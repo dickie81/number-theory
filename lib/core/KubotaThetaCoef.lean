@@ -2,10 +2,9 @@ import KubotaPmTheta
 
 /-! # The Fourier coefficients of θ
 
-S5f-10 of the plan, part 15 (S5f-10f, fifth part). The next step planned the Fourier
-coefficients of θ's automorphic representative `θ̃` (`thetaF`): `|θ̃|` integrable on
-`3P × [α, β]`, the unfolding of `P_m(ψ)` against `θ̃`, and the coefficients for almost every `v`. This file
-proves them, for `m = δ₃x`, `r > 0` and `Y > 0`:
+This file proves the Fourier coefficients of θ's automorphic representative `θ̃` (`thetaF`): `|θ̃|`
+integrable on `3P × [α, β]`, the unfolding of `P_m(ψ)` against `θ̃`, and the coefficients for almost every `v`,
+for `m = δ₃x`, `r > 0` and `Y > 0`:
 
 * **Counting** (`rowBd`, `boxT`, `cBox`, `boxZ` and `cTr`, definitions; **`tsum_boxT_le`** and
   **`tsum_boxZ_le`**, with `rowBd_finite`, `row_mem_rowBd`, `cBox_ne_top`,

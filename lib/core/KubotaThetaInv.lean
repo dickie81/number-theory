@@ -2,9 +2,9 @@ import KubotaThetaZero
 
 /-! # θ is invariant under `SL_2(ℤ)`
 
-S5f-12 of the plan, part 4. The next step planned θ's invariance under `S` and `T` through
+This file proves θ's invariance under `S` and `T` through
 `translates_eq_zero` on `Γ_1(3)` itself, a translation lemma on `3P` from the chart onto
-the torus, and the passage to θ's continuous Fourier series (`thS`). This file proves the three,
+the torus, and the passage to θ's continuous Fourier series (`thS`),
 for `r > 0`, `Y > 0` and θ's representative `θ̃` (`thetaF`):
 
 * **The trace from `Γ_1(3)` to itself** (**`trK_self`**, with `subsingleton_quot_gam3`): the identity at every
@@ -17,7 +17,7 @@ for `r > 0`, `Y > 0` and θ's representative `θ̃` (`thetaF`):
   `translates_eq_zero` with `H = H′_i = Γ_1(3)`, the translates `g` and `I`, and the coefficients `1` and
   `−1`). Conjugation by `h ∈ SL_2(ℤ)` is such an `e` (`gam3_normal` and `kub_conj_toSL`).
 * **`S`** (**`thetaF_sS_ae`**, with `actP_neg`, `slAct_sS_inv` and `const_theta_ne_zero`): `θ̃∘S = θ̃` almost
-  everywhere. `S⁻¹ = −S` acts as `S`, and rounds 433 and 442 give `θ̃` and `θ̃∘S` the same constant term
+  everywhere. `S⁻¹ = −S` acts as `S`, and `θ̃` and `θ̃∘S` have the same constant term
   `(9√3/2)·Res φ·v^{2/3}` at `∞`; it is nonzero (`phiRes_ne_zero`), so both slices are integrable
   on `3P` (Mathlib's `Integrable.of_integral_ne_zero`).
 * **Translation, and `T`** (**`integral_fundP3_add`** and **`thetaF_sT_ae`**, with `tch_add`, `tch_lift`,
@@ -199,7 +199,7 @@ theorem const_theta_ne_zero {v : ℝ} (hv : 0 < v) :
   refine mul_ne_zero (mul_ne_zero nine_sqrt_ne_zero phiRes_ne_zero) ?_
   exact_mod_cast (Real.rpow_pos_of_pos hv _).ne'
 
-/-- **`θ̃∘S = θ̃` almost everywhere**: by rounds 433 and 442 the constant terms at `∞` of `θ̃` and of `θ̃∘S`
+/-- **`θ̃∘S = θ̃` almost everywhere**: the constant terms at `∞` of `θ̃` and of `θ̃∘S`
 are both `(9√3/2)·Res φ·v^{2/3}`, and `S⁻¹` acts as `S`. -/
 theorem thetaF_sS_ae {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) :
     ∀ᵐ p ∂uhsMeasure, thetaF r Y hY (slAct sS p) = thetaF r Y hY p := by

@@ -2,11 +2,11 @@ import EisensteinPairRatio
 
 /-! # Lemma 7.3, part 1: the regrouping
 
-Round 492 (step 1 of the plan for door 5(b)) states the regrouping for the characters modulo any `m` with `4 ∣ m`:
+This file states the regrouping for the characters modulo any `m` with `4 ∣ m`:
 the zero frequency `zeroQ m` runs over the sets with a unit class modulo `m`, and `Qform_le_split`
 takes a set `U₀` of the kind.
 
-S5c-5, part 2, in the plan. `Qform` (the companion paper's `𝒬` of (7.2), times
+`Qform` (the companion paper's `𝒬` of (7.2), times
 `2LF/√3`) sums, over the triples `t = (b, T, V)` of `qTriples (2βL)`, the weight `2𝓗·N(b)/(√3·L)` times
 the second mean square, which `Mq_rowcolD` writes in row/column form. The paper's proof of
 Lemma 7.3 regroups that output by "`r=tg/e,\quad f'=Cew,\quad k'=deh`", here

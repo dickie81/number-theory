@@ -1,6 +1,5 @@
 /-
-# Their `J(f⃗)`, their Proposition 8.1 as a displayed hypothesis, and `S₃,₃`, `S₃,₄` in its form (the
-CGL plan's stage M3, the `S₃` side)
+# Their `J(f⃗)`, their Proposition 8.1 as a displayed hypothesis, and `S₃,₃`, `S₃,₄` in its form (the `S₃` side)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -13,7 +12,7 @@ f⃗ = {f_b}_{1≤b≤q, (b,q)=1} is a sequence of smooth functions such that ea
 J(f⃗) ⪅ ϕ(q)M⁶(∫_ℝ Σ_{1≤b≤q, (b,q)=1} f_b(u) du)² + ϕ(q)²M⁴ ∫_ℝ Σ_{1≤b≤q, (b,q)=1} f_b(u)² du." (lines 2464–2486).
 In both, spaces are restored and the arrows, the sums and their ranges, the integrals and their ranges, the hat, the
 large parentheses, the fractions, the subscripts and the exponents transcribed; the text layer's `R` and `N` are the
-PDF's blackboard `ℝ` and `ℕ` (`MSBM10` glyphs on page 26, `scratchpad/r662/probe/p26_all.txt`). Their notation:
+PDF's blackboard `ℝ` and `ℕ` (`MSBM10` glyphs on page 26). Their notation:
 "A∼B signifies the stronger condition B < A≤2B" (lines 278–279).
 
 The library's form.
@@ -40,8 +39,8 @@ nonnegative `f` with `f_{−b}(c) ≥ R̃(c, b)²` on `[−3, 3]`, and put `b = 
 * so `Q(v, b₁)` is at most twice the sum over `j ≤ k` of their inner sums at `a = b₁`, and Cauchy–Schwarz over the
   `k + 1` values of `j` puts a factor `k + 1` in the square.
 That gives `S₃,₄ ≤ 4(k + 1)Σ_{j≤k}Jint(f, 2^j − 1/2, 2^k − 1/2, 2^k − 1/2, 2)` (`S34_le_Jint`). For `S₃,₃` their change
-of variables `u = v⁻¹` (`|dv| = u⁻²du ≤ 4du` on `[1/2, 2]`) turns `c₁ = (m₁v + m₃)/(m₂v)` into `(m₁ + m₃u)/m₂`, as
-round 660 records. With `b₂ = b₁b`, the weight `(b₁m₁ − b₁bm₂ + m₃, q)` equals `(b₁⁻¹m₃ − bm₂ + m₁, q)`, since `b₁` is
+of variables `u = v⁻¹` (`|dv| = u⁻²du ≤ 4du` on `[1/2, 2]`) turns `c₁ = (m₁v + m₃)/(m₂v)` into `(m₁ + m₃u)/m₂`.
+With `b₂ = b₁b`, the weight `(b₁m₁ − b₁bm₂ + m₃, q)` equals `(b₁⁻¹m₃ − bm₂ + m₁, q)`, since `b₁` is
 a unit ("Note that (b₁m₁−b₁b₂m₂+m₃,q) = (m₁−b₂m₂+b₁⁻¹m₃,q) when (b₁,q) = 1", lines 5700–5701, spaces restored, the
 subscripts and the exponent transcribed). Then `b₁ ↦ b₁⁻¹` and the swap `(m₁, m₂, m₃) ↦ (m₃, m₂, m₁)`, which maps the
 block to itself, turn the sum into `Q` at `(u, b₁⁻¹)`. So `S₃,₃ ≤ 4S₃,₄` (`S33_le_S34`).

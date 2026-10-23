@@ -2,7 +2,7 @@ import EisensteinCubicRecip
 
 /-! # S3, part 1: Gauss sums at a prime of `ℤ[ω]`
 
-The Gauss-sum layer of the round-291 plan starts at a single prime. For a maximal `P` and any primitive
+The Gauss-sum layer starts at a single prime. For a maximal `P` and any primitive
 additive character `ψ` of `𝓞/P` with values in `ℂ`:
 
 * **The cubic Gauss sum** (`cubCharC`, the cubic character composed with the embedding `σ`):

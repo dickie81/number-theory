@@ -1,5 +1,5 @@
 /-
-# Their Lemmas 10.9 and 10.10 with their `⪅`, and their Proposition 10.2 (the CGL plan's stage M3)
+# Their Lemmas 10.9 and 10.10 with their `⪅`, and their Proposition 10.2
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -19,7 +19,7 @@ and exponents transcribed; "nor" is as printed (the PDF's page 47 has it).
 
 The library's form.
 * One point per character. The library's points have distinct characters (`Set.InjOn χ R`), which suffices for
-  `CGLDensity`, a count of characters (`frontier/linnik/CGL-LEAN.md`, "One point per character"); their spacing
+  `CGLDensity`, a count of characters; their spacing
   hypothesis then holds.
 * Their `a_n`. The library sums `b_nχ_i(n)n^{it_i}` over a set `S ⊆ (N, 2N]` with `|b_n| ≤ 1`: their `D_N` with
   `a_n = b_n` on `S` and `a_n = 0` off it.
@@ -36,7 +36,7 @@ The library's form.
   cubes at `D = ⌊N²/(qT)⌋` into `lemma109_eps` and `lemma1010_eps` at `ε/2`. That gives `E ≤ A + B√E`, and `quad_le`
   gives `E ≤ 2A + B²`, their "so that".
 
-Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` round 669's, `E` `energy` and
+Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` as in `LinnikCGLL105`, `E` `energy` and
 `CGLT101` the displayed hypothesis.
 * `card_le_totient`, `card_dyad_le`, `sqrt_add_le`: `|R| ≤ φ(q)` for `χ` injective on `R`; `|{n ∼ N}| ≤ N + 1` for
   `N ≥ 0`; and `√(x + y) ≤ √x + √y` for `x, y ≥ 0`.

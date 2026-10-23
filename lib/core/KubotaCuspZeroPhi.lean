@@ -2,8 +2,8 @@ import KubotaCuspZero
 
 /-! # The scattering coefficient at the cusp `0` in closed form, and its pole
 
-S5f-12 of the plan, part 2. The next step planned `S₀(m³)`, the closed form of
-`φ₀(s) = π/((9√3/2)(s − 1))·Σ_d S₀(d)N(d)^{−s}` and its pole at `4/3`. This file proves them, with
+This file proves `S₀(m³)`, the closed form of
+`φ₀(s) = π/((9√3/2)(s − 1))·Σ_d S₀(d)N(d)^{−s}` and its pole at `4/3`, with
 `ζ_K = ζ·L(·, χ₋₃)`:
 
 * **The count at the cubes** (**`count_bRow_fst`** and **`cuspS0_cube_eq`**, with `bRow_iff_fst` and

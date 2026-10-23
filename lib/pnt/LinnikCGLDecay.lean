@@ -1,6 +1,5 @@
 /-
-# The Fourier decay of their `f_b`, in the form of their Proposition 8.1 (the CGL plan's stage M3, the `S₃`
-side)
+# The Fourier decay of their `f_b`, in the form of their Proposition 8.1 (the `S₃` side)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

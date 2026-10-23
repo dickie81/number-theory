@@ -14,7 +14,7 @@ Plain statements. For `w ≥ 1` and `J`, `T w J j` (`j < J`) is the set of prime
   levels `k_j = k + 2j` that error's gap term is at most `V·ζ(k)`, where `V = ∏_j ∏_{T_j} (1 − g)` and
   `ζ(k) = e^{2C₀}(2C₀^k/k!)·exp(e^{2C₀}·2C₀^{k+1}/(k + 1)!)`.
 
-This is the fundamental lemma at a leaf of the tree, `frontier/linnik/SIEVE-ROUTE.md` §13's M5.
+This is the fundamental lemma at a leaf of the tree.
 
 The proof:
 

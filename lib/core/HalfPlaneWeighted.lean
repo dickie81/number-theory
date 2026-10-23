@@ -139,7 +139,7 @@ theorem wf_finset_prod {T : Finset (Ideal (𝓞 K))} (hT : ∀ P ∈ T, P.IsPrim
   · rfl
 
 
-/-- The prime factors of `p𝓞` are nonzero primes. (Round 514: `QuadIdeals.pFactors_prime` for
+/-- The prime factors of `p𝓞` are nonzero primes. (This is `QuadIdeals.pFactors_prime` for
 `ℚ(ζ₃)`.) -/
 theorem pFactors_prime {p : ℕ} (hp : p.Prime) {P : Ideal (𝓞 K)} (hP : P ∈ pFactors p) :
     P.IsPrime ∧ P ≠ ⊥ := QuadIdeals.pFactors_prime hp hP

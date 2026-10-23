@@ -15,7 +15,7 @@ So `DetectHyp δ` holds (`detectHyp`), hence `N(σ, T) ≪ T^{4(1+δ)(1−σ)}(l
 
 **`short_primes`**: for every `θ > ¾`, every large `y` has a prime in `(y, y + y^θ]`.
 
-Since round 400 the detection argument is `lib/core/DetectCore.lean` (`detectHyp_of_EMBound`), so that zeta23's layer,
+The detection argument is `lib/core/DetectCore.lean` (`detectHyp_of_EMBound`), so that zeta23's layer,
 which cannot import this file, runs it from its own copy of PNT+'s `ZetaBounds`
 (`lib/zeta23/ShellDensity.lean`).
 -/

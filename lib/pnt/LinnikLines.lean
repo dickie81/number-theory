@@ -28,7 +28,7 @@ For a prime `q`, a finite set `W` of Dirichlet characters mod `q` and residue we
 This is an exact finite form of Chen–Gupta–Li's Lemma 4.5 at `t = 0` for prime `q`, with their frequencies
 `m ∈ ℤ³` folded modulo `q`. For the weight `w(n/N)²` on `[N, 2N]`, Poisson summation gives
 `ŵ(k) = Σ_{m≡k} Nĥ(Nm/q)`. The identity does not use that; Poisson summation is needed only to show that `ŵ(k)` is
-small unless `k` is within about `q/N` of `0`. The line sums are `frontier/linnik/SEVEN-THIRDS.md` §6's `L(m)`, with
+small unless `k` is within about `q/N` of `0`. The line sums are `L(m)`, with
 `(m₁, m₂, m₃) = (k₂, k₃, k₁)`.
 -/
 

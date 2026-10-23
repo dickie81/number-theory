@@ -3,7 +3,7 @@ import ToneHyperbola
 import ExplicitBridge
 import GroundState
 
-/-! # The zeta23 ↔ pilot dictionary
+/-! # The zeta23 ↔ library dictionary
 
 `Zeta23.mu τ = (psiRe τ − log π)/(2π)`, `weilConst = 2π·mu 0`, `sigmaW a r = 2π(mu r + PX (e^{2a}) r)`, `ToneHyperbola.stirl q γ = π·N₀(qγ)/q`, and Stirling for the tone phase.
 -/

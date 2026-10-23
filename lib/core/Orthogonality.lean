@@ -3,7 +3,7 @@ import BohrSphere
 
 /-! # Orthogonality forces the Euclidean structure
 
-The owner wrote: "Orthogonality forces it". This file proves it in two forms, and what it says about the
+This file proves in two forms that orthogonality forces the Euclidean structure, and what it says about the
 Bohr ball.
 
 * **Parseval: distinct frequencies are orthogonal** (`trig` and `freqGapBound`, definitions;

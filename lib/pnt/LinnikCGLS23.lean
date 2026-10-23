@@ -1,5 +1,5 @@
 /-
-# The off-diagonal of the cubic trace as Chen–Gupta–Li's `S₂ + S₃` (the CGL plan's stage M3)
+# The off-diagonal of the cubic trace as Chen–Gupta–Li's `S₂ + S₃`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

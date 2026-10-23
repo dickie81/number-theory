@@ -15,10 +15,10 @@ Partial summation then gives `L(s, χ) = s∫_1^∞ S(x)x^{−s−1}dx` on `Re s
 * if every partial sum is `≥ 0`, `L(σ, χ) ≥ 1 − 2^{−σ} > 0` on `(0, ∞)` (`LFunction_real_ge`): no
   real zero, in particular no Siegel zero.
 
-*(Round 511: the partial-sum bound, the integral representation and the growth bound are LFunctionGrowth.lean's,
+*(The partial-sum bound, the integral representation and the growth bound are LFunctionGrowth.lean's,
 for every `χ ≠ 1` (`norm_sum_cC_le`, `LFunction_eq_IχC`, `norm_LFunction_leC`). Here `abs_summ_cR_le` is the real
 part of `norm_summC_le`, `LFunction_eq_Iχ` is `LFunction_eq_IχC` through `Iχ = IχC` for quadratic `χ`
-(`Iχ_eq_IχC`), `norm_LamG_le` holds for every `χ ≠ 1`, and `abs_sum_cR_le` and `norm_LFunction_le` are removed.)*
+(`Iχ_eq_IχC`), `norm_LamG_le` holds for every `χ ≠ 1`,.)*
 
 **A zero** (`exists_zero_of_primitive`). With `Λ*(s) = N^{s/2}Λ(s, χ)`, Mathlib's functional
 equation gives `Λ*(1 − s) = εΛ*(s)` (`LamG_one_sub`). `f(z) = Λ*(½ + iz)Λ*(½ − iz)` is even and entire of

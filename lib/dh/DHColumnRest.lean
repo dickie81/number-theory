@@ -4,13 +4,14 @@ import DHGround
 
 /-! # The dh column, part 4: the remaining G rows and the strip row of the P block
 
-Nine pilot theorems of the form "hypotheses ⇒ `RiemannHypothesis`" that DHColumn.lean and
+Nine theorems of the form "hypotheses ⇒ `RiemannHypothesis`" that DHColumn.lean and
 DHGround.lean leave without a dh column. Each is restated for the Davenport–Heilbronn function
 `dh` (`Xi ↦ XiDH chi5`, `IsGroundState ↦ IsGroundStateDH`, `HypConvStrip ↦ HypConvStripDH`,
 `topGS ↦ topGSDH`) and refuted, from DHColumn's and DHGround's refutations or, for the three
 Hadamard-parameter rows, from DHColumn's generic lemmas and `XiDH_nonreal_zero`: for `dh`, each
-hypothesis set is unsatisfiable. Seven theorems cover the nine rows; two rows get none (below). Every hypothesis of the ζ statement is kept (renamed) unless a landed dh fact
-discharges it; the docstrings say which.
+hypothesis set is unsatisfiable. Seven theorems cover the nine rows; two rows get none (below). Every
+hypothesis of the ζ statement is kept (renamed) unless a dh fact proved in the library discharges it; the
+docstrings say which.
 
 Each declaration (left) and the library declaration it is the dh column of (right):
 

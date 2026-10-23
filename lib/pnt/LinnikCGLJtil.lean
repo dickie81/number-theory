@@ -1,5 +1,5 @@
 /-
-# Their Cauchy–Schwarz back to `J(f̃⃗)`, for the terms `|n| ≤ N₀` of their `Σ_II` (the CGL plan's stage M4)
+# Their Cauchy–Schwarz back to `J(f̃⃗)`, for the terms `|n| ≤ N₀` of their `Σ_II`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

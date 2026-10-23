@@ -12,22 +12,22 @@ import WeilTwinGeneral
 Results whose parts the layer already had, but which no file stated. None needs new analysis.
 
 **`DHRH ↔ DHRHcross`** (`dhRH_iff_cross`). `dhRH_of_cross` (DHColumn) takes the exclusion of
-positive real zeros as a named input `hreal`, and `dh_ne_zero_of_real` (DHRealAxis, the same round)
+positive real zeros as a named input `hreal`, and `dh_ne_zero_of_real` (DHRealAxis)
 proves it; DHColumn does not import DHRealAxis. So RH for `dh` and its cross form are equivalent, and
 `dhRH_of_cross'` is `dhRH_of_cross` with `hreal` discharged. Both propositions are false:
 `dh_offline_zero` refutes `DHRH`, and `dh_offline_nonreal_zero` (DHOffCross)
 refutes `DHRHcross`.
 
-**Conjugation symmetry** (`dh_conj`, `dh_conj_zero`): `dh(s̄) = conj dh(s)` for every `s`. Round 253
-listed it first among its walls, as needing the Gauss-sum identity `ε_{χ⁻¹} = conj ε_χ`. Round 256 has
-that identity for `χ₅` without a Gauss sum (`rootNumber_chi5_inv_eq_conj`, from `εε′ = 1` and
-`‖ε‖ = 1`), and round 273 has `conj L(s, χ) = L(s̄, χ⁻¹)` for `χ ≠ 1` (`conj_LFunction`).
+**Conjugation symmetry** (`dh_conj`, `dh_conj_zero`): `dh(s̄) = conj dh(s)` for every `s`.
+It needs the Gauss-sum identity `ε_{χ⁻¹} = conj ε_χ`. That identity holds for `χ₅` without a Gauss sum
+(`rootNumber_chi5_inv_eq_conj`, from `εε′ = 1` and `‖ε‖ = 1`), and `conj L(s, χ) = L(s̄, χ⁻¹)` holds for
+`χ ≠ 1` (`conj_LFunction`).
 
 **The parity split of `Q_dh`** (`QDHu_add_even_odd`): `Q_dh(φ + ψ) = Q_dh(φ) + Q_dh(ψ)` for an even probe
 `φ` and an odd probe `ψ` at the same support, the `dh` column of `ParitySplit.weilQg_parity`.
 `QDHu` sees `g` only through its autocorrelation, whose cross terms cancel for `φ` even and `ψ` odd
 (`autocorr_parity`), and `QDHu` has no pole term. Hence the cosine and sine packets at `(12/5, 169/2)`
-(rounds 261 and 269) span a plane on which `Q_dh` is negative definite (`QDHu_packet_plane_neg`).
+span a plane on which `Q_dh` is negative definite (`QDHu_packet_plane_neg`).
 
 **The index on probes of either parity is at least `5`** (`DHNegIndex.negIndex_ge_five`): the four even
 directions of `negIndex_ge_four` and the odd sine packet span a `5`-dimensional space of
@@ -37,9 +37,9 @@ only in `0`, and `Q_dh` adds across the two parities.
 **`QCu χ` is a `ProbeForm`** (`QCu_form`) for every Dirichlet character `χ` (modulus `N ≠ 0`) at every
 support: DHForm's proof of `QDHu_form`, with `fχ` (DirichletOmega), `qC χ` (WeilChiBridge), `cChi χ` and
 `MC χ a` (WeilChiDensity) in place of `fDH`, `3/4`, `constDH` and `MDH a`. It uses DHForm's `archEQ_smul`
-and `archEQ_congr_ae`, which hold for every `q` but live in this layer, so it is stated here and not in
-`src/`. It defines the χ ground energy `λ_χ(a)` (`lamC`), non-increasing in the support
-(`lamC_antitone`), the first piece of the ground-state layer for `χ` that round 227 lists as not ported.
+and `archEQ_congr_ae`, which hold for every `q` but live in this layer, so it is stated here. It defines the
+χ ground energy `λ_χ(a)` (`lamC`), non-increasing in the support
+(`lamC_antitone`), the first piece of the ground-state layer for `χ`.
 
 **GRH(χ) iff `λ_χ ≥ 0` at every support** (`grh_iff_lamC_nonneg`). `Q_χ ≥ 0` on every probe at
 every support iff `λ_χ ≥ 0` at every support, for every `χ` (`probe_nonneg_iff_lamC_nonneg`), so

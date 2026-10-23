@@ -1,5 +1,5 @@
 /-
-# `ĝ_a` as a sum over `m₁` and `n`, and the sum over `a` for every `n ≠ 0` (the CGL plan's stage M4)
+# `ĝ_a` as a sum over `m₁` and `n`, and the sum over `a` for every `n ≠ 0`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

@@ -4,7 +4,7 @@ import ParabolaGap
 
 /-! # Simplicity of the ground state: small supports, and covering intervals of supports
 
-Round 46 reduced the chain to `(a) + eventual simplicity ⇒ RH`. This file does two things.
+The chain reduces to `(a) + eventual simplicity ⇒ RH`. This file does two things.
 
 1. **Every support `0 < a ≤ 0.36` has a simple ground state** (`simpleGround_036`), from the certified
    gap of ParabolaGap.lean and the passage "unique up to sign ⇒ simple" (`simpleGround_of_unique`).
@@ -181,7 +181,7 @@ theorem simpleGround_of_chain (node s : ℕ → ℝ) (hpos : ∀ i, 0 < node i) 
 /-! ## The certificates, and simplicity for every support `0 < a ≤ 1.035`
 
 The nodes are `a = 0.36, 0.51, 0.64, 0.75, 0.85, 0.935, 1.01, 1.035` (support `δ = 2a` up to `2.07`).
-`Round47Certs` lists the fourteen computer-assisted inequalities of `frontier/simplicity_cover/`:
+`Round47Certs` lists the fourteen computer-assisted inequalities:
 * upper bounds `λ₁(a_i) < s_i` are ball Rayleigh quotients of cosine trial vectors, computed at a support
   slightly below the node (valid at the node by `lam_antitone`);
 * lower bounds `λ₂(a_{i+1}) ≥ s_i` are Zhu's one-stroke reduction with a ball-arithmetic inertia count.

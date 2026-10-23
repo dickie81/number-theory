@@ -23,7 +23,7 @@ its cells `S1c i`, the extensions `S2 i`, `S3 i j`, `S4 i j k` (one more prime i
 * `decomp`: for a grid with `GridOK`, `P.Good`, weights `g_A ≥ 0` and `g_B`, and leaves within `Err ≥ 0`,
   `S_{g_A}(z_top) ≥ S_{g_B}(z_top) − D1(g_B) − (1 + n(1 + n(n(n + 2) + 2)))·Err`.
 
-This is the decomposition of `frontier/linnik/SIEVE-ROUTE.md` §6, M8 of §13, with M7's classification by cells (the grid
+This is the decomposition to depth 4 with the classification by cells (the grid
 of `SieveCert.Grid`: `n` cells a side, of side `H/DEN`, starting at `V/DEN = u₂ − u₁`; the identities `I_S1` … `I_S4`,
 the levels and `decomp` take `GridOK`). At depth 1 a cell inside the window is evaluated, the others decomposed. At
 depth 2 a candidate cell that `dec` allows is split at `X'` (above evaluated, below decomposed), a candidate cell not
@@ -34,8 +34,8 @@ is dropped, and the rest are evaluated or vanish.
 The proof of `decomp`: `lvl4`, `lvl3`, `lvl2`, `lvl1`, one level at a time. A dropped term has `A ≥ 0` and costs its
 `B`-version; a term with sign `−` is bounded above, so it is evaluated or decomposed, never dropped.
 
-Round 607 made the certificate's grid a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
-statements of earlier rounds are the case `SieveCert.grid2333`.
+The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); `SieveCert.grid2333`
+is one instance.
 
 
 The file imports `SieveDecomp.lean`.

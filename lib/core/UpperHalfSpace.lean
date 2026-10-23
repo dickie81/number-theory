@@ -2,7 +2,7 @@ import Mathlib
 
 /-! # Upper half-space and the action of `SL_2(ℂ)`
 
-S5f-1 of the plan, part 1. Upper half-space is `{z + vj : z ∈ ℂ, v > 0}` inside the real
+Upper half-space is `{z + vj : z ∈ ℂ, v > 0}` inside the real
 quaternions, and `SL_2(ℂ)` acts by `w ↦ (aw + b)(cw + d)⁻¹` (Dunn and Radziwiłł's §5.1, after
 Elstrodt, Grunewald and Mennicke).
 

@@ -10,9 +10,9 @@ Plain statement (`typeII_step`). Let `L = 2333/1000`, `f0` smooth and real with 
 `Σ_{χ≠1} |Σ_{m∈S} a_mχ(m)m^{−ih₀}||∏_{j<K} Σ_{p≤2Q_j} χ(p)(p/Q_j)^{−ih_j}f0(p/Q_j)|` is at most
 `q^{L−1/50000}(Σ_m |a_m|²/P)^{1/2}`.
 
-This is `frontier/linnik/SIEVE-ROUTE.md` §10's Proposition 3′ for the curve step of §12, on the window
-`[401/1000, 485/1000]` inside step's proved window, pointwise in the heights. The bins of the characters do not depend
-on the heights. In each bin Lemma 1 (`SieveWeight.norm_Sp_le`) bounds the prime sums, (H2′) counts the characters
+This is Proposition 3′ for the curve step, on the window
+`[401/1000, 485/1000]` inside the step's proved window, pointwise in the heights. The bins of the characters do not
+depend on the heights. In each bin Lemma 1 (`SieveWeight.norm_Sp_le`) bounds the prime sums, (H2′) counts the characters
 (`LinnikTwelve.charDensity_twelve_fifths`, `LinnikStep.charDensity_step`, and at most `q` characters), and
 Cauchy–Schwarz with orthogonality (T1) bounds the sum.
 

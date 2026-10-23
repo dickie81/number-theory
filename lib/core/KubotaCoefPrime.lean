@@ -2,9 +2,8 @@ import KubotaDirSplit
 
 /-! # θ's coefficients at `xp²` and `xp`
 
-S5f-13 of the plan, part 5. Round 453 proved the relations among the Dirichlet series at a
-primary prime `p ∤ x`; its next step planned their consequences for θ's coefficients `ρ` (`rhoM`),
-through the residue principle and the cube relation. This file proves them, with `N = N(p)`,
+The relations among the Dirichlet series at a primary prime `p ∤ x` have consequences for θ's coefficients
+`ρ` (`rhoM`), through the residue principle and the cube relation. This file proves them, with `N = N(p)`,
 `X = N(p)^{−s}`, `t = (3/p)₃` and the Gauss sums `γ_j(x)`:
 
 * **The completed series at `xp^e`** (`dirL_mul_pow`, **`dirL_p5`** and **`dirL_p3`**): with the factors
