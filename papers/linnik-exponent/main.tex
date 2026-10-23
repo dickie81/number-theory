@@ -1,6 +1,6 @@
 % The Linnik exponent paper: a skeleton. Each section says what it will contain; the claims table of
 % Section 7 is complete and names the Lean theorem behind each claim. The paper claims only its own steps: the
-% two results it uses from the literature are documented in formalisations/ and cited, not restated as its own.
+% results it uses from the literature are documented in formalisations/ and cited, not restated as its own.
 \documentclass[11pt]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -28,9 +28,9 @@
 \begin{abstract}
 We prove that there is a constant $K$ such that, for every $q \ge 1$ and every $a$ prime to $q$, there is a prime
 $p \equiv a \pmod q$ with $p \le K q^{899/400}$. The proof is a sieve argument. Its Type~II estimate uses two
-results from the literature: that no Dirichlet $L$-function vanishes in $\operatorname{Re} s > 11/12$, from OpenAI's
-release, and Chen, Gupta and Li's zero-density estimate. The theorem and both results are proved in Lean~4, and
-the proof depends on no axioms beyond Lean's standard three.
+recent results: that no Dirichlet $L$-function vanishes in $\operatorname{Re} s > 11/12$, from OpenAI's release, and
+Chen, Gupta and Li's zero-density estimate. The theorem, these two results and the classical results the proof uses
+are proved in Lean~4, and the proof depends on no axioms beyond Lean's standard three.
 \end{abstract}
 
 \section{Introduction}\label{sec:intro}
@@ -73,20 +73,22 @@ characters stated here. It is proved in Lean as \lean{LinnikCGLDensity.cglDensit
 documents it.
 
 % To be written: the density curve g7c that the Type II estimate uses on [1/2, 1], piece by piece, with the source
-% of each piece (Hypothesis H2 on [5/7, 16/21], and the library's other density estimates elsewhere), from the
-% census of the declarations that the proof uses.
+% of each piece (formalisations/README.md): the trivial count below 4/7; Ingham's estimate on [4/7, 5/7]
+% (formalisations/ingham-density.md); Hypothesis H2 on [5/7, 16/21]; Huxley's estimate from 16/21 on
+% (formalisations/huxley-density.md), which uses Hypothesis H1 above 11/12.
 
 \section{The Type II estimate}\label{sec:type2}
 
 % To be written: smooth prime sums bounded through each character's zeros near the height (Lemma 1 of the route);
 % the bins of characters by the real parts of their zeros; the top bin by Hypothesis H1; the other bins by the
-% density curve; the Halasz-Montgomery branch on the top piece [5/6, 11/12]; the window
+% density curve; the Halasz-Montgomery branch on the top piece [5/6, 11/12] (formalisations/halasz-montgomery.md,
+% cited to Halasz and Montgomery); the window
 % [41335/100000, 48069/100000] L at L = 899/400.
 
 \section{Type I estimates and Harman's sieve}\label{sec:type1}
 
 % To be written: the Type I estimate by orthogonality, the fundamental lemma, and Harman's comparison principle in
-% the form used, cited to Harman's book and not restated as new.
+% the form used, cited to Harman, Brun and Buchstab (formalisations/harman-sieve.md) and not restated as new.
 
 \section{The decomposition and its certificate}\label{sec:certificate}
 
@@ -117,6 +119,11 @@ The certificate's total is below $K$ (Section~\ref{sec:certificate}) & \lean{Sie
 \midrule
 Hypothesis~\ref{hyp:half-plane} (OpenAI; \texttt{formalisations/}) & \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt} \\
 Hypothesis~\ref{hyp:density} (Chen--Gupta--Li; \texttt{formalisations/}) & \lean{LinnikCGLDensity.cglDensity} \\
+Ingham's density estimate (\texttt{formalisations/}) & \lean{LinnikInghamC.charDensity\_ingham\_c} \\
+Huxley's density estimate (\texttt{formalisations/}) & \lean{LinnikHuxStep.charDensity\_gen} \\
+Huxley's estimate from $5/6$ on (\texttt{formalisations/}) & \lean{LinnikStep.charDensity\_step} \\
+The Hal\'asz--Montgomery inequality (\texttt{formalisations/}) & \lean{LinnikPower.hm\_duality} \\
+Harman's sieve in the form used (\texttt{formalisations/}) & \lean{SieveProp6.prop6} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -131,12 +138,31 @@ Hypothesis~\ref{hyp:density} (Chen--Gupta--Li; \texttt{formalisations/}) & \lean
 % 12 + epsilon from H1 alone. This section claims nothing new; it places Theorem 1.1.
 
 % The entries are to be checked against the sources before submission.
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 \bibitem{openai} OpenAI, \emph{The Quasi-Riemann Hypothesis: a zero-free half-plane $\operatorname{Re}(s) > 7/8$},
   preprint, 30 September 2026, and its companion preprint of 5 October 2026; \url{https://github.com/openai/math},
   entry 003.
 \bibitem{cgl} B. Chen, V. Gupta and Y. C. Li, \emph{Large value estimates for Dirichlet polynomials with characters
   and zero density of Dirichlet $L$-functions}, arXiv:2507.08296v2.
+\bibitem{ingham} A. E. Ingham, \emph{On the estimation of $N(\sigma, T)$}, Quart. J. Math. Oxford Ser. 11 (1940),
+  201--202.
+\bibitem{montgomery-topics} H. L. Montgomery, \emph{Topics in Multiplicative Number Theory}, Lecture Notes in Math.
+  227, Springer, Berlin, 1971.
+\bibitem{huxley72} M. N. Huxley, \emph{On the difference between consecutive primes}, Invent. Math. 15 (1972),
+  164--170.
+\bibitem{huxley75} M. N. Huxley, \emph{Large values of Dirichlet polynomials, III}, Acta Arith. 26 (1975), 435--444.
+\bibitem{halasz} G. Hal\'asz, \emph{\"Uber die Mittelwerte multiplikativer zahlentheoretischer Funktionen}, Acta Math.
+  Acad. Sci. Hungar. 19 (1968), 365--403.
+\bibitem{montgomery69} H. L. Montgomery, \emph{Mean and large values of Dirichlet polynomials}, Invent. Math. 8
+  (1969), 334--345.
+\bibitem{harman83} G. Harman, \emph{On the distribution of $\alpha p$ modulo one}, J. London Math. Soc. (2) 27 (1983),
+  9--18.
+\bibitem{harman} G. Harman, \emph{Prime-Detecting Sieves}, London Math. Soc. Monographs 33, Princeton University
+  Press, 2007.
+\bibitem{brun} V. Brun, \emph{Le crible d'Eratosth\`ene et le th\'eor\`eme de Goldbach}, Videnskapsselskapets
+  Skrifter I, Mat.-naturv. Klasse, Kristiania, 1920, no.~3.
+\bibitem{buchstab} A. A. Buchstab, \emph{Asymptotische Absch\"atzung einer allgemeinen zahlentheoretischen
+  Funktion}, Mat. Sb. 2(44) (1937), 1239--1246.
 \end{thebibliography}
 
 \end{document}
