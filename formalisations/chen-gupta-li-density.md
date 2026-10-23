@@ -34,6 +34,9 @@ The formalisation follows the paper. It was read from the PDF's text layer:
   12.1;
 - **in outline only:** Lemmas 10.7–10.10 and the proof of Proposition 10.2, §11.1, and the proof of Lemma 12.1.
 
+The text layer drops the bar over `χ₂` in the statement of Theorem 10.1 (p. 40). The PDF has it, and so does
+`LinnikCGLT101.CGLT101`.
+
 The chain in Lean is as follows.
 
 - **The density count from the large values** (their §12). `LinnikCGLStep.charDensity_cglGen` derives it from their
@@ -67,17 +70,16 @@ The formalisation is in `lib/pnt`, in the modules whose names begin with `Linnik
 - **Explicit constants and extra factors.** Several of the paper's `≪` and `⪅` bounds are stated in Lean with
   explicit constants. Where the Lean form carries an extra factor, the factor is absorbed by `(qTN)^ε`. For example,
   the Ramanujan-sum bound is used as `|C_q(n)| ≤ d(q)(n, q)` where the paper has `(n, q)`.
+- **The cut-off in `ξ`.** Their proof of Lemma 8.2 splits the integral of `Σ_a|ĝ_a(ξ)|²` at `|ξ| = (qT)²` and
+  discards `|ξ| > (qT)²` by the decay of `Σ_b|f̂_b|` (p. 29). The library's bound on that range (`LinnikCGLTail`) is
+  the same argument with a cut-off `X` in place of their `(qT)²`, and `LinnikCGLForm` takes `X = (qT)³`.
 - **Lemma 10.8 is not formalised as stated.** `LinnikCGLSep.sum_cube_le` does its part in the proof of Lemma 10.9.
 
 ## Corrections to the source
 
-The formalisation found three places where the paper's text needs a small repair. None of them affects the paper's
+The formalisation found six places where the paper's text needs a small repair. None of them affects the paper's
 results.
 
-- **Remark 10.3 (p. 40).** The remark holds as stated, strictly and with the constant `1`, since `E(W) ≤ |W|³`.
-  The slip is in the chain of inequalities given for it. Its step `(qT)³|W|³N^{−3} < qT|W|³` needs `N³ > (qT)²`, which
-  fails for `(qT)^{2/3}/2 ≤ N ≤ (qT)^{2/3}`. The library proves the remark directly (`LinnikCGLCase.remark103`),
-  without assuming `E ≤ |W|³` and with the constant `8`, which is then attained.
 - **Proposition 7.1.** The Cauchy–Schwarz step in the proof of Proposition 7.2 bounds an integral over `v₂` by
   `R̃_{M₂}` (their (7.5), p. 24), whose integral runs over `[1/2, 2]` only. So the step needs the integrand restricted
   to `v₂/v₁ ∈ [1/2, 2]`, which Proposition 7.1 as stated does not give. The restriction holds because the kernel `J`
@@ -85,6 +87,23 @@ results.
   includes it (`LinnikCGLSym.prop71r`).
 - **The proof of Proposition 7.2 (p. 26).** After the substitution `u′ = v₂/v₁`, a display omits the factor
   `√v₁ ≤ √2` that comes from `dv₂ = v₁du′`. The next line is stated with `≪_ϵ`, which absorbs it (`LinnikCGLRt`).
+- **The proof of Lemma 9.2 (p. 39).** After the change of variables `v = e^τ`, the majorized integral in the display
+  carries the Jacobian `e^τ`, and the identity that follows drops it. If it is kept, `e^τ` grows like `e^{(qT)^ϵ}` on
+  the support of the majorant. The library bounds `e^τ ≤ 2` on the original range `|τ| ≤ log 2` before majorizing,
+  at the cost of a factor `2` (`LinnikCGLMom4.lemma92`).
+- **Remark 10.3 (p. 40).** The remark holds as stated, strictly and with the constant `1`, since `E(W) ≤ |W|³`.
+  The slip is in the chain of inequalities given for it. Its step `(qT)³|W|³N^{−3} < qT|W|³` needs `N³ > (qT)²`, which
+  fails for `(qT)^{2/3}/2 ≤ N ≤ (qT)^{2/3}`. The library proves the remark directly (`LinnikCGLCase.remark103`),
+  without assuming `E ≤ |W|³` and with the constant `8`, which is then attained.
+- **The bump `ψ` of §11 (p. 48).** To bound `S₃,₄` they apply Proposition 8.1 to `f_b(v) = ψ(v)|R̃_{M₂}(v, −b)|²`,
+  "where ψ(v) is a smooth bump function supported on v ≍ 1 and such that ψ(1) > 0" (p. 48). Comparing `S₃,₄` with
+  `J(f⃗)` term by term needs `f_{−b} ≥ R̃_{M₂}(·, b)²` at every centre `(m₁v + m₃)/m₂`. The centres include points
+  near `0`, where such a `ψ` vanishes and `R̃_{M₂}` need not. On the library's dyadic blocks the centres lie in
+  `[−3, 3]`, and the library takes for `ψ` Mathlib's smooth bump with radii `3` and `4`, which is `1` on `[−3, 3]`
+  (`LinnikCGLFb.psiW`, `LinnikCGLFb.Rt_sq_le_fb`, `LinnikCGLJ.S34_le_Jint`).
+- **The change of variables `u = v⁻¹` in §11 (p. 48).** It takes `(m₁v + m₃)/(m₂v)` to `(m₁ + m₃u)/m₂`, the form
+  Proposition 8.1 needs, but the displays that follow print the denominator as `m₂u`. The library's bound on `S₃,₃`
+  uses `(m₁ + m₃u)/m₂` (`LinnikCGLJ.S33_le_S34`).
 
 ## Heath-Brown's Theorem 10.1, with characters
 
