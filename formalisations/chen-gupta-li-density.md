@@ -79,8 +79,8 @@ results.
   fails for `(qT)^{2/3}/2 ≤ N ≤ (qT)^{2/3}`. The library proves the remark directly (`LinnikCGLCase.remark103`),
   without assuming `E ≤ |W|³` and with the constant `8`, which is then attained.
 - **Proposition 7.1.** The Cauchy–Schwarz step in the proof of Proposition 7.2 bounds an integral over `v₂` by
-  `R̃_{M₂}` (their (7.5), p. 24), whose integral runs over `[1/2, 2]` only. So the step needs the integrand restricted to
-  `v₂/v₁ ∈ [1/2, 2]`, which Proposition 7.1 as stated does not give. The restriction holds because the kernel `J`
+  `R̃_{M₂}` (their (7.5), p. 24), whose integral runs over `[1/2, 2]` only. So the step needs the integrand restricted
+  to `v₂/v₁ ∈ [1/2, 2]`, which Proposition 7.1 as stated does not give. The restriction holds because the kernel `J`
   vanishes unless `v₂/v₁ ∈ (1/2, 2)` (`LinnikCGLSym.Jk_eq_zero_of_ratio`). The library's form of Proposition 7.1
   includes it (`LinnikCGLSym.prop71r`).
 - **The proof of Proposition 7.2 (p. 26).** After the substitution `u′ = v₂/v₁`, a display omits the factor
