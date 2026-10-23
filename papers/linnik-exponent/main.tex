@@ -1,0 +1,142 @@
+% The Linnik exponent paper: a skeleton. Each section says what it will contain; the claims table of
+% Section 7 is complete and names the Lean theorem behind each claim. The paper claims only its own steps: the
+% two results it uses from the literature are documented in formalisations/ and cited, not restated as its own.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{hypothesis}{Hypothesis}
+\renewcommand{\thehypothesis}{H\arabic{hypothesis}}
+
+\newcommand{\lean}[1]{\texttt{#1}}
+
+\title{The least prime in an arithmetic progression:\\ the exponent $899/400$}
+% The authors are to be filled in.
+\author{}
+\date{Draft}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We prove that there is a constant $K$ such that, for every $q \ge 1$ and every $a$ prime to $q$, there is a prime
+$p \equiv a \pmod q$ with $p \le K q^{899/400}$. The proof is a sieve argument. Its Type~II estimate uses two
+results from the literature: that no Dirichlet $L$-function vanishes in $\operatorname{Re} s > 11/12$, from OpenAI's
+release, and Chen, Gupta and Li's zero-density estimate. The theorem and both results are proved in Lean~4, and
+the proof depends on no axioms beyond Lean's standard three.
+\end{abstract}
+
+\section{Introduction}\label{sec:intro}
+
+\begin{theorem}\label{thm:main}
+There is $K$ such that for every $q \ge 1$ and every $a$ prime to $q$ there is a prime $p \equiv a \pmod q$ with
+$p \le K q^{899/400}$.
+\end{theorem}
+
+% To be written:
+% - Linnik's theorem and the records for its exponent: Xylouris's 5 (2011) and 5 - epsilon (2018); 2 + epsilon
+%   under the generalised Riemann hypothesis.
+% - Why a zero-free half-plane changes the problem. With (H1) the classical deduction (Gallagher's method, as in
+%   Chen-Gupta-Li's Corollary 1.4) gives the density exponent, 7/3 + epsilon. The sieve of this paper goes below
+%   the density exponent.
+% - What is new here: the Type II estimate over zero windows (Section 3), the decomposition, and its certificate
+%   (Section 5).
+% - What is not new: (H1) and (H2) (Section 2), Harman's sieve (Section 4), and the deduction of Section 8.
+
+\section{Notation and the two inputs}\label{sec:inputs}
+
+\begin{hypothesis}[the zero-free half-plane]\label{hyp:half-plane}
+For every $q \ge 1$, every Dirichlet character $\chi$ mod $q$ and every $s$ with $\operatorname{Re} s > 11/12$,
+$L(s, \chi) \ne 0$, except at $s = 1$ for the trivial character.
+\end{hypothesis}
+
+This is OpenAI's result \cite{openai}: their companion preprint proves it, and their main preprint proves the
+stronger $\operatorname{Re} s > 7/8$. It is proved in Lean as \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt}, following
+the companion preprint. \texttt{formalisations/openai-half-plane.md} gives the attribution and the differences
+between the Lean statement and the source's.
+
+\begin{hypothesis}[a zero-density estimate]\label{hyp:density}
+For every $\varepsilon > 0$ there is $C$ such that for every $q \ge 1$, every $5/7 \le \sigma \le 16/21$ and every
+$T \ge 2$, at most $C (qT)^{(7/3)(1 - \sigma) + \varepsilon}$ characters mod $q$ have an $L$-function with a zero in
+$\operatorname{Re} s \ge \sigma$, $|\operatorname{Im} s| \le T$.
+\end{hypothesis}
+
+This follows from Chen, Gupta and Li's estimate \cite{cgl}. Their estimate counts zeros, which gives the count of
+characters stated here. It is proved in Lean as \lean{LinnikCGLDensity.cglDensity}, and \texttt{formalisations/}
+documents it.
+
+% To be written: the density curve g7c that the Type II estimate uses on [1/2, 1], piece by piece, with the source
+% of each piece (Hypothesis H2 on [5/7, 16/21], and the library's other density estimates elsewhere), from the
+% census of the declarations that the proof uses.
+
+\section{The Type II estimate}\label{sec:type2}
+
+% To be written: smooth prime sums bounded through each character's zeros near the height (Lemma 1 of the route);
+% the bins of characters by the real parts of their zeros; the top bin by Hypothesis H1; the other bins by the
+% density curve; the Halasz-Montgomery branch on the top piece [5/6, 11/12]; the window
+% [41335/100000, 48069/100000] L at L = 899/400.
+
+\section{Type I estimates and Harman's sieve}\label{sec:type1}
+
+% To be written: the Type I estimate by orthogonality, the fundamental lemma, and Harman's comparison principle in
+% the form used, cited to Harman's book and not restated as new.
+
+\section{The decomposition and its certificate}\label{sec:certificate}
+
+% To be written: Buchstab's identity on the cells of the grid (n = 300; the window's ends rounded inward over
+% DEN = 2^40); the kept cells and the discarded ones; the loss as a sum over the cells, bounded above with the
+% scale K = 2^60; the refined certificate and the kernel's check of its total.
+
+\section{Proof of Theorem~\ref{thm:main}}\label{sec:proof}
+
+% To be written: the route theorem (Section 7's table) at the parameters, with Hypotheses H1 and H2.
+
+\section{The formalisation}\label{sec:lean}
+
+Every claim of the paper is a theorem of the Lean library in \texttt{lib/}. The table names each one. The file
+\texttt{lib/check/Check.lean} prints the axioms of these theorems, and \texttt{scripts/check\_axioms.py} checks that
+they are \lean{propext}, \lean{Classical.choice} and \lean{Quot.sound} only.
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Claim & Lean \\
+\midrule
+Theorem~\ref{thm:main} & \lean{Linnik22475R.linnik\_22475r} \\
+Theorem~\ref{thm:main} under Hypothesis~\ref{hyp:density} & \lean{Linnik22475R.linnik\_22475r\_of} \\
+The route theorem (Section~\ref{sec:proof}) & \lean{SieveMain2.linnik\_route\_lt2} \\
+The Type~II estimate on the window (Section~\ref{sec:type2}) & \lean{SieveTypeIIU22475C.typeII\_22475c} \\
+The certificate's total is below $K$ (Section~\ref{sec:certificate}) & \lean{SieveCert.total2\_lt\_22475R} \\
+\midrule
+Hypothesis~\ref{hyp:half-plane} (OpenAI; \texttt{formalisations/}) & \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt} \\
+Hypothesis~\ref{hyp:density} (Chen--Gupta--Li; \texttt{formalisations/}) & \lean{LinnikCGLDensity.cglDensity} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% To be written: how faithful the Lean statements are (Mathlib's DirichletCharacter.LFunction, the counts of
+% characters), and how to build and check (the repository's README).
+
+\section{What the inputs give without the sieve}\label{sec:comparison}
+
+% To be written: Hypotheses H1 and H2 by the classical deduction give 7/3 + epsilon (Chen-Gupta-Li's Corollary 1.4);
+% the library's own deduction (Linnik.linnik_of_charDensity) and the exponents it gives; the trivial count gives
+% 12 + epsilon from H1 alone. This section claims nothing new; it places Theorem 1.1.
+
+% The entries are to be checked against the sources before submission.
+\begin{thebibliography}{9}
+\bibitem{openai} OpenAI, \emph{The Quasi-Riemann Hypothesis: a zero-free half-plane $\operatorname{Re}(s) > 7/8$},
+  preprint, 30 September 2026, and its companion preprint of 5 October 2026; \url{https://github.com/openai/math},
+  entry 003.
+\bibitem{cgl} B. Chen, V. Gupta and Y. C. Li, \emph{Large value estimates for Dirichlet polynomials with characters
+  and zero density of Dirichlet $L$-functions}, arXiv:2507.08296v2.
+\end{thebibliography}
+
+\end{document}

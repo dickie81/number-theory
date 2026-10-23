@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: No escape hatches in the library's sources
+        run: python3 scripts/check_hygiene.py
+      - name: lakefile.lean matches lib/
+        run: python3 scripts/gen_lakefile.py --check
+      - name: The vendored libraries are upstream's with the port patches
+        run: python3 scripts/check_vendor.py
+      - name: The certificate regenerates
+        run: python3 tools/linnik/check_certificate.py
+
+  paper:
+    name: The Linnik paper builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: xu-cheng/latex-action@v4
+        with:
+          working_directory: papers/linnik-exponent
+          root_file: main.tex
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linnik-exponent
+          path: papers/linnik-exponent/main.pdf
+          retention-days: 14
+
+  # The Lean build in stages: a cold build takes longer than one job may run (six hours). Each stage continues from
+  # the previous stage's cache, and runs only if the previous one stopped at its time limit.
+  build-1:
+    name: Lean build (stage 1)
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    outputs:
+      partial: ${{ steps.build.outputs.partial }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '1'
+
+  build-2:
+    name: Lean build (stage 2)
+    needs: build-1
+    if: needs.build-1.outputs.partial == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    outputs:
+      partial: ${{ steps.build.outputs.partial }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '2'
+
+  build-3:
+    name: Lean build (stage 3)
+    needs: build-2
+    if: needs.build-2.outputs.partial == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '3'
+          last: 'true'
