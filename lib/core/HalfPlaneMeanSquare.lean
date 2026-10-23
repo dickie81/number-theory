@@ -7,7 +7,7 @@ The family is `A_Z(u) = Σ_𝔞 μ(𝔞)(u/𝔞)₆ W(N𝔞/Z)` over the ideals 
 to `6` (`famSum`). Its mean square at `σ` is the displayed hypothesis `MeanSquare σ`: for every weight
 `W` and `ε > 0`, `Σ_{z∈T} |A_Z(z)|² = O(Z^{2+σ+ε})` over finite sets `T` of nonzero `z` with
 `N(z) ≤ Z^{1+σ}`. This file derives from it the hypothesis of the S0′, and with S0′ and S0 the
-conditional milestone (`ne_zero_of_meanSquare`): `ζ(s) ≠ 0` and `L(s, χ₋₃) ≠ 0` on
+conditional result (`ne_zero_of_meanSquare`): `ζ(s) ≠ 0` and `L(s, χ₋₃) ≠ 0` on
 `Re s > (11 + 5σ)/12`.
 * **Sixth powers** (`sym6_pow_six`): for `𝔞` of norm prime to `6`, `(b⁶/𝔞)₆` is `1` if `b` lies in no
   prime factor of `𝔞`, and `0` otherwise.
@@ -21,7 +21,7 @@ conditional milestone (`ne_zero_of_meanSquare`): `ζ(s) ≠ 0` and `L(s, χ₋�
 * **Cauchy–Schwarz** over the sixth powers, which are distinct (`gen_pow_six_injOn`) and of norm at most
   `Y⁶`, against `MeanSquare σ` with `Y = Z^{(1+σ)/6}` (`weightedBound_of_meanSquare`).
 
-`MeanSquare σ` is a displayed hypothesis, the socket for S3–S5 of the round-277 plan.
+`MeanSquare σ` is a displayed hypothesis, the socket for the later steps of the argument.
 -/
 
 open NumberField Ideal UniqueFactorizationMonoid
@@ -689,8 +689,8 @@ theorem weightedBound_of_meanSquare {σ : ℝ} (hσ : 0 ≤ σ) (h : MeanSquare 
     (Real.rpow_le_rpow_of_exponent_le hZ (by linarith))
     (Real.rpow_le_rpow_of_exponent_le hZ (by linarith)) hcomb
 
-/-- **The conditional milestone: the family's mean square at `σ ≥ 0` gives
-`ζ(s) ≠ 0` and `L(s, χ₋₃) ≠ 0` on `Re s > (11 + 5σ)/12`.** Through S2′, S0′ and S0. At the release's
+/-- **The conditional result: the family's mean square at `σ ≥ 0` gives
+`ζ(s) ≠ 0` and `L(s, χ₋₃) ≠ 0` on `Re s > (11 + 5σ)/12`.** Through S2′, S0′ and S0. At
 `σ = 1/10` this is `Re s > 23/24`. -/
 theorem ne_zero_of_meanSquare {σ : ℝ} (hσ : 0 ≤ σ) (h : MeanSquare σ) {s : ℂ}
     (hs : (11 + 5 * σ) / 12 < s.re) :

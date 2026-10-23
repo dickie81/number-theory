@@ -19,12 +19,12 @@ up to `Y` that satisfy every atom of `spec`. For weights `g` on `(N₁, N₂]`, 
 * `famI_eq_zero`, `famI_vanish`: a family contributes `0` when no `n ∈ (N₁, N₂]` is counted, in particular when every
   `∏rt ≤ N₁` while `∏rt·rt_last > N₂`.
 
-These are the operations of the decomposition of `frontier/linnik/SIEVE-ROUTE.md` §6 (§13's M8), on families
+These are the operations of the decomposition of the sieve, on families
 described by finitely many atoms: extension by one prime (Buchstab), the cells of the newest prime, splits by a
 product against a threshold, and families that vanish.
 
-Round 607 made the certificate's grid a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
-statements of earlier rounds are the case `SieveCert.grid2333`.
+The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
+statements for the original grid are the case `SieveCert.grid2333`.
 
 
 The file imports `SieveChain.lean`.

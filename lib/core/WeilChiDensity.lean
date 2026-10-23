@@ -5,7 +5,7 @@ import WeilRH
 /-! # GRH(χ) gives `Q_χ ≥ 0` on every probe
 
 `QC_nonneg_of_GRH` needs the explicit formula for the probe at hand, so it covers only
-probes whose `ĝ²` is a strip test function. Here the gap is closed by density, as round 157 closed it
+probes whose `ĝ²` is a strip test function. Here the gap is closed by density, as in `WeilRH.lean`
 for ζ, but without ground states:
 
 * `QCu_add_smul`: `Q_χ` (in u-space) is a quadratic form with bilinear form `BC`.

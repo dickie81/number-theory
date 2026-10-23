@@ -1,5 +1,5 @@
 /-
-# The count of the pairs `(m₁′, n′)` in their Lemma 8.2 (the CGL plan's stage M4)
+# The count of the pairs `(m₁′, n′)` in their Lemma 8.2
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

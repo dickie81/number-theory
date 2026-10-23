@@ -2,7 +2,7 @@ import Mathlib
 
 /-! # The Bessel function `K_ν`
 
-S5f-1 of the plan, part 2. `K_ν(x) = ½∫_0^∞ t^{ν−1}e^{−x(t+1/t)/2} dt`, defined as half the
+`K_ν(x) = ½∫_0^∞ t^{ν−1}e^{−x(t+1/t)/2} dt`, defined as half the
 Mellin transform of the kernel `t ↦ e^{−x(t+1/t)/2}` (Mathlib's `mellin`), so that Mathlib's Mellin
 API applies. Mathlib's `Analysis/SpecialFunctions/Bessel.lean` has only the first kind.
 

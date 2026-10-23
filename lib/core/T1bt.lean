@@ -205,8 +205,8 @@ theorem re_inv_zero_term_ge (ρ : ℂ) (h0 : 0 < ρ.re) (h1 : ρ.re < 1) :
 
 /-- The Hadamard constant `K = 2 + γ_E - log(4π)` (true value 0.046191...) is below 0.0539.
 Uses only Mathlib's `γ_E < H_128 - log 128`, `log 2 > 0.6931471803`, `e < 2.7182818286`,
-`π > 3.141592` and a four-term Taylor bound for `exp 0.143`. (Round 233 moved `n` from 64 to 128:
-the bound `0.0539` is what lets 1bt(i) drop the first-zero height.) -/
+`π > 3.141592` and a four-term Taylor bound for `exp 0.143`. The bound `0.0539`, from `n = 128`,
+is what lets 1bt(i) drop the first-zero height. -/
 theorem hadamard_const_lt : 2 + eulerMascheroniConstant - Real.log (4 * π) < 0.0539 := by
   have hγ := Real.eulerMascheroniConstant_lt_eulerMascheroniSeq' 128
   have hseq : eulerMascheroniSeq' 128 = (harmonic 128 : ℝ) - Real.log 128 := by

@@ -7,7 +7,7 @@ Plain statement. For every `0 < ε ≤ 1/200`, `CharDensity (87/35 + 55ε) 10 C`
 (`charDensity_huxley`): for every `q ≥ 1`, `½ ≤ σ ≤ 1` and `T ≥ 2`, at most `C(qT)^{(87/35+55ε)(1−σ)}(log qT)^{10}`
 characters mod `q` have a zero of `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`. With `linnik_of_charDensity`, for
 every `η > 0` every reduced class mod `q` has a prime `p ≤ K q^{87/35+η}` (`linnik_eighty_seven_thirty_fifths`), with
-no hypothesis. Round 524 had `36/13 + η`. On `52/87 ≤ σ ≤ 23/29` the count is the Ingham argument at
+no hypothesis. On `52/87 ≤ σ ≤ 23/29` the count is the Ingham argument at
 `c = 17/140` (polynomial class `Q^{(2+4c)(1−σ)} = Q^{(87/35)(1−σ)}`); on `23/29 ≤ σ ≤ 11/12` it is the large-values
 method: powers of the blocks of the detecting polynomial, the Halász–Montgomery inequality of part 1 and the
 off-diagonal bound of part 2, with a short mollifier. Ingham's exponent `3/(2 − σ)` equals `87/35` at `σ = 23/29`.

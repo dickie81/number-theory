@@ -1,5 +1,5 @@
 /-
-# Their Lemma 9.2, the fourth moments of `R` and `R̃` (the CGL plan's stage M3, the `S₃` side)
+# Their Lemma 9.2, the fourth moments of `R` and `R̃`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

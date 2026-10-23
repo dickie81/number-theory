@@ -1,16 +1,15 @@
 /-
-# `S₃,₃`, `S₃,₄` and the block sums of `Ĩ`, by their Proposition 8.1 and Lemmas 9.1 and 9.2 (the CGL plan's
-stage M3, the `S₃` side)
+# `S₃,₃`, `S₃,₄` and the block sums of `Ĩ`, by their Proposition 8.1 and Lemmas 9.1 and 9.2
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Round 662 bounds `S₃,₄` on the dyadic block `k` of `prop72` by sums of their `J`, round 663 does so at its
-`f_b` (`S34_le_fb`), and round 665 proves the decay premise of their Proposition 8.1 for this `f_b` (`fb_decay_all`).
+`S34_le_Jint` bounds `S₃,₄` on the dyadic block `k` of `prop72` by sums of their `J`, `S34_le_fb` does so at its
+`f_b`, and `fb_decay_all` proves the decay premise of their Proposition 8.1 for this `f_b`.
 This file applies `CGLP81` to it. Their step: "Applying Proposition 8.1 then gives that S₃,₃ and S₃,₄ are
 both bounded by ⪅ ϕ(q)M₂⁶ (∫_ℝ Σ_{b mod q, (b,q)=1} |R̃_{M₂}(u,−b)|² ψ(u) du)² + ϕ(q)²M₂⁴ ∫_ℝ Σ_{b mod q, (b,q)=1}
 |R̃_{M₂}(u,−b)|⁴ ψ(u)² du" (text layer lines 5829–5847; spaces restored; the integrals, sums, tildes, large parentheses,
 subscripts and exponents transcribed; the text layer's `R` under the integrals is the PDF's blackboard `ℝ`, `MSBM10`
-glyphs at y = 139.2, x = 155.4 and 382.5 on page 49, `scratchpad/r671/probe/p49_all.txt`), and "This yields, by Lemmas
+glyphs at y = 139.2, x = 155.4 and 382.5 on page 49), and "This yields, by Lemmas
 9.1 and 9.2, S₃,₃, S₃,₄ ⪅_ϵ ϕ(q)³M₂⁶|W|² + ϕ(q)³M₂⁴E(W)." (lines 5848–5851; spaces restored; the subscripts and
 exponents transcribed).
 

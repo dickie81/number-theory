@@ -210,7 +210,7 @@ theorem race_seven_half {θ : ℝ} (hθ : 0 < θ) (hθ2 : θ < 1 / 2) (c X : ℝ
     (∃ x, X < x ∧ c * x ^ θ < summ (fχ chi7) x) ∧ (∃ x, X < x ∧ summ (fχ chi7) x < -(c * x ^ θ)) :=
   psiChi_omega_of_sums_nonneg chi7_ne_one chi7_isQuadratic chi7_isPrimitive sums_chi7 hθ hθ2 c X
 
-/-! ## Part 3: the sum of twin data, and round 236 for every good character -/
+/-! ## Part 3: the sum of twin data, and the criterion for every good character -/
 
 /-- **Twin data add.** -/
 theorem twinAdd {ι κ : Type*} {P₁ c₁ : ι → ℂ} {P₂ c₂ : κ → ℂ} {G : ℂ → ℂ} {Q₁ Q₂ : ℝ → ℝ}
@@ -320,7 +320,7 @@ theorem QKχ_twins_rate (hG : GoodChar χ) (hS : ∀ σ : ℝ, 0 < σ → σ < 1
   have := countable_ZeroIdxC hG
   rw [TwinLandau.rate_iff (twinData_Kχ hG hS) hσ, abs_re_PKχ hG]
 
-/-- **Round 236 for every good character**: `RH ∧ GRH(χ) ⟺ 2Q_ζ + Q_χ ≥ 0` on twin boxes. -/
+/-- **The twin-box criterion for every good character**: `RH ∧ GRH(χ) ⟺ 2Q_ζ + Q_χ ≥ 0` on twin boxes. -/
 theorem rh_grh_iff_QKχ_twins (hG : GoodChar χ) (hS : ∀ σ : ℝ, 0 < σ → σ < 1 → LFunction χ σ ≠ 0) :
     (RiemannHypothesis ∧ GRH χ) ↔ ∀ l : ℝ, 0 ≤ l → 0 ≤ QKχ χ (l + 1) (twin (box 1) l) := by
   constructor

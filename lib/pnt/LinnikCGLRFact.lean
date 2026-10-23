@@ -1,5 +1,5 @@
 /-
-# Their `I′_{m⃗}` as an integral over `(v₁, v₂)` (the CGL plan's stage M3, the `S₃` side)
+# Their `I′_{m⃗}` as an integral over `(v₁, v₂)`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

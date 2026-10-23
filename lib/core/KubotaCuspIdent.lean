@@ -2,8 +2,8 @@ import KubotaCuspCoef
 
 /-! # The Kubota sums at the cusps `γ_t` and `0`
 
-S5f-15 of the plan, part 4. The next step planned the relation between the Kubota sums
-at the cusps `γ_t` and `0`, and θ's coefficients at `γ_t`. This file proves the relation, and the relation
+This file proves the relation between the Kubota sums
+at the cusps `γ_t` and `0`, and θ's coefficients at `γ_t`, and the relation
 between the two pairings with `ũ_s` it gives, for `tt′ = 1`, `m` in the class of the cusp `γ_t` (
 `CuspClass`), `λ = ω − 1` and `m′ = δ₃ω²tλ²m = −tλ³m`:
 

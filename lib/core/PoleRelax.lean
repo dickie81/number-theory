@@ -24,7 +24,7 @@ expansion gives
   - the reduction `weilQ_ge_of_cert`, for any number of modes;
   - closed forms for every Gram entry;
   - the explicit rational tail and low-mode data (`N = 6`).
-* Certified by arb interval arithmetic (`frontier/nullvec/kpole_cert.py`): the hypotheses `G ≻ 0` and `M ⪰ 0`
+* Certified by arb interval arithmetic: the hypotheses `G ≻ 0` and `M ⪰ 0`
   at the single point `a = 1/4` (`Cert14`). Monotonicity in the support (`weilQ_mono`) carries the bound to
   every `0 < a ≤ 1/4`. Every quantity arb evaluates is defined in this file by a closed form
   proved here, or proved in `SmallPositivity*.lean` (`weilConst_eq`, `farField_eq`).
@@ -479,7 +479,7 @@ theorem weilQ_ge_of_cert {a ε : ℝ} (ha : 0 < a) (ha1 : a ≤ 1 / 4) (hG : (gr
 
 /-! ## F. Monotonicity in the support, and the certified range -/
 
-/-- The certificate at `a = 1/4`, `ε = 1/1000` (checked by `frontier/nullvec/kpole_cert.py` in arb). -/
+/-- The certificate at `a = 1/4`, `ε = 1/1000` (checked in arb). -/
 def Cert14 : Prop :=
   (gram6 (1 / 4)).PosDef ∧ (1 / 1000 : ℝ) ≤ kappa6 (1 / 4) ∧
     ((kappa6 (1 / 4) - 1 / 1000) • gram6 (1 / 4) + gram6 (1 / 4) * diagonal (s6 (1 / 4)) * gram6 (1 / 4)).PosSemidef

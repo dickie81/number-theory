@@ -22,10 +22,10 @@ Plain statements. `P` is the decomposition's parameters (`SieveBuch.Par`) on a g
   three sorted families: `p₁ > q₂ > q₁ > p₂` (`KS 0 2`), `q₂ > p₁ > q₁ > p₂` (`KS 1 2`) and `q₂ > q₁ > p₁ > p₂`
   (`KS 2 1`).
 
-This is the partition of a dropped term by the factorization of its rough part that `frontier/linnik/SIEVE-ROUTE.md`
-§28 describes: the kept parts are disjoint subsets of the dropped term's `n`, so their `A`-count is at most the term's;
-sorted, each is an exact product of a chain of four primes, which `SieveExact.T0_spec` evaluates when some subset of
-its primes has its product in the window.
+This is the partition of a dropped term by the factorization of its rough part: the kept parts are disjoint
+subsets of the dropped term's `n`, so their `A`-count is at most the term's; sorted, each is an exact product of a
+chain of four primes, which `SieveExact.T0_spec` evaluates when some subset of its primes has its product in the
+window.
 
 The file imports `SieveExact.lean` and `SieveCert2.lean`.
 -/

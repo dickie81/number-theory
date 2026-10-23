@@ -14,7 +14,7 @@ above its base is a `(gdim a − 1)`-dimensional negative-definite space of stri
 (`gdim_sub_one_le_quadruples`), and the join gives `gdim ≤ ⌊(M − 1)/2⌋ + 1` under (a) with
 an eventual bound `M` (`gdim_le_of_lam_neg`).
 
-If RH fails, `λ₁(a n) < 0` eventually along `a n → ∞` (`exists_lam_neg_of_not_RH`, round 161, and
+If RH fails, `λ₁(a n) < 0` eventually along `a n → ∞` (`exists_lam_neg_of_not_RH` and
 `lam_antitone`), so the bound descends, `M ↦ ⌊(M − 1)/2⌋ + 1 < M` for `M ≥ 3`, until
 `rh_of_dim_le_two` closes:
 

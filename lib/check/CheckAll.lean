@@ -1,6 +1,5 @@
-/- The final check of the library's old build (lib/pnt/build.sh in r-infinite): the axioms of every final
-theorem. Every line it prints must be `[propext, Classical.choice, Quot.sound]`, a subset of them, or none
-(scripts/check_axioms.py). Building it builds every certificate of the library. -/
+/- This file prints the axioms of every final theorem of the library. It is not built by default. Every line it
+prints must be `[propext, Classical.choice, Quot.sound]`, a subset of them, or none. -/
 import WanderLadderPNT
 import Rung3
 import PNTKV

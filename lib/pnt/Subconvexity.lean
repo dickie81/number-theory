@@ -386,7 +386,7 @@ theorem zeta_strip_of_zeroFree {θ σ ε : ℝ} (hθ : 1 / 2 ≤ θ) (hθ1 : θ 
   have hl0 : 0 < l := by linarith
   have hlu : l < u := by linarith
   have hε' : 0 < ε / 2 := by positivity
-  -- round 470 on `Re s ≥ u`
+  -- the bound `zeta_bound_of_zeroFree` on `Re s ≥ u`
   obtain ⟨T, C₀, hL⟩ := HalfPlaneLindelof.zeta_bound_of_zeroFree (by linarith) hθ1
     (by linarith : θ < u) hε' hzf
   -- polynomial growth in the strip `l ≤ Re s ≤ u`

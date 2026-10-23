@@ -2,7 +2,7 @@ import KubotaContour
 
 /-! # The decay of the transformed weight `V^♯`
 
-S5f-5 of the plan, part 3, which completes S5f-5. The companion paper writes: "`It remains to bound
+The companion paper writes: "`It remains to bound
 the transformed weight.`" It continues: "`We may therefore shift the kernel contour to $\Rea t=-1/4$ for
 $0<x\le1$, obtaining the factor $x^{1/4}$, and to $\Rea t=A$ for $x\ge1$, obtaining $x^{-A}$.`" and "`Each
 application of $x\partial_x$ introduces a factor $-t$.`" This file proves the bound in the form the display

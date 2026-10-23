@@ -1,14 +1,14 @@
 /-
-# Their Lemma 8.2 in their form, with the parameters chosen (the CGL plan's stage M4)
+# Their Lemma 8.2 in their form, with the parameters chosen
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li's Lemma 8.2 (lines 2495–2516) is `J(f⃗) ⪅ φ(q)M⁶(∫_ℝΣ_bf_b(u) du)² +
 φ(q)(M⁴∫_ℝΣ_bf_b(u)² du)^{1/2}J(f̃⃗)^{1/2}` (transcribed), where "we write A ⪅ B to indicate that for any ϵ > 0, there
 exists a constant C(ϵ) > 0, depending only on ϵ, such that A ≤ C(ϵ)(qT)^ϵ B for all sufficiently large qT." (lines
-279–281; spaces restored, the exponent transcribed). Round 688 proved the lemma in explicit form, before any choice of
-the parameters `L`, `X`, `N₀`, `δ`, `j` and `K`. This file chooses them and bounds every constant, and their negligible
-errors, by `C(qT)^θ`, for every `θ > 0`.
+279–281; spaces restored, the exponent transcribed). `LinnikCGLL82` proves the lemma in explicit form, before any
+choice of the parameters `L`, `X`, `N₀`, `δ`, `j` and `K`. This file chooses them and bounds every constant, and
+their negligible errors, by `C(qT)^θ`, for every `θ > 0`.
 
 The library's form.
 * The parameters, with `R = (qT)^{1/m}`, `m ≥ 1` and `13/m ≤ θ`: `L = (|κ| + 1)M`, `X = (qT)³`,

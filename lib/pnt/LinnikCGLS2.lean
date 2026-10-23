@@ -1,9 +1,9 @@
 /-
-# `CGLS2` (the CGL plan's stage M3)
+# `CGLS2`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Round 639 split the hypothesis on the cubic trace into two displayed hypotheses, `CGLS2` (the off-diagonal
+The hypothesis on the cubic trace is split into two displayed hypotheses, `CGLS2` (the off-diagonal
 mass of the Gram matrix, Chen–Gupta–Li's Proposition 6.1 at one point per character) and `CGLS3` (their
 Proposition 11.1). This file proves `CGLS2` (`cgls2`), from the explicit bound `LinnikCGLFrob.frobOff_le`, by
 choosing its parameters and bounding each factor by a power of `qT`. Linnik's exponents `9/4` and `226/100` then

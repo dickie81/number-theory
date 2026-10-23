@@ -1,5 +1,5 @@
 /-
-# The smooth cut-off of `frontier/linnik/SIEVE-ROUTE.md` §10, and the separation of two variables
+# The smooth cut-off, and the separation of two variables
 
 Plain statement. Let `g` be Mathlib's `Real.smoothTransition`, which is `0` on `(−∞, 0]` and `1` on `[1, ∞)`. For
 `θ > 0` and `Λ ≥ 0` put `G(u) = g(u/θ) − g((u − 2Λ)/θ)` (`G`, and `GC` with complex values). Then:
@@ -7,7 +7,7 @@ Plain statement. Let `g` be Mathlib's `Real.smoothTransition`, which is `0` on `
 * `G` is smooth, takes values in `[0, 1]` when `θ ≤ 2Λ`, and vanishes outside `[0, 2Λ + θ]` (`contDiff_G`, `G_nonneg`,
   `G_le_one`, `G_eq_zero`).
 * For `u ≤ Λ`, the indicator `1[u > 0]` or `1[u ≥ 0]` minus `G(u)` lies in `[0, 1]` and vanishes unless `0 ≤ u < θ`
-  (`indicator_sub_G`). This is the smoothing error of SIEVE-ROUTE.md's Lemma 4′.
+  (`indicator_sub_G`). This is the smoothing error.
 * `G^{(K)}(u) = θ^{−K}(g^{(K)}(u/θ) − g^{(K)}((u − 2Λ)/θ))` (`iteratedDeriv_GC`), and for `K ≥ 1` the derivative
   `g^{(K)}` vanishes outside `[0, 1]` and is integrable, so `‖G^{(K)}‖₁ ≤ 2θ^{1−K}‖g^{(K)}‖₁`
   (`integral_norm_iteratedDeriv_GC_le`).
@@ -18,8 +18,8 @@ Plain statement. Let `g` be Mathlib's `Real.smoothTransition`, which is `0` on `
   Mathlib's `Continuous.fourierInv_fourier_eq`). With `a = log Z` and `b = log Y`, the smoothed comparison
   `G(log Z − log Y)` is an integral of `Z^{2πiξ}Y^{−2πiξ}` against `𝓕G`, which decays like `(θ|ξ|)^{−K}`.
 
-SIEVE-ROUTE.md §10 writes the cut-off as `g(u/θ)c(u/Λ)` with a second bump `c`. On `u ≤ Λ` the two agree, and every
-property §10 uses holds for this form, with support `[0, 2Λ + θ]` in place of `[0, 2Λ]`. Mathlib's `𝓕` is
+A cut-off `g(u/θ)c(u/Λ)` with a second bump `c` agrees with `G` on `u ≤ Λ`; `G` has the properties above, with
+support `[0, 2Λ + θ]` in place of `[0, 2Λ]`. Mathlib's `𝓕` is
 `ξ ↦ ∫ e^{−2πixξ}f(x) dx`, so its heights are `2πξ`. The file imports only Mathlib.
 -/
 import Mathlib

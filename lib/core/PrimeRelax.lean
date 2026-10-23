@@ -55,7 +55,7 @@ theorem htailP {a : ℝ} (ha : 0 < a) (ha1 : a ≤ 1) (n : ℤ) (hn : (60 : ℤ)
     by nlinarith [Real.cos_le_one (π * n * Real.log 2 / (4 * a)), cP_nonneg]
   unfold tauP modeEP; linarith
 
-/-- **The certificate at `a* = 2/5`** (checked by `frontier/nullvec/kprime_cert.py`): the 60 quadrature bounds, the
+/-- **The certificate at `a* = 2/5`** (checked in arb): the 60 quadrature bounds, the
 Gram matrix, `ε ≤ κ`, and `(κ − ε)G + G diag(s) G ⪰ 0`, with `ε = 1/10000`. -/
 def CertP : Prop :=
   (∀ k : ℕ, k < 60 → psiC (k + 1) ≤ modeE (2 / 5) ((k : ℤ) + 1)) ∧ (gramP (2 / 5)).PosDef ∧

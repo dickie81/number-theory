@@ -1,5 +1,5 @@
 /-
-# The lengthening of Heath-Brown's double sums (the CGL plan's stage M5)
+# The lengthening of Heath-Brown's double sums
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

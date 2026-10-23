@@ -3,10 +3,10 @@ import KubotaEisFourier
 
 /-! # Twisted pseudo-Eisenstein series
 
-S5f-10 of the plan, part 12 (S5f-10f, second part). The next step planned the series `P_m(ψ)`,
-a pseudo-Eisenstein series twisted by the character `ĕ(m·z(γw)/9)`, its automorphy, its square-integrability
-and its unfolding. This file proves them, with `γ_{(c, d)}` the element of `Γ_1(3)` with bottom row
-`(c, d)`, `ν = ρ_G dμ` as, and frequencies `m = δ₃x`:
+This file treats the series `P_m(ψ)`,
+a pseudo-Eisenstein series twisted by the character `ĕ(m·z(γw)/9)`: its automorphy, its square-integrability
+and its unfolding. Here `γ_{(c, d)}` is the element of `Γ_1(3)` with bottom row
+`(c, d)`, `ν = ρ_G dμ` (`muR rhoG`), and the frequencies are `m = δ₃x`:
 
 * **The series** (`pmTerm` and `pmSer`, definitions): `P_m(ψ)(w) = Σ_{(c, d)} (c/d)₃·ψ(v(γw))·ĕ(m·z(γw)/9)`
   with `γ = γ_{(c, d)}`.

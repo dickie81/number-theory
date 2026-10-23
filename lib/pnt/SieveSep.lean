@@ -12,9 +12,9 @@ and integrable with integrable `𝓕g_j`.
   `|ξ_j| ≤ T₀` and `Σ_x |F_x(ξ)| ≤ B₂` everywhere, `B₁, B₂ ≥ 0`, and let the `h_j` be integrable. Then
   `Σ_x |∫ ∏_j h_j(ξ_j)F_x(ξ) dξ| ≤ B₁ ∏_j ‖h_j‖₁ + B₂ Σ_j (∫_{|t|>T₀} |h_j(t)| dt) ∏_{i≠j} ‖h_i‖₁`.
 
-This is the separation of `frontier/linnik/SIEVE-ROUTE.md` §13's M4 (§10's Lemma 4′). With the `g_j` the cut-off of
-`SieveSmooth`, a family's comparisons become an integral over the heights `ξ`; on the box M3 bounds the integrand, and
-outside it the trivial bound and the tails of the `𝓕g_j`. The file imports only Mathlib.
+With the `g_j` the cut-off of `SieveSmooth`, a family's comparisons become an integral over the heights `ξ`; on
+the box the integrand is bounded by `B₁`, and outside it by the trivial bound `B₂` and the tails of the `𝓕g_j`.
+The file imports only Mathlib.
 -/
 import Mathlib
 

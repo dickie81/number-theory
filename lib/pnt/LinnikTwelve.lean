@@ -7,7 +7,7 @@ Plain statement. For every `0 < ε ≤ 1/200`, `CharDensity (12/5 + 54ε) 10 C` 
 (`charDensity_twelve_fifths`): for every `q ≥ 1`, `½ ≤ σ ≤ 1` and `T ≥ 2`, at most
 `C(qT)^{(12/5+54ε)(1−σ)}(log qT)^{10}` characters mod `q` have a zero of `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`. With
 `linnik_of_charDensity`, for every `η > 0` every reduced class mod `q` has a prime `p ≤ K q^{12/5+η}`
-(`linnik_twelve_fifths`), with no hypothesis. Round 525 had `87/35 + η`. On `7/12 ≤ σ ≤ 3/4` the count is the
+(`linnik_twelve_fifths`), with no hypothesis. On `7/12 ≤ σ ≤ 3/4` the count is the
 Ingham argument at `c = 1/10` (part 1's `count_middle_c10`); on `3/4 ≤ σ ≤ 11/12` it is the detector and
 power trick, with the large-values estimate (part 1's `block_bin_hux`) in place of the
 Halász–Montgomery count (`LinnikHuxley.power_count`). Ingham's exponent `3/(2 − σ)` equals `12/5` at `σ = 3/4`.
