@@ -2,7 +2,7 @@ import KubotaTheta
 
 /-! # The companion paper's Lemma 6.1 from the Kubota–Patterson display
 
-S5f-2b of the plan, part 1. The twisted theta function of the companion paper's (6.2) and
+The twisted theta function of the companion paper's (6.2) and
 (A.2) is a finite sum of translates of `θ̄` (its (6.4) and (A.4)), and its coefficients at `λnb³` are the
 coefficients of the completed sum (the identity in the proof of its (6.3)).
 

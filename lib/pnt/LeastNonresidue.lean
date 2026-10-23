@@ -7,8 +7,8 @@ Plain statement. For every `A > 12` there is `C` such that every quadratic Diric
 has, for `ε = 1` and for `ε = −1`, a prime `p ∤ q` with `χ(p) = ε` and `p ≤ C(log(q + 2))^A`
 (`exists_prime_eq`). With the Legendre symbol, every odd prime `p` has a quadratic nonresidue
 `n ≤ C(log p)^A` (`exists_nonsquare_le`), so `n ≤ C_δ p^δ` for every `δ > 0` (`exists_nonsquare_le_rpow`),
-Vinogradov's least quadratic nonresidue conjecture. No hypothesis. *(Round 509: every Dirichlet character `χ ≠ 1`
-mod `q` has a prime `p ∤ q` with `χ(p) ≠ 1` and `p ≤ C(log(q + 2))^A` (`exists_prime_ne_one`).)*
+Vinogradov's least quadratic nonresidue conjecture. No hypothesis. Every Dirichlet character `χ ≠ 1`
+mod `q` has a prime `p ∤ q` with `χ(p) ≠ 1` and `p ≤ C(log(q + 2))^A` (`exists_prime_ne_one`).
 
 * `re_psiChi_ge`: if `χ(p) = ε` at every prime `p ≤ x` that does not divide `q`, then
   `ε·Re ψ(x, χ) ≥ ψ(x) − 4√x log x − log q`. The primes give `θ(x) − Σ_{p ∣ q} log p ≥ θ(x) − log q`
@@ -17,8 +17,7 @@ mod `q` has a prime `p ∤ q` with `χ(p) ≠ 1` and `p ≤ C(log(q + 2))^A` (`e
 * `rpow_le_of_forall_eq`: Ankeny's argument. With `ψ(x) ≥ x/4` for `x ≥ 100` (`psi_ge_quarter`, from Mathlib's
   `Chebyshev.psi_ge'`) and `ChiUniform.psiChi_le_uniform` at `η = 1/12 − 1/A`,
   `|ψ(x, χ)| ≤ C₁ log(q + 2)·x^{1−1/A}`, the hypothesis of `re_psiChi_ge` forces
-  `x^{1/A} ≤ 4(C₁ + 11) log(q + 2)`. *
-  *
+  `x^{1/A} ≤ 4(C₁ + 11) log(q + 2)`.
 * `exists_prime_eq`: `rpow_le_of_forall_eq` at `x = max(100, (K log(q + 2))^A) + 1`.
 * `exists_prime_ne_one`: the same at `ε = 1` for every `χ ≠ 1`: if `χ(p) = 1` at every prime
   `p ≤ x` not dividing `q`, then `x^{1/A} ≤ K log(q + 2)`.

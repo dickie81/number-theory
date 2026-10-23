@@ -10,7 +10,7 @@ curve `min(3/(2 − σ), 3/(3σ − 1))` on `[1 − 1/A_U, 5/6]`, `A_U = 12/5 + 
   `c = (3/(2 − σ₂) − 2)/4` on the ten equal steps `[σ₁, σ₂]` from `1 − 1/A_U` to `3/4`: the exponent
   `3/(2 − σ₂) + 1/2000`, Ingham's curve at the step's right end plus `1/2000`.
 * `parHx0` … `parHx9`, `charDensity_hx0` … `charDensity_hx9`: `LinnikHuxStep.charDensity_gen` at parameters found
-  by a linear program (scratch) for the ten equal steps from `3/4` to `5/6`: the exponent `3/(3σ₁ − 1) + 1/2000`,
+  by a linear program for the ten equal steps from `3/4` to `5/6`: the exponent `3/(3σ₁ − 1) + 1/2000`,
   Huxley's curve at the step's left end plus `1/2000`.
 
 The file imports `LinnikInghamC.lean` and `LinnikHuxStep.lean`.

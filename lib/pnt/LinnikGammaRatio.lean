@@ -3,8 +3,8 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Round 526 proves a large-values estimate of Huxley's shape over the characters mod `q`, one point per character
-(`LinnikReflect.huxley_large_values`, part 6): the off-diagonal terms of the Halász–Montgomery inequality are
+The library proves a large-values estimate of Huxley's shape over the characters mod `q`, one point per character
+(`LinnikReflect.huxley_large_values`): the off-diagonal terms of the Halász–Montgomery inequality are
 reflected through the functional equation, and the dual sums are bounded by the product trick against the large values
 themselves. This part gives the functional equation in the form the reflection uses, with explicit bounds on the
 reflected factors.

@@ -2,7 +2,7 @@ import EisensteinMeanSquarePoisson
 
 /-! # The mean square in row/column form
 
-Round 494 (step 3 of the plan for door 5(b)) carries the family twisted by a character `ν`
+The file carries the family twisted by a character `ν`
 modulo `m`, `4 ∣ m`, to the row/column form: the twisted paired factor `ν(x)ν̄(y)Ψ(x, y)` on the classes
 modulo `m` (`pairPsiNu`) is expanded in characters modulo `m` (**`pairTerm_expandNu`**, for unit classes),
 one pair is put in characters (**`pair_char_formNu`**: the twist sees only `A₁∖A₂` and `A₂∖A₁`, since
@@ -10,13 +10,13 @@ one pair is put in characters (**`pair_char_formNu`**: the twist sees only `A₁
 `U` of primes with unit classes that contains every such prime of norm at most `⌈βZ⌉`. `xi_chain` takes
 characters modulo any `m`.
 
-Round 492 (step 1 of the plan for door 5(b)) defines the class modulo any `m` of a set of primes (`cls`, with
+It defines the class modulo any `m` of a set of primes (`cls`, with
 `cls_union`, `isUnit_cls_of_subset` and `isUnit_cls_of_forall`), and states the column factorization
 (`aXi_idl`, `colA`, `col_factor`, `tauXi`, `rcTerm`, `term_factor`) for the characters modulo `m` and
 `pairPsi_eq_cls` for `4 ∣ m`. The expansion of the paired factor (`pairTerm_expand`,
 `pair_char_form`, `meanSquare_rowcol`) stays at `m = 4`, where every class is a unit (`isUnit_cls4`).
 
-S4 of the plan, part 8: the second half of the algebra in the companion paper's proof of
+The second half of the algebra in the companion paper's proof of
 its Proposition 4.5. The identity is carried, as one exact identity (`meanSquare_rowcol`), to
 the form the paper reaches just before its change of variables `b = g/e, f = ev, k = eh`, with the
 paired factor expanded in characters modulo `4`.

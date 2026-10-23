@@ -1,13 +1,12 @@
 /-
 # The certificate of the sieve route's loss, checked by the kernel
 
-Plain statements (`total_le_2333`, `total_div_le`). The loss certificate of
-`frontier/linnik/sieve_route_certificate.py`, with the crude bound for Buchstab's `ω`, is redone here in natural numbers
-on a grid of cells (`Grid`: the window's ends and the number `n` of cells a side). Each cell's bound is computed from
+Plain statements (`total_le_2333`, `total_div_le`). The loss certificate of the sieve route, with the crude bound for Buchstab's `ω`, is computed here in natural
+numbers on a grid of cells (`Grid`: the window's ends and the number `n` of cells a side). Each cell's bound is computed from
 its corners, rounding up twice (the value of `ω`, then the bound), and is a multiple of `2^{−60}`. On `grid2333`, the
 grid of the curve step at `L = 2333/1000` on the window `[401/1000, 485/1000]` of `SieveTypeII.typeII_step` with
 `n = 70`, the total is at most `0.88` (`total_le_2333`). The kernel checks it by `decide +kernel`; `total_le_2333`
-prints no axioms (`[propext]` until round 618, when the definitions elaborated `2 ^ 40` through `Nat.instMonoid`).
+prints no axioms.
 
 * The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. The window's ends are `U1 < U2` (for `grid2333`,
   `U1 = ⌈(401/1000)DEN⌉` and `U2 = ⌊(485/1000)DEN⌋`), `V = U2 − U1`, and the cells of side `H = ⌈(DEN/2 − V)/n⌉` start
@@ -34,7 +33,7 @@ What the tests say about points (the semantic lemmas):
 * `total_eq`, `total_div_le`: the total is the double sum of the costs, and if it is at most `0.88K` in natural numbers
   it is at most `0.88` in the reals.
 
-Round 607 made the grid a parameter (`Grid`, with `GridOK`); the grid is `grid2333`, and its `total_le` is
+The grid is a parameter (`Grid`, with `GridOK`); the one used is `grid2333`, and its `total_le` is
 `total_le_2333`.
 
 

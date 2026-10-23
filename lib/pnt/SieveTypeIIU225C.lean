@@ -3,7 +3,7 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-The curve `g7c` of `SieveTypeIIU226C.lean` (round 622: `g7` below `5/6`, `(101/50)(1 − σ)` from `5/6` on)
+The curve `g7c` of `SieveTypeIIU226C.lean` (`g7` below `5/6`, `(101/50)(1 − σ)` from `5/6` on)
 with the Type II bound of `SieveTypeIIHM.typeII_gen_hm`, as `SieveTypeIIU226C.lean` at
 `L = 226/100`: every piece of the window condition `WindowOKHM` holds by orthogonality at its corners except the top
 piece `[5/6, 11/12]` for `m ≤ 1`, which holds by the Halász–Montgomery branch at its corners

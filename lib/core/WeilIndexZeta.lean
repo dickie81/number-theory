@@ -4,9 +4,9 @@ import WeilRH
 /-! # Negative directions of `Q` count off-line zeros of ζ, with no named input
 
 `finrank_le_quadruples` and `finrank_le_offline` (ExplicitBridge.lean) take Weil's explicit
-formula for every probe of the space `V` as a hypothesis (`hEF`). Round 156 proved the formula over the
+formula for every probe of the space `V` as a hypothesis (`hEF`). The formula is proved over the
 zeros of `riemannZeta` for every probe whose `ĝ²` is a strip test function (`weilExplicit_zeta`), and
-round 157 for every `C²` probe vanishing near the edges (`weilExplicit_C2_zeta`). Here `hEF` is
+for every `C²` probe vanishing near the edges (`weilExplicit_C2_zeta`). Here `hEF` is
 discharged for ζ:
 
 * `finrank_le_quadruples_zeta`, `finrank_le_offline_zeta`: if `Q` is negative definite on a

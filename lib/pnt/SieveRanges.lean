@@ -9,7 +9,7 @@ Plain statements. `rng A` is the set of primes of `[A, A²)`.
 * `cover`: once `w^{2^{−J}} ≤ 2`, every prime below `w` lies in one of the ranges `rng(w^{2^{−j−1}})`, `j < J`.
 * `rng_disjoint`: for `w ≥ 1` these ranges are pairwise disjoint.
 
-These are the ranges `[w^{2^{−j−1}}, w^{2^{−j}})` of `frontier/linnik/SIEVE-ROUTE.md` §13's M5, each with
+These are the ranges `[w^{2^{−j−1}}, w^{2^{−j}})` of the sieve route, each with
 `Σ_p 1/p ≤ C`. For large `A`, `rng_sum_le` is `SieveRough.sum_inv_le` with `SieveRough.theta_near`; below that the
 range has at most `A² + 1` elements, each with `1/p ≤ 1`.
 

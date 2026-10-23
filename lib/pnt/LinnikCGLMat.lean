@@ -1,5 +1,5 @@
 /-
-# Chen–Gupta–Li's Proposition 3.1 from a bound on the cubic trace (the CGL plan's stage M3, first step)
+# Chen–Gupta–Li's Proposition 3.1 from a bound on the cubic trace
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

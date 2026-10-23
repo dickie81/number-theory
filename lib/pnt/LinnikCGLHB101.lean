@@ -1,12 +1,12 @@
 /-
-# Heath-Brown's Theorem 10.1 with characters, and Linnik's exponents `9/4` and `226/100` (stage M5)
+# Heath-Brown's Theorem 10.1 with characters, and Linnik's exponents `9/4` and `226/100`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 `sig_bound` bounds `σ(N)` by `((M_BB₁)² + 2M_BA₁)B(N)`, with the factors depending on `q`,
 `T`, `δ` and a divisor bound `D`. This file bounds the factors by powers of one quantity, `W = 3C_δ(4Q)^δ/δ` with
 `C_δ` the divisor constant and `Q = q(1 + 2T)`, and proves the displayed hypothesis `CGLT101`
-(Heath-Brown's Theorem 10.1 with characters, the stage M5 of the CGL plan). With `cgls3_t101`,
+(Heath-Brown's Theorem 10.1 with characters). With `cgls3_t101`,
 `prop31_t101`, `linnik_225c_t101` and `linnik_226c_t101` it gives, with no hypothesis, Chen–Gupta–Li's Propositions
 11.1 and 3.1 at one point per character, the count of characters with a zero at the exponent
 `(7/3 + 1/2000)(1 − σ)` on `[5/7, 16/21]` (`LinnikCGLStep.charDensity_cgl`) and Linnik's theorem with the exponents
@@ -20,7 +20,7 @@ The library's form.
   `M_B ≤ 5826240W¹³` at `D = 68W⁵`, and the factor is at most `κW⁵⁰`.
 * `W⁵⁰ = (3C_δ/δ)⁵⁰(4Q)^{50δ}`; at `δ = min(ε, 1)/50`, `(4Q)^{50δ} ≤ 12(qTN)^ε` for `T, N ≥ 1`, and `B(N)` is at most
   twice `RN + R² + R^{5/4}(qT)^{1/2}`.
-* `CGLT101` holds with `Q₀ = 0`: its double sum is the with the weights `c_n`, and positivity with
+* `CGLT101` holds with `Q₀ = 0`: its double sum is `LinnikCGLHBPos.dsum` with the weights `c_n`, and positivity with
   `|c_n| ≤ B ≤ B(2M)^{1/2}n^{−1/2}` on `(M, 2M]` bounds it by `2MB²σ(M)`.
 
 Plain statements, with `q ≥ 1` where `[NeZero q]`, `R` the number of points and `Q = q(1 + 2T)`.

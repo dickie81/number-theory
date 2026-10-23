@@ -3,12 +3,11 @@
 
 The grid of `SieveTypeIIU232.typeII_232`'s window: `U1 = ⌈(4045/10000)DEN⌉`, `U2 = ⌊(4825/10000)DEN⌋`, `n = 150`. On
 it `SieveCert.total` is at most `0.88K`, checked by the kernel in 25 parts: `rows a b` is the sum of the rows
-`a ≤ i < b` of the total (defined here until round 618 moved it to `SieveCertDefs.lean` and `rows_eq` to
+`a ≤ i < b` of the total (defined in `SieveCertDefs.lean`, with `rows_eq` in
 `SieveCert.lean`), the total is the sum of its 25 parts (`total_eq_rows`; from 2 to 30 rows each, grouped by the
 kernel's work), and each part is bounded by `decide +kernel` (`rows_0` … `rows_24`), one at a time (`Elab.async
-false`). One kernel check of the whole grid at `n = 150` needs more memory than the shell's memory cgroup allows (it was
-killed below the shell's cgroup limit, 13.36 GiB in the present container; the machine has 16), and the kernel frees a
-part's memory before the next; a part of 15 rows took up to 7.4 GB (scratch).
+false`). One kernel check of the whole grid at `n = 150` needs too much memory, so the certificate is cut into
+parts; the kernel frees a part's memory before the next.
 
 The file imports `SieveCert.lean`.
 -/

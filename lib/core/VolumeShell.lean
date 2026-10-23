@@ -2,7 +2,7 @@ import Mathlib
 
 /-! # At the limit all the volume is at the surface, and points carry no volume
 
-The owner wrote: "At the limit all the volume is at the surface of the infinite unit ball". That is a theorem,
+At the limit all the volume of the infinite unit ball is at its surface. That is a theorem,
 proved here for the Euclidean unit ball of `ℝⁿ` with Lebesgue measure, together with the two facts that decide
 what it can say about the zeros of ζ.
 

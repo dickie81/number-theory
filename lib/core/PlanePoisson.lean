@@ -2,7 +2,7 @@ import Mathlib
 
 /-! # Poisson summation in the plane
 
-S4 of the round-291 plan begins with Poisson summation over the lattice `ℤ[ω] ⊂ ℂ`. Mathlib has
+Poisson summation over the lattice `ℤ[ω] ⊂ ℂ`. Mathlib has
 Poisson summation on `ℝ` (`Real.tsum_eq_tsum_fourier`) and Fourier series on tori
 (`UnitAddTorus`). This file proves the two-dimensional formula for Schwartz functions on `ℂ`, and
 transfers it to every linear image of `ℤ²`. It is general analysis; the `ℤ[ω]` specialisation is next.

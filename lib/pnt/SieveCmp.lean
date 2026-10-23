@@ -10,7 +10,7 @@ says what it means for `x_i ≥ 1` (the `_holds` lemmas):
 * `rough`: `x_i ≤ minFac m`, for `m ≥ 2`; `rangeLo`, `rangeHi`: `b < m∏_i x_i` and `m∏_i x_i ≤ b`, for `b > 0`, `m ≥ 1`;
 * `lift`: a comparison of the first `j` coordinates, as one of `K ≥ j`.
 
-These are the comparisons of `SieveFamily.typeII_sharp`'s families, `frontier/linnik/SIEVE-ROUTE.md` §13's M4, in
+These are the comparisons of `SieveFamily.typeII_sharp`'s families, in
 the kinds that Proposition 6's stops need. The file imports only Mathlib.
 -/
 import Mathlib

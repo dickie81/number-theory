@@ -2,7 +2,7 @@ import KubotaCusps
 
 /-! # The multiplier at a cusp
 
-S5f-3d, part 1, the fourth part of the S5f-3. The companion paper's (A.10) gives Kubota's
+The companion paper's (A.10) gives Kubota's
 character at `g₁ = gH⁻¹` in three cases, "`(c_0/a)_3(a/r)_3,&3\mid c,`",
 "`(-u_0/(a-u_0b_g))_3\,((c_0/u_0)/a)_3(a/r)_3,`" at `v_λ(c) = 1`, and "`(a/c_0)_3(a/r)_3,&(c,\lambda)=1.`",
 proved by "`the determinant equation and cubic reciprocity`". This file proves the multiplier in the form

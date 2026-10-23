@@ -1,5 +1,5 @@
 /-
-# The reflection of the principal Gram entries (the CGL plan's stage M5)
+# The reflection of the principal Gram entries
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -7,7 +7,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 `G(i, k)` with `χ_i ≠ χ_k`. Heath-Brown's bound sums over every pair. For `χ_i = χ_k` the integrand of
 `perron_gram` is `G₁(s) = L(s, χ₀)H(s + iτ)N^s`, with `χ₀` the principal character mod `q`, and `L(s, χ₀)` has a pole
 at `s = 1`. This file reflects those entries through the pole and keeps its residue term. The dual sum runs over `χ₀`
-itself, as in Jutila's Lemma 1 for the principal character at `|t| ≥ h²` (Acta Arith. 32 (1977); README round 694).
+itself, as in Jutila's Lemma 1 for the principal character at `|t| ≥ h²` (Acta Arith. 32 (1977)).
 
 The library's form.
 * The functional equation `L(s, χ) = Φ(s)L(1 − s, χ⁻¹)E(s)` holds for every `χ`, the principal one

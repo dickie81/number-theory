@@ -3,18 +3,18 @@ import FourierGap
 
 /-! # Pushing the certified gap to `a = 0.36` with a parabola trial
 
-Round 20 compared every probe orthogonal to `w` against the box. Its energy overshoots `λ₁` by
+Comparing every probe orthogonal to `w` against the box gives an energy that overshoots `λ₁` by
 about `0.19` near `a = 0.35`. The parabola `g = C(1 − t²/a²)` is nearly optimal (within `0.01` of
 `λ₁` numerically), and its autocorrelation is an explicit polynomial:
 `f(u) = (2a − u)³(4a² + 6au + u²)/(32a⁵)` on `[0, 2a]`. With `K ≤ 1/u + ½` its near-field energy is
 `≤ 31/30 + 7a/12`, and its pole term is `≤ (10/3)a(1 + a²/40 + a⁴/3584)²`.
 
-On the segment `0.35 ≤ a ≤ 0.36` the round-20 lower bound (five modes, tail level `τ = 2.7` over six
+On the segment `0.35 ≤ a ≤ 0.36` that lower bound (five modes, tail level `τ = 2.7` over six
 certified `Cin` levels, prime defect `≤ 0.06026|n|`) beats the parabola by `1/50`. Result: `λ_⊥ ≥ λ₁ + 1/50` and
 a unique ground state of `Q` for every `0 < a ≤ 0.36`.
 
 This is the reach of the cos-free method: past `a ≈ 0.363` the prime `n = 2`'s defects in modes
-`k ≈ 10–40` pull the tail level below what the low modes need (see the README's frontier map).
+`k ≈ 10–40` pull the tail level below what the low modes need.
 -/
 
 open Real Filter Topology Complex MeasureTheory Set

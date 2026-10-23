@@ -8,7 +8,9 @@ import Landau
 
 /-! # Domination corollaries
 
-The negative-direction counts from round 232's; `ESupp → RSupp` so the `FourierInv` lemmas need only the weaker class; the λ₁ bounds, 164 and 234 (`lam_prefactor`, `lam_kaiser`, `lam_prefactor_KV`) as corollaries of `lam_nine`; `apply_localW` with the redundant hypotheses dropped.
+The negative-direction counts as corollaries of `negDirections_offline`; `ESupp → RSupp` so the `FourierInv` lemmas
+need only the weaker class; the λ₁ bounds (`lam_prefactor`, `lam_kaiser`, `lam_prefactor_KV`) as corollaries of
+`lam_nine`; `apply_localW` with the redundant hypotheses dropped.
 -/
 
 open Real Complex MeasureTheory Set Filter Topology
@@ -18,7 +20,7 @@ namespace Domination
 
 open WeilForm WeilTest WeilStrip
 
-/-! ### S1. Rounds 230–231 are corollaries (`negDirections_offline`). -/
+/-! ### S1. The negative-direction counts are corollaries (`negDirections_offline`). -/
 
 /-- `negDirections_of_quadruples`, verbatim statement, from `negDirections_offline`. -/
 theorem negDirections_of_quadruples' (R F : Finset (Σ w : NontrivialZero, Fin (zeroMult w)))
@@ -125,7 +127,7 @@ theorem weilExplicit_combo' {a : ℝ} (ha : 1 ≤ a) (p q : ℝ) :
       (hsq (fun t => p * twin (PhiA (a / 8)) (a / 4) t + q * twin (PhiA (a / 8)) (3 * a / 4) t) a) :=
   weilExplicit_combo_gen (by positivity) (by positivity) (by linarith) (by linarith) p q
 
-/-! ### S6. As Lean statements, the Kaiser `λ₁` bounds of rounds 16x, 164 and 234 follow from `lam_nine`. -/
+/-! ### S6. As Lean statements, the Kaiser `λ₁` bounds follow from `lam_nine`. -/
 
 /-- The statement of `KaiserKV.lam_prefactor_KV`, from `lam_nine` (`c = 1`). -/
 theorem lam_prefactor_KV' : ∃ K c : ℝ, 0 ≤ K ∧ 0 < c ∧ ∀ a : ℝ, 4 ≤ a →

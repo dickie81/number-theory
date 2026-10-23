@@ -12,14 +12,12 @@ Plain statement. If `ζ(s) ≠ 0` for `Re s > θ`, `θ < 1`, then `ψ(x) − x =
 * `logDeriv_le_of_zeroFree`: under a zero-free half-plane `Re s > θ ≥ 0`, `|ζ'/ζ(σ + it)| ≤ C log|t|` on
   `σ ≥ θ'`, `|t| > 3`, for every `θ' > θ`. Left of `3/2` this is PNT+'s `FinalBound` (Borel–Carathéodory with
   the zeros divided out) on the disc of radius `3/2 − θ` around `3/2 + it`, which holds no zero, with radii
-  fixed by `θ'` (`disc_point`); right of `3/2`, PNT+'s `LogDerivZetaBdd_of_Re_ge_three_halves`. *(Round 513: the
+  fixed by `θ'` (`disc_point`); right of `3/2`, PNT+'s `LogDerivZetaBdd_of_Re_ge_three_halves`. The
   disc step is `LogDerivDisc.logDeriv_le_Kld` at `F = ζ`, which is holomorphic on the disc of radius `2(3/2 − θ)`
-  when `|t| > 3` (`differentiableOn_zeta_ball`). This file's `disc_point` for `ζ` and its helpers `ctr_pole`,
-  `ctr_ne_zero` and `locF_logDeriv` are removed, and `ctr`, `re_ge` and `one_lt_log_three` moved to
-  `LogDerivDisc.lean`: STRUCTURAL-REVIEW §9.3, U4.)*
+  when `|t| > 3` (`differentiableOn_zeta_ball`); `ctr`, `re_ge` and `one_lt_log_three` are in `LogDerivDisc.lean`.
 * `psi_isBigO_of_zeroFree`: `MediumPNTW.GenPNTWNoEps` at the constant depth `1 − θ'`.
 
-Round 338: the exponent is the classical `θ + ε`. Round 337 had `(1+θ)/2 + ε`: through `MediumPNTW.GenPNTW'`
+The exponent is the classical `θ + ε`, not `(1+θ)/2 + ε`: through `MediumPNTW.GenPNTW'`
 the segments left of `Re s = 1` cost `x^{θ'}/ε` (PNT+'s bounds, through `MellinOfSmooth1b`) against `εx` for
 the smoothing, and the two balanced at `ε = x^{−(1−θ')/2}`. Through `GenPNTWNoEps` they cost
 `x^{θ'} (log x)²`, so the smoothing width can be `x^{θ'−1}`.
@@ -45,7 +43,7 @@ open LogDerivDisc
 /-- `|ζ(s)| ≤ ½ + 1/|1 − s| + |s|/Re s` for `Re s > 0`, `s ≠ 1`: PNT+'s Euler–Maclaurin formula at `N = 1`
 (`Zeta0EqZeta`, `ZetaBnd_aux1b`). The proof is that of zeta23's `RvM.norm_riemannZeta_le_of_re_pos`
 (`Zeta23/RvM/ZetaGrowth.lean`), whose two inputs have the same statements in PNT+; zeta23's copy cannot be
-imported here (STRUCTURAL-REVIEW §2.3). -/
+imported here. -/
 theorem norm_riemannZeta_le_of_re_pos {s : ℂ} (hσ : 0 < s.re) (hs : s ≠ 1) :
     ‖riemannZeta s‖ ≤ 1 / 2 + 1 / ‖1 - s‖ + ‖s‖ / s.re := by
   have hs0 : s ≠ 0 := fun h => by simp [h] at hσ

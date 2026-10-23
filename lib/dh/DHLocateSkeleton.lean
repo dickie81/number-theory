@@ -767,7 +767,7 @@ theorem norm_dh_sub_dhEM_le_ball {z : ℂ} (hz : z ∈ closedBall cLoc (1 / 100)
 /-! ## 6. Bernoulli numbers `B₂, …, B₂₄` as rationals
 
 Mathlib's `bernoulli'` (`B₁ = +1/2`) by its defining recursion, one step per index (binomials through
-`Nat.choose_eq_descFactorial_div_factorial`, round 333; they were 150 `decide` lemmas);
+`Nat.choose_eq_descFactorial_div_factorial`);
 `bernoulli n = bernoulli' n` for `n ≠ 1` (`bernoulli_eq_bernoulli'_of_ne_one`). -/
 
 theorem bernoulli'_5_val : bernoulli' 5 = 0 :=

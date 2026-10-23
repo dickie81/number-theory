@@ -3,9 +3,9 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Round 607 displayed Chen–Gupta–Li's zero-density estimate on `[5/7, 16/21]` as the hypothesis `LinnikCGL.CGLDensity`.
+`LinnikCGL.CGLDensity` states Chen–Gupta–Li's zero-density estimate on `[5/7, 16/21]` as a hypothesis.
 The step (`LinnikCGLStep`) gives the count at the exponent `(7/3 + 1/2000)(1 − σ)` from their Proposition
-3.1, which round 700 proved (`LinnikCGLHB101.prop31`). Round 702 makes the step's internal `ε` a field of its
+3.1 (`LinnikCGLHB101.prop31`). The step's internal `ε` is a field of its
 parameters (`LinnikCGLStep.ParC.e`). This file takes it to `0`, proves `CGLDensity`, and so gives
 `Linnik225C.linnik_225c` and `Linnik226C.linnik_226c` with no hypothesis.
 
@@ -144,7 +144,7 @@ theorem cglDensity : LinnikCGL.CGLDensity := by
     _ ≤ C * (20 / ε) ^ (10 : ℝ) * ((q : ℝ) * T) ^ (7 / 3 * (1 - σ) + ε) := by
         gcongr
 
-/-! ### The and the theorems with no hypothesis -/
+/-! ### The density estimate and the theorems with no hypothesis -/
 
 /-- **Linnik's theorem with exponent `9/4`**, `Linnik225C.linnik_225c` at `cglDensity`: there is `K` such that for
 every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{9/4}`. -/

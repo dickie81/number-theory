@@ -1,5 +1,5 @@
 /-
-# Round 216b: PNT+'s contour bounds for a zero-free region of general width
+# PNT+'s contour bounds for a zero-free region of general width
 
 PNT+'s `MediumPNT` pulls the Perron contour to `σ₁ = 1 − A/(log T)^{n₁}`. The proofs of the
 bounds `I2GenBound`–`I8GenBound` use only three properties of the depth `D T = A/(log T)^{n₁}`:
@@ -8,10 +8,10 @@ depth function `D` with these properties (`DepthOK`), with `σ₁ = 1 − D T`. 
 PNT+'s (`PrimeNumberTheoremAnd/MediumPNT.lean`), with the `A/(log T)^{n₁}` facts replaced by the
 `DepthOK` fields.
 
-Round 337: `GenPNTW'` takes the abscissa `σ₂` of the small-height box as a parameter and asks only
+`GenPNTW'` takes the abscissa `σ₂` of the small-height box as a parameter and asks only
 `σ₂ < 1 − D(T(x))` eventually, so a constant depth is allowed; `GenPNTW` is its case with PNT+'s `σ₂`.
 
-Round 338: the segments `I₃` to `I₇`, left of `Re s = 1`, are also bounded without the factor `1/ε`
+The segments `I₃` to `I₇`, left of `Re s = 1`, are also bounded without the factor `1/ε`
 (`I3NoEpsBoundW` to `I7NoEpsBoundW`), from the Mellin bound `|M(Smooth1 ν ε)(s)| ≤ B/|s|` (`MellinOfSmooth1d`).
 `GenPNTWOfLeft` is the contour argument with the bound on those five segments as a hypothesis; `GenPNTW'` and
 `GenPNTWNoEps` are its cases with PNT+'s bounds and with these.
@@ -1222,7 +1222,7 @@ with PNT+'s `σ₂` (from `LogDerivZetaHolcSmallT'`) replaced by any `σ₂ ∈ 
 holomorphic on `[σ₂, 2] × [−3, 3] ∖ {1}`, and the condition `D(T(x)) → 0` by `σ₂ < 1 − D(T(x))` eventually,
 which is the only use `GenPNTW` makes of it. A depth that does not shrink, such as that of a zero-free
 half-plane, is then allowed. The four error terms are those of `GenPNTW`, the last at this `σ₂` only. Since
-round 338 it is the case of `GenPNTWOfLeft` with PNT+'s bounds for `I₃` to `I₇`. -/
+it is the case of `GenPNTWOfLeft` with PNT+'s bounds for `I₃` to `I₇`. -/
 theorem GenPNTW' {D : ℝ → ℝ} (hD : DepthOK D) {n₂ C₂ : ℝ} (n₂_pos : 0 < n₂) (C₂_pos : 0 < C₂)
     (hb : LogDerivZetaHasBoundW D n₂ C₂)
     (holo : ∀ T : ℝ, 3 ≤ T → HolomorphicOn (fun s : ℂ ↦ ζ' s / ζ s)
@@ -1336,7 +1336,7 @@ theorem GenPNTWNoEps {D : ℝ → ℝ} (hD : DepthOK D) {n₂ C₂ : ℝ} (n₂_
 `σ ≥ 1 − D|t|` and holomorphic on the boxes `[1 − D T, 2] × [−T, T] ∖ {1}`, then for any choice of
 cutoffs `T(x) → ∞`, `ε(x) → 0` with `x ε(x) > 2` and `D(T(x)) → 0`, the error `ψ(x) − x` is
 `O(x F(x))` for any `F` dominating the four error terms `ε log x`, `log x/(ε T)`, `x^{−D(T)}/ε`
-and `x^{σ₂−1}/ε` (the last for every `σ₂ < 1`). Since round 337 it is the case of `GenPNTW'` with PNT+'s `σ₂`. -/
+and `x^{σ₂−1}/ε` (the last for every `σ₂ < 1`). It is the case of `GenPNTW'` with PNT+'s `σ₂`. -/
 theorem GenPNTW {D : ℝ → ℝ} (hD : DepthOK D) {n₂ C₂ : ℝ} (n₂_pos : 0 < n₂) (C₂_pos : 0 < C₂)
     (hb : LogDerivZetaHasBoundW D n₂ C₂)
     (holo : ∀ T : ℝ, 3 ≤ T → HolomorphicOn (fun s : ℂ ↦ ζ' s / ζ s)

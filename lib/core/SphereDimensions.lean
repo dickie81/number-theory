@@ -3,8 +3,8 @@ import BohrSphere
 
 /-! # Every point of the unit sphere is a dimension, and the sphere is the line
 
-The owner wrote: "Only Euclidean infinite unit ball forces the volume to the surface, also infinite dimensions
-means any point on that surface is a dimension, Euclidean is forced. The surface is the line. Prove in lean".
+The claim: only the Euclidean infinite unit ball forces the volume to the surface, infinitely many dimensions
+mean that any point on that surface is a dimension, and the surface is the line.
 This file proves the parts that are theorems. "A dimension" is read as a direction of an orthonormal basis.
 
 * **The points of the sphere are the basis directions** (**`mem_orthonormalBasis_iff`**, with

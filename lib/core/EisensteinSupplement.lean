@@ -6,7 +6,7 @@ import EisensteinGaussSum
 
 /-! # The supplementary laws of cubic reciprocity, as periodicity modulo `9`
 
-S5f-2a of the plan. The twist `φ` of the companion paper's Appendix A.2 contains `χ_n(λ)²`, and
+The twist `φ` of the companion paper's Appendix A.2 contains `χ_n(λ)²`, and
 its finite Fourier expansion needs `φ` periodic: "`The supplementary law of cubic reciprocity for
 $\lambda$ \cite[(1.5)]{DR}, which evaluates $\chi_n(\lambda)^2=(\lambda/n)_3$, makes $\phi$ periodic modulo
 $L$`". This file proves that periodicity from cubic reciprocity alone, by the release's comparison

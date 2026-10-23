@@ -2,7 +2,7 @@ import KubotaGrowth
 
 /-! # The constant term of the cubic Eisenstein series at `∞`
 
-S5f-9b of the plan, part 2. For `Re s > 2` and `v > 0`, the mean of `E(·, v; s)` over a
+For `Re s > 2` and `v > 0`, the mean of `E(·, v; s)` over a
 period parallelogram of `3ℤ[ω]` is `v^s + φ(s)v^{2−s}`, with `φ(s) = π/((9√3/2)(s − 1))·Σ_c S(c)N(c)^{−s}` and
 `S(c) = Σ_{d mod 3c} (c/d)₃`.
 
