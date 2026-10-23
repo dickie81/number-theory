@@ -7,7 +7,7 @@ import DHZeros
 (`dhL_eq_LSeries`), and `a(1) = (1 + ε)(1 + ε′) ≠ 0` (`aDH_one_eq`, `aDH_one_ne_zero`). Normalising,
 `a = a(1)·(δ + u)` with `u(n) = a(n)/a(1)` on `n ≥ 2` (`LSeries_aDH_eq`).
 
-**The Dirichlet inverse** (namespace `DInv`, agent-built, re-read and recompiled by the lead): for any
+**The Dirichlet inverse** (namespace `DInv`): for any
 `u` vanishing at `0, 1`, `dinv u` is the inverse of `δ + u` under Dirichlet convolution
 (`convolution_dinv`), with the norm bound `Σ_{n ≤ N} ‖dinv u n‖ n^{−σ} ≤ 1/(1 − K)` whenever
 `Σ_{n ≤ N} ‖u n‖ n^{−σ} ≤ K < 1` (`sum_norm_dinv_le`), hence `LSeries (δ + u) · LSeries (dinv u) = 1`
@@ -17,7 +17,7 @@ on `Re s ≥ σ` (`LSeries_mul_dinv`).
 `ε_χ ≠ −1`: `DH_χ′(s)/DH_χ(s) = −Σ c(n) n^{−s}` on `Re s > 1`, `Re s ≥ σ` (`logDeriv_dhL_eq`, from
 Mathlib's `LSeries_deriv` and `LSeries_convolution'`).
 
-**The numerics for `χ₅`** (agent-built, re-read and recompiled by the lead): the Gauss sum is
+**The numerics for `χ₅`**: the Gauss sum is
 `−2 sin(π/5) + 2i sin(2π/5)`, so `ε = (2 sin(2π/5) + 2i sin(π/5))/√5` (`rootNumber_chi5_eq`),
 `‖ε‖ = 1` from `sin²(π/5) + sin²(2π/5) = 5/4` (`norm_rootNumber_chi5`), `Re ε ≥ 4/5`
 (`re_rootNumber_chi5_ge`), `‖1 + ε‖, ‖1 + ε′‖ ≥ 9/5`, and `ε′ = ε̄` (`rootNumber_chi5_inv_eq_conj`).
@@ -28,7 +28,7 @@ Hence `‖u(n)‖ ≤ 10/9` and, with `Σ_{2 ≤ n ≤ N} n^{−2} ≤ 7/10`, `�
 convergent (`logDeriv_dh_eq`, `LSeriesSummable_cDH_chi5`), and `dh` has no zeros there
 (`dh_ne_zero_of_two_lt`). The abscissa `2` is what the crude bounds give; the true zero-free abscissa
 of `dh` is smaller. What remains for the explicit formula is the contour argument with the prime
-side on `Re s > 2`, which needs the strip machinery at width `> 3/2`; see the README.
+side on `Re s > 2`, which needs the strip machinery at width `> 3/2`.
 (`DHExplicit.lean`: done by scaling `Ξ₃(t) = Ξ_dh(3t)` instead, with the width-1
 machinery unchanged.)
 -/

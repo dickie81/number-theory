@@ -1,5 +1,5 @@
 /-
-# Sharpening, step S2b: VMVT with geometric decay from the start
+# Sharpening: VMVT with geometric decay from the start
 
 Plain statements.
 * `step_real2`: if `J_s(Q) ≤ C·Q^E` for all `Q ≥ 1`, then `J_{k+s}(P) ≤ C'·P^{E'}` for all
@@ -8,7 +8,7 @@ Plain statements.
   it costs `C'·P^{E'}/2` once `P^{1/k} ≥ T₀` with `T₀^D ≥ 8(2(k+2))^{2(k−1)}(k−1)^{2(k+s)}2^{E'}`,
   `D = E' − 2(k−1)`; below `P₀ = ⌈T₀⌉^k` the trivial bound `J ≤ P^{2(k+s)}` is used.
 * `vmvt2`: `J_{k+mk,k}(P) ≤ C_m·P^{2(k+mk) − k(k+1)/2 + η_m}` with `η_m = (1−1/k)^m·k(k−1)/2`
-  (no second branch; round 202 had `max(…, k(k+1)/2 − 2(s+1)/k)`), taking `T₀ = (4k)^{20}`.
+  (no second branch), taking `T₀ = (4k)^{20}`.
 * `Cv2_le`: `C_m ≤ (8(k+2))^{40k²(m+1) + g(m)}` with `g`.
 -/
 import VinoBad

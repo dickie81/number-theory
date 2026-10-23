@@ -5,7 +5,7 @@ import LinnikLines
 
 Built on Mathlib, `LinnikMoment` and `LinnikLines`; no PrimeNumberTheoremAnd file is imported.
 
-Round 538 wrote the folded third moment as `q⁻²Σ_k ŵ(k₁)ŵ(k₂)ŵ(k₃)L(k)` over `k ∈ (ZMod q)³`. Chen–Gupta–Li split their
+The folded third moment is `q⁻²Σ_k ŵ(k₁)ŵ(k₂)ŵ(k₃)L(k)` over `k ∈ (ZMod q)³`. Chen–Gupta–Li split their
 frequencies in §5: "S1 consists of terms with exactly one nonzero mi, S2 consists of terms with exactly two nonzero
 mi and S3 consists of terms with all three mi being nonzero" (from the PDF's text layer, spaces restored). This file
 evaluates the line sums off the generic lines exactly, for a prime `q`.

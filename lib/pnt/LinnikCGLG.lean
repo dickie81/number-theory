@@ -1,5 +1,5 @@
 /-
-# The majorant of their `J(f⃗)`, Plancherel, and its Fourier transform (the CGL plan's stage M4)
+# The majorant of their `J(f⃗)`, Plancherel, and its Fourier transform
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

@@ -1,5 +1,5 @@
 /-
-# Local averages of finite exponential sums, toward their Lemmas 10.4 and 10.8 (the CGL plan's stage M3, the
+# Local averages of finite exponential sums, toward their Lemmas 10.4 and 10.8 (the
 `S₃` side)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).

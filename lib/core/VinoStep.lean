@@ -7,7 +7,7 @@ Plain statement (`cond_count`). Fix a prime `p > k` with `P ≤ p^k`, a shift `a
 * `Σ(uᵢ−a)^j ≡ Σ(u'ᵢ−a)^j (mod p^j)` for `j = 1..k`.
 They number at most `k!·p^{k(k−1)/2}`.
 
-This is Step C of `frontier/vmvt/KARATSUBA_SPEC.md`. The proof has three parts.
+The proof has three parts.
 * Newton's identities over `ZMod p` (`p > k`, `map_eq_of_psum_field`): the residues of
   `u − a` rearrange those of `u' − a`, so there are at most `k!` residue vectors
   (`card_multiset_fibre_le`).

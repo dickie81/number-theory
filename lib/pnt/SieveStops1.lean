@@ -14,17 +14,16 @@ Plain statements.
   (`SieveDiff.tree_weighted`), weighted by `c_r` and summed over `r`, have `|A − B/φ(q)|` at most `q^{L−δ}/φ(q)`.
 * `window_bound`: the same with `r` itself in the window, `R ⊆ (P₁, P₂]`, for `S(A_r, z₀) − S(B_r, z₀)/φ(q)`.
 
-`stops1_bound` and `window_bound` were the first case of Proposition 6's proof in `frontier/linnik/SIEVE-ROUTE.md` §5
-(`r ≤ x^{u₁}`). The proof of `SieveMain.linnik_route` does not use them: `SieveProp6.prop6` runs one tree, at the
+`stops1_bound` and `window_bound` are the first case of Proposition 6's proof (`r ≤ x^{u₁}`).
+The proof of `SieveMain.linnik_route` does not use them: `SieveProp6.prop6` runs one tree, at the
 threshold `X'` (`SieveStops2`). `sum_cofactor` is used by `SieveStops2` and `SieveChain`.
 
 The proof of the bounds: a stop `W = r∏P·p` lies in `(X, Xz₀]`, inside the lower window; its least prime is `p`
 (`minFac_W`), so `W` determines `(r, P, p)` (`filter_W`, `div_W`), and the stop's cofactor is a `p`-rough `k ≥ 2`
 (`sum_cofactor`). `SieveTypeIIR.typeII_rough` with `m = W` and `z(m) = minFac m` bounds the sum.
 
-Round 607 made `L`, `w₁` and `w₂` a route's parameters and the Type II estimate a hypothesis (`hII`); the
-statements of earlier rounds are the case `SieveRoute.route2333`, with `SieveRoute.typeII2333` for `hII`.
-
+`L`, `w₁` and `w₂` are a route's parameters and the Type II estimate is a hypothesis (`hII`); the case
+`SieveRoute.route2333` has `SieveRoute.typeII2333` for `hII`.
 
 The file imports `SieveDiff.lean` and `SieveTypeIIR.lean`.
 -/

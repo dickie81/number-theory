@@ -1,10 +1,10 @@
 /-
-# Round 216c: the prime number theorem with the Korobov–Vinogradov error term
+# The prime number theorem with the Korobov–Vinogradov error term
 
 `ψ(x) = x + O(x·exp(−c (log x)^{3/5} (log log x)^{−1/5}))`.
 
-Inputs: round 216a's `ζ'/ζ` bound on `σ ≥ 1 − A·u(|t|)`, `u(T) = 1/((log T)^{2/3}(log(log T+3))^{1/3})`;
-the zero-free region; PNT+'s `ZetaNoZerosInBox`; and round 216b's `GenPNTW`, applied with
+Inputs: the `ζ'/ζ` bound on `σ ≥ 1 − A·u(|t|)`, `u(T) = 1/((log T)^{2/3}(log(log T+3))^{1/3})`;
+the zero-free region; PNT+'s `ZetaNoZerosInBox`; and `GenPNTW`, applied with
 depth `D(T) = A·u(T)`, `log T(x) = G(log x)`, `G(L) = L^{3/5}/(log L)^{1/5}`, `ε(x) = e^{−(A/2) G}`.
 -/
 import MediumPNTW

@@ -25,10 +25,8 @@ one of those estimates (`lf_j0` … `lf_e4`): its family has at most `18` atoms 
 (`len_*`, `thrOK_*`), and its windows are the integer ranges `P₁ = ⌊x^{u₁}⌋`, `P₂ = ⌊x^{u₂}⌋`, `W₀ = X'` and
 `W₁ = ⌊x^{1−u₁}⌋` (`P1_ok`, `P2_ok`, `W1_div`, `W0_div`).
 
-Round 607 made the route's numbers and the certificate's grid parameters and the Type II estimate a hypothesis
-(`hII`); the statements of earlier rounds are the case `SieveRoute.route2333` and `SieveCert.grid2333`, which fit
-(`SieveMain.fits2333`), with `SieveRoute.typeII2333` for `hII`.
-
+The route's numbers, the certificate's grid parameters and the Type II estimate are hypotheses (`hII`); the case
+`SieveRoute.route2333` and `SieveCert.grid2333` fits (`SieveMain.fits2333`), with `SieveRoute.typeII2333` for `hII`.
 
 The file imports `SieveLeaves.lean`.
 -/

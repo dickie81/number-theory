@@ -13,7 +13,7 @@ and WeilChi.lean) takes `χ` real: its integral representation `LFunction_eq_Iχ
   (`LFunction_eq_IχC`), hence `‖L(s, χ)‖ ≤ (N + 1)‖s‖/Re s` (`norm_LFunction_leC`);
 * `‖Λ*(w)‖ ≤ n^{3n}` on `Re w ≥ ½` (`norm_LamG_leC`), the reflection `Λ*(1 − s, χ) = ε_χ Λ*(s, χ⁻¹)`
   (`LamG_one_sub'`), and the order bound `‖Ξ_χ(t)‖ ≤ K_χ e^{36‖t‖^{3/2}}` for every primitive `χ`
-  (`norm_XiC_le'`), which, unlike round 225's, needs no `L(½, χ) ≠ 0`;
+  (`norm_XiC_le'`), which needs no `L(½, χ) ≠ 0`;
 * for the Davenport–Heilbronn combination (DavenportHeilbronn.lean): `‖Ξ_{DH}(t)‖ ≤ K e^{36‖t‖^{3/2}}`
   (`norm_XiDH_le`), `Ξ_{DH}(0) = 2(1 + ε_{χ⁻¹}) Λ*(½, χ)` (`XiDH_zero_eq`), and **the Hadamard
   product** `HadamardW (XiDH χ)` from `hadamardW_even`, under `ε_χ ≠ −1` and `L(½, χ) ≠ 0`
@@ -22,14 +22,9 @@ and WeilChi.lean) takes `χ` real: its integral representation `LFunction_eq_Iχ
 For `χ₅` the first input is `rootNumber_chi5_ne_neg_one`; the second is the named input
 `DHHalf : L(½, χ₅) ≠ 0`, and `hadamard_dh : DHHalf → HadamardW (XiDH chi5) …` gives the zeros of the
 Davenport–Heilbronn `Ξ`, squared, as the indexed family `ZeroIdx (sqF (XiDH chi5))` with multiplicities,
-summable inverses, and the product formula. What remains for the certificate chain is the explicit
-formula (the prime side of `−dh′/dh`) and the certificate arithmetic; see the README, round 254.
-(Superseded: `DHHalf` is proved, `dhHalf` in DHZeros.lean, so `hadamard_dh'` is
-unconditional; the explicit formula landed and the certificate,
-`dh_offline_zero` in DHCertificate.lean.)
- (Round 511: `norm_LamG_leC`
-is removed: `norm_LamG_le` (RealDirichlet.lean) now holds for every `χ ≠ 1`, and
-`LamG_one_sub'` moved on to RealDirichlet.lean.)
+summable inverses, and the product formula. `DHHalf` is proved (`dhHalf` in DHZeros.lean), so `hadamard_dh'` is
+unconditional; the explicit formula and the certificate (`dh_offline_zero` in DHCertificate.lean) follow.
+`norm_LamG_le` (RealDirichlet.lean) holds for every `χ ≠ 1`, and `LamG_one_sub'` is in RealDirichlet.lean.
 -/
 
 open Real Complex DirichletCharacter Filter Topology MeasureTheory Set Asymptotics

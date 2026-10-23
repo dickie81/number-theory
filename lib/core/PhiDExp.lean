@@ -3,7 +3,7 @@ import WeilZeta
 
 /-! # Double-exponential upper bounds on the first three rungs
 
-Rounds 133 and 153 bound rungs 0–2 of the ladder by `K e^{−Ba}` for every `B`, using only
+Rungs 0–2 of the ladder are bounded by `K e^{−Ba}` for every `B`, using only
 `|Φ(u)| ≤ C e^{−B|u|}`. Riemann's kernel actually decays double-exponentially,
 `|Φ(u)| ≤ C e^{9|u|/2 − πe^{2|u|}}`, and feeding that into the same zero-side argument gives
 double-exponential bounds, with no RH input (over the zeros of `Ξ`, all in the strip):

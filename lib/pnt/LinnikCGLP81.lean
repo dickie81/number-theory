@@ -1,5 +1,5 @@
 /-
-# Their Proposition 8.1, by their downward induction (the CGL plan's stage M4)
+# Their Proposition 8.1, by their downward induction
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -12,7 +12,7 @@ hypothesis.
 
 The library's form.
 * The induction runs on `P81 ε`, their (8.1) with an abstract `Λ`: the premise `Σ_b|f̂_b(ξ)| ≤ D_j(T/|ξ|)^jΛ` with
-  `0 ≤ Λ ≤ G(qT)²F`. By round 692, `f̃` keeps it with `(∫ψ̃₀)D_j` and `G/∫ψ̃₀`. `CGLP81`'s premise is relative to
+  `0 ≤ Λ ≤ G(qT)²F`. `f̃` keeps it with `(∫ψ̃₀)D_j` and `G/∫ψ̃₀`. `CGLP81`'s premise is relative to
   `Λ = φ(q)f_{b₀}(u₀)`, `φ(q)` times a value of `f` at one point. At `f̃` it would need a value of `f̃` bounding
   `f_{b₀}(u₀)` uniformly in `q` and `T`; `Lam_le`, with `∫f̃_b = (∫ψ̃₀)∫f_b`, gives a bound by `sup f̃`
   with a factor `(qT)²`.

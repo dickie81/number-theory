@@ -2,8 +2,8 @@ import KubotaCoefSupp
 
 /-! # The bound at `λ` and θ's support and size condition
 
-S5f-14 of the plan, part 4. Round 458 reduced the support and size condition `ThetaSupp` for
-θ's coefficients at `∞` to the bound `|ρ(uλ^j)| ≤ A·3^{j/6}` at `λ = ω − 1`. This file proves the bound,
+The support and size condition `ThetaSupp` for
+θ's coefficients at `∞` reduces to the bound `|ρ(uλ^j)| ≤ A·3^{j/6}` at `λ = ω − 1`. This file proves the bound,
 through two identities for the sums `S_M(c)` at `λ`, and with it `ThetaSupp` for `τ`:
 
 * **`S_{λ³M}(λ³c) = 27·S_M(c)`** for `M = δ₃x`, `3 ∣ c` and `c ≠ 0` (`lam_ne_zero`,

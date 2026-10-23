@@ -5,8 +5,8 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 `rowsJ a b j₀ j₁` is the sum of the costs of the rows `a ≤ i < b` over the columns `j₀ ≤ j < j₁`, so that a heavy row
 of a certificate can be checked by the kernel in several pieces (`rows a b` is `rowsJ a b 0 n`, `SieveCertCols.lean`).
-A row's kernel memory grows with its depth-4 tests; the heaviest rows of a grid with `n = 400` exceed the shell's
-memory alone (the lead's probe: killed at 13.1 GiB).
+A row's kernel memory grows with its depth-4 tests; the heaviest rows of a grid with `n = 400` exceed the available
+memory alone.
 
 The file imports `SieveCertDefs.lean` only, so the part files that use it load no more than it does.
 -/

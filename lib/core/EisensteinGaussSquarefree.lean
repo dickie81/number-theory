@@ -2,7 +2,7 @@ import EisensteinGaussPrime
 
 /-! # The companion paper's Lemma 4.1 for squarefree moduli
 
-S3 of the plan, part 6. For `n = ∏_{i∈S} π_i`, a product of distinct primes, and characters
+For `n = ∏_{i∈S} π_i`, a product of distinct primes, and characters
 `χ_i` modulo `π_i`, the normalized Gauss sum `γ(n) = G_n(∏_i χ_i, 1)/|σn|` (`gamF`) is the
 Gauss transform at frequency `1`.
 
@@ -19,7 +19,7 @@ Gauss transform at frequency `1`.
   The cross phases are sixth roots of unity, so they cancel in the cube and in `γ₁γ₋₁`, and combine
   to `χ_i(n/π_i)³` in `γ₁γ₂`.
 * **The multiplicative laws** for disjoint sets of primes `A, B`:
-  - **`GF_union`**: `G(ab) = G(a)·G(b)·∏_{p∣a, q∣b} ρ_p(q)ρ_q(p)`. By round 298 each factor is the
+  - **`GF_union`**: `G(ab) = G(a)·G(b)·∏_{p∣a, q∣b} ρ_p(q)ρ_q(p)`. Each factor is the
     paper's `R(p, q)`.
   - **`gamF_two_union`**: `γ₂(ab) = γ₂(a)·γ₂(b)·∏_{p∣a, q∣b} χ_q(p)⁴`, by cubic reciprocity in the
     form `χ_p(q)² = χ_q(p)²` (`chi6_sq_recip`). With `α` and `ξ` multiplicative this is the paper's
@@ -230,7 +230,7 @@ theorem cross_union_prod (χ : ∀ i, MulChar (𝓞 K ⧸ span {π i}) ℂ) (A B
   simp only [map_prod, Finset.prod_mul_distrib]
   rw [Finset.prod_comm (s := B) (t := A)]
 
-/-- **`G(ab) = G(a)·G(b)·∏_{p∣a, q∣b} ρ_p(q)ρ_q(p)`** for disjoint sets of primes; by round 298 each
+/-- **`G(ab) = G(a)·G(b)·∏_{p∣a, q∣b} ρ_p(q)ρ_q(p)`** for disjoint sets of primes; each
 factor `ρ_p(q)ρ_q(p)` is the paper's `R(p, q) = Γ_quad(pq)/(Γ_quad(p)Γ_quad(q))`. -/
 theorem GF_union (A B : Finset ι) (hAB : Disjoint A B)
     (hcop : ∀ i ∈ A ∪ B, ∀ j ∈ A ∪ B, i ≠ j → IsCoprime (π i) (π j)) :

@@ -11,10 +11,12 @@ import DHOffCross
 
 /-! # The dh column of the substitution matrix, part 1
 
-Pilot theorems about `ζ`/`Ξ`, restated for the Davenport–Heilbronn function `dh` and
+Library theorems about `ζ`/`Ξ`, restated for the Davenport–Heilbronn function `dh` and
 `Ξ_dh = XiDH chi5`. Where the ζ statement takes `Ξ`'s Hadamard factorisation, `Ξ(0) ≠ 0` or the
-entireness of `Ξ` as a named input or proves it from facts about `ζ`, the dh statement uses the landed
-dh facts `hadamard_dh'`, `XiDH_chi5_zero_ne'`, `differentiable_XiDH_chi5` (except `hypConvDH_of_D`, which keeps the factorisation as its input `hX`, as `hypConv_of_D` does; `dhRH_of_D_and_realRooted_proved` discharges it with `hadamard_dh'`). The `not_…` theorems then
+entireness of `Ξ` as a named input or proves it from facts about `ζ`, the dh statement uses the
+dh facts `hadamard_dh'`, `XiDH_chi5_zero_ne'`, `differentiable_XiDH_chi5` (except `hypConvDH_of_D`, which keeps
+the factorisation as its input `hX`, as `hypConv_of_D` does; `dhRH_of_D_and_realRooted_proved` discharges it
+with `hadamard_dh'`). The `not_…` theorems then
 refute the dh hypotheses with the certificate (`dh_offline_zero`, `QDHu_packet_neg`, and
 `dh_offline_nonreal_zero` of DHOffCross.lean): for `dh`, each of those sets of hypotheses is
 unsatisfiable.

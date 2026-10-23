@@ -2,9 +2,9 @@ import KubotaEisFourier
 
 /-! # Fourier analysis on `ℂ/3ℤ[ω]`
 
-S5f-10 of the plan, part 18 (S5f-10f, eighth part). The next step planned θ as its Fourier
-series, through the orthogonality of the characters `ĕ(mz/9)`, `m ∈ δ₃ℤ[ω]`, on the period parallelogram `3P`
-of `3ℤ[ω]` and the uniqueness of Fourier coefficients there. This file proves the two, through the chart
+θ's Fourier
+series rests on the orthogonality of the characters `ĕ(mz/9)`, `m ∈ δ₃ℤ[ω]`, on the period parallelogram `3P`
+of `3ℤ[ω]` and the uniqueness of Fourier coefficients there. This file proves both, through the chart
 `tch(y) = 3(y₀ + y₁ϖ)` from `ℝ²` onto `ℂ` and Mathlib's Fourier analysis on the unit torus `ℝ²/ℤ²`:
 
 * **The chart** (`tch`, `frq` and `frqInv`, definitions; **`ebr_tch`**, with `tch_apply`, `frq_crd`,
@@ -18,8 +18,8 @@ of `3ℤ[ω]` and the uniqueness of Fourier coefficients there. This file proves
   determinant of `Mw`; the chart carries `[0, 1)²` onto `3P`, and `[0, 1)²` differs from `(0, 1]²`
   by a null set.
 * **Orthogonality** (**`integral_fundP3_ebr_eq_zero`** and **`integral_fundP3_ebr_mul`**, with
-  `integral_box_mFourier_eq_zero`): `∫_{3P} ĕ(−σ(δ₃x)z/9) dz = 0` for `x ≠ 0`, the integral round 428 left
-  unevaluated, and `∫_{3P} ĕ(−σ(δ₃x)z/9)·ĕ(σ(δ₃x′)z/9) dz` is `9√3/2` if `x = x′` and `0` otherwise, from
+  `integral_box_mFourier_eq_zero`): `∫_{3P} ĕ(−σ(δ₃x)z/9) dz = 0` for `x ≠ 0`, and
+  `∫_{3P} ĕ(−σ(δ₃x)z/9)·ĕ(σ(δ₃x′)z/9) dz` is `9√3/2` if `x = x′` and `0` otherwise, from
   Mathlib's `orthonormal_mFourier`.
 * **Uniqueness** (**`ae_eq_zero_of_coef`** and **`ae_eq_zero_of_periodic`**): a measurable `g`,
   square-integrable on `3P`, whose coefficients `∫_{3P} ĕ(−σ(δ₃x)z/9)g(z) dz` all vanish, vanishes almost

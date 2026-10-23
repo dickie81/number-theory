@@ -3,8 +3,8 @@ import KubotaRows
 
 /-! # The Kubota–Patterson display, proved
 
-S5f-16 of the plan. The next step planned the display `KubotaTheta` from the clauses
-rounds 436–465 prove for θ's Fourier series. This file assembles it, at `r = Y = 1`, and with
+The display `KubotaTheta` is assembled from the clauses
+proved for θ's Fourier series. This file assembles it, at `r = Y = 1`, and with
 `ne_zero_of_kubotaTheta` the half-plane:
 
 * **`KubotaTheta`** (**`kubotaTheta`**): the function is the Fourier series `thS 1 1`, with constant
@@ -17,14 +17,14 @@ rounds 436–465 prove for θ's Fourier series. This file assembles it, at `r = 
 * **The route's other displays** (**`squarefreeCompleted`**, **`completedMeanSquare`**, **`dualMeanSquare`**
   and **`meanSquare`**): the companion paper's Lemma 6.6 (`SquarefreeCompleted`, through
   `squarefreeCompleted_of` and `quadLargeSieve`), its Proposition 5.2 (
-  `CompletedMeanSquare`), its (4.12) at every `ϑ > 0` (`DualMeanSquare`, round 315 with
+  `CompletedMeanSquare`), its (4.12) at every `ϑ > 0` (`DualMeanSquare`, with
   `transferEstimate`), and the family's mean square at every `σ > 0` (`MeanSquare`).
-* **Every modulus** (round 493, step 2 of the plan for door 5(b): **`thetaRowsM`**,
+* **Every modulus** (**`thetaRowsM`**,
   **`squarefreeCompletedM`**, **`completedMeanSquareM`** and **`dualMeanSquareM`**): the displays at
   every `md ≠ 0` (`ThetaRowsM md`, through `thetaRowsM_of_kubota`; `SquarefreeCompletedM md`;
   `CompletedMeanSquareM md`), and the dual mean square `DualMeanSquareM md ϑ` for the characters modulo every
   `md ≠ 0` with `4 ∣ md`, at every `ϑ > 0` (`dualMeanSquare_of_completed`).
-* **The twisted family** (round 494, step 3 of the plan for door 5(b): **`meanSquareNu`**): for a character
+* **The twisted family** (**`meanSquareNu`**): for a character
   `ν` modulo any `md ≠ 0` with `4 ∣ md`, the mean square of the family with the coefficients `ν(pgen 𝔞 mod md)`
   at every `σ > 0` (`MeanSquareC`, through `meanSquareNu_of_dualMeanSquareM`).
 * **The half-plane** (**`ne_zero_of_re_gt_eleven_twelfths`** and **`exists_zeroFree_halfPlane`**): `ζ(s) ≠ 0`

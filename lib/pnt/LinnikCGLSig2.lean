@@ -1,5 +1,5 @@
 /-
-# Their `Σ_II` expanded, and their `Σ₂` by Poisson summation (the CGL plan's stage M4)
+# Their `Σ_II` expanded, and their `Σ₂` by Poisson summation
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

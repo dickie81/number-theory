@@ -2,8 +2,8 @@ import KubotaCubeCoef
 
 /-! # θ's coefficients as residues
 
-S5f-13 of the plan, part 1. The next step planned `ρ(m)` as a residue of the Dirichlet
-series `D_m(s) = Σ_c S_m(c)N(c)^{−s}`, as the first step toward the support condition of
+`ρ(m)` is a residue of the Dirichlet
+series `D_m(s) = Σ_c S_m(c)N(c)^{−s}`, a step toward the support condition of
 `ThetaSupp` away from `λ`. This file proves it in the form in which it is used: a linear relation among the
 `D_m` holds for `ρ` at `4/3`.
 

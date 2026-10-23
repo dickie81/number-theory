@@ -2,7 +2,7 @@ import EisensteinQuadSieveBase
 
 /-! # The quadratic large sieve, part 3: Heath-Brown's Lemmas 2 and 10
 
-S5e of the plan, part 3 (the S5e-3), for a weighted norm in prime-set coordinates.
+The sieve is stated for a weighted norm in prime-set coordinates.
 
 * **The weighted norm** (`FBound w N Δ`): rows the arguments `m ∈ ℤ[ω]` with weights `w(m)`,
   columns the squarefree moduli `∏_{P∈A} π_P`, given by their sets of primes `A`, of norm at most

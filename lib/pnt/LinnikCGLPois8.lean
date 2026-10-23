@@ -1,5 +1,5 @@
 /-
-# The Poisson expansion of `ĝ_a` in residue classes (the CGL plan's stage M4)
+# The Poisson expansion of `ĝ_a` in residue classes
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

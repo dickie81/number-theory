@@ -2,7 +2,7 @@ import KubotaCuspZeroPhi
 
 /-! # θ at the cusp `0`
 
-S5f-12 of the plan, part 3. The next step planned θ̃∘S's constant term through a
+θ̃∘S's constant term is computed through a
 pseudo-Eisenstein series at the cusp `0`. `Γ_1(3)` is normal in `SL_2(ℤ[ω])` (`gam3_normal`) and
 `κ(SγS⁻¹) = κ(γ)` (`kub_conj_toSL`), so that series is `E(ψ)∘S⁻¹`, and this file moves the
 argument by `S`. For `r > 0`, `Y > 0`, θ's representative `θ̃` (`thetaF`), and `ψ`

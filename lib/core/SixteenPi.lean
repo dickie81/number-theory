@@ -1,11 +1,10 @@
 import Mathlib
 import Curvature
 
-/-! # The constant `1/(16π)`: the formal content of the strip note's §3.4
+/-! # The constant `1/(16π)`: the Gaussian-multiplier time
 
-The owner's working note (`riemann-strip-target-note.md` §3.4) derives the library's Gaussian-multiplier
-time `τ_a = e^{−δ}/(16π)` within the paper's reduced balayage problem. This file
-proves that derivation in full, including the balayage identity (§G below).
+The library's Gaussian-multiplier time `τ_a = e^{−δ}/(16π)` is derived within the paper's reduced
+balayage problem. This file proves that derivation in full, including the balayage identity (§G below).
 
 * **The closed-form integrals (iv).** `∫_X^∞ x⁻² ln x dx = (1 + ln X)/X` (`integral_log_div_sq_Ioi`),
   `P = ∫₀¹ (1 − √(1 − s²))/s² ds = π/2 − 1` (`P_eq`), `Q = ∫₀¹ ln s · (1 − √(1 − s²))/s² ds
@@ -16,7 +15,7 @@ proves that derivation in full, including the balayage identity (§G below).
   quadratically (`wall_quadratic`); at the wall `τ = 1/(8T₀) = e^{−δ}/(16π)` (`tau_at_wall`).
 * **The exterior form under D (ii), and its stability.** Matched zeros cancel exactly
   (`defect_eq_tail_of_D`); displaced ones by at most `Δ(2γ + Δ)/(γ²(γ − Δ)²) ≤ 10Δ/γ³` each
-  (`inv_sq_sub_le`, `defect_sub_tail_le`), the note's "at most `2Δ/γ³(1 + O(Δ/γ))`".
+  (`inv_sq_sub_le`, `defect_sub_tail_le`), that is, at most `2Δ/γ³(1 + O(Δ/γ))`.
 
 * **The balayage identity, proved.** With the paper's explicit density
   `τ(x) = −I(x)/(π√(x² − X²))`, `I(x) = ∫_{−X}^{X} √(X² − t²) ln|t|/(x − t) dt`,
@@ -25,7 +24,7 @@ proves that derivation in full, including the balayage identity (§G below).
   (`exteriorMoment_reduced`, `sixteenPi_reduced`), and its exponent `2πX(1 + ln 2 − ln X)` is maximal
   exactly at `X = 2` (`fBalExp_le`).
 
-**Not formalised:** the link from the reduced problem to ζ's ground state — the note's inputs
+**Not formalised:** the link from the reduced problem to ζ's ground state — the inputs
 (vii)(a)–(d): Hypothesis D at the wall (RH-strength), the reduction's five lemmas, that the ground
 state's wall is the reduced problem's maximiser, the continuum limit. Nothing here bears on RH.
 
@@ -45,7 +44,7 @@ namespace WeilForm
 
 /-! ## A. The wall -/
 
-/-- The note's (3.5): the defect time for a wall at `X·T₀`. -/
+/-- The defect time for a wall at `X·T₀`. -/
 def tauWall (T₀ X : ℝ) : ℝ := (1 + log (X / 2)) / (4 * X * T₀)
 
 /-- The wall law is at most `1/2`: `1 + ln y ≤ y`. -/
@@ -127,7 +126,7 @@ theorem integrableOn_log_div_sq_Ioi {X : ℝ} (hX : 1 ≤ X) :
 
 /-! ## C. `P` and `Q`, by `s = sin θ` -/
 
-/-- The note's kernel `(1 − √(1 − s²))/s²`, the restriction of its `h₁` to the slit. -/
+/-- The kernel `(1 − √(1 − s²))/s²`, the restriction of `h₁` to the slit. -/
 def kerN (s : ℝ) : ℝ := (1 - √(1 - s ^ 2)) / s ^ 2
 
 /-- On `0 < |s| ≤ 1` the kernel is `1/(1 + √(1 − s²))`: bounded and continuous. -/
@@ -138,10 +137,10 @@ theorem kerN_eq {s : ℝ} (hs : s ≠ 0) (h1 : s ^ 2 ≤ 1) : kerN s = 1 / (1 + 
   rw [div_eq_div_iff (pow_ne_zero 2 hs) hpos.ne']
   linear_combination (-1 : ℝ) * hw
 
-/-- The note's `P := ∫₀¹ (1 − √(1 − s²))/s² ds`. -/
+/-- `P := ∫₀¹ (1 − √(1 − s²))/s² ds`. -/
 def P : ℝ := ∫ s in (0 : ℝ)..1, kerN s
 
-/-- The note's `Q := ∫₀¹ ln s · (1 − √(1 − s²))/s² ds`. -/
+/-- `Q := ∫₀¹ ln s · (1 − √(1 − s²))/s² ds`. -/
 def Q : ℝ := ∫ s in (0 : ℝ)..1, log s * kerN s
 
 theorem sin_image_Ioo_half_pi : sin '' Ioo 0 (π / 2) = Ioo 0 1 := by
@@ -257,10 +256,10 @@ theorem Q_eq : Q = π / 2 - 1 - π / 2 * log 2 := by
 
 /-! ## D. The rescaling, `J(X)`, and the time -/
 
-/-- The note's `h_X` on the slit `(−X, X)`: `(1 − √(1 − t²/X²))/t²`. -/
+/-- `h_X` on the slit `(−X, X)`: `(1 − √(1 − t²/X²))/t²`. -/
 def hBal (X t : ℝ) : ℝ := (1 - √(1 - t ^ 2 / X ^ 2)) / t ^ 2
 
-/-- The balayage side of the note's (iv): `∫₀^X (−ln t) h_X(t) dt`. -/
+/-- The balayage side: `∫₀^X (−ln t) h_X(t) dt`. -/
 def balayageSide (X : ℝ) : ℝ := ∫ t in (0 : ℝ)..X, -log t * hBal X t
 
 theorem hBal_eq {X : ℝ} (hX : X ≠ 0) (t : ℝ) : hBal X t = kerN (t / X) / X ^ 2 := by
@@ -303,10 +302,10 @@ theorem balayageSide_eq {X : ℝ} (hX : 0 < X) : balayageSide X = (-P * log X - 
     intervalIntegral.integral_const_mul, hP, hQ]
   field_simp
 
-/-- The note's `J(X)` given the balayage identity: `∫_X^∞ x⁻² ln x dx − ∫₀^X (−ln t) h_X(t) dt`. -/
+/-- `J(X)` given the balayage identity: `∫_X^∞ x⁻² ln x dx − ∫₀^X (−ln t) h_X(t) dt`. -/
 def J (X : ℝ) : ℝ := (1 + log X) / X - balayageSide X
 
-/-- **The note's (3.4)**: `J(X) = (π/(2X))(1 + ln(X/2))`. -/
+/-- **`J(X)`** in closed form: `J(X) = (π/(2X))(1 + ln(X/2))`. -/
 theorem J_eq {X : ℝ} (hX : 0 < X) : J X = π / (2 * X) * (1 + log (X / 2)) := by
   rw [J, balayageSide_eq hX, P_eq, Q_eq, log_div hX.ne' two_ne_zero]
   field_simp; ring
@@ -325,12 +324,12 @@ theorem exteriorMoment_eq {X : ℝ} (hX : 1 ≤ X) {τ : ℝ → ℝ}
   rw [integral_sub (integrableOn_log_div_sq_Ioi hX) hτ, integral_log_div_sq_Ioi hX, hbal]
   exact J_eq (by linarith)
 
-/-- The note's (3.3) → (3.5): `J(X)/(2πT₀) = (1 + ln(X/2))/(4XT₀)`. -/
+/-- `J(X)/(2πT₀) = (1 + ln(X/2))/(4XT₀)`. -/
 theorem J_div_eq_tauWall {T₀ X : ℝ} (hT : 0 < T₀) (hX : 0 < X) :
     J X / (2 * π * T₀) = tauWall T₀ X := by
   rw [J_eq hX, tauWall]; field_simp; ring
 
-/-- **The chain of §3.4 (iii)–(v), assembled.** Given the balayage identity at the wall `X = 2`, the
+/-- **The chain (iii)–(v), assembled.** Given the balayage identity at the wall `X = 2`, the
 exterior moment divided by `2πT₀`, `T₀ = 2πe^δ`, is `e^{−δ}/(16π)`. -/
 theorem sixteenPi_of_balayage (δ : ℝ) {τ : ℝ → ℝ}
     (hτ : IntegrableOn (fun x => τ x / x ^ 2) (Ioi 2))
@@ -343,7 +342,7 @@ theorem sixteenPi_of_balayage (δ : ℝ) {τ : ℝ → ℝ}
 /-! ## E. The exterior form under D, and its stability -/
 
 /-- **One displaced zero.** If `|t − γ| ≤ Δ < γ`, then
-`|γ⁻² − t⁻²| ≤ Δ(2γ + Δ)/(γ²(γ − Δ)²)`, the note's `2Δ/γ³(1 + O(Δ/γ))`. -/
+`|γ⁻² − t⁻²| ≤ Δ(2γ + Δ)/(γ²(γ − Δ)²)`, that is, `2Δ/γ³(1 + O(Δ/γ))`. -/
 theorem inv_sq_sub_le {γ t Δ : ℝ} (hγ : 0 < γ) (hΔ : |t - γ| ≤ Δ) (hΔγ : Δ < γ) :
     |1 / γ ^ 2 - 1 / t ^ 2| ≤ Δ * (2 * γ + Δ) / (γ ^ 2 * (γ - Δ) ^ 2) := by
   obtain ⟨h1, h2⟩ := abs_le.1 hΔ
@@ -414,7 +413,7 @@ theorem defect_sub_tail_le {γ t Δ : ℕ → ℝ} (hγ : Summable fun n => 1 / 
 `w = τ⁻²`) and `F(z)/F(0) = Π(1 − z²v_k)` (Riemann's `Ξ`, `v = γ⁻²`),
 `f(z)/f(0) = (F(z)/F(0))·(1 + τ z² ) + O(‖z‖⁴)` with `τ = Σv − Σw = Σγ⁻² − Στ⁻²`, the curvature
 defect `κ_Ξ − κ(a)`; explicitly the error is at most `3‖z‖⁴(Σ‖w‖ + Σ‖v‖)²` once
-`‖z‖²(Σ‖w‖ + Σ‖v‖) ≤ 1`. So the library's multiplier time is the note's defect, whatever its value. -/
+`‖z‖²(Σ‖w‖ + Σ‖v‖) ≤ 1`. So the library's multiplier time is the defect, whatever its value. -/
 theorem multiplier_expansion {ι κ : Type*} {f F : ℂ → ℂ} {w : ι → ℂ} {v : κ → ℂ}
     (hf : HadamardW f w) (hF : HadamardW F v) (z : ℂ)
     (hz : ‖z‖ ^ 2 * ((∑' i, ‖w i‖) + ∑' k, ‖v k‖) ≤ 1) :

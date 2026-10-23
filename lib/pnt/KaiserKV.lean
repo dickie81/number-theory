@@ -4,9 +4,8 @@ import KaiserSplit
 /-! # The Korobov–Vinogradov region in the Kaiser prefactor
 
 `lam_prefactor` bounds the ground energy by `λ₁(a) ≤ K(a + 1)e^{10a − 4πe^{2a}}`. The factor
-`eᵃ` over Connes' `e^{9a}` is the weight `e^{2a|Im τ|} ≤ eᵃ` of a zero, and round 164 said of it: "The known
-zero-free regions only save a constant here." That holds for de la Vallée Poussin's region. The
-Korobov–Vinogradov region (`LandauKV.zeroFree_KV`) saves a growing amount.
+`eᵃ` over Connes' `e^{9a}` is the weight `e^{2a|Im τ|} ≤ eᵃ` of a zero. De la Vallée Poussin's region saves
+only a constant here. The Korobov–Vinogradov region (`LandauKV.zeroFree_KV`) saves a growing amount.
 
 * `region`: with PNT+'s `ZetaNoZerosInBox` below height `e³`, every zero `β + iγ` with `|γ| ≤ T` has
   `β < 1 − A/f(T)`, `f(T) = (log T)^{2/3}(log log T)^{1/3}`, for every `T ≥ e³`.
