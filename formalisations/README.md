@@ -22,6 +22,8 @@ The paper cites the note and does not restate the result as its own.
 | The hybrid fourth moment of `L(1/2 + it, χ)`, at one point per character | H. L. Montgomery, *Topics in Multiplicative Number Theory* (1971) | `LinnikFourth.fourth_moment` | Ingham's and Huxley's estimates | [hybrid-fourth-moment.md](hybrid-fourth-moment.md) |
 | Mean values of Dirichlet polynomials over the characters mod `q`, and Gallagher's lemma | H. L. Montgomery and R. C. Vaughan, J. London Math. Soc. 8 (1974); P. X. Gallagher, Mathematika 14 (1967) and Invent. Math. 11 (1970) | `LinnikHybrid.mean_value_chars`, `LinnikHybrid.large_values_chars` | Ingham's and Huxley's estimates, and the fourth moment | [mean-values.md](mean-values.md) |
 | Harman's sieve in the form used, with Brun's fundamental lemma and Buchstab's identity | G. Harman, J. London Math. Soc. 27 (1983) and *Prime-Detecting Sieves* (2007); V. Brun (1920); A. A. Buchstab, Mat. Sb. 2(44) (1937) | `SieveProp6.prop6`, `SieveBrun.fundamental` | The leaves of the Linnik paper's decomposition (`SieveLeaves`) | [harman-sieve.md](harman-sieve.md) |
+| Kubota's cubic theta function, with Patterson's coefficients, in the form the half-plane's route uses | T. Kubota (1969); S. J. Patterson, J. Reine Angew. Math. 296 (1977); A. Dunn and M. Radziwiłł, Ann. of Math. 200 (2024) | `Eis.kubotaTheta`, which proves `Eis.KubotaTheta` | The zero-free half-plane (`Eis.thetaRows_of_kubota`) | [cubic-theta.md](cubic-theta.md) |
+| The quadratic large sieve over `ℤ[ω]` | D. R. Heath-Brown, Acta Arith. 72 (1995); L. Goldmakher and B. Louvel, Math. Proc. Cambridge Philos. Soc. 154 (2013) | `Eis.quadLargeSieve`, which proves `Eis.QuadLargeSieve` | The zero-free half-plane (the companion preprint's Lemma 6.5) | [quadratic-large-sieve.md](quadratic-large-sieve.md) |
 
 The Chen–Gupta–Li note also covers the paper's Theorem 10.1, which they state for primitive characters and credit to
 Heath-Brown. Heath-Brown's paper could not be read, so the library proves the theorem (`LinnikCGLHB101.cglt101`) by
@@ -62,9 +64,23 @@ Mathlib, and no note covers them:
 - Dirichlet's theorem on primes in progressions, for the moduli below the route's threshold (Mathlib's
   `Nat.forall_exists_prime_gt_and_modEq`).
 
-The zero-free half-plane's own route uses further results from the literature: Kubota's cubic theta function,
-Patterson's coefficient formula, the Dunn–Radziwiłł cusp expansions and the quadratic large sieve over `ℤ[ω]`
-([openai-half-plane.md](openai-half-plane.md)). Notes on their sources are not yet written.
+The zero-free half-plane's route ([openai-half-plane.md](openai-half-plane.md)) uses, besides the theta function and
+the large sieve of the index, these classical results:
+
+- cubic reciprocity in `ℤ[ω]` (`Eis.cub_recip`), by the Jacobi- and Gauss-sum proof of K. Ireland and M. Rosen's
+  *A Classical Introduction to Modern Number Theory* (Springer, 1990), Chapter 9, and its supplementary laws as
+  periodicity modulo `9` (`EisensteinSupplement`);
+- quadratic and sextic reciprocity in `ℤ[ω]` (`Eis.quad_recip`, `Eis.sextic_recip`), from quadratic Gauss sums as in
+  the companion preprint's Appendix A.1, with their supplementary laws (`EisensteinQuadSupplement`);
+- Gauss sums and Poisson summation over `ℤ[ω]` and in the plane (`EisensteinGaussSum`, `EisensteinQuadGauss`,
+  `EisensteinPoisson`, `PlanePoisson`, `PlaneGaussian`);
+- the Bessel function `K_ν` and its Mellin transform (`BesselK`, `KubotaBesselMellin`);
+- hyperbolic three-space: the action of `SL_2(ℂ)`, the invariant measure, reduction theory for `SL_2(ℤ[ω])` and
+  unfolding (`UpperHalfSpace`, `KubotaMeasure`, `KubotaSiegel`, `KubotaUnfold`), as Dunn and Radziwiłł's §5.1 sets
+  them out after J. Elstrodt, F. Grunewald and J. Mennicke's *Groups Acting on Hyperbolic Space* (Springer, 1998);
+- resolvents of self-adjoint operators (`HilbertResolvent`);
+- the ideals of `ℤ[ω]` by norm, the Möbius function on them, and the Dedekind zeta function of a quadratic field
+  (`EisensteinIdealCount`, `EisensteinMobius`, `QuadIdeals`).
 
 These lists come from a census of the declarations that the proof of `Linnik22475R.linnik_22475r` uses
 (`scripts/census.py`), read module by module.

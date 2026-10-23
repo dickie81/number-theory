@@ -46,6 +46,12 @@ companion preprint's route. No file of the release is imported or vendored. The 
    Dunn–Radziwiłł cusp expansions, and the quadratic large sieve over `ℤ[ω]`, which bounds the dual mean square.
 5. Möbius inversion removes the cube factors, and the exponent is `11/12`.
 
+The library proves the results from the literature that the route uses. Two have notes of their own:
+[cubic-theta.md](cubic-theta.md), on Kubota's cubic theta function and Patterson's coefficients in Dunn and
+Radziwiłł's form, and [quadratic-large-sieve.md](quadratic-large-sieve.md), on Heath-Brown's and Goldmakher and
+Louvel's quadratic large sieve. The classical tools, among them cubic and sextic reciprocity in `ℤ[ω]`, are listed in
+[README.md](README.md) under its standard results.
+
 ## Differences from the release
 
 - **The exponent.** The library proves `Re s > 11/12`, the companion preprint's exponent. The main preprint's
