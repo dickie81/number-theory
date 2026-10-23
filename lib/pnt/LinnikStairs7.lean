@@ -9,7 +9,7 @@ Sixty density estimates, each an instance of a parametric argument of the librar
   steps `[σ₁, σ₂]` from `4/7` to `5/7`, with the exponent `3/(2 − σ₂) + 1/2000`, Ingham's curve at the right end plus
   `1/2000`.
 * `parHx7_0` … `parHx7_19`, `charDensity_hx7_0` … `charDensity_hx7_19`: `LinnikHuxStep.charDensity_gen` at parameters
-  found by a linear program and checked in rational arithmetic (scratch) on twenty equal steps from `16/21` to `5/6`,
+  found by a linear program and checked in rational arithmetic on twenty equal steps from `16/21` to `5/6`,
   with the exponent `3/(3σ₁ − 1) + 1/2000`, Huxley's curve at the left end plus `1/2000`.
 * `parHy_0` … `parHy_19`, `charDensity_hy_0` … `charDensity_hy_19`: `LinnikHuxStepY.charDensity_genY`, under
   `LinnikWeyl.PYWeyl`, on twenty equal steps from `5/6` to `11/12`, with the exponent `3/(3σ₁ − 1) + 1/2000` on steps

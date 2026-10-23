@@ -18,7 +18,7 @@ its Type II estimate (`hII : SieveRoute.TypeIIAt`). `N₁ = ⌊q^L⌋` and `N₂
 * `chainTL_bound` (the lower window): the same for `rt` strictly decreasing, with entries at least `q^{e₀}` and
   `P₁ < ∏_{i∈S} rt_i ≤ P₂` for a set `S` of indices, where `q^{w₁L} ≤ P₁` and `P₂ ≤ q^{w₂L}`.
 
-These evaluate the terms of `frontier/linnik/SIEVE-ROUTE.md` §6 that are evaluable: a chain `p₁ > ⋯ > p_k` of
+These evaluate the evaluable terms of the sieve's decomposition: a chain `p₁ > ⋯ > p_k` of
 primes, and the rough rest of `n`. In the upper window the chain's product is the Type II variable's partner and
 the rest of `n` is the variable; in the lower window `m = ∏_S rt` is the variable, and the rest of `n` with the
 primes off `S` are the family's primes.
@@ -33,8 +33,8 @@ The proof:
   read `m`'s factors in decreasing order (`factS`). Their `m`-parts are at most `B + log m` (`cmpsTL_c_le`), and
   `typeII_gcmp'` bounds each length of `y`.
 
-Round 607 made `L`, `w₁` and `w₂` a route's parameters and the Type II estimate a hypothesis (`hII`); the
-statements of earlier rounds are the case `SieveRoute.route2333`, with `SieveRoute.typeII2333` for `hII`.
+The case `SieveRoute.route2333`, with `SieveRoute.typeII2333` for `hII`, gives the statements with the parameters
+`L = 2333/1000` fixed.
 
 
 The file imports `SieveProp6.lean`.

@@ -14,7 +14,7 @@ import GroundChain
 
 In `z`-language: `V_ℂ = ĥ · {polynomials of degree < m in z²}`, Theorem D.
 
-Since round 274, steps 2–3 are proved once for any ground-state family (`GroundChain.lean`); this
+Steps 2–3 are proved once for any ground-state family (`GroundChain.lean`); this
 file supplies Weil's form as the instance `zetaGD` (finite dimension here, the Green steps from
 `DegenerateFlat`, the swap closure from `SimpleStructure`) and states the results under their
 original names.

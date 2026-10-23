@@ -5,8 +5,8 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Plain statement. For every quadratic Dirichlet character `χ ≠ 1` mod `N`:
 `|ψ(x, χ)| ≤ (2·10¹¹/e⁵) log(N + 2)·x^{11/12+η}` for every `x > 1` and `η > 0`, with `e = min(η, 1/24)`
-(`psiChi_le_explicit`; round 509: for every Dirichlet character `χ ≠ 1` mod `N`); `|L′/L(σ, χ)| ≤ 10²¹ log log(N + 16)` for `1 ≤ σ ≤ 2` (`logDeriv_le_explicit`,
-`norm_logDeriv_one_le_explicit`); `|log |L(1, χ)|| ≤ log log log(N + 16) + 2·10²¹`, so
+(`psiChi_le_explicit`, which holds for every Dirichlet character `χ ≠ 1` mod `N`);
+`|L′/L(σ, χ)| ≤ 10²¹ log log(N + 16)` for `1 ≤ σ ≤ 2` (`logDeriv_le_explicit`, `norm_logDeriv_one_le_explicit`); `|log |L(1, χ)|| ≤ log log log(N + 16) + 2·10²¹`, so
 `e^{−2·10²¹}/log log(N + 16) ≤ |L(1, χ)| ≤ e^{2·10²¹} log log(N + 16)` (`norm_LFunction_one_ge_explicit`,
 `norm_LFunction_one_le_explicit`). For every `A > 12`, with `e = min(1/12 − 1/A, 1/24)` and
 `K = 4(2·10¹¹/e⁵ + 11)`: `χ` has, for `ε = ±1`, a prime `p ∤ N` with `χ(p) = ε` and
@@ -17,11 +17,11 @@ Plain statement. For every quadratic Dirichlet character `χ ≠ 1` mod `N`:
 
 * `zeta32_le`, `logDerivZeta32_le`: `ζ(3/2) ≤ 3` and `−ζ′/ζ(3/2) ≤ 3(log 4 + 4)`, by the partial summation
   (`Littlewood.norm_LSeries_le_of_sum_le`) with `⌊t⌋ ≤ t` and with Mathlib's `Chebyshev.psi_le_const_mul_self`.
-* `Kld_le`: the constant `LogDerivDisc.Kld (11/12) (11/12 + e/4)` (`ChiUniform.Kld` before round 513) is at most
+* `Kld_le`: the constant `LogDerivDisc.Kld (11/12) (11/12 + e/4)` is at most
   `23000/e³` for `0 < e ≤ 1/24`: `16r²/(r − r′)³ ≤ 16(28/(3e))³`, and `(R²/R′ − R′) log(R/R′) ≥ (3e/28)²` from
   `log y ≥ 1 − 1/y`.
 * `KM_le`: the constant of `ExplicitSmooth.mellin_ν₀_le_geom` on the line `11/12 + e/4` is at most `6750`.
-* `psiChi_le_explicit`: `ChiPNT.sum_le_uniform_of` (`ChiUniform.sum_le_uniform_of` before round 513) with `ν₀`,
+* `psiChi_le_explicit`: `ChiPNT.sum_le_uniform_of` with `ν₀`,
   then `ChiUniform.psiChi_le_uniform_of`, with `log(2 + 36ζ(3/2)/11) ≤ 3` and `−ζ′/ζ(3/2) ≤ 17`.
 * The rest: the `_of` theorems of `Littlewood` and `LeastNonresidue` with these constants.
 -/

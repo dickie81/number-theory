@@ -1,26 +1,26 @@
 /-
-# Their Lemma 8.2 with explicit constants (the CGL plan's stage M4)
+# Their Lemma 8.2 with explicit constants
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li's Lemma 8.2: "Let f⃗ = {f_b} be as in Proposition 8.1. Then there is a bump function ψ(x) supported on
 |x| ≪ 1 such that" (lines 2495–2496; spaces restored, the arrow and the subscript transcribed)
 `J(f⃗) ⪅ φ(q)M⁶(∫_ℝΣ_bf_b(u) du)² + φ(q)(M⁴∫_ℝΣ_bf_b(u)² du)^{1/2}J(f̃⃗)^{1/2}` (lines 2497–2516, transcribed). This
-file assembles rounds 680 to 687 into that bound in explicit form, before any choice of parameters: every constant is
-kept, and their negligible errors are kept as explicit terms (`2πφ(q)G₁²X^{−(2j−2)}`, `B_tail` and the term `EP²F²` of
-`B_J`).
+file assembles `integral_gstar_le` and `setIntegral_ga_tail_le` into that bound in explicit form, before any choice of
+parameters: every constant is kept, and their negligible errors are kept as explicit terms
+(`2πφ(q)G₁²X^{−(2j−2)}`, `B_tail` and the term `EP²F²` of `B_J`).
 
 The library's form.
 * Their `ψ` is the bump `ψ̃₀`, and `f̃_b` is `ftil`.
 * Their `J(f⃗)` is a supremum over `M₁, M₂, M₃` of `Jint`; the bound here is for one `(M₁, M₂, M₃, κ)`,
   with `κM₃ ≤ L` for the majorant. Their `J(f̃⃗)` appears as `Jint` for `f̃` at `(M₂, M₂, M₂, 4|A| + 2)`, inside
   `B_J`.
-* The decay premise enters at one exponent `j`, as.
+* The decay premise `Σ_b|f̂_b(ξ)| ≤ D(T/|ξ|)^jΛ` enters at one exponent `j`.
 * Their "⪅" is not taken: the bound keeps every constant, and the choice of `L`, `X`, `N₀`, `δ`, `j` and `K` is left
-  to the next round.
+  to the caller.
 * The steps: `J ≤ Σ_a∫|ĝ_a|²`, split at `|ξ| = X`. On `|ξ| ≤ X`, `|ĝ_a|² ≤ 2|g₀,a|² + 2|ĝ_a − g₀,a|²`,
-  with `g₀,a` the term `n = 0` and the rest by round 683, with `B_II` and 687. On
-  `|ξ| > X`, the tail.
+  with `g₀,a` the term `n = 0` and the rest by `integral_gstar_le`, with `B_II`. On
+  `|ξ| > X`, the tail is `setIntegral_ga_tail_le`.
 
 Plain statements, with `q ≥ 1` (`[NeZero q]`), `ĝ_a` the Fourier transform of `ga`,
 `g₀,a = Σ_{m₁∈P1 M₁}tg(a, m₁, 0)` the term `n = 0`, `W₀` `W0`, `I₀ = ∫|ψ̂₀(−τ)| dτ`, and the
@@ -156,7 +156,7 @@ theorem lemma82_explicit {q : ℕ} [NeZero q] {f : (ZMod q)ˣ → ℝ → ℝ} (
       2 * π * q.totient * G1 q M₁ M₂ L T D Λ j ^ 2 * (X ^ (2 * j - 2))⁻¹ := by
   classical
   have hT0 : 0 ≤ T := by linarith
-  -- `B_II`, and 687
+  -- the bound `B_II`, for `integral_gstar_le`
   have hBII : ∀ W : Finset ℤ, ∑ n ∈ W.filter (· ≠ 0), ∫ τ, ‖𝓕 psiC (-τ)‖ * ‖Phi f M₂ L n τ‖ ^ 2 ≤
       (∫ τ, ‖𝓕 psiC (-τ)‖) * BJ f A M₂ T N₀ K + Btail f M₂ L N₀ T D Λ j K := by
     intro W

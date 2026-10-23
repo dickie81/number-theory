@@ -11,7 +11,7 @@ coefficients `|a_m| ≤ 1`, and let `z(m) ≥ q^{e₀}` on `S`. Then the sum ove
 `q^{L−δ}/φ(q)` in absolute value.
 
 This is the stop of a branch of Buchstab's tree inside the lower window: `m` is the branch's product and the rest
-of `n` is rough (`frontier/linnik/SIEVE-ROUTE.md` §5).
+of `n` is rough.
 
 The proof:
 
@@ -21,8 +21,8 @@ The proof:
   least `z(m)`, and the range `⌊q^L⌋ < m∏x_i ≤ ⌊2q^L⌋`.
 * `SieveTypeIIU.typeII_unw` for each length, with `E₀ = 1`, `Λ₁ = L + 1` and `e₁ = e₀/2`.
 
-Round 607 made `L`, `w₁` and `w₂` a route's parameters and the Type II estimate a hypothesis (`hII`); the
-statements of earlier rounds are the case `SieveRoute.route2333`, with `SieveRoute.typeII2333` for `hII`.
+The case `SieveRoute.route2333`, with `SieveRoute.typeII2333` for `hII`, gives the statements with the parameters
+`L = 2333/1000` fixed.
 
 
 The file imports `SieveTypeIIU.lean` and `SieveRoughTuple.lean`.

@@ -5,8 +5,7 @@ import ArchShift
 /-! # `Q_χ` in u-space
 
 `QC χ a g` (WeilChiCriterion.lean) is Weil's form for `L(s, χ)` in its Guinand–Weil presentation, with
-`h = ĝ²` on the spectral side. For every probe it equals the u-space form that
-`frontier/dh/dh_gram.py` computes:
+`h = ĝ²` on the spectral side. For every probe it equals the u-space form:
 
   `Q_χ(g) = (Re ψ(q_χ) + log(N/π))‖g‖² + ∫_0^∞ [f(0) − f(u)] e^{(1−2q_χ)u}/sinh u du
             − 2Σ Λ(n)χ(n)n^{−1/2} f(log n)`   (`QC_eq_QCu`),
@@ -49,7 +48,7 @@ theorem qC_of_odd (h : χ.Odd) : qC χ = 3 / 4 := by
 theorem psiReC_eq : psiReC χ = psiReQ (qC χ) := by
   funext r; unfold psiReC psiReQ zC zQ qC; congr 2; push_cast; ring
 
-/-- **Weil's form for `L(s, χ)` in u-space**, as `dh_gram.py` computes it. -/
+/-- **Weil's form for `L(s, χ)` in u-space**. -/
 def QCu [NeZero N] (χ : DirichletCharacter ℂ N) (g : ℝ → ℝ) : ℝ :=
   ((Complex.digamma (qC χ)).re + Real.log N - Real.log π) * normSq g + archEQ (qC χ) g
     - 2 * ∑' n : ℕ, fχ χ n / Real.sqrt n * autocorr g (Real.log n)

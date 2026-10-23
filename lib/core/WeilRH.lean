@@ -4,7 +4,7 @@ import WeilLandau
 /-! # RH gives `Q ≥ 0` on every probe, and Weil's criterion for `ζ`
 
 `weilQ_nonneg_of_zeros_on_line` needs the explicit formula for the probe at hand, and
-round 156 proves it only for strip test functions. Here the gap is closed by density:
+it is proved only for strip test functions. Here the gap is closed by density:
 
 * `ibp_C2`: for a `C²` probe vanishing near the edges, `it·ĝ(t) = −ĝ₁(t)`, so `ĝ²` is a strip test
   function (`weilExplicit_C2_zeta`).
@@ -13,7 +13,7 @@ round 156 proves it only for strip test functions. Here the gap is closed by den
   `Q(h) ≤ λ₁‖h‖² + 2C(‖h − g‖² + E(h − g)) < 0`, while RH and the explicit formula give `Q(h) ≥ 0`.
 * `weilQ_nonneg_of_RH`: hence `Q(g) ≥ λ₁‖g‖² ≥ 0` for every probe.
 * `weil_criterion_zeta`: `Q ≥ 0` on every probe **iff** Mathlib's `RiemannHypothesis`. No named
-  input, and (since round 220, `WeilLandau.rh_of_weil`) no finiteness hypothesis.
+  input, and (by `WeilLandau.rh_of_weil`) no finiteness hypothesis.
 
 Weil's criterion is an equivalence: no bearing on RH.
 -/

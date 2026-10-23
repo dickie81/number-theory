@@ -8,10 +8,9 @@ For `Im z > 0` and `|c| < a`, `(cos zc − cos za)/sin za = 2/(cot A + cot B)` w
 imaginary part (`trap_ratio_im_pos`, `trap_ratio_mul_pos`). With the rectangle's transform
 `2 sin(za)/z` (`integral_rect`), this is the core of Pólya's 1918 theorem.
 
-Round 124: the Pólya-class statement itself (`polyaFn`, `integral_trap`, `ghatC_polya`,
-`realRooted_polya`) is removed. `Concave.lean` proves real-rootedness for every even concave `g ≥ 0`
-directly (`realRooted_of_concaveOn`, `realRooted_of_ae_concaveOn`), with no representation
-hypothesis, so it supersedes that route. -/
+The Pólya-class statement itself is not stated here. `Concave.lean` proves real-rootedness for every even
+concave `g ≥ 0` directly (`realRooted_of_concaveOn`, `realRooted_of_ae_concaveOn`), with no representation
+hypothesis. -/
 
 open Real MeasureTheory Complex
 

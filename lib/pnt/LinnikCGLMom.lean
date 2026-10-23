@@ -1,5 +1,5 @@
 /-
-# Their Lemma 9.1, the second moments of `R` and `R̃` (the CGL plan's stage M3, the `S₃` side)
+# Their Lemma 9.1, the second moments of `R` and `R̃`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -31,8 +31,6 @@ Plain statements, with `q ≥ 1`, `χ` injective on `R` and `L = NM₂/q`.
 * `sum_units_eq`, `sum_units_mul_star`: orthogonality over the units.
 * `norm_cpow_I`, `sum_norm_Rf_sq`, `lemma91`: the part for `R`.
 * `integral_kernel`, `psi0_eq_zero`, `Rt_sq`, `integral_Rt_sq`, `lemma91_Rt`: the part for `R̃`.
-
-The next step is their Lemma 9.2, the fourth moments against the energy `E(W)`.
 
 The file imports `LinnikCGLP72.lean`.
 -/

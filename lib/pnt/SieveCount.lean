@@ -9,8 +9,7 @@ Plain statements, for `N₁ ≤ N₂`.
 * `card_B`: for `M > 0` prime to `q > 0`, the `n ∈ (N₁, N₂]` prime to `q` with `M ∣ n` number
   `φ(q)(N₂ − N₁)/(Mq)` within `φ(q)`.
 
-These are the counts `|A_d|` and `|B_d|` of `frontier/linnik/SIEVE-ROUTE.md` §1 that Lemma 5 (§5) and the leaves of
-§13's M5 use. The file imports only Mathlib.
+These are the counts `|A_d|` and `|B_d|` of the sieve route. The file imports only Mathlib.
 -/
 import Mathlib
 

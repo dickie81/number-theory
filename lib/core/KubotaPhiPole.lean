@@ -2,7 +2,7 @@ import KubotaPhi
 
 /-! # The pole of the scattering coefficient at `s = 4/3`
 
-S5f-9b of the plan, its last part. The closed form `phiC` of `φ` continues to
+The closed form `phiC` of `φ` continues to
 `Re s > 1` with one pole there, at `s = 4/3`, whose residue is `π/(6√3)·L(1, χ₋₃)/(ζ(2)L(2, χ₋₃))`, which
 is not `0`.
 

@@ -1,5 +1,5 @@
 /-
-# Their `R̃` and the inner integral of Proposition 7.2 (the CGL plan's stage M3, the `S₃` side)
+# Their `R̃` and the inner integral of Proposition 7.2
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -47,8 +47,6 @@ Plain statements, with `L = NM₂/q`, `X > 0` and `q ≥ 1`.
 * `Rf_inv`, `norm_Rf_inv`: the conjugation identity.
 * `integrableOn_Icc_of_le`, `local_le_Rt_sq`, `ratio_le_Rt_sq`: the local second moments.
 * `cs_Icc`, `inner_le`, `Vr_inner_le`: the Cauchy–Schwarz step.
-
-The next round integrates `Vr_inner_le` over `v₁` against `prop71r`.
 
 The file imports `LinnikCGLSym.lean`.
 -/

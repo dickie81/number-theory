@@ -3,7 +3,7 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-The sieve route of `frontier/linnik/SIEVE-ROUTE.md` §13 runs at `x = q^L` with a Type II window `[w₁L, w₂L]`. `Route`
+The sieve route runs at `x = q^L` with a Type II window `[w₁L, w₂L]`. `Route`
 holds `L`, `w₁` and `w₂`, and `RouteOK` the facts about them that the route's proofs use. `TypeIIAt` is the Type II
 estimate the route takes as its input: Proposition 3′ at `L` on the window, the conclusion of
 `SieveTypeII.typeII_step` with `L`, `w₁` and `w₂` in place of `2333/1000`, `401/1000` and `485/1000`.

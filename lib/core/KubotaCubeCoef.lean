@@ -2,9 +2,8 @@ import KubotaCubeEigen
 
 /-! # θ's coefficients at `p³m`
 
-S5f-12 of the plan, part 10. The next step planned the cube average of a theta-type series
-and, from `thS_cube_eigen_coord`, the relation `τ(p³m) = |p|·τ(m)` for θ's coefficients `τ` (
-`tauTh`). This file proves them, for a primary prime `p`:
+This file proves the cube average of a theta-type series and, from `thS_cube_eigen_coord`, the relation
+`τ(p³m) = |p|·τ(m)` for θ's coefficients `τ` (`tauTh`), for a primary prime `p`:
 
 * **The character sum** (`sum_ebr_quot`): `Σ_{q mod c} ĕ(σ(δ₃x)·(σ(3q)/σ(c))/9)` is `N(c)` when `c ∣ x` and
   `0` otherwise, for `c ≠ 0` (`ebr_shift` and `sum_ψc_mul`).

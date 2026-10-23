@@ -9,7 +9,7 @@ Plain statement (`charDensity_genY`). For parameters `Pa : ParY` with `Pa.Good`,
 in `Re s ≥ σ`, `|Im s| ≤ T`.
 
 This is the step (`LinnikHuxStep.charDensity_gen`) with the detector's height `Y = Q^y` as a parameter:
-`ParY` is `Par` with a field `cy`, `y = (1 + 2cy)/2000` (`Y = Yw cy U` at `U = Q^{1/2000}`; round 607 has `cy = 502`,
+`ParY` is `Par` with a field `cy`, `y = (1 + 2cy)/2000` (`Y = Yw cy U` at `U = Q^{1/2000}`; `cy = 502` gives
 `y = 201/400`). `ParY.Good` is `Par.Good` with `hlam1 : 2y + ε ≤ lam` in place of `201/200 + ε ≤ lam` and, in place of
 the fourth-moment condition `h3`, the emptiness condition `h5 : 1/6 + 2ε + 1/2000 ≤ y(lo − 1/2)`: under
 the pointwise bound `‖L(1/2 + it, χ)‖ ≤ CL(q(1 + |t|))^{1/6+ε}`, `LinnikWeyl.class2_empty` makes the integral class

@@ -2,7 +2,7 @@ import KubotaContour
 
 /-! # The uniformity of the group data in the active set
 
-S5f-6 of the plan, part 2. The companion paper writes: "`To average the transformed sums over $k_0$,
+The companion paper writes: "`To average the transformed sums over $k_0$,
 we need to choose their cusp coefficients and additive characters consistently as $k_0$ varies.`" Its
 Lemma 6.3 says: "`For each fixed index, the triple $(d,\psi,c_0)$ depends on $k_0$ only through its ray
 class modulo a fixed ideal supported on $S$ and depending only on $\Psi_0,S$.`" This file proves the core

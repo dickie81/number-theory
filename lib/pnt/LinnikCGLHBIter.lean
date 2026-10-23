@@ -1,5 +1,5 @@
 /-
-# Kerr's iteration with characters (the CGL plan's stage M5)
+# Kerr's iteration with characters
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

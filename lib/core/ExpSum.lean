@@ -12,8 +12,6 @@ This is how Vinogradov's mean value `J` controls an exponential sum. The proof:
 * the `ℓ`-th power of the inner sum is a sum over `ℓ`-tuples;
 * power mean over tuples, then Cauchy–Schwarz against the representation counts;
 * expanding a square reduces to the box sum `Z`.
-
-Spec: `frontier/expsum/EXPSUM_SPEC.md`, step (D).
 -/
 import VinoHolder
 

@@ -1,5 +1,5 @@
 /-
-# Sharpening, step S1b: explicit parameters for many good coordinates
+# Sharpening: explicit parameters for many good coordinates
 
 Plain statement (`block_saving_multi`). Write `N = u^20` (`u ≥ 2`), `M = ⌊u⁸⌋` and
 `u^R ≤ |t| ≤ u^{R+1}`, with `R + 21 ≤ 4K` and `K ≤ ℓ ≤ u⁴`. Let `G` be any set of coordinates
@@ -235,7 +235,7 @@ theorem window {R K : ℕ} (hR : 16 ≤ R) (hKR : R + 21 ≤ 4 * K) :
       nlinarith
 
 set_option maxHeartbeats 1600000 in
-/-- **Step S1b, the per-block saving with a window of good coordinates.** -/
+/-- **The per-block saving with a window of good coordinates.** -/
 theorem block_saving_multiH {t u C η H : ℝ} {N N' K ℓ R Q0 : ℕ} (G : Finset (Fin K))
     (hu : 2 ≤ u) (hN : (N : ℝ) = u ^ 20) (hN1 : N ≤ N') (hN2 : N' ≤ 2 * N)
     (hK1 : 1 ≤ K) (hKℓ : K ≤ ℓ) (hℓu : (ℓ : ℝ) ≤ u ^ 4)
@@ -420,7 +420,7 @@ theorem block_saving_multiH {t u C η H : ℝ} {N N' K ℓ R Q0 : ℕ} (G : Fins
     _ = 2 ^ (Q0 + 2) * N / u ^ sv := by ring
 
 
-/-- **Step S1b** with `η ≤ 1/32` (the form). -/
+/-- **The per-block saving** with `η ≤ 1/32` (the form). -/
 theorem block_saving_multi {t u C η : ℝ} {N N' K ℓ R Q0 : ℕ} (G : Finset (Fin K))
     (hu : 2 ≤ u) (hN : (N : ℝ) = u ^ 20) (hN1 : N ≤ N') (hN2 : N' ≤ 2 * N)
     (hK1 : 1 ≤ K) (hKℓ : K ≤ ℓ) (hℓu : (ℓ : ℝ) ≤ u ^ 4)

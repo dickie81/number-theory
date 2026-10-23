@@ -1,5 +1,5 @@
 /-
-# The sum over `a` in their Lemma 8.2, by the Ramanujan sum (the CGL plan's stage M4)
+# The sum over `a` in their Lemma 8.2, by the Ramanujan sum
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

@@ -192,7 +192,7 @@ theorem quad_of_orb {ρ ρ' : ℂ} {t t' : ℂ}
     linear_combination this
 
 
-/-! ## Round 232 at `dh`: an instance of `NegData` (until round 273, §B–E were copied here) -/
+/-! ## An instance of `NegData` at `dh` -/
 
 /-- **The zeros of `Ξ₃` as negative-index data** (`κ = 3`, `w = 2`, the width-3 strip test). -/
 def dhND : NegData where

@@ -1,5 +1,5 @@
 /-
-# The Gram matrix's diagonal against its main term (the CGL plan's stage M3, the `S₃` side)
+# The Gram matrix's diagonal against its main term
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -9,7 +9,7 @@ the terms when (t₁,χ₁) = (t₂,χ₂) = (t₃,χ₃)", which cost their `Z�
 4.3(1), for m ≠ 0, |ĥ₀(Nm/q)| ≪ q/(N|m|). On the other hand, the arithmetic sum is the Ramanujan sum C_q(m) and
 |C_q(m)| ≤ (m,q)." (text layer lines 1992 and 2014–2017; spaces restored, the fraction and subscripts transcribed).
 At one point per character the dropped terms are the diagonal ones, `F(i, i)³` with `F(i, i) = μ − μ₀` (`Fm_diag`);
-their sum `|R|(μ − μ₀)³` is their `Z′` before the truncation in `m`, which round 650 applies afterwards. Here the Gram
+their sum `|R|(μ − μ₀)³` is their `Z′` before the truncation in `m`, which is applied afterwards. Here the Gram
 diagonal is `μ = Σ_{n∈colsP N, (n,q)=1}w(n/N)²` (`muP`) and its main term is `μ₀ = (φ(q)/q)N∫w²` (
 `mu0`). This file bounds `|μ − μ₀|` by Möbius inversion over the divisors of `q` instead of Ramanujan sums:
 `μ − μ₀ = Σ_{d|q}μ(d)(Σ_{n∈colsP N, d|n}w(n/N)² − (N/d)∫w²)`, and each bracket is at most a constant `B`. For `d ≤ N`
