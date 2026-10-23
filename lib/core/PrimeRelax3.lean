@@ -7,7 +7,7 @@ The construction (`PrimeRelax.lean`), re-run at the last support before the prim
 `a* = 0.5493`, so `2a* = 1.0986 < log 3 ≈ 1.098612` (`log_three_gt`). Below `log 3` the prime side is still the
 single term `n = 2` (`primeS_eq_two`), diagonal in the circle modes, so the whole relaxation (`weilQ_ge_relaxP`,
 `bessel_gram`, `quad_lower`) and the tail (`htailP`, from `cinH61`) are reused unchanged. Only the 60 certified
-mode energies change (`psiCq3`, arb quadrature at `a*`, `kprime3_cert_result.json`).
+mode energies change (`psiCq3`, arb quadrature at `a*`).
 
 `weilQ_ge_prime3`: granted `CertP3`, every normalised even probe at every support `0 < a ≤ 0.5493` has
 `Q(g) ≥ 2·10⁻⁸`. A Ritz estimate of the true `λ₁(a*)` is `≈ 5.6·10⁻⁸`; the relaxation's bound is `4.199·10⁻⁸` (the certificate
@@ -30,7 +30,7 @@ def psiC3 (k : ℕ) : ℝ := ((psiCq3.getD (k - 1) 0 : ℚ) : ℝ)
 
 def sP3 (a : ℝ) : Fin 62 → ℝ := fun i => sfunP a (tauP a) cP (Real.log 2) psiC3 i
 
-/-- **The certificate at `a* = 0.5493`** (checked by `frontier/nullvec/kprime3_cert.py`): the 60 quadrature bounds,
+/-- **The certificate at `a* = 0.5493`**: the 60 quadrature bounds,
 the Gram matrix, `ε ≤ κ`, and `(κ − ε)G + G diag(s) G ⪰ 0`, with `ε = 2·10⁻⁸`. -/
 def CertP3 : Prop :=
   (∀ k : ℕ, k < 60 → psiC3 (k + 1) ≤ modeE (5493 / 10000) ((k : ℤ) + 1)) ∧ (gramP (5493 / 10000)).PosDef ∧

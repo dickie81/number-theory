@@ -3,8 +3,8 @@ import KubotaCharacter
 
 /-! # Reduction theory for `SL_2(ℤ[ω])`: the Siegel set, a partition of unity, finite volume
 
-S5f-8 of the plan, part 3 (S5f-8c, part 1). Rounds 383 and 384 proved that `dz dv/v³` and the energy
-are invariant under `SL_2(ℂ)`. This file proves that every orbit of `SL_2(ℤ[ω])` on upper half-space meets the
+The measure `dz dv/v³` and the energy are invariant under `SL_2(ℂ)` (`KubotaMeasure` and `KubotaEnergy`).
+This file proves that every orbit of `SL_2(ℤ[ω])` on upper half-space meets the
 Siegel set `K = {(z, v) : z ∈ P, v ≥ 1/2}`, for `P` the fundamental parallelogram of `σ(ℤ[ω])`, and meets it
 in finitely many `γ·p`. So `ρ = 1_K/#{γ : γ·p ∈ K}` is a measurable partition of unity, `Σ_γ ρ(γ·p) = 1`, and
 `∫ρ dz dv/v³ < ∞`.

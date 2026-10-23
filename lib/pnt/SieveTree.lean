@@ -10,7 +10,7 @@ Plain statements. `rough z n` says that `n` has no prime factor below `z`; `S C 
 * `tree_sum`: the same summed over a finite set `C`, as an identity of the counts `S`.
 
 This is Buchstab's identity iterated from `z₀` down to `w`, each branch stopped once its product would pass the
-threshold `X`: the tree of Proposition 6 in `frontier/linnik/SIEVE-ROUTE.md` §5, for §13's M5.
+threshold `X`.
 
 The proof: for `n` with `r ∣ n` and `rough w n`, let `Q` be the primes of `[w, z₀)` that divide `n`. The leaves that
 count `n` are the `P ⊆ Q`, and the stops those with `p = min Q`. `alt_cancel`,

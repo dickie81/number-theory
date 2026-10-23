@@ -2,7 +2,7 @@ import KubotaCuspData
 
 /-! # The twisted theta function in cusp coordinates
 
-S5f-3e, the last part of the S5f-3. For a group of translates the companion paper combines the
+For a group of translates the companion paper combines the
 multiplier, the additive Chinese remainder theorem (its (A.11),
 "`\breve e(-\delta'\ell/c) =\psi(\lambda^4\ell)\prod_{p\mid r}e(\epsilon_ph_p^{-1}\lambda^4\ell/p),`") and the
 local transformation (A.12): "`Consequently, for each fixed $h_0$ and active set $\mathcal A$, combining the
@@ -22,7 +22,7 @@ independent of $\ell$.`" This file proves it and, with the grouping, the expansi
 * **The per-group identity** (**`group_sum`**, **`group_expansion`**): the sum over a group of
   `∏_PC_{P,j_P}(h_P)·θ̄(z + z_h, v)` is a unimodular `C₀` times one theta-type series at `(−W, V)`, with
   coefficients `d̄_H(−m)ψ_{λ³D}(−my)∏_PB_{P,j_P}(m)`. In `group_sum`, `y = δ₀u` with `u∏_Pπ_P ≡ 1
-  (mod λ³D)` (since round 379).
+  (mod λ³D)`.
 * **The expansion** (**`twisted_theta_expansion`**): the twisted `θ̄` as a sum over `h₀` and the
   active sets of these series.
 -/
@@ -188,11 +188,11 @@ theorem ψc_prod_crt_inv (A : Finset Pr) {c u : 𝓞 K} {v : Pr → 𝓞 K} (hc 
   exact (mul_eq_right₀ hne).1 h3
 
 open Classical in
-/-- **The per-group identity** (S5f-3e; the companion paper's (A.11)–(A.12) for a group): under the
+/-- **The per-group identity** (the companion paper's (A.11)–(A.12) for a group): under the
 cusp data, the sum over a group of `∏_PC_{P,j_P}(h_P)·θ̄(z + z_h, v)` is
 `κ̄₀∏_P(χ_P(s_P)²)⁻¹ω_{P,j_P}(e_P)` times one theta-type series at `(−W, V)`, with constant term
 `c̄_H∏_PB_{P,j_P}(0)` and coefficients `d̄_H(−m)ψ_{λ³D}(−mδ₀u)∏_PB_{P,j_P}(m)`, where
-`u∏_Pπ_P ≡ 1 (mod λ³D)` (since round 379). -/
+`u∏_Pπ_P ≡ 1 (mod λ³D)`. -/
 theorem group_sum {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {L : 𝓞 K} (h₀ : 𝓞 K ⧸ span {L}) (A : Finset Pr)
     (j : Pr → ℕ) {D δ₀ : 𝓞 K} {cH κ₀ : ℂ} {dH : 𝓞 K → ℂ} {s : Pr → 𝓞 K}
     (hD : D ≠ 0) (hDA : ∀ P ∈ A, D ∉ P.1) (hdH : ThetaSupp Kc dH) (hs : ∀ P ∈ A, s P ∉ P.1)
@@ -302,7 +302,7 @@ theorem group_sum {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {L : 𝓞 K} (h₀ : �
   ring
 
 open Classical in
-/-- **The expansion of a group** (S5f-3e, from the display): for a group `(h₀, A)` with the primes of
+/-- **The expansion of a group** (from the display): for a group `(h₀, A)` with the primes of
 `A` prime to `L`, the sum over the group of `∏_PC_{P,j_P}(h_P)·θ̄(z + z_h, v)` is a unimodular `C₀` times
 the theta-type series at `(−W, V)` with constant term `c̄_H∏_PB_{P,j_P}(0)` and coefficients
 `d̄_H(−m)ψ_{λ³D}(−my)∏_PB_{P,j_P}(m)`, for some `D ∣ L` and `y`, with `d_H` under the support and
@@ -335,7 +335,7 @@ theorem group_expansion {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {c0 cP cM : ℂ} {
     rw [show -(m * (δ₀ * u)) = -(m * δ₀) * u by ring]
 
 open Classical in
-/-- **The twisted `θ̄` in cusp coordinates** (the end of S5f-3; the companion paper's (A.4) with
+/-- **The twisted `θ̄` in cusp coordinates** (the companion paper's (A.4) with
 (A.8)–(A.12)): the twisted series is a sum over the residues `h₀ mod L` and the active sets `A ⊆ Ps`
 of `φ̂₀(h₀)∏_{P∉A}C_{P,j_P}(0)` times a unimodular `C₀(h₀, A)` times one theta-type series at the
 coordinates `(−W, V)` of the group's cusp, with coefficients `d̄_H(−m)ψ_{λ³D}(−my)∏_{P∈A}B_{P,j_P}(m)`. -/

@@ -5,8 +5,8 @@ import ResponseKernel
 
 Unconditional: no hypothesis about ζ, RH or any `L`-function appears anywhere below.
 
-Round 114 derived the kernel phase `K̃(r) = r log 2r − r + √(r² − 1) − r arcosh r` beyond the wall `r > 1`.
-`ToneCalc` reduced a tone to the stationarity condition `K'(r) = log(2qr/p)` and the Legendre form
+The kernel phase `K̃(r) = r log 2r − r + √(r² − 1) − r arcosh r` is defined beyond the wall `r > 1`.
+`ToneCalc` reduces a tone to the stationarity condition `K'(r) = log(2qr/p)` and the Legendre form
 `4π[r(1 + log(p/2qr)) + K(r)]`. Here, for the conductor-`q` kernel `K_q(r) = K̃(qr)/q`:
 
 * `hasDerivAt_Kt`: `K̃'(r) = log 2r − arcosh r`;
@@ -24,7 +24,7 @@ Round 114 derived the kernel phase `K̃(r) = r log 2r − r + √(r² − 1) −
 Not formalised here (these remain numerical findings or classical inputs):
 * that the chain's first-order response has this phase;
 * the Stirling error term for `Im log Γ(a + iγ/2)`;
-* the round-77 integral identity for the multiplier;
+* the integral identity for the multiplier;
 * the lemma that the `L` kernel is `K̃(qr)/q`, as opposed to that form being assumed.
 -/
 
@@ -32,7 +32,7 @@ open Real
 
 namespace ToneHyperbola
 
-/-- The round-114 kernel phase. -/
+/-- The kernel phase. -/
 noncomputable def Kt (r : ℝ) : ℝ := r * log (2 * r) - r + √(r ^ 2 - 1) - r * arcosh r
 
 theorem hasDerivAt_Kt {r : ℝ} (hr : 1 < r) : HasDerivAt Kt (log (2 * r) - arcosh r) r := by

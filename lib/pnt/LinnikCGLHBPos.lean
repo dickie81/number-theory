@@ -1,9 +1,9 @@
 /-
-# Positivity, and the double sums of Heath-Brown's bound (the CGL plan's stage M5)
+# Positivity, and the double sums of Heath-Brown's bound
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Stage M5 is the displayed hypothesis `CGLT101`, their Theorem 10.1 (Heath-Brown's bound for double sums with
+`CGLT101` is the displayed hypothesis, their Theorem 10.1 (Heath-Brown's bound for double sums with
 characters). Its source, their [6], has not been read. The route here follows Kerr's proof for `q = 1`
 (arXiv:1909.12075, §§5–6: his Lemmas 18–20 and 22–27, Corollaries 21 and 28, and Theorem 16), with two inputs that
 carry characters, both from Jutila (Acta Arith. 32 (1977), 55–62, read from its scanned pages), and both quoted by

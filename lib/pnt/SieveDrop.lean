@@ -22,13 +22,11 @@ takes them. `xq q = q^L`, and `cornerP z` is the set of primes of `(⌊z/4⌋, z
 * `sum_cost_div_of`, `drop_ev_of`, `total_div_lt`: the same with the loss as a parameter, `total/K ≤ c` in
   the reals, so `D1(g_B) ≤ φ(q)⁻¹(c + ε)x/log x`; and `total < K` gives `total/K < 1`. The `0.88` forms are their cases.
 
-This is the loss of `frontier/linnik/SIEVE-ROUTE.md` §6, M8 of §13: M6's shares and M7's total bound the dropped
+This is the loss: the shares of the dropped cells and the certificate's total bound the dropped
 families' `B`-counts, and the corner near `(1/2, 1/2)` is `o(x/log x)`.
 
-Round 607 made the route's numbers and the certificate's grid parameters and the certificate's total a hypothesis
-(`htot`); the statements of earlier rounds are the case `SieveRoute.route2333` and `SieveCert.grid2333`, with
-`SieveCert.total_le_2333` for `htot`.
-
+The route's numbers, the certificate's grid parameters and the certificate's total are a hypothesis (`htot`); the
+case `SieveRoute.route2333` and `SieveCert.grid2333`, with `SieveCert.total_le_2333` for `htot`, instantiates it.
 
 The file imports `SieveQ.lean`.
 -/

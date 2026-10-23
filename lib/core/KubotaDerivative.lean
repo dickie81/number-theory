@@ -2,7 +2,7 @@ import KubotaExpansion
 
 /-! # The derivative `∂_{z̄}` at `z = 0` of the twisted `θ̄`, in both expansions
 
-S5f-4b, the second part of the S5f-4. The companion paper puts "`For $z=x+\mathrm i y$, use
+The companion paper puts "`For $z=x+\mathrm i y$, use
 $\partial_{\bar z}=(\partial_x+\mathrm i\partial_y)/2$ and $\partial_z=(\partial_x-\mathrm i\partial_y)/2$.`" At a
 cusp: "`Thus the derivative in cusp coordinates is $-(cv)^{-2}\partial_{z'}$, with no height-derivative
 term.`" This file proves the identity these give between the derivative series at `∞` and at the cusps. The
@@ -28,8 +28,8 @@ combined as `(∂_x + i∂_y)/2`.
   `Σ_m a(m)·v·K_{1/3}(4π|m|v/9)·2πi·m̄/9` equals the same combination of
   `−(σ(c)v)^{−2}·Σ_m d(m)·V₀·K_{1/3}(4π|m|V₀/9)·2πi·m/9`, with `V₀ = 1/(N(c)v)`.
 * **For the twisted `θ̄`** (**`twisted_theta_dbar`**, with `thetaSupp_mul_le` and `norm_twAt_le`): the
-  identity for the expansion. The cusp constant terms do not appear in it. Since round 379 it is
-  `twisted_theta_dbar_of`, the identity for any data given with their expansion, at the data.
+  identity for the expansion. The cusp constant terms do not appear in it. `twisted_theta_dbar_of` is
+  the identity for any data given with their expansion, at the data.
 -/
 
 open Real Set Filter MeasureTheory Complex NumberField Ideal
@@ -590,7 +590,7 @@ theorem twisted_theta_dbar_of {τ : 𝓞 K → ℂ} {Kc : ℝ} (hτ : ThetaSupp 
     rw [zero_mul, zero_add]
 
 open Classical in
-/-- **`∂_{z̄}` at `z = 0` of the twisted `θ̄`, in both expansions** (S5f-4b): for data `(D, C₀, d_H, y)` as in
+/-- **`∂_{z̄}` at `z = 0` of the twisted `θ̄`, in both expansions**: for data `(D, C₀, d_H, y)` as in
 `twisted_theta_expansion` and `v > 0`, the series `Σ_m a(m)·v·K_{1/3}(4π|m|v/9)·2πi·m̄/9` of the
 twisted coefficients `a(m) = φ(m/λ)·conj τ(−m)` equals the sum over `h₀` and the active sets `A` of
 `φ̂₀(h₀)∏_{P∉A}C_{P,j_P}(0)C₀(h₀, A)` times `−(σ(c)v)^{−2}·Σ_m d′(m)·V₀·K_{1/3}(4π|m|V₀/9)·2πi·m/9`, with

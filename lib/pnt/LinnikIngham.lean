@@ -7,7 +7,7 @@ Plain statement. For every `0 < ε ≤ 1`, `CharDensity (36/13 + 4ε) 10 C` hold
 (`charDensity_ingham`): for every `q ≥ 1`, `½ ≤ σ ≤ 1` and `T ≥ 2`, at most `C(qT)^{(36/13+4ε)(1−σ)}(log qT)^{10}`
 characters mod `q` have a zero of `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`. With `linnik_of_charDensity`,
 for every `η > 0` every reduced class mod `q` has a prime `p ≤ K q^{36/13+η}` (`linnik_thirtysix_thirteenths`), with
-no hypothesis. Round 522 had `17/6 + η`; `36/13 = 3/(2 − 11/12)` is Ingham's exponent `3/(2 − σ)` at the edge of the
+no hypothesis. The exponent `36/13 = 3/(2 − 11/12)` is Ingham's exponent `3/(2 − σ)` at the edge of the
 zero-free half-plane `Re s > 11/12`.
 
 * `Gχ_left_le'`: on the line `Re w = ½ − β` of the detector, `|G_χ(w)|(1 + |v|)⁵ ≤ (KG Y^{½−σ}/δ)|M_X||L|`,

@@ -19,14 +19,10 @@ on `θ' ≤ σ < 3/2`, where `Kld` and `Rld` depend on `θ < θ' < 3/2` only (`l
   supplies (`Linnik.logDeriv_LFunction_le`). The half-plane forms above follow from them, since that disc lies
   in `Re s > θ` (`re_gt_of_mem_ball`).
 
-History. Round 337 proved the disc step for `ζ` (`HalfPlanePNT.disc_point`); round 478 proved it for an entire `F`
-with the same text (`ChiPNT.disc_point`); round 480 kept the constants (`ChiUniform.Kld`,
-`ChiUniform.logDeriv_le_uniform_of`, `ChiUniform.logDeriv_le_uniform`), and the three files each repeated the
-radii. Round 513 (STRUCTURAL-REVIEW §9.3, U3 and U4) moves the disc step here for an `F` holomorphic on the disc,
-which covers `ζ` at `|t| > 3`, and states the radii once (`logDeriv_le_Kld`). The disc helpers (`ctr`, `re_ge`,
-`one_lt_log_three`) come from `HalfPlanePNT`, `locG` and `disc_point` from `ChiPNT`, and
-`Kld` and the two bounds from `ChiUniform`. Round 520 proves the disc step for a zero-free disc and
-derives the half-plane forms from it, so the radii are still stated once.
+The disc step is stated for an `F` holomorphic on the disc, which covers `ζ` at `|t| > 3`, and the radii are stated
+once (`logDeriv_le_Kld`). The disc helpers (`ctr`, `re_ge`, `one_lt_log_three`) come from `HalfPlanePNT`, `locG` and
+`disc_point` from `ChiPNT`, and `Kld` and the two bounds from `ChiUniform`. The disc step is proved for a zero-free
+disc, and the half-plane forms are derived from it.
 -/
 import Landau
 

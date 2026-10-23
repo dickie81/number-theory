@@ -16,7 +16,7 @@ Plain statements. For a finite set `T` and weights `x`, `esym T x m` is the elem
   `c₀⁻¹ Σ_j C₀^{k_j}/k_j!` times `∏_i (1 + C₀^{k_i+1}/((k_i + 1)! c₀))`, where `V = ∏_j ∏_{T_j} (1 − g)`.
 * `sum_levels_le`: for `C ≥ 0` and `2C² ≤ (k + 1)(k + 2)`, `Σ_{j<J} C^{k+2j}/(k + 2j)! ≤ 2C^k/k!`, uniformly in `J`.
 
-This is the fundamental lemma (T3) of `frontier/linnik/SIEVE-ROUTE.md` §13's M5, by Brun's sieve in product form.
+This is the fundamental lemma, by Brun's sieve in product form.
 
 The proof:
 

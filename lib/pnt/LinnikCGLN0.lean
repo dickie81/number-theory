@@ -1,5 +1,5 @@
 /-
-# The term `n = 0` of `ĝ_a`, their `I` (the CGL plan's stage M4)
+# The term `n = 0` of `ĝ_a`, their `I`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

@@ -1,6 +1,5 @@
 /-
-# The terms `n ≠ 0` of `ĝ_a` over `|ξ| ≤ X`, by the change of variables to their `Σ_II` (the CGL plan's
-stage M4)
+# The terms `n ≠ 0` of `ĝ_a` over `|ξ| ≤ X`, by the change of variables to their `Σ_II`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

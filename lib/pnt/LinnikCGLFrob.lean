@@ -1,5 +1,5 @@
 /-
-# The off-diagonal mass of the Gram matrix, explicitly (the CGL plan's stage M3)
+# The off-diagonal mass of the Gram matrix, explicitly
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -11,7 +11,7 @@ Lemma 6.2, at one point per character, before `Z` and `K` are chosen.
 Plain statement (`frobOff_le`). Let `χ` be injective on `R`, `|t_i| ≤ T`, `N > 0`, `S ⊆ [2, N′]`, and
 `|Σ_{n∈S}b_nχ_i(n)n^{it_i}| ≥ V > 0` for every `i ∈ R`. Let `Z, K ≥ 1`, and `d(k) ≤ τ` for `k ≤ N′Z`. Then
 `‖E‖_F² ≤ N·Q₀(q)²I_H²·|R|·V^{−2}L(N′Z)·τ·Σ_{n∈S}|b_n|²·H_Z + |R|²B²`, where `I_H = ∫|H(1/2 + iu)| du`, `L(X)` is
-the large-sieve factor `LSX`, `H_Z = Σ_{m≤Z}1/m`, `Q₀(q)` is round 642's, and `B` is the tail bound
+the large-sieve factor `LSX`, `H_Z = Σ_{m≤Z}1/m`, `Q₀(q)` is `Q0` of `LinnikCGLPair`, and `B` is the tail bound
 at `|τ| = 2T` (`Bmax`).
 
 Their proof of Proposition 6.1 says (spaces restored, the formulas transcribed): "Now we proceed with an argument

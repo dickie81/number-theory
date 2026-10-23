@@ -3,8 +3,8 @@ import DHHadamard
 
 /-! # `L(½, χ₅) ≠ 0` and the zero side for `Ξ_{DH}`
 
-The Hadamard product for the Davenport–Heilbronn `Ξ` took the named input
-`DHHalf : L(½, χ₅) ≠ 0`. It is discharged here without numerics, from the integral
+The Hadamard product for the Davenport–Heilbronn `Ξ` has the named input
+`DHHalf : L(½, χ₅) ≠ 0`. It is proved here without numerics, from the integral
 representation: `L(½, χ) = ½∫_1^∞ S(x)x^{−3/2}dx` (`LFunction_eq_IχC` at `s = ½`), and the summatory
 function of `χ₅` has real part `0, 0, 1, 1, 1` by the residue of `⌊x⌋ + 1` mod 5
 (`re_sum_range_cC_chi5`), so `Re S ≥ 0` everywhere and `Re S = 1` on `[1, 4)`, where
@@ -13,10 +13,10 @@ function of `χ₅` has real part `0, 0, 1, 1, 1` by the residue of `⌊x⌋ + 1
 
 The zero side of Weil's explicit formula for `Ξ_{DH}` then follows as for `Ξ_χ`: off the
 zeros, `Ξ_{DH}′(t)/Ξ_{DH}(t) = Σ_u 2t/(t² − u)` (`hasSum_logDeriv_XiDH`, `hasSum_logDeriv_dh`), and
-`Σ |u|^{−7/8} < ∞` (`summable_XiDH_zeros_rpow`). What remains for the explicit formula is the prime
-side, the Dirichlet series of `−dh′/dh`; see the README, round 255. (`DHPrime.lean`
-and `DHExplicit.lean`: done, for the scaled `Ξ₃(t) = Ξ_dh(3t)` with its own zero side
-(`hasSum_logDeriv_XiDH3`, `summable_XiDH3_zeros_rpow`); this file's zero side has no downstream use.)
+`Σ |u|^{−7/8} < ∞` (`summable_XiDH_zeros_rpow`). The prime
+side, the Dirichlet series of `−dh′/dh`, is in `DHPrime.lean` and `DHExplicit.lean`, for the scaled
+`Ξ₃(t) = Ξ_dh(3t)` with its own zero side (`hasSum_logDeriv_XiDH3`, `summable_XiDH3_zeros_rpow`); this file's
+zero side has no downstream use.
 -/
 
 open Real Complex DirichletCharacter Filter Topology MeasureTheory Set

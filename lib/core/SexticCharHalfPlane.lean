@@ -3,9 +3,9 @@ import EisensteinQuadSupplement
 import RealCharHalfPlane
 
 /-!
-# The characters of order dividing `6`, `L(s, χ) ≠ 0` on `Re s > 11/12` (door 5(a), part 2)
+# The characters of order dividing `6`, `L(s, χ) ≠ 0` on `Re s > 11/12`
 
-Door 5(a), completed: the half-plane for every Dirichlet character `χ` with `χ⁶ = 1`, of every modulus,
+This file proves the half-plane for every Dirichlet character `χ` with `χ⁶ = 1`, of every modulus,
 through the family's own members.
 
 * **The member `q⁶`** (`sym6_natCast_pow_six`): `(q⁶/𝔞)₆` is `1` if `N𝔞` is prime to `q` and `0` otherwise, on the
@@ -479,7 +479,7 @@ theorem LFunction_ne_zero_of_member_coprime {q : ℕ} [NeZero q] {χ : Dirichlet
 
 /-- **The half-plane `Re s > 11/12` for the characters of order dividing `6`**: for every modulus `q ≥ 1`, every
 Dirichlet character `χ` mod `q` with `χ⁶ = 1` and every `s` with `Re s > 11/12`, `L(s, χ) ≠ 0`, the trivial
-character excepted at `s = 1`. The real ones are round 477's. -/
+character excepted at `s = 1`. The real ones are in `RealCharHalfPlane`. -/
 theorem LFunction_ne_zero_of_pow_six {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ6 : χ ^ 6 = 1)
     {s : ℂ} (hs : 11 / 12 < s.re) (hχs : χ ≠ 1 ∨ s ≠ 1) : LFunction χ s ≠ 0 := by
   by_cases hχ2 : χ ^ 2 = 1

@@ -14,8 +14,8 @@ u-space form
   `Q_dh(g) = (Re ψ(¾) + log(5/π))‖g‖² + ∫_0^∞ [f(0) − f(u)] e^{−u/2}/sinh u du − 2 Σ c(n) n^{−1/2} f(log n)`
 
 (`QDHu`, `f = autocorr g`; `weilRHSDH_scaled`). This is `QCu` with `N = 5`, the odd
-shift `q = ¾`, and `c(n)` in place of `Λ(n)χ(n)`: the form `frontier/dh/dh_gram.py` and `cert.py`
-evaluate in ball arithmetic. **`QDHu_hasSum`**: `Q_dh(g) = Σ_u 2ĝ(3τ_u)²` over the zeros
+shift `q = ¾`, and `c(n)` in place of `Λ(n)χ(n)`: the form that the certificate
+evaluates in ball arithmetic. **`QDHu_hasSum`**: `Q_dh(g) = Σ_u 2ĝ(3τ_u)²` over the zeros
 `½ ± 3iτ_u` of `dh`; `QDHu_nonneg_of_DHRH`; **`exists_offline_dh_of_neg_u`**: `Q_dh(g) < 0` for one
 probe whose `ĝ(3·)²` is a strip test function gives a zero of `dh` with `Re s > 0`, `Re s ≠ ½`.
 
@@ -23,10 +23,10 @@ For even, nonnegative profiles non-increasing on `[0, a]` the strip test at widt
 (`striptest_antitone3`, from `norm_ghatC_le_of_antitone` with `cosh(3a)` and the bound
 `‖ĝ(z)‖ ≤ e^{a|Im z|}∫|g|`, `norm_ghatC_le_exp_im`), so **`exists_offline_dh_of_neg_antitone`** and
 **`exists_offline_dh_of_neg_box`** (`Q_dh(box a) < 0` for one `a > 0`) need no strip hypothesis.
-A kernel-checked off-line zero of `dh` was then one verified real inequality away, since
-closed by `QDHu_packet_neg` and `dh_offline_zero` (`DHCertificate`): `QDHu g < 0` for an
-explicit `g`, whose ingredients are the finitely many `c(n)` with `log n ≤ 2a` (`f(log n) = 0`
-beyond the support of the autocorrelation), `Re ψ(¾)`, and the elementary integral `E_{3/4}(g)`.
+An off-line zero of `dh` follows from one real inequality, `QDHu g < 0` for an explicit `g`, which
+`QDHu_packet_neg` and `dh_offline_zero` (`DHCertificate`) close. Its ingredients are the finitely many `c(n)` with
+`log n ≤ 2a` (`f(log n) = 0` beyond the support of the autocorrelation), `Re ψ(¾)`, and the elementary integral
+`E_{3/4}(g)`.
 -/
 
 open Real Complex DirichletCharacter Filter Topology MeasureTheory Set
@@ -126,7 +126,7 @@ theorem exists_offline_dh_of_neg_u (hp : Probe a g) (ha : 0 < a) {K : ℝ}
 
 /-! ## The strip test at width 3 for monotone profiles -/
 
-/-- `‖ĝ(z)‖ ≤ e^{a|Im z|}∫|g|`: `HadamardApply`'s (`src/`,). -/
+/-- `‖ĝ(z)‖ ≤ e^{a|Im z|}∫|g|`: `WeilForm.norm_ghatC_le_exp_im`. -/
 theorem norm_ghatC_le_exp_im (ha : 0 ≤ a) (hg : IntervalIntegrable g volume (-a) a) (z : ℂ) :
     ‖ghatC g a z‖ ≤ Real.exp (a * |z.im|) * ∫ u in (-a)..a, |g u| :=
   WeilForm.norm_ghatC_le_exp_im ha hg z

@@ -3,9 +3,9 @@ import HilbertResolvent
 
 /-! # The ball average as a self-adjoint operator
 
-S5f-10 of the plan, part 4 (S5f-10b, second half, second part). For a subgroup `Γ` of `SL_2(ℤ[ω])`
+For a subgroup `Γ` of `SL_2(ℤ[ω])`
 with a unitary character `χ` and a partition of unity `ρ` (`IsPU`), this file constructs the
-operator of the plan on `L²(ν)`, `ν = ρ dμ`, and proves it self-adjoint, so that the
+operator on `L²(ν)`, `ν = ρ dμ`, and proves it self-adjoint, so that the
 resolvent facts apply to it.
 
 * **Unitary characters** (`IsUChar`, a structure; `IsUChar.map_one` and **`IsUChar.map_inv`**):

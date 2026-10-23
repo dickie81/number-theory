@@ -1,5 +1,5 @@
 /-
-# Their Theorem 10.1 (Heath-Brown) displayed, and their Lemma 10.6 (the CGL plan's stage M3, the `S₃` side)
+# Their Theorem 10.1 (Heath-Brown) displayed, and their Lemma 10.6 (the `S₃` side)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -8,12 +8,12 @@ with |t| ≤ T such that for (t,χ) ≠ (t′,χ′) either χ ≠ χ′ or |t�
 c_nχ₁(n)χ̄₂(n)n^{i(t₁−t₂)}|² ⪅ (|T|N² + |T|²N + |T|^{5/4}(qT)^{1/2}N) max_{n∼N} |c_n|²." (text layer lines 4618–4635;
 spaces restored; the sums, large bars, subscripts and exponents transcribed; the first `T` is their calligraphic set).
 The bar over `χ₂`, which the text layer drops, is a rule at y = 438.6 spanning x = 220.3–227.7 over the `χ` at x =
-220.3–227.7 in the row y = 429.5 on PDF page 40 (pdfminer; `scratchpad/r670/probe/p40_all.txt`). Their notation: "we
+220.3–227.7 in the row y = 429.5 on PDF page 40 (pdfminer). Their notation: "we
 write A ⪅ B to indicate that for any ϵ > 0, there exists a constant C(ϵ) > 0, depending only on ϵ, such that A ≤
 C(ϵ)(qT)^ϵ B for all sufficiently large qT." (lines 279–281; spaces restored, the exponent transcribed), and "A ∼ B
 signifies the stronger condition B < A ≤ 2B" (lines 278–279; spaces restored).
 
-`CGLT101` displays it, not proved here (the plan's stage M5), with its implicit constants explicit: for every
+`CGLT101` displays it, not proved here, with its implicit constants explicit: for every
 `ε > 0` there are `C` and `Q₀` such that, for `qT ≥ Q₀`, `T, M ≥ 1`, points `(t_i, χ_i)` with `χ_i` primitive modulo
 `q`, `|t_i| ≤ T` and `χ_i ≠ χ_j` or `|t_i − t_j| ≥ 1` for `i ≠ j`, and `|c_n| ≤ B` on `M < n ≤ 2M`,
 `Σ_{i,j}|Σ_{M<n≤2M}c_nχ_i(n)χ̄_j(n)n^{i(t_i−t_j)}|² ≤ C(qTM)^ε(|P|M² + |P|²M + |P|^{5/4}(qT)^{1/2}M)B²`. Their

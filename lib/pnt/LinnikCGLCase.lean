@@ -1,9 +1,9 @@
 /-
-# Their Lemma 10.10 with its case analysis, and their Remark 10.3 (the CGL plan's stage M3, the `S₃` side)
+# Their Lemma 10.10 with its case analysis, and their Remark 10.3 (the `S₃` side)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Their case analysis in Lemma 10.10 (round 675 quotes the statement): "Since N ≥ (qT)^{1/2} and D = N²/(qT), we have
+Their case analysis in Lemma 10.10 (the statement quoted): "Since N ≥ (qT)^{1/2} and D = N²/(qT), we have
 |W|^{5/4}(qT)^{1/2}N ≫ |W|qT = |W|N²/D." (text layer line 5436; spaces restored, the exponents transcribed); "We split
 into cases based on whether |W| > (qT)^{2/3} or not." (line 5440; spaces restored, the exponent transcribed). The first
 case uses "N|W|⁴ ≫ |W|³qT ≥ E(W)qT," (line 5445; spaces restored, the exponents transcribed) and ends with their
@@ -37,7 +37,7 @@ The library's form.
 * `lemma1010_case`: their Lemma 10.10 with their hypotheses, from `lemma1010` and `case_le`, with
   `D = ⌊N²/(qT)⌋`.
 
-Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` round 669's, `E` `energy`,
+Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` as in `LinnikCGLL105`, `E` `energy`,
 `G = d(q)(⌊log₂|R|²⌋ + 1)` and `L = 1 + log max(1, N)`.
 * `sq_le_energy`, `energy_le_cube`: `|R|² ≤ E`; and `E ≤ |R|³` for `χ` injective on `R`.
 * `pow_rpow_eq`, `exists_pow_eq`: `(u^m)^x = u^k` for `u ≥ 0` and `mx = k`; and every `r ≥ 0` is `u^m` for some

@@ -1,14 +1,14 @@
 import EisensteinCount
 import HalfPlaneS0
 
-/-! # S1, part 2b: the splitting law in `ℤ[ω]` and `Σ_{N𝔞=n} μ(𝔞) = μ_K(n)`
+/-! # The splitting law in `ℤ[ω]` and `Σ_{N𝔞=n} μ(𝔞) = μ_K(n)`
 
-Round 283 proved that `m(n) = Σ_{N𝔞=n} μ(𝔞)` is multiplicative and, at prime powers, a signed count
+The function `m(n) = Σ_{N𝔞=n} μ(𝔞)` is multiplicative and, at prime powers, a signed count
 of sets of prime factors of `p𝓞`. This file decides the splitting type of every rational prime and
-concludes **`mI_eq_muK`**: `m(n) = μ_K(n)`, the coefficients of `1/(ζ(s)L(s, χ₋₃))` used by the
-S0. So sums over the ideals of `ℤ[ω]` (the family) and S0's `μ_K` are the same objects.
+concludes **`mI_eq_muK`**: `m(n) = μ_K(n)`, the coefficients of `1/(ζ(s)L(s, χ₋₃))` used by
+`HalfPlaneS0`. So sums over the ideals of `ℤ[ω]` (the family) and `HalfPlaneS0.muK` are the same objects.
 
-* **Split and inert, from Mathlib's cyclotomic theory** (round 284 proved both by hand,
+* **Split and inert, from Mathlib's cyclotomic theory** (both can also be proved by hand,
   through a counting bound on `𝓞/p𝓞` and cube roots of unity mod `p`). For `p ≠ 3` every prime
   factor of `p𝓞` has norm `p^{ord₃(p)}` (`absNorm_of_mem_pFactors`, from Mathlib's
   `IsCyclotomicExtension.Rat.inertiaDeg_eq_of_not_dvd`) and multiplicity one

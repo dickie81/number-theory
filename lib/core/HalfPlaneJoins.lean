@@ -16,7 +16,7 @@ strip then give, under `SmoothBound θ` with `θ ≥ ½`:
   `2Q_ζ + Q_{χ₋₃}` of `ζ·ζ_{ℚ(√−3)}` (`QK3_rate_of_smoothBound`, through `QKχ_twins_rate`);
 * the prefactor: `λ₁(a) ≤ K(a + 1)e^{(8 + 2θ)a − 4πe^{2a}}` (`lam_prefactor_of_smoothBound`,
   through `Kaiser.lam_le_split`). Unconditionally the exponent is `10a` (`lam_prefactor`), less a
-  Korobov–Vinogradov saving `c·a^{1/3}/(log a)^{1/3}` in `external/pnt` (`lam_prefactor_KV`).
+  Korobov–Vinogradov saving `c·a^{1/3}/(log a)^{1/3}` in `KaiserKV` (`lam_prefactor_KV`).
 
 `SmoothBound θ` stays a displayed hypothesis: no instance with `θ < 1` is proved.
 -/

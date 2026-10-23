@@ -1,5 +1,5 @@
 /-
-# The reflection of the Gram entries (the CGL plan's stage M3)
+# The reflection of the Gram entries
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

@@ -2,7 +2,7 @@ import Mathlib
 
 /-! # Separating variables with one-dimensional Mellin transforms
 
-S4 of the plan, part 2: the analysis that the companion paper's proof of its Proposition 4.5
+This file carries out the analysis that the companion paper's proof of its Proposition 4.5
 takes from its Appendix B (Lemma B.2, which rests on Lemma B.1). There a two-variable kernel depending
 on the row is separated by a two-dimensional Mellin transform. In Proposition 4.5 the kernel has the product form
 `W₀(ρx₁)·conj W₀(ρx₂)·𝓕Φ(A/(x₁x₂))`. This file separates each factor with a one-dimensional

@@ -2,8 +2,8 @@ import KubotaCuspTheta
 
 /-! # θ's Fourier series at the cusps `γ_±`
 
-S5f-15 of the plan, part 6. The next step planned θ's Fourier series at the cusps `γ_±` from
-the coefficients. This file proves it, for `tt′ = 1`, `m₀ = ±1` in the class of the cusp `γ_t` (
+This file proves θ's Fourier series at the cusps `γ_±` from
+the coefficients, for `tt′ = 1`, `m₀ = ±1` in the class of the cusp `γ_t` (
 `CuspClass`) and `θ` the Fourier series `thS`, and with it the clauses of
 `KubotaTheta` at `γ_±`:
 
