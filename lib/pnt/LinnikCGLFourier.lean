@@ -1,5 +1,5 @@
 /-
-# Chen–Gupta–Li's Lemma 4.3 (1), the decay of `ĥ_t` (the CGL plan's stage M3, the `S₃` side)
+# Chen–Gupta–Li's Lemma 4.3 (1), the decay of `ĥ_t` (the `S₃` side)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

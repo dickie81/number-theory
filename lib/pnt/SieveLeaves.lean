@@ -18,14 +18,12 @@ Plain statements. `gA q a m = 1[m ≡ a]` and `gB q m = 1[(m, q) = 1]/φ(q)`; `L
 * `P6_spec`: `SieveProp6.prop6` (with `RouteOK` and `hII`) on a family of at most `18` atoms with `ThrOK` and nonzero
   coefficients (`NZ`), as a bound on `|famJ(g_A, z₀) − famJ(g_B, z₀)|`.
 
-These connect M8's families (`SieveDecomp`) with the Type II bounds and Proposition 6. `dw_eq`, `sum_dw_famI` and
+These connect the families (`SieveDecomp`) with the Type II bounds and Proposition 6. `dw_eq`, `sum_dw_famI` and
 `sum_dw_famJ` write `SieveFamily.dw = gA − gB` on the families, and `RTg_eq_of_thrOK` and `RT_pivoted` identify a
 family with the comparisons of its atoms.
 
-Round 607 made the route's numbers and the certificate's grid parameters and the Type II estimate a hypothesis
-(`hII`); the statements of earlier rounds are the case `SieveRoute.route2333` and `SieveCert.grid2333`, with
-`SieveRoute.typeII2333` for `hII`.
-
+The route's numbers and the certificate's grid parameters are parameters and the Type II estimate is a hypothesis
+(`hII`); the case `SieveRoute.route2333` and `SieveCert.grid2333` takes `SieveRoute.typeII2333` for `hII`.
 
 The file imports `SieveBuch.lean`.
 -/

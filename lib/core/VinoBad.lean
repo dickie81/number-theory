@@ -1,5 +1,5 @@
 /-
-# Sharpening, step S2a: bad tuples by Hölder over classes
+# Sharpening: bad tuples by Hölder over classes
 
 Plain statement (`TBB_le2`). For a prime `p ≥ k ≥ 2` and `n = k + s`, the pairs of bad tuples
 (coordinates in fewer than `k` residue classes mod `p`) with equal power sums number at most

@@ -2,8 +2,8 @@
 # The certificate of the sieve route's loss at `L = 230/100` (the unconditional exponent under
 Halász–Montgomery per bin)
 
-The grid of the window `[3944/10000, 4780/10000]` (the Halász–Montgomery window of the curve `gU` at `L = 230/100`,
-the scan of `SIEVE-ROUTE.md` §20): `U1 = ⌈(3944/10000)DEN⌉`, `U2 = ⌊(4780/10000)DEN⌋`, `n = 100`. On it
+The grid of the window `[3944/10000, 4780/10000]` (the Halász–Montgomery window of the curve `gU` at `L = 230/100`):
+`U1 = ⌈(3944/10000)DEN⌉`, `U2 = ⌊(4780/10000)DEN⌋`, `n = 100`. On it
 `SieveCert.total` is at most `0.88K`, checked by the kernel in one check.
 
 The file imports `SieveCertDefs.lean`, so the check runs without Mathlib's environment.

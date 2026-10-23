@@ -2,7 +2,7 @@ import EisensteinQuadGauss
 
 /-! # Quadratic and sextic reciprocity in `ℤ[ω]`
 
-S3 of the plan, part 4: reciprocity from the quadratic Gauss sums, as in Appendix A.1
+Reciprocity from the quadratic Gauss sums, as in Appendix A.1
 of the release's companion paper (the proof of its Lemma 4.1).
 
 * **Twisted quadratic sums** `S_c(t) = Σ_{x mod c} ψ_c(t·x²)` (`sqSum`). Chinese remainders

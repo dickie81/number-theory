@@ -4,22 +4,19 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Plain statement. For every `η > 0` there is `C` with `|ψ(x, χ)| ≤ C log(N + 2)·x^{11/12+η}` for every quadratic
-Dirichlet character `χ ≠ 1` mod `N` and every `x > 1` (`psiChi_le_uniform`). No hypothesis. *
-*
+Dirichlet character `χ ≠ 1` mod `N` and every `x > 1` (`psiChi_le_uniform`). No hypothesis.
 
 * `psiChi_le_uniform`: `ChiPNT.sum_le_uniform` at `F = L(·, χ)`, with `c = 18(N + 1)/11` from
   `PsiOmega.norm_LFunction_le`, `A = ζ(3/2)` (`zeta32`) and `C₀ = −ζ′/ζ(3/2)` (`logDerivZeta32`), and the
-  half-plane `Re s > 11/12`. *
-  * **
+  half-plane `Re s > 11/12`.
 * `psiChi_le_uniform_of`: `psiChi_le_uniform` from given constants `C₁`, `C₂` of `sum_le_uniform`.
 
-History. Round 480 also proved here the two bounds for an entire `F` with their constants kept:
-`logDeriv_le_uniform` (`|F′/F(σ + it)| ≤ K(log(2 + 2cA) + log(|t| + 4)) + C₀` for `σ ≥ θ'`) and `sum_le_uniform`
-(`|Σ_{n ≤ X} f(n)| ≤ (C₁(log(2 + 2cA) + C₀) + C₂)X^{θ+η}` for `X > 1`); round 484 added their constants as
-formulas (`Kld`, `logDeriv_le_uniform_of`, `eta0`, `sum_le_uniform_of`, `integral_one_add_abs_rpow`). Round 513
-(STRUCTURAL-REVIEW §9.3, U3) moved `Kld` and the two log-derivative bounds to `LogDerivDisc.lean` and the rest to
-`ChiPNT.lean`, where the bounds without constants are now their corollaries; their namespaces are
-`LogDerivDisc` and `ChiPNT`.
+The two bounds for an entire `F` with their constants kept are `logDeriv_le_uniform`
+(`|F′/F(σ + it)| ≤ K(log(2 + 2cA) + log(|t| + 4)) + C₀` for `σ ≥ θ'`) and `sum_le_uniform`
+(`|Σ_{n ≤ X} f(n)| ≤ (C₁(log(2 + 2cA) + C₀) + C₂)X^{θ+η}` for `X > 1`), with their constants as
+formulas (`Kld`, `logDeriv_le_uniform_of`, `eta0`, `sum_le_uniform_of`, `integral_one_add_abs_rpow`). `Kld` and
+the two log-derivative bounds are in `LogDerivDisc.lean` and the rest in `ChiPNT.lean`, where the bounds
+without constants are corollaries; their namespaces are `LogDerivDisc` and `ChiPNT`.
 -/
 import ChiPNT
 
@@ -61,7 +58,7 @@ lemma zeta32_nonneg : 0 ≤ zeta32 := tsum_nonneg fun _ ↦ norm_nonneg _
 
 lemma logDerivZeta32_nonneg : 0 ≤ logDerivZeta32 := tsum_nonneg fun _ ↦ norm_nonneg _
 
-/-- `‖L(3/2 + it, χ)‖⁻¹ ≤ ζ(3/2)`, from `1/L(s, χ) = Σ χ(n)μ(n)n^{−s}` (round 520 names the step of
+/-- `‖L(3/2 + it, χ)‖⁻¹ ≤ ζ(3/2)`, from `1/L(s, χ) = Σ χ(n)μ(n)n^{−s}` (a step of
 `psiChi_le_uniform_of`). -/
 theorem LFunction_ctr_inv_le {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (t : ℝ) :
     ‖DirichletCharacter.LFunction χ (ctr t)‖⁻¹ ≤ zeta32 := by
@@ -79,7 +76,7 @@ theorem LFunction_ctr_inv_le {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N
   rw [Complex.norm_intCast]
   exact_mod_cast ArithmeticFunction.abs_moebius_le_one
 
-/-- `‖L′/L(s, χ)‖ ≤ −ζ′/ζ(3/2)` on `Re s ≥ 3/2` (round 520 names the step of `psiChi_le_uniform_of`). -/
+/-- `‖L′/L(s, χ)‖ ≤ −ζ′/ζ(3/2)` on `Re s ≥ 3/2` (a step of `psiChi_le_uniform_of`). -/
 theorem logDeriv_LFunction_right {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {s : ℂ} (hs : 3 / 2 ≤ s.re) :
     ‖deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s‖ ≤ logDerivZeta32 := by
   rw [← norm_neg, ← LSeries_twist_vonMangoldt_eq_LFunction χ (by linarith)]

@@ -1,5 +1,5 @@
 /-
-# Their Lemma 10.7, the fourth moment of `R` (the CGL plan's stage M3, the `S₃` side)
+# Their Lemma 10.7, the fourth moment of `R` (the `S₃` side)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -9,7 +9,7 @@ layer encodes as four form feeds each, large parentheses, subscripts and exponen
 the set U_{B,q₁} := {(u,χ) : #{(t₁,χ₁),(t₂,χ₂) ∈ W : ⌊t₁−t₂⌋ = u, χ₁χ̄₂ = χ} ∼ B, cond(χ) = q₁}, where cond(χ) is the
 conductor of χ." (lines 4826–4828; spaces restored, the subscripts transcribed; the bar over `χ₂`, which the text layer
 drops, is a rule at y = 354.2 spanning x = 381.6–388.9, over the `χ` at x = 381.6–388.9 in the row y = 345.1 of PDF
-page 42, `scratchpad/r672/p42_all.txt`). They sum over the classes "by the Cauchy-Schwarz inequality and the divisor
+page 42). They sum over the classes "by the Cauchy-Schwarz inequality and the divisor
 bound" (line 4829), then "Expanding the square" (line 4901), pass to "U*_{B,q₁} := {(u,χ*) : χ* is primitive,
 (u,χ₀χ*) ∈ U_{B,q₁}}" (lines 4955–4956; spaces restored, the subscripts and superscripts transcribed), and "with Lemma
 10.4, we replace the supremum with an integral and then apply Theorem 10.1" (lines 4957–4958). Their last step:

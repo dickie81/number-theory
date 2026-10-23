@@ -2,9 +2,8 @@ import KubotaThetaSeries
 
 /-! # `θ̃ = S` almost everywhere, and three clauses of `KubotaTheta`
 
-S5f-10 of the plan, part 20 (S5f-10f, tenth part). The next step planned `θ̃ = S` almost
-everywhere, with `S` θ's Fourier series (`thS`), and `S` automorphic at every point. This file
-proves both, for `r > 0` and `Y > 0`:
+This file proves `θ̃ = S` almost everywhere, with `S` θ's Fourier series (`thS`), and `S` automorphic at every
+point, for `r > 0` and `Y > 0`:
 
 * **Square-integrable slices** (**`ae_lintegral_sq_slice_lt_top`** and **`ae_integrable_slice`**, with
   `thetaF_add_period`, `enorm_sub_sq_le` and `lintegral_sq_boxZ_thetaF_lt_top`): `∫_{box}|θ̃|² dz dv/v³ < ∞`

@@ -1,5 +1,5 @@
 /-
-# Their Lemma 10.10, the large-gcd terms, before their case analysis (the CGL plan's stage M3, the `S₃` side)
+# Their Lemma 10.10, the large-gcd terms, before their case analysis (the `S₃` side)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -16,8 +16,8 @@ before it.
 
 The library's form.
 * `lemma106'`: `lemma106` assumes `Q₀ ≤ qT`. At `T′ = max(1, Q₀)T`, which makes `qT′ ≥ Q₀`, its bound
-  holds for every `q ≥ 1` and `T ≥ 1`, with the constant `max(C, 0)max(1, Q₀)^ε max(1, Q₀)^{1/2}`, as round 672
-  did for `lemma107`.
+  holds for every `q ≥ 1` and `T ≥ 1`, with the constant `max(C, 0)max(1, Q₀)^ε max(1, Q₀)^{1/2}`, as for
+  `lemma107`.
 * Their `n′ = n/d`: for `d, m₁, m₂ > 0`, `|R₂(dm₁, dm₂)| ≤ |R₂(m₁, m₂)|` (`norm_R2_mul_le`), with equality when `d` is
   a unit modulo `q`, and `R₂(dm₁, dm₂) = 0` otherwise. So the pairs `n₁, n₂ ∼ N` with gcd `d > 0` contribute at most
   `Σ_{m₁,m₂∼N/d}|R₂(m₁, m₂)|^k` (`sum_gcd_eq_le`), their inner sum.
@@ -33,7 +33,7 @@ The library's form.
   becomes `2N²/(D + 1)`. Their hypotheses on `D`, `N`, `|W|` and `E(W)` enter only their case analysis, which is
   not formalized here.
 
-Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` round 669's, `E` `energy`,
+Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` (`R2`), `E` `energy`,
 `G = d(q)(⌊log₂|R|²⌋ + 1)` and `L = 1 + log max(1, N)`.
 * `lemma106'`: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for primitive characters injective on
   `R`, `T, M ≥ 1` and points `|t_i| ≤ T`, `Σ_{n₁,n₂∼M}|R₂(n₁, n₂)|² ≤ C(qTM)^ε(|R|M² + |R|²M + |R|^{5/4}(qT)^{1/2}M)`.

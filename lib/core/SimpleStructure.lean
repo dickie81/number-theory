@@ -3,12 +3,12 @@ import SimpleCover
 
 /-! # The structure of a degenerate ground space
 
-Round 48. The zero-swap is an operation *on the ground space*. If `g` is in the ground
+The zero-swap is an operation *on the ground space*. If `g` is in the ground
 space and `ĝ(w) = 0` with `σ = w²` non-real, then both real parts of the Green solution
 `h = (∂² + σ)⁻¹ g` (compactly supported, ĥ = −ĝ/(z² − σ), SwapRealize.lean) are again in the ground
 space (`green_mem_groundSpace`). Iterating this, and using that `Q` commutes with `∂²` (the Weil
 functional is a distribution applied to `f ⋆ k̃`, and `(i/2)² = −¼` is real), gives the structure
-theorem of README round 48: the ground space is simple iff no ground state is `H²`-flat at the edges.
+theorem: the ground space is simple iff no ground state is `H²`-flat at the edges.
 -/
 
 open Real Filter Topology Complex MeasureTheory Set

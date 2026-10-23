@@ -1,5 +1,5 @@
 /-
-# Their Proposition 7.1 (the CGL plan's stage M3, the `S₃` side)
+# Their Proposition 7.1 (the `S₃` side)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -8,9 +8,8 @@ Chen–Gupta–Li's Proposition 7.1: "We have |I′_{m⃗}| ≪_ϵ (N³/q³) ∫
 + O_ϵ((qT)^{−200})" (text layer lines 2041–2066; spaces restored and the display transcribed). The absolute-value bars
 are large delimiters, which the text layer encodes as four form-feed characters each, invisible in a listing (lines 2054
 and 2065); their positions are read from the PDF (page 23, `CMEX10` glyphs at x = 337.6 and x = 516.7 in the rows
-y = 508.1–529.6, the display's first line; `scratchpad/r661/probe/p23_460_545.txt`). Their proof inserts the two bounds
- into their (7.3), `Ip_eq`, and applies the triangle inequality. This file does that with
-explicit constants.
+y = 508.1–529.6, the display's first line). Their proof inserts the two bounds into their (7.3),
+`Ip_eq`, and applies the triangle inequality. This file does that with explicit constants.
 
 Plain statement (`prop71`). For `q ≥ 1`, `N > 0`, `X > 0`, every `K`, points `t_i` and characters `χ_i` modulo `q`
 (`i ∈ R`) and integers `m₁, m₂, m₃`,

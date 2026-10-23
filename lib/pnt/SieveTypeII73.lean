@@ -10,7 +10,7 @@ in `[1/2, 2]`, `K₀ ≥ 0`, `e₁ > 0` and `0 < η ≤ 10⁻⁵`. For every lar
 `Σ_{χ≠1} |Σ_{m∈S} a_mχ(m)m^{−ih₀}||∏_{j<K} Σ_{p≤2Q_j} χ(p)(p/Q_j)^{−ih_j}f0(p/Q_j)|` is at most
 `q^{L−1/50000}(Σ_m |a_m|²/P)^{1/2}`.
 
-This is `SieveTypeIIGen.typeII_gen` for the curve of `frontier/linnik/SIEVE-ROUTE.md` §14: the trivial count below
+This is `SieveTypeIIGen.typeII_gen` for the curve: the trivial count below
 `8003/14003 = 1 − 1/A₇`, `A₇ = 7/3 + 1/2000` on `[8003/14003, 5/6]` and `101/50` from `5/6` on.
 
 * `g73`, `g73_le_one`, `g73_half`: the curve's exponent `A(σ)(1 − σ)`, at most `1`, and `1` at `σ = 1/2`.

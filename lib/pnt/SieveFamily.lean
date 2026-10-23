@@ -1,5 +1,5 @@
 /-
-# Type II families (milestone M4: SIEVE-ROUTE.md §10's Lemmas 4′ and 4″)
+# Type II families
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -48,9 +48,7 @@ The proof:
   `A₀q^L/φ(q)` times `a₁q^{−7/400000} + a₂q^{−1} + a₃(12q^{−ε₂} + q^{−e₁})`, which is at most `q^{−δ}` for large `q`,
   with `δ = min(ε₂, e₁)/2` (`bracket_le`).
 
-Round 607 made `L`, `w₁` and `w₂` a route's parameters and the Type II estimate a hypothesis (`hII`); the
-statements of earlier rounds are the case `SieveRoute.route2333`, with `SieveRoute.typeII2333` for `hII`.
-
+For the route `SieveRoute.route2333`, take `SieveRoute.typeII2333` for `hII`.
 
 The file imports `SieveSep.lean` and `SieveRoute.lean`.
 -/
@@ -126,8 +124,8 @@ theorem inner_factor (χ : DirichletCharacter ℂ q) (f0 : ℝ → ℝ) (S : Fin
   ring
 
 open scoped ContDiff in
-/-- **The bound for a smooth family** (SIEVE-ROUTE.md §10's Lemma 4′ with Proposition 3′, before the near-boundary
-terms). Assume the route's Type II estimate (`hII`). Let `f0` be smooth with support in `[1/2, 2]`, `e₁ > 0` and
+/-- **The bound for a smooth family** (before the near-boundary terms). Assume the route's Type II estimate (`hII`).
+Let `f0` be smooth with support in `[1/2, 2]`, `e₁ > 0` and
 `0 < η ≤ 10⁻⁵`. There is `q₀` such that for `q ≥ q₀`: let `m` run over `S ⊆ (P, 2P]`, `q^{w₁L} ≤ P ≤ q^{w₂L}`, with
 coefficients `a_m`, and `K ≤ K₀` primes over `Sp`'s ranges at the scales `Q_i ≥ q^{e₁}`, `∏_i Q_i ≤ 2^{K₀}q^L/P`, with
 the weights `f0(p_i/Q_i)`; and let `J` continuous integrable `g_j` with integrable `𝓕g_j` be applied to the forms
@@ -226,7 +224,7 @@ theorem family_bound [Route] (hII : TypeIIAt) {f0 : ℝ → ℝ} (hf0 : ContDiff
     rw [norm_mul, norm_prod]
     exact mul_le_mul (hWnorm χ ξ) (Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) fun i _ => hBnorm χ ξ i)
       (Finset.prod_nonneg fun i _ => norm_nonneg _) (Finset.sum_nonneg fun m _ => norm_nonneg _)
-  -- the box: M3
+  -- the box
   set B₁ : ℝ := (q : ℝ) ^ (L - 1 / 50000) * Real.sqrt ((∑ m ∈ S, ‖a m‖ ^ 2) / P) with hB₁def
   have hB₁0 : 0 ≤ B₁ := by positivity
   have hB₁ : ∀ ξ : Fin J → ℝ, (∀ j, |ξ j| ≤ T₀) →
@@ -509,7 +507,7 @@ section Sharp
 
 open Classical
 
-/-- **Sharp against smooth** (the shape of SIEVE-ROUTE.md §10's Lemma 4″). Let the comparisons `I_j ∈ [0, 1]` be
+/-- **Sharp against smooth.** Let the comparisons `I_j ∈ [0, 1]` be
 replaced by `G_j ∈ [0, 1]`, with `|I_j − G_j| ≤ M_j`. Then
 `|D(wΠI)| ≤ |D(wΠG)| + Σ_j (2φ(q)⁻¹ Σ_x |w(x)|M_j(x) + |D(|w|M_j)|)`. -/
 theorem norm_Dsum_sharp_le {X : Type*} {a : ZMod q} (T : Finset X) (n : X → ℕ) (w : X → ℂ) {J : ℕ}

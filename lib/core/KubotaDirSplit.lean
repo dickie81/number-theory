@@ -2,9 +2,8 @@ import KubotaLocTable
 
 /-! # The Dirichlet series `D_m` at a primary prime
 
-S5f-13 of the plan, part 4. The next step planned the relations among the Dirichlet
-series `D_m(s) = Σ_c S_m(c)·N(c)^{−s}` at a primary prime `p ∤ x`, for `m = δ₃xp^e`. This file proves them,
-for `Re s > 2`, with `N = N(p)`, `X = N(p)^{−s}` and `t = (3/p)₃`:
+This file proves the relations among the Dirichlet series `D_m(s) = Σ_c S_m(c)·N(c)^{−s}` at a primary
+prime `p ∤ x`, for `m = δ₃xp^e`, for `Re s > 2`, with `N = N(p)`, `X = N(p)^{−s}` and `t = (3/p)₃`:
 
 * **The series** (`dirD`, a definition; `dirL_eq`, `cuspSm_of_not_dvd`, `norm_cuspSm_le` and
   **`summable_dirD`**): `|S_m(c)| ≤ 9N(c)`, so `D_m(s)` converges absolutely for `Re s > 2`.

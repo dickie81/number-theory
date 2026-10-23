@@ -3,10 +3,9 @@ import Roadmap
 
 /-! # Hyperbolic balls and their averages
 
-S5f-10 of the plan, part 1 (S5f-10a). Round 360 planned Lax–Milgram for the energy form, to bound the
-resolvent by `|Im λ|⁻¹` off the real axis. This file prepares a different operator: the average over a
-hyperbolic ball of fixed radius. Ball averages commute with the action, the powers `v^s` are eigenfunctions
-with an explicit eigenvalue `ĥ(s)`, `ĥ` is entire, and `Im ĥ(s) > 0` just above the real axis.
+This file prepares the average over a hyperbolic ball of fixed radius. Ball averages commute with the
+action, the powers `v^s` are eigenfunctions with an explicit eigenvalue `ĥ(s)`, `ĥ` is entire, and
+`Im ĥ(s) > 0` just above the real axis.
 
 * **The point-pair invariant** (`ppi` and `PInv`, definitions; **`pinv_actP`**, with `PInv.comp`,
   `PInv.congr`, `pinv_transl`, `pinv_diag`, `inv_identity` and `pinv_E`):

@@ -32,9 +32,6 @@ difference formula at `z = ¾`, `w = 1`, and `digamma_one`).
 `f(0) − f(u) = f(0)(1 − cos ωu) + (u/2) cos ωu + β sin ωu`, `β = cos(2ωa)/(2ω)`; beyond `2a`, `f = 0`; the
 `(1 − cos)` pieces recombine to `f(0)·[Re ψ(¾ + iω/2) − ψ(¾)]` by the substitution `t = 2u` in Gauss's integral
 (`psiReQ_three_quarters_sub_u`), and the three remainders are the bounds above.
-
-The Frullani, `h`, Binet, `K` and assembly sections were built by agents to stated interfaces and re-read and
-recompiled by the lead; the split Gauss integral and its `u`-form are the lead's.
 -/
 
 open Real Complex MeasureTheory Set Filter Topology

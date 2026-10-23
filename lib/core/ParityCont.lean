@@ -803,7 +803,7 @@ theorem continuousOn_lamO : ContinuousOn lamO (Ioi 0) :=
 
 /-! ## The continuation theorem -/
 
-/-- **Round 146, the continuation theorem.** If the parity gap holds strictly at `a₀ > 0`
+/-- **The continuation theorem.** If the parity gap holds strictly at `a₀ > 0`
 (`lam a₀ < lamO a₀`) and the even and odd ground energies never coincide for `a ≥ a₀`, the parity
 gap holds at every `a ≥ a₀`. -/
 theorem parityGap_of_no_crossing {a₀ : ℝ} (h0 : 0 < a₀) (hgap : lam a₀ < lamO a₀)

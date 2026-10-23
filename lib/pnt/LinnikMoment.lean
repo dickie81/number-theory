@@ -10,7 +10,7 @@ import Mathlib.Tactic.Module
 
 Built on Mathlib alone; no PrimeNumberTheoremAnd file is imported.
 
-**Round 537: Chen–Gupta–Li's Lemma 4.2** (`refined_moment`, `refined_moment_cube`, `refined_moment_chars`). Their
+**Chen–Gupta–Li's Lemma 4.2** (`refined_moment`, `refined_moment_cube`, `refined_moment_chars`). Their
 Lemma 4.2, which they cite as Guth–Maynard's Lemma 4.2, reads
 "s₁(M) ≤ 2(tr((MM∗)³) − tr(MM∗)³/|W|²)^{1/6} + 2(tr(MM∗)/|W|)^{1/2}". Here it is proved with constant `1`, in
 squared form. For a complex matrix `A` with `n` rows indexed by `ι` and columns by `κ`, put `G = AAᴴ`,
@@ -27,14 +27,15 @@ Cauchy–Schwarz steps give `r³ ≤ ts²`. The polynomial `p(x) = x³ − 3μ²
 and `Re tr(p(G)) = X`. Together, `s³p(r/s) ≤ Xs³`. Finally `p` increases on `[μ, ∞)`, and
 `r/s ≥ ‖Ab‖²/‖b‖² ≥ μ` by a third Cauchy–Schwarz step.
 
-**Round 536: the simple bound at `r = 3`** (`moment_three`, `moment_three_chars`). `‖Ab‖⁶ ≤ ‖b‖⁶ · Re tr(G³)`;
+**The simple bound at `r = 3`** (`moment_three`, `moment_three_chars`). `‖Ab‖⁶ ≤ ‖b‖⁶ · Re tr(G³)`;
 over the characters, `(Σ_{χ∈W} |Σ_{n∈S} b_n c_n χ(n)|²)³ ≤ (Σ_{n∈S} |b_n|²)³ · Re Σ_{χ₁,χ₂,χ₃∈W}
 G(χ₁,χ₂)G(χ₂,χ₃)G(χ₃,χ₁)`. This is Chen–Gupta–Li's "simple bound s₁(M) ≤ tr((MM∗)^r)^{1/2r}" at `r = 3`, which they
 set aside: "this bound can be quite lossy". Since `Re tr(G³) ≥ nN_c³` when the diagonal is `N_c`, a large value
 `|D(χ)| ≥ V` on all of `W` with `‖b‖² ≤ N` gives through it at best `|W|² ≤ N³N_c³/V⁶`. At their critical point for
 prime moduli (`σ = 5/7`, `N = q^{7/9}`, `N_c ≍ N`) that is `|W| ≲ q^{2/3}`, the size to be beaten. Lemma 4.2
-removes the all-equal triples, the source of that term. *
-* Its proof: with `y = Ab`, `u = Aᴴy`,
+removes the all-equal triples, the source of that term.
+
+The simple bound is proved as follows. With `y = Ab`, `u = Aᴴy`,
 `z = Au` and `v = Aᴴz`, Cauchy–Schwarz gives `‖y‖⁴ ≤ ‖b‖²‖u‖²`, `‖u‖⁴ ≤ ‖z‖²‖y‖²` and `‖z‖⁴ ≤ ‖v‖²‖u‖²`; and
 `v = Cy` with `C = Aᴴ(AAᴴ)`, so row by row `‖v‖² ≤ ‖C‖_F²‖y‖²`, where `‖C‖_F² = Re tr(CCᴴ) = Re tr((AAᴴ)³)` by
 cyclicity of the trace.

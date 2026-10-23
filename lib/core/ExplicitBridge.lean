@@ -14,7 +14,7 @@ the library's own `weilQ` (the prime-side form of Theorem 1bn(i)). This file pro
 
 for every even probe `g`. So `WeilExplicit` is the one named input, and the other three shapes follow.
 
-**Proved with no new input** (the Fourier half lives in FourierInv.lean, round 127, where
+**Proved with no new input** (the Fourier half lives in FourierInv.lean, where
 SwapRealize.lean also uses it).
 * **The pole terms.** `h(±i/2) = ĝ(i/2)² = poleR²` (`ghatC_I_div_two`, evenness).
 * **The convolution identity** (`fourier_autocorr`): `∫ f(x)e^{irx} dx = ĝ(r)²` with `f = autocorr g`.
@@ -26,8 +26,7 @@ SwapRealize.lean also uses it).
 
 **`DigammaDiff`**: `ψ(z) − ψ(w) = ∫_0^∞ (e^{−wt} − e^{−zt})/(1 − e^{−t}) dt` for `Re z, Re w > 0`,
 Gauss's integral representation of the digamma function, in difference form. Mathlib's `Digamma.lean`
-lists it as a TODO. It entered as a named input; round 154 proves it (`digammaDiff`,
-from `DigammaGauss.lean`), so no theorem here assumes it.
+lists it as a TODO. `digammaDiff`, proved from `DigammaGauss.lean`, gives it, so no theorem here assumes it.
 -/
 
 open Real Filter Topology Complex MeasureTheory Set

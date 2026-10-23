@@ -2,10 +2,10 @@ import KubotaTorusScale
 
 /-! # The cube sum of Kubota's character
 
-S5f-12 of the plan, part 6. The next step planned the cubic character identity behind the cube
-eigenrelation. Let `p` be a primary prime and `(a, c)` the first column of `γ ∈ Γ_1(3)`: `a` primary, `3 ∣ c`,
-and `a`, `c` coprime. For `r ∈ ℤ[ω]` let `p^k` be the greatest common divisor of `x = a + 3rc` and `p³`. In
-the plan `M_rγ = γ_rβ_r`, and the first column of `γ_r` is `(x/p^k, cp^{3−k})`. With Kubota's symbol
+This file proves the cubic character identity behind the cube eigenrelation. Let `p` be a primary prime and
+`(a, c)` the first column of `γ ∈ Γ_1(3)`: `a` primary, `3 ∣ c`, and `a`, `c` coprime. For `r ∈ ℤ[ω]` let `p^k`
+be the greatest common divisor of `x = a + 3rc` and `p³`. Write `M_rγ = γ_rβ_r`; the first column of `γ_r` is
+`(x/p^k, cp^{3−k})`. With Kubota's symbol
 `κ(a, c) = (c/a)₃`, and `1` for `c = 0` (`kub` of the first column, `kub_eq_kubC`), this file
 proves `Σ_{r mod p³} κ(x/p^k, cp^{3−k})·|p|^{(4k−6)/3} = N(p)²·κ(a, c)`:
 

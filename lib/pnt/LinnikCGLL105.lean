@@ -1,5 +1,5 @@
 /-
-# Their Lemma 10.5, the energy by the third moment of `R` (the CGL plan's stage M3, the `S₃` side)
+# Their Lemma 10.5, the energy by the third moment of `R` (the `S₃` side)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -12,7 +12,7 @@ transcribed), and expands the square over the triples.
 
 The library's form, at one point per character. For a coefficient function `c`, `D_c(t) = Σ_{n∈S}c(n)n^{it}` (`Dp`).
 * `Dp` is a finite exponential sum with frequencies `log n`; for `N > 0` and `S ⊆ [N, 2N]` they lie within `1` of
-  `log N`, so round 668 gives `|D_c(t)|² ≤ ∫|k(ξ)||D_c(t + πξ)|² dξ`. The weight is shifted, not the window: for
+  `log N`, so `norm_sq_esum_le` gives `|D_c(t)|² ≤ ∫|k(ξ)||D_c(t + πξ)|² dξ`. The weight is shifted, not the window: for
   `|τ − t| ≤ 1`, `|D_c(t)|² ≤ ∫κ(ξ)|D_c(τ + πξ)|² dξ` with `κ(ξ) = 4C_k/(1 + ξ²)` (`kmaj`), since
   `(1 + ξ²)|k(ξ)| ≤ C_k` and `1 + ξ² ≤ 4(1 + (ξ + η)²)` for `|η| ≤ 1`.
 * The fourth point is not inverted: if `χ_iχ_j = χ_kχ_l` then `χ_l(n) = χ_i(n)χ_j(n)χ̄_k(n)` for every `n`

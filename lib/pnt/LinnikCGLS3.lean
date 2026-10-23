@@ -1,5 +1,5 @@
 /-
-# Their Proposition 11.1, `CGLS3` from `CGLP81` and `CGLT101` (the CGL plan's stage M3)
+# Their Proposition 11.1, `CGLS3` from `CGLP81` and `CGLT101`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

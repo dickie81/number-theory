@@ -29,7 +29,7 @@ theorem N0_sub_ge {a b : ℝ} (ha : 2 * π ≤ a) (hab : a ≤ b) :
 
 /-- **Bounded gaps between the zeros of `ζ`**: there is `H` such that every window `[t, t + H)` with
 `t ≥ T₀` contains the ordinate of a nontrivial zero. From `S(T) = O(log T)` (zeta23 layer) and the
-growth of `N₀` (pilot). -/
+growth of `N₀`. -/
 theorem zero_in_window : ∃ H T₀ : ℝ, 0 < H ∧ ∀ t : ℝ, T₀ ≤ t →
     ∃ p : PosZeroIdx, t ≤ zetaOrd p ∧ zetaOrd p < t + H := by
   obtain ⟨C, hC, hS⟩ := Slog_zeta

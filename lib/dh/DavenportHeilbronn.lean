@@ -3,9 +3,9 @@ import WeilChi
 
 /-! # Davenport–Heilbronn in Lean, stage 1
 
-Round 165 computed the Weil form of the Davenport–Heilbronn function numerically and certified
-`λ₁ < 0` at `2a = 3.45, 3.6, 4.0` in ball arithmetic, outside Lean. This file puts the function itself
-into Lean, on Mathlib's Dirichlet L-functions.
+The Weil form of the Davenport–Heilbronn function has `λ₁ < 0` at `2a = 3.45, 3.6, 4.0`, certified
+numerically in ball arithmetic outside Lean. This file puts the function itself into Lean,
+on Mathlib's Dirichlet L-functions.
 
 **For any primitive `χ ≠ 1` mod `N`.** Mathlib's functional equation
 `Λ(1 − s, χ) = N^{s − ½} ε_χ Λ(s, χ⁻¹)` applied twice at `s = 2`, where `Λ(2, χ) ≠ 0`, gives
@@ -31,7 +31,7 @@ symmetric under `s ↦ 1 − s` in the strip `0 < Re s < 1` (`dh_ne_zero`, `dh_f
 **Not here.** Conjugation symmetry (`ε_{χ⁻¹} = conj ε_χ`, a Gauss-sum identity); the growth bound and
 Hadamard product of `Ξ_{dh}` (the chain is stated for quadratic `χ`); the explicit formula
 (the prime side is the Dirichlet series of `−dh′/dh`, no Euler product, and `dh` has zeros with
-`Re s > 1`); and the certificate itself. See the README, round 253.
+`Re s > 1`); and the certificate itself.
 -/
 
 open Real Complex DirichletCharacter Filter Topology

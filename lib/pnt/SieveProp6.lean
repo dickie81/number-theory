@@ -12,9 +12,9 @@ unit `a` mod `q`: let `rt` run over the `j`-tuples of primes up to `⌊2q^L⌋` 
 `ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` in absolute value, where `A` is the `n ∈ (⌊q^L⌋, ⌊2q^L⌋]` with `n ≡ a` and `B` those
 prime to `q`.
 
-This is Proposition 6 of `frontier/linnik/SIEVE-ROUTE.md` §5, the last part of §13's M5, built with one tree at the
-threshold `X'` for every `r ≤ X'` in place of §5's two cases. The conditions on `a₀` and `b₀` say that the stops fall in
-the lower window (`a₀ + b₀ < (1 − w₁)L`, `(1 − w₂)L < b₀`) and that the leaves' remainder is small (`b₀ < L − 1`).
+It is built with one tree at the threshold `X'` for every `r ≤ X'`. The conditions on `a₀` and `b₀` say that the
+stops fall in the lower window (`a₀ + b₀ < (1 − w₁)L`, `(1 − w₂)L < b₀`) and that the
+leaves' remainder is small (`b₀ < L − 1`).
 
 The proof:
 
@@ -30,9 +30,8 @@ The proof:
 * `exists_k`, `main_coef`, `main_term`: an even `k` with `(2k + 4)²ζ(k)` small puts the main terms below
   `ηq^L/(φ(q) log q)`; `rem_le`, `rem_term`: the remainders total at most `q^{L−c}/φ(q)`.
 
-Round 607 made `L`, `w₁` and `w₂` a route's parameters and the Type II estimate a hypothesis (`hII`); the
-statements of earlier rounds are the case `SieveRoute.route2333`, with `SieveRoute.typeII2333` for `hII`.
-
+`L`, `w₁` and `w₂` are a route's parameters and the Type II estimate is a hypothesis (`hII`); for the route
+`SieveRoute.route2333`, take `SieveRoute.typeII2333` for `hII`.
 
 The file imports `SieveStops2.lean`.
 -/

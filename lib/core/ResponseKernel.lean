@@ -1,7 +1,7 @@
 import Mathlib
 
 /-!
-# Response kernel and tone calculus (rounds 104–112 of the library), unconditional
+# Response kernel and tone calculus, unconditional
 
 * `RespKernel.response_kernel`: for a Gram family `M(s) = C + Σ_k φ_k(s)φ_k(s)ᵀ` (C symmetric, M(t) invertible) and
   `S = e ⬝ M⁻¹ e > 0`, `d/ds log S = −(2/S) Σ_k (y ⬝ φ_k)(y ⬝ φ_k')` with `y = M(t)⁻¹ e`: the first-order kernel

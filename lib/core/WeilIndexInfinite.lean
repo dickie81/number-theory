@@ -3,9 +3,8 @@ import WeilIndexConverse
 
 /-! # Every off-line quadruple gives a negative direction of `Q`
 
-Rounds 230 and 231 build `m` negative directions of Weil's form from `m` off-line zero quadruples, but
-only when all the off-line zeros, or all those above some level, are finitely
-many. Here the finiteness is gone.
+Building `m` negative directions of Weil's form from `m` off-line zero quadruples needs all the off-line
+zeros, or all those above some level, to be finitely many. Here that finiteness is not needed.
 
 * **`negDirections_offline`**: for any `m` off-line zeros of ζ in pairwise different quadruples
   `{ρ, 1 − ρ, ρ̄, 1 − ρ̄}`, some support has an `m`-dimensional space of strip-test probes on which `Q` is
@@ -13,7 +12,7 @@ many. Here the finiteness is gone.
 * **`negDirections_unbounded`**: if the off-line quadruples are infinitely many (no finite set of
   quadruples holds every off-line zero), the negative index of `Q` over all supports is unbounded.
 
-With round 229 (`finrank_le_quadruples_zeta`), the negative index of `Q` over all supports is the number
+With `finrank_le_quadruples_zeta`, the negative index of `Q` over all supports is the number
 of off-line quadruples, finite or infinite. Bombieri (2000) proved the finite case for the complex form.
 
 The proof replaces the explicit construction by a density argument.
@@ -126,7 +125,7 @@ The argument (§B–E below) uses only: ordinates `t_i` with `|Im t_i| < ½`, `R
 finitely many below any height; `Σ‖ĝ₀(κt_i)‖² < ∞` at a scale `κ > 0`; and the explicit formula
 `Q(Σ c_s twin_s) = w·Σ_i (m_c(κt_i)ĝ₀(κt_i))²` with a weight `w > 0`. `NegData` bundles them. ζ is the
 instance `zetaND` (`κ = 1`, `w = 1`); the Davenport–Heilbronn form is `DHNegIndex.dhND` (`κ = 3`,
-`w = 2`). Until round 273 the two were separate copies. -/
+`w = 2`). -/
 
 theorem cancel_two_I {a b : ℂ} (h : 2 * I * a = 2 * I * b) : a = b :=
   mul_left_cancel₀ (mul_ne_zero two_ne_zero I_ne_zero) h
