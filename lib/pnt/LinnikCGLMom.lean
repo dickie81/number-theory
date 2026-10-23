@@ -7,11 +7,9 @@ This file proves Chen–Gupta–Li's Lemma 9.1 at one point per character, where
 
 Their statement. "Let W be a finite set of pairs (t,χ), where |t| ≤ T and for (t,χ) ≠ (t′,χ′) either χ ≠ χ′ or
 |t−t′| ≥ (qT)^ϵ. For any M₂ > 0, we have ∫_{v≍1} Σ_{a mod q, (a,q)=1} |R(v,a)|² dv ≪_ϵ ϕ(q)|W| and
-∫_{v≍1} Σ_{a mod q, (a,q)=1} |R̃_{M₂}(v,a)|² dv ⪅ ϕ(q)|W|." (text layer lines 4355–4368; spaces restored, the
-integrals, sums and their ranges, the tilde, exponents and subscripts transcribed). Their proof expands the square
-against a smooth majorant: "The final equality follows from the orthogonality of characters." (line 4458), and then
-"Finally, the terms with t₁ = t₂ contribute ≪ ϕ(q)|W| to the sum." (line 4467, spaces restored, the subscripts
-transcribed).
+∫_{v≍1} Σ_{a mod q, (a,q)=1} |R̃_{M₂}(v,a)|² dv ⪅ ϕ(q)|W|." (p. 38). Their proof expands the square
+against a smooth majorant: "The final equality follows from the orthogonality of characters." (p. 38), and then
+"Finally, the terms with t₁ = t₂ contribute ≪ ϕ(q)|W| to the sum." (p. 39).
 
 At one point per character. The library's points have distinct characters (`Set.InjOn χ R`), so the cross terms vanish
 exactly and no majorant is needed: `Σ_{a unit}|R(v, a)|² = φ(q)|R|` for every `v > 0` (`sum_norm_Rf_sq`), and its

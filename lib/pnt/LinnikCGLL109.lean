@@ -4,12 +4,10 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Their Lemma 10.9 (Small GCD terms): "We have Σ_{n₁,n₂∼N, (n₁n₂,q)=1, (n₁,n₂)≤D} |R(n₁/n₂, n₁n₂^{−1})|³ ⪅_ϵ
-(DqT + N²)|W|^{1/2}E(W)^{1/2}." (text layer lines 5070–5082; spaces restored; the sum, fraction, large bars, which the
-text layer encodes as four form feeds each, large parentheses, subscripts and exponents transcribed). Their proof
+(DqT + N²)|W|^{1/2}E(W)^{1/2}." (p. 44). Their proof
 splits the sum by `d = (n₁, n₂)` and the residue `a`, bounds each class with Lemma 10.8 and the separation of the
 fractions, sums over `d`, and ends: "We may bound the third moment by Cauchy-Schwarz and Lemmas 9.1 and
-9.2," (line 5265) with the bound "⪅_ϵ q|W|^{1/2}E(W)^{1/2}" (line 5285; spaces restored, the subscript and exponents
-transcribed).
+9.2," (p. 45) with the bound "⪅_ϵ q|W|^{1/2}E(W)^{1/2}" (p. 45).
 
 The library's form.
 * Their sum runs over the pairs with `(n₁n₂, q) = 1`. `R₂(n₁, n₂) = 0` for the others (`R2_eq_zero`), so the library

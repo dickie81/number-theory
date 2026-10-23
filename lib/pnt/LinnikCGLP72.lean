@@ -7,27 +7,21 @@ This file assembles Chen–Gupta–Li's Proposition 7.2.
 
 Their statement. "There is a choice of 0 < M₁ ≤ M₃ ≤ M₂ ≤ (qT)^ϵqT/N such that
 S₃ ⪅_ϵ (N²/(q²M₂)) Σ_{|m_i|∼M_i, 1≤i≤3} Ĩ_{m⃗} + |W|, where Ĩ_{m⃗} := ∫_{v₁∈[1/2,2]} Σ_{b₁,b₂ mod q, (b₁b₂,q)=1}
-|R(v₁,b₁) R̃_{M₂}((m₁v₁+m₃)/(m₂v₁), b₁⁻¹b₂) R̃_{M₂}((m₁v₁+m₃)/m₂, b₂)| · (b₁m₁−b₂m₂+m₃,q) dv₁" (text layer lines
-2264–2290; spaces restored, the tildes, arrows, integral, sums and their ranges, large parentheses, fractions,
-exponents and subscripts transcribed). The text layer encodes the large bars as four form-feed characters each,
-invisible in a listing (lines 2279 and 2289); the PDF draws them as CMEX10 glyphs, which pdfminer finds on page 25 at
-x = 219.7–223.7, just before the characters `R(v₁,b₁)`, and at x = 506.2–510.2, just after the second `R̃`'s closing
-parenthesis, in the rows y = 584–606. Since `R̃ ≥ 0`, the integrand is `|R(v₁,b₁)|R̃R̃(b₁m₁−b₂m₂+m₃, q)`, which is
-`Itg`; `It` is their `Ĩ` with `X` for their `(qT)^ϵ`.
+|R(v₁,b₁) R̃_{M₂}((m₁v₁+m₃)/(m₂v₁), b₁⁻¹b₂) R̃_{M₂}((m₁v₁+m₃)/m₂, b₂)| · (b₁m₁−b₂m₂+m₃,q) dv₁" (p. 25). The large
+absolute-value bars stand just before `R(v₁,b₁)` and just after the second `R̃`'s closing parenthesis. Since `R̃ ≥ 0`,
+the integrand is `|R(v₁,b₁)|R̃R̃(b₁m₁−b₂m₂+m₃, q)`, which is `Itg`; `It` is their `Ĩ` with `X` for their `(qT)^ϵ`.
 
 Their proof. "Furthermore, by selecting dyadic scales to maximize the right-hand side, we arrive at (7.6)
-|S₃| ⪅_ϵ Σ_{|m_i|∼M_i, 1≤i≤3} |I′_{m⃗}| + |W|, where M₁ ≤ M₃ ≤ M₂ ≤ (qT)^ϵqT/N" (lines 2342–2347, with the same
-allowances), and, after the Cauchy–Schwarz step, "Since we are summing over m₂ with |m₂| ∼ M₂, we can
-replace −m₂ with m₂ without altering the overall sum. Inserting this in (7.6) then gives the result." (lines
-2429–2430; spaces restored, the subscripts transcribed).
+|S₃| ⪅_ϵ Σ_{|m_i|∼M_i, 1≤i≤3} |I′_{m⃗}| + |W|, where M₁ ≤ M₃ ≤ M₂ ≤ (qT)^ϵqT/N" (p. 25), and, after the Cauchy–Schwarz
+step, "Since we are summing over m₂ with |m₂| ∼ M₂, we can replace −m₂ with m₂ without altering the overall sum.
+Inserting this in (7.6) then gives the result." (p. 26).
 
 The library's form. `prop72` keeps every term explicit and differs from their statement in three ways.
 * It sums over every dyadic scale `2^k ≤ |m₂| < 2^{k+1}`, `k ≤ log₂M`, instead of choosing the largest. Their
   `⪅` is defined by "we write A⪅B to indicate that for any ϵ > 0, there exists a constant C(ϵ) > 0, depending only on
-  ϵ, such that A ≤ C(ϵ)(qT)^ϵB for all sufficiently large qT" (lines 279–281; spaces restored, the exponent
-  transcribed), so the number of scales, `⌊log₂M⌋ + 1`, is `⪅ 1` for `M ≤ (qT)²`. Their `A ∼ B` "signifies the
-  stronger condition B < A ≤ 2B" (lines 278–279, spaces restored); the library's blocks give `M₂ = 2^k ≤ |m₂|`, which
-  is what `Ip_le_It` needs.
+  ϵ, such that A ≤ C(ϵ)(qT)^ϵB for all sufficiently large qT" (p. 5), so the number of scales, `⌊log₂M⌋ + 1`, is `⪅ 1`
+  for `M ≤ (qT)²`. Their `A ∼ B` "signifies the stronger condition B < A ≤ 2B" (p. 5); the library's blocks give
+  `M₂ = 2^k ≤ |m₂|`, which is what `Ip_le_It` needs.
 * It splits only `m₂` dyadically and keeps `|m₁|, |m₃| ≤ |m₂|`, from the cyclic symmetry; their
   `M₁ ≤ M₃` is not used.
 * Its constant `2C_J(0)d(q)` and its three errors are explicit: the error at each triple, `3(2M)³E`; their

@@ -4,19 +4,18 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li prove their Proposition 8.1 (the displayed hypothesis `LinnikCGLJ.CGLP81`) from their Lemma 8.2.
-Its proof first rescales `f⃗` (line 2623), then: "Let ψ₁(x) be a smooth bump function supported on |x| ≪ 1, such
+Its proof first rescales `f⃗` (p. 28), then: "Let ψ₁(x) be a smooth bump function supported on |x| ≪ 1, such
 that ψ₁(m₃/M₃) majorizes the summation condition |m₃| ≪ M₃. Then we can bound the inner double sum in J(f⃗) by"
-(lines 2623–2625; spaces restored, the line-break hyphen removed, the subscripts transcribed, the arrow over `f`
-written `f⃗`), followed by their `g_a(u)`, the sum over `b`, `|m₁| ∼ M₁`, `m₂ ∼ M₂` and `m₃ ∈ ℤ` of
-`ψ₁(m₃/M₃)f_b((m₁u + m₃)/m₂)(am₁ + bm₂ + m₃, q)` (lines 2626–2643). Then: "By applying Plancherel’s theorem for the
-choice of M₁, M₂, M₃ that achieves the supremum, we obtain" (lines 2644–2645; the same allowances)
-`J(f⃗) ≤ Σ_a∫|g_a(u)|² du = Σ_a∫|ĝ_a(ξ)|² dξ` (lines 2646–2658), and the change of variables `u = ũ − m₃/m₁` gives
-`ĝ_a` (lines 2659–2715).
+(p. 28), followed by their `g_a(u)`, the sum over `b`, `|m₁| ∼ M₁`, `m₂ ∼ M₂` and `m₃ ∈ ℤ` of
+`ψ₁(m₃/M₃)f_b((m₁u + m₃)/m₂)(am₁ + bm₂ + m₃, q)` (p. 28). Then: "By applying Plancherel’s theorem for the
+choice of M₁, M₂, M₃ that achieves the supremum, we obtain" (p. 28)
+`J(f⃗) ≤ Σ_a∫|g_a(u)|² du = Σ_a∫|ĝ_a(ξ)|² dξ` (p. 28), and the change of variables `u = ũ − m₃/m₁` gives
+`ĝ_a` (p. 28).
 
 The library's form.
 * `ψ₁(m₃/M₃)` is `ψ̃₀(m₃/L)` (`psi0`, `1` on `[−1, 1]` and `0` off `(−2, 2)`), for any `L` with
   `κM₃ ≤ L`. One majorant then serves every `M₃` with `κM₃ ≤ L`, which is the monotonicity their footnote 6 notes:
-  "as the larger M₃ is, the greater the inner double sum in J(f⃗) is." (lines 3515–3516; the same allowances). The
+  "as the larger M₃ is, the greater the inner double sum in J(f⃗) is." (p. 32). The
   sums over `m₁`, `m₂` and `m₃` are the finite sets `P1 M₁`, `P2 M₂` and `P3 L`; for `L > 0`, `ψ̃₀(m₃/L)` vanishes
   off `P3 L`.
 * `g_a` is smooth with compact support, so it is a Schwartz function (Mathlib's `HasCompactSupport.toSchwartzMap`),

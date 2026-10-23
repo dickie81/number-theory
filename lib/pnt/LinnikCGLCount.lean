@@ -6,7 +6,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 Chen–Gupta–Li bound a double sum over `|m₁′| ∼ M₁` and `n′` in the proof of their Lemma 8.2: "the double sum
 Σ_{m₁′}Σ_{n′} 1 is bounded by ⪅ 1 + M₁/M₃. To see this, write s = m₁′n′. Then s is a non-zero integer lying in a fixed
 residue class modulo q, and it is contained in a ⪅ qM₁/M₃ neighborhood of qξ. Thus there are at most ⪅ 1 + M₁/M₃
-possibilities for s, giving the claim." (lines 3358–3366; spaces restored, the sums and subscripts transcribed). This
+possibilities for s, giving the claim." (p. 32). This
 file proves
 the count in the form the library's bound for `Σ_a|ĝ_a(ξ)|²` uses: the sum over `m₁′` and `n′ ≠ 0` of the weight
 `|ψ̂₀(L(n′/q − ξ/m₁′))|` times the gcd `(n′m₁′ − x, q)`, over all residues at once.

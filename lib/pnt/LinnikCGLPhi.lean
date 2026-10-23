@@ -8,8 +8,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 `φ_{u′}(u) = ψ(u)K(u − u′)` against `|R(u′, −b)|²`. This file bounds the Fourier transform of each `φ_{u′}`, the
 first half of the decay that their Proposition 8.1 asks for. They argue: "By (7.4), it follows that
 F((NM₂/q) ψ̃((NM₂/q) u))(ξ) = ψ̃̂(qξ/(NM₂)) = 2(qT)^ϵ ψ̃̂₀(2(qT)^ϵqξ/(NM₂)) ≪_j 2(qT)^ϵ (NM₂/(2(qT)^ϵq|ξ|))^j ≪_j
-(qT)^ϵ (NM₂/(q|ξ|))^j." (text layer lines 5761–5785; spaces restored, the transform, tildes, hats, large
-parentheses, fractions, subscripts and exponents transcribed), and then apply "the convolution theorem" (line 5786).
+(qT)^ϵ (NM₂/(q|ξ|))^j." (p. 49), and then apply "the convolution theorem" (p. 49).
 The library keeps `ψ` in the integrand and integrates by parts instead.
 
 The bound. `K(· − u′)` has `m`-th derivative `L·c^m·ψ̃₀^{(m)}(c(x − u′))` with `c = L/(2X)`, so

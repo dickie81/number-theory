@@ -8,18 +8,15 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 `f̂_b(ξ) = ∫g_a(u′)φ̂_{u′}(ξ) du′`. So `(2π|ξ|)^j|φ̂_{u′}(ξ)| ≤ B_j(L, X)` and `|R(u′, a)| ≤ |R|` give
 `(2π|ξ|)^jΣ_b|f̂_b(ξ)| ≤ B_j(L, X)·(3/2)φ(q)|R|²`. Their step: "Applying the convolution theorem and noting
 ∫ |R(u,−b)|² 1_{[1/2,2]}(u) du ≪ |W|² since |R(u,−b)| ≤ |W|, we see that Σ_{1≤b≤q, (b,q)=1} |f̂_b(ξ)| ⪅_j
-ϕ(q)|W|² (NM₂/(q|ξ|))^j." (text layer lines 5786–5797; spaces restored, the integral, sum, hat, fraction, large
-parentheses, subscripts and exponents transcribed).
+ϕ(q)|W|² (NM₂/(q|ξ|))^j." (p. 49).
 
-The constants. They note "Notice that M₂ ≤ (qT)^ϵ qT/N." (line 5761; spaces restored, the subscript and exponent
-transcribed), that is `L ≤ XT` with `L = NM₂/q` and `X` for their `(qT)^ϵ`. For `j ≥ 1` and `T ≥ 1` this gives
-`c = L/(2X) ≤ T`, and each term of `B_j` is at most `2T^j·min(2X, L/(2T))` times a constant depending only on `j`:
-`B_j(L, X) ≤ 2T^j·min(2X, L/(2T))·E_j`. With `f_{−1}(1) ≥ min(2X, L/(2T))|R|²/2`, this gives
-`Σ_b|f̂_b(ξ)| ≤ (6E_j/(2π)^j)(T/|ξ|)^jφ(q)f_{−1}(1)`. Their chain: "This implies Σ_b |f̂_b(ξ)| ⪅_j
-ϕ(q)|W|² (NM₂/(q|ξ|))^j ⪅ ϕ(q) (T/|ξ|^j) (NM₂/q)^{j−1} f_{q−1}(1) ⪅_j ϕ(q) (T^j/|ξ|^j) sup_{b,u} f_b(u). Namely, we
-have the desired Fourier decay." (lines 5813–5829; spaces restored, the sum, hats, fractions, large parentheses,
-subscripts and exponents transcribed). The library's constant carries no power of `X`: `B_j` keeps the
-factor `(2X)^{−j}` of the kernel's scaling.
+The constants. They note "Notice that M₂ ≤ (qT)^ϵ qT/N." (p. 49), that is `L ≤ XT` with `L = NM₂/q` and `X` for their
+`(qT)^ϵ`. For `j ≥ 1` and `T ≥ 1` this gives `c = L/(2X) ≤ T`, and each term of `B_j` is at most `2T^j·min(2X, L/(2T))`
+times a constant depending only on `j`: `B_j(L, X) ≤ 2T^j·min(2X, L/(2T))·E_j`. With
+`f_{−1}(1) ≥ min(2X, L/(2T))|R|²/2`, this gives `Σ_b|f̂_b(ξ)| ≤ (6E_j/(2π)^j)(T/|ξ|)^jφ(q)f_{−1}(1)`. Their chain: "This
+implies Σ_b |f̂_b(ξ)| ⪅_j ϕ(q)|W|² (NM₂/(q|ξ|))^j ⪅ ϕ(q) (T/|ξ|^j) (NM₂/q)^{j−1} f_{q−1}(1) ⪅_j ϕ(q) (T^j/|ξ|^j)
+sup_{b,u} f_b(u). Namely, we have the desired Fourier decay." (p. 49). The library's constant carries no power of `X`:
+`B_j` keeps the factor `(2X)^{−j}` of the kernel's scaling.
 
 For `j = 0` the library uses `Σ_b|f̂_b(ξ)| ≤ Σ_b∫f_b ≤ 8φ(q)sup f`, since `f_b` vanishes off `[−4, 4]`; this needs no
 relation between `L` and `T`. `exists_max` supplies a largest value `f_{b₀}(u₀)`, and the two cases give

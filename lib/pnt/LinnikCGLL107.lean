@@ -4,17 +4,12 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Their Lemma 10.7: "For any M ≥ 1, we have Σ_{n₁,n₂∼M, (n₁n₂,q)=1} |R(n₁/n₂, n₁n₂^{−1})|⁴ ⪅ E(W)M² + |W|⁴M +
-E(W)^{3/4}|W|(qT)^{1/2}M." (text layer lines 4814–4825; spaces restored; the sum, fraction, large bars, which the text
-layer encodes as four form feeds each, large parentheses, subscripts and exponents transcribed). Their proof: "We define
+E(W)^{3/4}|W|(qT)^{1/2}M." (p. 42). Their proof: "We define
 the set U_{B,q₁} := {(u,χ) : #{(t₁,χ₁),(t₂,χ₂) ∈ W : ⌊t₁−t₂⌋ = u, χ₁χ̄₂ = χ} ∼ B, cond(χ) = q₁}, where cond(χ) is the
-conductor of χ." (lines 4826–4828; spaces restored, the subscripts transcribed; the bar over `χ₂`, which the text layer
-drops, is a rule at y = 354.2 spanning x = 381.6–388.9, over the `χ` at x = 381.6–388.9 in the row y = 345.1 of PDF
-page 42). They sum over the classes "by the Cauchy-Schwarz inequality and the divisor
-bound" (line 4829), then "Expanding the square" (line 4901), pass to "U*_{B,q₁} := {(u,χ*) : χ* is primitive,
-(u,χ₀χ*) ∈ U_{B,q₁}}" (lines 4955–4956; spaces restored, the subscripts and superscripts transcribed), and "with Lemma
-10.4, we replace the supremum with an integral and then apply Theorem 10.1" (lines 4957–4958). Their last step:
-"Notice that B|U*_{B,q₁}| ≤ |W|² and B²|U*_{B,q₁}| ≤ E(W)." (lines 4986–4988; spaces restored, the subscripts,
-superscripts and exponents transcribed).
+conductor of χ." (p. 42; the PDF has a bar over `χ₂`). They sum over the classes "by the Cauchy-Schwarz inequality and
+the divisor bound" (p. 42), then "Expanding the square" (p. 43), pass to "U*_{B,q₁} := {(u,χ*) : χ* is primitive,
+(u,χ₀χ*) ∈ U_{B,q₁}}" (p. 43), and "with Lemma 10.4, we replace the supremum with an integral and then apply Theorem
+10.1" (p. 43). Their last step: "Notice that B|U*_{B,q₁}| ≤ |W|² and B²|U*_{B,q₁}| ≤ E(W)." (p. 43).
 
 The library's form.
 * `R₂(n₁, n₂) = Σ_iχ_i(n₁)χ̄_i(n₂)e^{it_i(log n₁ − log n₂)}` is their `R(n₁/n₂, n₁n₂⁻¹)` for

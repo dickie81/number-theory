@@ -4,8 +4,7 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Their §11: "To bound S₃,₄, we define f_b(v) = ψ(v)|R̃_{M₂}(v,−b)|² for (b,q) = 1, where ψ(v) is a smooth bump
-function supported on v ≍ 1 and such that ψ(1) > 0." (text layer lines 5655–5657; spaces restored, the tilde,
-subscripts and exponent transcribed). The library takes a different `ψ`: the reduction
+function supported on v ≍ 1 and such that ψ(1) > 0." (p. 48). The library takes a different `ψ`: the reduction
 (`Qb_le_gJ`) compares `S₃,₄` with `J(f⃗)` term by term, which needs `f_{−b} ≥ R̃(·, b)²` at the centres, all in
 `[−3, 3]` on the library's block. Here `ψ` is Mathlib's smooth bump with radii `3` and `4`: it is `1` on `[−3, 3]`, `0`
 off `(−4, 4)`, and `ψ(1) = 1`.
@@ -18,8 +17,7 @@ This file proves the properties of `f_b` that `CGLP81` and `S34_le_Jint` ask for
 * The lower bound. For `T ≥ 1` and points `|t_i| ≤ T`, `|R(u′, 1)| ≥ |R|/2` when `|u′ − 1| ≤ 1/(2T)`: there
   `|t_i log u′| ≤ 1`, so each `Re u′^{it_i} = cos(t_i log u′) ≥ 1/2`. Their `ψ̃₀` is `1` on `[−1, 1]`, so with
   `δ = min(2X/L, 1/(2T))`, `f_{−1}(1) = R̃(1, 1)² ≥ 2δ·L|R|²/4 = min(2X, L/(2T))|R|²/2`. Their version of this step:
-  "f_{q−1}(1) = ψ(1) ∫ (NM₂/q) ψ̃((NM₂/q)(1−u′)) |R(u′,1)|² du′ ⪆ (NM₂/(qT)) |W|²" (lines 5804–5812; spaces restored,
-  the integral, tildes, large parentheses, fractions, subscripts and exponents transcribed).
+  "f_{q−1}(1) = ψ(1) ∫ (NM₂/q) ψ̃((NM₂/q)(1−u′)) |R(u′,1)|² du′ ⪆ (NM₂/(qT)) |W|²" (p. 49).
 * A largest value. A continuous nonnegative `f_b`, `0` beyond `A`, attains `sup_{b,u}f_b(u)` (`exists_max`).
 
 Plain statements, with `q ≥ 1`, `L = NM₂/q` and `X` for their `(qT)^ϵ`.

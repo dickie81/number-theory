@@ -21,7 +21,7 @@ Plain statement (`norm_Phi_le_far`). `|Φ(s)| ≤ f^{1/2−Re s}·π·CGK(K)(1 +
 `−K ≤ Re s ≤ 1/2`, with `EQh(q) = ∏_{p|q}(1 − p^{−1/2})⁻¹`; `norm_Phi_le` covers `−5/16 ≤ Re s ≤ 13/16`.
 
 Their proof of Lemma 6.2 reaches the same identity in another order. It shifts to `Re s = −1`, applies the functional
-equation there, splits the dual series at `M`, and then, in their words (spaces restored), "shifting the contour of
+equation there, splits the dual series at `M`, and then, in their words (p. 18), "shifting the contour of
 the integral involving terms with m ≤ M to Re(s) = 1/2, while shifting the integral involving terms with m > M to
 Re(s) = −2k for a large k ∈ ℕ". Here the integral moves to `Re s = 1/2` first, where
 `L(s, χ) = Φ(s)L(1 − s, χ⁻¹)E(s)`; the dual series splits there into its first `Z` terms and the rest, an entire

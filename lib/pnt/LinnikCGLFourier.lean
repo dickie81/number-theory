@@ -5,8 +5,8 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 The `S₃` side of Chen–Gupta–Li's argument starts from the Poisson expansion of the Gram entries in residue classes
 (their Lemmas 4.4 and 4.5), whose terms carry the Fourier transform of `h_t(u) = w(u)²u^{it}`. This file proves the
-decay of that transform, their Lemma 4.3 (1): "For any integer j ≥ 0, ĥ_t(ξ) ≪_j (1 + |t|)^j/|ξ|^j" (spaces restored,
-the hat, the subscripts and the exponents transcribed). They say of its proof: "The proof (cf. [5, Lemma 4.3]) relies on
+decay of that transform, their Lemma 4.3 (1): "For any integer j ≥ 0, ĥ_t(ξ) ≪_j (1 + |t|)^j/|ξ|^j" (p. 12).
+They say of its proof: "The proof (cf. [5, Lemma 4.3]) relies on
 the properties of the function w(u) and repeated applications of integration by parts." Here `w` is `wCGL`
 and `h_t` is `Wt t`. Mathlib's `𝓕f(ξ) = ∫ e^{−2πixξ}f(x) dx` is their `ĥ(ξ)`.
 

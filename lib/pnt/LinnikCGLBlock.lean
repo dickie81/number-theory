@@ -7,11 +7,8 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 `f_b`, and `fb_decay_all` proves the decay premise of their Proposition 8.1 for this `f_b`.
 This file applies `CGLP81` to it. Their step: "Applying Proposition 8.1 then gives that S₃,₃ and S₃,₄ are
 both bounded by ⪅ ϕ(q)M₂⁶ (∫_ℝ Σ_{b mod q, (b,q)=1} |R̃_{M₂}(u,−b)|² ψ(u) du)² + ϕ(q)²M₂⁴ ∫_ℝ Σ_{b mod q, (b,q)=1}
-|R̃_{M₂}(u,−b)|⁴ ψ(u)² du" (text layer lines 5829–5847; spaces restored; the integrals, sums, tildes, large parentheses,
-subscripts and exponents transcribed; the text layer's `R` under the integrals is the PDF's blackboard `ℝ`, `MSBM10`
-glyphs at y = 139.2, x = 155.4 and 382.5 on page 49), and "This yields, by Lemmas
-9.1 and 9.2, S₃,₃, S₃,₄ ⪅_ϵ ϕ(q)³M₂⁶|W|² + ϕ(q)³M₂⁴E(W)." (lines 5848–5851; spaces restored; the subscripts and
-exponents transcribed).
+|R̃_{M₂}(u,−b)|⁴ ψ(u)² du" (p. 49), and "This yields, by Lemmas
+9.1 and 9.2, S₃,₃, S₃,₄ ⪅_ϵ ϕ(q)³M₂⁶|W|² + ϕ(q)³M₂⁴E(W)." (p. 49).
 
 The library's form. On the block `k`, `M₂ = 2^k`, and `CGLP81` is applied with `M = 2^{k+1}`, the support bound `4`,
 `κ = 2` and `D_j`. Its bound holds for every `0 < M_i < M`, so it covers the `k + 1` terms of the

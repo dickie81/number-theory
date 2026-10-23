@@ -4,9 +4,9 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li continue the proof of their Lemma 8.2: "the last sum, according to the Poisson summation formula, is"
-(lines 2715–2716; spaces restored) `Σ_{d mod q}(am₁ + bm₂ + d, q)Σ_{m₃≡d (mod q)}ψ₁(m₃/M₃)e(m₃ξ/m₁) =
-Σ_{d mod q}(am₁ + bm₂ + d, q)Σ_{n∈ℤ}(M₃/q)e_q(dn)ψ̂₁((n/q − ξ/m₁)M₃)` (lines 2717–2745, transcribed), and "Lastly, we
-map d → d + am₁ + bm₂." (line 2746; spaces restored, the subscripts transcribed). This file proves that expansion for
+(p. 28) `Σ_{d mod q}(am₁ + bm₂ + d, q)Σ_{m₃≡d (mod q)}ψ₁(m₃/M₃)e(m₃ξ/m₁) =
+Σ_{d mod q}(am₁ + bm₂ + d, q)Σ_{n∈ℤ}(M₃/q)e_q(dn)ψ̂₁((n/q − ξ/m₁)M₃)` (p. 28), and "Lastly, we
+map d → d + am₁ + bm₂." (p. 28). This file proves that expansion for
 `LinnikCGLG.ga`, with `ψ₁(m₃/M₃)` as `ψ̃₀(m₃/L)` and their `ψ̂₁` as `𝓕psiC`.
 
 The library's form.

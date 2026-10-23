@@ -4,10 +4,9 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li's §7 truncates the frequencies: "By Lemma 4.3 (1), we have |ĥ_t(ξ)| ≪_j (1 + |t|)^j/|ξ|^j. This
-implies that I_{m⃗} is negligible unless |m_i| ≤ (qT)^ϵqT/N for 1 ≤ i ≤ 3" (text layer lines 1962–1963; spaces
-restored, the exponents and subscripts transcribed). They then bound `S₃` through `I′_{m⃗}`, the sum over all triples
-of points. The library's sum has no condition "not all equal"; this file truncates each `F(i, k)` at `0 < |m| ≤ M` and
-expands the truncated cubic trace as `Σ_{0<|m_i|≤M}I′(m⃗)`, with an explicit error.
+implies that I_{m⃗} is negligible unless |m_i| ≤ (qT)^ϵqT/N for 1 ≤ i ≤ 3" (p. 22). They then bound `S₃` through
+`I′_{m⃗}`, the sum over all triples of points. The library's sum has no condition "not all equal"; this file truncates
+each `F(i, k)` at `0 < |m| ≤ M` and expands the truncated cubic trace as `Σ_{0<|m_i|≤M}I′(m⃗)`, with an explicit error.
 
 The tail. For `|m| > M ≥ 1` and `K ≥ 2`, Lemma 4.3 (1) at `K` gives
 `|(N/q)ĥ_τ(Nm/q)| ≤ (N/q)CF(K)ρ^K|m|^{−K} ≤ (N/q)CF(K)ρ^K M^{2−K}|m|^{−2}`, with `ρ = q(1 + |τ|)/(2πN)`. Summed over

@@ -5,11 +5,11 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li define "R(v,a) := Σ_{(t,χ)∈W} v^{it}χ(a), v > 0, a ∈ Z/qZ" (their (7.2)). After their change of
 variables they continue: "Since the R factors do not depend on u₃, a₃, performing the u₃ integral and the
-a₃ summation first yields" their (7.3) (text layer lines 2036–2039 and 2193–2194; spaces restored, the sum, exponents
-and subscripts transcribed). In (7.3) (lines 2195–2226), `I′_{m⃗}` is `N³/q³` times a sum over `b₁, b₂` modulo `q`
-with `(b₁b₂, q) = 1` of an integral over `ℝ²` of `C_q(b₁m₁ + b₂m₂ + m₃)R(v₁, b₁)R(v₂/v₁, b₂b₁⁻¹)R(1/v₂, b₂⁻¹)`
-against the inner integral over `u₃`. Their `C_q` is "the Ramanujan sum" (line 2016). This file proves their (7.3)
-at one point per character, from `hhat_prod`, with the finite sums inside the integral.
+a₃ summation first yields" their (7.3) (pp. 23–24). In (7.3) (p. 24), `I′_{m⃗}` is `N³/q³` times a sum over `b₁, b₂`
+modulo `q` with `(b₁b₂, q) = 1` of an integral over `ℝ²` of
+`C_q(b₁m₁ + b₂m₂ + m₃)R(v₁, b₁)R(v₂/v₁, b₂b₁⁻¹)R(1/v₂, b₂⁻¹)` against the inner integral over `u₃`. Their `C_q` is "the
+Ramanujan sum" (p. 22). This file proves their (7.3) at one point per character, from `hhat_prod`, with the finite sums
+inside the integral.
 
 Plain statement (`Ip_eq`). For `q ≥ 1`, real `N`, points `t_i` and characters `χ_i` modulo `q` (`i ∈ R`) and integers
 `m₁, m₂, m₃`: `I′(m₁, m₂, m₃) = (N/q)³∫∫Ψ(v₁, v₂) dv₂ dv₁`, where

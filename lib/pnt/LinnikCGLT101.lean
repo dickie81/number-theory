@@ -5,13 +5,10 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Their Theorem 10.1: "Let T be a set of pairs (t,χ), where χ is a primitive character modulo q and t is a real number
 with |t| ≤ T such that for (t,χ) ≠ (t′,χ′) either χ ≠ χ′ or |t−t′| ≥ 1. Then Σ_{(t₁,χ₁),(t₂,χ₂)∈T} |Σ_{n∼N}
-c_nχ₁(n)χ̄₂(n)n^{i(t₁−t₂)}|² ⪅ (|T|N² + |T|²N + |T|^{5/4}(qT)^{1/2}N) max_{n∼N} |c_n|²." (text layer lines 4618–4635;
-spaces restored; the sums, large bars, subscripts and exponents transcribed; the first `T` is their calligraphic set).
-The bar over `χ₂`, which the text layer drops, is a rule at y = 438.6 spanning x = 220.3–227.7 over the `χ` at x =
-220.3–227.7 in the row y = 429.5 on PDF page 40 (pdfminer). Their notation: "we
-write A ⪅ B to indicate that for any ϵ > 0, there exists a constant C(ϵ) > 0, depending only on ϵ, such that A ≤
-C(ϵ)(qT)^ϵ B for all sufficiently large qT." (lines 279–281; spaces restored, the exponent transcribed), and "A ∼ B
-signifies the stronger condition B < A ≤ 2B" (lines 278–279; spaces restored).
+c_nχ₁(n)χ̄₂(n)n^{i(t₁−t₂)}|² ⪅ (|T|N² + |T|²N + |T|^{5/4}(qT)^{1/2}N) max_{n∼N} |c_n|²." (p. 40; the first `T` is their
+calligraphic set). The PDF has a bar over `χ₂` (p. 40). Their notation: "we write A ⪅ B to indicate that for any ϵ > 0,
+there exists a constant C(ϵ) > 0, depending only on ϵ, such that A ≤ C(ϵ)(qT)^ϵ B for all sufficiently large qT." (p.
+5), and "A ∼ B signifies the stronger condition B < A ≤ 2B" (p. 5).
 
 `CGLT101` displays it, not proved here, with its implicit constants explicit: for every
 `ε > 0` there are `C` and `Q₀` such that, for `qT ≥ Q₀`, `T, M ≥ 1`, points `(t_i, χ_i)` with `χ_i` primitive modulo
@@ -22,8 +19,7 @@ theorem implies it: `(qT)^ε ≤ (qTM)^ε` for `M ≥ 1`, and the hypotheses `T,
 and a height `T′`, where `M` can exceed `q₁T′`. It costs nothing for `M ≤ qT`, where it is at most `(qT)^{2ε}`.
 
 Their Lemma 10.6: "For any M ≥ 1, we have Σ_{n₁,n₂∼M, (n₁n₂,q)=1} |R(n₁/n₂, n₁n₂^{−1})|² ⪅ |W|M² + |W|²M +
-|W|^{5/4}(qT)^{1/2}M." (lines 4767–4778; spaces restored; the sum, fraction, large bars, large parentheses, subscripts
-and exponents transcribed), by expanding the square and "Applying Theorem 10.1" (line 4813). With `R₂`,
+|W|^{5/4}(qT)^{1/2}M." (p. 42), by expanding the square and "Applying Theorem 10.1" (p. 42). With `R₂`,
 the expansion is exact: `Σ_{n₁,n₂}|R₂(n₁, n₂)|² = Σ_{i,j}|Σ_nχ_i(n)χ̄_j(n)n^{i(t_i−t_j)}|²` (`sum_sq_R2_eq`). At one
 point per character the separation holds because the characters differ.
 

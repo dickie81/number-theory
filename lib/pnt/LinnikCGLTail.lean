@@ -4,13 +4,13 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li discard large frequencies by the decay of `f̂_b`: their `Σ_b|f̂_b(ξ)| = O((qT)^{−200})` unless `|ξ| ⪅ T`
-(lines 3480–3481, transcribed), so "we can restrict the sum over n to the range |n| ⪅ qT/M₂ at the cost of a negligible
-error." (lines 3481–3482; spaces restored, the subscript transcribed and their footnote mark omitted). This file bounds,
+(p. 32), so "we can restrict the sum over n to the range |n| ⪅ qT/M₂ at the cost of a negligible
+error." (p. 32). This file bounds,
 with explicit constants, the two ranges that `LinnikCGLJtil` (the terms `|n| ≤ N₀` of `B_II`) and
 `LinnikCGLCov` (`integral_gstar_le`, over `|ξ| ≤ X` only) leave out: the terms `|n| > N₀` of `B_II`,
 and the range `|ξ| > X` of `ĝ_a`. Their proof splits at `|ξ| = (qT)²` and discards `|ξ| > (qT)²` by the decay of
-`Σ_b|f̂_b|` (lines 2781–2794): "Thus, the contribution from the region |ξ| > (qT)² is negligible and our analysis can
-focus on the range |ξ| ≤ (qT)²." (lines 2795–2796; spaces restored, the exponents transcribed). The library's `X`
+`Σ_b|f̂_b|` (p. 29): "Thus, the contribution from the region |ξ| > (qT)² is negligible and our analysis can
+focus on the range |ξ| ≤ (qT)²." (p. 29). The library's `X`
 plays the role of their `(qT)²`, and `LinnikCGLForm` takes `X = (qT)³`. The count carries the factor
 `(1 + q|X|)^δ`, which grows with `X`, so `integral_gstar_le` integrates over `|ξ| ≤ X` only.
 

@@ -7,9 +7,8 @@ Chen–Gupta–Li end the proof of Proposition 7.1 with two inputs. For the kern
 [1,2], we observe that w(v₁u₃)²w(v₂u₃)²w(u₃)²u₃² vanishes unless v₁, v₂ ∈ [1/2,2]. Furthermore, its jth derivative
 with respect to u₃ is bounded by O_j(1). Thus, by repeated integration by parts, the inner integral is
 O_ϵ((qT)^{−300}) unless |m₁v₁+m₂v₂+m₃| ≤ (qT)^ϵq/N and v₁, v₂ ∈ [1/2,2]. On the other hand, the inner integral is
-O(1) trivially." For the Ramanujan sum: "the fact that |C_q(m)| ≤ (m,q)" (text layer lines 2227–2234; spaces
-restored, the exponents and subscripts transcribed). This file proves both inputs, the second in the weaker form
-`|C_q(n)| ≤ d(q)(n, q)`, whose extra `d(q)` the factor `(qTN)^ε` of `CGLS3` absorbs.
+O(1) trivially." For the Ramanujan sum: "the fact that |C_q(m)| ≤ (m,q)" (p. 24). This file proves both inputs, the
+second in the weaker form `|C_q(n)| ≤ d(q)(n, q)`, whose extra `d(q)` the factor `(qTN)^ε` of `CGLS3` absorbs.
 
 Plain statements.
 * `norm_Cq_le`: for `q ≥ 1` and `n ∈ ℤ/qℤ`, `|C_q(n)| ≤ d(q)·gcd(n, q)`, with `n` read as its least nonnegative

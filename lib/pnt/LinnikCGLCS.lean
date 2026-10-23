@@ -7,10 +7,10 @@ This file proves the two Cauchy–Schwarz steps with which Chen–Gupta–Li's p
 dyadic block of `prop72`.
 
 Their text. From Proposition 7.2, "Applications of the Cauchy-Schwarz inequality and the second moment bound for R
-(cf. Lemma 9.1) give" (text layer lines 5567–5568, spaces restored) `S₃ ⪅ (N²/(q²M₂))S₃,₁^{1/2}S₃,₂^{1/2} + |W|`,
-with `S₃,₁` and `S₃,₂` defined at lines 5575–5607. Then "Using the Cauchy-Schwarz inequality again, we have that
-(11.1) S₃,₂ ≤ S₃,₃^{1/2}S₃,₄^{1/2}," (lines 5608–5611; spaces restored, the subscripts and exponents transcribed),
-with `S₃,₃` and `S₃,₄` defined at lines 5613–5654.
+(cf. Lemma 9.1) give" (p. 48) `S₃ ⪅ (N²/(q²M₂))S₃,₁^{1/2}S₃,₂^{1/2} + |W|`,
+with `S₃,₁` and `S₃,₂` defined at p. 48. Then "Using the Cauchy-Schwarz inequality again, we have that
+(11.1) S₃,₂ ≤ S₃,₃^{1/2}S₃,₄^{1/2}," (p. 48),
+with `S₃,₃` and `S₃,₄` defined at p. 48.
 
 The library's quantities, for a finite set `B` of triples (in use, the block `blk M k`), `L = NM₂/q` and
 `X` for their `(qT)^ϵ`:
@@ -40,8 +40,7 @@ Plain statements, with `q ≥ 1` and `L ≥ 0`.
 
 Their Proposition 8.1 applies once `S₃,₃` and `S₃,₄` are in its form. For `S₃,₃` their change of variables
 `u = v⁻¹` turns `(m₁v + m₃)/(m₂v)` into `(m₁ + m₃u)/m₂`, which is the form Proposition 8.1 needs. The paper prints the
-denominator as `m₂u` (text layer lines 5672–5673). On page 48 pdfminer finds the numerator `m₁ + m₃u` at
-x = 281.3–332.3 over a rule at y = 256.5 spanning the same x, and the denominator `m₂u` at x = 296.0–317.7 below it.
+denominator as `m₂u` (p. 48): the numerator is `m₁ + m₃u`, over a fraction rule, with the denominator `m₂u` below it.
 
 The file imports `LinnikCGLMom4.lean`.
 -/

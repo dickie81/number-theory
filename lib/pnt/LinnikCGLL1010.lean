@@ -5,13 +5,12 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Their Lemma 10.10 (Large GCD terms): "Let D = N²/(qT) and N ≥ (qT)^{2/3}/2. Assume that either |W| ≥ (qT)^{2/3} or that
 E(W)^{1/8}N ≥ (qT)^{1/2}|W|^{5/8}. Then we have Σ_{n₁,n₂∼N, (n₁n₂,q)=1, (n₁,n₂)≥D} |R(n₁/n₂, n₁n₂^{−1})|³ ⪅ N|W|³ +
-N(qT)^{1/4}|W|^{21/8} + E(W)^{1/2}|W|^{1/2}N²." (text layer lines 5315–5336; spaces restored; the sum, fraction, large
-bars, which the text layer encodes as four form feeds each, large parentheses, subscripts and exponents transcribed).
-Their proof writes `n₁ = n′₁d`, `n₂ = n′₂d`; "By the Cauchy-Schwarz inequality, we have" (lines 5339–5340) the cubes
-over `n′₁, n′₂ ∼ N/d` bounded by the fourth and second moments; "Applying Lemmas 10.6 and 10.7 yields" (line 5387) a
-bound for each `d`; and "By summing over d ≥ D and using Cauchy-Schwarz, we arrive at" (line 5415; spaces restored)
+N(qT)^{1/4}|W|^{21/8} + E(W)^{1/2}|W|^{1/2}N²." (p. 45).
+Their proof writes `n₁ = n′₁d`, `n₂ = n′₂d`; "By the Cauchy-Schwarz inequality, we have" (p. 45) the cubes
+over `n′₁, n′₂ ∼ N/d` bounded by the fourth and second moments; "Applying Lemmas 10.6 and 10.7 yields" (p. 46) a
+bound for each `d`; and "By summing over d ≥ D and using Cauchy-Schwarz, we arrive at" (p. 46)
 the product `(|W|N²/D + |W|²N + |W|^{5/4}(qT)^{1/2}N)^{1/2}(E(W)N²/D + |W|⁴N + E(W)^{3/4}|W|(qT)^{1/2}N)^{1/2}` up to
-`⪅` (lines 5416–5435, transcribed). Their case analysis, (10.4) and (10.5) (lines 5436–5499), follows; this file stops
+`⪅` (p. 46). Their case analysis, (10.4) and (10.5) (pp. 46–47), follows; this file stops
 before it.
 
 The library's form.
@@ -26,9 +25,9 @@ The library's form.
   `Real.sum_sqrt_mul_sqrt_le`), `Σ_{D<d≤N}d^{−2} ≤ 2/(D + 1)` (Mathlib's `sum_Ioo_inv_sq_le`, `sum_inv_sq_le`) and
   `Σ_{D<d≤N}d^{−1} ≤ 1 + log max(1, N)` (Mathlib's `harmonic_le_one_add_log`, `sum_inv_le`); their `⪅` absorbs the
   logarithm and the divisor factor `d(q)(⌊log₂|R|²⌋ + 1)` of `lemma107`.
-* For `d > N` their Lemmas 10.6 and 10.7, each stated "For any M ≥ 1, we have" (lines 4767 and 4814; spaces
-  restored), do not apply, since `N/d < 1`. A pair `n₁, n₂ ∼ N` with gcd `d > N` is `(d, d)` (`eq_of_dvd_of_lt`), and
-  `|R₂| ≤ |R|` (`norm_R2_le`), so these pairs contribute at most `|{n ∼ N}||R|³`, a term of the size of their `N|W|³`.
+* For `d > N` their Lemmas 10.6 and 10.7, each stated "For any M ≥ 1, we have" (p. 42), do not apply, since `N/d < 1`. A
+  pair `n₁, n₂ ∼ N` with gcd `d > N` is `(d, d)` (`eq_of_dvd_of_lt`), and `|R₂| ≤ |R|` (`norm_R2_le`), so these pairs
+  contribute at most `|{n ∼ N}||R|³`, a term of the size of their `N|W|³`.
 * The library sums over `(n₁, n₂) > D`, so that with `(n₁, n₂) ≤ D` the two cover every pair; their `N²/D`
   becomes `2N²/(D + 1)`. Their hypotheses on `D`, `N`, `|W|` and `E(W)` enter only their case analysis, which is
   not formalized here.

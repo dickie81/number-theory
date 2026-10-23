@@ -20,7 +20,7 @@ Plain statement (`norm_dualT_le`). For `Z, K ≥ 1`, `|Σ_{m>Z}χ(m)m^{s−1}| �
 
 The proof of their Lemma 6.2 splits the dual series at `M`, "shifting the contour of the integral involving terms with
 m ≤ M to Re(s) = 1/2, while shifting the integral involving terms with m > M to Re(s) = −2k for a large k ∈ ℕ"
-(spaces restored). For `|t| ∼ T₀ ≥ (qT)^ϵ` it takes `M = (qT)^{2ϵ}qT₀/N` and bounds the tail by a display that
+(p. 18). For `|t| ∼ T₀ ≥ (qT)^ϵ` it takes `M = (qT)^{2ϵ}qT₀/N` and bounds the tail by a display that
 reads, on one line,
 `|I₂| ≪_k (qT)^{ϵ/2}N^{−2k}(q*T₀)^{1/2+2k}/((qT)^{2ϵ}qT₀/N)^{2k}·(q/q*)^{2k+2} + O_{ϵ,k}((qT)^{−200})`. `T_K` is its
 analogue at `K = 2k`, with `Z` for `M` and no truncation of the integral. Their `(q/q*)^{2k+2}` bounds their `P`, a

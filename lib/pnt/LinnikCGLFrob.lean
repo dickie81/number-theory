@@ -14,7 +14,7 @@ Plain statement (`frobOff_le`). Let `χ` be injective on `R`, `|t_i| ≤ T`, `N 
 the large-sieve factor `LSX`, `H_Z = Σ_{m≤Z}1/m`, `Q₀(q)` is `Q0` of `LinnikCGLPair`, and `B` is the tail bound
 at `|τ| = 2T` (`Bmax`).
 
-Their proof of Proposition 6.1 says (spaces restored, the formulas transcribed): "Now we proceed with an argument
+Their proof of Proposition 6.1 says (p. 21): "Now we proceed with an argument
 based on the mean value theorem. Notice that |Σ_{n∼N} w(n/N)b_n n^{it₂}χ₂(n)| ≥ N^σ for (t₂, χ₂) ∈ W." It multiplies
 each dual sum by the large polynomial, takes "some coefficients c_l depending on (t₁, χ₁) such that
 |c_l^{(t₁,χ₁)}| ⪅ 1, by the divisor bound", and applies the mean value theorem with characters. Their Remark 6.3: "In

@@ -6,28 +6,24 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 This file proves Chen–Gupta–Li's Lemma 9.2 at one point per character, with explicit constants.
 
 Their energy. "For a finite set W of pairs (t,χ), we define its energy E(W) as E(W) := #{(t₁,χ₁),(t₂,χ₂),(t₃,χ₃),
-(t₄,χ₄) ∈ W : |t₁+t₂−t₃−t₄| ≤ 1, χ₁χ₂ = χ₃χ₄}." (their footnote 5, text layer lines 2487–2488; spaces restored, the
-footnote mark dropped, the subscripts transcribed). `energy` is that count over `R⁴`; at one point per character
-`i ↦ (t_i, χ_i)` is injective on `R`, so it is their `E(W)` for `W = {(t_i, χ_i) : i ∈ R}`.
+(t₄,χ₄) ∈ W : |t₁+t₂−t₃−t₄| ≤ 1, χ₁χ₂ = χ₃χ₄}." (their footnote 5, p. 26). `energy` is that count over `R⁴`; at one
+point per character `i ↦ (t_i, χ_i)` is injective on `R`, so it is their `E(W)` for `W = {(t_i, χ_i) : i ∈ R}`.
 
 Their statement. "Let W be a finite set of pairs (t,χ), where |t| ≤ T and for (t,χ) ≠ (t′,χ′) either χ ≠ χ′ or
 |t−t′| ≥ (qT)^ϵ. For any M₂ > 0, we have ∫_{v≍1} Σ_{a mod q, (a,q)=1} |R(v,a)|⁴ dv ⪅ ϕ(q)E(W) and
-∫_{v≍1} Σ_{a mod q, (a,q)=1} |R̃_{M₂}(v,a)|⁴ dv ⪅_ϵ ϕ(q)E(W)." (lines 4470–4482; spaces restored, the integrals,
-sums and their ranges, the tilde, exponents and subscripts transcribed).
+∫_{v≍1} Σ_{a mod q, (a,q)=1} |R̃_{M₂}(v,a)|⁴ dv ⪅_ϵ ϕ(q)E(W)." (p. 39).
 
-Their proof for `R`. After the change of variables `v = e^τ` (line 4537), "Let ψ(τ) be a smooth bump function supported
-on |τ| ≪ 1 such that ψ(τ/(qT)^ϵ) majorizes the range of integration." (lines 4556–4557; spaces restored, the exponent
-transcribed), then orthogonality, and "Due to the rapid decay of ψ̂, the summation can be restricted to
-|t₁+t₂−t₃−t₄| ≤ 1, incurring an error of O_ϵ((qT)^{−100}). The proof is then completed by observing that the
-remaining terms contribute ⪅ ϕ(q)E(W)." (lines 4609–4612; spaces restored, the hat, subscripts and exponents
-transcribed).
+Their proof for `R`. After the change of variables `v = e^τ` (p. 39), "Let ψ(τ) be a smooth bump function supported
+on |τ| ≪ 1 such that ψ(τ/(qT)^ϵ) majorizes the range of integration." (p. 39), then orthogonality, and "Due to the rapid
+decay of ψ̂, the summation can be restricted to |t₁+t₂−t₃−t₄| ≤ 1, incurring an error of O_ϵ((qT)^{−100}). The proof is
+then completed by observing that the remaining terms contribute ⪅ ϕ(q)E(W)." (p. 40).
 
-An observation about their write-up. In the display of lines 4558–4584 the majorized integral carries the Jacobian
-`e^τ` (`… |Σ e^{itτ}χ(a)|⁴ e^τ dτ`, line 4571), and the identity that follows, `= Σ … ∫ ψ(τ/(qT)^ϵ)
-e^{iτ(t₁+t₂−t₃−t₄)} … dτ`, has no `e^τ`. The PDF agrees: on page 39 pdfminer finds two exponentials in the row at
-y = 201 (superscripts `itτ` and `τ` in the row at y = 207) and one in the row at y = 154 (superscript
-`iτ(t1+t2−t3−t4)` at y = 159). Kept, `e^τ` grows like `e^{(qT)^ϵ}` on the majorant's support. The repair costs a
-factor `2`: bound `e^τ ≤ 2` on the original range `|τ| ≤ log 2` before majorizing, as `lemma92` does.
+An observation about their write-up. In the display of p. 39 the majorized integral carries the Jacobian
+`e^τ` (`… |Σ e^{itτ}χ(a)|⁴ e^τ dτ`, p. 39), and the identity that follows, `= Σ … ∫ ψ(τ/(qT)^ϵ)
+e^{iτ(t₁+t₂−t₃−t₄)} … dτ`, has no `e^τ`. The PDF agrees: p. 39 prints two exponentials in the majorized
+integral (`e^{itτ}` and `e^τ`) and one in the identity (`e^{iτ(t₁+t₂−t₃−t₄)}`). Kept, `e^τ` grows like `e^{(qT)^ϵ}` on
+the majorant's support. The repair costs a factor `2`: bound `e^τ ≤ 2` on the original range `|τ| ≤ log 2` before
+majorizing, as `lemma92` does.
 
 The library's form.
 * `sum_norm_Rf_four` is exact for any characters: `Σ_{a unit}|R(e^τ, a)|⁴ = φ(q)Σ_{i,j,k,l}[χ_iχ_j = χ_kχ_l]

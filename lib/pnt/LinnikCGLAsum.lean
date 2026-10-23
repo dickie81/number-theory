@@ -4,11 +4,10 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li bound `Σ_a|ĝ_{a,1}(ξ)|²` in the proof of their Lemma 8.2: "For the a-sum, we apply the basic estimate
-|C_q(m)| ≤ (m,q) for Ramanujan’s sum" (line 3114; spaces restored, the subscript transcribed), then "Next, by
-Cauchy-Schwarz" (line 3214) and "upon mapping (m₁,n,m₁′,n′) → (−m₁′,n′,−m₁,n), we have G₂(ξ) = G₁(−ξ)" (lines
-3324–3327; spaces restored, the subscripts transcribed), and the count of the pairs `(m₁′, n′)` (
-`LinnikCGLCount.count_le`). This file gives that bound for a finite range of `n`, with any coefficients `F(m₁, n)` in
-place of their inner sums over `m₂` and `b`.
+|C_q(m)| ≤ (m,q) for Ramanujan’s sum" (p. 31), then "Next, by
+Cauchy-Schwarz" (p. 31) and "upon mapping (m₁,n,m₁′,n′) → (−m₁′,n′,−m₁,n), we have G₂(ξ) = G₁(−ξ)" (p. 31), and the
+count of the pairs `(m₁′, n′)` (`LinnikCGLCount.count_le`). This file gives that bound for a finite range of `n`, with
+any coefficients `F(m₁, n)` in place of their inner sums over `m₂` and `b`.
 
 The library's form.
 * `|Σ_ae_q(ax)| ≤ d(q)(x, q)` is `norm_Cq_le`, whose `d(q)` their `⪅` absorbs.

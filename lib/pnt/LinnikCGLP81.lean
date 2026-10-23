@@ -5,7 +5,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li prove their Proposition 8.1 from their Lemma 8.2: "We prove the statement via downward induction on
 ϵ. The base case ϵ = 100 holds trivially. For the inductive step, we assume (8.1) holds with parameter 3ϵ/2 and aim
-to establish it for ϵ." (lines 2543–2545; spaces restored). This file runs that induction on the form of
+to establish it for ϵ." (p. 27). This file runs that induction on the form of
 their Lemma 8.2 and proves the displayed hypothesis `CGLP81`, so `linnik_225c_t101` and `linnik_226c_t101`,
 Linnik's theorem with the exponents `9/4` and `226/100`, take Heath-Brown's Theorem 10.1 (`CGLT101`) as their only
 hypothesis.

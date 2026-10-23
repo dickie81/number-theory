@@ -5,10 +5,9 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Their §10 twice bounds a finite exponential sum at a point by its average near the point. Lemma 10.4, from
-Guth–Maynard: "|D_N(t,χ)| ⪅ ∫_{|u−t|⪅1} |D_N(u,χ)| du + O((qT)^{−100})." (text layer lines 4680–4683; spaces restored;
-the integral, subscripts and exponent transcribed). Lemma 10.8: "|R(v,a)| ≪_{ϵ,C} T ∫_{|v′−v|≤T^ϵ/T} |R(v′,a)| dv′ +
-O(T^{−100})." (lines 5012–5015; spaces normalized; the integral, subscripts and exponents transcribed), proved with "a
-smooth bump which is 1 on [−1,1]" and "by the Fourier inversion formula" (lines 5016–5017; spaces restored).
+Guth–Maynard: "|D_N(t,χ)| ⪅ ∫_{|u−t|⪅1} |D_N(u,χ)| du + O((qT)^{−100})." (p. 41). Lemma 10.8: "|R(v,a)| ≪_{ϵ,C} T
+∫_{|v′−v|≤T^ϵ/T} |R(v′,a)| dv′ + O(T^{−100})." (p. 43), proved with "a smooth bump which is 1 on [−1,1]" and "by the
+Fourier inversion formula" (p. 43).
 
 This file proves the common form without a window. For `F(x) = Σ_{k∈s}c_ke^{iλ_kx}` with every `|λ_k − Λ| ≤ H` and
 `k = ψ̂₀` the Fourier transform of the bump `ψ̃₀` (`kloc`), Fourier inversion gives

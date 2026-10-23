@@ -4,11 +4,11 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li bound the terms of `ĝ_a` with `q | n` in "8.2.5. The contribution of I. By the definition of
-ĝ_{a,2}(ξ), we see that" (line 4235; spaces restored, the hat and subscripts transcribed), "It follows from the
-Cauchy-Schwarz inequality and the positivity of f_b that" (line 4284; spaces restored, the subscript transcribed) and
-"Since M₁, M₂, M₃ ≤ M, we conclude that" (line 4325; spaces restored, the subscripts transcribed), then (8.13). This
+ĝ_{a,2}(ξ), we see that" (p. 37), "It follows from the
+Cauchy-Schwarz inequality and the positivity of f_b that" (p. 37) and
+"Since M₁, M₂, M₃ ≤ M, we conclude that" (p. 37), then (8.13). This
 file bounds the term `n = 0` of `LinnikCGLNsum.fourier_ga_split`, which corresponds to their term `ℓ = 0`
-in (8.4) (lines 2868–2891).
+in (8.4) (p. 29).
 
 The library's form.
 * Their region `|ξ| ≤ (qT)^ηM₁/M₃` is not used: `|ψ̂₀(−Lξ/m₁)| ≤ B₄L_{L/(2M₁)}(ξ)²` for `|m₁| ≤ 2M₁` (

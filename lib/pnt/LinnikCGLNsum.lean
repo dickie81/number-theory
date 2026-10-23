@@ -4,8 +4,8 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li continue the proof of their Lemma 8.2 with (8.2), `ĝ_a(ξ)` as sums over `b`, `m₁`, `m₂`, `d` and `n`
-(lines 2804–2833), and "We separate the terms on the right-hand side of (8.2) where q∤n to define ĝ_{a,1}(ξ) and
-define ĝ_{a,2}(ξ) using the remaining terms." (lines 2834–2835; spaces restored, the hats and subscripts transcribed).
+(p. 29), and "We separate the terms on the right-hand side of (8.2) where q∤n to define ĝ_{a,1}(ξ) and
+define ĝ_{a,2}(ξ) using the remaining terms." (p. 29).
 This file writes `fourier_ga_poisson` as a sum over `m₁` and `n`, splits off the term `n = 0`, and passes
 `sum_a_finite_le` from finite sets of `n` to every `n ≠ 0`.
 

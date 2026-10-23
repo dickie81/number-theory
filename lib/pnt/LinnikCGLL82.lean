@@ -4,8 +4,8 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li's Lemma 8.2: "Let f⃗ = {f_b} be as in Proposition 8.1. Then there is a bump function ψ(x) supported on
-|x| ≪ 1 such that" (lines 2495–2496; spaces restored, the arrow and the subscript transcribed)
-`J(f⃗) ⪅ φ(q)M⁶(∫_ℝΣ_bf_b(u) du)² + φ(q)(M⁴∫_ℝΣ_bf_b(u)² du)^{1/2}J(f̃⃗)^{1/2}` (lines 2497–2516, transcribed). This
+|x| ≪ 1 such that" (p. 27)
+`J(f⃗) ⪅ φ(q)M⁶(∫_ℝΣ_bf_b(u) du)² + φ(q)(M⁴∫_ℝΣ_bf_b(u)² du)^{1/2}J(f̃⃗)^{1/2}` (p. 27). This
 file assembles `integral_gstar_le` and `setIntegral_ga_tail_le` into that bound in explicit form, before any choice of
 parameters: every constant is kept, and their negligible errors are kept as explicit terms
 (`2πφ(q)G₁²X^{−(2j−2)}`, `B_tail` and the term `EP²F²` of `B_J`).

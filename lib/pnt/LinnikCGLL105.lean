@@ -3,12 +3,10 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Their Lemma 10.5: "E(W) ⪅ N^{−2σ} Σ_{n₁,n₂∼N, (n₁n₂,q)=1} |R(n₁/n₂, n₁n₂^{−1})|³," (text layer lines 4687–4698; spaces
-restored; the sum, fraction, large bars, large parentheses, subscripts and exponents transcribed). Their proof bounds
+Their Lemma 10.5: "E(W) ⪅ N^{−2σ} Σ_{n₁,n₂∼N, (n₁n₂,q)=1} |R(n₁/n₂, n₁n₂^{−1})|³," (p. 41). Their proof bounds
 each quadruple of the energy by `N^{−2σ}|D_N(t₄, χ₄)|²` (the large values), replaces `|D_N(t₄, χ₄)|²` by its average
 near `t₁ + t₂ − t₃` (their Lemma 10.4), notes that "given (t_i,χ_i) ∈ W for 1 ≤ i ≤ 3, there exists at most one choice
-of (t₄,χ₄) ∈ W such that |t₁+t₂−t₃−t₄| ≤ 1 and χ₁χ₂ = χ₃χ₄" (lines 4716–4718; spaces restored, the subscripts
-transcribed), and expands the square over the triples.
+of (t₄,χ₄) ∈ W such that |t₁+t₂−t₃−t₄| ≤ 1 and χ₁χ₂ = χ₃χ₄" (p. 41), and expands the square over the triples.
 
 The library's form, at one point per character. For a coefficient function `c`, `D_c(t) = Σ_{n∈S}c(n)n^{it}` (`Dp`).
 * `Dp` is a finite exponential sum with frequencies `log n`; for `N > 0` and `S ⊆ [N, 2N]` they lie within `1` of

@@ -7,7 +7,7 @@ Chen–Gupta–Li's §7 drops the condition that the points of a triple are not 
 the terms when (t₁,χ₁) = (t₂,χ₂) = (t₃,χ₃)", which cost their `Z′ = |W|((N/q)Σ_{0<|m|≤(qT)^ϵqT/N}ĥ₀(Nm/q)C_q(m))³`,
 `C_q(m) = Σ_{a mod q, (a,q)=1}e_q(am)`. Then: "Fortunately, the condition m ≠ 0 makes this term small. By Lemma
 4.3(1), for m ≠ 0, |ĥ₀(Nm/q)| ≪ q/(N|m|). On the other hand, the arithmetic sum is the Ramanujan sum C_q(m) and
-|C_q(m)| ≤ (m,q)." (text layer lines 1992 and 2014–2017; spaces restored, the fraction and subscripts transcribed).
+|C_q(m)| ≤ (m,q)." (p. 22).
 At one point per character the dropped terms are the diagonal ones, `F(i, i)³` with `F(i, i) = μ − μ₀` (`Fm_diag`);
 their sum `|R|(μ − μ₀)³` is their `Z′` before the truncation in `m`, which is applied afterwards. Here the Gram
 diagonal is `μ = Σ_{n∈colsP N, (n,q)=1}w(n/N)²` (`muP`) and its main term is `μ₀ = (φ(q)/q)N∫w²` (

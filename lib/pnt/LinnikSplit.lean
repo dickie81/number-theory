@@ -7,7 +7,7 @@ Built on Mathlib, `LinnikMoment` and `LinnikLines`; no PrimeNumberTheoremAnd fil
 
 The folded third moment is `q⁻²Σ_k ŵ(k₁)ŵ(k₂)ŵ(k₃)L(k)` over `k ∈ (ZMod q)³`. Chen–Gupta–Li split their
 frequencies in §5: "S1 consists of terms with exactly one nonzero mi, S2 consists of terms with exactly two nonzero
-mi and S3 consists of terms with all three mi being nonzero" (from the PDF's text layer, spaces restored). This file
+mi and S3 consists of terms with all three mi being nonzero" (§5). This file
 evaluates the line sums off the generic lines exactly, for a prime `q`.
 
 * `sum_mul_star`: `Σ_u χ(u)conj(χ′(u)) = (q − 1)·[χ = χ′]`.

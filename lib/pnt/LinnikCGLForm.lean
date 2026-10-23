@@ -3,19 +3,18 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Chen–Gupta–Li's Lemma 8.2 (lines 2495–2516) is `J(f⃗) ⪅ φ(q)M⁶(∫_ℝΣ_bf_b(u) du)² +
-φ(q)(M⁴∫_ℝΣ_bf_b(u)² du)^{1/2}J(f̃⃗)^{1/2}` (transcribed), where "we write A ⪅ B to indicate that for any ϵ > 0, there
-exists a constant C(ϵ) > 0, depending only on ϵ, such that A ≤ C(ϵ)(qT)^ϵ B for all sufficiently large qT." (lines
-279–281; spaces restored, the exponent transcribed). `LinnikCGLL82` proves the lemma in explicit form, before any
-choice of the parameters `L`, `X`, `N₀`, `δ`, `j` and `K`. This file chooses them and bounds every constant, and
-their negligible errors, by `C(qT)^θ`, for every `θ > 0`.
+Chen–Gupta–Li's Lemma 8.2 (p. 27) is `J(f⃗) ⪅ φ(q)M⁶(∫_ℝΣ_bf_b(u) du)² +
+φ(q)(M⁴∫_ℝΣ_bf_b(u)² du)^{1/2}J(f̃⃗)^{1/2}`, where "we write A ⪅ B to indicate that for any ϵ > 0, there
+exists a constant C(ϵ) > 0, depending only on ϵ, such that A ≤ C(ϵ)(qT)^ϵ B for all sufficiently large qT." (p. 5).
+`LinnikCGLL82` proves the lemma in explicit form, before any choice of the parameters `L`, `X`, `N₀`, `δ`, `j` and `K`.
+This file chooses them and bounds every constant, and their negligible errors, by `C(qT)^θ`, for every `θ > 0`.
 
 The library's form.
 * The parameters, with `R = (qT)^{1/m}`, `m ≥ 1` and `13/m ≤ θ`: `L = (|κ| + 1)M`, `X = (qT)³`,
-  `N₀ = R^{m+4}/M₂`, `δ = 1/m`, `j = 2m + 11` and `K = 2m + 8`. Their split in `ξ` is at `(qT)²` (lines 2781–2796).
+  `N₀ = R^{m+4}/M₂`, `δ = 1/m`, `j = 2m + 11` and `K = 2m + 8`. Their split in `ξ` is at `(qT)²` (p. 29).
   Their footnote 7: "One might choose ψ₂(x) = ψ₀(x/(qT)^η), where ψ₀(x) is a smooth bump supported on [−2,2] and
-  identically equal to 1 for |x| ≤ 1." (lines 3517–3518; spaces restored, the subscripts and the exponent
-  transcribed); `N₀` for that choice is `qT(qT)^η/M₂`, which is `R^{m+4}/M₂` at `η = 4/m`.
+  identically equal to 1 for |x| ≤ 1." (p. 32); `N₀` for that choice is `qT(qT)^η/M₂`, which is `R^{m+4}/M₂` at
+  `η = 4/m`.
 * The term `|n| ≤ N₀` carries `R^{13} = (qT)^{13/m} ≤ (qT)^θ`. The errors are at most constants times `F²`, and
   `F² ≤ 64φ(q)M⁶F²` for `M ≥ 1/2`, so they join the first term.
 * The decay premise enters at `j = 2m + 11` with `max(D_j, 0)`. The bound `Λ ≤ G(qT)²F` is a hypothesis here.

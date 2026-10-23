@@ -6,30 +6,24 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 This file supplies the Cauchy–Schwarz step of Chen–Gupta–Li's proof of Proposition 7.2.
 
 Their bump and their `R̃`. "Let ψ̃₀(x) be a non-negative smooth bump supported on [−2,2] such that ψ̃₀(x) = 1 for |x| ≤
-1, ‖ψ̃₀^{(j)}‖_∞ ≪_j 1 and ψ̃(x) = ψ̃₀(x/(2(qT)^ϵ))" (their (7.4), text layer lines 2236–2243; spaces restored, the
-tildes, subscripts, superscripts, the norm, the large parentheses and the fraction transcribed), and "R̃_{M₂}(u,a) :=
-(∫_{u′∈[1/2,2]} (NM₂/q) ψ̃((NM₂/q)(u−u′)) |R(u′,a)|² du′)^{1/2}" (their (7.5), lines 2246–2257; spaces restored, the
-tildes, the integral and its range, the large parentheses, the fractions, the exponents and the subscripts transcribed).
+1, ‖ψ̃₀^{(j)}‖_∞ ≪_j 1 and ψ̃(x) = ψ̃₀(x/(2(qT)^ϵ))" (their (7.4), p. 24), and "R̃_{M₂}(u,a) :=
+(∫_{u′∈[1/2,2]} (NM₂/q) ψ̃((NM₂/q)(u−u′)) |R(u′,a)|² du′)^{1/2}" (their (7.5), p. 24).
 `psi0` is Mathlib's smooth bump with radii 1 and 2 (`ContDiffBump`); this file uses four of its properties: it is
 continuous, nonnegative, at most 1, and 1 on `[−1, 1]`. `Rt` is their `R̃_{M₂}` with `X` for their `(qT)^ϵ`.
 
 The step. "Using Cauchy-Schwarz and noting that |R(1/v₂,b⁻¹)| = |R(v₂,b)|, the inner v₂ integral is bounded by"
-(lines 2382–2383; spaces restored, the subscripts and the exponent transcribed). The display that follows (lines
-2384–2422) ends with `≤ (q/(NM₂)) R̃_{M₂}((m₁v₁+m₃)/(−m₂v₁), b₁⁻¹b₂) R̃_{M₂}((m₁v₁+m₃)/(−m₂), b₂)` (transcribed).
-The identity it notes follows, by taking norms, from "From the definition of R(v,a), it follows that (see (7.2))
-R(1/v,a⁻¹) = R(v,a)" (lines 2330–2335; spaces restored, the large parentheses, the fraction and the exponent
-transcribed). In the PDF the right side carries a conjugation bar, a drawn rule that the text layer drops: on page 25
-pdfminer finds a rule at y = 346.1, above the row at y = 333, spanning x = 323.4–358.9, exactly the extent of the
-characters `R(v,a)`. `Rf_inv` is that identity, with the bar, for `v > 0` and a unit.
+(p. 26). The display that follows (p. 26) ends with
+`≤ (q/(NM₂)) R̃_{M₂}((m₁v₁+m₃)/(−m₂v₁), b₁⁻¹b₂) R̃_{M₂}((m₁v₁+m₃)/(−m₂), b₂)`. The identity it notes follows, by taking
+norms, from "From the definition of R(v,a), it follows that (see (7.2)) R(1/v,a⁻¹) = R(v,a)" (p. 25). In the PDF the
+right side carries a conjugation bar over `R(v,a)`. `Rf_inv` is that identity, with the bar, for `v > 0` and a unit.
 
 The window. `Vr` keeps `|m₁v₁ + m₂v₂ + m₃| ≤ Xq/N` and `v₂/v₁ ∈ [1/2, 2]`. For `|m₂| ≥ M₂ > 0` the first
 condition puts `v₂` within `δ = Xq/(NM₂)` of `c = −(m₁v₁ + m₃)/m₂`, so `(NM₂/q)δ = X`. With `u′ = v₂/v₁` the window
 becomes `|u′ − c/v₁| ≤ δ/v₁ ≤ 2δ`, on which `ψ̃ = 1`; the library uses the `2` in their `2(qT)^ϵ` here.
 
-The constant. The substitution `u′ = v₂/v₁` gives `dv₂ = v₁du′`, so the first factor carries `√v₁ ≤ √2`, which the library
- rounds up to `2`. Their display has no constant there. Their next line is "We therefore obtain
-|I′_{m₁,m₂,m₃}| ≪_ϵ (N²/(q²M₂)) Ĩ_{m₁,−m₂,m₃} + O_ϵ((qT)^{−200})" (lines 2423–2428; spaces restored, the tilde,
-the subscripts, the exponents and the fraction transcribed), stated with `≪_ϵ`, which absorbs it.
+The constant. The substitution `u′ = v₂/v₁` gives `dv₂ = v₁du′`, so the first factor carries `√v₁ ≤ √2`, which the
+library rounds up to `2`. Their display has no constant there. Their next line is "We therefore obtain
+|I′_{m₁,m₂,m₃}| ≪_ϵ (N²/(q²M₂)) Ĩ_{m₁,−m₂,m₃} + O_ϵ((qT)^{−200})" (p. 26), stated with `≪_ϵ`, which absorbs it.
 
 Plain statements, with `L = NM₂/q`, `X > 0` and `q ≥ 1`.
 * `Rf_inv`: `R(1/v, b⁻¹) = conj(R(v, b))` for `v > 0` and a unit `b`; `norm_Rf_inv` takes norms.

@@ -4,14 +4,13 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Their Lemma 10.9 (Small GCD terms): "We have Σ_{n₁,n₂∼N, (n₁n₂,q)=1, (n₁,n₂)≤D} |R(n₁/n₂, n₁n₂^{−1})|³ ⪅_ϵ
-(DqT + N²)|W|^{1/2}E(W)^{1/2}." (text layer lines 5070–5082; spaces restored; the sum, fraction, large bars, which the
-text layer encodes as four form feeds each, large parentheses, subscripts and exponents transcribed). Their proof
-splits the sum by `d = (n₁, n₂)` and by the residue `a`, and "It follows from Lemma 10.8 that, for (a,q) = 1," (line
-5090) the cubes over one class are bounded by an integral of `|R(v,a)|³` near the fractions, their (10.1). Then: "Hence,
-the fractions n′₁/n′₂ that appear in the inner sum are qd²/N²-separated. This separation enables us to bound the inner
-sum in (10.1) by ⪅ 1 + N²/(qTd²)." (lines 5186–5189; spaces restored; the subscripts and exponents transcribed). This
-file proves the separation and the bound that the separation gives; their Lemma 10.8 (quoted in the header) is
-not formalized as stated, and its part is taken by the local average without a window.
+(DqT + N²)|W|^{1/2}E(W)^{1/2}." (p. 44). Their proof
+splits the sum by `d = (n₁, n₂)` and by the residue `a`, and "It follows from Lemma 10.8 that, for (a,q) = 1," (p. 44)
+the cubes over one class are bounded by an integral of `|R(v,a)|³` near the fractions, their (10.1). Then: "Hence, the
+fractions n′₁/n′₂ that appear in the inner sum are qd²/N²-separated. This separation enables us to bound the inner sum
+in (10.1) by ⪅ 1 + N²/(qTd²)." (p. 44). This file proves the separation and the bound that the separation gives; their
+Lemma 10.8 (quoted in the header) is not formalized as stated, and its part is taken by the local average without a
+window.
 
 The library's form.
 * `R2_eq_Rf`: for `n₁, n₂ > 0` with `n₂` a unit modulo `q`, `R₂(n₁, n₂)` is
@@ -26,7 +25,7 @@ The library's form.
   `δ > 0`, `sum_cube_le` bounds `Σ_p|F(x_p)|³` by `C_k(3T + 4π/δ)∫ψ̃₀(y/X)|F(y)|³ dy` plus a tail.
   `norm_cube_esum_le` bounds each `|F(x_p)|³` by `∫|k(ξ)||F(x_p + 2πξ/(3T))|³ dξ`; `|k(ξ)| ≤ C_k(1 + ξ²)⁻¹`, and
   the Lorentzians centred at the points sum to at most `2π + 4π/(cδ)` (`sum_lor_le`), with `c = 3T/(2π)`. With
-  `δ = qd²/(8N²)` the coefficient is `C_k(3T + 32πN²/(qd²))`, their `T + N²/(d²q)` (lines 5246–5249, in the display
+  `δ = qd²/(8N²)` the coefficient is `C_k(3T + 32πN²/(qd²))`, their `T + N²/(d²q)` (p. 45, in the display
   ending with their (10.2)) up to constants. Where `|x_p + 2πξ/(3T)| > X`, `|x_p| ≤ 1` gives
   `|ξ| > Z = 3T(X − 1)/(2π)`, `norm_kloc_tail` bounds `k`, and the tail `|P|(Σ_k|c_k|)³·2πD_K(2π)^{−K}Z^{2−K}`
   stands for their `O(N²T^{−100})`: for `K ≥ 3` it is small for `X` large, with `T ≥ 1`; at `K = 2` it does not

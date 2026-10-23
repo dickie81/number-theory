@@ -3,15 +3,12 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Chen–Gupta–Li put their bound for `Σ_II` into their (8.8) (line 3620), then bound `M₃²∫_ℝG₁(ξ) dξ` (lines 3663–3666)
-"combining the bounds M₁, M₂, M₃ ≤ M with the Cauchy-Schwarz inequality" (lines 3658–3659; spaces restored, the
-subscripts transcribed); the library takes that step inside its bound of `Σ_II`, `B_II`. On the residue
-class they write "We also absorb a factor
-of q to bring in the gcd factor since given this modular constraint on m₃, we have q = (−bm₂ + b′m₂′ + m₃, q)." (lines
-3730–3733; likewise), and "Continuing, since f̃_b is supported on |u| ≪ 1, we have that |m₃| ≪ M₂." (lines 3733–3734;
-likewise, the tilde transcribed). Their bound is `⪅ φ(q)(M⁴∫_ℝΣ_bf_b(u)² du)^{1/2}J(f̃⃗)^{1/2}` (lines 3765–3776,
-transcribed). This file proves that step for the majorant, and bounds the terms `|n| ≤ N₀` of
-`B_II`.
+Chen–Gupta–Li put their bound for `Σ_II` into their (8.8) (p. 33), then bound `M₃²∫_ℝG₁(ξ) dξ` (p. 34)
+"combining the bounds M₁, M₂, M₃ ≤ M with the Cauchy-Schwarz inequality" (p. 33); the library takes that step inside its
+bound of `Σ_II`, `B_II`. On the residue class they write "We also absorb a factor of q to bring in the gcd factor since
+given this modular constraint on m₃, we have q = (−bm₂ + b′m₂′ + m₃, q)." (p. 34), and "Continuing, since f̃_b is
+supported on |u| ≪ 1, we have that |m₃| ≪ M₂." (p. 34). Their bound is `⪅ φ(q)(M⁴∫_ℝΣ_bf_b(u)² du)^{1/2}J(f̃⃗)^{1/2}`
+(p. 34). This file proves that step for the majorant, and bounds the terms `|n| ≤ N₀` of `B_II`.
 
 The library's form.
 * Their factor `q` is `gJw(−b, b′, (m₂, m₂′, m₃)) = q` on the class `m₃ ≡ bm₂ − b′m₂′ (mod q)` (`gJw_neg_eq`). Their
@@ -21,7 +18,7 @@ The library's form.
 * The bound keeps `M₂`: their `M₁, M₂, M₃ ≤ M` is not applied here.
 * The error term of the majorant keeps its explicit factor, bounded by its value at `m₂′ = M₂`, since every
   `m₂′ ∈ P2 M₂` exceeds `M₂`: `E = (1 + N₀M₂/(qT))^{−(K−2)}(2π + 4π/N₀)`.
-* "Trivially we have Σ₁ ⪅ 1." (line 3563; spaces restored, the subscript transcribed.) Here the bound of the
+* "Trivially we have Σ₁ ⪅ 1." (p. 33). Here the bound of the
   expansion holds for every `τ`, and the weight `|ψ̂₀(−τ)|` is integrated. The weight `ψ̃₀(n/N₀)` is `1` for
   `|n| ≤ N₀`, so the terms `|n| ≤ N₀` of `B_II` are at most `∫|ψ̂₀(−τ)| dτ` times the bound.
 

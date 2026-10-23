@@ -4,14 +4,12 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li prove their Proposition 8.1 from their Lemma 8.2: "We wish to show that for any ϵ > 0 there is a
-C(ϵ) > 0 such that" (lines 2521–2522; spaces restored) their (8.1) holds, "via downward induction on ϵ" (line 2543;
-spaces restored). For the step they need of `f̃_b(u) = ∫_ℝTψ(T(u − u′))f_b(u′) du′` (lines 2517–2520, transcribed):
-"The compact support conditions |u| ≪ 1 for f_b(u) and |x| ≪ 1 for ψ(x) ensure that the modified function f̃_b(u)
-maintains the same support restriction |u| ≪ 1. Moreover, the Fourier transform of f̃_b also satisfies the desired
-decay." (lines 2566–2568; spaces restored, the subscripts and the tildes transcribed), and "Since f̃_b is a smoothed
-version of f_b, we have the L¹ and L² norm comparisons:" (line 2590; likewise, the exponents transcribed)
-`∫f̃_b ≪ ∫f_b` and `∫f̃_b² ≪ ∫f_b²` (lines 2590–2595, transcribed). This file proves those four properties for
-`ftil`, and bounds `Λ = φ(q)f_{b₀}(u₀)` against `F = Σ_b∫f_b`, the hypothesis of `lemma82_form`.
+C(ϵ) > 0 such that" (p. 27) their (8.1) holds, "via downward induction on ϵ" (p. 27). For the step they need of
+`f̃_b(u) = ∫_ℝTψ(T(u − u′))f_b(u′) du′` (p. 27): "The compact support conditions |u| ≪ 1 for f_b(u) and |x| ≪ 1 for ψ(x)
+ensure that the modified function f̃_b(u) maintains the same support restriction |u| ≪ 1. Moreover, the Fourier
+transform of f̃_b also satisfies the desired decay." (p. 27), and "Since f̃_b is a smoothed version of f_b, we have the
+L¹ and L² norm comparisons:" (p. 27) `∫f̃_b ≪ ∫f_b` and `∫f̃_b² ≪ ∫f_b²` (p. 27). This file proves those four properties
+for `ftil`, and bounds `Λ = φ(q)f_{b₀}(u₀)` against `F = Σ_b∫f_b`, the hypothesis of `lemma82_form`.
 
 The library's form.
 * `f̃_b = k_T ⋆ f_b` with `k_T(t) = Tψ̃₀(Tt)` (`psi0`), smooth, `0` off `[−2/T, 2/T]`, with `∫k_T = ∫ψ̃₀`.

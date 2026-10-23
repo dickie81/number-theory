@@ -4,17 +4,16 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Their case analysis in Lemma 10.10 (the statement quoted): "Since N ≥ (qT)^{1/2} and D = N²/(qT), we have
-|W|^{5/4}(qT)^{1/2}N ≫ |W|qT = |W|N²/D." (text layer line 5436; spaces restored, the exponents transcribed); "We split
-into cases based on whether |W| > (qT)^{2/3} or not." (line 5440; spaces restored, the exponent transcribed). The first
-case uses "N|W|⁴ ≫ |W|³qT ≥ E(W)qT," (line 5445; spaces restored, the exponents transcribed) and ends with their
+|W|^{5/4}(qT)^{1/2}N ≫ |W|qT = |W|N²/D." (p. 46); "We split
+into cases based on whether |W| > (qT)^{2/3} or not." (p. 46). The first
+case uses "N|W|⁴ ≫ |W|³qT ≥ E(W)qT," (p. 46) and ends with their
 (10.4), `⪅ N|W|³`; the second ends with their (10.5), after "Notice that, in this case, our assumption gives
-E(W)^{1/8}N ≥ (qT)^{1/2}|W|^{5/8}." (line 5483; spaces restored, the exponents transcribed).
+E(W)^{1/8}N ≥ (qT)^{1/2}|W|^{5/8}." (p. 47).
 
 Their Remark 10.3: "Suppose that |W| < (qT)^{2/3} and E(W)^{1/8}N < (qT)^{1/2}|W|^{5/8}. Then (qT)²|W|^{3/2} >
-qTN|W|^{1/2}E(W)^{1/2}." (lines 4666–4667; spaces restored, the exponents transcribed), by a chain whose "first
-strict inequality follows from the lower bound N ≥ (qT)^{2/3} in the present range" (lines 4673–4674; spaces
-restored, the exponent transcribed), where the range of their Proposition 10.2 is "(qT)^{2/3}/2 ≤ N ≤ qT" (line
-4646; spaces restored, the exponent transcribed).
+qTN|W|^{1/2}E(W)^{1/2}." (p. 40), by a chain whose "first
+strict inequality follows from the lower bound N ≥ (qT)^{2/3} in the present range" (p. 41), where the range of their
+Proposition 10.2 is "(qT)^{2/3}/2 ≤ N ≤ qT" (p. 40).
 
 The library's form.
 * The energy. `sq_le_energy`: `|R|² ≤ E`, from the quadruples `(i, j, i, j)`. `energy_le_cube`: `E ≤ |R|³` at one
@@ -26,12 +25,12 @@ The library's form.
   `z⁶u⁵ ≤ vN` (`case_two`, their `|W| < (qT)^{2/3}`). The library uses `N ≥ (qT)^{1/2}/2`, which `N ≥ (qT)^{2/3}/2`
   and `qT ≥ 1` give, where they write `N ≥ (qT)^{1/2}` under `≫`. `case_le` is the result in real powers.
 * `remark103` is the library's form of their Remark 10.3. Their remark holds as stated, strictly and with the constant
-  `1`, for every `N > 0`: with `E ≤ |W|³` (`energy_le_cube`; the fourth point is unique, lines 4716–4718), their
+  `1`, for every `N > 0`: with `E ≤ |W|³` (`energy_le_cube`; the fourth point is unique, p. 41), their
   second assumption gives `E^{1/2} = E^{1/8}E^{3/8} < (qT)^{1/2}|W|^{7/4}N^{−1}`, so
   `qTN|W|^{1/2}E^{1/2} < (qT)^{3/2}|W|^{9/4}`, and their first gives `(qT)^{3/2}|W|^{9/4} < (qT)²|W|^{3/2}`. The slip
-  is in their chain: its step `(qT)³|W|³N^{−3} < qT|W|³` (line 4669) needs `N³ > (qT)²`, which fails for
+  is in their chain: its step `(qT)³|W|³N^{−3} < qT|W|³` (p. 40) needs `N³ > (qT)²`, which fails for
   `(qT)^{2/3}/2 ≤ N ≤ (qT)^{2/3}`. The library reads that step as their "first strict inequality", since the chain's
-  first step follows from their second assumption (lines 4667–4668). `remark103` does not assume `E ≤ |W|³`: with
+  first step follows from their second assumption (p. 40). `remark103` does not assume `E ≤ |W|³`: with
   `N ≥ (qT)^{2/3}/2` it gives `qTN|W|^{1/2}E^{1/2} ≤ 8(qT)²|W|^{3/2}`, and the `8` is attained, at `|W| = (qT)^{2/3}`,
   `N = (qT)^{2/3}/2` and `E = 256(qT)²`. The constant does not affect their use of it, which is up to `⪅`.
 * `lemma1010_case`: their Lemma 10.10 with their hypotheses, from `lemma1010` and `case_le`, with

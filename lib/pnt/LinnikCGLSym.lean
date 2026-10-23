@@ -6,15 +6,14 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 This file supplies two inputs of Chen–Gupta–Li's proof of Proposition 7.2.
 
 The support. Their Cauchy–Schwarz step bounds an integral over `v₂` of `|R(v₂/v₁, b₁⁻¹b₂)|²` by their "R̃_{M₂}(u,a) :=
-(∫_{u′∈[1/2,2]} (NM₂/q) ψ̃((NM₂/q)(u−u′)) |R(u′,a)|² du′)^{1/2}" (their (7.5), text layer lines 2246–2257; spaces
-restored, the tildes, the integral and its range, the large parentheses, the fractions, the exponents and the subscripts
-transcribed). That integral runs over `u′ ∈ [1/2, 2]` only, so with `u′ = v₂/v₁` the step needs `v₂/v₁ ∈ [1/2, 2]`.
-Their Proposition 7.1, as stated, integrates over `v₁, v₂ ∈ [1/2, 2]` without that constraint. The kernel supplies it:
-`J(v₁, v₂, λ) = 0` unless `v₂/v₁ ∈ (1/2, 2)`, since `u₁ = v₁u₃` and `u₂ = v₂u₃` lie in `(1, 2)` on the support of the
-weight (`Jk_eq_zero_of_ratio`). `prop71r` is `prop71` with the integrand restricted to `v₂/v₁ ∈ [1/2, 2]`.
+(∫_{u′∈[1/2,2]} (NM₂/q) ψ̃((NM₂/q)(u−u′)) |R(u′,a)|² du′)^{1/2}" (their (7.5), p. 24). That integral runs over
+`u′ ∈ [1/2, 2]` only, so with `u′ = v₂/v₁` the step needs `v₂/v₁ ∈ [1/2, 2]`. Their Proposition 7.1, as stated,
+integrates over `v₁, v₂ ∈ [1/2, 2]` without that constraint. The kernel supplies it: `J(v₁, v₂, λ) = 0` unless
+`v₂/v₁ ∈ (1/2, 2)`, since `u₁ = v₁u₃` and `u₂ = v₂u₃` lie in `(1, 2)` on the support of the weight
+(`Jk_eq_zero_of_ratio`). `prop71r` is `prop71` with the integrand restricted to `v₂/v₁ ∈ [1/2, 2]`.
 
 The symmetry. "These symmetries allow us to reduce the estimation to the case |m₁| ≤ |m₃| ≤ |m₂| at the cost of a
-factor 6" (lines 2340–2341, spaces restored, the subscripts transcribed). This file takes only `|m₂|` largest, which
+factor 6" (p. 25). This file takes only `|m₂|` largest, which
 their proof of Proposition 7.2 uses for the length of the `v₂`-interval. That comes from the cyclic symmetry
 `I′(m₁, m₂, m₃) = I′(m₂, m₃, m₁)`, a renaming of the triples of points (`Ip_cyc`), at the cost of a factor 3
 (`sum_le_three_mul`).

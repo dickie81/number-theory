@@ -6,10 +6,8 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 Chen–Gupta–Li expand the traces of `MM*` by Poisson summation in residue classes (their Lemmas 4.4 and 4.5). In the
 proof of Lemma 4.5: "Performing Poisson summation in the n₁-sum gives", followed by a display that reads, on one line,
 `Σ_{n₁∈ℤ}h_{t₁−t₂}(n₁/N)χ₁χ̄₂(n₁) = Σ_{a₁ mod q}Σ_{n₁∈ℤ, n₁≡a₁ mod q}h_{t₁−t₂}(n₁/N)χ₁χ̄₂(n₁) =
-(N/q)Σ_{a₁ mod q}Σ_{m₁∈ℤ}ĥ_{t₁−t₂}(Nm₁/q)e_q(a₁m₁)χ₁χ̄₂(a₁)` (text layer lines 1059–1087; spaces restored, the sums and
-their ranges, the hat, the large parentheses, the fractions and the subscripts transcribed). The conjugation bars over
-`χ₂` are drawn rules, which the text layer drops: on page 13 pdfminer finds rules at y = 267.2 over the `χ` at
-x = 208.1–215.5 and x = 415.9–423.3, and at y = 220.8 over the `χ` at x = 462.8–470.2. This file proves that expansion for the library's Gram entries
+(N/q)Σ_{a₁ mod q}Σ_{m₁∈ℤ}ĥ_{t₁−t₂}(Nm₁/q)e_q(a₁m₁)χ₁χ̄₂(a₁)` (p. 13). The PDF has conjugation bars over
+`χ₂`. This file proves that expansion for the library's Gram entries
 (`gramP`), with Lemma 4.3 (1) for the decay that Poisson summation needs. Their display carries no factor
 `N^{iτ}`, which cancels in the cyclic products of the cubic trace; the library keeps it in the entry.
 

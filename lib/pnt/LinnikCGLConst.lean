@@ -4,7 +4,7 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li bound the gcd sums of their §8.2 by a divisor estimate: "when q|n, the only dependence on d is (d,q) and
-we have that" (lines 2892–2893; spaces restored) `Σ_{d mod q}(d, q)/q ⪅ 1` (lines 2893–2896, transcribed). This file
+we have that" (p. 29) `Σ_{d mod q}(d, q)/q ⪅ 1` (p. 29). This file
 bounds two constants of Lemma 8.2, `W₀` and `K_X`, with the parameters `L`, `X`
 and `δ` left free under the hypotheses below.
 

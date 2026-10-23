@@ -4,9 +4,8 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li continue the proof of their Lemma 8.2 from (8.7): "By making a change of variables
-ξ = m₁n/q + (m₁/M₃)τ, the only m₁ dependence in the inner double sum is a 1/m₁ term." (lines 3428–3432; spaces
-restored, the fractions written inline and the subscripts transcribed). This file integrates the bound for the
-terms `n ≠ 0` over `|ξ| ≤ X` and makes that change of variables in each term.
+ξ = m₁n/q + (m₁/M₃)τ, the only m₁ dependence in the inner double sum is a 1/m₁ term." (p. 32). This file integrates the
+bound for the terms `n ≠ 0` over `|ξ| ≤ X` and makes that change of variables in each term.
 
 The library's form.
 * Their `M₃` is `L`, and their `ψ̂₁` is `ψ̂₀` (`𝓕 psiC`): with `ξ = (m₁/L)τ + m₁n/q`,

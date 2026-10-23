@@ -4,11 +4,11 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li continue the proof of their Lemma 8.2: "We write out f̂_b as an integral, expand out the square and bring
-the summation over n and integration over τ on the inside to get" (lines 3522–3523; spaces restored, the hat and
-subscript transcribed) `Σ_II = ∫∫Σ_{m₂,m₂′}Σ_{b,b′}m₂m₂′f_b(u)f_{b′}(u′)Σ₁Σ₂ du′ du` (transcribed), with
+the summation over n and integration over τ on the inside to get" (p. 33)
+`Σ_II = ∫∫Σ_{m₂,m₂′}Σ_{b,b′}m₂m₂′f_b(u)f_{b′}(u′)Σ₁Σ₂ du′ du`, with
 `Σ₂ = Σ_{n∈ℤ}ψ₂(M₂n/(qT))e_q((m₂′u′ − m₂u + b′m₂′ − bm₂)n)`, and "By Poisson summation and the rapid decay of the
-Fourier transform ψ̂₂, we have" (lines 3563–3564; spaces restored, the hat and subscript transcribed). This file proves
-that expansion for `Φ(n, τ)` under the weight `ψ̃₀(n/N₀)`, and that Poisson step.
+Fourier transform ψ̂₂, we have" (p. 33). This file proves that expansion for `Φ(n, τ)` under the weight `ψ̃₀(n/N₀)`, and
+that Poisson step.
 
 The library's form.
 * Their weight `ψ₂(M₂n/(qT))` is `ψ̃₀(n/N₀)` (the bump `psi0`), and the sum over `n` runs over

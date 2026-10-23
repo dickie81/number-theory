@@ -4,12 +4,10 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Chen–Gupta–Li bound the inner integral of their `Σ_II` after Poisson summation: "Let ψ(x) be a smooth bump function
-supported on |x| ≪ 1 and define" (line 3649; spaces restored) `f̃_{b′}(u) := ∫_ℝTψ(T(u − v))f_{b′}(v) dv` (lines
-3650–3653, transcribed), "We can then bound the above integral over u′ by" (line 3654; spaces restored)
-`f̃_{b′}((qj + m₂u + bm₂ − b′m₂′)/m₂′)` (lines 3654–3658, transcribed), and "In the final line we have introduced a
-sum over m₃ such that m₃ = qj + bm₂ − b′m₂′ for some integer j." (lines 3726–3728; spaces restored, the subscripts
-transcribed). This file proves that bound, for `S₂`, and with it the majorant `H` that
-`sum_psi_norm_Phi_sq_le` asks for.
+supported on |x| ≪ 1 and define" (p. 33) `f̃_{b′}(u) := ∫_ℝTψ(T(u − v))f_{b′}(v) dv` (p. 33), "We can then bound the
+above integral over u′ by" (p. 33) `f̃_{b′}((qj + m₂u + bm₂ − b′m₂′)/m₂′)` (p. 33), and "In the final line we have
+introduced a sum over m₃ such that m₃ = qj + bm₂ − b′m₂′ for some integer j." (p. 34). This file proves that bound, for
+`S₂`, and with it the majorant `H` that `sum_psi_norm_Phi_sq_le` asks for.
 
 The library's form.
 * Their `ψ` is the bump `ψ̃₀`, which is `1` on `[−1, 1]`, and `f̃_b = (Tψ̃₀(T·)) ⋆ f_b` (Mathlib's

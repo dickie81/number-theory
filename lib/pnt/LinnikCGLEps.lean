@@ -7,15 +7,14 @@ Their Proposition 10.2: "Let D_N(t, χ) = Σ_{N<n≤2N} a_nχ(n)n^{it}, where χ
 |a_n| ≤ 1. Suppose that W is a finite set of pairs (t, χ), where |t| ≤ T and for (t, χ) ≠ (t′, χ′) either χ ≠ χ′ or
 |t − t′| ≥ (qT)^ϵ. Assume that |D_N(t, χ)| ≥ N^σ/6 for all (t, χ) ∈ W and (qT)^{2/3}/2 ≤ N ≤ qT. Assume that either
 |W| ≥ (qT)^{2/3} or that E(W)^{1/8}N ≥ (qT)^{1/2}|W|^{5/8}. Then we have E(W) ⪅_ϵ |W|N^{4−4σ} +
-|W|^{21/8}(qT)^{1/4}N^{1−2σ} + |W|³N^{1−2σ}." (text layer lines 4637–4656.)
+|W|^{21/8}(qT)^{1/4}N^{1−2σ} + |W|³N^{1−2σ}." (p. 40.)
 
 Their proof: "First, we use Lemma 10.5 to obtain E(W) ⪅ N^{−2σ} Σ_{n₁,n₂∼N, (n₁n₂,q)=1} |R(n₁/n₂, n₁n₂^{−1})|³."
-(lines 5500–5512); "By splitting the sum based on whether (n₁, n₂) ≤ D nor not and applying (10.3) and Lemma 10.10,
+(p. 47); "By splitting the sum based on whether (n₁, n₂) ≤ D nor not and applying (10.3) and Lemma 10.10,
 we find E(W) ⪅ N^{−2σ}(N|W|³ + N(qT)^{1/4}|W|^{21/8} + E(W)^{1/2}|W|^{1/2}N²). so that E(W) ⪅ |W|N^{4−4σ} +
-|W|^{21/8}(qT)^{1/4}N^{1−2σ} + |W|³N^{1−2σ}, as required." (lines 5513–5518.) Their (10.3) is their Lemma 10.9,
-"⪅_ϵ (DqT + N²)|W|^{1/2}E(W)^{1/2}." (line 5082), at "D = N²/(qT)" (line 5300): "⪅ N²|W|^{1/2}E(W)^{1/2}."
-(line 5314). In all of these, spaces are restored and the sums, fractions, large bars, large parentheses, subscripts
-and exponents transcribed; "nor" is as printed (the PDF's page 47 has it).
+|W|^{21/8}(qT)^{1/4}N^{1−2σ} + |W|³N^{1−2σ}, as required." (p. 47.) Their (10.3) is their Lemma 10.9,
+"⪅_ϵ (DqT + N²)|W|^{1/2}E(W)^{1/2}." (p. 44), at "D = N²/(qT)" (p. 45): "⪅ N²|W|^{1/2}E(W)^{1/2}."
+(p. 45). "nor" is as printed (p. 47).
 
 The library's form.
 * One point per character. The library's points have distinct characters (`Set.InjOn χ R`), which suffices for

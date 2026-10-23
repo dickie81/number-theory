@@ -19,7 +19,7 @@ Plain statement (`s2_main`). For `N > 5/6` and `0 < δ ≤ 1/16`, `‖E‖_F² �
 The parameters: `P = qT`, `u = P^δ`, `N′ = ⌊9N/5⌋`, `Z = ⌊3Pu/N⌋ + 1`, `K = ⌈4/δ⌉` and `τ = C_δ(N′Z)^δ`.
 
 The paper's own count: "S₂ ⪅_ϵ (|W|N^{2−2σ}/M)(N²M² + qTNM) ⪅_ϵ qT|W|N^{3−2σ}, since NM ⪅_ϵ qT" (the end of their
-proof of Proposition 6.1, spaces restored and the fraction written on one line). Here `NZ` plays their `NM`, and
+proof of Proposition 6.1, p. 21). Here `NZ` plays their `NM`, and
 `‖E‖_F²` carries one power of `N` less than `S₂ = 3μ₀‖E‖_F²`.
 
 * `AL`, `natLog_le_two_log`, `LSX_le`: the large-sieve factor is at most `A(δ)(q(2T + 1) + X)X^δ`, from

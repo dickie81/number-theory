@@ -5,7 +5,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Kerr lengthens the double sum over `N ⩽ n ⩽ KN` to one over `UN ⩽ n ⩽ 3KNU/2` (arXiv:1909.12075, his Lemma 20). His
 proof averages over the characters modulo an auxiliary prime: "Let P be a prime number satisfying" `8U ⩽ P ⩽ 16U` (his
-(35); text layer lines 1307–1308, the condition transcribed). It puts `a(m, χ) = Σ_{U⩽u⩽3U/2, N⩽n⩽KN, un=m}χ(u)`,
+(35); p. 16). It puts `a(m, χ) = Σ_{U⩽u⩽3U/2, N⩽n⩽KN, un=m}χ(u)`,
 which the divisor bound controls, before positivity (his Lemma 18). This file proves that step for the double
 sums with characters.
 

@@ -9,7 +9,7 @@ of terms with all three m_i being nonzero", and their §7 opens "Let us first re
 S₃ = Σ_{m₁,m₂,m₃≠0} I_{m⃗}, where I_{m⃗} = N³/q³ Σ_{(t₁,χ₁),(t₂,χ₂),(t₃,χ₃)∈W, not all equal}
 Σ_{a₁,a₂,a₃ mod q, (a₁a₂a₃,q)=1} χ₁χ̄₂(a₁)χ₂χ̄₃(a₂)χ₃χ̄₁(a₃)e_q(a⃗·m⃗)
 · ĥ_{t₁−t₂}(Nm₁/q)ĥ_{t₂−t₃}(Nm₂/q)ĥ_{t₃−t₁}(Nm₃/q)"
-(spaces restored, the subscripts and the displays transcribed on one line, the bars read from the PDF). The
+(p. 22). The
 library's `S3 = X − 3μ₀‖E‖_F²` is named after their `S₃`; this file proves the identity at one point per
 character.
 

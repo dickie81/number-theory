@@ -4,10 +4,10 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Their Proposition 11.1: "Let (qT)^{2/3}/2 ≤ N ≤ qT. Then we have S₃ ⪅ (qT)²|W|^{3/2} + qT|W|N^{3−2σ} +
-qT|W|²N^{3/2−σ} + (qT)^{9/8}|W|^{29/16}N^{3/2−σ}." (text layer lines 5522–5533.) The end of their proof: "Since
-M₂ ⪅ qT/N, we get (11.2) S₃ ⪅ (qT)²|W|^{3/2} + qTN|W|^{1/2}E(W)^{1/2}." (lines 5865–5866) and "Finally, inserting
+qT|W|²N^{3/2−σ} + (qT)^{9/8}|W|^{29/16}N^{3/2−σ}." (p. 47.) The end of their proof: "Since
+M₂ ⪅ qT/N, we get (11.2) S₃ ⪅ (qT)²|W|^{3/2} + qTN|W|^{1/2}E(W)^{1/2}." (p. 50) and "Finally, inserting
 the energy bound established in Section 10 (see Proposition 10.2) into the above inequality yields the result."
-(lines 5867–5868). In these, spaces are restored and the subscripts, exponents and stacked fractions transcribed.
+(p. 50).
 
 The library's form.
 * `CGLS3` is the displayed hypothesis: their Proposition 11.1 at one point per character, for sums over

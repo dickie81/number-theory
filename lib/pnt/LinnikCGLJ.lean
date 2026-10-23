@@ -6,14 +6,12 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 Their §8 opens: "For parameters satisfying 0 < M ≤ (qT)^ϖ with 0 < ϖ < 1 and given a sequence of compactly supported
 smooth functions f⃗ = {f_b}_{1≤b≤q, (b,q)=1}, we define J(f⃗) := sup_{0<M_i<M, 1≤i≤3} ∫_ℝ Σ_{1≤a≤q, (a,q)=1}
 (Σ_{1≤b≤q, (b,q)=1} Σ_{|m₁|∼M₁, m₂∼M₂, |m₃|≪M₃} f_b((m₁u+m₃)/m₂)(am₁+bm₂+m₃,q))² du, which is an average of sums of
-affine transformations with GCD twists." (text layer lines 2436–2462), and states: "Proposition 8.1. Suppose that
+affine transformations with GCD twists." (p. 26), and states: "Proposition 8.1. Suppose that
 f⃗ = {f_b}_{1≤b≤q, (b,q)=1} is a sequence of smooth functions such that each f_b(u) is non-negative and supported on
 |u| ≪ 1 and Σ_{1≤b≤q, (b,q)=1} |f̂_b(ξ)| ⪅_j (T/|ξ|)^j ϕ(q) sup_{b,u} f_b(u) for all j ∈ ℕ. Then
-J(f⃗) ⪅ ϕ(q)M⁶(∫_ℝ Σ_{1≤b≤q, (b,q)=1} f_b(u) du)² + ϕ(q)²M⁴ ∫_ℝ Σ_{1≤b≤q, (b,q)=1} f_b(u)² du." (lines 2464–2486).
-In both, spaces are restored and the arrows, the sums and their ranges, the integrals and their ranges, the hat, the
-large parentheses, the fractions, the subscripts and the exponents transcribed; the text layer's `R` and `N` are the
-PDF's blackboard `ℝ` and `ℕ` (`MSBM10` glyphs on page 26). Their notation:
-"A∼B signifies the stronger condition B < A≤2B" (lines 278–279).
+J(f⃗) ⪅ ϕ(q)M⁶(∫_ℝ Σ_{1≤b≤q, (b,q)=1} f_b(u) du)² + ϕ(q)²M⁴ ∫_ℝ Σ_{1≤b≤q, (b,q)=1} f_b(u)² du." (p. 26).
+The `ℝ` and `ℕ` are blackboard letters. Their notation:
+"A∼B signifies the stronger condition B < A≤2B" (p. 5).
 
 The library's form.
 * `setJ M₁ M₂ M₃ κ` is their range `M₁ < |m₁| ≤ 2M₁`, `M₂ < m₂ ≤ 2M₂`, with `|m₃| ≤ κM₃` for their `|m₃| ≪ M₃`; `gJ`
@@ -28,7 +26,7 @@ The library's form.
   and `ξ = 0` by continuity, each `f̂_b` being continuous), and `Jint` at any `0 < M_i < M` is at most their supremum.
   `CGLP81` is not proved here.
 
-`S₃,₃` and `S₃,₄` in its form. Their §11 bounds both by Proposition 8.1 (lines 5655–5851).
+`S₃,₃` and `S₃,₄` in its form. Their §11 bounds both by Proposition 8.1 (pp. 48–49).
 `S₃,₄ = ∫_{[1/2,2]}Σ_{b₁}Q(v, b₁)² dv` has `Q(v, b₁) = Σ_{b₂}Σ_{m⃗∈B}R̃(c₂, b₂)²(b₁m₁ − b₂m₂ + m₃, q)` with
 `c₂ = (m₁v + m₃)/m₂`, over the dyadic block `B = blk M k`. On `B` and `v ∈ [1/2, 2]`, `|c₂| ≤ 3`. Take any
 nonnegative `f` with `f_{−b}(c) ≥ R̃(c, b)²` on `[−3, 3]`, and put `b = −b₂`, so that the weight is their
@@ -41,9 +39,9 @@ nonnegative `f` with `f_{−b}(c) ≥ R̃(c, b)²` on `[−3, 3]`, and put `b = 
 That gives `S₃,₄ ≤ 4(k + 1)Σ_{j≤k}Jint(f, 2^j − 1/2, 2^k − 1/2, 2^k − 1/2, 2)` (`S34_le_Jint`). For `S₃,₃` their change
 of variables `u = v⁻¹` (`|dv| = u⁻²du ≤ 4du` on `[1/2, 2]`) turns `c₁ = (m₁v + m₃)/(m₂v)` into `(m₁ + m₃u)/m₂`.
 With `b₂ = b₁b`, the weight `(b₁m₁ − b₁bm₂ + m₃, q)` equals `(b₁⁻¹m₃ − bm₂ + m₁, q)`, since `b₁` is
-a unit ("Note that (b₁m₁−b₁b₂m₂+m₃,q) = (m₁−b₂m₂+b₁⁻¹m₃,q) when (b₁,q) = 1", lines 5700–5701, spaces restored, the
-subscripts and the exponent transcribed). Then `b₁ ↦ b₁⁻¹` and the swap `(m₁, m₂, m₃) ↦ (m₃, m₂, m₁)`, which maps the
-block to itself, turn the sum into `Q` at `(u, b₁⁻¹)`. So `S₃,₃ ≤ 4S₃,₄` (`S33_le_S34`).
+a unit ("Note that (b₁m₁−b₁b₂m₂+m₃,q) = (m₁−b₂m₂+b₁⁻¹m₃,q) when (b₁,q) = 1", p. 48). Then `b₁ ↦ b₁⁻¹` and the swap
+`(m₁, m₂, m₃) ↦ (m₃, m₂, m₁)`, which maps the block to itself, turn the sum into `Q` at `(u, b₁⁻¹)`. So `S₃,₃ ≤ 4S₃,₄`
+(`S33_le_S34`).
 
 Plain statements, with `q ≥ 1`.
 * `gcd_val_unit_mul`, `gcd_val_neg`: `(ux, q) = (x, q)` for a unit `u`, and `(−x, q) = (x, q)`, in `ℤ/qℤ`.

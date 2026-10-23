@@ -7,10 +7,9 @@ Chen–Gupta–Li's proof of Proposition 7.1 opens: "Expanding the definition of
 order of summation and integration, one finds" `I′_{m⃗}` as an integral over `(u₁, u₂, u₃)`. Then, since "a key
 observation is that the arguments of the R functions above are restricted to a two-dimensional subvariety defined by
 z₁z₂z₃ = 1", "we make the change of variables v₁ = u₁/u₃, v₂ = u₂/u₃, b₁ = a₁a₃⁻¹, b₂ = a₂a₃⁻¹", with
-"du₁du₂du₃ = u₃²dv₁dv₂du₃" (text layer lines 2067–2068 and 2125–2163; spaces restored, the hat, fractions, exponents
-and subscripts transcribed). Their (7.3) integrates over `u₃` first, against `w(v₁u₃)²w(v₂u₃)²w(u₃)²u₃²`. This file
-proves the analytic part of that computation for one triple of points: a product of three `ĥ`s whose `τ`s sum to `0`
-is an integral over `(v₁, v₂)` of `v₁^{iτ₁}v₂^{iτ₂}` times the inner integral of their (7.3).
+"du₁du₂du₃ = u₃²dv₁dv₂du₃" (pp. 23–24). Their (7.3) integrates over `u₃` first, against `w(v₁u₃)²w(v₂u₃)²w(u₃)²u₃²`.
+This file proves the analytic part of that computation for one triple of points: a product of three `ĥ`s whose `τ`s sum
+to `0` is an integral over `(v₁, v₂)` of `v₁^{iτ₁}v₂^{iτ₂}` times the inner integral of their (7.3).
 
 Plain statement (`hhat_prod`). For `τ₁ + τ₂ + τ₃ = 0` and real `ξ₁, ξ₂, ξ₃`,
 `ĥ_{τ₁}(ξ₁)ĥ_{τ₂}(ξ₂)ĥ_{τ₃}(ξ₃) = ∫∫v₁^{iτ₁}v₂^{iτ₂}J(v₁, v₂, v₁ξ₁ + v₂ξ₂ + ξ₃) dv₂ dv₁`, with

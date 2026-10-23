@@ -8,8 +8,7 @@ explicit errors, with the dyadic blocks `B_k` of `blk` and `A_k = 2C_J(0)d(q)(N�
 `block_le` bounds each block by `(Σ_{m⃗∈B_k}Ĩ)² ≤ 3φ(q)|R|V_k`. This file takes the square root and sums over `k`.
 Their step: "Gathering all these estimates together, we arrive at S₃ ⪅_ϵ (N²/(q²M₂)) (ϕ(q)|W|)^{1/2} ϕ(q)^{3/2} (M₂⁶|W|²
 + M₂⁴E(W))^{1/2} + |W| ≤ N²M₂²|W|^{3/2} + N²M₂|W|^{1/2}E(W)^{1/2}. Since M₂ ⪅ qT/N, we get (11.2) S₃ ⪅ (qT)²|W|^{3/2} +
-qTN|W|^{1/2}E(W)^{1/2}." (text layer lines 5855–5866; spaces restored; the fraction, subscripts and exponents
-transcribed).
+qTN|W|^{1/2}E(W)^{1/2}." (p. 50).
 
 The library's form. With `G = ∫ψ̃₀·E + |R|⁴D_K/X^K` (`Gq`), `P = 12C(qT)^εX³|R|` and `M_k = 2^{k+1}`, `3φ(q)|R|V_k` is
 `((k + 1)∫ψ̃₀·φ(q)²)²·P·(9M_k⁶|R|² + 8M_k⁴G)`, and `√(9M_k⁶|R|² + 8M_k⁴G) ≤ 3M_k³|R| + 3M_k²√G`. So
