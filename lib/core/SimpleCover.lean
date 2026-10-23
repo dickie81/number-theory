@@ -181,7 +181,7 @@ theorem simpleGround_of_chain (node s : ℕ → ℝ) (hpos : ∀ i, 0 < node i) 
 /-! ## The certificates, and simplicity for every support `0 < a ≤ 1.035`
 
 The nodes are `a = 0.36, 0.51, 0.64, 0.75, 0.85, 0.935, 1.01, 1.035` (support `δ = 2a` up to `2.07`).
-`Round47Certs` lists the fourteen computer-assisted inequalities:
+`SimpleCoverCerts` lists the fourteen computer-assisted inequalities:
 * upper bounds `λ₁(a_i) < s_i` are ball Rayleigh quotients of cosine trial vectors, computed at a support
   slightly below the node (valid at the node by `lam_antitone`);
 * lower bounds `λ₂(a_{i+1}) ≥ s_i` are Zhu's one-stroke reduction with a ball-arithmetic inertia count.
@@ -189,7 +189,7 @@ The nodes are `a = 0.36, 0.51, 0.64, 0.75, 0.85, 0.935, 1.01, 1.035` (support `�
 They are stated as a hypothesis: Lean checks the logic, not the numerics. -/
 
 /-- The certified inequalities (computer-assisted, not checked in Lean). -/
-def Round47Certs : Prop :=
+def SimpleCoverCerts : Prop :=
   lam 0.36 < 1 / 100 ∧ Lam2Ge 0.51 (1 / 100) ∧
   lam 0.51 < 6e-6 ∧ Lam2Ge 0.64 6e-6 ∧
   lam 0.64 < 1e-9 ∧ Lam2Ge 0.75 1e-9 ∧
@@ -200,7 +200,7 @@ def Round47Certs : Prop :=
 
 /-- **Simplicity at every support `0 < a ≤ 1.035`** (`δ ≤ 2.07`), given the certificates:
 `a ≤ 0.36` is `simpleGround_036` (proved in Lean); the rest is seven covering cells. -/
-theorem simpleGround_le_1035 (hc : Round47Certs) {a : ℝ} (ha : 0 < a) (h : a ≤ 1.035)
+theorem simpleGround_le_1035 (hc : SimpleCoverCerts) {a : ℝ} (ha : 0 < a) (h : a ≤ 1.035)
     {g : ℝ → ℝ} (hg : IsGroundState a g) : SimpleGround a g := by
   obtain ⟨c0, d0, c1, d1, c2, d2, c3, d3, c4, d4, c5, d5, c6, d6⟩ := hc
   by_cases h0 : a ≤ 0.36
