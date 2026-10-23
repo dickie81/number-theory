@@ -15,8 +15,7 @@ Built on Mathlib, `LinnikMoment`, `LinnikLines` and `LinnikSplit`; no PrimeNumbe
 * `large_values_socket`: under the hypotheses of `large_values_lines`, if `‖E‖_F² ≤ A` (`offFrob`,
   the off-diagonal Frobenius norm of the Gram matrix) and `Re q⁻²S₃ ≤ B`, then
   `(|W|V² − N_cβ)³ ≤ β³(3N_c(A + |W|N_c²/q) + B)`. Chen–Gupta–Li bound the corresponding terms in their
-  Proposition 6.1 (`S₂`) and §§7–11 (`S₃`); a bound for `S₃` below their first term at low energy is the open step
-  of `frontier/linnik/SEVEN-THIRDS.md` §15.
+  Proposition 6.1 (`S₂`) and §§7–11 (`S₃`); a bound for `S₃` below their first term at low energy is the open step.
 -/
 
 open Finset

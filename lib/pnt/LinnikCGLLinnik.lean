@@ -5,8 +5,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Plain statement (`linnik_225c_lv`): if `LinnikCGLLV.CGLProp31` holds, there is `K` such that for every `q ≥ 1` and
 every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{9/4}`. Plain statement (`linnik_226c_lv`): the
-same with `p ≤ K·q^{226/100}`. Round 636 had Chen–Gupta–Li's Theorem 1.1 (`LinnikCGLLV.CGLLargeValues`) as the
-hypothesis; round 637 has their Proposition 3.1.
+same with `p ≤ K·q^{226/100}`.
 
 `Linnik225C.linnik_225c` and `Linnik226C.linnik_226c` take `LinnikCGL.CGLDensity` as their hypothesis and use it once,
 through `SieveTypeIIU227.rangeCounts_cgl`: the counts `C(qT)^{(14003/6000)(1−σ)}(1 + log qT)^{10}` on `[5/7, 16/21]`.
@@ -17,7 +16,7 @@ own windows, grids and certificates.
 * `counts_7c_lv`: `SieveTypeIIU226C.counts_7c`'s glue with `rangeCounts_lv` in place of `rangeCounts_cgl`.
 * `typeII225c_lv`, `typeII226c_lv`: `typeII_gen_hm` at `g7c` on the windows `window_225c` and `window_226c`.
 * `linnik_225c_lv`, `linnik_226c_lv`: `SieveMain.linnik_route_lt` with the certificate, and
-  `SieveMain.linnik_route` with round 614's.
+  `SieveMain.linnik_route` with the certificate of `Linnik226`.
 
 The file imports `Linnik225C.lean`, `Linnik226C.lean` and `LinnikCGLStep.lean`.
 -/

@@ -2,7 +2,7 @@ import KubotaLocalFactors
 
 /-! # The twisted theta function as grouped translates
 
-S5f-3b, the second part of the S5f-3. The companion paper's Appendix A.2 writes the twisted theta
+The companion paper's Appendix A.2 writes the twisted theta
 function as a sum of translates of `θ̄`, with
 "`z_{\boldsymbol h}=\lambda^2\Bigl(h_0/L+\sum_{p\in\mathcal P}h_p/p\Bigr),`" and
 "`c_{\mathrm F}(\boldsymbol h)=\widehat\phi(h_0)\prod_{p\in\mathcal P} C_{p,j_p}(h_p).`" (its (A.4)), and

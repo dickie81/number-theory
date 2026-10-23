@@ -1,5 +1,5 @@
 /-
-# Linnik's theorem by the sieve route, and with exponent `2333/1000` (milestones M8 and §0)
+# Linnik's theorem by the sieve route, and with exponent `2333/1000`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -17,8 +17,6 @@ Plain statements. The route and the grid are as in `SieveQ` (`RouteOK`, `GridOK`
   `SieveRoute.typeII2333` and `SieveCert.total_le_2333`: there is `K` such that for every `q ≥ 1` and every `a` prime to
   `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2333/1000}`.
 
-This is the theorem of `frontier/linnik/SIEVE-ROUTE.md` §0 at `x = q^L`, assembled as §13's M8 plans.
-
 The proof:
 
 * `primes_dyadic_ge`: `SieveRough.theta_near` at `x` and `2x`. `TB_ev`: `z_top = ⌊√N₂⌋ + 1`, so the `z_top`-rough
@@ -26,14 +24,12 @@ The proof:
 * `linnik_large_of` (`linnik_large` is its case `c = 0.88`): `SieveBuch.Par.decomp` with
   `SieveQ.leaves_ev`, `SieveDrop.drop_ev_of` and `TB_ev`, with `ε = (1 − c)/10` and `η = ε/(Cdec·L)`. For large `q` the
   leaves' error `Cdec·Err` is at most `2εx/(φ(q) log x)` and `q ≤ εx/log x`, so
-  `S(A, z_top) ≥ (1 − c)x/(2φ(q) log x) > 0` (until round 619 the proof set `ε = 1/100` and `η = 1/(100·Cdec·L)` at
-  `c = 0.88` and kept `0.07x/(φ(q) log x)`). A `z_top`-rough `n ∈ (N₁, N₂]` is prime.
+  `S(A, z_top) ≥ (1 − c)x/(2φ(q) log x) > 0`. A `z_top`-rough `n ∈ (N₁, N₂]` is prime.
 * `linnik_route`: for `q < q₀`, Mathlib's `Nat.forall_exists_prime_gt_and_modEq` (Dirichlet's theorem) gives a prime for
   each of the finitely many `q` and residues, and `K` is the larger of `2` and their maximum.
 
-Round 607 made the route's numbers and the certificate's grid parameters, and the Type II estimate and the
-certificate's total hypotheses; the theorem is their case `linnik_2333`.
-
+The route's numbers and the certificate's grid are parameters, and the Type II estimate and the
+certificate's total are hypotheses; the theorem is their case `linnik_2333`.
 
 The file imports `SieveDrop.lean`.
 -/
@@ -216,8 +212,7 @@ theorem ev_log_le {c r : ℝ} (hc : 0 < c) (hr : 0 < r) : ∀ᶠ q : ℕ in atTo
 the reals for some `c < 1` (`htot`), there is `q₀` such that for `q ≥ q₀` and `a` a unit mod `q` there is a prime
 `p ≡ a (mod q)` with `q^L < p ≤ 2q^L`. The losses the proof sets are shares `ε = (1 − c)/10` of `X = x/log x`:
 `TB_ev`'s, `drop_ev_of`'s, two for the leaves' error (through `η` and `ev_log_le`) and `q ≤ εX`, five in all, leaving
-`(1 − c − 5ε)X = (1 − c)X/2` of `S(A, z_top)` (`linnik_large` is the case `c = 0.88`, where until round 619
-the proof set `1/100` for each share). -/
+`(1 − c − 5ε)X = (1 − c)X/2` of `S(A, z_top)` (`linnik_large` is the case `c = 0.88`). -/
 theorem linnik_large_of (hII : TypeIIAt) {c : ℝ} (hc : c < 1) (htot : (SieveCert.total : ℝ) / SieveCert.K ≤ c) :
     ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
       ∃ p : ℕ, p.Prime ∧ (p : ZMod q) = a ∧ (q : ℝ) ^ L < p ∧ (p : ℝ) ≤ 2 * (q : ℝ) ^ L := by

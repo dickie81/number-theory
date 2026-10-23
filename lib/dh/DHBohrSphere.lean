@@ -4,7 +4,7 @@ import DHLocateFour
 
 /-! # A zero pair off the sphere
 
-Round 391 (`BohrSphere.lean`) identifies the critical line with the unit sphere of the normalised Bohr lift:
+`BohrSphere.lean` identifies the critical line with the unit sphere of the normalised Bohr lift:
 `v_F(s)` lies on the unit sphere of `ℂ^F` exactly when `Re s = ½`, strictly inside exactly when `Re s > ½`
 (`norm_vF_lt_one_iff`, added in this file) and strictly outside exactly when `Re s < ½` (`one_lt_norm_vF_iff`).
 None of this involves ζ: `v_F` is a map of the `s`-plane. So nothing in it can place the zeros of a function on

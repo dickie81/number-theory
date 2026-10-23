@@ -2,10 +2,10 @@ import EisensteinQuadSieveMainBound
 
 /-! # The quadratic large sieve, part 7b: the bound for one gcd part
 
-S5e of the plan, the second piece of S5e-7: the part of the expanded norm of Heath-Brown's
+The part of the expanded norm of Heath-Brown's
 `B(M, N, K)` from the pairs of columns with greatest common divisor `G` (`gcdPart`) is
-bounded through the explicit formulas and the bilinear bounds
-and 355. This is Goldmakher and Louvel's Proposition for one `𝔤`, with the norms of the rows left
+bounded through the explicit formulas and the bilinear bounds. This is Goldmakher and Louvel's Proposition for one
+`𝔤`, with the norms of the rows left
 as hypotheses.
 
 * **The pairs** (`gcdPart_eq_pairs`, with `colG`, `mem_colG`, `inter_eq_iff_disjoint_sdiff`):

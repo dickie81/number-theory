@@ -12,7 +12,7 @@ differentiable on `Re s ≥ θ + δ` and satisfies `(1 + |t − y|)^{K+3}|𝓜w(
 
 This is `Linnik.norm_Sx_le` with the weight `w` in place of `e^{−u}`, and with the rectangle centred at
 height `y`. For `w(u) = u^{−iy}ψ(u)`, `𝓜w(s) = 𝓜ψ(s − iy)`, the sum is `X^{iy}Σ_n χ(n)Λ(n)n^{−iy}ψ(n/X)`:
-`frontier/linnik/SIEVE-ROUTE.md` §3's Lemma 1 at height `y`, for von Mangoldt's weights.
+the bound at height `y`, for von Mangoldt's weights.
 
 * `perron_weight`: `(1/2π) ∫ L(f, σ + it)𝓜w(σ + it)X^{σ+it} dt = Σ_n f(n)w(n/X)`
   (`SmoothPerron.verticalIntegral_eq_smoothedSum` with `w` in place of `Smooth1`).

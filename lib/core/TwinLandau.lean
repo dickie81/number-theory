@@ -16,7 +16,7 @@ explicit formula for the twin boxes).
   `Σ_q c_q(2 + e^{λP_q} + e^{−λP_q})` is constant in `λ ≥ 0`, every residue `Σ_{±P_q = p} c_q`
   (`p ≠ 0`) vanishes.
 
-The proof is round 220's: the Laplace transform of `Q + C·e^{σλ}` is `F(z) + C/(z − σ)`,
+In the proof, the Laplace transform of `Q + C·e^{σλ}` is `F(z) + C/(z − σ)`,
 `F = Σ_q c_q(2/z + 1/(z − P_q) + 1/(z + P_q))`; Landau's theorem continues the integral to
 `Re z > σ`; the rightmost pole on a horizontal line has a nonzero residue. -/
 
@@ -883,7 +883,7 @@ theorem rate_iff [Countable ι] {σ : ℝ} (hσ : 0 ≤ σ) :
 end Data
 
 
-/-! ## Rates per pole, and the `o(e^λ)` bound (rounds 237 and 242) -/
+/-! ## Rates per pole, and the `o(e^λ)` bound -/
 
 /-- **The converse bound with a rate per pole**: if `|Re P_q| ≤ r_q` for every `q` and
 `Σ ‖c_q‖ e^{r_q λ} < ∞`, then `Q(λ) ≥ −4 Σ_q ‖c_q‖ e^{r_q λ}`. -/

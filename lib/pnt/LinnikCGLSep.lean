@@ -1,5 +1,5 @@
 /-
-# Separated points, and the fractions of their Lemma 10.9 (the CGL plan's stage M3, the `S₃` side)
+# Separated points, and the fractions of their Lemma 10.9
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

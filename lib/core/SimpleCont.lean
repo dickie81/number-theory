@@ -313,7 +313,7 @@ theorem first_degeneracy_036 {a₁ : ℝ} (h01 : 0.36 ≤ a₁) (hd : Degenerate
 
 /-! ## S4: the secular reduction, completed
 
-Rounds 49–50 (`GapCriterion.lean`) proved interlacing (`lam_le_of_perp`), the gap criterion
+`GapCriterion.lean` proves interlacing (`lam_le_of_perp`), the gap criterion
 (`simpleGround_of_gap`) and `not_simple_gap`: without simplicity, `λ₁(Q) = min_{φ₀^⊥} Q₀`, attained.
 The two missing links: the attaining function is automatically pole-free, hence a ground state of `Q`
 and an eigenfunction of `Q₀` at level `λ₁`; and, when the ground state has a nonzero pole value, this

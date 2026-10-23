@@ -3,15 +3,15 @@ import KubotaTorus
 
 /-! # θ's Fourier series
 
-S5f-10 of the plan, part 19 (S5f-10f, ninth part). The next step planned θ's Fourier series
+This file treats θ's Fourier series
 `S` with the coefficients: its convergence, continuity and periodicity, and its Fourier coefficients
-on `3P`. This file proves them for the theta-type series `thSer c d` with `|d(m)| ≤ C|m|⁵`,
+on `3P`. It proves them for the theta-type series `thSer c d` with `|d(m)| ≤ C|m|⁵`,
 `d(0) = 0` and `d` supported on `δ₃ℤ[ω]`, and then for θ's coefficients:
 
 * **Convergence and continuity** (`thTerm`, a definition; **`exists_norm_thTerm_le`**, **`summable_thTerm`**
   and **`continuousOn_thSer`**, with `thSer_eq`, `pow_five_exp_le`, `summable_rpow_neg_three` and
-  `continuousOn_thTerm`): on `{α ≤ v ≤ β}` with `α > 0` the terms are at most `B(1 + |m|)^{−3}` (
-  `bkR_le_exp`), so the series converges absolutely and locally uniformly on upper half-space and is
+  `continuousOn_thTerm`): on `{α ≤ v ≤ β}` with `α > 0` the terms are at most `B(1 + |m|)^{−3}` (`bkR_le_exp`), so
+  the series converges absolutely and locally uniformly on upper half-space and is
   continuous there (Mathlib's `continuousOn_tsum`).
 * **Periodicity** (**`thSer_add_period`**): the series is periodic under `3ℤ[ω]` (`ebr_period`).
 * **The Fourier coefficients** (**`integral_ebr_thSer`**, with `continuous_thTerm_fst`, `norm_thTerm_eq` and

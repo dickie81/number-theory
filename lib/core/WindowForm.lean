@@ -5,21 +5,21 @@ import Mathlib
 
 Unconditional: no hypothesis about ζ, RH or any zero appears.
 
-**Round 118: closed forms.** The window basis is `φ_k(u) = cos(ω_k u)` on `[−a, a]` with `ω_k = kπ/a`.
-* `ghat_cos`: its transform is `∫ cos(ω_k u) cos(tu) du = (−1)^k · 2t sin(ta)/(t² − ω_k²)`. These are the rows of every chain
-  .
+**Closed forms.** The window basis is `φ_k(u) = cos(ω_k u)` on `[−a, a]` with `ω_k = kπ/a`.
+* `ghat_cos`: its transform is `∫ cos(ω_k u) cos(tu) du = (−1)^k · 2t sin(ta)/(t² − ω_k²)`. These are the rows of
+  every chain.
 * `ghat_pole`: at the pole, `∫ cos(ω_k u) cosh(u/2) du = (−1)^k sinh(a/2)/(ω_k² + ¼)`. This is the rank-one pole term.
 * `product_dd`, `hasDerivAt_uA`: the product of two transforms is a divided difference, in `A = ω²`, of `u_A = A sin²(ta)/(t² − A)`.
   On the diagonal it is the `A`-derivative. So every linear functional of `ĝ_j ĝ_k` reduces to one scalar function.
 * `phi_u_trig`, `basis_trig`: the trigonometric reduction of the prime term `Φ_u`, and the values at the basis frequencies.
 
-**Round 119: certification logic.**
+**Certification logic.**
 * `posDef_of_cholesky`: `L Lᵀ` is positive definite if `L` is lower triangular with a positive diagonal. This is the
   certificate that the arb Cholesky produces.
 * `gram_quadratic`, `gram_pos`: a positive-definite Gram matrix makes the form strictly positive on every nonzero
   combination of the basis.
 
-**Round 119: the counterexample mechanism.**
+**The counterexample mechanism.**
 * `quadruple_sum`: for a transform that is even and real on the real axis, the four points `±γ₀ ± iδ` (the zeros
   `½ ± δ + iγ₀` and their conjugates) contribute `4 Re ĝ(γ₀ + iδ)²` to `Σ_ρ ĝ(γ_ρ)²`.
 * `offline_second_order`: if `F(γ₀) = 0` and `F'(γ₀) = c` is real, then `Re F(γ₀ + iδ)² = −c²δ² + o(δ²)`.

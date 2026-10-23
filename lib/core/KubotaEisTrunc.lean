@@ -3,10 +3,10 @@ import KubotaConstTerm
 
 /-! # The truncated Eisenstein series, and `g_s`
 
-S5f-10 of the plan, part 6 (S5f-10c). Round 422 identified the ball operator `K` with the ball
-average `T_R` on automorphic functions. This file takes `Γ_1(3)` with Kubota's character. It
+The ball operator `K` is the ball average `T_R` on automorphic functions. This file takes `Γ_1(3)` with Kubota's
+character. It
 builds the truncated Eisenstein series `E_s − h_s` and the function `g_s = (K − ĥ(s))(E_s − h_s)` that the
-resolvent is planned to act on.
+resolvent acts on.
 
 * **`Γ_1(3)` with Kubota's character** (`rhoG`, a definition, and the instances `finite_quot_three`,
   `finiteIndex_Gam3` and `finite_quot_Gam3`; `isUChar_kub` and `isPU_rhoG`): `κ` is a unitary character on

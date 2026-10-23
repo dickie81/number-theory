@@ -1,6 +1,5 @@
 /-
-# Chen–Gupta–Li's Proposition 3.1 as a hypothesis, and the large-values counts it gives (the CGL
-plan's stages M1 and M2)
+# Chen–Gupta–Li's Proposition 3.1 as a hypothesis, and the large-values counts it gives
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -40,9 +39,6 @@ Plain statement (`cgl_shift`). Under the hypothesis, characters with `|Σ_{N<n�
   degree `K − 1` within `2·16^{−K}` (`Real.exp_bound`); if every `Σ a_n log(n/N)^k χ(n)n^{−iγ}`, `k < K`, were below
   `V/2`, the sum would be at most `(V/2)e^{1/16} + V/4 < V`.
 * `cgl_shift`: `taylor_pick` for each character, and `cgl_all` for each `k < K`.
-
-Round 636 had their Theorem 1.1's second bound as the hypothesis (`CGLLargeValues`, with the bound `cglB`); round 637
-replaces it with Proposition 3.1.
 
 The file imports `LinnikPower.lean`.
 -/

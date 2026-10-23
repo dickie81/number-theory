@@ -17,8 +17,7 @@ splits exactly:
   `ê(−i/2) = E`, `ô(−i/2) = −O`), so `2ĝ(i/2)ĝ(−i/2) = 2E² − 2O²`, the sum of the two sectors'
   pole terms.
 
-This is Zhu's parity splitting (his Lemma 6.1), cited in README round 39, now formalised on the library's
-own definitions.
+This is Zhu's parity splitting (his Lemma 6.1), formalised on the library's own definitions.
 
 **Consequences.** The sector bounds combine into positivity for every real `g`:
 * `weilQg_ge_twentieth_all`: `Q(g) ≥ ‖g‖²/20` for `0 < a ≤ 1/12`, **pure Lean** (even sector

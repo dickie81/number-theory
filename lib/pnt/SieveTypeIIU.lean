@@ -13,7 +13,7 @@ comparisons hold each `x_i ≥ 2q^{e₁}` and `m∏_i x_i ≤ 2q^L`, then the fa
 most `q^{L−δ}/φ(q)`.
 
 This removes the dyadic weights from `SieveFamily.typeII_sharp`, whose primes carry `f0(x_i/Q_i)` at fixed scales
-and whose `m` lies in a dyadic block, so that §13's M5 can use families with sharp ranges.
+and whose `m` lies in a dyadic block, so that families with sharp ranges can be used.
 
 The proof:
 
@@ -23,9 +23,8 @@ The proof:
 * `SieveFamily.typeII_sharp` bounds each piece by `q^{L−δ}/φ(q)` (with `f0 = bump`, `F₀ = 1`, `A₀ = 1`). The pieces
   number at most `(3 + 4 log q)^{K₀+1}`, which `ev_log_pow_le` puts below `q^{δ/2}`.
 
-Round 607 made `L`, `w₁` and `w₂` a route's parameters and the Type II estimate a hypothesis (`hII`); the
-statements of earlier rounds are the case `SieveRoute.route2333`, with `SieveRoute.typeII2333` for `hII`.
-
+`L`, `w₁` and `w₂` are a route's parameters and the Type II estimate is a hypothesis (`hII`); the
+case `SieveRoute.route2333` has `SieveRoute.typeII2333` for `hII`.
 
 The file imports `SieveFamily.lean` and `SieveDyadic.lean`.
 -/

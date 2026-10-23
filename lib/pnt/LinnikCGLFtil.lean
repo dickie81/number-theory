@@ -1,5 +1,5 @@
 /-
-# Their smoothing `f̃_b`, and the inner integral of their `Σ_II` (the CGL plan's stage M4)
+# Their smoothing `f̃_b`, and the inner integral of their `Σ_II`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

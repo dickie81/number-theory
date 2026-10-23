@@ -5,8 +5,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Plain statement. For every `η > 0` there is `C` such that `|Σ_{n≤X} χ(n)μ(n)| ≤ C(q + 2)^η X^{11/12+η}` for every
 modulus `q ≥ 1`, every Dirichlet character `χ ≠ 1` mod `q` and every `X ≥ 1` (`norm_sum_le`). So for one `χ ≠ 1`,
-`Σ_{n≤X} χ(n)μ(n) = O(X^{11/12+η})` for every `η > 0` (`isBigO`), with no hypothesis. This is the Möbius bound of
-STRUCTURAL-REVIEW's K4; its Lindelöf bound landed.
+`Σ_{n≤X} χ(n)μ(n) = O(X^{11/12+η})` for every `η > 0` (`isBigO`), with no hypothesis. This is the Möbius bound for one character, resting on the Lindelöf bound.
 
 * `LSeries_fχμ`: `Σ χ(n)μ(n)n^{−s} = 1/L(s, χ)` on `Re s > 1` (Mathlib's `DirichletCharacter.LSeries.mul_mu_eq_one`).
 * `norm_sum_le`: the argument (`MertensExponent.mertens_isBigO_of_zeroFree`) with `F = 1/L(·, χ)`, which is
@@ -214,7 +213,7 @@ theorem norm_sum_le {η : ℝ} (hη : 0 < η) :
         · linarith
     _ = (C₀ * 4 ^ ε₁ * KM * Ir + 4) * ((q : ℝ) + 2) ^ η * X ^ (11 / 12 + η) := by ring
 
-/-- For one character `χ ≠ 1`: `Σ_{n≤X} χ(n)μ(n) = O(X^{11/12+η})` for every `η > 0` (STRUCTURAL-REVIEW's K4). -/
+/-- For one character `χ ≠ 1`: `Σ_{n≤X} χ(n)μ(n) = O(X^{11/12+η})` for every `η > 0` -/
 theorem isBigO {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) {η : ℝ} (hη : 0 < η) :
     (fun X : ℝ ↦ ∑ n ∈ Finset.Icc 1 ⌊X⌋₊, χ n * (ArithmeticFunction.moebius n : ℂ)) =O[atTop]
       fun X ↦ X ^ (11 / 12 + η) := by

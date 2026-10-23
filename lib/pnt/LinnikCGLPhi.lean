@@ -1,5 +1,5 @@
 /-
-# The Fourier decay of `ψ·K(· − u′)`, the pieces of their `f_b` (the CGL plan's stage M3, the `S₃` side)
+# The Fourier decay of `ψ·K(· − u′)`, the pieces of their `f_b`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 

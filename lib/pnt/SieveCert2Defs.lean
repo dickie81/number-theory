@@ -3,8 +3,8 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-The certificate of `SieveCertDefs.lean` with the evaluable two-prime parts of its dropped cells of depth 2 kept
-(`frontier/linnik/SIEVE-ROUTE.md` §28). A dropped term `S(A_{p₁p₂}, p₂)` counts the `n = p₁p₂m` whose cofactor `m` has
+The certificate of `SieveCertDefs.lean` with the evaluable two-prime parts of its dropped cells of depth 2 kept.
+A dropped term `S(A_{p₁p₂}, p₂)` counts the `n = p₁p₂m` whose cofactor `m` has
 no prime factor below `p₂`; its part with `m = q₁q₂`, `p₂ < q₁ < q₂` primes, is a Type II sum where some subset sum of
 the exponents lies in the window, so a refined route keeps it instead of dropping it, and its `B`-count comes off the
 cell's cost.

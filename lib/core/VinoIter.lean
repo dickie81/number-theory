@@ -7,8 +7,7 @@ the quadruples `(u, w, u', w')` where:
 * `w, w'` are `s`-tuples from the residue class `a` inside `[1,P]`;
 * `pv u + pv w = pv u' + pv w'` (power sums in degrees `1..k`).
 
-There are at most `P^k · k!·p^{k(k−1)/2} · J_{s,k}(⌊P/p⌋ + 1)` of them. This is Step C′ of
-`frontier/vmvt/KARATSUBA_SPEC.md`: the conditioned count fibred over `(u, u')`,
+There are at most `P^k · k!·p^{k(k−1)/2} · J_{s,k}(⌊P/p⌋ + 1)` of them. The conditioned count is fibred over `(u, u')`,
 with the residue class rescaled to an interval (`Jc_cls_le`).
 -/
 import VinoStep

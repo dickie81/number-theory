@@ -15,7 +15,7 @@ and `I` is the right side of the identity (`Iv`).
 
 * `norm_Gamma_poly_le`, `norm_Gamma_strip_le`: `|Γ(x + it)| ≤ 81e^{12}(1 + |t|)³e^{−π|t|/2}` and
   `|Γ(x + it)|(1 + |t|)⁵ ≤ KG` on `1/2 ≤ x ≤ 3`, from `Subconvexity.norm_Gamma_le_half` and
-  `|Γ(1/2 + it)| ≤ 3e^{−π|t|/2}` (`norm_Gamma_half_le`). Round 520 adds `|Γ(x + it)| ≤ KE e^{−|t|}`
+  `|Γ(1/2 + it)| ≤ 3e^{−π|t|/2}` (`norm_Gamma_half_le`). The file also proves `|Γ(x + it)| ≤ KE e^{−|t|}`
   (`norm_Gamma_exp_le`), the kernel bound of the Linnik contour (`Linnik.norm_pf_le`).
 * `integral_kernel_line`: `(1/2π) ∫ x^{−(c+iy)}(Γ(c + iy + 1) + aΓ(c + iy)) dy = (x + a)e^{−x}` for
   `1/2 ≤ c ≤ 2` and `x > 0` (Mathlib's `mellinInv_mellin_eq`, with `Γ` the Mellin transform of `e^{−x}`).

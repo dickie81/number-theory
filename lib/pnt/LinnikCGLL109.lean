@@ -1,5 +1,5 @@
 /-
-# Their Lemma 10.9, the small-gcd terms (the CGL plan's stage M3, the `S₃` side)
+# Their Lemma 10.9, the small-gcd terms
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -28,8 +28,8 @@ The library's form.
 * Then `φ(q) ≤ q` turns `(3DT + 64πN²/q)φ(q)` into `3DqT + 64πN²`. Their `⪅_ϵ` absorbs `C_k`, `X`, `∫ψ̃₀`, the term
   `|R|⁴D_K/X^K` and the tail; the library keeps them, with `X ≥ 4` and `K ≥ 2` free.
 
-Plain statements, with `q ≥ 1`, `k`, `C_k`, `D_K` and `ψ̃₀` as, `E` `energy`, `n ∼ N`
-`dyad`, and `F_a(y) = Σ_iχ_i(a)e^{it_iy}`, `esum`.
+Plain statements, with `q ≥ 1`, `k`, `C_k`, `D_K` and `ψ̃₀`, `E` the energy (`energy`), `n ∼ N`
+(`dyad`), and `F_a(y) = Σ_iχ_i(a)e^{it_iy}` (`esum`).
 * `Rf_exp_eq_esum`: `R(e^y, a) = F_a(y)`.
 * `abs_log_div_le_one`: for `N > 0` and `n₁, n₂ ∼ N`, `|log(n₁/n₂)| ≤ 1`.
 * `integrable_psi0_mul`: `y ↦ ψ̃₀(y/X)G(y)` is integrable for `X > 0` and `G` continuous.

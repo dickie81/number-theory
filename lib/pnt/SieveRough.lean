@@ -17,7 +17,7 @@ Plain statements.
   most `(bound4(e_i, e_j, e_k, e_l)/K + δ)x/log x`.
 * `share2_of_cand`, `share4_of_counted4`: the two on the cells that pass `SieveCert.cand` and `SieveCert.counted4`.
 
-This is milestone M6 of `frontier/linnik/SIEVE-ROUTE.md` §13. `Ψ(x/d, p)` counts the integers `n = dm ∈ (x, 2x]`
+`Ψ(x/d, p)` counts the integers `n = dm ∈ (x, 2x]`
 whose cofactor `m` has no prime factor below `p`. The shares bound these counts, summed over a cell's primes, by the
 certificate's own bounds `bound2/K` and `bound4/K`, from which `SieveCert.total` is summed.
 
@@ -49,8 +49,8 @@ The proof:
   product of the cells' `h/a` and `h/a²`, plus `δ`, and `SieveCert.bound2_ge` and `SieveCert.bound4_ge` bound
   `omK/K` times the product by `bound2/K` and `bound4/K`.
 
-Round 607 made the certificate's grid a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
-statements of earlier rounds are the case `SieveCert.grid2333`.
+The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
+case `SieveCert.grid2333` is the grid of exponent `2333/1000`.
 -/
 import HalfPlaneFinal
 import LinnikTwelveSizes

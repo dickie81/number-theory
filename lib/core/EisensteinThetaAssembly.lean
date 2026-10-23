@@ -2,13 +2,13 @@ import EisensteinThetaMeanSquare
 
 /-! # Lemma 6.6 from the displayed transformation and the quadratic large sieve
 
-Round 492 (step 1 of the plan for door 5(b)) states the assembly at every modulus `md`: `rows_meanSquare` and
+This file states the assembly at every modulus `md`: `rows_meanSquare` and
 `squarefreeCompletedM_of` take `ThetaRowsM md` and give `SquarefreeCompletedM md`;
-`squarefreeCompleted_of` is the case `md = 4`. Round 493 (step 2) splits the rows at `g·md`, so that the rows
+`squarefreeCompleted_of` is the case `md = 4`. The rows are split at `g·md`, so that the rows
 `k₀` are prime to `md` as `ThetaRowsM md` asks, for `md ≠ 0`.
 
-S5d of the plan, part 4: the assembly in the companion paper's proof of its Lemma 6.6, and with
-round 339 the zero-free half-plane `Re s > 11/12` from the two displayed inputs.
+It is the assembly in the companion paper's proof of its Lemma 6.6, and gives the zero-free half-plane
+`Re s > 11/12` from the two displayed inputs.
 
 * **The split of a squarefree row** (`exists_row_split`): `s = u·gen(𝔱)·k₀` with `u` a unit, `𝔱` the
   product of the primes of `s` dividing `6g`, and `k₀` primary, squarefree, of norm prime to `6` and prime
@@ -22,7 +22,7 @@ round 339 the zero-free half-plane `Re s > 11/12` from the two displayed inputs.
 * **`squarefreeCompletedM_of`**: `ThetaRowsM md → QuadLargeSieve → SquarefreeCompletedM md`, the paper's
   Lemma 6.6,
   with `H₀ = 𝓗/N(t)`, `σ = min(1/2, ε/(26C₀))` and the divisor bound of `four_pow_card_le`
-  at `δ = ε/(14C₀)`, so that `D^{7C₀δ + 13C₀σ} ≤ D^ε`. Since round 493 the rows are split at `g·md`, with at
+  at `δ = ε/(14C₀)`, so that `D^{7C₀δ + 13C₀σ} ≤ D^ε`. The rows are split at `g·md`, with at
   most `6·2^{c₆+ω(g)+ω(md)}` keys (`primeSet_mul_subset`).
 * **`ne_zero_of_theta`**: `ThetaRows → QuadLargeSieve → 11/12 < Re s → ζ(s) ≠ 0 ∧ L(s, χ₋₃) ≠ 0`, through
   `ne_zero_of_squarefree`.

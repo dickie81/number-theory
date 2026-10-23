@@ -1,5 +1,5 @@
 /-
-# Their (11.2), the blocks of their Proposition 7.2 summed (the CGL plan's stage M3, the `S₃` side)
+# Their (11.2), the blocks of their Proposition 7.2 summed
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -16,7 +16,7 @@ The library's form. With `G = ∫ψ̃₀·E + |R|⁴D_K/X^K` (`Gq`), `P = 12C(qT
 `Σ_{m⃗∈B_k}Ĩ ≤ (k + 1)∫ψ̃₀·φ(q)²√P(24·2^{3k}|R| + 12·2^{2k}√G)` (`sum_blk_It_le`). With `φ(q) ≤ q`, `k ≤ log₂M` and
 `2^k ≤ M`, each block's `Σ_{m⃗∈B_k}A_k` is at most `2C_J(0)d(q)∫ψ̃₀(log₂M + 1)√P(24(NM)²|R| + 12N²M√G)`, and the
 `⌊log₂M⌋ + 1` blocks give `S3_le_blocks`, with the three explicit errors carried unchanged. The hypothesis
-`NM/q ≤ XT`, which round 665 needs on every block, plays the part of their "M₂ ⪅ qT/N" and gives the form of (11.2)
+`NM/q ≤ XT`, which every block needs, plays the part of their "M₂ ⪅ qT/N" and gives the form of (11.2)
 (`S3_le_112`). The library's `(log₂M + 1)²` has one factor from the number of blocks and one from the `4(k + 1)²` of
 `V_k`, under the square root; it is a power of a logarithm, which their `⪅` absorbs.
 

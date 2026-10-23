@@ -2,10 +2,10 @@ import KubotaThetaEq
 
 /-! # The constant-term principle at `∞`
 
-S5f-11 of the plan, part 1. The next step planned the constant-term principle through θ's
-constant terms and pairings at the cusps of `Γ_1(3)`. This file proves it at `∞`, where it needs no other
-cusp: θ (`thetaL`) lies in the closed span of the pseudo-Eisenstein series `E(ψ)` in `L²(ν)`,
-`ν = ρ_G dμ` as, so θ is orthogonal to every automorphic function whose constant term at `∞`
+The constant-term principle through θ's constant terms and pairings at the cusps of `Γ_1(3)` is
+proved here at `∞`, where it needs no other cusp: θ (`thetaL`) lies in the closed span of the
+pseudo-Eisenstein series `E(ψ)` in `L²(ν)`, `ν = ρ_G dμ`, so θ is orthogonal to every automorphic function whose
+constant term at `∞`
 vanishes. The results hold for every `r` and every `Y > 0`.
 
 * **Eigenprojections and invariant subspaces** (**`starProjection_kerAt_mem`** and
