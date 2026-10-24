@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 """Regenerate the Linnik paper's certificate files and compare them with lib/pnt byte for byte.
 
-The certificate of `SieveCert.total2_lt_22475R` (L = 899/400, the window [41335/100000, 48069/100000], n = 300) is
-generated in two steps:
+Two certificates are checked (all of them with no argument, or the one named by its tag):
 
-1. `mirror2.py 41335 48069 300 CELLS.json` evaluates the refined certificate's definitions (SieveCert2Defs.lean) cell
-   by cell in exact integers, cross-checks the totals against `route_limits.replay` and
-   `refine_k2_probe.replay2`, and writes each cell's cost and kernel work (about two minutes);
-2. `gen_22475r.py CELLS.json OUTDIR` cuts the certificate into parts and writes the Lean files.
+* `22475R`: `SieveCert.total2_lt_22475R` (L = 899/400, the window [41335/100000, 48069/100000], n = 300, the curve `g7c`);
+* `22335R`: `SieveCert.total2_lt_22335R` (L = 4467/2000, the window [40993/100000, 47746/100000], n = 300, the curve `g7d`).
 
-This script runs both in a temporary directory and compares SieveGrid22475R.lean, every SieveCert22475RP<k>.lean and
-SieveCert22475R.lean with the files in lib/pnt. A file that differs, or a part file that exists on one side only,
+Each is generated in two steps:
+
+1. `mirror2.py W1 W2 300 CELLS.json` evaluates the refined certificate's definitions (SieveCert2Defs.lean) cell by cell
+   in exact integers, cross-checks the totals against `route_limits.replay` and `refine_k2_probe.replay2`, and writes
+   each cell's cost and kernel work (about two minutes);
+2. `gen_22475r.py CELLS.json OUTDIR [--tag ...]` cuts the certificate into parts and writes the Lean files.
+
+This script runs both in a temporary directory and compares SieveGrid<tag>.lean, every SieveCert<tag>P<k>.lean and
+SieveCert<tag>.lean with the files in lib/pnt. A file that differs, or a part file that exists on one side only,
 fails the check.
 """
 import filecmp
@@ -23,24 +27,31 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 
+# tag: (W1, W2, n, extra arguments of gen_22475r.py)
+CERTS = {
+    '22475R': (41335, 48069, 300, []),
+    '22335R': (40993, 47746, 300, ['--tag', '22335R', '--L', '4467/2000', '--curve', 'g7d',
+                                   '--typeii', 'SieveTypeIIU22335D.typeII_22335d']),
+}
 
-def names(d):
-    return sorted(f for f in os.listdir(d)
-                  if re.fullmatch(r'SieveGrid22475R\.lean|SieveCert22475R(P\d+)?\.lean', f))
+
+def names(d, tag):
+    return sorted(f for f in os.listdir(d) if re.fullmatch(rf'SieveGrid{tag}\.lean|SieveCert{tag}(P\d+)?\.lean', f))
 
 
-def main():
+def check(tag):
+    w1, w2, n, extra = CERTS[tag]
     with tempfile.TemporaryDirectory() as tmp:
         cells, out = os.path.join(tmp, 'cells.json'), os.path.join(tmp, 'out')
-        for args in ([os.path.join(HERE, 'mirror2.py'), '41335', '48069', '300', cells],
-                     [os.path.join(HERE, 'gen_22475r.py'), cells, out]):
+        for args in ([os.path.join(HERE, 'mirror2.py'), str(w1), str(w2), str(n), cells],
+                     [os.path.join(HERE, 'gen_22475r.py'), cells, out, *extra]):
             r = subprocess.run([sys.executable, *args], capture_output=True, text=True)
             print(r.stdout.rstrip())
             if r.returncode:
                 print(r.stderr.rstrip())
-                print('CERTIFICATE FAIL')
-                return 1
-        here, there = names(out), names(PNT)
+                print(f'CERTIFICATE {tag} FAIL')
+                return False
+        here, there = names(out, tag), names(PNT, tag)
         only = sorted(set(here) ^ set(there))
         same = [f for f in here if f in there and filecmp.cmp(os.path.join(out, f), os.path.join(PNT, f), shallow=False)]
         bad = [f for f in here if f in there and f not in same]
@@ -51,8 +62,20 @@ def main():
         for f in only:
             print('  ONE SIDE ONLY:', f)
         ok = not bad and not only and len(same) == len(there) > 0
-        print('CERTIFICATE', 'PASS' if ok else 'FAIL')
-        return 0 if ok else 1
+        print(f'CERTIFICATE {tag}', 'PASS' if ok else 'FAIL')
+        return ok
+
+
+def main():
+    tags = [a for a in sys.argv[1:]] or list(CERTS)
+    for t in tags:
+        if t not in CERTS:
+            print(f'unknown certificate {t}; known: {", ".join(CERTS)}')
+            return 2
+    results = [check(t) for t in tags]
+    if len(tags) > 1:
+        print('CERTIFICATE', 'PASS' if all(results) else 'FAIL', '(' + ', '.join(tags) + ')')
+    return 0 if all(results) else 1
 
 
 if __name__ == '__main__':
