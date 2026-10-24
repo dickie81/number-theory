@@ -12,7 +12,7 @@ The theorem is `Linnik22325R.linnik_22325r` in `lib/pnt/Linnik22325R.lean`. The 
 (`Linnik22475R.linnik_22475r`, which is still in the library); the paper keeps it as the earlier route.
 Both depend on the zero-free half-plane `Re s > 11/12` of OpenAI's preprints, which have not been refereed, and on
 Chen, Gupta and Li's arXiv preprint. Section 7's table names the Lean theorem
-behind each claim, and `lib/check/Check.lean` prints their axioms (those of the curve `g7d`, its window and its steps
-are in `lib/check/CheckAll.lean`, which `python3 scripts/check_axioms.py --all` checks).
+behind each claim, and `lib/check/Check.lean` prints their axioms (for the 110 density steps it prints the first; `lib/check/CheckAll.lean`, with
+`python3 scripts/check_axioms.py --all`, prints all of them and Chen, Gupta and Li's Proposition 3.1).
 
 To build: `latexmk -pdf main.tex`.
