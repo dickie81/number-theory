@@ -19,6 +19,8 @@ window. `Linnik22475R` above is unchanged. -/
 #print axioms SieveTypeIIU22325D.typeII_22325d
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_inT
+#print axioms LinnikCGLHB101.prop31
+#print axioms LinnikCGLSteps.charDensity_s109
 #print axioms SieveTypeIIU22325D.counts_7d
 #print axioms SieveTypeIIU22325D.window_22325d
 
