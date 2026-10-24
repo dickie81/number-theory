@@ -71,13 +71,14 @@ Section~\ref{sec:comparison} gives the details.
 \subsection*{Below the density exponent}
 
 This paper goes below $7/3$ with a sieve. Harman's sieve \cite{harman83, harman} bounds from below the number of
-primes in the set $\mathcal A$ of integers $n \le x$ with $n \equiv a \pmod q$ by comparing it with the set
-$\mathcal B$ of all integers $n \le x$, weighted by $1/\varphi(q)$. It needs two kinds of information. Type~I
-information is the comparison of $\mathcal A$ with $\mathcal B$ on the multiples of each small integer, which
-orthogonality gives. Type~II information is the comparison on bilinear sums
-$\sum_{mn} a_m b_n$, with $m$ in a range $(x^{u_1}, x^{u_2})$ and arbitrary bounded coefficients, which needs
-the zeros. A comparison over all such sums is not available at $x = q^{899/400}$. What is available is a window
-$[u_1, u_2]$ of exponents on which it holds, and the sieve recovers the primes from the sums it can compare,
+primes in the set $\mathcal A$ of integers $n \in (x, 2x]$ with $n \equiv a \pmod q$ by comparing it with the set
+$\mathcal B$ of the integers $n \in (x, 2x]$ prime to $q$, weighted by $1/\varphi(q)$. It needs two kinds of
+information. Type~I information is the comparison of $\mathcal A$ with $\mathcal B$ on the multiples of each small
+integer, which counting in residue classes gives. Type~II information is the comparison on bilinear sums
+$\sum_{mn} a_m b_n$, with $m$ in a range $(x^{u_1}, x^{u_2})$, bounded coefficients $a_m$, and $b_n$ supported on
+products of primes, which needs the zeros. A comparison over all such sums is not available at
+$x = q^{899/400}$. What is available is a window $[u_1, u_2]$ of exponents on which it holds, and the sieve recovers
+the primes from the sums it can compare,
 losing a fraction of them that a finite computation bounds.
 
 The paper's contributions are three.
@@ -379,8 +380,120 @@ bins are small.
 
 \section{Type I estimates and Harman's sieve}\label{sec:type1}
 
-% To be written: the Type I estimate by orthogonality, the fundamental lemma, and Harman's comparison principle in
-% the form used, cited to Harman, Brun and Buchstab (formalisations/harman-sieve.md) and not restated as new.
+Let $x = q^L$ and let $a$ be prime to $q$. The sets of the sieve are
+\[
+  \mathcal A = \{n \in (x, 2x] : n \equiv a \ (\mathrm{mod}\ q)\}, \qquad
+  \mathcal B = \{n \in (x, 2x] : (n, q) = 1\}.
+\]
+For a set $\mathcal C$ of integers, an integer $r$ and $z \ge 1$, $\mathcal C_r$ is the set of the multiples of $r$
+in $\mathcal C$, and $S(\mathcal C_r, z)$ the number of $n \in \mathcal C_r$ with no prime factor of $n/r$ below $z$.
+So $S(\mathcal A, (2x)^{1/2})$ is the number of primes in $\mathcal A$. The sieve compares $\mathcal A$ with
+$\mathcal B/\varphi(q)$ through the weight
+\[
+  \mathbf 1[n \equiv a] - \frac{\mathbf 1[(n, q) = 1]}{\varphi(q)}
+  = \frac1{\varphi(q)} \sum_{\chi \in \mathcal X^*} \overline\chi(a) \chi(n),
+\]
+which is orthogonality: the trivial character cancels, and the other characters carry the difference. This section
+states the three tools of Harman's sieve \cite{harman83, harman} in the form the proof uses. None of them is new;
+\file{formalisations/harman-sieve.md} gives their sources and the differences between the Lean statements and the
+classical ones.
+
+\subsection{Type~I}
+
+\begin{lemma}\label{lem:type1}
+Let $N_1 \le N_2$ and let $M > 0$ be prime to $q$. The number of $n \in (N_1, N_2]$ with $n \equiv a \pmod q$ and
+$M \mid n$ is $(N_2 - N_1)/(Mq)$ within $1$, and the number of $n \in (N_1, N_2]$ prime to $q$ with $M \mid n$ is
+$\varphi(q)(N_2 - N_1)/(Mq)$ within $\varphi(q)$.
+\end{lemma}
+
+So $|\mathcal A_M| - |\mathcal B_M|/\varphi(q)$ is at most $2$ in absolute value for every $M$ prime to $q$. This is
+all the Type~I information the sieve needs: it is used for the moduli up to $q^{b_0}$ with $b_0 < L - 1$, where the
+error $2$ is small against the size $x/(Mq)$ of the count.
+
+\subsection{Type~II}
+
+Theorem~\ref{thm:type2} bounds Dirichlet polynomials. The sieve needs sums over $\mathcal A$ and $\mathcal B$ of
+integers $n = m p_1 \cdots p_K$ whose primes are cut out by comparisons. Fix a smooth function $f_0 \ge 0$ supported
+in $[1/2, 2]$, an integer $K_0$ and $e_1 > 0$. A \emph{family} consists of
+\begin{itemize}
+\item a scale $P$ with $x^{u_1} \le P \le x^{u_2}$, a set $S \subseteq (P, 2P]$ and coefficients $|a_m| \le A_0$;
+\item $K \le K_0$ primes $p_i \le 2Q_i$ with weights $f_0(p_i/Q_i)$, at scales $Q_i \ge q^{e_1}$ with
+  $Q_1 \cdots Q_K \le 2^{K_0} x/P$;
+\item at most $J_0$ comparisons $\ell_j(m, p) > 0$, where
+  $\ell_j(m, p) = \varphi_j(m) + \sum_i e_{ji} \log p_i$ with $|e_{ji}| \le E_0$ and $\ell_j \le \Lambda_0 \log q$, each
+  with a \emph{pivot}, a prime $p_i$ with $e_{ji} = \pm 1$.
+\end{itemize}
+Its sum over $\mathcal A - \mathcal B/\varphi(q)$ is the sum of $a_m \prod_i f_0(p_i/Q_i)$ times the weight above at
+$n = m p_1 \cdots p_K$, over the $(m, p)$ that satisfy the comparisons.
+
+\begin{lemma}\label{lem:family}
+Assume the conclusion of Theorem~\ref{thm:type2}. Given $f_0$, $K_0$, $e_1$, $J_0$, $E_0$, $\Lambda_0$ and $A_0$, there
+are $\delta > 0$ and $q_0$ such that for every $q \ge q_0$ and every family, its sum over
+$\mathcal A - \mathcal B/\varphi(q)$ is at most $A_0 q^{L - \delta}/\varphi(q)$ in absolute value.
+\end{lemma}
+
+\begin{proof}[Sketch]
+Replace each sharp comparison $\mathbf 1[\ell_j > 0]$ by a smooth cut-off $G(\ell_j)$ that differs from it only for
+$|\ell_j| \le \theta$, with $\theta = x^{-\varepsilon_2}$ a small negative power. By Fourier inversion,
+$\prod_j G(\ell_j) = \int_{\mathbb R^J} \prod_j \hat G(\xi_j) e^{2\pi i \sum_j \xi_j \ell_j} \, d\xi$. The part of
+the phase that depends on $m$ goes into the coefficients $a_m$, and the parts that depend on the $p_i$ are twists
+$(p_i/Q_i)^{-ih_i}$ with $h_i$ a combination of the $\xi_j$. On the box $|\xi_j| \le T_0$, with
+$T_0 = x^{2\varepsilon_2}$, the heights are at most $q^\eta$, so after the orthogonality above each character's sum is
+$W(\chi) \prod_i S_{Q_i}(\chi, h_i)$ and Theorem~\ref{thm:type2} bounds the sum over $\chi \in \mathcal X^*$. Outside
+the box the trivial bound and the decay of $\hat G$ suffice. Where a sharp comparison and its smooth cut-off differ,
+the pivot prime lies in a range of relative length about $\theta$, and the count of such integers is small.
+\end{proof}
+
+If instead a product of some of the primes of $n$ lies in $(x^{1 - u_2}, x^{1 - u_1})$, the product of the other
+factors of $n$ lies in the window's range and plays the role of $m$. So the lemma also covers the reflected range,
+and this is how the sieve uses the window and its reflection.
+
+\subsection{Harman's comparison}
+
+Write $u_1, u_2$ for the window's ends as fractions of $L$, as in Theorem~\ref{thm:type2}, so that the window in
+terms of $q$ is $[u_1 L, u_2 L]$.
+
+\begin{proposition}[Harman's comparison, in the form used]\label{prop:harman}
+Assume the conclusion of Theorem~\ref{thm:type2}. Fix $j$, $J_0$, $\Lambda_1 \ge 0$, $\eta > 0$, and exponents
+$a_0 > 0$ and $b_0$ with $a_0 + b_0 < (1 - u_1)L$ and $(1 - u_2)L < b_0 < L - 1$. There are $\delta > 0$ and $q_0$ such
+that the following holds for every $q \ge q_0$ and every $a$ prime to $q$. Let $r = r_1 \cdots r_j$ run over the
+products of the $j$-tuples of primes up to $2x$ that satisfy at most $J_0$ comparisons (with constants at most
+$\Lambda_1 \log q$) which force every $r_i \ge z_0 = \lceil q^{a_0} \rceil$ and $r \le q^{b_0}$. Then
+\[
+  \Bigl|\sum_r \Bigl(S(\mathcal A_r, z_0) - \frac{S(\mathcal B_r, z_0)}{\varphi(q)}\Bigr)\Bigr|
+  \le \frac{\eta\, x}{\varphi(q) \log q} + \frac{q^{L - \delta}}{\varphi(q)}.
+\]
+\end{proposition}
+
+\begin{proof}[Sketch]
+For each $r$, iterate Buchstab's identity \cite{buchstab}
+\[
+  S(\mathcal C_r, z) = S(\mathcal C_r, w) - \sum_{w \le p < z} S(\mathcal C_{rp}, p)
+\]
+from $z_0$ down to $w = \lceil q^{\varepsilon_w} \rceil$, stopping a branch as soon as its product $W$ of primes
+exceeds a threshold $X'$, chosen so that $W$ lies in $(X', X' z_0)$ and the cofactor $k$ of every multiple $Wk$ in
+$(x, 2x]$ lies in the window's range. A stopped term is then a family in which $k$ is the Type~II variable, and
+Lemma~\ref{lem:family} bounds it. At a leaf, a product $d \le q^{b_0}$, the fundamental lemma of the sieve
+\cite{brun} applied to $\mathcal A_d$ and $\mathcal B_d$, with Lemma~\ref{lem:type1} for the counts of
+multiples, makes the two sifted counts agree up to $c(k)$ times the number of $w$-rough multiples of $d$, where the
+explicit constant $c(k)$ of Brun's sieve at the level $k$ tends to $0$ as $k$ grows. A suitable even level $k$ puts
+the sum over the leaves below $\eta x/(\varphi(q) \log q)$.
+\end{proof}
+
+\subsection{Rough numbers}
+
+The last tool bounds from above the number $\Psi(y, z)$ of integers in $(y, 2y]$ with no prime factor below $z$. Let
+$\omega^*(u) = 0$ for $u < 1$, $\omega^*(u) = 1/u$ for $1 \le u < 2$ and $\omega^*(u) = 0.5672$ for $u \ge 2$, a crude
+upper bound for Buchstab's function $\omega$: the two agree on $[1, 2)$, and $\omega$ stays below $0.5672$.
+
+\begin{lemma}\label{lem:rough}
+For every $U$ and $\varepsilon > 0$, for all large $z$ and all $y$ with $u = \log 2y/\log z \le U$,
+$\Psi(y, z) \le (\omega^*(u) + \varepsilon)\, y/\log z$.
+\end{lemma}
+
+It is proved from Buchstab's inequality for $\Psi$, partial summation over the primes and the prime number theorem
+with an error $o(t/\log t)$. The certificate of Section~\ref{sec:certificate} uses $\omega^*$ to bound the share of the
+integers in each term it drops.
 
 \section{The decomposition and its certificate}\label{sec:certificate}
 
@@ -420,7 +533,12 @@ Ingham's density estimate (\file{formalisations/}) & \lean{LinnikInghamC.charDen
 Huxley's density estimate (\file{formalisations/}) & \lean{LinnikHuxStep.charDensity\_gen} \\
 Huxley's estimate from $5/6$ on (\file{formalisations/}) & \lean{LinnikStep.charDensity\_step} \\
 The Hal\'asz--Montgomery inequality (\file{formalisations/}) & \lean{LinnikPower.hm\_duality} \\
-Harman's sieve in the form used (\file{formalisations/}) & \lean{SieveProp6.prop6} \\
+Proposition~\ref{prop:harman}, Harman's comparison in the form used & \lean{SieveProp6.prop6} \\
+Lemma~\ref{lem:type1}, Type~I counts & \lean{SieveCount.card\_A}, \lean{card\_B} \\
+Lemma~\ref{lem:family}, Type~II families & \lean{SieveFamily.typeII\_sharp} \\
+Lemma~\ref{lem:rough}, rough numbers from above & \lean{SieveRough.psi\_le} \\
+The fundamental lemma of the sieve & \lean{SieveBrun.fundamental} \\
+Buchstab's identity & \lean{SieveDecomp.buchstab\_fam} \\
 \bottomrule
 \end{tabular}
 \end{center}
