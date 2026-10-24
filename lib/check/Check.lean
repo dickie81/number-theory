@@ -49,3 +49,7 @@ by section, then the results of the literature it uses, each with a note in `for
 #print axioms SieveProp6.prop6
 #print axioms SieveBrun.fundamental
 #print axioms SieveDecomp.buchstab_fam
+#print axioms Linnik.linnik_of_charDensity
+#print axioms Linnik.linnik_twelve
+#print axioms LinnikIngham.linnik_thirtysix_thirteenths
+#print axioms LinnikTwelve.linnik_twelve_fifths
