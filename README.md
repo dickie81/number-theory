@@ -77,7 +77,9 @@ build, keeping what is already built.
 
 - **Checks:** `check_hygiene.py`, `gen_lakefile.py --check`, `check_vendor.py` and `check_certificate.py`.
 - **The paper:** `papers/linnik-exponent/main.tex` is compiled with LaTeX, and the PDF is kept as an artifact.
-- **The Lean build**, with a cache. Mathlib's prebuilt files come from Mathlib's own cache (`lake exe cache get`).
+- **The Lean build**, with a cache. On a pull request it runs only if the pull request changes `lib/`, the Lake
+  files, `lean-toolchain`, the build scripts or the workflow; on pushes to `main` it always runs. Mathlib's prebuilt
+  files come from Mathlib's own cache (`lake exe cache get`).
   The library's build directory, `.lake/build`, is restored from the GitHub Actions cache and saved back after
   every stage, including a stage that fails or is cancelled. Lake then rebuilds only what changed. A cold build
   takes longer than one job may run (six hours), so the build runs in up to three chained stages, each continuing

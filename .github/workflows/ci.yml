@@ -9,12 +9,38 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read  # for dorny/paths-filter on pull requests
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  # Whether the Lean build runs. On a pull request it runs only if the pull request changes a file the build reads;
+  # on pushes to main and on manual runs it always runs. paths-filter lists a pull request's files through the
+  # GitHub API, so this job needs no checkout.
+  changes:
+    name: Lean changes
+    runs-on: ubuntu-latest
+    outputs:
+      lean: ${{ github.event_name != 'pull_request' || steps.filter.outputs.lean == 'true' }}
+    steps:
+      - id: filter
+        if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            lean:
+              - 'lib/**'
+              - 'lakefile.lean'
+              - 'lake-manifest.json'
+              - 'lean-toolchain'
+              - 'scripts/build.sh'
+              - 'scripts/lean-slots.sh'
+              - 'scripts/check_axioms.py'
+              - '.github/actions/lean-build/**'
+              - '.github/workflows/ci.yml'
+
   checks:
     name: Checks
     runs-on: ubuntu-latest
@@ -51,6 +77,8 @@ jobs:
   # the previous stage's cache, and runs only if the previous one stopped at its time limit.
   build-1:
     name: Lean build (stage 1)
+    needs: changes
+    if: needs.changes.outputs.lean == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 355
     outputs:
