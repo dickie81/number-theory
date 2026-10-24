@@ -120,3 +120,23 @@ jobs:
         with:
           stage: '3'
           last: 'true'
+
+  # The one required check of main's branch protection. It passes when every job above passed or was skipped, and
+  # fails if any failed or was cancelled. Add new jobs to its needs.
+  ci-passed:
+    name: CI passed
+    if: always()
+    needs: [changes, checks, papers, build-1, build-2, build-3]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every job passed or was skipped
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Results: $RESULTS"
+          for r in $RESULTS; do
+            case "$r" in
+              success|skipped) ;;
+              *) echo "A job ended with: $r"; exit 1 ;;
+            esac
+          done

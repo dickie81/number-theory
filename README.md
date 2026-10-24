@@ -85,6 +85,10 @@ build, keeping what is already built.
   takes longer than one job may run (six hours), so the build runs in up to three chained stages, each continuing
   from the previous stage's cache. The stage that finishes the build runs `check_axioms.py`.
 
+The job **CI passed** summarises the others: it passes when each passed or was skipped, and fails if any failed or
+was cancelled. It is the check that `main`'s branch protection requires, so a pull request merges only when CI is
+green or skipped throughout. A new job must be added to its `needs`.
+
 `.github/workflows/pages.yml` runs on every push to `main` that changes `papers/`. It compiles every paper and
 publishes the PDFs, with an index page built by `scripts/build_site.py`, to GitHub Pages:
 <https://dickie81.github.io/number-theory/>. The Linnik paper is `linnik-exponent.pdf` there.
