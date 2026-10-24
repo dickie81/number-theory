@@ -220,8 +220,10 @@ Each of these bounds is a theorem of the library, with a factor $(\log qT)^{10}$
 claims table of Section~\ref{sec:lean} names them.
 \end{proof}
 
-The only piece that is not classical is the one on $[5/7, 16/21]$, where Chen, Gupta and Li's exponent $7/3$ replaces
-Huxley's, which is $12/5$ at $\sigma = 3/4$. Hypothesis~\ref{hyp:half-plane} enters the curve only above $11/12$, and
+The only piece that is not classical is the one on $[5/7, 16/21]$, where Chen, Gupta and Li's estimate, in the
+uniform form of Hypothesis~\ref{hyp:density}, replaces Huxley's exponent, which is $12/5$ at $\sigma = 3/4$. Their
+argument gives more than the uniform form: inside the range its exponent falls below $7/3$, which it reaches only at
+$\sigma = 5/7$. The curve $g_7$ uses only the uniform $7/3$. Hypothesis~\ref{hyp:half-plane} enters the curve only above $11/12$, and
 enters the Type~II estimate through the largest real part of the zeros, which it bounds by $11/12$.
 
 \section{The Type II estimate}\label{sec:type2}
@@ -847,7 +849,7 @@ Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density} & Harman's sieve, this pap
 \subsection*{Where the gain comes from}
 
 The deduction needs the zeros of every real part to contribute less than the main term, so its exponent is the
-largest density exponent on $[1/2, 11/12]$: Chen, Gupta and Li's $7/3$, on $[5/7, 16/21]$. The sieve needs the zeros
+largest density exponent on $[1/2, 11/12]$, which is $7/3$, at $\sigma = 5/7$. The sieve needs the zeros
 only in bilinear sums with one variable in the window, where Theorem~\ref{thm:type2} trades the density exponent
 against the length of the variable, and recovers the primes from those sums at the cost that the certificate bounds.
 The refinement of Section~\ref{sec:certificate} lowers that cost by evaluating part of the terms of depth two that the
