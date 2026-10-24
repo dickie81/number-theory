@@ -12,6 +12,7 @@
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
 \theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
 \newtheorem{hypothesis}{Hypothesis}
 \renewcommand{\thehypothesis}{H\arabic{hypothesis}}
 
@@ -120,6 +121,17 @@ Theorem~\ref{thm:main} with what the inputs give without the sieve.
 
 \section{Notation and the two inputs}\label{sec:inputs}
 
+Throughout, $q \ge 1$ is the modulus and $a$ is prime to $q$. The Dirichlet characters mod $q$ are $\chi$, the trivial
+one is $\chi_0$, and $L(s, \chi)$ is the $L$-function of $\chi$, continued to the whole plane (in Lean, Mathlib's
+\lean{DirichletCharacter.LFunction}). For $1/2 \le \sigma \le 1$ and $T \ge 2$ let
+\[
+  N^*(\sigma, T; q) = \#\{\chi \bmod q : L(s, \chi) = 0 \text{ for some } s \text{ with }
+    \operatorname{Re} s \ge \sigma,\ |\operatorname{Im} s| \le T\}
+\]
+be the number of characters mod $q$ whose $L$-function has a zero in the rectangle. It counts characters, not zeros,
+so a bound for the number of zeros bounds it. The proof is a sieve on the integers up to $x = q^L$, with $L = 899/400$
+in the end, and $q$ is taken large.
+
 \begin{hypothesis}[the zero-free half-plane]\label{hyp:half-plane}
 For every $q \ge 1$, every Dirichlet character $\chi$ mod $q$ and every $s$ with $\operatorname{Re} s > 11/12$,
 $L(s, \chi) \ne 0$, except at $s = 1$ for the trivial character.
@@ -140,10 +152,63 @@ This follows from Chen, Gupta and Li's estimate \cite{cgl}. Their estimate count
 characters stated here. It is proved in Lean as \lean{LinnikCGLDensity.cglDensity}, and \texttt{formalisations/}
 documents it.
 
-% To be written: the density curve g7c that the Type II estimate uses on [1/2, 1], piece by piece, with the source
-% of each piece (formalisations/README.md): the trivial count below 4/7; Ingham's estimate on [4/7, 5/7]
-% (formalisations/ingham-density.md); Hypothesis H2 on [5/7, 16/21]; Huxley's estimate from 16/21 on
-% (formalisations/huxley-density.md), which uses Hypothesis H1 above 11/12.
+\subsection*{The density curve}
+
+The Type~II estimate of Section~\ref{sec:type2} needs a bound for $N^*(\sigma, T; q)$ at every $\sigma$ in
+$[1/2, 1]$. It takes it in the form of a curve.
+
+\begin{definition}\label{def:curve}
+A function $g : \mathbb R \to \mathbb R$ is a \emph{density curve} if there is $C \ge 0$ such that for every
+$q \ge 1$, every $1/2 \le \sigma \le 1$ and every $T \ge 2$,
+\[
+  N^*(\sigma, T; q) \le C\, (qT)^{g(\sigma)} \bigl(1 + \log qT\bigr)^{10}.
+\]
+\end{definition}
+
+The curve of this paper is the function $g_7$ defined as follows; each of its pieces is a known density estimate,
+and the steps make each piece a constant multiple of $1 - \sigma$.
+\begin{itemize}
+\item $g_7(\sigma) = 1$ for $\sigma < 4/7$.
+\item On $[4/7, 5/7]$, divided into twenty steps $[\sigma_1, \sigma_2)$ of length $1/140$,
+  $g_7(\sigma) = \bigl(3/(2 - \sigma_2) + 1/2000\bigr)(1 - \sigma)$: Ingham's exponent at the step's right end.
+\item On $[5/7, 16/21)$, $g_7(\sigma) = (7/3 + 1/2000)(1 - \sigma)$.
+\item On $[16/21, 5/6]$, divided into twenty steps $[\sigma_1, \sigma_2)$ of length $1/280$,
+  $g_7(\sigma) = \bigl(3/(3\sigma_1 - 1) + 1/2000\bigr)(1 - \sigma)$: Huxley's exponent at the step's left end.
+\item $g_7(\sigma) = (101/50)(1 - \sigma)$ for $\sigma \ge 5/6$.
+\end{itemize}
+The exponents are written in Lean as fractions; the first step's is $3/(2 - 81/140) + 1/2000 = 840199/398000$. On
+$[4/7, 16/21]$ the exponent rises from about $2.111$ to $7/3 + 1/2000$, and on $[16/21, 5/6]$ it falls back to
+about $2.015$. On each step $A(1 - \sigma) \le A(1 - \sigma_1) \le 1$, so $g_7 \le 1$ everywhere, and
+$g_7(1/2) = 1$.
+
+\begin{proposition}\label{prop:curve}
+Under Hypothesis~\ref{hyp:density}, $g_7$ is a density curve.
+\end{proposition}
+
+\begin{proof}
+A finite union of ranges on each of which the bound holds, with its own constant, is a range on which it holds with
+the sum of the constants, so it suffices to prove the bound on each piece.
+\begin{itemize}
+\item For $\sigma < 4/7$: $N^*(\sigma, T; q) \le \varphi(q) \le qT$.
+\item On each step of $[4/7, 5/7]$: Ingham's estimate \cite{ingham} in the form over the characters mod $q$, which
+  bounds $N^*(\sigma, T; q)$ by $C(qT)^{A(1 - \sigma)}(\log qT)^{10}$ on $[\sigma_1, \sigma_2]$ for every $A$
+  above $3/(2 - \sigma_2)$ (\texttt{formalisations/ingham-density.md}). Ingham proved his estimate for the zeros of
+  $\zeta$; the form over the characters is Theorem~12.1 of Montgomery's book \cite{montgomery-topics}.
+\item On $[5/7, 16/21]$: Hypothesis~\ref{hyp:density} with $\varepsilon = (1/2000)(5/21)$, since $1 - \sigma \ge 5/21$
+  there.
+\item On each step of $[16/21, 5/6]$: Huxley's estimate \cite{huxley75} over the characters mod $q$, with the
+  exponent $3/(3\sigma_1 - 1) + 1/2000$ on $[\sigma_1, \sigma_2]$ (\texttt{formalisations/huxley-density.md}).
+\item For $\sigma \ge 5/6$: the exponent $101/50$, by the same large-values argument at fixed parameters on
+  $[5/6, 11/12]$, and by Hypothesis~\ref{hyp:half-plane} above $11/12$, where at most the trivial character is
+  counted (\texttt{formalisations/huxley-density.md}).
+\end{itemize}
+Each of these bounds is a theorem of the library, with a factor $(\log qT)^{10}$ at most $(1 + \log qT)^{10}$; the
+claims table of Section~\ref{sec:lean} names them.
+\end{proof}
+
+The only piece that is not classical is the one on $[5/7, 16/21]$, where Chen, Gupta and Li's exponent $7/3$ replaces
+Huxley's, which is $12/5$ at $\sigma = 3/4$. Hypothesis~\ref{hyp:half-plane} enters the curve only above $11/12$, and
+enters the Type~II estimate through the largest real part of the zeros, which it bounds by $11/12$.
 
 \section{The Type II estimate}\label{sec:type2}
 
@@ -181,6 +246,7 @@ Claim & Lean \\
 \midrule
 Theorem~\ref{thm:main} & \lean{Linnik22475R.linnik\_22475r} \\
 Theorem~\ref{thm:main} under Hypothesis~\ref{hyp:density} & \lean{Linnik22475R.linnik\_22475r\_of} \\
+Proposition~\ref{prop:curve}: $g_7$ is a density curve & \lean{SieveTypeIIU226C.counts\_7c} \\
 The route theorem (Section~\ref{sec:proof}) & \lean{SieveMain2.linnik\_route\_lt2} \\
 The Type~II estimate on the window (Section~\ref{sec:type2}) & \lean{SieveTypeIIU22475C.typeII\_22475c} \\
 The certificate's total is below $K$ (Section~\ref{sec:certificate}) & \lean{SieveCert.total2\_lt\_22475R} \\
