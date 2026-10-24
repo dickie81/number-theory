@@ -7,6 +7,17 @@
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{booktabs}
 \usepackage[hidelinks]{hyperref}
+% The Unicode symbols of the Lean statements quoted in Section 7.
+\DeclareUnicodeCharacter{2203}{\ensuremath{\exists}}
+\DeclareUnicodeCharacter{2200}{\ensuremath{\forall}}
+\DeclareUnicodeCharacter{211D}{\ensuremath{\mathbb R}}
+\DeclareUnicodeCharacter{2115}{\ensuremath{\mathbb N}}
+\DeclareUnicodeCharacter{2102}{\ensuremath{\mathbb C}}
+\DeclareUnicodeCharacter{2227}{\ensuremath{\wedge}}
+\DeclareUnicodeCharacter{2192}{\ensuremath{\to}}
+\DeclareUnicodeCharacter{2261}{\ensuremath{\equiv}}
+\DeclareUnicodeCharacter{2264}{\ensuremath{\le}}
+\DeclareUnicodeCharacter{03C7}{\ensuremath{\chi}}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
@@ -703,13 +714,14 @@ case of Theorem~\ref{thm:main} is \lean{Linnik22475R.linnik\_22475r\_of}, with
 
 \section{The formalisation}\label{sec:lean}
 
-Every claim of the paper is a theorem of the Lean library in \texttt{lib/}. The table names each one. The file
-\texttt{lib/check/Check.lean} prints the axioms of these theorems, and \texttt{scripts/check\_axioms.py} checks that
-they are \lean{propext}, \lean{Classical.choice} and \lean{Quot.sound} only.
+Every claim of the paper is a theorem of the Lean library in \texttt{lib/} of the repository, which is built with
+Lean~4 and Mathlib. The table names each one. The file \texttt{lib/check/Check.lean} prints the axioms of these
+theorems, and \texttt{scripts/check\_axioms.py} checks that they are \lean{propext}, \lean{Classical.choice} and
+\lean{Quot.sound} only.
 
 \begin{center}
 \small
-\begin{tabular}{@{}p{0.46\textwidth}l@{}}
+\begin{tabular}{@{}p{0.44\textwidth}l@{}}
 \toprule
 Claim & Lean \\
 \midrule
@@ -723,7 +735,8 @@ Proposition~\ref{prop:type2-gen}, the Type~II estimate on an admissible window &
 Proposition~\ref{prop:window}, the window is admissible & \lean{SieveTypeIIU22475C.window\_22475c} \\
 Proposition~\ref{prop:decomp}, the decomposition & \lean{SieveBuch.Par.decomp} \\
 Lemma~\ref{lem:drop}, the dropped terms & \lean{SieveDrop.drop\_ev\_of} \\
-Lemma~\ref{lem:kept}, the kept parts & \lean{SieveKept.Kp2\_le}, \lean{SieveKept.Kk\_eq}, \\
+Lemma~\ref{lem:kept}, the kept parts & \lean{SieveBuch.Par.Kp2\_le}, \\
+ & \lean{SieveBuch.Par.Kk\_eq}, \\
  & \lean{SieveKeptB.Kk\_gB\_ge} \\
 Proposition~\ref{prop:decomp-kept}, with the kept parts & \lean{SieveBuch.Par.decompk}, \\
  & \lean{SieveDrop2.drop\_ev2} \\
@@ -736,7 +749,7 @@ Huxley's density estimate (\file{formalisations/}) & \lean{LinnikHuxStep.charDen
 Huxley's estimate from $5/6$ on (\file{formalisations/}) & \lean{LinnikStep.charDensity\_step} \\
 The Hal\'asz--Montgomery inequality (\file{formalisations/}) & \lean{LinnikPower.hm\_duality} \\
 Proposition~\ref{prop:harman}, Harman's comparison in the form used & \lean{SieveProp6.prop6} \\
-Lemma~\ref{lem:type1}, Type~I counts & \lean{SieveCount.card\_A}, \lean{card\_B} \\
+Lemma~\ref{lem:type1}, Type~I counts & \lean{SieveCount.card\_A}, \lean{SieveCount.card\_B} \\
 Lemma~\ref{lem:family}, Type~II families & \lean{SieveFamily.typeII\_sharp} \\
 Lemma~\ref{lem:rough}, rough numbers from above & \lean{SieveRough.psi\_le} \\
 The fundamental lemma of the sieve & \lean{SieveBrun.fundamental} \\
@@ -745,8 +758,40 @@ Buchstab's identity & \lean{SieveDecomp.buchstab\_fam} \\
 \end{tabular}
 \end{center}
 
-% To be written: how faithful the Lean statements are (Mathlib's DirichletCharacter.LFunction, the counts of
-% characters), and how to build and check (the repository's README).
+\subsection*{The statements}
+
+The Lean statement of Theorem~\ref{thm:main} is
+{\small
+\begin{verbatim}
+theorem linnik_22475r : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ),
+    a.Coprime q → ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧
+      (p : ℝ) ≤ K * (q : ℝ) ^ (899 / 400 : ℝ)
+\end{verbatim}
+}
+where \lean{[NeZero q]} says $q \ge 1$ and the power is the real power. The statements of the two hypotheses and of the
+density estimates count the characters $\chi$ mod $q$, as elements of Mathlib's \lean{DirichletCharacter ℂ q}, for
+which \lean{LFunction χ s = 0} at some $s$ in the rectangle. Mathlib's $L$-function of a character mod $q$ is the
+analytic continuation of $\sum_n \chi(n) n^{-s}$, with the character taken mod $q$ and not reduced to a primitive
+one. So $L(s, \chi)$ is the $L$-function of the primitive character inducing $\chi$ times the Euler factors at the
+primes dividing $q$, whose zeros lie on $\operatorname{Re} s = 0$ and do not affect the counts for $\sigma \ge 1/2$.
+\file{formalisations/} records, for each result from the literature, the differences between the Lean statement and
+the published one.
+
+\subsection*{What the kernel checks}
+
+The library's own sources contain no \lean{sorry}, no declared axiom and no \lean{native\_decide}, which
+\texttt{scripts/check\_hygiene.py} checks. The certificate of Proposition~\ref{prop:certificate} is checked by kernel
+evaluation, \lean{decide +kernel}, and not by compiled code. The library uses 19 files of PrimeNumberTheoremAnd and
+59 files of the \texttt{zeta23} folder of Anthropic's \texttt{formal-math}, each ported to the library's toolchain by
+a patch that the repository records.
+
+\subsection*{Building}
+
+The repository's README gives the commands: \texttt{lake exe cache get} for Mathlib's prebuilt files,
+\texttt{scripts/build.sh} for the build, and \texttt{python3 scripts/check\_axioms.py} for the axioms. The build's
+default target is \texttt{lib/check/Check.lean} and everything it imports. Lean's kernel checks of the certificate
+need several GiB of memory each, and \texttt{scripts/build.sh} limits how many run at once. On every change to the
+library the repository's continuous integration rebuilds it and runs the axiom check.
 
 \section{What the inputs give without the sieve}\label{sec:comparison}
 
