@@ -76,7 +76,7 @@ build, keeping what is already built.
 `.github/workflows/ci.yml` runs on pull requests and on pushes to `main`:
 
 - **Checks:** `check_hygiene.py`, `gen_lakefile.py --check`, `check_vendor.py` and `check_certificate.py`.
-- **The paper:** `papers/linnik-exponent/main.tex` is compiled with LaTeX, and the PDF is kept as an artifact.
+- **The papers:** every `papers/<name>/main.tex` is compiled with LaTeX, and the PDFs are kept as an artifact.
 - **The Lean build**, with a cache. On a pull request it runs only if the pull request changes `lib/`, the Lake
   files, `lean-toolchain`, the build scripts or the workflow; on pushes to `main` it always runs. Mathlib's prebuilt
   files come from Mathlib's own cache (`lake exe cache get`).
