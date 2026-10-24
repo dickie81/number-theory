@@ -49,13 +49,16 @@ If Mathlib's cache does not have the pinned commit, `lake build` builds Mathlib 
 
 **Memory.** A module that imports Mathlib maps Mathlib's files into memory, and that mapping is shared between
 compiles. The default build also has 307 certificate parts (`lib/pnt/SieveCert*P<k>.lean`). Of Mathlib they import
-only `Mathlib.Data.Nat.Notation`, but each one can use about 5 GiB of private memory while the kernel checks it. Lake
-runs about as many compiles at once as there are cores, so a plain `lake build` on a machine with less than about
-5 GiB of memory per core can run out while it builds the certificates. `scripts/build.sh` runs Lake with a wrapper
+only `Mathlib.Data.Nat.Notation`, but each one can use about 5 GiB of private memory while the kernel checks it, and
+the five parts of the `226` certificate (`lib/pnt/SieveCert226P<k>.lean`) more than 10 GiB. Lake runs about as many
+compiles at once as there are cores, so a plain `lake build` on a machine with less than about 5 GiB of memory per
+core can run out while it builds the certificates. `scripts/build.sh` runs Lake with a wrapper
 around `lean`, `scripts/lean-slots.sh`. The wrapper allows at most `LEAN_SLOTS` compiles at once (default: the
 number of cores) and at most `LEAN_HEAVY` certificate parts among them (default 2). It also deletes each module's
 setup file after its compile; Lake writes that file for the compile and does not read it again. It needs `flock`.
-On 4 cores and 16 GB, a cold build of the default target takes several hours.
+On 4 cores and 16 GB, a cold build of the default target takes several hours. Two `226` parts at once can exceed
+16 GB: a compile killed with exit code 137 has run out of memory, and `LEAN_HEAVY=1 scripts/build.sh` finishes the
+build, keeping what is already built.
 
 ## Checks
 
