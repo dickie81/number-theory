@@ -17,6 +17,8 @@
 \renewcommand{\thehypothesis}{H\arabic{hypothesis}}
 
 \newcommand{\lean}[1]{\texttt{#1}}
+\newcommand{\file}[1]{\nolinkurl{#1}}
+\emergencystretch=3em
 
 \title{The least prime in an arithmetic progression:\\ the exponent $899/400$}
 % The authors are to be filled in.
@@ -108,7 +110,7 @@ and Section~\ref{sec:type1} the form of the sieve that is used.
 Every step of the proof, and every result it uses from the literature, is proved in Lean~4 with the Mathlib
 library. The Lean theorem \lean{Linnik22475R.linnik\_22475r} is Theorem~\ref{thm:main}, and its axioms are Lean's
 standard three. The certificate's sum is checked by Lean's kernel in 534 parts. Section~\ref{sec:lean} names the Lean
-theorem behind each claim of the paper, and the directory \texttt{formalisations/} of the repository documents each
+theorem behind each claim of the paper, and the directory \file{formalisations/} of the repository documents each
 result from the literature: its source, its Lean statement and the differences between them.
 
 \subsection*{Outline}
@@ -125,12 +127,12 @@ Throughout, $q \ge 1$ is the modulus and $a$ is prime to $q$. The Dirichlet char
 one is $\chi_0$, and $L(s, \chi)$ is the $L$-function of $\chi$, continued to the whole plane (in Lean, Mathlib's
 \lean{DirichletCharacter.LFunction}). For $1/2 \le \sigma \le 1$ and $T \ge 2$ let
 \[
-  N^*(\sigma, T; q) = \#\{\chi \bmod q : L(s, \chi) = 0 \text{ for some } s \text{ with }
-    \operatorname{Re} s \ge \sigma,\ |\operatorname{Im} s| \le T\}
+  N^*(\sigma, T; q) = \#\{\chi \bmod q : L(s, \chi) = 0 \text{ for some } s \in \mathcal R(\sigma, T)\},
 \]
-be the number of characters mod $q$ whose $L$-function has a zero in the rectangle. It counts characters, not zeros,
-so a bound for the number of zeros bounds it. The proof is a sieve on the integers up to $x = q^L$, with $L = 899/400$
-in the end, and $q$ is taken large.
+where $\mathcal R(\sigma, T) = \{s : \operatorname{Re} s \ge \sigma,\ |\operatorname{Im} s| \le T\}$: the number of
+characters mod $q$ whose $L$-function has a zero in the rectangle. It counts characters, not zeros, so a bound
+for the number of zeros bounds it. The proof is a sieve on the integers up to $x = q^L$, with $L = 899/400$ in the
+end, and $q$ is taken large.
 
 \begin{hypothesis}[the zero-free half-plane]\label{hyp:half-plane}
 For every $q \ge 1$, every Dirichlet character $\chi$ mod $q$ and every $s$ with $\operatorname{Re} s > 11/12$,
@@ -139,7 +141,7 @@ $L(s, \chi) \ne 0$, except at $s = 1$ for the trivial character.
 
 This is OpenAI's result \cite{openai}: their companion preprint proves it, and their main preprint proves the
 stronger $\operatorname{Re} s > 7/8$. It is proved in Lean as \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt}, following
-the companion preprint. \texttt{formalisations/openai-half-plane.md} gives the attribution and the differences
+the companion preprint. \file{formalisations/openai-half-plane.md} gives the attribution and the differences
 between the Lean statement and the source's.
 
 \begin{hypothesis}[a zero-density estimate]\label{hyp:density}
@@ -149,7 +151,7 @@ $\operatorname{Re} s \ge \sigma$, $|\operatorname{Im} s| \le T$.
 \end{hypothesis}
 
 This follows from Chen, Gupta and Li's estimate \cite{cgl}. Their estimate counts zeros, which gives the count of
-characters stated here. It is proved in Lean as \lean{LinnikCGLDensity.cglDensity}, and \texttt{formalisations/}
+characters stated here. It is proved in Lean as \lean{LinnikCGLDensity.cglDensity}, and \file{formalisations/}
 documents it.
 
 \subsection*{The density curve}
@@ -192,15 +194,15 @@ the sum of the constants, so it suffices to prove the bound on each piece.
 \item For $\sigma < 4/7$: $N^*(\sigma, T; q) \le \varphi(q) \le qT$.
 \item On each step of $[4/7, 5/7]$: Ingham's estimate \cite{ingham} in the form over the characters mod $q$, which
   bounds $N^*(\sigma, T; q)$ by $C(qT)^{A(1 - \sigma)}(\log qT)^{10}$ on $[\sigma_1, \sigma_2]$ for every $A$
-  above $3/(2 - \sigma_2)$ (\texttt{formalisations/ingham-density.md}). Ingham proved his estimate for the zeros of
+  above $3/(2 - \sigma_2)$ (\file{formalisations/ingham-density.md}). Ingham proved his estimate for the zeros of
   $\zeta$; the form over the characters is Theorem~12.1 of Montgomery's book \cite{montgomery-topics}.
 \item On $[5/7, 16/21]$: Hypothesis~\ref{hyp:density} with $\varepsilon = (1/2000)(5/21)$, since $1 - \sigma \ge 5/21$
   there.
 \item On each step of $[16/21, 5/6]$: Huxley's estimate \cite{huxley75} over the characters mod $q$, with the
-  exponent $3/(3\sigma_1 - 1) + 1/2000$ on $[\sigma_1, \sigma_2]$ (\texttt{formalisations/huxley-density.md}).
+  exponent $3/(3\sigma_1 - 1) + 1/2000$ on $[\sigma_1, \sigma_2]$ (\file{formalisations/huxley-density.md}).
 \item For $\sigma \ge 5/6$: the exponent $101/50$, by the same large-values argument at fixed parameters on
   $[5/6, 11/12]$, and by Hypothesis~\ref{hyp:half-plane} above $11/12$, where at most the trivial character is
-  counted (\texttt{formalisations/huxley-density.md}).
+  counted (\file{formalisations/huxley-density.md}).
 \end{itemize}
 Each of these bounds is a theorem of the library, with a factor $(\log qT)^{10}$ at most $(1 + \log qT)^{10}$; the
 claims table of Section~\ref{sec:lean} names them.
@@ -212,11 +214,168 @@ enters the Type~II estimate through the largest real part of the zeros, which it
 
 \section{The Type II estimate}\label{sec:type2}
 
-% To be written: smooth prime sums bounded through each character's zeros near the height (Lemma 1 of the route);
-% the bins of characters by the real parts of their zeros; the top bin by Hypothesis H1; the other bins by the
-% density curve; the Halasz-Montgomery branch on the top piece [5/6, 11/12] (formalisations/halasz-montgomery.md,
-% cited to Halasz and Montgomery); the window
-% [41335/100000, 48069/100000] L at L = 899/400.
+Fix a smooth real function $f_0$ supported in $[1/2, 2]$. For a character $\chi$, a scale $Q \ge 4$ and a
+height $h \in \mathbb R$, the smoothed prime sum is
+\[
+  S_Q(\chi, h) = \sum_{p \le 2Q} \chi(p) \Bigl(\frac{p}{Q}\Bigr)^{-ih} f_0\Bigl(\frac{p}{Q}\Bigr),
+\]
+and for a finite set $S \subseteq (P, 2P]$ of integers, coefficients $a_m \in \mathbb C$ and a height $h_0$,
+\[
+  W(\chi) = \sum_{m \in S} a_m \chi(m) m^{-ih_0}.
+\]
+The sieve of Section~\ref{sec:type1} needs, for the integers with a factor $m$ in a range $(x^{u_1}, x^{u_2})$ and
+the rest a product of primes, that the non-trivial characters contribute less than the main term. In the Dirichlet
+polynomials above this is the following estimate. Write $\mathcal X^*$ for the non-trivial characters mod $q$.
+
+\begin{theorem}[the Type~II estimate]\label{thm:type2}
+Assume Hypothesis~\ref{hyp:density}, and let $L = 899/400$, $u_1 = 41335/100000$ and $u_2 = 48069/100000$. Let
+$K_0 \ge 0$ be an integer, $e_1 > 0$ and $0 < \eta \le 10^{-5}$. There is $q_0$ such that for every $q \ge q_0$, every
+$P$ with $q^{u_1 L} \le P \le q^{u_2 L}$, every $S \subseteq (P, 2P]$, all $a_m$ and $h_0$, every $K \le K_0$, and all
+$Q_1, \dots, Q_K \ge q^{e_1}$ and $|h_1|, \dots, |h_K| \le q^\eta$ with $Q_1 \cdots Q_K \le 2^{K_0} q^L/P$,
+\[
+  \sum_{\chi \in \mathcal X^*} |W(\chi)| \prod_{j=1}^K |S_{Q_j}(\chi, h_j)|
+  \le q^{L - 1/50000} \Bigl(\frac1P \sum_{m \in S} |a_m|^2\Bigr)^{1/2}.
+\]
+\end{theorem}
+
+At $x = q^L$ the condition on $P$ is $x^{u_1} \le P \le x^{u_2}$. The bound saves the power $q^{-1/50000}$ over what
+the sieve needs, which is the size $q^L (\sum |a_m|^2/P)^{1/2}$ of the trivial character's term up to a constant.
+The proof has three parts: the prime sums are bounded through the zeros of each character's $L$-function, the
+characters are sorted by those zeros, and in each class the sum over the characters is bounded in two ways.
+
+\subsection{Prime sums in a zero-free rectangle}
+
+\begin{lemma}\label{lem:prime-sum}
+For every integer $K \ge 0$ there are $B, C \ge 0$ such that the following holds for every $q \ge 1$, every
+$\chi \in \mathcal X^*$, every $1/2 \le \theta \le 11/12$, $0 < \delta \le 1/24$, $H \ge 0$, $Q \ge 4$ and
+$y \in \mathbb R$. If $L(s, \chi) \ne 0$ for $\operatorname{Re} s > \theta$, $|\operatorname{Im} s - y| < H + 1$,
+then
+\begin{multline*}
+  |S_Q(\chi, y)| \le M_\delta(\theta)\, A\, B\,
+  \frac{Q^{\theta + \delta} + Q^{11/12 + \delta}(1 + H)^{-K}}{\log Q} \\
+  + C\bigl(\sqrt{2Q} + 1\bigr)\bigl(\log_2 (2Q) + 1\bigr),
+\end{multline*}
+where $A = \log(q + 2) + \log(|y| + 4) + 1$ and $M_\delta(\theta)$ depends only on $\theta$ and $\delta$.
+\end{lemma}
+
+\begin{proof}[Sketch]
+The weight $\psi_Q(u) = f_0(u)(1 + \log u/\log Q)^{-1}$ turns the prime sum into $1/\log Q$ times the sum of
+$\chi(n)\Lambda(n)(n/Q)^{-iy}\psi_Q(n/Q)$, up to the proper prime powers, which give the last term. By Mellin
+inversion that sum is an integral of $-L'/L(s, \chi)$ against the Mellin transform of the weight, which decays
+faster than any power of $|\operatorname{Im} s - y|$ uniformly in $Q$. The line of integration moves from
+$\operatorname{Re} s = 2$ to $\operatorname{Re} s = 11/12 + \delta$, which Hypothesis~\ref{hyp:half-plane} allows,
+and, for $|\operatorname{Im} s - y| \le H$, across the zero-free rectangle to $\operatorname{Re} s = \theta + \delta$.
+On both lines $|L'/L(s, \chi)| \ll A$, by the bound for the logarithmic derivative in a zero-free disc.
+\end{proof}
+
+The argument is the classical one for primes in progressions, with a smooth weight in place of a sharp cut-off; the
+only use of Hypothesis~\ref{hyp:half-plane} is the line $\operatorname{Re} s = 11/12 + \delta$.
+
+\subsection{The bins}
+
+Let $N = 500000$ and $\beta_i = 1/2 + i/(12N/5)$ for $0 \le i \le N$, so that $\beta_0 = 1/2$, $\beta_N = 11/12$ and
+the bins have width $1/1200000$. For a height bound $T \ge 2$ the \emph{bin} of $\chi \in \mathcal X^*$ is the largest
+$i < N$ such that $L(s, \chi)$ has a zero with $\operatorname{Re} s > \beta_i$ and $|\operatorname{Im} s| \le T$, and
+$0$ if there is none. If $\chi$ is in the bin $i$ then:
+\begin{itemize}
+\item $L(s, \chi)$ has no zero with $\operatorname{Re} s > \beta_{i+1}$ and $|\operatorname{Im} s| \le T$: for
+  $i + 1 < N$ by the choice of $i$, and for $i + 1 = N$ by Hypothesis~\ref{hyp:half-plane}. So
+  Lemma~\ref{lem:prime-sum} applies with $\theta = \beta_{i+1}$ to every height $|y| \le T - H - 1$.
+\item For $i \ge 1$, $\chi$ is counted by $N^*(\beta_i, T; q)$, so a density curve $g$ bounds the number of characters
+  in the bin by $C(qT)^{g(\beta_i)}(1 + \log qT)^{10}$. For $i = 0$ the bound $\varphi(q) \le qT$ is the same with
+  $g(1/2) = 1$.
+\end{itemize}
+The bins depend on $T$ but not on the heights $h_j$. The proof takes $H = q^\eta$ and $T = 2H + 1$, so that every
+height $|h_j| \le q^\eta$ has $|h_j| + H + 1 \le T$, and Lemma~\ref{lem:prime-sum} with $K$ large in terms of $\eta$,
+so that $(1 + H)^{-K}$ cancels the term $Q^{11/12 + \delta}$. For large $q$ it gives
+$|S_{Q_j}(\chi, h_j)| \le 2 Q_j^{\beta_{i+1} + 2\delta}$ in the bin $i$.
+
+\subsection{Two bounds in a bin}
+
+Let $R$ be the set of characters in a bin. Since the prime sums are bounded on $R$, it remains to bound
+$\sum_{\chi \in R} |W(\chi)|$. There are two bounds.
+\begin{enumerate}
+\item \emph{Orthogonality.} For $S \subseteq (P, 2P]$ and every $t$,
+  \[
+    \sum_\chi \Bigl|\sum_{m \in S} c_m \chi(m) m^{-it}\Bigr|^2 \le (P + q) \sum_{m \in S} |c_m|^2,
+  \]
+  summed over all characters mod $q$, since each residue class mod $q$ has at most $P/q + 1$ elements in
+  $(P, 2P]$. With Cauchy--Schwarz over $R$,
+  \[
+    \sum_{\chi \in R} |W(\chi)| \le |R|^{1/2} \Bigl((P + q) \sum_{m \in S} |a_m|^2\Bigr)^{1/2}.
+  \]
+\item \emph{The Hal\'asz--Montgomery inequality} \cite{halasz, montgomery69}, in the form over the characters mod
+  $q$ at one height (\file{formalisations/halasz-montgomery.md}):
+  \[
+    \Bigl(\sum_{\chi \in R} |W(\chi)|\Bigr)^2 \le e \sum_{m \in S} |a_m|^2 \cdot \bigl(2P |R| + |R|^2 B\bigr),
+  \]
+  where $B$ bounds the off-diagonal kernels $K_{2P}(\chi\chi'^{-1}, 0)$, $\chi \ne \chi'$ in $R$. These are smoothed
+  sums of a non-trivial character over $n \ll P$, and $|K_{2P}(\psi, 0)| \le C(2P)^{1/12 - \delta'}
+  (2q)^{5/12 + \delta' + 2\varepsilon'}$: the kernel's integral moves to $\operatorname{Re} w = 1/12 - \delta'$, where
+  the functional equation and the bound on $\operatorname{Re} s = 11/12 + \delta$ that
+  Hypothesis~\ref{hyp:half-plane} gives bound the $L$-function.
+\end{enumerate}
+The first bound is the better one when the bin is large, the second when it is small, which is the case near the top
+of the curve. The proof takes the better of the two in each bin.
+
+\subsection{The window condition}
+
+Write $P = q^m$ and $|R| \le q^{g(\beta) + o(1)}$. The product of the prime sums is at most
+$q^{(L - m)(\beta + w) + o(1)}$, where $\beta$ is the bin's lower end and $w \le 4 \cdot 10^{-6}$ accounts for the
+width of the bins and for the $2\delta$ above. Measured against $q^L (\sum |a_m|^2/P)^{1/2}$, the two bounds give the
+exponents
+\[
+  E_1 = (L - m)(\beta + w) + \frac{g(\beta)}2 + \frac m2 + \frac{\max(1, m)}2
+\]
+by orthogonality, and by the Hal\'asz--Montgomery inequality the larger of
+\begin{align*}
+  E_2 &= (L - m)(\beta + w) + \frac{g(\beta)}2 + m, \\
+  E_3 &= (L - m)(\beta + w) + \frac{g(\beta)}2 + \frac m2 + \frac{g(\beta) + b(m)}2,
+\end{align*}
+with $b(m) = 5/12 + m/12 + \delta'(1 - m) + 2\varepsilon'$ the exponent of the kernel bound.
+
+\begin{definition}\label{def:window}
+A window $[m_1, m_2]$ is \emph{admissible} for a curve $g$ at $L$ if for every $1/2 \le \beta \le 11/12$, every
+$m_1 \le m \le m_2$ and every $0 \le w \le 4 \cdot 10^{-6}$, either $E_1 \le L - 1/25000$, or $m \le 1$ and
+$\max(E_2, E_3) \le L - 1/25000$, with $\delta' = \varepsilon' = 1/1000$.
+\end{definition}
+
+\begin{proposition}\label{prop:type2-gen}
+Let $g$ be a density curve with $g \le 1$ and $g(1/2) = 1$, and let $[m_1, m_2]$ be admissible for $g$ at $L$. Then the
+conclusion of Theorem~\ref{thm:type2} holds with $q^{m_1} \le P \le q^{m_2}$ in place of
+$q^{u_1 L} \le P \le q^{u_2 L}$.
+\end{proposition}
+
+\begin{proof}
+Sum the better of the two bounds over the bins. Each bin contributes at most
+$q^{L - 1/25000 + \eta}(\sum |a_m|^2/P)^{1/2}$ times constants and a power of $\log qT$, the factor $q^\eta$
+coming from $T \le 3q^\eta$ in the count of the bin. There are $N$ bins, so for large $q$ the total is at most
+$q^{L - 1/25000 + \eta + 1/100000}(\sum |a_m|^2/P)^{1/2}$. Since $\eta \le 10^{-5}$,
+$L - 1/25000 + \eta + 1/100000 \le L - 1/50000$.
+\end{proof}
+
+\begin{proposition}\label{prop:window}
+The window $[u_1 L, u_2 L]$, with $u_1 = 41335/100000$ and $u_2 = 48069/100000$, is admissible for $g_7$ at
+$L = 899/400$.
+\end{proposition}
+
+\begin{proof}
+On each piece of $g_7$, $g_7(\beta) = A(1 - \beta)$ with $A$ constant, or $g_7 = 1$. There $E_1$, $E_2$ and $E_3$ are
+polynomials of degree at most one in each of $\beta$, $m$ and $w$ separately, so on a box
+$[\beta_{\mathrm{lo}}, \beta_{\mathrm{hi}}] \times [m_{\mathrm{lo}}, m_{\mathrm{hi}}] \times [0, 4 \cdot 10^{-6}]$ each
+attains its maximum at a corner. Split the window at $m = 1$. On every piece below $5/6$ the inequality
+$E_1 \le L - 1/25000$ holds at the corners. On the top piece $[5/6, 11/12]$ it holds at the corners with $m \ge 1$,
+and $\max(E_2, E_3) \le L - 1/25000$ holds at the corners with $m \le 1$. Each corner is an inequality between
+rational numbers, checked exactly.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:type2}]
+By Proposition~\ref{prop:curve}, $g_7$ is a density curve under Hypothesis~\ref{hyp:density}, with $g_7 \le 1$ and
+$g_7(1/2) = 1$. Apply Proposition~\ref{prop:type2-gen} with the window of Proposition~\ref{prop:window}.
+\end{proof}
+
+The Hal\'asz--Montgomery branch is used only on the top piece of the curve, at the corners with $m \le 1$, where the
+bins are small.
 
 \section{Type I estimates and Harman's sieve}\label{sec:type1}
 
@@ -240,7 +399,8 @@ Every claim of the paper is a theorem of the Lean library in \texttt{lib/}. The 
 they are \lean{propext}, \lean{Classical.choice} and \lean{Quot.sound} only.
 
 \begin{center}
-\begin{tabular}{@{}ll@{}}
+\small
+\begin{tabular}{@{}p{0.46\textwidth}l@{}}
 \toprule
 Claim & Lean \\
 \midrule
@@ -248,16 +408,19 @@ Theorem~\ref{thm:main} & \lean{Linnik22475R.linnik\_22475r} \\
 Theorem~\ref{thm:main} under Hypothesis~\ref{hyp:density} & \lean{Linnik22475R.linnik\_22475r\_of} \\
 Proposition~\ref{prop:curve}: $g_7$ is a density curve & \lean{SieveTypeIIU226C.counts\_7c} \\
 The route theorem (Section~\ref{sec:proof}) & \lean{SieveMain2.linnik\_route\_lt2} \\
-The Type~II estimate on the window (Section~\ref{sec:type2}) & \lean{SieveTypeIIU22475C.typeII\_22475c} \\
+Theorem~\ref{thm:type2}, the Type~II estimate & \lean{SieveTypeIIU22475C.typeII\_22475c} \\
+Lemma~\ref{lem:prime-sum}, prime sums in a zero-free rectangle & \lean{SieveWeight.norm\_Sp\_le} \\
+Proposition~\ref{prop:type2-gen}, the Type~II estimate on an admissible window & \lean{SieveTypeIIHM.typeII\_gen\_hm} \\
+Proposition~\ref{prop:window}, the window is admissible & \lean{SieveTypeIIU22475C.window\_22475c} \\
 The certificate's total is below $K$ (Section~\ref{sec:certificate}) & \lean{SieveCert.total2\_lt\_22475R} \\
 \midrule
-Hypothesis~\ref{hyp:half-plane} (OpenAI; \texttt{formalisations/}) & \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt} \\
-Hypothesis~\ref{hyp:density} (Chen--Gupta--Li; \texttt{formalisations/}) & \lean{LinnikCGLDensity.cglDensity} \\
-Ingham's density estimate (\texttt{formalisations/}) & \lean{LinnikInghamC.charDensity\_ingham\_c} \\
-Huxley's density estimate (\texttt{formalisations/}) & \lean{LinnikHuxStep.charDensity\_gen} \\
-Huxley's estimate from $5/6$ on (\texttt{formalisations/}) & \lean{LinnikStep.charDensity\_step} \\
-The Hal\'asz--Montgomery inequality (\texttt{formalisations/}) & \lean{LinnikPower.hm\_duality} \\
-Harman's sieve in the form used (\texttt{formalisations/}) & \lean{SieveProp6.prop6} \\
+Hypothesis~\ref{hyp:half-plane} (OpenAI; \file{formalisations/}) & \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt} \\
+Hypothesis~\ref{hyp:density} (Chen--Gupta--Li; \file{formalisations/}) & \lean{LinnikCGLDensity.cglDensity} \\
+Ingham's density estimate (\file{formalisations/}) & \lean{LinnikInghamC.charDensity\_ingham\_c} \\
+Huxley's density estimate (\file{formalisations/}) & \lean{LinnikHuxStep.charDensity\_gen} \\
+Huxley's estimate from $5/6$ on (\file{formalisations/}) & \lean{LinnikStep.charDensity\_step} \\
+The Hal\'asz--Montgomery inequality (\file{formalisations/}) & \lean{LinnikPower.hm\_duality} \\
+Harman's sieve in the form used (\file{formalisations/}) & \lean{SieveProp6.prop6} \\
 \bottomrule
 \end{tabular}
 \end{center}
