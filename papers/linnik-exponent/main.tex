@@ -750,8 +750,9 @@ Hypothesis~\ref{hyp:density} are theorems of the library. The first version's ca
 
 Every claim of the paper is a theorem of the Lean library in \texttt{lib/} of the repository, which is built with
 Lean~4 and Mathlib. The table names each one. The file \texttt{lib/check/Check.lean} prints the axioms of these
-theorems (for Hypothesis~\ref{hyp:density} it prints the first of the 110 steps; \texttt{lib/check/CheckAll.lean} prints
-all of them and Chen, Gupta and Li's Proposition~3.1), and \texttt{scripts/check\_axioms.py} checks that they are \lean{propext}, \lean{Classical.choice} and
+theorems (of the 110 steps of the density curve it prints the first, the last and the one for the whole range, and
+Chen, Gupta and Li's Proposition~3.1; \texttt{lib/check/CheckAll.lean} prints all the steps), and
+\texttt{scripts/check\_axioms.py} checks that they are \lean{propext}, \lean{Classical.choice} and
 \lean{Quot.sound} only.
 
 {\footnotesize
@@ -919,7 +920,9 @@ the argument, to write the Lean formalisation, including the proofs of the resul
 this paper. Every claim of the paper is a theorem of the Lean library, checked by Lean's kernel, as
 Section~\ref{sec:lean} describes. The author is responsible for the paper's content.
 
-% The entries are to be checked against the sources before submission.
+% The entries were checked against the publishers', arXiv and repository pages on 24 October 2026. Still open: Ingham's
+% pages (the publisher and Crossref give 201--202, Titchmarsh and Huxley cite 291--292), Huxley's year (the volume
+% is 1971/72) and Buchstab's pages (seen in secondary sources only). Check these before submission.
 \begin{thebibliography}{99}
 \bibitem{linnik44} U. V. Linnik, \emph{On the least prime in an arithmetic progression. I. The basic theorem},
   Rec. Math. [Mat. Sbornik] N.S. 15(57) (1944), 139--178.
@@ -930,9 +933,10 @@ Section~\ref{sec:lean} describes. The author is responsible for the paper's cont
 \bibitem{xylouris18} T. Xylouris, \emph{Linniks Konstante ist kleiner als 5}, Chebyshevskii Sb. 19 (2018), 80--94.
 \bibitem{lls} Y. Lamzouri, X. Li and K. Soundararajan, \emph{Conditional bounds for the least quadratic non-residue
   and related problems}, Math. Comp. 84 (2015), 2391--2412.
-\bibitem{openai} OpenAI, \emph{The Quasi-Riemann Hypothesis: a zero-free half-plane $\operatorname{Re}(s) > 7/8$},
-  preprint, 30 September 2026, and its companion preprint of 5 October 2026; \url{https://github.com/openai/math},
-  entry 003.
+\bibitem{openai} OpenAI, \emph{The Quasi-Riemann Hypothesis: A Zero-Free Half-Plane $\operatorname{Re}(s) > 7/8$},
+  preprint, 30 September 2026, and \emph{The Quasi-Riemann Hypothesis}, preprint, 5 October 2026 (which proves
+  $\operatorname{Re}(s) > 11/12$ by a different route); \url{https://github.com/openai/math}, entry 003. Neither
+  preprint has been refereed.
 \bibitem{cgl} B. Chen, V. Gupta and Y. C. Li, \emph{Large Value Estimates for Dirichlet Polynomials with Characters
   and Zero Density of Dirichlet $L$-Functions}, arXiv:2507.08296v2 (preprint; v2 of 27 July 2026, v1 of 11 July 2025
   was by B. Chen alone).
@@ -942,7 +946,7 @@ Section~\ref{sec:lean} describes. The author is responsible for the paper's cont
   201--202.
 \bibitem{montgomery-topics} H. L. Montgomery, \emph{Topics in Multiplicative Number Theory}, Lecture Notes in Math.
   227, Springer, Berlin, 1971.
-\bibitem{huxley72} M. N. Huxley, \emph{On the difference between consecutive primes}, Invent. Math. 15 (1972),
+\bibitem{huxley72} M. N. Huxley, \emph{On the difference between consecutive primes}, Invent. Math. 15 (1971/72),
   164--170.
 \bibitem{huxley75} M. N. Huxley, \emph{Large values of Dirichlet polynomials, III}, Acta Arith. 26 (1975), 435--444.
 \bibitem{halasz} G. Hal\'asz, \emph{\"Uber die Mittelwerte multiplikativer zahlentheoretischer Funktionen}, Acta Math.
