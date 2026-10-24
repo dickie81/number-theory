@@ -1,0 +1,79 @@
+name: Lean build stage
+description: >-
+  One stage of the Lean build. It restores the library's build from the Actions cache, gets Mathlib's prebuilt
+  files, builds the default target with scripts/build.sh for at most `minutes` minutes, and saves the build to the
+  cache, even when the stage fails or is cancelled. If the build finished, it then checks the axioms. A cold build
+  takes longer than one job may run, so the workflow chains stages: each one continues from the last one's cache.
+inputs:
+  stage:
+    description: The stage's number, used in the cache key.
+    required: true
+  minutes:
+    description: The build's time limit, in minutes.
+    default: '315'
+  last:
+    description: '"true" for the last stage, which fails if the build is still unfinished at its time limit.'
+    default: 'false'
+outputs:
+  partial:
+    description: '"true" if the build stopped at its time limit.'
+    value: ${{ steps.build.outputs.partial }}
+runs:
+  using: composite
+  steps:
+    - name: Install elan
+      shell: bash
+      run: |
+        curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+          | sh -s -- -y --default-toolchain none
+        echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+    - name: Get Mathlib's prebuilt files
+      shell: bash
+      run: |
+        lake exe cache get
+        if [ ! -f .lake/packages/mathlib/.lake/build/lib/lean/Mathlib.olean ]; then
+          echo "::error::Mathlib's cache has no prebuilt files for the pinned commit"
+          exit 1
+        fi
+
+    - name: Restore the library's build
+      uses: actions/cache/restore@v4
+      with:
+        path: .lake/build
+        key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+        restore-keys: |
+          lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}-
+          lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+    - name: Build
+      id: build
+      shell: bash
+      run: |
+        set +e
+        timeout "${{ inputs.minutes }}m" scripts/build.sh
+        rc=$?
+        if [ "$rc" -eq 124 ]; then
+          pkill -x lean
+          sleep 5
+          echo "partial=true" >> "$GITHUB_OUTPUT"
+          if [ "${{ inputs.last }}" = true ]; then
+            echo "::error::The build is unfinished after its last stage"
+            exit 1
+          fi
+          echo "::warning::The build stopped at its time limit; the next stage continues it from the cache"
+          exit 0
+        fi
+        exit "$rc"
+
+    - name: Save the library's build
+      if: always()
+      uses: actions/cache/save@v4
+      with:
+        path: .lake/build
+        key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.stage }}
+
+    - name: Check the axioms
+      if: steps.build.outputs.partial != 'true'
+      shell: bash
+      run: python3 scripts/check_axioms.py
