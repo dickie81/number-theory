@@ -230,6 +230,11 @@ import SieveTypeIIU22475C
 import SieveGrid22475R
 import SieveCert22475R
 import Linnik22475R
+import LinnikCGLSteps
+import SieveTypeIIU22335D
+import SieveGrid22335R
+import SieveCert22335R
+import Linnik22335R
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -840,6 +845,15 @@ import Linnik22475R
 #print axioms Linnik22475R.fits22475R
 #print axioms Linnik22475R.linnik_22475r_of
 #print axioms Linnik22475R.linnik_22475r
+#print axioms LinnikCGLSteps.charDensity_s0
+#print axioms LinnikCGLSteps.charDensity_s18
+#print axioms SieveTypeIIU22335D.counts_7d
+#print axioms SieveTypeIIU22335D.window_22335d
+#print axioms SieveTypeIIU22335D.typeII_22335d
+#print axioms SieveCert.gridOK22335R
+#print axioms SieveCert.total2_lt_22335R
+#print axioms Linnik22335R.fits22335R
+#print axioms Linnik22335R.linnik_22335r
 #print axioms LinnikDetect.LSeries_aXχ
 #print axioms LinnikDetect.detect_identityχ
 #print axioms LinnikDetect.dichotomy
