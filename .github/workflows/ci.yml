@@ -58,19 +58,21 @@ jobs:
       - name: The certificate regenerates
         run: python3 tools/linnik/check_certificate.py
 
-  paper:
-    name: The Linnik paper builds
+  # Every paper, papers/<name>/main.tex, so a new paper needs no change here.
+  papers:
+    name: The papers build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: xu-cheng/latex-action@v4
         with:
-          working_directory: papers/linnik-exponent
-          root_file: main.tex
+          root_file: papers/*/main.tex
+          work_in_root_file_dir: true
       - uses: actions/upload-artifact@v4
         with:
-          name: linnik-exponent
-          path: papers/linnik-exponent/main.pdf
+          name: papers
+          path: papers/*/main.pdf
+          if-no-files-found: error
           retention-days: 14
 
   # The Lean build in stages: a cold build takes longer than one job may run (six hours). Each stage continues from
