@@ -18,6 +18,9 @@ window. `Linnik22475R` above is unchanged. -/
 #print axioms SieveCert.total2_lt_22325R
 #print axioms SieveTypeIIU22325D.typeII_22325d
 #print axioms LinnikCGLSteps.charDensity_s0
+#print axioms LinnikCGLSteps.charDensity_inT
+#print axioms SieveTypeIIU22325D.counts_7d
+#print axioms SieveTypeIIU22325D.window_22325d
 
 /- Two results of the literature that it uses (`formalisations/`): the zero-free half-plane `Re s > 11/12` for
 every Dirichlet L-function, from OpenAI's release (`formalisations/openai-half-plane.md`), and Chen–Gupta–Li's
