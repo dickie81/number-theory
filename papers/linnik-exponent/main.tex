@@ -579,8 +579,9 @@ $q$, at most $x/(\varphi(q) \log x)$ times
 \]
 plus $\varepsilon$, and similarly at depth four with
 $d\alpha_1 \cdots d\alpha_4/(\alpha_1 \alpha_2 \alpha_3 \alpha_4^2)$ and the argument
-$(1 - \alpha_1 - \cdots - \alpha_4)/\alpha_4$. The certificate bounds each integral by its integrand's maximum on the cell times the cell's volume, with $\omega^*$ bounded on the cell's range of arguments, and
-works in units of $1/K$ with $K = 2^{60}$, every quotient rounded up.
+$(1 - \alpha_1 - \cdots - \alpha_4)/\alpha_4$. The certificate bounds each integral by its integrand's maximum on
+the cell times the cell's volume, with $\omega^*$ bounded on the cell's range of arguments, and works in units
+of $1/K$ with $K = 2^{60}$, every quotient rounded up.
 \begin{itemize}
 \item A dropped cell of depth two costs this bound, \texttt{bound2}.
 \item A decomposed cell $(i, j)$ costs the bounds of its dropped cells of depth four, summed over its non-evaluable
@@ -660,7 +661,45 @@ the kernel evaluates are arithmetic on natural numbers, lists and booleans, and 
 
 \section{Proof of Theorem~\ref{thm:main}}\label{sec:proof}
 
-% To be written: the route theorem (Section 7's table) at the parameters, with Hypotheses H1 and H2.
+The argument of Sections~\ref{sec:type1} and~\ref{sec:certificate} does not use the particular values of $L$, $u_1$,
+$u_2$ and $n$. It gives the following theorem, of which Theorem~\ref{thm:main} is a case.
+
+\begin{theorem}[the route theorem]\label{thm:route}
+Let $2 < L \le 5/2$ and $0 < u_1 < u_2 < 1$, and let a grid of $n$ cells a side, with ends $U_1$ and $U_2$ over
+$D = 2^{40}$, satisfy $u_1 D < U_1$, $U_2 < u_2 D$ and $L U_2 > D$. Assume the conclusion of
+Theorem~\ref{thm:type2} for $L$ on the window $[u_1 L, u_2 L]$, and $\mathtt{total2} < K$ on the grid. Then there is
+$K'$ such that for every $q \ge 1$ and every $a$ prime to $q$ there is a prime $p \equiv a \pmod q$ with
+$p \le K' q^L$.
+\end{theorem}
+
+\begin{proof}
+Let $c = \mathtt{total2}/K < 1$ and $0 < \varepsilon < (1 - c)/4$. By the prime number theorem, for large $q$ the
+primes in $(x, 2x]$ that do not divide $q$ number at least $(1 - \varepsilon) x/\log x$, and each of them is counted
+by $S(\mathcal B, z_{\mathrm{top}})$. Proposition~\ref{prop:decomp-kept} gives, for large $q$ and every $a$ prime to
+$q$,
+\[
+  S(\mathcal A, z_{\mathrm{top}}) \ge (1 - \varepsilon - c - \varepsilon) \frac{x}{\varphi(q) \log x}
+  > \frac{1 - c}{2} \cdot \frac{x}{\varphi(q) \log x} > 0.
+\]
+An integer of $\mathcal A$ counted by $S(\mathcal A, z_{\mathrm{top}})$ has no prime factor below $(2x)^{1/2}$ and is at
+most $2x$, so it is a prime $p \equiv a \pmod q$ with $x < p \le 2q^L$. So there is $q_0$ such that the theorem holds
+for $q \ge q_0$ with $K' = 2$. Each of the finitely many pairs $(q, a)$ with $q < q_0$ has a prime $p \equiv a \pmod q$
+by Dirichlet's theorem, and $K'$ is taken large enough to cover them.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+Take $L = 899/400$, $u_1 = 41335/100000$, $u_2 = 48069/100000$ and the grid of Proposition~\ref{prop:certificate}. The
+grid fits the window, since its ends are rounded inward and $L U_2 > D$; Theorem~\ref{thm:type2}, under
+Hypothesis~\ref{hyp:density}, is the Type~II estimate, and Proposition~\ref{prop:certificate} is $\mathtt{total2} < K$.
+Theorem~\ref{thm:route} gives Theorem~\ref{thm:main} under Hypothesis~\ref{hyp:density}, and Chen, Gupta and Li's
+estimate proves the hypothesis. Hypothesis~\ref{hyp:half-plane} enters through Lemma~\ref{lem:prime-sum}, the top bin
+and the kernel bound in Section~\ref{sec:type2}, and through the piece of $g_7$ above $11/12$.
+\end{proof}
+
+The proof does not compute $K$: the threshold $q_0$ comes from limits in $q$ in each step, and the small moduli
+from Dirichlet's theorem. The Lean proof of Theorem~\ref{thm:route} is \lean{SieveMain2.linnik\_route\_lt2}, and the
+case of Theorem~\ref{thm:main} is \lean{Linnik22475R.linnik\_22475r\_of}, with
+\lean{LinnikCGLDensity.cglDensity} for Hypothesis~\ref{hyp:density}.
 
 \section{The formalisation}\label{sec:lean}
 
@@ -677,7 +716,7 @@ Claim & Lean \\
 Theorem~\ref{thm:main} & \lean{Linnik22475R.linnik\_22475r} \\
 Theorem~\ref{thm:main} under Hypothesis~\ref{hyp:density} & \lean{Linnik22475R.linnik\_22475r\_of} \\
 Proposition~\ref{prop:curve}: $g_7$ is a density curve & \lean{SieveTypeIIU226C.counts\_7c} \\
-The route theorem (Section~\ref{sec:proof}) & \lean{SieveMain2.linnik\_route\_lt2} \\
+Theorem~\ref{thm:route}, the route theorem & \lean{SieveMain2.linnik\_route\_lt2} \\
 Theorem~\ref{thm:type2}, the Type~II estimate & \lean{SieveTypeIIU22475C.typeII\_22475c} \\
 Lemma~\ref{lem:prime-sum}, prime sums in a zero-free rectangle & \lean{SieveWeight.norm\_Sp\_le} \\
 Proposition~\ref{prop:type2-gen}, the Type~II estimate on an admissible window & \lean{SieveTypeIIHM.typeII\_gen\_hm} \\
