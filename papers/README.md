@@ -21,10 +21,14 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README.
 In a paper's directory, `latexmk -pdf main.tex`. CI compiles `linnik-exponent/main.tex` on every pull request and push
 to `main`, and keeps the PDF as an artifact for 14 days (`.github/workflows/ci.yml`).
 
+On every push to `main` that changes `papers/`, `.github/workflows/pages.yml` compiles every `papers/<name>/main.tex`
+and publishes the PDFs to <https://dickie81.github.io/number-theory/>, each as `<name>.pdf`, with an index page.
+
 ## Adding a paper
 
 - Make a directory `papers/<name>/` with `main.tex` and a README.
 - Put the paper's theorems in `lib/`, and add their `#print axioms` lines to `lib/check/Check.lean`.
 - Write a note in `formalisations/` for each result from the literature the paper uses, and list it in that
   directory's index.
-- Add a row to the table above, and a job to `.github/workflows/ci.yml` that compiles the paper.
+- Add a row to the table above, and a job to `.github/workflows/ci.yml` that compiles the paper on pull requests.
+  The site picks the paper up by itself.

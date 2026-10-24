@@ -11,3 +11,7 @@ __pycache__/
 *.out
 *.toc
 *.synctex.gz
+*.fls
+*.fdb_latexmk
+/papers/*/main.pdf
+/_site/
