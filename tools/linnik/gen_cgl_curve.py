@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""gen_cgl_curve.py [--check]: the Lean files of the curve `g7d` and its theorem at `L = 4467/2000`.
+"""gen_cgl_curve.py [--check]: the Lean files of the curve `g7d` and its theorem at `L = 893/400`.
 
 `g7d` is `g7c` (`lib/pnt/SieveTypeIIU226C.lean`) with Chen-Gupta-Li's Proposition 3.1 used at every point of
-`[5/7, 131/168]` instead of the flat `7/3 + 1/2000` and Huxley's steps there. On each step `[lo, hi]` of width `1/280`
-(the first step `[5/7, 16/21]` is cut into steps from `5/7`, the last of them `[213/280, 16/21]`) the library's step
+`[5/7, 131/168]` instead of the flat `7/3 + 1/2000` and Huxley's steps there, and with Ingham's last step
+`[99/140, 5/7]` at `ε = 1/400000` (the exponent `7/3 + 1/100000`) instead of `ε = 1/8000` (`7/3 + 1/2000`). On each
+step `[lo, hi]` of width `1/1680` (`STEP`; `g7c`'s pieces are cut into steps from their left ends) the library's step
 (`LinnikCGLStep.charDensity_cglGen`, with `ParC` parameters `M = 1556`, `a`, `λ`, `A_i`, `A`, `e = 1/100000`) gives the
 exponent `A(1 - σ)`. The parameters of a step are the ones that minimise the six exponents of `ParC.Good.hc` at the
 step's two ends over `(a, λ)` (a convex problem, solved in floating point, rounded up to multiples of `10⁻⁵`, then
@@ -12,8 +13,15 @@ condition of `ParC.Good` is checked here in exact rationals (`check_good`) befor
 `g7d` is `g7c` (Huxley's steps `hx7_5` ... `hx7_19`, then `(101/50)(1 - σ)` from `5/6`): there Huxley's exponent is
 smaller than the step's.
 
-Writes `lib/pnt/LinnikCGLSteps.lean` (the steps), `lib/pnt/SieveTypeIIU22335D.lean` (`g7d`, its counts, its window and
-Proposition 3′) and `lib/pnt/Linnik22335R.lean` (the theorem). The window `[W1, W2]/100000` is the one
+The steps are narrow because the window's lower end is set where a step's exponent most exceeds the curve it bounds,
+at a step's right end: with steps of `1/280` that was the step containing `7/9`, where `4/(1 + σ)` meets Huxley's
+`3/(3σ − 1)`. The window's upper end is set by the largest exponent, `7/3` at `5/7`, where Ingham's last step and the
+first Chen-Gupta-Li step meet; Ingham's theorem (`LinnikInghamC.charDensity_ingham_c`) takes any `ε > 0`, so its slack
+there is cut to `10⁻⁵`.
+
+Writes `lib/pnt/LinnikCGLSteps.lean` (the steps, and Ingham's last step `charDensity_inT`),
+`lib/pnt/SieveTypeIIU22325D.lean` (`g7d`, its counts, its window and Proposition 3′) and `lib/pnt/Linnik22325R.lean`
+(the theorem). The window `[W1, W2]/100000` is the one
 `route_limits.py run` computes for `g7d` at `L` (the sampled scan, then the exact corners). With `--check`, nothing is
 written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a difference). With `--table`, the
 steps' parameters are printed.
@@ -32,7 +40,11 @@ import route_limits as rl  # noqa: E402
 PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 E = Fr(1, 100000)
 M = 1556
-L = Fr(4467, 2000)
+L = Fr(893, 400)
+TAG, LNUM, LDEN = '22325', 893, 400
+STEP = Fr(1, 1680)
+# Ingham's last step, at ε = 1/400000: the exponent 2 + 4c + 4ε with c = 1/12
+INGHAM_T = (Fr(99, 140), Fr(5, 7), Fr(7, 3) + Fr(1, 100000))
 N = 300
 TOP = Fr(4, 5)
 
@@ -123,8 +135,8 @@ def steps(base):
             break
         xs = [lo]
         k = 1
-        while lo + Fr(k, 280) < hi:
-            xs.append(lo + Fr(k, 280))
+        while lo + k * STEP < hi:
+            xs.append(lo + k * STEP)
             k += 1
         xs.append(hi)
         for a_, b_ in zip(xs, xs[1:]):
@@ -142,6 +154,9 @@ def steps(base):
     raw = raw_pieces()
     assert len(raw) == 42
     keep = [(lo, hi, A, 'in7_%d' % (i - 1), raw[i]) for i, (lo, hi, A) in enumerate(base[1:21], 1)]
+    lo, hi, A = INGHAM_T
+    assert keep[-1][:2] == (lo, hi) and A < keep[-1][2]
+    keep[-1] = (lo, hi, A, 'inT', (lit(hi), lit(A)))
     hx = [(lo, hi, A, 'hx7_%d' % (i - 22), raw[i]) for i, (lo, hi, A) in enumerate(base[22:42], 22) if lo >= Fr(131, 168)]
     assert hx[0][0] == new[-1][1] == Fr(131, 168) and len(hx) == 15
     return keep, new, params, hx
@@ -217,9 +232,14 @@ Every step is `(parS_k, parS_k_good, charDensity_s_k)`: the parameters `ParC` (`
 `e := 1/100000`), `parS_k.Good` by `norm_num` and `linarith` (the exponent conditions are linear in `σ` once the
 parameters are numerals), and the density estimate by `charDensity_cglGen LinnikCGLHB101.prop31`.
 
-The file imports `LinnikCGLHB101.lean`.
+The file also holds Ingham's last step at a smaller slack, `charDensity_inT`: `LinnikInghamC.charDensity_ingham_c` at
+`ε = 1/400000` on `[99/140, 5/7]`, with the exponent `7/3 + 1/100000`, in place of `LinnikStairs7.charDensity_in7_19`'s
+`7/3 + 1/2000`. The largest exponent of the curve is at `5/7`, and it bounds the window's upper end.
+
+The file imports `LinnikCGLHB101.lean` and `LinnikInghamC.lean`.
 -/
 import LinnikCGLHB101
+import LinnikInghamC
 
 open Real
 
@@ -272,7 +292,8 @@ theorem parS{k}_good : parS{k}.Good where
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[{lit(lo)}, {lit(hi)}]`, density step {k}**: there is `C ≥ 0` such that for every
-`q ≥ 1`, `{lit(lo)} ≤ σ ≤ {lit(hi)}` and `T ≥ 2` at most `C(qT)^{{({lit(A)})(1−σ)}}(log qT)^{{10}}` characters mod `q` have a zero of
+`q ≥ 1`, `{lit(lo)} ≤ σ ≤ {lit(hi)}` and `T ≥ 2` at most `C(qT)^{{({lit(A)})(1−σ)}}(log qT)^{{10}}`
+characters mod `q` have a zero of
 `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`; no hypothesis. -/
 theorem charDensity_s{k} :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), {litp(lo)} ≤ σ → σ ≤ {litp(hi)} → 2 ≤ T →
@@ -281,15 +302,35 @@ theorem charDensity_s{k} :
           C * ((q : ℝ) * T) ^ ({litp(A)} * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
   charDensity_cglGen LinnikCGLHB101.prop31 parS{k} parS{k}_good
 ''')
+    lo, hi, A = INGHAM_T
+    w(f'''open scoped Classical in
+/-- **Ingham's last step at `ε = 1/400000`**: there is `C ≥ 0` such that for every `q ≥ 1`,
+`{lit(lo)} ≤ σ ≤ {lit(hi)}` and `T ≥ 2` at most `C(qT)^{{({lit(A)})(1−σ)}}(log qT)^{{10}}` characters mod `q`
+have a zero of `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`: `LinnikInghamC.charDensity_ingham_c` at `c = 1/12`, where `2 + 4c = 7/3 = 3/(2 − 5/7)`. -/
+theorem charDensity_inT :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), {litp(lo)} ≤ σ → σ ≤ {litp(hi)} → 2 ≤ T →
+      ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
+        ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ DirichletCharacter.LFunction χ s = 0).card : ℝ) ≤
+          C * ((q : ℝ) * T) ^ ({litp(A)} * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
+  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 400000) (c := 1 / 12)
+    (δ₀ := 29 / 140) (σ₂ := 5 / 7)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  obtain ⟨C, hC0, hC⟩ := h
+  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
+  have := hC q σ T (by linarith) hσ1 hT
+  rwa [show (2 + 4 * (1 / 12 : ℝ) + 4 * (1 / 400000)) * (1 - σ) =
+      {litp(A)} * (1 - σ) by ring] at this
+''')
     w('end LinnikCGLSteps\n')
     for k in range(n):
         w(f'#print axioms LinnikCGLSteps.charDensity_s{k}')
+    w('#print axioms LinnikCGLSteps.charDensity_inT')
     return '\n'.join(out) + '\n'
 
 
 # ---------------------------------------------------------------------------------------------------------------------
-def curve_file(keep, new, hx, W1, W2, tag='22335', LN='4467 / 2000'):
-    """`SieveTypeIIU22335D.lean`: g7d, its counts, its window and Proposition 3′."""
+def curve_file(keep, new, hx, W1, W2, tag=TAG, LN=f'{LNUM} / {LDEN}'):
+    """`SieveTypeIIU{TAG}D.lean`: g7d, its counts, its window and Proposition 3′."""
     pcs = [(Fr(1, 2), Fr(4, 7), None, 'trivial', ('4 / 7', None))] + keep + \
         [(lo, hi, A, 's%d' % k, (lit(hi), lit(A))) for k, (lo, hi, A) in enumerate(new)] + hx
     top = (Fr(5, 6), Fr(11, 12), Fr(101, 50), 'top', ('11 / 12', '101 / 50'))
@@ -351,10 +392,11 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). G
 The curve `g7d` is `g7c` of `SieveTypeIIU226C.lean` with the {n} steps of `LinnikCGLSteps.lean` (Chen–Gupta–Li's
 Proposition 3.1, exponent `A(1 − σ)` with `A` just above `4/(1 + σ)` at the step's left end) on `[5/7, 131/168]` in place
 of `7/3 + 1/2000` on `[5/7, 16/21]` and Huxley's steps `hx7_0` … `hx7_4`; from `131/168` on it is `g7c` (Huxley's steps
-`hx7_5` … `hx7_19`, then `(101/50)(1 − σ)` from `5/6`, `LinnikStep.charDensity_step`). Its counts need no hypothesis.
-The window and the Type II estimate are as in `SieveTypeIIU22475C.lean`: every piece of `WindowOKHM` below `5/6` holds by
-orthogonality at its corners (the tactic `corners`), the top piece `[5/6, 11/12]` by `windowPieceHM_const_split`
-(`cornersHMD`).
+`hx7_5` … `hx7_19`, then `(101/50)(1 − σ)` from `5/6`, `LinnikStep.charDensity_step`); below `5/7` it is `g7c` with
+Ingham's last step at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`, `7/3 + 1/100000` in place of `7/3 + 1/2000`).
+Its counts need no hypothesis. The window and the Type II estimate are as in `SieveTypeIIU22475C.lean`: every piece of
+`WindowOKHM` below `5/6` holds by orthogonality at its corners (the tactic `corners`), the top piece `[5/6, 11/12]` by
+`windowPieceHM_const_split` (`cornersHMD`).
 
 * `g7d`, `g7d_le_one`, `g7d_half`; `counts_7d`: `CurveCounts g7d`, with no hypothesis, glued by
   `SieveCurveGlue.rangeCounts_glue` from `LinnikStairs7`'s steps, `LinnikCGLSteps.charDensity_s0` … `charDensity_s{n - 1}`
@@ -376,6 +418,10 @@ open Complex Real Finset
 
 noncomputable section
 
+/- The curve has one `if` per piece, about 150 of them, and its glue and window proofs nest as deeply; the default
+recursion depth is not enough to elaborate them. -/
+set_option maxRecDepth 10000
+
 namespace SieveTypeIIU{tag}D
 
 open DirichletCharacter SieveTypeIIGen SieveCurveGlue SieveTypeIIU227 SieveTypeIIHM
@@ -386,20 +432,24 @@ macro "cornersHMD" : tactic =>
   `(tactic| (intro β m w hb hm hw
              rcases hb with rfl | rfl <;> rcases hm with rfl | rfl <;> rcases hw with rfl | rfl <;> norm_num))
 
-/-- The curve `g7d`: `1` below `4/7`, the twenty Ingham steps, the {n} steps of `LinnikCGLSteps` on `[5/7, 131/168]`,
+/-- The curve `g7d`: `1` below `4/7`, the twenty Ingham steps (the last at `ε = 1/400000`),
+the {n} steps of `LinnikCGLSteps` on `[5/7, 131/168]`,
 Huxley's steps `5` to `19` of `LinnikStairs7` on `[131/168, 5/6]`, and `(101/50)(1 − σ)` from `5/6` on. -/
 {chr(10).join(chain)}
 
+set_option maxHeartbeats 20000000 in
 /-- `g7d ≤ 1`: on each step `A(1 − σ) ≤ A(1 − lo) ≤ 1`, and `(101/50)(1 − σ) ≤ 101/300` from `5/6` on. -/
 {chr(10).join(le)}
 
 lemma g7d_half : g7d (1 / 2) = 1 := by unfold g7d; norm_num
 
-/-- **The counts of the curve** (`CurveCounts g7d`), with no hypothesis: the trivial count, the twenty Ingham steps,
+/-- **The counts of the curve** (`CurveCounts g7d`), with no hypothesis: the trivial count,
+the twenty Ingham steps (the last `charDensity_inT`),
 the {n} steps of `LinnikCGLSteps` (Proposition 3.1), Huxley's steps `5` to `19` and `LinnikStep.charDensity_step`,
 glued. -/
 {chr(10).join(glue)}
 
+set_option maxHeartbeats 20000000 in
 /-- **The window's exponents** at `L = {LN}` on `[{W1}/100000, {W2}/100000]·L`, with the Halász–Montgomery branch on the
 top piece. -/
 {chr(10).join(win)}
@@ -432,7 +482,7 @@ end SieveTypeIIU{tag}D
     return txt, allp
 
 
-def final_file(W1, W2, tag='22335', LNUM=4467, LDEN=2000):
+def final_file(W1, W2, tag=TAG, LNUM=LNUM, LDEN=LDEN):
     LN = f'{LNUM} / {LDEN}'
     d = lambda x: f'{x}'
     return f'''/-
@@ -519,7 +569,8 @@ def generate():
     W1, W2, moves = window_for(pcs)
     cfile, allp = curve_file(keep, new, hx, W1, W2)
     assert [(lo, hi, A) for lo, hi, A, _, _ in allp] == pcs
-    return {'LinnikCGLSteps.lean': sfile, 'SieveTypeIIU22335D.lean': cfile, 'Linnik22335R.lean': final_file(W1, W2)}, \
+    files = {'LinnikCGLSteps.lean': sfile, f'SieveTypeIIU{TAG}D.lean': cfile, f'Linnik{TAG}R.lean': final_file(W1, W2)}
+    return files, \
         (W1, W2, moves, params, new)
 
 
