@@ -1,11 +1,12 @@
-% The Linnik exponent paper: a skeleton. Each section says what it will contain; the claims table of
-% Section 7 is complete and names the Lean theorem behind each claim. The paper claims only its own steps: the
-% results it uses from the literature are documented in formalisations/ and cited, not restated as its own.
+% The Linnik exponent paper. The claims table of Section 7 names the Lean theorem behind each claim, and
+% lib/check/Check.lean prints their axioms. The paper claims only its own steps: the results it uses from the
+% literature are documented in formalisations/ and cited, not restated as its own.
 \documentclass[11pt]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{booktabs}
+\usepackage{longtable}
 \usepackage[hidelinks]{hyperref}
 % The Unicode symbols of the Lean statements quoted in Section 7.
 \DeclareUnicodeCharacter{2203}{\ensuremath{\exists}}
@@ -719,12 +720,12 @@ Lean~4 and Mathlib. The table names each one. The file \texttt{lib/check/Check.l
 theorems, and \texttt{scripts/check\_axioms.py} checks that they are \lean{propext}, \lean{Classical.choice} and
 \lean{Quot.sound} only.
 
-\begin{center}
-\small
-\begin{tabular}{@{}p{0.44\textwidth}l@{}}
+{\footnotesize
+\begin{longtable}{@{}p{0.36\textwidth}l@{}}
 \toprule
 Claim & Lean \\
 \midrule
+\endhead
 Theorem~\ref{thm:main} & \lean{Linnik22475R.linnik\_22475r} \\
 Theorem~\ref{thm:main} under Hypothesis~\ref{hyp:density} & \lean{Linnik22475R.linnik\_22475r\_of} \\
 Proposition~\ref{prop:curve}: $g_7$ is a density curve & \lean{SieveTypeIIU226C.counts\_7c} \\
@@ -754,9 +755,14 @@ Lemma~\ref{lem:family}, Type~II families & \lean{SieveFamily.typeII\_sharp} \\
 Lemma~\ref{lem:rough}, rough numbers from above & \lean{SieveRough.psi\_le} \\
 The fundamental lemma of the sieve & \lean{SieveBrun.fundamental} \\
 Buchstab's identity & \lean{SieveDecomp.buchstab\_fam} \\
+\midrule
+The classical deduction (Section~\ref{sec:comparison}) & \lean{Linnik.linnik\_of\_charDensity} \\
+Its exponents $12 + \varepsilon$, $36/13 + \varepsilon$ and $12/5 + \varepsilon$ & \lean{Linnik.linnik\_twelve}, \\
+ & \lean{LinnikIngham.linnik\_thirtysix\_thirteenths}, \\
+ & \lean{LinnikTwelve.linnik\_twelve\_fifths} \\
 \bottomrule
-\end{tabular}
-\end{center}
+\end{longtable}
+}
 
 \subsection*{The statements}
 
@@ -795,9 +801,67 @@ library the repository's continuous integration rebuilds it and runs the axiom c
 
 \section{What the inputs give without the sieve}\label{sec:comparison}
 
-% To be written: Hypotheses H1 and H2 by the classical deduction give 7/3 + epsilon (Chen-Gupta-Li's Corollary 1.4);
-% the library's own deduction (Linnik.linnik_of_charDensity) and the exponents it gives; the trivial count gives
-% 12 + epsilon from H1 alone. This section claims nothing new; it places Theorem 1.1.
+This section claims nothing new. It places Theorem~\ref{thm:main} against what the same inputs give by the
+classical argument, which has no sieve.
+
+\subsection*{The classical deduction}
+
+Suppose that for some $A \ge 2$ there is a uniform density estimate
+\[
+  N^*(\sigma, T; q) \le C (qT)^{A(1 - \sigma)} (\log qT)^B \qquad (1/2 \le \sigma \le 1,\ T \ge 2).
+\]
+With Hypothesis~\ref{hyp:half-plane}, the explicit formula for the primes in a class mod $q$, summed over the zeros
+of the $L$-functions mod $q$ up to a height, then gives Linnik's theorem with every exponent $L > A$: the zeros of
+real part about $\sigma$ contribute about $(q^A/x)^{1 - \sigma}$, and none has real part above $11/12$. The library
+proves this deduction as \lean{Linnik.linnik\_of\_charDensity}, and with it:
+\begin{itemize}
+\item $L = 12 + \varepsilon$ from Hypothesis~\ref{hyp:half-plane} alone: at most $\varphi(q) \le qT$ characters are
+  counted for every $\sigma$, and at most one above $11/12$, which is the estimate with $A = 12$;
+\item $L = 36/13 + \varepsilon$ with Ingham's estimate, whose exponent $3/(2 - \sigma)$ is $36/13$ at
+  $\sigma = 11/12$;
+\item $L = 12/5 + \varepsilon$ with Huxley's estimate, which bounds the density exponent by $12/5$ on the whole
+  range.
+\end{itemize}
+Section~\ref{sec:lean}'s table names the Lean theorem of each.
+With Hypothesis~\ref{hyp:density} as well, the exponent is $7/3 + \varepsilon$: this is Chen, Gupta and Li's
+Corollary~1.4 \cite{cgl}, under a zero-free region that Hypothesis~\ref{hyp:half-plane} supplies. In the terms of
+this paper, the curve $g_7$ of Section~\ref{sec:inputs} satisfies $g_7(\sigma) \le (7/3 + 1/2000)(1 - \sigma)$ on
+$[1/2, 1]$, so Proposition~\ref{prop:curve} and the deduction give every exponent above $7/3 + 1/2000$; the library
+does not state this case as a theorem.
+
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Inputs & Method & Exponent \\
+\midrule
+Hypothesis~\ref{hyp:half-plane} & density deduction & $12 + \varepsilon$ \\
+Hypothesis~\ref{hyp:half-plane}, Ingham & density deduction & $36/13 + \varepsilon \approx 2.769$ \\
+Hypothesis~\ref{hyp:half-plane}, Huxley & density deduction & $12/5 + \varepsilon = 2.4 + \varepsilon$ \\
+Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density} & density deduction \cite{cgl} &
+  $7/3 + \varepsilon \approx 2.333$ \\
+Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density} & Harman's sieve, this paper & $899/400 = 2.2475$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Where the gain comes from}
+
+The deduction needs the zeros of every real part to contribute less than the main term, so its exponent is the
+largest density exponent on $[1/2, 11/12]$: Chen, Gupta and Li's $7/3$, on $[5/7, 16/21]$. The sieve needs the zeros
+only in bilinear sums with one variable in the window, where Theorem~\ref{thm:type2} trades the density exponent
+against the length of the variable, and recovers the primes from those sums at the cost that the certificate bounds.
+The refinement of Section~\ref{sec:certificate} lowers that cost by evaluating part of the terms of depth two that the
+certificate would otherwise drop.
+
+\subsection*{Below $899/400$}
+
+The method as it stands does not go much further. Without the refinement the certificate's total at $899/400$ stays
+above $K$ on every grid computed, up to $n = 800$ (Section~\ref{sec:certificate}). With it, at $L = 2245/1000$ on
+its window, the total stays above $K$ on the grids of $200$, $300$, $400$ and $600$ cells a side computed with
+\file{tools/linnik/refine_k2_probe.py}; at $n = 600$ it is about $1.015K$. These are computations, not proofs.
+Going lower would need more of the
+dropped terms evaluated, or a sharper bound for the rough numbers than $\omega^*$.
 
 % The entries are to be checked against the sources before submission.
 \begin{thebibliography}{99}
