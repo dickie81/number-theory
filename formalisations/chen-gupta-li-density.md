@@ -141,16 +141,19 @@ pieces:
 ## Proposition 3.1 at every point of `[5/7, 131/168]`: the second route
 
 `LinnikCGLSteps` uses the same step (`LinnikCGLStep.charDensity_cglGen`, from Proposition 3.1,
-`LinnikCGLHB101.prop31`) at other parameters, nineteen steps on `[5/7, 131/168]`: the first `[5/7, 16/21]` cut into
-steps of width `1/280` (the last of them `[213/280, 16/21]`), then five of width `1/280`. Each step's exponent is `A(1 − σ)`
-with `A` within `10⁻⁴` of `4/(1 + lo)` (the table in the file's header), which is the divisor form `4/(1 + σ)` of the
+`LinnikCGLHB101.prop31`) at other parameters, 110 steps of width `1/1680` on `[5/7, 131/168]`. Each step's exponent is
+`A(1 − σ)` with `A` within `10⁻⁴` of `4/(1 + lo)` (the table in the file's header), which is the divisor form `4/(1 + σ)` of the
 paper's Theorem 1.2 at `q₁ = q`, taken at the step's left end. The library does not prove Theorem 1.2: the exponents
 come from what `ParC.Good` allows the library's own Proposition 3.1 route (`tools/linnik/gen_cgl_curve.py` computes
 the parameters and checks every field of `ParC.Good` in exact rationals). For `σ > 5/7` this is below the flat
 `7/3 + 1/2000` of `charDensity_cgl`, which `Linnik22475R` uses on `[5/7, 16/21]` and takes to `ε → 0`
 (`cglDensity`). No hypothesis is involved: the steps hold at `e = 1/100000` and need no `ε`.
 
-The curve is `g7d` (`SieveTypeIIU22335D.lean`): `g7c` with these steps on `[5/7, 131/168]`, in place of the plateau and
-Huxley's steps `hx7_0` … `hx7_4`. Huxley's steps `hx7_5` … `hx7_19` stay, since their exponents are smaller than the
-step's from `131/168` on. `Linnik22335R.linnik_22335r` is Linnik's theorem with exponent `4467/2000` on `g7d`
+The curve is `g7d` (`SieveTypeIIU22325D.lean`): `g7c` with these steps on `[5/7, 131/168]`, in place of the plateau and
+Huxley's steps `hx7_0` … `hx7_4`, and with Ingham's last step `[99/140, 5/7]` at `ε = 1/400000` (the exponent
+`7/3 + 1/100000`, `LinnikCGLSteps.charDensity_inT`). Huxley's steps `hx7_5` … `hx7_19` stay, since their exponents are
+smaller than the step's from `131/168` on. The steps are narrow because the window's lower end is set where a step's
+exponent most exceeds the curve it bounds, at the step containing `7/9`, where `4/(1 + σ)` meets Huxley's
+`3/(3σ − 1)`; its upper end is set by the largest exponent, `7/3` at `5/7`. `Linnik22325R.linnik_22325r` is Linnik's
+theorem with exponent `893/400` on `g7d`
 (`Linnik22475R.linnik_22475r` is unchanged).
