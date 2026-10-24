@@ -137,3 +137,20 @@ pieces:
 - the library's `(101/50)(1 − σ)` from `5/6` on (`LinnikStep.charDensity_step`).
 
 `Linnik22475R.linnik_22475r` is `linnik_22475r_of`, the theorem under `CGLDensity`, applied to `cglDensity`.
+
+## Proposition 3.1 at every point of `[5/7, 131/168]`: the second route
+
+`LinnikCGLSteps` uses the same step (`LinnikCGLStep.charDensity_cglGen`, from Proposition 3.1,
+`LinnikCGLHB101.prop31`) at other parameters, nineteen steps on `[5/7, 131/168]`: the first `[5/7, 16/21]` cut into
+steps of width `1/280` (the last of them `[213/280, 16/21]`), then five of width `1/280`. Each step's exponent is `A(1 − σ)`
+with `A` within `10⁻⁴` of `4/(1 + lo)` (the table in the file's header), which is the divisor form `4/(1 + σ)` of the
+paper's Theorem 1.2 at `q₁ = q`, taken at the step's left end. The library does not prove Theorem 1.2: the exponents
+come from what `ParC.Good` allows the library's own Proposition 3.1 route (`tools/linnik/gen_cgl_curve.py` computes
+the parameters and checks every field of `ParC.Good` in exact rationals). For `σ > 5/7` this is below the flat
+`7/3 + 1/2000` of `charDensity_cgl`, which `Linnik22475R` uses on `[5/7, 16/21]` and takes to `ε → 0`
+(`cglDensity`). No hypothesis is involved: the steps hold at `e = 1/100000` and need no `ε`.
+
+The curve is `g7d` (`SieveTypeIIU22335D.lean`): `g7c` with these steps on `[5/7, 131/168]`, in place of the plateau and
+Huxley's steps `hx7_0` … `hx7_4`. Huxley's steps `hx7_5` … `hx7_19` stay, since their exponents are smaller than the
+step's from `131/168` on. `Linnik22335R.linnik_22335r` is Linnik's theorem with exponent `4467/2000` on `g7d`
+(`Linnik22475R.linnik_22475r` is unchanged).
