@@ -23,7 +23,7 @@ The theorem is in the proof of `Linnik22475R.linnik_22475r`, whose axioms are `p
 ## Source
 
 A. E. Ingham proved `N(σ, T) ≪ T^{3(1−σ)/(2−σ)}(log T)⁵` for the zeros of `ζ` ("On the estimation of N(σ, T)", Quart.
-J. Math. Oxford Ser. 11 (1940), 201–202). Chourasiya and Simonič state his result in that form in the abstract of
+J. Math. Oxford Ser. 11 (1940), 291–292). Chourasiya and Simonič state his result in that form in the abstract of
 arXiv:2507.15184: "Ingham (1940) proved that N(σ,T) ≪ T^{3(1−σ)/(2−σ)} log^5 T".
 
 The form over the characters mod `q` is in H. L. Montgomery's *Topics in Multiplicative Number Theory* (Lecture Notes
