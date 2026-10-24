@@ -4,7 +4,7 @@
 Two certificates are checked (all of them with no argument, or the one named by its tag):
 
 * `22475R`: `SieveCert.total2_lt_22475R` (L = 899/400, the window [41335/100000, 48069/100000], n = 300, the curve `g7c`);
-* `22335R`: `SieveCert.total2_lt_22335R` (L = 4467/2000, the window [40993/100000, 47746/100000], n = 300, the curve `g7d`).
+* `22325R`: `SieveCert.total2_lt_22325R` (L = 893/400, the window [40980/100000, 47731/100000], n = 300, the curve `g7d`).
 
 Each is generated in two steps:
 
@@ -30,8 +30,8 @@ PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 # tag: (W1, W2, n, extra arguments of gen_22475r.py)
 CERTS = {
     '22475R': (41335, 48069, 300, []),
-    '22335R': (40993, 47746, 300, ['--tag', '22335R', '--L', '4467/2000', '--curve', 'g7d',
-                                   '--typeii', 'SieveTypeIIU22335D.typeII_22335d']),
+    '22325R': (40980, 47731, 300, ['--tag', '22325R', '--L', '893/400', '--curve', 'g7d',
+                                   '--typeii', 'SieveTypeIIU22325D.typeII_22325d']),
 }
 
 

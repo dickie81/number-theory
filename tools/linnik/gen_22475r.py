@@ -1,7 +1,7 @@
 """gen_22475r.py CELLS.json OUTDIR [PCAP] [FCAP] [CCAP] [PMAX] [--tag T --L a/b --curve g --typeii X]: the Lean files of the
 refined certificate (SieveCert2Defs.lean's `total2`) for the window and `n` of CELLS.json. With no options these are the
 default certificate's, L = 899/400 with n = 300 (window [41335, 48069]/100000, tag 22475R); the options only set the names
-and the text of the files, see below. `check_certificate.py` generates both certificates (`--tag 22335R` for the second).
+and the text of the files, see below. `check_certificate.py` generates both certificates (`--tag 22325R` for the second).
 
 The kernel parts are cut by work = depth-4 tests + `sub2`'s `surelyEval` tests: a part is a range of consecutive light
 rows (`rows2`), or a column piece `rowsJ2 i (i+1) j₀ j₁` of a heavy row, with at most PCAP work; a part file holds

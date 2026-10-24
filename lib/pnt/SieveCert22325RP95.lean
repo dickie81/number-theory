@@ -1,0 +1,36 @@
+/-
+# The refined certificate at `L = 893/400` with `n = 300`, parts 364–367 of 561
+
+File 95 of 142: the parts `rows22325R_364` … `rows22325R_367` of `SieveCert22325R.lean`'s certificate on
+`SieveGrid22325R.grid22325R` (4 parts, 24201 tests: row 107 columns 63–68, row 107 columns 69–76, row 107 columns
+77–299, row 108 columns 0–50), each a sum of refined costs (`rows2` or `rowsJ2`) at most its bound, by `decide
++kernel`, one at a time (`Elab.async false`).
+
+The file imports `SieveGrid22325R.lean`.
+-/
+import SieveGrid22325R
+
+/-! The kernel checks run one at a time: with asynchronous elaboration they would run together and need the
+memory of the whole file. -/
+set_option Elab.async false
+
+namespace SieveCert
+
+section
+
+attribute [local instance] grid22325R
+
+theorem rows22325R_364 : rowsJ2 107 108 63 69 ≤ 0 := by decide +kernel
+
+theorem rows22325R_365 : rowsJ2 107 108 69 77 ≤ 1399992446487 := by decide +kernel
+
+theorem rows22325R_366 : rowsJ2 107 108 77 300 ≤ 452935575600723 := by decide +kernel
+
+theorem rows22325R_367 : rowsJ2 108 109 0 51 ≤ 335928931463903 := by decide +kernel
+
+end
+
+end SieveCert
+
+#print axioms SieveCert.rows22325R_364
+#print axioms SieveCert.rows22325R_367
