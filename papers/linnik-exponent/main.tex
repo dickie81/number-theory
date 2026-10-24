@@ -40,15 +40,83 @@ There is $K$ such that for every $q \ge 1$ and every $a$ prime to $q$ there is a
 $p \le K q^{899/400}$.
 \end{theorem}
 
-% To be written:
-% - Linnik's theorem and the records for its exponent: Xylouris's 5 (2011) and 5 - epsilon (2018); 2 + epsilon
-%   under the generalised Riemann hypothesis.
-% - Why a zero-free half-plane changes the problem. With (H1) the classical deduction (Gallagher's method, as in
-%   Chen-Gupta-Li's Corollary 1.4) gives the density exponent, 7/3 + epsilon. The sieve of this paper goes below
-%   the density exponent.
-% - What is new here: the Type II estimate over zero windows (Section 3), the decomposition, and its certificate
-%   (Section 5).
-% - What is not new: (H1) and (H2) (Section 2), Harman's sieve (Section 4), and the deduction of Section 8.
+Linnik \cite{linnik44} proved that there are absolute constants $K$ and $L$ such that every reduced residue class
+mod $q$ contains a prime $p \le K q^L$. The admissible exponent $L$ has been lowered many times. Heath-Brown
+\cite{heath-brown92} reached $L = 5.5$ and Xylouris $L = 5$ \cite{xylouris11}, and then $L < 5$ \cite{xylouris18}.
+Under the generalised Riemann hypothesis every $L > 2$ is admissible \cite{lls}. Theorem~\ref{thm:main} is
+unconditional, with $L = 899/400 = 2.2475$.
+
+\subsection*{The zeros near $\operatorname{Re} s = 1$}
+
+The difficulty in Linnik's theorem is the zeros of the $L$-functions mod $q$ near the line $\operatorname{Re} s = 1$.
+By the explicit formula, a zero $\rho = \beta + i\gamma$ of $L(s, \chi)$ contributes about $x^{\beta - 1}$, relative to
+the main term, to the count of primes $p \le x$ in a class mod $q$. A zero-density estimate with exponent $A$, a
+bound of about $(qT)^{A(1 - \sigma)}$ for the number of zeros with real part at least $\sigma$, makes the zeros of
+real part about $\sigma$ contribute about $(q^A/x)^{1 - \sigma}$ together. Classically a zero may have
+$1 - \beta$ as small as $c/\log q$, and at $x = q^L$ the contribution $(q^A/x)^{1 - \beta}$ is then a constant, not a
+small quantity. The record proofs control these zeros with zero-free regions, density estimates without logarithmic
+factors and the Deuring--Heilbronn phenomenon, and the constants of all three enter the exponent.
+
+The zero-free half-plane of OpenAI's release \cite{openai}, Hypothesis~\ref{hyp:half-plane}, removes the zeros with
+$\beta > 11/12$. Every remaining zero then contributes at most a power $x^{-1/12}$, and the problem becomes one of
+density: a density exponent $A$ for $1/2 \le \sigma \le 11/12$ gives Linnik's theorem with every exponent $L > A$.
+Huxley's density estimate \cite{huxley75} gives $A = 12/5$. Chen, Gupta and Li \cite{cgl} prove $A = 7/3$, and
+their Corollary~1.4, on primes in short intervals in arithmetic progressions under a zero-free region that
+Hypothesis~\ref{hyp:half-plane} supplies, gives the exponent $7/3 + \varepsilon$.
+Section~\ref{sec:comparison} gives the details.
+
+\subsection*{Below the density exponent}
+
+This paper goes below $7/3$ with a sieve. Harman's sieve \cite{harman83, harman} bounds from below the number of
+primes in the set $\mathcal A$ of integers $n \le x$ with $n \equiv a \pmod q$ by comparing it with the set
+$\mathcal B$ of all integers $n \le x$, weighted by $1/\varphi(q)$. It needs two kinds of information. Type~I
+information is the comparison of $\mathcal A$ with $\mathcal B$ on the multiples of each small integer, which
+orthogonality gives. Type~II information is the comparison on bilinear sums
+$\sum_{mn} a_m b_n$, with $m$ in a range $(x^{u_1}, x^{u_2})$ and arbitrary bounded coefficients, which needs
+the zeros. A comparison over all such sums is not available at $x = q^{899/400}$. What is available is a window
+$[u_1, u_2]$ of exponents on which it holds, and the sieve recovers the primes from the sums it can compare,
+losing a fraction of them that a finite computation bounds.
+
+The paper's contributions are three.
+\begin{enumerate}
+\item \emph{A Type~II estimate over the zeros' real parts} (Section~\ref{sec:type2}). The characters mod $q$ are
+  sorted into bins by the largest real part of their $L$-function's zeros near a given height. In each bin the
+  bilinear sum is bounded by the zeros, which make the Dirichlet polynomial of the primes small, and by the number
+  of characters in the bin, which a density estimate bounds; the best of orthogonality and the
+  Hal\'asz--Montgomery inequality is taken in each bin. Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density},
+  with the classical density estimates of Ingham and Huxley, give the window
+  $[u_1, u_2] = [41335/100000,\ 48069/100000]$ at $L = 899/400$.
+\item \emph{A decomposition by Buchstab's identity, with a refinement} (Section~\ref{sec:certificate}). The
+  identity is applied to depth four. The terms in which the product of some of the prime variables has its
+  exponent in the window, or in its reflection $[1 - u_2, 1 - u_1]$, are Type~II sums and are evaluated, and the
+  others are dropped. The refinement keeps, in a dropped term of depth two, the part whose integers have exactly two
+  prime factors in the cofactor and are, in some grouping of their four prime factors, a Type~II sum.
+\item \emph{A certificate} (Section~\ref{sec:certificate}). The fraction of the primes the decomposition loses is
+  bounded above by a sum over the cells of a grid of the exponents, computed exactly in integers. On a grid of
+  $300$ cells a side the sum is below $0.99386$, which is less than $1$, so a positive proportion of the primes
+  remains.
+\end{enumerate}
+
+The rest is not new. Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density} are OpenAI's and Chen, Gupta and Li's,
+and the density estimates of Ingham \cite{ingham} and Huxley \cite{huxley72, huxley75}, the Hal\'asz--Montgomery
+inequality \cite{halasz, montgomery69} and Harman's sieve are classical. Section~\ref{sec:inputs} states the inputs
+and Section~\ref{sec:type1} the form of the sieve that is used.
+
+\subsection*{The formalisation}
+
+Every step of the proof, and every result it uses from the literature, is proved in Lean~4 with the Mathlib
+library. The Lean theorem \lean{Linnik22475R.linnik\_22475r} is Theorem~\ref{thm:main}, and its axioms are Lean's
+standard three. The certificate's sum is checked by Lean's kernel in 534 parts. Section~\ref{sec:lean} names the Lean
+theorem behind each claim of the paper, and the directory \texttt{formalisations/} of the repository documents each
+result from the literature: its source, its Lean statement and the differences between them.
+
+\subsection*{Outline}
+
+Section~\ref{sec:inputs} states the two recent inputs and the density estimates the Type~II estimate uses.
+Section~\ref{sec:type2} proves the Type~II estimate, and Section~\ref{sec:type1} gives the Type~I estimate and the
+sieve. Section~\ref{sec:certificate} describes the decomposition and its certificate, and Section~\ref{sec:proof}
+assembles the proof. Section~\ref{sec:lean} describes the formalisation, and Section~\ref{sec:comparison} compares
+Theorem~\ref{thm:main} with what the inputs give without the sieve.
 
 \section{Notation and the two inputs}\label{sec:inputs}
 
@@ -139,6 +207,15 @@ Harman's sieve in the form used (\texttt{formalisations/}) & \lean{SieveProp6.pr
 
 % The entries are to be checked against the sources before submission.
 \begin{thebibliography}{99}
+\bibitem{linnik44} U. V. Linnik, \emph{On the least prime in an arithmetic progression. I. The basic theorem},
+  Rec. Math. [Mat. Sbornik] N.S. 15(57) (1944), 139--178.
+\bibitem{heath-brown92} D. R. Heath-Brown, \emph{Zero-free regions for Dirichlet $L$-functions, and the least prime
+  in an arithmetic progression}, Proc. London Math. Soc. (3) 64 (1992), 265--338.
+\bibitem{xylouris11} T. Xylouris, \emph{\"Uber die Nullstellen der Dirichletschen $L$-Funktionen und die kleinste
+  Primzahl in einer arithmetischen Progression}, Bonner Math. Schriften 404, Bonn, 2011.
+\bibitem{xylouris18} T. Xylouris, \emph{Linniks Konstante ist kleiner als 5}, Chebyshevskii Sb. 19 (2018), 80--94.
+\bibitem{lls} Y. Lamzouri, X. Li and K. Soundararajan, \emph{Conditional bounds for the least quadratic non-residue
+  and related problems}, Math. Comp. 84 (2015), 2391--2412.
 \bibitem{openai} OpenAI, \emph{The Quasi-Riemann Hypothesis: a zero-free half-plane $\operatorname{Re}(s) > 7/8$},
   preprint, 30 September 2026, and its companion preprint of 5 October 2026; \url{https://github.com/openai/math},
   entry 003.
