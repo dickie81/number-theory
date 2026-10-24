@@ -750,8 +750,8 @@ Hypothesis~\ref{hyp:density} are theorems of the library. The first version's ca
 
 Every claim of the paper is a theorem of the Lean library in \texttt{lib/} of the repository, which is built with
 Lean~4 and Mathlib. The table names each one. The file \texttt{lib/check/Check.lean} prints the axioms of these
-theorems (those of the curve $g_7$, its window and its steps are in \texttt{lib/check/CheckAll.lean}), and
-\texttt{scripts/check\_axioms.py} checks that they are \lean{propext}, \lean{Classical.choice} and
+theorems (for Hypothesis~\ref{hyp:density} it prints the first of the 110 steps; \texttt{lib/check/CheckAll.lean} prints
+all of them and Chen, Gupta and Li's Proposition~3.1), and \texttt{scripts/check\_axioms.py} checks that they are \lean{propext}, \lean{Classical.choice} and
 \lean{Quot.sound} only.
 
 {\footnotesize
@@ -933,10 +933,11 @@ Section~\ref{sec:lean} describes. The author is responsible for the paper's cont
 \bibitem{openai} OpenAI, \emph{The Quasi-Riemann Hypothesis: a zero-free half-plane $\operatorname{Re}(s) > 7/8$},
   preprint, 30 September 2026, and its companion preprint of 5 October 2026; \url{https://github.com/openai/math},
   entry 003.
-\bibitem{cgl} B. Chen, V. Gupta and Y. C. Li, \emph{Large value estimates for Dirichlet polynomials with characters
-  and zero density of Dirichlet $L$-functions}, arXiv:2507.08296v2 (preprint, 27 July 2026).
+\bibitem{cgl} B. Chen, V. Gupta and Y. C. Li, \emph{Large Value Estimates for Dirichlet Polynomials with Characters
+  and Zero Density of Dirichlet $L$-Functions}, arXiv:2507.08296v2 (preprint; v2 of 27 July 2026, v1 of 11 July 2025
+  was by B. Chen alone).
 \bibitem{guth-maynard} L. Guth and J. Maynard, \emph{New large value estimates for Dirichlet polynomials},
-  Ann. of Math. 203 (2026), 623--675; arXiv:2405.20552.
+  Ann. of Math. 203 (2026), no. 2, 623--675; arXiv:2405.20552.
 \bibitem{ingham} A. E. Ingham, \emph{On the estimation of $N(\sigma, T)$}, Quart. J. Math. Oxford Ser. 11 (1940),
   201--202.
 \bibitem{montgomery-topics} H. L. Montgomery, \emph{Topics in Multiplicative Number Theory}, Lecture Notes in Math.
