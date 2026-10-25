@@ -36,7 +36,7 @@ proof of Proposition 6.1, p. 21). Here `NZ` plays their `NM`, and
 * `char_eq_of_le_two`, `frobOff_eq_zero_of_le_two`, `q_le_two`: for `N ≤ 5/6` (where `S` may contain `1`, outside
   the large sieve's support `[2, X]`), `q ≤ 2`, there is one character mod `q` (`φ(q) = 1`), and `‖E‖_F² = 0`.
 * `cgls2`: `s2_main` at `δ = min(ε, 1)/16`, with `(qT)^{min(ε,1)} ≤ (6/5)^ε(qTN)^ε`.
-* `linnik_225c_s3`, `linnik_226c_s3` (in `LinnikCGLLegacy.lean`): `linnik_225c_s23` and `linnik_226c_s23` with `cgls2`.
+* `linnik_225c_s3`, `linnik_226c_s3` (formerly in `LinnikCGLLegacy.lean`, since removed; see the git history): `linnik_225c_s23` and `linnik_226c_s23` with `cgls2`.
 
 The file imports `LinnikCGLFrob.lean` and `LinnikTwelve.lean`.
 -/

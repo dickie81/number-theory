@@ -7,7 +7,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 `T`, `δ` and a divisor bound `D`. This file bounds the factors by powers of one quantity, `W = 3C_δ(4Q)^δ/δ` with
 `C_δ` the divisor constant and `Q = q(1 + 2T)`, and proves the displayed hypothesis `CGLT101`
 (Heath-Brown's Theorem 10.1 with characters). With `cgls3_t101`,
-`prop31_t101`, and `linnik_225c_t101` and `linnik_226c_t101` (in `LinnikCGLLegacy.lean`) it gives, with no hypothesis, Chen–Gupta–Li's Propositions
+`prop31_t101`, and `linnik_225c_t101` and `linnik_226c_t101` (formerly in `LinnikCGLLegacy.lean`, since removed; see the git history) it gives, with no hypothesis, Chen–Gupta–Li's Propositions
 11.1 and 3.1 at one point per character, the count of characters with a zero at the exponent
 `(7/3 + 1/2000)(1 − σ)` on `[5/7, 16/21]` (`LinnikCGLStep.charDensity_cgl`) and Linnik's theorem with the exponents
 `9/4` and `226/100`. `CGLDensity` itself, the count at `(7/3)(1 − σ) + ε` for every `ε > 0`, is not proved here
@@ -41,7 +41,7 @@ Plain statements, with `q ≥ 1` where `[NeZero q]`, `R` the number of points an
 * `char_density`: there is `C ≥ 0` such that, for `q ≥ 1`, `5/7 ≤ σ ≤ 16/21` and `T ≥ 2`, at most
   `C(qT)^{(7/3+1/2000)(1−σ)}(log qT)^{10}` characters mod `q` have an `L`-function with a zero in `Re s ≥ σ`,
   `|Im s| ≤ T`.
-* `linnik_225`, `linnik_226` (in `LinnikCGLLegacy.lean`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime
+* `linnik_225`, `linnik_226` (formerly in `LinnikCGLLegacy.lean`, since removed; see the git history): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime
   `p ≡ a (mod q)` with `p ≤ Kq^{9/4}`; and likewise with `p ≤ Kq^{226/100}`.
 
 The file imports `LinnikCGLHBIter.lean`, `LinnikCGLP81.lean` and `LinnikCGLStep.lean`.

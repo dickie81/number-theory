@@ -49,18 +49,17 @@ builds the same thing where memory allows. The two produce the same build, so ei
 If Mathlib's cache does not have the pinned commit, `lake build` builds Mathlib as well, which takes several hours.
 
 **Memory.** A module that imports Mathlib maps Mathlib's files into memory, and that mapping is shared between
-compiles. The default build also has 143 certificate parts (`lib/pnt/SieveCert22322RP<k>.lean`). The earlier `22475R` certificate
-(135 parts, exponent `899/400`) is no longer in the tree; its files are at commit `6df0ebd`. Of Mathlib the parts import only `Mathlib.Data.Nat.Notation`, but each one can
-use about 5 GiB of private memory while the kernel checks it. The older certificates, 167 parts of `SieveCert225C` and
-the five parts of `SieveCert226` (`lib/pnt/SieveCert226P<k>.lean`, more than 10 GiB each), are not in the default
-build: `lake build CheckAll` builds them, through `LinnikCGLLegacy`, `Linnik225C` and `Linnik226`. Lake runs about as many
+compiles. The default build also has 143 certificate parts (`lib/pnt/SieveCert22322RP<k>.lean`). Of Mathlib the parts import only
+`Mathlib.Data.Nat.Notation`, but each one can use about 5 GiB of private memory while the kernel checks it. Earlier
+certificates (for the weaker exponents `899/400`, `9/4`, `226/100` and others) and the stepping-stone modules only they used are
+no longer in the tree; they are in the git history. Lake runs about as many
 compiles at once as there are cores, so a plain `lake build` on a machine with less than about 5 GiB of memory per
 core can run out while it builds the certificates. `scripts/build.sh` runs Lake with a wrapper
 around `lean`, `scripts/lean-slots.sh`. The wrapper allows at most `LEAN_SLOTS` compiles at once (default: the
 number of cores) and at most `LEAN_HEAVY` certificate parts among them (default 2). It also deletes each module's
 setup file after its compile; Lake writes that file for the compile and does not read it again. It needs `flock`.
-On 4 cores and 16 GB, a cold build of the default target takes several hours. Two `226` parts at once (a build of
-`CheckAll`) can exceed 16 GB: a compile killed with exit code 137 has run out of memory, and
+On 4 cores and 16 GB, a cold build of the default target takes several hours. Two certificate parts at once can come
+close to the limit of a 16 GB machine: a compile killed with exit code 137 has run out of memory, and
 `LEAN_HEAVY=1 scripts/build.sh` finishes the build, keeping what is already built.
 
 ## Checks

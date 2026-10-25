@@ -8,8 +8,7 @@ Plain statement (`charDensity_ingham_c`). For `0 < ε ≤ 1`, `0 ≤ c ≤ 1`, `
 `C ≥ 0` such that for every `q ≥ 1`, `1/2 + δ₀ ≤ σ ≤ σ₂` and `T ≥ 2`, at most `C(qT)^{(2+4c+4ε)(1−σ)}(log qT)^{10}`
 characters mod `q` have a zero of `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`.
 
-This is `LinnikIngham73.count_middle73` (`c = 1/12`, `δ₀ = 1/14`, `σ₂ = 5/7`; the top-level
-`charDensity_ingham73` adds the trivial count below `4/7` and has its own constant) with `c`, `δ₀` and the range as
+This generalises the count `count_middle73` of the earlier `LinnikIngham73.lean` (`c = 1/12`, `δ₀ = 1/14`, `σ₂ = 5/7`; removed, see the git history), with `c`, `δ₀` and the range as
 parameters: the argument
 (`LinnikIngham.charDensity_ingham`) with the detector's parameter `c`. The polynomial
 class is `Q^{(2+4c)(1−σ)}` (`bound_class1`), and the integral class, at `X = ⌊Q⌋`, `Y = Q^{1+2c}` and

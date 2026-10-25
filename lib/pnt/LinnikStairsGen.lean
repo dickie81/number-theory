@@ -1,5 +1,5 @@
 /-
-# Shared proofs for the staircase files `LinnikStairs.lean` and `LinnikStairs7.lean`
+# Shared proofs for the staircase file `LinnikStairs7.lean` (and the earlier `LinnikStairs.lean`, removed; see the git history)
 
 Each step of a staircase is an instance of a parametric argument at numerals, and the instances differ only in the
 numerals. This file holds what they share, so that each step's file text is its parameters and its statement:
@@ -10,7 +10,7 @@ numerals. This file holds what they share, so that each step's file text is its 
   parameters are numerals).
 * `stairs_good_y P`: the same for `LinnikHuxStepY.ParY.Good P`, whose fifth exponent condition `h5` is numeric.
 * `charDensity_ingham_inst`: `LinnikInghamC.charDensity_ingham_c` on `[lo, σ₂]`, in the form of the Ingham steps
-  (`charDensity_in0` … in `LinnikStairs`, `charDensity_in7_0` … in `LinnikStairs7`): at numerals its hypotheses are
+  (`charDensity_in7_0` … in `LinnikStairs7`; `charDensity_in0` … were in `LinnikStairs`): at numerals its hypotheses are
   `norm_num` goals.
 
 Both tactics use `εs` (`LinnikHuxStep.εs`) as the proofs they replace did; they are written without hygiene so that

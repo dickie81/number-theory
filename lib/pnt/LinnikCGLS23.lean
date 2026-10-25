@@ -19,7 +19,7 @@ Plain statement (`CGLS3`, a hypothesis). For every `ε > 0` there is `C ≥ 0` s
 with `μ₀ = (φ(q)/q)N∫w²` (`mu0`, the integral over `[1, 2]`, outside which `w` vanishes).
 
 Plain statement (`third_of_s23`). The two imply `CGLThird`, since `X = 3μ₀‖E‖_F² + S₃` and `0 ≤ μ₀ ≤ N`; so
-`linnik_225c_s23` and `linnik_226c_s23` (in `LinnikCGLLegacy.lean`) give Linnik's exponents `9/4` and `226/100` from them.
+`linnik_225c_s23` and `linnik_226c_s23` (formerly in `LinnikCGLLegacy.lean`, since removed; see the git history) give Linnik's exponents `9/4` and `226/100` from them.
 
 Why their paper implies the two. The header shows that at one point per character `Z′ = S₁ = 0`, so that
 `X = S₂ + S₃` (their (5.2)). Their proof of Proposition 6.1 concludes

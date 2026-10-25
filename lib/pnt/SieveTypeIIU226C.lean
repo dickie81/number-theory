@@ -8,7 +8,7 @@ Plain statement (`typeII_226c`). Under `LinnikCGL.CGLDensity` alone, Proposition
 per bin (`SieveTypeIIHM.typeII_gen_hm`) at `L = 226/100` on the window `[4075/10000, 4835/10000]·L`
 for the curve `g7c`: `g7` below `5/6` (the trivial count below `4/7`, twenty Ingham steps, `7/3 + 1/2000`
 on `[5/7, 16/21]`, twenty Huxley steps) and `(101/50)(1 − σ)` from `5/6` on (`LinnikStep.charDensity_step`, as
-`gU`), in place of `g7`'s twenty Petrow–Young steps.
+in `gU` of the earlier `SieveTypeIIU232.lean`, removed; see the git history), in place of `g7`'s twenty Petrow–Young steps.
 
 * `g7c`, `g7c_le_one`, `g7c_half`; `counts_7c`: `CurveCounts g7c` under `CGLDensity`, glued as `counts_7` up to `5/6`
   and from `charDensity_step` above it.

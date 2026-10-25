@@ -24,7 +24,7 @@ hypothesis for large `qT`, since `(qT)^ϵ ≤ 2^ϵ(qTN)^ϵ` for `N ≥ 1/2`. For
 `|X| ≤ |R|³(N + 1)³` are bounded while `N³ ≥ 1/8`.
 
 Plain statement (`prop31_of_third`). The hypothesis implies `LinnikCGLLV.CGLProp31`, so `linnik_225c_third` and
-`linnik_226c_third` (in `LinnikCGLLegacy.lean`) give Linnik's exponents `9/4` and `226/100` from it.
+`linnik_226c_third` (formerly in `LinnikCGLLegacy.lean`, since removed; see the git history) give Linnik's exponents `9/4` and `226/100` from it.
 
 * `wCGL`: Mathlib's `ContDiffBump` at `3/2` with radii `3/10` and `1/2`: smooth, `0` outside `(1, 2)` and `1` on
   `[6/5, 9/5]`, as their §3 asks of `w`, with values in `[0, 1]`.

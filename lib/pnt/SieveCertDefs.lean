@@ -3,12 +3,12 @@
 
 The definitions of the loss certificate of `SieveCert.lean`
  and of its class `GridOK`,
-and `rows` (from `SieveCert232.lean`), moved here from those files: verbatim, except that `rows` takes the
+and `rows` (from the earlier `SieveCert232.lean`, removed; see the git history), moved here from those files: verbatim, except that `rows` takes the
 section's `[Grid]` in place of its own binder and `GridOK`'s docstring is rewrapped and names `SieveCert.lean`. They are
 arithmetic on natural numbers, lists and booleans, and the file imports only `Mathlib.Data.Nat.Notation` (the notation
 `ℕ`), whose closure is `Mathlib.Init`'s: 1,339 modules, loaded in about 0.9 GiB, not the whole of Mathlib.
-So a file that imports no more than this one, such as a certificate's part files (`SieveCert226P1.lean` …
-`SieveCert226P5.lean`), runs its kernel checks without the environment of `import Mathlib`, which loads about 6.3 GiB
+So a file that imports no more than this one, such as a certificate's part files (`SieveCert22322RP1.lean` …
+`SieveCert22322RP143.lean`), runs its kernel checks without the environment of `import Mathlib`, which loads about 6.3 GiB
 into every process. The lemmas about these definitions, in the reals and over `Finset`, stay in `SieveCert.lean`, which
 imports this file and Mathlib.
 -/

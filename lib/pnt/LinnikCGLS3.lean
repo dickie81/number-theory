@@ -41,7 +41,7 @@ Plain statements, with `q ≥ 1`, `Q = qT`, `r = |R|`, `E` `energy`, `Φ = qTN`,
 * `cgls3`: `CGLP81 → CGLT101 → CGLS3`.
 * `prop31_pt`: `CGLProp31`, their Proposition 3.1 at one point per character, from `CGLP81` and
   `CGLT101`, through `third_of_s23` with `cgls2`, and `prop31_of_third`.
-* `linnik_225c_pt`, `linnik_226c_pt` (in `LinnikCGLLegacy.lean`): Linnik's theorem with the exponents `9/4` and `226/100` from `CGLP81` and
+* `linnik_225c_pt`, `linnik_226c_pt` (formerly in `LinnikCGLLegacy.lean`, since removed; see the git history): Linnik's theorem with the exponents `9/4` and `226/100` from `CGLP81` and
   `CGLT101`, by `linnik_225c_s3` and `linnik_226c_s3`.
 
 The file imports `LinnikCGLEps.lean`.
