@@ -67,8 +67,8 @@ theorem sumTo_eq (m : ℕ) (f : ℕ → ℕ) : sumTo m f = ∑ i ∈ Finset.rang
 theorem total_eq : total = ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, cost i j := by
   simp [total, sumTo_eq]
 
-/-- `rows a b` is the double sum of the costs over `a ≤ i < b` (moved from `SieveCert232.lean`
-). -/
+/-- `rows a b` is the double sum of the costs over `a ≤ i < b` (moved from the earlier `SieveCert232.lean`,
+removed; see the git history). -/
 theorem rows_eq (a b : ℕ) : rows a b = ∑ i ∈ Finset.Ico a b, ∑ j ∈ Finset.range n, cost i j := by
   rw [rows, sumTo_eq, Finset.sum_Ico_eq_sum_range]
   simp only [sumTo_eq]

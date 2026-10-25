@@ -7,7 +7,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 The step (`LinnikCGLStep`) gives the count at the exponent `(7/3 + 1/2000)(1 − σ)` from their Proposition
 3.1 (`LinnikCGLHB101.prop31`). The step's internal `ε` is a field of its
 parameters (`LinnikCGLStep.ParC.e`). This file takes it to `0`, proves `CGLDensity`, and so gives
-`Linnik225C.linnik_225c` and `Linnik226C.linnik_226c` with no hypothesis (`LinnikCGLLegacy.lean` has those two).
+Chen–Gupta–Li's density estimate with no hypothesis (the two Linnik exponents `9/4` and `226/100` that it gave were in `LinnikCGLLegacy.lean`, since removed; see the git history).
 
 The library's form.
 * `parCGLe e` is `parCGL`'s parameters at the internal `ε = e`: `a = 7/9 + 2e`, `λ = 7/6 + 9e/2`, `A_i = 7/3 + 25e`
@@ -25,7 +25,7 @@ Plain statements, with `q ≥ 1` where `[NeZero q]`.
 * `cglDensity`: `CGLDensity`: for every `ε > 0` there is `C` such that, for `q ≥ 1`, `5/7 ≤ σ ≤ 16/21`
   and `T ≥ 2`, at most `C(qT)^{(7/3)(1−σ)+ε}` characters mod `q` have an `L`-function with a zero in `Re s ≥ σ`,
   `|Im s| ≤ T`.
-* `linnik_225c`, `linnik_226c` (in `LinnikCGLLegacy.lean`): `Linnik225C.linnik_225c` and `Linnik226C.linnik_226c` at `cglDensity`: there is `K`
+* `linnik_225c`, `linnik_226c` (formerly in `LinnikCGLLegacy.lean`, since removed; see the git history): Linnik's theorem at `cglDensity`: there is `K`
   such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{9/4}`; and
   likewise with `p ≤ Kq^{226/100}`.
 

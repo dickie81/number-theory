@@ -3,12 +3,12 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statements about `SieveCert2Defs.lean`'s definitions, as `SieveCert.lean` and `SieveCertCols.lean` state them
+Plain statements about `SieveCert2Defs.lean`'s definitions, as `SieveCert.lean` and the earlier `SieveCertCols.lean` (removed; see the git history) state them
 for the certificate's.
 
 * `total2_eq`, `rows2_eq`, `rowsJ2_eq`: the sums as double sums of `cost2` over `Finset` ranges.
 * `rows2_eq_rowsJ2`, `rowsJ2_split`, `rows2_split`, `total2_eq_rows2_full`, `rows2_le_of_split`, `rowsJ2_le_of_split`,
-  `rows2_le_of_rowsJ2`: the steps that assemble a bound on `total2` from its parts' bounds (`SieveCertCols.lean`'s, for
+  `rows2_le_of_rowsJ2`: the steps that assemble a bound on `total2` from its parts' bounds (the earlier `SieveCertCols.lean`'s, for
   `cost2`).
 * `total2_div_lt`: `total2 < K` gives `total2/K < 1` in the reals.
 * `cost2_of_dec`, `cost2_of_not_dec`, `cost2_of_not_cand`, `sub2_eq`: the refined cost by cases, and `sub2` as a

@@ -6,7 +6,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 Chen–Gupta–Li prove their Proposition 8.1 from their Lemma 8.2: "We prove the statement via downward induction on
 ϵ. The base case ϵ = 100 holds trivially. For the inductive step, we assume (8.1) holds with parameter 3ϵ/2 and aim
 to establish it for ϵ." (p. 27). This file runs that induction on the form of
-their Lemma 8.2 and proves the displayed hypothesis `CGLP81`, so `linnik_225c_t101` and `linnik_226c_t101` (in `LinnikCGLLegacy.lean`),
+their Lemma 8.2 and proves the displayed hypothesis `CGLP81`, so `linnik_225c_t101` and `linnik_226c_t101` (formerly in `LinnikCGLLegacy.lean`, since removed; see the git history),
 Linnik's theorem with the exponents `9/4` and `226/100`, take Heath-Brown's Theorem 10.1 (`CGLT101`) as their only
 hypothesis.
 
@@ -44,7 +44,7 @@ Plain statements, with `q ≥ 1` (`[NeZero q]`), `F = Σ_b∫f_b`, `𝔖 = ∫Σ
 * `P81_step`, `P81_pow`, `P81_all`: for `ε > 0`, `P81(3ε/2)` gives `P81 ε`; `P81(5(2/3)ⁿ)` for every `n`; and
   `P81 ε` for every `ε > 0`.
 * `cglp81`: `CGLP81`.
-* `cgls3_t101`, `prop31_t101`, `linnik_225c_t101`, `linnik_226c_t101` (in `LinnikCGLLegacy.lean`): from `CGLT101`, their Propositions 11.1 and
+* `cgls3_t101`, `prop31_t101`, `linnik_225c_t101`, `linnik_226c_t101` (formerly in `LinnikCGLLegacy.lean`, since removed; see the git history): from `CGLT101`, their Propositions 11.1 and
   3.1 at one point per character (`CGLS3`, `CGLProp31`), and Linnik's theorem with the exponents `9/4` and `226/100`:
   there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with
   `p ≤ Kq^{9/4}`, respectively `p ≤ Kq^{226/100}`.

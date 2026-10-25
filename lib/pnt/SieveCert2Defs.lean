@@ -17,7 +17,7 @@ cell's cost.
   bound for the `B`-density `dα₁dα₂dβ/(α₁α₂βγ)` over the box in units of `1/K`.
 * `sub2`: the kept shares below `(i, j)`, for a cell of `reg2`; `cost2`: a candidate cell that is not decomposed costs
   its bound less `sub2`, truncated at `0`; the other cells cost as in `cost`.
-* `total2`, `rows2`, `rowsJ2`: `total`, `rows` and `rowsJ` (`SieveCertColsDefs.lean`) with `cost2`.
+* `total2`, `rows2`, `rowsJ2`: `total`, `rows` and `rowsJ` (of the earlier `SieveCertColsDefs.lean`, removed; see the git history) with `cost2`.
 
 The decisions `cand` and `dec` are the certificate's own, so the decomposition of `SieveBuch.lean` is unchanged. These
 are arithmetic on natural numbers, lists and booleans, and the file imports only `SieveCertDefs.lean`, so a part file

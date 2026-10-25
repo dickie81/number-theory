@@ -1,5 +1,7 @@
 # Lean DRY / efficiency survey
 
+> Historical. The older certificates and stepping-stone modules that this survey names (`225C`, `225R`, `226`, `226C`, `227`, `229`, `2285U`, `229U`, `230`, `232`, `22325R`, `LinnikCGLLegacy`, `LinnikCGLLinnik` and the modules only they used) have since been removed from the tree and are in the git history; the module names and counts below describe the repository at the time of each pass.
+
 Snapshot: `main` at `268d99e` (after PR #4; sections 1 and 2's "before" columns); the second pass below is on `main` at `6df0ebd`, 1,158 `.lean` files under `lib/` outside `lib/vendor`
 (`core` 349, `pnt` 743 before this pass and 744 after, `dh` 53, `zeta23` 11, `check` 2), about 28 MB.
 How the numbers were obtained is stated for each one. **Measured** means run on this box; **derived** means computed
