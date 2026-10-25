@@ -36,12 +36,19 @@ theorem ShortPrimesHalfPlane.short_primes_11_17_noKV {θ : ℝ} (hθ : 11 / 17 <
 
 `zeroFreeXi_of_halfplane` takes the zero-free region input of `ShortWeil.short_primes_of_density` from
 `HalfPlaneJoins.abs_im_tau_le_five_twelfths` (`lib/core/HalfPlaneJoinsFinal.lean`), a region of constant width `1/12`.
-`short_primes_11_17_noKV` is the statement of `InghamDensity.short_primes_11_17`, with that input in place of the
-Korobov–Vinogradov region (`ShortKV.zeroFreeXi_KV`).
+`short_primes_11_17_noKV` is the statement of `InghamDensity.short_primes_11_17`, proved without the Korobov–Vinogradov
+region (`ShortKV.zeroFreeXi_KV`).
 
 *Implication.* It is a second proof of the same result, not a stronger one: the density `DensityXi (17/6 + ε) 12` fixes
-`11/17`. It swaps the Korobov–Vinogradov input for the half-plane input. The library keeps `InghamDensity.short_primes_11_17`
-and `DetectEM.short_primes` (`θ > 3/4`, unconditional of the half-plane) on the Korobov–Vinogradov region.
+`11/17`. It removes the Korobov–Vinogradov dependency of `InghamDensity.short_primes_11_17` and leaves the zero-free
+half-plane as the only analytic input. The half-plane was already an input of `InghamDensity.short_primes_11_17`: the
+density `InghamDensity.densityXi_17_6` goes through `Subconvexity.zetaCritBound_five_24`, whose closure contains `Eis.ne_zero_of_re_gt_eleven_twelfths`. So
+`short_primes_11_17_noKV` does not swap one input for another and is not independent of the half-plane.
+The library keeps `InghamDensity.short_primes_11_17` on the Korobov–Vinogradov region, and `DetectEM.short_primes`
+(`θ > 3/4`), whose closure contains the Korobov–Vinogradov region and not the half-plane, is unchanged.
+
+(Checked by walking the constants each declaration depends on, with a scratch Lean script outside the repository. This
+is not part of the library's checks.)
 
 ## `LinnikWeylBridge`: `PYWeyl` contains `WeylBound`
 
