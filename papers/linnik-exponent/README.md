@@ -9,9 +9,10 @@ and Li's density estimate, and the classical results its proof uses, among them 
 the Halász–Montgomery inequality and Harman's sieve.
 
 The theorem is `Linnik22325R.linnik_22325r` in `lib/pnt/Linnik22325R.lean`. The paper's first version had `899/400`
-(`Linnik22475R.linnik_22475r`, which is still in the library); the paper keeps it as the earlier route.
+(`Linnik22475R.linnik_22475r`); that theorem and its certificate were removed from the library and are at commit `6df0ebd`
+in the repository's history. The paper keeps it as the earlier route, in prose.
 Both depend on the zero-free half-plane `Re s > 11/12` of OpenAI's preprints, which have not been refereed, and on
 Chen, Gupta and Li's arXiv preprint. Section 7's table names the Lean theorem
-behind each claim, and `lib/check/Check.lean` prints their axioms (of the 110 density steps it prints the first, the last and the whole-range one, and Chen, Gupta and Li's Proposition 3.1; `lib/check/CheckAll.lean`, with `python3 scripts/check_axioms.py --all`, prints all the steps).
+behind each claim, and `lib/check/Check.lean` prints their axioms (of the 110 density steps it prints the first and the last, and it prints Ingham's last step, Chen, Gupta and Li's Proposition 3.1 and the uniform estimate `cglDensity`; the other steps print their axioms in `LinnikCGLSteps.lean` when it is built; `lib/check/CheckAll.lean`, with `python3 scripts/check_axioms.py --all`, also prints the older routes' theorems).
 
 To build: `latexmk -pdf main.tex`.

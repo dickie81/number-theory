@@ -123,7 +123,8 @@ The paper's contributions are three.
 
 The first version of this paper reached $L = 899/400$ using Chen, Gupta and Li's estimate only in its uniform form,
 the exponent $7/3 + 1/2000$ on $[5/7, 16/21]$, with the window $[41335/100000,\ 48069/100000]$ and a certificate of
-$534$ parts. Its Lean theorem is \lean{Linnik22475R.linnik\_22475r}, and it remains in the library. The exponent
+$534$ parts. Its Lean theorem and its certificate, in $135$ files, are no longer in the library, which has the theorem of
+this paper in their place; they are in the repository's history, at commit \texttt{6df0ebd}. The exponent
 $893/400$ uses their Proposition~3.1 at every point of $[5/7, 131/168]$: on each of $110$ steps of length $1/1680$ the
 exponent is just above $4/(1 + \sigma)$ at the step's left end. It also uses Ingham's estimate on its last step,
 $[99/140, 5/7]$, at $\varepsilon = 1/400000$, where the exponent is $7/3 + 1/100000$. The steps are narrow because the
@@ -742,16 +743,17 @@ and the kernel bound in Section~\ref{sec:type2}, and through the piece of $g_7$ 
 The proof does not compute $K$: the threshold $q_0$ comes from limits in $q$ in each step, and the small moduli
 from Dirichlet's theorem. The Lean proof of Theorem~\ref{thm:route} is \lean{SieveMain2.linnik\_route\_lt2}, and the
 case of Theorem~\ref{thm:main} is \lean{Linnik22325R.linnik\_22325r}, which has no hypothesis: the steps of
-Hypothesis~\ref{hyp:density} are theorems of the library. The first version's case, at $L = 899/400$, is
-\lean{Linnik22475R.linnik\_22475r}, and \lean{Linnik22475R.linnik\_22475r\_of} is it under the uniform estimate of
-\lean{LinnikCGLDensity.cglDensity}.
+Hypothesis~\ref{hyp:density} are theorems of the library. The first version's case, at $L = 899/400$, is not in the
+library any more (Section~\ref{sec:intro}, ``The two routes''); the uniform estimate it used is
+\lean{LinnikCGLDensity.cglDensity}, which the library keeps.
 
 \section{The formalisation}\label{sec:lean}
 
 Every claim of the paper is a theorem of the Lean library in \texttt{lib/} of the repository, which is built with
 Lean~4 and Mathlib. The table names each one. The file \texttt{lib/check/Check.lean} prints the axioms of these
-theorems (of the 110 steps of the density curve it prints the first, the last and the one for the whole range, and
-Chen, Gupta and Li's Proposition~3.1; \texttt{lib/check/CheckAll.lean} prints all the steps), and
+theorems (of the 110 steps of the density curve it prints the first and the last, and it prints Ingham's last step, Chen,
+Gupta and Li's Proposition~3.1 and the uniform estimate; the other steps print their axioms in the module that proves
+them, \texttt{LinnikCGLSteps.lean}, when it is built; \texttt{lib/check/CheckAll.lean} also prints the older routes' theorems), and
 \texttt{scripts/check\_axioms.py} checks that they are \lean{propext}, \lean{Classical.choice} and
 \lean{Quot.sound} only.
 
@@ -762,8 +764,6 @@ Claim & Lean \\
 \midrule
 \endhead
 Theorem~\ref{thm:main} & \lean{Linnik22325R.linnik\_22325r} \\
-The first version's theorem, $899/400$ (Section~\ref{sec:comparison}) & \lean{Linnik22475R.linnik\_22475r}, \\
- & \lean{Linnik22475R.linnik\_22475r\_of} \\
 Proposition~\ref{prop:curve}: $g_7$ is a density curve & \lean{SieveTypeIIU22325D.counts\_7d} \\
 Theorem~\ref{thm:route}, the route theorem & \lean{SieveMain2.linnik\_route\_lt2} \\
 Theorem~\ref{thm:type2}, the Type~II estimate & \lean{SieveTypeIIU22325D.typeII\_22325d} \\
@@ -784,7 +784,7 @@ Hypothesis~\ref{hyp:density} (Chen--Gupta--Li; \file{formalisations/}) & \lean{L
  & \dots, \lean{LinnikCGLSteps.charDensity\_s109}, \\
  & \lean{LinnikCGLHB101.prop31} \\
 Ingham's last step, $\varepsilon = 1/400000$ & \lean{LinnikCGLSteps.charDensity\_inT} \\
-The uniform estimate of the first version & \lean{LinnikCGLDensity.cglDensity} \\
+The uniform estimate $7/3 + \varepsilon$ on $[5/7, 16/21]$, which the first version used & \lean{LinnikCGLDensity.cglDensity} \\
 Ingham's density estimate (\file{formalisations/}) & \lean{LinnikInghamC.charDensity\_ingham\_c} \\
 Huxley's density estimate (\file{formalisations/}) & \lean{LinnikHuxStep.charDensity\_gen} \\
 Huxley's estimate from $5/6$ on (\file{formalisations/}) & \lean{LinnikStep.charDensity\_step} \\
