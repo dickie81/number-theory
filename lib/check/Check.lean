@@ -1,8 +1,6 @@
 /- The axioms of the papers' theorems, the repository's default build target. Every line this file prints must be
 `[propext, Classical.choice, Quot.sound]` or a subset of them (`scripts/check_axioms.py`). -/
 import Linnik22322R
-import LinnikCGLDensity
-import SieveTypeIIU226C
 import LinnikHuxJunction
 
 /- The Linnik paper: its theorem with the density curve `g7d` (Chen–Gupta–Li's Proposition 3.1 on `[5/7, 1307/1680]`,
@@ -23,15 +21,13 @@ longer in the tree; it is at commit `6df0ebd`. -/
 #print axioms SieveTypeIIU22322D.window_22322d
 
 /- Two results of the literature that it uses (`formalisations/`): the zero-free half-plane `Re s > 11/12` for
-every Dirichlet L-function, from OpenAI's release (`formalisations/openai-half-plane.md`), and Chen–Gupta–Li's
-density estimate on `[5/7, 16/21]` (`cglDensity`, which `Linnik22322R` does not use: the steps of `LinnikCGLSteps` replace it, and
-the removed `Linnik22475R` was built on it). -/
+every Dirichlet L-function, from OpenAI's release (`formalisations/openai-half-plane.md`), printed here, and
+Chen–Gupta–Li's density estimate, whose steps and Proposition 3.1 are printed above (`cglDensity`, the same estimate on
+`[5/7, 16/21]`, is not used by `Linnik22322R` and is printed by `CheckAll`). -/
 #print axioms Eis.LFunction_ne_zero_of_re_gt
-#print axioms LinnikCGLDensity.cglDensity
 
 /- The other theorems of the Linnik paper's claims table (`papers/linnik-exponent/main.tex`, Section 7): its own steps
 by section, then the results of the literature it uses, each with a note in `formalisations/`. -/
-#print axioms SieveTypeIIU226C.counts_7c
 #print axioms SieveWeight.norm_Sp_le
 #print axioms SieveTypeIIHM.typeII_gen_hm
 #print axioms SieveCount.card_A

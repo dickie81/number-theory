@@ -3,12 +3,14 @@
 % literature are documented in formalisations/ and cited, not restated as its own.
 \documentclass[11pt]{article}
 \usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
+% pdfLaTeX needs the input encoding and the glyph declarations below; XeTeX reads Unicode directly.
+\ifdefined\XeTeXversion\else\usepackage[utf8]{inputenc}\fi
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage[hidelinks]{hyperref}
 % The Unicode symbols of the Lean statements quoted in Section 7.
+\ifdefined\XeTeXversion\else
 \DeclareUnicodeCharacter{2203}{\ensuremath{\exists}}
 \DeclareUnicodeCharacter{2200}{\ensuremath{\forall}}
 \DeclareUnicodeCharacter{211D}{\ensuremath{\mathbb R}}
@@ -19,20 +21,21 @@
 \DeclareUnicodeCharacter{2261}{\ensuremath{\equiv}}
 \DeclareUnicodeCharacter{2264}{\ensuremath{\le}}
 \DeclareUnicodeCharacter{03C7}{\ensuremath{\chi}}
+\fi
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
-\newtheorem{hypothesis}{Hypothesis}
-\renewcommand{\thehypothesis}{H\arabic{hypothesis}}
+\newtheorem{inputthm}{Input}
+\renewcommand{\theinputthm}{I\arabic{inputthm}}
 
 \newcommand{\lean}[1]{\texttt{#1}}
 \newcommand{\file}[1]{\nolinkurl{#1}}
 \emergencystretch=3em
 
-\title{The least prime in an arithmetic progression: the exponent $11161/5000$ from a half-plane zero-free region and a formalised sieve}
+\title{The least prime in an arithmetic progression: the exponent $11161/5000$ from a half-plane zero-free region, a zero-density estimate and a formalised sieve}
 \author{Ritchie Comley}
 \date{Draft}
 
@@ -40,13 +43,16 @@
 \maketitle
 
 \begin{abstract}
-We prove that there is a constant $K$ such that, for every $q \ge 1$ and every $a$ prime to $q$, there is a prime
-$p \equiv a \pmod q$ with $p \le K q^{11161/5000}$. The proof is a sieve argument. Its Type~II estimate uses two
-recent results: that no Dirichlet $L$-function vanishes in $\operatorname{Re} s > 11/12$, from OpenAI's release, and
-Chen, Gupta and Li's zero-density estimate, used at its exponent $4/(1 + \sigma)$ on narrow steps. Neither result is
-refereed: the first is in preprints that have not been reviewed, and the second is an arXiv preprint. The theorem
-depends on both. The theorem, these two results and the classical results the proof uses are proved in Lean~4, and
-the proof depends on no axioms beyond Lean's standard three.
+We prove, in Lean~4, that there is a constant $K$ such that, for every $q \ge 1$ and every $a$ prime to $q$, there is a
+prime $p \equiv a \pmod q$ with $p \le K q^{11161/5000}$. The Lean theorem has no hypotheses, but its correctness rests on
+two recent results that are not refereed, OpenAI's zero-free half-plane $\operatorname{Re} s > 11/12$ for every
+Dirichlet $L$-function and Chen, Gupta and Li's zero-density estimate, whose proofs the same library formalises from
+their preprints: the theorem is correct if those preprints are correct and the Lean formalisations are faithful to
+them. The proof is a sieve argument, and its Type~II estimate uses the two results, the second at its exponent
+$4/(1 + \sigma)$ on narrow steps. The first is in preprints that have not been reviewed, and the second is an arXiv
+preprint. The theorem, these two results and the classical results the proof uses are proved in Lean, and the proof
+depends on no axioms beyond Lean's standard three. The exponent is not comparable with the unconditional exponents of
+Heath-Brown and Xylouris, which use no zero-free half-plane.
 \end{abstract}
 
 \section{Introduction}\label{sec:intro}
@@ -60,9 +66,17 @@ Linnik \cite{linnik44} proved that there are absolute constants $K$ and $L$ such
 mod $q$ contains a prime $p \le K q^L$. The admissible exponent $L$ has been lowered many times. Heath-Brown
 \cite{heath-brown92} reached $L = 5.5$ and Xylouris $L = 5$ \cite{xylouris11}, and then $L < 5$ \cite{xylouris18}.
 Under the generalised Riemann hypothesis every $L > 2$ is admissible \cite{lls}. Theorem~\ref{thm:main} has
-$L = 11161/5000 = 2.2322$. Its Lean proof has no hypothesis, but it rests on two recent results that are not yet
-refereed, OpenAI's zero-free half-plane (Hypothesis~\ref{hyp:half-plane}) and Chen, Gupta and Li's zero-density
-estimate (Hypothesis~\ref{hyp:density}), which Section~\ref{sec:inputs} states.
+$L = 11161/5000 = 2.2322$. This is not comparable with the exponents of Heath-Brown and Xylouris: those are
+unconditional and use neither a zero-free half-plane nor a zero-density estimate that has not been refereed, and
+Theorem~\ref{thm:main} uses both.
+
+The Lean statement of Theorem~\ref{thm:main} has no hypotheses. Its proof uses two recent results that are not yet
+refereed, OpenAI's zero-free half-plane (Input~\ref{inp:half-plane}) and Chen, Gupta and Li's zero-density
+estimate (Input~\ref{inp:density}), which Section~\ref{sec:inputs} states. They are called inputs because the argument
+of the paper is written under them. The library proves both in Lean, from the preprints, so the Lean theorem does not
+assume them. Its correctness therefore depends on the two preprints being correct, and on the Lean statements and
+proofs of the two inputs being faithful formalisations of them; the kernel does not check the second.
+Section~\ref{sec:inputs} says what is known of independent checking.
 
 \subsection*{The zeros near $\operatorname{Re} s = 1$}
 
@@ -75,15 +89,15 @@ $1 - \beta$ as small as $c/\log q$, and at $x = q^L$ the contribution $(q^A/x)^{
 small quantity. The record proofs control these zeros with zero-free regions, density estimates without logarithmic
 factors and the Deuring--Heilbronn phenomenon, and the constants of all three enter the exponent.
 
-The zero-free half-plane of OpenAI's release \cite{openai}, Hypothesis~\ref{hyp:half-plane}, removes the zeros with
+The zero-free half-plane of OpenAI's release \cite{openai}, Input~\ref{inp:half-plane}, removes the zeros with
 $\beta > 11/12$. Every remaining zero then contributes at most a power $x^{-1/12}$, and the problem becomes one of
 density: a density exponent $A$ for $1/2 \le \sigma \le 11/12$ gives Linnik's theorem with every exponent $L > A$.
 Huxley's density estimate \cite{huxley75} gives $A = 12/5$. Chen, Gupta and Li \cite{cgl}, whose method is
 Guth and Maynard's \cite{guth-maynard}, prove $A = 7/3$; their Theorem~1.2, for a divisor $q_1$ of $q$, has at
-$q_1 = q$ the exponent $4/(1 + \sigma)$, which is $7/3$ at $\sigma = 5/7$ and smaller beyond. Their
-Corollary~1.4, on primes in short intervals in arithmetic progressions under a zero-free region that
-Hypothesis~\ref{hyp:half-plane} supplies, gives the exponent $7/3 + \varepsilon$.
-Section~\ref{sec:comparison} gives the details.
+$q_1 = q$ the exponent $4/(1 + \sigma)$, which is $7/3$ at $\sigma = 5/7$ and smaller beyond. With
+Input~\ref{inp:half-plane} the classical deduction of Section~\ref{sec:comparison} turns the density exponent $7/3$
+into Linnik's theorem with every exponent above $7/3$. That deduction is the classical one; Chen, Gupta and Li
+do not derive a Linnik exponent from their estimate. Section~\ref{sec:comparison} gives the details.
 
 \subsection*{Below the density exponent}
 
@@ -104,7 +118,7 @@ The paper's contributions are three.
   sorted into bins by the largest real part of their $L$-function's zeros near a given height. In each bin the
   bilinear sum is bounded by the zeros, which make the Dirichlet polynomial of the primes small, and by the number
   of characters in the bin, which a density estimate bounds; the best of orthogonality and the
-  Hal\'asz--Montgomery inequality is taken in each bin. Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density},
+  Hal\'asz--Montgomery inequality is taken in each bin. Inputs~\ref{inp:half-plane} and~\ref{inp:density},
   with the classical density estimates of Ingham and Huxley, give the window
   $[u_1, u_2] = [40981/100000,\ 47725/100000]$ at $L = 11161/5000$.
 \item \emph{A decomposition by Buchstab's identity, with a refinement} (Section~\ref{sec:certificate}). The
@@ -128,9 +142,9 @@ estimate on its last step, $[99/140, 5/7]$, at $\varepsilon = 1/400000$, where t
 steps are narrow because the ends of the window are set by the places where a step's exponent most exceeds the curve it
 bounds: at the steps around $7/9$, where $4/(1 + \sigma)$ meets Huxley's $3/(3\sigma - 1)$, and at $\sigma = 5/7$,
 where the exponent is largest. Using Huxley's exponent on those three steps, instead of Chen, Gupta and Li's, lowers
-the certificate's total enough to close at $11161/5000$ in place of $893/400 = 2.2325$, a gain of $0.0003$.
+the certificate's total, and this is what lets the certificate close at $11161/5000$.
 
-The rest is not new. Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density} are OpenAI's and Chen, Gupta and Li's,
+The rest is not new. Inputs~\ref{inp:half-plane} and~\ref{inp:density} are OpenAI's and Chen, Gupta and Li's,
 and the density estimates of Ingham \cite{ingham} and Huxley \cite{huxley72, huxley75}, the Hal\'asz--Montgomery
 inequality \cite{halasz, montgomery69} and Harman's sieve are classical. Section~\ref{sec:inputs} states the inputs
 and Section~\ref{sec:type1} the form of the sieve that is used.
@@ -141,7 +155,11 @@ Every step of the proof, and every result it uses from the literature, is proved
 library. The Lean theorem \lean{Linnik22322R.linnik\_22322r} is Theorem~\ref{thm:main}, and its axioms are Lean's
 standard three. The certificate's sum is checked by Lean's kernel in 561 parts. Section~\ref{sec:lean} names the Lean
 theorem behind each claim of the paper, and the directory \file{formalisations/} of the repository documents each
-result from the literature: its source, its Lean statement and the differences between them.
+result from the literature: its source, its Lean statement and the differences between them. The library's proofs of
+Inputs~\ref{inp:half-plane} and~\ref{inp:density} are the library's own formalisations: for the second, one ingredient of the Lean proof,
+Heath-Brown's Theorem~10.1 with characters, which Chen, Gupta and Li cite, follows Kerr and Jutila because the cited
+source was not read, and \file{formalisations/} records this. Whether they prove what the preprints prove is a question about the formalisations that this paper does
+not settle.
 
 \subsection*{Outline}
 
@@ -164,31 +182,41 @@ characters mod $q$ whose $L$-function has a zero in the rectangle. It counts cha
 for the number of zeros bounds it. The proof is a sieve on the integers up to $x = q^L$, with $L = 11161/5000$ in the
 end, and $q$ is taken large.
 
-\begin{hypothesis}[the zero-free half-plane]\label{hyp:half-plane}
+The paper states two inputs, written \emph{Input} and not \emph{hypothesis} because the library proves them in Lean.
+A statement below that holds `under' an input is conditional in the text of the paper. In Lean the corresponding
+theorems either take the statement of the input as an explicit hypothesis (as \lean{SieveTypeIIHM.typeII\_gen\_hm} takes
+a density curve's counts) or use the library's proof of the input directly; the final theorem,
+Theorem~\ref{thm:main}, has no hypotheses.
+
+\begin{inputthm}[the zero-free half-plane]\label{inp:half-plane}
 For every $q \ge 1$, every Dirichlet character $\chi$ mod $q$ and every $s$ with $\operatorname{Re} s > 11/12$,
 $L(s, \chi) \ne 0$, except at $s = 1$ for the trivial character.
-\end{hypothesis}
+\end{inputthm}
 
 This is OpenAI's result \cite{openai}: their companion preprint proves it, and their main preprint proves the
-stronger $\operatorname{Re} s > 7/8$. These preprints have not been refereed, and the theorem of this paper depends on
-the result. It is proved in Lean as \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt}, following
-the companion preprint. \file{formalisations/openai-half-plane.md} gives the attribution and the differences
+stronger $\operatorname{Re} s > 7/8$. These preprints have not been refereed. The theorem of this paper uses the result, which is proved in Lean as
+\lean{Eis.LFunction\_ne\_zero\_of\_re\_gt}, following the companion preprint; so the correctness of
+Theorem~\ref{thm:main} depends on the preprint being correct and on that Lean file being a faithful formalisation of
+it. Independent checking of the result is partial. The only independent machine check that the author has seen reported,
+the one recorded by the tracker AIProofWatch \cite{aiproofwatch} on 25 October 2026, concerns the specialisation to
+the Riemann zeta function, not Dirichlet $L$-functions in general; the author knows of no independent check of the
+general result besides this library's own Lean proof. \file{formalisations/openai-half-plane.md} gives the attribution and the differences
 between the Lean statement and the source's.
 
-\begin{hypothesis}[zero-density estimates from $5/7$ to $1307/1680$]\label{hyp:density}
+\begin{inputthm}[zero-density estimates from $5/7$ to $1307/1680$]\label{inp:density}
 For $0 \le k < 107$ let $\sigma_k = 5/7 + k/1680$. There are exponents $A_k$ with
 $4/(1 + \sigma_k) < A_k < 4/(1 + \sigma_k) + 1/10000$, listed in the header of \file{lib/pnt/LinnikCGLSteps.lean}
 ($A_0 = 2.3334$ and $A_{106} = 2.25057$), such that for each $k$ there is $C$ with the following property: for every
 $q \ge 1$, every $\sigma_k \le \sigma \le \sigma_k + 1/1680$ and every $T \ge 2$, at most
 $C (qT)^{A_k (1 - \sigma)} (1 + \log qT)^{10}$ characters mod $q$ have an $L$-function with a zero in
 $\operatorname{Re} s \ge \sigma$, $|\operatorname{Im} s| \le T$.
-\end{hypothesis}
+\end{inputthm}
 
 The exponent $A_k$ is that of Chen, Gupta and Li's Theorem~1.2 \cite{cgl} at $q_1 = q$, taken at the step's left end
 $\sigma_k$, up to $10^{-4}$. Their estimate counts zeros, which gives the count of characters stated here. The
 library does not prove their Theorem~1.2. It proves their Proposition~3.1, the large-values estimate, and derives each
 step from it, in \file{lib/pnt/LinnikCGLSteps.lean} (Section~\ref{sec:lean} names the theorems), and
-\file{formalisations/} documents it. Their paper \cite{cgl} is an arXiv preprint.
+\file{formalisations/} documents it. Their paper \cite{cgl} is an arXiv preprint and has not been refereed.
 
 \subsection*{The density curve}
 
@@ -212,7 +240,7 @@ its pieces is a known density estimate, and the steps make each piece a constant
   with $\varepsilon = 1/2000$ except on the last step $[99/140, 5/7)$, where $\varepsilon = 1/400000$ and the exponent
   is $7/3 + 1/100000$.
 \item On $[5/7, 1307/1680)$, divided into $107$ steps $[\sigma_k, \sigma_{k+1})$ of length $1/1680$,
-  $g_7(\sigma) = A_k(1 - \sigma)$ with $A_k$ the exponent of Hypothesis~\ref{hyp:density}.
+  $g_7(\sigma) = A_k(1 - \sigma)$ with $A_k$ the exponent of Input~\ref{inp:density}.
 \item On $[1307/1680, 131/168)$, divided into three steps $[\sigma_1, \sigma_2)$ of length $1/1680$,
   $g_7(\sigma) = A'(1 - \sigma)$ with $A' = 2.24915$, $2.24614$ and $2.24315$: Huxley's exponent $3/(3\sigma_1 - 1)$ at the
   step's left end plus at most $2 \cdot 10^{-4}$.
@@ -226,7 +254,7 @@ $2.25057$, on $[1307/1680, 131/168]$ it falls on to $2.24315$, and on $[131/168,
 $g_7(1/2) = 1$.
 
 \begin{proposition}\label{prop:curve}
-Under Hypothesis~\ref{hyp:density}, $g_7$ is a density curve.
+Under Input~\ref{inp:density}, $g_7$ is a density curve.
 \end{proposition}
 
 \begin{proof}
@@ -238,7 +266,7 @@ the sum of the constants, so it suffices to prove the bound on each piece.
   bounds $N^*(\sigma, T; q)$ by $C(qT)^{A(1 - \sigma)}(\log qT)^{10}$ on $[\sigma_1, \sigma_2]$ for every $A$
   above $3/(2 - \sigma_2)$ (\file{formalisations/ingham-density.md}; for the last step, Section~\ref{sec:lean}). Ingham proved his estimate for the zeros of
   $\zeta$; the form over the characters is Theorem~12.1 of Montgomery's book \cite{montgomery-topics}.
-\item On each step of $[5/7, 1307/1680]$: Hypothesis~\ref{hyp:density}.
+\item On each step of $[5/7, 1307/1680]$: Input~\ref{inp:density}.
 \item On each of the three steps of $[1307/1680, 131/168]$: Huxley's estimate \cite{huxley75} over the characters mod $q$,
   with the exponents $A'$ above, which exceed $3/(3\sigma_1 - 1)$ at the step's left end $\sigma_1$ by less than
   $2 \cdot 10^{-4}$ (\file{formalisations/huxley-density.md}; the library's step of that argument at new parameters, in
@@ -246,7 +274,7 @@ the sum of the constants, so it suffices to prove the bound on each piece.
 \item On each step of $[131/168, 5/6]$: Huxley's estimate \cite{huxley75} over the characters mod $q$, with the
   exponent $3/(3\sigma_1 - 1) + 1/2000$ on $[\sigma_1, \sigma_2]$ (\file{formalisations/huxley-density.md}).
 \item For $\sigma \ge 5/6$: the exponent $101/50$, by the same large-values argument at fixed parameters on
-  $[5/6, 11/12]$, and by Hypothesis~\ref{hyp:half-plane} above $11/12$, where at most the trivial character is
+  $[5/6, 11/12]$, and by Input~\ref{inp:half-plane} above $11/12$, where at most the trivial character is
   counted (\file{formalisations/huxley-density.md}).
 \end{itemize}
 Each of these bounds is a theorem of the library, with a factor $(\log qT)^{10}$ at most $(1 + \log qT)^{10}$; the
@@ -254,11 +282,11 @@ claims table of Section~\ref{sec:lean} names them.
 \end{proof}
 
 The only piece that is not classical is the one on $[5/7, 1307/1680]$, where Chen, Gupta and Li's estimate, in the
-step form of Hypothesis~\ref{hyp:density}, replaces Huxley's exponent, which is $12/5$ at $\sigma = 3/4$. Their
+step form of Input~\ref{inp:density}, replaces Huxley's exponent, which is $12/5$ at $\sigma = 3/4$. Their
 exponent is $7/3$ at $\sigma = 5/7$ and falls below it inside the range; the curve $g_7$ follows it step by step,
 to within $10^{-4}$ of $4/(1 + \sigma)$ at each step's left end. Huxley's exponent $3/(3\sigma - 1)$ is the smaller of
 the two from $\sigma = 7/9$ on, and $7/9$ lies in the step $[653/840, 1307/1680]$, which is the last of the $107$; so
-from $1307/1680$ on, on the three steps up to $131/168$ and on the steps from $131/168$ on, $g_7$ uses Huxley's. Hypothesis~\ref{hyp:half-plane} enters the curve only
+from $1307/1680$ on, on the three steps up to $131/168$ and on the steps from $131/168$ on, $g_7$ uses Huxley's. Input~\ref{inp:half-plane} enters the curve only
 above $11/12$, and enters the Type~II estimate through the largest real part of the zeros, which it bounds by $11/12$.
 
 \section{The Type II estimate}\label{sec:type2}
@@ -277,7 +305,7 @@ the rest a product of primes, that the non-trivial characters contribute less th
 polynomials above this is the following estimate. Write $\mathcal X^*$ for the non-trivial characters mod $q$.
 
 \begin{theorem}[the Type~II estimate]\label{thm:type2}
-Assume Hypothesis~\ref{hyp:density}, and let $L = 11161/5000$, $u_1 = 40981/100000$ and $u_2 = 47725/100000$. Let
+Assume Input~\ref{inp:density}, and let $L = 11161/5000$, $u_1 = 40981/100000$ and $u_2 = 47725/100000$. Let
 $K_0 \ge 0$ be an integer, $e_1 > 0$ and $0 < \eta \le 10^{-5}$. There is $q_0$ such that for every $q \ge q_0$, every
 $P$ with $q^{u_1 L} \le P \le q^{u_2 L}$, every $S \subseteq (P, 2P]$, all $a_m$ and $h_0$, every $K \le K_0$, and all
 $Q_1, \dots, Q_K \ge q^{e_1}$ and $|h_1|, \dots, |h_K| \le q^\eta$ with $Q_1 \cdots Q_K \le 2^{K_0} q^L/P$,
@@ -312,13 +340,13 @@ The weight $\psi_Q(u) = f_0(u)(1 + \log u/\log Q)^{-1}$ turns the prime sum into
 $\chi(n)\Lambda(n)(n/Q)^{-iy}\psi_Q(n/Q)$, up to the proper prime powers, which give the last term. By Mellin
 inversion that sum is an integral of $-L'/L(s, \chi)$ against the Mellin transform of the weight, which decays
 faster than any power of $|\operatorname{Im} s - y|$ uniformly in $Q$. The line of integration moves from
-$\operatorname{Re} s = 2$ to $\operatorname{Re} s = 11/12 + \delta$, which Hypothesis~\ref{hyp:half-plane} allows,
+$\operatorname{Re} s = 2$ to $\operatorname{Re} s = 11/12 + \delta$, which Input~\ref{inp:half-plane} allows,
 and, for $|\operatorname{Im} s - y| \le H$, across the zero-free rectangle to $\operatorname{Re} s = \theta + \delta$.
 On both lines $|L'/L(s, \chi)| \ll A$, by the bound for the logarithmic derivative in a zero-free disc.
 \end{proof}
 
 The argument is the classical one for primes in progressions, with a smooth weight in place of a sharp cut-off; the
-only use of Hypothesis~\ref{hyp:half-plane} is the line $\operatorname{Re} s = 11/12 + \delta$.
+only use of Input~\ref{inp:half-plane} is the line $\operatorname{Re} s = 11/12 + \delta$.
 
 \subsection{The bins}
 
@@ -328,7 +356,7 @@ $i < N$ such that $L(s, \chi)$ has a zero with $\operatorname{Re} s > \beta_i$ a
 $0$ if there is none. If $\chi$ is in the bin $i$ then:
 \begin{itemize}
 \item $L(s, \chi)$ has no zero with $\operatorname{Re} s > \beta_{i+1}$ and $|\operatorname{Im} s| \le T$: for
-  $i + 1 < N$ by the choice of $i$, and for $i + 1 = N$ by Hypothesis~\ref{hyp:half-plane}. So
+  $i + 1 < N$ by the choice of $i$, and for $i + 1 = N$ by Input~\ref{inp:half-plane}. So
   Lemma~\ref{lem:prime-sum} applies with $\theta = \beta_{i+1}$ to every height $|y| \le T - H - 1$.
 \item For $i \ge 1$, $\chi$ is counted by $N^*(\beta_i, T; q)$, so a density curve $g$ bounds the number of characters
   in the bin by $C(qT)^{g(\beta_i)}(1 + \log qT)^{10}$. For $i = 0$ the bound $\varphi(q) \le qT$ is the same with
@@ -362,7 +390,7 @@ $\sum_{\chi \in R} |W(\chi)|$. There are two bounds.
   sums of a non-trivial character over $n \ll P$, and $|K_{2P}(\psi, 0)| \le C(2P)^{1/12 - \delta'}
   (2q)^{5/12 + \delta' + 2\varepsilon'}$: the kernel's integral moves to $\operatorname{Re} w = 1/12 - \delta'$, where
   the functional equation and the bound on $\operatorname{Re} s = 11/12 + \delta$ that
-  Hypothesis~\ref{hyp:half-plane} gives bound the $L$-function.
+  Input~\ref{inp:half-plane} gives bound the $L$-function.
 \end{enumerate}
 The first bound is the better one when the bin is large, the second when it is small, which is the case near the top
 of the curve. The proof takes the better of the two in each bin.
@@ -418,8 +446,13 @@ and $\max(E_2, E_3) \le L - 1/25000$ holds at the corners with $m \le 1$. Each c
 rational numbers, checked exactly.
 \end{proof}
 
+The window has little room. The tightest of the corner inequalities, at $m = u_1 L$ and $\beta = 1307/1680$, holds
+with a slack of about $2.7 \cdot 10^{-6}$ below $L - 1/25000$, and the slack of the tightest at $m = u_2 L$ is about
+$7.4 \cdot 10^{-6}$. All of them are exact rational inequalities, so there is no numerical tolerance, but a perturbation
+of the curve or of $L$ of that size would move an end of the window out.
+
 \begin{proof}[Proof of Theorem~\ref{thm:type2}]
-By Proposition~\ref{prop:curve}, $g_7$ is a density curve under Hypothesis~\ref{hyp:density}, with $g_7 \le 1$ and
+By Proposition~\ref{prop:curve}, $g_7$ is a density curve under Input~\ref{inp:density}, with $g_7 \le 1$ and
 $g_7(1/2) = 1$. Apply Proposition~\ref{prop:type2-gen} with the window of Proposition~\ref{prop:window}.
 \end{proof}
 
@@ -737,21 +770,26 @@ by Dirichlet's theorem, and $K'$ is taken large enough to cover them.
 \begin{proof}[Proof of Theorem~\ref{thm:main}]
 Take $L = 11161/5000$, $u_1 = 40981/100000$, $u_2 = 47725/100000$ and the grid of Proposition~\ref{prop:certificate}. The
 grid fits the window, since its ends are rounded inward and $L U_2 > D$; Theorem~\ref{thm:type2}, under
-Hypothesis~\ref{hyp:density}, is the Type~II estimate, and Proposition~\ref{prop:certificate} is $\mathtt{total2} < K$.
-Theorem~\ref{thm:route} gives Theorem~\ref{thm:main} under Hypothesis~\ref{hyp:density}, and Chen, Gupta and Li's
-Proposition~3.1 proves the hypothesis. Hypothesis~\ref{hyp:half-plane} enters through Lemma~\ref{lem:prime-sum}, the top bin
+Input~\ref{inp:density}, is the Type~II estimate, and Proposition~\ref{prop:certificate} is $\mathtt{total2} < K$.
+Theorem~\ref{thm:route} gives Theorem~\ref{thm:main} under Input~\ref{inp:density}, and the library's formalisation
+from Chen, Gupta and Li's Proposition~3.1 proves that input. Input~\ref{inp:half-plane} enters through Lemma~\ref{lem:prime-sum}, the top bin
 and the kernel bound in Section~\ref{sec:type2}, and through the piece of $g_7$ above $11/12$.
 \end{proof}
 
 The proof does not compute $K$: the threshold $q_0$ comes from limits in $q$ in each step, and the small moduli
 from Dirichlet's theorem. The Lean proof of Theorem~\ref{thm:route} is \lean{SieveMain2.linnik\_route\_lt2}, and the
-case of Theorem~\ref{thm:main} is \lean{Linnik22322R.linnik\_22322r}, which has no hypothesis: the steps of
-Hypothesis~\ref{hyp:density} are theorems of the library.
+case of Theorem~\ref{thm:main} is \lean{Linnik22322R.linnik\_22322r}, which has no hypotheses: the steps of
+Input~\ref{inp:density} and Input~\ref{inp:half-plane} are theorems of the library.
 
 \section{The formalisation}\label{sec:lean}
 
-Every claim of the paper is a theorem of the Lean library in \texttt{lib/} of the repository, which is built with
-Lean~4 and Mathlib. The table names each one. The file \texttt{lib/check/Check.lean} prints the axioms of these
+Every numbered theorem, proposition, lemma and input of Sections~\ref{sec:intro} to~\ref{sec:proof}, and each result
+from the literature that the proof uses, is a theorem of the Lean library in \texttt{lib/} of the repository, which is
+built with Lean~4 and Mathlib; the table names each one. These are not Lean theorems: the historical statements of the
+introduction (the exponents of Linnik, Heath-Brown, Xylouris and under the generalised Riemann hypothesis, and the
+remarks on where the difficulty lies), the remark that the classical deduction gives $7/3 + \varepsilon$, the table of
+Section~\ref{sec:comparison}, the discussion of where the gain comes from and of going lower, including its
+heuristic, and what is said about independent checking and about the sources of the inputs. The file \texttt{lib/check/Check.lean} prints the axioms of these
 theorems (of the 107 Chen, Gupta and Li steps of the density curve it prints the first and the last, of the three Huxley steps of \texttt{LinnikHuxJunction.lean} the first and the last, and it prints Ingham's last step and
 Chen, Gupta and Li's Proposition~3.1; the other steps print their axioms in the module that proves them,
 \texttt{LinnikCGLSteps.lean}, when it is built; \texttt{lib/check/CheckAll.lean} prints the axioms of further
@@ -781,8 +819,8 @@ Proposition~\ref{prop:decomp-kept}, with the kept parts & \lean{SieveBuch.Par.de
  & \lean{SieveDrop2.drop\_ev2} \\
 Proposition~\ref{prop:certificate}, the certificate & \lean{SieveCert.total2\_lt\_22322R} \\
 \midrule
-Hypothesis~\ref{hyp:half-plane} (OpenAI; \file{formalisations/}) & \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt} \\
-Hypothesis~\ref{hyp:density} (Chen--Gupta--Li; \file{formalisations/}) & \lean{LinnikCGLSteps.charDensity\_s0}, \\
+Input~\ref{inp:half-plane} (OpenAI; \file{formalisations/}) & \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt} \\
+Input~\ref{inp:density} (Chen--Gupta--Li; \file{formalisations/}) & \lean{LinnikCGLSteps.charDensity\_s0}, \\
  & \dots, \lean{LinnikCGLSteps.charDensity\_s106}, \\
  & \lean{LinnikCGLHB101.prop31} \\
 Ingham's last step, $\varepsilon = 1/400000$ & \lean{LinnikCGLSteps.charDensity\_inT} \\
@@ -817,7 +855,7 @@ theorem linnik_22322r : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ),
       (p : ℝ) ≤ K * (q : ℝ) ^ (11161 / 5000 : ℝ)
 \end{verbatim}
 }
-where \lean{[NeZero q]} says $q \ge 1$ and the power is the real power. The statements of the two hypotheses and of the
+where \lean{[NeZero q]} says $q \ge 1$ and the power is the real power. The statements of the two inputs and of the
 density estimates count the characters $\chi$ mod $q$, as elements of Mathlib's \lean{DirichletCharacter ℂ q}, for
 which \lean{LFunction χ s = 0} at some $s$ in the rectangle. Mathlib's $L$-function of a character mod $q$ is the
 analytic continuation of $\sum_n \chi(n) n^{-s}$, with the character taken mod $q$ and not reduced to a primitive
@@ -845,7 +883,11 @@ library the repository's continuous integration rebuilds it and runs the axiom c
 \section{What the inputs give without the sieve}\label{sec:comparison}
 
 This section claims nothing new. It places Theorem~\ref{thm:main} against what the same inputs give by the
-classical argument, which has no sieve.
+classical argument, which has no sieve. It does not compare Theorem~\ref{thm:main} with the unconditional results of
+Heath-Brown, Xylouris and others, whose exponents ($5.5$, $5$ and below) are not comparable with it: they use
+neither a zero-free half-plane nor a zero-density estimate beyond the published ones. The exponent
+$11161/5000$ is as trustworthy as the two unrefereed inputs and their formalisations, and independent checking of the
+half-plane result is partial (Section~\ref{sec:inputs}).
 
 \subsection*{The classical deduction}
 
@@ -853,12 +895,12 @@ Suppose that for some $A \ge 2$ there is a uniform density estimate
 \[
   N^*(\sigma, T; q) \le C (qT)^{A(1 - \sigma)} (\log qT)^B \qquad (1/2 \le \sigma \le 1,\ T \ge 2).
 \]
-With Hypothesis~\ref{hyp:half-plane}, the explicit formula for the primes in a class mod $q$, summed over the zeros
+With Input~\ref{inp:half-plane}, the explicit formula for the primes in a class mod $q$, summed over the zeros
 of the $L$-functions mod $q$ up to a height, then gives Linnik's theorem with every exponent $L > A$: the zeros of
 real part about $\sigma$ contribute about $(q^A/x)^{1 - \sigma}$, and none has real part above $11/12$. The library
 proves this deduction as \lean{Linnik.linnik\_of\_charDensity}, and with it:
 \begin{itemize}
-\item $L = 12 + \varepsilon$ from Hypothesis~\ref{hyp:half-plane} alone: at most $\varphi(q) \le qT$ characters are
+\item $L = 12 + \varepsilon$ from Input~\ref{inp:half-plane} alone: at most $\varphi(q) \le qT$ characters are
   counted for every $\sigma$, and at most one above $11/12$, which is the estimate with $A = 12$;
 \item $L = 36/13 + \varepsilon$ with Ingham's estimate, whose exponent $3/(2 - \sigma)$ is $36/13$ at
   $\sigma = 11/12$;
@@ -866,24 +908,24 @@ proves this deduction as \lean{Linnik.linnik\_of\_charDensity}, and with it:
   range.
 \end{itemize}
 Section~\ref{sec:lean}'s table names the Lean theorem of each.
-With Chen, Gupta and Li's estimate as well, the exponent is $7/3 + \varepsilon$: this is their
-Corollary~1.4 \cite{cgl}, under a zero-free region that Hypothesis~\ref{hyp:half-plane} supplies. In the terms of
-this paper, the curve $g_7$ of Section~\ref{sec:inputs} satisfies $g_7(\sigma) \le (7/3 + 1/2000)(1 - \sigma)$ on
+With Chen, Gupta and Li's estimate as well, the exponent is $7/3 + \varepsilon$, by the same classical deduction: the density estimate
+is Chen, Gupta and Li's Theorem~1.2 \cite{cgl} (exponent $A = 7/3$), and the deduction is not theirs, since they do not
+derive a Linnik exponent. In the terms of this paper, the curve $g_7$ of Section~\ref{sec:inputs} satisfies $g_7(\sigma) \le (7/3 + 1/2000)(1 - \sigma)$ on
 $[1/2, 1]$, so Proposition~\ref{prop:curve} and the deduction give every exponent above $7/3 + 1/2000$; the library
 does not state this case as a theorem.
 
 \begin{center}
 \small
-\begin{tabular}{@{}lll@{}}
+\begin{tabular}{@{}p{0.40\textwidth}p{0.24\textwidth}l@{}}
 \toprule
 Inputs & Method & Exponent \\
 \midrule
-Hypothesis~\ref{hyp:half-plane} & density deduction & $12 + \varepsilon$ \\
-Hypothesis~\ref{hyp:half-plane}, Ingham & density deduction & $36/13 + \varepsilon \approx 2.769$ \\
-Hypothesis~\ref{hyp:half-plane}, Huxley & density deduction & $12/5 + \varepsilon = 2.4 + \varepsilon$ \\
-Hypothesis~\ref{hyp:half-plane}, Chen--Gupta--Li & density deduction \cite{cgl} &
+Input~\ref{inp:half-plane} & density deduction & $12 + \varepsilon$ \\
+Input~\ref{inp:half-plane}, Ingham & density deduction & $36/13 + \varepsilon \approx 2.769$ \\
+Input~\ref{inp:half-plane}, Huxley & density deduction & $12/5 + \varepsilon = 2.4 + \varepsilon$ \\
+Input~\ref{inp:half-plane}, Chen--Gupta--Li's estimate \cite{cgl} & density deduction &
   $7/3 + \varepsilon \approx 2.333$ \\
-Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density}, in steps & sieve, this paper & $11161/5000 = 2.2322$ \\
+Inputs~\ref{inp:half-plane} and~\ref{inp:density}, in steps & sieve, this paper & $11161/5000 = 2.2322$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -905,23 +947,24 @@ refinement totals about $1.10833K$ at $11161/5000$, above $K$ (Section~\ref{sec:
 a proof. Going lower would need more of
 the dropped terms evaluated, a sharper bound for the rough numbers than $\omega^*$, or a better density exponent.
 
-On the last, one remark, which is a heuristic and not a theorem. The curve $g_7$ is set by Chen, Gupta and Li's
-estimate on $[5/7, 1307/1680]$, and this paper uses no density estimate for all moduli that is better than theirs. A
-rough model of the method, made outside the library, not checked in Lean and accurate to about $5 \cdot 10^{-4}$,
-suggests that even a hypothetical saving in a term of their bound for prime moduli, as large as
-square-root cancellation, would lower the exponent only to about $2.2168$. A larger improvement would then need new
-ideas in the $q$-aspect. Nothing in the library depends on this.
+On the last, one remark, which is an unverified heuristic and not a theorem. The curve $g_7$ is set by Chen, Gupta and
+Li's estimate on $[5/7, 1307/1680]$, and this paper uses no density estimate for all moduli that is better than theirs.
+A rough model of the method, made outside the library, whose code is not in the repository and which has not been
+checked, suggests that even a hypothetical saving in a term of their bound for prime moduli, as large as
+square-root cancellation, would lower the exponent only to a value a little below $2.22$. Nothing in the paper or the
+library depends on this.
 
 \section*{Acknowledgements}
 
 This work was carried out with the assistance of an AI system, Claude, developed by Anthropic. It was used to develop
 the argument, to write the Lean formalisation, including the proofs of the results from the literature, and to draft
-this paper. Every claim of the paper is a theorem of the Lean library, checked by Lean's kernel, as
-Section~\ref{sec:lean} describes. The author is responsible for the paper's content.
+this paper. The numbered results of Sections~\ref{sec:intro} to~\ref{sec:proof} are theorems of the Lean library, checked by
+Lean's kernel; Section~\ref{sec:lean} says which statements of the paper are not. The author is responsible for the
+paper's content.
 
 Grok Bot, an AI research assistant built by xAI, also assisted: with the literature and the analysis of the density
 bounds, with the construction of the Chen--Gupta--Li step curve and the certificate pipeline, with edits to this paper,
-and with a survey and refactoring of the Lean library for duplication and build cost. The author is responsible for every claim of the paper. The Lean verification is by the Lean
+and with a survey and refactoring of the Lean library for duplication and build cost. The Lean verification is by the Lean
 kernel and the repository's continuous integration, and not by the assistants.
 
 % The entries were checked against the publishers', arXiv and repository pages and, for Ingham (Quart. J. Math. 11, issue 44,
@@ -941,6 +984,9 @@ kernel and the repository's continuous integration, and not by the assistants.
   preprint, 30 September 2026, and \emph{The Quasi-Riemann Hypothesis}, preprint, 5 October 2026 (which proves
   $\operatorname{Re}(s) > 11/12$ by a different route); \url{https://github.com/openai/math}, entry 003. Neither
   preprint has been refereed.
+\bibitem{aiproofwatch} AIProofWatch, record of OpenAI's \emph{The Quasi-Riemann Hypothesis: A Zero-Free Half-Plane
+  $\operatorname{Re}(s) > 7/8$}, \url{https://aiproofwatch.com/updates/openai-math-003} (assessment reviewed 25 October 2026;
+  reports an external Lean check of the Riemann zeta specialisation only).
 \bibitem{cgl} B. Chen, V. Gupta and Y. C. Li, \emph{Large Value Estimates for Dirichlet Polynomials with Characters
   and Zero Density of Dirichlet $L$-Functions}, arXiv:2507.08296v2 (preprint; v2 of 27 July 2026, v1 of 11 July 2025
   was by B. Chen alone).
