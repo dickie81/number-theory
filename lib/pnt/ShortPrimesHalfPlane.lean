@@ -14,9 +14,11 @@ half-plane: the half-plane is `|Im τ| ≤ 5/12` for the zeros `τ` of Ξ in the
 which gives `ZeroFreeXi α` for every `α ≥ 0` with `T₀ = e` (`zeroFreeXi_of_halfplane`).
 
 This is a second proof of the same result, not a stronger one: the density `DensityXi (17/6 + ε) 12` is the same
-(`InghamDensity.densityXi_17_6`) and `11/17 = 1 − 1/(17/6)` is fixed by it. It swaps the Korobov–Vinogradov input for the
-half-plane input. The library keeps `InghamDensity.short_primes_11_17` and `DetectEM.short_primes` (the unconditional
-`θ > 3/4`) on the Korobov–Vinogradov region, which does not depend on the half-plane's source.
+(`InghamDensity.densityXi_17_6`) and `11/17 = 1 − 1/(17/6)` is fixed by it. It removes the Korobov–Vinogradov dependency and
+leaves the zero-free half-plane (`Re s > 11/12`) as the only analytic input; it is not independent of the half-plane
+(the density `InghamDensity.densityXi_17_6` itself goes through `Subconvexity.zetaCritBound_five_24`, which uses it). The
+library keeps `InghamDensity.short_primes_11_17` (half-plane and Korobov–Vinogradov) and `DetectEM.short_primes` (the
+unconditional `θ > 3/4`, Korobov–Vinogradov and no half-plane) as they are.
 
 * `zeroFreeXi_of_halfplane`: `0 ≤ α → ZeroFreeXi α`.
 * `short_primes_11_17_noKV`: `11/17 < θ → ∀ᶠ y, ∃ p prime, y < p ∧ p ≤ y + y^θ`, by `short_primes_of_density` with
