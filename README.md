@@ -17,7 +17,7 @@ arithmetic progression.
 | Path | Contents |
 |---|---|
 | `lib/core` | The library's modules that need only Mathlib: 349 files. |
-| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 342 files. |
+| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 664 files. |
 | `lib/dh` | The Davenport–Heilbronn function and its zeros: 53 files. |
 | `lib/zeta23` | The modules that also use `zeta23`: 11 files. |
 | `lib/vendor/pnt-plus`, `lib/vendor/zeta23` | Two upstream libraries, ported to this toolchain, each with its license and its port patch. See their READMEs. |
@@ -49,7 +49,7 @@ builds the same thing where memory allows. The two produce the same build, so ei
 If Mathlib's cache does not have the pinned commit, `lake build` builds Mathlib as well, which takes several hours.
 
 **Memory.** A module that imports Mathlib maps Mathlib's files into memory, and that mapping is shared between
-compiles. The default build also has 143 certificate parts (`lib/pnt/SieveCert22322RP<k>.lean`). Of Mathlib the parts import only
+compiles. The default build also has 465 certificate part files (`lib/pnt/SieveCert22250RP<k>.lean`, 5796 parts). Of Mathlib the parts import only
 `Mathlib.Data.Nat.Notation`, but each one can use about 5 GiB of private memory while the kernel checks it. Earlier
 certificates (for the weaker exponents `899/400`, `9/4`, `226/100` and others) and the stepping-stone modules only they used are
 no longer in the tree; they are in the git history. Lake runs about as many
@@ -71,7 +71,7 @@ close to the limit of a 16 GB machine: a compile killed with exit code 137 has r
 | `python3 scripts/gen_lakefile.py --check` | `lakefile.lean` matches `lib/`. |
 | `python3 scripts/check_vendor.py` | `lib/vendor` holds the upstream files at the pinned commits with the port patches applied (needs network access). |
 | `python3 scripts/census.py MODULE CONSTANT` | After `lake build MODULE`: the library's modules whose declarations the proof of `CONSTANT` uses, with the count from each. |
-| `python3 tools/linnik/check_certificate.py` | The certificate's Lean files in `lib/pnt` are the ones `tools/linnik` generates (about two minutes). |
+| `python3 tools/linnik/check_certificate.py` | The certificate's Lean files in `lib/pnt` are the ones `tools/linnik` generates (about half a minute). |
 | `python3 scripts/import_cone.py [ROOT]` | Not a gate: the modules, source size and certificate part files in the import cone of `ROOT` (default `Check`, the default build), from the sources alone. `--why MODULE` prints the chain of imports that puts `MODULE` in the cone. |
 
 ## CI

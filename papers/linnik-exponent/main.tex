@@ -35,7 +35,7 @@
 \newcommand{\file}[1]{\nolinkurl{#1}}
 \emergencystretch=3em
 
-\title{The least prime in an arithmetic progression: the exponent $11161/5000$ from a half-plane zero-free region, a zero-density estimate and a formalised sieve}
+\title{The least prime in an arithmetic progression: the exponent $89/40$ from a half-plane zero-free region, a zero-density estimate and a formalised sieve}
 \author{Ritchie Comley}
 \date{Draft, 25 October 2026}
 
@@ -44,7 +44,7 @@
 
 \begin{abstract}
 We prove, in Lean~4, that there is a constant $K$ such that, for every $q \ge 1$ and every $a$ prime to $q$, there is a
-prime $p \equiv a \pmod q$ with $p \le K q^{11161/5000}$. The Lean theorem has no hypotheses: its truth rests on Lean's kernel, Mathlib and the pinned toolchain (with the
+prime $p \equiv a \pmod q$ with $p \le K q^{89/40}$. The Lean theorem has no hypotheses: its truth rests on Lean's kernel, Mathlib and the pinned toolchain (with the
 vendored upstream ports and the provenance of the build cache), not on any preprint. Its proof does use two recent
 results that have not been refereed, OpenAI's zero-free half-plane $\operatorname{Re} s > 11/12$ for every Dirichlet
 $L$-function, and Chen, Gupta and Li's zero-density estimate, which the library re-proves from the preprints: the first
@@ -62,7 +62,7 @@ half-plane.
 
 \begin{theorem}\label{thm:main}
 There is $K$ such that for every $q \ge 1$ and every $a$ prime to $q$ there is a prime $p \equiv a \pmod q$ with
-$p \le K q^{11161/5000}$.
+$p \le K q^{89/40}$.
 \end{theorem}
 
 Linnik \cite{linnik44} proved that there are absolute constants $K$ and $L$ such that every reduced residue class
@@ -70,7 +70,7 @@ mod $q$ contains a prime $p \le K q^L$. The admissible exponent $L$ has been low
 \cite{heath-brown92} reached $L = 5.5$, Xylouris $L = 5.18$ \cite{xylouris-acta} and then $L = 5$ \cite{xylouris11},
 and again $L = 5$ in a short version, which notes that a slightly smaller value follows \cite{xylouris18}.
 Under the generalised Riemann hypothesis every $L > 2$ is admissible \cite{lls, lls-corr}. Theorem~\ref{thm:main} has
-$L = 11161/5000 = 2.2322$. This is not comparable with the exponents of Heath-Brown and Xylouris: those are
+$L = 89/40 = 2.225$. This is not comparable with the exponents of Heath-Brown and Xylouris: those are
 unconditional and use neither a zero-free half-plane nor a zero-density estimate that has not been refereed, and
 Theorem~\ref{thm:main} uses both.
 
@@ -116,7 +116,7 @@ information. Type~I information is the comparison of $\mathcal A$ with $\mathcal
 integer, which counting in residue classes gives. Type~II information is the comparison on bilinear sums
 $\sum_{mn} a_m b_n$, with $m$ in a range $(x^{u_1}, x^{u_2})$, bounded coefficients $a_m$, and $b_n$ supported on
 products of primes, which needs the zeros. A comparison over all such sums is not available at
-$x = q^{11161/5000}$. What is available is a window $[u_1, u_2]$ of exponents on which it holds, and the sieve recovers
+$x = q^{89/40}$. What is available is a window $[u_1, u_2]$ of exponents on which it holds, and the sieve recovers
 the primes from the sums it can compare,
 losing a fraction of them that a finite computation bounds.
 
@@ -128,21 +128,21 @@ The paper's contributions are three.
   of characters in the bin, which a density estimate bounds; the best of orthogonality and the
   Hal\'asz--Montgomery inequality is taken in each bin. Inputs~\ref{inp:half-plane} and~\ref{inp:density},
   with the classical density estimates of Ingham and Huxley, give the window
-  $[u_1, u_2] = [40981/100000,\ 47725/100000]$ at $L = 11161/5000$.
+  $[u_1, u_2] = [41479/100000,\ 47555/100000]$ at $L = 89/40$.
 \item \emph{A decomposition by Buchstab's identity, with a refinement} (Section~\ref{sec:certificate}). The
-  identity is applied to depth four. The terms in which the product of some of the prime variables has its
+  identity is applied to depth six, the primes of the two deepest levels on a coarser grid. The terms in which the product of some of the prime variables has its
   exponent in the window, or in its reflection $[1 - u_2, 1 - u_1]$, are Type~II sums and are evaluated, and the
   others are dropped. The refinement keeps, in a dropped term of depth two, the part whose integers have exactly two
   prime factors in the cofactor and are, in some grouping of their four prime factors, a Type~II sum.
 \item \emph{A certificate} (Section~\ref{sec:certificate}). The fraction of the primes the decomposition loses is
   bounded above by a sum over the cells of a grid of the exponents, computed exactly in integers. On a grid of
-  $300$ cells a side the sum is below $0.99873$, which is less than $1$, so a positive proportion of the primes
+  $360$ cells a side (and $90$ for the deepest primes) the sum is below $0.99358$, which is less than $1$, so a positive proportion of the primes
   remains.
 \end{enumerate}
 
 \subsection*{The exponent}
 
-The exponent $11161/5000$ uses Chen, Gupta and Li's Proposition~3.1 at every point of $[5/7, 1307/1680]$: on each of
+The exponent $89/40$ uses Chen, Gupta and Li's Proposition~3.1 at every point of $[5/7, 1307/1680]$: on each of
 $107$ steps of length $1/1680$ the exponent is just above $4/(1 + \sigma)$ at the step's left end. From $\sigma = 7/9$
 on, Huxley's exponent $3/(3\sigma - 1)$ is below $4/(1 + \sigma)$, and on the three steps of that length that follow the
 step containing $7/9$, up to $131/168$, the curve takes Huxley's: just above $3/(3\sigma - 1)$ at the step's left end. It also uses Ingham's
@@ -151,7 +151,7 @@ that its exponent is $7/3 + 1/100000$. The
 steps are narrow because the ends of the window are set by the places where a step's exponent most exceeds the curve it
 bounds: at the steps around $7/9$, where $4/(1 + \sigma)$ meets Huxley's $3/(3\sigma - 1)$, and at $\sigma = 5/7$,
 where the exponent is largest. Using Huxley's exponent on those three steps, instead of Chen, Gupta and Li's, lowers
-the certificate's total, and this is what lets the certificate close at $11161/5000$.
+the certificate's total, and with the two deeper levels of the decomposition this is what lets the certificate close at $89/40$.
 
 The rest is not new. Inputs~\ref{inp:half-plane} and~\ref{inp:density} are OpenAI's and Chen, Gupta and Li's,
 and the density estimates of Ingham \cite{ingham} and Huxley \cite{huxley72, huxley75}, the Hal\'asz--Montgomery
@@ -162,8 +162,8 @@ and Section~\ref{sec:type1} the form of the sieve that is used.
 
 Every step of the proof is proved in Lean~4 with the Mathlib library, and so is each result it uses from the
 literature, except that for Chen, Gupta and Li's paper only its Proposition~3.1, with the results it rests on, and the steps derived from it are
-formalised. The Lean theorem \lean{Linnik22322R.linnik\_22322r} is Theorem~\ref{thm:main}, and its axioms are Lean's
-standard three. The certificate's sum is checked by Lean's kernel in 561 parts. Section~\ref{sec:lean} names the Lean
+formalised. The Lean theorem \lean{Linnik22250R.linnik\_22250r} is Theorem~\ref{thm:main}, and its axioms are Lean's
+standard three. The certificate's sum is checked by Lean's kernel in 5796 parts. Section~\ref{sec:lean} names the Lean
 theorem behind each claim of the paper, and the directory \file{formalisations/} of the repository documents each
 result from the literature: its source, its Lean statement and the differences between them. The library's proofs of
 Inputs~\ref{inp:half-plane} and~\ref{inp:density} are the library's own formalisations. For the second, one ingredient
@@ -191,7 +191,7 @@ one is $\chi_0$, and $L(s, \chi)$ is the $L$-function of $\chi$, continued to th
 \]
 where $\mathcal R(\sigma, T) = \{s : \operatorname{Re} s \ge \sigma,\ |\operatorname{Im} s| \le T\}$: the number of
 characters mod $q$ whose $L$-function has a zero in the rectangle. It counts characters, not zeros, so a bound
-for the number of zeros bounds it. The proof is a sieve on the integers up to $x = q^L$, with $L = 11161/5000$ in the
+for the number of zeros bounds it. The proof is a sieve on the integers up to $x = q^L$, with $L = 89/40$ in the
 end, and $q$ is taken large.
 
 The paper states two inputs, written \emph{Input} and not \emph{hypothesis} because the library proves them in Lean.
@@ -262,7 +262,7 @@ $q \ge 1$, every $1/2 \le \sigma \le 1$ and every $T \ge 2$,
 \]
 \end{definition}
 
-The curve of this paper is the function $g_7$ defined as follows (in Lean, \lean{SieveTypeIIU22322D.g7d}); each of
+The curve of this paper is the function $g_7$ defined as follows (in Lean, \lean{SieveTypeIIU22250D.g7d}); each of
 its pieces is a known density estimate, and the steps make each piece a constant multiple of $1 - \sigma$.
 \begin{itemize}
 \item $g_7(\sigma) = 1$ for $\sigma < 4/7$.
@@ -338,7 +338,7 @@ the rest a product of primes, that the non-trivial characters contribute less th
 polynomials above this is the following estimate. Write $\mathcal X^*$ for the non-trivial characters mod $q$.
 
 \begin{theorem}[the Type~II estimate]\label{thm:type2}
-Assume Input~\ref{inp:density}, and let $L = 11161/5000$, $u_1 = 40981/100000$ and $u_2 = 47725/100000$. Let
+Assume Input~\ref{inp:density}, and let $L = 89/40$, $u_1 = 41479/100000$ and $u_2 = 47555/100000$. Let
 $K_0 \ge 0$ be an integer, $e_1 > 0$ and $0 < \eta \le 10^{-5}$. There is $q_0$ such that for every $q \ge q_0$, every
 $P$ with $q^{u_1 L} \le P \le q^{u_2 L}$, every $S \subseteq (P, 2P]$, all $a_m$ and $h_0$, every $K \le K_0$, and all
 $Q_1, \dots, Q_K \ge q^{e_1}$ and $|h_1|, \dots, |h_K| \le q^\eta$ with $Q_1 \cdots Q_K \le 2^{K_0} q^L/P$,
@@ -465,8 +465,8 @@ $L - 1/25000 + \eta + 1/100000 \le L - 1/50000$.
 \end{proof}
 
 \begin{proposition}\label{prop:window}
-The window $[u_1 L, u_2 L]$, with $u_1 = 40981/100000$ and $u_2 = 47725/100000$, is admissible for $g_7$ at
-$L = 11161/5000$.
+The window $[u_1 L, u_2 L]$, with $u_1 = 41479/100000$ and $u_2 = 47555/100000$, is admissible for $g_7$ at
+$L = 89/40$.
 \end{proposition}
 
 \begin{proof}
@@ -623,7 +623,10 @@ The exponent of a prime $p$ is $\alpha = \log p/\log x$. Fix a denominator $D = 
 inward: $U_1 = \lceil u_1 D \rceil$ and $U_2 = \lfloor u_2 D \rfloor$, so that $u_1 < U_1/D < U_2/D < u_2$. Let
 $v = (U_2 - U_1)/D$. The decomposition sifts the primes of exponent at least $v$, so $z_0 = x^v$. The grid has $n$
 cells a side, of side $h = \lceil (D/2 - (U_2 - U_1))/n \rceil / D$; the cell $k$ is the range
-$[e_k, e_k + h]$ of exponents with $e_k = v + kh$, for $0 \le k < n$, and the cells cover $[v, 1/2]$. Here $n = 300$.
+$[e_k, e_k + h]$ of exponents with $e_k = v + kh$, for $0 \le k < n$, and the cells cover $[v, 1/2]$. Here $n = 360$.
+The primes of the two deepest levels of the decomposition, $p_5$ and $p_6$, have their exponents in the cells of a
+\emph{coarse grid} with the same window and $n_C = n/4 = 90$ cells a side, of side $h_C = \lceil (D/2 - (U_2 - U_1))/n_C \rceil / D$,
+and cells $[e^C_b, e^C_b + h_C]$ with $e^C_b = v + b h_C$.
 
 The set of \emph{evaluable} exponents is
 \[
@@ -658,11 +661,21 @@ $Wk \in (x, 2x]$ in the window's range.
 \item \emph{Depth three.} A term of depth three cannot be dropped. If its box is surely evaluable, it is evaluated;
   otherwise it is split at $X'$ in the same way, and the part with $p_1 p_2 p_3 \le X'$ gives terms of depth four with
   sign $+$.
-\item \emph{Depth four.} A term of depth four whose box is surely evaluable is evaluated, and the others are dropped.
+\item \emph{Depth four.} A term of depth four whose box is surely evaluable is evaluated. Another term of depth four,
+  with $(\alpha_1, \dots, \alpha_4)$ in the cell $(i, j, k, l)$ of the region where it is not empty (a
+  \emph{counted} cell), is either dropped, or decomposed once more, which gives terms of depth five with sign $-$,
+  $S(\mathcal A_{p_1 \cdots p_5}, p_5)$ with $z_0 \le p_5 < p_4$ and $\alpha_5$ in a cell $b$ of the coarse grid.
+\item \emph{Depth five.} A term of depth five cannot be dropped. If its box, the cell $(i, j, k, l)$ of the fine grid and the coarse
+  cell $b$, is surely evaluable, it is evaluated; otherwise it is split at $X'$ in the same way, and the part with
+  $p_1 \cdots p_5 \le X'$ gives terms of depth six with sign $+$, $S(\mathcal A_{p_1 \cdots p_6}, p_6)$ with
+  $\alpha_6$ in a coarse cell $c \le b$.
+\item \emph{Depth six.} A term of depth six whose box is surely evaluable is evaluated, and the others are dropped.
 \end{enumerate}
 The \emph{sharp rule} allows a candidate cell $(i, j)$ to be decomposed only if
 $\alpha_1 + \alpha_2 < 1 - U_1/D$ on its box, and $\alpha_1 + \alpha_2 + \alpha_3 < 1 - U_1/D$ on the boxes of its
-non-evaluable cells of depth three: then the splits at $X'$ produce only cofactors in the window's range.
+non-evaluable cells of depth three: then the splits at $X'$ produce only cofactors in the window's range. The same rule
+allows a counted cell of depth four to be decomposed only if $\alpha_1 + \cdots + \alpha_4 < 1 - U_1/D$ on its box and
+$\alpha_1 + \cdots + \alpha_5 < 1 - U_1/D$ on the boxes of its non-evaluable cells of depth five.
 
 \begin{proposition}\label{prop:decomp}
 Assume the conclusion of Theorem~\ref{thm:type2}. For every $\varepsilon > 0$, for all large $q$ and every $a$ prime to
@@ -678,7 +691,7 @@ where $D(\mathcal B)$ is the sum of the $\mathcal B$-versions of the dropped ter
 The identities of the decomposition are exact. A dropped term has sign $+$ and its $\mathcal A$-count is at least
 $0$, so dropping it lowers the right side by its $\mathcal B$-version. Every evaluated term, and every term
 $S(\cdot, z_0)$, has its $\mathcal A$- and $\mathcal B/\varphi(q)$-counts within an error $\mathrm{Err}$ by
-Lemma~\ref{lem:family} and Proposition~\ref{prop:harman}, and there are at most $1 + n(1 + n(n(n + 2) + 2))$ of
+Lemma~\ref{lem:family} and Proposition~\ref{prop:harman}, and there are at most $1 + n(1 + n(2 + n(2 + n(n_C(n_C + 2) + 2))))$ of
 them. For large $q$ the total error is below $\varepsilon x/(\varphi(q) \log x)$.
 \end{proof}
 
@@ -693,13 +706,17 @@ $q$, at most $x/(\varphi(q) \log x)$ times
 \]
 plus $\varepsilon$, and similarly at depth four with
 $d\alpha_1 \cdots d\alpha_4/(\alpha_1 \alpha_2 \alpha_3 \alpha_4^2)$ and the argument
-$(1 - \alpha_1 - \cdots - \alpha_4)/\alpha_4$. The certificate bounds each integral by its integrand's maximum on
+$(1 - \alpha_1 - \cdots - \alpha_4)/\alpha_4$, and at depth six with
+$d\alpha_1 \cdots d\alpha_6/(\alpha_1 \cdots \alpha_5 \alpha_6^2)$ and the argument $(1 - \alpha_1 - \cdots - \alpha_6)/\alpha_6$. The certificate bounds each integral by its integrand's maximum on
 the cell times the cell's volume, with $\omega^*$ bounded on the cell's range of arguments, and works in units
 of $1/K$ with $K = 2^{60}$, every quotient rounded up.
 \begin{itemize}
 \item A dropped cell of depth two costs this bound, \texttt{bound2}.
-\item A decomposed cell $(i, j)$ costs the bounds of its dropped cells of depth four, summed over its non-evaluable
-  cells of depth three: \texttt{refcost}. The cell is decomposed when the sharp rule allows it and this sum is at
+\item A decomposed cell $(i, j)$ costs the sum over its non-evaluable cells of depth three of the costs of its counted
+  cells of depth four: \texttt{refcost}. A counted cell of depth four costs its bound \texttt{bound4} if it is dropped,
+  and, if it is decomposed, the sum of the bounds \texttt{bound6} of the counted cells of depth six below its
+  non-evaluable cells of depth five (\texttt{refcost5}): it is decomposed when the sharp rule allows it and this sum is at
+  most its own \texttt{bound4}. The cell $(i, j)$ is decomposed when the sharp rule allows it and its \texttt{refcost} is at
   most its own \texttt{bound2}.
 \item The total is the sum of the costs over the candidate cells, $\mathtt{total} = \sum_{i, j} \mathtt{cost}(i, j)$.
 \end{itemize}
@@ -711,7 +728,7 @@ If $\mathtt{total}/K \le c$, then for every $\varepsilon > 0$ and all large $q$,
 $D(\mathcal B) \le (c + \varepsilon)\, x/\log x$.
 \end{lemma}
 
-On the grid of this paper the certificate as it stands totals about $1.10833K$ (a computation by
+On the grid of this paper the certificate as it stands totals about $1.11520K$ (a computation by
 \file{tools/linnik/route_limits.py}, not checked in Lean).
 Proposition~\ref{prop:decomp} with Lemma~\ref{lem:drop} then gives nothing. The refinement removes about a tenth of the total.
 
@@ -760,17 +777,21 @@ $\mathtt{total2}/K \le c$, then for every $\varepsilon > 0$, for all large $q$ a
 \subsection{The certificate}
 
 \begin{proposition}\label{prop:certificate}
-On the grid of $n = 300$ cells a side with $U_1 = \lceil (40981/100000) D \rceil$ and
-$U_2 = \lfloor (47725/100000) D \rfloor$, $\mathtt{total2} < K$; in fact $\mathtt{total2}/K = 0.9987228\ldots < 0.99873$.
+On the grid of $n = 360$ cells a side, with $n_C = 90$ cells a side in the coarse grid, and with
+$U_1 = \lceil (41479/100000) D \rceil$ and
+$U_2 = \lfloor (47555/100000) D \rfloor$, $\mathtt{total2} < K$; in fact $\mathtt{total2}/K = 0.9935725\ldots < 0.99358$.
 \end{proposition}
 
 The total is a finite sum of rational expressions in natural numbers, rounded to integers, so the proposition is a
-computation. Lean's kernel checks it by evaluation (\lean{decide +kernel}), split into 561 parts in 143 files: ranges
-of consecutive rows of the grid, and the heaviest $119$ rows in pieces of columns. Each part proves that its sum is at
+computation. Lean's kernel checks it by evaluation (\lean{decide +kernel}), split into 5796 parts in 465 files: ranges
+of consecutive rows of the grid, and the heaviest $200$ rows in pieces of columns. Each part proves that its sum is at
 most a bound $\lceil 1.001 \times \text{part} \rceil$, computed exactly, and the bounds sum to
-$1152600486568670170 < 2^{60} = K$, that is to below $0.99973 K$. The parts make $3{,}515{,}675$ tests of boxes of
-depth four. The definitions
+$1146656663135250298 < 2^{60} = K$, that is to below $0.99458 K$. The cells of the parts are tests of boxes of
+depths four, five and six: about $9.0$ million, $13.3$ million and $2.1$ million tests, as the evaluator
+\file{tools/linnik/mirror2.py} counts them. The definitions
 the kernel evaluates are arithmetic on natural numbers, lists and booleans, and do not depend on Mathlib.
+The deeper levels lower the total of the certificate without the kept parts from $1.41895K$, at depth four, to $1.11520K$, and
+the kept parts then bring it below $K$.
 
 \section{Proof of Theorem~\ref{thm:main}}\label{sec:proof}
 
@@ -801,7 +822,7 @@ by Dirichlet's theorem, and $K'$ is taken large enough to cover them.
 \end{proof}
 
 \begin{proof}[Proof of Theorem~\ref{thm:main}]
-Take $L = 11161/5000$, $u_1 = 40981/100000$, $u_2 = 47725/100000$ and the grid of Proposition~\ref{prop:certificate}. The
+Take $L = 89/40$, $u_1 = 41479/100000$, $u_2 = 47555/100000$ and the grid of Proposition~\ref{prop:certificate}. The
 grid fits the window, since its ends are rounded inward and $L U_2 > D$; Theorem~\ref{thm:type2}, under
 Input~\ref{inp:density}, is the Type~II estimate, and Proposition~\ref{prop:certificate} is $\mathtt{total2} < K$.
 Theorem~\ref{thm:route} gives Theorem~\ref{thm:main} under Input~\ref{inp:density}, and the library's formalisation
@@ -811,7 +832,7 @@ and the kernel bound in Section~\ref{sec:type2}, and through the piece of $g_7$ 
 
 The proof does not compute $K$: the threshold $q_0$ comes from limits in $q$ in each step, and the small moduli
 from Dirichlet's theorem. The Lean proof of Theorem~\ref{thm:route} is \lean{SieveMain2.linnik\_route\_lt2}, and the
-case of Theorem~\ref{thm:main} is \lean{Linnik22322R.linnik\_22322r}, which has no hypotheses: the steps of
+case of Theorem~\ref{thm:main} is \lean{Linnik22250R.linnik\_22250r}, which has no hypotheses: the steps of
 Input~\ref{inp:density} and Input~\ref{inp:half-plane} are theorems of the library.
 
 \section{The formalisation}\label{sec:lean}
@@ -837,13 +858,13 @@ declarations of the library), and
 Claim & Lean \\
 \midrule
 \endhead
-Theorem~\ref{thm:main} & \lean{Linnik22322R.linnik\_22322r} \\
-Proposition~\ref{prop:curve}: $g_7$ is a density curve & \lean{SieveTypeIIU22322D.counts\_7d} \\
+Theorem~\ref{thm:main} & \lean{Linnik22250R.linnik\_22250r} \\
+Proposition~\ref{prop:curve}: $g_7$ is a density curve & \lean{SieveTypeIIU22250D.counts\_7d} \\
 Theorem~\ref{thm:route}, the route theorem & \lean{SieveMain2.linnik\_route\_lt2} \\
-Theorem~\ref{thm:type2}, the Type~II estimate & \lean{SieveTypeIIU22322D.typeII\_22322d} \\
+Theorem~\ref{thm:type2}, the Type~II estimate & \lean{SieveTypeIIU22250D.typeII\_22250d} \\
 Lemma~\ref{lem:prime-sum}, prime sums in a zero-free rectangle & \lean{SieveWeight.norm\_Sp\_le} \\
 Proposition~\ref{prop:type2-gen}, the Type~II estimate on an admissible window & \lean{SieveTypeIIHM.typeII\_gen\_hm} \\
-Proposition~\ref{prop:window}, the window is admissible & \lean{SieveTypeIIU22322D.window\_22322d} \\
+Proposition~\ref{prop:window}, the window is admissible & \lean{SieveTypeIIU22250D.window\_22250d} \\
 Proposition~\ref{prop:decomp}, the decomposition & \lean{SieveBuch.Par.decomp} \\
 Lemma~\ref{lem:drop}, the dropped terms & \lean{SieveDrop.drop\_ev\_of} \\
 Lemma~\ref{lem:kept}, the kept parts & \lean{SieveBuch.Par.Kp2\_le}, \\
@@ -851,7 +872,7 @@ Lemma~\ref{lem:kept}, the kept parts & \lean{SieveBuch.Par.Kp2\_le}, \\
  & \lean{SieveKeptB.Kk\_gB\_ge} \\
 Proposition~\ref{prop:decomp-kept}, with the kept parts & \lean{SieveBuch.Par.decompk}, \\
  & \lean{SieveDrop2.drop\_ev2} \\
-Proposition~\ref{prop:certificate}, the certificate & \lean{SieveCert.total2\_lt\_22322R} \\
+Proposition~\ref{prop:certificate}, the certificate & \lean{SieveCert.total2\_lt\_22250R} \\
 \midrule
 Input~\ref{inp:half-plane} (OpenAI; \file{formalisations/}) & \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt} \\
 Input~\ref{inp:density} (Chen--Gupta--Li, their Proposition~3.1 and the steps derived from it; \file{formalisations/}) & \lean{LinnikCGLSteps.charDensity\_s0}, \\
@@ -884,7 +905,7 @@ Its exponents $12 + \varepsilon$, $36/13 + \varepsilon$ and $12/5 + \varepsilon$
 The Lean statement of Theorem~\ref{thm:main} is
 {\small
 \begin{verbatim}
-theorem linnik_22322r : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ),
+theorem linnik_22250r : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ),
     a.Coprime q → ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧
       (p : ℝ) ≤ K * (q : ℝ) ^ (11161 / 5000 : ℝ)
 \end{verbatim}
@@ -924,7 +945,7 @@ This section claims nothing new. It places Theorem~\ref{thm:main} against what t
 classical argument, which has no sieve. It does not compare Theorem~\ref{thm:main} with the unconditional results of
 Heath-Brown, Xylouris and others, whose exponents ($5.5$, $5$ and below) are not comparable with it: they use
 neither a zero-free half-plane nor a zero-density estimate beyond the published ones. The exponent
-$11161/5000$ is a hypothesis-free Lean theorem whose proof uses the two unrefereed inputs, which the library re-proves, and
+$89/40$ is a hypothesis-free Lean theorem whose proof uses the two unrefereed inputs, which the library re-proves, and
 independent checking of the half-plane result is partial (Section~\ref{sec:inputs}).
 
 \subsection*{The classical deduction}
@@ -965,7 +986,7 @@ Input~\ref{inp:half-plane}, Ingham & density deduction & $36/13 + \varepsilon \a
 Input~\ref{inp:half-plane}, Huxley & density deduction & $12/5 + \varepsilon = 2.4 + \varepsilon$ \\
 Input~\ref{inp:half-plane}, Chen--Gupta--Li's estimate \cite{cgl} & density deduction &
   $7/3 + \varepsilon \approx 2.333$ \\
-Inputs~\ref{inp:half-plane} and~\ref{inp:density}, in steps & sieve, this paper & $11161/5000 = 2.2322$ \\
+Inputs~\ref{inp:half-plane} and~\ref{inp:density}, in steps & sieve, this paper & $89/40 = 2.225$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -980,12 +1001,14 @@ The refinement of Section~\ref{sec:certificate} lowers that cost by evaluating p
 certificate would otherwise drop. The density curve follows the decrease of Chen, Gupta and Li's exponent below $7/3$ after $\sigma = 5/7$ step by step
 (Section~\ref{sec:inputs}).
 
-\subsection*{Below $11161/5000$}
+\subsection*{Below $89/40$}
 
-The method as it stands does not go much further. On the grid of $300$ cells a side the certificate without the
-refinement totals about $1.10833K$ at $11161/5000$, above $K$ (Section~\ref{sec:certificate}); this is a computation, not
-a proof. Going lower would need more of
-the dropped terms evaluated, a sharper bound for the rough numbers than $\omega^*$, or a better density exponent.
+The method as it stands does not go much further. On the grid of $360$ cells a side the certificate without the
+kept parts totals about $1.11520K$ at $89/40$, above $K$, and with them $0.99357K$ (Section~\ref{sec:certificate}); these
+are computations, and the second is checked by Lean's kernel. The same computation (\file{tools/linnik/mirror2.py}, not
+in Lean) gives $0.98699K$ at $388$ cells a side. Going lower would
+need more of the dropped terms evaluated, a sharper bound for the rough numbers than $\omega^*$, or a better density
+exponent.
 
 On the last, one remark, which is an unverified heuristic and not a theorem. The curve $g_7$ is set by Chen, Gupta and
 Li's estimate on $[5/7, 1307/1680]$, and this paper uses no density estimate for all moduli that is better than theirs.

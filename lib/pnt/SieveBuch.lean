@@ -34,8 +34,8 @@ is dropped, and the rest are evaluated or vanish.
 The proof of `decomp`: `lvl4`, `lvl3`, `lvl2`, `lvl1`, one level at a time. A dropped term has `A ≥ 0` and costs its
 `B`-version; a term with sign `−` is bounded above, so it is evaluated or decomposed, never dropped.
 
-The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); `SieveCert.grid2333`
-is one instance.
+The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); `SieveGrid22250R.grid22250R`
+is the one the library uses.
 
 
 The file imports `SieveDecomp.lean`.

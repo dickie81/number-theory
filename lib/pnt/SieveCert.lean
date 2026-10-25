@@ -1,15 +1,14 @@
 /-
 # The certificate of the sieve route's loss, checked by the kernel
 
-Plain statements (`total_le_2333`, `total_div_le`). The loss certificate of the sieve route, with the crude bound for Buchstab's `ω`, is computed here in natural
+Plain statements (`total_div_le`). The loss certificate of the sieve route, with the crude bound for Buchstab's `ω`, is computed here in natural
 numbers on a grid of cells (`Grid`: the window's ends and the number `n` of cells a side). Each cell's bound is computed from
-its corners, rounding up twice (the value of `ω`, then the bound), and is a multiple of `2^{−60}`. On `grid2333`, the
-grid of the curve step at `L = 2333/1000` on the window `[401/1000, 485/1000]` of `SieveTypeII.typeII_step` with
-`n = 70`, the total is at most `0.88` (`total_le_2333`). The kernel checks it by `decide +kernel`; `total_le_2333`
-prints no axioms.
+its corners, rounding up twice (the value of `ω`, then the bound), and is a multiple of `2^{−60}`. The library's certificate is on `grid22250R`, the grid of the curve `g7d` at `L = 89/40`
+on the window `[41479/100000, 47555/100000]` with `n = 360` (`SieveGrid22250R.lean`), and is the refined one of
+`SieveCert2Defs.lean`; the kernel checks it by `decide +kernel` (`SieveCert22250R.lean`).
 
-* The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. The window's ends are `U1 < U2` (for `grid2333`,
-  `U1 = ⌈(401/1000)DEN⌉` and `U2 = ⌊(485/1000)DEN⌋`), `V = U2 − U1`, and the cells of side `H = ⌈(DEN/2 − V)/n⌉` start
+* The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. The window's ends are `U1 < U2` (for `grid22250R`,
+  `U1 = ⌈(41479/100000)DEN⌉` and `U2 = ⌊(47555/100000)DEN⌋`), `V = U2 − U1`, and the cells of side `H = ⌈(DEN/2 − V)/n⌉` start
   at `e k = V + Hk`. `GridOK` lists the facts about the grid that the semantic lemmas below and the route's proofs use;
   for a given grid each is checked by `decide`.
 * The tests, as in the certificate: `cand` (a cell of `(α₁, α₂)` that may meet the region and may be non-evaluable),

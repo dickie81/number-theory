@@ -46,7 +46,7 @@ Its main tools:
   factor below `z`, and `ω*` is a crude upper bound for Buchstab's function `ω`: `0` below `1`, `1/u` on `[1, 2)`,
   and `0.5672` from `2` on (`SieveCert.omegaC`).
 
-These theorems are in the proof of `Linnik22322R.linnik_22322r`, whose axioms are `propext`, `Classical.choice` and
+These theorems are in the proof of `Linnik22250R.linnik_22250r`, whose axioms are `propext`, `Classical.choice` and
 `Quot.sound` (`lib/check/Check.lean`), so they depend on those only.
 
 ## Source

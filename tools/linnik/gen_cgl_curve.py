@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""gen_cgl_curve.py [--check]: the Lean files of the curve `g7d` and its theorem at `L = 11161/5000`.
+"""gen_cgl_curve.py [--check]: the Lean files of the curve `g7d` and its theorem at `L = 89/40`.
 
 `g7d` is `g7c` (`lib/pnt/SieveTypeIIU226C.lean`) with Chen-Gupta-Li's Proposition 3.1 used at every point of
 `[5/7, 1307/1680]`, and Huxley's bound on `[1307/1680, 131/168]` (below), instead of the flat `7/3 + 1/2000` and Huxley's steps there, and with Ingham's last step
@@ -24,8 +24,8 @@ first Chen-Gupta-Li step meet; Ingham's theorem (`LinnikInghamC.charDensity_ingh
 there is cut to `10⁻⁵`.
 
 Writes `lib/pnt/LinnikCGLSteps.lean` (the Chen-Gupta-Li steps, and Ingham's last step `charDensity_inT`),
-`lib/pnt/LinnikHuxJunction.lean` (Huxley's three steps), `lib/pnt/SieveTypeIIU22322D.lean` (`g7d`, its counts, its window
-and Proposition 3′) and `lib/pnt/Linnik22322R.lean` (the theorem). The window `[W1, W2]/100000` is the one
+`lib/pnt/LinnikHuxJunction.lean` (Huxley's three steps), `lib/pnt/SieveTypeIIU22250D.lean` (`g7d`, its counts, its window
+and Proposition 3′) and `lib/pnt/Linnik22250R.lean` (the theorem). The window `[W1, W2]/100000` is the one
 `route_limits.py run` computes for `g7d` at `L` (the sampled scan, then the exact corners). With `--check`, nothing is
 written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a difference). With `--table`, the
 steps' parameters are printed.

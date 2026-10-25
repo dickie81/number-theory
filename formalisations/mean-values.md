@@ -25,7 +25,7 @@ Here `dp S c t = Σ_{j∈S} c_j j^{−it}` (`DirMean.dp`). In words, let `D_χ(t
   `Σ_{χ∈R} |D_χ(x_χ)|² ≤ (q(hi − lo) + 8P(1 + log P))(2 + log²(2P))Σ|c_j|²`.
 
 `LinnikHybrid.large_values_chars_off` is the second with the weights `j^{−β_χ}`, `σ ≤ β_χ ≤ σ + 1/2`, at the cost of a
-factor `e`, and with `Σ|c_j|²j^{−2σ}` on the right. These theorems are in the proof of `Linnik22322R.linnik_22322r`,
+factor `e`, and with `Σ|c_j|²j^{−2σ}` on the right. These theorems are in the proof of `Linnik22250R.linnik_22250r`,
 whose axioms are `propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`), so they depend on those
 only.
 
