@@ -1,107 +1,155 @@
-"""mirror2.py W1 W2 N [OUT.json]: SieveCert2Defs.lean's `total2` on the grid U1 = ⌈(W1/10⁵)DEN⌉, U2 = ⌊(W2/10⁵)DEN⌋,
-n = N, in exact integers, cell by cell as the Lean definitions read (`cand`, `allowed`, `refcost`, `dec`, `bound2`,
-`reg2`, `keep`, `keepK`, `sub2`, `cost2`; natural subtraction truncated at 0). Also `route_limits.replay`'s `total`
-and `refine_k2_probe.replay2`'s refined total, as cross-checks. With OUT, writes per cell (i, j) of nonzero cost or
-work: cost2, the depth-4 tests the kernel makes for it (`counted4` evaluations in `refcost`, for allowed cells) and
-the `surelyEval` tests of `sub2` (for dropped cells of `reg2`)."""
+"""mirror2.py W1 W2 N [OUT.json]: the deep certificate of SieveCertDefs.lean / SieveCert2Defs.lean on the grid
+U1 = ⌈(W1/10⁵)DEN⌉, U2 = ⌊(W2/10⁵)DEN⌋, n = N (a multiple of 4, with the coarse grid of N/4 cells), in exact integers,
+cell by cell as the Lean definitions read: `cand`, `allowed`, `counted4`, `allowed4`, `inKK5`, `ne5`, `counted6`,
+`bound2`, `bound4`, `bound6`, `refcost5`, `dec4`, `cost4`, `refcost`, `dec`, and the kept parts `reg2`, `keep`, `keepK`,
+`sub2`, `cost2` (natural subtraction truncated at 0). Prints `total` (the certificate without the kept parts) and
+`total2` (with them), and, with OUT, writes per candidate cell (i, j): cost2 and the kernel work it makes: the counted
+cells of depth 4 evaluated (t4), the depth-5 cells evaluated (t5, in `allowed4` and `refcost5` together), the depth-6
+cells evaluated (t6) and the `surelyEval` tests of `sub2` (ts). Rows are computed in parallel processes."""
 import json, os, sys, time
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from multiprocessing import Pool
+DEN, K = 2 ** 40, 2 ** 60
+TOPK = None  # set below: ⌈0.5672 K⌉ as in SieveCertDefs.lean
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
 import route_limits as rl
-import refine_k2_probe as rk
-DEN, K, TOPK = rl.DEN, rl.K, rl.TOPK
-tsub, cdiv, subset_sums = rl.tsub, rl.cdiv, rl.subset_sums
+TOPK = rl.TOPK
+tsub, cdiv = rl.tsub, rl.cdiv
 W1, W2, N = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
 OUT = sys.argv[4] if len(sys.argv) > 4 else None
-U1, U2 = (W1 * DEN + 99999) // 100000, W2 * DEN // 100000
+assert N % 4 == 0
 n = N
+nC = n // 4
+U1, U2 = (W1 * DEN + 99999) // 100000, W2 * DEN // 100000
 V = U2 - U1
 H = (tsub(DEN // 2, V) + n - 1) // n
+HC = (tsub(DEN // 2, V) + nC - 1) // nC            # the coarse grid `Gc` of `nC` cells
 lim = tsub(DEN, U1)
-e = lambda k: V + H * k
+E = [V + H * k for k in range(n)]
+EC = [V + HC * b for b in range(nC)]
+LO2, HI2 = tsub(DEN, U2), tsub(DEN, U1)
 def inside(lo, hi):
-    return (U1 < lo and hi < U2) or (tsub(DEN, U2) < lo and hi < tsub(DEN, U1))
-surely = lambda xs: any(inside(*s) for s in subset_sums(xs))
-def invK(s, t, m):
-    return K if DEN <= s + 2 * t + (m + 1) * H else cdiv(K * (t + H), DEN - s - t - m * H)
-def omK(s, t, m):
+    return (U1 < lo and hi < U2) or (LO2 < lo and hi < HI2)
+def sums(boxes):
+    """the subset sums (lo, hi) of boxes [(lo, width)], the empty subset included"""
+    out = [(0, 0)]
+    for lo, w in boxes:
+        out = out + [(a + lo, b + lo + w) for a, b in out]
+    return out
+def surely(boxes): return any(inside(a, b) for a, b in sums(boxes))
+def extend(S, lo, w):
+    """the subset sums with one more box, when those of S are known not to be inside"""
+    return any(inside(a + lo, b + lo + w) for a, b in S)
+def invKw(s, t, W, w):
+    return K if DEN <= s + 2 * t + W + w else cdiv(K * (t + w), DEN - s - t - W)
+def omKw(s, t, W, w):
     if DEN < s + 2 * t: return 0
-    if s + 3 * t + (m + 2) * H <= DEN: return TOPK
-    if DEN < s + 3 * t: return invK(s, t, m)
-    return max(invK(s, t, m), TOPK)
-cell = lambda k: (e(k), e(k) + H)
-def bound2(a, b): return cdiv(H * H * DEN * omK(a, b, 2), a * b * b)
-def bound4(a, b, c, d): return cdiv(H ** 4 * DEN * omK(a + b + c, d, 4), a * b * c * d * d)
-def cand(i, j):
-    ei, ej = e(i), e(j)
-    return (ej < ei + H and 2 * ei < DEN and ei + 2 * ej <= DEN and not (U1 < ei and ei + H < U2)
-            and not surely([cell(i), cell(j)]))
-def inKK(i, j, k): return e(k) < e(j) + H and e(i) + e(j) + 2 * e(k) <= DEN
-def ne3(i, j, k): return not surely([cell(i), cell(j), cell(k)])
-def allowed(i, j):
-    return e(i) + H + (e(j) + H) < lim and all(not (inKK(i, j, k) and ne3(i, j, k)) or e(i) + H + (e(j) + H) + (e(k) + H) < lim
-                                                for k in range(n))
-def counted4(i, j, k, l): return e(i) + e(j) + e(k) + 2 * e(l) <= DEN and not surely([cell(i), cell(j), cell(k), cell(l)])
-def refcost(i, j):
-    """refcost and the counted4 evaluations (`row`'s sumTo over l ≤ k, for each k with inKK && ne3)."""
-    tot = tests = 0
-    for k in range(n):
-        if inKK(i, j, k) and ne3(i, j, k):
-            for l in range(k + 1):
-                tests += 1
-                if counted4(i, j, k, l):
-                    tot += bound4(e(i), e(j), e(k), e(l))
-    return tot, tests
-def reg2(i, j): return e(j) + H <= e(i) and 2 * (e(i) + H) <= DEN
-def keep_tests(i, j, k):
-    """(keep, whether `surelyEval` is evaluated): Bool `&&` evaluates its second argument only when the first is true."""
-    if not (e(j) + H <= e(k)): return False, 0
-    if not (2 * (e(k) + H) + e(i) + e(j) + 2 * H <= DEN): return False, 0
-    return surely([cell(i), cell(j), cell(k)]), 1
+    if s + 3 * t + W + 2 * w <= DEN: return TOPK
+    if DEN < s + 3 * t: return invKw(s, t, W, w)
+    return max(invKw(s, t, W, w), TOPK)
+def bound2(a, b): return cdiv(H * H * DEN * omKw(a, b, 2 * H, H), a * b * b)
+def bound4(a, b, c, d): return cdiv(H ** 4 * DEN * omKw(a + b + c, d, 4 * H, H), a * b * c * d * d)
+def bound6(a, b, c, d, f, g):
+    return cdiv(H ** 4 * HC ** 2 * DEN * omKw(a + b + c + d + f, g, 4 * H + 2 * HC, HC), a * b * c * d * f * g * g)
+def reg2(i, j): return E[j] + H <= E[i] and 2 * (E[i] + H) <= DEN
 def keepK(i, j, k):
-    d = (e(i) + H) * (e(j) + H) * (e(k) + H) * tsub(tsub(tsub(DEN, e(i)), e(j)), e(k))
-    return K * H ** 3 * DEN // d if d else 0
+    d = (E[i] + H) * (E[j] + H) * (E[k] + H) * tsub(tsub(tsub(DEN, E[i]), E[j]), E[k])
+    return K * H ** 3 * DEN // d if d else 0   # division by zero is zero in Lean
 def sub2(i, j):
     if not reg2(i, j): return 0, 0
     tot = tests = 0
+    S2 = sums([(E[i], H), (E[j], H)])
     for k in range(n):
-        kp, t = keep_tests(i, j, k)
-        tests += t
-        if kp: tot += keepK(i, j, k)
+        if not (E[j] + H <= E[k]): continue
+        if not (2 * (E[k] + H) + E[i] + E[j] + 2 * H <= DEN): continue
+        tests += 1
+        if inside_any3(i, j, k):
+            tot += keepK(i, j, k)
     return tot, tests
-t0 = time.time()
-total = total2 = 0
-cells = {}
-rowcost = [0] * n
-for i in range(n):
+def inside_any3(i, j, k): return surely([(E[i], H), (E[j], H), (E[k], H)])
+
+def cell_row(i):
+    """all candidate cells of the row i: {j: (cost, cost_nokept, t4, t5, t6, ts)}"""
+    res = {}
+    ei = E[i]
     for j in range(n):
-        if not cand(i, j): continue
-        b2 = bound2(e(i), e(j))
-        al = allowed(i, j)
-        t4 = 0
+        ej = E[j]
+        if not (ej < ei + H and 2 * ei < DEN and ei + 2 * ej <= DEN and not (U1 < ei and ei + H < U2)): continue
+        S2 = sums([(ei, H), (ej, H)])
+        if any(inside(a, b) for a, b in S2): continue
+        b2 = bound2(ei, ej)
+        al = ei + H + (ej + H) < lim
+        ks = []
+        for k in range(n):
+            ek = E[k]
+            if ek < ej + H and ei + ej + 2 * ek <= DEN:
+                S3 = sums([(ei, H), (ej, H), (ek, H)])
+                if not any(inside(a, b) for a, b in S3):
+                    ks.append((k, S3))
+                    if not (ei + H + (ej + H) + (ek + H) < lim): al = False
+        t4 = t5 = t6 = 0
+        dec = False
         if al:
-            ref, t4 = refcost(i, j)
+            ref = 0
+            for k, S3 in ks:
+                ek = E[k]
+                for l in range(k + 1):
+                    el = E[l]
+                    if not (ei + ej + ek + 2 * el <= DEN): continue
+                    t4 += 1
+                    if extend(S3, el, H): continue          # surely evaluable: cost 0
+                    S4 = ei + ej + ek + el
+                    T4 = S4 + 4 * H
+                    d = T4 < lim
+                    b4 = bound4(ei, ej, ek, el)
+                    # the cells of depth 5
+                    S4s = sums([(ei, H), (ej, H), (ek, H), (el, H)])
+                    ne5 = []
+                    for b in range(nC):
+                        eb = EC[b]
+                        if eb < el + H and S4 + 2 * eb <= DEN:
+                            t5 += 1
+                            if not extend(S4s, eb, HC):
+                                ne5.append(b)
+                                if not (T4 + eb + HC < lim): d = False
+                    if d:
+                        r5 = 0
+                        for b in ne5:
+                            eb = EC[b]
+                            S5s = S4s + [(a + eb, c + eb + HC) for a, c in S4s]
+                            for c in range(b + 1):
+                                ec = EC[c]
+                                if S4 + eb + 2 * ec <= DEN:
+                                    t6 += 1
+                                    if not extend(S5s, ec, HC):
+                                        r5 += bound6(ei, ej, ek, el, eb, ec)
+                        ref += r5 if r5 <= b4 else b4
+                    else:
+                        ref += b4
             dec = ref <= b2
-        else:
-            dec = False
         if dec:
-            c = ref; c1 = ref; ts = 0
+            c = c1 = ref; ts = 0
         else:
             s, ts = sub2(i, j)
             c = tsub(b2, s); c1 = b2
-        total += c1; total2 += c
-        rowcost[i] += c
-        cells[f'{i},{j}'] = (c, t4, ts)
-print(f'grid [{W1}, {W2}]/1e5 n={n}: U1={U1} U2={U2} H={H}; total/K {total / K:.5f} ({total}); total2/K {total2 / K:.5f} '
-      f'({total2}); total2 < K: {total2 < K}; {time.time() - t0:.0f} s', flush=True)
-rt, cnt, gok = rl.replay(U1, U2, n)
-rv = rk.replay2(U1, U2, n)  # the fifth value: total2 by the certificate's own decisions (cost2)
-r1, r2 = rv[:2]
-print(f'route_limits.replay total {rt} equal: {rt == total}; refine_k2_probe.replay2 (total, total2) = ({r1}, {r2}) '
-      f'equal: {r1 == total and r2 == total2}; GridOK {all(gok.values())}')
-if len(rv) > 4:
-    print(f'refine_k2_probe.replay2 fifth value {rv[4]} equal to total2: {rv[4] == total2}')
-t4 = sum(v[1] for v in cells.values()); ts = sum(v[2] for v in cells.values())
-print(f'kernel work: depth-4 tests {t4}, sub2 surelyEval tests {ts}, candidate cells {len(cells)}')
-if OUT:
-    json.dump({'W1': W1, 'W2': W2, 'n': n, 'U1': U1, 'U2': U2, 'H': H, 'total': total, 'total2': total2,
-               'cells': cells}, open(OUT, 'w'))
+        res[j] = (c, c1, t4, t5, t6, ts)
+    return i, res
+
+if __name__ == '__main__':
+    t0 = time.time()
+    with Pool() as p:
+        rows = dict(p.imap_unordered(cell_row, range(n), chunksize=1))
+    cells = {}; total = total2 = 0
+    for i in range(n):
+        for j, (c, c1, t4, t5, t6, ts) in sorted(rows[i].items()):
+            total += c1; total2 += c
+            cells[f'{i},{j}'] = (c, t4, t5, t6, ts)
+    print(f'grid [{W1}, {W2}]/1e5 n={n} nC={nC}: U1={U1} U2={U2} H={H} HC={HC}; total/K {total / K:.5f} ({total}); '
+          f'total2/K {total2 / K:.6f} ({total2}); total2 < K: {total2 < K}; {time.time() - t0:.0f} s', flush=True)
+    t4 = sum(v[1] for v in cells.values()); t5 = sum(v[2] for v in cells.values())
+    t6 = sum(v[3] for v in cells.values()); ts = sum(v[4] for v in cells.values())
+    print(f'kernel work: depth-4 tests {t4}, depth-5 tests {t5}, depth-6 tests {t6}, sub2 surelyEval tests {ts}, '
+          f'candidate cells {len(cells)}')
+    if OUT:
+        json.dump({'W1': W1, 'W2': W2, 'n': n, 'nC': nC, 'U1': U1, 'U2': U2, 'H': H, 'HC': HC, 'total': total,
+                   'total2': total2, 'cells': cells}, open(OUT, 'w'))

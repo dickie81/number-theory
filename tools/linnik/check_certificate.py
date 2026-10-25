@@ -3,7 +3,7 @@
 
 One certificate is checked (with no argument, or named by its tag):
 
-* `22322R`: `SieveCert.total2_lt_22322R` (L = 11161/5000, the window [40981/100000, 47725/100000], n = 300, the curve `g7d`).
+* `22250R`: `SieveCert.total2_lt_22250R` (L = 89/40, the window [41479/100000, 47555/100000], n = 360, the curve `g7d`).
 
 Earlier certificates, at weaker exponents, are no longer in the tree; see the git history.
 
@@ -30,8 +30,8 @@ PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 
 # tag: (W1, W2, n, extra arguments of gen_cert.py)
 CERTS = {
-    '22322R': (40981, 47725, 300, ['--tag', '22322R', '--L', '11161/5000', '--curve', 'g7d',
-                                   '--typeii', 'SieveTypeIIU22322D.typeII_22322d']),
+    '22250R': (41479, 47555, 360, ['--tag', '22250R', '--L', '89/40', '--curve', 'g7d',
+                                   '--typeii', 'SieveTypeIIU22250D.typeII_22250d']),
 }
 
 
