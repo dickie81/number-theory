@@ -7,7 +7,7 @@ The hypothesis on the cubic trace is split into two displayed hypotheses, `CGLS2
 mass of the Gram matrix, Chen–Gupta–Li's Proposition 6.1 at one point per character) and `CGLS3` (their
 Proposition 11.1). This file proves `CGLS2` (`cgls2`), from the explicit bound `LinnikCGLFrob.frobOff_le`, by
 choosing its parameters and bounding each factor by a power of `qT`. Linnik's exponents `9/4` and `226/100` then
-follow from `CGLS3` alone (`linnik_225c_s3`, `linnik_226c_s3`).
+follow from `CGLS3` alone (`linnik_225c_s3`, `linnik_226c_s3`, in `LinnikCGLLegacy.lean`).
 
 
 Plain statement (`cgls2`). For every `ε > 0` there is `C ≥ 0` such that, for `χ` injective on `R` with each `χ_i`
@@ -36,12 +36,13 @@ proof of Proposition 6.1, p. 21). Here `NZ` plays their `NM`, and
 * `char_eq_of_le_two`, `frobOff_eq_zero_of_le_two`, `q_le_two`: for `N ≤ 5/6` (where `S` may contain `1`, outside
   the large sieve's support `[2, X]`), `q ≤ 2`, there is one character mod `q` (`φ(q) = 1`), and `‖E‖_F² = 0`.
 * `cgls2`: `s2_main` at `δ = min(ε, 1)/16`, with `(qT)^{min(ε,1)} ≤ (6/5)^ε(qTN)^ε`.
-* `linnik_225c_s3`, `linnik_226c_s3`: `linnik_225c_s23` and `linnik_226c_s23` with `cgls2`.
+* `linnik_225c_s3`, `linnik_226c_s3` (in `LinnikCGLLegacy.lean`): `linnik_225c_s23` and `linnik_226c_s23` with `cgls2`.
 
-The file imports `LinnikCGLFrob.lean`.
+The file imports `LinnikCGLFrob.lean` and `LinnikTwelve.lean`.
 -/
 
 import LinnikCGLFrob
+import LinnikTwelve
 
 open Complex Set Real Filter Topology MeasureTheory
 
@@ -625,18 +626,6 @@ theorem cgls2 : CGLS2 := by
       _ = (C1 (min ε 1 / 16) + C2 (min ε 1 / 16)) * (6 / 5) ^ ε * ((q : ℝ) * T * N) ^ ε *
           ((q : ℝ) * T * R.card * N ^ (2 - 2 * σ)) := by ring
 
-/-- **Linnik's theorem with exponent `9/4` from the `S₃` hypothesis alone**: `linnik_225c_s23` with
-`cgls2`. -/
-theorem linnik_225c_s3 (h3 : CGLS3) : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (9 / 4 : ℝ) :=
-  linnik_225c_s23 cgls2 h3
-
-/-- **Linnik's theorem with exponent `226/100` from the `S₃` hypothesis alone**: `linnik_226c_s23` with
-`cgls2`. -/
-theorem linnik_226c_s3 (h3 : CGLS3) : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (226 / 100 : ℝ) :=
-  linnik_226c_s23 cgls2 h3
-
 end LinnikCGLS2
 
 #print axioms LinnikCGLS2.LSX_le
@@ -650,5 +639,3 @@ end LinnikCGLS2
 #print axioms LinnikCGLS2.tail_le
 #print axioms LinnikCGLS2.s2_main
 #print axioms LinnikCGLS2.cgls2
-#print axioms LinnikCGLS2.linnik_225c_s3
-#print axioms LinnikCGLS2.linnik_226c_s3

@@ -19,7 +19,7 @@ Plain statement (`CGLS3`, a hypothesis). For every `ε > 0` there is `C ≥ 0` s
 with `μ₀ = (φ(q)/q)N∫w²` (`mu0`, the integral over `[1, 2]`, outside which `w` vanishes).
 
 Plain statement (`third_of_s23`). The two imply `CGLThird`, since `X = 3μ₀‖E‖_F² + S₃` and `0 ≤ μ₀ ≤ N`; so
-`linnik_225c_s23` and `linnik_226c_s23` give Linnik's exponents `9/4` and `226/100` from them.
+`linnik_225c_s23` and `linnik_226c_s23` (in `LinnikCGLLegacy.lean`) give Linnik's exponents `9/4` and `226/100` from them.
 
 Why their paper implies the two. The header shows that at one point per character `Z′ = S₁ = 0`, so that
 `X = S₂ + S₃` (their (5.2)). Their proof of Proposition 6.1 concludes
@@ -280,20 +280,8 @@ theorem third_of_s23 (h2 : CGLS2) (h3 : CGLS3) : CGLThird := by
           mul_le_mul_of_nonneg_left (by linarith) (by positivity)
         nlinarith
 
-/-- **Linnik's theorem with exponent `9/4` from the `S₂` and `S₃` hypotheses.** -/
-theorem linnik_225c_s23 (h2 : CGLS2) (h3 : CGLS3) : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (9 / 4 : ℝ) :=
-  linnik_225c_third (third_of_s23 h2 h3)
-
-/-- **Linnik's theorem with exponent `226/100` from the `S₂` and `S₃` hypotheses.** -/
-theorem linnik_226c_s23 (h2 : CGLS2) (h3 : CGLS3) : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (226 / 100 : ℝ) :=
-  linnik_226c_third (third_of_s23 h2 h3)
-
 end LinnikCGLS23
 
 #print axioms LinnikCGLS23.X3_eq
 #print axioms LinnikCGLS23.mu0_le
 #print axioms LinnikCGLS23.third_of_s23
-#print axioms LinnikCGLS23.linnik_225c_s23
-#print axioms LinnikCGLS23.linnik_226c_s23

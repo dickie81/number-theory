@@ -24,7 +24,7 @@ hypothesis for large `qT`, since `(qT)^ϵ ≤ 2^ϵ(qTN)^ϵ` for `N ≥ 1/2`. For
 `|X| ≤ |R|³(N + 1)³` are bounded while `N³ ≥ 1/8`.
 
 Plain statement (`prop31_of_third`). The hypothesis implies `LinnikCGLLV.CGLProp31`, so `linnik_225c_third` and
-`linnik_226c_third` give Linnik's exponents `9/4` and `226/100` from it.
+`linnik_226c_third` (in `LinnikCGLLegacy.lean`) give Linnik's exponents `9/4` and `226/100` from it.
 
 * `wCGL`: Mathlib's `ContDiffBump` at `3/2` with radii `3/10` and `1/2`: smooth, `0` outside `(1, 2)` and `1` on
   `[6/5, 9/5]`, as their §3 asks of `w`, with values in `[0, 1]`.
@@ -43,10 +43,10 @@ Plain statement (`prop31_of_third`). The hypothesis implies `LinnikCGLLV.CGLProp
 * `prop31_of_third`: `prop46` and `alg112` for `N ≤ qT`, `mvt_case` for `N ≥ max(qT, 10)`, and at most `q < 10`
   characters for `qT < N < 10`.
 
-The file imports `LinnikCGLLinnik.lean`, `LinnikMoment.lean` and `LinnikPoints.lean`.
+The file imports `LinnikCGLLV.lean`, `LinnikMoment.lean` and `LinnikPoints.lean`.
 -/
 
-import LinnikCGLLinnik
+import LinnikCGLLV
 import LinnikMoment
 import LinnikPoints
 
@@ -751,16 +751,6 @@ theorem prop31_of_third (h : CGLThird) : LinnikCGLLV.CGLProp31 := by
             ((q : ℝ) * T) ^ (4 / 3 : ℝ) * N ^ (2 - 4 * σ)) := by rw [mul_assoc]; linarith
         _ ≤ _ := hfin _ (by norm_num) (by rw [hCtot]; linarith)
 
-/-- **Linnik's theorem with exponent `9/4` from the bound on the cubic trace** (`h`). -/
-theorem linnik_225c_third (h : CGLThird) : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (9 / 4 : ℝ) :=
-  LinnikCGLLinnik.linnik_225c_lv (prop31_of_third h)
-
-/-- **Linnik's theorem with exponent `226/100` from the bound on the cubic trace** (`h`). -/
-theorem linnik_226c_third (h : CGLThird) : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (226 / 100 : ℝ) :=
-  LinnikCGLLinnik.linnik_226c_lv (prop31_of_third h)
-
 end LinnikCGLMat
 
 #print axioms LinnikCGLMat.refined_moment_points
@@ -769,5 +759,3 @@ end LinnikCGLMat
 #print axioms LinnikCGLMat.polylog_le
 #print axioms LinnikCGLMat.alg112
 #print axioms LinnikCGLMat.prop31_of_third
-#print axioms LinnikCGLMat.linnik_225c_third
-#print axioms LinnikCGLMat.linnik_226c_third

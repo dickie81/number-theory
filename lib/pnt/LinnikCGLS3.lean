@@ -41,7 +41,7 @@ Plain statements, with `q ≥ 1`, `Q = qT`, `r = |R|`, `E` `energy`, `Φ = qTN`,
 * `cgls3`: `CGLP81 → CGLT101 → CGLS3`.
 * `prop31_pt`: `CGLProp31`, their Proposition 3.1 at one point per character, from `CGLP81` and
   `CGLT101`, through `third_of_s23` with `cgls2`, and `prop31_of_third`.
-* `linnik_225c_pt`, `linnik_226c_pt`: Linnik's theorem with the exponents `9/4` and `226/100` from `CGLP81` and
+* `linnik_225c_pt`, `linnik_226c_pt` (in `LinnikCGLLegacy.lean`): Linnik's theorem with the exponents `9/4` and `226/100` from `CGLP81` and
   `CGLT101`, by `linnik_225c_s3` and `linnik_226c_s3`.
 
 The file imports `LinnikCGLEps.lean`.
@@ -935,20 +935,6 @@ theorem cgls3 (hP : CGLP81) (hT : CGLT101) : CGLS3 := by
 theorem prop31_pt (hP : CGLP81) (hT : CGLT101) : LinnikCGLLV.CGLProp31 :=
   prop31_of_third (third_of_s23 LinnikCGLS2.cgls2 (cgls3 hP hT))
 
-/-! ### Linnik's theorem -/
-
-/-- **Linnik's theorem with exponent `9/4` from their Proposition 8.1 and Heath-Brown's Theorem 10.1**:
-`linnik_225c_s3` with `cgls3`. -/
-theorem linnik_225c_pt (hP : CGLP81) (hT : CGLT101) : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (9 / 4 : ℝ) :=
-  LinnikCGLS2.linnik_225c_s3 (cgls3 hP hT)
-
-/-- **Linnik's theorem with exponent `226/100` from their Proposition 8.1 and Heath-Brown's Theorem 10.1**:
-`linnik_226c_s3` with `cgls3`. -/
-theorem linnik_226c_pt (hP : CGLP81) (hT : CGLT101) : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (226 / 100 : ℝ) :=
-  LinnikCGLS2.linnik_226c_s3 (cgls3 hP hT)
-
 end LinnikCGLS3
 
 #print axioms LinnikCGLS3.S3_le_crude
@@ -964,5 +950,3 @@ end LinnikCGLS3
 #print axioms LinnikCGLS3.small_case
 #print axioms LinnikCGLS3.cgls3
 #print axioms LinnikCGLS3.prop31_pt
-#print axioms LinnikCGLS3.linnik_225c_pt
-#print axioms LinnikCGLS3.linnik_226c_pt

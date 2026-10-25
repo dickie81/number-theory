@@ -213,6 +213,7 @@ import LinnikCGLHBRefl
 import LinnikCGLHBIter
 import LinnikCGLHB101
 import LinnikCGLDensity
+import LinnikCGLLegacy
 import SieveCert2Defs
 import SieveGrid225R
 import SieveCert2
