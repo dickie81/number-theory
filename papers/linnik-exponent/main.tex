@@ -44,13 +44,14 @@
 
 \begin{abstract}
 We prove, in Lean~4, that there is a constant $K$ such that, for every $q \ge 1$ and every $a$ prime to $q$, there is a
-prime $p \equiv a \pmod q$ with $p \le K q^{11161/5000}$. The Lean theorem has no hypotheses, but it rests on two recent results that have not been refereed:
-OpenAI's zero-free half-plane $\operatorname{Re} s > 11/12$ for every Dirichlet $L$-function, and Chen, Gupta and Li's
-zero-density estimate. The library formalises the first from OpenAI's companion preprint. For the second it formalises
-Chen, Gupta and Li's Proposition~3.1 and derives from it their exponent $4/(1 + \sigma)$ on $107$ narrow steps; the
-rest of their paper is not formalised. Lean's kernel checks that these proofs establish the formal statements, not that
-the statements faithfully capture the preprints' theorems, so the theorem is correct only if the preprints are correct
-and the formalisations faithful; independent checking of the half-plane result is partial. The proof is a sieve
+prime $p \equiv a \pmod q$ with $p \le K q^{11161/5000}$. The Lean theorem has no hypotheses: its truth rests on Lean's kernel, Mathlib and the pinned toolchain (with the
+vendored upstream ports and the provenance of the build cache), not on any preprint. Its proof does use two recent
+results that have not been refereed, OpenAI's zero-free half-plane $\operatorname{Re} s > 11/12$ for every Dirichlet
+$L$-function, and Chen, Gupta and Li's zero-density estimate, which the library re-proves from the preprints: the first
+from OpenAI's companion preprint, and for the second it formalises Chen, Gupta and Li's Proposition~3.1 and derives from
+it their exponent $4/(1 + \sigma)$ on $107$ narrow steps; the rest of their paper is not formalised. Whether the formal
+statements faithfully capture the preprints' theorems matters for attributing and interpreting them, not for the truth
+of the Lean theorem; independent checking of the half-plane result is partial. The proof is a sieve
 argument, and its Type~II estimate uses the two results. The theorem, the formalisations of the two results and the
 classical results the proof uses are proved in Lean, and the proof depends on no axioms beyond Lean's standard three.
 The exponent is not comparable with the unconditional exponents of Heath-Brown and Xylouris, which use no zero-free
@@ -79,9 +80,10 @@ estimate (Input~\ref{inp:density}), which Section~\ref{sec:inputs} states. They 
 of the paper is written under them. The library formalises both in Lean, so the Lean theorem does not assume them: the
 half-plane from OpenAI's companion preprint, and the density estimate from Chen, Gupta and Li's Proposition~3.1, with
 the exponents of Input~\ref{inp:density} derived from it. The rest of their paper, in particular their Theorem~1.2, is
-not formalised. The theorem's correctness therefore depends on the two preprints being correct, and on the Lean
-statements of the two inputs being faithful to the preprints' theorems; the kernel checks the proofs but not the
-faithfulness. Section~\ref{sec:inputs} says what is known of independent checking, and Section~\ref{sec:lean} what the
+not formalised. The truth of the Lean theorem therefore rests on Lean's kernel, Mathlib and the pinned toolchain
+(with the vendored upstream ports and the provenance of the build cache), not on the preprints. Whether the Lean
+statements of the two inputs faithfully capture the preprints' theorems matters for attributing and interpreting them, not
+for the truth of the Lean theorem, and the kernel does not check it. Section~\ref{sec:inputs} says what is known of independent checking, and Section~\ref{sec:lean} what the
 library does and does not formalise.
 
 \subsection*{The zeros near $\operatorname{Re} s = 1$}
@@ -205,9 +207,9 @@ $L(s, \chi) \ne 0$, except at $s = 1$ for the trivial character.
 
 This is OpenAI's result \cite{openai}: their companion preprint proves it, and their main preprint proves the
 stronger $\operatorname{Re} s > 7/8$. These preprints have not been refereed. The theorem of this paper uses the result,
-which is proved in Lean as \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt}, following the companion preprint; so the
-correctness of Theorem~\ref{thm:main} depends on the preprint being correct and on that Lean file being a faithful
-formalisation of it.
+which is proved in Lean as \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt}, following the companion preprint. The truth of the Lean theorem does not depend on the preprint
+being correct; whether that Lean statement faithfully captures the preprint's theorem matters for attributing and
+interpreting it.
 
 Independent checking of the result is partial, and little of it is independent of OpenAI. OpenAI's release has its own
 Lean formalisation of the main preprint's result. Its catalogue \texttt{lean/formalization.yaml} \cite{openai-lean},
@@ -221,10 +223,11 @@ rebuilt it on 7 October 2026, which showed its two main theorems to depend on Le
 did not read its proofs in full. This library's proof of Input~\ref{inp:half-plane} is a new formalisation of the
 companion preprint's route, on a different Lean and Mathlib; it imports nothing from the release and was not compared
 with it, but the route is OpenAI's, so it is a second formalisation by the author and not an independent check of the
-mathematics. The only check by anyone other than OpenAI and the author that the author has seen reported, the one
-recorded by the tracker AIProofWatch \cite{aiproofwatch} on 25 October 2026, concerns the specialisation to the
-Riemann zeta function at $7/8$, not Dirichlet $L$-functions in general. So, for Dirichlet $L$-functions in general,
-the author knows of no check independent of OpenAI and of the author. The release's Lean was not confirmed to be
+mathematics. Third-party reports of replaying OpenAI's Lean proof of the $7/8$ result exist (including, in at least one report, for
+the Dirichlet statement); these check the proof, not the mathematics, and the author has not rerun them. The check
+recorded by the tracker AIProofWatch \cite{aiproofwatch} on 25 October 2026 concerns the specialisation to the Riemann zeta
+function at $7/8$, not Dirichlet $L$-functions in general. So the author knows of no review of the mathematics for
+Dirichlet $L$-functions in general that is independent of OpenAI and of the author. The release's Lean was not confirmed to be
 correct, beyond the statement above and the rebuild.
 \file{formalisations/openai-half-plane.md} gives the attribution and the differences between the Lean statement and
 the source's.
@@ -921,8 +924,8 @@ This section claims nothing new. It places Theorem~\ref{thm:main} against what t
 classical argument, which has no sieve. It does not compare Theorem~\ref{thm:main} with the unconditional results of
 Heath-Brown, Xylouris and others, whose exponents ($5.5$, $5$ and below) are not comparable with it: they use
 neither a zero-free half-plane nor a zero-density estimate beyond the published ones. The exponent
-$11161/5000$ is as trustworthy as the two unrefereed inputs and their formalisations, and independent checking of the
-half-plane result is partial (Section~\ref{sec:inputs}).
+$11161/5000$ is a hypothesis-free Lean theorem whose proof uses the two unrefereed inputs, which the library re-proves, and
+independent checking of the half-plane result is partial (Section~\ref{sec:inputs}).
 
 \subsection*{The classical deduction}
 
