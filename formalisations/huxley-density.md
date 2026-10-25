@@ -18,15 +18,18 @@ bound `A` below on `[lo, hi]`. `LFunction` is Mathlib's `DirichletCharacter.LFun
 
 The Linnik proof uses two kinds of instance:
 
-- `LinnikStairs7.charDensity_hx7_0` to `charDensity_hx7_19`, on twenty equal steps `[σ₁, σ₂]` of `[16/21, 5/6]`, each
-  with the exponent `3/(3σ₁ − 1) + 1/2000`: Huxley's exponent at the step's left end, plus `1/2000`. The first step is
-  `[16/21, 643/840]` with the exponent `14003/6000`, which is `7/3 + 1/2000`.
+- `LinnikStairs7.charDensity_hx7_5` to `charDensity_hx7_19`, the last fifteen of twenty equal steps `[σ₁, σ₂]` of
+  `[16/21, 5/6]` (`LinnikStairs7` has `charDensity_hx7_0` … `charDensity_hx7_19`; the first five are replaced in the
+  proof of `Linnik22325R.linnik_22325r` by the steps of `LinnikCGLSteps`, see
+  [chen-gupta-li-density.md](chen-gupta-li-density.md)). Each has the exponent `3/(3σ₁ − 1) + 1/2000`: Huxley's
+  exponent at the step's left end, plus `1/2000`. The first step is `[16/21, 643/840]` with the exponent `14003/6000`,
+  which is `7/3 + 1/2000`.
 - `LinnikStep.charDensity_step`, the exponent `101/50` on `5/6 ≤ σ ≤ 1`, by the same argument at fixed parameters.
   (`LinnikHuxStep.charDensity_step'` derives it again on `[5/6, 11/12]` from `charDensity_gen`.) Above `11/12` it uses
   the zero-free half-plane ([openai-half-plane.md](openai-half-plane.md)): no non-principal character is counted
   there.
 
-These theorems are in the proof of `Linnik22475R.linnik_22475r`, whose axioms are `propext`, `Classical.choice` and
+These theorems are in the proof of `Linnik22325R.linnik_22325r`, whose axioms are `propext`, `Classical.choice` and
 `Quot.sound` (`lib/check/Check.lean`), so they depend on those only. `charDensity_gen` and the twenty steps do not use
 the half-plane: `Eis.LFunction_ne_zero_of_re_gt` is not among the declarations their proofs depend on.
 
