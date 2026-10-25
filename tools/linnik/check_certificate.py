@@ -3,7 +3,7 @@
 
 One certificate is checked (with no argument, or named by its tag):
 
-* `22325R`: `SieveCert.total2_lt_22325R` (L = 893/400, the window [40980/100000, 47731/100000], n = 300, the curve `g7d`).
+* `22322R`: `SieveCert.total2_lt_22322R` (L = 11161/5000, the window [40981/100000, 47725/100000], n = 300, the curve `g7d`).
 
 The `22475R` certificate (L = 899/400, the window [41335/100000, 48069/100000], the curve `g7c`) is no longer in the tree;
 its files are at commit 6df0ebd. `gen_22475r.py` with no options still generates it.
@@ -31,8 +31,8 @@ PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 
 # tag: (W1, W2, n, extra arguments of gen_22475r.py)
 CERTS = {
-    '22325R': (40980, 47731, 300, ['--tag', '22325R', '--L', '893/400', '--curve', 'g7d',
-                                   '--typeii', 'SieveTypeIIU22325D.typeII_22325d']),
+    '22322R': (40981, 47725, 300, ['--tag', '22322R', '--L', '11161/5000', '--curve', 'g7d',
+                                   '--typeii', 'SieveTypeIIU22322D.typeII_22322d']),
 }
 
 

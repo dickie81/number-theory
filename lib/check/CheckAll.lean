@@ -228,10 +228,11 @@ import SieveDrop2
 import SieveMain2
 import Linnik225R
 import LinnikCGLSteps
-import SieveTypeIIU22325D
-import SieveGrid22325R
-import SieveCert22325R
-import Linnik22325R
+import LinnikHuxJunction
+import SieveTypeIIU22322D
+import SieveGrid22322R
+import SieveCert22322R
+import Linnik22322R
 import LinnikGRH
 import ShortPrimesHalfPlane
 import LinnikWeylBridge
@@ -839,15 +840,18 @@ import LinnikWeylBridge
 #print axioms Linnik225R.linnik_225r_of
 #print axioms Linnik225R.linnik_225r
 #print axioms LinnikCGLSteps.charDensity_s0
-#print axioms LinnikCGLSteps.charDensity_s109
+#print axioms LinnikCGLSteps.charDensity_s106
+#print axioms LinnikHuxJunction.charDensity_hj0
+#print axioms LinnikHuxJunction.charDensity_hj1
+#print axioms LinnikHuxJunction.charDensity_hj2
 #print axioms LinnikCGLSteps.charDensity_inT
-#print axioms SieveTypeIIU22325D.counts_7d
-#print axioms SieveTypeIIU22325D.window_22325d
-#print axioms SieveTypeIIU22325D.typeII_22325d
-#print axioms SieveCert.gridOK22325R
-#print axioms SieveCert.total2_lt_22325R
-#print axioms Linnik22325R.fits22325R
-#print axioms Linnik22325R.linnik_22325r
+#print axioms SieveTypeIIU22322D.counts_7d
+#print axioms SieveTypeIIU22322D.window_22322d
+#print axioms SieveTypeIIU22322D.typeII_22322d
+#print axioms SieveCert.gridOK22322R
+#print axioms SieveCert.total2_lt_22322R
+#print axioms Linnik22322R.fits22322R
+#print axioms Linnik22322R.linnik_22322r
 #print axioms LinnikDetect.LSeries_aXχ
 #print axioms LinnikDetect.detect_identityχ
 #print axioms LinnikDetect.dichotomy

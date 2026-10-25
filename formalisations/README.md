@@ -15,7 +15,7 @@ The paper cites the note and does not restate the result as its own.
 | Result | Source | Lean | Used by | Note |
 |---|---|---|---|---|
 | No zero of any Dirichlet `L`-function in `Re s > 11/12`, the pole at `s = 1` excepted | OpenAI, `github.com/openai/math`, entry 003 (the companion preprint of 5 October 2026) | `Eis.LFunction_ne_zero_of_re_gt` | The Linnik exponent paper. One use is the top bin of the Type II estimate (`SieveTypeII.bin_rect`). | [openai-half-plane.md](openai-half-plane.md) |
-| At most `C(qT)^{(7/3)(1−σ)+ε}` characters mod `q` have an `L`-function with a zero in `Re s ≥ σ`, `\|Im s\| ≤ T`, for `5/7 ≤ σ ≤ 16/21` | B. Chen, V. Gupta and Y. C. Li, arXiv:2507.08296v2 | `LinnikCGLDensity.cglDensity`, which proves `LinnikCGL.CGLDensity` | The Linnik exponent paper: `Linnik22325R.linnik_22325r` uses the step `LinnikCGLStep.charDensity_cglGen`; the earlier `899/400` route (`linnik_22475r_of` at `cglDensity`) is at commit `6df0ebd` | [chen-gupta-li-density.md](chen-gupta-li-density.md) |
+| At most `C(qT)^{(7/3)(1−σ)+ε}` characters mod `q` have an `L`-function with a zero in `Re s ≥ σ`, `\|Im s\| ≤ T`, for `5/7 ≤ σ ≤ 16/21` | B. Chen, V. Gupta and Y. C. Li, arXiv:2507.08296v2 | `LinnikCGLDensity.cglDensity`, which proves `LinnikCGL.CGLDensity` | The Linnik exponent paper: `Linnik22322R.linnik_22322r` uses the step `LinnikCGLStep.charDensity_cglGen`; the earlier `899/400` route (`linnik_22475r_of` at `cglDensity`) is at commit `6df0ebd` | [chen-gupta-li-density.md](chen-gupta-li-density.md) |
 | Ingham's zero-density estimate over the characters mod `q`, with a constant exponent on each step | A. E. Ingham, Quart. J. Math. 11 (1940); H. L. Montgomery, *Topics in Multiplicative Number Theory* (1971), Theorem 12.1 | `LinnikInghamC.charDensity_ingham_c` | The density curve of the Linnik paper's Type II estimate, on `[4/7, 5/7]` | [ingham-density.md](ingham-density.md) |
 | Huxley's zero-density estimate over the characters mod `q`, with a constant exponent on each step | M. N. Huxley, Invent. Math. 15 (1972) and Acta Arith. 26 (1975) | `LinnikHuxStep.charDensity_gen`, `LinnikStep.charDensity_step` | The same curve, on `[16/21, 1]` | [huxley-density.md](huxley-density.md) |
 | The Halász–Montgomery inequality over the characters mod `q` | G. Halász, Acta Math. Acad. Sci. Hungar. 19 (1968); H. L. Montgomery, Invent. Math. 8 (1969) | `LinnikPower.hm_duality` | Huxley's estimate, and the top piece `[5/6, 11/12]` of the Type II estimate (`SieveHMBin`) | [halasz-montgomery.md](halasz-montgomery.md) |
@@ -33,19 +33,19 @@ claims it.
 ## The density curve
 
 The Type II estimate of the Linnik paper counts characters by a density curve, `g7d`
-(`SieveTypeIIU22325D.counts_7d`). It is glued from these pieces:
+(`SieveTypeIIU22322D.counts_7d`). It is glued from these pieces:
 
 - the trivial count below `4/7`;
 - Ingham's estimate, on twenty steps of `[4/7, 5/7]` ([ingham-density.md](ingham-density.md));
-- Chen–Gupta–Li's estimate, on 110 steps of `[5/7, 131/168]` ([chen-gupta-li-density.md](chen-gupta-li-density.md));
-- Huxley's estimate, on fifteen steps of `[131/168, 5/6]`, and with the exponent `101/50` from `5/6` on
+- Chen–Gupta–Li's estimate, on 107 steps of `[5/7, 1307/1680]` ([chen-gupta-li-density.md](chen-gupta-li-density.md));
+- Huxley's estimate, on three steps of `[1307/1680, 131/168]` and on fifteen steps of `[131/168, 5/6]`, and with the exponent `101/50` from `5/6` on
   ([huxley-density.md](huxley-density.md)).
 
 Each piece counts characters, not zeros.
 
 ## Standard results
 
-The proof of `Linnik22325R.linnik_22325r` also uses textbook results. The library proves them, or takes them from
+The proof of `Linnik22322R.linnik_22322r` also uses textbook results. The library proves them, or takes them from
 Mathlib, and no note covers them:
 
 - Perron's formula with a smooth weight, and the shifting of vertical contours (`Linnik.perron_exp`,
@@ -82,7 +82,7 @@ the large sieve of the index, these classical results:
 - the ideals of `ℤ[ω]` by norm, the Möbius function on them, and the Dedekind zeta function of a quadratic field
   (`EisensteinIdealCount`, `EisensteinMobius`, `QuadIdeals`).
 
-These lists come from a census of the declarations that the proof of `Linnik22325R.linnik_22325r` uses
+These lists come from a census of the declarations that the proof of `Linnik22322R.linnik_22322r` uses
 (`scripts/census.py`), read module by module.
 
 ## The vendored libraries

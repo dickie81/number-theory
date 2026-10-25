@@ -32,7 +32,7 @@
 \newcommand{\file}[1]{\nolinkurl{#1}}
 \emergencystretch=3em
 
-\title{The least prime in an arithmetic progression:\\ the exponent $893/400$}
+\title{The least prime in an arithmetic progression: the exponent $11161/5000$ from a half-plane zero-free region and a formalised sieve}
 \author{Ritchie Comley}
 \date{Draft}
 
@@ -41,7 +41,7 @@
 
 \begin{abstract}
 We prove that there is a constant $K$ such that, for every $q \ge 1$ and every $a$ prime to $q$, there is a prime
-$p \equiv a \pmod q$ with $p \le K q^{893/400}$. The proof is a sieve argument. Its Type~II estimate uses two
+$p \equiv a \pmod q$ with $p \le K q^{11161/5000}$. The proof is a sieve argument. Its Type~II estimate uses two
 recent results: that no Dirichlet $L$-function vanishes in $\operatorname{Re} s > 11/12$, from OpenAI's release, and
 Chen, Gupta and Li's zero-density estimate, used at its exponent $4/(1 + \sigma)$ on narrow steps. Neither result is
 refereed: the first is in preprints that have not been reviewed, and the second is an arXiv preprint. The theorem
@@ -53,14 +53,14 @@ the proof depends on no axioms beyond Lean's standard three.
 
 \begin{theorem}\label{thm:main}
 There is $K$ such that for every $q \ge 1$ and every $a$ prime to $q$ there is a prime $p \equiv a \pmod q$ with
-$p \le K q^{893/400}$.
+$p \le K q^{11161/5000}$.
 \end{theorem}
 
 Linnik \cite{linnik44} proved that there are absolute constants $K$ and $L$ such that every reduced residue class
 mod $q$ contains a prime $p \le K q^L$. The admissible exponent $L$ has been lowered many times. Heath-Brown
 \cite{heath-brown92} reached $L = 5.5$ and Xylouris $L = 5$ \cite{xylouris11}, and then $L < 5$ \cite{xylouris18}.
 Under the generalised Riemann hypothesis every $L > 2$ is admissible \cite{lls}. Theorem~\ref{thm:main} has
-$L = 893/400 = 2.2325$. Its Lean proof has no hypothesis, but it rests on two recent results that are not yet
+$L = 11161/5000 = 2.2322$. Its Lean proof has no hypothesis, but it rests on two recent results that are not yet
 refereed, OpenAI's zero-free half-plane (Hypothesis~\ref{hyp:half-plane}) and Chen, Gupta and Li's zero-density
 estimate (Hypothesis~\ref{hyp:density}), which Section~\ref{sec:inputs} states.
 
@@ -94,7 +94,7 @@ information. Type~I information is the comparison of $\mathcal A$ with $\mathcal
 integer, which counting in residue classes gives. Type~II information is the comparison on bilinear sums
 $\sum_{mn} a_m b_n$, with $m$ in a range $(x^{u_1}, x^{u_2})$, bounded coefficients $a_m$, and $b_n$ supported on
 products of primes, which needs the zeros. A comparison over all such sums is not available at
-$x = q^{893/400}$. What is available is a window $[u_1, u_2]$ of exponents on which it holds, and the sieve recovers
+$x = q^{11161/5000}$. What is available is a window $[u_1, u_2]$ of exponents on which it holds, and the sieve recovers
 the primes from the sums it can compare,
 losing a fraction of them that a finite computation bounds.
 
@@ -106,7 +106,7 @@ The paper's contributions are three.
   of characters in the bin, which a density estimate bounds; the best of orthogonality and the
   Hal\'asz--Montgomery inequality is taken in each bin. Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density},
   with the classical density estimates of Ingham and Huxley, give the window
-  $[u_1, u_2] = [40980/100000,\ 47731/100000]$ at $L = 893/400$.
+  $[u_1, u_2] = [40981/100000,\ 47725/100000]$ at $L = 11161/5000$.
 \item \emph{A decomposition by Buchstab's identity, with a refinement} (Section~\ref{sec:certificate}). The
   identity is applied to depth four. The terms in which the product of some of the prime variables has its
   exponent in the window, or in its reflection $[1 - u_2, 1 - u_1]$, are Type~II sums and are evaluated, and the
@@ -114,18 +114,21 @@ The paper's contributions are three.
   prime factors in the cofactor and are, in some grouping of their four prime factors, a Type~II sum.
 \item \emph{A certificate} (Section~\ref{sec:certificate}). The fraction of the primes the decomposition loses is
   bounded above by a sum over the cells of a grid of the exponents, computed exactly in integers. On a grid of
-  $300$ cells a side the sum is below $0.98877$, which is less than $1$, so a positive proportion of the primes
+  $300$ cells a side the sum is below $0.99873$, which is less than $1$, so a positive proportion of the primes
   remains.
 \end{enumerate}
 
 \subsection*{The exponent}
 
-The exponent $893/400$ uses Chen, Gupta and Li's Proposition~3.1 at every point of $[5/7, 131/168]$: on each of $110$
-steps of length $1/1680$ the exponent is just above $4/(1 + \sigma)$ at the step's left end. It also uses Ingham's
+The exponent $11161/5000$ uses Chen, Gupta and Li's Proposition~3.1 at every point of $[5/7, 1307/1680]$: on each of
+$107$ steps of length $1/1680$ the exponent is just above $4/(1 + \sigma)$ at the step's left end. From $\sigma = 7/9$
+on, Huxley's exponent $3/(3\sigma - 1)$ is below $4/(1 + \sigma)$, and on the three steps of that length that follow the
+step containing $7/9$, up to $131/168$, the curve takes Huxley's: just above $3/(3\sigma - 1)$ at the step's left end. It also uses Ingham's
 estimate on its last step, $[99/140, 5/7]$, at $\varepsilon = 1/400000$, where the exponent is $7/3 + 1/100000$. The
 steps are narrow because the ends of the window are set by the places where a step's exponent most exceeds the curve it
-bounds: at the step containing $7/9$, where $4/(1 + \sigma)$ meets Huxley's $3/(3\sigma - 1)$, and at $\sigma = 5/7$,
-where the exponent is largest.
+bounds: at the steps around $7/9$, where $4/(1 + \sigma)$ meets Huxley's $3/(3\sigma - 1)$, and at $\sigma = 5/7$,
+where the exponent is largest. Using Huxley's exponent on those three steps, instead of Chen, Gupta and Li's, lowers
+the certificate's total enough to close at $11161/5000$ in place of $893/400 = 2.2325$, a gain of $0.0003$.
 
 The rest is not new. Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density} are OpenAI's and Chen, Gupta and Li's,
 and the density estimates of Ingham \cite{ingham} and Huxley \cite{huxley72, huxley75}, the Hal\'asz--Montgomery
@@ -135,7 +138,7 @@ and Section~\ref{sec:type1} the form of the sieve that is used.
 \subsection*{The formalisation}
 
 Every step of the proof, and every result it uses from the literature, is proved in Lean~4 with the Mathlib
-library. The Lean theorem \lean{Linnik22325R.linnik\_22325r} is Theorem~\ref{thm:main}, and its axioms are Lean's
+library. The Lean theorem \lean{Linnik22322R.linnik\_22322r} is Theorem~\ref{thm:main}, and its axioms are Lean's
 standard three. The certificate's sum is checked by Lean's kernel in 561 parts. Section~\ref{sec:lean} names the Lean
 theorem behind each claim of the paper, and the directory \file{formalisations/} of the repository documents each
 result from the literature: its source, its Lean statement and the differences between them.
@@ -158,7 +161,7 @@ one is $\chi_0$, and $L(s, \chi)$ is the $L$-function of $\chi$, continued to th
 \]
 where $\mathcal R(\sigma, T) = \{s : \operatorname{Re} s \ge \sigma,\ |\operatorname{Im} s| \le T\}$: the number of
 characters mod $q$ whose $L$-function has a zero in the rectangle. It counts characters, not zeros, so a bound
-for the number of zeros bounds it. The proof is a sieve on the integers up to $x = q^L$, with $L = 893/400$ in the
+for the number of zeros bounds it. The proof is a sieve on the integers up to $x = q^L$, with $L = 11161/5000$ in the
 end, and $q$ is taken large.
 
 \begin{hypothesis}[the zero-free half-plane]\label{hyp:half-plane}
@@ -172,10 +175,10 @@ the result. It is proved in Lean as \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt}, 
 the companion preprint. \file{formalisations/openai-half-plane.md} gives the attribution and the differences
 between the Lean statement and the source's.
 
-\begin{hypothesis}[zero-density estimates from $5/7$ to $131/168$]\label{hyp:density}
-For $0 \le k < 110$ let $\sigma_k = 5/7 + k/1680$. There are exponents $A_k$ with
+\begin{hypothesis}[zero-density estimates from $5/7$ to $1307/1680$]\label{hyp:density}
+For $0 \le k < 107$ let $\sigma_k = 5/7 + k/1680$. There are exponents $A_k$ with
 $4/(1 + \sigma_k) < A_k < 4/(1 + \sigma_k) + 1/10000$, listed in the header of \file{lib/pnt/LinnikCGLSteps.lean}
-($A_0 = 2.3334$ and $A_{109} = 2.24833$), such that for each $k$ there is $C$ with the following property: for every
+($A_0 = 2.3334$ and $A_{106} = 2.25057$), such that for each $k$ there is $C$ with the following property: for every
 $q \ge 1$, every $\sigma_k \le \sigma \le \sigma_k + 1/1680$ and every $T \ge 2$, at most
 $C (qT)^{A_k (1 - \sigma)} (1 + \log qT)^{10}$ characters mod $q$ have an $L$-function with a zero in
 $\operatorname{Re} s \ge \sigma$, $|\operatorname{Im} s| \le T$.
@@ -200,7 +203,7 @@ $q \ge 1$, every $1/2 \le \sigma \le 1$ and every $T \ge 2$,
 \]
 \end{definition}
 
-The curve of this paper is the function $g_7$ defined as follows (in Lean, \lean{SieveTypeIIU22325D.g7d}); each of
+The curve of this paper is the function $g_7$ defined as follows (in Lean, \lean{SieveTypeIIU22322D.g7d}); each of
 its pieces is a known density estimate, and the steps make each piece a constant multiple of $1 - \sigma$.
 \begin{itemize}
 \item $g_7(\sigma) = 1$ for $\sigma < 4/7$.
@@ -208,15 +211,18 @@ its pieces is a known density estimate, and the steps make each piece a constant
   $g_7(\sigma) = \bigl(3/(2 - \sigma_2) + \varepsilon\bigr)(1 - \sigma)$: Ingham's exponent at the step's right end,
   with $\varepsilon = 1/2000$ except on the last step $[99/140, 5/7)$, where $\varepsilon = 1/400000$ and the exponent
   is $7/3 + 1/100000$.
-\item On $[5/7, 131/168)$, divided into $110$ steps $[\sigma_k, \sigma_{k+1})$ of length $1/1680$,
+\item On $[5/7, 1307/1680)$, divided into $107$ steps $[\sigma_k, \sigma_{k+1})$ of length $1/1680$,
   $g_7(\sigma) = A_k(1 - \sigma)$ with $A_k$ the exponent of Hypothesis~\ref{hyp:density}.
+\item On $[1307/1680, 131/168)$, divided into three steps $[\sigma_1, \sigma_2)$ of length $1/1680$,
+  $g_7(\sigma) = A'(1 - \sigma)$ with $A' = 2.24915$, $2.24614$ and $2.24315$: Huxley's exponent $3/(3\sigma_1 - 1)$ at the
+  step's left end plus at most $2 \cdot 10^{-4}$.
 \item On $[131/168, 5/6]$, divided into fifteen steps $[\sigma_1, \sigma_2)$ of length $1/280$,
   $g_7(\sigma) = \bigl(3/(3\sigma_1 - 1) + 1/2000\bigr)(1 - \sigma)$: Huxley's exponent at the step's left end.
 \item $g_7(\sigma) = (101/50)(1 - \sigma)$ for $\sigma \ge 5/6$.
 \end{itemize}
 The exponents are written in Lean as fractions; the first step's is $3/(2 - 81/140) + 1/2000 = 840199/398000$. On
-$[4/7, 5/7]$ the exponent rises from about $2.111$ to $7/3 + 1/100000$. On $[5/7, 131/168]$ it falls from $2.3334$ to
-$2.24833$, and on $[131/168, 5/6]$, where Huxley's steps take over at $2.2405$, it falls to about $2.015$. On each step $A(1 - \sigma) \le A(1 - \sigma_1) \le 1$, so $g_7 \le 1$ everywhere, and
+$[4/7, 5/7]$ the exponent rises from about $2.111$ to $7/3 + 1/100000$. On $[5/7, 1307/1680]$ it falls from $2.3334$ to
+$2.25057$, on $[1307/1680, 131/168]$ it falls on to $2.24315$, and on $[131/168, 5/6]$, where Huxley's steps take over at $2.2405$, it falls to about $2.015$. On each step $A(1 - \sigma) \le A(1 - \sigma_1) \le 1$, so $g_7 \le 1$ everywhere, and
 $g_7(1/2) = 1$.
 
 \begin{proposition}\label{prop:curve}
@@ -232,7 +238,11 @@ the sum of the constants, so it suffices to prove the bound on each piece.
   bounds $N^*(\sigma, T; q)$ by $C(qT)^{A(1 - \sigma)}(\log qT)^{10}$ on $[\sigma_1, \sigma_2]$ for every $A$
   above $3/(2 - \sigma_2)$ (\file{formalisations/ingham-density.md}; for the last step, Section~\ref{sec:lean}). Ingham proved his estimate for the zeros of
   $\zeta$; the form over the characters is Theorem~12.1 of Montgomery's book \cite{montgomery-topics}.
-\item On each step of $[5/7, 131/168]$: Hypothesis~\ref{hyp:density}.
+\item On each step of $[5/7, 1307/1680]$: Hypothesis~\ref{hyp:density}.
+\item On each of the three steps of $[1307/1680, 131/168]$: Huxley's estimate \cite{huxley75} over the characters mod $q$,
+  with the exponents $A'$ above, which exceed $3/(3\sigma_1 - 1)$ at the step's left end $\sigma_1$ by less than
+  $2 \cdot 10^{-4}$ (\file{formalisations/huxley-density.md}; the library's step of that argument at new parameters, in
+  \file{lib/pnt/LinnikHuxJunction.lean}).
 \item On each step of $[131/168, 5/6]$: Huxley's estimate \cite{huxley75} over the characters mod $q$, with the
   exponent $3/(3\sigma_1 - 1) + 1/2000$ on $[\sigma_1, \sigma_2]$ (\file{formalisations/huxley-density.md}).
 \item For $\sigma \ge 5/6$: the exponent $101/50$, by the same large-values argument at fixed parameters on
@@ -243,11 +253,12 @@ Each of these bounds is a theorem of the library, with a factor $(\log qT)^{10}$
 claims table of Section~\ref{sec:lean} names them.
 \end{proof}
 
-The only piece that is not classical is the one on $[5/7, 131/168]$, where Chen, Gupta and Li's estimate, in the
+The only piece that is not classical is the one on $[5/7, 1307/1680]$, where Chen, Gupta and Li's estimate, in the
 step form of Hypothesis~\ref{hyp:density}, replaces Huxley's exponent, which is $12/5$ at $\sigma = 3/4$. Their
 exponent is $7/3$ at $\sigma = 5/7$ and falls below it inside the range; the curve $g_7$ follows it step by step,
-to within $10^{-4}$ of $4/(1 + \sigma)$ at each step's left end. From $131/168$ on, Huxley's steps are lower than the exponent of Hypothesis~\ref{hyp:density}
-would be, and $g_7$ uses them. Hypothesis~\ref{hyp:half-plane} enters the curve only
+to within $10^{-4}$ of $4/(1 + \sigma)$ at each step's left end. Huxley's exponent $3/(3\sigma - 1)$ is the smaller of
+the two from $\sigma = 7/9$ on, and $7/9$ lies in the step $[653/840, 1307/1680]$, which is the last of the $107$; so
+from $1307/1680$ on, on the three steps up to $131/168$ and on the steps from $131/168$ on, $g_7$ uses Huxley's. Hypothesis~\ref{hyp:half-plane} enters the curve only
 above $11/12$, and enters the Type~II estimate through the largest real part of the zeros, which it bounds by $11/12$.
 
 \section{The Type II estimate}\label{sec:type2}
@@ -266,7 +277,7 @@ the rest a product of primes, that the non-trivial characters contribute less th
 polynomials above this is the following estimate. Write $\mathcal X^*$ for the non-trivial characters mod $q$.
 
 \begin{theorem}[the Type~II estimate]\label{thm:type2}
-Assume Hypothesis~\ref{hyp:density}, and let $L = 893/400$, $u_1 = 40980/100000$ and $u_2 = 47731/100000$. Let
+Assume Hypothesis~\ref{hyp:density}, and let $L = 11161/5000$, $u_1 = 40981/100000$ and $u_2 = 47725/100000$. Let
 $K_0 \ge 0$ be an integer, $e_1 > 0$ and $0 < \eta \le 10^{-5}$. There is $q_0$ such that for every $q \ge q_0$, every
 $P$ with $q^{u_1 L} \le P \le q^{u_2 L}$, every $S \subseteq (P, 2P]$, all $a_m$ and $h_0$, every $K \le K_0$, and all
 $Q_1, \dots, Q_K \ge q^{e_1}$ and $|h_1|, \dots, |h_K| \le q^\eta$ with $Q_1 \cdots Q_K \le 2^{K_0} q^L/P$,
@@ -393,8 +404,8 @@ $L - 1/25000 + \eta + 1/100000 \le L - 1/50000$.
 \end{proof}
 
 \begin{proposition}\label{prop:window}
-The window $[u_1 L, u_2 L]$, with $u_1 = 40980/100000$ and $u_2 = 47731/100000$, is admissible for $g_7$ at
-$L = 893/400$.
+The window $[u_1 L, u_2 L]$, with $u_1 = 40981/100000$ and $u_2 = 47725/100000$, is admissible for $g_7$ at
+$L = 11161/5000$.
 \end{proposition}
 
 \begin{proof}
@@ -634,7 +645,7 @@ If $\mathtt{total}/K \le c$, then for every $\varepsilon > 0$ and all large $q$,
 $D(\mathcal B) \le (c + \varepsilon)\, x/\log x$.
 \end{lemma}
 
-On the grid of this paper the certificate as it stands totals about $1.09954K$ (a computation by
+On the grid of this paper the certificate as it stands totals about $1.10833K$ (a computation by
 \file{tools/linnik/route_limits.py}, not checked in Lean).
 Proposition~\ref{prop:decomp} with Lemma~\ref{lem:drop} then gives nothing. The refinement removes about a tenth of the total.
 
@@ -683,15 +694,15 @@ $\mathtt{total2}/K \le c$, then for every $\varepsilon > 0$, for all large $q$ a
 \subsection{The certificate}
 
 \begin{proposition}\label{prop:certificate}
-On the grid of $n = 300$ cells a side with $U_1 = \lceil (40980/100000) D \rceil$ and
-$U_2 = \lfloor (47731/100000) D \rfloor$, $\mathtt{total2} < K$; in fact $\mathtt{total2} < 0.98877 K$.
+On the grid of $n = 300$ cells a side with $U_1 = \lceil (40981/100000) D \rceil$ and
+$U_2 = \lfloor (47725/100000) D \rfloor$, $\mathtt{total2} < K$; in fact $\mathtt{total2} < 0.99873 K$.
 \end{proposition}
 
 The total is a finite sum of rational expressions in natural numbers, rounded to integers, so the proposition is a
-computation. Lean's kernel checks it by evaluation (\lean{decide +kernel}), split into 561 parts in 142 files: ranges
+computation. Lean's kernel checks it by evaluation (\lean{decide +kernel}), split into 561 parts in 143 files: ranges
 of consecutive rows of the grid, and the heaviest $119$ rows in pieces of columns. Each part proves that its sum is at
 most a bound $\lceil 1.001 \times \text{part} \rceil$, computed exactly, and the bounds sum to
-$1141112704303444843 < 2^{60} = K$, that is to below $0.98976 K$. The parts make $3{,}505{,}664$ tests of boxes of
+$1152600486568670170 < 2^{60} = K$, that is to below $0.99973 K$. The parts make $3{,}515{,}675$ tests of boxes of
 depth four. The definitions
 the kernel evaluates are arithmetic on natural numbers, lists and booleans, and do not depend on Mathlib.
 
@@ -724,7 +735,7 @@ by Dirichlet's theorem, and $K'$ is taken large enough to cover them.
 \end{proof}
 
 \begin{proof}[Proof of Theorem~\ref{thm:main}]
-Take $L = 893/400$, $u_1 = 40980/100000$, $u_2 = 47731/100000$ and the grid of Proposition~\ref{prop:certificate}. The
+Take $L = 11161/5000$, $u_1 = 40981/100000$, $u_2 = 47725/100000$ and the grid of Proposition~\ref{prop:certificate}. The
 grid fits the window, since its ends are rounded inward and $L U_2 > D$; Theorem~\ref{thm:type2}, under
 Hypothesis~\ref{hyp:density}, is the Type~II estimate, and Proposition~\ref{prop:certificate} is $\mathtt{total2} < K$.
 Theorem~\ref{thm:route} gives Theorem~\ref{thm:main} under Hypothesis~\ref{hyp:density}, and Chen, Gupta and Li's
@@ -734,14 +745,14 @@ and the kernel bound in Section~\ref{sec:type2}, and through the piece of $g_7$ 
 
 The proof does not compute $K$: the threshold $q_0$ comes from limits in $q$ in each step, and the small moduli
 from Dirichlet's theorem. The Lean proof of Theorem~\ref{thm:route} is \lean{SieveMain2.linnik\_route\_lt2}, and the
-case of Theorem~\ref{thm:main} is \lean{Linnik22325R.linnik\_22325r}, which has no hypothesis: the steps of
+case of Theorem~\ref{thm:main} is \lean{Linnik22322R.linnik\_22322r}, which has no hypothesis: the steps of
 Hypothesis~\ref{hyp:density} are theorems of the library.
 
 \section{The formalisation}\label{sec:lean}
 
 Every claim of the paper is a theorem of the Lean library in \texttt{lib/} of the repository, which is built with
 Lean~4 and Mathlib. The table names each one. The file \texttt{lib/check/Check.lean} prints the axioms of these
-theorems (of the 110 steps of the density curve it prints the first and the last, and it prints Ingham's last step and
+theorems (of the 107 Chen, Gupta and Li steps of the density curve it prints the first and the last, of the three Huxley steps of \texttt{LinnikHuxJunction.lean} the first and the last, and it prints Ingham's last step and
 Chen, Gupta and Li's Proposition~3.1; the other steps print their axioms in the module that proves them,
 \texttt{LinnikCGLSteps.lean}, when it is built; \texttt{lib/check/CheckAll.lean} prints the axioms of further
 declarations of the library), and
@@ -754,13 +765,13 @@ declarations of the library), and
 Claim & Lean \\
 \midrule
 \endhead
-Theorem~\ref{thm:main} & \lean{Linnik22325R.linnik\_22325r} \\
-Proposition~\ref{prop:curve}: $g_7$ is a density curve & \lean{SieveTypeIIU22325D.counts\_7d} \\
+Theorem~\ref{thm:main} & \lean{Linnik22322R.linnik\_22322r} \\
+Proposition~\ref{prop:curve}: $g_7$ is a density curve & \lean{SieveTypeIIU22322D.counts\_7d} \\
 Theorem~\ref{thm:route}, the route theorem & \lean{SieveMain2.linnik\_route\_lt2} \\
-Theorem~\ref{thm:type2}, the Type~II estimate & \lean{SieveTypeIIU22325D.typeII\_22325d} \\
+Theorem~\ref{thm:type2}, the Type~II estimate & \lean{SieveTypeIIU22322D.typeII\_22322d} \\
 Lemma~\ref{lem:prime-sum}, prime sums in a zero-free rectangle & \lean{SieveWeight.norm\_Sp\_le} \\
 Proposition~\ref{prop:type2-gen}, the Type~II estimate on an admissible window & \lean{SieveTypeIIHM.typeII\_gen\_hm} \\
-Proposition~\ref{prop:window}, the window is admissible & \lean{SieveTypeIIU22325D.window\_22325d} \\
+Proposition~\ref{prop:window}, the window is admissible & \lean{SieveTypeIIU22322D.window\_22322d} \\
 Proposition~\ref{prop:decomp}, the decomposition & \lean{SieveBuch.Par.decomp} \\
 Lemma~\ref{lem:drop}, the dropped terms & \lean{SieveDrop.drop\_ev\_of} \\
 Lemma~\ref{lem:kept}, the kept parts & \lean{SieveBuch.Par.Kp2\_le}, \\
@@ -768,13 +779,15 @@ Lemma~\ref{lem:kept}, the kept parts & \lean{SieveBuch.Par.Kp2\_le}, \\
  & \lean{SieveKeptB.Kk\_gB\_ge} \\
 Proposition~\ref{prop:decomp-kept}, with the kept parts & \lean{SieveBuch.Par.decompk}, \\
  & \lean{SieveDrop2.drop\_ev2} \\
-Proposition~\ref{prop:certificate}, the certificate & \lean{SieveCert.total2\_lt\_22325R} \\
+Proposition~\ref{prop:certificate}, the certificate & \lean{SieveCert.total2\_lt\_22322R} \\
 \midrule
 Hypothesis~\ref{hyp:half-plane} (OpenAI; \file{formalisations/}) & \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt} \\
 Hypothesis~\ref{hyp:density} (Chen--Gupta--Li; \file{formalisations/}) & \lean{LinnikCGLSteps.charDensity\_s0}, \\
- & \dots, \lean{LinnikCGLSteps.charDensity\_s109}, \\
+ & \dots, \lean{LinnikCGLSteps.charDensity\_s106}, \\
  & \lean{LinnikCGLHB101.prop31} \\
 Ingham's last step, $\varepsilon = 1/400000$ & \lean{LinnikCGLSteps.charDensity\_inT} \\
+Huxley's three steps on $[1307/1680, 131/168]$ (\file{formalisations/}) & \lean{LinnikHuxJunction.charDensity\_hj0}, \\
+ & \dots, \lean{LinnikHuxJunction.charDensity\_hj2} \\
 Ingham's density estimate (\file{formalisations/}) & \lean{LinnikInghamC.charDensity\_ingham\_c} \\
 Huxley's density estimate (\file{formalisations/}) & \lean{LinnikHuxStep.charDensity\_gen} \\
 Huxley's estimate from $5/6$ on (\file{formalisations/}) & \lean{LinnikStep.charDensity\_step} \\
@@ -799,9 +812,9 @@ Its exponents $12 + \varepsilon$, $36/13 + \varepsilon$ and $12/5 + \varepsilon$
 The Lean statement of Theorem~\ref{thm:main} is
 {\small
 \begin{verbatim}
-theorem linnik_22325r : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ),
+theorem linnik_22322r : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ),
     a.Coprime q → ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧
-      (p : ℝ) ≤ K * (q : ℝ) ^ (893 / 400 : ℝ)
+      (p : ℝ) ≤ K * (q : ℝ) ^ (11161 / 5000 : ℝ)
 \end{verbatim}
 }
 where \lean{[NeZero q]} says $q \ge 1$ and the power is the real power. The statements of the two hypotheses and of the
@@ -870,7 +883,7 @@ Hypothesis~\ref{hyp:half-plane}, Ingham & density deduction & $36/13 + \varepsil
 Hypothesis~\ref{hyp:half-plane}, Huxley & density deduction & $12/5 + \varepsilon = 2.4 + \varepsilon$ \\
 Hypothesis~\ref{hyp:half-plane}, Chen--Gupta--Li & density deduction \cite{cgl} &
   $7/3 + \varepsilon \approx 2.333$ \\
-Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density}, in steps & sieve, this paper & $893/400 = 2.2325$ \\
+Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density}, in steps & sieve, this paper & $11161/5000 = 2.2322$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -885,15 +898,15 @@ The refinement of Section~\ref{sec:certificate} lowers that cost by evaluating p
 certificate would otherwise drop. The density curve follows the decrease of Chen, Gupta and Li's exponent below $7/3$ after $\sigma = 5/7$ step by step
 (Section~\ref{sec:inputs}).
 
-\subsection*{Below $893/400$}
+\subsection*{Below $11161/5000$}
 
 The method as it stands does not go much further. On the grid of $300$ cells a side the certificate without the
-refinement totals about $1.09954K$ at $893/400$, above $K$ (Section~\ref{sec:certificate}); this is a computation, not
+refinement totals about $1.10833K$ at $11161/5000$, above $K$ (Section~\ref{sec:certificate}); this is a computation, not
 a proof. Going lower would need more of
 the dropped terms evaluated, a sharper bound for the rough numbers than $\omega^*$, or a better density exponent.
 
 On the last, one remark, which is a heuristic and not a theorem. The curve $g_7$ is set by Chen, Gupta and Li's
-estimate on $[5/7, 131/168]$, and this paper uses no density estimate for all moduli that is better than theirs. A
+estimate on $[5/7, 1307/1680]$, and this paper uses no density estimate for all moduli that is better than theirs. A
 rough model of the method, made outside the library, not checked in Lean and accurate to about $5 \cdot 10^{-4}$,
 suggests that even a hypothetical saving in a term of their bound for prime moduli, as large as
 square-root cancellation, would lower the exponent only to about $2.2168$. A larger improvement would then need new
