@@ -251,7 +251,7 @@ man = []
 for fi, g in enumerate(groups, 1):
     mt = max(parts[k][-2] for k in g); T = sum(parts[k][-2] for k in g); C = sum(pcands(parts[k]) for k in g)
     man.append(dict(file=f'SieveCert{TAG}P{fi}', parts=len(g), work=T, maxpart=mt, cands=C,
-                    peak=round(2.5 + 0.29 * mt / 1000, 1), secs=round(T / 1400 + 4)))
+                    peak=round(2.5 + 0.29 * mt / 1000, 1), secs=round(T / 400 + 10)))
 json.dump(man, open(OUT + f'files{TAGL}.json', 'w'))
 print(f'predicted: kernel time one lane {sum(m["secs"] for m in man) / 3600:.2f} h; parts {np_}, files {NF}, '
       f'largest cands per part {max(pcands(p) for p in parts)}')
