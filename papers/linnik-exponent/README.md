@@ -4,7 +4,7 @@
 the two inputs and the density curve, the Type II estimate, Type I and Harman's sieve, the decomposition and its
 certificate, the proof, the formalisation, and a comparison with what the inputs give without the sieve. The
 bibliography entries were checked against the publishers', arXiv and repository pages and, for Ingham and Huxley,
-against scans of the originals; Buchstab's volume, issue and pages (1937) are still unverified, having been seen in secondary
+against scans of the originals; Xylouris's Acta Arith. 150 paper (L = 5.18, checked against the journal's PDF and EUDML) and the Lamzouri–Li–Soundararajan corrigendum (checked against the AMS contents page, Math. Comp. 86 (2017), 2551–2554) were added later; Buchstab's volume, issue and pages (1937) are still unverified, having been seen in secondary
 sources only, and the entries for the OpenAI preprints and the AIProofWatch record are web pages, not refereed sources. The paper claims only its own steps. The results it uses from the literature are cited to their sources and to
 [`formalisations/`](../../formalisations/README.md): its two inputs, OpenAI's zero-free half-plane and Chen, Gupta
 and Li's density estimate, and the classical results its proof uses, among them Ingham's and Huxley's density estimates,

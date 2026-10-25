@@ -37,7 +37,7 @@
 
 \title{The least prime in an arithmetic progression: the exponent $11161/5000$ from a half-plane zero-free region, a zero-density estimate and a formalised sieve}
 \author{Ritchie Comley}
-\date{Draft}
+\date{Draft, 25 October 2026}
 
 \begin{document}
 \maketitle
@@ -64,8 +64,9 @@ $p \le K q^{11161/5000}$.
 
 Linnik \cite{linnik44} proved that there are absolute constants $K$ and $L$ such that every reduced residue class
 mod $q$ contains a prime $p \le K q^L$. The admissible exponent $L$ has been lowered many times. Heath-Brown
-\cite{heath-brown92} reached $L = 5.5$ and Xylouris $L = 5$ \cite{xylouris11}, and then $L < 5$ \cite{xylouris18}.
-Under the generalised Riemann hypothesis every $L > 2$ is admissible \cite{lls}. Theorem~\ref{thm:main} has
+\cite{heath-brown92} reached $L = 5.5$, Xylouris $L = 5.18$ \cite{xylouris-acta} and then $L = 5$ \cite{xylouris11},
+and later a value below $5$ \cite{xylouris18}.
+Under the generalised Riemann hypothesis every $L > 2$ is admissible \cite{lls, lls-corr}. Theorem~\ref{thm:main} has
 $L = 11161/5000 = 2.2322$. This is not comparable with the exponents of Heath-Brown and Xylouris: those are
 unconditional and use neither a zero-free half-plane nor a zero-density estimate that has not been refereed, and
 Theorem~\ref{thm:main} uses both.
@@ -866,8 +867,12 @@ the published one.
 
 \subsection*{What the kernel checks}
 
-The library's own sources contain no \lean{sorry}, no declared axiom and no \lean{native\_decide}, which
-\texttt{scripts/check\_hygiene.py} checks. The certificate of Proposition~\ref{prop:certificate} is checked by kernel
+The library's own sources, the directories \texttt{lib/core}, \texttt{lib/pnt}, \texttt{lib/dh},
+\texttt{lib/zeta23} and \texttt{lib/check}, contain no \lean{sorry}, no declared axiom and no \lean{native\_decide},
+which \texttt{scripts/check\_hygiene.py} checks. That scan does not cover the vendored upstream files in
+\texttt{lib/vendor}, one of which (\texttt{Wiener.lean} of PrimeNumberTheoremAnd) contains \lean{sorry}; the axiom
+check of the theorems in the table covers the whole dependency cone of each, and a \lean{sorry} in it would appear
+there as \lean{sorryAx}. The certificate of Proposition~\ref{prop:certificate} is checked by kernel
 evaluation, \lean{decide +kernel}, and not by compiled code. The library uses 19 files of PrimeNumberTheoremAnd and
 59 files of the \texttt{zeta23} folder of Anthropic's \texttt{formal-math}, each ported to the library's toolchain by
 a patch that the repository records.
@@ -969,17 +974,23 @@ kernel and the repository's continuous integration, and not by the assistants.
 
 % The entries were checked against the publishers', arXiv and repository pages and, for Ingham (Quart. J. Math. 11, issue 44,
 % December 1940) and Huxley (Invent. Math. 15, 1972), against scans of the originals on 25 October 2026. Still open:
-% Buchstab's volume, issue and pages, seen in secondary sources only (the original on Math-Net.Ru was not reachable).
+% Xylouris (Acta Arith. 150, 65--91; L = 5.18 read in the journal's PDF) and the Lamzouri--Li--Soundararajan corrigendum (Math. Comp. 86,
+% 2551--2554, from the AMS contents page) were checked the same day. Buchstab's volume, issue and pages, seen in secondary sources only (the original on Math-Net.Ru was not reachable).
 \begin{thebibliography}{99}
 \bibitem{linnik44} U. V. Linnik, \emph{On the least prime in an arithmetic progression. I. The basic theorem},
   Rec. Math. [Mat. Sbornik] N.S. 15(57) (1944), 139--178.
 \bibitem{heath-brown92} D. R. Heath-Brown, \emph{Zero-free regions for Dirichlet $L$-functions, and the least prime
   in an arithmetic progression}, Proc. London Math. Soc. (3) 64 (1992), 265--338.
+\bibitem{xylouris-acta} T. Xylouris, \emph{On the least prime in an arithmetic progression and estimates for the zeros of
+  Dirichlet $L$-functions}, Acta Arith. 150 (2011), no. 1, 65--91.
 \bibitem{xylouris11} T. Xylouris, \emph{\"Uber die Nullstellen der Dirichletschen $L$-Funktionen und die kleinste
   Primzahl in einer arithmetischen Progression}, Bonner Math. Schriften 404, Bonn, 2011.
 \bibitem{xylouris18} T. Xylouris, \emph{Linniks Konstante ist kleiner als 5}, Chebyshevskii Sb. 19 (2018), 80--94.
 \bibitem{lls} Y. Lamzouri, X. Li and K. Soundararajan, \emph{Conditional bounds for the least quadratic non-residue
   and related problems}, Math. Comp. 84 (2015), 2391--2412.
+\bibitem{lls-corr} Y. Lamzouri, X. Li and K. Soundararajan, \emph{Corrigendum to ``Conditional bounds for the least
+  quadratic non-residue and related problems''}, Math. Comp. 86 (2017), no. 307, 2551--2554 (it corrects Lemma~6.1 and
+  Theorems~1.2 and~1.3 of \cite{lls}).
 \bibitem{openai} OpenAI, \emph{The Quasi-Riemann Hypothesis: A Zero-Free Half-Plane $\operatorname{Re}(s) > 7/8$},
   preprint, 30 September 2026, and \emph{The Quasi-Riemann Hypothesis}, preprint, 5 October 2026 (which proves
   $\operatorname{Re}(s) > 11/12$ by a different route); \url{https://github.com/openai/math}, entry 003. Neither
