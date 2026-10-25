@@ -154,6 +154,35 @@ namespace LinnikCGLSteps
 
 open LinnikCGLStep
 
+/-- `ParC.Good` for numerals: the fifteen fields of `ParC.Good` are closed, in the order of the structure, by
+`norm_num` on the unfolded parameters, and by `linarith` for the three exponent conditions (affine in `σ` once the
+parameters are numerals). One use for each step below. -/
+macro "cgl_good " P:ident : tactic =>
+  `(tactic| (
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp [$P:ident]
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · intro σ h1 h2
+      simp only [$P:ident] at *
+      refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
+    · intro σ h1 h2
+      simp only [$P:ident] at *
+      linarith
+    · intro σ h2
+      simp only [$P:ident] at *
+      push_cast
+      linarith
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num))
+
 /-- Step 0, `[5 / 7, 1201 / 1680]`: `M = 1556`, `a = 0.77778`, `λ = 1.16669`, `A_i = 2.33339`,
 `A = 2.33340`, `e = 1/100000`. -/
 def parS0 : ParC where
@@ -166,32 +195,7 @@ def parS0 : ParC where
   A := (11667 / 5000)
   e := 1 / 100000
 
-theorem parS0_good : parS0.Good where
-  he := by simp only [parS0]; norm_num
-  he1 := by simp only [parS0]; norm_num
-  hM := by simp [parS0]
-  ha := by simp only [parS0]; norm_num
-  hat := by simp only [parS0]; norm_num
-  hlam1 := by simp only [parS0]; norm_num
-  hlam2 := by simp only [parS0]; norm_num
-  hlam3 := by simp only [parS0]; norm_num
-  hlo := by simp only [parS0]; norm_num
-  hhi := by simp only [parS0]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS0] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS0] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS0] at *
-    push_cast
-    linarith
-  hA := by simp only [parS0]; norm_num
-  hA10 := by simp only [parS0]; norm_num
+theorem parS0_good : parS0.Good := by cgl_good parS0
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[5 / 7, 1201 / 1680]`, density step 0**: there is `C ≥ 0` such that for every
@@ -217,32 +221,7 @@ def parS1 : ParC where
   A := (116629 / 50000)
   e := 1 / 100000
 
-theorem parS1_good : parS1.Good where
-  he := by simp only [parS1]; norm_num
-  he1 := by simp only [parS1]; norm_num
-  hM := by simp [parS1]
-  ha := by simp only [parS1]; norm_num
-  hat := by simp only [parS1]; norm_num
-  hlam1 := by simp only [parS1]; norm_num
-  hlam2 := by simp only [parS1]; norm_num
-  hlam3 := by simp only [parS1]; norm_num
-  hlo := by simp only [parS1]; norm_num
-  hhi := by simp only [parS1]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS1] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS1] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS1] at *
-    push_cast
-    linarith
-  hA := by simp only [parS1]; norm_num
-  hA10 := by simp only [parS1]; norm_num
+theorem parS1_good : parS1.Good := by cgl_good parS1
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1201 / 1680, 601 / 840]`, density step 1**: there is `C ≥ 0` such that for every
@@ -268,32 +247,7 @@ def parS2 : ParC where
   A := (116589 / 50000)
   e := 1 / 100000
 
-theorem parS2_good : parS2.Good where
-  he := by simp only [parS2]; norm_num
-  he1 := by simp only [parS2]; norm_num
-  hM := by simp [parS2]
-  ha := by simp only [parS2]; norm_num
-  hat := by simp only [parS2]; norm_num
-  hlam1 := by simp only [parS2]; norm_num
-  hlam2 := by simp only [parS2]; norm_num
-  hlam3 := by simp only [parS2]; norm_num
-  hlo := by simp only [parS2]; norm_num
-  hhi := by simp only [parS2]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS2] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS2] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS2] at *
-    push_cast
-    linarith
-  hA := by simp only [parS2]; norm_num
-  hA10 := by simp only [parS2]; norm_num
+theorem parS2_good : parS2.Good := by cgl_good parS2
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[601 / 840, 401 / 560]`, density step 2**: there is `C ≥ 0` such that for every
@@ -319,32 +273,7 @@ def parS3 : ParC where
   A := (29137 / 12500)
   e := 1 / 100000
 
-theorem parS3_good : parS3.Good where
-  he := by simp only [parS3]; norm_num
-  he1 := by simp only [parS3]; norm_num
-  hM := by simp [parS3]
-  ha := by simp only [parS3]; norm_num
-  hat := by simp only [parS3]; norm_num
-  hlam1 := by simp only [parS3]; norm_num
-  hlam2 := by simp only [parS3]; norm_num
-  hlam3 := by simp only [parS3]; norm_num
-  hlo := by simp only [parS3]; norm_num
-  hhi := by simp only [parS3]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS3] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS3] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS3] at *
-    push_cast
-    linarith
-  hA := by simp only [parS3]; norm_num
-  hA10 := by simp only [parS3]; norm_num
+theorem parS3_good : parS3.Good := by cgl_good parS3
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[401 / 560, 43 / 60]`, density step 3**: there is `C ≥ 0` such that for every
@@ -370,32 +299,7 @@ def parS4 : ParC where
   A := (29127 / 12500)
   e := 1 / 100000
 
-theorem parS4_good : parS4.Good where
-  he := by simp only [parS4]; norm_num
-  he1 := by simp only [parS4]; norm_num
-  hM := by simp [parS4]
-  ha := by simp only [parS4]; norm_num
-  hat := by simp only [parS4]; norm_num
-  hlam1 := by simp only [parS4]; norm_num
-  hlam2 := by simp only [parS4]; norm_num
-  hlam3 := by simp only [parS4]; norm_num
-  hlo := by simp only [parS4]; norm_num
-  hhi := by simp only [parS4]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS4] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS4] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS4] at *
-    push_cast
-    linarith
-  hA := by simp only [parS4]; norm_num
-  hA10 := by simp only [parS4]; norm_num
+theorem parS4_good : parS4.Good := by cgl_good parS4
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[43 / 60, 241 / 336]`, density step 4**: there is `C ≥ 0` such that for every
@@ -421,32 +325,7 @@ def parS5 : ParC where
   A := (116467 / 50000)
   e := 1 / 100000
 
-theorem parS5_good : parS5.Good where
-  he := by simp only [parS5]; norm_num
-  he1 := by simp only [parS5]; norm_num
-  hM := by simp [parS5]
-  ha := by simp only [parS5]; norm_num
-  hat := by simp only [parS5]; norm_num
-  hlam1 := by simp only [parS5]; norm_num
-  hlam2 := by simp only [parS5]; norm_num
-  hlam3 := by simp only [parS5]; norm_num
-  hlo := by simp only [parS5]; norm_num
-  hhi := by simp only [parS5]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS5] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS5] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS5] at *
-    push_cast
-    linarith
-  hA := by simp only [parS5]; norm_num
-  hA10 := by simp only [parS5]; norm_num
+theorem parS5_good : parS5.Good := by cgl_good parS5
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[241 / 336, 201 / 280]`, density step 5**: there is `C ≥ 0` such that for every
@@ -472,32 +351,7 @@ def parS6 : ParC where
   A := (116427 / 50000)
   e := 1 / 100000
 
-theorem parS6_good : parS6.Good where
-  he := by simp only [parS6]; norm_num
-  he1 := by simp only [parS6]; norm_num
-  hM := by simp [parS6]
-  ha := by simp only [parS6]; norm_num
-  hat := by simp only [parS6]; norm_num
-  hlam1 := by simp only [parS6]; norm_num
-  hlam2 := by simp only [parS6]; norm_num
-  hlam3 := by simp only [parS6]; norm_num
-  hlo := by simp only [parS6]; norm_num
-  hhi := by simp only [parS6]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS6] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS6] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS6] at *
-    push_cast
-    linarith
-  hA := by simp only [parS6]; norm_num
-  hA10 := by simp only [parS6]; norm_num
+theorem parS6_good : parS6.Good := by cgl_good parS6
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[201 / 280, 1207 / 1680]`, density step 6**: there is `C ≥ 0` such that for every
@@ -523,32 +377,7 @@ def parS7 : ParC where
   A := (58193 / 25000)
   e := 1 / 100000
 
-theorem parS7_good : parS7.Good where
-  he := by simp only [parS7]; norm_num
-  he1 := by simp only [parS7]; norm_num
-  hM := by simp [parS7]
-  ha := by simp only [parS7]; norm_num
-  hat := by simp only [parS7]; norm_num
-  hlam1 := by simp only [parS7]; norm_num
-  hlam2 := by simp only [parS7]; norm_num
-  hlam3 := by simp only [parS7]; norm_num
-  hlo := by simp only [parS7]; norm_num
-  hhi := by simp only [parS7]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS7] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS7] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS7] at *
-    push_cast
-    linarith
-  hA := by simp only [parS7]; norm_num
-  hA10 := by simp only [parS7]; norm_num
+theorem parS7_good : parS7.Good := by cgl_good parS7
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1207 / 1680, 151 / 210]`, density step 7**: there is `C ≥ 0` such that for every
@@ -574,32 +403,7 @@ def parS8 : ParC where
   A := (58173 / 25000)
   e := 1 / 100000
 
-theorem parS8_good : parS8.Good where
-  he := by simp only [parS8]; norm_num
-  he1 := by simp only [parS8]; norm_num
-  hM := by simp [parS8]
-  ha := by simp only [parS8]; norm_num
-  hat := by simp only [parS8]; norm_num
-  hlam1 := by simp only [parS8]; norm_num
-  hlam2 := by simp only [parS8]; norm_num
-  hlam3 := by simp only [parS8]; norm_num
-  hlo := by simp only [parS8]; norm_num
-  hhi := by simp only [parS8]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS8] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS8] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS8] at *
-    push_cast
-    linarith
-  hA := by simp only [parS8]; norm_num
-  hA10 := by simp only [parS8]; norm_num
+theorem parS8_good : parS8.Good := by cgl_good parS8
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[151 / 210, 403 / 560]`, density step 8**: there is `C ≥ 0` such that for every
@@ -625,32 +429,7 @@ def parS9 : ParC where
   A := (23261 / 10000)
   e := 1 / 100000
 
-theorem parS9_good : parS9.Good where
-  he := by simp only [parS9]; norm_num
-  he1 := by simp only [parS9]; norm_num
-  hM := by simp [parS9]
-  ha := by simp only [parS9]; norm_num
-  hat := by simp only [parS9]; norm_num
-  hlam1 := by simp only [parS9]; norm_num
-  hlam2 := by simp only [parS9]; norm_num
-  hlam3 := by simp only [parS9]; norm_num
-  hlo := by simp only [parS9]; norm_num
-  hhi := by simp only [parS9]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS9] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS9] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS9] at *
-    push_cast
-    linarith
-  hA := by simp only [parS9]; norm_num
-  hA10 := by simp only [parS9]; norm_num
+theorem parS9_good : parS9.Good := by cgl_good parS9
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[403 / 560, 121 / 168]`, density step 9**: there is `C ≥ 0` such that for every
@@ -676,32 +455,7 @@ def parS10 : ParC where
   A := (58133 / 25000)
   e := 1 / 100000
 
-theorem parS10_good : parS10.Good where
-  he := by simp only [parS10]; norm_num
-  he1 := by simp only [parS10]; norm_num
-  hM := by simp [parS10]
-  ha := by simp only [parS10]; norm_num
-  hat := by simp only [parS10]; norm_num
-  hlam1 := by simp only [parS10]; norm_num
-  hlam2 := by simp only [parS10]; norm_num
-  hlam3 := by simp only [parS10]; norm_num
-  hlo := by simp only [parS10]; norm_num
-  hhi := by simp only [parS10]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS10] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS10] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS10] at *
-    push_cast
-    linarith
-  hA := by simp only [parS10]; norm_num
-  hA10 := by simp only [parS10]; norm_num
+theorem parS10_good : parS10.Good := by cgl_good parS10
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[121 / 168, 173 / 240]`, density step 10**: there is `C ≥ 0` such that for every
@@ -727,32 +481,7 @@ def parS11 : ParC where
   A := (58113 / 25000)
   e := 1 / 100000
 
-theorem parS11_good : parS11.Good where
-  he := by simp only [parS11]; norm_num
-  he1 := by simp only [parS11]; norm_num
-  hM := by simp [parS11]
-  ha := by simp only [parS11]; norm_num
-  hat := by simp only [parS11]; norm_num
-  hlam1 := by simp only [parS11]; norm_num
-  hlam2 := by simp only [parS11]; norm_num
-  hlam3 := by simp only [parS11]; norm_num
-  hlo := by simp only [parS11]; norm_num
-  hhi := by simp only [parS11]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS11] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS11] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS11] at *
-    push_cast
-    linarith
-  hA := by simp only [parS11]; norm_num
-  hA10 := by simp only [parS11]; norm_num
+theorem parS11_good : parS11.Good := by cgl_good parS11
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[173 / 240, 101 / 140]`, density step 11**: there is `C ≥ 0` such that for every
@@ -778,32 +507,7 @@ def parS12 : ParC where
   A := (23237 / 10000)
   e := 1 / 100000
 
-theorem parS12_good : parS12.Good where
-  he := by simp only [parS12]; norm_num
-  he1 := by simp only [parS12]; norm_num
-  hM := by simp [parS12]
-  ha := by simp only [parS12]; norm_num
-  hat := by simp only [parS12]; norm_num
-  hlam1 := by simp only [parS12]; norm_num
-  hlam2 := by simp only [parS12]; norm_num
-  hlam3 := by simp only [parS12]; norm_num
-  hlo := by simp only [parS12]; norm_num
-  hhi := by simp only [parS12]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS12] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS12] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS12] at *
-    push_cast
-    linarith
-  hA := by simp only [parS12]; norm_num
-  hA10 := by simp only [parS12]; norm_num
+theorem parS12_good : parS12.Good := by cgl_good parS12
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[101 / 140, 1213 / 1680]`, density step 12**: there is `C ≥ 0` such that for every
@@ -829,32 +533,7 @@ def parS13 : ParC where
   A := (23229 / 10000)
   e := 1 / 100000
 
-theorem parS13_good : parS13.Good where
-  he := by simp only [parS13]; norm_num
-  he1 := by simp only [parS13]; norm_num
-  hM := by simp [parS13]
-  ha := by simp only [parS13]; norm_num
-  hat := by simp only [parS13]; norm_num
-  hlam1 := by simp only [parS13]; norm_num
-  hlam2 := by simp only [parS13]; norm_num
-  hlam3 := by simp only [parS13]; norm_num
-  hlo := by simp only [parS13]; norm_num
-  hhi := by simp only [parS13]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS13] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS13] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS13] at *
-    push_cast
-    linarith
-  hA := by simp only [parS13]; norm_num
-  hA10 := by simp only [parS13]; norm_num
+theorem parS13_good : parS13.Good := by cgl_good parS13
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1213 / 1680, 607 / 840]`, density step 13**: there is `C ≥ 0` such that for every
@@ -880,32 +559,7 @@ def parS14 : ParC where
   A := (58053 / 25000)
   e := 1 / 100000
 
-theorem parS14_good : parS14.Good where
-  he := by simp only [parS14]; norm_num
-  he1 := by simp only [parS14]; norm_num
-  hM := by simp [parS14]
-  ha := by simp only [parS14]; norm_num
-  hat := by simp only [parS14]; norm_num
-  hlam1 := by simp only [parS14]; norm_num
-  hlam2 := by simp only [parS14]; norm_num
-  hlam3 := by simp only [parS14]; norm_num
-  hlo := by simp only [parS14]; norm_num
-  hhi := by simp only [parS14]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS14] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS14] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS14] at *
-    push_cast
-    linarith
-  hA := by simp only [parS14]; norm_num
-  hA10 := by simp only [parS14]; norm_num
+theorem parS14_good : parS14.Good := by cgl_good parS14
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[607 / 840, 81 / 112]`, density step 14**: there is `C ≥ 0` such that for every
@@ -931,32 +585,7 @@ def parS15 : ParC where
   A := (23213 / 10000)
   e := 1 / 100000
 
-theorem parS15_good : parS15.Good where
-  he := by simp only [parS15]; norm_num
-  he1 := by simp only [parS15]; norm_num
-  hM := by simp [parS15]
-  ha := by simp only [parS15]; norm_num
-  hat := by simp only [parS15]; norm_num
-  hlam1 := by simp only [parS15]; norm_num
-  hlam2 := by simp only [parS15]; norm_num
-  hlam3 := by simp only [parS15]; norm_num
-  hlo := by simp only [parS15]; norm_num
-  hhi := by simp only [parS15]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS15] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS15] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS15] at *
-    push_cast
-    linarith
-  hA := by simp only [parS15]; norm_num
-  hA10 := by simp only [parS15]; norm_num
+theorem parS15_good : parS15.Good := by cgl_good parS15
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[81 / 112, 76 / 105]`, density step 15**: there is `C ≥ 0` such that for every
@@ -982,32 +611,7 @@ def parS16 : ParC where
   A := (4641 / 2000)
   e := 1 / 100000
 
-theorem parS16_good : parS16.Good where
-  he := by simp only [parS16]; norm_num
-  he1 := by simp only [parS16]; norm_num
-  hM := by simp [parS16]
-  ha := by simp only [parS16]; norm_num
-  hat := by simp only [parS16]; norm_num
-  hlam1 := by simp only [parS16]; norm_num
-  hlam2 := by simp only [parS16]; norm_num
-  hlam3 := by simp only [parS16]; norm_num
-  hlo := by simp only [parS16]; norm_num
-  hhi := by simp only [parS16]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS16] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS16] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS16] at *
-    push_cast
-    linarith
-  hA := by simp only [parS16]; norm_num
-  hA10 := by simp only [parS16]; norm_num
+theorem parS16_good : parS16.Good := by cgl_good parS16
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[76 / 105, 1217 / 1680]`, density step 16**: there is `C ≥ 0` such that for every
@@ -1033,32 +637,7 @@ def parS17 : ParC where
   A := (7249 / 3125)
   e := 1 / 100000
 
-theorem parS17_good : parS17.Good where
-  he := by simp only [parS17]; norm_num
-  he1 := by simp only [parS17]; norm_num
-  hM := by simp [parS17]
-  ha := by simp only [parS17]; norm_num
-  hat := by simp only [parS17]; norm_num
-  hlam1 := by simp only [parS17]; norm_num
-  hlam2 := by simp only [parS17]; norm_num
-  hlam3 := by simp only [parS17]; norm_num
-  hlo := by simp only [parS17]; norm_num
-  hhi := by simp only [parS17]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS17] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS17] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS17] at *
-    push_cast
-    linarith
-  hA := by simp only [parS17]; norm_num
-  hA10 := by simp only [parS17]; norm_num
+theorem parS17_good : parS17.Good := by cgl_good parS17
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1217 / 1680, 29 / 40]`, density step 17**: there is `C ≥ 0` such that for every
@@ -1084,32 +663,7 @@ def parS18 : ParC where
   A := (23189 / 10000)
   e := 1 / 100000
 
-theorem parS18_good : parS18.Good where
-  he := by simp only [parS18]; norm_num
-  he1 := by simp only [parS18]; norm_num
-  hM := by simp [parS18]
-  ha := by simp only [parS18]; norm_num
-  hat := by simp only [parS18]; norm_num
-  hlam1 := by simp only [parS18]; norm_num
-  hlam2 := by simp only [parS18]; norm_num
-  hlam3 := by simp only [parS18]; norm_num
-  hlo := by simp only [parS18]; norm_num
-  hhi := by simp only [parS18]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS18] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS18] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS18] at *
-    push_cast
-    linarith
-  hA := by simp only [parS18]; norm_num
-  hA10 := by simp only [parS18]; norm_num
+theorem parS18_good : parS18.Good := by cgl_good parS18
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[29 / 40, 1219 / 1680]`, density step 18**: there is `C ≥ 0` such that for every
@@ -1135,32 +689,7 @@ def parS19 : ParC where
   A := (23181 / 10000)
   e := 1 / 100000
 
-theorem parS19_good : parS19.Good where
-  he := by simp only [parS19]; norm_num
-  he1 := by simp only [parS19]; norm_num
-  hM := by simp [parS19]
-  ha := by simp only [parS19]; norm_num
-  hat := by simp only [parS19]; norm_num
-  hlam1 := by simp only [parS19]; norm_num
-  hlam2 := by simp only [parS19]; norm_num
-  hlam3 := by simp only [parS19]; norm_num
-  hlo := by simp only [parS19]; norm_num
-  hhi := by simp only [parS19]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS19] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS19] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS19] at *
-    push_cast
-    linarith
-  hA := by simp only [parS19]; norm_num
-  hA10 := by simp only [parS19]; norm_num
+theorem parS19_good : parS19.Good := by cgl_good parS19
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1219 / 1680, 61 / 84]`, density step 19**: there is `C ≥ 0` such that for every
@@ -1186,32 +715,7 @@ def parS20 : ParC where
   A := (14483 / 6250)
   e := 1 / 100000
 
-theorem parS20_good : parS20.Good where
-  he := by simp only [parS20]; norm_num
-  he1 := by simp only [parS20]; norm_num
-  hM := by simp [parS20]
-  ha := by simp only [parS20]; norm_num
-  hat := by simp only [parS20]; norm_num
-  hlam1 := by simp only [parS20]; norm_num
-  hlam2 := by simp only [parS20]; norm_num
-  hlam3 := by simp only [parS20]; norm_num
-  hlo := by simp only [parS20]; norm_num
-  hhi := by simp only [parS20]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS20] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS20] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS20] at *
-    push_cast
-    linarith
-  hA := by simp only [parS20]; norm_num
-  hA10 := by simp only [parS20]; norm_num
+theorem parS20_good : parS20.Good := by cgl_good parS20
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[61 / 84, 407 / 560]`, density step 20**: there is `C ≥ 0` such that for every
@@ -1237,32 +741,7 @@ def parS21 : ParC where
   A := (4633 / 2000)
   e := 1 / 100000
 
-theorem parS21_good : parS21.Good where
-  he := by simp only [parS21]; norm_num
-  he1 := by simp only [parS21]; norm_num
-  hM := by simp [parS21]
-  ha := by simp only [parS21]; norm_num
-  hat := by simp only [parS21]; norm_num
-  hlam1 := by simp only [parS21]; norm_num
-  hlam2 := by simp only [parS21]; norm_num
-  hlam3 := by simp only [parS21]; norm_num
-  hlo := by simp only [parS21]; norm_num
-  hhi := by simp only [parS21]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS21] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS21] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS21] at *
-    push_cast
-    linarith
-  hA := by simp only [parS21]; norm_num
-  hA10 := by simp only [parS21]; norm_num
+theorem parS21_good : parS21.Good := by cgl_good parS21
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[407 / 560, 611 / 840]`, density step 21**: there is `C ≥ 0` such that for every
@@ -1288,32 +767,7 @@ def parS22 : ParC where
   A := (23157 / 10000)
   e := 1 / 100000
 
-theorem parS22_good : parS22.Good where
-  he := by simp only [parS22]; norm_num
-  he1 := by simp only [parS22]; norm_num
-  hM := by simp [parS22]
-  ha := by simp only [parS22]; norm_num
-  hat := by simp only [parS22]; norm_num
-  hlam1 := by simp only [parS22]; norm_num
-  hlam2 := by simp only [parS22]; norm_num
-  hlam3 := by simp only [parS22]; norm_num
-  hlo := by simp only [parS22]; norm_num
-  hhi := by simp only [parS22]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS22] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS22] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS22] at *
-    push_cast
-    linarith
-  hA := by simp only [parS22]; norm_num
-  hA10 := by simp only [parS22]; norm_num
+theorem parS22_good : parS22.Good := by cgl_good parS22
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[611 / 840, 1223 / 1680]`, density step 22**: there is `C ≥ 0` such that for every
@@ -1339,32 +793,7 @@ def parS23 : ParC where
   A := (57873 / 25000)
   e := 1 / 100000
 
-theorem parS23_good : parS23.Good where
-  he := by simp only [parS23]; norm_num
-  he1 := by simp only [parS23]; norm_num
-  hM := by simp [parS23]
-  ha := by simp only [parS23]; norm_num
-  hat := by simp only [parS23]; norm_num
-  hlam1 := by simp only [parS23]; norm_num
-  hlam2 := by simp only [parS23]; norm_num
-  hlam3 := by simp only [parS23]; norm_num
-  hlo := by simp only [parS23]; norm_num
-  hhi := by simp only [parS23]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS23] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS23] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS23] at *
-    push_cast
-    linarith
-  hA := by simp only [parS23]; norm_num
-  hA10 := by simp only [parS23]; norm_num
+theorem parS23_good : parS23.Good := by cgl_good parS23
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1223 / 1680, 51 / 70]`, density step 23**: there is `C ≥ 0` such that for every
@@ -1390,32 +819,7 @@ def parS24 : ParC where
   A := (23141 / 10000)
   e := 1 / 100000
 
-theorem parS24_good : parS24.Good where
-  he := by simp only [parS24]; norm_num
-  he1 := by simp only [parS24]; norm_num
-  hM := by simp [parS24]
-  ha := by simp only [parS24]; norm_num
-  hat := by simp only [parS24]; norm_num
-  hlam1 := by simp only [parS24]; norm_num
-  hlam2 := by simp only [parS24]; norm_num
-  hlam3 := by simp only [parS24]; norm_num
-  hlo := by simp only [parS24]; norm_num
-  hhi := by simp only [parS24]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS24] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS24] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS24] at *
-    push_cast
-    linarith
-  hA := by simp only [parS24]; norm_num
-  hA10 := by simp only [parS24]; norm_num
+theorem parS24_good : parS24.Good := by cgl_good parS24
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[51 / 70, 35 / 48]`, density step 24**: there is `C ≥ 0` such that for every
@@ -1441,32 +845,7 @@ def parS25 : ParC where
   A := (23133 / 10000)
   e := 1 / 100000
 
-theorem parS25_good : parS25.Good where
-  he := by simp only [parS25]; norm_num
-  he1 := by simp only [parS25]; norm_num
-  hM := by simp [parS25]
-  ha := by simp only [parS25]; norm_num
-  hat := by simp only [parS25]; norm_num
-  hlam1 := by simp only [parS25]; norm_num
-  hlam2 := by simp only [parS25]; norm_num
-  hlam3 := by simp only [parS25]; norm_num
-  hlo := by simp only [parS25]; norm_num
-  hhi := by simp only [parS25]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS25] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS25] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS25] at *
-    push_cast
-    linarith
-  hA := by simp only [parS25]; norm_num
-  hA10 := by simp only [parS25]; norm_num
+theorem parS25_good : parS25.Good := by cgl_good parS25
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[35 / 48, 613 / 840]`, density step 25**: there is `C ≥ 0` such that for every
@@ -1492,32 +871,7 @@ def parS26 : ParC where
   A := (57813 / 25000)
   e := 1 / 100000
 
-theorem parS26_good : parS26.Good where
-  he := by simp only [parS26]; norm_num
-  he1 := by simp only [parS26]; norm_num
-  hM := by simp [parS26]
-  ha := by simp only [parS26]; norm_num
-  hat := by simp only [parS26]; norm_num
-  hlam1 := by simp only [parS26]; norm_num
-  hlam2 := by simp only [parS26]; norm_num
-  hlam3 := by simp only [parS26]; norm_num
-  hlo := by simp only [parS26]; norm_num
-  hhi := by simp only [parS26]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS26] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS26] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS26] at *
-    push_cast
-    linarith
-  hA := by simp only [parS26]; norm_num
-  hA10 := by simp only [parS26]; norm_num
+theorem parS26_good : parS26.Good := by cgl_good parS26
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[613 / 840, 409 / 560]`, density step 26**: there is `C ≥ 0` such that for every
@@ -1543,32 +897,7 @@ def parS27 : ParC where
   A := (23117 / 10000)
   e := 1 / 100000
 
-theorem parS27_good : parS27.Good where
-  he := by simp only [parS27]; norm_num
-  he1 := by simp only [parS27]; norm_num
-  hM := by simp [parS27]
-  ha := by simp only [parS27]; norm_num
-  hat := by simp only [parS27]; norm_num
-  hlam1 := by simp only [parS27]; norm_num
-  hlam2 := by simp only [parS27]; norm_num
-  hlam3 := by simp only [parS27]; norm_num
-  hlo := by simp only [parS27]; norm_num
-  hhi := by simp only [parS27]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS27] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS27] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS27] at *
-    push_cast
-    linarith
-  hA := by simp only [parS27]; norm_num
-  hA10 := by simp only [parS27]; norm_num
+theorem parS27_good : parS27.Good := by cgl_good parS27
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[409 / 560, 307 / 420]`, density step 27**: there is `C ≥ 0` such that for every
@@ -1594,32 +923,7 @@ def parS28 : ParC where
   A := (57773 / 25000)
   e := 1 / 100000
 
-theorem parS28_good : parS28.Good where
-  he := by simp only [parS28]; norm_num
-  he1 := by simp only [parS28]; norm_num
-  hM := by simp [parS28]
-  ha := by simp only [parS28]; norm_num
-  hat := by simp only [parS28]; norm_num
-  hlam1 := by simp only [parS28]; norm_num
-  hlam2 := by simp only [parS28]; norm_num
-  hlam3 := by simp only [parS28]; norm_num
-  hlo := by simp only [parS28]; norm_num
-  hhi := by simp only [parS28]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS28] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS28] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS28] at *
-    push_cast
-    linarith
-  hA := by simp only [parS28]; norm_num
-  hA10 := by simp only [parS28]; norm_num
+theorem parS28_good : parS28.Good := by cgl_good parS28
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[307 / 420, 1229 / 1680]`, density step 28**: there is `C ≥ 0` such that for every
@@ -1645,32 +949,7 @@ def parS29 : ParC where
   A := (57753 / 25000)
   e := 1 / 100000
 
-theorem parS29_good : parS29.Good where
-  he := by simp only [parS29]; norm_num
-  he1 := by simp only [parS29]; norm_num
-  hM := by simp [parS29]
-  ha := by simp only [parS29]; norm_num
-  hat := by simp only [parS29]; norm_num
-  hlam1 := by simp only [parS29]; norm_num
-  hlam2 := by simp only [parS29]; norm_num
-  hlam3 := by simp only [parS29]; norm_num
-  hlo := by simp only [parS29]; norm_num
-  hhi := by simp only [parS29]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS29] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS29] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS29] at *
-    push_cast
-    linarith
-  hA := by simp only [parS29]; norm_num
-  hA10 := by simp only [parS29]; norm_num
+theorem parS29_good : parS29.Good := by cgl_good parS29
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1229 / 1680, 41 / 56]`, density step 29**: there is `C ≥ 0` such that for every
@@ -1696,32 +975,7 @@ def parS30 : ParC where
   A := (115467 / 50000)
   e := 1 / 100000
 
-theorem parS30_good : parS30.Good where
-  he := by simp only [parS30]; norm_num
-  he1 := by simp only [parS30]; norm_num
-  hM := by simp [parS30]
-  ha := by simp only [parS30]; norm_num
-  hat := by simp only [parS30]; norm_num
-  hlam1 := by simp only [parS30]; norm_num
-  hlam2 := by simp only [parS30]; norm_num
-  hlam3 := by simp only [parS30]; norm_num
-  hlo := by simp only [parS30]; norm_num
-  hhi := by simp only [parS30]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS30] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS30] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS30] at *
-    push_cast
-    linarith
-  hA := by simp only [parS30]; norm_num
-  hA10 := by simp only [parS30]; norm_num
+theorem parS30_good : parS30.Good := by cgl_good parS30
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[41 / 56, 1231 / 1680]`, density step 30**: there is `C ≥ 0` such that for every
@@ -1747,32 +1001,7 @@ def parS31 : ParC where
   A := (28857 / 12500)
   e := 1 / 100000
 
-theorem parS31_good : parS31.Good where
-  he := by simp only [parS31]; norm_num
-  he1 := by simp only [parS31]; norm_num
-  hM := by simp [parS31]
-  ha := by simp only [parS31]; norm_num
-  hat := by simp only [parS31]; norm_num
-  hlam1 := by simp only [parS31]; norm_num
-  hlam2 := by simp only [parS31]; norm_num
-  hlam3 := by simp only [parS31]; norm_num
-  hlo := by simp only [parS31]; norm_num
-  hhi := by simp only [parS31]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS31] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS31] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS31] at *
-    push_cast
-    linarith
-  hA := by simp only [parS31]; norm_num
-  hA10 := by simp only [parS31]; norm_num
+theorem parS31_good : parS31.Good := by cgl_good parS31
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1231 / 1680, 11 / 15]`, density step 31**: there is `C ≥ 0` such that for every
@@ -1798,32 +1027,7 @@ def parS32 : ParC where
   A := (115387 / 50000)
   e := 1 / 100000
 
-theorem parS32_good : parS32.Good where
-  he := by simp only [parS32]; norm_num
-  he1 := by simp only [parS32]; norm_num
-  hM := by simp [parS32]
-  ha := by simp only [parS32]; norm_num
-  hat := by simp only [parS32]; norm_num
-  hlam1 := by simp only [parS32]; norm_num
-  hlam2 := by simp only [parS32]; norm_num
-  hlam3 := by simp only [parS32]; norm_num
-  hlo := by simp only [parS32]; norm_num
-  hhi := by simp only [parS32]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS32] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS32] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS32] at *
-    push_cast
-    linarith
-  hA := by simp only [parS32]; norm_num
-  hA10 := by simp only [parS32]; norm_num
+theorem parS32_good : parS32.Good := by cgl_good parS32
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[11 / 15, 411 / 560]`, density step 32**: there is `C ≥ 0` such that for every
@@ -1849,32 +1053,7 @@ def parS33 : ParC where
   A := (28837 / 12500)
   e := 1 / 100000
 
-theorem parS33_good : parS33.Good where
-  he := by simp only [parS33]; norm_num
-  he1 := by simp only [parS33]; norm_num
-  hM := by simp [parS33]
-  ha := by simp only [parS33]; norm_num
-  hat := by simp only [parS33]; norm_num
-  hlam1 := by simp only [parS33]; norm_num
-  hlam2 := by simp only [parS33]; norm_num
-  hlam3 := by simp only [parS33]; norm_num
-  hlo := by simp only [parS33]; norm_num
-  hhi := by simp only [parS33]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS33] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS33] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS33] at *
-    push_cast
-    linarith
-  hA := by simp only [parS33]; norm_num
-  hA10 := by simp only [parS33]; norm_num
+theorem parS33_good : parS33.Good := by cgl_good parS33
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[411 / 560, 617 / 840]`, density step 33**: there is `C ≥ 0` such that for every
@@ -1900,32 +1079,7 @@ def parS34 : ParC where
   A := (28827 / 12500)
   e := 1 / 100000
 
-theorem parS34_good : parS34.Good where
-  he := by simp only [parS34]; norm_num
-  he1 := by simp only [parS34]; norm_num
-  hM := by simp [parS34]
-  ha := by simp only [parS34]; norm_num
-  hat := by simp only [parS34]; norm_num
-  hlam1 := by simp only [parS34]; norm_num
-  hlam2 := by simp only [parS34]; norm_num
-  hlam3 := by simp only [parS34]; norm_num
-  hlo := by simp only [parS34]; norm_num
-  hhi := by simp only [parS34]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS34] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS34] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS34] at *
-    push_cast
-    linarith
-  hA := by simp only [parS34]; norm_num
-  hA10 := by simp only [parS34]; norm_num
+theorem parS34_good : parS34.Good := by cgl_good parS34
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[617 / 840, 247 / 336]`, density step 34**: there is `C ≥ 0` such that for every
@@ -1951,32 +1105,7 @@ def parS35 : ParC where
   A := (115269 / 50000)
   e := 1 / 100000
 
-theorem parS35_good : parS35.Good where
-  he := by simp only [parS35]; norm_num
-  he1 := by simp only [parS35]; norm_num
-  hM := by simp [parS35]
-  ha := by simp only [parS35]; norm_num
-  hat := by simp only [parS35]; norm_num
-  hlam1 := by simp only [parS35]; norm_num
-  hlam2 := by simp only [parS35]; norm_num
-  hlam3 := by simp only [parS35]; norm_num
-  hlo := by simp only [parS35]; norm_num
-  hhi := by simp only [parS35]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS35] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS35] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS35] at *
-    push_cast
-    linarith
-  hA := by simp only [parS35]; norm_num
-  hA10 := by simp only [parS35]; norm_num
+theorem parS35_good : parS35.Good := by cgl_good parS35
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[247 / 336, 103 / 140]`, density step 35**: there is `C ≥ 0` such that for every
@@ -2002,32 +1131,7 @@ def parS36 : ParC where
   A := (11523 / 5000)
   e := 1 / 100000
 
-theorem parS36_good : parS36.Good where
-  he := by simp only [parS36]; norm_num
-  he1 := by simp only [parS36]; norm_num
-  hM := by simp [parS36]
-  ha := by simp only [parS36]; norm_num
-  hat := by simp only [parS36]; norm_num
-  hlam1 := by simp only [parS36]; norm_num
-  hlam2 := by simp only [parS36]; norm_num
-  hlam3 := by simp only [parS36]; norm_num
-  hlo := by simp only [parS36]; norm_num
-  hhi := by simp only [parS36]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS36] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS36] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS36] at *
-    push_cast
-    linarith
-  hA := by simp only [parS36]; norm_num
-  hA10 := by simp only [parS36]; norm_num
+theorem parS36_good : parS36.Good := by cgl_good parS36
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[103 / 140, 1237 / 1680]`, density step 36**: there is `C ≥ 0` such that for every
@@ -2053,32 +1157,7 @@ def parS37 : ParC where
   A := (115189 / 50000)
   e := 1 / 100000
 
-theorem parS37_good : parS37.Good where
-  he := by simp only [parS37]; norm_num
-  he1 := by simp only [parS37]; norm_num
-  hM := by simp [parS37]
-  ha := by simp only [parS37]; norm_num
-  hat := by simp only [parS37]; norm_num
-  hlam1 := by simp only [parS37]; norm_num
-  hlam2 := by simp only [parS37]; norm_num
-  hlam3 := by simp only [parS37]; norm_num
-  hlo := by simp only [parS37]; norm_num
-  hhi := by simp only [parS37]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS37] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS37] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS37] at *
-    push_cast
-    linarith
-  hA := by simp only [parS37]; norm_num
-  hA10 := by simp only [parS37]; norm_num
+theorem parS37_good : parS37.Good := by cgl_good parS37
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1237 / 1680, 619 / 840]`, density step 37**: there is `C ≥ 0` such that for every
@@ -2104,32 +1183,7 @@ def parS38 : ParC where
   A := (2303 / 1000)
   e := 1 / 100000
 
-theorem parS38_good : parS38.Good where
-  he := by simp only [parS38]; norm_num
-  he1 := by simp only [parS38]; norm_num
-  hM := by simp [parS38]
-  ha := by simp only [parS38]; norm_num
-  hat := by simp only [parS38]; norm_num
-  hlam1 := by simp only [parS38]; norm_num
-  hlam2 := by simp only [parS38]; norm_num
-  hlam3 := by simp only [parS38]; norm_num
-  hlo := by simp only [parS38]; norm_num
-  hhi := by simp only [parS38]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS38] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS38] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS38] at *
-    push_cast
-    linarith
-  hA := by simp only [parS38]; norm_num
-  hA10 := by simp only [parS38]; norm_num
+theorem parS38_good : parS38.Good := by cgl_good parS38
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[619 / 840, 59 / 80]`, density step 38**: there is `C ≥ 0` such that for every
@@ -2155,32 +1209,7 @@ def parS39 : ParC where
   A := (115111 / 50000)
   e := 1 / 100000
 
-theorem parS39_good : parS39.Good where
-  he := by simp only [parS39]; norm_num
-  he1 := by simp only [parS39]; norm_num
-  hM := by simp [parS39]
-  ha := by simp only [parS39]; norm_num
-  hat := by simp only [parS39]; norm_num
-  hlam1 := by simp only [parS39]; norm_num
-  hlam2 := by simp only [parS39]; norm_num
-  hlam3 := by simp only [parS39]; norm_num
-  hlo := by simp only [parS39]; norm_num
-  hhi := by simp only [parS39]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS39] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS39] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS39] at *
-    push_cast
-    linarith
-  hA := by simp only [parS39]; norm_num
-  hA10 := by simp only [parS39]; norm_num
+theorem parS39_good : parS39.Good := by cgl_good parS39
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[59 / 80, 31 / 42]`, density step 39**: there is `C ≥ 0` such that for every
@@ -2206,32 +1235,7 @@ def parS40 : ParC where
   A := (115071 / 50000)
   e := 1 / 100000
 
-theorem parS40_good : parS40.Good where
-  he := by simp only [parS40]; norm_num
-  he1 := by simp only [parS40]; norm_num
-  hM := by simp [parS40]
-  ha := by simp only [parS40]; norm_num
-  hat := by simp only [parS40]; norm_num
-  hlam1 := by simp only [parS40]; norm_num
-  hlam2 := by simp only [parS40]; norm_num
-  hlam3 := by simp only [parS40]; norm_num
-  hlo := by simp only [parS40]; norm_num
-  hhi := by simp only [parS40]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS40] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS40] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS40] at *
-    push_cast
-    linarith
-  hA := by simp only [parS40]; norm_num
-  hA10 := by simp only [parS40]; norm_num
+theorem parS40_good : parS40.Good := by cgl_good parS40
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[31 / 42, 1241 / 1680]`, density step 40**: there is `C ≥ 0` such that for every
@@ -2257,32 +1261,7 @@ def parS41 : ParC where
   A := (14379 / 6250)
   e := 1 / 100000
 
-theorem parS41_good : parS41.Good where
-  he := by simp only [parS41]; norm_num
-  he1 := by simp only [parS41]; norm_num
-  hM := by simp [parS41]
-  ha := by simp only [parS41]; norm_num
-  hat := by simp only [parS41]; norm_num
-  hlam1 := by simp only [parS41]; norm_num
-  hlam2 := by simp only [parS41]; norm_num
-  hlam3 := by simp only [parS41]; norm_num
-  hlo := by simp only [parS41]; norm_num
-  hhi := by simp only [parS41]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS41] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS41] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS41] at *
-    push_cast
-    linarith
-  hA := by simp only [parS41]; norm_num
-  hA10 := by simp only [parS41]; norm_num
+theorem parS41_good : parS41.Good := by cgl_good parS41
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1241 / 1680, 207 / 280]`, density step 41**: there is `C ≥ 0` such that for every
@@ -2308,32 +1287,7 @@ def parS42 : ParC where
   A := (114993 / 50000)
   e := 1 / 100000
 
-theorem parS42_good : parS42.Good where
-  he := by simp only [parS42]; norm_num
-  he1 := by simp only [parS42]; norm_num
-  hM := by simp [parS42]
-  ha := by simp only [parS42]; norm_num
-  hat := by simp only [parS42]; norm_num
-  hlam1 := by simp only [parS42]; norm_num
-  hlam2 := by simp only [parS42]; norm_num
-  hlam3 := by simp only [parS42]; norm_num
-  hlo := by simp only [parS42]; norm_num
-  hhi := by simp only [parS42]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS42] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS42] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS42] at *
-    push_cast
-    linarith
-  hA := by simp only [parS42]; norm_num
-  hA10 := by simp only [parS42]; norm_num
+theorem parS42_good : parS42.Good := by cgl_good parS42
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[207 / 280, 1243 / 1680]`, density step 42**: there is `C ≥ 0` such that for every
@@ -2359,32 +1313,7 @@ def parS43 : ParC where
   A := (57477 / 25000)
   e := 1 / 100000
 
-theorem parS43_good : parS43.Good where
-  he := by simp only [parS43]; norm_num
-  he1 := by simp only [parS43]; norm_num
-  hM := by simp [parS43]
-  ha := by simp only [parS43]; norm_num
-  hat := by simp only [parS43]; norm_num
-  hlam1 := by simp only [parS43]; norm_num
-  hlam2 := by simp only [parS43]; norm_num
-  hlam3 := by simp only [parS43]; norm_num
-  hlo := by simp only [parS43]; norm_num
-  hhi := by simp only [parS43]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS43] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS43] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS43] at *
-    push_cast
-    linarith
-  hA := by simp only [parS43]; norm_num
-  hA10 := by simp only [parS43]; norm_num
+theorem parS43_good : parS43.Good := by cgl_good parS43
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1243 / 1680, 311 / 420]`, density step 43**: there is `C ≥ 0` such that for every
@@ -2410,32 +1339,7 @@ def parS44 : ParC where
   A := (114913 / 50000)
   e := 1 / 100000
 
-theorem parS44_good : parS44.Good where
-  he := by simp only [parS44]; norm_num
-  he1 := by simp only [parS44]; norm_num
-  hM := by simp [parS44]
-  ha := by simp only [parS44]; norm_num
-  hat := by simp only [parS44]; norm_num
-  hlam1 := by simp only [parS44]; norm_num
-  hlam2 := by simp only [parS44]; norm_num
-  hlam3 := by simp only [parS44]; norm_num
-  hlo := by simp only [parS44]; norm_num
-  hhi := by simp only [parS44]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS44] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS44] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS44] at *
-    push_cast
-    linarith
-  hA := by simp only [parS44]; norm_num
-  hA10 := by simp only [parS44]; norm_num
+theorem parS44_good : parS44.Good := by cgl_good parS44
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[311 / 420, 83 / 112]`, density step 44**: there is `C ≥ 0` such that for every
@@ -2461,32 +1365,7 @@ def parS45 : ParC where
   A := (57437 / 25000)
   e := 1 / 100000
 
-theorem parS45_good : parS45.Good where
-  he := by simp only [parS45]; norm_num
-  he1 := by simp only [parS45]; norm_num
-  hM := by simp [parS45]
-  ha := by simp only [parS45]; norm_num
-  hat := by simp only [parS45]; norm_num
-  hlam1 := by simp only [parS45]; norm_num
-  hlam2 := by simp only [parS45]; norm_num
-  hlam3 := by simp only [parS45]; norm_num
-  hlo := by simp only [parS45]; norm_num
-  hhi := by simp only [parS45]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS45] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS45] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS45] at *
-    push_cast
-    linarith
-  hA := by simp only [parS45]; norm_num
-  hA10 := by simp only [parS45]; norm_num
+theorem parS45_good : parS45.Good := by cgl_good parS45
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[83 / 112, 89 / 120]`, density step 45**: there is `C ≥ 0` such that for every
@@ -2512,32 +1391,7 @@ def parS46 : ParC where
   A := (22967 / 10000)
   e := 1 / 100000
 
-theorem parS46_good : parS46.Good where
-  he := by simp only [parS46]; norm_num
-  he1 := by simp only [parS46]; norm_num
-  hM := by simp [parS46]
-  ha := by simp only [parS46]; norm_num
-  hat := by simp only [parS46]; norm_num
-  hlam1 := by simp only [parS46]; norm_num
-  hlam2 := by simp only [parS46]; norm_num
-  hlam3 := by simp only [parS46]; norm_num
-  hlo := by simp only [parS46]; norm_num
-  hhi := by simp only [parS46]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS46] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS46] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS46] at *
-    push_cast
-    linarith
-  hA := by simp only [parS46]; norm_num
-  hA10 := by simp only [parS46]; norm_num
+theorem parS46_good : parS46.Good := by cgl_good parS46
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[89 / 120, 1247 / 1680]`, density step 46**: there is `C ≥ 0` such that for every
@@ -2563,32 +1417,7 @@ def parS47 : ParC where
   A := (28699 / 12500)
   e := 1 / 100000
 
-theorem parS47_good : parS47.Good where
-  he := by simp only [parS47]; norm_num
-  he1 := by simp only [parS47]; norm_num
-  hM := by simp [parS47]
-  ha := by simp only [parS47]; norm_num
-  hat := by simp only [parS47]; norm_num
-  hlam1 := by simp only [parS47]; norm_num
-  hlam2 := by simp only [parS47]; norm_num
-  hlam3 := by simp only [parS47]; norm_num
-  hlo := by simp only [parS47]; norm_num
-  hhi := by simp only [parS47]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS47] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS47] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS47] at *
-    push_cast
-    linarith
-  hA := by simp only [parS47]; norm_num
-  hA10 := by simp only [parS47]; norm_num
+theorem parS47_good : parS47.Good := by cgl_good parS47
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1247 / 1680, 26 / 35]`, density step 47**: there is `C ≥ 0` such that for every
@@ -2614,32 +1443,7 @@ def parS48 : ParC where
   A := (114757 / 50000)
   e := 1 / 100000
 
-theorem parS48_good : parS48.Good where
-  he := by simp only [parS48]; norm_num
-  he1 := by simp only [parS48]; norm_num
-  hM := by simp [parS48]
-  ha := by simp only [parS48]; norm_num
-  hat := by simp only [parS48]; norm_num
-  hlam1 := by simp only [parS48]; norm_num
-  hlam2 := by simp only [parS48]; norm_num
-  hlam3 := by simp only [parS48]; norm_num
-  hlo := by simp only [parS48]; norm_num
-  hhi := by simp only [parS48]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS48] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS48] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS48] at *
-    push_cast
-    linarith
-  hA := by simp only [parS48]; norm_num
-  hA10 := by simp only [parS48]; norm_num
+theorem parS48_good : parS48.Good := by cgl_good parS48
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[26 / 35, 1249 / 1680]`, density step 48**: there is `C ≥ 0` such that for every
@@ -2665,32 +1469,7 @@ def parS49 : ParC where
   A := (57359 / 25000)
   e := 1 / 100000
 
-theorem parS49_good : parS49.Good where
-  he := by simp only [parS49]; norm_num
-  he1 := by simp only [parS49]; norm_num
-  hM := by simp [parS49]
-  ha := by simp only [parS49]; norm_num
-  hat := by simp only [parS49]; norm_num
-  hlam1 := by simp only [parS49]; norm_num
-  hlam2 := by simp only [parS49]; norm_num
-  hlam3 := by simp only [parS49]; norm_num
-  hlo := by simp only [parS49]; norm_num
-  hhi := by simp only [parS49]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS49] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS49] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS49] at *
-    push_cast
-    linarith
-  hA := by simp only [parS49]; norm_num
-  hA10 := by simp only [parS49]; norm_num
+theorem parS49_good : parS49.Good := by cgl_good parS49
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1249 / 1680, 125 / 168]`, density step 49**: there is `C ≥ 0` such that for every
@@ -2716,32 +1495,7 @@ def parS50 : ParC where
   A := (114679 / 50000)
   e := 1 / 100000
 
-theorem parS50_good : parS50.Good where
-  he := by simp only [parS50]; norm_num
-  he1 := by simp only [parS50]; norm_num
-  hM := by simp [parS50]
-  ha := by simp only [parS50]; norm_num
-  hat := by simp only [parS50]; norm_num
-  hlam1 := by simp only [parS50]; norm_num
-  hlam2 := by simp only [parS50]; norm_num
-  hlam3 := by simp only [parS50]; norm_num
-  hlo := by simp only [parS50]; norm_num
-  hhi := by simp only [parS50]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS50] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS50] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS50] at *
-    push_cast
-    linarith
-  hA := by simp only [parS50]; norm_num
-  hA10 := by simp only [parS50]; norm_num
+theorem parS50_good : parS50.Good := by cgl_good parS50
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[125 / 168, 417 / 560]`, density step 50**: there is `C ≥ 0` such that for every
@@ -2767,32 +1521,7 @@ def parS51 : ParC where
   A := (114639 / 50000)
   e := 1 / 100000
 
-theorem parS51_good : parS51.Good where
-  he := by simp only [parS51]; norm_num
-  he1 := by simp only [parS51]; norm_num
-  hM := by simp [parS51]
-  ha := by simp only [parS51]; norm_num
-  hat := by simp only [parS51]; norm_num
-  hlam1 := by simp only [parS51]; norm_num
-  hlam2 := by simp only [parS51]; norm_num
-  hlam3 := by simp only [parS51]; norm_num
-  hlo := by simp only [parS51]; norm_num
-  hhi := by simp only [parS51]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS51] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS51] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS51] at *
-    push_cast
-    linarith
-  hA := by simp only [parS51]; norm_num
-  hA10 := by simp only [parS51]; norm_num
+theorem parS51_good : parS51.Good := by cgl_good parS51
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[417 / 560, 313 / 420]`, density step 51**: there is `C ≥ 0` such that for every
@@ -2818,32 +1547,7 @@ def parS52 : ParC where
   A := (573 / 250)
   e := 1 / 100000
 
-theorem parS52_good : parS52.Good where
-  he := by simp only [parS52]; norm_num
-  he1 := by simp only [parS52]; norm_num
-  hM := by simp [parS52]
-  ha := by simp only [parS52]; norm_num
-  hat := by simp only [parS52]; norm_num
-  hlam1 := by simp only [parS52]; norm_num
-  hlam2 := by simp only [parS52]; norm_num
-  hlam3 := by simp only [parS52]; norm_num
-  hlo := by simp only [parS52]; norm_num
-  hhi := by simp only [parS52]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS52] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS52] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS52] at *
-    push_cast
-    linarith
-  hA := by simp only [parS52]; norm_num
-  hA10 := by simp only [parS52]; norm_num
+theorem parS52_good : parS52.Good := by cgl_good parS52
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[313 / 420, 179 / 240]`, density step 52**: there is `C ≥ 0` such that for every
@@ -2869,32 +1573,7 @@ def parS53 : ParC where
   A := (114561 / 50000)
   e := 1 / 100000
 
-theorem parS53_good : parS53.Good where
-  he := by simp only [parS53]; norm_num
-  he1 := by simp only [parS53]; norm_num
-  hM := by simp [parS53]
-  ha := by simp only [parS53]; norm_num
-  hat := by simp only [parS53]; norm_num
-  hlam1 := by simp only [parS53]; norm_num
-  hlam2 := by simp only [parS53]; norm_num
-  hlam3 := by simp only [parS53]; norm_num
-  hlo := by simp only [parS53]; norm_num
-  hhi := by simp only [parS53]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS53] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS53] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS53] at *
-    push_cast
-    linarith
-  hA := by simp only [parS53]; norm_num
-  hA10 := by simp only [parS53]; norm_num
+theorem parS53_good : parS53.Good := by cgl_good parS53
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[179 / 240, 209 / 280]`, density step 53**: there is `C ≥ 0` such that for every
@@ -2920,32 +1599,7 @@ def parS54 : ParC where
   A := (57261 / 25000)
   e := 1 / 100000
 
-theorem parS54_good : parS54.Good where
-  he := by simp only [parS54]; norm_num
-  he1 := by simp only [parS54]; norm_num
-  hM := by simp [parS54]
-  ha := by simp only [parS54]; norm_num
-  hat := by simp only [parS54]; norm_num
-  hlam1 := by simp only [parS54]; norm_num
-  hlam2 := by simp only [parS54]; norm_num
-  hlam3 := by simp only [parS54]; norm_num
-  hlo := by simp only [parS54]; norm_num
-  hhi := by simp only [parS54]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS54] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS54] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS54] at *
-    push_cast
-    linarith
-  hA := by simp only [parS54]; norm_num
-  hA10 := by simp only [parS54]; norm_num
+theorem parS54_good : parS54.Good := by cgl_good parS54
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[209 / 280, 251 / 336]`, density step 54**: there is `C ≥ 0` such that for every
@@ -2971,32 +1625,7 @@ def parS55 : ParC where
   A := (114483 / 50000)
   e := 1 / 100000
 
-theorem parS55_good : parS55.Good where
-  he := by simp only [parS55]; norm_num
-  he1 := by simp only [parS55]; norm_num
-  hM := by simp [parS55]
-  ha := by simp only [parS55]; norm_num
-  hat := by simp only [parS55]; norm_num
-  hlam1 := by simp only [parS55]; norm_num
-  hlam2 := by simp only [parS55]; norm_num
-  hlam3 := by simp only [parS55]; norm_num
-  hlo := by simp only [parS55]; norm_num
-  hhi := by simp only [parS55]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS55] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS55] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS55] at *
-    push_cast
-    linarith
-  hA := by simp only [parS55]; norm_num
-  hA10 := by simp only [parS55]; norm_num
+theorem parS55_good : parS55.Good := by cgl_good parS55
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[251 / 336, 157 / 210]`, density step 55**: there is `C ≥ 0` such that for every
@@ -3022,32 +1651,7 @@ def parS56 : ParC where
   A := (28611 / 12500)
   e := 1 / 100000
 
-theorem parS56_good : parS56.Good where
-  he := by simp only [parS56]; norm_num
-  he1 := by simp only [parS56]; norm_num
-  hM := by simp [parS56]
-  ha := by simp only [parS56]; norm_num
-  hat := by simp only [parS56]; norm_num
-  hlam1 := by simp only [parS56]; norm_num
-  hlam2 := by simp only [parS56]; norm_num
-  hlam3 := by simp only [parS56]; norm_num
-  hlo := by simp only [parS56]; norm_num
-  hhi := by simp only [parS56]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS56] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS56] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS56] at *
-    push_cast
-    linarith
-  hA := by simp only [parS56]; norm_num
-  hA10 := by simp only [parS56]; norm_num
+theorem parS56_good : parS56.Good := by cgl_good parS56
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[157 / 210, 419 / 560]`, density step 56**: there is `C ≥ 0` such that for every
@@ -3073,32 +1677,7 @@ def parS57 : ParC where
   A := (22881 / 10000)
   e := 1 / 100000
 
-theorem parS57_good : parS57.Good where
-  he := by simp only [parS57]; norm_num
-  he1 := by simp only [parS57]; norm_num
-  hM := by simp [parS57]
-  ha := by simp only [parS57]; norm_num
-  hat := by simp only [parS57]; norm_num
-  hlam1 := by simp only [parS57]; norm_num
-  hlam2 := by simp only [parS57]; norm_num
-  hlam3 := by simp only [parS57]; norm_num
-  hlo := by simp only [parS57]; norm_num
-  hhi := by simp only [parS57]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS57] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS57] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS57] at *
-    push_cast
-    linarith
-  hA := by simp only [parS57]; norm_num
-  hA10 := by simp only [parS57]; norm_num
+theorem parS57_good : parS57.Good := by cgl_good parS57
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[419 / 560, 629 / 840]`, density step 57**: there is `C ≥ 0` such that for every
@@ -3124,32 +1703,7 @@ def parS58 : ParC where
   A := (57183 / 25000)
   e := 1 / 100000
 
-theorem parS58_good : parS58.Good where
-  he := by simp only [parS58]; norm_num
-  he1 := by simp only [parS58]; norm_num
-  hM := by simp [parS58]
-  ha := by simp only [parS58]; norm_num
-  hat := by simp only [parS58]; norm_num
-  hlam1 := by simp only [parS58]; norm_num
-  hlam2 := by simp only [parS58]; norm_num
-  hlam3 := by simp only [parS58]; norm_num
-  hlo := by simp only [parS58]; norm_num
-  hhi := by simp only [parS58]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS58] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS58] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS58] at *
-    push_cast
-    linarith
-  hA := by simp only [parS58]; norm_num
-  hA10 := by simp only [parS58]; norm_num
+theorem parS58_good : parS58.Good := by cgl_good parS58
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[629 / 840, 1259 / 1680]`, density step 58**: there is `C ≥ 0` such that for every
@@ -3175,32 +1729,7 @@ def parS59 : ParC where
   A := (114327 / 50000)
   e := 1 / 100000
 
-theorem parS59_good : parS59.Good where
-  he := by simp only [parS59]; norm_num
-  he1 := by simp only [parS59]; norm_num
-  hM := by simp [parS59]
-  ha := by simp only [parS59]; norm_num
-  hat := by simp only [parS59]; norm_num
-  hlam1 := by simp only [parS59]; norm_num
-  hlam2 := by simp only [parS59]; norm_num
-  hlam3 := by simp only [parS59]; norm_num
-  hlo := by simp only [parS59]; norm_num
-  hhi := by simp only [parS59]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS59] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS59] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS59] at *
-    push_cast
-    linarith
-  hA := by simp only [parS59]; norm_num
-  hA10 := by simp only [parS59]; norm_num
+theorem parS59_good : parS59.Good := by cgl_good parS59
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1259 / 1680, 3 / 4]`, density step 59**: there is `C ≥ 0` such that for every
@@ -3226,32 +1755,7 @@ def parS60 : ParC where
   A := (228579 / 100000)
   e := 1 / 100000
 
-theorem parS60_good : parS60.Good where
-  he := by simp only [parS60]; norm_num
-  he1 := by simp only [parS60]; norm_num
-  hM := by simp [parS60]
-  ha := by simp only [parS60]; norm_num
-  hat := by simp only [parS60]; norm_num
-  hlam1 := by simp only [parS60]; norm_num
-  hlam2 := by simp only [parS60]; norm_num
-  hlam3 := by simp only [parS60]; norm_num
-  hlo := by simp only [parS60]; norm_num
-  hhi := by simp only [parS60]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS60] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS60] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS60] at *
-    push_cast
-    linarith
-  hA := by simp only [parS60]; norm_num
-  hA10 := by simp only [parS60]; norm_num
+theorem parS60_good : parS60.Good := by cgl_good parS60
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[3 / 4, 1261 / 1680]`, density step 60**: there is `C ≥ 0` such that for every
@@ -3277,32 +1781,7 @@ def parS61 : ParC where
   A := (228501 / 100000)
   e := 1 / 100000
 
-theorem parS61_good : parS61.Good where
-  he := by simp only [parS61]; norm_num
-  he1 := by simp only [parS61]; norm_num
-  hM := by simp [parS61]
-  ha := by simp only [parS61]; norm_num
-  hat := by simp only [parS61]; norm_num
-  hlam1 := by simp only [parS61]; norm_num
-  hlam2 := by simp only [parS61]; norm_num
-  hlam3 := by simp only [parS61]; norm_num
-  hlo := by simp only [parS61]; norm_num
-  hhi := by simp only [parS61]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS61] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS61] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS61] at *
-    push_cast
-    linarith
-  hA := by simp only [parS61]; norm_num
-  hA10 := by simp only [parS61]; norm_num
+theorem parS61_good : parS61.Good := by cgl_good parS61
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1261 / 1680, 631 / 840]`, density step 61**: there is `C ≥ 0` such that for every
@@ -3328,32 +1807,7 @@ def parS62 : ParC where
   A := (228423 / 100000)
   e := 1 / 100000
 
-theorem parS62_good : parS62.Good where
-  he := by simp only [parS62]; norm_num
-  he1 := by simp only [parS62]; norm_num
-  hM := by simp [parS62]
-  ha := by simp only [parS62]; norm_num
-  hat := by simp only [parS62]; norm_num
-  hlam1 := by simp only [parS62]; norm_num
-  hlam2 := by simp only [parS62]; norm_num
-  hlam3 := by simp only [parS62]; norm_num
-  hlo := by simp only [parS62]; norm_num
-  hhi := by simp only [parS62]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS62] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS62] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS62] at *
-    push_cast
-    linarith
-  hA := by simp only [parS62]; norm_num
-  hA10 := by simp only [parS62]; norm_num
+theorem parS62_good : parS62.Good := by cgl_good parS62
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[631 / 840, 421 / 560]`, density step 62**: there is `C ≥ 0` such that for every
@@ -3379,32 +1833,7 @@ def parS63 : ParC where
   A := (45669 / 20000)
   e := 1 / 100000
 
-theorem parS63_good : parS63.Good where
-  he := by simp only [parS63]; norm_num
-  he1 := by simp only [parS63]; norm_num
-  hM := by simp [parS63]
-  ha := by simp only [parS63]; norm_num
-  hat := by simp only [parS63]; norm_num
-  hlam1 := by simp only [parS63]; norm_num
-  hlam2 := by simp only [parS63]; norm_num
-  hlam3 := by simp only [parS63]; norm_num
-  hlo := by simp only [parS63]; norm_num
-  hhi := by simp only [parS63]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS63] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS63] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS63] at *
-    push_cast
-    linarith
-  hA := by simp only [parS63]; norm_num
-  hA10 := by simp only [parS63]; norm_num
+theorem parS63_good : parS63.Good := by cgl_good parS63
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[421 / 560, 79 / 105]`, density step 63**: there is `C ≥ 0` such that for every
@@ -3430,32 +1859,7 @@ def parS64 : ParC where
   A := (228267 / 100000)
   e := 1 / 100000
 
-theorem parS64_good : parS64.Good where
-  he := by simp only [parS64]; norm_num
-  he1 := by simp only [parS64]; norm_num
-  hM := by simp [parS64]
-  ha := by simp only [parS64]; norm_num
-  hat := by simp only [parS64]; norm_num
-  hlam1 := by simp only [parS64]; norm_num
-  hlam2 := by simp only [parS64]; norm_num
-  hlam3 := by simp only [parS64]; norm_num
-  hlo := by simp only [parS64]; norm_num
-  hhi := by simp only [parS64]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS64] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS64] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS64] at *
-    push_cast
-    linarith
-  hA := by simp only [parS64]; norm_num
-  hA10 := by simp only [parS64]; norm_num
+theorem parS64_good : parS64.Good := by cgl_good parS64
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[79 / 105, 253 / 336]`, density step 64**: there is `C ≥ 0` such that for every
@@ -3481,32 +1885,7 @@ def parS65 : ParC where
   A := (228189 / 100000)
   e := 1 / 100000
 
-theorem parS65_good : parS65.Good where
-  he := by simp only [parS65]; norm_num
-  he1 := by simp only [parS65]; norm_num
-  hM := by simp [parS65]
-  ha := by simp only [parS65]; norm_num
-  hat := by simp only [parS65]; norm_num
-  hlam1 := by simp only [parS65]; norm_num
-  hlam2 := by simp only [parS65]; norm_num
-  hlam3 := by simp only [parS65]; norm_num
-  hlo := by simp only [parS65]; norm_num
-  hhi := by simp only [parS65]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS65] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS65] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS65] at *
-    push_cast
-    linarith
-  hA := by simp only [parS65]; norm_num
-  hA10 := by simp only [parS65]; norm_num
+theorem parS65_good : parS65.Good := by cgl_good parS65
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[253 / 336, 211 / 280]`, density step 65**: there is `C ≥ 0` such that for every
@@ -3532,32 +1911,7 @@ def parS66 : ParC where
   A := (228111 / 100000)
   e := 1 / 100000
 
-theorem parS66_good : parS66.Good where
-  he := by simp only [parS66]; norm_num
-  he1 := by simp only [parS66]; norm_num
-  hM := by simp [parS66]
-  ha := by simp only [parS66]; norm_num
-  hat := by simp only [parS66]; norm_num
-  hlam1 := by simp only [parS66]; norm_num
-  hlam2 := by simp only [parS66]; norm_num
-  hlam3 := by simp only [parS66]; norm_num
-  hlo := by simp only [parS66]; norm_num
-  hhi := by simp only [parS66]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS66] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS66] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS66] at *
-    push_cast
-    linarith
-  hA := by simp only [parS66]; norm_num
-  hA10 := by simp only [parS66]; norm_num
+theorem parS66_good : parS66.Good := by cgl_good parS66
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[211 / 280, 181 / 240]`, density step 66**: there is `C ≥ 0` such that for every
@@ -3583,32 +1937,7 @@ def parS67 : ParC where
   A := (228037 / 100000)
   e := 1 / 100000
 
-theorem parS67_good : parS67.Good where
-  he := by simp only [parS67]; norm_num
-  he1 := by simp only [parS67]; norm_num
-  hM := by simp [parS67]
-  ha := by simp only [parS67]; norm_num
-  hat := by simp only [parS67]; norm_num
-  hlam1 := by simp only [parS67]; norm_num
-  hlam2 := by simp only [parS67]; norm_num
-  hlam3 := by simp only [parS67]; norm_num
-  hlo := by simp only [parS67]; norm_num
-  hhi := by simp only [parS67]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS67] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS67] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS67] at *
-    push_cast
-    linarith
-  hA := by simp only [parS67]; norm_num
-  hA10 := by simp only [parS67]; norm_num
+theorem parS67_good : parS67.Good := by cgl_good parS67
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[181 / 240, 317 / 420]`, density step 67**: there is `C ≥ 0` such that for every
@@ -3634,32 +1963,7 @@ def parS68 : ParC where
   A := (227959 / 100000)
   e := 1 / 100000
 
-theorem parS68_good : parS68.Good where
-  he := by simp only [parS68]; norm_num
-  he1 := by simp only [parS68]; norm_num
-  hM := by simp [parS68]
-  ha := by simp only [parS68]; norm_num
-  hat := by simp only [parS68]; norm_num
-  hlam1 := by simp only [parS68]; norm_num
-  hlam2 := by simp only [parS68]; norm_num
-  hlam3 := by simp only [parS68]; norm_num
-  hlo := by simp only [parS68]; norm_num
-  hhi := by simp only [parS68]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS68] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS68] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS68] at *
-    push_cast
-    linarith
-  hA := by simp only [parS68]; norm_num
-  hA10 := by simp only [parS68]; norm_num
+theorem parS68_good : parS68.Good := by cgl_good parS68
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[317 / 420, 423 / 560]`, density step 68**: there is `C ≥ 0` such that for every
@@ -3685,32 +1989,7 @@ def parS69 : ParC where
   A := (227881 / 100000)
   e := 1 / 100000
 
-theorem parS69_good : parS69.Good where
-  he := by simp only [parS69]; norm_num
-  he1 := by simp only [parS69]; norm_num
-  hM := by simp [parS69]
-  ha := by simp only [parS69]; norm_num
-  hat := by simp only [parS69]; norm_num
-  hlam1 := by simp only [parS69]; norm_num
-  hlam2 := by simp only [parS69]; norm_num
-  hlam3 := by simp only [parS69]; norm_num
-  hlo := by simp only [parS69]; norm_num
-  hhi := by simp only [parS69]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS69] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS69] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS69] at *
-    push_cast
-    linarith
-  hA := by simp only [parS69]; norm_num
-  hA10 := by simp only [parS69]; norm_num
+theorem parS69_good : parS69.Good := by cgl_good parS69
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[423 / 560, 127 / 168]`, density step 69**: there is `C ≥ 0` such that for every
@@ -3736,32 +2015,7 @@ def parS70 : ParC where
   A := (227803 / 100000)
   e := 1 / 100000
 
-theorem parS70_good : parS70.Good where
-  he := by simp only [parS70]; norm_num
-  he1 := by simp only [parS70]; norm_num
-  hM := by simp [parS70]
-  ha := by simp only [parS70]; norm_num
-  hat := by simp only [parS70]; norm_num
-  hlam1 := by simp only [parS70]; norm_num
-  hlam2 := by simp only [parS70]; norm_num
-  hlam3 := by simp only [parS70]; norm_num
-  hlo := by simp only [parS70]; norm_num
-  hhi := by simp only [parS70]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS70] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS70] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS70] at *
-    push_cast
-    linarith
-  hA := by simp only [parS70]; norm_num
-  hA10 := by simp only [parS70]; norm_num
+theorem parS70_good : parS70.Good := by cgl_good parS70
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[127 / 168, 1271 / 1680]`, density step 70**: there is `C ≥ 0` such that for every
@@ -3787,32 +2041,7 @@ def parS71 : ParC where
   A := (227727 / 100000)
   e := 1 / 100000
 
-theorem parS71_good : parS71.Good where
-  he := by simp only [parS71]; norm_num
-  he1 := by simp only [parS71]; norm_num
-  hM := by simp [parS71]
-  ha := by simp only [parS71]; norm_num
-  hat := by simp only [parS71]; norm_num
-  hlam1 := by simp only [parS71]; norm_num
-  hlam2 := by simp only [parS71]; norm_num
-  hlam3 := by simp only [parS71]; norm_num
-  hlo := by simp only [parS71]; norm_num
-  hhi := by simp only [parS71]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS71] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS71] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS71] at *
-    push_cast
-    linarith
-  hA := by simp only [parS71]; norm_num
-  hA10 := by simp only [parS71]; norm_num
+theorem parS71_good : parS71.Good := by cgl_good parS71
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1271 / 1680, 53 / 70]`, density step 71**: there is `C ≥ 0` such that for every
@@ -3838,32 +2067,7 @@ def parS72 : ParC where
   A := (227649 / 100000)
   e := 1 / 100000
 
-theorem parS72_good : parS72.Good where
-  he := by simp only [parS72]; norm_num
-  he1 := by simp only [parS72]; norm_num
-  hM := by simp [parS72]
-  ha := by simp only [parS72]; norm_num
-  hat := by simp only [parS72]; norm_num
-  hlam1 := by simp only [parS72]; norm_num
-  hlam2 := by simp only [parS72]; norm_num
-  hlam3 := by simp only [parS72]; norm_num
-  hlo := by simp only [parS72]; norm_num
-  hhi := by simp only [parS72]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS72] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS72] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS72] at *
-    push_cast
-    linarith
-  hA := by simp only [parS72]; norm_num
-  hA10 := by simp only [parS72]; norm_num
+theorem parS72_good : parS72.Good := by cgl_good parS72
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[53 / 70, 1273 / 1680]`, density step 72**: there is `C ≥ 0` such that for every
@@ -3889,32 +2093,7 @@ def parS73 : ParC where
   A := (227571 / 100000)
   e := 1 / 100000
 
-theorem parS73_good : parS73.Good where
-  he := by simp only [parS73]; norm_num
-  he1 := by simp only [parS73]; norm_num
-  hM := by simp [parS73]
-  ha := by simp only [parS73]; norm_num
-  hat := by simp only [parS73]; norm_num
-  hlam1 := by simp only [parS73]; norm_num
-  hlam2 := by simp only [parS73]; norm_num
-  hlam3 := by simp only [parS73]; norm_num
-  hlo := by simp only [parS73]; norm_num
-  hhi := by simp only [parS73]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS73] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS73] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS73] at *
-    push_cast
-    linarith
-  hA := by simp only [parS73]; norm_num
-  hA10 := by simp only [parS73]; norm_num
+theorem parS73_good : parS73.Good := by cgl_good parS73
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1273 / 1680, 91 / 120]`, density step 73**: there is `C ≥ 0` such that for every
@@ -3940,32 +2119,7 @@ def parS74 : ParC where
   A := (227493 / 100000)
   e := 1 / 100000
 
-theorem parS74_good : parS74.Good where
-  he := by simp only [parS74]; norm_num
-  he1 := by simp only [parS74]; norm_num
-  hM := by simp [parS74]
-  ha := by simp only [parS74]; norm_num
-  hat := by simp only [parS74]; norm_num
-  hlam1 := by simp only [parS74]; norm_num
-  hlam2 := by simp only [parS74]; norm_num
-  hlam3 := by simp only [parS74]; norm_num
-  hlo := by simp only [parS74]; norm_num
-  hhi := by simp only [parS74]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS74] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS74] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS74] at *
-    push_cast
-    linarith
-  hA := by simp only [parS74]; norm_num
-  hA10 := by simp only [parS74]; norm_num
+theorem parS74_good : parS74.Good := by cgl_good parS74
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[91 / 120, 85 / 112]`, density step 74**: there is `C ≥ 0` such that for every
@@ -3991,32 +2145,7 @@ def parS75 : ParC where
   A := (227419 / 100000)
   e := 1 / 100000
 
-theorem parS75_good : parS75.Good where
-  he := by simp only [parS75]; norm_num
-  he1 := by simp only [parS75]; norm_num
-  hM := by simp [parS75]
-  ha := by simp only [parS75]; norm_num
-  hat := by simp only [parS75]; norm_num
-  hlam1 := by simp only [parS75]; norm_num
-  hlam2 := by simp only [parS75]; norm_num
-  hlam3 := by simp only [parS75]; norm_num
-  hlo := by simp only [parS75]; norm_num
-  hhi := by simp only [parS75]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS75] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS75] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS75] at *
-    push_cast
-    linarith
-  hA := by simp only [parS75]; norm_num
-  hA10 := by simp only [parS75]; norm_num
+theorem parS75_good : parS75.Good := by cgl_good parS75
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[85 / 112, 319 / 420]`, density step 75**: there is `C ≥ 0` such that for every
@@ -4042,32 +2171,7 @@ def parS76 : ParC where
   A := (227341 / 100000)
   e := 1 / 100000
 
-theorem parS76_good : parS76.Good where
-  he := by simp only [parS76]; norm_num
-  he1 := by simp only [parS76]; norm_num
-  hM := by simp [parS76]
-  ha := by simp only [parS76]; norm_num
-  hat := by simp only [parS76]; norm_num
-  hlam1 := by simp only [parS76]; norm_num
-  hlam2 := by simp only [parS76]; norm_num
-  hlam3 := by simp only [parS76]; norm_num
-  hlo := by simp only [parS76]; norm_num
-  hhi := by simp only [parS76]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS76] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS76] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS76] at *
-    push_cast
-    linarith
-  hA := by simp only [parS76]; norm_num
-  hA10 := by simp only [parS76]; norm_num
+theorem parS76_good : parS76.Good := by cgl_good parS76
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[319 / 420, 1277 / 1680]`, density step 76**: there is `C ≥ 0` such that for every
@@ -4093,32 +2197,7 @@ def parS77 : ParC where
   A := (45453 / 20000)
   e := 1 / 100000
 
-theorem parS77_good : parS77.Good where
-  he := by simp only [parS77]; norm_num
-  he1 := by simp only [parS77]; norm_num
-  hM := by simp [parS77]
-  ha := by simp only [parS77]; norm_num
-  hat := by simp only [parS77]; norm_num
-  hlam1 := by simp only [parS77]; norm_num
-  hlam2 := by simp only [parS77]; norm_num
-  hlam3 := by simp only [parS77]; norm_num
-  hlo := by simp only [parS77]; norm_num
-  hhi := by simp only [parS77]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS77] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS77] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS77] at *
-    push_cast
-    linarith
-  hA := by simp only [parS77]; norm_num
-  hA10 := by simp only [parS77]; norm_num
+theorem parS77_good : parS77.Good := by cgl_good parS77
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1277 / 1680, 213 / 280]`, density step 77**: there is `C ≥ 0` such that for every
@@ -4144,32 +2223,7 @@ def parS78 : ParC where
   A := (227187 / 100000)
   e := 1 / 100000
 
-theorem parS78_good : parS78.Good where
-  he := by simp only [parS78]; norm_num
-  he1 := by simp only [parS78]; norm_num
-  hM := by simp [parS78]
-  ha := by simp only [parS78]; norm_num
-  hat := by simp only [parS78]; norm_num
-  hlam1 := by simp only [parS78]; norm_num
-  hlam2 := by simp only [parS78]; norm_num
-  hlam3 := by simp only [parS78]; norm_num
-  hlo := by simp only [parS78]; norm_num
-  hhi := by simp only [parS78]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS78] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS78] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS78] at *
-    push_cast
-    linarith
-  hA := by simp only [parS78]; norm_num
-  hA10 := by simp only [parS78]; norm_num
+theorem parS78_good : parS78.Good := by cgl_good parS78
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[213 / 280, 1279 / 1680]`, density step 78**: there is `C ≥ 0` such that for every
@@ -4195,32 +2249,7 @@ def parS79 : ParC where
   A := (227109 / 100000)
   e := 1 / 100000
 
-theorem parS79_good : parS79.Good where
-  he := by simp only [parS79]; norm_num
-  he1 := by simp only [parS79]; norm_num
-  hM := by simp [parS79]
-  ha := by simp only [parS79]; norm_num
-  hat := by simp only [parS79]; norm_num
-  hlam1 := by simp only [parS79]; norm_num
-  hlam2 := by simp only [parS79]; norm_num
-  hlam3 := by simp only [parS79]; norm_num
-  hlo := by simp only [parS79]; norm_num
-  hhi := by simp only [parS79]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS79] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS79] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS79] at *
-    push_cast
-    linarith
-  hA := by simp only [parS79]; norm_num
-  hA10 := by simp only [parS79]; norm_num
+theorem parS79_good : parS79.Good := by cgl_good parS79
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1279 / 1680, 16 / 21]`, density step 79**: there is `C ≥ 0` such that for every
@@ -4246,32 +2275,7 @@ def parS80 : ParC where
   A := (45407 / 20000)
   e := 1 / 100000
 
-theorem parS80_good : parS80.Good where
-  he := by simp only [parS80]; norm_num
-  he1 := by simp only [parS80]; norm_num
-  hM := by simp [parS80]
-  ha := by simp only [parS80]; norm_num
-  hat := by simp only [parS80]; norm_num
-  hlam1 := by simp only [parS80]; norm_num
-  hlam2 := by simp only [parS80]; norm_num
-  hlam3 := by simp only [parS80]; norm_num
-  hlo := by simp only [parS80]; norm_num
-  hhi := by simp only [parS80]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS80] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS80] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS80] at *
-    push_cast
-    linarith
-  hA := by simp only [parS80]; norm_num
-  hA10 := by simp only [parS80]; norm_num
+theorem parS80_good : parS80.Good := by cgl_good parS80
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[16 / 21, 61 / 80]`, density step 80**: there is `C ≥ 0` such that for every
@@ -4297,32 +2301,7 @@ def parS81 : ParC where
   A := (226957 / 100000)
   e := 1 / 100000
 
-theorem parS81_good : parS81.Good where
-  he := by simp only [parS81]; norm_num
-  he1 := by simp only [parS81]; norm_num
-  hM := by simp [parS81]
-  ha := by simp only [parS81]; norm_num
-  hat := by simp only [parS81]; norm_num
-  hlam1 := by simp only [parS81]; norm_num
-  hlam2 := by simp only [parS81]; norm_num
-  hlam3 := by simp only [parS81]; norm_num
-  hlo := by simp only [parS81]; norm_num
-  hhi := by simp only [parS81]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS81] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS81] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS81] at *
-    push_cast
-    linarith
-  hA := by simp only [parS81]; norm_num
-  hA10 := by simp only [parS81]; norm_num
+theorem parS81_good : parS81.Good := by cgl_good parS81
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[61 / 80, 641 / 840]`, density step 81**: there is `C ≥ 0` such that for every
@@ -4348,32 +2327,7 @@ def parS82 : ParC where
   A := (226881 / 100000)
   e := 1 / 100000
 
-theorem parS82_good : parS82.Good where
-  he := by simp only [parS82]; norm_num
-  he1 := by simp only [parS82]; norm_num
-  hM := by simp [parS82]
-  ha := by simp only [parS82]; norm_num
-  hat := by simp only [parS82]; norm_num
-  hlam1 := by simp only [parS82]; norm_num
-  hlam2 := by simp only [parS82]; norm_num
-  hlam3 := by simp only [parS82]; norm_num
-  hlo := by simp only [parS82]; norm_num
-  hhi := by simp only [parS82]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS82] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS82] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS82] at *
-    push_cast
-    linarith
-  hA := by simp only [parS82]; norm_num
-  hA10 := by simp only [parS82]; norm_num
+theorem parS82_good : parS82.Good := by cgl_good parS82
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[641 / 840, 1283 / 1680]`, density step 82**: there is `C ≥ 0` such that for every
@@ -4399,32 +2353,7 @@ def parS83 : ParC where
   A := (226803 / 100000)
   e := 1 / 100000
 
-theorem parS83_good : parS83.Good where
-  he := by simp only [parS83]; norm_num
-  he1 := by simp only [parS83]; norm_num
-  hM := by simp [parS83]
-  ha := by simp only [parS83]; norm_num
-  hat := by simp only [parS83]; norm_num
-  hlam1 := by simp only [parS83]; norm_num
-  hlam2 := by simp only [parS83]; norm_num
-  hlam3 := by simp only [parS83]; norm_num
-  hlo := by simp only [parS83]; norm_num
-  hhi := by simp only [parS83]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS83] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS83] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS83] at *
-    push_cast
-    linarith
-  hA := by simp only [parS83]; norm_num
-  hA10 := by simp only [parS83]; norm_num
+theorem parS83_good : parS83.Good := by cgl_good parS83
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1283 / 1680, 107 / 140]`, density step 83**: there is `C ≥ 0` such that for every
@@ -4450,32 +2379,7 @@ def parS84 : ParC where
   A := (226729 / 100000)
   e := 1 / 100000
 
-theorem parS84_good : parS84.Good where
-  he := by simp only [parS84]; norm_num
-  he1 := by simp only [parS84]; norm_num
-  hM := by simp [parS84]
-  ha := by simp only [parS84]; norm_num
-  hat := by simp only [parS84]; norm_num
-  hlam1 := by simp only [parS84]; norm_num
-  hlam2 := by simp only [parS84]; norm_num
-  hlam3 := by simp only [parS84]; norm_num
-  hlo := by simp only [parS84]; norm_num
-  hhi := by simp only [parS84]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS84] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS84] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS84] at *
-    push_cast
-    linarith
-  hA := by simp only [parS84]; norm_num
-  hA10 := by simp only [parS84]; norm_num
+theorem parS84_good : parS84.Good := by cgl_good parS84
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[107 / 140, 257 / 336]`, density step 84**: there is `C ≥ 0` such that for every
@@ -4501,32 +2405,7 @@ def parS85 : ParC where
   A := (226651 / 100000)
   e := 1 / 100000
 
-theorem parS85_good : parS85.Good where
-  he := by simp only [parS85]; norm_num
-  he1 := by simp only [parS85]; norm_num
-  hM := by simp [parS85]
-  ha := by simp only [parS85]; norm_num
-  hat := by simp only [parS85]; norm_num
-  hlam1 := by simp only [parS85]; norm_num
-  hlam2 := by simp only [parS85]; norm_num
-  hlam3 := by simp only [parS85]; norm_num
-  hlo := by simp only [parS85]; norm_num
-  hhi := by simp only [parS85]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS85] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS85] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS85] at *
-    push_cast
-    linarith
-  hA := by simp only [parS85]; norm_num
-  hA10 := by simp only [parS85]; norm_num
+theorem parS85_good : parS85.Good := by cgl_good parS85
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[257 / 336, 643 / 840]`, density step 85**: there is `C ≥ 0` such that for every
@@ -4552,32 +2431,7 @@ def parS86 : ParC where
   A := (9063 / 4000)
   e := 1 / 100000
 
-theorem parS86_good : parS86.Good where
-  he := by simp only [parS86]; norm_num
-  he1 := by simp only [parS86]; norm_num
-  hM := by simp [parS86]
-  ha := by simp only [parS86]; norm_num
-  hat := by simp only [parS86]; norm_num
-  hlam1 := by simp only [parS86]; norm_num
-  hlam2 := by simp only [parS86]; norm_num
-  hlam3 := by simp only [parS86]; norm_num
-  hlo := by simp only [parS86]; norm_num
-  hhi := by simp only [parS86]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS86] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS86] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS86] at *
-    push_cast
-    linarith
-  hA := by simp only [parS86]; norm_num
-  hA10 := by simp only [parS86]; norm_num
+theorem parS86_good : parS86.Good := by cgl_good parS86
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[643 / 840, 429 / 560]`, density step 86**: there is `C ≥ 0` such that for every
@@ -4603,32 +2457,7 @@ def parS87 : ParC where
   A := (226497 / 100000)
   e := 1 / 100000
 
-theorem parS87_good : parS87.Good where
-  he := by simp only [parS87]; norm_num
-  he1 := by simp only [parS87]; norm_num
-  hM := by simp [parS87]
-  ha := by simp only [parS87]; norm_num
-  hat := by simp only [parS87]; norm_num
-  hlam1 := by simp only [parS87]; norm_num
-  hlam2 := by simp only [parS87]; norm_num
-  hlam3 := by simp only [parS87]; norm_num
-  hlo := by simp only [parS87]; norm_num
-  hhi := by simp only [parS87]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS87] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS87] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS87] at *
-    push_cast
-    linarith
-  hA := by simp only [parS87]; norm_num
-  hA10 := by simp only [parS87]; norm_num
+theorem parS87_good : parS87.Good := by cgl_good parS87
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[429 / 560, 23 / 30]`, density step 87**: there is `C ≥ 0` such that for every
@@ -4654,32 +2483,7 @@ def parS88 : ParC where
   A := (226423 / 100000)
   e := 1 / 100000
 
-theorem parS88_good : parS88.Good where
-  he := by simp only [parS88]; norm_num
-  he1 := by simp only [parS88]; norm_num
-  hM := by simp [parS88]
-  ha := by simp only [parS88]; norm_num
-  hat := by simp only [parS88]; norm_num
-  hlam1 := by simp only [parS88]; norm_num
-  hlam2 := by simp only [parS88]; norm_num
-  hlam3 := by simp only [parS88]; norm_num
-  hlo := by simp only [parS88]; norm_num
-  hhi := by simp only [parS88]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS88] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS88] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS88] at *
-    push_cast
-    linarith
-  hA := by simp only [parS88]; norm_num
-  hA10 := by simp only [parS88]; norm_num
+theorem parS88_good : parS88.Good := by cgl_good parS88
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[23 / 30, 1289 / 1680]`, density step 88**: there is `C ≥ 0` such that for every
@@ -4705,32 +2509,7 @@ def parS89 : ParC where
   A := (45269 / 20000)
   e := 1 / 100000
 
-theorem parS89_good : parS89.Good where
-  he := by simp only [parS89]; norm_num
-  he1 := by simp only [parS89]; norm_num
-  hM := by simp [parS89]
-  ha := by simp only [parS89]; norm_num
-  hat := by simp only [parS89]; norm_num
-  hlam1 := by simp only [parS89]; norm_num
-  hlam2 := by simp only [parS89]; norm_num
-  hlam3 := by simp only [parS89]; norm_num
-  hlo := by simp only [parS89]; norm_num
-  hhi := by simp only [parS89]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS89] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS89] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS89] at *
-    push_cast
-    linarith
-  hA := by simp only [parS89]; norm_num
-  hA10 := by simp only [parS89]; norm_num
+theorem parS89_good : parS89.Good := by cgl_good parS89
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1289 / 1680, 43 / 56]`, density step 89**: there is `C ≥ 0` such that for every
@@ -4756,32 +2535,7 @@ def parS90 : ParC where
   A := (226269 / 100000)
   e := 1 / 100000
 
-theorem parS90_good : parS90.Good where
-  he := by simp only [parS90]; norm_num
-  he1 := by simp only [parS90]; norm_num
-  hM := by simp [parS90]
-  ha := by simp only [parS90]; norm_num
-  hat := by simp only [parS90]; norm_num
-  hlam1 := by simp only [parS90]; norm_num
-  hlam2 := by simp only [parS90]; norm_num
-  hlam3 := by simp only [parS90]; norm_num
-  hlo := by simp only [parS90]; norm_num
-  hhi := by simp only [parS90]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS90] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS90] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS90] at *
-    push_cast
-    linarith
-  hA := by simp only [parS90]; norm_num
-  hA10 := by simp only [parS90]; norm_num
+theorem parS90_good : parS90.Good := by cgl_good parS90
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[43 / 56, 1291 / 1680]`, density step 90**: there is `C ≥ 0` such that for every
@@ -4807,32 +2561,7 @@ def parS91 : ParC where
   A := (45239 / 20000)
   e := 1 / 100000
 
-theorem parS91_good : parS91.Good where
-  he := by simp only [parS91]; norm_num
-  he1 := by simp only [parS91]; norm_num
-  hM := by simp [parS91]
-  ha := by simp only [parS91]; norm_num
-  hat := by simp only [parS91]; norm_num
-  hlam1 := by simp only [parS91]; norm_num
-  hlam2 := by simp only [parS91]; norm_num
-  hlam3 := by simp only [parS91]; norm_num
-  hlo := by simp only [parS91]; norm_num
-  hhi := by simp only [parS91]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS91] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS91] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS91] at *
-    push_cast
-    linarith
-  hA := by simp only [parS91]; norm_num
-  hA10 := by simp only [parS91]; norm_num
+theorem parS91_good : parS91.Good := by cgl_good parS91
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1291 / 1680, 323 / 420]`, density step 91**: there is `C ≥ 0` such that for every
@@ -4858,32 +2587,7 @@ def parS92 : ParC where
   A := (226117 / 100000)
   e := 1 / 100000
 
-theorem parS92_good : parS92.Good where
-  he := by simp only [parS92]; norm_num
-  he1 := by simp only [parS92]; norm_num
-  hM := by simp [parS92]
-  ha := by simp only [parS92]; norm_num
-  hat := by simp only [parS92]; norm_num
-  hlam1 := by simp only [parS92]; norm_num
-  hlam2 := by simp only [parS92]; norm_num
-  hlam3 := by simp only [parS92]; norm_num
-  hlo := by simp only [parS92]; norm_num
-  hhi := by simp only [parS92]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS92] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS92] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS92] at *
-    push_cast
-    linarith
-  hA := by simp only [parS92]; norm_num
-  hA10 := by simp only [parS92]; norm_num
+theorem parS92_good : parS92.Good := by cgl_good parS92
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[323 / 420, 431 / 560]`, density step 92**: there is `C ≥ 0` such that for every
@@ -4909,32 +2613,7 @@ def parS93 : ParC where
   A := (226041 / 100000)
   e := 1 / 100000
 
-theorem parS93_good : parS93.Good where
-  he := by simp only [parS93]; norm_num
-  he1 := by simp only [parS93]; norm_num
-  hM := by simp [parS93]
-  ha := by simp only [parS93]; norm_num
-  hat := by simp only [parS93]; norm_num
-  hlam1 := by simp only [parS93]; norm_num
-  hlam2 := by simp only [parS93]; norm_num
-  hlam3 := by simp only [parS93]; norm_num
-  hlo := by simp only [parS93]; norm_num
-  hhi := by simp only [parS93]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS93] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS93] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS93] at *
-    push_cast
-    linarith
-  hA := by simp only [parS93]; norm_num
-  hA10 := by simp only [parS93]; norm_num
+theorem parS93_good : parS93.Good := by cgl_good parS93
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[431 / 560, 647 / 840]`, density step 93**: there is `C ≥ 0` such that for every
@@ -4960,32 +2639,7 @@ def parS94 : ParC where
   A := (225967 / 100000)
   e := 1 / 100000
 
-theorem parS94_good : parS94.Good where
-  he := by simp only [parS94]; norm_num
-  he1 := by simp only [parS94]; norm_num
-  hM := by simp [parS94]
-  ha := by simp only [parS94]; norm_num
-  hat := by simp only [parS94]; norm_num
-  hlam1 := by simp only [parS94]; norm_num
-  hlam2 := by simp only [parS94]; norm_num
-  hlam3 := by simp only [parS94]; norm_num
-  hlo := by simp only [parS94]; norm_num
-  hhi := by simp only [parS94]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS94] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS94] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS94] at *
-    push_cast
-    linarith
-  hA := by simp only [parS94]; norm_num
-  hA10 := by simp only [parS94]; norm_num
+theorem parS94_good : parS94.Good := by cgl_good parS94
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[647 / 840, 37 / 48]`, density step 94**: there is `C ≥ 0` such that for every
@@ -5011,32 +2665,7 @@ def parS95 : ParC where
   A := (225889 / 100000)
   e := 1 / 100000
 
-theorem parS95_good : parS95.Good where
-  he := by simp only [parS95]; norm_num
-  he1 := by simp only [parS95]; norm_num
-  hM := by simp [parS95]
-  ha := by simp only [parS95]; norm_num
-  hat := by simp only [parS95]; norm_num
-  hlam1 := by simp only [parS95]; norm_num
-  hlam2 := by simp only [parS95]; norm_num
-  hlam3 := by simp only [parS95]; norm_num
-  hlo := by simp only [parS95]; norm_num
-  hhi := by simp only [parS95]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS95] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS95] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS95] at *
-    push_cast
-    linarith
-  hA := by simp only [parS95]; norm_num
-  hA10 := by simp only [parS95]; norm_num
+theorem parS95_good : parS95.Good := by cgl_good parS95
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[37 / 48, 27 / 35]`, density step 95**: there is `C ≥ 0` such that for every
@@ -5062,32 +2691,7 @@ def parS96 : ParC where
   A := (225813 / 100000)
   e := 1 / 100000
 
-theorem parS96_good : parS96.Good where
-  he := by simp only [parS96]; norm_num
-  he1 := by simp only [parS96]; norm_num
-  hM := by simp [parS96]
-  ha := by simp only [parS96]; norm_num
-  hat := by simp only [parS96]; norm_num
-  hlam1 := by simp only [parS96]; norm_num
-  hlam2 := by simp only [parS96]; norm_num
-  hlam3 := by simp only [parS96]; norm_num
-  hlo := by simp only [parS96]; norm_num
-  hhi := by simp only [parS96]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS96] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS96] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS96] at *
-    push_cast
-    linarith
-  hA := by simp only [parS96]; norm_num
-  hA10 := by simp only [parS96]; norm_num
+theorem parS96_good : parS96.Good := by cgl_good parS96
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[27 / 35, 1297 / 1680]`, density step 96**: there is `C ≥ 0` such that for every
@@ -5113,32 +2717,7 @@ def parS97 : ParC where
   A := (225739 / 100000)
   e := 1 / 100000
 
-theorem parS97_good : parS97.Good where
-  he := by simp only [parS97]; norm_num
-  he1 := by simp only [parS97]; norm_num
-  hM := by simp [parS97]
-  ha := by simp only [parS97]; norm_num
-  hat := by simp only [parS97]; norm_num
-  hlam1 := by simp only [parS97]; norm_num
-  hlam2 := by simp only [parS97]; norm_num
-  hlam3 := by simp only [parS97]; norm_num
-  hlo := by simp only [parS97]; norm_num
-  hhi := by simp only [parS97]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS97] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS97] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS97] at *
-    push_cast
-    linarith
-  hA := by simp only [parS97]; norm_num
-  hA10 := by simp only [parS97]; norm_num
+theorem parS97_good : parS97.Good := by cgl_good parS97
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1297 / 1680, 649 / 840]`, density step 97**: there is `C ≥ 0` such that for every
@@ -5164,32 +2743,7 @@ def parS98 : ParC where
   A := (225661 / 100000)
   e := 1 / 100000
 
-theorem parS98_good : parS98.Good where
-  he := by simp only [parS98]; norm_num
-  he1 := by simp only [parS98]; norm_num
-  hM := by simp [parS98]
-  ha := by simp only [parS98]; norm_num
-  hat := by simp only [parS98]; norm_num
-  hlam1 := by simp only [parS98]; norm_num
-  hlam2 := by simp only [parS98]; norm_num
-  hlam3 := by simp only [parS98]; norm_num
-  hlo := by simp only [parS98]; norm_num
-  hhi := by simp only [parS98]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS98] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS98] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS98] at *
-    push_cast
-    linarith
-  hA := by simp only [parS98]; norm_num
-  hA10 := by simp only [parS98]; norm_num
+theorem parS98_good : parS98.Good := by cgl_good parS98
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[649 / 840, 433 / 560]`, density step 98**: there is `C ≥ 0` such that for every
@@ -5215,32 +2769,7 @@ def parS99 : ParC where
   A := (45117 / 20000)
   e := 1 / 100000
 
-theorem parS99_good : parS99.Good where
-  he := by simp only [parS99]; norm_num
-  he1 := by simp only [parS99]; norm_num
-  hM := by simp [parS99]
-  ha := by simp only [parS99]; norm_num
-  hat := by simp only [parS99]; norm_num
-  hlam1 := by simp only [parS99]; norm_num
-  hlam2 := by simp only [parS99]; norm_num
-  hlam3 := by simp only [parS99]; norm_num
-  hlo := by simp only [parS99]; norm_num
-  hhi := by simp only [parS99]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS99] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS99] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS99] at *
-    push_cast
-    linarith
-  hA := by simp only [parS99]; norm_num
-  hA10 := by simp only [parS99]; norm_num
+theorem parS99_good : parS99.Good := by cgl_good parS99
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[433 / 560, 65 / 84]`, density step 99**: there is `C ≥ 0` such that for every
@@ -5266,32 +2795,7 @@ def parS100 : ParC where
   A := (225511 / 100000)
   e := 1 / 100000
 
-theorem parS100_good : parS100.Good where
-  he := by simp only [parS100]; norm_num
-  he1 := by simp only [parS100]; norm_num
-  hM := by simp [parS100]
-  ha := by simp only [parS100]; norm_num
-  hat := by simp only [parS100]; norm_num
-  hlam1 := by simp only [parS100]; norm_num
-  hlam2 := by simp only [parS100]; norm_num
-  hlam3 := by simp only [parS100]; norm_num
-  hlo := by simp only [parS100]; norm_num
-  hhi := by simp only [parS100]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS100] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS100] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS100] at *
-    push_cast
-    linarith
-  hA := by simp only [parS100]; norm_num
-  hA10 := by simp only [parS100]; norm_num
+theorem parS100_good : parS100.Good := by cgl_good parS100
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[65 / 84, 1301 / 1680]`, density step 100**: there is `C ≥ 0` such that for every
@@ -5317,32 +2821,7 @@ def parS101 : ParC where
   A := (45087 / 20000)
   e := 1 / 100000
 
-theorem parS101_good : parS101.Good where
-  he := by simp only [parS101]; norm_num
-  he1 := by simp only [parS101]; norm_num
-  hM := by simp [parS101]
-  ha := by simp only [parS101]; norm_num
-  hat := by simp only [parS101]; norm_num
-  hlam1 := by simp only [parS101]; norm_num
-  hlam2 := by simp only [parS101]; norm_num
-  hlam3 := by simp only [parS101]; norm_num
-  hlo := by simp only [parS101]; norm_num
-  hhi := by simp only [parS101]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS101] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS101] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS101] at *
-    push_cast
-    linarith
-  hA := by simp only [parS101]; norm_num
-  hA10 := by simp only [parS101]; norm_num
+theorem parS101_good : parS101.Good := by cgl_good parS101
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1301 / 1680, 31 / 40]`, density step 101**: there is `C ≥ 0` such that for every
@@ -5368,32 +2847,7 @@ def parS102 : ParC where
   A := (225357 / 100000)
   e := 1 / 100000
 
-theorem parS102_good : parS102.Good where
-  he := by simp only [parS102]; norm_num
-  he1 := by simp only [parS102]; norm_num
-  hM := by simp [parS102]
-  ha := by simp only [parS102]; norm_num
-  hat := by simp only [parS102]; norm_num
-  hlam1 := by simp only [parS102]; norm_num
-  hlam2 := by simp only [parS102]; norm_num
-  hlam3 := by simp only [parS102]; norm_num
-  hlo := by simp only [parS102]; norm_num
-  hhi := by simp only [parS102]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS102] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS102] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS102] at *
-    push_cast
-    linarith
-  hA := by simp only [parS102]; norm_num
-  hA10 := by simp only [parS102]; norm_num
+theorem parS102_good : parS102.Good := by cgl_good parS102
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[31 / 40, 1303 / 1680]`, density step 102**: there is `C ≥ 0` such that for every
@@ -5419,32 +2873,7 @@ def parS103 : ParC where
   A := (225283 / 100000)
   e := 1 / 100000
 
-theorem parS103_good : parS103.Good where
-  he := by simp only [parS103]; norm_num
-  he1 := by simp only [parS103]; norm_num
-  hM := by simp [parS103]
-  ha := by simp only [parS103]; norm_num
-  hat := by simp only [parS103]; norm_num
-  hlam1 := by simp only [parS103]; norm_num
-  hlam2 := by simp only [parS103]; norm_num
-  hlam3 := by simp only [parS103]; norm_num
-  hlo := by simp only [parS103]; norm_num
-  hhi := by simp only [parS103]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS103] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS103] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS103] at *
-    push_cast
-    linarith
-  hA := by simp only [parS103]; norm_num
-  hA10 := by simp only [parS103]; norm_num
+theorem parS103_good : parS103.Good := by cgl_good parS103
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1303 / 1680, 163 / 210]`, density step 103**: there is `C ≥ 0` such that for every
@@ -5470,32 +2899,7 @@ def parS104 : ParC where
   A := (225207 / 100000)
   e := 1 / 100000
 
-theorem parS104_good : parS104.Good where
-  he := by simp only [parS104]; norm_num
-  he1 := by simp only [parS104]; norm_num
-  hM := by simp [parS104]
-  ha := by simp only [parS104]; norm_num
-  hat := by simp only [parS104]; norm_num
-  hlam1 := by simp only [parS104]; norm_num
-  hlam2 := by simp only [parS104]; norm_num
-  hlam3 := by simp only [parS104]; norm_num
-  hlo := by simp only [parS104]; norm_num
-  hhi := by simp only [parS104]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS104] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS104] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS104] at *
-    push_cast
-    linarith
-  hA := by simp only [parS104]; norm_num
-  hA10 := by simp only [parS104]; norm_num
+theorem parS104_good : parS104.Good := by cgl_good parS104
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[163 / 210, 87 / 112]`, density step 104**: there is `C ≥ 0` such that for every
@@ -5521,32 +2925,7 @@ def parS105 : ParC where
   A := (225133 / 100000)
   e := 1 / 100000
 
-theorem parS105_good : parS105.Good where
-  he := by simp only [parS105]; norm_num
-  he1 := by simp only [parS105]; norm_num
-  hM := by simp [parS105]
-  ha := by simp only [parS105]; norm_num
-  hat := by simp only [parS105]; norm_num
-  hlam1 := by simp only [parS105]; norm_num
-  hlam2 := by simp only [parS105]; norm_num
-  hlam3 := by simp only [parS105]; norm_num
-  hlo := by simp only [parS105]; norm_num
-  hhi := by simp only [parS105]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS105] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS105] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS105] at *
-    push_cast
-    linarith
-  hA := by simp only [parS105]; norm_num
-  hA10 := by simp only [parS105]; norm_num
+theorem parS105_good : parS105.Good := by cgl_good parS105
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[87 / 112, 653 / 840]`, density step 105**: there is `C ≥ 0` such that for every
@@ -5572,32 +2951,7 @@ def parS106 : ParC where
   A := (225057 / 100000)
   e := 1 / 100000
 
-theorem parS106_good : parS106.Good where
-  he := by simp only [parS106]; norm_num
-  he1 := by simp only [parS106]; norm_num
-  hM := by simp [parS106]
-  ha := by simp only [parS106]; norm_num
-  hat := by simp only [parS106]; norm_num
-  hlam1 := by simp only [parS106]; norm_num
-  hlam2 := by simp only [parS106]; norm_num
-  hlam3 := by simp only [parS106]; norm_num
-  hlo := by simp only [parS106]; norm_num
-  hhi := by simp only [parS106]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS106] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS106] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS106] at *
-    push_cast
-    linarith
-  hA := by simp only [parS106]; norm_num
-  hA10 := by simp only [parS106]; norm_num
+theorem parS106_good : parS106.Good := by cgl_good parS106
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[653 / 840, 1307 / 1680]`, density step 106**: there is `C ≥ 0` such that for every
@@ -5623,32 +2977,7 @@ def parS107 : ParC where
   A := (224983 / 100000)
   e := 1 / 100000
 
-theorem parS107_good : parS107.Good where
-  he := by simp only [parS107]; norm_num
-  he1 := by simp only [parS107]; norm_num
-  hM := by simp [parS107]
-  ha := by simp only [parS107]; norm_num
-  hat := by simp only [parS107]; norm_num
-  hlam1 := by simp only [parS107]; norm_num
-  hlam2 := by simp only [parS107]; norm_num
-  hlam3 := by simp only [parS107]; norm_num
-  hlo := by simp only [parS107]; norm_num
-  hhi := by simp only [parS107]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS107] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS107] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS107] at *
-    push_cast
-    linarith
-  hA := by simp only [parS107]; norm_num
-  hA10 := by simp only [parS107]; norm_num
+theorem parS107_good : parS107.Good := by cgl_good parS107
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[1307 / 1680, 109 / 140]`, density step 107**: there is `C ≥ 0` such that for every
@@ -5674,32 +3003,7 @@ def parS108 : ParC where
   A := (224907 / 100000)
   e := 1 / 100000
 
-theorem parS108_good : parS108.Good where
-  he := by simp only [parS108]; norm_num
-  he1 := by simp only [parS108]; norm_num
-  hM := by simp [parS108]
-  ha := by simp only [parS108]; norm_num
-  hat := by simp only [parS108]; norm_num
-  hlam1 := by simp only [parS108]; norm_num
-  hlam2 := by simp only [parS108]; norm_num
-  hlam3 := by simp only [parS108]; norm_num
-  hlo := by simp only [parS108]; norm_num
-  hhi := by simp only [parS108]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS108] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS108] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS108] at *
-    push_cast
-    linarith
-  hA := by simp only [parS108]; norm_num
-  hA10 := by simp only [parS108]; norm_num
+theorem parS108_good : parS108.Good := by cgl_good parS108
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[109 / 140, 187 / 240]`, density step 108**: there is `C ≥ 0` such that for every
@@ -5725,32 +3029,7 @@ def parS109 : ParC where
   A := (224833 / 100000)
   e := 1 / 100000
 
-theorem parS109_good : parS109.Good where
-  he := by simp only [parS109]; norm_num
-  he1 := by simp only [parS109]; norm_num
-  hM := by simp [parS109]
-  ha := by simp only [parS109]; norm_num
-  hat := by simp only [parS109]; norm_num
-  hlam1 := by simp only [parS109]; norm_num
-  hlam2 := by simp only [parS109]; norm_num
-  hlam3 := by simp only [parS109]; norm_num
-  hlo := by simp only [parS109]; norm_num
-  hhi := by simp only [parS109]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS109] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS109] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS109] at *
-    push_cast
-    linarith
-  hA := by simp only [parS109]; norm_num
-  hA10 := by simp only [parS109]; norm_num
+theorem parS109_good : parS109.Good := by cgl_good parS109
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[187 / 240, 131 / 168]`, density step 109**: there is `C ≥ 0` such that for every

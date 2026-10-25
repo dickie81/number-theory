@@ -248,6 +248,35 @@ noncomputable section
 namespace LinnikCGLSteps
 
 open LinnikCGLStep
+
+/-- `ParC.Good` for numerals: the fifteen fields of `ParC.Good` are closed, in the order of the structure, by
+`norm_num` on the unfolded parameters, and by `linarith` for the three exponent conditions (affine in `σ` once the
+parameters are numerals). One use for each step below. -/
+macro "cgl_good " P:ident : tactic =>
+  `(tactic| (
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp [$P:ident]
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num
+    · intro σ h1 h2
+      simp only [$P:ident] at *
+      refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
+    · intro σ h1 h2
+      simp only [$P:ident] at *
+      linarith
+    · intro σ h2
+      simp only [$P:ident] at *
+      push_cast
+      linarith
+    · simp only [$P:ident]; norm_num
+    · simp only [$P:ident]; norm_num))
 ''')
     for k, (lo, hi, A) in enumerate(new):
         p = params[(lo, hi)]
@@ -263,32 +292,7 @@ def parS{k} : ParC where
   A := {litp(A)}
   e := 1 / 100000
 
-theorem parS{k}_good : parS{k}.Good where
-  he := by simp only [parS{k}]; norm_num
-  he1 := by simp only [parS{k}]; norm_num
-  hM := by simp [parS{k}]
-  ha := by simp only [parS{k}]; norm_num
-  hat := by simp only [parS{k}]; norm_num
-  hlam1 := by simp only [parS{k}]; norm_num
-  hlam2 := by simp only [parS{k}]; norm_num
-  hlam3 := by simp only [parS{k}]; norm_num
-  hlo := by simp only [parS{k}]; norm_num
-  hhi := by simp only [parS{k}]; norm_num
-  hc := by
-    intro σ h1 h2
-    simp only [parS{k}] at *
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parS{k}] at *
-    linarith
-  h4 := by
-    intro σ h2
-    simp only [parS{k}] at *
-    push_cast
-    linarith
-  hA := by simp only [parS{k}]; norm_num
-  hA10 := by simp only [parS{k}]; norm_num
+theorem parS{k}_good : parS{k}.Good := by cgl_good parS{k}
 
 open scoped Classical in
 /-- **Chen–Gupta–Li's Proposition 3.1 on `[{lit(lo)}, {lit(hi)}]`, density step {k}**: there is `C ≥ 0` such that for every
