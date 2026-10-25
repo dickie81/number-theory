@@ -232,6 +232,9 @@ import SieveTypeIIU22325D
 import SieveGrid22325R
 import SieveCert22325R
 import Linnik22325R
+import LinnikGRH
+import ShortPrimesHalfPlane
+import LinnikWeylBridge
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -931,3 +934,8 @@ import Linnik22325R
 #print axioms LinnikSplit.large_values_split
 #print axioms LinnikS2.S2_closed
 #print axioms LinnikS2.large_values_socket
+#print axioms LinnikGRH.charDensity_two_of_GRH
+#print axioms LinnikGRH.linnik_two_of_GRH
+#print axioms ShortPrimesHalfPlane.zeroFreeXi_of_halfplane
+#print axioms ShortPrimesHalfPlane.short_primes_11_17_noKV
+#print axioms LinnikWeylBridge.weylBound_of_PYWeyl
