@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""gen_cgl_curve.py [--check]: the Lean files of the curve `g7d` and its theorem at `L = 11161/5000`.
+"""gen_cgl_curve.py [--check]: the Lean files of the curve `g7d` and its theorem at `L = 2231/1000`.
 
 `g7d` is `g7c` (`lib/pnt/SieveTypeIIU226C.lean`) with Chen-Gupta-Li's Proposition 3.1 used at every point of
 `[5/7, 1307/1680]`, and Huxley's bound on `[1307/1680, 131/168]` (below), instead of the flat `7/3 + 1/2000` and Huxley's steps there, and with Ingham's last step
@@ -24,8 +24,8 @@ first Chen-Gupta-Li step meet; Ingham's theorem (`LinnikInghamC.charDensity_ingh
 there is cut to `10⁻⁵`.
 
 Writes `lib/pnt/LinnikCGLSteps.lean` (the Chen-Gupta-Li steps, and Ingham's last step `charDensity_inT`),
-`lib/pnt/LinnikHuxJunction.lean` (Huxley's three steps), `lib/pnt/SieveTypeIIU22322D.lean` (`g7d`, its counts, its window
-and Proposition 3′) and `lib/pnt/Linnik22322R.lean` (the theorem). The window `[W1, W2]/100000` is the one
+`lib/pnt/LinnikHuxJunction.lean` (Huxley's three steps), `lib/pnt/SieveTypeIIU22310D.lean` (`g7d`, its counts, its window
+and Proposition 3′) and `lib/pnt/Linnik22310R.lean` (the theorem). The window `[W1, W2]/100000` is the one
 `route_limits.py run` computes for `g7d` at `L` (the sampled scan, then the exact corners). With `--check`, nothing is
 written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a difference). With `--table`, the
 steps' parameters are printed.
@@ -44,12 +44,12 @@ import route_limits as rl  # noqa: E402
 PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 E = Fr(1, 100000)
 M = 1556
-L = Fr(11161, 5000)
-TAG, LNUM, LDEN = '22322', 11161, 5000
+L = Fr(2231, 1000)
+TAG, LNUM, LDEN = '22310', 2231, 1000
 STEP = Fr(1, 1680)
 # Ingham's last step, at ε = 1/400000: the exponent 2 + 4c + 4ε with c = 1/12
 INGHAM_T = (Fr(99, 140), Fr(5, 7), Fr(7, 3) + Fr(1, 100000))
-N = 300
+N = 400
 TOP = Fr(4, 5)
 # The last three steps of `[5/7, 131/168]` are Huxley's, not Chen-Gupta-Li's: from `7/9` on, `3/(3σ - 1)` is below
 # `4/(1 + σ)`. `(a, λ)` of each, as found by a linear program (Huxley's argument, `LinnikHuxStep.Par.Good`) and rounded
@@ -234,6 +234,11 @@ def window_for(pieces):
     while True:
         fails, slack, tag = rl.corners(pieces, L, W1, W2)
         if not fails:
+            # the scan in `route_limits.window` is coarse: widen the window while every corner still passes
+            while not rl.corners(pieces, L, W1, W2 + 1)[0]:
+                W2 += 1
+            while not rl.corners(pieces, L, W1 - 1, W2)[0]:
+                W1 -= 1
             return W1, W2, moves
         ends = {f[0] for f in fails}
         assert 'one' not in ends, fails[:3]
