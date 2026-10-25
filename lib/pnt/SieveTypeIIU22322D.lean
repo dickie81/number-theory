@@ -10,8 +10,8 @@ the 3 steps of `LinnikHuxJunction.lean` (Huxley's bound, exponent `A(1 − σ)` 
 step's left end) on `[1307/1680, 131/168]`, in place of `7/3 + 1/2000` on `[5/7, 16/21]` and Huxley's steps
 `hx7_0` … `hx7_4`: Huxley's exponent is the smaller from `7/9` on. From `131/168` on it is `g7c` (Huxley's steps
 `hx7_5` … `hx7_19`, then `(101/50)(1 − σ)` from `5/6`, `LinnikStep.charDensity_step`); below `5/7` it is `g7c` with
-Ingham's last step at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`, `7/3 + 1/100000` in place of `7/3 + 1/2000`).
-Its counts need no hypothesis. The window and the Type II estimate are as in `SieveTypeIIU22475C.lean` (no longer in the tree: commit `6df0ebd`): every piece of
+Ingham's last step at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`: the exponent is `7/3 + 4ε = 7/3 + 1/100000` in place of `7/3 + 1/2000`).
+Its counts need no hypothesis. The window and the Type II estimate are as in the earlier Type II estimate for the window at `L = 899/400` (in the git history): every piece of
 `WindowOKHM` below `5/6` holds by orthogonality at its corners (the tactic `corners`), the top piece `[5/6, 11/12]` by
 `windowPieceHM_const_split` (`cornersHMD`).
 

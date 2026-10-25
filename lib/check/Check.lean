@@ -5,8 +5,8 @@ import LinnikHuxJunction
 
 /- The Linnik paper: its theorem with the density curve `g7d` (Chen–Gupta–Li's Proposition 3.1 on `[5/7, 1307/1680]`,
 `LinnikCGLSteps`, and Huxley's bound on `[1307/1680, 131/168]`, `LinnikHuxJunction`) at `L = 11161/5000`, with no hypothesis, the sieve route, its certificate and the Type II
-estimate on its window. The earlier theorem at `L = 899/400` (`Linnik22475R`, with its certificate of 135 parts) is no
-longer in the tree; it is at commit `6df0ebd`. -/
+estimate on its window. Earlier theorems, at weaker exponents and with their own certificates, are no longer in the tree: see the git
+history. -/
 #print axioms Linnik22322R.linnik_22322r
 #print axioms SieveMain2.linnik_route_lt2
 #print axioms SieveCert.total2_lt_22322R

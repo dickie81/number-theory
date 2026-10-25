@@ -1,31 +1,33 @@
-"""gen_22475r.py CELLS.json OUTDIR [PCAP] [FCAP] [CCAP] [PMAX] [--tag T --L a/b --curve g --typeii X]: the Lean files of the
+"""gen_cert.py CELLS.json OUTDIR [PCAP] [FCAP] [CCAP] [PMAX] [--tag T --L a/b --curve g --typeii X]: the Lean files of the
 refined certificate (SieveCert2Defs.lean's `total2`) for the window and `n` of CELLS.json. With no options these are the
-default certificate's, L = 899/400 with n = 300 (window [41335, 48069]/100000, tag 22475R); the options only set the names
-and the text of the files, see below. `check_certificate.py` generates both certificates (`--tag 22322R` for the second).
+default certificate's, L = 11161/5000 with n = 300 (window [40981, 47725]/100000, tag 22322R, the library's);
+the options only set the names and the text of the files, see below. `check_certificate.py` generates it and compares it
+with `lib/pnt`. (Earlier certificates, at weaker exponents, are in the git history; this script no longer generates them.)
 
 The kernel parts are cut by work = depth-4 tests + `sub2`'s `surelyEval` tests: a part is a range of consecutive light
 rows (`rows2`), or a column piece `rowsJ2 i (i+1) j₀ j₁` of a heavy row, with at most PCAP work; a part file holds
 consecutive parts with at most FCAP work in all. The bounds are ⌈1.001 × part⌉ in exact integers; the cells and costs
-come from CELLS.json, mirror2.py's output for the window and `n` (`41335 48069 300` by default).
+come from CELLS.json, mirror2.py's output for the window and `n` (`40981 47725 300` by default).
 
 Files into OUTDIR, which must not exist or be empty: SieveGrid<T>.lean (imports SieveCert2Defs),
 SieveCert<T>P1..k.lean, SieveCert<T>.lean (total2 < K, with SieveCert2's split lemmas), and, as records,
 parts<t>.json, files<t>.json and modules<t>.txt (T the tag, t its lower case)."""
 import json, re, sys, os, textwrap
 # Options (before or after the positional arguments), for a certificate other than the default one:
-#   --tag T       the files' tag (default 22475R): SieveGridT, SieveCertTP<k>, SieveCertT, `total2_lt_T`
-#   --L a/b       the exponent L = a/b written in the files' text (default 899/400)
-#   --curve g    the curve's name in the text (default g7c)
-#   --typeii X    the Type II theorem the grid belongs to, in the text (default SieveTypeIIU22475C.typeII_22475c)
+#   --tag T       the files' tag (default 22322R): SieveGridT, SieveCertTP<k>, SieveCertT, `total2_lt_T`
+#   --L a/b       the exponent L = a/b written in the files' text (default 11161/5000)
+#   --curve g    the curve's name in the text (default g7d)
+#   --typeii X    the Type II theorem the grid belongs to, in the text (default SieveTypeIIU22322D.typeII_22322d)
 # The window [W1, W2]/100000 and n come from CELLS.json (mirror2.py's output); without options they must be the default
-# certificate's (41335, 48069, 300).
-OPTS = {'--tag': '22475R', '--L': '899/400', '--curve': 'g7c', '--typeii': 'SieveTypeIIU22475C.typeII_22475c'}
+# certificate's (40981, 47725, 300).
+DEFAULTS = {'--tag': '22322R', '--L': '11161/5000', '--curve': 'g7d', '--typeii': 'SieveTypeIIU22322D.typeII_22322d'}
+OPTS = dict(DEFAULTS)
 _args = []
 _it = iter(sys.argv[1:])
 for _a in _it:
     if _a in OPTS: OPTS[_a] = next(_it)
     else: _args.append(_a)
-CUSTOM = (OPTS['--tag'], OPTS['--L'], OPTS['--curve'], OPTS['--typeii']) != ('22475R', '899/400', 'g7c', 'SieveTypeIIU22475C.typeII_22475c')
+CUSTOM = OPTS != DEFAULTS
 TAG, LSTR, CURVE, TYPEII = OPTS['--tag'], OPTS['--L'], OPTS['--curve'], OPTS['--typeii']
 TAGL = TAG.lower()
 CELLS, OUT = _args[0], os.path.join(_args[1], '')
@@ -39,7 +41,7 @@ DW = 100000
 DEN = 2 ** 40; K = 2 ** 60
 D = json.load(open(CELLS))
 W1, W2, N = D['W1'], D['W2'], D['n']
-assert CUSTOM or (W1, W2, N) == (41335, 48069, 300)
+assert CUSTOM or (W1, W2, N) == (40981, 47725, 300)
 U1, U2 = (W1 * DEN + DW - 1) // DW, W2 * DEN // DW
 assert D['U1'] == U1 and D['U2'] == U2
 cells = {tuple(map(int, k.split(','))): tuple(v) for k, v in D['cells'].items()}  # (cost2, tests4, sub2tests)

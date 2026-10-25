@@ -44,15 +44,17 @@
 
 \begin{abstract}
 We prove, in Lean~4, that there is a constant $K$ such that, for every $q \ge 1$ and every $a$ prime to $q$, there is a
-prime $p \equiv a \pmod q$ with $p \le K q^{11161/5000}$. The Lean theorem has no hypotheses, but its correctness rests on
-two recent results that are not refereed, OpenAI's zero-free half-plane $\operatorname{Re} s > 11/12$ for every
-Dirichlet $L$-function and Chen, Gupta and Li's zero-density estimate, whose proofs the same library formalises from
-their preprints: the theorem is correct if those preprints are correct and the Lean formalisations are faithful to
-them. The proof is a sieve argument, and its Type~II estimate uses the two results, the second at its exponent
-$4/(1 + \sigma)$ on narrow steps. The first is in preprints that have not been reviewed, and the second is an arXiv
-preprint. The theorem, these two results and the classical results the proof uses are proved in Lean, and the proof
-depends on no axioms beyond Lean's standard three. The exponent is not comparable with the unconditional exponents of
-Heath-Brown and Xylouris, which use no zero-free half-plane.
+prime $p \equiv a \pmod q$ with $p \le K q^{11161/5000}$. The Lean theorem has no hypotheses, but it rests on two recent results that have not been refereed:
+OpenAI's zero-free half-plane $\operatorname{Re} s > 11/12$ for every Dirichlet $L$-function, and Chen, Gupta and Li's
+zero-density estimate. The library formalises the first from OpenAI's companion preprint. For the second it formalises
+Chen, Gupta and Li's Proposition~3.1 and derives from it their exponent $4/(1 + \sigma)$ on $107$ narrow steps; the
+rest of their paper is not formalised. Lean's kernel checks that these proofs establish the formal statements, not that
+the statements faithfully capture the preprints' theorems, so the theorem is correct only if the preprints are correct
+and the formalisations faithful; independent checking of the half-plane result is partial. The proof is a sieve
+argument, and its Type~II estimate uses the two results. The theorem, the formalisations of the two results and the
+classical results the proof uses are proved in Lean, and the proof depends on no axioms beyond Lean's standard three.
+The exponent is not comparable with the unconditional exponents of Heath-Brown and Xylouris, which use no zero-free
+half-plane.
 \end{abstract}
 
 \section{Introduction}\label{sec:intro}
@@ -65,7 +67,7 @@ $p \le K q^{11161/5000}$.
 Linnik \cite{linnik44} proved that there are absolute constants $K$ and $L$ such that every reduced residue class
 mod $q$ contains a prime $p \le K q^L$. The admissible exponent $L$ has been lowered many times. Heath-Brown
 \cite{heath-brown92} reached $L = 5.5$, Xylouris $L = 5.18$ \cite{xylouris-acta} and then $L = 5$ \cite{xylouris11},
-and later a value below $5$ \cite{xylouris18}.
+and again $L = 5$ in a short version, which notes that a slightly smaller value follows \cite{xylouris18}.
 Under the generalised Riemann hypothesis every $L > 2$ is admissible \cite{lls, lls-corr}. Theorem~\ref{thm:main} has
 $L = 11161/5000 = 2.2322$. This is not comparable with the exponents of Heath-Brown and Xylouris: those are
 unconditional and use neither a zero-free half-plane nor a zero-density estimate that has not been refereed, and
@@ -74,10 +76,13 @@ Theorem~\ref{thm:main} uses both.
 The Lean statement of Theorem~\ref{thm:main} has no hypotheses. Its proof uses two recent results that are not yet
 refereed, OpenAI's zero-free half-plane (Input~\ref{inp:half-plane}) and Chen, Gupta and Li's zero-density
 estimate (Input~\ref{inp:density}), which Section~\ref{sec:inputs} states. They are called inputs because the argument
-of the paper is written under them. The library proves both in Lean, from the preprints, so the Lean theorem does not
-assume them. Its correctness therefore depends on the two preprints being correct, and on the Lean statements and
-proofs of the two inputs being faithful formalisations of them; the kernel does not check the second.
-Section~\ref{sec:inputs} says what is known of independent checking.
+of the paper is written under them. The library formalises both in Lean, so the Lean theorem does not assume them: the
+half-plane from OpenAI's companion preprint, and the density estimate from Chen, Gupta and Li's Proposition~3.1, with
+the exponents of Input~\ref{inp:density} derived from it. The rest of their paper, in particular their Theorem~1.2, is
+not formalised. The theorem's correctness therefore depends on the two preprints being correct, and on the Lean
+statements of the two inputs being faithful to the preprints' theorems; the kernel checks the proofs but not the
+faithfulness. Section~\ref{sec:inputs} says what is known of independent checking, and Section~\ref{sec:lean} what the
+library does and does not formalise.
 
 \subsection*{The zeros near $\operatorname{Re} s = 1$}
 
@@ -139,7 +144,8 @@ The exponent $11161/5000$ uses Chen, Gupta and Li's Proposition~3.1 at every poi
 $107$ steps of length $1/1680$ the exponent is just above $4/(1 + \sigma)$ at the step's left end. From $\sigma = 7/9$
 on, Huxley's exponent $3/(3\sigma - 1)$ is below $4/(1 + \sigma)$, and on the three steps of that length that follow the
 step containing $7/9$, up to $131/168$, the curve takes Huxley's: just above $3/(3\sigma - 1)$ at the step's left end. It also uses Ingham's
-estimate on its last step, $[99/140, 5/7]$, at $\varepsilon = 1/400000$, where the exponent is $7/3 + 1/100000$. The
+estimate on its last step, $[99/140, 5/7]$, with a slack of $1/100000$ in place of the $1/2000$ of the other steps, so
+that its exponent is $7/3 + 1/100000$. The
 steps are narrow because the ends of the window are set by the places where a step's exponent most exceeds the curve it
 bounds: at the steps around $7/9$, where $4/(1 + \sigma)$ meets Huxley's $3/(3\sigma - 1)$, and at $\sigma = 5/7$,
 where the exponent is largest. Using Huxley's exponent on those three steps, instead of Chen, Gupta and Li's, lowers
@@ -152,15 +158,18 @@ and Section~\ref{sec:type1} the form of the sieve that is used.
 
 \subsection*{The formalisation}
 
-Every step of the proof, and every result it uses from the literature, is proved in Lean~4 with the Mathlib
-library. The Lean theorem \lean{Linnik22322R.linnik\_22322r} is Theorem~\ref{thm:main}, and its axioms are Lean's
+Every step of the proof is proved in Lean~4 with the Mathlib library, and so is each result it uses from the
+literature, except that for Chen, Gupta and Li's paper only its Proposition~3.1, with the results it rests on, and the steps derived from it are
+formalised. The Lean theorem \lean{Linnik22322R.linnik\_22322r} is Theorem~\ref{thm:main}, and its axioms are Lean's
 standard three. The certificate's sum is checked by Lean's kernel in 561 parts. Section~\ref{sec:lean} names the Lean
 theorem behind each claim of the paper, and the directory \file{formalisations/} of the repository documents each
 result from the literature: its source, its Lean statement and the differences between them. The library's proofs of
-Inputs~\ref{inp:half-plane} and~\ref{inp:density} are the library's own formalisations: for the second, one ingredient of the Lean proof,
-Heath-Brown's Theorem~10.1 with characters, which Chen, Gupta and Li cite, follows Kerr and Jutila because the cited
-source was not read, and \file{formalisations/} records this. Whether they prove what the preprints prove is a question about the formalisations that this paper does
-not settle.
+Inputs~\ref{inp:half-plane} and~\ref{inp:density} are the library's own formalisations. For the second, one ingredient
+of the Lean proof, Heath-Brown's Theorem~10.1 with characters, which Chen, Gupta and Li cite, follows Kerr and Jutila
+because the cited source was not read; some lemmas of their paper were formalised from an outline of their proofs only; and
+the formalisation found six places where the text of their paper needs a small repair, none affecting its results.
+\file{formalisations/chen-gupta-li-density.md} records all three.
+Whether the formalisations prove what the preprints prove is a question about them that this paper does not settle.
 
 \subsection*{Outline}
 
@@ -195,14 +204,30 @@ $L(s, \chi) \ne 0$, except at $s = 1$ for the trivial character.
 \end{inputthm}
 
 This is OpenAI's result \cite{openai}: their companion preprint proves it, and their main preprint proves the
-stronger $\operatorname{Re} s > 7/8$. These preprints have not been refereed. The theorem of this paper uses the result, which is proved in Lean as
-\lean{Eis.LFunction\_ne\_zero\_of\_re\_gt}, following the companion preprint; so the correctness of
-Theorem~\ref{thm:main} depends on the preprint being correct and on that Lean file being a faithful formalisation of
-it. Independent checking of the result is partial. The only independent machine check that the author has seen reported,
-the one recorded by the tracker AIProofWatch \cite{aiproofwatch} on 25 October 2026, concerns the specialisation to
-the Riemann zeta function, not Dirichlet $L$-functions in general; the author knows of no independent check of the
-general result besides this library's own Lean proof. \file{formalisations/openai-half-plane.md} gives the attribution and the differences
-between the Lean statement and the source's.
+stronger $\operatorname{Re} s > 7/8$. These preprints have not been refereed. The theorem of this paper uses the result,
+which is proved in Lean as \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt}, following the companion preprint; so the
+correctness of Theorem~\ref{thm:main} depends on the preprint being correct and on that Lean file being a faithful
+formalisation of it.
+
+Independent checking of the result is partial, and little of it is independent of OpenAI. OpenAI's release has its own
+Lean formalisation of the main preprint's result. Its catalogue \texttt{lean/formalization.yaml} \cite{openai-lean},
+read on 25 October 2026, lists that preprint among the papers with a formalised main result, and names the theorem
+\lean{OAI.DirichletCharacter.\allowbreak LFunction\_ne\_zero\_of\_seven\_eighths\_lt\_re}. Its statement is for every modulus
+$q \ge 1$, every character mod $q$ and every $s$ with $\operatorname{Re} s > 7/8$, against Mathlib's $L$-function,
+with the same exception at $s = 1$ for the trivial character. Since $7/8 < 11/12$, it implies Input~\ref{inp:half-plane}
+as stated here. The same catalogue gives the scope as partial progress and the review status as unchecked, so it is
+OpenAI's own record and not an independent one. The author read that release's statements, scanned its Lean and
+rebuilt it on 7 October 2026, which showed its two main theorems to depend on Lean's standard three axioms only, but
+did not read its proofs in full. This library's proof of Input~\ref{inp:half-plane} is a new formalisation of the
+companion preprint's route, on a different Lean and Mathlib; it imports nothing from the release and was not compared
+with it, but the route is OpenAI's, so it is a second formalisation by the author and not an independent check of the
+mathematics. The only check by anyone other than OpenAI and the author that the author has seen reported, the one
+recorded by the tracker AIProofWatch \cite{aiproofwatch} on 25 October 2026, concerns the specialisation to the
+Riemann zeta function at $7/8$, not Dirichlet $L$-functions in general. So, for Dirichlet $L$-functions in general,
+the author knows of no check independent of OpenAI and of the author. The release's Lean was not confirmed to be
+correct, beyond the statement above and the rebuild.
+\file{formalisations/openai-half-plane.md} gives the attribution and the differences between the Lean statement and
+the source's.
 
 \begin{inputthm}[zero-density estimates from $5/7$ to $1307/1680$]\label{inp:density}
 For $0 \le k < 107$ let $\sigma_k = 5/7 + k/1680$. There are exponents $A_k$ with
@@ -215,9 +240,11 @@ $\operatorname{Re} s \ge \sigma$, $|\operatorname{Im} s| \le T$.
 
 The exponent $A_k$ is that of Chen, Gupta and Li's Theorem~1.2 \cite{cgl} at $q_1 = q$, taken at the step's left end
 $\sigma_k$, up to $10^{-4}$. Their estimate counts zeros, which gives the count of characters stated here. The
-library does not prove their Theorem~1.2. It proves their Proposition~3.1, the large-values estimate, and derives each
-step from it, in \file{lib/pnt/LinnikCGLSteps.lean} (Section~\ref{sec:lean} names the theorems), and
-\file{formalisations/} documents it. Their paper \cite{cgl} is an arXiv preprint and has not been refereed.
+library does not prove their Theorem~1.2. It formalises their Proposition~3.1, the large-values estimate, and derives each
+step from it, in \file{lib/pnt/LinnikCGLSteps.lean} (Section~\ref{sec:lean} names the theorems); other parts of their paper are not
+formalised. \file{formalisations/chen-gupta-li-density.md} documents what is, and lists six small repairs that the
+formalisation needed in the text of their paper, none affecting its results. Their paper \cite{cgl} is an arXiv
+preprint and has not been refereed.
 
 \subsection*{The density curve}
 
@@ -237,9 +264,11 @@ its pieces is a known density estimate, and the steps make each piece a constant
 \begin{itemize}
 \item $g_7(\sigma) = 1$ for $\sigma < 4/7$.
 \item On $[4/7, 5/7]$, divided into twenty steps $[\sigma_1, \sigma_2)$ of length $1/140$,
-  $g_7(\sigma) = \bigl(3/(2 - \sigma_2) + \varepsilon\bigr)(1 - \sigma)$: Ingham's exponent at the step's right end,
-  with $\varepsilon = 1/2000$ except on the last step $[99/140, 5/7)$, where $\varepsilon = 1/400000$ and the exponent
-  is $7/3 + 1/100000$.
+  $g_7(\sigma) = \bigl(3/(2 - \sigma_2) + \delta\bigr)(1 - \sigma)$: Ingham's exponent at the step's right end plus a
+  slack $\delta$, with $\delta = 1/2000$ except on the last step $[99/140, 5/7)$, where $\delta = 1/100000$ and the
+  exponent is $7/3 + 1/100000$. (In Lean the slack is $4\varepsilon$ for the $\varepsilon$ of
+  \lean{LinnikInghamC.charDensity\_ingham\_c}, whose exponent is $2 + 4c + 4\varepsilon$: $\varepsilon = 1/8000$ on
+  the first nineteen steps and $\varepsilon = 1/400000$ on the last.)
 \item On $[5/7, 1307/1680)$, divided into $107$ steps $[\sigma_k, \sigma_{k+1})$ of length $1/1680$,
   $g_7(\sigma) = A_k(1 - \sigma)$ with $A_k$ the exponent of Input~\ref{inp:density}.
 \item On $[1307/1680, 131/168)$, divided into three steps $[\sigma_1, \sigma_2)$ of length $1/1680$,
@@ -729,7 +758,7 @@ $\mathtt{total2}/K \le c$, then for every $\varepsilon > 0$, for all large $q$ a
 
 \begin{proposition}\label{prop:certificate}
 On the grid of $n = 300$ cells a side with $U_1 = \lceil (40981/100000) D \rceil$ and
-$U_2 = \lfloor (47725/100000) D \rfloor$, $\mathtt{total2} < K$; in fact $\mathtt{total2} < 0.99873 K$.
+$U_2 = \lfloor (47725/100000) D \rfloor$, $\mathtt{total2} < K$; in fact $\mathtt{total2}/K = 0.9987228\ldots < 0.99873$.
 \end{proposition}
 
 The total is a finite sum of rational expressions in natural numbers, rounded to integers, so the proposition is a
@@ -786,7 +815,8 @@ Input~\ref{inp:density} and Input~\ref{inp:half-plane} are theorems of the libra
 
 Every numbered theorem, proposition, lemma and input of Sections~\ref{sec:intro} to~\ref{sec:proof}, and each result
 from the literature that the proof uses, is a theorem of the Lean library in \texttt{lib/} of the repository, which is
-built with Lean~4 and Mathlib; the table names each one. These are not Lean theorems: the historical statements of the
+built with Lean~4 and Mathlib; the table names each one. For Chen, Gupta and Li's paper that means its Proposition~3.1
+and the steps of Input~\ref{inp:density}, not its other results. These are not Lean theorems: the historical statements of the
 introduction (the exponents of Linnik, Heath-Brown, Xylouris and under the generalised Riemann hypothesis, and the
 remarks on where the difficulty lies), the remark that the classical deduction gives $7/3 + \varepsilon$, the table of
 Section~\ref{sec:comparison}, the discussion of where the gain comes from and of going lower, including its
@@ -821,10 +851,10 @@ Proposition~\ref{prop:decomp-kept}, with the kept parts & \lean{SieveBuch.Par.de
 Proposition~\ref{prop:certificate}, the certificate & \lean{SieveCert.total2\_lt\_22322R} \\
 \midrule
 Input~\ref{inp:half-plane} (OpenAI; \file{formalisations/}) & \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt} \\
-Input~\ref{inp:density} (Chen--Gupta--Li; \file{formalisations/}) & \lean{LinnikCGLSteps.charDensity\_s0}, \\
+Input~\ref{inp:density} (Chen--Gupta--Li, their Proposition~3.1 and the steps derived from it; \file{formalisations/}) & \lean{LinnikCGLSteps.charDensity\_s0}, \\
  & \dots, \lean{LinnikCGLSteps.charDensity\_s106}, \\
  & \lean{LinnikCGLHB101.prop31} \\
-Ingham's last step, $\varepsilon = 1/400000$ & \lean{LinnikCGLSteps.charDensity\_inT} \\
+Ingham's last step, slack $1/100000$ ($\varepsilon = 1/400000$ in Lean) & \lean{LinnikCGLSteps.charDensity\_inT} \\
 Huxley's three steps on $[1307/1680, 131/168]$ (\file{formalisations/}) & \lean{LinnikHuxJunction.charDensity\_hj0}, \\
  & \dots, \lean{LinnikHuxJunction.charDensity\_hj2} \\
 Ingham's density estimate (\file{formalisations/}) & \lean{LinnikInghamC.charDensity\_ingham\_c} \\
@@ -916,7 +946,9 @@ Section~\ref{sec:lean}'s table names the Lean theorem of each.
 With Chen, Gupta and Li's estimate as well, the exponent is $7/3 + \varepsilon$, by the same classical deduction: the density estimate
 is Chen, Gupta and Li's Theorem~1.2 \cite{cgl} (exponent $A = 7/3$), and the deduction is not theirs, since they do not
 derive a Linnik exponent. In the terms of this paper, the curve $g_7$ of Section~\ref{sec:inputs} satisfies $g_7(\sigma) \le (7/3 + 1/2000)(1 - \sigma)$ on
-$[1/2, 1]$, so Proposition~\ref{prop:curve} and the deduction give every exponent above $7/3 + 1/2000$; the library
+$[1/2, 1]$ (on the Ingham steps $3/(2 - \sigma_2) \le 7/3$ since $\sigma_2 \le 5/7$, and every slack is at most $1/2000$; the
+Chen--Gupta--Li and Huxley steps are below $7/3 + 1/2000$ by the table in the header of \file{lib/pnt/LinnikCGLSteps.lean};
+and $g_7 = 1 \le (7/3 + 1/2000)(1 - \sigma)$ for $\sigma \le 4/7$, as $(7/3 + 1/2000)(3/7) > 1$), so Proposition~\ref{prop:curve} and the deduction give every exponent above $7/3 + 1/2000$; the library
 does not state this case as a theorem.
 
 \begin{center}
@@ -995,6 +1027,11 @@ kernel and the repository's continuous integration, and not by the assistants.
   preprint, 30 September 2026, and \emph{The Quasi-Riemann Hypothesis}, preprint, 5 October 2026 (which proves
   $\operatorname{Re}(s) > 11/12$ by a different route); \url{https://github.com/openai/math}, entry 003. Neither
   preprint has been refereed.
+\bibitem{openai-lean} OpenAI, \emph{Catalog of papers with a formalized main result}, file
+  \texttt{lean/formalization.yaml} (version v0.4) of the repository \texttt{openai/math}, a web page,
+  \url{https://github.com/openai/math/blob/main/lean/formalization.yaml}, read 25 October 2026; with
+  \texttt{lean/OAI/NumberTheory/DirichletL/Nonvanishing.lean} of the same repository. It is OpenAI's own record; it
+  marks its scope as partial progress and its review status as unchecked.
 \bibitem{aiproofwatch} AIProofWatch, record of OpenAI's \emph{The Quasi-Riemann Hypothesis: A Zero-Free Half-Plane
   $\operatorname{Re}(s) > 7/8$}, \url{https://aiproofwatch.com/updates/openai-math-003} (assessment reviewed 25 October 2026;
   reports an external Lean check of the Riemann zeta specialisation only).
