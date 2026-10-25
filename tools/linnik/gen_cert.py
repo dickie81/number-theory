@@ -1,26 +1,26 @@
 """gen_cert.py CELLS.json OUTDIR [PCAP] [FCAP] [CCAP] [PMAX] [--tag T --L a/b --curve g --typeii X]: the Lean files of the
 refined certificate (SieveCert2Defs.lean's `total2`) for the window and `n` of CELLS.json. With no options these are the
-default certificate's, L = 11161/5000 with n = 300 (window [40981, 47725]/100000, tag 22322R, the library's);
+default certificate's, L = 89/40 with n = 360 (window [41479, 47555]/100000, tag 22250R, the library's);
 the options only set the names and the text of the files, see below. `check_certificate.py` generates it and compares it
 with `lib/pnt`. (Earlier certificates, at weaker exponents, are in the git history; this script no longer generates them.)
 
-The kernel parts are cut by work = depth-4 tests + `sub2`'s `surelyEval` tests: a part is a range of consecutive light
+The kernel parts are cut by work = depth-4 tests + 2 × depth-5 tests + 4 × depth-6 tests + `sub2`'s `surelyEval` tests: a part is a range of consecutive light
 rows (`rows2`), or a column piece `rowsJ2 i (i+1) j₀ j₁` of a heavy row, with at most PCAP work; a part file holds
 consecutive parts with at most FCAP work in all. The bounds are ⌈1.001 × part⌉ in exact integers; the cells and costs
-come from CELLS.json, mirror2.py's output for the window and `n` (`40981 47725 300` by default).
+come from CELLS.json, mirror2.py's output for the window and `n` (`41479 47555 360` by default).
 
 Files into OUTDIR, which must not exist or be empty: SieveGrid<T>.lean (imports SieveCert2Defs),
 SieveCert<T>P1..k.lean, SieveCert<T>.lean (total2 < K, with SieveCert2's split lemmas), and, as records,
 parts<t>.json, files<t>.json and modules<t>.txt (T the tag, t its lower case)."""
 import json, re, sys, os, textwrap
 # Options (before or after the positional arguments), for a certificate other than the default one:
-#   --tag T       the files' tag (default 22322R): SieveGridT, SieveCertTP<k>, SieveCertT, `total2_lt_T`
-#   --L a/b       the exponent L = a/b written in the files' text (default 11161/5000)
+#   --tag T       the files' tag (default 22250R): SieveGridT, SieveCertTP<k>, SieveCertT, `total2_lt_T`
+#   --L a/b       the exponent L = a/b written in the files' text (default 89/40)
 #   --curve g    the curve's name in the text (default g7d)
-#   --typeii X    the Type II theorem the grid belongs to, in the text (default SieveTypeIIU22322D.typeII_22322d)
+#   --typeii X    the Type II theorem the grid belongs to, in the text (default SieveTypeIIU22250D.typeII_22250d)
 # The window [W1, W2]/100000 and n come from CELLS.json (mirror2.py's output); without options they must be the default
-# certificate's (40981, 47725, 300).
-DEFAULTS = {'--tag': '22322R', '--L': '11161/5000', '--curve': 'g7d', '--typeii': 'SieveTypeIIU22322D.typeII_22322d'}
+# certificate's (41479, 47555, 360).
+DEFAULTS = {'--tag': '22250R', '--L': '89/40', '--curve': 'g7d', '--typeii': 'SieveTypeIIU22250D.typeII_22250d'}
 OPTS = dict(DEFAULTS)
 _args = []
 _it = iter(sys.argv[1:])
@@ -32,22 +32,25 @@ TAG, LSTR, CURVE, TYPEII = OPTS['--tag'], OPTS['--L'], OPTS['--curve'], OPTS['--
 TAGL = TAG.lower()
 CELLS, OUT = _args[0], os.path.join(_args[1], '')
 PCAP = int(_args[2]) if len(_args) > 2 else 8000
-FCAP = int(_args[3]) if len(_args) > 3 else 30000
+FCAP = int(_args[3]) if len(_args) > 3 else 100000
 CCAP = int(_args[4]) if len(_args) > 4 else 2500
-PMAX = int(_args[5]) if len(_args) > 5 else 10
+PMAX = int(_args[5]) if len(_args) > 5 else 40
 os.makedirs(OUT, exist_ok=True)
 assert not os.listdir(OUT), f'{OUT} is not empty'
 DW = 100000
 DEN = 2 ** 40; K = 2 ** 60
 D = json.load(open(CELLS))
 W1, W2, N = D['W1'], D['W2'], D['n']
-assert CUSTOM or (W1, W2, N) == (40981, 47725, 300)
+assert CUSTOM or (W1, W2, N) == (41479, 47555, 360)
 U1, U2 = (W1 * DEN + DW - 1) // DW, W2 * DEN // DW
 assert D['U1'] == U1 and D['U2'] == U2
-cells = {tuple(map(int, k.split(','))): tuple(v) for k, v in D['cells'].items()}  # (cost2, tests4, sub2tests)
+# a cell's work, in units of one depth-4 test (the subset sums of 4 boxes): the depth-5 tests (5 boxes) count 2 each, the
+# depth-6 tests (6 boxes) 4, and the `sub2` tests (3 boxes) 1
+def wk(t4, t5, t6, ts): return t4 + 2 * t5 + 4 * t6 + ts
+cells = {tuple(map(int, k.split(','))): tuple(v) for k, v in D['cells'].items()}  # (cost2, t4, t5, t6, sub2tests)
 rows = [0] * N; work = [0] * N; cnd = [0] * N
-for (i, j), (c, t4, ts) in cells.items():
-    rows[i] += c; work[i] += t4 + ts; cnd[i] += 1
+for (i, j), (c, t4, t5, t6, ts) in cells.items():
+    rows[i] += c; work[i] += wk(t4, t5, t6, ts); cnd[i] += 1
 assert sum(rows) == D['total2'] < K
 parts = []; a = 0; acc = 0; accC = 0
 def flush(b):
@@ -57,7 +60,7 @@ def flush(b):
 for i in range(N):
     if work[i] > PCAP:
         flush(i)
-        cols = sorted((j, t4 + ts, c) for (ii, j), (c, t4, ts) in cells.items() if ii == i)
+        cols = sorted((j, wk(t4, t5, t6, ts), c) for (ii, j), (c, t4, t5, t6, ts) in cells.items() if ii == i)
         j0 = 0; tt = 0; cc = 0; pieces = []
         for j, t, c in cols:
             if tt + t > PCAP and tt > 0:
@@ -139,9 +142,16 @@ namespace SieveCert
 theorem gridOK{TAG} : @GridOK grid{TAG} :=
   @GridOK.mk grid{TAG} (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
 
+/-- The coarse grid `Gc` (`n / 4 = {N // 4}` cells) and the facts about it that the deepest levels use. -/
+theorem gridOKC{TAG} : @GridOKC grid{TAG} :=
+  @GridOKC.mk grid{TAG}
+    (@GridOK.mk (@Gc grid{TAG}) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
+    (by decide) (by decide) (by decide)
+
 end SieveCert
 
 #print axioms SieveCert.gridOK{TAG}
+#print axioms SieveCert.gridOKC{TAG}
 """
 open(OUT + f'SieveGrid{TAG}.lean', 'w', encoding='utf-8').write(grid)
 for fi, g in enumerate(groups, 1):
@@ -238,7 +248,7 @@ man = []
 for fi, g in enumerate(groups, 1):
     mt = max(parts[k][-2] for k in g); T = sum(parts[k][-2] for k in g); C = sum(pcands(parts[k]) for k in g)
     man.append(dict(file=f'SieveCert{TAG}P{fi}', parts=len(g), work=T, maxpart=mt, cands=C,
-                    peak=round(2.02 + 0.2237 * mt / 1000, 2), secs=round(T / 180)))
+                    peak=round(2.02 + 0.2237 * mt / 1000, 2), secs=round(T / 1400 + 4)))
 json.dump(man, open(OUT + f'files{TAGL}.json', 'w'))
 print(f'predicted: kernel time one lane {sum(m["secs"] for m in man) / 3600:.2f} h; parts {np_}, files {NF}, '
       f'largest cands per part {max(pcands(p) for p in parts)}')

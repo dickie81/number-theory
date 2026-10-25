@@ -44,12 +44,12 @@ import route_limits as rl  # noqa: E402
 PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 E = Fr(1, 100000)
 M = 1556
-L = Fr(11161, 5000)
-TAG, LNUM, LDEN = '22322', 11161, 5000
+L = Fr(89, 40)
+TAG, LNUM, LDEN = '22250', 89, 40
 STEP = Fr(1, 1680)
 # Ingham's last step, at ε = 1/400000: the exponent 2 + 4c + 4ε with c = 1/12
 INGHAM_T = (Fr(99, 140), Fr(5, 7), Fr(7, 3) + Fr(1, 100000))
-N = 300
+N = 360
 TOP = Fr(4, 5)
 # The last three steps of `[5/7, 131/168]` are Huxley's, not Chen-Gupta-Li's: from `7/9` on, `3/(3σ - 1)` is below
 # `4/(1 + σ)`. `(a, λ)` of each, as found by a linear program (Huxley's argument, `LinnikHuxStep.Par.Good`) and rounded
@@ -698,7 +698,7 @@ theorem fits{tag}R : @Fits route{tag}D grid{tag}R := by
 `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`. -/
 theorem linnik_{tag}r : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
     ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ ({LN} : ℝ) :=
-  @SieveMain2.linnik_route_lt2 route{tag}D routeOK{tag}D grid{tag}R gridOK{tag}R fits{tag}R typeII{tag}d
+  @SieveMain2.linnik_route_lt2 route{tag}D routeOK{tag}D grid{tag}R gridOK{tag}R gridOKC{tag}R fits{tag}R typeII{tag}d
     total2_lt_{tag}R
 
 end Linnik{tag}R
