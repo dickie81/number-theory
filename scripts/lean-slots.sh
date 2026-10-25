@@ -21,8 +21,22 @@ take() {  # take FD PREFIX COUNT: hold one of the lock files PREFIX1 … PREFIXC
   return 1
 }
 
+# A part file marked `-- exclusive-heavy` (one with a part that can use over 7 GiB) holds every heavy slot, so it runs
+# alone among the certificate parts. The slots are taken in order, so two such files cannot deadlock.
+excl=0
+for a in "$@"; do
+  case "$a" in *SieveCert*P[0-9]*.lean) [ -f "$a" ] && grep -q '^-- exclusive-heavy' "$a" && excl=1 ;; esac
+done
 case "$*" in
-  *SieveCert*P[0-9]*.lean*) until take 7 heavy "${LEAN_HEAVY:-2}"; do sleep 2; done ;;
+  *SieveCert*P[0-9]*.lean*)
+    if [ "$excl" = 1 ]; then
+      for i in $(seq 1 "${LEAN_HEAVY:-2}"); do
+        eval "exec $((10 + i))>\"\$LOCKS/heavy$i.lock\""
+        flock "$((10 + i))"
+      done
+    else
+      until take 7 heavy "${LEAN_HEAVY:-2}"; do sleep 2; done
+    fi ;;
 esac
 until take 9 slot "${LEAN_SLOTS:-2}"; do sleep 2; done
 

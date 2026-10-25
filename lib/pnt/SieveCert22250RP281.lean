@@ -1,12 +1,11 @@
 /-
-# The refined certificate at `L = 89/40` with `n = 360`, parts 3143–3158 of 5796
+# The refined certificate at `L = 89/40` with `n = 340`, parts 3659–3670 of 4715
 
-File 281 of 465: the parts `rows22250R_3143` … `rows22250R_3158` of `SieveCert22250R.lean`'s certificate on
-`SieveGrid22250R.grid22250R` (16 parts, 99430 tests: row 106 columns 41–41, row 106 columns 42–42, row 106 columns
-43–43, row 106 columns 44–44, row 106 columns 45–45, row 106 columns 46–46, row 106 columns 47–47, row 106 columns
-48–48, row 106 columns 49–49, row 106 columns 50–51, row 106 columns 52–53, row 106 columns 54–55, row 106 columns
-56–58, row 106 columns 59–63, row 106 columns 64–70, row 106 columns 71–75), each a sum of refined costs (`rows2` or
-`rowsJ2`) at most its bound, by `decide +kernel`, one at a time (`Elab.async false`).
+File 281 of 351: the parts `rows22250R_3659` … `rows22250R_3670` of `SieveCert22250R.lean`'s certificate on
+`SieveGrid22250R.grid22250R` (12 parts, 93501 tests: row 137 columns 61–61, row 137 columns 62–62, row 137 columns
+63–63, row 137 columns 64–64, row 137 columns 65–65, row 137 columns 66–66, row 137 columns 67–67, row 137 columns
+68–68, row 137 columns 69–69, row 137 columns 70–70, row 137 columns 71–71, row 137 columns 72–72), each a sum of
+refined costs (`rows2` or `rowsJ2`) at most its bound, by `decide +kernel`, one at a time (`Elab.async false`).
 
 The file imports `SieveGrid22250R.lean`.
 -/
@@ -22,41 +21,33 @@ section
 
 attribute [local instance] grid22250R
 
-theorem rows22250R_3143 : rowsJ2 106 107 41 42 ≤ 13004606315888 := by decide +kernel
+theorem rows22250R_3659 : rowsJ2 137 138 61 62 ≤ 9801382115867 := by decide +kernel
 
-theorem rows22250R_3144 : rowsJ2 106 107 42 43 ≤ 14234226944909 := by decide +kernel
+theorem rows22250R_3660 : rowsJ2 137 138 62 63 ≤ 10581563150394 := by decide +kernel
 
-theorem rows22250R_3145 : rowsJ2 106 107 43 44 ≤ 12674760127024 := by decide +kernel
+theorem rows22250R_3661 : rowsJ2 137 138 63 64 ≤ 11315582200996 := by decide +kernel
 
-theorem rows22250R_3146 : rowsJ2 106 107 44 45 ≤ 11182806424678 := by decide +kernel
+theorem rows22250R_3662 : rowsJ2 137 138 64 65 ≤ 11081983768481 := by decide +kernel
 
-theorem rows22250R_3147 : rowsJ2 106 107 45 46 ≤ 9707378704439 := by decide +kernel
+theorem rows22250R_3663 : rowsJ2 137 138 65 66 ≤ 9994392243521 := by decide +kernel
 
-theorem rows22250R_3148 : rowsJ2 106 107 46 47 ≤ 8297825756427 := by decide +kernel
+theorem rows22250R_3664 : rowsJ2 137 138 66 67 ≤ 8960085825917 := by decide +kernel
 
-theorem rows22250R_3149 : rowsJ2 106 107 47 48 ≤ 6954034720318 := by decide +kernel
+theorem rows22250R_3665 : rowsJ2 137 138 67 68 ≤ 7998768284313 := by decide +kernel
 
-theorem rows22250R_3150 : rowsJ2 106 107 48 49 ≤ 5759267928140 := by decide +kernel
+theorem rows22250R_3666 : rowsJ2 137 138 68 69 ≤ 7086771011745 := by decide +kernel
 
-theorem rows22250R_3151 : rowsJ2 106 107 49 50 ≤ 4710687235948 := by decide +kernel
+theorem rows22250R_3667 : rowsJ2 137 138 69 70 ≤ 6244254544268 := by decide +kernel
 
-theorem rows22250R_3152 : rowsJ2 106 107 50 52 ≤ 6848055074431 := by decide +kernel
+theorem rows22250R_3668 : rowsJ2 137 138 70 71 ≤ 5447493798046 := by decide +kernel
 
-theorem rows22250R_3153 : rowsJ2 106 107 52 54 ≤ 4052867758826 := by decide +kernel
+theorem rows22250R_3669 : rowsJ2 137 138 71 72 ≤ 4717100647366 := by decide +kernel
 
-theorem rows22250R_3154 : rowsJ2 106 107 54 56 ≤ 1783206168650 := by decide +kernel
-
-theorem rows22250R_3155 : rowsJ2 106 107 56 59 ≤ 355909192625 := by decide +kernel
-
-theorem rows22250R_3156 : rowsJ2 106 107 59 64 ≤ 0 := by decide +kernel
-
-theorem rows22250R_3157 : rowsJ2 106 107 64 71 ≤ 0 := by decide +kernel
-
-theorem rows22250R_3158 : rowsJ2 106 107 71 76 ≤ 0 := by decide +kernel
+theorem rows22250R_3670 : rowsJ2 137 138 72 73 ≤ 4029257719270 := by decide +kernel
 
 end
 
 end SieveCert
 
-#print axioms SieveCert.rows22250R_3143
-#print axioms SieveCert.rows22250R_3158
+#print axioms SieveCert.rows22250R_3659
+#print axioms SieveCert.rows22250R_3670

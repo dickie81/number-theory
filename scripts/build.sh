@@ -7,7 +7,7 @@
 # share its files, but each certificate part (`lib/pnt/SieveCert*P<k>.lean`) can use about 5 GiB of private memory.
 # This script points Lake at a copy of the toolchain in `.lake/sysroot`. The copy links to the real toolchain
 # throughout, except that its `lean` is `scripts/lean-slots.sh`. That wrapper lets at most LEAN_SLOTS module compiles
-# run at once (default: the number of cores), with at most LEAN_HEAVY certificate parts among them (default 2). It
+# run at once (default: the number of cores), with at most LEAN_HEAVY certificate parts among them (default 2; a part file marked `-- exclusive-heavy` takes all the heavy slots). It
 # also deletes each module's setup file after a successful compile. The compiler is the toolchain's own, so the build
 # and its traces are those of a plain `lake build`.
 #

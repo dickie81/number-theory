@@ -49,7 +49,7 @@ TAG, LNUM, LDEN = '22250', 89, 40
 STEP = Fr(1, 1680)
 # Ingham's last step, at ε = 1/400000: the exponent 2 + 4c + 4ε with c = 1/12
 INGHAM_T = (Fr(99, 140), Fr(5, 7), Fr(7, 3) + Fr(1, 100000))
-N = 360
+N = 340
 TOP = Fr(4, 5)
 # The last three steps of `[5/7, 131/168]` are Huxley's, not Chen-Gupta-Li's: from `7/9` on, `3/(3σ - 1)` is below
 # `4/(1 + σ)`. `(a, λ)` of each, as found by a linear program (Huxley's argument, `LinnikHuxStep.Par.Good`) and rounded

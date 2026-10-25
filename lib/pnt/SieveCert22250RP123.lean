@@ -1,11 +1,11 @@
 /-
-# The refined certificate at `L = 89/40` with `n = 360`, parts 1184–1192 of 5796
+# The refined certificate at `L = 89/40` with `n = 340`, parts 1379–1390 of 4715
 
-File 123 of 465: the parts `rows22250R_1184` … `rows22250R_1192` of `SieveCert22250R.lean`'s certificate on
-`SieveGrid22250R.grid22250R` (9 parts, 96342 tests: row 66 columns 63–63, row 66 columns 64–64, row 66 columns
-65–65, row 66 columns 66–359, row 67 columns 0–17, row 67 columns 18–21, row 67 columns 22–23, row 67 columns 24–24,
-row 67 columns 25–25), each a sum of refined costs (`rows2` or `rowsJ2`) at most its bound, by `decide +kernel`, one
-at a time (`Elab.async false`).
+File 123 of 351: the parts `rows22250R_1379` … `rows22250R_1390` of `SieveCert22250R.lean`'s certificate on
+`SieveGrid22250R.grid22250R` (12 parts, 89447 tests: row 71 columns 40–41, row 71 columns 42–42, row 71 columns
+43–43, row 71 columns 44–44, row 71 columns 45–45, row 71 columns 46–46, row 71 columns 47–47, row 71 columns 48–48,
+row 71 columns 49–49, row 71 columns 50–50, row 71 columns 51–51, row 71 columns 52–52), each a sum of refined costs
+(`rows2` or `rowsJ2`) at most its bound, by `decide +kernel`, one at a time (`Elab.async false`).
 
 The file imports `SieveGrid22250R.lean`.
 -/
@@ -21,27 +21,33 @@ section
 
 attribute [local instance] grid22250R
 
-theorem rows22250R_1184 : rowsJ2 66 67 63 64 ≤ 10630720966936 := by decide +kernel
+theorem rows22250R_1379 : rowsJ2 71 72 40 42 ≤ 0 := by decide +kernel
 
-theorem rows22250R_1185 : rowsJ2 66 67 64 65 ≤ 10163640732331 := by decide +kernel
+theorem rows22250R_1380 : rowsJ2 71 72 42 43 ≤ 0 := by decide +kernel
 
-theorem rows22250R_1186 : rowsJ2 66 67 65 66 ≤ 9645313090651 := by decide +kernel
+theorem rows22250R_1381 : rowsJ2 71 72 43 44 ≤ 0 := by decide +kernel
 
-theorem rows22250R_1187 : rowsJ2 66 67 66 360 ≤ 9172916146357 := by decide +kernel
+theorem rows22250R_1382 : rowsJ2 71 72 44 45 ≤ 62512610724 := by decide +kernel
 
-theorem rows22250R_1188 : rowsJ2 67 68 0 18 ≤ 1552181068666 := by decide +kernel
+theorem rows22250R_1383 : rowsJ2 71 72 45 46 ≤ 245362143815 := by decide +kernel
 
-theorem rows22250R_1189 : rowsJ2 67 68 18 22 ≤ 102942556919 := by decide +kernel
+theorem rows22250R_1384 : rowsJ2 71 72 46 47 ≤ 732000827096 := by decide +kernel
 
-theorem rows22250R_1190 : rowsJ2 67 68 22 24 ≤ 9915154368 := by decide +kernel
+theorem rows22250R_1385 : rowsJ2 71 72 47 48 ≤ 1453640097395 := by decide +kernel
 
-theorem rows22250R_1191 : rowsJ2 67 68 24 25 ≤ 0 := by decide +kernel
+theorem rows22250R_1386 : rowsJ2 71 72 48 49 ≤ 2147970878954 := by decide +kernel
 
-theorem rows22250R_1192 : rowsJ2 67 68 25 26 ≤ 0 := by decide +kernel
+theorem rows22250R_1387 : rowsJ2 71 72 49 50 ≤ 2887511887443 := by decide +kernel
+
+theorem rows22250R_1388 : rowsJ2 71 72 50 51 ≤ 3645913455635 := by decide +kernel
+
+theorem rows22250R_1389 : rowsJ2 71 72 51 52 ≤ 4371949003007 := by decide +kernel
+
+theorem rows22250R_1390 : rowsJ2 71 72 52 53 ≤ 4854388418919 := by decide +kernel
 
 end
 
 end SieveCert
 
-#print axioms SieveCert.rows22250R_1184
-#print axioms SieveCert.rows22250R_1192
+#print axioms SieveCert.rows22250R_1379
+#print axioms SieveCert.rows22250R_1390

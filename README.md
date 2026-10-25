@@ -17,7 +17,7 @@ arithmetic progression.
 | Path | Contents |
 |---|---|
 | `lib/core` | The library's modules that need only Mathlib: 349 files. |
-| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 664 files. |
+| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 550 files. |
 | `lib/dh` | The Davenport–Heilbronn function and its zeros: 53 files. |
 | `lib/zeta23` | The modules that also use `zeta23`: 11 files. |
 | `lib/vendor/pnt-plus`, `lib/vendor/zeta23` | Two upstream libraries, ported to this toolchain, each with its license and its port patch. See their READMEs. |
@@ -49,8 +49,8 @@ builds the same thing where memory allows. The two produce the same build, so ei
 If Mathlib's cache does not have the pinned commit, `lake build` builds Mathlib as well, which takes several hours.
 
 **Memory.** A module that imports Mathlib maps Mathlib's files into memory, and that mapping is shared between
-compiles. The default build also has 465 certificate part files (`lib/pnt/SieveCert22250RP<k>.lean`, 5796 parts). Of Mathlib the parts import only
-`Mathlib.Data.Nat.Notation`, but each one can use about 5 GiB of private memory while the kernel checks it. Earlier
+compiles. The default build also has 351 certificate part files (`lib/pnt/SieveCert22250RP<k>.lean`, 4715 parts). Of Mathlib the parts import only
+`Mathlib.Data.Nat.Notation`, but each one can use about 5 GiB of private memory while the kernel checks it (a part file that holds a part of over 17,000 units of work, 13 of the 351, can use 7 to 10 GiB, is marked `-- exclusive-heavy`, and `scripts/lean-slots.sh` runs it with no other certificate part). Earlier
 certificates (for the weaker exponents `899/400`, `9/4`, `226/100` and others) and the stepping-stone modules only they used are
 no longer in the tree; they are in the git history. Lake runs about as many
 compiles at once as there are cores, so a plain `lake build` on a machine with less than about 5 GiB of memory per

@@ -136,7 +136,7 @@ The paper's contributions are three.
   prime factors in the cofactor and are, in some grouping of their four prime factors, a Type~II sum.
 \item \emph{A certificate} (Section~\ref{sec:certificate}). The fraction of the primes the decomposition loses is
   bounded above by a sum over the cells of a grid of the exponents, computed exactly in integers. On a grid of
-  $360$ cells a side (and $90$ for the deepest primes) the sum is below $0.99358$, which is less than $1$, so a positive proportion of the primes
+  $340$ cells a side (and $85$ for the deepest primes) the sum is below $0.99602$, which is less than $1$, so a positive proportion of the primes
   remains.
 \end{enumerate}
 
@@ -163,7 +163,7 @@ and Section~\ref{sec:type1} the form of the sieve that is used.
 Every step of the proof is proved in Lean~4 with the Mathlib library, and so is each result it uses from the
 literature, except that for Chen, Gupta and Li's paper only its Proposition~3.1, with the results it rests on, and the steps derived from it are
 formalised. The Lean theorem \lean{Linnik22250R.linnik\_22250r} is Theorem~\ref{thm:main}, and its axioms are Lean's
-standard three. The certificate's sum is checked by Lean's kernel in 5796 parts. Section~\ref{sec:lean} names the Lean
+standard three. The certificate's sum is checked by Lean's kernel in 4715 parts. Section~\ref{sec:lean} names the Lean
 theorem behind each claim of the paper, and the directory \file{formalisations/} of the repository documents each
 result from the literature: its source, its Lean statement and the differences between them. The library's proofs of
 Inputs~\ref{inp:half-plane} and~\ref{inp:density} are the library's own formalisations. For the second, one ingredient
@@ -623,9 +623,9 @@ The exponent of a prime $p$ is $\alpha = \log p/\log x$. Fix a denominator $D = 
 inward: $U_1 = \lceil u_1 D \rceil$ and $U_2 = \lfloor u_2 D \rfloor$, so that $u_1 < U_1/D < U_2/D < u_2$. Let
 $v = (U_2 - U_1)/D$. The decomposition sifts the primes of exponent at least $v$, so $z_0 = x^v$. The grid has $n$
 cells a side, of side $h = \lceil (D/2 - (U_2 - U_1))/n \rceil / D$; the cell $k$ is the range
-$[e_k, e_k + h]$ of exponents with $e_k = v + kh$, for $0 \le k < n$, and the cells cover $[v, 1/2]$. Here $n = 360$.
+$[e_k, e_k + h]$ of exponents with $e_k = v + kh$, for $0 \le k < n$, and the cells cover $[v, 1/2]$. Here $n = 340$.
 The primes of the two deepest levels of the decomposition, $p_5$ and $p_6$, have their exponents in the cells of a
-\emph{coarse grid} with the same window and $n_C = n/4 = 90$ cells a side, of side $h_C = \lceil (D/2 - (U_2 - U_1))/n_C \rceil / D$,
+\emph{coarse grid} with the same window and $n_C = n/4 = 85$ cells a side, of side $h_C = \lceil (D/2 - (U_2 - U_1))/n_C \rceil / D$,
 and cells $[e^C_b, e^C_b + h_C]$ with $e^C_b = v + b h_C$.
 
 The set of \emph{evaluable} exponents is
@@ -728,7 +728,7 @@ If $\mathtt{total}/K \le c$, then for every $\varepsilon > 0$ and all large $q$,
 $D(\mathcal B) \le (c + \varepsilon)\, x/\log x$.
 \end{lemma}
 
-On the grid of this paper the certificate as it stands totals about $1.11520K$ (a computation by
+On the grid of this paper the certificate as it stands totals about $1.11742K$ (a computation by
 \file{tools/linnik/route_limits.py}, not checked in Lean).
 Proposition~\ref{prop:decomp} with Lemma~\ref{lem:drop} then gives nothing. The refinement removes about a tenth of the total.
 
@@ -777,20 +777,20 @@ $\mathtt{total2}/K \le c$, then for every $\varepsilon > 0$, for all large $q$ a
 \subsection{The certificate}
 
 \begin{proposition}\label{prop:certificate}
-On the grid of $n = 360$ cells a side, with $n_C = 90$ cells a side in the coarse grid, and with
+On the grid of $n = 340$ cells a side, with $n_C = 85$ cells a side in the coarse grid, and with
 $U_1 = \lceil (41479/100000) D \rceil$ and
-$U_2 = \lfloor (47555/100000) D \rfloor$, $\mathtt{total2} < K$; in fact $\mathtt{total2}/K = 0.9935725\ldots < 0.99358$.
+$U_2 = \lfloor (47555/100000) D \rfloor$, $\mathtt{total2} < K$; in fact $\mathtt{total2}/K = 0.9960153\ldots < 0.99602$.
 \end{proposition}
 
 The total is a finite sum of rational expressions in natural numbers, rounded to integers, so the proposition is a
-computation. Lean's kernel checks it by evaluation (\lean{decide +kernel}), split into 5796 parts in 465 files: ranges
-of consecutive rows of the grid, and the heaviest $200$ rows in pieces of columns. Each part proves that its sum is at
+computation. Lean's kernel checks it by evaluation (\lean{decide +kernel}), split into 4715 parts in 351 files: ranges
+of consecutive rows of the grid, and the heaviest $187$ rows in pieces of columns. Each part proves that its sum is at
 most a bound $\lceil 1.001 \times \text{part} \rceil$, computed exactly, and the bounds sum to
-$1146656663135250298 < 2^{60} = K$, that is to below $0.99458 K$. The cells of the parts are tests of boxes of
-depths four, five and six: about $9.0$ million, $13.3$ million and $2.1$ million tests, as the evaluator
+$1149475836901239458 < 2^{60} = K$, that is to below $0.99701 K$. The cells of the parts are tests of boxes of
+depths four, five and six: about $7.1$ million, $9.9$ million and $1.6$ million tests, as the evaluator
 \file{tools/linnik/mirror2.py} counts them. The definitions
 the kernel evaluates are arithmetic on natural numbers, lists and booleans, and do not depend on Mathlib.
-The deeper levels lower the total of the certificate without the kept parts from $1.41895K$, at depth four, to $1.11520K$, and
+The deeper levels lower the total of the certificate without the kept parts from $1.42355K$, at depth four, to $1.11742K$, and
 the kept parts then bring it below $K$.
 
 \section{Proof of Theorem~\ref{thm:main}}\label{sec:proof}
@@ -1003,10 +1003,10 @@ certificate would otherwise drop. The density curve follows the decrease of Chen
 
 \subsection*{Below $89/40$}
 
-The method as it stands does not go much further. On the grid of $360$ cells a side the certificate without the
-kept parts totals about $1.11520K$ at $89/40$, above $K$, and with them $0.99357K$ (Section~\ref{sec:certificate}); these
+The method as it stands does not go much further. On the grid of $340$ cells a side the certificate without the
+kept parts totals about $1.11742K$ at $89/40$, above $K$, and with them $0.99602K$ (Section~\ref{sec:certificate}); these
 are computations, and the second is checked by Lean's kernel. The same computation (\file{tools/linnik/mirror2.py}, not
-in Lean) gives $0.98699K$ at $388$ cells a side. Going lower would
+in Lean) gives $0.99357K$ at $360$ cells a side. Going lower would
 need more of the dropped terms evaluated, a sharper bound for the rough numbers than $\omega^*$, or a better density
 exponent.
 
