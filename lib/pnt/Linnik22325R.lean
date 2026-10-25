@@ -9,8 +9,9 @@ Plain statement (`linnik_22325r`): there is `K` such that for every `q ≥ 1` an
 `[40980/100000, 47731/100000]` of `tools/linnik/route_limits.jsonl`'s rows for `g7d` (`route22325D`, with its Type II
 estimate `SieveTypeIIU22325D.typeII_22325d`), on its grid with `n = 300` (`SieveCert.grid22325R`), whose refined certificate's
 total is less than `K` (`SieveCert.total2_lt_22325R`), with `SieveMain2.linnik_route_lt2`. The curve `g7d` uses
-Chen–Gupta–Li's Proposition 3.1 at every point of `[5/7, 131/168]` (`LinnikCGLSteps`); the theorem is `Linnik22475R`'s
-route with that curve and the window and certificate of `L = 893 / 400`; `Linnik22475R.linnik_22475r` is unchanged.
+Chen–Gupta–Li's Proposition 3.1 at every point of `[5/7, 131/168]` (`LinnikCGLSteps`); the theorem is the route of the paper's first
+version (`L = 899 / 400`, `Linnik22475R`, no longer in the tree: commit `6df0ebd`) with that curve and the window and
+certificate of `L = 893 / 400`.
 
 * `route22325D`, `routeOK22325D`: `L = 893 / 400` on `[40980/100000, 47731/100000]`; `2 < L ≤ 5/2` and `0 < w₁ < w₂ < 1`.
 * `typeII22325d`: `SieveTypeIIU22325D.typeII_22325d` as `TypeIIAt`.
