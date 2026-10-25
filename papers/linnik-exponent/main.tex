@@ -62,8 +62,7 @@ mod $q$ contains a prime $p \le K q^L$. The admissible exponent $L$ has been low
 Under the generalised Riemann hypothesis every $L > 2$ is admissible \cite{lls}. Theorem~\ref{thm:main} has
 $L = 893/400 = 2.2325$. Its Lean proof has no hypothesis, but it rests on two recent results that are not yet
 refereed, OpenAI's zero-free half-plane (Hypothesis~\ref{hyp:half-plane}) and Chen, Gupta and Li's zero-density
-estimate (Hypothesis~\ref{hyp:density}), which Section~\ref{sec:inputs} states. The first version of this paper had
-$L = 899/400 = 2.2475$.
+estimate (Hypothesis~\ref{hyp:density}), which Section~\ref{sec:inputs} states.
 
 \subsection*{The zeros near $\operatorname{Re} s = 1$}
 
@@ -119,17 +118,14 @@ The paper's contributions are three.
   remains.
 \end{enumerate}
 
-\subsection*{The two routes}
+\subsection*{The exponent}
 
-The first version of this paper reached $L = 899/400$ using Chen, Gupta and Li's estimate only in its uniform form,
-the exponent $7/3 + 1/2000$ on $[5/7, 16/21]$, with the window $[41335/100000,\ 48069/100000]$ and a certificate of
-$534$ parts. Its Lean theorem is \lean{Linnik22475R.linnik\_22475r}, and it remains in the library. The exponent
-$893/400$ uses their Proposition~3.1 at every point of $[5/7, 131/168]$: on each of $110$ steps of length $1/1680$ the
-exponent is just above $4/(1 + \sigma)$ at the step's left end. It also uses Ingham's estimate on its last step,
-$[99/140, 5/7]$, at $\varepsilon = 1/400000$, where the exponent is $7/3 + 1/100000$. The steps are narrow because the
-ends of the window are set by the places where a step's exponent most exceeds the curve it bounds: at the step
-containing $7/9$, where $4/(1 + \sigma)$ meets Huxley's $3/(3\sigma - 1)$, and at $\sigma = 5/7$, where the exponent is
-largest. The rest of the argument is the same, with a new window and a new certificate.
+The exponent $893/400$ uses Chen, Gupta and Li's Proposition~3.1 at every point of $[5/7, 131/168]$: on each of $110$
+steps of length $1/1680$ the exponent is just above $4/(1 + \sigma)$ at the step's left end. It also uses Ingham's
+estimate on its last step, $[99/140, 5/7]$, at $\varepsilon = 1/400000$, where the exponent is $7/3 + 1/100000$. The
+steps are narrow because the ends of the window are set by the places where a step's exponent most exceeds the curve it
+bounds: at the step containing $7/9$, where $4/(1 + \sigma)$ meets Huxley's $3/(3\sigma - 1)$, and at $\sigma = 5/7$,
+where the exponent is largest.
 
 The rest is not new. Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density} are OpenAI's and Chen, Gupta and Li's,
 and the density estimates of Ingham \cite{ingham} and Huxley \cite{huxley72, huxley75}, the Hal\'asz--Montgomery
@@ -189,8 +185,7 @@ The exponent $A_k$ is that of Chen, Gupta and Li's Theorem~1.2 \cite{cgl} at $q_
 $\sigma_k$, up to $10^{-4}$. Their estimate counts zeros, which gives the count of characters stated here. The
 library does not prove their Theorem~1.2. It proves their Proposition~3.1, the large-values estimate, and derives each
 step from it, in \file{lib/pnt/LinnikCGLSteps.lean} (Section~\ref{sec:lean} names the theorems), and
-\file{formalisations/} documents it. Their paper \cite{cgl} is an arXiv preprint. The first version of this paper used
-instead the uniform estimate with exponent $(7/3 + \varepsilon)(1 - \sigma)$ on $[5/7, 16/21]$.
+\file{formalisations/} documents it. Their paper \cite{cgl} is an arXiv preprint.
 
 \subsection*{The density curve}
 
@@ -251,8 +246,7 @@ claims table of Section~\ref{sec:lean} names them.
 The only piece that is not classical is the one on $[5/7, 131/168]$, where Chen, Gupta and Li's estimate, in the
 step form of Hypothesis~\ref{hyp:density}, replaces Huxley's exponent, which is $12/5$ at $\sigma = 3/4$. Their
 exponent is $7/3$ at $\sigma = 5/7$ and falls below it inside the range; the curve $g_7$ follows it step by step,
-to within $10^{-4}$ of $4/(1 + \sigma)$ at each step's left end, where the first version of this paper used only the
-uniform $7/3 + 1/2000$. From $131/168$ on, Huxley's steps are lower than the exponent of Hypothesis~\ref{hyp:density}
+to within $10^{-4}$ of $4/(1 + \sigma)$ at each step's left end. From $131/168$ on, Huxley's steps are lower than the exponent of Hypothesis~\ref{hyp:density}
 would be, and $g_7$ uses them. Hypothesis~\ref{hyp:half-plane} enters the curve only
 above $11/12$, and enters the Type~II estimate through the largest real part of the zeros, which it bounds by $11/12$.
 
@@ -641,8 +635,7 @@ $D(\mathcal B) \le (c + \varepsilon)\, x/\log x$.
 \end{lemma}
 
 On the grid of this paper the certificate as it stands totals about $1.09954K$ (a computation by
-\file{tools/linnik/route_limits.py}, not checked in Lean; for the first version's curve, at $899/400$, the totals on the
-grids of $300$, $400$, $600$ and $800$ cells a side were about $1.10458K$, $1.0725K$, $1.0418K$ and $1.0274K$).
+\file{tools/linnik/route_limits.py}, not checked in Lean).
 Proposition~\ref{prop:decomp} with Lemma~\ref{lem:drop} then gives nothing. The refinement removes about a tenth of the total.
 
 \subsection{The refinement: keeping two-prime parts}
@@ -742,16 +735,16 @@ and the kernel bound in Section~\ref{sec:type2}, and through the piece of $g_7$ 
 The proof does not compute $K$: the threshold $q_0$ comes from limits in $q$ in each step, and the small moduli
 from Dirichlet's theorem. The Lean proof of Theorem~\ref{thm:route} is \lean{SieveMain2.linnik\_route\_lt2}, and the
 case of Theorem~\ref{thm:main} is \lean{Linnik22325R.linnik\_22325r}, which has no hypothesis: the steps of
-Hypothesis~\ref{hyp:density} are theorems of the library. The first version's case, at $L = 899/400$, is
-\lean{Linnik22475R.linnik\_22475r}, and \lean{Linnik22475R.linnik\_22475r\_of} is it under the uniform estimate of
-\lean{LinnikCGLDensity.cglDensity}.
+Hypothesis~\ref{hyp:density} are theorems of the library.
 
 \section{The formalisation}\label{sec:lean}
 
 Every claim of the paper is a theorem of the Lean library in \texttt{lib/} of the repository, which is built with
 Lean~4 and Mathlib. The table names each one. The file \texttt{lib/check/Check.lean} prints the axioms of these
-theorems (of the 110 steps of the density curve it prints the first, the last and the one for the whole range, and
-Chen, Gupta and Li's Proposition~3.1; \texttt{lib/check/CheckAll.lean} prints all the steps), and
+theorems (of the 110 steps of the density curve it prints the first and the last, and it prints Ingham's last step and
+Chen, Gupta and Li's Proposition~3.1; the other steps print their axioms in the module that proves them,
+\texttt{LinnikCGLSteps.lean}, when it is built; \texttt{lib/check/CheckAll.lean} prints the axioms of further
+declarations of the library), and
 \texttt{scripts/check\_axioms.py} checks that they are \lean{propext}, \lean{Classical.choice} and
 \lean{Quot.sound} only.
 
@@ -762,8 +755,6 @@ Claim & Lean \\
 \midrule
 \endhead
 Theorem~\ref{thm:main} & \lean{Linnik22325R.linnik\_22325r} \\
-The first version's theorem, $899/400$ (Section~\ref{sec:comparison}) & \lean{Linnik22475R.linnik\_22475r}, \\
- & \lean{Linnik22475R.linnik\_22475r\_of} \\
 Proposition~\ref{prop:curve}: $g_7$ is a density curve & \lean{SieveTypeIIU22325D.counts\_7d} \\
 Theorem~\ref{thm:route}, the route theorem & \lean{SieveMain2.linnik\_route\_lt2} \\
 Theorem~\ref{thm:type2}, the Type~II estimate & \lean{SieveTypeIIU22325D.typeII\_22325d} \\
@@ -784,7 +775,6 @@ Hypothesis~\ref{hyp:density} (Chen--Gupta--Li; \file{formalisations/}) & \lean{L
  & \dots, \lean{LinnikCGLSteps.charDensity\_s109}, \\
  & \lean{LinnikCGLHB101.prop31} \\
 Ingham's last step, $\varepsilon = 1/400000$ & \lean{LinnikCGLSteps.charDensity\_inT} \\
-The uniform estimate of the first version & \lean{LinnikCGLDensity.cglDensity} \\
 Ingham's density estimate (\file{formalisations/}) & \lean{LinnikInghamC.charDensity\_ingham\_c} \\
 Huxley's density estimate (\file{formalisations/}) & \lean{LinnikHuxStep.charDensity\_gen} \\
 Huxley's estimate from $5/6$ on (\file{formalisations/}) & \lean{LinnikStep.charDensity\_step} \\
@@ -880,7 +870,6 @@ Hypothesis~\ref{hyp:half-plane}, Ingham & density deduction & $36/13 + \varepsil
 Hypothesis~\ref{hyp:half-plane}, Huxley & density deduction & $12/5 + \varepsilon = 2.4 + \varepsilon$ \\
 Hypothesis~\ref{hyp:half-plane}, Chen--Gupta--Li & density deduction \cite{cgl} &
   $7/3 + \varepsilon \approx 2.333$ \\
-Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density}, uniform $7/3$ & sieve, first version & $899/400 = 2.2475$ \\
 Hypotheses~\ref{hyp:half-plane} and~\ref{hyp:density}, in steps & sieve, this paper & $893/400 = 2.2325$ \\
 \bottomrule
 \end{tabular}
@@ -893,17 +882,14 @@ largest density exponent on $[1/2, 11/12]$, which is $7/3$, at $\sigma = 5/7$. T
 only in bilinear sums with one variable in the window, where Theorem~\ref{thm:type2} trades the density exponent
 against the length of the variable, and recovers the primes from those sums at the cost that the certificate bounds.
 The refinement of Section~\ref{sec:certificate} lowers that cost by evaluating part of the terms of depth two that the
-certificate would otherwise drop. The step from $899/400$ to $893/400$ comes from the density curve alone: it uses
-the decrease of Chen, Gupta and Li's exponent below $7/3$ after $\sigma = 5/7$, which the uniform $7/3$ did not.
+certificate would otherwise drop. The density curve follows the decrease of Chen, Gupta and Li's exponent below $7/3$ after $\sigma = 5/7$ step by step
+(Section~\ref{sec:inputs}).
 
 \subsection*{Below $893/400$}
 
 The method as it stands does not go much further. On the grid of $300$ cells a side the certificate without the
-refinement totals about $1.09954K$ at $893/400$, above $K$ (Section~\ref{sec:certificate}). For the first version's
-curve, at $899/400$, the unrefined total stayed above $K$ on every grid computed, up to $n = 800$; and with the
-refinement, at $L = 2245/1000$ on its window, the total stayed above $K$ on the grids of $200$, $300$, $400$ and $600$
-cells a side computed with \file{tools/linnik/refine_k2_probe.py}, at about $1.015K$ for $n = 600$. These are
-computations, not proofs, and the last were not repeated for the curve of this paper. Going lower would need more of
+refinement totals about $1.09954K$ at $893/400$, above $K$ (Section~\ref{sec:certificate}); this is a computation, not
+a proof. Going lower would need more of
 the dropped terms evaluated, a sharper bound for the rough numbers than $\omega^*$, or a better density exponent.
 
 On the last, one remark, which is a heuristic and not a theorem. The curve $g_7$ is set by Chen, Gupta and Li's

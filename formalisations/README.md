@@ -32,13 +32,13 @@ claims it.
 
 ## The density curve
 
-The Type II estimate of the Linnik paper counts characters by a density curve, `g7c`
-(`SieveTypeIIU226C.counts_7c`). It is glued from these pieces:
+The Type II estimate of the Linnik paper counts characters by a density curve, `g7d`
+(`SieveTypeIIU22325D.counts_7d`). It is glued from these pieces:
 
 - the trivial count below `4/7`;
 - Ingham's estimate, on twenty steps of `[4/7, 5/7]` ([ingham-density.md](ingham-density.md));
-- Chen–Gupta–Li's estimate, on `[5/7, 16/21]` ([chen-gupta-li-density.md](chen-gupta-li-density.md));
-- Huxley's estimate, on twenty steps of `[16/21, 5/6]`, and with the exponent `101/50` from `5/6` on
+- Chen–Gupta–Li's estimate, on 110 steps of `[5/7, 131/168]` ([chen-gupta-li-density.md](chen-gupta-li-density.md));
+- Huxley's estimate, on fifteen steps of `[131/168, 5/6]`, and with the exponent `101/50` from `5/6` on
   ([huxley-density.md](huxley-density.md)).
 
 Each piece counts characters, not zeros.
