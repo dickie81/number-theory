@@ -100,15 +100,19 @@ and `X ≥ 0`: `dropS − [cand ∧ ¬dec ∧ reg2](sub2/K − nδ')X ≤ (cost2
 theorem dropS_sub_le_cost2 {x δ' X : ℝ} (hδ' : 0 ≤ δ') (hX : 0 ≤ X) {i j : ℕ}
     (h2 : cand i j = true → S2 x i j ≤ ((bound2 (SieveCert.e i) (SieveCert.e j) : ℝ) / K + δ') * X)
     (h4 : ∀ k < SieveCert.n, ∀ l < SieveCert.n, counted4 i j k l = true →
-      S4 x i j k l ≤ ((bound4 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) : ℝ) / K + δ') * X) :
+      S4 x i j k l ≤ ((bound4 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) : ℝ) / K + δ') * X)
+    (h6 : ∀ k < SieveCert.n, ∀ l < SieveCert.n, ∀ b < SieveCert.nC, ∀ c < SieveCert.nC,
+      SieveCert.counted6 i j k l b c = true →
+      S6 x i j k l b c ≤ ((SieveCert.bound6 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l)
+        (SieveCert.eC b) (SieveCert.eC c) : ℝ) / K + δ') * X) :
     dropS x i j - (if cand i j = true ∧ dec i j = false ∧ reg2 i j = true then
         ((sub2 i j : ℝ) / K - SieveCert.n * δ') * X else 0) ≤
-      (cost2 i j : ℝ) / K * X + δ' * (1 + SieveCert.n + SieveCert.n * SieveCert.n) * X := by
+      (cost2 i j : ℝ) / K * X + δ' * (1 + SieveCert.n + SieveCert.n * SieveCert.n * (1 + (SieveCert.nC : ℝ) * SieveCert.nC)) * X := by
   have hK : (0 : ℝ) < K := SieveCert.K_pos'
-  have hd := dropS_le_cost hδ' hX h2 h4
+  have hd := dropS_le_cost hδ' hX h2 h4 h6
   have hnδ : 0 ≤ (SieveCert.n : ℝ) * δ' * X := by positivity
-  have hexp : δ' * (1 + SieveCert.n + SieveCert.n * SieveCert.n) * X =
-      δ' * (1 + SieveCert.n * SieveCert.n) * X + SieveCert.n * δ' * X := by ring
+  have hexp : δ' * (1 + SieveCert.n + SieveCert.n * SieveCert.n * (1 + (SieveCert.nC : ℝ) * SieveCert.nC)) * X =
+      δ' * (1 + SieveCert.n * SieveCert.n * (1 + (SieveCert.nC : ℝ) * SieveCert.nC)) * X + SieveCert.n * δ' * X := by ring
   by_cases h : cand i j = true ∧ dec i j = false ∧ reg2 i j = true
   · rw [ite_eq_left h, hexp]
     rw [SieveCert.cost_of_not_dec h.1 h.2.1] at hd
@@ -142,10 +146,10 @@ theorem sum_cost2_div_of {c : ℝ} (htot : (total2 : ℝ) / K ≤ c) (X : ℝ) (
 /-- **The dropped terms less the kept parts, for large `q`**: for a route with `RouteOK` and a grid with `GridOK` that
 fit (`Fits`), if `total2/K ≤ c` in the reals (`htot`), then for `ε > 0`,
 `D1(g_B) − Kp(g_B) ≤ φ(q)⁻¹(c + ε)x/log x`. -/
-theorem drop_ev2 {c : ℝ} (htot : (total2 : ℝ) / K ≤ c) {ε : ℝ} (hε : 0 < ε) : ∀ᶠ q : ℕ in atTop, LargeQ q →
+theorem drop_ev2 [SieveCert.GridOKC] {c : ℝ} (htot : (total2 : ℝ) / K ≤ c) {ε : ℝ} (hε : 0 < ε) : ∀ᶠ q : ℕ in atTop, LargeQ q →
     (parQ q).D1 (gB q) - (parQ q).Kp (gB q) ≤ (q.totient : ℝ)⁻¹ * ((c + ε) * (xq q / Real.log (xq q))) := by
   have hn : (0 : ℝ) < SieveCert.n := by exact_mod_cast SieveCert.n_pos
-  set M : ℝ := (SieveCert.n : ℝ) * SieveCert.n * (1 + SieveCert.n + SieveCert.n * SieveCert.n) with hM
+  set M : ℝ := (SieveCert.n : ℝ) * SieveCert.n * (1 + SieveCert.n + SieveCert.n * SieveCert.n * (1 + (SieveCert.nC : ℝ) * SieveCert.nC)) with hM
   have hM0 : 0 < M := by positivity
   set δ' : ℝ := ε / (2 * M) with hδ'
   have hδ'0 : 0 < δ' := by positivity
@@ -190,18 +194,20 @@ theorem drop_ev2 {c : ℝ} (htot : (total2 : ℝ) / K ≤ c) {ε : ℝ} (hε : 0
       (if cand i j = true ∧ dec i j = false ∧ reg2 i j = true then ((sub2 i j : ℝ) / K - SieveCert.n * δ') * X
         else 0)) ≤ c * X + ε / 2 * X := by
     calc _ ≤ ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n,
-            ((cost2 i j : ℝ) / K * X + δ' * (1 + SieveCert.n + SieveCert.n * SieveCert.n) * X) := by
+            ((cost2 i j : ℝ) / K * X + δ' * (1 + SieveCert.n + SieveCert.n * SieveCert.n * (1 + (SieveCert.nC : ℝ) * SieveCert.nC)) * X) := by
           refine Finset.sum_le_sum fun i hi => Finset.sum_le_sum fun j hj => ?_
-          obtain ⟨h2, h4⟩ := hS i hi j hj
-          exact dropS_sub_le_cost2 hδ'0.le hX0 h2 fun k hk l hl hc => h4 k (Finset.mem_range.2 hk) l
-            (Finset.mem_range.2 hl) hc
+          obtain ⟨h2, h46⟩ := hS i hi j hj
+          exact dropS_sub_le_cost2 hδ'0.le hX0 h2
+            (fun k hk l hl hc => (h46 k (Finset.mem_range.2 hk) l (Finset.mem_range.2 hl)).1 hc)
+            (fun k hk l hl b hb c hc' hc => (h46 k (Finset.mem_range.2 hk) l (Finset.mem_range.2 hl)).2 b
+              (Finset.mem_range.2 hb) c (Finset.mem_range.2 hc') hc)
       _ = ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n, (cost2 i j : ℝ) / K * X +
-            SieveCert.n * SieveCert.n * (δ' * (1 + SieveCert.n + SieveCert.n * SieveCert.n) * X) := by
+            SieveCert.n * SieveCert.n * (δ' * (1 + SieveCert.n + SieveCert.n * SieveCert.n * (1 + (SieveCert.nC : ℝ) * SieveCert.nC)) * X) := by
           simp only [Finset.sum_add_distrib, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
           ring
       _ ≤ c * X + ε / 2 * X := by
           have h1 := sum_cost2_div_of htot X hX0
-          have h2 : (SieveCert.n : ℝ) * SieveCert.n * (δ' * (1 + SieveCert.n + SieveCert.n * SieveCert.n) * X) =
+          have h2 : (SieveCert.n : ℝ) * SieveCert.n * (δ' * (1 + SieveCert.n + SieveCert.n * SieveCert.n * (1 + (SieveCert.nC : ℝ) * SieveCert.nC)) * X) =
               ε / 2 * X := by
             rw [hδ']
             field_simp

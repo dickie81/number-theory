@@ -207,13 +207,18 @@ theorem Leaves.mono {P : Par} {gA gB : ℕ → ℝ} {E E' : ℝ} (h : P.Leaves g
     fun i hi j hj hc hd k hk h1 h2 => (h.e3 i hi j hj hc hd k hk h1 h2).trans hE,
     fun i hi j hj hc hd k hk h1 h2 => (h.p3 i hi j hj hc hd k hk h1 h2).trans hE,
     fun i hi j hj hc hd k hk h1 h2 => (h.e3' i hi j hj hc hd k hk h1 h2).trans hE,
-    fun i hi j hj hc hd k hk h1 h2 l hl h3 h4 => (h.e4 i hi j hj hc hd k hk h1 h2 l hl h3 h4).trans hE⟩
+    fun i hi j hj hc hd k hk h1 h2 l hl h3 h4 => (h.e4 i hi j hj hc hd k hk h1 h2 l hl h3 h4).trans hE,
+    fun i j k l hD => (h.e4gt i j k l hD).trans hE, fun i j k l hD => (h.p4 i j k l hD).trans hE,
+    fun i j k l hD b hb h1 h2 => (h.e5gt i j k l hD b hb h1 h2).trans hE,
+    fun i j k l hD b hb h1 h2 => (h.p5 i j k l hD b hb h1 h2).trans hE,
+    fun i j k l hD b hb h1 h2 => (h.e5' i j k l hD b hb h1 h2).trans hE,
+    fun i j k l hD b hb h1 h2 c hc h3 h4 => (h.e6 i j k l hD b hb h1 h2 c hc h3 h4).trans hE⟩
 
 /-- **The leaves and the kept leaves, for large `q`.** For a route with `RouteOK` and a grid with `GridOK` that fit
 (`Fits`), given the route's Type II estimate (`hII`), for `η > 0` there are `δ > 0` and `q₀` such that for `q ≥ 1` with
 `q ≥ q₀` and `a` a unit mod `q`, `q` is large, every leaf of the tree at `x = q^L` is within `Err η δ q`, and every
 kept part's `A` and `B` are within `3·Err η δ q`. -/
-theorem leaves_ev2 (hII : TypeIIAt) {η : ℝ} (hη : 0 < η) :
+theorem leaves_ev2 [SieveCert.GridOKC] (hII : TypeIIAt) {η : ℝ} (hη : 0 < η) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
       LargeQ q ∧ (parQ q).Leaves (gA q a) (gB q) (Err η δ q) ∧ (parQ q).KLeaves (gA q a) (gB q) (Err η δ q) := by
   obtain ⟨d1, hd1, q1, h1⟩ := leaves_ev hII hη

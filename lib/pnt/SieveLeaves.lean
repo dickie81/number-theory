@@ -14,8 +14,8 @@ Plain statements. `gA q a m = 1[m ≡ a]` and `gB q m = 1[(m, q) = 1]/φ(q)`; `L
 * `prod_proper_le`: a proper subset of a strictly decreasing tuple of positive integers has product at most that of all
   but the last entry.
 * `TL_spec`, `TU_spec`: `SieveChain.chainTL_bound` and `chainTU_bound` (with `RouteOK` and `hII`) on a family of at most
-  `18` atoms with `ThrOK`, as bounds on `|famI(g_A) − famI(g_B)|`.
-* `P6_spec`: `SieveProp6.prop6` (with `RouteOK` and `hII`) on a family of at most `18` atoms with `ThrOK` and nonzero
+  `32` atoms with `ThrOK`, as bounds on `|famI(g_A) − famI(g_B)|`.
+* `P6_spec`: `SieveProp6.prop6` (with `RouteOK` and `hII`) on a family of at most `32` atoms with `ThrOK` and nonzero
   coefficients (`NZ`), as a bound on `|famJ(g_A, z₀) − famJ(g_B, z₀)|`.
 
 These connect the families (`SieveDecomp`) with the Type II bounds and Proposition 6. `dw_eq`, `sum_dw_famI` and
@@ -102,6 +102,44 @@ theorem window_hi [SieveCert.Grid] {x : ℝ} (hx : 1 < x) {k : ℕ} {c rt : Fin 
   have h1 : x ^ (((∑ t ∈ T, (SieveCert.e (c t) + H) : ℕ) : ℝ) / DEN) < x ^ ((B : ℝ) / DEN) :=
     Real.rpow_lt_rpow_of_exponent_lt hx (div_lt_div_of_pos_right (by exact_mod_cast hB) hD)
   have h2 := box_hi (by linarith) h T
+  refine Nat.le_floor ?_
+  push_cast
+  exact (h2.trans h1.le)
+
+/-- For `x > 0` and primes with `x^{lo_t/DEN} ≤ rt_t`, `∏_T rt ≥ x^{Σ_T lo_t/DEN}`. -/
+theorem box_lo_gen [SieveCert.Grid] {x : ℝ} (hx : 0 < x) {k : ℕ} {lo : Fin k → ℕ} {rt : Fin k → ℕ}
+    (h : ∀ t, x ^ ((lo t : ℝ) / DEN) ≤ rt t) (T : Finset (Fin k)) :
+    x ^ (((∑ t ∈ T, lo t : ℕ) : ℝ) / DEN) ≤ ∏ t ∈ T, (rt t : ℝ) := by
+  rw [Nat.cast_sum, Finset.sum_div, Real.rpow_sum_of_pos hx]
+  exact Finset.prod_le_prod₀ (fun t _ => Real.rpow_nonneg hx.le _) fun t _ => h t
+
+/-- For `x > 0` and primes with `rt_t < x^{hi_t/DEN}`, `∏_T rt ≤ x^{Σ_T hi_t/DEN}`. -/
+theorem box_hi_gen [SieveCert.Grid] {x : ℝ} (hx : 0 < x) {k : ℕ} {hi : Fin k → ℕ} {rt : Fin k → ℕ}
+    (h : ∀ t, (rt t : ℝ) < x ^ ((hi t : ℝ) / DEN)) (T : Finset (Fin k)) :
+    ∏ t ∈ T, (rt t : ℝ) ≤ x ^ (((∑ t ∈ T, hi t : ℕ) : ℝ) / DEN) := by
+  rw [Nat.cast_sum, Finset.sum_div, Real.rpow_sum_of_pos hx]
+  exact Finset.prod_le_prod₀ (fun t _ => Nat.cast_nonneg _) fun t _ => (h t).le
+
+/-- Below the box, for general bounds: `B < Σ_T lo_t` gives `⌊x^{B/DEN}⌋ < ∏_T rt`. -/
+theorem window_lo_gen [SieveCert.Grid] {x : ℝ} (hx : 1 < x) {k : ℕ} {lo rt : Fin k → ℕ}
+    (h : ∀ t, x ^ ((lo t : ℝ) / DEN) ≤ rt t) {T : Finset (Fin k)} {B : ℕ} (hB : B < ∑ t ∈ T, lo t) :
+    ⌊x ^ ((B : ℝ) / DEN)⌋₊ < ∏ t ∈ T, rt t := by
+  have hD := SieveCert.DEN_pos'
+  have h1 : x ^ ((B : ℝ) / DEN) < x ^ (((∑ t ∈ T, lo t : ℕ) : ℝ) / DEN) :=
+    Real.rpow_lt_rpow_of_exponent_lt hx (div_lt_div_of_pos_right (by exact_mod_cast hB) hD)
+  have h2 := box_lo_gen (by linarith) h T
+  have h3 : (⌊x ^ ((B : ℝ) / DEN)⌋₊ : ℝ) < ∏ t ∈ T, (rt t : ℝ) :=
+    lt_of_le_of_lt (Nat.floor_le (Real.rpow_nonneg (by linarith) _)) (lt_of_lt_of_le h1 h2)
+  exact_mod_cast h3
+
+/-- Above the box, for general bounds: `Σ_T hi_t < B` gives `∏_T rt ≤ ⌊x^{B/DEN}⌋`. -/
+theorem window_hi_gen [SieveCert.Grid] {x : ℝ} (hx : 1 < x) {k : ℕ} {hi rt : Fin k → ℕ}
+    (h : ∀ t, (rt t : ℝ) < x ^ ((hi t : ℝ) / DEN)) {T : Finset (Fin k)} {B : ℕ} (hB : ∑ t ∈ T, hi t < B) :
+    ∏ t ∈ T, rt t ≤ ⌊x ^ ((B : ℝ) / DEN)⌋₊ := by
+  have hD := SieveCert.DEN_pos'
+  have h1 : x ^ (((∑ t ∈ T, hi t : ℕ) : ℝ) / DEN) < x ^ ((B : ℝ) / DEN) :=
+    Real.rpow_lt_rpow_of_exponent_lt hx (div_lt_div_of_pos_right (by exact_mod_cast hB) hD)
+  have h2 := box_hi_gen (by linarith) h T
   refine Nat.le_floor ?_
   push_cast
   exact (h2.trans h1.le)
@@ -207,19 +245,19 @@ variable (a₀ : ℝ)
 
 /-- **The lower window, on a family of atoms** (`SieveChain.chainTL_bound`). Assume `RouteOK` and the route's Type II
 estimate (`hII`). For `a₀ > 0` and `k'` there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a` mod `q`: a
-family of `(k' + 1)`-tuples of primes cut out by at most `18` atoms with thresholds as in `ThrOK`, each tuple strictly
+family of `(k' + 1)`-tuples of primes cut out by at most `32` atoms with thresholds as in `ThrOK`, each tuple strictly
 decreasing, with entries at least `q^{a₀}` and `P₁ < ∏_{i∈S} rt_i ≤ P₂`, where `q^{w₁L} ≤ P₁` and `P₂ ≤ q^{w₂L}`, has
 `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`. -/
 theorem TL_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (k' : ℕ) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
-      ∀ (spec : List (Atom (k' + 1))) (S : Finset (Fin (k' + 1))) (P₁ P₂ : ℕ), spec.length ≤ 18 → ThrOK q spec →
+      ∀ (spec : List (Atom (k' + 1))) (S : Finset (Fin (k' + 1))) (P₁ P₂ : ℕ), spec.length ≤ 32 → ThrOK q spec →
       (q : ℝ) ^ (w₁ * L) ≤ P₁ → (P₂ : ℝ) ≤ (q : ℝ) ^ (w₂ * L) →
       (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
         StrictAnti rt ∧ (∀ i, (q : ℝ) ^ a₀ ≤ rt i) ∧ P₁ < ∏ i ∈ S, rt i ∧ ∏ i ∈ S, rt i ≤ P₂) →
       |famI (gA q a) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec) -
           famI (gB q) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec)| ≤
         (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := chainTL_bound hII ha₀ k' 18 (Λ₁ := L + 1) (by linarith [L_pos])
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := chainTL_bound hII ha₀ k' 32 (Λ₁ := L + 1) (by linarith [L_pos])
   refine ⟨δ, hδ, q₀, fun q _ hq a ha spec S P₁ P₂ hlen hthr hP₁ hP₂ hreg => ?_⟩
   have hq1 : 1 ≤ q := Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
   have h := hq₀ q hq a ha S (spec.map Atom.toG) P₁ P₂ (by simpa using hlen) (c_le_of_thrOK hq1 hthr) hP₁ hP₂
@@ -228,12 +266,12 @@ theorem TL_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (k' : ℕ) :
 
 /-- **The upper window, on a family of atoms** (`SieveChain.chainTU_bound`). Assume `RouteOK` and the route's Type II
 estimate (`hII`). For `a₀ > 0` and `k'` there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a` mod `q`: a
-family of `(k' + 1)`-tuples of primes cut out by at most `18` atoms with thresholds as in `ThrOK`, each tuple strictly
+family of `(k' + 1)`-tuples of primes cut out by at most `32` atoms with thresholds as in `ThrOK`, each tuple strictly
 decreasing, with entries at least `q^{a₀}` and `W₀ < ∏rt ≤ W₁`, where `W₁ ≤ N₁`, `q^{w₁L} ≤ ⌊N₁/W₁⌋` and
 `⌊N₂/(W₀ + 1)⌋ ≤ q^{w₂L}`, has `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`. -/
 theorem TU_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (k' : ℕ) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
-      ∀ (spec : List (Atom (k' + 1))) (W₀ W₁ : ℕ), spec.length ≤ 18 → ThrOK q spec →
+      ∀ (spec : List (Atom (k' + 1))) (W₀ W₁ : ℕ), spec.length ≤ 32 → ThrOK q spec →
       (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
         StrictAnti rt ∧ (∀ i, (q : ℝ) ^ a₀ ≤ rt i) ∧ W₀ < ∏ i, rt i ∧ ∏ i, rt i ≤ W₁) →
       W₁ ≤ N1 q → (q : ℝ) ^ (w₁ * L) ≤ ((N1 q / W₁ : ℕ) : ℝ) →
@@ -241,7 +279,7 @@ theorem TU_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (k' : ℕ) :
       |famI (gA q a) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec) -
           famI (gB q) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec)| ≤
         (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := chainTU_bound hII ha₀ k' 18 (Λ₁ := L + 1) (by linarith [L_pos])
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := chainTU_bound hII ha₀ k' 32 (Λ₁ := L + 1) (by linarith [L_pos])
   refine ⟨δ, hδ, q₀, fun q _ hq a ha spec W₀ W₁ hlen hthr hreg hW₁ hP₁ hP₂ => ?_⟩
   have hq1 : 1 ≤ q := Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
   have h := hq₀ q hq a ha W₀ W₁ (spec.map Atom.toG) (by simpa using hlen) (c_le_of_thrOK hq1 hthr)
@@ -290,20 +328,20 @@ variable (b₀ : ℝ)
 
 /-- **Proposition 6, on a family of atoms.** Assume `RouteOK` and the route's Type II estimate (`hII`). For `a₀ > 0`,
 `b₀` with `a₀ + b₀ < (1 − w₁)L` and `(1 − w₂)L < b₀ < L − 1`, `j`, and `η > 0` there are `δ > 0` and `q₀` such that for
-`q ≥ q₀` and a unit `a` mod `q`: for a family of `j`-tuples of primes cut out by at most `18` atoms with nonzero
+`q ≥ q₀` and a unit `a` mod `q`: for a family of `j`-tuples of primes cut out by at most `32` atoms with nonzero
 coefficients and thresholds as in `ThrOK`, each tuple with entries at least `z₀ = ⌈q^{a₀}⌉` and product `r` at most
 `⌊q^{b₀}⌋`, `Σ_{rt}(S(A_r, z₀) − S(B_r, z₀)/φ(q))` is at most `ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` in absolute value. -/
 theorem P6_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (hab : a₀ + b₀ < (1 - w₁) * L)
     (hb₁ : (1 - w₂) * L < b₀) (hb₂ : b₀ < L - 1) (j : ℕ) {η : ℝ} (hη : 0 < η) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
-      ∀ (spec : List (Atom j)), spec.length ≤ 18 → ThrOK q spec → (∀ A ∈ spec, NZ A) →
+      ∀ (spec : List (Atom j)), spec.length ≤ 32 → ThrOK q spec → (∀ A ∈ spec, NZ A) →
       (∀ rt : Fin j → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
         (∀ i, ⌈(q : ℝ) ^ a₀⌉₊ ≤ rt i) ∧ ∏ i, rt i ≤ ⌊(q : ℝ) ^ b₀⌋₊) →
       |famJ (gA q a) (N1 q) (N2 q) ⌈(q : ℝ) ^ a₀⌉₊ (famSet j (N2 q) spec) -
           famJ (gB q) (N1 q) (N2 q) ⌈(q : ℝ) ^ a₀⌉₊ (famSet j (N2 q) spec)| ≤
         η * (q : ℝ) ^ L / (q.totient * Real.log q) +
           (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveProp6.prop6 hII j 18 (Λ₁ := L + 1) (by linarith [L_pos]) ha₀ hab hb₁ hb₂ hη
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveProp6.prop6 hII j 32 (Λ₁ := L + 1) (by linarith [L_pos]) ha₀ hab hb₁ hb₂ hη
   refine ⟨δ, hδ, q₀, fun q _ hq a ha spec hlen hthr hnz hreg => ?_⟩
   have hq1 : 1 ≤ q := Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
   have h := hq₀ q hq a ha (pivoted (spec.map Atom.toG)) ((length_pivoted_le _).trans (by simpa using hlen))

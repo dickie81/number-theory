@@ -1438,18 +1438,18 @@ theorem four_H_le_V : 4 * H ≤ V := GridOK.four_H_le_V
 
 omit [GridOK] in
 /-- **A point of a cell.** Let `x > 1` with `(log 2/log x)·DEN < 1`, let `d ≥ 1` be the product of the other primes
-and `p ≥ 2` the last, with `s ≤ (log d/log x)DEN`, `t ≤ (log p/log x)DEN ≤ t + H` and
-`((log d + log p)/log x)DEN ≤ s + t + mH ≤ DEN`. If `z₀` is `psi_le`'s for `U = 2DEN/t` and `ε`, and `p ≥ z₀`, then
-`Ψ(x/(dp), p) ≤ (omK s t m/K + ε)·x/(dp log p)`. -/
-theorem psi_point {s t m z₀ p : ℕ} {ε x d : ℝ} (ht : 0 < t)
+and `p ≥ 2` the last, with `s ≤ (log d/log x)DEN`, `t ≤ (log p/log x)DEN ≤ t + w` and
+`((log d + log p)/log x)DEN ≤ s + t + W ≤ DEN`. If `z₀` is `psi_le`'s for `U = 2DEN/t` and `ε`, and `p ≥ z₀`, then
+`Ψ(x/(dp), p) ≤ (omKw s t W w/K + ε)·x/(dp log p)`. -/
+theorem psi_point_w {s t W w z₀ p : ℕ} {ε x d : ℝ} (ht : 0 < t)
     (hz₀ : ∀ z : ℕ, z₀ ≤ z → ∀ y : ℝ, 1 ≤ y → Real.log (2 * y) ≤ 2 * DEN / t * Real.log z →
       (Psi y z : ℝ) ≤ (omegaC (Real.log (2 * y) / Real.log z) + ε) * y / Real.log z)
     (hx : 1 < x) (hτ : Real.log 2 / Real.log x * DEN < 1) (hd : 1 ≤ d) (hp : 2 ≤ p) (hpz : z₀ ≤ p)
     (hs : (s : ℝ) ≤ Real.log d / Real.log x * DEN)
-    (htp : (t : ℝ) ≤ Real.log p / Real.log x * DEN) (htpH : Real.log p / Real.log x * DEN ≤ t + H)
-    (hsum : (Real.log d / Real.log x + Real.log p / Real.log x) * DEN ≤ s + t + m * H)
-    (hDEN : (s : ℝ) + t + m * H ≤ DEN) :
-    (Psi (x / (d * p)) p : ℝ) ≤ ((omK s t m : ℝ) / K + ε) * (x / (d * p * Real.log p)) := by
+    (htp : (t : ℝ) ≤ Real.log p / Real.log x * DEN) (htpH : Real.log p / Real.log x * DEN ≤ t + w)
+    (hsum : (Real.log d / Real.log x + Real.log p / Real.log x) * DEN ≤ s + t + W)
+    (hDEN : (s : ℝ) + t + W ≤ DEN) :
+    (Psi (x / (d * p)) p : ℝ) ≤ ((omKw s t W w : ℝ) / K + ε) * (x / (d * p * Real.log p)) := by
   have hD := DEN_pos'
   have hlx : 0 < Real.log x := Real.log_pos hx
   have hx0 : 0 < x := by linarith
@@ -1499,15 +1499,29 @@ theorem psi_point {s t m z₀ p : ℕ} {ε x d : ℝ} (ht : 0 < t)
     have := hlp.ne'
     field_simp
     ring
-  have hω := omegaC_le (s := s) (t := t) (m := m) (σ := Real.log d / Real.log x)
+  have hω := omegaC_le_w (s := s) (t := t) (W := W) (w := w) (σ := Real.log d / Real.log x)
     (α := Real.log p / Real.log x) (τ := Real.log 2 / Real.log x) ht hs htp htpH hsum (div_pos hl2 hlx).le hτ
   rw [← harg] at hω
   have hyp : y / Real.log p = x / (d * p * Real.log p) := by rw [hy, div_div]
   calc (Psi y p : ℝ) ≤ (omegaC (Real.log (2 * y) / Real.log p) + ε) * y / Real.log p := hψ
     _ = (omegaC (Real.log (2 * y) / Real.log p) + ε) * (x / (d * p * Real.log p)) := by
         rw [mul_div_assoc, hyp]
-    _ ≤ ((omK s t m : ℝ) / K + ε) * (x / (d * p * Real.log p)) :=
+    _ ≤ ((omKw s t W w : ℝ) / K + ε) * (x / (d * p * Real.log p)) :=
         mul_le_mul_of_nonneg_right (by linarith) (div_nonneg hx0.le (by positivity))
+
+omit [GridOK] in
+/-- `psi_point_w` with all `m` boxes of width `H`. -/
+theorem psi_point {s t m z₀ p : ℕ} {ε x d : ℝ} (ht : 0 < t)
+    (hz₀ : ∀ z : ℕ, z₀ ≤ z → ∀ y : ℝ, 1 ≤ y → Real.log (2 * y) ≤ 2 * DEN / t * Real.log z →
+      (Psi y z : ℝ) ≤ (omegaC (Real.log (2 * y) / Real.log z) + ε) * y / Real.log z)
+    (hx : 1 < x) (hτ : Real.log 2 / Real.log x * DEN < 1) (hd : 1 ≤ d) (hp : 2 ≤ p) (hpz : z₀ ≤ p)
+    (hs : (s : ℝ) ≤ Real.log d / Real.log x * DEN)
+    (htp : (t : ℝ) ≤ Real.log p / Real.log x * DEN) (htpH : Real.log p / Real.log x * DEN ≤ t + H)
+    (hsum : (Real.log d / Real.log x + Real.log p / Real.log x) * DEN ≤ s + t + m * H)
+    (hDEN : (s : ℝ) + t + m * H ≤ DEN) :
+    (Psi (x / (d * p)) p : ℝ) ≤ ((omK s t m : ℝ) / K + ε) * (x / (d * p * Real.log p)) := by
+  rw [omK_eq_omKw]
+  exact psi_point_w ht hz₀ hx hτ hd hp hpz hs htp htpH (by exact_mod_cast hsum) (by exact_mod_cast hDEN)
 
 omit [Grid] [GridOK] in
 /-- **The finish.** Let `W, P ≥ 0`. If `F ≤ (W + ε)(x/log x)R` eventually for every `ε > 0`, `limsup R ≤ P` and
@@ -1721,6 +1735,171 @@ theorem share4 {i j k l : ℕ}
         Finset.sum_le_sum fun p₁ hp₁ => Finset.sum_le_sum fun p₂ hp₂ => Finset.sum_le_sum fun p₃ hp₃ =>
           Finset.sum_le_sum fun p₄ hp₄ => hterm p₁ hp₁ p₂ hp₂ p₃ hp₃ p₄ hp₄
     _ = _ := hsum_eq
+
+omit [Grid] [GridOK] in
+/-- A six-fold sum of a product is the product of the sums. -/
+theorem sum6_mul (s₁ s₂ s₃ s₄ s₅ s₆ : Finset ℕ) (f₁ f₂ f₃ f₄ f₅ f₆ : ℕ → ℝ) :
+    ∑ p₁ ∈ s₁, ∑ p₂ ∈ s₂, ∑ p₃ ∈ s₃, ∑ p₄ ∈ s₄, ∑ p₅ ∈ s₅, ∑ p₆ ∈ s₆,
+        f₁ p₁ * f₂ p₂ * f₃ p₃ * f₄ p₄ * f₅ p₅ * f₆ p₆ =
+      (∑ p ∈ s₁, f₁ p) * (∑ p ∈ s₂, f₂ p) * (∑ p ∈ s₃, f₃ p) * (∑ p ∈ s₄, f₄ p) * (∑ p ∈ s₅, f₅ p) *
+        (∑ p ∈ s₆, f₆ p) := by
+  simp only [← Finset.mul_sum, ← Finset.sum_mul]
+
+/-- **The share of a cell of depth 6** (four fine cells, then two coarse ones). On a grid with `GridOKC`, for a cell
+`(i, j, k, l, b, c)` with `e_i + e_j + e_k + e_l + eC_b + 2eC_c ≤ DEN`, as for a counted one, and every `δ > 0`: eventually
+`Σ Ψ(x/(p₁⋯p₆), p₆) ≤ (bound6/K + δ)·x/log x`, the sum over `p₁ ∈ cell i, …, p₄ ∈ cell l`,
+`p₅ ∈ coarse cell b`, `p₆ ∈ coarse cell c`. -/
+theorem share6 [GridOKC] {i j k l b c : ℕ}
+    (hfit6 : SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b + 2 * eC c ≤ DEN)
+    {δ : ℝ} (hδ : 0 < δ) :
+    ∀ᶠ x : ℝ in atTop, ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
+        ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c, (Psi (x / (p₁ * p₂ * p₃ * p₄ * p₅ * p₆)) p₆ : ℝ) ≤
+      ((bound6 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) (eC b) (eC c) : ℝ) / K + δ) *
+        (x / Real.log x) := by
+  have hD := DEN_pos'
+  have hH : (0 : ℝ) < H := by exact_mod_cast H_pos
+  have hHC : (0 : ℝ) < HC := by exact_mod_cast (@H_pos Gc GridOKC.ok)
+  have hei : (0 : ℝ) < SieveCert.e i := by exact_mod_cast e_pos i
+  have hej : (0 : ℝ) < SieveCert.e j := by exact_mod_cast e_pos j
+  have hek : (0 : ℝ) < SieveCert.e k := by exact_mod_cast e_pos k
+  have hel : (0 : ℝ) < SieveCert.e l := by exact_mod_cast e_pos l
+  have hpb : 0 < eC b := @e_pos Gc GridOKC.ok b
+  have hpc : 0 < eC c := @e_pos Gc GridOKC.ok c
+  have heb : (0 : ℝ) < eC b := by exact_mod_cast hpb
+  have hec : (0 : ℝ) < eC c := by exact_mod_cast hpc
+  have hK := K_pos'
+  have hVc : V ≤ eC c := by unfold eC SieveCert.e; simp only [SieveCert.V]; omega
+  have hfit0 := GridOKC.fit
+  have hDEN : SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b + eC c + (4 * H + 2 * HC) ≤ DEN := by
+    omega
+  have hDEN' : ((SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b : ℕ) : ℝ) + (eC c : ℕ) +
+      ((4 * H + 2 * HC : ℕ) : ℝ) ≤ DEN := by exact_mod_cast hDEN
+  obtain ⟨W, hW⟩ : ∃ W, W = (omKw (SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b) (eC c)
+      (4 * H + 2 * HC) HC : ℝ) / K := ⟨_, rfl⟩
+  have hW0 : 0 ≤ W := by rw [hW]; positivity
+  have hPi : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e i := by positivity
+  have hPj : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e j := by positivity
+  have hPk : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e k := by positivity
+  have hPl : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e l := by positivity
+  have hPb : (0 : ℝ) ≤ (HC : ℝ) / eC b := by positivity
+  have hPc : (0 : ℝ) ≤ (HC : ℝ) * DEN / (eC c : ℝ) ^ 2 := by positivity
+  have hWP : W * ((H : ℝ) / SieveCert.e i * ((H : ℝ) / SieveCert.e j) * ((H : ℝ) / SieveCert.e k) *
+      ((H : ℝ) / SieveCert.e l) * ((HC : ℝ) / eC b) * ((HC : ℝ) * DEN / (eC c : ℝ) ^ 2)) ≤
+      (bound6 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) (eC b) (eC c) : ℝ) / K := by
+    have h := bound6_ge (e_pos i) (e_pos j) (e_pos k) (e_pos l) hpb hpc
+    have heq : W * ((H : ℝ) / SieveCert.e i * ((H : ℝ) / SieveCert.e j) * ((H : ℝ) / SieveCert.e k) *
+        ((H : ℝ) / SieveCert.e l) * ((HC : ℝ) / eC b) * ((HC : ℝ) * DEN / (eC c : ℝ) ^ 2)) =
+        ((H : ℝ) / DEN) ^ 4 * ((HC : ℝ) / DEN) ^ 2 * ((omKw (SieveCert.e i + SieveCert.e j + SieveCert.e k +
+          SieveCert.e l + eC b) (eC c) (4 * H + 2 * HC) HC : ℝ) / K) /
+          (((SieveCert.e i : ℝ) / DEN) * ((SieveCert.e j : ℝ) / DEN) * ((SieveCert.e k : ℝ) / DEN) *
+            ((SieveCert.e l : ℝ) / DEN) * ((eC b : ℝ) / DEN) * ((eC c : ℝ) / DEN) ^ 2) := by
+      rw [hW]; field_simp
+    rw [heq]; exact h
+  have hS : ∀ m, ∀ᶠ x : ℝ in atTop, 0 ≤ ∑ p ∈ cellP x m, 1 / (p : ℝ) :=
+    fun m => Filter.Eventually.of_forall fun x => sum_inv_nonneg (cellP x m)
+  have hSb : ∀ᶠ x : ℝ in atTop, 0 ≤ ∑ p ∈ @cellP Gc x b, 1 / (p : ℝ) :=
+    Filter.Eventually.of_forall fun x => sum_inv_nonneg (@cellP Gc x b)
+  have hEb : EvLe (fun x => ∑ p ∈ @cellP Gc x b, 1 / (p : ℝ)) ((HC : ℝ) / eC b) :=
+    @evLe_cell_inv Gc GridOKC.ok b
+  have hEc : EvLe (fun x => Real.log x * ∑ p ∈ @cellP Gc x c, 1 / ((p : ℝ) * Real.log p))
+      ((HC : ℝ) * DEN / (eC c : ℝ) ^ 2) := @evLe_cell_inv_log Gc GridOKC.ok c
+  have hR4 := EvLe.mul (mul_nonneg (mul_nonneg hPi hPj) hPk) hPl
+    (by filter_upwards [hS i, hS j, hS k] with x h1 h2 h3; exact mul_nonneg (mul_nonneg h1 h2) h3) (hS l)
+    (EvLe.mul (mul_nonneg hPi hPj) hPk (by filter_upwards [hS i, hS j] with x h1 h2; exact mul_nonneg h1 h2)
+      (hS k) (EvLe.mul hPi hPj (hS i) (hS j) (evLe_cell_inv i) (evLe_cell_inv j)) (evLe_cell_inv k))
+    (evLe_cell_inv l)
+  have hR5 := EvLe.mul (mul_nonneg (mul_nonneg (mul_nonneg hPi hPj) hPk) hPl) hPb
+    (by filter_upwards [hS i, hS j, hS k, hS l] with x h1 h2 h3 h4
+        exact mul_nonneg (mul_nonneg (mul_nonneg h1 h2) h3) h4) hSb hR4 hEb
+  have hR := EvLe.mul (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg hPi hPj) hPk) hPl) hPb) hPc
+    (by filter_upwards [hS i, hS j, hS k, hS l, hSb] with x h1 h2 h3 h4 h5
+        exact mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg h1 h2) h3) h4) h5)
+    (ev_log_mul_nonneg fun x => @cellP Gc x c) hR5 hEc
+  refine evLe_finish hW0 (by positivity) hWP hR (fun ε hε => ?_) hδ
+  obtain ⟨z₀, hz₀⟩ := psi_le (2 * DEN / eC c) hε
+  have hb : (0 : ℝ) < (eC c : ℝ) / DEN := div_pos hec hD
+  filter_upwards [eventually_gt_atTop 1, Real.tendsto_log_atTop.eventually_gt_atTop (DEN * Real.log 2),
+    (tendsto_rpow_atTop hb).eventually_ge_atTop (z₀ : ℝ)] with x hx1 hlx2 hxz
+  have hlx : 0 < Real.log x := Real.log_pos hx1
+  have hτ : Real.log 2 / Real.log x * DEN < 1 := by
+    rw [div_mul_eq_mul_div, div_lt_one hlx]; linarith
+  have hterm : ∀ p₁ ∈ cellP x i, ∀ p₂ ∈ cellP x j, ∀ p₃ ∈ cellP x k, ∀ p₄ ∈ cellP x l,
+      ∀ p₅ ∈ @cellP Gc x b, ∀ p₆ ∈ @cellP Gc x c,
+      (Psi (x / (p₁ * p₂ * p₃ * p₄ * p₅ * p₆)) p₆ : ℝ) ≤
+        (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * p₅ * p₆ * Real.log p₆)) := by
+    intro p₁ hp₁ p₂ hp₂ p₃ hp₃ p₄ hp₄ p₅ hp₅ p₆ hp₆
+    have hz : z₀ ≤ p₆ := by
+      have h1 : (z₀ : ℝ) ≤ p₆ := le_trans hxz (mem_primesIn.1 hp₆).2.1
+      exact_mod_cast h1
+    rw [mem_cellP hx1] at hp₁ hp₂ hp₃ hp₄
+    obtain ⟨hp₁p, hc₁l, hc₁r⟩ := hp₁
+    obtain ⟨hp₂p, hc₂l, hc₂r⟩ := hp₂
+    obtain ⟨hp₃p, hc₃l, hc₃r⟩ := hp₃
+    obtain ⟨hp₄p, hc₄l, hc₄r⟩ := hp₄
+    obtain ⟨hp₅p, hc₅l, hc₅r⟩ := (@mem_cellP Gc x hx1 b p₅).1 hp₅
+    obtain ⟨hp₆p, hc₆l, hc₆r⟩ := (@mem_cellP Gc x hx1 c p₆).1 hp₆
+    have hc₅l' : ((eC b : ℕ) : ℝ) ≤ Real.log p₅ / Real.log x * DEN := hc₅l
+    have hc₅r' : Real.log p₅ / Real.log x * DEN < ((eC b : ℕ) : ℝ) + HC := hc₅r
+    have hc₆l' : ((eC c : ℕ) : ℝ) ≤ Real.log p₆ / Real.log x * DEN := hc₆l
+    have hc₆r' : Real.log p₆ / Real.log x * DEN < ((eC c : ℕ) : ℝ) + HC := hc₆r
+    have h1 : (1 : ℝ) ≤ p₁ := by exact_mod_cast hp₁p.one_lt.le
+    have h2 : (1 : ℝ) ≤ p₂ := by exact_mod_cast hp₂p.one_lt.le
+    have h3 : (1 : ℝ) ≤ p₃ := by exact_mod_cast hp₃p.one_lt.le
+    have h4 : (1 : ℝ) ≤ p₄ := by exact_mod_cast hp₄p.one_lt.le
+    have h5 : (1 : ℝ) ≤ p₅ := by exact_mod_cast hp₅p.one_lt.le
+    have hlogd : Real.log ((p₁ : ℝ) * p₂ * p₃ * p₄ * p₅) / Real.log x * DEN =
+        Real.log p₁ / Real.log x * DEN + Real.log p₂ / Real.log x * DEN + Real.log p₃ / Real.log x * DEN +
+          Real.log p₄ / Real.log x * DEN + Real.log p₅ / Real.log x * DEN := by
+      rw [Real.log_mul (by positivity) (by positivity), Real.log_mul (by positivity) (by positivity),
+        Real.log_mul (by positivity) (by positivity), Real.log_mul (by positivity) (by positivity)]; ring
+    have hd1 : (1 : ℝ) ≤ (p₁ : ℝ) * p₂ * p₃ * p₄ * p₅ :=
+      one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le
+        (one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le h1 h2) h3) h4) h5
+    rw [hW]
+    refine psi_point_w (s := SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b) (t := eC c)
+      (W := 4 * H + 2 * HC) (w := HC) hpc hz₀ hx1 hτ hd1 hp₆p.two_le hz ?_ hc₆l' hc₆r'.le ?_ ?_
+    · rw [hlogd]; push_cast; linarith
+    · rw [add_mul, hlogd]; push_cast; linarith
+    · exact hDEN'
+  have hsum_eq : ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
+      ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c,
+      (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * p₅ * p₆ * Real.log p₆)) =
+      (W + ε) * (x / Real.log x) * ((∑ p ∈ cellP x i, 1 / (p : ℝ)) * (∑ p ∈ cellP x j, 1 / (p : ℝ)) *
+        (∑ p ∈ cellP x k, 1 / (p : ℝ)) * (∑ p ∈ cellP x l, 1 / (p : ℝ)) *
+        (∑ p ∈ @cellP Gc x b, 1 / (p : ℝ)) *
+        (Real.log x * ∑ p ∈ @cellP Gc x c, 1 / ((p : ℝ) * Real.log p))) := by
+    have h1 : ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
+        ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c,
+        (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * p₅ * p₆ * Real.log p₆)) =
+        ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
+          ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c,
+          (W + ε) * x * (1 / (p₁ : ℝ)) * (1 / (p₂ : ℝ)) * (1 / (p₃ : ℝ)) * (1 / (p₄ : ℝ)) * (1 / (p₅ : ℝ)) *
+            (1 / ((p₆ : ℝ) * Real.log p₆)) := by
+      refine Finset.sum_congr rfl fun p₁ _ => Finset.sum_congr rfl fun p₂ _ =>
+        Finset.sum_congr rfl fun p₃ _ => Finset.sum_congr rfl fun p₄ _ => Finset.sum_congr rfl fun p₅ _ =>
+          Finset.sum_congr rfl fun p₆ _ => ?_
+      ring
+    rw [h1, sum6_mul (f₁ := fun p => (W + ε) * x * (1 / (p : ℝ))), ← Finset.mul_sum]
+    have := hlx.ne'
+    field_simp
+  calc ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
+        ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c, (Psi (x / (p₁ * p₂ * p₃ * p₄ * p₅ * p₆)) p₆ : ℝ)
+      ≤ ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
+        ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c,
+          (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * p₅ * p₆ * Real.log p₆)) :=
+        Finset.sum_le_sum fun p₁ hp₁ => Finset.sum_le_sum fun p₂ hp₂ => Finset.sum_le_sum fun p₃ hp₃ =>
+          Finset.sum_le_sum fun p₄ hp₄ => Finset.sum_le_sum fun p₅ hp₅ => Finset.sum_le_sum fun p₆ hp₆ =>
+            hterm p₁ hp₁ p₂ hp₂ p₃ hp₃ p₄ hp₄ p₅ hp₅ p₆ hp₆
+    _ = _ := hsum_eq
+
+/-- `share6` on a counted cell of depth 6. -/
+theorem share6_of_counted6 [GridOKC] {i j k l b c : ℕ} (h : counted6 i j k l b c = true) {δ : ℝ} (hδ : 0 < δ) :
+    ∀ᶠ x : ℝ in atTop, ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
+        ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c, (Psi (x / (p₁ * p₂ * p₃ * p₄ * p₅ * p₆)) p₆ : ℝ) ≤
+      ((bound6 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) (eC b) (eC c) : ℝ) / K + δ) *
+        (x / Real.log x) := by
+  simp only [counted6, Bool.and_eq_true, decide_eq_true_eq] at h
+  exact share6 h.1 hδ
 
 /-- `share2` on a candidate cell, on a grid with `GridOK`. -/
 theorem share2_of_cand {i j : ℕ} (h : cand i j = true) {δ : ℝ} (hδ : 0 < δ) :
