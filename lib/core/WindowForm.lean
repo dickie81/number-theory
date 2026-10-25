@@ -40,12 +40,6 @@ namespace WindowForm
 
 /-! ### Closed forms -/
 
-theorem sin_sub_nat_mul_pi (y : ℝ) (k : ℕ) : Real.sin (y - k * π) = (-1) ^ k * Real.sin y := by
-  rw [Real.sin_sub, Real.sin_nat_mul_pi, Real.cos_nat_mul_pi]; ring
-
-theorem sin_add_nat_mul_pi (y : ℝ) (k : ℕ) : Real.sin (y + k * π) = (-1) ^ k * Real.sin y := by
-  rw [Real.sin_add, Real.sin_nat_mul_pi, Real.cos_nat_mul_pi]; ring
-
 /-- **General closed forms** on `[−a, a]` (used for the Gram entries in PoleRelax.lean). -/
 theorem int_coshsq {a : ℝ} : (∫ t in (-a)..a, Real.cosh (t / 2) * Real.cosh (t / 2)) = a + Real.sinh a := by
   have hd : ∀ t ∈ Set.uIcc (-a) a, HasDerivAt (fun t => (t + Real.sinh t) / 2)
@@ -124,7 +118,7 @@ theorem ghat_cos {a t : ℝ} (k : ℕ) (ha : 0 < a) (h1 : t ≠ k * π / a) (h2 
   have hp : ω + t ≠ 0 := by intro h; apply h2; linarith
   have hωa : ω * a = k * π := by rw [hω]; field_simp
   rw [int_cos_cos hm hp, sub_mul, add_mul, hωa, show (k : ℝ) * π - t * a = -(t * a - k * π) by ring,
-    Real.sin_neg, sin_sub_nat_mul_pi, add_comm (k * π), sin_add_nat_mul_pi]
+    Real.sin_neg, Real.sin_sub_nat_mul_pi, add_comm (k * π), Real.sin_add_nat_mul_pi]
   have hsq : t ^ 2 - ω ^ 2 ≠ 0 := by
     rw [show t ^ 2 - ω ^ 2 = -((ω - t) * (ω + t)) by ring]; exact neg_ne_zero.2 (mul_ne_zero hm hp)
   field_simp
