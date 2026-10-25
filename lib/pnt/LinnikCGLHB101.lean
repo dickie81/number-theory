@@ -7,7 +7,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 `T`, `δ` and a divisor bound `D`. This file bounds the factors by powers of one quantity, `W = 3C_δ(4Q)^δ/δ` with
 `C_δ` the divisor constant and `Q = q(1 + 2T)`, and proves the displayed hypothesis `CGLT101`
 (Heath-Brown's Theorem 10.1 with characters). With `cgls3_t101`,
-`prop31_t101`, `linnik_225c_t101` and `linnik_226c_t101` it gives, with no hypothesis, Chen–Gupta–Li's Propositions
+`prop31_t101`, and `linnik_225c_t101` and `linnik_226c_t101` (in `LinnikCGLLegacy.lean`) it gives, with no hypothesis, Chen–Gupta–Li's Propositions
 11.1 and 3.1 at one point per character, the count of characters with a zero at the exponent
 `(7/3 + 1/2000)(1 − σ)` on `[5/7, 16/21]` (`LinnikCGLStep.charDensity_cgl`) and Linnik's theorem with the exponents
 `9/4` and `226/100`. `CGLDensity` itself, the count at `(7/3)(1 − σ) + ε` for every `ε > 0`, is not proved here
@@ -41,14 +41,15 @@ Plain statements, with `q ≥ 1` where `[NeZero q]`, `R` the number of points an
 * `char_density`: there is `C ≥ 0` such that, for `q ≥ 1`, `5/7 ≤ σ ≤ 16/21` and `T ≥ 2`, at most
   `C(qT)^{(7/3+1/2000)(1−σ)}(log qT)^{10}` characters mod `q` have an `L`-function with a zero in `Re s ≥ σ`,
   `|Im s| ≤ T`.
-* `linnik_225`, `linnik_226`: there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime
+* `linnik_225`, `linnik_226` (in `LinnikCGLLegacy.lean`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime
   `p ≡ a (mod q)` with `p ≤ Kq^{9/4}`; and likewise with `p ≤ Kq^{226/100}`.
 
-The file imports `LinnikCGLHBIter.lean` and `LinnikCGLP81.lean`.
+The file imports `LinnikCGLHBIter.lean`, `LinnikCGLP81.lean` and `LinnikCGLStep.lean`.
 -/
 
 import LinnikCGLHBIter
 import LinnikCGLP81
+import LinnikCGLStep
 
 open Complex Set Real Filter Topology MeasureTheory
 open scoped ComplexConjugate Classical
@@ -492,18 +493,6 @@ theorem char_density : ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T :
         C * ((q : ℝ) * T) ^ ((7 / 3 + 1 / 2000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
   LinnikCGLStep.charDensity_cgl prop31
 
-/-- **Linnik's theorem with exponent `9/4`**: there is `K` such that for every `q ≥ 1` and every `a` prime to `q`
-there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{9/4}` (`linnik_225c_t101` at `cglt101`). -/
-theorem linnik_225 : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (9 / 4 : ℝ) :=
-  LinnikCGLP81.linnik_225c_t101 cglt101
-
-/-- **Linnik's theorem with exponent `226/100`**: there is `K` such that for every `q ≥ 1` and every `a` prime to `q`
-there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{226/100}` (`linnik_226c_t101` at `cglt101`). -/
-theorem linnik_226 : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (226 / 100 : ℝ) :=
-  LinnikCGLP81.linnik_226c_t101 cglt101
-
 end LinnikCGLHB101
 
 #print axioms LinnikCGLHB101.sig_le_eps
@@ -511,5 +500,3 @@ end LinnikCGLHB101
 #print axioms LinnikCGLHB101.cgls3
 #print axioms LinnikCGLHB101.prop31
 #print axioms LinnikCGLHB101.char_density
-#print axioms LinnikCGLHB101.linnik_225
-#print axioms LinnikCGLHB101.linnik_226

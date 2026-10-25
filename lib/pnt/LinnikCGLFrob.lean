@@ -37,10 +37,12 @@ truncated (it is integrated against `|H(1/2 + iu)|`, whence `I_H`), and the pair
 * `Bmax`, `gram_sq_le`: `|G(i, k)|² ≤ N·Q₀(q)²(∫|H(1/2 + iu)||D_{ik}(u)| du)² + B²` for `χ_i ≠ χ_k`.
 * `frobOff_le`: Cauchy–Schwarz in `u` for each pair, and the sum over the pairs.
 
-The file imports `LinnikCGLPair.lean`.
+The file imports `LinnikCGLPair.lean`, `LinnikDual.lean` and `LinnikWeighted.lean`.
 -/
 
 import LinnikCGLPair
+import LinnikDual
+import LinnikWeighted
 
 open Complex Set Real Filter Topology MeasureTheory
 
