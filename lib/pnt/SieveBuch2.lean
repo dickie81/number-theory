@@ -13,7 +13,7 @@ kept parts' `A` and `B` agree within the leaves' errors, so the kept parts' `B`-
   within `3·Err` (three sorted families, `SieveBuch.Par.Kk_eq`).
 * `lvl2k`, `lvl1k`, `decompk`: `SieveBuch.Par.lvl2`, `lvl1` and `decomp` with the kept parts: for a grid with
   `GridOK`, `P.Good`, weights `g_A ≥ 0` and `g_B`, leaves within `Err ≥ 0` and kept leaves within `3·Err`,
-  `S_{g_A}(z_top) ≥ S_{g_B}(z_top) − (D1(g_B) − Kp(g_B)) − (1 + n(1 + n(n(n + 2) + 2 + 3n)))·Err`.
+  `S_{g_A}(z_top) ≥ S_{g_B}(z_top) − (D1(g_B) − Kp(g_B)) − (1 + n(1 + n(ec2 + 2 + 3n)))·Err`.
 
 The file imports `SieveKept.lean`.
 -/
@@ -62,16 +62,16 @@ theorem Kp2_ge {gA gB : ℕ → ℝ} {Err : ℝ} (hErr : 0 ≤ Err) (KL : P.KLea
 
 /-- **Level 2 with the kept parts**, for a grid with `GridOK`, `P.Good`, weights `g_A ≥ 0` and `g_B`, leaves within
 `Err ≥ 0`, kept leaves within `3·Err`, and a cell `i < n` of `p₁` not inside the window:
-`A ≥ B − (dropped) + (kept) − n(n(n + 2) + 2 + 3n)Err`. -/
-theorem lvl2k [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
+`A ≥ B − (dropped) + (kept) − n(ec2 + 2 + 3n)Err`. -/
+theorem lvl2k [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
     (Lv : P.Leaves gA gB Err) (KL : P.KLeaves gA gB Err) {i : ℕ} (hi : i < SieveCert.n) (hW : ¬ inW i) :
     P.I gB (P.S2 i) - P.D2 gB i + ∑ j ∈ range SieveCert.n,
         (if cand i j = true ∧ dec i j = false ∧ reg2 i j = true then P.Kp2 gB i j else 0) -
-      SieveCert.n * (SieveCert.n * (SieveCert.n + 2) + 2 + 3 * SieveCert.n) * Err ≤ P.I gA (P.S2 i) := by
+      SieveCert.n * (ec2 + 2 + 3 * SieveCert.n) * Err ≤ P.I gA (P.S2 i) := by
   rw [P.I_S2 G gA, P.I_S2 G gB]
   unfold D2
-  set c3 : ℝ := SieveCert.n * (SieveCert.n + 2) with hc3
-  have hc30 : 0 ≤ c3 := by positivity
+  set c3 : ℝ := ec2 with hc3
+  have hc30 : 0 ≤ c3 := ec2_nonneg
   have hn0 : (0 : ℝ) ≤ SieveCert.n := Nat.cast_nonneg _
   have hErrs : (SieveCert.n : ℝ) * (c3 + 2 + 3 * SieveCert.n) * Err =
       ∑ _j ∈ range SieveCert.n, (c3 + 2 + 3 * SieveCert.n) * Err := by
@@ -123,15 +123,15 @@ theorem lvl2k [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m
       linarith
 
 /-- **Level 1 with the kept parts**, for a grid with `GridOK`, `P.Good`, weights `g_A ≥ 0` and `g_B`, leaves within
-`Err ≥ 0` and kept leaves within `3·Err`: `A ≤ B + (dropped) − (kept) + n(1 + n(n(n + 2) + 2 + 3n))Err`. -/
-theorem lvl1k [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
+`Err ≥ 0` and kept leaves within `3·Err`: `A ≤ B + (dropped) − (kept) + n(1 + n(ec2 + 2 + 3n))Err`. -/
+theorem lvl1k [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
     (Lv : P.Leaves gA gB Err) (KL : P.KLeaves gA gB Err) :
     P.I gA P.S1 ≤ P.I gB P.S1 + P.D1 gB - P.Kp gB +
-      SieveCert.n * (1 + SieveCert.n * (SieveCert.n * (SieveCert.n + 2) + 2 + 3 * SieveCert.n)) * Err := by
+      SieveCert.n * (1 + SieveCert.n * (ec2 + 2 + 3 * SieveCert.n)) * Err := by
   rw [P.I_S1 G gA, P.I_S1 G gB]
   unfold D1 Kp
-  set c2 : ℝ := SieveCert.n * (SieveCert.n * (SieveCert.n + 2) + 2 + 3 * SieveCert.n) with hc2
-  have hc20 : 0 ≤ c2 := by positivity
+  set c2 : ℝ := SieveCert.n * (ec2 + 2 + 3 * SieveCert.n) with hc2
+  have hc20 : 0 ≤ c2 := by have := ec2_nonneg; rw [hc2]; positivity
   have hErrs : (SieveCert.n : ℝ) * (1 + c2) * Err = ∑ _i ∈ range SieveCert.n, (1 + c2) * Err := by
     rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
     ring
@@ -152,16 +152,16 @@ theorem lvl1k [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m
 
 /-- **The decomposition's inequality with the kept parts.** For a grid with `GridOK`, `P.Good`, weights `g_A ≥ 0` and
 `g_B`, leaves within `Err ≥ 0` and kept leaves within `3·Err`:
-`S(A, z_top) ≥ S(B, z_top) − (D1(g_B) − Kp(g_B)) − C·Err`, `C = 1 + n(1 + n(n(n + 2) + 2 + 3n))`. -/
-theorem decompk [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
+`S(A, z_top) ≥ S(B, z_top) − (D1(g_B) − Kp(g_B)) − C·Err`, `C = 1 + n(1 + n(ec2 + 2 + 3n))`. -/
+theorem decompk [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
     (Lv : P.Leaves gA gB Err) (KL : P.KLeaves gA gB Err) :
     P.T gB - (P.D1 gB - P.Kp gB) -
-        (1 + SieveCert.n * (1 + SieveCert.n * (SieveCert.n * (SieveCert.n + 2) + 2 + 3 * SieveCert.n))) * Err ≤
+        (1 + SieveCert.n * (1 + SieveCert.n * (ec2 + 2 + 3 * SieveCert.n))) * Err ≤
       P.T gA := by
   rw [P.T_eq G gA, P.T_eq G gB]
   have h1 := lvl1k G hgA hErr Lv KL
   have hJ := abs_le.1 Lv.j0
-  set c1 : ℝ := SieveCert.n * (1 + SieveCert.n * (SieveCert.n * (SieveCert.n + 2) + 2 + 3 * SieveCert.n)) with hc1
+  set c1 : ℝ := SieveCert.n * (1 + SieveCert.n * (ec2 + 2 + 3 * SieveCert.n)) with hc1
   have : (1 + c1) * Err = Err + c1 * Err := by ring
   linarith [hJ.1]
 

@@ -17,7 +17,7 @@ Plain statements. The route and the grid are as in `SieveQ` (`RouteOK`, `GridOK`
 The proof is `SieveMain.linnik_large_of`'s, with `SieveBuch.Par.decompk` (the decomposition with the kept parts) for
 `SieveBuch.Par.decomp`, `SieveKeptLeaf.leaves_ev2` (with the kept leaves) for `SieveQ.leaves_ev`,
 `SieveDrop2.drop_ev2` (the dropped terms less the kept parts) for `SieveDrop.drop_ev_of`, and the decomposition's
-constant `Ck = 1 + n(1 + n(n(n + 2) + 2 + 3n))` for `Cdec`; `route_of_large` is `SieveMain.linnik_route_of`'s step
+constant `Ck = 1 + n(1 + n(ec2 + 2 + 3n))` for `Cdec`; `route_of_large` is `SieveMain.linnik_route_of`'s step
 for the small moduli (Mathlib's `Nat.forall_exists_prime_gt_and_modEq`, Dirichlet's theorem).
 
 The file imports `SieveDrop2.lean`.
@@ -30,16 +30,19 @@ namespace SieveMain2
 
 open Classical
 
-variable [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits]
+variable [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [SieveCert.GridOKC] [Fits]
 
-/-- The decomposition's constant with the kept parts, `1 + n(1 + n(n(n + 2) + 2 + 3n))`. -/
+/-- The decomposition's constant with the kept parts, `1 + n(1 + n(ec2 + 2 + 3n))`. -/
 noncomputable def Ck : ℝ :=
-  1 + SieveCert.n * (1 + SieveCert.n * (SieveCert.n * (SieveCert.n + 2) + 2 + 3 * SieveCert.n))
+  1 + SieveCert.n * (1 + SieveCert.n * (SieveBuch.Par.ec2 + 2 + 3 * SieveCert.n))
 
-omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem Ck_pos : 0 < Ck := by unfold Ck; positivity
+omit [Route] [RouteOK] [SieveCert.GridOK] [SieveCert.GridOKC] [Fits] in
+theorem Ck_pos : 0 < Ck := by
+  unfold Ck
+  have := SieveBuch.Par.ec2_nonneg
+  positivity
 
-omit [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
+omit [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [SieveCert.GridOKC] [Fits] in
 /-- **The small moduli.** For `L ≥ 0` (`hL0`): if for large `q` every unit `a` mod `q` has a prime `p ≡ a (mod q)`
 with `q^L < p ≤ 2q^L` (`hlarge`), there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a
 prime `p ≡ a (mod q)` with `p ≤ K·q^L`: Dirichlet's theorem gives a prime for each of the finitely many smaller `q`

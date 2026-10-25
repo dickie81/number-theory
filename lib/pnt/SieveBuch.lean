@@ -43,7 +43,7 @@ The file imports `SieveDecomp.lean`.
 import SieveDecomp
 
 open Real Finset SieveFamily SieveChain SieveDecomp
-open SieveCert (V DEN H U1 U2 cand dec inKK ne3 counted4 surelyEval cell)
+open SieveCert (V DEN H U1 U2 cand dec inKK ne3 counted4 surelyEval cell nC eC HC cellC inKK5 ne5 counted6 dec4 lim Gc)
 
 namespace SieveBuch
 
@@ -58,6 +58,18 @@ structure Par where
   Xp : ℕ
   N₁ : ℕ
   N₂ : ℕ
+
+section Coarse
+
+variable [SieveCert.Grid]
+
+/-- The atoms of the coarse cell `c` for the prime `t`: `x^{eC_c/DEN} ≤ rt_t < x^{(eC_c + HC)/DEN}`. -/
+noncomputable abbrev cellAC {k : ℕ} (t : Fin k) (x : ℝ) (c : ℕ) : List (Atom k) := @cellA (Gc) k t x c
+
+/-- A prime in the coarse cell `c`. -/
+abbrev InCC (x : ℝ) (c p : ℕ) : Prop := @InC (Gc) x c p
+
+end Coarse
 
 namespace Par
 
@@ -89,6 +101,22 @@ noncomputable def S3gt (i j k : ℕ) : List (Atom 3) := P.S3c i j k ++ [Atom.pro
 noncomputable def S4 (i j k : ℕ) : List (Atom 4) := extS (P.z₀ : ℝ) (P.S3le i j k)
 /-- Depth 4, in the cell `(i, j, k, l)`. -/
 noncomputable def S4c (i j k l : ℕ) : List (Atom 4) := P.S4 i j k ++ cellA 3 P.x l
+/-- Depth 4, in the cell `(i, j, k, l)`, with `p₁p₂p₃p₄ ≤ X'`. -/
+noncomputable def S4cle (i j k l : ℕ) : List (Atom 4) := P.S4c i j k l ++ [Atom.prodLe Finset.univ P.Xp]
+/-- Depth 4, in the cell `(i, j, k, l)`, with `p₁p₂p₃p₄ > X'`. -/
+noncomputable def S4cgt (i j k l : ℕ) : List (Atom 4) := P.S4c i j k l ++ [Atom.prodGt Finset.univ P.Xp]
+/-- Depth 5 below `(i, j, k, l)`, `p₁p₂p₃p₄ ≤ X'`. -/
+noncomputable def S5 (i j k l : ℕ) : List (Atom 5) := extS (P.z₀ : ℝ) (P.S4cle i j k l)
+/-- Depth 5, `p₅` in the coarse cell `b`. -/
+noncomputable def S5c (i j k l b : ℕ) : List (Atom 5) := P.S5 i j k l ++ cellAC 4 P.x b
+/-- Depth 5, `p₅` in the coarse cell `b`, with `p₁⋯p₅ ≤ X'`. -/
+noncomputable def S5le (i j k l b : ℕ) : List (Atom 5) := P.S5c i j k l b ++ [Atom.prodLe Finset.univ P.Xp]
+/-- Depth 5, `p₅` in the coarse cell `b`, with `p₁⋯p₅ > X'`. -/
+noncomputable def S5gt (i j k l b : ℕ) : List (Atom 5) := P.S5c i j k l b ++ [Atom.prodGt Finset.univ P.Xp]
+/-- Depth 6 below `(i, j, k, l, b)`, `p₁⋯p₅ ≤ X'`. -/
+noncomputable def S6 (i j k l b : ℕ) : List (Atom 6) := extS (P.z₀ : ℝ) (P.S5le i j k l b)
+/-- Depth 6, `p₆` in the coarse cell `c`. -/
+noncomputable def S6c (i j k l b c : ℕ) : List (Atom 6) := P.S6 i j k l b ++ cellAC 5 P.x c
 
 /-- The terms `S(A_{∏rt}, rt_last)` of a family. -/
 noncomputable def I {k' : ℕ} (g : ℕ → ℝ) (spec : List (Atom (k' + 1))) : ℝ :=
@@ -114,6 +142,7 @@ structure Good : Prop where
   htopN : P.ztop ≤ P.N₂ + 1
   hXN : (P.Xp : ℝ) * Real.sqrt P.Xp ≤ P.N₁
   hN₂ : (P.N₂ : ℝ) < P.x ^ (((DEN : ℝ) + 1) / DEN)
+  hlim : P.x ^ ((lim : ℝ) / DEN) * Real.sqrt P.Xp ≤ P.N₁
 
 /-! ### Chains -/
 
@@ -148,6 +177,22 @@ theorem chain_S4 {Y : ℕ} (i j k : ℕ) : ∀ rt ∈ famSet 4 Y (P.S4 i j k), C
   chain_ext (P.chain_S3le i j k)
 theorem chain_S4c {Y : ℕ} (i j k l : ℕ) : ∀ rt ∈ famSet 4 Y (P.S4c i j k l), Chain P.z₀ P.ztop rt :=
   chain_append _ (P.chain_S4 i j k)
+theorem chain_S4cle {Y : ℕ} (i j k l : ℕ) : ∀ rt ∈ famSet 4 Y (P.S4cle i j k l), Chain P.z₀ P.ztop rt :=
+  chain_append _ (P.chain_S4c i j k l)
+theorem chain_S4cgt {Y : ℕ} (i j k l : ℕ) : ∀ rt ∈ famSet 4 Y (P.S4cgt i j k l), Chain P.z₀ P.ztop rt :=
+  chain_append _ (P.chain_S4c i j k l)
+theorem chain_S5 {Y : ℕ} (i j k l : ℕ) : ∀ rt ∈ famSet 5 Y (P.S5 i j k l), Chain P.z₀ P.ztop rt :=
+  chain_ext (P.chain_S4cle i j k l)
+theorem chain_S5c {Y : ℕ} (i j k l b : ℕ) : ∀ rt ∈ famSet 5 Y (P.S5c i j k l b), Chain P.z₀ P.ztop rt :=
+  chain_append _ (P.chain_S5 i j k l)
+theorem chain_S5le {Y : ℕ} (i j k l b : ℕ) : ∀ rt ∈ famSet 5 Y (P.S5le i j k l b), Chain P.z₀ P.ztop rt :=
+  chain_append _ (P.chain_S5c i j k l b)
+theorem chain_S5gt {Y : ℕ} (i j k l b : ℕ) : ∀ rt ∈ famSet 5 Y (P.S5gt i j k l b), Chain P.z₀ P.ztop rt :=
+  chain_append _ (P.chain_S5c i j k l b)
+theorem chain_S6 {Y : ℕ} (i j k l b : ℕ) : ∀ rt ∈ famSet 6 Y (P.S6 i j k l b), Chain P.z₀ P.ztop rt :=
+  chain_ext (P.chain_S5le i j k l b)
+theorem chain_S6c {Y : ℕ} (i j k l b c : ℕ) : ∀ rt ∈ famSet 6 Y (P.S6c i j k l b c), Chain P.z₀ P.ztop rt :=
+  chain_append _ (P.chain_S6 i j k l b)
 
 variable {P}
 
@@ -238,6 +283,50 @@ theorem I_S4 [SieveCert.GridOK] (G : P.Good) (g : ℕ → ℝ) (i j k : ℕ) :
     P.I g (P.S4 i j k) = ∑ l ∈ range SieveCert.n, P.I g (P.S4c i j k l) :=
   famI_cells g P.N₁ P.N₂ G.hx (P.S4 i j k) 3 fun rt hrt => range_of_chain G (P.chain_S4 i j k rt hrt) 3
 
+/-- Depth 4: a cell split at `p₁p₂p₃p₄ = X'`. -/
+theorem I_S4c (g : ℕ → ℝ) (i j k l : ℕ) :
+    P.I g (P.S4c i j k l) = P.I g (P.S4cle i j k l) + P.I g (P.S4cgt i j k l) :=
+  famI_split g P.N₁ P.N₂ (P.S4c i j k l) _ _ fun rt => by simp only [Atom.sem_prodLe, Atom.sem_prodGt, not_le]
+
+/-- Depth 4: the part `p₁⋯p₄ ≤ X'` decomposed. -/
+theorem I_S4cle (g : ℕ → ℝ) (i j k l : ℕ) :
+    P.I g (P.S4cle i j k l) = P.J g (P.S4cle i j k l) - P.I g (P.S5 i j k l) :=
+  buchstab_fam g P.N₁ P.N₂ (P.S4cle i j k l) fun rt hrt => last_le_of_chain (P.chain_S4cle i j k l rt hrt)
+
+/-- For `P.Good` and a grid with `GridOKC`, a chain's primes lie in the coarse grid. -/
+theorem range_of_chain_C [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {k : ℕ} {rt : Fin k → ℕ}
+    (h : Chain P.z₀ P.ztop rt) (t : Fin k) :
+    P.x ^ ((V : ℝ) / DEN) ≤ rt t ∧ (rt t : ℝ) < P.x ^ (((V : ℝ) + nC * HC) / DEN) := by
+  obtain ⟨h1, h2⟩ := range_of_chain G h t
+  refine ⟨h1, lt_of_lt_of_le h2 ?_⟩
+  have hD := SieveCert.DEN_pos'
+  refine Real.rpow_le_rpow_of_exponent_le G.hx.le (div_le_div_of_nonneg_right ?_ hD.le)
+  have : ((SieveCert.n * H : ℕ) : ℝ) ≤ ((nC * HC : ℕ) : ℝ) := by exact_mod_cast SieveCert.GridOKC.cover
+  push_cast at this
+  linarith
+
+/-- **Depth 5**, for a grid with `GridOKC` and `P.Good`: the coarse cells of `p₅`. -/
+theorem I_S5 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) (g : ℕ → ℝ) (i j k l : ℕ) :
+    P.I g (P.S5 i j k l) = ∑ b ∈ range nC, P.I g (P.S5c i j k l b) :=
+  @famI_cells (Gc) SieveCert.GridOKC.ok g P.N₁ P.N₂ P.x G.hx 4 P.N₂ (P.S5 i j k l) 4
+    fun rt hrt => range_of_chain_C G (P.chain_S5 i j k l rt hrt) 4
+
+/-- Depth 5: a cell split at `p₁⋯p₅ = X'`. -/
+theorem I_S5c (g : ℕ → ℝ) (i j k l b : ℕ) :
+    P.I g (P.S5c i j k l b) = P.I g (P.S5le i j k l b) + P.I g (P.S5gt i j k l b) :=
+  famI_split g P.N₁ P.N₂ (P.S5c i j k l b) _ _ fun rt => by simp only [Atom.sem_prodLe, Atom.sem_prodGt, not_le]
+
+/-- Depth 5: the part `p₁⋯p₅ ≤ X'` decomposed. -/
+theorem I_S5le (g : ℕ → ℝ) (i j k l b : ℕ) :
+    P.I g (P.S5le i j k l b) = P.J g (P.S5le i j k l b) - P.I g (P.S6 i j k l b) :=
+  buchstab_fam g P.N₁ P.N₂ (P.S5le i j k l b) fun rt hrt => last_le_of_chain (P.chain_S5le i j k l b rt hrt)
+
+/-- **Depth 6**, for a grid with `GridOKC` and `P.Good`: the coarse cells of `p₆`. -/
+theorem I_S6 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) (g : ℕ → ℝ) (i j k l b : ℕ) :
+    P.I g (P.S6 i j k l b) = ∑ c ∈ range nC, P.I g (P.S6c i j k l b c) :=
+  @famI_cells (Gc) SieveCert.GridOKC.ok g P.N₁ P.N₂ P.x G.hx 5 P.N₂ (P.S6 i j k l b) 5
+    fun rt hrt => range_of_chain_C G (P.chain_S6 i j k l b rt hrt) 5
+
 /-! ### What the families say of their primes -/
 
 theorem facts_S2c {Y : ℕ} {i j : ℕ} {rt : Fin 2 → ℕ} (hrt : rt ∈ famSet 2 Y (P.S2c i j)) :
@@ -277,6 +366,43 @@ theorem facts_S4c {Y : ℕ} {i j k l : ℕ} {rt : Fin 4 → ℕ} (hrt : rt ∈ f
   obtain ⟨-, h4, h5, h6, h7, h8⟩ := facts_S3le h3
   exact ⟨P.chain_S4c i j k l rt hrt, h4, h5, h6, inC_of_mem hrt (t := 3) fun A hA => List.mem_append_right _ hA,
     h7, h8⟩
+
+theorem facts_S4cle {Y : ℕ} {i j k l : ℕ} {rt : Fin 4 → ℕ} (hrt : rt ∈ famSet 4 Y (P.S4cle i j k l)) :
+    Chain P.z₀ P.ztop rt ∧ InC P.x i (rt 0) ∧ InC P.x j (rt 1) ∧ InC P.x k (rt 2) ∧ InC P.x l (rt 3) ∧
+      (rt 0 : ℝ) * rt 1 ≤ P.Xp ∧ (rt 0 : ℝ) * rt 1 * rt 2 ≤ P.Xp ∧ (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 ≤ P.Xp := by
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7⟩ := facts_S4c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
+  have h8 : ∏ t ∈ Finset.univ, (rt t : ℝ) ≤ P.Xp :=
+    sem_of_mem hrt (A := Atom.prodLe Finset.univ P.Xp) (List.mem_append_right _ (List.mem_singleton_self _))
+  rw [Fin.prod_univ_four] at h8
+  exact ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩
+
+theorem facts_S5c {Y : ℕ} {i j k l b : ℕ} {rt : Fin 5 → ℕ} (hrt : rt ∈ famSet 5 Y (P.S5c i j k l b)) :
+    Chain P.z₀ P.ztop rt ∧ InC P.x i (rt 0) ∧ InC P.x j (rt 1) ∧ InC P.x k (rt 2) ∧ InC P.x l (rt 3) ∧
+      InCC P.x b (rt 4) ∧ (rt 0 : ℝ) * rt 1 ≤ P.Xp ∧ (rt 0 : ℝ) * rt 1 * rt 2 ≤ P.Xp ∧
+      (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 ≤ P.Xp := by
+  have h4 : Fin.init rt ∈ famSet 4 Y (P.S4cle i j k l) := init_mem hrt fun A hA => List.mem_append_left _ hA
+  obtain ⟨-, a1, a2, a3, a4, a5, a6, a7⟩ := facts_S4cle h4
+  exact ⟨P.chain_S5c i j k l b rt hrt, a1, a2, a3, a4,
+    @inC_of_mem (Gc) 5 Y _ rt hrt 4 P.x b fun A hA => List.mem_append_right _ hA, a5, a6, a7⟩
+
+theorem facts_S5le {Y : ℕ} {i j k l b : ℕ} {rt : Fin 5 → ℕ} (hrt : rt ∈ famSet 5 Y (P.S5le i j k l b)) :
+    Chain P.z₀ P.ztop rt ∧ InC P.x i (rt 0) ∧ InC P.x j (rt 1) ∧ InC P.x k (rt 2) ∧ InC P.x l (rt 3) ∧
+      InCC P.x b (rt 4) ∧ (rt 0 : ℝ) * rt 1 ≤ P.Xp ∧ (rt 0 : ℝ) * rt 1 * rt 2 ≤ P.Xp ∧
+      (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 ≤ P.Xp ∧ (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 ≤ P.Xp := by
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9⟩ := facts_S5c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
+  have h10 : ∏ t ∈ Finset.univ, (rt t : ℝ) ≤ P.Xp :=
+    sem_of_mem hrt (A := Atom.prodLe Finset.univ P.Xp) (List.mem_append_right _ (List.mem_singleton_self _))
+  rw [Fin.prod_univ_five] at h10
+  exact ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩
+
+theorem facts_S6c {Y : ℕ} {i j k l b c : ℕ} {rt : Fin 6 → ℕ} (hrt : rt ∈ famSet 6 Y (P.S6c i j k l b c)) :
+    Chain P.z₀ P.ztop rt ∧ InC P.x i (rt 0) ∧ InC P.x j (rt 1) ∧ InC P.x k (rt 2) ∧ InC P.x l (rt 3) ∧
+      InCC P.x b (rt 4) ∧ InCC P.x c (rt 5) ∧ (rt 0 : ℝ) * rt 1 ≤ P.Xp ∧ (rt 0 : ℝ) * rt 1 * rt 2 ≤ P.Xp ∧
+      (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 ≤ P.Xp ∧ (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 ≤ P.Xp := by
+  have h5 : Fin.init rt ∈ famSet 5 Y (P.S5le i j k l b) := init_mem hrt fun A hA => List.mem_append_left _ hA
+  obtain ⟨-, a1, a2, a3, a4, a5, a6, a7, a8, a9⟩ := facts_S5le h5
+  exact ⟨P.chain_S6c i j k l b c rt hrt, a1, a2, a3, a4, a5,
+    @inC_of_mem (Gc) 6 Y _ rt hrt 5 P.x c fun A hA => List.mem_append_right _ hA, a6, a7, a8, a9⟩
 
 /-! ### Cells that contribute nothing -/
 
@@ -410,6 +536,162 @@ theorem I_S4c_vanish_reg (G : P.Good) (g : ℕ → ℝ) {i j k l : ℕ}
       ring
     exact_mod_cast this
 
+omit [SieveCert.Grid] in
+/-- Lower bounds multiply: `x^{a/DEN} ≤ P` and `x^{b/DEN} ≤ Q` give `x^{(a+b)/DEN} ≤ PQ`. -/
+theorem mul_rpow_ge {x : ℝ} (hx : 0 < x) {a b P Q : ℝ} (h1 : x ^ (a / DEN) ≤ P) (h2 : x ^ (b / DEN) ≤ Q) :
+    x ^ ((a + b) / DEN) ≤ P * Q := by
+  rw [← rpow_div_add hx]
+  exact mul_le_mul h1 h2 (Real.rpow_nonneg hx.le _) ((Real.rpow_nonneg hx.le _).trans h1)
+
+omit [SieveCert.Grid] in
+/-- Upper bounds multiply: `0 ≤ P ≤ x^{a/DEN}` and `0 ≤ Q ≤ x^{b/DEN}` give `PQ ≤ x^{(a+b)/DEN}`. -/
+theorem mul_rpow_le {x : ℝ} (hx : 0 < x) {a b P Q : ℝ} (hQ : 0 ≤ Q) (h1 : P ≤ x ^ (a / DEN))
+    (h2 : Q ≤ x ^ (b / DEN)) : P * Q ≤ x ^ ((a + b) / DEN) := by
+  rw [← rpow_div_add hx]
+  exact mul_le_mul h1 h2 hQ (Real.rpow_nonneg hx.le _)
+
+omit [SieveCert.Grid] in
+/-- For `x ≥ 1` and naturals `a ≤ b`, `x^{a/DEN} ≤ x^{b/DEN}`. -/
+theorem rpow_mono_nat {x : ℝ} (hx : 1 ≤ x) {a b : ℕ} (h : a ≤ b) :
+    x ^ ((a : ℝ) / DEN) ≤ x ^ ((b : ℝ) / DEN) := by
+  have hD := SieveCert.DEN_pos'
+  exact Real.rpow_le_rpow_of_exponent_le hx (div_le_div_of_nonneg_right (by exact_mod_cast h) hD.le)
+
+/-- **The first `m` primes of a tuple are below the limit.** For `x ≥ 1`, four primes in the cells `i, j, k, l`, with
+`e_i + H + ⋯ + (e_l + H) ≤ s`, have product at most `x^{s/DEN}`. -/
+theorem prod4_le_of_InC {x : ℝ} (hx : 1 ≤ x) {i j k l : ℕ} {p₁ p₂ p₃ p₄ : ℕ} (h1 : InC x i p₁) (h2 : InC x j p₂)
+    (h3 : InC x k p₃) (h4 : InC x l p₄) {s : ℕ}
+    (hs : SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H) ≤ s) :
+    (p₁ : ℝ) * p₂ * p₃ * p₄ ≤ x ^ ((s : ℝ) / DEN) := by
+  have hx0 : 0 < x := by linarith
+  have e1 := h1.2.le
+  have e2 := h2.2.le
+  have e3 := h3.2.le
+  have e4 := h4.2.le
+  have := mul_rpow_le hx0 (by positivity) (mul_rpow_le hx0 (by positivity)
+    (mul_rpow_le hx0 (by positivity) e1 e2) e3) e4
+  refine this.trans ?_
+  have := rpow_mono_nat hx (a := SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H))
+    hs
+  convert this using 2
+  push_cast; ring
+
+/-- **Depth 5, `eC b ≥ e_l + H`**, for `P.Good`: `p₅` would exceed `p₄`. -/
+theorem I_S5c_vanish_lt (G : P.Good) (g : ℕ → ℝ) {i j k l b : ℕ} (h : ¬ SieveCert.eC b < SieveCert.e l + H) :
+    P.I g (P.S5c i j k l b) = 0 := by
+  have hx1 : 1 ≤ P.x := G.hx.le
+  refine famI_eq_zero g _ _ _ fun rt hrt => False.elim ?_
+  obtain ⟨hc, -, -, -, hl, hb, -⟩ := P.facts_S5c hrt
+  have h43 : rt 4 < rt 3 := hc.1 (show (3 : Fin 5) < 4 by decide)
+  have hle : SieveCert.e l + H ≤ SieveCert.eC b := by omega
+  have := rpow_mono_nat hx1 hle
+  have h' : (rt 3 : ℝ) < rt 4 := by
+    refine lt_of_lt_of_le hl.2 (le_trans (by push_cast at this ⊢; exact this) hb.1)
+  exact absurd h43 (not_lt.2 (by exact_mod_cast h'.le))
+
+/-- **Depth 5, outside the region**, for `P.Good`, with `p₁⋯p₄` below the limit: `p₁⋯p₅² > N₂` while `p₁⋯p₅ ≤ N₁`. -/
+theorem I_S5c_vanish_reg (G : P.Good) (g : ℕ → ℝ) {i j k l b : ℕ}
+    (hT : SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H) ≤ SieveCert.lim)
+    (h : DEN < SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + 2 * SieveCert.eC b) :
+    P.I g (P.S5c i j k l b) = 0 := by
+  have hx0 : 0 < P.x := by linarith [G.hx]
+  have hx1 : 1 ≤ P.x := G.hx.le
+  refine famI_vanish g _ _ _ fun rt hrt => ?_
+  obtain ⟨hc, hi, hj, hk, hl, hb, hX2, hX3, hX4⟩ := P.facts_S5c hrt
+  have h10 : rt 1 < rt 0 := hc.1 (show (0 : Fin 5) < 1 by decide)
+  have h21 : rt 2 < rt 1 := hc.1 (show (1 : Fin 5) < 2 by decide)
+  have h32 : rt 3 < rt 2 := hc.1 (show (2 : Fin 5) < 3 by decide)
+  have h43 : rt 4 < rt 3 := hc.1 (show (3 : Fin 5) < 4 by decide)
+  have hs := third_lt_sqrt h10 h21 hX2
+  have h5s : (rt 4 : ℝ) < Real.sqrt P.Xp := lt_trans (by exact_mod_cast lt_trans h43 h32) hs
+  rw [Fin.prod_univ_five]
+  constructor
+  · have h4 := prod4_le_of_InC hx1 hi hj hk hl hT
+    have : ((rt 0 * rt 1 * rt 2 * rt 3 * rt 4 : ℕ) : ℝ) ≤ P.N₁ := by
+      push_cast
+      calc (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 ≤ P.x ^ ((SieveCert.lim : ℝ) / DEN) * Real.sqrt P.Xp :=
+            mul_le_mul h4 h5s.le (by positivity) (by positivity)
+        _ ≤ P.N₁ := G.hlim
+    exact_mod_cast this
+  · have hp4 := prod4_ge hx0 hi.1 hj.1 hk.1 hl.1
+    have hb1 : P.x ^ (((SieveCert.eC b : ℕ) : ℝ) / DEN) ≤ rt 4 := hb.1
+    have hp : P.x ^ ((((SieveCert.e i : ℝ) + SieveCert.e j + SieveCert.e k + SieveCert.e l) +
+        (SieveCert.eC b : ℕ) + (SieveCert.eC b : ℕ)) / DEN) ≤ (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 * rt 4 :=
+      mul_rpow_ge hx0 (mul_rpow_ge hx0 hp4 hb1) hb1
+    have hreg := rpow_region hx1
+      (s := SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + 2 * SieveCert.eC b) h
+    have : (P.N₂ : ℝ) < ((rt 0 * rt 1 * rt 2 * rt 3 * rt 4 * rt (Fin.last 4) : ℕ) : ℝ) := by
+      push_cast
+      refine lt_of_lt_of_le G.hN₂ (hreg.trans (le_of_eq_of_le ?_ hp))
+      congr 1
+      push_cast
+      ring
+    exact_mod_cast this
+
+/-- **Depth 6, `c > b`**, for `P.Good`: `p₆` would exceed `p₅`. -/
+theorem I_S6c_vanish_lt (G : P.Good) (g : ℕ → ℝ) {i j k l b c : ℕ} (h : b < c) :
+    P.I g (P.S6c i j k l b c) = 0 := by
+  have hx1 : 1 ≤ P.x := G.hx.le
+  refine famI_eq_zero g _ _ _ fun rt hrt => False.elim ?_
+  obtain ⟨hc, -, -, -, -, hb, hcc, -⟩ := P.facts_S6c hrt
+  have h54 : rt 5 < rt 4 := hc.1 (show (4 : Fin 6) < 5 by decide)
+  have hle : SieveCert.eC b + HC ≤ SieveCert.eC c := @e_add_H_le_of_lt (Gc) b c h
+  have := rpow_mono_nat hx1 hle
+  have h' : (rt 4 : ℝ) < rt 5 := by
+    refine lt_of_lt_of_le hb.2 (le_trans (by push_cast at this ⊢; exact this) hcc.1)
+  exact absurd h54 (not_lt.2 (by exact_mod_cast h'.le))
+
+/-- **Depth 6, outside the region**, for `P.Good`, with `p₁⋯p₅` below the limit: `p₁⋯p₆² > N₂` while `p₁⋯p₆ ≤ N₁`. -/
+theorem I_S6c_vanish_reg (G : P.Good) (g : ℕ → ℝ) {i j k l b c : ℕ}
+    (hT : SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H) +
+      (SieveCert.eC b + HC) ≤ SieveCert.lim)
+    (h : DEN < SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + SieveCert.eC b + 2 * SieveCert.eC c) :
+    P.I g (P.S6c i j k l b c) = 0 := by
+  have hx0 : 0 < P.x := by linarith [G.hx]
+  have hx1 : 1 ≤ P.x := G.hx.le
+  refine famI_vanish g _ _ _ fun rt hrt => ?_
+  obtain ⟨hc, hi, hj, hk, hl, hb, hcc, hX2, hX3⟩ := P.facts_S6c hrt
+  have h10 : rt 1 < rt 0 := hc.1 (show (0 : Fin 6) < 1 by decide)
+  have h21 : rt 2 < rt 1 := hc.1 (show (1 : Fin 6) < 2 by decide)
+  have h32 : rt 3 < rt 2 := hc.1 (show (2 : Fin 6) < 3 by decide)
+  have h43 : rt 4 < rt 3 := hc.1 (show (3 : Fin 6) < 4 by decide)
+  have h54 : rt 5 < rt 4 := hc.1 (show (4 : Fin 6) < 5 by decide)
+  have hs := third_lt_sqrt h10 h21 hX2
+  have h6s : (rt 5 : ℝ) < Real.sqrt P.Xp :=
+    lt_trans (by exact_mod_cast lt_trans h54 (lt_trans h43 h32)) hs
+  rw [Fin.prod_univ_six]
+  constructor
+  · have hb2 : (rt 4 : ℝ) < P.x ^ ((((SieveCert.eC b : ℕ) : ℝ) + (HC : ℕ)) / DEN) := hb.2
+    have h5 : (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 ≤ P.x ^ ((SieveCert.lim : ℝ) / DEN) := by
+      have h4 := prod4_le_of_InC hx1 hi hj hk hl (le_refl _)
+      have := mul_rpow_le hx0 (by positivity) h4 hb2.le
+      refine this.trans ?_
+      have := rpow_mono_nat hx1 hT
+      convert this using 2
+      push_cast; ring
+    have : ((rt 0 * rt 1 * rt 2 * rt 3 * rt 4 * rt 5 : ℕ) : ℝ) ≤ P.N₁ := by
+      push_cast
+      calc (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 * rt 5 ≤ P.x ^ ((SieveCert.lim : ℝ) / DEN) * Real.sqrt P.Xp :=
+            mul_le_mul h5 h6s.le (by positivity) (by positivity)
+        _ ≤ P.N₁ := G.hlim
+    exact_mod_cast this
+  · have hp4 := prod4_ge hx0 hi.1 hj.1 hk.1 hl.1
+    have hb1 : P.x ^ (((SieveCert.eC b : ℕ) : ℝ) / DEN) ≤ rt 4 := hb.1
+    have hc1 : P.x ^ (((SieveCert.eC c : ℕ) : ℝ) / DEN) ≤ rt 5 := hcc.1
+    have hp : P.x ^ ((((SieveCert.e i : ℝ) + SieveCert.e j + SieveCert.e k + SieveCert.e l) +
+        (SieveCert.eC b : ℕ) + (SieveCert.eC c : ℕ) + (SieveCert.eC c : ℕ)) / DEN) ≤
+        (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 * rt 5 * rt 5 :=
+      mul_rpow_ge hx0 (mul_rpow_ge hx0 (mul_rpow_ge hx0 hp4 hb1) hc1) hc1
+    have hreg := rpow_region hx1
+      (s := SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + SieveCert.eC b + 2 * SieveCert.eC c) h
+    have : (P.N₂ : ℝ) < ((rt 0 * rt 1 * rt 2 * rt 3 * rt 4 * rt 5 * rt (Fin.last 5) : ℕ) : ℝ) := by
+      push_cast
+      refine lt_of_lt_of_le G.hN₂ (hreg.trans (le_of_eq_of_le ?_ hp))
+      congr 1
+      push_cast
+      ring
+    exact_mod_cast this
+
 /-! ### The inequality, level by level -/
 
 /-- The cell `i` of `p₁` lies inside the window: its terms are evaluated at depth 1. -/
@@ -421,11 +703,66 @@ def sE2 (i j : ℕ) : Bool := surelyEval [cell i, cell j]
 /-- The box `(i, j, k, l)` is surely evaluable. -/
 def sE4 (i j k l : ℕ) : Bool := surelyEval [cell i, cell j, cell k, cell l]
 
+/-- The box `(i, j, k, l, b, c)` is surely evaluable. -/
+def sE6 (i j k l b c : ℕ) : Bool := surelyEval [cell i, cell j, cell k, cell l, cellC b, cellC c]
+
+/-- The error constants of the levels (`ec4`: one cell of depth 4; `ec3`: its row; `ec2`, `ec1`, `ec0`: the levels
+above), and `Cdec` the decomposition's. -/
+noncomputable def ec4 : ℝ := (nC : ℝ) * ((nC : ℝ) + 2) + 2
+/-- See `ec4`. -/
+noncomputable def ec3 : ℝ := (SieveCert.n : ℝ) * ec4
+/-- See `ec4`. -/
+noncomputable def ec2 : ℝ := (SieveCert.n : ℝ) * (ec3 + 2)
+/-- See `ec4`. -/
+noncomputable def ec1 : ℝ := (SieveCert.n : ℝ) * (ec2 + 2)
+/-- See `ec4`. -/
+noncomputable def ec0 : ℝ := (SieveCert.n : ℝ) * (1 + ec1)
+/-- The constant of `decomp`: the total error is at most `Cdec·Err`. -/
+noncomputable def Cdec : ℝ := 1 + ec0
+
+theorem ec4_nonneg : 0 ≤ ec4 := by unfold ec4; positivity
+theorem ec3_nonneg : 0 ≤ ec3 := by unfold ec3; have := ec4_nonneg; positivity
+theorem ec2_nonneg : 0 ≤ ec2 := by unfold ec2; have := ec3_nonneg; positivity
+theorem ec1_nonneg : 0 ≤ ec1 := by unfold ec1; have := ec2_nonneg; positivity
+
+/-- What `allowed4` says. -/
+theorem allowed4_tops {i j k l : ℕ} (h : SieveCert.allowed4 i j k l = true) :
+    SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H) < lim ∧
+      ∀ b < nC, inKK5 i j k l b = true → ne5 i j k l b = true →
+        SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H) + (eC b + HC) < lim := by
+  unfold SieveCert.allowed4 at h
+  simp only [Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, List.mem_range, Bool.or_eq_true,
+    Bool.not_eq_true'] at h
+  refine ⟨h.1, fun b hb h1 h2 => ?_⟩
+  have := h.2 b hb
+  rcases this with h3 | h3
+  · rw [h1, h2] at h3; simp at h3
+  · exact h3
+
+/-- The prefix of the tree down to the row `(i, j, k)`: the cell `(i, j)` is a decomposed candidate and `(i, j, k)` is
+in `inKK` and not evaluable. -/
+def Row3 (i j k : ℕ) : Prop :=
+  (i < SieveCert.n ∧ j < SieveCert.n ∧ cand i j = true ∧ dec i j = true) ∧
+    (k < SieveCert.n ∧ inKK i j k = true ∧ ne3 i j k = true)
+
+/-- The prefix down to the cell `(i, j, k, l)` of depth 4 that is counted and decomposed one level further. -/
+def Deep (i j k l : ℕ) : Prop := Row3 i j k ∧ l < k + 1 ∧ counted4 i j k l = true ∧ dec4 i j k l = true
+
 variable (P)
 
-/-- The dropped terms of depth 4 below `(i, j, k)`: the counted cells. -/
+/-- The dropped terms of depth 6 below `(i, j, k, l, b)`: the counted cells. -/
+noncomputable def D6 (g : ℕ → ℝ) (i j k l b : ℕ) : ℝ :=
+  ∑ c ∈ range (b + 1), if counted6 i j k l b c = true then P.I g (P.S6c i j k l b c) else 0
+
+/-- The dropped terms of depth 6 below the counted cell `(i, j, k, l)` of depth 4. -/
+noncomputable def D5 (g : ℕ → ℝ) (i j k l : ℕ) : ℝ :=
+  ∑ b ∈ range nC, if inKK5 i j k l b = true ∧ ne5 i j k l b = true then P.D6 g i j k l b else 0
+
+/-- The dropped terms of depth 4 below `(i, j, k)`: the counted cells, which are dropped as they are, or, when
+decomposed one level further, their counted cells of depth 6. -/
 noncomputable def D4 (g : ℕ → ℝ) (i j k : ℕ) : ℝ :=
-  ∑ l ∈ range (k + 1), if counted4 i j k l = true then P.I g (P.S4c i j k l) else 0
+  ∑ l ∈ range (k + 1), if counted4 i j k l = true then
+    (if dec4 i j k l = true then P.D5 g i j k l else P.I g (P.S4c i j k l)) else 0
 
 /-- The dropped terms below the cell `(i, j)`. -/
 noncomputable def D3 (g : ℕ → ℝ) (i j : ℕ) : ℝ :=
@@ -462,15 +799,106 @@ structure Leaves (gA gB : ℕ → ℝ) (Err : ℝ) : Prop where
   e4 : ∀ i < SieveCert.n, ∀ j < SieveCert.n, cand i j = true → dec i j = true → ∀ k < SieveCert.n,
     inKK i j k = true → ne3 i j k = true → ∀ l < k + 1, counted4 i j k l = false → sE4 i j k l = true →
       |P.I gA (P.S4c i j k l) - P.I gB (P.S4c i j k l)| ≤ Err
+  e4gt : ∀ i j k l, Deep i j k l → |P.I gA (P.S4cgt i j k l) - P.I gB (P.S4cgt i j k l)| ≤ Err
+  p4 : ∀ i j k l, Deep i j k l → |P.J gA (P.S4cle i j k l) - P.J gB (P.S4cle i j k l)| ≤ Err
+  e5gt : ∀ i j k l, Deep i j k l → ∀ b < nC, inKK5 i j k l b = true → ne5 i j k l b = true →
+    |P.I gA (P.S5gt i j k l b) - P.I gB (P.S5gt i j k l b)| ≤ Err
+  p5 : ∀ i j k l, Deep i j k l → ∀ b < nC, inKK5 i j k l b = true → ne5 i j k l b = true →
+    |P.J gA (P.S5le i j k l b) - P.J gB (P.S5le i j k l b)| ≤ Err
+  e5' : ∀ i j k l, Deep i j k l → ∀ b < nC, inKK5 i j k l b = true → ne5 i j k l b = false →
+    |P.I gA (P.S5c i j k l b) - P.I gB (P.S5c i j k l b)| ≤ Err
+  e6 : ∀ i j k l, Deep i j k l → ∀ b < nC, inKK5 i j k l b = true → ne5 i j k l b = true →
+    ∀ c < b + 1, counted6 i j k l b c = false → sE6 i j k l b c = true →
+      |P.I gA (P.S6c i j k l b c) - P.I gB (P.S6c i j k l b c)| ≤ Err
 
 variable {P}
 
-/-- **Level 4** (terms with sign `+`), for a grid with `GridOK`, `P.Good`, weights `g_A ≥ 0` and `g_B`, `k < n`, and the
-row's surely evaluable cells of depth 4 that are not counted within `Err ≥ 0`: `A ≥ B − (dropped) − (k + 1)Err`. -/
-theorem lvl4 [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
-    {i j k : ℕ} (hE : ∀ l < k + 1, counted4 i j k l = false → sE4 i j k l = true →
-      |P.I gA (P.S4c i j k l) - P.I gB (P.S4c i j k l)| ≤ Err) (hk : k < SieveCert.n) :
-    P.I gB (P.S4 i j k) - P.D4 gB i j k - (k + 1) * Err ≤ P.I gA (P.S4 i j k) := by
+/-- **Level 6** (terms with sign `+`), for grids with `GridOK` and `GridOKC`, `P.Good`, weights `g_A ≥ 0` and `g_B`, `b < nC`, `p₁⋯p₅` below the
+limit, and the row's surely evaluable cells of depth 6 that are not counted within `Err ≥ 0`:
+`A ≥ B − (dropped) − (b + 1)Err`. -/
+theorem lvl6 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ}
+    (hErr : 0 ≤ Err) {i j k l b : ℕ} (hb : b < nC)
+    (hT : SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H) + (eC b + HC) ≤ lim)
+    (hE : ∀ c < b + 1, counted6 i j k l b c = false → sE6 i j k l b c = true →
+      |P.I gA (P.S6c i j k l b c) - P.I gB (P.S6c i j k l b c)| ≤ Err) :
+    P.I gB (P.S6 i j k l b) - P.D6 gB i j k l b - (b + 1) * Err ≤ P.I gA (P.S6 i j k l b) := by
+  have hsub : ∀ g, ∑ c ∈ range nC, P.I g (P.S6c i j k l b c) = ∑ c ∈ range (b + 1), P.I g (P.S6c i j k l b c) := by
+    intro g
+    symm
+    refine Finset.sum_subset (Finset.range_subset_range.2 (by omega)) fun c hc hc' => ?_
+    rw [Finset.mem_range] at hc hc'
+    exact P.I_S6c_vanish_lt G g (by omega)
+  rw [P.I_S6 G gA, P.I_S6 G gB, hsub gA, hsub gB]
+  unfold D6
+  have hErrs : ((b : ℝ) + 1) * Err = ∑ _c ∈ range (b + 1), Err := by
+    rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+    push_cast
+    ring
+  rw [hErrs, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
+  refine Finset.sum_le_sum fun c hc => ?_
+  have hA0 := famI_nonneg hgA P.N₁ P.N₂ (famSet 6 P.N₂ (P.S6c i j k l b c))
+  by_cases hc6 : counted6 i j k l b c = true
+  · rw [ite_eq_left hc6]
+    unfold I
+    linarith
+  · rw [ite_eq_right hc6]
+    by_cases hs : sE6 i j k l b c = true
+    · have := abs_le.1 (hE c (Finset.mem_range.1 hc) (by simpa using hc6) hs)
+      linarith [this.1]
+    · have hreg : DEN < SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b + 2 * eC c := by
+        simp only [sE6, Bool.not_eq_true] at hs
+        simp only [counted6, hs, Bool.not_false, Bool.and_true, decide_eq_true_eq, not_le] at hc6
+        exact hc6
+      rw [P.I_S6c_vanish_reg G gA hT hreg, P.I_S6c_vanish_reg G gB hT hreg]
+      linarith
+
+/-- **Level 5** (terms with sign `−`), for grids with `GridOK` and `GridOKC`, `P.Good`, weights `g_A ≥ 0` and `g_B`, leaves within `Err ≥ 0`, and a
+counted cell `(i, j, k, l)` of depth 4 that is decomposed: `A ≤ B + (dropped below) + nC(nC + 2)Err`. -/
+theorem lvl5 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ}
+    (hErr : 0 ≤ Err) (Lv : P.Leaves gA gB Err) {i j k l : ℕ} (hD : Deep i j k l) :
+    P.I gA (P.S5 i j k l) ≤ P.I gB (P.S5 i j k l) + P.D5 gB i j k l + nC * (nC + 2) * Err := by
+  obtain ⟨hT4, hT5⟩ := allowed4_tops (SieveCert.allowed4_of_dec4 hD.2.2.2)
+  rw [P.I_S5 G gA, P.I_S5 G gB]
+  unfold D5
+  have hErrs : (nC : ℝ) * ((nC : ℝ) + 2) * Err = ∑ _b ∈ range nC, ((nC : ℝ) + 2) * Err := by
+    rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+    ring
+  rw [hErrs, ← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
+  refine Finset.sum_le_sum fun b hb => ?_
+  have hb' := Finset.mem_range.1 hb
+  have hbn : ((b : ℝ) + 1) * Err ≤ nC * Err := mul_le_mul_of_nonneg_right (by exact_mod_cast hb') hErr
+  by_cases hK : inKK5 i j k l b = true
+  · by_cases hn : ne5 i j k l b = true
+    · rw [ite_eq_left ⟨hK, hn⟩, P.I_S5c gA, P.I_S5c gB, P.I_S5le gA, P.I_S5le gB]
+      have h6 := lvl6 G hgA hErr hb' (hT5 b hb' hK hn).le (Lv.e6 i j k l hD b hb' hK hn)
+      have hJ := abs_le.1 (Lv.p5 i j k l hD b hb' hK hn)
+      have hE := abs_le.1 (Lv.e5gt i j k l hD b hb' hK hn)
+      have : ((nC : ℝ) + 2) * Err = nC * Err + 2 * Err := by ring
+      linarith [hJ.2, hE.2]
+    · have hn' : ne5 i j k l b = false := by simpa using hn
+      rw [ite_eq_right (show ¬(inKK5 i j k l b = true ∧ ne5 i j k l b = true) from fun h => hn h.2)]
+      have hE := abs_le.1 (Lv.e5' i j k l hD b hb' hK hn')
+      have : Err ≤ ((nC : ℝ) + 2) * Err :=
+        le_mul_of_one_le_left hErr (by have : (0 : ℝ) ≤ nC := Nat.cast_nonneg _; linarith)
+      linarith [hE.2]
+  · have hK' : inKK5 i j k l b = false := by simpa using hK
+    rw [ite_eq_right (show ¬(inKK5 i j k l b = true ∧ ne5 i j k l b = true) from fun h => hK h.1)]
+    have hz : ∀ g, P.I g (P.S5c i j k l b) = 0 := by
+      intro g
+      simp only [SieveCert.inKK5, Bool.and_eq_false_iff, decide_eq_false_iff_not, not_lt, not_le] at hK'
+      rcases hK' with h | h
+      · exact P.I_S5c_vanish_lt G g (by omega)
+      · exact P.I_S5c_vanish_reg G g hT4.le h
+    rw [hz gA, hz gB]
+    have : 0 ≤ ((nC : ℝ) + 2) * Err := by positivity
+    linarith
+
+/-- **Level 4** (terms with sign `+`), for grids with `GridOK` and `GridOKC`, `P.Good`, weights `g_A ≥ 0` and `g_B`, leaves within `Err ≥ 0` and
+a row `(i, j, k)` that is reached: `A ≥ B − (dropped) − (k + 1)·ec4·Err`. -/
+theorem lvl4 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ}
+    (hErr : 0 ≤ Err) (Lv : P.Leaves gA gB Err) {i j k : ℕ} (hR : Row3 i j k) :
+    P.I gB (P.S4 i j k) - P.D4 gB i j k - (k + 1) * ec4 * Err ≤ P.I gA (P.S4 i j k) := by
+  have hk : k < SieveCert.n := hR.2.1
   have hsub : ∀ g, ∑ l ∈ range SieveCert.n, P.I g (P.S4c i j k l) = ∑ l ∈ range (k + 1), P.I g (P.S4c i j k l) := by
     intro g
     symm
@@ -479,77 +907,97 @@ theorem lvl4 [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m,
     exact P.I_S4c_vanish_lt G g (by omega)
   rw [P.I_S4 G gA, P.I_S4 G gB, hsub gA, hsub gB]
   unfold D4
-  have hErrs : ((k : ℝ) + 1) * Err = ∑ _l ∈ range (k + 1), Err := by
+  have hErrs : ((k : ℝ) + 1) * ec4 * Err = ∑ _l ∈ range (k + 1), ec4 * Err := by
     rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
     push_cast
     ring
+  have hec : 1 ≤ ec4 := by
+    unfold ec4
+    have : (0 : ℝ) ≤ nC := Nat.cast_nonneg _
+    nlinarith
+  have hE0 : Err ≤ ec4 * Err := le_mul_of_one_le_left hErr hec
   rw [hErrs, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
   refine Finset.sum_le_sum fun l hl => ?_
+  have hl' := Finset.mem_range.1 hl
   have hA0 := famI_nonneg hgA P.N₁ P.N₂ (famSet 4 P.N₂ (P.S4c i j k l))
   by_cases hc4 : counted4 i j k l = true
   · rw [ite_eq_left hc4]
-    unfold I
-    linarith
+    by_cases hd4 : dec4 i j k l = true
+    · rw [ite_eq_left hd4, P.I_S4c gA, P.I_S4c gB, P.I_S4cle gA, P.I_S4cle gB]
+      have hD : Deep i j k l := ⟨hR, hl', hc4, hd4⟩
+      have h5 := P.lvl5 G hgA hErr Lv hD
+      have hJ := abs_le.1 (Lv.p4 i j k l hD)
+      have hE := abs_le.1 (Lv.e4gt i j k l hD)
+      have : ec4 * Err = nC * (nC + 2) * Err + 2 * Err := by unfold ec4; ring
+      linarith [hJ.1, hE.1]
+    · rw [ite_eq_right hd4]
+      unfold I at hA0 ⊢
+      linarith
   · rw [ite_eq_right hc4]
     by_cases hs : sE4 i j k l = true
-    · have := abs_le.1 (hE l (Finset.mem_range.1 hl) (by simpa using hc4) hs)
+    · have := abs_le.1 (Lv.e4 i hR.1.1 j hR.1.2.1 hR.1.2.2.1 hR.1.2.2.2 k hk hR.2.2.1 hR.2.2.2 l hl'
+        (by simpa using hc4) hs)
       linarith [this.1]
-    · -- outside the region: both sums vanish
-      have hreg : DEN < SieveCert.e i + SieveCert.e j + SieveCert.e k + 2 * SieveCert.e l := by
+    · have hreg : DEN < SieveCert.e i + SieveCert.e j + SieveCert.e k + 2 * SieveCert.e l := by
         simp only [sE4, Bool.not_eq_true] at hs
         simp only [counted4, hs, Bool.not_false, Bool.and_true, decide_eq_true_eq, not_le] at hc4
         exact hc4
       rw [P.I_S4c_vanish_reg G gA hreg, P.I_S4c_vanish_reg G gB hreg]
       linarith
 
-/-- **Level 3** (terms with sign `−`), for a grid with `GridOK`, `P.Good`, weights `g_A ≥ 0` and `g_B`, leaves within
-`Err ≥ 0`, and a candidate cell `(i, j)` that is decomposed: `A ≤ B + (dropped below) + n(n + 2)Err`. -/
-theorem lvl3 [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
-    (Lv : P.Leaves gA gB Err) {i j : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n)
+/-- **Level 3** (terms with sign `−`), for grids with `GridOK` and `GridOKC`, `P.Good`, weights `g_A ≥ 0` and `g_B`, leaves within
+`Err ≥ 0`, and a candidate cell `(i, j)` that is decomposed: `A ≤ B + (dropped below) + (n·ec3 ... )Err`, i.e.
+`ec2·Err`. -/
+theorem lvl3 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ}
+    (hErr : 0 ≤ Err) (Lv : P.Leaves gA gB Err) {i j : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n)
     (hcd : cand i j = true ∧ dec i j = true) :
-    P.I gA (P.S3 i j) ≤ P.I gB (P.S3 i j) + P.D3 gB i j + SieveCert.n * (SieveCert.n + 2) * Err := by
+    P.I gA (P.S3 i j) ≤ P.I gB (P.S3 i j) + P.D3 gB i j + ec2 * Err := by
   rw [P.I_S3 G gA, P.I_S3 G gB]
   unfold D3
-  have hErrs : (SieveCert.n : ℝ) * (SieveCert.n + 2) * Err =
-      ∑ _k ∈ range SieveCert.n, ((SieveCert.n : ℝ) + 2) * Err := by
+  have hErrs : ec2 * Err = ∑ _k ∈ range SieveCert.n, (ec3 + 2) * Err := by
+    unfold ec2
     rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
     ring
   rw [hErrs, ← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
   refine Finset.sum_le_sum fun k hk => ?_
   have hk' := Finset.mem_range.1 hk
-  have hkn : ((k : ℝ) + 1) * Err ≤ SieveCert.n * Err :=
-    mul_le_mul_of_nonneg_right (by exact_mod_cast hk') hErr
+  have hkn : ((k : ℝ) + 1) * ec4 * Err ≤ ec3 * Err := by
+    unfold ec3
+    have h1 : ((k : ℝ) + 1) ≤ SieveCert.n := by exact_mod_cast hk'
+    have h2 := @ec4_nonneg
+    nlinarith [mul_nonneg h2 hErr]
+  have h30 : 0 ≤ ec3 := ec3_nonneg
   by_cases hkk : inKK i j k = true
   · by_cases hn3 : ne3 i j k = true
     · rw [ite_eq_left ⟨hkk, hn3⟩, P.I_S3c gA, P.I_S3c gB, P.I_S3le gA, P.I_S3le gB]
-      have h4 := lvl4 G hgA hErr (Lv.e4 i hi j hj hcd.1 hcd.2 k hk' hkk hn3) hk'
+      have h4 := lvl4 G hgA hErr Lv (i := i) (j := j) (k := k) ⟨⟨hi, hj, hcd.1, hcd.2⟩, hk', hkk, hn3⟩
       have hJ := abs_le.1 (Lv.p3 i hi j hj hcd.1 hcd.2 k hk' hkk hn3)
       have hE := abs_le.1 (Lv.e3 i hi j hj hcd.1 hcd.2 k hk' hkk hn3)
-      have : ((SieveCert.n : ℝ) + 2) * Err = SieveCert.n * Err + 2 * Err := by ring
+      have : (ec3 + 2) * Err = ec3 * Err + 2 * Err := by ring
       linarith [hJ.2, hE.2]
     · have hn3' : ne3 i j k = false := by simpa using hn3
       rw [ite_eq_right (show ¬(inKK i j k = true ∧ ne3 i j k = true) from fun h => hn3 h.2)]
       have hE := abs_le.1 (Lv.e3' i hi j hj hcd.1 hcd.2 k hk' hkk hn3')
-      have : Err ≤ ((SieveCert.n : ℝ) + 2) * Err :=
-        le_mul_of_one_le_left hErr (by have : (0 : ℝ) ≤ SieveCert.n := Nat.cast_nonneg _; linarith)
+      have : Err ≤ (ec3 + 2) * Err := le_mul_of_one_le_left hErr (by linarith)
       linarith [hE.2]
   · have hkk' : inKK i j k = false := by simpa using hkk
     rw [ite_eq_right (show ¬(inKK i j k = true ∧ ne3 i j k = true) from fun h => hkk h.1),
       P.I_S3c_vanish G gA hkk', P.I_S3c_vanish G gB hkk']
-    have : 0 ≤ ((SieveCert.n : ℝ) + 2) * Err := by positivity
+    have : 0 ≤ (ec3 + 2) * Err := by positivity
     linarith
 
 /-- **Level 2** (terms with sign `+`), for a grid with `GridOK`, `P.Good`, weights `g_A ≥ 0` and `g_B`, leaves within
-`Err ≥ 0`, and a cell `i < n` of `p₁` not inside the window: `A ≥ B − (dropped) − n(n(n + 2) + 2)Err`. -/
-theorem lvl2 [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
+`Err ≥ 0`, and a cell `i < n` of `p₁` not inside the window: `A ≥ B − (dropped) − ec1·Err`. -/
+theorem lvl2 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
     (Lv : P.Leaves gA gB Err) {i : ℕ} (hi : i < SieveCert.n) (hW : ¬ inW i) :
-    P.I gB (P.S2 i) - P.D2 gB i - SieveCert.n * (SieveCert.n * (SieveCert.n + 2) + 2) * Err ≤
+    P.I gB (P.S2 i) - P.D2 gB i - ec1 * Err ≤
       P.I gA (P.S2 i) := by
   rw [P.I_S2 G gA, P.I_S2 G gB]
   unfold D2
-  set c3 : ℝ := SieveCert.n * (SieveCert.n + 2) with hc3
-  have hc30 : 0 ≤ c3 := by positivity
-  have hErrs : (SieveCert.n : ℝ) * (c3 + 2) * Err = ∑ _j ∈ range SieveCert.n, (c3 + 2) * Err := by
+  set c3 : ℝ := ec2 with hc3
+  have hc30 : 0 ≤ c3 := ec2_nonneg
+  have hErrs : ec1 * Err = ∑ _j ∈ range SieveCert.n, (c3 + 2) * Err := by
+    unfold ec1
     rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
     ring
   rw [hErrs, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
@@ -566,7 +1014,6 @@ theorem lvl2 [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m,
       have h3 := lvl3 G hgA hErr Lv hi hj' ⟨hc, hd⟩
       have hJ := abs_le.1 (Lv.p2 i hi j hj' hc hd)
       have hE := abs_le.1 (Lv.e2 i hi j hj' hc hd)
-      rw [← hc3] at h3
       have : (c3 + 2) * Err = c3 * Err + 2 * Err := by ring
       linarith [hJ.1, hE.1]
     · rw [ite_eq_left (show (cand i j = true ∧ dec i j = false) ∨ (cand i j = false ∧ sE2 i j = false) from
@@ -587,16 +1034,16 @@ theorem lvl2 [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m,
       linarith
 
 /-- **Level 1** (terms with sign `−`), for a grid with `GridOK`, `P.Good`, weights `g_A ≥ 0` and `g_B`, and leaves
-within `Err ≥ 0`: `A ≤ B + (dropped) + n(1 + n(n(n + 2) + 2))Err`. -/
-theorem lvl1 [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
+within `Err ≥ 0`: `A ≤ B + (dropped) + ec0·Err`. -/
+theorem lvl1 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
     (Lv : P.Leaves gA gB Err) :
-    P.I gA P.S1 ≤ P.I gB P.S1 + P.D1 gB +
-      SieveCert.n * (1 + SieveCert.n * (SieveCert.n * (SieveCert.n + 2) + 2)) * Err := by
+    P.I gA P.S1 ≤ P.I gB P.S1 + P.D1 gB + ec0 * Err := by
   rw [P.I_S1 G gA, P.I_S1 G gB]
   unfold D1
-  set c2 : ℝ := SieveCert.n * (SieveCert.n * (SieveCert.n + 2) + 2) with hc2
-  have hc20 : 0 ≤ c2 := by positivity
-  have hErrs : (SieveCert.n : ℝ) * (1 + c2) * Err = ∑ _i ∈ range SieveCert.n, (1 + c2) * Err := by
+  set c2 : ℝ := ec1 with hc2
+  have hc20 : 0 ≤ c2 := ec1_nonneg
+  have hErrs : ec0 * Err = ∑ _i ∈ range SieveCert.n, (1 + c2) * Err := by
+    unfold ec0
     rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
     ring
   rw [hErrs, ← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
@@ -610,21 +1057,18 @@ theorem lvl1 [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m,
   · rw [ite_eq_right hW, P.I_S1c gA, P.I_S1c gB]
     have h2 := lvl2 G hgA hErr Lv hi' hW
     have hJ := abs_le.1 (Lv.p1 i hi' hW)
-    rw [← hc2] at h2
     have : (1 + c2) * Err = Err + c2 * Err := by ring
     linarith [hJ.2]
 
 /-- **The decomposition's inequality.** For a grid with `GridOK`, `P.Good`, weights `g_A ≥ 0` and `g_B`, and leaves
-within `Err ≥ 0`: `S(A, z_top) ≥ S(B, z_top) − (the dropped B-terms) − C·Err`, `C = 1 + n(1 + n(n(n + 2) + 2))`. -/
-theorem decomp [SieveCert.GridOK] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
+within `Err ≥ 0`: `S(A, z_top) ≥ S(B, z_top) − (the dropped B-terms) − C·Err`, `C = Cdec`. -/
+theorem decomp [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ} (hErr : 0 ≤ Err)
     (Lv : P.Leaves gA gB Err) :
-    P.T gB - P.D1 gB - (1 + SieveCert.n * (1 + SieveCert.n * (SieveCert.n * (SieveCert.n + 2) + 2))) * Err ≤
-      P.T gA := by
+    P.T gB - P.D1 gB - Cdec * Err ≤ P.T gA := by
   rw [P.T_eq G gA, P.T_eq G gB]
   have h1 := lvl1 G hgA hErr Lv
   have hJ := abs_le.1 Lv.j0
-  set c1 : ℝ := SieveCert.n * (1 + SieveCert.n * (SieveCert.n * (SieveCert.n + 2) + 2)) with hc1
-  have : (1 + c1) * Err = Err + c1 * Err := by ring
+  have : Cdec * Err = Err + ec0 * Err := by unfold Cdec; ring
   linarith [hJ.1]
 
 end Par

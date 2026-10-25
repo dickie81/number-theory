@@ -87,6 +87,37 @@ def bound4 (a b c d : ℕ) : ℕ := cdiv (H ^ 4 * DEN * omK (a + b + c) d 4) (a 
 /-- The range of cell `k`. -/
 def cell (k : ℕ) : ℕ × ℕ := (e k, e k + H)
 
+/-! ### The coarse grid of the primes `p₅` and `p₆`, and the cells of depths 5 and 6 -/
+
+/-- The **coarse grid**: the same window and `n / 4` cells a side, so cells four times as wide. Its cells hold the primes
+`p₅` and `p₆` of the deepest levels. -/
+@[instance_reducible] def Gc : Grid := ⟨U1, U2, n / 4⟩
+
+/-- The number of cells of the coarse grid. -/
+def nC : ℕ := n / 4
+/-- The side of a coarse cell, `⌈(DEN/2 − V)/nC⌉`. -/
+def HC : ℕ := @H Gc
+/-- The lower end of the coarse cell `b`. -/
+def eC (b : ℕ) : ℕ := @e Gc b
+/-- The range of the coarse cell `b`. -/
+def cellC (b : ℕ) : ℕ × ℕ := (eC b, eC b + HC)
+
+/-- `invK` with the boxes' total width `W` and the last box's width `w`: `K/max(lo, 1)` rounded up for
+`lo = (DEN − s − t − W)/(t + w)`. -/
+def invKw (s t W w : ℕ) : ℕ :=
+  if DEN ≤ s + 2 * t + W + w then K else cdiv (K * (t + w)) (DEN - s - t - W)
+
+/-- `omK` with the boxes' total width `W` and the last box's width `w`. -/
+def omKw (s t W w : ℕ) : ℕ :=
+  if DEN < s + 2 * t then 0
+  else if s + 3 * t + W + 2 * w ≤ DEN then topK
+  else if DEN < s + 3 * t then invKw s t W w else max (invKw s t W w) topK
+
+/-- The bound of a cell of depth 6 with lower corner `(a, b, c, d)` in the fine grid and `(f, g)` in the coarse grid,
+in units of `1/K`. -/
+def bound6 (a b c d f g : ℕ) : ℕ :=
+  cdiv (H ^ 4 * HC ^ 2 * DEN * omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC) (a * b * c * d * f * g * g)
+
 /-- The cell `(i, j)` may meet the region of depth 2 and may be non-evaluable. -/
 def cand (i j : ℕ) : Bool :=
   decide (e j < e i + H) && decide (2 * e i < DEN) && decide (e i + 2 * e j ≤ DEN) &&
@@ -108,11 +139,47 @@ depth 4. -/
 def counted4 (i j k l : ℕ) : Bool :=
   decide (e i + e j + e k + 2 * e l ≤ DEN) && !surelyEval [cell i, cell j, cell k, cell l]
 
-/-- The row `(i, j, k)`: the counted cells of `α₄`, which have `l ≤ k`. -/
-def row (i j k : ℕ) : ℕ :=
-  sumTo (k + 1) (fun l => if counted4 i j k l then bound4 (e i) (e j) (e k) (e l) else 0)
+/-- The cell `f` of the coarse grid for `p₅` may meet the region of depth 5 over the cell `(i, j, k, l)`. -/
+def inKK5 (i j k l b : ℕ) : Bool :=
+  decide (eC b < e l + H) && decide (e i + e j + e k + e l + 2 * eC b ≤ DEN)
 
-/-- The cost of decomposing the cell `(i, j)`: its counted cells of depth 4. -/
+/-- The cell `(i, j, k, l, b)` may be non-evaluable. -/
+def ne5 (i j k l b : ℕ) : Bool := !surelyEval [cell i, cell j, cell k, cell l, cellC b]
+
+/-- The cell `(i, j, k, l, b, c)` may be non-evaluable, and for `c ≤ b`, which `row6` imposes, it may meet the region of
+depth 6. -/
+def counted6 (i j k l b c : ℕ) : Bool :=
+  decide (e i + e j + e k + e l + eC b + 2 * eC c ≤ DEN) &&
+    !surelyEval [cell i, cell j, cell k, cell l, cellC b, cellC c]
+
+/-- The row `(i, j, k, l, b)`: the counted cells of `α₆`, which have `c ≤ b`. -/
+def row6 (i j k l b : ℕ) : ℕ :=
+  sumTo (b + 1) (fun c => if counted6 i j k l b c then bound6 (e i) (e j) (e k) (e l) (eC b) (eC c) else 0)
+
+/-- The cost of decomposing the counted cell `(i, j, k, l)` one level further: its counted cells of depth 6. -/
+def refcost5 (i j k l : ℕ) : ℕ :=
+  sumTo nC (fun b => if inKK5 i j k l b && ne5 i j k l b then row6 i j k l b else 0)
+
+/-- The sharp rule at depth 4: the sum `α₁ + α₂ + α₃ + α₄`, and `α₁ + ⋯ + α₅` over the counted cells of depth 5, stay
+below `1 − u₁`. -/
+def allowed4 (i j k l : ℕ) : Bool :=
+  decide (e i + H + (e j + H) + (e k + H) + (e l + H) < lim) &&
+    (List.range nC).all (fun b => !(inKK5 i j k l b && ne5 i j k l b) ||
+      decide (e i + H + (e j + H) + (e k + H) + (e l + H) + (eC b + HC) < lim))
+
+/-- The counted cell `(i, j, k, l)` of depth 4 is decomposed one level further. -/
+def dec4 (i j k l : ℕ) : Bool :=
+  allowed4 i j k l && decide (refcost5 i j k l ≤ bound4 (e i) (e j) (e k) (e l))
+
+/-- The cost of the cell `(i, j, k, l)` of depth 4. -/
+def cost4 (i j k l : ℕ) : ℕ :=
+  if counted4 i j k l then
+    (if dec4 i j k l then refcost5 i j k l else bound4 (e i) (e j) (e k) (e l)) else 0
+
+/-- The row `(i, j, k)`: the costs of the cells of `α₄`, which have `l ≤ k`. -/
+def row (i j k : ℕ) : ℕ := sumTo (k + 1) (fun l => cost4 i j k l)
+
+/-- The cost of decomposing the cell `(i, j)`: its cells of depth 4. -/
 def refcost (i j : ℕ) : ℕ := sumTo n (fun k => if inKK i j k && ne3 i j k then row i j k else 0)
 
 /-- The cell `(i, j)` is decomposed. -/
@@ -138,5 +205,18 @@ class GridOK : Prop where
   two_e_lt : 2 * e (n - 1) < DEN
   four_H_le_V : 4 * H ≤ V
   DEN_lt_top : DEN < 2 * (V + n * H)
+
+/-- **The facts about the coarse grid** (`Gc`, with its cells `eC`, `HC`) that the deepest levels use: its own `GridOK`,
+and `4H + 2HC ≤ V`, which keeps the boxes of depth 6 inside `DEN`, and `DEN < 2U₁ + U₂`, which keeps the products of
+depth 6 below the range's lower end `N₁`. For a given grid each is checked by `decide`. -/
+class GridOKC : Prop where
+  /-- The coarse grid's own facts. -/
+  ok : @GridOK Gc
+  /-- The boxes of depth 6 fit. -/
+  fit : 4 * H + 2 * HC ≤ V
+  /-- The coarse cells cover the range of the fine ones: `nH ≤ nC·HC`. -/
+  cover : n * H ≤ nC * HC
+  /-- `1 − u₁ + (1 − u₂)/2 < 1`. -/
+  U_sum : DEN < 2 * U1 + U2
 
 end SieveCert
