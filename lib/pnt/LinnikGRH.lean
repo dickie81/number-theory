@@ -13,7 +13,7 @@ which is then trivial). The module's content is the machine-checked link between
 import between them: the Weil-criterion layer's `PsiOmega.GRH` (`lib/core/WeilChiCriterion.lean`) and the density
 deduction of `LinnikDeduction`. `Linnik.linnik_of_charDensity` itself uses the zero-free half-plane
 `Eis.LFunction_ne_zero_of_re_gt` (through `error_le`), so `linnik_two_of_GRH` is not a half-plane-free statement. It is
-conditional on GRH, so it is a different statement from the unconditional exponent `11161/5000` of the Linnik paper; `2` is
+conditional on GRH, so it is a different statement from the unconditional exponent `2231/1000` of the Linnik paper; `2` is
 the exponent the density route gives under GRH, not claimed to be an optimum.
 
 * `charDensity_two_of_GRH`: `(∀ q [NeZero q] χ, PsiOmega.GRH χ) → Linnik.CharDensity 2 0 1`, by cases `σ > 1/2` (only the

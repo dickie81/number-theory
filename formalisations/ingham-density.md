@@ -16,7 +16,7 @@ end `σ₂ ≤ 11/12` of the range. In words: for such `c` and for `0 < ε ≤ 1
 every `q ≥ 1`, `1/2 + δ₀ ≤ σ ≤ σ₂` and `T ≥ 2`, at most `C(qT)^{(2+4c+4ε)(1−σ)}(log qT)^{10}` characters mod `q` have
 an `L`-function with a zero in `Re s ≥ σ`, `|Im s| ≤ T`. `LFunction` is Mathlib's `DirichletCharacter.LFunction`.
 
-The theorem is in the proof of `Linnik22322R.linnik_22322r`, whose axioms are `propext`, `Classical.choice` and
+The theorem is in the proof of `Linnik22310R.linnik_22310r`, whose axioms are `propext`, `Classical.choice` and
 `Quot.sound` (`lib/check/Check.lean`), so it depends on those only. It does not use the zero-free half-plane:
 `Eis.LFunction_ne_zero_of_re_gt` is not among the declarations its proof depends on.
 

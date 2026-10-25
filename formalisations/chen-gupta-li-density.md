@@ -164,12 +164,12 @@ contain `σ > 7/9`, the curve takes Huxley's bound: `LinnikHuxJunction` (`charDe
 Chen–Gupta–Li steps' `2.24983`, `2.24907`, `2.24833`). `tools/linnik/gen_cgl_curve.py` checks every field of `Par.Good` in
 exact rationals. No hypothesis is involved.
 
-The curve is `g7d` (`SieveTypeIIU22322D.lean`): `g7c` with the Chen–Gupta–Li steps on `[5/7, 1307/1680]` and these Huxley
+The curve is `g7d` (`SieveTypeIIU22310D.lean`): `g7c` with the Chen–Gupta–Li steps on `[5/7, 1307/1680]` and these Huxley
 steps on `[1307/1680, 131/168]`, in place of the plateau and Huxley's steps `hx7_0` … `hx7_4`, and with Ingham's last step
 `[99/140, 5/7]` at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`: `LinnikInghamC.charDensity_ingham_c` has exponent `2 + 4c + 4ε`, so the slack is `4ε`, and the exponent is `7/3 + 1/100000` in place of `7/3 + 1/2000` at `ε = 1/8000`). Huxley's steps
 `hx7_5` … `hx7_19` stay, since their exponents are smaller than the Chen–Gupta–Li step's from `131/168` on. The steps are
 narrow because the window's lower end is set where a step's exponent most exceeds the curve it bounds, at the steps
 containing `7/9`, where `4/(1 + σ)` meets Huxley's `3/(3σ − 1)`; its upper end is set by the largest exponent, `7/3`
-at `5/7`. `Linnik22322R.linnik_22322r` is Linnik's theorem with exponent `11161/5000` on `g7d`. (With Chen–Gupta–Li's
+at `5/7`. `Linnik22310R.linnik_22310r` is Linnik's theorem with exponent `2231/1000` on `g7d`. (With Chen–Gupta–Li's
 steps all the way to `131/168`, the library's certificate closed at `893/400`; the Huxley steps on the last three
-steps lower `total2/K` enough to close at `11161/5000`.)
+steps lower `total2/K` enough to close at `11161/5000` on a grid of `300` cells a side, and a grid of `400` closes at `2231/1000`.)
