@@ -50,7 +50,7 @@ The proof:
   `omK/K` times the product by `bound2/K` and `bound4/K`.
 
 The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
-case `SieveCert.grid2333` is the grid of exponent `2333/1000`.
+case `SieveGrid22250R.grid22250R` is the grid of exponent `89/40`.
 -/
 import HalfPlaneFinal
 import LinnikTwelveSizes

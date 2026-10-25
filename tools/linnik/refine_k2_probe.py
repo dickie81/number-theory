@@ -1,4 +1,4 @@
-"""refine_k2_probe.py: the certificate's total with the evaluable two-prime parts of the dropped depth-2 terms kept, in
+"""refine_k2_probe.py (the depth-4 certificate, before the deeper levels; the library's `total2` is `mirror2.py`'s): the certificate's total with the evaluable two-prime parts of the dropped depth-2 terms kept, in
 exact integers on the grid of `route_limits.replay`. This is a replay of the refined certificate, not a certificate.
 In Lean the refined total is `SieveCert.total2` (`SieveCert2Defs.lean`), and `SieveMain2.linnik_route_lt2` takes
 `total2 < K`, which the kernel checks. The Lean definition (`SieveCert.cost2`) decides with `dec` on the unrefined
