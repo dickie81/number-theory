@@ -22,6 +22,7 @@ The file imports `LinnikInghamC.lean`, `LinnikHuxStep.lean` and `LinnikHuxStepY.
 -/
 import LinnikInghamC
 import LinnikHuxStep
+import LinnikStairsGen
 import LinnikHuxStepY
 
 open Complex Real Finset
@@ -41,15 +42,11 @@ theorem charDensity_in7_0 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 4 / 7 ≤ σ → σ ≤ 81 / 140 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((840199 / 398000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 11 / 398)
-    (δ₀ := 1 / 14) (σ₂ := 81 / 140)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (11 / 398 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (840199 / 398000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((840199 / 398000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 11 / 398) (δ₀ := 1 / 14)
+    (σ₂ := 81 / 140) (lo := 4 / 7) (A := 840199 / 398000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `1`**: the exponent `140033 / 66000` on `[81 / 140, 41 / 70]` (`3/(2 − σ₂) + 1/2000` at the
@@ -58,15 +55,11 @@ theorem charDensity_in7_1 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 81 / 140 ≤ σ → σ ≤ 41 / 70 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((140033 / 66000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 1 / 33)
-    (δ₀ := 11 / 140) (σ₂ := 41 / 70)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (1 / 33 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (140033 / 66000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((140033 / 66000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 1 / 33) (δ₀ := 11 / 140)
+    (σ₂ := 41 / 70) (lo := 81 / 140) (A := 140033 / 66000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `2`**: the exponent `840197 / 394000` on `[41 / 70, 83 / 140]` (`3/(2 − σ₂) + 1/2000` at the
@@ -75,15 +68,11 @@ theorem charDensity_in7_2 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 41 / 70 ≤ σ → σ ≤ 83 / 140 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((840197 / 394000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 13 / 394)
-    (δ₀ := 3 / 35) (σ₂ := 83 / 140)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (13 / 394 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (840197 / 394000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((840197 / 394000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 13 / 394) (δ₀ := 3 / 35)
+    (σ₂ := 83 / 140) (lo := 41 / 70) (A := 840197 / 394000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `3`**: the exponent `30007 / 14000` on `[83 / 140, 3 / 5]` (`3/(2 − σ₂) + 1/2000` at the
@@ -92,15 +81,11 @@ theorem charDensity_in7_3 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 83 / 140 ≤ σ → σ ≤ 3 / 5 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((30007 / 14000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 1 / 28)
-    (δ₀ := 13 / 140) (σ₂ := 3 / 5)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (1 / 28 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (30007 / 14000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((30007 / 14000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 1 / 28) (δ₀ := 13 / 140)
+    (σ₂ := 3 / 5) (lo := 83 / 140) (A := 30007 / 14000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `4`**: the exponent `56013 / 26000` on `[3 / 5, 17 / 28]` (`3/(2 − σ₂) + 1/2000` at the
@@ -109,15 +94,11 @@ theorem charDensity_in7_4 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 3 / 5 ≤ σ → σ ≤ 17 / 28 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((56013 / 26000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 1 / 26)
-    (δ₀ := 1 / 10) (σ₂ := 17 / 28)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (1 / 26 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (56013 / 26000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((56013 / 26000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 1 / 26) (δ₀ := 1 / 10)
+    (σ₂ := 17 / 28) (lo := 3 / 5) (A := 56013 / 26000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `5`**: the exponent `420097 / 194000` on `[17 / 28, 43 / 70]` (`3/(2 − σ₂) + 1/2000` at the
@@ -126,15 +107,11 @@ theorem charDensity_in7_5 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 17 / 28 ≤ σ → σ ≤ 43 / 70 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((420097 / 194000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 4 / 97)
-    (δ₀ := 3 / 28) (σ₂ := 43 / 70)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (4 / 97 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (420097 / 194000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((420097 / 194000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 4 / 97) (δ₀ := 3 / 28)
+    (σ₂ := 43 / 70) (lo := 17 / 28) (A := 420097 / 194000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `6`**: the exponent `840193 / 386000` on `[43 / 70, 87 / 140]` (`3/(2 − σ₂) + 1/2000` at the
@@ -143,15 +120,11 @@ theorem charDensity_in7_6 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 43 / 70 ≤ σ → σ ≤ 87 / 140 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((840193 / 386000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 17 / 386)
-    (δ₀ := 4 / 35) (σ₂ := 87 / 140)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (17 / 386 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (840193 / 386000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((840193 / 386000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 17 / 386) (δ₀ := 4 / 35)
+    (σ₂ := 87 / 140) (lo := 43 / 70) (A := 840193 / 386000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `7`**: the exponent `547 / 250` on `[87 / 140, 22 / 35]` (`3/(2 − σ₂) + 1/2000` at the
@@ -160,15 +133,11 @@ theorem charDensity_in7_7 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 87 / 140 ≤ σ → σ ≤ 22 / 35 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((547 / 250) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 3 / 64)
-    (δ₀ := 17 / 140) (σ₂ := 22 / 35)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (3 / 64 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (547 / 250) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((547 / 250) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 3 / 64) (δ₀ := 17 / 140)
+    (σ₂ := 22 / 35) (lo := 87 / 140) (A := 547 / 250)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `8`**: the exponent `840191 / 382000` on `[22 / 35, 89 / 140]` (`3/(2 − σ₂) + 1/2000` at the
@@ -177,15 +146,11 @@ theorem charDensity_in7_8 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 22 / 35 ≤ σ → σ ≤ 89 / 140 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((840191 / 382000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 19 / 382)
-    (δ₀ := 9 / 70) (σ₂ := 89 / 140)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (19 / 382 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (840191 / 382000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((840191 / 382000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 19 / 382) (δ₀ := 9 / 70)
+    (σ₂ := 89 / 140) (lo := 22 / 35) (A := 840191 / 382000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `9`**: the exponent `84019 / 38000` on `[89 / 140, 9 / 14]` (`3/(2 − σ₂) + 1/2000` at the
@@ -194,15 +159,11 @@ theorem charDensity_in7_9 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 89 / 140 ≤ σ → σ ≤ 9 / 14 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((84019 / 38000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 1 / 19)
-    (δ₀ := 19 / 140) (σ₂ := 9 / 14)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (1 / 19 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (84019 / 38000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((84019 / 38000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 1 / 19) (δ₀ := 19 / 140)
+    (σ₂ := 9 / 14) (lo := 89 / 140) (A := 84019 / 38000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `10`**: the exponent `40009 / 18000` on `[9 / 14, 13 / 20]` (`3/(2 − σ₂) + 1/2000` at the
@@ -211,15 +172,11 @@ theorem charDensity_in7_10 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 9 / 14 ≤ σ → σ ≤ 13 / 20 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((40009 / 18000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 1 / 18)
-    (δ₀ := 1 / 7) (σ₂ := 13 / 20)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (1 / 18 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (40009 / 18000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((40009 / 18000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 1 / 18) (δ₀ := 1 / 7)
+    (σ₂ := 13 / 20) (lo := 9 / 14) (A := 40009 / 18000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `11`**: the exponent `210047 / 94000` on `[13 / 20, 23 / 35]` (`3/(2 − σ₂) + 1/2000` at the
@@ -228,15 +185,11 @@ theorem charDensity_in7_11 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 13 / 20 ≤ σ → σ ≤ 23 / 35 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((210047 / 94000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 11 / 188)
-    (δ₀ := 3 / 20) (σ₂ := 23 / 35)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (11 / 188 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (210047 / 94000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((210047 / 94000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 11 / 188) (δ₀ := 3 / 20)
+    (σ₂ := 23 / 35) (lo := 13 / 20) (A := 210047 / 94000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `12`**: the exponent `840187 / 374000` on `[23 / 35, 93 / 140]` (`3/(2 − σ₂) + 1/2000` at the
@@ -245,15 +198,11 @@ theorem charDensity_in7_12 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 23 / 35 ≤ σ → σ ≤ 93 / 140 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((840187 / 374000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 23 / 374)
-    (δ₀ := 11 / 70) (σ₂ := 93 / 140)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (23 / 374 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (840187 / 374000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((840187 / 374000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 23 / 374) (δ₀ := 11 / 70)
+    (σ₂ := 93 / 140) (lo := 23 / 35) (A := 840187 / 374000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `13`**: the exponent `140031 / 62000` on `[93 / 140, 47 / 70]` (`3/(2 − σ₂) + 1/2000` at the
@@ -262,15 +211,11 @@ theorem charDensity_in7_13 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 93 / 140 ≤ σ → σ ≤ 47 / 70 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((140031 / 62000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 2 / 31)
-    (δ₀ := 23 / 140) (σ₂ := 47 / 70)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (2 / 31 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (140031 / 62000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((140031 / 62000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 2 / 31) (δ₀ := 23 / 140)
+    (σ₂ := 47 / 70) (lo := 93 / 140) (A := 140031 / 62000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `14`**: the exponent `168037 / 74000` on `[47 / 70, 19 / 28]` (`3/(2 − σ₂) + 1/2000` at the
@@ -279,15 +224,11 @@ theorem charDensity_in7_14 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 47 / 70 ≤ σ → σ ≤ 19 / 28 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((168037 / 74000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 5 / 74)
-    (δ₀ := 6 / 35) (σ₂ := 19 / 28)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (5 / 74 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (168037 / 74000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((168037 / 74000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 5 / 74) (δ₀ := 6 / 35)
+    (σ₂ := 19 / 28) (lo := 47 / 70) (A := 168037 / 74000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `15`**: the exponent `105023 / 46000` on `[19 / 28, 24 / 35]` (`3/(2 − σ₂) + 1/2000` at the
@@ -296,15 +237,11 @@ theorem charDensity_in7_15 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 19 / 28 ≤ σ → σ ≤ 24 / 35 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((105023 / 46000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 13 / 184)
-    (δ₀ := 5 / 28) (σ₂ := 24 / 35)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (13 / 184 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (105023 / 46000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((105023 / 46000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 13 / 184) (δ₀ := 5 / 28)
+    (σ₂ := 24 / 35) (lo := 19 / 28) (A := 105023 / 46000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `16`**: the exponent `280061 / 122000` on `[24 / 35, 97 / 140]` (`3/(2 − σ₂) + 1/2000` at the
@@ -313,15 +250,11 @@ theorem charDensity_in7_16 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 24 / 35 ≤ σ → σ ≤ 97 / 140 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((280061 / 122000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 9 / 122)
-    (δ₀ := 13 / 70) (σ₂ := 97 / 140)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (9 / 122 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (280061 / 122000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((280061 / 122000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 9 / 122) (δ₀ := 13 / 70)
+    (σ₂ := 97 / 140) (lo := 24 / 35) (A := 280061 / 122000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `17`**: the exponent `60013 / 26000` on `[97 / 140, 7 / 10]` (`3/(2 − σ₂) + 1/2000` at the
@@ -330,15 +263,11 @@ theorem charDensity_in7_17 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 97 / 140 ≤ σ → σ ≤ 7 / 10 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((60013 / 26000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 1 / 13)
-    (δ₀ := 27 / 140) (σ₂ := 7 / 10)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (1 / 13 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (60013 / 26000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((60013 / 26000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 1 / 13) (δ₀ := 27 / 140)
+    (σ₂ := 7 / 10) (lo := 97 / 140) (A := 60013 / 26000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `18`**: the exponent `840181 / 362000` on `[7 / 10, 99 / 140]` (`3/(2 − σ₂) + 1/2000` at the
@@ -347,15 +276,11 @@ theorem charDensity_in7_18 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 7 / 10 ≤ σ → σ ≤ 99 / 140 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((840181 / 362000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 29 / 362)
-    (δ₀ := 1 / 5) (σ₂ := 99 / 140)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (29 / 362 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (840181 / 362000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((840181 / 362000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 29 / 362) (δ₀ := 1 / 5)
+    (σ₂ := 99 / 140) (lo := 7 / 10) (A := 840181 / 362000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 open scoped Classical in
 /-- **Ingham's step `19`**: the exponent `14003 / 6000` on `[99 / 140, 5 / 7]` (`3/(2 − σ₂) + 1/2000` at the
@@ -364,15 +289,11 @@ theorem charDensity_in7_19 :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 99 / 140 ≤ σ → σ ≤ 5 / 7 → 2 ≤ T →
       ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
         ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((14003 / 6000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := by
-  have h := LinnikInghamC.charDensity_ingham_c (ε := 1 / 8000) (c := 1 / 12)
-    (δ₀ := 29 / 140) (σ₂ := 5 / 7)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  obtain ⟨C, hC0, hC⟩ := h
-  refine ⟨C, hC0, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have := hC q σ T (by linarith) hσ1 hT
-  rwa [show (2 + 4 * (1 / 12 : ℝ) + 4 * (1 / 8000)) * (1 - σ) =
-      (14003 / 6000) * (1 - σ) by ring] at this
+          C * ((q : ℝ) * T) ^ ((14003 / 6000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
+  LinnikStairsGen.charDensity_ingham_inst (ε := 1 / 8000) (c := 1 / 12) (δ₀ := 29 / 140)
+    (σ₂ := 5 / 7) (lo := 99 / 140) (A := 14003 / 6000)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 /-! ### Huxley's steps on `[16/21, 5/6]`, with the fourth moment -/
 
@@ -387,34 +308,7 @@ def parHx7_0 : Par where
   Ai := 233383 / 100000
   A := 14003 / 6000
 
-theorem parHx7_0_good : parHx7_0.Good where
-  hM := by simp [parHx7_0]
-  ha := by simp only [parHx7_0]; norm_num
-  hat := by simp only [parHx7_0, εs]; norm_num
-  hlam1 := by simp only [parHx7_0, εs]; norm_num
-  hlam2 := by simp only [parHx7_0, εs]; norm_num
-  hlam3 := by simp only [parHx7_0]; norm_num
-  hlo := by simp only [parHx7_0]; norm_num
-  hhi := by simp only [parHx7_0]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_0, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_0, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_0, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_0, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_0]; norm_num
-  hA16 := by simp only [parHx7_0]; norm_num
+theorem parHx7_0_good : parHx7_0.Good := by stairs_good parHx7_0
 
 open scoped Classical in
 /-- **Huxley's step `0`**: there is `C ≥ 0` such that for every `q ≥ 1`, `16 / 21 ≤ σ ≤ 643 / 840` and `T ≥ 2` at most
@@ -437,34 +331,7 @@ def parHx7_1 : Par where
   Ai := 115727 / 50000
   A := 560121 / 242000
 
-theorem parHx7_1_good : parHx7_1.Good where
-  hM := by simp [parHx7_1]
-  ha := by simp only [parHx7_1]; norm_num
-  hat := by simp only [parHx7_1, εs]; norm_num
-  hlam1 := by simp only [parHx7_1, εs]; norm_num
-  hlam2 := by simp only [parHx7_1, εs]; norm_num
-  hlam3 := by simp only [parHx7_1]; norm_num
-  hlo := by simp only [parHx7_1]; norm_num
-  hhi := by simp only [parHx7_1]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_1, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_1, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_1, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_1, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_1]; norm_num
-  hA16 := by simp only [parHx7_1]; norm_num
+theorem parHx7_1_good : parHx7_1.Good := by stairs_good parHx7_1
 
 open scoped Classical in
 /--  **Huxley's step `1`**: there is `C ≥ 0` such that for every `q ≥ 1`, `643 / 840 ≤ σ ≤ 323 / 420` and `T ≥ 2` at
@@ -488,34 +355,7 @@ def parHx7_2 : Par where
   Ai := 114779 / 50000
   A := 280061 / 122000
 
-theorem parHx7_2_good : parHx7_2.Good where
-  hM := by simp [parHx7_2]
-  ha := by simp only [parHx7_2]; norm_num
-  hat := by simp only [parHx7_2, εs]; norm_num
-  hlam1 := by simp only [parHx7_2, εs]; norm_num
-  hlam2 := by simp only [parHx7_2, εs]; norm_num
-  hlam3 := by simp only [parHx7_2]; norm_num
-  hlo := by simp only [parHx7_2]; norm_num
-  hhi := by simp only [parHx7_2]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_2, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_2, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_2, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_2, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_2]; norm_num
-  hA16 := by simp only [parHx7_2]; norm_num
+theorem parHx7_2_good : parHx7_2.Good := by stairs_good parHx7_2
 
 open scoped Classical in
 /--  **Huxley's step `2`**: there is `C ≥ 0` such that for every `q ≥ 1`, `323 / 420 ≤ σ ≤ 649 / 840` and `T ≥ 2` at
@@ -539,34 +379,7 @@ def parHx7_3 : Par where
   Ai := 56923 / 25000
   A := 560123 / 246000
 
-theorem parHx7_3_good : parHx7_3.Good where
-  hM := by simp [parHx7_3]
-  ha := by simp only [parHx7_3]; norm_num
-  hat := by simp only [parHx7_3, εs]; norm_num
-  hlam1 := by simp only [parHx7_3, εs]; norm_num
-  hlam2 := by simp only [parHx7_3, εs]; norm_num
-  hlam3 := by simp only [parHx7_3]; norm_num
-  hlo := by simp only [parHx7_3]; norm_num
-  hhi := by simp only [parHx7_3]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_3, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_3, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_3, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_3, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_3]; norm_num
-  hA16 := by simp only [parHx7_3]; norm_num
+theorem parHx7_3_good : parHx7_3.Good := by stairs_good parHx7_3
 
 open scoped Classical in
 /--  **Huxley's step `3`**: there is `C ≥ 0` such that for every `q ≥ 1`, `649 / 840 ≤ σ ≤ 163 / 210` and `T ≥ 2` at
@@ -590,34 +403,7 @@ def parHx7_4 : Par where
   Ai := 7058 / 3125
   A := 140031 / 62000
 
-theorem parHx7_4_good : parHx7_4.Good where
-  hM := by simp [parHx7_4]
-  ha := by simp only [parHx7_4]; norm_num
-  hat := by simp only [parHx7_4, εs]; norm_num
-  hlam1 := by simp only [parHx7_4, εs]; norm_num
-  hlam2 := by simp only [parHx7_4, εs]; norm_num
-  hlam3 := by simp only [parHx7_4]; norm_num
-  hlo := by simp only [parHx7_4]; norm_num
-  hhi := by simp only [parHx7_4]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_4, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_4, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_4, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_4, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_4]; norm_num
-  hA16 := by simp only [parHx7_4]; norm_num
+theorem parHx7_4_good : parHx7_4.Good := by stairs_good parHx7_4
 
 open scoped Classical in
 /-- **Huxley's step `4`**: there is `C ≥ 0` such that for every `q ≥ 1`, `163 / 210 ≤ σ ≤ 131 / 168` and `T ≥ 2` at most
@@ -640,34 +426,7 @@ def parHx7_5 : Par where
   Ai := 224049 / 100000
   A := 4481 / 2000
 
-theorem parHx7_5_good : parHx7_5.Good where
-  hM := by simp [parHx7_5]
-  ha := by simp only [parHx7_5]; norm_num
-  hat := by simp only [parHx7_5, εs]; norm_num
-  hlam1 := by simp only [parHx7_5, εs]; norm_num
-  hlam2 := by simp only [parHx7_5, εs]; norm_num
-  hlam3 := by simp only [parHx7_5]; norm_num
-  hlo := by simp only [parHx7_5]; norm_num
-  hhi := by simp only [parHx7_5]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_5, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_5, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_5, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_5, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_5]; norm_num
-  hA16 := by simp only [parHx7_5]; norm_num
+theorem parHx7_5_good : parHx7_5.Good := by stairs_good parHx7_5
 
 open scoped Classical in
 /-- **Huxley's step `5`**: there is `C ≥ 0` such that for every `q ≥ 1`, `131 / 168 ≤ σ ≤ 47 / 60` and `T ≥ 2` at most
@@ -690,34 +449,7 @@ def parHx7_6 : Par where
   Ai := 6946 / 3125
   A := 40009 / 18000
 
-theorem parHx7_6_good : parHx7_6.Good where
-  hM := by simp [parHx7_6]
-  ha := by simp only [parHx7_6]; norm_num
-  hat := by simp only [parHx7_6, εs]; norm_num
-  hlam1 := by simp only [parHx7_6, εs]; norm_num
-  hlam2 := by simp only [parHx7_6, εs]; norm_num
-  hlam3 := by simp only [parHx7_6]; norm_num
-  hlo := by simp only [parHx7_6]; norm_num
-  hhi := by simp only [parHx7_6]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_6, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_6, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_6, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_6, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_6]; norm_num
-  hA16 := by simp only [parHx7_6]; norm_num
+theorem parHx7_6_good : parHx7_6.Good := by stairs_good parHx7_6
 
 open scoped Classical in
 /-- **Huxley's step `6`**: there is `C ≥ 0` such that for every `q ≥ 1`, `47 / 60 ≤ σ ≤ 661 / 840` and `T ≥ 2` at most
@@ -740,34 +472,7 @@ def parHx7_7 : Par where
   Ai := 110261 / 50000
   A := 560127 / 254000
 
-theorem parHx7_7_good : parHx7_7.Good where
-  hM := by simp [parHx7_7]
-  ha := by simp only [parHx7_7]; norm_num
-  hat := by simp only [parHx7_7, εs]; norm_num
-  hlam1 := by simp only [parHx7_7, εs]; norm_num
-  hlam2 := by simp only [parHx7_7, εs]; norm_num
-  hlam3 := by simp only [parHx7_7]; norm_num
-  hlo := by simp only [parHx7_7]; norm_num
-  hhi := by simp only [parHx7_7]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_7, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_7, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_7, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_7, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_7]; norm_num
-  hA16 := by simp only [parHx7_7]; norm_num
+theorem parHx7_7_good : parHx7_7.Good := by stairs_good parHx7_7
 
 open scoped Classical in
 /--  **Huxley's step `7`**: there is `C ≥ 0` such that for every `q ≥ 1`, `661 / 840 ≤ σ ≤ 83 / 105` and `T ≥ 2` at most
@@ -791,34 +496,7 @@ def parHx7_8 : Par where
   Ai := 218799 / 100000
   A := 547 / 250
 
-theorem parHx7_8_good : parHx7_8.Good where
-  hM := by simp [parHx7_8]
-  ha := by simp only [parHx7_8]; norm_num
-  hat := by simp only [parHx7_8, εs]; norm_num
-  hlam1 := by simp only [parHx7_8, εs]; norm_num
-  hlam2 := by simp only [parHx7_8, εs]; norm_num
-  hlam3 := by simp only [parHx7_8]; norm_num
-  hlo := by simp only [parHx7_8]; norm_num
-  hhi := by simp only [parHx7_8]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_8, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_8, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_8, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_8, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_8]; norm_num
-  hA16 := by simp only [parHx7_8]; norm_num
+theorem parHx7_8_good : parHx7_8.Good := by stairs_good parHx7_8
 
 open scoped Classical in
 /-- **Huxley's step `8`**: there is `C ≥ 0` such that for every `q ≥ 1`, `83 / 105 ≤ σ ≤ 667 / 840` and `T ≥ 2` at most
@@ -841,34 +519,7 @@ def parHx7_9 : Par where
   Ai := 13569 / 6250
   A := 560129 / 258000
 
-theorem parHx7_9_good : parHx7_9.Good where
-  hM := by simp [parHx7_9]
-  ha := by simp only [parHx7_9]; norm_num
-  hat := by simp only [parHx7_9, εs]; norm_num
-  hlam1 := by simp only [parHx7_9, εs]; norm_num
-  hlam2 := by simp only [parHx7_9, εs]; norm_num
-  hlam3 := by simp only [parHx7_9]; norm_num
-  hlo := by simp only [parHx7_9]; norm_num
-  hhi := by simp only [parHx7_9]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_9, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_9, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_9, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_9, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_9]; norm_num
-  hA16 := by simp only [parHx7_9]; norm_num
+theorem parHx7_9_good : parHx7_9.Good := by stairs_good parHx7_9
 
 open scoped Classical in
 /--  **Huxley's step `9`**: there is `C ≥ 0` such that for every `q ≥ 1`, `667 / 840 ≤ σ ≤ 67 / 84` and `T ≥ 2` at most
@@ -892,34 +543,7 @@ def parHx7_10 : Par where
   Ai := 107717 / 50000
   A := 56013 / 26000
 
-theorem parHx7_10_good : parHx7_10.Good where
-  hM := by simp [parHx7_10]
-  ha := by simp only [parHx7_10]; norm_num
-  hat := by simp only [parHx7_10, εs]; norm_num
-  hlam1 := by simp only [parHx7_10, εs]; norm_num
-  hlam2 := by simp only [parHx7_10, εs]; norm_num
-  hlam3 := by simp only [parHx7_10]; norm_num
-  hlo := by simp only [parHx7_10]; norm_num
-  hhi := by simp only [parHx7_10]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_10, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_10, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_10, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_10, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_10]; norm_num
-  hA16 := by simp only [parHx7_10]; norm_num
+theorem parHx7_10_good : parHx7_10.Good := by stairs_good parHx7_10
 
 open scoped Classical in
 /-- **Huxley's step `10`**: there is `C ≥ 0` such that for every `q ≥ 1`, `67 / 84 ≤ σ ≤ 673 / 840` and `T ≥ 2` at most
@@ -942,34 +566,7 @@ def parHx7_11 : Par where
   Ai := 21379 / 10000
   A := 560131 / 262000
 
-theorem parHx7_11_good : parHx7_11.Good where
-  hM := by simp [parHx7_11]
-  ha := by simp only [parHx7_11]; norm_num
-  hat := by simp only [parHx7_11, εs]; norm_num
-  hlam1 := by simp only [parHx7_11, εs]; norm_num
-  hlam2 := by simp only [parHx7_11, εs]; norm_num
-  hlam3 := by simp only [parHx7_11]; norm_num
-  hlo := by simp only [parHx7_11]; norm_num
-  hhi := by simp only [parHx7_11]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_11, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_11, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_11, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_11, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_11]; norm_num
-  hA16 := by simp only [parHx7_11]; norm_num
+theorem parHx7_11_good : parHx7_11.Good := by stairs_good parHx7_11
 
 open scoped Classical in
 /--  **Huxley's step `11`**: there is `C ≥ 0` such that for every `q ≥ 1`, `673 / 840 ≤ σ ≤ 169 / 210` and `T ≥ 2` at
@@ -993,34 +590,7 @@ def parHx7_12 : Par where
   Ai := 212171 / 100000
   A := 140033 / 66000
 
-theorem parHx7_12_good : parHx7_12.Good where
-  hM := by simp [parHx7_12]
-  ha := by simp only [parHx7_12]; norm_num
-  hat := by simp only [parHx7_12, εs]; norm_num
-  hlam1 := by simp only [parHx7_12, εs]; norm_num
-  hlam2 := by simp only [parHx7_12, εs]; norm_num
-  hlam3 := by simp only [parHx7_12]; norm_num
-  hlo := by simp only [parHx7_12]; norm_num
-  hhi := by simp only [parHx7_12]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_12, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_12, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_12, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_12, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_12]; norm_num
-  hA16 := by simp only [parHx7_12]; norm_num
+theorem parHx7_12_good : parHx7_12.Good := by stairs_good parHx7_12
 
 open scoped Classical in
 /-- **Huxley's step `12`**: there is `C ≥ 0` such that for every `q ≥ 1`, `169 / 210 ≤ σ ≤ 97 / 120` and `T ≥ 2` at most
@@ -1043,34 +613,7 @@ def parHx7_13 : Par where
   Ai := 13161 / 6250
   A := 80019 / 38000
 
-theorem parHx7_13_good : parHx7_13.Good where
-  hM := by simp [parHx7_13]
-  ha := by simp only [parHx7_13]; norm_num
-  hat := by simp only [parHx7_13, εs]; norm_num
-  hlam1 := by simp only [parHx7_13, εs]; norm_num
-  hlam2 := by simp only [parHx7_13, εs]; norm_num
-  hlam3 := by simp only [parHx7_13]; norm_num
-  hlo := by simp only [parHx7_13]; norm_num
-  hhi := by simp only [parHx7_13]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_13, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_13, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_13, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_13, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_13]; norm_num
-  hA16 := by simp only [parHx7_13]; norm_num
+theorem parHx7_13_good : parHx7_13.Good := by stairs_good parHx7_13
 
 open scoped Classical in
 /-- **Huxley's step `13`**: there is `C ≥ 0` such that for every `q ≥ 1`, `97 / 120 ≤ σ ≤ 341 / 420` and `T ≥ 2` at most
@@ -1093,34 +636,7 @@ def parHx7_14 : Par where
   Ai := 41801 / 20000
   A := 280067 / 134000
 
-theorem parHx7_14_good : parHx7_14.Good where
-  hM := by simp [parHx7_14]
-  ha := by simp only [parHx7_14]; norm_num
-  hat := by simp only [parHx7_14, εs]; norm_num
-  hlam1 := by simp only [parHx7_14, εs]; norm_num
-  hlam2 := by simp only [parHx7_14, εs]; norm_num
-  hlam3 := by simp only [parHx7_14]; norm_num
-  hlo := by simp only [parHx7_14]; norm_num
-  hhi := by simp only [parHx7_14]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_14, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_14, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_14, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_14, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_14]; norm_num
-  hA16 := by simp only [parHx7_14]; norm_num
+theorem parHx7_14_good : parHx7_14.Good := by stairs_good parHx7_14
 
 open scoped Classical in
 /--  **Huxley's step `14`**: there is `C ≥ 0` such that for every `q ≥ 1`, `341 / 420 ≤ σ ≤ 137 / 168` and `T ≥ 2` at
@@ -1144,34 +660,7 @@ def parHx7_15 : Par where
   Ai := 207457 / 100000
   A := 112027 / 54000
 
-theorem parHx7_15_good : parHx7_15.Good where
-  hM := by simp [parHx7_15]
-  ha := by simp only [parHx7_15]; norm_num
-  hat := by simp only [parHx7_15, εs]; norm_num
-  hlam1 := by simp only [parHx7_15, εs]; norm_num
-  hlam2 := by simp only [parHx7_15, εs]; norm_num
-  hlam3 := by simp only [parHx7_15]; norm_num
-  hlo := by simp only [parHx7_15]; norm_num
-  hhi := by simp only [parHx7_15]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_15, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_15, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_15, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_15, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_15]; norm_num
-  hA16 := by simp only [parHx7_15]; norm_num
+theorem parHx7_15_good : parHx7_15.Good := by stairs_good parHx7_15
 
 open scoped Classical in
 /-- **Huxley's step `15`**: there is `C ≥ 0` such that for every `q ≥ 1`, `137 / 168 ≤ σ ≤ 86 / 105` and `T ≥ 2` at most
@@ -1194,34 +683,7 @@ def parHx7_16 : Par where
   Ai := 51483 / 25000
   A := 70017 / 34000
 
-theorem parHx7_16_good : parHx7_16.Good where
-  hM := by simp [parHx7_16]
-  ha := by simp only [parHx7_16]; norm_num
-  hat := by simp only [parHx7_16, εs]; norm_num
-  hlam1 := by simp only [parHx7_16, εs]; norm_num
-  hlam2 := by simp only [parHx7_16, εs]; norm_num
-  hlam3 := by simp only [parHx7_16]; norm_num
-  hlo := by simp only [parHx7_16]; norm_num
-  hhi := by simp only [parHx7_16]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_16, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_16, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_16, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_16, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_16]; norm_num
-  hA16 := by simp only [parHx7_16]; norm_num
+theorem parHx7_16_good : parHx7_16.Good := by stairs_good parHx7_16
 
 open scoped Classical in
 /-- **Huxley's step `16`**: there is `C ≥ 0` such that for every `q ≥ 1`, `86 / 105 ≤ σ ≤ 691 / 840` and `T ≥ 2` at most
@@ -1244,34 +706,7 @@ def parHx7_17 : Par where
   Ai := 204429 / 100000
   A := 560137 / 274000
 
-theorem parHx7_17_good : parHx7_17.Good where
-  hM := by simp [parHx7_17]
-  ha := by simp only [parHx7_17]; norm_num
-  hat := by simp only [parHx7_17, εs]; norm_num
-  hlam1 := by simp only [parHx7_17, εs]; norm_num
-  hlam2 := by simp only [parHx7_17, εs]; norm_num
-  hlam3 := by simp only [parHx7_17]; norm_num
-  hlo := by simp only [parHx7_17]; norm_num
-  hhi := by simp only [parHx7_17]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_17, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_17, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_17, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_17, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_17]; norm_num
-  hA16 := by simp only [parHx7_17]; norm_num
+theorem parHx7_17_good : parHx7_17.Good := by stairs_good parHx7_17
 
 open scoped Classical in
 /--  **Huxley's step `17`**: there is `C ≥ 0` such that for every `q ≥ 1`, `691 / 840 ≤ σ ≤ 347 / 420` and `T ≥ 2` at
@@ -1295,34 +730,7 @@ def parHx7_18 : Par where
   Ai := 50737 / 25000
   A := 280069 / 138000
 
-theorem parHx7_18_good : parHx7_18.Good where
-  hM := by simp [parHx7_18]
-  ha := by simp only [parHx7_18]; norm_num
-  hat := by simp only [parHx7_18, εs]; norm_num
-  hlam1 := by simp only [parHx7_18, εs]; norm_num
-  hlam2 := by simp only [parHx7_18, εs]; norm_num
-  hlam3 := by simp only [parHx7_18]; norm_num
-  hlo := by simp only [parHx7_18]; norm_num
-  hhi := by simp only [parHx7_18]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_18, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_18, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_18, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_18, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_18]; norm_num
-  hA16 := by simp only [parHx7_18]; norm_num
+theorem parHx7_18_good : parHx7_18.Good := by stairs_good parHx7_18
 
 open scoped Classical in
 /--  **Huxley's step `18`**: there is `C ≥ 0` such that for every `q ≥ 1`, `347 / 420 ≤ σ ≤ 697 / 840` and `T ≥ 2` at
@@ -1346,34 +754,7 @@ def parHx7_19 : Par where
   Ai := 12593 / 6250
   A := 560139 / 278000
 
-theorem parHx7_19_good : parHx7_19.Good where
-  hM := by simp [parHx7_19]
-  ha := by simp only [parHx7_19]; norm_num
-  hat := by simp only [parHx7_19, εs]; norm_num
-  hlam1 := by simp only [parHx7_19, εs]; norm_num
-  hlam2 := by simp only [parHx7_19, εs]; norm_num
-  hlam3 := by simp only [parHx7_19]; norm_num
-  hlo := by simp only [parHx7_19]; norm_num
-  hhi := by simp only [parHx7_19]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHx7_19, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHx7_19, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHx7_19, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHx7_19, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHx7_19]; norm_num
-  hA16 := by simp only [parHx7_19]; norm_num
+theorem parHx7_19_good : parHx7_19.Good := by stairs_good parHx7_19
 
 open scoped Classical in
 /--  **Huxley's step `19`**: there is `C ≥ 0` such that for every `q ≥ 1`, `697 / 840 ≤ σ ≤ 5 / 6` and `T ≥ 2` at most
@@ -1400,31 +781,7 @@ def parHy_0 : ParY where
   A := 50159 / 25000
   cy := 25053 / 50
 
-theorem parHy_0_good : parHy_0.Good where
-  hM := by simp [parHy_0]
-  ha := by simp only [parHy_0]; norm_num
-  hat := by simp only [parHy_0, εs]; norm_num
-  hlam1 := by simp only [parHy_0, εs]; norm_num
-  hlam2 := by simp only [parHy_0, εs]; norm_num
-  hlam3 := by simp only [parHy_0]; norm_num
-  hlo := by simp only [parHy_0]; norm_num
-  hhi := by simp only [parHy_0]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_0, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_0, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_0, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_0, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_0]; norm_num
-  hA16 := by simp only [parHy_0]; norm_num
+theorem parHy_0_good : parHy_0.Good := by stairs_good_y parHy_0
 
 open scoped Classical in
 /-- **The step `0` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`, `5 / 6 ≤ σ ≤ 67 / 80`
@@ -1449,31 +806,7 @@ def parHy_1 : ParY where
   A := 480121 / 242000
   cy := 49487 / 100
 
-theorem parHy_1_good : parHy_1.Good where
-  hM := by simp [parHy_1]
-  ha := by simp only [parHy_1]; norm_num
-  hat := by simp only [parHy_1, εs]; norm_num
-  hlam1 := by simp only [parHy_1, εs]; norm_num
-  hlam2 := by simp only [parHy_1, εs]; norm_num
-  hlam3 := by simp only [parHy_1]; norm_num
-  hlo := by simp only [parHy_1]; norm_num
-  hhi := by simp only [parHy_1]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_1, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_1, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_1, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_1, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_1]; norm_num
-  hA16 := by simp only [parHy_1]; norm_num
+theorem parHy_1_good : parHy_1.Good := by stairs_good_y parHy_1
 
 open scoped Classical in
 /--  **The step `1` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -1498,31 +831,7 @@ def parHy_2 : ParY where
   A := 240061 / 122000
   cy := 48883 / 100
 
-theorem parHy_2_good : parHy_2.Good where
-  hM := by simp [parHy_2]
-  ha := by simp only [parHy_2]; norm_num
-  hat := by simp only [parHy_2, εs]; norm_num
-  hlam1 := by simp only [parHy_2, εs]; norm_num
-  hlam2 := by simp only [parHy_2, εs]; norm_num
-  hlam3 := by simp only [parHy_2]; norm_num
-  hlo := by simp only [parHy_2]; norm_num
-  hhi := by simp only [parHy_2]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_2, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_2, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_2, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_2, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_2]; norm_num
-  hA16 := by simp only [parHy_2]; norm_num
+theorem parHy_2_good : parHy_2.Good := by stairs_good_y parHy_2
 
 open scoped Classical in
 /--  **The step `2` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -1547,31 +856,7 @@ def parHy_3 : ParY where
   A := 160041 / 82000
   cy := 24147 / 50
 
-theorem parHy_3_good : parHy_3.Good where
-  hM := by simp [parHy_3]
-  ha := by simp only [parHy_3]; norm_num
-  hat := by simp only [parHy_3, εs]; norm_num
-  hlam1 := by simp only [parHy_3, εs]; norm_num
-  hlam2 := by simp only [parHy_3, εs]; norm_num
-  hlam3 := by simp only [parHy_3]; norm_num
-  hlo := by simp only [parHy_3]; norm_num
-  hhi := by simp only [parHy_3]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_3, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_3, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_3, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_3, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_3]; norm_num
-  hA16 := by simp only [parHy_3]; norm_num
+theorem parHy_3_good : parHy_3.Good := by stairs_good_y parHy_3
 
 open scoped Classical in
 /--  **The step `3` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -1596,31 +881,7 @@ def parHy_4 : ParY where
   A := 120031 / 62000
   cy := 23859 / 50
 
-theorem parHy_4_good : parHy_4.Good where
-  hM := by simp [parHy_4]
-  ha := by simp only [parHy_4]; norm_num
-  hat := by simp only [parHy_4, εs]; norm_num
-  hlam1 := by simp only [parHy_4, εs]; norm_num
-  hlam2 := by simp only [parHy_4, εs]; norm_num
-  hlam3 := by simp only [parHy_4]; norm_num
-  hlo := by simp only [parHy_4]; norm_num
-  hhi := by simp only [parHy_4]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_4, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_4, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_4, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_4, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_4]; norm_num
-  hA16 := by simp only [parHy_4]; norm_num
+theorem parHy_4_good : parHy_4.Good := by stairs_good_y parHy_4
 
 open scoped Classical in
 /-- **The step `4` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`, `17 / 20 ≤ σ ≤ 41 / 48`
@@ -1645,31 +906,7 @@ def parHy_5 : ParY where
   A := 3841 / 2000
   cy := 11789 / 25
 
-theorem parHy_5_good : parHy_5.Good where
-  hM := by simp [parHy_5]
-  ha := by simp only [parHy_5]; norm_num
-  hat := by simp only [parHy_5, εs]; norm_num
-  hlam1 := by simp only [parHy_5, εs]; norm_num
-  hlam2 := by simp only [parHy_5, εs]; norm_num
-  hlam3 := by simp only [parHy_5]; norm_num
-  hlo := by simp only [parHy_5]; norm_num
-  hhi := by simp only [parHy_5]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_5, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_5, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_5, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_5, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_5]; norm_num
-  hA16 := by simp only [parHy_5]; norm_num
+theorem parHy_5_good : parHy_5.Good := by stairs_good_y parHy_5
 
 open scoped Classical in
 /--  **The step `5` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -1694,31 +931,7 @@ def parHy_6 : ParY where
   A := 80021 / 42000
   cy := 46607 / 100
 
-theorem parHy_6_good : parHy_6.Good where
-  hM := by simp [parHy_6]
-  ha := by simp only [parHy_6]; norm_num
-  hat := by simp only [parHy_6, εs]; norm_num
-  hlam1 := by simp only [parHy_6, εs]; norm_num
-  hlam2 := by simp only [parHy_6, εs]; norm_num
-  hlam3 := by simp only [parHy_6]; norm_num
-  hlo := by simp only [parHy_6]; norm_num
-  hhi := by simp only [parHy_6]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_6, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_6, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_6, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_6, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_6]; norm_num
-  hA16 := by simp only [parHy_6]; norm_num
+theorem parHy_6_good : parHy_6.Good := by stairs_good_y parHy_6
 
 open scoped Classical in
 /--  **The step `6` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -1743,31 +956,7 @@ def parHy_7 : ParY where
   A := 480127 / 254000
   cy := 46071 / 100
 
-theorem parHy_7_good : parHy_7.Good where
-  hM := by simp [parHy_7]
-  ha := by simp only [parHy_7]; norm_num
-  hat := by simp only [parHy_7, εs]; norm_num
-  hlam1 := by simp only [parHy_7, εs]; norm_num
-  hlam2 := by simp only [parHy_7, εs]; norm_num
-  hlam3 := by simp only [parHy_7]; norm_num
-  hlo := by simp only [parHy_7]; norm_num
-  hhi := by simp only [parHy_7]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_7, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_7, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_7, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_7, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_7]; norm_num
-  hA16 := by simp only [parHy_7]; norm_num
+theorem parHy_7_good : parHy_7.Good := by stairs_good_y parHy_7
 
 open scoped Classical in
 /-- **The step `7` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`, `69 / 80 ≤ σ ≤ 13 / 15`
@@ -1792,31 +981,7 @@ def parHy_8 : ParY where
   A := 3751 / 2000
   cy := 45547 / 100
 
-theorem parHy_8_good : parHy_8.Good where
-  hM := by simp [parHy_8]
-  ha := by simp only [parHy_8]; norm_num
-  hat := by simp only [parHy_8, εs]; norm_num
-  hlam1 := by simp only [parHy_8, εs]; norm_num
-  hlam2 := by simp only [parHy_8, εs]; norm_num
-  hlam3 := by simp only [parHy_8]; norm_num
-  hlo := by simp only [parHy_8]; norm_num
-  hhi := by simp only [parHy_8]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_8, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_8, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_8, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_8, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_8]; norm_num
-  hA16 := by simp only [parHy_8]; norm_num
+theorem parHy_8_good : parHy_8.Good := by stairs_good_y parHy_8
 
 open scoped Classical in
 /--  **The step `8` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -1841,31 +1006,7 @@ def parHy_9 : ParY where
   A := 160043 / 86000
   cy := 9007 / 20
 
-theorem parHy_9_good : parHy_9.Good where
-  hM := by simp [parHy_9]
-  ha := by simp only [parHy_9]; norm_num
-  hat := by simp only [parHy_9, εs]; norm_num
-  hlam1 := by simp only [parHy_9, εs]; norm_num
-  hlam2 := by simp only [parHy_9, εs]; norm_num
-  hlam3 := by simp only [parHy_9]; norm_num
-  hlo := by simp only [parHy_9]; norm_num
-  hhi := by simp only [parHy_9]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_9, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_9, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_9, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_9, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_9]; norm_num
-  hA16 := by simp only [parHy_9]; norm_num
+theorem parHy_9_good : parHy_9.Good := by stairs_good_y parHy_9
 
 open scoped Classical in
 /-- **The step `9` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`, `209 / 240 ≤ σ ≤ 7 / 8`
@@ -1890,31 +1031,7 @@ def parHy_10 : ParY where
   A := 48013 / 26000
   cy := 22267 / 50
 
-theorem parHy_10_good : parHy_10.Good where
-  hM := by simp [parHy_10]
-  ha := by simp only [parHy_10]; norm_num
-  hat := by simp only [parHy_10, εs]; norm_num
-  hlam1 := by simp only [parHy_10, εs]; norm_num
-  hlam2 := by simp only [parHy_10, εs]; norm_num
-  hlam3 := by simp only [parHy_10]; norm_num
-  hlo := by simp only [parHy_10]; norm_num
-  hhi := by simp only [parHy_10]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_10, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_10, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_10, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_10, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_10]; norm_num
-  hA16 := by simp only [parHy_10]; norm_num
+theorem parHy_10_good : parHy_10.Good := by stairs_good_y parHy_10
 
 open scoped Classical in
 /-- **The step `10` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`, `7 / 8 ≤ σ ≤ 211 / 240`
@@ -1939,31 +1056,7 @@ def parHy_11 : ParY where
   A := 480131 / 262000
   cy := 11011 / 25
 
-theorem parHy_11_good : parHy_11.Good where
-  hM := by simp [parHy_11]
-  ha := by simp only [parHy_11]; norm_num
-  hat := by simp only [parHy_11, εs]; norm_num
-  hlam1 := by simp only [parHy_11, εs]; norm_num
-  hlam2 := by simp only [parHy_11, εs]; norm_num
-  hlam3 := by simp only [parHy_11]; norm_num
-  hlo := by simp only [parHy_11]; norm_num
-  hhi := by simp only [parHy_11]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_11, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_11, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_11, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_11, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_11]; norm_num
-  hA16 := by simp only [parHy_11]; norm_num
+theorem parHy_11_good : parHy_11.Good := by stairs_good_y parHy_11
 
 open scoped Classical in
 /--  **The step `11` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -1988,31 +1081,7 @@ def parHy_12 : ParY where
   A := 40011 / 22000
   cy := 10891 / 25
 
-theorem parHy_12_good : parHy_12.Good where
-  hM := by simp [parHy_12]
-  ha := by simp only [parHy_12]; norm_num
-  hat := by simp only [parHy_12, εs]; norm_num
-  hlam1 := by simp only [parHy_12, εs]; norm_num
-  hlam2 := by simp only [parHy_12, εs]; norm_num
-  hlam3 := by simp only [parHy_12]; norm_num
-  hlo := by simp only [parHy_12]; norm_num
-  hhi := by simp only [parHy_12]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_12, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_12, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_12, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_12, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_12]; norm_num
-  hA16 := by simp only [parHy_12]; norm_num
+theorem parHy_12_good : parHy_12.Good := by stairs_good_y parHy_12
 
 open scoped Classical in
 /-- **The step `12` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`, `53 / 60 ≤ σ ≤ 71 / 80`
@@ -2037,31 +1106,7 @@ def parHy_13 : ParY where
   A := 480133 / 266000
   cy := 8619 / 20
 
-theorem parHy_13_good : parHy_13.Good where
-  hM := by simp [parHy_13]
-  ha := by simp only [parHy_13]; norm_num
-  hat := by simp only [parHy_13, εs]; norm_num
-  hlam1 := by simp only [parHy_13, εs]; norm_num
-  hlam2 := by simp only [parHy_13, εs]; norm_num
-  hlam3 := by simp only [parHy_13]; norm_num
-  hlo := by simp only [parHy_13]; norm_num
-  hhi := by simp only [parHy_13]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_13, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_13, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_13, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_13, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_13]; norm_num
-  hA16 := by simp only [parHy_13]; norm_num
+theorem parHy_13_good : parHy_13.Good := by stairs_good_y parHy_13
 
 open scoped Classical in
 /--  **The step `13` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -2086,31 +1131,7 @@ def parHy_14 : ParY where
   A := 240067 / 134000
   cy := 10659 / 25
 
-theorem parHy_14_good : parHy_14.Good where
-  hM := by simp [parHy_14]
-  ha := by simp only [parHy_14]; norm_num
-  hat := by simp only [parHy_14, εs]; norm_num
-  hlam1 := by simp only [parHy_14, εs]; norm_num
-  hlam2 := by simp only [parHy_14, εs]; norm_num
-  hlam3 := by simp only [parHy_14]; norm_num
-  hlo := by simp only [parHy_14]; norm_num
-  hhi := by simp only [parHy_14]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_14, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_14, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_14, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_14, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_14]; norm_num
-  hA16 := by simp only [parHy_14]; norm_num
+theorem parHy_14_good : parHy_14.Good := by stairs_good_y parHy_14
 
 open scoped Classical in
 /--  **The step `14` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -2135,31 +1156,7 @@ def parHy_15 : ParY where
   A := 32009 / 18000
   cy := 42187 / 100
 
-theorem parHy_15_good : parHy_15.Good where
-  hM := by simp [parHy_15]
-  ha := by simp only [parHy_15]; norm_num
-  hat := by simp only [parHy_15, εs]; norm_num
-  hlam1 := by simp only [parHy_15, εs]; norm_num
-  hlam2 := by simp only [parHy_15, εs]; norm_num
-  hlam3 := by simp only [parHy_15]; norm_num
-  hlo := by simp only [parHy_15]; norm_num
-  hhi := by simp only [parHy_15]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_15, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_15, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_15, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_15, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_15]; norm_num
-  hA16 := by simp only [parHy_15]; norm_num
+theorem parHy_15_good : parHy_15.Good := by stairs_good_y parHy_15
 
 open scoped Classical in
 /-- **The step `15` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`, `43 / 48 ≤ σ ≤ 9 / 10`
@@ -2184,31 +1181,7 @@ def parHy_16 : ParY where
   A := 60017 / 34000
   cy := 41747 / 100
 
-theorem parHy_16_good : parHy_16.Good where
-  hM := by simp [parHy_16]
-  ha := by simp only [parHy_16]; norm_num
-  hat := by simp only [parHy_16, εs]; norm_num
-  hlam1 := by simp only [parHy_16, εs]; norm_num
-  hlam2 := by simp only [parHy_16, εs]; norm_num
-  hlam3 := by simp only [parHy_16]; norm_num
-  hlo := by simp only [parHy_16]; norm_num
-  hhi := by simp only [parHy_16]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_16, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_16, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_16, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_16, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_16]; norm_num
-  hA16 := by simp only [parHy_16]; norm_num
+theorem parHy_16_good : parHy_16.Good := by stairs_good_y parHy_16
 
 open scoped Classical in
 /--  **The step `16` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -2233,31 +1206,7 @@ def parHy_17 : ParY where
   A := 480137 / 274000
   cy := 10329 / 25
 
-theorem parHy_17_good : parHy_17.Good where
-  hM := by simp [parHy_17]
-  ha := by simp only [parHy_17]; norm_num
-  hat := by simp only [parHy_17, εs]; norm_num
-  hlam1 := by simp only [parHy_17, εs]; norm_num
-  hlam2 := by simp only [parHy_17, εs]; norm_num
-  hlam3 := by simp only [parHy_17]; norm_num
-  hlo := by simp only [parHy_17]; norm_num
-  hhi := by simp only [parHy_17]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_17, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_17, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_17, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_17, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_17]; norm_num
-  hA16 := by simp only [parHy_17]; norm_num
+theorem parHy_17_good : parHy_17.Good := by stairs_good_y parHy_17
 
 open scoped Classical in
 /--  **The step `17` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -2282,31 +1231,7 @@ def parHy_18 : ParY where
   A := 80023 / 46000
   cy := 20447 / 50
 
-theorem parHy_18_good : parHy_18.Good where
-  hM := by simp [parHy_18]
-  ha := by simp only [parHy_18]; norm_num
-  hat := by simp only [parHy_18, εs]; norm_num
-  hlam1 := by simp only [parHy_18, εs]; norm_num
-  hlam2 := by simp only [parHy_18, εs]; norm_num
-  hlam3 := by simp only [parHy_18]; norm_num
-  hlo := by simp only [parHy_18]; norm_num
-  hhi := by simp only [parHy_18]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_18, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_18, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_18, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_18, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_18]; norm_num
-  hA16 := by simp only [parHy_18]; norm_num
+theorem parHy_18_good : parHy_18.Good := by stairs_good_y parHy_18
 
 open scoped Classical in
 /--  **The step `18` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`,
@@ -2331,31 +1256,7 @@ def parHy_19 : ParY where
   A := 480139 / 278000
   cy := 40481 / 100
 
-theorem parHy_19_good : parHy_19.Good where
-  hM := by simp [parHy_19]
-  ha := by simp only [parHy_19]; norm_num
-  hat := by simp only [parHy_19, εs]; norm_num
-  hlam1 := by simp only [parHy_19, εs]; norm_num
-  hlam2 := by simp only [parHy_19, εs]; norm_num
-  hlam3 := by simp only [parHy_19]; norm_num
-  hlo := by simp only [parHy_19]; norm_num
-  hhi := by simp only [parHy_19]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHy_19, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHy_19, εs] at *
-    nlinarith
-  h5 := by simp only [parHy_19, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parHy_19, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHy_19]; norm_num
-  hA16 := by simp only [parHy_19]; norm_num
+theorem parHy_19_good : parHy_19.Good := by stairs_good_y parHy_19
 
 open scoped Classical in
 /-- **The step `19` above `5/6`, under `PYWeyl`**: there is `C ≥ 0` such that for every `q ≥ 1`, `73 / 80 ≤ σ ≤ 11 / 12`
