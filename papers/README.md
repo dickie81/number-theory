@@ -2,7 +2,7 @@
 
 Each paper has a directory here with its LaTeX source, `main.tex`, and a README.
 
-- **Every claim is a Lean theorem.** Each paper has a table that names the Lean theorem behind each of its claims.
+- **Every numbered result is a Lean theorem.** Each paper has a table that names the Lean theorem behind each of its numbered results. Historical remarks, comparisons with other methods and heuristics in a paper are not Lean theorems, and the paper says so.
   `lib/check/Check.lean` prints the axioms of those theorems, and `scripts/check_axioms.py` checks that they are
   `propext`, `Classical.choice` and `Quot.sound` only.
 - **A paper claims only its own steps.** The results it uses from the literature are proved in `lib/` too. Each has a
@@ -14,7 +14,7 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README.
 
 | Paper | Its theorem | Lean | State |
 |---|---|---|---|
-| [Linnik's exponent](linnik-exponent/README.md) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{11161/5000}` | `Linnik22322R.linnik_22322r` | A full draft: every section is written; the bibliography is still to be checked against the sources |
+| [Linnik's exponent](linnik-exponent/README.md) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{11161/5000}` | `Linnik22322R.linnik_22322r` | A full draft: every section is written; the bibliography is checked except Buchstab (1937), which is unverified |
 
 ## Building
 
