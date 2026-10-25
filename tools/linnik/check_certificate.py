@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Regenerate the Linnik paper's certificate files and compare them with lib/pnt byte for byte.
 
-Two certificates are checked (all of them with no argument, or the one named by its tag):
+One certificate is checked (with no argument, or named by its tag):
 
-* `22475R`: `SieveCert.total2_lt_22475R` (L = 899/400, the window [41335/100000, 48069/100000], n = 300, the curve `g7c`);
 * `22325R`: `SieveCert.total2_lt_22325R` (L = 893/400, the window [40980/100000, 47731/100000], n = 300, the curve `g7d`).
+
+The `22475R` certificate (L = 899/400, the window [41335/100000, 48069/100000], the curve `g7c`) is no longer in the tree;
+its files are at commit 6df0ebd. `gen_22475r.py` with no options still generates it.
 
 Each is generated in two steps:
 
@@ -29,7 +31,6 @@ PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 
 # tag: (W1, W2, n, extra arguments of gen_22475r.py)
 CERTS = {
-    '22475R': (41335, 48069, 300, []),
     '22325R': (40980, 47731, 300, ['--tag', '22325R', '--L', '893/400', '--curve', 'g7d',
                                    '--typeii', 'SieveTypeIIU22325D.typeII_22325d']),
 }

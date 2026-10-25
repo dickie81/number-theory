@@ -11,8 +11,8 @@ name and the namespace it had in that module (`LinnikCGLMat.linnik_225c_third`, 
 `LinnikCGLDensity.linnik_225c`), and its proof.
 
 They moved here because their proofs use `LinnikCGLLinnik` (and so the certificates of `Linnik225C` and
-`Linnik226C`), which no module of the density chain itself, and neither `Linnik22475R` nor `Linnik22325R`, needs.
-The chain's modules no longer import them, so building `Linnik22475R` and `Linnik22325R` no longer builds the
+`Linnik226C`), which no module of the density chain itself, and neither `Linnik22325R` nor the since removed `Linnik22475R` (commit
+`6df0ebd`), needs. The chain's modules no longer import them, so building `Linnik22325R` no longer builds the
 `SieveCert225C` (167 parts) and `SieveCert226` (5 parts) certificates. `CheckAll.lean` imports this file.
 
 Plain statements. Each is: there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime

@@ -227,10 +227,6 @@ import SieveKeptB
 import SieveDrop2
 import SieveMain2
 import Linnik225R
-import SieveTypeIIU22475C
-import SieveGrid22475R
-import SieveCert22475R
-import Linnik22475R
 import LinnikCGLSteps
 import SieveTypeIIU22325D
 import SieveGrid22325R
@@ -839,13 +835,6 @@ import Linnik22325R
 #print axioms SieveMain2.linnik_route_lt2
 #print axioms Linnik225R.linnik_225r_of
 #print axioms Linnik225R.linnik_225r
-#print axioms SieveTypeIIU22475C.window_22475c
-#print axioms SieveTypeIIU22475C.typeII_22475c
-#print axioms SieveCert.gridOK22475R
-#print axioms SieveCert.total2_lt_22475R
-#print axioms Linnik22475R.fits22475R
-#print axioms Linnik22475R.linnik_22475r_of
-#print axioms Linnik22475R.linnik_22475r
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_s109
 #print axioms LinnikCGLSteps.charDensity_inT
