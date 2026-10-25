@@ -70,7 +70,6 @@ import SieveWeight
 import SieveTypeII
 import SieveRoute
 import SieveCert
-import SieveCert229
 import SieveRough
 import SieveSep
 import SieveFamily
@@ -96,62 +95,21 @@ import SieveQ
 import SieveDrop
 import SieveMain
 import LinnikCGL
-import LinnikIngham73
 import LinnikHuxStep
 import SieveTypeIIGen
-import SieveTypeII73
-import Linnik229
 import LinnikInghamC
-import LinnikStairs
 import SieveCurveGlue
-import SieveTypeIIU232
-import SieveCert232
-import Linnik232
 import LinnikWeyl
 import LinnikHuxStepY
 import LinnikStairs7
 import SieveTypeIIU227
-import SieveCert227
-import Linnik227
-import SieveTypeIIU226
-import SieveGrid226
-import SieveCert226P1
-import SieveCert226P2
-import SieveCert226P3
-import SieveCert226P4
-import SieveCert226P5
-import SieveCert226
-import Linnik226
 import SieveHMBin
 import SieveHMBins
 import SieveHMWindow
 import SieveTypeIIHM
-import SieveTypeIIU230
-import SieveCert230
-import Linnik230
 import SieveTypeIIU226C
-import Linnik226C
-import SieveTypeIIU229
-import SieveGrid229U
-import SieveCert229UP1
-import SieveCert229UP2
-import SieveCert229UP3
-import SieveCert229UP4
-import SieveCert229UP5
-import SieveCert229U
-import Linnik229U
-import SieveCertCols
-import SieveTypeIIU225C
-import SieveGrid225C
-import SieveCert225C
-import Linnik225C
-import SieveTypeIIU2285
-import SieveGrid2285U
-import SieveCert2285U
-import Linnik2285U
 import LinnikCGLLV
 import LinnikCGLStep
-import LinnikCGLLinnik
 import LinnikCGLMat
 import LinnikCGLS23
 import LinnikCGLMellin
@@ -213,11 +171,8 @@ import LinnikCGLHBRefl
 import LinnikCGLHBIter
 import LinnikCGLHB101
 import LinnikCGLDensity
-import LinnikCGLLegacy
 import SieveCert2Defs
-import SieveGrid225R
 import SieveCert2
-import SieveCert225R
 import SieveRoughLo
 import SieveExact
 import SieveKept
@@ -226,7 +181,6 @@ import SieveKeptLeaf
 import SieveKeptB
 import SieveDrop2
 import SieveMain2
-import Linnik225R
 import LinnikCGLSteps
 import LinnikHuxJunction
 import SieveTypeIIU22322D
@@ -530,9 +484,6 @@ import LinnikWeylBridge
 #print axioms SieveMain.linnik_route_lt
 #print axioms SieveMain.fits2333
 #print axioms SieveMain.linnik_2333
-#print axioms LinnikIngham73.bound_class2_73
-#print axioms LinnikIngham73.count_middle73
-#print axioms LinnikIngham73.charDensity_ingham73
 #print axioms LinnikHuxStep.class1_gen
 #print axioms LinnikHuxStep.count_gen
 #print axioms LinnikHuxStep.charDensity_gen
@@ -542,29 +493,7 @@ import LinnikWeylBridge
 #print axioms SieveTypeIIGen.bin_bound_gen
 #print axioms SieveTypeIIGen.prod_MB_le_gen
 #print axioms SieveTypeIIGen.typeII_gen
-#print axioms SieveTypeII73.counts_73
-#print axioms SieveTypeII73.window_73
-#print axioms SieveTypeII73.typeII_73
-#print axioms SieveCert.gridOK229
-#print axioms SieveCert.total_le_229
-#print axioms Linnik229.routeOK229
-#print axioms Linnik229.typeII229
-#print axioms Linnik229.fits229
-#print axioms Linnik229.linnik_229
 #print axioms LinnikInghamC.charDensity_ingham_c
-#print axioms LinnikStairs.charDensity_in0
-#print axioms LinnikStairs.charDensity_hx0
-#print axioms LinnikStairs.charDensity_hx9
-#print axioms SieveTypeIIU232.counts_U
-#print axioms SieveTypeIIU232.window_U
-#print axioms SieveTypeIIU232.typeII_232
-#print axioms SieveCert.gridOK232
-#print axioms SieveCert.total_eq_rows
-#print axioms SieveCert.total_le_232
-#print axioms Linnik232.routeOK232
-#print axioms Linnik232.typeII232
-#print axioms Linnik232.fits232
-#print axioms Linnik232.linnik_232
 #print axioms LinnikWeyl.class2_empty
 #print axioms LinnikWeyl.class2_finset_empty
 #print axioms LinnikWeyl.class2_card_eq_zero
@@ -578,21 +507,6 @@ import LinnikWeylBridge
 #print axioms SieveTypeIIU227.counts_7
 #print axioms SieveTypeIIU227.window_7
 #print axioms SieveTypeIIU227.typeII_227
-#print axioms SieveCert.gridOK227
-#print axioms SieveCert.total_le_227
-#print axioms Linnik227.routeOK227
-#print axioms Linnik227.typeII227
-#print axioms Linnik227.fits227
-#print axioms Linnik227.linnik_227
-#print axioms SieveTypeIIU226.window_6
-#print axioms SieveTypeIIU226.typeII_226
-#print axioms SieveCert.gridOK226
-#print axioms SieveCert.total_eq_rows226
-#print axioms SieveCert.total_le_226
-#print axioms Linnik226.routeOK226
-#print axioms Linnik226.typeII226
-#print axioms Linnik226.fits226
-#print axioms Linnik226.linnik_226
 #print axioms SieveTypeIIHM.dp_eq_pv
 #print axioms SieveTypeIIHM.sum_bin_hm
 #print axioms SieveTypeIIHM.sum_typeII_bins_hm
@@ -604,52 +518,9 @@ import LinnikWeylBridge
 #print axioms SieveTypeIIHM.bin_bound_pt
 #print axioms SieveTypeIIHM.bin_bound_gen_hm
 #print axioms SieveTypeIIHM.typeII_gen_hm
-#print axioms SieveTypeIIU230.window_230
-#print axioms SieveTypeIIU230.typeII_230
-#print axioms SieveCert.gridOK230
-#print axioms SieveCert.total_le_230
-#print axioms Linnik230.routeOK230
-#print axioms Linnik230.typeII230
-#print axioms Linnik230.fits230
-#print axioms Linnik230.linnik_230
 #print axioms SieveTypeIIU226C.counts_7c
 #print axioms SieveTypeIIU226C.window_226c
 #print axioms SieveTypeIIU226C.typeII_226c
-#print axioms Linnik226C.typeII226c
-#print axioms Linnik226C.linnik_226c
-#print axioms SieveTypeIIU229.window_229
-#print axioms SieveTypeIIU229.typeII_229
-#print axioms SieveCert.gridOK229U
-#print axioms SieveCert.total_eq_rows229U
-#print axioms SieveCert.total_lt_229U
-#print axioms Linnik229U.routeOK229U
-#print axioms Linnik229U.typeII229U
-#print axioms Linnik229U.fits229U
-#print axioms Linnik229U.linnik_229U
-#print axioms SieveCert.rowsJ_eq
-#print axioms SieveCert.rows_eq_rowsJ
-#print axioms SieveCert.rowsJ_split
-#print axioms SieveCert.rows_split
-#print axioms SieveCert.total_eq_rows_full
-#print axioms SieveCert.rows_le_of_split
-#print axioms SieveCert.rowsJ_le_of_split
-#print axioms SieveCert.rows_le_of_rowsJ
-#print axioms SieveTypeIIU225C.window_225c
-#print axioms SieveTypeIIU225C.typeII_225c
-#print axioms SieveCert.gridOK225C
-#print axioms SieveCert.total_lt_225C
-#print axioms Linnik225C.routeOK225C
-#print axioms Linnik225C.typeII225c
-#print axioms Linnik225C.fits225C
-#print axioms Linnik225C.linnik_225c
-#print axioms SieveTypeIIU2285.window_2285
-#print axioms SieveTypeIIU2285.typeII_2285
-#print axioms SieveCert.gridOK2285U
-#print axioms SieveCert.total_lt_2285U
-#print axioms Linnik2285U.routeOK2285U
-#print axioms Linnik2285U.typeII2285U
-#print axioms Linnik2285U.fits2285U
-#print axioms Linnik2285U.linnik_2285U
 #print axioms LinnikCGLLV.lv_range
 #print axioms LinnikCGLLV.cgl_all
 #print axioms LinnikCGLLV.taylor_pick
@@ -658,20 +529,13 @@ import LinnikWeylBridge
 #print axioms LinnikCGLStep.class1_cgl
 #print axioms LinnikCGLStep.count_cgl
 #print axioms LinnikCGLStep.charDensity_cgl
-#print axioms LinnikCGLLinnik.counts_7c_lv
-#print axioms LinnikCGLLinnik.linnik_225c_lv
-#print axioms LinnikCGLLinnik.linnik_226c_lv
 #print axioms LinnikCGLMat.refined_moment_points
 #print axioms LinnikCGLMat.prop46
 #print axioms LinnikCGLMat.mvt_case
 #print axioms LinnikCGLMat.alg112
 #print axioms LinnikCGLMat.prop31_of_third
-#print axioms LinnikCGLMat.linnik_225c_third
-#print axioms LinnikCGLMat.linnik_226c_third
 #print axioms LinnikCGLS23.X3_eq
 #print axioms LinnikCGLS23.third_of_s23
-#print axioms LinnikCGLS23.linnik_225c_s23
-#print axioms LinnikCGLS23.linnik_226c_s23
 #print axioms LinnikCGLMellin.exists_H_bound
 #print axioms LinnikCGLMellin.differentiable_H
 #print axioms LinnikCGLMellin.perron_Wt
@@ -695,8 +559,6 @@ import LinnikWeylBridge
 #print axioms LinnikCGLS2.Bmax_le
 #print axioms LinnikCGLS2.s2_main
 #print axioms LinnikCGLS2.cgls2
-#print axioms LinnikCGLS2.linnik_225c_s3
-#print axioms LinnikCGLS2.linnik_226c_s3
 #print axioms LinnikCGLFourier.hasDerivAt_F
 #print axioms LinnikCGLFourier.fourier_F
 #print axioms LinnikCGLFourier.lemma43
@@ -774,8 +636,6 @@ import LinnikWeylBridge
 #print axioms LinnikCGLEps.prop102
 #print axioms LinnikCGLS3.cgls3
 #print axioms LinnikCGLS3.prop31_pt
-#print axioms LinnikCGLS3.linnik_225c_pt
-#print axioms LinnikCGLS3.linnik_226c_pt
 #print axioms LinnikCGLG.Jint_le_ga
 #print axioms LinnikCGLG.integral_sq_ga
 #print axioms LinnikCGLG.fourier_ga
@@ -804,8 +664,6 @@ import LinnikWeylBridge
 #print axioms LinnikCGLFtilP.integral_ftil_sq_le
 #print axioms LinnikCGLFtilP.Lam_le
 #print axioms LinnikCGLP81.cglp81
-#print axioms LinnikCGLP81.linnik_225c_t101
-#print axioms LinnikCGLP81.linnik_226c_t101
 #print axioms LinnikCGLHBPos.dsum_le
 #print axioms LinnikCGLHBPos.shat_sq_le
 #print axioms LinnikCGLHBLen.cqU_mul_sig_le
@@ -820,14 +678,8 @@ import LinnikWeylBridge
 #print axioms LinnikCGLHB101.cgls3
 #print axioms LinnikCGLHB101.prop31
 #print axioms LinnikCGLHB101.char_density
-#print axioms LinnikCGLHB101.linnik_225
-#print axioms LinnikCGLHB101.linnik_226
 #print axioms LinnikCGLDensity.cglDensity
-#print axioms LinnikCGLDensity.linnik_225c
-#print axioms LinnikCGLDensity.linnik_226c
-#print axioms SieveCert.gridOK225R
 #print axioms SieveCert.cost2_ge
-#print axioms SieveCert.total2_lt_225R
 #print axioms SieveRoughLo.evGe_cell_inv
 #print axioms SieveExact.T0_spec
 #print axioms SieveBuch.Par.Kp2_le
@@ -837,8 +689,6 @@ import LinnikWeylBridge
 #print axioms SieveKeptB.Kk_gB_ge
 #print axioms SieveDrop2.drop_ev2
 #print axioms SieveMain2.linnik_route_lt2
-#print axioms Linnik225R.linnik_225r_of
-#print axioms Linnik225R.linnik_225r
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_s106
 #print axioms LinnikHuxJunction.charDensity_hj0
