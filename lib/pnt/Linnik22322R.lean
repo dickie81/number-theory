@@ -11,7 +11,7 @@ estimate `SieveTypeIIU22322D.typeII_22322d`), on its grid with `n = 300` (`Sieve
 total is less than `K` (`SieveCert.total2_lt_22322R`), with `SieveMain2.linnik_route_lt2`. The curve `g7d` uses
 Chen–Gupta–Li's Proposition 3.1 on `[5/7, 1307/1680]` (`LinnikCGLSteps`) and Huxley's bound on `[1307/1680, 131/168]`
 (`LinnikHuxJunction`); the theorem is the route of the paper's first
-version (`L = 899 / 400`, `Linnik22475R`, no longer in the tree: commit `6df0ebd`) with that curve and the window and
+version (at an earlier exponent; it is in the git history) with that curve and the window and
 certificate of `L = 11161 / 5000`.
 
 * `route22322D`, `routeOK22322D`: `L = 11161 / 5000` on `[40981/100000, 47725/100000]`; `2 < L ≤ 5/2` and `0 < w₁ < w₂ < 1`.

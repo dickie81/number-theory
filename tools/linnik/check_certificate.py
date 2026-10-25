@@ -5,15 +5,14 @@ One certificate is checked (with no argument, or named by its tag):
 
 * `22322R`: `SieveCert.total2_lt_22322R` (L = 11161/5000, the window [40981/100000, 47725/100000], n = 300, the curve `g7d`).
 
-The `22475R` certificate (L = 899/400, the window [41335/100000, 48069/100000], the curve `g7c`) is no longer in the tree;
-its files are at commit 6df0ebd. `gen_22475r.py` with no options still generates it.
+Earlier certificates, at weaker exponents, are no longer in the tree; see the git history.
 
 Each is generated in two steps:
 
 1. `mirror2.py W1 W2 300 CELLS.json` evaluates the refined certificate's definitions (SieveCert2Defs.lean) cell by cell
    in exact integers, cross-checks the totals against `route_limits.replay` and `refine_k2_probe.replay2`, and writes
    each cell's cost and kernel work (about two minutes);
-2. `gen_22475r.py CELLS.json OUTDIR [--tag ...]` cuts the certificate into parts and writes the Lean files.
+2. `gen_cert.py CELLS.json OUTDIR [--tag ...]` cuts the certificate into parts and writes the Lean files.
 
 This script runs both in a temporary directory and compares SieveGrid<tag>.lean, every SieveCert<tag>P<k>.lean and
 SieveCert<tag>.lean with the files in lib/pnt. A file that differs, or a part file that exists on one side only,
@@ -29,7 +28,7 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 
-# tag: (W1, W2, n, extra arguments of gen_22475r.py)
+# tag: (W1, W2, n, extra arguments of gen_cert.py)
 CERTS = {
     '22322R': (40981, 47725, 300, ['--tag', '22322R', '--L', '11161/5000', '--curve', 'g7d',
                                    '--typeii', 'SieveTypeIIU22322D.typeII_22322d']),
@@ -45,7 +44,7 @@ def check(tag):
     with tempfile.TemporaryDirectory() as tmp:
         cells, out = os.path.join(tmp, 'cells.json'), os.path.join(tmp, 'out')
         for args in ([os.path.join(HERE, 'mirror2.py'), str(w1), str(w2), str(n), cells],
-                     [os.path.join(HERE, 'gen_22475r.py'), cells, out, *extra]):
+                     [os.path.join(HERE, 'gen_cert.py'), cells, out, *extra]):
             r = subprocess.run([sys.executable, *args], capture_output=True, text=True)
             print(r.stdout.rstrip())
             if r.returncode:

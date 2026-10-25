@@ -33,6 +33,19 @@ not read the release's proofs in full.
 
 Nothing in this library claims the half-plane, or the route to it, as its own.
 
+### What independent checking exists
+
+The release's catalogue `lean/formalization.yaml` (version `v0.4`, read on 2026-10-25) lists the main preprint under
+"Catalog of papers with a formalized main result", with the theorem
+`OAI.DirichletCharacter.LFunction_ne_zero_of_seven_eighths_lt_re` (`lean/OAI/NumberTheory/DirichletL/Nonvanishing.lean`).
+Its statement is for every `q ≠ 0`, every `χ : DirichletCharacter ℂ q` and every `s` with `7/8 < s.re` and
+`¬(χ = 1 ∧ s = 1)`, with Mathlib's `LFunction`, so it implies the statement above at `11/12`. The same catalogue gives its
+scope as "Partial progress", its automation as `agent` and its review status as `unchecked`: it is OpenAI's own record,
+not an independent one. Beyond the rebuild above, nothing here confirms that the release's Lean is correct, and this
+library's proof was not compared with it. The only check by a third party that the author has seen reported (the
+AIProofWatch record, reviewed 2026-10-25) covers the Riemann zeta function at `7/8` only. For Dirichlet L-functions in
+general, no check independent of OpenAI and of this library is known.
+
 ## What the formalisation here is
 
 The library derives the half-plane on its own toolchain (Lean v4.35.0-rc3, Mathlib `0f64d30a`), following the
@@ -79,5 +92,5 @@ Louvel's quadratic large sieve. The classical tools, among them cubic and sextic
 The Type II estimate of the sieve route (`SieveRoute.TypeIIAt`) holds over all non-principal characters mod `q`. It
 needs every character's prime sums to be small, not only most of them. Its proof sorts the characters into bins by the
 real parts of their zeros. At the top bin, `SieveTypeII.bin_rect` uses the half-plane: no zero of `L(·, χ)` lies in
-`Re s > 11/12`. The paper's exponent (`899/400` when this note was written, `11161/5000` in the library's `Linnik22322R`) therefore depends on this result. The paper states the dependence, and
+`Re s > 11/12`. The paper's exponent (`11161/5000`, in the library's `Linnik22322R`) therefore depends on this result. The paper states the dependence, and
 compares what its method gives with what the half-plane and the density estimate give without it.

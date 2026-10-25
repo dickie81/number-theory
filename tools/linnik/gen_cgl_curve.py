@@ -3,7 +3,7 @@
 
 `g7d` is `g7c` (`lib/pnt/SieveTypeIIU226C.lean`) with Chen-Gupta-Li's Proposition 3.1 used at every point of
 `[5/7, 1307/1680]`, and Huxley's bound on `[1307/1680, 131/168]` (below), instead of the flat `7/3 + 1/2000` and Huxley's steps there, and with Ingham's last step
-`[99/140, 5/7]` at `ε = 1/400000` (the exponent `7/3 + 1/100000`) instead of `ε = 1/8000` (`7/3 + 1/2000`). On each
+`[99/140, 5/7]` at `ε = 1/400000` (exponent `7/3 + 4ε = 7/3 + 1/100000`) instead of `ε = 1/8000` (`7/3 + 4ε = 7/3 + 1/2000`). On each
 step `[lo, hi]` of width `1/1680` (`STEP`; `g7c`'s pieces are cut into steps from their left ends) the library's step
 (`LinnikCGLStep.charDensity_cglGen`, with `ParC` parameters `M = 1556`, `a`, `λ`, `A_i`, `A`, `e = 1/100000`) gives the
 exponent `A(1 - σ)`. The parameters of a step are the ones that minimise the six exponents of `ParC.Good.hc` at the
@@ -539,8 +539,8 @@ the {nh} steps of `LinnikHuxJunction.lean` (Huxley's bound, exponent `A(1 − σ
 step's left end) on `[1307/1680, 131/168]`, in place of `7/3 + 1/2000` on `[5/7, 16/21]` and Huxley's steps
 `hx7_0` … `hx7_4`: Huxley's exponent is the smaller from `7/9` on. From `131/168` on it is `g7c` (Huxley's steps
 `hx7_5` … `hx7_19`, then `(101/50)(1 − σ)` from `5/6`, `LinnikStep.charDensity_step`); below `5/7` it is `g7c` with
-Ingham's last step at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`, `7/3 + 1/100000` in place of `7/3 + 1/2000`).
-Its counts need no hypothesis. The window and the Type II estimate are as in `SieveTypeIIU22475C.lean` (no longer in the tree: commit `6df0ebd`): every piece of
+Ingham's last step at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`: the exponent is `7/3 + 4ε = 7/3 + 1/100000` in place of `7/3 + 1/2000`).
+Its counts need no hypothesis. The window and the Type II estimate are as in the earlier Type II estimate for the window at `L = 899/400` (in the git history): every piece of
 `WindowOKHM` below `5/6` holds by orthogonality at its corners (the tactic `corners`), the top piece `[5/6, 11/12]` by
 `windowPieceHM_const_split` (`cornersHMD`).
 
@@ -645,7 +645,7 @@ estimate `SieveTypeIIU{tag}D.typeII_{tag}d`), on its grid with `n = {N}` (`Sieve
 total is less than `K` (`SieveCert.total2_lt_{tag}R`), with `SieveMain2.linnik_route_lt2`. The curve `g7d` uses
 Chen–Gupta–Li's Proposition 3.1 on `[5/7, 1307/1680]` (`LinnikCGLSteps`) and Huxley's bound on `[1307/1680, 131/168]`
 (`LinnikHuxJunction`); the theorem is the route of the paper's first
-version (`L = 899 / 400`, `Linnik22475R`, no longer in the tree: commit `6df0ebd`) with that curve and the window and
+version (at an earlier exponent; it is in the git history) with that curve and the window and
 certificate of `L = {LN}`.
 
 * `route{tag}D`, `routeOK{tag}D`: `L = {LN}` on `[{W1}/100000, {W2}/100000]`; `2 < L ≤ 5/2` and `0 < w₁ < w₂ < 1`.
