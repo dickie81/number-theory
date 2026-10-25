@@ -1,12 +1,11 @@
 /-
-# The refined certificate at `L = 89/40` with `n = 360`, parts 3351–3366 of 5796
+# The refined certificate at `L = 89/40` with `n = 340`, parts 3834–3845 of 4715
 
-File 294 of 465: the parts `rows22250R_3351` … `rows22250R_3366` of `SieveCert22250R.lean`'s certificate on
-`SieveGrid22250R.grid22250R` (16 parts, 98785 tests: row 110 columns 50–51, row 110 columns 52–54, row 110 columns
-55–59, row 110 columns 60–68, row 110 columns 69–74, row 110 columns 75–78, row 110 columns 79–81, row 110 columns
-82–83, row 110 columns 84–84, row 110 columns 85–85, row 110 columns 86–86, row 110 columns 87–87, row 110 columns
-88–88, row 110 columns 89–89, row 110 columns 90–90, row 110 columns 91–91), each a sum of refined costs (`rows2` or
-`rowsJ2`) at most its bound, by `decide +kernel`, one at a time (`Elab.async false`).
+File 294 of 351: the parts `rows22250R_3834` … `rows22250R_3845` of `SieveCert22250R.lean`'s certificate on
+`SieveGrid22250R.grid22250R` (12 parts, 95688 tests: row 144 columns 53–53, row 144 columns 54–54, row 144 columns
+55–55, row 144 columns 56–56, row 144 columns 57–57, row 144 columns 58–58, row 144 columns 59–59, row 144 columns
+60–60, row 144 columns 61–61, row 144 columns 62–62, row 144 columns 63–63, row 144 columns 64–64), each a sum of
+refined costs (`rows2` or `rowsJ2`) at most its bound, by `decide +kernel`, one at a time (`Elab.async false`).
 
 The file imports `SieveGrid22250R.lean`.
 -/
@@ -22,41 +21,33 @@ section
 
 attribute [local instance] grid22250R
 
-theorem rows22250R_3351 : rowsJ2 110 111 50 52 ≤ 3377169769317 := by decide +kernel
+theorem rows22250R_3834 : rowsJ2 144 145 53 54 ≤ 6643524855734 := by decide +kernel
 
-theorem rows22250R_3352 : rowsJ2 110 111 52 55 ≤ 1900214416304 := by decide +kernel
+theorem rows22250R_3835 : rowsJ2 144 145 54 55 ≤ 7552272316916 := by decide +kernel
 
-theorem rows22250R_3353 : rowsJ2 110 111 55 60 ≤ 76552313406 := by decide +kernel
+theorem rows22250R_3836 : rowsJ2 144 145 55 56 ≤ 8505990922786 := by decide +kernel
 
-theorem rows22250R_3354 : rowsJ2 110 111 60 69 ≤ 0 := by decide +kernel
+theorem rows22250R_3837 : rowsJ2 144 145 56 57 ≤ 9503010428213 := by decide +kernel
 
-theorem rows22250R_3355 : rowsJ2 110 111 69 75 ≤ 0 := by decide +kernel
+theorem rows22250R_3838 : rowsJ2 144 145 57 58 ≤ 10541802801509 := by decide +kernel
 
-theorem rows22250R_3356 : rowsJ2 110 111 75 79 ≤ 0 := by decide +kernel
+theorem rows22250R_3839 : rowsJ2 144 145 58 59 ≤ 11620975110541 := by decide +kernel
 
-theorem rows22250R_3357 : rowsJ2 110 111 79 82 ≤ 191998075614 := by decide +kernel
+theorem rows22250R_3840 : rowsJ2 144 145 59 60 ≤ 12739263070413 := by decide +kernel
 
-theorem rows22250R_3358 : rowsJ2 110 111 82 84 ≤ 796182592147 := by decide +kernel
+theorem rows22250R_3841 : rowsJ2 144 145 60 61 ≤ 13875314405176 := by decide +kernel
 
-theorem rows22250R_3359 : rowsJ2 110 111 84 85 ≤ 754190214563 := by decide +kernel
+theorem rows22250R_3842 : rowsJ2 144 145 61 62 ≤ 12503420990225 := by decide +kernel
 
-theorem rows22250R_3360 : rowsJ2 110 111 85 86 ≤ 1056033076762 := by decide +kernel
+theorem rows22250R_3843 : rowsJ2 144 145 62 63 ≤ 11194643042755 := by decide +kernel
 
-theorem rows22250R_3361 : rowsJ2 110 111 86 87 ≤ 958747475331 := by decide +kernel
+theorem rows22250R_3844 : rowsJ2 144 145 63 64 ≤ 9966963367197 := by decide +kernel
 
-theorem rows22250R_3362 : rowsJ2 110 111 87 88 ≤ 859325096103 := by decide +kernel
-
-theorem rows22250R_3363 : rowsJ2 110 111 88 89 ≤ 804968403948 := by decide +kernel
-
-theorem rows22250R_3364 : rowsJ2 110 111 89 90 ≤ 816958955436 := by decide +kernel
-
-theorem rows22250R_3365 : rowsJ2 110 111 90 91 ≤ 874114706062 := by decide +kernel
-
-theorem rows22250R_3366 : rowsJ2 110 111 91 92 ≤ 999519934543 := by decide +kernel
+theorem rows22250R_3845 : rowsJ2 144 145 64 65 ≤ 8818307070923 := by decide +kernel
 
 end
 
 end SieveCert
 
-#print axioms SieveCert.rows22250R_3351
-#print axioms SieveCert.rows22250R_3366
+#print axioms SieveCert.rows22250R_3834
+#print axioms SieveCert.rows22250R_3845

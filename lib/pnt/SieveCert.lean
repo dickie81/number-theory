@@ -4,7 +4,7 @@
 Plain statements (`total_div_le`). The loss certificate of the sieve route, with the crude bound for Buchstab's `ω`, is computed here in natural
 numbers on a grid of cells (`Grid`: the window's ends and the number `n` of cells a side). Each cell's bound is computed from
 its corners, rounding up twice (the value of `ω`, then the bound), and is a multiple of `2^{−60}`. The library's certificate is on `grid22250R`, the grid of the curve `g7d` at `L = 89/40`
-on the window `[41479/100000, 47555/100000]` with `n = 360` (`SieveGrid22250R.lean`), and is the refined one of
+on the window `[41479/100000, 47555/100000]` with `n = 340` (`SieveGrid22250R.lean`), and is the refined one of
 `SieveCert2Defs.lean`; the kernel checks it by `decide +kernel` (`SieveCert22250R.lean`).
 
 * The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. The window's ends are `U1 < U2` (for `grid22250R`,
