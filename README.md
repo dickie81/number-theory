@@ -49,7 +49,7 @@ builds the same thing where memory allows. The two produce the same build, so ei
 If Mathlib's cache does not have the pinned commit, `lake build` builds Mathlib as well, which takes several hours.
 
 **Memory.** A module that imports Mathlib maps Mathlib's files into memory, and that mapping is shared between
-compiles. The default build also has 430 certificate parts (`lib/pnt/SieveCert22310RP<k>.lean`). Of Mathlib the parts import only
+compiles. The default build also has 143 certificate parts (`lib/pnt/SieveCert22322RP<k>.lean`). Of Mathlib the parts import only
 `Mathlib.Data.Nat.Notation`, but each one can use about 5 GiB of private memory while the kernel checks it. Earlier
 certificates (for the weaker exponents `899/400`, `9/4`, `226/100` and others) and the stepping-stone modules only they used are
 no longer in the tree; they are in the git history. Lake runs about as many
