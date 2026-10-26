@@ -50,7 +50,7 @@ If Mathlib's cache does not have the pinned commit, `lake build` builds Mathlib 
 
 **Memory.** A module that imports Mathlib maps Mathlib's files into memory, and that mapping is shared between
 compiles. The default build also has 351 certificate part files (`lib/pnt/SieveCert22250RP<k>.lean`, 4715 parts). Of Mathlib the parts import only
-`Mathlib.Data.Nat.Notation`, but each one can use about 5 GiB of private memory while the kernel checks it (a part file that holds a part of over 17,000 units of work, 13 of the 351, can use 7 to 10 GiB, is marked `-- exclusive-heavy`, and `scripts/lean-slots.sh` runs it with no other certificate part). Earlier
+`Mathlib.Data.Nat.Notation`, but each one can use up to about 2.5 GiB of private memory while the kernel checks it (measured on a sample of parts; before the faster evaluator of `surelyEval` and `sumTo` it was about 5 GiB, and up to 10 GiB for the 13 of the 351 part files that hold a part of over 17,000 units of work; those are still marked `-- exclusive-heavy`, and `scripts/lean-slots.sh` runs them with no other certificate part, which is now more cautious than needed). Earlier
 certificates (for the weaker exponents `899/400`, `9/4`, `226/100` and others) and the stepping-stone modules only they used are
 no longer in the tree; they are in the git history. Lake runs about as many
 compiles at once as there are cores, so a plain `lake build` on a machine with less than about 5 GiB of memory per

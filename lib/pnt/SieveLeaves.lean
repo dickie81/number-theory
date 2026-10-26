@@ -62,7 +62,7 @@ theorem subsetSums_ofFn {k : ℕ} (f : Fin k → ℕ × ℕ) :
 /-- A box surely evaluable has a set of primes whose sums over the box stay inside `U`. -/
 theorem exists_inside [SieveCert.Grid] {k : ℕ} (f : Fin k → ℕ × ℕ) (h : surelyEval (List.ofFn f) = true) :
     ∃ T : Finset (Fin k), inside (∑ t ∈ T, (f t).1) (∑ t ∈ T, (f t).2) = true := by
-  simp only [surelyEval, List.any_eq_true] at h
+  simp only [SieveCert.surelyEval_eq, SieveCert.surelyEvalSpec, List.any_eq_true] at h
   obtain ⟨s, hs, hin⟩ := h
   obtain ⟨T, rfl⟩ := subsetSums_ofFn f s hs
   exact ⟨T, hin⟩
