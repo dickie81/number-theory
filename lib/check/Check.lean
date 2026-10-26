@@ -1,29 +1,29 @@
 /- The axioms of the papers' theorems, the repository's default build target. Every line this file prints must be
 `[propext, Classical.choice, Quot.sound]` or a subset of them (`scripts/check_axioms.py`). -/
-import Linnik22310R
+import Linnik22322R
 import LinnikHuxJunction
 
 /- The Linnik paper: its theorem with the density curve `g7d` (Chen–Gupta–Li's Proposition 3.1 on `[5/7, 1307/1680]`,
-`LinnikCGLSteps`, and Huxley's bound on `[1307/1680, 131/168]`, `LinnikHuxJunction`) at `L = 2231/1000`, with no hypothesis, the sieve route, its certificate and the Type II
+`LinnikCGLSteps`, and Huxley's bound on `[1307/1680, 131/168]`, `LinnikHuxJunction`) at `L = 11161/5000`, with no hypothesis, the sieve route, its certificate and the Type II
 estimate on its window. Earlier theorems, at weaker exponents and with their own certificates, are no longer in the tree: see the git
 history. -/
-#print axioms Linnik22310R.linnik_22310r
+#print axioms Linnik22322R.linnik_22322r
 #print axioms SieveMain2.linnik_route_lt2
-#print axioms SieveCert.total2_lt_22310R
-#print axioms SieveTypeIIU22310D.typeII_22310d
+#print axioms SieveCert.total2_lt_22322R
+#print axioms SieveTypeIIU22322D.typeII_22322d
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_inT
 #print axioms LinnikCGLHB101.prop31
 #print axioms LinnikCGLSteps.charDensity_s106
 #print axioms LinnikHuxJunction.charDensity_hj0
 #print axioms LinnikHuxJunction.charDensity_hj2
-#print axioms SieveTypeIIU22310D.counts_7d
-#print axioms SieveTypeIIU22310D.window_22310d
+#print axioms SieveTypeIIU22322D.counts_7d
+#print axioms SieveTypeIIU22322D.window_22322d
 
 /- Two results of the literature that it uses (`formalisations/`): the zero-free half-plane `Re s > 11/12` for
 every Dirichlet L-function, from OpenAI's release (`formalisations/openai-half-plane.md`), printed here, and
 Chen–Gupta–Li's density estimate, whose steps and Proposition 3.1 are printed above (`cglDensity`, the same estimate on
-`[5/7, 16/21]`, is not used by `Linnik22310R` and is printed by `CheckAll`). -/
+`[5/7, 16/21]`, is not used by `Linnik22322R` and is printed by `CheckAll`). -/
 #print axioms Eis.LFunction_ne_zero_of_re_gt
 
 /- The other theorems of the Linnik paper's claims table (`papers/linnik-exponent/main.tex`, Section 7): its own steps

@@ -3,13 +3,13 @@
 
 One certificate is checked (with no argument, or named by its tag):
 
-* `22310R`: `SieveCert.total2_lt_22310R` (L = 2231/1000, the window [41046/100000, 47698/100000], n = 400, the curve `g7d`).
+* `22322R`: `SieveCert.total2_lt_22322R` (L = 11161/5000, the window [40981/100000, 47725/100000], n = 300, the curve `g7d`).
 
 Earlier certificates, at weaker exponents, are no longer in the tree; see the git history.
 
 Each is generated in two steps:
 
-1. `mirror2.py W1 W2 400 CELLS.json` evaluates the refined certificate's definitions (SieveCert2Defs.lean) cell by cell
+1. `mirror2.py W1 W2 300 CELLS.json` evaluates the refined certificate's definitions (SieveCert2Defs.lean) cell by cell
    in exact integers, cross-checks the totals against `route_limits.replay` and `refine_k2_probe.replay2`, and writes
    each cell's cost and kernel work (about two minutes);
 2. `gen_cert.py CELLS.json OUTDIR [--tag ...]` cuts the certificate into parts and writes the Lean files.
@@ -30,8 +30,8 @@ PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 
 # tag: (W1, W2, n, extra arguments of gen_cert.py)
 CERTS = {
-    '22310R': (41046, 47698, 400, ['--tag', '22310R', '--L', '2231/1000', '--curve', 'g7d',
-                                   '--typeii', 'SieveTypeIIU22310D.typeII_22310d']),
+    '22322R': (40981, 47725, 300, ['--tag', '22322R', '--L', '11161/5000', '--curve', 'g7d',
+                                   '--typeii', 'SieveTypeIIU22322D.typeII_22322d']),
 }
 
 
