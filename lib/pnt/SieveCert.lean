@@ -59,7 +59,9 @@ theorem foldl_add_eq (f : ℕ → ℕ) (m a : ℕ) :
 
 omit [Grid] in
 theorem sumTo_eq (m : ℕ) (f : ℕ → ℕ) : sumTo m f = ∑ i ∈ Finset.range m, f i := by
-  simp [sumTo, foldl_add_eq]
+  induction m with
+  | zero => rfl
+  | succ m ih => rw [Finset.sum_range_succ, ← ih]; rfl
 
 /-- The total is the double sum of the costs. -/
 theorem total_eq : total = ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, cost i j := by
@@ -172,10 +174,44 @@ theorem subsetSums_sound {xs : List (ℕ × ℕ)} {αs : List ℝ} (h : List.For
       · simp only [List.sum_cons]; push_cast; nlinarith [hp.1]
       · simp only [List.sum_cons]; push_cast; nlinarith [hp.2]
 
+omit [GridOK] in
+theorem insideF_eq (lo hi : ℕ) : insideF lo hi = inside lo hi := by
+  simp only [insideF, inside]
+  rw [Bool.eq_iff_iff]
+  simp [Nat.blt_eq]
+
+omit [GridOK] in
+theorem anySub_eq (xs : List (ℕ × ℕ)) : ∀ a b : ℕ,
+    anySub xs a b = (subsetSums xs).any (fun s => inside (a + s.1) (b + s.2)) := by
+  induction xs with
+  | nil => intro a b; simp [anySub, insideF_eq, subsetSums]
+  | cons p rest ih =>
+    intro a b
+    simp only [anySub, ih, subsetSums, List.any_append, List.any_map, Function.comp_def]
+    congr 2
+    funext s
+    simp only [Nat.add_assoc, Nat.add_left_comm s.1 p.1, Nat.add_left_comm s.2 p.2]
+    simp [Nat.add_comm p.1, Nat.add_comm p.2, Nat.add_assoc, Nat.add_left_comm]
+
+omit [GridOK] in
+/-- `surelyEval` (the unrolled search) is `surelyEvalSpec` (the list of all subset sums). -/
+theorem surelyEval_eq (xs : List (ℕ × ℕ)) : surelyEval xs = surelyEvalSpec xs := by
+  have key : ∀ xs : List (ℕ × ℕ), anySub xs 0 0 = surelyEvalSpec xs := fun xs => by
+    simp [surelyEvalSpec, anySub_eq]
+  match xs with
+  | [] => rw [← key]; rfl
+  | [p] => rw [← key]; rfl
+  | [p, q] => rw [← key]; rfl
+  | [p, q, r] => rw [← key]; rfl
+  | [p, q, r, s] => rw [← key]; rfl
+  | [p, q, r, s, t] => rw [← key]; rfl
+  | [p, q, r, s, t, u] => rw [← key]; rfl
+  | _ :: _ :: _ :: _ :: _ :: _ :: _ :: _ => simp [surelyEval]
+
 /-- On a grid with `GridOK`, if `surelyEval` holds on a box, every point of the box is evaluable. -/
 theorem eval_of_surelyEval {xs : List (ℕ × ℕ)} {αs : List ℝ} (h : List.Forall₂ InRange xs αs)
     (hs : surelyEval xs = true) : Eval αs := by
-  simp only [surelyEval, List.any_eq_true] at hs
+  simp only [surelyEval_eq, surelyEvalSpec, List.any_eq_true] at hs
   obtain ⟨s, hs, hin⟩ := hs
   obtain ⟨l, hl, h1, h2⟩ := subsetSums_sound h s hs
   refine ⟨l, hl, ?_⟩

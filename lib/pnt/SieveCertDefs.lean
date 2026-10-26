@@ -45,8 +45,9 @@ def subsetSums : List (ℕ × ℕ) → List (ℕ × ℕ)
 /-- Division rounded up. -/
 def cdiv (a b : ℕ) : ℕ := (a + b - 1) / b
 
-/-- `f 0 + ⋯ + f (m − 1)`. -/
-def sumTo (m : ℕ) (f : ℕ → ℕ) : ℕ := (List.range m).foldl (fun s i => s + f i) 0
+/-- `f 0 + ⋯ + f (m − 1)`, by the recursor of `ℕ`, which the kernel evaluates faster than a list's fold
+(`SieveCert.sumTo_eq`). -/
+def sumTo (m : ℕ) (f : ℕ → ℕ) : ℕ := Nat.rec (motive := fun _ => ℕ) 0 (fun k acc => acc + f k) m
 
 variable [Grid]
 
@@ -63,8 +64,64 @@ def lim : ℕ := DEN - U1
 def inside (lo hi : ℕ) : Bool :=
   (decide (U1 < lo) && decide (hi < U2)) || (decide (DEN - U2 < lo) && decide (hi < DEN - U1))
 
-/-- Some subset sum of the box lies inside `U` on the whole box. -/
-def surelyEval (xs : List (ℕ × ℕ)) : Bool := (subsetSums xs).any (fun s => inside s.1 s.2)
+/-- Some subset sum of the box lies inside `U`, by the list of all of them (the specification of `surelyEval`). -/
+def surelyEvalSpec (xs : List (ℕ × ℕ)) : Bool := (subsetSums xs).any (fun s => inside s.1 s.2)
+
+/-- `inside` by the kernel's primitive `Nat.blt` (`SieveCert.insideF_eq`). -/
+def insideF (lo hi : ℕ) : Bool :=
+  (Nat.blt U1 lo && Nat.blt hi U2) || (Nat.blt (DEN - U2) lo && Nat.blt hi (DEN - U1))
+
+/-- Some subset of the boxes `xs`, added to the range `[a, b]`, has its sum inside `U`: a search with no list of sums
+(`SieveCert.anySub_eq`). -/
+def anySub : List (ℕ × ℕ) → ℕ → ℕ → Bool
+  | [], a, b => insideF a b
+  | p :: rest, a, b => anySub rest a b || anySub rest (a + p.1) (b + p.2)
+
+/-! The search of `anySub` unrolled for `k ≤ 6` boxes, `sub k`: the same tree of `||`, with `Nat.add` and no recursion,
+which the kernel evaluates several times faster than the recursion; `SieveCert.surelyEval_eq` proves `surelyEval` equal to
+`surelyEvalSpec`. -/
+
+/-- The search on no box. -/
+def sub0 (a b : ℕ) : Bool := insideF a b
+/-- The search on one box. -/
+def sub1 (p : ℕ × ℕ) (a b : ℕ) : Bool := sub0 a b || sub0 (Nat.add a p.1) (Nat.add b p.2)
+/-- The search on two boxes. -/
+def sub2' (p q : ℕ × ℕ) (a b : ℕ) : Bool := sub1 q a b || sub1 q (Nat.add a p.1) (Nat.add b p.2)
+/-- The search on three boxes. -/
+def sub3 (p q r : ℕ × ℕ) (a b : ℕ) : Bool := sub2' q r a b || sub2' q r (Nat.add a p.1) (Nat.add b p.2)
+/-- The search on four boxes. -/
+def sub4 (p q r s : ℕ × ℕ) (a b : ℕ) : Bool := sub3 q r s a b || sub3 q r s (Nat.add a p.1) (Nat.add b p.2)
+/-- The search on five boxes. -/
+def sub5 (p q r s t : ℕ × ℕ) (a b : ℕ) : Bool :=
+  sub4 q r s t a b || sub4 q r s t (Nat.add a p.1) (Nat.add b p.2)
+/-- The search on six boxes. -/
+def sub6 (p q r s t u : ℕ × ℕ) (a b : ℕ) : Bool :=
+  sub5 q r s t u a b || sub5 q r s t u (Nat.add a p.1) (Nat.add b p.2)
+
+/-- Some subset sum of the box lies inside `U` on the whole box: `surelyEvalSpec` by the unrolled search, for up to six
+boxes (`SieveCert.surelyEval_eq`). -/
+def surelyEval (xs : List (ℕ × ℕ)) : Bool :=
+  match xs with
+  | [] => sub0 0 0
+  | p :: xs1 =>
+    match xs1 with
+    | [] => sub1 p 0 0
+    | q :: xs2 =>
+      match xs2 with
+      | [] => sub2' p q 0 0
+      | r :: xs3 =>
+        match xs3 with
+        | [] => sub3 p q r 0 0
+        | s :: xs4 =>
+          match xs4 with
+          | [] => sub4 p q r s 0 0
+          | t :: xs5 =>
+            match xs5 with
+            | [] => sub5 p q r s t 0 0
+            | u :: xs6 =>
+              match xs6 with
+              | [] => sub6 p q r s t u 0 0
+              | _ :: _ => surelyEvalSpec xs
 
 /-- `K/max(lo, 1)` rounded up, with `lo = (DEN − s − t − mH)/(t + H)`. -/
 def invK (s t m : ℕ) : ℕ :=
