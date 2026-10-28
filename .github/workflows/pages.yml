@@ -1,7 +1,8 @@
 name: Publish the papers
 
-# On every push to main that changes a paper, compile every papers/<name>/main.tex and publish the PDFs, with an
-# index page, to GitHub Pages (https://dickie81.github.io/number-theory/). Pull requests are checked by ci.yml.
+# On every push to main that changes a paper, compile every papers/<name>/main.tex, then every supplement
+# papers/<name>/supplement.tex (which reads its paper's main.aux), and publish the PDFs, with an index page, to GitHub
+# Pages (https://dickie81.github.io/number-theory/). Pull requests are checked by ci.yml.
 
 on:
   push:
@@ -31,6 +32,12 @@ jobs:
         uses: xu-cheng/latex-action@v4
         with:
           root_file: papers/*/main.tex
+          work_in_root_file_dir: true
+
+      - name: Compile the supplements
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: papers/*/supplement.tex
           work_in_root_file_dir: true
 
       - name: Build the site

@@ -14,4 +14,5 @@ __pycache__/
 *.fls
 *.fdb_latexmk
 /papers/*/main.pdf
+/papers/*/supplement.pdf
 /_site/

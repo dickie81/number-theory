@@ -79,7 +79,8 @@ close to the limit of a 16 GB machine: a compile killed with exit code 137 has r
 `.github/workflows/ci.yml` runs on pull requests and on pushes to `main`:
 
 - **Checks:** `check_hygiene.py`, `gen_lakefile.py --check`, `check_vendor.py` and `check_certificate.py`.
-- **The papers:** every `papers/<name>/main.tex` is compiled with LaTeX, and the PDFs are kept as an artifact.
+- **The papers:** every `papers/<name>/main.tex`, and then every supplement `papers/<name>/supplement.tex`, is compiled
+  with LaTeX, and the PDFs are kept as an artifact.
 - **The Lean build**, with a cache. On a pull request it runs only if the pull request changes `lib/`, the Lake
   files, `lean-toolchain`, the build scripts or the workflow; on pushes to `main` it always runs. Mathlib's prebuilt
   files come from Mathlib's own cache (`lake exe cache get`).
@@ -92,9 +93,10 @@ The job **CI passed** summarises the others: it passes when each passed or was s
 was cancelled. It is the check that `main`'s branch protection requires, so a pull request merges only when CI is
 green or skipped throughout. A new job must be added to its `needs`.
 
-`.github/workflows/pages.yml` runs on every push to `main` that changes `papers/`. It compiles every paper and
-publishes the PDFs, with an index page built by `scripts/build_site.py`, to GitHub Pages:
-<https://dickie81.github.io/number-theory/>. The Linnik paper is `linnik-exponent.pdf` there.
+`.github/workflows/pages.yml` runs on every push to `main` that changes `papers/`. It compiles every paper and its
+supplement, and publishes the PDFs, with an index page built by `scripts/build_site.py`, to GitHub Pages:
+<https://dickie81.github.io/number-theory/>. The Linnik paper is `linnik-exponent.pdf` there, and its supplement
+`linnik-exponent-supplement.pdf`.
 
 ## License
 

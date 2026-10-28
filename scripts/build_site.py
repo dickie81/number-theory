@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Build the papers' web site in `_site/`: each compiled paper as `<name>.pdf` and an index page linking them.
+"""Build the papers' web site in `_site/`: each compiled paper as `<name>.pdf`, its supplement, if it has one, as
+`<name>-supplement.pdf`, and an index page linking them.
 
 Usage: build_site.py [OUT]   (default `_site`)
 
-Run after compiling every `papers/<name>/main.tex`, as `.github/workflows/pages.yml` does. A paper without a
-`main.pdf` is an error, so a failed compile cannot publish a site that silently lacks it.
+Run after compiling every `papers/<name>/main.tex` and `papers/<name>/supplement.tex`, as `.github/workflows/pages.yml`
+does. A paper without a `main.pdf`, or with a `supplement.tex` but no `supplement.pdf`, is an error, so a failed compile
+cannot publish a site that silently lacks it.
 """
 import html
 import os
@@ -40,15 +42,22 @@ def main():
         if not os.path.isfile(pdf):
             print(f"build_site: {name}/main.pdf is missing; compile the papers first", file=sys.stderr)
             return 1
-        papers.append((name, title_of(open(tex, encoding="utf-8").read()) or name, pdf))
+        supp = None
+        if os.path.isfile(os.path.join(papers_dir, name, "supplement.tex")):
+            supp = os.path.join(papers_dir, name, "supplement.pdf")
+            if not os.path.isfile(supp):
+                print(f"build_site: {name}/supplement.pdf is missing; compile the supplements first", file=sys.stderr)
+                return 1
+        papers.append((name, title_of(open(tex, encoding="utf-8").read()) or name, pdf, supp))
     os.makedirs(out, exist_ok=True)
     items = []
-    for name, title, pdf in papers:
+    for name, title, pdf, supp in papers:
         shutil.copyfile(pdf, os.path.join(out, f"{name}.pdf"))
-        items.append(
-            f'    <li><a href="{name}.pdf">{html.escape(title)}</a>'
-            f' (<a href="{REPO}/tree/main/papers/{name}">source</a>)</li>'
-        )
+        links = f'<a href="{REPO}/tree/main/papers/{name}">source</a>'
+        if supp:
+            shutil.copyfile(supp, os.path.join(out, f"{name}-supplement.pdf"))
+            links = f'<a href="{name}-supplement.pdf">supplement</a>, ' + links
+        items.append(f'    <li><a href="{name}.pdf">{html.escape(title)}</a> ({links})</li>')
     page = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
