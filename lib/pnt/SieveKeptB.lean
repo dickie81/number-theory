@@ -656,7 +656,8 @@ theorem Kk_gB_ge {i j k : ℕ} (hr : reg2 i j = true) (hkeep : keep i j k = true
     refine (SieveCert.keepK_le hkeep).trans (le_of_eq ?_)
     rw [hκdef, hγ]
     have := hepos i; have := hepos j; have := hepos k
-    field_simp <;> norm_num
+    field_simp
+    norm_num
   -- the margins `ε` and `d`
   obtain ⟨ε, hεdef⟩ : ∃ ε : ℝ, ε = min (1 / 2) (δ / (4 * (κ + 1))) := ⟨_, rfl⟩
   have hε0 : 0 < ε := by rw [hεdef]; exact lt_min (by norm_num) (by positivity)

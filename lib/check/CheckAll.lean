@@ -468,6 +468,8 @@ import LinnikWeylBridge
 #print axioms SieveLeaf.leaf_A
 #print axioms SieveLeaf.leaf_B
 #print axioms SieveLeaf.leaf_gap
+#print axioms SieveLeaf.prod_T_le
+#print axioms SieveLeaf.prod_primesBelow_le
 #print axioms SieveTree.tree_sum
 #print axioms SieveDyadic.sum_bump
 #print axioms SieveTypeIIU.typeII_unw
@@ -702,7 +704,7 @@ import LinnikWeylBridge
 #print axioms SieveDrop2.drop_ev2
 #print axioms SieveMain2.linnik_route_lt2
 #print axioms LinnikCGLSteps.charDensity_s0
-#print axioms LinnikCGLSteps.charDensity_s109
+#print axioms LinnikCGLSteps.charDensity_s29
 #print axioms LinnikCGLSteps.charDensity_inT
 #print axioms SieveTypeIIU22240D.counts_7d
 #print axioms SieveTypeIIU22240D.window_22240d

@@ -4,23 +4,25 @@
 `g7d` is `g7c` (`lib/pnt/SieveTypeIIU226C.lean`) with Chen-Gupta-Li's Proposition 3.1 used at every point of
 `[5/7, 131/168]`, instead of the flat `7/3 + 1/2000` and Huxley's steps there, and with Ingham's last step
 `[99/140, 5/7]` at `ε = 1/400000` (exponent `7/3 + 4ε = 7/3 + 1/100000`) instead of `ε = 1/8000` (`7/3 + 4ε = 7/3 + 1/2000`). On each
-step `[lo, hi]` of width `1/1680` (`STEP`; `g7c`'s pieces are cut into steps from their left ends) the library's step
-(`LinnikCGLStep.charDensity_cglGen`, with `ParC` parameters `M = 1556`, `a`, `λ`, `A_i`, `A`, `e = 1/100000`) gives the
-exponent `A(1 - σ)`. The parameters of a step are the ones that minimise the six exponents of `ParC.Good.hc` at the
+step `[lo, hi]` (the first fourteen of width `1/1680` from `5/7`, the other sixteen of width `1/280`, to `131/168`:
+`NARROW`, `STEP`, `WIDE`) the library's step (`LinnikCGLStep.charDensity_cglGen`, with `ParC` parameters `M = 1556`,
+`a`, `λ`, `A_i`, `A`, `e = 1/100000`) gives the exponent `A(1 - σ)`. The parameters of a step are the ones that minimise the six exponents of `ParC.Good.hc` at the
 step's two ends over `(a, λ)` (a convex problem, solved in floating point, rounded up to multiples of `10⁻⁵`, then
 checked in exact rationals), `A_i` the least multiple of `10⁻⁵` that satisfies them, and `A = A_i + 10⁻⁵`. Every
 condition of `ParC.Good` is checked here in exact rationals (`check_good`) before a file is written. From `131/168` on,
 `g7d` is `g7c` (Huxley's steps `hx7_5` ... `hx7_19`, then `(101/50)(1 - σ)` from `5/6`): there Huxley's exponent is
-smaller than the step's. Huxley's exponent `3/(3σ - 1)` is already below `4/(1 + σ)` from `7/9` on: on the three steps
-of `[1307/1680, 131/168]` his exponent at a step's left end, plus the slack `1/2000` of his steps, is below the step's
-exponent by at most `5·10⁻³`. That does not change the window, so those steps are Chen-Gupta-Li's too (from 11161/5000
-to 89/40 they were Huxley's, in a file `LinnikHuxJunction.lean`, in the git history).
+smaller than the step's. Huxley's exponent `3/(3σ - 1)` is already below `4/(1 + σ)` from `7/9` on, inside the last
+step `[163/210, 131/168]`; using it there does not change the window, so the whole step is Chen-Gupta-Li's (from
+11161/5000 to 89/40 the steps of `[1307/1680, 131/168]` were Huxley's, in a file `LinnikHuxJunction.lean`, in the git
+history).
 
-The steps are narrow because both ends of the window are set where a step's exponent most exceeds the curve it bounds,
-on the first step `[5/7, 1201/1680]`, at its right end: its exponent `2.3334` is the curve's largest, `7/3` at `5/7`,
-where Ingham's last step and the first Chen-Gupta-Li step meet. Ingham's theorem (`LinnikInghamC.charDensity_ingham_c`)
-takes any `ε > 0`, so its slack there is cut to `10⁻⁵`. (With steps of `1/280`, at larger `L`, the lower end was set at the
-step containing `7/9`, where `4/(1 + σ)` meets Huxley's `3/(3σ − 1)`; that constraint binds only above `L = 107/48`.)
+The first steps are narrow because both ends of the window are set where a step's exponent most exceeds the curve it
+bounds, on the first step `[5/7, 1201/1680]`, at its right end: its exponent `2.3334` is the curve's largest, `7/3` at
+`5/7`, where Ingham's last step and the first Chen-Gupta-Li step meet. The corners' slack grows along `[5/7, 131/168]`:
+from `5/7 + 14/1680` on, steps of `1/280` leave the window as it is (steps of `1/140` do not). Ingham's theorem
+(`LinnikInghamC.charDensity_ingham_c`) takes any `ε > 0`, so its slack there is cut to `10⁻⁵`. (With steps of `1/280`
+from `5/7`, at larger `L`, the lower end was set at the step containing `7/9`, where `4/(1 + σ)` meets Huxley's
+`3/(3σ − 1)`; that constraint binds only above `L = 107/48`.)
 
 Writes `lib/pnt/LinnikCGLSteps.lean` (the Chen-Gupta-Li steps, and Ingham's last step `charDensity_inT`),
 `lib/pnt/SieveTypeIIU22240D.lean` (`g7d`, `g7d_le_one`, `g7d_le_lin`, its counts, its window and Proposition 3′) and
@@ -46,6 +48,8 @@ M = 1556
 L = Fr(278, 125)
 TAG, LNUM, LDEN = '22240', 278, 125
 STEP = Fr(1, 1680)
+# the steps of `[5/7, 131/168]`: `NARROW` of width `STEP` from `5/7`, then steps of width `WIDE`
+NARROW, WIDE = 14, Fr(1, 280)
 # Ingham's last step, at ε = 1/400000: the exponent 2 + 4c + 4ε with c = 1/12
 INGHAM_T = (Fr(99, 140), Fr(5, 7), Fr(7, 3) + Fr(1, 100000))
 N = 340
@@ -131,30 +135,37 @@ def raw_pieces():
     return out
 
 
+def step_ends():
+    """The ends of the steps of `[5/7, 131/168]`: `NARROW` steps of width `STEP` from `5/7`, then steps of width `WIDE`
+    up to `131/168`."""
+    xs = [Fr(5, 7) + k * STEP for k in range(NARROW + 1)]
+    while xs[-1] < Fr(131, 168):
+        xs.append(xs[-1] + WIDE)
+    assert xs[-1] == Fr(131, 168)
+    return xs
+
+
 def steps(base):
     """The pieces of `g7d` from the pieces of `g7c`, and the parameters of the new steps."""
     assert len(base) == 43 and base[0][2] is None and base[21][:2] == (Fr(5, 7), Fr(16, 21))
+    # `g7c`'s pieces on `[5/7, 131/168]`, which the steps replace
+    old = [(lo, hi, A) for lo, hi, A in base[21:42] if hi <= Fr(131, 168)]
+    assert old[0][0] == Fr(5, 7) and old[-1][1] == Fr(131, 168)
     new, params = [], {}
-    for lo, hi, Aold in base[21:42]:
-        if hi > Fr(131, 168):
-            break
-        xs = [lo]
-        k = 1
-        while lo + k * STEP < hi:
-            xs.append(lo + k * STEP)
-            k += 1
-        xs.append(hi)
-        for a_, b_ in zip(xs, xs[1:]):
-            a0, l0 = best(float(a_), float(b_))
-            a = ceilq(Fr(a0), 100000)
-            lam = max(ceilq(Fr(l0), 100000), ceilq(Fr(3, 2) * (a + E), 100000))
-            Ai = ceilq(need_exact(a_, b_, a, lam), 100000)
-            A = Ai + Fr(1, 100000)
-            p = dict(M=M, lo=a_, hi=b_, a=a, lam=lam, Ai=Ai, A=A, e=E, kind='cgl')
-            check_good(p)
-            assert A < Aold, (a_, b_, float(A), float(Aold))
-            new.append((a_, b_, A))
-            params[(a_, b_)] = p
+    xs = step_ends()
+    for a_, b_ in zip(xs, xs[1:]):
+        a0, l0 = best(float(a_), float(b_))
+        a = ceilq(Fr(a0), 100000)
+        lam = max(ceilq(Fr(l0), 100000), ceilq(Fr(3, 2) * (a + E), 100000))
+        Ai = ceilq(need_exact(a_, b_, a, lam), 100000)
+        A = Ai + Fr(1, 100000)
+        p = dict(M=M, lo=a_, hi=b_, a=a, lam=lam, Ai=Ai, A=A, e=E, kind='cgl')
+        check_good(p)
+        # below every piece of `g7c` that the step meets
+        Aold = min(Ao for lo, hi, Ao in old if lo < b_ and a_ < hi)
+        assert A < Aold, (a_, b_, float(A), float(Aold))
+        new.append((a_, b_, A))
+        params[(a_, b_)] = p
     # g7c's pieces: 0 trivial, 1..20 Ingham steps in7_0..19, 21 the plateau, 22..41 Huxley steps hx7_0..19, 42 top
     raw = raw_pieces()
     assert len(raw) == 42
@@ -212,7 +223,8 @@ def steps_file(new, params):
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). Generated by
 `tools/linnik/gen_cgl_curve.py`; do not edit by hand.
 
-Plain statement (`charDensity_s0` … `charDensity_s{n - 1}`). For each step `[lo, hi]` of the table below there is `C ≥ 0`
+Plain statement (`charDensity_s0` … `charDensity_s{n - 1}`). The steps are `[5/7 + k/1680, 5/7 + (k + 1)/1680]` for
+`k < {NARROW}`, and then steps of width `{lit(WIDE)}` up to `131/168`. For each step `[lo, hi]` of the table below there is `C ≥ 0`
 such that for every `q ≥ 1`, `lo ≤ σ ≤ hi` and `T ≥ 2` at most `C(qT)^{{A(1−σ)}}(log qT)^{{10}}` characters mod `q` have a
 zero of `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`. There is no hypothesis: `LinnikCGLHB101.prop31` proves Chen–Gupta–Li's
 Proposition 3.1.
@@ -448,7 +460,7 @@ open Complex Real Finset
 
 noncomputable section
 
-/- The curve has one `if` per piece, about 150 of them, and its glue and window proofs nest as deeply; the default
+/- The curve has one `if` per piece, {len(pcs) + 1} of them, and its glue and window proofs nest as deeply; the default
 recursion depth is not enough to elaborate them. -/
 set_option maxRecDepth 10000
 
