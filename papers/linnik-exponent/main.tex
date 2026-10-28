@@ -571,16 +571,16 @@ and $\mu \in \{\mu_1, 1, \mu_2\}$, $16$ on each piece below $5/6$, and $24$ on t
 $E_3$ for $\mu \le 1$.
 \end{proof}
 
-The window has little room. At each end the tightest corner is on the first step of $[5/7, 131/168)$, whose exponent
-is $2.3334$, at $\beta = 1201/1680$ and $\varpi = 4 \cdot 10^{-6}$: it holds with a slack of about $5.3 \cdot 10^{-6}$
-below $L - 1/25000$ at $\mu = u_1 L$, and of about $1.54 \cdot 10^{-5}$ at $\mu = u_2 L$. All the corners are exact
-rational inequalities, so there is no numerical tolerance. With $u_1$ and $u_2$ fixed, they hold for $L$ down to
-$222399/100000$, and the tightest fails at $222398/100000$; raising the first step's exponent by about $4 \cdot 10^{-5}$
-moves the lower end out. Since the Type~II estimate on this window and the certificate of
+The window has little room. At each end the tightest corner is on the first step of $[5/7, 131/168]$, whose exponent
+is $2.3334$, at $\beta = 1201/1680$ and $\varpi = 4 \cdot 10^{-6}$: it holds with a slack (below $L - 1/25000$) of
+about $5.3 \cdot 10^{-6}$ at $\mu = u_1 L$, and of about $1.54 \cdot 10^{-5}$ at $\mu = u_2 L$. All the corners are
+exact rational inequalities, so there is no numerical tolerance. With $u_1$ and $u_2$ fixed, they hold exactly for
+$L \ge 2.2239858\ldots$, so at $222399/100000$ but not at $222398/100000$; raising the first step's exponent by
+about $4 \cdot 10^{-5}$ moves the lower end out. Since the Type~II estimate on this window and the certificate of
 Section~\ref{sec:certificate} on its grid do not depend on $L$ otherwise (Theorem~\ref{thm:route} also needs
-$2 < L \le 5/2$ and $L U_2 > D$, which still hold), the window has a slack of about
-$10^{-5}$ in the exponent. On every other step the slack is larger; on the steps near $7/9$ it is at least
-$7 \cdot 10^{-4}$.
+$2 < L \le 5/2$ and $L U_2 > D$, with $U_2$ and $D$ as in Section~\ref{sec:certificate}, which still hold), the
+window leaves about $1.4 \cdot 10^{-5}$ of room in the exponent. On every other step the slack is larger: on the
+last step, $[163/210, 131/168]$, which contains $7/9$, it is $3.3 \cdot 10^{-4}$.
 
 \begin{proof}[Proof of Theorem~\ref{thm:type2}]
 By Proposition~\ref{prop:curve}, $g_7$ is a density curve under the two inputs, with $g_7 \le 1$ and $g_7(1/2) = 1$.
@@ -1567,7 +1567,7 @@ finds a window admissible at $L$, checked at the corners in exact rationals, eva
 $340$ cells a side, and lowers $L$ in steps of $10^{-3}$ while the total stays below $0.999\mathcal K$, then tries
 one further step of $5 \cdot 10^{-4}$ (\file{tools/linnik/README.md} describes the search). For $\mu \ge 1$ the window condition on a piece $A(1 - \beta)$ requires $L - \mu > A/2$, where $g_7 = 1$
 counts as $A = 1/(1 - \beta)$, which tends to $7/3$ at $4/7$; so with the trivial count kept below $4/7$ and every
-exponent capped at $30/13$ the script reaches only $2.2230$. The other curves replace the trivial count on $[11/20, 4/7]$
+exponent capped at $30/13$ the script reaches only $2.2235$. The other curves replace the trivial count on $[11/20, 4/7]$
 by one step of Ingham's estimate, of exponent $3/(2 - 4/7) + 10^{-5}$, and set the slack of the steps on $[4/7, 5/7]$ to
 $10^{-5}$, both as \lean{LinnikInghamC.charDensity\_ingham\_c} allows (that change alone leaves $278/125$); with every
 exponent then capped at $A$ the script reaches:
@@ -1575,10 +1575,13 @@ exponent then capped at $A$ the script reaches:
 \begin{tabular}{lccccc}
 \toprule
 cap $A$ & $2.33$ & $2.325$ & $2.32$ & $2.315$ & $30/13 \approx 2.3077$ \\
-lowest $L$ & $2.2230$ & $2.2215$ & $2.2200$ & $2.2185$ & $2.2160$ \\
+lowest $L$ & $2.2235$ & $2.2220$ & $2.2205$ & $2.2190$ & $2.2170$ \\
 \bottomrule
 \end{tabular}
 \end{center}
+These figures are partly those of $g_7$'s steps: for the capped curves the window's lower end is set not at $5/7$ but on
+one of the steps of length $1/280$, whose exponent is taken at its left end (the first, $[607/840, 61/84]$, for the
+cap $2.33$, and the last, $[163/210, 131/168]$, for the cap $30/13$).
 With the same change and the exponent of each step inside $[7/10, 4/5]$ capped at Chen, Gupta and Li's bound at
 $q_1 = q$ without its first term \cite[Theorem~1.2]{cgl}, the term that gives $4/(1 + \sigma)$, taken at the step's
 left end plus $10^{-5}$, the script reaches $2.2090$; on $[7/10, 4/5]$ the largest of the exponents of the other three

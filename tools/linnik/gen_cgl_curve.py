@@ -460,8 +460,8 @@ open Complex Real Finset
 
 noncomputable section
 
-/- The curve has one `if` per piece, {len(pcs) + 1} of them, and its glue and window proofs nest as deeply; the default
-recursion depth is not enough to elaborate them. -/
+/- The curve has {len(pcs) + 1} pieces, with one `if` for each but the last, and its glue and window proofs nest as
+deeply; the default recursion depth is not enough to elaborate them. -/
 set_option maxRecDepth 10000
 
 namespace SieveTypeIIU{tag}D

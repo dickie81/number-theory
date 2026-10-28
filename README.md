@@ -17,7 +17,7 @@ arithmetic progression.
 | Path | Contents |
 |---|---|
 | `lib/core` | The library's modules that need only Mathlib: 349 files. |
-| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 550 files. |
+| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 587 files. |
 | `lib/dh` | The Davenport–Heilbronn function and its zeros: 53 files. |
 | `lib/zeta23` | The modules that also use `zeta23`: 11 files. |
 | `lib/vendor/pnt-plus`, `lib/vendor/zeta23` | Two upstream libraries, ported to this toolchain, each with its license and its port patch. See their READMEs. |
