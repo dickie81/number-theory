@@ -485,10 +485,11 @@ and $\max(E_2, E_3) \le L - 1/25000$ holds at the corners with $m \le 1$. Each c
 rational numbers, checked exactly.
 \end{proof}
 
-The window has little room. The tightest of the corner inequalities, at $m = u_1 L$ and $\beta = 1307/1680$, holds
-with a slack of about $2.7 \cdot 10^{-6}$ below $L - 1/25000$, and the slack of the tightest at $m = u_2 L$ is about
-$7.4 \cdot 10^{-6}$. All of them are exact rational inequalities, so there is no numerical tolerance, but a perturbation
-of the curve or of $L$ of that size would move an end of the window out.
+The window has little room. At each end the tightest of the corner inequalities is on the first step of
+$[5/7, 1307/1680)$, whose exponent is $2.3334$, at $\beta = 1201/1680$: it holds with a slack of about
+$1.16 \cdot 10^{-5}$ below $L - 1/25000$ at $m = u_1 L$, and of about $1.27 \cdot 10^{-5}$ at $m = u_2 L$. All of them
+are exact rational inequalities, so there is no numerical tolerance, but a perturbation of the curve or of $L$ of that
+size would move an end of the window out.
 
 \begin{proof}[Proof of Theorem~\ref{thm:type2}]
 By Proposition~\ref{prop:curve}, $g_7$ is a density curve under Input~\ref{inp:density}, with $g_7 \le 1$ and
@@ -1018,12 +1019,41 @@ in Lean) gives $0.99357K$ at $360$ cells a side. Going lower would
 need more of the dropped terms evaluated, a sharper bound for the rough numbers than $\omega^*$, or a better density
 exponent.
 
-On the last, one remark, which is an unverified heuristic and not a theorem. The curve $g_7$ is set by Chen, Gupta and
-Li's estimate on $[5/7, 1307/1680]$, and this paper uses no density estimate for all moduli that is better than theirs.
-A rough model of the method, made outside the library, whose code is not in the repository and which has not been
-checked, suggests that even a hypothetical saving in a term of their bound for prime moduli, as large as
-square-root cancellation, would lower the exponent only to a value a little below $2.22$. Nothing in the paper or the
-library depends on this.
+On the last, a computation, which is not a theorem. Chen, Gupta and Li note that the worst case for their estimate is
+$T = 1$ with no divisor $q_1$ of $q$ of a suitable size, as for prime $q$, that the critical situation is then at
+$\sigma = 5/7$, and that improving the term which dominates there would need a joint cancellation which ``seems quite
+difficult'' \cite[Remark~12.3]{cgl}. The script \file{tools/linnik/density_payoff.py} measures what lower curves would
+give the method. For a curve made from $g_7$, it computes a window admissible for the curve at $L$
+(Definition~\ref{def:window}), checked at the corners in exact rationals as in the proof of
+Proposition~\ref{prop:window}, and evaluates the certificate's total on it with \file{tools/linnik/mirror2.py} on $340$
+cells a side, in exact integers but not in Lean. Starting from $89/40$, it lowers $L$ by $1/1000$ while the total stays
+below $0.999K$, then tests once the value $1/2000$ below the last one passed, and reports the lowest $L$ passed. No
+theorem of the library gives these curves.
+
+Two places of $g_7$ decide the window. Both ends of the window at $89/40$ are set on the first step of
+$[5/7, 1307/1680)$, whose exponent is $2.3334$. And for $m \ge 1$ the window condition on a piece $A(1 - \beta)$
+requires $L - m > A/2$, where $g_7 = 1$ counts as $A = 1/(1 - \beta)$, which tends to $7/3$ at $4/7$; so the upper
+end stays below $L - 7/6$ however $g_7$ is lowered above $4/7$. With every exponent capped at $30/13$ and $g_7 = 1$
+kept below $4/7$, the script reaches only $2.2240$. The other curves therefore also replace the trivial count on
+$[11/20, 4/7]$ by one step of Ingham's estimate, of exponent $3/(2 - 4/7) + 10^{-5}$, and set the slack of the steps
+on $[4/7, 5/7]$ to $10^{-5}$, both as \lean{LinnikInghamC.charDensity\_ingham\_c} allows; that change alone leaves
+$89/40$. With every exponent then capped at $A$, the script reaches:
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+cap $A$ & $2.33$ & $2.325$ & $2.32$ & $2.315$ & $30/13 \approx 2.3077$ \\
+lowest $L$ & $2.2240$ & $2.2225$ & $2.2210$ & $2.2195$ & $2.2170$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+With the same change and the exponent of each step inside $[7/10, 4/5]$ capped at Chen, Gupta and Li's bound at
+$q_1 = q$ without its first term \cite[Theorem~1.2]{cgl}, the term that gives $4/(1 + \sigma)$, taken at the step's
+left end plus $10^{-5}$, the script reaches $2.2100$; on $[7/10, 4/5]$ the largest of the exponents of the other three
+terms is $15/(3 + 5\sigma)$, the exponent of Guth and Maynard's estimate for $\zeta$ \cite[Theorem~1.2]{guth-maynard}.
+Capping the exponent on $[15/19, 11/12]$ at $2 + 10^{-5}$, as Heath-Brown's estimate
+$\sum_{\chi \bmod q} N(\sigma, T, \chi) \ll (qT)^{2 - 2\sigma + \varepsilon}$ for $15/19 \le \sigma \le 1$ \cite{hb79}
+would allow, changes none of the figures for $g_7$, for the change below $4/7$ alone, for the cap at $30/13$ or for
+this last curve. Nothing in the paper or the library depends on these computations.
 
 \section*{Acknowledgements}
 
@@ -1044,6 +1074,9 @@ kernel and the repository's continuous integration, and not by the assistants.
 % same day. Still open: Buchstab's volume, issue and pages, seen in secondary sources only (the original on Math-Net.Ru was not reachable).
 % R. Li (arXiv:2308.04458v8, 16 October 2025) was read on 28 October 2026: Theorems 9 and 11 on p. 36, and the
 % paragraph before Theorem 8, which presents Theorems 8 to 11 as modifications of the calculation behind Theorem 1.
+% For the remark of Section 8, on 28 October 2026: Chen--Gupta--Li's Theorem 1.2 and Remark 12.3 were read in v2, and
+% Guth--Maynard's Theorem 1.2 in arXiv:2405.20552v2 (7 April 2026). Heath-Brown (1979) was checked against zbMATH (Zbl
+% 0393.10043, the author's abstract, which states the bound for 15/19 <= sigma <= 1); the paper itself was not read.
 \begin{thebibliography}{99}
 \bibitem{linnik44} U. V. Linnik, \emph{On the least prime in an arithmetic progression. I. The basic theorem},
   Rec. Math. [Mat. Sbornik] N.S. 15(57) (1944), 139--178.
@@ -1083,6 +1116,8 @@ kernel and the repository's continuous integration, and not by the assistants.
 \bibitem{huxley72} M. N. Huxley, \emph{On the difference between consecutive primes}, Invent. Math. 15 (1972),
   164--170.
 \bibitem{huxley75} M. N. Huxley, \emph{Large values of Dirichlet polynomials, III}, Acta Arith. 26 (1975), 435--444.
+\bibitem{hb79} D. R. Heath-Brown, \emph{Zero density estimates for the Riemann zeta-function and Dirichlet
+  $L$-functions}, J. London Math. Soc. (2) 19 (1979), 221--232.
 \bibitem{halasz} G. Hal\'asz, \emph{\"Uber die Mittelwerte multiplikativer zahlentheoretischer Funktionen}, Acta Math.
   Acad. Sci. Hungar. 19 (1968), 365--403.
 \bibitem{montgomery69} H. L. Montgomery, \emph{Mean and large values of Dirichlet polynomials}, Invent. Math. 8
