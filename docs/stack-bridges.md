@@ -47,7 +47,7 @@ density `InghamDensity.densityXi_17_6` goes through `Subconvexity.zetaCritBound_
 The library keeps `InghamDensity.short_primes_11_17` on the Korobov–Vinogradov region, and `DetectEM.short_primes`
 (`θ > 3/4`), whose closure contains the Korobov–Vinogradov region and not the half-plane, is unchanged.
 
-(Checked by walking the constants each declaration depends on, with a scratch Lean script outside the repository. This
+(Checked by walking the constants each declaration depends on, with a one-off Lean script outside the repository. This
 is not part of the library's checks.)
 
 ## `LinnikWeylBridge`: `PYWeyl` contains `WeylBound`

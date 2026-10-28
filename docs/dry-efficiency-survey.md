@@ -89,7 +89,7 @@ checked for equivalence), or save lines rather than time. Item 2 was the biggest
 
 See the PR description. In short: the seven density-chain modules, `LinnikCGLFrob`, `SieveTypeIIU22325D` and
 `WindowForm` were built with `lake build` on the pinned Mathlib; `Linnik22325R`, `Linnik225R`,
-`LinnikCGLLegacy` and `Check.lean` were elaborated against stand-in certificate modules (a scratch copy of each
+`LinnikCGLLegacy` and `Check.lean` were elaborated against stand-in certificate modules (a temporary copy of each
 certificate's assembly file whose final theorem is `sorry`, kept outside the repository), because the certificates
 cost hours; `check_hygiene.py`, `gen_lakefile.py --check`, `check_certificate.py` (both tags) and
 `gen_cgl_curve.py --check` pass. The full build and `check_axioms.py` are for CI.
