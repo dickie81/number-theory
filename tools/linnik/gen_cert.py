@@ -130,8 +130,8 @@ The grid of `{TYPEII}`'s window: `U1 = ⌈({W1}/{DW})DEN⌉`, `U2 = ⌊({W2}/{DW
 (`SieveCert{TAG}P1.lean` … `SieveCert{TAG}P{NF}.lean`, one `lean` process each): ranges of consecutive rows, and the
 {len(heavy)} heavy rows in column pieces (`SieveCert2Defs.rowsJ2`); assembled in `SieveCert{TAG}.lean`.
 
-The file imports `SieveCert2Defs.lean`, which imports `SieveCertDefs.lean` only, so neither it nor the part files load
-`Mathlib`.
+The file imports `SieveCert2Defs.lean`, which imports `SieveCertDefs.lean` only, which imports only
+`Mathlib.Data.Nat.Notation` from `Mathlib`; so neither it nor the part files load the rest of `Mathlib`.
 -/
 import SieveCert2Defs
 
@@ -159,7 +159,7 @@ for fi, g in enumerate(groups, 1):
     lem = '\n\n'.join(f'theorem rows{TAG}_{k} : {term(parts[k])} ≤ {B[k]} := by decide +kernel' for k in g)
     desc = ', '.join(f'rows {parts[k][1]}–{parts[k][2] - 1}' if parts[k][0] == 'rows' else
                      f'row {parts[k][1]} columns {parts[k][2]}–{parts[k][3] - 1}' for k in g)
-    desc = textwrap.fill(f'`SieveGrid{TAG}.grid{TAG}` ({len(g)} parts, {gt[fi - 1]} tests: {desc}), each a sum of refined '
+    desc = textwrap.fill(f'`SieveGrid{TAG}.grid{TAG}` ({len(g)} parts, work {gt[fi - 1]} in units of a depth-4 test: {desc}), each a sum of refined '
                          f'costs (`rows2` or `rowsJ2`) at most its bound, by `decide +kernel`, one at a time '
                          f'(`Elab.async false`).', width=116)
     excl = ('-- exclusive-heavy: a part of this file can use over 7 GiB; scripts/lean-slots.sh runs it alone among the parts\n'

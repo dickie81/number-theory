@@ -8,15 +8,15 @@ takes them. `xq q = q^L`, and `cornerP z` is the set of primes of `(⌊z/4⌋, z
 
 * `card_le_Psi`, `famI_gB_le`: a family's `B`-count is at most `φ(q)⁻¹ Σ_rt Ψ(x/∏rt, rt_last)`, since the `n = Wc ∈
   (x, 2x]` with no prime factor below `z` inject into `Ψ(x/W, z)`.
-* `drop2_le`, `drop4_le`: a dropped cell's `B`-count is at most `φ(q)⁻¹` times its sum over the primes of its cells
-  (`SieveRough.cellP`), `Σ Ψ(x/(p₁p₂), p₂)` or `Σ Ψ(x/(p₁p₂p₃p₄), p₄)`.
+* `drop2_le`, `drop4_le`, `drop6_le`: a dropped cell's `B`-count is at most `φ(q)⁻¹` times its sum over the primes of
+  its cells (`SieveRough.cellP`), `Σ Ψ(x/(p₁p₂), p₂)`, `Σ Ψ(x/(p₁p₂p₃p₄), p₄)` or the same at depth 6.
 * `corner_le`, `corner_ev`: for `(parQ q).Good` and `z_top² ≤ 4N₁`, a corner cell (not a candidate, not surely
   evaluable, `p₁`'s cell not inside the window) counts only the `n = p₁p₂`, both primes in `cornerP z_top`, so it is at
   most `φ(q)⁻¹|cornerP|²`; for `ε > 0` and large `q`, `z_top² ≤ 4N₁` and `n²|cornerP|² ≤ εx/log x` (`n` the grid's
   number of cells a side), by `cornerP_card_ev`.
 * `D1_le`, `dropS_le_cost`, `shares_ev`, `sum_cost_div`: the dropped cells' sums are at most their certificate costs
-  `cost/K` times `x/log x`, plus `δ′(1 + n²)x/log x` for `δ′ > 0` and large `x`, by `SieveRough.share2_of_cand` and
-  `share4_of_counted4` simultaneously for the finitely many cells, and the costs total at most `0.88` when the
+  `cost/K` times `x/log x`, plus `δ′(1 + n²)x/log x` for `δ′ > 0` and large `x`, by `SieveRough.share2_of_cand`,
+  `share4_of_counted4` and `share6_of_counted6` simultaneously for the finitely many cells, and the costs total at most `0.88` when the
   certificate's total is at most `0.88K` (`htot`, `SieveCert.total_div_le`).
 * `drop_ev`: given `htot`, for `ε > 0`, eventually `D1(g_B) ≤ φ(q)⁻¹(0.88 + ε)x/log x`.
 * `sum_cost_div_of`, `drop_ev_of`, `total_div_lt`: the same with the loss as a parameter, `total/K ≤ c` in
