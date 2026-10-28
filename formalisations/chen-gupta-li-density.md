@@ -159,19 +159,20 @@ the parameters and checks every field of `ParC.Good` in exact rationals). For `�
 
 From `7/9` on Huxley's exponent `3/(3σ − 1)` is below `4/(1 + σ)`. On the three steps `[1307/1680, 131/168]` his
 exponent at a step's left end, plus the slack `1/2000` of his steps, is below the step's exponent by at most `5·10⁻³`
-(pointwise, `3/(3σ − 1)` is below it by up to `8.4·10⁻³`, at `131/168`). At `89/40` that does not change the window,
-whose corners on these steps have a slack of at least `5.9·10⁻⁴`, so these steps are Chen–Gupta–Li's too (`2.24983`,
+(pointwise, `3/(3σ − 1)` is below it by up to `8.4·10⁻³`, at `131/168`). At `278/125` that does not change the window,
+whose corners on these steps have a slack of at least `7.3·10⁻⁴`, so these steps are Chen–Gupta–Li's too (`2.24983`,
 `2.24907`, `2.24833`). Between the exponents `11161/5000` and `89/40` the library took Huxley's bound there, in a file
 `LinnikHuxJunction.lean` (in the git history); at `11161/5000` the window's lower end was set near `7/9`.
 
-The curve is `g7d` (`SieveTypeIIU22250D.lean`): `g7c` with the Chen–Gupta–Li steps on `[5/7, 131/168]`, in place of the
+The curve is `g7d` (`SieveTypeIIU22240D.lean`): `g7c` with the Chen–Gupta–Li steps on `[5/7, 131/168]`, in place of the
 plateau and Huxley's steps `hx7_0` … `hx7_4`, and with Ingham's last step
 `[99/140, 5/7]` at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`: `LinnikInghamC.charDensity_ingham_c` has exponent `2 + 4c + 4ε`, so the slack is `4ε`, and the exponent is `7/3 + 1/100000` in place of `7/3 + 1/2000` at `ε = 1/8000`). Huxley's steps
 `hx7_5` … `hx7_19` stay, since their exponents are smaller than the Chen–Gupta–Li step's from `131/168` on. The steps are
 narrow because both ends of the window are set where a step's exponent most exceeds the curve it bounds, on the first
 step `[5/7, 1201/1680]`, at its right end; its exponent `2.3334` is the curve's largest, `7/3` at `5/7`, where Ingham's
-and Chen–Gupta–Li's exponents meet. `Linnik22250R.linnik_22250r` is Linnik's theorem with exponent `89/40` on `g7d`;
+and Chen–Gupta–Li's exponents meet. `Linnik22240R.linnik_22240r` is Linnik's theorem with exponent `278/125` on `g7d`;
 the classical deduction from the same curve gives `2.3334 + ε` (`LinnikG7.linnik_g7d`, with
-`SieveTypeIIU22250D.g7d_le_lin`: `g7d σ ≤ 2.3334(1 − σ)`).
-What lets the certificate close at `89/40` is the two deeper levels of the Buchstab decomposition and the kept parts
-(the Linnik paper, Section 5).
+`SieveTypeIIU22240D.g7d_le_lin`: `g7d σ ≤ 2.3334(1 − σ)`).
+What lets the certificate close at `278/125` is the two deeper levels of the Buchstab decomposition, the kept parts,
+and the cells' bounds, with Buchstab's `ω` itself on `[2, 3]` and the trapezoid rule for the cells' prime sums (the
+Linnik paper, Section 5).

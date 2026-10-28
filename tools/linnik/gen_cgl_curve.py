@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""gen_cgl_curve.py [--check]: the Lean files of the curve `g7d` and its theorem at `L = 89/40`.
+"""gen_cgl_curve.py [--check]: the Lean files of the curve `g7d` and its theorem at `L = 278/125`.
 
 `g7d` is `g7c` (`lib/pnt/SieveTypeIIU226C.lean`) with Chen-Gupta-Li's Proposition 3.1 used at every point of
 `[5/7, 131/168]`, instead of the flat `7/3 + 1/2000` and Huxley's steps there, and with Ingham's last step
@@ -11,9 +11,10 @@ step's two ends over `(a, λ)` (a convex problem, solved in floating point, roun
 checked in exact rationals), `A_i` the least multiple of `10⁻⁵` that satisfies them, and `A = A_i + 10⁻⁵`. Every
 condition of `ParC.Good` is checked here in exact rationals (`check_good`) before a file is written. From `131/168` on,
 `g7d` is `g7c` (Huxley's steps `hx7_5` ... `hx7_19`, then `(101/50)(1 - σ)` from `5/6`): there Huxley's exponent is
-smaller than the step's. Huxley's exponent `3/(3σ - 1)` is already below `4/(1 + σ)` from `7/9` on, by less than
-`6·10⁻³` on the three steps of `[1307/1680, 131/168]`; at `89/40` that does not change the window, so those steps are
-Chen-Gupta-Li's too (from 11161/5000 to 89/40 they were Huxley's, in a file `LinnikHuxJunction.lean`, in the git history).
+smaller than the step's. Huxley's exponent `3/(3σ - 1)` is already below `4/(1 + σ)` from `7/9` on: on the three steps
+of `[1307/1680, 131/168]` his exponent at a step's left end, plus the slack `1/2000` of his steps, is below the step's
+exponent by at most `5·10⁻³`. That does not change the window, so those steps are Chen-Gupta-Li's too (from 11161/5000
+to 89/40 they were Huxley's, in a file `LinnikHuxJunction.lean`, in the git history).
 
 The steps are narrow because both ends of the window are set where a step's exponent most exceeds the curve it bounds,
 on the first step `[5/7, 1201/1680]`, at its right end: its exponent `2.3334` is the curve's largest, `7/3` at `5/7`,
@@ -22,8 +23,8 @@ takes any `ε > 0`, so its slack there is cut to `10⁻⁵`. (With steps of `1/2
 step containing `7/9`, where `4/(1 + σ)` meets Huxley's `3/(3σ − 1)`; that constraint binds only above `L = 107/48`.)
 
 Writes `lib/pnt/LinnikCGLSteps.lean` (the Chen-Gupta-Li steps, and Ingham's last step `charDensity_inT`),
-`lib/pnt/SieveTypeIIU22250D.lean` (`g7d`, `g7d_le_one`, `g7d_le_lin`, its counts, its window and Proposition 3′) and
-`lib/pnt/Linnik22250R.lean` (the theorem). The window `[W1, W2]/100000` is the one
+`lib/pnt/SieveTypeIIU22240D.lean` (`g7d`, `g7d_le_one`, `g7d_le_lin`, its counts, its window and Proposition 3′) and
+`lib/pnt/Linnik22240R.lean` (the theorem). The window `[W1, W2]/100000` is the one
 `route_limits.py run` computes for `g7d` at `L` (the sampled scan, then the exact corners). With `--check`, nothing is
 written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a difference). With `--table`, the
 steps' parameters are printed.
@@ -42,8 +43,8 @@ import route_limits as rl  # noqa: E402
 PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 E = Fr(1, 100000)
 M = 1556
-L = Fr(89, 40)
-TAG, LNUM, LDEN = '22250', 89, 40
+L = Fr(278, 125)
+TAG, LNUM, LDEN = '22240', 278, 125
 STEP = Fr(1, 1680)
 # Ingham's last step, at ε = 1/400000: the exponent 2 + 4c + 4ε with c = 1/12
 INGHAM_T = (Fr(99, 140), Fr(5, 7), Fr(7, 3) + Fr(1, 100000))

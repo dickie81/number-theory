@@ -14,7 +14,7 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README.
 
 | Paper | Its theorem | Lean | State |
 |---|---|---|---|
-| [Linnik's exponent](linnik-exponent/README.md) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{89/40}` | `Linnik22250R.linnik_22250r` | A full draft: every section is written; the bibliography is checked except Buchstab (1937), which is unverified |
+| [Linnik's exponent](linnik-exponent/README.md) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{278/125}` | `Linnik22240R.linnik_22240r` | A full draft: every section is written; the bibliography is checked except Buchstab (1937), which is unverified |
 
 ## Building
 

@@ -182,10 +182,10 @@ import SieveKeptB
 import SieveDrop2
 import SieveMain2
 import LinnikCGLSteps
-import SieveTypeIIU22250D
-import SieveGrid22250R
-import SieveCert22250R
-import Linnik22250R
+import SieveTypeIIU22240D
+import SieveGrid22240R
+import SieveCert22240R
+import Linnik22240R
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
@@ -437,6 +437,22 @@ import LinnikWeylBridge
 #print axioms SieveRough.share4
 #print axioms SieveRough.share2_of_cand
 #print axioms SieveRough.share4_of_counted4
+#print axioms SieveOmegaB.log_le_half_sub_inv
+#print axioms SieveOmegaB.two_mul_div_le_log
+#print axioms SieveOmegaB.omB_le_w1
+#print axioms SieveOmegaB.omB_mono
+#print axioms SieveOmegaB.omB_anti
+#print axioms SieveOmegaB.lnT_ge
+#print axioms SieveOmegaB.omF_ge
+#print axioms SieveCert.omegaC_le_w
+#print axioms SieveCert.bound2_ge
+#print axioms SieveCert.bound4_ge
+#print axioms SieveCert.bound6_ge
+#print axioms SieveRough.super_M
+#print axioms SieveRough.evLe_cell_tr
+#print axioms SieveRough.evLe_cell_ex
+#print axioms SieveRoughLo.evGe_cell_tr
+#print axioms SieveCert.keepK_le
 #print axioms SieveSep.sum_sep
 #print axioms SieveSep.sep_bound
 #print axioms SieveFamily.family_bound
@@ -688,15 +704,15 @@ import LinnikWeylBridge
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_s109
 #print axioms LinnikCGLSteps.charDensity_inT
-#print axioms SieveTypeIIU22250D.counts_7d
-#print axioms SieveTypeIIU22250D.window_22250d
-#print axioms SieveTypeIIU22250D.typeII_22250d
-#print axioms SieveCert.gridOK22250R
-#print axioms SieveCert.gridOKC22250R
-#print axioms SieveCert.total2_lt_22250R
-#print axioms Linnik22250R.fits22250R
-#print axioms Linnik22250R.linnik_22250r
-#print axioms SieveTypeIIU22250D.g7d_le_lin
+#print axioms SieveTypeIIU22240D.counts_7d
+#print axioms SieveTypeIIU22240D.window_22240d
+#print axioms SieveTypeIIU22240D.typeII_22240d
+#print axioms SieveCert.gridOK22240R
+#print axioms SieveCert.gridOKC22240R
+#print axioms SieveCert.total2_lt_22240R
+#print axioms Linnik22240R.fits22240R
+#print axioms Linnik22240R.linnik_22240r
+#print axioms SieveTypeIIU22240D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d
 #print axioms LinnikDetect.LSeries_aXχ

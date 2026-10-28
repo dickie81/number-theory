@@ -1,16 +1,13 @@
 /-
 # The certificate's definitions, without Mathlib
 
-The definitions of the loss certificate of `SieveCert.lean`
- and of its class `GridOK`,
-and `rows` (from the earlier `SieveCert232.lean`, removed; see the git history), moved here from those files: verbatim, except that `rows` takes the
-section's `[Grid]` in place of its own binder and `GridOK`'s docstring is rewrapped and names `SieveCert.lean`. They are
-arithmetic on natural numbers, lists and booleans, and the file imports only `Mathlib.Data.Nat.Notation` (the notation
-`ℕ`), whose closure is `Mathlib.Init`'s: 1,339 modules, loaded in about 0.9 GiB, not the whole of Mathlib.
-So a file that imports no more than this one, such as a certificate's part files (`SieveCert22250RP1.lean` …
-`SieveCert22250RP351.lean`), runs its kernel checks without the environment of `import Mathlib`, which loads about 6.3 GiB
-into every process. The lemmas about these definitions, in the reals and over `Finset`, stay in `SieveCert.lean`, which
-imports this file and Mathlib.
+The definitions of the loss certificate of `SieveCert.lean`, of its bound `ω*` for Buchstab's `ω` on a box (`omKw`, with
+its table `lnT` and `omF`), and of its classes `GridOK` and `GridOKC`. They are arithmetic on natural numbers, lists and
+booleans, and the file imports only `Mathlib.Data.Nat.Notation` (the notation `ℕ`), whose closure is `Mathlib.Init`'s:
+1,339 modules, loaded in about 0.9 GiB, not the whole of Mathlib. So a file that imports no more than this one, such as a
+certificate's part files (`SieveCert22240RP1.lean` … `SieveCert22240RP387.lean`), runs its kernel checks without the
+environment of `import Mathlib`, which loads about 6.3 GiB into every process. The lemmas about these definitions, in the
+reals and over `Finset`, are in `SieveCert.lean` and `SieveOmegaB.lean`, which import this file and Mathlib.
 -/
 import Mathlib.Data.Nat.Notation
 
@@ -20,8 +17,9 @@ namespace SieveCert
 
 /-- The denominator of the coordinates. -/
 def DEN : ℕ := 2 ^ 40
-/-- **A grid of the certificate**: the window's ends `U1 < U2`, in units of `1/DEN`, and the number `n` of cells a
-side. -/
+/-- **A grid of the certificate**: the window's ends `U1 < U2`, in units of `1/DEN`, the number `n` of cells a side,
+and the cells' multiplier `μ`: a cell is `μ` consecutive cells of the grid of `μn` cells (`μ = 1` for a certificate's
+grid; its coarse grid `Gc` has `n/4` cells of four). -/
 class Grid where
   /-- The window's left end. -/
   U1 : ℕ
@@ -29,13 +27,18 @@ class Grid where
   U2 : ℕ
   /-- The number of cells a side. -/
   n : ℕ
+  /-- The cells' multiplier `μ`. -/
+  mult : ℕ
 
 export Grid (U1 U2 n)
 
 /-- The fixed point's scale: bounds are in units of `1/K = 2^{−60}`. -/
 def K : ℕ := 2 ^ 60
-/-- `⌈0.5672 K⌉`. -/
-def topK : ℕ := (K * 5672 + 9999) / 10000
+/-- `⌈0.565073 K⌉`: `K` times `ω* = 0.565073`, the bound above `3`. -/
+def topK : ℕ := (K * 565073 + 999999) / 1000000
+/-- `⌈0.5671433 K⌉`: `K` times an upper bound for Buchstab's `ω` on `[2, 3]`, whose maximum is `Ω = 0.56714329…`
+(`Ω e^Ω = 1`), at `u = 1 + 1/Ω`. -/
+def w1K : ℕ := (K * 5671433 + 9999999) / 10000000
 
 /-- The ranges of the subset sums of a box, the empty subset included. -/
 def subsetSums : List (ℕ × ℕ) → List (ℕ × ℕ)
@@ -49,12 +52,62 @@ def cdiv (a b : ℕ) : ℕ := (a + b - 1) / b
 (`SieveCert.sumTo_eq`). -/
 def sumTo (m : ℕ) (f : ℕ → ℕ) : ℕ := Nat.rec (motive := fun _ => ℕ) 0 (fun k acc => acc + f k) m
 
+/-! ### Buchstab's `ω` on the arguments of a box -/
+
+/-- The denominator of `lnT`. -/
+def LD : ℕ := 10 ^ 9
+
+/-- `LD` times an upper bound for `log((16 + k)/16)`, for `k ≤ 16` (`SieveOmegaB.lnT_ge`), by a tree of tests. -/
+def lnT (k : ℕ) : ℕ :=
+  if k < 8 then
+    if k < 4 then
+      if k < 2 then (if k < 1 then 0 else 60624623) else (if k < 3 then 117783037 else 171850258)
+    else
+      if k < 6 then (if k < 5 then 223143553 else 271933717) else (if k < 7 then 318453733 else 362905495)
+  else if k < 16 then
+    if k < 12 then
+      if k < 10 then (if k < 9 then 405465110 else 446287104) else (if k < 11 then 485507817 else 523248145)
+    else
+      if k < 14 then (if k < 13 then 559615789 else 594707109) else (if k < 15 then 628608661 else 661398484)
+  else 693147182
+
+/-- `omF` at the table's index `k`, with `A = 16(P − Q)` and `B = (16 + k)Q`: `K` times
+`(Q/P)(1 + lnT k/LD + (A/B − B/A)/2)`, rounded up. -/
+def omFk (P Q k A B : ℕ) : ℕ :=
+  cdiv (K * Q * (2 * A * B * (LD + lnT k) + (A * A - B * B) * LD)) (2 * A * B * LD * P)
+
+/-- `K` times an upper bound for Buchstab's `ω(v) = (1 + log(v − 1))/v` at `v = P/Q ∈ [2, 3]`, rounded up
+(`SieveOmegaB.omF_ge`): with `k = ⌊16(v − 2)⌋` and `r = (16 + k)/16 ≤ v − 1`, `log(v − 1) ≤ lnT k/LD + (y − 1/y)/2` for
+`y = (v − 1)/r = A/B`. -/
+def omF (P Q : ℕ) : ℕ :=
+  omFk P Q (16 * (P - 2 * Q) / Q) (16 * (P - Q)) ((16 + 16 * (P - 2 * Q) / Q) * Q)
+
+/-- `K/max(lo, 1)` rounded up, for `lo = (DEN − s − t − W)/(t + w)`: the boxes' total width is `W` and the last box's
+width `w`. -/
+def invKw (s t W w : ℕ) : ℕ :=
+  if DEN ≤ s + 2 * t + W + w then K else cdiv (K * (t + w)) (DEN - s - t - W)
+
+/-- `K` times an upper bound for `ω*` (`SieveCert.omegaC`) on the arguments of a box, rounded up: the other exponents
+sum to at least `s`, the last lies in `[t, t + w]`, and all of them sum to at most `s + t + W`, so the arguments lie in
+`[lo, hi)` with `lo = (DEN − s − t − W)/(t + w)` and `hi = (DEN + 1 − s − t)/t`. It is `0` if `hi ≤ 1`, `0.565073` if
+`lo ≥ 3`, `1/max(lo, 1)` if `hi ≤ 2`, and otherwise the largest of `1/max(lo, 1)` (if `lo < 2`), the bound on `[2, 3]`
+and `0.565073` (if `hi > 3`). On `[2, 3]` the bound is Buchstab's `ω` at `hi` if `hi ≤ 2.76`, where `ω` increases, at
+`lo` if `lo ≥ 2.77`, where it decreases, and its maximum otherwise. -/
+def omKw (s t W w : ℕ) : ℕ :=
+  if DEN < s + 2 * t then 0
+  else if s + 4 * t + W + 3 * w ≤ DEN then topK
+  else if DEN < s + 3 * t then invKw s t W w
+  else max (max (if s + 3 * t + W + 2 * w ≤ DEN then 0 else invKw s t W w)
+      (if 100 * (DEN + 1 - s - t) ≤ 276 * t then omF (DEN + 1 - s - t) t
+        else if 277 * (t + w) ≤ 100 * (DEN - s - t - W) then omF (DEN - s - t - W) (t + w) else w1K))
+    (if s + 4 * t ≤ DEN then topK else 0)
+
 variable [Grid]
 
 /-- The window's width, the least exponent of a sifted prime. -/
 def V : ℕ := U2 - U1
-/-- The cells' side, `⌈(DEN/2 − V)/n⌉`. -/
-def H : ℕ := (DEN / 2 - V + n - 1) / n
+/-- The cells' side, `μ⌈(DEN/2 − V)/(μn)⌉`: for `μ = 1`, `⌈(DEN/2 − V)/n⌉`. -/
+def H : ℕ := Grid.mult * ((DEN / 2 - V + n * Grid.mult - 1) / (n * Grid.mult))
 /-- The lower end of cell `k`. -/
 def e (k : ℕ) : ℕ := V + H * k
 /-- `DEN − U1`, the right end of the complement window. -/
@@ -123,57 +176,45 @@ def surelyEval (xs : List (ℕ × ℕ)) : Bool :=
               | [] => sub6 p q r s t u 0 0
               | _ :: _ => surelyEvalSpec xs
 
-/-- `K/max(lo, 1)` rounded up, with `lo = (DEN − s − t − mH)/(t + H)`. -/
-def invK (s t m : ℕ) : ℕ :=
-  if DEN ≤ s + 2 * t + (m + 1) * H then K else cdiv (K * (t + H)) (DEN - s - t - m * H)
+/-- `omKw` for a cell of `m` variables, all of width `H`. -/
+def omK (s t m : ℕ) : ℕ := omKw s t (m * H) H
 
-/-- `K` times an upper bound for the crude `ω` on the arguments `[lo, hi]` of a cell, rounded up, where
-`lo = (DEN − s − t − mH)/(t + H)` and `hi = (DEN − s − t)/t`: `0` if `hi < 1`, `0.5672` if `lo ≥ 2`, `1/max(lo, 1)`
-if `hi < 2`, and the larger of the last two otherwise. -/
-def omK (s t m : ℕ) : ℕ :=
-  if DEN < s + 2 * t then 0
-  else if s + 3 * t + (m + 2) * H ≤ DEN then topK
-  else if DEN < s + 3 * t then invK s t m else max (invK s t m) topK
+/-- The bound of a cell of depth 2 with lower corner `(a, b)`, in units of `1/K`: `omK` times `H(2a + H)/(2a(a + H))`,
+the trapezoid bound of the first cell's `Σ 1/p`, times `DEN·H/(b(b + H))`, the last cell's `log x · Σ 1/(p log p)`,
+rounded up. -/
+def bound2 (a b : ℕ) : ℕ := cdiv (H * H * (2 * a + H) * DEN * omK a b 2) (2 * a * (a + H) * (b * (b + H)))
 
-/-- The bound of a cell of depth 2 with lower corner `(a, b)`, in units of `1/K`. -/
-def bound2 (a b : ℕ) : ℕ := cdiv (H * H * DEN * omK a b 2) (a * b * b)
-
-/-- The bound of a cell of depth 4 with lower corner `(a, b, c, d)`, in units of `1/K`. -/
-def bound4 (a b c d : ℕ) : ℕ := cdiv (H ^ 4 * DEN * omK (a + b + c) d 4) (a * b * c * d * d)
+/-- The bound of a cell of depth 4 with lower corner `(a, b, c, d)`, in units of `1/K`: as `bound2`, with a trapezoid
+factor for each of the first three cells. -/
+def bound4 (a b c d : ℕ) : ℕ :=
+  cdiv (H ^ 4 * ((2 * a + H) * (2 * b + H) * (2 * c + H)) * DEN * omK (a + b + c) d 4)
+    (8 * (a * (a + H)) * (b * (b + H)) * (c * (c + H)) * (d * (d + H)))
 
 /-- The range of cell `k`. -/
 def cell (k : ℕ) : ℕ × ℕ := (e k, e k + H)
 
 /-! ### The coarse grid of the primes `p₅` and `p₆`, and the cells of depths 5 and 6 -/
 
-/-- The **coarse grid**: the same window and `n / 4` cells a side, so cells four times as wide. Its cells hold the primes
-`p₅` and `p₆` of the deepest levels. -/
-@[instance_reducible] def Gc : Grid := ⟨U1, U2, n / 4⟩
+/-- The **coarse grid**: the same window and `n / 4` cells a side, each four consecutive cells of the grid: for `4 ∣ n`
+and `μ = 1` its side is `HC = 4H` and its cell `b` is the cells `4b, …, 4b + 3`. Its cells hold the primes `p₅` and `p₆`
+of the deepest levels. -/
+@[instance_reducible] def Gc : Grid := ⟨U1, U2, n / 4, 4 * Grid.mult⟩
 
 /-- The number of cells of the coarse grid. -/
 def nC : ℕ := n / 4
-/-- The side of a coarse cell, `⌈(DEN/2 − V)/nC⌉`. -/
+/-- The side of a coarse cell, `4μ⌈(DEN/2 − V)/(4μ·nC)⌉`: `4H` for `4 ∣ n`. -/
 def HC : ℕ := @H Gc
 /-- The lower end of the coarse cell `b`. -/
 def eC (b : ℕ) : ℕ := @e Gc b
 /-- The range of the coarse cell `b`. -/
 def cellC (b : ℕ) : ℕ × ℕ := (eC b, eC b + HC)
 
-/-- `invK` with the boxes' total width `W` and the last box's width `w`: `K/max(lo, 1)` rounded up for
-`lo = (DEN − s − t − W)/(t + w)`. -/
-def invKw (s t W w : ℕ) : ℕ :=
-  if DEN ≤ s + 2 * t + W + w then K else cdiv (K * (t + w)) (DEN - s - t - W)
-
-/-- `omK` with the boxes' total width `W` and the last box's width `w`. -/
-def omKw (s t W w : ℕ) : ℕ :=
-  if DEN < s + 2 * t then 0
-  else if s + 3 * t + W + 2 * w ≤ DEN then topK
-  else if DEN < s + 3 * t then invKw s t W w else max (invKw s t W w) topK
-
 /-- The bound of a cell of depth 6 with lower corner `(a, b, c, d)` in the fine grid and `(f, g)` in the coarse grid,
-in units of `1/K`. -/
+in units of `1/K`: as `bound4`, with trapezoid factors for the first five cells (the fifth of width `HC`). -/
 def bound6 (a b c d f g : ℕ) : ℕ :=
-  cdiv (H ^ 4 * HC ^ 2 * DEN * omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC) (a * b * c * d * f * g * g)
+  cdiv (H ^ 4 * HC ^ 2 * ((2 * a + H) * (2 * b + H) * (2 * c + H) * (2 * d + H) * (2 * f + HC)) * DEN *
+      omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC)
+    (32 * (a * (a + H)) * (b * (b + H)) * (c * (c + H)) * (d * (d + H)) * (f * (f + HC)) * (g * (g + HC)))
 
 /-- The cell `(i, j)` may meet the region of depth 2 and may be non-evaluable. -/
 def cand (i j : ℕ) : Bool :=
@@ -265,7 +306,8 @@ class GridOK : Prop where
 
 /-- **The facts about the coarse grid** (`Gc`, with its cells `eC`, `HC`) that the deepest levels use: its own `GridOK`,
 `4H + 2HC ≤ V`, which keeps the boxes of depth 6 inside `DEN`, and `nH ≤ nC·HC`, which makes the coarse cells cover the
-range of the fine ones. For a given grid each is checked by `decide`. -/
+range of the fine ones (with equality for `4 ∣ n` and multiplier `1`, where a coarse cell is four fine ones). For a given
+grid each is checked by `decide`. -/
 class GridOKC : Prop where
   /-- The coarse grid's own facts. -/
   ok : @GridOK Gc

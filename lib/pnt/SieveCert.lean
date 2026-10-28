@@ -1,24 +1,28 @@
 /-
 # The certificate of the sieve route's loss, checked by the kernel
 
-Plain statements (`total_div_le`). The loss certificate of the sieve route, with the crude bound for Buchstab's `ω`, is computed here in natural
-numbers on a grid of cells (`Grid`: the window's ends and the number `n` of cells a side). Each cell's bound is computed from
-its corners, rounding up twice (the value of `ω`, then the bound), and is a multiple of `2^{−60}`. The library's certificate is on `grid22250R`, the grid of the curve `g7d` at `L = 89/40`
-on the window `[41479/100000, 47555/100000]` with `n = 340` (`SieveGrid22250R.lean`), and is the refined one of
-`SieveCert2Defs.lean`; the kernel checks it by `decide +kernel` (`SieveCert22250R.lean`).
+Plain statements (`total_div_le`). The loss certificate of the sieve route is computed here in natural numbers on a grid
+of cells (`Grid`: the window's ends, the number `n` of cells a side and the cells' multiplier). Each cell's bound is
+computed from its corners, rounding up twice (the value of `ω*`, then the bound), and is a multiple of `2^{−60}`. The
+library's certificate is on `grid22240R`, the grid of the curve `g7d` at `L = 278/125` on the window
+`[41556/100000, 47531/100000]` with `n = 340` (`SieveGrid22240R.lean`), and is the refined one of `SieveCert2Defs.lean`;
+the kernel checks it by `decide +kernel` (`SieveCert22240R.lean`).
 
-* The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. The window's ends are `U1 < U2` (for `grid22250R`,
-  `U1 = ⌈(41479/100000)DEN⌉` and `U2 = ⌊(47555/100000)DEN⌋`), `V = U2 − U1`, and the cells of side `H = ⌈(DEN/2 − V)/n⌉` start
-  at `e k = V + Hk`. `GridOK` lists the facts about the grid that the semantic lemmas below and the route's proofs use;
-  for a given grid each is checked by `decide`.
+* The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. The window's ends are `U1 < U2` (for `grid22240R`,
+  `U1 = ⌈(41556/100000)DEN⌉` and `U2 = ⌊(47531/100000)DEN⌋`), `V = U2 − U1`, and the cells of side
+  `H = ⌈(DEN/2 − V)/n⌉` start at `e k = V + Hk`. `GridOK` lists the facts about the grid that the semantic lemmas below
+  and the route's proofs use; for a given grid each is checked by `decide`.
 * The tests, as in the certificate: `cand` (a cell of `(α₁, α₂)` that may meet the region and may be non-evaluable),
   `allowed` (the sharp rule for decomposition), `inKK` and `ne3` (the cells of `α₃`), and `counted4` (the cells of
   depth 4). Evaluability is a subset sum of the cell's corners inside `U = (u₁, u₂) ∪ (1 − u₂, 1 − u₁)`
   (`surelyEval`).
-* The bounds: `h²` (or `h⁴`) times an upper bound for the crude `ω` on the cell's arguments, rounded up to a multiple
-  of `2^{−60}` (`omK`), times the prefactor `1/(ab²)` (or `1/(abcd²)`) at the lower corner, rounded up again to a
-  multiple of `2^{−60}` (`bound2`, `bound4`). A cell of depth 2 costs the smaller of its own bound and the sum of its
-  cells of depth 4 when it may be decomposed (`dec`, `cost`).
+* The bound `ω*` for Buchstab's `ω` (`omegaC`): `0` below `1`, `1/u` on `[1, 2)`, Buchstab's `(1 + log(u − 1))/u` on
+  `[2, 3]` and `0.565073` above. On a cell, `omKw` (and `omK`, its case of `m` cells of side `H`) bounds it on the
+  arguments the cell's points can have, from its corners.
+* The bounds: `omK/K` times a factor for each cell, the trapezoid bound `trB a H = H(2a + H)/(2a(a + H))` of the cell's
+  `Σ 1/p` for the first ones and the exact `exB a H = DEN·H/(a(a + H))` of the last cell's `log x · Σ 1/(p log p)`,
+  rounded up to a multiple of `2^{−60}` (`bound2`, `bound4`, `bound6`). A cell of depth 2 costs the smaller of its own
+  bound and the sum of its cells of depth 4 when it may be decomposed (`dec`, `cost`).
 
 What the tests say about points (the semantic lemmas):
 
@@ -27,19 +31,19 @@ What the tests say about points (the semantic lemmas):
 * `sum_le_of_allowed`, `cover3`: on a cell that may be decomposed, a non-evaluable point keeps `α₁ + α₂ ≤ 1 − u₂`,
   and each non-evaluable `α₃` of the region of depth 3 keeps `α₁ + α₂ + α₃ ≤ 1 − u₂` and lies in a counted row.
 * `cover4`: a point of depth 4 that is not evaluable lies in a counted cell.
-* `omegaC_le`: the crude `ω` (`omegaC`) on the cell's arguments, widened by `τ < 1/DEN`, is at most `omK/K`.
-* `bound2_ge`, `bound4_ge`: each bound is at least `h²` (or `h⁴`) times `omK/K` times the prefactor.
+* `omegaC_le_w`, `omegaC_le`: `ω*` on the box's arguments, widened by `τ < 1/DEN`, is at most `omKw/K` (`omK/K`); on
+  `[2, 3]` by Buchstab's `ω` at the box's ends where it is monotone (`SieveOmegaB`).
+* `bound2_ge`, `bound4_ge`, `bound6_ge`: each bound is at least `omK/K` (`omKw/K`) times the cells' `trB` and `exB`.
 * `total_eq`, `total_div_le`: the total is the double sum of the costs, and if it is at most `0.88K` in natural numbers
   it is at most `0.88` in the reals.
 
 The grid is a parameter (`Grid`, with `GridOK`); the certificates' grids are in `SieveGrid…`.
 
-
-The file imports Mathlib and `SieveCertDefs.lean`, which holds the definitions (until then they were
-here, and the file imported only Mathlib).
+The file imports Mathlib, `SieveCertDefs.lean`, which holds the definitions, and `SieveOmegaB.lean`.
 -/
 import Mathlib
 import SieveCertDefs
+import SieveOmegaB
 
 namespace SieveCert
 
@@ -106,7 +110,7 @@ theorem n_pos : 0 < n := by
   rcases Nat.eq_zero_or_pos n with h | h
   · have h0 := H_pos
     unfold H at h0
-    rw [h, Nat.div_zero] at h0
+    rw [h, Nat.zero_mul, Nat.div_zero, Nat.mul_zero] at h0
     exact absurd h0 (lt_irrefl 0)
   · exact h
 theorem two_V_lt : 2 * V < DEN := by simpa [e] using two_e_lt 0 n_pos
@@ -388,33 +392,48 @@ theorem cover4 {i j k : ℕ} {α₁ α₂ α₃ α₄ : ℝ} (hk : k < n) (hci :
         (List.Forall₂.cons (inRange_of_inCell hck) (List.Forall₂.cons (inRange_of_inCell hcl)
           List.Forall₂.nil)))) hne
 
-/-! ### The crude `ω` -/
+/-! ### The bound `ω*` for Buchstab's `ω` -/
 
-/-- The crude upper bound for Buchstab's `ω`: `0` below `1`, `1/u` on `[1, 2)` and `0.5672` from `2` on. -/
-def omegaC (u : ℝ) : ℝ := if u < 1 then 0 else if u < 2 then 1 / u else 5672 / 10000
+/-- The upper bound `ω*` for Buchstab's `ω`: `0` below `1`, `1/u` on `[1, 2)`, Buchstab's own `(1 + log(u − 1))/u` on
+`[2, 3]` (`SieveOmegaB.omB`) and `0.565073` above `3`. -/
+def omegaC (u : ℝ) : ℝ :=
+  if u < 1 then 0 else if u < 2 then 1 / u else if u ≤ 3 then SieveOmegaB.omB u else 565073 / 1000000
 
 omit [Grid] [GridOK] in
 theorem K_pos' : (0 : ℝ) < K := by norm_num [K]
 
 omit [Grid] [GridOK] in
-theorem topK_ge : (5672 / 10000 : ℝ) ≤ topK / K := by
+theorem topK_ge : (565073 / 1000000 : ℝ) ≤ topK / K := by
   rw [le_div_iff₀ K_pos']
-  have h : K * 5672 ≤ topK * 10000 := by decide
-  have h' : (K : ℝ) * 5672 ≤ topK * 10000 := by exact_mod_cast h
+  have h : K * 565073 ≤ topK * 1000000 := by decide
+  have h' : (K : ℝ) * 565073 ≤ topK * 1000000 := by exact_mod_cast h
   linarith
 
 omit [Grid] [GridOK] in
-theorem div_le_cdiv (a b : ℕ) (hb : 0 < b) : (a : ℝ) / b ≤ cdiv a b := by
-  have hb' : (0 : ℝ) < b := by exact_mod_cast hb
-  rw [div_le_iff₀ hb']
-  have h := Nat.lt_div_mul_add (a := a + b - 1) hb
-  have h2 : a ≤ cdiv a b * b := by unfold cdiv; omega
-  exact_mod_cast h2
+theorem w1K_ge : (5671433 / 10000000 : ℝ) ≤ w1K / K := by
+  rw [le_div_iff₀ K_pos']
+  have h : K * 5671433 ≤ w1K * 10000000 := by decide
+  have h' : (K : ℝ) * 5671433 ≤ w1K * 10000000 := by exact_mod_cast h
+  linarith
 
-omit [GridOK] in
-/-- **The crude `ω` on a cell.** Let the other exponents sum to `σ` and the last be `α`, with `s ≤ σ·DEN`,
-`t ≤ α·DEN ≤ t + H` and `(σ + α)DEN ≤ s + t + mH`, as for the lower corner `(s, t)` of a cell of `m` variables. Then
-on the argument `(1 − σ − α + τ)/α`, widened by `0 ≤ τ < 1/DEN`, the crude `ω` is at most `omKw s t W w / K`. -/
+omit [Grid] [GridOK] in
+theorem div_le_cdiv (a b : ℕ) (hb : 0 < b) : (a : ℝ) / b ≤ cdiv a b := SieveOmegaB.div_le_cdiv a b hb
+
+omit [Grid] [GridOK] in
+/-- `ω*` is at most `0.565073` from `3` on (`ω(3) = (1 + log 2)/3 ≤ 0.565073`). -/
+theorem omegaC_le_of_three_le {u : ℝ} (h3 : 3 ≤ u) : omegaC u ≤ 565073 / 1000000 := by
+  unfold omegaC
+  rw [ite_eq_right (not_lt.mpr (by linarith)), ite_eq_right (not_lt.mpr (by linarith))]
+  split_ifs with h
+  · rw [le_antisymm h h3]; exact SieveOmegaB.omB_three_le
+  · exact le_rfl
+
+omit [Grid] [GridOK] in
+/-- **`ω*` on a box.** Let the other exponents sum to `σ` and the last be `α`, with `s ≤ σ·DEN`, `t ≤ α·DEN ≤ t + w`
+and `(σ + α)DEN ≤ s + t + W`, as for the lower corner `(s, t)` of a box whose widths sum to `W`, the last `w`. Then on
+the argument `(1 − σ − α + τ)/α`, widened by `0 ≤ τ < 1/DEN`, `ω*` is at most `omKw s t W w / K`. The argument lies
+in `[lo, hi)`, `lo = (DEN − s − t − W)/(t + w)` and `hi = (DEN + 1 − s − t)/t`, and `omKw`'s tests read its place
+there. -/
 theorem omegaC_le_w {s t W w : ℕ} {σ α τ : ℝ} (ht : 0 < t) (hσ : (s : ℝ) ≤ σ * DEN) (hα : (t : ℝ) ≤ α * DEN)
     (hαH : α * DEN ≤ t + w) (hsum : (σ + α) * DEN ≤ s + t + W) (hτ0 : 0 ≤ τ) (hτ : τ * DEN < 1) :
     omegaC ((1 - σ - α + τ) / α) ≤ (omKw s t W w : ℝ) / K := by
@@ -425,49 +444,52 @@ theorem omegaC_le_w {s t W w : ℕ} {σ α τ : ℝ} (ht : 0 < t) (hσ : (s : �
     by_contra h
     have : α * DEN ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (not_lt.mp h) hD.le
     linarith
+  have hτD : 0 ≤ τ * DEN := mul_nonneg hτ0 hD.le
   set u := (1 - σ - α + τ) / α with hu
   have hua : u * α = 1 - σ - α + τ := by rw [hu]; field_simp
-  -- `u < 1` when `DEN < s + 2t`
+  -- the tests of `omKw`, read on `u`
   have lt1 : DEN < s + 2 * t → u < 1 := by
     intro h
     have h' : (DEN : ℝ) + 1 ≤ s + 2 * t := by exact_mod_cast h
     have : (1 + τ) * DEN < (σ + 2 * α) * DEN := by nlinarith
     have : 1 + τ < σ + 2 * α := lt_of_mul_lt_mul_right this hD.le
     nlinarith
-  -- `u ≥ 2` when `s + 3t + (m + 2)H ≤ DEN`
   have ge2 : s + 3 * t + W + 2 * w ≤ DEN → 2 ≤ u := by
     intro h
     have h' : (s : ℝ) + 3 * t + W + 2 * w ≤ DEN := by exact_mod_cast h
     have : (σ + 3 * α) * DEN ≤ (1 + τ) * DEN := by nlinarith
     have : σ + 3 * α ≤ 1 + τ := le_of_mul_le_mul_right this hD
     nlinarith
-  -- `u < 2` when `DEN < s + 3t`
   have lt2 : DEN < s + 3 * t → u < 2 := by
     intro h
     have h' : (DEN : ℝ) + 1 ≤ s + 3 * t := by exact_mod_cast h
     have : (1 + τ) * DEN < (σ + 3 * α) * DEN := by nlinarith
     have : 1 + τ < σ + 3 * α := lt_of_mul_lt_mul_right this hD.le
     nlinarith
-  -- `1/u ≤ (t + H)/D` when `u ≥ 1` and `D = DEN − s − t − mH > 0`
-  have inv_le : ∀ D : ℝ, D = DEN - s - t - W → 0 < D → 1 ≤ u → 1 / u ≤ (t + w) / D := by
-    intro D hD' hDpos hu1
-    have hu0 : 0 < u := by linarith
-    have h1 : D / DEN ≤ u * α := by
-      rw [hua, div_le_iff₀ hD]
-      nlinarith
-    have h2 : D ≤ u * (t + w) := by
-      have : D ≤ u * α * DEN := by rwa [div_le_iff₀ hD] at h1
-      nlinarith
-    rw [div_le_div_iff₀ hu0 hDpos]
-    linarith
-  have hcases : omegaC u = 0 ∨ (1 ≤ u ∧ u < 2 ∧ omegaC u = 1 / u) ∨ (2 ≤ u ∧ omegaC u = 5672 / 10000) := by
-    unfold omegaC
-    by_cases h1 : u < 1
-    · left; simp [h1]
-    · by_cases h2 : u < 2
-      · right; left; exact ⟨not_lt.mp h1, h2, by simp [h1, h2]⟩
-      · right; right; exact ⟨not_lt.mp h2, by simp [h1, h2]⟩
-  -- `1/u ≤ invK/K` for `u ≥ 1`
+  have ge3 : s + 4 * t + W + 3 * w ≤ DEN → 3 ≤ u := by
+    intro h
+    have h' : (s : ℝ) + 4 * t + W + 3 * w ≤ DEN := by exact_mod_cast h
+    have : (σ + 4 * α) * DEN ≤ (1 + τ) * DEN := by nlinarith
+    have : σ + 4 * α ≤ 1 + τ := le_of_mul_le_mul_right this hD
+    nlinarith
+  have lt3 : DEN < s + 4 * t → u < 3 := by
+    intro h
+    have h' : (DEN : ℝ) + 1 ≤ s + 4 * t := by exact_mod_cast h
+    have : (1 + τ) * DEN < (σ + 4 * α) * DEN := by nlinarith
+    have : 1 + τ < σ + 4 * α := lt_of_mul_lt_mul_right this hD.le
+    nlinarith
+  -- `u` against the box's ends
+  have hhi : 0 ≤ u → u * t < (DEN : ℝ) + 1 - s - t := by
+    intro hu0
+    have h1 : u * t ≤ u * (α * DEN) := mul_le_mul_of_nonneg_left hα hu0
+    have h2 : u * (α * DEN) = (1 - σ - α + τ) * DEN := by rw [← mul_assoc, hua]
+    nlinarith
+  have hlo : 0 ≤ u → (DEN : ℝ) - s - t - W ≤ u * (t + w) := by
+    intro hu0
+    have h1 : u * (α * DEN) ≤ u * (t + w) := mul_le_mul_of_nonneg_left hαH hu0
+    have h2 : u * (α * DEN) = (1 - σ - α + τ) * DEN := by rw [← mul_assoc, hua]
+    nlinarith
+  -- `1/u ≤ invKw/K` for `u ≥ 1`
   have hinv : 1 ≤ u → 1 / u ≤ (invKw s t W w : ℝ) / K := by
     intro hu1
     have hu0 : 0 < u := by linarith
@@ -482,58 +504,120 @@ theorem omegaC_le_w {s t W w : ℕ} {σ α τ : ℝ} (ht : 0 < t) (hσ : (s : �
         have h1 : s ≤ DEN := by omega
         have h2 : t ≤ DEN - s := by omega
         have h3 : W ≤ DEN - s - t := by omega
-        rw [Nat.cast_sub h3, Nat.cast_sub h2, Nat.cast_sub h1] <;> (push_cast; ring)
+        rw [Nat.cast_sub h3, Nat.cast_sub h2, Nat.cast_sub h1]
       have hc := div_le_cdiv (K * (t + w)) (DEN - s - t - W) hpos
       rw [hDcast] at hc
       push_cast at hc
       have hDpos : (0 : ℝ) < (DEN : ℝ) - s - t - W := by
         have : (s : ℝ) + t + W < DEN := by exact_mod_cast hDnat
         linarith
-      have hi := inv_le _ rfl hDpos hu1
+      have hi : 1 / u ≤ (t + w) / ((DEN : ℝ) - s - t - W) := by
+        rw [div_le_div_iff₀ hu0 hDpos]
+        linarith [hlo hu0.le]
       rw [le_div_iff₀ hK]
       calc 1 / u * K ≤ (t + w) / ((DEN : ℝ) - s - t - W) * K := by gcongr
         _ = K * (t + w) / ((DEN : ℝ) - s - t - W) := by ring
         _ ≤ _ := hc
   have hinv0 : (0 : ℝ) ≤ (invKw s t W w : ℝ) / K := by positivity
-  have htop0 : (0 : ℝ) ≤ (topK : ℝ) / K := by positivity
-  -- the cases of `omK`
+  -- the cases of `omKw`
   by_cases hA : DEN < s + 2 * t
-  · have hu := lt1 hA
+  · have hu1 := lt1 hA
     have h0 : omKw s t W w = 0 := by simp [omKw, hA]
     rw [h0]
-    simp [omegaC, hu]
-  by_cases hB : s + 3 * t + W + 2 * w ≤ DEN
-  · have hu := ge2 hB
-    have h0 : omKw s t W w = topK := by simp [omKw, hA, hB]
+    simp [omegaC, hu1]
+  by_cases hB : s + 4 * t + W + 3 * w ≤ DEN
+  · have h0 : omKw s t W w = topK := by simp [omKw, hA, hB]
     rw [h0]
-    have : omegaC u = 5672 / 10000 := by
-      simp [omegaC, show ¬ u < 1 by linarith, show ¬ u < 2 by linarith]
-    rw [this]; exact topK_ge
-  by_cases hC2 : DEN < s + 3 * t
-  · have hu2 := lt2 hC2
-    have h0 : omKw s t W w = invKw s t W w := by simp [omKw, hA, hB, hC2]
+    exact (omegaC_le_of_three_le (ge3 hB)).trans topK_ge
+  by_cases hC : DEN < s + 3 * t
+  · have hu2 := lt2 hC
+    have h0 : omKw s t W w = invKw s t W w := by simp [omKw, hA, hB, hC]
     rw [h0]
-    rcases hcases with h | ⟨h1, -, h⟩ | ⟨h2, -⟩
-    · rw [h]; exact hinv0
-    · rw [h]; exact hinv h1
-    · linarith
-  · have h0 : omKw s t W w = max (invKw s t W w) topK := by simp [omKw, hA, hB, hC2]
-    rw [h0, Nat.cast_max, ← max_div_div_right hK.le]
-    rcases hcases with h | ⟨h1, -, h⟩ | ⟨-, h⟩
-    · rw [h]; exact le_trans hinv0 (le_max_left _ _)
-    · rw [h]; exact le_trans (hinv h1) (le_max_left _ _)
-    · rw [h]; exact le_trans topK_ge (le_max_right _ _)
+    by_cases hu1 : u < 1
+    · simp only [omegaC, hu1, ite_true]; exact hinv0
+    · simp only [omegaC, hu1, hu2, ite_false, ite_true]; exact hinv (not_lt.mp hu1)
+  have hs3 : s + 3 * t ≤ DEN := not_lt.mp hC
+  have h0 : omKw s t W w = max (max (if s + 3 * t + W + 2 * w ≤ DEN then 0 else invKw s t W w)
+      (if 100 * (DEN + 1 - s - t) ≤ 276 * t then omF (DEN + 1 - s - t) t
+        else if 277 * (t + w) ≤ 100 * (DEN - s - t - W) then omF (DEN - s - t - W) (t + w) else w1K))
+      (if s + 4 * t ≤ DEN then topK else 0) := by
+    simp only [omKw, hA, hB, hC, ite_false]
+  rw [h0, Nat.cast_max, Nat.cast_max, ← max_div_div_right hK.le, ← max_div_div_right hK.le]
+  by_cases hu1 : u < 1
+  · have : omegaC u = 0 := by simp [omegaC, hu1]
+    rw [this]
+    exact le_trans (by positivity) (le_max_right _ _)
+  by_cases hu2 : u < 2
+  · -- `ω* = 1/u`; then `lo < 2`
+    have hp1 : (if s + 3 * t + W + 2 * w ≤ DEN then 0 else invKw s t W w) = invKw s t W w := by
+      rw [ite_eq_right]; intro h; have := ge2 h; linarith
+    have : omegaC u = 1 / u := by simp [omegaC, hu1, hu2]
+    rw [this, hp1]
+    exact le_trans (hinv (not_lt.mp hu1)) (le_trans (le_max_left _ _) (le_max_left _ _))
+  have hu2' : 2 ≤ u := not_lt.mp hu2
+  by_cases hu3 : u ≤ 3
+  · -- `ω* = omB u`, bounded by the part on `[2, 3]`
+    have hω : omegaC u = SieveOmegaB.omB u := by simp [omegaC, hu1, hu2, hu3]
+    rw [hω]
+    refine le_trans ?_ (le_trans (le_max_right _ _) (le_max_left _ _))
+    split_ifs with hhi276 hlo277
+    · -- `hi ≤ 2.76`: `ω` increases up to `hi`
+      have hs1 : s ≤ DEN + 1 := by omega
+      have ht1 : t ≤ DEN + 1 - s := by omega
+      have hcast : ((DEN + 1 - s - t : ℕ) : ℝ) = (DEN : ℝ) + 1 - s - t := by
+        rw [Nat.cast_sub ht1, Nat.cast_sub hs1]; push_cast; ring
+      have hP2 : 2 * t ≤ DEN + 1 - s - t := by omega
+      have hP3 : DEN + 1 - s - t ≤ 3 * t := by omega
+      have hle : u ≤ ((DEN + 1 - s - t : ℕ) : ℝ) / t := by
+        rw [le_div_iff₀ ht', hcast]; exact (hhi (by linarith)).le
+      have h276 : ((DEN + 1 - s - t : ℕ) : ℝ) / t ≤ 276 / 100 := by
+        rw [div_le_div_iff₀ ht' (by norm_num)]
+        have : ((100 * (DEN + 1 - s - t) : ℕ) : ℝ) ≤ ((276 * t : ℕ) : ℝ) := by exact_mod_cast hhi276
+        push_cast at this
+        linarith
+      exact (SieveOmegaB.omB_mono hu2' hle h276).trans (SieveOmegaB.omF_ge ht hP2 hP3)
+    · -- `lo ≥ 2.77`: `ω` decreases from `lo`
+      have hW : s + t + W ≤ DEN := by
+        by_contra h
+        have h' : DEN - s - t - W = 0 := by omega
+        rw [h'] at hlo277
+        omega
+      have hs1 : s ≤ DEN := by omega
+      have ht1 : t ≤ DEN - s := by omega
+      have hW1 : W ≤ DEN - s - t := by omega
+      have hcast : ((DEN - s - t - W : ℕ) : ℝ) = (DEN : ℝ) - s - t - W := by
+        rw [Nat.cast_sub hW1, Nat.cast_sub ht1, Nat.cast_sub hs1]
+      have hQ : 0 < t + w := by omega
+      have hQ' : (0 : ℝ) < ((t + w : ℕ) : ℝ) := by exact_mod_cast hQ
+      have hP2 : 2 * (t + w) ≤ DEN - s - t - W := by omega
+      have hP3 : DEN - s - t - W ≤ 3 * (t + w) := by omega
+      have hge : ((DEN - s - t - W : ℕ) : ℝ) / ((t + w : ℕ) : ℝ) ≤ u := by
+        rw [div_le_iff₀ hQ', hcast]
+        push_cast
+        linarith [hlo (by linarith)]
+      have h277 : 277 / 100 ≤ ((DEN - s - t - W : ℕ) : ℝ) / ((t + w : ℕ) : ℝ) := by
+        rw [div_le_div_iff₀ (by norm_num) hQ']
+        have : ((277 * (t + w) : ℕ) : ℝ) ≤ ((100 * (DEN - s - t - W) : ℕ) : ℝ) := by exact_mod_cast hlo277
+        push_cast at this ⊢
+        linarith
+      exact (SieveOmegaB.omB_anti h277 hge).trans (SieveOmegaB.omF_ge hQ hP2 hP3)
+    · exact (SieveOmegaB.omB_le_w1 (by linarith)).trans w1K_ge
+  · -- `u > 3`: `ω* = 0.565073`, and `hi > 3`
+    have hs4 : s + 4 * t ≤ DEN := by
+      by_contra h
+      have := lt3 (not_le.mp h)
+      linarith
+    have hω : omegaC u = 565073 / 1000000 := by simp [omegaC, hu1, hu2, hu3]
+    rw [hω, ite_eq_left hs4]
+    exact topK_ge.trans (le_max_right _ _)
 
 omit [GridOK] in
-theorem omK_eq_omKw (s t m : ℕ) : omK s t m = omKw s t (m * H) H := by
-  have h1 : (m + 1) * H = m * H + H := by ring
-  have h2 : (m + 2) * H = m * H + 2 * H := by ring
-  simp only [omK, omKw, invK, invKw, h1, h2, add_assoc]
+theorem omK_eq_omKw (s t m : ℕ) : omK s t m = omKw s t (m * H) H := rfl
 
 omit [GridOK] in
-/-- **The crude `ω` on a cell.** Let the other exponents sum to `σ` and the last be `α`, with `s ≤ σ·DEN`,
+/-- **`ω*` on a cell.** Let the other exponents sum to `σ` and the last be `α`, with `s ≤ σ·DEN`,
 `t ≤ α·DEN ≤ t + H` and `(σ + α)DEN ≤ s + t + mH`, as for the lower corner `(s, t)` of a cell of `m` variables. Then
-on the argument `(1 − σ − α + τ)/α`, widened by `0 ≤ τ < 1/DEN`, the crude `ω` is at most `omK s t m / K`. -/
+on the argument `(1 − σ − α + τ)/α`, widened by `0 ≤ τ < 1/DEN`, `ω*` is at most `omK s t m / K`. -/
 theorem omegaC_le {s t m : ℕ} {σ α τ : ℝ} (ht : 0 < t) (hσ : (s : ℝ) ≤ σ * DEN) (hα : (t : ℝ) ≤ α * DEN)
     (hαH : α * DEN ≤ t + H) (hsum : (σ + α) * DEN ≤ s + t + m * H) (hτ0 : 0 ≤ τ) (hτ : τ * DEN < 1) :
     omegaC ((1 - σ - α + τ) / α) ≤ (omK s t m : ℝ) / K := by
@@ -544,50 +628,70 @@ theorem omegaC_le {s t m : ℕ} {σ α τ : ℝ} (ht : 0 < t) (hσ : (s : ℝ) �
 
 theorem e_pos (k : ℕ) : 0 < e k := by unfold e; have := V_pos; omega
 
+omit [Grid] [GridOK] in
+/-- The trapezoid bound of a cell's `Σ 1/p`, for the cell `[a, a + w]` (in units of `1/DEN`):
+`w(2a + w)/(2a(a + w))`, at least `log(1 + w/a)` (`SieveOmegaB.log_le_half_sub_inv`). -/
+def trB (a w : ℕ) : ℝ := (w : ℝ) * (2 * a + w) / (2 * a * (a + w))
+
+omit [Grid] [GridOK] in
+/-- The last cell's `log x · Σ 1/(p log p)`, for the cell `[a, a + w]`: `DEN·w/(a(a + w)) = DEN(1/a − 1/(a + w))`. -/
+def exB (a w : ℕ) : ℝ := (DEN : ℝ) * w / (a * (a + w))
+
+omit [Grid] [GridOK] in
+theorem trB_nonneg (a w : ℕ) : 0 ≤ trB a w := by unfold trB; positivity
+
+omit [Grid] [GridOK] in
+theorem exB_nonneg (a w : ℕ) : 0 ≤ exB a w := by unfold exB; positivity
+
 omit [GridOK] in
-/-- A cell of depth 2 with lower corner `(a, b)` costs at least `h²` times `omK/K` times `1/(ab²)`, in the
-exponents. -/
+/-- A cell of depth 2 with lower corner `(a, b)` costs at least `omK/K` times the first cell's trapezoid bound and the
+last cell's `DEN·H/(b(b + H))`. -/
 theorem bound2_ge {a b : ℕ} (ha : 0 < a) (hb : 0 < b) :
-    ((H : ℝ) / DEN) ^ 2 * ((omK a b 2 : ℝ) / K) / (((a : ℝ) / DEN) * ((b : ℝ) / DEN) ^ 2) ≤
-      (bound2 a b : ℝ) / K := by
+    trB a H * exB b H * ((omK a b 2 : ℝ) / K) ≤ (bound2 a b : ℝ) / K := by
   have hD := DEN_pos'
   have hK := K_pos'
   have ha' : (0 : ℝ) < a := by exact_mod_cast ha
   have hb' : (0 : ℝ) < b := by exact_mod_cast hb
-  have hc := div_le_cdiv (H * H * DEN * omK a b 2) (a * b * b) (by positivity)
-  have heq : ((H : ℝ) / DEN) ^ 2 * ((omK a b 2 : ℝ) / K) / (((a : ℝ) / DEN) * ((b : ℝ) / DEN) ^ 2) =
-      ((H * H * DEN * omK a b 2 : ℕ) : ℝ) / ((a * b * b : ℕ) : ℝ) / K := by
-    push_cast; field_simp
+  have haH : (0 : ℝ) < a + H := by positivity
+  have hbH : (0 : ℝ) < b + H := by positivity
+  have hc := div_le_cdiv (H * H * (2 * a + H) * DEN * omK a b 2) (2 * a * (a + H) * (b * (b + H))) (by positivity)
+  have heq : trB a H * exB b H * ((omK a b 2 : ℝ) / K) =
+      ((H * H * (2 * a + H) * DEN * omK a b 2 : ℕ) : ℝ) / ((2 * a * (a + H) * (b * (b + H)) : ℕ) : ℝ) / K := by
+    simp only [trB, exB]; push_cast; field_simp
   rw [heq, bound2]
   exact div_le_div_of_nonneg_right hc hK.le
 
 omit [GridOK] in
-/-- A cell of depth 4 with lower corner `(a, b, c, d)` costs at least `h⁴` times `omK/K` times `1/(abcd²)`. -/
+/-- A cell of depth 4 with lower corner `(a, b, c, d)` costs at least `omK/K` times the trapezoid bounds of the first
+three cells and the last cell's `DEN·H/(d(d + H))`. -/
 theorem bound4_ge {a b c d : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) (hd : 0 < d) :
-    ((H : ℝ) / DEN) ^ 4 * ((omK (a + b + c) d 4 : ℝ) / K) /
-        (((a : ℝ) / DEN) * ((b : ℝ) / DEN) * ((c : ℝ) / DEN) * ((d : ℝ) / DEN) ^ 2) ≤
-      (bound4 a b c d : ℝ) / K := by
+    trB a H * trB b H * trB c H * exB d H * ((omK (a + b + c) d 4 : ℝ) / K) ≤ (bound4 a b c d : ℝ) / K := by
   have hD := DEN_pos'
   have hK := K_pos'
   have ha' : (0 : ℝ) < a := by exact_mod_cast ha
   have hb' : (0 : ℝ) < b := by exact_mod_cast hb
   have hc' : (0 : ℝ) < c := by exact_mod_cast hc
   have hd' : (0 : ℝ) < d := by exact_mod_cast hd
-  have hcd := div_le_cdiv (H ^ 4 * DEN * omK (a + b + c) d 4) (a * b * c * d * d) (by positivity)
-  have heq : ((H : ℝ) / DEN) ^ 4 * ((omK (a + b + c) d 4 : ℝ) / K) /
-        (((a : ℝ) / DEN) * ((b : ℝ) / DEN) * ((c : ℝ) / DEN) * ((d : ℝ) / DEN) ^ 2) =
-      ((H ^ 4 * DEN * omK (a + b + c) d 4 : ℕ) : ℝ) / ((a * b * c * d * d : ℕ) : ℝ) / K := by
-    push_cast; field_simp
+  have haH : (0 : ℝ) < a + H := by positivity
+  have hbH : (0 : ℝ) < b + H := by positivity
+  have hcH : (0 : ℝ) < c + H := by positivity
+  have hdH : (0 : ℝ) < d + H := by positivity
+  have hcd := div_le_cdiv (H ^ 4 * ((2 * a + H) * (2 * b + H) * (2 * c + H)) * DEN * omK (a + b + c) d 4)
+    (8 * (a * (a + H)) * (b * (b + H)) * (c * (c + H)) * (d * (d + H))) (by positivity)
+  have heq : trB a H * trB b H * trB c H * exB d H * ((omK (a + b + c) d 4 : ℝ) / K) =
+      ((H ^ 4 * ((2 * a + H) * (2 * b + H) * (2 * c + H)) * DEN * omK (a + b + c) d 4 : ℕ) : ℝ) /
+        ((8 * (a * (a + H)) * (b * (b + H)) * (c * (c + H)) * (d * (d + H)) : ℕ) : ℝ) / K := by
+    simp only [trB, exB]; push_cast; field_simp; ring
   rw [heq, bound4]
   exact div_le_div_of_nonneg_right hcd hK.le
 
 omit [GridOK] in
 /-- A cell of depth 6 (four fine cells and two coarse ones) with lower corner `(a, b, c, d, f, g)` costs at least
-`h⁴·hC²` times `omKw/K` times `1/(abcdfg²)`. -/
+`omKw/K` times the trapezoid bounds of the first five cells (the fifth of width `HC`) and the last cell's
+`DEN·HC/(g(g + HC))`. -/
 theorem bound6_ge {a b c d f g : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) (hd : 0 < d) (hf : 0 < f) (hg : 0 < g) :
-    ((H : ℝ) / DEN) ^ 4 * ((HC : ℝ) / DEN) ^ 2 * ((omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC : ℝ) / K) /
-        (((a : ℝ) / DEN) * ((b : ℝ) / DEN) * ((c : ℝ) / DEN) * ((d : ℝ) / DEN) * ((f : ℝ) / DEN) *
-          ((g : ℝ) / DEN) ^ 2) ≤ (bound6 a b c d f g : ℝ) / K := by
+    trB a H * trB b H * trB c H * trB d H * trB f HC * exB g HC *
+        ((omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC : ℝ) / K) ≤ (bound6 a b c d f g : ℝ) / K := by
   have hD := DEN_pos'
   have hK := K_pos'
   have ha' : (0 : ℝ) < a := by exact_mod_cast ha
@@ -596,14 +700,23 @@ theorem bound6_ge {a b c d f g : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) (hd
   have hd' : (0 : ℝ) < d := by exact_mod_cast hd
   have hf' : (0 : ℝ) < f := by exact_mod_cast hf
   have hg' : (0 : ℝ) < g := by exact_mod_cast hg
-  have hcd := div_le_cdiv (H ^ 4 * HC ^ 2 * DEN * omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC)
-    (a * b * c * d * f * g * g) (by positivity)
-  have heq : ((H : ℝ) / DEN) ^ 4 * ((HC : ℝ) / DEN) ^ 2 * ((omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC : ℝ) / K) /
-        (((a : ℝ) / DEN) * ((b : ℝ) / DEN) * ((c : ℝ) / DEN) * ((d : ℝ) / DEN) * ((f : ℝ) / DEN) *
-          ((g : ℝ) / DEN) ^ 2) =
-      ((H ^ 4 * HC ^ 2 * DEN * omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC : ℕ) : ℝ) /
-        ((a * b * c * d * f * g * g : ℕ) : ℝ) / K := by
-    push_cast; field_simp
+  have haH : (0 : ℝ) < a + H := by positivity
+  have hbH : (0 : ℝ) < b + H := by positivity
+  have hcH : (0 : ℝ) < c + H := by positivity
+  have hdH : (0 : ℝ) < d + H := by positivity
+  have hfH : (0 : ℝ) < f + HC := by positivity
+  have hgH : (0 : ℝ) < g + HC := by positivity
+  have hcd := div_le_cdiv (H ^ 4 * HC ^ 2 * ((2 * a + H) * (2 * b + H) * (2 * c + H) * (2 * d + H) * (2 * f + HC)) *
+      DEN * omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC)
+    (32 * (a * (a + H)) * (b * (b + H)) * (c * (c + H)) * (d * (d + H)) * (f * (f + HC)) * (g * (g + HC)))
+    (by positivity)
+  have heq : trB a H * trB b H * trB c H * trB d H * trB f HC * exB g HC *
+        ((omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC : ℝ) / K) =
+      ((H ^ 4 * HC ^ 2 * ((2 * a + H) * (2 * b + H) * (2 * c + H) * (2 * d + H) * (2 * f + HC)) * DEN *
+          omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC : ℕ) : ℝ) /
+        ((32 * (a * (a + H)) * (b * (b + H)) * (c * (c + H)) * (d * (d + H)) * (f * (f + HC)) *
+          (g * (g + HC)) : ℕ) : ℝ) / K := by
+    simp only [trB, exB]; push_cast; field_simp; ring
   rw [heq, bound6]
   exact div_le_div_of_nonneg_right hcd hK.le
 

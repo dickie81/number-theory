@@ -38,7 +38,7 @@ Here `K = ℚ(ω)`, `𝓞 K = ℤ[ω]`, `δ₃ = 1 + 2ω` is a square root of `�
   `τ(±δ₃nb³) = C·N(b)^{1/2}·(δ₃/n)₆²·conj γ₂(n)` for one constant `C ≠ 0`. Here `(·/n)₆` is the sextic residue symbol,
   and `γ₂(n) = Σ_{x mod n} (x/n)₆²ψ_n(x)/|n|` is the normalised cubic Gauss sum (`gamI 2`).
 
-The constant terms `c₀`, `cP` and `cM` are left free. The theorem is in the proof of `Linnik22250R.linnik_22250r`,
+The constant terms `c₀`, `cP` and `cM` are left free. The theorem is in the proof of `Linnik22240R.linnik_22240r`,
 whose axioms are `propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`), so it depends on those only.
 
 ## Source

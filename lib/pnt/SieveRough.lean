@@ -6,8 +6,9 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 Plain statements.
 
 * `psi_le`: for every `U` and `ε > 0` there is `z₀` such that `Ψ(y, z) ≤ (ω*(u) + ε)y/log z` for `z ≥ z₀`, `y ≥ 1`
-  and `u = log 2y/log z ≤ U`. Here `Ψ(y, z) = #{m ∈ (y, 2y] : p | m ⇒ p ≥ z}` (`Psi`), and `ω*` is the crude bound
-  for Buchstab's `ω` (`SieveCert.omegaC`: `0` below `1`, `1/u` on `[1, 2)` and `0.5672` from `2` on).
+  and `u = log 2y/log z ≤ U`. Here `Ψ(y, z) = #{m ∈ (y, 2y] : p | m ⇒ p ≥ z}` (`Psi`), and `ω*` is the bound for
+  Buchstab's `ω` of `SieveCert.omegaC`: `0` below `1`, `1/u` on `[1, 2)`, Buchstab's `(1 + log(u − 1))/u` on `[2, 3]`
+  and `0.565073` above `3`.
 * `share2`: let `cellP x k` be the primes whose exponent `log p/log x` lies in the cell `k` of a grid of the certificate
   (`SieveCert.Grid`, `mem_cellP`). On a grid with `GridOK`, for a cell `(i, j)` with `e_i + 2e_j ≤ DEN`, as for a
   candidate cell, and every `δ > 0`, eventually in `x`:
@@ -15,7 +16,9 @@ Plain statements.
 * `share4`: on a grid with `GridOK`, for a cell `(i, j, k, l)` with `e_i + e_j + e_k + 2e_l ≤ DEN`, as for a counted
   cell, and every `δ > 0`, eventually in `x`: the sum of `Ψ(x/(p₁p₂p₃p₄), p₄)` over the primes of the four cells is at
   most `(bound4(e_i, e_j, e_k, e_l)/K + δ)x/log x`.
-* `share2_of_cand`, `share4_of_counted4`: the two on the cells that pass `SieveCert.cand` and `SieveCert.counted4`.
+* `share6`: the same at depth 6, four cells of the grid and two of its coarse grid.
+* `share2_of_cand`, `share4_of_counted4`, `share6_of_counted6`: the three on the cells that pass `SieveCert.cand`,
+  `SieveCert.counted4` and `SieveCert.counted6`.
 
 `Ψ(x/d, p)` counts the integers `n = dm ∈ (x, 2x]`
 whose cofactor `m` has no prime factor below `p`. The shares bound these counts, summed over a cell's primes, by the
@@ -31,26 +34,28 @@ The proof:
   `(y, 2y]`.
 * `Psi_eq_zero`, `Psi_le_buchstab`: `Ψ(y, z) = 0` when `y ≥ 1` and `2y < z`, and for `y ≥ 2` Buchstab's inequality
   by the least prime factor, `Ψ(y, z) ≤ #{p : y < p ≤ 2y} + Σ_{z ≤ p ≤ √(2y)} Ψ(y/p, p)`.
-* `one_add_log_le`, `one_add_log_two_le`, `super_M`: `ω*` is a supersolution of Buchstab's delay equation,
-  `1 + ∫_1^{u−1} ω* ≤ uω*(u)` for `u ≥ 2`. On `[2, 3]` this is `1 + log(u − 1) ≤ 0.5672u`; above `3` it is
-  `1 + log 2 ≤ 3·0.5672`.
-* `rangeA_le`, `rangeB_le`, `sumW_le_three`, `sumW_gt_three`: with `L = log 2y`, the sum of
-  `ω*((L − log p)/log p)/(p log p)` over the primes of `(z, √(2y)]`, where `ω* = 0.5672` for `log p ≤ L/3` and
-  `ω* = log p/(L − log p)` above.
+* `one_add_log_two_le`, `one_add_log_two_add_w1_le`, `super_M`: `1 + M(u) ≤ uω*(u)` for `u ≥ 2`, where `M(u)` bounds
+  the step's `∫_1^{u−1} ω*`: on `[2, 3]` it is `log(u − 1)`, with equality, and above `3`
+  `log 2 + 0.5671433·min(u − 3, 1) + 0.565073·max(u − 4, 0)`, from `1 + log 2 ≤ 3·0.565073` and
+  `1 + log 2 + 0.5671433 ≤ 4·0.565073` (`0.5671433` bounds Buchstab's `ω` on `[2, 3]`, `SieveOmegaB.omB_le_w1`).
+* `range_const_le`, `rangeB_le`, `sumW_le_three`, `sumW_gt_three`: with `L = log 2y`, the sum of
+  `ω*((L − log p)/log p)/(p log p)` over the primes of `(z, √(2y)]`: `ω* ≤ 0.565073` for `log p ≤ L/4`,
+  `ω* ≤ 0.5671433` for `log p ≤ L/3`, and `ω* = log p/(L − log p)` above.
 * `Claim`, `claim_step`, `claim_nat`, `psi_le`: the induction on the level `K` in `log 2y ≤ K log z`.
-* `evLe_sum_inv`, `evLe_sum_inv_log`, `evLe_cell_inv`, `evLe_cell_inv_log`: for `0 < a ≤ c` and large `x`, the primes of
-  `[x^a, x^c)` have `Σ 1/p ≤ log c − log a + δ` and `log x · Σ 1/(p log p) ≤ 1/a − 1/c + δ`; on the cell `k` of a grid
-  with `GridOK`, whose side is `h = H/DEN` and whose lower corner is `a = e_k/DEN`, these are at most `h/a + δ` and
-  `h/a² + δ`.
+* `evLe_sum_inv`, `evLe_sum_inv_log`, `evLe_cell_inv`, `evLe_cell_tr`, `evLe_cell_ex`: for `0 < a ≤ c` and large `x`,
+  the primes of `[x^a, x^c)` have `Σ 1/p ≤ log c − log a + δ` and `log x · Σ 1/(p log p) ≤ 1/a − 1/c + δ`; on the cell
+  `k` of a grid with `GridOK`, whose side is `h = H/DEN` and whose lower corner is `a = e_k/DEN`, these are at most
+  `h/a + δ`, at most the trapezoid bound `h(2a + h)/(2a(a + h)) + δ` of `log(1 + h/a)` (`SieveCert.trB`), and
+  `h/(a(a + h)) + δ` (`SieveCert.exB`).
 * `psi_point`: at a point of a cell, `psi_le` and `SieveCert.omegaC_le` give
   `Ψ(x/(dp), p) ≤ (omK/K + ε)x/(dp log p)`.
-* `evLe_finish`, `share2`, `share4`: each share is at most `(omK/K + ε)x/log x` times the product of the cells'
-  prime sums (`Σ 1/p`, and `log x · Σ 1/(p log p)` for the last cell). For large `x` that product is at most the
-  product of the cells' `h/a` and `h/a²`, plus `δ`, and `SieveCert.bound2_ge` and `SieveCert.bound4_ge` bound
-  `omK/K` times the product by `bound2/K` and `bound4/K`.
+* `evLe_finish`, `share2`, `share4`, `share6`: each share is at most `(omK/K + ε)x/log x` times the product of the
+  cells' prime sums (`Σ 1/p`, and `log x · Σ 1/(p log p)` for the last cell). For large `x` that product is at most the
+  product of the cells' `trB` and the last cell's `exB`, plus `δ`, and `SieveCert.bound2_ge`, `bound4_ge` and
+  `bound6_ge` bound `omK/K` times the product by `bound2/K`, `bound4/K` and `bound6/K`.
 
 The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
-case `SieveGrid22250R.grid22250R` is the grid of exponent `89/40`.
+case `SieveGrid22240R.grid22240R` is the grid of exponent `278/125`.
 -/
 import HalfPlaneFinal
 import LinnikTwelveSizes
@@ -645,66 +650,67 @@ theorem card_primes_dyadic {ε : ℝ} (hε : 0 < ε) :
     _ ≤ y * ((1 + ε) * Real.log y) := mul_le_mul_of_nonneg_left key hy0.le
     _ = (1 + ε) * y * Real.log y := by ring
 
-/-! ### The crude `ω` is a supersolution of Buchstab's delay equation -/
+/-! ### `ω*` is a supersolution of Buchstab's delay equation -/
 
-/-- `log 0.5672 ≥ −0.5672`, from `0.5672·exp(0.5672) ≥ 1` (the exponential's series to degree `5`). -/
-theorem log_c_ge : -(5672 / 10000 : ℝ) ≤ Real.log (5672 / 10000) := by
-  have hc : (0 : ℝ) ≤ 5672 / 10000 := by norm_num
-  have hexp := Real.sum_le_exp_of_nonneg hc 6
-  simp only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial] at hexp
-  norm_num at hexp
-  have h1 : (10000 / 5672 : ℝ) ≤ Real.exp (5672 / 10000) := by linarith
-  have h2 : Real.log (10000 / 5672) ≤ 5672 / 10000 := by
-    rw [Real.log_le_iff_le_exp (by norm_num)]; exact h1
-  have h3 : Real.log (10000 / 5672 : ℝ) = -Real.log (5672 / 10000) := by
-    rw [show (10000 / 5672 : ℝ) = (5672 / 10000)⁻¹ by norm_num, Real.log_inv]
-  linarith
-
-/-- `1 + log(u − 1) ≤ 0.5672u` for `u > 1`, by the tangent line of `log` at `1/0.5672`. -/
-theorem one_add_log_le {u : ℝ} (hu : 1 < u) : 1 + Real.log (u - 1) ≤ 5672 / 10000 * u := by
-  have hc : (0 : ℝ) < 5672 / 10000 := by norm_num
-  have h1 : Real.log (5672 / 10000 * (u - 1)) ≤ 5672 / 10000 * (u - 1) - 1 :=
-    Real.log_le_sub_one_of_pos (by nlinarith)
-  rw [Real.log_mul hc.ne' (by linarith)] at h1
-  linarith [log_c_ge]
-
-/-- `1 + log 2 ≤ 3·0.5672`. -/
-theorem one_add_log_two_le : 1 + Real.log 2 ≤ 3 * (5672 / 10000 : ℝ) := by
+/-- `1 + log 2 ≤ 3·0.565073`. -/
+theorem one_add_log_two_le : 1 + Real.log 2 ≤ 3 * (565073 / 1000000 : ℝ) := by
   have := Real.log_two_lt_d9; norm_num at this ⊢; linarith
 
-/-- **The supersolution property**, in the step's terms: for `u ≥ 2`, `M(u) = ∫_1^{u−1} ω*` is `log(u − 1)` up to
-`u = 3` and `log 2 + 0.5672(u − 3)` above, and `1 + M(u) ≤ 0.5672u`. -/
-theorem super_M {u c M : ℝ} (hu2 : 2 ≤ u) (hc : c = 5672 / 10000)
-    (hM : M = if u ≤ 3 then Real.log (u - 1) else Real.log 2 + c * (u - 3)) : 1 + M ≤ c * u := by
-  subst hc hM
-  by_cases hu3 : u ≤ 3
-  · simp only [hu3, ite_true]
-    linarith [one_add_log_le (by linarith : (1 : ℝ) < u)]
-  · simp only [hu3, ite_false]
-    linarith [one_add_log_two_le]
+/-- `1 + log 2 + 0.5671433 ≤ 4·0.565073`: the constant of `ω*` above `3`. -/
+theorem one_add_log_two_add_w1_le : 1 + Real.log 2 + 5671433 / 10000000 ≤ 4 * (565073 / 1000000 : ℝ) := by
+  have := Real.log_two_lt_d9; norm_num at this ⊢; linarith
 
-/-! ### The two ranges of the Buchstab sum -/
+/-- **The supersolution property**, in the step's terms: for `u ≥ 2`, with `M(u) = log(u − 1)` up to `u = 3` and
+`log 2 + 0.5671433·min(u − 3, 1) + 0.565073·max(u − 4, 0)` above, `1 + M(u) ≤ uω*(u)`; on `[2, 3]` with equality, where
+`ω*` is Buchstab's `ω`. -/
+theorem super_M {u M : ℝ} (hu2 : 2 ≤ u)
+    (hM : M = if u ≤ 3 then Real.log (u - 1) else
+      Real.log 2 + 5671433 / 10000000 * min (u - 3) 1 + 565073 / 1000000 * max (u - 4) 0) :
+    1 + M ≤ SieveCert.omegaC u * u := by
+  by_cases hu3 : u ≤ 3
+  · have hω : SieveCert.omegaC u = SieveOmegaB.omB u := by
+      simp [SieveCert.omegaC, show ¬ u < 1 by linarith, show ¬ u < 2 by linarith, hu3]
+    rw [hM, ite_eq_left hu3, hω, SieveOmegaB.omB, div_mul_cancel₀ _ (by linarith)]
+  · have hω : SieveCert.omegaC u = 565073 / 1000000 := by
+      simp [SieveCert.omegaC, show ¬ u < 1 by linarith, show ¬ u < 2 by linarith, hu3]
+    rw [hM, ite_eq_right hu3, hω]
+    have h3 := one_add_log_two_le
+    have h4 := one_add_log_two_add_w1_le
+    rcases le_total (u - 3) 1 with h | h
+    · rw [min_eq_left h, max_eq_right (by linarith)]
+      have e1 : (4 - u) * (1 + Real.log 2 - 3 * (565073 / 1000000)) ≤ 0 :=
+        mul_nonpos_of_nonneg_of_nonpos (by linarith) (by linarith)
+      have e2 : (u - 3) * (1 + Real.log 2 + 5671433 / 10000000 - 4 * (565073 / 1000000)) ≤ 0 :=
+        mul_nonpos_of_nonneg_of_nonpos (by linarith) (by linarith)
+      linarith
+    · rw [min_eq_right h, max_eq_left (by linarith)]
+      linarith
+
+/-! ### The ranges of the Buchstab sum -/
 
 theorem omegaC_le_one (u : ℝ) : SieveCert.omegaC u ≤ 1 := by
   unfold SieveCert.omegaC
-  split_ifs with h1 h2
+  split_ifs with h1 h2 h3
   · norm_num
   · rw [div_le_one (by linarith)]; linarith
+  · linarith [SieveOmegaB.omB_le_w1 (show 1 < u by linarith)]
   · norm_num
 
 theorem omegaC_nonneg (u : ℝ) : 0 ≤ SieveCert.omegaC u := by
   unfold SieveCert.omegaC
-  split_ifs with h1 h2
+  split_ifs with h1 h2 h3
   · exact le_refl _
   · exact div_nonneg zero_le_one (by linarith)
+  · exact SieveOmegaB.omB_nonneg (by linarith)
   · norm_num
 
-/-- Where `log p ≤ L/3`, the argument `L/log p − 1` is at least `2`, and `ω* = 0.5672`. -/
-theorem omegaC_low {L l : ℝ} (hl : 0 < l) (h3 : 3 * l ≤ L) : SieveCert.omegaC ((L - l) / l) = 5672 / 10000 := by
-  have : 2 ≤ (L - l) / l := by rw [le_div_iff₀ hl]; linarith
-  have h1 : ¬ (L - l) / l < 1 := by linarith
-  have h2 : ¬ (L - l) / l < 2 := by linarith
-  simp only [SieveCert.omegaC, h1, h2, ite_false]
+/-- `ω* ≤ 0.5671433` from `2` on. -/
+theorem omegaC_le_w1 {u : ℝ} (hu : 2 ≤ u) : SieveCert.omegaC u ≤ 5671433 / 10000000 := by
+  unfold SieveCert.omegaC
+  rw [ite_eq_right (not_lt.mpr (by linarith)), ite_eq_right (not_lt.mpr hu)]
+  split_ifs
+  · exact SieveOmegaB.omB_le_w1 (by linarith)
+  · norm_num
 
 /-- Where `L/3 < log p ≤ L/2`, the argument lies in `[1, 2)`, and `ω* = log p/(L − log p)`. -/
 theorem omegaC_mid {L l : ℝ} (hl : 0 < l) (h3 : L < 3 * l) (h2 : 2 * l ≤ L) :
@@ -714,30 +720,29 @@ theorem omegaC_mid {L l : ℝ} (hl : 0 < l) (h3 : L < 3 * l) (h2 : 2 * l ≤ L) 
   have h1 : ¬ (L - l) / l < 1 := by linarith
   simp only [SieveCert.omegaC, h1, hlt, ite_false, ite_true, one_div_div]
 
-/-- **Range A**: the primes `z < p ≤ b` with `3 log b = L` carry `ω* = 0.5672`. -/
-theorem rangeA_le {z b L ε : ℝ} (hz : Real.exp 1 ≤ z) (hzb : z ≤ b) (hL : 3 * Real.log b = L) (hε : 0 ≤ ε)
-    (hθ : ∀ t ∈ Set.Icc z b, |θ t - t| ≤ ε * t / Real.log t) :
-    ∑ p ∈ (Ioc ⌊z⌋₊ ⌊b⌋₊).filter Nat.Prime,
+/-- **A range of a bounded weight**: on the primes `a < p ≤ b` with `ω*((L − log p)/log p) ≤ c`, the sum of
+`ω*((L − log p)/log p)/(p log p)` is at most `c(1/log a − 1/log b + 4ε/log² a)`. -/
+theorem range_const_le {a b L c ε : ℝ} (ha : Real.exp 1 ≤ a) (hab : a ≤ b) (hc : 0 ≤ c) (hε : 0 ≤ ε)
+    (hw : ∀ p : ℕ, p.Prime → a < p → (p : ℝ) ≤ b → SieveCert.omegaC ((L - Real.log p) / Real.log p) ≤ c)
+    (hθ : ∀ t ∈ Set.Icc a b, |θ t - t| ≤ ε * t / Real.log t) :
+    ∑ p ∈ (Ioc ⌊a⌋₊ ⌊b⌋₊).filter Nat.Prime,
         SieveCert.omegaC ((L - Real.log p) / Real.log p) / ((p : ℝ) * Real.log p) ≤
-      5672 / 10000 * (1 / Real.log z - 3 / L + 4 * ε / Real.log z ^ 2) := by
-  have hz0 : 0 ≤ z := le_trans (Real.exp_pos 1).le hz
-  have hb0 : 0 < b := lt_of_lt_of_le (Real.exp_pos 1) (hz.trans hzb)
-  have hterm : ∀ p ∈ (Ioc ⌊z⌋₊ ⌊b⌋₊).filter Nat.Prime,
-      SieveCert.omegaC ((L - Real.log p) / Real.log p) / ((p : ℝ) * Real.log p) =
-        5672 / 10000 * (1 / ((p : ℝ) * Real.log p)) := by
+      c * (1 / Real.log a - 1 / Real.log b + 4 * ε / Real.log a ^ 2) := by
+  have ha0 : 0 ≤ a := le_trans (Real.exp_pos 1).le ha
+  have hb0 : 0 < b := lt_of_lt_of_le (Real.exp_pos 1) (ha.trans hab)
+  have hterm : ∀ p ∈ (Ioc ⌊a⌋₊ ⌊b⌋₊).filter Nat.Prime,
+      SieveCert.omegaC ((L - Real.log p) / Real.log p) / ((p : ℝ) * Real.log p) ≤
+        c * (1 / ((p : ℝ) * Real.log p)) := by
     intro p hp
     obtain ⟨hpI, hpp⟩ := Finset.mem_filter.1 hp
-    rw [Finset.mem_Ioc, Nat.le_floor_iff hb0.le] at hpI
+    rw [Finset.mem_Ioc, Nat.floor_lt ha0, Nat.le_floor_iff hb0.le] at hpI
     have hp1 : (1 : ℝ) < p := by exact_mod_cast hpp.one_lt
     have hl : 0 < Real.log p := Real.log_pos hp1
-    have hlb : Real.log p ≤ Real.log b := Real.log_le_log (by linarith) hpI.2
-    rw [omegaC_low hl (by linarith)]
-    ring
-  rw [Finset.sum_congr rfl hterm, ← Finset.mul_sum]
-  have hS := sum_inv_mul_log_le hz hzb hε hθ
-  have hLb : 1 / Real.log b = 3 / L := by rw [← hL]; field_simp
-  rw [hLb] at hS
-  exact mul_le_mul_of_nonneg_left hS (by norm_num)
+    rw [div_eq_mul_one_div]
+    exact mul_le_mul_of_nonneg_right (hw p hpp hpI.1 hpI.2) (by positivity)
+  refine (Finset.sum_le_sum hterm).trans ?_
+  rw [← Finset.mul_sum]
+  exact mul_le_mul_of_nonneg_left (sum_inv_mul_log_le ha hab hε hθ) hc
 
 /-- **Range B**: the primes `a < p ≤ b` with `L/3 ≤ log a` and `2 log b = L` carry `ω* = log p/(L − log p)`. -/
 theorem rangeB_le {a b L ε : ℝ} (ha : Real.exp 1 ≤ a) (hab : a ≤ b) (hL : 2 * Real.log b = L)
@@ -796,11 +801,6 @@ theorem claim_of_small {K : ℝ} (h : ∀ ε : ℝ, 0 < ε → ε ≤ 1 → ∃ 
   apply mul_le_mul_of_nonneg_right _ (by linarith)
   linarith [min_le_left ε 1]
 
-theorem omegaC_of_ge_two {u : ℝ} (hu : 2 ≤ u) : SieveCert.omegaC u = 5672 / 10000 := by
-  have h1 : ¬ u < 1 := by linarith
-  have h2 : ¬ u < 2 := by linarith
-  simp only [SieveCert.omegaC, h1, h2, ite_false]
-
 theorem omegaC_of_lt_two {u : ℝ} (hu1 : 1 ≤ u) (hu : u < 2) : SieveCert.omegaC u = 1 / u := by
   have h1 : ¬ u < 1 := by linarith
   simp only [SieveCert.omegaC, h1, hu, ite_false, ite_true]
@@ -857,16 +857,16 @@ theorem sumW_le_three {z : ℕ} {b2 L u ε₃ : ℝ} (hez : Real.exp 1 ≤ z) (h
   linarith
 
 /-- The sum of `ω*((L − log p)/log p)/(p log p)` over the primes of `(z, b₂]`, with
-`2 log b₂ = 3 log b₃ = L = u log z` and `u > 3` (ranges A and B, split at `b₃`). -/
-theorem sumW_gt_three {z : ℕ} {b2 b3 L u ε₃ c : ℝ} (hez : Real.exp 1 ≤ z)
-    (hlb2 : 2 * Real.log b2 = L) (hlb3 : 3 * Real.log b3 = L) (hb20 : 0 < b2) (hb30 : 0 < b3)
-    (hLu : L = u * Real.log z)
-    (hu3 : 3 < u) (hc : c = 5672 / 10000) (hε₃0 : 0 < ε₃)
+`2 log b₂ = 3 log b₃ = 4 log b₄ = L = u log z` and `u > 3`: ranges A and B, split at `b₃`, with `ω* ≤ 0.5671433` on
+range A, and `ω* ≤ 0.565073` on its part below `b₄` when `u > 4`. -/
+theorem sumW_gt_three {z : ℕ} {b2 b3 b4 L u ε₃ : ℝ} (hez : Real.exp 1 ≤ z)
+    (hlb2 : 2 * Real.log b2 = L) (hlb3 : 3 * Real.log b3 = L) (hlb4 : 4 * Real.log b4 = L)
+    (hb20 : 0 < b2) (hb30 : 0 < b3) (hb40 : 0 < b4) (hLu : L = u * Real.log z) (hu3 : 3 < u) (hε₃0 : 0 < ε₃)
     (hθ : ∀ t ∈ Set.Icc (z : ℝ) b2, |θ t - t| ≤ ε₃ * t / Real.log t) :
     ∑ p ∈ (Ioc z ⌊b2⌋₊).filter Nat.Prime,
         SieveCert.omegaC ((L - Real.log p) / Real.log p) / ((p : ℝ) * Real.log p) ≤
-      1 / L * (Real.log 2 + c * (u - 3)) + 12 * ε₃ / L + 4 * ε₃ / Real.log z := by
-  subst hc
+      1 / L * (Real.log 2 + 5671433 / 10000000 * min (u - 3) 1 + 565073 / 1000000 * max (u - 4) 0) +
+        12 * ε₃ / L + 8 * ε₃ / Real.log z := by
   have hz0 : (0 : ℝ) < z := lt_of_lt_of_le (Real.exp_pos 1) hez
   have hlz : 1 ≤ Real.log z := by rw [Real.le_log_iff_exp_le hz0]; exact hez
   have hlz0 : 0 < Real.log z := by linarith
@@ -887,9 +887,8 @@ theorem sumW_gt_three {z : ℕ} {b2 b3 L u ε₃ c : ℝ} (hez : Real.exp 1 ≤ 
     fun t ht => hθ t ⟨ht.1, ht.2.trans hb3b2⟩
   have hθ32 : ∀ t ∈ Set.Icc b3 b2, |θ t - t| ≤ ε₃ * t / Real.log t :=
     fun t ht => hθ t ⟨hzb3.trans ht.1, ht.2⟩
-  have hA := rangeA_le hez hzb3 hlb3 hε₃0.le hθ3
-  rw [Nat.floor_natCast] at hA
   have heb3 : Real.exp 1 ≤ b3 := hez.trans hzb3
+  -- range B
   have hB := rangeB_le heb3 hb3b2 hlb2 (by linarith) hε₃0.le hθ32
   have hq : (L - Real.log b3) / Real.log b3 = 2 := by
     have : Real.log b3 = L / 3 := by linarith
@@ -897,21 +896,6 @@ theorem sumW_gt_three {z : ℕ} {b2 b3 L u ε₃ c : ℝ} (hez : Real.exp 1 ≤ 
   rw [hq] at hB
   have hlb3z : Real.log z ≤ Real.log b3 := Real.log_le_log hz0 hzb3
   have hlb3_1 : 1 ≤ Real.log b3 := le_trans hlz hlb3z
-  have eA : 5672 / 10000 * (1 / Real.log z - 3 / L + 4 * ε₃ / Real.log z ^ 2) ≤
-      1 / L * (5672 / 10000 * (u - 3)) + 4 * ε₃ / Real.log z := by
-    have h1 : 1 / Real.log z = u / L := by rw [hLu]; field_simp
-    have h2 : 4 * ε₃ / Real.log z ^ 2 ≤ 4 * ε₃ / Real.log z := by
-      apply div_le_div_of_nonneg_left (by positivity) hlz0
-      exact le_self_pow₀ hlz (by norm_num)
-    have h3 : 5672 / 10000 * (u / L - 3 / L) = 1 / L * (5672 / 10000 * (u - 3)) := by ring
-    have hc0 : (5672 / 10000 : ℝ) ≤ 1 := by norm_num
-    have hc00 : (0 : ℝ) ≤ 5672 / 10000 := by norm_num
-    have h4 : 5672 / 10000 * (4 * ε₃ / Real.log z ^ 2) ≤ 4 * ε₃ / Real.log z :=
-      le_trans (mul_le_of_le_one_left (by positivity) hc0) h2
-    have e : 5672 / 10000 * (1 / Real.log z - 3 / L + 4 * ε₃ / Real.log z ^ 2) =
-        5672 / 10000 * (1 / Real.log z - 3 / L) + 5672 / 10000 * (4 * ε₃ / Real.log z ^ 2) := by ring
-    rw [e, h1, h3]
-    linarith
   have eB : Real.log 2 / L * (1 + ε₃ / Real.log b3) + 6 * ε₃ / (L * Real.log b3 ^ 2) ≤
       1 / L * Real.log 2 + 7 * ε₃ / L := by
     have hl2 : Real.log 2 ≤ 1 := by have := Real.log_two_lt_d9; norm_num at this; linarith
@@ -931,14 +915,103 @@ theorem sumW_gt_three {z : ℕ} {b2 b3 L u ε₃ c : ℝ} (hez : Real.exp 1 ≤ 
     linarith
   have h7 : 7 * ε₃ / L ≤ 12 * ε₃ / L := by
     rw [div_le_div_iff_of_pos_right hL0]; linarith
-  have e : 1 / L * (Real.log 2 + 5672 / 10000 * (u - 3)) =
-      1 / L * (5672 / 10000 * (u - 3)) + 1 / L * Real.log 2 := by ring
-  linarith [hA.trans eA, hB.trans eB]
+  -- the weights of range A
+  have hwW : ∀ p : ℕ, p.Prime → (z : ℝ) < p → (p : ℝ) ≤ b3 →
+      SieveCert.omegaC ((L - Real.log p) / Real.log p) ≤ 5671433 / 10000000 := by
+    intro p hp _ hpb
+    have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.one_lt
+    have hl : 0 < Real.log p := Real.log_pos hp1
+    have hlpb : Real.log p ≤ Real.log b3 := Real.log_le_log (by linarith) hpb
+    apply omegaC_le_w1
+    rw [le_div_iff₀ hl]; linarith
+  have hW1 : (0 : ℝ) ≤ 5671433 / 10000000 := by norm_num
+  have hdz : 4 * ε₃ / Real.log z ^ 2 ≤ 4 * ε₃ / Real.log z := by
+    apply div_le_div_of_nonneg_left (by positivity) hlz0
+    exact le_self_pow₀ hlz (by norm_num)
+  have h1z : 1 / Real.log z = u / L := by rw [hLu]; field_simp
+  have hlb3' : 1 / Real.log b3 = 3 / L := by rw [← hlb3]; field_simp
+  by_cases hu4 : u ≤ 4
+  · -- `3 < u ≤ 4`: range A carries at most `0.5671433`
+    have hA := range_const_le (a := (z : ℝ)) hez hzb3 hW1 hε₃0.le hwW hθ3
+    rw [Nat.floor_natCast, hlb3'] at hA
+    rw [min_eq_left (by linarith), max_eq_right (by linarith)]
+    have e1 : 5671433 / 10000000 * (1 / Real.log z - 3 / L + 4 * ε₃ / Real.log z ^ 2) ≤
+        1 / L * (5671433 / 10000000 * (u - 3)) + 4 * ε₃ / Real.log z := by
+      rw [h1z]
+      have h4 : 5671433 / 10000000 * (4 * ε₃ / Real.log z ^ 2) ≤ 4 * ε₃ / Real.log z :=
+        le_trans (mul_le_of_le_one_left (by positivity) (by norm_num)) hdz
+      have e : 5671433 / 10000000 * (u / L - 3 / L + 4 * ε₃ / Real.log z ^ 2) =
+          1 / L * (5671433 / 10000000 * (u - 3)) + 5671433 / 10000000 * (4 * ε₃ / Real.log z ^ 2) := by ring
+      linarith
+    have h48 : 4 * ε₃ / Real.log z ≤ 8 * ε₃ / Real.log z := div_le_div_of_nonneg_right (by linarith) hlz0.le
+    have e : 1 / L * (Real.log 2 + 5671433 / 10000000 * (u - 3) + 565073 / 1000000 * 0) =
+        1 / L * (5671433 / 10000000 * (u - 3)) + 1 / L * Real.log 2 := by ring
+    linarith [hA.trans e1, hB.trans eB]
+  · -- `u > 4`: range A splits at `b₄`, with `ω* ≤ 0.565073` below it
+    have hu4' : 4 < u := not_le.mp hu4
+    have hzb4 : (z : ℝ) ≤ b4 := by
+      have : 4 * Real.log z ≤ 4 * Real.log b4 := by
+        rw [hlb4]
+        calc 4 * Real.log z ≤ u * Real.log z := mul_le_mul_of_nonneg_right hu4'.le hlz0.le
+          _ = L := hLu.symm
+      exact (Real.log_le_log_iff hz0 hb40).1 (by linarith)
+    have hb4b3 : b4 ≤ b3 := by
+      have : Real.log b4 ≤ Real.log b3 := by linarith
+      exact (Real.log_le_log_iff hb40 hb30).1 this
+    have hz4 : z ≤ ⌊b4⌋₊ := Nat.le_floor hzb4
+    have h43 : ⌊b4⌋₊ ≤ ⌊b3⌋₊ := Nat.floor_le_floor hb4b3
+    rw [sum_Ioc_filter_split _ hz4 h43]
+    have hθ4 : ∀ t ∈ Set.Icc (z : ℝ) b4, |θ t - t| ≤ ε₃ * t / Real.log t :=
+      fun t ht => hθ3 t ⟨ht.1, ht.2.trans hb4b3⟩
+    have hθ43 : ∀ t ∈ Set.Icc b4 b3, |θ t - t| ≤ ε₃ * t / Real.log t :=
+      fun t ht => hθ3 t ⟨hzb4.trans ht.1, ht.2⟩
+    have heb4 : Real.exp 1 ≤ b4 := hez.trans hzb4
+    have hcp : (0 : ℝ) ≤ 565073 / 1000000 := by norm_num
+    have hwC : ∀ p : ℕ, p.Prime → (z : ℝ) < p → (p : ℝ) ≤ b4 →
+        SieveCert.omegaC ((L - Real.log p) / Real.log p) ≤ 565073 / 1000000 := by
+      intro p hp _ hpb
+      have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.one_lt
+      have hl : 0 < Real.log p := Real.log_pos hp1
+      have hlpb : Real.log p ≤ Real.log b4 := Real.log_le_log (by linarith) hpb
+      apply SieveCert.omegaC_le_of_three_le
+      rw [le_div_iff₀ hl]; linarith
+    have hA1 := range_const_le (a := (z : ℝ)) hez hzb4 hcp hε₃0.le hwC hθ4
+    have hA2 := range_const_le heb4 hb4b3 hW1 hε₃0.le
+      (fun p hp hzp hpb => hwW p hp (lt_of_le_of_lt hzb4 hzp) hpb) hθ43
+    have hlb4' : 1 / Real.log b4 = 4 / L := by rw [← hlb4]; field_simp
+    rw [Nat.floor_natCast, hlb4'] at hA1
+    rw [hlb4', hlb3'] at hA2
+    have hlb4z : Real.log z ≤ Real.log b4 := Real.log_le_log hz0 hzb4
+    have hlb4_1 : 1 ≤ Real.log b4 := le_trans hlz hlb4z
+    have hd4 : 4 * ε₃ / Real.log b4 ^ 2 ≤ 4 * ε₃ / Real.log z := by
+      apply div_le_div_of_nonneg_left (by positivity) hlz0
+      calc Real.log z ≤ Real.log b4 := hlb4z
+        _ ≤ Real.log b4 ^ 2 := le_self_pow₀ hlb4_1 (by norm_num)
+    rw [min_eq_right (by linarith), max_eq_left (by linarith)]
+    have e1 : 565073 / 1000000 * (1 / Real.log z - 4 / L + 4 * ε₃ / Real.log z ^ 2) ≤
+        1 / L * (565073 / 1000000 * (u - 4)) + 4 * ε₃ / Real.log z := by
+      rw [h1z]
+      have h4 : 565073 / 1000000 * (4 * ε₃ / Real.log z ^ 2) ≤ 4 * ε₃ / Real.log z :=
+        le_trans (mul_le_of_le_one_left (by positivity) (by norm_num)) hdz
+      have e : 565073 / 1000000 * (u / L - 4 / L + 4 * ε₃ / Real.log z ^ 2) =
+          1 / L * (565073 / 1000000 * (u - 4)) + 565073 / 1000000 * (4 * ε₃ / Real.log z ^ 2) := by ring
+      linarith
+    have e2 : 5671433 / 10000000 * (4 / L - 3 / L + 4 * ε₃ / Real.log b4 ^ 2) ≤
+        1 / L * (5671433 / 10000000) + 4 * ε₃ / Real.log z := by
+      have h4 : 5671433 / 10000000 * (4 * ε₃ / Real.log b4 ^ 2) ≤ 4 * ε₃ / Real.log z :=
+        le_trans (mul_le_of_le_one_left (by positivity) (by norm_num)) hd4
+      have e : 5671433 / 10000000 * (4 / L - 3 / L + 4 * ε₃ / Real.log b4 ^ 2) =
+          1 / L * (5671433 / 10000000) + 5671433 / 10000000 * (4 * ε₃ / Real.log b4 ^ 2) := by ring
+      linarith
+    have e : 1 / L * (Real.log 2 + 5671433 / 10000000 * 1 + 565073 / 1000000 * (u - 4)) =
+        1 / L * (565073 / 1000000 * (u - 4)) + 1 / L * (5671433 / 10000000) + 1 / L * Real.log 2 := by ring
+    have e8 : 8 * ε₃ / Real.log z = 4 * ε₃ / Real.log z + 4 * ε₃ / Real.log z := by ring
+    linarith [hA1.trans e1, hA2.trans e2, hB.trans eB]
 
 /-- The bracket of the induction step, in units of `y/log z`. -/
 theorem bracket_le {u z lz ε ε₃ c M : ℝ} (hu1 : 1 ≤ u) (hlz : 1 ≤ lz) (hz2 : 2 / z ≤ ε / 4) (hε : 0 < ε)
     (hε1 : ε ≤ 1) (hε₃ : ε₃ = ε / 100) (hsuper : 1 + M ≤ c * u) :
-    (1 + ε / 4) / u + 2 / z + (M + 12 * ε₃) / u + 4 * ε₃ + (ε / 4 + ε * ε₃ / lz) ≤ c + ε := by
+    (1 + ε / 4) / u + 2 / z + (M + 12 * ε₃) / u + 8 * ε₃ + (ε / 4 + ε * ε₃ / lz) ≤ c + ε := by
   subst hε₃
   have hu0 : 0 < u := by linarith
   have k1 : (1 + ε / 4) / u + (M + 12 * (ε / 100)) / u = (1 + M) / u + (ε / 4 + 12 * (ε / 100)) / u := by ring
@@ -954,9 +1027,9 @@ theorem bracket_le {u z lz ε ε₃ c M : ℝ} (hu1 : 1 ≤ u) (hlz : 1 ≤ lz) 
 /-- The induction step's bound, in units of `Q = y/log z`. -/
 theorem units_eq {y lz L u Q z ε ε₃ M : ℝ} (hlz0 : 0 < lz) (hLu : L = u * lz) (hu0 : 0 < u) (hQ : Q = y / lz)
     (hz0 : 0 < z) :
-    (1 + ε / 4) * (Q / u) + y * (2 / (z * lz) + (1 / L * M + 12 * ε₃ / L + 4 * ε₃ / lz) +
+    (1 + ε / 4) * (Q / u) + y * (2 / (z * lz) + (1 / L * M + 12 * ε₃ / L + 8 * ε₃ / lz) +
       ε / 4 * (1 / lz + 4 * ε₃ / lz ^ 2)) =
-      Q * ((1 + ε / 4) / u + 2 / z + (M + 12 * ε₃) / u + 4 * ε₃ + (ε / 4 + ε * ε₃ / lz)) := by
+      Q * ((1 + ε / 4) / u + 2 / z + (M + 12 * ε₃) / u + 8 * ε₃ + (ε / 4 + ε * ε₃ / lz)) := by
   subst hLu hQ
   field_simp
   ring
@@ -967,7 +1040,6 @@ set_option maxHeartbeats 1000000 in
 theorem claim_step {K : ℝ} (hK : 0 ≤ K) (IH : Claim K) : Claim (K + 1) := by
   apply claim_of_small
   intro ε hε hε1
-  obtain ⟨c, hc⟩ : ∃ c : ℝ, c = 5672 / 10000 := ⟨_, rfl⟩
   obtain ⟨ε₃, hε₃⟩ : ∃ ε₃ : ℝ, ε₃ = ε / 100 := ⟨_, rfl⟩
   have hε₃0 : 0 < ε₃ := by rw [hε₃]; positivity
   obtain ⟨y₀, hy₀⟩ := card_primes_dyadic (ε := ε / 4) (by positivity)
@@ -1098,7 +1170,6 @@ theorem claim_step {K : ℝ} (hK : 0 ≤ K) (IH : Claim K) : Claim (K + 1) := by
       _ = (1 / u + ε) * y / Real.log z := by rw [hQ]; ring
   · -- `u ≥ 2`
     have hu2' : 2 ≤ u := not_lt.1 hu2
-    rw [omegaC_of_ge_two hu2', ← hc]
     obtain ⟨b2, hb2⟩ : ∃ b2 : ℝ, b2 = √(2 * y) := ⟨_, rfl⟩
     have hlb2 : 2 * Real.log b2 = L := by rw [hb2, Real.log_sqrt (by linarith), hLdef]; ring
     have hzb2 : (z : ℝ) ≤ b2 := by
@@ -1133,19 +1204,27 @@ theorem claim_step {K : ℝ} (hK : 0 ≤ K) (IH : Claim K) : Claim (K + 1) := by
     -- the sum of `ω*` over `(z, √2y]`
     have hW : ∑ p ∈ (Ioc z ⌊b2⌋₊).filter Nat.Prime,
         SieveCert.omegaC ((L - Real.log p) / Real.log p) / ((p : ℝ) * Real.log p) ≤
-        (1 / L) * (if u ≤ 3 then Real.log (u - 1) else Real.log 2 + c * (u - 3)) + 12 * ε₃ / L +
-          4 * ε₃ / Real.log z := by
+        (1 / L) * (if u ≤ 3 then Real.log (u - 1) else
+          Real.log 2 + 5671433 / 10000000 * min (u - 3) 1 + 565073 / 1000000 * max (u - 4) 0) + 12 * ε₃ / L +
+          8 * ε₃ / Real.log z := by
       by_cases hu3 : u ≤ 3
       · simp only [hu3, ite_true]
-        exact sumW_le_three hez hzb2 hlb2 hLu hu2' hu3 hε₃0 (hθ z b2 le_rfl)
+        have h := sumW_le_three hez hzb2 hlb2 hLu hu2' hu3 hε₃0 (hθ z b2 le_rfl)
+        have h48 : 4 * ε₃ / Real.log z ≤ 8 * ε₃ / Real.log z :=
+          div_le_div_of_nonneg_right (by linarith) hlz0.le
+        linarith
       · have hu3' : 3 < u := not_le.1 hu3
         obtain ⟨b3, hb3⟩ : ∃ b3 : ℝ, b3 = (2 * y) ^ ((1 : ℝ) / 3) := ⟨_, rfl⟩
         have hb30 : 0 < b3 := by rw [hb3]; positivity
         have hlb3 : 3 * Real.log b3 = L := by
           rw [hb3, Real.log_rpow (by linarith), hLdef]; ring
+        obtain ⟨b4, hb4⟩ : ∃ b4 : ℝ, b4 = (2 * y) ^ ((1 : ℝ) / 4) := ⟨_, rfl⟩
+        have hb40 : 0 < b4 := by rw [hb4]; positivity
+        have hlb4 : 4 * Real.log b4 = L := by
+          rw [hb4, Real.log_rpow (by linarith), hLdef]; ring
         simp only [hu3, ite_false]
         have hb20 : 0 < b2 := by rw [hb2]; positivity
-        exact sumW_gt_three hez hlb2 hlb3 hb20 hb30 hLu hu3' hc hε₃0 (hθ z b2 le_rfl)
+        exact sumW_gt_three hez hlb2 hlb3 hlb4 hb20 hb30 hb40 hLu hu3' hε₃0 (hθ z b2 le_rfl)
     -- the final count
     have hPsum := sum_Icc_filter_le hF0 hzn
     have hIocF : ∑ p ∈ (Ioc z ⌊b2⌋₊).filter Nat.Prime, F p =
@@ -1153,15 +1232,16 @@ theorem claim_step {K : ℝ} (hK : 0 ≤ K) (IH : Claim K) : Claim (K + 1) := by
           SieveCert.omegaC ((L - Real.log p) / Real.log p) / ((p : ℝ) * Real.log p) +
         ∑ p ∈ (Ioc z ⌊b2⌋₊).filter Nat.Prime, ε / 4 / ((p : ℝ) * Real.log p) := by
       simp only [hFdef, Finset.sum_add_distrib]
-    obtain ⟨M, hM⟩ : ∃ M : ℝ, M = if u ≤ 3 then Real.log (u - 1) else Real.log 2 + c * (u - 3) := ⟨_, rfl⟩
+    obtain ⟨M, hM⟩ : ∃ M : ℝ, M = if u ≤ 3 then Real.log (u - 1) else
+        Real.log 2 + 5671433 / 10000000 * min (u - 3) 1 + 565073 / 1000000 * max (u - 4) 0 := ⟨_, rfl⟩
     rw [← hM] at hW
-    have hsuper : 1 + M ≤ c * u := super_M hu2' hc hM
+    have hsuper : 1 + M ≤ SieveCert.omegaC u * u := super_M hu2' hM
     -- everything in units of `Q = y/log z`, with `y/L = Q/u`
     have hN' : (1 + ε / 4) * y / Real.log (2 * y) = (1 + ε / 4) * (Q / u) := by
       rw [← hLdef, ← hyL]; ring
     have h1 := hN.trans hN'.le
     have h2 : ∑ p ∈ (Icc z ⌊√(2 * y)⌋₊).filter Nat.Prime, F p ≤ 2 / ((z : ℝ) * Real.log z) +
-        ((1 / L) * M + 12 * ε₃ / L + 4 * ε₃ / Real.log z) +
+        ((1 / L) * M + 12 * ε₃ / L + 8 * ε₃ / Real.log z) +
         ε / 4 * (1 / Real.log z + 4 * ε₃ / Real.log z ^ 2) := by
       rw [← hb2]
       calc ∑ p ∈ (Icc z ⌊b2⌋₊).filter Nat.Prime, F p
@@ -1169,11 +1249,11 @@ theorem claim_step {K : ℝ} (hK : 0 ≤ K) (IH : Claim K) : Claim (K + 1) := by
         _ = F z + (∑ p ∈ (Ioc z ⌊b2⌋₊).filter Nat.Prime,
               SieveCert.omegaC ((L - Real.log p) / Real.log p) / ((p : ℝ) * Real.log p) +
             ∑ p ∈ (Ioc z ⌊b2⌋₊).filter Nat.Prime, ε / 4 / ((p : ℝ) * Real.log p)) := by rw [hIocF]
-        _ ≤ 2 / ((z : ℝ) * Real.log z) + (((1 / L) * M + 12 * ε₃ / L + 4 * ε₃ / Real.log z) +
+        _ ≤ 2 / ((z : ℝ) * Real.log z) + (((1 / L) * M + 12 * ε₃ / L + 8 * ε₃ / Real.log z) +
             ε / 4 * (1 / Real.log z + 4 * ε₃ / Real.log z ^ 2)) := add_le_add hFz (add_le_add hW hE)
         _ = _ := by ring
     have hbound : (Psi y z : ℝ) ≤ (1 + ε / 4) * (Q / u) + y * (2 / ((z : ℝ) * Real.log z) +
-        ((1 / L) * M + 12 * ε₃ / L + 4 * ε₃ / Real.log z) + ε / 4 * (1 / Real.log z + 4 * ε₃ / Real.log z ^ 2)) :=
+        ((1 / L) * M + 12 * ε₃ / L + 8 * ε₃ / Real.log z) + ε / 4 * (1 / Real.log z + 4 * ε₃ / Real.log z ^ 2)) :=
       hbuch.trans (add_le_add h1 (hsumP.trans (mul_le_mul_of_nonneg_left h2 hy0.le)))
     -- the bracket
     have hu0 : 0 < u := by linarith
@@ -1183,8 +1263,8 @@ theorem claim_step {K : ℝ} (hK : 0 ≤ K) (IH : Claim K) : Claim (K + 1) := by
       nlinarith
     calc (Psi y z : ℝ) ≤ _ := hbound
       _ = _ := units_eq hlz0 hLu hu0 hQ (by linarith)
-      _ ≤ Q * (c + ε) := mul_le_mul_of_nonneg_left (bracket_le hu1 hlz hz2 hε hε1 hε₃ hsuper) hQ0.le
-      _ = (c + ε) * y / Real.log z := by rw [hQ]; ring
+      _ ≤ Q * (SieveCert.omegaC u + ε) := mul_le_mul_of_nonneg_left (bracket_le hu1 hlz hz2 hε hε1 hε₃ hsuper) hQ0.le
+      _ = (SieveCert.omegaC u + ε) * y / Real.log z := by rw [hQ]; ring
 
 /-- The bound at level `0` is vacuous, since `log 2y > 0` for `y ≥ 1`. -/
 theorem claim_zero : Claim 0 := by
@@ -1414,20 +1494,41 @@ theorem evLe_cell_inv (k : ℕ) : EvLe (fun x => ∑ p ∈ cellP x k, 1 / (p : �
   filter_upwards [evLe_sum_inv ha hac δ hδ] with x hx
   exact le_trans hx (by linarith)
 
-/-- On a grid with `GridOK`, the cell's `log x · Σ 1/(p log p)` is at most `h/a² = H·DEN/e_k²`, up to `o(1)`. -/
-theorem evLe_cell_inv_log (k : ℕ) :
-    EvLe (fun x => Real.log x * ∑ p ∈ cellP x k, 1 / ((p : ℝ) * Real.log p)) ((H : ℝ) * DEN / (SieveCert.e k : ℝ) ^ 2) := by
+/-- On a grid with `GridOK`, the cell's `Σ 1/p` is at most the trapezoid bound
+`trB(e_k, H) = H(2e_k + H)/(2e_k(e_k + H))` of `log(1 + H/e_k)`, up to `o(1)`. -/
+theorem evLe_cell_tr (k : ℕ) : EvLe (fun x => ∑ p ∈ cellP x k, 1 / (p : ℝ)) (trB (SieveCert.e k) H) := by
   have hek : (0 : ℝ) < SieveCert.e k := by exact_mod_cast e_pos k
   have hH : (0 : ℝ) < H := by exact_mod_cast H_pos
   have hD := DEN_pos'
   have ha : (0 : ℝ) < (SieveCert.e k : ℝ) / DEN := div_pos hek hD
   have hac : (SieveCert.e k : ℝ) / DEN ≤ ((SieveCert.e k : ℝ) + H) / DEN := div_le_div_of_nonneg_right (by linarith) hD.le
-  have hle : 1 / ((SieveCert.e k : ℝ) / DEN) - 1 / (((SieveCert.e k : ℝ) + H) / DEN) ≤ (H : ℝ) * DEN / (SieveCert.e k : ℝ) ^ 2 := by
-    have heq : 1 / ((SieveCert.e k : ℝ) / DEN) - 1 / (((SieveCert.e k : ℝ) + H) / DEN) = (H : ℝ) * DEN / ((SieveCert.e k : ℝ) * (SieveCert.e k + H)) := by
-      field_simp; ring
+  have hlog : Real.log (((SieveCert.e k : ℝ) + H) / DEN) - Real.log ((SieveCert.e k : ℝ) / DEN) ≤
+      trB (SieveCert.e k) H := by
+    rw [← Real.log_div (by positivity) (by positivity)]
+    have heq : ((SieveCert.e k : ℝ) + H) / DEN / ((SieveCert.e k : ℝ) / DEN) = ((SieveCert.e k : ℝ) + H) / SieveCert.e k := by
+      field_simp
     rw [heq]
-    apply div_le_div_of_nonneg_left (by positivity) (by positivity)
-    nlinarith
+    have h1 : (1 : ℝ) ≤ ((SieveCert.e k : ℝ) + H) / SieveCert.e k := by rw [le_div_iff₀ hek]; linarith
+    have h := SieveOmegaB.log_le_half_sub_inv h1
+    have h2 : (((SieveCert.e k : ℝ) + H) / SieveCert.e k - (((SieveCert.e k : ℝ) + H) / SieveCert.e k)⁻¹) / 2 =
+        trB (SieveCert.e k) H := by
+      unfold trB; field_simp; ring
+    linarith
+  intro δ hδ
+  filter_upwards [evLe_sum_inv ha hac δ hδ] with x hx
+  exact le_trans hx (by linarith)
+
+/-- On a grid with `GridOK`, the cell's `log x · Σ 1/(p log p)` is at most `exB(e_k, H) = H·DEN/(e_k(e_k + H))`, the
+exact `DEN(1/e_k − 1/(e_k + H))`, up to `o(1)`. -/
+theorem evLe_cell_ex (k : ℕ) :
+    EvLe (fun x => Real.log x * ∑ p ∈ cellP x k, 1 / ((p : ℝ) * Real.log p)) (exB (SieveCert.e k) H) := by
+  have hek : (0 : ℝ) < SieveCert.e k := by exact_mod_cast e_pos k
+  have hH : (0 : ℝ) < H := by exact_mod_cast H_pos
+  have hD := DEN_pos'
+  have ha : (0 : ℝ) < (SieveCert.e k : ℝ) / DEN := div_pos hek hD
+  have hac : (SieveCert.e k : ℝ) / DEN ≤ ((SieveCert.e k : ℝ) + H) / DEN := div_le_div_of_nonneg_right (by linarith) hD.le
+  have hle : 1 / ((SieveCert.e k : ℝ) / DEN) - 1 / (((SieveCert.e k : ℝ) + H) / DEN) = exB (SieveCert.e k) H := by
+    unfold exB; field_simp; ring
   intro δ hδ
   filter_upwards [evLe_sum_inv_log ha hac δ hδ] with x hx
   exact le_trans hx (by linarith)
@@ -1436,7 +1537,7 @@ theorem evLe_cell_inv_log (k : ℕ) :
 
 theorem four_H_le_V : 4 * H ≤ V := GridOK.four_H_le_V
 
-omit [GridOK] in
+omit [Grid] [GridOK] in
 /-- **A point of a cell.** Let `x > 1` with `(log 2/log x)·DEN < 1`, let `d ≥ 1` be the product of the other primes
 and `p ≥ 2` the last, with `s ≤ (log d/log x)DEN`, `t ≤ (log p/log x)DEN ≤ t + w` and
 `((log d + log p)/log x)DEN ≤ s + t + W ≤ DEN`. If `z₀` is `psi_le`'s for `U = 2DEN/t` and `ε`, and `p ≥ z₀`, then
@@ -1579,18 +1680,17 @@ theorem share2 {i j : ℕ} (hij : SieveCert.e i + 2 * SieveCert.e j ≤ DEN) {δ
   have hfit' : (SieveCert.e i : ℝ) + SieveCert.e j + 2 * H ≤ DEN := by exact_mod_cast hfit
   obtain ⟨W, hW⟩ : ∃ W, W = (omK (SieveCert.e i) (SieveCert.e j) 2 : ℝ) / K := ⟨_, rfl⟩
   have hW0 : 0 ≤ W := by rw [hW]; positivity
-  have hP1 : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e i := by positivity
-  have hP2 : (0 : ℝ) ≤ (H : ℝ) * DEN / (SieveCert.e j : ℝ) ^ 2 := by positivity
-  have hWP : W * ((H : ℝ) / SieveCert.e i * ((H : ℝ) * DEN / (SieveCert.e j : ℝ) ^ 2)) ≤
+  have hP1 : (0 : ℝ) ≤ trB (SieveCert.e i) H := trB_nonneg _ _
+  have hP2 : (0 : ℝ) ≤ exB (SieveCert.e j) H := exB_nonneg _ _
+  have hWP : W * (trB (SieveCert.e i) H * exB (SieveCert.e j) H) ≤
       (bound2 (SieveCert.e i) (SieveCert.e j) : ℝ) / K := by
     have h := bound2_ge (e_pos i) (e_pos j)
-    have heq : W * ((H : ℝ) / SieveCert.e i * ((H : ℝ) * DEN / (SieveCert.e j : ℝ) ^ 2)) =
-        ((H : ℝ) / DEN) ^ 2 * ((omK (SieveCert.e i) (SieveCert.e j) 2 : ℝ) / K) /
-          (((SieveCert.e i : ℝ) / DEN) * ((SieveCert.e j : ℝ) / DEN) ^ 2) := by
-      rw [hW]; field_simp
-    rw [heq]; exact h
+    rw [hW]
+    calc _ = trB (SieveCert.e i) H * exB (SieveCert.e j) H * ((omK (SieveCert.e i) (SieveCert.e j) 2 : ℝ) / K) := by
+          ring
+      _ ≤ _ := h
   have hR := EvLe.mul hP1 hP2 (Filter.Eventually.of_forall fun x => sum_inv_nonneg (cellP x i))
-    (ev_log_mul_nonneg fun x => cellP x j) (evLe_cell_inv i) (evLe_cell_inv_log j)
+    (ev_log_mul_nonneg fun x => cellP x j) (evLe_cell_tr i) (evLe_cell_ex j)
   refine evLe_finish hW0 (mul_nonneg hP1 hP2) hWP hR (fun ε hε => ?_) hδ
   obtain ⟨z₀, hz₀⟩ := psi_le (2 * DEN / SieveCert.e j) hε
   have hb : (0 : ℝ) < (SieveCert.e j : ℝ) / DEN := div_pos hej hD
@@ -1659,29 +1759,25 @@ theorem share4 {i j k l : ℕ}
   obtain ⟨W, hW⟩ : ∃ W, W = (omK (SieveCert.e i + SieveCert.e j + SieveCert.e k) (SieveCert.e l) 4 : ℝ) / K :=
     ⟨_, rfl⟩
   have hW0 : 0 ≤ W := by rw [hW]; positivity
-  have hPi : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e i := by positivity
-  have hPj : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e j := by positivity
-  have hPk : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e k := by positivity
-  have hPl : (0 : ℝ) ≤ (H : ℝ) * DEN / (SieveCert.e l : ℝ) ^ 2 := by positivity
-  have hWP : W * ((H : ℝ) / SieveCert.e i * ((H : ℝ) / SieveCert.e j) * ((H : ℝ) / SieveCert.e k) *
-      ((H : ℝ) * DEN / (SieveCert.e l : ℝ) ^ 2)) ≤
+  have hPi : (0 : ℝ) ≤ trB (SieveCert.e i) H := trB_nonneg _ _
+  have hPj : (0 : ℝ) ≤ trB (SieveCert.e j) H := trB_nonneg _ _
+  have hPk : (0 : ℝ) ≤ trB (SieveCert.e k) H := trB_nonneg _ _
+  have hPl : (0 : ℝ) ≤ exB (SieveCert.e l) H := exB_nonneg _ _
+  have hWP : W * (trB (SieveCert.e i) H * trB (SieveCert.e j) H * trB (SieveCert.e k) H * exB (SieveCert.e l) H) ≤
       (bound4 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) : ℝ) / K := by
     have h := bound4_ge (e_pos i) (e_pos j) (e_pos k) (e_pos l)
-    have heq : W * ((H : ℝ) / SieveCert.e i * ((H : ℝ) / SieveCert.e j) * ((H : ℝ) / SieveCert.e k) *
-        ((H : ℝ) * DEN / (SieveCert.e l : ℝ) ^ 2)) =
-        ((H : ℝ) / DEN) ^ 4 * ((omK (SieveCert.e i + SieveCert.e j + SieveCert.e k) (SieveCert.e l) 4 : ℝ) / K) /
-          (((SieveCert.e i : ℝ) / DEN) * ((SieveCert.e j : ℝ) / DEN) * ((SieveCert.e k : ℝ) / DEN) *
-            ((SieveCert.e l : ℝ) / DEN) ^ 2) := by
-      rw [hW]; field_simp
-    rw [heq]; exact h
+    rw [hW]
+    calc _ = trB (SieveCert.e i) H * trB (SieveCert.e j) H * trB (SieveCert.e k) H * exB (SieveCert.e l) H *
+          ((omK (SieveCert.e i + SieveCert.e j + SieveCert.e k) (SieveCert.e l) 4 : ℝ) / K) := by ring
+      _ ≤ _ := h
   have hS : ∀ m, ∀ᶠ x : ℝ in atTop, 0 ≤ ∑ p ∈ cellP x m, 1 / (p : ℝ) :=
     fun m => Filter.Eventually.of_forall fun x => sum_inv_nonneg (cellP x m)
   have hR := EvLe.mul (mul_nonneg (mul_nonneg hPi hPj) hPk) hPl
     (by filter_upwards [hS i, hS j, hS k] with x h1 h2 h3; exact mul_nonneg (mul_nonneg h1 h2) h3)
     (ev_log_mul_nonneg fun x => cellP x l)
     (EvLe.mul (mul_nonneg hPi hPj) hPk (by filter_upwards [hS i, hS j] with x h1 h2; exact mul_nonneg h1 h2)
-      (hS k) (EvLe.mul hPi hPj (hS i) (hS j) (evLe_cell_inv i) (evLe_cell_inv j)) (evLe_cell_inv k))
-    (evLe_cell_inv_log l)
+      (hS k) (EvLe.mul hPi hPj (hS i) (hS j) (evLe_cell_tr i) (evLe_cell_tr j)) (evLe_cell_tr k))
+    (evLe_cell_ex l)
   refine evLe_finish hW0 (by positivity) hWP hR (fun ε hε => ?_) hδ
   obtain ⟨z₀, hz₀⟩ := psi_le (2 * DEN / SieveCert.e l) hε
   have hb : (0 : ℝ) < (SieveCert.e l : ℝ) / DEN := div_pos hel hD
@@ -1777,37 +1873,34 @@ theorem share6 [GridOKC] {i j k l b c : ℕ}
   obtain ⟨W, hW⟩ : ∃ W, W = (omKw (SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b) (eC c)
       (4 * H + 2 * HC) HC : ℝ) / K := ⟨_, rfl⟩
   have hW0 : 0 ≤ W := by rw [hW]; positivity
-  have hPi : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e i := by positivity
-  have hPj : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e j := by positivity
-  have hPk : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e k := by positivity
-  have hPl : (0 : ℝ) ≤ (H : ℝ) / SieveCert.e l := by positivity
-  have hPb : (0 : ℝ) ≤ (HC : ℝ) / eC b := by positivity
-  have hPc : (0 : ℝ) ≤ (HC : ℝ) * DEN / (eC c : ℝ) ^ 2 := by positivity
-  have hWP : W * ((H : ℝ) / SieveCert.e i * ((H : ℝ) / SieveCert.e j) * ((H : ℝ) / SieveCert.e k) *
-      ((H : ℝ) / SieveCert.e l) * ((HC : ℝ) / eC b) * ((HC : ℝ) * DEN / (eC c : ℝ) ^ 2)) ≤
+  have hPi : (0 : ℝ) ≤ trB (SieveCert.e i) H := trB_nonneg _ _
+  have hPj : (0 : ℝ) ≤ trB (SieveCert.e j) H := trB_nonneg _ _
+  have hPk : (0 : ℝ) ≤ trB (SieveCert.e k) H := trB_nonneg _ _
+  have hPl : (0 : ℝ) ≤ trB (SieveCert.e l) H := trB_nonneg _ _
+  have hPb : (0 : ℝ) ≤ trB (eC b) HC := trB_nonneg _ _
+  have hPc : (0 : ℝ) ≤ exB (eC c) HC := exB_nonneg _ _
+  have hWP : W * (trB (SieveCert.e i) H * trB (SieveCert.e j) H * trB (SieveCert.e k) H * trB (SieveCert.e l) H *
+      trB (eC b) HC * exB (eC c) HC) ≤
       (bound6 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) (eC b) (eC c) : ℝ) / K := by
     have h := bound6_ge (e_pos i) (e_pos j) (e_pos k) (e_pos l) hpb hpc
-    have heq : W * ((H : ℝ) / SieveCert.e i * ((H : ℝ) / SieveCert.e j) * ((H : ℝ) / SieveCert.e k) *
-        ((H : ℝ) / SieveCert.e l) * ((HC : ℝ) / eC b) * ((HC : ℝ) * DEN / (eC c : ℝ) ^ 2)) =
-        ((H : ℝ) / DEN) ^ 4 * ((HC : ℝ) / DEN) ^ 2 * ((omKw (SieveCert.e i + SieveCert.e j + SieveCert.e k +
-          SieveCert.e l + eC b) (eC c) (4 * H + 2 * HC) HC : ℝ) / K) /
-          (((SieveCert.e i : ℝ) / DEN) * ((SieveCert.e j : ℝ) / DEN) * ((SieveCert.e k : ℝ) / DEN) *
-            ((SieveCert.e l : ℝ) / DEN) * ((eC b : ℝ) / DEN) * ((eC c : ℝ) / DEN) ^ 2) := by
-      rw [hW]; field_simp
-    rw [heq]; exact h
+    rw [hW]
+    calc _ = trB (SieveCert.e i) H * trB (SieveCert.e j) H * trB (SieveCert.e k) H * trB (SieveCert.e l) H *
+          trB (eC b) HC * exB (eC c) HC * ((omKw (SieveCert.e i + SieveCert.e j + SieveCert.e k +
+          SieveCert.e l + eC b) (eC c) (4 * H + 2 * HC) HC : ℝ) / K) := by ring
+      _ ≤ _ := h
   have hS : ∀ m, ∀ᶠ x : ℝ in atTop, 0 ≤ ∑ p ∈ cellP x m, 1 / (p : ℝ) :=
     fun m => Filter.Eventually.of_forall fun x => sum_inv_nonneg (cellP x m)
   have hSb : ∀ᶠ x : ℝ in atTop, 0 ≤ ∑ p ∈ @cellP Gc x b, 1 / (p : ℝ) :=
     Filter.Eventually.of_forall fun x => sum_inv_nonneg (@cellP Gc x b)
-  have hEb : EvLe (fun x => ∑ p ∈ @cellP Gc x b, 1 / (p : ℝ)) ((HC : ℝ) / eC b) :=
-    @evLe_cell_inv Gc GridOKC.ok b
+  have hEb : EvLe (fun x => ∑ p ∈ @cellP Gc x b, 1 / (p : ℝ)) (trB (eC b) HC) :=
+    @evLe_cell_tr Gc GridOKC.ok b
   have hEc : EvLe (fun x => Real.log x * ∑ p ∈ @cellP Gc x c, 1 / ((p : ℝ) * Real.log p))
-      ((HC : ℝ) * DEN / (eC c : ℝ) ^ 2) := @evLe_cell_inv_log Gc GridOKC.ok c
+      (exB (eC c) HC) := @evLe_cell_ex Gc GridOKC.ok c
   have hR4 := EvLe.mul (mul_nonneg (mul_nonneg hPi hPj) hPk) hPl
     (by filter_upwards [hS i, hS j, hS k] with x h1 h2 h3; exact mul_nonneg (mul_nonneg h1 h2) h3) (hS l)
     (EvLe.mul (mul_nonneg hPi hPj) hPk (by filter_upwards [hS i, hS j] with x h1 h2; exact mul_nonneg h1 h2)
-      (hS k) (EvLe.mul hPi hPj (hS i) (hS j) (evLe_cell_inv i) (evLe_cell_inv j)) (evLe_cell_inv k))
-    (evLe_cell_inv l)
+      (hS k) (EvLe.mul hPi hPj (hS i) (hS j) (evLe_cell_tr i) (evLe_cell_tr j)) (evLe_cell_tr k))
+    (evLe_cell_tr l)
   have hR5 := EvLe.mul (mul_nonneg (mul_nonneg (mul_nonneg hPi hPj) hPk) hPl) hPb
     (by filter_upwards [hS i, hS j, hS k, hS l] with x h1 h2 h3 h4
         exact mul_nonneg (mul_nonneg (mul_nonneg h1 h2) h3) h4) hSb hR4 hEb
@@ -1933,7 +2026,8 @@ end SieveRough
 #print axioms SieveRough.psi_le
 #print axioms SieveRough.mem_cellP
 #print axioms SieveRough.evLe_cell_inv
-#print axioms SieveRough.evLe_cell_inv_log
+#print axioms SieveRough.evLe_cell_tr
+#print axioms SieveRough.evLe_cell_ex
 #print axioms SieveRough.psi_point
 #print axioms SieveRough.share2
 #print axioms SieveRough.share4

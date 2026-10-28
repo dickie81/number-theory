@@ -15,7 +15,7 @@ for the certificate's.
   `Finset` sum.
 * `cost2_ge`: a dropped candidate cell's refined cost is at least its bound less `sub2`, in the reals.
 * `keepK_le`: on a grid with `GridOK`, on a cell `k` that `keep` passes below a cell `(i, j)`, `keepK/K` is at most
-  `H³·DEN/((e_i + H)(e_j + H)(e_k + H)(DEN − e_i − e_j − e_k))`, whose denominator is positive.
+  `8H³·DEN/((2e_i + H)(2e_j + H)(2e_k + H)(DEN − e_i − e_j − e_k))`, whose denominator is positive.
 
 The file imports `SieveCert.lean` and `SieveCert2Defs.lean`.
 -/
@@ -126,33 +126,34 @@ theorem keep_gamma {i j k : ℕ} (hk : keep i j k = true) :
   rw [Nat.cast_sub h4, Nat.cast_sub h3, Nat.cast_sub h2]
 
 /-- **The kept share's bound.** On a grid with `GridOK`, on a cell `k` that `keep` passes below `(i, j)`, `keepK/K` is
-at most
-`H³·DEN/((e_i + H)(e_j + H)(e_k + H)(DEN − e_i − e_j − e_k))`. -/
+at most `8H³·DEN/((2e_i + H)(2e_j + H)(2e_k + H)(DEN − e_i − e_j − e_k))`. -/
 theorem keepK_le {i j k : ℕ} (hk : keep i j k = true) :
     (keepK i j k : ℝ) / K ≤
-      (H : ℝ) ^ 3 * DEN / (((e i : ℝ) + H) * ((e j : ℝ) + H) * ((e k : ℝ) + H) * ((DEN : ℝ) - e i - e j - e k)) := by
+      8 * (H : ℝ) ^ 3 * DEN / ((2 * (e i : ℝ) + H) * (2 * (e j : ℝ) + H) * (2 * (e k : ℝ) + H) *
+        ((DEN : ℝ) - e i - e j - e k)) := by
   obtain ⟨hlt, hcast⟩ := keep_gamma hk
   have hK := K_pos'
   have hg : (0 : ℝ) < (DEN : ℝ) - e i - e j - e k := by
     have : ((e i + e j + e k : ℕ) : ℝ) < DEN := by exact_mod_cast hlt
     push_cast at this
     linarith
-  set d : ℕ := (e i + H) * (e j + H) * (e k + H) * (DEN - e i - e j - e k) with hd
-  have hdR : (d : ℝ) = ((e i : ℝ) + H) * ((e j : ℝ) + H) * ((e k : ℝ) + H) * ((DEN : ℝ) - e i - e j - e k) := by
+  set d : ℕ := (2 * e i + H) * (2 * e j + H) * (2 * e k + H) * (DEN - e i - e j - e k) with hd
+  have hdR : (d : ℝ) =
+      (2 * (e i : ℝ) + H) * (2 * (e j : ℝ) + H) * (2 * (e k : ℝ) + H) * ((DEN : ℝ) - e i - e j - e k) := by
     rw [hd]; push_cast [hcast]; ring
   have hH' : (0 : ℝ) < H := by exact_mod_cast H_pos
   have hd0 : (0 : ℝ) < d := by
     rw [hdR]
-    have a1 : (0 : ℝ) < (e i : ℝ) + H := by have : (0 : ℝ) ≤ e i := Nat.cast_nonneg _; linarith
-    have a2 : (0 : ℝ) < (e j : ℝ) + H := by have : (0 : ℝ) ≤ e j := Nat.cast_nonneg _; linarith
-    have a3 : (0 : ℝ) < (e k : ℝ) + H := by have : (0 : ℝ) ≤ e k := Nat.cast_nonneg _; linarith
+    have a1 : (0 : ℝ) < 2 * (e i : ℝ) + H := by have : (0 : ℝ) ≤ e i := Nat.cast_nonneg _; linarith
+    have a2 : (0 : ℝ) < 2 * (e j : ℝ) + H := by have : (0 : ℝ) ≤ e j := Nat.cast_nonneg _; linarith
+    have a3 : (0 : ℝ) < 2 * (e k : ℝ) + H := by have : (0 : ℝ) ≤ e k := Nat.cast_nonneg _; linarith
     exact mul_pos (mul_pos (mul_pos a1 a2) a3) hg
-  have hfl : ((K * H ^ 3 * DEN / d : ℕ) : ℝ) ≤ ((K * H ^ 3 * DEN : ℕ) : ℝ) / d := Nat.cast_div_le
+  have hfl : ((K * 8 * H ^ 3 * DEN / d : ℕ) : ℝ) ≤ ((K * 8 * H ^ 3 * DEN : ℕ) : ℝ) / d := Nat.cast_div_le
   unfold keepK
   rw [← hd, div_le_iff₀ hK]
-  calc ((K * H ^ 3 * DEN / d : ℕ) : ℝ) ≤ ((K * H ^ 3 * DEN : ℕ) : ℝ) / d := hfl
-    _ = (H : ℝ) ^ 3 * DEN / (((e i : ℝ) + H) * ((e j : ℝ) + H) * ((e k : ℝ) + H) * ((DEN : ℝ) - e i - e j - e k)) *
-          K := by rw [hdR]; push_cast; ring
+  calc ((K * 8 * H ^ 3 * DEN / d : ℕ) : ℝ) ≤ ((K * 8 * H ^ 3 * DEN : ℕ) : ℝ) / d := hfl
+    _ = 8 * (H : ℝ) ^ 3 * DEN / ((2 * (e i : ℝ) + H) * (2 * (e j : ℝ) + H) * (2 * (e k : ℝ) + H) *
+          ((DEN : ℝ) - e i - e j - e k)) * K := by rw [hdR]; push_cast; ring
 
 end
 
