@@ -27,8 +27,8 @@ The proof formalised here is theirs. Nothing in this library claims the estimate
 
 **Scope.** The library formalises their Proposition 3.1 (`LinnikCGLHB101.prop31`) with the results it rests on
 (Propositions 4.6, 6.1, 8.1 and 11.1 and Theorem 10.1, see below), and derives from it the steps
-`LinnikCGLSteps.charDensity_s0` … `charDensity_s106` of the Linnik paper and the estimate `CGLDensity` below. It does not
-formalise their Theorem 1.2 beyond the range `[5/7, 16/21]` (nor `[5/7, 1307/1680]` as a single statement), their Theorem 1.1,
+`LinnikCGLSteps.charDensity_s0` … `charDensity_s109` of the Linnik paper and the estimate `CGLDensity` below. It does not
+formalise their Theorem 1.2 beyond the range `[5/7, 16/21]` (nor `[5/7, 131/168]` as a single statement), their Theorem 1.1,
 or the other parts of their paper. Some of what it does formalise was read only in outline (list below). The Lean statements are the library's own, and the kernel checks
 their proofs, not that they faithfully capture the preprint's theorems.
 
@@ -146,10 +146,10 @@ pieces:
 The theorem of the proof built on this curve, at an earlier exponent (`899/400`), is no longer in the tree: it was
 superseded, and is in the git history. `cglDensity` stays and is printed by `lib/check/Check.lean`.
 
-## Proposition 3.1 on `[5/7, 1307/1680]`, and Huxley's bound up to `131/168`: the second route
+## Proposition 3.1 on `[5/7, 131/168]`: the second route
 
 `LinnikCGLSteps` uses the same step (`LinnikCGLStep.charDensity_cglGen`, from Proposition 3.1,
-`LinnikCGLHB101.prop31`) at other parameters, 107 steps of width `1/1680` on `[5/7, 1307/1680]`. Each step's exponent is
+`LinnikCGLHB101.prop31`) at other parameters, 110 steps of width `1/1680` on `[5/7, 131/168]`. Each step's exponent is
 `A(1 − σ)` with `A` within `10⁻⁴` of `4/(1 + lo)` (the table in the file's header), which is the divisor form `4/(1 + σ)` of the
 paper's Theorem 1.2 at `q₁ = q`, taken at the step's left end. The library does not prove Theorem 1.2: the exponents
 come from what `ParC.Good` allows the library's own Proposition 3.1 route (`tools/linnik/gen_cgl_curve.py` computes
@@ -157,19 +157,19 @@ the parameters and checks every field of `ParC.Good` in exact rationals). For `�
 `7/3 + 1/2000` of `charDensity_cgl`, which the earlier route (at `899/400`, in the git history) used on `[5/7, 16/21]` and took to `ε → 0`
 (`cglDensity`). No hypothesis is involved: the steps hold at `e = 1/100000` and need no `ε`.
 
-From `7/9` on Huxley's exponent `3/(3σ − 1)` is below `4/(1 + σ)`, so on `[1307/1680, 131/168]`, the three steps that
-contain `σ > 7/9`, the curve takes Huxley's bound: `LinnikHuxJunction` (`charDensity_hj0` … `charDensity_hj2`) is
-`LinnikHuxStep.charDensity_gen` (the argument of `huxley-density.md`) at new `Par` parameters on these steps of width
-`1/1680`, with `A` just above Huxley's exponent at the step's left end (`2.24915`, `2.24614`, `2.24315`, against the
-Chen–Gupta–Li steps' `2.24983`, `2.24907`, `2.24833`). `tools/linnik/gen_cgl_curve.py` checks every field of `Par.Good` in
-exact rationals. No hypothesis is involved.
+From `7/9` on Huxley's exponent `3/(3σ − 1)` is below `4/(1 + σ)`. On the three steps `[1307/1680, 131/168]` it is smaller
+by up to `6·10⁻³`, but at `89/40` that does not change the window, so these steps are Chen–Gupta–Li's too (`2.24983`,
+`2.24907`, `2.24833`). Between the exponents `11161/5000` and `89/40` the library took Huxley's bound there, in a file
+`LinnikHuxJunction.lean` (in the git history); at `11161/5000` the window's lower end was set near `7/9`.
 
-The curve is `g7d` (`SieveTypeIIU22250D.lean`): `g7c` with the Chen–Gupta–Li steps on `[5/7, 1307/1680]` and these Huxley
-steps on `[1307/1680, 131/168]`, in place of the plateau and Huxley's steps `hx7_0` … `hx7_4`, and with Ingham's last step
+The curve is `g7d` (`SieveTypeIIU22250D.lean`): `g7c` with the Chen–Gupta–Li steps on `[5/7, 131/168]`, in place of the
+plateau and Huxley's steps `hx7_0` … `hx7_4`, and with Ingham's last step
 `[99/140, 5/7]` at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`: `LinnikInghamC.charDensity_ingham_c` has exponent `2 + 4c + 4ε`, so the slack is `4ε`, and the exponent is `7/3 + 1/100000` in place of `7/3 + 1/2000` at `ε = 1/8000`). Huxley's steps
 `hx7_5` … `hx7_19` stay, since their exponents are smaller than the Chen–Gupta–Li step's from `131/168` on. The steps are
-narrow because the window's lower end is set where a step's exponent most exceeds the curve it bounds, at the steps
-containing `7/9`, where `4/(1 + σ)` meets Huxley's `3/(3σ − 1)`; its upper end is set by the largest exponent, `7/3`
-at `5/7`. `Linnik22250R.linnik_22250r` is Linnik's theorem with exponent `89/40` on `g7d`. (With Chen–Gupta–Li's
-steps all the way to `131/168`, the library's certificate closed at `893/400`; the Huxley steps on the last three
-steps, and two more levels of the Buchstab decomposition, lower `total2/K` enough to close at `89/40`.)
+narrow because both ends of the window are set where a step's exponent most exceeds the curve it bounds, on the first
+step `[5/7, 1201/1680]`, at its right end; its exponent `2.3334` is the curve's largest, `7/3` at `5/7`, where Ingham's
+and Chen–Gupta–Li's exponents meet. `Linnik22250R.linnik_22250r` is Linnik's theorem with exponent `89/40` on `g7d`;
+the classical deduction from the same curve gives `2.3334 + ε` (`LinnikG7.linnik_g7d`, with
+`SieveTypeIIU22250D.g7d_le_lin`: `g7d σ ≤ 2.3334(1 − σ)`).
+What lets the certificate close at `89/40` is the two deeper levels of the Buchstab decomposition and the kept parts
+(the Linnik paper, Section 5).

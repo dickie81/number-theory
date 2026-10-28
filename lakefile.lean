@@ -140,7 +140,7 @@ lean_lib PNT where
     .one `LinnikCGLSym, .one `LinnikCGLT101, .one `LinnikCGLTail, .one `LinnikCGLTrace,
     .one `LinnikCGLTrunc, .one `LinnikChar, .one `LinnikDeduction, .one `LinnikDensity,
     .one `LinnikDetect, .one `LinnikDual, .one `LinnikFE, .one `LinnikFourth,
-    .one `LinnikGRH, .one `LinnikGammaRatio, .one `LinnikHalf, .one `LinnikHuxJunction,
+    .one `LinnikG7, .one `LinnikGRH, .one `LinnikGammaRatio, .one `LinnikHalf,
     .one `LinnikHuxStep, .one `LinnikHuxStepY, .one `LinnikHuxley, .one `LinnikHybrid,
     .one `LinnikIngham, .one `LinnikInghamC, .one `LinnikLargeValues, .one `LinnikLindelof,
     .one `LinnikLines, .one `LinnikMoment, .one `LinnikOffDiag, .one `LinnikPoints,

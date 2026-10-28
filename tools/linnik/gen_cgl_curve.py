@@ -2,30 +2,28 @@
 """gen_cgl_curve.py [--check]: the Lean files of the curve `g7d` and its theorem at `L = 89/40`.
 
 `g7d` is `g7c` (`lib/pnt/SieveTypeIIU226C.lean`) with Chen-Gupta-Li's Proposition 3.1 used at every point of
-`[5/7, 1307/1680]`, and Huxley's bound on `[1307/1680, 131/168]` (below), instead of the flat `7/3 + 1/2000` and Huxley's steps there, and with Ingham's last step
+`[5/7, 131/168]`, instead of the flat `7/3 + 1/2000` and Huxley's steps there, and with Ingham's last step
 `[99/140, 5/7]` at `ε = 1/400000` (exponent `7/3 + 4ε = 7/3 + 1/100000`) instead of `ε = 1/8000` (`7/3 + 4ε = 7/3 + 1/2000`). On each
 step `[lo, hi]` of width `1/1680` (`STEP`; `g7c`'s pieces are cut into steps from their left ends) the library's step
 (`LinnikCGLStep.charDensity_cglGen`, with `ParC` parameters `M = 1556`, `a`, `λ`, `A_i`, `A`, `e = 1/100000`) gives the
 exponent `A(1 - σ)`. The parameters of a step are the ones that minimise the six exponents of `ParC.Good.hc` at the
 step's two ends over `(a, λ)` (a convex problem, solved in floating point, rounded up to multiples of `10⁻⁵`, then
 checked in exact rationals), `A_i` the least multiple of `10⁻⁵` that satisfies them, and `A = A_i + 10⁻⁵`. Every
-condition of `ParC.Good` is checked here in exact rationals (`check_good`) before a file is written. From `7/9` on,
-Huxley's exponent `3/(3σ - 1)` is below `4/(1 + σ)`, so the last three steps, `[1307/1680, 131/168]`, are Huxley's
-(`LinnikHuxStep.charDensity_gen`, with `Par` parameters `M`, `a`, `λ`, `A_i`, `A`, `e = 1/100000`; `HUX_AL` has the `(a, λ)`
-that a linear program gave, rounded to multiples of `10⁻⁵`, and `hux_params` takes `M`, `A_i` and `A = A_i + 10⁻⁵` from
-them; `check_good_hux` checks every field of `Par.Good` in exact rationals, and that `A` is below the Chen-Gupta-Li step's).
-From `131/168` on, `g7d` is `g7c` (Huxley's steps `hx7_5` ... `hx7_19`, then `(101/50)(1 - σ)` from `5/6`): there Huxley's
-exponent is smaller than the step's.
+condition of `ParC.Good` is checked here in exact rationals (`check_good`) before a file is written. From `131/168` on,
+`g7d` is `g7c` (Huxley's steps `hx7_5` ... `hx7_19`, then `(101/50)(1 - σ)` from `5/6`): there Huxley's exponent is
+smaller than the step's. Huxley's exponent `3/(3σ - 1)` is already below `4/(1 + σ)` from `7/9` on, by less than
+`6·10⁻³` on the three steps of `[1307/1680, 131/168]`; at `89/40` that does not change the window, so those steps are
+Chen-Gupta-Li's too (from 11161/5000 to 89/40 they were Huxley's, in a file `LinnikHuxJunction.lean`, in the git history).
 
-The steps are narrow because the window's lower end is set where a step's exponent most exceeds the curve it bounds,
-at a step's right end: with steps of `1/280` that was the step containing `7/9`, where `4/(1 + σ)` meets Huxley's
-`3/(3σ − 1)`. The window's upper end is set by the largest exponent, `7/3` at `5/7`, where Ingham's last step and the
-first Chen-Gupta-Li step meet; Ingham's theorem (`LinnikInghamC.charDensity_ingham_c`) takes any `ε > 0`, so its slack
-there is cut to `10⁻⁵`.
+The steps are narrow because both ends of the window are set where a step's exponent most exceeds the curve it bounds,
+on the first step `[5/7, 1201/1680]`, at its right end: its exponent `2.3334` is the curve's largest, `7/3` at `5/7`,
+where Ingham's last step and the first Chen-Gupta-Li step meet. Ingham's theorem (`LinnikInghamC.charDensity_ingham_c`)
+takes any `ε > 0`, so its slack there is cut to `10⁻⁵`. (With steps of `1/280`, at larger `L`, the lower end was set at the
+step containing `7/9`, where `4/(1 + σ)` meets Huxley's `3/(3σ − 1)`; that constraint binds only above `L = 107/48`.)
 
 Writes `lib/pnt/LinnikCGLSteps.lean` (the Chen-Gupta-Li steps, and Ingham's last step `charDensity_inT`),
-`lib/pnt/LinnikHuxJunction.lean` (Huxley's three steps), `lib/pnt/SieveTypeIIU22250D.lean` (`g7d`, its counts, its window
-and Proposition 3′) and `lib/pnt/Linnik22250R.lean` (the theorem). The window `[W1, W2]/100000` is the one
+`lib/pnt/SieveTypeIIU22250D.lean` (`g7d`, `g7d_le_one`, `g7d_le_lin`, its counts, its window and Proposition 3′) and
+`lib/pnt/Linnik22250R.lean` (the theorem). The window `[W1, W2]/100000` is the one
 `route_limits.py run` computes for `g7d` at `L` (the sampled scan, then the exact corners). With `--check`, nothing is
 written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a difference). With `--table`, the
 steps' parameters are printed.
@@ -51,15 +49,8 @@ STEP = Fr(1, 1680)
 INGHAM_T = (Fr(99, 140), Fr(5, 7), Fr(7, 3) + Fr(1, 100000))
 N = 340
 TOP = Fr(4, 5)
-# The last three steps of `[5/7, 131/168]` are Huxley's, not Chen-Gupta-Li's: from `7/9` on, `3/(3σ - 1)` is below
-# `4/(1 + σ)`. `(a, λ)` of each, as found by a linear program (Huxley's argument, `LinnikHuxStep.Par.Good`) and rounded
-# to multiples of `10⁻⁵`; `M`, `A_i` and `A` follow from them (`hux_params`), and `check_good_hux` checks every field in
-# exact rationals.
-HUX_AL = {
-    (Fr(1307, 1680), Fr(109, 140)): (Fr(9371, 12500), Fr(56227, 50000)),
-    (Fr(109, 140), Fr(187, 240)): (Fr(74867, 100000), Fr(56151, 50000)),
-    (Fr(187, 240), Fr(131, 168)): (Fr(74767, 100000), Fr(14019, 12500)),
-}
+# The largest exponent of the curve, that of the first Chen-Gupta-Li step: `g7d σ ≤ A_MAX (1 - σ)` (`g7d_le_lin`).
+A_MAX = Fr(11667, 5000)
 
 
 def need(lo, hi, a, lam, e):
@@ -127,37 +118,6 @@ def check_good(p):
     return True
 
 
-def hux_need(lo, hi, a, lam):
-    """The least `A_i` (a multiple of `10⁻⁵`) with `h1` and `h2` of `LinnikHuxStep.Par.Good` at both ends of `[lo, hi]`."""
-    w = Fr(0)
-    for s in (lo, hi):
-        r1 = (lam * (2 - 2 * s + E) + E / 12) / (1 - s)
-        r2 = ((a + E) * (4 - 6 * s + 3 * E) + (E / 4 + 1 + Fr(3, 2) * E + E / 4)) / (1 - s)
-        w = max(w, r1, r2)
-    return ceilq(w, 100000)
-
-
-def hux_params(lo, hi, a, lam):
-    """`LinnikHuxStep.Par` for the step: `M` the least with `a + e ≤ M/2000`, `A_i` the least, `A = A_i + 10⁻⁵`."""
-    M = math.ceil(2000 * (a + E))
-    Ai = hux_need(lo, hi, a, lam)
-    return dict(M=M, lo=lo, hi=hi, a=a, lam=lam, Ai=Ai, A=Ai + Fr(1, 100000), e=E, kind='hux')
-
-
-def check_good_hux(p):
-    """Every field of `LinnikHuxStep.Par.Good` for the parameters `p`, in exact rationals (affine in `σ`: the ends)."""
-    lo, hi, a, lam, Ai, A, M = (p[k] for k in ('lo', 'hi', 'a', 'lam', 'Ai', 'A', 'M'))
-    assert M >= 1 and a > 0 and a + E <= Fr(M, 2000)
-    assert Fr(201, 200) + E <= lam and 3 * (a + E) / 2 <= lam and lam <= 2
-    assert Fr(3, 4) <= lo and hi <= Fr(11, 12) and 0 <= A <= 16
-    for s in (lo, hi):
-        assert lam * (2 - 2 * s + E) + E / 12 <= Ai * (1 - s), ('h1', lo, hi, s)
-        assert (a + E) * (4 - 6 * s + 3 * E) + (E / 4 + 1 + Fr(3, 2) * E + E / 4) <= Ai * (1 - s), ('h2', lo, hi, s)
-        assert Fr(201, 100) * (Fr(1, 2) - s) + Fr(1, 500) + (1 + E) <= A * (1 - s), ('h3', lo, hi, s)
-    assert E / (24 * M) + Ai * (1 - hi) <= A * (1 - hi)
-    return True
-
-
 def raw_pieces():
     """The textual literals of `g7c`'s pieces (`hi`, `A` as written in the Lean file; the glue needs them verbatim)."""
     import re
@@ -192,11 +152,6 @@ def steps(base):
             p = dict(M=M, lo=a_, hi=b_, a=a, lam=lam, Ai=Ai, A=A, e=E, kind='cgl')
             check_good(p)
             assert A < Aold, (a_, b_, float(A), float(Aold))
-            if (a_, b_) in HUX_AL:
-                ph = hux_params(a_, b_, *HUX_AL[(a_, b_)])
-                check_good_hux(ph)
-                assert ph['A'] < A, (a_, b_, float(ph['A']), float(A))
-                p, A = ph, ph['A']
             new.append((a_, b_, A))
             params[(a_, b_)] = p
     # g7c's pieces: 0 trivial, 1..20 Ingham steps in7_0..19, 21 the plateau, 22..41 Huxley steps hx7_0..19, 42 top
@@ -250,7 +205,7 @@ def steps_file(new, params):
     new = [x for x in new if params[(x[0], x[1])]['kind'] == 'cgl']
     n = len(new)
     w(f'''/-
-# Chen–Gupta–Li's Proposition 3.1 at every point of `[5/7, 1307/1680]`: {n} density steps with the exponent
+# Chen–Gupta–Li's Proposition 3.1 at every point of `[5/7, 131/168]`: {n} density steps with the exponent
 `A(1 − σ)`, `A` just above `4/(1 + σ)` at the step's left end
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). Generated by
@@ -382,96 +337,13 @@ theorem charDensity_inT :
     return '\n'.join(out) + '\n'
 
 
-def hux_file(new, params):
-    """`LinnikHuxJunction.lean`: Huxley's steps on `[1307/1680, 131/168]`."""
-    hx = [x for x in new if params[(x[0], x[1])]['kind'] == 'hux']
-    n = len(hx)
-    out = []
-    w = out.append
-    w(f'''/-
-# Huxley's bound on `[1307/1680, 131/168]`, in {n} steps of width `1/1680`, where it is below Chen–Gupta–Li's
-
-Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). Generated by
-`tools/linnik/gen_cgl_curve.py`; do not edit by hand.
-
-Plain statement (`charDensity_hj0` … `charDensity_hj{n - 1}`). For each step `[lo, hi]` of the table below there is
-`C ≥ 0` such that for every `q ≥ 1`, `lo ≤ σ ≤ hi` and `T ≥ 2` at most `C(qT)^{{A(1−σ)}}(log qT)^{{10}}` characters mod `q`
-have a zero of `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`. There is no hypothesis.
-
-This is `LinnikHuxStep.charDensity_gen` (the library's step of Huxley's argument, the one of the steps `hx7_0` … `hx7_19`
-of `LinnikStairs7.lean`) at new `Par` parameters, on steps of width `1/1680` in place of `1/280`. `Par.Good` has the
-exponent conditions `h1`, `h2` (the argument's two terms), `h3` (the integral class) and `h4` (the number of dyadic
-blocks), which are affine in `σ` and so ask for the step's two ends; the other fields are `e = 1/100000`,
-`a + e ≤ M/2000`, the bounds on `λ` and `3/4 ≤ lo`, `hi ≤ 11/12`. The parameters `(a, λ)` come from a linear program
-that minimises the exponent at the two ends; `tools/linnik/gen_cgl_curve.py` rounds them to multiples of `10⁻⁵`, takes
-`A_i` the least multiple of `10⁻⁵` that satisfies `h1` and `h2` at the ends, `A = A_i + 10⁻⁵`, and checks every field of
-`Good` in exact rationals. On these steps `A` is below the exponent of the Chen–Gupta–Li step of the same width
-(`4/(1 + σ)` at the left end, `LinnikCGLSteps`), by `7·10⁻⁴` at the first and `5·10⁻³` at the last; below `7/9` it is above it.
-
-| step | `lo` | `hi` | `M` | `a` | `λ` | `A_i` | `A` | `3/(3 lo − 1)` | `4/(1 + lo)` |
-|---|---|---|---|---|---|---|---|---|---|''')
-    for k, (lo, hi, A) in enumerate(hx):
-        p = params[(lo, hi)]
-        w(f'| {k} | `{lit(lo)}` | `{lit(hi)}` | `{p["M"]}` | `{dec(p["a"], 5)}` | `{dec(p["lam"], 5)}` | `{dec(p["Ai"], 5)}` | '
-          f'`{dec(A, 5)}` | `{dec(Fr(3) / (3 * lo - 1), 5)}` | `{dec(Fr(4) / (1 + lo), 5)}` |')
-    w('''
-The file imports `LinnikStairsGen.lean` (the tactic `stairs_good`) and `LinnikHuxStep.lean`.
--/
-import LinnikStairsGen
-import LinnikHuxStep
-
-open Complex Real Finset
-
-noncomputable section
-
-namespace LinnikHuxJunction
-
-open DirichletCharacter LinnikHuxStep LinnikStairsGen
-''')
-    for k, (lo, hi, A) in enumerate(hx):
-        p = params[(lo, hi)]
-        w(f'''/-- The parameters of Huxley's step `{k}` on `[{lit(lo)}, {lit(hi)}]`: `M = {p["M"]}`, `a = {dec(p["a"], 5)}`,
-`λ = {dec(p["lam"], 5)}`, `A_i = {dec(p["Ai"], 5)}`, `A = {dec(A, 5)}`. -/
-def parHJ{k} : Par where
-  M := {p["M"]}
-  a := {litp(p["a"])}
-  lam := {litp(p["lam"])}
-  lo := {litp(lo)}
-  hi := {litp(hi)}
-  Ai := {litp(p["Ai"])}
-  A := {litp(A)}
-
-theorem parHJ{k}_good : parHJ{k}.Good := by stairs_good parHJ{k}
-
-open scoped Classical in
-/-- **Huxley's step on `[{lit(lo)}, {lit(hi)}]`, junction step {k}**: there is `C ≥ 0` such that for every `q ≥ 1`,
-`{lit(lo)} ≤ σ ≤ {lit(hi)}` and `T ≥ 2` at most `C(qT)^{{({lit(A)})(1−σ)}}(log qT)^{{10}}` characters mod `q` have a zero
-of `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`; no hypothesis. -/
-theorem charDensity_hj{k} :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), {litp(lo)} ≤ σ → σ ≤ {litp(hi)} → 2 ≤ T →
-      ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
-        ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ({litp(A)} * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
-  charDensity_gen parHJ{k} parHJ{k}_good
-
-''')
-    w('end LinnikHuxJunction\n')
-    for k in range(n):
-        w(f'#print axioms LinnikHuxJunction.charDensity_hj{k}')
-    return '\n'.join(out) + '\n'
-
-
-# ---------------------------------------------------------------------------------------------------------------------
 def curve_file(keep, new, hx, W1, W2, params, tag=TAG, LN=f'{LNUM} / {LDEN}'):
     """`SieveTypeIIU{TAG}D.lean`: g7d, its counts, its window and Proposition 3′."""
-    names, kc, kh = [], 0, 0
+    names, kc = [], 0
     for lo, hi, A in new:
-        if params[(lo, hi)]['kind'] == 'cgl':
-            names.append('s%d' % kc)
-            kc += 1
-        else:
-            names.append('hj%d' % kh)
-            kh += 1
+        assert params[(lo, hi)]['kind'] == 'cgl'
+        names.append('s%d' % kc)
+        kc += 1
     pcs = [(Fr(1, 2), Fr(4, 7), None, 'trivial', ('4 / 7', None))] + keep + \
         [(lo, hi, A, names[k], (lit(hi), lit(A))) for k, (lo, hi, A) in enumerate(new)] + hx
     top = (Fr(5, 6), Fr(11, 12), Fr(101, 50), 'top', ('11 / 12', '101 / 50'))
@@ -502,13 +374,26 @@ def curve_file(keep, new, hx, W1, W2, params, tag=TAG, LN=f'{LNUM} / {LDEN}'):
             le.append(f'  clear h{k - 1}')
     assert Fr(101, 50) * (1 - Fr(5, 6)) <= 1
     le.append(f'  linarith only [not_lt.1 h{len(pcs) - 1}]')
+    # g7d σ ≤ A_MAX (1 - σ) for σ ≤ 1: every piece's exponent is at most A_MAX, and the trivial count 1 is at most
+    # A_MAX (1 - σ) below 4/7, as A_MAX · 3/7 > 1
+    assert A_MAX * (1 - Fr(4, 7)) > 1 and Fr(101, 50) <= A_MAX
+    assert max(A for _, _, A, _, _ in pcs if A is not None) == A_MAX
+    ll = [f'lemma g7d_le_lin {{σ : ℝ}} (hσ : σ ≤ 1) : g7d σ ≤ ({lit(A_MAX)}) * (1 - σ) := by', '  unfold g7d']
+    for k, (lo, hi, A, nm, (hr, ar)) in enumerate(pcs):
+        ll.append(f'  by_cases h{k} : σ < {hr}')
+        if k == 0:
+            ll.append(f'  · simp only [h{k}, ite_true]; linarith only [h{k}]')
+        else:
+            ll.append(f'  · simp only [h{k}, ite_true]; linarith only [hσ]')
+        ll.append(f'  simp only [h{k}, ite_false]')
+        if k >= 1:
+            ll.append(f'  clear h{k - 1}')
+    ll.append('  linarith only [hσ]')
     glue = ['theorem counts_7d : CurveCounts g7d :=',
             '  curveCounts_of_range <| rangeCounts_glue (rangeCounts_trivial _ _) <|']
     for lo, hi, A, nm, _ in pcs[1:]:
         if nm.startswith('in7') or nm.startswith('hx7'):
             glue.append(f'    rangeCounts_glue (rangeCounts_of_density LinnikStairs7.charDensity_{nm}) <|')
-        elif nm.startswith('hj'):
-            glue.append(f'    rangeCounts_glue (rangeCounts_of_density LinnikHuxJunction.charDensity_{nm}) <|')
         else:
             glue.append(f'    rangeCounts_glue (rangeCounts_of_density LinnikCGLSteps.charDensity_{nm}) <|')
     glue.append('    rangeCounts_of_density LinnikStep.charDensity_step')
@@ -526,7 +411,6 @@ def curve_file(keep, new, hx, W1, W2, params, tag=TAG, LN=f'{LNUM} / {LDEN}'):
     win.append('    windowPieceHM_const_split (A := 101 / 50) (lo := 5 / 6) (hi := 11 / 12)')
     win.append('      (by norm_num) (by cornersHMD) (by cornersHMD) (by cornersHMD)')
     n = kc
-    nh = kh
     txt = f'''/-
 # Proposition 3′ at `L = {LN}` on the Halász–Montgomery window `[{W1}/100000, {W2}/100000]·L`, for the curve `g7d`
 
@@ -534,31 +418,29 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). G
 `tools/linnik/gen_cgl_curve.py`; do not edit by hand.
 
 The curve `g7d` is `g7c` of `SieveTypeIIU226C.lean` with the {n} steps of `LinnikCGLSteps.lean` (Chen–Gupta–Li's
-Proposition 3.1, exponent `A(1 − σ)` with `A` just above `4/(1 + σ)` at the step's left end) on `[5/7, 1307/1680]`, and
-the {nh} steps of `LinnikHuxJunction.lean` (Huxley's bound, exponent `A(1 − σ)` with `A` just above `3/(3σ − 1)` at the
-step's left end) on `[1307/1680, 131/168]`, in place of `7/3 + 1/2000` on `[5/7, 16/21]` and Huxley's steps
-`hx7_0` … `hx7_4`: Huxley's exponent is the smaller from `7/9` on. From `131/168` on it is `g7c` (Huxley's steps
+Proposition 3.1, exponent `A(1 − σ)` with `A` just above `4/(1 + σ)` at the step's left end) on `[5/7, 131/168]`, in
+place of `7/3 + 1/2000` on `[5/7, 16/21]` and Huxley's steps `hx7_0` … `hx7_4`. From `131/168` on it is `g7c` (Huxley's steps
 `hx7_5` … `hx7_19`, then `(101/50)(1 − σ)` from `5/6`, `LinnikStep.charDensity_step`); below `5/7` it is `g7c` with
 Ingham's last step at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`: the exponent is `7/3 + 4ε = 7/3 + 1/100000` in place of `7/3 + 1/2000`).
 Its counts need no hypothesis. The window and the Type II estimate are as in the earlier Type II estimate for the window at `L = 899/400` (in the git history): every piece of
 `WindowOKHM` below `5/6` holds by orthogonality at its corners (the tactic `corners`), the top piece `[5/6, 11/12]` by
 `windowPieceHM_const_split` (`cornersHMD`).
 
-* `g7d`, `g7d_le_one`, `g7d_half`; `counts_7d`: `CurveCounts g7d`, with no hypothesis, glued by
-  `SieveCurveGlue.rangeCounts_glue` from `LinnikStairs7`'s steps, `LinnikCGLSteps.charDensity_s0` … `charDensity_s{n - 1}`,
-  `LinnikHuxJunction.charDensity_hj0` … `charDensity_hj{nh - 1}` and `LinnikStep.charDensity_step`.
+* `g7d`, `g7d_le_one`, `g7d_half`; `g7d_le_lin`: `g7d σ ≤ {litp(A_MAX)}(1 − σ)` for `σ ≤ 1` (the curve's largest
+  exponent is that of the first Chen–Gupta–Li step); `counts_7d`: `CurveCounts g7d`, with no hypothesis, glued by
+  `SieveCurveGlue.rangeCounts_glue` from `LinnikStairs7`'s steps, `LinnikCGLSteps.charDensity_s0` … `charDensity_s{n - 1}`
+  and `LinnikStep.charDensity_step`.
 * `window_{tag}d`: `WindowOKHM g7d L m₁ m₂ (1/1000) (1/1000)` at `L = {LN}` on `[{W1}/100000, {W2}/100000]·L`.
 * `typeII_{tag}d`: `typeII_gen_hm` at `g7d`, with no hypothesis.
 
 The window is the one `tools/linnik/route_limits.py run` computes for `g7d` at `L = {LN}` (`route_limits.jsonl`).
 
 The file imports `SieveTypeIIU227.lean` (for `LinnikStairs7`, `corners` and `rangeCounts_glue`), `LinnikStep.lean`,
-`LinnikCGLSteps.lean`, `LinnikHuxJunction.lean` and `SieveTypeIIHM.lean`.
+`LinnikCGLSteps.lean` and `SieveTypeIIHM.lean`.
 -/
 import SieveTypeIIU227
 import LinnikStep
 import LinnikCGLSteps
-import LinnikHuxJunction
 import SieveTypeIIHM
 
 open Complex Real Finset
@@ -580,8 +462,8 @@ macro "cornersHMD" : tactic =>
              rcases hb with rfl | rfl <;> rcases hm with rfl | rfl <;> rcases hw with rfl | rfl <;> norm_num))
 
 /-- The curve `g7d`: `1` below `4/7`, the twenty Ingham steps (the last at `ε = 1/400000`),
-the {n} steps of `LinnikCGLSteps` on `[5/7, 1307/1680]`, the {nh} steps of `LinnikHuxJunction` on `[1307/1680, 131/168]`,
-Huxley's steps `5` to `19` of `LinnikStairs7` on `[131/168, 5/6]`, and `(101/50)(1 − σ)` from `5/6` on. -/
+the {n} steps of `LinnikCGLSteps` on `[5/7, 131/168]`, Huxley's steps `5` to `19` of `LinnikStairs7` on
+`[131/168, 5/6]`, and `(101/50)(1 − σ)` from `5/6` on. -/
 {chr(10).join(chain)}
 
 set_option maxHeartbeats 20000000 in
@@ -590,9 +472,14 @@ set_option maxHeartbeats 20000000 in
 
 lemma g7d_half : g7d (1 / 2) = 1 := by unfold g7d; norm_num
 
+set_option maxHeartbeats 20000000 in
+/-- `g7d σ ≤ {litp(A_MAX)}(1 − σ)` for `σ ≤ 1`: every step's exponent is at most `{lit(A_MAX)}`, the first Chen–Gupta–Li
+step's, and `1 ≤ {litp(A_MAX)}(1 − σ)` below `4/7`. -/
+{chr(10).join(ll)}
+
 /-- **The counts of the curve** (`CurveCounts g7d`), with no hypothesis: the trivial count,
 the twenty Ingham steps (the last `charDensity_inT`),
-the {n} steps of `LinnikCGLSteps` (Proposition 3.1), the {nh} steps of `LinnikHuxJunction`, Huxley's steps `5` to `19`
+the {n} steps of `LinnikCGLSteps` (Proposition 3.1), Huxley's steps `5` to `19`
 and `LinnikStep.charDensity_step`, glued. -/
 {chr(10).join(glue)}
 
@@ -643,8 +530,7 @@ Plain statement (`linnik_{tag}r`): there is `K` such that for every `q ≥ 1` an
 `[{W1}/100000, {W2}/100000]` of `tools/linnik/route_limits.jsonl`'s rows for `g7d` (`route{tag}D`, with its Type II
 estimate `SieveTypeIIU{tag}D.typeII_{tag}d`), on its grid with `n = {N}` (`SieveCert.grid{tag}R`), whose refined certificate's
 total is less than `K` (`SieveCert.total2_lt_{tag}R`), with `SieveMain2.linnik_route_lt2`. The curve `g7d` uses
-Chen–Gupta–Li's Proposition 3.1 on `[5/7, 1307/1680]` (`LinnikCGLSteps`) and Huxley's bound on `[1307/1680, 131/168]`
-(`LinnikHuxJunction`); the theorem is the route of the paper's first
+Chen–Gupta–Li's Proposition 3.1 on `[5/7, 131/168]` (`LinnikCGLSteps`); the theorem is the route of the paper's first
 version (at an earlier exponent; it is in the git history) with that curve and the window and
 certificate of `L = {LN}`.
 
@@ -711,7 +597,6 @@ end Linnik{tag}R
 def generate():
     base = rl.parse('g7c')
     keep, new, params, hx = steps(base)
-    assert all(k in params and params[k]['kind'] == 'hux' for k in HUX_AL)
     sfile = steps_file(new, params)
     # the curve's pieces, for the window
     pcs = [(Fr(1, 2), Fr(4, 7), None)] + [(lo, hi, A) for lo, hi, A, _, _ in keep] + new + [(lo, hi, A) for lo, hi, A, _, _ in hx] \
@@ -719,7 +604,7 @@ def generate():
     W1, W2, moves = window_for(pcs)
     cfile, allp = curve_file(keep, new, hx, W1, W2, params)
     assert [(lo, hi, A) for lo, hi, A, _, _ in allp] == pcs
-    files = {'LinnikCGLSteps.lean': sfile, 'LinnikHuxJunction.lean': hux_file(new, params),
+    files = {'LinnikCGLSteps.lean': sfile,
              f'SieveTypeIIU{TAG}D.lean': cfile, f'Linnik{TAG}R.lean': final_file(W1, W2)}
     return files, \
         (W1, W2, moves, params, new)

@@ -264,8 +264,8 @@ class GridOK : Prop where
   DEN_lt_top : DEN < 2 * (V + n * H)
 
 /-- **The facts about the coarse grid** (`Gc`, with its cells `eC`, `HC`) that the deepest levels use: its own `GridOK`,
-and `4H + 2HC ≤ V`, which keeps the boxes of depth 6 inside `DEN`, and `DEN < 2U₁ + U₂`, which keeps the products of
-depth 6 below the range's lower end `N₁`. For a given grid each is checked by `decide`. -/
+`4H + 2HC ≤ V`, which keeps the boxes of depth 6 inside `DEN`, and `nH ≤ nC·HC`, which makes the coarse cells cover the
+range of the fine ones. For a given grid each is checked by `decide`. -/
 class GridOKC : Prop where
   /-- The coarse grid's own facts. -/
   ok : @GridOK Gc
@@ -273,7 +273,5 @@ class GridOKC : Prop where
   fit : 4 * H + 2 * HC ≤ V
   /-- The coarse cells cover the range of the fine ones: `nH ≤ nC·HC`. -/
   cover : n * H ≤ nC * HC
-  /-- `1 − u₁ + (1 − u₂)/2 < 1`. -/
-  U_sum : DEN < 2 * U1 + U2
 
 end SieveCert

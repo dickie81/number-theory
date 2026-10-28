@@ -20,7 +20,7 @@ The Linnik proof uses two kinds of instance:
 
 - `LinnikStairs7.charDensity_hx7_5` to `charDensity_hx7_19`, the last fifteen of twenty equal steps `[σ₁, σ₂]` of
   `[16/21, 5/6]` (`LinnikStairs7` has `charDensity_hx7_0` … `charDensity_hx7_19`; the first five are replaced in the
-  proof of `Linnik22250R.linnik_22250r` by the steps of `LinnikCGLSteps` and `LinnikHuxJunction`, see
+  proof of `Linnik22250R.linnik_22250r` by the steps of `LinnikCGLSteps`, see
   [chen-gupta-li-density.md](chen-gupta-li-density.md)). Each has the exponent `3/(3σ₁ − 1) + 1/2000`: Huxley's
   exponent at the step's left end, plus `1/2000`. The first step is `[16/21, 643/840]` with the exponent `14003/6000`,
   which is `7/3 + 1/2000`.

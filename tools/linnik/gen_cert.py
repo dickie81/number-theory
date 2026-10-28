@@ -147,7 +147,7 @@ theorem gridOK{TAG} : @GridOK grid{TAG} :=
 theorem gridOKC{TAG} : @GridOKC grid{TAG} :=
   @GridOKC.mk grid{TAG}
     (@GridOK.mk (@Gc grid{TAG}) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
-    (by decide) (by decide) (by decide)
+    (by decide) (by decide)
 
 end SieveCert
 

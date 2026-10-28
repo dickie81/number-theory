@@ -9,9 +9,8 @@ Earlier certificates, at weaker exponents, are no longer in the tree; see the gi
 
 Each is generated in two steps:
 
-1. `mirror2.py W1 W2 300 CELLS.json` evaluates the refined certificate's definitions (SieveCert2Defs.lean) cell by cell
-   in exact integers, cross-checks the totals against `route_limits.replay` and `refine_k2_probe.replay2`, and writes
-   each cell's cost and kernel work (about two minutes);
+1. `mirror2.py W1 W2 340 CELLS.json` evaluates the refined certificate's definitions (SieveCert2Defs.lean) cell by cell
+   in exact integers, in parallel, and writes each cell's cost and kernel work (about twenty seconds on four cores);
 2. `gen_cert.py CELLS.json OUTDIR [--tag ...]` cuts the certificate into parts and writes the Lean files.
 
 This script runs both in a temporary directory and compares SieveGrid<tag>.lean, every SieveCert<tag>P<k>.lean and

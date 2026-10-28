@@ -9,8 +9,7 @@ Plain statement (`linnik_22250r`): there is `K` such that for every `q ≥ 1` an
 `[41479/100000, 47555/100000]` of `tools/linnik/route_limits.jsonl`'s rows for `g7d` (`route22250D`, with its Type II
 estimate `SieveTypeIIU22250D.typeII_22250d`), on its grid with `n = 340` (`SieveCert.grid22250R`), whose refined certificate's
 total is less than `K` (`SieveCert.total2_lt_22250R`), with `SieveMain2.linnik_route_lt2`. The curve `g7d` uses
-Chen–Gupta–Li's Proposition 3.1 on `[5/7, 1307/1680]` (`LinnikCGLSteps`) and Huxley's bound on `[1307/1680, 131/168]`
-(`LinnikHuxJunction`); the theorem is the route of the paper's first
+Chen–Gupta–Li's Proposition 3.1 on `[5/7, 131/168]` (`LinnikCGLSteps`); the theorem is the route of the paper's first
 version (at an earlier exponent; it is in the git history) with that curve and the window and
 certificate of `L = 89 / 40`.
 
