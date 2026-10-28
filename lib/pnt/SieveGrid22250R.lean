@@ -7,8 +7,8 @@ The grid of `SieveTypeIIU22250D.typeII_22250d`'s window: `U1 = ⌈(41479/100000)
 (`SieveCert22250RP1.lean` … `SieveCert22250RP351.lean`, one `lean` process each): ranges of consecutive rows, and the
 187 heavy rows in column pieces (`SieveCert2Defs.rowsJ2`); assembled in `SieveCert22250R.lean`.
 
-The file imports `SieveCert2Defs.lean`, which imports `SieveCertDefs.lean` only, so neither it nor the part files load
-`Mathlib`.
+The file imports `SieveCert2Defs.lean`, which imports `SieveCertDefs.lean` only, which imports only
+`Mathlib.Data.Nat.Notation` from `Mathlib`; so neither it nor the part files load the rest of `Mathlib`.
 -/
 import SieveCert2Defs
 

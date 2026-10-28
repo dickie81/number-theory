@@ -2,11 +2,11 @@
 # The refined certificate at `L = 89/40` with `n = 340`, parts 2586–2602 of 4715
 
 File 211 of 351: the parts `rows22250R_2586` … `rows22250R_2602` of `SieveCert22250R.lean`'s certificate on
-`SieveGrid22250R.grid22250R` (17 parts, 99093 tests: row 99 columns 80–80, row 99 columns 81–81, row 99 columns
-82–82, row 99 columns 83–83, row 99 columns 84–84, row 99 columns 85–85, row 99 columns 86–86, row 99 columns 87–87,
-row 99 columns 88–88, row 99 columns 89–89, row 99 columns 90–90, row 99 columns 91–91, row 99 columns 92–92, row 99
-columns 93–93, row 99 columns 94–94, row 99 columns 95–95, row 99 columns 96–96), each a sum of refined costs
-(`rows2` or `rowsJ2`) at most its bound, by `decide +kernel`, one at a time (`Elab.async false`).
+`SieveGrid22250R.grid22250R` (17 parts, work 99093 in units of a depth-4 test: row 99 columns 80–80, row 99 columns
+81–81, row 99 columns 82–82, row 99 columns 83–83, row 99 columns 84–84, row 99 columns 85–85, row 99 columns 86–86,
+row 99 columns 87–87, row 99 columns 88–88, row 99 columns 89–89, row 99 columns 90–90, row 99 columns 91–91, row 99
+columns 92–92, row 99 columns 93–93, row 99 columns 94–94, row 99 columns 95–95, row 99 columns 96–96), each a sum
+of refined costs (`rows2` or `rowsJ2`) at most its bound, by `decide +kernel`, one at a time (`Elab.async false`).
 
 The file imports `SieveGrid22250R.lean`.
 -/

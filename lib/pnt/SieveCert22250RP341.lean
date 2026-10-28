@@ -2,12 +2,12 @@
 # The refined certificate at `L = 89/40` with `n = 340`, parts 4547–4564 of 4715
 
 File 341 of 351: the parts `rows22250R_4547` … `rows22250R_4564` of `SieveCert22250R.lean`'s certificate on
-`SieveGrid22250R.grid22250R` (18 parts, 96319 tests: row 180 columns 43–43, row 180 columns 44–44, row 180 columns
-45–45, row 180 columns 46–93, row 180 columns 94–339, row 181 columns 0–33, row 181 columns 34–35, row 181 columns
-36–37, row 181 columns 38–38, row 181 columns 39–39, row 181 columns 40–40, row 181 columns 41–41, row 181 columns
-42–42, row 181 columns 43–43, row 181 columns 44–44, row 181 columns 45–45, row 181 columns 46–339, row 182 columns
-0–32), each a sum of refined costs (`rows2` or `rowsJ2`) at most its bound, by `decide +kernel`, one at a time
-(`Elab.async false`).
+`SieveGrid22250R.grid22250R` (18 parts, work 96319 in units of a depth-4 test: row 180 columns 43–43, row 180
+columns 44–44, row 180 columns 45–45, row 180 columns 46–93, row 180 columns 94–339, row 181 columns 0–33, row 181
+columns 34–35, row 181 columns 36–37, row 181 columns 38–38, row 181 columns 39–39, row 181 columns 40–40, row 181
+columns 41–41, row 181 columns 42–42, row 181 columns 43–43, row 181 columns 44–44, row 181 columns 45–45, row 181
+columns 46–339, row 182 columns 0–32), each a sum of refined costs (`rows2` or `rowsJ2`) at most its bound, by
+`decide +kernel`, one at a time (`Elab.async false`).
 
 The file imports `SieveGrid22250R.lean`.
 -/

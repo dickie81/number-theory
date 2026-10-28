@@ -13,7 +13,7 @@ def CGLDensity : Prop :=
 In words: for every `ε > 0` there is `C` such that, for every `q ≥ 1`, `5/7 ≤ σ ≤ 16/21` and `T ≥ 2`, at most
 `C(qT)^{(7/3)(1−σ)+ε}` characters mod `q` have an `L`-function with a zero in `Re s ≥ σ`, `|Im s| ≤ T`.
 `LFunction` is Mathlib's `DirichletCharacter.LFunction`. The theorem depends on `propext`, `Classical.choice` and
-`Quot.sound` only (`lib/check/Check.lean`).
+`Quot.sound` only (`lib/check/CheckAll.lean`).
 
 ## Attribution
 
@@ -144,7 +144,7 @@ pieces:
 - the library's `(101/50)(1 − σ)` from `5/6` on (`LinnikStep.charDensity_step`).
 
 The theorem of the proof built on this curve, at an earlier exponent (`899/400`), is no longer in the tree: it was
-superseded, and is in the git history. `cglDensity` stays and is printed by `lib/check/Check.lean`.
+superseded, and is in the git history. `cglDensity` stays and is printed by `lib/check/CheckAll.lean`.
 
 ## Proposition 3.1 on `[5/7, 131/168]`: the second route
 
@@ -157,8 +157,10 @@ the parameters and checks every field of `ParC.Good` in exact rationals). For `�
 `7/3 + 1/2000` of `charDensity_cgl`, which the earlier route (at `899/400`, in the git history) used on `[5/7, 16/21]` and took to `ε → 0`
 (`cglDensity`). No hypothesis is involved: the steps hold at `e = 1/100000` and need no `ε`.
 
-From `7/9` on Huxley's exponent `3/(3σ − 1)` is below `4/(1 + σ)`. On the three steps `[1307/1680, 131/168]` it is smaller
-by up to `6·10⁻³`, but at `89/40` that does not change the window, so these steps are Chen–Gupta–Li's too (`2.24983`,
+From `7/9` on Huxley's exponent `3/(3σ − 1)` is below `4/(1 + σ)`. On the three steps `[1307/1680, 131/168]` his
+exponent at a step's left end, plus the slack `1/2000` of his steps, is below the step's exponent by at most `5·10⁻³`
+(pointwise, `3/(3σ − 1)` is below it by up to `8.4·10⁻³`, at `131/168`). At `89/40` that does not change the window,
+whose corners on these steps have a slack of at least `5.9·10⁻⁴`, so these steps are Chen–Gupta–Li's too (`2.24983`,
 `2.24907`, `2.24833`). Between the exponents `11161/5000` and `89/40` the library took Huxley's bound there, in a file
 `LinnikHuxJunction.lean` (in the git history); at `11161/5000` the window's lower end was set near `7/9`.
 

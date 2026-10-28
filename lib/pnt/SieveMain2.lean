@@ -93,7 +93,7 @@ theorem route_of_large (hL0 : 0 ≤ L) (hlarge : ∃ q₀ : ℕ, ∀ (q : ℕ) [
           mul_le_mul_of_nonneg_left hqL (le_trans (by norm_num) (le_max_left _ _))
 
 /-- **Linnik's theorem at `x = q^L`, for large `q`, under the refined certificate.** For a route with `RouteOK` and a
-grid with `GridOK` that fit (`Fits`), given the route's Type II estimate (`hII`) and `total2/K ≤ c` in the reals for
+grid with `GridOK` and `GridOKC` that fit (`Fits`), given the route's Type II estimate (`hII`) and `total2/K ≤ c` in the reals for
 some `c < 1` (`htot`), there is `q₀` such that for `q ≥ 1` with `q ≥ q₀` and `a` a unit mod `q` there is a prime
 `p ≡ a (mod q)` with `q^L < p ≤ 2q^L`. The losses are `SieveMain.linnik_large_of`'s five shares `ε = (1 − c)/10` of
 `X = x/log x`, leaving `(1 − c)X/2` of `S(A, z_top)`. -/
@@ -211,7 +211,7 @@ theorem linnik_large2 (hII : TypeIIAt) {c : ℝ} (hc : c < 1) (htot : (SieveCert
     exact this.trans (N2_le q)
 
 /-- **Linnik's theorem with exponent `L`, under the refined certificate.** For a route with `RouteOK` and a grid with
-`GridOK` that fit (`Fits`), given the route's Type II estimate (`hII`) and `total2/K ≤ c` in the reals for some `c < 1`
+`GridOK` and `GridOKC` that fit (`Fits`), given the route's Type II estimate (`hII`) and `total2/K ≤ c` in the reals for some `c < 1`
 (`htot`), there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with
 `p ≤ K·q^L`. -/
 theorem linnik_route2 (hII : TypeIIAt) {c : ℝ} (hc : c < 1) (htot : (SieveCert.total2 : ℝ) / SieveCert.K ≤ c) :
@@ -220,7 +220,7 @@ theorem linnik_route2 (hII : TypeIIAt) {c : ℝ} (hc : c < 1) (htot : (SieveCert
   route_of_large L_pos.le (linnik_large2 hII hc htot)
 
 /-- **Linnik's theorem with exponent `L`, under a refined certificate whose total is below `K`.** For a route with
-`RouteOK` and a grid with `GridOK` that fit (`Fits`), given the route's Type II estimate (`hII`) and the refined
+`RouteOK` and a grid with `GridOK` and `GridOKC` that fit (`Fits`), given the route's Type II estimate (`hII`) and the refined
 certificate's total less than `K` (`htot`), there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there
 is a prime `p ≡ a (mod q)` with `p ≤ K·q^L`. -/
 theorem linnik_route_lt2 (hII : TypeIIAt) (htot : SieveCert.total2 < SieveCert.K) :

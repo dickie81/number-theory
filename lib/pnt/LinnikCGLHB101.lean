@@ -1,16 +1,16 @@
 /-
-# Heath-Brown's Theorem 10.1 with characters, and Linnik's exponents `9/4` and `226/100`
+# Heath-Brown's Theorem 10.1 with characters, and Chen–Gupta–Li's Propositions 11.1 and 3.1
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 `sig_bound` bounds `σ(N)` by `((M_BB₁)² + 2M_BA₁)B(N)`, with the factors depending on `q`,
 `T`, `δ` and a divisor bound `D`. This file bounds the factors by powers of one quantity, `W = 3C_δ(4Q)^δ/δ` with
 `C_δ` the divisor constant and `Q = q(1 + 2T)`, and proves the displayed hypothesis `CGLT101`
-(Heath-Brown's Theorem 10.1 with characters). With `cgls3_t101`,
-`prop31_t101`, and `linnik_225c_t101` and `linnik_226c_t101` (formerly in `LinnikCGLLegacy.lean`, since removed; see the git history) it gives, with no hypothesis, Chen–Gupta–Li's Propositions
-11.1 and 3.1 at one point per character, the count of characters with a zero at the exponent
-`(7/3 + 1/2000)(1 − σ)` on `[5/7, 16/21]` (`LinnikCGLStep.charDensity_cgl`) and Linnik's theorem with the exponents
-`9/4` and `226/100`. `CGLDensity` itself, the count at `(7/3)(1 − σ) + ε` for every `ε > 0`, is not proved here
+(Heath-Brown's Theorem 10.1 with characters). With `LinnikCGLP81.cgls3_t101` and `LinnikCGLP81.prop31_t101` it gives,
+with no hypothesis, Chen–Gupta–Li's Propositions 11.1 and 3.1 at one point per character (`cgls3`, `prop31`), from which
+`LinnikCGLStep.charDensity_cgl` counts the characters with a zero at the exponent `(7/3 + 1/2000)(1 − σ)` on
+`[5/7, 16/21]` and `LinnikCGLSteps` derives the steps of the Linnik paper. The theorems that gave Linnik's exponents
+`9/4` and `226/100` from it (`linnik_225c_t101`, `linnik_226c_t101`) were removed; see the git history. `CGLDensity` itself, the count at `(7/3)(1 − σ) + ε` for every `ε > 0`, is not proved here
 (`LinnikCGLDensity.cglDensity` proves it).
 
 The library's form.

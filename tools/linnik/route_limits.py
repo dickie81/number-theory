@@ -23,7 +23,8 @@ corners and the depth-4 certificate (`replay`) for a curve, an exponent and a gr
   truncated at `0`, division by `0` giving `0`), and `GridOK`, `Fits` and `RouteOK` as `decide` would evaluate them.
 
 A row with the depth-4 `total < K`, no failed corner and every grid and route condition true (`accepted`) would be a
-certificate of the earlier depth-4 route (`SieveMain.linnik_route_lt`, in the git history); the library's theorem takes
+certificate of the earlier depth-4 route (`SieveMain.linnik_route_lt`, whose certificate files are in the git history);
+the library's theorem takes
 `total2 < K` (`mirror2.py`) instead, with the curve's counts (`counts_7c`, which holds with no hypothesis because
 `LinnikCGLDensity.cglDensity` proves `CGLDensity`, or `counts_7d`). The counts do not depend on `L`. What remains is the
 kernel's run of `norm_num` at the corners and of `decide +kernel` on the total, which this script does not make. The

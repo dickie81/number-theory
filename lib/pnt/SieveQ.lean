@@ -19,9 +19,9 @@ Plain statements. Throughout, `L`, `w₁` and `w₂` are a route's parameters (`
   and `a` a unit mod `q`, `LargeQ q` holds and every leaf of `(parQ q).Leaves` is within
   `Err η δ q = ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)`.
 
-The proof of `leaves_ev`: for the tuple lengths of the tree, `SieveLeaves.TL_spec` (one to four primes), `TU_spec` (two
-to four) and `P6_spec` (none to three) give `δ` and `q₀`; `δ` is their minimum and `q₀` their maximum. Each leaf is then
-one of those estimates (`lf_j0` … `lf_e4`): its family has at most `32` atoms with thresholds in `[1, q^{L+1}]`
+The proof of `leaves_ev`: for the tuple lengths of the tree, `SieveLeaves.TL_spec` (one to six primes), `TU_spec` (two
+to six) and `P6_spec` (none to five) give `δ` and `q₀`; `δ` is their minimum and `q₀` their maximum. Each leaf is then
+one of those estimates (`lf_j0` … `lf_e6`): its family has at most `32` atoms with thresholds in `[1, q^{L+1}]`
 (`len_*`, `thrOK_*`), and its windows are the integer ranges `P₁ = ⌊x^{u₁}⌋`, `P₂ = ⌊x^{u₂}⌋`, `W₀ = X'` and
 `W₁ = ⌊x^{1−u₁}⌋` (`P1_ok`, `P2_ok`, `W1_div`, `W0_div`).
 
