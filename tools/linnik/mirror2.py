@@ -1,11 +1,14 @@
-"""mirror2.py W1 W2 N [OUT.json]: the deep certificate of SieveCertDefs.lean / SieveCert2Defs.lean on the grid
+"""mirror2.py W1 W2 N [OUT.json] [--depth4]: the deep certificate of SieveCertDefs.lean / SieveCert2Defs.lean on the grid
 U1 = ⌈(W1/10⁵)DEN⌉, U2 = ⌊(W2/10⁵)DEN⌋, n = N (a multiple of 4, with the coarse grid of N/4 cells), in exact integers,
 cell by cell as the Lean definitions read: `cand`, `allowed`, `counted4`, `allowed4`, `inKK5`, `ne5`, `counted6`,
 `omF`, `invKw`, `omKw`, `bound2`, `bound4`, `bound6`, `refcost5`, `dec4`, `cost4`, `refcost`, `dec`, and the kept parts
 `reg2`, `keep`, `keepK`, `sub2`, `cost2` (natural subtraction truncated at 0). Prints `total` (the certificate without the kept parts) and
 `total2` (with them), and, with OUT, writes per candidate cell (i, j): cost2 and the kernel work it makes: the counted
 cells of depth 4 evaluated (t4), the depth-5 cells evaluated (t5, in `allowed4` and `refcost5` together), the depth-6
-cells evaluated (t6) and the `surelyEval` tests of `sub2` (ts). Rows are computed in parallel processes."""
+cells evaluated (t6) and the `surelyEval` tests of `sub2` (ts). It also prints the number of cells of depth 3 tested by
+`ne3` below the decomposed candidate cells (the boxes of `inKK`, counted as t4 is), which OUT does not record. Rows are computed in parallel processes. With `--depth4`
+no counted cell of depth 4 is decomposed: the decomposition stopped at depth four, whose `total` on the library's grid
+(`41556 47531 340`) is the paper's `1.45721𝒦`."""
 import json, os, sys, time
 from multiprocessing import Pool
 DEN, K = 2 ** 40, 2 ** 60
@@ -15,11 +18,13 @@ import route_limits as rl
 tsub, cdiv = rl.tsub, rl.cdiv
 TOPK = (K * 565073 + 999999) // 1000000       # `topK`: ⌈0.565073 K⌉, ω* above 3
 W1K = (K * 5671433 + 9999999) // 10000000     # `w1K`: ⌈0.5671433 K⌉, the maximum of Buchstab's ω on [2, 3]
-LD = 10 ** 9                                  # `LD`, and `lnT`: LD·log((16 + k)/16), rounded up, for k ≤ 16
+LD = 10 ** 9                                  # `LD`, and `lnT`: upper bounds for LD·log((16 + k)/16), k ≤ 16
 LNT = [0, 60624623, 117783037, 171850258, 223143553, 271933717, 318453733, 362905495, 405465110, 446287104,
        485507817, 523248145, 559615789, 594707109, 628608661, 661398484, 693147182]
-W1, W2, N = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
-OUT = sys.argv[4] if len(sys.argv) > 4 else None
+DEPTH4 = '--depth4' in sys.argv
+ARGS = [a for a in sys.argv[1:] if a != '--depth4']
+W1, W2, N = int(ARGS[0]), int(ARGS[1]), int(ARGS[2])
+OUT = ARGS[3] if len(ARGS) > 3 else None
 assert N % 4 == 0
 n = N
 nC = n // 4
@@ -89,7 +94,7 @@ def sub2(i, j):
 def inside_any3(i, j, k): return surely([(E[i], H), (E[j], H), (E[k], H)])
 
 def cell_row(i):
-    """all candidate cells of the row i: {j: (cost, cost_nokept, t4, t5, t6, ts)}"""
+    """all candidate cells of the row i: {j: (cost, cost_nokept, t4, t5, t6, ts, t3)}"""
     res = {}
     ei = E[i]
     for j in range(n):
@@ -100,13 +105,16 @@ def cell_row(i):
         b2 = bound2(ei, ej)
         al = ei + H + (ej + H) < lim
         ks = []
+        c3 = 0
         for k in range(n):
             ek = E[k]
             if ek < ej + H and ei + ej + 2 * ek <= DEN:
+                c3 += 1
                 S3 = sums([(ei, H), (ej, H), (ek, H)])
                 if not any(inside(a, b) for a, b in S3):
                     ks.append((k, S3))
                     if not (ei + H + (ej + H) + (ek + H) < lim): al = False
+        t3 = c3 if al else 0
         t4 = t5 = t6 = 0
         dec = False
         if al:
@@ -120,7 +128,7 @@ def cell_row(i):
                     if extend(S3, el, H): continue          # surely evaluable: cost 0
                     S4 = ei + ej + ek + el
                     T4 = S4 + 4 * H
-                    d = T4 < lim
+                    d = T4 < lim and not DEPTH4
                     b4 = bound4(ei, ej, ek, el)
                     # the cells of depth 5
                     S4s = sums([(ei, H), (ej, H), (ek, H), (el, H)])
@@ -152,24 +160,24 @@ def cell_row(i):
         else:
             s, ts = sub2(i, j)
             c = tsub(b2, s); c1 = b2
-        res[j] = (c, c1, t4, t5, t6, ts)
+        res[j] = (c, c1, t4, t5, t6, ts, t3)
     return i, res
 
 if __name__ == '__main__':
     t0 = time.time()
     with Pool() as p:
         rows = dict(p.imap_unordered(cell_row, range(n), chunksize=1))
-    cells = {}; total = total2 = 0
+    cells = {}; total = total2 = t3 = 0
     for i in range(n):
-        for j, (c, c1, t4, t5, t6, ts) in sorted(rows[i].items()):
-            total += c1; total2 += c
+        for j, (c, c1, t4, t5, t6, ts, c3) in sorted(rows[i].items()):
+            total += c1; total2 += c; t3 += c3
             cells[f'{i},{j}'] = (c, t4, t5, t6, ts)
     print(f'grid [{W1}, {W2}]/1e5 n={n} nC={nC}: U1={U1} U2={U2} H={H} HC={HC}; total/K {total / K:.5f} ({total}); '
           f'total2/K {total2 / K:.6f} ({total2}); total2 < K: {total2 < K}; {time.time() - t0:.0f} s', flush=True)
     t4 = sum(v[1] for v in cells.values()); t5 = sum(v[2] for v in cells.values())
     t6 = sum(v[3] for v in cells.values()); ts = sum(v[4] for v in cells.values())
-    print(f'kernel work: depth-4 tests {t4}, depth-5 tests {t5}, depth-6 tests {t6}, sub2 surelyEval tests {ts}, '
-          f'candidate cells {len(cells)}')
+    print(f'kernel work: depth-3 tests {t3}, depth-4 tests {t4}, depth-5 tests {t5}, depth-6 tests {t6}, '
+          f'sub2 surelyEval tests {ts}, candidate cells {len(cells)}')
     if OUT:
         json.dump({'W1': W1, 'W2': W2, 'n': n, 'nC': nC, 'U1': U1, 'U2': U2, 'H': H, 'HC': HC, 'total': total,
                    'total2': total2, 'cells': cells}, open(OUT, 'w'))

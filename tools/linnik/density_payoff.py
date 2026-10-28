@@ -24,6 +24,12 @@ Variants (several may be given; with none, all of the list below are run, in abo
 * `V+hb`, for any variant `V` above: also every step on `[15/19, 11/12]` at most `2 + 10⁻⁵` (Heath-Brown's density
   estimate for the characters to one modulus, exponent `2` for `15/19 ≤ σ ≤ 1`; the step containing `15/19` is split
   there).
+* `classical`: `g7d` without Chen–Gupta–Li, its steps on `[5/7, 131/168]` replaced by steps of `1/1680` with the
+  classical exponents and the slack `1/2000` of the library's steps: Ingham's `3/(2 − σ₊) + 1/2000` up to `3/4` and
+  Huxley's `3/(3σ₋ − 1) + 1/2000` from `3/4` (the forms of `LinnikInghamC.charDensity_ingham_c` and of
+  `LinnikHuxStep.charDensity_gen`, whose parameters at this width were checked for the first Huxley step only). Its
+  search starts at `23/10` (`STARTS`), since `278/125` fails. The window is then set at `3/4`, where Ingham's and
+  Huxley's exponents are both `12/5`.
 
 Needs Python 3 only (and `mirror2.py`, which uses all cores).
 """
@@ -40,10 +46,11 @@ import route_limits as rl  # noqa: E402
 N = 340
 OK = 0.999
 START = Fr(278, 125)
+STARTS = {'classical': Fr(23, 10)}   # the search's first L for a variant that fails at START
 STEP, FINE = Fr(1, 1000), Fr(1, 2000)
 SLACK = Fr(1, 100000)
 DEFAULT = ['today', 'ingham', 'rawcap:30/13', 'cap:2.33', 'cap:2.325', 'cap:2.32', 'cap:2.315', 'cap:30/13', 'gm',
-           'today+hb', 'ingham+hb', 'cap:30/13+hb', 'gm+hb']
+           'today+hb', 'ingham+hb', 'cap:30/13+hb', 'gm+hb', 'classical']
 
 
 def ingham(pieces):
@@ -83,6 +90,27 @@ def hb(pieces):
     return out
 
 
+def classical(pieces):
+    """The steps on `[5/7, 131/168]` replaced by steps of `1/1680`: Ingham's `3/(2 − σ₊) + 1/2000` up to `3/4`, Huxley's
+    `3/(3σ₋ − 1) + 1/2000` from `3/4`."""
+    lo0, hi0, slack = Fr(5, 7), Fr(131, 168), Fr(1, 2000)
+    steps, x = [], lo0
+    while x < hi0:
+        y = x + Fr(1, 1680)
+        steps.append((x, y, 3 / (2 - y) + slack if y <= Fr(3, 4) else 3 / (3 * x - 1) + slack))
+        x = y
+    assert x == hi0
+    out = []
+    for lo, hi, A in pieces:
+        if A is not None and lo0 <= lo and hi <= hi0:
+            if lo == lo0:
+                out += steps
+            continue
+        out.append((lo, hi, A))
+    assert all(p[1] == q[0] for p, q in zip(out, out[1:]))
+    return out
+
+
 def curve(name):
     base, _, extra = name.partition('+')
     pieces = rl.parse('g7d')
@@ -96,6 +124,8 @@ def curve(name):
         pieces = cap(pieces, Fr(base[7:]))
     elif base == 'gm':
         pieces = gm(ingham(pieces))
+    elif base == 'classical':
+        pieces = classical(pieces)
     else:
         raise SystemExit(f'unknown variant {name}')
     if extra == 'hb':
@@ -138,7 +168,7 @@ def total2(pieces, L):
 def least(name):
     pieces = curve(name)
     print(f'{name}: largest exponent {float(max(A for _, _, A in pieces if A is not None)):.6f}', flush=True)
-    L = START
+    L = STARTS.get(name, START)
     w, t = total2(pieces, L)
     print(f'  L = {L} ({float(L):.4f}): window {w}, total2/K {t}', flush=True)
     if t is None or t >= OK:
@@ -164,7 +194,7 @@ def main():
     found = [(n, least(n)) for n in names]
     print('\nlowest L passed (total2 < 0.999K at n = 340; steps of 1/1000, then one of 1/2000):')
     for n, L in found:
-        print(f'  {n:16s} {"fails at 278/125" if L is None else f"{L} = {float(L):.4f}"}')
+        print(f'  {n:16s} {f"fails at {STARTS.get(n, START)}" if L is None else f"{L} = {float(L):.4f}"}')
 
 
 if __name__ == '__main__':
