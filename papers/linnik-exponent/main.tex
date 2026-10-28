@@ -183,10 +183,9 @@ because the cited source was not read; some lemmas of their paper were formalise
 the formalisation found six places where the text of their paper needs a small repair, none affecting its results.
 \file{formalisations/chen-gupta-li-density.md} records all three.
 
-The paper is a guide to the Lean proof, which is the complete one. The proofs of Lemma~\ref{lem:prime-sum},
-Lemma~\ref{lem:family} and Proposition~\ref{prop:harman} are sketches, and Lemmas~\ref{lem:type1}, \ref{lem:rough},
-\ref{lem:drop} and~\ref{lem:kept} and Proposition~\ref{prop:decomp-kept} are stated with at most an outline of a proof.
-Section~\ref{sec:lean} names the Lean theorem that proves each of them.
+The proofs of the paper follow the Lean proofs step by step. Where the Lean proof fixes a constant whose value the
+argument does not need, the paper says only that the constant exists. Section~\ref{sec:lean} names the Lean theorem
+behind each claim.
 
 \subsection*{Outline}
 
@@ -384,18 +383,117 @@ then
 where $A = \log(q + 2) + \log(|y| + 4) + 1$ and $M_\delta(\theta)$ depends only on $\theta$ and $\delta$.
 \end{lemma}
 
-\begin{proof}[Sketch]
-The weight $\psi_Q(u) = f_0(u)(1 + \log u/\log Q)^{-1}$ turns the prime sum into $1/\log Q$ times the sum of
-$\chi(n)\Lambda(n)(n/Q)^{-iy}\psi_Q(n/Q)$, up to the proper prime powers, which give the last term. By Mellin
-inversion that sum is an integral of $-L'/L(s, \chi)$ against the Mellin transform of the weight, which decays
-faster than any power of $|\operatorname{Im} s - y|$ uniformly in $Q$. The line of integration moves from
-$\operatorname{Re} s = 2$ to $\operatorname{Re} s = 11/12 + \delta$, which Input~\ref{inp:half-plane} allows,
-and, for $|\operatorname{Im} s - y| \le H$, across the zero-free rectangle to $\operatorname{Re} s = \theta + \delta$.
-On both lines $|L'/L(s, \chi)| \ll A$, by the bound for the logarithmic derivative in a zero-free disc.
+\begin{proof}
+Throughout, $Q \ge 4$, so that $\log Q > 1$, and $L$ stands for $L(\cdot, \chi)$, which is entire since $\chi$ is not
+trivial. Put $\sigma_1 = 11/12 + \delta$ and $E = (1 + H)^{-K}$.
+
+\emph{The weight.} Let $\psi_Q(u) = f_0(u)(1 + \log u/\log Q)^{-1}$ for $u > 0$, and $w(u) = u^{-iy} \psi_Q(u)$. If
+$f_0(n/Q) \ne 0$ then $n \ge Q/2 \ge 2$ and $1 + \log(n/Q)/\log Q = \log n/\log Q$, so that
+$\Lambda(n) \psi_Q(n/Q) = \log Q \cdot (\Lambda(n)/\log n) f_0(n/Q)$. Since $\Lambda(p)/\log p = 1$,
+\begin{gather*}
+  \sum_n \chi(n) \Lambda(n) w(n/Q) = \log Q \, \bigl(S_Q(\chi, y) + R\bigr), \\
+  R = \sum_{\substack{p^k \le 2Q \\ k \ge 2}} \frac{\chi(p^k)}{k} \Bigl(\frac{p^k}{Q}\Bigr)^{-iy} f_0\Bigl(\frac{p^k}{Q}\Bigr).
+\end{gather*}
+Each term of $R$ is at most $C = \max |f_0|$ in absolute value, and a proper prime power $p^k \le 2Q$ has
+$p \le \sqrt{2Q}$ and $k \le \log_2(2Q)$, so $|R| \le C(\sqrt{2Q} + 1)(\log_2(2Q) + 1)$. It remains to prove
+\begin{equation}\label{eq:Sw-bound}
+  \Bigl|\sum_n \chi(n) \Lambda(n) w(n/Q)\Bigr| \le M_\delta(\theta) \, A \, B \bigl(Q^{\theta + \delta} + Q^{\sigma_1} E\bigr).
+\end{equation}
+
+\emph{The Mellin transform.} Write $\mathcal M \psi(s) = \int_0^\infty u^{s - 1} \psi(u) \, du$. The substitution
+$u = e^{-v}$ gives, with $a = 1/\log Q \in (0, 1/\log 4]$,
+\[
+  \mathcal M \psi_Q(\sigma + it) = \int_{\mathbb R} e^{-itv} g(v) \, dv, \qquad
+  g(v) = e^{-\sigma v} f_0(e^{-v}) (1 - av)^{-1}.
+\]
+The function $g$ vanishes for $|v| > \log 2$, and $av \le 1/2$ for $v \le \log 2$, so $g$ is smooth. By Leibniz's rule,
+with $|(d/dv)^m (1 - av)^{-1}| = m! \, a^m |1 - av|^{-1 - m} \le m! \, 2^{m + 1}$ on $|v| \le \log 2$, the $j$-th
+derivative of $g$ is bounded by a constant $G_j$ that depends only on $f_0$ and $j$, uniformly in $0 \le \sigma \le 2$
+and $Q \ge 4$. Integration by parts $j$ times gives $|t|^j |\mathcal M \psi_Q(\sigma + it)| \le 2 \log 2 \cdot G_j$, and
+with $j = 0$ and $j = K + 3$,
+\[
+  (1 + |t|)^{K + 3} |\mathcal M \psi_Q(\sigma + it)| \le B \qquad (0 \le \sigma \le 2,\ t \in \mathbb R,\ Q \ge 4),
+\]
+where $B = 2^{K + 4} \log 2 \, (G_0 + G_{K + 3})$ depends only on $f_0$ and $K$. Since $\psi_Q$ is continuous on
+$(0, \infty)$ and vanishes near $0$ and near $\infty$, $\mathcal M \psi_Q$ is entire. Finally
+$\mathcal M w(s) = \mathcal M \psi_Q(s - iy)$, so that
+\begin{equation}\label{eq:mellin-decay}
+  (1 + |t - y|)^{K + 3} |\mathcal M w(\sigma + it)| \le B \qquad (0 \le \sigma \le 2,\ t \in \mathbb R).
+\end{equation}
+
+\emph{Perron's formula.} For $\operatorname{Re} s > 1$, $-L'/L(s) = \sum_n \chi(n) \Lambda(n) n^{-s}$. Mellin
+inversion on the line $\operatorname{Re} s = 2$ at each point $n/Q$, with the exchange of sum and integral justified by
+\eqref{eq:mellin-decay}, gives
+\[
+  \sum_n \chi(n) \Lambda(n) w(n/Q) = \frac1{2\pi} \int_{\mathbb R} F(2 + it) \, dt, \qquad
+  F(s) = -\frac{L'}{L}(s) \, \mathcal M w(s) \, Q^s.
+\]
+
+\emph{The logarithmic derivative.} For $1/2 \le \theta_0 < \theta' < 3/2$ there is $\kappa(\theta_0, \theta')$ with the
+following property, for every $q$, every non-trivial $\chi$ mod $q$ and every $t \in \mathbb R$: if $L$ has no zero in
+the open disc $D_t$ of centre $3/2 + it$ and radius $\rho = 3/2 - \theta_0$, then
+\begin{equation}\label{eq:logderiv}
+  \Bigl|\frac{L'}{L}(\sigma + it)\Bigr| \le \kappa(\theta_0, \theta') \bigl(\log(q + 2) + \log(|t| + 4)\bigr)
+  \qquad (\sigma \ge \theta').
+\end{equation}
+For $\sigma \ge 3/2$ this holds as soon as $\kappa \ge -\zeta'/\zeta(3/2)$, by the Dirichlet series of $L'/L$. For
+$\theta' \le \sigma < 3/2$ it follows from a lemma of Landau's type: if $f$ is analytic near the closed unit disc,
+$f(0) = 1$, $|f| \le B_0$ on $|z| \le R$, $f$ has no zero in $|z| < 1$ and $0 < r' < r < R' < R < 1$, then
+\[
+  |f'/f(z)| \le \Bigl(\frac{16 r^2}{(r - r')^3} + \frac1{(R^2/R' - R') \log(R/R')}\Bigr) \log B_0 \qquad (|z| \le r').
+\]
+(The library uses the form of this lemma in PrimeNumberTheoremAnd, \lean{FinalBound}, which combines a Blaschke
+product, the Borel--Carath\'eodory inequality and Jensen's formula, and allows zeros.) Apply it to
+$f(z) = L(3/2 + it + \rho z)/L(3/2 + it)$ at $z = (\sigma - 3/2)/\rho$, with $r' = (3/2 - \theta')/\rho$ and with $r$,
+$R'$ and $R$ a quarter, a half and three quarters of the way from $r'$ to $1$; then $f'/f(z) = \rho \, L'/L(\sigma + it)$.
+The bound $B_0$ comes from two estimates. First, $|L(s)| \le 3(q + 1)(|\operatorname{Im} s| + 2)$ for
+$1/2 \le \operatorname{Re} s \le 3$, which follows by partial summation from $|L(s)| \le (q + 1)|s|/\operatorname{Re} s$
+for $\operatorname{Re} s > 0$. Second, $|L(3/2 + it)|^{-1} \le \zeta(3/2)$, from $1/L(s) = \sum \mu(n) \chi(n) n^{-s}$.
+Together they give $|f| \le 3(q + 1)(|t| + 4) \zeta(3/2)$ on $|z| \le R$, and $\log B_0 \ll \log(q + 2) + \log(|t| + 4)$.
+The constant $\kappa(\theta_0, \theta')$ is explicit and of order $(\theta' - \theta_0)^{-3}$.
+
+The disc $D_t$ lies in $\operatorname{Re} s > \theta_0$ and, since $\rho \le 1$, in $|\operatorname{Im} s - t| < 1$. So
+\eqref{eq:logderiv} applies in two cases:
+\begin{enumerate}
+\item[(i)] with $\theta_0 = 11/12$ and every $t$, by Input~\ref{inp:half-plane};
+\item[(ii)] with $\theta_0 = \theta$ and every $t$ with $|t - y| \le H$, by the hypothesis of the lemma.
+\end{enumerate}
+Since $|t| + 4 \le (|y| + 4)(1 + |t - y|)$ and $\log(1 + u) \le u$, we have
+$\log(q + 2) + \log(|t| + 4) \le A(1 + |t - y|)$. With \eqref{eq:mellin-decay} this gives, in either case,
+\begin{equation}\label{eq:F-bound}
+  |F(\sigma + it)| \le \kappa(\theta_0, \theta') \, A \, B \, Q^\sigma (1 + |t - y|)^{-K - 2} \qquad (\theta' \le \sigma \le 2).
+\end{equation}
+
+\emph{The contour.} By Input~\ref{inp:half-plane}, $F$ is holomorphic on $\sigma_1 \le \operatorname{Re} s \le 2$, and by
+\eqref{eq:F-bound} in case (i), with $\theta' = \sigma_1$, it is $O((1 + |t - y|)^{-2})$ there uniformly. So Cauchy's
+theorem on the rectangles $[\sigma_1, 2] \times [-T, T]$, with $T \to \infty$, moves the line of integration from $2$ to
+$\sigma_1$. Split the line $\operatorname{Re} s = \sigma_1$ at the heights $y \pm H$. By the hypothesis of the lemma, $F$
+is holomorphic on the rectangle $\theta + \delta \le \operatorname{Re} s \le \sigma_1$, $|\operatorname{Im} s - y| \le H$,
+so by Cauchy's theorem the integral over $|t - y| \le H$ on the line $\sigma_1$ equals the integral over the same
+heights on the line $\theta + \delta$ plus the integrals over the two horizontal sides at the heights $y \pm H$.
+
+\emph{The pieces.} Put $\kappa_1 = \kappa(11/12, \sigma_1)$ and $\kappa_2 = \kappa(\theta, \theta + \delta)$.
+\begin{itemize}
+\item On the line $\sigma_1$ with $|t - y| \ge H$: by \eqref{eq:F-bound} in case (i) and
+  $(1 + u)^{-K - 2} \le (1 + H)^{-K} (1 + u^2)^{-1}$ for $u \ge H$, $|F| \le \kappa_1 A B Q^{\sigma_1} E/(1 + (t - y)^2)$.
+  Each of the two tails contributes at most $\pi \kappa_1 A B Q^{\sigma_1} E$.
+\item On the line $\theta + \delta$ with $|t - y| \le H$: by \eqref{eq:F-bound} in case (ii),
+  $|F| \le \kappa_2 A B Q^{\theta + \delta}/(1 + (t - y)^2)$, so this part contributes at most
+  $\pi \kappa_2 A B Q^{\theta + \delta}$.
+\item On each horizontal side, of length $11/12 - \theta \le 1$: by \eqref{eq:F-bound} in case (ii), with
+  $Q^\sigma \le Q^{\sigma_1}$, $|F| \le \kappa_2 A B Q^{\sigma_1} (1 + H)^{-K - 2} \le \kappa_2 A B Q^{\sigma_1} E$.
+\end{itemize}
+Adding the pieces and dividing by $2\pi$, the sum in \eqref{eq:Sw-bound} is at most
+\[
+  \kappa_1 A B Q^{\sigma_1} E + \tfrac12 \kappa_2 A B Q^{\theta + \delta} + \tfrac1\pi \kappa_2 A B Q^{\sigma_1} E
+  \le (\kappa_1 + \kappa_2) \, A \, B \bigl(Q^{\theta + \delta} + Q^{\sigma_1} E\bigr),
+\]
+which is \eqref{eq:Sw-bound} with $M_\delta(\theta) = \kappa(\theta, \theta + \delta) + \kappa(11/12, 11/12 + \delta)$.
 \end{proof}
 
 The argument is the classical one for primes in progressions, with a smooth weight in place of a sharp cut-off; the
-only use of Input~\ref{inp:half-plane} is the line $\operatorname{Re} s = 11/12 + \delta$.
+only use of Input~\ref{inp:half-plane} is to move the line of integration to $\operatorname{Re} s = 11/12 + \delta$ and
+to bound $L'/L$ on that line and to its right.
 
 \subsection{The bins}
 
@@ -534,10 +632,19 @@ classical ones.
 \subsection{Type~I}
 
 \begin{lemma}\label{lem:type1}
-Let $N_1 \le N_2$ and let $M > 0$ be prime to $q$. The number of $n \in (N_1, N_2]$ with $n \equiv a \pmod q$ and
+Let $N_1 \le N_2$ be integers and let $M > 0$ be prime to $q$. The number of $n \in (N_1, N_2]$ with $n \equiv a \pmod q$ and
 $M \mid n$ is $(N_2 - N_1)/(Mq)$ within $1$, and the number of $n \in (N_1, N_2]$ prime to $q$ with $M \mid n$ is
 $\varphi(q)(N_2 - N_1)/(Mq)$ within $\varphi(q)$.
 \end{lemma}
+
+\begin{proof}
+Since $(M, q) = 1$, the Chinese remainder theorem gives $c$ with $c \equiv 0 \pmod M$ and $c \equiv a \pmod q$, and
+the two conditions $n \equiv a \pmod q$ and $M \mid n$ together say $n \equiv c \pmod{Mq}$. For $r \ge 1$ the number of
+$n \in (N_1, N_2]$ with $n \equiv c \pmod r$ is $\lfloor (N_2 - c)/r \rfloor - \lfloor (N_1 - c)/r \rfloor$, which
+differs from $(N_2 - N_1)/r$ by less than $1$. With $r = Mq$ this is the first count. The integers prime to $q$ form the
+$\varphi(q)$ residue classes $b \bmod q$ with $(b, q) = 1$, and adding the first count over these classes gives the
+second.
+\end{proof}
 
 So $|\mathcal A_M| - |\mathcal B_M|/\varphi(q)$ is at most $2$ in absolute value for every $M$ prime to $q$. This is
 all the Type~I information the sieve needs: it is used for the moduli up to $q^{b_0}$ with $b_0 < L - 1$, where the
@@ -550,14 +657,16 @@ integers $n = m p_1 \cdots p_K$ whose primes are cut out by comparisons. Fix a s
 in $[1/2, 2]$, an integer $K_0$ and $e_1 > 0$. A \emph{family} consists of
 \begin{itemize}
 \item a scale $P$ with $x^{u_1} \le P \le x^{u_2}$, a set $S \subseteq (P, 2P]$ and coefficients $|a_m| \le A_0$;
-\item $K \le K_0$ primes $p_i \le 2Q_i$ with weights $f_0(p_i/Q_i)$, at scales $Q_i \ge q^{e_1}$ with
+\item between $1$ and $K_0$ primes $p_i \le 2Q_i$ with weights $f_0(p_i/Q_i)$, at scales $Q_i \ge q^{e_1}$ with
   $Q_1 \cdots Q_K \le 2^{K_0} x/P$;
-\item at most $J_0$ comparisons $\ell_j(m, p) > 0$, where
-  $\ell_j(m, p) = \varphi_j(m) + \sum_i e_{ji} \log p_i$ with $|e_{ji}| \le E_0$ and $\ell_j \le \Lambda_0 \log q$, each
-  with a \emph{pivot}, a prime $p_i$ with $e_{ji} = \pm 1$.
+\item at most $J_0$ comparisons, conditions on $(m, p)$ that hold when $\ell_j(m, p) > 0$ and fail when
+  $\ell_j(m, p) < 0$, where $\ell_j(m, p) = \varphi_j(m) + \sum_i e_{ji} \log p_i$ with $|e_{ji}| \le E_0$ and
+  $\ell_j \le \Lambda_0 \log q$ for every $m \in S$ and all primes $p_i \le 2Q_i$, each comparison with a
+  \emph{pivot}, a prime $p_i$ with $e_{ji} = \pm 1$.
 \end{itemize}
 Its sum over $\mathcal A - \mathcal B/\varphi(q)$ is the sum of $a_m \prod_i f_0(p_i/Q_i)$ times the weight above at
-$n = m p_1 \cdots p_K$, over the $(m, p)$ that satisfy the comparisons.
+$n = m p_1 \cdots p_K$, over the $(m, p)$ that satisfy the comparisons. The integers $n$ need not lie in $(x, 2x]$; where
+they must, two comparisons say so.
 
 \begin{lemma}\label{lem:family}
 Assume the conclusion of Theorem~\ref{thm:type2}. Given $f_0$, $K_0$, $e_1$, $J_0$, $E_0$, $\Lambda_0$ and $A_0$, there
@@ -565,21 +674,143 @@ are $\delta > 0$ and $q_0$ such that for every $q \ge q_0$ and every family, its
 $\mathcal A - \mathcal B/\varphi(q)$ is at most $A_0 q^{L - \delta}/\varphi(q)$ in absolute value.
 \end{lemma}
 
-\begin{proof}[Sketch]
-Replace each sharp comparison $\mathbf 1[\ell_j > 0]$ by a smooth cut-off $G(\ell_j)$ that differs from it only for
-$|\ell_j| \le \theta$, with $\theta = x^{-\varepsilon_2}$ a small negative power. By Fourier inversion,
-$\prod_j G(\ell_j) = \int_{\mathbb R^J} \prod_j \hat G(\xi_j) e^{2\pi i \sum_j \xi_j \ell_j} \, d\xi$. The part of
-the phase that depends on $m$ goes into the coefficients $a_m$, and the parts that depend on the $p_i$ are twists
-$(p_i/Q_i)^{-ih_i}$ with $h_i$ a combination of the $\xi_j$. On the box $|\xi_j| \le T_0$, with
-$T_0 = x^{2\varepsilon_2}$, the heights are at most $q^\eta$, so after the orthogonality above each character's sum is
-$W(\chi) \prod_i S_{Q_i}(\chi, h_i)$ and Theorem~\ref{thm:type2} bounds the sum over $\chi \in \mathcal X^*$. Outside
-the box the trivial bound and the decay of $\hat G$ suffice. Where a sharp comparison and its smooth cut-off differ,
-the pivot prime lies in a range of relative length about $\theta$, and the count of such integers is small.
+\begin{proof}
+Let the family have the scale $P$, the set $S$, the coefficients $a_m$, the primes $p_1, \dots, p_K$ at the scales
+$Q_i$, and the comparisons $C_1, \dots, C_J$ with forms $\ell_j$ and pivots $\pi(j)$. Let $\mathcal T$ be the set of the
+$t = (m, p_1, \dots, p_K)$ with $m \in S$ and each $p_i$ a prime at most $2Q_i$; for $t \in \mathcal T$ put
+$w(t) = a_m \prod_i f_0(p_i/Q_i)$ and $n(t) = m p_1 \cdots p_K$, and for a function $v$ on $\mathcal T$ put
+\[
+  D(v) = \sum_{t \in \mathcal T} v(t) \, \Delta(n(t)), \qquad
+  \Delta(n) = \mathbf 1[n \equiv a] - \frac{\mathbf 1[(n, q) = 1]}{\varphi(q)}.
+\]
+The sum of the lemma is $D(w \prod_j I_j)$, with $I_j(t) = \mathbf 1[C_j \text{ holds at } t]$. Let $F_0 = \max f_0$ and
+$\eta_0 = 10^{-5}$.
+
+\emph{Orthogonality.} For $a$ prime to $q$,
+$\Delta(n) = \varphi(q)^{-1} \sum_{\chi \in \mathcal X^*} \overline\chi(a) \chi(n)$, so for every $v$
+\begin{equation}\label{eq:orth}
+  |D(v)| \le \frac1{\varphi(q)} \sum_{\chi \in \mathcal X^*} \Bigl|\sum_{t \in \mathcal T} v(t) \chi(n(t))\Bigr|.
+\end{equation}
+
+\emph{A smooth family.} Let $g_1, \dots, g_J$ be continuous and integrable, with integrable Fourier transforms
+$\hat g_j(\xi) = \int g_j(u) e^{-2\pi i u \xi} \, du$, and let $T_0 \ge 1$ with
+$2\pi \sum_j |e_{ji}| \, T_0 \le q^{\eta_0}$ for every $i$. We show that for $q$ larger than the $q_0$ of
+Theorem~\ref{thm:type2} (with $f_0$, $K_0$, $e_1$ and $\eta_0$),
+\begin{multline}\label{eq:smooth-family}
+  \sum_{\chi \in \mathcal X^*} \Bigl|\sum_{t \in \mathcal T} w(t) \prod_j g_j(\ell_j(t)) \, \chi(n(t))\Bigr|
+  \le q^{L - 1/50000} N \prod_j \|\hat g_j\|_1 \\
+  + \varphi(q) \, \mathfrak B \sum_j \int_{|\xi| > T_0} |\hat g_j| \prod_{l \ne j} \|\hat g_l\|_1,
+\end{multline}
+where
+\[
+  N = \Bigl(\frac1P \sum_{m \in S} |a_m|^2\Bigr)^{1/2} \le A_0, \qquad
+  \mathfrak B = \sum_m |a_m| \prod_i \sum_{p \le 2Q_i} f_0(p/Q_i).
+\]
+By Fourier inversion, and since the phase factors,
+\begin{gather*}
+  \prod_j g_j(\ell_j) = \int_{\mathbb R^J} \prod_j \hat g_j(\xi_j) \, e^{2\pi i \sum_j \xi_j \ell_j} \, d\xi, \\
+  e^{2\pi i \sum_j \xi_j \ell_j(t)} = e^{2\pi i \sum_j \xi_j \varphi_j(m)} \prod_i p_i^{2\pi i H_i}, \qquad
+  H_i = \sum_j \xi_j e_{ji}.
+\end{gather*}
+So the inner sum in \eqref{eq:smooth-family} is
+$\int \prod_j \hat g_j(\xi_j) \, W_\xi(\chi) \prod_i Q_i^{2\pi i H_i} S_{Q_i}(\chi, h_i) \, d\xi$, where
+$W_\xi(\chi) = \sum_m a_m e^{2\pi i \sum_j \xi_j \varphi_j(m)} \chi(m)$ and $h_i = -2\pi H_i$. Take absolute values,
+sum over $\chi$, and bound the integrand for each $\xi$. If $|\xi_j| \le T_0$ for every $j$, then $|h_i| \le q^{\eta_0}$,
+and Theorem~\ref{thm:type2}, with the coefficients $a_m e^{2\pi i \sum_j \xi_j \varphi_j(m)}$, which have the moduli
+$|a_m|$, and the heights $h_i$, gives
+$\sum_\chi |W_\xi(\chi)| \prod_i |S_{Q_i}(\chi, h_i)| \le q^{L - 1/50000} N$. Otherwise some $|\xi_j| > T_0$, and the
+trivial bound $\varphi(q) \mathfrak B$ holds. Integrating gives \eqref{eq:smooth-family}.
+
+\emph{The cut-off.} Let $g$ be smooth, with $g = 0$ on $(-\infty, 0]$, $g = 1$ on $[1, \infty)$ and $0 \le g \le 1$, and
+let $c_k = \int |g^{(k)}|$. For $0 < \theta \le 2\Lambda$ put $G_{\theta, \Lambda}(u) = g(u/\theta) - g((u - 2\Lambda)/\theta)$.
+It is smooth, $0 \le G_{\theta, \Lambda} \le 1$, it vanishes outside $[0, 2\Lambda + \theta]$, and
+$G_{\theta, \Lambda}(u) = g(u/\theta)$ for $u \le 2\Lambda$. So if $u \le \Lambda$ and a condition holds when $u > 0$ and
+fails when $u < 0$,
+\begin{equation}\label{eq:cutoff}
+  \bigl|\mathbf 1[\text{condition}] - G_{\theta, \Lambda}(u)\bigr| \le G_{\theta, \theta}(u + \theta),
+\end{equation}
+since the left side vanishes unless $0 \le u < \theta$, where $G_{\theta, \theta}(u + \theta) = 1$. Integration by parts
+gives $(2\pi |\xi|)^k |\hat G_{\theta, \Lambda}(\xi)| \le \|G_{\theta, \Lambda}^{(k)}\|_1 \le 2\theta^{1 - k} c_k$, and
+$|\hat G_{\theta, \Lambda}| \le 2\Lambda + \theta$. Hence
+\begin{gather*}
+  \|\hat G_{\theta, \Lambda}\|_1 \le \pi(2\Lambda + \theta) + \frac{c_2}{2\pi\theta}, \\
+  \int_{|\xi| > T_0} |\hat G_{\theta, \Lambda}| \le \frac{4\pi c_k}{(2\pi)^k} \, \theta^{1 - k} T_0^{2 - k}
+  \qquad (k \ge 2,\ T_0 \ge 1).
+\end{gather*}
+
+\emph{Sharp against smooth.} Let $\Lambda = \Lambda_0 \log q + 1$, so that $\ell_j \le \Lambda$ on $\mathcal T$, and put
+$G_j = G_{\theta, \Lambda}(\ell_j)$ and $M_j = G_{\theta, \theta}(\ell_j + \theta)$. All these values lie in $[0, 1]$, so
+by \eqref{eq:cutoff} $|\prod_j I_j - \prod_j G_j| \le \sum_j |I_j - G_j| \le \sum_j M_j$. Since
+$|\Delta(n)| \le \Delta(n) + 2 \cdot \mathbf 1[(n, q) = 1]/\varphi(q)$ and $f_0 \ge 0$,
+\begin{equation}\label{eq:sharp-smooth}
+  \Bigl|D\Bigl(w \prod_j I_j\Bigr)\Bigr| \le \Bigl|D\Bigl(w \prod_j G_j\Bigr)\Bigr|
+  + \sum_j \Bigl(|D(|w| M_j)| + \frac2{\varphi(q)} \sum_{t \in \mathcal T} |w(t)| M_j(t)\Bigr).
+\end{equation}
+The first term and each $D(|w| M_j)$ are smooth families: the first with $g_j = G_{\theta, \Lambda}$, the second with
+the coefficients $|a_m|$ and the single function $G_{\theta, \theta}$ at the form $\ell_j + \theta$. Both are bounded by
+\eqref{eq:orth} and \eqref{eq:smooth-family}. The trivial count in the near-boundary region is not enough for them,
+since it does not see the condition $n \equiv a$. The last sum is counted trivially, by the pivot. Fix $m$ and the primes
+other than $p_{\pi(j)}$; then $\ell_j = c + \sigma \log p_{\pi(j)}$ with $\sigma = \pm 1$, and $M_j \ne 0$ forces
+$-\theta \le \ell_j \le 2\theta$, which confines $p_{\pi(j)}$ to an interval $[Y, e^{3\theta} Y]$. At most
+$(e^{3\theta} - 1) 2Q_{\pi(j)} + 1$ integers up to $2Q_{\pi(j)}$ lie in it, so
+\[
+  \sum_{t \in \mathcal T} |w(t)| M_j(t)
+  \le F_0 \bigl((e^{3\theta} - 1) 2Q_{\pi(j)} + 1\bigr) \sum_m |a_m| \prod_{i \ne \pi(j)} \sum_{p \le 2Q_i} f_0(p/Q_i).
+\]
+
+\emph{The parameters.} Put $\varepsilon_2 = 1/(400000(J_0 + 1))$, $\theta = q^{-\varepsilon_2}$, $T_0 = q^{1/200000}$,
+$k = 1200003$ and $\delta = \min(\varepsilon_2, e_1)/2$. For large $q$:
+\begin{itemize}
+\item $2\pi J_0 E_0 T_0 \le q^{\eta_0}$, so \eqref{eq:smooth-family} applies, as $\sum_j |e_{ji}| \le J_0 E_0$;
+\item $\pi(2\Lambda + 1) \le q^{\varepsilon_2}$, so $\|\hat G_{\theta, \Lambda}\|_1$ and $\|\hat G_{\theta, \theta}\|_1$
+  are at most $C q^{\varepsilon_2}$ with $C = 1 + c_2/(2\pi)$, and a product of at most $J_0$ of them is at most
+  $C^{J_0 + 1} q^{1/400000}$;
+\item $\theta^{1 - k} T_0^{2 - k} = q^{\varepsilon_2(k - 1) - (k - 2)/200000} \le q^{-3}$, which bounds the tails.
+\end{itemize}
+Moreover $\mathfrak B \le P A_0 (3F_0)^K \prod_i Q_i \le A_0 (3F_0 + 1)^{K_0} 2^{K_0} q^L$, since at most $3Q$ integers
+lie in $[1, 2Q]$ for $Q \ge 1$ and $P \prod_i Q_i \le 2^{K_0} x$. Finally $e^{3\theta} - 1 \le 6\theta$ for
+$\theta \le 1/3$ and $Q_{\pi(j)} \ge q^{e_1}$ give
+$(12\theta Q_{\pi(j)} + 1) \prod_{i \ne \pi(j)} Q_i \le (12\theta + q^{-e_1}) \prod_i Q_i$. Putting these into
+\eqref{eq:sharp-smooth}, with \eqref{eq:orth} and \eqref{eq:smooth-family}, and using $\varphi(q) \le q$, the sum of the
+lemma is at most
+\[
+  \frac{A_0 q^L}{\varphi(q)} \bigl(a_1 q^{-7/400000} + a_2 q^{-1} + a_3(12 q^{-\varepsilon_2} + q^{-e_1})\bigr),
+\]
+where $a_1$, $a_2$ and $a_3$ depend only on $K_0$, $J_0$ and $F_0$. The three terms come from the smooth families, from
+the tails and from the pivot counts. Each power of $q$ in the bracket is at most $q^{-2\delta}$, so for large $q$ the sum
+is at most $A_0 q^{L - \delta}/\varphi(q)$. Here $\delta$ depends only on $J_0$ and $e_1$, and Theorem~\ref{thm:type2}
+was used once for the smoothed family and once for each near-boundary family.
+\end{proof}
+
+\begin{lemma}\label{lem:family-sharp}
+Assume the conclusion of Theorem~\ref{thm:type2}. Given $K_0$, $J_0$, $e_1 > 0$, $E_0 \ge 0$ and $\Lambda_1 \ge 0$, there
+are $\delta > 0$ and $q_0$ such that the following holds for every $q \ge q_0$ and every $a$ prime to $q$. Let $m$ run
+over a set $S \subseteq (P_1, P_2]$ of integers with $q^{u_1 L} \le P_1$ and $P_2 \le q^{u_2 L}$, with coefficients
+$|a_m| \le 1$, and let $1 \le K \le K_0$ primes $p_1, \dots, p_K$ run over all the primes up to $2x$. Let $J \le J_0$
+comparisons, with forms $\ell_j = \varphi_j(m) + \sum_i e_{ji} \log p_i$, $|e_{ji}| \le E_0$,
+$\varphi_j(m) \le \Lambda_1 \log q$ for $m \in S$, and pivots, cut out the $(m, p)$, and suppose that wherever they all
+hold, every $p_i \ge 2q^{e_1}$ and $m p_1 \cdots p_K \le 2x$. Then the sum of
+$a_m(\mathbf 1[n \equiv a] - \mathbf 1[(n, q) = 1]/\varphi(q))$ at $n = m p_1 \cdots p_K$ over the $(m, p)$ that satisfy
+the comparisons is at most $q^{L - \delta}/\varphi(q)$ in absolute value.
+\end{lemma}
+
+\begin{proof}
+Split $(P_1, P_2]$ into the dyadic blocks $(2^b P_1, 2^{b + 1} P_1]$, and each prime variable by a smooth partition of
+unity: take for the $f_0$ of Lemma~\ref{lem:family} a smooth function supported in $[1/2, 2]$, with values in $[0, 1]$
+and $\sum_{t \ge 0} f_0(y/2^t) = 1$ for $1 \le y \le 2^M$, $M = \lfloor \log_2 (2x) \rfloor + 1$. This writes the sum as a sum of at most
+$(3 + 4 \log q)^{K_0 + 1}$ pieces. In each, $m$ runs over a block, which lies in $(P, 2P]$ with $P$ in the window's
+range, and the primes carry the weights $f_0(p_i/2^{t_i})$ at the scales $Q_i = 2^{t_i}$; on its box every form is at
+most $(\Lambda_1 + K_0 E_0 (L + 3)) \log q$. A piece with some $2^{t_i} < q^{e_1}$ vanishes, since its weights force
+$p_i < 2q^{e_1}$; and so does a piece with $\prod_i 2^{t_i} > 2^{K_0 + 1} x/P$, since its weights force
+$m \prod_i p_i > 2x$. Every other piece is a family, with $K_0 + 1$ in place of $K_0$, $A_0 = 1$ and
+$\Lambda_0 = \Lambda_1 + K_0 E_0 (L + 3)$, and Lemma~\ref{lem:family} bounds it by $q^{L - \delta'}/\varphi(q)$. For
+large $q$ the number of pieces is at most $q^{\delta'/2}$, and $\delta = \delta'/2$ will do.
 \end{proof}
 
 If instead a product of some of the primes of $n$ lies in $(x^{1 - u_2}, x^{1 - u_1})$, the product of the other
-factors of $n$ lies in the window's range and plays the role of $m$. So the lemma also covers the reflected range,
-and this is how the sieve uses the window and its reflection.
+factors of $n$ lies in the window's range and plays the role of $m$. So Lemmas~\ref{lem:family}
+and~\ref{lem:family-sharp} also cover the reflected range, and this is how the sieve uses the window and its
+reflection.
 
 \subsection{Harman's comparison}
 
@@ -589,28 +820,161 @@ terms of $q$ is $[u_1 L, u_2 L]$.
 \begin{proposition}[Harman's comparison, in the form used]\label{prop:harman}
 Assume the conclusion of Theorem~\ref{thm:type2}. Fix $j$, $J_0$, $\Lambda_1 \ge 0$, $\eta > 0$, and exponents
 $a_0 > 0$ and $b_0$ with $a_0 + b_0 < (1 - u_1)L$ and $(1 - u_2)L < b_0 < L - 1$. There are $\delta > 0$ and $q_0$ such
-that the following holds for every $q \ge q_0$ and every $a$ prime to $q$. Let $r = r_1 \cdots r_j$ run over the
-products of the $j$-tuples of primes up to $2x$ that satisfy at most $J_0$ comparisons (with constants at most
-$\Lambda_1 \log q$) which force every $r_i \ge z_0 = \lceil q^{a_0} \rceil$ and $r \le q^{b_0}$. Then
+that the following holds for every $q \ge q_0$ and every $a$ prime to $q$. Let $(r_1, \dots, r_j)$ run over the
+$j$-tuples of primes up to $2x$, counted with multiplicity, that satisfy at most $J_0$ comparisons, with coefficients
+at most $1$ in absolute value, pivots and constants at most $\Lambda_1 \log q$, which force every
+$r_i \ge z_0 = \lceil q^{a_0} \rceil$ and $r = r_1 \cdots r_j \le q^{b_0}$. Then
 \[
   \Bigl|\sum_r \Bigl(S(\mathcal A_r, z_0) - \frac{S(\mathcal B_r, z_0)}{\varphi(q)}\Bigr)\Bigr|
   \le \frac{\eta\, x}{\varphi(q) \log q} + \frac{q^{L - \delta}}{\varphi(q)}.
 \]
 \end{proposition}
 
-\begin{proof}[Sketch]
-For each $r$, iterate Buchstab's identity \cite{buchstab}
+\begin{proof}
+Write $\mathcal P[y, z)$ for the set of primes in $[y, z)$, and say that $n$ is \emph{$z$-rough} if it has no prime
+factor below $z$. For $\mathcal C = \mathcal A$ or $\mathcal B$ and $d$ whose prime factors are all at least $z$,
+$S(\mathcal C_d, z)$ is the number of $z$-rough multiples of $d$ in $\mathcal C$. Throughout, $x = q^L$, and the
+integers of $(x, 2x]$ are those of $(N_1, N_2]$ with $N_1 = \lfloor x \rfloor$ and $N_2 = \lfloor 2x \rfloor$. A tuple
+$(r_1, \dots, r_j)$ is counted with multiplicity, and $r = r_1 \cdots r_j$.
+
+\emph{The constants.} They are chosen before $q$ and depend only on $L$, $u_1$, $u_2$, $j$, $J_0$, $\Lambda_1$, $a_0$,
+$b_0$ and $\eta$. Let $c = (L - 1 - b_0)/4 > 0$. Let $C_0 \ge 1$ be an absolute constant with
+$\sum_{p \in \mathcal P[y, y^2)} 1/p \le C_0$ for every $y \ge 1$; it exists by the prime number theorem. Put
+$K_1 = (\log((L + 1)/a_0) + 1)^j$ and
 \[
-  S(\mathcal C_r, z) = S(\mathcal C_r, w) - \sum_{w \le p < z} S(\mathcal C_{rp}, p)
+  \zeta_k = e^{2C_0} \cdot \frac{2 C_0^k}{k!} \cdot \exp\Bigl(e^{2C_0} \frac{2 C_0^{k + 1}}{(k + 1)!}\Bigr).
 \]
-from $z_0$ down to $w = \lceil q^{\varepsilon_w} \rceil$, stopping a branch as soon as its product $W$ of primes
-exceeds a threshold $X'$, chosen so that $W$ lies in $(X', X' z_0)$ and the cofactor $k$ of every multiple $Wk$ in
-$(x, 2x]$ lies in the window's range. A stopped term is then a family in which $k$ is the Type~II variable, and
-Lemma~\ref{lem:family} bounds it. At a leaf, a product $d \le q^{b_0}$, the fundamental lemma of the sieve
-\cite{brun} applied to $\mathcal A_d$ and $\mathcal B_d$, with Lemma~\ref{lem:type1} for the counts of
-multiples, makes the two sifted counts agree up to $c(k)$ times the number of $w$-rough multiples of $d$, where the
-explicit constant $c(k)$ of Brun's sieve at the level $k$ tends to $0$ as $k$ grows. A suitable even level $k$ puts
-the sum over the leaves below $\eta x/(\varphi(q) \log q)$.
+Since $(2k + 4)^2 \zeta_k \to 0$, there is an even $k \ge 2$ with $2C_0^2 \le (k + 1)(k + 2)$, $c < (2k + 4) a_0$,
+$\zeta_k \le 1/2$ and $(2k + 4)^2 \zeta_k \le \eta c^2/(8e(K_1 + 1) a_0)$. Put $\varepsilon_w = c/(2k + 4)$, so
+that $0 < \varepsilon_w < a_0$ and $(2k + 7) \varepsilon_w \le 2c$, and $S_0 = \lceil L/\varepsilon_w \rceil$. At $q$,
+put $w = \lceil q^{\varepsilon_w} \rceil$, $z_0 = \lceil q^{a_0} \rceil$ and $X' = \lfloor q^{b_0} \rfloor$. Then
+$w \le z_0$, and by hypothesis every tuple in the sum has $r_i \ge z_0$ and $r \le X'$.
+
+\emph{The tree identity.} Let $r$ have all its prime factors at least $z_0$, and let $r \le X'$. For a set $P$ of primes
+write $d_P = r \prod_{p \in P} p$, and let $\rho_z(n) = 1$ if $n$ is $z$-rough and $\rho_z(n) = 0$ otherwise. Then for
+every $n$,
+\begin{multline}\label{eq:tree}
+  \mathbf 1[r \mid n] \, \rho_{z_0}(n)
+  = \sum_{P \subseteq \mathcal P[w, z_0)} (-1)^{|P|} \, \mathbf 1[d_P \le X'] \, \mathbf 1[d_P \mid n] \, \rho_w(n) \\
+  + \sum_{p \in \mathcal P[w, z_0)} \ \sum_{P \subseteq \mathcal P(p, z_0)} (-1)^{|P| + 1} \,
+    \mathbf 1[d_P \le X' < p \, d_P] \, \mathbf 1[p \, d_P \mid n] \, \rho_p(n),
+\end{multline}
+where $\mathcal P(p, z_0)$ is the set of primes in $(p, z_0)$. This is what iterating Buchstab's identity
+$S(\mathcal C_m, z) = S(\mathcal C_m, w) - \sum_{w \le p < z} S(\mathcal C_{mp}, p)$ from the root $r$ at $z_0$ gives,
+when a child $mp$ is stopped as soon as $mp > X'$: the first sum collects the \emph{leaves} $S(\mathcal C_d, w)$,
+$d = d_P \le X'$, and the second the \emph{stops} $S(\mathcal C_W, p)$, $W = p \, d_P$. It is proved directly,
+for each $n$. If $r \nmid n$ or $n$ is not $w$-rough, every term vanishes. Otherwise let $Q$ be the set of the primes of
+$[w, z_0)$ that divide $n$; the left side is $\mathbf 1[Q = \emptyset]$. Since the primes of $r$ are at least $z_0$, a
+leaf $P$ counts $n$ exactly when $P \subseteq Q$, and a stop $(p, P)$ exactly when $p = \min Q$ and
+$P \subseteq Q \setminus \{p\}$. If $Q = \emptyset$, only the leaf $P = \emptyset$ counts $n$, with
+$\mathbf 1[r \le X'] = 1$. If $Q \ne \emptyset$, let $p_0 = \min Q$; grouping $P \subseteq Q \setminus \{p_0\}$ with
+$P \cup \{p_0\}$, and writing $R = d_P$, the right side is
+\[
+  \sum_{P \subseteq Q \setminus \{p_0\}} (-1)^{|P|}
+  \bigl(\mathbf 1[R \le X'] - \mathbf 1[p_0 R \le X'] - \mathbf 1[R \le X' < p_0 R]\bigr) = 0.
+\]
+Multiplying \eqref{eq:tree} by $\mathbf 1[n \equiv a] - \mathbf 1[(n, q) = 1]/\varphi(q)$ and summing over $n$ and over
+the tuples, the sum of the proposition is the sum over the leaves of
+$(-1)^{|P|}(S(\mathcal A_d, w) - S(\mathcal B_d, w)/\varphi(q))$ plus the sum over the stops of
+$(-1)^{|P| + 1}(S(\mathcal A_W, p) - S(\mathcal B_W, p)/\varphi(q))$.
+
+\emph{The stops.} A stop has $X' < W \le p X' < z_0 X'$, and $W$ is $p$-rough, since the primes of $r$ are at least
+$z_0 > p$ and those of $P$ exceed $p$. So the $p$-rough multiples of $W$ in $(N_1, N_2]$ are the $n = Wk$ whose cofactor
+$k$ is $p$-rough, and every such $k$ lies in $(P_1, P_2]$ with $P_1 = \lfloor N_1/(z_0 X') \rfloor$ and
+$P_2 = \lfloor N_2/(X' + 1) \rfloor$. For large $q$, $q^{u_1 L} \le P_1$, since $5q^{u_1 L + a_0 + b_0} \le q^L$ by
+$a_0 + b_0 < (1 - u_1)L$, and $P_2 \le q^{u_2 L}$, since $2q^{L - b_0} \le q^{u_2 L}$ by $(1 - u_2)L < b_0$. So the
+cofactor $k$ lies in the window's range, and $W$ in its reflection. A stop has $|P| \le S_0$, since
+$\prod P \ge w^{|P|} \ge q^{\varepsilon_w |P|}$ and $\prod P \le X' \le q^L$.
+
+For each $s \le S_0$, the stops with $|P| = s$ form one sum of the kind that Lemma~\ref{lem:family-sharp} bounds, with
+$m = k \in (P_1, P_2]$ and $a_m = 1$, whose primes are $r_1, \dots, r_j$, the elements $y_1 > \dots > y_s$ of $P$ and
+$p$, and whose comparisons are the given ones on the $r_i$ and
+\begin{gather*}
+  y_1 > \dots > y_s > p, \quad y_1 < z_0, \quad p \ge w, \quad r y_1 \cdots y_s \le X' < r y_1 \cdots y_s \, p, \\
+  p \le \min\{\ell \text{ prime} : \ell \mid k\}, \qquad N_1 < k r y_1 \cdots y_s p \le N_2 .
+\end{gather*}
+Each is of the form $\varphi(k) + \sum_i e_i \log x_i > 0$ or $\ge 0$ with coefficients in $\{-1, 0, 1\}$ and a pivot.
+There are at most $J_0 + s + 7$ of them, and $\varphi(k) \le (\Lambda_1 + L + 1) \log q$ for $k \le P_2$. Wherever they
+all hold, every prime is at least $w \ge 2q^{\varepsilon_w/2}$ and $k r y_1 \cdots y_s p \le 2x$. So
+Lemma~\ref{lem:family-sharp}, with $K_0 = j + S_0 + 1$, $J_0 + S_0 + 7$ comparisons, $e_1 = \varepsilon_w/2$, $E_0 = 1$
+and $\Lambda_1 + L + 1$ in place of $\Lambda_1$, bounds each of these $S_0 + 1$ sums by $q^{L - \delta_T}/\varphi(q)$,
+with $\delta_T > 0$ depending only on the constants above. For large $q$ the stops therefore total at most
+$q^{L - \delta_1}/\varphi(q)$, with $\delta_1 = \delta_T/2$.
+
+\emph{A leaf.} Let $d$ have all its prime factors at least $w$. We show
+\begin{multline}\label{eq:leaf}
+  \Bigl|S(\mathcal A_d, w) - \frac{S(\mathcal B_d, w)}{\varphi(q)}\Bigr| \\
+  \le \frac{4 \zeta_k}{\varphi(q)} \, \#\{n \in (N_1, N_2] : d \mid n,\ n \text{ is } w\text{-rough}\}
+  + 48 \, w^{2k + 7}.
+\end{multline}
+If $(d, q) > 1$ both counts vanish, so let $(d, q) = 1$. Sieve by the primes below $w$, in the ranges
+$T_i = \mathcal P[w^{2^{-i - 1}}, w^{2^{-i}})$ for $0 \le i < J = 2 \lfloor \log_2 w \rfloor + 2$, which cover them, at the
+even levels $k_i = k + 2i$. Brun's sieve, in the following form, is used. Let $\mathcal C$ be a finite set of integers,
+$X \ge 0$, and $g$ a function on the primes of $\bigcup T_i$ with $0 \le g \le 1$. Suppose that for every choice of
+$s_i \subseteq T_i$, with $D = \prod_i \prod_{p \in s_i} p$, the count $\#\{n \in \mathcal C : D \mid n\}$ is
+$X \prod_i \prod_{p \in s_i} g(p)$ within $R$. Then $\#\{n \in \mathcal C : (n, \prod_i \prod_{T_i} p) = 1\}$ is
+$X \prod_i \prod_{p \in T_i} (1 - g(p))$ within
+\[
+  X \sum_i e_{k_i}(T_i) \prod_{l \ne i} F_{k_l}(T_l)
+  + (J + 1) \, R \prod_i \sum_{m \le k_i} \binom{|T_i|}{m},
+\]
+where $e_m(T) = \sum_{s \subseteq T,\ |s| = m} \prod_{p \in s} g(p)$ and $F_k(T) = \sum_{m \le k} (-1)^m e_m(T)$. It
+follows from Bonferroni's inequalities $F_{k_i - 1}(T_i) \le \prod_{p \in T_i}(1 - \mathbf 1[p \mid n]) \le F_{k_i}(T_i)$,
+taken for each $n$ with $g = \mathbf 1[\cdot \mid n]$ (the levels are even), and the elementary inequality
+$\prod_i \mathrm{hi}_i - \sum_i (\mathrm{hi}_i - \mathrm{lo}_i) \prod_{l \ne i} \mathrm{hi}_l \le \prod_i \rho_i$ for
+$0 \le \mathrm{lo}_i \le \rho_i \le \mathrm{hi}_i$.
+
+Take $g(p) = 1/p$ for $p \nmid q$ and $g(p) = 0$ for $p \mid q$. For $\mathcal A_d$, take
+$\mathcal C = \{n \in (N_1, N_2] : n \equiv a,\ d \mid n\}$, $X = (N_2 - N_1)/(dq)$ and $R = 1$: if no prime of $D$
+divides $q$, Lemma~\ref{lem:type1} with $M = dD$ gives the count within $1$, and otherwise the count and the model both
+vanish. For $\mathcal B_d$, take $\mathcal C = \{n \in (N_1, N_2] : (n, q) = 1,\ d \mid n\}$, $X\varphi(q)$ and
+$R = \varphi(q)$, and divide by $\varphi(q)$. Both main terms are then $XV$ with $V = \prod_{p < w,\ p \nmid q}(1 - 1/p)$,
+so that
+\begin{gather*}
+  \Bigl|S(\mathcal A_d, w) - \frac{S(\mathcal B_d, w)}{\varphi(q)}\Bigr| \le 2(XG + \mathrm{rem}), \\
+  G = \sum_i e_{k_i}(T_i) \prod_{l \ne i} F_{k_l}(T_l), \qquad
+  \mathrm{rem} = (J + 1) \prod_i \sum_{m \le k_i} \binom{|T_i|}{m}.
+\end{gather*}
+Each $T_i$ lies in some $\mathcal P[y, y^2)$, so $\sum_{p \in T_i} g(p) \le C_0$ and, since $1 - t \ge e^{-2t}$ for
+$0 \le t \le 1/2$, $V_i = \prod_{p \in T_i}(1 - g(p)) \ge e^{-2C_0}$. With $e_m \le C_0^m/m!$,
+$F_{k_l} \le V_l + e_{k_l + 1} \le V_l (1 + e^{2C_0} C_0^{k_l + 1}/(k_l + 1)!)$ and
+$\prod_{l \ne i} V_l \le e^{2C_0} V$, this gives
+$G \le V e^{2C_0} \sum_i \frac{C_0^{k_i}}{k_i!} \prod_l \bigl(1 + e^{2C_0} \frac{C_0^{k_l + 1}}{(k_l + 1)!}\bigr)$. Since
+$2C_0^2 \le (k + 1)(k + 2)$, the terms of $\sum_i C_0^{k + 2i}/(k + 2i)!$ decrease at least geometrically with ratio
+$1/2$, so the sum is at most $2C_0^k/k!$, and with $\prod (1 + t_l) \le \exp \sum t_l$ we get $G \le \zeta_k V$. The
+lower bound for $\mathcal B_d$ gives $XV \le S(\mathcal B_d, w)/\varphi(q) + XV/2 + \mathrm{rem}$, since
+$\zeta_k \le 1/2$, so $XV \le 2(S(\mathcal B_d, w)/\varphi(q) + \mathrm{rem})$, and then
+\[
+  \Bigl|S(\mathcal A_d, w) - \frac{S(\mathcal B_d, w)}{\varphi(q)}\Bigr|
+  \le 4\zeta_k \frac{S(\mathcal B_d, w)}{\varphi(q)} + 4\,\mathrm{rem}.
+\]
+Finally $S(\mathcal B_d, w)$ is at most the count in \eqref{eq:leaf}, and
+$\sum_{m \le k_i} \binom{|T_i|}{m} \le 2 \max(1, |T_i|)^{k_i}$ with $|T_i| \le w^{2^{-i}}$,
+$\sum_i 2^{-i}(k + 2i) \le 2k + 4$, $J + 1 \le 3w$ and $2^J \le 4w^2$ give $\mathrm{rem} \le 12 w^{2k + 7}$.
+
+\emph{The leaves together.} The count in \eqref{eq:leaf} is at most the number of $w$-rough integers in
+$(x/d, 2x/d]$. For $d \le X' \le x$ and large $q$, Lemma~\ref{lem:rough} with $U = (L + 1)/\varepsilon_w$ and
+$\varepsilon = 1$, and $\omega^* \le 1$, bound it by $2x/(d \log w) \le 2x/(d \varepsilon_w \log q)$. With $1 \le X'/d$
+for the remainder, the leaves total at most
+\[
+  \Bigl(\frac{8 \zeta_k x}{\varphi(q) \varepsilon_w \log q} + 48 \, w^{2k + 7} X'\Bigr)
+  \sum_{(r_1, \dots, r_j)} \sum_{P \subseteq \mathcal P[w, z_0)} \frac1{r \prod P},
+\]
+and the double sum is $\sum 1/r \cdot \prod_{w \le p < z_0}(1 + 1/p)$. Each $r_i$ is a prime in $[q^{a_0}, 2q^L]$, so
+for large $q$, by the prime number theorem, $\sum 1/r \le K_1$ and $\prod_{w \le p < z_0}(1 + 1/p) \le e a_0/\varepsilon_w$.
+The main part is then at most
+\[
+  \frac{8 e K_1 a_0 \zeta_k}{\varepsilon_w^2} \cdot \frac{x}{\varphi(q) \log q}
+  = \frac{8 e K_1 a_0 (2k + 4)^2 \zeta_k}{c^2} \cdot \frac{x}{\varphi(q) \log q}
+  \le \frac{\eta \, x}{\varphi(q) \log q},
+\]
+by the choice of $k$. Since $w \le 2q^{\varepsilon_w}$ and $(2k + 7)\varepsilon_w \le 2c$, the remainder part is at most
+$48 \cdot 2^{2k + 7} K_1 e a_0 \varepsilon_w^{-1} q^{b_0 + 2c} \le q^{b_0 + 3c} = q^{L - 1 - c} \le q^{L - c}/\varphi(q)$
+for large $q$, using $\varphi(q) \le q$.
+
+\emph{Conclusion.} The sum of the proposition is at most
+$\eta x/(\varphi(q) \log q) + (q^{L - c} + q^{L - \delta_1})/\varphi(q)$, which for large $q$ is at most
+$\eta x/(\varphi(q) \log q) + q^{L - \delta}/\varphi(q)$ with $\delta = \min(c, \delta_1)/2$.
 \end{proof}
 
 \subsection{Rough numbers}
@@ -620,19 +984,83 @@ $\omega^*(u) = 0$ for $u < 1$, $\omega^*(u) = 1/u$ for $1 \le u < 2$ and $\omega
 upper bound for Buchstab's function $\omega$: the two agree on $[1, 2)$, and $\omega$ stays below $0.5672$.
 
 \begin{lemma}\label{lem:rough}
-For every $U$ and $\varepsilon > 0$, for all large $z$ and all $y$ with $u = \log 2y/\log z \le U$,
+For every $U$ and $\varepsilon > 0$, for all large $z$ and all $y \ge 1$ with $u = \log 2y/\log z \le U$,
 $\Psi(y, z) \le (\omega^*(u) + \varepsilon)\, y/\log z$.
 \end{lemma}
 
-It is proved from Buchstab's inequality for $\Psi$, partial summation over the primes and the prime number theorem
-with an error $o(t/\log t)$. The certificate of Section~\ref{sec:certificate} uses $\omega^*$ to bound the share of the
-integers in each term it drops.
+\begin{proof}
+Write $c = 0.5672$, $u = \log 2y/\log z$, and say that an integer is $z$-rough if it has no prime factor below $z$.
+Three facts are used.
+
+\emph{(a) Prime sums.} By the prime number theorem with an error $o(t/\log t)$, for every $\varepsilon_3 > 0$,
+$|\theta(t) - t| \le \varepsilon_3 t/\log t$ for large $t$. With partial summation this gives, for large $a \le b$,
+\[
+  \sum_{a < p \le b} \frac1{p \log p} \le \frac1{\log a} - \frac1{\log b} + \frac{4\varepsilon_3}{\log^2 a},
+\]
+and, if $2 \log b \le \Lambda$,
+\[
+  \sum_{a < p \le b} \frac1{p(\Lambda - \log p)}
+  \le \frac{1 + \varepsilon_3/\log a}{\Lambda} \log \frac{\log b \, (\Lambda - \log a)}{\log a \, (\Lambda - \log b)}
+  + \frac{6\varepsilon_3}{\Lambda \log^2 a};
+\]
+and, for large $y$, there are at most $(1 + \varepsilon_3) y/\log 2y$ primes in $(y, 2y]$.
+
+\emph{(b) Buchstab's inequality.} For $y \ge 2$,
+\[
+  \Psi(y, z) \le \#\{p : y < p \le 2y\} + \sum_{z \le p \le \sqrt{2y}} \Psi(y/p, p),
+\]
+since a $z$-rough integer $m \in (y, 2y]$ that is not prime has its least prime factor $p$ in $[z, \sqrt{2y}]$, and
+$m/p$ is a $p$-rough integer in $(y/p, 2y/p]$; the map $m \mapsto (p, m/p)$ is injective. Also $\Psi(y, z) = 0$ if
+$y \ge 1$ and $2y < z$, since every integer of $(y, 2y]$ is then at least $2$ and below $z$.
+
+\emph{(c) A delay inequality.} Let $M(u) = \log(u - 1)$ for $2 \le u \le 3$ and $M(u) = \log 2 + c(u - 3)$ for $u > 3$,
+so that $M(u) = \int_1^{u - 1} \omega^*(t) \, dt$. Then $1 + M(u) \le cu$ for $u \ge 2$. For $u \le 3$, the inequality
+$\log t \le t - 1$ at $t = c(u - 1)$ gives $1 + \log(u - 1) \le c(u - 1) - \log c \le cu$, since $-\log c \le c$; that
+is, $c e^c \ge 1$, which holds because $e^c \ge \sum_{m \le 5} c^m/m! > 1.7632 > 1/c$. For $u > 3$ it follows from
+$1 + \log 2 < 1.7016 = 3c$. So $\omega^*$ satisfies $u \omega^*(u) \ge 1 + \int_1^{u - 1} \omega^*$ for $u \ge 2$, the
+inequality that the induction below needs; Buchstab's function itself is not used.
+
+We prove by induction on the integer $k \ge 0$ the statement $\mathrm C(k)$: for every $\varepsilon > 0$ there is
+$z_0$ such that $\Psi(y, z) \le (\omega^*(u) + \varepsilon) y/\log z$ for all $z \ge z_0$ and all $y \ge 1$ with
+$u \le k$. $\mathrm C(0)$ holds trivially, since $u > 0$, and the lemma is $\mathrm C(\lceil U \rceil)$. Assume
+$\mathrm C(k)$, let $0 < \varepsilon \le 1$ and $\varepsilon_3 = \varepsilon/100$, let $z$ be large in terms of
+$\varepsilon$ and of the $z_0$ of $\mathrm C(k)$ for $\varepsilon/4$, and let $y \ge 1$ with
+$\Lambda = \log 2y = u \log z \le (k + 1) \log z$. If $2y < z$, then $\Psi(y, z) = 0$. Otherwise $u \ge 1$, $y \ge z/2$
+is large, and (a) and (b) give
+\[
+  \Psi(y, z) \le \Bigl(1 + \frac\varepsilon4\Bigr) \frac y\Lambda + \sum_{z \le p \le \sqrt{2y}} \Psi(y/p, p).
+\]
+If $u < 2$, then $\sqrt{2y} < z$, the sum is empty, and
+$\Psi(y, z) \le (1 + \varepsilon/4) y/(u \log z) \le (\omega^*(u) + \varepsilon) y/\log z$. Let $u \ge 2$, so that
+$\omega^*(u) = c$. A prime $p \in [z, \sqrt{2y}]$ has $y/p \ge 1$ and
+$\log(2y/p) = \Lambda - \log p \le k \log p$, since $\Lambda \le (k + 1) \log p$. So $\mathrm C(k)$ gives
+$\Psi(y/p, p) \le (\omega^*(u_p) + \varepsilon/4) \, y/(p \log p)$ with $u_p = (\Lambda - \log p)/\log p$. The term
+$p = z$, if $z$ is prime, contributes at most $2y/(z \log z)$, since $\omega^* \le 1$. By (a), the parts
+$\varepsilon/4$ of the other terms contribute at most $(\varepsilon/4)(1/\log z + 4\varepsilon_3/\log^2 z) \, y$. For
+the parts $\omega^*(u_p)$: if $p \le (2y)^{1/3}$ then $u_p \ge 2$ and $\omega^*(u_p) = c$; if
+$(2y)^{1/3} < p \le (2y)^{1/2}$ then $1 \le u_p < 2$ and $\omega^*(u_p)/(p \log p) = 1/(p(\Lambda - \log p))$. By (a),
+applied on $(z, \sqrt{2y}]$ if $u \le 3$, and on $(z, (2y)^{1/3}]$ and $((2y)^{1/3}, \sqrt{2y}]$ if $u > 3$,
+\[
+  \sum_{z < p \le \sqrt{2y}} \frac{\omega^*(u_p)}{p \log p} \le \frac{M(u) + 12\varepsilon_3}\Lambda
+  + \frac{4\varepsilon_3}{\log z}.
+\]
+Collecting the terms, with $\Lambda = u \log z$,
+\[
+  \Psi(y, z) \le \frac y{\log z} \Bigl(\frac{1 + M(u)}u + \frac{\varepsilon/4 + 12\varepsilon_3}u + \frac2z
+  + 4\varepsilon_3 + \frac\varepsilon4 + \frac{\varepsilon \varepsilon_3}{\log z}\Bigr).
+\]
+By (c) the first term is at most $c$, and since $u \ge 1$ and $z$ is large the others add up to at most
+$0.92\varepsilon$. So $\Psi(y, z) \le (c + \varepsilon) y/\log z$, which proves $\mathrm C(k + 1)$.
+\end{proof}
+
+The certificate of Section~\ref{sec:certificate} uses $\omega^*$ to bound the share of the integers in each term it
+drops.
 
 \section{The decomposition and its certificate}\label{sec:certificate}
 
 This section bounds $S(\mathcal A, z_{\mathrm{top}})$, with $z_{\mathrm{top}} = (2x)^{1/2}$, from below. The
 decomposition writes it by Buchstab's identity as a signed sum of sifted terms. Each term is evaluated, that is
-compared with its $\mathcal B$-version by Lemma~\ref{lem:family} or Proposition~\ref{prop:harman}, or, if it has
+compared with its $\mathcal B$-version by Lemma~\ref{lem:family-sharp} or Proposition~\ref{prop:harman}, or, if it has
 sign $+$, dropped, which costs its $\mathcal B$-version. The certificate is an upper bound for the total cost,
 computed exactly in integers.
 
@@ -654,7 +1082,7 @@ The set of \emph{evaluable} exponents is
 A box, a product of cells, is \emph{surely evaluable} if for some subset of its coordinates the sum of the exponents
 lies in $\mathcal U$ throughout the box. If the exponents of the primes $p_1, \dots, p_k$ of a term lie in such a box,
 then a product of some of them lies in $(x^{U_1/D}, x^{U_2/D})$, or in the reflected range, and by
-Lemma~\ref{lem:family} the term's sums over $\mathcal A$ and $\mathcal B/\varphi(q)$ agree up to $q^{L - \delta}/
+Lemma~\ref{lem:family-sharp} the term's sums over $\mathcal A$ and $\mathcal B/\varphi(q)$ agree up to $q^{L - \delta}/
 \varphi(q)$. A box is tested exactly: the subset sums of a box range over intervals with rational ends.
 
 \subsection{The decomposition}
@@ -668,7 +1096,7 @@ $Wk \in (x, 2x]$ in the window's range.
   $S(\mathcal A, z_{\mathrm{top}})
   = S(\mathcal A, z_0) - \sum_{z_0 \le p_1 < z_{\mathrm{top}}} S(\mathcal A_{p_1}, p_1)$.
   The first term is evaluated by Proposition~\ref{prop:harman}. A term whose $\alpha_1$ lies in a cell inside the
-  window is evaluated by Lemma~\ref{lem:family}; the others are decomposed again by Buchstab's identity, which gives
+  window is evaluated by Lemma~\ref{lem:family-sharp}; the others are decomposed again by Buchstab's identity, which gives
   $S(\mathcal A_{p_1}, z_0)$, evaluated by Proposition~\ref{prop:harman}, and the terms
   $S(\mathcal A_{p_1 p_2}, p_2)$ of depth two with $z_0 \le p_2 < p_1$, with sign $+$.
 \item \emph{Depth two.} Let $(\alpha_1, \alpha_2)$ lie in the cell $(i, j)$. If the box of the cell is surely
@@ -710,7 +1138,7 @@ where $D(\mathcal B)$ is the sum of the $\mathcal B$-versions of the dropped ter
 The identities of the decomposition are exact. A dropped term has sign $+$ and its $\mathcal A$-count is at least
 $0$, so dropping it lowers the right side by its $\mathcal B$-version. Every evaluated term, and every term
 $S(\cdot, z_0)$, has its $\mathcal A$- and $\mathcal B/\varphi(q)$-counts within an error $\mathrm{Err}$ by
-Lemma~\ref{lem:family} and Proposition~\ref{prop:harman}, and there are at most $1 + n(1 + n(2 + n(2 + n(n_C(n_C + 2) + 2))))$ of
+Lemma~\ref{lem:family-sharp} and Proposition~\ref{prop:harman}, and there are at most $1 + n(1 + n(2 + n(2 + n(n_C(n_C + 2) + 2))))$ of
 them. For large $q$ the total error is below $\varepsilon x/(\varphi(q) \log x)$.
 \end{proof}
 
@@ -718,7 +1146,7 @@ them. For large $q$ the total error is below $\varepsilon x/(\varphi(q) \log x)$
 
 A dropped term of depth two over the cell $(i, j)$ counts the $n = p_1 p_2 m \in (x, 2x]$ whose cofactor $m$ has no
 prime factor below $p_2$. By Lemma~\ref{lem:rough} and the prime number theorem its $\mathcal B$-version is, for large
-$q$, at most $x/(\varphi(q) \log x)$ times
+$q$, at most $x/\log x$ times
 \[
   \iint_{\text{cell}} \omega^*\Bigl(\frac{1 - \alpha_1 - \alpha_2}{\alpha_2}\Bigr)
   \frac{d\alpha_1\, d\alpha_2}{\alpha_1 \alpha_2^2},
@@ -740,12 +1168,72 @@ of $1/K$ with $K = 2^{60}$, every quotient rounded up.
 \item The total is the sum of the costs over the candidate cells, $\mathtt{total} = \sum_{i, j} \mathtt{cost}(i, j)$.
 \end{itemize}
 The non-candidate cells that are not surely evaluable cost nothing in the total: on them the term is empty, or the
-argument $(1 - \alpha_1 - \alpha_2)/\alpha_2$ is below $1$, where $\omega^* = 0$.
+argument $(1 - \alpha_1 - \alpha_2)/\alpha_2$ is below $1$, so that the cofactor $m$ is $1$, and these terms together
+are $o(x/\log x)$ (the proof of Lemma~\ref{lem:drop}).
 
 \begin{lemma}\label{lem:drop}
 If $\mathtt{total}/K \le c$, then for every $\varepsilon > 0$ and all large $q$,
 $D(\mathcal B) \le (c + \varepsilon)\, x/\log x$.
 \end{lemma}
+
+\begin{proof}
+Write $X = x/\log x$ and, for a cell $k$, $\mathcal P_k$ for the set of the primes $p$ with
+$x^{e_k} \le p < x^{e_k + h}$. We bound the $\mathcal B$-version of each dropped term and then add the bounds.
+
+\emph{A dropped term of depth two.} Let $(i, j)$ be a candidate cell that is dropped. Its $\mathcal B$-version counts
+the $n \in (x, 2x]$ prime to $q$ of the form $n = p_1 p_2 m$ with $(p_1, p_2)$ in the cell and $m$ without prime
+factors below $p_2$. Dropping the conditions $(n, q) = 1$, $p_2 < p_1$, $z_0 \le p_2$ and $p_1 < z_{\mathrm{top}}$, and
+mapping $n$ to $m$, it is at most
+\[
+  \sum_{p_1 \in \mathcal P_i} \sum_{p_2 \in \mathcal P_j} \Psi\Bigl(\frac{x}{p_1 p_2}, p_2\Bigr).
+\]
+A candidate has $e_i + 2e_j \le 1$, and $e_j \ge v \ge 4h$, so $e_i + e_j + 2h < 1$ and $y = x/(p_1 p_2) \ge 1$.
+Lemma~\ref{lem:rough}, with $U = 2/e_j$, applies to $\Psi(y, p_2)$, with
+$u = \log 2y/\log p_2 = (1 - \alpha_1 - \alpha_2 + \tau)/\alpha_2$ and $\tau = \log 2/\log x$. Let $\Omega_{ij}$ be the
+certificate's upper bound for $\omega^*$ on the cell's range of arguments. Since $\omega^*$ is not monotone, it is
+found by cases:
+\begin{itemize}
+\item $0$ if every argument is below $1$;
+\item $0.5672$, rounded up in units of $1/K$, if every argument is at least $2$;
+\item $1/u$ at the smallest argument, which is at least $1$, if every argument is below $2$;
+\item the larger of the last two otherwise.
+\end{itemize}
+The certificate's tests are strict inequalities between integers over $D$, so they leave a margin of $1/D$, which
+exceeds $\tau$ once $\log x > D \log 2$; so $\Omega_{ij}$ also bounds $\omega^*(u)$. Hence
+$\Psi(y, p_2) \le (\Omega_{ij} + \varepsilon') x/(p_1 p_2 \log p_2)$ for large $x$, and the term is at most
+\[
+  (\Omega_{ij} + \varepsilon') \, x \sum_{p_1 \in \mathcal P_i} \frac1{p_1} \sum_{p_2 \in \mathcal P_j}
+  \frac1{p_2 \log p_2}.
+\]
+By the prime number theorem and partial summation, for large $x$,
+\begin{gather*}
+  \sum_{p \in \mathcal P_i} \frac1p \le \log\Bigl(1 + \frac h{e_i}\Bigr) + \varepsilon' \le \frac h{e_i} + \varepsilon', \\
+  \log x \sum_{p \in \mathcal P_j} \frac1{p \log p} \le \frac1{e_j} - \frac1{e_j + h} + \varepsilon'
+  \le \frac h{e_j^2} + \varepsilon'.
+\end{gather*}
+These are the integrals of $d\alpha/\alpha$ and $d\alpha/\alpha^2$ over the cells, bounded by the integrands at the lower
+corners times $h$. Since $\mathtt{bound2}(i, j)/K \ge \Omega_{ij} h^2/(e_i e_j^2)$ by its definition, with every quotient
+rounded up, the term is at most $(\mathtt{bound2}(i, j)/K + \delta) X$ for large $q$, for any given $\delta > 0$.
+
+\emph{Depths four and six.} The same argument bounds a dropped term over a counted cell $(i, j, k, l)$ of depth four,
+with $\Psi(x/(p_1 \cdots p_4), p_4)$, three sums $\sum 1/p$ and one sum $\log x \sum 1/(p \log p)$, by
+$(\mathtt{bound4}/K + \delta) X$; and a dropped term over a counted box of depth six, whose last two primes lie in coarse
+cells, by $(\mathtt{bound6}/K + \delta) X$. Here $y \ge 1$ follows from the condition that defines a counted cell, with
+$4h \le v$ at depth four and $4h + 2h_C \le v$ at depth six.
+
+\emph{The corner cells.} A cell $(i, j)$ that is neither a candidate nor surely evaluable, with the cell $i$ not inside
+the window, is dropped as well. Since $2e_i < 1$, either $e_j \ge e_i + h$, and the term is empty, or
+$e_i + 2e_j > 1$. In the second case $p_1 p_2^2 > 2x$ for large $x$, so the cofactor $m$, which has no prime factor
+below $p_2$, is $1$, and $n = p_1 p_2 > x$ with $p_1, p_2 < z_{\mathrm{top}}$. Both primes then lie in
+$(z_{\mathrm{top}}/4, z_{\mathrm{top}}]$, so there are at most $(12\sqrt x/\log x)^2$ such integers for large $x$. The
+corner cells, at most $n^2$ of them, together contribute $O(x/\log^2 x) = o(X)$.
+
+\emph{Assembly.} $D(\mathcal B)$ is the sum of the terms of depth two of the dropped candidate cells, of the dropped terms
+of depths four and six below the decomposed candidate cells, and of the terms of the corner cells. By the bounds above,
+a candidate cell $(i, j)$ contributes at most $(\mathtt{cost}(i, j)/K + (1 + n^2(1 + n_C^2))\delta) X$, since the cell
+has at most $1 + n^2(1 + n_C^2)$ dropped terms below it. Taking $\delta$ small and $q$ large,
+$D(\mathcal B) \le (\mathtt{total}/K + \varepsilon/2) X + o(X) \le (c + \varepsilon) X$.
+\end{proof}
 
 On the grid of this paper the certificate as it stands totals about $1.11742K$ (a computation by
 \file{tools/linnik/route_limits.py}, not checked in Lean).
@@ -765,17 +1253,71 @@ cell $k$, $q_2 > q_1$ a prime, and $q_1, q_2 \ne p_1$.
 
 \begin{lemma}\label{lem:kept}
 \begin{enumerate}
-\item The kept parts below a cell are disjoint sets of the dropped term's integers, so their $\mathcal A$-count is at
-  most the term's.
+\item For each pair $(p_1, p_2)$ of the dropped term, the kept parts below the cell count distinct integers, all of
+  which the term counts for that pair; so their $\mathcal A$-count is at most the term's.
 \item Each kept part is the sum of three families of products of four primes in decreasing order, according to the
-  position of $q_2$, and Lemma~\ref{lem:family} evaluates each of them.
+  position of $q_2$, and Lemma~\ref{lem:family-sharp} evaluates each of them.
 \item For every $\delta > 0$ and all large $q$, the $\mathcal B$-version of the kept part below $k$ is at least
-  $(\mathtt{keepK}(i, j, k)/K - \delta)\, x/(\varphi(q) \log x)$, where
+  $(\mathtt{keepK}(i, j, k)/K - \delta)\, x/\log x$, where
   $\mathtt{keepK}(i, j, k) = \lfloor K h^3 / ((e_i + h)(e_j + h)(e_k + h)(1 - e_i - e_j - e_k)) \rfloor$ is a lower
   bound for its density $d\alpha_1\, d\alpha_2\, d\beta/(\alpha_1 \alpha_2 \beta \gamma)$ over the box, $\gamma$ the
   exponent of $q_2$.
 \end{enumerate}
 \end{lemma}
+
+\begin{proof}
+Write $X = x/\log x$ and $\mathcal P_c$ for the set of primes of the cell $c$. By the definition of the term
+$S(\mathcal A_{p_1 p_2}, p_2)$ of the cell $(i, j)$, its pairs $(p_1, p_2)$ have $p_2 < p_1$, $z_0 \le p_2$ and
+$p_1 < z_{\mathrm{top}}$.
+
+(1) Fix a pair $(p_1, p_2)$ of the term. An integer $n = p_1 p_2 q_1 q_2$ of a kept part determines
+$q_1 q_2 = n/(p_1 p_2)$, hence the primes $q_1 < q_2$, and $q_1$ determines the cell $k$, since the cells are disjoint.
+So, for this pair, the kept parts below $(i, j)$ count each integer at most once. Each such $n$ is counted by the term
+for the pair: $n \in (x, 2x]$, $p_1 p_2 \mid n$, and every prime factor of $n$ is one of $p_1$, $p_2$, $q_1$, $q_2$,
+which are all at least $p_2$, since $q_1 \ge x^{e_k} \ge x^{e_j + h} > p_2$ by \texttt{keep} and $q_2 > q_1$. Summing over
+the pairs, with the nonnegative weight $\mathbf 1[n \equiv a]$, gives (1). The kept $n$ are products of four distinct
+primes; the integers of the term with a prime-power cofactor stay in the dropped remainder.
+
+(2) For an integer $n = p_1 p_2 q_1 q_2$ of the kept part below $k$, exactly one of $q_2 < p_1$, $q_1 < p_1 < q_2$ and
+$p_1 < q_1$ holds, since $q_1 < q_2$, $q_1, q_2 \ne p_1$ and $p_2 < q_1$. So the kept part is the sum of three sums over
+the decreasing $4$-tuples $r_0 > r_1 > r_2 > r_3$ of primes, equal to $(p_1, q_2, q_1, p_2)$, $(q_2, p_1, q_1, p_2)$ and
+$(q_2, q_1, p_1, p_2)$ respectively. The conditions are $N_1 < r_0 r_1 r_2 r_3 \le N_2$, that $p_1$ lies in the cell $i$
+with $z_0 \le p_1 < z_{\mathrm{top}}$, that $p_2 = r_3$ lies in the cell $j$ with $p_2 \ge z_0$, and that $q_1$ lies in
+the cell $k$; $q_2$ is subject to no cell condition. These are at most $18$ comparisons in the sense of
+Section~\ref{sec:type1}, with coefficients in $\{-1, 0, 1\}$, pivots and constants $O(\log q)$. Since the box
+$(i, j, k)$ is surely evaluable, the product of a set $T$ of the primes $p_1$, $p_2$, $q_1$ lies, on the box, in
+$(x^{U_1/D}, x^{U_2/D})$ or in $(x^{1 - U_2/D}, x^{1 - U_1/D})$. In the first case $m = \prod_T$ lies in the window's
+range; in the second the complementary product, which contains $q_2$, does, for large $q$, as for the stops in the proof
+of Proposition~\ref{prop:harman}, since the grid's window lies strictly inside the route's. Group the tuples by this
+$m$, a squarefree integer whose prime factors, read in decreasing order, are the primes of its set. The comparisons
+that involve only these primes then become conditions on $m$, absorbed into $a_m \in \{0, 1\}$; the others are pivoted
+on the remaining primes. Each of the three sums is then a sum as in Lemma~\ref{lem:family-sharp}, which bounds its
+$\mathcal A - \mathcal B/\varphi(q)$ by $q^{L - \delta}/\varphi(q)$.
+
+(3) For $p_1 \in \mathcal P_i$, $p_2 \in \mathcal P_j$ and $q_1 \in \mathcal P_k$, put $y = x/(p_1 p_2 q_1)$ and
+$\gamma = 1 - e_i - e_j - e_k$. By \texttt{reg2}, $p_2 < p_1 < x^{1/2}$, so every such pair belongs to the term. By the
+second condition of \texttt{keep}, $\gamma \ge e_k + 4h$ and $q_1 < y$, so every prime $q_2 \in (y, 2y]$ has $q_2 > q_1$
+and $p_1 p_2 q_1 q_2 \in (x, 2x]$. Exclude $q_2 = p_1$ and the $q_2$ dividing $q$, at most $1 + \omega(q)$ primes with
+$\omega(q) \le \log q/\log 2$, and exclude the triples with $q_1 = p_1$ or with a prime dividing $q$. Then the
+$\mathcal B$-version of the kept part is at least
+\[
+  \sum_{p_1, p_2, q_1} \bigl(\pi(2y) - \pi(y)\bigr) - (2 + \omega(q)) \#\{(p_1, p_2, q_1)\}
+  - \sum_{\text{excluded triples}} (y + 1).
+\]
+On the box $x^{\gamma - 3h} < y \le x^\gamma$, so for large $x$ the prime number theorem gives
+$\pi(2y) - \pi(y) \ge (1 - \varepsilon) y/\log y \ge (1 - \varepsilon) y/(\gamma \log x)$, and
+\[
+  \sum_{p_1, p_2, q_1} \frac y{\gamma \log x} = \frac X\gamma \prod_{c \in \{i, j, k\}} \sum_{p \in \mathcal P_c} \frac1p
+  \ge \frac X\gamma \Bigl(\prod_c \frac h{e_c + h} - 3d\Bigr),
+\]
+using $\sum_{p \in \mathcal P_c} 1/p \ge \log(1 + h/e_c) - d \ge h/(e_c + h) - d$ for large $x$, which is the prime
+number theorem again, and that each sum is at most $1$. The excluded triples contribute $O(x(1 + \omega(q))/z_0)$, since
+$\sum_{p \ge z_0,\ p \mid q} 1/p \le \omega(q)/z_0$, and the triples number $O(x^{e_i + e_j + e_k + 3h})$ with
+$e_i + e_j + e_k + 3h < 1$. Both are $o(X)$. Finally
+$(1/\gamma) \prod_c h/(e_c + h) \ge \mathtt{keepK}(i, j, k)/K$, because the floor is at most the quotient. Taking
+$\varepsilon$ and $d$ small in terms of $\delta$ gives (3). The bound is the integral of the density over the box, read
+from below: the number of $q_2$ is about $y/(\gamma \log x)$, and $\int_e^{e + h} d\alpha/\alpha \ge h/(e + h)$.
+\end{proof}
 
 In the decomposition, a dropped candidate cell of \texttt{reg2} now uses $\mathcal A \ge$ (its kept parts) in place of
 $\mathcal A \ge 0$, and the kept parts' $\mathcal A$- and $\mathcal B$-counts agree within the leaves' error. So the
@@ -792,6 +1334,32 @@ $\mathtt{total2}/K \le c$, then for every $\varepsilon > 0$, for all large $q$ a
   - (c + \varepsilon)\frac{x}{\varphi(q) \log x}.
 \]
 \end{proposition}
+
+\begin{proof}
+Follow the proof of Proposition~\ref{prop:decomp}, with one change. For a dropped candidate cell $(i, j)$ of
+\texttt{reg2}, that proof bounds the $\mathcal A$-count of its term from below by $0$. Instead, let $\kappa_k$ be the
+kept part below $k$, for the cells $k$ that \texttt{keep} passes. By Lemma~\ref{lem:kept}(1) and~(2), the term's
+$\mathcal A$-count is at least
+\[
+  \sum_k \mathcal A(\kappa_k) \ge \frac1{\varphi(q)} \sum_k \mathcal B(\kappa_k) - \frac{3n \, q^{L - \delta}}{\varphi(q)}.
+\]
+So the inequality of Proposition~\ref{prop:decomp} holds with $D(\mathcal B)$ replaced by
+$D(\mathcal B) - \sum \mathcal B(\kappa_k)$, the sum over these cells $(i, j)$ and $k$, and with at most $3n^3$ more
+errors $q^{L - \delta}/\varphi(q)$, which for large $q$ add less than $\varepsilon x/(4\varphi(q) \log x)$.
+
+It remains to bound $D(\mathcal B) - \sum \mathcal B(\kappa_k)$ by $(c + \varepsilon/2) x/\log x$ for large $q$. By the
+proof of Lemma~\ref{lem:drop}, the $\mathcal B$-version of the term of such a cell is at most
+$(\mathtt{bound2}(i, j)/K + \delta) x/\log x$, and by Lemma~\ref{lem:kept}(3)
+$\mathcal B(\kappa_k) \ge (\mathtt{keepK}(i, j, k)/K - \delta) x/\log x$. So the cell contributes at most
+\[
+  \Bigl(\frac{\mathtt{bound2}(i, j) - \mathtt{sub2}(i, j)}K + (n + 1)\delta\Bigr) \frac x{\log x}
+  \le \Bigl(\frac{\mathtt{cost2}(i, j)}K + (n + 1)\delta\Bigr) \frac x{\log x},
+\]
+since truncating at $0$ can only increase the cost. Every other cell contributes as in the proof of
+Lemma~\ref{lem:drop}, and has $\mathtt{cost2} = \mathtt{cost}$. Adding up and taking $\delta$ small gives the bound
+$(\mathtt{total2}/K + \varepsilon/4) x/\log x + o(x/\log x) \le (c + \varepsilon/2) x/\log x$. With the inequality of
+Proposition~\ref{prop:decomp} for $\varepsilon/4$, this proves the proposition.
+\end{proof}
 
 \subsection{The certificate}
 
@@ -890,8 +1458,10 @@ Proposition~\ref{prop:decomp}, the decomposition & \lean{SieveBuch.Par.decomp} \
 Lemma~\ref{lem:drop}, the dropped terms & \lean{SieveDrop.drop\_ev\_of} \\
 Lemma~\ref{lem:kept}, the kept parts & \lean{SieveBuch.Par.Kp2\_le}, \\
  & \lean{SieveBuch.Par.Kk\_eq}, \\
+ & \lean{SieveKeptLeaf.lf\_Kk}, \\
  & \lean{SieveKeptB.Kk\_gB\_ge} \\
 Proposition~\ref{prop:decomp-kept}, with the kept parts & \lean{SieveBuch.Par.decompk}, \\
+ & \lean{SieveKeptLeaf.leaves\_ev2}, \\
  & \lean{SieveDrop2.drop\_ev2} \\
 Proposition~\ref{prop:certificate}, the certificate & \lean{SieveCert.total2\_lt\_22250R} \\
 \midrule
@@ -907,8 +1477,10 @@ Huxley's density estimate (\file{formalisations/}) & \lean{LinnikHuxStep.charDen
 Huxley's estimate from $5/6$ on (\file{formalisations/}) & \lean{LinnikStep.charDensity\_step} \\
 The Hal\'asz--Montgomery inequality (\file{formalisations/}) & \lean{LinnikPower.hm\_duality} \\
 Proposition~\ref{prop:harman}, Harman's comparison in the form used & \lean{SieveProp6.prop6} \\
+Its tree identity & \lean{SieveTree.tree\_pt} \\
 Lemma~\ref{lem:type1}, Type~I counts & \lean{SieveCount.card\_A}, \lean{SieveCount.card\_B} \\
 Lemma~\ref{lem:family}, Type~II families & \lean{SieveFamily.typeII\_sharp} \\
+Lemma~\ref{lem:family-sharp}, sharp prime ranges & \lean{SieveTypeIIU.typeII\_unw} \\
 Lemma~\ref{lem:rough}, rough numbers from above & \lean{SieveRough.psi\_le} \\
 The fundamental lemma of the sieve & \lean{SieveBrun.fundamental} \\
 Buchstab's identity & \lean{SieveDecomp.buchstab\_fam} \\
