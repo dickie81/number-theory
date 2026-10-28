@@ -165,9 +165,8 @@ structure LargeQ (q : ℕ) : Prop where
   hw₁ : 3 ≤ (q : ℝ) ^ (L * ((U1 : ℝ) / DEN) - w₁ * L)
   hw₂ : 2 ≤ (q : ℝ) ^ (w₂ * L - L * ((U2 : ℝ) / DEN))
   hb : 3 ≤ (q : ℝ) ^ (b0 - L / 2)
-  hlim : 3 ≤ (q : ℝ) ^ (L - (L * ((SieveCert.lim : ℝ) / DEN) + b0 / 2))
 
-theorem largeQ_ev [SieveCert.GridOKC] : ∀ᶠ q : ℕ in atTop, LargeQ q := by
+theorem largeQ_ev : ∀ᶠ q : ℕ in atTop, LargeQ q := by
   have hD := DEN_pos
   have hL := (L_pos : (0 : ℝ) < L)
   have e2 : (0 : ℝ) < L / 2 := by positivity
@@ -193,19 +192,9 @@ theorem largeQ_ev [SieveCert.GridOKC] : ∀ᶠ q : ℕ in atTop, LargeQ q := by
     unfold b0
     rw [DU2_cast, sub_div, div_self hD.ne']
     nlinarith
-  have e9 : (0 : ℝ) < L - (L * ((SieveCert.lim : ℝ) / DEN) + b0 / 2) := by
-    have hU : (DEN : ℝ) < 2 * U1 + U2 := by exact_mod_cast SieveCert.GridOKC.U_sum
-    have hlim : (SieveCert.lim : ℝ) = DEN - U1 := by unfold SieveCert.lim; rw [Nat.cast_sub SieveCert.U1_le_DEN]
-    have heq : L - (L * ((SieveCert.lim : ℝ) / DEN) + b0 / 2) = L * ((2 * U1 + U2 - DEN) / (2 * DEN)) := by
-      unfold b0
-      rw [hlim, DU2_cast]
-      field_simp
-      ring
-    rw [heq]
-    exact mul_pos hL (div_pos (by linarith) (by positivity))
   filter_upwards [eventually_ge_atTop 3, ev_rpow e2 4, ev_rpow e3 3, ev_rpow e4 3, ev_rpow e5 3,
-    ev_rpow e6 3, ev_rpow e7 2, ev_rpow e8 3, ev_rpow e9 3] with q h1 h3 h4 h5 h6 h7 h8 h9 h10
-  exact ⟨h1, h3, h4, h5, h6, h7, h8, h9, h10⟩
+    ev_rpow e6 3, ev_rpow e7 2, ev_rpow e8 3] with q h1 h3 h4 h5 h6 h7 h8 h9
+  exact ⟨h1, h3, h4, h5, h6, h7, h8, h9⟩
 
 omit [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
 theorem sqrt_x (q : ℕ) : Real.sqrt ((q : ℝ) ^ L) = (q : ℝ) ^ (L / 2 : ℝ) := by
@@ -234,7 +223,7 @@ theorem good_of_large {q : ℕ} (hL : LargeQ q) : (parQ q).Good := by
   have hN₂y := N2_ge q (by have := hL.q3; omega)
   have hN₂le := N2_le q
   have hsy := sqrt_x q
-  refine ⟨hy1, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨hy1, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · show ((q : ℝ) ^ L) ^ ((V : ℝ) / DEN) ≤ (⌈(q : ℝ) ^ a0⌉₊ : ℝ)
     rw [xpow]
     exact Nat.le_ceil _
@@ -308,26 +297,6 @@ theorem good_of_large {q : ℕ} (hL : LargeQ q) : (parQ q).Good := by
     have h3 : 0 < (q : ℝ) ^ L := by positivity
     rw [h1]
     nlinarith
-  · show ((q : ℝ) ^ L) ^ ((SieveCert.lim : ℝ) / DEN) * Real.sqrt (⌊(q : ℝ) ^ b0⌋₊ : ℝ) ≤ (N1 q : ℝ)
-    have hw : (⌊(q : ℝ) ^ b0⌋₊ : ℝ) ≤ (q : ℝ) ^ b0 := Nat.floor_le (by positivity)
-    have hsq : Real.sqrt (⌊(q : ℝ) ^ b0⌋₊ : ℝ) ≤ (q : ℝ) ^ (b0 / 2) := by
-      calc Real.sqrt (⌊(q : ℝ) ^ b0⌋₊ : ℝ) ≤ Real.sqrt ((q : ℝ) ^ b0) := Real.sqrt_le_sqrt hw
-        _ = (q : ℝ) ^ (b0 / 2) := by
-          rw [Real.sqrt_eq_rpow, ← Real.rpow_mul hq0.le]
-          congr 1
-          ring
-    have hprod : ((q : ℝ) ^ L) ^ ((SieveCert.lim : ℝ) / DEN) * Real.sqrt (⌊(q : ℝ) ^ b0⌋₊ : ℝ) ≤
-        (q : ℝ) ^ (L * ((SieveCert.lim : ℝ) / DEN) + b0 / 2) := by
-      rw [xpow, Real.rpow_add hq0]
-      exact mul_le_mul_of_nonneg_left hsq (by positivity)
-    have hne : 0 ≤ L * ((SieveCert.lim : ℝ) / DEN) + b0 / 2 := by
-      have := b0_pos
-      have : (0 : ℝ) ≤ SieveCert.lim := Nat.cast_nonneg _
-      have := (L_pos : (0 : ℝ) < L)
-      positivity
-    have hgap := rpow_gap hq0 hL.hlim (Real.one_le_rpow hq1 hne)
-    have hN₁ : (q : ℝ) ^ L - 1 < (N1 q : ℝ) := Nat.sub_one_lt_floor _
-    linarith
 
 /-! ### The families' atoms: thresholds, nonzero coefficients, lengths -/
 

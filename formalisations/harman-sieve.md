@@ -71,8 +71,8 @@ methods as recalled, and state only what the route needs. Nothing in this librar
 Proposition 6 is proved with one Buchstab tree for every product `r ≤ q^{b₀}`.
 
 - **The tree** (`SieveDiff.tree_weighted`) iterates Buchstab's identity from `z₀` down to `w = ⌈q^{ε_w}⌉`, with
-  `ε_w = c/(2k + 4)` and `c = (L − 1 − b₀)/4`. A branch stops when its partial product falls in the lower window of
-  the route. `SieveStops2.stops2_bound` bounds the stopped terms by the route's Type II estimate (`hII`).
+  `ε_w = c/(2k + 4)` and `c = (L − 1 − b₀)/4`. A branch stops when its partial product exceeds `X' = ⌊q^{b₀}⌋`: the
+  stop then lies in the reflection `(X', z₀X']` of the route's window, and its cofactor in the window. `SieveStops2.stops2_bound` bounds the stopped terms by the route's Type II estimate (`hII`).
 - **The leaves** (`SieveProp6.leaf_bound`). At a leaf `d = r∏P ≤ q^{b₀}`, `SieveLeaf.leaf_A` and `SieveLeaf.leaf_B`
   apply the fundamental lemma to `A` and `B`, with the ranges of primes below `w` cut into dyadic-exponent ranges and
   the levels `k + 2j`. The gap is at most `4ζ(k)·#{n : d ∣ n, n w-rough}/φ(q)` plus a remainder, and the count of

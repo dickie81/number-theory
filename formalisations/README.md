@@ -37,8 +37,8 @@ The Type II estimate of the Linnik paper counts characters by a density curve, `
 
 - the trivial count below `4/7`;
 - Ingham's estimate, on twenty steps of `[4/7, 5/7]` ([ingham-density.md](ingham-density.md));
-- Chen–Gupta–Li's estimate, on 107 steps of `[5/7, 1307/1680]` ([chen-gupta-li-density.md](chen-gupta-li-density.md));
-- Huxley's estimate, on three steps of `[1307/1680, 131/168]` and on fifteen steps of `[131/168, 5/6]`, and with the exponent `101/50` from `5/6` on
+- Chen–Gupta–Li's estimate, on 110 steps of `[5/7, 131/168]` ([chen-gupta-li-density.md](chen-gupta-li-density.md));
+- Huxley's estimate, on fifteen steps of `[131/168, 5/6]`, and with the exponent `101/50` from `5/6` on
   ([huxley-density.md](huxley-density.md)).
 
 Each piece counts characters, not zeros.

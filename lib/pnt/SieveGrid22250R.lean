@@ -24,7 +24,7 @@ theorem gridOK22250R : @GridOK grid22250R :=
 theorem gridOKC22250R : @GridOKC grid22250R :=
   @GridOKC.mk grid22250R
     (@GridOK.mk (@Gc grid22250R) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
-    (by decide) (by decide) (by decide)
+    (by decide) (by decide)
 
 end SieveCert
 

@@ -1,5 +1,5 @@
 /-
-# The decomposition to depth 4, with the certificate's classification
+# The decomposition to depth 6, with the certificate's classification
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -7,35 +7,41 @@ Plain statements. `Par` holds `x`, the sieve's floor `z₀`, its top `z_top`, Pr
 `(N₁, N₂]`; `Good` is what the decomposition needs of them (`SieveQ.good_of_large` proves it at `x = q^L` for large
 `q`). For weights `g`, `T g = S_g(z_top)` and `J0 g = S_g(z₀)` count the `n ∈ (N₁, N₂]` with no prime factor below
 `z_top` and `z₀`, weighted by `g`. The families of the tree are lists of `SieveDecomp` atoms: `S1` (`p₁ ∈ [z₀, z_top)`),
-its cells `S1c i`, the extensions `S2 i`, `S3 i j`, `S4 i j k` (one more prime in `[z₀, rt_last)`), their cells
-`S2c`, `S3c`, `S4c`, and the splits `S2le`/`S2gt`, `S3le`/`S3gt` at the product `X'`.
+its cells `S1c i`, the extensions `S2 i`, `S3 i j`, … `S6 i j k l b` (one more prime in `[z₀, rt_last)`), their cells
+`S2c` … `S6c` (the cells of the coarse grid `Gc` at depths 5 and 6), and the splits `S2le`/`S2gt` … `S5le`/`S5gt` at
+the product `X'`.
 
-* `T_eq`, `I_S1` … `I_S4`: for `P.Good`, the exact identities of the decomposition,
-  `S(A, z_top) = S(A, z₀) − Σ_{p₁} S(A_{p₁}, p₁)` and so on to depth 4: the cells of each new prime, Buchstab's identity
+* `T_eq`, `I_S1` … `I_S6`: for `P.Good`, the exact identities of the decomposition,
+  `S(A, z_top) = S(A, z₀) − Σ_{p₁} S(A_{p₁}, p₁)` and so on to depth 6: the cells of each new prime, Buchstab's identity
   on the cells that are decomposed, and the splits at `X'`.
-* `I_S3c_vanish`, `I_S4c_vanish_lt`, `I_S4c_vanish_reg`: for `P.Good`, the cells outside `SieveCert.inKK` at depth 3,
-  and at depth 4 the cells `l > k` and those outside the region, contribute `0`.
+* `I_S3c_vanish`, `I_S4c_vanish_lt`, `I_S4c_vanish_reg`, … `I_S6c_vanish_reg`: for `P.Good`, the cells outside
+  `SieveCert.inKK` at depth 3, and at depths 4 to 6 the cells whose prime would exceed the one before and those outside
+  the region, contribute `0`. Outside the region the product of the primes is at most `X'·√X' ≤ N₁`, while it times
+  the last prime exceeds `N₂`.
 * `D1`: the dropped terms, as the certificate drops them. At depth 2 the candidate cells that are not decomposed
   (`cand ∧ ¬dec`) and the corner cells (`¬cand ∧ ¬surelyEval`), below a cell `i` of `p₁` outside the window
-  (`inW`); at depth 4 the counted cells (`counted4`, `l ≤ k`) below the cells of depth 3 that are split.
+  (`inW`); at depth 4 the counted cells (`counted4`, `l ≤ k`) below the cells of depth 3 that are split, except those
+  that `dec4` decomposes, and below these the counted cells of depth 6 (`counted6`, `c ≤ b`).
 * `Leaves`: the estimates the leaves need, each `|A − B| ≤ Err`: the evaluated families (`e1`, `e2`, `e2'`, `e3`,
-  `e3'`, `e4`) and the families of Proposition 6 (`j0` for `S(z₀)`, `p1`, `p2`, `p3`).
-* `decomp`: for a grid with `GridOK`, `P.Good`, weights `g_A ≥ 0` and `g_B`, and leaves within `Err ≥ 0`,
-  `S_{g_A}(z_top) ≥ S_{g_B}(z_top) − D1(g_B) − (1 + n(1 + n(n(n + 2) + 2)))·Err`.
+  `e3'`, `e4`, `e4gt`, `e5gt`, `e5'`, `e6`) and the families of Proposition 6 (`j0` for `S(z₀)`, `p1` … `p5`).
+* `decomp`: for a grid with `GridOK` and `GridOKC`, `P.Good`, weights `g_A ≥ 0` and `g_B`, and leaves within
+  `Err ≥ 0`, `S_{g_A}(z_top) ≥ S_{g_B}(z_top) − D1(g_B) − Cdec·Err`, with `Cdec` a polynomial in `n` and `nC`.
 
-This is the decomposition to depth 4 with the classification by cells (the grid
-of `SieveCert.Grid`: `n` cells a side, of side `H/DEN`, starting at `V/DEN = u₂ − u₁`; the identities `I_S1` … `I_S4`,
-the levels and `decomp` take `GridOK`). At depth 1 a cell inside the window is evaluated, the others decomposed. At
-depth 2 a candidate cell that `dec` allows is split at `X'` (above evaluated, below decomposed), a candidate cell not
-allowed is dropped, and a non-candidate cell is evaluated when surely evaluable and dropped otherwise (the corner). At
-depth 3 a cell of `inKK` is split at `X'` when not surely evaluable and evaluated otherwise. At depth 4 a counted cell
-is dropped, and the rest are evaluated or vanish.
+This is the decomposition with the classification by cells (the grid of `SieveCert.Grid`: `n` cells a side, of side
+`H/DEN`, starting at `V/DEN = u₂ − u₁`, and its coarse grid of `nC` cells of side `HC/DEN`). At depth 1 a cell inside
+the window is evaluated, the others decomposed. At depth 2 a candidate cell that `dec` allows is split at `X'` (above
+evaluated, below decomposed), a candidate cell not allowed is dropped, and a non-candidate cell is evaluated when surely
+evaluable and dropped otherwise (the corner). At depth 3 a cell of `inKK` is split at `X'` when not surely evaluable
+and evaluated otherwise. At depth 4 a counted cell is dropped, unless `dec4` allows it, when it is split at `X'` and the
+part below decomposed with the coarse cells of `p₅`; the cells that are not counted are evaluated or vanish. At depth 5
+a cell of `inKK5` is split at `X'` when not surely evaluable and evaluated otherwise, and at depth 6 a counted cell is
+dropped and the rest are evaluated or vanish.
 
-The proof of `decomp`: `lvl4`, `lvl3`, `lvl2`, `lvl1`, one level at a time. A dropped term has `A ≥ 0` and costs its
+The proof of `decomp`: `lvl6`, `lvl5`, …, `lvl1`, one level at a time. A dropped term has `A ≥ 0` and costs its
 `B`-version; a term with sign `−` is bounded above, so it is evaluated or decomposed, never dropped.
 
-The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); `SieveGrid22250R.grid22250R`
-is the one the library uses.
+The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` and `GridOKC` where the Lean takes them);
+`SieveGrid22250R.grid22250R` is the one the library uses.
 
 
 The file imports `SieveDecomp.lean`.
@@ -142,7 +148,6 @@ structure Good : Prop where
   htopN : P.ztop ≤ P.N₂ + 1
   hXN : (P.Xp : ℝ) * Real.sqrt P.Xp ≤ P.N₁
   hN₂ : (P.N₂ : ℝ) < P.x ^ (((DEN : ℝ) + 1) / DEN)
-  hlim : P.x ^ ((lim : ℝ) / DEN) * Real.sqrt P.Xp ≤ P.N₁
 
 /-! ### Chains -/
 
@@ -589,9 +594,9 @@ theorem I_S5c_vanish_lt (G : P.Good) (g : ℕ → ℝ) {i j k l b : ℕ} (h : ¬
     refine lt_of_lt_of_le hl.2 (le_trans (by push_cast at this ⊢; exact this) hb.1)
   exact absurd h43 (not_lt.2 (by exact_mod_cast h'.le))
 
-/-- **Depth 5, outside the region**, for `P.Good`, with `p₁⋯p₄` below the limit: `p₁⋯p₅² > N₂` while `p₁⋯p₅ ≤ N₁`. -/
+/-- **Depth 5, outside the region**, for `P.Good`: `p₁⋯p₅² > N₂` while `p₁⋯p₅ ≤ X'·√X' ≤ N₁` (`p₁⋯p₄ ≤ X'` and
+`p₅ < p₃ < √X'`). -/
 theorem I_S5c_vanish_reg (G : P.Good) (g : ℕ → ℝ) {i j k l b : ℕ}
-    (hT : SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H) ≤ SieveCert.lim)
     (h : DEN < SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + 2 * SieveCert.eC b) :
     P.I g (P.S5c i j k l b) = 0 := by
   have hx0 : 0 < P.x := by linarith [G.hx]
@@ -606,12 +611,11 @@ theorem I_S5c_vanish_reg (G : P.Good) (g : ℕ → ℝ) {i j k l b : ℕ}
   have h5s : (rt 4 : ℝ) < Real.sqrt P.Xp := lt_trans (by exact_mod_cast lt_trans h43 h32) hs
   rw [Fin.prod_univ_five]
   constructor
-  · have h4 := prod4_le_of_InC hx1 hi hj hk hl hT
-    have : ((rt 0 * rt 1 * rt 2 * rt 3 * rt 4 : ℕ) : ℝ) ≤ P.N₁ := by
+  · have : ((rt 0 * rt 1 * rt 2 * rt 3 * rt 4 : ℕ) : ℝ) ≤ P.N₁ := by
       push_cast
-      calc (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 ≤ P.x ^ ((SieveCert.lim : ℝ) / DEN) * Real.sqrt P.Xp :=
-            mul_le_mul h4 h5s.le (by positivity) (by positivity)
-        _ ≤ P.N₁ := G.hlim
+      calc (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 ≤ P.Xp * Real.sqrt P.Xp :=
+            mul_le_mul hX4 h5s.le (by positivity) (by positivity)
+        _ ≤ P.N₁ := G.hXN
     exact_mod_cast this
   · have hp4 := prod4_ge hx0 hi.1 hj.1 hk.1 hl.1
     have hb1 : P.x ^ (((SieveCert.eC b : ℕ) : ℝ) / DEN) ≤ rt 4 := hb.1
@@ -641,16 +645,15 @@ theorem I_S6c_vanish_lt (G : P.Good) (g : ℕ → ℝ) {i j k l b c : ℕ} (h : 
     refine lt_of_lt_of_le hb.2 (le_trans (by push_cast at this ⊢; exact this) hcc.1)
   exact absurd h54 (not_lt.2 (by exact_mod_cast h'.le))
 
-/-- **Depth 6, outside the region**, for `P.Good`, with `p₁⋯p₅` below the limit: `p₁⋯p₆² > N₂` while `p₁⋯p₆ ≤ N₁`. -/
+/-- **Depth 6, outside the region**, for `P.Good`: `p₁⋯p₆² > N₂` while `p₁⋯p₆ ≤ X'·√X' ≤ N₁` (`p₁⋯p₅ ≤ X'` and
+`p₆ < p₃ < √X'`). -/
 theorem I_S6c_vanish_reg (G : P.Good) (g : ℕ → ℝ) {i j k l b c : ℕ}
-    (hT : SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H) +
-      (SieveCert.eC b + HC) ≤ SieveCert.lim)
     (h : DEN < SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + SieveCert.eC b + 2 * SieveCert.eC c) :
     P.I g (P.S6c i j k l b c) = 0 := by
   have hx0 : 0 < P.x := by linarith [G.hx]
   have hx1 : 1 ≤ P.x := G.hx.le
   refine famI_vanish g _ _ _ fun rt hrt => ?_
-  obtain ⟨hc, hi, hj, hk, hl, hb, hcc, hX2, hX3⟩ := P.facts_S6c hrt
+  obtain ⟨hc, hi, hj, hk, hl, hb, hcc, hX2, -, -, hX5⟩ := P.facts_S6c hrt
   have h10 : rt 1 < rt 0 := hc.1 (show (0 : Fin 6) < 1 by decide)
   have h21 : rt 2 < rt 1 := hc.1 (show (1 : Fin 6) < 2 by decide)
   have h32 : rt 3 < rt 2 := hc.1 (show (2 : Fin 6) < 3 by decide)
@@ -661,19 +664,11 @@ theorem I_S6c_vanish_reg (G : P.Good) (g : ℕ → ℝ) {i j k l b c : ℕ}
     lt_trans (by exact_mod_cast lt_trans h54 (lt_trans h43 h32)) hs
   rw [Fin.prod_univ_six]
   constructor
-  · have hb2 : (rt 4 : ℝ) < P.x ^ ((((SieveCert.eC b : ℕ) : ℝ) + (HC : ℕ)) / DEN) := hb.2
-    have h5 : (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 ≤ P.x ^ ((SieveCert.lim : ℝ) / DEN) := by
-      have h4 := prod4_le_of_InC hx1 hi hj hk hl (le_refl _)
-      have := mul_rpow_le hx0 (by positivity) h4 hb2.le
-      refine this.trans ?_
-      have := rpow_mono_nat hx1 hT
-      convert this using 2
-      push_cast; ring
-    have : ((rt 0 * rt 1 * rt 2 * rt 3 * rt 4 * rt 5 : ℕ) : ℝ) ≤ P.N₁ := by
+  · have : ((rt 0 * rt 1 * rt 2 * rt 3 * rt 4 * rt 5 : ℕ) : ℝ) ≤ P.N₁ := by
       push_cast
-      calc (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 * rt 5 ≤ P.x ^ ((SieveCert.lim : ℝ) / DEN) * Real.sqrt P.Xp :=
-            mul_le_mul h5 h6s.le (by positivity) (by positivity)
-        _ ≤ P.N₁ := G.hlim
+      calc (rt 0 : ℝ) * rt 1 * rt 2 * rt 3 * rt 4 * rt 5 ≤ P.Xp * Real.sqrt P.Xp :=
+            mul_le_mul hX5 h6s.le (by positivity) (by positivity)
+        _ ≤ P.N₁ := G.hXN
     exact_mod_cast this
   · have hp4 := prod4_ge hx0 hi.1 hj.1 hk.1 hl.1
     have hb1 : P.x ^ (((SieveCert.eC b : ℕ) : ℝ) / DEN) ≤ rt 4 := hb.1
@@ -813,12 +808,11 @@ structure Leaves (gA gB : ℕ → ℝ) (Err : ℝ) : Prop where
 
 variable {P}
 
-/-- **Level 6** (terms with sign `+`), for grids with `GridOK` and `GridOKC`, `P.Good`, weights `g_A ≥ 0` and `g_B`, `b < nC`, `p₁⋯p₅` below the
-limit, and the row's surely evaluable cells of depth 6 that are not counted within `Err ≥ 0`:
+/-- **Level 6** (terms with sign `+`), for grids with `GridOK` and `GridOKC`, `P.Good`, weights `g_A ≥ 0` and `g_B`, `b < nC`,
+and the row's surely evaluable cells of depth 6 that are not counted within `Err ≥ 0`:
 `A ≥ B − (dropped) − (b + 1)Err`. -/
 theorem lvl6 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ}
     (hErr : 0 ≤ Err) {i j k l b : ℕ} (hb : b < nC)
-    (hT : SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H) + (eC b + HC) ≤ lim)
     (hE : ∀ c < b + 1, counted6 i j k l b c = false → sE6 i j k l b c = true →
       |P.I gA (P.S6c i j k l b c) - P.I gB (P.S6c i j k l b c)| ≤ Err) :
     P.I gB (P.S6 i j k l b) - P.D6 gB i j k l b - (b + 1) * Err ≤ P.I gA (P.S6 i j k l b) := by
@@ -849,7 +843,7 @@ theorem lvl6 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ �
         simp only [sE6, Bool.not_eq_true] at hs
         simp only [counted6, hs, Bool.not_false, Bool.and_true, decide_eq_true_eq, not_le] at hc6
         exact hc6
-      rw [P.I_S6c_vanish_reg G gA hT hreg, P.I_S6c_vanish_reg G gB hT hreg]
+      rw [P.I_S6c_vanish_reg G gA hreg, P.I_S6c_vanish_reg G gB hreg]
       linarith
 
 /-- **Level 5** (terms with sign `−`), for grids with `GridOK` and `GridOKC`, `P.Good`, weights `g_A ≥ 0` and `g_B`, leaves within `Err ≥ 0`, and a
@@ -857,7 +851,6 @@ counted cell `(i, j, k, l)` of depth 4 that is decomposed: `A ≤ B + (dropped b
 theorem lvl5 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ → ℝ} (hgA : ∀ m, 0 ≤ gA m) {Err : ℝ}
     (hErr : 0 ≤ Err) (Lv : P.Leaves gA gB Err) {i j k l : ℕ} (hD : Deep i j k l) :
     P.I gA (P.S5 i j k l) ≤ P.I gB (P.S5 i j k l) + P.D5 gB i j k l + nC * (nC + 2) * Err := by
-  obtain ⟨hT4, hT5⟩ := allowed4_tops (SieveCert.allowed4_of_dec4 hD.2.2.2)
   rw [P.I_S5 G gA, P.I_S5 G gB]
   unfold D5
   have hErrs : (nC : ℝ) * ((nC : ℝ) + 2) * Err = ∑ _b ∈ range nC, ((nC : ℝ) + 2) * Err := by
@@ -870,7 +863,7 @@ theorem lvl5 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ �
   by_cases hK : inKK5 i j k l b = true
   · by_cases hn : ne5 i j k l b = true
     · rw [ite_eq_left ⟨hK, hn⟩, P.I_S5c gA, P.I_S5c gB, P.I_S5le gA, P.I_S5le gB]
-      have h6 := lvl6 G hgA hErr hb' (hT5 b hb' hK hn).le (Lv.e6 i j k l hD b hb' hK hn)
+      have h6 := lvl6 G hgA hErr hb' (Lv.e6 i j k l hD b hb' hK hn)
       have hJ := abs_le.1 (Lv.p5 i j k l hD b hb' hK hn)
       have hE := abs_le.1 (Lv.e5gt i j k l hD b hb' hK hn)
       have : ((nC : ℝ) + 2) * Err = nC * Err + 2 * Err := by ring
@@ -888,7 +881,7 @@ theorem lvl5 [SieveCert.GridOK] [SieveCert.GridOKC] (G : P.Good) {gA gB : ℕ �
       simp only [SieveCert.inKK5, Bool.and_eq_false_iff, decide_eq_false_iff_not, not_lt, not_le] at hK'
       rcases hK' with h | h
       · exact P.I_S5c_vanish_lt G g (by omega)
-      · exact P.I_S5c_vanish_reg G g hT4.le h
+      · exact P.I_S5c_vanish_reg G g h
     rw [hz gA, hz gB]
     have : 0 ≤ ((nC : ℝ) + 2) * Err := by positivity
     linarith

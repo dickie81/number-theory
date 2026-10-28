@@ -68,7 +68,7 @@ the others at most `B`.
 
 ## Where the Linnik paper uses it
 
-- Through Huxley's estimate, on the steps of the density curve from `16/21` on ([huxley-density.md](huxley-density.md)).
+- Through Huxley's estimate, on the steps of the density curve from `131/168` on ([huxley-density.md](huxley-density.md)).
 - Directly, on the top piece `[5/6, 11/12]` of the Type II estimate. There `SieveHMBins` and `SieveTypeIIHM` bound
   each bin of characters at one height by `SieveTypeIIHM.sum_bin_hm`, with the kernel bound above. The window of the
   library's current exponent, `[41479/100000, 47555/100000]·L` at `L = 89/40`, is the window of this branch

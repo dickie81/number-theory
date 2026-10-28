@@ -13,8 +13,8 @@ unit `a` mod `q`: let `rt` run over the `j`-tuples of primes up to `⌊2q^L⌋` 
 prime to `q`.
 
 It is built with one tree at the threshold `X'` for every `r ≤ X'`. The conditions on `a₀` and `b₀` say that the
-stops fall in the lower window (`a₀ + b₀ < (1 − w₁)L`, `(1 − w₂)L < b₀`) and that the
-leaves' remainder is small (`b₀ < L − 1`).
+stops' cofactors fall in the lower window (`a₀ + b₀ < (1 − w₁)L`, `(1 − w₂)L < b₀`: a stop lies in `(X', X'z₀)`) and
+that the leaves' remainder is small (`b₀ < L − 1`).
 
 The proof:
 
