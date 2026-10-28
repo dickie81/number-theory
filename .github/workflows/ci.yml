@@ -58,7 +58,8 @@ jobs:
       - name: The certificate regenerates
         run: python3 tools/linnik/check_certificate.py
 
-  # Every paper, papers/<name>/main.tex, so a new paper needs no change here.
+  # Every paper, papers/<name>/main.tex, so a new paper needs no change here; then every supplement,
+  # papers/<name>/supplement.tex, which reads its paper's cross-references from main.aux.
   papers:
     name: The papers build
     runs-on: ubuntu-latest
@@ -68,10 +69,16 @@ jobs:
         with:
           root_file: papers/*/main.tex
           work_in_root_file_dir: true
+      - uses: xu-cheng/latex-action@v4
+        with:
+          root_file: papers/*/supplement.tex
+          work_in_root_file_dir: true
       - uses: actions/upload-artifact@v4
         with:
           name: papers
-          path: papers/*/main.pdf
+          path: |
+            papers/*/main.pdf
+            papers/*/supplement.pdf
           if-no-files-found: error
           retention-days: 14
 

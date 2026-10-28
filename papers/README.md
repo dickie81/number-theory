@@ -1,6 +1,7 @@
 # Papers
 
-Each paper has a directory here with its LaTeX source, `main.tex`, and a README.
+Each paper has a directory here with its LaTeX source, `main.tex`, and a README, and may have a supplement,
+`supplement.tex`, which refers to the paper's numbering through its `main.aux`.
 
 - **Every numbered result is a Lean theorem.** Each paper has a table that names the Lean theorem behind each of its numbered results. Historical remarks, comparisons with other methods and heuristics in a paper are not Lean theorems, and the paper says so.
   `lib/check/Check.lean` prints the axioms of those theorems, and `scripts/check_axioms.py` checks that they are
@@ -18,11 +19,13 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README.
 
 ## Building
 
-In a paper's directory, `latexmk -pdf main.tex`. On every pull request and push to `main`, CI compiles every
-`papers/<name>/main.tex` and keeps the PDFs as an artifact for 14 days (`.github/workflows/ci.yml`).
+In a paper's directory, `latexmk -pdf main.tex`, and then, for a supplement, `latexmk -pdf supplement.tex`. On every
+pull request and push to `main`, CI compiles every `papers/<name>/main.tex` and then every
+`papers/<name>/supplement.tex`, and keeps the PDFs as an artifact for 14 days (`.github/workflows/ci.yml`).
 
-On every push to `main` that changes `papers/`, `.github/workflows/pages.yml` compiles every `papers/<name>/main.tex`
-and publishes the PDFs to <https://dickie81.github.io/number-theory/>, each as `<name>.pdf`, with an index page.
+On every push to `main` that changes `papers/`, `.github/workflows/pages.yml` compiles the papers and their
+supplements in the same way and publishes the PDFs to <https://dickie81.github.io/number-theory/>, each paper as
+`<name>.pdf` and its supplement as `<name>-supplement.pdf`, with an index page.
 
 ## Adding a paper
 

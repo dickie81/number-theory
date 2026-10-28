@@ -94,7 +94,7 @@ def sub2(i, j):
 def inside_any3(i, j, k): return surely([(E[i], H), (E[j], H), (E[k], H)])
 
 def cell_row(i):
-    """all candidate cells of the row i: {j: (cost, cost_nokept, t4, t5, t6, ts, t3)}"""
+    """all candidate cells of the row i: {j: (cost, cost_nokept, t4, t5, t6, ts, t3, dec)}"""
     res = {}
     ei = E[i]
     for j in range(n):
@@ -160,7 +160,7 @@ def cell_row(i):
         else:
             s, ts = sub2(i, j)
             c = tsub(b2, s); c1 = b2
-        res[j] = (c, c1, t4, t5, t6, ts, t3)
+        res[j] = (c, c1, t4, t5, t6, ts, t3, dec)
     return i, res
 
 if __name__ == '__main__':
@@ -169,7 +169,7 @@ if __name__ == '__main__':
         rows = dict(p.imap_unordered(cell_row, range(n), chunksize=1))
     cells = {}; total = total2 = t3 = 0
     for i in range(n):
-        for j, (c, c1, t4, t5, t6, ts, c3) in sorted(rows[i].items()):
+        for j, (c, c1, t4, t5, t6, ts, c3, _) in sorted(rows[i].items()):
             total += c1; total2 += c; t3 += c3
             cells[f'{i},{j}'] = (c, t4, t5, t6, ts)
     print(f'grid [{W1}, {W2}]/1e5 n={n} nC={nC}: U1={U1} U2={U2} H={H} HC={HC}; total/K {total / K:.5f} ({total}); '
