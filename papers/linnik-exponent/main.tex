@@ -1647,6 +1647,28 @@ $\sum_{\chi \bmod q} N(\sigma, T, \chi) \ll (qT)^{2 - 2\sigma + \varepsilon}$ fo
 would allow, changes none of the figures for $g_7$, for the change below $4/7$ alone, for the cap at $30/13$ or for
 this last curve. Nothing in the paper or the library depends on these computations.
 
+Two further computations, on which nothing depends either, measure what the decomposition could still recover with the
+same inputs. The script \file{tools/linnik/dropped_mass.py} replays the certificate on the window that
+\file{tools/linnik/density_payoff.py} computes for $g_7$ at $L$, and estimates the true mass of the dropped terms by
+sampling, in units of $x/\log x$, with Buchstab's $\omega$ in place of $\omega^*$ and each rough cofactor factored into
+primes drawn from their asymptotic distribution. If no product of some of an integer's prime factors has its exponent in
+$\mathcal U$, the integer lies in no Type~II sum over the window, so a certificate that drops these terms loses it,
+whatever parts of them it recovers by such sums. At $89/40$ the dropped terms have true mass $1.084$, which the
+certificate bounds by $1.11742$: $0.123$ in the kept parts, $0.075$ with a product of prime factors in $\mathcal U$ that
+the certificate does not recover, and $0.886$ with none. The last part, a floor for the loss, is $0.998$ at $L = 2.22$
+and $1.132$ at $L = 2.215$, with sampling errors of about $0.002$. Since it counts true masses, neither more recovery by
+Type~II sums over the window nor a sharper bound than $\omega^*$ takes the method below about $2.22$ while these terms
+are dropped. Of the $0.886$, $0.284$ lies in terms of depth two with $p_1$ below the window and
+$p_1 p_2 \ge x^{1 - U_1/D}$, so that every prime factor of their integers is below the window; $0.402$ in terms of depth
+two with $p_1$ below the window and $p_1 p_2 < x^{1 - U_1/D}$; $0.192$ in terms of depth two with $p_1$ between the
+window and $x^{1/2}$ and $p_1 p_2 \ge x^{1 - U_1/D}$; and $0.008$ in terms of depths four and six. Every candidate
+cell that the certificate drops at $89/40$ is one that the sharp rule does not allow to be decomposed. For the third
+part, \file{tools/linnik/role_reversal.py} measures two role reversals. Counting $S(\mathcal A_{p_1}, p_1)$ by its
+other prime $n/p_1$ loses $0.272$ in place of $0.192$, and more than the certificate at each of the $200$ values of
+$\alpha_1$ sampled. Counting a dropped term itself by $n/p_1$, with $p_1$ sifted, gives terms of sign $-$, which must
+all be evaluated; even with each value of $n/p_1$ taken separately, that is possible only on integers of total mass
+$0.011$.
+
 \section*{Acknowledgements}
 
 This work was carried out with the assistance of an AI system, Claude, developed by Anthropic. It was used to develop
