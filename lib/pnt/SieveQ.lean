@@ -26,8 +26,8 @@ one of those estimates (`lf_j0` … `lf_e6`): its family has at most `32` atoms 
 `W₁ = ⌊x^{1−u₁}⌋` (`P1_ok`, `P2_ok`, `W1_div`, `W0_div`).
 
 The route's numbers, the certificate's grid parameters and the Type II estimate are hypotheses (`hII`); the case
-of the library's theorem is `Linnik22250R.route22250D` and `SieveGrid22250R.grid22250R` (`Linnik22250R.fits22250R`), with
-`Linnik22250R.typeII22250d` for `hII`.
+of the library's theorem is `Linnik22240R.route22240D` and `SieveGrid22240R.grid22240R` (`Linnik22240R.fits22240R`), with
+`Linnik22240R.typeII22240d` for `hII`.
 
 The file imports `SieveLeaves.lean`.
 -/

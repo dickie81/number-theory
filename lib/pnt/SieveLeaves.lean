@@ -23,8 +23,8 @@ These connect the families (`SieveDecomp`) with the Type II bounds and Propositi
 family with the comparisons of its atoms.
 
 The route's numbers and the certificate's grid parameters are parameters and the Type II estimate is a hypothesis
-(`hII`); the case of the library's theorem, `Linnik22250R.route22250D` and `SieveGrid22250R.grid22250R`, takes
-`Linnik22250R.typeII22250d` for `hII`.
+(`hII`); the case of the library's theorem, `Linnik22240R.route22240D` and `SieveGrid22240R.grid22240R`, takes
+`Linnik22240R.typeII22240d` for `hII`.
 
 The file imports `SieveBuch.lean`.
 -/

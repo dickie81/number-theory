@@ -20,7 +20,7 @@ The Linnik proof uses two kinds of instance:
 
 - `LinnikStairs7.charDensity_hx7_5` to `charDensity_hx7_19`, the last fifteen of twenty equal steps `[σ₁, σ₂]` of
   `[16/21, 5/6]` (`LinnikStairs7` has `charDensity_hx7_0` … `charDensity_hx7_19`; the first five are replaced in the
-  proof of `Linnik22250R.linnik_22250r` by the steps of `LinnikCGLSteps`, see
+  proof of `Linnik22240R.linnik_22240r` by the steps of `LinnikCGLSteps`, see
   [chen-gupta-li-density.md](chen-gupta-li-density.md)). Each has the exponent `3/(3σ₁ − 1) + 1/2000`: Huxley's
   exponent at the step's left end, plus `1/2000`. The first step is `[16/21, 643/840]` with the exponent `14003/6000`,
   which is `7/3 + 1/2000`.
@@ -29,7 +29,7 @@ The Linnik proof uses two kinds of instance:
   the zero-free half-plane ([openai-half-plane.md](openai-half-plane.md)): no non-principal character is counted
   there.
 
-These theorems are in the proof of `Linnik22250R.linnik_22250r`, whose axioms are `propext`, `Classical.choice` and
+These theorems are in the proof of `Linnik22240R.linnik_22240r`, whose axioms are `propext`, `Classical.choice` and
 `Quot.sound` (`lib/check/Check.lean`), so they depend on those only. `charDensity_gen` and the twenty steps do not use
 the half-plane: `Eis.LFunction_ne_zero_of_re_gt` is not among the declarations their proofs depend on.
 

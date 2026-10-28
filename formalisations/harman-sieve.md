@@ -43,10 +43,11 @@ Its main tools:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveRough.psi_le`, rough numbers from above. For every `U` and `ε > 0`, eventually in `z`,
   `Ψ(y, z) ≤ (ω*(u) + ε)y/log z` for `u = log 2y/log z ≤ U`. Here `Ψ(y, z)` counts the `m ∈ (y, 2y]` with no prime
-  factor below `z`, and `ω*` is a crude upper bound for Buchstab's function `ω`: `0` below `1`, `1/u` on `[1, 2)`,
-  and `0.5672` from `2` on (`SieveCert.omegaC`).
+  factor below `z`, and `ω*` is the bound of `SieveCert.omegaC`: `0` below `1`, Buchstab's function `ω` itself on
+  `[1, 3]` (`1/u` on `[1, 2)`, `(1 + log(u − 1))/u` on `[2, 3]`), and `0.565073` above `3`, the least constant, to six
+  decimals, for which the induction of the proof closes with `0.5671433 ≥ max ω` on `[2, 3]` (`SieveOmegaB`).
 
-These theorems are in the proof of `Linnik22250R.linnik_22250r`, whose axioms are `propext`, `Classical.choice` and
+These theorems are in the proof of `Linnik22240R.linnik_22240r`, whose axioms are `propext`, `Classical.choice` and
 `Quot.sound` (`lib/check/Check.lean`), so they depend on those only.
 
 ## Source

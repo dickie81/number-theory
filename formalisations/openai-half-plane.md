@@ -93,5 +93,5 @@ Louvel's quadratic large sieve. The classical tools, among them cubic and sextic
 The Type II estimate of the sieve route (`SieveRoute.TypeIIAt`) holds over all non-principal characters mod `q`. It
 needs every character's prime sums to be small, not only most of them. Its proof sorts the characters into bins by the
 real parts of their zeros. At the top bin, `SieveTypeII.bin_rect` uses the half-plane: no zero of `L(·, χ)` lies in
-`Re s > 11/12`. The paper's exponent (`89/40`, in the library's `Linnik22250R`) therefore depends on this result. The paper states the dependence, and
+`Re s > 11/12`. The paper's exponent (`278/125`, in the library's `Linnik22240R`) therefore depends on this result. The paper states the dependence, and
 compares what its method gives with what the half-plane and the density estimate give without it.

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """density_payoff.py [VARIANT ...]: what a lower density curve would buy the route, by replaying its certificate.
 
-Each variant is a hypothetical density curve made from the committed curve `g7d` (`SieveTypeIIU22250D.lean`, read by
+Each variant is a hypothetical density curve made from the committed curve `g7d` (`SieveTypeIIU22240D.lean`, read by
 `route_limits.parse`). For each, the script computes an admissible window as `route_limits.py run` does (the sampled
 scan, then the exact corners, moving an end inward by `10⁻⁵` while a corner fails, here with no limit on the number of
 moves), replays the library's certificate on it with `mirror2.py` (`total2`, depths up to 6, `n = 340`, in exact
-integers), and reports the lowest exponent `L` it passes: it starts at the library's `89/40`, which must pass, lowers
+integers), and reports the lowest exponent `L` it passes: it starts at the library's `278/125`, which must pass, lowers
 `L` by `1/1000` while `total2 < 0.999K`, and then tests once the value `1/2000` below the last one passed. These are
 computations, not theorems, and nothing in the library depends on them: the variants are curves no Lean theorem gives.
 
@@ -39,7 +39,7 @@ import route_limits as rl  # noqa: E402
 
 N = 340
 OK = 0.999
-START = Fr(89, 40)
+START = Fr(278, 125)
 STEP, FINE = Fr(1, 1000), Fr(1, 2000)
 SLACK = Fr(1, 100000)
 DEFAULT = ['today', 'ingham', 'rawcap:30/13', 'cap:2.33', 'cap:2.325', 'cap:2.32', 'cap:2.315', 'cap:30/13', 'gm',
@@ -164,7 +164,7 @@ def main():
     found = [(n, least(n)) for n in names]
     print('\nlowest L passed (total2 < 0.999K at n = 340; steps of 1/1000, then one of 1/2000):')
     for n, L in found:
-        print(f'  {n:16s} {"fails at 89/40" if L is None else f"{L} = {float(L):.4f}"}')
+        print(f'  {n:16s} {"fails at 278/125" if L is None else f"{L} = {float(L):.4f}"}')
 
 
 if __name__ == '__main__':

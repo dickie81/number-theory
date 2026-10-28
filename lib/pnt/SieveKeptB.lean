@@ -17,7 +17,7 @@ is at least `φ(q)⁻¹(keepK/K − δ)X` for large `q`, for every `δ > 0` (`Kk
   `ω(q)` the prime factors of `q`; each such `q₂` exceeds `q₁`, since `2(e_k + H) + e_i + e_j + 2H ≤ DEN`.
 * `Kk_gB_ge`: the bound. The main term is the prime number theorem in dyadic intervals (`SieveMain.primes_dyadic_ge`),
   `π(y) ≥ (1 − ε)y/log y` with `log y ≤ (γ_hi/DEN)log x`, `γ_hi = DEN − e_i − e_j − e_k`, times the three cells'
-  `Σ 1/p`, each at least `H/(e + H) − δ′` (`SieveRoughLo.evGe_cell_inv`); the triples with a prime dividing `q` or with
+  `Σ 1/p`, each at least `2H/(2e + H) − δ′` (`SieveRoughLo.evGe_cell_tr`); the triples with a prime dividing `q` or with
   `q₁ = p₁` cost at most `x(1 + 3ω(q))/z₀`, and the other exclusions `(2 + ω(q))` per triple, both `o(X)`.
 
 The file imports `SieveMain.lean`, `SieveKeptLeaf.lean` and `SieveRoughLo.lean`.
@@ -645,17 +645,18 @@ theorem Kk_gB_ge {i j k : ℕ} (hr : reg2 i j = true) (hkeep : keep i j k = true
     linarith
   have hγlo : 0 < γ - 3 * H := by rw [hγ]; linarith [hepos k]
   have hγ0 : 0 < γ := by linarith
-  -- the cells' `h/(a + h)` and the share `κ ≥ keepK/K`
-  have hh : ∀ c : ℕ, 0 ≤ (H : ℝ) / ((SieveCert.e c : ℝ) + H) ∧ (H : ℝ) / ((SieveCert.e c : ℝ) + H) ≤ 1 := fun c =>
-    ⟨by have := hepos c; positivity, by rw [div_le_one (by linarith [hepos c])]; linarith [hepos c]⟩
-  obtain ⟨κ, hκdef⟩ : ∃ κ : ℝ, κ = (DEN : ℝ) / γ * ((H : ℝ) / ((SieveCert.e i : ℝ) + H) *
-      ((H : ℝ) / ((SieveCert.e j : ℝ) + H)) * ((H : ℝ) / ((SieveCert.e k : ℝ) + H))) := ⟨_, rfl⟩
+  -- the cells' `2h/(2a + h)` and the share `κ ≥ keepK/K`
+  have hh : ∀ c : ℕ, 0 ≤ 2 * (H : ℝ) / (2 * (SieveCert.e c : ℝ) + H) ∧
+      2 * (H : ℝ) / (2 * (SieveCert.e c : ℝ) + H) ≤ 1 := fun c =>
+    ⟨by have := hepos c; positivity, by rw [div_le_one (by linarith [hepos c])]; linarith [hepos c, hVe c]⟩
+  obtain ⟨κ, hκdef⟩ : ∃ κ : ℝ, κ = (DEN : ℝ) / γ * (2 * (H : ℝ) / (2 * (SieveCert.e i : ℝ) + H) *
+      (2 * (H : ℝ) / (2 * (SieveCert.e j : ℝ) + H)) * (2 * (H : ℝ) / (2 * (SieveCert.e k : ℝ) + H))) := ⟨_, rfl⟩
   have hκ0 : 0 ≤ κ := by rw [hκdef]; have := (hh i).1; have := (hh j).1; have := (hh k).1; positivity
   have hκ : (keepK i j k : ℝ) / K ≤ κ := by
     refine (SieveCert.keepK_le hkeep).trans (le_of_eq ?_)
     rw [hκdef, hγ]
     have := hepos i; have := hepos j; have := hepos k
-    field_simp
+    field_simp <;> norm_num
   -- the margins `ε` and `d`
   obtain ⟨ε, hεdef⟩ : ∃ ε : ℝ, ε = min (1 / 2) (δ / (4 * (κ + 1))) := ⟨_, rfl⟩
   have hε0 : 0 < ε := by rw [hεdef]; exact lt_min (by norm_num) (by positivity)
@@ -671,9 +672,9 @@ theorem Kk_gB_ge {i j k : ℕ} (hr : reg2 i j = true) (hkeep : keep i j k = true
   have hd0 : 0 < d := by rw [hd]; positivity
   have hdD : 3 * d * ((DEN : ℝ) / γ) = δ / 4 := by rw [hd]; field_simp; ring
   -- the eventual facts
-  have eGi := evGe_cell_inv i d hd0
-  have eGj := evGe_cell_inv j d hd0
-  have eGk := evGe_cell_inv k d hd0
+  have eGi := evGe_cell_tr i d hd0
+  have eGj := evGe_cell_tr j d hd0
+  have eGk := evGe_cell_tr k d hd0
   have eLi := evLe_cell_inv i (1 / 2) (by norm_num)
   have eLj := evLe_cell_inv j (1 / 2) (by norm_num)
   have eLk := evLe_cell_inv k (1 / 2) (by norm_num)
@@ -776,8 +777,8 @@ theorem Kk_gB_ge {i j k : ℕ} (hr : reg2 i j = true) (hkeep : keep i j k = true
     rw [hX]
     linarith only [hE, e1, e2]
   -- the product of the cells' sums
-  have hprodS : (H : ℝ) / ((SieveCert.e i : ℝ) + H) * ((H : ℝ) / ((SieveCert.e j : ℝ) + H)) *
-      ((H : ℝ) / ((SieveCert.e k : ℝ) + H)) - 3 * d ≤ (∑ p ∈ cellP (xq q) i, 1 / (p : ℝ)) *
+  have hprodS : 2 * (H : ℝ) / (2 * (SieveCert.e i : ℝ) + H) * (2 * (H : ℝ) / (2 * (SieveCert.e j : ℝ) + H)) *
+      (2 * (H : ℝ) / (2 * (SieveCert.e k : ℝ) + H)) - 3 * d ≤ (∑ p ∈ cellP (xq q) i, 1 / (p : ℝ)) *
         (∑ p ∈ cellP (xq q) j, 1 / (p : ℝ)) * ∑ p ∈ cellP (xq q) k, 1 / (p : ℝ) := by
     obtain ⟨h0i, h1i⟩ := hh i
     obtain ⟨h0j, h1j⟩ := hh j
@@ -785,10 +786,10 @@ theorem Kk_gB_ge {i j k : ℕ} (hr : reg2 i j = true) (hkeep : keep i j k = true
     exact prod3_ge h0i h1i h0j h1j hd0.le gi gj (hS0 j) hSj1 gk (hS0 k) hSk1
   have hmainK : (κ - δ / 2) * X ≤ (1 - ε) * ((DEN : ℝ) / γ) * X * ((∑ p ∈ cellP (xq q) i, 1 / (p : ℝ)) *
       (∑ p ∈ cellP (xq q) j, 1 / (p : ℝ)) * ∑ p ∈ cellP (xq q) k, 1 / (p : ℝ)) := by
-    have h1 : κ - δ / 2 ≤ (1 - ε) * ((DEN : ℝ) / γ) * ((H : ℝ) / ((SieveCert.e i : ℝ) + H) *
-        ((H : ℝ) / ((SieveCert.e j : ℝ) + H)) * ((H : ℝ) / ((SieveCert.e k : ℝ) + H)) - 3 * d) := by
-      have e1 : (1 - ε) * ((DEN : ℝ) / γ) * ((H : ℝ) / ((SieveCert.e i : ℝ) + H) *
-          ((H : ℝ) / ((SieveCert.e j : ℝ) + H)) * ((H : ℝ) / ((SieveCert.e k : ℝ) + H)) - 3 * d) =
+    have h1 : κ - δ / 2 ≤ (1 - ε) * ((DEN : ℝ) / γ) * (2 * (H : ℝ) / (2 * (SieveCert.e i : ℝ) + H) *
+        (2 * (H : ℝ) / (2 * (SieveCert.e j : ℝ) + H)) * (2 * (H : ℝ) / (2 * (SieveCert.e k : ℝ) + H)) - 3 * d) := by
+      have e1 : (1 - ε) * ((DEN : ℝ) / γ) * (2 * (H : ℝ) / (2 * (SieveCert.e i : ℝ) + H) *
+          (2 * (H : ℝ) / (2 * (SieveCert.e j : ℝ) + H)) * (2 * (H : ℝ) / (2 * (SieveCert.e k : ℝ) + H)) - 3 * d) =
           (1 - ε) * κ - (1 - ε) * (3 * d * ((DEN : ℝ) / γ)) := by rw [hκdef]; ring
       rw [e1, hdD]
       nlinarith only [hεκ, hε0, hε1, hδ, hκ0]

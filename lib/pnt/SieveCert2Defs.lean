@@ -13,8 +13,9 @@ cell's cost.
   (`α₂ < α₁ < 1/2` on the box).
 * `keep`: the cell `k` of `q₁` is kept below `(i, j)`: `e_j + H ≤ e_k` (`q₁ > p₂` on the box),
   `2(e_k + H) + e_i + e_j + 2H ≤ DEN` (`q₁ < q₂` on the box), and the box `(i, j, k)` surely evaluable.
-* `keepK`: the kept share of the cell `k`, `⌊K·H³·DEN/((e_i + H)(e_j + H)(e_k + H)(DEN − e_i − e_j − e_k))⌋`, a lower
-  bound for the `B`-density `dα₁dα₂dβ/(α₁α₂βγ)` over the box in units of `1/K`.
+* `keepK`: the kept share of the cell `k`,
+  `⌊8K·H³·DEN/((2e_i + H)(2e_j + H)(2e_k + H)(DEN − e_i − e_j − e_k))⌋`, a lower bound for the `B`-density
+  `dα₁dα₂dβ/(α₁α₂βγ)` over the box in units of `1/K`: each cell's `Σ 1/p` is at least `log(1 + H/e) ≥ 2H/(2e + H)`.
 * `sub2`: the kept shares below `(i, j)`, for a cell of `reg2`; `cost2`: a candidate cell that is not decomposed costs
   its bound less `sub2`, truncated at `0`; the other cells cost as in `cost`.
 * `total2`, `rows2`, `rowsJ2`: `total`, `rows` and `rowsJ` (of the earlier `SieveCertColsDefs.lean`, removed; see the git history) with `cost2`.
@@ -38,8 +39,9 @@ def keep (i j k : ℕ) : Bool :=
   decide (e j + H ≤ e k) && decide (2 * (e k + H) + e i + e j + 2 * H ≤ DEN) && surelyEval [cell i, cell j, cell k]
 
 /-- The kept share of the cell `k` below `(i, j)`, in units of `1/K`, rounded down:
-`⌊K·H³·DEN/((e_i + H)(e_j + H)(e_k + H)(DEN − e_i − e_j − e_k))⌋`. -/
-def keepK (i j k : ℕ) : ℕ := K * H ^ 3 * DEN / ((e i + H) * (e j + H) * (e k + H) * (DEN - e i - e j - e k))
+`⌊8K·H³·DEN/((2e_i + H)(2e_j + H)(2e_k + H)(DEN − e_i − e_j − e_k))⌋`. -/
+def keepK (i j k : ℕ) : ℕ :=
+  K * 8 * H ^ 3 * DEN / ((2 * e i + H) * (2 * e j + H) * (2 * e k + H) * (DEN - e i - e j - e k))
 
 /-- The kept shares below the cell `(i, j)`, for a cell of `reg2`. -/
 def sub2 (i j : ℕ) : ℕ := if reg2 i j then sumTo n (fun k => if keep i j k then keepK i j k else 0) else 0

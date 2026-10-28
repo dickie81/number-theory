@@ -17,7 +17,8 @@ Plain statements. `SieveRough.lean` bounds sums over primes from above (`abel_le
 * `sum_primesIn_ge`: for `f ≥ 0`, a sum over `primesIn A B` is at least the sum over the primes of `(⌊A⌋, ⌊B⌋]` less
   the term at `⌊B⌋`.
 * `evGe_sum_inv`: for `0 < a ≤ c`, `Σ_{x^a ≤ p < x^c} 1/p ≥ log c − log a − o(1)`.
-* `evGe_cell_inv`: on a grid with `GridOK`, the cell `k`'s `Σ 1/p` is at least `H/(e_k + H)`, up to `o(1)`.
+* `evGe_cell_inv`, `evGe_cell_tr`: on a grid with `GridOK`, the cell `k`'s `Σ 1/p` is at least `H/(e_k + H)`, and at
+  least `2H/(2e_k + H)`, up to `o(1)`: `log(1 + H/e_k)` is at least both (`SieveOmegaB.two_mul_div_le_log`).
 
 The proofs mirror `SieveRough.abel_le` and `sum_inv_le` with the inequalities reversed: `θ(t) ≥ t(1 − ε/log a)` on
 `[a, b]`, and `−g′ ≥ 0`.
@@ -333,7 +334,38 @@ theorem evGe_cell_inv (k : ℕ) :
   filter_upwards [evGe_sum_inv ha hac δ hδ] with x hx
   exact le_trans (by linarith) hx
 
+/-- **The cell's `Σ 1/p`, from below, sharper.** On a grid with `GridOK`, the cell `k`'s `Σ 1/p` is at least
+`2h/(2a + h) = 2H/(2e_k + H)`, up to `o(1)`. -/
+theorem evGe_cell_tr (k : ℕ) :
+    EvGe (fun x => ∑ p ∈ cellP x k, 1 / (p : ℝ))
+      (2 * (SieveCert.H : ℝ) / (2 * (SieveCert.e k : ℝ) + SieveCert.H)) := by
+  have hek : (0 : ℝ) < SieveCert.e k := by exact_mod_cast SieveCert.e_pos k
+  have hH : (0 : ℝ) < SieveCert.H := by exact_mod_cast SieveCert.H_pos
+  have hD := SieveCert.DEN_pos'
+  have ha : (0 : ℝ) < (SieveCert.e k : ℝ) / SieveCert.DEN := div_pos hek hD
+  have hac : (SieveCert.e k : ℝ) / SieveCert.DEN ≤ ((SieveCert.e k : ℝ) + SieveCert.H) / SieveCert.DEN :=
+    div_le_div_of_nonneg_right (by linarith) hD.le
+  have hlog : 2 * (SieveCert.H : ℝ) / (2 * (SieveCert.e k : ℝ) + SieveCert.H) ≤
+      Real.log (((SieveCert.e k : ℝ) + SieveCert.H) / SieveCert.DEN) -
+        Real.log ((SieveCert.e k : ℝ) / SieveCert.DEN) := by
+    rw [← Real.log_div (by positivity) (by positivity)]
+    have heq : ((SieveCert.e k : ℝ) + SieveCert.H) / SieveCert.DEN / ((SieveCert.e k : ℝ) / SieveCert.DEN) =
+        ((SieveCert.e k : ℝ) + SieveCert.H) / SieveCert.e k := by field_simp
+    rw [heq]
+    have h1 : (1 : ℝ) ≤ ((SieveCert.e k : ℝ) + SieveCert.H) / SieveCert.e k := by
+      rw [le_div_iff₀ hek]; linarith
+    have h := SieveOmegaB.two_mul_div_le_log h1
+    have h2 : 2 * (((SieveCert.e k : ℝ) + SieveCert.H) / SieveCert.e k - 1) /
+        (((SieveCert.e k : ℝ) + SieveCert.H) / SieveCert.e k + 1) =
+        2 * (SieveCert.H : ℝ) / (2 * (SieveCert.e k : ℝ) + SieveCert.H) := by
+      field_simp; ring
+    linarith
+  intro δ hδ
+  filter_upwards [evGe_sum_inv ha hac δ hδ] with x hx
+  exact le_trans (by linarith) hx
+
 end SieveRoughLo
 
 #print axioms SieveRoughLo.sum_inv_ge
 #print axioms SieveRoughLo.evGe_cell_inv
+#print axioms SieveRoughLo.evGe_cell_tr

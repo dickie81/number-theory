@@ -1,20 +1,23 @@
 """mirror2.py W1 W2 N [OUT.json]: the deep certificate of SieveCertDefs.lean / SieveCert2Defs.lean on the grid
 U1 = ⌈(W1/10⁵)DEN⌉, U2 = ⌊(W2/10⁵)DEN⌋, n = N (a multiple of 4, with the coarse grid of N/4 cells), in exact integers,
 cell by cell as the Lean definitions read: `cand`, `allowed`, `counted4`, `allowed4`, `inKK5`, `ne5`, `counted6`,
-`bound2`, `bound4`, `bound6`, `refcost5`, `dec4`, `cost4`, `refcost`, `dec`, and the kept parts `reg2`, `keep`, `keepK`,
-`sub2`, `cost2` (natural subtraction truncated at 0). Prints `total` (the certificate without the kept parts) and
+`omF`, `invKw`, `omKw`, `bound2`, `bound4`, `bound6`, `refcost5`, `dec4`, `cost4`, `refcost`, `dec`, and the kept parts
+`reg2`, `keep`, `keepK`, `sub2`, `cost2` (natural subtraction truncated at 0). Prints `total` (the certificate without the kept parts) and
 `total2` (with them), and, with OUT, writes per candidate cell (i, j): cost2 and the kernel work it makes: the counted
 cells of depth 4 evaluated (t4), the depth-5 cells evaluated (t5, in `allowed4` and `refcost5` together), the depth-6
 cells evaluated (t6) and the `surelyEval` tests of `sub2` (ts). Rows are computed in parallel processes."""
 import json, os, sys, time
 from multiprocessing import Pool
 DEN, K = 2 ** 40, 2 ** 60
-TOPK = None  # set below: ⌈0.5672 K⌉ as in SieveCertDefs.lean
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import route_limits as rl
-TOPK = rl.TOPK
 tsub, cdiv = rl.tsub, rl.cdiv
+TOPK = (K * 565073 + 999999) // 1000000       # `topK`: ⌈0.565073 K⌉, ω* above 3
+W1K = (K * 5671433 + 9999999) // 10000000     # `w1K`: ⌈0.5671433 K⌉, the maximum of Buchstab's ω on [2, 3]
+LD = 10 ** 9                                  # `LD`, and `lnT`: LD·log((16 + k)/16), rounded up, for k ≤ 16
+LNT = [0, 60624623, 117783037, 171850258, 223143553, 271933717, 318453733, 362905495, 405465110, 446287104,
+       485507817, 523248145, 559615789, 594707109, 628608661, 661398484, 693147182]
 W1, W2, N = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
 OUT = sys.argv[4] if len(sys.argv) > 4 else None
 assert N % 4 == 0
@@ -23,7 +26,7 @@ nC = n // 4
 U1, U2 = (W1 * DEN + 99999) // 100000, W2 * DEN // 100000
 V = U2 - U1
 H = (tsub(DEN // 2, V) + n - 1) // n
-HC = (tsub(DEN // 2, V) + nC - 1) // nC            # the coarse grid `Gc` of `nC` cells
+HC = 4 * ((tsub(DEN // 2, V) + 4 * nC - 1) // (4 * nC))   # the coarse grid `Gc`: nC cells of four, HC = 4H
 lim = tsub(DEN, U1)
 E = [V + H * k for k in range(n)]
 EC = [V + HC * b for b in range(nC)]
@@ -40,21 +43,38 @@ def surely(boxes): return any(inside(a, b) for a, b in sums(boxes))
 def extend(S, lo, w):
     """the subset sums with one more box, when those of S are known not to be inside"""
     return any(inside(a + lo, b + lo + w) for a, b in S)
+def omF(P, Q):
+    """`omF`: K·(1 + log(v − 1))/v at v = P/Q ∈ [2, 3], rounded up, with log(v − 1) ≤ lnT k/LD + (y − 1/y)/2 for
+    k = ⌊16(v − 2)⌋ and y = (v − 1)·16/(16 + k) = A/B."""
+    k = 16 * (P - 2 * Q) // Q
+    A, B = 16 * (P - Q), (16 + k) * Q
+    return cdiv(K * Q * (2 * A * B * (LD + LNT[k]) + (A * A - B * B) * LD), 2 * A * B * LD * P)
 def invKw(s, t, W, w):
     return K if DEN <= s + 2 * t + W + w else cdiv(K * (t + w), DEN - s - t - W)
 def omKw(s, t, W, w):
-    if DEN < s + 2 * t: return 0
-    if s + 3 * t + W + 2 * w <= DEN: return TOPK
-    if DEN < s + 3 * t: return invKw(s, t, W, w)
-    return max(invKw(s, t, W, w), TOPK)
-def bound2(a, b): return cdiv(H * H * DEN * omKw(a, b, 2 * H, H), a * b * b)
-def bound4(a, b, c, d): return cdiv(H ** 4 * DEN * omKw(a + b + c, d, 4 * H, H), a * b * c * d * d)
+    """`omKw`: K·ω* on the arguments [lo, hi) of a box, lo = (DEN − s − t − W)/(t + w), hi = (DEN + 1 − s − t)/t."""
+    if DEN < s + 2 * t: return 0                                  # hi ≤ 1
+    if s + 4 * t + W + 3 * w <= DEN: return TOPK                  # lo ≥ 3
+    if DEN < s + 3 * t: return invKw(s, t, W, w)                  # hi ≤ 2
+    p1 = 0 if s + 3 * t + W + 2 * w <= DEN else invKw(s, t, W, w) # lo < 2: 1/max(lo, 1)
+    if 100 * (DEN + 1 - s - t) <= 276 * t: p2 = omF(DEN + 1 - s - t, t)                 # hi ≤ 2.76: ω increases
+    elif 277 * (t + w) <= 100 * tsub(tsub(tsub(DEN, s), t), W): p2 = omF(DEN - s - t - W, t + w)  # lo ≥ 2.77
+    else: p2 = W1K
+    p3 = TOPK if s + 4 * t <= DEN else 0                          # hi > 3
+    return max(p1, p2, p3)
+def bound2(a, b):
+    return cdiv(H * H * (2 * a + H) * DEN * omKw(a, b, 2 * H, H), 2 * a * (a + H) * (b * (b + H)))
+def bound4(a, b, c, d):
+    return cdiv(H ** 4 * ((2 * a + H) * (2 * b + H) * (2 * c + H)) * DEN * omKw(a + b + c, d, 4 * H, H),
+                8 * (a * (a + H)) * (b * (b + H)) * (c * (c + H)) * (d * (d + H)))
 def bound6(a, b, c, d, f, g):
-    return cdiv(H ** 4 * HC ** 2 * DEN * omKw(a + b + c + d + f, g, 4 * H + 2 * HC, HC), a * b * c * d * f * g * g)
+    return cdiv(H ** 4 * HC ** 2 * ((2 * a + H) * (2 * b + H) * (2 * c + H) * (2 * d + H) * (2 * f + HC)) * DEN *
+                omKw(a + b + c + d + f, g, 4 * H + 2 * HC, HC),
+                32 * (a * (a + H)) * (b * (b + H)) * (c * (c + H)) * (d * (d + H)) * (f * (f + HC)) * (g * (g + HC)))
 def reg2(i, j): return E[j] + H <= E[i] and 2 * (E[i] + H) <= DEN
 def keepK(i, j, k):
-    d = (E[i] + H) * (E[j] + H) * (E[k] + H) * tsub(tsub(tsub(DEN, E[i]), E[j]), E[k])
-    return K * H ** 3 * DEN // d if d else 0   # division by zero is zero in Lean
+    d = (2 * E[i] + H) * (2 * E[j] + H) * (2 * E[k] + H) * tsub(tsub(tsub(DEN, E[i]), E[j]), E[k])
+    return K * 8 * H ** 3 * DEN // d if d else 0   # division by zero is zero in Lean
 def sub2(i, j):
     if not reg2(i, j): return 0, 0
     tot = tests = 0

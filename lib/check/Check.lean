@@ -1,34 +1,34 @@
 /- The axioms of the papers' theorems, the repository's default build target. Every line this file prints must be
 `[propext, Classical.choice, Quot.sound]` or a subset of them (`scripts/check_axioms.py`). -/
-import Linnik22250R
+import Linnik22240R
 import LinnikG7
 
 /- The Linnik paper: its theorem with the density curve `g7d` (Chen–Gupta–Li's Proposition 3.1 on `[5/7, 131/168]`,
-`LinnikCGLSteps`) at `L = 89/40`, with no hypothesis, the sieve route, its certificate and the Type II estimate on its
+`LinnikCGLSteps`) at `L = 278/125`, with no hypothesis, the sieve route, its certificate and the Type II estimate on its
 window. Earlier theorems, at weaker exponents and with their own certificates, are no longer in the tree: see the git
 history. -/
-#print axioms Linnik22250R.linnik_22250r
+#print axioms Linnik22240R.linnik_22240r
 #print axioms SieveMain2.linnik_route_lt2
 #print axioms SieveMain2.linnik_large2
-#print axioms SieveCert.total2_lt_22250R
-#print axioms SieveCert.gridOK22250R
-#print axioms SieveCert.gridOKC22250R
-#print axioms Linnik22250R.routeOK22250D
-#print axioms Linnik22250R.fits22250R
-#print axioms SieveTypeIIU22250D.typeII_22250d
+#print axioms SieveCert.total2_lt_22240R
+#print axioms SieveCert.gridOK22240R
+#print axioms SieveCert.gridOKC22240R
+#print axioms Linnik22240R.routeOK22240D
+#print axioms Linnik22240R.fits22240R
+#print axioms SieveTypeIIU22240D.typeII_22240d
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_inT
 #print axioms LinnikCGLHB101.prop31
 #print axioms LinnikCGLSteps.charDensity_s109
-#print axioms SieveTypeIIU22250D.counts_7d
-#print axioms SieveTypeIIU22250D.g7d_le_one
-#print axioms SieveTypeIIU22250D.g7d_half
-#print axioms SieveTypeIIU22250D.window_22250d
+#print axioms SieveTypeIIU22240D.counts_7d
+#print axioms SieveTypeIIU22240D.g7d_le_one
+#print axioms SieveTypeIIU22240D.g7d_half
+#print axioms SieveTypeIIU22240D.window_22240d
 
 /- Two results of the literature that it uses (`formalisations/`): the zero-free half-plane `Re s > 11/12` for
 every Dirichlet L-function, from OpenAI's release (`formalisations/openai-half-plane.md`), printed here, and
 Chen–Gupta–Li's density estimate, whose steps and Proposition 3.1 are printed above (`cglDensity`, the same estimate on
-`[5/7, 16/21]`, is not used by `Linnik22250R` and is printed by `CheckAll`). -/
+`[5/7, 16/21]`, is not used by `Linnik22240R` and is printed by `CheckAll`). -/
 #print axioms Eis.LFunction_ne_zero_of_re_gt
 
 /- The other theorems of the Linnik paper's claims table (`papers/linnik-exponent/main.tex`, Section 7): its own steps
@@ -51,6 +51,10 @@ by section, then the results of the literature it uses, each with a note in `for
 #print axioms SieveChain.chainTL_bound
 #print axioms SieveRoughTuple.sum_rough_eq
 #print axioms SieveRough.psi_le
+#print axioms SieveRough.super_M
+#print axioms SieveOmegaB.omB_le_w1
+#print axioms SieveOmegaB.omB_mono
+#print axioms SieveOmegaB.omB_anti
 #print axioms SieveProp6.prop6
 #print axioms SieveTree.tree_pt
 #print axioms SieveBrun.fundamental
@@ -65,6 +69,15 @@ by section, then the results of the literature it uses, each with a note in `for
 #print axioms SieveBuch.Par.I_S6c_vanish_lt
 #print axioms SieveBuch.Par.I_S6c_vanish_reg
 #print axioms SieveQ.leaves_ev
+#print axioms SieveCert.omegaC_le_w
+#print axioms SieveOmegaB.omF_ge
+#print axioms SieveOmegaB.lnT_ge
+#print axioms SieveRough.evLe_cell_tr
+#print axioms SieveRough.evLe_cell_ex
+#print axioms SieveOmegaB.log_le_half_sub_inv
+#print axioms SieveCert.bound2_ge
+#print axioms SieveCert.bound4_ge
+#print axioms SieveCert.bound6_ge
 #print axioms SieveDrop.drop2_le
 #print axioms SieveDrop.drop4_le
 #print axioms SieveDrop.drop6_le
@@ -75,6 +88,8 @@ by section, then the results of the literature it uses, each with a note in `for
 #print axioms SieveBuch.Par.Kk_eq
 #print axioms SieveKeptLeaf.lf_Kk
 #print axioms SieveKeptB.Kk_gB_ge
+#print axioms SieveRoughLo.evGe_cell_tr
+#print axioms SieveOmegaB.two_mul_div_le_log
 #print axioms SieveBuch.Par.decompk
 #print axioms SieveKeptLeaf.leaves_ev2
 #print axioms SieveDrop2.drop_ev2

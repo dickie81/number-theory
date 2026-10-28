@@ -41,7 +41,7 @@ The proof of `decomp`: `lvl6`, `lvl5`, …, `lvl1`, one level at a time. A dropp
 `B`-version; a term with sign `−` is bounded above, so it is evaluated or decomposed, never dropped.
 
 The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` and `GridOKC` where the Lean takes them);
-`SieveGrid22250R.grid22250R` is the one the library uses.
+`SieveGrid22240R.grid22240R` is the one the library uses.
 
 
 The file imports `SieveDecomp.lean`.
