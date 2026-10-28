@@ -109,7 +109,13 @@ do not derive a Linnik exponent from their estimate. Section~\ref{sec:comparison
 
 \subsection*{Below the density exponent}
 
-This paper goes below $7/3$ with a sieve. Harman's sieve \cite{harman83, harman} bounds from below the number of
+This paper goes below $7/3$ with a sieve. Harman's sieve has been used on Linnik's problem before, for special
+moduli. R.~Li \cite{li-harman} adapts the calculation behind his theorem on primes in short intervals to primes in
+progressions to moduli $q$ whose prime factors are below $q^C$ and for which the $L$-functions of the primitive
+characters to the divisors of $q$ have no zero with $\operatorname{Re} s > 1 - (\log q)^{-3/4}$ and
+$|\operatorname{Im} s| \le \exp(\varepsilon (\log q)^{3/4})$ (his Theorem~9), and deduces Linnik's theorem with the
+exponent $1/0.4752 < 2.1044$ when $q$ is a power of a fixed prime (his Theorem~11). Theorem~\ref{thm:main} holds for
+every modulus. Harman's sieve \cite{harman83, harman} bounds from below the number of
 primes in the set $\mathcal A$ of integers $n \in (x, 2x]$ with $n \equiv a \pmod q$ by comparing it with the set
 $\mathcal B$ of the integers $n \in (x, 2x]$ prime to $q$, weighted by $1/\varphi(q)$. It needs two kinds of
 information. Type~I information is the comparison of $\mathcal A$ with $\mathcal B$ on the multiples of each small
@@ -944,7 +950,9 @@ library the repository's continuous integration rebuilds it and runs the axiom c
 This section claims nothing new. It places Theorem~\ref{thm:main} against what the same inputs give by the
 classical argument, which has no sieve. It does not compare Theorem~\ref{thm:main} with the unconditional results of
 Heath-Brown, Xylouris and others, whose exponents ($5.5$, $5$ and below) are not comparable with it: they use
-neither a zero-free half-plane nor a zero-density estimate beyond the published ones. The exponent
+neither a zero-free half-plane nor a zero-density estimate beyond the published ones. Nor does it compare it with
+results for special moduli: for the powers of a fixed prime, R.~Li's Harman-sieve argument gives the exponent
+$1/0.4752 < 2.1044$ \cite[Theorem~11]{li-harman}. The exponent
 $89/40$ is a hypothesis-free Lean theorem whose proof uses the two unrefereed inputs, which the library re-proves, and
 independent checking of the half-plane result is partial (Section~\ref{sec:inputs}).
 
@@ -1034,6 +1042,8 @@ kernel and the repository's continuous integration, and not by the assistants.
 % December 1940) and Huxley (Invent. Math. 15, 1972), against scans of the originals on 25 October 2026. Xylouris (Acta Arith. 150, 65--91; L = 5.18 read in the journal's PDF)
 % and the Lamzouri--Li--Soundararajan corrigendum (Math. Comp. 86, 2551--2554, from the AMS contents page) were checked the
 % same day. Still open: Buchstab's volume, issue and pages, seen in secondary sources only (the original on Math-Net.Ru was not reachable).
+% R. Li (arXiv:2308.04458v8, 16 October 2025) was read on 28 October 2026: Theorems 9 and 11 on p. 36, and the
+% paragraph before Theorem 8, which presents Theorems 8 to 11 as modifications of the calculation behind Theorem 1.
 \begin{thebibliography}{99}
 \bibitem{linnik44} U. V. Linnik, \emph{On the least prime in an arithmetic progression. I. The basic theorem},
   Rec. Math. [Mat. Sbornik] N.S. 15(57) (1944), 139--178.
@@ -1081,6 +1091,8 @@ kernel and the repository's continuous integration, and not by the assistants.
   9--18.
 \bibitem{harman} G. Harman, \emph{Prime-Detecting Sieves}, London Math. Soc. Monographs 33, Princeton University
   Press, 2007.
+\bibitem{li-harman} R. Li, \emph{The number of primes in short intervals and numerical calculations for Harman's
+  sieve}, arXiv:2308.04458v8 (preprint, 16 October 2025); Theorems~9 and~11 are on p.~36.
 \bibitem{brun} V. Brun, \emph{Le crible d'Eratosth\`ene et le th\'eor\`eme de Goldbach}, Videnskapsselskapets
   Skrifter I, Mat.-naturv. Klasse, Kristiania, 1920, no.~3.
 \bibitem{buchstab} A. A. Buchstab, \emph{Asymptotische Absch\"atzung einer allgemeinen zahlentheoretischen
