@@ -13,6 +13,7 @@ Plain statements. For `w ≥ 1` and `J`, `T w J j` (`j < J`) is the set of prime
 * `leaf_gap`: let `C₀ ≥ 0` bound `Σ_{p ∈ rng A} 1/p` for `A ≥ 1`, and `k` be even with `2C₀² ≤ (k + 1)(k + 2)`. At the
   levels `k_j = k + 2j` that error's gap term is at most `V·ζ(k)`, where `V = ∏_j ∏_{T_j} (1 − g)` and
   `ζ(k) = e^{2C₀}(2C₀^k/k!)·exp(e^{2C₀}·2C₀^{k+1}/(k + 1)!)`.
+* `prod_T_le`: for an integer `w ≥ 2` with `w^{2^{−J}} ≤ 2` and `q > 0`, `V ≤ q/(φ(q) log w)`.
 
 This is the fundamental lemma at a leaf of the tree.
 
@@ -26,6 +27,10 @@ The proof:
 * `leaf_A`, `leaf_B`: `SieveBrun.fundamental` with these counts.
 * `leaf_gap`: `SieveBrun.gap_le` with `c₀ = e^{−2C₀}`, since `e^{−2g} ≤ 1 − g` for `0 ≤ g ≤ 1/2`, and
   `SieveBrun.sum_levels_le`.
+* `prod_primesBelow_le`, `biUnion_T`, `prod_T_le`: `∏_{p < N} (1 − 1/p) ≤ 1/log N` for `N ≥ 2`, since the reciprocal
+  of the product is `Σ 1/m` over the `N`-smooth `m` (Mathlib's Euler product over the primes below `N`), at least the
+  harmonic sum `Σ_{m < N} 1/m ≥ log N`. The ranges' primes are the primes below `w`, and
+  `V ∏_{p < w, p ∣ q} (1 − 1/p) = ∏_{p < w} (1 − 1/p)` with `∏_{p ∣ q} (1 − 1/p) = φ(q)/q`.
 
 The file imports `SieveRanges.lean` and `SieveCount.lean`.
 -/
@@ -362,5 +367,114 @@ theorem leaf_gap {w : ℝ} (hw : 1 ≤ w) (J q : ℕ) {C₀ : ℝ} (hC₀ : 0 �
         apply mul_le_mul (mul_le_mul_of_nonneg_left hs1' hV0) hs2 hQ0
         exact mul_nonneg hV0 (by positivity)
     _ = _ := by ring
+
+/-! ### The leaves' main term -/
+
+/-- `n ↦ 1/n`, as a monoid homomorphism. -/
+noncomputable def invHom : ℕ →* ℝ where
+  toFun n := (n : ℝ)⁻¹
+  map_one' := by simp
+  map_mul' m n := by push_cast; exact mul_inv _ _
+
+/-- **Mertens' product bound, in its elementary form.** For `N ≥ 2`, `∏_{p < N} (1 − 1/p) ≤ 1/log N`: the
+reciprocal of the product is `Σ 1/m` over the `N`-smooth `m`, which is at least `Σ_{m < N} 1/m ≥ log N`. -/
+theorem prod_primesBelow_le {N : ℕ} (hN : 2 ≤ N) :
+    ∏ p ∈ N.primesBelow, (1 - 1 / (p : ℝ)) ≤ 1 / Real.log N := by
+  have hlog : 0 < Real.log N := Real.log_pos (by exact_mod_cast hN)
+  have hP : 0 < ∏ p ∈ N.primesBelow, (1 - 1 / (p : ℝ)) := Finset.prod_pos fun p hp => by
+    have : (2 : ℝ) ≤ p := by exact_mod_cast (Nat.prime_of_mem_primesBelow hp).two_le
+    rw [sub_pos, div_lt_one (by linarith)]; linarith
+  have hsum := (EulerProduct.summable_and_hasSum_smoothNumbers_prod_primesBelow_geometric (f := invHom)
+    (fun {p} hp => by
+      have : (1 : ℝ) < p := by exact_mod_cast hp.one_lt
+      simp only [invHom, MonoidHom.coe_mk, OneHom.coe_mk, norm_inv, Real.norm_natCast]
+      exact inv_lt_one_of_one_lt₀ this) N).2
+  have hle := sum_le_hasSum ((Finset.Icc 1 (N - 1)).subtype (· ∈ N.smoothNumbers))
+    (fun m _ => by simp only [invHom, MonoidHom.coe_mk, OneHom.coe_mk]; positivity) hsum
+  rw [Finset.sum_subtype_eq_sum_filter, Finset.filter_true_of_mem fun m hm => by
+    rw [Finset.mem_Icc] at hm
+    exact Nat.mem_smoothNumbers_of_lt (by omega) (by omega)] at hle
+  have hH : Real.log N ≤ ∑ m ∈ Finset.Icc 1 (N - 1), invHom m := by
+    have h := log_add_one_le_harmonic (N - 1)
+    rw [harmonic_eq_sum_Icc, show N - 1 + 1 = N by omega] at h
+    push_cast at h
+    simpa [invHom] using h
+  have h2 : Real.log N ≤ (∏ p ∈ N.primesBelow, (1 - 1 / (p : ℝ)))⁻¹ := by
+    refine hH.trans (hle.trans (le_of_eq ?_))
+    rw [← Finset.prod_inv_distrib]
+    simp [invHom, one_div]
+  calc ∏ p ∈ N.primesBelow, (1 - 1 / (p : ℝ)) = 1 / (∏ p ∈ N.primesBelow, (1 - 1 / (p : ℝ)))⁻¹ := by
+        rw [one_div, inv_inv]
+    _ ≤ 1 / Real.log N := one_div_le_one_div_of_le hlog h2
+
+/-- For an integer `w ≥ 1` with `w^{2^{−J}} ≤ 2`, the ranges' primes are the primes below `w`. -/
+theorem biUnion_T {w J : ℕ} (hw : 1 ≤ w) (hJ : (w : ℝ) ^ ((1 / 2 : ℝ) ^ J) ≤ 2) :
+    Finset.univ.biUnion (T w J) = w.primesBelow := by
+  have hw' : (1 : ℝ) ≤ w := by exact_mod_cast hw
+  ext p
+  rw [Finset.mem_biUnion, Nat.mem_primesBelow]
+  constructor
+  · rintro ⟨j, -, hp⟩
+    exact ⟨by exact_mod_cast lt_w_of_mem_T hw' hp, prime_of_mem_T hp⟩
+  · rintro ⟨hpw, hp⟩
+    obtain ⟨j, hj, hmem⟩ := cover hJ hp (by exact_mod_cast hpw)
+    exact ⟨⟨j, hj⟩, Finset.mem_univ _, hmem⟩
+
+/-- **The main term of a leaf.** For an integer `w ≥ 2` with `w^{2^{−J}} ≤ 2` and `q > 0`,
+`V = ∏_j ∏_{T_j} (1 − g) ≤ q/(φ(q) log w)`, since `V ∏_{p < w, p ∣ q} (1 − 1/p) = ∏_{p < w} (1 − 1/p)` and
+`∏_{p ∣ q} (1 − 1/p) = φ(q)/q`. -/
+theorem prod_T_le {w J q : ℕ} (hw : 2 ≤ w) (hJ : (w : ℝ) ^ ((1 / 2 : ℝ) ^ J) ≤ 2) (hq : 0 < q) :
+    ∏ j : Fin J, ∏ p ∈ T w J j, (1 - g q p) ≤ q / (q.totient * Real.log w) := by
+  have hw' : (1 : ℝ) ≤ w := by exact_mod_cast (by omega : 1 ≤ w)
+  have hlog : 0 < Real.log w := Real.log_pos (by exact_mod_cast hw)
+  have hφ : (0 : ℝ) < q.totient := by exact_mod_cast Nat.totient_pos.2 hq
+  have hq' : (0 : ℝ) < q := by exact_mod_cast hq
+  rw [prod_g_eq hw' (T w J) (fun j => subset_rfl), biUnion_T (by omega) hJ]
+  set S := w.primesBelow with hS
+  -- `V ∏_{p ∈ S, p ∣ q} (1 − 1/p) = ∏_{p ∈ S} (1 − 1/p)`
+  have hsplit : (∏ p ∈ S, (1 - g q p)) * ∏ p ∈ S with p ∣ q, (1 - 1 / (p : ℝ)) = ∏ p ∈ S, (1 - 1 / (p : ℝ)) := by
+    rw [Finset.prod_filter, ← Finset.prod_mul_distrib]
+    refine Finset.prod_congr rfl fun p _ => ?_
+    unfold g
+    split_ifs <;> ring
+  -- `∏_{p ∣ q} (1 − 1/p) = φ(q)/q`
+  have htot : (q.totient : ℝ) / q = ∏ p ∈ q.primeFactors, (1 - 1 / (p : ℝ)) := by
+    have h := congrArg (fun x : ℚ => (x : ℝ)) (Nat.totient_eq_mul_prod_factors q)
+    push_cast at h
+    rw [h, mul_div_cancel_left₀ _ hq'.ne']
+    simp [one_div]
+  have hsub : S.filter (· ∣ q) ⊆ q.primeFactors := fun p hp => by
+    rw [Finset.mem_filter] at hp
+    exact Nat.mem_primeFactors.2 ⟨Nat.prime_of_mem_primesBelow hp.1, hp.2, hq.ne'⟩
+  have hfacq : ∀ p ∈ q.primeFactors, 0 < 1 - 1 / (p : ℝ) ∧ 1 - 1 / (p : ℝ) ≤ 1 := fun p hp => by
+    have : (2 : ℝ) ≤ p := by exact_mod_cast (Nat.prime_of_mem_primeFactors hp).two_le
+    refine ⟨?_, by have : 0 ≤ 1 / (p : ℝ) := by positivity
+                   linarith⟩
+    rw [sub_pos, div_lt_one (by linarith)]; linarith
+  have hge : (q.totient : ℝ) / q ≤ ∏ p ∈ S with p ∣ q, (1 - 1 / (p : ℝ)) := by
+    rw [htot, ← Finset.prod_sdiff hsub]
+    have h1 : ∏ p ∈ q.primeFactors \ S.filter (· ∣ q), (1 - 1 / (p : ℝ)) ≤ 1 :=
+      Finset.prod_le_one₀ (fun p hp => (hfacq p (Finset.sdiff_subset hp)).1.le)
+        fun p hp => (hfacq p (Finset.sdiff_subset hp)).2
+    have h2 : 0 ≤ ∏ p ∈ S with p ∣ q, (1 - 1 / (p : ℝ)) :=
+      Finset.prod_nonneg fun p hp => (hfacq p (hsub hp)).1.le
+    calc (∏ p ∈ q.primeFactors \ S.filter (· ∣ q), (1 - 1 / (p : ℝ))) * ∏ p ∈ S with p ∣ q, (1 - 1 / (p : ℝ))
+        ≤ 1 * ∏ p ∈ S with p ∣ q, (1 - 1 / (p : ℝ)) := mul_le_mul_of_nonneg_right h1 h2
+      _ = _ := one_mul _
+  have hV0 : 0 ≤ ∏ p ∈ S, (1 - g q p) := Finset.prod_nonneg fun p hp =>
+    sub_nonneg.2 (g_le_one (Nat.prime_of_mem_primesBelow hp).one_lt.le)
+  have hmer := prod_primesBelow_le hw
+  have hfin : (∏ p ∈ S, (1 - g q p)) * ((q.totient : ℝ) / q) ≤ 1 / Real.log w :=
+    (mul_le_mul_of_nonneg_left hge hV0).trans (hsplit ▸ hmer)
+  have h3 : (∏ p ∈ S, (1 - g q p)) * q.totient ≤ q / Real.log w := by
+    have e : (∏ p ∈ S, (1 - g q p)) * q.totient = ((∏ p ∈ S, (1 - g q p)) * ((q.totient : ℝ) / q)) * q := by
+      field_simp
+    rw [e, div_eq_mul_one_div (q : ℝ), mul_comm (q : ℝ) (1 / Real.log w)]
+    exact mul_le_mul_of_nonneg_right hfin hq'.le
+  rw [le_div_iff₀ (by positivity)]
+  calc (∏ p ∈ S, (1 - g q p)) * (q.totient * Real.log w) = ((∏ p ∈ S, (1 - g q p)) * q.totient) * Real.log w := by
+        ring
+    _ ≤ (q / Real.log w) * Real.log w := mul_le_mul_of_nonneg_right h3 hlog.le
+    _ = q := by field_simp
 
 end SieveLeaf

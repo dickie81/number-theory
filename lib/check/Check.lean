@@ -19,7 +19,7 @@ history. -/
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_inT
 #print axioms LinnikCGLHB101.prop31
-#print axioms LinnikCGLSteps.charDensity_s109
+#print axioms LinnikCGLSteps.charDensity_s29
 #print axioms SieveTypeIIU22240D.counts_7d
 #print axioms SieveTypeIIU22240D.g7d_le_one
 #print axioms SieveTypeIIU22240D.g7d_half
@@ -58,6 +58,8 @@ by section, then the results of the literature it uses, each with a note in `for
 #print axioms SieveProp6.prop6
 #print axioms SieveTree.tree_pt
 #print axioms SieveBrun.fundamental
+#print axioms SieveLeaf.prod_T_le
+#print axioms SieveLeaf.prod_primesBelow_le
 #print axioms SieveDecomp.buchstab_fam
 #print axioms SieveBuch.Par.T_eq
 #print axioms SieveBuch.Par.lvl1k

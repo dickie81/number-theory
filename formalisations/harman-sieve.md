@@ -41,6 +41,13 @@ Its main tools:
   `SieveBrun.gap_le` bounds the first.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
+- `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer
+  `w ≥ 2`, from `∏_{p < w} (1 − 1/p) ≤ 1/log w` (`SieveLeaf.prod_primesBelow_le`). That bound is elementary: the
+  reciprocal of the product is `Σ 1/m` over the `m` whose prime factors are all below `w` (Mathlib's Euler product over
+  the primes below `w`), and that sum is at least the harmonic sum `Σ_{m < w} 1/m ≥ log w`.
+
+The note also covers the bound for rough numbers that the certificate's cells use (below):
+
 - `SieveRough.psi_le`, rough numbers from above. For every `U` and `ε > 0`, eventually in `z`,
   `Ψ(y, z) ≤ (ω*(u) + ε)y/log z` for `u = log 2y/log z ≤ U`. Here `Ψ(y, z)` counts the `m ∈ (y, 2y]` with no prime
   factor below `z`, and `ω*` is the bound of `SieveCert.omegaC`: `0` below `1`, Buchstab's function `ω` itself on
@@ -76,10 +83,11 @@ Proposition 6 is proved with one Buchstab tree for every product `r ≤ q^{b₀}
   stop then lies in the reflection `(X', z₀X']` of the route's window, and its cofactor in the window. `SieveStops2.stops2_bound` bounds the stopped terms by the route's Type II estimate (`hII`).
 - **The leaves** (`SieveProp6.leaf_bound`). At a leaf `d = r∏P ≤ q^{b₀}`, `SieveLeaf.leaf_A` and `SieveLeaf.leaf_B`
   apply the fundamental lemma to `A` and `B`, with the ranges of primes below `w` cut into dyadic-exponent ranges and
-  the levels `k + 2j`. The gap is at most `4ζ(k)·#{n : d ∣ n, n w-rough}/φ(q)` plus a remainder, and the count of
-  `w`-rough multiples is at most `Ψ(X/d, w)`.
-- **Summing the leaves** (`SieveProp6.leaves_sum_le`). With `Ψ(X/d, w) ≤ 2X/(d log w)` from `SieveRough.psi_le`, the
-  leaves total at most `(4ζ(k)·2X/(φ(q) log w) + 4·rem·q^{b₀})·Σ_{rt} 1/r ∏_{w≤p<z₀}(1 + 1/p)`.
+  the levels `k + 2j`. Both main terms are `YV`, with `Y = (N₂ − N₁)/(dq)` and `V = ∏_{p < w, p ∤ q} (1 − 1/p)`, so the
+  gap is at most `2ζ(k)·YV` plus a remainder, and `YV ≤ (N₂ − N₁)/(dφ(q) log w)` by `SieveLeaf.prod_T_le`. No lower
+  bound for `B` and no count of rough numbers is needed.
+- **Summing the leaves** (`SieveProp6.leaves_sum_le`). With `N₂ − N₁ ≤ X + 1`, `X = q^L`, the leaves total at most
+  `(2ζ(k)(X + 1)/(φ(q) log w) + 2·rem·q^{b₀})·Σ_{rt} 1/r ∏_{w≤p<z₀}(1 + 1/p)`.
 - **The parameters** (`SieveProp6.exists_k`, `SieveProp6.main_term`, `SieveProp6.rem_term`). An even `k` with
   `(2k + 4)²ζ(k)` small puts the main terms below `ηq^L/(φ(q) log q)`, and the remainders total at most
   `q^{L−c}/φ(q)`.
@@ -96,8 +104,9 @@ theorem in the form `|θ(t) − t| ≤ εt/log t` for all large `t` (`SieveRough
 - **The fundamental lemma** is proved by Brun's pure sieve with explicit truncations, not by Selberg's or Rosser's
   sieve. Its constants are explicit: the gap is at most `V·ζ(k)` with
   `ζ(k) = e^{2C₀}(2C₀^k/k!)·exp(e^{2C₀}·2C₀^{k+1}/(k + 1)!)` (`SieveLeaf.leaf_gap`).
-- **Rough numbers** are bounded above by the crude `ω*`, not by Buchstab's `ω`. The bound is weaker, and the
-  certificate of the Linnik paper is computed with it.
+- **Rough numbers** are bounded above by `ω*`, which is Buchstab's `ω` on `[1, 3]` but above `3` the constant
+  `0.565073`, slightly more than `ω(3) = 0.56438…`, the largest value of `ω` there. The certificate of the Linnik
+  paper is computed with `ω*`.
 - **The prime number theorem** used by `SieveRough.psi_le` is the library's `ψ(t) − t = O(t^{11/12+ε})`
   (`HalfPlanePNT.psi_isBigO_eleven_twelfths`), which comes from the zero-free half-plane for `ζ`
   ([openai-half-plane.md](openai-half-plane.md)). Any error term `o(t/log t)` would do, as in the classical prime
