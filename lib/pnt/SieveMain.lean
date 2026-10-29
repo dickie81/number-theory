@@ -213,9 +213,11 @@ the reals for some `c < 1` (`htot`), there is `q₀` such that for `q ≥ q₀` 
 `p ≡ a (mod q)` with `q^L < p ≤ 2q^L`. The losses the proof sets are shares `ε = (1 − c)/10` of `X = x/log x`:
 `TB_ev`'s, `drop_ev_of`'s, two for the leaves' error (through `η` and `ev_log_le`) and `q ≤ εX`, five in all, leaving
 `(1 − c − 5ε)X = (1 − c)X/2` of `S(A, z_top)` (`linnik_large` is the case `c = 0.88`). -/
-theorem linnik_large_of (hII : TypeIIAt) {c : ℝ} (hc : c < 1) (htot : (SieveCert.total : ℝ) / SieveCert.K ≤ c) :
+theorem linnik_large_of [SieveCert.Rule] [SieveCert.IBPar] [SieveCert.RuleIB] [IBFits] (hII : TypeIIAt) {c : ℝ}
+    (hc : c < 1) (htot : (SieveCert.totalR : ℝ) / SieveCert.K ≤ c) :
     ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
       ∃ p : ℕ, p.Prime ∧ (p : ZMod q) = a ∧ (q : ℝ) ^ L < p ∧ (p : ℝ) ≤ 2 * (q : ℝ) ^ L := by
+  have : SieveCert.RuleNB := SieveCert.RuleIB.toRuleNB
   have hC := Cdec_pos
   have hL0 : 0 < L := L_pos
   set ε : ℝ := (1 - c) / 10 with hεdef
@@ -328,17 +330,19 @@ theorem linnik_large_of (hII : TypeIIAt) {c : ℝ} (hc : c < 1) (htot : (SieveCe
 /-- **Linnik's theorem at `x = q^L`, for large `q`.** For a route with `RouteOK` and a grid with `GridOK` that fit
 (`Fits`), given the route's Type II estimate (`hII`) and the certificate's total at most `0.88K` (`htot`), there is `q₀`
 such that for `q ≥ q₀` and `a` a unit mod `q` there is a prime `p ≡ a (mod q)` with `q^L < p ≤ 2q^L`. -/
-theorem linnik_large (hII : TypeIIAt) (htot : SieveCert.total ≤ 88 * SieveCert.K / 100) :
+theorem linnik_large [SieveCert.Rule] [SieveCert.IBPar] [SieveCert.RuleIB] [IBFits] (hII : TypeIIAt)
+    (htot : SieveCert.totalR ≤ 88 * SieveCert.K / 100) :
     ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
       ∃ p : ℕ, p.Prime ∧ (p : ZMod q) = a ∧ (q : ℝ) ^ L < p ∧ (p : ℝ) ≤ 2 * (q : ℝ) ^ L :=
-  linnik_large_of hII (by norm_num) (SieveCert.total_div_le htot)
+  linnik_large_of hII (by norm_num) (SieveCert.totalR_div_le htot)
 
 /-- **Linnik's theorem with exponent `L`, with the certificate's loss as a parameter.** For a route with `RouteOK` and a
 grid with `GridOK` that fit (`Fits`), given the route's Type II estimate (`hII`) and `total/K ≤ c` in the reals for
 some `c < 1` (`htot`), there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime
 `p ≡ a (mod q)` with `p ≤ K·q^L` (`linnik_route` is the case `c = 0.88`, `linnik_route_lt` the case
 `c = total/K` for `total < K`). -/
-theorem linnik_route_of (hII : TypeIIAt) {c : ℝ} (hc : c < 1) (htot : (SieveCert.total : ℝ) / SieveCert.K ≤ c) :
+theorem linnik_route_of [SieveCert.Rule] [SieveCert.IBPar] [SieveCert.RuleIB] [IBFits] (hII : TypeIIAt) {c : ℝ}
+    (hc : c < 1) (htot : (SieveCert.totalR : ℝ) / SieveCert.K ≤ c) :
     ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
     ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ L := by
   obtain ⟨q₀, hq₀⟩ := linnik_large_of hII hc htot
@@ -385,16 +389,18 @@ theorem linnik_route_of (hII : TypeIIAt) {c : ℝ} (hc : c < 1) (htot : (SieveCe
 /-- **Linnik's theorem with exponent `L`.** For a route with `RouteOK` and a grid with `GridOK` that fit (`Fits`), given
 the route's Type II estimate (`hII`) and the certificate's total at most `0.88K` (`htot`), there is `K` such that for
 every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^L`. -/
-theorem linnik_route (hII : TypeIIAt) (htot : SieveCert.total ≤ 88 * SieveCert.K / 100) :
+theorem linnik_route [SieveCert.Rule] [SieveCert.IBPar] [SieveCert.RuleIB] [IBFits] (hII : TypeIIAt)
+    (htot : SieveCert.totalR ≤ 88 * SieveCert.K / 100) :
     ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
     ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ L :=
-  linnik_route_of hII (by norm_num) (SieveCert.total_div_le htot)
+  linnik_route_of hII (by norm_num) (SieveCert.totalR_div_le htot)
 
 /-- **Linnik's theorem with exponent `L`, under a certificate whose total is below `K`.** For a route with `RouteOK` and
 a grid with `GridOK` that fit (`Fits`), given the route's Type II estimate (`hII`) and the certificate's total less than
 `K` (`htot`), there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with
 `p ≤ K·q^L`. -/
-theorem linnik_route_lt (hII : TypeIIAt) (htot : SieveCert.total < SieveCert.K) :
+theorem linnik_route_lt [SieveCert.Rule] [SieveCert.IBPar] [SieveCert.RuleIB] [IBFits] (hII : TypeIIAt)
+    (htot : SieveCert.totalR < SieveCert.K) :
     ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
     ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ L :=
   linnik_route_of hII (SieveDrop.total_div_lt htot) le_rfl

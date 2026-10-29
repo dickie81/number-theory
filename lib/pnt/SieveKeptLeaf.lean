@@ -15,9 +15,10 @@ Plain statements. The route and the grid are as in `SieveQ` (`RouteOK`, `GridOK`
   window `T`'s product lies in `(P₁, P₂]`; in the upper window the product of the other primes lies in
   `(N₁/W₁, N₂/(X′ + 1)]`, since the four primes' product lies in `(N₁, N₂]`.
 * `lf_Kk`: such a cell's kept part `Kk(i, j, k)` has `|A − B| ≤ 3E` (`SieveBuch.Par.Kk_eq`).
-* `Leaves.mono`, `leaves_ev2`: given the route's Type II estimate (`hII`), for `η > 0` there are `δ > 0` and `q₀` such
-  that for `q ≥ 1` with `q ≥ q₀` and `a` a unit mod `q`, `LargeQ q`, the leaves of `SieveQ.leaves_ev` are within
-  `Err η δ q` and the kept parts of `SieveBuch2.lean` have their `A` and `B` within `3·Err η δ q`.
+* `Leaves.mono`, `leaves_ev2`: for a rule with `RuleIB` (and `IBFits`), given the route's Type II estimate (`hII`), for
+  `η > 0` there are `δ > 0` and `q₀` such that for `q ≥ 1` with `q ≥ q₀` and `a` a unit mod `q`, `LargeQ q`, the leaves
+  of `SieveQ.leaves_ev` are within `Err η δ q` and the kept parts of `SieveBuch2.lean` have their `A` and `B` within
+  `3·Err η δ q`.
 
 The file imports `SieveQ.lean` and `SieveBuch2.lean`.
 -/
@@ -25,7 +26,7 @@ import SieveQ
 import SieveBuch2
 
 open Real Finset Filter SieveFamily SieveChain SieveDecomp SieveBuch SieveLeaves SieveQ SieveRoute SieveExact
-open SieveCert (V DEN H U1 U2 cand dec keep reg2 surelyEval cell inside)
+open SieveCert (V DEN H U1 U2 cand decR keep reg2 surelyEval cell inside)
 
 namespace SieveKeptLeaf
 
@@ -199,7 +200,7 @@ theorem lf_Kk {q : ℕ} (hL : LargeQ q) {a : ZMod q} {E : ℝ} (hT : T0at q a E)
   constructor <;> linarith [h1.1, h1.2, h2.1, h2.2, h3.1, h3.2]
 
 omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem Leaves.mono {P : Par} {gA gB : ℕ → ℝ} {E E' : ℝ} (h : P.Leaves gA gB E) (hE : E ≤ E') :
+theorem Leaves.mono [SieveCert.Rule] {P : Par} {gA gB : ℕ → ℝ} {E E' : ℝ} (h : P.Leaves gA gB E) (hE : E ≤ E') :
     P.Leaves gA gB E' :=
   ⟨h.j0.trans hE, fun i hi hW => (h.e1 i hi hW).trans hE, fun i hi hW => (h.p1 i hi hW).trans hE,
     fun i hi j hj hc hd => (h.e2 i hi j hj hc hd).trans hE, fun i hi j hj hc hd => (h.p2 i hi j hj hc hd).trans hE,
@@ -214,11 +215,13 @@ theorem Leaves.mono {P : Par} {gA gB : ℕ → ℝ} {E E' : ℝ} (h : P.Leaves g
     fun i j k l hD b hb h1 h2 => (h.e5' i j k l hD b hb h1 h2).trans hE,
     fun i j k l hD b hb h1 h2 c hc h3 h4 => (h.e6 i j k l hD b hb h1 h2 c hc h3 h4).trans hE⟩
 
-/-- **The leaves and the kept leaves, for large `q`.** For a route with `RouteOK` and a grid with `GridOK` that fit
-(`Fits`), given the route's Type II estimate (`hII`), for `η > 0` there are `δ > 0` and `q₀` such that for `q ≥ 1` with
-`q ≥ q₀` and `a` a unit mod `q`, `q` is large, every leaf of the tree at `x = q^L` is within `Err η δ q`, and every
-kept part's `A` and `B` are within `3·Err η δ q`. -/
-theorem leaves_ev2 [SieveCert.GridOKC] (hII : TypeIIAt) {η : ℝ} (hη : 0 < η) :
+/-- **The leaves and the kept leaves, for large `q`.** For a route with `RouteOK` and a grid with `GridOK` and
+`GridOKC` that fit (`Fits`), a rule with `RuleIB` whose bilinear exponent is the route's (`IBFits`), and the route's
+Type II estimate (`hII`): for `η > 0` there are `δ > 0` and `q₀` such that for `q ≥ 1` with `q ≥ q₀` and `a` a unit mod
+`q`, `q` is large, every leaf of the tree at `x = q^L` is within `Err η δ q`, and every kept part's `A` and `B` are
+within `3·Err η δ q`. -/
+theorem leaves_ev2 [SieveCert.GridOKC] [SieveCert.Rule] [SieveCert.IBPar] [SieveCert.RuleIB] [IBFits]
+    (hII : TypeIIAt) {η : ℝ} (hη : 0 < η) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
       LargeQ q ∧ (parQ q).Leaves (gA q a) (gB q) (Err η δ q) ∧ (parQ q).KLeaves (gA q a) (gB q) (Err η δ q) := by
   obtain ⟨d1, hd1, q1, h1⟩ := leaves_ev hII hη

@@ -15,6 +15,15 @@ certificate's own.
 * `allowedR_of_decR`, `allowed4R_of_dec4R`, `costR_of_decR`, `costR_of_not_decR`, `cost4R_of_dec4R`,
   `cost4R_of_not_dec4R`, `cost4R_of_not_counted4`, `cost2R_of_decR`, `cost2R_of_not_decR`, `cost2R_of_not_cand`,
   `cost2R_ge`: the costs by cases.
+* `limOK_cells2` … `limOK_cells5`, `nbOK_cells2` … `nbOK_cells5`: the tests on a box of cells, as inequalities;
+  `ok2_of_decR`, `ok3_of_decR`, `ok4_of_dec4R`, `ok5_of_dec4R`: the boxes that the decomposition decomposes pass the
+  rule.
+* `subsetSums_ofFn`, `hiSum_ofFn`, `lastHi_ofFn`, `tstar_mem`: a box's subset sums are its sums over the `Finset`s of
+  its cells, and `tstar` is attained.
+* `ibOK_sound`: `ibOK`'s witnesses, a set `S₀` of the box's cells with `T = cIB` there and a split `(S₁, eIn₁)` of its
+  leaves, as sums over `Finset`s; `okIB_cases`: `okIB` is `limOK`, or `ibOK` and `nbOK`.
+* `RuleNB`, `RuleIB`: what a rule guarantees of the boxes it passes (`limOK`, or no boundary term; `limOK`, or `ibOK`
+  with no boundary term), for `limRule` and `ibRule`.
 
 The file imports `SieveCert2.lean` and `SieveRuleDefs.lean`.
 -/
@@ -320,5 +329,84 @@ theorem okIB_cases {xs : List (ℕ × ℕ)} (h : okIB xs = true) :
   simpa [okIB] using h
 
 end Witness
+
+/-! ### The boxes of the decomposed cells -/
+
+section Boxes
+
+variable [Grid]
+
+theorem nbOK_cells2 (i j : ℕ) : nbOK [cell i, cell j] = decide (e i + H + (e j + H) + (e j + H) < DEN) := by
+  simp only [nbOK, hiSum, lastHi, cell, Nat.add_zero, Nat.add_assoc]
+
+theorem nbOK_cells3 (i j k : ℕ) :
+    nbOK [cell i, cell j, cell k] = decide (e i + H + (e j + H) + (e k + H) + (e k + H) < DEN) := by
+  simp only [nbOK, hiSum, lastHi, cell, Nat.add_zero, Nat.add_assoc]
+
+theorem nbOK_cells4 (i j k l : ℕ) :
+    nbOK [cell i, cell j, cell k, cell l] =
+      decide (e i + H + (e j + H) + (e k + H) + (e l + H) + (e l + H) < DEN) := by
+  simp only [nbOK, hiSum, lastHi, cell, Nat.add_zero, Nat.add_assoc]
+
+theorem nbOK_cells5 (i j k l b : ℕ) :
+    nbOK [cell i, cell j, cell k, cell l, cellC b] =
+      decide (e i + H + (e j + H) + (e k + H) + (e l + H) + (eC b + HC) + (eC b + HC) < DEN) := by
+  simp only [nbOK, hiSum, lastHi, cell, cellC, Nat.add_zero, Nat.add_assoc]
+
+variable [Rule]
+
+/-- A decomposed cell's box is `ok`. -/
+theorem ok2_of_decR {i j : ℕ} (h : decR i j = true) : Rule.ok [cell i, cell j] = true := by
+  have := allowedR_of_decR h
+  simp only [allowedR, Bool.and_eq_true] at this
+  exact this.1
+
+/-- The boxes of a decomposed cell's counted rows are `ok`. -/
+theorem ok3_of_decR {i j k : ℕ} (h : decR i j = true) (hk : k < n) (hkk : inKK i j k = true)
+    (hn : ne3 i j k = true) : Rule.ok [cell i, cell j, cell k] = true := by
+  have := allowedR_of_decR h
+  simp only [allowedR, Bool.and_eq_true, List.all_eq_true, List.mem_range] at this
+  have h' := this.2 k hk
+  simpa [hkk, hn] using h'
+
+/-- A cell of depth 4 decomposed one level further has its box `ok`. -/
+theorem ok4_of_dec4R {i j k l : ℕ} (h : dec4R i j k l = true) : Rule.ok [cell i, cell j, cell k, cell l] = true := by
+  have := allowed4R_of_dec4R h
+  simp only [allowed4R, Bool.and_eq_true] at this
+  exact this.1
+
+/-- The boxes of its counted cells of depth 5 are `ok`. -/
+theorem ok5_of_dec4R {i j k l b : ℕ} (h : dec4R i j k l = true) (hb : b < nC) (hK : inKK5 i j k l b = true)
+    (hn : ne5 i j k l b = true) : Rule.ok [cell i, cell j, cell k, cell l, cellC b] = true := by
+  have := allowed4R_of_dec4R h
+  simp only [allowed4R, Bool.and_eq_true, List.all_eq_true, List.mem_range] at this
+  have h' := this.2 b hb
+  simpa [hK, hn] using h'
+
+end Boxes
+
+/-! ### What a rule guarantees -/
+
+/-- **A rule with no boundary term**: a box it passes passes `limOK`, or has no boundary term (`nbOK`). The
+decomposition's cells that vanish outside the region use it (`SieveBuch`). -/
+class RuleNB [Grid] [Rule] : Prop where
+  nb : ∀ xs, Rule.ok xs = true → limOK xs = true ∨ nbOK xs = true
+
+/-- **A rule of the bilinear Type I estimate**: a box it passes passes `limOK`, or passes `ibOK` with no boundary
+term. The leaves use it (`SieveQ`). -/
+class RuleIB [Grid] [Rule] [IBPar] : Prop where
+  ib : ∀ xs, Rule.ok xs = true → limOK xs = true ∨ (ibOK xs = true ∧ nbOK xs = true)
+
+theorem RuleIB.toRuleNB [Grid] [Rule] [IBPar] [RuleIB] : RuleNB :=
+  ⟨fun xs h => (RuleIB.ib xs h).imp id fun h' => h'.2⟩
+
+theorem limRule_ib [Grid] [IBPar] : @RuleIB _ limRule _ := @RuleIB.mk _ limRule _ fun _ h => Or.inl h
+
+theorem limRule_nb [Grid] : @RuleNB _ limRule := @RuleNB.mk _ limRule fun _ h => Or.inl h
+
+theorem ibRule_ib [Grid] [IBPar] : @RuleIB _ ibRule _ := @RuleIB.mk _ ibRule _ fun _ h => okIB_cases h
+
+theorem ibRule_nb [Grid] [IBPar] : @RuleNB _ ibRule :=
+  @RuleNB.mk _ ibRule fun _ h => (okIB_cases h).imp id fun h' => h'.2
 
 end SieveCert

@@ -520,6 +520,7 @@ import BohrLandauCore
 #print axioms SieveChain.typeII_gcmp'
 #print axioms SieveChain.chainTU_bound
 #print axioms SieveChain.chainTL_bound
+#print axioms SieveChainR.chainTR_bound
 #print axioms SieveDecomp.buchstab_fam
 #print axioms SieveDecomp.famI_cells
 #print axioms SieveDecomp.famI_vanish
@@ -527,7 +528,11 @@ import BohrLandauCore
 #print axioms SieveLeaves.TL_spec
 #print axioms SieveLeaves.TU_spec
 #print axioms SieveLeaves.P6_spec
+#print axioms SieveP6ib.prop6ib
+#print axioms SieveLeaves.TR_spec
+#print axioms SieveLeaves.P6IB_spec
 #print axioms SieveQ.good_of_large
+#print axioms SieveQ.P6IB_boxes
 #print axioms SieveQ.leaves_ev
 #print axioms SieveDrop.drop_ev
 #print axioms SieveMain.TB_ev

@@ -3,16 +3,16 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 686 theorems: the library's final
+`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 691 theorems: the library's final
 results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 115 modules that neither `Check` nor `CheckAll` imports, directly or
+The last section lists the 99 modules that neither `Check` nor `CheckAll` imports, directly or
 not, with their headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 206 | 678 | 17 | 87 |
+| `lib/pnt` | 208 | 683 | 1 | 0 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -1007,6 +1007,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveChain.chainTU_bound`: Chains times a rough cofactor in the window *paper*
 - `SieveChain.chainTL_bound`: Chains with a product of some of their primes in the window *paper*
 
+#### `SieveChainR`: Type II for chains with part of their product in the reflection of the window
+
+- `SieveChainR.chainTR_bound`: Chains with part of their product in the reflection of the window
+
 #### `SieveCount`: Type I counts in a residue class
 
 - `SieveCount.card_A`: Type I for `A` *paper*
@@ -1100,7 +1104,9 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 - `SieveLeaves.TL_spec`: The lower window, on a family of atoms
 - `SieveLeaves.TU_spec`: The upper window, on a family of atoms
+- `SieveLeaves.TR_spec`: The reflected window, on a family of atoms
 - `SieveLeaves.P6_spec`: Proposition 6, on a family of atoms ([note](../formalisations/harman-sieve.md))
+- `SieveLeaves.P6IB_spec`: Proposition 6 with the bilinear estimate, on a family of atoms
 
 #### `SieveLemma1`: Weighted prime sums at a height inside a zero-free rectangle (Lemma 1 of the sieve route, `Λ` form)
 
@@ -1129,6 +1135,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveOmegaB.lnT_ge`: The table *paper*
 - `SieveOmegaB.omF_ge`: `omF` bounds Buchstab's `ω` *paper*
 
+#### `SieveP6ib`: Proposition 6 with the bilinear estimate
+
+- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate
+
 #### `SieveProp6`: Proposition 6, Harman's fundamental theorem in the form used
 
 - `SieveProp6.leaf_bound`: A leaf *paper* ([note](../formalisations/harman-sieve.md))
@@ -1137,6 +1147,7 @@ not, with their headline theorems (those whose docstring opens with a bold title
 #### `SieveQ`: The decomposition at `x = q^L`, and its leaves for large `q`
 
 - `SieveQ.good_of_large`: The decomposition's hypotheses hold for large `q`
+- `SieveQ.P6IB_boxes`: Proposition 6-ib, uniformly over finitely many boxes
 - `SieveQ.leaves_ev`: The leaves, for large `q` *paper*
 
 #### `SieveRanges`: The ranges of Brun's sieve
@@ -1569,140 +1580,6 @@ not, with their headline theorems (those whose docstring opens with a bold title
 ### `lib/pnt`
 
 #### `Architect`
-
-#### `SieveChainR`: Type II for chains with part of their product in the reflection of the window
-
-- `SieveChainR.sum_slices`: Slices
-- `SieveChainR.chainTR_bound`: Chains with part of their product in the reflection of the window
-
-#### `SieveP6Chain`: Proposition 6 with the bilinear estimate: the branches as chains
-
-- `SieveP6Chain.sum_chain`: The branches as chains
-
-#### `SieveP6Leaves`: Proposition 6 with the bilinear estimate: the large leaves
-
-- `SieveP6Leaves.count_eq_rsum`: A leaf's count
-- `SieveP6Leaves.wf_inj`: The moduli of the weights are distinct
-- `SieveP6Leaves.wf_le`: The moduli's size
-- `SieveP6Leaves.sum_wS₁_div_le`: The weights above, divided by their moduli
-- `SieveP6Leaves.sum_wS₂_div_le`: The weights below, divided by their moduli
-- `SieveP6Leaves.W_le`: The weights' total mass
-- `SieveP6Leaves.V_le`: The weights divided by their moduli
-- `SieveP6Leaves.abs_gap_le`: The weights' gap
-- `SieveP6Leaves.fibre_wS₁_le`: The fibres of the weights above
-- `SieveP6Leaves.fibre_wS₂_le`: The fibres of the weights below
-- `SieveP6Leaves.leaves_chain`: The large leaves of a family, with Brun's weights
-
-#### `SieveP6Split`: Proposition 6 with the bilinear estimate: a family of chains split into two blocks
-
-- `SieveP6Split.sum_RTg_split`: A family of chains split into two blocks
-
-#### `SieveP6Tree`: Proposition 6 with the bilinear estimate: Buchstab's tree on a family
-
-- `SieveP6Tree.sum_snoc_chain`: The extension's bijection
-- `SieveP6Tree.tree_split`: Buchstab's tree with the rule `E ≤ c∏P`
-- `SieveP6Tree.sum_leaves_chain`: The leaves of size `s` as chains
-- `SieveP6Tree.sum_stops_chain`: The stops of size `s + 1` as chains
-- `SieveP6Tree.tree_chains`: Buchstab's tree on a family, as chains
-- `SieveP6Tree.chainOK_TL`: The lower window for every length up to `K₀ + 1`
-- `SieveP6Tree.chainOK_TR`: The reflected window for every length up to `K₀ + 1`
-- `SieveP6Tree.root_bound`: A family with a product in a window, sifted at `z₀`
-- `SieveP6Tree.stops_bound`: The stops of a tree
-
-#### `SieveP6TreeLeaves`: Proposition 6 with the bilinear estimate: the leaves of the tree
-
-- `SieveP6TreeLeaves.large_leaves_le`: The large leaves of a family of chains
-- `SieveP6TreeLeaves.small_leaves_le`: The small leaves
-- `SieveP6TreeLeaves.sum_leaves_inv_le`: The sums of `1/d` over the leaves
-- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree
-
-#### `SieveP6ib`: Proposition 6 with the bilinear estimate
-
-- `SieveP6ib.leaf_blocks_le`: A leaf's two blocks are small
-- `SieveP6ib.sum_patterns`: The five patterns partition the family
-- `SieveP6ib.tree_pattern_le`: A tree pattern
-- `SieveP6ib.tree_pattern_ib`: A tree pattern, with the sizes from the boxes
-- `SieveP6ib.win_lo`: The lower window's stops fit
-- `SieveP6ib.win_hi`: The reflected window
-- `SieveP6ib.alive_lo`: Below the window, a leaf's block is small
-- `SieveP6ib.alive_mid`: Between the windows, a leaf's block is small
-- `SieveP6ib.prop6ib_core`: Proposition 6 with the bilinear estimate, at one `q`, for given windows
-- `SieveP6ib.prop6ib_at`: Proposition 6 with the bilinear estimate, at one `q`
-- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate
-
-#### `SieveRule`: The certificate under a decomposition rule, in the reals and over `Finset`
-
-- `SieveCert.ibOK_sound`: The bilinear Type I rule's witnesses
-
-#### `SieveRuleDefs`: The certificate under a decomposition rule, without Mathlib
-
-#### `SieveTreeStop`: Buchstab's tree with a stopping rule
-
-- `SieveTreeStop.tree_pt_stop`: Buchstab's tree with a stopping rule, at one `n`
-- `SieveTreeStop.tree_weighted_stop`: Buchstab's tree with a stopping rule, weighted
-- `SieveTreeStop.alive_iff_lt`: Small steps
-- `SieveTreeStop.stop_insert_iff`: Small steps, the stops
-
-#### `SieveTypeIBAsym`: The leaves by the bilinear estimate: the asymptotic form
-
-- `SieveTypeIBAsym.cutoffs`: The cut-offs
-- `SieveTypeIBAsym.pivot_inv_le`: The pivot's sum, weighted by `1/p`
-- `SieveTypeIBAsym.pivot_box`: The pivot over a box
-- `SieveTypeIBAsym.pivot_two_le`: The pivot over two groups
-- `SieveTypeIBAsym.blk_floor_le`: The number of blocks
-- `SieveTypeIBAsym.bdU_le_pow`: The uniform bound as powers of `q`
-- `SieveTypeIBAsym.bil_le`: The bilinear part, as a power of `q`
-- `SieveTypeIBAsym.leaves_ib`: The leaves by the bilinear estimate, asymptotically
-
-#### `SieveTypeIBBrun`: Brun's weights for the leaves of the bilinear estimate
-
-- `SieveTypeIBBrun.sum_wS₁`: The weights above
-- `SieveTypeIBBrun.sum_wS₂`: The weights below
-- `SieveTypeIBBrun.R_le`: The weights above bound the sifted indicator
-- `SieveTypeIBBrun.le_R`: The weights below are below the sifted indicator
-- `SieveTypeIBBrun.gap_eq`: The sieve's gap
-
-#### `SieveTypeIBEv`: The leaves by the bilinear estimate: blocks, splines, and a block pair
-
-- `SieveTypeIBEv.sandwich`: The sandwich at a scale
-- `SieveTypeIBEv.mass_diff_le`: The transition's mass
-- `SieveTypeIBEv.pair_le`: A block pair
-
-#### `SieveTypeIBFam`: Type I_B families: the bilinear Type I estimate over families with comparisons
-
-- `SieveTypeIBFam.sum_fiber`: Fibres
-- `SieveTypeIBFam.typeIB_smooth`: The bilinear Type I estimate over a family with smooth comparisons
-- `SieveTypeIBFam.typeIB_sharp`: Sharp comparisons
-- `SieveTypeIBFam.typeIB_sharp0`: Sharp comparisons, with no base weight
-
-#### `SieveTypeIBLeaf`: The leaves of a tree by the bilinear Type I estimate: the sandwich
-
-- `SieveTypeIBLeaf.brun_upper`: Brun, above
-- `SieveTypeIBLeaf.brun_lower`: Brun, below
-- `SieveTypeIBLeaf.split_upper`: The sign-split sandwich, above
-- `SieveTypeIBLeaf.split_lower`: The sign-split sandwich, below
-- `SieveTypeIBLeaf.term_sandwich`: The sign-split sandwich of one term
-- `SieveTypeIBLeaf.leaf_upper`: One leaf, above
-- `SieveTypeIBLeaf.leaf_lower`: One leaf, below
-- `SieveTypeIBLeaf.abs_spl_unit`: The units on a spline
-- `SieveTypeIBLeaf.abs_Ioc_unit`: The units in an interval
-- `SieveTypeIBLeaf.term_main`: One weight's main part, in the reals
-- `SieveTypeIBLeaf.main_upper`: The main part of one leaf, above
-- `SieveTypeIBLeaf.main_lower`: The main part of one leaf, below
-- `SieveTypeIBLeaf.leaf_two_sided`: One leaf, both ways
-- `SieveTypeIBLeaf.leaves_bound`: The family of leaves
-- `SieveTypeIBLeaf.sum_blocks`: Regrouping by pairs of blocks
-- `SieveTypeIBLeaf.abs_dwU_le`: The bilinear part above, by block pairs
-- `SieveTypeIBLeaf.abs_dwL_le`: The bilinear part below, by block pairs
-
-#### `SieveTypeIBSum`: The leaves by the bilinear estimate: a family of leaves
-
-- `SieveTypeIBSum.bdP_le`: A block pair in the region
-- `SieveTypeIBSum.errL_le`: A leaf's main errors
-- `SieveTypeIBSum.witness_le`: A leaf's block pair
-- `SieveTypeIBSum.pair_le_W`: A block pair, by a witness
-- `SieveTypeIBSum.blocks_le`: The block pairs of one sieve
-- `SieveTypeIBSum.leaves_family`: A family of leaves by the bilinear estimate
 
 ### `lib/dh`
 

@@ -545,13 +545,16 @@ estimate `SieveTypeIIU{tag}D.typeII_{tag}d`), on its grid with `n = {N}` (`Sieve
 total is less than `K` (`SieveCert.total2_lt_{tag}R`), with `SieveMain2.linnik_route_lt2`. The curve `g7d` uses
 Chen–Gupta–Li's Proposition 3.1 on `[5/7, 131/168]` (`LinnikCGLSteps`); the theorem is the route of the paper's first
 version (at an earlier exponent; it is in the git history) with that curve and the window and
-certificate of `L = {LN}`.
+certificate of `L = {LN}`. The decomposition's rule is the certificate's own (`SieveCert.limRule`), which
+never takes a box whole, so the bilinear Type I rule's exponent (`ibPar{tag}`) is idle.
 
 * `route{tag}D`, `routeOK{tag}D`: `L = {LN}` on `[{W1}/100000, {W2}/100000]`; `2 < L ≤ 5/2` and `0 < w₁ < w₂ < 1`.
 * `typeII{tag}d`: `SieveTypeIIU{tag}D.typeII_{tag}d` as `TypeIIAt`.
 * `fits{tag}R`: `grid{tag}R` fits `route{tag}D`: `({W1}/100000)·DEN < U1`, `U2 < ({W2}/100000)·DEN` and
   `DEN < ({LN})·U2`.
-* `linnik_{tag}r`: `SieveMain2.linnik_route_lt2` at them.
+* `ibPar{tag}`, `ibFits{tag}`: the bilinear rule's exponent `{LNUM}/{LDEN}`, which is the route's.
+* `linnik_{tag}r`: `SieveMain2.linnik_route_lt2` at them, with `SieveCert.limRule` (`SieveCert.limRule_ib`)
+  and `SieveCert.total2R_lim`.
 
 The file imports `SieveMain2.lean`, `SieveCert{tag}R.lean` and `SieveTypeIIU{tag}D.lean`.
 -/
@@ -593,12 +596,20 @@ theorem fits{tag}R : @Fits route{tag}D grid{tag}R := by
     show (DEN : ℝ) < {LN} * (({W2} * DEN / 100000 : ℕ) : ℝ)
     linarith
 
+/-- The bilinear Type I rule's exponent, `{LNUM}/{LDEN}`. -/
+@[instance_reducible] def ibPar{tag} : IBPar := ⟨{LNUM}, {LDEN}⟩
+
+/-- `ibPar{tag}`'s exponent `Lnum/Lden` is the route's `L = {LN}`. -/
+theorem ibFits{tag} : @IBFits route{tag}D ibPar{tag} :=
+  @IBFits.mk route{tag}D ibPar{tag} (show (({LNUM} : ℕ) : ℝ) / (({LDEN} : ℕ) : ℝ) = {LN} by norm_num)
+
 /-- **Linnik's theorem with exponent `{LN}`, by the refined certificate at `n = {N}`**: there is `K` such that for every
 `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`. -/
 theorem linnik_{tag}r : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
     ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ ({LN} : ℝ) :=
-  @SieveMain2.linnik_route_lt2 route{tag}D routeOK{tag}D grid{tag}R gridOK{tag}R gridOKC{tag}R fits{tag}R typeII{tag}d
-    total2_lt_{tag}R
+  @SieveMain2.linnik_route_lt2 route{tag}D routeOK{tag}D grid{tag}R gridOK{tag}R gridOKC{tag}R fits{tag}R
+    (@limRule grid{tag}R) ibPar{tag} (@limRule_ib grid{tag}R ibPar{tag}) ibFits{tag} typeII{tag}d
+    (by rw [@total2R_lim grid{tag}R]; exact total2_lt_{tag}R)
 
 end Linnik{tag}R
 
