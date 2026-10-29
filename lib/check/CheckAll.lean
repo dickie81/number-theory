@@ -190,6 +190,9 @@ import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
 import LinnikWeylBridge
+import ZetaHuxley
+import AlmostAllPrimes
+import ZetaGMDensity
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -385,6 +388,27 @@ import LinnikWeylBridge
 #print axioms InghamDensity.densityHypothesis_of_lindelof
 #print axioms InghamDensity.short_primes_11_17
 #print axioms InghamDensity.short_primes_Theta
+#print axioms ZetaFourth.afe_xi
+#print axioms ZetaFourth.zeta_fourth_moment
+#print axioms ZetaIngham.nx_ingham
+#print axioms ZetaKernel.hm_duality_pts
+#print axioms ZetaKernel.norm_kz_le
+#print axioms ZetaKernel.power_count_pts
+#print axioms ZetaHuxley.nx_huxley
+#print axioms ZetaHuxley.densityXi_twelve_fifths
+#print axioms ZetaHuxley.short_primes_seven_twelfths
+#print axioms AlmostAll.arch_far
+#print axioms AlmostAll.head_mean_square
+#print axioms AlmostAll.almost_all_of_density
+#print axioms AlmostAll.almost_all_short_primes
+#print axioms ZetaGMLV.gm_prop31_one
+#print axioms ZetaGMLV.gm_large_values
+#print axioms ZetaGMWin.nx_gm
+#print axioms ZetaGMIngham.nx_ingham13
+#print axioms ZetaGMHux.nx_gmh
+#print axioms ZetaGMDensity.densityXi_thirty_thirteenths
+#print axioms ZetaGMDensity.short_primes_seventeen_thirtieths
+#print axioms ZetaGMDensity.almost_all_short_primes_two_fifteenths
 #print axioms LogDerivDisc.disc_point_ball
 #print axioms LogDerivDisc.logDeriv_le_ball
 #print axioms InghamDensity.norm_Gamma_exp_le

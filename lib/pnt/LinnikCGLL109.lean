@@ -20,7 +20,8 @@ The library's form.
   `C_k(3T + 32πN²/(qd²))∫ψ̃₀(y/X)|F_a(y)|³ dy` plus its tail, where their coefficient is `T + N²/(d²q)`.
 * The sum over `d`: `Σ_{1≤d≤D}(3T + 32πN²/(qd²)) ≤ 3DT + 64πN²/q`, by Mathlib's `sum_Ioo_inv_sq_le`.
 * The third moment. Their Cauchy–Schwarz with Lemmas 9.1 and 9.2 is `sum_cube_moment_le`: `|F|³ ≤ (l|F|² + |F|⁴/l)/2`
-  for every `l > 0`, the second moment `Σ_{a unit}|F_a(y)|² = φ(q)|R|`, exact at one point per character, and
+  for every `l > 0`, the second moment `∫ψ̃₀(y/X)Σ_{a unit}|F_a(y)|² dy ≤ φ(q)X(∫ψ̃₀·|R| + |R|²D_K/X^K)` for
+  spaced points (`integral_sum_sq_le`, `pairs1_le_card`), and
   the fourth moment `∫ψ̃₀(y/X)Σ_{a unit}|F_a(y)|⁴ dy ≤ φ(q)X(∫ψ̃₀·E + |R|⁴D_K/X^K)` (`integral_sum_four_le`, whose
   proof copies the second step of `lemma92`). The weight `ψ̃₀(y/X)` stands for their `|v| ≍ 1`.
 * Then `φ(q) ≤ q` turns `(3DT + 64πN²/q)φ(q)` into `3DqT + 64πN²`. Their `⪅_ϵ` absorbs `C_k`, `X`, `∫ψ̃₀`, the term
@@ -33,13 +34,17 @@ Plain statements, with `q ≥ 1`, `k`, `C_k`, `D_K` and `ψ̃₀`, `E` the energ
 * `integrable_psi0_mul`: `y ↦ ψ̃₀(y/X)G(y)` is integrable for `X > 0` and `G` continuous.
 * `le_sqrt_of_forall`: for `a, b ≥ 0`, if `s ≤ (la + b/l)/2` for every `l > 0`, then `s ≤ √(ab)`.
 * `integral_sum_four_le`: for `X ≥ 1` and `K ∈ ℕ`, `∫ψ̃₀(τ/X)Σ_{a unit}|R(e^τ, a)|⁴ dτ ≤ φ(q)X(∫ψ̃₀·E + |R|⁴D_K/X^K)`.
-* `sum_cube_moment_le`: for `χ` injective on `R`, `X ≥ 1` and `K ∈ ℕ`,
-  `Σ_{a unit}∫ψ̃₀(y/X)|F_a(y)|³ dy ≤ φ(q)X√(|R|∫ψ̃₀·(∫ψ̃₀·E + |R|⁴D_K/X^K))`.
+* `pairs1`, `sum_norm_Rf_sq_gen`, `integral_sum_sq_le`, `pairs1_le_card`: with `P = Σ_{i,k∈R}[|t_i − t_k| ≤ 1,
+  χ_i = χ_k]`, for any points `Σ_{a unit}|R(e^τ, a)|² = φ(q)Σ_{i,k∈R}[χ_i = χ_k]e^{iτ(t_i−t_k)}` and, for `X ≥ 1`,
+  `∫ψ̃₀(τ/X)Σ_{a unit}|R(e^τ, a)|² dτ ≤ φ(q)X(∫ψ̃₀·P + |R|²D_K/X^K)`; and `P ≤ |R|` for spaced points.
+* `sum_cube_moment_le`: for spaced points, `X ≥ 1` and `K ∈ ℕ`,
+  `Σ_{a unit}∫ψ̃₀(y/X)|F_a(y)|³ dy ≤ φ(q)X√((∫ψ̃₀·|R| + |R|²D_K/X^K)(∫ψ̃₀·E + |R|⁴D_K/X^K))`.
 * `R2_eq_zero`, `R2_eq_esum`: `R₂(n₁, n₂) = 0` unless `n₁` and `n₂` are units modulo `q`; and for `n₁, n₂ > 0` with
   `n₂` a unit modulo `q`, `R₂(n₁, n₂) = F_a(log(n₁/n₂))` with `a = n₁n₂⁻¹`.
 * `pairs`: the pairs `n₁, n₂ ∼ N` with `(n₁, n₂) ≤ D`.
-* `lemma109`: for `χ` injective on `R`, `T ≥ 1`, points `|t_i| ≤ T`, `N > 0`, `X ≥ 4`, `D ∈ ℕ` and `K ≥ 2`,
-  `Σ_{(n₁,n₂)∈P}|R₂(n₁, n₂)|³ ≤ C_k(3DqT + 64πN²)X√(|R|∫ψ̃₀·(∫ψ̃₀·E + |R|⁴D_K/X^K)) + |P||R|³·2πD_K(2π)^{−K}Z^{2−K}`,
+* `lemma109`: for spaced points, `T ≥ 1`, `|t_i| ≤ T`, `N > 0`, `X ≥ 4`, `D ∈ ℕ` and `K ≥ 2`,
+  `Σ_{(n₁,n₂)∈P}|R₂(n₁, n₂)|³ ≤ C_k(3DqT + 64πN²)X√((∫ψ̃₀·|R| + |R|²D_K/X^K)(∫ψ̃₀·E + |R|⁴D_K/X^K)) +
+  |P||R|³·2πD_K(2π)^{−K}Z^{2−K}`,
   with `P` the pairs and `Z = 3T(X − 1)/(2π)`.
 
 The file imports `LinnikCGLSep.lean`.
@@ -129,6 +134,120 @@ lemma le_sqrt_of_forall {s a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (h : ∀ l :
       linarith
     linarith
 
+/-! ### The second moment for spaced points -/
+
+open scoped Classical in
+/-- The pairs of points with one character at distance at most `1`: `Σ_{i,k∈R}[|t_i − t_k| ≤ 1, χ_i = χ_k]`. -/
+def pairs1 {ι : Type*} {q : ℕ} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) : ℝ :=
+  ∑ i ∈ R, ∑ k ∈ R, (if |t i - t k| ≤ 1 ∧ χ i = χ k then (1 : ℝ) else 0)
+
+open scoped Classical in
+/-- **The second moment over the units at `v = e^τ`**, for any points:
+`Σ_{a unit}|R(e^τ, a)|² = φ(q)Σ_{i,k∈R}[χ_i = χ_k]e^{iτ(t_i − t_k)}`. -/
+lemma sum_norm_Rf_sq_gen {ι : Type*} {q : ℕ} [NeZero q] (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
+    (t : ι → ℝ) (τ : ℝ) :
+    ((∑ a : (ZMod q)ˣ, ‖Rf R χ t (Real.exp τ) a‖ ^ 2 : ℝ) : ℂ) = (q.totient : ℂ) *
+      ∑ i ∈ R, ∑ k ∈ R, (if χ i = χ k then Complex.exp (((τ * (t i - t k) : ℝ) : ℂ) * I) else 0) := by
+  set e : ι → ℂ := fun i => Complex.exp (((τ * t i : ℝ) : ℂ) * I) with he
+  have h1 : ∀ a : (ZMod q)ˣ, ((‖Rf R χ t (Real.exp τ) a‖ ^ 2 : ℝ) : ℂ) =
+      ∑ i ∈ R, ∑ k ∈ R, (e i * conj (e k)) * (χ i a * star (χ k a)) := by
+    intro a
+    set z := Rf R χ t (Real.exp τ) a with hz
+    have hz2 : ((‖z‖ ^ 2 : ℝ) : ℂ) = z * conj z := by
+      rw [← Complex.normSq_eq_norm_sq, Complex.mul_conj]
+    rw [hz2, hz, Rf_exp, map_sum, Finset.sum_mul_sum]
+    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => ?_
+    simp only [map_mul, Complex.star_def, he]
+    ring
+  rw [Complex.ofReal_sum, Finset.sum_congr rfl (fun a _ => h1 a)]
+  rw [Finset.sum_comm, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [Finset.sum_comm, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [← Finset.mul_sum, LinnikCGLMom.sum_units_mul_star]
+  split_ifs with h
+  · simp only [he, conj_exp_I, ← Complex.exp_add]
+    rw [mul_comm]; congr 2; push_cast; ring
+  · simp
+
+open scoped Classical in
+/-- **The weighted second moment over the units, for any points**: for `X ≥ 1` and `K ∈ ℕ`,
+`∫ψ̃₀(τ/X)Σ_{a unit}|R(e^τ, a)|² dτ ≤ φ(q)X(∫ψ̃₀·P + |R|²D_K/X^K)`, with `P = pairs1`: by `sum_norm_Rf_sq_gen`,
+`∫ψ̃₀(τ/X)e^{iτΔ} dτ = Xψ̂₀(−XΔ/(2π))` (`integral_psi_exp`) and `norm_term_le`, as in `integral_sum_four_le`. -/
+theorem integral_sum_sq_le {ι : Type*} {q : ℕ} [NeZero q] (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
+    (t : ι → ℝ) {X : ℝ} (hX : 1 ≤ X) (K : ℕ) :
+    ∫ τ, psi0 (τ / X) * ∑ a : (ZMod q)ˣ, ‖Rf R χ t (Real.exp τ) a‖ ^ 2 ≤
+      q.totient * X * ((∫ x, psi0 x) * pairs1 R χ t + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K) := by
+  have hX0 : 0 < X := by linarith
+  set H : ℝ → ℝ := fun τ => psi0 (τ / X) * ∑ a : (ZMod q)ˣ, ‖Rf R χ t (Real.exp τ) a‖ ^ 2 with hH
+  have hH0 : ∀ τ, 0 ≤ H τ := fun τ => mul_nonneg (psi0_nonneg _) (Finset.sum_nonneg fun a _ => by positivity)
+  have hC : ((∫ τ, H τ : ℝ) : ℂ) = (q.totient : ℂ) * ∑ i ∈ R, ∑ k ∈ R,
+      (if χ i = χ k then (X : ℂ) * 𝓕 psiC (-(X * (t i - t k)) / (2 * π)) else 0) := by
+    rw [← integral_complex_ofReal]
+    have e1 : ∀ τ, ((H τ : ℝ) : ℂ) = (q.totient : ℂ) * ∑ i ∈ R, ∑ k ∈ R,
+        (if χ i = χ k then
+          (psi0 (τ / X) : ℂ) * Complex.exp (((τ * (t i - t k) : ℝ) : ℂ) * I) else 0) := by
+      intro τ
+      simp only [hH]
+      rw [Complex.ofReal_mul, sum_norm_Rf_sq_gen, mul_left_comm]
+      congr 1
+      simp only [Finset.mul_sum, mul_ite, mul_zero]
+    simp_rw [e1]
+    rw [integral_const_mul]
+    congr 1
+    have hint2 : ∀ i k, Integrable fun τ : ℝ => (if χ i = χ k then
+        (psi0 (τ / X) : ℂ) * Complex.exp (((τ * (t i - t k) : ℝ) : ℂ) * I) else 0) := by
+      intro i k
+      split_ifs
+      · exact integrable_psi_exp hX0 _
+      · exact integrable_zero _ _ _
+    rw [integral_finsetSum _ fun i _ => integrable_finsetSum _ fun k _ => hint2 i k]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [integral_finsetSum _ fun k _ => hint2 i k]
+    refine Finset.sum_congr rfl fun k _ => ?_
+    split_ifs
+    · rw [integral_psi_exp hX0]
+    · simp
+  have hnn : 0 ≤ ∫ τ, H τ := integral_nonneg hH0
+  have hn : ∫ τ, H τ = ‖((∫ τ, H τ : ℝ) : ℂ)‖ := by rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hnn]
+  rw [hn, hC, norm_mul, Complex.norm_natCast]
+  have hsum : ‖∑ i ∈ R, ∑ k ∈ R,
+      (if χ i = χ k then (X : ℂ) * 𝓕 psiC (-(X * (t i - t k)) / (2 * π)) else 0)‖ ≤
+      ∑ i ∈ R, ∑ k ∈ R, ((if |t i - t k| ≤ 1 ∧ χ i = χ k then X * ∫ x, psi0 x else 0) +
+        X * (Dpsi K / X ^ K)) := by
+    refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
+    refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun k _ => ?_)
+    exact norm_term_le hX K _ _
+  have hcount : ∑ i ∈ R, ∑ k ∈ R, ((if |t i - t k| ≤ 1 ∧ χ i = χ k then X * ∫ x, psi0 x else 0) +
+        X * (Dpsi K / X ^ K)) =
+      X * (∫ x, psi0 x) * pairs1 R χ t + (R.card : ℝ) ^ 2 * (X * (Dpsi K / X ^ K)) := by
+    unfold pairs1
+    simp only [Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul, Finset.mul_sum, mul_ite, mul_one,
+      mul_zero]
+    ring
+  calc (q.totient : ℝ) * ‖∑ i ∈ R, ∑ k ∈ R, (if χ i = χ k then
+        (X : ℂ) * 𝓕 psiC (-(X * (t i - t k)) / (2 * π)) else 0)‖
+      ≤ q.totient * (X * (∫ x, psi0 x) * pairs1 R χ t + (R.card : ℝ) ^ 2 * (X * (Dpsi K / X ^ K))) :=
+        mul_le_mul_of_nonneg_left (hsum.trans (le_of_eq hcount)) (Nat.cast_nonneg _)
+    _ = q.totient * X * ((∫ x, psi0 x) * pairs1 R χ t + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K) := by ring
+
+open scoped Classical in
+/-- For spaced points (`Spaced`), only the diagonal pairs count: `P ≤ |R|`. -/
+lemma pairs1_le_card {ι : Type*} {q : ℕ} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ)
+    (hsp : Spaced R χ t) : pairs1 R χ t ≤ R.card := by
+  unfold pairs1
+  have h : ∀ i ∈ R, ∑ k ∈ R, (if |t i - t k| ≤ 1 ∧ χ i = χ k then (1 : ℝ) else 0) ≤ 1 := by
+    intro i hi
+    rw [Finset.sum_eq_single i]
+    · split_ifs <;> norm_num
+    · intro k hk hki
+      refine ite_eq_right fun h => ?_
+      exact absurd h.1 (not_le.2 (lt_trans one_lt_two (hsp i hi k hk (Ne.symm hki) h.2)))
+    · intro h; exact absurd hi h
+  calc ∑ i ∈ R, ∑ k ∈ R, (if |t i - t k| ≤ 1 ∧ χ i = χ k then (1 : ℝ) else 0) ≤ ∑ _i ∈ R, (1 : ℝ) :=
+        Finset.sum_le_sum h
+    _ = R.card := by simp
+
 /-! ### The moments over the units -/
 
 section moments
@@ -207,14 +326,16 @@ theorem integral_sum_four_le {X : ℝ} (hX : 1 ≤ X) (K : ℕ) :
         mul_le_mul_of_nonneg_left (hsum.trans (le_of_eq hcount)) (Nat.cast_nonneg _)
     _ = q.totient * X * ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K) := by ring
 
-/-- **The weighted third moment over the units**: at one point per character, for `X ≥ 1` and `K ∈ ℕ`,
-`Σ_{a unit}∫ψ̃₀(y/X)|F_a(y)|³ dy ≤ φ(q)X√(|R|∫ψ̃₀·(∫ψ̃₀·E + |R|⁴D_K/X^K))`, with `F_a = Σ_iχ_i(a)e^{it_iy}`. It is
-Cauchy–Schwarz between the second moment, `φ(q)|R|X∫ψ̃₀` exactly (`sum_norm_Rf_sq`), and the fourth
+/-- **The weighted third moment over the units**: for spaced points (`Spaced`), `X ≥ 1` and `K ∈ ℕ`,
+`Σ_{a unit}∫ψ̃₀(y/X)|F_a(y)|³ dy ≤ φ(q)X√((∫ψ̃₀·|R| + |R|²D_K/X^K)(∫ψ̃₀·E + |R|⁴D_K/X^K))`, with
+`F_a = Σ_iχ_i(a)e^{it_iy}`. It is Cauchy–Schwarz between the second moment, at most
+`φ(q)X(∫ψ̃₀·|R| + |R|²D_K/X^K)` (`integral_sum_sq_le`, `pairs1_le_card`), and the fourth
 (`integral_sum_four_le`), in the form `|F|³ ≤ (l|F|² + |F|⁴/l)/2` for every `l > 0`. -/
-theorem sum_cube_moment_le (hinj : Set.InjOn χ R) {X : ℝ} (hX : 1 ≤ X) (K : ℕ) :
+theorem sum_cube_moment_le (hsp : Spaced R χ t) {X : ℝ} (hX : 1 ≤ X) (K : ℕ) :
     ∑ u : (ZMod q)ˣ, ∫ y, psi0 (y / X) * ‖esum R (fun i => χ i u) t y‖ ^ 3 ≤
       q.totient * X *
-        √(R.card * (∫ x, psi0 x) * ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K)) := by
+        √(((∫ x, psi0 x) * R.card + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K) *
+          ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K)) := by
   have hX0 : 0 < X := by linarith
   have hc : ∀ u : (ZMod q)ˣ, Continuous (esum R (fun i => χ i u) t) := fun u => continuous_esum R _ t
   have hI0 : 0 ≤ ∫ x, psi0 x := integral_nonneg psi0_nonneg
@@ -222,23 +343,23 @@ theorem sum_cube_moment_le (hinj : Set.InjOn χ R) {X : ℝ} (hX : 1 ≤ X) (K :
   have hD0 := Dpsi_nonneg K
   have hi : ∀ (u : (ZMod q)ˣ) (k : ℕ), Integrable fun y => psi0 (y / X) * ‖esum R (fun i => χ i u) t y‖ ^ k :=
     fun u k => integrable_psi0_mul hX0 ((hc u).norm.pow k)
-  -- the second moment, exactly
-  have hS2 : ∑ u : (ZMod q)ˣ, ∫ y, psi0 (y / X) * ‖esum R (fun i => χ i u) t y‖ ^ 2 =
-      q.totient * R.card * (X * ∫ x, psi0 x) := by
+  -- the second moment
+  have hS2 : ∑ u : (ZMod q)ˣ, ∫ y, psi0 (y / X) * ‖esum R (fun i => χ i u) t y‖ ^ 2 ≤
+      q.totient * X * ((∫ x, psi0 x) * R.card + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K) := by
     have hsw : ∑ u : (ZMod q)ˣ, ∫ y, psi0 (y / X) * ‖esum R (fun i => χ i u) t y‖ ^ 2 =
         ∫ y, ∑ u : (ZMod q)ˣ, psi0 (y / X) * ‖esum R (fun i => χ i u) t y‖ ^ 2 :=
       (integral_finsetSum _ fun u _ => hi u 2).symm
     rw [hsw]
     have e : ∀ y, ∑ u : (ZMod q)ˣ, psi0 (y / X) * ‖esum R (fun i => χ i u) t y‖ ^ 2 =
-        psi0 (y / X) * (q.totient * R.card) := by
+        psi0 (y / X) * ∑ a : (ZMod q)ˣ, ‖Rf R χ t (Real.exp y) a‖ ^ 2 := by
       intro y
       rw [← Finset.mul_sum]
-      congr 1
-      simp_rw [← Rf_exp_eq_esum]
-      exact LinnikCGLMom.sum_norm_Rf_sq R hinj t (Real.exp_pos y)
+      simp_rw [Rf_exp_eq_esum]
     simp_rw [e]
-    rw [integral_mul_const, Measure.integral_comp_div psi0 X, abs_of_pos hX0, smul_eq_mul]
-    ring
+    refine (integral_sum_sq_le R χ t hX K).trans ?_
+    have hP : (∫ x, psi0 x) * pairs1 R χ t ≤ (∫ x, psi0 x) * R.card :=
+      mul_le_mul_of_nonneg_left (pairs1_le_card R χ t hsp) hI0
+    exact mul_le_mul_of_nonneg_left (by linarith) (by positivity)
   -- the fourth moment
   have hS4 : ∑ u : (ZMod q)ˣ, ∫ y, psi0 (y / X) * ‖esum R (fun i => χ i u) t y‖ ^ 4 ≤
       q.totient * X * ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K) := by
@@ -255,7 +376,7 @@ theorem sum_cube_moment_le (hinj : Set.InjOn χ R) {X : ℝ} (hX : 1 ≤ X) (K :
     exact integral_sum_four_le R χ t hX K
   -- every `l > 0`
   have hl : ∀ l : ℝ, 0 < l → ∑ u : (ZMod q)ˣ, ∫ y, psi0 (y / X) * ‖esum R (fun i => χ i u) t y‖ ^ 3 ≤
-      (l * (q.totient * R.card * (X * ∫ x, psi0 x)) +
+      (l * (q.totient * X * ((∫ x, psi0 x) * R.card + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K)) +
         q.totient * X * ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K) / l) / 2 := by
     intro l hl
     have hpt : ∀ (u : (ZMod q)ˣ) y, psi0 (y / X) * ‖esum R (fun i => χ i u) t y‖ ^ 3 ≤
@@ -281,23 +402,24 @@ theorem sum_cube_moment_le (hinj : Set.InjOn χ R) {X : ℝ} (hX : 1 ≤ X) (K :
           rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
           refine Finset.sum_congr rfl fun u _ => ?_
           rw [integral_add ((hi u 2).const_mul _) ((hi u 4).const_mul _), integral_const_mul, integral_const_mul]
-      _ ≤ l / 2 * (q.totient * R.card * (X * ∫ x, psi0 x)) +
+      _ ≤ l / 2 * (q.totient * X * ((∫ x, psi0 x) * R.card + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K)) +
             1 / (2 * l) * (q.totient * X * ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K)) := by
-          rw [hS2]
-          have : (0 : ℝ) ≤ 1 / (2 * l) := by positivity
-          have := mul_le_mul_of_nonneg_left hS4 this
+          have h1 : (0 : ℝ) ≤ 1 / (2 * l) := by positivity
+          have h2 := mul_le_mul_of_nonneg_left hS4 h1
+          have h3 := mul_le_mul_of_nonneg_left hS2 (by positivity : (0 : ℝ) ≤ l / 2)
           linarith
-      _ = (l * (q.totient * R.card * (X * ∫ x, psi0 x)) +
+      _ = (l * (q.totient * X * ((∫ x, psi0 x) * R.card + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K)) +
             q.totient * X * ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K) / l) / 2 := by
           field_simp
-  have ha : (0 : ℝ) ≤ q.totient * R.card * (X * ∫ x, psi0 x) := by positivity
+  have ha : (0 : ℝ) ≤ q.totient * X * ((∫ x, psi0 x) * R.card + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K) := by
+    positivity
   have hb : (0 : ℝ) ≤ q.totient * X * ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K) := by
     positivity
   refine (le_sqrt_of_forall ha hb hl).trans (le_of_eq ?_)
-  have e : q.totient * R.card * (X * ∫ x, psi0 x) *
+  have e : q.totient * X * ((∫ x, psi0 x) * R.card + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K) *
       (q.totient * X * ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K)) =
-      (q.totient * X) ^ 2 *
-        (R.card * (∫ x, psi0 x) * ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K)) := by ring
+      (q.totient * X) ^ 2 * (((∫ x, psi0 x) * R.card + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K) *
+        ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K)) := by ring
   rw [e, Real.sqrt_mul' _ (by positivity), Real.sqrt_sq (by positivity)]
 
 end moments
@@ -328,22 +450,23 @@ omit [NeZero q] in
 /-- The pairs `n₁, n₂ ∼ N` with `(n₁, n₂) ≤ D`. -/
 def pairs (N : ℝ) (D : ℕ) : Finset (ℕ × ℕ) := (dyad N ×ˢ dyad N).filter fun p => Nat.gcd p.1 p.2 ≤ D
 
-/-- **Their Lemma 10.9 (small gcd terms), at one point per character**: for `q ≥ 1`, `χ` injective on `R`, `T ≥ 1`,
-points `|t_i| ≤ T`, `N > 0`, `X ≥ 4`, `D ∈ ℕ` and `K ≥ 2`, `Σ_{n₁,n₂∼N, (n₁,n₂)≤D}|R₂(n₁, n₂)|³ ≤
-C_k(3DqT + 64πN²)X√(|R|∫ψ̃₀·(∫ψ̃₀·E + |R|⁴D_K/X^K)) + |P|·|R|³·2πD_K(2π)^{−K}Z^{2−K}`, with `P` the pairs and
-`Z = 3T(X − 1)/(2π)`. The pairs prime to `q` are split by their gcd `d` and their residue `a = n₁n₂⁻¹`; on each
-class `R₂(n₁, n₂) = F_a(log(n₁/n₂))` (`R2_eq_esum`), the points are `qd²/(8N²)`-separated (`log_sep`),
-and `sum_cube_le` applies; `Σ_d(3T + 32πN²/(qd²)) ≤ 3DT + 64πN²/q`, and `sum_cube_moment_le` bounds
-the sum over `a`. -/
-theorem lemma109 (hinj : Set.InjOn χ R) {T N X : ℝ} (hT : 1 ≤ T) (ht : ∀ i ∈ R, |t i| ≤ T) (hN : 0 < N)
+/-- **Their Lemma 10.9 (small gcd terms)**: for `q ≥ 1`, spaced points (`Spaced`), `T ≥ 1`, `|t_i| ≤ T`,
+`N > 0`, `X ≥ 4`, `D ∈ ℕ` and `K ≥ 2`, `Σ_{n₁,n₂∼N, (n₁,n₂)≤D}|R₂(n₁, n₂)|³ ≤
+C_k(3DqT + 64πN²)X√((∫ψ̃₀·|R| + |R|²D_K/X^K)(∫ψ̃₀·E + |R|⁴D_K/X^K)) + |P|·|R|³·2πD_K(2π)^{−K}Z^{2−K}`, with `P`
+the pairs and `Z = 3T(X − 1)/(2π)`. The pairs prime to `q` are split by their gcd `d` and their residue
+`a = n₁n₂⁻¹`; on each class `R₂(n₁, n₂) = F_a(log(n₁/n₂))` (`R2_eq_esum`), the points are
+`qd²/(8N²)`-separated (`log_sep`), and `sum_cube_le` applies; `Σ_d(3T + 32πN²/(qd²)) ≤ 3DT + 64πN²/q`, and
+`sum_cube_moment_le` bounds the sum over `a`. -/
+theorem lemma109 (hsp : Spaced R χ t) {T N X : ℝ} (hT : 1 ≤ T) (ht : ∀ i ∈ R, |t i| ≤ T) (hN : 0 < N)
     (hX : 4 ≤ X) (D : ℕ) {K : ℕ} (hK : 2 ≤ K) :
     ∑ p ∈ pairs N D, ‖R2 R χ t p.1 p.2‖ ^ 3 ≤
       Ck * (3 * D * q * T + 64 * π * N ^ 2) * X *
-          √(R.card * (∫ x, psi0 x) * ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K)) +
+          √(((∫ x, psi0 x) * R.card + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K) *
+            ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K)) +
         (pairs N D).card * (R.card : ℝ) ^ 3 *
           (2 * π * (Dpsi K / (2 * π) ^ K / (3 * T * (X - 1) / (2 * π)) ^ (K - 2))) := by
   classical
-  obtain ⟨Q, hQ⟩ : ∃ Q : ℝ, Q = √(R.card * (∫ x, psi0 x) *
+  obtain ⟨Q, hQ⟩ : ∃ Q : ℝ, Q = √(((∫ x, psi0 x) * R.card + (R.card : ℝ) ^ 2 * Dpsi K / X ^ K) *
       ((∫ x, psi0 x) * energy R χ t + (R.card : ℝ) ^ 4 * Dpsi K / X ^ K)) := ⟨_, rfl⟩
   rw [← hQ]
   obtain ⟨τ', hτ'⟩ : ∃ τ' : ℝ, τ' = 2 * π * (Dpsi K / (2 * π) ^ K / (3 * T * (X - 1) / (2 * π)) ^ (K - 2)) :=
@@ -472,7 +595,7 @@ theorem lemma109 (hinj : Set.InjOn χ R) {T N X : ℝ} (hT : 1 ≤ T) (ht : ∀ 
       Nat.cast_sum, Finset.sum_product]
   have hsumW : ∑ a ∈ A, W a ≤ q.totient * X * Q := by
     rw [hA, Finset.sum_image fun u _ v _ h => Units.ext h, hQ, hW]
-    exact sum_cube_moment_le R χ t hinj hX1 K
+    exact sum_cube_moment_le R χ t hsp hX1 K
   have hsW0 : 0 ≤ ∑ a ∈ A, W a := Finset.sum_nonneg fun a _ => hW0 a
   have hUc : (U.card : ℝ) ≤ (pairs N D).card := by
     rw [hU]; exact_mod_cast Finset.card_filter_le _ _

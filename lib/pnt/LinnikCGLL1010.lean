@@ -34,8 +34,8 @@ The library's form.
 
 Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` (`R2`), `E` `energy`,
 `G = d(q)(⌊log₂|R|²⌋ + 1)` and `L = 1 + log max(1, N)`.
-* `lemma106'`: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for primitive characters injective on
-  `R`, `T, M ≥ 1` and points `|t_i| ≤ T`, `Σ_{n₁,n₂∼M}|R₂(n₁, n₂)|² ≤ C(qTM)^ε(|R|M² + |R|²M + |R|^{5/4}(qT)^{1/2}M)`.
+* `lemma106'`: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for spaced points with primitive
+  characters, `T, M ≥ 1` and `|t_i| ≤ T`, `Σ_{n₁,n₂∼M}|R₂(n₁, n₂)|² ≤ C(qTM)^ε(|R|M² + |R|²M + |R|^{5/4}(qT)^{1/2}M)`.
 * `norm_R2_le`, `norm_R2_mul_le`: `|R₂(n₁, n₂)| ≤ |R|`; and `|R₂(dm₁, dm₂)| ≤ |R₂(m₁, m₂)|` for `d, m₁, m₂ > 0`.
 * `sum_gcd_eq_le`: for `N > 0`, `d > 0` and `k ∈ ℕ`, `Σ_{n₁,n₂∼N, (n₁,n₂)=d}|R₂(n₁, n₂)|^k ≤
   Σ_{m₁,m₂∼N/d}|R₂(m₁, m₂)|^k`.
@@ -43,8 +43,8 @@ Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` (`R2`), `E` `energy`,
 * `sum_inv_le`, `sum_inv_sq_le`: `Σ_{D<d≤N}d^{−1} ≤ 1 + log max(1, N)` and `Σ_{D<d≤N}d^{−2} ≤ 2/(D + 1)`.
 * `pairsGt`, `eq_of_dvd_of_lt`: the pairs `n₁, n₂ ∼ N` with `(n₁, n₂) > D`; and for `N > 0`, `n ∼ N` and a divisor
   `g > N` of `n`, `n = g`.
-* `lemma1010`: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for primitive characters injective on
-  `R`, `T ≥ 1`, points `|t_i| ≤ T`, `N > 0` and `D ∈ ℕ`, `Σ_{n₁,n₂∼N, (n₁,n₂)>D}|R₂(n₁, n₂)|³ ≤ CG(qTN)^ε√(ab) +
+* `lemma1010`: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for spaced points with primitive
+  characters, `T ≥ 1`, `|t_i| ≤ T`, `N > 0` and `D ∈ ℕ`, `Σ_{n₁,n₂∼N, (n₁,n₂)>D}|R₂(n₁, n₂)|³ ≤ CG(qTN)^ε√(ab) +
   |{n ∼ N}||R|³` with `a = |R|N²·2/(D + 1) + (|R|² + |R|^{5/4}(qT)^{1/2})NL` and
   `b = E·N²·2/(D + 1) + (|R|⁴ + E^{3/4}|R|(qT)^{1/2})NL`.
 
@@ -65,12 +65,12 @@ open LinnikCGLL105 LinnikCGLMom4 LinnikCGLT101 LinnikCGLL107 LinnikCGLL109
 /-! ### Their Lemma 10.6 without a threshold -/
 
 /-- **Their Lemma 10.6 without a lower bound on `qT`**: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that,
-for `q ≥ 1`, primitive characters injective on `R`, `T, M ≥ 1` and points `|t_i| ≤ T`,
+for `q ≥ 1`, spaced points (`Spaced`) with primitive characters, `T, M ≥ 1` and `|t_i| ≤ T`,
 `Σ_{n₁,n₂∼M}|R₂(n₁, n₂)|² ≤ C(qTM)^ε(|R|M² + |R|²M + |R|^{5/4}(qT)^{1/2}M)`. `lemma106` at
 `T′ = max(1, Q₀)T`, which makes `qT′ ≥ Q₀`. -/
 theorem lemma106' (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] {ι : Type} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
-      (t : ι → ℝ) (T M : ℝ), 1 ≤ T → 1 ≤ M → (∀ i ∈ R, (χ i).IsPrimitive) → Set.InjOn χ R →
+      (t : ι → ℝ) (T M : ℝ), 1 ≤ T → 1 ≤ M → (∀ i ∈ R, (χ i).IsPrimitive) → Spaced R χ t →
       (∀ i ∈ R, |t i| ≤ T) →
       ∑ n₁ ∈ dyad M, ∑ n₂ ∈ dyad M, ‖R2 R χ t n₁ n₂‖ ^ 2 ≤
         C * ((q : ℝ) * T * M) ^ ε * ((R.card : ℝ) * M ^ 2 + (R.card : ℝ) ^ 2 * M +
@@ -80,7 +80,7 @@ theorem lemma106' (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
   have hQ₁1 : 1 ≤ Q₁ := hQ₁ ▸ le_max_left _ _
   have hQ₀ : Q₀ ≤ Q₁ := hQ₁ ▸ le_max_right _ _
   refine ⟨max C 0 * Q₁ ^ ε * Q₁ ^ (1 / 2 : ℝ), by positivity, ?_⟩
-  intro q _ ι R χ t T M hT1 hM hprim hinj ht
+  intro q _ ι R χ t T M hT1 hM hprim hsp ht
   have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
   have hqT1 : 1 ≤ (q : ℝ) * T := one_le_mul_of_one_le_of_one_le hq1 hT1
   have hQT : Q₀ ≤ (q : ℝ) * (Q₁ * T) := by
@@ -92,7 +92,7 @@ theorem lemma106' (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
   have hT' : 1 ≤ Q₁ * T := one_le_mul_of_one_le_of_one_le hQ₁1 hT1
   have ht' : ∀ i ∈ R, |t i| ≤ Q₁ * T := fun i hi =>
     (ht i hi).trans (le_mul_of_one_le_left (by linarith) hQ₁1)
-  have h := hCQ q R χ t (Q₁ * T) M hQT hT' hM hprim hinj ht'
+  have h := hCQ q R χ t (Q₁ * T) M hQT hT' hM hprim hsp ht'
   have hqT : 0 ≤ (q : ℝ) * T := by positivity
   have e1 : ((q : ℝ) * (Q₁ * T) * M) ^ ε = Q₁ ^ ε * ((q : ℝ) * T * M) ^ ε := by
     rw [show (q : ℝ) * (Q₁ * T) * M = Q₁ * ((q : ℝ) * T * M) by ring, Real.mul_rpow (by linarith) (by positivity)]
@@ -306,14 +306,14 @@ lemma eq_of_dvd_of_lt {N : ℝ} (hN : 0 < N) {n g : ℕ} (hn : n ∈ dyad N) (hg
     nlinarith [(by positivity : (0 : ℝ) ≤ g)]
   linarith [hn.2]
 
-/-- **Their Lemma 10.10 (large gcd terms), at one point per character, before their case analysis**: from
-`CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for `q ≥ 1`, primitive characters injective on `R`, `T ≥ 1`,
-points `|t_i| ≤ T`, `N > 0` and `D ∈ ℕ`, `Σ_{n₁,n₂∼N, (n₁,n₂)>D}|R₂(n₁, n₂)|³ ≤ CG(qTN)^ε√(ab) + |{n ∼ N}||R|³`, with
+/-- **Their Lemma 10.10 (large gcd terms), before their case analysis**: from `CGLT101`, for every `ε > 0` there
+is `C ≥ 0` such that, for `q ≥ 1`, spaced points (`Spaced`) with primitive characters, `T ≥ 1`, `|t_i| ≤ T`,
+`N > 0` and `D ∈ ℕ`, `Σ_{n₁,n₂∼N, (n₁,n₂)>D}|R₂(n₁, n₂)|³ ≤ CG(qTN)^ε√(ab) + |{n ∼ N}||R|³`, with
 `G = d(q)(⌊log₂|R|²⌋ + 1)`, `L = 1 + log max(1, N)`, `a = |R|N²·2/(D + 1) + (|R|² + |R|^{5/4}(qT)^{1/2})NL` and
 `b = E·N²·2/(D + 1) + (|R|⁴ + E^{3/4}|R|(qT)^{1/2})NL`. -/
 theorem lemma1010 (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] {ι : Type} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
-      (t : ι → ℝ) (T N : ℝ) (D : ℕ), 1 ≤ T → 0 < N → (∀ i ∈ R, (χ i).IsPrimitive) → Set.InjOn χ R →
+      (t : ι → ℝ) (T N : ℝ) (D : ℕ), 1 ≤ T → 0 < N → (∀ i ∈ R, (χ i).IsPrimitive) → Spaced R χ t →
       (∀ i ∈ R, |t i| ≤ T) →
       ∑ p ∈ pairsGt N D, ‖R2 R χ t p.1 p.2‖ ^ 3 ≤
         C * ((q.divisors.card : ℝ) * (Nat.log 2 (R.card ^ 2) + 1)) * ((q : ℝ) * T * N) ^ ε *
@@ -327,7 +327,7 @@ theorem lemma1010 (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
   obtain ⟨C₆, hC₆0, h6⟩ := lemma106' hT hε
   obtain ⟨C₇, hC₇0, h7⟩ := lemma107 hT hε
   refine ⟨√(C₆ * C₇), Real.sqrt_nonneg _, ?_⟩
-  intro q _ ι R χ t T N D hT1 hN hprim hinj ht
+  intro q _ ι R χ t T N D hT1 hN hprim hsp ht
   classical
   obtain ⟨G, hG⟩ : ∃ G : ℝ, G = (q.divisors.card : ℝ) * (Nat.log 2 (R.card ^ 2) + 1) := ⟨_, rfl⟩
   obtain ⟨L, hL⟩ : ∃ L : ℝ, L = 1 + Real.log (max 1 N) := ⟨_, rfl⟩
@@ -411,7 +411,7 @@ theorem lemma1010 (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
     have h2 := sum_gcd_eq_le R χ t hN hd0 3
     have h3 := sum_cube_le_sqrt (dyad (N / d) ×ˢ dyad (N / d)) (fun p => ‖R2 R χ t p.1 p.2‖) fun _ => norm_nonneg _
     -- the moments at `M = N/d`
-    have h6' := h6 q R χ t T (N / d) hT1 hM hprim hinj ht
+    have h6' := h6 q R χ t T (N / d) hT1 hM hprim hsp ht
     have h7' := (h7 q R χ t T (N / d) hT1 hM ht)
     rw [← Finset.sum_product' (dyad (N / d)) (dyad (N / d)) fun n₁ n₂ => ‖R2 R χ t n₁ n₂‖ ^ 2] at h6'
     rw [← Finset.sum_product' (dyad (N / d)) (dyad (N / d)) fun n₁ n₂ => ‖R2 R χ t n₁ n₂‖ ^ 4] at h7'

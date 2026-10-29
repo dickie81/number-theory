@@ -38,7 +38,7 @@ The library's form.
 
 Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` as in `LinnikCGLL105`, `E` `energy`,
 `G = d(q)(⌊log₂|R|²⌋ + 1)` and `L = 1 + log max(1, N)`.
-* `sq_le_energy`, `energy_le_cube`: `|R|² ≤ E`; and `E ≤ |R|³` for `χ` injective on `R`.
+* `sq_le_energy`, `energy_le_cube`: `|R|² ≤ E`; and `E ≤ |R|³` for spaced points.
 * `pow_rpow_eq`, `exists_pow_eq`: `(u^m)^x = u^k` for `u ≥ 0` and `mx = k`; and every `r ≥ 0` is `u^m` for some
   `u ≥ 0`, for `m ≥ 1`.
 * `sq_add_sq_le`, `z6_le`, `case_a`, `case_one`, `case_two`, `case_poly`: the polynomial inequalities.
@@ -47,8 +47,8 @@ Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` as in `LinnikCGLL105`
   `b = EN²·2/(D + 1) + (r⁴ + E^{3/4}rQ^{1/2})NL` have `√(ab) ≤ 8L(Nr³ + NQ^{1/4}r^{21/8} + E^{1/2}r^{1/2}N²)`.
 * `remark103`: for `r, E ≥ 0`, `Q ≥ 1`, `N ≥ Q^{2/3}/2`, `r ≤ Q^{2/3}` and `E^{1/8}N ≤ Q^{1/2}r^{5/8}`,
   `QNr^{1/2}E^{1/2} ≤ 8Q²r^{3/2}`.
-* `lemma1010_case`: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for primitive characters injective
-  on `R`, `T ≥ 1`, points `|t_i| ≤ T`, `(qT)^{2/3}/2 ≤ N`, `D = ⌊N²/(qT)⌋` and either `|R| ≥ (qT)^{2/3}` or
+* `lemma1010_case`: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for spaced points with primitive
+  characters, `T ≥ 1`, `|t_i| ≤ T`, `(qT)^{2/3}/2 ≤ N`, `D = ⌊N²/(qT)⌋` and either `|R| ≥ (qT)^{2/3}` or
   `(qT)^{1/2}|R|^{5/8} ≤ E^{1/8}N`, `Σ_{n₁,n₂∼N, (n₁,n₂)>D}|R₂(n₁, n₂)|³ ≤
   8CGL(qTN)^ε(N|R|³ + N(qT)^{1/4}|R|^{21/8} + E^{1/2}|R|^{1/2}N²) + |{n ∼ N}||R|³`.
 
@@ -91,9 +91,9 @@ lemma sq_le_energy : (R.card : ℝ) ^ 2 ≤ energy R χ t := by
   push_cast at this
   nlinarith
 
-/-- `E ≤ |R|³` at one point per character: in a quadruple of the energy, `χ_l` is determined by `χ_i`, `χ_j` and
-`χ_k`, and so is `l`. -/
-lemma energy_le_cube (hinj : Set.InjOn χ R) : (energy R χ t : ℝ) ≤ (R.card : ℝ) ^ 3 := by
+/-- `E ≤ |R|³` for spaced points (`Spaced`): in a quadruple of the energy, `χ_l` is determined by `χ_i`, `χ_j` and
+`χ_k`, and `t_l` to within `2` by `t_i`, `t_j` and `t_k`, so `l` is determined. -/
+lemma energy_le_cube (hsp : Spaced R χ t) : (energy R χ t : ℝ) ≤ (R.card : ℝ) ^ 3 := by
   classical
   have h : energy R χ t ≤ (R ×ˢ R ×ˢ R).card := by
     unfold energy
@@ -112,7 +112,15 @@ lemma energy_le_cube (hinj : Set.InjOn χ R) : (energy R χ t : ℝ) ≤ (R.card
         rw [h1, h2, h3] at e
         rw [e] at e'
         exact mul_left_cancel e'
-      have hl' := hinj hp.1.2.2.2 hp'.1.2.2.2 hl
+      have hl' : p.2.2.2 = p'.2.2.2 := by
+        by_contra hne
+        have q1 : |t p.1 + t p.2.1 - t p.2.2.1 - t p.2.2.2| ≤ 1 := hp.2.1
+        have q2 : |t p'.1 + t p'.2.1 - t p'.2.2.1 - t p'.2.2.2| ≤ 1 := hp'.2.1
+        rw [h1, h2, h3] at q1
+        have hd : |t p.2.2.2 - t p'.2.2.2| ≤ 2 := by
+          rw [abs_le] at q1 q2 ⊢
+          constructor <;> linarith [q1.1, q1.2, q2.1, q2.2]
+        exact absurd hd (not_le.2 (hsp _ hp.1.2.2.2 _ hp'.1.2.2.2 hne hl))
       exact Prod.ext h1 (Prod.ext h2 (Prod.ext h3 hl'))
   rw [Finset.card_product, Finset.card_product] at h
   have : (energy R χ t : ℝ) ≤ ((R.card * (R.card * R.card) : ℕ) : ℝ) := by exact_mod_cast h
@@ -407,14 +415,14 @@ theorem remark103 {r E Q N : ℝ} (hr0 : 0 ≤ r) (hE0 : 0 ≤ E) (hQ : 1 ≤ Q)
 
 /-! ### Their Lemma 10.10 -/
 
-/-- **Their Lemma 10.10 (large gcd terms), at one point per character**: from `CGLT101`, for every `ε > 0` there is
-`C ≥ 0` such that, for `q ≥ 1`, primitive characters injective on `R`, `T ≥ 1`, points `|t_i| ≤ T`,
+/-- **Their Lemma 10.10 (large gcd terms)**: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for
+`q ≥ 1`, spaced points (`Spaced`) with primitive characters, `T ≥ 1`, `|t_i| ≤ T`,
 `(qT)^{2/3}/2 ≤ N`, `D = ⌊N²/(qT)⌋` and either `|R| ≥ (qT)^{2/3}` or `(qT)^{1/2}|R|^{5/8} ≤ E^{1/8}N`,
 `Σ_{n₁,n₂∼N, (n₁,n₂)>D}|R₂(n₁, n₂)|³ ≤ 8CGL(qTN)^ε(N|R|³ + N(qT)^{1/4}|R|^{21/8} + E^{1/2}|R|^{1/2}N²) + |{n ∼ N}||R|³`,
 with `G = d(q)(⌊log₂|R|²⌋ + 1)` and `L = 1 + log max(1, N)`: `lemma1010` and `case_le`. -/
 theorem lemma1010_case (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] {ι : Type} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
-      (t : ι → ℝ) (T N : ℝ), 1 ≤ T → (∀ i ∈ R, (χ i).IsPrimitive) → Set.InjOn χ R → (∀ i ∈ R, |t i| ≤ T) →
+      (t : ι → ℝ) (T N : ℝ), 1 ≤ T → (∀ i ∈ R, (χ i).IsPrimitive) → Spaced R χ t → (∀ i ∈ R, |t i| ≤ T) →
       ((q : ℝ) * T) ^ (2 / 3 : ℝ) / 2 ≤ N →
       (((q : ℝ) * T) ^ (2 / 3 : ℝ) ≤ R.card ∨
         ((q : ℝ) * T) ^ (1 / 2 : ℝ) * (R.card : ℝ) ^ (5 / 8 : ℝ) ≤ (energy R χ t : ℝ) ^ (1 / 8 : ℝ) * N) →
@@ -426,20 +434,20 @@ theorem lemma1010_case (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
           (dyad N).card * (R.card : ℝ) ^ 3 := by
   obtain ⟨C, hC0, hC⟩ := lemma1010 hT hε
   refine ⟨C, hC0, ?_⟩
-  intro q _ ι R χ t T N hT1 hprim hinj ht hN halt
+  intro q _ ι R χ t T N hT1 hprim hsp ht hN halt
   have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
   have hQ : 1 ≤ (q : ℝ) * T := one_le_mul_of_one_le_of_one_le hq1 hT1
   have hN0 : 0 < N := by
     have : 0 < ((q : ℝ) * T) ^ (2 / 3 : ℝ) / 2 := by positivity
     linarith
-  have h := hC q R χ t T N ⌊N ^ 2 / ((q : ℝ) * T)⌋₊ hT1 hN0 hprim hinj ht
+  have h := hC q R χ t T N ⌊N ^ 2 / ((q : ℝ) * T)⌋₊ hT1 hN0 hprim hsp ht
   have hr : (R.card : ℝ) = 0 ∨ 1 ≤ (R.card : ℝ) := by
     rcases Nat.eq_zero_or_pos R.card with h0 | h0
     · left; exact_mod_cast h0
     · right; exact_mod_cast h0
   have hL : 1 ≤ 1 + Real.log (max 1 N) := by have := Real.log_nonneg (le_max_left 1 N); linarith
   have hD : N ^ 2 / ((q : ℝ) * T) < (⌊N ^ 2 / ((q : ℝ) * T)⌋₊ : ℝ) + 1 := Nat.lt_floor_add_one _
-  have hcase := case_le hr (Nat.cast_nonneg _) (energy_le_cube R χ t hinj) hQ hN hL hD halt
+  have hcase := case_le hr (Nat.cast_nonneg _) (energy_le_cube R χ t hsp) hQ hN hL hD halt
   have hG0 : 0 ≤ (q.divisors.card : ℝ) * (Nat.log 2 (R.card ^ 2) + 1) := by positivity
   have hΛ0 : 0 ≤ ((q : ℝ) * T * N) ^ ε := by positivity
   have hk := mul_le_mul_of_nonneg_left hcase
