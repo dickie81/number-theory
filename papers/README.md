@@ -1,5 +1,7 @@
 # Papers
 
+The compiled papers and their supplements are at <https://dickie81.github.io/number-theory/>.
+
 Each paper has a directory here with its LaTeX source, `main.tex`, and a README, and may have a supplement,
 `supplement.tex`, which refers to the paper's numbering through its `main.aux`.
 
@@ -15,7 +17,7 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README,
 
 | Paper | Its theorem | Lean | State |
 |---|---|---|---|
-| [Linnik's exponent](linnik-exponent/README.md) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{278/125}` | `Linnik22240R.linnik_22240r` | A full draft: every section is written; the bibliography is checked except Buchstab (1937), which is unverified |
+| [Linnik's exponent](linnik-exponent/README.md) ([PDF](https://dickie81.github.io/number-theory/linnik-exponent.pdf), [supplement](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf)) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{278/125}` | `Linnik22240R.linnik_22240r` | A full draft: every section is written; the bibliography is checked except Buchstab (1937), which is unverified |
 
 ## Building
 
@@ -23,9 +25,9 @@ In a paper's directory, `latexmk -pdf main.tex`, and then, for a supplement, `la
 pull request and push to `main`, CI compiles every `papers/<name>/main.tex` and then every
 `papers/<name>/supplement.tex`, and keeps the PDFs as an artifact for 14 days (`.github/workflows/ci.yml`).
 
-On every push to `main` that changes `papers/`, `.github/workflows/pages.yml` compiles the papers and their
-supplements in the same way and publishes the PDFs to <https://dickie81.github.io/number-theory/>, each paper as
-`<name>.pdf` and its supplement as `<name>-supplement.pdf`, with an index page.
+On every push to `main`, `.github/workflows/pages.yml` compiles the papers and their supplements in the same way and
+publishes the PDFs to <https://dickie81.github.io/number-theory/>, each paper as `<name>.pdf` and its supplement as
+`<name>-supplement.pdf`, with an index page that lists both.
 
 ## Adding a paper
 
@@ -33,4 +35,4 @@ supplements in the same way and publishes the PDFs to <https://dickie81.github.i
 - Put the paper's theorems in `lib/`, and add their `#print axioms` lines to `lib/check/Check.lean`.
 - Write a note in `formalisations/` for each result from the literature the paper uses, and list it in that
   directory's index.
-- Add a row to the table above. CI and the site pick the paper up by themselves.
+- Add a row to the table above and to the top-level README's. CI and the site pick the paper up by themselves.

@@ -1,5 +1,9 @@
 # Linnik's exponent
 
+Read it: [the paper (PDF)](https://dickie81.github.io/number-theory/linnik-exponent.pdf) and
+[its supplement (PDF)](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf), rebuilt from `main`
+on every push.
+
 `main.tex` is the paper: Linnik's theorem with exponent `278/125`. Its eight sections are the introduction, the two
 inputs and the density curve, the Type II estimate (ending with an account of the window's ends), Type I and Harman's
 sieve, the decomposition and its certificate (with a figure of the cells, drawn by `tools/linnik/fig_cells.py` into
