@@ -83,5 +83,6 @@ green or skipped throughout. A new job must be added to its `needs`.
 `.github/workflows/pages.yml` runs on every push to `main`. It compiles every paper and its supplement, and publishes
 the PDFs, with an index page built by `scripts/build_site.py`, to GitHub Pages:
 <https://dickie81.github.io/number-theory/>. Each paper is `<name>.pdf` there, and its supplement
-`<name>-supplement.pdf`. The workflow has no paths filter, because GitHub matches such a filter against only the first
-300 files that a push changes, and a large merge could then skip the publish.
+`<name>-supplement.pdf`. The workflow has no paths filter, so every push to `main` republishes the site. A push that
+starts no workflow at all leaves the site stale, as the merges of PR #21 and PR #38 did (neither started CI either);
+the workflow can then be run by hand from the repository's Actions tab.
