@@ -8,9 +8,9 @@ the scale `D = ρ^{β₁+β₂}` of a block pair of `blk ρ`.
   spline `t` have length and mass at most `N₂/D + ηN₁/(Dρ²)`, step `ℓ ≥ ηN₁/(rDρ²)` and power `r`. Then `bdP ≤ bdU`,
   `bdU = √(ρ²(1 + η)N₂(ρX₁/q + 1)F((1 + η)ρ²N₂/(X₃q) + 1)) + ρ²(1 + η)N₂(rρ³X₂/(ηN₁))^r + ρ²√(X₁X₂)d(q)/φ(q)`.
 * `mass_leaf_le`, `massd_le`, `errL_le`: at a leaf `d₁d₂` and a weight `f`, the splines at the block pair of
-  `(d₁f, d₂)` have masses differing by at most `Θ/(d₁d₂) + 2`, `Θ = (N₁ + N₂)(ρ² − 1) + 2ηN₁`, and `(B − A)d₁fd₂` at
-  most `(1 + η)ρ²N₂`; so the leaf's main errors (`SieveTypeIBLeaf.errL`) are at most
-  `(N₂ − N₁)|Γ|/(qd₁d₂) + (W₁ + W₂)(Θ/(d₁d₂) + 4)/q + 2(W₁ + W₂)d(q)/φ(q)`, `W_i = Σ|λ_i|`.
+  `(d₁f, d₂)` have masses differing by at most `Θ/(d₁fd₂) + 2`, `Θ = (N₁ + N₂)(ρ² − 1) + 2ηN₁`, and `(B − A)d₁fd₂`
+  at most `(1 + η)ρ²N₂`; so the leaf's main errors (`SieveTypeIBLeaf.errL`) are at most
+  `(N₂ − N₁)|Γ|/(qd₁d₂) + (VΘ/(d₁d₂) + 4W)/q + 2W·d(q)/φ(q)`, `V = Σ|λ_i|/f_i` and `W = Σ|λ_i|` over both sieves.
 * `witness_le`: at a leaf with `p₁f_max ≤ X₁`, `p₁f_max p₂² ≤ X₂` and `X₃ ≤ p₁p₂`, the block pair of `(p₁f, p₂)` has
   `blk(p₁f) ≤ blk⌊X₁⌋`, `blk(p₂) ≤ blk⌊√X₂⌋`, and `bdP ≤ bdU` for both splines.
 * `pair_le_W`, `blocks_le`: a block pair's bilinear sum is at most `(∏_j ‖𝓕G_j‖₁ + Σ_j ‖𝓕M_j‖₁)M_fM₂U` if the pair
@@ -172,12 +172,12 @@ theorem blk_mono {ρ : ℝ} (hρ : 1 < ρ) {d d' : ℕ} (hd : 1 ≤ d) (hdd : d 
   exact Real.log_le_log (by exact_mod_cast (by omega : 0 < d)) (by exact_mod_cast hdd)
 
 /-- The transition at a leaf: with the splines at the block pair of `(d₁f, d₂)`, the masses differ by at most
-`((N₁ + N₂)(ρ² − 1) + 2ηN₁)/(d₁d₂) + 2`. -/
+`((N₁ + N₂)(ρ² − 1) + 2ηN₁)/(d₁fd₂) + 2`. -/
 theorem mass_leaf_le {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 ≤ η) (hη1 : η ≤ 1) {N₁ N₂ : ℕ} (hN : N₁ ≤ N₂) {r : ℕ}
     (hr : 1 ≤ r) {d₁ f d₂ : ℕ} (hd₁ : 1 ≤ d₁) (hf : 1 ≤ f) (hd₂ : 1 ≤ d₂) :
     massv (TPs η ρ (ρ ^ (blk ρ (d₁ * f) + blk ρ d₂)) N₁ N₂ r) -
         massv (TMs η ρ (ρ ^ (blk ρ (d₁ * f) + blk ρ d₂)) N₁ N₂ r) ≤
-      ((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) / (d₁ * d₂ : ℕ) + 2 := by
+      ((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) / (d₁ * f * d₂ : ℕ) + 2 := by
   have hρ0 : 0 < ρ := by linarith
   set D : ℝ := ρ ^ (blk ρ (d₁ * f) + blk ρ d₂) with hD
   have hD0 : 0 < D := by positivity
@@ -185,21 +185,19 @@ theorem mass_leaf_le {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 ≤ η) (hη1 : η �
   have hdf : 1 ≤ d₁ * f := Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (by omega) (by omega))
   have hpair := (blk_pair hρ hdf hd₂).2
   rw [← hD] at hpair
-  have hdd : 1 ≤ d₁ * d₂ := Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (by omega) (by omega))
-  have he1 : (1 : ℝ) ≤ (d₁ * d₂ : ℕ) := by exact_mod_cast hdd
-  have he : ((d₁ * d₂ : ℕ) : ℝ) ≤ D * ρ ^ 2 := by
-    refine le_trans ?_ hpair.le
-    exact_mod_cast Nat.mul_le_mul_right d₂ (Nat.le_mul_of_pos_right d₁ (by omega))
+  have hdd : 1 ≤ d₁ * f * d₂ := Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (by omega) (by omega))
+  have he1 : (1 : ℝ) ≤ (d₁ * f * d₂ : ℕ) := by exact_mod_cast hdd
+  have he : ((d₁ * f * d₂ : ℕ) : ℝ) ≤ D * ρ ^ 2 := hpair.le
   have hρ2 : 1 ≤ ρ ^ 2 := one_le_pow₀ hρ.le
   have hN0 : (0 : ℝ) ≤ (N₁ + N₂) * (ρ ^ 2 - 1) := by positivity
   have e1 : ((N₁ : ℝ) + N₂) * (1 - 1 / ρ ^ 2) / D = (N₁ + N₂) * (ρ ^ 2 - 1) / (D * ρ ^ 2) := by
     field_simp
-  have h1 : ((N₁ : ℝ) + N₂) * (ρ ^ 2 - 1) / (D * ρ ^ 2) ≤ (N₁ + N₂) * (ρ ^ 2 - 1) / (d₁ * d₂ : ℕ) :=
+  have h1 : ((N₁ : ℝ) + N₂) * (ρ ^ 2 - 1) / (D * ρ ^ 2) ≤ (N₁ + N₂) * (ρ ^ 2 - 1) / (d₁ * f * d₂ : ℕ) :=
     div_le_div_of_nonneg_left hN0 (by linarith) he
-  have h2 : η * N₁ / (D * ρ ^ 2) ≤ η * N₁ / (d₁ * d₂ : ℕ) :=
+  have h2 : η * N₁ / (D * ρ ^ 2) ≤ η * N₁ / (d₁ * f * d₂ : ℕ) :=
     div_le_div_of_nonneg_left (by positivity) (by linarith) he
-  have e2 : ((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) / ((d₁ * d₂ : ℕ) : ℝ) =
-      (N₁ + N₂) * (ρ ^ 2 - 1) / (d₁ * d₂ : ℕ) + 2 * (η * N₁ / (d₁ * d₂ : ℕ)) := by ring
+  have e2 : ((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) / ((d₁ * f * d₂ : ℕ) : ℝ) =
+      (N₁ + N₂) * (ρ ^ 2 - 1) / (d₁ * f * d₂ : ℕ) + 2 * (η * N₁ / (d₁ * f * d₂ : ℕ)) := by ring
   rw [e2]
   linarith
 
@@ -237,7 +235,7 @@ theorem massd_le {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 ≤ η) {N₁ N₂ : ℕ}
     key _ (massv_le_lenv _) (len_TMs_le hη hρ.le hD0 N₁ N₂ hr)⟩
 
 /-- **A leaf's main errors** (`SieveTypeIBLeaf.errL`) with the splines at its block pairs: at most
-`(N₂ − N₁)|Γ|/(qd) + (W₁ + W₂)(Θ/d + 4)/q + 2(W₁ + W₂)d(q)/φ(q)`, with `d = d₁d₂`, `W_i = Σ|λ_i|` and
+`(N₂ − N₁)|Γ|/(qd) + (VΘ/d + 4W)/q + 2W·d(q)/φ(q)`, with `d = d₁d₂`, `V = Σ|λ_i|/f_i`, `W = Σ|λ_i|` and
 `Θ = (N₁ + N₂)(ρ² − 1) + 2ηN₁`. -/
 theorem errL_le (q : ℕ) {N₁ N₂ : ℕ} (hN : N₁ ≤ N₂) {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 ≤ η) (hη1 : η ≤ 1)
     {r : ℕ} (hr : 1 ≤ r) {d₁ d₂ : ℕ} (hd₁ : 1 ≤ d₁) (hd₂ : 1 ≤ d₂)
@@ -250,38 +248,46 @@ theorem errL_le (q : ℕ) {N₁ N₂ : ℕ} (hN : N₁ ≤ N₂) {ρ η : ℝ} (
         (fun τ => TMs η ρ (ρ ^ (blk ρ (d₁ * f₂ τ) + blk ρ d₂)) N₁ N₂ r) ≤
       ((N₂ : ℝ) - N₁) / q * (|∑ σ ∈ S₁, l₁ σ * gU q (f₁ σ) / f₁ σ - ∑ τ ∈ S₂, l₂ τ * gU q (f₂ τ) / f₂ τ| /
           (d₁ * d₂ : ℕ)) +
-        (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|) * (((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) / (d₁ * d₂ : ℕ) + 4) / q +
+        ((∑ σ ∈ S₁, |l₁ σ| / f₁ σ + ∑ τ ∈ S₂, |l₂ τ| / f₂ τ) *
+            (((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) / (d₁ * d₂ : ℕ)) +
+          4 * (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|)) / q +
         2 * (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|) * ((q.divisors.card : ℝ) / q.totient) := by
   set Θ : ℝ := ((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) / (d₁ * d₂ : ℕ) with hΘ
   have hq : (0 : ℝ) ≤ q := Nat.cast_nonneg q
+  have hdd : (0 : ℝ) < ((d₁ * d₂ : ℕ) : ℝ) := by
+    exact_mod_cast Nat.pos_of_ne_zero (Nat.mul_ne_zero (by omega) (by omega))
+  -- one weight: `|λ|(m⁺ − m⁻ + 1) ≤ (|λ|/f)Θ + 3|λ|`
+  have one : ∀ f : ℕ, 1 ≤ f → ∀ l : ℝ, |l| * (massv (TPs η ρ (ρ ^ (blk ρ (d₁ * f) + blk ρ d₂)) N₁ N₂ r) -
+      massv (TMs η ρ (ρ ^ (blk ρ (d₁ * f) + blk ρ d₂)) N₁ N₂ r) + 1) ≤ |l| / f * Θ + 3 * |l| := by
+    intro f hf l
+    have hm := mass_leaf_le hρ hη hη1 hN hr hd₁ hf hd₂
+    have hf0 : (0 : ℝ) < f := by exact_mod_cast (by omega : 0 < f)
+    have hcast : ((d₁ * f * d₂ : ℕ) : ℝ) = (f : ℝ) * ((d₁ * d₂ : ℕ) : ℝ) := by push_cast; ring
+    have e : ((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) / ((d₁ * f * d₂ : ℕ) : ℝ) = Θ / f := by
+      rw [hcast, hΘ, div_div, mul_comm ((d₁ * d₂ : ℕ) : ℝ)]
+    rw [e] at hm
+    have e2 : |l| / f * Θ + 3 * |l| = |l| * (Θ / f + 3) := by field_simp
+    rw [e2]
+    exact mul_le_mul_of_nonneg_left (by linarith) (abs_nonneg _)
   have h₁ : ∑ σ ∈ S₁, |l₁ σ| * (massv (TPs η ρ (ρ ^ (blk ρ (d₁ * f₁ σ) + blk ρ d₂)) N₁ N₂ r) -
-      massv (TMs η ρ (ρ ^ (blk ρ (d₁ * f₁ σ) + blk ρ d₂)) N₁ N₂ r) + 1) ≤ (∑ σ ∈ S₁, |l₁ σ|) * (Θ + 3) := by
-    rw [Finset.sum_mul]
-    refine Finset.sum_le_sum fun σ hσ => mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)
-    have := mass_leaf_le hρ hη hη1 hN hr hd₁ (hf₁ σ hσ) hd₂
-    linarith
+      massv (TMs η ρ (ρ ^ (blk ρ (d₁ * f₁ σ) + blk ρ d₂)) N₁ N₂ r) + 1) ≤
+      (∑ σ ∈ S₁, |l₁ σ| / f₁ σ) * Θ + 3 * ∑ σ ∈ S₁, |l₁ σ| := by
+    rw [Finset.sum_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
+    exact Finset.sum_le_sum fun σ hσ => one _ (hf₁ σ hσ) _
   have h₂ : ∑ τ ∈ S₂, |l₂ τ| * (massv (TPs η ρ (ρ ^ (blk ρ (d₁ * f₂ τ) + blk ρ d₂)) N₁ N₂ r) -
-      massv (TMs η ρ (ρ ^ (blk ρ (d₁ * f₂ τ) + blk ρ d₂)) N₁ N₂ r) + 1) ≤ (∑ τ ∈ S₂, |l₂ τ|) * (Θ + 3) := by
-    rw [Finset.sum_mul]
-    refine Finset.sum_le_sum fun τ hτ => mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)
-    have := mass_leaf_le hρ hη hη1 hN hr hd₁ (hf₂ τ hτ) hd₂
-    linarith
+      massv (TMs η ρ (ρ ^ (blk ρ (d₁ * f₂ τ) + blk ρ d₂)) N₁ N₂ r) + 1) ≤
+      (∑ τ ∈ S₂, |l₂ τ| / f₂ τ) * Θ + 3 * ∑ τ ∈ S₂, |l₂ τ| := by
+    rw [Finset.sum_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
+    exact Finset.sum_le_sum fun τ hτ => one _ (hf₂ τ hτ) _
   rw [errL]
-  have hW₁ : 0 ≤ ∑ σ ∈ S₁, |l₁ σ| := Finset.sum_nonneg fun σ _ => abs_nonneg _
-  have hW₂ : 0 ≤ ∑ τ ∈ S₂, |l₂ τ| := Finset.sum_nonneg fun τ _ => abs_nonneg _
-  have e : (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|) * (Θ + 4) / q =
-      ((∑ σ ∈ S₁, |l₁ σ|) * (Θ + 3) + ∑ τ ∈ S₂, |l₂ τ|) / q +
-        ((∑ τ ∈ S₂, |l₂ τ|) * (Θ + 3) + ∑ σ ∈ S₁, |l₁ σ|) / q := by
-    ring
-  rw [e]
-  have k1 : (∑ σ ∈ S₁, |l₁ σ| * (massv (TPs η ρ (ρ ^ (blk ρ (d₁ * f₁ σ) + blk ρ d₂)) N₁ N₂ r) -
-      massv (TMs η ρ (ρ ^ (blk ρ (d₁ * f₁ σ) + blk ρ d₂)) N₁ N₂ r) + 1) + ∑ τ ∈ S₂, |l₂ τ|) / q ≤
-      ((∑ σ ∈ S₁, |l₁ σ|) * (Θ + 3) + ∑ τ ∈ S₂, |l₂ τ|) / q :=
-    div_le_div_of_nonneg_right (by linarith) hq
-  have k2 : (∑ τ ∈ S₂, |l₂ τ| * (massv (TPs η ρ (ρ ^ (blk ρ (d₁ * f₂ τ) + blk ρ d₂)) N₁ N₂ r) -
-      massv (TMs η ρ (ρ ^ (blk ρ (d₁ * f₂ τ) + blk ρ d₂)) N₁ N₂ r) + 1) + ∑ σ ∈ S₁, |l₁ σ|) / q ≤
-      ((∑ τ ∈ S₂, |l₂ τ|) * (Θ + 3) + ∑ σ ∈ S₁, |l₁ σ|) / q :=
-    div_le_div_of_nonneg_right (by linarith) hq
+  have k : (∑ σ ∈ S₁, |l₁ σ| * (massv (TPs η ρ (ρ ^ (blk ρ (d₁ * f₁ σ) + blk ρ d₂)) N₁ N₂ r) -
+        massv (TMs η ρ (ρ ^ (blk ρ (d₁ * f₁ σ) + blk ρ d₂)) N₁ N₂ r) + 1) + ∑ τ ∈ S₂, |l₂ τ|) / q +
+      (∑ τ ∈ S₂, |l₂ τ| * (massv (TPs η ρ (ρ ^ (blk ρ (d₁ * f₂ τ) + blk ρ d₂)) N₁ N₂ r) -
+        massv (TMs η ρ (ρ ^ (blk ρ (d₁ * f₂ τ) + blk ρ d₂)) N₁ N₂ r) + 1) + ∑ σ ∈ S₁, |l₁ σ|) / q ≤
+      ((∑ σ ∈ S₁, |l₁ σ| / f₁ σ + ∑ τ ∈ S₂, |l₂ τ| / f₂ τ) * Θ + 4 * (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|)) /
+        q := by
+    rw [← add_div]
+    exact div_le_div_of_nonneg_right (by linarith) hq
   have k3 : 2 * (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|) * ((q.divisors.card : ℝ) / q.totient) =
       2 * (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|) * ((q.divisors.card : ℝ) / q.totient) := rfl
   linarith
@@ -595,7 +601,7 @@ open Classical in
 divisors `f ≤ f_max`, and the fibres be bounded (`M_f`, `M₂`, as in `SieveTypeIBEv.pair_le`); let `d(n) ≤ F` for
 `0 < n < q`, `ρ > 1`, `0 < η ≤ 1` and `r ≥ 1`, and let every leaf (`c ≠ 0`) have `π₁f_max ≤ X₁`,
 `π₁f_maxπ₂² ≤ X₂` and `X₃ ≤ π₁π₂`. Then `|Σ_{y₁,y₂} c Σ_m rng(d, m)R(m)dw(dm)|`, `d = π₁π₂`, is at most
-`Σ_y c·((N₂ − N₁)|Γ|/(qd) + (W₁ + W₂)(Θ/d + 4)/q + 2(W₁ + W₂)d(q)/φ(q))` (`errL_le`, with
+`Σ_y c·((N₂ − N₁)|Γ|/(qd) + (VΘ/d + 4W)/q + 2W·d(q)/φ(q))` (`errL_le`, with
 `Θ = (N₁ + N₂)(ρ² − 1) + 2ηN₁`) plus `4(K₁ + 1)(K₂ + 1)(∏_j ‖𝓕G_j‖₁ + Σ_j ‖𝓕M_j‖₁)M_fM₂·bdU`
 (`K₁ = blk⌊X₁⌋`, `K₂ = blk⌊√X₂⌋`) plus the near-boundary masses
 `Σ_j 2φ(q)⁻¹Σ_{(y₁,σ),y₂} (1 + η)ρ²N₂|λ_σ|M_j(ℓ_j)/(π₁f_σπ₂)` of both sieves. -/
@@ -629,8 +635,9 @@ theorem leaves_family (a : ZMod q) (ha : IsUnit a) {N₁ N₂ : ℕ} (hN : N₁ 
       ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, (∏ j, I j y₁ y₂) *
           (((N₂ : ℝ) - N₁) / q * (|∑ σ ∈ S₁, l₁ σ * gU q (f₁ σ) / f₁ σ - ∑ τ ∈ S₂, l₂ τ * gU q (f₂ τ) / f₂ τ| /
               (π₁ y₁ * π₂ y₂ : ℕ)) +
-            (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|) * (((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) /
-              (π₁ y₁ * π₂ y₂ : ℕ) + 4) / q +
+            ((∑ σ ∈ S₁, |l₁ σ| / f₁ σ + ∑ τ ∈ S₂, |l₂ τ| / f₂ τ) *
+                (((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) / (π₁ y₁ * π₂ y₂ : ℕ)) +
+              4 * (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|)) / q +
             2 * (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|) * ((q.divisors.card : ℝ) / q.totient)) +
         4 * (((blk ρ ⌊X₁⌋₊ + 1) * (blk ρ ⌊√X₂⌋₊ + 1) : ℕ) : ℝ) *
           (((∏ j, ∫ u, ‖𝓕 (fun u => ((Gs j u : ℝ) : ℂ)) u‖) + ∑ j, ∫ u, ‖𝓕 (fun u => ((Ms j u : ℝ) : ℂ)) u‖) *
@@ -680,8 +687,9 @@ theorem leaves_family (a : ZMod q) (ha : IsUnit a) {N₁ N₂ : ℕ} (hN : N₁ 
       ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, (∏ j, I j y₁ y₂) *
           (((N₂ : ℝ) - N₁) / q * (|∑ σ ∈ S₁, l₁ σ * gU q (f₁ σ) / f₁ σ - ∑ τ ∈ S₂, l₂ τ * gU q (f₂ τ) / f₂ τ| /
               (π₁ y₁ * π₂ y₂ : ℕ)) +
-            (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|) * (((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) /
-              (π₁ y₁ * π₂ y₂ : ℕ) + 4) / q +
+            ((∑ σ ∈ S₁, |l₁ σ| / f₁ σ + ∑ τ ∈ S₂, |l₂ τ| / f₂ τ) *
+                (((N₁ + N₂) * (ρ ^ 2 - 1) + 2 * η * N₁) / (π₁ y₁ * π₂ y₂ : ℕ)) +
+              4 * (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|)) / q +
             2 * (∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ|) * ((q.divisors.card : ℝ) / q.totient)) :=
     Finset.sum_le_sum fun y₁ hy₁ => Finset.sum_le_sum fun y₂ hy₂ => mul_le_mul_of_nonneg_left
       (errL_le q hN hρ hη.le hη1 hr (hπ₁ y₁ hy₁) (hπ₂ y₂ hy₂) S₁ f₁ l₁ hf₁ S₂ f₂ l₂ hf₂) (hc0 y₁ y₂)

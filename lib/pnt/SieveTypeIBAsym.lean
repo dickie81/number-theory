@@ -25,16 +25,16 @@ Plain statements. `G θ Λ` is `SieveSmooth`'s cut-off and `massB θ Λ = π(2Λ
   `∏_j m_j + Σ_j m'_j ≤ (J₀ + 1)M^{J₀}`; and the bilinear part `4k₁k₂·FN·M_fM₂U` is at most
   `36L²(J₀ + 1)C_m^{J₀}(√(816C_d) + r' + 4C_d)(log x)²x^{L−3s/4}/φ(q)` when `k_i ≤ 3Lx^s log x`,
   `FN ≤ (J₀ + 1)(C_mx^s)^{J₀}`, `M_f, M₂ ≤ x^{c₁}`, `U` is at most `bdU_le_pow`'s bound and the exponents allow.
-* `split_main`: the leaves' main errors, regrouped into the main term, the transition `(WΘ/x)Σ_y c/d` and
-  `(4W/x + 2W·d(q)/φ(q))Σ_y c`.
+* `split_main`: the leaves' main errors, regrouped into the main term, the transition `(VΘ/x)Σ_y c/d` and
+  `(4W/x + 2W·d(q)/φ(q))Σ_y c`, `V = Σ|λ|/f` and `W = Σ|λ|`.
 * `leaves_ib`: **the leaves by the bilinear estimate, asymptotically.** Fix `L > 2`, margins `0 ≤ δ' < a ≤ L − 2` and
   `0 < b ≤ L`, `e₀ > 0`, `Λ₀ ≥ 0`, `B ≥ 1`, sizes `K₁`, `K₂`, `J₀`, and `0 ≤ c₁ < s/4` with `s = sIB a b δ' e₀ J₀`.
   For large `q`: let families `Y₁`, `Y₂` of tuples lie in boxes of integers at least `q^{e₀}` with `Σ 1/p ≤ B` on
   each coordinate, `J ≤ J₀` sharp comparisons `Pr_j` of forms at most `Λ₀ log q` each have a coefficient `±1`, and
-  sieve weights `S₁` above and `S₂` below sandwich `R`, with fibres, `Σ|λ|` and `Σ|λ|/f` at most `q^{c₁}`; and let
-  every leaf have `∏y₁·f_max ≤ q^{L−1−a}`, `∏y₁·f_max(∏y₂)² ≤ q^{L−b}` and `∏y₁∏y₂ ≥ q^{L−1−δ'}`. Then
-  `|Σ_y c Σ_m rng(d, m)R(m)dw(dm)| ≤ (N₂ − N₁)/q·|Γ|·Σ_y c/d + q^{L−s/4}/φ(q)`, `c = ∏_j 1[Pr_j]`, `d = ∏y₁∏y₂`,
-  `N₁ = ⌊q^L⌋`, `N₂ = ⌊2q^L⌋`, `Γ` the sieve's gap.
+  sieve weights `S₁` above and `S₂` below sandwich `R`, with fibres and `Σ|λ|/f` at most `q^{c₁}` and `Σ|λ|` at
+  most `q^{1/4}`; and let every leaf have `∏y₁·f_max ≤ q^{L−1−a}`, `∏y₁·f_max(∏y₂)² ≤ q^{L−b}` and
+  `∏y₁∏y₂ ≥ q^{L−1−δ'}`. Then `|Σ_y c Σ_m rng(d, m)R(m)dw(dm)| ≤ (N₂ − N₁)/q·|Γ|·Σ_y c/d + q^{L−s/4}/φ(q)`,
+  `c = ∏_j 1[Pr_j]`, `d = ∏y₁∏y₂`, `N₁ = ⌊q^L⌋`, `N₂ = ⌊2q^L⌋`, `Γ` the sieve's gap.
 
 The proof of `leaves_ib`: `SieveTypeIBSum.leaves_family` at `θ = η = q^{−s}`, `Λ = Λ₀ log q + 1`, `r = ⌈4/b⌉` and
 `F = ⌊C_dq^s⌋` (`LinnikPower.card_divisors_le`), with each comparison replaced off the family by its cut-off, so that
@@ -637,12 +637,12 @@ theorem bil_le {x φ L s c₁ a δ' Cm Cd r' FN Mf M₂ U k₁ k₂ : ℝ} {J₀
           ((√(816 * Cd) + r' + 4 * Cd) * (x ^ (L - 3 * s / 4) / φ)) := mul_le_mul_of_nonneg_left hEU hc0
     _ = _ := by ring
 
-/-- The leaves' explicit bound, regrouped: `Σ_y c(α·Γ/d + W(Θ/d + 4)/x + 2W·D/φ) =
-αΓ·Σ_y c/d + (WΘ/x)·Σ_y c/d + (4W/x + 2W·D/φ)·Σ_y c`. -/
+/-- The leaves' explicit bound, regrouped: `Σ_y c(α·Γ/d + (V·Θ/d + 4W)/x + 2W·D/φ) =
+αΓ·Σ_y c/d + (VΘ/x)·Σ_y c/d + (4W/x + 2W·D/φ)·Σ_y c`. -/
 theorem split_main {ι₁ ι₂ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂) (c d : ι₁ → ι₂ → ℝ)
-    (α Γ W Θ x D φ : ℝ) :
-    ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, c y₁ y₂ * (α * (Γ / d y₁ y₂) + W * (Θ / d y₁ y₂ + 4) / x + 2 * W * (D / φ)) =
-      α * Γ * ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, c y₁ y₂ / d y₁ y₂ + W * Θ / x * ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, c y₁ y₂ / d y₁ y₂ +
+    (α Γ V W Θ x D φ : ℝ) :
+    ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, c y₁ y₂ * (α * (Γ / d y₁ y₂) + (V * (Θ / d y₁ y₂) + 4 * W) / x + 2 * W * (D / φ)) =
+      α * Γ * ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, c y₁ y₂ / d y₁ y₂ + V * Θ / x * ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, c y₁ y₂ / d y₁ y₂ +
         (4 * W / x + 2 * W * (D / φ)) * ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, c y₁ y₂ := by
   simp only [Finset.mul_sum, ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -655,7 +655,7 @@ There are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a'`: let fa
 integers at least `q^{e₀}` with `Σ 1/p ≤ B` on each coordinate, with fibres of `∏y₂` at most `q^{c₁}`; let
 `J ≤ J₀` sharp comparisons `Pr_j` of forms `c_j + Σ e₁ log y₁ + Σ e₂ log y₂ ≤ Λ₀ log q`, each with a coefficient
 `±1`; let sieve weights `S₁` above and `S₂` below sandwich `R`, with divisors in `[1, f_max]`, fibres and
-`Σ|λ|` and `Σ|λ|/f` at most `q^{c₁}`; and let every leaf have `∏y₁·f_max ≤ q^{L−1−a}`,
+`Σ|λ|/f` at most `q^{c₁}` and `Σ|λ|` at most `q^{1/4}`; and let every leaf have `∏y₁·f_max ≤ q^{L−1−a}`,
 `∏y₁·f_max(∏y₂)² ≤ q^{L−b}` and `∏y₁∏y₂ ≥ q^{L−1−δ'}`. Then the leaves' sum
 `Σ_{y₁,y₂} c Σ_m rng(d, m)R(m)dw(dm)`, `c = ∏_j 1[Pr_j]`, `d = ∏y₁∏y₂`, `N₁ = ⌊q^L⌋`, `N₂ = ⌊2q^L⌋`, is at most
 `(N₂ − N₁)/q·|Γ|·Σ_y c/d + q^{L−δ}/φ(q)` in absolute value, `Γ` the sieve's gap. -/
@@ -681,7 +681,7 @@ theorem leaves_ib {L : ℝ} (hL : 2 < L) {a b δ' e₀ c₁ Λ₀ B : ℝ} (hδ'
     ∀ fmax : ℝ, 1 ≤ fmax → (∀ σ ∈ S₁, (f₁ σ : ℝ) ≤ fmax) → (∀ τ ∈ S₂, (f₂ τ : ℝ) ≤ fmax) →
       (∀ d, ∑ x ∈ (Y₁ ×ˢ S₁).filter (fun x => (∏ i, x.1 i) * f₁ x.2 = d), |l₁ x.2| ≤ (q : ℝ) ^ c₁) →
       (∀ d, ∑ x ∈ (Y₁ ×ˢ S₂).filter (fun x => (∏ i, x.1 i) * f₂ x.2 = d), |l₂ x.2| ≤ (q : ℝ) ^ c₁) →
-      ∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ| ≤ (q : ℝ) ^ c₁ →
+      ∑ σ ∈ S₁, |l₁ σ| + ∑ τ ∈ S₂, |l₂ τ| ≤ (q : ℝ) ^ (1 / 4 : ℝ) →
       ∑ σ ∈ S₁, |l₁ σ| / f₁ σ + ∑ τ ∈ S₂, |l₂ τ| / f₂ τ ≤ (q : ℝ) ^ c₁ →
       (∀ y₁ ∈ Y₁, ∀ y₂ ∈ Y₂, (∀ j, Pr j y₁ y₂) →
         ((∏ i, y₁ i : ℕ) : ℝ) * fmax ≤ (q : ℝ) ^ (L - 1 - a) ∧
@@ -1000,10 +1000,11 @@ theorem leaves_ib {L : ℝ} (hL : 2 < L) {a b δ' e₀ c₁ Λ₀ B : ℝ} (hδ'
     · calc _ ≤ x ^ c₁ * (11 * x ^ (L - s)) / x * B ^ K := by gcongr
         _ = 11 * B ^ K * (x ^ c₁ * x ^ (L - s) / x) := by ring
         _ ≤ 11 * B ^ K * P := mul_le_mul_of_nonneg_left (hPb _ _ (by linarith)) (by positivity)
-    · calc _ ≤ (4 * x ^ c₁ / x + 2 * x ^ c₁ * (Cd * x ^ s / q.totient)) * (x ^ (L - 1 / 2) * B ^ K) := by
+    · calc _ ≤ (4 * x ^ (1 / 4 : ℝ) / x + 2 * x ^ (1 / 4 : ℝ) * (Cd * x ^ s / q.totient)) *
+              (x ^ (L - 1 / 2) * B ^ K) := by
             gcongr
-        _ = 4 * B ^ K * (x ^ c₁ * x ^ (L - 1 / 2) / x) +
-            2 * Cd * B ^ K * (x ^ (c₁ + s) * x ^ (L - 1 / 2) / q.totient) := by
+        _ = 4 * B ^ K * (x ^ (1 / 4 : ℝ) * x ^ (L - 1 / 2) / x) +
+            2 * Cd * B ^ K * (x ^ ((1 / 4 : ℝ) + s) * x ^ (L - 1 / 2) / q.totient) := by
             rw [Real.rpow_add hx0]; ring
         _ ≤ 4 * B ^ K * P + 2 * Cd * B ^ K * P :=
             add_le_add (mul_le_mul_of_nonneg_left (hPb _ _ (by linarith)) (by positivity))
