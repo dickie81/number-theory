@@ -1,5 +1,5 @@
-% The supplement to the Linnik exponent paper (main.tex): the proofs of four standard results, and the details of the
-% paper's Sections 7 and 8. Compile main.tex first: the references to the paper (\ref{M-...}) are read from main.aux.
+% The supplement to the Linnik exponent paper (main.tex): the proofs of four standard results and of the kernel bound,
+% the Lean details of the paper, and the computations around its exponent. Compile main.tex first: the references to the paper (\ref{M-...}) are read from main.aux.
 \documentclass[11pt]{article}
 \usepackage[T1]{fontenc}
 % pdfLaTeX needs the input encoding and the glyph declarations below; XeTeX reads Unicode directly.
@@ -32,20 +32,21 @@
 \numberwithin{equation}{section}
 \renewcommand{\thesection}{S\arabic{section}}
 
-\title{Supplement to ``Linnik's constant below the zero-density exponent: $278/125$ from a zero-free half-plane''}
+\title{Supplement to ``Linnik's constant below the zero-density exponent: $278/125$ from a zero-free half-plane and
+  the Chen--Gupta--Li density estimate''}
 \author{Ritchie Comley}
 \date{Draft, 29 October 2026}
 
 \begin{document}
 \maketitle
 
-This supplement holds the proofs of four standard results that the paper uses, in the form in which the Lean library
-proves them (Sections~\ref{app:prime-sum} to~\ref{app:rough}), and the details of the paper's account of the
-formalisation (Section~\ref{sup:lean}) and of its computations around the exponent (Section~\ref{sup:computations}).
-Numbers such as Lemma~\ref{M-lem:prime-sum} and Section~\ref{M-sec:certificate} refer to the paper, and those that
-begin with S to this supplement. Its notation is the paper's.
+This supplement holds the proofs of four standard results that the paper uses, and of its kernel bound, in the form
+in which the Lean library proves them (Sections~\ref{app:prime-sum} to~\ref{app:rough}), and the details of the paper's
+account of the formalisation (Section~\ref{sup:lean}) and of its computations around the exponent
+(Section~\ref{sup:computations}). Numbers such as Lemma~\ref{M-lem:prime-sum} and Section~\ref{M-sec:certificate} refer
+to the paper, and those that begin with S to this supplement. Its notation is the paper's.
 
-\section{Proof of Lemma~\ref{M-lem:prime-sum}}\label{app:prime-sum}
+\section{Proof of Lemma~\ref{M-lem:prime-sum}, and the kernel bound}\label{app:prime-sum}
 
 \begin{proof}
 Throughout, $Q \ge 4$, so that $\log Q > 1$, and $L_\chi$ stands for $L(\cdot, \chi)$, which is entire since $\chi$ is
@@ -95,16 +96,16 @@ justified by \eqref{eq:mellin-decay}, gives
   F(s) = -\frac{L_\chi'}{L_\chi}(s) \, \mathcal M w_y(s) \, Q^s.
 \end{gather*}
 
-\emph{The logarithmic derivative.} For $1/2 \le \theta_0 < \theta' < 3/2$ there is $C_L(\theta_0, \theta')$ with the
-following property, for every $q$, every non-trivial $\chi$ mod $q$ and every $t \in \mathbb R$: if $L_\chi$ has no
+\emph{The logarithmic derivative.} For $1/2 \le \theta_0 < \theta' < 3/2$ there is $C_{\log}(\theta_0, \theta')$ with
+the following property, for every $q$, every non-trivial $\chi$ mod $q$ and every $t \in \mathbb R$: if $L_\chi$ has no
 zero in the open disc $D_t$ of centre $3/2 + it$ and radius $\rho = 3/2 - \theta_0$, then
 \begin{equation}\label{eq:logderiv}
-  \Bigl|\frac{L_\chi'}{L_\chi}(\sigma + it)\Bigr| \le C_L(\theta_0, \theta') \bigl(\log(q + 2) + \log(|t| + 4)\bigr)
-  \qquad (\sigma \ge \theta').
+  \Bigl|\frac{L_\chi'}{L_\chi}(\sigma + it)\Bigr| \le C_{\log}(\theta_0, \theta') \bigl(\log(q + 2) + \log(|t| +
+  4)\bigr) \qquad (\sigma \ge \theta').
 \end{equation}
-For $\sigma \ge 3/2$ this holds as soon as $C_L(\theta_0, \theta') \ge -\zeta'/\zeta(3/2)$, by the Dirichlet series of
-$L_\chi'/L_\chi$. For $\theta' \le \sigma < 3/2$ it follows from a lemma of Landau's type: if $f$ is analytic near the
-closed unit disc, $f(0) = 1$, $|f| \le B_0$ on $|z| \le R$ with $B_0 > 1$, $f$ has no zero in $|z| < 1$ and
+For $\sigma \ge 3/2$ this holds as soon as $C_{\log}(\theta_0, \theta') \ge -\zeta'/\zeta(3/2)$, by the Dirichlet series
+of $L_\chi'/L_\chi$. For $\theta' \le \sigma < 3/2$ it follows from a lemma of Landau's type: if $f$ is analytic near
+the closed unit disc, $f(0) = 1$, $|f| \le B_0$ on $|z| \le R$ with $B_0 > 1$, $f$ has no zero in $|z| < 1$ and
 $0 < r' < r < R' < R < 1$, then
 \[
   |f'/f(z)| \le \Bigl(\frac{16 r^2}{(r - r')^3} + \frac1{(R^2/R' - R') \log(R/R')}\Bigr) \log B_0 \qquad (|z| \le r').
@@ -118,7 +119,7 @@ $|L_\chi(s)| \le 3(q + 1)(|\operatorname{Im} s| + 2)$ for $1/2 \le \operatorname
 partial-summation bound $|L_\chi(s)| \le (q + 1)|s|/\operatorname{Re} s$ for $\operatorname{Re} s > 0$. Second,
 $|L_\chi(3/2 + it)|^{-1} \le \zeta(3/2)$, from $1/L_\chi(s) = \sum \mu(n) \chi(n) n^{-s}$. Together they give
 $|f| \le B_0 = 2 + 6(q + 1)\zeta(3/2)(|t| + 4)$ on $|z| \le R$, and $\log B_0 \ll \log(q + 2) + \log(|t| + 4)$. The
-constant $C_L(\theta_0, \theta')$ is explicit and of order $(\theta' - \theta_0)^{-3}$.
+constant $C_{\log}(\theta_0, \theta')$ is explicit and of order $(\theta' - \theta_0)^{-3}$.
 
 The disc $D_t$ lies in $\operatorname{Re} s > \theta_0$ and, since $\rho \le 1$, in $|\operatorname{Im} s - t| < 1$. So
 \eqref{eq:logderiv} applies in two cases:
@@ -129,7 +130,8 @@ The disc $D_t$ lies in $\operatorname{Re} s > \theta_0$ and, since $\rho \le 1$,
 Since $|t| + 4 \le (|y| + 4)(1 + |t - y|)$ and $\log(1 + u) \le u$, we have
 $\log(q + 2) + \log(|t| + 4) \le \lambda(1 + |t - y|)$. With \eqref{eq:mellin-decay} this gives, in either case,
 \begin{equation}\label{eq:F-bound}
-  |F(\sigma + it)| \le C_L(\theta_0, \theta') \, \lambda \, B \, Q^\sigma (1 + |t - y|)^{-J - 2} \qquad (\theta' \le \sigma \le 2).
+  |F(\sigma + it)| \le C_{\log}(\theta_0, \theta') \, \lambda \, B \, Q^\sigma (1 + |t - y|)^{-J - 2} \qquad (\theta'
+  \le \sigma \le 2).
 \end{equation}
 
 \emph{The contour.} By Input~\ref{M-inp:half-plane}, $F$ is holomorphic on $\sigma_* \le \operatorname{Re} s \le 2$, and by
@@ -140,7 +142,7 @@ is holomorphic on the rectangle $\theta + \delta \le \operatorname{Re} s \le \si
 so by Cauchy's theorem the integral over $|t - y| \le H$ on the line $\sigma_*$ equals the integral over the same
 heights on the line $\theta + \delta$ plus the integrals over the two horizontal sides at the heights $y \pm H$.
 
-\emph{The pieces.} Put $C_1 = C_L(11/12, \sigma_*)$ and $C_2 = C_L(\theta, \theta + \delta)$.
+\emph{The pieces.} Put $C_1 = C_{\log}(11/12, \sigma_*)$ and $C_2 = C_{\log}(\theta, \theta + \delta)$.
 \begin{itemize}
 \item On the line $\sigma_*$ with $|t - y| \ge H$: by \eqref{eq:F-bound} in case (i) and
   $(1 + u)^{-J - 2} \le (1 + H)^{-J} (1 + u^2)^{-1}$ for $u \ge H$,
@@ -157,22 +159,42 @@ Adding the pieces and dividing by $2\pi$, the sum in \eqref{eq:Sw-bound} is at m
   C_1 \lambda B Q^{\sigma_*} \tau + \tfrac12 C_2 \lambda B Q^{\theta + \delta} + \tfrac1\pi C_2 \lambda B Q^{\sigma_*} \tau
   \le (C_1 + C_2) \, \lambda \, B \bigl(Q^{\theta + \delta} + Q^{\sigma_*} \tau\bigr),
 \]
-which is \eqref{eq:Sw-bound} with $M_\delta(\theta) = C_L(\theta, \theta + \delta) + C_L(11/12, 11/12 + \delta)$.
+which is \eqref{eq:Sw-bound} with $M_\delta(\theta) = C_{\log}(\theta, \theta + \delta) + C_{\log}(11/12, 11/12 +
+\delta)$.
 \end{proof}
+
+\subsection*{The kernel bound of Section~\ref{M-sec:two-bounds}}
+
+Let $\delta' = \varepsilon' = 1/1000$, let $\psi$ be a non-trivial character mod $q$, and let $Y \ge 1$. By Mellin
+inversion, $k_Y(\psi) = (2\pi i)^{-1} \int_{(2)} L(s, \psi) \Gamma(s) Y^s \, ds$. Since $L(\cdot, \psi)$ is entire and
+$1/12 - \delta' > 0$, the line moves to $\operatorname{Re} s = 1/12 - \delta'$ without crossing a pole. There the
+functional equation of the primitive character $\psi^*$ that induces $\psi$, of conductor $q^*$, gives
+$|L(s, \psi^*)| \ll (q^*(|\operatorname{Im} s| + 2))^{5/12 + \delta'} |L(1 - s, \overline{\psi^*})|$, and $1 - s$ lies
+on $\operatorname{Re} s = 11/12 + \delta'$. There Input~\ref{M-inp:half-plane} gives the Lindelöf-type bound
+$|L(s, \chi)|^{\pm 1} \ll ((q + 2)(|\operatorname{Im} s| + 4))^{\varepsilon'}$, uniformly in $q$ and $\chi \ne \chi_0$,
+by the argument by which the Riemann hypothesis implies the Lindelöf hypothesis \cite[\S 14.2]{titchmarsh}. The lemma
+of Landau's type above bounds $|L'/L(s, \chi)|$ by a multiple of $\log((q + 2)(|\operatorname{Im} s| + 4))$ on
+$\operatorname{Re} s \ge 11/12 + \delta'/2$; the three-lines theorem, on rectangles of height comparable to that
+logarithm, interpolates this against $|L'/L| \ll 1$ on $\operatorname{Re} s = 3/2$; and integrating $L'/L$ from
+$\operatorname{Re} s = 3/2$, where $|\log |L|| \le \log \zeta(3/2)$, gives the bound for $|L|$ and $1/|L|$. The Euler
+factors at the primes dividing $q$ are at most $2$ each, which is $\ll q^{\varepsilon'}$ in all, and together
+$|L(s, \psi)| \ll (q(|\operatorname{Im} s| + 2))^{5/12 + \delta' + 2\varepsilon'}$ on the new line. The decay of
+$\Gamma$ makes the integral converge, and $|k_Y(\psi)| \le C Y^{1/12 - \delta'} (2q)^{5/12 + \delta' + 2\varepsilon'}$
+with $C$ independent of $q$, $\psi$ and $Y$.
 
 \section{Proof of Lemma~\ref{M-lem:family}}\label{app:family}
 
 \begin{proof}
 Let the family have the scale $P$, the set $S$, the coefficients $a_m$, the primes $p_1, \dots, p_K$ at the scales
-$Q_i$, and the comparisons $C_1, \dots, C_J$ with forms $\ell_j$ and pivots $\pi(j)$. Let $\mathcal T$ be the set of the
-$t = (m, p_1, \dots, p_K)$ with $m \in S$ and each $p_i$ a prime at most $2Q_i$; for $t \in \mathcal T$ put
+$Q_i$, and the comparisons $C_1, \dots, C_J$ with forms $\ell_j$ and pivots $\mathrm{piv}(j)$. Let $\mathcal T$ be the
+set of the $t = (m, p_1, \dots, p_K)$ with $m \in S$ and each $p_i$ a prime at most $2Q_i$; for $t \in \mathcal T$ put
 $w(t) = a_m \prod_i f_0(p_i/Q_i)$ and $n(t) = m p_1 \cdots p_K$, and for a function $v$ on $\mathcal T$ put
 \[
   \mathcal D(v) = \sum_{t \in \mathcal T} v(t) \, \Delta(n(t)), \qquad
   \Delta(n) = \mathbf 1[n \equiv a] - \frac{\mathbf 1[(n, q) = 1]}{\varphi(q)}.
 \]
 The sum of the lemma is $\mathcal D(w \prod_j I_j)$, with $I_j(t) = \mathbf 1[C_j \text{ holds at } t]$. Let $F_0 = \max f_0$ and
-$\eta_0 = 10^{-5}$.
+$\eta = 10^{-5}$, the largest height exponent that Theorem~\ref{M-thm:type2} allows.
 
 \emph{Orthogonality.} For $a$ prime to $q$,
 $\Delta(n) = \varphi(q)^{-1} \sum_{\chi \in \mathcal X^*} \overline\chi(a) \chi(n)$, so for every $v$
@@ -182,8 +204,8 @@ $\Delta(n) = \varphi(q)^{-1} \sum_{\chi \in \mathcal X^*} \overline\chi(a) \chi(
 
 \emph{A smooth family.} Let $g_1, \dots, g_J$ be continuous and integrable, with integrable Fourier transforms
 $\hat g_j(\xi) = \int g_j(u) e^{-2\pi i u \xi} \, du$, and let $T_0 \ge 1$ with
-$2\pi \sum_j |e_{ji}| \, T_0 \le q^{\eta_0}$ for every $i$. We show that for $q$ larger than the $q_0$ of
-Theorem~\ref{M-thm:type2} (with $f_0$, $K_0$, $e_1$ and $\eta_0$),
+$2\pi \sum_j |e_{ji}| \, T_0 \le q^{\eta}$ for every $i$. We show that for $q$ larger than the $q_0$ of
+Theorem~\ref{M-thm:type2} (with $f_0$, $K_0$, $e_1$ and $\eta$),
 \begin{multline}\label{eq:smooth-family}
   \sum_{\chi \in \mathcal X^*} \Bigl|\sum_{t \in \mathcal T} w(t) \prod_j g_j(\ell_j(t)) \, \chi(n(t))\Bigr|
   \le q^{L - 1/50000} \mathcal N \prod_j \|\hat g_j\|_1 \\
@@ -203,7 +225,7 @@ By Fourier inversion, and since the phase factorises over the variables,
 So the inner sum in \eqref{eq:smooth-family} is
 $\int \prod_j \hat g_j(\xi_j) \, W_\xi(\chi) \prod_i Q_i^{2\pi i H_i} S_{Q_i}(\chi, h_i) \, d\xi$, where
 $W_\xi(\chi) = \sum_m a_m e^{2\pi i \sum_j \xi_j \lambda_j(m)} \chi(m)$ and $h_i = -2\pi H_i$. Take absolute values,
-sum over $\chi$, and bound the integrand for each $\xi$. If $|\xi_j| \le T_0$ for every $j$, then $|h_i| \le q^{\eta_0}$,
+sum over $\chi$, and bound the integrand for each $\xi$. If $|\xi_j| \le T_0$ for every $j$, then $|h_i| \le q^{\eta}$,
 and Theorem~\ref{M-thm:type2}, with the coefficients $a_m e^{2\pi i \sum_j \xi_j \lambda_j(m)}$, which have the moduli
 $|a_m|$, and the heights $h_i$, gives
 $\sum_\chi |W_\xi(\chi)| \prod_i |S_{Q_i}(\chi, h_i)| \le q^{L - 1/50000} \mathcal N$. Otherwise some $|\xi_j| > T_0$, and the
@@ -238,32 +260,33 @@ The first term and each $\mathcal D(|w| M_j)$ are smooth families: the first wit
 the coefficients $|a_m|$ and the single function $G_{\nu, \nu}$ at the form $\ell_j + \nu$. Both are bounded by
 \eqref{eq:orth} and \eqref{eq:smooth-family}. A trivial count would not do for them, since it would lose the factor $1/\varphi(q)$ that the condition
 $n \equiv a$ gives. The last sum, which carries that factor already, is counted trivially, by the pivot. Fix $m$ and the primes
-other than $p_{\pi(j)}$; then $\ell_j = c + s \log p_{\pi(j)}$ with $s = \pm 1$, and $M_j \ne 0$ forces
-$-\nu \le \ell_j \le 2\nu$, which confines $p_{\pi(j)}$ to an interval $[Y, e^{3\nu} Y]$. At most
-$(e^{3\nu} - 1) 2Q_{\pi(j)} + 1$ integers up to $2Q_{\pi(j)}$ lie in it, so
+other than $p_{\mathrm{piv}(j)}$; then $\ell_j = c \pm \log p_{\mathrm{piv}(j)}$, and $M_j \ne 0$ forces
+$-\nu \le \ell_j \le 2\nu$, which confines $p_{\mathrm{piv}(j)}$ to an interval $[Y, e^{3\nu} Y]$. At most
+$(e^{3\nu} - 1) 2Q_{\mathrm{piv}(j)} + 1$ integers up to $2Q_{\mathrm{piv}(j)}$ lie in it, so
 \[
   \sum_{t \in \mathcal T} |w(t)| M_j(t)
-  \le F_0 \bigl((e^{3\nu} - 1) 2Q_{\pi(j)} + 1\bigr) \sum_m |a_m| \prod_{i \ne \pi(j)} \sum_{p \le 2Q_i} f_0(p/Q_i).
+  \le F_0 \bigl((e^{3\nu} - 1) 2Q_{\mathrm{piv}(j)} + 1\bigr) \sum_m |a_m| \prod_{i \ne \mathrm{piv}(j)} \sum_{p \le
+  2Q_i} f_0(p/Q_i).
 \]
 
 \emph{The parameters.} Put $\varepsilon_2 = 1/(400000(J_0 + 1))$, $\nu = q^{-\varepsilon_2}$, $T_0 = q^{1/200000}$,
 $k = 1200003$ and $\delta = \min(\varepsilon_2, e_1)/2$. For large $q$:
 \begin{itemize}
-\item $2\pi J_0 E_0 T_0 \le q^{\eta_0}$, so \eqref{eq:smooth-family} applies, as $\sum_j |e_{ji}| \le J_0 E_0$;
+\item $2\pi J_0 E_0 T_0 \le q^{\eta}$, so \eqref{eq:smooth-family} applies, as $\sum_j |e_{ji}| \le J_0 E_0$;
 \item $\pi(2\Lambda + 1) \le q^{\varepsilon_2}$, so $\|\hat G_{\nu, \Lambda}\|_1$ and $\|\hat G_{\nu, \nu}\|_1$
   are at most $C q^{\varepsilon_2}$ with $C = 1 + c_2/(2\pi)$, and a product of at most $J_0$ of them is at most
   $C^{J_0 + 1} q^{1/400000}$;
 \item $\nu^{1 - k} T_0^{2 - k} = q^{\varepsilon_2(k - 1) - (k - 2)/200000} \le q^{-3}$, which bounds the tails.
 \end{itemize}
-The constants come from $\eta_0 = 10^{-5}$: the norms lose at most $q^{\eta_0/4}$, $T_0 = q^{\eta_0/2}$ leaves room
-for the factor $2\pi J_0 E_0$ below $q^{\eta_0}$, and $k = 1200003$ is the least $k$ with
-$(k - 1)\eta_0/4 - (k - 2)\eta_0/2 \le -3$, so that the tails are at most $q^{-3}$ whatever $J_0$.
+The constants come from $\eta = 10^{-5}$: the norms lose at most $q^{\eta/4}$, $T_0 = q^{\eta/2}$ leaves room
+for the factor $2\pi J_0 E_0$ below $q^{\eta}$, and $k = 1200003$ is the least $k$ with
+$(k - 1)\eta/4 - (k - 2)\eta/2 \le -3$, so that the tails are at most $q^{-3}$ whatever $J_0$.
 Moreover $\mathfrak B \le P A_0 (3F_0)^K \prod_i Q_i \le A_0 (3F_0 + 1)^{K_0} 2^{K_0} q^L$, since at most $3Q$ integers
 lie in $[1, 2Q]$ for $Q \ge 1$ and $P \prod_i Q_i \le 2^{K_0} x$. Finally $e^{3\nu} - 1 \le 6\nu$ for
-$\nu \le 1/3$ and $Q_{\pi(j)} \ge q^{e_1}$ give
-$(12\nu Q_{\pi(j)} + 1) \prod_{i \ne \pi(j)} Q_i \le (12\nu + q^{-e_1}) \prod_i Q_i$. Putting these into
-\eqref{eq:sharp-smooth}, with \eqref{eq:orth} and \eqref{eq:smooth-family}, and using $\varphi(q) \le q$, the sum of the
-lemma is at most
+$\nu \le 1/3$ and $Q_{\mathrm{piv}(j)} \ge q^{e_1}$ give
+$(12\nu Q_{\mathrm{piv}(j)} + 1) \prod_{i \ne \mathrm{piv}(j)} Q_i \le (12\nu + q^{-e_1}) \prod_i Q_i$. Putting these
+into \eqref{eq:sharp-smooth}, with \eqref{eq:orth} and \eqref{eq:smooth-family}, and using $\varphi(q) \le q$, the sum
+of the lemma is at most
 \[
   \frac{A_0 q^L}{\varphi(q)} \bigl(a_1 q^{-7/400000} + a_2 q^{-1} + a_3(12 q^{-\varepsilon_2} + q^{-e_1})\bigr),
 \]
@@ -313,10 +336,10 @@ $[w, z_0)$ that divide $n$; the left side is $\mathbf 1[Q = \emptyset]$. Since t
 leaf $P$ counts $n$ exactly when $P \subseteq Q$, and a stop $(p, P)$ exactly when $p = \min Q$ and
 $P \subseteq Q \setminus \{p\}$. If $Q = \emptyset$, only the leaf $P = \emptyset$ counts $n$, with
 $\mathbf 1[r \le X'] = 1$. If $Q \ne \emptyset$, let $p_0 = \min Q$; grouping $P \subseteq Q \setminus \{p_0\}$ with
-$P \cup \{p_0\}$, and writing $R = d_P$, the right side is
+$P \cup \{p_0\}$, the right side is
 \[
   \sum_{P \subseteq Q \setminus \{p_0\}} (-1)^{|P|}
-  \bigl(\mathbf 1[R \le X'] - \mathbf 1[p_0 R \le X'] - \mathbf 1[R \le X' < p_0 R]\bigr) = 0.
+  \bigl(\mathbf 1[d_P \le X'] - \mathbf 1[p_0 d_P \le X'] - \mathbf 1[d_P \le X' < p_0 d_P]\bigr) = 0.
 \]
 Multiplying \eqref{eq:tree} by $\mathbf 1[n \equiv a] - \mathbf 1[(n, q) = 1]/\varphi(q)$ and summing over $n$ and over
 the tuples, the sum of the proposition is the sum over the leaves of
@@ -325,23 +348,22 @@ $(-1)^{|P| + 1}(S(\mathcal A_W, p) - S(\mathcal B_W, p)/\varphi(q))$.
 
 \emph{The stops.} A stop has $X' < W \le p X' < z_0 X'$, and $W$ is $p$-rough, since the primes of $r$ are at least
 $z_0 > p$ and those of $P$ exceed $p$. So the $p$-rough multiples of $W$ in $(N_1, N_2]$ are the $n = Wm$ whose cofactor
-$m$ is $p$-rough, and every such $m$ lies in $(P_1, P_2]$ with $P_1 = \lfloor N_1/(z_0 X') \rfloor$ and
-$P_2 = \lfloor N_2/(X' + 1) \rfloor$. For large $q$, $q^{u_1 L} \le P_1$, since $5q^{u_1 L + a_0 + b_0} \le q^L$ by
-$a_0 + b_0 < (1 - u_1)L$, and $P_2 \le q^{u_2 L}$, since $2q^{L - b_0} \le q^{u_2 L}$ by $(1 - u_2)L < b_0$. So the
+$m$ is $p$-rough, and every such $m$ lies in $(M_1, M_2]$ with $M_1 = \lfloor N_1/(z_0 X') \rfloor$ and
+$M_2 = \lfloor N_2/(X' + 1) \rfloor$. For large $q$, $q^{u_1 L} \le M_1$, since $5q^{u_1 L + a_0 + b_0} \le q^L$ by
+$a_0 + b_0 < (1 - u_1)L$, and $M_2 \le q^{u_2 L}$, since $2q^{L - b_0} \le q^{u_2 L}$ by $(1 - u_2)L < b_0$. So the
 cofactor $m$ lies in the window's range, and $W$ in its reflection. A stop has $|P| \le S_0$, since
 $\prod P \ge w^{|P|} \ge q^{\varepsilon_w |P|}$ and $\prod P \le X' \le q^L$.
 
 For each $s \le S_0$, the stops with $|P| = s$ form one sum of the kind that Lemma~\ref{M-lem:family-sharp} bounds, with
-$m \in (P_1, P_2]$ and $a_m = 1$, whose primes are $r_1, \dots, r_j$, the elements $y_1 > \dots > y_s$ of $P$ and
+$m \in (M_1, M_2]$ and $a_m = 1$, whose primes are $r_1, \dots, r_j$, the elements $y_1 > \dots > y_s$ of $P$ and
 $p$, and whose comparisons are the given ones on the $r_i$ and
 \begin{gather*}
   y_1 > \dots > y_s > p, \quad y_1 < z_0, \quad p \ge w, \quad r y_1 \cdots y_s \le X' < r y_1 \cdots y_s \, p, \\
   p \le \min\{\ell \text{ prime} : \ell \mid m\}, \qquad N_1 < m r y_1 \cdots y_s p \le N_2 .
 \end{gather*}
 For $s = 0$ the condition $y_1 < z_0$ reads $p < z_0$. Each condition is of the form
-$\lambda(m) + \sum_i e_i \log x_i > 0$ or $\ge 0$ with a pivot: the new ones have coefficients in $\{-1, 0, 1\}$,
-and the given ones coefficients at most $1$ in absolute value. There are at most $J_0 + s + 7$ of them, and
-$\lambda(m) \le (\Lambda_1 + L + 1) \log q$ for $m \le P_2$. Wherever they
+$\lambda(m) + \sum_i e_i \log x_i > 0$ or $\ge 0$, with coefficients in $\{-1, 0, 1\}$ and a pivot. There are at most
+$J_0 + s + 7$ of them, and $\lambda(m) \le (\Lambda_1 + L + 1) \log q$ for $m \le M_2$. Wherever they
 all hold, every prime is at least $w \ge 2q^{\varepsilon_w/2}$ and $m r y_1 \cdots y_s p \le 2x$. So
 Lemma~\ref{M-lem:family-sharp}, with $K_0 = j + S_0 + 2$, $J_0 + S_0 + 7$ comparisons, $e_1 = \varepsilon_w/2$, $E_0 = 1$
 and $\Lambda_1 + L + 1$ in place of $\Lambda_1$, bounds each of these $S_0 + 1$ sums by $q^{L - \delta_T}/\varphi(q)$,
@@ -354,40 +376,40 @@ $q^{L - \delta_1}/\varphi(q)$, with $\delta_1 = \delta_T/2$.
   \le \frac{2 \zeta_k (N_2 - N_1)}{d \varphi(q) \log w} + 24 \, w^{2k + 7}.
 \end{equation}
 If $(d, q) > 1$ both counts vanish, so let $(d, q) = 1$. Sieve by the primes below $w$, in the ranges
-$T_i = \mathcal P[w^{2^{-i - 1}}, w^{2^{-i}})$ for $0 \le i < J = 2 \lfloor \log_2 w \rfloor + 2$, which cover them, at the
-even levels $k_i = k + 2i$, which grow with $i$ so that the errors $C_0^{k_i}/k_i!$ below have a sum that does not
-depend on $J$. Brun's sieve \cite{brun}, in the following form, is used, for disjoint sets $T_i$ of
+$T_i = \mathcal P[w^{2^{-i - 1}}, w^{2^{-i}})$ for $0 \le i < J_w = 2 \lfloor \log_2 w \rfloor + 2$, which cover them,
+at the even levels $k_i = k + 2i$, which grow with $i$ so that the errors $C_0^{k_i}/k_i!$ below have a sum that does
+not depend on $J_w$. Brun's sieve \cite{brun}, in the following form, is used, for disjoint sets $T_i$ of
 primes and even levels $k_i \ge 2$. Let $\mathcal C$ be a finite set of integers,
-$X \ge 0$, and $g$ a function on the primes of $\bigcup T_i$ with $0 \le g \le 1$. Suppose that for every choice of
-$s_i \subseteq T_i$, with $D = \prod_i \prod_{p \in s_i} p$, the count $\#\{n \in \mathcal C : D \mid n\}$ is
-$X \prod_i \prod_{p \in s_i} g(p)$ within $R$. Then $\#\{n \in \mathcal C : (n, \prod_i \prod_{T_i} p) = 1\}$ is
-$X \prod_i \prod_{p \in T_i} (1 - g(p))$ within
+$Y \ge 0$, and $g$ a function on the primes of $\bigcup T_i$ with $0 \le g \le 1$. Suppose that for every choice of
+$s_i \subseteq T_i$, with $\Pi = \prod_i \prod_{p \in s_i} p$, the count $\#\{n \in \mathcal C : \Pi \mid n\}$ is
+$Y \prod_i \prod_{p \in s_i} g(p)$ within $R$. Then $\#\{n \in \mathcal C : (n, \prod_i \prod_{T_i} p) = 1\}$ is
+$Y \prod_i \prod_{p \in T_i} (1 - g(p))$ within
 \[
-  X \sum_i e_{k_i}(T_i) \prod_{l \ne i} F_{k_l}(T_l)
-  + (J + 1) \, R \prod_i \sum_{m \le k_i} \binom{|T_i|}{m},
+  Y \sum_i e_{k_i}(T_i) \prod_{l \ne i} F_{k_l}(T_l)
+  + (J_w + 1) \, R \prod_i \sum_{m \le k_i} \binom{|T_i|}{m},
 \]
 where $e_m(T) = \sum_{s \subseteq T,\ |s| = m} \prod_{p \in s} g(p)$ and $F_k(T) = \sum_{m \le k} (-1)^m e_m(T)$.
 Bonferroni's inequalities say that $F_{k - 1}(T) \le \prod_{p \in T}(1 - g(p)) \le F_k(T)$ for every even $k$, and the
 same for any weights in $[0, 1]$ in place of $g$. Take them for each $n \in \mathcal C$ with the weights
 $\mathbf 1[p \mid n]$, and use the elementary inequality
-$\prod_i \mathrm{hi}_i - \sum_i (\mathrm{hi}_i - \mathrm{lo}_i) \prod_{l \ne i} \mathrm{hi}_l \le \prod_i \rho_i$ for
-$\rho_i \ge 0$ and $\mathrm{lo}_i \le \rho_i \le \mathrm{hi}_i$ (the $\mathrm{lo}_i$, odd truncations, may be negative).
-Summed over $n$, and expanded by the hypothesis, they place the count, up to $(J + 1)$ times
-$R \prod_i \sum_{m \le k_i} \binom{|T_i|}{m}$, in the interval from $X \prod_i F_{k_i} - X \sum_i e_{k_i} \prod_{l \ne i}
-F_{k_l}$ to $X \prod_i F_{k_i}$. The model $X \prod_i V_i$, with $V_i = \prod_{p \in T_i}(1 - g(p))$, lies in the same
-interval: Bonferroni's inequalities for $g$ give $F_{k_i} - e_{k_i} = F_{k_i - 1} \le V_i \le F_{k_i}$, hence
+$\prod_i \mathrm{hi}_i - \sum_i (\mathrm{hi}_i - \mathrm{lo}_i) \prod_{l \ne i} \mathrm{hi}_l \le \prod_i \varrho_i$ for
+$\varrho_i \ge 0$ and $\mathrm{lo}_i \le \varrho_i \le \mathrm{hi}_i$ (the $\mathrm{lo}_i$, odd truncations, may be
+negative). Summed over $n$, and expanded by the hypothesis, they place the count, up to $(J_w + 1)$ times
+$R \prod_i \sum_{m \le k_i} \binom{|T_i|}{m}$, in the interval from $Y \prod_i F_{k_i} - Y \sum_i e_{k_i} \prod_{l \ne
+i} F_{k_l}$ to $Y \prod_i F_{k_i}$. The model $Y \prod_i V_i$, with $V_i = \prod_{p \in T_i}(1 - g(p))$, lies in the
+same interval: Bonferroni's inequalities for $g$ give $F_{k_i} - e_{k_i} = F_{k_i - 1} \le V_i \le F_{k_i}$, hence
 $0 \le \prod_i F_{k_i} - \prod_i V_i \le \sum_i e_{k_i} \prod_{l \ne i} F_{k_l}$.
 
 Take $g(p) = 1/p$ for $p \nmid q$ and $g(p) = 0$ for $p \mid q$. For $\mathcal A_d$, take
-$\mathcal C = \{n \in (N_1, N_2] : n \equiv a,\ d \mid n\}$, $X = (N_2 - N_1)/(dq)$ and $R = 1$: if no prime of $D$
-divides $q$, Lemma~\ref{M-lem:type1} with $M = dD$ gives the count within $1$, and otherwise the count and the model both
-vanish. For $\mathcal B_d$, take $\mathcal C = \{n \in (N_1, N_2] : (n, q) = 1,\ d \mid n\}$, $X\varphi(q)$ and
-$R = \varphi(q)$, and divide by $\varphi(q)$. Both main terms are then $XV$ with $V = \prod_{p < w,\ p \nmid q}(1 - 1/p)$,
-so that
+$\mathcal C = \{n \in (N_1, N_2] : n \equiv a,\ d \mid n\}$, $Y = (N_2 - N_1)/(dq)$ and $R = 1$: if no prime of $\Pi$
+divides $q$, Lemma~\ref{M-lem:type1} with $M = d\Pi$ gives the count within $1$, and otherwise the count and the model
+both vanish. For $\mathcal B_d$, take $\mathcal C = \{n \in (N_1, N_2] : (n, q) = 1,\ d \mid n\}$, $Y\varphi(q)$ and
+$R = \varphi(q)$, and divide by $\varphi(q)$. Both main terms are then $YV$ with $V = \prod_{p < w,\ p \nmid q}(1 -
+1/p)$, so that
 \begin{gather*}
-  \Bigl|S(\mathcal A_d, w) - \frac{S(\mathcal B_d, w)}{\varphi(q)}\Bigr| \le 2(XG + \mathrm{rem}), \\
+  \Bigl|S(\mathcal A_d, w) - \frac{S(\mathcal B_d, w)}{\varphi(q)}\Bigr| \le 2(YG + \mathrm{rem}), \\
   G = \sum_i e_{k_i}(T_i) \prod_{l \ne i} F_{k_l}(T_l), \qquad
-  \mathrm{rem} = (J + 1) \prod_i \sum_{m \le k_i} \binom{|T_i|}{m}.
+  \mathrm{rem} = (J_w + 1) \prod_i \sum_{m \le k_i} \binom{|T_i|}{m}.
 \end{gather*}
 Each $T_i$ lies in some $\mathcal P[y, y^2)$, so $\sum_{p \in T_i} g(p) \le C_0$ and, since $1 - t \ge e^{-2t}$ for
 $0 \le t \le 1/2$, $V_i \ge e^{-2C_0}$. With $e_m \le C_0^m/m!$,
@@ -395,14 +417,16 @@ $F_{k_l} \le V_l + e_{k_l + 1} \le V_l (1 + e^{2C_0} C_0^{k_l + 1}/(k_l + 1)!)$ 
 $\prod_{l \ne i} V_l \le e^{2C_0} V$, this gives
 $G \le V e^{2C_0} \sum_i \frac{C_0^{k_i}}{k_i!} \prod_l \bigl(1 + e^{2C_0} \frac{C_0^{k_l + 1}}{(k_l + 1)!}\bigr)$. Since
 $2C_0^2 \le (k + 1)(k + 2)$, the terms of $\sum_i C_0^{k + 2i}/(k + 2i)!$ decrease at least geometrically with ratio
-$1/2$, so the sum is at most $2C_0^k/k!$, and with $\prod (1 + t_l) \le \exp \sum t_l$ we get $G \le \zeta_k V$. So
-the difference is at most $2\zeta_k XV + 2\,\mathrm{rem}$. Next, $V \le q/(\varphi(q) \log w)$. Indeed
+$1/2$, so the sum is at most $2C_0^k/k!$; likewise, since $2C_0^2 \le (k + 2)(k + 3)$,
+$\sum_l C_0^{k_l + 1}/(k_l + 1)! \le 2C_0^{k + 1}/(k + 1)!$; and with $\prod (1 + t_l) \le \exp \sum t_l$ we get
+$G \le \zeta_k V$. So
+the difference is at most $2\zeta_k YV + 2\,\mathrm{rem}$. Next, $V \le q/(\varphi(q) \log w)$. Indeed
 $V \prod_{p < w,\ p \mid q}(1 - 1/p) = \prod_{p < w}(1 - 1/p)$, the second product on the left is at least
 $\prod_{p \mid q}(1 - 1/p) = \varphi(q)/q$, and $\prod_{p < w}(1 - 1/p) \le 1/\log w$, since
 $\prod_{p < w}(1 - 1/p)^{-1}$ is the sum of $1/m$ over the integers $m \ge 1$ whose prime factors are all below $w$,
-which is at least $\sum_{m < w} 1/m \ge \log w$. So $XV \le (N_2 - N_1)/(d \varphi(q) \log w)$. Finally
+which is at least $\sum_{m < w} 1/m \ge \log w$. So $YV \le (N_2 - N_1)/(d \varphi(q) \log w)$. Finally
 $\sum_{m \le k_i} \binom{|T_i|}{m} \le 2 \max(1, |T_i|)^{k_i}$ with $|T_i| \le w^{2^{-i}}$,
-$\sum_i 2^{-i}(k + 2i) \le 2k + 4$, $J + 1 \le 3w$ and $2^J \le 4w^2$ give $\mathrm{rem} \le 12 w^{2k + 7}$.
+$\sum_i 2^{-i}(k + 2i) \le 2k + 4$, $J_w + 1 \le 3w$ and $2^{J_w} \le 4w^2$ give $\mathrm{rem} \le 12 w^{2k + 7}$.
 
 \emph{The leaves together.} In \eqref{eq:leaf}, $N_2 - N_1 \le x + 1 \le 2x$ and $\log w \ge \varepsilon_w \log q$.
 With $1 \le X'/d$ for the remainder, the leaves total at most
@@ -440,11 +464,11 @@ $|\theta(t) - t| \le \varepsilon_3 t/\log t$ for large $t$. With partial summati
 \[
   \sum_{a < p \le b} \frac1{p \log p} \le \frac1{\log a} - \frac1{\log b} + \frac{4\varepsilon_3}{\log^2 a},
 \]
-and, if $2 \log b \le \Lambda$,
+and, if $2 \log b \le \mathcal L$,
 \[
-  \sum_{a < p \le b} \frac1{p(\Lambda - \log p)}
-  \le \frac{1 + \varepsilon_3/\log a}{\Lambda} \log \frac{\log b \, (\Lambda - \log a)}{\log a \, (\Lambda - \log b)}
-  + \frac{6\varepsilon_3}{\Lambda \log^2 a};
+  \sum_{a < p \le b} \frac1{p(\mathcal L - \log p)}
+  \le \frac{1 + \varepsilon_3/\log a}{\mathcal L} \log \frac{\log b \, (\mathcal L - \log a)}{\log a \, (\mathcal L -
+  \log b)} + \frac{6\varepsilon_3}{\mathcal L \log^2 a};
 \]
 and, for large $y$, there are at most $(1 + \varepsilon_3) y/\log 2y$ primes in $(y, 2y]$.
 
@@ -469,34 +493,34 @@ constant on $[4, \infty)$; so it suffices that it is at most $0$ at $u = 4$, tha
 holds since $\log 2 < 0.6931471808$ and $2.2602904808 < 2.260292 = 4c_*$.
 
 We prove by induction on the integer $k \ge 0$ the statement $\mathrm C(k)$: for every $\varepsilon > 0$ there is
-$z_0$ such that $\Phi(y, z) \le (\omega^*(u) + \varepsilon) y/\log z$ for all $z \ge z_0$ and all $y \ge 1$ with
+$z_1$ such that $\Phi(y, z) \le (\omega^*(u) + \varepsilon) y/\log z$ for all $z \ge z_1$ and all $y \ge 1$ with
 $u \le k$. $\mathrm C(0)$ holds trivially, since $u > 0$, and the lemma is $\mathrm C(\lceil U \rceil)$. Assume
 $\mathrm C(k)$, let $0 < \varepsilon \le 1$ (which suffices, since the bound for one $\varepsilon$ implies it for every
 larger one) and $\varepsilon_3 = \varepsilon/100$, let $z$ be large in terms of
-$\varepsilon$ and of the $z_0$ of $\mathrm C(k)$ for $\varepsilon/4$, and let $y \ge 1$ with
-$\Lambda = \log 2y = u \log z \le (k + 1) \log z$. If $2y < z$, then $\Phi(y, z) = 0$. Otherwise $u \ge 1$, $y \ge z/2$
-is large, and (a) and (b) give
+$\varepsilon$ and of the $z_1$ of $\mathrm C(k)$ for $\varepsilon/4$, and let $y \ge 1$ with
+$\mathcal L = \log 2y = u \log z \le (k + 1) \log z$. If $2y < z$, then $\Phi(y, z) = 0$. Otherwise $u \ge 1$, $y \ge
+z/2$ is large, and (a) and (b) give
 \[
-  \Phi(y, z) \le \Bigl(1 + \frac\varepsilon4\Bigr) \frac y\Lambda + \sum_{z \le p \le \sqrt{2y}} \Phi(y/p, p).
+  \Phi(y, z) \le \Bigl(1 + \frac\varepsilon4\Bigr) \frac{y}{\mathcal L} + \sum_{z \le p \le \sqrt{2y}} \Phi(y/p, p).
 \]
 If $u < 2$, then $\sqrt{2y} < z$, the sum is empty, and
 $\Phi(y, z) \le (1 + \varepsilon/4) y/(u \log z) \le (\omega^*(u) + \varepsilon) y/\log z$. Let $u \ge 2$. A prime
 $p \in [z, \sqrt{2y}]$ has $y/p \ge 1$ and
-$\log(2y/p) = \Lambda - \log p \le k \log p$, since $\Lambda \le (k + 1) \log p$. So $\mathrm C(k)$ gives
-$\Phi(y/p, p) \le (\omega^*(u_p) + \varepsilon/4) \, y/(p \log p)$ with $u_p = (\Lambda - \log p)/\log p$. The term
+$\log(2y/p) = \mathcal L - \log p \le k \log p$, since $\mathcal L \le (k + 1) \log p$. So $\mathrm C(k)$ gives
+$\Phi(y/p, p) \le (\omega^*(u_p) + \varepsilon/4) \, y/(p \log p)$ with $u_p = (\mathcal L - \log p)/\log p$. The term
 $p = z$, if $z$ is prime, contributes at most $2y/(z \log z)$, since $\omega^* \le 1$. By (a), the parts
 $\varepsilon/4$ of the other terms contribute at most $(\varepsilon/4)(1/\log z + 4\varepsilon_3/\log^2 z) \, y$. For
 the parts $\omega^*(u_p)$: if $p \le (2y)^{1/4}$ then $u_p \ge 3$ and $\omega^*(u_p) \le c_*$; if
 $(2y)^{1/4} < p \le (2y)^{1/3}$ then $2 \le u_p < 3$ and $\omega^*(u_p) \le \bar\omega$; and if $(2y)^{1/3} < p \le (2y)^{1/2}$ then
-$1 \le u_p < 2$ and $\omega^*(u_p)/(p \log p) = 1/(p(\Lambda - \log p))$, by the definition of $\omega^*$ on
+$1 \le u_p < 2$ and $\omega^*(u_p)/(p \log p) = 1/(p(\mathcal L - \log p))$, by the definition of $\omega^*$ on
 $[1, 2)$. By (a), applied on $(z, \sqrt{2y}]$ if
 $u \le 3$, on $(z, (2y)^{1/3}]$ and $((2y)^{1/3}, \sqrt{2y}]$ if $3 < u \le 4$, and also with the first range split at
 $(2y)^{1/4}$ if $u > 4$,
 \[
-  \sum_{z < p \le \sqrt{2y}} \frac{\omega^*(u_p)}{p \log p} \le \frac{M(u) + 12\varepsilon_3}\Lambda
+  \sum_{z < p \le \sqrt{2y}} \frac{\omega^*(u_p)}{p \log p} \le \frac{M(u) + 12\varepsilon_3}{\mathcal L}
   + \frac{8\varepsilon_3}{\log z}.
 \]
-Collecting the terms, with $\Lambda = u \log z$,
+Collecting the terms, with $\mathcal L = u \log z$,
 \[
   \Phi(y, z) \le \frac y{\log z} \Bigl(\frac{1 + M(u)}u + \frac{\varepsilon/4 + 12\varepsilon_3}u + \frac2z
   + 8\varepsilon_3 + \frac\varepsilon4 + \frac{\varepsilon \varepsilon_3}{\log z}\Bigr).
@@ -547,22 +571,29 @@ result from the literature, the differences between the Lean statement and the p
 
 \subsection*{The proof in Lean}
 
-A statement of the paper that holds under an input is, in Lean, a theorem that either takes as a hypothesis what the
-input supplies (as \lean{SieveTypeIIHM.typeII\_gen\_hm}, Proposition~\ref{M-prop:type2-gen}, takes a density curve's
-counts) or uses the library's proof of the input. The exception in Input~\ref{M-inp:half-plane} is the pole of
-$L(s, \chi_0)$ at $s = 1$, where Mathlib's function, like every function in Lean, still has a value; the Lean statement
-leaves that point aside. The curve $g^*$ is \lean{SieveTypeIIU22240D.g7d}, and its exponents are written as fractions;
-the first step's is $3/(2 - 81/140) + 1/2000 = 840199/398000$.
+The statements of Sections~\ref{M-sec:type1} and~\ref{M-sec:certificate} carry, in Lean, the instances
+\lean{SieveRoute.Route}, which holds $L$ and the window's ends as the fractions $w_1 = u_1$ and $w_2 = u_2$ of $L$, and
+\lean{SieveRoute.RouteOK}, which holds $2 < L \le 5/2$ and $0 < u_1 < u_2 < 1$, and the hypothesis
+\lean{SieveRoute.TypeIIAt}, the conclusion of Theorem~\ref{M-thm:type2} at this $L$ on the window $[u_1 L, u_2 L]$. In
+the same way a statement of the paper that holds under an input either takes what the input supplies as a hypothesis
+(\lean{SieveTypeIIHM.typeII\_gen\_hm}, Proposition~\ref{M-prop:type2-gen}, takes the counts of a density curve, which
+Proposition~\ref{M-prop:curve} supplies from Input~\ref{M-inp:density}) or uses the library's proof of the input. The
+exception in Input~\ref{M-inp:half-plane} is the pole of $L(s, \chi_0)$ at $s = 1$, where Mathlib's function, like every
+function in Lean, still has a value; the Lean statement leaves that point aside. The curve $g^*$ is
+\lean{SieveTypeIIU22240D.g7d}, and its exponents are written as fractions; the first step's is
+$3/(2 - 81/140) + 1/2000 = 840199/398000$.
 
-In Section~\ref{M-sec:type2}, the Hal\'asz--Montgomery inequality is formalised in the form over the characters mod $q$
-at one height (\file{formalisations/halasz-montgomery.md}), and the Lindelöf-type bound behind the kernel bound is
+In Section~\ref{M-sec:type2}, the Hal\'asz--Montgomery inequality is used in the form over the characters mod $q$ at
+one height, \lean{SieveTypeIIHM.sum\_bin\_hm}, a case of \lean{LinnikPower.hm\_duality}, which allows one point for each
+character (\file{formalisations/halasz-montgomery.md}); the Lindelöf-type bound behind the kernel bound is
 \lean{LinnikLindelof.lindelof}. The Lean definition of admissible windows, \lean{SieveCurveGlue.WindowOKHM}, has the
 form of Definition~\ref{M-def:window}. The $134$ inequalities of the proof of Proposition~\ref{M-prop:window} are
 among the $1080$ corners that \file{tools/linnik/route\_limits.py} checks in exact rationals and the Lean checks by
 \lean{norm\_num}. The Lean (\lean{SieveTypeIIU22240D.window\_22240d}) uses neither the convexity nor the
-monotonicity of that proof: it interpolates on $[\mu_1, 1]$ and on $[1, \mu_2]$ separately, at the corners with $\varpi \in \{0, 4 \cdot 10^{-6}\}$
-and $\mu \in \{\mu_1, 1, \mu_2\}$, $16$ on each piece below $5/6$, and $24$ on the top piece, where it checks $E_2$ and
-$E_3$ for $\mu \le 1$.
+monotonicity of that proof. On each of the $66$ pieces below $5/6$ it checks $16$ corners: $\beta$ at both ends of the
+piece, $\varpi \in \{0, 4 \cdot 10^{-6}\}$, and the form of $E_1$ for $\mu \le 1$ at $\mu \in \{\mu_1, 1\}$ and its form
+for $\mu \ge 1$ at $\mu \in \{1, \mu_2\}$. On the top piece it checks $24$: $E_2$ and $E_3$ at $\mu \in \{\mu_1, 1\}$
+and $E_1$ at $\mu \in \{1, \mu_2\}$. In all $66 \cdot 16 + 24 = 1080$.
 
 In Sections~\ref{M-sec:type1} and~\ref{M-sec:certificate}, \file{formalisations/harman-sieve.md} gives the sources of
 Proposition~\ref{M-prop:harman} and Lemma~\ref{M-lem:rough} and the differences between the Lean statements and the
@@ -571,22 +602,26 @@ Lemmas~\ref{M-lem:family} to~\ref{M-lem:chains} among the standard results. The 
 is \lean{SieveTree.S}, which counts the multiples of $r$ in $\mathcal C$ with no prime factor below $z$, and so agrees
 with the paper's when $r$ has no prime factor below $z$, as in every use; the count $\Phi(y, z)$ of rough numbers is
 \lean{SieveRough.Psi}; and the exact-product case of Lemma~\ref{M-lem:chains} is \lean{SieveExact.chainT0\_bound}. The
-library tests the rules of the decomposition in a fixed order: (O) first at depths three and five, and at depths four
-and six $\alpha_k \ge \alpha_{k - 1}$ first, then (E), then the rest of (O).
+comparisons of Lemma~\ref{M-lem:chains} are \lean{SieveChain.GCmp}, with coefficients in $\{-1, 0, 1\}$.
+\lean{SieveProp6.prop6} allows real coefficients in $[-1, 1]$ with a pivot (\lean{SieveCmp.Cmp}), and
+Proposition~\ref{M-prop:harman} states its case for comparisons with coefficients in $\{-1, 0, 1\}$, which is the one
+the decomposition uses (\lean{SieveLeaves.P6\_spec}, through \lean{SieveChain.pivoted}). The library tests the rules
+of the decomposition in a fixed order: at depth two (E) first, the empty cells of (O) being dropped with the corner
+cells, at no cost; at depths three and five (O) first; and at depths four and six $\alpha_k \ge \alpha_{k - 1}$ first,
+then (E), then the rest of (O).
 
 In Lean (\lean{SieveMain2.linnik\_route\_lt2}) the grid conditions of Theorem~\ref{M-thm:route} are \lean{GridOK},
 those conditions with $4h \le v$ in place of $16h \le v$ and with $0 < h$ and $U_1 < U_2$, which follow from the
-others, and \lean{GridOKC}: \lean{GridOK} for the coarse grid, $4h + 2h_C \le v$ and $Nh \le N_C h_C$. The Lean's grids also carry a multiplier, \lean{Grid.mult}, the side being rounded up to a
-multiple of the multiplier over $D$; Theorem~\ref{M-thm:route} is the case of the multiplier $1$. For $4 \mid N$ and
-that multiplier the coarse cells are unions of four cells, $h_C = 4h$, $e^C_{N_C - 1} = e_{N - 4}$ and $N_C h_C = Nh$, so
-beyond \lean{GridOK} the condition \lean{GridOKC} asks only $4h_C = 16h \le v$, which implies $4h \le v$ and
-$4h + 2h_C = 12h \le v$.
-
-The route theorem states the condition $2 < L$, which follows from the others. The grid conditions of the grid of
-Theorem~\ref{M-thm:main} are checked by \lean{decide} (\lean{SieveCert.gridOK22240R} and
-\lean{SieveCert.gridOKC22240R}). The prime number theorem of Sections~\ref{M-sec:type1} to~\ref{M-sec:proof} is derived from the case of $\zeta$ of
-Input~\ref{M-inp:half-plane}, in the form $\psi(t) - t = O(t^{11/12 + \varepsilon})$
-(\lean{HalfPlanePNT.\allowbreak psi\_isBigO\_eleven\_twelfths}).
+others, and \lean{GridOKC}: \lean{GridOK} for the coarse grid, $4h + 2h_C \le v$ and $Nh \le N_C h_C$. The Lean's
+grids also carry a multiplier, \lean{Grid.mult}, the side being rounded up to a multiple of the multiplier over $D$;
+Theorem~\ref{M-thm:route} is the case of the multiplier $1$. For $4 \mid N$ and that multiplier the coarse cells are
+unions of four cells, $h_C = 4h$, $e^C_{N_C - 1} = e_{N - 4}$ and $N_C h_C = Nh$, so beyond \lean{GridOK} the
+condition \lean{GridOKC} asks only $4h_C = 16h \le v$, which implies $4h \le v$ and $4h + 2h_C = 12h \le v$; the
+written proof needs only $12h \le v$. The condition $2 < L$ of the theorem is a field of \lean{RouteOK}; it follows from
+the others. The grid conditions of the grid of Proposition~\ref{M-prop:certificate} are checked by \lean{decide}
+(\lean{SieveCert.gridOK22240R} and \lean{SieveCert.gridOKC22240R}). The prime number theorem of
+Sections~\ref{M-sec:type1} to~\ref{M-sec:proof} is derived from the case of $\zeta$ of Input~\ref{M-inp:half-plane}, in
+the form $\psi(t) - t = O(t^{11/12 + \varepsilon})$ (\lean{HalfPlanePNT.\allowbreak psi\_isBigO\_eleven\_twelfths}).
 
 \subsection*{The library's proof of Input~\ref{M-inp:half-plane}}
 
@@ -643,10 +678,13 @@ The certificate of Proposition~\ref{M-prop:certificate} is checked by kernel eva
 compiled code, split into 5066 parts in 387 files: ranges of consecutive rows of the grid, and the heaviest $188$ rows in
 pieces of columns. Each part proves that its sum is at most a bound $\lceil 1.001 \times \text{part} \rceil$, computed
 exactly, and the bounds sum to $1151230848467235036 < 2^{60}$. The exact total,
-$\Sigma' = 1150080767699533326$, is computed from the same definitions by \file{tools/linnik/mirror2.py}. Evaluating the parts tests about $0.48$ million,
-$7.4$ million, $11.0$ million and $1.9$ million boxes of depths three to six below the decomposed cells, as
-\file{tools/linnik/mirror2.py} counts them, besides the $27020$ candidate cells and $0.35$ million boxes for the kept
-parts. The definitions the kernel evaluates are
+$\Sigma' = 1150080767699533326$, is computed from the same definitions by \file{tools/linnik/mirror2.py}, which also
+gives the totals of Section~\ref{M-sec:certificate} without the kept parts, $1.12341\mathcal K$, and (with
+\texttt{--depth4}) stopped at depth four, $1.45721\mathcal K$ and $1.33134\mathcal K$; \file{tools/linnik/choices.py}
+gives its counts of the forced choices and of the cells that reach the line $\alpha_1 + \alpha_2 = 1 - U_1/D$.
+Evaluating the parts tests about $0.48$ million, $7.4$ million, $11.0$ million and $1.9$ million boxes of depths three
+to six below the decomposed cells, as \file{tools/linnik/mirror2.py} counts them, besides the $27020$ candidate cells
+and $0.35$ million boxes for the kept parts. The definitions the kernel evaluates are
 arithmetic on Lean's core natural numbers, lists and booleans; their files import from Mathlib only the notation $\mathbb N$.
 
 \subsection*{The artefact}
@@ -655,8 +693,9 @@ The library, the paper and this supplement are in the repository \cite{repo}; th
 supplement describes the library at the commit that contains it. The toolchain is Lean \texttt{v4.35.0-rc3}
 \cite{lean4}, with Mathlib \cite{mathlib} at commit \texttt{0f64d30a},
 PrimeNumberTheoremAnd at \texttt{650d312} and \texttt{formal-math} at \texttt{fbdc36b}. The repository's README gives the
-commands: \texttt{lake exe cache get} for Mathlib's prebuilt files, \texttt{scripts/build.sh} for the build, which
-limits how many of the memory-hungry kernel checks of the certificate run at once, and
+commands: \texttt{lake exe cache get} for Mathlib's prebuilt files (which the build then trusts; building Mathlib
+from source, or replaying the environment with \texttt{lean4checker}, removes that trust), \texttt{scripts/build.sh} for
+the build, which limits how many of the memory-hungry kernel checks of the certificate run at once, and
 \texttt{python3 scripts/check\_axioms.py} for the axioms; the repository's continuous integration runs them on every
 change to the library.
 
@@ -671,7 +710,7 @@ of the library; nothing in the paper or the library depends on them.
 
 The window of Proposition~\ref{M-prop:window} has little room. All the corners are exact rational inequalities, so
 there is no numerical tolerance. With $u_1$ and $u_2$ fixed, they hold exactly for $L \ge 2.2239858\ldots$, so at $222399/100000$ but not at
-$222398/100000$; raising the first step's exponent by $3.7 \cdot 10^{-5}$ moves the lower end out. Since the Type~II
+$222398/100000$; raising the first step's exponent by $3.73 \cdot 10^{-5}$ moves the lower end out. Since the Type~II
 estimate on this window and the certificate of Section~\ref{M-sec:certificate} on its grid do not depend on $L$ otherwise
 (Theorem~\ref{M-thm:route} also needs $2 < L \le 5/2$ and $L U_2 > D$, which still hold), the window leaves about
 $1.4 \cdot 10^{-5}$ of room in the exponent. The corners' slack grows along the narrow steps, to $4.3 \cdot 10^{-4}$ on
@@ -697,7 +736,7 @@ $1/280$, start at $16/21$); the parameters of \lean{LinnikHuxStep.charDensity\_g
 first of these steps only; and the certificate on this grid has not been checked by the kernel.
 \subsection*{Below $278/125$}
 
-The method as it stands does not go much further. At $278/125$ the certificate's total is $0.99754\mathcal K$
+At $278/125$ the certificate's total is $0.99754\mathcal K$
 (Section~\ref{M-sec:certificate}); the kernel checks that it is below $0.99854\mathcal K$. Of it, about $0.971\mathcal K$
 comes from the candidate cells that the sharp rule does not allow to be decomposed: about $0.507\mathcal K$ from those that
 reach the line $\alpha_1 + \alpha_2 = 1 - U_1/D$, beyond which the cofactor is below the window, and about $0.464\mathcal K$,
@@ -709,24 +748,28 @@ $\mathcal U$ has no product of some of its prime factors with its exponent in $\
 $m$ (a product with $p_1$ and another prime has exponent above $1 - U_1/D$, since the prime factors of $m$ are at least
 $p_2$; one without $p_1$ that omits $p_2$ or a prime of $m$ has exponent at most $1 - \alpha_1 - \alpha_2 < U_1/D$; and
 the others are $p_1$ and $p_2 m$, of exponents $\alpha_1$ and $1 - \alpha_1$), and $p_1 p_2$ is beyond the Type~I level $X'$. Such integers need a wider window, that is a better density exponent at $\sigma = 5/7$, or arithmetic
-information of another kind. These figures, like the others of this subsection, are computed by
-\file{tools/linnik/mirror2.py}. A finer grid helps little: at $278/125$ the total is $0.99167\mathcal K$ at $380$ cells
-a side and $0.98972\mathcal K$ at $400$ (and $0.99878\mathcal K$ at $360$, where the cells lie less well against the
-window), but at $400$ cells a side $4447/2000 = 2.2235$ still fails with the present margin, at $1.00115\mathcal K$. A
-smaller margin in Definition~\ref{M-def:window} helps a little more. The margin $1/25000$, a convenience of the Lean
-statements, accounts for much of the window's loss (Section~\ref{M-sec:window-278}) and costs about $10^{-4}$ in the
-exponent: with a margin of $7.8 \cdot 10^{-6}$ the
-window of Theorem~\ref{M-thm:type2} is admissible at $2.2239$, with the same grid and certificate, and with a margin of
-$3 \cdot 10^{-6}$ the window $[41587, 47527]/100000$ is admissible at $4447/2000 = 2.2235$, where the total on $400$
-cells a side is $0.99842\mathcal K$. Each would need the constants of the Type~II estimate changed in Lean (the saving of
-Theorem~\ref{M-thm:type2}, the bound on $\eta$ and the absorption in the proof of Proposition~\ref{M-prop:type2-gen},
-and with them those of Section~\ref{app:family}), and the second a new certificate. The bounds of the cells are close to the integrals they bound: a constant $\omega(3) = 0.56438$
-above $3$ in place of $0.565073$ would lower the total by only $6 \cdot 10^{-4}\mathcal K$.
-The half-plane $\operatorname{Re} s > 7/8$ of OpenAI's main preprint \cite{openai-main}, in place of
-Input~\ref{M-inp:half-plane}, would not help: the window condition (Definition~\ref{M-def:window}) would be needed only for
-$\beta \le 7/8$, and the exponent of the kernel bound would become $b(\mu) = 3/8 + \mu/8 + \delta'(1 - \mu) + 2\varepsilon'$,
-which is no larger for $\mu \le 1$; neither change reaches the corners that set the window's ends, on the first step at
-$5/7$. Going lower would need more of the dropped terms evaluated or a better density exponent near $\sigma = 5/7$.
+information of another kind. The costs of the three kinds of candidate cell are printed by
+\file{tools/linnik/fig_cells.py}, and that of the cells that reach the line by \file{tools/linnik/choices.py}. A finer
+grid helps little: at $278/125$ the total is $0.99167\mathcal K$ at $380$ cells a side and $0.98972\mathcal K$ at $400$
+(and $0.99878\mathcal K$ at $360$, where the cells lie less well against the window), but at $400$ cells a side
+$4447/2000 = 2.2235$ still fails with the present margin, at $1.00115\mathcal K$. A smaller margin in
+Definition~\ref{M-def:window} helps a little more. The margin $1/25000$, a convenience of the Lean statements, accounts
+for much of the window's loss (Section~\ref{M-sec:window-278}) and costs about $10^{-4}$ in the exponent: with a margin
+of $7.8 \cdot 10^{-6}$ the window of Theorem~\ref{M-thm:type2} is admissible at $2.2239$, with the same grid and
+certificate, and with a margin of $3 \cdot 10^{-6}$ the window $[41587, 47527]/100000$ is admissible at $4447/2000 =
+2.2235$, where the total on $400$ cells a side is $0.99842\mathcal K$. Each would need the constants of the Type~II
+estimate changed in Lean (the saving of Theorem~\ref{M-thm:type2}, the bound on $\eta$ and the absorption in the proof
+of Proposition~\ref{M-prop:type2-gen}, and with them those of Section~\ref{app:family}), and the second a new
+certificate. The bounds of the cells are close to the integrals they bound: a constant $\omega(3) = 0.56438$ above $3$
+in place of $0.565073$ would lower the total by only $6 \cdot 10^{-4}\mathcal K$. The totals of this subsection are
+computed by \file{tools/linnik/mirror2.py}, the last with its constant \texttt{TOPK} lowered to $\lceil
+0.5643823\mathcal K \rceil$, and the windows for the other exponents and margins by \file{tools/linnik/route_limits.py},
+with its \texttt{MARGIN} changed for the margins. The half-plane $\operatorname{Re} s > 7/8$ of OpenAI's main preprint
+\cite{openai-main}, in place of Input~\ref{M-inp:half-plane}, would not help: the window condition
+(Definition~\ref{M-def:window}) would be needed only for $\beta \le 7/8$, and the exponent of the kernel bound would
+become $b(\mu) = 3/8 + \mu/8 + \delta'(1 - \mu) + 2\varepsilon'$, which is no larger for $\mu \le 1$; neither change
+reaches the corners that set the window's ends, on the first step at $5/7$. Going lower would need more of the dropped
+terms evaluated or a better density exponent near $\sigma = 5/7$.
 
 On the last, Chen, Gupta and Li note that the worst case for their estimate is $T = 1$ with no divisor $q_1$ of $q$ of a
 suitable size, as for prime $q$, that the critical situation is then at $\sigma = 5/7$, and that improving the term which
@@ -773,8 +816,9 @@ the bound without the first term, both with that change).
 \bibitem{hb79} D. R. Heath-Brown, \emph{Zero density estimates for the Riemann zeta-function and Dirichlet
   $L$-functions}, J. London Math. Soc. (2) 19 (1979), 221--232.
 \bibitem{pnt-plus} A. Kontorovich, T. Tao and contributors, \emph{PrimeNumberTheoremAnd}, a Lean project,
-  \url{https://github.com/AlexKontorovich/PrimeNumberTheoremAnd}.
-\bibitem{formal-math} Anthropic, \emph{formal-math}, a Lean repository, \url{https://github.com/anthropics/formal-math}.
+  \url{https://github.com/AlexKontorovich/PrimeNumberTheoremAnd}, at commit \texttt{650d312}.
+\bibitem{formal-math} Anthropic, \emph{formal-math}, a Lean repository, \url{https://github.com/anthropics/formal-math},
+at commit \texttt{fbdc36b}.
 \end{thebibliography}
 
 \end{document}

@@ -176,5 +176,5 @@ steps of `1/280` leave the window as it is (steps of `1/140` would move its lowe
 the classical deduction from the same curve gives `2.3334 + ε` (`LinnikG7.linnik_g7d`, with
 `SieveTypeIIU22240D.g7d_le_lin`: `g7d σ ≤ 2.3334(1 − σ)`).
 What lets the certificate close at `278/125` is the two deeper levels of the Buchstab decomposition, the kept parts,
-and the cells' bounds, with Buchstab's `ω` itself on `[2, 3]` and the trapezoid rule for the cells' prime sums (the
-Linnik paper, Section 5).
+and Buchstab's `ω` itself on `[2, 3]` in the cells' bounds; the trapezoid rule for the cells' prime sums leaves the room
+for the kernel's check of the parts (the Linnik paper, Section 5).
