@@ -193,6 +193,7 @@ import LinnikWeylBridge
 import ZetaHuxley
 import AlmostAllPrimes
 import ZetaGMDensity
+import BohrLandauCore
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -225,6 +226,9 @@ import ZetaGMDensity
 #print axioms HalfPlanePNT.psi_isBigO_eleven_twelfths
 #print axioms PsiExponent.Theta_le
 #print axioms PsiExponent.half_le_Theta
+#print axioms Eis.ne_zero_of_re_gt_eleven_twelfths
+#print axioms HalfPlaneJoins.zeta_band_eleven_twelfths
+#print axioms BohrLandauCore.tendsto_NX_div_of_lower
 #print axioms PsiExponent.zeta_ne_zero_of_Theta_lt
 #print axioms PsiExponent.psi_isBigO_Theta
 #print axioms PsiExponent.psi_omega_Theta
