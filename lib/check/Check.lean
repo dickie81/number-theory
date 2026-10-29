@@ -31,7 +31,7 @@ Chen–Gupta–Li's density estimate, whose steps and Proposition 3.1 are printe
 `[5/7, 16/21]`, is not used by `Linnik22240R` and is printed by `CheckAll`). -/
 #print axioms Eis.LFunction_ne_zero_of_re_gt
 
-/- The other theorems of the Linnik paper's claims table (`papers/linnik-exponent/main.tex`, Section 7): its own steps
+/- The other theorems of the Linnik paper's claims table (`papers/linnik-exponent/main.tex`, Appendix A): its own steps
 by section, then the results of the literature it uses, each with a note in `formalisations/`. -/
 #print axioms HalfPlanePNT.psi_isBigO_eleven_twelfths
 #print axioms SieveWeight.norm_Sp_le
@@ -51,6 +51,7 @@ by section, then the results of the literature it uses, each with a note in `for
 #print axioms SieveChain.chainTL_bound
 #print axioms SieveExact.chainT0_bound
 #print axioms SieveRoughTuple.sum_rough_eq
+#print axioms SieveChain.sum_rough_tuples
 #print axioms SieveRough.psi_le
 #print axioms SieveRough.Psi_le_buchstab
 #print axioms SieveRough.super_M
@@ -129,5 +130,6 @@ by section, then the results of the literature it uses, each with a note in `for
 #print axioms Linnik.linnik_twelve
 #print axioms LinnikIngham.linnik_thirtysix_thirteenths
 #print axioms LinnikTwelve.linnik_twelve_fifths
+#print axioms SieveTypeIIU22240D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d

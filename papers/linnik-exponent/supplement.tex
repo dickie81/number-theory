@@ -32,16 +32,15 @@
 \numberwithin{equation}{section}
 \renewcommand{\thesection}{S\arabic{section}}
 
-\title{Supplement to ``The least prime in an arithmetic progression: the exponent $278/125$ from a half-plane zero-free
-region, a zero-density estimate and a formalised sieve''}
+\title{Supplement to ``Linnik's constant below the zero-density exponent: $278/125$ from a zero-free half-plane''}
 \author{Ritchie Comley}
-\date{Draft, 28 October 2026}
+\date{Draft, 29 October 2026}
 
 \begin{document}
 \maketitle
 
 This supplement holds the proofs of four standard results that the paper uses, in the form in which the Lean library
-proves them (Sections~\ref{app:prime-sum} to~\ref{app:rough}), and the details of the paper's account of the
+proves them (Sections~\ref{app:prime-sum} to~\ref{app:harman}), and the details of the paper's account of the
 formalisation (Section~\ref{sup:lean}) and of its computations around the exponent (Section~\ref{sup:computations}).
 Numbers such as Lemma~\ref{M-lem:prime-sum} and Section~\ref{M-sec:certificate} refer to the paper, and those that
 begin with S to this supplement. Its notation is the paper's.
@@ -274,6 +273,92 @@ is at most $A_0 q^{L - \delta}/\varphi(q)$. Here $\delta$ depends only on $J_0$ 
 was used once for the smoothed family and once for each near-boundary family.
 \end{proof}
 
+\section{Proof of Lemma~\ref{M-lem:rough}}\label{app:rough}
+
+\begin{proof}
+Write $c_* = 0.565073$ and $\bar\omega = 0.5671433$, $u = \log 2y/\log z$, and say that an integer is $z$-rough if it has no
+prime factor below $z$. Four facts are used.
+
+\emph{(a) Prime sums.} By the prime number theorem with an error $o(t/\log t)$ (in the library, the bound
+$\psi(t) - t = O(t^{11/12 + \varepsilon})$, which it derives from the case of $\zeta$ of Input~\ref{M-inp:half-plane};
+the classical theorem would do), for every $\varepsilon_3 > 0$,
+$|\theta(t) - t| \le \varepsilon_3 t/\log t$ for large $t$. With partial summation this gives, for large $a \le b$,
+\[
+  \sum_{a < p \le b} \frac1{p \log p} \le \frac1{\log a} - \frac1{\log b} + \frac{4\varepsilon_3}{\log^2 a},
+\]
+and, if $2 \log b \le \Lambda$,
+\[
+  \sum_{a < p \le b} \frac1{p(\Lambda - \log p)}
+  \le \frac{1 + \varepsilon_3/\log a}{\Lambda} \log \frac{\log b \, (\Lambda - \log a)}{\log a \, (\Lambda - \log b)}
+  + \frac{6\varepsilon_3}{\Lambda \log^2 a};
+\]
+and, for large $y$, there are at most $(1 + \varepsilon_3) y/\log 2y$ primes in $(y, 2y]$.
+
+\emph{(b) Buchstab's inequality.} For $y \ge 2$,
+\[
+  \Phi(y, z) \le \#\{p : y < p \le 2y\} + \sum_{z \le p \le \sqrt{2y}} \Phi(y/p, p),
+\]
+since a $z$-rough integer $m \in (y, 2y]$ that is not prime has its least prime factor $p$ in $[z, \sqrt{2y}]$, and
+$m/p$ is a $p$-rough integer in $(y/p, 2y/p]$; the map $m \mapsto (p, m/p)$ is injective. Also $\Phi(y, z) = 0$ if
+$y \ge 1$ and $2y < z$, since every integer of $(y, 2y]$ is then at least $2$ and below $z$.
+
+\emph{(c) Buchstab's function on $[2, 3]$.} For $u > 1$, $1 + \log(u - 1) \le \bar\omega u$: the inequality $\log t \le t - 1$ at
+$t = \bar\omega(u - 1)$ gives $1 + \log(u - 1) \le \bar\omega(u - 1) - \log \bar\omega \le \bar\omega u$, since $-\log \bar\omega \le \bar\omega$, that is $\bar\omega e^{\bar\omega} \ge 1$, which
+holds because $e^{\bar\omega} \ge \sum_{m \le 12} \bar\omega^m/m! > 1/\bar\omega$. So $\omega^* \le \bar\omega$ on $[2, 3]$, and since $c_* < \bar\omega$,
+$\omega^* \le \bar\omega$ on $[2, \infty)$; and $\omega^* \le c_*$ on $[3, \infty)$, since $\omega^*(3) = (1 + \log 2)/3 < c_*$.
+
+\emph{(d) A delay inequality.} Let $M(u) = \log(u - 1)$ for $2 \le u \le 3$ and
+$M(u) = \log 2 + \bar\omega \min(u - 3, 1) + c_* \max(u - 4, 0)$ for $u > 3$, which is $\int_1^{u - 1} \omega^*(t)\, dt$ with
+$\omega^*$ replaced by $\bar\omega$ on $[2, 3]$. Then $1 + M(u) \le u \omega^*(u)$ for $u \ge 2$. For $u \le 3$ it is an
+equality. For $u > 3$, $\omega^*(u) = c_*$, and $1 + M(u) - c_* u$ is affine on $[3, 4]$, with slope $\bar\omega - c_* > 0$, and
+constant on $[4, \infty)$; so it suffices that it is at most $0$ at $u = 4$, that is $1 + \log 2 + \bar\omega \le 4c_*$, which
+holds since $\log 2 < 0.6931471808$ and $2.2602904808 < 2.260292 = 4c_*$.
+
+We prove by induction on the integer $k \ge 0$ the statement $\mathrm C(k)$: for every $\varepsilon > 0$ there is
+$z_0$ such that $\Phi(y, z) \le (\omega^*(u) + \varepsilon) y/\log z$ for all $z \ge z_0$ and all $y \ge 1$ with
+$u \le k$. $\mathrm C(0)$ holds trivially, since $u > 0$, and the lemma is $\mathrm C(\lceil U \rceil)$. Assume
+$\mathrm C(k)$, let $0 < \varepsilon \le 1$ (which suffices, since the bound for one $\varepsilon$ implies it for every
+larger one) and $\varepsilon_3 = \varepsilon/100$, let $z$ be large in terms of
+$\varepsilon$ and of the $z_0$ of $\mathrm C(k)$ for $\varepsilon/4$, and let $y \ge 1$ with
+$\Lambda = \log 2y = u \log z \le (k + 1) \log z$. If $2y < z$, then $\Phi(y, z) = 0$. Otherwise $u \ge 1$, $y \ge z/2$
+is large, and (a) and (b) give
+\[
+  \Phi(y, z) \le \Bigl(1 + \frac\varepsilon4\Bigr) \frac y\Lambda + \sum_{z \le p \le \sqrt{2y}} \Phi(y/p, p).
+\]
+If $u < 2$, then $\sqrt{2y} < z$, the sum is empty, and
+$\Phi(y, z) \le (1 + \varepsilon/4) y/(u \log z) \le (\omega^*(u) + \varepsilon) y/\log z$. Let $u \ge 2$. A prime
+$p \in [z, \sqrt{2y}]$ has $y/p \ge 1$ and
+$\log(2y/p) = \Lambda - \log p \le k \log p$, since $\Lambda \le (k + 1) \log p$. So $\mathrm C(k)$ gives
+$\Phi(y/p, p) \le (\omega^*(u_p) + \varepsilon/4) \, y/(p \log p)$ with $u_p = (\Lambda - \log p)/\log p$. The term
+$p = z$, if $z$ is prime, contributes at most $2y/(z \log z)$, since $\omega^* \le 1$. By (a), the parts
+$\varepsilon/4$ of the other terms contribute at most $(\varepsilon/4)(1/\log z + 4\varepsilon_3/\log^2 z) \, y$. For
+the parts $\omega^*(u_p)$: if $p \le (2y)^{1/4}$ then $u_p \ge 3$ and $\omega^*(u_p) \le c_*$; if
+$(2y)^{1/4} < p \le (2y)^{1/3}$ then $2 \le u_p < 3$ and $\omega^*(u_p) \le \bar\omega$; and if $(2y)^{1/3} < p \le (2y)^{1/2}$ then
+$1 \le u_p < 2$ and $\omega^*(u_p)/(p \log p) = 1/(p(\Lambda - \log p))$, by the definition of $\omega^*$ on
+$[1, 2)$. By (a), applied on $(z, \sqrt{2y}]$ if
+$u \le 3$, on $(z, (2y)^{1/3}]$ and $((2y)^{1/3}, \sqrt{2y}]$ if $3 < u \le 4$, and also with the first range split at
+$(2y)^{1/4}$ if $u > 4$,
+\[
+  \sum_{z < p \le \sqrt{2y}} \frac{\omega^*(u_p)}{p \log p} \le \frac{M(u) + 12\varepsilon_3}\Lambda
+  + \frac{8\varepsilon_3}{\log z}.
+\]
+Collecting the terms, with $\Lambda = u \log z$,
+\[
+  \Phi(y, z) \le \frac y{\log z} \Bigl(\frac{1 + M(u)}u + \frac{\varepsilon/4 + 12\varepsilon_3}u + \frac2z
+  + 8\varepsilon_3 + \frac\varepsilon4 + \frac{\varepsilon \varepsilon_3}{\log z}\Bigr).
+\]
+By (d) the first term is at most $\omega^*(u)$, and since $u \ge 1$ and $z$ is large the others add up to at most
+$0.96\varepsilon$. So $\Phi(y, z) \le (\omega^*(u) + \varepsilon) y/\log z$, which proves $\mathrm C(k + 1)$.
+\end{proof}
+
+\emph{A fact used in Section~\ref{M-sec:certificate}.} The bound $\Omega$ of that section, though not the proof above,
+uses that on $[2, 3]$, $\omega^*(u) = (1 + \log(u - 1))/u$ increases up to $2.76$ and decreases from $2.77$ on. For
+$2 \le u \le u' \le 2.76$, $\omega^*(u) \le \omega^*(u')$ is $(u' - u)(1 + \log(u - 1)) \le u \log((u' - 1)/(u - 1))$:
+the right side is at least $u(u' - u)/(u' - 1)$, by $\log t \ge 1 - 1/t$, and the left at most $(u' - u)u/1.76$, by
+$\log t \le t - 1$ at $t = (u - 1)/1.76$ and $\log 1.76 \le 1/1.76$. For $2.77 \le u \le u'$ the reverse inequality
+follows in the same way from $\log((u' - 1)/(u - 1)) \le (u' - u)/(u - 1)$ and
+$\log(u - 1) \ge \log 1.77 \ge 1/1.77 \ge 1/(u - 1)$. The two constants come from the exponential's series.
+
 \section{Proof of Proposition~\ref{M-prop:harman}}\label{app:harman}
 
 \begin{proof}
@@ -428,92 +513,6 @@ $\varepsilon_H x/(\varphi(q) \log q) + (q^{L - c} + q^{L - \delta_1})/\varphi(q)
 $\varepsilon_H x/(\varphi(q) \log q) + q^{L - \delta}/\varphi(q)$ with $\delta = \min(c, \delta_1)/2$.
 \end{proof}
 
-\section{Proof of Lemma~\ref{M-lem:rough}}\label{app:rough}
-
-\begin{proof}
-Write $c_* = 0.565073$ and $\bar\omega = 0.5671433$, $u = \log 2y/\log z$, and say that an integer is $z$-rough if it has no
-prime factor below $z$. Four facts are used.
-
-\emph{(a) Prime sums.} By the prime number theorem with an error $o(t/\log t)$ (in the library, the bound
-$\psi(t) - t = O(t^{11/12 + \varepsilon})$, which it derives from the case of $\zeta$ of Input~\ref{M-inp:half-plane};
-the classical theorem would do), for every $\varepsilon_3 > 0$,
-$|\theta(t) - t| \le \varepsilon_3 t/\log t$ for large $t$. With partial summation this gives, for large $a \le b$,
-\[
-  \sum_{a < p \le b} \frac1{p \log p} \le \frac1{\log a} - \frac1{\log b} + \frac{4\varepsilon_3}{\log^2 a},
-\]
-and, if $2 \log b \le \Lambda$,
-\[
-  \sum_{a < p \le b} \frac1{p(\Lambda - \log p)}
-  \le \frac{1 + \varepsilon_3/\log a}{\Lambda} \log \frac{\log b \, (\Lambda - \log a)}{\log a \, (\Lambda - \log b)}
-  + \frac{6\varepsilon_3}{\Lambda \log^2 a};
-\]
-and, for large $y$, there are at most $(1 + \varepsilon_3) y/\log 2y$ primes in $(y, 2y]$.
-
-\emph{(b) Buchstab's inequality.} For $y \ge 2$,
-\[
-  \Phi(y, z) \le \#\{p : y < p \le 2y\} + \sum_{z \le p \le \sqrt{2y}} \Phi(y/p, p),
-\]
-since a $z$-rough integer $m \in (y, 2y]$ that is not prime has its least prime factor $p$ in $[z, \sqrt{2y}]$, and
-$m/p$ is a $p$-rough integer in $(y/p, 2y/p]$; the map $m \mapsto (p, m/p)$ is injective. Also $\Phi(y, z) = 0$ if
-$y \ge 1$ and $2y < z$, since every integer of $(y, 2y]$ is then at least $2$ and below $z$.
-
-\emph{(c) Buchstab's function on $[2, 3]$.} For $u > 1$, $1 + \log(u - 1) \le \bar\omega u$: the inequality $\log t \le t - 1$ at
-$t = \bar\omega(u - 1)$ gives $1 + \log(u - 1) \le \bar\omega(u - 1) - \log \bar\omega \le \bar\omega u$, since $-\log \bar\omega \le \bar\omega$, that is $\bar\omega e^{\bar\omega} \ge 1$, which
-holds because $e^{\bar\omega} \ge \sum_{m \le 12} \bar\omega^m/m! > 1/\bar\omega$. So $\omega^* \le \bar\omega$ on $[2, 3]$, and since $c_* < \bar\omega$,
-$\omega^* \le \bar\omega$ on $[2, \infty)$; and $\omega^* \le c_*$ on $[3, \infty)$, since $\omega^*(3) = (1 + \log 2)/3 < c_*$.
-On $[2, 3]$, $\omega^*(u) = (1 + \log(u - 1))/u$ increases up to $2.76$ and decreases from $2.77$ on. For
-$2 \le u \le u' \le 2.76$, $\omega^*(u) \le \omega^*(u')$ is $(u' - u)(1 + \log(u - 1)) \le u \log((u' - 1)/(u - 1))$:
-the right side is at least $u(u' - u)/(u' - 1)$, by $\log t \ge 1 - 1/t$, and the left at most $(u' - u)u/1.76$, by
-$\log t \le t - 1$ at $t = (u - 1)/1.76$ and $\log 1.76 \le 1/1.76$. For $2.77 \le u \le u'$ the reverse inequality
-follows in the same way from $\log((u' - 1)/(u - 1)) \le (u' - u)/(u - 1)$ and
-$\log(u - 1) \ge \log 1.77 \ge 1/1.77 \ge 1/(u - 1)$. The two constants come from the exponential's series. (This
-proof does not use the monotonicity; the bound $\Omega$ of Section~\ref{M-sec:certificate} does.)
-
-\emph{(d) A delay inequality.} Let $M(u) = \log(u - 1)$ for $2 \le u \le 3$ and
-$M(u) = \log 2 + \bar\omega \min(u - 3, 1) + c_* \max(u - 4, 0)$ for $u > 3$, which is $\int_1^{u - 1} \omega^*(t)\, dt$ with
-$\omega^*$ replaced by $\bar\omega$ on $[2, 3]$. Then $1 + M(u) \le u \omega^*(u)$ for $u \ge 2$. For $u \le 3$ it is an
-equality. For $u > 3$, $\omega^*(u) = c_*$, and $1 + M(u) - c_* u$ is affine on $[3, 4]$, with slope $\bar\omega - c_* > 0$, and
-constant on $[4, \infty)$; so it suffices that it is at most $0$ at $u = 4$, that is $1 + \log 2 + \bar\omega \le 4c_*$, which
-holds since $\log 2 < 0.6931471808$ and $2.2602904808 < 2.260292 = 4c_*$.
-
-We prove by induction on the integer $k \ge 0$ the statement $\mathrm C(k)$: for every $\varepsilon > 0$ there is
-$z_0$ such that $\Phi(y, z) \le (\omega^*(u) + \varepsilon) y/\log z$ for all $z \ge z_0$ and all $y \ge 1$ with
-$u \le k$. $\mathrm C(0)$ holds trivially, since $u > 0$, and the lemma is $\mathrm C(\lceil U \rceil)$. Assume
-$\mathrm C(k)$, let $0 < \varepsilon \le 1$ (which suffices, since the bound for one $\varepsilon$ implies it for every
-larger one) and $\varepsilon_3 = \varepsilon/100$, let $z$ be large in terms of
-$\varepsilon$ and of the $z_0$ of $\mathrm C(k)$ for $\varepsilon/4$, and let $y \ge 1$ with
-$\Lambda = \log 2y = u \log z \le (k + 1) \log z$. If $2y < z$, then $\Phi(y, z) = 0$. Otherwise $u \ge 1$, $y \ge z/2$
-is large, and (a) and (b) give
-\[
-  \Phi(y, z) \le \Bigl(1 + \frac\varepsilon4\Bigr) \frac y\Lambda + \sum_{z \le p \le \sqrt{2y}} \Phi(y/p, p).
-\]
-If $u < 2$, then $\sqrt{2y} < z$, the sum is empty, and
-$\Phi(y, z) \le (1 + \varepsilon/4) y/(u \log z) \le (\omega^*(u) + \varepsilon) y/\log z$. Let $u \ge 2$. A prime
-$p \in [z, \sqrt{2y}]$ has $y/p \ge 1$ and
-$\log(2y/p) = \Lambda - \log p \le k \log p$, since $\Lambda \le (k + 1) \log p$. So $\mathrm C(k)$ gives
-$\Phi(y/p, p) \le (\omega^*(u_p) + \varepsilon/4) \, y/(p \log p)$ with $u_p = (\Lambda - \log p)/\log p$. The term
-$p = z$, if $z$ is prime, contributes at most $2y/(z \log z)$, since $\omega^* \le 1$. By (a), the parts
-$\varepsilon/4$ of the other terms contribute at most $(\varepsilon/4)(1/\log z + 4\varepsilon_3/\log^2 z) \, y$. For
-the parts $\omega^*(u_p)$: if $p \le (2y)^{1/4}$ then $u_p \ge 3$ and $\omega^*(u_p) \le c_*$; if
-$(2y)^{1/4} < p \le (2y)^{1/3}$ then $2 \le u_p < 3$ and $\omega^*(u_p) \le \bar\omega$; and if $(2y)^{1/3} < p \le (2y)^{1/2}$ then
-$1 \le u_p < 2$ and $\omega^*(u_p)/(p \log p) = 1/(p(\Lambda - \log p))$, by the definition of $\omega^*$ on
-$[1, 2)$. By (a), applied on $(z, \sqrt{2y}]$ if
-$u \le 3$, on $(z, (2y)^{1/3}]$ and $((2y)^{1/3}, \sqrt{2y}]$ if $3 < u \le 4$, and also with the first range split at
-$(2y)^{1/4}$ if $u > 4$,
-\[
-  \sum_{z < p \le \sqrt{2y}} \frac{\omega^*(u_p)}{p \log p} \le \frac{M(u) + 12\varepsilon_3}\Lambda
-  + \frac{8\varepsilon_3}{\log z}.
-\]
-Collecting the terms, with $\Lambda = u \log z$,
-\[
-  \Phi(y, z) \le \frac y{\log z} \Bigl(\frac{1 + M(u)}u + \frac{\varepsilon/4 + 12\varepsilon_3}u + \frac2z
-  + 8\varepsilon_3 + \frac\varepsilon4 + \frac{\varepsilon \varepsilon_3}{\log z}\Bigr).
-\]
-By (d) the first term is at most $\omega^*(u)$, and since $u \ge 1$ and $z$ is large the others add up to at most
-$0.96\varepsilon$. So $\Phi(y, z) \le (\omega^*(u) + \varepsilon) y/\log z$, which proves $\mathrm C(k + 1)$.
-\end{proof}
-
-% The entries are the paper's; main.tex records how they were checked.
 \section{The formalisation in detail}\label{sup:lean}
 
 This section completes Section~\ref{M-sec:lean} of the paper.
@@ -523,12 +522,13 @@ This section completes Section~\ref{M-sec:lean} of the paper.
 For Chen, Gupta and Li's paper \cite{cgl} the library formalises its Proposition~3.1, in the form for one point per
 character of Section~\ref{M-sec:inputs} of the paper (\lean{LinnikCGLLV.CGLProp31}, proved as
 \lean{LinnikCGLHB101.prop31}), with the results it rests on (their Propositions~4.6, 6.1, 8.1 and~11.1 and
-Theorem~10.1), the steps of Input~\ref{M-inp:density}, and the estimate with exponent $7/3$ on $[5/7, 16/21]$
-(\lean{LinnikCGLDensity.cglDensity}); their Theorem~1.2 as they state it and their other results are not formalised.
-The library's proof of their Theorem~10.1, a large-values bound with characters that they credit to Heath-Brown
-\cite{hb79b}, follows the arguments of Kerr \cite{kerr} and Jutila \cite{jutila}; some lemmas of their paper were
-formalised from an outline of their proofs; and the formalisation found six places where the text of their paper needs
-a small repair, none affecting its results (\file{formalisations/chen-gupta-li-density.md}).
+Theorem~10.1), the steps of Input~\ref{M-inp:density}, and the estimate with exponent $7/3 + \varepsilon$ on
+$[5/7, 16/21]$ (\lean{LinnikCGLDensity.cglDensity}); their Theorem~1.2 as they state it and their other results are not
+formalised. The library's proof of their Theorem~10.1, a large-values bound with characters that they credit to
+Heath-Brown \cite{hb79b}, follows the arguments of Kerr \cite{kerr} and Jutila \cite{jutila}; some lemmas of their paper
+were formalised from an outline of their proofs; and the formalisation found six places where the text of their paper
+needs a small repair, none affecting its results, which the author has sent to them
+(\file{formalisations/chen-gupta-li-density.md}).
 
 \subsection*{The statements}
 
@@ -538,11 +538,28 @@ which \lean{LFunction χ s = 0} at some $s$ in the rectangle. Mathlib's $L$-func
 analytic continuation of $\sum_n \chi(n) n^{-s}$, with the character taken mod $q$ and not reduced to a primitive
 one. So $L(s, \chi)$ is the $L$-function of the primitive character inducing $\chi$ times the Euler factors at the
 primes dividing $q$, whose zeros lie on $\operatorname{Re} s = 0$ and do not affect the counts for $\sigma \ge 1/2$.
-In Lean the slack of Ingham's steps is $4\varepsilon$ for the $\varepsilon$ of
+In Lean the excess of Ingham's steps \cite{ingham} is $4\varepsilon$ for the $\varepsilon$ of
 \lean{LinnikInghamC.charDensity\_ingham\_c}, whose exponent is $2 + 4c + 4\varepsilon$, with $c$ chosen so that
 $2 + 4c = 3/(2 - \sigma_+)$, Ingham's exponent at the step's right end $\sigma_+$: $\varepsilon = 1/8000$ on the
 first nineteen steps and $\varepsilon = 1/400000$ on the last. \file{formalisations/} records, for each result from the
 literature, the differences between the Lean statement and the published one.
+
+\subsection*{The library's proof of Input~\ref{M-inp:half-plane}}
+
+The library proves Input~\ref{M-inp:half-plane} as \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt}, along the route of OpenAI's
+companion preprint \cite{openai-companion}, on its own toolchain; it imports nothing from OpenAI's release
+(\file{formalisations/openai-half-plane.md}). The route has five steps. Power savings for the smoothed Möbius sums of the
+Dedekind zeta function of $\mathbb Q(\sqrt{-3})$ give the half-plane. The target is embedded in a family of sextic
+twists, over which a mean square bounds it. Poisson summation and the Gauss--Jacobi identities turn the Möbius function
+times sextic Gauss sums into cubic Gauss sums. Kubota's cubic theta function \cite{kubota} supplies the transformation,
+with Patterson's formula for its coefficients \cite{patterson}, Dunn and Radziwi\l\l's cusp expansions
+\cite{dunn-radziwill}, and the quadratic large sieve over $\mathbb Z[\omega]$ \cite{hb-quadratic, goldmakher-louvel},
+which bounds the dual mean square. Möbius inversion removes the cube factors and gives the exponent $11/12$. The chain
+gives $\zeta$ and $L(s, \chi_{-3})$ first, then the real characters, the characters of order dividing $6$, and every
+other character through the family twisted by a character modulo $4q$. The classical results that the route uses,
+among them cubic and sextic reciprocity \cite{ireland-rosen}, are theorems of the library. The import cone of the
+theorem in the library has about $230$ files and $109000$ lines of Lean, almost all of them in \texttt{lib/core}.
+
 \subsection*{Independent checking of the inputs}
 
 Independent checking of Input~\ref{M-inp:half-plane} is partial, and little of it is independent of OpenAI. OpenAI's
@@ -551,24 +568,20 @@ release has its own Lean formalisation of the main preprint's result. Its catalo
 names the theorem \lean{OAI.DirichletCharacter.\allowbreak LFunction\_ne\_zero\_of\_seven\_eighths\_lt\_re}. Its
 statement is for every modulus $q \ge 1$, every character mod $q$ and every $s$ with $\operatorname{Re} s > 7/8$,
 against Mathlib's $L$-function, with the same exception at $s = 1$ for the trivial character, so it implies
-Input~\ref{M-inp:half-plane} as stated here. The same catalogue gives the scope as partial progress and the review status
-as unchecked, so it is OpenAI's own record and not an independent one. The author read that release's statements,
+Input~\ref{M-inp:half-plane} as stated here. It is OpenAI's own record, not an independent one, and the catalogue gives
+its scope as partial progress and its review status as unchecked. The author read that release's statements,
 scanned its Lean and rebuilt it on 7 October 2026, which showed its two main theorems to depend on Lean's standard
 three axioms only, but did not read its proofs in full. This library's proof of Input~\ref{M-inp:half-plane} is a new
 formalisation of the companion preprint's route, on a different Lean and Mathlib; it imports nothing from the release
 and was not compared with it. It is a machine-checked proof of the companion preprint's theorem, but the route is
 OpenAI's and the formalisation is the author's, written with the AI assistance described in the paper's acknowledgements, so
 it is not a review of the mathematics that is independent of OpenAI and of the author. The check recorded by the tracker AIProofWatch \cite{aiproofwatch} on 25 October 2026 concerns the
-specialisation to the Riemann zeta function at $7/8$, not Dirichlet $L$-functions in general. There are third-party
-reports of replaying OpenAI's Lean proof of the $7/8$ result, in at least one of them for the Dirichlet statement; they
-check that proof, not the mathematics, and the author has not rerun them. So the author knows of no
+specialisation to the Riemann zeta function at $7/8$, not Dirichlet $L$-functions in general. So the author knows of no
 review of the mathematics for Dirichlet $L$-functions in general that is independent of OpenAI and of the author.
 
 For Input~\ref{M-inp:density} the author knows of no independent check either. The library's proof of Chen, Gupta and
-Li's Proposition~3.1 is the author's formalisation of their text, written in the same way; some of their lemmas were
-formalised from an outline of their proofs, and the formalisation found six places where the text needs a small repair
-(\file{formalisations/chen-gupta-li-density.md}), which the author has sent to them. Lean's kernel checks that proof;
-it does not check that its statement is theirs.
+Li's Proposition~3.1 is the author's formalisation of their text, written in the same way. Lean's kernel checks that
+proof; it does not check that its statement is theirs.
 
 \subsection*{What the kernel checks}
 
@@ -594,12 +607,14 @@ arithmetic on Lean's core natural numbers, lists and booleans; their files impor
 \subsection*{The artefact}
 
 The library, the paper and this supplement are in the repository \cite{repo}; this version of the paper and of the
-supplement describes the library at the commit that contains it. The toolchain is Lean \texttt{v4.35.0-rc3}, with Mathlib at commit \texttt{0f64d30a},
+supplement describes the library at the commit that contains it. The toolchain is Lean \texttt{v4.35.0-rc3}
+\cite{lean4}, with Mathlib \cite{mathlib} at commit \texttt{0f64d30a},
 PrimeNumberTheoremAnd at \texttt{650d312} and \texttt{formal-math} at \texttt{fbdc36b}. The repository's README gives the
 commands: \texttt{lake exe cache get} for Mathlib's prebuilt files, \texttt{scripts/build.sh} for the build, which
 limits how many of the memory-hungry kernel checks of the certificate run at once, and
 \texttt{python3 scripts/check\_axioms.py} for the axioms; the repository's continuous integration runs them on every
 change to the library.
+
 \section{Computations around the exponent}\label{sup:computations}
 
 This section gives the computations behind the last two paragraphs of Section~\ref{M-sec:comparison} of the paper.
@@ -608,24 +623,25 @@ of the library; nothing in the paper or the library depends on them.
 
 \subsection*{The classical estimates in place of Chen, Gupta and Li's}
 
-The gain does not depend on Chen, Gupta and Li's estimate. Take $g_7$ with its steps on $[5/7, 131/168]$ replaced by
-steps of length $1/1680$ with the classical exponents and the slack $1/2000$ of the library's steps: Ingham's
-$3/(2 - \sigma_+) + 1/2000$ up to $3/4$ and Huxley's $3/(3\sigma_- - 1) + 1/2000$ from $3/4$. The window is then set
+Take $g_7$ with its steps on $[5/7, 131/168]$ replaced by steps of length $1/1680$ with the classical exponents and the
+excess $1/2000$ of the library's steps: Ingham's \cite{ingham} $3/(2 - \sigma_+) + 1/2000$ up to $3/4$ and Huxley's
+\cite{huxley75} $3/(3\sigma_- - 1) + 1/2000$ from $3/4$. The window is then set
 at $3/4$, where both exponents are $12/5$, and the closed forms of Section~\ref{M-sec:ends} become $u_1 \ge 16/(5L) - 1$ and
 $u_2 \le 1 - 6/(5L)$, which meet at $L = 11/5$. The search of \file{tools/linnik/density\_payoff.py} described below
 (its variant \texttt{classical}) finds the window $[41098, 47082]/100000$ admissible at $L = 4537/2000 = 2.2685$, in
 exact rationals, and the certificate's total on it $0.99835\mathcal K$ on $340$ cells a side; at $2.268$ it is
 $1.00648\mathcal K$. So the sieve brings Huxley's $12/5$ down to about $2.27$, as it brings $7/3$ down to $2.224$,
-and with Input~\ref{M-inp:half-plane} as the only input that is not refereed. This is a computation with the
-certificate's definitions, not a theorem of the library: the library has no steps of Ingham's or Huxley's estimate of
-length $1/1680$ on $[5/7, 131/168]$ (its Ingham steps end at $5/7$, and its Huxley steps, of length $1/280$, start at
-$16/21$), and the certificate on this grid has not been checked by the kernel.
+and with Input~\ref{M-inp:half-plane} as the only input that is not refereed. The library has no steps of Ingham's or
+Huxley's estimate of length $1/1680$ on $[5/7, 131/168]$ (its Ingham steps end at $5/7$, and its Huxley steps, of length
+$1/280$, start at $16/21$); the parameters of \lean{LinnikHuxStep.charDensity\_gen} at this width were checked for the
+first of these steps only; and the certificate on this grid has not been checked by the kernel.
 \subsection*{Below $278/125$}
 
 The method as it stands does not go much further. At $278/125$ the certificate's total is $0.99754\mathcal K$
 (Section~\ref{M-sec:certificate}); the kernel checks that it is below $0.99854\mathcal K$. Of it, about $0.971\mathcal K$
-comes from the candidate cells that the sharp rule does not allow to be decomposed: about $0.507\mathcal K$ from those with
-$\alpha_1 + \alpha_2$ beyond $1 - U_1/D$, whose cofactor is below the window, and about $0.464\mathcal K$, after the kept
+comes from the candidate cells that the sharp rule does not allow to be decomposed: about $0.507\mathcal K$ from those that
+reach the line $\alpha_1 + \alpha_2 = 1 - U_1/D$, beyond which the cofactor is below the window, and about $0.464\mathcal K$,
+after the kept
 parts, from those blocked only by their cells of depth three; the decomposed cells cost about $0.026\mathcal K$, so more
 depth would not help. No refinement of the decomposition recovers most of the first part with this window: an
 integer $p_1 p_2 m$ that those cells count with $\alpha_1 + \alpha_2 > 1 - U_1/D$ and $\alpha_1$ and $\alpha_2$ outside
@@ -633,11 +649,18 @@ $\mathcal U$ has no product of some of its prime factors with its exponent in $\
 $m$ (a product with $p_1$ and another prime has exponent above $1 - U_1/D$, since the prime factors of $m$ are at least
 $p_2$; one without $p_1$ that omits $p_2$ or a prime of $m$ has exponent at most $1 - \alpha_1 - \alpha_2 < U_1/D$; and
 the others are $p_1$ and $p_2 m$, of exponents $\alpha_1$ and $1 - \alpha_1$), and $p_1 p_2$ is beyond the Type~I level $X'$. Such integers need a wider window, that is a better density exponent at $\sigma = 5/7$, or arithmetic
-information of another kind. These figures, like the others of this subsection, are computations with the definitions of the
-certificate (\file{tools/linnik/mirror2.py}), not theorems. A finer grid helps little: at $278/125$ the total is
-$0.99167\mathcal K$ at $380$ cells a side and $0.98972\mathcal K$ at $400$ (and $0.99878\mathcal K$ at $360$, where the
-cells lie less well against the window), but at $400$ cells a side $4447/2000 = 2.2235$ still fails, at
-$1.00115\mathcal K$. The bounds of the cells are close to the integrals they bound: a constant $\omega(3) = 0.56438$
+information of another kind. These figures, like the others of this subsection, are computed by
+\file{tools/linnik/mirror2.py}. A finer grid helps little: at $278/125$ the total is $0.99167\mathcal K$ at $380$ cells
+a side and $0.98972\mathcal K$ at $400$ (and $0.99878\mathcal K$ at $360$, where the cells lie less well against the
+window), but at $400$ cells a side $4447/2000 = 2.2235$ still fails with the present margin, at $1.00115\mathcal K$. A
+smaller margin in Definition~\ref{M-def:window} helps a little more. The margin $1/25000$, a convenience of the Lean
+statements, accounts for much of the window's loss (Section~\ref{M-sec:ends}) and costs about $10^{-4}$ in the
+exponent: with a margin of $7.8 \cdot 10^{-6}$ the
+window of Theorem~\ref{M-thm:type2} is admissible at $2.2239$, with the same grid and certificate, and with a margin of
+$3 \cdot 10^{-6}$ the window $[41587, 47527]/100000$ is admissible at $4447/2000 = 2.2235$, where the total on $400$
+cells a side is $0.99842\mathcal K$. Each would need the constants of the Type~II estimate changed in Lean (the saving of
+Theorem~\ref{M-thm:type2}, the bound on $\eta$ and the absorption in the proof of Proposition~\ref{M-prop:type2-gen},
+and with them those of Section~\ref{app:family}), and the second a new certificate. The bounds of the cells are close to the integrals they bound: a constant $\omega(3) = 0.56438$
 above $3$ in place of $0.565073$ would lower the total by only $6 \cdot 10^{-4}\mathcal K$.
 The half-plane $\operatorname{Re} s > 7/8$ of OpenAI's main preprint \cite{openai-main}, in place of
 Input~\ref{M-inp:half-plane}, would not help: the window condition (Definition~\ref{M-def:window}) would be needed only for
@@ -647,14 +670,14 @@ $5/7$. Going lower would need more of the dropped terms evaluated or a better de
 
 On the last, Chen, Gupta and Li note that the worst case for their estimate is $T = 1$ with no divisor $q_1$ of $q$ of a
 suitable size, as for prime $q$, that the critical situation is then at $\sigma = 5/7$, and that improving the term which
-dominates there would need a joint cancellation which ``seems quite difficult'' \cite[Remark~12.3]{cgl}. The script
+dominates there is hard (\cite[Remark~12.3]{cgl}, quoted in Section~\ref{M-sec:comparison}). The script
 \file{tools/linnik/density_payoff.py} measures what lower curves would give the method: for a curve made from $g_7$ it
 finds a window admissible at $L$, checked at the corners in exact rationals, evaluates the certificate's total on it on
 $340$ cells a side, and lowers $L$ in steps of $10^{-3}$ while the total stays below $0.999\mathcal K$, then tries
 one further step of $5 \cdot 10^{-4}$ (\file{tools/linnik/README.md} describes the search). For $\mu \ge 1$ the window condition on a piece $A(1 - \beta)$ requires $L - \mu > A/2$, where $g_7 = 1$
 counts as $A = 1/(1 - \beta)$, which tends to $7/3$ at $4/7$; so with the trivial count kept below $4/7$ and every
 exponent capped at $30/13$ the script reaches only $2.2235$. The other curves replace the trivial count on $[11/20, 4/7]$
-by one step of Ingham's estimate, of exponent $3/(2 - 4/7) + 10^{-5}$, and set the slack of the steps on $[4/7, 5/7]$ to
+by one step of Ingham's estimate, of exponent $3/(2 - 4/7) + 10^{-5}$, and set the excess of the steps on $[4/7, 5/7]$ to
 $10^{-5}$, both as \lean{LinnikInghamC.charDensity\_ingham\_c} allows (that change alone leaves $278/125$); with every
 exponent then capped at $A$ the script reaches:
 \begin{center}
@@ -667,7 +690,7 @@ lowest $L$ & $2.2235$ & $2.2220$ & $2.2205$ & $2.2190$ & $2.2170$ \\
 \end{center}
 These figures are partly those of $g_7$'s steps: for the capped curves the window's lower end is set not at $5/7$ but on
 one of the steps of length $1/280$, whose exponent is taken at its left end (the first, $[607/840, 61/84]$, for the
-cap $2.33$, and the last, $[163/210, 131/168]$, for the cap $30/13$).
+cap $2.33$, and $[11/15, 619/840]$, at whose left end $4/(1 + \sigma) = 30/13$, for the cap $30/13$).
 With the same change and the exponent of each step inside $[7/10, 4/5]$ capped at Chen, Gupta and Li's bound at
 $q_1 = q$ without its first term \cite[Theorem~1.2]{cgl}, the term that gives $4/(1 + \sigma)$, taken at the step's
 left end plus $10^{-5}$, the script reaches $2.2090$; on $[7/10, 4/5]$ the largest of the exponents of the other three
@@ -676,42 +699,22 @@ Capping the exponent on $[15/19, 11/12]$ at $2 + 10^{-5}$, as Heath-Brown's esti
 $\sum_{\chi \bmod q} N(\sigma, T, \chi) \ll (qT)^{2 - 2\sigma + \varepsilon}$ for $15/19 \le \sigma \le 1$ \cite{hb79}
 would allow (the range as in the review of \cite{hb79} in zbMATH, Zbl~0393.10043), changes none of the figures for the four curves
 on which the script tries it (the curve $g_7$ itself, the change on $[11/20, 5/7]$ alone, and the cap at $30/13$ and
-the bound without the first term, both with that change). Nothing in the paper
-or the library depends on these computations.
+the bound without the first term, both with that change).
 
 
+% The paper's references (references.tex), numbered as in the paper, then the four cited only here: AIProofWatch's
+% record, Heath-Brown (1979), whose check main.tex records, and the two Lean projects the library vendors.
 \begin{thebibliography}{99}
 \raggedright
-\bibitem{openai-main} OpenAI, \emph{The Quasi-Riemann Hypothesis: A Zero-Free Half-Plane $\operatorname{Re}(s) > 7/8$},
-  preprint, 30 September 2026, \url{https://github.com/openai/math}, entry 003, read at commit \texttt{adc7f12}. Not
-  refereed.
-\bibitem{openai-lean} OpenAI, \emph{Catalog of papers with a formalized main result}, file
-  \texttt{lean/formalization.yaml} (version v0.4) of the repository \texttt{openai/math}, a web page,
-  \url{https://github.com/openai/math/blob/main/lean/formalization.yaml}, read 25 October 2026; with
-  \texttt{lean/OAI/NumberTheory/DirichletL/Nonvanishing.lean} of the same repository. It is OpenAI's own record; it
-  marks its scope as partial progress and its review status as unchecked.
+\input{references}
 \bibitem{aiproofwatch} AIProofWatch, record of OpenAI's \emph{The Quasi-Riemann Hypothesis: A Zero-Free Half-Plane
   $\operatorname{Re}(s) > 7/8$}, \url{https://aiproofwatch.com/updates/openai-math-003} (assessment reviewed 25 October 2026;
   reports an external Lean check of the Riemann zeta specialisation only).
-\bibitem{cgl} B. Chen, V. Gupta and Y. C. Li, \emph{Large Value Estimates for Dirichlet Polynomials with Characters
-  and Zero Density of Dirichlet $L$-Functions}, arXiv:2507.08296v2 (preprint; v2 of 27 July 2026, v1 of 11 July 2025
-  was by B. Chen alone).
-\bibitem{guth-maynard} L. Guth and J. Maynard, \emph{New large value estimates for Dirichlet polynomials},
-  Ann. of Math. (2) 203 (2026), 623--675; arXiv:2405.20552.
-\bibitem{hb79b} D. R. Heath-Brown, \emph{A large values estimate for Dirichlet polynomials}, J. London Math. Soc. (2) 20
-  (1979), 8--18.
-\bibitem{kerr} B. Kerr, \emph{Large values of Dirichlet polynomials and zero density estimates for the Riemann zeta
-  function}, arXiv:1909.12075.
-\bibitem{jutila} M. Jutila, \emph{Zero-density estimates for $L$-functions}, Acta Arith. 32 (1977), 55--62.
 \bibitem{hb79} D. R. Heath-Brown, \emph{Zero density estimates for the Riemann zeta-function and Dirichlet
   $L$-functions}, J. London Math. Soc. (2) 19 (1979), 221--232.
-\bibitem{brun} V. Brun, \emph{Le crible d'Eratosth\`ene et le th\'eor\`eme de Goldbach}, Videnskapsselskapets
-  Skrifter I, Mat.-naturv. Klasse, Kristiania, 1920, no.~3.
 \bibitem{pnt-plus} A. Kontorovich, T. Tao and contributors, \emph{PrimeNumberTheoremAnd}, a Lean project,
   \url{https://github.com/AlexKontorovich/PrimeNumberTheoremAnd}.
 \bibitem{formal-math} Anthropic, \emph{formal-math}, a Lean repository, \url{https://github.com/anthropics/formal-math}.
-\bibitem{repo} R. Comley, \emph{number-theory}, the repository of the paper, this supplement and its Lean library,
-  \url{https://github.com/dickie81/number-theory}.
 \end{thebibliography}
 
 \end{document}

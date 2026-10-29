@@ -101,8 +101,8 @@ theorem in the form `|θ(t) − t| ≤ εt/log t` for all large `t` (`SieveRough
   `q`, with `B/φ(q)`, `B` those prime to `q`. The tuples `rt` are cut out by finitely many comparisons between their
   primes and products, and the Type II information is the route's hypothesis `TypeIIAt`. A general statement of
   Harman's fundamental theorem is not formalised.
-- **The fundamental lemma** is proved by Brun's pure sieve with explicit truncations, not by Selberg's or Rosser's
-  sieve. Its constants are explicit: the gap is at most `V·ζ(k)` with
+- **The fundamental lemma** is proved by Brun's sieve, with each range of primes truncated at its own level, not by
+  Selberg's or Rosser's sieve. Its constants are explicit: the gap is at most `V·ζ(k)` with
   `ζ(k) = e^{2C₀}(2C₀^k/k!)·exp(e^{2C₀}·2C₀^{k+1}/(k + 1)!)` (`SieveLeaf.leaf_gap`).
 - **Rough numbers** are bounded above by `ω*`, which is Buchstab's `ω` on `[1, 3]` but above `3` the constant
   `0.565073`, slightly more than `ω(3) = 0.56438…`, the largest value of `ω` there. The certificate of the Linnik
@@ -114,6 +114,6 @@ theorem in the form `|θ(t) − t| ≤ εt/log t` for all large `t` (`SieveRough
 
 ## Where the Linnik paper uses it
 
-In the leaves of its decomposition: `SieveLeaves.P6_spec` applies `prop6` to each family of at most `18` comparisons.
+In the leaves of its decomposition: `SieveLeaves.P6_spec` applies `prop6` to each family of at most `32` comparisons.
 The rough-number bound also gives the shares of the certificate's cells (`SieveRough.share2_of_cand`,
 `SieveRough.share4_of_counted4`), with which `SieveDrop` bounds the terms the decomposition drops.
