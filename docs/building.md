@@ -54,6 +54,7 @@ adding, removing or renaming a module.
 | `python3 scripts/check_axioms.py` | After `lake build`: every theorem in `lib/check/Check.lean` depends only on `propext`, `Classical.choice` and `Quot.sound`. With `--all` it checks `CheckAll.lean` instead, which must be built first with `lake build CheckAll`. |
 | `python3 scripts/check_hygiene.py` | The library's own sources contain no `sorry`, `admit`, `native_decide`, declared `axiom`, `implemented_by`, `extern`, `unsafe`, `ofReduceBool`, `skipKernelTC` or `#exit`. |
 | `python3 scripts/gen_lakefile.py --check` | `lakefile.lean` matches `lib/`. |
+| `python3 scripts/inventory.py --check` | `docs/inventory.md` is what `scripts/inventory.py` writes from the sources: every theorem that `Check.lean` or `CheckAll.lean` prints, by module, with the headline of its docstring and its note in `formalisations/`, and the headline theorems of the modules that neither imports. Run `python3 scripts/inventory.py` after changing those theorems, their docstrings or the notes. |
 | `python3 scripts/check_vendor.py` | `lib/vendor` holds the upstream files at the pinned commits with the port patches applied (needs network access). |
 | `python3 scripts/census.py MODULE CONSTANT` | After `lake build MODULE`: the library's modules whose declarations the proof of `CONSTANT` uses, with the count from each. |
 | `python3 tools/linnik/check_certificate.py` | The certificate's Lean files in `lib/pnt` are the ones `tools/linnik` generates (about half a minute). |
@@ -64,7 +65,8 @@ adding, removing or renaming a module.
 
 `.github/workflows/ci.yml` runs on pull requests and on pushes to `main`:
 
-- **Checks:** `check_hygiene.py`, `gen_lakefile.py --check`, `check_vendor.py` and `check_certificate.py`.
+- **Checks:** `check_hygiene.py`, `gen_lakefile.py --check`, `inventory.py --check`, `check_vendor.py` and
+  `check_certificate.py`.
 - **The papers:** every `papers/<name>/main.tex`, and then every supplement `papers/<name>/supplement.tex`, is compiled
   with LaTeX, and the PDFs are kept as an artifact.
 - **The Lean build**, with a cache. On a pull request it runs only if the pull request changes `lib/`, the Lake

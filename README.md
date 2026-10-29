@@ -11,10 +11,12 @@ from `main` on every push.
 
 ## What is here
 
-- `lib/`: the Lean library, built with Lake against Mathlib.
-- [`formalisations/`](formalisations/README.md): one note for each published result that the library formalises.
-  Each note gives the result's source and attribution, and any differences between the Lean statement and the
-  published one.
+- `lib/`: the Lean library, built with Lake against Mathlib. [`docs/inventory.md`](docs/inventory.md) lists its
+  results: every theorem of `lib/check/Check.lean` and `lib/check/CheckAll.lean` with its headline, and the headline
+  theorems of the modules that neither imports.
+- [`formalisations/`](formalisations/README.md): a note for each published result that a paper uses, and for a few
+  others that the library formalises. Each note gives the result's source and attribution, and any differences
+  between the Lean statement and the published one.
 - [`papers/`](papers/README.md): the papers. Each claims only its own steps and cites `formalisations/` for the
   results it uses.
 
@@ -32,7 +34,7 @@ from `main` on every push.
 | `formalisations/` | The notes on the results from the literature. See its [README](formalisations/README.md), the index of the notes. |
 | `papers/` | The papers. See its [README](papers/README.md). |
 | `scripts/` | The build script and the checks (see [`docs/building.md`](docs/building.md)), and `build_site.py`, which builds the papers' web site. |
-| `docs/` | [`building.md`](docs/building.md): building, memory, the checks and CI. [`dry-efficiency-survey.md`](docs/dry-efficiency-survey.md) and [`stack-bridges.md`](docs/stack-bridges.md): a survey of duplication and build cost, and three modules that join parts of the library. |
+| `docs/` | [`inventory.md`](docs/inventory.md): the library's results, written by `scripts/inventory.py`. [`building.md`](docs/building.md): building, memory, the checks and CI. [`dry-efficiency-survey.md`](docs/dry-efficiency-survey.md) and [`stack-bridges.md`](docs/stack-bridges.md): a survey of duplication and build cost, and three modules that join parts of the library. |
 | `tools/linnik/` | The Linnik paper's certificate tools: the route's computations outside Lean and the generator of the certificate's Lean files. See its README. |
 
 ## Building
