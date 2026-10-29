@@ -38,6 +38,8 @@ jobs:
               - 'scripts/build.sh'
               - 'scripts/lean-slots.sh'
               - 'scripts/check_axioms.py'
+              - 'scripts/lean_targets.py'
+              - 'scripts/import_cone.py'
               - '.github/actions/lean-build/**'
               - '.github/workflows/ci.yml'
 
@@ -83,7 +85,9 @@ jobs:
           retention-days: 14
 
   # The Lean build in stages: a cold build takes longer than one job may run (six hours). Each stage continues from
-  # the previous stage's cache, and runs only if the previous one stopped at its time limit.
+  # the previous stage's cache, and runs only if the previous one stopped at its time limit. Each builds Check,
+  # CheckAll, and every module the change edits or that imports one (scripts/lean_targets.py); the checkout keeps the
+  # commit's parent, a pull request's base.
   build-1:
     name: Lean build (stage 1)
     needs: changes
@@ -94,6 +98,8 @@ jobs:
       partial: ${{ steps.build.outputs.partial }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - id: build
         uses: ./.github/actions/lean-build
         with:
@@ -109,6 +115,8 @@ jobs:
       partial: ${{ steps.build.outputs.partial }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - id: build
         uses: ./.github/actions/lean-build
         with:
@@ -122,6 +130,8 @@ jobs:
     timeout-minutes: 355
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - id: build
         uses: ./.github/actions/lean-build
         with:

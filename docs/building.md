@@ -57,6 +57,7 @@ adding, removing or renaming a module.
 | `python3 scripts/check_vendor.py` | `lib/vendor` holds the upstream files at the pinned commits with the port patches applied (needs network access). |
 | `python3 scripts/census.py MODULE CONSTANT` | After `lake build MODULE`: the library's modules whose declarations the proof of `CONSTANT` uses, with the count from each. |
 | `python3 tools/linnik/check_certificate.py` | The certificate's Lean files in `lib/pnt` are the ones `tools/linnik` generates (about half a minute). |
+| `python3 scripts/lean_targets.py BASE` | Not a gate: the Lake targets that CI's Lean build builds for the changes from `BASE` to `HEAD`: `Check`, `CheckAll`, and every module of `lib/` that the changes add or edit, the vendored libraries' included, with every module that imports one of them or a deleted module, directly or not. A change to `lean-toolchain`, `lake-manifest.json` or `lakefile.lean` outside its module lists gives every library instead, as does `--all`. |
 | `python3 scripts/import_cone.py [ROOT]` | Not a gate: the modules, source size and certificate part files in the import cone of `ROOT` (default `Check`, the default build), from the sources alone. `--why MODULE` prints the chain of imports that puts `MODULE` in the cone. |
 
 ## CI
@@ -72,7 +73,14 @@ adding, removing or renaming a module.
   The library's build directory, `.lake/build`, is restored from the GitHub Actions cache and saved back after
   every stage, including a stage that fails or is cancelled. Lake then rebuilds only what changed. A cold build
   takes longer than one job may run (six hours), so the build runs in up to three chained stages, each continuing
-  from the previous stage's cache. The stage that finishes the build runs `check_axioms.py`.
+  from the previous stage's cache. The stage that finishes the build runs `check_axioms.py` and
+  `check_axioms.py --all`.
+  The build's targets are those of `scripts/lean_targets.py`, so that every change to the Lean is validated by
+  building what it can break: `Check`, `CheckAll`, every module that the change adds or edits, and every module that
+  imports one of them, directly or not. A pull request is compared with its base, a push to `main` with the commit it
+  replaced; a manual run, or a change to the toolchain, to Mathlib's pin or to the lakefile's settings, builds every
+  library. Modules that no target imports, among them the `lib/dh` and `lib/zeta23` layers, are built when a change
+  reaches them.
 
 The job **CI passed** summarises the others: it passes when each passed or was skipped, and fails if any failed or
 was cancelled. It is the check that `main`'s branch protection requires, so a pull request merges only when CI is
