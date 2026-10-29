@@ -4,9 +4,9 @@ name: Publish the papers
 # (which reads its paper's main.aux), and publish the PDFs, with an index page, to GitHub Pages
 # (https://dickie81.github.io/number-theory/). Pull requests are checked by ci.yml.
 #
-# There is no paths filter: GitHub matches a filter against only the first 300 files a push changes, so the merge of a
-# large pull request (PR #21 changed 800 files, the papers' among the last) skipped the publish and left the site
-# stale. The job takes a few minutes.
+# There is no paths filter, so every push to main republishes the site; the job takes a few minutes. A push that
+# starts no workflow at all leaves the site stale: the merges of PR #21 and PR #38 started none, not even CI, which has
+# no filter. Run this workflow by hand from the Actions tab (workflow_dispatch) when that happens.
 
 on:
   push:
