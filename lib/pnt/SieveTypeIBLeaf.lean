@@ -1036,6 +1036,7 @@ theorem block_real (a : ZMod q) {ι₁ ι₂ κ : Type*} (Y₁ : Finset ι₁) (
   rw [ssum_dwR_eq]
   ring
 
+omit [NeZero q] in
 /-- **The bilinear part above, by block pairs.** With the splines `TP(β₁, β₂)`, `TM(β₁, β₂)` of the block pair of
 `(π₁(y₁)f_σ, π₂(y₂))`, `|Σ_y c·dwU|` is at most `Σ_{β₁,β₂} (|blockSum(λ₊, TP)| + |blockSum(λ₋, TM)|)`. -/
 theorem abs_dwU_le (a : ZMod q) {ι₁ ι₂ κ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂) (π₁ : ι₁ → ℕ) (π₂ : ι₂ → ℕ)
@@ -1081,6 +1082,7 @@ theorem abs_dwU_le (a : ZMod q) {ι₁ ι₂ κ : Type*} (Y₁ : Finset ι₁) (
   · rw [← block_real a Y₁ Y₂ π₁ π₂ S f (fun σ => npart (lam σ)) c b₁ b₂ β₁ β₂ (TM β₁ β₂), Complex.norm_real,
       Real.norm_eq_abs]
 
+omit [NeZero q] in
 /-- **The bilinear part below, by block pairs**: the same for `dwL`, whose splines enter as `λ₊TM − λ₋TP`. -/
 theorem abs_dwL_le (a : ZMod q) {ι₁ ι₂ κ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂) (π₁ : ι₁ → ℕ) (π₂ : ι₂ → ℕ)
     (S : Finset κ) (f : κ → ℕ) (lam : κ → ℝ) (c : ι₁ → ι₂ → ℝ) (b₁ b₂ : ℕ → ℕ) (B₁ B₂ : Finset ℕ)
