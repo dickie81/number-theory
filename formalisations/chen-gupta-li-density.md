@@ -65,7 +65,11 @@ The formalisation is in `lib/pnt`, in the modules whose names begin with `Linnik
 - **Characters, not zeros.** The source bounds `Σ_χ N(σ, T, χ)`, the number of zeros. The Lean statement bounds the
   number of characters with a zero, which is at most that sum. So the source implies the Lean statement, and not the
   other way round. Counting characters lets every large-values set carry one point per character, which is the form
-  the whole formalisation uses.
+  the density count uses. The lemmas behind it hold for several points per character, as long as the points of each
+  character are separated: their Propositions 4.6 and 6.1 for points at least `1` apart, and Lemmas 10.5, 10.6, 10.9
+  and 10.10, Proposition 10.2 and Theorem 10.1 for points more than `2` apart (`LinnikCGLL105.Spaced`). One point per
+  character is a case of both, and at `q = 1` the general form gives Guth and Maynard's large values estimate
+  (`ZetaGMLV.gm_large_values`).
 - **The range.** The source's Theorem 1.2 holds for `1/2 < σ < 1`. Their §12 says that "Theorem 1.2 follows from
   Ingham’s result (1.4) when σ ≤ 0.7 and Huxley’s result (1.5) when σ ≥ 0.8", so the paper's own argument is needed
   only on `[0.7, 0.8]`. The Lean statement covers only `[5/7, 16/21]`, which lies inside `[0.7, 0.8]`. The Linnik

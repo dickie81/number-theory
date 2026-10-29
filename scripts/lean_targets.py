@@ -1,0 +1,114 @@
+#!/usr/bin/env python3
+"""The Lake targets that validate a change, one per line, for CI's Lean build.
+
+    python3 scripts/lean_targets.py BASE   # for the changes from the commit BASE to HEAD
+    python3 scripts/lean_targets.py --all  # every library of the lakefile
+
+A change to a module is validated by building the module and every module that imports it, directly or not; Lake
+builds their own imports. So the targets are `Check` (the papers' theorems) and `CheckAll` (every final theorem of
+the library), always, and, as `+Module`:
+- every module of `lib/` that the change adds or edits, the vendored libraries' included;
+- every module that imports one of these, or a module that the change deletes or renames.
+They are every library of the lakefile instead when `lean-toolchain` or `lake-manifest.json` changes, or
+`lakefile.lean` changes outside its module lists, since such a change reaches every module.
+
+The import graph is read from the working tree, which should be at HEAD, as `import_cone.py` reads it, with the
+vendored libraries' modules under their hierarchical names.
+"""
+import os
+import re
+import subprocess
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import import_cone  # noqa: E402
+
+ROOT = import_cone.ROOT
+WHOLE = {"lean-toolchain", "lake-manifest.json"}
+ALWAYS = ["Check", "CheckAll"]
+
+
+def graph():
+    """The modules of `lib/`, each with the names its `import` lines give."""
+    mods, _ = import_cone.sources()
+    vendor = os.path.join("lib", "vendor")
+    for lib in sorted(os.listdir(os.path.join(ROOT, vendor))):
+        for d, _, files in os.walk(os.path.join(ROOT, vendor, lib)):
+            for f in files:
+                if f.endswith(".lean"):
+                    p = os.path.relpath(os.path.join(d, f), ROOT)
+                    mods[os.path.relpath(p, os.path.join(vendor, lib))[:-5].replace(os.sep, ".")] = p
+    imports = {m: re.findall(r"^import\s+(\S+)", open(os.path.join(ROOT, p), encoding="utf-8").read(), re.M)
+               for m, p in mods.items()}
+    return mods, imports
+
+
+def module_of(path):
+    """The module that a path of the repository holds, or None."""
+    parts = path.split("/")
+    if not path.endswith(".lean") or len(parts) < 3 or parts[0] != "lib":
+        return None
+    if parts[1] == "vendor":
+        return ".".join(parts[3:])[:-5] if len(parts) > 3 else None
+    return parts[2][:-5] if parts[1] in import_cone.DIRS and len(parts) == 3 else None
+
+
+def git(*args):
+    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=True).stdout
+
+
+def lakefile_settings(rev):
+    """`lakefile.lean` at `rev` without its module lists, which `gen_lakefile.py` writes as `.one` rows under a
+    `/-- lib/<layer>: <n> modules. -/` line."""
+    try:
+        text = git("show", f"{rev}:lakefile.lean")
+    except subprocess.CalledProcessError:
+        return None
+    return [line for line in text.splitlines()
+            if not line.lstrip().startswith(".one ") and not re.fullmatch(r"/-- lib/\w+: \d+ modules\. -/", line)]
+
+
+def libraries():
+    text = open(os.path.join(ROOT, "lakefile.lean"), encoding="utf-8").read()
+    return re.findall(r"^lean_lib\s+(\S+)\s+where", text, re.M)
+
+
+def targets(base):
+    changed, whole = set(), False
+    for line in git("diff", "--name-status", "--no-renames", base, "HEAD").splitlines():
+        path = line.split("\t", 1)[1]
+        if path in WHOLE:
+            whole = True
+        elif path == "lakefile.lean":
+            whole = whole or lakefile_settings(base) != lakefile_settings("HEAD")
+        elif module_of(path):
+            changed.add(module_of(path))
+    if whole:
+        return libraries()
+    mods, imports = graph()
+    importers = {}
+    for m, names in imports.items():
+        for n in names:
+            importers.setdefault(n, set()).add(m)
+    reached, stack = set(changed), list(changed)
+    while stack:
+        for m in importers.get(stack.pop(), ()):
+            if m not in reached:
+                reached.add(m)
+                stack.append(m)
+    return ALWAYS + sorted("+" + m for m in reached if m in mods and m not in ALWAYS)
+
+
+def main(argv):
+    if argv == ["--all"]:
+        print("\n".join(libraries()))
+    elif len(argv) == 1 and not argv[0].startswith("-"):
+        print("\n".join(targets(argv[0])))
+    else:
+        print("\n".join(line.strip() for line in __doc__.splitlines()[2:4]), file=sys.stderr)
+        return 2
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
