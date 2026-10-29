@@ -3,7 +3,7 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 691 theorems: the library's final
+`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 694 theorems: the library's final
 results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 The last section lists the 99 modules that neither `Check` nor `CheckAll` imports, directly or
@@ -12,7 +12,7 @@ not, with their headline theorems (those whose docstring opens with a bold title
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 208 | 683 | 1 | 0 |
+| `lib/pnt` | 210 | 686 | 1 | 0 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -204,6 +204,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `LeastNonresidue.exists_nonsquare_le`: Vinogradov's least quadratic nonresidue conjecture, in Ankeny's form
 - `LeastNonresidue.exists_nonsquare_le_rpow_of`: `n(p) ≤ C₀(13/δ)^{13}p^δ` from `n(p) ≤ C₀(log p)^{13}`
 - `LeastNonresidue.exists_nonsquare_le_rpow`: `n(p) ≪_δ p^δ`
+
+#### `Linnik22015R`: Linnik's theorem with exponent `4403 / 2000` by the bilinear Type I rule, from its certificate's inequality
+
+- `Linnik22015R.linnik_22015r_of_cert`: Linnik's theorem with exponent `4403 / 2000`, from the certificate's inequality
 
 #### `Linnik22240R`: Linnik's theorem with exponent `278 / 125`, under the refined certificate at `n = 340`
 
@@ -1246,6 +1250,11 @@ not, with their headline theorems (those whose docstring opens with a bold title
 #### `SieveTypeIIU`: Type II families with sharp prime ranges
 
 - `SieveTypeIIU.typeII_unw`: Type II for families with sharp prime ranges *paper*
+
+#### `SieveTypeIIU22015D`: Proposition 3′ at `L = 4403 / 2000` on the window `[43336/100000, 46995/100000]·L`, for the curve `g7d`
+
+- `SieveTypeIIU22015D.window_22015d`: The window's exponents
+- `SieveTypeIIU22015D.typeII_22015d`: Proposition 3′ at `L = 4403 / 2000` on `[43336/100000, 46995/100000]·L`, for the curve `g7d`
 
 #### `SieveTypeIIU22240D`: Proposition 3′ at `L = 278 / 125` on the Halász–Montgomery window `[41556/100000, 47531/100000]·L`, for the curve `g7d`
 

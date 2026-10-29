@@ -18,9 +18,12 @@ import json, re, sys, os, textwrap
 #   --L a/b       the exponent L = a/b written in the files' text (default 278/125)
 #   --curve g    the curve's name in the text (default g7d)
 #   --typeii X    the Type II theorem the grid belongs to, in the text (default SieveTypeIIU22240D.typeII_22240d)
+#   --rule ib     the certificate under the bilinear Type I rule of SieveRuleDefs.lean (`ibRule`, `total2R`,
+#                 `rows2R`, `rowsJ2R`), from `mirror2.py --ib` (default `lim`: SieveCert2Defs.lean's `total2`)
 # The window [W1, W2]/100000 and n come from CELLS.json (mirror2.py's output); without options they must be the default
-# certificate's (41556, 47531, 340).
-DEFAULTS = {'--tag': '22240R', '--L': '278/125', '--curve': 'g7d', '--typeii': 'SieveTypeIIU22240D.typeII_22240d'}
+# certificate's (41556, 47531, 340). Under `--rule ib` the exponent of the rule is CELLS.json's (`ib`).
+DEFAULTS = {'--tag': '22240R', '--L': '278/125', '--curve': 'g7d', '--typeii': 'SieveTypeIIU22240D.typeII_22240d',
+            '--rule': 'lim'}
 OPTS = dict(DEFAULTS)
 _args = []
 _it = iter(sys.argv[1:])
@@ -28,8 +31,11 @@ for _a in _it:
     if _a in OPTS: OPTS[_a] = next(_it)
     else: _args.append(_a)
 CUSTOM = OPTS != DEFAULTS
-TAG, LSTR, CURVE, TYPEII = OPTS['--tag'], OPTS['--L'], OPTS['--curve'], OPTS['--typeii']
+TAG, LSTR, CURVE, TYPEII, RULE = OPTS['--tag'], OPTS['--L'], OPTS['--curve'], OPTS['--typeii'], OPTS['--rule']
 TAGL = TAG.lower()
+assert RULE in ('lim', 'ib')
+# the names under the rule: `rows2R`, `rowsJ2R`, `total2R` and their lemmas (SieveRule.lean) for `ib`
+R = '' if RULE == 'lim' else 'R'
 CELLS, OUT = _args[0], os.path.join(_args[1], '')
 EXCL = 17000  # a part file with a part of more than EXCL work is run alone among the heavy slots
 PCAP = int(_args[2]) if len(_args) > 2 else 8000
@@ -43,12 +49,17 @@ DEN = 2 ** 40; K = 2 ** 60
 D = json.load(open(CELLS))
 W1, W2, N = D['W1'], D['W2'], D['n']
 assert CUSTOM or (W1, W2, N) == (41556, 47531, 340)
+assert (RULE != 'lim') == ('ib' in D)
+if RULE != 'lim':
+    LNUM, LDEN = map(int, D['ib'].split('/'))
 U1, U2 = (W1 * DEN + DW - 1) // DW, W2 * DEN // DW
 assert D['U1'] == U1 and D['U2'] == U2
 # a cell's work, in units of one depth-4 test (the subset sums of 4 boxes): the depth-5 tests (5 boxes) count 2 each, the
 # depth-6 tests (6 boxes) 4, and the `sub2` tests (3 boxes) 1
 def wk(t4, t5, t6, ts): return t4 + 2 * t5 + 4 * t6 + ts
-cells = {tuple(map(int, k.split(','))): tuple(v) for k, v in D['cells'].items()}  # (cost2, t4, t5, t6, sub2tests)
+# (cost2, t4, t5, t6, sub2tests), and under `ib` the weighted `ibOK` tests, which count as depth-4 tests
+cells = {tuple(map(int, k.split(','))): (v[0], v[1], v[2], v[3], v[4] + (v[5] if len(v) > 5 else 0))
+         for k, v in D['cells'].items()}
 rows = [0] * N; work = [0] * N; cnd = [0] * N
 for (i, j), (c, t4, t5, t6, ts) in cells.items():
     rows[i] += c; work[i] += wk(t4, t5, t6, ts); cnd[i] += 1
@@ -92,7 +103,7 @@ print(f'parts {np_} ({sum(1 for p in parts if p[0] == "rows")} row ranges, {sum(
       f'sum B / K = {sum(B) / K:.5f}; exact total2 / K = {D["total2"] / K:.10f}')
 json.dump({'n': N, 'pcap': PCAP, 'fcap': FCAP, 'parts': parts, 'bounds': B, 'files': groups, 'work_per_file': gt,
            'sumB_over_K': sum(B) / K, 'heavy_rows': heavy}, open(OUT + f'parts{TAGL}.json', 'w'))
-def term(p): return f'rows2 {p[1]} {p[2]}' if p[0] == 'rows' else f'rowsJ2 {p[1]} {p[1] + 1} {p[2]} {p[3]}'
+def term(p): return f'rows2{R} {p[1]} {p[2]}' if p[0] == 'rows' else f'rowsJ2{R} {p[1]} {p[1] + 1} {p[2]} {p[3]}'
 rowranges = []
 for p in parts:
     if p[0] == 'rows': rowranges.append((p[1], p[2]))
@@ -108,20 +119,21 @@ for i in heavy:
     name = f'rows{TAG}_{ks[-1]}'; acc = B[ks[-1]]
     for m in range(len(pcs) - 2, -1, -1):
         j0 = pcs[m][2]; acc2 = acc + B[ks[m]]
-        chain.append(f'theorem c{TAG}_{i}_{m} : rowsJ2 {i} {i + 1} {j0} {N} ≤ {acc2} :=\n'
-                     f'  rowsJ2_le_of_split {i} {i + 1} (by norm_num) (by norm_num) rows{TAG}_{ks[m]} {name} (by norm_num)')
+        chain.append(f'theorem c{TAG}_{i}_{m} : rowsJ2{R} {i} {i + 1} {j0} {N} ≤ {acc2} :=\n'
+                     f'  rowsJ2{R}_le_of_split {i} {i + 1} (by norm_num) (by norm_num) rows{TAG}_{ks[m]} {name} (by norm_num)')
         name = f'c{TAG}_{i}_{m}'; acc = acc2
-    chain.append(f'theorem hr{TAG}_{i} : rows2 {i} {i + 1} ≤ {acc} := rows2_le_of_rowsJ2 {i} {i + 1} {name}')
+    chain.append(f'theorem hr{TAG}_{i} : rows2{R} {i} {i + 1} ≤ {acc} := rows2{R}_le_of_rowsJ2{R} {i} {i + 1} {name}')
     rowbound[(i, i + 1)] = (f'hr{TAG}_{i}', acc)
 name, acc = rowbound[rowranges[-1]]
 for m in range(len(rowranges) - 2, -1, -1):
     x, y = rowranges[m]; hname, hb = rowbound[(x, y)]; acc2 = acc + hb
-    chain.append(f'theorem t{TAG}_{m} : rows2 {x} {N} ≤ {acc2} :=\n'
-                 f'  rows2_le_of_split (by norm_num) (by norm_num) {hname} {name} (by norm_num)')
+    chain.append(f'theorem t{TAG}_{m} : rows2{R} {x} {N} ≤ {acc2} :=\n'
+                 f'  rows2{R}_le_of_split (by norm_num) (by norm_num) {hname} {name} (by norm_num)')
     name = f't{TAG}_{m}'; acc = acc2
 assert acc == sum(B)
 chain = '\n\n'.join(chain); nr = len(rowranges); FINAL = name; FINALB = acc
-grid = f"""/-
+if RULE == 'lim':
+    GRIDHEAD = f"""/-
 # The grid of the refined certificate at `L = {LSTR}` with `n = {N}`
 
 The grid of `{TYPEII}`'s window: `U1 = ⌈({W1}/{DW})DEN⌉`, `U2 = ⌊({W2}/{DW})DEN⌋`,
@@ -134,7 +146,33 @@ The file imports `SieveCert2Defs.lean`, which imports `SieveCertDefs.lean` only,
 `Mathlib.Data.Nat.Notation` from `Mathlib`; so neither it nor the part files load the rest of `Mathlib`.
 -/
 import SieveCert2Defs
+"""
+    GRIDTAIL = ''
+    INST = f'grid{TAG}'
+    UNDER = ''
+else:
+    GRIDHEAD = f"""/-
+# The grid of the refined certificate at `L = {LSTR}` with `n = {N}`, under the bilinear Type I rule
 
+The grid of `{TYPEII}`'s window: `U1 = ⌈({W1}/{DW})DEN⌉`, `U2 = ⌊({W2}/{DW})DEN⌋`,
+`n = {N}` (`grid{TAG}`, `gridOK{TAG}`), the window `route_limits.window` and `route_limits.corners` give for `{CURVE}`
+at `{LSTR}`, and the bilinear Type I rule's exponent `{LNUM}/{LDEN}` (`ibPar{TAG}`). Its refined certificate under the
+rule (`SieveRuleDefs.total2R` with `ibRule`) is checked by the kernel in {np_} parts, {NF} files
+(`SieveCert{TAG}P1.lean` … `SieveCert{TAG}P{NF}.lean`, one `lean` process each): ranges of consecutive rows, and the
+{len(heavy)} heavy rows in column pieces (`SieveRuleDefs.rowsJ2R`); assembled in `SieveCert{TAG}.lean`.
+
+The file imports `SieveRuleDefs.lean`, which imports `SieveCert2Defs.lean` only; so neither it nor the part files load
+more of `Mathlib` than `Mathlib.Data.Nat.Notation`.
+-/
+import SieveRuleDefs
+"""
+    GRIDTAIL = f"""
+/-- **The bilinear Type I rule's exponent** at `L = {LSTR}`: `{LNUM}/{LDEN}`. -/
+@[instance_reducible] def ibPar{TAG} : IBPar := ⟨{LNUM}, {LDEN}⟩
+"""
+    INST = f'grid{TAG} ibPar{TAG} ibRule'
+    UNDER = ', under the bilinear Type I rule'
+grid = GRIDHEAD + f"""
 namespace SieveCert
 
 /-- **The grid at `L = {LSTR}` with `n = {N}`**: `U1 = ⌈({W1}/{DW})DEN⌉`, `U2 = ⌊({W2}/{DW})DEN⌋`,
@@ -149,7 +187,7 @@ theorem gridOKC{TAG} : @GridOKC grid{TAG} :=
   @GridOKC.mk grid{TAG}
     (@GridOK.mk (@Gc grid{TAG}) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
     (by decide) (by decide)
-
+{GRIDTAIL}
 end SieveCert
 
 #print axioms SieveCert.gridOK{TAG}
@@ -161,12 +199,12 @@ for fi, g in enumerate(groups, 1):
     desc = ', '.join(f'rows {parts[k][1]}–{parts[k][2] - 1}' if parts[k][0] == 'rows' else
                      f'row {parts[k][1]} columns {parts[k][2]}–{parts[k][3] - 1}' for k in g)
     desc = textwrap.fill(f'`SieveGrid{TAG}.grid{TAG}` ({len(g)} parts, work {gt[fi - 1]} in units of a depth-4 test: {desc}), each a sum of refined '
-                         f'costs (`rows2` or `rowsJ2`) at most its bound, by `decide +kernel`, one at a time '
+                         f'costs (`rows2{R}` or `rowsJ2{R}`) at most its bound, by `decide +kernel`, one at a time '
                          f'(`Elab.async false`).', width=116)
     excl = ('-- exclusive-heavy: a part of this file can use over 7 GiB; scripts/lean-slots.sh runs it alone among the parts\n'
             if max(parts[k][-2] for k in g) > EXCL else '')
     part = f"""/-
-# The refined certificate at `L = {LSTR}` with `n = {N}`, parts {g[0]}–{g[-1]} of {np_}
+# The refined certificate at `L = {LSTR}` with `n = {N}`{UNDER}, parts {g[0]}–{g[-1]} of {np_}
 
 File {fi} of {NF}: the parts `rows{TAG}_{g[0]}` … `rows{TAG}_{g[-1]}` of `SieveCert{TAG}.lean`'s certificate on
 {desc}
@@ -183,7 +221,7 @@ namespace SieveCert
 
 section
 
-attribute [local instance] grid{TAG}
+attribute [local instance] {INST}
 
 {lem}
 
@@ -195,30 +233,34 @@ end SieveCert
 """ + (f"#print axioms SieveCert.rows{TAG}_{g[-1]}\n" if len(g) > 1 else '')
     open(OUT + f'SieveCert{TAG}P{fi}.lean', 'w', encoding='utf-8').write(part)
 imports_parts = '\n'.join(f'import SieveCert{TAG}P{fi}' for fi in range(1, NF + 1))
-cert_head = textwrap.fill(f"On `SieveGrid{TAG}.grid{TAG}` (`U1 = ⌈({W1}/{DW})DEN⌉`, `U2 = ⌊({W2}/{DW})DEN⌋`, `n = {N}`), "
-    f"`SieveCert.total2` is less than `K` (it is below `{-(-D['total2'] * 10 ** 5 // K) / 10 ** 5:.5f}K`, rounded up; the certificate of `SieveCertDefs.lean` "
-    f"on the same grid totals `{D['total'] / K:.5f}K`): `total2` is `rows2 0 n` (`SieveCert2.total2_eq_rows2_full`), "
+ONRULE = '' if RULE == 'lim' else f' under `ibRule` (`ibPar{TAG}`, `L = {LNUM}/{LDEN}`)'
+WITHOUT = ('the certificate of `SieveCertDefs.lean` on the same grid' if RULE == 'lim' else
+           'without the kept parts the certificate under the rule')
+EQ = 'SieveCert2.total2_eq_rows2_full' if RULE == 'lim' else 'SieveRule.total2R_eq_rows2R_full'
+cert_head = textwrap.fill(f"On `SieveGrid{TAG}.grid{TAG}` (`U1 = ⌈({W1}/{DW})DEN⌉`, `U2 = ⌊({W2}/{DW})DEN⌋`, `n = {N}`){ONRULE}, "
+    f"`SieveCert.total2{R}` is less than `K` (it is below `{-(-D['total2'] * 10 ** 5 // K) / 10 ** 5:.5f}K`, rounded up; {WITHOUT} "
+    f"totals `{D['total'] / K:.5f}K`): `total2{R}` is `rows2{R} 0 n` (`{EQ}`), "
     f"and its bound is assembled one step at a time from the {np_} parts' bounds (`rows{TAG}_0` … `rows{TAG}_{np_ - 1}`, "
     f"each by `decide +kernel` in one of the {NF} part files): a heavy row's bound from its column pieces' "
-    f"(`rowsJ2_le_of_split`, `rows2_le_of_rowsJ2`), then the {nr} ranges of rows from the last to the first "
-    f"(`rows2_le_of_split`), every bound a literal and every step a theorem of its own (`c{TAG}_…`, `hr{TAG}_…`, `t{TAG}_…`); the bounds, "
+    f"(`rowsJ2{R}_le_of_split`, `rows2{R}_le_of_rowsJ2{R}`), then the {nr} ranges of rows from the last to the first "
+    f"(`rows2{R}_le_of_split`), every bound a literal and every step a theorem of its own (`c{TAG}_…`, `hr{TAG}_…`, `t{TAG}_…`); the bounds, "
     f"`⌈1.001 × part⌉` computed exactly in integers, sum to `{FINALB}`, less than `K` by `decide +kernel` "
-    f"(`total2_lt_{TAG}`).", width=116)
+    f"(`total2{R}_lt_{TAG}`).", width=116)
 cert = f"""/-
-# The refined certificate of the sieve route's loss at `L = {LSTR}` with `n = {N}`: `total2 < K`
+# The refined certificate of the sieve route's loss at `L = {LSTR}` with `n = {N}`{UNDER}: `total2{R} < K`
 
 {cert_head}
 
-The file imports `SieveCert2.lean` and `SieveCert{TAG}P1.lean` … `SieveCert{TAG}P{NF}.lean`.
+The file imports `{'SieveCert2' if RULE == 'lim' else 'SieveRule'}.lean` and `SieveCert{TAG}P1.lean` … `SieveCert{TAG}P{NF}.lean`.
 -/
-import SieveCert2
+import {'SieveCert2' if RULE == 'lim' else 'SieveRule'}
 {imports_parts}
 
 namespace SieveCert
 
 section
 
-attribute [local instance] grid{TAG}
+attribute [local instance] {INST}
 
 /-! The chain of bounds: `c{TAG}_{{i}}_{{m}}` for the heavy row `i` from its `m`-th column piece on, `hr{TAG}_{{i}}` for
 the heavy row `i`, `t{TAG}_{{m}}` for the rows from the `m`-th range on; each a theorem of its own, its name distinct
@@ -228,15 +270,15 @@ from the other certificates' chains in the same namespace. -/
 
 /-- **The refined certificate on `grid{TAG}`**: the loss's bound is less than `K`, the {np_} parts checked by the
 kernel. -/
-theorem total2_lt_{TAG} : total2 < K := by
-  rw [total2_eq_rows2_full]
+theorem total2{R}_lt_{TAG} : total2{R} < K := by
+  rw [total2{R}_eq_rows2{R}_full]
   exact lt_of_le_of_lt {FINAL} (by decide +kernel)
 
 end
 
 end SieveCert
 
-#print axioms SieveCert.total2_lt_{TAG}
+#print axioms SieveCert.total2{R}_lt_{TAG}
 """
 open(OUT + f'SieveCert{TAG}.lean', 'w', encoding='utf-8').write(cert)
 bad = []
@@ -256,5 +298,6 @@ for fi, g in enumerate(groups, 1):
 json.dump(man, open(OUT + f'files{TAGL}.json', 'w'))
 print(f'predicted: kernel time one lane {sum(m["secs"] for m in man) / 3600:.2f} h; parts {np_}, files {NF}, '
       f'largest cands per part {max(pcands(p) for p in parts)}')
-open(OUT + f'modules{TAGL}.txt', 'w').write(' '.join(['SieveCert2Defs', f'SieveGrid{TAG}'] +
+open(OUT + f'modules{TAGL}.txt', 'w').write(' '.join(['SieveCert2Defs'] + ([] if RULE == 'lim' else ['SieveRuleDefs']) +
+    [f'SieveGrid{TAG}'] +
     [f'SieveCert{TAG}P{i}' for i in range(1, NF + 1)]) + '\n')

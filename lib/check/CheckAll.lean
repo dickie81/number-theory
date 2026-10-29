@@ -188,6 +188,8 @@ import SieveTypeIIU22240D
 import SieveGrid22240R
 import SieveCert22240R
 import Linnik22240R
+import SieveTypeIIU22015D
+import Linnik22015R
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
@@ -755,6 +757,9 @@ import BohrLandauCore
 #print axioms SieveCert.total2_lt_22240R
 #print axioms Linnik22240R.fits22240R
 #print axioms Linnik22240R.linnik_22240r
+#print axioms SieveTypeIIU22015D.window_22015d
+#print axioms SieveTypeIIU22015D.typeII_22015d
+#print axioms Linnik22015R.linnik_22015r_of_cert
 #print axioms SieveTypeIIU22240D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d

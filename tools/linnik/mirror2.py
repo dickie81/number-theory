@@ -1,5 +1,5 @@
-"""mirror2.py W1 W2 N [OUT.json] [--depth4]: the deep certificate of SieveCertDefs.lean / SieveCert2Defs.lean on the grid
-U1 = ⌈(W1/10⁵)DEN⌉, U2 = ⌊(W2/10⁵)DEN⌋, n = N (a multiple of 4, with the coarse grid of N/4 cells), in exact integers,
+"""mirror2.py W1 W2 N [OUT.json] [--depth4] [--ib a/b]: the deep certificate of SieveCertDefs.lean / SieveCert2Defs.lean
+on the grid U1 = ⌈(W1/10⁵)DEN⌉, U2 = ⌊(W2/10⁵)DEN⌋, n = N (a multiple of 4, with the coarse grid of N/4 cells), in exact integers,
 cell by cell as the Lean definitions read: `cand`, `allowed`, `counted4`, `allowed4`, `inKK5`, `ne5`, `counted6`,
 `omF`, `invKw`, `omKw`, `bound2`, `bound4`, `bound6`, `refcost5`, `dec4`, `cost4`, `refcost`, `dec`, and the kept parts
 `reg2`, `keep`, `keepK`, `sub2`, `cost2` (natural subtraction truncated at 0). Prints `total` (the certificate without the kept parts) and
@@ -8,7 +8,14 @@ cells of depth 4 evaluated (t4), the depth-5 cells evaluated (t5, in `allowed4` 
 cells evaluated (t6) and the `surelyEval` tests of `sub2` (ts). It also prints the number of cells of depth 3 tested by
 `ne3` below the decomposed candidate cells (the boxes of `inKK`, counted as t4 is), which OUT does not record. Rows are computed in parallel processes. With `--depth4`
 no counted cell of depth 4 is decomposed: the decomposition stopped at depth four, whose `total` on the library's grid
-(`41556 47531 340`) is the paper's `1.45721𝒦`."""
+(`41556 47531 340`) is the paper's `1.45721𝒦`.
+
+With `--ib a/b` it is the certificate under the bilinear Type I rule of SieveRuleDefs.lean at `L = a/b` (`ibRule`,
+`total2R`): a box may be split and decomposed when its upper sum is below `lim` (`limOK`), or when the bilinear test
+passes it (`ibOK`: `tstar`, the least `cIB` over its subsets with upper sum below `DEN − U1`, and a split of its primes
+with `a₁ < (1 − 1/L)DEN` and `a₁ + 2a₂ < DEN` at the upper ends, `leafIB`) with no boundary term (`nbOK`: the upper sum
+plus the last cell's upper end below `DEN`). OUT then records a sixth number per cell, the `ibOK` tests the kernel makes
+(tib, weighted by `2^k/16` for a box of `k` cells: two passes over its `2^k` subset sums)."""
 import json, os, sys, time
 from multiprocessing import Pool
 DEN, K = 2 ** 40, 2 ** 60
@@ -22,7 +29,8 @@ LD = 10 ** 9                                  # `LD`, and `lnT`: upper bounds fo
 LNT = [0, 60624623, 117783037, 171850258, 223143553, 271933717, 318453733, 362905495, 405465110, 446287104,
        485507817, 523248145, 559615789, 594707109, 628608661, 661398484, 693147182]
 DEPTH4 = '--depth4' in sys.argv
-ARGS = [a for a in sys.argv[1:] if a != '--depth4']
+IB = sys.argv[sys.argv.index('--ib') + 1] if '--ib' in sys.argv else None
+ARGS = [a for k, a in enumerate(sys.argv[1:], 1) if a not in ('--depth4', '--ib') and sys.argv[k - 1] != '--ib']
 W1, W2, N = int(ARGS[0]), int(ARGS[1]), int(ARGS[2])
 OUT = ARGS[3] if len(ARGS) > 3 else None
 assert N % 4 == 0
@@ -92,6 +100,29 @@ def sub2(i, j):
             tot += keepK(i, j, k)
     return tot, tests
 def inside_any3(i, j, k): return surely([(E[i], H), (E[j], H), (E[k], H)])
+# the bilinear Type I rule (`--ib a/b`), as SieveRuleDefs.lean reads it
+if IB:
+    LNUM, LDEN = map(int, IB.split('/'))
+def cIB(s):
+    """`cIB`: the largest exponent at which `p_S·e` enters the window from at or below `U1`, or its reflection from
+    `[U2, DEN − U2]`, for `S` with subset sums `s = (lo, hi)`."""
+    return max(tsub(U1, s[0]), tsub(tsub(DEN, U2), max(s[0], U2)) if U2 <= s[1] else 0)
+def condIB(a1, a2): return a1 * LNUM < tsub(LNUM, LDEN) * DEN and a1 + 2 * a2 < DEN
+def ibOK(boxes):
+    """`ibOK`: `tstar`, then `leafIB` at the upper ends."""
+    ss = sums(boxes)
+    cs = [cIB(s) for s in ss if s[1] < tsub(DEN, U1)]
+    if not cs: return False
+    T, tot = min(cs), sum(lo + w for lo, w in boxes)
+    return any(condIB(s[1] + T, tot - s[1]) or condIB(s[1], tot - s[1] + T) for s in ss)
+def nbOK(boxes): return sum(lo + w for lo, w in boxes) + boxes[-1][0] + boxes[-1][1] < DEN
+IBT = [0]   # the `ibOK` tests of the current cell, weighted by 2^k/16
+def ok(boxes):
+    """`Rule.ok`: `limOK` (the certificate's own rule), or with `--ib`, `okIB = limOK || (ibOK && nbOK)`."""
+    if sum(lo + w for lo, w in boxes) < lim: return True
+    if not IB: return False
+    IBT[0] += 2 ** len(boxes) / 16
+    return ibOK(boxes) and nbOK(boxes)
 
 def cell_row(i):
     """all candidate cells of the row i: {j: (cost, cost_nokept, t4, t5, t6, ts, t3, dec)}"""
@@ -103,7 +134,8 @@ def cell_row(i):
         S2 = sums([(ei, H), (ej, H)])
         if any(inside(a, b) for a, b in S2): continue
         b2 = bound2(ei, ej)
-        al = ei + H + (ej + H) < lim
+        IBT[0] = 0
+        al = ok([(ei, H), (ej, H)])
         ks = []
         c3 = 0
         for k in range(n):
@@ -113,7 +145,7 @@ def cell_row(i):
                 S3 = sums([(ei, H), (ej, H), (ek, H)])
                 if not any(inside(a, b) for a, b in S3):
                     ks.append((k, S3))
-                    if not (ei + H + (ej + H) + (ek + H) < lim): al = False
+                    if al and not ok([(ei, H), (ej, H), (ek, H)]): al = False
         t3 = c3 if al else 0
         t4 = t5 = t6 = 0
         dec = False
@@ -127,8 +159,7 @@ def cell_row(i):
                     t4 += 1
                     if extend(S3, el, H): continue          # surely evaluable: cost 0
                     S4 = ei + ej + ek + el
-                    T4 = S4 + 4 * H
-                    d = T4 < lim and not DEPTH4
+                    d = not DEPTH4 and ok([(ei, H), (ej, H), (ek, H), (el, H)])
                     b4 = bound4(ei, ej, ek, el)
                     # the cells of depth 5
                     S4s = sums([(ei, H), (ej, H), (ek, H), (el, H)])
@@ -139,7 +170,7 @@ def cell_row(i):
                             t5 += 1
                             if not extend(S4s, eb, HC):
                                 ne5.append(b)
-                                if not (T4 + eb + HC < lim): d = False
+                                if d and not ok([(ei, H), (ej, H), (ek, H), (el, H), (eb, HC)]): d = False
                     if d:
                         r5 = 0
                         for b in ne5:
@@ -160,7 +191,7 @@ def cell_row(i):
         else:
             s, ts = sub2(i, j)
             c = tsub(b2, s); c1 = b2
-        res[j] = (c, c1, t4, t5, t6, ts, t3, dec)
+        res[j] = (c, c1, t4, t5, t6, ts, t3, dec, round(IBT[0]))
     return i, res
 
 if __name__ == '__main__':
@@ -169,15 +200,16 @@ if __name__ == '__main__':
         rows = dict(p.imap_unordered(cell_row, range(n), chunksize=1))
     cells = {}; total = total2 = t3 = 0
     for i in range(n):
-        for j, (c, c1, t4, t5, t6, ts, c3, _) in sorted(rows[i].items()):
+        for j, (c, c1, t4, t5, t6, ts, c3, _, tib) in sorted(rows[i].items()):
             total += c1; total2 += c; t3 += c3
-            cells[f'{i},{j}'] = (c, t4, t5, t6, ts)
+            cells[f'{i},{j}'] = (c, t4, t5, t6, ts, tib) if IB else (c, t4, t5, t6, ts)
     print(f'grid [{W1}, {W2}]/1e5 n={n} nC={nC}: U1={U1} U2={U2} H={H} HC={HC}; total/K {total / K:.5f} ({total}); '
           f'total2/K {total2 / K:.6f} ({total2}); total2 < K: {total2 < K}; {time.time() - t0:.0f} s', flush=True)
     t4 = sum(v[1] for v in cells.values()); t5 = sum(v[2] for v in cells.values())
     t6 = sum(v[3] for v in cells.values()); ts = sum(v[4] for v in cells.values())
     print(f'kernel work: depth-3 tests {t3}, depth-4 tests {t4}, depth-5 tests {t5}, depth-6 tests {t6}, '
-          f'sub2 surelyEval tests {ts}, candidate cells {len(cells)}')
+          f'sub2 surelyEval tests {ts}, candidate cells {len(cells)}' +
+          (f', ibOK tests (weighted) {sum(v[5] for v in cells.values())}' if IB else ''))
     if OUT:
         json.dump({'W1': W1, 'W2': W2, 'n': n, 'nC': nC, 'U1': U1, 'U2': U2, 'H': H, 'HC': HC, 'total': total,
-                   'total2': total2, 'cells': cells}, open(OUT, 'w'))
+                   'total2': total2, 'cells': cells, **({'ib': IB} if IB else {})}, open(OUT, 'w'))
