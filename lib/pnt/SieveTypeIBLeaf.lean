@@ -255,8 +255,8 @@ theorem ssum_sub (t : ℕ × ℕ × ℕ × ℕ) (g h : ℕ → ℝ) (d : ℕ) (c
   exact Finset.sum_congr rfl fun k _ => by ring
 
 /-- **One leaf, above.** For `d₁, d₂ ≥ 1`, sieve weights above (`S⁺`) and below (`S⁻`) of `R`, and splines `tp(·)`,
-`tm(·)` with `tm ≤ rng(d₁fd₂, ·) ≤ tp` for each weight's `f`: the leaf's `Σ_m rng(d₁d₂, m)R(m)dw(d₁d₂m)` is at most the main
-part `φ(q)⁻¹[Σ_σ (λ₊ssum⁺(gU) − λ₋ssum⁻(gU)) − Σ_τ λ⁻_τ rsum(gU)]` plus the bilinear part
+`tm(·)` with `tm ≤ rng(d₁fd₂, ·) ≤ tp` for each weight's `f`: the leaf's `Σ_m rng(d₁d₂, m)R(m)dw(d₁d₂m)` is at most the
+main part `φ(q)⁻¹[Σ_σ (λ₊ssum⁺(gU) − λ₋ssum⁻(gU)) − Σ_τ λ⁻_τ rsum(gU)]` plus the bilinear part
 `Σ_σ (λ₊ssum⁺(dw) − λ₋ssum⁻(dw))`. -/
 theorem leaf_upper (q : ℕ) (a : ZMod q) (N₁ N₂ d₁ d₂ : ℕ) (hd₁ : 1 ≤ d₁) (hd₂ : 1 ≤ d₂) (R : ℕ → ℝ)
     {κ₁ κ₂ : Type*} (S₁ : Finset κ₁) (f₁ : κ₁ → ℕ) (l₁ : κ₁ → ℝ) (hf₁ : ∀ σ ∈ S₁, 1 ≤ f₁ σ)
@@ -981,5 +981,123 @@ theorem leaves_bound (a : ZMod q) (N₁ N₂ : ℕ) (hN : N₁ ≤ N₂) {ι₁ 
   · have := le_abs_self PU
     have := abs_nonneg PL
     linarith
+
+/-! ### The bilinear parts, by pairs of blocks -/
+
+omit [NeZero q] in
+/-- A spline's sum of `dw` is real: `ssum(t, dw, d)` as a complex number is `Σ_k w(k)dw(dk)`. -/
+theorem ssum_dwR_eq (a : ZMod q) (t : ℕ × ℕ × ℕ × ℕ) (d : ℕ) :
+    ((ssum t (dwR q a) d : ℝ) : ℂ) = ∑ k ∈ suppv t, ((splv t k : ℝ) : ℂ) * SieveFamily.dw q a (d * k) := by
+  unfold ssum
+  push_cast
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [dw_eq]
+  rfl
+
+omit [NeZero q] in
+/-- **Regrouping by pairs of blocks.** If `b₁` maps `Y₁ × S` into `B₁` and `b₂` maps `Y₂` into `B₂`, then
+`Σ_{y₁,y₂,σ} F = Σ_{β₁∈B₁} Σ_{β₂∈B₂} Σ_{(y₁,σ): b₁ = β₁} Σ_{y₂: b₂ = β₂} F`. -/
+theorem sum_blocks {ι₁ ι₂ κ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂) (S : Finset κ) (B₁ B₂ : Finset ℕ)
+    (b₁ : ι₁ × κ → ℕ) (b₂ : ι₂ → ℕ) (hb₁ : ∀ x ∈ Y₁ ×ˢ S, b₁ x ∈ B₁) (hb₂ : ∀ y ∈ Y₂, b₂ y ∈ B₂)
+    (F : ι₁ → ι₂ → κ → ℝ) :
+    ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, ∑ σ ∈ S, F y₁ y₂ σ =
+      ∑ β₁ ∈ B₁, ∑ β₂ ∈ B₂, ∑ x ∈ (Y₁ ×ˢ S).filter (fun x => b₁ x = β₁),
+        ∑ y₂ ∈ Y₂.filter (fun y => b₂ y = β₂), F x.1 y₂ x.2 := by
+  classical
+  have h1 : ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, ∑ σ ∈ S, F y₁ y₂ σ = ∑ x ∈ Y₁ ×ˢ S, ∑ y₂ ∈ Y₂, F x.1 y₂ x.2 := by
+    rw [Finset.sum_product]
+    exact Finset.sum_congr rfl fun y₁ _ => Finset.sum_comm
+  rw [h1, ← Finset.sum_fiberwise_of_maps_to hb₁]
+  refine Finset.sum_congr rfl fun β₁ _ => ?_
+  rw [Finset.sum_comm, ← Finset.sum_fiberwise_of_maps_to hb₂]
+  refine Finset.sum_congr rfl fun β₂ _ => ?_
+  exact Finset.sum_comm
+
+/-- A block pair's bilinear sum: over `(y₁, σ)` with `b₁(π₁(y₁)f_σ) = β₁` and `y₂` with `b₂(π₂(y₂)) = β₂`, of
+`λ(σ)c(y₁, y₂)Σ_k w_t(k)dw(π₁(y₁)f_σπ₂(y₂)k)`, in the form of `SieveTypeIBFam.typeIB_sharp0`. -/
+noncomputable def blockSum (q : ℕ) (a : ZMod q) {ι₁ ι₂ κ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂) (π₁ : ι₁ → ℕ)
+    (π₂ : ι₂ → ℕ) (S : Finset κ) (f : κ → ℕ) (lam : κ → ℝ) (c : ι₁ → ι₂ → ℝ) (b₁ b₂ : ℕ → ℕ) (β₁ β₂ : ℕ)
+    (t : ℕ × ℕ × ℕ × ℕ) : ℂ :=
+  ∑ x ∈ (Y₁ ×ˢ S).filter (fun x => b₁ (π₁ x.1 * f x.2) = β₁), ∑ y₂ ∈ Y₂.filter (fun y => b₂ (π₂ y) = β₂),
+    ((lam x.2 : ℝ) : ℂ) * (1 : ℂ) * ((c x.1 y₂ : ℝ) : ℂ) *
+      ∑ k ∈ suppv t, ((splv t k : ℝ) : ℂ) * SieveFamily.dw q a (π₁ x.1 * f x.2 * π₂ y₂ * k)
+
+omit [NeZero q] in
+/-- The real sum of a block pair is its `blockSum`. -/
+theorem block_real (a : ZMod q) {ι₁ ι₂ κ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂) (π₁ : ι₁ → ℕ) (π₂ : ι₂ → ℕ)
+    (S : Finset κ) (f : κ → ℕ) (lam : κ → ℝ) (c : ι₁ → ι₂ → ℝ) (b₁ b₂ : ℕ → ℕ) (β₁ β₂ : ℕ)
+    (t : ℕ × ℕ × ℕ × ℕ) :
+    ((∑ x ∈ (Y₁ ×ˢ S).filter (fun x => b₁ (π₁ x.1 * f x.2) = β₁), ∑ y₂ ∈ Y₂.filter (fun y => b₂ (π₂ y) = β₂),
+        c x.1 y₂ * (lam x.2 * ssum t (dwR q a) (π₁ x.1 * f x.2 * π₂ y₂)) : ℝ) : ℂ) =
+      blockSum q a Y₁ Y₂ π₁ π₂ S f lam c b₁ b₂ β₁ β₂ t := by
+  rw [blockSum]
+  push_cast
+  refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y₂ _ => ?_
+  rw [ssum_dwR_eq]
+  ring
+
+/-- **The bilinear part above, by block pairs.** With the splines `TP(β₁, β₂)`, `TM(β₁, β₂)` of the block pair of
+`(π₁(y₁)f_σ, π₂(y₂))`, `|Σ_y c·dwU|` is at most `Σ_{β₁,β₂} (|blockSum(λ₊, TP)| + |blockSum(λ₋, TM)|)`. -/
+theorem abs_dwU_le (a : ZMod q) {ι₁ ι₂ κ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂) (π₁ : ι₁ → ℕ) (π₂ : ι₂ → ℕ)
+    (S : Finset κ) (f : κ → ℕ) (lam : κ → ℝ) (c : ι₁ → ι₂ → ℝ) (b₁ b₂ : ℕ → ℕ) (B₁ B₂ : Finset ℕ)
+    (hb₁ : ∀ x ∈ Y₁ ×ˢ S, b₁ (π₁ x.1 * f x.2) ∈ B₁) (hb₂ : ∀ y ∈ Y₂, b₂ (π₂ y) ∈ B₂)
+    (TP TM : ℕ → ℕ → ℕ × ℕ × ℕ × ℕ) :
+    |∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, c y₁ y₂ * dwU q a (π₁ y₁) (π₂ y₂) S f lam
+        (fun σ => TP (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂))) (fun σ => TM (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂)))| ≤
+      ∑ β₁ ∈ B₁, ∑ β₂ ∈ B₂,
+        (‖blockSum q a Y₁ Y₂ π₁ π₂ S f (fun σ => ppart (lam σ)) c b₁ b₂ β₁ β₂ (TP β₁ β₂)‖ +
+          ‖blockSum q a Y₁ Y₂ π₁ π₂ S f (fun σ => npart (lam σ)) c b₁ b₂ β₁ β₂ (TM β₁ β₂)‖) := by
+  classical
+  set F : ι₁ → ι₂ → κ → ℝ := fun y₁ y₂ σ =>
+    c y₁ y₂ * (ppart (lam σ) * ssum (TP (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂))) (dwR q a) (π₁ y₁ * f σ * π₂ y₂)) -
+      c y₁ y₂ * (npart (lam σ) * ssum (TM (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂))) (dwR q a) (π₁ y₁ * f σ * π₂ y₂))
+    with hF
+  have e1 : ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, c y₁ y₂ * dwU q a (π₁ y₁) (π₂ y₂) S f lam
+      (fun σ => TP (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂))) (fun σ => TM (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂))) =
+      ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, ∑ σ ∈ S, F y₁ y₂ σ := by
+    refine Finset.sum_congr rfl fun y₁ _ => Finset.sum_congr rfl fun y₂ _ => ?_
+    rw [dwU, Finset.mul_sum]
+    exact Finset.sum_congr rfl fun σ _ => by rw [hF]; ring
+  rw [e1, sum_blocks Y₁ Y₂ S B₁ B₂ (fun x => b₁ (π₁ x.1 * f x.2)) (fun y => b₂ (π₂ y)) hb₁ hb₂ F]
+  refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun β₁ _ => ?_)
+  refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun β₂ _ => ?_)
+  -- inside the block pair the splines are `TP β₁ β₂` and `TM β₁ β₂`
+  have e2 : ∑ x ∈ (Y₁ ×ˢ S).filter (fun x => b₁ (π₁ x.1 * f x.2) = β₁),
+        ∑ y₂ ∈ Y₂.filter (fun y => b₂ (π₂ y) = β₂), F x.1 y₂ x.2 =
+      (∑ x ∈ (Y₁ ×ˢ S).filter (fun x => b₁ (π₁ x.1 * f x.2) = β₁), ∑ y₂ ∈ Y₂.filter (fun y => b₂ (π₂ y) = β₂),
+        c x.1 y₂ * (ppart (lam x.2) * ssum (TP β₁ β₂) (dwR q a) (π₁ x.1 * f x.2 * π₂ y₂))) -
+      ∑ x ∈ (Y₁ ×ˢ S).filter (fun x => b₁ (π₁ x.1 * f x.2) = β₁), ∑ y₂ ∈ Y₂.filter (fun y => b₂ (π₂ y) = β₂),
+        c x.1 y₂ * (npart (lam x.2) * ssum (TM β₁ β₂) (dwR q a) (π₁ x.1 * f x.2 * π₂ y₂)) := by
+    rw [← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl fun x hx => ?_
+    rw [← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl fun y₂ hy₂ => ?_
+    simp only [hF]
+    rw [(Finset.mem_filter.1 hx).2, (Finset.mem_filter.1 hy₂).2]
+  rw [e2]
+  refine (abs_sub _ _).trans (add_le_add (le_of_eq ?_) (le_of_eq ?_))
+  · rw [← block_real a Y₁ Y₂ π₁ π₂ S f (fun σ => ppart (lam σ)) c b₁ b₂ β₁ β₂ (TP β₁ β₂), Complex.norm_real,
+      Real.norm_eq_abs]
+  · rw [← block_real a Y₁ Y₂ π₁ π₂ S f (fun σ => npart (lam σ)) c b₁ b₂ β₁ β₂ (TM β₁ β₂), Complex.norm_real,
+      Real.norm_eq_abs]
+
+/-- **The bilinear part below, by block pairs**: the same for `dwL`, whose splines enter as `λ₊TM − λ₋TP`. -/
+theorem abs_dwL_le (a : ZMod q) {ι₁ ι₂ κ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂) (π₁ : ι₁ → ℕ) (π₂ : ι₂ → ℕ)
+    (S : Finset κ) (f : κ → ℕ) (lam : κ → ℝ) (c : ι₁ → ι₂ → ℝ) (b₁ b₂ : ℕ → ℕ) (B₁ B₂ : Finset ℕ)
+    (hb₁ : ∀ x ∈ Y₁ ×ˢ S, b₁ (π₁ x.1 * f x.2) ∈ B₁) (hb₂ : ∀ y ∈ Y₂, b₂ (π₂ y) ∈ B₂)
+    (TP TM : ℕ → ℕ → ℕ × ℕ × ℕ × ℕ) :
+    |∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, c y₁ y₂ * dwL q a (π₁ y₁) (π₂ y₂) S f lam
+        (fun σ => TP (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂))) (fun σ => TM (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂)))| ≤
+      ∑ β₁ ∈ B₁, ∑ β₂ ∈ B₂,
+        (‖blockSum q a Y₁ Y₂ π₁ π₂ S f (fun σ => ppart (lam σ)) c b₁ b₂ β₁ β₂ (TM β₁ β₂)‖ +
+          ‖blockSum q a Y₁ Y₂ π₁ π₂ S f (fun σ => npart (lam σ)) c b₁ b₂ β₁ β₂ (TP β₁ β₂)‖) := by
+  have h := abs_dwU_le (q := q) a Y₁ Y₂ π₁ π₂ S f lam c b₁ b₂ B₁ B₂ hb₁ hb₂ TM TP
+  have e : ∀ y₁ y₂, dwL q a (π₁ y₁) (π₂ y₂) S f lam
+      (fun σ => TP (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂))) (fun σ => TM (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂))) =
+      dwU q a (π₁ y₁) (π₂ y₂) S f lam
+        (fun σ => TM (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂))) (fun σ => TP (b₁ (π₁ y₁ * f σ)) (b₂ (π₂ y₂))) := by
+    intro y₁ y₂; rfl
+  simp only [e]
+  exact h
 
 end SieveTypeIBLeaf
