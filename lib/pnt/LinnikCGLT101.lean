@@ -20,14 +20,15 @@ and a height `T′`, where `M` can exceed `q₁T′`. It costs nothing for `M �
 
 Their Lemma 10.6: "For any M ≥ 1, we have Σ_{n₁,n₂∼M, (n₁n₂,q)=1} |R(n₁/n₂, n₁n₂^{−1})|² ⪅ |W|M² + |W|²M +
 |W|^{5/4}(qT)^{1/2}M." (p. 42), by expanding the square and "Applying Theorem 10.1" (p. 42). With `R₂`,
-the expansion is exact: `Σ_{n₁,n₂}|R₂(n₁, n₂)|² = Σ_{i,j}|Σ_nχ_i(n)χ̄_j(n)n^{i(t_i−t_j)}|²` (`sum_sq_R2_eq`). At one
-point per character the separation holds because the characters differ.
+the expansion is exact: `Σ_{n₁,n₂}|R₂(n₁, n₂)|² = Σ_{i,j}|Σ_nχ_i(n)χ̄_j(n)n^{i(t_i−t_j)}|²` (`sum_sq_R2_eq`). For
+spaced points (`LinnikCGLL105.Spaced`) the separation holds: two points have distinct characters or are more
+than `2` apart.
 
 Plain statements, with `n ∼ M` the naturals `M < n ≤ 2M` (`dyad`).
 * `mem_dyad`: for `M ≥ 0`, `n ∈ dyad M ↔ M < n ≤ 2M`.
 * `sum_sq_R2_eq`: `Σ_{n₁,n₂∼M}|R₂(n₁, n₂)|² = Σ_{i,j∈R}|Σ_{n∼M}χ_i(n)χ̄_j(n)n^{i(t_i−t_j)}|²`.
-* `lemma106`: from `CGLT101`, for every `ε > 0` there are `C` and `Q₀` such that, for `qT ≥ Q₀`, `T, M ≥ 1`, `χ`
-  injective on `R` with primitive values and `|t_i| ≤ T`,
+* `lemma106`: from `CGLT101`, for every `ε > 0` there are `C` and `Q₀` such that, for `qT ≥ Q₀`, `T, M ≥ 1`, spaced
+  points with primitive characters and `|t_i| ≤ T`,
   `Σ_{n₁,n₂∼M}|R₂(n₁, n₂)|² ≤ C(qTM)^ε(|R|M² + |R|²M + |R|^{5/4}(qT)^{1/2}M)`.
 
 * `dyad`, `mem_dyad`, `CGLT101`: the hypothesis.
@@ -138,24 +139,26 @@ theorem sum_sq_R2_eq (S : Finset ℕ) (hS : ∀ n ∈ S, 0 < n) :
 
 end R2
 
-/-- **Their Lemma 10.6, at one point per character**: from `CGLT101`, for every `ε > 0` there are `C` and `Q₀` such
-that, for `qT ≥ Q₀`, `T, M ≥ 1`, `χ` injective on `R` with primitive values and `|t_i| ≤ T`,
+/-- **Their Lemma 10.6**: from `CGLT101`, for every `ε > 0` there are `C` and `Q₀` such that, for `qT ≥ Q₀`,
+`T, M ≥ 1`, spaced points (`Spaced`) with primitive characters and `|t_i| ≤ T`,
 `Σ_{n₁,n₂∼M}|R₂(n₁, n₂)|² ≤ C(qTM)^ε(|R|M² + |R|²M + |R|^{5/4}(qT)^{1/2}M)`. -/
 theorem lemma106 (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
     ∃ C Q₀ : ℝ, ∀ (q : ℕ) [NeZero q] {ι : Type} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ)
-      (T M : ℝ), Q₀ ≤ (q : ℝ) * T → 1 ≤ T → 1 ≤ M → (∀ i ∈ R, (χ i).IsPrimitive) → Set.InjOn χ R →
+      (T M : ℝ), Q₀ ≤ (q : ℝ) * T → 1 ≤ T → 1 ≤ M → (∀ i ∈ R, (χ i).IsPrimitive) → Spaced R χ t →
       (∀ i ∈ R, |t i| ≤ T) →
       ∑ n₁ ∈ dyad M, ∑ n₂ ∈ dyad M, ‖R2 R χ t n₁ n₂‖ ^ 2 ≤
         C * ((q : ℝ) * T * M) ^ ε * ((R.card : ℝ) * M ^ 2 + (R.card : ℝ) ^ 2 * M +
           (R.card : ℝ) ^ (5 / 4 : ℝ) * ((q : ℝ) * T) ^ (1 / 2 : ℝ) * M) := by
   obtain ⟨C, Q₀, hCQ⟩ := hT ε hε
   refine ⟨C, Q₀, ?_⟩
-  intro q hq0 ι R χ t T M hQ hT1 hM hprim hinj ht
+  intro q hq0 ι R χ t T M hQ hT1 hM hprim hsp ht
   have hpos : ∀ n ∈ dyad M, 0 < n := fun n hn => by
     have := ((mem_dyad (by linarith)).mp hn).1
     exact_mod_cast (by linarith : (0 : ℝ) < n)
-  have hsep : ∀ i ∈ R, ∀ j ∈ R, i ≠ j → χ i ≠ χ j ∨ 1 ≤ |t i - t j| := fun i hi j hj hij =>
-    Or.inl fun h => hij (hinj hi hj h)
+  have hsep : ∀ i ∈ R, ∀ j ∈ R, i ≠ j → χ i ≠ χ j ∨ 1 ≤ |t i - t j| := fun i hi j hj hij => by
+    by_cases h : χ i = χ j
+    · exact Or.inr (by linarith [hsp i hi j hj hij h])
+    · exact Or.inl h
   have h := hCQ q R χ t T M 1 (fun _ => 1) hQ hT1 hM hprim ht hsep (fun n _ => by simp)
   rw [sum_sq_R2_eq R χ t (dyad M) hpos]
   simp only [one_mul, one_pow, mul_one] at h

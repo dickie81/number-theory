@@ -15,7 +15,9 @@ primitive (a hypothesis of `CGLS2` that the proof does not use), `T ≥ 1`, `7/1
 `(qT)^{2/3}/2 ≤ N ≤ qT`, `S ⊆ [6N/5, 9N/5]`, `|b_n| ≤ 1`, `|t_i| ≤ T` and `|Σ_{n∈S}b_nχ_i(n)n^{it_i}| ≥ N^σ/6`
 for every `i ∈ R`, `‖E‖_F² ≤ C(qTN)^ε·qT|R|N^{2−2σ}`.
 
-Plain statement (`s2_main`). For `N > 5/6` and `0 < δ ≤ 1/16`, `‖E‖_F² ≤ (C₁(δ) + C₂(δ))(qT)^{1+16δ}|R|N^{2−2σ}`.
+Plain statement (`s2_main`). For points whose characters are distinct or which are at least `1` apart, `N > 5/6`
+and `0 < δ ≤ 1/16`, `‖E‖_F² ≤ (C₁(δ) + C₂(δ))(qT)^{1+16δ}|R|N^{2−2σ} + 2N²P_H`, with `P_H` the residues of
+`LinnikCGLFrob.resP`, `0` at one point per character.
 The parameters: `P = qT`, `u = P^δ`, `N′ = ⌊9N/5⌋`, `Z = ⌊3Pu/N⌋ + 1`, `K = ⌈4/δ⌉` and `τ = C_δ(N′Z)^δ`.
 
 The paper's own count: "S₂ ⪅_ϵ (|W|N^{2−2σ}/M)(N²M² + qTNM) ⪅_ϵ qT|W|N^{3−2σ}, since NM ⪅_ϵ qT" (the end of their
@@ -184,14 +186,15 @@ lemma Q0_le (q : ℕ) : Q0 q ≤ Real.pi * CGK 0 * ((2 : ℝ) ^ q.primeFactors.c
 
 /-- **The number of large values**: `|R|V² ≤ L(N′)Σ|b_n|²` (`ls_points` for `F` itself). -/
 lemma card_mul_sq_le {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finset ι}
-    {χ : ι → DirichletCharacter ℂ q} (hinj : Set.InjOn χ R) {t : ι → ℝ} {T : ℝ} (hT : 0 ≤ T)
-    (ht : ∀ i ∈ R, |t i| ≤ T) {S : Finset ℕ} {N' : ℕ} (hS : S ⊆ Finset.Icc 2 N') (b : ℕ → ℂ) {V : ℝ}
+    {χ : ι → DirichletCharacter ℂ q} {t : ι → ℝ} (hsep : ∀ i ∈ R, ∀ j ∈ R, i ≠ j → χ i = χ j → 1 ≤ |t i - t j|)
+    {T : ℝ} (hT : 0 ≤ T) (ht : ∀ i ∈ R, |t i| ≤ T) {S : Finset ℕ} {N' : ℕ} (hS : S ⊆ Finset.Icc 2 N')
+    (b : ℕ → ℂ) {V : ℝ}
     (hV : 0 ≤ V) (hbig : ∀ i ∈ R, V ≤ ‖pv S b (χ i) (((0 : ℝ) : ℂ) + ((-t i : ℝ) : ℂ) * I)‖) :
     (R.card : ℝ) * V ^ 2 ≤ LSX q T N' * ∑ n ∈ S, ‖b n‖ ^ 2 := by
   calc (R.card : ℝ) * V ^ 2 = ∑ _i ∈ R, V ^ 2 := by rw [Finset.sum_const, nsmul_eq_mul]
     _ ≤ ∑ i ∈ R, ‖pv S b (χ i) (((0 : ℝ) : ℂ) + ((-t i : ℝ) : ℂ) * I)‖ ^ 2 :=
         Finset.sum_le_sum fun i hi => pow_le_pow_left₀ hV (hbig i hi) 2
-    _ ≤ LSX q T N' * ∑ n ∈ S, ‖b n‖ ^ 2 := ls_points hinj hT ht hS b
+    _ ≤ LSX q T N' * ∑ n ∈ S, ‖b n‖ ^ 2 := ls_points hsep hT ht hS b
 
 /-- For `q ≤ 2` there is one character mod `q`: `(ℤ/q)ˣ` has `φ(q) = 1` element. -/
 lemma char_eq_of_le_two {q : ℕ} [NeZero q] (hq : q ≤ 2) (χ ψ : DirichletCharacter ℂ q) : χ = ψ := by
@@ -329,7 +332,8 @@ lemma Bmax_le {q : ℕ} [NeZero q] {N T P u δ : ℝ} {Z K : ℕ} (hT : 1 ≤ T)
 /-- **The number of large values as a power of `P`**: under the hypotheses of `CGLS2` with `N > 5/6`, and with
 `P = qT`, `u = P^δ` and `N′ ≤ 2P`, `|R| ≤ A(δ)·5P·2u·(9/5)N·36N^{−2σ}` (`card_mul_sq_le` and `LSX_le`). -/
 lemma card_le {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finset ι} {χ : ι → DirichletCharacter ℂ q}
-    (hinj : Set.InjOn χ R) {t : ι → ℝ} {T N σ P u δ : ℝ} (hT : 1 ≤ T) (hN0 : 0 < N) (hP : P = (q : ℝ) * T)
+    {t : ι → ℝ} (hsep : ∀ i ∈ R, ∀ j ∈ R, i ≠ j → χ i = χ j → 1 ≤ |t i - t j|) {T N σ P u δ : ℝ} (hT : 1 ≤ T)
+    (hN0 : 0 < N) (hP : P = (q : ℝ) * T)
     (hu : u = P ^ δ) (hδ0 : 0 < δ) (hδ1 : δ ≤ 1) (ht : ∀ i ∈ R, |t i| ≤ T) {S : Finset ℕ} {N' : ℕ}
     (hS : S ⊆ Finset.Icc 2 N') (hN'1 : 1 ≤ N') (hN'P : (N' : ℝ) ≤ 2 * P) {b : ℕ → ℂ}
     (hSb : ∑ n ∈ S, ‖b n‖ ^ 2 ≤ 9 / 5 * N)
@@ -345,7 +349,7 @@ lemma card_le {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finset ι}
   have hb0 : 0 ≤ ∑ n ∈ S, ‖b n‖ ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
   have hbig' : ∀ i ∈ R, N ^ σ / 6 ≤ ‖pv S b (χ i) (((0 : ℝ) : ℂ) + ((-t i : ℝ) : ℂ) * I)‖ := fun i hi => by
     rw [pv_point_eq]; exact hbig i hi
-  have h1 := card_mul_sq_le hinj hT0 ht hS b (by positivity) hbig'
+  have h1 := card_mul_sq_le hsep hT0 ht hS b (by positivity) hbig'
   have h2 : LSX q T N' ≤ AL δ * (5 * P) * (2 * u) := by
     refine (LSX_le q hT0 hN'1 hδ0 hδ1).trans ?_
     have h3 : (q : ℝ) * (2 * T + 1) + N' ≤ 5 * P := by
@@ -439,15 +443,19 @@ lemma tail_le {N P u δ σ Rc B : ℝ} {K : ℕ} (hN56 : 5 / 6 < N) (hP1 : 1 ≤
         gcongr
     _ = C2 δ * (P * u ^ 16) * (Rc * N ^ (2 - 2 * σ)) := by unfold C2; rw [← hK]; ring
 
-/-- **The main case of `CGLS2`**, `N > 5/6`: with `P = qT`, `Z = ⌊3P^{1+δ}/N⌋ + 1` and `K = ⌈4/δ⌉`,
-`‖E‖_F² ≤ (C₁(δ) + C₂(δ))P^{1+16δ}|R|N^{2−2σ}` for `0 < δ ≤ 1/16` (`frobOff_le` and the sizes). -/
+/-- **The main case of `CGLS2`**, `N > 5/6`: for points whose characters are distinct or which are at least `1`
+apart, with `P = qT`, `Z = ⌊3P^{1+δ}/N⌋ + 1` and `K = ⌈4/δ⌉`,
+`‖E‖_F² ≤ (C₁(δ) + C₂(δ))P^{1+16δ}|R|N^{2−2σ} + 2N²P_H` for `0 < δ ≤ 1/16`, with `P_H` the residues (`resP`)
+(`frobOff_le` and the sizes). -/
 theorem s2_main {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finset ι} {χ : ι → DirichletCharacter ℂ q}
-    (hinj : Set.InjOn χ R) {t : ι → ℝ} {T N σ : ℝ} (hT : 1 ≤ T) (hN56 : 5 / 6 < N) (hNP : N ≤ (q : ℝ) * T)
+    {t : ι → ℝ} (hsep : ∀ i ∈ R, ∀ j ∈ R, i ≠ j → χ i = χ j → 1 ≤ |t i - t j|) {T N σ : ℝ} (hT : 1 ≤ T)
+    (hN56 : 5 / 6 < N) (hNP : N ≤ (q : ℝ) * T)
     {S : Finset ℕ} (hS : ∀ n ∈ S, 6 / 5 * N ≤ (n : ℝ) ∧ (n : ℝ) ≤ 9 / 5 * N) {b : ℕ → ℂ} (hb : ∀ n, ‖b n‖ ≤ 1)
     (ht : ∀ i ∈ R, |t i| ≤ T) (hbig : ∀ i ∈ R, N ^ σ / 6 ≤ ‖∑ n ∈ S, b n * χ i n * (n : ℂ) ^ ((t i : ℂ) * I)‖)
     {δ : ℝ} (hδ0 : 0 < δ) (hδ1 : δ ≤ 1 / 16) :
     frobOff N R χ t ≤
-      (C1 δ + C2 δ) * (((q : ℝ) * T) * ((q : ℝ) * T) ^ (16 * δ)) * (R.card * N ^ (2 - 2 * σ)) := by
+      (C1 δ + C2 δ) * (((q : ℝ) * T) * ((q : ℝ) * T) ^ (16 * δ)) * (R.card * N ^ (2 - 2 * σ)) +
+        2 * N ^ 2 * resP R χ t := by
   classical
   have hN0 : 0 < N := by linarith
   have hT0 : 0 ≤ T := by linarith
@@ -530,7 +538,7 @@ theorem s2_main {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finset �
   have hV0 : 0 < V := by rw [hV]; positivity
   have hbigV : ∀ i ∈ R, V ≤ ‖∑ n ∈ S, b n * χ i n * (n : ℂ) ^ ((t i : ℂ) * I)‖ := fun i hi => by
     rw [hV]; exact hbig i hi
-  have h := frobOff_le hinj hT0 hN0 ht hS' b hV0 hbigV hZ1 hK1 hτ
+  have h := frobOff_le hsep hT0 hN0 ht hS' b hV0 hbigV hZ1 hK1 hτ
   -- the sizes
   have hqδ : (q : ℝ) ^ δ ≤ u := by rw [hu]; exact Real.rpow_le_rpow (by linarith) hqP hδ0.le
   have hω : (2 : ℝ) ^ q.primeFactors.card ≤ Cdiv δ * u :=
@@ -563,14 +571,16 @@ theorem s2_main {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finset �
   have hV2 : (V ^ 2)⁻¹ = 36 * ((N ^ σ) ^ 2)⁻¹ := by rw [hV]; field_simp; ring
   have hmain := main_term_le hN0 hP0 hu1 hδ0 hδ1' (Nat.cast_nonneg R.card) hQ0b
     (LSX_nonneg q hT0 (N' * Z)) hLSXb hτ0 hτb (Finset.sum_nonneg fun _ _ => sq_nonneg _) hSb hHZ0 hHZb hV2
-  have hRb := card_le hinj hT hN0 hP hu hδ0 hδ1' ht hS' hN'1 hN'P hSb hbig
+  have hRb := card_le hsep hT hN0 hP hu hδ0 hδ1' ht hS' hN'1 hN'P hSb hbig
   have hBb := Bmax_le hT hN0 hP hu hδ0 hδ1' hZ1 hNZ hδK
   have htail := tail_le hN56 hP1 hu1 hδ0 hδ1' (Nat.cast_nonneg R.card) hRb (Bmax_nonneg q hN0.le hT0 Z K) hBb hK
   calc frobOff N R χ t ≤ N * Q0 q ^ 2 * IH ^ 2 * (R.card * ((V ^ 2)⁻¹ * (LSX q T (N' * Z) *
-        (τ * ((∑ n ∈ S, ‖b n‖ ^ 2) * HZ Z))))) + (R.card : ℝ) ^ 2 * Bmax q N T Z K ^ 2 := h
-    _ ≤ C1 δ * (P * u ^ 16) * (R.card * N ^ (2 - 2 * σ)) + C2 δ * (P * u ^ 16) * (R.card * N ^ (2 - 2 * σ)) :=
-        add_le_add hmain htail
-    _ = (C1 δ + C2 δ) * (P * u ^ 16) * (R.card * N ^ (2 - 2 * σ)) := by ring
+        (τ * ((∑ n ∈ S, ‖b n‖ ^ 2) * HZ Z))))) + (R.card : ℝ) ^ 2 * Bmax q N T Z K ^ 2 +
+        2 * N ^ 2 * resP R χ t := h
+    _ ≤ C1 δ * (P * u ^ 16) * (R.card * N ^ (2 - 2 * σ)) + C2 δ * (P * u ^ 16) * (R.card * N ^ (2 - 2 * σ)) +
+        2 * N ^ 2 * resP R χ t :=
+        add_le_add (add_le_add hmain htail) le_rfl
+    _ = (C1 δ + C2 δ) * (P * u ^ 16) * (R.card * N ^ (2 - 2 * σ)) + 2 * N ^ 2 * resP R χ t := by ring
 
 /-- For `N ≤ 5/6`, `(qT)^{2/3}/2 ≤ N` and `T ≥ 1` force `q ≤ 2`: otherwise `(qT)² ≥ 9 > (5/3)³`. -/
 lemma q_le_two {q : ℕ} {T N : ℝ} (hT : 1 ≤ T) (hN1 : ((q : ℝ) * T) ^ (2 / 3 : ℝ) / 2 ≤ N) (hN : N ≤ 5 / 6) :
@@ -607,7 +617,8 @@ theorem cgls2 : CGLS2 := by
   rcases le_or_gt N (5 / 6) with hN56 | hN56
   · rw [frobOff_eq_zero_of_le_two (q_le_two hT hN1 hN56) hinj N t]
     positivity
-  · have h := s2_main hinj hT hN56 hN2 hS hb ht hbig hδ0 hδ1
+  · have h := s2_main (fun i hi j hj hij h => absurd (hinj hi hj h) hij) hT hN56 hN2 hS hb ht hbig hδ0 hδ1
+    rw [resP_eq_zero_of_injOn hinj t, mul_zero, add_zero] at h
     have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
     have hP1 : (1 : ℝ) ≤ q * T := one_le_mul_of_one_le_of_one_le hq1 hT
     have hPN : (q : ℝ) * T ≤ 6 / 5 * ((q : ℝ) * T * N) := by

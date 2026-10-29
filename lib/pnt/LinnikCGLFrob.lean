@@ -6,13 +6,17 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 `LinnikCGLPair.norm_gram_le` bounds one Gram entry. This file sums the squares over the pairs, with the
 large polynomial put back, into an explicit bound on `‖E‖_F² = Σ_{i≠k}|G(i, k)|²` (`frobOff`), the
 quantity of the displayed hypothesis `CGLS2`. It is the proof of Chen–Gupta–Li's Proposition 6.1 from their
-Lemma 6.2, at one point per character, before `Z` and `K` are chosen.
+Lemma 6.2, for points whose characters are distinct or which are at least `1` apart, before `Z` and `K` are
+chosen.
 
-Plain statement (`frobOff_le`). Let `χ` be injective on `R`, `|t_i| ≤ T`, `N > 0`, `S ⊆ [2, N′]`, and
+Plain statement (`frobOff_le`). Let two points of `R` have distinct characters or be at least `1` apart,
+`|t_i| ≤ T`, `N > 0`, `S ⊆ [2, N′]`, and
 `|Σ_{n∈S}b_nχ_i(n)n^{it_i}| ≥ V > 0` for every `i ∈ R`. Let `Z, K ≥ 1`, and `d(k) ≤ τ` for `k ≤ N′Z`. Then
-`‖E‖_F² ≤ N·Q₀(q)²I_H²·|R|·V^{−2}L(N′Z)·τ·Σ_{n∈S}|b_n|²·H_Z + |R|²B²`, where `I_H = ∫|H(1/2 + iu)| du`, `L(X)` is
+`‖E‖_F² ≤ N·Q₀(q)²I_H²·|R|·V^{−2}L(N′Z)·τ·Σ_{n∈S}|b_n|²·H_Z + |R|²B² + 2N²P_H`, where `I_H = ∫|H(1/2 + iu)| du`,
+`L(X)` is
 the large-sieve factor `LSX`, `H_Z = Σ_{m≤Z}1/m`, `Q₀(q)` is `Q0` of `LinnikCGLPair`, and `B` is the tail bound
-at `|τ| = 2T` (`Bmax`).
+at `|τ| = 2T` (`Bmax`), and `P_H = Σ_{i≠k, χ_i=χ_k}|H(1 + i(t_i − t_k))|²` (`resP`), the residues of the principal
+Gram entries, which vanish at one point per character (`resP_eq_zero_of_injOn`).
 
 Their proof of Proposition 6.1 says (p. 21): "Now we proceed with an argument
 based on the mean value theorem. Notice that |Σ_{n∼N} w(n/N)b_n n^{it₂}χ₂(n)| ≥ N^σ for (t₂, χ₂) ∈ W." It multiplies
@@ -26,7 +30,8 @@ truncated (it is integrated against `|H(1/2 + iu)|`, whence `I_H`), and the pair
 
 * `sq_le_mul_of_forall`, `two_mul_le_lam`, `integral_sq_le`: Cauchy–Schwarz against a weight, through
   `2hd ≤ λh + hd²/λ` for every `λ > 0`.
-* `ls_points`: `ls_pv_dyadic` at the points `(χ_i, t_i)`, through the characters `χ(R)`.
+* `ls_points`: the large sieve at the points `(χ_i, t_i)`, from `LinnikPoints.large_values_points` on dyadic
+  pieces, as `ls_pv_dyadic` is from `large_values_chars_off`.
 * `prod_trick_points`: `|E| ≤ |FE|/V` at each point; `FE` is a polynomial on `[2, N′Z]` (`pv_mul`);
   then `ls_points` and `mass_mulCo_le`. `huxley_core` is the same argument for a sum of
   `|E|`, with Cauchy–Schwarz over the points.
@@ -34,13 +39,17 @@ truncated (it is integrated against `|H(1/2 + iu)|`, whence `I_H`), and the pair
   at the point of `χ_i`, `e_{k,u}(m) = conj(χ_k(m)m^{−1/2+i(u+t_k)})` (`dualS_eq_conj_pv`), and
   `Σ_{m≤Z}|e_{k,u}(m)|² ≤ H_Z`.
 * `wH`, `IH`, `Dp`, `sum_Dp_sq_le`: `Σ_{i,k∈R}|D_{ik}(u)|² ≤ |R|·V^{−2}L(N′Z)·τ·Σ|b_n|²·H_Z` at every `u`.
-* `Bmax`, `gram_sq_le`: `|G(i, k)|² ≤ N·Q₀(q)²(∫|H(1/2 + iu)||D_{ik}(u)| du)² + B²` for `χ_i ≠ χ_k`.
+* `Bmax`, `gram_sq_le`, `gram_sq_le0`: `|G(i, k)|² ≤ N·Q₀(q)²(∫|H(1/2 + iu)||D_{ik}(u)| du)² + B²` for
+  `χ_i ≠ χ_k`; and for `χ_i = χ_k` the same with `2(N|H(1 + i(t_i − t_k))|)²` added
+  (`LinnikCGLRefl0.norm_gram_le0`).
+* `resT`, `resP`, `resT_nonneg`, `resP_nonneg`, `resP_eq_zero_of_injOn`: the residues.
 * `frobOff_le`: Cauchy–Schwarz in `u` for each pair, and the sum over the pairs.
 
-The file imports `LinnikCGLPair.lean`, `LinnikDual.lean` and `LinnikWeighted.lean`.
+The file imports `LinnikCGLPair.lean`, `LinnikCGLRefl0.lean`, `LinnikDual.lean` and `LinnikWeighted.lean`.
 -/
 
 import LinnikCGLPair
+import LinnikCGLRefl0
 import LinnikDual
 import LinnikWeighted
 
@@ -99,39 +108,121 @@ lemma integral_sq_le {h d : ℝ → ℝ} (hh : ∀ u, 0 ≤ h u) (hd : ∀ u, 0 
 
 /-! ### The large sieve and the product trick at the points -/
 
-/-- **The large sieve at the points**: for `χ` injective on `R`, `T ≥ 0` and `|t_i| ≤ T`,
-`Σ_{i∈R}|Σ_{k∈S_k}c_kχ_i(k)k^{it_i}|² ≤ L(X)Σ|c_k|²` for `S_k ⊆ [2, X]` (`ls_pv_dyadic` on the
-characters `χ(R)`). -/
+/-- **The large sieve at the points**: for points whose characters are distinct or which are at least `1` apart,
+`T ≥ 0` and `|t_i| ≤ T`, `Σ_{i∈R}|Σ_{k∈S_k}c_kχ_i(k)k^{it_i}|² ≤ L(X)Σ|c_k|²` for `S_k ⊆ [2, X]`
+(`LinnikPoints.large_values_points` on the dyadic pieces `(2^j, 2^{j+1}]`, `j ≤ log₂ X`, and Cauchy–Schwarz over the
+pieces, as in `ls_pv_dyadic`). -/
 lemma ls_points {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finset ι} {χ : ι → DirichletCharacter ℂ q}
-    (hinj : Set.InjOn χ R) {t : ι → ℝ} {T : ℝ} (hT : 0 ≤ T) (ht : ∀ i ∈ R, |t i| ≤ T) {Sk : Finset ℕ} {X : ℕ}
-    (hSk : Sk ⊆ Finset.Icc 2 X) (c : ℕ → ℂ) :
+    {t : ι → ℝ} (hsep : ∀ i ∈ R, ∀ j ∈ R, i ≠ j → χ i = χ j → 1 ≤ |t i - t j|) {T : ℝ} (hT : 0 ≤ T)
+    (ht : ∀ i ∈ R, |t i| ≤ T) {Sk : Finset ℕ} {X : ℕ} (hSk : Sk ⊆ Finset.Icc 2 X) (c : ℕ → ℂ) :
     ∑ i ∈ R, ‖pv Sk c (χ i) (((0 : ℝ) : ℂ) + ((-t i : ℝ) : ℂ) * I)‖ ^ 2 ≤ LSX q T X * ∑ k ∈ Sk, ‖c k‖ ^ 2 := by
   classical
-  rcases R.eq_empty_or_nonempty with hR | ⟨i₀, -⟩
-  · rw [hR, Finset.sum_empty]
-    exact mul_nonneg (LSX_nonneg q hT X) (Finset.sum_nonneg fun _ _ => sq_nonneg _)
-  have : Nonempty ι := ⟨i₀⟩
-  set g : DirichletCharacter ℂ q → ι := Function.invFunOn χ R with hg
-  have hleft : ∀ i ∈ R, g (χ i) = i := fun i hi => hinj.leftInvOn_invFunOn (Finset.mem_coe.2 hi)
-  have hγ : ∀ ψ ∈ R.image χ, |(fun ψ => -t (g ψ)) ψ| ≤ T := by
-    intro ψ hψ
-    obtain ⟨j, hj, rfl⟩ := Finset.mem_image.1 hψ
-    simp only [hleft j hj, abs_neg]
-    exact ht j hj
-  have h := ls_pv_dyadic hSk c q hT (R.image χ) (fun _ => 0) (fun ψ => -t (g ψ))
-    (fun _ _ => ⟨le_refl _, by norm_num⟩) hγ
-  rw [Finset.sum_image (fun i hi j hj hij => hinj (Finset.mem_coe.2 hi) (Finset.mem_coe.2 hj) hij)] at h
-  refine le_of_eq_of_le (Finset.sum_congr rfl fun i hi => ?_) h
-  simp only [hleft i hi]
+  set J := Nat.log 2 X + 1 with hJ
+  set g : ℕ → ℕ := fun k => Nat.log 2 (k - 1) with hg
+  have hSk0 : 0 ∉ Sk := fun h => by have := (Finset.mem_Icc.1 (hSk h)).1; omega
+  have hmaps : ∀ k ∈ Sk, g k ∈ Finset.range J := by
+    intro k hk
+    obtain ⟨hk1, hk2⟩ := Finset.mem_Icc.1 (hSk hk)
+    rw [Finset.mem_range, hJ]
+    have : Nat.log 2 (k - 1) ≤ Nat.log 2 X := Nat.log_mono_right (by omega)
+    simp only [hg]; omega
+  have hpiece : ∀ j ∈ Finset.range J, (Sk.filter fun k => g k = j) ⊆ Finset.Ioc (2 ^ j) (2 * 2 ^ j) := by
+    intro j _ k hk
+    obtain ⟨hk, hkj⟩ := Finset.mem_filter.1 hk
+    obtain ⟨hk1, -⟩ := Finset.mem_Icc.1 (hSk hk)
+    have h1 : 2 ^ Nat.log 2 (k - 1) ≤ k - 1 := Nat.pow_log_le_self 2 (by omega)
+    have h2 : k - 1 < 2 ^ (Nat.log 2 (k - 1) + 1) := Nat.lt_pow_succ_log_self (by norm_num) _
+    simp only [hg] at hkj
+    rw [hkj] at h1 h2
+    rw [pow_succ] at h2
+    rw [Finset.mem_Ioc]
+    constructor <;> omega
+  set s : ι → ℂ := fun i => ((0 : ℝ) : ℂ) + ((-t i : ℝ) : ℂ) * I with hs
+  -- the polynomial as the sum of its pieces, and Cauchy–Schwarz over the pieces
+  have hcs : ∀ i, ‖pv Sk c (χ i) (s i)‖ ^ 2 ≤
+      J * ∑ j ∈ Finset.range J, ‖pv (Sk.filter fun k => g k = j) c (χ i) (s i)‖ ^ 2 := by
+    intro i
+    have hsplit : pv Sk c (χ i) (s i) =
+        ∑ j ∈ Finset.range J, pv (Sk.filter fun k => g k = j) c (χ i) (s i) := by
+      unfold pv
+      exact (Finset.sum_fiberwise_of_maps_to hmaps _).symm
+    rw [hsplit]
+    have h1 := norm_sum_le (Finset.range J) fun j => pv (Sk.filter fun k => g k = j) c (χ i) (s i)
+    have h2 := sq_sum_le_card_mul_sum_sq (s := Finset.range J)
+      (f := fun j => ‖pv (Sk.filter fun k => g k = j) c (χ i) (s i)‖)
+    rw [Finset.card_range] at h2
+    exact (pow_le_pow_left₀ (norm_nonneg _) h1 2).trans h2
+  -- the mean value theorem at the points on each piece
+  have hX0 : 0 ≤ Real.log X := Real.log_natCast_nonneg X
+  have hq0 : (0 : ℝ) ≤ q := Nat.cast_nonneg q
+  set L0 : ℝ := Real.exp 1 * ((q * (2 * T + 1) + 8 * X * (1 + Real.log X)) * (2 + Real.log (2 * X) ^ 2))
+    with hL0
+  have hL0nn : 0 ≤ L0 := by rw [hL0]; positivity
+  have hls : ∀ j ∈ Finset.range J, ∑ i ∈ R, ‖pv (Sk.filter fun k => g k = j) c (χ i) (s i)‖ ^ 2 ≤
+      L0 * ∑ k ∈ Sk.filter (fun k => g k = j), ‖c k‖ ^ 2 := by
+    intro j hj
+    rcases (Sk.filter fun k => g k = j).eq_empty_or_nonempty with he | hne
+    · rw [he]; simp [pv]
+    obtain ⟨k₀, hk₀⟩ := hne
+    have hk₀X : k₀ ≤ X := (Finset.mem_Icc.1 (hSk (Finset.mem_filter.1 hk₀).1)).2
+    have hjX : 2 ^ j < X := lt_of_lt_of_le (Finset.mem_Ioc.1 (hpiece j hj hk₀)).1 hk₀X
+    have hS0' : 0 ∉ Sk.filter (fun k => g k = j) := fun h => hSk0 (Finset.mem_filter.1 h).1
+    have h := LinnikPoints.large_values_points (hpiece j hj) c q (lo := -T - 1 / 2) (hi := T + 1 / 2)
+      (by linarith) R χ (fun i => -t i)
+      (fun i hi => ⟨by linarith [(abs_le.1 (ht i hi)).2], by linarith [(abs_le.1 (ht i hi)).1]⟩)
+      (fun i hi k hk hik hχ => by
+        rw [show -t i - -t k = -(t i - t k) by ring, abs_neg]; exact hsep i hi k hk hik hχ)
+    have hconv : ∀ i, pv (Sk.filter fun k => g k = j) c (χ i) (s i) =
+        DirMean.dp (Sk.filter fun k => g k = j) (fun k => c k * χ i k) (-t i) := by
+      intro i
+      rw [hs, pv_eq_dp _ hS0' c (χ i) 0 (-t i)]
+      simp only [neg_zero, Real.rpow_zero, Complex.ofReal_one, mul_one]
+    simp_rw [hconv]
+    refine h.trans (mul_le_mul_of_nonneg_right ?_ (Finset.sum_nonneg fun _ _ => by positivity))
+    -- the factor at `P = 2^j` is at most the factor at `X`
+    have hPX : ((2 ^ j : ℕ) : ℝ) ≤ X := by exact_mod_cast hjX.le
+    have hP1 : (1 : ℝ) ≤ ((2 ^ j : ℕ) : ℝ) := by exact_mod_cast Nat.one_le_two_pow
+    have hP0 : (0 : ℝ) < ((2 ^ j : ℕ) : ℝ) := by linarith
+    have hlog1 : Real.log ((2 ^ j : ℕ) : ℝ) ≤ Real.log X := Real.log_le_log hP0 hPX
+    have hlog2 : Real.log (2 * ((2 ^ j : ℕ) : ℝ)) ≤ Real.log (2 * X) :=
+      Real.log_le_log (by positivity) (by linarith)
+    have hlogP : 0 ≤ Real.log ((2 ^ j : ℕ) : ℝ) := Real.log_natCast_nonneg _
+    have hlog2P : 0 ≤ Real.log (2 * ((2 ^ j : ℕ) : ℝ)) := Real.log_nonneg (by linarith)
+    have e : (q : ℝ) * (T + 1 / 2 - (-T - 1 / 2)) = q * (2 * T + 1) := by ring
+    rw [e]
+    have hA : ((q : ℝ) * (2 * T + 1) + 8 * ((2 ^ j : ℕ) : ℝ) * (1 + Real.log ((2 ^ j : ℕ) : ℝ))) *
+        (2 + Real.log (2 * ((2 ^ j : ℕ) : ℝ)) ^ 2) ≤
+        ((q : ℝ) * (2 * T + 1) + 8 * X * (1 + Real.log X)) * (2 + Real.log (2 * X) ^ 2) := by
+      gcongr
+    have he1 : (1 : ℝ) ≤ Real.exp 1 := Real.one_le_exp (by norm_num)
+    calc ((q : ℝ) * (2 * T + 1) + 8 * ((2 ^ j : ℕ) : ℝ) * (1 + Real.log ((2 ^ j : ℕ) : ℝ))) *
+          (2 + Real.log (2 * ((2 ^ j : ℕ) : ℝ)) ^ 2) ≤
+          ((q : ℝ) * (2 * T + 1) + 8 * X * (1 + Real.log X)) * (2 + Real.log (2 * X) ^ 2) := hA
+      _ ≤ L0 := by rw [hL0]; exact le_mul_of_one_le_left (by positivity) he1
+  have hLSX : LSX q T X = L0 * J := by rw [hL0, hJ]; unfold LSX; push_cast; ring
+  calc ∑ i ∈ R, ‖pv Sk c (χ i) (s i)‖ ^ 2
+      ≤ ∑ i ∈ R, J * ∑ j ∈ Finset.range J, ‖pv (Sk.filter fun k => g k = j) c (χ i) (s i)‖ ^ 2 :=
+        Finset.sum_le_sum fun i _ => hcs i
+    _ = J * ∑ j ∈ Finset.range J, ∑ i ∈ R, ‖pv (Sk.filter fun k => g k = j) c (χ i) (s i)‖ ^ 2 := by
+        rw [← Finset.mul_sum, Finset.sum_comm]
+    _ ≤ J * ∑ j ∈ Finset.range J, L0 * ∑ k ∈ Sk.filter (fun k => g k = j), ‖c k‖ ^ 2 := by
+        gcongr with j hj
+        exact hls j hj
+    _ = L0 * J * ∑ k ∈ Sk, ‖c k‖ ^ 2 := by
+        rw [← Finset.mul_sum, Finset.sum_fiberwise_of_maps_to hmaps]
+        ring
+    _ = LSX q T X * ∑ k ∈ Sk, ‖c k‖ ^ 2 := by rw [hLSX]
 
-/-- **The product trick at the points, squared**: for `χ` injective on `R`, `T ≥ 0` and `|t_i| ≤ T`, if
+/-- **The product trick at the points, squared**: for points whose characters are distinct or which are at least
+`1` apart, `T ≥ 0` and `|t_i| ≤ T`, if
 `|F(χ_i, −it_i)| ≥ V > 0` for every `i ∈ R`, with `F`
 supported on `[2, N′]`, then for any polynomial `E` on `[1, Z]`,
 `Σ_{i∈R}|E(χ_i, −it_i)|² ≤ V^{−2}L(N′Z)·τ·Σ|b_n|²·Σ|e_m|²` with `d(k) ≤ τ` for `k ≤ N′Z`
 (`pv_mul`, `mass_mulCo_le` and `ls_points`). -/
 lemma prod_trick_points {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finset ι}
-    {χ : ι → DirichletCharacter ℂ q} (hinj : Set.InjOn χ R) {t : ι → ℝ} {T : ℝ} (hT : 0 ≤ T)
-    (ht : ∀ i ∈ R, |t i| ≤ T) {S M : Finset ℕ} {N' Z : ℕ} (hS : S ⊆ Finset.Icc 2 N') (hM : M ⊆ Finset.Icc 1 Z)
+    {χ : ι → DirichletCharacter ℂ q} {t : ι → ℝ} (hsep : ∀ i ∈ R, ∀ j ∈ R, i ≠ j → χ i = χ j → 1 ≤ |t i - t j|)
+    {T : ℝ} (hT : 0 ≤ T) (ht : ∀ i ∈ R, |t i| ≤ T) {S M : Finset ℕ} {N' Z : ℕ} (hS : S ⊆ Finset.Icc 2 N')
+    (hM : M ⊆ Finset.Icc 1 Z)
     (b e : ℕ → ℂ) {V : ℝ} (hV : 0 < V)
     (hbig : ∀ i ∈ R, V ≤ ‖pv S b (χ i) (((0 : ℝ) : ℂ) + ((-t i : ℝ) : ℂ) * I)‖) {τ : ℝ}
     (hτ : ∀ k, k ≤ N' * Z → (k.divisors.card : ℝ) ≤ τ) :
@@ -159,7 +250,7 @@ lemma prod_trick_points {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : 
       ≤ ∑ i ∈ R, (V ^ 2)⁻¹ * ‖pv (mulSupp S M) (mulCo S M b e) (χ i) (s i)‖ ^ 2 := Finset.sum_le_sum hpt
     _ = (V ^ 2)⁻¹ * ∑ i ∈ R, ‖pv (mulSupp S M) (mulCo S M b e) (χ i) (s i)‖ ^ 2 := by rw [Finset.mul_sum]
     _ ≤ (V ^ 2)⁻¹ * (LSX q T (N' * Z) * ∑ k ∈ mulSupp S M, ‖mulCo S M b e k‖ ^ 2) := by
-        gcongr; exact ls_points hinj hT ht hsupp _
+        gcongr; exact ls_points hsep hT ht hsupp _
     _ ≤ (V ^ 2)⁻¹ * (LSX q T (N' * Z) * (τ * ((∑ n ∈ S, ‖b n‖ ^ 2) * ∑ m ∈ M, ‖e m‖ ^ 2))) := by
         have := LSX_nonneg q hT (N' * Z)
         gcongr
@@ -232,12 +323,14 @@ lemma continuous_Dp {ι : Type*} {q : ℕ} (χ : ι → DirichletCharacter ℂ q
     Continuous (Dp χ t Z i k) :=
   (continuous_dualS_line _ Z (1 / 2) (t i - t k)).norm
 
-/-- **The mass of the dual sums over all pairs, at one height**: for `χ` injective on `R`, `|t_i| ≤ T`, `F` on
+/-- **The mass of the dual sums over all pairs, at one height**: for points whose characters are distinct or which
+are at least `1` apart, `|t_i| ≤ T`, `F` on
 `[2, N′]` with `|F(χ_i, −it_i)| ≥ V > 0` on `R`, and `d(k) ≤ τ` for `k ≤ N′Z`,
 `Σ_{i,k∈R}|D_{ik}(u)|² ≤ |R|·V^{−2}L(N′Z)·τ·Σ|b_n|²·H_Z`. -/
 lemma sum_Dp_sq_le {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finset ι}
-    {χ : ι → DirichletCharacter ℂ q} (hinj : Set.InjOn χ R) {t : ι → ℝ} {T : ℝ} (hT : 0 ≤ T)
-    (ht : ∀ i ∈ R, |t i| ≤ T) {S : Finset ℕ} {N' Z : ℕ} (hS : S ⊆ Finset.Icc 2 N') (b : ℕ → ℂ) {V : ℝ}
+    {χ : ι → DirichletCharacter ℂ q} {t : ι → ℝ} (hsep : ∀ i ∈ R, ∀ j ∈ R, i ≠ j → χ i = χ j → 1 ≤ |t i - t j|)
+    {T : ℝ} (hT : 0 ≤ T) (ht : ∀ i ∈ R, |t i| ≤ T) {S : Finset ℕ} {N' Z : ℕ} (hS : S ⊆ Finset.Icc 2 N')
+    (b : ℕ → ℂ) {V : ℝ}
     (hV : 0 < V) (hbig : ∀ i ∈ R, V ≤ ‖pv S b (χ i) (((0 : ℝ) : ℂ) + ((-t i : ℝ) : ℂ) * I)‖) {τ : ℝ}
     (hτ : ∀ k, k ≤ N' * Z → (k.divisors.card : ℝ) ≤ τ) (u : ℝ) :
     ∑ i ∈ R, ∑ k ∈ R, Dp χ t Z i k u ^ 2 ≤
@@ -247,7 +340,7 @@ lemma sum_Dp_sq_le {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finse
       (V ^ 2)⁻¹ * (LSX q T (N' * Z) * (τ * ((∑ n ∈ S, ‖b n‖ ^ 2) * HZ Z))) := by
     intro k _
     simp only [Dp, norm_dualS_pair]
-    refine (prod_trick_points hinj hT ht hS (Finset.Subset.refl _) b _ hV hbig hτ).trans ?_
+    refine (prod_trick_points hsep hT ht hS (Finset.Subset.refl _) b _ hV hbig hτ).trans ?_
     have := LSX_nonneg q hT (N' * Z)
     have hb0 : 0 ≤ ∑ n ∈ S, ‖b n‖ ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
     gcongr
@@ -307,17 +400,94 @@ lemma gram_sq_le {ι : Type*} {q : ℕ} [NeZero q] {N : ℝ} (hN : 0 < N) (χ : 
     _ ≤ 1 * (a ^ 2 + B ^ 2) := by gcongr
     _ = N * Q0 q ^ 2 * J ^ 2 + B ^ 2 := by rw [one_mul, hsq]
 
-/-- **The off-diagonal mass of the Gram matrix, explicitly**: for `χ` injective on `R`, `|t_i| ≤ T`, `N > 0`,
-`F = Σ_{n∈S}b_nχ(n)n^{it}` on `S ⊆ [2, N′]` with `|F(χ_i, t_i)| ≥ V > 0` for every `i ∈ R`, `Z, K ≥ 1` and
-`d(k) ≤ τ` for `k ≤ N′Z`,
-`‖E‖_F² ≤ N·Q₀(q)²I_H²·|R|·V^{−2}L(N′Z)·τ·Σ|b_n|²·H_Z + |R|²B²`. -/
+/-- **A principal Gram entry, squared**: for `χ_i = χ_k`, `|t_i|, |t_k| ≤ T` and `Z, K ≥ 1`, with `τ = t_i − t_k`,
+`|G(i, k)|² ≤ 2(N|H(1 + iτ)|)² + N·Q₀(q)²(∫|H(1/2 + iu)||D_{ik}(u)| du)² + B²` with `B` the tail bound at
+`|τ| ≤ 2T` (`LinnikCGLRefl0.norm_gram_le0`, `(a + b)² ≤ 2(a² + b²)` twice and `4(2π)^{−2} ≤ 1`). -/
+lemma gram_sq_le0 {ι : Type*} {q : ℕ} [NeZero q] {N : ℝ} (hN : 0 < N) (χ : ι → DirichletCharacter ℂ q)
+    (t : ι → ℝ) {i k : ι} (hik : χ i = χ k) {T : ℝ} (hti : |t i| ≤ T) (htk : |t k| ≤ T) {Z K : ℕ} (hZ : 1 ≤ Z)
+    (hK : 1 ≤ K) :
+    ‖gramP N χ t i k‖ ^ 2 ≤ 2 * (N * ‖H (1 + ((t i - t k : ℝ) : ℂ) * I)‖) ^ 2 +
+      N * Q0 q ^ 2 * (∫ u : ℝ, wH u * Dp χ t Z i k u) ^ 2 + Bmax q N T Z K ^ 2 := by
+  have hT : 0 ≤ T := (abs_nonneg _).trans hti
+  set J := ∫ u : ℝ, wH u * Dp χ t Z i k u with hJ
+  have hJ0 : 0 ≤ J := integral_nonneg fun u => mul_nonneg (wH_nonneg u) (Dp_nonneg χ t Z i k u)
+  have h1 : χ i * (χ k)⁻¹ = 1 := by rw [hik, mul_inv_cancel]
+  have hD : (∫ u : ℝ, ‖H ((1 / 2 : ℝ) + u * I)‖ *
+      ‖dualS (1 : DirichletCharacter ℂ q)⁻¹ Z ((1 / 2 : ℝ) + (u - ((t i - t k : ℝ) : ℂ)) * I)‖) = J := by
+    rw [hJ]
+    simp only [wH, Dp, h1]
+  have h := LinnikCGLRefl0.norm_gram_le0 hN χ t hik hZ hK
+  rw [hD] at h
+  have htail : 2 ^ (q.primeFactors.card + 1) * (Real.pi * CGK K) * EQh q * (q : ℝ) ^ ((K : ℝ) + 1 / 2) *
+      (N * Z) ^ (-(K : ℝ)) * (1 + |t i - t k|) ^ (K + 1) * IK K ≤ Bmax q N T Z K := by
+    unfold Bmax
+    have h1 : |t i - t k| ≤ 2 * T := (abs_sub _ _).trans (by linarith)
+    have := CGK_pos K; have := EQh_pos q; have := IK_nonneg K
+    gcongr
+  set a := N ^ (1 / 2 : ℝ) * Q0 q * J with ha
+  have ha0 : 0 ≤ a := by have := Q0_nonneg q; positivity
+  set B := Bmax q N T Z K with hB
+  have hB0 : 0 ≤ B := Bmax_nonneg q hN.le hT Z K
+  set ρ := N * ‖H (1 + ((t i - t k : ℝ) : ℂ) * I)‖ with hρ
+  have hρ0 : 0 ≤ ρ := by positivity
+  have hpi : (2 * Real.pi)⁻¹ ^ 2 * 4 ≤ 1 := by
+    have := Real.pi_gt_three
+    rw [inv_pow, inv_mul_le_iff₀ (by positivity)]; nlinarith
+  set c := (2 * Real.pi)⁻¹ with hc
+  have hc0 : 0 ≤ c := by positivity
+  have h2 : ‖gramP N χ t i k‖ ≤ ρ + c * (a + B) :=
+    h.trans (add_le_add le_rfl (mul_le_mul_of_nonneg_left (add_le_add le_rfl htail) hc0))
+  have hN2 : (N ^ (1 / 2 : ℝ)) ^ 2 = N := by
+    rw [← Real.rpow_natCast, ← Real.rpow_mul hN.le]; norm_num
+  have hsq : a ^ 2 = N * Q0 q ^ 2 * J ^ 2 := by rw [ha, mul_pow, mul_pow, hN2]
+  have hab : (a + B) ^ 2 ≤ 2 * (a ^ 2 + B ^ 2) := by nlinarith [sq_nonneg (a - B)]
+  calc ‖gramP N χ t i k‖ ^ 2 ≤ (ρ + c * (a + B)) ^ 2 := pow_le_pow_left₀ (norm_nonneg _) h2 2
+    _ ≤ 2 * ρ ^ 2 + 2 * c ^ 2 * (a + B) ^ 2 := by nlinarith [sq_nonneg (ρ - c * (a + B))]
+    _ ≤ 2 * ρ ^ 2 + 2 * c ^ 2 * (2 * (a ^ 2 + B ^ 2)) := by gcongr
+    _ = 2 * ρ ^ 2 + (c ^ 2 * 4) * (a ^ 2 + B ^ 2) := by ring
+    _ ≤ 2 * ρ ^ 2 + 1 * (a ^ 2 + B ^ 2) := by gcongr
+    _ = 2 * ρ ^ 2 + N * Q0 q ^ 2 * J ^ 2 + B ^ 2 := by rw [hsq]; ring
+
+open scoped Classical in
+/-- The residue of the pair `(i, k)`: `[i ≠ k, χ_i = χ_k]|H(1 + i(t_i − t_k))|²`. -/
+def resT {ι : Type*} {q : ℕ} (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) (i k : ι) : ℝ :=
+  if i ≠ k ∧ χ i = χ k then ‖H (1 + ((t i - t k : ℝ) : ℂ) * I)‖ ^ 2 else 0
+
+/-- **The residues of the principal Gram entries**: `Σ_{i≠k, χ_i=χ_k}|H(1 + i(t_i − t_k))|²`. -/
+def resP {ι : Type*} {q : ℕ} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) : ℝ :=
+  ∑ i ∈ R, ∑ k ∈ R, resT χ t i k
+
+lemma resT_nonneg {ι : Type*} {q : ℕ} (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) (i k : ι) :
+    0 ≤ resT χ t i k := by
+  unfold resT; split_ifs <;> positivity
+
+lemma resP_nonneg {ι : Type*} {q : ℕ} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) :
+    0 ≤ resP R χ t :=
+  Finset.sum_nonneg fun i _ => Finset.sum_nonneg fun k _ => resT_nonneg χ t i k
+
+/-- At one point per character there are no residues. -/
+lemma resP_eq_zero_of_injOn {ι : Type*} {q : ℕ} {R : Finset ι} {χ : ι → DirichletCharacter ℂ q}
+    (hinj : Set.InjOn χ R) (t : ι → ℝ) : resP R χ t = 0 := by
+  unfold resP
+  refine Finset.sum_eq_zero fun i hi => Finset.sum_eq_zero fun k hk => ?_
+  unfold resT
+  refine ite_eq_right ?_
+  rintro ⟨hik, h⟩
+  exact hik (hinj (Finset.mem_coe.2 hi) (Finset.mem_coe.2 hk) h)
+
+/-- **The off-diagonal mass of the Gram matrix, explicitly**: for points whose characters are distinct or which
+are at least `1` apart, `|t_i| ≤ T`, `N > 0`, `F = Σ_{n∈S}b_nχ(n)n^{it}` on `S ⊆ [2, N′]` with `|F(χ_i, t_i)| ≥ V > 0`
+for every `i ∈ R`, `Z, K ≥ 1` and `d(k) ≤ τ` for `k ≤ N′Z`,
+`‖E‖_F² ≤ N·Q₀(q)²I_H²·|R|·V^{−2}L(N′Z)·τ·Σ|b_n|²·H_Z + |R|²B² + 2N²P_H`, with `P_H` the residues (`resP`). -/
 theorem frobOff_le {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finset ι} {χ : ι → DirichletCharacter ℂ q}
-    (hinj : Set.InjOn χ R) {t : ι → ℝ} {T N : ℝ} (hT : 0 ≤ T) (hN : 0 < N) (ht : ∀ i ∈ R, |t i| ≤ T)
+    {t : ι → ℝ} (hsep : ∀ i ∈ R, ∀ j ∈ R, i ≠ j → χ i = χ j → 1 ≤ |t i - t j|) {T N : ℝ} (hT : 0 ≤ T) (hN : 0 < N)
+    (ht : ∀ i ∈ R, |t i| ≤ T)
     {S : Finset ℕ} {N' : ℕ} (hS : S ⊆ Finset.Icc 2 N') (b : ℕ → ℂ) {V : ℝ} (hV : 0 < V)
     (hbig : ∀ i ∈ R, V ≤ ‖∑ n ∈ S, b n * χ i n * (n : ℂ) ^ ((t i : ℂ) * I)‖) {Z K : ℕ} (hZ : 1 ≤ Z)
     (hK : 1 ≤ K) {τ : ℝ} (hτ : ∀ k, k ≤ N' * Z → (k.divisors.card : ℝ) ≤ τ) :
     frobOff N R χ t ≤ N * Q0 q ^ 2 * IH ^ 2 * (R.card * ((V ^ 2)⁻¹ * (LSX q T (N' * Z) *
-        (τ * ((∑ n ∈ S, ‖b n‖ ^ 2) * HZ Z))))) + (R.card : ℝ) ^ 2 * Bmax q N T Z K ^ 2 := by
+        (τ * ((∑ n ∈ S, ‖b n‖ ^ 2) * HZ Z))))) + (R.card : ℝ) ^ 2 * Bmax q N T Z K ^ 2 +
+      2 * N ^ 2 * resP R χ t := by
   classical
   have hbig' : ∀ i ∈ R, V ≤ ‖pv S b (χ i) (((0 : ℝ) : ℂ) + ((-t i : ℝ) : ℂ) * I)‖ := by
     intro i hi
@@ -329,7 +499,7 @@ theorem frobOff_le {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finse
     push_cast; ring
   set W := (R.card : ℝ) * ((V ^ 2)⁻¹ * (LSX q T (N' * Z) * (τ * ((∑ n ∈ S, ‖b n‖ ^ 2) * HZ Z)))) with hW
   have hWu : ∀ u, ∑ i ∈ R, ∑ k ∈ R, Dp χ t Z i k u ^ 2 ≤ W := fun u =>
-    sum_Dp_sq_le hinj hT ht hS b hV hbig' hτ u
+    sum_Dp_sq_le hsep hT ht hS b hV hbig' hτ u
   have hB := Bmax_nonneg q hN.le hT Z K
   have hQ := Q0_nonneg q
   have hIH := IH_nonneg
@@ -341,19 +511,27 @@ theorem frobOff_le {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finse
       rw [Real.norm_of_nonneg (sq_nonneg _)]
       exact pow_le_pow_left₀ (Dp_nonneg χ t Z i k u) (Dp_le χ t Z i k u) 2
   have hpair : ∀ i ∈ R, ∀ k ∈ R, (if i = k then 0 else ‖gramP N χ t i k‖ ^ 2) ≤
-      N * Q0 q ^ 2 * IH * (∫ u, wH u * Dp χ t Z i k u ^ 2) + Bmax q N T Z K ^ 2 := by
+      N * Q0 q ^ 2 * IH * (∫ u, wH u * Dp χ t Z i k u ^ 2) + Bmax q N T Z K ^ 2 +
+        2 * N ^ 2 * resT χ t i k := by
     intro i hi k hk
     have hint0 : 0 ≤ ∫ u, wH u * Dp χ t Z i k u ^ 2 :=
       integral_nonneg fun u => mul_nonneg (wH_nonneg u) (sq_nonneg _)
+    have hres := resT_nonneg χ t i k
     split_ifs with hik
     · positivity
-    · have hχ : χ i ≠ χ k := fun h => hik (hinj (Finset.mem_coe.2 hi) (Finset.mem_coe.2 hk) h)
-      have hcs : (∫ u, wH u * Dp χ t Z i k u) ^ 2 ≤ IH * ∫ u, wH u * Dp χ t Z i k u ^ 2 :=
+    · have hcs : (∫ u, wH u * Dp χ t Z i k u) ^ 2 ≤ IH * ∫ u, wH u * Dp χ t Z i k u ^ 2 :=
         integral_sq_le wH_nonneg (Dp_nonneg χ t Z i k) integrable_wH (hi2 i k) (hi3 i k)
-      refine (gram_sq_le hN χ t hχ (ht i hi) (ht k hk) hZ hK).trans ?_
       have h1 := mul_le_mul_of_nonneg_left hcs (show 0 ≤ N * Q0 q ^ 2 by positivity)
-      linarith [h1, show N * Q0 q ^ 2 * (IH * ∫ u, wH u * Dp χ t Z i k u ^ 2) =
-        N * Q0 q ^ 2 * IH * ∫ u, wH u * Dp χ t Z i k u ^ 2 by ring]
+      have e1 : N * Q0 q ^ 2 * (IH * ∫ u, wH u * Dp χ t Z i k u ^ 2) =
+          N * Q0 q ^ 2 * IH * ∫ u, wH u * Dp χ t Z i k u ^ 2 := by ring
+      by_cases hχ : χ i = χ k
+      · have hr : resT χ t i k = ‖H (1 + ((t i - t k : ℝ) : ℂ) * I)‖ ^ 2 := by
+          unfold resT; exact ite_eq_left ⟨hik, hχ⟩
+        refine (gram_sq_le0 hN χ t hχ (ht i hi) (ht k hk) hZ hK).trans ?_
+        rw [hr]
+        nlinarith [h1, e1]
+      · refine (gram_sq_le hN χ t hχ (ht i hi) (ht k hk) hZ hK).trans ?_
+        nlinarith [h1, e1]
   have hswap : ∑ i ∈ R, ∑ k ∈ R, (∫ u, wH u * Dp χ t Z i k u ^ 2) =
       ∫ u, wH u * ∑ i ∈ R, ∑ k ∈ R, Dp χ t Z i k u ^ 2 := by
     have e : ∀ u, wH u * ∑ i ∈ R, ∑ k ∈ R, Dp χ t Z i k u ^ 2 =
@@ -374,15 +552,17 @@ theorem frobOff_le {ι : Type*} [DecidableEq ι] {q : ℕ} [NeZero q] {R : Finse
           integral_mono hl (integrable_wH.mul_const W) fun u => mul_le_mul_of_nonneg_left (hWu u) (wH_nonneg u)
       _ = IH * W := by rw [integral_mul_const]; rfl
   calc frobOff N R χ t = ∑ i ∈ R, ∑ k ∈ R, (if i = k then 0 else ‖gramP N χ t i k‖ ^ 2) := rfl
-    _ ≤ ∑ i ∈ R, ∑ k ∈ R, (N * Q0 q ^ 2 * IH * (∫ u, wH u * Dp χ t Z i k u ^ 2) + Bmax q N T Z K ^ 2) :=
+    _ ≤ ∑ i ∈ R, ∑ k ∈ R, (N * Q0 q ^ 2 * IH * (∫ u, wH u * Dp χ t Z i k u ^ 2) + Bmax q N T Z K ^ 2 +
+          2 * N ^ 2 * resT χ t i k) :=
         Finset.sum_le_sum fun i hi => Finset.sum_le_sum fun k hk => hpair i hi k hk
     _ = N * Q0 q ^ 2 * IH * (∑ i ∈ R, ∑ k ∈ R, (∫ u, wH u * Dp χ t Z i k u ^ 2)) +
-          (R.card : ℝ) ^ 2 * Bmax q N T Z K ^ 2 := by
-        simp only [Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul, Finset.mul_sum]
+          (R.card : ℝ) ^ 2 * Bmax q N T Z K ^ 2 + 2 * N ^ 2 * resP R χ t := by
+        simp only [resP, Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul, Finset.mul_sum]
         ring
-    _ ≤ N * Q0 q ^ 2 * IH * (IH * W) + (R.card : ℝ) ^ 2 * Bmax q N T Z K ^ 2 := by
+    _ ≤ N * Q0 q ^ 2 * IH * (IH * W) + (R.card : ℝ) ^ 2 * Bmax q N T Z K ^ 2 + 2 * N ^ 2 * resP R χ t := by
         rw [hswap]; gcongr
-    _ = N * Q0 q ^ 2 * IH ^ 2 * W + (R.card : ℝ) ^ 2 * Bmax q N T Z K ^ 2 := by ring
+    _ = N * Q0 q ^ 2 * IH ^ 2 * W + (R.card : ℝ) ^ 2 * Bmax q N T Z K ^ 2 + 2 * N ^ 2 * resP R χ t := by
+        ring
 
 end LinnikCGLFrob
 
@@ -390,4 +570,6 @@ end LinnikCGLFrob
 #print axioms LinnikCGLFrob.prod_trick_points
 #print axioms LinnikCGLFrob.sum_Dp_sq_le
 #print axioms LinnikCGLFrob.gram_sq_le
+#print axioms LinnikCGLFrob.gram_sq_le0
+#print axioms LinnikCGLFrob.resP_eq_zero_of_injOn
 #print axioms LinnikCGLFrob.frobOff_le

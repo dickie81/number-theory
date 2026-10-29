@@ -17,9 +17,9 @@ we find E(W) ⪅ N^{−2σ}(N|W|³ + N(qT)^{1/4}|W|^{21/8} + E(W)^{1/2}|W|^{1/2}
 (p. 45). "nor" is as printed (p. 47).
 
 The library's form.
-* One point per character. The library's points have distinct characters (`Set.InjOn χ R`), which suffices for
-  `CGLDensity`, a count of characters; their spacing
-  hypothesis then holds.
+* Spaced points. Two of the library's points with one character are more than `2` apart (`Spaced`), which their
+  spacing gives once `(qT)^ϵ > 2`. One point per character (`Set.InjOn χ R`), which suffices for `CGLDensity`, a
+  count of characters, is a case (`spaced_of_injOn`).
 * Their `a_n`. The library sums `b_nχ_i(n)n^{it_i}` over a set `S ⊆ (N, 2N]` with `|b_n| ≤ 1`: their `D_N` with
   `a_n = b_n` on `S` and `a_n = 0` off it.
 * Their `⪅`. Each result carries a constant for each `ε`: `C max(1, N)^ε` in `lemma109_eps`, `C(2qTN)^ε` in
@@ -29,28 +29,30 @@ The library's form.
   term `|R|⁴D_K/X^K` (`eps_absorb`) and its tail (`eps_tail`). Their (10.3) does not have this term. Their Lemma
   10.10's bound has it, so their Proposition 10.2's bound is the same.
 * `lemma1010_eps` is `lemma1010_case` with `d(q) ≤ C_δq^δ` (`card_divisors_le`) and
-  `|R| ≤ φ(q) ≤ q` (`card_le_totient`) for `G`, `1 + log max(1, N) ≤ (1 + 1/δ)max(1, N)^δ` (`log_max_le`) for `L`,
-  and `|{n ∼ N}| ≤ N + 1 ≤ 3N` (`card_dyad_le`) for the term `|{n ∼ N}||R|³`.
+  `|R| ≤ φ(q)(⌊T⌋ + 1) ≤ 2qT` (`card_le_of_spaced`) for `G`, `1 + log max(1, N) ≤ (1 + 1/δ)max(1, N)^δ`
+  (`log_max_le`) for `L`, and `|{n ∼ N}| ≤ N + 1 ≤ 3N` (`card_dyad_le`) for the term `|{n ∼ N}||R|³`.
 * `prop102`. `lemma105` gives `E ≤ 36(N^σ)^{−2}∫κ·Σ_{n₁,n₂∈S}|R₂(n₁, n₂)|³`; `sum_S_le` splits the
   cubes at `D = ⌊N²/(qT)⌋` into `lemma109_eps` and `lemma1010_eps` at `ε/2`. That gives `E ≤ A + B√E`, and `quad_le`
   gives `E ≤ 2A + B²`, their "so that".
 
 Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` as in `LinnikCGLL105`, `E` `energy` and
 `CGLT101` the displayed hypothesis.
-* `card_le_totient`, `card_dyad_le`, `sqrt_add_le`: `|R| ≤ φ(q)` for `χ` injective on `R`; `|{n ∼ N}| ≤ N + 1` for
+* `card_le_totient`, `card_le_of_spaced`, `card_dyad_le`, `sqrt_add_le`: `|R| ≤ φ(q)` for `χ` injective on `R`;
+  `|R| ≤ φ(q)(⌊T⌋ + 1)` for spaced points with `|t_i| ≤ T`; `|{n ∼ N}| ≤ N + 1` for
   `N ≥ 0`; and `√(x + y) ≤ √x + √y` for `x, y ≥ 0`.
-* `eps_sqrt_le`, `eps_absorb`, `eps_tail`, `eps_Z`, `card_pairs_le`, `eps_combine`: the steps of `lemma109_eps`.
-* `lemma109_eps`: for every `ε > 0` there is `C ≥ 0` such that, for `χ` injective on `R`, `T ≥ 1`, points
+* `eps_sqrt_le`, `eps_absorb`, `eps_absorb_cube`, `eps_tail`, `eps_Z`, `card_pairs_le`, `eps_combine`: the steps
+  of `lemma109_eps`.
+* `lemma109_eps`: for every `ε > 0` there is `C ≥ 0` such that, for spaced points, `T ≥ 1`,
   `|t_i| ≤ T`, `N ≥ 1/2` and `D ∈ ℕ` with `DqT ≤ N²`, `Σ_{n₁,n₂∼N, (n₁,n₂)≤D}|R₂(n₁, n₂)|³ ≤
   C max(1, N)^ε(N²√(|R|E) + N|R|³)`.
 * `natlog_le`, `log_max_le`, `factor_le`: the steps of `lemma1010_eps`.
-* `lemma1010_eps`: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for primitive characters injective
-  on `R`, `T ≥ 1`, points `|t_i| ≤ T`, `(qT)^{2/3}/2 ≤ N`, `D = ⌊N²/(qT)⌋` and either `|R| ≥ (qT)^{2/3}` or
+* `lemma1010_eps`: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for spaced points with primitive
+  characters, `T ≥ 1`, `|t_i| ≤ T`, `(qT)^{2/3}/2 ≤ N`, `D = ⌊N²/(qT)⌋` and either `|R| ≥ (qT)^{2/3}` or
   `(qT)^{1/2}|R|^{5/8} ≤ E^{1/8}N`, `Σ_{n₁,n₂∼N, (n₁,n₂)>D}|R₂(n₁, n₂)|³ ≤
   C(2qTN)^ε(N|R|³ + N(qT)^{1/4}|R|^{21/8} + N²√(|R|E))`.
 * `quad_le`, `sum_S_le`, `rpow_four_sub`, `sq_rpow_half`, `prop102_fin`, `prop102_sum`: the steps of `prop102`.
-* `prop102`: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for primitive characters injective on
-  `R`, `T ≥ 1`, points `|t_i| ≤ T`, `(qT)^{2/3}/2 ≤ N`, `S ⊆ (N, 2N]`, `|b_n| ≤ 1`, `|Σ_{n∈S}b_nχ_i(n)n^{it_i}| ≥
+* `prop102`: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for spaced points with primitive
+  characters, `T ≥ 1`, `|t_i| ≤ T`, `(qT)^{2/3}/2 ≤ N`, `S ⊆ (N, 2N]`, `|b_n| ≤ 1`, `|Σ_{n∈S}b_nχ_i(n)n^{it_i}| ≥
   N^σ/6` for `i ∈ R` and either `|R| ≥ (qT)^{2/3}` or `(qT)^{1/2}|R|^{5/8} ≤ E^{1/8}N`,
   `E ≤ C(qTN)^ε(|R|N^{4−4σ} + |R|^{21/8}(qT)^{1/4}N^{1−2σ} + |R|³N^{1−2σ})`.
 
@@ -81,6 +83,34 @@ lemma card_le_totient {ι : Type*} {q : ℕ} [NeZero q] (R : Finset ι) {χ : ι
     DirichletCharacter.card_eq_totient_of_hasEnoughRootsOfUnity ℂ q] at h1
   exact h1
 
+/-- `|R| ≤ φ(q)(⌊T⌋ + 1)` for spaced points (`Spaced`) with `|t_i| ≤ T`: `i ↦ (χ_i, ⌊(t_i + T)/2⌋)` is injective
+on `R`, since two points with one character and one value are less than `2` apart. -/
+lemma card_le_of_spaced {ι : Type*} {q : ℕ} [NeZero q] (R : Finset ι) {χ : ι → DirichletCharacter ℂ q}
+    {t : ι → ℝ} (hsp : Spaced R χ t) {T : ℝ} (ht : ∀ i ∈ R, |t i| ≤ T) : R.card ≤ q.totient * (⌊T⌋₊ + 1) := by
+  classical
+  have h1 : R.card ≤ ((Finset.univ : Finset (DirichletCharacter ℂ q)) ×ˢ Finset.range (⌊T⌋₊ + 1)).card := by
+    refine Finset.card_le_card_of_injOn (fun i => (χ i, ⌊(t i + T) / 2⌋₊)) (fun i hi => ?_) (fun i hi j hj hij => ?_)
+    · rw [Finset.mem_coe] at hi
+      rw [Finset.mem_coe, Finset.mem_product, Finset.mem_range]
+      have h := abs_le.mp (ht i hi)
+      exact ⟨Finset.mem_univ _, Nat.lt_succ_of_le (Nat.floor_mono (by linarith [h.2]))⟩
+    · rw [Finset.mem_coe] at hi hj
+      simp only [Prod.mk.injEq] at hij
+      by_contra hne
+      have hs := hsp i hi j hj hne hij.1
+      have hi0 : 0 ≤ (t i + T) / 2 := by linarith [(abs_le.mp (ht i hi)).1]
+      have hj0 : 0 ≤ (t j + T) / 2 := by linarith [(abs_le.mp (ht j hj)).1]
+      have a1 := Nat.floor_le hi0
+      have a2 := Nat.lt_floor_add_one ((t i + T) / 2)
+      have b1 := Nat.floor_le hj0
+      have b2 := Nat.lt_floor_add_one ((t j + T) / 2)
+      rw [hij.2] at a1 a2
+      have : |t i - t j| < 2 := by
+        rw [abs_lt]; constructor <;> linarith
+      linarith
+  rwa [Finset.card_product, Finset.card_univ, ← Nat.card_eq_fintype_card,
+    DirichletCharacter.card_eq_totient_of_hasEnoughRootsOfUnity ℂ q, Finset.card_range] at h1
+
 /-- `|{n ∼ N}| ≤ N + 1` for `N ≥ 0`. -/
 lemma card_dyad_le {N : ℝ} (hN : 0 ≤ N) : ((dyad N).card : ℝ) ≤ N + 1 := by
   unfold dyad
@@ -103,16 +133,55 @@ lemma sqrt_add_le {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) : √(x + y) ≤ √
 
 /-! ### Their Lemma 10.9 with `⪅` -/
 
-/-- The square root of the lemma: `√(rI(IE + r⁴D/X^K)) ≤ I√(rE) + √(ID)√(r⁵/X^K)` for `r, I, E, D ≥ 0`
-and `X > 0`. -/
-lemma eps_sqrt_le {r I E D X : ℝ} (K : ℕ) (hr : 0 ≤ r) (hI : 0 ≤ I) (hE : 0 ≤ E) (hD : 0 ≤ D) (hX : 0 < X) :
-    √(r * I * (I * E + r ^ 4 * D / X ^ K)) ≤ I * √(r * E) + √(I * D) * √(r ^ 5 / X ^ K) := by
-  have e1 : r * I * (I * E + r ^ 4 * D / X ^ K) = I ^ 2 * (r * E) + I * D * (r ^ 5 / X ^ K) := by
-    field_simp
-  rw [e1]
-  refine (sqrt_add_le (by positivity) (by positivity)).trans (le_of_eq ?_)
-  rw [Real.sqrt_mul (show (0 : ℝ) ≤ I ^ 2 by positivity) (r * E),
-    Real.sqrt_mul (show (0 : ℝ) ≤ I * D by positivity) (r ^ 5 / X ^ K), Real.sqrt_sq hI]
+/-- The square root of the lemma for spaced points: `√((Ir + r²D/X^K)(IE + r⁴D/X^K)) ≤
+I√(rE) + 2√(ID)√(r⁵/X^K) + r³D/X^K` for `r, I, E, D ≥ 0`, `E ≤ r³` and `X > 0`. -/
+lemma eps_sqrt_le {r I E D X : ℝ} (K : ℕ) (hr : 0 ≤ r) (hI : 0 ≤ I) (hE : 0 ≤ E) (hEr : E ≤ r ^ 3) (hD : 0 ≤ D)
+    (hX : 0 < X) :
+    √((I * r + r ^ 2 * D / X ^ K) * (I * E + r ^ 4 * D / X ^ K)) ≤
+      I * √(r * E) + 2 * √(I * D) * √(r ^ 5 / X ^ K) + r ^ 3 * D / X ^ K := by
+  have hXK : 0 < X ^ K := by positivity
+  obtain ⟨a, ha⟩ : ∃ a, a = √(r * E) := ⟨_, rfl⟩
+  obtain ⟨b, hb⟩ : ∃ b, b = √(I * D) := ⟨_, rfl⟩
+  obtain ⟨c, hc⟩ : ∃ c, c = √(r ^ 5 / X ^ K) := ⟨_, rfl⟩
+  obtain ⟨d, hd⟩ : ∃ d, d = r ^ 3 * D / X ^ K := ⟨_, rfl⟩
+  rw [← ha, ← hb, ← hc, ← hd]
+  have ha0 : 0 ≤ a := ha ▸ Real.sqrt_nonneg _
+  have hb0 : 0 ≤ b := hb ▸ Real.sqrt_nonneg _
+  have hc0 : 0 ≤ c := hc ▸ Real.sqrt_nonneg _
+  have hd0 : 0 ≤ d := by rw [hd]; positivity
+  have ha2 : a ^ 2 = r * E := by rw [ha]; exact Real.sq_sqrt (by positivity)
+  have hb2 : b ^ 2 = I * D := by rw [hb]; exact Real.sq_sqrt (by positivity)
+  have hc2 : c ^ 2 = r ^ 5 / X ^ K := by rw [hc]; exact Real.sq_sqrt (by positivity)
+  have e : (I * r + r ^ 2 * D / X ^ K) * (I * E + r ^ 4 * D / X ^ K) =
+      I ^ 2 * (r * E) + I * D * (r ^ 5 / X ^ K) + I * D * (r ^ 2 * E / X ^ K) + d ^ 2 := by
+    rw [hd]; field_simp; ring
+  have h1 : I * D * (r ^ 2 * E / X ^ K) ≤ I * D * (r ^ 5 / X ^ K) := by
+    refine mul_le_mul_of_nonneg_left (div_le_div_of_nonneg_right ?_ hXK.le) (by positivity)
+    calc r ^ 2 * E ≤ r ^ 2 * r ^ 3 := mul_le_mul_of_nonneg_left hEr (by positivity)
+      _ = r ^ 5 := by ring
+  have h2 : 0 ≤ I * D * (r ^ 5 / X ^ K) := by positivity
+  have hexp : I ^ 2 * a ^ 2 + 4 * (b ^ 2 * c ^ 2) + d ^ 2 ≤ (I * a + 2 * b * c + d) ^ 2 := by
+    nlinarith [mul_nonneg (mul_nonneg hI ha0) (mul_nonneg hb0 hc0), mul_nonneg (mul_nonneg hI ha0) hd0,
+      mul_nonneg (mul_nonneg hb0 hc0) hd0]
+  rw [ha2, hb2, hc2] at hexp
+  rw [e, Real.sqrt_le_left (by positivity)]
+  nlinarith [h1, h2, hexp]
+
+/-- The term `r³D/X^K` absorbed: for `K = 2m + 2`, `0 ≤ N ≤ M ≤ X^m`, `X ≥ 1` and `r, D ≥ 0`,
+`N²X·r³D/X^K ≤ D·Nr³`. -/
+lemma eps_absorb_cube {r N M X D : ℝ} {m K : ℕ} (hK : K = 2 * m + 2) (hr : 0 ≤ r) (hN : 0 ≤ N) (hNM : N ≤ M)
+    (hX : 1 ≤ X) (hXm : M ≤ X ^ m) (hD : 0 ≤ D) : N ^ 2 * X * (r ^ 3 * D / X ^ K) ≤ D * (N * r ^ 3) := by
+  have hX0 : 0 < X := by linarith
+  have hXK : 0 < X ^ K := by positivity
+  have h1 : N * X ≤ X ^ K := by
+    calc N * X ≤ X ^ m * X := mul_le_mul_of_nonneg_right (hNM.trans hXm) hX0.le
+      _ = X ^ (m + 1) := (pow_succ X m).symm
+      _ ≤ X ^ K := pow_le_pow_right₀ hX (by omega)
+  have h2 : 0 ≤ N * (r ^ 3 * D) := by positivity
+  rw [mul_div_assoc', div_le_iff₀ hXK]
+  calc N ^ 2 * X * (r ^ 3 * D) = N * X * (N * (r ^ 3 * D)) := by ring
+    _ ≤ X ^ K * (N * (r ^ 3 * D)) := mul_le_mul_of_nonneg_right h1 h2
+    _ = D * (N * r ^ 3) * X ^ K := by ring
 
 /-- The term `r⁴D/X^K` absorbed: for `K = 2m + 2`, `0 ≤ N ≤ M ≤ X^m`, `X > 0` and `r = 0` or `r ≥ 1`,
 `N²X√(r⁵/X^K) ≤ Nr³`. -/
@@ -214,15 +283,15 @@ lemma eps_combine {S A B C₁ C₂ C₃ Mε P Q : ℝ} (hS : S ≤ A + B) (hA : 
   have h4 : 0 ≤ (C₂ + C₃) * Mε * P := by positivity
   nlinarith
 
-/-- **Their Lemma 10.9 with their `⪅`**: for every `ε > 0` there is `C ≥ 0` such that, for `q ≥ 1`, `χ` injective on
-`R`, `T ≥ 1`, points `|t_i| ≤ T`, `N ≥ 1/2` and `D ∈ ℕ` with `DqT ≤ N²`,
+/-- **Their Lemma 10.9 with their `⪅`**: for every `ε > 0` there is `C ≥ 0` such that, for `q ≥ 1`, spaced points
+(`Spaced`), `T ≥ 1`, `|t_i| ≤ T`, `N ≥ 1/2` and `D ∈ ℕ` with `DqT ≤ N²`,
 `Σ_{n₁,n₂∼N, (n₁,n₂)≤D}|R₂(n₁, n₂)|³ ≤ C max(1, N)^ε(N²√(|R|E) + N|R|³)`. `lemma109` with
-`K = 2m + 2`, `m = ⌈1/ε⌉` and `X = 16max(1, N)^{1/m}`: then `X^m ≥ max(1, N)` absorbs the term `|R|⁴D_K/X^K`
-into `N|R|³` (`eps_absorb`), and `Z = 3T(X − 1)/(2π) ≥ 7max(1, N)^{1/m}` makes the tail at most a constant times
-`N|R|³` (`eps_Z`, `eps_tail`). -/
+`K = 2m + 2`, `m = ⌈1/ε⌉` and `X = 16max(1, N)^{1/m}`: then `X^m ≥ max(1, N)` absorbs the terms `|R|⁴D_K/X^K`
+and `|R|²D_K/X^K` into `N|R|³` (`eps_absorb`, `eps_absorb_cube`, with `E ≤ |R|³`), and
+`Z = 3T(X − 1)/(2π) ≥ 7max(1, N)^{1/m}` makes the tail at most a constant times `N|R|³` (`eps_Z`, `eps_tail`). -/
 theorem lemma109_eps {ε : ℝ} (hε : 0 < ε) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] {ι : Type} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
-      (t : ι → ℝ) (T N : ℝ) (D : ℕ), Set.InjOn χ R → 1 ≤ T → (∀ i ∈ R, |t i| ≤ T) → 1 / 2 ≤ N →
+      (t : ι → ℝ) (T N : ℝ) (D : ℕ), Spaced R χ t → 1 ≤ T → (∀ i ∈ R, |t i| ≤ T) → 1 / 2 ≤ N →
       (D : ℝ) * ((q : ℝ) * T) ≤ N ^ 2 →
       ∑ p ∈ pairs N D, ‖R2 R χ t p.1 p.2‖ ^ 3 ≤
         C * (max 1 N) ^ ε * (N ^ 2 * √((R.card : ℝ) * energy R χ t) + N * (R.card : ℝ) ^ 3) := by
@@ -246,8 +315,8 @@ theorem lemma109_eps {ε : ℝ} (hε : 0 < ε) :
   obtain ⟨ct, hct⟩ : ∃ ct : ℝ, ct = 2 * π * (Dpsi K / (2 * π) ^ K) := ⟨_, rfl⟩
   have hct0 : 0 ≤ ct := by rw [hct]; positivity
   have hCk := Ck_nonneg
-  refine ⟨Ck * c₀ * 16 * I + Ck * c₀ * √(I * Dpsi K) + 2 * ct, by positivity, ?_⟩
-  intro q _ ι R χ t T N D hinj hT ht hN hDN
+  refine ⟨Ck * c₀ * 16 * I + (2 * Ck * c₀ * √(I * Dpsi K) + Ck * c₀ * Dpsi K) + 2 * ct, by positivity, ?_⟩
+  intro q _ ι R χ t T N D hsp hT ht hN hDN
   have hN0 : 0 < N := by linarith
   obtain ⟨M, hM⟩ : ∃ M : ℝ, M = max 1 N := ⟨_, rfl⟩
   rw [← hM]
@@ -268,7 +337,7 @@ theorem lemma109_eps {ε : ℝ} (hε : 0 < ε) :
     rw [hX, mul_pow, hYm]
     have : (1 : ℝ) ≤ 16 ^ m := one_le_pow₀ (by norm_num)
     nlinarith
-  have h := lemma109 R χ t hinj hT ht hN0 hX4 D hK2
+  have h := lemma109 R χ t hsp hT ht hN0 hX4 D hK2
   rw [← hI] at h
   obtain ⟨r, hr⟩ : ∃ r : ℝ, r = (R.card : ℝ) := ⟨_, rfl⟩
   obtain ⟨E, hE⟩ : ∃ E : ℝ, E = (energy R χ t : ℝ) := ⟨_, rfl⟩
@@ -285,8 +354,10 @@ theorem lemma109_eps {ε : ℝ} (hε : 0 < ε) :
     have e : 3 * (D : ℝ) * q * T = 3 * ((D : ℝ) * ((q : ℝ) * T)) := by ring
     rw [e, hc₀]
     linarith
-  have hs2 := eps_sqrt_le K hr0 hI0 hE0 hD0 hX0
+  have hEr : E ≤ r ^ 3 := by rw [hE, hr]; exact energy_le_cube R χ t hsp
+  have hs2 := eps_sqrt_le K hr0 hI0 hE0 hEr hD0 hX0
   have hs3 := eps_absorb hK hr1 hN0.le hNM hX0 hXm
+  have hs3' := eps_absorb_cube hK hr0 hN0.le hNM (by linarith) hXm hD0
   -- the tail
   have hZK : 4 * M ^ 2 ≤ (3 * T * (X - 1) / (2 * π)) ^ (K - 2) := by
     have e : K - 2 = 2 * m := by omega
@@ -307,8 +378,9 @@ theorem lemma109_eps {ε : ℝ} (hε : 0 < ε) :
     exact eps_tail hZ0 (hcard.trans hZK) hct0 hr0 hN
   -- the main term
   have hmain : Ck * (3 * (D : ℝ) * q * T + 64 * π * N ^ 2) * X *
-      √(r * I * (I * E + r ^ 4 * Dpsi K / X ^ K)) ≤
-      Ck * c₀ * 16 * I * M ^ ε * (N ^ 2 * √(r * E)) + Ck * c₀ * √(I * Dpsi K) * (N * r ^ 3) := by
+      √((I * r + r ^ 2 * Dpsi K / X ^ K) * (I * E + r ^ 4 * Dpsi K / X ^ K)) ≤
+      Ck * c₀ * 16 * I * M ^ ε * (N ^ 2 * √(r * E)) +
+        (2 * Ck * c₀ * √(I * Dpsi K) + Ck * c₀ * Dpsi K) * (N * r ^ 3) := by
     have h1 : Ck * (3 * (D : ℝ) * q * T + 64 * π * N ^ 2) * X ≤ Ck * (c₀ * N ^ 2) * X :=
       mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hs1 hCk) hX0.le
     have h2 := mul_le_mul h1 hs2 (Real.sqrt_nonneg _) (by positivity)
@@ -318,14 +390,23 @@ theorem lemma109_eps {ε : ℝ} (hε : 0 < ε) :
       rw [e]
       refine mul_le_mul_of_nonneg_right ?_ (by positivity)
       exact mul_le_mul_of_nonneg_left hYε (by positivity)
-    have h4 : Ck * (c₀ * N ^ 2) * X * (√(I * Dpsi K) * √(r ^ 5 / X ^ K)) ≤
-        Ck * c₀ * √(I * Dpsi K) * (N * r ^ 3) := by
-      have e : Ck * (c₀ * N ^ 2) * X * (√(I * Dpsi K) * √(r ^ 5 / X ^ K)) =
-          Ck * c₀ * √(I * Dpsi K) * (N ^ 2 * X * √(r ^ 5 / X ^ K)) := by ring
+    have h4 : Ck * (c₀ * N ^ 2) * X * (2 * √(I * Dpsi K) * √(r ^ 5 / X ^ K)) ≤
+        2 * Ck * c₀ * √(I * Dpsi K) * (N * r ^ 3) := by
+      have e : Ck * (c₀ * N ^ 2) * X * (2 * √(I * Dpsi K) * √(r ^ 5 / X ^ K)) =
+          2 * Ck * c₀ * √(I * Dpsi K) * (N ^ 2 * X * √(r ^ 5 / X ^ K)) := by ring
       rw [e]
       exact mul_le_mul_of_nonneg_left hs3 (by positivity)
-    have e5 : Ck * (c₀ * N ^ 2) * X * (I * √(r * E) + √(I * Dpsi K) * √(r ^ 5 / X ^ K)) =
-        Ck * (c₀ * N ^ 2) * X * (I * √(r * E)) + Ck * (c₀ * N ^ 2) * X * (√(I * Dpsi K) * √(r ^ 5 / X ^ K)) := by
+    have h5 : Ck * (c₀ * N ^ 2) * X * (r ^ 3 * Dpsi K / X ^ K) ≤ Ck * c₀ * Dpsi K * (N * r ^ 3) := by
+      have e : Ck * (c₀ * N ^ 2) * X * (r ^ 3 * Dpsi K / X ^ K) =
+          Ck * c₀ * (N ^ 2 * X * (r ^ 3 * Dpsi K / X ^ K)) := by ring
+      rw [e]
+      have := mul_le_mul_of_nonneg_left hs3' (by positivity : (0 : ℝ) ≤ Ck * c₀)
+      linarith
+    have e5 : Ck * (c₀ * N ^ 2) * X *
+        (I * √(r * E) + 2 * √(I * Dpsi K) * √(r ^ 5 / X ^ K) + r ^ 3 * Dpsi K / X ^ K) =
+        Ck * (c₀ * N ^ 2) * X * (I * √(r * E)) +
+          Ck * (c₀ * N ^ 2) * X * (2 * √(I * Dpsi K) * √(r ^ 5 / X ^ K)) +
+          Ck * (c₀ * N ^ 2) * X * (r ^ 3 * Dpsi K / X ^ K) := by
       ring
     linarith
   exact eps_combine h hmain hs4 hMε1 (by positivity) (by positivity) (by positivity) (by positivity)
@@ -368,15 +449,19 @@ lemma log_max_le (N : ℝ) {δ : ℝ} (hδ : 0 < δ) : 1 + Real.log (max 1 N) �
   linarith
 
 /-- The factors of `lemma1010_case` against `(2qTN)^ε`: for `q, T ≥ 1`, `N ≥ 1/2` and `0 ≤ 4δ ≤ ε`,
-`q^δ·q^δ·(qTN)^δ·max(1, N)^δ ≤ (2qTN)^ε`. -/
+`q^δ·(qT)^δ·(qTN)^δ·max(1, N)^δ ≤ (2qTN)^ε`. -/
 lemma factor_le {q T N δ ε : ℝ} (hq : 1 ≤ q) (hT : 1 ≤ T) (hN : 1 / 2 ≤ N) (hδ : 0 ≤ δ) (hδε : 4 * δ ≤ ε) :
-    q ^ δ * q ^ δ * (q * T * N) ^ δ * (max 1 N) ^ δ ≤ (2 * q * T * N) ^ ε := by
+    q ^ δ * (q * T) ^ δ * (q * T * N) ^ δ * (max 1 N) ^ δ ≤ (2 * q * T * N) ^ ε := by
   have hB : 1 ≤ 2 * q * T * N := by
     have : 1 ≤ q * T := one_le_mul_of_one_le_of_one_le hq hT
     nlinarith
   have hqB : q ≤ 2 * q * T * N := by
     have : q * 1 ≤ q * (2 * T * N) := mul_le_mul_of_nonneg_left (by nlinarith) (by linarith)
     nlinarith
+  have hqTB : q * T ≤ 2 * q * T * N := by
+    have hqT0 : 0 ≤ q * T := by nlinarith
+    have := mul_le_mul_of_nonneg_left (show (1 : ℝ) ≤ 2 * N by linarith) hqT0
+    linarith
   have hqTN : q * T * N ≤ 2 * q * T * N := by
     have hN0 : 0 ≤ N := by linarith
     have : 0 ≤ q * T * N := by positivity
@@ -391,7 +476,8 @@ lemma factor_le {q T N δ ε : ℝ} (hq : 1 ≤ q) (hT : 1 ≤ T) (hN : 1 / 2 �
     have : 0 ≤ N := by linarith
     have : 0 ≤ q * T := by nlinarith
     positivity
-  calc q ^ δ * q ^ δ * (q * T * N) ^ δ * (max 1 N) ^ δ
+  have hqT0 : 0 ≤ q * T := by nlinarith
+  calc q ^ δ * (q * T) ^ δ * (q * T * N) ^ δ * (max 1 N) ^ δ
       ≤ (2 * q * T * N) ^ δ * (2 * q * T * N) ^ δ * (2 * q * T * N) ^ δ * (2 * q * T * N) ^ δ := by
         gcongr
     _ = (2 * q * T * N) ^ (4 * δ) := by
@@ -400,14 +486,14 @@ lemma factor_le {q T N δ ε : ℝ} (hq : 1 ≤ q) (hT : 1 ≤ T) (hN : 1 / 2 �
     _ ≤ (2 * q * T * N) ^ ε := Real.rpow_le_rpow_of_exponent_le hB hδε
 
 /-- **Their Lemma 10.10 with their `⪅`**: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for `q ≥ 1`,
-primitive characters injective on `R`, `T ≥ 1`, points `|t_i| ≤ T`, `(qT)^{2/3}/2 ≤ N`, `D = ⌊N²/(qT)⌋` and either
+spaced points (`Spaced`) with primitive characters, `T ≥ 1`, `|t_i| ≤ T`, `(qT)^{2/3}/2 ≤ N`, `D = ⌊N²/(qT)⌋` and either
 `|R| ≥ (qT)^{2/3}` or `(qT)^{1/2}|R|^{5/8} ≤ E^{1/8}N`, `Σ_{n₁,n₂∼N, (n₁,n₂)>D}|R₂(n₁, n₂)|³ ≤
 C(2qTN)^ε(N|R|³ + N(qT)^{1/4}|R|^{21/8} + N²√(|R|E))`. `lemma1010_case` at `δ = min(ε/4, 1)`, with
-the divisor bound `d(q) ≤ C_δq^δ` (`card_divisors_le`), `|R| ≤ φ(q) ≤ q` (`card_le_totient`) for the
-logarithm `⌊log₂|R|²⌋ + 1`, and `1 + log max(1, N) ≤ (1 + 1/δ)max(1, N)^δ`. -/
+the divisor bound `d(q) ≤ C_δq^δ` (`card_divisors_le`), `|R| ≤ φ(q)(⌊T⌋ + 1) ≤ 2qT` (`card_le_of_spaced`) for
+the logarithm `⌊log₂|R|²⌋ + 1`, and `1 + log max(1, N) ≤ (1 + 1/δ)max(1, N)^δ`. -/
 theorem lemma1010_eps (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] {ι : Type} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
-      (t : ι → ℝ) (T N : ℝ), 1 ≤ T → (∀ i ∈ R, (χ i).IsPrimitive) → Set.InjOn χ R → (∀ i ∈ R, |t i| ≤ T) →
+      (t : ι → ℝ) (T N : ℝ), 1 ≤ T → (∀ i ∈ R, (χ i).IsPrimitive) → Spaced R χ t → (∀ i ∈ R, |t i| ≤ T) →
       ((q : ℝ) * T) ^ (2 / 3 : ℝ) / 2 ≤ N →
       (((q : ℝ) * T) ^ (2 / 3 : ℝ) ≤ R.card ∨
         ((q : ℝ) * T) ^ (1 / 2 : ℝ) * (R.card : ℝ) ^ (5 / 8 : ℝ) ≤ (energy R χ t : ℝ) ^ (1 / 8 : ℝ) * N) →
@@ -424,9 +510,9 @@ theorem lemma1010_eps (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
   have hl2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
   have hCd : 1 ≤ LinnikPower.Cdiv δ := LinnikPower.one_le_Cdiv hδ0 hδ1
   have hcG0 : 0 ≤ cG := by rw [hcG]; positivity
-  refine ⟨8 * C₁ * cG * (1 + 1 / δ) + 3, by positivity, ?_⟩
-  intro q _ ι R χ t T N hT1 hprim hinj ht hN halt
-  have h := hC₁ q R χ t T N hT1 hprim hinj ht hN halt
+  refine ⟨16 * C₁ * cG * (1 + 1 / δ) + 3, by positivity, ?_⟩
+  intro q _ ι R χ t T N hT1 hprim hsp ht hN halt
+  have h := hC₁ q R χ t T N hT1 hprim hsp ht hN halt
   have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
   have hQ1 : 1 ≤ (q : ℝ) * T := one_le_mul_of_one_le_of_one_le hq1 hT1
   have hN2 : 1 / 2 ≤ N := by
@@ -434,18 +520,41 @@ theorem lemma1010_eps (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
     linarith
   have hN0 : 0 < N := by linarith
   -- the divisor factor
-  have hG : (q.divisors.card : ℝ) * (Nat.log 2 (R.card ^ 2) + 1) ≤ cG * ((q : ℝ) ^ δ * (q : ℝ) ^ δ) := by
+  have hG : (q.divisors.card : ℝ) * (Nat.log 2 (R.card ^ 2) + 1) ≤
+      2 * cG * ((q : ℝ) ^ δ * ((q : ℝ) * T) ^ δ) := by
     have h1 := LinnikPower.card_divisors_le hδ0 hδ1 q
-    have hRq : R.card ^ 2 ≤ q ^ 2 := by
-      have := card_le_totient R hinj
-      exact Nat.pow_le_pow_left (this.trans (Nat.totient_le q)) 2
-    have h2 := natlog_le (Nat.one_le_iff_ne_zero.2 (NeZero.ne q)) hRq hδ0
+    obtain ⟨Q, hQ⟩ : ∃ Q : ℕ, Q = q.totient * (⌊T⌋₊ + 1) := ⟨_, rfl⟩
+    have hQ1 : 1 ≤ Q := by
+      rw [hQ]
+      exact Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero
+        (Nat.totient_pos.2 (Nat.pos_of_ne_zero (NeZero.ne q))).ne' (Nat.succ_ne_zero _))
+    have hRQ : R.card ^ 2 ≤ Q ^ 2 := Nat.pow_le_pow_left (hQ ▸ card_le_of_spaced R hsp ht) 2
+    have h2 := natlog_le hQ1 hRQ hδ0
+    -- `Q ≤ q(T + 1) ≤ 2qT`
+    have hQqT : (Q : ℝ) ≤ 2 * ((q : ℝ) * T) := by
+      rw [hQ]
+      push_cast
+      have htot : (q.totient : ℝ) ≤ q := by exact_mod_cast Nat.totient_le q
+      have hfl : (⌊T⌋₊ : ℝ) ≤ T := Nat.floor_le (by linarith)
+      have h0 : (0 : ℝ) ≤ q.totient := Nat.cast_nonneg _
+      calc (q.totient : ℝ) * (⌊T⌋₊ + 1) ≤ q * (T + 1) :=
+            mul_le_mul htot (by linarith) (by positivity) (by positivity)
+        _ ≤ 2 * ((q : ℝ) * T) := by nlinarith
+    have hQδ : (Q : ℝ) ^ δ ≤ 2 * ((q : ℝ) * T) ^ δ := by
+      calc (Q : ℝ) ^ δ ≤ (2 * ((q : ℝ) * T)) ^ δ := Real.rpow_le_rpow (by positivity) hQqT hδ0.le
+        _ = 2 ^ δ * ((q : ℝ) * T) ^ δ := Real.mul_rpow (by norm_num) (by positivity)
+        _ ≤ 2 * ((q : ℝ) * T) ^ δ := by
+            refine mul_le_mul_of_nonneg_right ?_ (by positivity)
+            calc (2 : ℝ) ^ δ ≤ 2 ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le (by norm_num) hδ1
+              _ = 2 := Real.rpow_one 2
+    have h2' : (Nat.log 2 (R.card ^ 2) : ℝ) + 1 ≤ (2 / (δ * Real.log 2) + 1) * (2 * ((q : ℝ) * T) ^ δ) :=
+      h2.trans (mul_le_mul_of_nonneg_left hQδ (by positivity))
     have h3 : (0 : ℝ) ≤ (Nat.log 2 (R.card ^ 2) : ℝ) + 1 := by positivity
     rw [hcG]
     calc (q.divisors.card : ℝ) * (Nat.log 2 (R.card ^ 2) + 1)
-        ≤ (LinnikPower.Cdiv δ * (q : ℝ) ^ δ) * ((2 / (δ * Real.log 2) + 1) * (q : ℝ) ^ δ) :=
-          mul_le_mul h1 h2 h3 (by positivity)
-      _ = LinnikPower.Cdiv δ * (2 / (δ * Real.log 2) + 1) * ((q : ℝ) ^ δ * (q : ℝ) ^ δ) := by ring
+        ≤ (LinnikPower.Cdiv δ * (q : ℝ) ^ δ) * ((2 / (δ * Real.log 2) + 1) * (2 * ((q : ℝ) * T) ^ δ)) :=
+          mul_le_mul h1 h2' h3 (by positivity)
+      _ = 2 * (LinnikPower.Cdiv δ * (2 / (δ * Real.log 2) + 1)) * ((q : ℝ) ^ δ * ((q : ℝ) * T) ^ δ) := by ring
   have hL := log_max_le N hδ0
   have hfac := factor_le hq1 hT1 hN2 hδ0.le hδε
   -- the sum
@@ -475,20 +584,21 @@ theorem lemma1010_eps (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
     have h5 : 3 * W ≤ 3 * (2 * (q : ℝ) * T * N) ^ ε * W := by nlinarith
     linarith
   have hmain : 8 * C₁ * ((q.divisors.card : ℝ) * (Nat.log 2 (R.card ^ 2) + 1)) * ((q : ℝ) * T * N) ^ δ *
-      (1 + Real.log (max 1 N)) * W ≤ 8 * C₁ * cG * (1 + 1 / δ) * (2 * (q : ℝ) * T * N) ^ ε * W := by
+      (1 + Real.log (max 1 N)) * W ≤ 16 * C₁ * cG * (1 + 1 / δ) * (2 * (q : ℝ) * T * N) ^ ε * W := by
     have hΛ : 0 ≤ ((q : ℝ) * T * N) ^ δ := by positivity
     calc 8 * C₁ * ((q.divisors.card : ℝ) * (Nat.log 2 (R.card ^ 2) + 1)) * ((q : ℝ) * T * N) ^ δ *
           (1 + Real.log (max 1 N)) * W
-        ≤ 8 * C₁ * (cG * ((q : ℝ) ^ δ * (q : ℝ) ^ δ)) * ((q : ℝ) * T * N) ^ δ *
+        ≤ 8 * C₁ * (2 * cG * ((q : ℝ) ^ δ * ((q : ℝ) * T) ^ δ)) * ((q : ℝ) * T * N) ^ δ *
             ((1 + 1 / δ) * (max 1 N) ^ δ) * W := by
           gcongr
           have : 0 ≤ Real.log (max 1 N) := Real.log_nonneg (le_max_left 1 N)
           linarith
-      _ = 8 * C₁ * cG * (1 + 1 / δ) * ((q : ℝ) ^ δ * (q : ℝ) ^ δ * ((q : ℝ) * T * N) ^ δ * (max 1 N) ^ δ) * W := by
+      _ = 16 * C₁ * cG * (1 + 1 / δ) *
+            ((q : ℝ) ^ δ * ((q : ℝ) * T) ^ δ * ((q : ℝ) * T * N) ^ δ * (max 1 N) ^ δ) * W := by
           ring
-      _ ≤ 8 * C₁ * cG * (1 + 1 / δ) * (2 * (q : ℝ) * T * N) ^ ε * W := by gcongr
-  have e : (8 * C₁ * cG * (1 + 1 / δ) + 3) * (2 * (q : ℝ) * T * N) ^ ε * W =
-      8 * C₁ * cG * (1 + 1 / δ) * (2 * (q : ℝ) * T * N) ^ ε * W + 3 * (2 * (q : ℝ) * T * N) ^ ε * W := by ring
+      _ ≤ 16 * C₁ * cG * (1 + 1 / δ) * (2 * (q : ℝ) * T * N) ^ ε * W := by gcongr
+  have e : (16 * C₁ * cG * (1 + 1 / δ) + 3) * (2 * (q : ℝ) * T * N) ^ ε * W =
+      16 * C₁ * cG * (1 + 1 / δ) * (2 * (q : ℝ) * T * N) ^ ε * W + 3 * (2 * (q : ℝ) * T * N) ^ ε * W := by ring
   rw [← hW, e]
   linarith
 
@@ -590,8 +700,8 @@ lemma prop102_sum {s s₁ s₂ C₁ C₂ C₃ M Λ N r E Q4 : ℝ} (hsplit : s �
   rw [e]
   linarith
 
-/-- **Their Proposition 10.2, at one point per character**: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such
-that, for `q ≥ 1`, primitive characters injective on `R`, `T ≥ 1`, points `|t_i| ≤ T`, `(qT)^{2/3}/2 ≤ N`,
+/-- **Their Proposition 10.2**: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for `q ≥ 1`, spaced
+points (`Spaced`) with primitive characters, `T ≥ 1`, `|t_i| ≤ T`, `(qT)^{2/3}/2 ≤ N`,
 `S ⊆ (N, 2N]`, `|b_n| ≤ 1`, `|Σ_{n∈S}b_nχ_i(n)n^{it_i}| ≥ N^σ/6` for `i ∈ R`, and either `|R| ≥ (qT)^{2/3}` or
 `(qT)^{1/2}|R|^{5/8} ≤ E^{1/8}N`, `E ≤ C(qTN)^ε(|R|N^{4−4σ} + |R|^{21/8}(qT)^{1/4}N^{1−2σ} + |R|³N^{1−2σ})`.
 `lemma105` bounds `E` by the cubes over `S × S`; `sum_S_le` splits them at `D = ⌊N²/(qT)⌋` into
@@ -599,7 +709,7 @@ that, for `q ≥ 1`, primitive characters injective on `R`, `T ≥ 1`, points `|
 theorem prop102 (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] {ι : Type} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
       (t : ι → ℝ) (T N σ : ℝ) (S : Finset ℕ) (b : ℕ → ℂ),
-      Set.InjOn χ R → (∀ i ∈ R, (χ i).IsPrimitive) → 1 ≤ T → (∀ i ∈ R, |t i| ≤ T) →
+      Spaced R χ t → (∀ i ∈ R, (χ i).IsPrimitive) → 1 ≤ T → (∀ i ∈ R, |t i| ≤ T) →
       ((q : ℝ) * T) ^ (2 / 3 : ℝ) / 2 ≤ N → (∀ n ∈ S, N < n ∧ (n : ℝ) ≤ 2 * N) → (∀ n, ‖b n‖ ≤ 1) →
       (∀ i ∈ R, N ^ σ / 6 ≤ ‖∑ n ∈ S, b n * χ i n * (n : ℂ) ^ ((t i : ℂ) * I)‖) →
       (((q : ℝ) * T) ^ (2 / 3 : ℝ) ≤ R.card ∨
@@ -614,7 +724,7 @@ theorem prop102 (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
   obtain ⟨C₃, hC₃⟩ : ∃ C₃ : ℝ, C₃ = C₁ + C₂ := ⟨_, rfl⟩
   have hC₃0 : 0 ≤ C₃ := by rw [hC₃]; positivity
   refine ⟨(2 * c₁ * C₃ + c₁ ^ 2 * C₃ ^ 2) * 2 ^ ε, by positivity, ?_⟩
-  intro q _ ι R χ t T N σ S b hinj hprim hT1 ht hN hS hb hbig halt
+  intro q _ ι R χ t T N σ S b hsp hprim hT1 ht hN hS hb hbig halt
   have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
   have hQ1 : 1 ≤ (q : ℝ) * T := one_le_mul_of_one_le_of_one_le hq1 hT1
   have hN2 : 1 / 2 ≤ N := by
@@ -622,14 +732,14 @@ theorem prop102 (hT : CGLT101) {ε : ℝ} (hε : 0 < ε) :
     linarith
   have hN0 : 0 < N := by linarith
   -- the energy by the cubes
-  have h105 := lemma105 hinj t hN0 (fun n hn => ⟨(hS n hn).1.le, (hS n hn).2⟩) hb hbig
+  have h105 := lemma105 t hsp hN0 (fun n hn => ⟨(hS n hn).1.le, (hS n hn).2⟩) hb hbig
   obtain ⟨D, hD⟩ : ∃ D : ℕ, D = ⌊N ^ 2 / ((q : ℝ) * T)⌋₊ := ⟨_, rfl⟩
   have hDqT : (D : ℝ) * ((q : ℝ) * T) ≤ N ^ 2 := by
     have : (D : ℝ) ≤ N ^ 2 / ((q : ℝ) * T) := by rw [hD]; exact Nat.floor_le (by positivity)
     rwa [le_div_iff₀ (by positivity)] at this
   have hsplit := sum_S_le R χ t hN0 hS D
-  have hs1 := h109 q R χ t T N D hinj hT1 ht hN2 hDqT
-  have hs2 := h1010 q R χ t T N hT1 hprim hinj ht hN halt
+  have hs1 := h109 q R χ t T N D hsp hT1 ht hN2 hDqT
+  have hs2 := h1010 q R χ t T N hT1 hprim hsp ht hN halt
   rw [← hD] at hs2
   -- `max(1, N)^{ε/2} ≤ (2qTN)^{ε/2}`
   have hqTN : N ≤ (q : ℝ) * T * N := by
