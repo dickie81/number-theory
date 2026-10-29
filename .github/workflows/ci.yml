@@ -38,6 +38,8 @@ jobs:
               - 'scripts/build.sh'
               - 'scripts/lean-slots.sh'
               - 'scripts/check_axioms.py'
+              - 'scripts/lean_targets.py'
+              - 'scripts/import_cone.py'
               - '.github/actions/lean-build/**'
               - '.github/workflows/ci.yml'
 
@@ -53,13 +55,18 @@ jobs:
         run: python3 scripts/check_hygiene.py
       - name: lakefile.lean matches lib/
         run: python3 scripts/gen_lakefile.py --check
+      - name: docs/inventory.md matches the sources
+        run: python3 scripts/inventory.py --check
+      - name: The page on the zeros agrees with the Lean and the paper
+        run: python3 scripts/zeros_page.py --check
       - name: The vendored libraries are upstream's with the port patches
         run: python3 scripts/check_vendor.py
       - name: The certificate regenerates
         run: python3 tools/linnik/check_certificate.py
 
   # Every paper, papers/<name>/main.tex, so a new paper needs no change here; then every supplement,
-  # papers/<name>/supplement.tex, which reads its paper's cross-references from main.aux.
+  # papers/<name>/supplement.tex, which reads its paper's cross-references from main.aux. Then the site, as pages.yml
+  # builds it, with the page on the zeros, which cites the compiled paper's numbering.
   papers:
     name: The papers build
     runs-on: ubuntu-latest
@@ -81,9 +88,19 @@ jobs:
             papers/*/supplement.pdf
           if-no-files-found: error
           retention-days: 14
+      - name: The site builds
+        run: python3 scripts/build_site.py _site
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: _site
+          if-no-files-found: error
+          retention-days: 14
 
   # The Lean build in stages: a cold build takes longer than one job may run (six hours). Each stage continues from
-  # the previous stage's cache, and runs only if the previous one stopped at its time limit.
+  # the previous stage's cache, and runs only if the previous one stopped at its time limit. Each builds Check,
+  # CheckAll, and every module the change edits or that imports one (scripts/lean_targets.py); the checkout keeps the
+  # commit's parent, a pull request's base.
   build-1:
     name: Lean build (stage 1)
     needs: changes
@@ -94,6 +111,8 @@ jobs:
       partial: ${{ steps.build.outputs.partial }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - id: build
         uses: ./.github/actions/lean-build
         with:
@@ -109,6 +128,8 @@ jobs:
       partial: ${{ steps.build.outputs.partial }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - id: build
         uses: ./.github/actions/lean-build
         with:
@@ -122,6 +143,8 @@ jobs:
     timeout-minutes: 355
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - id: build
         uses: ./.github/actions/lean-build
         with:

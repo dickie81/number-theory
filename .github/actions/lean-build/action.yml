@@ -1,9 +1,11 @@
 name: Lean build stage
 description: >-
   One stage of the Lean build. It restores the library's build from the Actions cache, gets Mathlib's prebuilt
-  files, builds the default target with scripts/build.sh for at most `minutes` minutes, and saves the build to the
-  cache, even when the stage fails or is cancelled. If the build finished, it then checks the axioms. A cold build
-  takes longer than one job may run, so the workflow chains stages: each one continues from the last one's cache.
+  files, builds the targets that validate the change (scripts/lean_targets.py) with scripts/build.sh for at most
+  `minutes` minutes, and saves the build to the cache, even when the stage fails or is cancelled. If the build
+  finished, it then checks the axioms of Check and CheckAll. A cold build takes longer than one job may run, so the
+  workflow chains stages: each one continues from the last one's cache. The job must check out the commit with its
+  parent (fetch-depth 2), so that a pull request's merge commit has its base.
 inputs:
   stage:
     description: The stage's number, used in the cache key.
@@ -46,12 +48,33 @@ runs:
           lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}-
           lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
+    - name: Choose the targets
+      id: targets
+      shell: bash
+      run: |
+        # A pull request is compared with its base (the first parent of its merge commit), a push with the commit it
+        # replaced. A manual run, a new branch, or a base that cannot be fetched builds every library.
+        base=
+        case "${{ github.event_name }}" in
+          pull_request) base=$(git rev-parse HEAD^1) ;;
+          push) base="${{ github.event.before }}" ;;
+        esac
+        if [ -n "$base" ] && [ "$base" != 0000000000000000000000000000000000000000 ] \
+            && { git cat-file -e "$base^{commit}" 2>/dev/null || git fetch --no-tags --depth=1 origin "$base"; }; then
+          targets=$(python3 scripts/lean_targets.py "$base")
+        else
+          targets=$(python3 scripts/lean_targets.py --all)
+        fi
+        echo "$(echo "$targets" | wc -l) targets:"
+        echo "$targets"
+        echo "list=$(echo $targets)" >> "$GITHUB_OUTPUT"
+
     - name: Build
       id: build
       shell: bash
       run: |
         set +e
-        timeout "${{ inputs.minutes }}m" scripts/build.sh
+        timeout "${{ inputs.minutes }}m" scripts/build.sh ${{ steps.targets.outputs.list }}
         rc=$?
         if [ "$rc" -eq 124 ]; then
           pkill -x lean
@@ -76,4 +99,6 @@ runs:
     - name: Check the axioms
       if: steps.build.outputs.partial != 'true'
       shell: bash
-      run: python3 scripts/check_axioms.py
+      run: |
+        python3 scripts/check_axioms.py
+        python3 scripts/check_axioms.py --all

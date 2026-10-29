@@ -1,7 +1,8 @@
 # Formalisations
 
 A paper in this repository claims only its own results. When a paper uses a result from the literature, that result
-is formalised in `lib/` and documented here. Each note gives:
+is formalised in `lib/` and documented here. A few results from the literature that the library formalises for their
+own sake, with no paper using them, are documented here too; the index says so. Each note gives:
 
 - the source;
 - the Lean statement;
@@ -24,6 +25,7 @@ The paper cites the note and does not restate the result as its own.
 | Harman's sieve in the form used, with Brun's fundamental lemma and Buchstab's identity | G. Harman, J. London Math. Soc. 27 (1983) and *Prime-Detecting Sieves* (2007); V. Brun (1920); A. A. Buchstab, Mat. Sb. 2(44) (1937) | `SieveProp6.prop6`, `SieveBrun.fundamental` | The leaves of the Linnik paper's decomposition (`SieveLeaves`) | [harman-sieve.md](harman-sieve.md) |
 | Kubota's cubic theta function, with Patterson's coefficients, in the form the half-plane's route uses | T. Kubota (1969); S. J. Patterson, J. Reine Angew. Math. 296 (1977); A. Dunn and M. Radziwiłł, Ann. of Math. 200 (2024) | `Eis.kubotaTheta`, which proves `Eis.KubotaTheta` | The zero-free half-plane (`Eis.thetaRows_of_kubota`) | [cubic-theta.md](cubic-theta.md) |
 | The quadratic large sieve over `ℤ[ω]` | D. R. Heath-Brown, Acta Arith. 72 (1995); L. Goldmakher and B. Louvel, Math. Proc. Cambridge Philos. Soc. 154 (2013) | `Eis.quadLargeSieve`, which proves `Eis.QuadLargeSieve` | The zero-free half-plane (the companion preprint's Lemma 6.5) | [quadratic-large-sieve.md](quadratic-large-sieve.md) |
+| Zero density for `ζ` with Guth and Maynard's exponent `30/13`, and the classical `12/5`, with primes in short intervals for `θ > 17/30` and in almost all for `θ > 2/15` | L. Guth and J. Maynard, Ann. of Math. 203 (2026); A. E. Ingham, Quart. J. Math. 11 (1940); M. N. Huxley, Invent. Math. 15 (1972) | `ZetaGMDensity.densityXi_thirty_thirteenths`, `ZetaGMLV.gm_large_values` | No paper: a result of the library | [zeta-density.md](zeta-density.md) |
 
 The Chen–Gupta–Li note also covers the paper's Theorem 10.1, which they state for primitive characters and credit to
 Heath-Brown. Heath-Brown's paper could not be read, so the library proves the theorem (`LinnikCGLHB101.cglt101`) by
