@@ -6,13 +6,13 @@ rewrites it, and CI checks that it is current (`--check`).
 `lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 686 theorems: the library's final
 results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 113 modules that neither `Check` nor `CheckAll` imports, directly or
+The last section lists the 115 modules that neither `Check` nor `CheckAll` imports, directly or
 not, with their headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 206 | 678 | 15 | 86 |
+| `lib/pnt` | 206 | 678 | 17 | 87 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -1629,6 +1629,12 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveP6ib.prop6ib_core`: Proposition 6 with the bilinear estimate, at one `q`, for given windows
 - `SieveP6ib.prop6ib_at`: Proposition 6 with the bilinear estimate, at one `q`
 - `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate
+
+#### `SieveRule`: The certificate under a decomposition rule, in the reals and over `Finset`
+
+- `SieveCert.ibOK_sound`: The bilinear Type I rule's witnesses
+
+#### `SieveRuleDefs`: The certificate under a decomposition rule, without Mathlib
 
 #### `SieveTreeStop`: Buchstab's tree with a stopping rule
 
