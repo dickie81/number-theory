@@ -112,7 +112,7 @@ lean_lib Core where
     .one `Zeta, .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaInputs,
     .one `ZetaJoins]
 
-/-- lib/pnt: 593 modules. -/
+/-- lib/pnt: 594 modules. -/
 lean_lib PNT where
   srcDir := "lib/pnt"
   globs := #[
@@ -260,11 +260,11 @@ lean_lib PNT where
     .one `SieveRough, .one `SieveRoughLo, .one `SieveRoughTuple, .one `SieveRoute,
     .one `SieveSep, .one `SieveSmooth, .one `SieveSpline, .one `SieveStops1,
     .one `SieveStops2, .one `SieveTree, .one `SieveTypeIB, .one `SieveTypeIBBrun,
-    .one `SieveTypeIBEv, .one `SieveTypeIBFam, .one `SieveTypeIBLeaf, .one `SieveTypeII,
-    .one `SieveTypeIIGen, .one `SieveTypeIIHM, .one `SieveTypeIIR, .one `SieveTypeIIU,
-    .one `SieveTypeIIU22240D, .one `SieveTypeIIU226C, .one `SieveTypeIIU227, .one `SieveWeight,
-    .one `SmoothPerron, .one `SquarefreeCount, .one `Subconvexity, .one `TwinKV,
-    .one `WanderLadderPNT]
+    .one `SieveTypeIBEv, .one `SieveTypeIBFam, .one `SieveTypeIBLeaf, .one `SieveTypeIBSum,
+    .one `SieveTypeII, .one `SieveTypeIIGen, .one `SieveTypeIIHM, .one `SieveTypeIIR,
+    .one `SieveTypeIIU, .one `SieveTypeIIU22240D, .one `SieveTypeIIU226C, .one `SieveTypeIIU227,
+    .one `SieveWeight, .one `SmoothPerron, .one `SquarefreeCount, .one `Subconvexity,
+    .one `TwinKV, .one `WanderLadderPNT]
 
 /-- lib/dh: 53 modules. -/
 lean_lib DH where
