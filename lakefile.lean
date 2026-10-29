@@ -112,7 +112,7 @@ lean_lib Core where
     .one `Zeta, .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaInputs,
     .one `ZetaJoins]
 
-/-- lib/pnt: 596 modules. -/
+/-- lib/pnt: 597 modules. -/
 lean_lib PNT where
   srcDir := "lib/pnt"
   globs := #[
@@ -250,21 +250,22 @@ lean_lib PNT where
     .one `SieveCert22240RP9, .one `SieveCert22240RP90, .one `SieveCert22240RP91, .one `SieveCert22240RP92,
     .one `SieveCert22240RP93, .one `SieveCert22240RP94, .one `SieveCert22240RP95, .one `SieveCert22240RP96,
     .one `SieveCert22240RP97, .one `SieveCert22240RP98, .one `SieveCert22240RP99, .one `SieveCert2Defs,
-    .one `SieveCertDefs, .one `SieveChain, .one `SieveCmp, .one `SieveCount,
-    .one `SieveCurveGlue, .one `SieveDecomp, .one `SieveDiff, .one `SieveDrop,
-    .one `SieveDrop2, .one `SieveDyadic, .one `SieveExact, .one `SieveFamily,
-    .one `SieveGrid22240R, .one `SieveHMBin, .one `SieveHMBins, .one `SieveHMWindow,
-    .one `SieveKept, .one `SieveKeptB, .one `SieveKeptLeaf, .one `SieveLeaf,
-    .one `SieveLeaves, .one `SieveLemma1, .one `SieveMain, .one `SieveMain2,
-    .one `SieveOmegaB, .one `SieveProp6, .one `SieveQ, .one `SieveRanges,
-    .one `SieveRough, .one `SieveRoughLo, .one `SieveRoughTuple, .one `SieveRoute,
-    .one `SieveSep, .one `SieveSmooth, .one `SieveSpline, .one `SieveStops1,
-    .one `SieveStops2, .one `SieveTree, .one `SieveTreeStop, .one `SieveTypeIB,
-    .one `SieveTypeIBAsym, .one `SieveTypeIBBrun, .one `SieveTypeIBEv, .one `SieveTypeIBFam,
-    .one `SieveTypeIBLeaf, .one `SieveTypeIBSum, .one `SieveTypeII, .one `SieveTypeIIGen,
-    .one `SieveTypeIIHM, .one `SieveTypeIIR, .one `SieveTypeIIU, .one `SieveTypeIIU22240D,
-    .one `SieveTypeIIU226C, .one `SieveTypeIIU227, .one `SieveWeight, .one `SmoothPerron,
-    .one `SquarefreeCount, .one `Subconvexity, .one `TwinKV, .one `WanderLadderPNT]
+    .one `SieveCertDefs, .one `SieveChain, .one `SieveChainR, .one `SieveCmp,
+    .one `SieveCount, .one `SieveCurveGlue, .one `SieveDecomp, .one `SieveDiff,
+    .one `SieveDrop, .one `SieveDrop2, .one `SieveDyadic, .one `SieveExact,
+    .one `SieveFamily, .one `SieveGrid22240R, .one `SieveHMBin, .one `SieveHMBins,
+    .one `SieveHMWindow, .one `SieveKept, .one `SieveKeptB, .one `SieveKeptLeaf,
+    .one `SieveLeaf, .one `SieveLeaves, .one `SieveLemma1, .one `SieveMain,
+    .one `SieveMain2, .one `SieveOmegaB, .one `SieveProp6, .one `SieveQ,
+    .one `SieveRanges, .one `SieveRough, .one `SieveRoughLo, .one `SieveRoughTuple,
+    .one `SieveRoute, .one `SieveSep, .one `SieveSmooth, .one `SieveSpline,
+    .one `SieveStops1, .one `SieveStops2, .one `SieveTree, .one `SieveTreeStop,
+    .one `SieveTypeIB, .one `SieveTypeIBAsym, .one `SieveTypeIBBrun, .one `SieveTypeIBEv,
+    .one `SieveTypeIBFam, .one `SieveTypeIBLeaf, .one `SieveTypeIBSum, .one `SieveTypeII,
+    .one `SieveTypeIIGen, .one `SieveTypeIIHM, .one `SieveTypeIIR, .one `SieveTypeIIU,
+    .one `SieveTypeIIU22240D, .one `SieveTypeIIU226C, .one `SieveTypeIIU227, .one `SieveWeight,
+    .one `SmoothPerron, .one `SquarefreeCount, .one `Subconvexity, .one `TwinKV,
+    .one `WanderLadderPNT]
 
 /-- lib/dh: 53 modules. -/
 lean_lib DH where
