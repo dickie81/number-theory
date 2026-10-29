@@ -55,6 +55,8 @@ jobs:
         run: python3 scripts/check_hygiene.py
       - name: lakefile.lean matches lib/
         run: python3 scripts/gen_lakefile.py --check
+      - name: docs/inventory.md matches the sources
+        run: python3 scripts/inventory.py --check
       - name: The vendored libraries are upstream's with the port patches
         run: python3 scripts/check_vendor.py
       - name: The certificate regenerates
