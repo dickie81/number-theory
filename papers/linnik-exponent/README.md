@@ -5,8 +5,9 @@ inputs and the density curve, the Type II estimate (ending with an account of th
 sieve, the decomposition and its certificate (with a figure of the cells, drawn by `tools/linnik/fig_cells.py` into
 `fig-cells.tex`), the proof, the formalisation, and a comparison with what the inputs give without the sieve; its
 appendix is the claims table. `supplement.tex` is its supplement: the proofs of four standard results (the prime sums,
-the Type II families, Harman's comparison and the rough numbers, §S1–§S4), the details of the formalisation (§S5) and
-the computations around the exponent (§S6). The
+the Type II families, the rough numbers and Harman's comparison, §S1–§S4), the details of the formalisation (§S5) and
+the computations around the exponent (§S6). The two share their references, `references.tex`, so that each work has
+the same number in both; the supplement adds four of its own. The
 bibliography entries were checked against the publishers', arXiv and repository pages and, for Ingham and Huxley,
 against scans of the originals; Xylouris's Acta Arith. 150 paper (L = 5.18, checked against the journal's PDF and EUDML) and the Lamzouri–Li–Soundararajan corrigendum (checked against the AMS contents page, Math. Comp. 86 (2017), 2551–2554) were added later; Buchstab's volume, issue and pages (1937) are still unverified, having been seen in secondary
 sources only; Banks and Shparlinski's entry and their exponent `2.1115` are taken from R. Li's and Chen, Gupta and Li's citations of that paper, which was not read; and the entries for the OpenAI preprints, OpenAI's `lean/formalization.yaml` catalogue and the AIProofWatch record are web pages, not refereed sources. The paper claims only its own steps. The results it uses from the literature are cited to their sources and to

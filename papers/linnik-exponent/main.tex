@@ -32,35 +32,29 @@
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{inputthm}{Input}
-\renewcommand{\theinputthm}{I\arabic{inputthm}}
 
 \newcommand{\lean}[1]{\texttt{#1}}
 \newcommand{\file}[1]{\nolinkurl{#1}}
 \emergencystretch=3em
 
-\title{The least prime in an arithmetic progression: the exponent $278/125$ from a half-plane zero-free region, a zero-density estimate and a formalised sieve}
+\title{Linnik's constant below the zero-density exponent: $278/125$ from a zero-free half-plane}
 \author{Ritchie Comley}
-\date{Draft, 28 October 2026}
+\date{Draft, 29 October 2026}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-We prove, in Lean~4, that there is a constant $K$ such that, for every $q \ge 1$ and every $a$ prime to $q$, there is a
-prime $p \equiv a \pmod q$ with $p \le K q^{278/125}$. The Lean theorem has no hypotheses and depends on no axioms beyond
-Lean's standard three; its truth rests on Lean's kernel, Mathlib and the pinned toolchain, not on any preprint. Its
-proof uses two recent results that have not been refereed, OpenAI's zero-free half-plane $\operatorname{Re} s > 11/12$
-for every Dirichlet $L$-function and Chen, Gupta and Li's zero-density estimate, and the library proves both: the
-half-plane along the route of OpenAI's companion preprint, and for the density estimate their Proposition~3.1, from
-which it derives exponents within $10^{-4}$ of their $4/(1 + \sigma)$ at the left ends of $30$ short steps. From the two
-results, as their authors state them, the classical deduction gives every exponent above $7/3$ (from the library's
-thirty steps, every exponent above $2.3334$). The proof here goes below $7/3$: a Type~II estimate that sorts
-the characters by the real parts of their $L$-functions' zeros feeds Harman's sieve, and the sieve's loss is bounded
-by a certificate computed exactly in integers and checked by Lean's kernel. The exponent $278/125$ is to be compared
-with that $7/3$, not with the exponents $5.5$ and $5$ of Heath-Brown and Xylouris: the half-plane with Huxley's
-classical density estimate alone already gives every exponent above $12/5$, and the proofs of Heath-Brown and
-Xylouris use refereed results only. With the half-plane and only the classical density estimates of Ingham and Huxley,
-the same sieve gives about $2.27$, by a computation that is not formalised.
+We prove that there is a constant $K$ such that every reduced residue class modulo $q$ contains a prime
+$p \le K q^{278/125}$ ($278/125 = 2.224$). The proof uses two recent results that have not been refereed: OpenAI's
+zero-free half-plane $\operatorname{Re} s > 11/12$ for Dirichlet $L$-functions, and Chen, Gupta and Li's zero-density
+estimate, which lowers the density exponent to $7/3$. From these the classical argument gives every exponent above
+$7/3$. We go below the density exponent with Harman's sieve, fed by a Type~II estimate that sorts the characters by the
+real parts of the zeros of their $L$-functions; the sieve's loss is bounded by a certificate computed in exact integer
+arithmetic. The whole proof, including proofs of both inputs, is formalised in Lean~4 with Mathlib and depends only on
+Lean's standard axioms. The exponent is to be compared with $7/3$, not with Xylouris's $5$, whose proof uses refereed
+results only. With the classical density estimates of Ingham and Huxley in place of Chen, Gupta and Li's, the same
+method gives about $2.27$ in place of $12/5$, by a computation that is not formalised.
 \end{abstract}
 
 \section{Introduction}\label{sec:intro}
@@ -93,13 +87,13 @@ preprint and the density estimate from Chen, Gupta and Li's Proposition~3.1, so 
 Lean's kernel, Mathlib and the pinned toolchain, not on the preprints. Whether the Lean statements of the inputs
 faithfully capture the preprints' theorems matters for attributing and interpreting them, not for the truth of the
 theorem, and the kernel does not check it. Every step of the proof, and every result from the literature that it uses,
-is a theorem of the Lean library \cite{repo}, written with Lean~4 \cite{lean4} and Mathlib \cite{mathlib};
+is a theorem of the Lean library \cite{repo}, written with Lean~4 \cite{lean4} and Mathlib \cite{mathlib}, or, for
+Dirichlet's theorem, of Mathlib;
 Appendix~\ref{app:claims} names them, Section~\ref{sec:lean} says what is formalised and what is known of independent
 checking of the inputs, and the directory \file{formalisations/} of the repository documents each result from the
 literature: its source, its Lean statement and the differences between them. The proofs of the paper are those of the
 library, written at the level of detail of a paper; where the Lean proof fixes a constant whose value the argument does
-not need, the paper usually says only that the constant exists. The proofs of four standard results, and the details of
-Sections~\ref{sec:lean} and~\ref{sec:comparison}, are in a supplement, whose sections are cited as \S S1 to \S S6. The
+not need, the paper usually says only that the constant exists. The
 argument, the formalisation and this text were developed with the help of AI systems (see the acknowledgements); the
 author is responsible for the paper.
 
@@ -109,8 +103,9 @@ The difficulty in Linnik's theorem is the zeros of the $L$-functions mod $q$ nea
 By the explicit formula, a zero $\rho = \beta + i\gamma$ of $L(s, \chi)$ contributes about $x^{\beta - 1}$, relative to
 the main term, to the count of primes $p \le x$ in a class mod $q$. A zero-density estimate with exponent $A$, a
 bound of about $(qT)^{A(1 - \sigma)}$ for the number of zeros with real part at least $\sigma$, makes the zeros of
-real part about $\sigma$ contribute about $(q^A/x)^{1 - \sigma}$ together. Classically a zero may have
-$1 - \beta$ as small as $c/\log q$, and at $x = q^L$ its contribution is then a constant, not a small quantity. The
+real part about $\sigma$ contribute about $(q^A/x)^{1 - \sigma}$ together. Classically the zero-free region allows
+$1 - \beta$ as small as $c/\log q$, and one exceptional real zero may be closer still; at $x = q^L$ such a zero
+contributes a constant, not a small quantity. The
 record proofs control these zeros with zero-free regions, density estimates without logarithmic factors and the
 Deuring--Heilbronn phenomenon, and the constants of all three enter the exponent.
 
@@ -120,8 +115,11 @@ becomes one of density: a density exponent $A \ge 2$ for $1/2 \le \sigma \le 11/
 every exponent $L > A$. Huxley's density estimate \cite{huxley75} gives $A = 12/5$. Chen, Gupta and Li \cite{cgl}, whose
 method is Guth and Maynard's \cite{guth-maynard}, prove $A = 7/3$, uniformly in $q$ and $T$: their Theorem~1.2 bounds
 the count, for a divisor $q_1$ of $q$, by four terms, and at $q_1 = q$ the largest of them on $[7/10, 4/5]$ has the
-exponent $4/(1 + \sigma)$, which is $7/3$ at $\sigma = 5/7$ and smaller beyond. With Input~\ref{inp:half-plane} the
-classical deduction turns the density exponent $7/3$ into every Linnik exponent above $7/3$
+exponent $4/(1 + \sigma)$, which is $7/3$ at $\sigma = 5/7$ and smaller beyond; below $5/7$ Ingham's exponent
+$3/(2 - \sigma)$ is at most $7/3$. With Input~\ref{inp:half-plane} the classical deduction turns the density exponent
+$7/3$ into every Linnik exponent above $7/3$ (Section~\ref{sec:comparison}). Neither that deduction nor the exponent
+of this paper needs the value $11/12$: what they use is a zero-free half-plane $\operatorname{Re} s > 1 - \eta_0$ for
+some fixed $\eta_0 > 0$, so no zeros near $\operatorname{Re} s = 1$ and no exceptional zero
 (Section~\ref{sec:comparison}).
 
 \subsection*{Below the density exponent}
@@ -143,7 +141,7 @@ every modulus.
 Harman's sieve \cite{harman83, harman} bounds from below the number of primes in the set $\mathcal A$ of integers
 $n \in (x, 2x]$ with $n \equiv a \pmod q$ by comparing it with the set $\mathcal B$ of the integers $n \in (x, 2x]$
 prime to $q$, weighted by $1/\varphi(q)$. It needs two kinds of information. Type~I information is the comparison of
-$\mathcal A$ with $\mathcal B$ on the multiples of each small integer, which counting in residue classes gives.
+$\mathcal A$ with $\mathcal B$ on the multiples of each integer prime to $q$, which counting in residue classes gives.
 Type~II information is the comparison on bilinear sums $\sum_{mn} a_m b_n$, with $m$ in a range $(x^{u_1}, x^{u_2})$,
 bounded coefficients $a_m$, and $b_n$ supported on products of primes, which needs the zeros. A comparison over all
 such sums is not available at $x = q^{278/125}$. What is available is a window $[u_1, u_2]$ of exponents on which it
@@ -184,7 +182,8 @@ estimate and accounts for the window's ends, and Section~\ref{sec:type1} gives t
 the sieve. Section~\ref{sec:certificate} describes the decomposition and its certificate, and
 Section~\ref{sec:proof} assembles the proof. Section~\ref{sec:lean} describes the formalisation, and
 Section~\ref{sec:comparison} compares Theorem~\ref{thm:main} with what the inputs give without the sieve.
-Appendix~\ref{app:claims} names the Lean theorem behind each claim.
+Appendix~\ref{app:claims} names the Lean theorem behind each claim. A supplement holds the proofs of four standard
+results (\S S1 to \S S4) and the details of Sections~\ref{sec:lean} and~\ref{sec:comparison} (\S S5 and \S S6).
 
 \section{Notation and the two inputs}\label{sec:inputs}
 
@@ -213,7 +212,7 @@ The exception is the pole of $L(s, \chi_0)$ at $s = 1$, where Mathlib's function
 has a value; the Lean statement leaves that point aside.
 
 This is OpenAI's result: their companion preprint \cite{openai-companion} proves it, and their main preprint
-\cite{openai-main} proves the stronger $\operatorname{Re} s > 7/8$; neither has been refereed. The library proves it as
+\cite{openai-main} proves the stronger $\operatorname{Re} s > 7/8$. The library proves it as
 \lean{Eis.LFunction\_ne\_zero\_of\_re\_gt}, following the companion preprint
 (\file{formalisations/openai-half-plane.md}).
 
@@ -228,12 +227,23 @@ $\operatorname{Re} s \ge \sigma$, $|\operatorname{Im} s| \le T$.
 
 The exponent $A_k$ is the exponent $4/(1 + \sigma)$ of the first term of Chen, Gupta and Li's Theorem~1.2 \cite{cgl}
 at $q_1 = q$, the largest of its four terms on $[7/10, 4/5]$, taken at the step's left end $\sigma_k$, up to
-$10^{-4}$; the library's $A_k$ are multiples of $10^{-5}$, from $A_0 = 2.3334$ down to $A_{29} = 2.25207$. Their
-estimate counts zeros, which gives the count of characters stated here. The library does not prove their Theorem~1.2
+$10^{-4}$. The library's $A_k$, multiples of $10^{-5}$ between $4/(1 + \sigma_k) + 3.5 \cdot 10^{-5}$ and
+$4/(1 + \sigma_k) + 8 \cdot 10^{-5}$, are
+\[
+\begin{array}{r@{\quad}llllll}
+k = 0\text{--}5:   & 2.33340 & 2.33258 & 2.33178 & 2.33096 & 2.33016 & 2.32934 \\
+k = 6\text{--}11:  & 2.32854 & 2.32772 & 2.32692 & 2.32610 & 2.32532 & 2.32452 \\
+k = 12\text{--}17: & 2.32370 & 2.32290 & 2.32212 & 2.31728 & 2.31252 & 2.30774 \\
+k = 18\text{--}23: & 2.30300 & 2.29826 & 2.29358 & 2.28889 & 2.28423 & 2.27959 \\
+k = 24\text{--}29: & 2.27493 & 2.27035 & 2.26575 & 2.26117 & 2.25661 & 2.25207
+\end{array}
+\]
+Proposition~\ref{prop:window} holds for these values, and for every other choice that Input~\ref{inp:density}
+allows. Their estimate counts zeros, which gives the count of characters stated here. The library does not prove their Theorem~1.2
 as they state it. It formalises their Proposition~3.1, the large-values estimate, in the form for one point per
 character that their proof uses (distinct primitive characters, each with one height, and sums over $[6N/5, 9N/5]$
 with $N \ge (qT)^{2/3}/2$ and $7/10 \le \sigma \le 4/5$), and derives each step from it
-(\file{formalisations/chen-gupta-li-density.md}). Their paper is an arXiv preprint and has not been refereed.
+(\file{formalisations/chen-gupta-li-density.md}).
 
 \subsection*{The density curve}
 
@@ -254,8 +264,8 @@ constant multiple of $1 - \sigma$.
 \begin{itemize}
 \item $g_7(\sigma) = 1$ for $\sigma < 4/7$.
 \item On $[4/7, 5/7)$, divided into twenty steps $[\sigma_-, \sigma_+)$ of length $1/140$,
-  $g_7(\sigma) = \bigl(3/(2 - \sigma_+) + 1/2000\bigr)(1 - \sigma)$: Ingham's exponent at the step's right end plus a
-  slack of $1/2000$, except on the last step $[99/140, 5/7)$, where the slack is $1/100000$ and the exponent is
+  $g_7(\sigma) = \bigl(3/(2 - \sigma_+) + 1/2000\bigr)(1 - \sigma)$: Ingham's exponent at the step's right end plus an
+  excess of $1/2000$, except on the last step $[99/140, 5/7)$, where the excess is $1/100000$ and the exponent is
   $7/3 + 1/100000$.
 \item On $[5/7, 131/168)$, divided into the $30$ steps $[\sigma_k, \sigma_{k+1})$ of Input~\ref{inp:density},
   $g_7(\sigma) = A_k(1 - \sigma)$.
@@ -288,17 +298,17 @@ the sum of the constants, so it suffices to prove the bound on each piece.
   exponent $3/(3\sigma_- - 1) + 1/2000$ on $[\sigma_-, \sigma_+]$ (\file{formalisations/huxley-density.md}). His
   (1.1) is a bound $(Q^2 T/q_0)^{12(1 - \sigma)/5 + \varepsilon}$ for the zeros of the $L$-functions of the primitive
   characters to the moduli up to $Q$ divisible by $q_0$, and his (2.23) has the exponent $3/(3\sigma - 1)$ there;
-  with $Q = q_0 = d$ for each $d \mid q$, the case of one modulus (which, he remarks on p.~435, is the one Jutila
-  treats), it bounds the characters
-  mod $q$, each of which is induced by a primitive character mod some $d \mid q$ with the same zeros in
-  $\operatorname{Re} s > 0$, at a cost $\tau(q) \ll q^\varepsilon$. The library proves its own form of the estimate.
+  with $Q = q_0 = d$ for each $d \mid q$, the case of one modulus, it bounds the characters mod $q$, each of which is
+  induced by a primitive character mod some $d \mid q$ with the same zeros in $\operatorname{Re} s > 0$, at a cost
+  $\tau(q) \ll q^\varepsilon$. The excess $1/2000$ absorbs this $q^\varepsilon$ and Huxley's own $\varepsilon$,
+  since $(1 - \sigma)/2000 \ge 1/12000$ on these steps. The library proves its own form of the estimate.
 \item For $\sigma \ge 5/6$: the exponent $101/50$. On $[5/6, 11/12]$ Huxley's exponent $3/(3\sigma - 1)$ is at most
   $2$, and his zero-detection argument, with its parameters fixed for this range, gives $2 + 1/50$
   (\lean{LinnikStep.charDensity\_step}); above $11/12$ at most the trivial character is counted, by
   Input~\ref{inp:half-plane} (\file{formalisations/huxley-density.md}).
 \end{itemize}
-Each of these bounds is a theorem of the library, with a factor $(\log qT)^{10}$ at most $(1 + \log qT)^{10}$; the
-claims table of Section~\ref{sec:lean} names them.
+Each of these bounds is a theorem of the library, with a factor $(\log qT)^{10}$ at most $(1 + \log qT)^{10}$;
+Appendix~\ref{app:claims} names them.
 \end{proof}
 
 Two pieces of $g_7$ are not classical. One is the steps of Input~\ref{inp:density} on $[5/7, 131/168]$: their
@@ -307,8 +317,8 @@ $\min(3/(2 - \sigma), 3/(3\sigma - 1))$, which is Ingham's up to $\sigma = 3/4$,
 after. The other is the part above $11/12$, which Input~\ref{inp:half-plane} gives. Huxley's $3/(3\sigma - 1)$ is below
 $4/(1 + \sigma)$ from $\sigma = 7/9$ on, and $g_7$ takes it from $131/168$ on. Inside the last step,
 $[163/210, 131/168]$, it is below the step's exponent $2.25207$ from $\sigma \approx 0.7774$ on, by up to
-$1.2 \cdot 10^{-2}$ at $131/168$; taking it there would not change the window of Section~\ref{sec:type2}, whose corners
-on that step have a slack of at least $3.2 \cdot 10^{-4}$. Input~\ref{inp:half-plane}
+$1.2 \cdot 10^{-2}$ at $131/168$; taking it there would not change the window of Section~\ref{sec:type2}, since the
+corners on that step do not bind (their least slack is $3.26 \cdot 10^{-4}$). Input~\ref{inp:half-plane}
 also enters the Type~II estimate (Section~\ref{sec:type2}) and, in the library, the prime number theorem
 (Section~\ref{sec:proof}).
 
@@ -330,7 +340,8 @@ polynomials above this is the following estimate. Write $\mathcal X^*$ for the n
 \begin{theorem}[the Type~II estimate]\label{thm:type2}
 Assume Inputs~\ref{inp:half-plane} and~\ref{inp:density}, and let $L = 278/125$, $u_1 = 41556/100000$ and
 $u_2 = 47531/100000$. Let
-$K_0 \ge 0$ be an integer, $e_1 > 0$ and $0 < \eta \le 10^{-5}$. There is $q_0$ such that for every $q \ge q_0$, every
+$K_0 \ge 0$ be an integer, $e_1 > 0$ and $0 < \eta \le 10^{-5}$. There is $q_0$, depending on $f_0$, $K_0$, $e_1$ and
+$\eta$, such that for every $q \ge q_0$, every
 integer $P$ with $q^{u_1 L} \le P \le q^{u_2 L}$, every $S \subseteq (P, 2P]$, all $a_m$ and $h_0$, every $K \le K_0$,
 and all $Q_1, \dots, Q_K \ge q^{e_1}$ and $|h_1|, \dots, |h_K| \le q^\eta$ with $Q_1 \cdots Q_K \le 2^{K_0} q^L/P$,
 \[
@@ -358,8 +369,9 @@ then
   \frac{Q^{\theta + \delta} + Q^{11/12 + \delta}(1 + H)^{-J}}{\log Q} \\
   + C\bigl(\sqrt{2Q} + 1\bigr)\bigl(\log_2 (2Q) + 1\bigr),
 \end{multline*}
-where $\lambda = \log(q + 2) + \log(|y| + 4) + 1$ and $M_\delta(\theta)$, the constant of the bound for $L'/L$ in
-its proof (\S S1), depends only on $\theta$ and $\delta$.
+where $\lambda = \log(q + 2) + \log(|y| + 4) + 1$ and $M_\delta(\theta) = \kappa(\theta, \theta + \delta) +
+\kappa(11/12, 11/12 + \delta)$, with $\kappa$ the constant of the bound for $L'/L$ in \S S1, depends only on $\theta$
+and $\delta$.
 \end{lemma}
 
 The argument is the classical one for primes in progressions \cite{iwaniec-kowalski}, with a smooth weight in place
@@ -387,7 +399,7 @@ $0$ if there is none. If $\chi$ is in the bin $i$ then:
 The bins depend on $T$, and so on all the zeros up to the height $T$, but not on the heights $h_j$. The proof takes
 $\delta = 10^{-6}$, $H = q^\eta$ and $T = 2H + 1 \le 3q^\eta$, so that every height $|h_j| \le q^\eta$ has
 $|h_j| + H + 1 \le T$, and Lemma~\ref{lem:prime-sum} with $J = \lceil 5(1 + L)/(12\eta) \rceil$. As
-$Q_j \ge q^{e_1} \ge 1$ and $Q_1 \cdots Q_K \le 2^{K_0} q^L/P$, each $Q_j \le q^{1 + L}$ for large $q$, so that
+$Q_j \ge q^{e_1} \ge 4$ for large $q$ and $Q_1 \cdots Q_K \le 2^{K_0} q^L/P$, each $Q_j \le q^{1 + L}$ for large $q$, so that
 $Q_j^{11/12 + \delta}(1 + H)^{-J} \le Q_j^{1/2 + \delta}$. The hypothesis $Q_j \ge q^{e_1}$ gives
 $\lambda/\log Q_j \ll 1/e_1$, and $M_\delta$ is bounded on the $I + 1$ values $\beta_i$. So for large $q$,
 $|S_{Q_j}(\chi, h_j)| \le 2 Q_j^{\beta_{i+1} + 2\delta}$ in the bin $i$, and the product of the prime sums is at most
@@ -438,20 +450,16 @@ $\chi \ne \chi_0$ (\lean{LinnikLindelof.lindelof}): Landau's lemma, as in the pr
 bounds $|L'/L(s, \chi)|$ by a multiple of $\log((q + 2)(|\operatorname{Im} s| + 4))$ on
 $\operatorname{Re} s \ge 11/12 + \delta'/2$; the three-lines theorem, on rectangles of height comparable to that
 logarithm, interpolates this against $|L'/L| \ll 1$ on $\operatorname{Re} s = 3/2$; and integrating $L'/L$ from
-$\operatorname{Re} s = 3/2$, where $|\log L| \le \log \zeta(3/2)$, gives the bound for $|L|$ and $1/|L|$. The Euler factors at the primes dividing $q$ cost $2^{\omega(q)} \ll q^{\varepsilon'}$, and
+$\operatorname{Re} s = 3/2$, where $|\log |L|| \le \log \zeta(3/2)$, gives the bound for $|L|$ and $1/|L|$. The Euler factors at the primes dividing $q$ cost $2^{\omega(q)} \ll q^{\varepsilon'}$, and
 together $|L(s, \psi)| \ll (q(|\operatorname{Im} s| + 2))^{5/12 + \delta' + 2\varepsilon'}$ on the new line; the decay of
 $\Gamma$ makes the integral converge. At $\Lambda = 2P$ this gives
 $\mathcal H = C(2P)^{1/12 - \delta'}(2q)^{5/12 + \delta' + 2\varepsilon'}$. This is the bound the library proves and
-uses, but the window has room for much less: any $\mathcal H \ll q^{0.68}$ would do (the corners that involve it, those of
-$E_3$ on the top piece in Proposition~\ref{prop:window}, hold with a slack of about $0.09$), for instance
-$|K_\Lambda(\psi, 0)| \le \max_N |\sum_{n \le N} \psi(n)| \ll_\varepsilon q^{1/2 + \varepsilon}$, by partial summation
-and the Pólya--Vinogradov inequality \cite{davenport}. So the window does not need Input~\ref{inp:half-plane} for the
-kernel bound.
+uses; the window accepts a much weaker one (Section~\ref{sec:window}).
 
 The first bound is the better one when the bin is large, the second when it is small, which is the case for $\beta$
 near $11/12$, on the top piece $[5/6, 11/12]$ of the curve. The proof takes the better of the two in each bin.
 
-\subsection{The window condition}
+\subsection{The window condition}\label{sec:window}
 
 Write $P = q^\mu$, and let $\beta = \beta_i$. Since $T \le 3q^\eta$ and $g \le 1$, the bin has
 $|\mathcal X_i| \le 3C q^{g(\beta) + \eta}(1 + \log qT)^{10}$, and the product of the prime sums is at most
@@ -468,39 +476,37 @@ the larger of
   E_3 &= (L - \mu)(\beta + \varpi) + \frac{g(\beta)}2 + \frac\mu2 + \frac{g(\beta) + b(\mu)}2,
 \end{align*}
 with $b(\mu) = 5/12 + \mu/12 + \delta'(1 - \mu) + 2\varepsilon'$ the exponent of $\mathcal H$. For $\mu \ge 1$,
-$E_2 = E_1$, so the Hal\'asz--Montgomery inequality never helps there, and the better of the two bounds has the
-exponent
-\[
-  E(\beta, \mu, \varpi) = (L - \mu)(\beta + \varpi) + \frac{g(\beta)}2 + \frac\mu2
-  + \frac12 \max\bigl(\mu, \min(1, g(\beta) + b(\mu))\bigr).
-\]
+$E_2 = E_1$, so the Hal\'asz--Montgomery inequality never helps there.
 
 In this section a window is an interval $[\mu_1, \mu_2]$ of exponents of $q$, for the scale $P = q^\mu$ of the Type~II
-variable; the other sections write it $[u_1, u_2]$, in the exponents of $x = q^L$, so that $\mu_i = u_i L$.
+variable; the other sections write it $[u_1, u_2]$, in the exponents of $x = q^L$, so that $\mu_1 = u_1 L$ and $\mu_2 = u_2 L$.
 
 \begin{definition}\label{def:window}
-A window $[\mu_1, \mu_2]$ is \emph{admissible} for a curve $g$ at $L$ if
-$E(\beta, \mu, \varpi) \le L - 1/25000$ for every $1/2 \le \beta \le 11/12$, every $\mu_1 \le \mu \le \mu_2$ and
-every $0 \le \varpi \le 4 \cdot 10^{-6}$, with $\delta' = \varepsilon' = 1/1000$.
+A window $[\mu_1, \mu_2]$ is \emph{admissible} for a curve $g$ at $L$ if for every $1/2 \le \beta \le 11/12$, every
+$\mu_1 \le \mu \le \mu_2$ and every $0 \le \varpi \le 4 \cdot 10^{-6}$, with $\delta' = \varepsilon' = 1/1000$,
+either $E_1 \le L - 1/25000$, or $\mu \le 1$ and $\max(E_2, E_3) \le L - 1/25000$.
 \end{definition}
 
-For $\mu \le 1$, $E = \min(E_1, \max(E_2, E_3))$, and for $\mu \ge 1$, $E = E_1$. So the condition says that
-$E_1 \le L - 1/25000$, or $\mu \le 1$ and $\max(E_2, E_3) \le L - 1/25000$, which is how the Lean states it
-(\lean{SieveCurveGlue.WindowOKHM}).
+So at each point one of the two bounds has an exponent at most $L - 1/25000$. The Lean definition,
+\lean{SieveCurveGlue.WindowOKHM}, has this form.
 
 \begin{lemma}[one bin]\label{lem:bin}
-Let $g \le 1$ be a function and $[\mu_1, \mu_2]$ a window admissible for $g$ at $L$. Given $C_0$, $C_d$ and $C_K$, there
+Let $g \le 1$ be a function and $[\mu_1, \mu_2]$ a window admissible for $g$ at $L$. Given $C_0, C_d, C_K \ge 0$, there
 is $C'$ such that the following holds. Let $q > 1$, $\mu_1 \le \mu \le \mu_2$, $P = q^\mu$, $1 \le T \le 3q^\eta$
 with $\eta \ge 0$, $1/2 \le \beta \le 11/12$ and $0 \le \varpi \le 4 \cdot 10^{-6}$. Let $\mathcal X$ be a set of at
-most $C_d (qT)^{g(\beta)} (1 + \log qT)^{10}$ characters on which the product of the prime sums is at most
-$C_0 (q^L/P)^{\beta + \varpi}$, and let $\mathcal H \le C_K (2P)^{1/12 - \delta'} (2q)^{5/12 + \delta' + 2\varepsilon'}$
-bound the off-diagonal kernels on $\mathcal X$. Then the product of the prime sums times the better of the two
-bounds for $\sum_{\chi \in \mathcal X} |W(\chi)|$ is at most
-$C' (1 + \log qT)^{10} q^{L - 1/25000 + \eta} (\sum |a_m|^2/P)^{1/2}$.
+most $C_d (qT)^{g(\beta)} (1 + \log qT)^{10}$ characters on which
+$\prod_{j=1}^K |S_{Q_j}(\chi, h_j)| \le C_0 (q^L/P)^{\beta + \varpi}$, for some $K$, $Q_j$ and $h_j$, and let
+$\mathcal H \le C_K (2P)^{1/12 - \delta'} (2q)^{5/12 + \delta' + 2\varepsilon'}$ bound the off-diagonal kernels on
+$\mathcal X$. Then for every $S \subseteq (P, 2P]$ and all $a_m$ and $h_0$,
+\[
+  \sum_{\chi \in \mathcal X} |W(\chi)| \prod_{j=1}^K |S_{Q_j}(\chi, h_j)|
+  \le C' (1 + \log qT)^{10} q^{L - 1/25000 + \eta} \Bigl(\frac1P \sum_{m \in S} |a_m|^2\Bigr)^{1/2}.
+\]
 \end{lemma}
 
 \begin{proof}
-At $(\beta, \mu, \varpi)$ the window condition gives $E_1 \le L - 1/25000$ or $\max(E_2, E_3) \le L - 1/25000$. In the
+The left side is at most $C_0 (q^L/P)^{\beta + \varpi} \sum_{\chi \in \mathcal X} |W(\chi)|$, and the two bounds of
+Section~\ref{sec:two-bounds} bound the sum. At $(\beta, \mu, \varpi)$ the window condition gives $E_1 \le L - 1/25000$ or $\max(E_2, E_3) \le L - 1/25000$. In the
 first case, the orthogonality bound with $(P + q)^{1/2} \le \sqrt2\, q^{\max(1, \mu)/2}$ and $|\mathcal X|^{1/2} \le
 (3C_d)^{1/2} q^{(g(\beta) + \eta)/2}(1 + \log qT)^5$ gives the claim with the exponent $E_1 + \eta/2$. In the second, the
 Hal\'asz--Montgomery bound, split as above, gives two terms: $(2P|\mathcal X|)^{1/2}$ carries the exponent
@@ -539,13 +545,16 @@ $2.3334 < 2(L - \mu_2)$ (on $g_7 = 1$ the slope is $L - \mu > 0$), and on the to
 $L - \mu - A < 0$. Since $\mu_1 < 1 < \mu_2$, it therefore suffices that $E_1 \le L - 1/25000$ at the right end
 $\beta_+$ of every piece below $5/6$ for $\mu \in \{\mu_1, \mu_2\}$, and at $(11/12, \mu_2)$ on the top piece, and that
 $E_3 \le L - 1/25000$ at $(5/6, \mu_1)$, all at $\varpi = 4 \cdot 10^{-6}$. These are $134$ inequalities between
-rational numbers, and each holds, the least with a slack of $5.3 \cdot 10^{-6}$. Solved for $\mu$, with
-$X = L - 1/25000$, they say that $\mu_1$ is at least
-$\bigl(L(\beta_+ + \varpi) + g(\beta_+)/2 + 1/2 - X\bigr)/(\beta_+ + \varpi - 1/2)$ and $\mu_2$ at most
-$\bigl(X - L(\beta_+ + \varpi) - g(\beta_+)/2\bigr)/(1 - \beta_+ - \varpi)$ at every right end $\beta_+$, with
+rational numbers, and each holds, the least with a slack of $5.3 \cdot 10^{-6}$. They hold also with the largest
+exponents that Input~\ref{inp:density} allows, $A_k = 4/(1 + \sigma_k) + 10^{-4}$, the least then with a slack of
+$5.6 \cdot 10^{-7}$, so the proposition holds for every choice of the $A_k$ that the input allows. Solved for $\mu$,
+with $\Theta = L - 1/25000$, they say that $\mu_1$ is at least
+$\bigl(L(\beta_+ + \varpi) + g(\beta_+)/2 + 1/2 - \Theta\bigr)/(\beta_+ + \varpi - 1/2)$ at the right end $\beta_+$
+of every piece below $5/6$, and $\mu_2$ at most
+$\bigl(\Theta - L(\beta_+ + \varpi) - g(\beta_+)/2\bigr)/(1 - \beta_+ - \varpi)$ at these ends and at $11/12$, with
 $g(\beta_+)$ the piece's value there, besides the top piece's condition on $E_3$. Both bounds are set at
 $\beta_+ = 1201/1680$, the right end of the first step of $[5/7, 131/168]$, and give the exact window
-$[0.4155489\ldots, 0.4753342\ldots] \cdot L$, which contains the proposition's. At $\varpi = 0$, with no margin and
+$[0.41554887\ldots, 0.47533423\ldots] \cdot L$, which contains the proposition's. At $\varpi = 0$, with no margin and
 $\beta_+ = 5/7$, $A = 7/3$, they reduce to the closed forms of Section~\ref{sec:ends}. The $134$ inequalities are among the
 $1080$ corners that \file{tools/linnik/route\_limits.py} checks in exact rationals and the Lean checks by
 \lean{norm\_num}. The Lean (\lean{SieveTypeIIU22240D.window\_22240d}) uses neither the convexity nor the monotonicity:
@@ -560,14 +569,19 @@ Apply Proposition~\ref{prop:type2-gen}, under Input~\ref{inp:half-plane}, with t
 Proposition~\ref{prop:window}.
 \end{proof}
 
-The Hal\'asz--Montgomery branch is used only on the top piece of the curve, at the corners with $\mu \le 1$, where the
-bins are small.
+The Hal\'asz--Montgomery branch is used only on the top piece of the curve, for $\mu \le 1$, where the bins are small,
+and it is needed there: at $(11/12, \mu_1)$, $E_1$ exceeds $L - 1/25000$ by $1.4 \cdot 10^{-2}$, and orthogonality alone
+would need $u_1 \ge 0.4304$. The kernel bound enters only through the corner of $E_3$ at $(5/6, \mu_1)$, which holds
+with a slack of $0.094$, so the window accepts a much weaker bound than the library's: any $\mathcal H \ll q^{0.684}$
+would do, for instance $|K_\Lambda(\psi, 0)| \le \max_N |\sum_{n \le N} \psi(n)| \ll_\varepsilon
+q^{1/2 + \varepsilon}$, by partial summation and the Pólya--Vinogradov inequality \cite{davenport}. So the window does
+not need Input~\ref{inp:half-plane} for the kernel bound.
 
 \subsection{The window's ends}\label{sec:ends}
 
-The exponent $278/125$ uses Chen, Gupta and Li's Proposition~3.1 at every point of $[5/7, 131/168]$: on each of
-$30$ steps, fourteen of length $1/1680$ and then sixteen of length $1/280$, the exponent is just above $4/(1 + \sigma)$
-at the step's left end. It also uses Ingham's estimate on its last step, $[99/140, 5/7]$, with a slack of $1/100000$ in
+The exponent $278/125$ uses \cite[Proposition~3.1]{cgl} at every point of $[5/7, 131/168]$: on each of $30$ steps,
+fourteen of length $1/1680$ and then sixteen of length $1/280$, the exponent is just above $4/(1 + \sigma)$ at the
+step's left end. It also uses Ingham's estimate on its last step, $[99/140, 5/7]$, with an excess of $1/100000$ in
 place of the $1/2000$ of the other steps, so that its exponent is $7/3 + 1/100000$. Both ends of the window are set
 where the density exponent is largest. Neglecting the margins and the steps, take a piece $g(\beta) = A(1 - \beta)$ of
 the density curve and a variable $m$ of size $P = q^\mu$ with $\mu = uL$. The orthogonality bound then suffices when
@@ -576,35 +590,62 @@ $\beta = 5/7$ the exponents of Ingham and of Chen, Gupta and Li are both $A = 7/
 \[
   u_1 \ge \frac{35}{9L} - \frac43, \qquad u_2 \le 1 - \frac7{6L},
 \]
-which are $0.41527$ and $0.47542$ at $L = 278/125$, against the window's $0.41556$ and $0.47531$. The two bounds meet at
-$L = 13/6$, below which these exponents leave no window at all, whatever the certificate. At the lower end the rest,
-$2.8 \cdot 10^{-4}$ in all, is lost to the first step of $[5/7, 131/168]$, whose exponent $2.3334$, taken at its left
-end, is used up to its right end $1201/1680$ ($1.66 \cdot 10^{-4}$), to the margin $1/25000$ of
-Definition~\ref{def:window} ($0.84 \cdot 10^{-4}$), to the excess $2.3334 - 7/3$ ($0.20 \cdot 10^{-4}$) and to the width
-of the bins ($0.11 \cdot 10^{-4}$); at the upper end the loss, $0.9 \cdot 10^{-4}$, is mostly the margin's
-($0.63 \cdot 10^{-4}$). The window used, found by a sampled scan, lies $1.1 \cdot 10^{-5}$ and $2.4 \cdot 10^{-5}$ inside
-the exact one of the proof of Proposition~\ref{prop:window}.
+which are $0.41527$ and $0.47542$ at $L = 278/125$. At $\mu = 1$ both conditions read $L \ge 1 + A/2$, whatever
+$\beta$. So, neglecting the margins, there is a window around $P = q$ exactly when $L > 1 + A/2$ for the largest
+exponent $A$ of the curve, and it shrinks to the point $\mu = 1$ at $L = 1 + A/2$. The halving of $A$ comes from
+Cauchy--Schwarz over a bin, which takes the bin's size to the power $1/2$. For $A = 7/3$ the two bounds meet at
+$L = 13/6$, below which these exponents leave no window at all, whatever the certificate. Between the closed forms and the exact window of the proof
+of Proposition~\ref{prop:window} the losses are these, in units of $10^{-4}$ of $u$ (adding the effects in this order;
+the last digit depends on the order):
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+ & lower end $u_1$ & upper end $u_2$ \\
+\midrule
+closed form & $0.4152678$ & $0.4754197$ \\
+the first step's exponent used up to $1201/1680$ & $+1.66$ & $\phantom{+}0$ \\
+the margin $1/25000$ of Definition~\ref{def:window} & $+0.84$ & $-0.63$ \\
+the excess $2.3334 - 7/3$ of the first step & $+0.20$ & $-0.15$ \\
+the allowance $\varpi \le 4 \cdot 10^{-6}$ & $+0.11$ & $-0.07$ \\
+\midrule
+exact window & $0.41554887\ldots$ & $0.47533423\ldots$ \\
+window used & $0.41556$ & $0.47531$ \\
+least slack of a corner & $5.3 \cdot 10^{-6}$ & $1.54 \cdot 10^{-5}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The allowance $\varpi \le 4 \cdot 10^{-6}$ covers the bins' width $1/1200000$ and the $2\delta$ of
+Section~\ref{sec:bins}, rounded up. At the upper end the first step costs nothing, since for $\mu \ge 1$ the condition
+$\mu \le L - A/2$ does not involve $\beta$. The window used, found by a sampled scan, lies $1.1 \cdot 10^{-5}$ and
+$2.4 \cdot 10^{-5}$ inside the exact one.
 
-The window has little room. At each end the tightest corner is on the first step of $[5/7, 131/168]$, at
-$\beta = 1201/1680$ and $\varpi = 4 \cdot 10^{-6}$: it holds with a slack (below $L - 1/25000$) of about
-$5.3 \cdot 10^{-6}$ at $\mu = u_1 L$, and of about $1.54 \cdot 10^{-5}$ at $\mu = u_2 L$. All the corners are exact
-rational inequalities, so there is no numerical tolerance. With $u_1$ and $u_2$ fixed, they hold exactly for
-$L \ge 2.2239858\ldots$, so at $222399/100000$ but not at $222398/100000$; raising the first step's exponent by
-about $4 \cdot 10^{-5}$ moves the lower end out. Since the Type~II estimate on this window and the certificate of
-Section~\ref{sec:certificate} on its grid do not depend on $L$ otherwise (Theorem~\ref{thm:route} also needs
-$2 < L \le 5/2$ and $L U_2 > D$, which still hold), the window leaves about $1.4 \cdot 10^{-5}$ of room in the exponent.
-The corners' slack grows along the narrow steps, to $4.3 \cdot 10^{-4}$ on the fourteenth, and from there steps of
-$1/280$ leave the window as it is: the least slack of a corner on them is $4.4 \cdot 10^{-5}$, on the first of them
-(steps of $1/140$ would move the window's lower end), and on the last step, $[163/210, 131/168]$, which contains $7/9$,
-it is $3.3 \cdot 10^{-4}$. At $\sigma = 7/9$, where $4/(1 + \sigma)$ meets Huxley's $3/(3\sigma - 1)$ at $A = 9/4$, the
-first condition gives $u_1 \ge 27/(10L) - 4/5$, which binds only above $L = 107/48 \approx 2.229$; so at $278/125$ the
-exponents near $7/9$ do not change the window. What lets the certificate close at $278/125$ is the decomposition's two
-deeper levels, its kept parts, and the bounds of its cells, which take Buchstab's function itself on $[2, 3]$ and the
-prime sums of the cells by the trapezoid rule (Section~\ref{sec:certificate}).
+No bound for the kernels could move the ends. At the upper end $\mu_2 > 1$, and there the Hal\'asz--Montgomery
+inequality never helps. At the lower end the binding corner is at $\beta = 1201/1680$, where
+$g_7(\beta) + b(\mu_1) = 1.161 > 1$, so that $E_3 > E_1$ and the inequality loses to orthogonality. Every admissible
+$\mathcal H$ is at least about $P^{1/2}$, since the mean square of $|K_{2P}(\psi, 0)|$ over the non-trivial characters
+mod $q$ is of order $P\varphi(q)/q$ when $P \le q^{1 - \varepsilon}$, and $g_7(\beta) + \mu_1/2 = 1.127 > 1$ still. So the ends are set by orthogonality, that is, by the
+density exponent near $5/7$ and the large sieve.
+
+The window has little room. All the corners are exact rational inequalities, so there is no numerical tolerance.
+With $u_1$ and $u_2$ fixed, they hold exactly for $L \ge 2.2239858\ldots$, so at $222399/100000$ but not at
+$222398/100000$; raising the first step's exponent by $3.7 \cdot 10^{-5}$ moves the lower end out. Since the Type~II
+estimate on this window and the certificate of Section~\ref{sec:certificate} on its grid do not depend on $L$ otherwise
+(Theorem~\ref{thm:route} also needs $2 < L \le 5/2$ and $L U_2 > D$, which still hold), the window leaves about
+$1.4 \cdot 10^{-5}$ of room in the exponent. The corners' slack grows along the narrow steps, to $4.3 \cdot 10^{-4}$ on
+the fourteenth, and from there steps of $1/280$ leave the window as it is: the least slack of a corner on them is
+$4.4 \cdot 10^{-5}$, on the first of them (steps of $1/140$ would move the window's lower end), and on the last step,
+$[163/210, 131/168]$, which contains $7/9$, it is $3.26 \cdot 10^{-4}$. At $\sigma = 7/9$, where $4/(1 + \sigma)$ meets
+Huxley's $3/(3\sigma - 1)$ at $A = 9/4$, the first condition gives $u_1 \ge 27/(10L) - 4/5$, which binds only above
+$L = 107/48 \approx 2.229$; so at $278/125$ the exponents near $7/9$ do not change the window. What lets the certificate
+close at $278/125$ is the decomposition's two deeper levels, its kept parts, and the bounds of its cells, which take
+Buchstab's function itself on $[2, 3]$ and the prime sums of the cells by the trapezoid rule
+(Section~\ref{sec:certificate}).
 
 \section{Type I estimates and Harman's sieve}\label{sec:type1}
 
-Let $2 < L \le 5/2$ and $0 < u_1 < u_2 < 1$; this section and the next use nothing else of $L$ and the window. Below,
+Let $2 < L \le 5/2$ and $0 < u_1 < u_2 < 1$; this section uses nothing else of $L$ and the window, and
+Section~\ref{sec:certificate} adds the conditions of Theorem~\ref{thm:route}. Below,
 `the conclusion of Theorem~\ref{thm:type2}' means the Type~II estimate of that theorem at this $L$ on the window
 $[u_1 L, u_2 L]$, which Proposition~\ref{prop:type2-gen} gives on every admissible window; Theorem~\ref{thm:type2} is its
 case $L = 278/125$, $u_1 = 41556/100000$, $u_2 = 47531/100000$. Let $x = q^L$ and let $a$ be prime to $q$. The
@@ -617,6 +658,8 @@ $(P, 2P]$, and its \emph{reflection} is $[x^{1 - u_2}, x^{1 - u_1}]$. The sets o
 whose integers are those of $(N_1, N_2]$ with $N_1 = \lfloor x \rfloor$ and $N_2 = \lfloor 2x \rfloor$.
 For a set $\mathcal C$ of integers, an integer $r$ and $z \ge 1$, $\mathcal C_r$ is the set of the multiples of $r$
 in $\mathcal C$, and $S(\mathcal C_r, z)$ the number of $n \in \mathcal C_r$ with no prime factor of $n/r$ below $z$.
+When $r$ has no prime factor below $z$, as in every use below, this is the number of multiples of $r$ in $\mathcal C$
+with no prime factor below $z$, which is the Lean's definition (\lean{SieveTree.S}).
 With $z_{\mathrm{top}} = \lfloor N_2^{1/2} \rfloor + 1$, an integer of $(N_1, N_2]$ with no prime factor below
 $z_{\mathrm{top}}$ is prime, so $S(\mathcal A, z_{\mathrm{top}})$ is the number of primes in $\mathcal A$. The sieve
 compares $\mathcal A$ with $\mathcal B/\varphi(q)$ through the weight
@@ -630,12 +673,12 @@ states the tools of Harman's sieve \cite{harman83, harman} in the form the proof
 the differences between the Lean statements and the classical ones; Lemmas~\ref{lem:type1} to~\ref{lem:chains} use
 standard arguments, and \file{formalisations/README.md} lists the Fourier separation of variables behind
 Lemmas~\ref{lem:family} to~\ref{lem:chains} among the standard results. The proofs of Lemma~\ref{lem:family},
-Proposition~\ref{prop:harman} and Lemma~\ref{lem:rough} are in the supplement (\S S2 to \S S4).
+Lemma~\ref{lem:rough} and Proposition~\ref{prop:harman} are in the supplement (\S S2 to \S S4).
 
 \subsection{Type~I}
 
 \begin{lemma}\label{lem:type1}
-Let $N_1 \le N_2$ be integers and let $M > 0$ be prime to $q$. The number of $n \in (N_1, N_2]$ with $n \equiv a \pmod q$ and
+Let $0 \le N_1 \le N_2$ be integers and let $M > 0$ be prime to $q$. The number of $n \in (N_1, N_2]$ with $n \equiv a \pmod q$ and
 $M \mid n$ is $(N_2 - N_1)/(Mq)$ within $1$, and the number of $n \in (N_1, N_2]$ prime to $q$ with $M \mid n$ is
 $\varphi(q)(N_2 - N_1)/(Mq)$ within $\varphi(q)$.
 \end{lemma}
@@ -651,8 +694,9 @@ second.
 
 So $|\mathcal A_M| - |\mathcal B_M|/\varphi(q)$ is at most $2$ in absolute value for every $M$ prime to $q$. This is
 all the Type~I information the sieve needs. It is used at the leaves of Proposition~\ref{prop:harman}, where what
-matters is that the number of counts, a power of $q$ below $q^{L - 1}$, keeps their errors small against the size
-$x/q$ of the main terms; the size of each modulus does not.
+matters is that the number of counts, at most a constant times $q^{L - 1 - 2c}$ with $c = (L - 1 - b_0)/4 > 0$
+(\S S4), keeps
+their errors small against the size $x/q$ of the main terms; the size of each modulus does not.
 
 \subsection{Type~II}
 
@@ -680,14 +724,16 @@ $\mathcal A - \mathcal B/\varphi(q)$ is at most $A_0 q^{L - \delta}/\varphi(q)$ 
 
 The proof is in \S S2. By orthogonality the family's sum is a sum over the non-trivial characters.
 Replacing each comparison by a smooth cut-off of its form makes the family smooth; Fourier inversion then separates the
-variables, and Theorem~\ref{thm:type2} bounds the smooth family at each frequency. The difference between the sharp
+variables, and Theorem~\ref{thm:type2} bounds the smooth family at each frequency up to a small power of $q$; the decay of
+the cut-offs' Fourier transforms handles the rest. The difference between the sharp
 and the smooth comparisons lies near the boundaries $\ell_j = 0$; the proof bounds it by families of the same kind,
 again through Theorem~\ref{thm:type2}, and by a count along the pivot.
 
 \begin{lemma}\label{lem:family-sharp}
 Assume the conclusion of Theorem~\ref{thm:type2}. Given $K_0$, $J_0$, $e_1 > 0$, $E_0 \ge 0$ and $\Lambda_1 \ge 0$, there
 are $\delta > 0$ and $q_0$ such that the following holds for every $q \ge q_0$ and every $a$ prime to $q$. Let $m$ run
-over a set $S \subseteq (P_1, P_2]$ of integers with $q^{u_1 L} \le P_1$ and $P_2 \le q^{u_2 L}$, with coefficients
+over a set $S \subseteq (P_1, P_2]$ of integers, for integers $P_1$ and $P_2$ with $q^{u_1 L} \le P_1$ and
+$P_2 \le q^{u_2 L}$, with coefficients
 $|a_m| \le 1$, and let $1 \le K \le K_0$ primes $p_1, \dots, p_K$ run over all the primes up to $2x$. Let $J \le J_0$
 comparisons, with forms $\ell_j = \lambda_j(m) + \sum_i e_{ji} \log p_i$, $|e_{ji}| \le E_0$,
 $\lambda_j(m) \le \Lambda_1 \log q$ for $m \in S$, and pivots, cut out the $(m, p)$, and suppose that wherever they all
@@ -698,8 +744,11 @@ the comparisons is at most $q^{L - \delta}/\varphi(q)$ in absolute value.
 
 \begin{proof}
 Split $(P_1, P_2]$ into the dyadic blocks $(2^b P_1, 2^{b + 1} P_1]$, and each prime variable by a smooth partition of
-unity: take for the $f_0$ of Lemma~\ref{lem:family} a smooth function supported in $[1/2, 2]$, with values in $[0, 1]$
-and $\sum_{t \ge 0} f_0(y/2^t) = 1$ for $1 \le y \le 2^M$, $M = \lfloor \log_2 (2x) \rfloor + 1$. This writes the sum as a sum of at most
+unity: take for the $f_0$ of Lemma~\ref{lem:family} the fixed function $f_0(y) = \psi(y) - \psi(y/2)$, with $\psi$
+smooth and nondecreasing, $0$ on $(-\infty, 1/2]$ and $1$ on $[1, \infty)$. It is supported in $[1/2, 2]$, takes values
+in $[0, 1]$, and $\sum_{t \ge 0} f_0(y/2^t) = 1$ for every $y \ge 1$; the primes are at most $2x < 2^M$,
+$M = \lfloor \log_2 (2x) \rfloor + 1$, so only the scales $2^t$ with $t \le M$ occur. This writes the sum as a sum of
+at most
 $(3 + 4 \log q)^{K_0 + 1}$ pieces. In each, $m$ runs over a block, which lies in $(P, 2P]$ with $P$ in the window's
 range, and the primes carry the weights $f_0(p_i/2^{t_i})$ at the scales $Q_i = 2^{t_i}$; on its box every form is at
 most $(\Lambda_1 + K_0 E_0 (L + 3)) \log q$. A piece with some $2^{t_i} < q^{e_1}$ vanishes, since its weights force
@@ -707,13 +756,13 @@ $p_i < 2q^{e_1}$; and so does a piece with $\prod_i 2^{t_i} > 2^{K_0 + 1} x/P$, 
 $m \prod_i p_i > 2x$. In a piece the primes may run over the range $p_i \le 2Q_i$ of a family instead of the primes up
 to $2x$, since a term with some $p_i > 2x$ violates the comparisons, which force $m \prod_i p_i \le 2x$. Every other
 piece is a family, with $K_0 + 1$ in place of $K_0$, $A_0 = 1$ and
-$\Lambda_0 = \Lambda_1 + K_0 E_0 (L + 3)$, and Lemma~\ref{lem:family} bounds it by $q^{L - \delta'}/\varphi(q)$. For
-large $q$ the number of pieces is at most $q^{\delta'/2}$, and $\delta = \delta'/2$ will do.
+$\Lambda_0 = \Lambda_1 + K_0 E_0 (L + 3)$, and Lemma~\ref{lem:family} bounds it by $q^{L - \delta_1}/\varphi(q)$. For
+large $q$ the number of pieces is at most $q^{\delta_1/2}$, and $\delta = \delta_1/2$ will do.
 \end{proof}
 
 Every use of Lemma~\ref{lem:family-sharp} below has coefficients $a_m \in \{0, 1\}$. For nonnegative coefficients a
-minorant and a majorant of the sharp comparisons, $G(\ell_j) \le \mathbf 1[\ell_j > 0] \le G(\ell_j + \nu)$ with a
-cut-off $G$ of width $\nu$, would replace the near-boundary families of the proof of Lemma~\ref{lem:family} by the
+minorant and a majorant of the sharp comparisons, $G(\ell_j) \le \mathbf 1[C_j] \le G(\ell_j + \nu)$, with
+$\mathbf 1[C_j]$ the indicator of the $j$-th comparison and a cut-off $G$ of width $\nu$, would replace the near-boundary families of the proof of Lemma~\ref{lem:family} by the
 count along the pivot. The library proves the lemma for complex coefficients, as stated, and the paper follows it.
 
 The sieve meets these sums with the rest of $n$ given only as a rough number. The next lemma writes such sums as
@@ -727,10 +776,10 @@ $\mathbf r = (r_1, \dots, r_k)$ run over the $k$-tuples of primes up to $N_2$ th
 with constant terms at most $\Lambda_1 \log q$, and suppose that every tuple of primes that satisfies the comparisons has
 $r_i \ge q^{e_0}$ for every $i$, and that either every such tuple satisfies (a), or every such tuple satisfies (b):
 \begin{enumerate}
-\item[(a)] $r_k \le r_i$ for every $i$, and $W_0 < r_1 \cdots r_k \le W_1$, where $W_1 \le N_1$,
+\item[(a)] $r_k \le r_i$ for every $i$, and $W_0 < r_1 \cdots r_k \le W_1$, for integers $W_0$ and $W_1$ with $W_1 \le N_1$,
   $q^{u_1 L} \le \lfloor N_1/W_1 \rfloor$ and $\lfloor N_2/(W_0 + 1) \rfloor \le q^{u_2 L}$;
-\item[(b)] $r_1 > \dots > r_k$, and $P_1 < \prod_{i \in T} r_i \le P_2$ for a fixed set $T$ of indices, where
-  $q^{u_1 L} \le P_1$ and $P_2 \le q^{u_2 L}$.
+\item[(b)] $r_1 > \dots > r_k$, and $P_1 < \prod_{i \in T} r_i \le P_2$ for a fixed set $T$ of indices, for
+  integers $P_1$ and $P_2$ with $q^{u_1 L} \le P_1$ and $P_2 \le q^{u_2 L}$.
 \end{enumerate}
 Then, with $r = r_1 \cdots r_k$,
 \[
@@ -752,8 +801,8 @@ ones, each pivoted on a prime with a nonzero coefficient (one with none is a con
 $\log \mathrm{lpf}(m) - \log r_k \ge 0$, with $\mathrm{lpf}(m)$ the least prime factor of $m$ and the pivot $r_k$; and
 $N_1 < mr \le N_2$, two comparisons with the forms $\log m + \sum_i \log r_i - \log N_1$ and its counterpart. Their
 $m$-parts are at most $(L + 1) \log q$. Wherever they hold, every $r_i \ge q^{e_0} \ge 2q^{e_0/2}$ and $mr \le 2x$, so
-Lemma~\ref{lem:family-sharp} applies, with $K_0 = k + 1$, $J_0 + 3$ comparisons, $e_0/2$ in place of $e_1$ and
-$\Lambda_1 + L + 1$ in place of $\Lambda_1$.
+Lemma~\ref{lem:family-sharp} applies, with $K_0 = k + 1$, $J_0 + 3$ comparisons, $E_0 = 1$, $e_0/2$ in place of $e_1$
+and $\Lambda_1 + L + 1$ in place of $\Lambda_1$.
 
 (b) Here $m = \prod_{i \in T} r_i$ is the variable, and the rest of $n$ must be written in primes. The cofactor
 $n/r$ has no prime factor below $r_k \ge q^{e_0}$ and is at most $2x \le q^{L + 1}$, so it is the product of a unique
@@ -768,9 +817,9 @@ $(P_1, P_2]$; each of the others has a nonzero coefficient at a variable outside
 $J_0 + s_1^2 + s_1 + 2$ of them, with $m$-parts at most $(\Lambda_1 + 2L + 2) \log q$, and wherever they hold every
 prime is at least $q^{e_0}$ and the product is at most $2x$. If $T = \{1, \dots, k\}$ and $s = 0$, no prime is left:
 then $n = m \le P_2 < N_1$ for large $q$, and that sum is empty. Lemma~\ref{lem:family-sharp}, with
-$K_0 = s_1 + k + 1$, $e_0/2$ in place of $e_1$ and $\Lambda_1 + 2L + 2$ in place of $\Lambda_1$, bounds each of the
-other sums by $q^{L - \delta'}/\varphi(q)$; there are at most $s_1 + 1$ of them, and $\delta = \delta'/2$ will do for
-large $q$. The exact products are the case $s = 0$ alone, with no cofactor: the same regrouping makes their sum one sum
+$K_0 = s_1 + k + 1$, $J_0 + s_1^2 + s_1 + 2$ comparisons, $E_0 = 1$, $e_0/2$ in place of $e_1$ and
+$\Lambda_1 + 2L + 2$ in place of $\Lambda_1$, bounds each of the other sums by $q^{L - \delta_1}/\varphi(q)$; there
+are at most $s_1 + 1$ of them, and $\delta = \delta_1/2$ will do for large $q$. The exact products are the case $s = 0$ alone, with no cofactor: the same regrouping makes their sum one sum
 of the kind of Lemma~\ref{lem:family-sharp} (in Lean, \lean{SieveExact.chainT0\_bound}).
 \end{proof}
 
@@ -804,19 +853,17 @@ $\Phi(y, z) \le (\omega^*(u) + \varepsilon)\, y/\log z$.
 \end{lemma}
 
 This is an upper bound of the kind that Buchstab's asymptotic for rough numbers gives \cite{buchstab, tenenbaum}, with
-an explicit constant above $3$. The proof (\S S4) is an induction on $u$ with Buchstab's inequality, the prime number
-theorem and a delay inequality: $1 + M(u) \le u \omega^*(u)$ for $u \ge 2$, where $M(u)$ is $\int_1^{u - 1} \omega^*$ with
-$\omega^*$ replaced by $0.5671433$ on $[2, 3]$, a bound for it there since $0.5671433 \ge 0.567143\ldots$. On $[2, 3]$ the
-inequality is the equality $1 + \log(u - 1) = u\omega^*(u)$. Above $3$ it asks
-$1 + \log 2 + 0.5671433 \min(u - 3, 1) + c_* \max(u - 4, 0) \le c_* u$ of the constant $c_*$ of $\omega^*$ there,
-which holds for every $u > 3$ exactly when $1 + \log 2 + 0.5671433 \le 4c_*$, that is when $c_* \ge 0.5650726\ldots$;
-so $0.565073$ is that bound rounded up. The certificate of Section~\ref{sec:certificate} uses the lemma, through $\omega^*$, to bound
+an explicit constant above $3$. The proof (\S S3) is an induction on $u$ with Buchstab's inequality, the prime number
+theorem and a delay inequality, $1 + M(u) \le u \omega^*(u)$ for $u \ge 2$, where $M(u)$ is $\int_1^{u - 1} \omega^*$
+with $\omega^*$ replaced by $0.5671433 \ge 0.567143\ldots$ on $[2, 3]$. Above $3$ the inequality holds exactly when
+$1 + \log 2 + 0.5671433 \le 4c_*$ for the constant $c_*$ of $\omega^*$ there, that is when $c_* \ge 0.5650726\ldots$,
+and $0.565073$ is that bound rounded up. The certificate of Section~\ref{sec:certificate} uses the lemma, through $\omega^*$, to bound
 the share of the integers in each term it drops.
 
 \subsection{Harman's comparison}
 
 \begin{proposition}[Harman's comparison, in the form used]\label{prop:harman}
-Assume the conclusion of Theorem~\ref{thm:type2}. Fix $j$, $J_0$, $\Lambda_1 \ge 0$, $\varepsilon_H > 0$, and exponents
+Assume the conclusion of Theorem~\ref{thm:type2}. Fix $j \ge 0$, $J_0$, $\Lambda_1 \ge 0$, $\varepsilon_H > 0$, and exponents
 $a_0 > 0$ and $b_0$ with $a_0 + b_0 < (1 - u_1)L$ and $(1 - u_2)L < b_0 < L - 1$. There are $\delta > 0$ and $q_0$ such
 that the following holds for every $q \ge q_0$ and every $a$ prime to $q$. Let $(r_1, \dots, r_j)$ run over the ordered
 $j$-tuples of primes up to $2x$ that satisfy at most $J_0$ comparisons, with coefficients at most $1$ in absolute value,
@@ -826,15 +873,17 @@ $r = r_1 \cdots r_j \le q^{b_0}$. Then
   \Bigl|\sum_{(r_1, \dots, r_j)} \Bigl(S(\mathcal A_r, z_0) - \frac{S(\mathcal B_r, z_0)}{\varphi(q)}\Bigr)\Bigr|
   \le \frac{\varepsilon_H\, x}{\varphi(q) \log q} + \frac{q^{L - \delta}}{\varphi(q)}.
 \]
+For $j = 0$ the sum is the single term $S(\mathcal A, z_0) - S(\mathcal B, z_0)/\varphi(q)$.
 \end{proposition}
 
-The proof (\S S3) iterates Buchstab's identity \cite{buchstab} from $z_0$ down to a small
+The proof (\S S4) iterates Buchstab's identity \cite{buchstab} from $z_0$ down to a small
 power $w$ of $q$, stopping a branch as soon as its product exceeds $X' = \lfloor q^{b_0} \rfloor$. A stopped branch has
 its product in $(X', z_0 X']$, the reflection of the window, and its cofactor in the window's range, so
 Lemma~\ref{lem:family-sharp} evaluates the stops. The leaves are sifted only by the primes below $w$, and Brun's sieve
 \cite{brun}, in the form of the fundamental lemma of sieve theory \cite{friedlander-iwaniec, iwaniec-kowalski},
 compares their $\mathcal A$- and $\mathcal B$-counts, with an error that the elementary bound
-$\prod_{p < w}(1 - 1/p) \le 1/\log w$ and the choice of the sieve's levels make at most $\varepsilon_H x/(\varphi(q) \log q)$.
+$\prod_{p < w}(1 - 1/p) \le 1/\log w$, Mertens' theorem for the sum over the leaves and the choice of the sieve's
+levels make at most $\varepsilon_H x/(\varphi(q) \log q)$.
 
 \section{The decomposition and its certificate}\label{sec:certificate}
 
@@ -845,12 +894,14 @@ $\mathcal B$-version. The certificate is an upper bound for the total cost, comp
 
 \subsection{Exponents and the grid}
 
-The exponent of a prime $p$ is $\alpha = \log p/\log x$. Fix a denominator $D = 2^{40}$ and round the window's ends
-inward: $U_1 = \lceil u_1 D \rceil$ and $U_2 = \lfloor u_2 D \rfloor$; since $u_1 D$ and $u_2 D$ are not integers,
-$u_1 < U_1/D < U_2/D < u_2$. Let $v = (U_2 - U_1)/D$. The decomposition sifts the primes of exponent at least $v$. The
+The exponent of a prime $p$ is $\alpha = \log p/\log x$. Fix a denominator $D = 2^{40}$ and integers $U_1 < U_2$ with
+$u_1 D < U_1$ and $U_2 < u_2 D$, so that $u_1 < U_1/D < U_2/D < u_2$; the grid of Theorem~\ref{thm:main} rounds the
+window's ends inward, $U_1 = \lceil u_1 D \rceil$ and $U_2 = \lfloor u_2 D \rfloor$, which qualify since $u_1 D$ and
+$u_2 D$ are not integers. Let $v = (U_2 - U_1)/D$. The decomposition sifts the primes of exponent at least $v$. The
 grid has $N$ cells a side, of side $h = \lceil (D/2 - (U_2 - U_1))/N \rceil / D$; the cell $k$ is the range
 $[e_k, e_k + h)$ of exponents with $e_k = v + kh$, for $0 \le k < N$, so that the cells cover $[v, v + Nh)$, and
-$v + Nh > 1/2$. Here $N = 340$. The primes of the two deepest levels of the decomposition, $p_5$ and $p_6$, have their
+$v + Nh \ge 1/2$ (Theorem~\ref{thm:route} asks $v + Nh > 1/2$, which holds on the grid of Theorem~\ref{thm:main}).
+Here $N = 340$. The primes of the two deepest levels of the decomposition, $p_5$ and $p_6$, have their
 exponents in the cells of a \emph{coarse grid} with the same window and $N_C = N/4 = 85$ cells a side, each four
 consecutive cells of the grid: its side is $h_C = 4h$, and its cell $b$ is $[e^C_b, e^C_b + h_C)$ with
 $e^C_b = v + b h_C = e_{4b}$.
@@ -888,7 +939,8 @@ that applies.
 \item[(O)] If its box lies in $\alpha_k \ge \alpha_{k - 1}$, that is, the cell of $\alpha_k$ starts at or above the end of
   the cell of $\alpha_{k - 1}$, or if its lower corner $(e_1, \dots, e_k)$ has $e_1 + \cdots + e_{k - 1} + 2e_k > 1$, so
   that $\alpha_1 + \cdots + \alpha_{k - 1} + 2\alpha_k \ge 1 + 1/D$ on the box, it is empty for $k \ge 3$ (below), and
-  for $k = 2$ it is empty or counts only products $p_1 p_2$; these \emph{corner} cells of depth two are dropped, at a
+  for $k = 2$ it is empty if its box lies in $\alpha_2 \ge \alpha_1$ and otherwise counts only products $p_1 p_2$; these
+  non-empty cells of depth two, with $e_1 + 2e_2 > 1$, are the \emph{corner} cells, and they are dropped, at a
   negligible cost (Lemma~\ref{lem:drop}).
 \item[(S)] Otherwise, a term with sign $-$ is split at $X'$: the part with $p_1 \cdots p_k > X'$ is evaluated by
   Lemma~\ref{lem:chains}(a), with the cofactor as the Type~II variable, and the part with $p_1 \cdots p_k \le X'$ is
@@ -897,11 +949,13 @@ that applies.
   split and decomposed as in (S).
 \end{enumerate}
 For $k \ge 3$ the order of (E) and (O) does not matter, since the terms of (O) are empty; the library tests (O) first at
-depths three and five.
+depths three and five, and at depths four and six tests $\alpha_k \ge \alpha_{k - 1}$ first, then (E), then the rest
+of (O).
 At depth one there is no split: a term whose cell lies inside the window is evaluated by Lemma~\ref{lem:chains}(b) with
 $T = \{1\}$, and every other one is decomposed, since $p_1 < z_{\mathrm{top}} \le X'$. The terms of depth six are
 evaluated or dropped, and not decomposed. At depth two a cell to which (E) and (O) do not apply is a
-\emph{candidate}; at depths four and six such a cell is \emph{counted}. Table~\ref{tab:tree} sums up.
+\emph{candidate}; at depths four and six such a cell is \emph{counted}. Table~\ref{tab:tree} sums up, and
+Figure~\ref{fig:cells} shows the cells of depth two.
 
 \begin{table}[ht]
 \centering
@@ -910,7 +964,7 @@ evaluated or dropped, and not decomposed. At depth two a cell to which (E) and (
 \toprule
 Depth & Sign & Grid & Terms to which (E) and (O) do not apply \\
 \midrule
-1 & $-$ & fine & inside the window: evaluated; otherwise decomposed \\
+1 & $-$ & fine & decomposed (no split) \\
 2 & $+$ & fine & candidate cells: dropped, or split and decomposed \\
 3 & $-$ & fine & split and decomposed \\
 4 & $+$ & fine & counted cells: dropped, or split and decomposed \\
@@ -938,8 +992,9 @@ and (O) do not apply has $(e_i + h) + (e_j + h) + (e_k + h) < 1 - U_1/D$; and a 
 same tests hold for its box and for the boxes of its cells of depth five to which (E) and (O) do not apply, whose last
 cell is coarse, with upper end $e^C_b + h_C$. Then the cell, and every term below it that is split at $X'$, has
 $\alpha_1 + \cdots + \alpha_k < 1 - U_1/D$ on its box, so that its part above $X'$ has
-$X' < p_1 \cdots p_k < x^{1 - U_1/D}$, and Lemma~\ref{lem:chains}(a) applies there, with $W_0 = X'$ and $W_1 = \lfloor x^{1 - U_1/D} \rfloor$: the cofactor lies in
-$(x^{U_1/D}, 2x^{U_2/D}]$, inside the window's range for large $q$.
+$X' < p_1 \cdots p_k < x^{1 - U_1/D}$, and Lemma~\ref{lem:chains}(a) applies there, with $W_0 = X'$ and
+$W_1 = \lfloor x^{1 - U_1/D} \rfloor$: the cofactor lies in $(\lfloor N_1/W_1 \rfloor, \lfloor N_2/(X' + 1) \rfloor]$,
+which is inside the window's range for large $q$ by the remark after Lemma~\ref{lem:chains}.
 
 \emph{Evaluation.} Let the box of a term of depth $k$ be surely evaluable, with $\sum_{i \in T} \alpha_i \in \mathcal U$
 on it. If the sum lies in $(U_1/D, U_2/D)$, Lemma~\ref{lem:chains}(b) applies with this $T$, the cells, the order of
@@ -980,14 +1035,18 @@ $\omega^*$ is not monotone:
 \item otherwise the largest of $1/\max(u_{\min}, 1)$, if $u_{\min} < 2$; of a bound for $\omega^*$ on the part of the
   range in $[2, 3]$; and of $0.565073$, if $u_{\max} > 3$.
 \end{itemize}
-On $[2, 3]$, $\omega^* = \omega$ increases up to $2.76$ and decreases from $2.77$ on (\S S4), so the
+On $[2, 3]$, $\omega^* = \omega$ increases up to $2.76$ and decreases from $2.77$ on (\S S3), so the
 bound there is $\omega(u_{\max})$ if $u_{\max} \le 2.76$, $\omega(u_{\min})$ if $u_{\min} \ge 2.77$, and $0.5671433$, at
 least its maximum $0.567143\ldots$ there, otherwise. At a rational $w \in [2, 3]$ the certificate bounds $\omega(w) = (1 + \log(w - 1))/w$ by
 $\log(w - 1) \le \ell_k + (y - 1/y)/2$, where $r_k = 1 + k/16 \le w - 1 < r_k + 1/16$, $y = (w - 1)/r_k \ge 1$, and
 $\ell_k \ge \log r_k$ is one of seventeen rationals of a table, each checked against the exponential's series; the
 second term is $\log y \le (y - 1/y)/2$, the trapezoid rule again, which here errs by less than $4 \cdot 10^{-5}$. At
-depths four and six $\Omega$ is found in the same way, from the sum of the other exponents and the cells' widths. The
-\emph{bound} of a cell is then
+depths four and six $\Omega$ is found in the same way: for a box of cells $c_1, \dots, c_k$, with lower ends $e_{c_i}$
+and widths $w_i$ ($h$, or $h_C$ for a coarse cell), the arguments lie in $[u_{\min}, u_{\max})$ with
+\[
+  u_{\min} = \frac{1 - E - (w_1 + \cdots + w_k)}{e_{c_k} + w_k}, \qquad u_{\max} = \frac{1 + 1/D - E}{e_{c_k}},
+\]
+where $E = e_{c_1} + \cdots + e_{c_k}$; at depth two these are the ends above. The \emph{bound} of a cell is then
 \begin{gather*}
   \Delta_2(i, j) = \bigl\lceil \mathcal K \Omega\, t(e_i, h)\, s(e_j, h) \bigr\rceil, \\
   \Delta_4(i, j, k, l) = \bigl\lceil \mathcal K \Omega\, t(e_i, h)\, t(e_j, h)\, t(e_k, h)\, s(e_l, h) \bigr\rceil, \\
@@ -1021,22 +1080,22 @@ Lemma~\ref{lem:rough}, with $U = 2/e_j$, applies to $\Phi(y, p_2)$, with
 $u = \log 2y/\log p_2 = (1 - \alpha_1 - \alpha_2 + \tau)/\alpha_2$ and $\tau = \log 2/\log x$. Since $\tau < 1/D$ once
 $\log x > D \log 2$, $u < u_{\max}$, and $u \ge u_{\min}$ since $\tau \ge 0$. So $\Omega$ also bounds $\omega^*(u)$,
 and
-$\Phi(y, p_2) \le (\Omega + \varepsilon') x/(p_1 p_2 \log p_2)$ for large $x$. The term is at most
+$\Phi(y, p_2) \le (\Omega + \varepsilon_1) x/(p_1 p_2 \log p_2)$ for large $x$. The term is at most
 \[
-  (\Omega + \varepsilon') \, x \sum_{p_1 \in \mathcal P_i} \frac1{p_1} \sum_{p_2 \in \mathcal P_j}
+  (\Omega + \varepsilon_1) \, x \sum_{p_1 \in \mathcal P_i} \frac1{p_1} \sum_{p_2 \in \mathcal P_j}
   \frac1{p_2 \log p_2}.
 \]
 By the prime number theorem and partial summation, for large $x$,
 \begin{gather*}
-  \sum_{p \in \mathcal P_i} \frac1p \le \log\Bigl(1 + \frac h{e_i}\Bigr) + \varepsilon' \le t(e_i, h) + \varepsilon', \\
-  \log x \sum_{p \in \mathcal P_j} \frac1{p \log p} \le \frac1{e_j} - \frac1{e_j + h} + \varepsilon'
-  = s(e_j, h) + \varepsilon'.
+  \sum_{p \in \mathcal P_i} \frac1p \le \log\Bigl(1 + \frac h{e_i}\Bigr) + \varepsilon_1 \le t(e_i, h) + \varepsilon_1, \\
+  \log x \sum_{p \in \mathcal P_j} \frac1{p \log p} \le \frac1{e_j} - \frac1{e_j + h} + \varepsilon_1
+  = s(e_j, h) + \varepsilon_1.
 \end{gather*}
 These are the integrals of $d\alpha/\alpha$ and $d\alpha/\alpha^2$ over the cells; the first bound,
 $\log(1 + h/e_i) \le t(e_i, h)$, is $\xi \le \sinh \xi$ at $\xi = \log(1 + h/e_i)$, since
 $t(e, h) = \sinh \log(1 + h/e)$. Since
 $\Delta_2(i, j)/\mathcal K \ge \Omega\, t(e_i, h)\, s(e_j, h)$, the term is at most
-$(\Delta_2(i, j)/\mathcal K + \varepsilon_c) X$ once $\varepsilon'$ is small.
+$(\Delta_2(i, j)/\mathcal K + \varepsilon_c) X$ once $\varepsilon_1$ is small.
 
 (2) The same argument bounds a dropped counted cell $(i, j, k, l)$ of depth four, with
 $\Phi(x/(p_1 \cdots p_4), p_4)$, three sums $\sum 1/p$ and one sum $\log x \sum 1/(p \log p)$, and a dropped counted
@@ -1045,11 +1104,11 @@ cell of depth six, whose last two primes lie in coarse cells. Here $y \ge 1$ fol
 $e_i + e_j + e_k + e_l + e^C_b + 2e^C_c \le 1$ at depth six, with $4h \le v$ at depth four and $4h + 2h_C \le v$ at
 depth six.
 
-(3) A corner cell $(i, j)$ has its cell $i$ outside the window, and, since $2e_i < 1$ and the term is not empty,
-$e_i + 2e_j > 1$. Then $p_1 p_2^2 > 2x$ for large $x$, so the cofactor, which has no prime factor below $p_2$, is $1$,
+(3) A corner cell $(i, j)$ has $e_i + 2e_j > 1$, and its cell $i$ lies outside the window, since the term of depth one
+above it is decomposed. Then $p_1 p_2^2 > 2x$ for large $x$, so the cofactor, which has no prime factor below $p_2$, is $1$,
 and $n = p_1 p_2 > x$ with $p_1, p_2 < z_{\mathrm{top}}$. Both primes then lie in $(z_{\mathrm{top}}/4, z_{\mathrm{top}}]$,
-so there are at most $(12\sqrt x/\log x)^2$ such integers for large $x$. The corner cells, at most $N^2$ of them,
-together contribute $O(x/\log^2 x) = o(X)$.
+so there are at most $(12\sqrt x/\log x)^2$ such integers for large $x$, and the corner cells together contribute
+$O(x/\log^2 x) = o(X)$.
 \end{proof}
 
 \subsection{The refinement: keeping two-prime parts}
@@ -1060,8 +1119,8 @@ belongs to a Type~II sum. The refinement keeps these parts instead of dropping t
 
 Let the cell $(i, j)$ be a candidate that is not decomposed, with $e_j + h \le e_i$ and $2(e_i + h) \le 1$, so that
 $\alpha_2 < \alpha_1 < 1/2$ on its box. A cell $k$ is \emph{kept} below $(i, j)$ if $e_k \ge e_j + h$ (so $\ell_1 > p_2$
-on the box), $2(e_k + h) + e_i + e_j + 2h \le 1$ (so $\ell_1 < \ell_2$ on the box), and the box $(i, j, k)$ is surely
-evaluable. The \emph{kept part} below $k$ counts the $n = p_1 p_2 \ell_1 \ell_2 \in (x, 2x]$ with $(p_1, p_2)$ in the
+on the box), $2(e_k + h) + e_i + e_j + 2h \le 1$ (so that every prime $\ell_2$ with $p_1 p_2 \ell_1 \ell_2 \in (x, 2x]$
+exceeds $\ell_1$), and the box $(i, j, k)$ is surely evaluable. The \emph{kept part} below $k$ counts the $n = p_1 p_2 \ell_1 \ell_2 \in (x, 2x]$ with $(p_1, p_2)$ in the
 cell $(i, j)$, $\ell_1$ a prime of the cell $k$, $\ell_2 > \ell_1$ a prime, and $\ell_1, \ell_2 \ne p_1$.
 
 \begin{lemma}\label{lem:kept}
@@ -1099,7 +1158,7 @@ So the kept part is the sum of three sums over the decreasing $4$-tuples $r_1 > 
 $(p_1, \ell_2, \ell_1, p_2)$, $(\ell_2, p_1, \ell_1, p_2)$ and $(\ell_2, \ell_1, p_1, p_2)$ respectively. The
 conditions are $N_1 < r_1 r_2 r_3 r_4 \le N_2$, that $p_1$ lies in the cell $i$ with $z_0 \le p_1 < z_{\mathrm{top}}$,
 that $p_2 = r_4$ lies in the cell $j$ with $p_2 \ge z_0$, and that $\ell_1$ lies in the cell $k$; $\ell_2$ is subject to
-no cell condition. These are $14$ comparisons, with coefficients in $\{-1, 0, 1\}$ and constant terms
+no cell condition. These, with the three of $r_1 > r_2 > r_3 > r_4$, are $14$ comparisons, with coefficients in $\{-1, 0, 1\}$ and constant terms
 $O(\log q)$. Since the box $(i, j, k)$ is surely evaluable, the product of a set $T$ of the primes $p_1$, $p_2$,
 $\ell_1$ lies, on the box, in $(x^{U_1/D}, x^{U_2/D})$ or in $(x^{1 - U_2/D}, x^{1 - U_1/D})$. In the first case
 $m = \prod_T$ lies in the window's range; in the second the complementary product, which contains $\ell_2$, does, for
@@ -1128,7 +1187,7 @@ $\pi(2y) - \pi(y) \ge (1 - \varepsilon) y/\log y \ge (1 - \varepsilon) y/(\gamma
 \]
 using $\sum_{p \in \mathcal P_c} 1/p \ge \log(1 + h/e_c) - d \ge 2h/(2e_c + h) - d$ for large $x$, which is the prime
 number theorem again with $\log(1 + h/e_c) = 2\operatorname{artanh}(h/(2e_c + h)) \ge 2h/(2e_c + h)$, the first term of
-the series, and that each sum is at most $1$. The excluded triples contribute $O(x(1 + \omega(q))/z_0)$, since
+the series, and that each sum is at most $1$, since it is at most $h/e_c + o(1) \le 1/4 + o(1)$ by $h \le e_c/4$. The excluded triples contribute $O(x(1 + \omega(q))/z_0)$, since
 $\sum_{p \ge z_0,\ p \mid q} 1/p \le \omega(q)/z_0$, and the triples number $O(x^{e_i + e_j + e_k + 3h})$ with
 $e_i + e_j + e_k + 3h < 1$. Both are $o(X)$. Finally
 $(1/\gamma_0) \prod_c 2h/(2e_c + h) \ge \kappa(i, j, k)/\mathcal K$, because the floor is at most the quotient. Taking
@@ -1154,7 +1213,9 @@ The certificate prices each candidate cell by what it costs: dropped, or decompo
 \end{itemize}
 On the library's grid the choice at depth two is forced: the sharp rule allows $13230$ of the $27020$ candidate cells,
 each of them has $\Delta^{\mathrm{dec}}_2 \le (\Delta_2 - \kappa(i, j))_+$, and so each is decomposed, and pricing every
-candidate cell at the smaller of its two costs gives the same total. Figure~\ref{fig:cells} shows the three kinds of
+candidate cell at the smaller of its two costs gives the same total. The choice at depth four is forced too: below the
+decomposed candidate cells there are $2029388$ counted cells of depth four, the sharp rule allows $1441678$ of them, and
+every one of these is decomposed (a computation, not in Lean). Figure~\ref{fig:cells} shows the three kinds of
 candidate cell.
 
 \begin{figure}[tbp]
@@ -1162,18 +1223,22 @@ candidate cell.
 \input{fig-cells}
 \caption{The cells $(\alpha_1, \alpha_2)$ of depth two on the grid of Proposition~\ref{prop:certificate}, with
 $v \le \alpha_2 < \alpha_1 < 1/2$. Shaded from dark to light, the three kinds of candidate cell: the $13230$ that are
-decomposed, which cost $0.026\mathcal K$ in all; the $4682$ dropped with kept parts, $0.439\mathcal K$; and the
-$9108$ dropped without, $0.533\mathcal K$. White: the cells evaluated at depth two, on which $\alpha_1 + \alpha_2$
-or $\alpha_2$ lies in $\mathcal U$, and the window's strip $U_1/D < \alpha_1 < U_2/D$ (dashed), where the term of
-depth one is evaluated. Hatched: the corner cells, beyond $\alpha_1 + 2\alpha_2 = 1$. Drawn by
-\file{tools/linnik/fig_cells.py} from the certificate's definitions.}\label{fig:cells}
+decomposed, which cost $0.0260\mathcal K$ in all; the $4682$ dropped with kept parts, $0.4386\mathcal K$ net of the
+kept parts; and the $9108$ dropped without, $0.5329\mathcal K$. Of the $0.971\mathcal K$ dropped, $0.507\mathcal K$ is
+in cells that reach the line $\alpha_1 + \alpha_2 = 1 - U_1/D$ (Section~\ref{sec:comparison}). White: the cells
+evaluated at depth two, on which $\alpha_1 + \alpha_2$ or $\alpha_2$ lies in $\mathcal U$ throughout the cell, and the
+cells of the window's strip $U_1/D < \alpha_1 < U_2/D$, between the dashed lines, where the term of depth one is
+evaluated; a cell that straddles a dashed line is decomposed at depth one. The dotted lines are
+$\alpha_1 + \alpha_2 = U_1/D$, $U_2/D$, $1 - U_2/D$ and $1 - U_1/D$, labelled by their constants. Hatched: the corner
+cells, beyond $\alpha_1 + 2\alpha_2 = 1$. Drawn by \file{tools/linnik/fig_cells.py} from the certificate's
+definitions.}\label{fig:cells}
 \end{figure}
 
 The other cells of depth two cost nothing in the total: they are evaluated, empty, or corner cells
 (Lemma~\ref{lem:drop}(3)). Without the kept parts, that is with $\kappa = 0$, the total $\Sigma$ is about
-$1.12341\mathcal K$ on the grid of this paper, and with the decomposition stopped at depth four it is about
-$1.45721\mathcal K$ (computations by \file{tools/linnik/mirror2.py}, not in Lean). The kept parts remove about a ninth
-of the total.
+$1.12341\mathcal K$ on the grid of this paper; with the decomposition stopped at depth four it is about
+$1.45721\mathcal K$ without the kept parts and $1.33134\mathcal K$ with them (computations by
+\file{tools/linnik/mirror2.py}, not in Lean). The kept parts remove about a ninth of the total.
 
 \begin{proposition}\label{prop:decomp-kept}
 Assume the conclusion of Theorem~\ref{thm:type2}. If $\Sigma'/\mathcal K \le c$, then for every $\varepsilon > 0$, for
@@ -1201,20 +1266,21 @@ $\mathcal B/\varphi(q)$-counts within $\mathrm{Err}$, and every kept part within
 Lemma~\ref{lem:kept}(2). There are at most $C_{\mathrm{dec}} = 1 + N(1 + N(2 + N(2 + N(N_C(N_C + 2) + 2))))$ terms,
 and at most $N^3$ kept parts. So
 \[
-  S(\mathcal A, z_{\mathrm{top}}) \ge \frac{S(\mathcal B, z_{\mathrm{top}}) - (D(\mathcal B) - K(\mathcal B))}{\varphi(q)}
+  S(\mathcal A, z_{\mathrm{top}}) \ge \frac{S(\mathcal B, z_{\mathrm{top}}) - (\mathrm{Dr}(\mathcal B) - \mathrm{Kp}(\mathcal B))}{\varphi(q)}
   - (C_{\mathrm{dec}} + 3N^3)\,\mathrm{Err},
 \]
-where $D(\mathcal B)$ is the sum of the $\mathcal B$-versions of the dropped terms and $K(\mathcal B)$ that of the kept
-parts. Taking $\varepsilon_H$ small in terms of $\varepsilon$ and $q$ large, the errors are below
+where $\mathrm{Dr}(\mathcal B)$ is the sum of the $\mathcal B$-versions of the dropped terms and $\mathrm{Kp}(\mathcal B)$
+that of the kept parts. Taking $\varepsilon_H$ small in terms of $\varepsilon$ and $q$ large, the errors are below
 $\varepsilon x/(2\varphi(q) \log x)$.
 
 \emph{The dropped terms.} By Lemma~\ref{lem:drop}, a dropped candidate cell contributes at most
-$(\Delta_2(i, j)/\mathcal K + \varepsilon_c) X$ to $D(\mathcal B)$, and by Lemma~\ref{lem:kept}(3) its kept parts at least
-$(\kappa(i, j)/\mathcal K - N\varepsilon_c) X$ to $K(\mathcal B)$; a decomposed candidate cell contributes at most
+$(\Delta_2(i, j)/\mathcal K + \varepsilon_c) X$ to $\mathrm{Dr}(\mathcal B)$, and by Lemma~\ref{lem:kept}(3) its kept parts
+at least $(\kappa(i, j)/\mathcal K - N\varepsilon_c) X$ to $\mathrm{Kp}(\mathcal B)$; a decomposed candidate cell contributes at most
 $(\Delta^{\mathrm{dec}}_2(i, j)/\mathcal K + N^2(1 + N_C^2)\varepsilon_c) X$, the sum over its dropped terms of depths four
 and six; and the corner cells $o(X)$. Since truncating at $0$ can only raise a cost, each candidate cell contributes at
-most $(\mathrm{cost}'(i, j)/\mathcal K + N^2(1 + N_C^2)\varepsilon_c) X$ to $D(\mathcal B) - K(\mathcal B)$. Adding up and
-taking $\varepsilon_c$ small, $D(\mathcal B) - K(\mathcal B) \le (c + \varepsilon/2) X$ for large $q$.
+most $(\mathrm{cost}'(i, j)/\mathcal K + N^2(1 + N_C^2)\varepsilon_c) X$ to $\mathrm{Dr}(\mathcal B) - \mathrm{Kp}(\mathcal B)$.
+Adding up and taking $\varepsilon_c$ small, $\mathrm{Dr}(\mathcal B) - \mathrm{Kp}(\mathcal B) \le (c + \varepsilon/2) X$ for
+large $q$.
 \end{proof}
 
 \subsection{The certificate}
@@ -1236,11 +1302,11 @@ The argument of Sections~\ref{sec:type1} and~\ref{sec:certificate} uses of the p
 and $N$ only the conditions of the following theorem, of which Theorem~\ref{thm:main} is a case.
 
 \begin{theorem}[the route theorem]\label{thm:route}
-Let $2 < L \le 5/2$ and $0 < u_1 < u_2 < 1$, and let a grid of $N$ cells a side, with $4 \mid N$, ends $U_1$ and $U_2$
-over $D = 2^{40}$ and its coarse grid of $N/4$ cells of four, satisfy $u_1 D < U_1$, $U_2 < u_2 D$ and $L U_2 > D$, and
-the grid conditions
+Let $2 < L \le 5/2$ and $0 < u_1 < u_2 < 1$, and let a grid of $N$ cells a side, with $4 \mid N$, integer ends $U_1$
+and $U_2$ over $D = 2^{40}$ and its coarse grid of $N/4$ cells of four, satisfy $u_1 D < U_1$, $U_2 < u_2 D$ and
+$L U_2 > D$, and the grid conditions
 \[
-  0 < h, \quad U_1 < U_2, \quad 2U_2 < D, \quad 2e_{N - 1} < 1 < 2(v + Nh), \quad 16h \le v.
+  2U_2 < D, \quad 2e_{N - 1} < 1 < 2(v + Nh), \quad 16h \le v.
 \]
 Assume the conclusion of Theorem~\ref{thm:type2} for $L$ on the window $[u_1 L, u_2 L]$, and $\Sigma' < \mathcal K$ on
 the grid.
@@ -1249,22 +1315,23 @@ $p \le K' q^L$.
 \end{theorem}
 
 In Lean (\lean{SieveMain2.linnik\_route\_lt2}) the grid conditions are \lean{GridOK}, the conditions above with
-$4h \le v$ in place of $16h \le v$, and \lean{GridOKC}: \lean{GridOK} for the coarse grid, $4h + 2h_C \le v$ and
+$4h \le v$ in place of $16h \le v$ and with $0 < h$ and $U_1 < U_2$, which follow from the others, and \lean{GridOKC}: \lean{GridOK} for the coarse grid, $4h + 2h_C \le v$ and
 $Nh \le N_C h_C$. The Lean's grids also carry a multiplier $\mu$ (\lean{Grid.mult}), the side being rounded up to a
 multiple of $\mu/D$; Theorem~\ref{thm:route} is the case $\mu = 1$. For $4 \mid N$ and $\mu = 1$ the coarse cells are
 unions of four cells, $h_C = 4h$, $e^C_{N_C - 1} = e_{N - 4}$ and $N_C h_C = Nh$, so beyond \lean{GridOK} the
 condition \lean{GridOKC} asks only $4h_C = 16h \le v$, which implies $4h \le v$ and $4h + 2h_C = 12h \le v$.
 
 The grid conditions are what the proofs of Sections~\ref{sec:certificate} and~\ref{sec:proof} use of the grid.
-$0 < h$ and $U_1 < U_2$ make the cells and the floor $z_0 = \lceil x^v \rceil$, with $v > 0$, well defined.
-$1 < 2(v + Nh)$ makes the cells, and the coarse cells, cover the exponents of the primes below $z_{\mathrm{top}}$.
-$2e_{N-1} < 1$ gives $2e_i < 1$ for every cell, hence $v < 1/2$ and $z_0 \le z_{\mathrm{top}}$; with $16h \le v$ it
-gives $v + Nh \le 1$, which keeps the thresholds of the comparisons of every cell, the coarse ones included, in
-$[1, q^{L + 1}]$; and it bounds the corner cells in Lemma~\ref{lem:drop}(3). $2U_2 < D$ gives $z_{\mathrm{top}} \le X'$. $16h \le v$ gives $y \ge 1$ in
+$2e_{N-1} < 1 < 2(v + Nh)$ gives $h > 0$, and then $16h \le v$ gives $v > 0$, that is $U_1 < U_2$; so the cells and the
+floor $z_0 = \lceil x^v \rceil$ are well defined. $1 < 2(v + Nh)$ makes the cells, and the coarse cells, cover the
+exponents of the primes below $z_{\mathrm{top}}$. $2e_{N-1} < 1$ gives $2e_i < 1$ for every cell, hence $v < 1/2$ and
+$z_0 \le z_{\mathrm{top}}$; with $16h \le v$ it gives $v + Nh \le 1$, which keeps the thresholds of the comparisons of
+every cell, the coarse ones included, in $[1, q^{L + 1}]$. $2U_2 < D$ gives $z_{\mathrm{top}} \le X'$. $16h \le v$ gives $y \ge 1$ in
 Lemma~\ref{lem:drop} ($4h \le v$ at depths two and four, $12h \le v$ at depth six) and $h \le e_c/4$ in
 Lemma~\ref{lem:kept}(3). Of the other conditions, $L U_2 > D$ gives $b_0 < L - 1$, and with $L \le 5/2$ it gives
 $X'^{3/2} < N_1$ for the empty terms; $L \le 5/2$ also bounds the number of pieces in the proof of
-Lemma~\ref{lem:family-sharp}.
+Lemma~\ref{lem:family-sharp}. The condition $2 < L$ follows from $L U_2 > D$ and $2U_2 < D$; the Lean states it, and
+uses it only through $L > 1$.
 
 \begin{proof}
 Let $\rho = \Sigma'/\mathcal K < 1$ and $0 < \varepsilon < (1 - \rho)/4$. By the prime number theorem, for large $q$ the
@@ -1295,17 +1362,17 @@ in the form $\psi(t) - t = O(t^{11/12 + \varepsilon})$ (\lean{HalfPlanePNT.psi\_
 \end{proof}
 
 The proof does not compute $K$: the threshold $q_0$ comes from limits in $q$ in each step, and the small moduli
-from Dirichlet's theorem. Unlike the classical proofs, the argument has no step on an exceptional zero, since
-Input~\ref{inp:half-plane} leaves none, and no step is ineffective in the way Siegel's theorem is: every constant could
-in principle be computed. But its thresholds are enormous: the inward rounding of the window to
-multiples of $2^{-40}$, for one, leaves Proposition~\ref{prop:harman} a margin of order $10^{-12}$ in its exponents,
-which only $\log q \gtrsim 10^{12}$ turns into a usable factor.
+from Dirichlet's theorem. As in the classical proofs, every constant is effective in principle; unlike them, the
+argument needs no step on an exceptional zero, since Input~\ref{inp:half-plane} leaves none. But its thresholds are
+enormous: the inward rounding of the window to multiples of $2^{-40}$, for one, leaves Proposition~\ref{prop:harman}
+margins below $10^{-12}$ in its exponents, which only $\log q \gtrsim 10^{12}$ turns into a usable factor.
 
 \section{The formalisation}\label{sec:lean}
 
 Every numbered theorem, proposition, lemma and input of Sections~\ref{sec:intro} to~\ref{sec:proof}, and each result
 from the literature that the proof uses, is a theorem of the Lean library in \texttt{lib/} of the repository
-\cite{repo}, which is built with Lean~4 and Mathlib; Appendix~\ref{app:claims} names them, and
+\cite{repo}, which is built with Lean~4 and Mathlib, or, for Dirichlet's theorem, of Mathlib; Appendix~\ref{app:claims}
+names them, and
 \file{formalisations/} documents the results from the literature and the further classical results behind them. The
 Lean statement of Theorem~\ref{thm:main} is
 {\small
@@ -1325,34 +1392,32 @@ $5066$ parts, on definitions that are arithmetic on Lean's core natural numbers,
 Lean \texttt{v4.35.0-rc3} with Mathlib at commit \texttt{0f64d30a}, and the repository's continuous integration builds
 the library and checks the axioms on every change to it.
 
-These are not Lean theorems: the historical statements of the introduction, among them the remarks on R.~Li's theorems;
-the remarks that Chen, Gupta and Li's Theorem~1.2 and Corollary~1.4 give $7/3 + \varepsilon$; the account of the
-window's ends in Section~\ref{sec:ends}; the figures computed by the repository's scripts (the totals $1.45721$,
-$1.12341$ and $0.9975360$ times $\mathcal K$, Figure~\ref{fig:cells} and its counts, the slacks, losses and
-sensitivities of the window, and the computations of Section~\ref{sec:comparison}); and what is said about the sources
-of the inputs and their independent checking.
+Among the statements that are not Lean theorems are: the historical statements of the introduction, among them the
+remarks on R.~Li's theorems; the heuristic remarks of Sections~\ref{sec:intro}, \ref{sec:type2} and~\ref{sec:type1},
+among them what the window needs of the kernel bound, and the effectivity remark of Section~\ref{sec:proof}; the
+remarks that Chen, Gupta and Li's Theorem~1.2 and Corollary~1.4 give $7/3 + \varepsilon$; the account of the window's
+ends in Section~\ref{sec:ends}; the figures computed by the repository's scripts (the totals $1.45721$, $1.33134$,
+$1.12341$ and $0.9975360$ times $\mathcal K$, the share that the kept parts remove, the forced choices at depths two and
+four, Figure~\ref{fig:cells} and its counts, the slacks, losses and sensitivities of the window, among them the worst
+case of the $A_k$, and the computations of Section~\ref{sec:comparison}); and what is said about the sources of the
+inputs and their independent checking.
 
 Independent checking of the inputs is limited. OpenAI's release has its own Lean formalisation of the main preprint's
-result, $\operatorname{Re} s > 7/8$, which implies Input~\ref{inp:half-plane}, but its catalogue \cite{openai-lean}
-gives its scope as partial progress and its review status as unchecked, so it is OpenAI's own record. This library's
-proof of Input~\ref{inp:half-plane} is a new formalisation of the companion preprint's route, written by the author
-with the AI assistance described in the acknowledgements, so it is not a review of the mathematics that is independent
-of OpenAI and of the author; and the check recorded by the tracker AIProofWatch \cite{aiproofwatch} concerns the
-Riemann zeta function only. For Input~\ref{inp:density} the author knows of no independent check; the formalisation of
-Chen, Gupta and Li's Proposition~3.1 found six places where the text of their paper needs a small repair, none
-affecting its results, which the author has sent to them. Lean's kernel checks the proofs of the inputs; it does not
-check that their statements are the preprints'. \S S5 gives the details: the Lean statements of the density estimates,
-what of Chen, Gupta and Li's paper is formalised, independent checking, what the kernel checks, and the artefact.
+result, $\operatorname{Re} s > 7/8$, which implies Input~\ref{inp:half-plane}; it is OpenAI's own record, not an
+independent one, and its catalogue \cite{openai-lean} gives its scope as partial progress and its review status as
+unchecked. This library's proof of Input~\ref{inp:half-plane} is a new formalisation of the companion preprint's
+route, written by the author with the AI assistance described in the acknowledgements, so it is not a review of the
+mathematics that is independent of OpenAI and of the author. For Input~\ref{inp:density} the author knows of no
+independent check. Lean's kernel checks the proofs of the inputs; it does not check that their statements are the
+preprints'. \S S5 gives the details: what of Chen, Gupta and Li's paper is formalised, the Lean statements of the
+density estimates, the library's proof of Input~\ref{inp:half-plane}, independent checking, what the kernel checks,
+and the artefact.
 
 \section{What the inputs give without the sieve}\label{sec:comparison}
 
 This section claims nothing new. It places Theorem~\ref{thm:main} against what the same inputs give by the
-classical argument, which has no sieve. The unconditional exponents of Heath-Brown and Xylouris ($5.5$, $5.18$ and
-$5$) are larger, and their proofs use neither a zero-free half-plane nor a zero-density estimate beyond the
-published ones; the introduction says how Theorem~\ref{thm:main} stands against them. For special moduli smaller
-exponents are known: for the powers of a fixed prime, Banks and Shparlinski's $2.1115$ \cite{banks-shparlinski} (as
-cited in \cite[footnote~1]{cgl}), and $1/0.4752 < 2.1044$ by R.~Li's Harman-sieve argument
-\cite[Theorem~11]{li-harman}.
+classical argument, which has no sieve; the introduction says how it stands against the exponents of Heath-Brown and
+Xylouris, and against the smaller ones known for special moduli.
 
 \subsection*{The classical deduction}
 
@@ -1363,7 +1428,8 @@ Suppose that for some $A \ge 2$ there is a uniform density estimate
 With Input~\ref{inp:half-plane} it gives Linnik's theorem with every exponent $L > A$. The library's proof,
 \lean{Linnik.linnik\_of\_charDensity}, writes the smoothed sum $\sum_{n \equiv a} \Lambda(n) e^{-n/x}$ through the
 characters, bounds each non-trivial character's sum by a contour shift to the edge of its largest zero-free rectangle,
-at one of the levels $\theta_j = \min(1/2 + j\delta/2, 11/12)$, and counts the characters at each level by the density
+at one of the levels $\theta_j = \min(1/2 + j\delta/2, 11/12)$, for a small $\delta > 0$ fixed in terms of $L - A$,
+and counts the characters at each level by the density
 estimate at the height $T + 1$, with $T = 2 \log x + 2$: the characters with zeros of real part about $\sigma$
 contribute about $(q^A/x)^{1 - \sigma}$ together, and none has a zero of real part above $11/12$. With it the library
 proves:
@@ -1372,8 +1438,8 @@ proves:
   counted for every $\sigma$, and at most one above $11/12$, which is the estimate with $A = 12$;
 \item $L = 36/13 + \varepsilon$ with Ingham's estimate, whose exponent $3/(2 - \sigma)$ is $36/13$ at
   $\sigma = 11/12$;
-\item $L = 12/5 + \varepsilon$ with Huxley's estimate, which bounds the density exponent by $12/5$ on the whole
-  range;
+\item $L = 12/5 + \varepsilon$ with Huxley's estimate (with Ingham's below $\sigma = 3/4$), which bounds the density
+  exponent by $12/5$ on the whole range;
 \item $L = 2.3334 + \varepsilon$ with the curve $g_7$, since $g_7(\sigma) \le 2.3334(1 - \sigma)$ on $[1/2, 1]$: on every
   step the exponent is at most $A_0 = 2.3334$, and $g_7 = 1 \le 2.3334(1 - \sigma)$ for $\sigma < 4/7$, as
   $2.3334 \cdot 3/7 > 1$.
@@ -1398,11 +1464,27 @@ Input~\ref{inp:half-plane}, Huxley & density deduction & $12/5 + \varepsilon = 2
 Inputs~\ref{inp:half-plane} and~\ref{inp:density}, the curve $g_7$ & density deduction & $2.3334 + \varepsilon$ \\
 Input~\ref{inp:half-plane}, Chen--Gupta--Li's estimate \cite{cgl} & density deduction (not formalised) &
   $7/3 + \varepsilon \approx 2.333$ \\
-Input~\ref{inp:half-plane}, Ingham, Huxley, in steps & sieve, computed (not formalised) & $4537/2000 \approx 2.269$ \\
-Inputs~\ref{inp:half-plane} and~\ref{inp:density}, in steps & sieve, this paper & $278/125 = 2.224$ \\
+Input~\ref{inp:half-plane}, Ingham, Huxley, in steps & sieve, computed (not formalised) & $4537/2000 = 2.2685$ \\
+Inputs~\ref{inp:half-plane} and~\ref{inp:density}, the curve $g_7$ & sieve, this paper & $278/125 = 2.224$ \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\subsection*{What the half-plane is used for}
+
+Neither the classical deduction nor Theorem~\ref{thm:main} needs the value $11/12$ of Input~\ref{inp:half-plane}. The
+deduction works with any zero-free half-plane $\operatorname{Re} s > 1 - \eta_0$, for a fixed $\eta_0 > 0$, in place of
+Input~\ref{inp:half-plane}. In the sieve, the half-plane enters the window condition only at the top of the curve:
+with Input~\ref{inp:half-plane} replaced by such a half-plane, the top piece $(101/50)(1 - \sigma)$ of $g_7$ extended up
+to $1 - \eta_0$, and the margins of Definition~\ref{def:window} kept, the window of Theorem~\ref{thm:type2} stays
+admissible at $278/125$ for every $\eta_0 \ge 2.85 \cdot 10^{-4}$. The binding corner is then $E_1$ at
+$(1 - \eta_0, \mu_2)$; the corner of $E_2$ at $\mu = 1$ needs only $\eta_0 \ge 2.1 \cdot 10^{-4}$, and with smaller
+margins any fixed $\eta_0 > 0$ would do. The other uses of Input~\ref{inp:half-plane} also need only some half-plane:
+the contour of Lemma~\ref{lem:prime-sum}, the prime number theorem, and the kernel bound, for which the Pólya--Vinogradov
+inequality would do (Section~\ref{sec:window}). So Theorem~\ref{thm:main} depends on OpenAI's result only through
+the existence of some zero-free half-plane, that is, no zeros near $\operatorname{Re} s = 1$ and in particular no
+exceptional zero. This is a remark, checked at the corners in exact rationals, not a theorem of the library, whose
+statements use $\operatorname{Re} s > 11/12$.
 
 \subsection*{Where the gain comes from, and its limits}
 
@@ -1410,8 +1492,8 @@ The deduction needs the zeros of every real part to contribute less than the mai
 largest density exponent on $[1/2, 11/12]$, which is $7/3$, at $\sigma = 5/7$. The sieve needs the zeros only in
 bilinear sums with one variable in the window, where Theorem~\ref{thm:type2} trades the density exponent against the
 length of the variable, and recovers the primes from those sums at the cost that the certificate bounds; the window is
-set at $5/7$, where the density exponent is largest (Section~\ref{sec:ends}). The gain does not depend on Chen, Gupta
-and Li's estimate. With steps of Ingham's and Huxley's estimates, of length $1/1680$, in place of
+set at $5/7$, where the density exponent is largest (Section~\ref{sec:ends}). With steps of Ingham's and Huxley's
+estimates, of length $1/1680$, in place of
 Input~\ref{inp:density} on $[5/7, 131/168]$, the window is set at $3/4$, where both exponents are $12/5$, and a window
 admissible at $L = 4537/2000 = 2.2685$ carries a certificate's total of $0.99835\mathcal K$; so the sieve brings
 $12/5$ down to about $2.27$, with Input~\ref{inp:half-plane} as the only input that is not refereed. This is a
@@ -1419,11 +1501,12 @@ computation (\S S6), not a theorem of the library.
 
 The method as it stands does not go much further. Of the total $0.99754\mathcal K$ at $278/125$, the decomposed cells
 cost about $0.026\mathcal K$ and the dropped ones about $0.971\mathcal K$ (Figure~\ref{fig:cells}), of which about
-$0.507\mathcal K$ comes from the cells with $\alpha_1 + \alpha_2$ beyond $1 - U_1/D$: their integers have no product of
-some of their prime factors with its exponent in $\mathcal U$, whatever the factorisation of the cofactor, so no
-refinement of the decomposition recovers them with this window. More depth, a finer grid, sharper bounds for the cells
-and the half-plane $\operatorname{Re} s > 7/8$ in place of Input~\ref{inp:half-plane} help little or not at all;
-going lower needs a wider window, that is a better density exponent near $\sigma = 5/7$, or arithmetic information of
+$0.507\mathcal K$ comes from the cells that reach the line $\alpha_1 + \alpha_2 = 1 - U_1/D$: most of their integers
+have no product of some of their prime factors with its exponent in $\mathcal U$, whatever the factorisation of the
+cofactor, and $p_1 p_2$ is beyond the Type~I level $X'$, so no refinement of the decomposition recovers most of that
+part with this window (\S S6). More depth, a finer grid, sharper bounds for the cells and the half-plane
+$\operatorname{Re} s > 7/8$ in place of Input~\ref{inp:half-plane} help little or not at all, and a smaller margin in
+Definition~\ref{def:window} would gain about $10^{-4}$ in the exponent (\S S6); going lower needs a wider window, that is a better density exponent near $\sigma = 5/7$, or arithmetic information of
 another kind. On the former, Chen, Gupta and Li note that improving the term of their estimate that dominates at
 $\sigma = 5/7$ would need a joint cancellation which ``seems quite difficult'' \cite[Remark~12.3]{cgl}. \S S6 gives
 these computations, and what lower density curves would give the method.
@@ -1432,9 +1515,7 @@ these computations, and what lower density curves would give the method.
 
 This work was carried out with the assistance of an AI system, Claude, developed by Anthropic. It was used to develop
 the argument, to write the Lean formalisation, including the proofs of the results from the literature, and to draft
-this paper. The numbered results of Sections~\ref{sec:intro} to~\ref{sec:proof}, other than the two definitions, are theorems of the Lean library, checked by
-Lean's kernel; Section~\ref{sec:lean} says which statements of the paper are not. The author is responsible for the
-paper's content.
+this paper. The author is responsible for the paper's content.
 
 Grok Bot, an AI research assistant built by xAI, also assisted: with the literature and the analysis of the density
 bounds, with the construction of the Chen--Gupta--Li step curve and the certificate pipeline, with edits to this paper,
@@ -1507,7 +1588,8 @@ The kernel bound & \lean{SieveTypeIIHM.offK\_bound}, \\
  & \lean{LinnikOffDiag.norm\_offK\_le}, \\
  & \lean{LinnikLindelof.lindelof} \\
 Definition~\ref{def:window}, admissible windows & \lean{SieveCurveGlue.WindowOKHM} \\
-Lemma~\ref{lem:bin}, one bin & \lean{SieveTypeIIHM.bin\_bound\_gen\_hm} \\
+Lemma~\ref{lem:bin}, one bin & \lean{SieveTypeIIHM.bin\_bound\_gen\_hm}, \\
+ & \lean{SieveTypeIIHM.sum\_typeII\_bins\_hm} \\
 Proposition~\ref{prop:type2-gen}, the Type~II estimate on an admissible window & \lean{SieveTypeIIHM.typeII\_gen\_hm} \\
 Proposition~\ref{prop:window}, the window is admissible & \lean{SieveTypeIIU22240D.window\_22240d} \\
 Lemma~\ref{lem:type1}, Type~I counts & \lean{SieveCount.card\_A}, \\
@@ -1517,7 +1599,7 @@ Lemma~\ref{lem:family-sharp}, sharp prime ranges & \lean{SieveTypeIIU.typeII\_un
 Lemma~\ref{lem:chains}, chains of primes & \lean{SieveChain.chainTU\_bound} (a), \\
  & \lean{SieveChain.chainTL\_bound} (b), \\
  & \lean{SieveExact.chainT0\_bound} (exact products), \\
- & \lean{SieveRoughTuple.sum\_rough\_eq} \\
+ & \lean{SieveChain.sum\_rough\_tuples} (cofactor) \\
 Lemma~\ref{lem:rough}, rough numbers from above & \lean{SieveRough.psi\_le} \\
 \quad Buchstab's inequality for rough numbers & \lean{SieveRough.Psi\_le\_buchstab} \\
 \quad its delay inequality & \lean{SieveRough.super\_M} \\
@@ -1529,7 +1611,7 @@ Proposition~\ref{prop:harman}, Harman's comparison in the form used & \lean{Siev
 \quad its tree identity & \lean{SieveTree.tree\_pt} \\
 \quad Brun's sieve & \lean{SieveBrun.fundamental} \\
 \quad the stops & \lean{SieveStops2.stops2\_bound} \\
-\quad a leaf (\S S3) & \lean{SieveProp6.leaf\_bound}, \\
+\quad a leaf (\S S4) & \lean{SieveProp6.leaf\_bound}, \\
  & \lean{SieveLeaf.leaf\_gap} \\
 \quad the main term at a leaf, with $\prod_{p < w}(1 - 1/p) \le 1/\log w$ & \lean{SieveLeaf.prod\_T\_le}, \\
  & \lean{SieveLeaf.prod\_primesBelow\_le} \\
@@ -1597,7 +1679,9 @@ The classical deduction (Section~\ref{sec:comparison}) & \lean{Linnik.linnik\_of
 Its exponents $12 + \varepsilon$, $36/13 + \varepsilon$ and $12/5 + \varepsilon$ & \lean{Linnik.linnik\_twelve}, \\
  & \lean{LinnikIngham.linnik\_thirtysix\_thirteenths}, \\
  & \lean{LinnikTwelve.linnik\_twelve\_fifths} \\
-Its exponent $2.3334 + \varepsilon$ from the curve $g_7$ & \lean{LinnikG7.linnik\_g7d} \\
+Its exponent $2.3334 + \varepsilon$ from the curve $g_7$ & \lean{LinnikG7.linnik\_g7d}, \\
+ & \lean{LinnikG7.charDensity\_g7d}, \\
+ & \lean{SieveTypeIIU22240D.g7d\_le\_lin} \\
 \bottomrule
 \end{longtable}
 }
@@ -1625,108 +1709,7 @@ Its exponent $2.3334 + \varepsilon$ from the curve $g_7$ & \lean{LinnikG7.linnik
 % (1979, J. London Math. Soc. 20) is cited as Chen, Gupta and Li cite it; it was not read.
 \begin{thebibliography}{99}
 \raggedright
-\bibitem{linnik44} U. V. Linnik, \emph{On the least prime in an arithmetic progression. I. The basic theorem},
-  Rec. Math. [Mat. Sbornik] N.S. 15(57) (1944), 139--178.
-\bibitem{linnik44b} U. V. Linnik, \emph{On the least prime in an arithmetic progression. II. The Deuring--Heilbronn
-  phenomenon}, Rec. Math. [Mat. Sbornik] N.S. 15(57) (1944), 347--368.
-\bibitem{heath-brown92} D. R. Heath-Brown, \emph{Zero-free regions for Dirichlet $L$-functions, and the least prime
-  in an arithmetic progression}, Proc. London Math. Soc. (3) 64 (1992), 265--338.
-\bibitem{xylouris-acta} T. Xylouris, \emph{On the least prime in an arithmetic progression and estimates for the zeros of
-  Dirichlet $L$-functions}, Acta Arith. 150 (2011), 65--91.
-\bibitem{xylouris11} T. Xylouris, \emph{\"Uber die Nullstellen der Dirichletschen $L$-Funktionen und die kleinste
-  Primzahl in einer arithmetischen Progression}, Bonner Math. Schriften 404, Bonn, 2011.
-\bibitem{xylouris18} T. Xylouris, \emph{Linniks Konstante ist kleiner als 5}, Chebyshevskii Sb. 19 (2018), 80--94.
-\bibitem{lls} Y. Lamzouri, X. Li and K. Soundararajan, \emph{Conditional bounds for the least quadratic non-residue
-  and related problems}, Math. Comp. 84 (2015), 2391--2412.
-\bibitem{lls-corr} Y. Lamzouri, X. Li and K. Soundararajan, \emph{Corrigendum to ``Conditional bounds for the least
-  quadratic non-residue and related problems''}, Math. Comp. 86 (2017), 2551--2554 (it corrects Lemma~6.1 and
-  Theorems~1.2 and~1.3 of \cite{lls}).
-\bibitem{openai-main} OpenAI, \emph{The Quasi-Riemann Hypothesis: A Zero-Free Half-Plane $\operatorname{Re}(s) > 7/8$},
-  preprint, 30 September 2026, \url{https://github.com/openai/math}, entry 003, read at commit \texttt{adc7f12}. Not
-  refereed.
-\bibitem{openai-companion} OpenAI, \emph{The Quasi-Riemann Hypothesis}, preprint, 5 October 2026, which proves
-  $\operatorname{Re}(s) > 11/12$ by a different route from \cite{openai-main}; \url{https://github.com/openai/math},
-  entry 003, file
-  \file{preprints/The-Quasi-Riemann-Hypothesis-October-5-2026/build/paper2.tex}, read at commit \texttt{adc7f12}.
-  Not refereed.
-\bibitem{openai-lean} OpenAI, \emph{Catalog of papers with a formalized main result}, file
-  \texttt{lean/formalization.yaml} (version v0.4) of the repository \texttt{openai/math}, a web page,
-  \url{https://github.com/openai/math/blob/main/lean/formalization.yaml}, read 25 October 2026; with
-  \texttt{lean/OAI/NumberTheory/DirichletL/Nonvanishing.lean} of the same repository. It is OpenAI's own record; it
-  marks its scope as partial progress and its review status as unchecked.
-\bibitem{aiproofwatch} AIProofWatch, record of OpenAI's \emph{The Quasi-Riemann Hypothesis: A Zero-Free Half-Plane
-  $\operatorname{Re}(s) > 7/8$}, \url{https://aiproofwatch.com/updates/openai-math-003} (assessment reviewed 25 October 2026;
-  reports an external Lean check of the Riemann zeta specialisation only).
-\bibitem{cgl} B. Chen, V. Gupta and Y. C. Li, \emph{Large Value Estimates for Dirichlet Polynomials with Characters
-  and Zero Density of Dirichlet $L$-Functions}, arXiv:2507.08296v2 (preprint; v2 of 27 July 2026, v1 of 11 July 2025
-  was by B. Chen alone).
-\bibitem{guth-maynard} L. Guth and J. Maynard, \emph{New large value estimates for Dirichlet polynomials},
-  Ann. of Math. (2) 203 (2026), 623--675; arXiv:2405.20552.
-\bibitem{hb79b} D. R. Heath-Brown, \emph{A large values estimate for Dirichlet polynomials}, J. London Math. Soc. (2) 20
-  (1979), 8--18.
-\bibitem{kerr} B. Kerr, \emph{Large values of Dirichlet polynomials and zero density estimates for the Riemann zeta
-  function}, arXiv:1909.12075.
-\bibitem{jutila} M. Jutila, \emph{Zero-density estimates for $L$-functions}, Acta Arith. 32 (1977), 55--62.
-\bibitem{ingham} A. E. Ingham, \emph{On the estimation of $N(\sigma, T)$}, Quart. J. Math. Oxford Ser. 11 (1940),
-  291--292.
-\bibitem{montgomery-topics} H. L. Montgomery, \emph{Topics in Multiplicative Number Theory}, Lecture Notes in Math.
-  227, Springer, Berlin, 1971.
-\bibitem{davenport} H. Davenport, \emph{Multiplicative Number Theory}, 3rd ed., revised by H. L. Montgomery, Graduate
-  Texts in Mathematics 74, Springer, New York, 2000.
-\bibitem{iwaniec-kowalski} H. Iwaniec and E. Kowalski, \emph{Analytic Number Theory}, American Mathematical Society
-  Colloquium Publications 53, American Mathematical Society, Providence, RI, 2004.
-\bibitem{friedlander-iwaniec} J. Friedlander and H. Iwaniec, \emph{Opera de Cribro}, American Mathematical Society
-  Colloquium Publications 57, American Mathematical Society, Providence, RI, 2010.
-\bibitem{tenenbaum} G. Tenenbaum, \emph{Introduction to Analytic and Probabilistic Number Theory}, 3rd ed., Graduate
-  Studies in Mathematics 163, American Mathematical Society, Providence, RI, 2015.
-\bibitem{huxley72} M. N. Huxley, \emph{On the difference between consecutive primes}, Invent. Math. 15 (1972),
-  164--170.
-\bibitem{huxley75} M. N. Huxley, \emph{Large values of Dirichlet polynomials, III}, Acta Arith. 26 (1975), 435--444.
-\bibitem{halasz} G. Hal\'asz, \emph{\"Uber die Mittelwerte multiplikativer zahlentheoretischer Funktionen}, Acta Math.
-  Acad. Sci. Hungar. 19 (1968), 365--403.
-\bibitem{montgomery69} H. L. Montgomery, \emph{Mean and large values of Dirichlet polynomials}, Invent. Math. 8
-  (1969), 334--345.
-\bibitem{montgomery-vaughan} H. L. Montgomery and R. C. Vaughan, \emph{Hilbert's inequality}, J. London Math. Soc.
-  (2) 8 (1974), 73--82.
-\bibitem{gallagher67} P. X. Gallagher, \emph{The large sieve}, Mathematika 14 (1967), 14--20.
-\bibitem{gallagher70} P. X. Gallagher, \emph{A large sieve density estimate near $\sigma = 1$}, Invent. Math. 11
-  (1970), 329--339.
-\bibitem{kubota} T. Kubota, \emph{On Automorphic Functions and the Reciprocity Law in a Number Field}, Lectures in
-  Mathematics, Department of Mathematics, Kyoto University, No.~2, Kinokuniya, Tokyo, 1969.
-\bibitem{patterson} S. J. Patterson, \emph{A cubic analogue of the theta series}, J. Reine Angew. Math. 296 (1977),
-  125--161; II, ibid., 217--220.
-\bibitem{dunn-radziwill} A. Dunn and M. Radziwi\l\l, \emph{Bias in cubic Gauss sums: Patterson's conjecture}, Ann. of
-  Math. (2) 200 (2024), 967--1057.
-\bibitem{hb-quadratic} D. R. Heath-Brown, \emph{A mean value estimate for real character sums}, Acta Arith. 72 (1995),
-  235--275.
-\bibitem{goldmakher-louvel} L. Goldmakher and B. Louvel, \emph{A quadratic large sieve inequality over number fields},
-  Math. Proc. Cambridge Philos. Soc. 154 (2013), 193--212.
-\bibitem{ireland-rosen} K. Ireland and M. Rosen, \emph{A Classical Introduction to Modern Number Theory}, 2nd ed.,
-  Graduate Texts in Mathematics 84, Springer, New York, 1990.
-\bibitem{harman83} G. Harman, \emph{On the distribution of $\alpha p$ modulo one}, J. London Math. Soc. (2) 27 (1983),
-  9--18.
-\bibitem{harman} G. Harman, \emph{Prime-Detecting Sieves}, London Math. Soc. Monographs 33, Princeton University
-  Press, 2007.
-\bibitem{hb-iwaniec} D. R. Heath-Brown and H. Iwaniec, \emph{On the difference between consecutive primes}, Invent.
-  Math. 55 (1979), 49--69.
-\bibitem{bhp} R. C. Baker, G. Harman and J. Pintz, \emph{The difference between consecutive primes, II}, Proc. London
-  Math. Soc. (3) 83 (2001), 532--562.
-\bibitem{li-harman} R. Li, \emph{The number of primes in short intervals and numerical calculations for Harman's
-  sieve}, arXiv:2308.04458v8 (preprint, 16 October 2025); Theorems~9 and~11 are on p.~36.
-\bibitem{banks-shparlinski} W. D. Banks and I. E. Shparlinski, \emph{Bounds on short character sums and $L$-functions
-  with characters to a powerful modulus}, J. Anal. Math. 139 (2019), 239--263.
-\bibitem{brun} V. Brun, \emph{Le crible d'Eratosth\`ene et le th\'eor\`eme de Goldbach}, Videnskapsselskapets
-  Skrifter I, Mat.-naturv. Klasse, Kristiania, 1920, no.~3.
-\bibitem{buchstab} A. A. Buchstab, \emph{Asymptotische Absch\"atzung einer allgemeinen zahlentheoretischen
-  Funktion}, Rec. Math. [Mat. Sbornik] N.S. 2(44) (1937), 1239--1246.
-\bibitem{cheer-goldston} A. Y. Cheer and D. A. Goldston, \emph{A differential delay equation arising from the sieve of
-  Eratosthenes}, Math. Comp. 55 (1990), 129--141.
-\bibitem{lean4} L. de Moura and S. Ullrich, \emph{The Lean~4 theorem prover and programming language}, Automated
-  Deduction -- CADE 28, Lecture Notes in Comput. Sci. 12699, Springer, 2021, 625--635.
-\bibitem{mathlib} The mathlib Community, \emph{The Lean mathematical library}, Proceedings of the 9th ACM SIGPLAN
-  International Conference on Certified Programs and Proofs (CPP 2020), 367--381.
-\bibitem{repo} R. Comley, \emph{number-theory}, the repository of this paper and its Lean library,
-  \url{https://github.com/dickie81/number-theory}.
+\input{references}
 \end{thebibliography}
 
 \end{document}
