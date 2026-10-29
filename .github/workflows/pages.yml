@@ -1,16 +1,16 @@
 name: Publish the papers
 
-# On every push to main that changes a paper, compile every papers/<name>/main.tex, then every supplement
-# papers/<name>/supplement.tex (which reads its paper's main.aux), and publish the PDFs, with an index page, to GitHub
-# Pages (https://dickie81.github.io/number-theory/). Pull requests are checked by ci.yml.
+# On every push to main, compile every papers/<name>/main.tex, then every supplement papers/<name>/supplement.tex
+# (which reads its paper's main.aux), and publish the PDFs, with an index page, to GitHub Pages
+# (https://dickie81.github.io/number-theory/). Pull requests are checked by ci.yml.
+#
+# There is no paths filter: GitHub matches a filter against only the first 300 files a push changes, so the merge of a
+# large pull request (PR #21 changed 800 files, the papers' among the last) skipped the publish and left the site
+# stale. The job takes a few minutes.
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'papers/**'
-      - 'scripts/build_site.py'
-      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
