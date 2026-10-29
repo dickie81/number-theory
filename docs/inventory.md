@@ -3,15 +3,15 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 677 theorems: the library's final
+`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 680 theorems: the library's final
 results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 108 modules that neither `Check` nor `CheckAll` imports, directly or
+The last section lists the 99 modules that neither `Check` nor `CheckAll` imports, directly or
 not, with their headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
-| `lib/core` | 5 | 5 | 43 | 154 |
+| `lib/core` | 7 | 8 | 34 | 118 |
 | `lib/pnt` | 204 | 672 | 1 | 0 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
@@ -19,6 +19,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 ## The results of `CheckAll`
 
 ### `lib/core`
+
+#### `BohrLandauCore`: For every w > 0, almost every zero lies within w of the critical line
+
+- `BohrLandauCore.tendsto_NX_div_of_lower`: For every `w > 0`, almost every zero lies within `w` of the critical line
 
 #### `DirichletCharHalfPlane`: Every Dirichlet character, `L(s, χ) ≠ 0` on `Re s > 11/12`
 
@@ -32,9 +36,14 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 - `Eis.quadLargeSieve`: The companion paper's Lemma 6.5 is proved *paper* ([note](../formalisations/quadratic-large-sieve.md))
 
+#### `HalfPlaneJoinsFinal`: The half-plane's joins with no hypothesis
+
+- `HalfPlaneJoins.zeta_band_eleven_twelfths`: Every nontrivial zero of `ζ` has `|2 Re ρ − 1| ≤ 5/6`.
+
 #### `KubotaThetaProof`: The Kubota–Patterson display, proved
 
 - `Eis.kubotaTheta`: The display `KubotaTheta`, proved *paper* ([note](../formalisations/cubic-theta.md))
+- `Eis.ne_zero_of_re_gt_eleven_twelfths`: The half-plane ([note](../formalisations/openai-half-plane.md))
 
 #### `TwinLandau`: The Landau argument for twin forms, for any zero family
 
@@ -1336,14 +1345,6 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `AngularResidue.residue_angular`: The residue of the radial member
 - `AngularResidue.LFunction_chi4_one`: `L(1, χ₋₄) = π/4`
 
-#### `BohrLandauCore`: For every w > 0, almost every zero lies within w of the critical line
-
-- `BohrLandauCore.window_bound_R`: A window `[u, u + Kh)` of radius-`(2 − σ₀)` cells
-- `BohrLandauCore.window_zero_count_R`: The window count from a mean-square bound
-- `BohrLandauCore.count_bound_ms`: The zeros with `β ≥ σ₁` up to height `T`, from a polylogarithmic mean square on `Re s ≥ σ₀`
-- `BohrLandauCore.tendsto_NX_div_of_msPoly`: From a polylogarithmic mean square on `Re s ≥ σ₀`, almost every zero lies within `w` of the critical line for every `w > σ₀ − ½`
-- `BohrLandauCore.tendsto_NX_div_of_lower`: For every `w > 0`, almost every zero lies within `w` of the critical line
-
 #### `BohrTorus`: The Bohr torus: Vinogradov's orthogonality on the lift of a vertical line
 
 - `BohrTorus.eq_zero_of_sum_log`: The logarithms of distinct primes are linearly independent over `ℤ`
@@ -1425,20 +1426,6 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 - `HalfPlaneS0.smoothBound_of_one_le`: The trivial range of the hypothesis
 
-#### `HurwitzEM`: Euler–Maclaurin for the Hurwitz zeta function with an explicit remainder
-
-- `HurwitzEM.cpow_eq_T_sub`: One unit interval
-- `HurwitzEM.norm_R_le`: Sharp per-interval bound
-- `HurwitzEM.norm_R_le_crude`: Crude per-interval bound
-- `HurwitzEM.hurwitz_eq_of_one_lt`: The Euler–Maclaurin identity for `Re s > 1`
-- `HurwitzEM.hurwitzZeta_eq_EM`: The Euler–Maclaurin identity on `Re s > 0`, `s ≠ 1`
-- `HurwitzEM.norm_hurwitzZeta_sub_EM_le`: Euler–Maclaurin for the Hurwitz zeta function, with explicit remainder
-- `HurwitzEM.norm_EMrem_le_box`: Uniform bound on a box
-
-#### `JensenAvg`: Jensen's formula with an averaged majorant
-
-- `JensenAvg.sum_divisor_mul_log_le`: Jensen's formula with an averaged majorant
-
 #### `KernelChain`: RH from `L²` closeness to Riemann's kernel
 
 - `WeilForm.kernelApprox_RPhi`: `KernelApprox` holds for Riemann's kernel
@@ -1460,19 +1447,6 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `LocalTeeth.card_two_sq_zero`: 2D teeth mod `p`, zero shell
 - `LocalTeeth.card_four_sq`: 4D teeth mod `p`, nonzero shell
 - `LocalTeeth.teeth_mod_prime`: At a prime `p`
-
-#### `MeanSquareHigh`: The mean square of ζ on Re s ≥ (2K+1)/(4K+1), from the Euler–Maclaurin formula of order 2K
-
-- `MeanSquareHigh.norm_zeta_sub_partial_le`: The order-`2K` approximation of `ζ` by its partial sums
-- `MeanSquareHigh.mean_square_of_pointwise`: The mean square of `ζ` from a pointwise approximation
-- `MeanSquareHigh.mean_square_partial_gen`: The mean square of `Σ_{n≤2^J} n^{−σ−it}`
-- `MeanSquareHigh.mean_square_zeta_le_order`: The mean square of `ζ` on `Re s ≥ σ₀` from the order-`2K` approximation
-- `MeanSquareHigh.msPoly_of_order`: `MSPoly σ₀` for every `σ₀ ≥ (2K+1)/(4K+1)`
-
-#### `MeanSquareZeta`: The mean square of ζ on Re s ≥ 2/3
-
-- `MeanSquareZeta.mean_square_partial`: The mean square of `Σ_{n≤2^J} n^{−σ−it}`
-- `MeanSquareZeta.mean_square_zeta_le`: The mean square of `ζ` on a vertical segment
 
 #### `OddProbe`: Odd probes and real characters
 
@@ -1512,22 +1486,6 @@ not, with their headline theorems (those whose docstring opens with a bold title
 #### `ResponseKernel`: Response kernel and tone calculus, unconditional
 
 - `RespKernel.response_kernel`: The response kernel (the first order), unconditional
-
-#### `ShellCount`: Zero density as counts outside shells around the Bohr sphere
-
-- `ShellCount.le_im_iff_outside`: The pair `i` lies outside the shell of half-width `w`
-- `ShellCount.NX_eq_ncard_outside`: `NX w T` counts the pairs up to height `T` outside the shell
-- `ShellCount.ncard_outside_le`: A density estimate bounds the number of pairs outside the shell
-- `ShellCount.tendsto_NX_div`: The proportion of pairs outside the shell tends to `0`
-- `ShellCount.tendsto_outside_div`: The same in sphere form
-
-#### `ShellSixthCore`: Zeros with β ≥ σ₁ > 2/3, and almost every zero within w > 1/6 of the line
-
-- `ShellSixthCore.window_bound`: The window `[u, u + Kh)`
-- `ShellSixthCore.window_zero_count`: The window count from a mean-square bound
-- `ShellSixthCore.NX_le_ncard`: `NX w T` is at most the number of zeros with `β ≥ ½ + w` and `|γ| ≤ T`
-- `ShellSixthCore.count_bound`: The zeros with `β ≥ σ₁ > 2/3` up to height `T`
-- `ShellSixthCore.tendsto_NX_div_of_EMApprox`: For every `w > 1/6`, almost every zero lies within `w` of the critical line
 
 #### `SixteenPi`: The constant `1/(16π)`: the Gaussian-multiplier time
 
@@ -1593,18 +1551,6 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `WeilForm.xi_offcross_card_le`: Off-cross zeros of `Ξ`, counted by `z²`, number at most `2⌊(M − 1)/2⌋`
 - `WeilForm.zeta_offline_card_le`: At most `2⌊(M − 1)/2⌋` zeros of `ζ` with `Re s > ½`
 - `WeilForm.rh_of_dim_le_two`: RH from (a) for any ground states with eventually `dim V ≤ 2`
-
-#### `ZetaDiscs`: Zeros of ζ in discs about 2 + it, by Jensen's formula
-
-- `ZetaDiscs.norm_zeta_two_ge`: `|ζ(2 + it)| ≥ 2 − π²/6`
-- `ZetaDiscs.ncard_zeros_ball_le`: The zeros of `ζ` in a closed disc avoiding `1`, counted with multiplicity
-- `ZetaDiscs.cell_bound`: One cell
-- `ZetaDiscs.integral_avgOnCircle_le`: Fubini
-
-#### `ZetaDiscsR`: Zeros of ζ in discs of radius 2 − σ₀ about 2 + it
-
-- `ZetaDiscsR.cell_bound_R`: One cell, radius `2 − σ₀`
-- `ZetaDiscsR.integral_avgOnCircleR_le`: Fubini, radius `2 − σ₀`
 
 #### `ZetaJoins`: Joins on the `ζ` side
 
