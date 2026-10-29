@@ -55,6 +55,7 @@ adding, removing or renaming a module.
 | `python3 scripts/check_hygiene.py` | The library's own sources contain no `sorry`, `admit`, `native_decide`, declared `axiom`, `implemented_by`, `extern`, `unsafe`, `ofReduceBool`, `skipKernelTC` or `#exit`. |
 | `python3 scripts/gen_lakefile.py --check` | `lakefile.lean` matches `lib/`. |
 | `python3 scripts/inventory.py --check` | `docs/inventory.md` is what `scripts/inventory.py` writes from the sources: every theorem that `Check.lean` or `CheckAll.lean` prints, by module, with the headline of its docstring and its note in `formalisations/`, and the headline theorems of the modules that neither imports. Run `python3 scripts/inventory.py` after changing those theorems, their docstrings or the notes. |
+| `python3 scripts/zeros_page.py --check` | The site's page on the zeros (`site/zeros.html`) agrees with the Lean and the paper. The script reads each number the page shows from the statement of the theorem that proves it: the half-plane, the bounds for `Θ`, the density exponents, the Linnik exponents, the curve `g*` with the theorem that `counts_7d` glues in for each piece (checked against the piece's range and exponent), and the window condition `SieveCurveGlue.WindowOKHM` with its constants. Every theorem the page presents as a result must be printed by `Check.lean` or `CheckAll.lean`, and the window's exact ends, computed from the Lean's curve and condition, must be the paper's. The other numbers are read from the paper's sources. Without `--check` it writes the page, as `scripts/build_site.py` does. |
 | `python3 scripts/check_vendor.py` | `lib/vendor` holds the upstream files at the pinned commits with the port patches applied (needs network access). |
 | `python3 scripts/census.py MODULE CONSTANT` | After `lake build MODULE`: the library's modules whose declarations the proof of `CONSTANT` uses, with the count from each. |
 | `python3 tools/linnik/check_certificate.py` | The certificate's Lean files in `lib/pnt` are the ones `tools/linnik` generates (about half a minute). |
@@ -65,10 +66,11 @@ adding, removing or renaming a module.
 
 `.github/workflows/ci.yml` runs on pull requests and on pushes to `main`:
 
-- **Checks:** `check_hygiene.py`, `gen_lakefile.py --check`, `inventory.py --check`, `check_vendor.py` and
-  `check_certificate.py`.
+- **Checks:** `check_hygiene.py`, `gen_lakefile.py --check`, `inventory.py --check`, `zeros_page.py --check`,
+  `check_vendor.py` and `check_certificate.py`.
 - **The papers:** every `papers/<name>/main.tex`, and then every supplement `papers/<name>/supplement.tex`, is compiled
-  with LaTeX, and the PDFs are kept as an artifact.
+  with LaTeX, and the PDFs are kept as an artifact. Then the site is built from them, as `pages.yml` builds it, and kept
+  as the artifact `site`, so a pull request's page on the zeros can be looked at before it is published.
 - **The Lean build**, with a cache. On a pull request it runs only if the pull request changes `lib/`, the Lake
   files, `lean-toolchain`, the build scripts or the workflow; on pushes to `main` it always runs. Mathlib's prebuilt
   files come from Mathlib's own cache (`lake exe cache get`).
@@ -93,4 +95,7 @@ green or skipped throughout. A new job must be added to its `needs`.
 `.github/workflows/pages.yml` runs on every push to `main`. It compiles every paper and its supplement, and publishes
 the PDFs, with an index page built by `scripts/build_site.py`, to GitHub Pages:
 <https://dickie81.github.io/number-theory/>. Each paper is `<name>.pdf` there, and its supplement
-`<name>-supplement.pdf`. If the site is ever stale, run the workflow by hand from the repository's Actions tab.
+`<name>-supplement.pdf`. The site also has a page on the zeros, `zeros.html`: what the library's theorems say about
+the zeros of `ζ` and of Dirichlet L-functions, and what that gives for Linnik's exponent. `scripts/zeros_page.py`
+writes it from `site/zeros.html`, a template, with every number read from the Lean sources or the paper, so the
+published page follows `main`. If the site is ever stale, run the workflow by hand from the repository's Actions tab.

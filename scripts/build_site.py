@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Build the papers' web site in `_site/`: each compiled paper as `<name>.pdf`, its supplement, if it has one, as
-`<name>-supplement.pdf`, and an index page that lists each paper with its date and links to the paper, its supplement
-and its source.
+`<name>-supplement.pdf`, the page on the zeros, `zeros.html`, which `scripts/zeros_page.py` writes from the Lean
+sources, and an index page that lists each paper with its date and links to the paper, its supplement and its source,
+and then the page on the zeros and the inventory of the library's results.
 
 Usage: build_site.py [OUT]   (default `_site`)
 
@@ -14,6 +15,9 @@ import os
 import re
 import shutil
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import zeros_page  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO = "https://github.com/dickie81/number-theory"
@@ -54,6 +58,9 @@ def main():
         source = open(tex, encoding="utf-8").read()
         papers.append((name, field_of(source, "title") or name, field_of(source, "date"), pdf, supp))
     os.makedirs(out, exist_ok=True)
+    if zeros_page.main([os.path.join(out, "zeros.html")]) != 0:
+        print("build_site: the page on the zeros could not be written", file=sys.stderr)
+        return 1
     items = []
     for name, title, date, pdf, supp in papers:
         shutil.copyfile(pdf, os.path.join(out, f"{name}.pdf"))
@@ -96,6 +103,16 @@ def main():
   <a href="{REPO}/blob/main/formalisations/README.md">formalisations/</a>.</p>
   <h2>Papers</h2>
 {chr(10).join(items)}
+  <h2>The library</h2>
+  <section>
+    <h3><a href="zeros.html">The Strip and the Count</a></h3>
+    <p class="muted">What the library's theorems say about the zeros of ζ and of Dirichlet <i>L</i>-functions, and what
+    that gives for Linnik's exponent, with every number read from the statement of the theorem that proves it.</p>
+    <ul>
+      <li><a href="{REPO}/blob/main/docs/inventory.md">The inventory of the library's results</a>: every theorem whose
+      axioms the library's checks print, with its headline</li>
+    </ul>
+  </section>
   <p class="muted">Built from <a href="{REPO}">{REPO.removeprefix("https://")}</a> on every push to
   <code>main</code>.</p>
 </body>
