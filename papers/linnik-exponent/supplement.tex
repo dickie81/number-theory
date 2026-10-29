@@ -40,7 +40,7 @@
 \maketitle
 
 This supplement holds the proofs of four standard results that the paper uses, in the form in which the Lean library
-proves them (Sections~\ref{app:prime-sum} to~\ref{app:harman}), and the details of the paper's account of the
+proves them (Sections~\ref{app:prime-sum} to~\ref{app:rough}), and the details of the paper's account of the
 formalisation (Section~\ref{sup:lean}) and of its computations around the exponent (Section~\ref{sup:computations}).
 Numbers such as Lemma~\ref{M-lem:prime-sum} and Section~\ref{M-sec:certificate} refer to the paper, and those that
 begin with S to this supplement. Its notation is the paper's.
@@ -95,14 +95,14 @@ justified by \eqref{eq:mellin-decay}, gives
   F(s) = -\frac{L_\chi'}{L_\chi}(s) \, \mathcal M w_y(s) \, Q^s.
 \end{gather*}
 
-\emph{The logarithmic derivative.} For $1/2 \le \theta_0 < \theta' < 3/2$ there is $\kappa(\theta_0, \theta')$ with the
+\emph{The logarithmic derivative.} For $1/2 \le \theta_0 < \theta' < 3/2$ there is $C_L(\theta_0, \theta')$ with the
 following property, for every $q$, every non-trivial $\chi$ mod $q$ and every $t \in \mathbb R$: if $L_\chi$ has no
 zero in the open disc $D_t$ of centre $3/2 + it$ and radius $\rho = 3/2 - \theta_0$, then
 \begin{equation}\label{eq:logderiv}
-  \Bigl|\frac{L_\chi'}{L_\chi}(\sigma + it)\Bigr| \le \kappa(\theta_0, \theta') \bigl(\log(q + 2) + \log(|t| + 4)\bigr)
+  \Bigl|\frac{L_\chi'}{L_\chi}(\sigma + it)\Bigr| \le C_L(\theta_0, \theta') \bigl(\log(q + 2) + \log(|t| + 4)\bigr)
   \qquad (\sigma \ge \theta').
 \end{equation}
-For $\sigma \ge 3/2$ this holds as soon as $\kappa \ge -\zeta'/\zeta(3/2)$, by the Dirichlet series of
+For $\sigma \ge 3/2$ this holds as soon as $C_L(\theta_0, \theta') \ge -\zeta'/\zeta(3/2)$, by the Dirichlet series of
 $L_\chi'/L_\chi$. For $\theta' \le \sigma < 3/2$ it follows from a lemma of Landau's type: if $f$ is analytic near the
 closed unit disc, $f(0) = 1$, $|f| \le B_0$ on $|z| \le R$ with $B_0 > 1$, $f$ has no zero in $|z| < 1$ and
 $0 < r' < r < R' < R < 1$, then
@@ -118,7 +118,7 @@ $|L_\chi(s)| \le 3(q + 1)(|\operatorname{Im} s| + 2)$ for $1/2 \le \operatorname
 partial-summation bound $|L_\chi(s)| \le (q + 1)|s|/\operatorname{Re} s$ for $\operatorname{Re} s > 0$. Second,
 $|L_\chi(3/2 + it)|^{-1} \le \zeta(3/2)$, from $1/L_\chi(s) = \sum \mu(n) \chi(n) n^{-s}$. Together they give
 $|f| \le B_0 = 2 + 6(q + 1)\zeta(3/2)(|t| + 4)$ on $|z| \le R$, and $\log B_0 \ll \log(q + 2) + \log(|t| + 4)$. The
-constant $\kappa(\theta_0, \theta')$ is explicit and of order $(\theta' - \theta_0)^{-3}$.
+constant $C_L(\theta_0, \theta')$ is explicit and of order $(\theta' - \theta_0)^{-3}$.
 
 The disc $D_t$ lies in $\operatorname{Re} s > \theta_0$ and, since $\rho \le 1$, in $|\operatorname{Im} s - t| < 1$. So
 \eqref{eq:logderiv} applies in two cases:
@@ -129,35 +129,35 @@ The disc $D_t$ lies in $\operatorname{Re} s > \theta_0$ and, since $\rho \le 1$,
 Since $|t| + 4 \le (|y| + 4)(1 + |t - y|)$ and $\log(1 + u) \le u$, we have
 $\log(q + 2) + \log(|t| + 4) \le \lambda(1 + |t - y|)$. With \eqref{eq:mellin-decay} this gives, in either case,
 \begin{equation}\label{eq:F-bound}
-  |F(\sigma + it)| \le \kappa(\theta_0, \theta') \, \lambda \, B \, Q^\sigma (1 + |t - y|)^{-J - 2} \qquad (\theta' \le \sigma \le 2).
+  |F(\sigma + it)| \le C_L(\theta_0, \theta') \, \lambda \, B \, Q^\sigma (1 + |t - y|)^{-J - 2} \qquad (\theta' \le \sigma \le 2).
 \end{equation}
 
 \emph{The contour.} By Input~\ref{M-inp:half-plane}, $F$ is holomorphic on $\sigma_* \le \operatorname{Re} s \le 2$, and by
 \eqref{eq:F-bound} in case (i), with $\theta' = \sigma_*$, it is $O((1 + |t - y|)^{-2})$ there uniformly. So Cauchy's
-theorem on the rectangles $[\sigma_*, 2] \times [-Y, Y]$, with $Y \to \infty$, moves the line of integration from $2$ to
+theorem on the rectangles $[\sigma_*, 2] \times [-t_0, t_0]$, with $t_0 \to \infty$, moves the line of integration from $2$ to
 $\sigma_*$. Split the line $\operatorname{Re} s = \sigma_*$ at the heights $y \pm H$. By the hypothesis of the lemma, $F$
 is holomorphic on the rectangle $\theta + \delta \le \operatorname{Re} s \le \sigma_*$, $|\operatorname{Im} s - y| \le H$,
 so by Cauchy's theorem the integral over $|t - y| \le H$ on the line $\sigma_*$ equals the integral over the same
 heights on the line $\theta + \delta$ plus the integrals over the two horizontal sides at the heights $y \pm H$.
 
-\emph{The pieces.} Put $\kappa_1 = \kappa(11/12, \sigma_*)$ and $\kappa_2 = \kappa(\theta, \theta + \delta)$.
+\emph{The pieces.} Put $C_1 = C_L(11/12, \sigma_*)$ and $C_2 = C_L(\theta, \theta + \delta)$.
 \begin{itemize}
 \item On the line $\sigma_*$ with $|t - y| \ge H$: by \eqref{eq:F-bound} in case (i) and
   $(1 + u)^{-J - 2} \le (1 + H)^{-J} (1 + u^2)^{-1}$ for $u \ge H$,
-  $|F| \le \kappa_1 \lambda B Q^{\sigma_*} \tau/(1 + (t - y)^2)$. Each of the two tails contributes at most
-  $\pi \kappa_1 \lambda B Q^{\sigma_*} \tau$.
+  $|F| \le C_1 \lambda B Q^{\sigma_*} \tau/(1 + (t - y)^2)$. Each of the two tails contributes at most
+  $\pi C_1 \lambda B Q^{\sigma_*} \tau$.
 \item On the line $\theta + \delta$ with $|t - y| \le H$: by \eqref{eq:F-bound} in case (ii),
-  $|F| \le \kappa_2 \lambda B Q^{\theta + \delta}/(1 + (t - y)^2)$, so this part contributes at most
-  $\pi \kappa_2 \lambda B Q^{\theta + \delta}$.
+  $|F| \le C_2 \lambda B Q^{\theta + \delta}/(1 + (t - y)^2)$, so this part contributes at most
+  $\pi C_2 \lambda B Q^{\theta + \delta}$.
 \item On each horizontal side, of length $11/12 - \theta \le 1$: by \eqref{eq:F-bound} in case (ii), with
-  $Q^\sigma \le Q^{\sigma_*}$, $|F| \le \kappa_2 \lambda B Q^{\sigma_*} (1 + H)^{-J - 2} \le \kappa_2 \lambda B Q^{\sigma_*} \tau$.
+  $Q^\sigma \le Q^{\sigma_*}$, $|F| \le C_2 \lambda B Q^{\sigma_*} (1 + H)^{-J - 2} \le C_2 \lambda B Q^{\sigma_*} \tau$.
 \end{itemize}
 Adding the pieces and dividing by $2\pi$, the sum in \eqref{eq:Sw-bound} is at most
 \[
-  \kappa_1 \lambda B Q^{\sigma_*} \tau + \tfrac12 \kappa_2 \lambda B Q^{\theta + \delta} + \tfrac1\pi \kappa_2 \lambda B Q^{\sigma_*} \tau
-  \le (\kappa_1 + \kappa_2) \, \lambda \, B \bigl(Q^{\theta + \delta} + Q^{\sigma_*} \tau\bigr),
+  C_1 \lambda B Q^{\sigma_*} \tau + \tfrac12 C_2 \lambda B Q^{\theta + \delta} + \tfrac1\pi C_2 \lambda B Q^{\sigma_*} \tau
+  \le (C_1 + C_2) \, \lambda \, B \bigl(Q^{\theta + \delta} + Q^{\sigma_*} \tau\bigr),
 \]
-which is \eqref{eq:Sw-bound} with $M_\delta(\theta) = \kappa(\theta, \theta + \delta) + \kappa(11/12, 11/12 + \delta)$.
+which is \eqref{eq:Sw-bound} with $M_\delta(\theta) = C_L(\theta, \theta + \delta) + C_L(11/12, 11/12 + \delta)$.
 \end{proof}
 
 \section{Proof of Lemma~\ref{M-lem:family}}\label{app:family}
@@ -272,92 +272,6 @@ the tails and from the pivot counts. Each power of $q$ in the bracket is at most
 is at most $A_0 q^{L - \delta}/\varphi(q)$. Here $\delta$ depends only on $J_0$ and $e_1$, and Theorem~\ref{M-thm:type2}
 was used once for the smoothed family and once for each near-boundary family.
 \end{proof}
-
-\section{Proof of Lemma~\ref{M-lem:rough}}\label{app:rough}
-
-\begin{proof}
-Write $c_* = 0.565073$ and $\bar\omega = 0.5671433$, $u = \log 2y/\log z$, and say that an integer is $z$-rough if it has no
-prime factor below $z$. Four facts are used.
-
-\emph{(a) Prime sums.} By the prime number theorem with an error $o(t/\log t)$ (in the library, the bound
-$\psi(t) - t = O(t^{11/12 + \varepsilon})$, which it derives from the case of $\zeta$ of Input~\ref{M-inp:half-plane};
-the classical theorem would do), for every $\varepsilon_3 > 0$,
-$|\theta(t) - t| \le \varepsilon_3 t/\log t$ for large $t$. With partial summation this gives, for large $a \le b$,
-\[
-  \sum_{a < p \le b} \frac1{p \log p} \le \frac1{\log a} - \frac1{\log b} + \frac{4\varepsilon_3}{\log^2 a},
-\]
-and, if $2 \log b \le \Lambda$,
-\[
-  \sum_{a < p \le b} \frac1{p(\Lambda - \log p)}
-  \le \frac{1 + \varepsilon_3/\log a}{\Lambda} \log \frac{\log b \, (\Lambda - \log a)}{\log a \, (\Lambda - \log b)}
-  + \frac{6\varepsilon_3}{\Lambda \log^2 a};
-\]
-and, for large $y$, there are at most $(1 + \varepsilon_3) y/\log 2y$ primes in $(y, 2y]$.
-
-\emph{(b) Buchstab's inequality.} For $y \ge 2$,
-\[
-  \Phi(y, z) \le \#\{p : y < p \le 2y\} + \sum_{z \le p \le \sqrt{2y}} \Phi(y/p, p),
-\]
-since a $z$-rough integer $m \in (y, 2y]$ that is not prime has its least prime factor $p$ in $[z, \sqrt{2y}]$, and
-$m/p$ is a $p$-rough integer in $(y/p, 2y/p]$; the map $m \mapsto (p, m/p)$ is injective. Also $\Phi(y, z) = 0$ if
-$y \ge 1$ and $2y < z$, since every integer of $(y, 2y]$ is then at least $2$ and below $z$.
-
-\emph{(c) Buchstab's function on $[2, 3]$.} For $u > 1$, $1 + \log(u - 1) \le \bar\omega u$: the inequality $\log t \le t - 1$ at
-$t = \bar\omega(u - 1)$ gives $1 + \log(u - 1) \le \bar\omega(u - 1) - \log \bar\omega \le \bar\omega u$, since $-\log \bar\omega \le \bar\omega$, that is $\bar\omega e^{\bar\omega} \ge 1$, which
-holds because $e^{\bar\omega} \ge \sum_{m \le 12} \bar\omega^m/m! > 1/\bar\omega$. So $\omega^* \le \bar\omega$ on $[2, 3]$, and since $c_* < \bar\omega$,
-$\omega^* \le \bar\omega$ on $[2, \infty)$; and $\omega^* \le c_*$ on $[3, \infty)$, since $\omega^*(3) = (1 + \log 2)/3 < c_*$.
-
-\emph{(d) A delay inequality.} Let $M(u) = \log(u - 1)$ for $2 \le u \le 3$ and
-$M(u) = \log 2 + \bar\omega \min(u - 3, 1) + c_* \max(u - 4, 0)$ for $u > 3$, which is $\int_1^{u - 1} \omega^*(t)\, dt$ with
-$\omega^*$ replaced by $\bar\omega$ on $[2, 3]$. Then $1 + M(u) \le u \omega^*(u)$ for $u \ge 2$. For $u \le 3$ it is an
-equality. For $u > 3$, $\omega^*(u) = c_*$, and $1 + M(u) - c_* u$ is affine on $[3, 4]$, with slope $\bar\omega - c_* > 0$, and
-constant on $[4, \infty)$; so it suffices that it is at most $0$ at $u = 4$, that is $1 + \log 2 + \bar\omega \le 4c_*$, which
-holds since $\log 2 < 0.6931471808$ and $2.2602904808 < 2.260292 = 4c_*$.
-
-We prove by induction on the integer $k \ge 0$ the statement $\mathrm C(k)$: for every $\varepsilon > 0$ there is
-$z_0$ such that $\Phi(y, z) \le (\omega^*(u) + \varepsilon) y/\log z$ for all $z \ge z_0$ and all $y \ge 1$ with
-$u \le k$. $\mathrm C(0)$ holds trivially, since $u > 0$, and the lemma is $\mathrm C(\lceil U \rceil)$. Assume
-$\mathrm C(k)$, let $0 < \varepsilon \le 1$ (which suffices, since the bound for one $\varepsilon$ implies it for every
-larger one) and $\varepsilon_3 = \varepsilon/100$, let $z$ be large in terms of
-$\varepsilon$ and of the $z_0$ of $\mathrm C(k)$ for $\varepsilon/4$, and let $y \ge 1$ with
-$\Lambda = \log 2y = u \log z \le (k + 1) \log z$. If $2y < z$, then $\Phi(y, z) = 0$. Otherwise $u \ge 1$, $y \ge z/2$
-is large, and (a) and (b) give
-\[
-  \Phi(y, z) \le \Bigl(1 + \frac\varepsilon4\Bigr) \frac y\Lambda + \sum_{z \le p \le \sqrt{2y}} \Phi(y/p, p).
-\]
-If $u < 2$, then $\sqrt{2y} < z$, the sum is empty, and
-$\Phi(y, z) \le (1 + \varepsilon/4) y/(u \log z) \le (\omega^*(u) + \varepsilon) y/\log z$. Let $u \ge 2$. A prime
-$p \in [z, \sqrt{2y}]$ has $y/p \ge 1$ and
-$\log(2y/p) = \Lambda - \log p \le k \log p$, since $\Lambda \le (k + 1) \log p$. So $\mathrm C(k)$ gives
-$\Phi(y/p, p) \le (\omega^*(u_p) + \varepsilon/4) \, y/(p \log p)$ with $u_p = (\Lambda - \log p)/\log p$. The term
-$p = z$, if $z$ is prime, contributes at most $2y/(z \log z)$, since $\omega^* \le 1$. By (a), the parts
-$\varepsilon/4$ of the other terms contribute at most $(\varepsilon/4)(1/\log z + 4\varepsilon_3/\log^2 z) \, y$. For
-the parts $\omega^*(u_p)$: if $p \le (2y)^{1/4}$ then $u_p \ge 3$ and $\omega^*(u_p) \le c_*$; if
-$(2y)^{1/4} < p \le (2y)^{1/3}$ then $2 \le u_p < 3$ and $\omega^*(u_p) \le \bar\omega$; and if $(2y)^{1/3} < p \le (2y)^{1/2}$ then
-$1 \le u_p < 2$ and $\omega^*(u_p)/(p \log p) = 1/(p(\Lambda - \log p))$, by the definition of $\omega^*$ on
-$[1, 2)$. By (a), applied on $(z, \sqrt{2y}]$ if
-$u \le 3$, on $(z, (2y)^{1/3}]$ and $((2y)^{1/3}, \sqrt{2y}]$ if $3 < u \le 4$, and also with the first range split at
-$(2y)^{1/4}$ if $u > 4$,
-\[
-  \sum_{z < p \le \sqrt{2y}} \frac{\omega^*(u_p)}{p \log p} \le \frac{M(u) + 12\varepsilon_3}\Lambda
-  + \frac{8\varepsilon_3}{\log z}.
-\]
-Collecting the terms, with $\Lambda = u \log z$,
-\[
-  \Phi(y, z) \le \frac y{\log z} \Bigl(\frac{1 + M(u)}u + \frac{\varepsilon/4 + 12\varepsilon_3}u + \frac2z
-  + 8\varepsilon_3 + \frac\varepsilon4 + \frac{\varepsilon \varepsilon_3}{\log z}\Bigr).
-\]
-By (d) the first term is at most $\omega^*(u)$, and since $u \ge 1$ and $z$ is large the others add up to at most
-$0.96\varepsilon$. So $\Phi(y, z) \le (\omega^*(u) + \varepsilon) y/\log z$, which proves $\mathrm C(k + 1)$.
-\end{proof}
-
-\emph{A fact used in Section~\ref{M-sec:certificate}.} The bound $\Omega$ of that section, though not the proof above,
-uses that on $[2, 3]$, $\omega^*(u) = (1 + \log(u - 1))/u$ increases up to $2.76$ and decreases from $2.77$ on. For
-$2 \le u \le u' \le 2.76$, $\omega^*(u) \le \omega^*(u')$ is $(u' - u)(1 + \log(u - 1)) \le u \log((u' - 1)/(u - 1))$:
-the right side is at least $u(u' - u)/(u' - 1)$, by $\log t \ge 1 - 1/t$, and the left at most $(u' - u)u/1.76$, by
-$\log t \le t - 1$ at $t = (u - 1)/1.76$ and $\log 1.76 \le 1/1.76$. For $2.77 \le u \le u'$ the reverse inequality
-follows in the same way from $\log((u' - 1)/(u - 1)) \le (u' - u)/(u - 1)$ and
-$\log(u - 1) \ge \log 1.77 \ge 1/1.77 \ge 1/(u - 1)$. The two constants come from the exponential's series.
 
 \section{Proof of Proposition~\ref{M-prop:harman}}\label{app:harman}
 
@@ -513,6 +427,92 @@ $\varepsilon_H x/(\varphi(q) \log q) + (q^{L - c} + q^{L - \delta_1})/\varphi(q)
 $\varepsilon_H x/(\varphi(q) \log q) + q^{L - \delta}/\varphi(q)$ with $\delta = \min(c, \delta_1)/2$.
 \end{proof}
 
+\section{Proof of Lemma~\ref{M-lem:rough}}\label{app:rough}
+
+\begin{proof}
+Write $c_* = 0.565073$ and $\bar\omega = 0.5671433$, $u = \log 2y/\log z$, and say that an integer is $z$-rough if it has no
+prime factor below $z$. Four facts are used.
+
+\emph{(a) Prime sums.} By the prime number theorem with an error $o(t/\log t)$ (in the library, the bound
+$\psi(t) - t = O(t^{11/12 + \varepsilon})$, which it derives from the case of $\zeta$ of Input~\ref{M-inp:half-plane};
+the classical theorem would do), for every $\varepsilon_3 > 0$,
+$|\theta(t) - t| \le \varepsilon_3 t/\log t$ for large $t$. With partial summation this gives, for large $a \le b$,
+\[
+  \sum_{a < p \le b} \frac1{p \log p} \le \frac1{\log a} - \frac1{\log b} + \frac{4\varepsilon_3}{\log^2 a},
+\]
+and, if $2 \log b \le \Lambda$,
+\[
+  \sum_{a < p \le b} \frac1{p(\Lambda - \log p)}
+  \le \frac{1 + \varepsilon_3/\log a}{\Lambda} \log \frac{\log b \, (\Lambda - \log a)}{\log a \, (\Lambda - \log b)}
+  + \frac{6\varepsilon_3}{\Lambda \log^2 a};
+\]
+and, for large $y$, there are at most $(1 + \varepsilon_3) y/\log 2y$ primes in $(y, 2y]$.
+
+\emph{(b) Buchstab's inequality.} For $y \ge 2$,
+\[
+  \Phi(y, z) \le \#\{p : y < p \le 2y\} + \sum_{z \le p \le \sqrt{2y}} \Phi(y/p, p),
+\]
+since a $z$-rough integer $m \in (y, 2y]$ that is not prime has its least prime factor $p$ in $[z, \sqrt{2y}]$, and
+$m/p$ is a $p$-rough integer in $(y/p, 2y/p]$; the map $m \mapsto (p, m/p)$ is injective. Also $\Phi(y, z) = 0$ if
+$y \ge 1$ and $2y < z$, since every integer of $(y, 2y]$ is then at least $2$ and below $z$.
+
+\emph{(c) Buchstab's function on $[2, 3]$.} For $u > 1$, $1 + \log(u - 1) \le \bar\omega u$: the inequality $\log t \le t - 1$ at
+$t = \bar\omega(u - 1)$ gives $1 + \log(u - 1) \le \bar\omega(u - 1) - \log \bar\omega \le \bar\omega u$, since $-\log \bar\omega \le \bar\omega$, that is $\bar\omega e^{\bar\omega} \ge 1$, which
+holds because $e^{\bar\omega} \ge \sum_{m \le 12} \bar\omega^m/m! > 1/\bar\omega$. So $\omega^* \le \bar\omega$ on $[2, 3]$, and since $c_* < \bar\omega$,
+$\omega^* \le \bar\omega$ on $[2, \infty)$; and $\omega^* \le c_*$ on $[3, \infty)$, since $\omega^*(3) = (1 + \log 2)/3 < c_*$.
+
+\emph{(d) A delay inequality.} Let $M(u) = \log(u - 1)$ for $2 \le u \le 3$ and
+$M(u) = \log 2 + \bar\omega \min(u - 3, 1) + c_* \max(u - 4, 0)$ for $u > 3$, which is $\int_1^{u - 1} \omega^*(t)\, dt$ with
+$\omega^*$ replaced by $\bar\omega$ on $[2, 3]$. Then $1 + M(u) \le u \omega^*(u)$ for $u \ge 2$. For $u \le 3$ it is an
+equality. For $u > 3$, $\omega^*(u) = c_*$, and $1 + M(u) - c_* u$ is affine on $[3, 4]$, with slope $\bar\omega - c_* > 0$, and
+constant on $[4, \infty)$; so it suffices that it is at most $0$ at $u = 4$, that is $1 + \log 2 + \bar\omega \le 4c_*$, which
+holds since $\log 2 < 0.6931471808$ and $2.2602904808 < 2.260292 = 4c_*$.
+
+We prove by induction on the integer $k \ge 0$ the statement $\mathrm C(k)$: for every $\varepsilon > 0$ there is
+$z_0$ such that $\Phi(y, z) \le (\omega^*(u) + \varepsilon) y/\log z$ for all $z \ge z_0$ and all $y \ge 1$ with
+$u \le k$. $\mathrm C(0)$ holds trivially, since $u > 0$, and the lemma is $\mathrm C(\lceil U \rceil)$. Assume
+$\mathrm C(k)$, let $0 < \varepsilon \le 1$ (which suffices, since the bound for one $\varepsilon$ implies it for every
+larger one) and $\varepsilon_3 = \varepsilon/100$, let $z$ be large in terms of
+$\varepsilon$ and of the $z_0$ of $\mathrm C(k)$ for $\varepsilon/4$, and let $y \ge 1$ with
+$\Lambda = \log 2y = u \log z \le (k + 1) \log z$. If $2y < z$, then $\Phi(y, z) = 0$. Otherwise $u \ge 1$, $y \ge z/2$
+is large, and (a) and (b) give
+\[
+  \Phi(y, z) \le \Bigl(1 + \frac\varepsilon4\Bigr) \frac y\Lambda + \sum_{z \le p \le \sqrt{2y}} \Phi(y/p, p).
+\]
+If $u < 2$, then $\sqrt{2y} < z$, the sum is empty, and
+$\Phi(y, z) \le (1 + \varepsilon/4) y/(u \log z) \le (\omega^*(u) + \varepsilon) y/\log z$. Let $u \ge 2$. A prime
+$p \in [z, \sqrt{2y}]$ has $y/p \ge 1$ and
+$\log(2y/p) = \Lambda - \log p \le k \log p$, since $\Lambda \le (k + 1) \log p$. So $\mathrm C(k)$ gives
+$\Phi(y/p, p) \le (\omega^*(u_p) + \varepsilon/4) \, y/(p \log p)$ with $u_p = (\Lambda - \log p)/\log p$. The term
+$p = z$, if $z$ is prime, contributes at most $2y/(z \log z)$, since $\omega^* \le 1$. By (a), the parts
+$\varepsilon/4$ of the other terms contribute at most $(\varepsilon/4)(1/\log z + 4\varepsilon_3/\log^2 z) \, y$. For
+the parts $\omega^*(u_p)$: if $p \le (2y)^{1/4}$ then $u_p \ge 3$ and $\omega^*(u_p) \le c_*$; if
+$(2y)^{1/4} < p \le (2y)^{1/3}$ then $2 \le u_p < 3$ and $\omega^*(u_p) \le \bar\omega$; and if $(2y)^{1/3} < p \le (2y)^{1/2}$ then
+$1 \le u_p < 2$ and $\omega^*(u_p)/(p \log p) = 1/(p(\Lambda - \log p))$, by the definition of $\omega^*$ on
+$[1, 2)$. By (a), applied on $(z, \sqrt{2y}]$ if
+$u \le 3$, on $(z, (2y)^{1/3}]$ and $((2y)^{1/3}, \sqrt{2y}]$ if $3 < u \le 4$, and also with the first range split at
+$(2y)^{1/4}$ if $u > 4$,
+\[
+  \sum_{z < p \le \sqrt{2y}} \frac{\omega^*(u_p)}{p \log p} \le \frac{M(u) + 12\varepsilon_3}\Lambda
+  + \frac{8\varepsilon_3}{\log z}.
+\]
+Collecting the terms, with $\Lambda = u \log z$,
+\[
+  \Phi(y, z) \le \frac y{\log z} \Bigl(\frac{1 + M(u)}u + \frac{\varepsilon/4 + 12\varepsilon_3}u + \frac2z
+  + 8\varepsilon_3 + \frac\varepsilon4 + \frac{\varepsilon \varepsilon_3}{\log z}\Bigr).
+\]
+By (d) the first term is at most $\omega^*(u)$, and since $u \ge 1$ and $z$ is large the others add up to at most
+$0.96\varepsilon$. So $\Phi(y, z) \le (\omega^*(u) + \varepsilon) y/\log z$, which proves $\mathrm C(k + 1)$.
+\end{proof}
+
+\emph{A fact used in Section~\ref{M-sec:certificate}.} The bound $\Omega$ of that section, though not the proof above,
+uses that on $[2, 3]$, $\omega^*(u) = (1 + \log(u - 1))/u$ increases up to $2.76$ and decreases from $2.77$ on. For
+$2 \le u \le u' \le 2.76$, $\omega^*(u) \le \omega^*(u')$ is $(u' - u)(1 + \log(u - 1)) \le u \log((u' - 1)/(u - 1))$:
+the right side is at least $u(u' - u)/(u' - 1)$, by $\log t \ge 1 - 1/t$, and the left at most $(u' - u)u/1.76$, by
+$\log t \le t - 1$ at $t = (u - 1)/1.76$ and $\log 1.76 \le 1/1.76$. For $2.77 \le u \le u'$ the reverse inequality
+follows in the same way from $\log((u' - 1)/(u - 1)) \le (u' - u)/(u - 1)$ and
+$\log(u - 1) \ge \log 1.77 \ge 1/1.77 \ge 1/(u - 1)$. The two constants come from the exponential's series.
+
 \section{The formalisation in detail}\label{sup:lean}
 
 This section completes Section~\ref{M-sec:lean} of the paper.
@@ -541,8 +541,52 @@ primes dividing $q$, whose zeros lie on $\operatorname{Re} s = 0$ and do not aff
 In Lean the excess of Ingham's steps \cite{ingham} is $4\varepsilon$ for the $\varepsilon$ of
 \lean{LinnikInghamC.charDensity\_ingham\_c}, whose exponent is $2 + 4c + 4\varepsilon$, with $c$ chosen so that
 $2 + 4c = 3/(2 - \sigma_+)$, Ingham's exponent at the step's right end $\sigma_+$: $\varepsilon = 1/8000$ on the
-first nineteen steps and $\varepsilon = 1/400000$ on the last. \file{formalisations/} records, for each result from the
-literature, the differences between the Lean statement and the published one.
+first nineteen steps and $\varepsilon = 1/400000$ on the last. Huxley's estimate is proved in the library in its own
+form, for the characters mod $q$ (\file{formalisations/huxley-density.md}). \file{formalisations/} records, for each
+result from the literature, the differences between the Lean statement and the published one.
+
+\subsection*{The proof in Lean}
+
+A statement of the paper that holds under an input is, in Lean, a theorem that either takes as a hypothesis what the
+input supplies (as \lean{SieveTypeIIHM.typeII\_gen\_hm}, Proposition~\ref{M-prop:type2-gen}, takes a density curve's
+counts) or uses the library's proof of the input. The exception in Input~\ref{M-inp:half-plane} is the pole of
+$L(s, \chi_0)$ at $s = 1$, where Mathlib's function, like every function in Lean, still has a value; the Lean statement
+leaves that point aside. The curve $g^*$ is \lean{SieveTypeIIU22240D.g7d}, and its exponents are written as fractions;
+the first step's is $3/(2 - 81/140) + 1/2000 = 840199/398000$.
+
+In Section~\ref{M-sec:type2}, the Hal\'asz--Montgomery inequality is formalised in the form over the characters mod $q$
+at one height (\file{formalisations/halasz-montgomery.md}), and the Lindelöf-type bound behind the kernel bound is
+\lean{LinnikLindelof.lindelof}. The Lean definition of admissible windows, \lean{SieveCurveGlue.WindowOKHM}, has the
+form of Definition~\ref{M-def:window}. The $134$ inequalities of the proof of Proposition~\ref{M-prop:window} are
+among the $1080$ corners that \file{tools/linnik/route\_limits.py} checks in exact rationals and the Lean checks by
+\lean{norm\_num}. The Lean (\lean{SieveTypeIIU22240D.window\_22240d}) uses neither the convexity nor the
+monotonicity of that proof: it interpolates on $[\mu_1, 1]$ and on $[1, \mu_2]$ separately, at the corners with $\varpi \in \{0, 4 \cdot 10^{-6}\}$
+and $\mu \in \{\mu_1, 1, \mu_2\}$, $16$ on each piece below $5/6$, and $24$ on the top piece, where it checks $E_2$ and
+$E_3$ for $\mu \le 1$.
+
+In Sections~\ref{M-sec:type1} and~\ref{M-sec:certificate}, \file{formalisations/harman-sieve.md} gives the sources of
+Proposition~\ref{M-prop:harman} and Lemma~\ref{M-lem:rough} and the differences between the Lean statements and the
+classical ones, and \file{formalisations/README.md} lists the Fourier separation of variables behind
+Lemmas~\ref{M-lem:family} to~\ref{M-lem:chains} among the standard results. The sifting function $S(\mathcal C_r, z)$
+is \lean{SieveTree.S}, which counts the multiples of $r$ in $\mathcal C$ with no prime factor below $z$, and so agrees
+with the paper's when $r$ has no prime factor below $z$, as in every use; the count $\Phi(y, z)$ of rough numbers is
+\lean{SieveRough.Psi}; and the exact-product case of Lemma~\ref{M-lem:chains} is \lean{SieveExact.chainT0\_bound}. The
+library tests the rules of the decomposition in a fixed order: (O) first at depths three and five, and at depths four
+and six $\alpha_k \ge \alpha_{k - 1}$ first, then (E), then the rest of (O).
+
+In Lean (\lean{SieveMain2.linnik\_route\_lt2}) the grid conditions of Theorem~\ref{M-thm:route} are \lean{GridOK},
+those conditions with $4h \le v$ in place of $16h \le v$ and with $0 < h$ and $U_1 < U_2$, which follow from the
+others, and \lean{GridOKC}: \lean{GridOK} for the coarse grid, $4h + 2h_C \le v$ and $Nh \le N_C h_C$. The Lean's grids also carry a multiplier, \lean{Grid.mult}, the side being rounded up to a
+multiple of the multiplier over $D$; Theorem~\ref{M-thm:route} is the case of the multiplier $1$. For $4 \mid N$ and
+that multiplier the coarse cells are unions of four cells, $h_C = 4h$, $e^C_{N_C - 1} = e_{N - 4}$ and $N_C h_C = Nh$, so
+beyond \lean{GridOK} the condition \lean{GridOKC} asks only $4h_C = 16h \le v$, which implies $4h \le v$ and
+$4h + 2h_C = 12h \le v$.
+
+The route theorem states the condition $2 < L$, which follows from the others. The grid conditions of the grid of
+Theorem~\ref{M-thm:main} are checked by \lean{decide} (\lean{SieveCert.gridOK22240R} and
+\lean{SieveCert.gridOKC22240R}). The prime number theorem of Sections~\ref{M-sec:type1} to~\ref{M-sec:proof} is derived from the case of $\zeta$ of
+Input~\ref{M-inp:half-plane}, in the form $\psi(t) - t = O(t^{11/12 + \varepsilon})$
+(\lean{HalfPlanePNT.\allowbreak psi\_isBigO\_eleven\_twelfths}).
 
 \subsection*{The library's proof of Input~\ref{M-inp:half-plane}}
 
@@ -598,7 +642,8 @@ table of Appendix~\ref{M-app:claims} covers the whole dependency cone of each, a
 The certificate of Proposition~\ref{M-prop:certificate} is checked by kernel evaluation, \lean{decide +kernel}, and not by
 compiled code, split into 5066 parts in 387 files: ranges of consecutive rows of the grid, and the heaviest $188$ rows in
 pieces of columns. Each part proves that its sum is at most a bound $\lceil 1.001 \times \text{part} \rceil$, computed
-exactly, and the bounds sum to $1151230848467235036 < 2^{60}$. Evaluating the parts tests about $0.48$ million,
+exactly, and the bounds sum to $1151230848467235036 < 2^{60}$. The exact total,
+$\Sigma' = 1150080767699533326$, is computed from the same definitions by \file{tools/linnik/mirror2.py}. Evaluating the parts tests about $0.48$ million,
 $7.4$ million, $11.0$ million and $1.9$ million boxes of depths three to six below the decomposed cells, as
 \file{tools/linnik/mirror2.py} counts them, besides the $27020$ candidate cells and $0.35$ million boxes for the kept
 parts. The definitions the kernel evaluates are
@@ -617,13 +662,28 @@ change to the library.
 
 \section{Computations around the exponent}\label{sup:computations}
 
-This section gives the computations behind the last two paragraphs of Section~\ref{M-sec:comparison} of the paper.
+This section gives the computations behind the room that the window of Section~\ref{M-sec:window-278} leaves and
+behind the last two paragraphs of Section~\ref{M-sec:comparison} of the paper.
 They are computations with the definitions of the certificate, by the scripts of \file{tools/linnik/}, and not theorems
 of the library; nothing in the paper or the library depends on them.
 
+\subsection*{The room in the window}
+
+The window of Proposition~\ref{M-prop:window} has little room. All the corners are exact rational inequalities, so
+there is no numerical tolerance. With $u_1$ and $u_2$ fixed, they hold exactly for $L \ge 2.2239858\ldots$, so at $222399/100000$ but not at
+$222398/100000$; raising the first step's exponent by $3.7 \cdot 10^{-5}$ moves the lower end out. Since the Type~II
+estimate on this window and the certificate of Section~\ref{M-sec:certificate} on its grid do not depend on $L$ otherwise
+(Theorem~\ref{M-thm:route} also needs $2 < L \le 5/2$ and $L U_2 > D$, which still hold), the window leaves about
+$1.4 \cdot 10^{-5}$ of room in the exponent. The corners' slack grows along the narrow steps, to $4.3 \cdot 10^{-4}$ on
+the fourteenth, and from there steps of $1/280$ leave the window as it is: the least slack of a corner on them is
+$4.4 \cdot 10^{-5}$, on the first of them (steps of $1/140$ would move the window's lower end), and on the last step,
+$[163/210, 131/168]$, which contains $7/9$, it is $3.26 \cdot 10^{-4}$. Inside that step Huxley's $3/(3\sigma - 1)$,
+which is below $4/(1 + \sigma)$ from $\sigma = 7/9$ on, is below the step's exponent $2.25207$ from
+$\sigma \approx 0.7774$ on, by up to $1.2 \cdot 10^{-2}$ at $131/168$; taking it there would not change the window, since the corners on that step do not bind.
+
 \subsection*{The classical estimates in place of Chen, Gupta and Li's}
 
-Take $g_7$ with its steps on $[5/7, 131/168]$ replaced by steps of length $1/1680$ with the classical exponents and the
+Take $g^*$ with its steps on $[5/7, 131/168]$ replaced by steps of length $1/1680$ with the classical exponents and the
 excess $1/2000$ of the library's steps: Ingham's \cite{ingham} $3/(2 - \sigma_+) + 1/2000$ up to $3/4$ and Huxley's
 \cite{huxley75} $3/(3\sigma_- - 1) + 1/2000$ from $3/4$. The window is then set
 at $3/4$, where both exponents are $12/5$, and the closed forms of Section~\ref{M-sec:ends} become $u_1 \ge 16/(5L) - 1$ and
@@ -654,7 +714,7 @@ information of another kind. These figures, like the others of this subsection, 
 a side and $0.98972\mathcal K$ at $400$ (and $0.99878\mathcal K$ at $360$, where the cells lie less well against the
 window), but at $400$ cells a side $4447/2000 = 2.2235$ still fails with the present margin, at $1.00115\mathcal K$. A
 smaller margin in Definition~\ref{M-def:window} helps a little more. The margin $1/25000$, a convenience of the Lean
-statements, accounts for much of the window's loss (Section~\ref{M-sec:ends}) and costs about $10^{-4}$ in the
+statements, accounts for much of the window's loss (Section~\ref{M-sec:window-278}) and costs about $10^{-4}$ in the
 exponent: with a margin of $7.8 \cdot 10^{-6}$ the
 window of Theorem~\ref{M-thm:type2} is admissible at $2.2239$, with the same grid and certificate, and with a margin of
 $3 \cdot 10^{-6}$ the window $[41587, 47527]/100000$ is admissible at $4447/2000 = 2.2235$, where the total on $400$
@@ -671,10 +731,10 @@ $5/7$. Going lower would need more of the dropped terms evaluated or a better de
 On the last, Chen, Gupta and Li note that the worst case for their estimate is $T = 1$ with no divisor $q_1$ of $q$ of a
 suitable size, as for prime $q$, that the critical situation is then at $\sigma = 5/7$, and that improving the term which
 dominates there is hard (\cite[Remark~12.3]{cgl}, quoted in Section~\ref{M-sec:comparison}). The script
-\file{tools/linnik/density_payoff.py} measures what lower curves would give the method: for a curve made from $g_7$ it
+\file{tools/linnik/density_payoff.py} measures what lower curves would give the method: for a curve made from $g^*$ it
 finds a window admissible at $L$, checked at the corners in exact rationals, evaluates the certificate's total on it on
 $340$ cells a side, and lowers $L$ in steps of $10^{-3}$ while the total stays below $0.999\mathcal K$, then tries
-one further step of $5 \cdot 10^{-4}$ (\file{tools/linnik/README.md} describes the search). For $\mu \ge 1$ the window condition on a piece $A(1 - \beta)$ requires $L - \mu > A/2$, where $g_7 = 1$
+one further step of $5 \cdot 10^{-4}$ (\file{tools/linnik/README.md} describes the search). For $\mu \ge 1$ the window condition on a piece $A(1 - \beta)$ requires $L - \mu > A/2$, where $g^* = 1$
 counts as $A = 1/(1 - \beta)$, which tends to $7/3$ at $4/7$; so with the trivial count kept below $4/7$ and every
 exponent capped at $30/13$ the script reaches only $2.2235$. The other curves replace the trivial count on $[11/20, 4/7]$
 by one step of Ingham's estimate, of exponent $3/(2 - 4/7) + 10^{-5}$, and set the excess of the steps on $[4/7, 5/7]$ to
@@ -688,7 +748,7 @@ lowest $L$ & $2.2235$ & $2.2220$ & $2.2205$ & $2.2190$ & $2.2170$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-These figures are partly those of $g_7$'s steps: for the capped curves the window's lower end is set not at $5/7$ but on
+These figures are partly those of $g^*$'s steps: for the capped curves the window's lower end is set not at $5/7$ but on
 one of the steps of length $1/280$, whose exponent is taken at its left end (the first, $[607/840, 61/84]$, for the
 cap $2.33$, and $[11/15, 619/840]$, at whose left end $4/(1 + \sigma) = 30/13$, for the cap $30/13$).
 With the same change and the exponent of each step inside $[7/10, 4/5]$ capped at Chen, Gupta and Li's bound at
@@ -698,7 +758,7 @@ terms is $15/(3 + 5\sigma)$, the exponent of Guth and Maynard's estimate for $\z
 Capping the exponent on $[15/19, 11/12]$ at $2 + 10^{-5}$, as Heath-Brown's estimate
 $\sum_{\chi \bmod q} N(\sigma, T, \chi) \ll (qT)^{2 - 2\sigma + \varepsilon}$ for $15/19 \le \sigma \le 1$ \cite{hb79}
 would allow (the range as in the review of \cite{hb79} in zbMATH, Zbl~0393.10043), changes none of the figures for the four curves
-on which the script tries it (the curve $g_7$ itself, the change on $[11/20, 5/7]$ alone, and the cap at $30/13$ and
+on which the script tries it (the curve $g^*$ itself, the change on $[11/20, 5/7]$ alone, and the cap at $30/13$ and
 the bound without the first term, both with that change).
 
 

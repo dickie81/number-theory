@@ -5,11 +5,11 @@ Read it: [the paper (PDF)](https://dickie81.github.io/number-theory/linnik-expon
 on every push.
 
 `main.tex` is the paper: Linnik's theorem with exponent `278/125`. Its eight sections are the introduction, the two
-inputs and the density curve, the Type II estimate (ending with an account of the window's ends), Type I and Harman's
-sieve, the decomposition and its certificate (with a figure of the cells, drawn by `tools/linnik/fig_cells.py` into
-`fig-cells.tex`), the proof, the formalisation, and a comparison with what the inputs give without the sieve; its
+inputs and the density curve, the Type II estimate (with where its window comes from), Type I and Harman's sieve, the
+decomposition and its certificate (with the bound for rough numbers and a figure of the cells, drawn by
+`tools/linnik/fig_cells.py` into `fig-cells.tex`), the proof, the formalisation, and a comparison with what the inputs give without the sieve; its
 appendix is the claims table. `supplement.tex` is its supplement: the proofs of four standard results (the prime sums,
-the Type II families, the rough numbers and Harman's comparison, §S1–§S4), the details of the formalisation (§S5) and
+the Type II families, Harman's comparison and the rough numbers, §S1–§S4), the Lean details of the paper (§S5) and
 the computations around the exponent (§S6). The two share their references, `references.tex`, so that each work has
 the same number in both; the supplement adds four of its own. The
 bibliography entries were checked against the publishers', arXiv and repository pages and, for Ingham and Huxley,
