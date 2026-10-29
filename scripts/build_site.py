@@ -21,7 +21,7 @@ REPO = "https://github.com/dickie81/number-theory"
 
 def field_of(tex, command):
     """The argument of the paper's `\\<command>{...}`, with line breaks, math delimiters and spacing commands
-    removed."""
+    removed, and TeX's dashes made into Unicode ones."""
     m = re.search(r"\\" + command + r"\{((?:[^{}]|\{[^{}]*\})*)\}", tex)
     if not m:
         return None
@@ -29,6 +29,7 @@ def field_of(tex, command):
     t = re.sub(r"\\\\", " ", t)
     t = re.sub(r"\$([^$]*)\$", r"\1", t)
     t = re.sub(r"\\[,;:! ]|~", " ", t)
+    t = t.replace("---", "\u2014").replace("--", "\u2013")
     return " ".join(t.split())
 
 

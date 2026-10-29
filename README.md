@@ -7,7 +7,7 @@ from `main` on every push.
 
 | Paper | Read it |
 |---|---|
-| *Linnik's constant below the zero-density exponent: 278/125 from a zero-free half-plane*. Every reduced residue class mod `q` contains a prime `p ≤ Kq^{278/125}`. | [Paper (PDF)](https://dickie81.github.io/number-theory/linnik-exponent.pdf) · [Supplement (PDF)](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf) · [Source](papers/linnik-exponent/README.md) |
+| *Linnik's constant below the zero-density exponent: 278/125 from a zero-free half-plane and the Chen–Gupta–Li density estimate*. Every reduced residue class mod `q` contains a prime `p ≤ Kq^{278/125}`. | [Paper (PDF)](https://dickie81.github.io/number-theory/linnik-exponent.pdf) · [Supplement (PDF)](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf) · [Source](papers/linnik-exponent/README.md) |
 
 ## What is here
 

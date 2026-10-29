@@ -33,7 +33,8 @@ Plain statement (`prop31_of_third`). The hypothesis implies `LinnikCGLLV.CGLProp
   the work of their Lemmas 4.1 and 4.2 together.
 * `prop46`: their Proposition 4.6 for the points, in a cubed form. With the coefficients `b_n1_S(n)`, for which
   `w(n/N) = 1`, either `|R|N^{2σ} ≤ 648N²` or `(|R|N^{2σ})³ ≤ (216N)³X`.
-* `mvt_case`, `polylog_le`: for `N ≥ max(qT, 10)`, the mean value theorem at one point per character
+* `mvt_case`, `polylog_le`: for `N ≥ max(qT, 10)`, the mean value theorem at points whose characters are distinct
+  or which are at least `1` apart
   (`LinnikPoints.large_values_points`) gives `|R|N^{2σ} ≤ 36N²(11 + 8 log N)(2 + log²(2N))`, at most
   `36(11 + 24/ε)(2 + 36/ε²)N^{2+ε}` for `0 < ε ≤ 1`.
 * `le_of_cube_le`, `dom4`, `dom5`, `alg112`: their §11.2's algebra. The terms `qT|R|²N^{3/2−σ}` and
@@ -290,10 +291,11 @@ lemma natCast_cpow_I {n : ℕ} (hn : 0 < n) (x : ℝ) :
   rw [← Complex.ofReal_natCast, ← Complex.ofReal_log (Nat.cast_nonneg n)]
   push_cast; ring
 
-/-- **The mean value theorem at one point per character** (`LinnikPoints.large_values_points`), for `N ≥ 10` and
-`qT ≤ N`: `|R|N^{2σ} ≤ 36N²(11 + 8 log N)(2 + log²(2N))`. -/
+/-- **The mean value theorem at the points** (`LinnikPoints.large_values_points`), for points whose characters are
+distinct or which are at least `1` apart, `N ≥ 10` and `qT ≤ N`: `|R|N^{2σ} ≤ 36N²(11 + 8 log N)(2 + log²(2N))`. -/
 theorem mvt_case {ι : Type*} {q : ℕ} [NeZero q] (R : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ)
-    (hinj : Set.InjOn χ R) {T N σ : ℝ} (hT : 1 ≤ T) (hqT : (q : ℝ) * T ≤ N) (hN : 10 ≤ N) {S : Finset ℕ}
+    (hsep : ∀ i ∈ R, ∀ j ∈ R, i ≠ j → χ i = χ j → 1 ≤ |t i - t j|) {T N σ : ℝ} (hT : 1 ≤ T) (hqT : (q : ℝ) * T ≤ N)
+    (hN : 10 ≤ N) {S : Finset ℕ}
     (hS : ∀ n ∈ S, 6 / 5 * N ≤ (n : ℝ) ∧ (n : ℝ) ≤ 9 / 5 * N) {b : ℕ → ℂ} (hb : ∀ n, ‖b n‖ ≤ 1)
     (ht : ∀ i ∈ R, |t i| ≤ T)
     (hbig : ∀ i ∈ R, N ^ σ / 6 ≤ ‖∑ n ∈ S, b n * χ i n * (n : ℂ) ^ ((t i : ℂ) * I)‖) :
@@ -313,7 +315,8 @@ theorem mvt_case {ι : Type*} {q : ℕ} [NeZero q] (R : Finset ι) (χ : ι → 
     · exact_mod_cast (show (n : ℝ) ≤ 2 * P by linarith)
   have hmv := LinnikPoints.large_values_points hSP b q (lo := -T - 1 / 2) (hi := T + 1 / 2) (by linarith) R χ
     (fun i => -t i) (fun i hi => by have := abs_le.1 (ht i hi); constructor <;> linarith)
-    (fun i hi j hj hij hχ => absurd (hinj hi hj hχ) hij)
+    (fun i hi j hj hij hχ => by
+      rw [show -t i - -t j = -(t i - t j) by ring, abs_neg]; exact hsep i hi j hj hij hχ)
   have hdp : ∀ i, DirMean.dp S (fun j => b j * χ i j) (-t i) =
       ∑ n ∈ S, b n * χ i n * (n : ℂ) ^ ((t i : ℂ) * I) := by
     intro i
@@ -716,7 +719,7 @@ theorem prop31_of_third (h : CGLThird) : LinnikCGLLV.CGLProp31 := by
       _ ≤ _ := hfin _ (by positivity) (by rw [hCtot]; linarith)
   · rcases le_or_gt 10 N with hN10 | hN10
     · -- `N ≥ max(qT, 10)`: the mean value theorem
-      have hm := mvt_case R χ t hinj hT hNq.le hN10 hS hb ht hbig
+      have hm := mvt_case R χ t (fun i hi j hj hij hχ => absurd (hinj hi hj hχ) hij) hT hNq.le hN10 hS hb ht hbig
       have hpl := polylog_le (by linarith : (1 : ℝ) ≤ N) hε₁0 hε₁1
       rw [← hCm] at hpl
       have e : N ^ (2 - 2 * σ) = N ^ 2 / (N ^ σ) ^ 2 := by

@@ -921,7 +921,7 @@ theorem cgls3 (hP : CGLP81) (hT : CGLT101) : CGLS3 := by
       ring
     have hS' : ∀ n ∈ S, N < n ∧ (n : ℝ) ≤ 2 * N := fun n hn =>
       ⟨by linarith [(hS n hn).1], by linarith [(hS n hn).2]⟩
-    have h102' := h102 q R χ t T N σ S b hinj hprim hT1 ht hN hS' hb hbig
+    have h102' := h102 q R χ t T N σ S b (LinnikCGLL105.spaced_of_injOn hinj t) hprim hT1 ht hN hS' hb hbig
     rw [← hΛ2] at h102'
     have hen := energy_term hr0 hE0 hQ1 hN hΛ1 hC₂0 h102'
     have hm := main_part R hq1 hT1 hN1 hNQ hrq hE0 hε hδ0 hδ1 hδε hε'0 hε'ε hX hXk hM1 hMΦ hC₁0

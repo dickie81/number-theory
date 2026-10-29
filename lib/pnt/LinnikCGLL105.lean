@@ -8,13 +8,17 @@ each quadruple of the energy by `N^{−2σ}|D_N(t₄, χ₄)|²` (the large valu
 near `t₁ + t₂ − t₃` (their Lemma 10.4), notes that "given (t_i,χ_i) ∈ W for 1 ≤ i ≤ 3, there exists at most one choice
 of (t₄,χ₄) ∈ W such that |t₁+t₂−t₃−t₄| ≤ 1 and χ₁χ₂ = χ₃χ₄" (p. 41), and expands the square over the triples.
 
-The library's form, at one point per character. For a coefficient function `c`, `D_c(t) = Σ_{n∈S}c(n)n^{it}` (`Dp`).
+The library's form, for spaced points (`Spaced`): two points with one character are more than `2` apart, as in their
+`W` once `(qT)^ϵ > 2`; one point per character is a case (`spaced_of_injOn`). For a coefficient function `c`,
+`D_c(t) = Σ_{n∈S}c(n)n^{it}` (`Dp`).
 * `Dp` is a finite exponential sum with frequencies `log n`; for `N > 0` and `S ⊆ [N, 2N]` they lie within `1` of
   `log N`, so `norm_sq_esum_le` gives `|D_c(t)|² ≤ ∫|k(ξ)||D_c(t + πξ)|² dξ`. The weight is shifted, not the window: for
   `|τ − t| ≤ 1`, `|D_c(t)|² ≤ ∫κ(ξ)|D_c(τ + πξ)|² dξ` with `κ(ξ) = 4C_k/(1 + ξ²)` (`kmaj`), since
   `(1 + ξ²)|k(ξ)| ≤ C_k` and `1 + ξ² ≤ 4(1 + (ξ + η)²)` for `|η| ≤ 1`.
 * The fourth point is not inverted: if `χ_iχ_j = χ_kχ_l` then `χ_l(n) = χ_i(n)χ_j(n)χ̄_k(n)` for every `n`
   (`char_eq_of_mul_eq`), so `D_N(·, χ_l)` is `D_c` with `c(n) = b_nχ_i(n)χ_j(n)χ̄_k(n)`, a function of the triple.
+  Two fourth points of one triple have one character and are within `2` of each other, so for spaced points there
+  is at most one.
 * With `R₂(n₁, n₂) = Σ_iχ_i(n₁)χ̄_i(n₂)e^{it_i(log n₁ − log n₂)}` (`R2`), which is their `R(n₁/n₂, n₁n₂⁻¹)` when
   `(n₁n₂, q) = 1` and `0` otherwise, the sum over the triples of `|D_c(t_i + t_j − t_k + y)|²` is, for `S` of positive
   integers, `Σ_{n₁,n₂}b_{n₁}b̄_{n₂}e^{iy(log n₁ − log n₂)}R₂²R̄₂` (`sum_triple_eq`), at most `Σ_{n₁,n₂}|R₂|³` for
@@ -24,14 +28,16 @@ Plain statements, with `S` a finite set of naturals in `[N, 2N]`, `N > 0`.
 * `norm_kloc_shift_le`: for `|η| ≤ 1`, `|k(ξ + η)| ≤ κ(ξ)`.
 * `norm_sq_Dp_le_shift`: for `|τ − t| ≤ 1`, `|D_c(t)|² ≤ ∫κ(ξ)|D_c(τ + πξ)|² dξ`.
 * `sum_triple_le`: for `|b_n| ≤ 1`, `Σ_{i,j,k∈R}|D_{c_{ijk}}(t_i + t_j − t_k + y)|² ≤ Σ_{n₁,n₂∈S}|R₂(n₁, n₂)|³`.
-* `lemma105`: for `χ` injective on `R`, `|b_n| ≤ 1` and `|D_N(t_i, χ_i)| ≥ N^σ/6` on `R`,
+* `Spaced`, `spaced_of_injOn`: two points of `R` with one character are more than `2` apart; one point per character
+  is a case.
+* `lemma105`: for spaced points, `|b_n| ≤ 1` and `|D_N(t_i, χ_i)| ≥ N^σ/6` on `R`,
   `E ≤ 36(N^σ)^{−2}∫κ·Σ_{n₁,n₂∈S}|R₂(n₁, n₂)|³`.
 
 * `Ck`, `norm_kloc_mul_le`, `Ck_nonneg`, `kmaj`, `kmaj_nonneg`, `integrable_kmaj`, `norm_kloc_shift_le`: the
   majorant.
 * `Dp`, `Dp_eq_esum`, `norm_Dp_le`, `continuous_Dp`, `norm_sq_Dp_le`, `norm_sq_Dp_le_shift`: Dirichlet polynomials.
 * `char_eq_of_mul_eq`, `R2`, `sum3_comm`, `ct`, `sum_triple_eq`, `sum_triple_le`: the triples.
-* `lemma105`: their Lemma 10.5.
+* `Spaced`, `spaced_of_injOn`, `lemma105`: their Lemma 10.5.
 
 The file imports `LinnikCGLLoc.lean`.
 -/
@@ -301,10 +307,19 @@ end triples
 
 /-! ### Their Lemma 10.5 -/
 
-/-- **Their Lemma 10.5, at one point per character**: for `χ` injective on `R`, `S ⊆ [N, 2N]` with `N > 0`,
-`|b_n| ≤ 1` and `|Σ_{n∈S}b_nχ_i(n)n^{it_i}| ≥ N^σ/6` for `i ∈ R`, `E ≤ 36(N^σ)^{−2}∫κ·Σ_{n₁,n₂∈S}|R₂(n₁, n₂)|³`. -/
-theorem lemma105 {ι : Type*} {q : ℕ} {R : Finset ι} {χ : ι → DirichletCharacter ℂ q} (hinj : Set.InjOn χ R)
-    (t : ι → ℝ) {S : Finset ℕ} {b : ℕ → ℂ} {N σ : ℝ} (hN : 0 < N) (hS : ∀ n ∈ S, N ≤ n ∧ (n : ℝ) ≤ 2 * N)
+/-- **Spaced points**: two points of `R` with one character are more than `2` apart. Their `W` is spaced once
+`(qT)^ϵ > 2`: its points with one character are `(qT)^ϵ` apart. -/
+def Spaced {ι : Type*} {q : ℕ} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) : Prop :=
+  ∀ i ∈ R, ∀ j ∈ R, i ≠ j → χ i = χ j → 2 < |t i - t j|
+
+/-- One point per character is spaced. -/
+lemma spaced_of_injOn {ι : Type*} {q : ℕ} {R : Finset ι} {χ : ι → DirichletCharacter ℂ q} (hinj : Set.InjOn χ R)
+    (t : ι → ℝ) : Spaced R χ t := fun _ hi _ hj hij h => absurd (hinj hi hj h) hij
+
+/-- **Their Lemma 10.5**: for spaced points (`Spaced`), `S ⊆ [N, 2N]` with `N > 0`, `|b_n| ≤ 1` and
+`|Σ_{n∈S}b_nχ_i(n)n^{it_i}| ≥ N^σ/6` for `i ∈ R`, `E ≤ 36(N^σ)^{−2}∫κ·Σ_{n₁,n₂∈S}|R₂(n₁, n₂)|³`. -/
+theorem lemma105 {ι : Type*} {q : ℕ} {R : Finset ι} {χ : ι → DirichletCharacter ℂ q} (t : ι → ℝ)
+    (hsp : Spaced R χ t) {S : Finset ℕ} {b : ℕ → ℂ} {N σ : ℝ} (hN : 0 < N) (hS : ∀ n ∈ S, N ≤ n ∧ (n : ℝ) ≤ 2 * N)
     (hb : ∀ n, ‖b n‖ ≤ 1)
     (hbig : ∀ i ∈ R, N ^ σ / 6 ≤ ‖∑ n ∈ S, b n * χ i n * (n : ℂ) ^ ((t i : ℂ) * I)‖) :
     (energy R χ t : ℝ) ≤ 36 / (N ^ σ) ^ 2 * (∫ ξ, kmaj ξ) * ∑ n₁ ∈ S, ∑ n₂ ∈ S, ‖R2 R χ t n₁ n₂‖ ^ 3 := by
@@ -345,10 +360,16 @@ theorem lemma105 {ι : Type*} {q : ℕ} {R : Finset ι} {χ : ι → DirichletCh
       rw [Finset.card_le_one]
       intro l hl l' hl'
       rw [Finset.mem_filter] at hl hl'
+      by_contra hne
       have h1 := hl.2.2
       have h2 := hl'.2.2
       rw [h1] at h2
-      exact hinj hl.1 hl'.1 (mul_left_cancel h2)
+      have q1 : |t i + t j - t k - t l| ≤ 1 := hl.2.1
+      have q2 : |t i + t j - t k - t l'| ≤ 1 := hl'.2.1
+      have hd : |t l - t l'| ≤ 2 := by
+        rw [abs_le] at q1 q2 ⊢
+        constructor <;> linarith [q1.1, q1.2, q2.1, q2.2]
+      exact absurd hd (not_le.2 (hsp l hl.1 l' hl'.1 hne (mul_left_cancel h2)))
     rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hcard with h0 | h1
     · rw [Finset.card_eq_zero.mp h0, Finset.sum_empty]
       exact mul_nonneg hA0 hI0

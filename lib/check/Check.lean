@@ -26,14 +26,14 @@ history. -/
 #print axioms SieveTypeIIU22240D.window_22240d
 
 /- Two results of the literature that it uses (`formalisations/`): the zero-free half-plane `Re s > 11/12` for
-every Dirichlet L-function, from OpenAI's release (`formalisations/openai-half-plane.md`), printed here, and
-Chen–Gupta–Li's density estimate, whose steps and Proposition 3.1 are printed above (`cglDensity`, the same estimate on
-`[5/7, 16/21]`, is not used by `Linnik22240R` and is printed by `CheckAll`). -/
+every Dirichlet L-function, OpenAI's result, proved here along their companion preprint
+(`formalisations/openai-half-plane.md`), printed here, and Chen–Gupta–Li's density estimate, whose steps and
+Proposition 3.1 are printed above (`cglDensity`, their estimate with the exponent `7/3 + ε` on `[5/7, 16/21]`, is not
+used by `Linnik22240R` and is printed by `CheckAll`). -/
 #print axioms Eis.LFunction_ne_zero_of_re_gt
 
 /- The other theorems of the Linnik paper's claims table (`papers/linnik-exponent/main.tex`, Appendix A): its own steps
 by section, then the results of the literature it uses, each with a note in `formalisations/`. -/
-#print axioms HalfPlanePNT.psi_isBigO_eleven_twelfths
 #print axioms SieveWeight.norm_Sp_le
 #print axioms SieveTypeII.sum_chars_dp_sq_le
 #print axioms SieveTypeIIHM.sum_bin_hm
@@ -50,20 +50,13 @@ by section, then the results of the literature it uses, each with a note in `for
 #print axioms SieveChain.chainTU_bound
 #print axioms SieveChain.chainTL_bound
 #print axioms SieveExact.chainT0_bound
-#print axioms SieveRoughTuple.sum_rough_eq
 #print axioms SieveChain.sum_rough_tuples
-#print axioms SieveRough.psi_le
-#print axioms SieveRough.Psi_le_buchstab
-#print axioms SieveRough.super_M
-#print axioms SieveOmegaB.omB_le_w1
-#print axioms SieveOmegaB.omB_mono
-#print axioms SieveOmegaB.omB_anti
 #print axioms SieveProp6.prop6
 #print axioms SieveTree.tree_pt
-#print axioms SieveBrun.fundamental
 #print axioms SieveStops2.stops2_bound
 #print axioms SieveProp6.leaf_bound
 #print axioms SieveLeaf.leaf_gap
+#print axioms SieveBrun.fundamental
 #print axioms SieveLeaf.prod_T_le
 #print axioms SieveLeaf.prod_primesBelow_le
 #print axioms SieveDecomp.buchstab_fam
@@ -83,9 +76,15 @@ by section, then the results of the literature it uses, each with a note in `for
 #print axioms SieveBuch.Par.I_S6c_vanish_lt
 #print axioms SieveBuch.Par.I_S6c_vanish_reg
 #print axioms SieveQ.leaves_ev
+#print axioms SieveRough.psi_le
+#print axioms SieveRough.Psi_le_buchstab
+#print axioms SieveRough.super_M
+#print axioms SieveOmegaB.omB_le_w1
 #print axioms SieveCert.omegaC_le_w
 #print axioms SieveOmegaB.omF_ge
 #print axioms SieveOmegaB.lnT_ge
+#print axioms SieveOmegaB.omB_mono
+#print axioms SieveOmegaB.omB_anti
 #print axioms SieveRough.evLe_cell_tr
 #print axioms SieveRough.evLe_cell_ex
 #print axioms SieveOmegaB.log_le_half_sub_inv
@@ -107,6 +106,7 @@ by section, then the results of the literature it uses, each with a note in `for
 #print axioms SieveBuch.Par.decompk
 #print axioms SieveKeptLeaf.leaves_ev2
 #print axioms SieveDrop2.drop_ev2
+#print axioms HalfPlanePNT.psi_isBigO_eleven_twelfths
 #print axioms LinnikStairs7.charDensity_in7_0
 #print axioms LinnikStairs7.charDensity_in7_18
 #print axioms LinnikStairs7.charDensity_hx7_5
