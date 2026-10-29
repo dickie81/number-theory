@@ -8,7 +8,8 @@ Plain statements, with `e(x) = e^{2πix/q}` (`SieveTypeIB.eq`), `ŵ(h) = Σ_{k�
 * `norm_sum_range_le`, `norm_sum_Ioc_le`: for an integer `t` with `0 < |t|` and `2|t| ≤ q`,
   `|Σ_{i<Y} e(t(u + i))| ≤ q/(2|t|)` and `|Σ_{A<k≤B} e(tk)| ≤ q/(2|t|)`.
 * `spl`, the spline `w(k) = ℓ^{−r}#{(i, j) : A < i ≤ B, j ∈ [0, ℓ)^r, i + Σj = k}` (`ℓ ≥ 1`), an average of the
-  indicators of the intervals `(A + Σj, B + Σj]` (`sum_spl_mul`): `spl_nonneg`, `spl_le_one` and `spl_eq_one`
+  indicators of the intervals `(A + Σj, B + Σj]` (`sum_spl_mul`), of mass `B − A` (`sum_spl`): `spl_nonneg`,
+  `spl_le_one` and `spl_eq_one`
   (`0 ≤ w ≤ 1`, and `w = 1` on `(A + r(ℓ − 1), B]`), `spl_eq_zero` (`w = 0` off `supp = (A, B + r(ℓ − 1)]`),
   `what_spl` (`ŵ(h) = ℓ^{−r}(Σ_{A<i≤B} e(hi))(Σ_{j<ℓ} e(hj))^r`), `norm_what_spl_le` (for `0 < |t|`, `2|t| ≤ q`:
   `|ŵ(t)| ≤ (B − A)(q/(2ℓ|t|))^r`) and `norm_what_spl_tail` (for `h ≠ 0` off the image of `[−H, H]`:
@@ -196,6 +197,17 @@ theorem sum_spl_mul (A B ℓ r : ℕ) (hℓ : 1 ≤ ℓ) (f : ℕ → ℂ) :
   field_simp
 
 theorem spl_nonneg (A B ℓ r k : ℕ) : 0 ≤ spl A B ℓ r k := by unfold spl; positivity
+
+/-- The spline's mass: `Σ_k w(k) = B − A`. -/
+theorem sum_spl (A B ℓ r : ℕ) (hℓ : 1 ≤ ℓ) : ∑ k ∈ supp A B ℓ r, spl A B ℓ r k = ((B - A : ℕ) : ℝ) := by
+  have h := sum_spl_mul A B ℓ r hℓ (fun _ => 1)
+  have hℓ0 : (ℓ : ℂ) ^ r ≠ 0 := pow_ne_zero _ (by exact_mod_cast (by omega : ℓ ≠ 0))
+  simp only [mul_one, Finset.sum_const, nsmul_eq_mul] at h
+  rw [tup, Finset.card_product, Fintype.card_piFinset, Finset.prod_const, Finset.card_range, Finset.card_univ,
+    Fintype.card_fin, Nat.card_Ioc] at h
+  push_cast at h
+  rw [mul_comm ((B - A : ℕ) : ℂ), ← mul_assoc, inv_mul_cancel₀ hℓ0, one_mul] at h
+  exact_mod_cast h
 
 /-- `w ≤ 1`: a tuple summing to `k` is fixed by its `j`. -/
 theorem spl_le_one (A B ℓ r k : ℕ) (hℓ : 1 ≤ ℓ) : spl A B ℓ r k ≤ 1 := by
