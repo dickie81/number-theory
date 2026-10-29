@@ -73,6 +73,8 @@ import SieveCert
 import SieveRough
 import SieveSep
 import SieveFamily
+import SieveTypeIB
+import SieveSpline
 import SieveBrun
 import SieveCount
 import SieveRanges
@@ -459,6 +461,12 @@ import LinnikWeylBridge
 #print axioms SieveFamily.Dsum_sharp_le
 #print axioms SieveFamily.typeII_sharp_explicit
 #print axioms SieveFamily.typeII_sharp
+#print axioms SieveTypeIB.sum_bilinear
+#print axioms SieveTypeIB.typeIB_bound
+#print axioms SieveSpline.what_spl
+#print axioms SieveSpline.norm_what_spl_tail
+#print axioms SieveSpline.norm_Ew_spl_le
+#print axioms SieveSpline.typeIB_spline
 #print axioms SieveBrun.bonferroni
 #print axioms SieveBrun.fundamental
 #print axioms SieveBrun.gap_le

@@ -9,11 +9,33 @@ naturals prime to `q`, `B(h) = Σ_{d₁,d₂} α(d₁)β(d₂)e(−had̄₁d̄�
 * `sum_eq_mul`, `ind_eq`: orthogonality, `Σ_h e(ht) = q·1[t = 0]`, and `1[k = c] = q⁻¹Σ_h e(h(k − c))`.
 * `sum_w_dw`: for `d` prime to `q`, `Σ_{k∈S} w(k)dw(dk) = q⁻¹Σ_{h≠0} ŵ(h)e(−had̄) − E_w/φ(q)`.
 * `sum_bilinear`: `Σ_{d₁,d₂} α(d₁)β(d₂)Σ_{k∈S} w(k)dw(d₁d₂k) = q⁻¹Σ_{h≠0} ŵ(h)B(h) − (Σα)(Σβ)E_w/φ(q)`.
+* `sum_norm_sq_le` (Parseval): `Σ_r |Σ_{j∈J} c_je(rs_j)|² ≤ qΣ_{j,j′∈J, s_j = s_j′} |c_j||c_j′|`.
+* `typeIB_bound`, **the bilinear Type I estimate**: let `a` be a unit mod `q`, `D₂ ⊆ [1, Dm]` with `Dm ≥ 1` and
+  `2HDm < q`, every residue the inverse of at most `m` elements of `D₁`, every `|t|d` with `0 < |t| ≤ H` and `d ∈ D₂`
+  with at most `F` divisors, and `|ŵ(h)| ≤ W` at the frequencies `h ≠ 0` off the image of `[−H, H]`. Then
+  `|Σ_{d₁,d₂} α(d₁)β(d₂)Σ_{k∈S} w(k)dw(d₁d₂k)|` is at most
+  `(Σ|α|²)^{1/2}(mF(Σ|β|²)·q⁻¹Σ_h|ŵ(h)|²)^{1/2} + W(Σ|α|)(Σ|β|) + |(Σα)(Σβ)E_w/φ(q)|`.
 
-The file imports `SieveFamily.lean` (for `dw`) and `LinnikPower.lean` (for the divisor bound).
+The proof:
+
+* `sum_w_dw`, `sum_bilinear`: expand `1[d₁d₂k ≡ a]` by `ind_eq`; the frequency `h = 0` cancels the units' term up to
+  `E_w`.
+* `norm_sum_B_le`: for frequencies `f_j` with weights `c_j`, Cauchy–Schwarz over `d₁` extends `d̄₁` to every residue,
+  counted at most `m` times, and Parseval (`sum_norm_sq_le`) leaves the pairs `(j, d₂)`, `(j′, d₂′)` with
+  `f_jd̄₂ = f_j′d̄₂′`.
+* `diag_le`: on the integer frequencies `0 < |t| ≤ H`, with `2HDm < q`, that congruence is the equation `td₂′ = t′d₂`
+  (`int_eq_of_cong`); `|c_t||β_{d₂}||c_{t′}||β_{d₂′}| ≤ ½(|c_t|²|β_{d₂′}|² + |c_{t′}|²|β_{d₂}|²)`, and for each
+  `(t, d₂′)` the pairs `(t′, d₂)` number at most `F` (`card_fiber_le`). So the diagonal is at most
+  `F(Σ|c|²)(Σ|β|²)`.
+* `typeIB_bound`: the frequencies `0 < |t| ≤ H` by `norm_sum_B_le` and `diag_le`, with `c_t = ŵ(t)` and
+  `Σ_t |ŵ(t)|² ≤ Σ_h |ŵ(h)|²` (the casts are distinct, `cast_injOn`); the others by `|B(h)| ≤ (Σ|α|)(Σ|β|)`
+  (`norm_Bh_le`).
+
+The weights themselves, intervals and splines, are in `SieveSpline.lean`.
+
+The file imports `SieveFamily.lean` (for `dw`).
 -/
 import SieveFamily
-import LinnikPower
 
 open Finset Complex
 
