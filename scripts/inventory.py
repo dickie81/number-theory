@@ -26,7 +26,7 @@ DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|no
 
 
 def declarations(path):
-    """The declarations of a module, in order: (full name, kind, docstring or None)."""
+    """The declarations of a module, in order: (full name, kind, docstring or None, index of its line)."""
     lines = open(path, encoding="utf-8").read().split("\n")
     out, namespaces, doc, i = [], [], None, 0
     while i < len(lines):
@@ -45,7 +45,7 @@ def declarations(path):
         elif DECL.match(line):
             kind, name = DECL.match(line).groups()
             full = name[len("_root_."):] if name.startswith("_root_.") else ".".join(namespaces + [name])
-            out.append((full, kind, doc))
+            out.append((full, kind, doc, i))
             doc = None
         elif line.strip() and not line.startswith(("@[", " ", "--", "open ")):
             doc = None
@@ -99,7 +99,7 @@ def printed(name):
 def inventory():
     mods, imports = import_cone.sources()
     decls = {m: declarations(os.path.join(ROOT, p)) for m, p in mods.items()}
-    where = {full: m for m, ds in decls.items() for full, _, _ in ds}
+    where = {full: m for m, ds in decls.items() for full, *_ in ds}
     check, named = printed("Check"), notes()
     listed = printed("CheckAll") + [n for n in check if n not in set(printed("CheckAll"))]
     check = set(check)
@@ -115,12 +115,12 @@ def inventory():
     for m in sorted(mods, key=lambda m: (import_cone.DIRS.index(layer[m]), m)):
         if m in results:
             rows = [{"name": f, "headline": headline(doc), "paper": f in check, "note": named.get(f)}
-                    for f, _, doc in decls[m] if f in results[m]]
+                    for f, _, doc, _ in decls[m] if f in results[m]]
             entries.append({"module": m, "layer": layer[m], "path": mods[m], "title": title(os.path.join(ROOT, mods[m])),
                             "printed": True, "results": rows})
         elif m not in reached:
             rows = [{"name": f, "headline": headline(doc), "paper": False, "note": named.get(f)}
-                    for f, kind, doc in decls[m] if kind in ("theorem", "lemma") and doc and doc.startswith("/-- **")]
+                    for f, kind, doc, _ in decls[m] if kind in ("theorem", "lemma") and doc and doc.startswith("/-- **")]
             entries.append({"module": m, "layer": layer[m], "path": mods[m], "title": title(os.path.join(ROOT, mods[m])),
                             "printed": False, "results": rows})
     return entries

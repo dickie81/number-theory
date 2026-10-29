@@ -19,6 +19,10 @@ from `main` on every push.
   between the Lean statement and the published one.
 - [`papers/`](papers/README.md): the papers. Each claims only its own steps and cites `formalisations/` for the
   results it uses.
+- [The Strip and the Count](https://dickie81.github.io/number-theory/zeros.html), a page of the site: what the
+  library's theorems say about the zeros of `ζ` and of Dirichlet L-functions, and what that gives for Linnik's
+  exponent. `scripts/zeros_page.py` writes it from `site/zeros.html`, reading every number from the statement of the
+  theorem that proves it, and CI checks that it agrees with the Lean.
 
 ## Layout
 
@@ -34,6 +38,7 @@ from `main` on every push.
 | `formalisations/` | The notes on the results from the literature. See its [README](formalisations/README.md), the index of the notes. |
 | `papers/` | The papers. See its [README](papers/README.md). |
 | `scripts/` | The build script and the checks (see [`docs/building.md`](docs/building.md)), and `build_site.py`, which builds the papers' web site. |
+| `site/` | `zeros.html`, the template of the site's page on the zeros, which `scripts/zeros_page.py` fills from the Lean sources. |
 | `docs/` | [`inventory.md`](docs/inventory.md): the library's results, written by `scripts/inventory.py`. [`building.md`](docs/building.md): building, memory, the checks and CI. [`dry-efficiency-survey.md`](docs/dry-efficiency-survey.md) and [`stack-bridges.md`](docs/stack-bridges.md): a survey of duplication and build cost, and three modules that join parts of the library. |
 | `tools/linnik/` | The Linnik paper's certificate tools: the route's computations outside Lean and the generator of the certificate's Lean files. See its README. |
 

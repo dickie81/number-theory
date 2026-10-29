@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<!-- The template of the site's page on the zeros. scripts/zeros_page.py fills each name in double braces from the Lean
+     sources and the paper, and DATA with what the script below draws; scripts/build_site.py writes it as zeros.html. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Strip and the Count</title>
+<meta name="description" content="What the library's Lean theorems say about the zeros of ζ and of Dirichlet L-functions, and what that gives for Linnik's exponent, read from the theorems' statements.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: one reading column, like a plate in a journal: the strip, the two counts, Linnik's exponent, the theorems. */
+:root {
+  --bg: #f3f5f7;
+  --surface: #fbfcfd;
+  --ink: #101820;
+  --ink-2: #47525e;
+  --muted: #76808b;
+  --grid: #e2e6eb;
+  --axis: #bfc6ce;
+  --void: #e7ebf0;
+  --accent: #1c5cab;
+  --line-band: rgba(42, 120, 214, 0.16);
+  --s1: #2a78d6;
+  --s2: #eb6834;
+  --s3: #1baf7a;
+  --s4: #eda100;
+  --ref: #8a939d;
+  --ref-2: #b3bac2;
+  --ring: rgba(16, 24, 32, 0.10);
+  --font-display: "STIX Two Text", "STIX Two Math", "Cambria", "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1013; --surface: #161a1f; --ink: #eef1f4; --ink-2: #b6bfc9; --muted: #8b95a1; --grid: #252b32;
+    --axis: #3a424b; --void: #1f242a; --accent: #6da7ec; --line-band: rgba(57, 135, 229, 0.22);
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --ref: #7f8994; --ref-2: #4d555e;
+    --ring: rgba(255, 255, 255, 0.10); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1013; --surface: #161a1f; --ink: #eef1f4; --ink-2: #b6bfc9; --muted: #8b95a1; --grid: #252b32;
+  --axis: #3a424b; --void: #1f242a; --accent: #6da7ec; --line-band: rgba(57, 135, 229, 0.22);
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --ref: #7f8994; --ref-2: #4d555e;
+  --ring: rgba(255, 255, 255, 0.10); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 56px;
+}
+main { max-width: 940px; margin: 0 auto; display: grid; gap: 44px; }
+header { display: grid; gap: 10px; }
+.eyebrow { font-size: 13px; color: var(--muted); }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(30px, 5vw, 44px); line-height: 1.1; margin: 0;
+  text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1.2; margin: 0; text-wrap: balance; }
+h3 { font-family: var(--font-display); font-weight: 600; font-size: 19px; line-height: 1.25; margin: 10px 0 0; text-wrap: balance; }
+p { margin: 0; max-width: 68ch; }
+.lede { font-size: 17px; color: var(--ink-2); }
+section { display: grid; gap: 14px; }
+.math { font-family: var(--font-display); font-style: italic; }
+.num { font-family: var(--font-display); }
+code { font-family: var(--font-mono); font-size: 0.86em; color: var(--ink-2); overflow-wrap: anywhere; }
+a { color: var(--accent); }
+.plate { background: var(--surface); border-radius: 6px; box-shadow: 0 0 0 1px var(--ring); padding: 16px; display: grid;
+  gap: 12px; min-width: 0; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.fact { display: grid; gap: 4px; align-content: start; padding: 12px 14px; border-left: 2px solid var(--axis); min-width: 0; }
+.fact .claim { font-family: var(--font-display); font-size: 19px; line-height: 1.25; }
+.leans { display: grid; gap: 2px; margin-top: 4px; }
+.leans code { font-size: 12px; }
+.controls, .slider { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.seg { display: inline-flex; border-radius: 6px; box-shadow: 0 0 0 1px var(--axis); overflow: hidden; }
+.seg button { font: inherit; font-size: 13px; padding: 6px 12px; border: 0; background: transparent; color: var(--ink-2);
+  cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+.seg button:focus-visible, .chart:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); }
+.legend > span { display: inline-flex; align-items: center; gap: 7px; }
+.key { width: 18px; height: 0; border-top: 2px solid currentColor; display: inline-block; }
+.key.thin { border-top-width: 1px; }
+.key.dash { border-top-style: dashed; }
+.key.band { height: 10px; border: 0; background: currentColor; }
+.kd { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+.kd.lean { background: var(--s1); }
+.kd.other { border: 2px solid var(--s2); }
+.kd.ref { width: 8px; height: 8px; border-radius: 1px; background: var(--ref); transform: rotate(45deg); }
+.kv { width: 0; height: 14px; border-left: 1px solid var(--ink-2); display: inline-block; }
+.kv.dash { border-left-style: dashed; }
+.chart { position: relative; min-width: 0; outline: none; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--font-body); font-size: 12px; fill: var(--muted); }
+.chart text.ink { fill: var(--ink-2); }
+.chart text.lbl { fill: var(--ink); font-size: 12px; font-weight: 500; }
+@media (max-width: 520px) { .chart text.tick { font-size: 10.5px; } }
+.tip { position: absolute; pointer-events: none; background: var(--surface); color: var(--ink); border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--ring), 0 6px 20px rgba(0, 0, 0, 0.12); padding: 8px 10px; font-size: 12px; min-width: 190px;
+  max-width: 300px; display: grid; gap: 3px; }
+.tip[hidden] { display: none; }
+.tip .head { color: var(--muted); }
+.tip .row { display: grid; grid-template-columns: 18px auto 1fr; gap: 6px; align-items: center; }
+.tip .row b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.tip .row span:last-child { color: var(--ink-2); }
+.tip .src { color: var(--ink-2); }
+.note { font-size: 13px; color: var(--ink-2); }
+details { font-size: 13px; }
+summary { cursor: pointer; color: var(--accent); width: max-content; }
+.scroll { overflow-x: auto; margin-top: 8px; }
+table { border-collapse: collapse; font-size: 13px; min-width: 520px; width: 100%; }
+th, td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { font-weight: 600; color: var(--ink-2); }
+td.n { font-variant-numeric: tabular-nums; white-space: nowrap; }
+footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
+.ladder { display: grid; }
+.lrow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) 6.5em; column-gap: 16px; }
+.lrow > div { min-width: 0; }
+.lrow .lab { padding: 6px 0; display: grid; gap: 1px; align-content: center; }
+.lrow .lab .name { font-size: 14px; line-height: 1.3; }
+.lrow .lab code, .lrow .lab .cite { font-size: 11.5px; color: var(--muted); }
+.lrow .val { padding: 6px 0; align-self: center; text-align: right; font-family: var(--font-display); font-size: 15px;
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lrow .val small { display: block; font-family: var(--font-body); font-size: 11.5px; color: var(--muted); }
+.lrow.lgroup .lab { padding: 16px 0 2px; font-size: 12px; color: var(--muted); align-content: end; }
+.lrow.lmain .name, .lrow.lmain .val { font-weight: 600; }
+.lrow.litem:hover { background: var(--void); }
+.track { position: relative; min-height: 30px; }
+.track .stem { position: absolute; left: 0; top: 50%; height: 2px; margin-top: -1px; background: var(--grid); }
+.track .dot { position: absolute; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; }
+.dot.lean { background: var(--s1); box-shadow: 0 0 0 2px var(--surface); }
+.dot.other { background: var(--surface); border: 2px solid var(--s2); }
+.dot.ref { width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 1px; background: var(--ref); transform: rotate(45deg); }
+.dot.off { width: 0; height: 0; margin: -5px 0 0 -9px; border-radius: 0; background: none; box-shadow: none; transform: none;
+  border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 9px solid var(--s1); }
+.dot.off.ref { border-left-color: var(--ref); }
+.track .vline { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--axis); }
+.track .vline.dash { border-left-style: dashed; }
+.lhead .track { min-height: 24px; border-bottom: 1px solid var(--axis); }
+.lhead .tick { position: absolute; bottom: 5px; transform: translateX(-50%); font-size: 11px; color: var(--muted);
+  font-variant-numeric: tabular-nums; }
+.slider label { font-family: var(--font-display); font-style: italic; font-size: 18px; }
+input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
+.Lval { font-family: var(--font-display); font-size: 18px; font-variant-numeric: tabular-nums; min-width: 4.4em; }
+@media (max-width: 560px) {
+  .lrow { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "lab val" "track track"; column-gap: 10px; }
+  .lrow .lab { grid-area: lab; } .lrow .val { grid-area: val; } .lrow .track { grid-area: track; min-height: 18px; }
+  .lrow.lgroup .track { display: none; }
+  .lrow.lhead { grid-template-areas: "track track"; }
+  .lrow.lhead .lab, .lrow.lhead .val { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow"><a href="./">number-theory</a> · the Lean library at {{commit}}</div>
+    <h1>The Strip and the Count</h1>
+    <p class="lede">What the library's Lean theorems say about the zeros of <span class="math">ζ(s)</span> and of Dirichlet
+      <span class="math">L</span>-functions: where in the critical strip a zero can be, how many can lie to the right of a
+      line <span class="math">Re s = σ</span>, and what that gives for Linnik's exponent. Every constraint drawn in color is
+      a theorem of the library, named beside it, and its numbers are read from the theorem's statement; the gray curves
+      are published or conjectured bounds, drawn for comparison.</p>
+  </header>
+
+  <section aria-labelledby="strip-h">
+    <h2 id="strip-h">Where a zero can be</h2>
+    <div class="plate">
+      <div class="chart" id="strip" role="img" aria-label="The critical strip from Re s = 0 to 1. Every nontrivial zero of ζ has real part between {{bandLo}} and {{bandHi}}. Almost every zero lies within any distance w of the line Re s = 1/2. The supremum Θ of the real parts lies between {{thetaLo}} and {{thetaHi}}."></div>
+      <div class="facts">
+        <div class="fact"><div class="claim">No zero with <span class="math">Re s</span> &gt; {{hp}}</div>
+          <p class="note">of <span class="math">ζ</span>, or of any Dirichlet <span class="math">L</span>-function (the pole at
+            <span class="math">s</span> = 1 aside). For <span class="math">ζ</span> the functional equation mirrors it: every
+            nontrivial zero has {{bandLo}} ≤ <span class="math">Re ρ</span> ≤ {{bandHi}}.</p>
+          <div class="leans"><code>Eis.<wbr>ne_zero_of_re_gt_eleven_twelfths</code><code>Eis.<wbr>LFunction_ne_zero_of_re_gt</code><code>HalfPlaneJoins.<wbr>zeta_band_eleven_twelfths</code></div></div>
+        <div class="fact"><div class="claim">{{thetaLo}} ≤ <span class="math">Θ</span> ≤ {{thetaHi}}</div>
+          <p class="note"><span class="math">Θ</span> is the supremum of the real parts of the zeros of <span class="math">ζ</span>.</p>
+          <div class="leans"><code>PsiExponent.<wbr>half_le_Theta</code><code>PsiExponent.<wbr>Theta_le</code></div></div>
+        <div class="fact"><div class="claim">Almost every zero is near the line</div>
+          <p class="note">For every <span class="math">w</span> &gt; 0, the share of zeros with <span class="math">|β − ½| ≥ w</span>
+            tends to 0, given <span class="math">N(T) ≥ cT log T</span>.</p>
+          <div class="leans"><code>BohrLandauCore.<wbr>tendsto_NX_div_of_lower</code></div></div>
+      </div>
+      <p class="note">The library also proves the Korobov–Vinogradov zero-free region (<code>LandauKV.zeroFree_KV</code>), whose
+        width shrinks like <span class="math">(log t)<sup>−{{kvA}}</sup>(log log t)<sup>−{{kvB}}</sup></span>, so at large
+        heights the half-plane, of width {{hpWidth}} at every height, says more. The half-plane and the route to it are
+        OpenAI's (2026); the library formalises them
+        (<a href="https://github.com/dickie81/number-theory/blob/main/formalisations/openai-half-plane.md">its note</a>).</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="zeta-h">
+    <h2 id="zeta-h">How many zeros of ζ lie right of σ</h2>
+    <p>A density estimate bounds <span class="math">N(σ, T)</span>, the number of zeros with <span class="math">β ≥ σ</span> and
+      <span class="math">|γ| ≤ T</span>, by <span class="math">CT</span><sup class="math">A(1−σ)</sup><span class="math">(log T)</span><sup class="math">B</sup>.
+      All zeros up to height <span class="math">T</span> number about <span class="math">T log T</span>, so a bound says
+      something only where <span class="math">A(1−σ) &lt; 1</span>. The library proves {{nzeta}} exponents
+      <span class="math">A</span>; right of {{hp}} the half-plane leaves no zeros at all.</p>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="What the charts show">
+        <button type="button" id="view-count" aria-pressed="true">Zeros counted</button>
+        <button type="button" id="view-exp" aria-pressed="false">Density exponent</button>
+      </div>
+      <span class="note" id="view-note"></span>
+    </div>
+    <div class="plate">
+      <div class="legend" id="zeta-legend"></div>
+      <div class="chart" id="zeta" tabindex="0" role="img" aria-label="Zero-density bounds for ζ as functions of σ. Use the left and right arrow keys to move the readout."></div>
+      <details>
+        <summary>Table</summary>
+        <div class="scroll"><table id="zeta-table"></table></div>
+      </details>
+    </div>
+  </section>
+
+  <section aria-labelledby="char-h">
+    <h2 id="char-h">Characters mod q: the Linnik route's density curve</h2>
+    <p>The Linnik paper counts the characters mod <span class="math">q</span> whose <span class="math">L</span>-function has a zero
+      with <span class="math">β ≥ σ</span>, <span class="math">|γ| ≤ T</span>: at most <span class="math">C(qT)</span><sup class="math">g*(σ)</sup>
+      <span class="math">(1 + log qT)</span><sup>10</sup>. Its curve <span class="math">g*</span>, <code>SieveTypeIIU22240D.g7d</code>,
+      is glued from {{npieces}} pieces, each counted by a theorem that <code>SieveTypeIIU22240D.counts_7d</code> glues in. The
+      exponent peaks at {{gmax}} on <span class="num">[{{gmaxLo}}, {{gmaxHi}}]</span>, just above {{cgl}}, the density
+      exponent of Chen, Gupta and Li.</p>
+    <div class="plate">
+      <div class="legend" id="char-legend"></div>
+      <div class="chart" id="char" tabindex="0" role="img" aria-label="The Linnik route's density curve g star as a function of σ, with the source of each range below the axis. Use the left and right arrow keys to move the readout."></div>
+      <details>
+        <summary>Table of the {{npieces}} pieces</summary>
+        <div class="scroll"><table id="char-table"></table></div>
+      </details>
+    </div>
+  </section>
+
+  <section aria-labelledby="linnik-h">
+    <h2 id="linnik-h">Linnik's exponent</h2>
+    <p>Linnik's theorem: there are <span class="math">K</span> and <span class="math">L</span> such that every reduced residue
+      class mod <span class="math">q</span> contains a prime <span class="math">p ≤ Kq</span><sup class="math">L</sup>. The zeros
+      above decide <span class="math">L</span>. A zero with real part <span class="math">β</span> costs about
+      <span class="math">x</span><sup class="math">β−1</sup> of the primes up to <span class="math">x</span>, so the half-plane
+      leaves no zero that costs much, and the density curve says how many zeros there are. The library proves
+      <span class="math">L</span> = {{L}} = {{Ldec}} (<code>Linnik22240R.linnik_22240r</code>), from two inputs that have not
+      been refereed: the half-plane and Chen, Gupta and Li's Proposition 3.1.</p>
+    <div class="plate">
+      <div class="legend">
+        <span><i class="kd lean"></i><span>proved in Lean</span></span>
+        <span><i class="kd other"></i><span>stated or computed, not formalised</span></span>
+        <span><i class="kd ref"></i><span>refereed, without the half-plane</span></span>
+        <span><i class="kv"></i><span>{{grh}}: every <i>L</i> &gt; {{grh}} under GRH (in Lean)</span></span>
+        <span><i class="kv dash"></i><span>{{floor}}: no window for the sieve below it at <i>A</i> = {{cgl}}</span></span>
+      </div>
+      <div class="ladder" id="ladder" role="list" aria-label="Linnik exponents, from the half-plane alone down to {{L}}"></div>
+    </div>
+
+    <h3 id="la-h">From the density exponent to <span class="math">L</span></h3>
+    <p>The density deduction turns a density exponent <span class="math">A</span> into every <span class="math">L &gt; A</span>
+      (<code>Linnik.linnik_of_charDensity</code>): the diagonal. Harman's sieve goes below it, since Cauchy–Schwarz over the
+      characters halves the density exponent, but not below <span class="math">L = 1 + A/2</span>, where its window closes. The
+      two lines meet at the density hypothesis, <span class="math">A</span> = {{grh}}. Lowering the curve's peak near
+      {{gmaxLo}} by 0.01 lowers the sieve's exponent by about {{capslope}} (computed, not formalised).</p>
+    <div class="plate">
+      <div class="legend" id="la-legend"></div>
+      <div class="chart" id="la" tabindex="0" role="img" aria-label="The Linnik exponent L against the largest density exponent A of the curve: the density deduction gives L = A, the sieve gives less, down to its floor L = 1 + A/2. Use the left and right arrow keys to step through the points."></div>
+      <details>
+        <summary>Table</summary>
+        <div class="scroll"><table id="la-table"></table></div>
+      </details>
+    </div>
+
+    <h3 id="win-h">Where the window closes</h3>
+    <p>The sieve needs a Type II estimate for Dirichlet polynomials of length <span class="math">P = x</span><sup class="math">u</sup>,
+      with <span class="math">x = q</span><sup class="math">L</sup>, for every <span class="math">u</span> in a window
+      [<span class="math">u</span><sub>1</sub>, <span class="math">u</span><sub>2</sub>] around <span class="math">P = q</span>. At each
+      <span class="math">β</span>, the characters that <span class="math">g*(β)</span> counts allow only part of that range (the
+      paper's {{defWindow}}, <code>SieveCurveGlue.WindowOKHM</code> in the Lean), and the two curves are its ends. The window
+      has to fit at every <span class="math">β</span> at once, so it is pinched where <span class="math">g*</span> peaks, on
+      [{{gmaxLo}}, {{gmaxHi}}]. Move <span class="math">L</span> to open and close it.</p>
+    <div class="slider">
+      <label for="Lrange">L</label>
+      <input type="range" id="Lrange" min="2.15" max="2.4" step="0.0001" value="{{Ldec}}">
+      <output id="Lval" class="Lval" for="Lrange">{{Ldec}}</output>
+      <div class="seg" role="group" aria-label="Preset exponents" id="presets"></div>
+    </div>
+    <div class="plate">
+      <div class="legend" id="win-legend"></div>
+      <div class="chart" id="win" tabindex="0" role="img" aria-label="The ends of the sieve's window at each β, for the chosen L, with the widest window that fits at every β. Use the left and right arrow keys to move the readout."></div>
+      <p class="note" id="win-note" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section aria-labelledby="thm-h">
+    <h2 id="thm-h">The theorems</h2>
+    <div class="plate">
+      <div class="scroll" style="margin-top:0"><table>
+        <thead><tr><th>Constraint</th><th>Lean</th></tr></thead>
+        <tbody>
+{{theorems}}
+        </tbody>
+      </table></div>
+      <p class="note">Each of these theorems is printed by <code>lib/check/Check.lean</code> or <code>lib/check/CheckAll.lean</code>,
+        so CI checks that it depends only on <code>propext</code>, <code>Classical.choice</code> and <code>Quot.sound</code>.
+        The curve of Ingham, Guth–Maynard and Huxley is drawn for comparison only: the library proves its maximum, 30/13 at
+        <span class="math">σ</span> = 0.7, as a constant exponent, not the curve, and better exponents are published for
+        parts of the range.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Written by <code>scripts/zeros_page.py</code> from the Lean sources at {{commit}} ({{date}}). Each number above that a
+      theorem states is read from that theorem's statement; each piece of <span class="math">g*</span> is checked against the
+      range and exponent of the theorem that counts it; and the script fails, and with it CI, if the Lean changes in a way
+      the page does not follow. <code>Check.lean</code> and <code>CheckAll.lean</code> print {{nresults}} theorems in all,
+      listed in <a href="https://github.com/dickie81/number-theory/blob/main/docs/inventory.md">docs/inventory.md</a>.</p>
+    <p>The window's ends are computed in the page from <span class="math">g*</span> and the condition of
+      <code>SieveCurveGlue.WindowOKHM</code>, with its margins; at {{L}} they give the paper's exact window
+      [{{exactLo}}…, {{exactHi}}…] ({{propWindow}}), which the script checks. The exponents marked computed are the paper's and
+      its supplement's computations ({{secComparison}}, {{supComputations}}), read from their sources; they are not theorems
+      of the library.</p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var DATA = {{data}};
+  var G7D = DATA.g7d, HP = DATA.hp.x, HPT = DATA.hp.t, WD = DATA.window;
+  var css = function (v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); };
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function txt(x, y, s, cls, anchor, parent) {
+    var t = el("text", { x: x, y: y, "text-anchor": anchor || "start" }, parent);
+    if (cls) t.setAttribute("class", cls);
+    t.textContent = s;
+    return t;
+  }
+  function frac(x) { return x.toFixed(4); }
+
+  // ---- the view toggle -------------------------------------------------------------------------------------------
+  var view = "count";
+  try { var saved = localStorage.getItem("strip-count-view"); if (saved === "exp" || saved === "count") view = saved; } catch (e) {}
+  var bCount = document.getElementById("view-count"), bExp = document.getElementById("view-exp");
+  var viewNote = document.getElementById("view-note");
+  function setView(v) {
+    view = v;
+    bCount.setAttribute("aria-pressed", String(v === "count"));
+    bExp.setAttribute("aria-pressed", String(v === "exp"));
+    viewNote.innerHTML = v === "count"
+      ? "Height: the exponent of <i>T</i> (or <i>qT</i>) in the bound, <i>A</i>(1 − <i>σ</i>) capped at 1; at 1 a bound saves nothing over all zeros."
+      : "Height: the density exponent <i>A</i>; above the trivial count, 1/(1 − <i>σ</i>), a bound says nothing.";
+    try { localStorage.setItem("strip-count-view", v); } catch (e) {}
+    drawZeta(); drawChar();
+  }
+  bCount.addEventListener("click", function () { setView("count"); });
+  bExp.addEventListener("click", function () { setView("exp"); });
+
+  // ---- the strip -------------------------------------------------------------------------------------------------
+  function drawStrip() {
+    var box = document.getElementById("strip");
+    box.textContent = "";
+    var W = Math.max(300, box.clientWidth), H = W < 520 ? 210 : 190;
+    var m = { l: 34, r: 14, t: 34, b: 44 };
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, "aria-hidden": "true" }, box);
+    var x = function (s) { return m.l + s * (W - m.l - m.r); };
+    var top = m.t, bot = H - m.b, lo = DATA.band[0].x;
+    el("rect", { x: x(0), y: top, width: x(1) - x(0), height: bot - top, fill: css("--surface") }, svg);
+    var defs = el("defs", {}, svg);
+    var gr = el("linearGradient", { id: "band", x1: "0", x2: "1", y1: "0", y2: "0" }, defs);
+    [[0, 0], [0.38, 0.35], [0.5, 1], [0.62, 0.35], [1, 0]].forEach(function (p) {
+      el("stop", { offset: p[0], "stop-color": css("--s1"), "stop-opacity": (0.32 * p[1]).toFixed(3) }, gr);
+    });
+    el("rect", { x: x(lo), y: top, width: x(HP) - x(lo), height: bot - top, fill: "url(#band)" }, svg);
+    [[0, lo], [HP, 1]].forEach(function (r) {
+      el("rect", { x: x(r[0]), y: top, width: x(r[1]) - x(r[0]), height: bot - top, fill: css("--void") }, svg);
+    });
+    el("line", { x1: x(0.5), x2: x(0.5), y1: top, y2: bot, stroke: css("--s1"), "stroke-width": 2 }, svg);
+    el("line", { x1: x(0), x2: x(1), y1: bot, y2: bot, stroke: css("--axis"), "stroke-width": 1 }, svg);
+    el("line", { x1: x(0), x2: x(0), y1: top, y2: bot, stroke: css("--axis"), "stroke-width": 1 }, svg);
+    el("line", { x1: x(1), x2: x(1), y1: top, y2: bot, stroke: css("--axis"), "stroke-width": 1 }, svg);
+    [[0, "0"], [lo, DATA.band[0].t], [0.5, "½"], [HP, HPT], [1, "1"]].forEach(function (t) {
+      el("line", { x1: x(t[0]), x2: x(t[0]), y1: bot, y2: bot + 5, stroke: css("--axis") }, svg);
+      txt(x(t[0]), bot + 18, t[1], "ink tick", "middle", svg);
+    });
+    txt(x(1), bot + 34, "Re s", null, "end", svg);
+    var mid = (top + bot) / 2;
+    txt(x((HP + 1) / 2), mid + 4, "none", "ink tick", "middle", svg);
+    txt(x(lo / 2), mid + 4, "none", "ink tick", "middle", svg);
+    txt(x(0.5) + 6, top + 14, "Re s = ½", "lbl", "start", svg);
+    if (W < 520) {
+      txt(x(0.5) + 6, top + 30, "almost every zero", null, "start", svg);
+      txt(x(0.5) + 6, top + 44, "lies near this line", null, "start", svg);
+    } else txt(x(0.5) + 6, top + 30, "almost every zero lies near this line", null, "start", svg);
+    // the bracket of Θ, above the strip
+    var by = top - 12, t0 = DATA.theta[0], t1 = DATA.theta[1];
+    el("path", { d: "M" + x(t0.x) + " " + (by + 6) + " V" + by + " H" + x(t1.x) + " V" + (by + 6), fill: "none",
+      stroke: css("--ink-2"), "stroke-width": 1 }, svg);
+    txt((x(t0.x) + x(t1.x)) / 2, by - 6, "Θ lies here: " + t0.t + " ≤ Θ ≤ " + t1.t, "ink", "middle", svg);
+    txt(x(0) - 8, mid + 4, "Im s", null, "end", svg).setAttribute("transform", "rotate(-90 " + (x(0) - 12) + " " + mid + ")");
+  }
+
+  // ---- shared chart machinery ------------------------------------------------------------------------------------
+  function chart(box, cfg) {
+    box.textContent = "";
+    var W = Math.max(300, box.clientWidth), narrow = W < 560;
+    var H = Math.round(Math.min(440, Math.max(300, W * 0.52))) + (cfg.ribbon ? 30 : 0);
+    var m = { l: 46, r: narrow ? 16 : 28, t: 18, b: 38 + (cfg.ribbon ? 30 : 0) };
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H }, box);
+    svg.setAttribute("aria-hidden", "true");
+    var x0 = 0.5, x1 = 1, y0 = cfg.y0, y1 = cfg.y1;
+    var X = function (s) { return m.l + (s - x0) / (x1 - x0) * (W - m.l - m.r); };
+    var Y = function (v) { return H - m.b - (v - y0) / (y1 - y0) * (H - m.t - m.b); };
+    var plotB = H - m.b;
+    // the half-plane's band
+    el("rect", { x: X(HP), y: m.t, width: X(1) - X(HP), height: plotB - m.t, fill: css("--void") }, svg);
+    txt((X(HP) + X(1)) / 2, m.t + 14, "no zeros", "ink", "middle", svg);
+    // grid and axes
+    cfg.yticks.forEach(function (t) {
+      el("line", { x1: m.l, x2: W - m.r, y1: Y(t[0]), y2: Y(t[0]), stroke: css("--grid"), "stroke-width": 1 }, svg);
+      txt(m.l - 8, Y(t[0]) + 4, t[1], "tick", "end", svg);
+    });
+    [[0.5, "½"], [0.6, "0.6"], [0.7, "0.7"], [0.8, "0.8"], [HP, HPT], [1, "1"]].forEach(function (t) {
+      if (narrow && (t[0] === 0.6 || t[0] === 0.8)) return;
+      el("line", { x1: X(t[0]), x2: X(t[0]), y1: plotB, y2: plotB + 5, stroke: css("--axis") }, svg);
+      txt(X(t[0]), plotB + 18, t[1], "tick", "middle", svg);
+    });
+    el("line", { x1: m.l, x2: W - m.r, y1: plotB, y2: plotB, stroke: css("--axis"), "stroke-width": 1 }, svg);
+    txt(W - m.r, plotB + 32, cfg.xname || "σ", null, "end", svg);
+    var clip = el("clipPath", { id: cfg.id + "-clip" }, el("defs", {}, svg));
+    el("rect", { x: m.l, y: m.t, width: W - m.l - m.r, height: plotB - m.t }, clip);
+    var plot = el("g", { "clip-path": "url(#" + cfg.id + "-clip)" }, svg);
+    if (cfg.under) cfg.under(plot, X, Y);
+    // series: the main curves (z = 1) are drawn over the references; knots are where a curve starts or jumps
+    var N = 600;
+    cfg.series.slice().sort(function (a, b) { return (a.z || 0) - (b.z || 0); }).forEach(function (s) {
+      var xs = [];
+      for (var i = 0; i <= N; i++) xs.push(x0 + (x1 - x0) * i / N);
+      if (s.knots) xs = xs.concat(s.knots).sort(function (a, b) { return a - b; });
+      var d = "", pen = false;
+      xs.forEach(function (sg) {
+        var v = s.f(sg);
+        if (v === null || !isFinite(v)) { pen = false; return; }
+        d += (pen ? "L" : "M") + X(sg).toFixed(1) + " " + Y(v).toFixed(1) + " ";
+        pen = true;
+      });
+      el("path", { d: d, fill: "none", stroke: css(s.color), "stroke-width": s.width || 2, "stroke-linejoin": "round",
+        "stroke-linecap": "round" }, plot);
+    });
+    (cfg.labels || []).forEach(function (l) {
+      txt(X(l.x) + (l.dx || 0), Y(l.y) + (l.dy || -8), l.text, "lbl", l.anchor || "start", svg);
+    });
+    if (cfg.ribbon) cfg.ribbon(svg, X, plotB + 52);
+    if (cfg.over) cfg.over(svg, X, Y);
+    // crosshair and readout
+    var hair = el("line", { y1: m.t, y2: plotB, stroke: css("--ink-2"), "stroke-width": 1, visibility: "hidden" }, svg);
+    var dots = cfg.series.filter(function (s) { return !s.noDot; }).map(function (s) {
+      return { s: s, c: el("circle", { r: 4, fill: css(s.color), stroke: css("--surface"), "stroke-width": 2, visibility: "hidden" }, svg) };
+    });
+    var tip = document.createElement("div");
+    tip.className = "tip"; tip.hidden = true; box.appendChild(tip);
+    function show(sg) {
+      sg = Math.min(x1, Math.max(x0, sg));
+      box.dataset.sigma = sg;
+      hair.setAttribute("x1", X(sg)); hair.setAttribute("x2", X(sg)); hair.setAttribute("visibility", "visible");
+      dots.forEach(function (d) {
+        var v = d.s.f(sg);
+        if (v === null || !isFinite(v) || v < y0 || v > y1) { d.c.setAttribute("visibility", "hidden"); return; }
+        d.c.setAttribute("cx", X(sg)); d.c.setAttribute("cy", Y(v)); d.c.setAttribute("visibility", "visible");
+      });
+      tip.textContent = "";
+      var head = document.createElement("div"); head.className = "head";
+      head.textContent = (cfg.xname || "σ") + " = " + sg.toFixed(3) + (sg > HP ? " · right of " + HPT + ": no zeros" : "");
+      tip.appendChild(head);
+      cfg.series.forEach(function (s) {
+        if (s.inTip === false) return;
+        var v = s.f(sg);
+        var row = document.createElement("div"); row.className = "row";
+        var k = document.createElement("span"); k.className = "key"; k.style.color = css(s.color);
+        var b = document.createElement("b");
+        b.textContent = s.tipText ? s.tipText(sg) : (v === null || !isFinite(v)) ? "—" : cfg.digits ? v.toFixed(cfg.digits) : frac(v);
+        var n = document.createElement("span"); n.textContent = s.name;
+        row.appendChild(k); row.appendChild(b); row.appendChild(n); tip.appendChild(row);
+      });
+      if (cfg.extra) { var e = cfg.extra(sg); if (e) { var p = document.createElement("div"); p.className = "src"; p.textContent = e; tip.appendChild(p); } }
+      tip.hidden = false;
+      var bw = box.clientWidth, tw = tip.offsetWidth, px = X(sg) * bw / W;
+      tip.style.left = Math.max(0, Math.min(bw - tw, px + (px > bw / 2 ? -tw - 14 : 14))) + "px";
+      tip.style.top = "8px";
+    }
+    function hide() {
+      hair.setAttribute("visibility", "hidden"); tip.hidden = true;
+      dots.forEach(function (d) { d.c.setAttribute("visibility", "hidden"); });
+    }
+    var hit = el("rect", { x: m.l, y: m.t, width: W - m.l - m.r, height: plotB - m.t, fill: "transparent" }, svg);
+    hit.addEventListener("pointermove", function (ev) {
+      var r = svg.getBoundingClientRect();
+      var px = (ev.clientX - r.left) * W / r.width;
+      show(x0 + (px - m.l) / (W - m.l - m.r) * (x1 - x0));
+    });
+    hit.addEventListener("pointerleave", hide);
+    box.onkeydown = function (ev) {
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      var cur = parseFloat(box.dataset.sigma || "0.7"), step = ev.shiftKey ? 0.025 : 0.0025;
+      show(cur + (ev.key === "ArrowRight" ? step : -step));
+    };
+    box.onfocus = function () { show(parseFloat(box.dataset.sigma || "0.7")); };
+    box.onblur = hide;
+  }
+  function legend(id, items) {
+    var box = document.getElementById(id); box.textContent = "";
+    items.forEach(function (it) {
+      var s = document.createElement("span");
+      var k = document.createElement("i");
+      k.className = "key" + (it.thin ? " thin" : "") + (it.dash ? " dash" : "") + (it.band ? " band" : "");
+      k.style.color = css(it.color);
+      s.appendChild(k); s.appendChild(document.createTextNode(it.text)); box.appendChild(s);
+    });
+  }
+  function table(id, head, rows) {
+    var t = document.getElementById(id); t.textContent = "";
+    var tr = document.createElement("tr");
+    head.forEach(function (h) { var th = document.createElement("th"); th.textContent = h; tr.appendChild(th); });
+    var thead = document.createElement("thead"); thead.appendChild(tr); t.appendChild(thead);
+    var tb = document.createElement("tbody");
+    rows.forEach(function (r) {
+      var tr2 = document.createElement("tr");
+      r.forEach(function (c) {
+        var td = document.createElement("td");
+        if (c && typeof c === "object") { td.textContent = c.t; if (c.cls) td.className = c.cls; }
+        else td.textContent = c;
+        tr2.appendChild(td);
+      });
+      tb.appendChild(tr2);
+    });
+    t.appendChild(tb);
+  }
+
+  // ---- ζ ---------------------------------------------------------------------------------------------------------
+  var COLORS = ["--s1", "--s2", "--s3", "--s4"];
+  var ZETA = DATA.zeta.map(function (z, i) {
+    var label = z.shape === "eps" ? z.f : z.f + "(1 + δ)";
+    return { A: z.A, label: label, eps: z.shape === "eps", name: label + (z.shape === "eps" ? " + ε" : "") + " (" + z.how + ")",
+      color: COLORS[i % COLORS.length], lean: z.lean };
+  });
+  // the labels of exponents close together are stacked: at the knees in one view, at the right end in the other
+  (function () {
+    var sorted = ZETA.slice().sort(function (a, b) { return a.A - b.A; });
+    sorted.forEach(function (z, i) {
+      var prev = sorted[i - 1], next = sorted[i + 1];
+      z.dyCount = prev && 1 / prev.A - 1 / z.A < 0.03 && prev.dyCount === -8 ? -22 : -8;
+      z.dyExp = next && next.A - z.A < 0.15 ? 15 : -6;
+    });
+  })();
+  function published(sg) { return sg <= 0.7 ? 3 / (2 - sg) : sg <= 0.8 ? 15 / (3 + 5 * sg) : 3 / (3 * sg - 1); }
+  function drawZeta() {
+    var count = view === "count";
+    // a bound is drawn only where it saves something over all zeros, A(1 − σ) ≤ 1, and only up to the half-plane
+    var series = ZETA.map(function (z) {
+      var saves = function (sg) { return z.A * (1 - sg) <= 1 + 1e-9; };
+      return { name: z.name, color: z.color, z: 1, knots: [1 - 1 / z.A, HP],
+        f: function (sg) { return sg > HP || !saves(sg) ? null : count ? z.A * (1 - sg) : z.A; },
+        tipText: function (sg) { return sg > HP ? "—" : !saves(sg) ? "no saving" : frac(count ? z.A * (1 - sg) : z.A); } };
+    });
+    series.push({ name: "Ingham, Guth–Maynard, Huxley (published)", color: "--ref", f: function (sg) {
+      return count ? published(sg) * (1 - sg) : published(sg); } });
+    series.push({ name: "density hypothesis, A = 2 (conjecture)", color: "--ref-2", width: 1, noDot: true, f: function (sg) {
+      return count ? 2 * (1 - sg) : 2; } });
+    series.push({ name: "trivial count", color: "--ref-2", width: 1, noDot: true, inTip: false,
+      f: function (sg) { return count ? 1 : sg < 0.995 ? 1 / (1 - sg) : null; } });
+    var labels = ZETA.map(function (z) {
+      return count ? { x: 1 - 1 / z.A, y: 1, text: z.label, anchor: "middle", dy: z.dyCount }
+                   : { x: HP, y: z.A, text: z.label, anchor: "end", dx: -6, dy: z.dyExp };
+    });
+    chart(document.getElementById("zeta"), {
+      id: "zeta", series: series, labels: labels,
+      y0: count ? 0 : 1.4, y1: count ? 1.1 : 4.3,
+      yticks: count ? [[0, "0"], [0.25, "0.25"], [0.5, "0.5"], [0.75, "0.75"], [1, "1"]]
+                    : [[1.5, "1.5"], [2, "2"], [2.5, "2.5"], [3, "3"], [3.5, "3.5"], [4, "4"]]
+    });
+    legend("zeta-legend", ZETA.map(function (z) { return { color: z.color, text: z.name }; }).concat([
+      { color: "--ref", text: "the curve of Ingham, Guth–Maynard and Huxley (published)" },
+      { color: "--ref-2", text: "density hypothesis and the trivial count", thin: true }]));
+    table("zeta-table", ["Exponent A", "Saves over all zeros from", "Up to", "Lean"],
+      ZETA.map(function (z) {
+        return [{ t: z.label + (z.eps ? " + ε" : ""), cls: "n" }, { t: "σ > " + (1 - 1 / z.A).toFixed(4), cls: "n" },
+          { t: HPT + " (none beyond)", cls: "n" }, z.lean];
+      }).concat([[{ t: "3/(2−σ), 15/(3+5σ), 3/(3σ−1)", cls: "n" }, { t: "σ > ½", cls: "n" }, { t: "1", cls: "n" },
+        "published (Ingham 1940, Guth–Maynard 2026, Huxley 1972); not formalised as a curve"]]));
+  }
+
+  // ---- characters mod q ------------------------------------------------------------------------------------------
+  // The sources of g*'s pieces, run by run, from the theorems that counts_7d glues in.
+  var SRC = {
+    trivial: { text: "trivial", abbr: "triv.", row: "the trivial count" },
+    ingham: { text: "Ingham", abbr: "Ing.", row: "Ingham's estimate" },
+    cgl: { text: "Chen–Gupta–Li", abbr: "CGL", row: "Chen, Gupta and Li's Proposition 3.1" },
+    huxley: { text: "Huxley", abbr: "Hux.", row: "Huxley's estimate" }
+  };
+  var SOURCES = [];
+  G7D.forEach(function (p) {
+    var last = SOURCES[SOURCES.length - 1];
+    if (last && last.kind === p.src) { last.hi = p.hi; last.n++; last.leanTo = p.lean; return; }
+    SOURCES.push({ kind: p.src, lo: p.lo, hi: p.hi, n: 1, leanFrom: p.lean, leanTo: p.lean, AF: p.AF });
+  });
+  SOURCES.forEach(function (s) {
+    var k = SRC[s.kind] || { text: s.AF, abbr: s.AF, row: "the exponent " + s.AF };
+    s.text = k.text; s.abbr = k.abbr; s.row = k.row;
+    s.long = s.row + (s.n > 1 ? ", " + s.n + " steps" : "");
+    s.lean = s.n > 1 ? s.leanFrom + " … " + s.leanTo.split(".").pop() : s.leanFrom;
+  });
+  SOURCES.push({ kind: "none", lo: HP, hi: 1, text: "none", abbr: "none", row: "no zeros", long: "no zeros: the half-plane",
+    lean: "Eis.LFunction_ne_zero_of_re_gt" });
+  function pieceIndex(sg) {
+    for (var i = 0; i < G7D.length; i++) if (sg >= G7D[i].lo && sg < G7D[i].hi) return i;
+    return -1;
+  }
+  function piece(sg) { var i = pieceIndex(sg); return i < 0 ? null : G7D[i]; }
+  var KNOTS = G7D.reduce(function (a, p) { return a.concat([p.lo, p.hi - 1e-9]); }, []);
+  function source(sg) { for (var i = 0; i < SOURCES.length; i++) if (sg >= SOURCES[i].lo && sg < SOURCES[i].hi) return SOURCES[i]; return SOURCES[SOURCES.length - 1]; }
+  function gstar(sg, count) {
+    if (sg >= HP) return null;
+    var p = piece(sg);
+    if (p.A === null) return count ? 1 : 1 / (1 - sg);
+    return count ? p.A * (1 - sg) : p.A;
+  }
+  function drawChar() {
+    var count = view === "count", A7 = DATA.cgl.x, top = G7D[DATA.peak];
+    var series = [
+      { name: "g* (the Linnik route's curve)", color: "--s1", z: 1, knots: KNOTS, f: function (sg) { return gstar(sg, count); } },
+      { name: DATA.cgl.t + ", Chen–Gupta–Li (published)", color: "--ref", f: function (sg) { return count ? Math.min(1, A7 * (1 - sg)) : A7; } },
+      { name: "density hypothesis, A = 2", color: "--ref-2", width: 1, noDot: true, f: function (sg) { return count ? Math.min(1, 2 * (1 - sg)) : 2; } }
+    ];
+    series.push({ name: "trivial count", color: "--ref-2", width: 1, noDot: true, inTip: false,
+      f: function (sg) { return count ? 1 : sg < 0.99 ? 1 / (1 - sg) : null; } });
+    var peak = { x: top.lo, y: count ? top.A * (1 - top.lo) : top.A, text: DATA.gmax.t, anchor: "start", dx: 6, dy: count ? -8 : -6 };
+    chart(document.getElementById("char"), {
+      id: "char", series: series, labels: [peak],
+      y0: count ? 0 : 1.9, y1: count ? 1.1 : 2.5,
+      yticks: count ? [[0, "0"], [0.25, "0.25"], [0.5, "0.5"], [0.75, "0.75"], [1, "1"]]
+                    : [[2, "2"], [2.1, "2.1"], [2.2, "2.2"], [2.3, "2.3"], [2.4, "2.4"]],
+      extra: function (sg) {
+        var s = source(sg), i = pieceIndex(sg);
+        if (i < 0) return s.long + " · " + s.lean;
+        var p = G7D[i];
+        return s.long + " · " + (p.A !== null ? "A = " + p.AF + " " : "") + "on [" + p.loF + ", " + p.hiF + ") · " + p.lean;
+      },
+      ribbon: function (svg, X, y) {
+        SOURCES.forEach(function (s, i) {
+          el("rect", { x: X(s.lo) + 1, y: y - 12, width: Math.max(1, X(s.hi) - X(s.lo) - 2), height: 18,
+            fill: i % 2 ? css("--grid") : css("--void") }, svg);
+          // the source's name, or its abbreviation where the band is too narrow for it
+          var w = X(s.hi) - X(s.lo), t = txt((X(s.lo) + X(s.hi)) / 2, y + 1, s.text, "ink tick", "middle", svg);
+          if (t.getComputedTextLength() > w - 6) t.textContent = s.abbr;
+          if (t.getComputedTextLength() > w - 4) t.remove();
+        });
+      }
+    });
+    legend("char-legend", [{ color: "--s1", text: "g*, the Linnik route's density curve" },
+      { color: "--ref", text: DATA.cgl.t + ", Chen, Gupta and Li's density exponent (published)" },
+      { color: "--ref-2", text: "density hypothesis and the trivial count", thin: true }]);
+    table("char-table", ["σ from", "to", "Exponent A", "Source", "Lean"], G7D.map(function (p, i) {
+      var s = source((p.lo + p.hi) / 2), last = i === G7D.length - 1;
+      return [{ t: p.loF, cls: "n" }, { t: last ? "1" : p.hiF, cls: "n" },
+        { t: p.A === null ? "count 1" : p.AF + " = " + p.A.toFixed(5), cls: "n" },
+        last ? s.row + "; from " + HPT + " on the half-plane leaves no zeros" : s.row, p.lean];
+    }));
+  }
+
+  // ---- Linnik's exponent: the ladder -----------------------------------------------------------------------------
+  var LMIN = DATA.grh.x, LMAX = 2.9;
+  function lpct(L) { return (Math.min(L, LMAX) - LMIN) / (LMAX - LMIN) * 100; }
+  function drawLadder() {
+    var box = document.getElementById("ladder"); box.textContent = "";
+    var narrow = box.clientWidth < 560;
+    var cell = function (cls, row) { var d = document.createElement("div"); d.className = cls; row.appendChild(d); return d; };
+    // every row's track carries the two limits, so that they run through the ladder
+    var track = function (row) {
+      var t = cell("track", row);
+      [[DATA.grh.x, "vline"], [DATA.floor.x, "vline dash"]].forEach(function (l) {
+        var v = document.createElement("i"); v.className = l[1]; v.style.left = lpct(l[0]) + "%"; t.appendChild(v);
+      });
+      return t;
+    };
+    var head = document.createElement("div"); head.className = "lrow lhead"; head.setAttribute("aria-hidden", "true");
+    cell("lab", head);
+    var ax = track(head);
+    for (var k = 0; k <= Math.round((LMAX - LMIN) * 10); k++) {
+      if (narrow && k % 2) continue;
+      var tk = document.createElement("span"); tk.className = "tick"; tk.style.left = lpct(LMIN + k / 10) + "%";
+      tk.textContent = (LMIN + k / 10).toFixed(1); ax.appendChild(tk);
+    }
+    cell("val", head);
+    box.appendChild(head);
+    DATA.ladder.forEach(function (r) {
+      var row = document.createElement("div");
+      row.className = "lrow" + (r.group ? " lgroup" : " litem") + (r.main ? " lmain" : "");
+      row.setAttribute("role", "listitem");
+      var lab = cell("lab", row), tr = track(row), val = cell("val", row);
+      if (r.group) { lab.textContent = r.group; box.appendChild(row); return; }
+      var name = document.createElement("span"); name.className = "name"; name.innerHTML = r.label; lab.appendChild(name);
+      var src = document.createElement(r.kind === "lean" ? "code" : "span"); src.className = "cite";
+      if (r.kind === "lean") src.innerHTML = r.src.replace(/\./g, ".<wbr>"); else src.textContent = r.src;
+      lab.appendChild(src);
+      var stem = document.createElement("i"); stem.className = "stem"; stem.style.width = lpct(r.L) + "%"; tr.appendChild(stem);
+      var dot = document.createElement("i"); dot.className = "dot " + r.kind + (r.L > LMAX ? " off" : "");
+      dot.style.left = lpct(r.L) + "%"; tr.appendChild(dot);
+      val.textContent = r.text;
+      if (r.dec) { var sm = document.createElement("small"); sm.textContent = r.dec; val.appendChild(sm); }
+      box.appendChild(row);
+    });
+  }
+
+  // ---- Linnik's exponent against the density exponent -----------------------------------------------------------
+  var LA = DATA.la;
+  function role(r) { return LA.filter(function (p) { return p.role === r; }); }
+  var MAIN = role("main")[0], DH = role("dh")[0], CAPS = role("cap"), LOWERED = role("lowered")[0];
+  var laIdx = -1;
+  function drawLA() {
+    var box = document.getElementById("la"); box.textContent = "";
+    var W = Math.max(300, box.clientWidth), narrow = W < 560;
+    var H = Math.round(Math.min(460, Math.max(320, W * 0.55)));
+    var m = { l: 46, r: narrow ? 14 : 24, t: 22, b: 48 }, v0 = 1.97, v1 = 2.52;
+    var X = function (a) { return m.l + (a - v0) / (v1 - v0) * (W - m.l - m.r); };
+    var Y = function (l) { return H - m.b - (l - v0) / (v1 - v0) * (H - m.t - m.b); };
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, "aria-hidden": "true" }, box);
+    var defs = el("defs", {}, svg);
+    el("rect", { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b }, el("clipPath", { id: "la-clip" }, defs));
+    var mk = el("marker", { id: "la-arrow", viewBox: "0 0 8 8", refX: 7, refY: 4, markerWidth: 7, markerHeight: 7,
+      orient: "auto" }, defs);
+    el("path", { d: "M0 0 L8 4 L0 8 z", fill: css("--ink-2") }, mk);
+    [2, 2.1, 2.2, 2.3, 2.4, 2.5].forEach(function (t) {
+      el("line", { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: css("--grid") }, svg);
+      txt(m.l - 8, Y(t) + 4, t.toFixed(1), "tick", "end", svg);
+      el("line", { x1: X(t), x2: X(t), y1: H - m.b, y2: H - m.b + 5, stroke: css("--axis") }, svg);
+      txt(X(t), H - m.b + 18, t.toFixed(1), "tick", "middle", svg);
+    });
+    el("line", { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: css("--axis") }, svg);
+    txt(W - m.r, H - m.b + 36, narrow ? "A, the curve's peak" : "A, the largest density exponent of the curve", null, "end", svg);
+    txt(m.l - 8, m.t - 8, "L", null, "end", svg);
+    var g = el("g", { "clip-path": "url(#la-clip)" }, svg);
+    // the sieve's room, between its floor and the deduction
+    el("path", { d: "M" + X(2) + " " + Y(2) + " L" + X(v1) + " " + Y(v1) + " L" + X(v1) + " " + Y(1 + v1 / 2) + " Z",
+      fill: css("--line-band") }, g);
+    el("line", { x1: X(v0), y1: Y(v0), x2: X(v1), y2: Y(v1), stroke: css("--ref"), "stroke-width": 2 }, g);
+    el("line", { x1: X(v0), y1: Y(1 + v0 / 2), x2: X(v1), y2: Y(1 + v1 / 2), stroke: css("--ref"), "stroke-width": 1.5,
+      "stroke-dasharray": "5 4" }, g);
+    if (!narrow) {
+      txt(X(2.16) - 4, Y(2.16) - 10, "L = A", "ink", "end", svg);
+      txt(X(2.5), Y(2.25) + 32, "L = 1 + A/2", "ink", "end", svg);
+    }
+    // what the sieve gains at g*'s peak
+    el("line", { x1: X(MAIN.A), y1: Y(MAIN.A) + 7, x2: X(MAIN.A), y2: Y(MAIN.L) - 9, stroke: css("--ink-2"),
+      "stroke-width": 1, "marker-end": "url(#la-arrow)" }, svg);
+    if (!narrow) txt(X(MAIN.A) - 6, (Y(MAIN.A) + Y(MAIN.L)) / 2 + 4, "−" + (MAIN.A - MAIN.L).toFixed(3), "ink", "end", svg);
+    var caps = [MAIN].concat(CAPS);
+    el("path", { d: caps.map(function (p, i) { return (i ? "L" : "M") + X(p.A).toFixed(1) + " " + Y(p.L).toFixed(1); }).join(" "),
+      fill: "none", stroke: css("--s2"), "stroke-width": 1.5 }, g);
+    LA.forEach(function (p) {
+      var lean = p.kind === "lean";
+      el("circle", { cx: X(p.A), cy: Y(p.L), r: p.role === "main" ? 6 : p.role === "cap" ? 3.5 : 4.5,
+        fill: lean ? css("--s1") : css("--surface"), stroke: lean ? css("--surface") : p.kind === "other" ? css("--s2") : css("--ref"),
+        "stroke-width": 2 }, svg);
+    });
+    var lab = function (p, dx, dy, anchor, text) { txt(X(p.A) + dx, Y(p.L) + dy, text, "lbl", anchor, svg); };
+    // on a narrow screen only the main points are labelled; the tooltips and the table have the rest
+    lab(DH, 10, 16, "start", narrow ? DH.text.replace(" + η", "") : DH.text.replace(" + η", "") + ": the density hypothesis");
+    role("ded").forEach(function (p) {
+      if (!narrow || p.A === MAIN.A) lab(p, -9, -7, "end", p.text.replace(" + η", ""));
+    });
+    lab(MAIN, 10, 4, "start", MAIN.text);
+    if (!narrow) {
+      role("classic").forEach(function (p) { lab(p, 9, 4, "start", p.text); });
+      if (CAPS.length) lab(CAPS[CAPS.length - 1], -8, 14, "end", CAPS[CAPS.length - 1].At + ": " + CAPS[CAPS.length - 1].text);
+      if (LOWERED) lab(LOWERED, 8, 15, "start", LOWERED.text);
+    }
+    var tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; box.appendChild(tip);
+    var ring = el("circle", { r: 9, fill: "none", stroke: css("--ink"), "stroke-width": 1.5, visibility: "hidden" }, svg);
+    function show(i) {
+      laIdx = i;
+      var p = LA[i], add = function (cls, t) { var d = document.createElement("div"); d.className = cls; d.textContent = t; tip.appendChild(d); };
+      ring.setAttribute("cx", X(p.A)); ring.setAttribute("cy", Y(p.L)); ring.setAttribute("visibility", "visible");
+      tip.textContent = "";
+      add("head", "A = " + p.A.toFixed(4) + " · L = " + p.L.toFixed(4));
+      add("", p.label + ": " + p.text);
+      add("src", p.src);
+      tip.hidden = false;
+      var sc = box.clientWidth / W, tw = tip.offsetWidth, px = X(p.A) * sc;
+      tip.style.left = Math.max(0, Math.min(box.clientWidth - tw, px + (px > box.clientWidth / 2 ? -tw - 16 : 16))) + "px";
+      tip.style.top = Math.max(0, Y(p.L) * sc - 48) + "px";
+    }
+    function hide() { ring.setAttribute("visibility", "hidden"); tip.hidden = true; }
+    svg.addEventListener("pointermove", function (ev) {
+      var r = svg.getBoundingClientRect(), sx = (ev.clientX - r.left) * W / r.width, sy = (ev.clientY - r.top) * W / r.width;
+      var best = -1, bd = 18;
+      LA.forEach(function (p, i) { var d = Math.hypot(X(p.A) - sx, Y(p.L) - sy); if (d < bd) { bd = d; best = i; } });
+      if (best >= 0) show(best); else hide();
+    });
+    svg.addEventListener("pointerleave", hide);
+    var first = LA.indexOf(MAIN);
+    box.onkeydown = function (ev) {
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      show(((laIdx < 0 ? first : laIdx + (ev.key === "ArrowRight" ? 1 : -1)) + LA.length) % LA.length);
+    };
+    box.onfocus = function () { show(laIdx < 0 ? first : laIdx); };
+    box.onblur = hide;
+    document.getElementById("la-legend").innerHTML =
+      '<span><i class="key" style="color:' + css("--ref") + '"></i><span><i>L = A</i>: the density deduction</span></span>' +
+      '<span><i class="key dash" style="color:' + css("--ref") + '"></i><span><i>L</i> = 1 + <i>A</i>/2: the sieve\'s window ' +
+      'closes</span></span>' +
+      '<span><i class="kd lean"></i><span>proved in Lean</span></span>' +
+      '<span><i class="kd other"></i><span>computed, not formalised</span></span>' +
+      '<span><i class="key" style="color:' + css("--s2") + '"></i><span>the peak lowered (computed)</span></span>';
+    table("la-table", ["A, the peak", "L", "How", "Lean or source"], LA.map(function (p) {
+      return [{ t: p.A.toFixed(4), cls: "n" }, { t: p.text, cls: "n" }, p.label, p.src];
+    }));
+  }
+
+  // ---- the sieve's window ----------------------------------------------------------------------------------------
+  // The ends of the range of μ = uL that the characters counted at β allow, for the curve's value g there: the
+  // condition of SieveCurveGlue.WindowOKHM, with ϖ at its largest, and its constants from the Lean. μ ≥ lo for
+  // μ ≤ 1, by the better of orthogonality and the Halász–Montgomery inequality (hmBound), and μ ≤ hi for μ ≥ 1.
+  // scripts/zeros_page.py computes the same ends in exact arithmetic and checks them against the paper.
+  function winEnds(L, beta, g) {
+    var th = L - WD.margin, b = beta + WD.varpi;
+    var loO = (L * b + g / 2 + 0.5 - th) / (b - 0.5);
+    var hi = (th - L * b - g / 2) / (1 - b);
+    var k = b - 0.5 - (WD.k1 - WD.d) / 2, c0 = (WD.k0 + WD.d + 2 * WD.e) / 2;
+    var loH = k > 0 ? (L * b + g + c0 - th) / k : Infinity;
+    return { lo: loH <= Math.min(1, hi) ? Math.min(loO, loH) : loO, hi: hi };
+  }
+  // the widest window at L: on each piece the ends move monotonically, so its ends and a few points inside suffice
+  function windowAt(L) {
+    var w = { lo: -Infinity, hi: Infinity, ilo: -1, ihi: -1, blo: 0, bhi: 0 };
+    G7D.forEach(function (p, i) {
+      for (var j = 0; j <= 12; j++) {
+        var b = j === 12 ? p.hi - 1e-12 : p.lo + (p.hi - p.lo) * j / 12;
+        if (b <= 0.5) continue;
+        var e = winEnds(L, b, p.A === null ? 1 : p.A * (1 - b));
+        if (e.lo / L > w.lo) { w.lo = e.lo / L; w.ilo = i; w.blo = b; }
+        if (e.hi / L < w.hi) { w.hi = e.hi / L; w.ihi = i; w.bhi = b; }
+      }
+    });
+    return w;
+  }
+  var L_OPEN = (function () {
+    var a = 2.1, b = 2.3;
+    for (var n = 0; n < 50; n++) { var c = (a + b) / 2, w = windowAt(c); if (w.lo < w.hi) b = c; else a = c; }
+    return b;
+  })();
+  var WIN_L = WD.L, P = DATA.paper, GMAX = DATA.gmax;
+  function stepName(i) {
+    var p = G7D[i];
+    return "[" + p.loF + ", " + p.hiF + "] (" + source((p.lo + p.hi) / 2).row + ")";
+  }
+  function drawWin() {
+    var L = WIN_L, w = windowAt(L), open = w.lo < w.hi;
+    var gAt = function (b) { var i = pieceIndex(b); return i < 0 ? null : G7D[i].A === null ? 1 : G7D[i].A * (1 - b); };
+    var series = [
+      { name: "the least u₁", color: "--s2", z: 1, knots: KNOTS, f: function (b) {
+        var g = gAt(b); return g === null || b <= 0.5 ? null : Math.max(winEnds(L, b, g).lo / L, 0.1); } },
+      { name: "the greatest u₂", color: "--s1", z: 1, knots: KNOTS, f: function (b) {
+        var g = gAt(b); return g === null || b <= 0.5 ? null : winEnds(L, b, g).hi / L; } },
+      { name: "P = q, u = 1/L", color: "--ref-2", width: 1, noDot: true, f: function (b) { return b <= HP ? 1 / L : null; } }
+    ];
+    chart(document.getElementById("win"), {
+      id: "win", series: series, xname: "β", digits: 5, y0: 0.22, y1: 0.6,
+      yticks: [[0.3, "0.30"], [0.4, "0.40"], [0.5, "0.50"], [0.6, "0.60"]],
+      extra: function (b) {
+        var i = pieceIndex(b);
+        if (i < 0) return "no zeros: the half-plane · Eis.LFunction_ne_zero_of_re_gt";
+        var p = G7D[i];
+        return source(b).long + " · " + (p.A !== null ? "A = " + p.AF + " " : "") + "on [" + p.loF + ", " + p.hiF + ")";
+      },
+      under: function (g, X, Y) {
+        if (open) el("rect", { x: X(0.5), y: Y(w.hi), width: X(HP) - X(0.5), height: Math.max(1, Y(w.lo) - Y(w.hi)),
+          fill: css("--line-band") }, g);
+        [WD.u1, WD.u2].forEach(function (u) {
+          el("line", { x1: X(0.5), x2: X(HP), y1: Y(u), y2: Y(u), stroke: css("--ink-2"), "stroke-width": 1,
+            "stroke-dasharray": "4 3" }, g);
+        });
+      },
+      over: function (svg, X, Y) {
+        [[w.blo, w.lo, "--s2"], [w.bhi, w.hi, "--s1"]].forEach(function (e) {
+          el("circle", { cx: X(e[0]), cy: Y(e[1]), r: 6, fill: "none", stroke: css(e[2]), "stroke-width": 2 }, svg);
+        });
+      }
+    });
+    legend("win-legend", [
+      { color: "--s2", text: "the least u₁ that the zeros at β allow" },
+      { color: "--s1", text: "the greatest u₂" },
+      { color: "--line-band", text: "the widest window at this L", band: true },
+      { color: "--ink-2", text: "the paper's window, [" + WD.u1t + ", " + WD.u2t + "]", dash: true, thin: true },
+      { color: "--ref-2", text: "P = q", thin: true }]);
+    var h, Ls = L.toFixed(4), corners = parseFloat(P.corners), failL = parseFloat(P.failL);
+    if (!open) {
+      h = "At <i>L</i> = " + Ls + " there is no window: the least <i>u</i><sub>1</sub>, " + w.lo.toFixed(5) + ", set on " +
+        stepName(w.ilo) + ", is above the greatest <i>u</i><sub>2</sub>, " + w.hi.toFixed(5) + ", set on " + stepName(w.ihi) +
+        ". The window opens at <i>L</i> ≈ " + L_OPEN.toFixed(5) + ", just above 1 + " + GMAX.t + "/2 = " +
+        (1 + GMAX.x / 2).toFixed(4) + ".";
+    } else {
+      h = "At <i>L</i> = " + Ls + " the widest window is [" + w.lo.toFixed(5) + ", " + w.hi.toFixed(5) + "], of width " +
+        (w.hi - w.lo).toFixed(5) + ": " + (w.ilo === w.ihi ? "both its ends are set on " + stepName(w.ilo) +
+        (w.ilo === DATA.peak ? ", where g* peaks" : "") : "its lower end is set on " + stepName(w.ilo) + ", its upper end on " +
+        stepName(w.ihi)) + ". ";
+      if (L > GMAX.x) h += "Above " + GMAX.t + " the density deduction gives this exponent with no sieve (<code>" + GMAX.lean + "</code>).";
+      else if (L >= WD.L + 5e-5) h += "The Lean's " + WD.Lt + " gives every exponent above it; this window contains the paper's.";
+      else if (L >= corners) h += "The paper's window fits inside it, so the paper's certificate applies: it bounds the " +
+        "sieve's losses by " + P.certExact + " of the main term, less than all of it (Lean's kernel checks a bound below " +
+        P.certBound + "). That window's corners hold down to <i>L</i> = " + P.corners + "…; the Lean states " + WD.Lt +
+        ", just above.";
+      else if (L >= failL) h += "The paper's window no longer fits. A narrower one does, but at " + P.failL + " the sieve's " +
+        "certificate fails, even on " + P.failCells + " cells a side (" + P.failTotal + "𝒦, " + P.sup + ").";
+      else h += "The window is narrower than at " + P.failL + ", where the sieve's certificate already fails (" + P.sup + ").";
+    }
+    document.getElementById("win-note").innerHTML = h;
+  }
+  var Lrange = document.getElementById("Lrange"), Lval = document.getElementById("Lval");
+  function setL(L, fromRange) {
+    WIN_L = L; Lval.textContent = L.toFixed(4);
+    if (!fromRange) Lrange.value = String(L);
+    drawWin();
+  }
+  Lrange.addEventListener("input", function () { setL(parseFloat(Lrange.value), true); });
+  [[WD.Lt, WD.L], ["where it opens", null], [GMAX.t, GMAX.x]].forEach(function (b) {
+    var bt = document.createElement("button"); bt.type = "button"; bt.textContent = b[0];
+    bt.addEventListener("click", function () { setL(b[1] === null ? L_OPEN : b[1]); });
+    document.getElementById("presets").appendChild(bt);
+  });
+
+  drawStrip();
+  setView(view);
+  drawLadder(); drawLA(); setL(WD.L);
+  var redrawAll = function () { drawStrip(); drawZeta(); drawChar(); drawLadder(); drawLA(); drawWin(); };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(redrawAll);
+  var pending = null;
+  window.addEventListener("resize", function () {
+    if (pending) cancelAnimationFrame(pending);
+    pending = requestAnimationFrame(redrawAll);
+  });
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mq.addEventListener) mq.addEventListener("change", redrawAll);
+    new MutationObserver(redrawAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+})();
+</script>
+</body>
+</html>
