@@ -705,8 +705,6 @@ end HurwitzEM
 open HurwitzEM in
 #print axioms norm_hurwitzZeta_sub_EM_le
 open HurwitzEM in
-open HurwitzEM in
-open HurwitzEM in
 #print axioms hasSum_zeta_CB
 open HurwitzEM in
 #print axioms CB_le
