@@ -1,21 +1,23 @@
 /- The axioms of the papers' theorems, the repository's default build target. Every line this file prints must be
 `[propext, Classical.choice, Quot.sound]` or a subset of them (`scripts/check_axioms.py`). -/
-import Linnik22240R
+import Linnik22000E
 import LinnikG7
 
-/- The Linnik paper: its theorem with the density curve `g7d` (Chen–Gupta–Li's Proposition 3.1 on `[5/7, 131/168]`,
-`LinnikCGLSteps`) at `L = 278/125`, with no hypothesis, the sieve route, its certificate and the Type II estimate on its
-window. Earlier theorems, at weaker exponents and with their own certificates, are no longer in the tree: see the git
-history. -/
-#print axioms Linnik22240R.linnik_22240r
-#print axioms SieveMain2.linnik_route_lt2
-#print axioms SieveMain2.linnik_large2
-#print axioms SieveCert.total2_lt_22240R
-#print axioms SieveCert.gridOK22240R
-#print axioms SieveCert.gridOKC22240R
-#print axioms Linnik22240R.routeOK22240D
-#print axioms Linnik22240R.fits22240R
-#print axioms SieveTypeIIU22240D.typeII_22240d
+/- Linnik's theorem with exponent `L = 11/5`, with no hypothesis: the sieve route with the density curve `g7d`
+(Chen–Gupta–Li's Proposition 3.1 on `[5/7, 131/168]`, `LinnikCGLSteps`), the bilinear Type I estimate and the
+decomposition to depth 8, its certificate and the Type II estimate on its window. The theorem at `278/125` with the
+refined certificate (`Linnik22240R.linnik_22240r`) is printed by `CheckAll`. Earlier theorems, at weaker exponents and
+with their own certificates, are no longer in the tree: see the git history. -/
+#print axioms Linnik22000E.linnik_22000e
+#print axioms SieveMain8.linnik_route_lt8
+#print axioms SieveMain8.linnik_large8
+#print axioms SieveDeep.totalD_lt_22000E
+#print axioms SieveCert.gridOK22000E
+#print axioms SieveCert.gridOKC22000E
+#print axioms Linnik22000E.routeOK22000D
+#print axioms Linnik22000E.fits22000E
+#print axioms Linnik22000E.deepGrid22000E
+#print axioms SieveTypeIIU22000D.typeII_22000d
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_inT
 #print axioms LinnikCGLHB101.prop31
@@ -23,13 +25,13 @@ history. -/
 #print axioms SieveTypeIIU22240D.counts_7d
 #print axioms SieveTypeIIU22240D.g7d_le_one
 #print axioms SieveTypeIIU22240D.g7d_half
-#print axioms SieveTypeIIU22240D.window_22240d
+#print axioms SieveTypeIIU22000D.window_22000d
 
 /- Two results of the literature that it uses (`formalisations/`): the zero-free half-plane `Re s > 11/12` for
 every Dirichlet L-function, OpenAI's result, proved here along their companion preprint
 (`formalisations/openai-half-plane.md`), printed here, and Chen–Gupta–Li's density estimate, whose steps and
 Proposition 3.1 are printed above (`cglDensity`, their estimate with the exponent `7/3 + ε` on `[5/7, 16/21]`, is not
-used by `Linnik22240R` and is printed by `CheckAll`). -/
+used by `Linnik22000E` or `Linnik22240R` and is printed by `CheckAll`). -/
 #print axioms Eis.LFunction_ne_zero_of_re_gt
 
 /- The other theorems of the Linnik paper's claims table (`papers/linnik-exponent/main.tex`, Appendix A): its own steps
