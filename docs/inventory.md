@@ -6,13 +6,13 @@ rewrites it, and CI checks that it is current (`--check`).
 `lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 694 theorems: the library's final
 results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 101 modules that neither `Check` nor `CheckAll` imports, directly or
+The last section lists the 103 modules that neither `Check` nor `CheckAll` imports, directly or
 not, with their headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 210 | 686 | 3 | 18 |
+| `lib/pnt` | 210 | 686 | 5 | 28 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -1609,6 +1609,21 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveBuch.Par.lvl2'`: Level 2
 - `SieveBuch.Par.lvl1'`: Level 1
 - `SieveBuch.Par.decomp8`: The decomposition's inequality to depth 8
+
+#### `SieveDeep`: The certificate to depth 8: its rule and its decisions
+
+- `SieveDeep.lmask_sel`: The mask of `l`
+- `SieveDeep.emask_sel`: The coarse masks
+- `SieveDeep.surelyEval4_of_lmask`: A bit of the mask of `l` makes the box `(i, j, k, l)` surely evaluable
+- `SieveDeep.surelyEval5_of_emask`: A bit `b` of the coarse mask of one cell makes the box `(i, j, k, l, b)` surely evaluable
+- `SieveDeep.surelyEval6_of_emask`: A bit `c` of the coarse mask of one cell, or `b + c` of that of two, makes the box `(i, j, k, l, b, c)` surely evaluable
+- `SieveDeep.ibOK_append`: A split of a box with deeper cells
+- `SieveDeep.dmaxL_sound`: `dmaxL` is sound
+- `SieveDeep.dmax3_sound`: `dmax3` is sound
+- `SieveDeep.okIB_of_okD`: The block test is sound
+- `SieveDeep.cstar_sound`: `cstar` is sound
+
+#### `SieveDeepDefs`: The certificate to depth 8, without Mathlib
 
 #### `SieveQ8`: The leaves of the decomposition to depth 8, for large `q`
 
