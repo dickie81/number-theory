@@ -190,6 +190,18 @@ import SieveCert22240R
 import Linnik22240R
 import SieveTypeIIU22015D
 import Linnik22015R
+import SieveBuch8
+import SieveQ8
+import SieveDeep
+import SieveDeepCost
+import SieveBox
+import SieveDrop8
+import SieveMain8
+import SieveDeepCert
+import SieveTypeIIU22000D
+import SieveGrid22000E
+import SieveCert22000E
+import Linnik22000E
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
@@ -760,6 +772,25 @@ import BohrLandauCore
 #print axioms SieveTypeIIU22015D.window_22015d
 #print axioms SieveTypeIIU22015D.typeII_22015d
 #print axioms Linnik22015R.linnik_22015r_of_cert
+#print axioms SieveBuch.Par.decomp8
+#print axioms SieveQ8.leaves_ev8
+#print axioms SieveDeep.okIB_of_okD
+#print axioms SieveDeep.Ch3_le
+#print axioms SieveRough.shareBox
+#print axioms SieveDrop8.share8D
+#print axioms SieveDrop8.E1_le
+#print axioms SieveDrop8.dT_le_cost
+#print axioms SieveDrop8.drop_ev8
+#print axioms SieveMain8.linnik_route_lt8
+#print axioms SieveDeep.totalD_eq_rowsJD
+#print axioms SieveTypeIIU22000D.window_22000d
+#print axioms SieveTypeIIU22000D.typeII_22000d
+#print axioms SieveCert.gridOK22000E
+#print axioms SieveCert.gridOKC22000E
+#print axioms SieveDeep.totalD_lt_22000E
+#print axioms Linnik22000E.fits22000E
+#print axioms Linnik22000E.deepGrid22000E
+#print axioms Linnik22000E.linnik_22000e
 #print axioms SieveTypeIIU22240D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d

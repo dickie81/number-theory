@@ -3,16 +3,16 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 694 theorems: the library's final
+`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 713 theorems: the library's final
 results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 107 modules that neither `Check` nor `CheckAll` imports, directly or
+The last section lists the 99 modules that neither `Check` nor `CheckAll` imports, directly or
 not, with their headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 210 | 686 | 9 | 50 |
+| `lib/pnt` | 222 | 705 | 1 | 0 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -204,6 +204,12 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `LeastNonresidue.exists_nonsquare_le`: Vinogradov's least quadratic nonresidue conjecture, in Ankeny's form
 - `LeastNonresidue.exists_nonsquare_le_rpow_of`: `n(p) ≤ C₀(13/δ)^{13}p^δ` from `n(p) ≤ C₀(log p)^{13}`
 - `LeastNonresidue.exists_nonsquare_le_rpow`: `n(p) ≪_δ p^δ`
+
+#### `Linnik22000E`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 and its certificate at `n = 272`
+
+- `Linnik22000E.fits22000E`: `grid22000E` fits `route22000D`
+- `Linnik22000E.deepGrid22000E`: `grid22000E` holds the decomposition to depth 8
+- `Linnik22000E.linnik_22000e`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 at `n = 272`
 
 #### `Linnik22015R`: Linnik's theorem with exponent `4403 / 2000` by the bilinear Type I rule, from its certificate's inequality
 
@@ -954,6 +960,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `ShortPrimesHalfPlane.zeroFreeXi_of_halfplane`: The zero-free half-plane gives `ZeroFreeXi α` for every `α` (here `α < 1` is what `short_primes_of_density` takes), with no Korobov–Vinogradov input. ([note](../formalisations/zeta-density.md))
 - `ShortPrimesHalfPlane.short_primes_11_17_noKV`: With it, `short_primes_of_density` at the density `DensityXi (17/6 + ε) 12` of `InghamDensity` needs no KV region (the same statement as…
 
+#### `SieveBox`: The share of a box of prime intervals
+
+- `SieveRough.shareBox`: The share of a box
+
 #### `SieveBrun`: Brun's sieve in product form, abstractly
 
 - `SieveBrun.bonferroni`: Bonferroni's inequalities
@@ -983,6 +993,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveBuch.Par.lvl1k`: Level 1 with the kept parts *paper*
 - `SieveBuch.Par.decompk`: The decomposition's inequality with the kept parts *paper*
 
+#### `SieveBuch8`: The decomposition to depth 8
+
+- `SieveBuch.Par.decomp8`: The decomposition's inequality to depth 8
+
 #### `SieveCert`: The certificate of the sieve route's loss, checked by the kernel
 
 - `SieveCert.total_div_le`: The certificate in the reals
@@ -999,6 +1013,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 - `SieveCert.cost2_ge`: A dropped candidate cell's refined cost is at least its bound less `sub2`, in the reals.
 - `SieveCert.keepK_le`: The kept share's bound
+
+#### `SieveCert22000E`: The certificate to depth 8 of the sieve route's loss at `L = 11/5` with `n = 272`: `totalD < K`
+
+- `SieveDeep.totalD_lt_22000E`: The certificate to depth 8 on `grid22000E`
 
 #### `SieveCert22240R`: The refined certificate of the sieve route's loss at `L = 278/125` with `n = 340`: `total2 < K`
 
@@ -1026,6 +1044,18 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveDecomp.famI_cells`: The cells of the prime `t`
 - `SieveDecomp.famI_vanish`: A family whose products are at most `N₁` and whose products times their last prime exceed `N₂` contributes `0`
 
+#### `SieveDeep`: The certificate to depth 8: its rule and its decisions
+
+- `SieveDeep.okIB_of_okD`: The block test is sound
+
+#### `SieveDeepCert`: The certificate to depth 8, by parts
+
+- `SieveDeep.totalD_eq_rowsJD`: The certificate's total is `rowsJD 0 n 0 n`.
+
+#### `SieveDeepCost`: The certificate to depth 8: its costs bound the dropped cells' charges
+
+- `SieveDeep.Ch3_le`: The charges below a cell `(i, j)` are at most `SC⁸·refcost`
+
 #### `SieveDiff`: The tree's weights, and a leaf's difference
 
 - `SieveDiff.leaf_diff`: A leaf's difference
@@ -1044,6 +1074,13 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 - `SieveDrop2.drop_ev2`: The dropped terms less the kept parts, for large `q` *paper*
 
+#### `SieveDrop8`: The dropped terms' `B`-count, to depth 8
+
+- `SieveDrop8.share8D`: The share of a cell of depth 8 of the region
+- `SieveDrop8.E1_le`: The dropped terms' `B`-count
+- `SieveDrop8.dT_le_cost`: The dropped sums of a cell `(i, j)` against its cost
+- `SieveDrop8.drop_ev8`: The dropped terms, for large `q`, with the loss as a parameter
+
 #### `SieveDyadic`: A dyadic partition of unity
 
 - `SieveDyadic.sum_bump`: The dyadic partition of unity
@@ -1059,6 +1096,11 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveFamily.Dsum_sharp_le`: A sharp family, explicitly
 - `SieveFamily.typeII_sharp_explicit`: A sharp family, with the Type II estimate
 - `SieveFamily.typeII_sharp`: The Type II estimate for a sharp family (Lemmas 4′ and 4″), asymptotic form *paper*
+
+#### `SieveGrid22000E`: The grid of the certificate to depth 8 at `L = 11/5` with `n = 272`
+
+- `SieveCert.gridOK22000E`
+- `SieveCert.gridOKC22000E`: The coarse grid `Gc` (`n / 4 = 68` cells) and the facts about it that the deepest levels use.
 
 #### `SieveGrid22240R`: The grid of the refined certificate at `L = 278/125` with `n = 340`
 
@@ -1129,6 +1171,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveMain2.linnik_large2`: Linnik's theorem at `x = q^L`, for large `q`, under the refined certificate *paper*
 - `SieveMain2.linnik_route_lt2`: Linnik's theorem with exponent `L`, under a refined certificate whose total is below `K` *paper*
 
+#### `SieveMain8`: Linnik's theorem by the sieve route, under the certificate of depth 8
+
+- `SieveMain8.linnik_route_lt8`: Linnik's theorem with exponent `L`, under a certificate of depth 8 whose total is below `K`
+
 #### `SieveOmegaB`: Buchstab's `ω` on `[2, 3]`, and the logarithm's bounds of the certificate's cells
 
 - `SieveOmegaB.log_le_half_sub_inv`: `log y ≤ (y − 1/y)/2` for `y ≥ 1` *paper*
@@ -1153,6 +1199,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveQ.good_of_large`: The decomposition's hypotheses hold for large `q`
 - `SieveQ.P6IB_boxes`: Proposition 6-ib, uniformly over finitely many boxes
 - `SieveQ.leaves_ev`: The leaves, for large `q` *paper*
+
+#### `SieveQ8`: The leaves of the decomposition to depth 8, for large `q`
+
+- `SieveQ8.leaves_ev8`: The leaves of the decomposition to depth 8, for large `q`
 
 #### `SieveRanges`: The ranges of Brun's sieve
 
@@ -1250,6 +1300,11 @@ not, with their headline theorems (those whose docstring opens with a bold title
 #### `SieveTypeIIU`: Type II families with sharp prime ranges
 
 - `SieveTypeIIU.typeII_unw`: Type II for families with sharp prime ranges *paper*
+
+#### `SieveTypeIIU22000D`: Proposition 3′ at `L = 11 / 5` on the window `[43457/100000, 46959/100000]·L`, for the curve `g7d`
+
+- `SieveTypeIIU22000D.window_22000d`: The window's exponents
+- `SieveTypeIIU22000D.typeII_22000d`: Proposition 3′ at `L = 11 / 5` on `[43457/100000, 46959/100000]·L`, for the curve `g7d`
 
 #### `SieveTypeIIU22015D`: Proposition 3′ at `L = 4403 / 2000` on the window `[43336/100000, 46995/100000]·L`, for the curve `g7d`
 
@@ -1589,79 +1644,6 @@ not, with their headline theorems (those whose docstring opens with a bold title
 ### `lib/pnt`
 
 #### `Architect`
-
-#### `SieveBox`: The share of a box of prime intervals
-
-- `SieveRough.shareBox`: The share of a box
-
-#### `SieveBuch8`: The decomposition to depth 8
-
-- `SieveBuch.Par.I_S7`: Depth 7
-- `SieveBuch.Par.I_S8`: Depth 8
-- `SieveBuch.Par.I_S7c_vanish_lt`: Depth 7, `d > c`
-- `SieveBuch.Par.I_S8c_vanish_lt`: Depth 8, `f > d`
-- `SieveBuch.Par.I_S7c_vanish_reg`: Depth 7, outside the region
-- `SieveBuch.Par.I_S8c_vanish_reg`: Depth 8, outside the region
-- `SieveBuch.Par.I_S8_eq`: The cells of depth 8 below a cell of depth 7
-- `SieveBuch.Par.lvl7`: Level 7
-- `SieveBuch.Par.lvl7row`: The cells of depth 7 below a decomposed cell of depth 6
-- `SieveBuch.Par.lvl6c`: A decomposed cell of depth 6
-- `SieveBuch.Par.lvl6'`: Level 6
-- `SieveBuch.Par.lvl5'`: Level 5
-- `SieveBuch.Par.lvl4'`: Level 4
-- `SieveBuch.Par.lvl3'`: Level 3
-- `SieveBuch.Par.lvl2'`: Level 2
-- `SieveBuch.Par.lvl1'`: Level 1
-- `SieveBuch.Par.decomp8`: The decomposition's inequality to depth 8
-
-#### `SieveDeep`: The certificate to depth 8: its rule and its decisions
-
-- `SieveDeep.lmask_sel`: The mask of `l`
-- `SieveDeep.emask_sel`: The coarse masks
-- `SieveDeep.surelyEval4_of_lmask`: A bit of the mask of `l` makes the box `(i, j, k, l)` surely evaluable
-- `SieveDeep.surelyEval5_of_emask`: A bit `b` of the coarse mask of one cell makes the box `(i, j, k, l, b)` surely evaluable
-- `SieveDeep.surelyEval6_of_emask`: A bit `c` of the coarse mask of one cell, or `b + c` of that of two, makes the box `(i, j, k, l, b, c)` surely evaluable
-- `SieveDeep.ibOK_append`: A split of a box with deeper cells
-- `SieveDeep.dmaxL_sound`: `dmaxL` is sound
-- `SieveDeep.dmax3_sound`: `dmax3` is sound
-- `SieveDeep.okIB_of_okD`: The block test is sound
-- `SieveDeep.cstar_sound`: `cstar` is sound
-
-#### `SieveDeepCost`: The certificate to depth 8: its costs bound the dropped cells' charges
-
-- `SieveDeep.term6_le`: A counted cell of depth 6 at its cost
-- `SieveDeep.Ch6_le`: The cells of depth 6 below `(i, j, k, l, b)`
-- `SieveDeep.Ch5_le_cost6`: Below a decomposed cell of depth 4, not every box passing
-- `SieveDeep.Ch5_le_Fpure`: Below a decomposed cell of depth 4 whose boxes below all pass
-- `SieveDeep.term4_le`: A counted cell of depth 4 at its cost
-- `SieveDeep.Ch4_le_row`: The row `(i, j, k)`
-- `SieveDeep.Ch3_le`: The charges below a cell `(i, j)` are at most `SC⁸·refcost`
-
-#### `SieveDeepDefs`: The certificate to depth 8, without Mathlib
-
-#### `SieveDrop8`: The dropped terms' `B`-count, to depth 8
-
-- `SieveDrop8.drop4_le'`: A dropped cell of depth 4
-- `SieveDrop8.drop6_le'`: A dropped cell of depth 6
-- `SieveDrop8.drop8_le`: A dropped cell of depth 8
-- `SieveDrop8.share4D`: The share of a counted cell of depth 4
-- `SieveDrop8.share6D`: The share of a counted cell of depth 6
-- `SieveDrop8.share8D`: The share of a cell of depth 8 of the region
-- `SieveDrop8.E1_le`: The dropped terms' `B`-count
-- `SieveDrop8.sum_level`: A level of the sums
-- `SieveDrop8.dT_le_cost`: The dropped sums of a cell `(i, j)` against its cost
-- `SieveDrop8.shares_ev8`: The shares, eventually
-- `SieveDrop8.drop_ev8`: The dropped terms, for large `q`, with the loss as a parameter
-
-#### `SieveMain8`: Linnik's theorem by the sieve route, under the certificate of depth 8
-
-- `SieveMain8.linnik_large8`: Linnik's theorem at `x = q^L`, for large `q`, under the certificate of depth 8
-- `SieveMain8.linnik_route8`: Linnik's theorem with exponent `L`, under the certificate of depth 8
-- `SieveMain8.linnik_route_lt8`: Linnik's theorem with exponent `L`, under a certificate of depth 8 whose total is below `K`
-
-#### `SieveQ8`: The leaves of the decomposition to depth 8, for large `q`
-
-- `SieveQ8.leaves_ev8`: The leaves of the decomposition to depth 8, for large `q`
 
 ### `lib/dh`
 
