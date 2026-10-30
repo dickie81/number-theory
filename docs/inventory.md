@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 107 modules that none of the three imports, directly or not, with their
+The last section lists the 108 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 16 | 93 |
+| `lib/pnt` | 223 | 726 | 17 | 94 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1737,6 +1737,10 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveDreq.hux_exp_le_of_three_quarters_le`: Huxley's estimate above `3/4`
 - `ShortSieveDreq.hm_exp_le_of_three_quarters_le`: The library's count above `3/4`
 - `ShortSieveDreq.dreq_hux`: Harman's exponent from the mean value theorem and Huxley's estimate
+
+#### `ShortSieveExpand`: Sieve terms with several rough items as tuples of primes
+
+- `ShortSieveExpand.card_expand`: The expansion
 
 #### `ShortSieveGroup`: Type II estimates for groups of prime boxes
 
