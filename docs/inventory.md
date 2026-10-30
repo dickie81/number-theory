@@ -3,7 +3,7 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 710 theorems: the library's final
+`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 705 theorems: the library's final
 results and the papers' theorems, of which there are 118, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 The last section lists the 99 modules that neither `Check` nor `CheckAll` imports, directly or
@@ -12,7 +12,7 @@ not, with their headline theorems (those whose docstring opens with a bold title
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 220 | 702 | 1 | 0 |
+| `lib/pnt` | 217 | 697 | 1 | 0 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -210,12 +210,7 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `Linnik22000E.routeOK22000D`: `route22000D` is a route *paper*
 - `Linnik22000E.fits22000E`: `grid22000E` fits `route22000D` *paper*
 - `Linnik22000E.deepGrid22000E`: `grid22000E` holds the decomposition to depth 8 *paper*
-- `Linnik22000E.linnik_22000e`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 at `n = 272` *paper*
-
-#### `Linnik22240R`: Linnik's theorem with exponent `278 / 125`, under the refined certificate at `n = 340`
-
-- `Linnik22240R.fits22240R`: `grid22240R` fits `route22240D`
-- `Linnik22240R.linnik_22240r`: Linnik's theorem with exponent `278 / 125`, by the refined certificate at `n = 340` ([note](../formalisations/chen-gupta-li-density.md))
+- `Linnik22000E.linnik_22000e`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 at `n = 272` *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikAFE`: The approximate functional equation for `L(s, χ)²`
 
@@ -1014,10 +1009,6 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 - `SieveDeep.totalD_lt_22000E`: The certificate to depth 8 on `grid22000E` *paper*
 
-#### `SieveCert22240R`: The refined certificate of the sieve route's loss at `L = 278/125` with `n = 340`: `total2 < K`
-
-- `SieveCert.total2_lt_22240R`: The refined certificate on `grid22240R`
-
 #### `SieveChain`: Type II for chains of primes
 
 - `SieveChain.sum_rough_tuples`: For `z ≥ 2`, `Y ≥ 1` and `Y < z^{K+1}`, the `z`-rough `k ∈ [1, Y]` are the products of the non-increasing tuples of at most `K` primes at least `z`, the… *paper*
@@ -1097,11 +1088,6 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 - `SieveCert.gridOK22000E` *paper*
 - `SieveCert.gridOKC22000E`: The coarse grid `Gc` (`n / 4 = 68` cells) and the facts about it that the deepest levels use. *paper*
-
-#### `SieveGrid22240R`: The grid of the refined certificate at `L = 278/125` with `n = 340`
-
-- `SieveCert.gridOK22240R`
-- `SieveCert.gridOKC22240R`: The coarse grid `Gc` (`n / 4 = 85` cells) and the facts about it that the deepest levels use.
 
 #### `SieveHMBin`: Halász–Montgomery for one bin of characters at one height
 

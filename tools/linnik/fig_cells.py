@@ -1,6 +1,6 @@
-"""fig_cells.py [OUT.tex]: the figure of the cells of depth two of the library's certificate (the paper's Figure 1),
-as a TikZ picture, from the definitions `mirror2.py` mirrors (`cand`, `dec`, `sub2` and the tests before `cand`), on
-the library's grid `41556 47531 340`.
+"""fig_cells.py [OUT.tex]: the figure of the cells of depth two of the paper's certificate (its Figure 1), as a TikZ
+picture, from the definitions `mirror2.py` mirrors (`cand`, `dec`, `sub2` and the tests before `cand`), on the paper's
+grid `41556 47531 340`.
 
 The picture also draws the diagonal, the line `α₁ + 2α₂ = 1` of the corner cells, the window's ends `α₁ = U₁/D` and
 `α₁ = U₂/D` (dashed), and the lines `α₁ + α₂ = U₁/D, U₂/D, 1 − U₂/D, 1 − U₁/D` (dotted, labelled by their constants),

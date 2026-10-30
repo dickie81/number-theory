@@ -243,7 +243,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       above decide <span class="math">L</span>. A zero with real part <span class="math">β</span> costs about
       <span class="math">x</span><sup class="math">β−1</sup> of the primes up to <span class="math">x</span>, so the half-plane
       leaves no zero that costs much, and the density curve says how many zeros there are. The library proves
-      <span class="math">L</span> = {{L}} = {{Ldec}} (<code>Linnik22240R.linnik_22240r</code>), from two inputs that have not
+      <span class="math">L</span> = {{L}} = {{Ldec}} (<code>Linnik22000E.linnik_22000e</code>), from two inputs that have not
       been refereed: the half-plane and Chen, Gupta and Li's Proposition 3.1.</p>
     <div class="plate">
       <div class="legend">
@@ -260,8 +260,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     <p>The density deduction turns a density exponent <span class="math">A</span> into every <span class="math">L &gt; A</span>
       (<code>Linnik.linnik_of_charDensity</code>): the diagonal. Harman's sieve goes below it, since Cauchy–Schwarz over the
       characters halves the density exponent, but not below <span class="math">L = 1 + A/2</span>, where its window closes. The
-      two lines meet at the density hypothesis, <span class="math">A</span> = {{grh}}. Lowering the curve's peak near
-      {{gmaxLo}} by 0.01 lowers the sieve's exponent by about {{capslope}} (computed, not formalised).</p>
+      two lines meet at the density hypothesis, <span class="math">A</span> = {{grh}}.</p>
     <div class="plate">
       <div class="legend" id="la-legend"></div>
       <div class="chart" id="la" tabindex="0" role="img" aria-label="The Linnik exponent L against the largest density exponent A of the curve: the density deduction gives L = A, the sieve gives less, down to its floor L = 1 + A/2. Use the left and right arrow keys to step through the points."></div>
@@ -316,10 +315,10 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       the page does not follow. <code>Check.lean</code> and <code>CheckAll.lean</code> print {{nresults}} theorems in all,
       listed in <a href="https://github.com/dickie81/number-theory/blob/main/docs/inventory.md">docs/inventory.md</a>.</p>
     <p>The window's ends are computed in the page from <span class="math">g*</span> and the condition of
-      <code>SieveCurveGlue.WindowOKHM</code>, with its margins; at {{L}} they give the paper's exact window
-      [{{exactLo}}…, {{exactHi}}…] ({{propWindow}}), which the script checks. The exponents marked computed are the paper's and
-      its supplement's computations ({{secComparison}}, {{supComputations}}), read from their sources; they are not theorems
-      of the library.</p>
+      <code>SieveCurveGlue.WindowOKHM</code>, with its margins; at {{L}} they give the window [{{exactLo}}…, {{exactHi}}…],
+      which the script computes again in exact arithmetic and checks contains the Lean's, [{{u1}}, {{u2}}]. The exponents
+      marked computed are the paper's and its supplement's computations ({{secComparison}}, {{supComputations}}), read from
+      their sources; they are not theorems of the library.</p>
   </footer>
 </main>
 
@@ -721,7 +720,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
   // ---- Linnik's exponent against the density exponent -----------------------------------------------------------
   var LA = DATA.la;
   function role(r) { return LA.filter(function (p) { return p.role === r; }); }
-  var MAIN = role("main")[0], DH = role("dh")[0], CAPS = role("cap"), LOWERED = role("lowered")[0];
+  var MAIN = role("main")[0], DH = role("dh")[0];
   var laIdx = -1;
   function drawLA() {
     var box = document.getElementById("la"); box.textContent = "";
@@ -760,12 +759,9 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     el("line", { x1: X(MAIN.A), y1: Y(MAIN.A) + 7, x2: X(MAIN.A), y2: Y(MAIN.L) - 9, stroke: css("--ink-2"),
       "stroke-width": 1, "marker-end": "url(#la-arrow)" }, svg);
     if (!narrow) txt(X(MAIN.A) - 6, (Y(MAIN.A) + Y(MAIN.L)) / 2 + 4, "−" + (MAIN.A - MAIN.L).toFixed(3), "ink", "end", svg);
-    var caps = [MAIN].concat(CAPS);
-    el("path", { d: caps.map(function (p, i) { return (i ? "L" : "M") + X(p.A).toFixed(1) + " " + Y(p.L).toFixed(1); }).join(" "),
-      fill: "none", stroke: css("--s2"), "stroke-width": 1.5 }, g);
     LA.forEach(function (p) {
       var lean = p.kind === "lean";
-      el("circle", { cx: X(p.A), cy: Y(p.L), r: p.role === "main" ? 6 : p.role === "cap" ? 3.5 : 4.5,
+      el("circle", { cx: X(p.A), cy: Y(p.L), r: p.role === "main" ? 6 : 4.5,
         fill: lean ? css("--s1") : css("--surface"), stroke: lean ? css("--surface") : p.kind === "other" ? css("--s2") : css("--ref"),
         "stroke-width": 2 }, svg);
     });
@@ -776,11 +772,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       if (!narrow || p.A === MAIN.A) lab(p, -9, -7, "end", p.text.replace(" + η", ""));
     });
     lab(MAIN, 10, 4, "start", MAIN.text);
-    if (!narrow) {
-      role("classic").forEach(function (p) { lab(p, 9, 4, "start", p.text); });
-      if (CAPS.length) lab(CAPS[CAPS.length - 1], -8, 14, "end", CAPS[CAPS.length - 1].At + ": " + CAPS[CAPS.length - 1].text);
-      if (LOWERED) lab(LOWERED, 8, 15, "start", LOWERED.text);
-    }
+    if (!narrow) role("classic").forEach(function (p) { lab(p, 9, 4, "start", p.text); });
     var tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; box.appendChild(tip);
     var ring = el("circle", { r: 9, fill: "none", stroke: css("--ink"), "stroke-width": 1.5, visibility: "hidden" }, svg);
     function show(i) {
@@ -817,8 +809,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       '<span><i class="key dash" style="color:' + css("--ref") + '"></i><span><i>L</i> = 1 + <i>A</i>/2: the sieve\'s window ' +
       'closes</span></span>' +
       '<span><i class="kd lean"></i><span>proved in Lean</span></span>' +
-      '<span><i class="kd other"></i><span>computed, not formalised</span></span>' +
-      '<span><i class="key" style="color:' + css("--s2") + '"></i><span>the peak lowered (computed)</span></span>';
+      '<span><i class="kd other"></i><span>computed, not formalised</span></span>';
     table("la-table", ["A, the peak", "L", "How", "Lean or source"], LA.map(function (p) {
       return [{ t: p.A.toFixed(4), cls: "n" }, { t: p.text, cls: "n" }, p.label, p.src];
     }));
@@ -828,7 +819,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
   // The ends of the range of μ = uL that the characters counted at β allow, for the curve's value g there: the
   // condition of SieveCurveGlue.WindowOKHM, with ϖ at its largest, and its constants from the Lean. μ ≥ lo for
   // μ ≤ 1, by the better of orthogonality and the Halász–Montgomery inequality (hmBound), and μ ≤ hi for μ ≥ 1.
-  // scripts/zeros_page.py computes the same ends in exact arithmetic and checks them against the paper.
+  // scripts/zeros_page.py computes the same ends in exact arithmetic and checks that they contain the Lean's window.
   function winEnds(L, beta, g) {
     var th = L - WD.margin, b = beta + WD.varpi;
     var loO = (L * b + g / 2 + 0.5 - th) / (b - 0.5);
@@ -856,7 +847,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     for (var n = 0; n < 50; n++) { var c = (a + b) / 2, w = windowAt(c); if (w.lo < w.hi) b = c; else a = c; }
     return b;
   })();
-  var WIN_L = WD.L, P = DATA.paper, GMAX = DATA.gmax;
+  var WIN_L = WD.L, C = DATA.cert, GMAX = DATA.gmax;
   function stepName(i) {
     var p = G7D[i];
     return "[" + p.loF + ", " + p.hiF + "] (" + source((p.lo + p.hi) / 2).row + ")";
@@ -898,9 +889,9 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       { color: "--s2", text: "the least u₁ that the zeros at β allow" },
       { color: "--s1", text: "the greatest u₂" },
       { color: "--line-band", text: "the widest window at this L", band: true },
-      { color: "--ink-2", text: "the paper's window, [" + WD.u1t + ", " + WD.u2t + "]", dash: true, thin: true },
+      { color: "--ink-2", text: "the Lean's window, [" + WD.u1t + ", " + WD.u2t + "]", dash: true, thin: true },
       { color: "--ref-2", text: "P = q", thin: true }]);
-    var h, Ls = L.toFixed(4), corners = parseFloat(P.corners), failL = parseFloat(P.failL);
+    var h, Ls = L.toFixed(4), corners = parseFloat(C.corners);
     if (!open) {
       h = "At <i>L</i> = " + Ls + " there is no window: the least <i>u</i><sub>1</sub>, " + w.lo.toFixed(5) + ", set on " +
         stepName(w.ilo) + ", is above the greatest <i>u</i><sub>2</sub>, " + w.hi.toFixed(5) + ", set on " + stepName(w.ihi) +
@@ -912,14 +903,13 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
         (w.ilo === DATA.peak ? ", where g* peaks" : "") : "its lower end is set on " + stepName(w.ilo) + ", its upper end on " +
         stepName(w.ihi)) + ". ";
       if (L > GMAX.x) h += "Above " + GMAX.t + " the density deduction gives this exponent with no sieve (<code>" + GMAX.lean + "</code>).";
-      else if (L >= WD.L + 5e-5) h += "The Lean's " + WD.Lt + " gives every exponent above it; this window contains the paper's.";
-      else if (L >= corners) h += "The paper's window fits inside it, so the paper's certificate applies: it bounds the " +
-        "sieve's losses by " + P.certExact + " of the main term, less than all of it (Lean's kernel checks a bound below " +
-        P.certBound + "). That window's corners hold down to <i>L</i> = " + P.corners + "…; the Lean states " + WD.Lt +
-        ", just above.";
-      else if (L >= failL) h += "The paper's window no longer fits. A narrower one does, but at " + P.failL + " the sieve's " +
-        "certificate fails, even on " + P.failCells + " cells a side (" + P.failTotal + "𝒦, " + P.sup + ").";
-      else h += "The window is narrower than at " + P.failL + ", where the sieve's certificate already fails (" + P.sup + ").";
+      else if (L >= WD.L + 5e-5) h += "The Lean's " + WD.Lt + " gives every exponent above it; this window contains the Lean's.";
+      else if (L > WD.L - 5e-5) h += "The Lean's window fits inside it, so the Lean's certificate applies: it bounds the " +
+        "sieve's losses by " + C.bound + "… of the main term, less than all of it, and the kernel checks it (<code>" +
+        C.lean + "</code>). Down to <i>L</i> = " + C.corners + "… the Lean's window still fits.";
+      else if (L >= corners) h += "The Lean's window still fits inside it, down to <i>L</i> = " + C.corners + "…, but the " +
+        "Lean's certificate is for " + WD.Lt + " only.";
+      else h += "The Lean's window no longer fits. A narrower one does, but the library has no certificate for it.";
     }
     document.getElementById("win-note").innerHTML = h;
   }

@@ -26,7 +26,7 @@ Two forms of it are used.
 - `SieveTypeIIHM.sum_bin_hm` (`lib/pnt/SieveHMBin.lean`) is the case `σ = 0`, `β_χ = 0` and `γ_χ = h₀`, one height
   for the whole bin, at `Λ = 2P` for `S ⊆ (P, 2P]`.
 
-These theorems are in the proof of `Linnik22240R.linnik_22240r`, whose axioms are `propext`, `Classical.choice` and
+These theorems are in the proof of `Linnik22000E.linnik_22000e`, whose axioms are `propext`, `Classical.choice` and
 `Quot.sound` (`lib/check/Check.lean`), so they depend on those only. `hm_duality` does not use the zero-free
 half-plane.
 
@@ -71,6 +71,7 @@ the others at most `B`.
 - Through Huxley's estimate, on the steps of the density curve from `131/168` on ([huxley-density.md](huxley-density.md)).
 - Directly, on the top piece `[5/6, 11/12]` of the Type II estimate. There `SieveHMBins` and `SieveTypeIIHM` bound
   each bin of characters at one height by `SieveTypeIIHM.sum_bin_hm`, with the kernel bound above. The window of the
-  library's current exponent, `[41556/100000, 47531/100000]·L` at `L = 278/125`, is the window of this branch
-  (`SieveTypeIIU22240D`). (The earlier windows, `[41479/100000, 47555/100000]·L` at `L = 89/40` and
-  `[41335/100000, 48069/100000]·L` at `L = 899/400`, are in the git history.)
+  library's current exponent, `[43457/100000, 46959/100000]·L` at `L = 11/5`, is the window of this branch
+  (`SieveTypeIIU22000D`), as is the paper's, `[41556/100000, 47531/100000]·L` at `L = 278/125` (`SieveTypeIIU22240D`).
+  (The earlier windows, `[41479/100000, 47555/100000]·L` at `L = 89/40` and `[41335/100000, 48069/100000]·L` at
+  `L = 899/400`, are in the git history.)

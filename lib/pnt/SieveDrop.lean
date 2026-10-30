@@ -26,7 +26,7 @@ This is the loss: the shares of the dropped cells and the certificate's total bo
 families' `B`-counts, and the corner near `(1/2, 1/2)` is `o(x/log x)`.
 
 The route's numbers, the certificate's grid parameters and the certificate's total are a hypothesis (`htot`); the
-library's theorem (`Linnik22240R`) instantiates the refined version of it (`SieveDrop2`).
+library's theorem (`Linnik22000E`) instantiates its version to depth 8 (`SieveDrop8`).
 
 The file imports `SieveQ.lean`.
 -/

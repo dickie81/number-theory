@@ -26,12 +26,10 @@ On 4 cores and 16 GB, a cold build of the default target takes several hours.
 A module that imports Mathlib maps Mathlib's files into memory, and that mapping is shared between compiles. The
 default build also has 114 certificate part files (`lib/pnt/SieveCert22000EP<k>.lean`, 1136 parts), about 6.2 hours of
 one core in all. Of Mathlib the parts import only `Mathlib.Data.Nat.Notation`, and each one used at most 2.8 GiB of
-private memory while the kernel checked it. `CheckAll` also builds the certificate at `278/125`, 387 part files
-(`lib/pnt/SieveCert22240RP<k>.lean`, 5066 parts), each of which can use up to about 2.5 GiB (measured on a sample of
-parts; before the faster evaluator of `surelyEval` and `sumTo` it was about 5 GiB, and up to 10 GiB for the part files
-that hold a part of over 17,000 units of work (26 of the 387); those are still marked `-- exclusive-heavy`, and
-`scripts/lean-slots.sh` runs them with no other certificate part, which is now more cautious than needed). Earlier certificates (for the weaker exponents `899/400`, `9/4`, `226/100` and others) and
-the stepping-stone modules only they used are no longer in the tree; they are in the git history.
+private memory while the kernel checked it. `scripts/lean-slots.sh` still honours a `-- exclusive-heavy` mark, which
+runs a part file with no other certificate part; no part file now carries it. Earlier certificates (for the weaker
+exponents `278/125`, `899/400`, `9/4`, `226/100` and others) and the stepping-stone modules only they used are no
+longer in the tree; they are in the git history.
 
 Lake runs about as many compiles at once as there are cores, so a plain `lake build` on a machine with less than about
 5 GiB of memory per core can run out while it builds the certificates. `scripts/build.sh` runs Lake with a wrapper
@@ -59,7 +57,7 @@ adding, removing or renaming a module.
 | `python3 scripts/zeros_page.py --check` | The site's page on the zeros (`site/zeros.html`) agrees with the Lean and the paper. The script reads each number the page shows from the statement of the theorem that proves it: the half-plane, the bounds for `Θ`, the density exponents, the Linnik exponents, the curve `g*` with the theorem that `counts_7d` glues in for each piece (checked against the piece's range and exponent), and the window condition `SieveCurveGlue.WindowOKHM` with its constants. Every theorem the page presents as a result must be printed by `Check.lean` or `CheckAll.lean`, and the window's exact ends, computed from the Lean's curve and condition, must be the paper's. The other numbers are read from the paper's sources. Without `--check` it writes the page, as `scripts/build_site.py` does. |
 | `python3 scripts/check_vendor.py` | `lib/vendor` holds the upstream files at the pinned commits with the port patches applied (needs network access). |
 | `python3 scripts/census.py MODULE CONSTANT` | After `lake build MODULE`: the library's modules whose declarations the proof of `CONSTANT` uses, with the count from each. |
-| `python3 tools/linnik/check_certificate.py` | The certificates' Lean files in `lib/pnt` are the ones `tools/linnik` generates, for `22240R` and `22000E` (about two minutes). |
+| `python3 tools/linnik/check_certificate.py` | The certificate's Lean files in `lib/pnt` are the ones `tools/linnik` generates, for `22000E` (about a minute and a half). |
 | `python3 scripts/lean_targets.py BASE` | Not a gate: the Lake targets that CI's Lean build builds for the changes from `BASE` to `HEAD`: `Check`, `CheckAll`, and every module of `lib/` that the changes add or edit, the vendored libraries' included, with every module that imports one of them or a deleted module, directly or not. A change to `lean-toolchain`, `lake-manifest.json` or `lakefile.lean` outside its module lists gives every library instead, as does `--all`. |
 | `python3 scripts/import_cone.py [ROOT]` | Not a gate: the modules, source size and certificate part files in the import cone of `ROOT` (default `Check`, the default build), from the sources alone. `--why MODULE` prints the chain of imports that puts `MODULE` in the cone. |
 

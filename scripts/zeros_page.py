@@ -15,9 +15,11 @@ statement:
   from the proof of `counts_7d` and checked against the piece's range and exponent;
 - the Linnik exponents;
 - the sieve's window condition (`SieveCurveGlue.WindowOKHM`), with its constants, and the window and the exponent of
-  `window_22240d`.
+  `window_22000d`;
+- the bound of the certificate (`SieveDeep.totalD_lt_22000E`).
 Every theorem the page presents as a result must be printed by `lib/check/Check.lean` or `lib/check/CheckAll.lean`,
-whose axioms CI checks. The window's exact ends, computed here from the Lean's curve and condition, must be the paper's.
+whose axioms CI checks. The window's exact ends, computed here from the Lean's curve and condition, must contain the
+Lean's window.
 The numbers that are not theorems of the library (the literature's exponents and the paper's computations) are read
 from the paper's sources, and the numbers of the paper's sections and statements from its `.aux` files when it is
 compiled. A change to the Lean or to the paper that the page does not follow makes this script fail; CI runs it with
@@ -197,7 +199,6 @@ def refs():
     """The numbers of the paper's statements and sections that the page cites: from the compiled paper's `.aux`
     files, or, when it is not compiled, their numbers when this script was written."""
     cites = {"defWindow": ("main", "def:window", "Definition {}", "3.3"),
-             "propWindow": ("main", "prop:window", "Proposition {}", "3.6"),
              "secComparison": ("main", "sec:comparison", "§{}", "8"),
              "supComputations": ("supplement", "sup:computations", "§{}", "S6")}
     out = {}
@@ -327,8 +328,8 @@ def extract():
     deduction.sort(key=lambda r: -r[0])
     gx = [L for L, n, _ in deduction if n == "LinnikG7.linnik_g7d"][0]
     need(gx == gmax, f"LinnikG7.linnik_g7d gives {gx}, not g*'s largest exponent {gmax}")
-    Lmain, plus, grh = linnik(res("Linnik22240R.linnik_22240r"))
-    need(not plus and not grh, "Linnik22240R.linnik_22240r is not an exponent without hypothesis")
+    Lmain, plus, grh = linnik(res("Linnik22000E.linnik_22000e"))
+    need(not plus and not grh, "Linnik22000E.linnik_22000e is not an exponent without hypothesis")
     Lgrh, plus, grh = linnik(res("LinnikGRH.linnik_two_of_GRH"))
     need(plus and grh, "LinnikGRH.linnik_two_of_GRH no longer assumes GRH")
     Agrh = q(grab(r"Linnik\.CharDensity (\S+) \S+ \S+$", statement(res("LinnikGRH.charDensity_two_of_GRH")),
@@ -336,48 +337,69 @@ def extract():
     need(Agrh == Lgrh, "GRH's density exponent is not its Linnik exponent")
 
     # The window: the condition, its constants, the window of the Lean and the exponent.
-    s = statement(res("SieveTypeIIU22240D.window_22240d"))
+    s = statement(res("SieveTypeIIU22000D.window_22000d"))
     m = grab(r"WindowOKHM g7d \((.+?)\) \((.+?) \* \((.+?)\)\) \((.+?) \* \((.+?)\)\) \((.+?)\) \((.+?)\)$", s,
-             "the window of window_22240d")
+             "the window of window_22000d")
     L, u1, La, u2, Lb, kd, ke = (q(x) for x in m.groups())
-    need(L == La == Lb == Lmain, "window_22240d's exponent is not linnik_22240r's")
-    route = grab(r"⟨(.+?), (.+?), (.+?)⟩", definition("Linnik22240R.route22240D"), "the route's parameters")
-    cited.update({"Linnik22240R.route22240D", "SieveCurveGlue.WindowOKHM", "SieveCurveGlue.hmBound"})
+    need(L == La == Lb == Lmain, "window_22000d's exponent is not linnik_22000e's")
+    route = grab(r"⟨(.+?), (.+?), (.+?)⟩", definition("Linnik22000E.route22000D"), "the route's parameters")
+    cited.update({"Linnik22000E.route22000D", "SieveCurveGlue.WindowOKHM", "SieveCurveGlue.hmBound"})
     need((q(route.group(1)), q(route.group(2)), q(route.group(3))) == (L, u1, u2),
-         "route22240D's parameters are not window_22240d's")
+         "route22000D's parameters are not window_22000d's")
     c = {**form("SieveCurveGlue.WindowOKHM"), **form("SieveCurveGlue.hmBound")}
     need(c["TOP"] == hp, "the window condition does not stop at the half-plane")
     margin, varpi, k0, k1 = c["M"], c["W"], c["K0"], 1 / c["K1"]
 
-    def ends(beta, g):
-        """The window's ends allowed at β, as winEnds of site/zeros.html computes them, in exact arithmetic."""
-        th, b = L - margin, beta + varpi
-        lo = (L * b + g / 2 + F(1, 2) - th) / (b - F(1, 2))
-        hi = (th - L * b - g / 2) / (1 - b)
+    def ends(x, beta, g):
+        """The window's ends allowed at β for the exponent x, as winEnds of site/zeros.html computes them, in exact
+        arithmetic."""
+        th, b = x - margin, beta + varpi
+        lo = (x * b + g / 2 + F(1, 2) - th) / (b - F(1, 2))
+        hi = (th - x * b - g / 2) / (1 - b)
         k = b - F(1, 2) - (k1 - kd) / 2
         if k > 0:
-            lh = (L * b + g + (k0 + kd + 2 * ke) / 2 - th) / k
+            lh = (x * b + g + (k0 + kd + 2 * ke) / 2 - th) / k
             if lh <= min(1, hi):
                 lo = min(lo, lh)
         return lo, hi
 
-    exact_lo, exact_hi = -10, 10
-    for lo, hi, A in pieces:
-        for beta in (lo, hi):
-            a, b = ends(beta, F(1) if A is None else A * (1 - beta))
-            exact_lo, exact_hi = max(exact_lo, a / L), min(exact_hi, b / L)
-    need(exact_lo <= u1 and u2 <= exact_hi, "the Lean's window does not lie in the exact window computed here")
+    def exact(x):
+        """The widest window at the exponent x, in units of x: on each piece of g* its ends move monotonically, so
+        the piece's ends suffice."""
+        out = [F(-10), F(10)]
+        for lo, hi, A in pieces:
+            for beta in (lo, hi):
+                a, b = ends(x, beta, F(1) if A is None else A * (1 - beta))
+                out = [max(out[0], a / x), min(out[1], b / x)]
+        return out
 
-    # The paper: its numbers, which the page cites, and the numbers it gives that this script computes.
+    def fits(x):
+        lo, hi = exact(x)
+        return lo <= u1 and u2 <= hi
+
+    exact_lo, exact_hi = exact(L)
+    need(fits(L), "the Lean's window does not lie in the exact window computed here")
+    # The least exponent at which the Lean's window still fits, by bisection: it fits at L, and not at 1 + A/2 for
+    # g*'s largest exponent A, below which there is no window.
+    x0, x1 = 1 + gmax / 2, L
+    need(not fits(x0), f"the Lean's window fits at 1 + {t(gmax)}/2")
+    for _ in range(40):
+        x0, x1 = (x0, (x0 + x1) / 2) if fits((x0 + x1) / 2) else ((x0 + x1) / 2, x1)
+    corners = x1
+
+    # The certificate: the bound on its total that the kernel checks is less than K.
+    cert = "SieveDeep.totalD_lt_22000E"
+    need(statement(res(cert)) == "theorem totalD_lt_22000E : totalD < K", f"{cert} no longer says totalD < K")
+    top = grab(r"rw \[totalD_eq_rowsJD\] exact lt_of_le_of_lt (\w+) \(by decide \+kernel\)$", definition(cert),
+               f"the proof of {cert}").group(1)
+    m = grab(r"rowsJD 0 (\d+) 0 \1 ≤ (\d+)$", statement("SieveDeep." + top), f"the bound of SieveDeep.{top}")
+    k = int(grab(r"def K : ℕ := 2 \^ (\d+)$", definition("SieveCert.K"), "the certificate's K").group(1))
+    bound = F(int(m.group(2)), 2 ** k)
+    need(bound < 1, f"the bound of SieveDeep.{top} is not less than K")
+
+    # The paper: its numbers, which the page cites.
     main, supp, bib, r = tex("main.tex"), tex("supplement.tex"), tex("references.tex"), refs()
     sup = "supplement " + r["supComputations"]
-    m = says(r"give the exact window \$\[([\d.]+)\\ldots, ([\d.]+)\\ldots\] \\cdot L\$", main, "exact window")
-    need((cut(exact_lo, 8), cut(exact_hi, 8)) == m.groups(),
-         f"the exact window computed here, [{cut(exact_lo, 8)}…, {cut(exact_hi, 8)}…], is not the paper's "
-         f"[{m.group(1)}…, {m.group(2)}…]")
-    m = says(r"At \$L = (\d+)/(\d+)\$ the window is \$\[u_1, u_2\] = \[([\d.]+), ([\d.]+)\]\$", main, "window")
-    need(F(int(m.group(1)), int(m.group(2))) == L and (F(m.group(3)), F(m.group(4))) == (u1, u2),
-         "the paper's window or exponent is not the Lean's")
     hb = float(says(r"Heath-Brown \\cite\{heath-brown92\} reached \$L = ([\d.]+)\$", main, "Heath-Brown").group(1))
     xy = float(says(r"and then \$L = ([\d.]+)\$ \\cite\{xylouris11\}", main, "Xylouris").group(1))
     hb_src = says(r"\\bibitem\{heath-brown92\} .*?\\emph\{[^}]*\}, (.+?) \((\d{4})\),", bib, "reference for Heath-Brown")
@@ -394,19 +416,6 @@ def extract():
     excess = F(says(r"and the excess \$(\d+/\d+)\$ of the library's steps", supp, "classical steps").group(1))
     cpeak = F(says(r"The window is then set at \$3/4\$, where both exponents are \$(\d+/\d+)\$", supp,
                    "classical peak").group(1)) + excess
-    m = says(r"cap \$A\$ & (.+?) \\\\ lowest \$L\$ & (.+?) \\\\", supp, "table of capped curves")
-    caps_At = re.findall(r"\$([\d./]+)", m.group(1))
-    caps_A = [F(x) for x in caps_At]
-    caps_L = [F(x) for x in re.findall(r"\$([\d.]+)\$", m.group(2))]
-    need(len(caps_A) == len(caps_L) >= 2, "the paper's table of capped curves has lost its shape")
-    lowered = F(says(r"the script reaches \$([\d.]+)\$; on \$\[7/10, 4/5\]\$", supp, "lowered curve").group(1))
-    m = says(r"that is \$[\d.]+\\mathcal K\$, below \$([\d.]+)\\mathcal K\$; the exact value is \$\\Sigma' = \d+ = "
-             r"([\d.]+)\\ldots\\mathcal K\$", main, "certificate's total")
-    cert_bound, cert_exact = m.group(1), dec(F(m.group(2)), 5)
-    corners = says(r"they hold exactly for \$L \\ge ([\d.]+)\\ldots\$", supp, "room in the window").group(1)
-    m = says(r"at \$(\d+)\$ cells a side \$(\d+)/(\d+) = ([\d.]+)\$ still fails with the present margin, at "
-             r"\$([\d.]+)\\mathcal K\$", supp, "failure below 278/125")
-    fail_cells, fail_L, fail_total = m.group(1), m.group(4), m.group(5)
 
     ladder = [{"group": "Refereed results, without the half-plane"},
               {"label": "Heath-Brown (" + hb_src.group(2) + ")", "L": hb, "text": dec(hb, 2), "kind": "ref",
@@ -423,11 +432,9 @@ def extract():
     ladder += [{"group": "Harman's sieve: below the density exponent"},
                {"label": "with Ingham's and Huxley's estimates in steps", "L": float(classic), "text": t(classic),
                 "dec": dec(classic, 4), "kind": "other", "src": f"computed, not formalised ({sup})"},
-               {"label": "with the curve <i>g*</i>: the Linnik paper", "L": float(Lmain), "text": t(Lmain),
-                "dec": dec(Lmain, 3), "kind": "lean", "src": "Linnik22240R.linnik_22240r", "main": True}]
+               {"label": "with the curve <i>g*</i> and a bilinear Type I estimate", "L": float(Lmain), "text": t(Lmain),
+                "dec": dec(Lmain, 3), "kind": "lean", "src": "Linnik22000E.linnik_22000e", "main": True}]
 
-    capsrc = (f"computed, not formalised: g* with one step of Ingham's estimate on [11/20, 4/7] and its exponents "
-              f"capped ({sup})")
     la = [{"A": float(Agrh), "L": float(Lgrh), "kind": "limit", "role": "dh", "text": t(Lgrh) + " + η",
            "label": f"the density hypothesis, A = {t(Agrh)}, which GRH implies",
            "src": "LinnikGRH.linnik_two_of_GRH, under GRH"}]
@@ -440,14 +447,8 @@ def extract():
                "label": f"the sieve, with Ingham's and Huxley's estimates in steps (peak {t(cpeak - excess)} + "
                         f"{t(excess)})", "src": f"computed, not formalised ({sup})"})
     la.append({"A": float(gmax), "L": float(Lmain), "kind": "lean", "role": "main", "text": t(Lmain),
-               "label": "the sieve, with the curve g*", "src": "Linnik22240R.linnik_22240r"})
-    for a, at, x in zip(caps_A, caps_At, caps_L):
-        la.append({"A": float(a), "L": float(x), "kind": "other", "role": "cap", "text": dec(x, 4), "At": at,
-                   "label": f"the sieve, with the peak capped at {at}", "src": capsrc})
-    la.append({"A": float(caps_A[-1]), "L": float(lowered), "kind": "other", "role": "lowered", "text": dec(lowered, 4),
-               "label": f"the sieve, capped at {caps_At[-1]} and without the term of Chen, Gupta and Li's bound "
-                        f"that gives 4/(1 + σ) on [7/10, 4/5]", "src": f"computed, not formalised ({sup})"})
-    slope = (caps_L[0] - caps_L[-1]) / (caps_A[0] - caps_A[-1])
+               "label": "the sieve, with the curve g* and a bilinear Type I estimate",
+               "src": "Linnik22000E.linnik_22000e"})
 
     sha, day = commit()
     named, shown = results | cited, printed()
@@ -465,8 +466,7 @@ def extract():
         "window": {"L": float(L), "Lt": t(L), "Ld": dec(L, 4), "u1": float(u1), "u2": float(u2), "u1t": dec(u1, 5),
                    "u2t": dec(u2, 5), "margin": float(margin), "varpi": float(varpi), "d": float(kd), "e": float(ke),
                    "k0": float(k0), "k1": float(k1)},
-        "paper": {"corners": corners, "certExact": cert_exact, "certBound": cert_bound, "failL": fail_L,
-                  "failTotal": fail_total, "failCells": fail_cells, "sup": sup},
+        "cert": {"corners": cut(corners, 7), "bound": cut(bound, 5), "lean": cert},
     }
     texts = {
         "hp": t(hp), "hpWidth": t(1 - hp), "bandLo": t(band[0]), "bandHi": t(band[1]),
@@ -475,7 +475,7 @@ def extract():
         "nzeta": {1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}.get(len(zeta), str(len(zeta))),
         "npieces": str(len(pieces)), "gmax": dec(gmax, 4), "gmaxLo": t(pieces[peak][0]), "gmaxHi": t(pieces[peak][1]),
         "cgl": t(cgl), "floor": t(floor), "grh": t(Lgrh),
-        "L": t(Lmain), "Ldec": dec(Lmain, 4), "capslope": dec(slope / 100, 3),
+        "L": t(Lmain), "Ldec": dec(Lmain, 4), "u1": dec(u1, 5), "u2": dec(u2, 5),
         "exactLo": cut(exact_lo, 8), "exactHi": cut(exact_hi, 8),
         "nresults": str(len(shown)),
         "commit": f'<a href="{REPO}/tree/{sha}">{sha[:7]}</a>' if sha else "the working tree",
@@ -484,7 +484,7 @@ def extract():
         "theorems": theorem_rows(hp, band, th_lo, th_hi, zeta, c524, Lmain),
     }
     for k in ("hp", "hpWidth", "bandLo", "bandHi", "thetaLo", "thetaHi", "kvA", "kvB", "nzeta", "npieces", "gmax",
-              "gmaxLo", "gmaxHi", "cgl", "floor", "grh", "L", "Ldec", "capslope", "exactLo", "exactHi", "nresults"):
+              "gmaxLo", "gmaxHi", "cgl", "floor", "grh", "L", "Ldec", "u1", "u2", "exactLo", "exactHi", "nresults"):
         texts[k] = html.escape(texts[k])
     return data, texts, named, results
 
@@ -513,7 +513,7 @@ def theorem_rows(hp, band, th_lo, th_hi, zeta, c524, Lmain):
     rows.append((f"At most {m('C(qT)')}<sup class=\"math\">g*(σ)</sup>{m('(1 + log qT)')}<sup>10</sup> characters mod "
                  f"{m('q')} have a zero with {m('β ≥ σ')}, {m('|γ| ≤ T')}", ["SieveTypeIIU22240D.counts_7d"]))
     rows.append((f"Every reduced residue class mod {m('q')} contains a prime {m('p ≤ Kq')}"
-                 f"<sup class=\"math\">{t(Lmain)}</sup>", ["Linnik22240R.linnik_22240r"]))
+                 f"<sup class=\"math\">{t(Lmain)}</sup>", ["Linnik22000E.linnik_22000e"]))
     return "\n".join(f"          <tr><td>{a}</td>\n            <td>{', '.join(f'<code>{n}</code>' for n in ns)}</td></tr>"
                      for a, ns in rows)
 
@@ -549,7 +549,8 @@ def main(argv):
     if "--check" in argv:
         print(f"zeros_page: the page agrees with the Lean and the paper: {len(results)} theorems named as results, all "
               f"printed by Check or CheckAll; g*'s {len(data['g7d'])} pieces each counted by the theorem counts_7d "
-              f"glues in; the exact window [{texts['exactLo']}…, {texts['exactHi']}…]")
+              f"glues in; the exact window [{texts['exactLo']}…, {texts['exactHi']}…] contains the Lean's, which fits "
+              f"down to L = {data['cert']['corners']}…")
         return 0
     out = argv[0] if argv else OUT
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)

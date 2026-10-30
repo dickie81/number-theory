@@ -5,9 +5,9 @@ import LinnikG7
 
 /- Linnik's theorem with exponent `L = 11/5`, with no hypothesis: the sieve route with the density curve `g7d`
 (Chen–Gupta–Li's Proposition 3.1 on `[5/7, 131/168]`, `LinnikCGLSteps`), the bilinear Type I estimate and the
-decomposition to depth 8, its certificate and the Type II estimate on its window. The theorem at `278/125` with the
-refined certificate (`Linnik22240R.linnik_22240r`) is printed by `CheckAll`. Earlier theorems, at weaker exponents and
-with their own certificates, are no longer in the tree: see the git history. -/
+decomposition to depth 8, its certificate and the Type II estimate on its window. Earlier theorems, at weaker
+exponents (the last at `278/125`, with the refined certificate) and with their own certificates, are no longer in the
+tree: see the git history. -/
 #print axioms Linnik22000E.linnik_22000e
 #print axioms SieveMain8.linnik_route_lt8
 #print axioms SieveMain8.linnik_large8
@@ -31,7 +31,7 @@ with their own certificates, are no longer in the tree: see the git history. -/
 every Dirichlet L-function, OpenAI's result, proved here along their companion preprint
 (`formalisations/openai-half-plane.md`), printed here, and Chen–Gupta–Li's density estimate, whose steps and
 Proposition 3.1 are printed above (`cglDensity`, their estimate with the exponent `7/3 + ε` on `[5/7, 16/21]`, is not
-used by `Linnik22000E` or `Linnik22240R` and is printed by `CheckAll`). -/
+used by `Linnik22000E` and is printed by `CheckAll`). -/
 #print axioms Eis.LFunction_ne_zero_of_re_gt
 
 /- The other theorems of the Linnik paper's claims table (`papers/linnik-exponent/main.tex`, Appendix A): its own steps

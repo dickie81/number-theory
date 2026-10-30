@@ -33,8 +33,8 @@ windows are the integer ranges `P₁ = ⌊x^{u₁}⌋`, `P₂ = ⌊x^{u₂}⌋`,
 Proposition 6; a whole box's term above `N₁` is empty, and its term at or below `N₁` goes by Proposition 6-ib.
 
 The route's numbers, the certificate's grid parameters and the Type II estimate are hypotheses (`hII`); the case
-of the library's theorem is `Linnik22240R.route22240D` and `SieveGrid22240R.grid22240R` (`Linnik22240R.fits22240R`),
-with `Linnik22240R.typeII22240d` for `hII`.
+of the library's theorem is `Linnik22000E.route22000D` and `SieveCert.grid22000E` (`Linnik22000E.fits22000E`),
+with `Linnik22000E.typeII22000d` for `hII`.
 
 The file imports `SieveLeaves.lean`.
 -/

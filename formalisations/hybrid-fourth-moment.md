@@ -12,7 +12,7 @@ theorem fourth_moment {ε : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) :
 In words: for every `ε` in `(0, 1]` there is `C` such that, for every modulus `q ≥ 1`, every set `R` of non-principal
 characters mod `q` and every choice of one point `|t_χ| ≤ T` for each `χ ∈ R`,
 `Σ_{χ∈R} |L(1/2 + it_χ, χ)|⁴ ≤ C(q(T + 2))^{1+ε}`. `LFunction` is Mathlib's `DirichletCharacter.LFunction`. The theorem
-is in the proof of `Linnik22240R.linnik_22240r`, whose axioms are `propext`, `Classical.choice` and `Quot.sound`
+is in the proof of `Linnik22000E.linnik_22000e`, whose axioms are `propext`, `Classical.choice` and `Quot.sound`
 (`lib/check/Check.lean`), so it depends on those only.
 
 ## Source

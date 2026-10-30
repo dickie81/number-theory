@@ -185,9 +185,6 @@ import SieveDrop2
 import SieveMain2
 import LinnikCGLSteps
 import SieveTypeIIU22240D
-import SieveGrid22240R
-import SieveCert22240R
-import Linnik22240R
 import SieveBuch8
 import SieveQ8
 import SieveDeep
@@ -762,11 +759,6 @@ import BohrLandauCore
 #print axioms SieveTypeIIU22240D.counts_7d
 #print axioms SieveTypeIIU22240D.window_22240d
 #print axioms SieveTypeIIU22240D.typeII_22240d
-#print axioms SieveCert.gridOK22240R
-#print axioms SieveCert.gridOKC22240R
-#print axioms SieveCert.total2_lt_22240R
-#print axioms Linnik22240R.fits22240R
-#print axioms Linnik22240R.linnik_22240r
 #print axioms SieveBuch.Par.decomp8
 #print axioms SieveQ8.leaves_ev8
 #print axioms SieveDeep.okIB_of_okD

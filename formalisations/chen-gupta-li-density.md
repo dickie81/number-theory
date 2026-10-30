@@ -176,7 +176,7 @@ plateau and Huxley's steps `hx7_0` … `hx7_4`, and with Ingham's last step
 steps are narrow because both ends of the window are set where a step's exponent most exceeds the curve it bounds, on
 the first step `[5/7, 1201/1680]`, at its right end; its exponent `2.3334` is the curve's largest, `7/3` at `5/7`, where
 Ingham's and Chen–Gupta–Li's exponents meet. The corners' slack grows along the steps, and from `5/7 + 14/1680` on
-steps of `1/280` leave the window as it is (steps of `1/140` would move its lower end). `Linnik22240R.linnik_22240r` is Linnik's theorem with exponent `278/125` on `g7d`;
+steps of `1/280` leave the window as it is (steps of `1/140` would move its lower end). `Linnik22000E.linnik_22000e` is Linnik's theorem with exponent `11/5` on `g7d` (and the paper's, at `278/125`, was `Linnik22240R.linnik_22240r`, now in the git history);
 the classical deduction from the same curve gives `2.3334 + ε` (`LinnikG7.linnik_g7d`, with
 `SieveTypeIIU22240D.g7d_le_lin`: `g7d σ ≤ 2.3334(1 − σ)`).
 What lets the certificate close at `278/125` is the two deeper levels of the Buchstab decomposition, the kept parts,
