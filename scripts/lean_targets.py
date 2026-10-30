@@ -6,7 +6,8 @@
 
 A change to a module is validated by building the module and every module that imports it, directly or not; Lake
 builds their own imports. So the targets are `Check` (the papers' theorems), `CheckAll` (every final theorem of the
-library) and `CheckZeta23` (those of the zeta23 layer, which `CheckAll` cannot import), always, and, as `+Module`:
+library), `CheckZeta23` (those of the zeta23 layer, which `CheckAll` cannot import) and `CheckDH` (those of the
+lib/dh layer), always, and, as `+Module`:
 - every module of `lib/` that the change adds or edits, the vendored libraries' included;
 - every module that imports one of these, or a module that the change deletes or renames;
 - every library that the change adds to `lakefile.lean`.
@@ -27,7 +28,7 @@ import import_cone  # noqa: E402
 
 ROOT = import_cone.ROOT
 WHOLE = {"lean-toolchain", "lake-manifest.json"}
-ALWAYS = ["Check", "CheckAll", "CheckZeta23"]
+ALWAYS = ["Check", "CheckAll", "CheckZeta23", "CheckDH"]
 
 
 def graph():

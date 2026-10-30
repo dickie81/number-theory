@@ -95,7 +95,8 @@ results.
   `R̃_{M₂}` (their (7.5), p. 24), whose integral runs over `[1/2, 2]` only. So the step needs the integrand restricted
   to `v₂/v₁ ∈ [1/2, 2]`, which Proposition 7.1 as stated does not give. The restriction holds because the kernel `J`
   vanishes unless `v₂/v₁ ∈ (1/2, 2)` (`LinnikCGLSym.Jk_eq_zero_of_ratio`). The library's form of Proposition 7.1
-  includes it (`LinnikCGLSym.prop71r`).
+  includes it (`LinnikCGLSym.prop71r`); Proposition 7.1 as they state it, at one point per character and with
+  explicit constants, is `LinnikCGLP71.prop71`.
 - **The proof of Proposition 7.2 (p. 26).** After the substitution `u′ = v₂/v₁`, a display omits the factor
   `√v₁ ≤ √2` that comes from `dv₂ = v₁du′`. The next line is stated with `≪_ϵ`, which absorbs it (`LinnikCGLRt`).
 - **The proof of Lemma 9.2 (p. 39).** After the change of variables `v = e^τ`, the majorized integral in the display

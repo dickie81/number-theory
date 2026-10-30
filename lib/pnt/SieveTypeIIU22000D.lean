@@ -29,7 +29,7 @@ set_option maxRecDepth 10000
 
 namespace SieveTypeIIU22000D
 
-open DirichletCharacter SieveTypeIIGen SieveCurveGlue SieveTypeIIU227 SieveTypeIIHM SieveCurve7D
+open DirichletCharacter SieveTypeIIGen SieveCurveGlue SieveTypeIIHM SieveCurve7D
 
 set_option hygiene false in
 /-- The corner cases of `windowPieceHM_const_split`: two values of `β`, two of `m`, two of `w`, each by `norm_num`. -/

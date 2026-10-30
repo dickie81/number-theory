@@ -8,7 +8,7 @@ added, removed or renamed in lib/ without regenerating fails the check.
 
 Layers (lib/<dir> → library): core → Core, pnt → PNT, dh → DH, zeta23 → Zeta23Layer. The vendored upstreams keep
 their hierarchical names and the Lean options their ports were built with. Check (lib/check/Check.lean) is the
-default target; CheckAll is built on request, and so is the executable deadcode (scripts/lean/DeadCode.lean), the
+default target; CheckAll, CheckZeta23 and CheckDH are built on request, and so is the executable deadcode (scripts/lean/DeadCode.lean), the
 dead-code check's Lean side.
 """
 import os
@@ -51,6 +51,8 @@ def lakefile():
             '/-- The axioms of every final theorem of the library; not a default target. -/', 'lean_lib CheckAll where', '  srcDir := "lib/check"', '  roots := #[`CheckAll]', '',
             '/-- The axioms of the zeta23 layer\'s results, which CheckAll cannot import; not a default target. -/',
             'lean_lib CheckZeta23 where', '  srcDir := "lib/check"', '  roots := #[`CheckZeta23]', '',
+            "/-- The axioms of the lib/dh layer's results; not a default target. -/",
+            'lean_lib CheckDH where', '  srcDir := "lib/check"', '  roots := #[`CheckDH]', '',
             "/-- The dead-code check's Lean side, run by scripts/dead_code.py; it imports only Lean. -/",
             'lean_exe deadcode where', '  srcDir := "scripts/lean"', '  root := `DeadCode', '  supportInterpreter := true',
             '']
