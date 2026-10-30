@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 106 modules that none of the three imports, directly or not, with their
+The last section lists the 107 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 15 | 91 |
+| `lib/pnt` | 223 | 726 | 16 | 93 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1850,6 +1850,11 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveTypeII.abs_card_tuples_sub_le_of_pos`: Type II estimates for products of primes in boxes, for every `ρ > 0`
 - `ShortSieveTypeII.abs_card_tuples_sub_le_three`: Three primes near `x^{1/3}` in intervals of length `x^{3/5}`
 - `ShortSieveTypeII.abs_card_tuples_sub_le_three_long`: Three primes near `x^{1/3}` in intervals of length `x^{3/5}`, against intervals of length `x^{399/400}`
+
+#### `ShortSieveWit`: Type II witnesses from a pointwise test
+
+- `ShortSieveWit.momentOK_of_le_add`: Admissibility is open in `D`
+- `ShortSieveWit.exists_wit_list`: Witnesses by compactness
 
 ### `lib/dh`
 
