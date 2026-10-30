@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 144, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 92 modules that none of the three imports, directly or not, with their
+The last section lists the 94 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 725 | 1 | 0 |
+| `lib/pnt` | 223 | 725 | 3 | 6 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1716,6 +1716,18 @@ headline theorems (those whose docstring opens with a bold title).
 ### `lib/pnt`
 
 #### `Architect`
+
+#### `ShortSieveHolder`: Hölder's inequality with real exponents for a product of factors
+
+- `ShortSieveHolder.lintegral_prod_le`: Hölder's inequality for `n` factors with real exponents
+- `ShortSieveHolder.lintegral_prod_le_of_moments`: The Type II combination
+- `ShortSieveHolder.lintegral_rpow_le_of_le`: A moment raised through a pointwise bound
+
+#### `ShortSieveLevel`: Moments from counts of large values
+
+- `ShortSieveLevel.volume_le_of_sep`: The measure of a set from counts of separated points
+- `ShortSieveLevel.lintegral_rpow_le_levels`: Moments from the measures of level sets
+- `ShortSieveLevel.lintegral_rpow_le_of_counts`: Moments from counts of large values
 
 ### `lib/dh`
 
