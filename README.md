@@ -11,6 +11,8 @@ from `main` on every push.
 
 ## What is here
 
+- [`docs/account.md`](docs/account.md): the library on one page. What it proves, what that rests on, how much of
+  number theory it covers, what a new input would give at once, and where the next results are.
 - `lib/`: the Lean library, built with Lake against Mathlib. [`docs/inventory.md`](docs/inventory.md) lists its
   results: every theorem of the check files `lib/check/Check.lean`, `CheckAll.lean`, `CheckZeta23.lean` and
   `CheckDH.lean`, with its headline. CI checks that the library keeps nothing that these theorems do not use.
@@ -41,7 +43,7 @@ from `main` on every push.
 | `papers/` | The papers. See its [README](papers/README.md). |
 | `scripts/` | The build script and the checks (see [`docs/building.md`](docs/building.md)), and `build_site.py`, which builds the papers' web site. |
 | `site/` | `zeros.html`, the template of the site's page on the zeros, which `scripts/zeros_page.py` fills from the Lean sources. |
-| `docs/` | [`inventory.md`](docs/inventory.md): the library's results, written by `scripts/inventory.py`. [`building.md`](docs/building.md): building, memory, the checks and CI. [`dry-efficiency-survey.md`](docs/dry-efficiency-survey.md) and [`stack-bridges.md`](docs/stack-bridges.md): a survey of duplication and build cost, and three modules that join parts of the library. |
+| `docs/` | [`account.md`](docs/account.md): the library on one page, with its frontier; `scripts/check_account.py` checks its Lean names. [`inventory.md`](docs/inventory.md): the library's results, written by `scripts/inventory.py`. [`building.md`](docs/building.md): building, memory, the checks and CI. [`dry-efficiency-survey.md`](docs/dry-efficiency-survey.md) and [`stack-bridges.md`](docs/stack-bridges.md): a survey of duplication and build cost, and three modules that join parts of the library. |
 | `tools/linnik/` | The Linnik paper's certificate tools: the route's computations outside Lean and the generator of the certificate's Lean files. See its README. |
 
 ## Building

@@ -57,6 +57,8 @@ jobs:
         run: python3 scripts/gen_lakefile.py --check
       - name: docs/inventory.md matches the sources
         run: python3 scripts/inventory.py --check
+      - name: docs/account.md names only what the library declares
+        run: python3 scripts/check_account.py
       - name: The page on the zeros agrees with the Lean and the paper
         run: python3 scripts/zeros_page.py --check
       - name: The vendored libraries are upstream's with the port patches
