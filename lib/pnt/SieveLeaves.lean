@@ -7,16 +7,23 @@ Plain statements. `gA q a m = 1[m ≡ a]` and `gB q m = 1[(m, q) = 1]/φ(q)`; `L
 (`SieveRoute.Route`); `N1 q = ⌊q^L⌋`, `N2 q = ⌊2q^L⌋`; `ThrOK q spec` says that the atoms' thresholds lie in
 `[1, q^{L+1}]`. The cells are those of `SieveCert`'s grid (`SieveCert.Grid`).
 
-* `exists_inside`: a box of cells that `SieveCert.surelyEval` passes has a set `T` of its primes whose subset sums
-  over the box stay inside `U = (u₁, u₂) ∪ (1 − u₂, 1 − u₁)`.
+* `exists_inside`: a box (its primes' ranges, in units of `1/DEN`) that `SieveCert.surelyEval` passes has a set `T` of
+  its primes whose subset sums over the box stay inside `U = (u₁, u₂) ∪ (1 − u₂, 1 − u₁)`.
 * `window_lo`, `window_hi`: for `x > 1` and primes in their cells, `⌊x^{B/DEN}⌋ < ∏_T rt` when `B` is below the box's
-  lower sum over `T`, and `∏_T rt ≤ ⌊x^{B/DEN}⌋` when `B` is above its upper sum.
+  lower sum over `T`, and `∏_T rt ≤ ⌊x^{B/DEN}⌋` when `B` is above its upper sum; `window_lo_gen` and
+  `window_hi_gen` for primes in ranges of any widths.
 * `prod_proper_le`: a proper subset of a strictly decreasing tuple of positive integers has product at most that of all
   but the last entry.
-* `TL_spec`, `TU_spec`: `SieveChain.chainTL_bound` and `chainTU_bound` (with `RouteOK` and `hII`) on a family of at most
-  `32` atoms with `ThrOK`, as bounds on `|famI(g_A) − famI(g_B)|`.
-* `P6_spec`: `SieveProp6.prop6` (with `RouteOK` and `hII`) on a family of at most `32` atoms with `ThrOK` and nonzero
+* `TL_spec`, `TU_spec`, `TR_spec`: `SieveChain.chainTL_bound`, `chainTU_bound` and `SieveChainR.chainTR_bound` (with
+  `RouteOK` and `hII`) on a family of at most `40` atoms with `ThrOK`, as bounds on `|famI(g_A) − famI(g_B)|`: the
+  product of a set of the primes in the lower window, the product of all of them in the upper one, and the product of
+  a set of them in the reflected window `(N₁/W₁, N₂/(W₀ + 1)]`.
+* `P6_spec`: `SieveProp6.prop6` (with `RouteOK` and `hII`) on a family of at most `40` atoms with `ThrOK` and nonzero
   coefficients (`NZ`), as a bound on `|famJ(g_A, z₀) − famJ(g_B, z₀)|`.
+* `P6IB_spec`: `SieveP6ib.prop6ib`, Proposition 6 with the bilinear Type I estimate (with `RouteOK` and `hII`), on a
+  family of at most `40` atoms with `ThrOK` whose tuples are strictly decreasing, with entries at least `q^{a₀}` and the
+  `i`-th in `[q^{lo_i}, q^{hi_i}]` for exponents meeting its conditions, as a bound on
+  `|famJ(g_A, z₀) − famJ(g_B, z₀)|`.
 
 These connect the families (`SieveDecomp`) with the Type II bounds and Proposition 6. `dw_eq`, `sum_dw_famI` and
 `sum_dw_famJ` write `SieveFamily.dw = gA − gB` on the families, and `RTg_eq_of_thrOK` and `RT_pivoted` identify a
@@ -26,12 +33,13 @@ The route's numbers and the certificate's grid parameters are parameters and the
 (`hII`); the case of the library's theorem, `Linnik22240R.route22240D` and `SieveGrid22240R.grid22240R`, takes
 `Linnik22240R.typeII22240d` for `hII`.
 
-The file imports `SieveBuch.lean`.
+The file imports `SieveBuch.lean` and `SieveP6ib.lean`.
 -/
 import SieveBuch
+import SieveP6ib
 
 open Real Finset SieveFamily SieveChain SieveDecomp SieveBuch SieveRoute
-open SieveCert (V DEN H U1 U2 cand dec inKK ne3 counted4 surelyEval cell inside subsetSums)
+open SieveCert (V DEN H U1 U2 cand inKK ne3 counted4 surelyEval cell inside subsetSums)
 
 namespace SieveLeaves
 
@@ -39,32 +47,12 @@ open Classical
 
 /-! ### A box surely evaluable has one set of primes in a window -/
 
-/-- Each subset-sum range of a box is the sum over a set of its sides. -/
-theorem subsetSums_ofFn {k : ℕ} (f : Fin k → ℕ × ℕ) :
-    ∀ s ∈ subsetSums (List.ofFn f), ∃ T : Finset (Fin k), s = (∑ t ∈ T, (f t).1, ∑ t ∈ T, (f t).2) := by
-  induction k with
-  | zero =>
-    intro s hs
-    simp only [List.ofFn_zero, subsetSums, List.mem_singleton] at hs
-    exact ⟨∅, by simp [hs]⟩
-  | succ k ih =>
-    intro s hs
-    simp only [List.ofFn_succ, subsetSums, List.mem_append, List.mem_map] at hs
-    rcases hs with hs | ⟨s', hs', rfl⟩
-    · obtain ⟨T, rfl⟩ := ih (fun t => f t.succ) s hs
-      exact ⟨T.map (Fin.succEmb k), by simp [Finset.sum_map]⟩
-    · obtain ⟨T, rfl⟩ := ih (fun t => f t.succ) s' hs'
-      refine ⟨insert 0 (T.map (Fin.succEmb k)), ?_⟩
-      have h0 : (0 : Fin (k + 1)) ∉ T.map (Fin.succEmb k) := by simp [Fin.succ_ne_zero]
-      rw [Finset.sum_insert h0, Finset.sum_insert h0]
-      simp [Finset.sum_map, add_comm]
-
 /-- A box surely evaluable has a set of primes whose sums over the box stay inside `U`. -/
 theorem exists_inside [SieveCert.Grid] {k : ℕ} (f : Fin k → ℕ × ℕ) (h : surelyEval (List.ofFn f) = true) :
     ∃ T : Finset (Fin k), inside (∑ t ∈ T, (f t).1) (∑ t ∈ T, (f t).2) = true := by
   simp only [SieveCert.surelyEval_eq, SieveCert.surelyEvalSpec, List.any_eq_true] at h
   obtain ⟨s, hs, hin⟩ := h
-  obtain ⟨T, rfl⟩ := subsetSums_ofFn f s hs
+  obtain ⟨T, rfl⟩ := SieveCert.subsetSums_ofFn f s hs
   exact ⟨T, hin⟩
 
 /-- For `x > 0` and primes in the cells `c`, `∏_T rt ≥ x^{Σ_T e_{c_t}/DEN}`. -/
@@ -246,19 +234,19 @@ variable (a₀ : ℝ)
 
 /-- **The lower window, on a family of atoms** (`SieveChain.chainTL_bound`). Assume `RouteOK` and the route's Type II
 estimate (`hII`). For `a₀ > 0` and `k'` there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a` mod `q`: a
-family of `(k' + 1)`-tuples of primes cut out by at most `32` atoms with thresholds as in `ThrOK`, each tuple strictly
+family of `(k' + 1)`-tuples of primes cut out by at most `40` atoms with thresholds as in `ThrOK`, each tuple strictly
 decreasing, with entries at least `q^{a₀}` and `P₁ < ∏_{i∈S} rt_i ≤ P₂`, where `q^{w₁L} ≤ P₁` and `P₂ ≤ q^{w₂L}`, has
 `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`. -/
 theorem TL_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (k' : ℕ) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
-      ∀ (spec : List (Atom (k' + 1))) (S : Finset (Fin (k' + 1))) (P₁ P₂ : ℕ), spec.length ≤ 32 → ThrOK q spec →
+      ∀ (spec : List (Atom (k' + 1))) (S : Finset (Fin (k' + 1))) (P₁ P₂ : ℕ), spec.length ≤ 40 → ThrOK q spec →
       (q : ℝ) ^ (w₁ * L) ≤ P₁ → (P₂ : ℝ) ≤ (q : ℝ) ^ (w₂ * L) →
       (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
         StrictAnti rt ∧ (∀ i, (q : ℝ) ^ a₀ ≤ rt i) ∧ P₁ < ∏ i ∈ S, rt i ∧ ∏ i ∈ S, rt i ≤ P₂) →
       |famI (gA q a) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec) -
           famI (gB q) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec)| ≤
         (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := chainTL_bound hII ha₀ k' 32 (Λ₁ := L + 1) (by linarith [L_pos])
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := chainTL_bound hII ha₀ k' 40 (Λ₁ := L + 1) (by linarith [L_pos])
   refine ⟨δ, hδ, q₀, fun q _ hq a ha spec S P₁ P₂ hlen hthr hP₁ hP₂ hreg => ?_⟩
   have hq1 : 1 ≤ q := Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
   have h := hq₀ q hq a ha S (spec.map Atom.toG) P₁ P₂ (by simpa using hlen) (c_le_of_thrOK hq1 hthr) hP₁ hP₂
@@ -267,12 +255,12 @@ theorem TL_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (k' : ℕ) :
 
 /-- **The upper window, on a family of atoms** (`SieveChain.chainTU_bound`). Assume `RouteOK` and the route's Type II
 estimate (`hII`). For `a₀ > 0` and `k'` there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a` mod `q`: a
-family of `(k' + 1)`-tuples of primes cut out by at most `32` atoms with thresholds as in `ThrOK`, each tuple strictly
+family of `(k' + 1)`-tuples of primes cut out by at most `40` atoms with thresholds as in `ThrOK`, each tuple strictly
 decreasing, with entries at least `q^{a₀}` and `W₀ < ∏rt ≤ W₁`, where `W₁ ≤ N₁`, `q^{w₁L} ≤ ⌊N₁/W₁⌋` and
 `⌊N₂/(W₀ + 1)⌋ ≤ q^{w₂L}`, has `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`. -/
 theorem TU_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (k' : ℕ) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
-      ∀ (spec : List (Atom (k' + 1))) (W₀ W₁ : ℕ), spec.length ≤ 32 → ThrOK q spec →
+      ∀ (spec : List (Atom (k' + 1))) (W₀ W₁ : ℕ), spec.length ≤ 40 → ThrOK q spec →
       (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
         StrictAnti rt ∧ (∀ i, (q : ℝ) ^ a₀ ≤ rt i) ∧ W₀ < ∏ i, rt i ∧ ∏ i, rt i ≤ W₁) →
       W₁ ≤ N1 q → (q : ℝ) ^ (w₁ * L) ≤ ((N1 q / W₁ : ℕ) : ℝ) →
@@ -280,13 +268,35 @@ theorem TU_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (k' : ℕ) :
       |famI (gA q a) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec) -
           famI (gB q) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec)| ≤
         (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := chainTU_bound hII ha₀ k' 32 (Λ₁ := L + 1) (by linarith [L_pos])
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := chainTU_bound hII ha₀ k' 40 (Λ₁ := L + 1) (by linarith [L_pos])
   refine ⟨δ, hδ, q₀, fun q _ hq a ha spec W₀ W₁ hlen hthr hreg hW₁ hP₁ hP₂ => ?_⟩
   have hq1 : 1 ≤ q := Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
   have h := hq₀ q hq a ha W₀ W₁ (spec.map Atom.toG) (by simpa using hlen) (c_le_of_thrOK hq1 hthr)
     (fun rt hp hΩ => by
       obtain ⟨hsa, hge, hlo, hhi⟩ := hreg rt hp ((holds_iff_sem hthr hp).1 hΩ)
       exact ⟨hge, fun i => hsa.antitone (Fin.le_last i), hlo, hhi⟩) hW₁ hP₁ hP₂
+  rwa [RTg_eq_of_thrOK hthr, sum_dw_famI, Complex.norm_real, Real.norm_eq_abs] at h
+
+/-- **The reflected window, on a family of atoms** (`SieveChainR.chainTR_bound`). Assume `RouteOK` and the route's
+Type II estimate (`hII`). For `a₀ > 0` and `k'` there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a` mod
+`q`: a family of `(k' + 1)`-tuples of primes cut out by at most `40` atoms with thresholds as in `ThrOK`, each tuple
+strictly decreasing, with entries at least `q^{a₀}` and `W₀ < ∏_{i∈U} rt_i ≤ W₁` for a set `U`, where `W₁ ≤ N₁`,
+`q^{w₁L} ≤ ⌊N₁/W₁⌋` and `⌊N₂/(W₀ + 1)⌋ ≤ q^{w₂L}`, has `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`. -/
+theorem TR_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (k' : ℕ) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∀ (spec : List (Atom (k' + 1))) (U : Finset (Fin (k' + 1))) (W₀ W₁ : ℕ), spec.length ≤ 40 → ThrOK q spec →
+      (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
+        StrictAnti rt ∧ (∀ i, (q : ℝ) ^ a₀ ≤ rt i) ∧ W₀ < ∏ i ∈ U, rt i ∧ ∏ i ∈ U, rt i ≤ W₁) →
+      W₁ ≤ N1 q → (q : ℝ) ^ (w₁ * L) ≤ ((N1 q / W₁ : ℕ) : ℝ) →
+      ((N2 q / (W₀ + 1) : ℕ) : ℝ) ≤ (q : ℝ) ^ (w₂ * L) →
+      |famI (gA q a) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec) -
+          famI (gB q) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec)| ≤
+        (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveChainR.chainTR_bound hII ha₀ k' 40 (Λ₁ := L + 1) (by linarith [L_pos])
+  refine ⟨δ, hδ, q₀, fun q _ hq a ha spec U W₀ W₁ hlen hthr hreg hW₁ hP₁ hP₂ => ?_⟩
+  have hq1 : 1 ≤ q := Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
+  have h := hq₀ q hq a ha U (spec.map Atom.toG) W₀ W₁ (by simpa using hlen) (c_le_of_thrOK hq1 hthr)
+    (fun rt hp hΩ => hreg rt hp ((holds_iff_sem hthr hp).1 hΩ)) hW₁ hP₁ hP₂
   rwa [RTg_eq_of_thrOK hthr, sum_dw_famI, Complex.norm_real, Real.norm_eq_abs] at h
 
 /-- An atom whose comparison has a nonzero coefficient. -/
@@ -329,20 +339,20 @@ variable (b₀ : ℝ)
 
 /-- **Proposition 6, on a family of atoms.** Assume `RouteOK` and the route's Type II estimate (`hII`). For `a₀ > 0`,
 `b₀` with `a₀ + b₀ < (1 − w₁)L` and `(1 − w₂)L < b₀ < L − 1`, `j`, and `η > 0` there are `δ > 0` and `q₀` such that for
-`q ≥ q₀` and a unit `a` mod `q`: for a family of `j`-tuples of primes cut out by at most `32` atoms with nonzero
+`q ≥ q₀` and a unit `a` mod `q`: for a family of `j`-tuples of primes cut out by at most `40` atoms with nonzero
 coefficients and thresholds as in `ThrOK`, each tuple with entries at least `z₀ = ⌈q^{a₀}⌉` and product `r` at most
 `⌊q^{b₀}⌋`, `Σ_{rt}(S(A_r, z₀) − S(B_r, z₀)/φ(q))` is at most `ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` in absolute value. -/
 theorem P6_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (hab : a₀ + b₀ < (1 - w₁) * L)
     (hb₁ : (1 - w₂) * L < b₀) (hb₂ : b₀ < L - 1) (j : ℕ) {η : ℝ} (hη : 0 < η) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
-      ∀ (spec : List (Atom j)), spec.length ≤ 32 → ThrOK q spec → (∀ A ∈ spec, NZ A) →
+      ∀ (spec : List (Atom j)), spec.length ≤ 40 → ThrOK q spec → (∀ A ∈ spec, NZ A) →
       (∀ rt : Fin j → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
         (∀ i, ⌈(q : ℝ) ^ a₀⌉₊ ≤ rt i) ∧ ∏ i, rt i ≤ ⌊(q : ℝ) ^ b₀⌋₊) →
       |famJ (gA q a) (N1 q) (N2 q) ⌈(q : ℝ) ^ a₀⌉₊ (famSet j (N2 q) spec) -
           famJ (gB q) (N1 q) (N2 q) ⌈(q : ℝ) ^ a₀⌉₊ (famSet j (N2 q) spec)| ≤
         η * (q : ℝ) ^ L / (q.totient * Real.log q) +
           (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveProp6.prop6 hII j 32 (Λ₁ := L + 1) (by linarith [L_pos]) ha₀ hab hb₁ hb₂ hη
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveProp6.prop6 hII j 40 (Λ₁ := L + 1) (by linarith [L_pos]) ha₀ hab hb₁ hb₂ hη
   refine ⟨δ, hδ, q₀, fun q _ hq a ha spec hlen hthr hnz hreg => ?_⟩
   have hq1 : 1 ≤ q := Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
   have h := hq₀ q hq a ha (pivoted (spec.map Atom.toG)) ((length_pivoted_le _).trans (by simpa using hlen))
@@ -356,5 +366,33 @@ theorem P6_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (hab : a₀ + b₀
         obtain ⟨i, hi⟩ := toG_nz A (hnz A hA)
         exact absurd (h0 i) hi⟩))
   rwa [RT_pivoted hthr hnz, sum_dw_famJ, Complex.norm_real, Real.norm_eq_abs] at h
+
+/-- **Proposition 6 with the bilinear estimate, on a family of atoms** (`SieveP6ib.prop6ib`). Assume `RouteOK` and the
+route's Type II estimate (`hII`). For `0 < a₀ < (w₂ − w₁)L`, `j`, boxes `lo`, `hi`, the sets `S₀` and `(S₁, eIn₁)`
+and the growth `t` of `prop6ib`'s rule, and `η > 0`, there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a`
+mod `q`: for a family of `j`-tuples of primes cut out by at most `40` atoms with thresholds as in `ThrOK`, each tuple
+strictly decreasing with entries at least `z₀ = ⌈q^{a₀}⌉` and in their boxes `[q^{lo_i}, q^{hi_i}]`,
+`Σ_{rt}(S(A_r, z₀) − S(B_r, z₀)/φ(q))` is at most `ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` in absolute value. -/
+theorem P6IB_spec [RouteOK] (hII : TypeIIAt) (ha₀ : 0 < a₀) (ha₀W : a₀ < (w₂ - w₁) * L) (j : ℕ)
+    (lo hi : Fin j → ℝ) (S₀ S₁ : Finset (Fin j)) (eIn₁ : Bool) {t : ℝ}
+    (hlo : w₁ * L - ∑ i ∈ S₀, lo i ≤ t)
+    (hmid : w₂ * L < ∑ i ∈ S₀, hi i → L - w₂ * L - max (w₂ * L) (∑ i ∈ S₀, lo i) ≤ t)
+    (hhi : ∑ i ∈ S₀, hi i < L - w₁ * L) (hD₁ : ∑ i ∈ S₁, hi i + (if eIn₁ then t else 0) < L - 1)
+    (hD₂ : ∑ i ∈ S₁, hi i + (if eIn₁ then t else 0) + 2 * (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) < L)
+    {η : ℝ} (hη : 0 < η) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∀ (spec : List (Atom j)), spec.length ≤ 40 → ThrOK q spec →
+      (∀ rt : Fin j → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
+        StrictAnti rt ∧ (∀ i, ⌈(q : ℝ) ^ a₀⌉₊ ≤ rt i) ∧ ∀ i, (q : ℝ) ^ lo i ≤ rt i ∧ (rt i : ℝ) ≤ (q : ℝ) ^ hi i) →
+      |famJ (gA q a) (N1 q) (N2 q) ⌈(q : ℝ) ^ a₀⌉₊ (famSet j (N2 q) spec) -
+          famJ (gB q) (N1 q) (N2 q) ⌈(q : ℝ) ^ a₀⌉₊ (famSet j (N2 q) spec)| ≤
+        η * (q : ℝ) ^ L / (q.totient * Real.log q) + (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveP6ib.prop6ib hII j 40 (Λ₁ := L + 1) (by linarith [L_pos]) ha₀ ha₀W lo hi S₀ S₁
+    eIn₁ hlo hmid hhi hD₁ hD₂ hη
+  refine ⟨δ, hδ, q₀, fun q _ hq a ha spec hlen hthr hreg => ?_⟩
+  have hq1 : 1 ≤ q := Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
+  have h := hq₀ q hq a ha (spec.map Atom.toG) (by simpa using hlen) (c_le_of_thrOK hq1 hthr)
+    (fun rt hp hΩ => hreg rt hp ((holds_iff_sem hthr hp).1 hΩ))
+  rwa [RTg_eq_of_thrOK hthr, sum_dw_famJ, Complex.norm_real, Real.norm_eq_abs] at h
 
 end SieveLeaves

@@ -17,7 +17,7 @@ takes them. `xq q = q^L`, and `cornerP z` is the set of primes of `(⌊z/4⌋, z
 * `D1_le`, `dropS_le_cost`, `shares_ev`, `sum_cost_div`: the dropped cells' sums are at most their certificate costs
   `cost/K` times `x/log x`, plus `δ′(1 + n²)x/log x` for `δ′ > 0` and large `x`, by `SieveRough.share2_of_cand`,
   `share4_of_counted4` and `share6_of_counted6` simultaneously for the finitely many cells, and the costs total at most `0.88` when the
-  certificate's total is at most `0.88K` (`htot`, `SieveCert.total_div_le`).
+  certificate's total is at most `0.88K` (`htot`, `SieveCert.totalR_div_le`).
 * `drop_ev`: given `htot`, for `ε > 0`, eventually `D1(g_B) ≤ φ(q)⁻¹(0.88 + ε)x/log x`.
 * `sum_cost_div_of`, `drop_ev_of`, `total_div_lt`: the same with the loss as a parameter, `total/K ≤ c` in
   the reals, so `D1(g_B) ≤ φ(q)⁻¹(c + ε)x/log x`; and `total < K` gives `total/K < 1`. The `0.88` forms are their cases.
@@ -33,8 +33,8 @@ The file imports `SieveQ.lean`.
 import SieveQ
 
 open Real Finset Filter SieveFamily SieveChain SieveDecomp SieveBuch SieveLeaves SieveQ SieveRough SieveRoute
-open SieveCert (V DEN H U1 U2 cand dec inKK ne3 counted4 surelyEval cell bound2 bound4 bound6 K total cost refcost
-  nC eC inKK5 ne5 counted6 dec4 refcost5 cost4)
+open SieveCert (V DEN H U1 U2 cand decR inKK ne3 counted4 surelyEval cell bound2 bound4 bound6 K totalR costR
+  refcostR nC eC inKK5 ne5 counted6 dec4R refcost5 cost4R)
 
 namespace SieveDrop
 
@@ -600,13 +600,13 @@ noncomputable def dropS5 (x : ℝ) (i j k l : ℕ) : ℝ :=
 
 /-- The dropped sums below the counted cell `(i, j, k, l)` of depth 4: the cell's `S4` as it is, or, when it is
 decomposed one level further, its counted cells of depth 6. -/
-noncomputable def dropS4 (x : ℝ) (i j k l : ℕ) : ℝ :=
-  if counted4 i j k l = true then (if dec4 i j k l = true then dropS5 x i j k l else S4 x i j k l) else 0
+noncomputable def dropS4 [SieveCert.Rule] (x : ℝ) (i j k l : ℕ) : ℝ :=
+  if counted4 i j k l = true then (if dec4R i j k l = true then dropS5 x i j k l else S4 x i j k l) else 0
 
 /-- The dropped cells' sums below the cell `(i, j)`. -/
-noncomputable def dropS (x : ℝ) (i j : ℕ) : ℝ :=
-  (if cand i j = true ∧ dec i j = false then S2 x i j else 0) +
-    (if cand i j = true ∧ dec i j = true then ∑ k ∈ range SieveCert.n,
+noncomputable def dropS [SieveCert.Rule] (x : ℝ) (i j : ℕ) : ℝ :=
+  (if cand i j = true ∧ decR i j = false then S2 x i j else 0) +
+    (if cand i j = true ∧ decR i j = true then ∑ k ∈ range SieveCert.n,
       (if inKK i j k = true ∧ ne3 i j k = true then ∑ l ∈ range (k + 1), dropS4 x i j k l else 0) else 0)
 
 omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
@@ -618,12 +618,12 @@ theorem dropS5_nonneg (x : ℝ) (i j k l : ℕ) : 0 ≤ dropS5 x i j k l := by
   · exact le_rfl
 
 omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem dropS4_nonneg (x : ℝ) (i j k l : ℕ) : 0 ≤ dropS4 x i j k l := by
+theorem dropS4_nonneg [SieveCert.Rule] (x : ℝ) (i j k l : ℕ) : 0 ≤ dropS4 x i j k l := by
   unfold dropS4
   split_ifs <;> first | exact le_rfl | exact dropS5_nonneg _ _ _ _ _ | exact S4_nonneg _ _ _ _ _
 
 omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem dropS_nonneg (x : ℝ) (i j : ℕ) : 0 ≤ dropS x i j := by
+theorem dropS_nonneg [SieveCert.Rule] (x : ℝ) (i j : ℕ) : 0 ≤ dropS x i j := by
   unfold dropS
   refine add_nonneg (by split_ifs <;> first | exact le_rfl | exact S2_nonneg _ _ _) ?_
   split_ifs
@@ -651,9 +651,9 @@ theorem D5_le {q : ℕ} (hq : 1 ≤ q) (i j k l : ℕ) :
 
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
 /-- The `B`-count of the dropped terms of depth 4 below `(i, j, k)`. -/
-theorem D4_le {q : ℕ} (hq : 1 ≤ q) (i j k : ℕ) (l : ℕ) :
+theorem D4_le [SieveCert.Rule] {q : ℕ} (hq : 1 ≤ q) (i j k : ℕ) (l : ℕ) :
     (if counted4 i j k l = true then
-      (if dec4 i j k l = true then (parQ q).D5 (gB q) i j k l else (parQ q).I (gB q) ((parQ q).S4c i j k l))
+      (if dec4R i j k l = true then (parQ q).D5 (gB q) i j k l else (parQ q).I (gB q) ((parQ q).S4c i j k l))
         else 0) ≤ (q.totient : ℝ)⁻¹ * dropS4 (xq q) i j k l := by
   unfold dropS4
   split_ifs with h1 h2
@@ -664,7 +664,7 @@ theorem D4_le {q : ℕ} (hq : 1 ≤ q) (i j k : ℕ) (l : ℕ) :
 omit [RouteOK] [Fits] in
 /-- **The dropped terms' `B`-count**, on a grid with `GridOK`, for `(parQ q).Good`, `z_top² ≤ 4N₁` and `q ≥ 1`: it is at
 most `φ(q)⁻¹(Σ_{i,j} dropS + n²|cornerP|²)`. -/
-theorem D1_le {q : ℕ} (G : (parQ q).Good) (hsq : (((parQ q).ztop : ℝ)) ^ 2 ≤ 4 * N1 q) (hq : 1 ≤ q) :
+theorem D1_le [SieveCert.Rule] {q : ℕ} (G : (parQ q).Good) (hsq : (((parQ q).ztop : ℝ)) ^ 2 ≤ 4 * N1 q) (hq : 1 ≤ q) :
     (parQ q).D1 (gB q) ≤ (q.totient : ℝ)⁻¹ * (∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n,
       dropS (xq q) i j + (SieveCert.n : ℝ) ^ 2 * ((cornerP (parQ q).ztop).card : ℝ) ^ 2) := by
   set C := ((cornerP (parQ q).ztop).card : ℝ) ^ 2 with hC
@@ -687,9 +687,9 @@ theorem D1_le {q : ℕ} (G : (parQ q).Good) (hsq : (((parQ q).ztop : ℝ)) ^ 2 �
   have hj' := Finset.mem_range.1 hj
   unfold dropS
   -- the cells of depth 2
-  have hA : (if (cand i j = true ∧ dec i j = false) ∨ (cand i j = false ∧ Par.sE2 i j = false) then
+  have hA : (if (cand i j = true ∧ decR i j = false) ∨ (cand i j = false ∧ Par.sE2 i j = false) then
       (parQ q).I (gB q) ((parQ q).S2c i j) else 0) ≤
-        (q.totient : ℝ)⁻¹ * ((if cand i j = true ∧ dec i j = false then S2 (xq q) i j else 0) + C) := by
+        (q.totient : ℝ)⁻¹ * ((if cand i j = true ∧ decR i j = false then S2 (xq q) i j else 0) + C) := by
     split_ifs with h1 h2
     · exact (drop2_le hq i j).trans (mul_le_mul_of_nonneg_left (by unfold S2; linarith) hφ)
     · rcases h1 with h1 | h1
@@ -698,8 +698,8 @@ theorem D1_le {q : ℕ} (G : (parQ q).Good) (hsq : (((parQ q).ztop : ℝ)) ^ 2 �
     · exact mul_nonneg hφ (add_nonneg (S2_nonneg _ _ _) hC0)
     · exact mul_nonneg hφ (by linarith)
   -- below the decomposed cells
-  have hB : (if cand i j = true ∧ dec i j = true then (parQ q).D3 (gB q) i j else 0) ≤
-      (q.totient : ℝ)⁻¹ * (if cand i j = true ∧ dec i j = true then ∑ k ∈ range SieveCert.n,
+  have hB : (if cand i j = true ∧ decR i j = true then (parQ q).D3 (gB q) i j else 0) ≤
+      (q.totient : ℝ)⁻¹ * (if cand i j = true ∧ decR i j = true then ∑ k ∈ range SieveCert.n,
         (if inKK i j k = true ∧ ne3 i j k = true then ∑ l ∈ range (k + 1), dropS4 (xq q) i j k l else 0)
           else 0) := by
     split_ifs with hcd
@@ -712,8 +712,8 @@ theorem D1_le {q : ℕ} (G : (parQ q).Good) (hsq : (((parQ q).ztop : ℝ)) ^ 2 �
         exact Finset.sum_le_sum fun l _ => D4_le hq i j k l
       · exact le_of_eq (mul_zero _).symm
     · exact le_of_eq (mul_zero _).symm
-  calc _ ≤ (q.totient : ℝ)⁻¹ * ((if cand i j = true ∧ dec i j = false then S2 (xq q) i j else 0) + C) +
-        (q.totient : ℝ)⁻¹ * (if cand i j = true ∧ dec i j = true then ∑ k ∈ range SieveCert.n,
+  calc _ ≤ (q.totient : ℝ)⁻¹ * ((if cand i j = true ∧ decR i j = false then S2 (xq q) i j else 0) + C) +
+        (q.totient : ℝ)⁻¹ * (if cand i j = true ∧ decR i j = true then ∑ k ∈ range SieveCert.n,
           (if inKK i j k = true ∧ ne3 i j k = true then ∑ l ∈ range (k + 1), dropS4 (xq q) i j k l else 0)
             else 0) :=
         add_le_add hA hB
@@ -772,45 +772,45 @@ theorem dropS5_le_cost {x δ' X : ℝ} (hδ' : 0 ≤ δ') (hX : 0 ≤ X) {i j k 
 
 omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
 /-- **A cell of depth 4: its dropped sums against its cost**: `dropS4 ≤ (cost4/K)X + δ'(1 + nC²)X`. -/
-theorem dropS4_le_cost {x δ' X : ℝ} (hδ' : 0 ≤ δ') (hX : 0 ≤ X) {i j k l : ℕ}
+theorem dropS4_le_cost [SieveCert.Rule] {x δ' X : ℝ} (hδ' : 0 ≤ δ') (hX : 0 ≤ X) {i j k l : ℕ}
     (h4 : counted4 i j k l = true →
       S4 x i j k l ≤ ((bound4 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) : ℝ) / K + δ') * X)
     (h6 : ∀ b < nC, ∀ c < nC, counted6 i j k l b c = true →
       S6 x i j k l b c ≤ ((bound6 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) (eC b) (eC c) : ℝ) / K +
         δ') * X) :
-    dropS4 x i j k l ≤ (cost4 i j k l : ℝ) / K * X + δ' * (1 + (nC : ℝ) * nC) * X := by
+    dropS4 x i j k l ≤ (cost4R i j k l : ℝ) / K * X + δ' * (1 + (nC : ℝ) * nC) * X := by
   have hδX : 0 ≤ δ' * X := mul_nonneg hδ' hX
   have hnn : 0 ≤ (nC : ℝ) * nC * (δ' * X) := by positivity
   have hE : δ' * (1 + (nC : ℝ) * nC) * X = δ' * X + (nC : ℝ) * nC * (δ' * X) := by ring
   unfold dropS4
   by_cases hc : counted4 i j k l = true
   · rw [ite_eq_left hc]
-    by_cases hd : dec4 i j k l = true
-    · rw [ite_eq_left hd, SieveCert.cost4_of_dec4 hc hd]
+    by_cases hd : dec4R i j k l = true
+    · rw [ite_eq_left hd, SieveCert.cost4R_of_dec4R hc hd]
       have := dropS5_le_cost hδ' hX h6
       linarith
-    · have hd' : dec4 i j k l = false := by simpa using hd
-      rw [ite_eq_right hd, SieveCert.cost4_of_not_dec4 hc hd']
+    · have hd' : dec4R i j k l = false := by simpa using hd
+      rw [ite_eq_right hd, SieveCert.cost4R_of_not_dec4R hc hd']
       have h4' := h4 hc
       have : ((bound4 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) : ℝ) / K + δ') * X =
           (bound4 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) : ℝ) / K * X + δ' * X := by ring
       linarith
   · have hc' : counted4 i j k l = false := by simpa using hc
-    rw [ite_eq_right hc, SieveCert.cost4_of_not_counted4 hc']
+    rw [ite_eq_right hc, SieveCert.cost4R_of_not_counted4 hc']
     rw [Nat.cast_zero, zero_div, zero_mul, zero_add]
     positivity
 
 omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
 /-- **A cell's dropped sums against its cost**, given the shares at `x`, for `δ' ≥ 0` and `X ≥ 0`:
 `dropS ≤ (cost/K)X + δ'(1 + n²(1 + nC²))X`. -/
-theorem dropS_le_cost {x δ' X : ℝ} (hδ' : 0 ≤ δ') (hX : 0 ≤ X) {i j : ℕ}
+theorem dropS_le_cost [SieveCert.Rule] {x δ' X : ℝ} (hδ' : 0 ≤ δ') (hX : 0 ≤ X) {i j : ℕ}
     (h2 : cand i j = true → S2 x i j ≤ ((bound2 (SieveCert.e i) (SieveCert.e j) : ℝ) / K + δ') * X)
     (h4 : ∀ k < SieveCert.n, ∀ l < SieveCert.n, counted4 i j k l = true →
       S4 x i j k l ≤ ((bound4 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) : ℝ) / K + δ') * X)
     (h6 : ∀ k < SieveCert.n, ∀ l < SieveCert.n, ∀ b < nC, ∀ c < nC, counted6 i j k l b c = true →
       S6 x i j k l b c ≤ ((bound6 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) (eC b) (eC c) : ℝ) / K +
         δ') * X) :
-    dropS x i j ≤ (cost i j : ℝ) / K * X +
+    dropS x i j ≤ (costR i j : ℝ) / K * X +
       δ' * (1 + (SieveCert.n : ℝ) * SieveCert.n * (1 + (nC : ℝ) * nC)) * X := by
   have hK : (0 : ℝ) < K := SieveCert.K_pos'
   have hn : (0 : ℝ) ≤ SieveCert.n := Nat.cast_nonneg _
@@ -821,13 +821,13 @@ theorem dropS_le_cost {x δ' X : ℝ} (hδ' : 0 ≤ δ') (hX : 0 ≤ X) {i j : �
       δ' * X + (SieveCert.n : ℝ) * SieveCert.n * E4 := by rw [hE4]; ring
   unfold dropS
   by_cases hc : cand i j = true
-  · by_cases hd : dec i j = true
-    · rw [ite_eq_right (show ¬(cand i j = true ∧ dec i j = false) by simp [hd]), zero_add,
-        ite_eq_left ⟨hc, hd⟩, SieveCert.cost_of_dec hc hd]
-      have hrc : ((refcost i j : ℕ) : ℝ) / K * X = ∑ k ∈ range SieveCert.n,
+  · by_cases hd : decR i j = true
+    · rw [ite_eq_right (show ¬(cand i j = true ∧ decR i j = false) by simp [hd]), zero_add,
+        ite_eq_left ⟨hc, hd⟩, SieveCert.costR_of_decR hc hd]
+      have hrc : ((refcostR i j : ℕ) : ℝ) / K * X = ∑ k ∈ range SieveCert.n,
           (if inKK i j k = true ∧ ne3 i j k = true then ∑ l ∈ range (k + 1),
-            (cost4 i j k l : ℝ) / K * X else 0) := by
-        rw [SieveCert.refcost_eq]
+            (cost4R i j k l : ℝ) / K * X else 0) := by
+        rw [SieveCert.refcostR_eq]
         push_cast
         rw [Finset.sum_div, Finset.sum_mul]
         refine Finset.sum_congr rfl fun k _ => ?_
@@ -849,7 +849,7 @@ theorem dropS_le_cost {x δ' X : ℝ} (hδ' : 0 ≤ δ') (hX : 0 ≤ X) {i j : �
       have hmain : ∑ k ∈ range SieveCert.n, (if inKK i j k = true ∧ ne3 i j k = true then
             ∑ l ∈ range (k + 1), dropS4 x i j k l else 0) ≤
           ∑ k ∈ range SieveCert.n, (if inKK i j k = true ∧ ne3 i j k = true then ∑ l ∈ range (k + 1),
-            (cost4 i j k l : ℝ) / K * X else 0) + ∑ k ∈ range SieveCert.n, ∑ _l ∈ range (k + 1), E4 := by
+            (cost4R i j k l : ℝ) / K * X else 0) + ∑ k ∈ range SieveCert.n, ∑ _l ∈ range (k + 1), E4 := by
         rw [← Finset.sum_add_distrib]
         refine Finset.sum_le_sum fun k hkm => ?_
         have hkn := Finset.mem_range.1 hkm
@@ -863,28 +863,28 @@ theorem dropS_le_cost {x δ' X : ℝ} (hδ' : 0 ≤ δ') (hX : 0 ≤ X) {i j : �
           linarith
       have h0 : 0 ≤ δ' * X := hδX
       linarith [hmain, hcount, hEtot]
-    · have hd' : dec i j = false := by simpa using hd
-      rw [ite_eq_left ⟨hc, hd'⟩, ite_eq_right (show ¬(cand i j = true ∧ dec i j = true) from fun h => hd h.2),
-        add_zero, SieveCert.cost_of_not_dec hc hd']
+    · have hd' : decR i j = false := by simpa using hd
+      rw [ite_eq_left ⟨hc, hd'⟩, ite_eq_right (show ¬(cand i j = true ∧ decR i j = true) from fun h => hd h.2),
+        add_zero, SieveCert.costR_of_not_decR hc hd']
       have h2' := h2 hc
       have h4 : ((bound2 (SieveCert.e i) (SieveCert.e j) : ℝ) / K + δ') * X =
           (bound2 (SieveCert.e i) (SieveCert.e j) : ℝ) / K * X + δ' * X := by ring
       have : 0 ≤ (SieveCert.n : ℝ) * SieveCert.n * E4 := by positivity
       linarith [hEtot]
   · have hc' : cand i j = false := by simpa using hc
-    rw [ite_eq_right (show ¬(cand i j = true ∧ dec i j = false) from fun h => hc h.1),
-      ite_eq_right (show ¬(cand i j = true ∧ dec i j = true) from fun h => hc h.1), add_zero]
-    have hcost : cost i j = 0 := by simp [cost, hc']
+    rw [ite_eq_right (show ¬(cand i j = true ∧ decR i j = false) from fun h => hc h.1),
+      ite_eq_right (show ¬(cand i j = true ∧ decR i j = true) from fun h => hc h.1), add_zero]
+    have hcost : costR i j = 0 := by simp [costR, hc']
     rw [hcost, Nat.cast_zero, zero_div, zero_mul, zero_add]
     positivity
 
 omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
 /-- The certificate's total in the reals, with the loss as a parameter: if `total/K ≤ c` in the reals (`htot`), then for
 `X ≥ 0`, `Σ_{i,j} (cost/K)X ≤ cX` (`sum_cost_div` is the case `c = 0.88`). -/
-theorem sum_cost_div_of {c : ℝ} (htot : (total : ℝ) / K ≤ c) (X : ℝ) (hX : 0 ≤ X) :
-    ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n, (cost i j : ℝ) / K * X ≤ c * X := by
-  have hsum : ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n, (cost i j : ℝ) / K * X = (total : ℝ) / K * X := by
-    rw [SieveCert.total_eq]
+theorem sum_cost_div_of [SieveCert.Rule] {c : ℝ} (htot : (totalR : ℝ) / K ≤ c) (X : ℝ) (hX : 0 ≤ X) :
+    ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n, (costR i j : ℝ) / K * X ≤ c * X := by
+  have hsum : ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n, (costR i j : ℝ) / K * X = (totalR : ℝ) / K * X := by
+    rw [SieveCert.totalR_eq]
     push_cast
     rw [Finset.sum_div, Finset.sum_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -894,13 +894,13 @@ theorem sum_cost_div_of {c : ℝ} (htot : (total : ℝ) / K ≤ c) (X : ℝ) (hX
 
 omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
 /-- The certificate's total in the reals: if `total ≤ 0.88K` (`htot`), then for `X ≥ 0`, `Σ_{i,j} (cost/K)X ≤ 0.88X`. -/
-theorem sum_cost_div (htot : total ≤ 88 * K / 100) (X : ℝ) (hX : 0 ≤ X) :
-    ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n, (cost i j : ℝ) / K * X ≤ 88 / 100 * X :=
-  sum_cost_div_of (SieveCert.total_div_le htot) X hX
+theorem sum_cost_div [SieveCert.Rule] (htot : totalR ≤ 88 * K / 100) (X : ℝ) (hX : 0 ≤ X) :
+    ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n, (costR i j : ℝ) / K * X ≤ 88 / 100 * X :=
+  sum_cost_div_of (SieveCert.totalR_div_le htot) X hX
 
 omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
 /-- If `total < K` in the natural numbers, then `total/K < 1` in the reals. -/
-theorem total_div_lt (htot : total < K) : (total : ℝ) / K < 1 := by
+theorem total_div_lt [SieveCert.Rule] (htot : totalR < K) : (totalR : ℝ) / K < 1 := by
   rw [div_lt_one SieveCert.K_pos']
   exact_mod_cast htot
 
@@ -948,7 +948,7 @@ theorem shares_ev [SieveCert.GridOKC] {δ' : ℝ} (hδ' : 0 < δ') : ∀ᶠ x : 
 /-- **The dropped terms, for large `q`, with the loss as a parameter**: for a route with `RouteOK` and grids with
 `GridOK` and `GridOKC` that fit (`Fits`), if `total/K ≤ c` in the reals (`htot`), then for `ε > 0`,
 `D1(g_B) ≤ φ(q)⁻¹(c + ε)x/log x` (`drop_ev` is the case `c = 0.88`). -/
-theorem drop_ev_of [SieveCert.GridOKC] {c : ℝ} (htot : (total : ℝ) / K ≤ c) {ε : ℝ} (hε : 0 < ε) :
+theorem drop_ev_of [SieveCert.GridOKC] [SieveCert.Rule] {c : ℝ} (htot : (totalR : ℝ) / K ≤ c) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ q : ℕ in atTop, LargeQ q →
     (parQ q).D1 (gB q) ≤ (q.totient : ℝ)⁻¹ * ((c + ε) * (xq q / Real.log (xq q))) := by
   have hn : (0 : ℝ) < SieveCert.n := by exact_mod_cast SieveCert.n_pos
@@ -968,14 +968,14 @@ theorem drop_ev_of [SieveCert.GridOKC] {c : ℝ} (htot : (total : ℝ) / K ≤ c
       c * X + ε / 2 * X := by
     calc ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n, dropS (xq q) i j
         ≤ ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n,
-            ((cost i j : ℝ) / K * X + δ' * Mc * X) := by
+            ((costR i j : ℝ) / K * X + δ' * Mc * X) := by
           refine Finset.sum_le_sum fun i hi => Finset.sum_le_sum fun j hj => ?_
           obtain ⟨h2, h46⟩ := hS i hi j hj
           exact dropS_le_cost hδ'0.le hX0 h2
             (fun k hk l hl hc => (h46 k (Finset.mem_range.2 hk) l (Finset.mem_range.2 hl)).1 hc)
             (fun k hk l hl b hb c hc' hc => (h46 k (Finset.mem_range.2 hk) l (Finset.mem_range.2 hl)).2 b
               (Finset.mem_range.2 hb) c (Finset.mem_range.2 hc') hc)
-      _ = ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n, (cost i j : ℝ) / K * X +
+      _ = ∑ i ∈ range SieveCert.n, ∑ j ∈ range SieveCert.n, (costR i j : ℝ) / K * X +
             SieveCert.n * SieveCert.n * (δ' * Mc * X) := by
           simp only [Finset.sum_add_distrib, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
           ring
@@ -997,9 +997,9 @@ theorem drop_ev_of [SieveCert.GridOKC] {c : ℝ} (htot : (total : ℝ) / K ≤ c
 /-- **The dropped terms, for large `q`**: for a route with `RouteOK` and grids with `GridOK` and `GridOKC` that fit
 (`Fits`), if the certificate's total is at most `0.88K` (`htot`), then for `ε > 0`,
 `D1(g_B) ≤ φ(q)⁻¹(0.88 + ε)x/log x`. -/
-theorem drop_ev [SieveCert.GridOKC] (htot : total ≤ 88 * K / 100) {ε : ℝ} (hε : 0 < ε) :
+theorem drop_ev [SieveCert.GridOKC] [SieveCert.Rule] (htot : totalR ≤ 88 * K / 100) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ q : ℕ in atTop, LargeQ q →
     (parQ q).D1 (gB q) ≤ (q.totient : ℝ)⁻¹ * ((88 / 100 + ε) * (xq q / Real.log (xq q))) :=
-  drop_ev_of (SieveCert.total_div_le htot) hε
+  drop_ev_of (SieveCert.totalR_div_le htot) hε
 
 end SieveDrop

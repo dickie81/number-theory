@@ -7,34 +7,41 @@ Plain statements. Throughout, `L`, `w₁` and `w₂` are a route's parameters (`
 `SieveCert.Grid`; where the Lean takes them, the route has `RouteOK`, the grid `GridOK`, and the two fit (`Fits`): with
 `u₁ = U1/DEN` and `u₂ = U2/DEN`, `w₁ < u₁`, `u₂ < w₂` and `Lu₂ > 1`. `parQ q` is the decomposition's parameters at
 `x = q^L`: `z₀ = ⌈q^{a₀}⌉` with `a₀ = L·V/DEN`, `z_top = ⌊√N₂⌋ + 1`, `X' = ⌊q^{b₀}⌋` with `b₀ = L(DEN − U2)/DEN`,
-`N₁ = ⌊q^L⌋` and `N₂ = ⌊2q^L⌋`. `LargeQ q` lists the facts about `q` that the proofs use, as powers of `q`.
+`N₁ = ⌊q^L⌋` and `N₂ = ⌊2q^L⌋`. `LargeQ q` lists the facts about `q` that the proofs use, as powers of `q`. The
+decomposition's rule (`SieveCert.Rule`) splits a box at `X'` when `limOK` passes it and takes it whole otherwise
+(`SieveBuch.Par.Xs`); `IBFits` says that the bilinear rule's exponent `Lnum/Lden` is the route's `L`.
 
-* `a0_b0`, `b0_gt`, `b0_lt`: `a₀ + b₀ < (1 − w₁)L`, `(1 − w₂)L < b₀ < L − 1`, Proposition 6's conditions. They come from
-  `Fits`.
+* `a0_b0`, `b0_gt`, `b0_lt`: `a₀ + b₀ < (1 − w₁)L` and `(1 − w₂)L < b₀ < L − 1`, Proposition 6's conditions, and
+  `a0_lt_W`: `a₀ < (w₂ − w₁)L`, Proposition 6-ib's. They come from `Fits`.
 * `largeQ_ev`, `good_of_large`: eventually `LargeQ q`, and then `(parQ q).Good`.
-* `box_leaf`: a box of cells that is surely evaluable is estimated by the lower window, or by the upper window when
-  its set is all the primes; a proper set in the upper window is impossible, since the product of all but the last
-  prime is at most `X'`.
-* `leaves_ev`: given the route's Type II estimate (`hII`), for `η > 0` there are `δ > 0` and `q₀` such that for `q ≥ q₀`
-  and `a` a unit mod `q`, `LargeQ q` holds and every leaf of `(parQ q).Leaves` is within
+* `box_leaf_gen`, `box_leaf`: a surely evaluable box is estimated by the lower window, or by the reflected one (`TRat`)
+  for the set of its primes whose product it puts there.
+* `famI_whole_gt`: a whole box's part above `N₁` is empty when its upper sum is below `DEN`.
+* `P6IB_box`, `P6IB_boxes`: for a box that the bilinear Type I test passes, `ibOK_sound`'s witnesses are
+  `SieveP6ib.prop6ib`'s conditions, so Proposition 6-ib holds on its families (`P6IBat`); uniformly over finitely many
+  boxes.
+* `leaves_ev`: for a rule with `RuleIB`, given the route's Type II estimate (`hII`), for `η > 0` there are `δ > 0` and
+  `q₀` such that for `q ≥ q₀` and `a` a unit mod `q`, `LargeQ q` holds and every leaf of `(parQ q).Leaves` is within
   `Err η δ q = ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)`.
 
 The proof of `leaves_ev`: for the tuple lengths of the tree, `SieveLeaves.TL_spec` (one to six primes), `TU_spec` (two
-to six) and `P6_spec` (none to five) give `δ` and `q₀`; `δ` is their minimum and `q₀` their maximum. Each leaf is then
-one of those estimates (`lf_j0` … `lf_e6`): its family has at most `32` atoms with thresholds in `[1, q^{L+1}]`
-(`len_*`, `thrOK_*`), and its windows are the integer ranges `P₁ = ⌊x^{u₁}⌋`, `P₂ = ⌊x^{u₂}⌋`, `W₀ = X'` and
-`W₁ = ⌊x^{1−u₁}⌋` (`P1_ok`, `P2_ok`, `W1_div`, `W0_div`).
+to five), `TR_spec` (two to six), `P6_spec` (none to five) and `P6IB_boxes` (the grid's boxes of two to five cells)
+give `δ` and `q₀`; `δ` is at most each of theirs and `q₀` is their sum. Each leaf is then one of those estimates
+(`lf_j0` … `lf_e6`): its family has at most `40` atoms with thresholds in `[1, q^{L+1}]` (`len_*`, `thrOK_*`), and its
+windows are the integer ranges `P₁ = ⌊x^{u₁}⌋`, `P₂ = ⌊x^{u₂}⌋`, `W₀ = X'` and `W₁ = ⌊x^{1−u₁}⌋` (`P1_ok`, `P2_ok`,
+`W1_div`, `W0_div`). A split box's term above `X'` goes by the upper window and its term at or below `X'` by
+Proposition 6; a whole box's term above `N₁` is empty, and its term at or below `N₁` goes by Proposition 6-ib.
 
 The route's numbers, the certificate's grid parameters and the Type II estimate are hypotheses (`hII`); the case
-of the library's theorem is `Linnik22240R.route22240D` and `SieveGrid22240R.grid22240R` (`Linnik22240R.fits22240R`), with
-`Linnik22240R.typeII22240d` for `hII`.
+of the library's theorem is `Linnik22240R.route22240D` and `SieveGrid22240R.grid22240R` (`Linnik22240R.fits22240R`),
+with `Linnik22240R.typeII22240d` for `hII`.
 
 The file imports `SieveLeaves.lean`.
 -/
 import SieveLeaves
 
 open Real Finset Filter SieveFamily SieveChain SieveDecomp SieveBuch SieveLeaves SieveRoute
-open SieveCert (V DEN H U1 U2 cand dec inKK ne3 counted4 surelyEval cell inside allowed lim)
+open SieveCert (V DEN H U1 U2 cand decR inKK ne3 counted4 surelyEval cell inside lim limOK nbOK)
 
 namespace SieveQ
 
@@ -48,6 +55,10 @@ class Fits [Route] [SieveCert.Grid] : Prop where
   w₁_lt : w₁ * DEN < U1
   U2_lt : (U2 : ℝ) < w₂ * DEN
   DEN_lt : (DEN : ℝ) < L * U2
+
+/-- **The bilinear Type I rule's exponent is the route's**: `Lnum/Lden = L`. -/
+class IBFits [Route] [SieveCert.IBPar] : Prop where
+  L_eq : (SieveCert.IBPar.Lnum : ℝ) / SieveCert.IBPar.Lden = L
 
 variable [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits]
 
@@ -223,7 +234,7 @@ theorem good_of_large {q : ℕ} (hL : LargeQ q) : (parQ q).Good := by
   have hN₂y := N2_ge q (by have := hL.q3; omega)
   have hN₂le := N2_le q
   have hsy := sqrt_x q
-  refine ⟨hy1, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨hy1, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · show ((q : ℝ) ^ L) ^ ((V : ℝ) / DEN) ≤ (⌈(q : ℝ) ^ a0⌉₊ : ℝ)
     rw [xpow]
     exact Nat.le_ceil _
@@ -297,6 +308,19 @@ theorem good_of_large {q : ℕ} (hL : LargeQ q) : (parQ q).Good := by
     have h3 : 0 < (q : ℝ) ^ L := by positivity
     rw [h1]
     nlinarith
+  · show ((q : ℝ) ^ L) ^ (((DEN : ℝ) - 1) / DEN) ≤ (N1 q : ℝ)
+    have h1 : ((q : ℝ) ^ L) ^ (((DEN : ℝ) - 1) / DEN) * (q : ℝ) ^ (L / (DEN : ℝ)) = (q : ℝ) ^ L := by
+      rw [xpow, ← Real.rpow_add hq0]
+      congr 1
+      field_simp
+      ring
+    have h2 := hL.hDEN
+    have h3 : 1 ≤ ((q : ℝ) ^ L) ^ (((DEN : ℝ) - 1) / DEN) := Real.one_le_rpow hy1.le (by
+      have : (1 : ℝ) ≤ DEN := by exact_mod_cast SieveCert.DEN_pos
+      positivity)
+    have h4 : (q : ℝ) ^ L - 1 < (N1 q : ℝ) := Nat.sub_one_lt_floor _
+    have h5 := mul_le_mul_of_nonneg_left h2 (show (0 : ℝ) ≤ ((q : ℝ) ^ L) ^ (((DEN : ℝ) - 1) / DEN) by positivity)
+    linarith
 
 /-! ### The families' atoms: thresholds, nonzero coefficients, lengths -/
 
@@ -398,6 +422,22 @@ theorem thr_bounds {q : ℕ} (hL : LargeQ q) :
     have := Nat.floor_le (show (0 : ℝ) ≤ (q : ℝ) ^ b0 by positivity)
     rw [hsplit]
     nlinarith
+
+/-- For `LargeQ q`, a split's threshold (`X'` or `N₁`) lies in `[1, q^{L+1}]`. -/
+theorem thr_Xs {q : ℕ} (hL : LargeQ q) (s : Bool) :
+    1 ≤ (parQ q).Xs s ∧ (parQ q).Xs s ≤ (q : ℝ) ^ (L + 1 : ℝ) := by
+  cases s with
+  | true => simpa [Par.Xs] using (thr_bounds hL).2.2
+  | false =>
+    have hq3 : (3 : ℝ) ≤ q := by exact_mod_cast hL.q3
+    have hq1 : (1 : ℝ) ≤ q := by linarith
+    have hy3 : (3 : ℝ) ≤ (q : ℝ) ^ L := le_trans hq3 (le_of_eq_of_le (Real.rpow_one _).symm
+      (Real.rpow_le_rpow_of_exponent_le hq1 (by route_num)))
+    have hN : (q : ℝ) ^ L - 1 < (N1 q : ℝ) := Nat.sub_one_lt_floor _
+    have hN' : (N1 q : ℝ) ≤ (q : ℝ) ^ L := Nat.floor_le (by positivity)
+    have hLL : (q : ℝ) ^ L ≤ (q : ℝ) ^ (L + 1 : ℝ) := Real.rpow_le_rpow_of_exponent_le hq1 (by linarith)
+    simp only [Par.Xs, Bool.false_eq_true, ite_false]
+    exact ⟨by show (1 : ℝ) ≤ (N1 q : ℝ); linarith, by show (N1 q : ℝ) ≤ _; linarith⟩
 
 /-! ### The windows' thresholds for large `q` -/
 
@@ -566,10 +606,10 @@ theorem thrOK_S2c {i j : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) : Th
   thrOK_append (thrOK_S2 hL hi) (thrOK_cellA (q1 hL) 1 hj)
 
 theorem thrOK_S2le {i j : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) : ThrOK q ((parQ q).S2le i j) :=
-  thrOK_append (thrOK_S2c hL hi hj) (thrOK_single (thr_bounds hL).2.2.1 (thr_bounds hL).2.2.2)
+  thrOK_append (thrOK_S2c hL hi hj) (thrOK_single (thr_Xs hL _).1 (thr_Xs hL _).2)
 
 theorem thrOK_S2gt {i j : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) : ThrOK q ((parQ q).S2gt i j) :=
-  thrOK_append (thrOK_S2c hL hi hj) (thrOK_single (thr_bounds hL).2.2.1 (thr_bounds hL).2.2.2)
+  thrOK_append (thrOK_S2c hL hi hj) (thrOK_single (thr_Xs hL _).1 (thr_Xs hL _).2)
 
 theorem thrOK_S3 {i j : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) : ThrOK q ((parQ q).S3 i j) :=
   thrOK_extS (thrOK_S2le hL hi hj) (thr_bounds hL).1.1 (thr_bounds hL).1.2 (q1 hL)
@@ -580,11 +620,11 @@ theorem thrOK_S3c {i j k : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) (h
 
 theorem thrOK_S3le {i j k : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) (hk : k < SieveCert.n) :
     ThrOK q ((parQ q).S3le i j k) :=
-  thrOK_append (thrOK_S3c hL hi hj hk) (thrOK_single (thr_bounds hL).2.2.1 (thr_bounds hL).2.2.2)
+  thrOK_append (thrOK_S3c hL hi hj hk) (thrOK_single (thr_Xs hL _).1 (thr_Xs hL _).2)
 
 theorem thrOK_S3gt {i j k : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) (hk : k < SieveCert.n) :
     ThrOK q ((parQ q).S3gt i j k) :=
-  thrOK_append (thrOK_S3c hL hi hj hk) (thrOK_single (thr_bounds hL).2.2.1 (thr_bounds hL).2.2.2)
+  thrOK_append (thrOK_S3c hL hi hj hk) (thrOK_single (thr_Xs hL _).1 (thr_Xs hL _).2)
 
 theorem thrOK_S4 {i j k : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) (hk : k < SieveCert.n) :
     ThrOK q ((parQ q).S4 i j k) :=
@@ -596,7 +636,7 @@ theorem thrOK_S4c {i j k l : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) 
 
 end Families
 
-omit [Fits] in
+omit [SieveCert.GridOK] [Fits] in
 theorem thrOK_cellAC {q k : ℕ} [SieveCert.GridOKC] (hq : 1 ≤ q) (t : Fin k) {c : ℕ} (hc : c < SieveCert.nC) :
     ThrOK q (cellAC t ((q : ℝ) ^ L) c) := by
   have := @thrOK_cellA _ _ (SieveCert.Gc) SieveCert.GridOKC.ok q k hq t c
@@ -609,11 +649,11 @@ include hL
 
 theorem thrOK_S4cle {i j k l : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) (hk : k < SieveCert.n)
     (hl : l < SieveCert.n) : ThrOK q ((parQ q).S4cle i j k l) :=
-  thrOK_append (thrOK_S4c hL hi hj hk hl) (thrOK_single (thr_bounds hL).2.2.1 (thr_bounds hL).2.2.2)
+  thrOK_append (thrOK_S4c hL hi hj hk hl) (thrOK_single (thr_Xs hL _).1 (thr_Xs hL _).2)
 
 theorem thrOK_S4cgt {i j k l : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) (hk : k < SieveCert.n)
     (hl : l < SieveCert.n) : ThrOK q ((parQ q).S4cgt i j k l) :=
-  thrOK_append (thrOK_S4c hL hi hj hk hl) (thrOK_single (thr_bounds hL).2.2.1 (thr_bounds hL).2.2.2)
+  thrOK_append (thrOK_S4c hL hi hj hk hl) (thrOK_single (thr_Xs hL _).1 (thr_Xs hL _).2)
 
 theorem thrOK_S5 {i j k l : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) (hk : k < SieveCert.n)
     (hl : l < SieveCert.n) : ThrOK q ((parQ q).S5 i j k l) :=
@@ -625,11 +665,11 @@ theorem thrOK_S5c [SieveCert.GridOKC] {i j k l b : ℕ} (hi : i < SieveCert.n) (
 
 theorem thrOK_S5le [SieveCert.GridOKC] {i j k l b : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n)
     (hk : k < SieveCert.n) (hl : l < SieveCert.n) (hb : b < SieveCert.nC) : ThrOK q ((parQ q).S5le i j k l b) :=
-  thrOK_append (thrOK_S5c hL hi hj hk hl hb) (thrOK_single (thr_bounds hL).2.2.1 (thr_bounds hL).2.2.2)
+  thrOK_append (thrOK_S5c hL hi hj hk hl hb) (thrOK_single (thr_Xs hL _).1 (thr_Xs hL _).2)
 
 theorem thrOK_S5gt [SieveCert.GridOKC] {i j k l b : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n)
     (hk : k < SieveCert.n) (hl : l < SieveCert.n) (hb : b < SieveCert.nC) : ThrOK q ((parQ q).S5gt i j k l b) :=
-  thrOK_append (thrOK_S5c hL hi hj hk hl hb) (thrOK_single (thr_bounds hL).2.2.1 (thr_bounds hL).2.2.2)
+  thrOK_append (thrOK_S5c hL hi hj hk hl hb) (thrOK_single (thr_Xs hL _).1 (thr_Xs hL _).2)
 
 theorem thrOK_S6 [SieveCert.GridOKC] {i j k l b : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n)
     (hk : k < SieveCert.n) (hl : l < SieveCert.n) (hb : b < SieveCert.nC) : ThrOK q ((parQ q).S6 i j k l b) :=
@@ -705,50 +745,50 @@ theorem nz_S5le (q i j k l b : ℕ) : ∀ A ∈ (parQ q).S5le i j k l b, NZ A :=
   exact @nz_cellA (SieveCert.Gc) 5 4 ((q : ℝ) ^ L) b
 
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S1c (q i : ℕ) : ((parQ q).S1c i).length ≤ 32 := by
+theorem len_S1c (q i : ℕ) : ((parQ q).S1c i).length ≤ 40 := by
   simp [Par.S1c, Par.S1, cellA]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S2c (q i j : ℕ) : ((parQ q).S2c i j).length ≤ 32 := by
+theorem len_S2c (q i j : ℕ) : ((parQ q).S2c i j).length ≤ 40 := by
   simp [Par.S2c, Par.S2, Par.S1c, Par.S1, cellA, extS]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S2le (q i j : ℕ) : ((parQ q).S2le i j).length ≤ 32 := by
+theorem len_S2le (q i j : ℕ) : ((parQ q).S2le i j).length ≤ 40 := by
   simp [Par.S2le, Par.S2c, Par.S2, Par.S1c, Par.S1, cellA, extS]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S2gt (q i j : ℕ) : ((parQ q).S2gt i j).length ≤ 32 := by
+theorem len_S2gt (q i j : ℕ) : ((parQ q).S2gt i j).length ≤ 40 := by
   simp [Par.S2gt, Par.S2c, Par.S2, Par.S1c, Par.S1, cellA, extS]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S3c (q i j k : ℕ) : ((parQ q).S3c i j k).length ≤ 32 := by
+theorem len_S3c (q i j k : ℕ) : ((parQ q).S3c i j k).length ≤ 40 := by
   simp [Par.S3c, Par.S3, Par.S2le, Par.S2c, Par.S2, Par.S1c, Par.S1, cellA, extS]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S3le (q i j k : ℕ) : ((parQ q).S3le i j k).length ≤ 32 := by
+theorem len_S3le (q i j k : ℕ) : ((parQ q).S3le i j k).length ≤ 40 := by
   simp [Par.S3le, Par.S3c, Par.S3, Par.S2le, Par.S2c, Par.S2, Par.S1c, Par.S1, cellA, extS]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S3gt (q i j k : ℕ) : ((parQ q).S3gt i j k).length ≤ 32 := by
+theorem len_S3gt (q i j k : ℕ) : ((parQ q).S3gt i j k).length ≤ 40 := by
   simp [Par.S3gt, Par.S3c, Par.S3, Par.S2le, Par.S2c, Par.S2, Par.S1c, Par.S1, cellA, extS]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S4c (q i j k l : ℕ) : ((parQ q).S4c i j k l).length ≤ 32 := by
+theorem len_S4c (q i j k l : ℕ) : ((parQ q).S4c i j k l).length ≤ 40 := by
   simp [Par.S4c, Par.S4, Par.S3le, Par.S3c, Par.S3, Par.S2le, Par.S2c, Par.S2, Par.S1c, Par.S1, cellA, extS]
 
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S4cle (q i j k l : ℕ) : ((parQ q).S4cle i j k l).length ≤ 32 := by
+theorem len_S4cle (q i j k l : ℕ) : ((parQ q).S4cle i j k l).length ≤ 40 := by
   simp [Par.S4cle, Par.S4c, Par.S4, Par.S3le, Par.S3c, Par.S3, Par.S2le, Par.S2c, Par.S2, Par.S1c, Par.S1, cellA, extS]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S4cgt (q i j k l : ℕ) : ((parQ q).S4cgt i j k l).length ≤ 32 := by
+theorem len_S4cgt (q i j k l : ℕ) : ((parQ q).S4cgt i j k l).length ≤ 40 := by
   simp [Par.S4cgt, Par.S4c, Par.S4, Par.S3le, Par.S3c, Par.S3, Par.S2le, Par.S2c, Par.S2, Par.S1c, Par.S1, cellA, extS]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S5c (q i j k l b : ℕ) : ((parQ q).S5c i j k l b).length ≤ 32 := by
+theorem len_S5c (q i j k l b : ℕ) : ((parQ q).S5c i j k l b).length ≤ 40 := by
   simp [Par.S5c, Par.S5, Par.S4cle, Par.S4c, Par.S4, Par.S3le, Par.S3c, Par.S3, Par.S2le, Par.S2c, Par.S2, Par.S1c,
     Par.S1, cellAC, cellA, extS]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S5le (q i j k l b : ℕ) : ((parQ q).S5le i j k l b).length ≤ 32 := by
+theorem len_S5le (q i j k l b : ℕ) : ((parQ q).S5le i j k l b).length ≤ 40 := by
   simp [Par.S5le, Par.S5c, Par.S5, Par.S4cle, Par.S4c, Par.S4, Par.S3le, Par.S3c, Par.S3, Par.S2le, Par.S2c, Par.S2,
     Par.S1c, Par.S1, cellAC, cellA, extS]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S5gt (q i j k l b : ℕ) : ((parQ q).S5gt i j k l b).length ≤ 32 := by
+theorem len_S5gt (q i j k l b : ℕ) : ((parQ q).S5gt i j k l b).length ≤ 40 := by
   simp [Par.S5gt, Par.S5c, Par.S5, Par.S4cle, Par.S4c, Par.S4, Par.S3le, Par.S3c, Par.S3, Par.S2le, Par.S2c, Par.S2,
     Par.S1c, Par.S1, cellAC, cellA, extS]
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem len_S6c (q i j k l b c : ℕ) : ((parQ q).S6c i j k l b c).length ≤ 32 := by
+theorem len_S6c (q i j k l b c : ℕ) : ((parQ q).S6c i j k l b c).length ≤ 40 := by
   simp [Par.S6c, Par.S6, Par.S5le, Par.S5c, Par.S5, Par.S4cle, Par.S4c, Par.S4, Par.S3le, Par.S3c, Par.S3, Par.S2le,
     Par.S2c, Par.S2, Par.S1c, Par.S1, cellAC, cellA, extS]
 
@@ -756,7 +796,7 @@ theorem len_S6c (q i j k l b c : ℕ) : ((parQ q).S6c i j k l b c).length ≤ 32
 
 /-- The lower window's estimate at `q`, with error `E`. -/
 def TLat (q : ℕ) (a : ZMod q) (k' : ℕ) (E : ℝ) : Prop :=
-  ∀ (spec : List (Atom (k' + 1))) (S : Finset (Fin (k' + 1))) (P₁ P₂ : ℕ), spec.length ≤ 32 → ThrOK q spec →
+  ∀ (spec : List (Atom (k' + 1))) (S : Finset (Fin (k' + 1))) (P₁ P₂ : ℕ), spec.length ≤ 40 → ThrOK q spec →
     (q : ℝ) ^ (w₁ * L) ≤ P₁ → (P₂ : ℝ) ≤ (q : ℝ) ^ (w₂ * L) →
     (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
       StrictAnti rt ∧ (∀ i, (q : ℝ) ^ a0 ≤ rt i) ∧ P₁ < ∏ i ∈ S, rt i ∧ ∏ i ∈ S, rt i ≤ P₂) →
@@ -765,7 +805,7 @@ def TLat (q : ℕ) (a : ZMod q) (k' : ℕ) (E : ℝ) : Prop :=
 
 /-- The upper window's estimate at `q`, with error `E`. -/
 def TUat (q : ℕ) (a : ZMod q) (k' : ℕ) (E : ℝ) : Prop :=
-  ∀ (spec : List (Atom (k' + 1))) (W₀ W₁ : ℕ), spec.length ≤ 32 → ThrOK q spec →
+  ∀ (spec : List (Atom (k' + 1))) (W₀ W₁ : ℕ), spec.length ≤ 40 → ThrOK q spec →
     (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
       StrictAnti rt ∧ (∀ i, (q : ℝ) ^ a0 ≤ rt i) ∧ W₀ < ∏ i, rt i ∧ ∏ i, rt i ≤ W₁) →
     W₁ ≤ N1 q → (q : ℝ) ^ (w₁ * L) ≤ ((N1 q / W₁ : ℕ) : ℝ) →
@@ -773,11 +813,31 @@ def TUat (q : ℕ) (a : ZMod q) (k' : ℕ) (E : ℝ) : Prop :=
     |famI (gA q a) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec) -
         famI (gB q) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec)| ≤ E
 
+/-- The reflected window's estimate at `q`, for a set `U` of the primes, with error `E`. -/
+def TRat (q : ℕ) (a : ZMod q) (k' : ℕ) (E : ℝ) : Prop :=
+  ∀ (spec : List (Atom (k' + 1))) (U : Finset (Fin (k' + 1))) (W₀ W₁ : ℕ), spec.length ≤ 40 → ThrOK q spec →
+    (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
+      StrictAnti rt ∧ (∀ i, (q : ℝ) ^ a0 ≤ rt i) ∧ W₀ < ∏ i ∈ U, rt i ∧ ∏ i ∈ U, rt i ≤ W₁) →
+    W₁ ≤ N1 q → (q : ℝ) ^ (w₁ * L) ≤ ((N1 q / W₁ : ℕ) : ℝ) →
+    ((N2 q / (W₀ + 1) : ℕ) : ℝ) ≤ (q : ℝ) ^ (w₂ * L) →
+    |famI (gA q a) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec) -
+        famI (gB q) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec)| ≤ E
+
 /-- Proposition 6's estimate at `q`, with error `E`. -/
 def P6at (q : ℕ) (a : ZMod q) (j : ℕ) (E : ℝ) : Prop :=
-  ∀ (spec : List (Atom j)), spec.length ≤ 32 → ThrOK q spec → (∀ A ∈ spec, NZ A) →
+  ∀ (spec : List (Atom j)), spec.length ≤ 40 → ThrOK q spec → (∀ A ∈ spec, NZ A) →
     (∀ rt : Fin j → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
       (∀ i, ⌈(q : ℝ) ^ a0⌉₊ ≤ rt i) ∧ ∏ i, rt i ≤ ⌊(q : ℝ) ^ b0⌋₊) →
+    |famJ (gA q a) (N1 q) (N2 q) ⌈(q : ℝ) ^ a0⌉₊ (famSet j (N2 q) spec) -
+        famJ (gB q) (N1 q) (N2 q) ⌈(q : ℝ) ^ a0⌉₊ (famSet j (N2 q) spec)| ≤ E
+
+/-- Proposition 6 with the bilinear estimate at `q`, for families in the box `f` (its `t`-th prime in
+`[x^{(f t).1/DEN}, x^{(f t).2/DEN})`), with error `E`. -/
+def P6IBat (q : ℕ) (a : ZMod q) {j : ℕ} (f : Fin j → ℕ × ℕ) (E : ℝ) : Prop :=
+  ∀ (spec : List (Atom j)), spec.length ≤ 40 → ThrOK q spec →
+    (∀ rt : Fin j → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
+      StrictAnti rt ∧ (∀ i, ⌈(q : ℝ) ^ a0⌉₊ ≤ rt i) ∧
+        ∀ t, xq q ^ (((f t).1 : ℝ) / DEN) ≤ rt t ∧ (rt t : ℝ) < xq q ^ (((f t).2 : ℝ) / DEN)) →
     |famJ (gA q a) (N1 q) (N2 q) ⌈(q : ℝ) ^ a0⌉₊ (famSet j (N2 q) spec) -
         famJ (gB q) (N1 q) (N2 q) ⌈(q : ℝ) ^ a0⌉₊ (famSet j (N2 q) spec)| ≤ E
 
@@ -790,63 +850,30 @@ theorem TUat.mono {q : ℕ} {a : ZMod q} {k' : ℕ} {E E' : ℝ} (h : TUat q a k
   fun spec W₀ W₁ h1 h2 h3 h4 h5 h6 => (h spec W₀ W₁ h1 h2 h3 h4 h5 h6).trans hE
 
 omit [RouteOK] [SieveCert.GridOK] [Fits] in
+theorem TRat.mono {q : ℕ} {a : ZMod q} {k' : ℕ} {E E' : ℝ} (h : TRat q a k' E) (hE : E ≤ E') : TRat q a k' E' :=
+  fun spec U W₀ W₁ h1 h2 h3 h4 h5 h6 => (h spec U W₀ W₁ h1 h2 h3 h4 h5 h6).trans hE
+
+omit [RouteOK] [SieveCert.GridOK] [Fits] in
 theorem P6at.mono {q : ℕ} {a : ZMod q} {j : ℕ} {E E' : ℝ} (h : P6at q a j E) (hE : E ≤ E') : P6at q a j E' :=
   fun spec h1 h2 h3 h4 => (h spec h1 h2 h3 h4).trans hE
 
-/-- **A box surely evaluable.** Let the route have `RouteOK` and the grid `GridOK`, let the two fit (`Fits`), and let
-`LargeQ q`, `E ≥ 0`, and the windows' estimates at `E` (`TLat`, `TUat`). Let a family of `(k' + 1)`-tuples of primes be
-cut out by at most `32` atoms with thresholds as in `ThrOK`, each tuple strictly decreasing, with entries at least `z₀`
-in the cells `c`, and the product of all but the last entry at most `X'`. If the box of the cells `c` is surely
-evaluable, the family's `|A − B/φ(q)|` is at most `E`: it is estimated by the lower window, or by the upper window when
-its set is all the primes; a proper set in the upper window is impossible below `X'`. -/
-theorem box_leaf {q : ℕ} (hL : LargeQ q) {a : ZMod q} {k' : ℕ} {E : ℝ} (hE : 0 ≤ E) (hTL : TLat q a k' E)
-    (hTU : TUat q a k' E) {spec : List (Atom (k' + 1))} (hlen : spec.length ≤ 32) (hthr : ThrOK q spec)
-    (c : Fin (k' + 1) → ℕ)
-    (hsem : ∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
-      StrictAnti rt ∧ (∀ i, (parQ q).z₀ ≤ rt i) ∧ (∀ t, InC (xq q) (c t) (rt t)) ∧
-        ∏ t ∈ Finset.univ.erase (Fin.last k'), rt t ≤ (parQ q).Xp)
-    (hsE : surelyEval (List.ofFn fun t => cell (c t)) = true) :
-    |famI (gA q a) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec) -
-        famI (gB q) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec)| ≤ E := by
-  have hq1 : (1 : ℝ) < xq q := Real.one_lt_rpow (by exact_mod_cast (show 1 < q by have := hL.q3; omega))
-    (by route_num)
-  have ha0 : ∀ rt : Fin (k' + 1) → ℕ, (∀ i, (parQ q).z₀ ≤ rt i) → ∀ i, (q : ℝ) ^ a0 ≤ rt i :=
-    fun rt h i => (Nat.le_ceil _).trans (by exact_mod_cast h i)
-  obtain ⟨T, hT⟩ := exists_inside _ hsE
-  simp only [inside, cell, Bool.or_eq_true, Bool.and_eq_true] at hT
-  rcases hT with ⟨hlo, hhi⟩ | ⟨hlo, hhi⟩ <;> replace hlo := of_decide_eq_true hlo <;>
-    replace hhi := of_decide_eq_true hhi
-  · refine hTL spec T (P1 q) (P2 q) hlen hthr (P1_ok hL) (P2_ok hL) fun rt hp hs => ?_
-    obtain ⟨hsa, hz₀, hc, -⟩ := hsem rt hp hs
-    exact ⟨hsa, ha0 rt hz₀, window_lo hq1 hc hlo, window_hi hq1 hc hhi⟩
-  · by_cases hTu : T = Finset.univ
-    · subst hTu
-      refine hTU spec (parQ q).Xp (W1 q) hlen hthr (fun rt hp hs => ?_) (W1_le hL) (W1_div hL) (W0_div hL)
-      obtain ⟨hsa, hz₀, hc, -⟩ := hsem rt hp hs
-      refine ⟨hsa, ha0 rt hz₀, ?_, window_hi hq1 hc hhi⟩
-      rw [Xp_eq]
-      exact window_lo hq1 hc hlo
-    · have hempty : ∀ rt ∈ famSet (k' + 1) (N2 q) spec, False := by
-        intro rt hrt
-        rw [mem_famSet] at hrt
-        obtain ⟨hsa, -, hc, hX⟩ := hsem rt (fun i => (hrt.1 i).2) hrt.2
-        have h1 := window_lo hq1 hc hlo
-        have h2 := prod_proper_le hsa (fun t => (hrt.1 t).2.one_lt.le) hTu
-        rw [← Xp_eq] at h1
-        omega
-      rw [famI_eq_zero _ _ _ _ (fun rt hrt => (hempty rt hrt).elim),
-        famI_eq_zero _ _ _ _ (fun rt hrt => (hempty rt hrt).elim), sub_zero, abs_zero]
-      exact hE
+omit [RouteOK] [SieveCert.GridOK] [Fits] in
+theorem P6IBat.mono {q : ℕ} {a : ZMod q} {j : ℕ} {f : Fin j → ℕ × ℕ} {E E' : ℝ} (h : P6IBat q a f E)
+    (hE : E ≤ E') : P6IBat q a f E' :=
+  fun spec h1 h2 h3 => (h spec h1 h2 h3).trans hE
 
-/-- **A box surely evaluable, with boxes of any widths.** As `box_leaf`, for a box `f : Fin (k' + 1) → ℕ × ℕ` whose
-`t`-th prime satisfies `x^{(f t).1/DEN} ≤ rt_t < x^{(f t).2/DEN}`. -/
-theorem box_leaf_gen {q : ℕ} (hL : LargeQ q) {a : ZMod q} {k' : ℕ} {E : ℝ} (hE : 0 ≤ E) (hTL : TLat q a k' E)
-    (hTU : TUat q a k' E) {spec : List (Atom (k' + 1))} (hlen : spec.length ≤ 32) (hthr : ThrOK q spec)
+/-- **A box surely evaluable, with boxes of any widths.** Let the route have `RouteOK` and the grid `GridOK`, let the
+two fit (`Fits`), and let `LargeQ q` and the windows' estimates at `E` (`TLat`, `TRat`). Let a family of
+`(k' + 1)`-tuples of primes be cut out by at most `40` atoms with thresholds as in `ThrOK`, each tuple strictly
+decreasing, with entries at least `z₀` and its `t`-th prime in `[x^{(f t).1/DEN}, x^{(f t).2/DEN})`. If the box `f` is
+surely evaluable, the family's `|A − B/φ(q)|` is at most `E`: a set of its primes has its product in the lower window,
+or in the reflected one. -/
+theorem box_leaf_gen {q : ℕ} (hL : LargeQ q) {a : ZMod q} {k' : ℕ} {E : ℝ} (hTL : TLat q a k' E)
+    (hTR : TRat q a k' E) {spec : List (Atom (k' + 1))} (hlen : spec.length ≤ 40) (hthr : ThrOK q spec)
     (f : Fin (k' + 1) → ℕ × ℕ)
     (hsem : ∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
       StrictAnti rt ∧ (∀ i, (parQ q).z₀ ≤ rt i) ∧
-        (∀ t, xq q ^ (((f t).1 : ℝ) / DEN) ≤ rt t ∧ (rt t : ℝ) < xq q ^ (((f t).2 : ℝ) / DEN)) ∧
-        ∏ t ∈ Finset.univ.erase (Fin.last k'), rt t ≤ (parQ q).Xp)
+        ∀ t, xq q ^ (((f t).1 : ℝ) / DEN) ≤ rt t ∧ (rt t : ℝ) < xq q ^ (((f t).2 : ℝ) / DEN))
     (hsE : surelyEval (List.ofFn f) = true) :
     |famI (gA q a) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec) -
         famI (gB q) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec)| ≤ E := by
@@ -859,27 +886,27 @@ theorem box_leaf_gen {q : ℕ} (hL : LargeQ q) {a : ZMod q} {k' : ℕ} {E : ℝ}
   rcases hT with ⟨hlo, hhi⟩ | ⟨hlo, hhi⟩ <;> replace hlo := of_decide_eq_true hlo <;>
     replace hhi := of_decide_eq_true hhi
   · refine hTL spec T (P1 q) (P2 q) hlen hthr (P1_ok hL) (P2_ok hL) fun rt hp hs => ?_
-    obtain ⟨hsa, hz₀, hc, -⟩ := hsem rt hp hs
+    obtain ⟨hsa, hz₀, hc⟩ := hsem rt hp hs
     exact ⟨hsa, ha0 rt hz₀, window_lo_gen hq1 (fun t => (hc t).1) hlo,
       window_hi_gen hq1 (fun t => (hc t).2) hhi⟩
-  · by_cases hTu : T = Finset.univ
-    · subst hTu
-      refine hTU spec (parQ q).Xp (W1 q) hlen hthr (fun rt hp hs => ?_) (W1_le hL) (W1_div hL) (W0_div hL)
-      obtain ⟨hsa, hz₀, hc, -⟩ := hsem rt hp hs
-      refine ⟨hsa, ha0 rt hz₀, ?_, window_hi_gen hq1 (fun t => (hc t).2) hhi⟩
-      rw [Xp_eq]
-      exact window_lo_gen hq1 (fun t => (hc t).1) hlo
-    · have hempty : ∀ rt ∈ famSet (k' + 1) (N2 q) spec, False := by
-        intro rt hrt
-        rw [mem_famSet] at hrt
-        obtain ⟨hsa, -, hc, hX⟩ := hsem rt (fun i => (hrt.1 i).2) hrt.2
-        have h1 := window_lo_gen hq1 (fun t => (hc t).1) hlo
-        have h2 := prod_proper_le hsa (fun t => (hrt.1 t).2.one_lt.le) hTu
-        rw [← Xp_eq] at h1
-        omega
-      rw [famI_eq_zero _ _ _ _ (fun rt hrt => (hempty rt hrt).elim),
-        famI_eq_zero _ _ _ _ (fun rt hrt => (hempty rt hrt).elim), sub_zero, abs_zero]
-      exact hE
+  · refine hTR spec T (parQ q).Xp (W1 q) hlen hthr (fun rt hp hs => ?_) (W1_le hL) (W1_div hL) (W0_div hL)
+    obtain ⟨hsa, hz₀, hc⟩ := hsem rt hp hs
+    refine ⟨hsa, ha0 rt hz₀, ?_, window_hi_gen hq1 (fun t => (hc t).2) hhi⟩
+    rw [Xp_eq]
+    exact window_lo_gen hq1 (fun t => (hc t).1) hlo
+
+/-- **A box of cells surely evaluable**: `box_leaf_gen` for the cells `c`. -/
+theorem box_leaf {q : ℕ} (hL : LargeQ q) {a : ZMod q} {k' : ℕ} {E : ℝ} (hTL : TLat q a k' E)
+    (hTR : TRat q a k' E) {spec : List (Atom (k' + 1))} (hlen : spec.length ≤ 40) (hthr : ThrOK q spec)
+    (c : Fin (k' + 1) → ℕ)
+    (hsem : ∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ A ∈ spec, A.sem rt) →
+      StrictAnti rt ∧ (∀ i, (parQ q).z₀ ≤ rt i) ∧ (∀ t, InC (xq q) (c t) (rt t)))
+    (hsE : surelyEval (List.ofFn fun t => cell (c t)) = true) :
+    |famI (gA q a) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec) -
+        famI (gB q) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec)| ≤ E :=
+  box_leaf_gen hL hTL hTR hlen hthr (fun t => cell (c t)) (fun rt hp hs => by
+    obtain ⟨hsa, hz₀, hc⟩ := hsem rt hp hs
+    exact ⟨hsa, hz₀, fun t => ⟨by simpa [cell] using (hc t).1, by simpa [cell] using (hc t).2⟩⟩) hsE
 
 /-! ### The leaves -/
 
@@ -887,13 +914,6 @@ omit [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
 theorem mem_famSet_sum {k : ℕ} {spec : List (Atom k)} {rt : Fin k → ℕ} (hp : ∀ i, (rt i).Prime)
     (hs : ∀ A ∈ spec, A.sem rt) : rt ∈ famSet k (∑ i, rt i) spec :=
   mem_famSet.2 ⟨fun i => ⟨Finset.single_le_sum (fun j _ => Nat.zero_le (rt j)) (Finset.mem_univ i), hp i⟩, hs⟩
-
-omit [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
-theorem prod_erase_last {k' : ℕ} (rt : Fin (k' + 1) → ℕ) (h : ∀ i, 0 < rt i) :
-    ∏ t ∈ Finset.univ.erase (Fin.last k'), rt t = ∏ i : Fin k', rt i.castSucc := by
-  have h1 := Finset.prod_erase_mul (Finset.univ : Finset (Fin (k' + 1))) rt (Finset.mem_univ (Fin.last k'))
-  rw [Fin.prod_univ_castSucc] at h1
-  exact Nat.eq_of_mul_eq_mul_right (h _) h1
 
 omit [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
 theorem J0_eq (P : Par) (g : ℕ → ℝ) : P.J0 g = famJ g P.N₁ P.N₂ P.z₀ (famSet 0 P.N₂ []) := by
@@ -904,6 +924,23 @@ theorem J0_eq (P : Par) (g : ℕ → ℝ) : P.J0 g = famJ g P.N₁ P.N₂ P.z₀
   rw [h, famJ, Finset.sum_singleton]
   unfold Par.J0
   simp
+
+/-- **A whole cell's part above `N₁` is empty**: for `LargeQ q`, a family whose tuples have product above `N₁` and
+their `t`-th prime below `x^{u_t/DEN}`, with `Σ u_t < DEN`, has none. -/
+theorem famI_whole_gt {q : ℕ} (hL : LargeQ q) (g : ℕ → ℝ) {k' : ℕ} {spec : List (Atom (k' + 1))}
+    (u : Fin (k' + 1) → ℕ) (hu : ∑ t, u t < DEN)
+    (hsem : ∀ rt ∈ famSet (k' + 1) (N2 q) spec,
+      (N1 q : ℝ) < ∏ t, (rt t : ℝ) ∧ ∀ t, (rt t : ℝ) < xq q ^ ((u t : ℝ) / DEN)) :
+    famI g (N1 q) (N2 q) (famSet (k' + 1) (N2 q) spec) = 0 := by
+  have hq1 : (1 : ℝ) ≤ xq q := Real.one_le_rpow (by exact_mod_cast (show 1 ≤ q by have := hL.q3; omega))
+    (by route_num)
+  refine famI_eq_zero _ _ _ _ fun rt hrt => False.elim ?_
+  obtain ⟨hN, hc⟩ := hsem rt hrt
+  have h1 := box_hi_gen (by linarith) hc Finset.univ
+  have h2 : xq q ^ (((∑ t, u t : ℕ) : ℝ) / DEN) ≤ xq q ^ (((DEN : ℝ) - 1) / DEN) :=
+    Par.rpow_le_top hq1 le_rfl hu
+  have h3 : xq q ^ (((DEN : ℝ) - 1) / DEN) ≤ (N1 q : ℝ) := (good_of_large hL).hN₁
+  linarith
 
 section Leaves
 
@@ -946,243 +983,393 @@ theorem lf_p1 (hP : P6at q a 1 E) {i : ℕ} (hi : i < SieveCert.n) :
   show rt 0 ≤ (parQ q).Xp
   omega
 
-theorem lf_e2 (hT : TUat q a 1 E) {i j : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) (hd : dec i j = true) :
+variable [SieveCert.Rule]
+
+theorem lf_e2 [SieveCert.RuleNB] (hE : 0 ≤ E) (hT : TUat q a 1 E) {i j : ℕ} (hi : i < SieveCert.n)
+    (hj : j < SieveCert.n) (hok : SieveCert.Rule.ok [cell i, cell j] = true) :
     |(parQ q).I (gA q a) ((parQ q).S2gt i j) - (parQ q).I (gB q) ((parQ q).S2gt i j)| ≤ E := by
   have hq1 : (1 : ℝ) < xq q := Real.one_lt_rpow (by exact_mod_cast (show 1 < q by have := hL.q3; omega))
     (by route_num)
-  have hall := SieveCert.allowed_of_dec hd
-  simp only [allowed, Bool.and_eq_true, decide_eq_true_eq] at hall
-  refine hT _ (parQ q).Xp (W1 q) (len_S2gt q i j) (thrOK_S2gt hL hi hj) (fun rt hp hs => ?_) (W1_le hL)
-    (W1_div hL) (W0_div hL)
-  have hrt := mem_famSet_sum hp hs
-  obtain ⟨hc, hCi, hCj⟩ := (parQ q).facts_S2c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
-  have hC : ∀ t, InC (xq q) (![i, j] t) (rt t) := by
-    intro t
+  have hfacts : ∀ {Y : ℕ} (rt : Fin 2 → ℕ), rt ∈ famSet 2 Y ((parQ q).S2gt i j) →
+      (∀ t, InC (xq q) (![i, j] t) (rt t)) ∧ (parQ q).Xs (sp2 i j) < ∏ t ∈ Finset.univ, (rt t : ℝ) := by
+    intro Y rt hrt
+    obtain ⟨-, hCi, hCj⟩ := (parQ q).facts_S2c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
+    refine ⟨fun t => ?_, sem_of_mem hrt (A := Atom.prodGt Finset.univ ((parQ q).Xs (sp2 i j)))
+      (List.mem_append_right _ (List.mem_singleton_self _))⟩
     fin_cases t
     · exact hCi
     · exact hCj
-  have hgt : ((parQ q).Xp : ℝ) < ∏ t ∈ Finset.univ, (rt t : ℝ) :=
-    sem_of_mem hrt (A := Atom.prodGt Finset.univ (parQ q).Xp) (List.mem_append_right _ (List.mem_singleton_self _))
-  refine ⟨hc.1, ha0_of hc.2.1, by exact_mod_cast hgt, ?_⟩
-  have := window_hi hq1 hC (T := Finset.univ) (B := DEN - U1) (by simpa [Fin.sum_univ_two, SieveCert.lim] using hall.1)
-  simpa using this
+  by_cases hs : sp2 i j = true
+  · have hlim : SieveCert.e i + H + (SieveCert.e j + H) < lim := by
+      simpa [sp2, SieveCert.limOK_cells2] using hs
+    refine hT _ (parQ q).Xp (W1 q) (len_S2gt q i j) (thrOK_S2gt hL hi hj) (fun rt hp hs' => ?_) (W1_le hL)
+      (W1_div hL) (W0_div hL)
+    have hrt := mem_famSet_sum hp hs'
+    obtain ⟨hc, -, -⟩ := (parQ q).facts_S2c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
+    obtain ⟨hC, hgt⟩ := hfacts rt hrt
+    rw [hs, Par.Xs_true] at hgt
+    refine ⟨hc.1, ha0_of hc.2.1, by exact_mod_cast hgt, ?_⟩
+    have := window_hi hq1 hC (T := Finset.univ) (B := DEN - U1) (by
+      simpa [Fin.sum_univ_two, SieveCert.lim] using hlim)
+    simpa using this
+  · have hnb : nbOK [cell i, cell j] = true := (SieveCert.RuleNB.nb _ hok).resolve_left hs
+    rw [SieveCert.nbOK_cells2, decide_eq_true_eq] at hnb
+    have hs' : sp2 i j = false := by simpa using hs
+    have hz : ∀ g, (parQ q).I g ((parQ q).S2gt i j) = 0 := fun g =>
+      famI_whole_gt hL g ![SieveCert.e i + H, SieveCert.e j + H] (by simp [Fin.sum_univ_two]; omega)
+        fun rt hrt => by
+          obtain ⟨hC, hgt⟩ := hfacts rt hrt
+          rw [hs', Par.Xs_false] at hgt
+          refine ⟨hgt, fun t => ?_⟩
+          fin_cases t
+          · simpa using (hC 0).2
+          · simpa using (hC 1).2
+    rw [hz, hz, sub_zero, abs_zero]
+    exact hE
 
-theorem lf_p2 (hP : P6at q a 2 E) {i j : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n) :
+theorem lf_p2 [SieveCert.IBPar] [SieveCert.RuleIB] (hP : P6at q a 2 E) {i j : ℕ} (hi : i < SieveCert.n)
+    (hj : j < SieveCert.n) (hok : SieveCert.Rule.ok [cell i, cell j] = true)
+    (hIB : SieveCert.ibOK [cell i, cell j] = true → P6IBat q a ![cell i, cell j] E) :
     |(parQ q).J (gA q a) ((parQ q).S2le i j) - (parQ q).J (gB q) ((parQ q).S2le i j)| ≤ E := by
-  refine hP _ (len_S2le q i j) (thrOK_S2le hL hi hj) (nz_S2le q i j) fun rt hp hs => ?_
-  have hrt := mem_famSet_sum hp hs
-  obtain ⟨hc, -, -, hX⟩ := (parQ q).facts_S2le hrt
-  refine ⟨hc.2.1, ?_⟩
-  rw [Fin.prod_univ_two]
-  exact_mod_cast hX
+  by_cases hs : sp2 i j = true
+  · refine hP _ (len_S2le q i j) (thrOK_S2le hL hi hj) (nz_S2le q i j) fun rt hp hs' => ?_
+    obtain ⟨hc, -, -, hX⟩ := (parQ q).facts_S2le (mem_famSet_sum hp hs')
+    rw [hs, Par.Xs_true] at hX
+    refine ⟨hc.2.1, ?_⟩
+    rw [Fin.prod_univ_two]
+    exact_mod_cast hX
+  · have hib := ((SieveCert.RuleIB.ib _ hok).resolve_left hs).1
+    refine hIB hib _ (len_S2le q i j) (thrOK_S2le hL hi hj) fun rt hp hs' => ?_
+    obtain ⟨hc, hCi, hCj, -⟩ := (parQ q).facts_S2le (mem_famSet_sum hp hs')
+    have hCi : InC (xq q) i (rt 0) := hCi
+    have hCj : InC (xq q) j (rt 1) := hCj
+    refine ⟨hc.1, hc.2.1, fun t => ?_⟩
+    fin_cases t
+    · exact ⟨by simpa [cell] using hCi.1, by simpa [cell] using hCi.2⟩
+    · exact ⟨by simpa [cell] using hCj.1, by simpa [cell] using hCj.2⟩
 
-theorem lf_e2' (hE : 0 ≤ E) (hTL : TLat q a 1 E) (hTU : TUat q a 1 E) {i j : ℕ} (hi : i < SieveCert.n)
+omit [SieveCert.Rule] in
+theorem lf_e2' (hTL : TLat q a 1 E) (hTR : TRat q a 1 E) {i j : ℕ} (hi : i < SieveCert.n)
     (hj : j < SieveCert.n) (hs : Par.sE2 i j = true) :
     |(parQ q).I (gA q a) ((parQ q).S2c i j) - (parQ q).I (gB q) ((parQ q).S2c i j)| ≤ E := by
-  refine box_leaf hL hE hTL hTU (len_S2c q i j) (thrOK_S2c hL hi hj) ![i, j] (fun rt hp hs' => ?_) ?_
+  refine box_leaf hL hTL hTR (len_S2c q i j) (thrOK_S2c hL hi hj) ![i, j] (fun rt hp hs' => ?_) ?_
   · obtain ⟨hc, hCi, hCj⟩ := (parQ q).facts_S2c (mem_famSet_sum hp hs')
-    refine ⟨hc.1, hc.2.1, fun t => ?_, ?_⟩
-    · fin_cases t
-      · exact hCi
-      · exact hCj
-    · rw [prod_erase_last rt fun t => (hp t).pos, Fin.prod_univ_one]
-      have := hc.2.2 0
-      have := ztop_le_Xp hL
-      show rt 0 ≤ (parQ q).Xp
-      omega
+    refine ⟨hc.1, hc.2.1, fun t => ?_⟩
+    fin_cases t
+    · exact hCi
+    · exact hCj
   · simpa [List.ofFn_succ, Par.sE2] using hs
 
-theorem lf_e3 (hT : TUat q a 2 E) {i j k : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n)
-    (hk : k < SieveCert.n) (hd : dec i j = true) (hkk : inKK i j k = true) (hn3 : ne3 i j k = true) :
+theorem lf_e3 [SieveCert.RuleNB] (hE : 0 ≤ E) (hT : TUat q a 2 E) {i j k : ℕ} (hi : i < SieveCert.n)
+    (hj : j < SieveCert.n) (hk : k < SieveCert.n) (hok : SieveCert.Rule.ok [cell i, cell j, cell k] = true) :
     |(parQ q).I (gA q a) ((parQ q).S3gt i j k) - (parQ q).I (gB q) ((parQ q).S3gt i j k)| ≤ E := by
   have hq1 : (1 : ℝ) < xq q := Real.one_lt_rpow (by exact_mod_cast (show 1 < q by have := hL.q3; omega))
     (by route_num)
-  have hall := SieveCert.allowed_of_dec hd
-  simp only [allowed, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, List.mem_range] at hall
-  have hrow := hall.2 k hk
-  simp only [hkk, hn3, Bool.and_self, Bool.not_true, Bool.false_or, decide_eq_true_eq] at hrow
-  refine hT _ (parQ q).Xp (W1 q) (len_S3gt q i j k) (thrOK_S3gt hL hi hj hk) (fun rt hp hs => ?_) (W1_le hL)
-    (W1_div hL) (W0_div hL)
-  have hrt := mem_famSet_sum hp hs
-  obtain ⟨hc, hCi, hCj, hCk, -⟩ := (parQ q).facts_S3c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
-  have hC : ∀ t, InC (xq q) (![i, j, k] t) (rt t) := by
-    intro t
+  have hfacts : ∀ {Y : ℕ} (rt : Fin 3 → ℕ), rt ∈ famSet 3 Y ((parQ q).S3gt i j k) →
+      (∀ t, InC (xq q) (![i, j, k] t) (rt t)) ∧ (parQ q).Xs (sp3 i j k) < ∏ t ∈ Finset.univ, (rt t : ℝ) := by
+    intro Y rt hrt
+    obtain ⟨-, hCi, hCj, hCk, -⟩ := (parQ q).facts_S3c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
+    refine ⟨fun t => ?_, sem_of_mem hrt (A := Atom.prodGt Finset.univ ((parQ q).Xs (sp3 i j k)))
+      (List.mem_append_right _ (List.mem_singleton_self _))⟩
     fin_cases t
     · exact hCi
     · exact hCj
     · exact hCk
-  have hgt : ((parQ q).Xp : ℝ) < ∏ t ∈ Finset.univ, (rt t : ℝ) :=
-    sem_of_mem hrt (A := Atom.prodGt Finset.univ (parQ q).Xp) (List.mem_append_right _ (List.mem_singleton_self _))
-  refine ⟨hc.1, ha0_of hc.2.1, by exact_mod_cast hgt, ?_⟩
-  have := window_hi hq1 hC (T := Finset.univ) (B := DEN - U1) (by
-    simp only [Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
-      Matrix.head_cons, Matrix.tail_cons]
-    simpa [SieveCert.lim] using hrow)
-  simpa using this
+  by_cases hs : sp3 i j k = true
+  · have hlim : SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) < lim := by
+      simpa [sp3, SieveCert.limOK_cells3] using hs
+    refine hT _ (parQ q).Xp (W1 q) (len_S3gt q i j k) (thrOK_S3gt hL hi hj hk) (fun rt hp hs' => ?_) (W1_le hL)
+      (W1_div hL) (W0_div hL)
+    have hrt := mem_famSet_sum hp hs'
+    obtain ⟨hc, -⟩ := (parQ q).facts_S3c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
+    obtain ⟨hC, hgt⟩ := hfacts rt hrt
+    rw [hs, Par.Xs_true] at hgt
+    refine ⟨hc.1, ha0_of hc.2.1, by exact_mod_cast hgt, ?_⟩
+    have := window_hi hq1 hC (T := Finset.univ) (B := DEN - U1) (by
+      simp only [Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+        Matrix.head_cons, Matrix.tail_cons]
+      simpa [SieveCert.lim] using hlim)
+    simpa using this
+  · have hs' : sp3 i j k = false := by simpa using hs
+    have hnb : nbOK [cell i, cell j, cell k] = true :=
+      (SieveCert.RuleNB.nb _ hok).resolve_left hs
+    rw [SieveCert.nbOK_cells3, decide_eq_true_eq] at hnb
+    have hz : ∀ g, (parQ q).I g ((parQ q).S3gt i j k) = 0 := fun g =>
+      famI_whole_gt hL g ![SieveCert.e i + H, SieveCert.e j + H, SieveCert.e k + H]
+        (by simp [Fin.sum_univ_three]; omega) fun rt hrt => by
+          obtain ⟨hC, hgt⟩ := hfacts rt hrt
+          rw [hs', Par.Xs_false] at hgt
+          refine ⟨hgt, fun t => ?_⟩
+          fin_cases t
+          · simpa using (hC 0).2
+          · simpa using (hC 1).2
+          · simpa using (hC 2).2
+    rw [hz, hz, sub_zero, abs_zero]
+    exact hE
 
-theorem lf_p3 (hP : P6at q a 3 E) {i j k : ℕ} (hi : i < SieveCert.n) (hj : j < SieveCert.n)
-    (hk : k < SieveCert.n) :
+theorem lf_p3 [SieveCert.IBPar] [SieveCert.RuleIB] (hP : P6at q a 3 E) {i j k : ℕ} (hi : i < SieveCert.n)
+    (hj : j < SieveCert.n) (hk : k < SieveCert.n) (hok : SieveCert.Rule.ok [cell i, cell j, cell k] = true)
+    (hIB : SieveCert.ibOK [cell i, cell j, cell k] = true → P6IBat q a ![cell i, cell j, cell k] E) :
     |(parQ q).J (gA q a) ((parQ q).S3le i j k) - (parQ q).J (gB q) ((parQ q).S3le i j k)| ≤ E := by
-  refine hP _ (len_S3le q i j k) (thrOK_S3le hL hi hj hk) (nz_S3le q i j k) fun rt hp hs => ?_
-  have hrt := mem_famSet_sum hp hs
-  obtain ⟨hc, -, -, -, -, hX⟩ := (parQ q).facts_S3le hrt
-  refine ⟨hc.2.1, ?_⟩
-  rw [Fin.prod_univ_three]
-  exact_mod_cast hX
+  by_cases hs : sp3 i j k = true
+  · refine hP _ (len_S3le q i j k) (thrOK_S3le hL hi hj hk) (nz_S3le q i j k) fun rt hp hs' => ?_
+    obtain ⟨hc, -, -, -, -, hX⟩ := (parQ q).facts_S3le (mem_famSet_sum hp hs')
+    rw [hs, Par.Xs_true] at hX
+    refine ⟨hc.2.1, ?_⟩
+    rw [Fin.prod_univ_three]
+    exact_mod_cast hX
+  · have hib := ((SieveCert.RuleIB.ib _ hok).resolve_left hs).1
+    refine hIB hib _ (len_S3le q i j k) (thrOK_S3le hL hi hj hk) fun rt hp hs' => ?_
+    obtain ⟨hc, hCi, hCj, hCk, -⟩ := (parQ q).facts_S3le (mem_famSet_sum hp hs')
+    have hCi : InC (xq q) i (rt 0) := hCi
+    have hCj : InC (xq q) j (rt 1) := hCj
+    have hCk : InC (xq q) k (rt 2) := hCk
+    refine ⟨hc.1, hc.2.1, fun t => ?_⟩
+    fin_cases t
+    · exact ⟨by simpa [cell] using hCi.1, by simpa [cell] using hCi.2⟩
+    · exact ⟨by simpa [cell] using hCj.1, by simpa [cell] using hCj.2⟩
+    · exact ⟨by simpa [cell] using hCk.1, by simpa [cell] using hCk.2⟩
 
-theorem lf_e3' (hE : 0 ≤ E) (hTL : TLat q a 2 E) (hTU : TUat q a 2 E) {i j k : ℕ} (hi : i < SieveCert.n)
+omit [SieveCert.Rule] in
+theorem lf_e3' (hTL : TLat q a 2 E) (hTR : TRat q a 2 E) {i j k : ℕ} (hi : i < SieveCert.n)
     (hj : j < SieveCert.n) (hk : k < SieveCert.n) (hn3 : ne3 i j k = false) :
     |(parQ q).I (gA q a) ((parQ q).S3c i j k) - (parQ q).I (gB q) ((parQ q).S3c i j k)| ≤ E := by
-  refine box_leaf hL hE hTL hTU (len_S3c q i j k) (thrOK_S3c hL hi hj hk) ![i, j, k] (fun rt hp hs' => ?_) ?_
-  · obtain ⟨hc, hCi, hCj, hCk, hX⟩ := (parQ q).facts_S3c (mem_famSet_sum hp hs')
-    refine ⟨hc.1, hc.2.1, fun t => ?_, ?_⟩
-    · fin_cases t
-      · exact hCi
-      · exact hCj
-      · exact hCk
-    · rw [prod_erase_last rt fun t => (hp t).pos, Fin.prod_univ_two]
-      exact_mod_cast hX
+  refine box_leaf hL hTL hTR (len_S3c q i j k) (thrOK_S3c hL hi hj hk) ![i, j, k] (fun rt hp hs' => ?_) ?_
+  · obtain ⟨hc, hCi, hCj, hCk, -⟩ := (parQ q).facts_S3c (mem_famSet_sum hp hs')
+    refine ⟨hc.1, hc.2.1, fun t => ?_⟩
+    fin_cases t
+    · exact hCi
+    · exact hCj
+    · exact hCk
   · simpa [List.ofFn_succ, ne3] using hn3
 
-theorem lf_e4 (hE : 0 ≤ E) (hTL : TLat q a 3 E) (hTU : TUat q a 3 E) {i j k l : ℕ} (hi : i < SieveCert.n)
+omit [SieveCert.Rule] in
+theorem lf_e4 (hTL : TLat q a 3 E) (hTR : TRat q a 3 E) {i j k l : ℕ} (hi : i < SieveCert.n)
     (hj : j < SieveCert.n) (hk : k < SieveCert.n) (hl : l < SieveCert.n) (hs : Par.sE4 i j k l = true) :
     |(parQ q).I (gA q a) ((parQ q).S4c i j k l) - (parQ q).I (gB q) ((parQ q).S4c i j k l)| ≤ E := by
-  refine box_leaf hL hE hTL hTU (len_S4c q i j k l) (thrOK_S4c hL hi hj hk hl) ![i, j, k, l]
+  refine box_leaf hL hTL hTR (len_S4c q i j k l) (thrOK_S4c hL hi hj hk hl) ![i, j, k, l]
     (fun rt hp hs' => ?_) ?_
-  · obtain ⟨hc, hCi, hCj, hCk, hCl, -, hX⟩ := (parQ q).facts_S4c (mem_famSet_sum hp hs')
-    refine ⟨hc.1, hc.2.1, fun t => ?_, ?_⟩
-    · fin_cases t
-      · exact hCi
-      · exact hCj
-      · exact hCk
-      · exact hCl
-    · rw [prod_erase_last rt fun t => (hp t).pos, Fin.prod_univ_three]
-      exact_mod_cast hX
-  · simpa [List.ofFn_succ, Par.sE4] using hs
-
-
-omit hL in
-theorem inCC_iff {x : ℝ} {b p : ℕ} : InCC x b p ↔
-    x ^ ((SieveCert.eC b : ℝ) / DEN) ≤ p ∧ (p : ℝ) < x ^ (((SieveCert.eC b : ℝ) + SieveCert.HC) / DEN) := Iff.rfl
-
-omit hL in
-/-- The depth-4 prefix's data: all four indices are below `n`. -/
-theorem Deep.idx {i j k l : ℕ} (h : Par.Deep i j k l) :
-    i < SieveCert.n ∧ j < SieveCert.n ∧ k < SieveCert.n ∧ l < SieveCert.n :=
-  ⟨h.1.1.1, h.1.1.2.1, h.1.2.1, by have := h.1.2.1; have := h.2.1; omega⟩
-
-theorem lf_e4gt (hT : TUat q a 3 E) {i j k l : ℕ} (hD : Par.Deep i j k l) :
-    |(parQ q).I (gA q a) ((parQ q).S4cgt i j k l) - (parQ q).I (gB q) ((parQ q).S4cgt i j k l)| ≤ E := by
-  obtain ⟨hi, hj, hk, hl⟩ := Deep.idx hD
-  have hq1 : (1 : ℝ) < xq q := Real.one_lt_rpow (by exact_mod_cast (show 1 < q by have := hL.q3; omega))
-    (by route_num)
-  obtain ⟨hT4, -⟩ := Par.allowed4_tops (SieveCert.allowed4_of_dec4 hD.2.2.2)
-  refine hT _ (parQ q).Xp (W1 q) (len_S4cgt q i j k l) (thrOK_S4cgt hL hi hj hk hl) (fun rt hp hs => ?_)
-    (W1_le hL) (W1_div hL) (W0_div hL)
-  have hrt := mem_famSet_sum hp hs
-  obtain ⟨hc, hCi, hCj, hCk, hCl, -⟩ := (parQ q).facts_S4c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
-  have hC : ∀ t, InC (xq q) (![i, j, k, l] t) (rt t) := by
-    intro t
+  · obtain ⟨hc, hCi, hCj, hCk, hCl, -⟩ := (parQ q).facts_S4c (mem_famSet_sum hp hs')
+    refine ⟨hc.1, hc.2.1, fun t => ?_⟩
     fin_cases t
     · exact hCi
     · exact hCj
     · exact hCk
     · exact hCl
-  have hgt : ((parQ q).Xp : ℝ) < ∏ t ∈ Finset.univ, (rt t : ℝ) :=
-    sem_of_mem hrt (A := Atom.prodGt Finset.univ (parQ q).Xp) (List.mem_append_right _ (List.mem_singleton_self _))
-  refine ⟨hc.1, ha0_of hc.2.1, by exact_mod_cast hgt, ?_⟩
-  have := window_hi hq1 hC (T := Finset.univ) (B := DEN - U1) (by
-    simp only [Fin.sum_univ_four, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
-      Matrix.cons_val_three, Matrix.head_cons, Matrix.tail_cons]
-    simpa [SieveCert.lim] using hT4)
-  simpa using this
+  · simpa [List.ofFn_succ, Par.sE4] using hs
 
-theorem lf_p4 (hP : P6at q a 4 E) {i j k l : ℕ} (hD : Par.Deep i j k l) :
-    |(parQ q).J (gA q a) ((parQ q).S4cle i j k l) - (parQ q).J (gB q) ((parQ q).S4cle i j k l)| ≤ E := by
-  obtain ⟨hi, hj, hk, hl⟩ := Deep.idx hD
-  refine hP _ (len_S4cle q i j k l) (thrOK_S4cle hL hi hj hk hl) (nz_S4cle q i j k l) fun rt hp hs => ?_
-  have hrt := mem_famSet_sum hp hs
-  obtain ⟨hc, -, -, -, -, -, -, hX⟩ := (parQ q).facts_S4cle hrt
-  refine ⟨hc.2.1, ?_⟩
-  rw [Fin.prod_univ_four]
-  exact_mod_cast hX
+omit hL in
+omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] [SieveCert.Rule] in
+theorem inCC_iff {x : ℝ} {b p : ℕ} : InCC x b p ↔
+    x ^ ((SieveCert.eC b : ℝ) / DEN) ≤ p ∧ (p : ℝ) < x ^ (((SieveCert.eC b : ℝ) + SieveCert.HC) / DEN) := Iff.rfl
 
-theorem lf_e5gt [SieveCert.GridOKC] (hT : TUat q a 4 E) {i j k l b : ℕ} (hD : Par.Deep i j k l) (hb : b < SieveCert.nC)
-    (hK : SieveCert.inKK5 i j k l b = true) (hn : SieveCert.ne5 i j k l b = true) :
-    |(parQ q).I (gA q a) ((parQ q).S5gt i j k l b) - (parQ q).I (gB q) ((parQ q).S5gt i j k l b)| ≤ E := by
-  obtain ⟨hi, hj, hk, hl⟩ := Deep.idx hD
+omit hL in
+omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
+/-- The depth-4 prefix's data: all four indices are below `n`. -/
+theorem Deep.idx {i j k l : ℕ} (h : Par.Deep i j k l) :
+    i < SieveCert.n ∧ j < SieveCert.n ∧ k < SieveCert.n ∧ l < SieveCert.n :=
+  ⟨h.1.1.1, h.1.1.2.1, h.1.2.1, by have := h.1.2.1; have := h.2.1; omega⟩
+
+theorem lf_e4gt [SieveCert.RuleNB] (hE : 0 ≤ E) (hT : TUat q a 3 E) {i j k l : ℕ}
+    (hx : i < SieveCert.n ∧ j < SieveCert.n ∧ k < SieveCert.n ∧ l < SieveCert.n)
+    (hok : SieveCert.Rule.ok [cell i, cell j, cell k, cell l] = true) :
+    |(parQ q).I (gA q a) ((parQ q).S4cgt i j k l) - (parQ q).I (gB q) ((parQ q).S4cgt i j k l)| ≤ E := by
+  obtain ⟨hi, hj, hk, hl⟩ := hx
   have hq1 : (1 : ℝ) < xq q := Real.one_lt_rpow (by exact_mod_cast (show 1 < q by have := hL.q3; omega))
     (by route_num)
-  obtain ⟨-, hT5⟩ := Par.allowed4_tops (SieveCert.allowed4_of_dec4 hD.2.2.2)
-  have hT5 := hT5 b hb hK hn
-  refine hT _ (parQ q).Xp (W1 q) (len_S5gt q i j k l b) (thrOK_S5gt hL hi hj hk hl hb) (fun rt hp hs => ?_)
-    (W1_le hL) (W1_div hL) (W0_div hL)
-  have hrt := mem_famSet_sum hp hs
-  obtain ⟨hc, hCi, hCj, hCk, hCl, hCb, -⟩ := (parQ q).facts_S5c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
-  have hCi : InC (xq q) i (rt 0) := hCi
-  have hCj : InC (xq q) j (rt 1) := hCj
-  have hCk : InC (xq q) k (rt 2) := hCk
-  have hCl : InC (xq q) l (rt 3) := hCl
-  have hCb : InCC (xq q) b (rt 4) := hCb
-  have hCb := inCC_iff.1 hCb
-  have hb5 : ∀ t, (rt t : ℝ) < xq q ^ ((((![SieveCert.e i + H, SieveCert.e j + H, SieveCert.e k + H,
-      SieveCert.e l + H, SieveCert.eC b + SieveCert.HC] : Fin 5 → ℕ) t : ℕ) : ℝ) / DEN) := by
-    intro t
+  have hfacts : ∀ {Y : ℕ} (rt : Fin 4 → ℕ), rt ∈ famSet 4 Y ((parQ q).S4cgt i j k l) →
+      (∀ t, InC (xq q) (![i, j, k, l] t) (rt t)) ∧
+        (parQ q).Xs (sp4 i j k l) < ∏ t ∈ Finset.univ, (rt t : ℝ) := by
+    intro Y rt hrt
+    obtain ⟨-, hCi, hCj, hCk, hCl, -⟩ :=
+      (parQ q).facts_S4c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
+    refine ⟨fun t => ?_, sem_of_mem hrt (A := Atom.prodGt Finset.univ ((parQ q).Xs (sp4 i j k l)))
+      (List.mem_append_right _ (List.mem_singleton_self _))⟩
     fin_cases t
-    · simpa using hCi.2
-    · simpa using hCj.2
-    · simpa using hCk.2
-    · simpa using hCl.2
-    · simpa using hCb.2
-  have hgt : ((parQ q).Xp : ℝ) < ∏ t ∈ Finset.univ, (rt t : ℝ) :=
-    sem_of_mem hrt (A := Atom.prodGt Finset.univ (parQ q).Xp) (List.mem_append_right _ (List.mem_singleton_self _))
-  refine ⟨hc.1, ha0_of hc.2.1, by exact_mod_cast hgt, ?_⟩
-  have := window_hi_gen hq1 hb5 (T := Finset.univ) (B := DEN - U1) (by
-    simp [Fin.sum_univ_five, SieveCert.lim] at hT5 ⊢
-    omega)
-  simpa using this
+    · exact hCi
+    · exact hCj
+    · exact hCk
+    · exact hCl
+  by_cases hs : sp4 i j k l = true
+  · have hT4 : SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H) < lim := by
+      simpa [sp4, SieveCert.limOK_cells4] using hs
+    refine hT _ (parQ q).Xp (W1 q) (len_S4cgt q i j k l) (thrOK_S4cgt hL hi hj hk hl) (fun rt hp hs' => ?_)
+      (W1_le hL) (W1_div hL) (W0_div hL)
+    have hrt := mem_famSet_sum hp hs'
+    obtain ⟨hc, -⟩ := (parQ q).facts_S4c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
+    obtain ⟨hC, hgt⟩ := hfacts rt hrt
+    rw [hs, Par.Xs_true] at hgt
+    refine ⟨hc.1, ha0_of hc.2.1, by exact_mod_cast hgt, ?_⟩
+    have := window_hi hq1 hC (T := Finset.univ) (B := DEN - U1) (by
+      simp only [Fin.sum_univ_four, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+        Matrix.cons_val_three, Matrix.head_cons, Matrix.tail_cons]
+      simpa [SieveCert.lim] using hT4)
+    simpa using this
+  · have hs' : sp4 i j k l = false := by simpa using hs
+    have hnb : nbOK [cell i, cell j, cell k, cell l] = true :=
+      (SieveCert.RuleNB.nb _ hok).resolve_left hs
+    rw [SieveCert.nbOK_cells4, decide_eq_true_eq] at hnb
+    have hz : ∀ g, (parQ q).I g ((parQ q).S4cgt i j k l) = 0 := fun g =>
+      famI_whole_gt hL g ![SieveCert.e i + H, SieveCert.e j + H, SieveCert.e k + H, SieveCert.e l + H]
+        (by simp [Fin.sum_univ_four]; omega) fun rt hrt => by
+          obtain ⟨hC, hgt⟩ := hfacts rt hrt
+          rw [hs', Par.Xs_false] at hgt
+          refine ⟨hgt, fun t => ?_⟩
+          fin_cases t
+          · simpa using (hC 0).2
+          · simpa using (hC 1).2
+          · simpa using (hC 2).2
+          · simpa using (hC 3).2
+    rw [hz, hz, sub_zero, abs_zero]
+    exact hE
 
-theorem lf_p5 [SieveCert.GridOKC] (hP : P6at q a 5 E) {i j k l b : ℕ} (hD : Par.Deep i j k l) (hb : b < SieveCert.nC) :
-    |(parQ q).J (gA q a) ((parQ q).S5le i j k l b) - (parQ q).J (gB q) ((parQ q).S5le i j k l b)| ≤ E := by
-  obtain ⟨hi, hj, hk, hl⟩ := Deep.idx hD
-  refine hP _ (len_S5le q i j k l b) (thrOK_S5le hL hi hj hk hl hb) (nz_S5le q i j k l b) fun rt hp hs => ?_
-  have hrt := mem_famSet_sum hp hs
-  obtain ⟨hc, -, -, -, -, -, -, -, -, hX⟩ := (parQ q).facts_S5le hrt
-  refine ⟨hc.2.1, ?_⟩
-  rw [Fin.prod_univ_five]
-  exact_mod_cast hX
+theorem lf_p4 [SieveCert.IBPar] [SieveCert.RuleIB] (hP : P6at q a 4 E) {i j k l : ℕ}
+    (hx : i < SieveCert.n ∧ j < SieveCert.n ∧ k < SieveCert.n ∧ l < SieveCert.n)
+    (hok : SieveCert.Rule.ok [cell i, cell j, cell k, cell l] = true)
+    (hIB : SieveCert.ibOK [cell i, cell j, cell k, cell l] = true → P6IBat q a ![cell i, cell j, cell k, cell l] E) :
+    |(parQ q).J (gA q a) ((parQ q).S4cle i j k l) - (parQ q).J (gB q) ((parQ q).S4cle i j k l)| ≤ E := by
+  obtain ⟨hi, hj, hk, hl⟩ := hx
+  by_cases hs : sp4 i j k l = true
+  · refine hP _ (len_S4cle q i j k l) (thrOK_S4cle hL hi hj hk hl) (nz_S4cle q i j k l) fun rt hp hs' => ?_
+    obtain ⟨hc, -, -, -, -, -, -, hX⟩ := (parQ q).facts_S4cle (mem_famSet_sum hp hs')
+    rw [hs, Par.Xs_true] at hX
+    refine ⟨hc.2.1, ?_⟩
+    rw [Fin.prod_univ_four]
+    exact_mod_cast hX
+  · have hib := ((SieveCert.RuleIB.ib _ hok).resolve_left hs).1
+    refine hIB hib _ (len_S4cle q i j k l) (thrOK_S4cle hL hi hj hk hl) fun rt hp hs' => ?_
+    obtain ⟨hc, hCi, hCj, hCk, hCl, -⟩ := (parQ q).facts_S4cle (mem_famSet_sum hp hs')
+    have hCi : InC (xq q) i (rt 0) := hCi
+    have hCj : InC (xq q) j (rt 1) := hCj
+    have hCk : InC (xq q) k (rt 2) := hCk
+    have hCl : InC (xq q) l (rt 3) := hCl
+    refine ⟨hc.1, hc.2.1, fun t => ?_⟩
+    fin_cases t
+    · exact ⟨by simpa [cell] using hCi.1, by simpa [cell] using hCi.2⟩
+    · exact ⟨by simpa [cell] using hCj.1, by simpa [cell] using hCj.2⟩
+    · exact ⟨by simpa [cell] using hCk.1, by simpa [cell] using hCk.2⟩
+    · exact ⟨by simpa [cell] using hCl.1, by simpa [cell] using hCl.2⟩
 
-theorem lf_e5' [SieveCert.GridOKC] (hE : 0 ≤ E) (hTL : TLat q a 4 E) (hTU : TUat q a 4 E) {i j k l b : ℕ}
-    (hD : Par.Deep i j k l) (hb : b < SieveCert.nC) (hn : SieveCert.ne5 i j k l b = false) :
-    |(parQ q).I (gA q a) ((parQ q).S5c i j k l b) - (parQ q).I (gB q) ((parQ q).S5c i j k l b)| ≤ E := by
-  obtain ⟨hi, hj, hk, hl⟩ := Deep.idx hD
-  refine box_leaf_gen hL hE hTL hTU (len_S5c q i j k l b) (thrOK_S5c hL hi hj hk hl hb)
-    ![cell i, cell j, cell k, cell l, SieveCert.cellC b] (fun rt hp hs' => ?_) ?_
-  · obtain ⟨hc, hCi, hCj, hCk, hCl, hCb, -, -, hX⟩ := (parQ q).facts_S5c (mem_famSet_sum hp hs')
+theorem lf_e5gt [SieveCert.GridOKC] [SieveCert.RuleNB] (hE : 0 ≤ E) (hT : TUat q a 4 E) {i j k l b : ℕ}
+    (hx : i < SieveCert.n ∧ j < SieveCert.n ∧ k < SieveCert.n ∧ l < SieveCert.n) (hb : b < SieveCert.nC)
+    (hok : SieveCert.Rule.ok [cell i, cell j, cell k, cell l, SieveCert.cellC b] = true) :
+    |(parQ q).I (gA q a) ((parQ q).S5gt i j k l b) - (parQ q).I (gB q) ((parQ q).S5gt i j k l b)| ≤ E := by
+  obtain ⟨hi, hj, hk, hl⟩ := hx
+  have hq1 : (1 : ℝ) < xq q := Real.one_lt_rpow (by exact_mod_cast (show 1 < q by have := hL.q3; omega))
+    (by route_num)
+  have hfacts : ∀ {Y : ℕ} (rt : Fin 5 → ℕ), rt ∈ famSet 5 Y ((parQ q).S5gt i j k l b) →
+      (∀ t, (rt t : ℝ) < xq q ^ ((((![SieveCert.e i + H, SieveCert.e j + H, SieveCert.e k + H,
+        SieveCert.e l + H, SieveCert.eC b + SieveCert.HC] : Fin 5 → ℕ) t : ℕ) : ℝ) / DEN)) ∧
+        (parQ q).Xs (sp5 i j k l b) < ∏ t ∈ Finset.univ, (rt t : ℝ) := by
+    intro Y rt hrt
+    obtain ⟨-, hCi, hCj, hCk, hCl, hCb, -⟩ :=
+      (parQ q).facts_S5c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
     have hCi : InC (xq q) i (rt 0) := hCi
     have hCj : InC (xq q) j (rt 1) := hCj
     have hCk : InC (xq q) k (rt 2) := hCk
     have hCl : InC (xq q) l (rt 3) := hCl
     have hCb : InCC (xq q) b (rt 4) := hCb
     have hCb := inCC_iff.1 hCb
-    refine ⟨hc.1, hc.2.1, fun t => ?_, ?_⟩
-    · fin_cases t
-      · exact ⟨by simpa [cell] using hCi.1, by simpa [cell] using hCi.2⟩
-      · exact ⟨by simpa [cell] using hCj.1, by simpa [cell] using hCj.2⟩
-      · exact ⟨by simpa [cell] using hCk.1, by simpa [cell] using hCk.2⟩
-      · exact ⟨by simpa [cell] using hCl.1, by simpa [cell] using hCl.2⟩
-      · exact ⟨by simpa [SieveCert.cellC] using hCb.1, by simpa [SieveCert.cellC] using hCb.2⟩
-    · rw [prod_erase_last rt fun t => (hp t).pos, Fin.prod_univ_four]
-      exact_mod_cast hX
+    refine ⟨fun t => ?_, sem_of_mem hrt (A := Atom.prodGt Finset.univ ((parQ q).Xs (sp5 i j k l b)))
+      (List.mem_append_right _ (List.mem_singleton_self _))⟩
+    fin_cases t
+    · simpa using hCi.2
+    · simpa using hCj.2
+    · simpa using hCk.2
+    · simpa using hCl.2
+    · simpa using hCb.2
+  by_cases hs : sp5 i j k l b = true
+  · have hT5 : SieveCert.e i + H + (SieveCert.e j + H) + (SieveCert.e k + H) + (SieveCert.e l + H) +
+        (SieveCert.eC b + SieveCert.HC) < lim := by
+      simpa [sp5, SieveCert.limOK_cells5] using hs
+    refine hT _ (parQ q).Xp (W1 q) (len_S5gt q i j k l b) (thrOK_S5gt hL hi hj hk hl hb) (fun rt hp hs' => ?_)
+      (W1_le hL) (W1_div hL) (W0_div hL)
+    have hrt := mem_famSet_sum hp hs'
+    obtain ⟨hc, -⟩ := (parQ q).facts_S5c (famSet_mono (fun A hA => List.mem_append_left _ hA) hrt)
+    obtain ⟨hb5, hgt⟩ := hfacts rt hrt
+    rw [hs, Par.Xs_true] at hgt
+    refine ⟨hc.1, ha0_of hc.2.1, by exact_mod_cast hgt, ?_⟩
+    have := window_hi_gen hq1 hb5 (T := Finset.univ) (B := DEN - U1) (by
+      simp [Fin.sum_univ_five, SieveCert.lim] at hT5 ⊢
+      omega)
+    simpa using this
+  · have hs' : sp5 i j k l b = false := by simpa using hs
+    have hnb : nbOK [cell i, cell j, cell k, cell l, SieveCert.cellC b] = true :=
+      (SieveCert.RuleNB.nb _ hok).resolve_left hs
+    rw [SieveCert.nbOK_cells5, decide_eq_true_eq] at hnb
+    have hz : ∀ g, (parQ q).I g ((parQ q).S5gt i j k l b) = 0 := fun g =>
+      famI_whole_gt hL g ![SieveCert.e i + H, SieveCert.e j + H, SieveCert.e k + H, SieveCert.e l + H,
+        SieveCert.eC b + SieveCert.HC] (by simp [Fin.sum_univ_five]; omega) fun rt hrt => by
+          obtain ⟨hb5, hgt⟩ := hfacts rt hrt
+          rw [hs', Par.Xs_false] at hgt
+          exact ⟨hgt, hb5⟩
+    rw [hz, hz, sub_zero, abs_zero]
+    exact hE
+
+theorem lf_p5 [SieveCert.GridOKC] [SieveCert.IBPar] [SieveCert.RuleIB] (hP : P6at q a 5 E) {i j k l b : ℕ}
+    (hx : i < SieveCert.n ∧ j < SieveCert.n ∧ k < SieveCert.n ∧ l < SieveCert.n) (hb : b < SieveCert.nC)
+    (hok : SieveCert.Rule.ok [cell i, cell j, cell k, cell l, SieveCert.cellC b] = true)
+    (hIB : SieveCert.ibOK [cell i, cell j, cell k, cell l, SieveCert.cellC b] = true →
+      P6IBat q a ![cell i, cell j, cell k, cell l, SieveCert.cellC b] E) :
+    |(parQ q).J (gA q a) ((parQ q).S5le i j k l b) - (parQ q).J (gB q) ((parQ q).S5le i j k l b)| ≤ E := by
+  obtain ⟨hi, hj, hk, hl⟩ := hx
+  by_cases hs : sp5 i j k l b = true
+  · refine hP _ (len_S5le q i j k l b) (thrOK_S5le hL hi hj hk hl hb) (nz_S5le q i j k l b) fun rt hp hs' => ?_
+    obtain ⟨hc, -, -, -, -, -, -, -, -, hX⟩ := (parQ q).facts_S5le (mem_famSet_sum hp hs')
+    rw [hs, Par.Xs_true] at hX
+    refine ⟨hc.2.1, ?_⟩
+    rw [Fin.prod_univ_five]
+    exact_mod_cast hX
+  · have hib := ((SieveCert.RuleIB.ib _ hok).resolve_left hs).1
+    refine hIB hib _ (len_S5le q i j k l b) (thrOK_S5le hL hi hj hk hl hb) fun rt hp hs' => ?_
+    obtain ⟨hc, hCi, hCj, hCk, hCl, hCb, -⟩ := (parQ q).facts_S5le (mem_famSet_sum hp hs')
+    have hCi : InC (xq q) i (rt 0) := hCi
+    have hCj : InC (xq q) j (rt 1) := hCj
+    have hCk : InC (xq q) k (rt 2) := hCk
+    have hCl : InC (xq q) l (rt 3) := hCl
+    have hCb : InCC (xq q) b (rt 4) := hCb
+    have hCb := inCC_iff.1 hCb
+    refine ⟨hc.1, hc.2.1, fun t => ?_⟩
+    fin_cases t
+    · exact ⟨by simpa [cell] using hCi.1, by simpa [cell] using hCi.2⟩
+    · exact ⟨by simpa [cell] using hCj.1, by simpa [cell] using hCj.2⟩
+    · exact ⟨by simpa [cell] using hCk.1, by simpa [cell] using hCk.2⟩
+    · exact ⟨by simpa [cell] using hCl.1, by simpa [cell] using hCl.2⟩
+    · exact ⟨by simpa [SieveCert.cellC] using hCb.1, by simpa [SieveCert.cellC] using hCb.2⟩
+
+omit [SieveCert.Rule] in
+theorem lf_e5' [SieveCert.GridOKC] (hTL : TLat q a 4 E) (hTR : TRat q a 4 E) {i j k l b : ℕ}
+    (hx : i < SieveCert.n ∧ j < SieveCert.n ∧ k < SieveCert.n ∧ l < SieveCert.n) (hb : b < SieveCert.nC)
+    (hn : SieveCert.ne5 i j k l b = false) :
+    |(parQ q).I (gA q a) ((parQ q).S5c i j k l b) - (parQ q).I (gB q) ((parQ q).S5c i j k l b)| ≤ E := by
+  obtain ⟨hi, hj, hk, hl⟩ := hx
+  refine box_leaf_gen hL hTL hTR (len_S5c q i j k l b) (thrOK_S5c hL hi hj hk hl hb)
+    ![cell i, cell j, cell k, cell l, SieveCert.cellC b] (fun rt hp hs' => ?_) ?_
+  · obtain ⟨hc, hCi, hCj, hCk, hCl, hCb, -⟩ := (parQ q).facts_S5c (mem_famSet_sum hp hs')
+    have hCi : InC (xq q) i (rt 0) := hCi
+    have hCj : InC (xq q) j (rt 1) := hCj
+    have hCk : InC (xq q) k (rt 2) := hCk
+    have hCl : InC (xq q) l (rt 3) := hCl
+    have hCb : InCC (xq q) b (rt 4) := hCb
+    have hCb := inCC_iff.1 hCb
+    refine ⟨hc.1, hc.2.1, fun t => ?_⟩
+    fin_cases t
+    · exact ⟨by simpa [cell] using hCi.1, by simpa [cell] using hCi.2⟩
+    · exact ⟨by simpa [cell] using hCj.1, by simpa [cell] using hCj.2⟩
+    · exact ⟨by simpa [cell] using hCk.1, by simpa [cell] using hCk.2⟩
+    · exact ⟨by simpa [cell] using hCl.1, by simpa [cell] using hCl.2⟩
+    · exact ⟨by simpa [SieveCert.cellC] using hCb.1, by simpa [SieveCert.cellC] using hCb.2⟩
   · simpa [List.ofFn_succ, SieveCert.ne5] using hn
 
-theorem lf_e6 [SieveCert.GridOKC] (hE : 0 ≤ E) (hTL : TLat q a 5 E) (hTU : TUat q a 5 E) {i j k l b c : ℕ}
-    (hD : Par.Deep i j k l) (hb : b < SieveCert.nC) (hc : c < SieveCert.nC) (hs : Par.sE6 i j k l b c = true) :
+omit [SieveCert.Rule] in
+theorem lf_e6 [SieveCert.GridOKC] (hTL : TLat q a 5 E) (hTR : TRat q a 5 E) {i j k l b c : ℕ}
+    (hx : i < SieveCert.n ∧ j < SieveCert.n ∧ k < SieveCert.n ∧ l < SieveCert.n) (hb : b < SieveCert.nC)
+    (hc : c < SieveCert.nC) (hs : Par.sE6 i j k l b c = true) :
     |(parQ q).I (gA q a) ((parQ q).S6c i j k l b c) - (parQ q).I (gB q) ((parQ q).S6c i j k l b c)| ≤ E := by
-  obtain ⟨hi, hj, hk, hl⟩ := Deep.idx hD
-  refine box_leaf_gen hL hE hTL hTU (len_S6c q i j k l b c) (thrOK_S6c hL hi hj hk hl hb hc)
+  obtain ⟨hi, hj, hk, hl⟩ := hx
+  refine box_leaf_gen hL hTL hTR (len_S6c q i j k l b c) (thrOK_S6c hL hi hj hk hl hb hc)
     ![cell i, cell j, cell k, cell l, SieveCert.cellC b, SieveCert.cellC c] (fun rt hp hs' => ?_) ?_
-  · obtain ⟨hch, hCi, hCj, hCk, hCl, hCb, hCc, -, -, -, hX⟩ := (parQ q).facts_S6c (mem_famSet_sum hp hs')
+  · obtain ⟨hch, hCi, hCj, hCk, hCl, hCb, hCc, -⟩ := (parQ q).facts_S6c (mem_famSet_sum hp hs')
     have hCi : InC (xq q) i (rt 0) := hCi
     have hCj : InC (xq q) j (rt 1) := hCj
     have hCk : InC (xq q) k (rt 2) := hCk
@@ -1191,16 +1378,14 @@ theorem lf_e6 [SieveCert.GridOKC] (hE : 0 ≤ E) (hTL : TLat q a 5 E) (hTU : TUa
     have hCc : InCC (xq q) c (rt 5) := hCc
     have hCb := inCC_iff.1 hCb
     have hCc := inCC_iff.1 hCc
-    refine ⟨hch.1, hch.2.1, fun t => ?_, ?_⟩
-    · fin_cases t
-      · exact ⟨by simpa [cell] using hCi.1, by simpa [cell] using hCi.2⟩
-      · exact ⟨by simpa [cell] using hCj.1, by simpa [cell] using hCj.2⟩
-      · exact ⟨by simpa [cell] using hCk.1, by simpa [cell] using hCk.2⟩
-      · exact ⟨by simpa [cell] using hCl.1, by simpa [cell] using hCl.2⟩
-      · exact ⟨by simpa [SieveCert.cellC] using hCb.1, by simpa [SieveCert.cellC] using hCb.2⟩
-      · exact ⟨by simpa [SieveCert.cellC] using hCc.1, by simpa [SieveCert.cellC] using hCc.2⟩
-    · rw [prod_erase_last rt fun t => (hp t).pos, Fin.prod_univ_five]
-      exact_mod_cast hX
+    refine ⟨hch.1, hch.2.1, fun t => ?_⟩
+    fin_cases t
+    · exact ⟨by simpa [cell] using hCi.1, by simpa [cell] using hCi.2⟩
+    · exact ⟨by simpa [cell] using hCj.1, by simpa [cell] using hCj.2⟩
+    · exact ⟨by simpa [cell] using hCk.1, by simpa [cell] using hCk.2⟩
+    · exact ⟨by simpa [cell] using hCl.1, by simpa [cell] using hCl.2⟩
+    · exact ⟨by simpa [SieveCert.cellC] using hCb.1, by simpa [SieveCert.cellC] using hCb.2⟩
+    · exact ⟨by simpa [SieveCert.cellC] using hCc.1, by simpa [SieveCert.cellC] using hCc.2⟩
   · simpa [List.ofFn_succ, Par.sE6] using hs
 
 end Leaves
@@ -1239,40 +1424,247 @@ theorem Err_ge' {η : ℝ} {δ d : ℝ} (hδd : δ ≤ d) (q : ℕ) (hq : 1 ≤ 
   have : (0 : ℝ) ≤ (q.totient : ℝ)⁻¹ := by positivity
   nlinarith
 
-/-- **The leaves, for large `q`.** For a route with `RouteOK` and a grid with `GridOK` that fit (`Fits`), given the
-route's Type II estimate (`hII`), for `η > 0` there are `δ > 0` and `q₀` such that for `q ≥ q₀` and `a` a unit mod `q`,
-`q` is large and every leaf of the tree at `x = q^L` is within `Err η δ q`. -/
-theorem leaves_ev [SieveCert.GridOKC] (hII : TypeIIAt) {η : ℝ} (hη : 0 < η) :
+/-- The sieve's floor is below the window's width: `a₀ < (w₂ − w₁)L`. -/
+theorem a0_lt_W : a0 < (w₂ - w₁) * L := by
+  have h1 := (Fits.w₁_lt : w₁ * DEN < U1)
+  have h2 := (Fits.U2_lt : (U2 : ℝ) < w₂ * DEN)
+  have hD := DEN_pos
+  have hL : (0 : ℝ) < L := L_pos
+  have hV : (V : ℝ) / DEN < w₂ - w₁ := by
+    rw [div_lt_iff₀ hD, V_cast]
+    linarith
+  unfold a0
+  nlinarith
+
+/-- **Proposition 6-ib on a box the bilinear rule passes.** Let the route have `RouteOK`, the grid `GridOK`, the two
+fit (`Fits`), and the bilinear rule's exponent be the route's (`IBFits`), and assume the route's Type II estimate
+(`hII`). For a box `f` that `ibOK` passes and `η > 0` there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a`
+mod `q`, Proposition 6's estimate holds on the families in the box (`P6IBat`) with error `Err η δ q`: the witnesses of
+`ibOK_sound`, at the exponents `L·lo/DEN`, `L·hi/DEN` and `t = L·T/DEN`, are `SieveP6ib.prop6ib`'s conditions. -/
+theorem P6IB_box [SieveCert.IBPar] [IBFits] (hII : TypeIIAt) {j : ℕ} (f : Fin j → ℕ × ℕ)
+    (hf : SieveCert.ibOK (List.ofFn f) = true) {η : ℝ} (hη : 0 < η) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      P6IBat q a f (Err η δ q) := by
+  obtain ⟨S₀, T, h0, hlo, hmid, S₁, eIn₁, hD₁, hD₂⟩ := SieveCert.ibOK_sound f hf
+  have hD := DEN_pos
+  have hDne : (DEN : ℝ) ≠ 0 := hD.ne'
+  have hLp : (0 : ℝ) < L := L_pos
+  have hw₁ := (Fits.w₁_lt : w₁ * DEN < U1)
+  have hw₂ := (Fits.U2_lt : (U2 : ℝ) < w₂ * DEN)
+  have sc : ∀ {x y : ℝ}, x ≤ y → L * (x / DEN) ≤ L * (y / DEN) := fun h =>
+    mul_le_mul_of_nonneg_left (div_le_div_of_nonneg_right h hD.le) hLp.le
+  have sc' : ∀ {x y : ℝ}, x < y → L * (x / DEN) < L * (y / DEN) := fun h =>
+    mul_lt_mul_of_pos_left (div_lt_div_of_pos_right h hD) hLp
+  have hs : ∀ (S : Finset (Fin j)) (g : Fin j → ℕ), ∑ i ∈ S, L * ((g i : ℝ) / DEN) =
+      L * (((∑ i ∈ S, g i : ℕ) : ℝ) / DEN) := fun S g => by
+    rw [Nat.cast_sum, Finset.sum_div, Finset.mul_sum]
+  -- the exponent `L = Lnum/Lden`
+  have hLden : (0 : ℝ) < SieveCert.IBPar.Lden := by
+    rcases Nat.eq_zero_or_pos SieveCert.IBPar.Lden with h | h
+    · have := (IBFits.L_eq : (SieveCert.IBPar.Lnum : ℝ) / SieveCert.IBPar.Lden = L)
+      rw [h, Nat.cast_zero, div_zero] at this
+      linarith
+    · exact_mod_cast h
+  have hLnum : (SieveCert.IBPar.Lnum : ℝ) = L * SieveCert.IBPar.Lden := by
+    rw [← (IBFits.L_eq : (SieveCert.IBPar.Lnum : ℝ) / SieveCert.IBPar.Lden = L), div_mul_cancel₀ _ hLden.ne']
+  -- the split's sums
+  set a₁ : ℕ := ∑ t ∈ S₁, (f t).2 + (if eIn₁ then T else 0) with ha₁
+  set a₂ : ℕ := ∑ t ∈ S₁ᶜ, (f t).2 + (if eIn₁ then 0 else T) with ha₂
+  have hA₁ : ∑ i ∈ S₁, L * (((f i).2 : ℝ) / DEN) + (if eIn₁ then L * ((T : ℝ) / DEN) else 0) =
+      L * ((a₁ : ℝ) / DEN) := by
+    rw [hs S₁ fun i => (f i).2, ha₁]
+    cases eIn₁ <;> simp [add_div, mul_add]
+  have hA₂ : ∑ i ∈ S₁ᶜ, L * (((f i).2 : ℝ) / DEN) + (if eIn₁ then 0 else L * ((T : ℝ) / DEN)) =
+      L * ((a₂ : ℝ) / DEN) := by
+    rw [hs S₁ᶜ fun i => (f i).2, ha₂]
+    cases eIn₁ <;> simp [add_div, mul_add]
+  have hS₀lo := hs S₀ fun i => (f i).1
+  have hS₀hi := hs S₀ fun i => (f i).2
+  -- `w₁L − Σ_{S₀} lo ≤ t`
+  have c1 : w₁ * L - ∑ i ∈ S₀, L * (((f i).1 : ℝ) / DEN) ≤ L * ((T : ℝ) / DEN) := by
+    have e1 : U1 ≤ T + ∑ t ∈ S₀, (f t).1 := by omega
+    have r1 : (U1 : ℝ) ≤ T + ((∑ t ∈ S₀, (f t).1 : ℕ) : ℝ) := by exact_mod_cast e1
+    rw [hS₀lo]
+    calc w₁ * L - L * (((∑ t ∈ S₀, (f t).1 : ℕ) : ℝ) / DEN)
+        = L * ((w₁ * DEN - ((∑ t ∈ S₀, (f t).1 : ℕ) : ℝ)) / DEN) := by field_simp
+      _ ≤ L * ((T : ℝ) / DEN) := sc (by linarith)
+  have hw2L : w₂ * L = L * (w₂ * DEN / DEN) := by field_simp
+  have hLL : L = L * ((DEN : ℝ) / DEN) := by field_simp
+  -- the middle of the window
+  have c2 : w₂ * L < ∑ i ∈ S₀, L * (((f i).2 : ℝ) / DEN) →
+      L - w₂ * L - max (w₂ * L) (∑ i ∈ S₀, L * (((f i).1 : ℝ) / DEN)) ≤ L * ((T : ℝ) / DEN) := by
+    rw [hS₀lo, hS₀hi]
+    intro hW
+    have hU : U2 ≤ ∑ t ∈ S₀, (f t).2 := by
+      have h' : w₂ * DEN < ((∑ t ∈ S₀, (f t).2 : ℕ) : ℝ) := by
+        by_contra hc
+        have := sc (not_lt.1 hc)
+        rw [← hw2L] at this
+        linarith
+      have : (U2 : ℝ) < ((∑ t ∈ S₀, (f t).2 : ℕ) : ℝ) := by linarith
+      exact_mod_cast this.le
+    have hm := hmid hU
+    have hmax : w₂ * L ≤ max (w₂ * L) (L * (((∑ t ∈ S₀, (f t).1 : ℕ) : ℝ) / DEN)) := le_max_left _ _
+    have hmax' : L * (((∑ t ∈ S₀, (f t).1 : ℕ) : ℝ) / DEN) ≤
+        max (w₂ * L) (L * (((∑ t ∈ S₀, (f t).1 : ℕ) : ℝ) / DEN)) := le_max_right _ _
+    rcases le_total (∑ t ∈ S₀, (f t).1) U2 with hA | hA
+    · rw [max_eq_right hA] at hm
+      have e2 : DEN ≤ T + U2 + U2 := by omega
+      have r2 : (DEN : ℝ) ≤ T + U2 + U2 := by exact_mod_cast e2
+      have : L * ((DEN : ℝ) / DEN) - L * (w₂ * DEN / DEN) - L * (w₂ * DEN / DEN) ≤ L * ((T : ℝ) / DEN) := by
+        calc L * ((DEN : ℝ) / DEN) - L * (w₂ * DEN / DEN) - L * (w₂ * DEN / DEN)
+            = L * (((DEN : ℝ) - w₂ * DEN - w₂ * DEN) / DEN) := by ring
+          _ ≤ L * ((T : ℝ) / DEN) := sc (by linarith)
+      rw [← hw2L, ← hLL] at this
+      linarith
+    · rw [max_eq_left hA] at hm
+      have e2 : DEN ≤ T + U2 + ∑ t ∈ S₀, (f t).1 := by omega
+      have r2 : (DEN : ℝ) ≤ T + U2 + ((∑ t ∈ S₀, (f t).1 : ℕ) : ℝ) := by exact_mod_cast e2
+      have : L * ((DEN : ℝ) / DEN) - L * (w₂ * DEN / DEN) - L * (((∑ t ∈ S₀, (f t).1 : ℕ) : ℝ) / DEN) ≤
+          L * ((T : ℝ) / DEN) := by
+        calc L * ((DEN : ℝ) / DEN) - L * (w₂ * DEN / DEN) - L * (((∑ t ∈ S₀, (f t).1 : ℕ) : ℝ) / DEN)
+            = L * (((DEN : ℝ) - w₂ * DEN - ((∑ t ∈ S₀, (f t).1 : ℕ) : ℝ)) / DEN) := by ring
+          _ ≤ L * ((T : ℝ) / DEN) := sc (by linarith)
+      rw [← hw2L, ← hLL] at this
+      linarith
+  -- `Σ_{S₀} hi < L − w₁L`
+  have c3 : ∑ i ∈ S₀, L * (((f i).2 : ℝ) / DEN) < L - w₁ * L := by
+    rw [hS₀hi]
+    have e3 : ∑ t ∈ S₀, (f t).2 + U1 < DEN := by omega
+    have r3 : ((∑ t ∈ S₀, (f t).2 : ℕ) : ℝ) + U1 < DEN := by exact_mod_cast e3
+    calc L * (((∑ t ∈ S₀, (f t).2 : ℕ) : ℝ) / DEN) < L * (((DEN : ℝ) - w₁ * DEN) / DEN) := sc' (by linarith)
+      _ = L - w₁ * L := by field_simp
+  -- `a₁ < L − 1`, at the upper ends
+  have c4 : ∑ i ∈ S₁, L * (((f i).2 : ℝ) / DEN) + (if eIn₁ then L * ((T : ℝ) / DEN) else 0) < L - 1 := by
+    rw [hA₁]
+    have hN : SieveCert.IBPar.Lden < SieveCert.IBPar.Lnum := by
+      by_contra hc
+      rw [Nat.sub_eq_zero_of_le (not_lt.1 hc), zero_mul] at hD₁
+      exact absurd hD₁ (Nat.not_lt_zero _)
+    have r4 : (a₁ : ℝ) * SieveCert.IBPar.Lnum < ((SieveCert.IBPar.Lnum : ℝ) - SieveCert.IBPar.Lden) * DEN := by
+      rw [← Nat.cast_sub hN.le]
+      exact_mod_cast hD₁
+    rw [hLnum] at r4
+    have r5 : (a₁ : ℝ) * L < (L - 1) * DEN := by
+      have : ((a₁ : ℝ) * L) * SieveCert.IBPar.Lden < ((L - 1) * DEN) * SieveCert.IBPar.Lden := by nlinarith
+      exact lt_of_mul_lt_mul_right this hLden.le
+    rw [mul_div_assoc', div_lt_iff₀ hD]
+    linarith
+  -- `a₁ + 2a₂ < 1`, at the upper ends
+  have c5 : ∑ i ∈ S₁, L * (((f i).2 : ℝ) / DEN) + (if eIn₁ then L * ((T : ℝ) / DEN) else 0) +
+      2 * (∑ i ∈ S₁ᶜ, L * (((f i).2 : ℝ) / DEN) + (if eIn₁ then 0 else L * ((T : ℝ) / DEN))) < L := by
+    rw [hA₁, hA₂]
+    have r6 : (a₁ : ℝ) + 2 * a₂ < DEN := by exact_mod_cast hD₂
+    calc L * ((a₁ : ℝ) / DEN) + 2 * (L * ((a₂ : ℝ) / DEN)) = L * (((a₁ : ℝ) + 2 * a₂) / DEN) := by ring
+      _ < L * ((DEN : ℝ) / DEN) := sc' r6
+      _ = L := by field_simp
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := P6IB_spec a0 hII a0_pos a0_lt_W j (fun i => L * (((f i).1 : ℝ) / DEN))
+    (fun i => L * (((f i).2 : ℝ) / DEN)) S₀ S₁ eIn₁ c1 c2 c3 c4 c5 hη
+  refine ⟨δ, hδ, q₀, fun q _ hq a ha spec hlen hthr hsem => hq₀ q hq a ha spec hlen hthr fun rt hp hs' => ?_⟩
+  obtain ⟨hsa, hz, hc⟩ := hsem rt hp hs'
+  refine ⟨hsa, hz, fun i => ⟨?_, ?_⟩⟩
+  · rw [Real.rpow_mul (Nat.cast_nonneg q)]
+    exact (hc i).1
+  · rw [Real.rpow_mul (Nat.cast_nonneg q)]
+    exact (hc i).2.le
+
+/-- **Proposition 6-ib, uniformly over finitely many boxes**: `P6IB_box` for each box of `B` that `ibOK` passes, with
+the least `δ` and the largest `q₀`. -/
+theorem P6IB_boxes [SieveCert.IBPar] [IBFits] (hII : TypeIIAt) {j : ℕ} (B : Finset (Fin j → ℕ × ℕ)) {η : ℝ}
+    (hη : 0 < η) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∀ f ∈ B, SieveCert.ibOK (List.ofFn f) = true → P6IBat q a f (Err η δ q) := by
+  classical
+  induction B using Finset.induction_on with
+  | empty => exact ⟨1, one_pos, 0, fun q _ _ a _ f hf => absurd hf (Finset.notMem_empty f)⟩
+  | insert f B _ ih =>
+    obtain ⟨δ₁, hδ₁, q₁, h₁⟩ := ih
+    by_cases hf : SieveCert.ibOK (List.ofFn f) = true
+    · obtain ⟨δ₂, hδ₂, q₂, h₂⟩ := P6IB_box hII f hf hη
+      refine ⟨min δ₁ δ₂, lt_min hδ₁ hδ₂, max q₁ (max q₂ 1), fun q _ hq a ha g hg hgo => ?_⟩
+      have hq1 : 1 ≤ q := le_of_max_le_right (le_of_max_le_right hq)
+      rcases Finset.mem_insert.1 hg with rfl | hg
+      · exact (h₂ q (le_of_max_le_left (le_of_max_le_right hq)) a ha).mono (Err_ge' (min_le_right _ _) q hq1)
+      · exact (h₁ q (le_of_max_le_left hq) a ha g hg hgo).mono (Err_ge' (min_le_left _ _) q hq1)
+    · refine ⟨δ₁, hδ₁, q₁, fun q _ hq a ha g hg hgo => ?_⟩
+      rcases Finset.mem_insert.1 hg with rfl | hg
+      · exact absurd hgo hf
+      · exact h₁ q hq a ha g hg hgo
+
+omit [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
+/-- Some `δ > 0` is at most each of finitely many positive reals. -/
+theorem exists_le_list (ds : List ℝ) (h : ∀ d ∈ ds, 0 < d) : ∃ δ : ℝ, 0 < δ ∧ ∀ d ∈ ds, δ ≤ d := by
+  induction ds with
+  | nil => exact ⟨1, one_pos, by simp⟩
+  | cons d ds ih =>
+    obtain ⟨δ, hδ, hle⟩ := ih fun x hx => h x (List.mem_cons_of_mem _ hx)
+    refine ⟨min d δ, lt_min (h d (by simp)) hδ, fun x hx => ?_⟩
+    rcases List.mem_cons.1 hx with rfl | hx
+    · exact min_le_left _ _
+    · exact (min_le_right _ _).trans (hle x hx)
+
+/-- The boxes of depth 2 of the grid: `(cell i, cell j)` for `i, j < n`. -/
+def boxes2 : Finset (Fin 2 → ℕ × ℕ) :=
+  (Finset.range SieveCert.n ×ˢ Finset.range SieveCert.n).image fun p => ![cell p.1, cell p.2]
+
+/-- The boxes of depth 3 of the grid. -/
+def boxes3 : Finset (Fin 3 → ℕ × ℕ) :=
+  (Finset.range SieveCert.n ×ˢ Finset.range SieveCert.n ×ˢ Finset.range SieveCert.n).image
+    fun p => ![cell p.1, cell p.2.1, cell p.2.2]
+
+/-- The boxes of depth 4 of the grid. -/
+def boxes4 : Finset (Fin 4 → ℕ × ℕ) :=
+  (Finset.range SieveCert.n ×ˢ Finset.range SieveCert.n ×ˢ Finset.range SieveCert.n ×ˢ Finset.range SieveCert.n).image
+    fun p => ![cell p.1, cell p.2.1, cell p.2.2.1, cell p.2.2.2]
+
+/-- The boxes of depth 5 of the grid: four fine cells and a coarse one. -/
+def boxes5 : Finset (Fin 5 → ℕ × ℕ) :=
+  (Finset.range SieveCert.n ×ˢ Finset.range SieveCert.n ×ˢ Finset.range SieveCert.n ×ˢ Finset.range SieveCert.n ×ˢ
+    Finset.range SieveCert.nC).image
+      fun p => ![cell p.1, cell p.2.1, cell p.2.2.1, cell p.2.2.2.1, SieveCert.cellC p.2.2.2.2]
+
+/-- **The leaves, for large `q`.** For a route with `RouteOK` and a grid with `GridOK` and `GridOKC` that fit
+(`Fits`), a rule that splits and decomposes a box only when `limOK` passes, or the bilinear Type I test with no boundary
+term does (`RuleIB`), its exponent the route's (`IBFits`), and the route's Type II estimate (`hII`): for `η > 0` there
+are `δ > 0` and `q₀` such that for `q ≥ q₀` and `a` a unit mod `q`, `q` is large and every leaf of the tree at
+`x = q^L` is within `Err η δ q`. -/
+theorem leaves_ev [SieveCert.GridOKC] [SieveCert.Rule] [SieveCert.IBPar] [SieveCert.RuleIB] [IBFits]
+    (hII : TypeIIAt) {η : ℝ} (hη : 0 < η) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
       LargeQ q ∧ (parQ q).Leaves (gA q a) (gB q) (Err η δ q) := by
+  have : SieveCert.RuleNB := SieveCert.RuleIB.toRuleNB
   obtain ⟨d1, hd1, q1, h1⟩ := TL_spec a0 hII a0_pos 0
   obtain ⟨d2, hd2, q2, h2⟩ := TL_spec a0 hII a0_pos 1
   obtain ⟨d3, hd3, q3, h3⟩ := TL_spec a0 hII a0_pos 2
   obtain ⟨d4, hd4, q4, h4⟩ := TL_spec a0 hII a0_pos 3
-  obtain ⟨d5, hd5, q5, h5⟩ := TU_spec a0 hII a0_pos 1
-  obtain ⟨d6, hd6, q6, h6⟩ := TU_spec a0 hII a0_pos 2
-  obtain ⟨d7, hd7, q7, h7⟩ := TU_spec a0 hII a0_pos 3
-  obtain ⟨d8, hd8, q8, h8⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 0 hη
-  obtain ⟨d9, hd9, q9, h9⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 1 hη
-  obtain ⟨d10, hd10, q10, h10⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 2 hη
-  obtain ⟨d11, hd11, q11, h11⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 3 hη
-  obtain ⟨d12, hd12, q12, h12⟩ := TL_spec a0 hII a0_pos 4
-  obtain ⟨d13, hd13, q13, h13⟩ := TL_spec a0 hII a0_pos 5
-  obtain ⟨d14, hd14, q14, h14⟩ := TU_spec a0 hII a0_pos 4
-  obtain ⟨d15, hd15, q15, h15⟩ := TU_spec a0 hII a0_pos 5
-  obtain ⟨d16, hd16, q16, h16⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 4 hη
-  obtain ⟨d17, hd17, q17, h17⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 5 hη
+  obtain ⟨d5, hd5, q5, h5⟩ := TL_spec a0 hII a0_pos 4
+  obtain ⟨d6, hd6, q6, h6⟩ := TL_spec a0 hII a0_pos 5
+  obtain ⟨d7, hd7, q7, h7⟩ := TU_spec a0 hII a0_pos 1
+  obtain ⟨d8, hd8, q8, h8⟩ := TU_spec a0 hII a0_pos 2
+  obtain ⟨d9, hd9, q9, h9⟩ := TU_spec a0 hII a0_pos 3
+  obtain ⟨d10, hd10, q10, h10⟩ := TU_spec a0 hII a0_pos 4
+  obtain ⟨d11, hd11, q11, h11⟩ := TR_spec a0 hII a0_pos 1
+  obtain ⟨d12, hd12, q12, h12⟩ := TR_spec a0 hII a0_pos 2
+  obtain ⟨d13, hd13, q13, h13⟩ := TR_spec a0 hII a0_pos 3
+  obtain ⟨d14, hd14, q14, h14⟩ := TR_spec a0 hII a0_pos 4
+  obtain ⟨d15, hd15, q15, h15⟩ := TR_spec a0 hII a0_pos 5
+  obtain ⟨d16, hd16, q16, h16⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 0 hη
+  obtain ⟨d17, hd17, q17, h17⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 1 hη
+  obtain ⟨d18, hd18, q18, h18⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 2 hη
+  obtain ⟨d19, hd19, q19, h19⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 3 hη
+  obtain ⟨d20, hd20, q20, h20⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 4 hη
+  obtain ⟨d21, hd21, q21, h21⟩ := P6_spec a0 b0 hII a0_pos a0_b0 b0_gt b0_lt 5 hη
+  obtain ⟨d22, hd22, q22, h22⟩ := P6IB_boxes hII boxes2 hη
+  obtain ⟨d23, hd23, q23, h23⟩ := P6IB_boxes hII boxes3 hη
+  obtain ⟨d24, hd24, q24, h24⟩ := P6IB_boxes hII boxes4 hη
+  obtain ⟨d25, hd25, q25, h25⟩ := P6IB_boxes hII boxes5 hη
   obtain ⟨qL, hqL⟩ := Filter.eventually_atTop.1 (largeQ_ev)
-  set δ := min d1 (min d2 (min d3 (min d4 (min d5 (min d6 (min d7 (min d8 (min d9 (min d10 (min d11 (min d12 (min d13 (min d14 (min d15 (min d16 d17))))))))))))))) with hδ
-  have hδ0 : 0 < δ := by
-    simp only [hδ, lt_min_iff]
-    exact ⟨hd1, hd2, hd3, hd4, hd5, hd6, hd7, hd8, hd9, hd10, hd11, hd12, hd13, hd14, hd15, hd16, hd17⟩
-  have hle : ∀ d ∈ [d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15, d16, d17], δ ≤ d := by
-    intro d hd
-    simp only [List.mem_cons, List.mem_nil_iff, or_false] at hd
-    rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-      simp [hδ, min_le_iff]
-  refine ⟨δ, hδ0, q1 + q2 + q3 + q4 + q5 + q6 + q7 + q8 + q9 + q10 + q11 + q12 + q13 + q14 + q15 + q16 + q17 + qL, fun q _ hq a ha => ?_⟩
+  obtain ⟨δ, hδ0, hle⟩ := exists_le_list [d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15, d16, d17,
+    d18, d19, d20, d21, d22, d23, d24, d25]
+    (by simp [hd1, hd2, hd3, hd4, hd5, hd6, hd7, hd8, hd9, hd10, hd11, hd12, hd13, hd14, hd15, hd16, hd17, hd18, hd19,
+      hd20, hd21, hd22, hd23, hd24, hd25])
+  refine ⟨δ, hδ0, q1 + q2 + q3 + q4 + q5 + q6 + q7 + q8 + q9 + q10 + q11 + q12 + q13 + q14 + q15 + q16 + q17 + q18 +
+    q19 + q20 + q21 + q22 + q23 + q24 + q25 + qL, fun q _ hq a ha => ?_⟩
   have hLq : LargeQ q := hqL q (by omega)
   have hq1 : 1 ≤ q := by have := hLq.q3; omega
   have hE0 := Err_nonneg hη δ q hq1
@@ -1280,29 +1672,53 @@ theorem leaves_ev [SieveCert.GridOKC] (hII : TypeIIAt) {η : ℝ} (hη : 0 < η)
   have tl1 : TLat q a 1 (Err η δ q) := TLat.mono (h2 q (by omega) a ha) (Err_ge hη (hle d2 (by simp)) q hq1)
   have tl2 : TLat q a 2 (Err η δ q) := TLat.mono (h3 q (by omega) a ha) (Err_ge hη (hle d3 (by simp)) q hq1)
   have tl3 : TLat q a 3 (Err η δ q) := TLat.mono (h4 q (by omega) a ha) (Err_ge hη (hle d4 (by simp)) q hq1)
-  have tu1 : TUat q a 1 (Err η δ q) := TUat.mono (h5 q (by omega) a ha) (Err_ge hη (hle d5 (by simp)) q hq1)
-  have tu2 : TUat q a 2 (Err η δ q) := TUat.mono (h6 q (by omega) a ha) (Err_ge hη (hle d6 (by simp)) q hq1)
-  have tu3 : TUat q a 3 (Err η δ q) := TUat.mono (h7 q (by omega) a ha) (Err_ge hη (hle d7 (by simp)) q hq1)
-  have p0 : P6at q a 0 (Err η δ q) := P6at.mono (h8 q (by omega) a ha) (Err_ge' (η := η) (hle d8 (by simp)) q hq1)
-  have p1 : P6at q a 1 (Err η δ q) := P6at.mono (h9 q (by omega) a ha) (Err_ge' (η := η) (hle d9 (by simp)) q hq1)
-  have p2 : P6at q a 2 (Err η δ q) := P6at.mono (h10 q (by omega) a ha) (Err_ge' (η := η) (hle d10 (by simp)) q hq1)
-  have p3 : P6at q a 3 (Err η δ q) := P6at.mono (h11 q (by omega) a ha) (Err_ge' (η := η) (hle d11 (by simp)) q hq1)
-  have tl4 : TLat q a 4 (Err η δ q) := TLat.mono (h12 q (by omega) a ha) (Err_ge hη (hle d12 (by simp)) q hq1)
-  have tl5 : TLat q a 5 (Err η δ q) := TLat.mono (h13 q (by omega) a ha) (Err_ge hη (hle d13 (by simp)) q hq1)
-  have tu4 : TUat q a 4 (Err η δ q) := TUat.mono (h14 q (by omega) a ha) (Err_ge hη (hle d14 (by simp)) q hq1)
-  have tu5 : TUat q a 5 (Err η δ q) := TUat.mono (h15 q (by omega) a ha) (Err_ge hη (hle d15 (by simp)) q hq1)
-  have p4 : P6at q a 4 (Err η δ q) := P6at.mono (h16 q (by omega) a ha) (Err_ge' (η := η) (hle d16 (by simp)) q hq1)
-  have p5 : P6at q a 5 (Err η δ q) := P6at.mono (h17 q (by omega) a ha) (Err_ge' (η := η) (hle d17 (by simp)) q hq1)
+  have tl4 : TLat q a 4 (Err η δ q) := TLat.mono (h5 q (by omega) a ha) (Err_ge hη (hle d5 (by simp)) q hq1)
+  have tl5 : TLat q a 5 (Err η δ q) := TLat.mono (h6 q (by omega) a ha) (Err_ge hη (hle d6 (by simp)) q hq1)
+  have tu1 : TUat q a 1 (Err η δ q) := TUat.mono (h7 q (by omega) a ha) (Err_ge hη (hle d7 (by simp)) q hq1)
+  have tu2 : TUat q a 2 (Err η δ q) := TUat.mono (h8 q (by omega) a ha) (Err_ge hη (hle d8 (by simp)) q hq1)
+  have tu3 : TUat q a 3 (Err η δ q) := TUat.mono (h9 q (by omega) a ha) (Err_ge hη (hle d9 (by simp)) q hq1)
+  have tu4 : TUat q a 4 (Err η δ q) := TUat.mono (h10 q (by omega) a ha) (Err_ge hη (hle d10 (by simp)) q hq1)
+  have tr1 : TRat q a 1 (Err η δ q) := TRat.mono (h11 q (by omega) a ha) (Err_ge hη (hle d11 (by simp)) q hq1)
+  have tr2 : TRat q a 2 (Err η δ q) := TRat.mono (h12 q (by omega) a ha) (Err_ge hη (hle d12 (by simp)) q hq1)
+  have tr3 : TRat q a 3 (Err η δ q) := TRat.mono (h13 q (by omega) a ha) (Err_ge hη (hle d13 (by simp)) q hq1)
+  have tr4 : TRat q a 4 (Err η δ q) := TRat.mono (h14 q (by omega) a ha) (Err_ge hη (hle d14 (by simp)) q hq1)
+  have tr5 : TRat q a 5 (Err η δ q) := TRat.mono (h15 q (by omega) a ha) (Err_ge hη (hle d15 (by simp)) q hq1)
+  have p0 : P6at q a 0 (Err η δ q) := P6at.mono (h16 q (by omega) a ha) (Err_ge' (η := η) (hle d16 (by simp)) q hq1)
+  have p1 : P6at q a 1 (Err η δ q) := P6at.mono (h17 q (by omega) a ha) (Err_ge' (η := η) (hle d17 (by simp)) q hq1)
+  have p2 : P6at q a 2 (Err η δ q) := P6at.mono (h18 q (by omega) a ha) (Err_ge' (η := η) (hle d18 (by simp)) q hq1)
+  have p3 : P6at q a 3 (Err η δ q) := P6at.mono (h19 q (by omega) a ha) (Err_ge' (η := η) (hle d19 (by simp)) q hq1)
+  have p4 : P6at q a 4 (Err η δ q) := P6at.mono (h20 q (by omega) a ha) (Err_ge' (η := η) (hle d20 (by simp)) q hq1)
+  have p5 : P6at q a 5 (Err η δ q) := P6at.mono (h21 q (by omega) a ha) (Err_ge' (η := η) (hle d21 (by simp)) q hq1)
+  have ib2 := fun f hf ho =>
+    (h22 q (by omega) a ha f hf ho).mono (Err_ge' (η := η) (hle d22 (by simp)) q hq1)
+  have ib3 := fun f hf ho =>
+    (h23 q (by omega) a ha f hf ho).mono (Err_ge' (η := η) (hle d23 (by simp)) q hq1)
+  have ib4 := fun f hf ho =>
+    (h24 q (by omega) a ha f hf ho).mono (Err_ge' (η := η) (hle d24 (by simp)) q hq1)
+  have ib5 := fun f hf ho =>
+    (h25 q (by omega) a ha f hf ho).mono (Err_ge' (η := η) (hle d25 (by simp)) q hq1)
   refine ⟨hLq, ⟨lf_j0 hLq p0, fun i hi hW => lf_e1 hLq tl0 hi hW, fun i hi _ => lf_p1 hLq p1 hi,
-    fun i hi j hj _ hd => lf_e2 hLq tu1 hi hj hd, fun i hi j hj _ _ => lf_p2 hLq p2 hi hj,
-    fun i hi _ j hj _ hs => lf_e2' hLq hE0 tl1 tu1 hi hj hs,
-    fun i hi j hj _ hd k hk hkk hn3 => lf_e3 hLq tu2 hi hj hk hd hkk hn3,
-    fun i hi j hj _ _ k hk _ _ => lf_p3 hLq p3 hi hj hk,
-    fun i hi j hj _ _ k hk _ hn3 => lf_e3' hLq hE0 tl2 tu2 hi hj hk hn3,
-    fun i hi j hj _ _ k hk _ _ l hl _ hs => lf_e4 hLq hE0 tl3 tu3 hi hj hk (by omega) hs,
-    fun i j k l hD => lf_e4gt hLq tu3 hD, fun i j k l hD => lf_p4 hLq p4 hD,
-    fun i j k l hD b hb hK hn => lf_e5gt hLq tu4 hD hb hK hn, fun i j k l hD b hb _ _ => lf_p5 hLq p5 hD hb,
-    fun i j k l hD b hb _ hn => lf_e5' hLq hE0 tl4 tu4 hD hb hn,
-    fun i j k l hD b hb _ _ c hc _ hs => lf_e6 hLq hE0 tl5 tu5 hD hb (by omega) hs⟩⟩
+    fun i hi j hj _ hd => lf_e2 hLq hE0 tu1 hi hj (SieveCert.ok2_of_decR hd),
+    fun i hi j hj _ hd => lf_p2 hLq p2 hi hj (SieveCert.ok2_of_decR hd) fun hib =>
+      ib2 _ (Finset.mem_image.2 ⟨(i, j), by simp [hi, hj], rfl⟩) (by simpa [List.ofFn_succ] using hib),
+    fun i hi _ j hj _ hs => lf_e2' hLq tl1 tr1 hi hj hs,
+    fun i hi j hj _ hd k hk hkk hn3 => lf_e3 hLq hE0 tu2 hi hj hk (SieveCert.ok3_of_decR hd hk hkk hn3),
+    fun i hi j hj _ hd k hk hkk hn3 => lf_p3 hLq p3 hi hj hk (SieveCert.ok3_of_decR hd hk hkk hn3) fun hib =>
+      ib3 _ (Finset.mem_image.2 ⟨(i, j, k), by simp [hi, hj, hk], rfl⟩) (by simpa [List.ofFn_succ] using hib),
+    fun i hi j hj _ _ k hk _ hn3 => lf_e3' hLq tl2 tr2 hi hj hk hn3,
+    fun i hi j hj _ _ k hk _ _ l hl _ hs => lf_e4 hLq tl3 tr3 hi hj hk (by omega) hs,
+    fun i j k l hD => lf_e4gt hLq hE0 tu3 (Deep.idx hD) (SieveCert.ok4_of_dec4R hD.2.2.2),
+    fun i j k l hD => lf_p4 hLq p4 (Deep.idx hD) (SieveCert.ok4_of_dec4R hD.2.2.2) fun hib => by
+      obtain ⟨hi, hj, hk, hl⟩ := Deep.idx hD
+      exact ib4 _ (Finset.mem_image.2 ⟨(i, j, k, l), by simp [hi, hj, hk, hl], rfl⟩)
+        (by simpa [List.ofFn_succ] using hib),
+    fun i j k l hD b hb hK hn => lf_e5gt hLq hE0 tu4 (Deep.idx hD) hb (SieveCert.ok5_of_dec4R hD.2.2.2 hb hK hn),
+    fun i j k l hD b hb hK hn => lf_p5 hLq p5 (Deep.idx hD) hb (SieveCert.ok5_of_dec4R hD.2.2.2 hb hK hn)
+      fun hib => by
+        obtain ⟨hi, hj, hk, hl⟩ := Deep.idx hD
+        exact ib5 _ (Finset.mem_image.2 ⟨(i, j, k, l, b), by simp [hi, hj, hk, hl, hb], rfl⟩)
+          (by simpa [List.ofFn_succ] using hib),
+    fun i j k l hD b hb _ hn => lf_e5' hLq tl4 tr4 (Deep.idx hD) hb hn,
+    fun i j k l hD b hb _ _ c hc _ hs => lf_e6 hLq tl5 tr5 (Deep.idx hD) hb (by omega) hs⟩⟩
 
 end SieveQ

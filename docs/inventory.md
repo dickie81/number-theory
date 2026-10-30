@@ -3,7 +3,7 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 680 theorems: the library's final
+`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 713 theorems: the library's final
 results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 The last section lists the 99 modules that neither `Check` nor `CheckAll` imports, directly or
@@ -12,7 +12,7 @@ not, with their headline theorems (those whose docstring opens with a bold title
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 204 | 672 | 1 | 0 |
+| `lib/pnt` | 222 | 705 | 1 | 0 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -204,6 +204,16 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `LeastNonresidue.exists_nonsquare_le`: Vinogradov's least quadratic nonresidue conjecture, in Ankeny's form
 - `LeastNonresidue.exists_nonsquare_le_rpow_of`: `n(p) ≤ C₀(13/δ)^{13}p^δ` from `n(p) ≤ C₀(log p)^{13}`
 - `LeastNonresidue.exists_nonsquare_le_rpow`: `n(p) ≪_δ p^δ`
+
+#### `Linnik22000E`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 and its certificate at `n = 272`
+
+- `Linnik22000E.fits22000E`: `grid22000E` fits `route22000D`
+- `Linnik22000E.deepGrid22000E`: `grid22000E` holds the decomposition to depth 8
+- `Linnik22000E.linnik_22000e`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 at `n = 272`
+
+#### `Linnik22015R`: Linnik's theorem with exponent `4403 / 2000` by the bilinear Type I rule, from its certificate's inequality
+
+- `Linnik22015R.linnik_22015r_of_cert`: Linnik's theorem with exponent `4403 / 2000`, from the certificate's inequality
 
 #### `Linnik22240R`: Linnik's theorem with exponent `278 / 125`, under the refined certificate at `n = 340`
 
@@ -950,6 +960,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `ShortPrimesHalfPlane.zeroFreeXi_of_halfplane`: The zero-free half-plane gives `ZeroFreeXi α` for every `α` (here `α < 1` is what `short_primes_of_density` takes), with no Korobov–Vinogradov input. ([note](../formalisations/zeta-density.md))
 - `ShortPrimesHalfPlane.short_primes_11_17_noKV`: With it, `short_primes_of_density` at the density `DensityXi (17/6 + ε) 12` of `InghamDensity` needs no KV region (the same statement as…
 
+#### `SieveBox`: The share of a box of prime intervals
+
+- `SieveRough.shareBox`: The share of a box
+
 #### `SieveBrun`: Brun's sieve in product form, abstractly
 
 - `SieveBrun.bonferroni`: Bonferroni's inequalities
@@ -979,6 +993,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveBuch.Par.lvl1k`: Level 1 with the kept parts *paper*
 - `SieveBuch.Par.decompk`: The decomposition's inequality with the kept parts *paper*
 
+#### `SieveBuch8`: The decomposition to depth 8
+
+- `SieveBuch.Par.decomp8`: The decomposition's inequality to depth 8
+
 #### `SieveCert`: The certificate of the sieve route's loss, checked by the kernel
 
 - `SieveCert.total_div_le`: The certificate in the reals
@@ -996,6 +1014,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveCert.cost2_ge`: A dropped candidate cell's refined cost is at least its bound less `sub2`, in the reals.
 - `SieveCert.keepK_le`: The kept share's bound
 
+#### `SieveCert22000E`: The certificate to depth 8 of the sieve route's loss at `L = 11/5` with `n = 272`: `totalD < K`
+
+- `SieveDeep.totalD_lt_22000E`: The certificate to depth 8 on `grid22000E`
+
 #### `SieveCert22240R`: The refined certificate of the sieve route's loss at `L = 278/125` with `n = 340`: `total2 < K`
 
 - `SieveCert.total2_lt_22240R`: The refined certificate on `grid22240R` *paper*
@@ -1007,6 +1029,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveChain.chainTU_bound`: Chains times a rough cofactor in the window *paper*
 - `SieveChain.chainTL_bound`: Chains with a product of some of their primes in the window *paper*
 
+#### `SieveChainR`: Type II for chains with part of their product in the reflection of the window
+
+- `SieveChainR.chainTR_bound`: Chains with part of their product in the reflection of the window
+
 #### `SieveCount`: Type I counts in a residue class
 
 - `SieveCount.card_A`: Type I for `A` *paper*
@@ -1017,6 +1043,18 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveDecomp.buchstab_fam`: Buchstab's identity on a family *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveDecomp.famI_cells`: The cells of the prime `t`
 - `SieveDecomp.famI_vanish`: A family whose products are at most `N₁` and whose products times their last prime exceed `N₂` contributes `0`
+
+#### `SieveDeep`: The certificate to depth 8: its rule and its decisions
+
+- `SieveDeep.okIB_of_okD`: The block test is sound
+
+#### `SieveDeepCert`: The certificate to depth 8, by parts
+
+- `SieveDeep.totalD_eq_rowsJD`: The certificate's total is `rowsJD 0 n 0 n`.
+
+#### `SieveDeepCost`: The certificate to depth 8: its costs bound the dropped cells' charges
+
+- `SieveDeep.Ch3_le`: The charges below a cell `(i, j)` are at most `SC⁸·refcost`
 
 #### `SieveDiff`: The tree's weights, and a leaf's difference
 
@@ -1036,6 +1074,13 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 - `SieveDrop2.drop_ev2`: The dropped terms less the kept parts, for large `q` *paper*
 
+#### `SieveDrop8`: The dropped terms' `B`-count, to depth 8
+
+- `SieveDrop8.share8D`: The share of a cell of depth 8 of the region
+- `SieveDrop8.E1_le`: The dropped terms' `B`-count
+- `SieveDrop8.dT_le_cost`: The dropped sums of a cell `(i, j)` against its cost
+- `SieveDrop8.drop_ev8`: The dropped terms, for large `q`, with the loss as a parameter
+
 #### `SieveDyadic`: A dyadic partition of unity
 
 - `SieveDyadic.sum_bump`: The dyadic partition of unity
@@ -1051,6 +1096,11 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveFamily.Dsum_sharp_le`: A sharp family, explicitly
 - `SieveFamily.typeII_sharp_explicit`: A sharp family, with the Type II estimate
 - `SieveFamily.typeII_sharp`: The Type II estimate for a sharp family (Lemmas 4′ and 4″), asymptotic form *paper*
+
+#### `SieveGrid22000E`: The grid of the certificate to depth 8 at `L = 11/5` with `n = 272`
+
+- `SieveCert.gridOK22000E`
+- `SieveCert.gridOKC22000E`: The coarse grid `Gc` (`n / 4 = 68` cells) and the facts about it that the deepest levels use.
 
 #### `SieveGrid22240R`: The grid of the refined certificate at `L = 278/125` with `n = 340`
 
@@ -1100,7 +1150,9 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 - `SieveLeaves.TL_spec`: The lower window, on a family of atoms
 - `SieveLeaves.TU_spec`: The upper window, on a family of atoms
+- `SieveLeaves.TR_spec`: The reflected window, on a family of atoms
 - `SieveLeaves.P6_spec`: Proposition 6, on a family of atoms ([note](../formalisations/harman-sieve.md))
+- `SieveLeaves.P6IB_spec`: Proposition 6 with the bilinear estimate, on a family of atoms
 
 #### `SieveLemma1`: Weighted prime sums at a height inside a zero-free rectangle (Lemma 1 of the sieve route, `Λ` form)
 
@@ -1119,6 +1171,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveMain2.linnik_large2`: Linnik's theorem at `x = q^L`, for large `q`, under the refined certificate *paper*
 - `SieveMain2.linnik_route_lt2`: Linnik's theorem with exponent `L`, under a refined certificate whose total is below `K` *paper*
 
+#### `SieveMain8`: Linnik's theorem by the sieve route, under the certificate of depth 8
+
+- `SieveMain8.linnik_route_lt8`: Linnik's theorem with exponent `L`, under a certificate of depth 8 whose total is below `K`
+
 #### `SieveOmegaB`: Buchstab's `ω` on `[2, 3]`, and the logarithm's bounds of the certificate's cells
 
 - `SieveOmegaB.log_le_half_sub_inv`: `log y ≤ (y − 1/y)/2` for `y ≥ 1` *paper*
@@ -1129,6 +1185,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveOmegaB.lnT_ge`: The table *paper*
 - `SieveOmegaB.omF_ge`: `omF` bounds Buchstab's `ω` *paper*
 
+#### `SieveP6ib`: Proposition 6 with the bilinear estimate
+
+- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate
+
 #### `SieveProp6`: Proposition 6, Harman's fundamental theorem in the form used
 
 - `SieveProp6.leaf_bound`: A leaf *paper* ([note](../formalisations/harman-sieve.md))
@@ -1137,7 +1197,12 @@ not, with their headline theorems (those whose docstring opens with a bold title
 #### `SieveQ`: The decomposition at `x = q^L`, and its leaves for large `q`
 
 - `SieveQ.good_of_large`: The decomposition's hypotheses hold for large `q`
+- `SieveQ.P6IB_boxes`: Proposition 6-ib, uniformly over finitely many boxes
 - `SieveQ.leaves_ev`: The leaves, for large `q` *paper*
+
+#### `SieveQ8`: The leaves of the decomposition to depth 8, for large `q`
+
+- `SieveQ8.leaves_ev8`: The leaves of the decomposition to depth 8, for large `q`
 
 #### `SieveRanges`: The ranges of Brun's sieve
 
@@ -1181,6 +1246,13 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveSmooth.integrable_fourier_GC`
 - `SieveSmooth.GC_sub_eq_integral`: Separation by Fourier inversion
 
+#### `SieveSpline`: Weights for the bilinear Type I estimate: Parseval for the weight, intervals and splines
+
+- `SieveSpline.what_spl`: The spline's transform
+- `SieveSpline.norm_what_spl_tail`: The spline's tail
+- `SieveSpline.norm_Ew_spl_le`: `E_w` for a spline
+- `SieveSpline.typeIB_spline`: The bilinear Type I estimate with a spline weight
+
 #### `SieveStops1`: A stop's cofactor, and the stops below the window
 
 - `SieveStops1.stops1_bound`: The stops below the window
@@ -1195,6 +1267,11 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 - `SieveTree.tree_pt`: The Buchstab tree at one `n` *paper*
 - `SieveTree.tree_sum`: The Buchstab tree over a finite set
+
+#### `SieveTypeIB`: A bilinear Type I estimate by Parseval's identity
+
+- `SieveTypeIB.sum_bilinear`: The bilinear sum in Fourier form
+- `SieveTypeIB.typeIB_bound`: The bilinear Type I estimate
 
 #### `SieveTypeII`: The Type II estimate of the sieve route at small heights (Proposition 3′, pointwise in the heights)
 
@@ -1223,6 +1300,16 @@ not, with their headline theorems (those whose docstring opens with a bold title
 #### `SieveTypeIIU`: Type II families with sharp prime ranges
 
 - `SieveTypeIIU.typeII_unw`: Type II for families with sharp prime ranges *paper*
+
+#### `SieveTypeIIU22000D`: Proposition 3′ at `L = 11 / 5` on the window `[43457/100000, 46959/100000]·L`, for the curve `g7d`
+
+- `SieveTypeIIU22000D.window_22000d`: The window's exponents
+- `SieveTypeIIU22000D.typeII_22000d`: Proposition 3′ at `L = 11 / 5` on `[43457/100000, 46959/100000]·L`, for the curve `g7d`
+
+#### `SieveTypeIIU22015D`: Proposition 3′ at `L = 4403 / 2000` on the window `[43336/100000, 46995/100000]·L`, for the curve `g7d`
+
+- `SieveTypeIIU22015D.window_22015d`: The window's exponents
+- `SieveTypeIIU22015D.typeII_22015d`: Proposition 3′ at `L = 4403 / 2000` on `[43336/100000, 46995/100000]·L`, for the curve `g7d`
 
 #### `SieveTypeIIU22240D`: Proposition 3′ at `L = 278 / 125` on the Halász–Montgomery window `[41556/100000, 47531/100000]·L`, for the curve `g7d`
 

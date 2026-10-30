@@ -11,13 +11,16 @@ estimate `SieveTypeIIU22240D.typeII_22240d`), on its grid with `n = 340` (`Sieve
 total is less than `K` (`SieveCert.total2_lt_22240R`), with `SieveMain2.linnik_route_lt2`. The curve `g7d` uses
 Chen–Gupta–Li's Proposition 3.1 on `[5/7, 131/168]` (`LinnikCGLSteps`); the theorem is the route of the paper's first
 version (at an earlier exponent; it is in the git history) with that curve and the window and
-certificate of `L = 278 / 125`.
+certificate of `L = 278 / 125`. The decomposition's rule is the certificate's own (`SieveCert.limRule`), which
+never takes a box whole, so the bilinear Type I rule's exponent (`ibPar22240`) is idle.
 
 * `route22240D`, `routeOK22240D`: `L = 278 / 125` on `[41556/100000, 47531/100000]`; `2 < L ≤ 5/2` and `0 < w₁ < w₂ < 1`.
 * `typeII22240d`: `SieveTypeIIU22240D.typeII_22240d` as `TypeIIAt`.
 * `fits22240R`: `grid22240R` fits `route22240D`: `(41556/100000)·DEN < U1`, `U2 < (47531/100000)·DEN` and
   `DEN < (278 / 125)·U2`.
-* `linnik_22240r`: `SieveMain2.linnik_route_lt2` at them.
+* `ibPar22240`, `ibFits22240`: the bilinear rule's exponent `278/125`, which is the route's.
+* `linnik_22240r`: `SieveMain2.linnik_route_lt2` at them, with `SieveCert.limRule` (`SieveCert.limRule_ib`)
+  and `SieveCert.total2R_lim`.
 
 The file imports `SieveMain2.lean`, `SieveCert22240R.lean` and `SieveTypeIIU22240D.lean`.
 -/
@@ -59,12 +62,20 @@ theorem fits22240R : @Fits route22240D grid22240R := by
     show (DEN : ℝ) < 278 / 125 * ((47531 * DEN / 100000 : ℕ) : ℝ)
     linarith
 
+/-- The bilinear Type I rule's exponent, `278/125`. -/
+@[instance_reducible] def ibPar22240 : IBPar := ⟨278, 125⟩
+
+/-- `ibPar22240`'s exponent `Lnum/Lden` is the route's `L = 278 / 125`. -/
+theorem ibFits22240 : @IBFits route22240D ibPar22240 :=
+  @IBFits.mk route22240D ibPar22240 (show ((278 : ℕ) : ℝ) / ((125 : ℕ) : ℝ) = 278 / 125 by norm_num)
+
 /-- **Linnik's theorem with exponent `278 / 125`, by the refined certificate at `n = 340`**: there is `K` such that for every
 `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{278 / 125}`. -/
 theorem linnik_22240r : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
     ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (278 / 125 : ℝ) :=
-  @SieveMain2.linnik_route_lt2 route22240D routeOK22240D grid22240R gridOK22240R gridOKC22240R fits22240R typeII22240d
-    total2_lt_22240R
+  @SieveMain2.linnik_route_lt2 route22240D routeOK22240D grid22240R gridOK22240R gridOKC22240R fits22240R
+    (@limRule grid22240R) ibPar22240 (@limRule_ib grid22240R ibPar22240) ibFits22240 typeII22240d
+    (by rw [@total2R_lim grid22240R]; exact total2_lt_22240R)
 
 end Linnik22240R
 
