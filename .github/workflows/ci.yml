@@ -66,15 +66,14 @@ jobs:
 
   # Every paper, papers/<name>/main.tex, so a new paper needs no change here; then every supplement,
   # papers/<name>/supplement.tex, which reads its paper's cross-references from main.aux. The PDFs are kept under the
-  # site's names, <name>.pdf and <name>-supplement.pdf, and on a pull request from this repository one comment links
-  # them, updated on every push. Then the site, as pages.yml builds it, with the page on the zeros, which cites the
-  # compiled paper's numbering.
+  # site's names, <name>.pdf and <name>-supplement.pdf, as the artifact `papers`, which the job pdf-preview shows on a
+  # pull request. Then the site, as pages.yml builds it, with the page on the zeros, which cites the compiled paper's
+  # numbering.
   papers:
     name: The papers build
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write  # the comment that links the PDFs
+    outputs:
+      pdfs: ${{ steps.pdfs.outputs.artifact-url }}
     steps:
       - uses: actions/checkout@v4
       - uses: xu-cheng/latex-action@v4
@@ -100,33 +99,6 @@ jobs:
           path: pdf/*.pdf
           if-no-files-found: error
           retention-days: 14
-      - name: Link the PDFs on the pull request
-        if: >-
-          github.event_name == 'pull_request' &&
-          github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/github-script@v7
-        env:
-          URL: ${{ steps.pdfs.outputs.artifact-url }}
-        with:
-          script: |
-            const marker = '<!-- papers-pdf -->';
-            const files = require('fs').readdirSync('pdf').filter(f => f.endsWith('.pdf')).map(f => f.slice(0, -4)).sort()
-              .map(f => f + '.pdf');
-            const sha = context.payload.pull_request.head.sha;
-            const body = [
-              marker,
-              `**The papers' PDFs**, built from ${sha.slice(0, 7)}: [download](${process.env.URL}) ` +
-                `(a zip of ${files.map(f => '`' + f + '`').join(', ')}; kept for 14 days).`,
-            ].join('\n');
-            const { owner, repo } = context.repo;
-            const issue_number = context.issue.number;
-            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
-            const old = comments.find(c => c.user.login === 'github-actions[bot]' && c.body.includes(marker));
-            if (old) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: old.id, body });
-            } else {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
-            }
       - name: The site builds
         run: python3 scripts/build_site.py _site
       - uses: actions/upload-artifact@v4
@@ -135,6 +107,71 @@ jobs:
           path: _site
           if-no-files-found: error
           retention-days: 14
+
+  # On a pull request from this repository, the PDFs on a branch of their own, pdf-preview/pr-<number>: one commit that
+  # holds only them, replaced on every push, so that GitHub's file view shows them in the browser. One comment on the
+  # pull request links them and the zip of the artifact, updated on every push, and pdf-preview-cleanup.yml deletes the
+  # branch when the pull request closes. The job runs none of the pull request's code: it takes the PDFs from the
+  # artifact.
+  pdf-preview:
+    name: The PDFs' preview
+    needs: papers
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # the preview branch
+      pull-requests: write  # the comment that links the PDFs
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: papers
+          path: pdf
+      - id: push
+        name: The PDFs on the preview branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          cd pdf
+          git init -q
+          git add -- *.pdf
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -q -m "The papers' PDFs of #$PR, built from ${HEAD_SHA::7}"
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+          git push -q -f "$remote" "HEAD:refs/heads/pdf-preview/pr-$PR"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Link the PDFs on the pull request
+        uses: actions/github-script@v7
+        env:
+          ZIP: ${{ needs.papers.outputs.pdfs }}
+          PREVIEW: ${{ steps.push.outputs.sha }}
+        with:
+          script: |
+            const marker = '<!-- papers-pdf -->';
+            const { owner, repo } = context.repo;
+            const files = require('fs').readdirSync('pdf').filter(f => f.endsWith('.pdf')).map(f => f.slice(0, -4))
+              .sort().map(f => f + '.pdf');
+            const blob = `https://github.com/${owner}/${repo}/blob/${process.env.PREVIEW}`;
+            const view = files.map(f => `[\`${f}\`](${blob}/${f})`);
+            const sha = context.payload.pull_request.head.sha;
+            const body = [
+              marker,
+              `**The papers' PDFs**, built from ${sha.slice(0, 7)}, to read in the browser: ${view.join(', ')}. ` +
+                `Or [download them](${process.env.ZIP}) as a zip, kept for 14 days. The preview's branch is deleted ` +
+                'when the pull request closes.',
+            ].join('\n');
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const old = comments.find(c => c.user.login === 'github-actions[bot]' && c.body.includes(marker));
+            if (old) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: old.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
 
   # The Lean build in stages: a cold build takes longer than one job may run (six hours). Each stage continues from
   # the previous stage's cache, and runs only if the previous one stopped at its time limit. Each builds Check,
@@ -195,7 +232,7 @@ jobs:
   ci-passed:
     name: CI passed
     if: always()
-    needs: [changes, checks, papers, build-1, build-2, build-3]
+    needs: [changes, checks, papers, pdf-preview, build-1, build-2, build-3]
     runs-on: ubuntu-latest
     steps:
       - name: Every job passed or was skipped

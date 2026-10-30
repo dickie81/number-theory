@@ -1,0 +1,28 @@
+name: PDF preview cleanup
+
+# When a pull request closes, merged or not, the branch of its PDFs' preview, pdf-preview/pr-<number>, goes (ci.yml's
+# job pdf-preview makes it, for a pull request from this repository).
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write  # deleting the preview branch
+
+jobs:
+  delete:
+    name: Delete the PDFs' preview branch
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          REF: heads/pdf-preview/pr-${{ github.event.pull_request.number }}
+        run: |
+          if gh api "repos/$REPO/git/ref/$REF" > /dev/null 2>&1; then
+            gh api -X DELETE "repos/$REPO/git/refs/$REF"
+            echo "Deleted $REF."
+          else
+            echo "No branch $REF."
+          fi
