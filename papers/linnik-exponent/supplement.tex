@@ -1,5 +1,6 @@
-% The supplement to the Linnik exponent paper (main.tex): the proofs of four standard results and of the kernel bound,
-% the Lean details of the paper, and the computations around its exponent. Compile main.tex first: the references to the paper (\ref{M-...}) are read from main.aux.
+% The supplement to the Linnik exponent paper (main.tex): the proofs of four standard results, of the kernel bound,
+% and of Lemma 4.3 and Proposition 4.8, the Lean details of the paper, and the computations around its exponent.
+% Compile main.tex first: the references to the paper (\ref{M-...}) are read from main.aux.
 \documentclass[11pt]{article}
 \usepackage[T1]{fontenc}
 % pdfLaTeX needs the input encoding and the glyph declarations below; XeTeX reads Unicode directly.
@@ -483,13 +484,13 @@ and $\sum |\lambda|/f \le (3 + 4\log q)^{C}$ for a constant $C$, and the gap $\G
 $\sum_\sigma \lambda^+_\sigma \mathbf 1[(f_\sigma, q) = 1]/f_\sigma - \sum_\tau \lambda^-_\tau \mathbf 1[(f_\tau, q) = 1]/f_\tau$,
 is at most $\zeta_k q/(\varphi(q) \log w)$ in size, as the gap $G$ of that proof.
 
-\emph{The sandwich.} Split each $\lambda$ into its positive and negative parts. With splines $w_- \le
-\mathrm{rng}(d, \cdot) \le w_+$, the count of $\mathcal A$ is at most $\sum_\sigma (\lambda^+_\sigma)_+ \sum_k w_+(k)
-\mathbf 1[d f_\sigma k \equiv a] - \sum_\sigma (\lambda^+_\sigma)_- \sum_k w_-(k) \mathbf 1[d f_\sigma k \equiv a]$, and at
-least the same expression with the weights $\lambda^-$ and the splines exchanged; and the same holds for
-$\mathcal B/\varphi(q)$. The difference between the $\mathcal A$- and the $\mathcal B/\varphi(q)$-counts is thus bounded by
-two kinds of term: the difference of the main terms, which carries the gap $\Gamma$ and the difference of the splines'
-masses, and bilinear sums $\sum \lambda \sum_k w(k)\, \vartheta(d f k)$.
+\emph{The sandwich.} Split each $\lambda$ into its positive and negative parts. With splines $w_- \le \mathrm{rng}(d
+f_\sigma, \cdot) \le w_+$, chosen below for each block, the count of $\mathcal A$ is at most $\sum_\sigma
+(\lambda^+_\sigma)_+ \sum_k w_+(k) \mathbf 1[d f_\sigma k \equiv a] - \sum_\sigma (\lambda^+_\sigma)_- \sum_k w_-(k)
+\mathbf 1[d f_\sigma k \equiv a]$, and at least the same expression with the weights $\lambda^-$ and the splines
+exchanged; and the same holds for $\mathcal B/\varphi(q)$. The difference between the $\mathcal A$- and the $\mathcal
+B/\varphi(q)$-counts is thus bounded by two kinds of term: the difference of the main terms, which carries the gap
+$\Gamma$ and the difference of the splines' masses, and bilinear sums $\sum \lambda \sum_k w(k)\, \vartheta(d f k)$.
 
 \emph{Blocks.} For $\rho = 1 + q^{-s}$ group the pairs $(d_1 f, d_2)$, $d_1 = \prod \mathbf y_1$ and $d_2 = \prod \mathbf y_2$,
 by the blocks $\lfloor \log(d_1 f)/\log \rho \rfloor$ and $\lfloor \log d_2/\log \rho \rfloor$; a block pair
@@ -500,36 +501,38 @@ $\ell = \lfloor \eta N_1/(rD'\rho^2) \rfloor + 1$ with $\eta = q^{-s}$, sandwich
 the block pair, and their masses differ by at most $(N_1 + N_2)(1 - \rho^{-2})/D' + 2\eta N_1/(D'\rho^2) + 2$.
 
 \emph{A block pair.} On a block pair Lemma~\ref{M-lem:typeIB} applies, with $\mathcal D_1$ the values $d_1 f$, whose
-coefficients aggregate the fibres $\{(\mathbf y_1, \sigma) : \prod \mathbf y_1 \cdot f_\sigma = d_1 f\}$ (at most
-$(J + 1) d(d_1 f)$ elements, by the uniqueness of the factorisation), $\mathcal D_2$ the values $d_2$ (a decreasing tuple
-of primes is determined by its product), $P_\iota = \rho^{\beta_\iota + 1}$, $D = \lfloor P_2 \rfloor$,
-$H = \lfloor (q - 1)/(2D) \rfloor$, so that $2HD < q$ and $q/(2\ell(H + 1)) \le D/\ell$, and $m = \lfloor P_1 \rfloor/q + 1$,
-since the values $d_1 f \le P_1$ with a given inverse lie in one residue class. The comparisons are replaced by smooth
-cut-offs of their forms, as in the proof of Lemma~\ref{M-lem:family} (\S S2): the smooth part is separated by Fourier
-inversion into bilinear forms of the lemma's kind, at a cost of the cut-offs' Fourier masses, and the part near the
-boundaries is bounded by the mass of the terms there. A block pair is so bounded by its Fourier masses and fibre sizes
-times
+coefficients aggregate the fibres $\{(\mathbf y_1, \sigma) : \prod \mathbf y_1 \cdot f_\sigma = d_1 f\}$ (at most $(J_w
++ 1) d(d_1 f)$ elements, by the uniqueness of the factorisation), $\mathcal D_2$ the values $d_2$ (a decreasing tuple of
+primes is determined by its product), $P_\iota = \rho^{\beta_\iota + 1}$, $D = \lfloor P_2 \rfloor$, $H = \lfloor (q -
+1)/(2D) \rfloor$, so that $2HD < q$ and $q/(2\ell(H + 1)) \le D/\ell$, and $m = \lfloor P_1/q \rfloor + 1$, since the
+values $d_1 f \le P_1$ with a given inverse lie in one residue class. The comparisons are replaced by smooth cut-offs of
+their forms, as in the proof of Lemma~\ref{M-lem:family} (\S S2): the smooth part is separated by Fourier inversion into
+bilinear forms of the lemma's kind, at a cost of the cut-offs' Fourier masses, and the part near the boundaries is
+treated as in \S S2: with $|\vartheta(n)| \le \vartheta(n) + 2 \cdot \mathbf 1[(n, q) = 1]/\varphi(q)$, the part with
+$\vartheta$ is again a bilinear form of the lemma's kind, with the narrow cut-offs, and the part with $2/\varphi(q)$ is
+counted along the pivots. A block pair is so bounded by its Fourier masses and fibre sizes times
 \[
   \sqrt{P_1 P_2 (P_1/q + 1) F (n/q + 1) n} + (B - A)(P_2/\ell)^r P_1 P_2 + P_1 P_2\, d(q)/\varphi(q),
 \]
-with $n$ the length of the spline, plus the masses near the boundaries.
+with $n$ the length of the spline, plus the counted parts near the boundaries.
 
-\emph{The bound in powers of $q$.} Take $s = \min\bigl((a - \delta')/(2(J_0 + 6)),\ b/2,\ \varepsilon_w,\
-1/(4(J_0 + 6))\bigr)$, $r = \lceil 4/b \rceil$ and $F = \lfloor C_d q^s \rfloor$, a bound for the number of divisors of
-the integers below $q$. On a block pair that holds a leaf, with $X_1 = q^{L - 1 - a}$, $X_2 = q^{L - b}$ and
-$X_3 = q^{L - 1 - \delta'}$ in the lemma's conditions, the three terms are at most
-$\sqrt{816 C_d}\, q^{L - 1 - (a - \delta' - s)/2}$, $16(16r)^r q^{L - 2}$ and $4C_d q^{L - 1/2 + s}/\varphi(q)$; a
-block pair that holds no leaf contributes nothing. There are at most $(3Lq^s \log q)^2$ block pairs, the Fourier masses
-of at most $J_0$ cut-offs are at most $(J_0 + 1)(Cq^s)^{J_0}$, and the fibres at most $q^{c_1}$ with $c_1 < s/4$; so the
-bilinear sums total at most $C(\log q)^2 q^{L - 3s/4}/\varphi(q)$, by the choice of $s$.
+\emph{The bound in powers of $q$.} Take $s = \min\bigl((\kappa_1 - \kappa_0)/(2(J_0 + 6)),\ \kappa_2/2,\ \varepsilon_w,\
+1/(4(J_0 + 6))\bigr)$, $r = \lceil 4/\kappa_2 \rceil$ and $F = \lfloor C_d q^s \rfloor$, a bound for the number of
+divisors of the integers below $q$. On a block pair that holds a leaf, with $X_1 = q^{L - 1 - \kappa_1}$, $X_2 = q^{L -
+\kappa_2}$ and $X_3 = q^{L - 1 - \kappa_0}$ in the lemma's conditions, the three terms are at most $\sqrt{816 C_d}\,
+q^{L - 1 - (\kappa_1 - \kappa_0 - s)/2}$, $16(16r)^r q^{L - 2}$ and $4C_d q^{L - 1/2 + s}/\varphi(q)$; a block pair that
+holds no leaf contributes nothing. There are at most $(3Lq^s \log q)^2$ block pairs, the Fourier masses of at most $J_0$
+cut-offs are at most $(J_0 + 1)(Cq^s)^{J_0}$, and the fibres at most $q^{c_1}$ with $c_1 < s/4$; so the bilinear sums
+total at most $C(\log q)^2 q^{L - 3s/4}/\varphi(q)$, by the choice of $s$.
 
 \emph{The main terms.} The difference of the main terms is $(N_2 - N_1)/q \cdot \Gamma \cdot \sum c/d$, plus the
-transition from the splines' masses, at most $(V\Theta/x) \sum c/d + (4W/x + 2W d(q)/\varphi(q)) \sum c$ with
-$\Theta \le 11 q^{L - s}$, $V = \sum |\lambda|/f$ and $W = \sum |\lambda|$. Since $(d_1 d_2)^2 \le X_1 X_2$ on the leaves,
-$\sum c \le q^{L - 1/2} B^{K_1 + K_2}$, with $B$ bounding the sums of $1/p$ over the primes' ranges; and the masses near
-the boundaries are at most $(12\theta + 1/Y_0)B^{K_1 + K_2 - 1}$ times the count, by the pivots, with $\theta = q^{-s}$.
-All these are at most $C(\log q)^2 q^{L - 3s/4}/\varphi(q)$, which is below $q^{L - s/4}/\varphi(q)$ for large $q$.
-With $|\Gamma| \le \zeta_k q/(\varphi(q) \log w)$ this is the lemma, with $\delta = s/4$.
+transition from the splines' masses, at most $(V\Theta/q) \sum c/d + (4W/q + 2W d(q)/\varphi(q)) \sum c$ with $\Theta
+\le 11 q^{L - s}$, $V = \sum |\lambda|/f$ and $W = \sum |\lambda|$. Since $(d_1 d_2)^2 \le X_1 X_2$ on the leaves, $\sum
+c \le q^{L - 1/2} B^{K_1 + K_2}$, with $B$ bounding the sums of $1/p$ over the primes' ranges; and the counted parts
+near the boundaries are at most $(12\theta + 1/w)B^{K_1 + K_2 - 1}$ times $2(1 + \eta)\rho^2 N_2 V/\varphi(q)$, by the
+pivots, since every prime is at least $w$, with $\theta = q^{-s}$. All these are at most $C(\log q)^2 q^{L -
+3s/4}/\varphi(q)$, which is below $q^{L - s/4}/\varphi(q)$ for large $q$. With $|\Gamma| \le \zeta_k q/(\varphi(q) \log
+w)$ this is the lemma, with $\delta = s/4$.
 \end{proof}
 
 \subsection*{Proof of Proposition~\ref{M-prop:harman-ib}}
@@ -544,40 +547,41 @@ $w = \lceil q^{\varepsilon_w} \rceil$ and $z_0 = \lceil q^{a_0} \rceil$, and let
 \lfloor q^{u_2 L} \rfloor]$ be the window's range and $(W_0, W_1] = (\lceil N_2/q^{u_2 L} \rceil,
 \lfloor N_1/\lceil q^{u_1 L} \rceil \rfloor]$ its reflection, where Lemma~\ref{M-lem:chains}(c) applies.
 
-\emph{The patterns.} Split the tuples by the position of $c = \prod_{i \in \mathcal S_0} r_i$: $c \le P_1$, $c$ in the
-window's range, $P_2 < c \le W_0$, $c$ in the reflection, $c > W_1$. The last is empty for large $q$, since
-$c \le q^{\sigma^+}$ and $\sigma^+ < (1 - u_1)L$. Each of the others is a family of the same kind, with two more
-comparisons.
+\emph{The patterns.} Split the tuples by the position of $r_{\mathcal S_0} = \prod_{i \in \mathcal S_0} r_i$:
+$r_{\mathcal S_0} \le P_1$, $r_{\mathcal S_0}$ in the window's range, $P_2 < r_{\mathcal S_0} \le W_0$, $r_{\mathcal
+S_0}$ in the reflection, $r_{\mathcal S_0} > W_1$. The last is empty for large $q$, since $r_{\mathcal S_0} \le
+q^{\sigma^+}$ and $\sigma^+ < (1 - u_1)L$. Each of the others is a family of the same kind, with two more comparisons.
 
-\emph{$c$ in the window or its reflection.} By Buchstab's identity,
+\emph{$r_{\mathcal S_0}$ in the window or its reflection.} By Buchstab's identity,
 $S(\mathcal A_r, z_0) = S(\mathcal A_r, r_j) + \sum_{z_0 \le p < r_j} S(\mathcal A_{rp}, p)$, and the same for
 $\mathcal B$; both sums are of the kind of Lemma~\ref{M-lem:chains}, (b) with $\mathcal I = \mathcal S_0$ or (c) with
-$\mathcal U = \mathcal S_0$, the second with the chain extended by $p$. So these patterns contribute at most
-$4q^{L - \delta_1}/\varphi(q)$.
+$\mathcal J = \mathcal S_0$, the second with the chain extended by $p$. So these patterns contribute at most
+$2(q^{L - \delta_1} + q^{L - \delta_2})/\varphi(q)$.
 
-\emph{$c$ below the window, or between it and its reflection.} Let $E = P_1 + 1$ in the first case and $E = W_0 + 1$ in
-the second. Iterate Buchstab's identity from $z_0$ down to $w$, stopping a branch as soon as $c$ times its primes reaches
-$E$. As in \eqref{eq:tree}, with the condition $c\prod P < E$ in place of $d_P \le X'$, this writes
-$S(\mathcal A_r, z_0)$ as the sum over the \emph{leaves}, the sets $P$ of primes of $[w, z_0)$ with $c \prod P < E$, of
-$(-1)^{|P|} S(\mathcal A_{r \prod P}, w)$, plus the sum over the \emph{stops}, the pairs $(p, P)$ with $P$ a leaf of
-primes above $p$ and $c \prod P \cdot p \ge E$, of $(-1)^{|P| + 1} S(\mathcal A_{r \prod P \cdot p}, p)$; the identity is
-proved for each $n$ in the same way, since the products of the upper parts of a set grow by factors below $z_0$, so
-that a set with $c\prod P \ge E$ has exactly one first upper part that stops. A stop has
-$E \le c \prod P \cdot p < E z_0$, in the window's range, or in its reflection, for large $q$, since
-$a_0 < (u_2 - u_1)L$. So for each size of $P$, at most $s_{\max}$ of them, the stops form one sum that
+\emph{$r_{\mathcal S_0}$ below the window, or between it and its reflection.} Let $E = P_1 + 1$ in the first case and $E
+= W_0 + 1$ in the second. Iterate Buchstab's identity from $z_0$ down to $w$, stopping a branch as soon as $r_{\mathcal
+S_0}$ times its primes reaches $E$. As in \eqref{eq:tree}, with the condition $r_{\mathcal S_0} \prod P < E$ in place of
+$d_P \le X'$, this writes $S(\mathcal A_r, z_0)$ as the sum over the \emph{leaves}, the sets $P$ of primes of $[w, z_0)$
+with $r_{\mathcal S_0} \prod P < E$, of $(-1)^{|P|} S(\mathcal A_{r \prod P}, w)$, plus the sum over the \emph{stops},
+the pairs $(p, P)$ with $P$ a leaf of primes above $p$ and $r_{\mathcal S_0} \prod P \cdot p \ge E$, of $(-1)^{|P| + 1}
+S(\mathcal A_{r \prod P \cdot p}, p)$; the identity is proved for each $n$ in the same way, since the products
+$r_{\mathcal S_0} \prod_{p \in P,\, p \ge y} p$ of the upper parts of a set grow by factors below $z_0$ as $y$
+decreases, so that a set with $r_{\mathcal S_0} \prod P \ge E$ has exactly one first upper part that stops. A stop has
+$E \le r_{\mathcal S_0} \prod P \cdot p < E z_0$, in the window's range, or in its reflection, for large $q$, since $a_0
+< (u_2 - u_1)L$. So for each size of $P$, at most $s_{\max}$ of them, the stops form one sum that
 Lemma~\ref{M-lem:chains}(b), or~(c), bounds, with $\mathcal S_0$ and the primes of $P$ and $p$ as $\mathcal I$, or
-$\mathcal U$.
+$\mathcal J$.
 
-\emph{The leaves.} A leaf has $\prod P < E/c \le 4q^t$ for large $q$, by the hypotheses on $t$, since
-$c \ge q^{\sigma^-}$, and $c > P_2$ in the second case; and $d = r \prod P$. Those with
-$d \le q^{L - 1 - 4c'}$ are counted by \eqref{eq:leaf}, and total at most
-$(2\zeta_k (N_2 - N_1)/(\varphi(q) \log w) + 24 w^{2k + 7} q^{L - 1 - 4c'}) \sum 1/d$. The others are split into
-$d_1$, the product of the $r_i$ with $i \in \mathcal S_1$ and, if $\iota = 1$, of the primes of $P$, and $d_2$, the
-rest. Then $d_1 \le 4q^{D_1}$ and $d_2 \le 4q^{D_2}$, so $d_1 w^{2k + 4} \le q^{L - 1 - 8c'}$ and
-$d_1 w^{2k + 4} d_2^2 \le q^{L - 8c'}$ for large $q$, by the choice of $c'$; the primes of $P$ are below $z_0 \le r_j$,
-so the merged tuples are strictly decreasing; and the comparisons with no nonzero coefficient, constant on the family,
-can be dropped. So Lemma~\ref{M-lem:leaves}, with $a = b = 8c'$ and $\delta' = 4c'$, bounds the large leaves, for each
-pair of block sizes, by $\zeta_k (N_2 - N_1)/(\varphi(q) \log w) \sum 1/d + q^{L - \delta_3}/\varphi(q)$.
+\emph{The leaves.} A leaf has $\prod P < E/r_{\mathcal S_0} \le 4q^t$ for large $q$, by the hypotheses on $t$, since
+$r_{\mathcal S_0} \ge q^{\sigma^-}$, and $r_{\mathcal S_0} > P_2$ in the second case; and $d = r \prod P$. Those with $d
+\le q^{L - 1 - 4c'}$ are counted by \eqref{eq:leaf}, and total at most $(2\zeta_k (N_2 - N_1)/(\varphi(q) \log w) + 24
+w^{2k + 7} q^{L - 1 - 4c'}) \sum 1/d$. The others are split into $d_1$, the product of the $r_i$ with $i \in \mathcal
+S_1$ and, if $\iota = 1$, of the primes of $P$, and $d_2$, the rest. Then $d_1 \le 4q^{D_1}$ and $d_2 \le 4q^{D_2}$, so
+$d_1 w^{2k + 4} \le q^{L - 1 - 8c'}$ and $d_1 w^{2k + 4} d_2^2 \le q^{L - 8c'}$ for large $q$, by the choice of $c'$;
+the primes of $P$ are below $z_0 \le r_j$, so the merged tuples are strictly decreasing; and the comparisons with no
+nonzero coefficient, constant on the family, can be dropped. So Lemma~\ref{M-lem:leaves}, with $\kappa_1 = \kappa_2 =
+8c'$ and $\kappa_0 = 4c'$, bounds the large leaves, for each pair $(K_1, K_2)$ of tuple lengths, by $\zeta_k (N_2 -
+N_1)/(\varphi(q) \log w) \sum 1/d + q^{L - \delta_3}/\varphi(q)$.
 
 \emph{Conclusion.} As in the proof of Proposition~\ref{M-prop:harman}, $\sum 1/d \le K_1 e a_0/\varepsilon_w$ for large $q$,
 so the main parts of the leaves total at most $\varepsilon_H x/(\varphi(q) \log q)$ by the choice of $k$, and the
@@ -753,14 +757,15 @@ $L$. The library tests the rules of the decomposition in a fixed order: at depth
 being dropped with the corner cells, at no cost; at depths three and five (O) first; at depths four and six
 $\alpha_k \ge \alpha_{k - 1}$ first, then (E), then the rest of (O); and at depths seven and eight (O) alone.
 
-In Lean (\lean{SieveMain8.linnik\_route\_lt8}) the grid conditions of Theorem~\ref{M-thm:route} are \lean{GridOK},
-which holds $2U_2 < D$, $2e_{N - 1} < 1 < 2(v + Nh)$, $4h \le v$, $0 < h$ and $U_1 < U_2$; \lean{GridOKC}:
-\lean{GridOK} for the coarse grid, $4h + 2h_C \le v$ and $Nh \le N_C h_C$; and \lean{DeepGrid}: $h_C = 4h$, $h > 0$ and
-$4h + 4h_C \le v$. The Lean's grids also carry a multiplier, \lean{Grid.mult}, the side being rounded up to a multiple
-of the multiplier over $D$; Theorem~\ref{M-thm:route} is the case of the multiplier $1$. With $h_C = 4h$ the coarse cells
-are unions of four cells, $e^C_{N_C - 1} = e_{N - 4}$ and $N_C h_C = Nh$, so beyond \lean{GridOK} these ask only
-$4h + 4h_C = 20h \le v$, which implies $16h \le v$ and $4h + 2h_C = 12h \le v$. The condition $2 < L$ of the theorem is
-a field of \lean{RouteOK}; it follows from the others. The grid conditions of the grid of
+In Lean (\lean{SieveMain8.linnik\_route\_lt8}) the grid conditions of Theorem~\ref{M-thm:route} are
+\lean{SieveCert.GridOK}, which holds $2U_2 < D$, $2e_{N - 1} < 1 < 2(v + Nh)$, $4h \le v$, $0 < h$ and $U_1 < U_2$;
+\lean{SieveCert.GridOKC}: \lean{GridOK} for the coarse grid, $4h + 2h_C \le v$ and $Nh \le N_C h_C$; and
+\lean{SieveDrop8.DeepGrid}: $h_C = 4h$, $h > 0$ and $4h + 4h_C \le v$. The Lean's grids also carry a multiplier,
+\lean{SieveCert.Grid.mult}, the side being rounded up to a multiple of the multiplier over $D$;
+Theorem~\ref{M-thm:route} is the case of the multiplier $1$. With $h_C = 4h$ the coarse cells are unions of four cells,
+$e^C_{N_C - 1} = e_{N - 4}$ and $N_C h_C = Nh$, so beyond \lean{GridOK} these ask only $4h + 4h_C = 20h \le v$, which
+implies $16h \le v$ and $4h + 2h_C = 12h \le v$. The condition $2 < L$ of the theorem is a field of
+\lean{SieveRoute.RouteOK}; it follows from the others, since $L U_2 > D > 2U_2$. The grid conditions of the grid of
 Proposition~\ref{M-prop:certificate} are checked by \lean{decide} (\lean{SieveCert.gridOK22000E},
 \lean{SieveCert.gridOKC22000E} and \lean{Linnik22000E.deepGrid22000E}). The prime number theorem of
 Sections~\ref{M-sec:type1} to~\ref{M-sec:proof} is derived from the case of $\zeta$ of Input~\ref{M-inp:half-plane}, in
@@ -780,7 +785,7 @@ which bounds the dual mean square. Möbius inversion removes the cube factors an
 gives $\zeta$ and $L(s, \chi_{-3})$ first, then the real characters, the characters of order dividing $6$, and every
 other character through the family twisted by a character modulo $4q$. The classical results that the route uses,
 among them cubic and sextic reciprocity \cite{ireland-rosen}, are theorems of the library. The import cone of the
-theorem in the library has about $230$ files and $109000$ lines of Lean, almost all of them in \texttt{lib/core}.
+theorem in the library has $228$ files and $108696$ lines of Lean, all of them in \texttt{lib/core}.
 
 \subsection*{Independent checking of the inputs}
 
@@ -817,14 +822,18 @@ Theorem~\ref{M-thm:main} contains 15 of the PrimeNumberTheoremAnd files and none
 \texttt{Wiener.lean}, the vendored file that contains \lean{sorry}. In any case the axiom check of the theorems in the
 table of Appendix~\ref{M-app:claims} covers the whole dependency cone of each, and a \lean{sorry} in it would appear there as \lean{sorryAx}.
 
-The certificate of Proposition~\ref{M-prop:certificate} is checked by kernel evaluation, \lean{decide +kernel}, and not by
-compiled code, split into 1136 parts in 114 files: $229$ ranges of consecutive rows of the grid, and the heaviest $197$
-rows in pieces of columns. Each part proves that its sum is at most a bound $\lceil 1.001 \times \text{part} \rceil$,
-computed exactly, and the bounds sum to $1075756859466551505 < 2^{60}$. The exact total,
-$\Sigma = 1074682177289261666$, is computed from the same definitions by \file{tools/linnik/mirror8.py}, and
-\file{tools/linnik/gen\_cert8.py} cuts it into the parts by the kernel's predicted time. The kernel's check of the 114 files took $6.2$ hours of one core in all, and
-$1.6$ hours on four cores, with at most $2.8$ GB for any one file. The definitions the kernel evaluates are
-arithmetic on Lean's core natural numbers, lists and booleans; their files import from Mathlib only the notation $\mathbb N$.
+The certificate of Proposition~\ref{M-prop:certificate} is checked by kernel evaluation, \lean{decide +kernel}, and not
+by compiled code, split into 1136 parts in 114 files. The $272$ rows of the grid form $229$ ranges of consecutive rows;
+$32$ of the ranges are parts, and each of the other $197$, the heaviest single rows, is cut into pieces of columns,
+$1104$ in all. Each part proves that its sum is at most a bound $\lceil 1.001 \times \text{part} \rceil$, computed
+exactly, and the bounds sum to $1075756859466551505 < 2^{60}$. The exact total, $\Sigma = 1074682177289261666$, is
+computed from the same definitions by \file{tools/linnik/mirror8.py}, and \file{tools/linnik/gen\_cert8.py} cuts it into
+the parts by the kernel's predicted time. The kernel's check of the 114 files took $6.2$ hours of one core in all, and
+$1.6$ hours on four cores, with at most $2.8$ GiB for any one file. The definitions the kernel evaluates are arithmetic
+on Lean's core natural numbers, lists and booleans; their files import from Mathlib only the notation $\mathbb N$.
+Lean's kernel reduces the operations of the natural numbers on literals (addition, multiplication, division, comparison
+and the like) by the GMP library's arithmetic rather than by their definitions, so this check trusts GMP as well as the
+kernel.
 
 \subsection*{The artefact}
 
@@ -833,7 +842,7 @@ supplement describes the library at the commit that contains it. The earlier ver
 $278/125$, by the decomposition to depth six with kept parts and without the bilinear estimate; that theorem,
 \lean{Linnik22240R.linnik\_22240r}, with its certificate, window and Type~II estimate, is in the repository's history,
 at commit \texttt{8ba053b}. The toolchain is Lean \texttt{v4.35.0-rc3}
-\cite{lean4}, with Mathlib \cite{mathlib} at commit \texttt{0f64d30a},
+\cite{lean4}, a release candidate, with Mathlib \cite{mathlib} at commit \texttt{0f64d30a},
 PrimeNumberTheoremAnd at \texttt{650d312} and \texttt{formal-math} at \texttt{fbdc36b}. The repository's README gives the
 commands: \texttt{lake exe cache get} for Mathlib's prebuilt files (which the build then trusts; building Mathlib
 from source, or replaying the environment with \texttt{lean4checker}, removes that trust), \texttt{scripts/build.sh} for
@@ -843,28 +852,49 @@ change to the library.
 
 \section{Computations around the exponent}\label{sup:computations}
 
-This section gives the computations behind the room that the window of Section~\ref{M-sec:window-L} leaves and
-behind the last two paragraphs of Section~\ref{M-sec:comparison} of the paper.
-They are computations with the definitions of the certificate, by the scripts of \file{tools/linnik/}, and not theorems
-of the library; nothing in the paper or the library depends on them.
+This section gives the computations behind the room that the window of Section~\ref{M-sec:window-L} leaves, behind the
+remark there on the Hal\'asz--Montgomery branch, and behind the last two paragraphs of Section~\ref{M-sec:comparison}
+of the paper. They are computations with the definitions of the window and of the certificate, by the scripts of
+\file{tools/linnik/}, and not theorems of the library; nothing in the paper or the library depends on them.
 
 \subsection*{The room in the window}
 
-The window of Proposition~\ref{M-prop:window} has little room. All the corners are exact rational inequalities, so
-there is no numerical tolerance. With $u_1$ and $u_2$ fixed, they hold exactly for $L \ge 2.1999832\ldots$, so at
-$219999/100000$ but not at $219998/100000$; raising the first step's exponent by $4.44 \cdot 10^{-5}$ moves the lower
-end out. The Type~II estimate on this window does not depend on $L$ otherwise, and Theorem~\ref{M-thm:route} also needs
-$2 < L \le 5/2$ and $L U_2 > D$, which still hold. The certificate depends on $L$ through the bilinear test's condition
-$a_1 < 1 - 1/L$, which is stricter for smaller $L$, but on the grid of Proposition~\ref{M-prop:certificate} its total
-at $L = 137499/62500 = 2.199984$ is the same integer as at $11/5$. So the window and the certificate leave about
-$1.7 \cdot 10^{-5}$ of room in the exponent. The corners' slack grows along the narrow steps, to $8.6 \cdot 10^{-4}$ on
-the fourteenth, and from there steps of $1/280$ leave the window as it is: the least slack of a corner on them is
-$6.8 \cdot 10^{-4}$, on the first of them, and on the last step, $[163/210, 131/168]$, which contains $7/9$, it is
-$3.95 \cdot 10^{-3}$. Steps of $1/140$ would leave the window as it is too, with a least slack of $3.8 \cdot 10^{-4}$
-on them; at $278/125$, with the window of the earlier version, they moved its lower end. Inside the last step Huxley's
-$3/(3\sigma - 1)$, which is below $4/(1 + \sigma)$ from $\sigma = 7/9$ on, is below the step's exponent $2.25207$ from
-$\sigma \approx 0.7774$ on, by up to $1.2 \cdot 10^{-2}$ at $131/168$; taking it there would not change the window,
-since the corners on that step do not bind.
+The window of Proposition~\ref{M-prop:window} has little room. All the corners are exact rational inequalities, so there
+is no numerical tolerance. With $u_1$ and $u_2$ fixed, they hold exactly for $L \ge 2.1999832\ldots$, so at
+$219999/100000$ but not at $219998/100000$ (\texttt{route\_limits.py corners g7d 219999/100000 43457 46959 100000});
+raising the first step's exponent by more than $4.4404 \cdot 10^{-5}$ moves the lower end out. The Type~II estimate on
+this window does not depend on $L$ otherwise, and Theorem~\ref{M-thm:route} also needs $2 < L \le 5/2$ and $L U_2 > D$,
+which still hold. The certificate depends on $L$ only through the bilinear test's condition $a_1 < 1 - 1/L$, which the
+block test also applies and which is stricter for smaller $L$; on the grid of Proposition~\ref{M-prop:certificate} its
+total at $L = 137499/62500 = 2.199984$ is the same integer as at $11/5$ (\texttt{mirror8.py 43457 46959 272
+137499/62500}). So with this window the route also holds at $2.199984$, about $1.6 \cdot 10^{-5}$ below $11/5$; a window
+chosen afresh for a smaller $L$ goes further (below). The corners' slack grows along the narrow steps, to $8.6 \cdot
+10^{-4}$ on the fourteenth, and from there steps of $1/280$ leave the window as it is: the least slack of a corner on
+them is $6.8 \cdot 10^{-4}$, on the first of them, and on the last step, $[163/210, 131/168]$, which contains $7/9$, it
+is $3.95 \cdot 10^{-3}$. Steps of $1/140$ in place of those of $1/280$, from the end of the fourteenth step, $5/7 +
+1/120$, would leave the window as it is too, with a least slack of $3.8 \cdot 10^{-4}$ on them; at $278/125$, with the
+window of the earlier version, they moved its lower end. Inside the last step Huxley's $3/(3\sigma - 1)$, which is below
+$4/(1 + \sigma)$ from $\sigma = 7/9$ on, is below the step's exponent $2.25207$ from $\sigma \approx 0.7774$ on, by up
+to $1.2 \cdot 10^{-2}$ at $131/168$; taking it there would not change the window, since the corners on that step do not
+bind. These slacks are the corner inequalities of \file{tools/linnik/route\_limits.py}, evaluated on the curve with
+those steps changed.
+
+\subsection*{The Hal\'asz--Montgomery branch}
+
+The top piece of the curve is the single step $101/50$ on $[5/6, 11/12]$ (\lean{LinnikStep.charDensity\_step}), and on
+it the window needs the Hal\'asz--Montgomery inequality (Section~\ref{M-sec:window-L}). Orthogonality alone would do
+with a smaller exponent near $11/12$: with $101/50$ kept on $[5/6, 7/8]$, where orthogonality allows any constant
+exponent up to $2.1356$, and a constant exponent of at most $1.9595$ on $[7/8, 11/12]$, every corner holds by
+orthogonality, and Huxley's estimate would give $3/(3 \cdot 7/8 - 1) + 1/50 = 24/13 + 1/50 \approx 1.866$ there, with
+the excess of the top piece. The library has no such step. Its steps of Huxley's estimate,
+\lean{LinnikHuxStep.charDensity\_gen}, bound the zeros that the integral detects by the fourth moment of the
+$L$-functions, and the condition that this asks of a step $[\sigma_-, \sigma_+]$ (\lean{h3} of
+\lean{LinnikHuxStep.Par.Good}) is $A(1 - \sigma) \ge (201/100)(1/2 - \sigma) + 1/500 + 1 + 10^{-5}$ on the step, that
+is $A \ge 2.01 - 0.00299/(1 - \sigma_-)$; since the steps lie in $[3/4, 11/12]$, every one of them has
+$A > 2.01 - 12 \cdot 0.00299 > 1.974$. Huxley's exponents above $5/6$ are in the library only under Petrow and Young's
+Weyl bound for every character, taken as a hypothesis (\lean{LinnikWeyl.PYWeyl}, in \file{LinnikStairs7.lean}), which
+empties that class of zeros and is not a theorem of the library. So with the density estimates that the library
+proves, the branch is needed.
 
 \subsection*{The classical estimates in place of Chen, Gupta and Li's}
 
@@ -877,46 +907,58 @@ meet at $L = 11/5$. The script \file{tools/linnik/density\_payoff.py} (its varia
 certificate's total on it on $272$ cells a side under the rule at $L$, and lowers $L$ in steps of $10^{-3}$ while the
 total stays below $0.999\mathcal K$ and the grid satisfies the conditions of Theorem~\ref{M-thm:route}, then tries one
 further step of $5 \cdot 10^{-4}$. It finds the window $[42950, 46385]/100000$ admissible at $L = 2239/1000 = 2.239$,
-and the certificate's total on it $0.94509\mathcal K$; at $2.238$ the window is too narrow for $20h \le v$ on $272$
-cells a side, though the total there is still $0.99209\mathcal K$. So the sieve brings Huxley's $12/5$ down to about
-$2.24$, as it brings $7/3$ down to $11/5$, and with Input~\ref{M-inp:half-plane} as the only input that is not
-refereed. The library has no steps of Ingham's or Huxley's estimate of length $1/1680$ on $[5/7, 131/168]$ (its Ingham
-steps end at $5/7$, and its Huxley steps, of length $1/280$, start at $16/21$); the parameters of
-\lean{LinnikHuxStep.charDensity\_gen} at this width were checked for the first of these steps only; and the
-certificate on this grid has not been checked by the kernel.
+and the certificate's total on it $0.94509\mathcal K$. The search stops there at the grid, not at the total: at
+$2.238$ the window it finds, $[43014, 46361]/100000$, is too narrow for $20h \le v$ on $272$ cells a side, so the
+script does not evaluate it, though \file{mirror8.py}'s total on that grid is $0.99209\mathcal K$; on $280$ cells a
+side the window satisfies the grid conditions, but finer grids were not tried. So the sieve brings Huxley's $12/5$
+down to $2.239$ at least, with Input~\ref{M-inp:half-plane} as the only input that is not refereed. The library has
+no steps of Ingham's or Huxley's estimate of length $1/1680$ on $[5/7, 131/168]$ (its Ingham steps end at $5/7$, and
+its Huxley steps, of length $1/280$, start at $16/21$); the parameters of \lean{LinnikHuxStep.charDensity\_gen} at this
+width were checked for the first of these steps only; and the certificate on this grid has not been checked by the
+kernel.
 
 \subsection*{Below $11/5$}
 
 At $11/5$ the certificate's total is $0.9321382\mathcal K$ (Section~\ref{M-sec:certificate}); the kernel checks that
 it is below $0.9330704\mathcal K$. Of it, $0.7173\mathcal K$ comes from the $7289$ candidate cells that are dropped,
-$0.6790\mathcal K$ of that from the $6896$ of them that reach the line $\alpha_1 + \alpha_2 = 1 - U_1/D$, beyond which
-the cofactor is below the window; the decomposed cells cost $0.2149\mathcal K$. More depth can lower only the cost of
-the decomposed cells and of the $22$ cells that are cheaper dropped: the other dropped cells, which cost
-$0.7151\mathcal K$, are dropped because the rule fails on their box or on a box of depth three below them, and that
-does not depend on the depth. The two deepest levels matter for the rest: to depth six the total would be
-$1.55502\mathcal K$, since the cells of depth six that pass the block test would cost $0.669\mathcal K$ at their own
-bounds, against $0.049\mathcal K$ decomposed to depth eight. Without the bilinear test, that is with (R1) alone as the
-rule, $10974$ candidate cells are decomposed in place of $15884$, and the total would be $2.43064\mathcal K$.
+$0.6790\mathcal K$ of that from the $6896$ of them that reach the line $\alpha_1 + \alpha_2 = 1 - U_1/D$, that is whose
+box's upper sum is at least $1 - U_1/D$; the decomposed cells cost $0.2149\mathcal K$. More depth can lower only the
+cost of the decomposed cells and of the $22$ cells that are cheaper dropped: the other dropped cells, which cost
+$0.7151\mathcal K$, are dropped because the rule fails on their box or on a box of depth three below them (where the
+block test is the rule itself), and that does not depend on the depth. The two deepest levels matter for the rest: to
+depth six the total would be $1.55502\mathcal K$, since the cells of depth six that pass the block test would cost
+$0.669\mathcal K$ at their own bounds, against $0.049\mathcal K$ decomposed to depth eight. Without the bilinear test,
+that is with (R1) alone as the rule, $10974$ candidate cells are decomposed in place of $15884$, and the total would
+be $2.43064\mathcal K$. These counts and costs are printed by \file{tools/linnik/breakdown8.py}, and the totals without
+the deeper levels or without the bilinear test by its variants \texttt{depth6}, \texttt{depth4}, \texttt{lim} and
+\texttt{lim6}.
 
-The cells beyond the line are those that the Type~II estimate cannot reach. An integer $p_1 p_2 m$ that such a cell
-counts with $\alpha_1 + \alpha_2 > 1 - U_1/D$ and $\alpha_1$ and $\alpha_2$ outside $\mathcal U$ has no product of
-some of its prime factors with its exponent in $\mathcal U$, whatever the factorisation of $m$ (a product with $p_1$
-and another prime has exponent above $1 - U_1/D$, since the prime factors of $m$ are at least $p_2$; one without $p_1$
-that omits $p_2$ or a prime of $m$ has exponent at most $1 - \alpha_1 - \alpha_2 < U_1/D$; and the others are $p_1$
-and $p_2 m$, of exponents $\alpha_1$ and $1 - \alpha_1$). In the decomposition such integers can be counted only by
-Type~I estimates, and $p_1 p_2$ is beyond the Type~I level $X'$: the bilinear estimate of Lemma~\ref{M-lem:typeIB}
-reaches them where the bilinear test passes. Of the $6896$ dropped cells beyond the line, $1725$ fail the bilinear test
-themselves, $5162$ pass it but have a box of depth three below them that fails the block test, and $9$ are cheaper
-dropped. Going lower would need a wider window, that is a better density exponent near $\sigma = 5/7$, or Type~I
-information on longer products than the bilinear estimate gives. A finer grid would also be needed: on a narrower
-window the condition $20h \le v$ of Theorem~\ref{M-thm:route} asks for more cells, $N \ge 20(1/2 - v)/v$, which is
-$266$ on the window of Proposition~\ref{M-prop:certificate}. The half-plane $\operatorname{Re} s > 7/8$ of OpenAI's
-main preprint \cite{openai-main}, in place of Input~\ref{M-inp:half-plane}, would not help: the window condition
+The cells that reach the line hold the integers that the Type~II estimate cannot reach. Let $\varepsilon > 0$, and let
+$n = p_1 p_2 m \le 2x$ be an integer that such a cell counts, with $\alpha_1 + \alpha_2 \ge 1 - U_1/D + \varepsilon$ and
+$\alpha_1$ and $\alpha_2$ outside $\mathcal U$. For large $x$, no product of some of its prime factors has its exponent
+in $\mathcal U$, whatever the factorisation of $m$: a product with $p_1$ and another prime has exponent at least
+$\alpha_1 + \alpha_2 > 1 - U_1/D$, since the prime factors of $m$ are at least $p_2$; one without $p_1$ that omits $p_2$
+or a prime of $m$ has exponent at most $1 - \alpha_1 - \alpha_2 + o(1) < U_1/D$; and the others are $p_1$ and $p_2 m$,
+of exponents $\alpha_1$, outside $\mathcal U$, and $1 - \alpha_1 + o(1) > 1/2$. In the decomposition such integers can
+be counted only by Type~I estimates, and $p_1 p_2$ is beyond the Type~I level $X'$: the bilinear estimate of
+Lemma~\ref{M-lem:typeIB} reaches them where the bilinear test passes. Of the $6896$ dropped cells that reach the line,
+$1725$ fail the bilinear test themselves, $5162$ pass it but have a box of depth three below them on which the rule
+fails, and $9$ are cheaper dropped.
+
+With the window chosen afresh, the method goes a little below $11/5$. With the same curve, rule, depth and bounds, the
+window's corners checked in exact rationals and the grid satisfying the conditions of Theorem~\ref{M-thm:route}, the
+certificate's total is $0.96047\mathcal K$ at $L = 2.19925$, on the window $[43516, 46942]/100000$ and $272$ cells a
+side; $0.96729\mathcal K$ at $2.199$, on $[43538, 46935]/100000$ and $276$ cells; and $1.01027\mathcal K$ at $2.198$, on
+$[43617, 46911]/100000$ and $284$ cells (\file{mirror8.py} and \texttt{route\_limits.py corners} on these windows). So
+the method reaches about $2.198$; $11/5$, about $2 \cdot 10^{-3}$ above that, is the round exponent that the paper
+proves. A narrower window needs a finer grid: the condition $20h \le v$ of Theorem~\ref{M-thm:route} asks for $N \ge
+20(1/2 - v)/v$, which with $4 \mid N$ is $N \ge 268$ on the window of Proposition~\ref{M-prop:certificate}. Going much
+lower would need a wider window, that is a better density exponent near $\sigma = 5/7$, or Type~I information on longer
+products than the bilinear estimate gives. The half-plane $\operatorname{Re} s > 7/8$ of OpenAI's main preprint
+\cite{openai-main}, in place of Input~\ref{M-inp:half-plane}, would not help: the window condition
 (Definition~\ref{M-def:window}) would be needed only for $\beta \le 7/8$, and the exponent of the kernel bound would
 become $b(\mu) = 3/8 + \mu/8 + \delta'(1 - \mu) + 2\varepsilon'$, which is no larger for $\mu \le 1$; neither change
-reaches the corners that set the window's ends, on the first step at $5/7$. The counts and costs of this subsection are
-printed by \file{tools/linnik/fig_cells.py}, and the totals of the variants are computed from the definitions of
-\file{tools/linnik/mirror8.py} with the deeper levels or the bilinear test removed.
+reaches the corners that set the window's ends, on the first step at $5/7$.
 
 On the density exponent, Chen, Gupta and Li note that the worst case for their estimate is $T = 1$ with no divisor
 $q_1$ of $q$ of a suitable size, as for prime $q$, that the critical situation is then at $\sigma = 5/7$, and that

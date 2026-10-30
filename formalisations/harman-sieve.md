@@ -114,6 +114,8 @@ theorem in the form `|θ(t) − t| ≤ εt/log t` for all large `t` (`SieveRough
 
 ## Where the Linnik paper uses it
 
-In the leaves of its decomposition: `SieveLeaves.P6_spec` applies `prop6` to each family of at most `32` comparisons.
-The rough-number bound also gives the shares of the certificate's cells (`SieveRough.share2_of_cand`,
+In the leaves of its decomposition: `SieveLeaves.P6_spec` applies `prop6` to each family of at most `40` comparisons,
+and `SieveLeaves.P6IB_spec` applies the form of Proposition 6 with the bilinear Type I estimate (`SieveP6ib.prop6ib`,
+the paper's Proposition 4.8) to the families of the boxes that the rule's bilinear test (R2) takes whole, with the
+witnesses of the test (`SieveCert.ibOK_sound`) turned into its hypotheses by `SieveQ.P6IB_boxes`. The rough-number bound also gives the shares of the certificate's cells (`SieveRough.share2_of_cand`,
 `SieveRough.share4_of_counted4`), with which `SieveDrop` bounds the terms the decomposition drops.
