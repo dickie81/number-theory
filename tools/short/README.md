@@ -96,10 +96,13 @@ The plan, with what is done:
      (`ShortSieveHarman`, done).
    - Still to do: Guth–Maynard's estimate in the counts (V3; V2 needs only Huxley's), and the polynomials of the other
      factors (the rough cofactor, products of primes) with their pointwise bounds.
-2. **Li's other arithmetic information.** His Lemma 3.1 (Baker, Harman and Pintz's Lemma 9), and the reduction of
-   sums over short intervals to mean values of Dirichlet polynomials (their Lemma 6), by Perron's formula. His Lemmas
-   2.1 and 2.2 (their Lemmas 12 and 13) rest on Watt's mean value theorem (their Lemma 2), which rests on
-   Deshouillers and Iwaniec's bounds for sums of Kloosterman sums: not in the library, and a hypothesis until it is.
+2. **Li's other arithmetic information.**
+   - The reduction of sums over short intervals to mean values of Dirichlet polynomials (Baker, Harman and Pintz's
+     Lemma 6), by Mellin inversion on `Re s = 1/2` with a window averaged `k` times: `ShortSieveInterval` (done).
+   - His Lemma 3.1 (their Lemma 9).
+   - His Lemmas 2.1 and 2.2 (their Lemmas 12 and 13) rest on Watt's mean value theorem (their Lemma 2), which rests on
+     Deshouillers and Iwaniec's bounds for sums of Kloosterman sums: not in the library, and a hypothesis until it
+     is.
 3. **The sieve.** Buchstab's identity on families of tuples (`SieveDecomp.buchstab_fam` has the form the Linnik route
    uses), the comparison of `(x − x^θ, x]` with a long interval, the main terms through Buchstab's `ω`
    (`SieveRough`), and Li's decomposition into the regions `A`, `B` and `C`.
