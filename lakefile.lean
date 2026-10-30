@@ -249,3 +249,9 @@ lean_lib CheckAll where
 lean_lib CheckZeta23 where
   srcDir := "lib/check"
   roots := #[`CheckZeta23]
+
+/-- The dead-code check's Lean side, run by scripts/dead_code.py; it imports only Lean. -/
+lean_exe deadcode where
+  srcDir := "scripts/lean"
+  root := `DeadCode
+  supportInterpreter := true
