@@ -47,8 +47,8 @@ The proof of `decomp`: `lvl6`, `lvl5`, …, `lvl1`, one level at a time. A dropp
 `B`-version; a term with sign `−` is bounded above, so it is evaluated or decomposed, never dropped.
 
 The certificate's grid and rule are parameters (`SieveCert.Grid` and `SieveCert.Rule`, with `GridOK`, `GridOKC` and
-`RuleNB` where the Lean takes them); `SieveGrid22240R.grid22240R` with `SieveCert.limRule` is the one the library's
-theorem uses.
+`RuleNB` where the Lean takes them); the library's theorem (`Linnik22000E`) takes the decomposition to depth 8 of
+`SieveBuch8.lean`, on `SieveCert.grid22000E` with `SieveCert.ibRule`.
 
 The file imports `SieveDecomp.lean` and `SieveRule.lean`.
 -/

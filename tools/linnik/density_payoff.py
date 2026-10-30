@@ -4,8 +4,8 @@
 Each variant is a hypothetical density curve made from the committed curve `g7d` (`SieveTypeIIU22240D.lean`, read by
 `route_limits.parse`). For each, the script computes an admissible window as `route_limits.py run` does (the sampled
 scan, then the exact corners, moving an end inward by `10⁻⁵` while a corner fails, here with no limit on the number of
-moves), replays the library's certificate on it with `mirror2.py` (`total2`, depths up to 6, `n = 340`, in exact
-integers), and reports the lowest exponent `L` it passes: it starts at the library's `278/125`, which must pass, lowers
+moves), replays the paper's certificate on it with `mirror2.py` (`total2`, depths up to 6, `n = 340`, in exact
+integers), and reports the lowest exponent `L` it passes: it starts at the paper's `278/125`, which must pass, lowers
 `L` by `1/1000` while `total2 < 0.999K`, and then tests once the value `1/2000` below the last one passed. These are
 computations, not theorems, and nothing in the library depends on them: the variants are curves no Lean theorem gives.
 

@@ -4,12 +4,12 @@
 Plain statements (`total_div_le`). The loss certificate of the sieve route is computed here in natural numbers on a grid
 of cells (`Grid`: the window's ends, the number `n` of cells a side and the cells' multiplier). Each cell's bound is
 computed from its corners, rounding up twice (the value of `ω*`, then the bound), and is a multiple of `2^{−60}`. The
-library's certificate is on `grid22240R`, the grid of the curve `g7d` at `L = 278/125` on the window
-`[41556/100000, 47531/100000]` with `n = 340` (`SieveGrid22240R.lean`), and is the refined one of `SieveCert2Defs.lean`;
-the kernel checks it by `decide +kernel` (`SieveCert22240R.lean`).
+library's certificate is on `grid22000E`, the grid of the curve `g7d` at `L = 11/5` on the window
+`[43457/100000, 46959/100000]` with `n = 272` (`SieveGrid22000E.lean`), and is the one of `SieveDeepDefs.lean`, to
+depth 8; the kernel checks it by `decide +kernel` (`SieveCert22000E.lean`).
 
-* The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. The window's ends are `U1 < U2` (for `grid22240R`,
-  `U1 = ⌈(41556/100000)DEN⌉` and `U2 = ⌊(47531/100000)DEN⌋`), `V = U2 − U1`, and the cells of side
+* The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. The window's ends are `U1 < U2` (for `grid22000E`,
+  `U1 = ⌈(43457/100000)DEN⌉` and `U2 = ⌊(46959/100000)DEN⌋`), `V = U2 − U1`, and the cells of side
   `H = ⌈(DEN/2 − V)/n⌉` start at `e k = V + Hk`. `GridOK` lists the facts about the grid that the semantic lemmas below
   and the route's proofs use; for a given grid each is checked by `decide`.
 * The tests, as in the certificate: `cand` (a cell of `(α₁, α₂)` that may meet the region and may be non-evaluable),

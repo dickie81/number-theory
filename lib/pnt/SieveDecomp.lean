@@ -24,7 +24,7 @@ described by finitely many atoms: extension by one prime (Buchstab), the cells o
 product against a threshold, and families that vanish.
 
 The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
-statements for the library's grid are the case `SieveGrid22240R.grid22240R`.
+statements for the library's grid are the case `SieveCert.grid22000E`.
 
 
 The file imports `SieveChain.lean`.

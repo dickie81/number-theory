@@ -55,7 +55,7 @@ The proof:
   `bound6_ge` bound `omK/K` times the product by `bound2/K`, `bound4/K` and `bound6/K`.
 
 The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
-case `SieveGrid22240R.grid22240R` is the grid of exponent `278/125`.
+case `SieveCert.grid22000E` is the grid of exponent `11/5`.
 -/
 import HalfPlaneFinal
 import LinnikTwelveSizes

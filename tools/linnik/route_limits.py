@@ -2,12 +2,14 @@
 computed in exact arithmetic; `fit` and the window's sampled scan in floating point.
 
 The sieve route proves Linnik's theorem with exponent `L` from three checks on a window `[w₁, w₂]` (`m = w·L`): the
-window condition `WindowOKHM g L m₁ m₂ (1/1000) (1/1000)`, which the window files prove by `norm_num` at the corners of
-each piece; the grid's and route's conditions `GridOK`, `GridOKC`, `Fits` and `RouteOK` (by `decide` and `norm_num`,
-as in `Linnik22240R.lean`); and the refined certificate's `total2 < K` on the grid (`lib/pnt/SieveCert2Defs.lean`),
-which the kernel checks by `decide +kernel` (`SieveMain2.linnik_route_lt2`). This script computes the window, its
-corners and the depth-4 certificate (`replay`) for a curve, an exponent and a grid size `n`, without Lean; the library's
-`total2`, to depth 6 with the kept parts, is `mirror2.py`'s:
+window condition `WindowOKHM g L m₁ m₂ (1/1000) (1/1000)`, which the window files prove by `norm_num` at the corners
+of each piece; the grid's and route's conditions `GridOK`, `GridOKC`, `Fits` and `RouteOK` (by `decide` and
+`norm_num`, as in `Linnik22000E.lean`); and the certificate's total below `K` on the grid, which the kernel checks by
+`decide +kernel`: at `11/5`, `totalD < K` of `lib/pnt/SieveDeepDefs.lean` (`SieveMain8.linnik_route_lt8`), and at
+`278/125`, in the git history, the refined certificate's `total2 < K` of `lib/pnt/SieveCert2Defs.lean`
+(`SieveMain2.linnik_route_lt2`). This script computes the window, its corners and the depth-4 certificate (`replay`)
+for a curve, an exponent and a grid size `n`, without Lean; the refined `total2`, to depth 6 with the kept parts, is
+`mirror2.py`'s, and the depth-8 `totalD` is `mirror8.py`'s:
 
 * `window`: the Halász–Montgomery window by a sampled scan (`β` at each piece's ends and 400 interior points, `m` in
   steps of `1/20000` over `[0.30L, 0.52L]`, `w ∈ {0, 4·10⁻⁶}`, the margin `1/25000`), the longest passing run of `m`,
@@ -19,17 +21,18 @@ corners and the depth-4 certificate (`replay`) for a curve, an exponent and a gr
   the inequalities for `m ≥ 1`, at `m₁` and `m₂`, and at `m₁ = 1` those for `m ≤ 1` at `m = 1` too;
 * `replay`: the depth-4 certificate of the library's first route, before the depths 5 and 6, the kept parts and the
   present bounds of the cells (its `omK` is `0.5672` from `2` on, and `bound2`, `bound4` take `h/a` and `h/a²` at the
-  lower corners; the library's `total` and `total2` are now `mirror2.py`'s), on the grid `U1 = ⌈w₁·DEN⌉`,
+  lower corners; the refined `total` and `total2` are `mirror2.py`'s), on the grid `U1 = ⌈w₁·DEN⌉`,
   `U2 = ⌊w₂·DEN⌋`, `n`, in exact integers (`cdiv`, `omK`, `bound2`, `bound4`, `cand`, `allowed`, `refcost`, `dec`,
   `cost` as `SieveCertDefs.lean` had them; natural subtraction truncated at `0`, division by `0` giving `0`), and
   `GridOK`, `Fits` and `RouteOK` as `decide` would evaluate them.
 
 A row with the depth-4 `total < K`, no failed corner and every grid and route condition true (`accepted`) would have
-been a certificate of that first route (its certificate files are in the git history); the library's theorem takes
-`total2 < K` (`mirror2.py`) instead, with the curve's counts (`counts_7c`, which holds with no hypothesis because
-`LinnikCGLDensity.cglDensity` proves `CGLDensity`, or `counts_7d`). The counts do not depend on `L`. What remains is the
-kernel's run of `norm_num` at the corners and of `decide +kernel` on the total, which this script does not make. The
-certificate files bound each part by `⌈1.001 × part⌉`, about `0.1%` above the parts `mirror2.py` computes.
+been a certificate of that first route (its certificate files are in the git history); the later theorems take the
+refined `total2 < K` (`mirror2.py`) or, at `11/5`, the depth-8 `totalD < K` (`mirror8.py`) instead, with the curve's
+counts (`counts_7c`, which holds with no hypothesis because `LinnikCGLDensity.cglDensity` proves `CGLDensity`, or
+`counts_7d`). The counts do not depend on `L`. What remains is the kernel's run of `norm_num` at the corners and of
+`decide +kernel` on the total, which this script does not make. The certificate files bound each part by `⌈1.001 ×
+part⌉`, about `0.1%` above the parts the mirrors compute.
 
 Curves, parsed from the Lean sources: `g7c`
 (`SieveTypeIIU226C.lean`, under `LinnikCGL.CGLDensity`, which `LinnikCGLDensity.cglDensity` proves) and `g7d`
