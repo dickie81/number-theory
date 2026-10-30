@@ -88,14 +88,6 @@ theorem abs_im_mul_norm_resolvent_le {A : E →L[ℂ] E} (hA : IsSelfAdjoint A) 
   have h := abs_im_mul_norm_le hA z (resolvent A z x)
   rwa [sub_apply_resolvent (mem_resolventSet_of_im_ne_zero hA hz)] at h
 
-/-- `‖R(z)‖ ≤ |Im z|⁻¹`. -/
-theorem norm_resolvent_le {A : E →L[ℂ] E} (hA : IsSelfAdjoint A) {z : ℂ} (hz : z.im ≠ 0) :
-    ‖resolvent A z‖ ≤ |z.im|⁻¹ := by
-  have hpos : 0 < |z.im| := abs_pos.2 hz
-  refine ContinuousLinearMap.opNorm_le_bound _ (inv_nonneg.2 hpos.le) fun x => ?_
-  rw [inv_mul_eq_div, le_div_iff₀ hpos, mul_comm]
-  exact abs_im_mul_norm_resolvent_le hA hz x
-
 /-- **The resolvent is holomorphic off the real axis** (Mathlib's
 `spectrum.hasDerivAt_resolvent_const_left`). -/
 theorem hasDerivAt_resolvent_of_im_ne_zero {A : E →L[ℂ] E} (hA : IsSelfAdjoint A) {z : ℂ}
@@ -358,7 +350,6 @@ end
 #print axioms Eis.sub_apply_resolvent
 #print axioms Eis.resolvent_sub_apply
 #print axioms Eis.abs_im_mul_norm_resolvent_le
-#print axioms Eis.norm_resolvent_le
 #print axioms Eis.hasDerivAt_resolvent_of_im_ne_zero
 #print axioms Eis.algebraMap_sub_apply_eq
 #print axioms Eis.resolvent_apply_sub

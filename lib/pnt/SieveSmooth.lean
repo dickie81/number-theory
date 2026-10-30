@@ -53,11 +53,6 @@ noncomputable def G (θ Λ : ℝ) (u : ℝ) : ℝ :=
 
 variable {θ Λ : ℝ}
 
-theorem contDiff_G {n : ℕ∞} : ContDiff ℝ n (G θ Λ) := by
-  unfold G
-  exact (Real.smoothTransition.contDiff.comp (contDiff_id.div_const θ)).sub
-    (Real.smoothTransition.contDiff.comp ((contDiff_id.sub contDiff_const).div_const θ))
-
 /-- Below `2Λ`, `G` is `g(u/θ)`. -/
 theorem G_of_le (hθ : 0 < θ) {u : ℝ} (hu : u ≤ 2 * Λ) : G θ Λ u = Real.smoothTransition (u / θ) := by
   have h : (u - 2 * Λ) / θ ≤ 0 := div_nonpos_of_nonpos_of_nonneg (by linarith) hθ.le
@@ -266,21 +261,5 @@ theorem integrable_fourier_GC (hθ : 0 < θ) (hΛ : 0 ≤ Λ) : Integrable (𝓕
   have hpos : 0 < 1 + ξ ^ 2 := by positivity
   rw [← div_eq_mul_inv, le_div_iff₀ hpos]
   nlinarith
-
-/-- **Separation by Fourier inversion**: `G(a − b) = ∫ 𝓕G(ξ) e^{2πiξa} e^{−2πiξb} dξ`. -/
-theorem GC_sub_eq_integral (hθ : 0 < θ) (hΛ : 0 ≤ Λ) (a b : ℝ) :
-    GC θ Λ (a - b) = ∫ ξ : ℝ, Complex.exp (2 * π * I * ξ * a) * Complex.exp (-(2 * π * I * ξ * b)) *
-      𝓕 (GC θ Λ) ξ := by
-  have hinv := Continuous.fourierInv_fourier_eq (contDiff_GC (θ := θ) (Λ := Λ) (n := 0)).continuous
-    (integrable_GC hθ hΛ) (integrable_fourier_GC hθ hΛ)
-  rw [← congrFun hinv (a - b), Real.fourierInv_eq']
-  refine integral_congr_ae (Eventually.of_forall fun ξ => ?_)
-  simp only [smul_eq_mul]
-  congr 1
-  rw [← Complex.exp_add]
-  congr 1
-  simp only [RCLike.inner_apply, conj_trivial]
-  push_cast
-  ring
 
 end SieveSmooth

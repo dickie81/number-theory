@@ -363,15 +363,6 @@ theorem slT_mem_Gam3 {t : 𝓞 K} (ht : (3 : 𝓞 K) ∣ t) : slT t ∈ Gam3 := 
   rw [mem_Gam3, coe_slT, modThree_iff]
   exact ⟨primary_one, ht, dvd_zero _, primary_one⟩
 
-/-- **Periodicity**: `E(z + t, v; s) = E(z, v; s)` for `t ∈ 3ℤ[ω]`. -/
-theorem eis1_transl {t : 𝓞 K} (ht : (3 : 𝓞 K) ∣ t) (s : ℂ) {p : ℂ × ℝ} (hp : p ∈ UHS) :
-    eis1 s (p.1 + σO t, p.2) = eis1 s p := by
-  have h := eis1_slAct (slT_mem_Gam3 ht) s hp
-  rw [slAct_slT, coe_slT] at h
-  rw [h]
-  unfold kub
-  simp
-
 theorem bRow_zero_iff {d : 𝓞 K} : BRow (0, d) ↔ d = 1 := by
   constructor
   · rintro ⟨h1, -, h3⟩
@@ -410,48 +401,6 @@ theorem eis1_eq {s : ℂ} (hs : 2 < s.re) {p : ℂ × ℝ} (hp : p ∈ UHS) :
       simp only [h2, h1, ↓reduceIte, e]
     · simp only [h2, h1, ↓reduceIte]
 
-/-- `x^t ≤ x^a + x^b` for `x > 0` and `a ≤ t ≤ b`. -/
-theorem rpow_le_add_rpow {x a b t : ℝ} (hx : 0 < x) (ha : a ≤ t) (hb : t ≤ b) :
-    x ^ t ≤ x ^ a + x ^ b := by
-  rcases le_total x 1 with h | h
-  · have := Real.rpow_le_rpow_of_exponent_ge hx h ha
-    linarith [Real.rpow_nonneg hx.le b]
-  · have := Real.rpow_le_rpow_of_exponent_le h hb
-    linarith [Real.rpow_nonneg hx.le a]
-
-open Classical in
-/-- **Holomorphy in `s`** on `Re s > 2`. -/
-theorem differentiableOn_eis1 {p : ℂ × ℝ} (hp : p ∈ UHS) :
-    DifferentiableOn ℂ (fun s => eis1 s p) {s | 2 < s.re} := by
-  intro s₀ hs₀
-  have hs₀' : 2 < s₀.re := hs₀
-  set a := (2 + s₀.re) / 2
-  set b := s₀.re + 1
-  have ha : 2 < a := by simp only [a]; linarith
-  have hb : 2 < b := by simp only [b]; linarith
-  set U := {s : ℂ | a < s.re ∧ s.re < b}
-  have hU : IsOpen U :=
-    (isOpen_lt continuous_const Complex.continuous_re).inter
-      (isOpen_lt Complex.continuous_re continuous_const)
-  have hs₀U : s₀ ∈ U := ⟨by simp only [a]; linarith, by simp only [b]; linarith⟩
-  have hD : DifferentiableOn ℂ (fun s => eis1 s p) U := by
-    refine Complex.differentiableOn_tsum_of_summable_norm
-      (u := fun cd => (if BRow cd then (p.2 / uhsDen (σO cd.1) (σO cd.2) p.1 p.2) ^ a else 0) +
-        (if BRow cd then (p.2 / uhsDen (σO cd.1) (σO cd.2) p.1 p.2) ^ b else 0))
-      ((summable_height_rpow ha hp).add (summable_height_rpow hb hp)) (fun cd => ?_) hU
-      (fun cd s hs => ?_)
-    · unfold eisTerm
-      split_ifs with h
-      · have hx : ((p.2 / uhsDen (σO cd.1) (σO cd.2) p.1 p.2 : ℝ) : ℂ) ≠ 0 := by
-          exact_mod_cast (div_pos hp (uhsDen_pos_of_BRow h hp)).ne'
-        exact fun s _ => ((differentiableAt_id.const_cpow (Or.inl hx)).const_mul _).differentiableWithinAt
-      · exact differentiableOn_const _
-    · refine (norm_eisTerm_le s hp cd).trans ?_
-      split_ifs with h
-      · exact rpow_le_add_rpow (div_pos hp (uhsDen_pos_of_BRow h hp)) hs.1.le hs.2.le
-      · simp
-  exact (hD.differentiableAt (hU.mem_nhds hs₀U)).differentiableWithinAt
-
 end Eis
 
 end
@@ -480,9 +429,6 @@ end
 #print axioms Eis.eisTerm_rowMul
 #print axioms Eis.eis1_slAct
 #print axioms Eis.slT_mem_Gam3
-#print axioms Eis.eis1_transl
 #print axioms Eis.bRow_zero_iff
 #print axioms Eis.eisTerm_zero_one
 #print axioms Eis.eis1_eq
-#print axioms Eis.rpow_le_add_rpow
-#print axioms Eis.differentiableOn_eis1

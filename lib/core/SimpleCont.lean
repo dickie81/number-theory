@@ -228,10 +228,6 @@ theorem not_simple_of_degenerate {a : ℝ} (ha : 0 < a) (hd : Degenerate a) {g :
   · rw [h] at hn1; norm_num at hn1
   · rw [h] at hn2; norm_num at hn2
 
-theorem degenerate_iff {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hg : IsGroundState a g) :
-    Degenerate a ↔ ¬ SimpleGround a g :=
-  ⟨fun hd => not_simple_of_degenerate ha hd hg, degenerate_of_not_simple ha hg⟩
-
 /-- **Degeneracy is closed**: if `bₙ → a > 0` and every `bₙ` is degenerate, so is `a`. -/
 theorem degenerate_of_tendsto {a : ℝ} (ha : 0 < a) {b : ℕ → ℝ} (hbt : Tendsto b atTop (𝓝 a))
     (hd : ∀ n, Degenerate (b n)) : Degenerate a := by
@@ -386,7 +382,6 @@ end WeilForm
 
 #print axioms WeilForm.lsc_even
 #print axioms WeilForm.continuousOn_lam
-#print axioms WeilForm.degenerate_iff
 #print axioms WeilForm.degenerate_of_tendsto
 #print axioms WeilForm.first_degeneracy
 #print axioms WeilForm.first_degeneracy_036

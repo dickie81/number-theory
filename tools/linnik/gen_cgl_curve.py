@@ -227,7 +227,7 @@ such that for every `q ≥ 1`, `lo ≤ σ ≤ hi` and `T ≥ 2` at most `C(qT)^{
 zero of `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`. There is no hypothesis: `LinnikCGLHB101.prop31` proves Chen–Gupta–Li's
 Proposition 3.1.
 
-This is `LinnikCGLStep.charDensity_cglGen` (the library's step from Proposition 3.1, as `charDensity_cgl` on
+This is `LinnikCGLStep.charDensity_cglGen` (the library's step from Proposition 3.1, which an earlier curve took on
 `[5/7, 16/21]`) at new `ParC` parameters. `ParC.Good` has one exponent condition per use of Proposition 3.1: on `[lo, hi]`
 the six of `hc` (they are affine in `σ`, so they ask for the step's two ends), `h3` for the integral class and `h4` for
 the number of dyadic blocks; the other fields are `M = 1556`, `e = 1/100000`, `2/3 ≤ a`, `a + e ≤ M/2000` and the

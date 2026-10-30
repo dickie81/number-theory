@@ -304,17 +304,6 @@ theorem psi_isBigO_of_zeroFree {β : ℝ} (hβ1 : β < 1) (hzf : ∀ s : ℂ, β
     rw [Real.rpow_add hx0 1 (-a + 2 * b), Real.rpow_one]]
   exact Real.rpow_le_rpow_of_exponent_le hx1.le (by simp only [hadef, hbdef, hβ'def]; linarith)
 
-/-- Under `SmoothBound β`, `β < 1`: `ψ(x) − x = O(x^{β+ε})`. -/
-theorem psi_isBigO_of_smoothBound {β : ℝ} (h : HalfPlaneS0.SmoothBound β) (hβ1 : β < 1) {ε : ℝ}
-    (hε : 0 < ε) : (ψ - id) =O[atTop] fun x : ℝ ↦ x ^ (β + ε) :=
-  psi_isBigO_of_zeroFree hβ1 (fun _ hs ↦ (HalfPlaneS0.ne_zero_of_smoothBound h hs).1) hε
-
-/-- Under the completed mean square (`Eis.CompletedMeanSquare`, the companion paper's Proposition 5.2), which
-gives `ζ(s) ≠ 0` on `Re s > 11/12`: `ψ(x) − x = O(x^{11/12+ε})`. -/
-theorem psi_isBigO_of_completed (hC : Eis.CompletedMeanSquare) {ε : ℝ} (hε : 0 < ε) :
-    (ψ - id) =O[atTop] fun x : ℝ ↦ x ^ ((11 : ℝ) / 12 + ε) :=
-  psi_isBigO_of_zeroFree (by norm_num) (fun _ hs ↦ (Eis.ne_zero_of_completed hC hs).1) hε
-
 end PNT
 
 end HalfPlanePNT
@@ -323,5 +312,3 @@ end HalfPlanePNT
 #print axioms HalfPlanePNT.logDeriv_le_of_zeroFree
 #print axioms HalfPlanePNT.half_le_of_zeroFree
 #print axioms HalfPlanePNT.psi_isBigO_of_zeroFree
-#print axioms HalfPlanePNT.psi_isBigO_of_smoothBound
-#print axioms HalfPlanePNT.psi_isBigO_of_completed

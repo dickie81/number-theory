@@ -491,23 +491,6 @@ theorem twist_617M {md : 𝓞 K} [NeZero md] (ξ : MulChar (𝓞 K ⧸ span {md}
     linear_combination (sym6 δ3 (span {x}) ^ 2 * ξ (Ideal.Quotient.mk _ x) * sym6 St (span {x}) *
       sym6 Sg (span {x}) ^ 4) * key
 
-/-- **The companion paper's (6.17)** at the modulus `4`: `twist_617M` with
-`L = 72`. -/
-theorem twist_617 (ξ : MulChar (𝓞 K ⧸ span {(4 : 𝓞 K)}) ℂ) (u₀ : (𝓞 K)ˣ) {t g : 𝓞 K}
-    (ht : t ≠ 0) (hg : g ≠ 0) :
-    ∃ φ₀ : 𝓞 K → 𝓞 K → ℂ,
-      (∀ k x u, φ₀ k (x + 72 * u) = φ₀ k x) ∧
-      (∀ k k' x, (4 : 𝓞 K) ∣ k - k' → φ₀ k x = φ₀ k' x) ∧
-      (∀ k x, ‖φ₀ k x‖ ≤ 1) ∧
-      (∀ k, φ₀ k 0 = 0) ∧
-      ∀ k₀ : 𝓞 K, Primary k₀ → Squarefree (span {k₀}) → (absNorm (span {k₀})).Coprime 6 →
-        IsCoprime k₀ (t * g) → ∀ x : 𝓞 K,
-        phiTw (twistPsi ξ (u₀ * t * k₀) g) x =
-          φ₀ k₀ x * (∏ P ∈ primeSet (span {t * g}), chiPow P.1 (jFix t g P) x) *
-            ∏ P ∈ primeSet (span {k₀}), chiP P.1 x := by
-  obtain ⟨φ₀, hper, h4, hbd, h0, hid⟩ := twist_617M ξ u₀ ht hg
-  exact ⟨φ₀, hper 72 dvd_rfl ⟨18, by norm_num⟩, h4, hbd, h0, hid⟩
-
 end Eis
 
 end
@@ -539,4 +522,3 @@ end
 #print axioms Eis.mem_S_of_mem
 #print axioms Eis.key_617
 #print axioms Eis.twist_617M
-#print axioms Eis.twist_617

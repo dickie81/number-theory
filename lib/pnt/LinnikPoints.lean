@@ -127,12 +127,4 @@ theorem large_values_points {ι : Type*} {P : ℕ} {S : Finset ℕ} (hS : S ⊆ 
         have := mul_le_mul_of_nonneg_left hc'le hL0; linarith
     _ = L * (2 + Real.log (2 * P) ^ 2) * ∑ j ∈ S, ‖c j‖ ^ 2 := by ring
 
-/-- `LinnikHybrid.large_values_chars` is the case of one point per character. -/
-theorem large_values_chars_of_points {P : ℕ} {S : Finset ℕ} (hS : S ⊆ Finset.Ioc P (2 * P)) (c : ℕ → ℂ)
-    (q : ℕ) [NeZero q] {lo hi : ℝ} (hab : lo ≤ hi) (Rs : Finset (DirichletCharacter ℂ q))
-    (x : DirichletCharacter ℂ q → ℝ) (hR : ∀ χ ∈ Rs, lo + 1 / 2 ≤ x χ ∧ x χ ≤ hi - 1 / 2) :
-    ∑ χ ∈ Rs, ‖dp S (fun j => c j * χ j) (x χ)‖ ^ 2
-      ≤ (q * (hi - lo) + 8 * P * (1 + Real.log P)) * (2 + Real.log (2 * P) ^ 2) * ∑ j ∈ S, ‖c j‖ ^ 2 :=
-  large_values_points hS c q hab Rs id x hR fun _ _ _ _ hne heq => absurd heq hne
-
 end LinnikPoints

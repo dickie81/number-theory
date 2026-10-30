@@ -145,11 +145,6 @@ theorem cf_shift' {A r : ℝ} {g : ℝ → ℝ} (hsupp : ∀ u, r < |u| → g u 
     integral_eq_of_supp hsuppC (by linarith) (by linarith)]
   ring
 
-theorem cf_shift {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hsupp : ∀ u, a < |u| → g u = 0) {s : ℝ}
-    (hs : |s| < a) (n : ℤ) :
-    cf a (fun t => g (t + s)) n = Complex.exp (2 * π * I * n * s / (4 * a)) * cf a g n :=
-  cf_shift' hsupp (by linarith) (by linarith) n
-
 theorem cf_sub {a : ℝ} {g₁ g₂ : ℝ → ℝ} (h₁ : IntervalIntegrable g₁ volume (-(2 * a)) (2 * a))
     (h₂ : IntervalIntegrable g₂ volume (-(2 * a)) (2 * a)) (n : ℤ) :
     cf a (fun t => g₁ t - g₂ t) n = cf a g₁ n - cf a g₂ n := by
@@ -209,11 +204,6 @@ theorem hasSum_shift' {A r : ℝ} (hA : 0 < A) {g : ℝ → ℝ} (hg : MemLp g 2
       congr 1; push_cast; ring
     rw [this]; ring
   rw [hlin, norm_mul, mul_pow, norm_one_sub_exp_sq]
-
-theorem hasSum_shift {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hp : Probe a g) {s : ℝ} (hs : |s| < a) :
-    HasSum (fun n : ℤ => ‖cf a g n‖ ^ 2 * (2 - 2 * Real.cos (2 * π * n * s / (4 * a))))
-      ((4 * a)⁻¹ * (2 * (autocorr g 0 - autocorr g s))) :=
-  hasSum_shift' ha hp.memL2 hp.supp (by linarith)
 
 /-! ## The archimedean kernel near `0` -/
 
@@ -496,8 +486,6 @@ end WeilForm
 
 #print axioms WeilForm.normSq_sub_shift
 #print axioms WeilForm.hasSum_cf_sq
-#print axioms WeilForm.cf_shift
-#print axioms WeilForm.hasSum_shift
 #print axioms WeilForm.archK_ge
 #print axioms WeilForm.weight_ge
 #print axioms WeilForm.weighted_le_archE

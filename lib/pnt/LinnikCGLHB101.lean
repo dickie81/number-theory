@@ -484,19 +484,9 @@ theorem cgls3 : LinnikCGLS23.CGLS3 := LinnikCGLP81.cgls3_t101 cglt101
 `cglt101`. -/
 theorem prop31 : LinnikCGLLV.CGLProp31 := LinnikCGLP81.prop31_t101 cglt101
 
-/-- **The density count with no hypothesis**: there is `C ≥ 0` such that, for `q ≥ 1`, `5/7 ≤ σ ≤ 16/21` and
-`T ≥ 2`, at most `C(qT)^{(7/3+1/2000)(1−σ)}(log qT)^{10}` characters mod `q` have an `L`-function with a zero in
-`Re s ≥ σ`, `|Im s| ≤ T` (`charDensity_cgl` at `prop31`). -/
-theorem char_density : ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 5 / 7 ≤ σ → σ ≤ 16 / 21 → 2 ≤ T →
-    ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
-      ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ DirichletCharacter.LFunction χ s = 0).card : ℝ) ≤
-        C * ((q : ℝ) * T) ^ ((7 / 3 + 1 / 2000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
-  LinnikCGLStep.charDensity_cgl prop31
-
 end LinnikCGLHB101
 
 #print axioms LinnikCGLHB101.sig_le_eps
 #print axioms LinnikCGLHB101.cglt101
 #print axioms LinnikCGLHB101.cgls3
 #print axioms LinnikCGLHB101.prop31
-#print axioms LinnikCGLHB101.char_density

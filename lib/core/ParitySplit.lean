@@ -1,6 +1,5 @@
 import Mathlib
 import OddPositivity
-import PoleRelax
 
 /-! # Weil's form splits by parity: positivity for every real `g`
 
@@ -210,15 +209,6 @@ theorem weilQg_ge_twentieth_all {a : ℝ} (ha : 0 < a) (ha1 : a ≤ 1 / 12) {g :
   have ho := weilQodd_ge_mul ha (by linarith) (oprobe_oddPart hg)
   linarith
 
-/-- **Weil positivity for every real `g`** on `(0, 1/4]`, granted the certificate `Cert14`:
-`Q(g) ≥ ‖g‖²/1000`. -/
-theorem weilQg_ge_all {a : ℝ} (ha : 0 < a) (ha1 : a ≤ 1 / 4) (hc : Cert14) {g : ℝ → ℝ}
-    (hg : SProbe a g) : (1 / 1000) * normSq g ≤ weilQg a g := by
-  rw [weilQg_parity hg, normSq_parity hg.memL2]
-  have he := weilQ_ge_mul ha (fun h hp hn => weilQ_ge_pole ha ha1 hc hp hn) (probe_evenPart hg)
-  have ho := weilQodd_ge_mul ha ha1 (oprobe_oddPart hg)
-  nlinarith [normSq_nonneg (oddPart g)]
-
 /-! ## Monotonicity of the general form in the support -/
 
 theorem poleL_eq_integral {a : ℝ} (ha : 0 ≤ a) {g : ℝ → ℝ} (hsupp : ∀ u, a < |u| → g u = 0) :
@@ -253,4 +243,3 @@ end WeilForm
 #print axioms WeilForm.weilQg_parity
 #print axioms WeilForm.weilQodd_ge_mul
 #print axioms WeilForm.weilQg_ge_twentieth_all
-#print axioms WeilForm.weilQg_ge_all

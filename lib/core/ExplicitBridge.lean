@@ -40,46 +40,10 @@ variable {a : ℝ} {g : ℝ → ℝ}
 
 /-! ## B1. The digamma difference as a positive-kernel integral -/
 
-/-- **Gauss's digamma integral, in difference form** (proved below as `digammaDiff`). For `Re z, Re w > 0`,
-`ψ(z) − ψ(w) = ∫_0^∞ (e^{−wt} − e^{−zt})/(1 − e^{−t}) dt`, with the integrand integrable.
-(Mathlib's `Digamma.lean` lists the integral representation as a TODO.) -/
-def DigammaDiff : Prop :=
-  ∀ z w : ℂ, 0 < z.re → 0 < w.re →
-    IntegrableOn (fun t : ℝ => (cexp (-(w * t)) - cexp (-(z * t))) / ((1 - Real.exp (-t) : ℝ) : ℂ))
-        (Ioi 0) ∧
-      Complex.digamma z - Complex.digamma w
-        = ∫ t in Ioi (0 : ℝ), (cexp (-(w * t)) - cexp (-(z * t))) / ((1 - Real.exp (-t) : ℝ) : ℂ)
-
-/-- **`DigammaDiff` is a theorem** (`DigammaGauss.lean`): proved from Mathlib's recurrence
-`ψ(s + n) = ψ(s) + Σ 1/(s + k)` and the convexity of `log Γ`. -/
-theorem digammaDiff : DigammaDiff := fun _ _ hz hw => GammaIntegrals.digamma_sub_eq_integral hz hw
-
-/-- The kernel `e^{−t/4}/(1 − e^{−t})`. -/
-def kk (t : ℝ) : ℝ := Real.exp (-(t / 4)) / (1 - Real.exp (-t))
-
 /-! B1 and B2 are the instance `q = ¼` of ArchShift.lean. -/
-
-theorem kkQ_quarter : kkQ (1 / 4) = kk := by
-  funext t; unfold kkQ kk; congr 2; ring
 
 theorem psiReQ_quarter : psiReQ (1 / 4) = psiRe := by
   funext r; unfold psiReQ psiRe zQ zB; push_cast; rfl
-
-theorem kk_nonneg {t : ℝ} (ht : 0 < t) : 0 ≤ kk t := kkQ_quarter ▸ kkQ_nonneg _ ht
-
-/-- **B1**: `Re ψ(¼ + ir/2) − Re ψ(¼) = ∫_0^∞ k(t)(1 − cos(rt/2)) dt`, integrably. -/
-theorem psiRe_sub (r : ℝ) :
-    IntegrableOn (fun t => kk t * (1 - Real.cos (r * (t / 2)))) (Ioi 0) ∧
-      psiRe r - psiRe 0 = ∫ t in Ioi (0 : ℝ), kk t * (1 - Real.cos (r * (t / 2))) := by
-  have h := psiReQ_sub (q := 1 / 4) (by norm_num) r
-  rwa [kkQ_quarter, psiReQ_quarter] at h
-
-/-- **B2**: `∫ ĝ(r)² (Re ψ(¼ + ir/2) − Re ψ(¼)) dr = 2π·E(g)`, integrably. -/
-theorem hsq_psi_sub (hp : Probe a g) (ha : 0 < a) :
-    Integrable (fun r => hsq g a r * (psiRe r - psiRe 0)) ∧
-      ∫ r, hsq g a r * (psiRe r - psiRe 0) = 2 * π * archE g := by
-  have h := hsq_psiQ_sub hp ha (le_refl (1 / 4 : ℝ))
-  rwa [psiReQ_quarter, archEQ_quarter] at h
 
 /-- `(1/2π)∫ ĝ² Re ψ(¼ + ir/2) = Re ψ(¼)‖g‖² + E(g)`. -/
 theorem arch_term (hp : Probe a g) (ha : 0 < a) :
@@ -113,12 +77,6 @@ theorem weilQ_eq_zero_sum {ι : Type*} {ρ : ι → ℂ} (hp : Probe a g) (ha : 
   simp only
   rw [hpole1, hpole2, hg0, hpr, arch_term hp ha, hz0, weilQ_eq', weilConst]
   push_cast; ring
-
-/-- The same, as the zero-sum identity `weilQ a g = Σ_ρ ĝ(t_ρ)²`. -/
-theorem weilQ_eq_tsum {ι : Type*} {ρ : ι → ℂ} (hp : Probe a g) (ha : 0 < a)
-    (hEF : WeilExplicit ρ (fun z => ghatC g a z ^ 2) (hsq g a)) :
-    (weilQ a g : ℂ) = ∑' i, ghatC g a ((ρ i - 1 / 2) / Complex.I) ^ 2 :=
-  (weilQ_eq_zero_sum hp ha hEF).tsum_eq.symm
 
 /-! ## C. The symbol form and the jump form
 
@@ -185,24 +143,6 @@ theorem weilQ_symbol (hp : Probe a g) (ha : 0 < a) :
   have hπ : (0 : ℝ) < 2 * π := by positivity
   field_simp at harch ⊢
   linarith
-
-/-- **The jump form** (no named input): `Q₀(g) = (c₀ − 2P(a))‖g‖² + E(g)
-+ Σ_{n ≤ e^{2a}} Λ(n) n^{−1/2} ‖g − g(· + log n)‖²`. -/
-theorem weilQ0_jump (hp : Probe a g) :
-    weilQ0 a g = (weilConst - 2 * primeWeight a) * normSq g + archE g
-      + ∑ n ∈ Finset.range (primeCut a), ArithmeticFunction.vonMangoldt n / Real.sqrt n
-          * normSq (fun t => g t - g (t + Real.log n)) := by
-  rw [weilQ0_eq', primeS, prime_sum_eq hp.supp, primeWeight]
-  simp only [normSq_sub_shift hp.memL2, autocorr_zero]
-  have h : ∑ n ∈ Finset.range (primeCut a), ArithmeticFunction.vonMangoldt n / Real.sqrt n
-        * (2 * (normSq g - autocorr g (Real.log n)))
-      = 2 * (∑ n ∈ Finset.range (primeCut a), ArithmeticFunction.vonMangoldt n / Real.sqrt n)
-          * normSq g
-        - 2 * ∑ n ∈ Finset.range (primeCut a), ArithmeticFunction.vonMangoldt n / Real.sqrt n
-          * autocorr g (Real.log n) := by
-    rw [Finset.mul_sum, Finset.sum_mul, Finset.mul_sum, ← Finset.sum_sub_distrib]
-    exact Finset.sum_congr rfl fun n _ => by ring
-  rw [h]; ring
 
 /-! ## D. Negative directions of `Q` count off-line zeros
 
@@ -335,16 +275,11 @@ end Index
 
 end WeilForm
 
-#print axioms WeilForm.digammaDiff
-#print axioms WeilForm.psiRe_sub
-#print axioms WeilForm.hsq_psi_sub
 #print axioms WeilForm.arch_term
 #print axioms WeilForm.hsq_ofReal
 #print axioms WeilForm.weilQ_eq_zero_sum
-#print axioms WeilForm.weilQ_eq_tsum
 #print axioms WeilForm.psiRe_ge
 #print axioms WeilForm.weilQ_symbol
-#print axioms WeilForm.weilQ0_jump
 #print axioms WeilForm.weilQ_nonneg_of_zeros_on_line
 #print axioms WeilForm.exists_offline_of_neg
 #print axioms WeilForm.finrank_le_offline

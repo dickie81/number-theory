@@ -44,13 +44,6 @@ theorem mul_bounds {x y lo₁ hi₁ lo₂ hi₂ : ℝ} (h₁ : lo₁ ≤ x ∧ x
     rw [mul_comm y hi₁, mul_comm lo₂ hi₁, mul_comm hi₂ hi₁] at b
     exact max_le (a.trans (le_max_left _ _)) (b.trans (le_max_right _ _))
 
-theorem add_bounds {x y lo₁ hi₁ lo₂ hi₂ : ℝ} (h₁ : lo₁ ≤ x ∧ x ≤ hi₁) (h₂ : lo₂ ≤ y ∧ y ≤ hi₂) :
-    lo₁ + lo₂ ≤ x + y ∧ x + y ≤ hi₁ + hi₂ :=
-  ⟨add_le_add h₁.1 h₂.1, add_le_add h₁.2 h₂.2⟩
-
-theorem neg_bounds {x lo hi : ℝ} (h : lo ≤ x ∧ x ≤ hi) : -hi ≤ -x ∧ -x ≤ -lo :=
-  ⟨neg_le_neg h.2, neg_le_neg h.1⟩
-
 theorem inv_bounds {x lo hi : ℝ} (h : lo ≤ x ∧ x ≤ hi) (hlo : 0 < lo) : hi⁻¹ ≤ x⁻¹ ∧ x⁻¹ ≤ lo⁻¹ :=
   ⟨inv_anti₀ (hlo.trans_le h.1) h.2, inv_anti₀ hlo h.1⟩
 

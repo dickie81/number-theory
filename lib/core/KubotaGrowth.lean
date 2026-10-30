@@ -405,22 +405,6 @@ open Classical in
 def cuspA (g : SL(2, 𝓞 K)) : ℂ :=
   ∑' cd : 𝓞 K × 𝓞 K, if BRow cd ∧ (rowMul g cd).1 = 0 then σO (cub cd.1 (span {cd.2})) else 0
 
-open Classical in
-/-- At `g = 1` the coefficient is `1`: the only bottom row `(0, d)` is `(0, 1)`. -/
-theorem cuspA_one : cuspA 1 = 1 := by
-  unfold cuspA
-  rw [tsum_eq_single ((0 : 𝓞 K), (1 : 𝓞 K)) fun cd hcd => ?_]
-  · have h : BRow ((0 : 𝓞 K), (1 : 𝓞 K)) := bRow_zero_iff.2 rfl
-    simp only [rowMul_one, h, true_and, ↓reduceIte]
-    change σO (cub 0 (span {1})) = 1
-    rw [cub_one_right, map_one]
-  · rw [rowMul_one]
-    refine ite_eq_right_iff.2 fun ⟨hb, h0⟩ => (hcd ?_).elim
-    obtain ⟨c, d⟩ := cd
-    simp only at h0
-    subst h0
-    rw [bRow_zero_iff.1 hb]
-
 /-- A bottom row with `(c, d)·g = (0, e)` has `e` a unit. -/
 theorem isUnit_rowMul_snd {g : SL(2, 𝓞 K)} {cd : 𝓞 K × 𝓞 K} (h : BRow cd)
     (h0 : (rowMul g cd).1 = 0) : IsUnit (rowMul g cd).2 := by
@@ -429,66 +413,6 @@ theorem isUnit_rowMul_snd {g : SL(2, 𝓞 K)} {cd : 𝓞 K × 𝓞 K} (h : BRow 
   subst e
   refine h.1.isUnit_of_dvd' ?_ ?_ <;>
     simp only [rowMul, h0, zero_mul, zero_add] <;> exact dvd_mul_right _ _
-
-/-- The terms of the cusp `g·∞`: `(c/d)₃·v^s` at the rows with `(c, d)·g = (0, *)`. -/
-theorem eisTerm_slAct_of_fst {g : SL(2, 𝓞 K)} {cd : 𝓞 K × 𝓞 K} (h : BRow cd)
-    (h0 : (rowMul g cd).1 = 0) (s : ℂ) {p : ℂ × ℝ} (hp : p ∈ UHS) :
-    eisTerm s (slAct g p) cd = σO (cub cd.1 (span {cd.2})) * ((p.2 : ℝ) : ℂ) ^ s := by
-  unfold eisTerm
-  simp only [h, ↓reduceIte]
-  rw [height_rowMul g h hp, h0]
-  obtain ⟨u, hu⟩ := isUnit_rowMul_snd h h0
-  have hD : uhsDen (σO 0) (σO (u : 𝓞 K)) p.1 p.2 = 1 := by
-    unfold uhsDen
-    rw [map_zero, zero_mul, zero_add, normSq_σO_unit, Complex.normSq_zero, zero_mul, add_zero]
-  rw [← hu, hD, div_one]
-
-open Classical in
-/-- **Growth at the cusp `g·∞`**: `|E(g·w, s) − a_g·v^s| ≤ cuspC(σ)·v^{2−σ}` for every
-`g ∈ SL_2(ℤ[ω])`, `σ = Re s > 2` and `v ≥ 1/2`, with `a_g = cuspA g`. -/
-theorem norm_eis1_slAct_sub_le {s : ℂ} (hs : 2 < s.re) (g : SL(2, 𝓞 K)) {p : ℂ × ℝ}
-    (hv : 1 / 2 ≤ p.2) :
-    ‖eis1 s (slAct g p) - cuspA g * ((p.2 : ℝ) : ℂ) ^ s‖ ≤ cuspC s.re * p.2 ^ (2 - s.re) := by
-  have hp : p ∈ UHS := show 0 < p.2 by linarith
-  have hgp : slAct g p ∈ UHS := slAct_mem g hp
-  have hS := summable_eisTerm hs hgp
-  set F := fun cd : 𝓞 K × 𝓞 K => eisTerm s (slAct g p) cd
-  have hA : ∑' cd, (if (rowMul g cd).1 = 0 then F cd else 0) = cuspA g * ((p.2 : ℝ) : ℂ) ^ s := by
-    unfold cuspA
-    rw [← tsum_mul_right]
-    refine tsum_congr fun cd => ?_
-    by_cases h0 : (rowMul g cd).1 = 0
-    · by_cases hb : BRow cd
-      · simp only [h0, hb, and_self, ↓reduceIte, F]
-        exact eisTerm_slAct_of_fst hb h0 s hp
-      · simp only [h0, hb, and_true, ↓reduceIte, zero_mul, F]
-        unfold eisTerm
-        simp [hb]
-    · simp [h0]
-  have hN : Summable fun cd => ‖F cd‖ :=
-    Summable.of_nonneg_of_le (fun _ => norm_nonneg _) (norm_eisTerm_le s hgp)
-      (summable_height_rpow hs hgp)
-  have h1 : Summable fun cd => if (rowMul g cd).1 = 0 then F cd else 0 :=
-    Summable.of_norm_bounded hN fun cd => by split_ifs <;> simp
-  have h2 : Summable fun cd => if (rowMul g cd).1 = 0 then 0 else F cd :=
-    Summable.of_norm_bounded hN fun cd => by split_ifs <;> simp
-  have hsplit : eis1 s (slAct g p) = ∑' cd, (if (rowMul g cd).1 = 0 then F cd else 0) +
-      ∑' cd, (if (rowMul g cd).1 = 0 then 0 else F cd) := by
-    rw [← h1.tsum_add h2]
-    refine tsum_congr fun cd => ?_
-    split_ifs <;> simp [F]
-  rw [hsplit, hA, add_sub_cancel_left]
-  obtain ⟨hsum, hle⟩ := summable_height_ne hs p.1 hv
-  refine (tsum_of_norm_bounded ((rowEquiv g).hasSum_iff.2 hsum.hasSum) fun cd => ?_).trans hle
-  change _ ≤ (if (rowMul g cd).1 = 0 then 0 else
-    (p.2 / uhsDen (σO (rowMul g cd).1) (σO (rowMul g cd).2) p.1 p.2) ^ s.re)
-  by_cases h0 : (rowMul g cd).1 = 0
-  · simp [h0]
-  · simp only [h0, ↓reduceIte, F]
-    refine (norm_eisTerm_le s hgp cd).trans ?_
-    split_ifs with hb
-    · rw [height_rowMul g hb hp]
-    · exact Real.rpow_nonneg (div_nonneg hp.le (uhsDen_nonneg _ _ _ _)) _
 
 end Eis
 
@@ -513,7 +437,4 @@ end
 #print axioms Eis.tsum_height_ne_le
 #print axioms Eis.summable_height_ne
 #print axioms Eis.norm_eis1_sub_le
-#print axioms Eis.cuspA_one
 #print axioms Eis.isUnit_rowMul_snd
-#print axioms Eis.eisTerm_slAct_of_fst
-#print axioms Eis.norm_eis1_slAct_sub_le

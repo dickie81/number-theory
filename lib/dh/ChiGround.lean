@@ -640,10 +640,6 @@ end UData
 /-- **The Davenport–Heilbronn form is the instance `q = ¾`.** -/
 def dhU : UData := ⟨constDH, 3 / 4, fDH, Or.inr rfl⟩
 
-theorem dhU_Q : dhU.Q = QDHu := rfl
-
-theorem dhU_lam (a : ℝ) : dhU.lam a = lamDH a := rfl
-
 /-! ## The χ column -/
 
 section Chi
@@ -663,10 +659,6 @@ theorem qC_cases (χ : DirichletCharacter ℂ N) : qC χ = 1 / 4 ∨ qC χ = 3 /
 /-- **Weil's form for `L(s, χ)` as a u-space form**: `c = cChi χ`, `q = qC χ`, `f = fχ χ`. -/
 def chiU (χ : DirichletCharacter ℂ N) : UData := ⟨cChi χ, qC χ, fχ χ, qC_cases χ⟩
 
-theorem chiU_Q (χ : DirichletCharacter ℂ N) : (chiU χ).Q = QCu χ := rfl
-
-theorem chiU_lam (χ : DirichletCharacter ℂ N) (a : ℝ) : (chiU χ).lam a = lamC χ a := rfl
-
 /-- **The ground-state family of `QCu χ`**, for every Dirichlet character `χ`. -/
 def chiGD (χ : DirichletCharacter ℂ N) : GroundData := (chiU χ).gd
 
@@ -677,9 +669,6 @@ abbrev groundSpaceC (χ : DirichletCharacter ℂ N) (a : ℝ) : Submodule ℝ (�
 /-- **A ground state of `QCu χ`**: a normalised probe with `Q_χ(g) = λ_χ(a)`. -/
 def IsGroundStateC (χ : DirichletCharacter ℂ N) (a : ℝ) (g : ℝ → ℝ) : Prop :=
   Probe a g ∧ normSq g = 1 ∧ QCu χ g = lamC χ a
-
-theorem isGroundStateC_iff : IsGroundStateC χ a g ↔ g ∈ groundSpaceC χ a ∧ normSq g = 1 :=
-  (chiU χ).isGroundState_iff
 
 /-- **A ground state of `QCu χ` exists at every support `a > 0`.** -/
 theorem exists_groundStateC (ha : 0 < a) : ∃ g, IsGroundStateC χ a g :=
@@ -797,30 +786,6 @@ theorem grh_of_eventually_simpleC (hG : GoodChar χ)
     (grhCross_of_cross hG (fun n => (probe_integrable (hgs n).1).intervalIntegrable)
       (hsimple.mono fun n hs => (chiU χ).zeros_real_or_imag' (ha n) hs) hconv) hS
 
-/-- If the ground states `g n` of `QCu χ` are eventually simple, they agree with the top-of-chain
-ground states up to scalars, so `HypConvC χ` transfers (the χ column of `hypConv_top_of_simple`,
-StructureD.lean:199). -/
-theorem hypConvC_top_of_simple {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ} (ha : ∀ n, 0 < a n)
-    (hsimple : ∀ᶠ n in atTop, SimpleGroundC χ (a n) (g n)) (hconv : HypConvC χ a g) :
-    HypConvC χ a fun n => topGSC χ (a n) := by
-  have heq : ∀ᶠ n in atTop, ∀ z : ℂ,
-      ghatC (topGSC χ (a n)) (a n) z / ghatC (topGSC χ (a n)) (a n) 0
-        = ghatC (g n) (a n) z / ghatC (g n) (a n) 0 := by
-    filter_upwards [hsimple] with n hs z
-    obtain ⟨c, hcg⟩ := hs.2 _ (isGroundStateC_iff.1 (topGSC_isGroundState (ha n))).1
-    have hc0 : c ≠ 0 := by
-      rintro rfl
-      have := normSq_congr_ae hcg
-      rw [(topGSC_isGroundState (ha n)).2.1] at this
-      simp [WeilForm.normSq] at this
-    rw [ghatC_congr_ae hcg, ghatC_congr_ae hcg, ghatC_smul, ghatC_smul,
-      mul_div_mul_left _ _ (by exact_mod_cast hc0)]
-  intro u hu x
-  obtain ⟨t, ht, hev⟩ := hconv u hu x
-  refine ⟨t, ht, ?_⟩
-  filter_upwards [hev, heq] with n hn he y hy
-  rw [he y]; exact hn y hy
-
 end Chi
 
 /-! ### Instances -/
@@ -859,8 +824,6 @@ end PsiOmega
 #print axioms PsiOmega.UData.G_mem_partner
 #print axioms PsiOmega.UData.finiteDimensional_groundL2
 #print axioms PsiOmega.UData.topGS_cross
-#print axioms PsiOmega.dhU_lam
-#print axioms PsiOmega.chiU_lam
 #print axioms PsiOmega.exists_groundStateC
 #print axioms PsiOmega.theoremDC
 #print axioms PsiOmega.topGSC_cross
@@ -868,7 +831,6 @@ end PsiOmega
 #print axioms PsiOmega.grhCross_of_hypConvC_top
 #print axioms PsiOmega.grh_of_hypConvC_top
 #print axioms PsiOmega.grh_of_eventually_simpleC
-#print axioms PsiOmega.hypConvC_top_of_simple
 #print axioms PsiOmega.grh_chi3_of_hypConvC_top
 #print axioms PsiOmega.grh_chi4_of_hypConvC_top
 #print axioms PsiOmega.grh_chi8_of_hypConvC_top

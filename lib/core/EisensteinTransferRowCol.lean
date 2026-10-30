@@ -58,13 +58,6 @@ theorem chiS_pow_four (M : Finset Pr) (f : 𝓞 K) : chiS M f ^ 4 = conj (chiS M
 def colP (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) (y c : 𝓞 K) (M : Finset Pr) : ℂ :=
   (-1 : ℂ) ^ M.card * ξ (cls m M) * chiS M c * conj (chiS M y)
 
-theorem colP_union (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) (y c : 𝓞 K) {V M : Finset Pr}
-    (h : Disjoint V M) : colP ξ y c (V ∪ M) = colP ξ y c V * colP ξ y c M := by
-  unfold colP
-  rw [Finset.card_union_of_disjoint h, pow_add, cls_union h, map_mul, chiS_union h,
-    chiS_union h, map_mul]
-  ring
-
 theorem norm_colP_le [NeZero m] (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) (y c : 𝓞 K) (M : Finset Pr) :
     ‖colP ξ y c M‖ ≤ 1 := by
   unfold colP
@@ -123,10 +116,6 @@ theorem cls_empty : cls m ∅ = 1 := by
 
 theorem pairPsiDual_empty : pairPsiDual ∅ ∅ = 1 := by
   unfold pairPsiDual; rw [Finset.card_empty, pow_zero, pairPsi_empty]; ring
-
-/-- `χ_M(t⁶) = 1` for `M` prime to `t`. -/
-theorem chiS_eS_pow_six_eq_one {M V : Finset Pr} (h : Disjoint M V) : chiS M (eS V ^ 6) = 1 := by
-  rw [chiS_pow, chiS_eS_pow_six h]
 
 /-- A column coefficient vanishes on the columns containing a prime dividing `c`. -/
 theorem colP_eq_zero_of_dvd (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) (y c : 𝓞 K) {M : Finset Pr}
@@ -527,14 +516,12 @@ end Eis
 end
 
 #print axioms Eis.chiS_pow_four
-#print axioms Eis.colP_union
 #print axioms Eis.norm_colP_le
 #print axioms Eis.norm_pairPsiXi_le
 #print axioms Eis.conj_xi_cls
 #print axioms Eis.dualPair_expand
 #print axioms Eis.cls_empty
 #print axioms Eis.pairPsiDual_empty
-#print axioms Eis.chiS_eS_pow_six_eq_one
 #print axioms Eis.colP_eq_zero_of_dvd
 #print axioms Eis.colP_natural
 #print axioms Eis.WW_kapC

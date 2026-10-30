@@ -141,13 +141,6 @@ theorem fourier_inv (c : 𝓞 K) (hc : c ≠ 0) (F : 𝓞 K → ℂ) (hF : ∀ z
         · intro h; exact absurd (Finset.mem_univ _) h
     _ = F x := by field_simp
 
-/-- `Σ_{h mod c} F̂(h) = F(0)`. -/
-theorem sum_fCoef (c : 𝓞 K) (hc : c ≠ 0) (F : 𝓞 K → ℂ) (hF : ∀ z u, F (z + c * u) = F z) :
-    ∑ᶠ h : 𝓞 K ⧸ span {c}, fCoef c F (repQ c h) = F 0 := by
-  have := fourier_inv c hc F hF 0
-  simp only [mul_zero, ψc_zero, mul_one] at this
-  exact this
-
 /-- `|F̂(h)| ≤ B` when `|F| ≤ B`. -/
 theorem norm_fCoef_le (c : 𝓞 K) (hc : c ≠ 0) (F : 𝓞 K → ℂ) {B : ℝ} (hB : ∀ x, ‖F x‖ ≤ B)
     (h : 𝓞 K) : ‖fCoef c F h‖ ≤ B := by
@@ -301,52 +294,6 @@ theorem twAt_mul (F : 𝓞 K → ℂ) (x : 𝓞 K) : twAt F (δ3 * x) = F x := b
   congr 1
   exact (mul_left_cancel₀ δ3_ne_zero h.choose_spec).symm
 
-/-- **The twisted series as translates** (the companion paper's (6.4) and (A.4)): for `F` periodic
-modulo `q` and `d` supported on `δ₃𝒪`, `Σ_{h mod q} F̂(h)·thSer(c, d)(z + λ²h/q) = F(0)·c·v^{2/3} +
-Σ_m F(m/λ)·d(m)·v·K_{1/3}(4π|m|v/9)·ĕ(mz/9)`. -/
-theorem thSer_twist (q : 𝓞 K) (hq : q ≠ 0) (F : 𝓞 K → ℂ) (hF : ∀ z u, F (z + q * u) = F z)
-    (c₀ : ℂ) (d : 𝓞 K → ℂ) (hd : ∀ m, d m ≠ 0 → δ3 ∣ m) (z : ℂ) (v : ℝ)
-    (hs : ∀ w : ℂ, Summable fun m : 𝓞 K =>
-      d m * (v : ℂ) * besselK (1 / 3) (4 * Real.pi * ‖σO m‖ * v / 9) * ebr (σO m * w / 9)) :
-    ∑ᶠ h : 𝓞 K ⧸ span {q}, fCoef q F (repQ q h) *
-        thSer c₀ d (z + σO (δ3 ^ 2 * repQ q h) / σO q) v =
-      F 0 * (c₀ * ((v ^ (2 / 3 : ℝ) : ℝ) : ℂ)) +
-        ∑' m : 𝓞 K, twAt F m * d m * (v : ℂ) * besselK (1 / 3) (4 * Real.pi * ‖σO m‖ * v / 9) *
-          ebr (σO m * z / 9) := by
-  have := finite_quot q hq
-  classical
-  let : Fintype (𝓞 K ⧸ span {q}) := Fintype.ofFinite _
-  have h0 := sum_fCoef q hq F hF
-  rw [finsum_eq_sum_of_fintype] at h0
-  rw [finsum_eq_sum_of_fintype, thSer_translates Finset.univ (fun h => fCoef q F (repQ q h))
-    (fun h => σO (δ3 ^ 2 * repQ q h) / σO q) c₀ d (twAt F) z v (fun i _ => hs _), h0]
-  intro m hm
-  obtain ⟨x, rfl⟩ := hd m hm
-  rw [twAt_mul, ← fourier_inv q hq F hF x, finsum_eq_sum_of_fintype]
-  refine Finset.sum_congr rfl fun h _ => ?_
-  rw [ebr_shift]
-
-/-- **Lemma 6.1's translates for `θ̄`**: if `θ = thSer(c₀, τ)` with `τ` under the support and size
-condition and supported on `δ₃𝒪`, then for `F` periodic modulo `q` with `F(0) = 0`,
-`Σ_{h mod q} F̂(h)·θ̄(z + λ²h/q, v) = Σ_m F(m/λ)·conj τ(−m)·v·K_{1/3}(4π|m|v/9)·ĕ(mz/9)`. -/
-theorem conj_theta_translates {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {c₀ : ℂ} {τ : 𝓞 K → ℂ}
-    (hθ : ∀ z v, 0 < v → θ z v = thSer c₀ τ z v) (hτ : ThetaSupp Kc τ)
-    (hτd : ∀ m, τ m ≠ 0 → δ3 ∣ m) (q : 𝓞 K) (hq : q ≠ 0) (F : 𝓞 K → ℂ)
-    (hF : ∀ z u, F (z + q * u) = F z) (hF0 : F 0 = 0) (z : ℂ) {v : ℝ} (hv : 0 < v) :
-    ∑ᶠ h : 𝓞 K ⧸ span {q}, fCoef q F (repQ q h) * conj (θ (z + σO (δ3 ^ 2 * repQ q h) / σO q) v) =
-      ∑' m : 𝓞 K, twAt F m * conj (τ (-m)) * (v : ℂ) *
-        besselK (1 / 3) (4 * Real.pi * ‖σO m‖ * v / 9) * ebr (σO m * z / 9) := by
-  have e : ∀ h : 𝓞 K ⧸ span {q}, fCoef q F (repQ q h) *
-      conj (θ (z + σO (δ3 ^ 2 * repQ q h) / σO q) v) =
-      fCoef q F (repQ q h) * thSer (conj c₀) (fun m => conj (τ (-m)))
-        (z + σO (δ3 ^ 2 * repQ q h) / σO q) v := by
-    intro h; rw [hθ _ _ hv, conj_thSer]
-  rw [finsum_congr e, thSer_twist q hq F hF _ _ ?_ z v
-    (fun w => summable_thSer (thetaSupp_conj hτ) w hv), hF0, zero_mul, zero_add]
-  intro m hm
-  have hm' : τ (-m) ≠ 0 := fun h0 => hm (by simp [h0])
-  exact (dvd_neg.1 (hτd _ hm'))
-
 /-! ### The coefficient identity of Lemma 6.1 -/
 
 theorem primary_pow {a : 𝓞 K} (ha : Primary a) (k : ℕ) : Primary (a ^ k) := by
@@ -428,27 +375,6 @@ theorem coef_realization {τ : 𝓞 K → ℂ} {C : ℂ} (Ψ : Ideal (𝓞 K) �
   linear_combination (conj C * (Real.sqrt (absNorm (span {b})) : ℂ) * gamI 2 (span {n}) *
     Ψ (span {n}) * Ψ (span {b}) ^ 3) * ((conj x * x + 1) * y ^ 6 * hx + hy)
 
-/-- **The companion paper's Lemma 6.1, from the display**: `θ̄` twisted by any `F` periodic modulo
-`q ≠ 0` with `F(0) = 0` is the sum of the translates `F̂(h)·θ̄(z + λ²h/q, v)` (its (6.4)), and the
-twisted coefficient at `λnb³` is `conj C·N(b)^{1/2}γ₂(n)Ψ(n)Ψ(b)³` (its (6.3), with `C = 3^{5/2}`). -/
-theorem lemma61_of_kubotaTheta (hK : KubotaTheta) :
-    ∃ (θ : ℂ → ℝ → ℂ) (Kc : ℝ) (C : ℂ) (τ : 𝓞 K → ℂ), C ≠ 0 ∧ ThetaSupp Kc τ ∧
-      (∀ q : 𝓞 K, q ≠ 0 → ∀ F : 𝓞 K → ℂ, (∀ z u, F (z + q * u) = F z) → F 0 = 0 →
-        ∀ (z : ℂ) (v : ℝ), 0 < v →
-        ∑ᶠ h : 𝓞 K ⧸ span {q}, fCoef q F (repQ q h) *
-            conj (θ (z + σO (δ3 ^ 2 * repQ q h) / σO q) v) =
-          ∑' m : 𝓞 K, twAt F m * conj (τ (-m)) * (v : ℂ) *
-            besselK (1 / 3) (4 * Real.pi * ‖σO m‖ * v / 9) * ebr (σO m * z / 9)) ∧
-      (∀ Ψ : Ideal (𝓞 K) → ℂ, (∀ I J, Ψ (I * J) = Ψ I * Ψ J) → ∀ n b : 𝓞 K, Primary n → Primary b →
-        Squarefree (span {n}) → (absNorm (span {n * b})).Coprime 6 →
-        conj (τ (-(δ3 * (n * b ^ 3)))) * phiTw Ψ (n * b ^ 3) =
-          conj C * (Real.sqrt (absNorm (span {b})) : ℂ) * gamI 2 (span {n}) * Ψ (span {n}) *
-            Ψ (span {b}) ^ 3) := by
-  obtain ⟨θ, Kc, C, c₀, -, -, τ, -, -, hC, hτ, -, -, hτd, hθ, -, -, -, -, hval⟩ := hK
-  refine ⟨θ, Kc, C, τ, hC, hτ, fun q hq F hF hF0 z v hv =>
-    conj_theta_translates hθ hτ hτd q hq F hF hF0 z hv, fun Ψ hΨ n b hn hb hsq h6 =>
-    coef_realization Ψ hΨ hn hb h6 (hval n b hn hb hsq h6).2⟩
-
 end Eis
 
 end
@@ -461,7 +387,6 @@ end
 #print axioms Eis.norm_ψc
 #print axioms Eis.sum_ψc_mul
 #print axioms Eis.fourier_inv
-#print axioms Eis.sum_fCoef
 #print axioms Eis.norm_fCoef_le
 #print axioms Eis.ebr_add
 #print axioms Eis.ebr_shift
@@ -473,8 +398,6 @@ end
 #print axioms Eis.thetaSupp_conj
 #print axioms Eis.δ3_ne_zero
 #print axioms Eis.twAt_mul
-#print axioms Eis.thSer_twist
-#print axioms Eis.conj_theta_translates
 #print axioms Eis.primary_pow
 #print axioms Eis.δ3_not_mem_of_factor
 #print axioms Eis.sym6_δ3_pow_six
@@ -483,4 +406,3 @@ end
 #print axioms Eis.coprime6_right
 #print axioms Eis.span_ne_zero_of_coprime6
 #print axioms Eis.coef_realization
-#print axioms Eis.lemma61_of_kubotaTheta

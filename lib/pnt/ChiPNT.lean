@@ -70,40 +70,6 @@ lemma growth_of_ge_one {F : ℂ → ℂ} (hF : Continuous F)
       _ ≤ max M 0 := le_max_left _ _
       _ ≤ (c₁ + max M 0) * (|s.im| + 2) := by nlinarith
 
-/-- **The log-derivative of an entire function in a zero-free half-plane.** Let `F` be entire with no
-zero in `Re s > θ ≥ 0`, of at most linear growth `|F(s)| ≤ c_δ|Im s|` on `δ ≤ Re s ≤ 3`, `|Im s| ≥ 1`, for
-every `δ > 0`, with `1/|F(3/2 + it)| ≤ A` and `|F′/F| ≤ C₀` on `Re s ≥ 3/2`. Then for every
-`θ' ∈ (θ, 3/2)` there is `C` with `|F′/F(σ + it)| ≤ C log|t|` for `σ ≥ θ'`, `|t| > 3`.
-The proof applies `LogDerivDisc.logDeriv_le_uniform_of` at `(θ + θ')/2`. -/
-theorem logDeriv_le_of_zeroFree {F : ℂ → ℂ} (hF : Differentiable ℂ F) {θ θ' : ℝ} (hθ0 : 0 ≤ θ)
-    (hθθ' : θ < θ') (hθ'32 : θ' < 3 / 2) (hzf : ∀ s : ℂ, θ < s.re → F s ≠ 0)
-    (hgrowth : ∀ δ : ℝ, 0 < δ → ∃ c : ℝ, 0 ≤ c ∧ ∀ s : ℂ, δ ≤ s.re → s.re ≤ 3 → 1 ≤ |s.im| →
-      ‖F s‖ ≤ c * |s.im|)
-    {A : ℝ} (hlow : ∀ t : ℝ, ‖F (ctr t)‖⁻¹ ≤ A)
-    {C₀ : ℝ} (hright : ∀ s : ℂ, 3 / 2 ≤ s.re → ‖deriv F s / F s‖ ≤ C₀) :
-    ∃ C : ℝ, 0 < C ∧ ∀ σ t : ℝ, 3 < |t| → θ' ≤ σ →
-      ‖deriv F (σ + t * I) / F (σ + t * I)‖ ≤ C * Real.log |t| := by
-  set θ₁ : ℝ := (θ + θ') / 2 with hθ₁def
-  obtain ⟨c, hc0, hc⟩ := growth_of_ge_one hF.continuous hgrowth (by linarith : 0 < θ₁)
-  have hA0 : 0 ≤ A := (inv_nonneg.2 (norm_nonneg _)).trans (hlow 0)
-  obtain ⟨hK, hb⟩ := logDeriv_le_uniform_of (by linarith : 0 < θ₁) (by linarith : θ₁ < θ') hθ'32
-  set K : ℝ := Kld θ₁ θ' with hKdef
-  set L₀ : ℝ := Real.log (2 + 2 * c * A) with hL₀def
-  have hL₀ : 0 ≤ L₀ := Real.log_nonneg (by nlinarith)
-  refine ⟨K * L₀ + 2 * K + |C₀|, by positivity, fun σ t ht hσ => ?_⟩
-  have hlt : 1 < Real.log |t| :=
-    lt_of_lt_of_le one_lt_log_three (Real.log_le_log (by norm_num) ht.le)
-  have hl4 : Real.log (|t| + 4) ≤ 2 * Real.log |t| := by
-    calc Real.log (|t| + 4) ≤ Real.log (|t| ^ 2) := Real.log_le_log (by linarith) (by nlinarith)
-      _ = 2 * Real.log |t| := by rw [Real.log_pow]; norm_num
-  have h := hb hF (fun s hs => hzf s (by linarith)) hc0 hA0 hc hlow hright σ t hσ
-  have h1 : L₀ ≤ L₀ * Real.log |t| := le_mul_of_one_le_right hL₀ hlt.le
-  have h2 : C₀ ≤ |C₀| * Real.log |t| :=
-    (le_abs_self _).trans (le_mul_of_one_le_right (abs_nonneg _) hlt.le)
-  have h3 := mul_le_mul_of_nonneg_left (add_le_add h1 hl4) hK.le
-  calc ‖deriv F (σ + t * I) / F (σ + t * I)‖ ≤ K * (L₀ + Real.log (|t| + 4)) + C₀ := h
-    _ ≤ (K * L₀ + 2 * K + |C₀|) * Real.log |t| := by nlinarith
-
 /-! ### Sums of the coefficients of `−F′/F` -/
 
 /-- `L(f, s)` converges absolutely on `Re s > 1` when `|f(n)| ≤ Λ(n)`. -/

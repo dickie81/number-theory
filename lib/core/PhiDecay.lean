@@ -630,21 +630,6 @@ theorem lam_decay {ι : Type*} {ρ : ι → ℂ} (hz : ∀ i, Xi ((ρ i - 1 / 2)
   · rw [div_mul_eq_mul_div, le_div_iff₀ hN1]
     nlinarith [mul_le_mul_of_nonneg_left hmono hl.le]
 
-/-- **The quantitative corollary over the zeros of `ζ`.** Named input: Weil's explicit formula for
-each `Φ_a` and for `h(z) = 1/(z² + 4)` (which gives `Σ_ρ ‖1/(t_ρ² + 4)‖ < ∞`). Gauss's digamma
-integral is proved (`digammaDiff`). Then `λ₁(a) ≤ K e^{−Ba}` for every `B`. -/
-theorem lam_decay_zeta
-    (hEF : ∀ a, 1 ≤ a →
-      WeilExplicit zetaZeroFamily (fun z => ghatC (PhiA a) a z ^ 2) (hsq (PhiA a) a))
-    (h4 : WeilExplicit zetaZeroFamily (fun z => 1 / (z ^ 2 + 4)) (fun r => 1 / (r ^ 2 + 4)))
-    (B : ℝ) :
-    ∃ K, 0 ≤ K ∧ ∀ a, 1 ≤ a → lam a ≤ K * Real.exp (-B * a) := by
-  refine lam_decay Xi_zeta_zero (fun p => ?_) ?_ hEF B
-  · rw [im_ordinate, abs_neg, abs_le]
-    obtain ⟨h1, h2⟩ := p.1.2.mem_strip
-    exact ⟨by simp only [zetaZeroFamily]; linarith, by simp only [zetaZeroFamily]; linarith⟩
-  · exact summable_norm_iff.2 h4.2.summable
-
 end WeilForm
 
 #print axioms WeilForm.hasDerivAt_RPhi
@@ -654,6 +639,5 @@ end WeilForm
 #print axioms WeilForm.zero_bounds
 #print axioms WeilForm.weilQ_PhiA_le
 #print axioms WeilForm.lam_decay
-#print axioms WeilForm.lam_decay_zeta
 #print axioms WeilForm.ibp_ghatC
 #print axioms WeilForm.probe_indicator_of_lip

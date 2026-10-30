@@ -115,7 +115,6 @@ theorem rh_iff_twins_concave {b : ℝ} (hb : 0 < b) {g₀ : ℝ → ℝ} (hp : P
   · exact hnn t ⟨h, ht.2.le⟩
   · rw [← hp.even t]; exact hnn (-t) ⟨by linarith, by linarith [ht.1]⟩
 
-
 /-! ## Part 1b: the box is an instance; `ghat_box_ne` is Pólya's theorem -/
 
 theorem box_concave : ConcaveOn ℝ (Ioo (-1) 1) (box 1) := by
@@ -128,9 +127,6 @@ theorem box_realRooted : RealRooted 1 (box 1) :=
   realRooted_of_concaveOn one_pos box_concave (box_probe 1).even
     (fun t ht => by rw [box_apply]; split_ifs <;> positivity)
     (by rw [box_apply, ite_eq_left (by norm_num)]; positivity)
-
-/-- `ghat_box_ne`, as an instance of `realRooted_of_concaveOn`. -/
-theorem ghat_box_ne' {z : ℂ} (hz : z.im ≠ 0) : ghatC (box 1) 1 z ≠ 0 := fun h => hz (box_realRooted z h)
 
 /-- `rh_of_weil_twins` (both directions), as the box instance. -/
 theorem rh_iff_twins_box : RiemannHypothesis ↔ ∀ l : ℝ, 0 ≤ l → 0 ≤ weilQ (l + 1) (twin (box 1) l) :=
@@ -370,7 +366,6 @@ end WeilTwinGeneral
 #print axioms WeilTwinGeneral.twins_rate_realRooted
 #print axioms WeilTwinGeneral.rh_iff_twins_concave
 #print axioms WeilTwinGeneral.box_realRooted
-#print axioms WeilTwinGeneral.ghat_box_ne'
 #print axioms WeilTwinGeneral.rh_iff_twins_box
 #print axioms WeilTwinGeneral.good_chi7
 #print axioms WeilTwinGeneral.grh_iff_twins_chi7

@@ -167,16 +167,6 @@ theorem chi6_four_ne_zero (hp6 : (6 : 𝓞 K) ∉ span {p}) : chi6 (span {p}) hp
   rw [h0] at this
   norm_num at this
 
-/-- **`γ₂(p)³ = μ(p)α(p) = −α(p)`** for a primary prime `p ∤ 6`. -/
-theorem gamN_two_cube (hp6 : (6 : 𝓞 K) ∉ span {p}) (hpr : Primary p) :
-    gamN p (chi6 (span {p}) hp6 ^ 2) ^ 3 = -alphaN p := by
-  have hc := gaussSum_cubCharC_cube (span {p}) (three_not_mem_of_six (span {p}) hp6) hpr rfl
-    (ψp_isPrimitive p)
-  rw [gamN, chi6_sq, div_pow, hc, absNorm_eq_card, card_eq_norm_sq, alphaN]
-  have hγ := norm_σO_ne_zero p
-  field_simp
-  rfl
-
 open Classical in
 /-- **`γ₁(p)γ₂(p) = μ(p)α(p)G(p)`** with `G(p) = χ_p(4)⁻¹γ₃(p)`, for a primary prime `p ∤ 6`. -/
 theorem gamN_one_mul_two (hp6 : (6 : 𝓞 K) ∉ span {p}) (hpr : Primary p) :
@@ -217,47 +207,11 @@ theorem gamN_one_mul_inv (hp6 : (6 : 𝓞 K) ∉ span {p}) :
   field_simp
   linear_combination (chi6 (span {p}) hp6 (-1)) * h1
 
-open Classical in
-/-- **`γ₃(p) = Γ_quad(p) = Φ(x, y)/2`** for `p = x + yω`, `p ∤ 6`. -/
-theorem gamN_three (hp6 : (6 : 𝓞 K) ∉ span {p}) (x y : ℤ) (hxy : p = x + y * ω) :
-    gamN p (chi6 (span {p}) hp6 ^ 3) = quadPhi x y / 2 := by
-  rw [gamN, chi6_cube, ψp, gaussSum_quadR_coords p (two_not_mem_of_six _ hp6) x y hxy]
-  have hγ := norm_σO_ne_zero p
-  push_cast
-  field_simp
-
 end GaussPrime
 
 section GFun
 
 variable (p : 𝓞 K) [hP : (span {p} : Ideal (𝓞 K)).IsMaximal]
-
-/-- The paper's `G(p) = χ̄_p(4)·γ₃(p)`, with `χ̄_p(4) = χ_p(4)⁻¹`. -/
-def Gp (hp6 : (6 : 𝓞 K) ∉ span {p}) : ℂ :=
-  (chi6 (span {p}) hp6 4)⁻¹ * gamN p (chi6 (span {p}) hp6 ^ 3)
-
-/-- **`G(p)` in coordinates**: for a primary prime `p = x + yω ∤ 6`, `G(p) = σ(u)⁻¹·Φ(x, y)/2` for the
-cube root of unity `u ≡ p (mod 2)`. -/
-theorem Gp_coords (hp6 : (6 : 𝓞 K) ∉ span {p}) (hpr : Primary p) (x y : ℤ)
-    (hxy : p = x + y * ω) :
-    ∃ u : 𝓞 K, u ^ 3 = 1 ∧
-      Ideal.Quotient.mk (span {(2 : 𝓞 K)}) u = Ideal.Quotient.mk (span {(2 : 𝓞 K)}) p ∧
-        Gp p hp6 = (σO u)⁻¹ * (quadPhi x y / 2) := by
-  obtain ⟨u, hu3, hu2, h4⟩ := chi6_four p hp6 hpr
-  exact ⟨u, hu3, hu2, by rw [Gp, h4, gamN_three p hp6 x y hxy]⟩
-
-open Classical in
-/-- `|G(p)| = 1`. -/
-theorem norm_Gp (hp6 : (6 : 𝓞 K) ∉ span {p}) : ‖Gp p hp6‖ = 1 := by
-  have h3 : chi6 (span {p}) hp6 ^ 3 ≠ 1 := by
-    rw [chi6_cube]
-    exact (MulChar.ringHomComp_ne_one_iff (RingHom.injective_int (Int.castRingHom ℂ))).2
-      (quadraticChar_ne_one (ringChar_ne_two (span {p}) hp6))
-  have h4 : ‖chi6 (span {p}) hp6 4‖ = 1 := by
-    have h := congrArg norm (chi6_four_pow_six p hp6)
-    rw [norm_pow, norm_one] at h
-    exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) (by norm_num)).1 h
-  rw [Gp, norm_mul, norm_inv, h4, norm_gamN p h3, inv_one, one_mul]
 
 /-- `Φ` depends only on the coordinates modulo `4`. -/
 theorem quadPhi_add_four (x y a b : ℤ) : quadPhi (x + 4 * a) (y + 4 * b) = quadPhi x y := by
@@ -266,29 +220,6 @@ theorem quadPhi_add_four (x y a b : ℤ) : quadPhi (x + 4 * a) (y + 4 * b) = qua
   unfold quadPhi
   rw [show -(y + 4 * b) = -y + 4 * (-b) by ring, show y + 4 * b - (x + 4 * a) = (y - x) + 4 * (b - a)
     by ring, hI, hI, hI]
-
-/-- **`G` depends only on the class modulo `4`**: for primary primes `p, q ∤ 6` with `p ≡ q (mod 4)`,
-`G(p) = G(q)`. -/
-theorem Gp_eq_of_mod_four (q : 𝓞 K) [(span {q} : Ideal (𝓞 K)).IsMaximal]
-    (hp6 : (6 : 𝓞 K) ∉ span {p}) (hq6 : (6 : 𝓞 K) ∉ span {q}) (hpr : Primary p)
-    (hqr : Primary q) (h4 : p - q ∈ span {(4 : 𝓞 K)}) : Gp p hp6 = Gp q hq6 := by
-  obtain ⟨x, y, hxy⟩ := exists_coords p
-  obtain ⟨d, hd⟩ := Ideal.mem_span_singleton'.1 h4
-  obtain ⟨a, b, hab⟩ := exists_coords d
-  -- `q = (x − 4a) + (y − 4b)ω`
-  have hq : q = ((x - 4 * a : ℤ) : 𝓞 K) + ((y - 4 * b : ℤ) : 𝓞 K) * ω := by
-    have : q = p - d * 4 := by rw [hd]; ring
-    rw [this, hxy, hab]; push_cast; ring
-  obtain ⟨u, hu3, hu2, hGp⟩ := Gp_coords p hp6 hpr x y hxy
-  obtain ⟨v, hv3, hv2, hGq⟩ := Gp_coords q hq6 hqr _ _ hq
-  have huv : u = v := by
-    apply cube_eq_of_mk_eq (span {(2 : 𝓞 K)}) three_not_mem_span_two hu3 hv3
-    rw [hu2, hv2, Ideal.Quotient.eq]
-    have : p - q = 2 * (2 * d) := by rw [← hd]; ring
-    rw [this]
-    exact Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self 2)
-  rw [hGp, hGq, huv, show x - 4 * a = x + 4 * (-a) by ring, show y - 4 * b = y + 4 * (-b) by ring,
-    quadPhi_add_four]
 
 end GFun
 
@@ -299,10 +230,5 @@ end
 #print axioms Eis.span_two_isMaximal
 #print axioms Eis.chi6_four
 #print axioms Eis.norm_gamN
-#print axioms Eis.gamN_two_cube
 #print axioms Eis.gamN_one_mul_two
 #print axioms Eis.gamN_one_mul_inv
-#print axioms Eis.gamN_three
-#print axioms Eis.Gp_coords
-#print axioms Eis.norm_Gp
-#print axioms Eis.Gp_eq_of_mod_four

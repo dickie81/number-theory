@@ -289,20 +289,6 @@ theorem atG_thS {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) (γ : Matrix (Fin 
   have h := isAut_thS hr hY ⟨γ, hdet⟩ hγ (z, v) hv
   exact h
 
-/-- **Three clauses of `KubotaTheta`**, for θ's Fourier series: a function on upper half-space,
-equal to a theta-type series `thSer c₀ τ` at every point, with `τ` supported on `δ₃ℤ[ω]`, and automorphic
-on `Γ_1(3)` with Kubota's character; it agrees almost everywhere with θ's representative (
-`thetaF`). -/
-theorem exists_theta_series {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) :
-    ∃ (θ : ℂ → ℝ → ℂ) (c₀ : ℂ) (τ : 𝓞 K → ℂ),
-      (∀ z v, 0 < v → θ z v = thSer c₀ τ z v) ∧ (∀ m, τ m ≠ 0 → δ3 ∣ m) ∧
-      (∀ γ : Matrix (Fin 2) (Fin 2) (𝓞 K), γ.det = 1 → ModThree γ → ∀ z v, 0 < v →
-        atG θ (γ.map σO) z v = kub γ * θ z v) ∧
-      ∀ᵐ p ∂(volume.restrict UHS), thetaF r Y hY p = θ p.1 p.2 :=
-  ⟨fun z v => thS r Y hY (z, v), phiG (4 / 3) / 3, tauTh r Y hY, fun _ _ _ => rfl,
-    fun _ h => dvd_of_tauTh_ne_zero h, fun γ hdet h3 z _ hv => atG_thS hr hY γ hdet h3 z hv,
-    ae_thetaF_eq_thS hr hY⟩
-
 end Eis
 
 end
@@ -320,4 +306,3 @@ end
 #print axioms Eis.ae_slAct
 #print axioms Eis.isAut_thS
 #print axioms Eis.atG_thS
-#print axioms Eis.exists_theta_series

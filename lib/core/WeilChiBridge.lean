@@ -33,17 +33,6 @@ def qC (χ : DirichletCharacter ℂ N) : ℝ := (1 + 2 * parity χ) / 4
 theorem quarter_le_qC : 1 / 4 ≤ qC χ := by
   unfold qC; linarith [parity_nonneg' χ]
 
-theorem qC_of_even (h : χ.Even) : qC χ = 1 / 4 := by
-  classical
-  unfold qC parity; simp only [h, ↓reduceIte]; norm_num
-
-theorem qC_of_odd (h : χ.Odd) : qC χ = 3 / 4 := by
-  classical
-  have hne : ¬χ.Even := fun he => by
-    have e : (1 : ℂ) = -1 := he.symm.trans h
-    norm_num at e
-  unfold qC parity; simp only [hne, ↓reduceIte]; norm_num
-
 /-- `z_χ(r) = q_χ + ir/2`. -/
 theorem psiReC_eq : psiReC χ = psiReQ (qC χ) := by
   funext r; unfold psiReC psiReQ zC zQ qC; congr 2; push_cast; ring
@@ -60,35 +49,6 @@ theorem QC_eq_QCu [NeZero N] (hp : Probe a g) (ha : 0 < a) : QC χ a g = QCu χ 
   simp only [gh_hsq hp.toE ha, autocorr_zero]
   ring
 
-/-- For odd `χ` the archimedean kernel is `e^{−u/2}/sinh u`. -/
-theorem archKer_odd (h : χ.Odd) (u : ℝ) : archKer (qC χ) u = Real.exp (-(u / 2)) / Real.sinh u := by
-  rw [qC_of_odd h]; unfold archKer; congr 2; ring
-
-/-- For even `χ` the archimedean term is ζ's. -/
-theorem archEQ_even (h : χ.Even) : archEQ (qC χ) g = archE g := by
-  rw [qC_of_even h, archEQ_quarter]
-
-/-! ## The instances are odd -/
-
-theorem chi3_odd : chi3.Odd := by
-  show chi3 (-1) = -1
-  rw [show (-1 : ZMod 3) = ((2 : ℕ) : ZMod 3) by decide, chi3_nat, χ₃_nat]; norm_num
-
-theorem chi4_odd : chi4.Odd := by
-  show chi4 (-1) = -1
-  rw [show (-1 : ZMod 4) = ((3 : ℕ) : ZMod 4) by decide, chi4_nat,
-    ZMod.χ₄_nat_three_mod_four (by norm_num)]; norm_num
-
-theorem chi8_odd : chi8.Odd := by
-  show chi8 (-1) = -1
-  rw [show (-1 : ZMod 8) = ((7 : ℕ) : ZMod 8) by decide, chi8_nat,
-    ZMod.χ₈'_nat_eq_if_mod_eight]; norm_num
-
 end PsiOmega
 
 #print axioms PsiOmega.QC_eq_QCu
-#print axioms PsiOmega.archKer_odd
-#print axioms PsiOmega.archEQ_even
-#print axioms PsiOmega.chi3_odd
-#print axioms PsiOmega.chi4_odd
-#print axioms PsiOmega.chi8_odd

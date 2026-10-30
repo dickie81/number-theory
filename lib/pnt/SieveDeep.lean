@@ -50,8 +50,6 @@ theorem blt_true {a b : ℕ} (h : a < b) : Nat.blt a b = true := ble_true h
 
 theorem blt_false {a b : ℕ} (h : b ≤ a) : Nat.blt a b = false := ble_false (by omega)
 
-theorem ble_iff {a b : ℕ} : Nat.ble a b = true ↔ a ≤ b := ⟨Nat.le_of_ble_eq_true, ble_true⟩
-
 theorem blt_iff {a b : ℕ} : Nat.blt a b = true ↔ a < b := ⟨fun h => Nat.le_of_ble_eq_true h, blt_true⟩
 
 theorem nmin_eq (a b : ℕ) : nmin a b = min a b := by
@@ -329,7 +327,6 @@ theorem lmask_sel {i j k l : ℕ} (hH : 0 < H) (h : (lmask i j k).testBit l = tr
   · refine ⟨![true, true, true], ?_⟩
     convert h' using 2 <;> simp [lo3, hi3s, SieveCert.e] <;> ring
 
-
 /-- **The coarse masks**, for `HC = 4H`: a bit `t` of `emask m i j k l` gives a selection of `(i, j, k, l)` whose sums
 with `m` coarse cells of index sum `t` lie inside `U`. -/
 theorem emask_sel {m i j k l t : ℕ} (hHC : HC = 4 * H) (hH : 0 < H) (h : (emask m i j k l).testBit t = true) :
@@ -375,7 +372,6 @@ theorem emask_sel {m i j k l t : ℕ} (hHC : HC = 4 * H) (hH : 0 < H) (h : (emas
     convert h' using 2 <;> simp [lo4, hi4s, SieveCert.e] <;> linarith [hl]
   · refine ⟨![true, true, true, true], ?_⟩
     convert h' using 2 <;> simp [lo4, hi4s, SieveCert.e] <;> linarith [hl]
-
 
 /-- **A bit of the mask of `l` makes the box `(i, j, k, l)` surely evaluable.** -/
 theorem surelyEval4_of_lmask {i j k l : ℕ} (hH : 0 < H) (h : (lmask i j k).testBit l = true) :
@@ -602,7 +598,6 @@ theorem okIB_of_okD {i j k : ℕ} (zs : List (ℕ × ℕ))
     obtain ⟨T, hT, s, hs, hc⟩ := dmax3_sound h2
     exact ibOK_append hT hs hc
 
-
 /-! ### The tests of the deeper boxes -/
 
 omit [IBPar] in
@@ -612,7 +607,6 @@ theorem okD_mono {hi3 Dm D h D' h' : ℕ} (hok : okD hi3 Dm D h = true) (hD : D'
   unfold okD at hok ⊢
   simp only [Bool.or_eq_true, Bool.and_eq_true, Nat.blt_eq] at hok ⊢
   omega
-
 
 omit [IBPar] in
 theorem lt_cntH {X c : ℕ} (hHC : 0 < HC) (h : c < cntH X) : V + HC * (c + 1) ≤ X := by

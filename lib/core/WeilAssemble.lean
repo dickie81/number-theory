@@ -100,7 +100,6 @@ theorem zero_side {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ t
   simp only [kernel_eq] at hs
   exact hs.tsum_eq.symm
 
-
 /-! ## The archimedean term -/
 
 theorem abs_log_le {y : ℝ} (hy : 1 / 4 ≤ y) : |Real.log y| ≤ 2 * Real.sqrt y + 2 := by
@@ -160,7 +159,6 @@ theorem digamma_zB_neg (r : ℝ) : Complex.digamma (zB (-r)) = (starRingEnd ℂ)
     simp at this
     linarith [(Nat.cast_nonneg m : (0 : ℝ) ≤ m)]
   rw [hconj, GammaIntegrals.digamma_conj hnp]
-
 
 /-- The archimedean integrand `f(t) = h(t)ψ((½ + it)/2)` on the strip `−1 ≤ Im t ≤ 0`. -/
 theorem psi_strip_bound {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) {t : ℂ} (ht : t ∈ strip (-1) 0) :
@@ -272,17 +270,11 @@ theorem psi_real {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ t,
   rw [him0]
   simp
 
-
 /-! ## The kernel `F = 2πg_h` and the constant term -/
 
 theorem hR_even {h : ℂ → ℂ} (heven : ∀ t, h (-t) = h t) {hR : ℝ → ℝ} (hreal : ∀ r : ℝ, h r = hR r)
     (r : ℝ) : hR (-r) = hR r := by
   have := heven r; rw [← Complex.ofReal_neg, hreal, hreal] at this; exact_mod_cast this
-
-theorem integrable_real_line {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) :
-    Integrable fun r : ℝ => h r := by
-  have := integrable_line H.diff H.bound (y := 0) ⟨by norm_num, by norm_num⟩
-  simpa using this
 
 /-- **`F(x) = 2πg_h(x)`** for `h` even and real on `ℝ`. -/
 theorem FK_eq_gh {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ t, h (-t) = h t)
@@ -334,7 +326,6 @@ theorem integral_line_const {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (hev
   have e2 : (fun r : ℝ => h (↑r + ↑(0 : ℝ) * I)) = fun r : ℝ => h r := by funext r; simp
   rw [e1, this, e2, ← FK_eq_gh H heven hreal 0]
   unfold FK; simp
-
 
 /-! ## The prime term -/
 
@@ -417,7 +408,6 @@ theorem prime_line {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ 
   refine integral_congr_ae (Eventually.of_forall fun r => ?_)
   have hs := ((ArithmeticFunction.LSeriesSummable_vonMangoldt (s := s r) (by rw [hsre]; norm_num)).LSeriesHasSum).mul_left (h ((r : ℂ) - I))
   exact hs.tsum_eq.symm
-
 
 /-! ## Assembly -/
 
@@ -566,7 +556,6 @@ theorem weil_Xi {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ t, 
     push_cast
     field_simp
     ring_nf
-
 
 /-! ## `WeilExplicit` over the zeros of `Ξ` -/
 

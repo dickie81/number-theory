@@ -171,15 +171,6 @@ theorem σO_cub_prod (a : 𝓞 K) (A : Finset Pr) :
       cub_mul_span a (ne_zero_of_maximal (πP P)) (prod_πP_ne_zero A), map_mul, ih, cub_prime,
       ← chiP_sq (h6Pr P), (πP_spec P).2]
 
-/-- **The supplementary factor is fixed modulo `18`**: `(uλʲ2ⁱ/a)₃ = (uλʲ2ⁱ/a′)₃` for `a, a′` primary
-and odd with `a ≡ a′ (mod 9)` and `(mod 2)`. -/
-theorem cub_S_congr (u : (𝓞 K)ˣ) (j i : ℕ) {a a' : 𝓞 K} (ha : Primary a) (ha' : Primary a')
-    (h2 : IsCoprime a 2) (h2' : IsCoprime a' 2) (h9 : (9 : 𝓞 K) ∣ a - a') (h22 : (2 : 𝓞 K) ∣ a - a') :
-    cub ((u : 𝓞 K) * δ3 ^ j * 2 ^ i) (span {a}) = cub ((u : 𝓞 K) * δ3 ^ j * 2 ^ i) (span {a'}) := by
-  rw [cub_mul_left, cub_mul_left, cub_mul_left, cub_mul_left, cub_pow_left ha, cub_pow_left ha,
-    cub_pow_left ha', cub_pow_left ha', cub_unit_congr u ha ha' (cub_omega_congr ha ha' h9),
-    cub_δ3_congr ha ha' h9, cub_two_congr ha ha' h2 h2' h22]
-
 /-- `θ` is invariant under `z ↦ z + 3t`. -/
 theorem theta_add_three {θ : ℂ → ℝ → ℂ}
     (hK3 : ∀ γ : Matrix (Fin 2) (Fin 2) (𝓞 K), γ.det = 1 → ModThree γ → ∀ z v, 0 < v →
@@ -255,7 +246,6 @@ end
 #print axioms Eis.kub_inv
 #print axioms Eis.cub_split_left
 #print axioms Eis.σO_cub_prod
-#print axioms Eis.cub_S_congr
 #print axioms Eis.theta_add_three
 #print axioms Eis.exists_reduced
 #print axioms Eis.mod_lam

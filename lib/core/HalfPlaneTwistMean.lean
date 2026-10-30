@@ -223,27 +223,6 @@ theorem wsymC_member_mul {u₀ : 𝓞 K} {c' : Ideal (𝓞 K) → ℂ} {c : ℕ 
   · simp
 
 open Classical in
-/-- If `(u₀/𝔞)₆ = c(N𝔞)` on the ideals of norm prime to `6`, the family's weight at `u₀u` is `c(N𝔞)` times its
-weight at `u`. -/
-theorem wsym_member_mul {u₀ : 𝓞 K} {c : ℕ → ℂ}
-    (hu₀ : ∀ I : Ideal (𝓞 K), (absNorm I).Coprime 6 → sym6 u₀ I = c (absNorm I)) (u : 𝓞 K)
-    (I : Ideal (𝓞 K)) :
-    wsym (u₀ * u) I = c (absNorm I) * wsym u I := by
-  simpa only [one_mul] using
-    wsymC_member_mul (c' := fun _ => 1) (fun I hI => by simpa only [one_mul] using hu₀ I hI) u I
-
-/-- The identity `(d³/𝔞)₆ = J(d | N𝔞)`, in the form of `wsym_member_mul`'s hypothesis. -/
-theorem sym6_intCast_cube_member (d : ℤ) (I : Ideal (𝓞 K)) (hI : (absNorm I).Coprime 6) :
-    sym6 ((d : 𝓞 K) ^ 3) I = (fun n : ℕ ↦ (jacobiSym d n : ℂ)) (absNorm I) :=
-  sym6_intCast_cube d hI
-
-open Classical in
-/-- By the identity, the family's weight at `d³u` is `J(d | N𝔞)` times its weight at `u`. -/
-theorem wsym_intCast_cube_mul (d : ℤ) (u : 𝓞 K) (I : Ideal (𝓞 K)) :
-    wsym ((d : 𝓞 K) ^ 3 * u) I = (jacobiSym d (absNorm I) : ℂ) * wsym u I :=
-  wsym_member_mul (u₀ := (d : 𝓞 K) ^ 3) (c := fun n : ℕ ↦ (jacobiSym d n : ℂ)) (sym6_intCast_cube_member d) u I
-
-open Classical in
 /-- **The average of the twisted family over `u₀·gen(𝔟)⁶`**, as a finite sum: if
 `c'(𝔞)(u₀/𝔞)₆ = c(N𝔞)` on the ideals of norm prime to `6`, `sum_famSum_gen` with the factor `c(n)`. -/
 theorem sum_famSumC_member_gen {u₀ : 𝓞 K} {c' : Ideal (𝓞 K) → ℂ} {c : ℕ → ℂ}
@@ -270,42 +249,9 @@ theorem sum_famSumC_member_gen {u₀ : 𝓞 K} {c' : Ideal (𝓞 K) → ℂ} {c 
   rw [Finset.sum_congr rfl hI, ← Finset.mul_sum]
   ring
 
-open Classical in
-/-- **The average over `u₀·gen(𝔟)⁶`**, as a finite sum: `sum_famSum_gen` with the factor
-`c(n)`. -/
-theorem sum_famSum_member_gen {u₀ : 𝓞 K} {c : ℕ → ℂ}
-    (hu₀ : ∀ I : Ideal (𝓞 K), (absNorm I).Coprime 6 → sym6 u₀ I = c (absNorm I)) {W : ℝ → ℝ} {R : ℝ}
-    (hR : ∀ x, R < x → W x = 0) {Z : ℝ} (hZ : 0 < Z) {M : ℕ} (hM : R * Z ≤ M) (Y : ℝ) :
-    ∑ J ∈ idealsLe Y, famSum W Z (u₀ * gen J ^ 6) =
-      ∑ n ∈ Finset.Ioc 0 M, c n * (W (n / Z) : ℂ) * ∑ I ∈ ofNorm n,
-        (if (absNorm I).Coprime 6 then (moebius I : ℂ) *
-          (((idealsLe Y).filter fun J => ∀ P ∈ (normalizedFactors I).toFinset, ¬ P ∣ J).card : ℂ)
-        else 0) := by
-  simpa only [famSumC_one] using
-    sum_famSumC_member_gen (c' := fun _ => 1) (fun I hI => by simpa only [one_mul] using hu₀ I hI) hR hZ hM Y
-
-open Classical in
-/-- **The average over `d³·gen(𝔟)⁶`**, as a finite sum: `sum_famSum_gen` with the factor
-`J(d | n)`. -/
-theorem sum_famSum_intCast_cube_gen (d : ℤ) {W : ℝ → ℝ} {R : ℝ} (hR : ∀ x, R < x → W x = 0) {Z : ℝ}
-    (hZ : 0 < Z) {M : ℕ} (hM : R * Z ≤ M) (Y : ℝ) :
-    ∑ J ∈ idealsLe Y, famSum W Z ((d : 𝓞 K) ^ 3 * gen J ^ 6) =
-      ∑ n ∈ Finset.Ioc 0 M, (jacobiSym d n : ℂ) * (W (n / Z) : ℂ) * ∑ I ∈ ofNorm n,
-        (if (absNorm I).Coprime 6 then (moebius I : ℂ) *
-          (((idealsLe Y).filter fun J => ∀ P ∈ (normalizedFactors I).toFinset, ¬ P ∣ J).card : ℂ)
-        else 0) :=
-  sum_famSum_member_gen (sym6_intCast_cube_member d) hR hZ hM Y
-
 /-- The twisted smoothed sum `Σ_n c(n)f(n)W(n/Z)`. -/
 noncomputable def fSmoothC (c : ℕ → ℂ) (W : ℝ → ℝ) (Z : ℝ) : ℂ :=
   ∑' n : ℕ, c n * normSum wf n * (W (n / Z) : ℂ)
-
-/-- The twisted smoothed sum `Σ_n J(d | n)f(n)W(n/Z)`. -/
-noncomputable def fSmoothJ (d : ℤ) (W : ℝ → ℝ) (Z : ℝ) : ℂ :=
-  fSmoothC (fun n ↦ (jacobiSym d n : ℂ)) W Z
-
-theorem norm_jacobiSym_le (d : ℤ) (n : ℕ) : ‖(jacobiSym d n : ℂ)‖ ≤ 1 := by
-  rcases jacobiSym.trichotomy d n with h | h | h <;> rw [h] <;> simp
 
 open Classical in
 /-- **The averaged identity with its error, for the twisted family**: if `c'(𝔞)(u₀/𝔞)₆ = c(N𝔞)` on the
@@ -354,29 +300,6 @@ theorem norm_sum_famSumC_member_sub_le {u₀ : 𝓞 K} {c' : Ideal (𝓞 K) → 
   · rw [ite_eq_right hc6, ite_eq_right hc6]
     simp only [mul_zero, zero_mul, sub_zero, norm_zero]
     positivity
-
-open Classical in
-/-- **The averaged identity with its error, twisted**: for `W` vanishing beyond `R`, bounded by `B`, and
-`RZ ≤ M`, `|Σ_{N𝔟≤Y} A_Z(u₀gen(𝔟)⁶) − κY·Σ_n c(n)f(n)W(n/Z)| ≤ B(5√Y + κ)·Σ_{n≤M} Σ_{N𝔞=n} 2^{ω(𝔞)}` when
-`|c(n)| ≤ 1`. -/
-theorem norm_sum_famSum_member_sub_le {u₀ : 𝓞 K} {c : ℕ → ℂ}
-    (hu₀ : ∀ I : Ideal (𝓞 K), (absNorm I).Coprime 6 → sym6 u₀ I = c (absNorm I)) (hc1 : ∀ n, ‖c n‖ ≤ 1)
-    {W : ℝ → ℝ} {R B : ℝ} (hR : ∀ x, R < x → W x = 0)
-    (hB : ∀ x, |W x| ≤ B) {Z : ℝ} (hZ : 0 < Z) {M : ℕ} (hM : R * Z ≤ M) {Y : ℝ} (hY : 0 ≤ Y) :
-    ‖∑ J ∈ idealsLe Y, famSum W Z (u₀ * gen J ^ 6) - ((kappa * Y : ℝ) : ℂ) * fSmoothC c W Z‖ ≤
-      B * (5 * √Y + kappa) * ∑ n ∈ Finset.Ioc 0 M, ‖normSum w2 n‖ := by
-  simpa only [famSumC_one] using
-    norm_sum_famSumC_member_sub_le (c' := fun _ => 1) (fun I hI => by simpa only [one_mul] using hu₀ I hI) hc1 hR
-      hB hZ hM hY
-
-open Classical in
-/-- **The averaged identity with its error, twisted by `J(d | ·)`**: for `W` vanishing beyond `R`, bounded by `B`,
-and `RZ ≤ M`, `|Σ_{N𝔟≤Y} A_Z(d³gen(𝔟)⁶) − κY·Σ_n J(d | n)f(n)W(n/Z)| ≤ B(5√Y + κ)·Σ_{n≤M} Σ_{N𝔞=n} 2^{ω(𝔞)}`. -/
-theorem norm_sum_famSum_intCast_cube_sub_le (d : ℤ) {W : ℝ → ℝ} {R B : ℝ} (hR : ∀ x, R < x → W x = 0)
-    (hB : ∀ x, |W x| ≤ B) {Z : ℝ} (hZ : 0 < Z) {M : ℕ} (hM : R * Z ≤ M) {Y : ℝ} (hY : 0 ≤ Y) :
-    ‖∑ J ∈ idealsLe Y, famSum W Z ((d : 𝓞 K) ^ 3 * gen J ^ 6) - ((kappa * Y : ℝ) : ℂ) * fSmoothJ d W Z‖ ≤
-      B * (5 * √Y + kappa) * ∑ n ∈ Finset.Ioc 0 M, ‖normSum w2 n‖ :=
-  norm_sum_famSum_member_sub_le (sym6_intCast_cube_member d) (norm_jacobiSym_le d) hR hB hZ hM hY
 
 end Average
 
@@ -535,26 +458,6 @@ theorem fSmoothC_isBigO_of_meanSquareC {σ : ℝ} (hσ : 0 ≤ σ) {c' : Ideal (
     (Real.rpow_le_rpow_of_exponent_le hZ (by linarith))
     (Real.rpow_le_rpow_of_exponent_le hZ (by linarith)) hcomb
 
-/-- **The twisted S2′ at a member**: if `(u₀/𝔞)₆ = c(N𝔞)` on the ideals of norm prime to `6`, `u₀ ≠ 0` and
-`|c| ≤ 1`, then `MeanSquare σ` with `σ ≥ 0` gives `Σ_n c(n)f(n)W(n/Z) = O(Z^{(11+5σ)/12+ε})` for every weight `W`
-and `ε > 0`. The proof, averaged over `u₀gen(𝔟)⁶` with `N𝔟 ≤ Y = Z^{(1+σ)/6}/N(u₀)^{1/6}`. -/
-theorem fSmoothC_isBigO_of_meanSquare {σ : ℝ} (hσ : 0 ≤ σ) (h : MeanSquare σ) {u₀ : 𝓞 K} (hu₀0 : u₀ ≠ 0)
-    {c : ℕ → ℂ} (hu₀ : ∀ I : Ideal (𝓞 K), (absNorm I).Coprime 6 → sym6 u₀ I = c (absNorm I))
-    (hc1 : ∀ n, ‖c n‖ ≤ 1)
-    (W : ℝ → ℝ) (hW : HalfPlaneS0.Weight W) {ε : ℝ} (hε : 0 < ε) :
-    fSmoothC c W =O[atTop] fun Z => Z ^ ((11 + 5 * σ) / 12 + ε) :=
-  fSmoothC_isBigO_of_meanSquareC hσ (meanSquareC_one_iff.2 h) hu₀0 (c' := fun _ => 1)
-    (fun I hI => by simpa only [one_mul] using hu₀ I hI) hc1 W hW hε
-
-/-- **The twisted S2′ at `d³`**: `MeanSquare σ` with `σ ≥ 0` gives `Σ_n J(d | n)f(n)W(n/Z) = O(Z^{(11+5σ)/12+ε})`
-for every `d ≠ 0`, weight `W` and `ε > 0`: `fSmoothC_isBigO_of_meanSquare` at the member `d³`, whose norm is
-`|d|⁶`, so that `Y = Z^{(1+σ)/6}/|d|`. -/
-theorem fSmoothJ_isBigO_of_meanSquare {σ : ℝ} (hσ : 0 ≤ σ) (h : MeanSquare σ) {d : ℤ} (hd : d ≠ 0)
-    (W : ℝ → ℝ) (hW : HalfPlaneS0.Weight W) {ε : ℝ} (hε : 0 < ε) :
-    fSmoothJ d W =O[atTop] fun Z => Z ^ ((11 + 5 * σ) / 12 + ε) :=
-  fSmoothC_isBigO_of_meanSquare hσ h (pow_ne_zero 3 (Int.cast_ne_zero.2 hd)) (sym6_intCast_cube_member d)
-    (norm_jacobiSym_le d) W hW hε
-
 end MeanSquareTw
 
 /-! ### The half-plane for a twist through a member, and by `J(d | ·)` -/
@@ -562,13 +465,6 @@ end MeanSquareTw
 section HalfPlane
 
 open DirichletCharacter
-
-theorem normSum_wf_eq_zero {n : ℕ} (hn : ¬ n.Coprime 6) : normSum wf n = 0 := by
-  classical
-  refine Finset.sum_eq_zero fun I hI => ?_
-  rw [wf, ite_eq_right]
-  intro hc
-  exact hn (by rw [← mem_ofNorm.1 hI]; exact hc)
 
 /-- **The half-plane `Re s > 11/12` for a twist through the twisted family**. For `3 ∣ N`, a Dirichlet
 character `χ` mod `N` with `χ ≠ 1` and `χχ₋₃ ≠ 1`, coefficients `c'` with `MeanSquareC c' σ` for every `σ > 0`, and
@@ -615,13 +511,7 @@ end Eis
 #print axioms Eis.muKTw_eq_fTw_mul_hTw
 #print axioms Eis.smoothSumOf_muKTw_eq
 #print axioms Eis.twistBound_of_fSmoothTw
-#print axioms Eis.wsym_intCast_cube_mul
-#print axioms Eis.norm_sum_famSum_intCast_cube_sub_le
-#print axioms Eis.fSmoothJ_isBigO_of_meanSquare
 #print axioms Eis.ne_zero_of_jacobiTwist
-#print axioms Eis.wsym_member_mul
-#print axioms Eis.norm_sum_famSum_member_sub_le
-#print axioms Eis.fSmoothC_isBigO_of_meanSquare
 #print axioms Eis.ne_zero_of_memberTwist
 #print axioms Eis.wsymC_member_mul
 #print axioms Eis.sum_famSumC_member_gen

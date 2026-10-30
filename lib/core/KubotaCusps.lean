@@ -91,12 +91,6 @@ def KubotaData (θ : ℂ → ℝ → ℂ) (Kc : ℝ) (c₀ cP cM : ℂ) (τ tP t
     (∀ γ : Matrix (Fin 2) (Fin 2) (𝓞 K), γ.det = 1 → ModThree γ → ∀ z v, 0 < v →
       atG θ (γ.map σO) z v = kub γ * θ z v)
 
-theorem kubotaData_of (hK : KubotaTheta) :
-    ∃ (θ : ℂ → ℝ → ℂ) (Kc : ℝ) (c₀ cP cM : ℂ) (τ tP tM : 𝓞 K → ℂ),
-      KubotaData θ Kc c₀ cP cM τ tP tM := by
-  obtain ⟨θ, Kc, C, c₀, cP, cM, τ, tP, tM, -, h1, h2, h3, h4, h5, h6, h7, h8, h9, -⟩ := hK
-  exact ⟨θ, Kc, c₀, cP, cM, τ, tP, tM, h1, h2, h3, h4, h5, h6, h7, h8, h9⟩
-
 theorem det_map_σO {γ : Matrix (Fin 2) (Fin 2) (𝓞 K)} (h : γ.det = 1) : (γ.map σO).det = 1 := by
   rw [← RingHom.mapMatrix_apply, ← RingHom.map_det, h, map_one]
 
@@ -441,7 +435,6 @@ end
 #print axioms Eis.norm_σO_unit
 #print axioms Eis.thSer_affine
 #print axioms Eis.thetaSupp_affine
-#print axioms Eis.kubotaData_of
 #print axioms Eis.det_map_σO
 #print axioms Eis.atG_mul
 #print axioms Eis.map_int_σO

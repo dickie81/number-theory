@@ -201,34 +201,6 @@ def sig {q : ℕ} (P : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι
 def shat {q : ℕ} (P : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) (Y : ℝ) : ℝ :=
   dsum P (famA χ t) (Finset.Icc 1 ⌊Y⌋₊) wh
 
-/-- **Monotonicity**: for `Y ≤ Y'`, `Ŝ(Y) ≤ Ŝ(Y')`. -/
-lemma shat_mono {q : ℕ} (P : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) {Y Y' : ℝ} (h : Y ≤ Y') :
-    shat P χ t Y ≤ shat P χ t Y' :=
-  dsum_le P (famA χ t) (Finset.Icc_subset_Icc le_rfl (Nat.floor_le_floor h))
-    (b := fun n => (n : ℝ) ^ (-(1 / 2 : ℝ))) (fun n _ => (norm_wh n).le) (fun n _ => by positivity)
-
-/-- `σ(N) ≤ Ŝ(2N)`. -/
-lemma sig_le_shat {q : ℕ} (P : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) (N : ℝ) :
-    sig P χ t N ≤ shat P χ t (2 * N) := by
-  refine dsum_le P (famA χ t) ?_ (b := fun n => (n : ℝ) ^ (-(1 / 2 : ℝ))) (fun n _ => (norm_wh n).le)
-    (fun n _ => by positivity)
-  intro n hn
-  rw [dyad, Finset.mem_Ioc] at hn
-  rw [Finset.mem_Icc]
-  omega
-
-/-- A unimodular twist `n^{iu}` does not raise the double sum: `Σ_{r,s}|Σ_n n^{−1/2+iu}A_r(n)Ā_s(n)|²` over `S` is at
-most the same sum without `n^{iu}`. -/
-lemma dsum_twist_le (P : Finset ι) (A : ι → ℕ → ℂ) (S : Finset ℕ) (u : ℝ) :
-    dsum P A S (fun n => wh n * (n : ℂ) ^ ((u : ℂ) * I)) ≤ dsum P A S wh := by
-  refine dsum_le P A le_rfl (b := fun n => (n : ℝ) ^ (-(1 / 2 : ℝ))) (fun n _ => ?_) (fun n _ => by positivity)
-  rw [norm_mul, norm_wh]
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp only [Nat.cast_zero]
-    rw [Real.zero_rpow (by norm_num), zero_mul]
-  · rw [Complex.norm_natCast_cpow_of_pos hn]
-    simp
-
 /-! ### The dyadic decomposition -/
 
 /-- For `Y ≥ 0`, the pieces `(Y/2^{j+1}, Y/2^j]`, `j ≤ J`, of `(Y/2^{J+1}, Y]`. -/

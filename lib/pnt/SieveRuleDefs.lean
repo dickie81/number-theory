@@ -1,15 +1,14 @@
 /-
-# The certificate under a decomposition rule, without Mathlib
+# The certificate's decomposition rule, without Mathlib
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-The refined certificate of `SieveCert2Defs.lean` with its sharp rule as a parameter. A **rule** (`Rule`) says which
-boxes of cells may be split and decomposed (`Rule.ok`, on a box given as the list of its cells' ranges `(lo, hi)` in
-units of `1/DEN`). `allowedR`, `allowed4R`, `dec4R`, `cost4R`, `rowR`, `refcostR`, `decR`, `cost2R` and `total2R` are
-`allowed`, `allowed4`, `dec4`, `cost4`, `row`, `refcost`, `dec`, `cost2` and `total2` with `Rule.ok` in place of the
-test `Σ hi < lim`; `costR` and `totalR` are `cost` and `total`, and `rows2R` and `rowsJ2R` are `rows2` and `rowsJ2`.
+A **rule** (`Rule`) says which boxes of cells may be split and decomposed (`Rule.ok`, on a box given as the list of its
+cells' ranges `(lo, hi)` in units of `1/DEN`). `allowedR` and `allowed4R` are the tests of a box at depths 2 and 4: the
+box and the boxes of its counted cells one level deeper are `ok`. (The certificates of the earlier routes, which tested
+`Σ hi < lim` in place of `Rule.ok`, are in the git history.)
 
-* `limRule`: the certificate's own rule, `limOK`: the box's upper sum is below `lim = DEN − U1`.
+* `limOK`: the box's upper sum is below `lim = DEN − U1`.
 * `ibRule`: `limOK`, or the bilinear Type I rule `ibOK` with no boundary term (`nbOK`). For `L = Lnum/Lden`
   (`IBPar`), `ibOK` takes `tstar`, the least over the subsets `S` of the box whose upper sum is below `DEN − U1` of
   `cIB S`, the largest exponent at which a product `p_S·e` still enters the window `(U1, U2)` or its reflection
@@ -19,9 +18,9 @@ test `Σ hi < lim`; `costR` and `totalR` are `cost` and `total`, and `rows2R` an
 
 These are `tools/linnik/typeib_payoff.py`'s `ok`, `tstar`, `ib_leaf` and `ib` for the estimate `parseval`, with its
 no-boundary test. They are arithmetic on natural numbers, lists and booleans, and the file imports only
-`SieveCert2Defs.lean`, so a part file that imports no more than this one runs its kernel checks without `Mathlib`.
+`SieveCertDefs.lean`, so a part file that imports no more than this one runs its kernel checks without `Mathlib`.
 -/
-import SieveCert2Defs
+import SieveCertDefs
 
 namespace SieveCert
 
@@ -47,9 +46,6 @@ variable [Grid]
 
 /-- The certificate's own test: the box's upper sum is below `lim = DEN − U1`. -/
 def limOK (xs : List (ℕ × ℕ)) : Bool := decide (hiSum xs < lim)
-
-/-- **The certificate's own rule**, `limOK`. -/
-@[instance_reducible] def limRule : Rule := ⟨limOK⟩
 
 /-- No boundary term: the box's upper sum plus its last cell's upper end is below `DEN`. -/
 def nbOK (xs : List (ℕ × ℕ)) : Bool := decide (hiSum xs + lastHi xs < DEN)
@@ -117,43 +113,6 @@ def allowed4R (i j k l : ℕ) : Bool :=
   Rule.ok [cell i, cell j, cell k, cell l] &&
     (List.range nC).all (fun b => !(inKK5 i j k l b && ne5 i j k l b) ||
       Rule.ok [cell i, cell j, cell k, cell l, cellC b])
-
-/-- The counted cell `(i, j, k, l)` of depth 4 is decomposed one level further. -/
-def dec4R (i j k l : ℕ) : Bool :=
-  allowed4R i j k l && decide (refcost5 i j k l ≤ bound4 (e i) (e j) (e k) (e l))
-
-/-- The cost of the cell `(i, j, k, l)` of depth 4. -/
-def cost4R (i j k l : ℕ) : ℕ :=
-  if counted4 i j k l then
-    (if dec4R i j k l then refcost5 i j k l else bound4 (e i) (e j) (e k) (e l)) else 0
-
-/-- The row `(i, j, k)`: the costs of the cells of `α₄`, which have `l ≤ k`. -/
-def rowR (i j k : ℕ) : ℕ := sumTo (k + 1) (fun l => cost4R i j k l)
-
-/-- The cost of decomposing the cell `(i, j)`: its cells of depth 4. -/
-def refcostR (i j : ℕ) : ℕ := sumTo n (fun k => if inKK i j k && ne3 i j k then rowR i j k else 0)
-
-/-- The cell `(i, j)` is decomposed. -/
-def decR (i j : ℕ) : Bool := allowedR i j && decide (refcostR i j ≤ bound2 (e i) (e j))
-
-/-- The cost of the cell `(i, j)`. -/
-def costR (i j : ℕ) : ℕ := if cand i j then (if decR i j then refcostR i j else bound2 (e i) (e j)) else 0
-
-/-- The certificate's total under the rule, in units of `1/K`. -/
-def totalR : ℕ := sumTo n (fun i => sumTo n (fun j => costR i j))
-
-/-- The refined cost of the cell `(i, j)`. -/
-def cost2R (i j : ℕ) : ℕ :=
-  if cand i j then (if decR i j then refcostR i j else bound2 (e i) (e j) - sub2 i j) else 0
-
-/-- The refined certificate's total under the rule, in units of `1/K`. -/
-def total2R : ℕ := sumTo n (fun i => sumTo n (fun j => cost2R i j))
-
-/-- The sum of the rows `a ≤ i < b` of `total2R`. -/
-def rows2R (a b : ℕ) : ℕ := sumTo (b - a) (fun i => sumTo n (fun j => cost2R (a + i) j))
-
-/-- The sum of the costs of the rows `a ≤ i < b` of `total2R` over the columns `j₀ ≤ j < j₁`. -/
-def rowsJ2R (a b j₀ j₁ : ℕ) : ℕ := sumTo (b - a) (fun i => sumTo (j₁ - j₀) (fun j => cost2R (a + i) (j₀ + j)))
 
 end Cert
 

@@ -34,26 +34,6 @@ theorem log_le_half_sub_inv {y : ℝ} (hy : 1 ≤ y) : Real.log y ≤ (y - y⁻�
   have h := Real.self_le_sinh_iff.mpr (Real.log_nonneg hy)
   rwa [Real.sinh_eq, Real.exp_neg, Real.exp_log hy0] at h
 
-/-- `2(y − 1)/(y + 1) ≤ log y` for `y ≥ 1`: the first term of `log(1 + z) − log(1 − z) = 2(z + z³/3 + ⋯)` at
-`z = (y − 1)/(y + 1)`. -/
-theorem two_mul_div_le_log {y : ℝ} (hy : 1 ≤ y) : 2 * (y - 1) / (y + 1) ≤ Real.log y := by
-  have hy1 : 0 < y + 1 := by linarith
-  obtain ⟨z, hz⟩ : ∃ z : ℝ, z = (y - 1) / (y + 1) := ⟨_, rfl⟩
-  have hz0 : 0 ≤ z := by rw [hz]; exact div_nonneg (by linarith) hy1.le
-  have hz1 : z < 1 := by rw [hz, div_lt_one hy1]; linarith
-  have hs := Real.hasSum_log_sub_log_of_abs_lt_one (x := z) (by rw [abs_lt]; constructor <;> linarith)
-  have h0 := le_hasSum hs 0 (fun k _ => mul_nonneg (by positivity) (pow_nonneg hz0 _))
-  have hl : Real.log (1 + z) - Real.log (1 - z) = Real.log y := by
-    rw [← Real.log_div (by linarith) (by linarith)]
-    congr 1
-    rw [hz]
-    field_simp
-    ring
-  rw [hl] at h0
-  norm_num at h0
-  calc 2 * (y - 1) / (y + 1) = 2 * z := by rw [hz]; ring
-    _ ≤ _ := h0
-
 /-! ### Buchstab's `ω` on `[2, 3]` -/
 
 /-- Buchstab's `ω` on `[2, 3]`: `(1 + log(u − 1))/u`. -/

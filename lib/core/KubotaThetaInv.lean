@@ -425,20 +425,6 @@ theorem atG_thS_int {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) (γ : Matrix (
   have h := atG_thS_toSL hr hY ⟨γ, hdet⟩ z hv
   exact (congrArg (fun M => atG (fun z v => thS r Y hY (z, v)) M z v) e).trans h
 
-/-- **Four clauses of `KubotaTheta`**, for θ's Fourier series: the three
-(`exists_theta_series`) and invariance under `SL_2(ℤ)`. -/
-theorem exists_theta_series_inv {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) :
-    ∃ (θ : ℂ → ℝ → ℂ) (c₀ : ℂ) (τ : 𝓞 K → ℂ),
-      (∀ z v, 0 < v → θ z v = thSer c₀ τ z v) ∧ (∀ m, τ m ≠ 0 → δ3 ∣ m) ∧
-      (∀ γ : Matrix (Fin 2) (Fin 2) ℤ, γ.det = 1 → ∀ z v, 0 < v →
-        atG θ (γ.map (Int.castRingHom ℂ)) z v = θ z v) ∧
-      (∀ γ : Matrix (Fin 2) (Fin 2) (𝓞 K), γ.det = 1 → ModThree γ → ∀ z v, 0 < v →
-        atG θ (γ.map σO) z v = kub γ * θ z v) ∧
-      ∀ᵐ p ∂(volume.restrict UHS), thetaF r Y hY p = θ p.1 p.2 :=
-  ⟨fun z v => thS r Y hY (z, v), phiG (4 / 3) / 3, tauTh r Y hY, fun _ _ _ => rfl,
-    fun _ h => dvd_of_tauTh_ne_zero h, fun γ hdet z _ hv => atG_thS_int hr hY γ hdet z hv,
-    fun γ hdet h3 z _ hv => atG_thS hr hY γ hdet h3 z hv, ae_thetaF_eq_thS hr hY⟩
-
 end Eis
 
 end
@@ -466,4 +452,3 @@ end
 #print axioms Eis.map_toSL_σO
 #print axioms Eis.atG_thS_toSL
 #print axioms Eis.atG_thS_int
-#print axioms Eis.exists_theta_series_inv

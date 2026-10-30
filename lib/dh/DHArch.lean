@@ -697,17 +697,6 @@ theorem uK_div_two_le {u : ℝ} (hu : 0 < u) : u * archKer (3 / 4) u / 2 ≤ 1 /
   rw [le_div_iff₀ hu] at h
   nlinarith
 
-/-- `φ(u) = u K(u)/2` is non-increasing on `(0, ∞)`. -/
-theorem uK_div_two_antitoneOn : AntitoneOn (fun u => u * archKer (3 / 4) u / 2) (Ioi 0) := by
-  have : AntitoneOn phiK (Ioi 0) := by
-    refine antitoneOn_of_deriv_nonpos (convex_Ioi 0) ?_ ?_ ?_
-    · intro x hx; exact (hasDerivAt_phiK hx).continuousAt.continuousWithinAt
-    · rw [interior_Ioi]; intro x hx
-      exact (hasDerivAt_phiK hx).differentiableAt.differentiableWithinAt
-    · rw [interior_Ioi]; intro x hx
-      rw [(hasDerivAt_phiK hx).deriv]; exact phiD_nonpos hx
-  exact this
-
 /-! ## Integrability -/
 
 theorem intervalIntegrable_of_bdd {f : ℝ → ℝ} (hf : Measurable f) {M b c : ℝ} (hb : 0 ≤ b)
@@ -1118,7 +1107,6 @@ end PsiOmega
 #print axioms PsiOmega.integral_hK_eq
 #print axioms PsiOmega.K_le_inv
 #print axioms PsiOmega.integral_K_tail_le
-#print axioms PsiOmega.uK_div_two_antitoneOn
 #print axioms PsiOmega.abs_integral_uK_cos_le
 #print axioms PsiOmega.abs_integral_K_sin_le
 #print axioms PsiOmega.psiReQ_three_quarters_sub

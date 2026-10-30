@@ -353,34 +353,6 @@ theorem integral_dualG_Ioi :
     exact mul_ne_zero two_ne_zero this
   exact mul_left_cancel₀ h2pi h5
 
-/-- **The planar Lemma 14** (Heath-Brown's Lemma 14 in the plane, for the majorant):
-`∫_ℂ 𝓕Φ(αz²) dz = |α|⁻¹∫_ℂ Φ(z²) dz` for `α ≠ 0`. -/
-theorem integral_fourier_Phi_sq {α : ℂ} (hα : α ≠ 0) :
-    ∫ z : ℂ, 𝓕 (Majorant.Phi : ℂ → ℂ) (α * z ^ 2) =
-      ((‖α‖⁻¹ : ℝ) : ℂ) * ∫ z : ℂ, Majorant.Phi (z ^ 2) := by
-  have hα' : 0 < ‖α‖ := norm_pos_iff.2 hα
-  have hL : ∫ z : ℂ, 𝓕 (Majorant.Phi : ℂ → ℂ) (α * z ^ 2) =
-      ∫ z : ℂ, dualG (‖α‖ * ‖z‖ ^ 2) := by
-    refine integral_congr_ae (Filter.Eventually.of_forall fun z => ?_)
-    simp only
-    rw [fourier_Phi_eq_dualG, norm_mul, norm_pow]
-  have hR : ∫ z : ℂ, Majorant.Phi (z ^ 2) =
-      ∫ z : ℂ, (fun s : ℝ => Majorant.Phi ((s : ℝ) : ℂ)) (1 * ‖z‖ ^ 2) := by
-    refine integral_congr_ae (Filter.Eventually.of_forall fun z => ?_)
-    simp only
-    rw [Phi_eq_norm, norm_pow, one_mul]
-  have hP := integral_radial_sq one_pos (fun s : ℝ => Majorant.Phi ((s : ℝ) : ℂ))
-  rw [hL, hR, integral_radial_sq hα' dualG, hP, integral_dualG_Ioi]
-  push_cast
-  field_simp
-
-
-/-- **The main-term integral**: `∫_ℂ G(a|z|²) dz = (π/a)∫_0^∞ Φ` for `a > 0`. -/
-theorem integral_dualG_sq {a : ℝ} (ha : 0 < a) :
-    ∫ z : ℂ, dualG (a * ‖z‖ ^ 2) =
-      ((Real.pi / a : ℝ) : ℂ) * ∫ s in Ioi (0 : ℝ), Majorant.Phi ((s : ℝ) : ℂ) := by
-  rw [integral_radial_sq ha dualG, integral_dualG_Ioi]
-
 end Eis
 
 end
@@ -394,5 +366,3 @@ end
 #print axioms Eis.integral_radial_mul_inv_norm
 #print axioms Eis.integral_radial_sq
 #print axioms Eis.integral_dualG_Ioi
-#print axioms Eis.integral_fourier_Phi_sq
-#print axioms Eis.integral_dualG_sq

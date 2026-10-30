@@ -111,18 +111,6 @@ def WindowPiece (g : ℝ → ℝ) (L m₁ m₂ lo hi : ℝ) : Prop :=
     (m ≤ 1 → (L - m) * (β + w) + g β / 2 + (1 + m) / 2 ≤ L - 1 / 25000) ∧
     (1 ≤ m → (L - m) * (β + w) + g β / 2 + m ≤ L - 1 / 25000)
 
-theorem windowOK_of_piece {g : ℝ → ℝ} {L m₁ m₂ : ℝ} (h : WindowPiece g L m₁ m₂ (1 / 2) (11 / 12)) :
-    WindowOK g L m₁ m₂ := h
-
-/-- Gluing two pieces across `mid`. -/
-theorem windowPiece_glue {g g' : ℝ → ℝ} {L m₁ m₂ lo mid hi : ℝ} (h₁ : WindowPiece g L m₁ m₂ lo mid)
-    (h₂ : WindowPiece g' L m₁ m₂ mid hi) :
-    WindowPiece (fun β => if β < mid then g β else g' β) L m₁ m₂ lo hi := by
-  intro β m w hβ hβ1 hm hm1 hw hw1
-  by_cases hb : β < mid
-  · simp only [hb, ite_true]; exact h₁ β m w hβ hb.le hm hm1 hw hw1
-  · simp only [hb, ite_false]; exact h₂ β m w (not_lt.1 hb) hβ1 hm hm1 hw hw1
-
 /-- **A piece with an affine exponent `g β = p − Aβ`** (`A(1 − β)` is `p = A`; the trivial piece is `p = 1`, `A = 0`):
 for `lo ≤ hi` and `m₁ ≤ m₂`, the corner inequalities give the piece. For the inequality with `m ≤ 1` the corners are
 `β ∈ {lo, hi}`, `m ∈ {m₁, 1, m₂}` where the corner is at most `1`, `w ∈ {0, 4·10⁻⁶}`; for the one with `m ≥ 1` the

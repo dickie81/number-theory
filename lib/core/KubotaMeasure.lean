@@ -245,8 +245,6 @@ def diagL (a : ℂ) : ℂ × ℝ →L[ℝ] ℂ × ℝ :=
   (ContinuousLinearMap.restrictScalars ℝ ((a ^ 2) • ContinuousLinearMap.id ℂ ℂ)).prodMap
     (Complex.normSq a • ContinuousLinearMap.id ℝ ℝ)
 
-theorem diagL_apply (a : ℂ) (p : ℂ × ℝ) : diagL a p = (a ^ 2 * p.1, Complex.normSq a * p.2) := rfl
-
 theorem det_diagL (a : ℂ) : (diagL a).det = Complex.normSq a ^ 3 := by
   unfold diagL
   rw [ContinuousLinearMap.det, ContinuousLinearMap.coe_prodMap, LinearMap.det_prodMap]
@@ -398,7 +396,6 @@ end Eis
 #print axioms Eis.actP_mul
 #print axioms Eis.actP_mem
 #print axioms Eis.uhsAct_diag
-#print axioms Eis.diagL_apply
 #print axioms Eis.det_diagL
 #print axioms Eis.uinv_diag
 #print axioms Eis.uinv_actP_E

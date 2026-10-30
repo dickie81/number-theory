@@ -71,15 +71,6 @@ def Lam2Ge (a s : ℝ) : Prop :=
   ∀ g h : ℝ → ℝ, Probe a g → Probe a h → normSq g = 1 → normSq h = 1 → xcorr g h 0 = 0 →
     ∃ α β : ℝ, α ^ 2 + β ^ 2 = 1 ∧ s ≤ weilQ a (fun t => α * g t + β * h t)
 
-theorem Lam2Ge.mono {a a₁ s : ℝ} (ha : 0 ≤ a) (hle : a ≤ a₁) (H : Lam2Ge a₁ s) : Lam2Ge a s := by
-  intro g h hg hh hng hnh hx
-  obtain ⟨α, β, hab, hs⟩ := H g h (hg.mono hle) (hh.mono hle) hng hnh hx
-  refine ⟨α, β, hab, ?_⟩
-  have hc : Probe a (fun t => α * g t + β * h t) := by
-    have := probe_add_smul (probe_smul hg α) hh β
-    simpa using this
-  rwa [← weilQ_mono ha hle hc]
-
 /-! ## The covering criterion -/
 
 theorem normSq_comb {g h : ℝ → ℝ} (hg : MemLp g 2 volume) (hh : MemLp h 2 volume) (α β : ℝ) :
@@ -156,82 +147,9 @@ theorem simpleGround_of_lam2 {a s : ℝ} (ha : 0 < a) (hl : lam a < s) (H : Lam2
   rw [hq, hN, mul_one] at hs
   linarith
 
-/-- **Monotone covering.** `λ₁(a₀) < s` and `λ₂(a₁) ≥ s` give simple ground states at every
-support in `[a₀, a₁]`. -/
-theorem simpleGround_of_cover {a₀ a₁ s : ℝ} (ha₀ : 0 < a₀) (hl : lam a₀ < s) (H : Lam2Ge a₁ s)
-    {a : ℝ} (h0 : a₀ ≤ a) (h1 : a ≤ a₁) {g : ℝ → ℝ} (hg : IsGroundState a g) :
-    SimpleGround a g :=
-  simpleGround_of_lam2 (ha₀.trans_le h0) ((lam_antitone ha₀ h0).trans_lt hl)
-    (H.mono (ha₀.le.trans h0) h1) hg
-
-/-- **A chain of cells.** If the nodes `a₀, a₁, …, a_{m+1}` are positive and consecutive nodes satisfy
-`λ₁(a_i) < s_i ≤ λ₂(a_{i+1})`, every support in `[a₀, a_{m+1}]` has simple ground states. -/
-theorem simpleGround_of_chain (node s : ℕ → ℝ) (hpos : ∀ i, 0 < node i) (m : ℕ)
-    (hl : ∀ i ≤ m, lam (node i) < s i) (H : ∀ i ≤ m, Lam2Ge (node (i + 1)) (s i))
-    {a : ℝ} (h0 : node 0 ≤ a) (h1 : a ≤ node (m + 1)) {g : ℝ → ℝ} (hg : IsGroundState a g) :
-    SimpleGround a g := by
-  induction m generalizing a with
-  | zero => exact simpleGround_of_cover (hpos 0) (hl 0 le_rfl) (H 0 le_rfl) h0 h1 hg
-  | succ m ih =>
-    by_cases hc : a ≤ node (m + 1)
-    · exact ih (fun i hi => hl i (by omega)) (fun i hi => H i (by omega)) h0 hc hg
-    · exact simpleGround_of_cover (hpos (m + 1)) (hl (m + 1) le_rfl) (H (m + 1) le_rfl)
-        (le_of_lt (not_le.mp hc)) h1 hg
-
-/-! ## The certificates, and simplicity for every support `0 < a ≤ 1.035`
-
-The nodes are `a = 0.36, 0.51, 0.64, 0.75, 0.85, 0.935, 1.01, 1.035` (support `δ = 2a` up to `2.07`).
-`SimpleCoverCerts` lists the fourteen computer-assisted inequalities:
-* upper bounds `λ₁(a_i) < s_i` are ball Rayleigh quotients of cosine trial vectors, computed at a support
-  slightly below the node (valid at the node by `lam_antitone`);
-* lower bounds `λ₂(a_{i+1}) ≥ s_i` are Zhu's one-stroke reduction with a ball-arithmetic inertia count.
-
-They are stated as a hypothesis: Lean checks the logic, not the numerics. -/
-
-/-- The certified inequalities (computer-assisted, not checked in Lean). -/
-def SimpleCoverCerts : Prop :=
-  lam 0.36 < 1 / 100 ∧ Lam2Ge 0.51 (1 / 100) ∧
-  lam 0.51 < 6e-6 ∧ Lam2Ge 0.64 6e-6 ∧
-  lam 0.64 < 1e-9 ∧ Lam2Ge 0.75 1e-9 ∧
-  lam 0.75 < 2.7e-14 ∧ Lam2Ge 0.85 2.7e-14 ∧
-  lam 0.85 < 4.9e-19 ∧ Lam2Ge 0.935 4.9e-19 ∧
-  lam 0.935 < 3e-24 ∧ Lam2Ge 1.01 3e-24 ∧
-  lam 1.01 < 4e-26 ∧ Lam2Ge 1.035 4e-26
-
-/-- **Simplicity at every support `0 < a ≤ 1.035`** (`δ ≤ 2.07`), given the certificates:
-`a ≤ 0.36` is `simpleGround_036` (proved in Lean); the rest is seven covering cells. -/
-theorem simpleGround_le_1035 (hc : SimpleCoverCerts) {a : ℝ} (ha : 0 < a) (h : a ≤ 1.035)
-    {g : ℝ → ℝ} (hg : IsGroundState a g) : SimpleGround a g := by
-  obtain ⟨c0, d0, c1, d1, c2, d2, c3, d3, c4, d4, c5, d5, c6, d6⟩ := hc
-  by_cases h0 : a ≤ 0.36
-  · exact simpleGround_036 ha h0 hg
-  push Not at h0
-  by_cases h1 : a ≤ 0.51
-  · exact simpleGround_of_cover (by norm_num) c0 d0 h0.le h1 hg
-  push Not at h1
-  by_cases h2 : a ≤ 0.64
-  · exact simpleGround_of_cover (by norm_num) c1 d1 h1.le h2 hg
-  push Not at h2
-  by_cases h3 : a ≤ 0.75
-  · exact simpleGround_of_cover (by norm_num) c2 d2 h2.le h3 hg
-  push Not at h3
-  by_cases h4 : a ≤ 0.85
-  · exact simpleGround_of_cover (by norm_num) c3 d3 h3.le h4 hg
-  push Not at h4
-  by_cases h5 : a ≤ 0.935
-  · exact simpleGround_of_cover (by norm_num) c4 d4 h4.le h5 hg
-  push Not at h5
-  by_cases h6 : a ≤ 1.01
-  · exact simpleGround_of_cover (by norm_num) c5 d5 h5.le h6 hg
-  push Not at h6
-  exact simpleGround_of_cover (by norm_num) c6 d6 h6.le h hg
-
 end WeilForm
 
 #print axioms WeilForm.simpleGround_of_unique
 #print axioms WeilForm.simpleGround_036
 #print axioms WeilForm.lam_antitone
 #print axioms WeilForm.simpleGround_of_lam2
-#print axioms WeilForm.simpleGround_of_cover
-#print axioms WeilForm.simpleGround_of_chain
-#print axioms WeilForm.simpleGround_le_1035

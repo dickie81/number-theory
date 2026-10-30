@@ -362,9 +362,6 @@ theorem abs_arch_le {b : ℝ} (hb : 0 < b) (hb1 : b ≤ 1) {J : ℕ} (hJ : 1 ≤
 /-- The zero weight `x^{|β − ½| − ½}/(1 + b|γ|)^k`. -/
 def Wz (x b : ℝ) (k : ℕ) (ρ : ℂ) : ℝ := x ^ (|ρ.re - 1 / 2| - 1 / 2) / (1 + b * |ρ.im|) ^ k
 
-theorem Wz_nonneg {x b : ℝ} (hx : 0 < x) (hb : 0 ≤ b) (k : ℕ) (ρ : ℂ) : 0 ≤ Wz x b k ρ := by
-  unfold Wz; positivity
-
 theorem norm_hmod_zero_le {b : ℝ} (hb : 0 < b) (J : ℕ) {x : ℝ} (hx : 1 ≤ x) {ρ : ℂ}
     (h0 : 0 < ρ.re) (h1 : ρ.re < 1) :
     ‖hmod b J (Real.log x) ((ρ - 1 / 2) / I)‖

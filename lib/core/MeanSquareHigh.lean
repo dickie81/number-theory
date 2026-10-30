@@ -37,9 +37,6 @@ def CE (K : ℕ) : ℝ :=
   1 / 2 + ∑ k ∈ range K, |(bernoulli (2 * k + 2) : ℝ)| / ((2 * k + 2)! : ℝ) * ((2 * K + 3 : ℕ) : ℝ) ^ (2 * k + 1)
     + |(bernoulli (2 * K) : ℝ)| / ((2 * K)! : ℝ) * ((2 * K + 3 : ℕ) : ℝ) ^ (2 * K)
 
-lemma CE_nonneg (K : ℕ) : 0 ≤ CE K := by
-  unfold CE; positivity
-
 /-- One factor of the rising factorial: `|s + i| ≤ (2K+3)|t|` for `i < 2K`, `0 < σ ≤ 4`, `|t| ≥ 2`. -/
 lemma norm_add_nat_le {K i : ℕ} (hi : i < 2 * K) {σ t : ℝ} (hσ0 : 0 < σ) (hσ4 : σ ≤ 4) (ht : 2 ≤ |t|) :
     ‖((σ : ℂ) + t * I) + i‖ ≤ ((2 * K + 3 : ℕ) : ℝ) * |t| := by
@@ -609,7 +606,6 @@ theorem msPoly_of_order {K : ℕ} (hK : 1 ≤ K) {σ₀ : ℝ} (hσ₀ : (2 * K 
 
 end MeanSquareHigh
 
-#print axioms MeanSquareHigh.CE_nonneg
 #print axioms MeanSquareHigh.norm_add_nat_le
 #print axioms MeanSquareHigh.norm_prod_add_le
 #print axioms MeanSquareHigh.sum_range_succ_cpow

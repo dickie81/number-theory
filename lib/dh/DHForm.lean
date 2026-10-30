@@ -178,9 +178,6 @@ theorem lamDH_neg {b : ℝ} (hb : 12 / 5 ≤ b) : lamDH b < 0 := by
     linarith
   exact (lamDH_antitone (by norm_num) hb).trans_lt h2
 
-theorem not_lamDH_nonneg : ¬ ∀ a : ℝ, 0 < a → 0 ≤ lamDH a := fun h =>
-  absurd (h (12 / 5) (by norm_num)) (not_le.2 (lamDH_neg le_rfl))
-
 /-- **The `dh` column of `exists_lam_neg_of_not_RH`, unconditional.** -/
 theorem exists_lamDH_neg : ∃ a, 0 < a ∧ lamDH a < 0 :=
   ⟨12 / 5, by norm_num, lamDH_neg le_rfl⟩

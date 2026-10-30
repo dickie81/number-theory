@@ -114,28 +114,6 @@ theorem affine_corner_bound {p A L lo hi ma mb t₀ t₁ β m w : ℝ} (hlo : lo
     rw [hθ]
     nlinarith [mul_le_mul_of_nonneg_left h0 hθ0, mul_le_mul_of_nonneg_left h1 hθ1]
 
-/-- **An affine piece by the Halász–Montgomery branch**, for `lo ≤ hi` (`hlo`) and a window with `m₂ ≤ 1` (`hm2`):
-if both bilinear inequalities hold at the eight corners `β ∈ {lo, hi}`, `m ∈ {m₁, m₂}`, `w ∈ {0, 4·10⁻⁶}` (`h1`,
-`h2`), the piece holds. The first is
-`affine_corner_bound` with `t(m) = m`; the second with `p, A` doubled (its `(p − Aβ)` appears twice) and
-`t(m) = (5/12 + d + 2e)/2 + ((13/12 − d)/2)m`. -/
-theorem windowPieceHM_affine {p A L m₁ m₂ d e lo hi : ℝ} (hlo : lo ≤ hi) (hm2 : m₂ ≤ 1)
-    (h1 : ∀ β m w, (β = lo ∨ β = hi) → (m = m₁ ∨ m = m₂) → (w = 0 ∨ w = 4 / 10 ^ 6) →
-      (L - m) * (β + w) + (p - A * β) / 2 + m / 2 + m / 2 ≤ L - 1 / 25000)
-    (h2 : ∀ β m w, (β = lo ∨ β = hi) → (m = m₁ ∨ m = m₂) → (w = 0 ∨ w = 4 / 10 ^ 6) →
-      (L - m) * (β + w) + (p - A * β) / 2 + m / 2 +
-        ((p - A * β) + (5 / 12 + m / 12 + d * (1 - m) + 2 * e)) / 2 ≤ L - 1 / 25000) :
-    WindowPieceHM (fun β => p - A * β) L m₁ m₂ d e lo hi := by
-  intro β m w hβ hβ1 hm1 hm2' hw hw1
-  refine Or.inr ⟨hm2'.trans hm2, ?_, ?_⟩
-  · have := affine_corner_bound (p := p) (A := A) (L := L) (t₀ := 0) (t₁ := 1) hlo hβ hβ1 hm1 hm2' hw hw1
-      (fun β' m' w' hb' hm' hw' => by have := h1 β' m' w' hb' hm' hw'; linarith)
-    linarith
-  · have := affine_corner_bound (p := 2 * p) (A := 2 * A) (L := L) (t₀ := (5 / 12 + d + 2 * e) / 2)
-      (t₁ := (13 / 12 - d) / 2) hlo hβ hβ1 hm1 hm2' hw hw1
-      (fun β' m' w' hb' hm' hw' => by have := h2 β' m' w' hb' hm' hw'; linarith)
-    linarith
-
 /-- **An affine piece by the Halász–Montgomery branch below `m = 1` and by orthogonality above it**, for
 `lo ≤ hi` (`hlo`): the two bilinear inequalities at the corners `m ∈ {m₁, 1}` (`h1`, `h2`) give the branch for
 `m ≤ 1`, and orthogonality's inequality for `m ≥ 1` (whose exponent `(L − m)(β + w) + gβ/2 + m` is the first of the
@@ -188,6 +166,5 @@ theorem windowPieceHM_const_split {A L m₁ m₂ d e lo hi : ℝ} (hlo : lo ≤ 
 end SieveCurveGlue
 
 #print axioms SieveCurveGlue.affine_corner_bound
-#print axioms SieveCurveGlue.windowPieceHM_affine
 #print axioms SieveCurveGlue.windowPieceHM_affine_split
 #print axioms SieveCurveGlue.windowPieceHM_const_split

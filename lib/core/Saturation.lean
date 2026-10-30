@@ -66,33 +66,7 @@ theorem zero_near_of_deriv_le {F : ℝ → ℝ} {γ η m r : ℝ} (hm : 0 < m) (
     (by simpa [abs_neg] using hsmall)
   exact ⟨x, hx, by simpa using h⟩
 
-/-- **Each term of the zero-side sum is bounded by the energy.** Named input: the explicit formula
-with the zeros on the line, `Q = 2 Σ_k F(γ_k)²` (for the normalised ground state `Q = λ₁`). -/
-theorem sq_le_of_explicit {F : ℝ → ℝ} {γ : ℕ → ℝ} {Q Λ : ℝ} (hs : Summable fun k => F (γ k) ^ 2)
-    (hQ : Q = 2 * ∑' k, F (γ k) ^ 2) (hQΛ : Q ≤ Λ) (j : ℕ) : |F (γ j)| ≤ Real.sqrt (Λ / 2) := by
-  have h1 : F (γ j) ^ 2 ≤ ∑' k, F (γ k) ^ 2 :=
-    hs.le_tsum j (fun k _ => sq_nonneg _)
-  rw [← Real.sqrt_sq_eq_abs]
-  exact Real.sqrt_le_sqrt (by linarith)
-
-/-- **Saturation, reduced to the envelope.** Under the explicit formula with the zeros on the line,
-if `|ĝ'| ≥ m` with fixed sign on `[γ_j − r, γ_j + r]` and `√(λ/2)/m ≤ r`, then `ĝ` has a zero within
-`√(λ/2)/m` of `γ_j`. -/
-theorem pinned_of_explicit {F : ℝ → ℝ} {γ : ℕ → ℝ} {Q Λ : ℝ} (hs : Summable fun k => F (γ k) ^ 2)
-    (hQ : Q = 2 * ∑' k, F (γ k) ^ 2) (hQΛ : Q ≤ Λ) (j : ℕ) {m r : ℝ} (hm : 0 < m)
-    (hr : Real.sqrt (Λ / 2) / m ≤ r)
-    (hc : ContinuousOn F (Icc (γ j - r) (γ j + r))) (hd : DifferentiableOn ℝ F (Ioo (γ j - r) (γ j + r)))
-    (hslope : (∀ x ∈ Ioo (γ j - r) (γ j + r), m ≤ deriv F x) ∨
-      (∀ x ∈ Ioo (γ j - r) (γ j + r), deriv F x ≤ -m)) :
-    ∃ x ∈ Icc (γ j - Real.sqrt (Λ / 2) / m) (γ j + Real.sqrt (Λ / 2) / m), F x = 0 := by
-  have hsmall := sq_le_of_explicit hs hQ hQΛ j
-  rcases hslope with h | h
-  · exact zero_near_of_deriv_ge hm (Real.sqrt_nonneg _) hr hc hd h hsmall
-  · exact zero_near_of_deriv_le hm (Real.sqrt_nonneg _) hr hc hd h hsmall
-
 end WeilForm
 
 #print axioms WeilForm.zero_near_of_deriv_ge
 #print axioms WeilForm.zero_near_of_deriv_le
-#print axioms WeilForm.sq_le_of_explicit
-#print axioms WeilForm.pinned_of_explicit

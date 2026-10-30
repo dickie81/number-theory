@@ -64,31 +64,4 @@ theorem psiOmegaSqrt_of_not_RH (h : ¬ RiemannHypothesis) : CrossCriteria.PsiOme
   · linarith
   · linarith
 
-/-- **`LandauKV.zeroFree_KV` with `A = 1/6`**: for `|t| ≥ e³` the region lies in `Re s > 11/12`. -/
-theorem zeroFree_KV_explicit : ∀ σ t : ℝ, Real.exp 3 ≤ |t| →
-    1 - (1 / 6) / (Real.log |t| ^ ((2 : ℝ) / 3) * Real.log (Real.log |t|) ^ ((1 : ℝ) / 3)) ≤ σ →
-    riemannZeta (σ + t * I) ≠ 0 := by
-  intro σ t ht hσ
-  have hl3 : 3 ≤ Real.log |t| := by
-    rw [← Real.log_exp 3]; exact Real.log_le_log (Real.exp_pos 3) ht
-  have hll : 1 ≤ Real.log (Real.log |t|) := by
-    rw [← Real.log_exp 1]
-    exact Real.log_le_log (Real.exp_pos 1) (by linarith [Real.exp_one_lt_d9])
-  have h2 : (2 : ℝ) < Real.log |t| ^ ((2 : ℝ) / 3) := by
-    have h3 : (3 : ℝ) ^ ((2 : ℝ) / 3) ≤ Real.log |t| ^ ((2 : ℝ) / 3) :=
-      Real.rpow_le_rpow (by norm_num) hl3 (by norm_num)
-    have h8 : (2 : ℝ) < 3 ^ ((2 : ℝ) / 3) := by
-      have hc : ((2 : ℝ) ^ (3 : ℝ)) < ((3 : ℝ) ^ ((2 : ℝ) / 3)) ^ (3 : ℝ) := by
-        rw [← Real.rpow_mul (by norm_num)]; norm_num
-      exact (Real.rpow_lt_rpow_iff (by norm_num) (by positivity) (by norm_num)).1 hc
-    linarith
-  have h1 : 1 ≤ Real.log (Real.log |t|) ^ ((1 : ℝ) / 3) := Real.one_le_rpow hll (by norm_num)
-  have hD : 2 < Real.log |t| ^ ((2 : ℝ) / 3) * Real.log (Real.log |t|) ^ ((1 : ℝ) / 3) := by
-    nlinarith
-  have hq : (1 / 6) / (Real.log |t| ^ ((2 : ℝ) / 3) * Real.log (Real.log |t|) ^ ((1 : ℝ) / 3)) < 1 / 12 := by
-    rw [div_lt_iff₀ (by linarith)]; linarith
-  refine (Eis.ne_zero_of_re_gt_eleven_twelfths ?_).1
-  simp only [add_re, ofReal_re, mul_re, ofReal_im, I_re, I_im, mul_zero, mul_one, sub_zero]
-  linarith
-
 end HalfPlaneJoinsPNT

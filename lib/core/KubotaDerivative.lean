@@ -589,35 +589,6 @@ theorem twisted_theta_dbar_of {τ : 𝓞 K → ℂ} {Kc : ℝ} (hτ : ThetaSupp 
     unfold thSer
     rw [zero_mul, zero_add]
 
-open Classical in
-/-- **`∂_{z̄}` at `z = 0` of the twisted `θ̄`, in both expansions**: for data `(D, C₀, d_H, y)` as in
-`twisted_theta_expansion` and `v > 0`, the series `Σ_m a(m)·v·K_{1/3}(4π|m|v/9)·2πi·m̄/9` of the
-twisted coefficients `a(m) = φ(m/λ)·conj τ(−m)` equals the sum over `h₀` and the active sets `A` of
-`φ̂₀(h₀)∏_{P∉A}C_{P,j_P}(0)C₀(h₀, A)` times `−(σ(c)v)^{−2}·Σ_m d′(m)·V₀·K_{1/3}(4π|m|V₀/9)·2πi·m/9`, with
-`c = D(h₀, A)∏_{P∈A}π_P`, `V₀ = 1/(N(c)v)` and the cusp coefficients `d′` of the group. -/
-theorem twisted_theta_dbar {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {c0 cP cM : ℂ} {τ tP tM : 𝓞 K → ℂ}
-    (hd : KubotaData θ Kc c0 cP cM τ tP tM) {L : 𝓞 K} (hL : L ≠ 0) (φ₀ : 𝓞 K → ℂ)
-    (hφ : ∀ z u, φ₀ (z + L * u) = φ₀ z) (hφ0 : φ₀ 0 = 0) (Ps : Finset Pr) (hPs : ∀ P ∈ Ps, L ∉ P.1)
-    (j : Pr → ℕ) :
-    ∃ (D : (𝓞 K ⧸ span {L}) → Finset Pr → 𝓞 K) (C₀ : (𝓞 K ⧸ span {L}) → Finset Pr → ℂ)
-      (dH : (𝓞 K ⧸ span {L}) → Finset Pr → 𝓞 K → ℂ) (y : (𝓞 K ⧸ span {L}) → Finset Pr → 𝓞 K),
-      (∀ h₀, ∀ A ∈ Ps.powerset, D h₀ A ≠ 0 ∧ D h₀ A ∣ L ∧ ‖C₀ h₀ A‖ = 1 ∧ ThetaSupp Kc (dH h₀ A)) ∧
-      ∀ v : ℝ, 0 < v →
-        ∑' m : 𝓞 K, twAt (fun x => φ₀ x * ∏ P ∈ Ps, chiPow P.1 (j P) x) m * conj (τ (-m)) * (v : ℂ) *
-            besselK (1 / 3) (4 * Real.pi * ‖σO m‖ * v / 9) * (2 * Real.pi * I * conj (σO m) / 9) =
-          ∑ᶠ h₀ : 𝓞 K ⧸ span {L}, fCoef L φ₀ (repQ L h₀) *
-            ∑ A ∈ Ps.powerset, (∏ P ∈ Ps \ A, locCoef P (j P) 0) *
-              (C₀ h₀ A * (-(σO (D h₀ A * ∏ P ∈ A, πP P) ^ 2 * (v : ℂ) ^ 2)⁻¹ *
-                ∑' m : 𝓞 K, conj (dH h₀ A (-m)) * ψc (δ3 ^ 3 * D h₀ A) (-(m * y h₀ A)) *
-                    (∏ P : A, Bloc P.1.1 (j P.1) m) *
-                  (((Complex.normSq (σO (D h₀ A * ∏ P ∈ A, πP P)) * v)⁻¹ : ℝ) : ℂ) *
-                  besselK (1 / 3)
-                    (4 * Real.pi * ‖σO m‖ * (Complex.normSq (σO (D h₀ A * ∏ P ∈ A, πP P)) * v)⁻¹ / 9) *
-                  (2 * Real.pi * I * σO m / 9))) := by
-  obtain ⟨D, C₀, cH, dH, y, hDATA, hexp⟩ := twisted_theta_expansion hd hL φ₀ hφ hφ0 Ps hPs j
-  exact ⟨D, C₀, dH, y, hDATA, fun v hv => twisted_theta_dbar_of hd.1 hL φ₀ hφ Ps j D C₀ cH dH y
-    (fun h₀ A hA => ⟨(hDATA h₀ A hA).1, (hDATA h₀ A hA).2.2.2⟩) hexp hv⟩
-
 end Eis
 
 end
@@ -643,4 +614,3 @@ end
 #print axioms Eis.sum_comb
 #print axioms Eis.dbar_identity
 #print axioms Eis.twisted_theta_dbar_of
-#print axioms Eis.twisted_theta_dbar

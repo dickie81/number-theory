@@ -685,75 +685,6 @@ theorem thetaSupp_cuspCoef {Kc : ℝ} {dH : 𝓞 K → ℂ} (h : ThetaSupp Kc dH
     rw [norm_prod]
     exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun P _ => norm_Bloc_le_sqrt P.1 (j P.1) m
 
-open Classical in
-/-- **`𝒥(s)` for the twisted `θ̄`**: with the data of `twisted_theta_dbar`, the
-Mellin transform of the `∂_{z̄}`-series at `∞`, `𝒥(s) = ∫_0^∞ D(v)v^{2s−1} dv`, converges at every `s`
-and is entire. For `Re s ≥ 5/3` it is the Dirichlet series of the twisted coefficients with the Gamma
-factors of (A.15). For `Re s < −3/2` it is the sum over the groups of
-`−σ(c)^{−2}N(c)^{2−2s}` times the Dirichlet series of the cusp coefficients at `1 − s`. -/
-theorem twisted_theta_mellin {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {c0 cP cM : ℂ} {τ tP tM : 𝓞 K → ℂ}
-    (hd : KubotaData θ Kc c0 cP cM τ tP tM) {L : 𝓞 K} (hL : L ≠ 0) (φ₀ : 𝓞 K → ℂ)
-    (hφ : ∀ z u, φ₀ (z + L * u) = φ₀ z) (hφ0 : φ₀ 0 = 0) (Ps : Finset Pr) (hPs : ∀ P ∈ Ps, L ∉ P.1)
-    (j : Pr → ℕ) :
-    ∃ (D : (𝓞 K ⧸ span {L}) → Finset Pr → 𝓞 K) (C₀ : (𝓞 K ⧸ span {L}) → Finset Pr → ℂ)
-      (dH : (𝓞 K ⧸ span {L}) → Finset Pr → 𝓞 K → ℂ) (y : (𝓞 K ⧸ span {L}) → Finset Pr → 𝓞 K),
-      (∀ h₀, ∀ A ∈ Ps.powerset, D h₀ A ≠ 0 ∧ D h₀ A ∣ L ∧ ‖C₀ h₀ A‖ = 1 ∧ ThetaSupp Kc (dH h₀ A)) ∧
-      (∀ s, MellinConvergent (dSer (fun m => twAt (fun x => φ₀ x * ∏ P ∈ Ps, chiPow P.1 (j P) x) m *
-        conj (τ (-m))) fun m => 2 * Real.pi * I * conj (σO m) / 9) s) ∧
-      Differentiable ℂ (mellin (dSer (fun m => twAt (fun x => φ₀ x * ∏ P ∈ Ps, chiPow P.1 (j P) x) m *
-        conj (τ (-m))) fun m => 2 * Real.pi * I * conj (σO m) / 9)) ∧
-      (∀ s : ℂ, 5 / 3 ≤ s.re →
-        mellin (dSer (fun m => twAt (fun x => φ₀ x * ∏ P ∈ Ps, chiPow P.1 (j P) x) m *
-          conj (τ (-m))) fun m => 2 * Real.pi * I * conj (σO m) / 9) (2 * s) =
-        ∑' m : 𝓞 K, twAt (fun x => φ₀ x * ∏ P ∈ Ps, chiPow P.1 (j P) x) m * conj (τ (-m)) *
-          (2 * Real.pi * I * conj (σO m) / 9) * (2 ^ (2 * s - 1) * Gamma (s + 1 / 3) *
-            Gamma (s + 2 / 3) * (((4 * Real.pi * ‖σO m‖ / 9 : ℝ)) : ℂ) ^ (-(2 * s + 1)))) ∧
-      ∀ s : ℂ, s.re < -3 / 2 →
-        mellin (dSer (fun m => twAt (fun x => φ₀ x * ∏ P ∈ Ps, chiPow P.1 (j P) x) m *
-          conj (τ (-m))) fun m => 2 * Real.pi * I * conj (σO m) / 9) (2 * s) =
-        ∑ᶠ h₀ : 𝓞 K ⧸ span {L}, fCoef L φ₀ (repQ L h₀) *
-          ∑ A ∈ Ps.powerset, (∏ P ∈ Ps \ A, locCoef P (j P) 0) *
-            (C₀ h₀ A * (-(σO (D h₀ A * ∏ P ∈ A, πP P) ^ 2)⁻¹ *
-              (((Complex.normSq (σO (D h₀ A * ∏ P ∈ A, πP P)) : ℝ) : ℂ) ^ (2 - 2 * s) *
-                ∑' m : 𝓞 K, conj (dH h₀ A (-m)) * ψc (δ3 ^ 3 * D h₀ A) (-(m * y h₀ A)) *
-                    (∏ P : A, Bloc P.1.1 (j P.1) m) * (2 * Real.pi * I * σO m / 9) *
-                  (2 ^ (2 * (1 - s) - 1) * Gamma ((1 - s) + 1 / 3) * Gamma ((1 - s) + 2 / 3) *
-                    (((4 * Real.pi * ‖σO m‖ / 9 : ℝ)) : ℂ) ^ (-(2 * (1 - s) + 1)))))) := by
-  obtain ⟨D, C₀, dH, y, hDATA, hid⟩ := twisted_theta_dbar hd hL φ₀ hφ hφ0 Ps hPs j
-  obtain ⟨B₀, hB₀⟩ := exists_bound_of_periodic L hL φ₀ hφ
-  have hB₀0 : 0 ≤ B₀ := (norm_nonneg _).trans (hB₀ 0)
-  have hF : ∀ x, ‖φ₀ x * ∏ P ∈ Ps, chiPow P.1 (j P) x‖ ≤ B₀ := by
-    intro x
-    rw [norm_mul, norm_prod]
-    exact (mul_le_of_le_one_right (norm_nonneg _) (Finset.prod_le_one₀ (fun _ _ => norm_nonneg _)
-      (fun P _ => norm_chiPow_le _ _ _))).trans (hB₀ x)
-  have ha := thetaSupp_twisted hd.1 hB₀0 hF
-  have hcne : ∀ (h₀ : 𝓞 K ⧸ span {L}), ∀ A ∈ Ps.powerset, σO (D h₀ A * ∏ P ∈ A, πP P) ≠ 0 := by
-    intro h₀ A hA
-    have hD := (hDATA h₀ A hA).1
-    have hprod : (∏ P ∈ A, πP P) ≠ 0 := Finset.prod_ne_zero_iff.2 fun P _ => ne_zero_of_maximal (πP P)
-    have hc : D h₀ A * ∏ P ∈ A, πP P ≠ 0 := mul_ne_zero hD hprod
-    exact fun h => hc (σO_injective (h.trans (map_zero σO).symm))
-  have := finite_quot L hL
-  let _ : Fintype (𝓞 K ⧸ span {L}) := Fintype.ofFinite _
-  obtain ⟨hconv, hdiff, hFE⟩ := mellin_FE Finset.univ Ps.powerset ha (fun m => norm_phiInf_le m)
-    (fun m => norm_phiCusp_le m) (fun h₀ => fCoef L φ₀ (repQ L h₀))
-    (fun A => ∏ P ∈ Ps \ A, locCoef P (j P) 0) C₀
-    (fun h₀ A m => conj (dH h₀ A (-m)) * ψc (δ3 ^ 3 * D h₀ A) (-(m * y h₀ A)) *
-      ∏ P : A, Bloc P.1.1 (j P.1) m)
-    (fun h₀ A => D h₀ A * ∏ P ∈ A, πP P) (fun _ A => (∏ P : A, Real.sqrt (absNorm P.1.1)) * Kc)
-    (fun h₀ _ A hA => ⟨thetaSupp_cuspCoef (hDATA h₀ A hA).2.2.2 _ _ A j, hcne h₀ A hA⟩)
-    (fun v hv => by rw [← finsum_eq_sum_of_fintype]; exact hid v hv)
-  refine ⟨D, C₀, dH, y, hDATA, hconv, hdiff, fun s hs => mellin_dSer ha (fun m => norm_phiInf_le m) hs,
-    fun s hs => ?_⟩
-  rw [hFE s hs, finsum_eq_sum_of_fintype]
-  refine Finset.sum_congr rfl fun h₀ _ => ?_
-  congr 1
-  refine Finset.sum_congr rfl fun A hA => ?_
-  have hm := mellin_dSer (thetaSupp_cuspCoef (hDATA h₀ A hA).2.2.2 (D h₀ A) (y h₀ A) A j)
-    (fun m => norm_phiCusp_le m) (w := 1 - s) (by simp; linarith)
-  rw [show (2 : ℂ) - 2 * s = 2 * (1 - s) by ring, hm]
-
 end Eis
 
 end
@@ -777,4 +708,3 @@ end
 #print axioms Eis.norm_phiCusp_le
 #print axioms Eis.thetaSupp_twisted
 #print axioms Eis.thetaSupp_cuspCoef
-#print axioms Eis.twisted_theta_mellin

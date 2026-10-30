@@ -133,30 +133,6 @@ theorem window_hi_gen [SieveCert.Grid] {x : ℝ} (hx : 1 < x) {k : ℕ} {hi rt :
   push_cast
   exact (h2.trans h1.le)
 
-/-- A proper subset of a strictly decreasing tuple of positive integers has product at most that of all but the last
-entry. -/
-theorem prod_proper_le {k' : ℕ} {rt : Fin (k' + 1) → ℕ} (hsa : StrictAnti rt) (hpos : ∀ t, 1 ≤ rt t)
-    {T : Finset (Fin (k' + 1))} (hT : T ≠ Finset.univ) :
-    ∏ t ∈ T, rt t ≤ ∏ t ∈ Finset.univ.erase (Fin.last k'), rt t := by
-  obtain ⟨t₀, ht₀⟩ : ∃ t₀, t₀ ∉ T := by
-    by_contra h
-    push Not at h
-    exact hT (Finset.eq_univ_of_forall h)
-  have h1 : ∏ t ∈ T, rt t ≤ ∏ t ∈ Finset.univ.erase t₀, rt t :=
-    Finset.prod_le_prod_of_subset_of_one_le (fun t ht => Finset.mem_erase.2 ⟨fun h => ht₀ (h ▸ ht),
-      Finset.mem_univ _⟩) fun t _ _ => hpos t
-  have h2 : (∏ t ∈ Finset.univ.erase t₀, rt t) * rt t₀ = (∏ t ∈ Finset.univ.erase (Fin.last k'), rt t) *
-      rt (Fin.last k') := by
-    rw [Finset.prod_erase_mul _ _ (Finset.mem_univ _), Finset.prod_erase_mul _ _ (Finset.mem_univ _)]
-  have h3 : rt (Fin.last k') ≤ rt t₀ := hsa.antitone (Fin.le_last t₀)
-  have h4 : 0 < rt (Fin.last k') := hpos _
-  have h5 : (∏ t ∈ Finset.univ.erase t₀, rt t) * rt (Fin.last k') ≤
-      (∏ t ∈ Finset.univ.erase (Fin.last k'), rt t) * rt (Fin.last k') := by
-    calc (∏ t ∈ Finset.univ.erase t₀, rt t) * rt (Fin.last k') ≤ (∏ t ∈ Finset.univ.erase t₀, rt t) * rt t₀ :=
-          Nat.mul_le_mul_left _ h3
-      _ = _ := h2
-  exact h1.trans (Nat.le_of_mul_le_mul_right h5 h4)
-
 /-! ### The weights, and the sums of `dw` -/
 
 /-- `1[n ≡ a]`. -/

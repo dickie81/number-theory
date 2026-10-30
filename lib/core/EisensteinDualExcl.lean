@@ -98,7 +98,6 @@ theorem aXi_mul_left (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) {D M : Ideal (𝓞
       refine ⟨Nat.Coprime.coprime_dvd_left ?_ h.1, Squarefree.of_mul_right h.2⟩
       rw [map_mul]; exact dvd_mul_left _ _
 
-
 /-- A product of distinct primes from `Pr` divides `I` iff each does. -/
 theorem prod_Pr_dvd_iff (T : Finset Pr) (I : Ideal (𝓞 K)) :
     (∏ P ∈ T, P.1) ∣ I ↔ ∀ P ∈ T, P.1 ∣ I := by
@@ -132,7 +131,6 @@ theorem isRelPrime_iff_primeSet {I R : Ideal (𝓞 K)} (hI : I ≠ ⊥) (hR6 : (
     obtain ⟨Q, hQ, hQI⟩ := exists_common_factor hI hsR.ne_zero hrel
     exact h ⟨Q, isMaximal_of_factor hQ, six_not_mem_of_factor hR6 hQ⟩ (mem_primeSet.2 hQ) hQI
 
-
 open Classical in
 /-- `Σ_I 1_{𝔡 ∣ I}·h(I) = Σ_𝔪 h(𝔡𝔪)` over the ideals, for `𝔡 ≠ 0` (`tsum_ite_dvd_eq`). -/
 theorem tsum_ideal_dvd_eq (D : Ideal (𝓞 K)) (hD : D ≠ ⊥) (h : Ideal (𝓞 K) → ℂ) :
@@ -164,7 +162,6 @@ theorem colSum_summand_eq_zero (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) {W : ℝ
       · have : (0 : ℝ) ≤ absNorm I := Nat.cast_nonneg _
         linarith
     rw [hW _ (by rw [lt_div_iff₀ hX]; linarith), mul_zero]
-
 
 /-- A product of primes of `R` is squarefree, of norm prime to `6`, and divides `R`. -/
 theorem prod_sub_primeSet {R : Ideal (𝓞 K)} (hR6 : (absNorm R).Coprime 6) (hsR : Squarefree R)
@@ -242,7 +239,6 @@ theorem colSum_excl (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) {W : ℝ → ℂ} {
       field_simp
     rw [hw]
     ring
-
 
 /-! ### Norm bounds -/
 
@@ -439,7 +435,6 @@ theorem dualMeanSquare_excl [NeZero m] {ϑ : ℝ} (hDM : DualMeanSquareM m ϑ) :
         rw [← mul_pow]
         norm_num
 
-
 /-! ### Classes modulo `4` through characters -/
 
 section CharExpand
@@ -577,13 +572,6 @@ theorem isUnit_mk_four {z : 𝓞 K} (hz : IsCoprime z 2) :
     Ideal.mem_span_singleton']
   exact ⟨-b, by linear_combination -h⟩
 
-/-- The primary generator of a squarefree ideal of norm prime to `6` is prime to `2`. -/
-theorem isCoprime_pgen_two {I : Ideal (𝓞 K)} (hI : (absNorm I).Coprime 6) (hsq : Squarefree I) :
-    IsCoprime (pgen I) 2 := by
-  rw [pgen_eq_prod hI hsq]
-  exact IsCoprime.prod_left fun P _ => isCoprime_two (πP P) (h6Pr P)
-
-
 end Eis
 
 namespace MellinSep
@@ -653,5 +641,4 @@ end
 #print axioms Eis.pair_eq_sum_mulChar
 #print axioms Eis.norm_pairCoeff_le
 #print axioms Eis.isUnit_mk_four
-#print axioms Eis.isCoprime_pgen_two
 #print axioms MellinSep.bilinear_dual_bound₂

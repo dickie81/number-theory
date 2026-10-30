@@ -1,4 +1,5 @@
-import SexticCharHalfPlane
+import HalfPlaneTwistMean
+import RealCharHalfPlane
 
 /-!
 # Every Dirichlet character, `L(s, χ) ≠ 0` on `Re s > 11/12`

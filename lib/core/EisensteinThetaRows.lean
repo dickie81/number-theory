@@ -116,23 +116,6 @@ open Classical in
 theorem tgPrimes_subset (md t g : 𝓞 K) : tgPrimes md t g ⊆ primeSet (span {t * g}) :=
   fun _ hP => (Finset.mem_filter.1 hP).1
 
-/-- No prime prime to `6` contains `4`. -/
-theorem four_not_mem (P : Pr) : (4 : 𝓞 K) ∉ P.1 := by
-  intro h
-  have h2 : (2 : 𝓞 K) ∈ P.1 :=
-    P.2.1.isPrime.mem_of_pow_mem 2 (by rw [show (2 : 𝓞 K) ^ 2 = 4 by norm_num]; exact h)
-  have h6 : (2 : 𝓞 K) * 3 ∈ P.1 := P.1.mul_mem_right 3 h2
-  norm_num at h6
-  exact P.2.2 h6
-
-open Classical in
-/-- At `md = 4`, `𝒫_fix` is the set of all primes prime to `6` dividing `tg`. -/
-theorem tgPrimes_four (t g : 𝓞 K) : tgPrimes 4 t g = primeSet (span {t * g}) := by
-  ext P
-  unfold tgPrimes
-  rw [Finset.mem_filter]
-  exact ⟨fun h => h.1, fun h => ⟨h, four_not_mem P⟩⟩
-
 open Classical in
 /-- The admissible active sets: `{P ∈ 𝒫_fix : j_P ≠ 0} ⊆ 𝒜 ⊆ 𝒫_fix`, where `𝒫_fix = tgPrimes md t g` is the
 set of primes prime to `6` dividing `tg` and not dividing `md`. -/
@@ -839,8 +822,6 @@ end
 #print axioms Eis.Bloc_four
 #print axioms Eis.Bloc_one
 #print axioms Eis.tgPrimes_subset
-#print axioms Eis.four_not_mem
-#print axioms Eis.tgPrimes_four
 #print axioms Eis.dualPt_mem_iff
 #print axioms Eis.prod_Bloc_one
 #print axioms Eis.sym6_dualPt

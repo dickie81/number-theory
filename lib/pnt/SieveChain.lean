@@ -36,7 +36,6 @@ The proof:
 The case `SieveRoute.route2333`, with `SieveRoute.typeII2333` for `hII`, gives the statements with the parameters
 `L = 2333/1000` fixed.
 
-
 The file imports `SieveProp6.lean`.
 -/
 import SieveProp6
@@ -79,8 +78,6 @@ noncomputable def GCmp.toCmp (C : GCmp K) (h : ∃ i, C.e i ≠ 0) : Cmp K where
 
 theorem GCmp.toCmp_holds (C : GCmp K) (h : ∃ i, C.e i ≠ 0) (m : ℕ) (x : Fin K → ℕ) :
     (C.toCmp h).holds m x ↔ C.holds m x := Iff.rfl
-
-theorem GCmp.toCmp_c (C : GCmp K) (h : ∃ i, C.e i ≠ 0) : (C.toCmp h).c = C.c := rfl
 
 /-- With every coefficient zero, a comparison does not depend on `x`. -/
 theorem GCmp.holds_of_zero (C : GCmp K) (h : ∀ i, C.e i = 0) (m : ℕ) (x y : Fin K → ℕ) :
@@ -206,18 +203,6 @@ theorem ggeVar_holds (i j : Fin K) (m : ℕ) {x : Fin K → ℕ} (hx : ∀ t, 1 
   simp only [Bool.false_eq_true, ite_false, zero_add, sub_mul, Finset.sum_sub_distrib, gsum_single, sub_nonneg]
   rw [Real.log_le_log_iff (hpos _) (hpos _), Nat.cast_le]
 
-/-- `g(m) ≤ log x_i`. -/
-noncomputable def ggeM (i : Fin K) (g : ℕ → ℝ) : GCmp K where
-  c := fun m => -g m
-  e := fun t => if t = i then 1 else 0
-  strict := false
-  he := fun t => by split_ifs <;> simp
-
-theorem ggeM_holds (i : Fin K) (g : ℕ → ℝ) (m : ℕ) (x : Fin K → ℕ) :
-    (ggeM i g).holds m x ↔ g m ≤ Real.log (x i) := by
-  unfold GCmp.holds GCmp.form ggeM
-  simp only [Bool.false_eq_true, ite_false, gsum_single, neg_add_eq_sub, sub_nonneg]
-
 /-! ### Multiples of a number in a range -/
 
 /-- A `p`-rough `W ∈ (W₀, W₁]` with `W₁ ≤ N₁`: its multiples in `(N₁, N₂]` that are `p`-rough are `Wk` with
@@ -281,11 +266,6 @@ theorem merge_split (rt : Fin k → ℕ) :
   rcases y with u | v
   · exact merge_inl _ _ u
   · exact merge_inr _ _ v
-
-theorem eS_inl (u : Fin S.card) : eS S (Sum.inl u) = S.orderEmbOfFin rfl u := rfl
-
-theorem eS_inl_mem (u : Fin S.card) : eS S (Sum.inl u) ∈ S := by
-  rw [eS_inl]; exact S.orderEmbOfFin_mem rfl u
 
 theorem eS_inl_strictMono : StrictMono (fun u : Fin S.card => eS S (Sum.inl u)) :=
   (S.orderEmbOfFin rfl).strictMono

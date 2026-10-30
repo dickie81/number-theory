@@ -340,9 +340,6 @@ theorem weilQ_form (a : ℝ) : ProbeForm a (weilQ a) where
 /-- The ground energy `λ₁(2a) = inf {Q(g) : g a probe, ‖g‖ = 1}`. -/
 abbrev lam (a : ℝ) : ℝ := (weilQ_form a).inf
 
-theorem lam_bdd (a : ℝ) : BddBelow {q | ∃ h, Probe a h ∧ normSq h = 1 ∧ weilQ a h = q} :=
-  (weilQ_form a).bdd
-
 theorem lam_le {a : ℝ} {h : ℝ → ℝ} (hp : Probe a h) (hn : normSq h = 1) : lam a ≤ weilQ a h :=
   (weilQ_form a).inf_le hp hn
 
@@ -375,16 +372,6 @@ theorem groundState_unique {a : ℝ} (ha : 0 < a)
     (fun hf hg' => poleR_sub hf.1.memL2 hg'.1.memL2 a)
     (fun v hv hvn => hw v ((isGroundState_iff ha).2 ⟨hv, hvn⟩)) hgS.1 hgS.2 hhS.1 hhS.2
 
-/-- **If two ground states are not equal up to sign, some ground state is orthogonal to
-`w = 1_{[−a,a]}e^{−u/2}`**, i.e. has `ĝ(i/2) = 0`. -/
-theorem exists_perp_of_not_unique {a : ℝ} (ha : 0 < a) {g h : ℝ → ℝ}
-    (hg : IsGroundState a g) (hh : IsGroundState a h)
-    (hne : ¬ (g =ᵐ[volume] h ∨ g =ᵐ[volume] fun t => -h t)) :
-    ∃ v, IsGroundState a v ∧ poleR v a = 0 := by
-  by_contra hw
-  push Not at hw
-  exact hne (groundState_unique ha hw hg hh)
-
 /-- `λ_⊥ = inf {Q(g) : g a probe, ‖g‖ = 1, ĝ(i/2) = 0}`, the minimum of `Q` (equivalently of the
 pole-free `Q₀`) orthogonally to `w`. -/
 def lamPerp (a : ℝ) : ℝ :=
@@ -411,7 +398,6 @@ end WeilForm
 #print axioms WeilForm.weilQ_smul
 #print axioms WeilForm.lam_mul_le
 #print axioms WeilForm.isGroundState_iff
-#print axioms WeilForm.exists_perp_of_not_unique
 #print axioms WeilForm.groundState_unique
 #print axioms WeilForm.groundState_unique_of_gap
 #print axioms WeilForm.ProbeForm.unique_of_functional

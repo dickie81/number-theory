@@ -1,9 +1,11 @@
 /-
 # The certificate's definitions, without Mathlib
 
-The definitions of the loss certificate of `SieveCert.lean`, of its bound `ω*` for Buchstab's `ω` on a box (`omKw`, with
-its table `lnT` and `omF`), and of its classes `GridOK` and `GridOKC`. They are arithmetic on natural numbers, lists and
-booleans, and the file imports only `Mathlib.Data.Nat.Notation` (the notation `ℕ`), whose closure is `Mathlib.Init`'s:
+The definitions that the certificate builds on: its grid of cells (`Grid`, `cell`, `cellC`), the bound `ω*` for
+Buchstab's `ω` on a box (`omKw`, with its table `lnT` and `omF`), the test of evaluability (`surelyEval`), the bound
+`bound2`, the cells' tests (`cand`, `inKK`, `ne3`, `counted4`, `inKK5`, `ne5`, `counted6`) and the classes `GridOK` and
+`GridOKC`; the certificate, the total `totalD`, is in `SieveDeepDefs.lean`. They are arithmetic on natural numbers, lists
+and booleans, and the file imports only `Mathlib.Data.Nat.Notation` (the notation `ℕ`), whose closure is `Mathlib.Init`'s:
 1,339 modules, loaded in about 0.9 GiB, not the whole of Mathlib. So a file that imports no more than this one, such as a
 certificate's part files (`SieveCert22000EP1.lean` … `SieveCert22000EP114.lean`), runs its kernel checks without the
 environment of `import Mathlib`, which loads about 6.3 GiB into every process. The lemmas about these definitions, in the
@@ -184,12 +186,6 @@ the trapezoid bound of the first cell's `Σ 1/p`, times `DEN·H/(b(b + H))`, the
 rounded up. -/
 def bound2 (a b : ℕ) : ℕ := cdiv (H * H * (2 * a + H) * DEN * omK a b 2) (2 * a * (a + H) * (b * (b + H)))
 
-/-- The bound of a cell of depth 4 with lower corner `(a, b, c, d)`, in units of `1/K`: as `bound2`, with a trapezoid
-factor for each of the first three cells. -/
-def bound4 (a b c d : ℕ) : ℕ :=
-  cdiv (H ^ 4 * ((2 * a + H) * (2 * b + H) * (2 * c + H)) * DEN * omK (a + b + c) d 4)
-    (8 * (a * (a + H)) * (b * (b + H)) * (c * (c + H)) * (d * (d + H)))
-
 /-- The range of cell `k`. -/
 def cell (k : ℕ) : ℕ × ℕ := (e k, e k + H)
 
@@ -209,13 +205,6 @@ def eC (b : ℕ) : ℕ := @e Gc b
 /-- The range of the coarse cell `b`. -/
 def cellC (b : ℕ) : ℕ × ℕ := (eC b, eC b + HC)
 
-/-- The bound of a cell of depth 6 with lower corner `(a, b, c, d)` in the fine grid and `(f, g)` in the coarse grid,
-in units of `1/K`: as `bound4`, with trapezoid factors for the first five cells (the fifth of width `HC`). -/
-def bound6 (a b c d f g : ℕ) : ℕ :=
-  cdiv (H ^ 4 * HC ^ 2 * ((2 * a + H) * (2 * b + H) * (2 * c + H) * (2 * d + H) * (2 * f + HC)) * DEN *
-      omKw (a + b + c + d + f) g (4 * H + 2 * HC) HC)
-    (32 * (a * (a + H)) * (b * (b + H)) * (c * (c + H)) * (d * (d + H)) * (f * (f + HC)) * (g * (g + HC)))
-
 /-- The cell `(i, j)` may meet the region of depth 2 and may be non-evaluable. -/
 def cand (i j : ℕ) : Bool :=
   decide (e j < e i + H) && decide (2 * e i < DEN) && decide (e i + 2 * e j ≤ DEN) &&
@@ -226,11 +215,6 @@ def inKK (i j k : ℕ) : Bool := decide (e k < e j + H) && decide (e i + e j + 2
 
 /-- The cell `(i, j, k)` may be non-evaluable. -/
 def ne3 (i j k : ℕ) : Bool := !surelyEval [cell i, cell j, cell k]
-
-/-- The sharp rule: the sums `α₁ + α₂`, and `α₁ + α₂ + α₃` over the counted rows, stay below `1 − u₁`. -/
-def allowed (i j : ℕ) : Bool :=
-  decide (e i + H + (e j + H) < lim) &&
-    (List.range n).all (fun k => !(inKK i j k && ne3 i j k) || decide (e i + H + (e j + H) + (e k + H) < lim))
 
 /-- The cell `(i, j, k, l)` may be non-evaluable, and for `l ≤ k`, which `row` imposes, it may meet the region of
 depth 4. -/
@@ -244,53 +228,10 @@ def inKK5 (i j k l b : ℕ) : Bool :=
 /-- The cell `(i, j, k, l, b)` may be non-evaluable. -/
 def ne5 (i j k l b : ℕ) : Bool := !surelyEval [cell i, cell j, cell k, cell l, cellC b]
 
-/-- The cell `(i, j, k, l, b, c)` may be non-evaluable, and for `c ≤ b`, which `row6` imposes, it may meet the region of
-depth 6. -/
+/-- The cell `(i, j, k, l, b, c)` may be non-evaluable, and for `c ≤ b` it may meet the region of depth 6. -/
 def counted6 (i j k l b c : ℕ) : Bool :=
   decide (e i + e j + e k + e l + eC b + 2 * eC c ≤ DEN) &&
     !surelyEval [cell i, cell j, cell k, cell l, cellC b, cellC c]
-
-/-- The row `(i, j, k, l, b)`: the counted cells of `α₆`, which have `c ≤ b`. -/
-def row6 (i j k l b : ℕ) : ℕ :=
-  sumTo (b + 1) (fun c => if counted6 i j k l b c then bound6 (e i) (e j) (e k) (e l) (eC b) (eC c) else 0)
-
-/-- The cost of decomposing the counted cell `(i, j, k, l)` one level further: its counted cells of depth 6. -/
-def refcost5 (i j k l : ℕ) : ℕ :=
-  sumTo nC (fun b => if inKK5 i j k l b && ne5 i j k l b then row6 i j k l b else 0)
-
-/-- The sharp rule at depth 4: the sum `α₁ + α₂ + α₃ + α₄`, and `α₁ + ⋯ + α₅` over the counted cells of depth 5, stay
-below `1 − u₁`. -/
-def allowed4 (i j k l : ℕ) : Bool :=
-  decide (e i + H + (e j + H) + (e k + H) + (e l + H) < lim) &&
-    (List.range nC).all (fun b => !(inKK5 i j k l b && ne5 i j k l b) ||
-      decide (e i + H + (e j + H) + (e k + H) + (e l + H) + (eC b + HC) < lim))
-
-/-- The counted cell `(i, j, k, l)` of depth 4 is decomposed one level further. -/
-def dec4 (i j k l : ℕ) : Bool :=
-  allowed4 i j k l && decide (refcost5 i j k l ≤ bound4 (e i) (e j) (e k) (e l))
-
-/-- The cost of the cell `(i, j, k, l)` of depth 4. -/
-def cost4 (i j k l : ℕ) : ℕ :=
-  if counted4 i j k l then
-    (if dec4 i j k l then refcost5 i j k l else bound4 (e i) (e j) (e k) (e l)) else 0
-
-/-- The row `(i, j, k)`: the costs of the cells of `α₄`, which have `l ≤ k`. -/
-def row (i j k : ℕ) : ℕ := sumTo (k + 1) (fun l => cost4 i j k l)
-
-/-- The cost of decomposing the cell `(i, j)`: its cells of depth 4. -/
-def refcost (i j : ℕ) : ℕ := sumTo n (fun k => if inKK i j k && ne3 i j k then row i j k else 0)
-
-/-- The cell `(i, j)` is decomposed. -/
-def dec (i j : ℕ) : Bool := allowed i j && decide (refcost i j ≤ bound2 (e i) (e j))
-
-/-- The cost of the cell `(i, j)`. -/
-def cost (i j : ℕ) : ℕ := if cand i j then (if dec i j then refcost i j else bound2 (e i) (e j)) else 0
-
-/-- The certificate's total, in units of `1/K`. -/
-def total : ℕ := sumTo n (fun i => sumTo n (fun j => cost i j))
-
-/-- The sum of the rows `a ≤ i < b` of the total. -/
-def rows (a b : ℕ) : ℕ := sumTo (b - a) (fun i => sumTo n (fun j => cost (a + i) j))
 
 /-! ### Facts about the grid -/
 

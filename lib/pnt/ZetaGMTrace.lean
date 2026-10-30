@@ -62,39 +62,8 @@ lemma sum_range_one_mul_star (χ ψ : DirichletCharacter ℂ 1) :
 
 /-! ### `ĥ_τ(0)` -/
 
-lemma wsq_nonneg (u : ℝ) : 0 ≤ wsq u := by unfold wsq; positivity
-
-/-- `|W_τ(u)| ≤ w(u)²`. -/
-lemma norm_Wt_le (τ u : ℝ) : ‖Wt τ u‖ ≤ wsq u := by
-  unfold Wt Wc
-  rcases le_or_gt u 0 with hu | hu
-  · rw [wsq_eq_zero (Or.inl (by linarith))]; simp
-  · rw [norm_smul, Complex.norm_cpow_eq_rpow_re_of_pos hu]
-    simp [abs_of_nonneg (wsq_nonneg u)]
-
-lemma integrable_wsq : Integrable wsq :=
-  contDiff_wsq.continuous.integrable_of_hasCompactSupport
-    (HasCompactSupport.intro (K := Icc 1 2) isCompact_Icc fun u hu => by
-      rw [mem_Icc, not_and_or, not_le, not_le] at hu
-      exact wsq_eq_zero (hu.elim (fun h => Or.inl h.le) fun h => Or.inr h.le))
-
-/-- `∫w² = ∫_1^2 w²`. -/
-lemma integral_wsq : ∫ u, wsq u = ∫ u in (1 : ℝ)..2, wCGL u ^ 2 := by
-  rw [intervalIntegral.integral_of_le (by norm_num : (1 : ℝ) ≤ 2)]
-  refine (setIntegral_eq_integral_of_forall_compl_eq_zero fun u hu => ?_).symm
-  rw [mem_Ioc, not_and_or, not_lt, not_le] at hu
-  exact wsq_eq_zero (hu.elim Or.inl fun h => Or.inr h.le)
-
 lemma fourier_Wt_zero_eq_integral (τ : ℝ) : 𝓕 (Wt τ) 0 = ∫ u : ℝ, Wt τ u := by
   rw [Real.fourier_real_eq]; simp
-
-/-- `|ĥ_τ(0)| ≤ ∫_1^2 w² ≤ 1`. -/
-lemma norm_hhat_zero_le (τ : ℝ) : ‖𝓕 (Wt τ) 0‖ ≤ 1 := by
-  rw [fourier_Wt_zero_eq_integral]
-  calc ‖∫ u : ℝ, Wt τ u‖ ≤ ∫ u, wsq u :=
-        norm_integral_le_of_norm_le integrable_wsq (Eventually.of_forall (norm_Wt_le τ))
-    _ = ∫ u in (1 : ℝ)..2, wCGL u ^ 2 := integral_wsq
-    _ ≤ 1 := integral_w_sq_le_one
 
 /-- `ĥ_τ(0) = H(1 + iτ)`: both are `∫ u^{iτ}w(u)² du`, the weight vanishing for `u ≤ 1`. -/
 lemma fourier_Wt_zero_eq (τ : ℝ) : 𝓕 (Wt τ) 0 = H (1 + τ * I) := by
@@ -229,14 +198,6 @@ lemma norm_Fp_le {ι : Type*} [DecidableEq ι] {N : ℝ} (hN : 0 < N) (χ : ι �
         · rw [Complex.norm_real, Real.norm_of_nonneg hmu0]; exact hmu
         · rw [norm_zero]; exact hN.le
     _ = 2 * N + 1 := by ring
-
-/-- `|Z(i, k)| ≤ N`. -/
-lemma norm_Zm_le {ι : Type*} [DecidableEq ι] {N : ℝ} (hN : 0 ≤ N) (t : ι → ℝ) (i k : ι) : ‖Zm N t i k‖ ≤ N := by
-  unfold Zm
-  split_ifs
-  · rw [norm_zero]; exact hN
-  · rw [norm_mul, Complex.norm_real, Real.norm_of_nonneg hN]
-    exact mul_le_of_le_one_right hN (norm_hhat_zero_le _)
 
 /-- **`Z` for separated points**: with `B` as in `exists_hhat_zero_bound`, if `i ≠ k` gives `|t_i − t_k| ≥ X ≥ 0`,
 then `|Z(i, k)| ≤ NB(1 + X)^{−(K+3)}`. -/
@@ -483,7 +444,6 @@ theorem prop72_one {ι : Type*} [DecidableEq ι] {N : ℝ} (hN : 0 < N) (R : Fin
 end ZetaGMTrace
 
 #print axioms ZetaGMTrace.sum_range_one_mul_star
-#print axioms ZetaGMTrace.norm_hhat_zero_le
 #print axioms ZetaGMTrace.fourier_Wt_zero_eq
 #print axioms ZetaGMTrace.exists_hhat_zero_bound
 #print axioms ZetaGMTrace.Em_eq_gen

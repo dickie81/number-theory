@@ -44,36 +44,6 @@ theorem zeroFreeXi_of_halfplane {α : ℝ} (hα : 0 ≤ α) : ZeroFreeXi α := b
   have : (1 / 12 : ℝ) / Real.log T ^ α ≤ 1 / 12 := div_le_self (by norm_num) hpow
   linarith
 
-/-- With it, `short_primes_of_density` at the density `DensityXi (17/6 + ε) 12` of `InghamDensity` needs no KV region
-(the same statement as `InghamDensity.short_primes_11_17`, whose proof goes through `ShortKV.zeroFreeXi_KV`). -/
-theorem short_primes_11_17_noKV {θ : ℝ} (hθ : 11 / 17 < θ) :
-    ∀ᶠ y : ℝ in Filter.atTop, ∃ p : ℕ, p.Prime ∧ y < p ∧ (p : ℝ) ≤ y + y ^ θ := by
-  set θ' : ℝ := min θ (3 / 4) with hθ'
-  have h1 : 11 / 17 < θ' := lt_min hθ (by norm_num)
-  have h2 : θ' ≤ 3 / 4 := min_le_right _ _
-  have hθ1 : 0 < 1 - θ' := by linarith
-  set X : ℝ := 1 / (1 - θ') with hX
-  have hX17 : 17 / 6 < X := by
-    rw [hX, lt_div_iff₀ hθ1]; nlinarith
-  set ε : ℝ := (X - 17 / 6) / 2 with hε
-  have hε0 : 0 < ε := by rw [hε]; linarith
-  have hAe : 17 / 6 + ε < X := by rw [hε]; linarith
-  have hA : (0 : ℝ) < 17 / 6 + ε := by linarith
-  have hθA : 1 - 1 / (17 / 6 + ε) < θ' := by
-    have : 1 - θ' < 1 / (17 / 6 + ε) := by
-      rw [lt_div_iff₀ hA]
-      have : (1 - θ') * X = 1 := by rw [hX]; field_simp
-      nlinarith
-    linarith
-  have key := ShortWeil.short_primes_of_density (A := 17 / 6 + ε) (B := 12) (α := 0) hA (by norm_num)
-    (InghamDensity.densityXi_17_6 hε0) (zeroFreeXi_of_halfplane le_rfl) (θ := θ') (by linarith) hθA
-  filter_upwards [key, Filter.eventually_ge_atTop (1 : ℝ)] with y hy hy1
-  obtain ⟨p, hp, hyp, hpy⟩ := hy
-  exact ⟨p, hp, hyp, hpy.trans (by
-    have : y ^ θ' ≤ y ^ θ := Real.rpow_le_rpow_of_exponent_le hy1 (min_le_left _ _)
-    linarith)⟩
-
 end ShortPrimesHalfPlane
 
 #print axioms ShortPrimesHalfPlane.zeroFreeXi_of_halfplane
-#print axioms ShortPrimesHalfPlane.short_primes_11_17_noKV

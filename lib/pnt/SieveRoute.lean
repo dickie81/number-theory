@@ -80,22 +80,3 @@ macro "route_num" : tactic =>
 
 end SieveRoute
 
-namespace SieveRoute
-
-/-- **The first goal's parameters**: `L = 2333/1000` on the window `[401/1000, 485/1000]`. -/
-@[instance_reducible] def route2333 : Route := ⟨2333 / 1000, 401 / 1000, 485 / 1000⟩
-
-theorem routeOK2333 : @RouteOK route2333 :=
-  @RouteOK.mk route2333 (show (2 : ℝ) < 2333 / 1000 by norm_num) (show (0 : ℝ) < 401 / 1000 by norm_num)
-    (show (401 / 1000 : ℝ) < 485 / 1000 by norm_num) (show (485 / 1000 : ℝ) < 1 by norm_num)
-    (show (2333 / 1000 : ℝ) ≤ 5 / 2 by norm_num)
-
-/-- **`SieveTypeII.typeII_step` as `TypeIIAt`** at the first goal's parameters. -/
-theorem typeII2333 : @TypeIIAt route2333 := by
-  intro f0 hf0 hsupp K₀ e₁ η he₁ hη hη1
-  exact SieveTypeII.typeII_step hf0 hsupp K₀ he₁ hη hη1
-
-end SieveRoute
-
-#print axioms SieveRoute.routeOK2333
-#print axioms SieveRoute.typeII2333

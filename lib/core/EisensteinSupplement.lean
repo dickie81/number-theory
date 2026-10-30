@@ -458,12 +458,6 @@ theorem sym6_sq_δ3_congr {n n' : 𝓞 K} (hn : Primary n) (hn' : Primary n')
     (h9 : (9 : 𝓞 K) ∣ n - n') : sym6 δ3 (span {n}) ^ 2 = sym6 δ3 (span {n'}) ^ 2 := by
   rw [sym6_sq_eq_cub h6, sym6_sq_eq_cub h6', cub_δ3_congr hn hn' h9]
 
-/-- **Periodicity of `χ_n(ω)²`** modulo `9`. -/
-theorem sym6_sq_omega_congr {n n' : 𝓞 K} (hn : Primary n) (hn' : Primary n')
-    (h6 : (absNorm (span {n})).Coprime 6) (h6' : (absNorm (span {n'})).Coprime 6)
-    (h9 : (9 : 𝓞 K) ∣ n - n') : sym6 ω (span {n}) ^ 2 = sym6 ω (span {n'}) ^ 2 := by
-  rw [sym6_sq_eq_cub h6, sym6_sq_eq_cub h6', cub_omega_congr hn hn' h9]
-
 end Eis
 
 end
@@ -510,4 +504,3 @@ end
 #print axioms Eis.chiP_sq
 #print axioms Eis.sym6_sq_eq_cub
 #print axioms Eis.sym6_sq_δ3_congr
-#print axioms Eis.sym6_sq_omega_congr

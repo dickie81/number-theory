@@ -45,13 +45,6 @@ theorem zeta_band_eleven_twelfths {s : ℂ} (hs : IsNontrivialZero s) : |2 * s.r
   norm_num at this ⊢
   linarith
 
-/-- Every zero of `L(s, χ₋₃)` in the critical strip has `|2 Re ρ − 1| ≤ 5/6`. -/
-theorem chi3_band_eleven_twelfths {s : ℂ} (hs : DirichletCharacter.LFunction chi3 s = 0)
-    (h0 : 0 < s.re) (h1 : s.re < 1) : |2 * s.re - 1| ≤ 5 / 6 := by
-  have := chi3_band smoothBound_eleven_twelfths hs h0 h1
-  norm_num at this ⊢
-  linarith
-
 /-- Every zero `τ` of `Ξ` has `|Im τ| ≤ 5/12`. -/
 theorem abs_im_tau_le_five_twelfths (i : ZeroIdx (sqF Xi)) : |(tau i).im| ≤ 5 / 12 := by
   have := abs_im_tau_le smoothBound_eleven_twelfths i
@@ -108,7 +101,6 @@ end BohrJoins
 
 #print axioms HalfPlaneJoins.smoothBound_eleven_twelfths
 #print axioms HalfPlaneJoins.zeta_band_eleven_twelfths
-#print axioms HalfPlaneJoins.chi3_band_eleven_twelfths
 #print axioms HalfPlaneJoins.abs_im_tau_le_five_twelfths
 #print axioms HalfPlaneJoins.weil_rate_eleven_twelfths
 #print axioms HalfPlaneJoins.chi3_rate_eleven_twelfths

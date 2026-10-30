@@ -112,18 +112,6 @@ theorem kubTermT_periodic {t m : 𝓞 K} (hm : CuspClass t m) {c : 𝓞 K} (hc :
     rw [← ebr_add, neg_add_cancel, ebr_zero]
   linear_combination (wtCuspT t c d * ebr (σO m / 9 * (σO d / σO c))) * h1
 
-/-- **The summand of `S⁰_m(c)` is periodic modulo `3c`** for `m = δ₃x`. -/
-theorem kubTerm0_periodic (x : 𝓞 K) {c : 𝓞 K} (hc : c ≠ 0) (d y : 𝓞 K) :
-    kubTerm0 (δ3 * x) c (d + 3 * c * y) = kubTerm0 (δ3 * x) c d := by
-  unfold kubTerm0
-  rw [wtCusp0_add]
-  have hc' : σO c ≠ 0 := σO_ne_zero hc
-  have e : σO (δ3 * x) / 9 * (σO (d + 3 * c * y) / σO c) =
-      σO (δ3 * x) / 9 * (σO d / σO c) + σO (δ3 * x) * σO (3 * y) / 9 := by
-    simp only [map_add, map_mul]
-    field_simp
-  rw [e, ebr_add, ebr_period, mul_one]
-
 /-- **`S^t_m(c)` vanishes unless `c ≡ t (mod 3)`**: a nonzero summand needs `(c − dt, d)` to be a bottom
 row, so `3 ∣ c − dt` and `d ≡ 1 (mod 3)`. -/
 theorem cuspSmT_eq_zero {t m c : 𝓞 K} (h : ¬ (3 : 𝓞 K) ∣ c - t) : cuspSmT t m c = 0 := by
@@ -475,7 +463,6 @@ end
 #print axioms Eis.cuspSmT_eq
 #print axioms Eis.cuspSm0_eq
 #print axioms Eis.kubTermT_periodic
-#print axioms Eis.kubTerm0_periodic
 #print axioms Eis.cuspSmT_eq_zero
 #print axioms Eis.cuspSm0_eq_zero
 #print axioms Eis.δ3_eq_lam_neg
