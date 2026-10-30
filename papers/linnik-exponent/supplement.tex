@@ -690,7 +690,13 @@ arithmetic on Lean's core natural numbers, lists and booleans; their files impor
 \subsection*{The artefact}
 
 The library, the paper and this supplement are in the repository \cite{repo}; this version of the paper and of the
-supplement describes the library at the commit that contains it. The toolchain is Lean \texttt{v4.35.0-rc3}
+supplement describes the library at commit \texttt{8ba053b}, and every Lean name in them is that commit's. The library
+has changed since: its Linnik theorem is now \lean{Linnik22000E.linnik\_22000e}, with exponent $11/5$, by a bilinear
+Type~I estimate and a decomposition to depth $8$, which neither the paper nor this supplement describes, and it implies
+Theorem~\ref{M-thm:main}. The
+theorem \lean{Linnik22240R.linnik\_22240r}, its certificate and grid, and the window and Type~II estimate at $278/125$
+have been removed from the library, and the file \file{SieveTypeIIU22240D.lean} is now \file{SieveCurve7D.lean}. The
+toolchain at commit \texttt{8ba053b} is Lean \texttt{v4.35.0-rc3}
 \cite{lean4}, with Mathlib \cite{mathlib} at commit \texttt{0f64d30a},
 PrimeNumberTheoremAnd at \texttt{650d312} and \texttt{formal-math} at \texttt{fbdc36b}. The repository's README gives the
 commands: \texttt{lake exe cache get} for Mathlib's prebuilt files (which the build then trusts; building Mathlib

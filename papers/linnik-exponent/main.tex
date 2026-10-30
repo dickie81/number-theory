@@ -1393,7 +1393,9 @@ margins below $10^{-12}$ in its exponents, which only $\log q \gtrsim 10^{12}$ t
 
 Appendix~\ref{app:claims} names the Lean theorems that prove each numbered result of Sections~\ref{sec:intro}
 to~\ref{sec:proof}, and the results from the literature that the proof uses; they are in \texttt{lib/} of the
-repository \cite{repo} or in Mathlib. \file{formalisations/} documents the results from the literature and the further
+repository \cite{repo} or in Mathlib. The Lean names, files and checks in this paper are those of the library at
+commit \texttt{8ba053b} \cite{repo}; the library has since moved to the exponent $11/5$ by another route (\S S5, the
+artefact). \file{formalisations/} documents the results from the literature and the further
 classical results behind them. The Lean statement of Theorem~\ref{thm:main} is
 {\small
 \begin{verbatim}
@@ -1537,9 +1539,9 @@ kernel and the repository's continuous integration, and not by the assistants.
 
 \section{The claims table}\label{app:claims}
 
-The table names the Lean theorem behind each result of the paper, and behind the results from the literature that its
-argument uses directly, with the main ones behind the inputs and the density estimates. Of the $30$ steps of
-Input~\ref{inp:density}, and of Ingham's and Huxley's steps, \texttt{lib/check/Check.lean} prints the first and the
+The table names the Lean theorem behind each result of the paper, at commit \texttt{8ba053b} of the repository
+(Section~\ref{sec:lean}), and behind the results from the literature that its argument uses directly, with the main
+ones behind the inputs and the density estimates. Of the $30$ steps of Input~\ref{inp:density}, and of Ingham's and Huxley's steps, \texttt{lib/check/Check.lean} prints the first and the
 last; \lean{SieveTypeIIU22240D.counts\_7d} uses every step of the curve, so all of them are in the dependency cone of
 \lean{Linnik22240R.linnik\_22240r}, whose axioms are checked. \texttt{lib/check/CheckAll.lean} prints the axioms of
 further declarations of the library.
