@@ -69,8 +69,10 @@ adding, removing or renaming a module.
   `check_vendor.py` and `check_certificate.py`.
 - **The papers:** every `papers/<name>/main.tex`, and then every supplement `papers/<name>/supplement.tex`, is compiled
   with LaTeX, and the PDFs are kept as the artifact `papers`, under the site's names (`<name>.pdf`,
-  `<name>-supplement.pdf`). On a pull request from this repository a comment links that artifact, so the PDFs can be
-  downloaded from the pull request's page; the job updates the same comment on every push. Then the site is built
+  `<name>-supplement.pdf`). On a pull request from this repository the job `pdf-preview` also puts them on a branch
+  of their own, `pdf-preview/pr-<number>` (one commit, replaced on every push), and a comment links each PDF there,
+  where GitHub's file view shows it in the browser, and the artifact's zip; the job updates the same comment on every
+  push, and `pdf-preview-cleanup.yml` deletes the branch when the pull request closes. Then the site is built
   from them, as `pages.yml` builds it, and kept as the artifact `site`, so a pull request's page on the zeros can be
   looked at before it is published.
 - **The Lean build**, with a cache. On a pull request it runs only if the pull request changes `lib/`, the Lake
