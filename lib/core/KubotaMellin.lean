@@ -23,10 +23,10 @@ file proves these for the derivative series.
   terms `−(σ(c)v)^{−2}G_c(1/(N(c)v))`, all under the support and size condition, then its Mellin transform
   converges at every `s` and is entire. For `Re s < −3/2` the transform at `2s` equals the same combination
   of `−σ(c)^{−2}N(c)^{2−2s}∫_0^∞ G_c(u)u^{1−2s} du`.
-* **For the twisted `θ̄`** (**`twisted_theta_mellin`**, with `thetaSupp_twisted`, `thetaSupp_cuspCoef`,
-  `norm_phiInf_le` and `norm_phiCusp_le`): `𝒥(s)` converges for every `s` and is entire. For `Re s ≥ 5/3` it
-  is the Dirichlet series of the twisted coefficients. For `Re s < −3/2` it is the sum over the groups of
-  `−σ(c)^{−2}N(c)^{2−2s}` times their Dirichlet series at `1 − s`.
+* **For the twisted `θ̄`** (`thetaSupp_twisted`, `thetaSupp_cuspCoef`, `norm_phiInf_le` and `norm_phiCusp_le`):
+  the twisted coefficients `F(m/λ)·conj τ(−m)` for a bounded `F` and the coefficients of a group's series at its
+  cusp satisfy the support and size condition, and the factors `2πi·m̄/9` at `∞` and `2πi·m/9` at the cusps
+  have norm at most `(2π/9)|m|`.
 -/
 
 open Real Set Filter MeasureTheory Complex NumberField Ideal Asymptotics

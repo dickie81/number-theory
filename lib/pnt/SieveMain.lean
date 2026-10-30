@@ -1,5 +1,5 @@
 /-
-# Linnik's theorem by the sieve route
+# The primes of `(x, 2x]` prime to `q`, for Linnik's theorem by the sieve route
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -7,26 +7,14 @@ Plain statements. The route and the grid are as in `SieveQ` (`RouteOK`, `GridOK`
 
 * `primes_dyadic_ge`: for `ε > 0`, the primes of `(⌊x⌋, ⌊2x⌋]` number at least `(1 − ε)x/log x` for large `x`.
 * `TB_ev`: for `ε > 0`, `S(B, z_top) ≥ φ(q)⁻¹((1 − ε)x/log x − q)` for large `q`, at `x = q^L`.
-* `linnik_large`: given the route's Type II estimate (`hII`) and the certificate's total at most `0.88K` (`htot`), there
-  is `q₀` such that for `q ≥ q₀` and `a` a unit mod `q` there is a prime `p ≡ a (mod q)` with `q^L < p ≤ 2q^L`.
-* `linnik_route`: given `hII` and `htot`, there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a
-  prime `p ≡ a (mod q)` with `p ≤ K·q^L`.
-* `linnik_large_of`, `linnik_route_of`: the same with the certificate's loss as a parameter, `total/K ≤ c`
-  in the reals for some `c < 1`; `linnik_route_lt`: `linnik_route_of` at `c = total/K` for `total < K`.
 
 The proof:
 
 * `primes_dyadic_ge`: `SieveRough.theta_near` at `x` and `2x`. `TB_ev`: `z_top = ⌊√N₂⌋ + 1`, so the `z_top`-rough
   `n ∈ (N₁, N₂]` are the primes there, and at most `ω(q) ≤ q` of them divide `q`.
-* `linnik_large_of` (`linnik_large` is its case `c = 0.88`): `SieveBuch.Par.decomp` with
-  `SieveQ.leaves_ev`, `SieveDrop.drop_ev_of` and `TB_ev`, with `ε = (1 − c)/10` and `η = ε/(Cdec·L)`. For large `q` the
-  leaves' error `Cdec·Err` is at most `2εx/(φ(q) log x)` and `q ≤ εx/log x`, so
-  `S(A, z_top) ≥ (1 − c)x/(2φ(q) log x) > 0`. A `z_top`-rough `n ∈ (N₁, N₂]` is prime.
-* `linnik_route`: for `q < q₀`, Mathlib's `Nat.forall_exists_prime_gt_and_modEq` (Dirichlet's theorem) gives a prime for
-  each of the finitely many `q` and residues, and `K` is the larger of `2` and their maximum.
 
-The route's numbers and the certificate's grids are parameters, and the Type II estimate and the
-certificate's total are hypotheses; the final theorem is their case in the certificate's assembly file.
+The route's numbers and the certificate's grids are parameters. `SieveMain8.lean` proves Linnik's theorem by the
+sieve route with `TB_ev`.
 
 The file imports `SieveDrop.lean`.
 -/

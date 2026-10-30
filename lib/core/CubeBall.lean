@@ -3,30 +3,25 @@ import BohrSphere
 
 /-! # The infinite cube and the infinite ball are different objects
 
-This file proves that the infinite unit ball and the infinite unit cube are not the same object as metric spaces,
-nor up to any linear map of bounded distortion, and that the Euclidean ball inside the cube holds a vanishing share
-of its volume. It proves facts about one sense in which they are the same, the topological one, and it records what
-the Bohr lift `z(s) = (p^{−s})_p` does in each. The cube is the unit ball of the sup norm: `[−1, 1]ⁿ` in `ℝⁿ`, and
-the closed unit ball of `ℓ^∞(ℕ)` in the limit.
+This file proves that in each dimension `n ≥ 2` the unit ball and the unit cube are not the same object as metric
+spaces, nor up to any linear map of distortion less than `√n`, and that the Euclidean ball inside the cube holds a
+vanishing share of its volume. For the infinite ball and cube it proves facts about one sense in which they are the
+same, the topological one, and it records what the Bohr lift `z(s) = (p^{−s})_p` does in each. The cube is the unit
+ball of the sup norm: `[−1, 1]ⁿ` in `ℝⁿ`, and the closed unit ball of `ℓ^∞(ℕ)` in the limit.
 
-* **No isometric copy** (**`no_isometry_square`**, **`no_isometry_cube`**, **`no_isometry_infCube`** and
-  **`not_isometry_infCube`**, with `sub_eq_sub_of_dist_eq_half`, `eq_of_midpoints_inner`, `norm_vec2`,
-  `no_isometry_of_square`, `sqInf`, `sqInf_apply`, `norm_sqInf`, `sqInf_sub`, `sqFin`, `norm_sqFin` and
-  `sqFin_sub`): in an inner product space at most one point lies at distance `1` from both ends of a segment of
-  length `2` (the parallelogram law). In the square `[−1, 1]²` with the sup distance, `(0, 0)` and `(0, 1)` are two
-  such points for `(−1, 0)` and `(1, 0)`, at distance `1` from each other. So no distance-preserving map takes the
-  square, the cube `[−1, 1]ⁿ` for any `n ≥ 2`, or the infinite cube into an inner product space, the infinite ball
-  included.
-* **The distortion is at least `√n`** (**`exists_signs_sum_sq_le`**, **`card_mul_sq_le_of_signs`**,
-  **`cube_distortion`**, **`euclidean_sandwich`**, **`infCube_not_ball`** and **`not_continuousLinearEquiv`**): if
-  an additive map `T` from `ℝⁿ` with the sup norm into an inner product space satisfies `c‖x‖ ≤ ‖T x‖ ≤ C‖x‖` with
-  `c ≥ 0`, then `n c² ≤ C²`. The proof picks signs one vector at a time so that `‖Σ ±T e_i‖² ≥ Σ ‖T e_i‖²`, again
-  by the parallelogram law. The identity into Euclidean `ℝⁿ` has `c = 1` and `C = √n`, so the least distortion is
-  exactly `√n`, which tends to infinity. For the infinite cube no additive map into an inner product space has
-  `c > 0` and a finite `C`; in particular no isomorphism of normed spaces identifies `ℓ^∞(ℕ)` with one.
-* **The Euclidean ball's share of the cube tends to `0`** (**`ball_subset_cube`**, **`volume_euclideanBall`** and
-  **`tendsto_ball_div_cube`**): the Euclidean unit ball of `ℝⁿ` lies inside the cube `(−1, 1)ⁿ`, and the ratio of
-  their volumes tends to `0`.
+* **No isometric copy** (**`no_isometry_square`** and **`no_isometry_cube`**, with `sub_eq_sub_of_dist_eq_half`,
+  `eq_of_midpoints_inner`, `norm_vec2`, `no_isometry_of_square`, `sqFin`, `norm_sqFin` and `sqFin_sub`): in an
+  inner product space at most one point lies at distance `1` from both ends of a segment of length `2` (the
+  parallelogram law). In the square `[−1, 1]²` with the sup distance, `(0, 0)` and `(0, 1)` are two such points for
+  `(−1, 0)` and `(1, 0)`, at distance `1` from each other. So no distance-preserving map takes the square, or the
+  cube `[−1, 1]ⁿ` for any `n ≥ 2`, into an inner product space.
+* **The distortion is at least `√n`** (**`exists_signs_sum_sq_le`**, **`card_mul_sq_le_of_signs`** and
+  **`cube_distortion`**): if an additive map `T` from `ℝⁿ` with the sup norm into an inner product space satisfies
+  `c‖x‖ ≤ ‖T x‖ ≤ C‖x‖` with `c ≥ 0`, then `n c² ≤ C²`. The proof picks signs one vector at a time so that
+  `‖Σ ±T e_i‖² ≥ Σ ‖T e_i‖²`, again by the parallelogram law.
+* **The Euclidean ball's share of the cube tends to `0`** (**`volume_euclideanBall`** and
+  **`tendsto_ball_div_cube`**): the ratio of the volume of the Euclidean unit ball of `ℝⁿ` to that of the cube
+  `(−1, 1)ⁿ` tends to `0`.
 * **The Bohr lift tells them apart** (`zCube`, a definition; **`memℓp_top_bohr_iff`**, **`norm_zCube`**,
   **`norm_zCube_eq_one_iff`** and **`line_inside_cube_not_in_ell2`**): `z(s)` is a point of `ℓ^∞` if and only if
   `Re s ≥ 0`, with sup norm `2^{−Re s}`. So `z(s)` lies on the cube's unit sphere exactly on the line `Re s = 0`,
@@ -262,7 +257,8 @@ end Distortion
 
 /-! ## Part C: the Euclidean ball's share of the cube -/
 
-/-- Its volume is that of the unit ball of `EuclideanSpace ℝ (Fin n)`. -/
+/-- The Euclidean unit ball of `ℝⁿ`, as a subset of the cube's space, has the volume of the unit ball of
+`EuclideanSpace ℝ (Fin n)`. -/
 theorem volume_euclideanBall (n : ℕ) :
     volume {x : Fin n → ℝ | ‖WithLp.toLp 2 x‖ < 1} =
       volume (ball (0 : EuclideanSpace ℝ (Fin n)) 1) := by

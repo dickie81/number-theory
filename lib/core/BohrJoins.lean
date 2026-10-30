@@ -17,26 +17,16 @@ an open hypothesis.
 * **Zero-free regions are shells around the sphere** (**`shell_of_zeroFree`**, with `norm_vF_le_norm_vF`): if `ζ ≠ 0`
   on `Re s > θ`, every nontrivial zero `ρ` has `‖v_F(θ)‖ ≤ ‖v_F(ρ)‖ ≤ ‖v_F(1 − θ)‖` for every nonempty finite set `F`
   of primes, through `PsiOmega.band_of_zeroFree`. Instances: unconditionally, strictly between the radii at `1` and
-  `0` (**`shell_unconditional`**); from S0's hypothesis (**`shell_of_smoothBound`**); from the Kubota–Patterson
-  display, between the radii at `11/12` and `1/12` (**`shell_of_kubotaTheta`**). At `θ = ½` the shell is the sphere
-  (**`sphere_of_zeroFree_half`**, through `PsiOmega.rh_of_zeroFree_half`).
+  `0` (**`shell_unconditional`**); from the Kubota–Patterson display, between the radii at `11/12` and `1/12`
+  (**`shell_of_kubotaTheta`**).
 * **In the limit no shell short of the sphere constrains the radius** (**`shell_radii_tendsto`**): for every `θ > ½`
   the radius at `θ` tends to `0` and the radius at `1 − θ` to `∞` over the primes below `N`. If RH fails, some zero
   pair has one Bohr vector strictly inside the sphere and one strictly outside, in every dimension, with radii
   tending to `0` and `∞` (**`zero_pair_of_not_RH`**). For the Davenport–Heilbronn function this is
   `dh_zero_pair_off_sphere` (`lib/dh/DHBohrSphere.lean`).
-* **The ball tower** (**`tendsto_ballVol`**, **`tendsto_sphereArea`**, **`tendsto_volume_unitBall`**,
-  **`ball_div_cube_eq`** and **`completed_eq_sphereArea_bohr`**, with `ballVol_add_two_le` and `ballVol_le_geom`):
-  `BallTower.ballVol n`, the volume of the unit ball of `ℝⁿ`, is at most `C·rⁿ` with `r² = 7/10` for `n ≥ 7`, so it
-  tends to `0`; so do the area of the unit sphere and Mathlib's volume of the unit ball, the latter through
-  `BallTower.ballVol_eq_volume`. The ratio of the ball to the cube is `ballVol n/2ⁿ`.
-  For every integer `n ≥ 2`, `Λ(n) = (2/|S^{n−1}|)·exp(Σ_p p^{−n})·D₂(n)`, which joins
-  `BallTower.Gammaℝ_mul_sphereArea` to the Euler split.
-* **The mean value theorem, both sides** (**`abs_mean_value_sub_le`** and **`mean_value_ge`**, with `dp_eq_trig`,
-  `injOn_neg_log_nat` and `gap_sum_le`): for a Dirichlet polynomial `D` supported on `(P, 2P]`,
-  `|∫₀ᵀ |D|² − T·Σ|c_j|²| ≤ 8P(1 + log P)·Σ|c_j|²`. `DirMean.mean_value` states the upper half;
-  `Orthogonality.abs_integral_sub_le` supplies the lower. The two files prove the same oscillatory bound
-  separately (`DirMean.norm_integral_exp_le`, `Orthogonality.norm_integral_exp_mul_I_le`).
+* **The ball tower and the Bohr lift in one identity** (**`completed_eq_sphereArea_bohr`**): for every integer
+  `n ≥ 2`, `Λ(n) = (2/|S^{n−1}|)·exp(Σ_p p^{−n})·D₂(n)`, which joins `BallTower.Gammaℝ_mul_sphereArea` to the Euler
+  split.
 -/
 
 open Filter Topology BohrSphere MeasureTheory Metric

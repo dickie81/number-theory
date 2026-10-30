@@ -26,7 +26,7 @@ The library's form.
 * The family is `A_r(n) = χ_r(n)n^{it_r}` (`famA`), multiplicative in `n` (`famA_mul`), with
   `A_r(n)Ā_s(n) = χ_r(n)χ̄_s(n)n^{i(t_r−t_s)}` for `n ≥ 1` (`famA_mul_conj`), the summand of `CGLT101`.
 * With the weight `n^{−1/2}` (`wh`), `σ(N)` (`sig`) is the double sum over `N < n ≤ 2N` (`dyad`), and
-  `Ŝ(Y)` (`shat`) the one over `1 ≤ n ≤ Y`. Positivity makes `Ŝ` monotone in `Y` (`shat_mono`).
+  `Ŝ(Y)` (`shat`) the one over `1 ≤ n ≤ Y`.
 * Squaring (Kerr's Lemma 22, here for `Ŝ`): `(Σ_{n≤Y}…)²` is a sum over `m = n₁n₂ ≤ Y²`, whose coefficients count
   the factorizations, at most `d(m)` of them.
 
@@ -38,8 +38,6 @@ Plain statements, with `R = |P|`.
 * `dsum_const_mul`, `dsum_conj`: `dsum P A S (ca) = |c|²·dsum P A S a`; and the family `Ā_r` with the weights `a`
   has the double sum of the family `A_r` with the weights `ā`.
 * `famA_mul_conj`, `famA_mul`, `norm_wh`: as above, and `|n^{−1/2}| = n^{−1/2}`.
-* `shat_mono`, `sig_le_shat`: for `Y ≤ Y'`, `Ŝ(Y) ≤ Ŝ(Y')`; and `σ(N) ≤ Ŝ(2N)`.
-* `dsum_twist_le`: for real `u`, the weights `n^{−1/2+iu}` give at most what `n^{−1/2}` gives.
 * `sum_Ioc_pieces`, `shat_le_sum_sig`: for `Y ≥ 0`, `(Y/2^{J+1}, Y]` is the union of the pieces
   `(Y/2^{j+1}, Y/2^j]`, `j ≤ J`; and for `0 ≤ Y < 2^{J+1}`, `Ŝ(Y) ≤ (J + 1)Σ_{j≤J}σ(Y/2^{j+1})`.
 * `card_fiber_le`: for `m ≥ 1`, at most `d(m)` pairs `(n₁, n₂)` have `n₁n₂ = m`.

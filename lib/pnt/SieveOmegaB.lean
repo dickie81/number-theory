@@ -6,10 +6,8 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 Plain statements, about real numbers. `SieveCert.lean` uses them for the certificate's bounds (`omegaC_le_w`,
 `bound2_ge`) and `SieveRough.lean` for Buchstab's induction (`psi_le`) and the cells' prime sums.
 
-* `log_le_half_sub_inv`, `two_mul_div_le_log`: for `y ≥ 1`, `2(y − 1)/(y + 1) ≤ log y ≤ (y − 1/y)/2`, from
-  `x ≤ sinh x` at `x = log y` and from the first term of `log((1 + z)/(1 − z)) = 2(z + z³/3 + ⋯)` at
-  `z = (y − 1)/(y + 1)`. At `y = 1 + w/a` they are `2w/(2a + w) ≤ log(1 + w/a) ≤ w(2a + w)/(2a(a + w))`, the bounds of
-  a cell's `Σ 1/p` from below and above (the trapezoid rule for `∫ dt/t`).
+* `log_le_half_sub_inv`: for `y ≥ 1`, `log y ≤ (y − 1/y)/2`, from `x ≤ sinh x` at `x = log y`. At `y = 1 + w/a` it is
+  `log(1 + w/a) ≤ w(2a + w)/(2a(a + w))`, the bound of a cell's `Σ 1/p` from above (the trapezoid rule for `∫ dt/t`).
 * `omB u = (1 + log(u − 1))/u`, Buchstab's `ω` on `[2, 3]`: `omB_le_w1` (`omB ≤ 0.5671433` for `u > 1`, by the tangent
   line of `log` at `1/0.5671433`, since `0.5671433·e^{0.5671433} ≥ 1`); `omB_mono` (it increases on `[2, 2.76]`, from
   `log 1.76 ≤ 1/1.76`) and `omB_anti` (it decreases from `2.77` on, from `log 1.77 ≥ 1/1.77`).

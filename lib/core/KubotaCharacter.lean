@@ -26,12 +26,8 @@ and the supplementary laws as periodicity modulo `9`.
 * **Trivial on `SL_2(ℤ) ∩ Γ_1(3)`** (**`kub_int`**, with `cub_cj`, `eq_one_of_cube_of_cj` and
   `cub_intCast`): `(x̄/ā)₃ = conj((x/a)₃)` from `chi3_map_cj`, so the symbol of rational integers
   is a cube root of unity fixed by conjugation.
-* **The extension** (`Gam3`, `Gam2`, `kub2` and `kubHom`, definitions; **`kub2_mul`**, with `mem_Gam3`,
-  `mem_Gam2`, `kub2_eq`, `kub2_toSL` and `kub2_Gam3`): `κ(hγ) = κ(γ)` for `h ∈ SL_2(ℤ)`, `γ ∈ Γ_1(3)` is
-  well defined and a homomorphism on `Γ_2`, `1` on `SL_2(ℤ)` and `κ` on `Γ_1(3)`.
-* **The cusps** (`mul_inv_mem_Gam3_of_cong`, Dunn and Radziwiłł's (5.3); **`gamPlus_not_mem_Gam2`**,
-  `gamMinus_not_mem_Gam2`, `gamPlus_mul_inv_gamMinus_not_mem_Gam2`): `Γ_2`, `Γ_2γ_+` and `Γ_2γ_−` are three
-  distinct cosets of `Γ_2\Γ`.
+* **The extension** (`Gam3`, `Gam2` and `kub2`, definitions; **`kub2_mul`**, with `mem_Gam3`, `mem_Gam2` and
+  `kub2_eq`): `κ(hγ) = κ(γ)` for `h ∈ SL_2(ℤ)`, `γ ∈ Γ_1(3)` is well defined and a homomorphism on `Γ_2`.
 -/
 
 open NumberField Ideal UniqueFactorizationMonoid Complex

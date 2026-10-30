@@ -13,8 +13,8 @@ The ground-state theory of Weil's form `weilQ` for `ζ`, ported to the Davenport
 the dh column of.
 
 **Stage 1 (existence).** `groundSpaceDH`, `IsGroundStateDH`, and `exists_groundStateDH`, the port of
-`exists_groundState` (GroundStateExists.lean:485) through `exists_min_weilQc`
-(GroundStateExists.lean:355). Compactness (`exists_convergent_subseq`, Compactness.lean:233) needs a
+`exists_groundState` (GroundStateExists.lean:482) through `exists_min_weilQc`
+(GroundStateExists.lean:389). Compactness (`exists_convergent_subseq`, Compactness.lean:233) needs a
 bound on the archimedean energy at `q = ¼`; `QDHu` controls it at `q = ¾`. The transfer:
 `K_{1/4}(u) = e^u K_{3/4}(u)` (`archIntegrand_eq_exp_mul`), so on `(0, 2a]` the `¼`-integrand is at
 most `e^{2a}` times the `¾`-integrand; beyond `2a` the autocorrelation of a probe at support `a`
@@ -47,11 +47,11 @@ open LandauLaplace WeilForm WeilTest WeilStrip
 /-! ## Stage 1: the ground-state space and existence -/
 
 /-- **The ground-state space of `QDHu`** at support `a`: probes with `Q_dh(g) = λ_dh(a)‖g‖²`
-(the dh column of `groundSpace`, Uniqueness.lean:332). A submodule of `ℝ → ℝ`. -/
+(the dh column of `groundSpace`, Uniqueness.lean:351). A submodule of `ℝ → ℝ`. -/
 abbrev groundSpaceDH (a : ℝ) : Submodule ℝ (ℝ → ℝ) := (QDHu_form a).space
 
 /-- **A ground state of `QDHu`** at support `a`: a normalised probe at the ground energy (the dh
-column of `IsGroundState`, Roadmap.lean:63, in the energy form of `isGroundState_iff`). -/
+column of `IsGroundState`, Roadmap.lean:60, in the energy form of `isGroundState_iff`). -/
 def IsGroundStateDH (a : ℝ) (g : ℝ → ℝ) : Prop :=
   Probe a g ∧ normSq g = 1 ∧ QDHu g = lamDH a
 
@@ -68,7 +68,7 @@ theorem isGroundStateDH_iff {a : ℝ} {g : ℝ → ℝ} :
     rw [hq, hn, mul_one]; rfl
 
 /-- The ground states are exactly the normalised minimisers (the form of `IsGroundState`,
-Roadmap.lean:63; `isGroundState_iff`, Uniqueness.lean:335). -/
+Roadmap.lean:60; `isGroundState_iff`, Uniqueness.lean:354). -/
 theorem isGroundStateDH_iff_min {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} :
     IsGroundStateDH a g ↔
       Probe a g ∧ normSq g = 1 ∧ ∀ h, Probe a h → normSq h = 1 → QDHu g ≤ QDHu h := by
@@ -176,7 +176,7 @@ theorem arch_of_archQ {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hsupp : ∀ u, a
 /-! ### The minimiser -/
 
 /-- The non-archimedean part of `QDHu` at support `a`: the constant and the finite prime sum (the dh
-column of `nonArch`, GroundStateExists.lean:326, with no pole term). -/
+column of `nonArch`, GroundStateExists.lean:360, with no pole term). -/
 def nonArchDH (a : ℝ) (g : ℝ → ℝ) : ℝ :=
   constDH * normSq g
     - 2 * ∑ n ∈ Finset.range (primeCut a), fDH n / Real.sqrt n * autocorr g (Real.log n)
@@ -195,7 +195,7 @@ theorem nonArchDH_ge {a : ℝ} {g : ℝ → ℝ} (hp : Probe a g) (hn : normSq g
   unfold nonArchDH MDH; rw [hn, mul_one]; linarith
 
 /-- **A minimiser of `QDHu` exists at every support `a > 0`** (the dh column of `exists_min_weilQc`,
-GroundStateExists.lean:355, at pole weight `0` with `E_{3/4}` in place of `E`). -/
+GroundStateExists.lean:389, at pole weight `0` with `E_{3/4}` in place of `E`). -/
 theorem exists_min_QDHu {a : ℝ} (ha : 0 < a) : ∃ g, Probe a g ∧ normSq g = 1 ∧
     ∀ h, Probe a h → normSq h = 1 → QDHu g ≤ QDHu h := by
   set Sv : Set ℝ := {q | ∃ h, Probe a h ∧ normSq h = 1 ∧ QDHu h = q} with hSv
@@ -269,7 +269,7 @@ theorem exists_min_QDHu {a : ℝ} (ha : 0 < a) : ∃ g, Probe a g ∧ normSq g =
   exact hQG.trans (csInf_le hbdd ⟨h', hp', hn', rfl⟩)
 
 /-- **A ground state of `QDHu` exists at every support `a > 0`** (the dh column of
-`exists_groundState`, GroundStateExists.lean:485). -/
+`exists_groundState`, GroundStateExists.lean:482). -/
 theorem exists_groundStateDH {a : ℝ} (ha : 0 < a) : ∃ g, IsGroundStateDH a g := by
   obtain ⟨g, hp, hn, hmin⟩ := exists_min_QDHu ha
   exact ⟨g, (isGroundStateDH_iff_min ha).2 ⟨hp, hn, hmin⟩⟩
@@ -279,7 +279,7 @@ theorem exists_groundStateDH {a : ℝ} (ha : 0 < a) : ∃ g, IsGroundStateDH a g
 /-- **The bilinear form of `QDHu`** at support `a`:
 `B_dh(φ, ψ) = c·x(0) + ∫_0^∞ (x(0) − x(u))K_{3/4}(u) du − 2Σ_{n < N(a)} c(n)n^{−1/2} x(log n)`,
 `x = xcorr φ ψ` (the dh column of `bil0`, StrictPositivity.lean:92; the term `2ĝ(i/2)ĥ(i/2)` of
-`euler_lagrange_mem`, UniquenessQ.lean:83, is absent). It is the polarisation of `QDHu`
+`euler_lagrange_mem`, UniquenessQ.lean:82, is absent). It is the polarisation of `QDHu`
 (`bilDH_polar`). -/
 def bilDH (a : ℝ) (φ ψ : ℝ → ℝ) : ℝ :=
   constDH * xcorr φ ψ 0 + (∫ u in Ioi 0, archXQ (3 / 4) φ ψ u)
@@ -315,7 +315,7 @@ theorem bilDH_polar {a : ℝ} {φ ψ : ℝ → ℝ} (hφ : Probe a φ) (hψ : Pr
   rw [f2] at e2
   rw [e1, e2]; ring
 
-/-- `Q_dh(f) = B_dh(f, f)` (the dh column of `weilQ0_eq_bil0`, Commute.lean:148). -/
+/-- `Q_dh(f) = B_dh(f, f)` (the dh column of `weilQ0_eq_bil0`, Commute.lean:44). -/
 theorem QDHu_eq_bilDH {a : ℝ} {f : ℝ → ℝ} (hf : Probe a f) : QDHu f = bilDH a f f := by
   have e := QDHu_add_smul hf hf 1
   have e2 : (fun t => f t + 1 * f t) = fun t => (2 : ℝ) * f t := by funext t; ring
@@ -429,14 +429,14 @@ theorem zeros_real_or_imagDH {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hs : Simp
   exact zero_swap_falseDH ha hs him (hPW w hw him)
 
 /-- **Zeros of a simple ground state of `QDHu` lie on `ℝ ∪ iℝ`**, no further input
-(the dh column of `zeros_real_or_imag'`, SwapRealize.lean:405; `swapRealization_of_zero`,
-SwapRealize.lean:391, holds for every probe). -/
+(the dh column of `zeros_real_or_imag'`, SwapRealize.lean:401; `swapRealization_of_zero`,
+SwapRealize.lean:387, holds for every probe). -/
 theorem zeros_real_or_imagDH' {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hs : SimpleGroundDH a g) :
     ∀ w : ℂ, ghatC g a w = 0 → w.re = 0 ∨ w.im = 0 :=
   zeros_real_or_imagDH ha hs fun _ hw hσ => swapRealization_of_zero ha hs.1.1 hw hσ
 
 /-- **The chain for `dh` with eventual simplicity** (the dh column of `rh_of_eventually_simple`,
-SwapRealize.lean:412, and of `rh_of_simple_ground_states`, HurwitzCross.lean:86): eventually simple
+SwapRealize.lean:408, and of `rh_of_simple_ground_states`, HurwitzCross.lean:86): eventually simple
 ground states of `QDHu` satisfying `HypConvDH` give the cross form `DHRHcross`. -/
 theorem dhRHcross_of_eventually_simple {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ} (ha : ∀ n, 0 < a n)
     (hgs : ∀ n, IsGroundStateDH (a n) (g n))
@@ -514,7 +514,7 @@ fact about probes, not about the form: `Gpole_probe`, `Gpole_hat`, `xcorr_G_swap
 changes is that `QDHu` has no pole term, so `Gpole_annihilatesDH` needs no pole hypothesis on `v`. -/
 
 /-- **`Q_dh − λ_dh` pairs `G v` with every pole-free probe to zero**, for `v` in the ground space
-(the dh column of `Gpole_annihilates`, DegenerateFlat.lean:511, whose hypothesis `v̂(i/2) = 0` only
+(the dh column of `Gpole_annihilates`, DegenerateFlat.lean:498, whose hypothesis `v̂(i/2) = 0` only
 killed the pole term `2v̂(i/2)(Gm)^(i/2)` and drops out). -/
 theorem Gpole_annihilatesDH {a : ℝ} (ha : 0 ≤ a) {v m : ℝ → ℝ} (hv : v ∈ groundSpaceDH a)
     (hm : Probe a m) (hmpole : poleR m a = 0) :
@@ -526,7 +526,7 @@ theorem Gpole_annihilatesDH {a : ℝ} (ha : 0 ≤ a) {v m : ℝ → ℝ} (hv : v
   rw [hsw, xcorr_G_swap ha hv.1 hm hmpole, el, sub_self]
 
 /-- `Q_λ(φ + rψ) = Q_λ(φ) + 2r B_λ(φ, ψ) + r² Q_λ(ψ)` for `Q_λ = Q_dh − λ_dh‖·‖²` (the dh column of
-`Qlam_add_smul`, DegenerateFlat.lean:519). -/
+`Qlam_add_smul`, DegenerateFlat.lean:506). -/
 theorem QlamDH_add_smul {a : ℝ} {φ ψ : ℝ → ℝ} (hφ : Probe a φ) (hψ : Probe a ψ) (r : ℝ) :
     QDHu (fun t => φ t + r * ψ t) - lamDH a * normSq (fun t => φ t + r * ψ t)
       = (QDHu φ - lamDH a * normSq φ) + 2 * r * (bilDH a φ ψ - lamDH a * xcorr φ ψ 0)
@@ -538,7 +538,7 @@ theorem QlamDH_nonneg {a : ℝ} {f : ℝ → ℝ} (hf : Probe a f) : 0 ≤ QDHu 
 
 /-- If `w` is pole-free in the ground space and `G w` is pole-free, `G w` is in the ground space
 (the dh column of
-`G_mem_pole_free`, DegenerateFlat.lean:545). -/
+`G_mem_pole_free`, DegenerateFlat.lean:532). -/
 theorem G_mem_pole_freeDH {a : ℝ} (ha : 0 ≤ a) {w : ℝ → ℝ} (hw : w ∈ groundSpaceDH a)
     (hwp : poleR w a = 0) (hGp : poleR (Gpole w a) a = 0) : Gpole w a ∈ groundSpaceDH a := by
   have hP := Gpole_probe hw.1 ha hwp
@@ -548,7 +548,7 @@ theorem G_mem_pole_freeDH {a : ℝ} (ha : 0 ≤ a) {w : ℝ → ℝ} (hw : w ∈
   rw [QDHu_eq_bilDH hP, normSq_eq_xcorr hP.memL2]
   linarith
 
-/-- **Rank-one step** (the dh column of `G_mem_partner`, DegenerateFlat.lean:559). If `w` is
+/-- **Rank-one step** (the dh column of `G_mem_partner`, DegenerateFlat.lean:546). If `w` is
 pole-free in the ground space and some ground-space element `k` has `k̂(i/2) ≠ 0`, then `G w` is in
 the ground space. -/
 theorem G_mem_partnerDH {a : ℝ} (ha : 0 ≤ a) {w k : ℝ → ℝ} (hw : w ∈ groundSpaceDH a)
@@ -724,7 +724,7 @@ theorem topGSDH_cross {a : ℝ} (ha : 0 < a) (z : ℂ) (hz : ghatC (topGSDH a) a
   dhGD.topGS_cross ha z hz
 
 /-- **The chain for `dh` with simplicity removed** (the dh column of `rh_of_hypConv_top`,
-StructureD.lean:192): `HypConvDH` for the top-of-chain ground states gives `DHRHcross`. -/
+StructureD.lean:151): `HypConvDH` for the top-of-chain ground states gives `DHRHcross`. -/
 theorem dhRHcross_of_hypConv_top {a : ℕ → ℝ} (ha : ∀ n, 0 < a n)
     (hconv : HypConvDH a fun n => topGSDH (a n)) : DHRHcross :=
   dhRHcross_of_cross (fun n => (probe_integrable (topGSDH_isGroundState (ha n)).1).intervalIntegrable)

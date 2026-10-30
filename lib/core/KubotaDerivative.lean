@@ -27,9 +27,9 @@ combined as `(∂_x + i∂_y)/2`.
   support and size condition, then
   `Σ_m a(m)·v·K_{1/3}(4π|m|v/9)·2πi·m̄/9` equals the same combination of
   `−(σ(c)v)^{−2}·Σ_m d(m)·V₀·K_{1/3}(4π|m|V₀/9)·2πi·m/9`, with `V₀ = 1/(N(c)v)`.
-* **For the twisted `θ̄`** (**`twisted_theta_dbar`**, with `thetaSupp_mul_le` and `norm_twAt_le`): the
-  identity for the expansion. The cusp constant terms do not appear in it. `twisted_theta_dbar_of` is
-  the identity for any data given with their expansion, at the data.
+* **For the twisted `θ̄`** (**`twisted_theta_dbar_of`**, with `thetaSupp_mul_le` and `norm_twAt_le`): the
+  identity for any data given with their expansion of the twisted `θ̄`. The cusp constant terms do not appear in
+  it.
 -/
 
 open Real Set Filter MeasureTheory Complex NumberField Ideal
@@ -525,9 +525,8 @@ theorem dbar_identity {ι κ : Type*} (s : Finset ι) (t : Finset κ) {Ka : ℝ}
   exact tsum_congr fun m => by ring
 
 open Classical in
-/-- **`∂_{z̄}` at `z = 0` from any expansion in cusp coordinates**: the identity of
-`twisted_theta_dbar` for data `(D, C₀, c_H, d_H, y)` given with their expansion of the twisted `θ̄`, rather
-than chosen by `twisted_theta_expansion`. -/
+/-- **`∂_{z̄}` at `z = 0` from any expansion in cusp coordinates**: the identity between the derivative series
+at `∞` and at the cusps, for data `(D, C₀, c_H, d_H, y)` given with their expansion of the twisted `θ̄`. -/
 theorem twisted_theta_dbar_of {τ : 𝓞 K → ℂ} {Kc : ℝ} (hτ : ThetaSupp Kc τ) {L : 𝓞 K} (hL : L ≠ 0)
     (φ₀ : 𝓞 K → ℂ) (hφ : ∀ z u, φ₀ (z + L * u) = φ₀ z) (Ps : Finset Pr) (j : Pr → ℕ)
     (D : (𝓞 K ⧸ span {L}) → Finset Pr → 𝓞 K) (C₀ cH : (𝓞 K ⧸ span {L}) → Finset Pr → ℂ)

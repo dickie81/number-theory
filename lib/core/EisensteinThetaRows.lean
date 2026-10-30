@@ -10,7 +10,7 @@ The transformation is displayed for the characters modulo any `md` (`ThetaRowsM 
 `ThetaRowsM 4`), and `thetaRowsM_of_kubota` proves it at every `md ≠ 0`. In the display the rows `k₀` are
 prime to `md`, and the active sets run over the primes of `tg` that do not divide `md` (`tgPrimes`), since the
 dual sums take only primes not dividing their modulus `72·md`. At `md = 4` they run over all primes prime to
-`6` dividing `tg` (`tgPrimes_four`).
+`6` dividing `tg`.
 
 * **The local factors** `B_{P,j}` (`Bloc`, the paper's (6.5)): `B_{P,1} = χ_P³` (`Bloc_one`),
   `B_{P,4} = −N(P)^{−1/2} + N(P)^{1/2}1_{P∣x}` (`Bloc_four`), `|B_{P,j}| ≤ 1` at `j ≢ 0, 4` and

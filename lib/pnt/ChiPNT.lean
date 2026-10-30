@@ -8,22 +8,17 @@ Plain statement. For a Dirichlet character `χ ≠ 1` with `L(s, χ) ≠ 0` on `
 half-plane `Eis.LFunction_ne_zero_of_re_gt`, `ψ(x, χ) = O(x^{11/12+η})` with no hypothesis
 (`psiChi_isBigO_eleven_twelfths`).
 
-* `logDeriv_le_of_zeroFree`: the log-derivative bound (`HalfPlanePNT.logDeriv_le_of_zeroFree`) for an
-  entire `F` in place of `ζ`. If `F` has no zero in `Re s > θ ≥ 0`, grows at most linearly on
-  `δ ≤ Re s ≤ 3`, `|Im s| ≥ 1`, for every `δ > 0`, has `1/|F(3/2 + it)| ≤ A` and `|F′/F| ≤ C₀` on
-  `Re s ≥ 3/2`, then `|F′/F(σ + it)| ≤ C log|t|` on `σ ≥ θ' > θ`, `|t| > 3`. The disc step (`disc_point`) is
-  that bound's, with `F(3/2 + it + ρw)/F(3/2 + it)` (`locG`) in PNT+'s `FinalBound`; with no pole, no
-  condition keeps the disc away from `1`. The proof applies the bound with its constants,
-  `LogDerivDisc.logDeriv_le_uniform_of`, at `(θ + θ')/2`, with `F` bounded on the box `|Im s| ≤ 1`
-  (`growth_of_ge_one`); `locG` and `disc_point` are in `LogDerivDisc.lean`.
-* `sum_isBigO_of_zeroFree`: for coefficients with `f(0) = 0`, `|f(n)| ≤ Λ(n)` and `L(f, s) = −F′/F(s)` on
+* `sum_isBigO_of_zeroFree`: let `F` be entire with no zero in `Re s > θ ≥ 0`, growing at most linearly on
+  `δ ≤ Re s ≤ 3`, `|Im s| ≥ 1`, for every `δ > 0`, with `1/|F(3/2 + it)| ≤ A` and `|F′/F| ≤ C₀` on
+  `Re s ≥ 3/2`. For coefficients with `f(0) = 0`, `|f(n)| ≤ Λ(n)` and `L(f, s) = −F′/F(s)` on
   `Re s > 1`, `Σ_{n ≤ x} f(n) = O(x^{θ+η})`. The Mertens argument
   (`MertensExponent.mertens_isBigO_of_zeroFree`) with `−F′/F` for `1/ζ`: the smoothed Perron integral
   moved to `Re s = θ' = θ + η₀/4` (`SmoothPerron.smoothedSum_eq_verticalIntegral_left`), where
-  `|F′/F(θ' + it)| ≤ K(1 + |t|)^{η₀/8}` from the log-derivative bound (and compactness for `|t| ≤ 4`), and
-  the unsmoothing at `B = log 3X` (`SmoothPerron.norm_smoothedSum_sub_le`), with `ε = X^{θ'−1}`. The
-  argument above is that of `sum_le_uniform_of`; the proof applies the bound with its constants,
-  `sum_le_uniform`, at `θ + η₁`, `η₁ = min(η, 1 − θ)/2`.
+  `|F′/F(θ' + it)| ≤ K(1 + |t|)^{η₀/8}` from the log-derivative bound `LogDerivDisc.logDeriv_le_uniform_of`
+  (and compactness for `|t| ≤ 4`), and the unsmoothing at `B = log 3X` (`SmoothPerron.norm_smoothedSum_sub_le`),
+  with `ε = X^{θ'−1}`. The argument above is that of `sum_le_uniform_of`; the proof applies the bound with its
+  constants, `sum_le_uniform`, at `θ + η₁`, `η₁ = min(η, 1 − θ)/2`, with `F` bounded on the box `|Im s| ≤ 1`
+  (`growth_of_ge_one`).
 * `psiChi_isBigO_of_zeroFree`: `F = L(·, χ)`, entire for `χ ≠ 1` (Mathlib's
   `DirichletCharacter.differentiable_LFunction`), with linear growth from
   `PsiOmega.norm_LFunction_leC` (`|L(s, χ)| ≤ (N + 1)|s|/Re s` for every `χ ≠ 1`),
@@ -324,7 +319,7 @@ theorem sum_le_uniform_of {θ : ℝ} (hθ0 : 0 < θ) (hθ1 : θ < 1) {η : ℝ} 
         linarith
 
 /-- **Sums of the coefficients of `−F′/F`, with their constants.** For `0 < θ < 1` and `η > 0` there are
-`C₁, C₂` such that for every `F` as in `logDeriv_le_uniform` and every `f` with `f(0) = 0`,
+`C₁, C₂` such that for every `F` as in `logDeriv_le_uniform_of` and every `f` with `f(0) = 0`,
 `|f(n)| ≤ Λ(n)` and `L(f, s) = −F′/F(s)` on `Re s > 1`:
 `|Σ_{n≤X} f(n)| ≤ (C₁(log(2 + 2cA) + C₀) + C₂)X^{θ+η}` for every `X > 1` (`sum_le_uniform_of`, with PNT+'s
 `SmoothExistence`). -/
@@ -351,10 +346,11 @@ theorem sum_le_uniform {θ : ℝ} (hθ0 : 0 < θ) (hθ1 : θ < 1) {η : ℝ} (h�
   exact ⟨_, _, by positivity, by positivity,
     sum_le_uniform_of hθ0 hθ1 hη diffν νnonneg ν_supp mass_one hKM0 hKM⟩
 
-/-- **Sums of the coefficients of `−F′/F` in a zero-free half-plane.** Let `F` be as in
-`logDeriv_le_of_zeroFree` with `θ < 1`, and `f` with `f(0) = 0`, `|f(n)| ≤ Λ(n)` and `L(f, s) = −F′/F(s)` on
-`Re s > 1`. Then `Σ_{n ≤ x} f(n) = O(x^{θ+η})` for every `η > 0`. The proof applies `sum_le_uniform` at
-`θ + η₁`, `η₁ = min(η, 1 − θ)/2`. -/
+/-- **Sums of the coefficients of `−F′/F` in a zero-free half-plane.** Let `F` be entire with no zero in
+`Re s > θ`, `0 ≤ θ < 1`, growing at most linearly on `δ ≤ Re s ≤ 3`, `|Im s| ≥ 1`, for every `δ > 0`, with
+`1/|F(3/2 + it)| ≤ A` and `|F′/F| ≤ C₀` on `Re s ≥ 3/2`, and `f` with `f(0) = 0`, `|f(n)| ≤ Λ(n)` and
+`L(f, s) = −F′/F(s)` on `Re s > 1`. Then `Σ_{n ≤ x} f(n) = O(x^{θ+η})` for every `η > 0`. The proof applies
+`sum_le_uniform` at `θ + η₁`, `η₁ = min(η, 1 − θ)/2`. -/
 theorem sum_isBigO_of_zeroFree {F : ℂ → ℂ} (hF : Differentiable ℂ F) {θ : ℝ} (hθ0 : 0 ≤ θ)
     (hθ1 : θ < 1) (hzf : ∀ s : ℂ, θ < s.re → F s ≠ 0)
     (hgrowth : ∀ δ : ℝ, 0 < δ → ∃ c : ℝ, 0 ≤ c ∧ ∀ s : ℂ, δ ≤ s.re → s.re ≤ 3 → 1 ≤ |s.im| →

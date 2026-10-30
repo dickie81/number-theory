@@ -33,9 +33,6 @@ The proof:
   read `m`'s factors in decreasing order (`factS`). Their `m`-parts are at most `B + log m` (`cmpsTL_c_le`), and
   `typeII_gcmp'` bounds each length of `y`.
 
-The case `SieveRoute.route2333`, with `SieveRoute.typeII2333` for `hII`, gives the statements with the parameters
-`L = 2333/1000` fixed.
-
 The file imports `SieveProp6.lean`.
 -/
 import SieveProp6

@@ -2,12 +2,11 @@ import KubotaCoefUnit
 
 /-! # The display's scalar: `C = τ(δ₃) ≠ 0`
 
-This file proves the display's `C ≠ 0`, that is `τ(δ₃) ≠ 0`, and θ's coefficients at the unit
-multiples by `ω`, with `S` denoting `thS`:
+This file proves the display's `C ≠ 0`, that is `τ(δ₃) ≠ 0`, with `S` denoting `thS`:
 
 * **The mask from `T`** (`besselK_third_ne_zero`, `thS_add_one`, `ebr_eq_one_of_rhoM_ne_zero`,
-  `two_re_σO_δ3_crd`, `mask_of_ebr` and **`tauTh_mask`**): `S(z + 1, v) = S(z, v)` gives `ĕ(σ(δ₃x)/9) = 1`
-  where `ρ(x) ≠ 0`, and for `x = a + bω` that is `3 ∣ b`; so `τ(δ₃x) ≠ 0` only if `3 ∣ x` or `x ≡ ±1 (mod 3)`.
+  `two_re_σO_δ3_crd` and `mask_of_ebr`): `S(z + 1, v) = S(z, v)` gives `ĕ(σ(δ₃x)/9) = 1` where `ρ(x) ≠ 0`, and
+  for `x = a + bω` that is `3 ∣ b`, so that `3 ∣ x` or `x ≡ ±1 (mod 3)`.
 * **The primary indices** (**`rhoM_primary_eq_zero`**): `ρ(x) = 0` for every primary `x` when `ρ(1) = 0`.
 * **Periodicity under `ℤ[ω]`** (`rhoM_one_eq_zero`, `dvd_of_tauTh_ne_zero_of_scalar` and `thSer_add_O`): if
   `τ(δ₃) = 0`, `τ` is supported on `3δ₃ℤ[ω]` and `S` is periodic under `ℤ[ω]`.

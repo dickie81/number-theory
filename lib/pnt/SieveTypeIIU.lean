@@ -23,8 +23,7 @@ The proof:
 * `SieveFamily.typeII_sharp` bounds each piece by `q^{L−δ}/φ(q)` (with `f0 = bump`, `F₀ = 1`, `A₀ = 1`). The pieces
   number at most `(3 + 4 log q)^{K₀+1}`, which `ev_log_pow_le` puts below `q^{δ/2}`.
 
-`L`, `w₁` and `w₂` are a route's parameters and the Type II estimate is a hypothesis (`hII`); the
-case `SieveRoute.route2333` has `SieveRoute.typeII2333` for `hII`.
+`L`, `w₁` and `w₂` are a route's parameters and the Type II estimate is a hypothesis (`hII`).
 
 The file imports `SieveFamily.lean` and `SieveDyadic.lean`.
 -/

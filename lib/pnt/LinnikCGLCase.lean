@@ -16,9 +16,8 @@ strict inequality follows from the lower bound N ≥ (qT)^{2/3} in the present r
 Proposition 10.2 is "(qT)^{2/3}/2 ≤ N ≤ qT" (p. 40).
 
 The library's form.
-* The energy. `sq_le_energy`: `|R|² ≤ E`, from the quadruples `(i, j, i, j)`. `energy_le_cube`: `E ≤ |R|³` at one
-  point per character, since `χ_iχ_j = χ_kχ_l` determines `χ_l` and so `l`; their case analysis uses this as
-  `|W|³qT ≥ E(W)qT`.
+* The energy. `energy_le_cube`: `E ≤ |R|³` at one point per character, since `χ_iχ_j = χ_kχ_l` determines `χ_l`
+  and so `l`; their case analysis uses this as `|W|³qT ≥ E(W)qT`.
 * The case analysis is an inequality between real numbers. With `r = u⁸`, `E = v⁸` and `qT = z¹²` (`exists_pow_eq`,
   `pow_rpow_eq`) every power in it is a natural power of `u`, `v` and `z`, and it becomes the polynomial inequality
   `case_poly`, proved in two cases: `z ≤ u` (`case_one`, their `|W| ≥ (qT)^{2/3}`) and `u < z` with their assumption
@@ -38,7 +37,7 @@ The library's form.
 
 Plain statements, with `q ≥ 1`, `n ∼ N` `dyad`, `R₂` as in `LinnikCGLL105`, `E` `energy`,
 `G = d(q)(⌊log₂|R|²⌋ + 1)` and `L = 1 + log max(1, N)`.
-* `sq_le_energy`, `energy_le_cube`: `|R|² ≤ E`; and `E ≤ |R|³` for spaced points.
+* `energy_le_cube`: `E ≤ |R|³` for spaced points.
 * `pow_rpow_eq`, `exists_pow_eq`: `(u^m)^x = u^k` for `u ≥ 0` and `mx = k`; and every `r ≥ 0` is `u^m` for some
   `u ≥ 0`, for `m ≥ 1`.
 * `sq_add_sq_le`, `z6_le`, `case_a`, `case_one`, `case_two`, `case_poly`: the polynomial inequalities.

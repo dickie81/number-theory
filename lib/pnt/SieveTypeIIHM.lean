@@ -3,13 +3,15 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`bin_bound_pt`: `SieveTypeIIGen.bin_bound_gen`'s proof at one point `(β, m, w)`, with the window's two inequalities
-there as the hypothesis.
-`bin_bound_gen_hm`: as `SieveTypeIIGen.bin_bound_gen`, with `WindowOKHM`'s disjunction; in the Halász–Montgomery case
-the bin's `binTerm` is bounded through its two terms (`√(x + y) ≤ √x + √y`), each a product of powers of `q` whose
-exponent is `hmBound`'s (plus `η/2` and `η`), with the count's `(1 + log qT)^10` kept whole in the second.
-`typeII_gen_hm`: `SieveTypeIIGen.typeII_gen` with `WindowOKHM` for `WindowOK`: `sum_typeII_bins_hm` for
-`typeII_pointwise`, `bin_bound_gen_hm` for `bin_bound_gen`, the constants absorbed into `q^{1/100000}`.
+`bin_bound_pt`: one bin by orthogonality at one point `(β, m, w)`, with the window's two inequalities there as the
+hypothesis.
+`bin_bound_gen_hm`: one bin under `WindowOKHM`'s disjunction; in the orthogonality case `bin_bound_pt` applies, and in
+the Halász–Montgomery case the bin's `binTerm` is bounded through its two terms (`√(x + y) ≤ √x + √y`), each a product
+of powers of `q` whose exponent is `hmBound`'s (plus `η/2` and `η`), with the count's `(1 + log qT)^10` kept whole in
+the second.
+`typeII_gen_hm`: Proposition 3′ for a curve `g` with `CurveCounts g` and a window with `WindowOKHM`, pointwise in the
+heights: `sum_typeII_bins_hm` bounds the sum by bins, `bin_bound_gen_hm` each bin, and the constants are absorbed into
+`q^{1/100000}`.
 
 The file imports `SieveHMBins.lean` and `SieveHMWindow.lean`.
 -/
@@ -20,11 +22,10 @@ namespace SieveTypeIIHM
 
 open Finset SieveTypeII SieveTypeIIGen SieveCurveGlue
 
-/-- **One bin by orthogonality, at one point**: `SieveTypeIIGen.bin_bound_gen`'s proof with the window's two
-inequalities at `(β, m, w)` (`hexp`) for `WindowOK`. For `g β ≤ 1` (`hg1`), `q > 1` (`hq`), `P = q^m` (`hPm`),
-`1 ≤ T ≤ 3q^η` (`hT1`, `hT`), `C₀, C_d ≥ 0` (`hC₀`, `hCd`), `Mp ≤ C₀(q^L/P)^{β+w}` (`hMp`) and
-`cnt ≤ C_d(qT)^{g(β)}(1 + log qT)^{10}` (`hcnt`): `Mp·cnt^{1/2}((P + q)V)^{1/2}` is at most
-`2√3·C₀C_d^{1/2}(1 + log qT)^5 q^{L−1/25000+η/2}(V/P)^{1/2}`. -/
+/-- **One bin by orthogonality, at one point**, with the window's two inequalities at `(β, m, w)` (`hexp`). For
+`g β ≤ 1` (`hg1`), `q > 1` (`hq`), `P = q^m` (`hPm`), `1 ≤ T ≤ 3q^η` (`hT1`, `hT`), `C₀, C_d ≥ 0` (`hC₀`, `hCd`),
+`Mp ≤ C₀(q^L/P)^{β+w}` (`hMp`) and `cnt ≤ C_d(qT)^{g(β)}(1 + log qT)^{10}` (`hcnt`): `Mp·cnt^{1/2}((P + q)V)^{1/2}` is
+at most `2√3·C₀C_d^{1/2}(1 + log qT)^5 q^{L−1/25000+η/2}(V/P)^{1/2}`. -/
 lemma bin_bound_pt {g : ℝ → ℝ} {L q P m T η β w Mp cnt V C₀ Cd : ℝ} (hg1 : g β ≤ 1)
     (hexp : (m ≤ 1 → (L - m) * (β + w) + g β / 2 + (1 + m) / 2 ≤ L - 1 / 25000) ∧
       (1 ≤ m → (L - m) * (β + w) + g β / 2 + m ≤ L - 1 / 25000))
@@ -79,7 +80,7 @@ lemma bin_bound_pt {g : ℝ → ℝ} {L q P m T η β w Mp cnt V C₀ Cd : ℝ} 
 `hw1`), `C₀, C_d, C_K ≥ 0` (`hC₀`, `hCd`, `hCK`), `0 ≤ Mp ≤ C₀(q^L/P)^{β+w}` (`hMp0`, `hMp`),
 `0 ≤ cnt ≤ C_d(qT)^{g(β)}(1 + log qT)^{10}` (`hcnt0`, `hcnt`) and `0 ≤ B ≤ C_K(2P)^{1/12−d}(2q)^{5/12+d+2e}` (`hB0`,
 `hB`): `Mp · binTerm cnt P q V B ≤ C′(1 + log qT)^{10} q^{L − 1/25000 + η}(V/P)^{1/2}`, with
-`C′ = 2√3·(exp 1)^{1/2}C₀C_d^{1/2} + 3(exp 1)^{1/2}C₀C_dC_K^{1/2}·2`. When `WindowOKHM` gives `WindowOK`'s
+`C′ = 2√3·(exp 1)^{1/2}C₀C_d^{1/2} + 3(exp 1)^{1/2}C₀C_dC_K^{1/2}·2`. When `WindowOKHM` gives the orthogonality
 inequalities, `binTerm` is at most its first term and `bin_bound_pt` applies. Otherwise (`hmBound`) its second term
 is at most `(exp 1)^{1/2}(V/P)^{1/2}(√2·cnt^{1/2}P + P^{1/2}cnt·B^{1/2})`; the first summand carries `q` to the
 exponent of `hmBound`'s first inequality plus `η/2`, with `(1 + log qT)^5`, and the second to its second inequality
@@ -242,14 +243,13 @@ theorem bin_bound_gen_hm {g : ℝ → ℝ} {L m₁ m₂ d e : ℝ} (hg1 : ∀ σ
       _ = _ := by ring
 
 open scoped ContDiff in
-/-- **Proposition 3′ for a curve and a window with the Halász–Montgomery branch, pointwise in the heights**:
-`typeII_gen`'s statement with `WindowOKHM g L m₁ m₂ (1/1000) (1/1000)` for `WindowOK g L m₁ m₂`. Hypotheses: `g ≤ 1`
-(`hg1`), `g(1/2) = 1` (`hg0`), the counts `CurveCounts g` (`hcnt`), the window (`hwin`), `f0` smooth (`hf0`) with
-support in `[1/2, 2]` (`hsupp`), `K₀ ≥ 0`, `e₁ > 0` (`he₁`) and `0 < η ≤ 10⁻⁵` (`hη`, `hη1`). The proof is
-`typeII_gen`'s with `sum_typeII_bins_hm` for `typeII_pointwise` (each bin's `M_i` the larger of `0` and the product of
-Lemma 1's bounds, the kernel's bound at `Λ = 2P` from `offK_bound`), `bin_bound_gen_hm` for `bin_bound_gen`, and the
-constants absorbed into `q^{1/100000}` (`500000·C′(1 + log qT)^{10} ≤ q^{1/100000}` for large `q`, and
-`L − 1/25000 + η + 1/100000 ≤ L − 1/50000`). -/
+/-- **Proposition 3′ for a curve and a window with the Halász–Montgomery branch, pointwise in the heights**, with the
+window `WindowOKHM g L m₁ m₂ (1/1000) (1/1000)`. Hypotheses: `g ≤ 1` (`hg1`), `g(1/2) = 1` (`hg0`), the counts
+`CurveCounts g` (`hcnt`), the window (`hwin`), `f0` smooth (`hf0`) with support in `[1/2, 2]` (`hsupp`), `K₀ ≥ 0`,
+`e₁ > 0` (`he₁`) and `0 < η ≤ 10⁻⁵` (`hη`, `hη1`). The proof: `sum_typeII_bins_hm` bounds the sum by bins (each bin's
+`M_i` the larger of `0` and the product of Lemma 1's bounds, the kernel's bound at `Λ = 2P` from `offK_bound`),
+`bin_bound_gen_hm` bounds each bin, and the constants are absorbed into `q^{1/100000}`
+(`500000·C′(1 + log qT)^{10} ≤ q^{1/100000}` for large `q`, and `L − 1/25000 + η + 1/100000 ≤ L − 1/50000`). -/
 theorem typeII_gen_hm {g : ℝ → ℝ} {L m₁ m₂ : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g (1 / 2) = 1) (hcnt : CurveCounts g)
     (hwin : WindowOKHM g L m₁ m₂ (1 / 1000) (1 / 1000)) {f0 : ℝ → ℝ} (hf0 : ContDiff ℝ ∞ f0)
     (hsupp : Function.support f0 ⊆ Set.Icc (1 / 2) 2) (K₀ : ℕ) {e₁ η : ℝ} (he₁ : 0 < e₁) (hη : 0 < η)
@@ -352,7 +352,7 @@ theorem typeII_gen_hm {g : ℝ → ℝ} {L m₁ m₂ : ℝ} (hg1 : ∀ σ, g σ 
       (2 * (q : ℝ)) ^ (5 / 12 + 1 / 1000 + 2 * (1 / 1000) : ℝ) := by
     have e3 : (5 / 12 + 1 / 1000 + 2 * (1 / 1000) : ℝ) = 5 / 12 + 3 / 1000 := by norm_num
     rw [hBk, e3]
-  -- Lemma 1 in each bin (as in `typeII_pointwise`), with the bound's larger of it and `0`
+  -- Lemma 1 in each bin, with the bound's larger of it and `0`
   have hBχ : ∀ χ : DirichletCharacter ℂ q, χ ≠ 1 →
       ‖∏ j ∈ Finset.range K, SieveWeight.Sp χ f0 (Q j) (h j)‖ ≤
         max (∏ j ∈ Finset.range K, MB q Bc Cc Kd (βg (bin βg 500000 T χ + 1)) δ H (Q j) (h j)) 0 := by

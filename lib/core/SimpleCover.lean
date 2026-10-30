@@ -2,16 +2,16 @@ import Mathlib
 import SwapRealize
 import ParabolaGap
 
-/-! # Simplicity of the ground state: small supports, and covering intervals of supports
+/-! # Simplicity of the ground state: small supports, and the criterion `λ₁ < s ≤ λ₂`
 
 The chain reduces to `(a) + eventual simplicity ⇒ RH`. This file does two things.
 
 1. **Every support `0 < a ≤ 0.36` has a simple ground state** (`simpleGround_036`), from the certified
    gap of ParabolaGap.lean and the passage "unique up to sign ⇒ simple" (`simpleGround_of_unique`).
-2. **Monotone covering.** Enlarging the support enlarges the probe class. So `λ₁(a)` is nonincreasing
-   (`lam_antitone`), and so is every lower bound on the second min–max value (`Lam2Ge.mono`). Hence a
-   single inequality `λ₁(a₀) < s ≤ λ₂(a₁)` gives simplicity at **every** `a ∈ [a₀, a₁]`
-   (`simpleGround_of_cover`). Finitely many point certificates therefore cover an interval.
+2. **Monotonicity, and the criterion.** Enlarging the support enlarges the probe class, so `λ₁(a)` is
+   nonincreasing (`lam_antitone`). A single inequality `λ₁(a) < s ≤ λ₂(a)` gives simplicity at `a`
+   (`simpleGround_of_lam2`): a non-simple ground state gives an orthonormal pair of ground states
+   (`degenerate_of_not_simple`).
 
 `Lam2Ge a s` is the min–max statement `λ₂(a) ≥ s` in the even sector: every orthonormal pair of
 probes spans a unit vector with `Q ≥ s`.

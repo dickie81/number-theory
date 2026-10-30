@@ -4,9 +4,11 @@ import ShortPrimes
 import WeilRate
 import Zeta
 
-/-! # Weil positivity modulo real zeros, and the missing Props stated
+/-! # GRH modulo real zeros, and the missing Props stated
 
-`Q_χ ≥ 0` follows from GRH off the real axis (`QC_nonneg_of_cross`, `twins_nonneg_of_cross`); with `hS` it is GRH (`grh_of_cross`); one-sided Liouville bounds at every `θ > ½` give RH. The open inputs the density route and the `χ` chain would need are stated as named `Prop`s: `ZetaCritBound c`, `ConvexityBound`, `WeylBound`, `Lindelof`, `DensityHypothesis`, `NoRealZero χ`, `GRHCross χ`, `PsiOmegaSqrt`, `LittlewoodS1`, `FirstZeroAbove14`, `LamGradedConverse`.
+With `hS`, GRH off the real axis is GRH (`grh_of_cross`); one-sided Liouville bounds at every `θ > ½` give RH. The
+open inputs the density route and the `χ` chain would need are stated as named `Prop`s: `ZetaCritBound c`,
+`ConvexityBound`, `WeylBound`, `Lindelof`, `DensityHypothesis`, `GRHCross χ`, `PsiOmegaSqrt`.
 -/
 
 open Real Complex MeasureTheory Filter Topology Set
@@ -46,7 +48,10 @@ theorem rh_of_liouville_theta {ε : ℝ} (hε : ε ≠ 0)
   · obtain ⟨c, hc⟩ := h ((1 / 2 + ρ.re) / 2) (by linarith) (by linarith)
     exact zeta_ne_zero_of_liouville (by linarith) (by linarith) hε hc (by linarith)
 
-/-! ### (C) The exact missing Props (well-typed; none was proved in the three layers, except `NoRealZero` at `chi3`, `chi4`, `chi7`, `chi8`, whose bodies are `WeilTwinGeneral.hS3`, `Dedekind4.hS4`, `WeilTwinGeneral.hS7`, `WeilTwinGeneral.hS8`; `lib/pnt/Subconvexity.lean` proves `ConvexityBound`, `ZetaCritBound (5/24 + ε)` for every `ε > 0`, and `Lindelof` under `RiemannHypothesis`) -/
+/-! ### (C) The exact missing Props
+
+Well-typed; none was proved in the three layers. `lib/pnt/Subconvexity.lean` proves `ConvexityBound`,
+`ZetaCritBound (5/24 + ε)` for every `ε > 0`, and `Lindelof` under `RiemannHypothesis`. -/
 
 /-- Pointwise growth exponent `c` for `ζ` on the critical line. -/
 def ZetaCritBound (c : ℝ) : Prop :=
@@ -68,7 +73,7 @@ def InghamFromC (c : ℝ) : Prop :=
 /-- The density hypothesis in the library's normalisation. -/
 def DensityHypothesis : Prop := ∀ ε > 0, ∃ B : ℝ, ShortWeil.DensityXi (2 + ε) B
 
-/-- GRH modulo real zeros (the cross hypothesis of `QC_nonneg_of_cross`). -/
+/-- GRH modulo real zeros (the cross hypothesis of `grh_of_cross`). -/
 def GRHCross (χ : DirichletCharacter ℂ N) : Prop :=
   ∀ s : ℂ, LFunction χ s = 0 → 0 < s.re → s.re < 1 → s.re = 1 / 2 ∨ s.im = 0
 

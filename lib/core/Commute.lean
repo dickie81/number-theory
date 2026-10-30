@@ -1,17 +1,14 @@
 import Mathlib
 import GapCriterion
 
-/-! # Weil's form commutes with `∂²` (Theorem B, formal)
+/-! # `C²` functions of compact support, and two identities on the diagonal
 
-For `C²` functions `f, k` supported in `[−a, a]` (with `f, f'` vanishing outside):
+* `C2Supp r f f₁ f₂`: `f` is `C²` with derivatives `f₁, f₂`, and `f, f₁, f₂` vanish outside `[−r, r]`; `C2Fun` is
+  the same without the support condition.
+* `weilQ0_eq_bil0`: `weilQ0 a f = bil0 a f f` for a probe `f`; `normSq_eq_xcorr`: `normSq f = xcorr f f 0` for `f`
+  in `L²`.
 
-* `xcorr_deriv2`: `xcorr(f'', k)(u) = xcorr(f, k'')(u)` for every shift `u`, by two integrations by parts;
-* `bil0_deriv2`: hence `B₀(f'', k) = B₀(f, k'')` for the pole-free bilinear form (constant, archimedean and
-  prime terms are all functionals of the cross-correlation);
-* `poleR_deriv2`: `poleR(f'') = ¼·poleR(f)`, because `(e^{−u/2})'' = ¼e^{−u/2}`, i.e. `(i/2)² = −¼` is real;
-* `bilQ_deriv2`: the full bilinear form of `Q` satisfies `B(f'', k) = B(f, k'')`.
-
-Theorem C itself (flat ⇒ degenerate) is proved in `H²` generality in TheoremC.lean, where the smooth
+Theorem C (flat ⇒ degenerate) is proved in `H²` generality in TheoremC.lean, where the smooth
 form `simple_not_flat` is derived as a corollary.
 -/
 

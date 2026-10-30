@@ -14,27 +14,21 @@ The members are `u₀·gen(𝔟)⁶` for every `u₀ ≠ 0` whose sextic symbol 
   `Σ_n χ(n)μ_K(n)W(n/Z) = Σ_d χ(d)h(d)·Σ_m χ(m)f(m)W(md/Z)` (`smoothSumOf_muKTw_eq`). Bounds `O(Z^{θ+ε})` on
   `Σ_n χ(n)f(n)W(n/Z)` then give the hypothesis of `ne_zero_of_twistBound`
   (`twistBound_of_fSmoothTw`), since `|χ(d)h(d)| ≤ |h(d)|` and `summable_hfun`.
-* **The family at `u₀·gen(𝔟)⁶`**: if `(u₀/𝔞)₆ = c(N𝔞)` on the ideals of norm prime to `6`, the family's weight
-  at `u₀u` is `c(N𝔞)` times its weight at `u` (`wsym_member_mul`). So the average over sixth powers, taken
-  at the members `u₀·gen(𝔟)⁶`, is `κY·Σ_n c(n)f(n)W(n/Z)` up to the error when `|c| ≤ 1`
-  (`norm_sum_famSum_member_sub_le`). By the identity, `u₀ = d³` and `c = J(d | ·)` qualify
-  (`wsym_intCast_cube_mul`, `norm_sum_famSum_intCast_cube_sub_le`).
-* **The twisted S2′** (`fSmoothC_isBigO_of_meanSquare`): the Cauchy–Schwarz against `MeanSquare σ`,
+* **The twisted family at `u₀·gen(𝔟)⁶`**: for the family with coefficients,
+  `A_Z^{c'}(u) = Σ_𝔞 c'(𝔞)μ(𝔞)(u/𝔞)₆W(N𝔞/Z)`, if `c'(𝔞)(u₀/𝔞)₆ = c(N𝔞)` on the ideals of norm prime to `6`, then
+  `c'(𝔞)` times the family's weight at `u₀u` is `c(N𝔞)` times its weight at `u` (**`wsymC_member_mul`**). So the
+  average over sixth powers, taken at the members `u₀·gen(𝔟)⁶`, is `κY·Σ_n c(n)f(n)W(n/Z)` up to the error when
+  `|c| ≤ 1` (**`sum_famSumC_member_gen`**, **`norm_sum_famSumC_member_sub_le`**).
+* **The twisted S2′** (**`fSmoothC_isBigO_of_meanSquareC`**): the Cauchy–Schwarz against `MeanSquareC c' σ`,
   `σ ≥ 0`, with `N𝔟 ≤ Y = Z^{(1+σ)/6}/N(u₀)^{1/6}`, so that the members, distinct for `u₀ ≠ 0`, have norm
-  `N(u₀)N(𝔟)⁶ ≤ Z^{1+σ}`: `Σ_n c(n)f(n)W(n/Z) = O(Z^{(11+5σ)/12+ε})`. At `u₀ = d³`, `N(u₀) = |d|⁶`
-  (`fSmoothJ_isBigO_of_meanSquare`).
-* **`ne_zero_of_memberTwist`**: for `3 ∣ N`, a Dirichlet character `χ` mod `N` with `χ ≠ 1` and `χχ₋₃ ≠ 1`, and
-  `u₀ ≠ 0` with `(u₀/𝔞)₆ = χ(N𝔞)` on the ideals of norm prime to `6`: `L(s, χ) ≠ 0` and `L(s, χχ₋₃) ≠ 0` on
-  `Re s > 11/12`. The mean square (`Eis.meanSquare`) at `σ = 6ε/5` gives the bound with exponent
-  `11/12 + ε`, as for `ζ`. **`ne_zero_of_jacobiTwist`** is the case `u₀ = d³`, for `χ` with
-  `χ(n) = J(d | n)` on the `n` prime to `6`.
-* **The twisted family**: the statements above for the
-  family with coefficients, `A_Z^{c'}(u) = Σ_𝔞 c'(𝔞)μ(𝔞)(u/𝔞)₆W(N𝔞/Z)`, at the members `u₀·gen(𝔟)⁶` with
-  `c'(𝔞)(u₀/𝔞)₆ = c(N𝔞)` on the ideals of norm prime to `6` (**`wsymC_member_mul`**, **`sum_famSumC_member_gen`**,
-  **`norm_sum_famSumC_member_sub_le`**), against `MeanSquareC c' σ`
-  (**`fSmoothC_isBigO_of_meanSquareC`**), and **`ne_zero_of_famTwist`**: `L(s, χ) ≠ 0` and `L(s, χχ₋₃) ≠ 0` on
-  `Re s > 11/12` when `MeanSquareC c' σ` holds for every `σ > 0`. The statements above are its
-  case `c' = 1` (`famSumC_one` and `meanSquareC_one_iff`).
+  `N(u₀)N(𝔟)⁶ ≤ Z^{1+σ}`: `Σ_n c(n)f(n)W(n/Z) = O(Z^{(11+5σ)/12+ε})`.
+* **`ne_zero_of_famTwist`**: for `3 ∣ N`, a Dirichlet character `χ` mod `N` with `χ ≠ 1` and `χχ₋₃ ≠ 1`, and
+  `u₀ ≠ 0` with `c'(𝔞)(u₀/𝔞)₆ = χ(N𝔞)` on the ideals of norm prime to `6`: `L(s, χ) ≠ 0` and `L(s, χχ₋₃) ≠ 0` on
+  `Re s > 11/12` when `MeanSquareC c' σ` holds for every `σ > 0`. The twisted S2′ at `σ = 6ε/5` gives the bound
+  with exponent `11/12 + ε`, as for `ζ`.
+* **`ne_zero_of_memberTwist`**: the same conclusion for `u₀ ≠ 0` with `(u₀/𝔞)₆ = χ(N𝔞)` on the ideals of norm
+  prime to `6`; it is the case `c' = 1`, with the mean square (`Eis.meanSquare`) through `meanSquareC_one_iff`.
+  **`ne_zero_of_jacobiTwist`** is the case `u₀ = d³`, for `χ` with `χ(n) = J(d | n)` on the `n` prime to `6`.
 -/
 
 open NumberField Ideal UniqueFactorizationMonoid

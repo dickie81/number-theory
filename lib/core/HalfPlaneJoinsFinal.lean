@@ -12,8 +12,8 @@ the exponent `11/12 + ε`:
 * `smoothBound_eleven_twelfths`: `SmoothBound (11/12)`.
 
 The joins at `θ = 11/12`:
-* `zeta_band_eleven_twelfths`, `chi3_band_eleven_twelfths`: every nontrivial zero of `ζ`, and every zero of
-  `L(s, χ₋₃)` in the critical strip, has `|2 Re ρ − 1| ≤ 5/6`, so `1/12 ≤ Re ρ ≤ 11/12`;
+* `zeta_band_eleven_twelfths`: every nontrivial zero `ρ` of `ζ` has `|2 Re ρ − 1| ≤ 5/6`, so
+  `1/12 ≤ Re ρ ≤ 11/12`;
 * `abs_im_tau_le_five_twelfths`: every zero `τ` of `Ξ` has `|Im τ| ≤ 5/12`;
 * `weil_rate_eleven_twelfths`, `chi3_rate_eleven_twelfths`, `QK3_rate_eleven_twelfths`: the twin forms of `ζ`,
   of `L(s, χ₋₃)` and of `ζ·ζ_{ℚ(√−3)}` are at least `−C e^{5λ/6}` at `λ ≥ 0`;

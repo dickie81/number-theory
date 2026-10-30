@@ -21,7 +21,7 @@ constructs these data and proves the expansion of every translate of a group at 
   with its series, and the class `δ₀` of `δ′` modulo `9εc₀`), every translate is `κ₀∏_Pχ_P(s_Ph_P)²` times
   the series at `H` in the coordinates of (A.9), with the cusp shift as the phase `ψ_{λ³c}(−mδ′)`. Here
   `‖κ₀‖ = 1`, `δ′ ≡ δ₀ (mod 9εc₀)` and `δ′s_Ph_P ≡ 1 (mod π_P)`.
-* **The parameters exist** (`group_params`, **`group_cusp_exists`**).
+* **The parameters exist** (`group_params`).
 -/
 
 open NumberField Ideal UniqueFactorizationMonoid Complex

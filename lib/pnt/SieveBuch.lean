@@ -18,37 +18,18 @@ for the others (`sp2` … `sp5`).
 * `I_S3c_vanish`, `I_S4c_vanish_lt`, `I_S4c_vanish_reg`, … `I_S6c_vanish_reg`: for `P.Good`, the cells outside
   `SieveCert.inKK` at depth 3, and at depths 4 to 6 the cells whose prime would exceed the one before and those outside
   the region, contribute `0`. Outside the region the product of the primes is at most `N₁`, while it times the last
-  prime exceeds `N₂`: below a box split at `X'` the product is at most `X'·√X'`, and below a box that the rule takes
-  whole it is below `x^{(DEN−1)/DEN}`, by the box's test of no boundary term (`nbOK`).
-* `D1`: the dropped terms, as the certificate drops them. At depth 2 the candidate cells that are not decomposed
-  (`cand ∧ ¬decR`) and the corner cells (`¬cand ∧ ¬surelyEval`), below a cell `i` of `p₁` outside the window
-  (`inW`); at depth 4 the counted cells (`counted4`, `l ≤ k`) below the cells of depth 3 that are split, except those
-  that `dec4R` decomposes, and below these the counted cells of depth 6 (`counted6`, `c ≤ b`).
-* `Leaves`: the estimates the leaves need, each `|A − B| ≤ Err`: the evaluated families (`e1`, `e2`, `e2'`, `e3`,
-  `e3'`, `e4`, `e4gt`, `e5gt`, `e5'`, `e6`) and the families of Proposition 6 (`j0` for `S(z₀)`, `p1` … `p5`).
-* `decomp`: for a grid with `GridOK` and `GridOKC`, a rule with `RuleNB`, `P.Good`, weights `g_A ≥ 0` and `g_B`, and
-  leaves within `Err ≥ 0`, `S_{g_A}(z_top) ≥ S_{g_B}(z_top) − D1(g_B) − Cdec·Err`, with `Cdec` a polynomial in `n` and
-  `nC`.
+  prime exceeds `N₂`: below a box split at `X'` the product is at most `X'·√X'`, and below a box taken whole it is
+  below `x^{(DEN−1)/DEN}`, by the box's test of no boundary term (`nbOK`).
+* `inW`, `sE2`, `sE4`, `sE6`: the cells of `p₁` inside the window, and the boxes of depths 2, 4 and 6 that are surely
+  evaluable.
 
 This is the decomposition with the classification by cells (the grid of `SieveCert.Grid`: `n` cells a side, of side
-`H/DEN`, starting at `V/DEN = u₂ − u₁`, and its coarse grid of `nC` cells of side `HC/DEN`). The rule
-(`SieveCert.Rule`) says which boxes may be decomposed (`decR`, `dec4R`); with `RuleNB`, a box it passes passes `limOK`
-or `nbOK`. A decomposed box is split at `X'` when `limOK` passes it, and is otherwise taken whole, at the threshold
-`N₁`, above which it has no term. At depth 1 a cell inside the window is evaluated, the others decomposed. At depth 2
-a candidate cell that `decR` allows is split at its threshold (above evaluated, below decomposed), a candidate cell not
-allowed is dropped, and a non-candidate cell is evaluated when surely evaluable and dropped otherwise (the corner). At
-depth 3 a cell of `inKK` is split at its threshold when not surely evaluable and evaluated otherwise. At depth 4 a
-counted cell is dropped, unless `dec4R` allows it, when it is split at its threshold and the part below decomposed
-with the coarse cells of `p₅`; the cells that are not counted are evaluated or vanish. At depth 5 a cell of `inKK5` is
-split at its threshold when not surely evaluable and evaluated otherwise, and at depth 6 a counted cell is dropped and
-the rest are evaluated or vanish.
+`H/DEN`, starting at `V/DEN = u₂ − u₁`, and its coarse grid of `nC` cells of side `HC/DEN`). A decomposed box is split
+at `X'` when `limOK` passes it, and is otherwise taken whole, at the threshold `N₁`, above which it has no term.
 
-The proof of `decomp`: `lvl6`, `lvl5`, …, `lvl1`, one level at a time. A dropped term has `A ≥ 0` and costs its
-`B`-version; a term with sign `−` is bounded above, so it is evaluated or decomposed, never dropped.
-
-The certificate's grid and rule are parameters (`SieveCert.Grid` and `SieveCert.Rule`, with `GridOK`, `GridOKC` and
-`RuleNB` where the Lean takes them); the library's theorem (`Linnik22000E`) takes the decomposition to depth 8 of
-`SieveBuch8.lean`, on `SieveCert.grid22000E` with `SieveCert.ibRule`.
+The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` and `GridOKC` where the Lean takes them); the
+library's theorem (`Linnik22000E`) takes the decomposition to depth 8 of `SieveBuch8.lean`, on
+`SieveCert.grid22000E` with `SieveCert.ibRule`.
 
 The file imports `SieveDecomp.lean` and `SieveRule.lean`.
 -/
@@ -763,7 +744,7 @@ theorem I_S6c_vanish_reg (G : P.Good) (g : ℕ → ℝ) {i j k l b c : ℕ}
       ring
     exact_mod_cast this
 
-/-! ### The inequality, level by level -/
+/-! ### The window and the surely evaluable boxes -/
 
 /-- The cell `i` of `p₁` lies inside the window: its terms are evaluated at depth 1. -/
 def inW (i : ℕ) : Prop := U1 < SieveCert.e i ∧ SieveCert.e i + H < U2

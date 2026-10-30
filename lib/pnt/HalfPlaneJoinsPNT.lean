@@ -1,12 +1,10 @@
 /-
-# Joins from the exponent `Θ` and the half-plane into older sockets
+# Joins from the exponent `Θ` into older sockets
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Plain statement. For `σ ≥ 0`, `ζ`'s twin form is at least `−C e^{σλ}` at `λ ≥ 0` if and only if `2Θ − 1 ≤ σ`
-(`weil_twins_rate_Theta`); if RH fails, `ψ(x) − x = Ω±(√x)` (`psiOmegaSqrt_of_not_RH`); and the Korobov–Vinogradov
-region of `LandauKV.zeroFree_KV` holds with the constant `A = 1/6` (`zeroFree_KV_explicit`). No
-hypothesis.
+(`weil_twins_rate_Theta`), and if RH fails, `ψ(x) − x = Ω±(√x)` (`psiOmegaSqrt_of_not_RH`). No hypothesis.
 
 * `weil_twins_rate_Theta`: `WeilForm.weil_twins_rate` (the rate condition iff `|2 Re ρ − 1| ≤ σ` at
   every nontrivial zero) with `PsiExponent.Theta`: zeros with `Re ρ > Θ − ε` for every `ε > 0`
@@ -15,9 +13,6 @@ hypothesis.
 * `psiOmegaSqrt_of_not_RH`: `CrossCriteria.PsiOmegaSqrt` when RH fails. Then `Θ > 1/2`
   (`MertensExponent.rh_iff_Theta_eq_half`), and `psi_omega_Theta` at `ε = (Θ − 1/2)/2`
   gives `ψ(x) − x` beyond `±x^{Θ−ε} ≥ ±√x` for arbitrarily large `x`.
-* `zeroFree_KV_explicit`: for `|t| ≥ e³` the denominator `(log|t|)^{2/3}(log log|t|)^{1/3}` exceeds
-  `3^{2/3} > 2`, so the region lies in `Re s > 11/12`, where the half-plane
-  (`Eis.ne_zero_of_re_gt_eleven_twelfths`) applies.
 -/
 import MertensExponent
 import CrossCriteria

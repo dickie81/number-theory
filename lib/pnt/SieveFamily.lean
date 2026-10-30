@@ -29,8 +29,8 @@ The proof:
 * `sum_twist_eq`, `inner_factor`: a separated family sum factors into the twisted `m`-sum and the twisted prime sums,
   which are `SieveWeight.Sp` at the heights `−2πΣ_j ξ_je_{ji}`.
 * `family_bound`: `SieveSep.sum_sep` writes each character's sum as an integral over `ℝ^J`. On the box `|ξ_j| ≤ T₀` the
-  heights are at most `q^η`, and `hII` bounds the sum over `χ ≠ 1` (for `route2333` it is `SieveTypeII.typeII_step`);
-  everywhere the trivial bound holds; `SieveSep.sep_bound` combines the two.
+  heights are at most `q^η`, and `hII` bounds the sum over `χ ≠ 1`; everywhere the trivial bound holds;
+  `SieveSep.sep_bound` combines the two.
 * `integral_norm_GC_le`, `mass_GC_le`, `tail_GC_le`: for `SieveSmooth`'s cut-off `G` with `0 < θ ≤ 2Λ`,
   `‖G‖₁ ≤ 2Λ + θ` and `‖𝓕G‖₁ ≤ π(2Λ + θ) + c₂/(2πθ)`, and for `θ > 0`, `Λ ≥ 0`, `k ≥ 2` and `T₀ ≥ 1`,
   `∫_{|ξ|>T₀} |𝓕G| ≤ 2π·2θ^{1−k}c_k(2π)^{−k}T₀^{2−k}`, with `c_k = ‖g^{(k)}‖₁`.
@@ -47,8 +47,6 @@ The proof:
   and the pivots' counts are at most constants times `A₀q^L` (`box_le`, `pivot_le`). So the bound is at most
   `A₀q^L/φ(q)` times `a₁q^{−7/400000} + a₂q^{−1} + a₃(12q^{−ε₂} + q^{−e₁})`, which is at most `q^{−δ}` for large `q`,
   with `δ = min(ε₂, e₁)/2` (`bracket_le`).
-
-For the route `SieveRoute.route2333`, take `SieveRoute.typeII2333` for `hII`.
 
 The file imports `SieveSep.lean` and `SieveRoute.lean`.
 -/

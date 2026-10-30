@@ -11,8 +11,7 @@ normalised even probe. Three constants are sharpened.
   monotonicity. So `Far(a) ≥ log(2/a) + π/2 − sinh a ≥ log 24 + π/2 − sinh(1/12)`.
 
 The budget at `a = 1/12` is `c₀ ≥ −5.4301`, `Far ≥ 4.6654` and `Near ≥ 0.834`, for a total of `0.069 ≥ 1/20`.
-The method's ceiling is about `a ≈ 0.095`, where `λ₀ → 0`. Beyond it the pole term is needed:
-see `PoleRelax.lean`.
+The method's ceiling is about `a ≈ 0.095`, where `λ₀ → 0`. Beyond it the pole term is needed.
 -/
 
 open Real Filter Topology Complex MeasureTheory Set

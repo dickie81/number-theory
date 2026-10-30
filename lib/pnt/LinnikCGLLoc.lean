@@ -27,8 +27,7 @@ Plain statements, with `F = esum s c λ`.
 
 * `integrable_psiC`, `kloc`, `continuous_kloc`, `integrable_kloc`, `kloc_inv`, `kloc_inv_one`: the kernel.
 * `esum`, `continuous_esum`, `norm_esum_le`, `esum_mul`, `conj_esum`: finite exponential sums.
-* `esum_eq_integral`, `integrable_loc`, `norm_esum_le_integral`, `norm_sq_esum_le`, `norm_cube_esum_le`: the local
-  averages.
+* `esum_eq_integral`, `norm_esum_le_integral`, `norm_sq_esum_le`, `norm_cube_esum_le`: the local averages.
 
 The file imports `LinnikCGL112.lean`.
 -/

@@ -8,17 +8,14 @@ it has to go through the explicit formula `Q(g) = Σ_ρ ĝ(t_ρ)²`. Off the cri
 complex and cannot be bounded one at a time, so full saturation from the prime side alone is as
 hard as Hypothesis D (item 1(a)).
 
-What is proved here is the reduction. Assume the explicit formula with the zeros on the line,
-`Q = 2 Σ_{γ>0} ĝ(γ)²` (named input `hQ`). Then:
-* `sq_le_of_explicit`: each `ĝ(γ_j)² ≤ Q/2 ≤ λ/2`, so `|ĝ(γ_j)| ≤ √(λ/2)`.
+What is proved here is the step from a small value to a nearby zero, where the envelope `|ĝ'|` is
+bounded below:
 * `zero_near_of_deriv_ge` and `zero_near_of_deriv_le`: a function that is at most `η` in size at
   `γ`, with `|F'| ≥ m` of fixed sign on `[γ − r, γ + r]` and `η/m ≤ r`, vanishes within `η/m`
   of `γ`.
-* `pinned_of_explicit`: a zero of `ĝ` lies within `√(λ/2)/m` of every `γ_j` near which `|ĝ'| ≥ m`.
 
-So saturation holds wherever the envelope `|ĝ'|` exceeds `√λ₁`, which is the model's saturated
-region. The pinning rate is `e^{−Δ}` rather than the model's `e^{−2Δ}`. What remains open is a
-lower bound on the envelope, together with the explicit-formula input. -/
+`Unconditional.lean` bounds `|ĝ|` at the verified zeros through the explicit formula and applies this
+step there (`pinned_unconditional`). -/
 
 open Set
 

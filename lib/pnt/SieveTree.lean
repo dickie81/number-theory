@@ -1,13 +1,12 @@
 /-
-# Buchstab's tree over a finite set
+# Buchstab's tree
 
-Plain statements. `rough z n` says that `n` has no prime factor below `z`; `S C m z` is `S(C_m, z)`, the number of
-`n ∈ C` with `m ∣ n` and `rough z n`; `primesIco w z` is the set of primes of `[w, z)`.
+Plain statement. `rough z n` says that `n` has no prime factor below `z`; `primesIco w z` is the set of primes of
+`[w, z)`.
 
 * `tree_pt`: Buchstab's tree at one `n`. For `w ≤ z₀` and `r ≤ X` with every prime factor of `r` at least `z₀`,
   `[r ∣ n, rough z₀ n]` is the leaves' sum `Σ_{P ⊆ [w, z₀), r∏P ≤ X} (−1)^{|P|} [r∏P ∣ n, rough w n]` plus the stops'
   sum `Σ_{w ≤ p < z₀} Σ_{P ⊆ (p, z₀), r∏P ≤ X < r∏P·p} (−1)^{|P|+1} [r∏P·p ∣ n, rough p n]`, over sets `P` of primes.
-* `tree_sum`: the same summed over a finite set `C`, as an identity of the counts `S`.
 
 This is Buchstab's identity iterated from `z₀` down to `w`, each branch stopped once its product would pass the
 threshold `X`.

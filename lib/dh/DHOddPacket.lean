@@ -15,9 +15,8 @@ The cosine packet `packet a ω = 1_{[−a,a]}·cos(ω·)` certifies `Q_dh < 0` o
 
 **Closed forms** (every `0 < a`, `0 < ω`): `‖g‖² = a − sin(2ωa)/(2ω)` (`sinPacket_normSq`),
 `f(u) = ½(2a − u) cos(ωu) − sin(ω(2a − u))/(2ω)` on `0 ≤ u ≤ 2a` and `0` beyond (`sinPacket_autocorr`,
-`sinPacket_autocorr_of_le`: the cosine packet's autocorrelation with the sidelobe sign flipped),
-`ĝ(z) = i[sin((z − ω)a)/(z − ω) − sin((z + ω)a)/(z + ω)]` (`sinPacket_ghatC`), the width-3 strip test
-(`sinPacket_striptest`), and the odd probe (`sinPacket_oprobe : OProbe a (sinPacket a ω)`).
+`sinPacket_autocorr_of_le`: the cosine packet's autocorrelation with the sidelobe sign flipped), and the
+odd probe (`sinPacket_oprobe : OProbe a (sinPacket a ω)`).
 **The form** (`QDHu_sinPacket_eq`): `QDHu` has no pole term (`dh` is entire), so on an odd `g` it is the
 same expression as on an even one,
 `Q_dh(g) = (Re ψ(¾) + log(5/π))(a − sin(2ωa)/(2ω)) + E_{3/4}(g) − 2 Σ_{2 ≤ n ≤ ⌊e^{2a}⌋} c(n) n^{−1/2} f(log n)`.
@@ -28,7 +27,7 @@ packet, since only `|β′| = |β| ≤ 1/(2ω)` enters.
 **The certificate** (`QDHu_sinPacket_le`): `Q_dh(sinPacket 12/5 169/2) ≤ −111/100`, from the generated
 `oddPartial_121` (DHOddTerms.lean, `gen_oddterms.py`) and DHConstants' bounds; numerically
 `Q_dh = −1.24351…` (`−0.51771‖g‖²`, `‖g‖² = 2.4019428…`).
-**The `dh` column of `rh_of_lamO_lower`** (`not_odd_lower_dh`, `not_lamODH_lower`): `QDHu` sees the probe,
+**No odd lower bound for `dh`** (`not_odd_lower_dh`, `not_lamODH_lower`): `QDHu` sees the probe,
 not the window, so the normalised sine packet is a negative odd unit probe at every `b ≥ 12/5`
 (`exists_oprobe_QDHu_neg`), the odd ground energy `λ_dh^odd(b)` (`lamODH`) is negative there (`lamODH_neg`),
 and no positive lower bound `c·e^{(9+δ)b − 4πe^{2b}}` on the odd sector of `dh` holds eventually.
@@ -457,7 +456,7 @@ theorem QDHu_sinPacket_neg : QDHu (sinPacket (12 / 5) (169 / 2)) < 0 := by
   have := QDHu_sinPacket_le
   linarith
 
-/-! ## The `dh` column of `rh_of_lamO_lower` -/
+/-! ## No odd lower bound for `dh` -/
 
 /-- **A negative normalised odd probe at every support `b ≥ 12/5`**: the normalised sine packet
 (`QDHu` sees the probe, not the window). -/
@@ -477,8 +476,8 @@ theorem exists_oprobe_QDHu_neg {b : ℝ} (hb : 12 / 5 ≤ b) :
   · rw [normSq_smul]; exact hc2
   · rw [QDHu_smul]; exact mul_neg_of_pos_of_neg (pow_pos hc0 2) QDHu_sinPacket_neg
 
-/-- **The `dh` column of `rh_of_lamO_lower`'s hypothesis, refuted**: for no `c > 0` (and any `δ`) is
-Weil's form of `dh` eventually `≥ c·e^{(9+δ)b − 4πe^{2b}}` on every normalised odd probe at support `b`. -/
+/-- **The odd lower bound for `dh`, refuted**: for no `c > 0` (and any `δ`) is Weil's form of `dh` eventually
+`≥ c·e^{(9+δ)b − 4πe^{2b}}` on every normalised odd probe at support `b`. -/
 theorem not_odd_lower_dh {δ c : ℝ} (hc : 0 < c) :
     ¬ ∀ᶠ b in atTop, ∀ o, OProbe b o → normSq o = 1 →
       c * Real.exp ((9 + δ) * b - 4 * π * Real.exp (2 * b)) ≤ QDHu o := by
@@ -512,7 +511,8 @@ theorem lamODH_neg {b : ℝ} (hb : 12 / 5 ≤ b) : lamODH b < 0 := by
   obtain ⟨o, hp, hn, hneg⟩ := exists_oprobe_QDHu_neg hb
   exact (lamODH_le hp hn).trans_lt hneg
 
-/-- **`rh_of_lamO_lower`'s hypothesis with `λ_dh^odd` in place of `λ_odd`, refuted.** -/
+/-- **The lower bound `λ_dh^odd(b) ≥ c·e^{(9+δ)b − 4πe^{2b}}`, refuted**: for no `c > 0` (and any `δ`) does it hold
+eventually. -/
 theorem not_lamODH_lower {δ c : ℝ} (hc : 0 < c) :
     ¬ ∀ᶠ b in atTop, c * Real.exp ((9 + δ) * b - 4 * π * Real.exp (2 * b)) ≤ lamODH b := by
   intro h

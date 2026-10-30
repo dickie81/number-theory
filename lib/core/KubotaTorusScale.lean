@@ -19,8 +19,6 @@ term:
   **`integral_fundP3_affine`**, with `integrableOn_fundP3_mul` and `integral_fundP3_mul_real`):
   `∫_{3P} f(μz + t) dz = ∫_{3P} f(z) dz` for `f` measurable, periodic under `3ℤ[ω]` and integrable on `3P`,
   `μ ∈ ℤ[ω]` nonzero and `t ∈ ℂ` (with `integral_fundP3_add`).
-* **θ's constant term** (**`integral_thS_affine`**, with `integrableOn_thS_slice`):
-  `∫_{3P} thS(μz + t, v) dz = (9√3/2)·Res φ·v^{2/3}` for `v > 0` (`integral_thS`).
 -/
 
 open MeasureTheory Set Filter NumberField Complex Ideal

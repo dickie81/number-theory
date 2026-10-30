@@ -25,14 +25,13 @@ Three inputs of the companion paper's proof of its Proposition 4.5.
   `exists_apply_ne_one_of_hasEnoughRootsOfUnity`); `1_{x = c} = N⁻¹·Σ_ξ ξ(c⁻¹)ξ(x)`
   (`indicator_eq_sum_mulChar`); and a function `Ψ` of two unit classes is
   `Σ_{ξ₁,ξ₂} ĉ(ξ₁, ξ₂)·ξ₁(x)·ξ₂(y)` (`pair_eq_sum_mulChar`) with `|ĉ| ≤ max |Ψ|`
-  (`norm_pairCoeff_le`; a character's values at units have norm `1`, `norm_mulChar_unit`). Primary generators of
-  squarefree ideals of norm prime to `6` are prime to `2` (`isCoprime_pgen_two`), so their classes modulo `4` are
-  units (`isUnit_mk_four`). With
-  `M = ℤ[ω]/4` this expands the paired factor, which depends only on the classes of `z₁, z₂`
-  modulo `4` (`pairFactor_eq_of_mod_four`), into products of characters. The paper instead reduces its
+  (`norm_pairCoeff_le`; a character's values at units have norm `1`, `norm_mulChar_unit`). An element prime to
+  `2`, such as a primary generator of a squarefree ideal of norm prime to `6`, has a unit class modulo `4`
+  (`isUnit_mk_four`). With `M = ℤ[ω]/4` this expands the paired factor, which depends only on the classes of
+  `z₁, z₂` modulo `4` (`pairFactor_eq_of_mod_four`), into products of characters. The paper instead reduces its
   pair factor to a function of one class with its (4.7) and expands that.
-* **Two coefficient families** (`MellinSep.bilinear_dual_bound₂`): `bilinear_dual_bound`
-  with coefficient families `a` and `b` on the two columns, each satisfying the mean-square hypothesis
+* **Two coefficient families** (`MellinSep.bilinear_dual_bound₂`): the bound on the bilinear form with the dual
+  kernel, with coefficient families `a` and `b` on the two columns, each satisfying the mean-square hypothesis
   with the same `M`. It is an instance of `bilinear_dual_bound_of_dilated`
   (`MellinSeparation.lean`), whose AM–GM step combines the dilated bounds of the two families.
 -/
@@ -579,8 +578,8 @@ namespace MellinSep
 open Complex MeasureTheory Set
 open scoped FourierTransform RealInnerProductSpace ContDiff SchwartzMap Nat ComplexConjugate
 
-/-- **The bilinear form with two coefficient families**: `bilinear_dual_bound` with the
-family `a` on the first column and `b` on the second, both satisfying the mean-square hypothesis with
+/-- **The bilinear form with two coefficient families**: the bound on the bilinear form with the dual kernel, with
+the family `a` on the first column and `b` on the second, both satisfying the mean-square hypothesis with
 the same `M`. -/
 theorem bilinear_dual_bound₂ (W0 : ℝ → ℂ) (hW0 : ContDiff ℝ ∞ W0) {α β : ℝ} (hα : 0 < α)
     (hW0s : ∀ y, y < α ∨ β < y → W0 y = 0) (V : ℝ → ℂ) (hV : ContDiff ℝ ∞ V)

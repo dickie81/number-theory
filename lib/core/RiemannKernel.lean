@@ -7,9 +7,9 @@ Riemann's kernel `Φ(u) = Σ_{n≥1} (2π²n⁴e^{9u/2} − 3πn²e^{5u/2}) e^{�
 
   `∫_ℝ Φ(u) e^{izu} du = Ξ(z)/2`   for every `z ∈ ℂ`   (`RPhiHat_eq`),
 
-with `Ξ(z) = ξ(½ + iz)` built from Mathlib's `completedRiemannZeta₀`. This discharges
-`KernelApprox` for `φ_n = Φ` (KernelChain.lean). Since `Φ > 0` (`RPhi_pos`), `Ξ(it) = 2∫Φ(u)e^{−tu}du > 0`,
-so `ξ(σ) ≠ 0` for real `σ` (`xi_real_ne_zero`), giving `Ξ(0) ≠ 0` and `ζ(σ) ≠ 0` on `(0, 1)`.
+with `Ξ(z) = ξ(½ + iz)` built from Mathlib's `completedRiemannZeta₀`. Since `Φ > 0` (`RPhi_pos`),
+`Ξ(it) = 2∫Φ(u)e^{−tu}du > 0`, so `ξ(σ) ≠ 0` for real `σ` (`xi_real_ne_zero`), giving `Ξ(0) ≠ 0` and `ζ(σ) ≠ 0`
+on `(0, 1)`.
 
 * **Half-plane (`integral_RPhi_halfplane`).** For `Im z < −½` (`Re s > 1`, `s = ½ + iz`), each term
   integrates to `(s(s−1)/4)(πn²)^{−s/2}Γ(s/2)` by the substitution `x = e^{2u}` and Euler's integral

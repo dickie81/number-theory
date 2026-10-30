@@ -54,7 +54,7 @@ theorem chiS_pow_four (M : Finset Pr) (f : 𝓞 K) : chiS M f ^ 4 = conj (chiS M
 
 /-- The column coefficient `μ(M)ξ(M)·χ_M(c)·conj(χ_M(y))`: the companion paper's `p_y` of (7.1) with
 `y` its `hf²` and `c` its `C⁴d·t⁶`, the factor `χ_M(t)⁶` giving its indicator `1_{(n,t)=1}`
-(`chiS_eS_pow_six_eq_one`, `colP_eq_zero_of_dvd`). -/
+(`chiS_eS_pow_six`, `colP_eq_zero_of_dvd`). -/
 def colP (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) (y c : 𝓞 K) (M : Finset Pr) : ℂ :=
   (-1 : ℂ) ^ M.card * ξ (cls m M) * chiS M c * conj (chiS M y)
 
