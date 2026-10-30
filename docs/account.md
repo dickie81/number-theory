@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 914 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 937 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -147,6 +147,7 @@ The deductions are stated for any input, against Mathlib's `ζ` and `LFunction`,
 | GRH for every `L(s, χ)` | Linnik's theorem with every exponent above `2` | `LinnikGRH.linnik_two_of_GRH` |
 | Petrow and Young's Weyl bound for every `L(s, χ)`, uniformly (`LinnikWeyl.PYWeyl`) | Weyl's bound for `ζ`, and Huxley's exponents above `5/6` for the characters | `LinnikWeylBridge.weylBound_of_PYWeyl`, `LinnikStairs7.charDensity_hy_0`, `LinnikStairs7.charDensity_hy_top` |
 | that RH fails | `ψ(x) − x = Ω±(√x)` | `HalfPlaneJoinsPNT.psiOmegaSqrt_of_not_RH` |
+| the arb certificates `WeilForm.CertE` and `WeilForm.CertO`: lower bounds for 350 mode energies, and the definiteness of two Gram matrices | Weil's form positive on every real probe at supports `2a ≤ 1.6`, past the prime powers `2`, `3` and `4` | `WeilForm.weilQg_ge_both` |
 | a Type II estimate on a window (`SieveRoute.TypeIIAt`) | Harman's comparison for the primes in a class mod `q` | `SieveProp6.prop6` |
 
 ## Connections
@@ -179,11 +180,13 @@ Within reach, with no hypothesis, from results the library has:
   `ψ(x, χ) ≪ log q · x^{11/12+η}`, uniform in `q` (`ChiUniform.psiChi_le_uniform`).
 - **Binary quadratic forms**: `2` is a cube mod a prime `p ≡ 1 (mod 3)` if and only if `p = x² + 27y²` (Gauss), from
   cubic reciprocity (`Eis.cub_recip`) and its supplementary laws.
-- **Weil positivity past the prime 2**, to supports `2a < log 3`, beyond Connes and Consani's `log 2`. The module
-  PrimeRelax3, in the git history, proves it from 60 mode energies that arb computes, taken as a hypothesis; a
-  certificate that the kernel checks, as the Linnik sieve's is, would remove the hypothesis.
+- **Weil positivity past the primes 2 and 3**, to supports `2a ≤ 1.6`, beyond Connes and Consani's `log 2`: the
+  library proves it from hypotheses that arb computations support, lower bounds for 350 mode energies and the
+  definiteness of two Gram matrices (`WeilForm.weilQg_ge_both`, and `WeilForm.weilQ_ge_prime3` for even probes below
+  `2a = log 3`). Certificates that the kernel checks, as the Linnik sieve's are, would remove the hypotheses.
 - **Hyperbolic 3-space**: Kubota's `θ` (`Eis.kubotaTheta`) as an eigenfunction of the Laplacian at `s(2 − s) = 8/9`,
-  below the continuous spectrum `[1, ∞)`: a bound state of a free particle on the cubic metaplectic cover.
+  below the continuous spectrum `[1, ∞)`: a bound state of a free particle on the cubic metaplectic cover. The library
+  has the energy `∫ v²|∇F|² dz dv/v³` and its invariance (`Eis.lintegral_energy_actP`), not the Laplacian.
 - **The half-plane's `dh` column**: `dh` vanishes somewhere in `Re s > 1` (Davenport and Heilbronn), so a located zero
   there would show in Lean that the half-plane needs the Euler product.
 

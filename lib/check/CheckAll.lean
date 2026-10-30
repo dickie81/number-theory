@@ -203,6 +203,15 @@ import LocalTeeth
 import BohrTorus
 import LSeriesLandau
 import HalfPlaneJoinsChar
+import KubotaEnergy
+import EulerGammaBinet
+import WindowForm
+import PoleRelax
+import PrimeRelax
+import PrimeRelax3
+import ParityRelax
+import ParityCert
+import CertInstances
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -983,3 +992,30 @@ coefficients; the band `1/12 ≤ Re ρ ≤ 11/12` for every Dirichlet `L`-functi
 #print axioms HalfPlaneJoins.QC_rate_eleven_twelfths
 #print axioms HalfPlaneJoins.QKχ_rate_eleven_twelfths
 #print axioms HalfPlaneJoins.realRooted_rate_eleven_twelfths
+
+/- Kept with the bridges, each named in `formalisations/`: the invariant energy on `ℍ³`; Euler's constant to seven
+digits; and Weil positivity at small supports from arb certificates, a conditional result, with the window form and
+the linear algebra of its certificates. -/
+#print axioms Eis.lintegral_energy_actP
+#print axioms Eis.edens_automorphic
+#print axioms Electron.eulerMascheroni_bounds
+#print axioms WeilForm.weilQ_ge_pole
+#print axioms WeilForm.weilQ_ge_prime
+#print axioms WeilForm.weilQ_ge_prime3
+#print axioms WeilForm.weilQg_ge_both
+#print axioms CertInstances.weilQ_ge_of_cert'
+#print axioms CertInstances.weilQ_ge_of_certP'
+#print axioms WindowForm.posDef_of_cholesky
+#print axioms WindowForm.gram_pos
+#print axioms WindowForm.offline_negative
+#print axioms WindowForm.quadruple_sum
+#print axioms WindowForm.ghat_cos
+#print axioms WindowForm.ghat_pole
+#print axioms WindowForm.product_dd
+#print axioms WindowForm.hasDerivAt_uA
+#print axioms WindowForm.phi_u_trig
+#print axioms WindowForm.basis_trig
+#print axioms WeilForm.memLp_ind
+#print axioms WeilForm.ind_mul_ind
+#print axioms WeilForm.wP_zero
+#print axioms WeilForm.log_three_le

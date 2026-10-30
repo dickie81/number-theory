@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 914 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 937 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 76 | 176 |
+| `lib/core` | 85 | 199 |
 | `lib/pnt` | 204 | 645 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
@@ -60,6 +60,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BohrTorus.prod_eq_iff_map_eq`: The multiplicative system is rigid at every `ℓ`
 - `BohrTorus.agree_not_rigid`: The additive system is not rigid beyond its dimension
 - `BohrTorus.tendsto_mean_moment_rearrangements`: The limiting means of `|Σ_{p∈F} p^{−it}|^{2ℓ}` count the pairs of rearrangements
+
+#### `CertInstances`: The certificate theorems as instances of the weighted certificate
+
+- `CertInstances.weilQ_ge_of_cert'`: `PoleRelax.weilQ_ge_of_cert`, verbatim statement, as the `(K, N, T) = (2, 6, 3.033953)` instance.
+- `CertInstances.weilQ_ge_of_certP'`: `PrimeRelax.weilQ_ge_of_certP`, verbatim statement, as the `(K, N, T) = (3, 60, 5.098076)` instance.
 
 #### `Concave`: Pólya's theorem for even concave probes, with no representation hypothesis
 
@@ -120,6 +125,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `Eis.fBound_gcd`: Heath-Brown's Lemma 2
 - `Eis.fBound_sep`: Heath-Brown's Lemma 10
+
+#### `EulerGammaBinet`: Euler's constant to seven digits, from Binet's formula
+
+- `Electron.eulerMascheroni_bounds`: Euler's constant to seven digits
 
 #### `ExplicitBridge`: The explicit-formula bridge: `weilQ` is the zero side of Weil's explicit formula
 
@@ -196,6 +205,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Eis.summable_eisTerm`: Absolute convergence ([note](../formalisations/cubic-theta.md))
 - `Eis.eis1_slAct`: Automorphy ([note](../formalisations/cubic-theta.md))
 
+#### `KubotaEnergy`: The conformality of the action, and the invariant energy
+
+- `Eis.lintegral_energy_actP`: The energy `∫ v²·edens(F′) dz dv/v³` is invariant under `SL_2(ℂ)`
+- `Eis.edens_automorphic`: The energy density of an automorphic function is invariant
+
 #### `KubotaThetaInv`: θ is invariant under `SL_2(ℤ)`
 
 - `Eis.isAut_thS_Gam2`: θ's Fourier series is automorphic on `Γ_2 = SL_2(ℤ)Γ_1(3)` ([note](../formalisations/cubic-theta.md))
@@ -246,6 +260,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Orthogonality.tendsto_mean_sq_norm_primeSum`: The radius is the root mean square of the prime sum
 - `Orthogonality.pythagoras_lpGauge_iff`: Orthogonality forces `p = 2`
 
+#### `ParityCert`: Weil positivity in both parity sectors, as far as the relaxation reaches
+
+- `WeilForm.log_three_le`
+- `WeilForm.weilQg_ge_both`: Weil positivity for every real `g`
+
 #### `ParityCont`: The parity gap by continuation in the support
 
 - `WeilForm.rh_of_no_crossing`: RH from no crossing ([note](../formalisations/weil-positivity.md))
@@ -253,6 +272,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `ParityGap`: Real zeros from the parity gap
 
 - `WeilForm.rh_of_parity_gap`: RH from the parity gap ([note](../formalisations/weil-positivity.md))
+
+#### `ParityRelax`: The relaxation for both parities and every prime power below the support
+
+- `WeilForm.wP_zero`
 
 #### `ParitySplit`: Weil's form splits by parity: positivity for every real `g`
 
@@ -268,6 +291,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.bil_zero_sum`: The bilinear Weil form is the bilinear zero sum ([note](../formalisations/weil-positivity.md))
 
+#### `PoleRelax`: Past `λ₀ = 0`: the pole term through a finite relaxation
+
+- `WeilForm.memLp_ind`
+- `WeilForm.ind_mul_ind`
+- `WeilForm.weilQ_ge_pole`: Weil positivity with the pole term, for every support `0 < a ≤ 1/4`
+
 #### `Positivity`: The pole-free form `Q₀`: existence, one sign, uniqueness
 
 - `WeilForm.weilQ0_abs_le`: Beurling–Deny for `Q₀` ([note](../formalisations/weil-positivity.md))
@@ -278,6 +307,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PsiOmega.hadamard_chi4`: The Hadamard product for `L(s, χ₄)`
 - `PsiOmega.race_three_half`: The race mod 3
 - `PsiOmega.race_eight_half`: The race mod 8
+
+#### `PrimeRelax`: Weil positivity past the first prime: every support `2a ≤ 0.8`
+
+- `WeilForm.weilQ_ge_prime`: Weil positivity through the first prime
+
+#### `PrimeRelax3`: Weil positivity up to the second prime: every support `2a ≤ 1.0986 < log 3`
+
+- `WeilForm.weilQ_ge_prime3`: Weil positivity up to the second prime
 
 #### `PrimeSide`: §11 item 1, restated with prime-side hypotheses only
 
@@ -415,6 +452,19 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilTwinGeneral.rh_grh_iff_twins_Q8`: `ζ_{ℚ(√−2)}`. ([note](../formalisations/weil-positivity.md))
 - `WeilTwinGeneral.rh_grh_iff_twins_Q7`: `ζ_{ℚ(√−7)}`. ([note](../formalisations/weil-positivity.md))
 - `WeilTwinGeneral.rh_grh_iff_twins_Q4`: The theorem recovered as an instance. ([note](../formalisations/weil-positivity.md))
+
+#### `WindowForm`: The prime-side window form: its algebra, its certification logic, and the counterexample mechanism
+
+- `WindowForm.ghat_cos`: The window basis transform
+- `WindowForm.ghat_pole`: The pole value
+- `WindowForm.product_dd`: Products of transforms are divided differences
+- `WindowForm.hasDerivAt_uA`: On the diagonal, the divided difference becomes the `A`-derivative of `u_A = A c/(s − A)`, which is `c s/(s − A)²`.
+- `WindowForm.phi_u_trig`: The prime term's trigonometric reduction
+- `WindowForm.basis_trig`: At the basis frequencies `ω_k = kπ/a`
+- `WindowForm.posDef_of_cholesky`: A Cholesky certificate
+- `WindowForm.gram_pos`: A positive-definite Gram matrix makes the form strictly positive on every nonzero combination of the basis
+- `WindowForm.quadruple_sum`: The off-line quadruple.
+- `WindowForm.offline_negative`: The mechanism of positivity loss
 
 #### `XiBounds`: The order of `Ξ`, from Riemann's theta kernel
 
