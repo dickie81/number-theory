@@ -1,8 +1,8 @@
 % The Linnik exponent paper. The claims table of Appendix A names the Lean theorem behind each claim, and
 % lib/check/Check.lean prints their axioms. The paper claims only its own steps: the results it uses from the
 % literature are documented in formalisations/ and cited, not restated as its own. supplement.tex holds the proofs of
-% four standard results and of the kernel bound, the Lean details of the paper and the computations around its
-% exponent; compile this file first.
+% four standard results, of the kernel bound, and of Lemma 4.3 and Proposition 4.8, the Lean details of the paper and
+% the computations around its exponent; compile this file first.
 \documentclass[11pt]{article}
 \usepackage[T1]{fontenc}
 % pdfLaTeX needs the input encoding and the glyph declarations below; XeTeX reads Unicode directly.
@@ -47,17 +47,17 @@
 \maketitle
 
 \begin{abstract}
-We prove that there is a constant $K$ such that every reduced residue class modulo $q$ contains a prime
-$p \le K q^{11/5}$. The proof uses two recent results that have not been refereed: OpenAI's
-zero-free half-plane $\operatorname{Re} s > 11/12$ for Dirichlet $L$-functions, and Chen, Gupta and Li's zero-density
-estimate, which lowers the density exponent to $7/3$. From these the classical argument gives every exponent above
-$7/3$. We go below the density exponent with Harman's sieve, fed by a Type~II estimate that sorts the characters by the
-real parts of the zeros of their $L$-functions: Cauchy--Schwarz over each class of characters halves the density
-exponent $A$, so that the estimate holds for Dirichlet polynomials of length about $q$ once the exponent exceeds
-$1 + A/2$, which is $13/6$ for $A = 7/3$. A bilinear Type~I estimate, proved by Parseval's identity, lets the sieve
-also decompose terms whose moduli exceed $x/q$, and the sieve's loss is bounded by a certificate computed in exact
-integer arithmetic. The whole proof is formalised in Lean~4 with Mathlib, including the half-plane and, from Chen, Gupta and
-Li's Proposition~3.1, the density estimates it uses, and depends only on Lean's standard axioms. The exponent is to be
+We prove that there is a constant $K$ such that every reduced residue class modulo $q$ contains a prime $p \le K
+q^{11/5}$. The proof uses two recent results that have not been refereed: OpenAI's zero-free half-plane
+$\operatorname{Re} s > 11/12$ for Dirichlet $L$-functions, and Chen, Gupta and Li's zero-density estimate, which lowers
+the density exponent to $7/3$. From these the classical argument gives every exponent above $7/3$. We go below the
+density exponent with Harman's sieve, fed by a Type~II estimate that sorts the characters by the real parts of the zeros
+of their $L$-functions: Cauchy--Schwarz over each class of characters halves the density exponent $A$, so that, for the
+primes up to $x = q^L$, the estimate holds for Dirichlet polynomials of length about $q$ once $L$ exceeds $1 + A/2$,
+which is $13/6$ for $A = 7/3$. A bilinear Type~I estimate, proved by Parseval's identity, lets the sieve also decompose
+terms whose moduli exceed $x/q$, and the sieve's loss is bounded by a certificate computed in exact integer arithmetic.
+The whole proof is formalised in Lean~4 with Mathlib, including the half-plane and, from Chen, Gupta and Li's
+Proposition~3.1, the density estimates it uses, and depends only on Lean's standard axioms. The exponent is to be
 compared with $7/3$, not with Xylouris's $5$, whose proof uses refereed results only.
 \end{abstract}
 
@@ -100,9 +100,10 @@ exponent $4/(1 + \sigma)$, which is $7/3$ at $\sigma = 5/7$ and smaller beyond; 
 $3/(2 - \sigma)$ is at most $7/3$. With Input~\ref{inp:half-plane} the classical deduction turns the density exponent
 $7/3$ into every Linnik exponent above $7/3$ (Section~\ref{sec:comparison}). Neither that deduction nor the exponent
 of this paper needs the value $11/12$. The deduction works with any zero-free half-plane
-$\operatorname{Re} s > 1 - \eta_0$, for a fixed $\eta_0 > 0$, and so does the sieve, by a remark that is checked at the
-corners of the window but not formalised (Section~\ref{sec:comparison}): what both use is that there are no zeros near
-$\operatorname{Re} s = 1$, and in particular no exceptional zero.
+$\operatorname{Re} s > 1 - \eta_0$, for a fixed $\eta_0 > 0$, and so does the sieve: with the paper's margins its window
+stays admissible for every $\eta_0 \ge 2.85 \cdot 10^{-4}$, as checked at the corners of the window, and with smaller
+margins for any fixed $\eta_0 > 0$; neither remark is formalised (Section~\ref{sec:comparison}). What both use is that
+there are no zeros near $\operatorname{Re} s = 1$, and in particular no exceptional zero.
 
 \subsection*{Why a sieve can go below the density exponent}
 
@@ -120,7 +121,9 @@ threshold is $13/6 \approx 2.167$, against $7/3$ for the classical argument.
 
 The sieve needs a window of positive width, and it pays for the sums it cannot compare. At $L = 11/5$ the window is
 $[u_1, u_2] = [0.43457, 0.46959]$ in exponents of $x = q^L$ (Section~\ref{sec:type2}), and the primes that the sieve
-loses, bounded by a finite computation, are fewer than all of them (Section~\ref{sec:certificate}). The table compares
+loses, bounded by a finite computation, are at most $0.9331$ of them (Section~\ref{sec:certificate}). The method has a
+little room below $11/5$: with the window chosen afresh it reaches about $2.198$, by a computation that is not
+formalised (\S S6), and $11/5$ is the round exponent that the paper proves. The table compares
 what the inputs give with and without the sieve (Section~\ref{sec:comparison}).
 \begin{center}
 \small
@@ -166,10 +169,14 @@ The paper's contributions are three.
   (Sections~\ref{sec:type1} and~\ref{sec:certificate}). The identity is applied to depth eight, the primes of the four
   deepest levels on a coarser grid. The terms in which the product of some of the prime variables has its exponent in
   the window, or in its reflection $[1 - u_2, 1 - u_1]$, are Type~II sums and are evaluated; of the others, a term with
-  sign $-$ is decomposed further, and a term with sign $+$ is dropped or decomposed further. A term whose primes
-  multiply beyond $x/q$ is decomposed whole when its primes split into two groups $d_1 < x/q$ and $d_2$ with
-  $d_1 d_2^2 < x$: the leaves of its tree are then evaluated by a bilinear Type~I estimate, proved by Parseval's identity,
-  with no bound for Kloosterman sums.
+  sign $-$ is decomposed further, and a term with sign $+$ is dropped or decomposed further. Classically a term can be
+  decomposed only while the product of its primes stays below $x^{1 - u_1}$, its part above $X' = x^{1 - u_2}$ being
+  a Type~II sum; beyond, the cofactor falls below the window, and the term could only be dropped, at a cost which at
+  $L = 11/5$ would exceed all the primes. Such a term is now decomposed whole when its primes, with the smaller primes
+  still to come, split into two groups $d_1 < x/q$ and $d_2$ with $d_1 d_2^2 < x$, which reaches moduli up to about
+  $x/q^{1/2}$: the leaves of its tree are then evaluated by a bilinear Type~I estimate, proved by Parseval's identity,
+  with no bound for Kloosterman sums. With the split alone the certificate's total would be $2.43$, against $0.932$
+  with the bilinear estimate (Section~\ref{sec:certificate}).
 \item \emph{A certificate} (Section~\ref{sec:certificate}). The fraction of the primes the decomposition loses is
   bounded above by a sum over the cells of a grid of the exponents, computed exactly in integers, with Buchstab's
   function itself where its argument lies in $[2, 3]$ and the trapezoid rule for the cells' prime sums. On a grid of
@@ -216,12 +223,13 @@ gives a smaller exponent (Section~\ref{sec:comparison}). Theorem~\ref{thm:main} 
 \subsection*{Outline}
 
 Section~\ref{sec:inputs} states the two inputs and the density curve. Section~\ref{sec:type2} proves the Type~II
-estimate and explains where the window comes from, and Section~\ref{sec:type1} gives the Type~I estimates, the
-classical one and a bilinear one, and the tools of Harman's sieve. Section~\ref{sec:certificate} describes the decomposition, the cost of the terms it drops and its
-certificate, and Section~\ref{sec:proof} assembles the proof. Section~\ref{sec:lean} describes the formalisation, and
-Section~\ref{sec:comparison} compares Theorem~\ref{thm:main} with what the inputs give without the sieve.
-Appendix~\ref{app:claims} names the Lean theorem behind each claim. A supplement holds the proofs of four standard
-results and of the kernel bound (\S S1 to \S S4), the Lean details of the paper (\S S5) and the computations around the
+estimate and explains where the window comes from, and Section~\ref{sec:type1} gives the Type~I estimates, the classical
+one and a bilinear one, and the tools of Harman's sieve. Section~\ref{sec:certificate} describes the decomposition, the
+cost of the terms it drops and its certificate, and Section~\ref{sec:proof} assembles the proof. Section~\ref{sec:lean}
+describes the formalisation, and Section~\ref{sec:comparison} compares Theorem~\ref{thm:main} with what the inputs give
+without the sieve, and discusses the method's limits. Appendix~\ref{app:claims} names the Lean theorem behind each
+claim. A supplement holds the proofs of four standard results, of the kernel bound, and of Lemma~\ref{lem:leaves} and
+Proposition~\ref{prop:harman-ib} (\S S1 to \S S4), the Lean details of the paper (\S S5) and the computations around the
 exponent (\S S6).
 
 \section{Notation and the two inputs}\label{sec:inputs}
@@ -529,12 +537,12 @@ replaces the modulus $q$ of the large sieve by $|\mathcal X_i| \mathcal H$ when 
 
 \begin{lemma}[one bin]\label{lem:bin}
 Let $g \le 1$ be a function and $[\mu_1, \mu_2]$ a window admissible for $g$ at $L$. Given $C_0, C_d, C_K \ge 0$, there
-is $C'$ such that the following holds. Let $q > 1$, $\mu_1 \le \mu \le \mu_2$, $P = q^\mu$, $1 \le T \le 3q^\eta$
-with $\eta \ge 0$, $1/2 \le \beta \le 11/12$ and $0 \le \varpi \le 4 \cdot 10^{-6}$. Let $\mathcal X$ be a set of at
-most $C_d (qT)^{g(\beta)} (1 + \log qT)^{10}$ characters on which
-$\prod_{j=1}^K |S_{Q_j}(\chi, h_j)| \le C_0 (q^L/P)^{\beta + \varpi}$, for some $K$, $Q_j$ and $h_j$, and let
-$\mathcal H \le C_K (2P)^{1/12 - \delta'} (2q)^{5/12 + \delta' + 2\varepsilon'}$ bound $|k_{2P}(\psi)|$ for every
-non-trivial character $\psi$ mod $q$. Then for every $S \subseteq (P, 2P]$ and all $a_m$ and $h_0$,
+is $C'$ such that the following holds. Let $q > 1$, $\mu_1 \le \mu \le \mu_2$ with $P = q^\mu$ an integer, $1 \le T \le
+3q^\eta$ with $\eta \ge 0$, $1/2 \le \beta \le 11/12$ and $0 \le \varpi \le 4 \cdot 10^{-6}$. Let $\mathcal X$ be a set
+of at most $C_d (qT)^{g(\beta)} (1 + \log qT)^{10}$ characters on which $\prod_{j=1}^K |S_{Q_j}(\chi, h_j)| \le C_0
+(q^L/P)^{\beta + \varpi}$, for some $K$, $Q_j$ and $h_j$, and let $\mathcal H \le C_K (2P)^{1/12 - \delta'} (2q)^{5/12 +
+\delta' + 2\varepsilon'}$ bound $|k_{2P}(\psi)|$ for every non-trivial character $\psi$ mod $q$. Then for every $S
+\subseteq (P, 2P]$ and all $a_m$ and $h_0$,
 \[
   \sum_{\chi \in \mathcal X} |W(\chi)| \prod_{j=1}^K |S_{Q_j}(\chi, h_j)|
   \le C' (1 + \log qT)^{10} q^{L - 1/25000 + \eta} \Bigl(\frac1P \sum_{m \in S} |a_m|^2\Bigr)^{1/2}.
@@ -592,12 +600,16 @@ Three other points of the curve matter. The upper end is set at $\sigma = 4/7$ a
 trivial count $g = 1$, which is $A(1 - \sigma)$ with $A = 1/(1 - \sigma)$, and $A$ tends to $7/3$ at $4/7$, which gives
 the same condition $u_2 \le 1 - 7/(6L)$. This is why the curve takes the trivial count only below $4/7$; with the
 margins its bound for $u_2$ is $3.9 \cdot 10^{-5}$ from binding. Near $\beta = 11/12$ the factor $1 - \beta$ of the
-first condition is small, and orthogonality alone would need $\mu$ close to $1$, $u_1 \ge 0.4373$ at $11/12$; there the
+first condition is small, and with the curve's exponent $101/50$ there orthogonality alone would need $\mu$ close to
+$1$, $u_1 \ge 0.4373$ at $11/12$; there the
 bins are small, and the Hal\'asz--Montgomery inequality takes over (Section~\ref{sec:window-L}). So the lower end is
 set at $5/7$ only with its help. At $\sigma = 7/9$, where $4/(1 + \sigma)$ meets Huxley's $3/(3\sigma - 1)$ at
 $A = 9/4$, the first condition gives $u_1 \ge 27/(10L) - 4/5$, which binds only for $L > 107/48 \approx 2.229$. For the
-classical exponents, whose largest is $12/5$, at $\sigma = 3/4$, the threshold is $1 + 6/5 = 11/5$, the exponent of
-Theorem~\ref{thm:main}: without Input~\ref{inp:density} the window would close there (\S S6).
+classical exponents, whose largest is $12/5$, at $\sigma = 3/4$, the threshold is $1 + 6/5 = 11/5$: without
+Input~\ref{inp:density} the window shrinks to a point at $L = 11/5$, and the classical estimates give only about $2.24$
+(\S S6). That this threshold is the exponent of Theorem~\ref{thm:main} is a coincidence: with
+Input~\ref{inp:density} the threshold is $13/6$, and in both cases the sieve's certificate needs between $0.03$ and
+$0.04$ above the threshold.
 
 \subsection{The window at $11/5$}\label{sec:window-L}
 
@@ -607,33 +619,31 @@ $L = 11/5$.
 \end{proposition}
 
 \begin{proof}
-On each piece of $g^*$, $g^*(\beta) = A(1 - \beta)$ with $A$ constant, or $g^* = 1$, so each $E_i$ is affine in
-$\beta$ on the piece. Each $E_i$ increases with $\varpi$, since $L - \mu > 0$. As a function of $\mu$, $E_1$ is
-convex: it decreases for $\mu < 1$, with slope $1/2 - \beta - \varpi \le 0$, and increases for $\mu > 1$, with slope
-$1 - \beta - \varpi > 0$. On the top piece $[5/6, 11/12]$, $E_2$ increases with $\mu$, so for $\mu \le 1$ it is at most
-$E_2(\beta, 1, \varpi) = E_1(\beta, 1, \varpi) \le E_1(\beta, \mu_2, \varpi)$, and $E_3$ decreases with $\mu$, with
-slope $13/24 - \delta'/2 - \beta - \varpi < 0$. As a function of $\beta$ on a piece $A(1 - \beta)$, $E_1$ has slope
-$L - \mu - A/2$, which is positive for $\mu \le \mu_2$ since every exponent of $g^*$ is at most
-$2.3334 < 2(L - \mu_2)$ (on $g^* = 1$ the slope is $L - \mu > 0$), and on the top piece $E_3$ has slope
-$L - \mu - A < 0$. Since $\mu_1 < 1 < \mu_2$, it therefore suffices that $E_1 \le L - 1/25000$ at the right end
-$\beta_+$ of every piece below $5/6$ for $\mu \in \{\mu_1, \mu_2\}$, and at $(11/12, \mu_2)$ on the top piece, and that
-$E_3 \le L - 1/25000$ at $(5/6, \mu_1)$, all at $\varpi = 4 \cdot 10^{-6}$. These are $134$ inequalities between
-rational numbers, and each holds, the least with a slack of $6.3 \cdot 10^{-6}$. They hold also with
-$A_k = 4/(1 + \sigma_k) + 10^{-4}$ in place of the table's values, the least then with a slack of $1.6 \cdot 10^{-6}$;
-since each $E_i$ increases with $g$, they hold for every $A_k$ up to that limit. Solved for $\mu$,
-with $\Theta = L - 1/25000$, they say that $\mu_1$ is at least
-$\bigl(L(\beta_+ + \varpi) + g_+/2 + 1/2 - \Theta\bigr)/(\beta_+ + \varpi - 1/2)$ at the right end $\beta_+$
-of every piece below $5/6$, and $\mu_2$ at most
-$\bigl(\Theta - L(\beta_+ + \varpi) - g_+/2\bigr)/(1 - \beta_+ - \varpi)$ at these ends and at $11/12$, with
-$g_+$ the piece's value at $\beta_+$, $A(1 - \beta_+)$ or $1$, besides the top piece's condition on $E_3$. Both bounds
-are set at $\beta_+ = 1201/1680$, the right end of the first step of $[5/7, 131/168]$, and give the exact window
-$[0.43455660\ldots, 0.46961060\ldots] \cdot L$, which contains the proposition's. At $\varpi = 0$, with no margin and
-$\beta_+ = 5/7$, $A = 7/3$, they reduce to the closed forms of Section~\ref{sec:ends}. The $134$ inequalities are
-checked in exact rational arithmetic (\S S5).
+On each piece of $g^*$, $g^*(\beta) = A(1 - \beta)$ with $A$ constant, or $g^* = 1$, so each $E_i$ is affine in $\beta$
+on the piece. Each $E_i$ increases with $\varpi$, since $L - \mu > 0$. As a function of $\mu$, $E_1$ is convex: it
+decreases for $\mu < 1$, with slope $1/2 - \beta - \varpi \le 0$, and increases for $\mu > 1$, with slope $1 - \beta -
+\varpi > 0$. On the top piece $[5/6, 11/12]$, $E_2$ increases with $\mu$, so for $\mu \le 1$ it is at most $E_2(\beta,
+1, \varpi) = E_1(\beta, 1, \varpi) \le E_1(\beta, \mu_2, \varpi)$, and $E_3$ decreases with $\mu$, with slope $13/24 -
+\delta'/2 - \beta - \varpi < 0$. As a function of $\beta$ on a piece $A(1 - \beta)$, $E_1$ has slope $L - \mu - A/2$,
+which is positive for $\mu \le \mu_2$ since every exponent of $g^*$ is at most $2.3334 < 2(L - \mu_2)$ (on $g^* = 1$ the
+slope is $L - \mu > 0$), and on the top piece $E_3$ has slope $L - \mu - A < 0$. Since $\mu_1 < 1 < \mu_2$, it therefore
+suffices that $E_1 \le L - 1/25000$ at the right end $\beta_+$ of every piece below $5/6$ for $\mu \in \{\mu_1,
+\mu_2\}$, and at $(11/12, \mu_2)$ on the top piece, and that $E_3 \le L - 1/25000$ at $(5/6, \mu_1)$, all at $\varpi = 4
+\cdot 10^{-6}$. These are $134$ inequalities between rational numbers, the \emph{corners} of the window, and each holds,
+the least with a slack of $6.3 \cdot 10^{-6}$. They hold also with $A_k = 4/(1 + \sigma_k) + 10^{-4}$ in place of the
+table's values, the least then with a slack of $1.6 \cdot 10^{-6}$; since each $E_i$ increases with $g$, they hold for
+every $A_k$ up to that limit. Solved for $\mu$, with $\Theta = L - 1/25000$, they say that $\mu_1$ is at least
+$\bigl(L(\beta_+ + \varpi) + g_+/2 + 1/2 - \Theta\bigr)/(\beta_+ + \varpi - 1/2)$ at the right end $\beta_+$ of every
+piece below $5/6$, and $\mu_2$ at most $\bigl(\Theta - L(\beta_+ + \varpi) - g_+/2\bigr)/(1 - \beta_+ - \varpi)$ at
+these ends and at $11/12$, with $g_+$ the piece's value at $\beta_+$, $A(1 - \beta_+)$ or $1$, besides the top piece's
+condition on $E_3$. Both bounds are set at $\beta_+ = 1201/1680$, the right end of the first step of $[5/7, 131/168]$,
+and give the exact window $[0.43455660\ldots, 0.46961060\ldots] \cdot L$, which contains the proposition's. At $\varpi =
+0$, with no margin and $\beta_+ = 5/7$, $A = 7/3$, they reduce to the closed forms of Section~\ref{sec:ends}. The $134$
+inequalities are checked in exact rational arithmetic (\S S5).
 \end{proof}
 
 Between the closed forms of Section~\ref{sec:ends} and the exact window of the proof the losses are these, in units of
-$10^{-4}$ of $u$ (adding the effects in this order; the last digit depends on the order):
+$10^{-4}$ of $u$ (adding the effects in this order):
 \begin{center}
 \small
 \begin{tabular}{@{}lll@{}}
@@ -648,7 +658,7 @@ the allowance $\varpi \le 4 \cdot 10^{-6}$ & $+0.11$ & $-0.07$ \\
 \midrule
 exact window & $0.43455660\ldots$ & $0.46961060\ldots$ \\
 window used & $0.43457$ & $0.46959$ \\
-least slack of a corner & $6.3 \cdot 10^{-6}$ & $1.29 \cdot 10^{-5}$ \\
+least slack of a corner, in the exponent of $q$ & $6.3 \cdot 10^{-6}$ & $1.29 \cdot 10^{-5}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -666,10 +676,13 @@ Proposition~\ref{prop:window}.
 
 The Hal\'asz--Montgomery branch is used only on the top piece of the curve, for $\mu \le 1$, where the bins are small,
 and it is needed there: at $(11/12, \mu_1)$, $E_1$ exceeds $L - 1/25000$ by $2.5 \cdot 10^{-3}$, and orthogonality alone
-would need $u_1 \ge 0.4373$. The kernel bound enters only through the corner of $E_3$ at $(5/6, \mu_1)$, which holds
-with a slack of $0.099$. So the corners hold with any constant kernel exponent up to $0.697$ in place of $b(\mu)$, and
-the Pólya--Vinogradov bound $\mathcal H \ll_\varepsilon q^{1/2 + \varepsilon}$ of Section~\ref{sec:two-bounds} would
-do: the window does not need Input~\ref{inp:half-plane} for the kernel bound.
+would need $u_1 \ge 0.4373$. It is needed because of the curve's exponent near $11/12$: with a constant exponent of at
+most $1.9595$ on $[7/8, 11/12]$, as Huxley's $3/(3\sigma - 1)$ would give, orthogonality alone would hold at every
+corner, but the density estimates proved here have no exponent below $1.97$ near $11/12$ (\S S6). The kernel bound
+enters only through the corner of $E_3$ at $(5/6, \mu_1)$, which holds with a slack of $0.099$. So the corners hold with
+any constant kernel exponent up to $0.697$ in place of $b(\mu)$, and the Pólya--Vinogradov bound $\mathcal H
+\ll_\varepsilon q^{1/2 + \varepsilon}$ of Section~\ref{sec:two-bounds} would do: the window does not need
+Input~\ref{inp:half-plane} for the kernel bound.
 
 No bound for the kernels could move the ends. At the upper end $\mu_2 > 1$, and there the Hal\'asz--Montgomery
 inequality never helps. At the lower end the binding corner is at $\beta = 1201/1680$, where
@@ -746,12 +759,12 @@ weight of the comparison. For a weight $w$ on a finite set $S$ of integers, let
 \end{gather*}
 
 \begin{lemma}[a bilinear Type~I estimate]\label{lem:typeIB}
-Let $\mathcal D_1$ and $\mathcal D_2$ be finite sets of positive integers prime to $q$, with coefficients
-$\alpha(d_1)$ and $\beta(d_2)$, and let $w$ be a weight on a finite set $S$ of integers. Let $H \ge 0$ and $D \ge 1$ be
-integers with $\mathcal D_2 \subseteq [1, D]$ and $2HD < q$, and suppose that every residue class mod $q$ contains the
-inverses of at most $m$ elements of $\mathcal D_1$, that every integer $|t| d$ with $0 < |t| \le H$ and
-$d \in \mathcal D_2$ has at most $F$ divisors, and that $|\hat w(h)| \le W$ at every $h \ne 0$ that is not the residue
-of an integer $t$ with $0 < |t| \le H$. Then
+Let $\mathcal D_1$ and $\mathcal D_2$ be finite sets of positive integers prime to $q$, with coefficients $\alpha(d_1)$
+and $\beta(d_2)$, and let $w$ be a weight on a finite set $S$ of integers. Let $H \ge 0$ and $D \ge 1$ be integers with
+$\mathcal D_2 \subseteq [1, D]$ and $2HD < q$, and suppose that every residue class mod $q$ contains the inverses of at
+most $m$ elements of $\mathcal D_1$, that every integer $|t| d$ with $0 < |t| \le H$ and $d \in \mathcal D_2$ has at
+most $F$ divisors, and that $W \ge 0$ and $|\hat w(h)| \le W$ at every $h \ne 0$ that is not the residue of an integer
+$t$ with $0 < |t| \le H$. Then
 \begin{multline*}
   \Bigl|\sum_{d_1, d_2} \alpha(d_1) \beta(d_2) \sum_{k \in S} w(k)\, \vartheta(d_1 d_2 k)\Bigr| \\
   \le \Bigl(\sum |\alpha|^2\Bigr)^{1/2} \Bigl(mF \sum |\beta|^2 \cdot \frac1q \sum_h |\hat w(h)|^2\Bigr)^{1/2} \\
@@ -788,39 +801,47 @@ $\sum_t |\hat w(t)|^2 \le \sum_h |\hat w(h)|^2$. Dividing by $q$ gives the first
 
 No bound for Kloosterman sums enters: the inverses $\bar d_1$ are averaged by Parseval's identity, and the inverses
 $\bar d_2$ survive only on the diagonal $t d_2' = t' d_2$, which $2HD < q$ makes an equation in integers. The lemma is
-applied with $w$ a smooth majorant or minorant of the cofactor's range, a spline: for an interval $(A, B]$, a step
-$\ell \ge 1$ and a power $r \ge 1$, $w(k)$ is $\ell^{-r}$ times the number of $(i, j_1, \dots, j_r)$ with $A < i \le B$,
-$0 \le j_s < \ell$ and $i + j_1 + \cdots + j_r = k$. Then $0 \le w \le 1$, $w = 1$ on $(A + r(\ell - 1), B]$, $w = 0$
-off $(A, B + r(\ell - 1)]$, $\sum_h |\hat w(h)|^2 \le q(\lfloor n/q \rfloor + 1) n$ with $n = B - A + r(\ell - 1)$,
-$|E_w| \le d(q)$, and, since $\hat w(h)$ is the sum over the interval times the $r$-th power of a geometric sum of length
-$\ell$, $|\hat w(h)| \le (B - A)(q/(2\ell(H + 1)))^r$ at the residues $h$ of the integers $t$ with $H < |t| \le q/2$ (\S S3).
-In the application the coefficients are bounded, and the pairs $(d_1, d_2)$ are taken in short blocks, on each of
+applied with $w$ a smooth majorant or minorant of the cofactor's range, a spline: for an interval $(A, B]$, a step $\ell
+\ge 1$ and a power $r \ge 1$, $w(k)$ is $\ell^{-r}$ times the number of $(i, j_1, \dots, j_r)$ with $A < i \le B$, $0
+\le j_s < \ell$ and $i + j_1 + \cdots + j_r = k$. Then $0 \le w \le 1$, $w = 1$ on $(A + r(\ell - 1), B]$, $w = 0$ off
+$(A, B + r(\ell - 1)]$, $\sum_h |\hat w(h)|^2 \le q(\lfloor n/q \rfloor + 1) n$ with $n = B - A + r(\ell - 1)$, $|E_w|
+\le d(q)$, and, since $\hat w(h)$ is the sum over the interval times the $r$-th power of a geometric sum of length
+$\ell$, $|\hat w(h)| \le (B - A)(q/(2\ell(H + 1)))^r$ at the residues $h$ of the integers $t$ with $H < |t| \le q/2$ (\S
+S3). In the application the coefficients are bounded, and the pairs $(d_1, d_2)$ are taken in short blocks, on each of
 which $d_1 \approx P_1$, $d_2 \approx P_2$ and the cofactor runs over an interval of length about $n = x/(P_1 P_2)$,
-with a spline whose step $\ell$ is below $n$ by a small power of $q$. Measured against $x/\varphi(q)$, the size of the
-main terms, the first term of the lemma is then, for $P_1 \ge q$, about $(x/q)(F/P_2)^{1/2}$, which is small when
-$d_1$ is below the leaves' products $d_1 d_2$ by a power of $q$, as when $d_1 \le x/q^{1 + a}$ and
-$d_1 d_2 \ge x/q^{1 + \delta'}$ with $\delta' < a$; the second, with $D = P_2$ and $H = \lfloor (q - 1)/(2D) \rfloor$,
-is about $x(P_2/\ell)^r$, which is small when $d_1 d_2^2$ is below $x$ by a power of $q$ and $r$ is large; and the
-third is small since then $d_1 d_2 \le x q^{-1/2}$.
+with a spline whose step $\ell$ is below $n$ by a small power of $q$. Measured against $x/q$, the size of a block's main
+term, the first term of the lemma is then about $(F(P_1 + q)(n + q)/x)^{1/2}$: Parseval's identity over the inverses
+$\bar d_1$ costs the factor $P_1/q + 1$, the cofactor's residues the factor $n/q + 1$, and the diagonal leaves $F$. At
+the leaves of Lemma~\ref{lem:leaves} below, the cofactor is short, $n \le 2q^{1 + \kappa_0}$ when $d_1 d_2 \ge x/q^{1 +
+\kappa_0}$, and if $d_1 \le x/q^{1 + \kappa_1}$ with $\kappa_0 < \kappa_1 \le L - 2$ the first term is at most about $(F
+q^{\kappa_0 - \kappa_1})^{1/2}$ times the main term, whatever $d_2$: so $d_1 d_2$ may exceed $x/q$, and only $d_1$, the
+part that Parseval's identity averages, must stay below it. The second term, with $D = P_2$ and $H = \lfloor (q -
+1)/(2D) \rfloor$, is about $q(P_2/\ell)^r$ times the main term, which is small when $d_2$ is below the cofactor's length
+$n$ by a power of $q$, that is when $d_1 d_2^2$ is below $x$ by a power of $q$, and $r$ is large; and the third is small
+since then $d_1 d_2 \le x q^{-1/2}$. The two conditions allow moduli $d_1 d_2$ up to about $x/q^{1/2}$, against $x/q$
+for Lemma~\ref{lem:type1}.
 
 The sieve meets these sums at the leaves of Buchstab's tree, the integers that are multiples of a product $d$ of primes
 and have no other prime factor below a small power $w$ of $q$. Sifting by the primes below $w$ with Brun's weights and
 splitting the primes of $d$ into two groups gives sums of the kind of Lemma~\ref{lem:typeIB}, which yields the following
 lemma. Here and below, a \emph{comparison} of tuples of primes is a condition $c + \sum_i e_i \log y_i > 0$ (or $\ge 0$)
-on their entries, with coefficients $e_i \in \{-1, 0, 1\}$; an entry with $e_i = \pm 1$ is a \emph{pivot} of it. The
-constant $C_0$ bounds the sums of $1/p$ over the ranges $[y, y^2)$, and $\zeta_k$ is the constant of \S S3, which tends
-to $0$ as the even level $k$ grows.
+on their entries, with a constant term $c$ and coefficients $e_i \in \{-1, 0, 1\}$; an index $i$ with $e_i = \pm 1$ is a
+\emph{pivot} of it. The
+constant $C_0$ bounds the sums of $1/p$ over the ranges $[y, y^2)$, and
+$\zeta_k = e^{2C_0} (2C_0^k/k!) \exp(e^{2C_0} \cdot 2C_0^{k + 1}/(k + 1)!)$, which tends to $0$ as the even level $k$
+grows (\S S3).
 
 \begin{lemma}[the leaves by the bilinear estimate]\label{lem:leaves}
-Let $L > 2$, $0 \le \delta' < a \le L - 2$, $0 < b \le L$, $\varepsilon_w > 0$, $\Lambda_0 \ge 0$, integers $K_1$, $K_2$ and
-$J_0$, and an even $k \ge 2$ with $2C_0^2 \le (k + 1)(k + 2)$ and $(2k + 4)\varepsilon_w \le 1/16$. There are $\delta > 0$
-and $q_0$ such that the following holds for every $q \ge q_0$ and every $a$ prime to $q$, with
-$w = \lceil q^{\varepsilon_w} \rceil$. Let $\mathbf y_1$ and $\mathbf y_2$ run over sets of strictly decreasing
+Let $L > 2$, $0 \le \kappa_0 < \kappa_1 \le L - 2$, $0 < \kappa_2 \le L$, $\varepsilon_w > 0$, $\Lambda_0 \ge 0$,
+integers $K_1$, $K_2$ and $J_0$, and an even $k \ge 2$ with $2C_0^2 \le (k + 1)(k + 2)$ and $(2k + 4)\varepsilon_w \le
+1/16$. There are $\delta > 0$ and $q_0$ such that the following holds for every $q \ge q_0$ and every $a$ prime to $q$,
+with $w = \lceil q^{\varepsilon_w} \rceil$. Let $\mathbf y_1$ and $\mathbf y_2$ run over sets of strictly decreasing
 $K_1$- and $K_2$-tuples of primes in $[w, N_2]$, cut out by at most $J_0$ comparisons, each with a pivot and with its
-form at most $\Lambda_0 \log q$, and suppose that wherever the comparisons hold, the products
-$d_1 = \prod \mathbf y_1$ and $d_2 = \prod \mathbf y_2$ satisfy
+form at most $\Lambda_0 \log q$, and suppose that wherever the comparisons hold, the products $d_1 = \prod \mathbf y_1$
+and $d_2 = \prod \mathbf y_2$ satisfy
 \[
-  d_1 w^{2k + 4} \le q^{L - 1 - a}, \qquad d_1 w^{2k + 4} d_2^2 \le q^{L - b}, \qquad q^{L - 1 - \delta'} \le d_1 d_2.
+  d_1 w^{2k + 4} \le q^{L - 1 - \kappa_1}, \qquad d_1 w^{2k + 4} d_2^2 \le q^{L - \kappa_2},
+  \qquad q^{L - 1 - \kappa_0} \le d_1 d_2.
 \]
 Then, with $d = d_1 d_2$,
 \[
@@ -896,22 +917,21 @@ large $q$ the number of pieces is at most $q^{\delta_1/2}$, and $\delta = \delta
 \end{proof}
 
 The sieve meets these sums with the rest of $n$ given only as a rough number. The next lemma writes such sums as
-families. A \emph{comparison} of a tuple $(r_1, \dots, r_k)$ of primes is a condition $c + \sum_i e_i \log r_i > 0$
-(or $\ge 0$) with a constant term $c$ and coefficients $e_i \in \{-1, 0, 1\}$; an index $i$ with $e_i = \pm 1$ is a
-\emph{pivot} of it. Proposition~\ref{prop:harman} asks each of its comparisons to have a pivot.
+families. Its comparisons are those defined before Lemma~\ref{lem:leaves}; Proposition~\ref{prop:harman} asks each of
+its comparisons to have a pivot, and this lemma does not.
 
 \begin{lemma}[chains of primes]\label{lem:chains}
 Assume the conclusion of Theorem~\ref{thm:type2}. Given $k \ge 1$, $J_0$, $e_0 > 0$ and $\Lambda_1 \ge 0$, there are
 $\delta > 0$ and $q_0$ such that the following holds for every $q \ge q_0$ and every $a$ prime to $q$. Let
 $\mathbf r = (r_1, \dots, r_k)$ run over the $k$-tuples of primes up to $N_2$ that satisfy at most $J_0$ comparisons
 with constant terms at most $\Lambda_1 \log q$, and suppose that every tuple of primes that satisfies the comparisons
-has $r_i \ge q^{e_0}$ for every $i$, and that either every such tuple satisfies (a), or every such tuple satisfies (b):
+has $r_i \ge q^{e_0}$ for every $i$, and that one of the following holds for every such tuple, the same one for all:
 \begin{enumerate}
 \item[(a)] $r_k \le r_i$ for every $i$, and $W_0 < r_1 \cdots r_k \le W_1$, for integers $W_0$ and $W_1$ with $W_1 \le N_1$,
   $q^{u_1 L} \le \lfloor N_1/W_1 \rfloor$ and $\lfloor N_2/(W_0 + 1) \rfloor \le q^{u_2 L}$;
 \item[(b)] $r_1 > \dots > r_k$, and $P_1 < \prod_{i \in \mathcal I} r_i \le P_2$ for a fixed set $\mathcal I$ of
   indices, for integers $P_1$ and $P_2$ with $q^{u_1 L} \le P_1$ and $P_2 \le q^{u_2 L}$;
-\item[(c)] $r_1 > \dots > r_k$, and $W_0 < \prod_{i \in \mathcal U} r_i \le W_1$ for a fixed set $\mathcal U$ of
+\item[(c)] $r_1 > \dots > r_k$, and $W_0 < \prod_{i \in \mathcal J} r_i \le W_1$ for a fixed set $\mathcal J$ of
   indices, for integers $W_0$ and $W_1$ as in (a).
 \end{enumerate}
 Then, with $r = r_1 \cdots r_k$,
@@ -919,8 +939,6 @@ Then, with $r = r_1 \cdots r_k$,
   \Bigl|\sum_{\mathbf r} \Bigl(S(\mathcal A_r, r_k) - \frac{S(\mathcal B_r, r_k)}{\varphi(q)}\Bigr)\Bigr|
   \le \frac{q^{L - \delta}}{\varphi(q)}.
 \]
-Under (b) the same bound holds for the exact products: for the sum over $\mathbf r$ with $N_1 < r \le N_2$ of
-$\mathbf 1[r \equiv a] - \mathbf 1[(r, q) = 1]/\varphi(q)$.
 \end{lemma}
 
 \begin{proof}
@@ -940,41 +958,39 @@ in place of $e_1$ and $\Lambda_1 + L + 1$ in place of $\Lambda_1$.
 (b) Here $m = \prod_{i \in \mathcal I} r_i$ is the variable, and the rest of $n$ must be written in primes. The cofactor
 $n/r$ has no prime factor below $r_k \ge q^{e_0}$ and is at most $2x \le q^{L + 1}$, so it is the product of a unique
 non-increasing tuple $y_1 \ge \dots \ge y_s \ge r_k$ of primes with $s \le s_1 = \lceil (L + 1)/e_0 \rceil$. For each
-$s$, regroup the pairs $(\mathbf r, y)$ by $m$: since $\mathbf r$ is strictly decreasing, $m$ is a squarefree integer
-of $(P_1, P_2]$ with $|\mathcal I|$ prime factors, which, read in decreasing order, are the $r_i$ with $i \in \mathcal
-I$, so $m$ determines them. The other variables are the primes $r_i$ with $i \notin \mathcal I$ and $y_1, \dots, y_s$.
-The conditions are the given comparisons (which imply $r_1 > \dots > r_k$), $y_b \le y_a$ for $a \le b$, $y_a \ge r_k$
-for every $a$, and $N_1 < m \prod_{i \notin \mathcal I} r_i \prod_l y_l \le N_2$, each a comparison whose $m$-part reads
-the $r_i$ with $i \in \mathcal I$ off $m$. Those that involve only these $r_i$ are conditions on $m$, and give
-coefficients $a_m \in \{0, 1\}$ on $(P_1, P_2]$; each of the others has a nonzero coefficient at a variable outside $T$,
-its pivot. There are at most $J_0 + s_1^2 + s_1 + 2$ of them, with $m$-parts at most $(\Lambda_1 + 2L + 2) \log q$, and
-wherever they hold every prime is at least $q^{e_0}$ and the product is at most $2x$. If $\mathcal I = \{1, \dots, k\}$
-and $s = 0$, no prime is left: then $n = m \le P_2 < N_1$ for large $q$, and that sum is empty.
-Lemma~\ref{lem:family-sharp}, with $K_0 = s_1 + k + 1$, $J_0 + s_1^2 + s_1 + 2$ comparisons, $E_0 = 1$, $e_0/2$ in place
-of $e_1$ and $\Lambda_1 + 2L + 2$ in place of $\Lambda_1$, bounds each of the other sums by $q^{L -
-\delta_1}/\varphi(q)$; there are at most $s_1 + 1$ of them, and $\delta = \delta_1/2$ will do for large $q$. The exact
-products are the case $s = 0$ alone, with no cofactor: the same regrouping makes their sum one sum of the kind of
-Lemma~\ref{lem:family-sharp}.
+$s$, regroup the pairs $(\mathbf r, y)$ by $m$: since $\mathbf r$ is strictly decreasing, $m$ is a squarefree integer of
+$(P_1, P_2]$ with $|\mathcal I|$ prime factors, which, read in decreasing order, are the $r_i$ with $i \in \mathcal I$,
+so $m$ determines them. The other variables are the primes $r_i$ with $i \notin \mathcal I$ and $y_1, \dots, y_s$. The
+conditions are the given comparisons (which imply $r_1 > \dots > r_k$), $y_b \le y_a$ for $a \le b$, $y_a \ge r_k$ for
+every $a$, and $N_1 < m \prod_{i \notin \mathcal I} r_i \prod_l y_l \le N_2$, each a comparison whose $m$-part reads the
+$r_i$ with $i \in \mathcal I$ off $m$. Those that involve only these $r_i$ are conditions on $m$, and give coefficients
+$a_m \in \{0, 1\}$ on $(P_1, P_2]$; each of the others has a nonzero coefficient at one of the other variables, a prime
+$r_i$ with $i \notin \mathcal I$ or a $y_l$, which is its pivot. There are at most $J_0 + s_1^2 + s_1 + 2$ of them, with
+$m$-parts at most $(\Lambda_1 + 2L + 2) \log q$, and wherever they hold every prime is at least $q^{e_0}$ and the
+product is at most $2x$. If $\mathcal I = \{1, \dots, k\}$ and $s = 0$, no prime is left: then $n = m \le P_2 < N_1$ for
+large $q$, and that sum is empty. Lemma~\ref{lem:family-sharp}, with $K_0 = s_1 + k + 1$, $J_0 + s_1^2 + s_1 + 2$
+comparisons, $E_0 = 1$, $e_0/2$ in place of $e_1$ and $\Lambda_1 + 2L + 2$ in place of $\Lambda_1$, bounds each of the
+other sums by $q^{L - \delta_1}/\varphi(q)$; there are at most $s_1 + 1$ of them, and $\delta = \delta_1/2$ will do for
+large $q$.
 
-(c) Here the variable is $m = n/\prod_{i \in \mathcal U} r_i$, which lies in the window's range as in (a); it is the
-product of the primes $r_i$ with $i \notin \mathcal U$ and of the rough cofactor $n/r$. These primes are read back from
+(c) Here the variable is $m = n/\prod_{i \in \mathcal J} r_i$, which lies in the window's range as in (a); it is the
+product of the primes $r_i$ with $i \notin \mathcal J$ and of the rough cofactor $n/r$. These primes are read back from
 $m$: since $m \le 2x \le q^{L + 1}$, it has at most $s_1 = \lceil (L + 1)/e_0 \rceil$ prime factors at least
-$q^{e_0}$, and the $r_i$ with $i \notin \mathcal U$ are those of given ranks among them. For each choice of the ranks
+$q^{e_0}$, and the $r_i$ with $i \notin \mathcal J$ are those of given ranks among them. For each choice of the ranks
 (a \emph{slice}, of which there are at most $2^{s_1}$), the pairs $(\mathbf r, n)$ with these ranks correspond to the
-pairs of the tuple $(r_i)_{i \in \mathcal U}$ and an $m$ in the window's range with that many prime factors at least
-$q^{e_0}$; the comparisons on the $r_i$ with $i \notin \mathcal U$ and the roughness of $n/r$ become comparisons of the
-$r_i$ with $i \in \mathcal U$ against parts read off $m$, each with a pivot among those $r_i$, as in (b). So each slice
-is one sum of the kind of Lemma~\ref{lem:family-sharp}, and $\delta = \delta_1/2$ will do for large $q$. Case (a) is
-the case $\mathcal U = \{1, \dots, k\}$.
+pairs of the tuple $(r_i)_{i \in \mathcal J}$ and an $m$ in the window's range with that many prime factors at least
+$q^{e_0}$; the comparisons on the $r_i$ with $i \notin \mathcal J$ and the roughness of $n/r$ become comparisons of the
+$r_i$ with $i \in \mathcal J$ against parts read off $m$, each with a pivot among those $r_i$, as in (b). So each slice
+is one sum of the kind of Lemma~\ref{lem:family-sharp}, and $\delta = \delta_1/2$ will do for large $q$. With
+$\mathcal J = \{1, \dots, k\}$ no prime is read off $m$, and the argument is that of (a).
 \end{proof}
 
-In (a) the product $r$ lies in the reflection of the window, and in (b) a product of some of the primes lies in the
-window. If $W_0 + 1 \ge x^{1 - u_2'}$ (for instance $W_0 = \lfloor x^{1 - u_2'} \rfloor$) and
-$W_1 = \lfloor x^{1 - u_1'} \rfloor$ with $u_1 < u_1' < u_2' < u_2$, the
-conditions of (a) hold for large $q$, since $\lfloor N_1/W_1 \rfloor \ge x^{u_1'} - 2 \ge x^{u_1}$ and
-$\lfloor N_2/(W_0 + 1) \rfloor \le 2x^{u_2'} \le x^{u_2}$. Section~\ref{sec:certificate} uses (a) in this way, with
-$u_1' = U_1/D$ and $u_2' = U_2/D$: the margins absorb the factor $2$ of the upper end $2x$ and the rounding of
-$N_1/W_1$.
+In (a) the product $r$, and in (c) the product of the $r_i$ with $i \in \mathcal J$, lies in the reflection of the
+window, and in (b) a product of some of the primes lies in the window. If $W_0 + 1 \ge x^{1 - u_2'}$ (for instance $W_0
+= \lfloor x^{1 - u_2'} \rfloor$) and $W_1 = \lfloor x^{1 - u_1'} \rfloor$ with $u_1 < u_1' < u_2' < u_2$, the conditions
+of (a) and (c) hold for large $q$, since $\lfloor N_1/W_1 \rfloor \ge x^{u_1'} - 2 \ge x^{u_1}$ and $\lfloor N_2/(W_0 +
+1) \rfloor \le 2x^{u_2'} \le x^{u_2}$. Section~\ref{sec:certificate} uses (a) and (c) in this way, with $u_1' = U_1/D$
+and $u_2' = U_2/D$: the margins absorb the factor $2$ of the upper end $2x$ and the rounding of $N_1/W_1$.
 
 \subsection{Harman's comparison}
 
@@ -1029,14 +1045,15 @@ $q^{l_i} \le r_i \le q^{h_i}$ for every $i$. Then, with $r = r_1 \cdots r_j$,
 \]
 \end{proposition}
 
-Here $c = \prod_{i \in \mathcal S_0} r_i$ is the part of $r$ that the primes below $z_0$ bring into the window or its
-reflection, and $t$ bounds the exponent they need: from below the window, $c$ needs at most $q^{u_1 L - \sigma^-}$, and
-from between the window and its reflection at most $q^{(1 - u_2)L - \max(u_2 L, \sigma^-)}$; $c$ is never past the
-reflection. The proof (\S S3) splits the sum by the position of $c$. Where $c$ is in the window, or in its reflection,
-one step of Buchstab's identity and Lemma~\ref{lem:chains}, (b) or~(c), evaluate it. Where $c$ is below the window, or
-between the window and its reflection, Buchstab's tree from $z_0$ down to $w$ stops a branch as soon as $c$ times its
-primes reaches the window, or the reflection, and Lemma~\ref{lem:chains} evaluates the stops; so the primes $P$ of a
-leaf have $\prod P < q^t$. A leaf with $d = r \prod P$ at most $q^{L - 1 - \delta'}$ is a Type~I count, as in
+Here $r_{\mathcal S_0} = \prod_{i \in \mathcal S_0} r_i$ is the part of $r$ that the primes below $z_0$ bring into the
+window or its reflection, and $t$ bounds the exponent of the factor they must supply: at most $u_1 L - \sigma^-$ from
+below the window, and at most $(1 - u_2)L - \max(u_2 L, \sigma^-)$ from between the window and its reflection;
+$r_{\mathcal S_0}$ is never past the reflection. The proof (\S S3) splits the sum by the position of $r_{\mathcal S_0}$.
+Where it is in the window, or in its reflection, one step of Buchstab's identity and Lemma~\ref{lem:chains}, (b)
+or~(c), evaluate it. Where it is below the window, or between the window and its reflection, Buchstab's tree from $z_0$
+down to $w$ stops a branch as soon as $r_{\mathcal S_0}$ times its primes reaches the window, or the reflection, and
+Lemma~\ref{lem:chains} evaluates the stops; so the primes $P$ of a leaf have $\prod P < 4q^t$. A leaf with
+$d = r \prod P$ at most $q^{L - 1 - 4c'}$, for a small $c' > 0$ (\S S3), is a Type~I count, as in
 Proposition~\ref{prop:harman}; the others are split into $d_1$, the primes of $\mathcal S_1$ and, if $\iota = 1$, those
 of $P$, and $d_2$, the rest, and $D_1 < L - 1$ and $D_1 + 2D_2 < L$ are the conditions of Lemma~\ref{lem:leaves}, with
 margins.
@@ -1068,12 +1085,20 @@ The set of \emph{evaluable} exponents is
 \[
   \mathcal U = (U_1/D,\ U_2/D) \cup (1 - U_2/D,\ 1 - U_1/D).
 \]
-A box, a product of cells, is \emph{surely evaluable} if for some subset of its coordinates the sum of the exponents
-lies in $\mathcal U$ throughout the box. For a box of cells $c_1, \dots, c_k$, with lower ends $e_{c_i}$ ($e^C_{c_i}$
-for a coarse cell) and widths $w_i$ ($h$, or $h_C$ for a coarse cell), and a set $\mathcal S$ of its coordinates, write
+For a box, a product of cells $c_1, \dots, c_k$, with lower ends $e_{c_i}$ ($e^C_{c_i}$ for a coarse cell) and widths
+$w_i$ ($h$, or $h_C$ for a coarse cell), and a set $\mathcal S$ of its coordinates, write
 $s^-(\mathcal S) = \sum_{i \in \mathcal S} e_{c_i}$ and $s^+(\mathcal S) = \sum_{i \in \mathcal S} (e_{c_i} + w_i)$;
-$s^+$ of all the coordinates is the box's \emph{upper sum}. The sums over the subsets range over intervals with rational
-ends, so a box is tested exactly.
+$s^+$ of all the coordinates is the box's \emph{upper sum}. The box is \emph{surely evaluable} if
+$[s^-(\mathcal S), s^+(\mathcal S)] \subset \mathcal U$ for some set $\mathcal S$ of its coordinates, so that the sum
+of those exponents lies in $\mathcal U$ throughout the box. The ends are rational, so a box is tested exactly.
+
+\emph{The parameters.} Apply Proposition~\ref{prop:harman} with $a_0 = vL$ and $b_0 = (1 - U_2/D)L$, so that $z_0 =
+\lceil x^v \rceil$ and $X' = \lfloor x^{1 - U_2/D} \rfloor$, and Proposition~\ref{prop:harman-ib} with the same $a_0$.
+The hypotheses of the first hold: $a_0 + b_0 = (1 - U_1/D)L < (1 - u_1)L$, since $U_1/D > u_1$; $b_0 > (1 - u_2)L$,
+since $U_2/D < u_2$; and $b_0 < L - 1$ is the condition $L U_2 > D$ of Theorem~\ref{thm:route}. For large $x$,
+$z_{\mathrm{top}} \le X'$, since $2U_2 < D$, and $z_0 X' \le x^{1 - U_1/D}$ up to rounding: $v$ is the largest floor for
+which the stops of Proposition~\ref{prop:harman} stay in the reflection of the rounded window $[U_1/D, U_2/D]$.
+
 
 \subsection{The rule}
 
@@ -1085,15 +1110,15 @@ Proposition~\ref{prop:harman-ib} evaluates. A box passes the rule if
 \item[(R2)] it passes the \emph{bilinear test} and has \emph{no boundary term}, that is, its upper sum plus the upper
   end of its last cell is below $1$.
 \end{enumerate}
-For a set $\mathcal S$ of the box's coordinates with $s^+(\mathcal S) < 1 - U_1/D$, let
+For a set $\mathcal S$ of the box's coordinates with $s^+(\mathcal S) < 1 - U_1/D$, the empty set included, let
 \[
-  c(\mathcal S) = \max\Bigl(\frac{U_1}D - s^-(\mathcal S),\ \
+  t(\mathcal S) = \max\Bigl(\frac{U_1}D - s^-(\mathcal S),\ \
   \mathbf 1\Bigl[s^+(\mathcal S) \ge \frac{U_2}D\Bigr] \Bigl(1 - \frac{U_2}D - \max\Bigl(s^-(\mathcal S), \frac{U_2}D\Bigr)\Bigr),\ \ 0\Bigr),
 \]
 the largest exponent of a product of smaller primes with which the product of the primes of $\mathcal S$ may still
-enter the window from at or below it, or its reflection from between the two; let $T$ be the least $c(\mathcal S)$ over
-these sets. The box passes the \emph{bilinear test} if there are such sets, and if its coordinates split into two sets
-$\mathcal S_1$ and $\mathcal S_2$, with $T$ joined to one of them, such that
+enter the window from at or below it, or its reflection from between the two; let $T$ be the least $t(\mathcal S)$ over
+these sets, so that $T \le t(\emptyset) = U_1/D$. The box passes the \emph{bilinear test} if its coordinates split into
+two sets $\mathcal S_1$ and $\mathcal S_2$, with $T$ joined to one of them, such that
 \[
   a_1 < 1 - \frac1L, \qquad a_1 + 2a_2 < 1,
 \]
@@ -1107,17 +1132,11 @@ $(\lfloor N_1/W_1 \rfloor, \lfloor N_2/(X' + 1) \rfloor]$, which is inside the w
 after Lemma~\ref{lem:chains}. (R2) is the test of Proposition~\ref{prop:harman-ib}, in exponents of $x$: with $l_i$ and
 $h_i$ the ends of the cells times $L$, $\mathcal S_0$ a set at which $T$ is attained, $t = TL$, and the split
 $(\mathcal S_1, \mathcal S_2)$ with $\iota$ the side of $T$, its hypotheses hold, since $U_1/D > u_1$ and $U_2/D < u_2$,
-and $a_0 = vL < (u_2 - u_1)L$. A box without a boundary term has no part above $N_1$ for large $q$: its product is at
-most $x^{1 - 1/D} < N_1$. So a whole box is not split.
+and $a_0 = vL < (u_2 - u_1)L$. The condition of no boundary term makes empty the terms of depth $k + 1$ below a whole
+box that count only products of $k + 1$ primes (\emph{Empty terms}, below); below a split box they are empty anyway,
+since its decomposed part has $p_1 \cdots p_k \le X'$.
 
 \subsection{The decomposition}
-
-\emph{The parameters.} Apply Proposition~\ref{prop:harman} with $a_0 = vL$ and $b_0 = (1 - U_2/D)L$, so that
-$z_0 = \lceil x^v \rceil$ and $X' = \lfloor x^{1 - U_2/D} \rfloor$, and Proposition~\ref{prop:harman-ib} with the same
-$a_0$. The hypotheses of the first hold: $a_0 + b_0 = (1 - U_1/D)L < (1 - u_1)L$, since $U_1/D > u_1$; $b_0 > (1 - u_2)L$,
-since $U_2/D < u_2$; and $b_0 < L - 1$ is the condition $L U_2 > D$ of Theorem~\ref{thm:route}. For large $x$,
-$z_{\mathrm{top}} \le X'$, since $2U_2 < D$, and $z_0 X' \le x^{1 - U_1/D}$ up to rounding: $v$ is the largest floor for
-which the stops of Proposition~\ref{prop:harman} stay in the reflection of the rounded window $[U_1/D, U_2/D]$.
 
 \emph{The tree.} Buchstab's identity
 \[
@@ -1171,10 +1190,10 @@ Depth & Sign & Grid & Terms to which (E) and (O) do not apply \\
 8 & $+$ & coarse & counted cells: dropped ((E) not tested) \\
 \bottomrule
 \end{tabular}
-\caption{The decomposition. A term over a surely evaluable box is evaluated (E); one whose box lies past the region
-$\alpha_k < \alpha_{k - 1}$, $\alpha_1 + \cdots + \alpha_{k - 1} + 2\alpha_k \le 1$ in the sense of (O) is empty, or at
-depth two counts only products of two primes. A decomposed box is split at $X'$ if it passes (R1), and taken whole if it
-passes only (R2).}\label{tab:tree}
+\caption{The decomposition. A term of depth at most six over a surely evaluable box is evaluated (E); one whose box lies
+past the region $\alpha_k < \alpha_{k - 1}$, $\alpha_1 + \cdots + \alpha_{k - 1} + 2\alpha_k \le 1$ in the sense of (O)
+is empty, or at depth two counts only products of two primes. A decomposed box is split at $X'$ if it passes (R1), and
+taken whole if it passes only (R2).}\label{tab:tree}
 \end{table}
 
 \emph{Empty terms.} Let a term of depth $k \ge 3$ lie in (O), below a decomposed term of depth $k - 1$. If its box lies
@@ -1191,9 +1210,10 @@ $\alpha_1 + 2\alpha_2 \le 1$ the cofactor is $1$ and the term counts the product
 \emph{Evaluation.} Let the box of a term of depth $k$ be surely evaluable, with $\sum_{i \in \mathcal I} \alpha_i \in
 \mathcal U$ on it. If the sum lies in $(U_1/D, U_2/D)$, Lemma~\ref{lem:chains}(b) applies with this $\mathcal I$, the
 cells, the order of the primes and the earlier splits as comparisons. If it lies in $(1 - U_2/D, 1 - U_1/D)$,
-Lemma~\ref{lem:chains}(c) applies with $\mathcal U = \mathcal I$, and with $W_0$ and $W_1$ as in the remark after the
-lemma; when $\mathcal I$ is the set of all the primes, as below a split, where a proper subset has product at most
-$p_1 \cdots p_{k - 1} \le X' \le x^{1 - U_2/D}$, this is case~(a), with the cofactor as the variable.
+Lemma~\ref{lem:chains}(c) applies with $\mathcal J = \mathcal I$, and with $W_0$ and $W_1$ as in the remark after the
+lemma. Below a split box only the set of all the primes can have its sum in the reflection, since a proper subset's
+product is at most $p_1 \cdots p_{k - 1} \le X' \le x^{1 - U_2/D}$; then (c) is case~(a), with the cofactor as the
+variable.
 
 \subsection{The cost of a dropped term}
 
@@ -1334,26 +1354,31 @@ decomposition drops, and takes the cheaper of the two, the second only where the
   six below its cells of depth five to which (E) and (O) do not apply.
 \item A candidate cell $(i, j)$ costs $\Delta_2(i, j)$, or, decomposed, $\Delta^{\mathrm{dec}}_2(i, j)$, the sum over its
   cells of depth three to which (E) and (O) do not apply of the costs of their counted cells of depth four, rounded up
-  to a multiple of $1/\mathcal K$.
+  to an integer, as $\Delta_2$ is.
 \item The total is the sum of the costs of the candidate cells, $\Sigma = \sum_{i, j} \mathrm{cost}(i, j)$.
 \end{itemize}
 The certificate checks the rule on the boxes of depth three and more through a sufficient condition, the \emph{block
-test}. For the box $(i, j, k)$ of the first three primes it computes the largest sum $\Delta$ of the upper ends of
-deeper cells for which the box, with the deeper cells joined to one side of a split, passes the bilinear test with its
-own $T$; a deeper box passes the block test if its upper sum is below $1 - U_1/D$, or if it has no boundary term and the
-upper ends of its deeper cells sum to less than $\Delta$. A box that passes the block test passes the rule, since
-joining cells to a box can only lower its $T$, and the bilinear test's inequalities are monotone. In the same way the
+test}, which on the boxes of depth three is the rule itself. For the box $(i, j, k)$ of the first three primes it
+computes the least sum $\Delta^{\mathrm{blk}}_{ijk}$ of the upper ends of deeper cells at which no split of the box,
+with the deeper cells joined to one of its sides, passes the bilinear test with the box's own $T$; a deeper box passes
+the block test if its upper sum is below $1 - U_1/D$, or if it has no boundary term and the upper ends of its deeper
+cells sum to less than $\Delta^{\mathrm{blk}}_{ijk}$. A box that passes the block test passes the rule, since joining
+cells to a box can only lower its $T$, and the bilinear test's inequalities are monotone. In the same way the
 certificate finds the surely evaluable boxes of depths four to six from a table over the sums of the cells' indices,
-which is sound since $h_C = 4h$ makes the lower sum of a box a function of its number of cells and of the sum of their
-indices (a coarse cell's index counting four). Both devices may miss boxes, so the certificate's costs are upper bounds
-for those of the decomposition with the rule itself; they make its computation feasible.
+which is sound since $h_C = 4h$ makes the sums $s^\pm$ of a box functions of its numbers of fine and of coarse cells and
+of the sums of their indices (a coarse cell's index counting four). The certificate consults the table at depth five,
+and at depth six only for the cells it does not decompose; below a counted cell of depth four whose deeper boxes all
+pass the block test it does not consult it, and charges every cell of depths five and six of the region, so that the
+cell's cost depends only on its index and on the sum of the indices above it. Charging a cell that (E) evaluates only
+raises the total. So the certificate's decisions are among those the rule allows, the boxes it evaluates are surely
+evaluable, and its total bounds the dropped terms of its own decomposition; these devices make its computation feasible.
 
 On the grid of Proposition~\ref{prop:certificate}, the certificate decomposes $15884$ of the $23173$ candidate cells
-and drops the other $7289$: the rule fails on the box of $1725$ of them, the block test fails on a box of depth three
-below $5542$ others, and the last $22$ would cost more decomposed. The decomposed cells cost $0.2149\mathcal K$ in
+and drops the other $7289$: the rule fails on the box of $1725$ of them, and on a box of depth three below $5542$
+others, and the last $22$ would cost more decomposed. The decomposed cells cost $0.2149\mathcal K$ in
 all, the cost of the cells dropped below them: $0.1572\mathcal K$ at depth four, $0.0083\mathcal K$ at depth six and
-$0.0494\mathcal K$ at depth eight (computations, not formalised). Figure~\ref{fig:cells} shows the kinds of candidate
-cell.
+$0.0494\mathcal K$ at depth eight (computations, not formalised, printed by \file{tools/linnik/breakdown8.py}).
+Figure~\ref{fig:cells} shows the kinds of candidate cell.
 
 \begin{figure}[tbp]
 \centering
@@ -1375,7 +1400,8 @@ The other cells of depth two cost nothing in the total: they are evaluated, empt
 (Lemma~\ref{lem:drop}(3)). With the decomposition stopped at depth six, that is with no counted cell of depth six
 decomposed, the total $\Sigma$ would be about $1.55502\mathcal K$ on the grid of Proposition~\ref{prop:certificate},
 and stopped at depth four about $6.36647\mathcal K$; with (R1) alone as the rule, that is without the bilinear test, it
-would be about $2.43064\mathcal K$, and $2.77411\mathcal K$ stopped at depth six (computations, not formalised). So what
+would be about $2.43064\mathcal K$, and $2.77411\mathcal K$ stopped at depth six (computations, not formalised, by the
+variants of \file{tools/linnik/breakdown8.py}). So what
 lets the certificate close at $11/5$ is the bilinear test together with the two deepest levels of the decomposition.
 
 \begin{proposition}\label{prop:decomp}
@@ -1438,10 +1464,10 @@ and $N$ only the conditions of the following theorem, of which Theorem~\ref{thm:
 
 \begin{theorem}[the route theorem]\label{thm:route}
 Let $2 < L \le 5/2$ and $0 < u_1 < u_2 < 1$, and let a grid of $N$ cells a side, with $4 \mid N$, integer ends $U_1$
-and $U_2$ over $D = 2^{40}$ and its coarse grid of $N/4$ cells, satisfy $u_1 D < U_1$, $U_2 < u_2 D$ and
-$L U_2 > D$, and the grid conditions
+and $U_2$ over $D = 2^{40}$ and its coarse grid of $N/4$ cells of side $h_C = 4h$, satisfy $u_1 D < U_1$,
+$U_2 < u_2 D$ and $L U_2 > D$, and the grid conditions
 \[
-  2U_2 < D, \quad 2e_{N - 1} < 1 < 2(v + Nh), \quad h_C = 4h, \quad 20h \le v.
+  2U_2 < D, \quad 2e_{N - 1} < 1 < 2(v + Nh), \quad 20h \le v.
 \]
 Assume the conclusion of Theorem~\ref{thm:type2} for $L$ on the window $[u_1 L, u_2 L]$, and $\Sigma < \mathcal K$ on
 the grid, under the rule at $L$.
@@ -1455,13 +1481,14 @@ floor $z_0 = \lceil x^v \rceil$ are well defined. $1 < 2(v + Nh)$ makes the cell
 exponents of the primes below $z_{\mathrm{top}}$. $2e_{N-1} < 1$ gives $2e_i < 1$ for every cell, hence $v < 1/2$ and
 $z_0 \le z_{\mathrm{top}}$, and, since $h < e_{N-1}$, $v + Nh = e_{N-1} + h < 1$, which keeps the thresholds of the
 comparisons of every cell, the coarse ones included, in $[1, q^{L + 1}]$. $2U_2 < D$ gives $z_{\mathrm{top}} \le X'$.
-$h_C = 4h$ makes a coarse cell four cells of the grid, and the lower sum of a box a function of its number of cells
-and of the sum of their indices, as the certificate's table of the surely evaluable boxes needs. $20h \le v$ gives
+That $4 \mid N$ makes a coarse cell four cells of the grid, of side $h_C = 4h$, and the sums $s^\pm$ of a box functions
+of its numbers of fine and of coarse cells and of the sums of their indices, as the certificate's table of the surely
+evaluable boxes needs. $20h \le v$ gives
 $y \ge 1$ in Lemma~\ref{lem:drop} ($4h \le v$ at depths two and four, $12h \le v$ at depth six, $20h \le v$ at depth
 eight). Of the other conditions, $L U_2 > D$ gives $b_0 < L - 1$, and with $L \le 5/2$ it
 gives $X'^{3/2} < N_1$ for the empty terms; $L \le 5/2$ also bounds the number of pieces in the proof of
-Lemma~\ref{lem:family-sharp}. The condition $2 < L$ follows from $L U_2 > D$ and $2U_2 < D$, and is used only through
-$L > 1$.
+Lemma~\ref{lem:family-sharp}. The condition $2 < L$ follows from $L U_2 > D$ and $2U_2 < D$; Lemma~\ref{lem:leaves}
+uses it, through Proposition~\ref{prop:harman-ib}, and the rest of the argument uses only $L > 1$.
 
 \begin{proof}
 Let $\rho = \Sigma/\mathcal K < 1$ and $0 < \varepsilon < (1 - \rho)/4$. By the prime number theorem, for large $q$ the
@@ -1539,7 +1566,7 @@ no independent check. \S S5 gives the details: what of Chen, Gupta and Li's pape
 the density estimates, the Lean forms of the paper's definitions and checks, the library's proof of
 Input~\ref{inp:half-plane}, independent checking, what the kernel checks, and the artefact.
 
-\section{What the inputs give without the sieve}\label{sec:comparison}
+\section{What the inputs give without the sieve, and the method's limits}\label{sec:comparison}
 
 This section claims nothing new. It places Theorem~\ref{thm:main} against what the same inputs give by the
 classical argument, which has no sieve, and against the exponents known for special moduli; the table of the
@@ -1617,16 +1644,19 @@ length of the variable, and recovers the primes from those sums at the cost that
 set where the density exponent is largest (Section~\ref{sec:ends}). With steps of Ingham's and Huxley's
 estimates, of length $1/1680$, in place of
 Input~\ref{inp:density} on $[5/7, 131/168]$, the window is set at $3/4$, where both exponents are $12/5$, and a window
-admissible at $L = 2239/1000$ carries a certificate's total below $\mathcal K$, on a grid that satisfies the conditions
-of Theorem~\ref{thm:route}, so the sieve brings $12/5$ down to about $2.24$, with Input~\ref{inp:half-plane} as the
-only input that is not refereed (a computation, \S S6).
+admissible at $L = 2239/1000$ carries a certificate's total below $\mathcal K$ on $272$ cells a side, a grid that
+satisfies the conditions of Theorem~\ref{thm:route} (at $2.238$ the window is too narrow for that grid, and finer grids
+were not tried), so the sieve brings $12/5$ down to about $2.24$, with Input~\ref{inp:half-plane} as the only input that
+is not refereed (a computation, \S S6).
 
+The certificate at $11/5$ has room: with the window chosen afresh, the same method reaches about $2.198$, where the
+certificate's total on a finer grid reaches $\mathcal K$ (\S S6), and $11/5$ is the round exponent the paper proves.
 About three quarters of the certificate's total comes from the cells that reach the line
 $\alpha_1 + \alpha_2 = 1 - U_1/D$ (Figure~\ref{fig:cells}). Most of their integers have no product of some of their
 prime factors with its exponent in $\mathcal U$, so that the Type~II estimate cannot count them, and the decomposition
 reaches them only through the bilinear Type~I estimate, where its test passes. More depth can lower only the cost of
 the decomposed cells, about a quarter of the total, and the half-plane $\operatorname{Re} s > 7/8$ does not help
-(\S S6). Going lower needs a wider window, that is a better density exponent near $\sigma = 5/7$, or Type~I
+(\S S6). Going much lower needs a wider window, that is a better density exponent near $\sigma = 5/7$, or Type~I
 information on longer products. On the former, Chen, Gupta and Li note that improving the term of their estimate that
 dominates at $\sigma = 5/7$ would need a joint cancellation which ``seems quite difficult'' \cite[Remark~12.3]{cgl}.
 
@@ -1663,7 +1693,8 @@ Dirichlet's theorem is Mathlib's.
 \lean{SieveDeep.totalD\_lt\_22000E} & \file{SieveCert22000E.lean} \\
 \lean{SieveDeep.Ch3\_le} & \file{SieveDeepCost.lean} \\
 \lean{SieveBuch.Par.decomp8} & \file{SieveBuch8.lean} \\
-\lean{SieveBuch.Par.I\_S6c}, \dots, & \file{SieveBuch8.lean} \\
+\lean{SieveBuch.Par.I\_S6c}, \dots, \lean{SieveBuch.Par.I\_S8} & \file{SieveBuch8.lean} \\
+\lean{SieveBuch.Par.I\_S7c\_vanish\_lt}, \dots, & \file{SieveBuch8.lean} \\
 \quad\lean{SieveBuch.Par.I\_S8c\_vanish\_reg} & \file{SieveBuch8.lean} \\
 \lean{SieveCert.ibOK\_sound} & \file{SieveRule.lean} \\
 \lean{SieveCert.okIB\_cases} & \file{SieveRule.lean} \\
@@ -1704,8 +1735,7 @@ The kernel bound & \lean{SieveTypeIIHM.offK\_bound}, \\
  & \lean{LinnikOffDiag.norm\_offK\_le}, \\
  & \lean{LinnikLindelof.lindelof} \\
 Definition~\ref{def:window}, admissible windows & \lean{SieveCurveGlue.WindowOKHM} \\
-Lemma~\ref{lem:bin}, one bin & \lean{SieveTypeIIHM.bin\_bound\_gen\_hm}, \\
- & \lean{SieveTypeIIHM.sum\_typeII\_bins\_hm} \\
+Lemma~\ref{lem:bin}, one bin & \lean{SieveTypeIIHM.bin\_bound\_gen\_hm} \\
 Proposition~\ref{prop:type2-gen}, the Type~II estimate on an admissible window & \lean{SieveTypeIIHM.typeII\_gen\_hm} \\
 Proposition~\ref{prop:window}, the window is admissible & \lean{SieveTypeIIU22000D.window\_22000d} \\
 Lemma~\ref{lem:type1}, Type~I counts & \lean{SieveCount.card\_A}, \\
@@ -1719,7 +1749,6 @@ Lemma~\ref{lem:family-sharp}, sharp prime ranges & \lean{SieveTypeIIU.typeII\_un
 Lemma~\ref{lem:chains}, chains of primes & \lean{SieveChain.chainTU\_bound} (a), \\
  & \lean{SieveChain.chainTL\_bound} (b), \\
  & \lean{SieveChainR.chainTR\_bound} (c), \\
- & \lean{SieveExact.chainT0\_bound} (exact products), \\
  & \lean{SieveChain.sum\_rough\_tuples} (cofactor) \\
 Proposition~\ref{prop:harman}, Harman's comparison in the form used & \lean{SieveProp6.prop6} \\
 \quad its tree identity & \lean{SieveTree.tree\_pt} \\
@@ -1733,18 +1762,15 @@ Proposition~\ref{prop:harman-ib}, Harman's comparison with the bilinear estimate
 \quad its tree with a stopping rule & \lean{SieveTreeStop.tree\_pt\_stop}, \\
  & \lean{SieveP6Tree.tree\_chains} \\
 \quad its leaves & \lean{SieveP6TreeLeaves.tree\_leaves\_le} \\
+The rule, (R1) or (R2), and Proposition~\ref{prop:harman-ib}'s hypotheses from (R2) & \lean{SieveCert.okIB\_cases}, \\
+ & \lean{SieveCert.ibOK\_sound}, \\
+ & \lean{SieveQ.P6IB\_box} \\
 Buchstab's identity & \lean{SieveDecomp.buchstab\_fam} \\
 The decomposition's identity & \lean{SieveBuch.Par.T\_eq}, \\
  & \lean{SieveBuch.Par.I\_S1}, \dots, \lean{SieveBuch.Par.I\_S6}, \\
  & \lean{SieveBuch.Par.I\_S6c}, \dots, \lean{SieveBuch.Par.I\_S8} \\
 \quad its empty terms & \lean{SieveBuch.Par.I\_S3c\_vanish}, \\
  & \dots, \lean{SieveBuch.Par.I\_S8c\_vanish\_reg} \\
-The rule, (R1) or (R2), and Proposition~\ref{prop:harman-ib}'s hypotheses from (R2) & \lean{SieveCert.okIB\_cases}, \\
- & \lean{SieveCert.ibOK\_sound} \\
-\quad the block test and the table of the surely evaluable boxes & \lean{SieveDeep.okIB\_of\_okD}, \\
- & \lean{SieveDeep.surelyEval4\_of\_lmask}, \\
- & \lean{SieveDeep.surelyEval6\_of\_emask} \\
-\quad the certificate's decisions pass the rule & \lean{SieveDeep.scheme} \\
 The evaluated terms of the decomposition & \lean{SieveQ8.leaves\_ev8} \\
 Lemma~\ref{lem:rough}, rough numbers from above & \lean{SieveRough.psi\_le} \\
 \quad Buchstab's inequality for rough numbers & \lean{SieveRough.Psi\_le\_buchstab} \\
@@ -1767,10 +1793,16 @@ Lemma~\ref{lem:drop}, the dropped terms, (1) and (2) & \lean{SieveDrop.drop2\_le
  & \lean{SieveDrop8.drop4\_le'}, \\
  & \lean{SieveDrop8.drop6\_le'}, \\
  & \lean{SieveDrop8.drop8\_le}, \\
+ & \lean{SieveRough.share2\_of\_cand}, \\
  & \lean{SieveRough.shareBox}, \\
  & \lean{SieveDrop8.share4D}, \dots, \lean{SieveDrop8.share8D} \\
 \quad (3), the corner cells & \lean{SieveDrop.corner\_le}, \\
  & \lean{SieveDrop.corner\_ev} \\
+The block test, and the table of the surely evaluable boxes & \lean{SieveDeep.okIB\_of\_okD}, \\
+ & \lean{SieveDeep.surelyEval4\_of\_lmask}, \\
+ & \lean{SieveDeep.surelyEval5\_of\_emask}, \\
+ & \lean{SieveDeep.surelyEval6\_of\_emask} \\
+The certificate's decisions pass the rule & \lean{SieveDeep.scheme} \\
 The certificate's costs bound the dropped cells & \lean{SieveDeep.Ch3\_le}, \\
  & \lean{SieveDrop8.dT\_le\_cost} \\
 Proposition~\ref{prop:decomp}, the decomposition (assembled in \lean{SieveMain8.linnik\_large8}) &
@@ -1832,9 +1864,7 @@ Its exponent $2.3334 + \varepsilon$ from the curve $g^*$ & \lean{LinnikG7.linnik
 % same day. Still open: Buchstab's volume, issue and pages, seen in secondary sources only (the original on Math-Net.Ru was not reachable).
 % R. Li (arXiv:2308.04458v8, 16 October 2025) was read on 28 October 2026: Theorems 9 and 11 on p. 36, and the
 % paragraph before Theorem 8, which presents Theorems 8 to 11 as modifications of the calculation behind Theorem 1.
-% For the remark of Section 8, on 28 October 2026: Chen--Gupta--Li's Theorem 1.2 and Remark 12.3 were read in v2, and
-% Guth--Maynard's Theorem 1.2 in arXiv:2405.20552v2 (7 April 2026). Heath-Brown (1979) was checked against zbMATH (Zbl
-% 0393.10043, the author's abstract, which states the bound for 15/19 <= sigma <= 1); the paper itself was not read.
+% For the remark of Section 8, on 28 October 2026: Chen--Gupta--Li's Theorem 1.2 and Remark 12.3 were read in v2.
 % Chen--Gupta--Li's Corollary 1.4 and footnote 1 were read in v2 on 28 October 2026. Banks--Shparlinski: the data as in
 % R. Li's reference [7] (J. Anal. Math. 139 (2019), 239--263; DOI 10.1007/s11854-019-0060-4), the value 2.1115 as in
 % Chen--Gupta--Li's footnote 1, and R. Li's sentence before his Theorem 11 that his result improves theirs; the paper

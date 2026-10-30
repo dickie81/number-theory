@@ -1044,7 +1044,7 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveCurve7D.g7d_le_one`: `g7d ≤ 1` *paper*
 - `SieveCurve7D.g7d_half` *paper*
 - `SieveCurve7D.g7d_le_lin`: `g7d σ ≤ (11667 / 5000)(1 − σ)` for `σ ≤ 1` *paper* ([note](../formalisations/chen-gupta-li-density.md))
-- `SieveCurve7D.counts_7d`: The counts of the curve *paper*
+- `SieveCurve7D.counts_7d`: The counts of the curve *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `SieveDecomp`: Families of prime tuples, and Buchstab's identity on them
 
@@ -1165,7 +1165,7 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveLeaves.TU_spec`: The upper window, on a family of atoms
 - `SieveLeaves.TR_spec`: The reflected window, on a family of atoms
 - `SieveLeaves.P6_spec`: Proposition 6, on a family of atoms ([note](../formalisations/harman-sieve.md))
-- `SieveLeaves.P6IB_spec`: Proposition 6 with the bilinear estimate, on a family of atoms
+- `SieveLeaves.P6IB_spec`: Proposition 6 with the bilinear estimate, on a family of atoms ([note](../formalisations/harman-sieve.md))
 
 #### `SieveLemma1`: Weighted prime sums at a height inside a zero-free rectangle (Lemma 1 of the sieve route, `Λ` form)
 
@@ -1212,7 +1212,7 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveP6ib`: Proposition 6 with the bilinear estimate
 
-- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate *paper*
+- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate *paper* ([note](../formalisations/harman-sieve.md))
 
 #### `SieveProp6`: Proposition 6, Harman's fundamental theorem in the form used
 
@@ -1222,7 +1222,7 @@ headline theorems (those whose docstring opens with a bold title).
 #### `SieveQ`: The decomposition at `x = q^L`, and its leaves for large `q`
 
 - `SieveQ.good_of_large`: The decomposition's hypotheses hold for large `q`
-- `SieveQ.P6IB_boxes`: Proposition 6-ib, uniformly over finitely many boxes
+- `SieveQ.P6IB_boxes`: Proposition 6-ib, uniformly over finitely many boxes ([note](../formalisations/harman-sieve.md))
 - `SieveQ.leaves_ev`: The leaves, for large `q`
 
 #### `SieveQ8`: The leaves of the decomposition to depth 8, for large `q`
@@ -1261,7 +1261,7 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveRule`: The certificate under a decomposition rule, in the reals and over `Finset`
 
-- `SieveCert.ibOK_sound`: The bilinear Type I rule's witnesses *paper*
+- `SieveCert.ibOK_sound`: The bilinear Type I rule's witnesses *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveCert.okIB_cases`: `okIB` passes a box only when `limOK` does, or `ibOK` and `nbOK` do. *paper*
 
 #### `SieveSep`: Separation of smooth comparisons by Fourier inversion over `ℝ^J`
