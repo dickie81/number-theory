@@ -72,6 +72,6 @@ the others at most `B`.
 - Directly, on the top piece `[5/6, 11/12]` of the Type II estimate. There `SieveHMBins` and `SieveTypeIIHM` bound
   each bin of characters at one height by `SieveTypeIIHM.sum_bin_hm`, with the kernel bound above. The window of the
   library's current exponent, `[43457/100000, 46959/100000]·L` at `L = 11/5`, is the window of this branch
-  (`SieveTypeIIU22000D`), as is the paper's, `[41556/100000, 47531/100000]·L` at `L = 278/125` (`SieveTypeIIU22240D`).
-  (The earlier windows, `[41479/100000, 47555/100000]·L` at `L = 89/40` and `[41335/100000, 48069/100000]·L` at
-  `L = 899/400`, are in the git history.)
+  (`SieveTypeIIU22000D`). (The earlier windows, the paper's `[41556/100000, 47531/100000]·L` at `L = 278/125`,
+  `[41479/100000, 47555/100000]·L` at `L = 89/40` and `[41335/100000, 48069/100000]·L` at `L = 899/400`, are in the git
+  history.)
