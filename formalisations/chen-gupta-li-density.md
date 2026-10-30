@@ -140,17 +140,17 @@ this repository claims it.
 
 The density curve of the Linnik paper's Type II estimate is `g7d` (`SieveCurve7D.counts_7d`), which takes their
 Proposition 3.1 directly, on 30 steps of `[5/7, 131/168]` (next section), and not `CGLDensity`. An earlier curve, `g7c`
-(`SieveTypeIIU226C.counts_7c`), used `CGLDensity`; it is built from these pieces:
+(`SieveTypeIIU226C.counts_7c`, now in the git history), used `CGLDensity`; it was built from these pieces:
 
 - the trivial count below `4/7`;
 - twenty steps from Ingham's estimate;
 - this estimate on `[5/7, 16/21]` at `ε = 1/8400`, giving the exponent `(7/3 + 1/2000)(1 − σ)`
-  (`SieveTypeIIU227.rangeCounts_cgl`);
+  (`SieveTypeIIU227.rangeCounts_cgl`, also in the git history);
 - twenty steps from Huxley's estimate up to `5/6`;
 - the library's `(101/50)(1 − σ)` from `5/6` on (`LinnikStep.charDensity_step`).
 
-The theorem of the proof built on `g7c`, at an earlier exponent (`899/400`), is no longer in the tree: it was
-superseded, and is in the git history. `cglDensity` stays and is printed by `lib/check/CheckAll.lean`.
+The theorem of the proof built on `g7c`, at an earlier exponent (`899/400`), was superseded too. `cglDensity` stays
+and is printed by `lib/check/CheckAll.lean`.
 
 ## Proposition 3.1 on `[5/7, 131/168]`: the Linnik paper's steps
 

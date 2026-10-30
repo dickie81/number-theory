@@ -6,7 +6,7 @@ window condition `WindowOKHM g L m₁ m₂ (1/1000) (1/1000)`, which the window 
 of each piece; the grid's and route's conditions `GridOK`, `GridOKC`, `Fits` and `RouteOK` (by `decide` and
 `norm_num`, as in `Linnik22000E.lean`); and the certificate's total below `K` on the grid, which the kernel checks by
 `decide +kernel`: at `11/5`, `totalD < K` of `lib/pnt/SieveDeepDefs.lean` (`SieveMain8.linnik_route_lt8`), and at
-`278/125`, in the git history, the refined certificate's `total2 < K` of `lib/pnt/SieveCert2Defs.lean`
+`278/125`, in the git history with its files, the refined certificate's `total2 < K` of `SieveCert2Defs.lean`
 (`SieveMain2.linnik_route_lt2`). This script computes the window, its corners and the depth-4 certificate (`replay`)
 for a curve, an exponent and a grid size `n`, without Lean; the refined `total2`, to depth 6 with the kept parts, is
 `mirror2.py`'s, and the depth-8 `totalD` is `mirror8.py`'s:

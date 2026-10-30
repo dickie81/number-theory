@@ -77,8 +77,7 @@ Louvel's quadratic large sieve. The classical tools, among them cubic and sextic
 - **The characters, in order.** The chain first gives `ζ(s)` and `L(s, χ₋₃)`
   (`Eis.ne_zero_of_re_gt_eleven_twelfths`). It then covers:
   - the real characters, through the family's own members (`Eis.RealChar.LFunction_ne_zero_of_isQuadratic`);
-  - the characters of order dividing `6` (`Eis.LFunction_ne_zero_of_pow_six`);
-  - every other Dirichlet character (`Eis.LFunction_ne_zero_of_sq_ne_one`), through the family twisted by `ν_χ`
+  - every character with `χ² ≠ 1` (`Eis.LFunction_ne_zero_of_sq_ne_one`), through the family twisted by `ν_χ`
     modulo `4q`, where `ν_χ(pgen 𝔞 mod 4q) = χ(N𝔞)` for every ideal `𝔞` of norm prime to `6` (`nuChi_pgen`). For
     this step the library generalises the chain to every modulus `m` with `4 ∣ m` and the theta step to every
     modulus, and twists the family by a character modulo `m`. The twisted family's member `1` gives

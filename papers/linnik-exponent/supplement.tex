@@ -739,10 +739,9 @@ In Sections~\ref{M-sec:type1} and~\ref{M-sec:certificate}, \file{formalisations/
 Proposition~\ref{M-prop:harman} and Lemma~\ref{M-lem:rough} and the differences between the Lean statements and the
 classical ones, and \file{formalisations/README.md} lists the Fourier separation of variables behind
 Lemmas~\ref{M-lem:family} to~\ref{M-lem:chains} among the standard results. The sifting function $S(\mathcal C_r, z)$
-is \lean{SieveTree.S}, which counts the multiples of $r$ in $\mathcal C$ with no prime factor below $z$, and so agrees
-with the paper's when $r$ has no prime factor below $z$, as in every use; the count $\Phi(y, z)$ of rough numbers is
-\lean{SieveRough.Psi}; and the exact-product case of Lemma~\ref{M-lem:chains} is \lean{SieveExact.chainT0\_bound}. The
-comparisons of Lemma~\ref{M-lem:chains} are \lean{SieveChain.GCmp}, with coefficients in $\{-1, 0, 1\}$.
+is, in the Lean, the number of the multiples of $r$ in $\mathcal C$ with no prime factor below $z$
+(\lean{SieveTree.rough}), and so agrees with the paper's when $r$ has no prime factor below $z$, as in every use; and
+the count $\Phi(y, z)$ of rough numbers is \lean{SieveRough.Psi}. The comparisons of Lemma~\ref{M-lem:chains} are \lean{SieveChain.GCmp}, with coefficients in $\{-1, 0, 1\}$.
 \lean{SieveProp6.prop6} allows real coefficients in $[-1, 1]$ with a pivot (\lean{SieveCmp.Cmp}), and
 Proposition~\ref{M-prop:harman} states its case for comparisons with coefficients in $\{-1, 0, 1\}$, which is the one
 the decomposition uses (\lean{SieveLeaves.P6\_spec}, through \lean{SieveChain.pivoted}).
