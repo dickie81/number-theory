@@ -85,10 +85,17 @@ The plan, with what is done:
      pointwise bound: `ShortSieveHolder` (done).
    - Moments from counts of large values: the measure of a level set from the number of `1`-separated points in it,
      and the dyadic sum over levels: `ShortSieveLevel` (done).
-   - The counts for powers of a Dirichlet polynomial from the mean value theorem (`DirMean.large_values`), Huxley's
-     argument (`ZetaKernel.power_count_pts`) and Guth–Maynard's estimate (`ZetaGMLV.gm_large_values`, with
-     `ZetaGMWin.pow_piece_pick` for the powers), and the exponent arithmetic that gives `δ_req`.
-   - The saving near `σ = 1`, a pointwise bound for prime-factored polynomials (from the zero-free half-plane).
+   - The exponent arithmetic: for `D ∈ (m, m + 1/2]` and `δ ≥ 4D − 2m`, the mean value theorem on the `m`-th power
+     below `σ = 3/4` and Huxley's estimate (or the library's Halász–Montgomery count) above: `ShortSieveDreq` (done).
+   - The counts for powers of a Dirichlet polynomial from the mean value theorem (`DirMean.large_values`, with
+     `ZetaGMWin.pow_piece_pick` for the powers) and the library's Halász–Montgomery count
+     (`ZetaKernel.power_count_pts`): `ShortSieveCount` (done).
+   - Harman's moment lemma with real exponents given a pointwise bound `|L| ≤ N^{1−η}`: `ShortSieveMoment` (done).
+   - The pointwise bound for the primes from the zero-free half-plane, a twisted prime number theorem
+     (`ShortSieveTwist`, done), and the two together, the moment lemma for the primes with no hypothesis
+     (`ShortSieveHarman`, done).
+   - Still to do: Guth–Maynard's estimate in the counts (V3; V2 needs only Huxley's), and the polynomials of the other
+     factors (the rough cofactor, products of primes) with their pointwise bounds.
 2. **Li's other arithmetic information.** His Lemma 3.1 (Baker, Harman and Pintz's Lemma 9), and the reduction of
    sums over short intervals to mean values of Dirichlet polynomials (their Lemma 6), by Perron's formula. His Lemmas
    2.1 and 2.2 (their Lemmas 12 and 13) rest on Watt's mean value theorem (their Lemma 2), which rests on
