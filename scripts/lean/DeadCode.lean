@@ -57,9 +57,10 @@ partial def closedHyps (env : Environment) (e : Expr) (acc : Array Expr := #[]) 
       closedHyps env e.appArg! (closedHyps env e.appFn!.appArg! acc)
     else acc
 
-/-- Whether Lean generates the constant, rather than the sources declaring it. -/
+/-- Whether Lean generates the constant, rather than the sources declaring it. A private constant is judged by the
+name its source gives it. -/
 def generated (env : Environment) (n : Name) (ci : ConstantInfo) : Bool :=
-  n.isInternalDetail || isAuxRecursor env n || isNoConfusion env n || isRecCore env n
+  (privateToUserName? n |>.getD n).isInternalDetail || isAuxRecursor env n || isNoConfusion env n || isRecCore env n
     || Meta.isMatcherCore env n || env.isProjectionFn n || ci matches .ctorInfo _ || ci matches .recInfo _
     || ci matches .quotInfo _
     || (match n with
@@ -155,11 +156,23 @@ def main (args : List String) : IO UInt32 := do
       for d in deps do
         -- a constant's own equation lemmas, matchers and auxiliary proofs (`d.eq_1`, `d._proof_1`) do not count
         if !d.isPrefixOf ci.name && ours d && !live.contains d then usedDead := usedDead.insert d
-  -- the constants of the library's modules that no root reaches
+  -- the constants of the library's modules that no root reaches, and for each module its declarations, the live ones
+  -- among them and its macros, syntax and elaborators (a module with none live goes as a whole, unless it has some)
   let mut dead : Array Json := #[]
+  let mut stats : Array (String × Json) := #[]
   for i in [:modNames.size] do
     if !oursIdx[i]! then continue
     let md := env.header.moduleData[i]!
+    let mut total := 0
+    let mut alive := 0
+    let mut metas := 0
+    for ci in md.constants do
+      let n := ci.name
+      if generated env n ci || (lines env n).isNone then continue
+      if isMeta ci then metas := metas + 1; continue
+      total := total + 1
+      if live.contains n then alive := alive + 1
+    stats := stats.push (modNames[i]!.toString, toJson #[total, alive, metas])
     for ci in md.constants do
       let n := ci.name
       if live.contains n || generated env n ci || isMeta ci then continue
@@ -167,7 +180,8 @@ def main (args : List String) : IO UInt32 := do
       let kind := match ci with
         | .thmInfo _ => "theorem" | .defnInfo _ => "def" | .opaqueInfo _ => "opaque" | .axiomInfo _ => "axiom"
         | .inductInfo _ => "inductive" | _ => "other"
-      dead := dead.push <| Json.mkObj [("name", toJson n.toString), ("module", toJson modNames[i]!.toString),
+      dead := dead.push <| Json.mkObj [("name", toJson (privateToUserName? n |>.getD n).toString),
+        ("private", toJson (isPrivateName n)), ("module", toJson modNames[i]!.toString),
         ("kind", toJson kind), ("start", toJson start), ("stop", toJson stop), ("doc", toJson (doc env n)),
         ("top", toJson (!usedDead.contains n))]
   let rootsJson := hyps.map fun (n, hs) => Json.mkObj [("name", toJson n.toString),
@@ -176,5 +190,5 @@ def main (args : List String) : IO UInt32 := do
     ("usedByAny", toJson ((w.usedByAny.get? n).map (·.toString))), ("doc", toJson (doc env n))]
   let oursHere := (modNames.filter oursMods.contains).map (·.toString)
   IO.println (Json.mkObj [("modules", toJson (mods.toArray)), ("ours", toJson oursHere), ("roots", Json.arr rootsJson),
-    ("dead", Json.arr dead), ("live", toJson live.size)]).compress
+    ("dead", Json.arr dead), ("live", toJson live.size), ("stats", Json.mkObj stats.toList)]).compress
   return 0

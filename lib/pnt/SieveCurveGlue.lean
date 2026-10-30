@@ -20,7 +20,8 @@ constant pieces `A_i(1 − σ)` (a staircase above a density curve) is glued her
   `g β = p − Aβ` on `[lo, hi]` (`A(1 − β)` is `p = A`; the trivial piece `1` is `p = 1`, `A = 0`), with `lo ≤ hi` and
   `m₁ ≤ m₂`, the inequalities at the corners `β ∈ {lo, hi}`, `m ∈ {m₁, 1, m₂}` (each where it lies in the range of its
   inequality) and `w ∈ {0, 4·10⁻⁶}` give the piece: on each range of `m` the exponent is affine in `w`, in `β` and in
-  `m` separately, so it is at most its values at the corners of the box.
+  `m` separately, so it is at most its values at the corners of the box; the tactic `corners` closes the corner
+  cases of `windowPiece_const` and `windowPiece_one`.
 
 The file imports `SieveTypeIIGen.lean`.
 -/
@@ -239,5 +240,14 @@ theorem windowPiece_one {L m₁ m₂ lo hi : ℝ} (hlo : lo ≤ hi) (hm : m₁ �
       (w = 0 ∨ w = 4 / 10 ^ 6) → (L - m) * (β + w) + (1 - 0 * β) / 2 + m ≤ L - 1 / 25000) :
     WindowPiece (fun _ => (1 : ℝ)) L m₁ m₂ lo hi :=
   windowPiece_congr (fun β => by ring) (windowPiece_affine hlo hm hL1 hL2)
+
+set_option hygiene false in
+/-- The corner cases of `windowPiece_const` and `windowPiece_one`: the two values of `β`, the three of `m` where the
+side condition holds, the two of `w`, each closed by `norm_num` (a corner whose side condition is false, `m = m₂` with
+`m₂ ≤ 1` or `m = m₁` with `1 ≤ m₁`, is closed at `h`). -/
+macro "corners" : tactic =>
+  `(tactic| (intro β m w hb hm hw
+             rcases hb with rfl | rfl <;> rcases hm with ⟨rfl, h⟩ | ⟨rfl, h, h'⟩ | ⟨rfl, h⟩ <;>
+               rcases hw with rfl | rfl <;> (try norm_num at h) <;> norm_num ))
 
 end SieveCurveGlue

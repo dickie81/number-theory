@@ -12,8 +12,8 @@ from `main` on every push.
 ## What is here
 
 - `lib/`: the Lean library, built with Lake against Mathlib. [`docs/inventory.md`](docs/inventory.md) lists its
-  results: every theorem of `lib/check/Check.lean`, `lib/check/CheckAll.lean` and `lib/check/CheckZeta23.lean` with
-  its headline, and the headline theorems of the modules that none of them imports.
+  results: every theorem of the check files `lib/check/Check.lean`, `CheckAll.lean`, `CheckZeta23.lean` and
+  `CheckDH.lean`, with its headline. CI checks that the library keeps nothing that these theorems do not use.
 - [`formalisations/`](formalisations/README.md): a note for each published result that a paper uses, and for a few
   others that the library formalises. Each note gives the result's source and attribution, and any differences
   between the Lean statement and the published one.
@@ -36,6 +36,7 @@ from `main` on every push.
 | `lib/check/Check.lean` | The axioms of the papers' theorems. This is the default build target. |
 | `lib/check/CheckAll.lean` | The axioms of every final theorem of the library. Not built by default; CI builds it whenever it builds the Lean. |
 | `lib/check/CheckZeta23.lean` | The axioms of the final theorems of `lib/zeta23`, which `CheckAll` cannot import: zeta23's copies of PrimeNumberTheoremAnd's files declare the same names. Not built by default; CI builds it whenever it builds the Lean. |
+| `lib/check/CheckDH.lean` | The axioms of the final theorems of `lib/dh`. `CheckAll` does not import the layer, so that its build leaves out the layer's numerical certificates. Not built by default; CI builds it whenever it builds the Lean. |
 | `formalisations/` | The notes on the results from the literature. See its [README](formalisations/README.md), the index of the notes. |
 | `papers/` | The papers. See its [README](papers/README.md). |
 | `scripts/` | The build script and the checks (see [`docs/building.md`](docs/building.md)), and `build_site.py`, which builds the papers' web site. |

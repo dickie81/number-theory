@@ -250,6 +250,11 @@ lean_lib CheckZeta23 where
   srcDir := "lib/check"
   roots := #[`CheckZeta23]
 
+/-- The axioms of the lib/dh layer's results; not a default target. -/
+lean_lib CheckDH where
+  srcDir := "lib/check"
+  roots := #[`CheckDH]
+
 /-- The dead-code check's Lean side, run by scripts/dead_code.py; it imports only Lean. -/
 lean_exe deadcode where
   srcDir := "scripts/lean"
