@@ -14,8 +14,8 @@ the roots use, through types and proofs. The check fails if:
    check file;
 2. a root has a closed hypothesis, a proposition or an instance that mentions none of its variables (such as
    `RiemannHypothesis`, `SieveRoute.TypeIIAt` or `[SieveCert.Grid]`), and no root without one uses it, nor a result of
-   the section "Conditional results" of formalisations/README.md, which lists the results conditional on purpose: a
-   lemma of a route that nothing proves any more;
+   a section "Conditional results" of formalisations/ (formalisations/README.md's, or a note's), which lists the results
+   conditional on purpose: a lemma of a route that nothing proves any more;
 3. a root that no other root uses, a result of the library, is neither printed by Check.lean (the papers' results),
    nor presented by the page on the zeros (scripts/zeros_page.py), nor named in formalisations/: a result that
    nothing uses must be registered there, with what it is;
@@ -49,19 +49,20 @@ def printed(check):
 
 
 def registry():
-    """The names that formalisations/ registers, and those of the Lean column of its table "Conditional results"."""
+    """The names that formalisations/ registers, and those of the Lean column of the tables "Conditional results" of
+    its notes."""
     d = os.path.join(ROOT, "formalisations")
-    names = set()
+    names, conditional = set(), set()
     for f in sorted(os.listdir(d)):
-        if f.endswith(".md"):
-            names |= set(re.findall(NAME, open(os.path.join(d, f), encoding="utf-8").read()))
-    readme = open(os.path.join(d, "README.md"), encoding="utf-8").read()
-    m = re.search(r"^## Conditional results\n(.*?)(?=^## |\Z)", readme, re.M | re.S)
-    conditional = set()
-    for row in (m.group(1) if m else "").splitlines():
-        cells = re.split(r"(?<!\\)\|", row)[1:-1]
-        if len(cells) == 3:
-            conditional |= set(re.findall(NAME, cells[2]))
+        if not f.endswith(".md"):
+            continue
+        text = open(os.path.join(d, f), encoding="utf-8").read()
+        names |= set(re.findall(NAME, text))
+        m = re.search(r"^## Conditional results\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+        for row in (m.group(1) if m else "").splitlines():
+            cells = re.split(r"(?<!\\)\|", row)[1:-1]
+            if len(cells) == 3:
+                conditional |= set(re.findall(NAME, cells[2]))
     return names, conditional
 
 
@@ -149,7 +150,7 @@ def main():
         print(f"{n}: a result that nothing uses, neither a paper's, nor on the page on the zeros, nor in "
               f"formalisations/")
     for n in stale:
-        print(f"{n}: in formalisations/README.md's Conditional results but printed by no check file")
+        print(f"{n}: in a section Conditional results of formalisations/ but printed by no check file")
     for n in missing:
         print(f"{n}: printed by a check file, but no module of its environment declares it")
     ok = not (unused or unimported or condUnused or unregistered or stale or missing)

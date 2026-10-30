@@ -111,6 +111,11 @@ nontrivial zeros of `ζ` (`PsiExponent.Theta`).
 | Quadratic fields: the class number of an imaginary field, and the class number times the regulator of a real one, between `c√\|D\|/log log \|D\|` and `C√\|D\| log log \|D\|`; a split and an inert prime below `C_A(log \|D\|)^A` for every `A > 12`, and below `10^{298}(log \|D\|)^{13}`; the Euler–Kronecker constant; every prime splits, is inert or ramifies | `QuadClassNumber.classNumber_ge_loglog`, `QuadClassNumber.classNumber_le`, `QuadClassNumber.regulator_mul_classNumber_ge_loglog`, `QuadClassNumber.regulator_mul_classNumber_le`, `QuadClassNumber.exists_split_le`, `QuadClassNumber.exists_split_le_13`, `QuadClassNumber.exists_inert_le`, `QuadClassNumber.exists_inert_le_13`, `QuadClassNumber.eulerKronecker`, `QuadIdeals.trichotomy` | J. E. Littlewood (1928) for the class numbers, under GRH; here from the half-plane |
 | The least quadratic non-residue: below `C_δ p^δ` for every odd prime `p` and every `δ > 0`, Vinogradov's conjecture, also with explicit constants; for every character `χ ≠ 1` mod `q`, a prime `p ≤ C(log q)^A` with `χ(p) ≠ 1`, for every `A > 12` | `LeastNonresidue.exists_nonsquare_le_rpow`, `ExplicitConstants.exists_nonsquare_le_rpow_explicit`, `LeastNonresidue.exists_prime_ne_one` | the argument of N. C. Ankeny (1952), under GRH; here from the half-plane |
 | The first supplementary law of quadratic reciprocity in `ℤ[ω]` | `Eis.quadR_neg_one` | the companion preprint's Appendix A.1 (see the half-plane's note) |
+| `ψ(x) − x` and Mertens' `M(x)` are `Ω±(x^θ)` for every `θ < 1/2`, unconditionally, and so are the differences of the prime races mod 3, 4, 7 and 8 | `PsiOmega.psi_omega_half`, `PsiOmega.mertens_omega_half`, `PsiOmega.race_three_half`, `PsiOmega.race_four_half`, `WeilTwinGeneral.race_seven_half`, `PsiOmega.race_eight_half` | Landau's theorem on Dirichlet series with nonnegative coefficients; H. L. Montgomery and R. C. Vaughan, *Multiplicative Number Theory I* (2007), Chapter 15 |
+| The Hadamard product of `L(s, χ₋₄)` | `PsiOmega.hadamard_chi4` | J. Hadamard (1893); H. Davenport, *Multiplicative Number Theory*, Chapter 12 |
+| The ideals of `ℤ[ω]` of norm `p^k`: `k + 1` for `p ≡ 1 (mod 3)`, one or none for `p ≡ 2 (mod 3)` as `k` is even or odd, and one for `3` | `Eis.card_ofNorm_split`, `Eis.card_ofNorm_inert`, `Eis.card_ofNorm_three` | the decomposition of primes in `ℚ(√−3)` |
+| Heath-Brown's Lemmas 2 and 10 of the quadratic large sieve, for any nonnegative summable weight | `Eis.fBound_gcd`, `Eis.fBound_sep` | D. R. Heath-Brown, Acta Arith. 72 (1995); L. Goldmakher and B. Louvel's Lemmas 5.1 and 7.1 (see the quadratic large sieve's note) |
+| Weil's criterion for `ζ`, and the library's criteria for RH and GRH from Weil's form, with its unconditional bounds | `WeilForm.weil_criterion_zeta`, `WeilForm.rh_iff_lam_subexp` and the others of the note [weil-positivity.md](weil-positivity.md) | A. Weil (1952); the library |
 | A bound for the third moment of character sums over the characters mod `q`, by their Gram matrix, and its refinement with the diagonal removed | `LinnikMoment.moment_three_chars`, `LinnikMoment.refined_moment_chars` | the library; the refinement is Lemma 4.2 of B. Chen, V. Gupta and Y. C. Li, arXiv:2507.08296v2, over the characters mod `q` |
 | The twin form of Weil's explicit formula: its lower bounds with the Korobov–Vinogradov region, its exact rate `2Θ − 1` for `ζ`, the rate at most `5/6` for `L(s, χ₋₃)` and for `ζ·ζ_{ℚ(√−3)}`, and the Korobov–Vinogradov saving in the Kaiser prefactor | `TwinKV.twins_lower_KV'`, `TwinKV.twins_lower_KV_sharp`, `TwinKV.twins_lower_cut`, `HalfPlaneJoinsPNT.weil_twins_rate_Theta`, `HalfPlaneJoins.chi3_rate_eleven_twelfths`, `HalfPlaneJoins.QK3_rate_eleven_twelfths`, `KaiserKV.lam_prefactor_KV` | the library, on A. Weil's explicit formula (1952) |
 | A criterion for RH: a relative spectral gap of the Weil form's normalised probes | `WeilForm.rh_of_relgap` | the library |
@@ -122,8 +127,10 @@ nontrivial zeros of `ζ` (`PsiExponent.Theta`).
 
 The library proves these results under a hypothesis that it does not prove, and no unconditional result uses them;
 the last is the column of the Davenport–Heilbronn function of a statement about `ζ`, under a hypothesis that fails for
-it. `scripts/dead_code.py` reads the Lean column of the table: a printed theorem with a hypothesis that mentions none of
-its variables passes only if an unconditional result uses it, or a result listed here does, or it is listed here.
+it. `scripts/dead_code.py` reads the Lean column of the table, and of the tables of the same name in the notes (that of
+[weil-positivity.md](weil-positivity.md), for the criteria for RH): a printed theorem with a hypothesis that mentions
+none of its variables passes only if an unconditional result uses it, or a result listed in one of them does, or it is
+listed in one of them.
 
 | Result | Hypothesis | Lean |
 |---|---|---|
