@@ -90,6 +90,6 @@ step: his Theorem 1 and his Lemma 2 are not formalised as stated.
 
 ## Where the Linnik paper uses it
 
-The density curve `g7c` of the Linnik paper's Type II estimate (`SieveTypeIIU226C.counts_7c`) takes the twenty steps
-`LinnikStairs7.charDensity_hx7_0` to `charDensity_hx7_19` on `[16/21, 5/6]`, and `LinnikStep.charDensity_step` from
+The density curve `g7d` of the Linnik paper's Type II estimate (`SieveCurve7D.counts_7d`) takes the fifteen steps
+`LinnikStairs7.charDensity_hx7_5` to `charDensity_hx7_19` on `[131/168, 5/6]`, and `LinnikStep.charDensity_step` from
 `5/6` on.

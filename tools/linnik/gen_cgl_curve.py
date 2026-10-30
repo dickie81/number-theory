@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """gen_cgl_curve.py [--check]: the Lean files of the curve `g7d`, and of its window and its theorem at `L = 11/5`.
 
-`g7d` is `g7c` (`G7C` below) with Chen-Gupta-Li's Proposition 3.1 used at every point of
+`g7d` is `g7c` (`route_limits.G7C`) with Chen-Gupta-Li's Proposition 3.1 used at every point of
 `[5/7, 131/168]`, instead of the flat `7/3 + 1/2000` and Huxley's steps there, and with Ingham's last step
 `[99/140, 5/7]` at `ε = 1/400000` (exponent `7/3 + 4ε = 7/3 + 1/100000`) instead of `ε = 1/8000` (`7/3 + 4ε = 7/3 + 1/2000`). On each
 step `[lo, hi]` (the first fourteen of width `1/1680` from `5/7`, the other sixteen of width `1/280`, to `131/168`:
@@ -128,28 +128,9 @@ def check_good(p):
     return True
 
 
-# The pieces of `g7c`, the curve of the route at `L = 226/100`, each `(hi, A)` as its file wrote them (the glue needs
-# them verbatim): the piece is `A(1 − σ)` below `hi`, `1` for the first (`A` is `None`), and `(101/50)(1 − σ)` from the
-# last `hi` on. The file, `SieveTypeIIU226C.lean`, is in the git history.
-G7C = [('4 / 7', None), ('81 / 140', '840199 / 398000'), ('41 / 70', '140033 / 66000'),
-       ('83 / 140', '840197 / 394000'), ('3 / 5', '30007 / 14000'), ('17 / 28', '56013 / 26000'),
-       ('43 / 70', '420097 / 194000'), ('87 / 140', '840193 / 386000'), ('22 / 35', '547 / 250'),
-       ('89 / 140', '840191 / 382000'), ('9 / 14', '84019 / 38000'), ('13 / 20', '40009 / 18000'),
-       ('23 / 35', '210047 / 94000'), ('93 / 140', '840187 / 374000'), ('47 / 70', '140031 / 62000'),
-       ('19 / 28', '168037 / 74000'), ('24 / 35', '105023 / 46000'), ('97 / 140', '280061 / 122000'),
-       ('7 / 10', '60013 / 26000'), ('99 / 140', '840181 / 362000'), ('5 / 7', '14003 / 6000'),
-       ('16 / 21', '14003 / 6000'), ('643 / 840', '14003 / 6000'), ('323 / 420', '560121 / 242000'),
-       ('649 / 840', '280061 / 122000'), ('163 / 210', '560123 / 246000'), ('131 / 168', '140031 / 62000'),
-       ('47 / 60', '4481 / 2000'), ('661 / 840', '40009 / 18000'), ('83 / 105', '560127 / 254000'),
-       ('667 / 840', '547 / 250'), ('67 / 84', '560129 / 258000'), ('673 / 840', '56013 / 26000'),
-       ('169 / 210', '560131 / 262000'), ('97 / 120', '140033 / 66000'), ('341 / 420', '80019 / 38000'),
-       ('137 / 168', '280067 / 134000'), ('86 / 105', '112027 / 54000'), ('691 / 840', '70017 / 34000'),
-       ('347 / 420', '560137 / 274000'), ('697 / 840', '280069 / 138000'), ('5 / 6', '560139 / 278000')]
-
-
 def raw_pieces():
-    """The textual literals of `g7c`'s pieces (`hi`, `A`)."""
-    return list(G7C)
+    """The textual literals of `g7c`'s pieces (`hi`, `A`), as `route_limits.G7C` keeps them."""
+    return list(rl.G7C)
 
 
 def step_ends():

@@ -1,4 +1,5 @@
 import Lean
+import Lean.Server.References
 
 /-!
 # The dead-code check's Lean side (`lake exe deadcode`)
@@ -6,8 +7,10 @@ import Lean
 `deadcode OURS ROOTS ALLOW MODULE...` imports the modules `MODULE...` (check files) and prints one JSON object. `OURS`
 is a file of the library's own module names, one a line, `ROOTS` a file of the theorems that the check files print,
 and `ALLOW` a file of the roots that are conditional on purpose (results under GRH, say).
-It walks the constants that the roots use, through their types and values, transitively, within the library's own
-modules (the vendored libraries, Mathlib and Lean cannot use the library's constants), and reports:
+It walks the constants that the roots use, through their types and values and through the names their sources cite
+(the `.ilean` files that Lake writes, which record, for each use of a constant, the declaration it is in: a lemma that
+`simp` applies by `rfl` appears in no proof term), transitively, within the library's own modules (the vendored
+libraries, Mathlib and Lean cannot use the library's constants), and reports:
 
 * `dead`: every constant of the library's modules that no root reaches, with its module, the lines of its source
   and the first line of its docstring, except those Lean generates (recursors, `noConfusion`, matchers,
@@ -94,8 +97,8 @@ structure Walk where
 use of a root `d` by a constant `c` is an edge from `c`, seen when `c` is expanded, under a source other than `d`
 (else `d` would use itself), so `usedByAny` misses no root that another uses, and `usedBy`, for the sources walked
 with `isSource`, none that a source uses. -/
-def walk (env : Environment) (ours : Name → Bool) (rootSet : Std.HashSet Name) (sources : Array Name)
-    (isSource : Name → Bool) (w : Walk := {}) : Walk := Id.run do
+def walk (env : Environment) (ours : Name → Bool) (srcRefs : Std.HashMap Name (Array Name))
+    (rootSet : Std.HashSet Name) (sources : Array Name) (isSource : Name → Bool) (w : Walk := {}) : Walk := Id.run do
   let mut w := w
   for s in sources do
     let mut stack := #[s]
@@ -108,6 +111,7 @@ def walk (env : Environment) (ours : Name → Bool) (rootSet : Std.HashSet Name)
       let mut deps := ci.type.getUsedConstants
       if let some v := ci.value? (allowOpaque := true) then deps := deps ++ v.getUsedConstants
       if let .inductInfo v := ci then deps := deps ++ v.ctors.toArray
+      deps := deps ++ srcRefs.getD c #[]
       for d in deps do
         if !ours d then continue
         if d != s && rootSet.contains d then
@@ -118,6 +122,24 @@ def walk (env : Environment) (ours : Name → Bool) (rootSet : Std.HashSet Name)
 
 def readLines (path : String) : IO (Array String) := do
   return (← IO.FS.lines path).filter (!·.isEmpty)
+
+/-- The names that the sources of the modules `mods` cite, by the declaration that cites them, from their `.ilean`
+files: an edge from each declaration to each constant of the library that its source names. `byStr` reads a name as
+the `.ilean` writes it. -/
+def sourceRefs (mods : Array Name) (byStr : Std.HashMap String Name) : IO (Std.HashMap Name (Array Name)) := do
+  let mut out : Std.HashMap Name (Array Name) := {}
+  for m in mods do
+    let path := (← findOLean m).withExtension "ilean"
+    unless ← path.pathExists do continue
+    let ilean ← Lean.Server.Ilean.load path
+    for (ident, info) in ilean.references do
+      let .const _ target := ident | continue
+      let some t := byStr[target]? | continue
+      for u in info.usages do
+        let some p := u.parentDecl? | continue
+        let some parent := byStr[p]? | continue
+        if parent != t then out := out.insert parent ((out.getD parent #[]).push t)
+  return out
 
 end DeadCode
 
@@ -135,6 +157,15 @@ def main (args : List String) : IO UInt32 := do
     | some i => oursIdx[i.toNat]!
     | none => false
   let roots := (← readLines rootsFile).map (·.toName) |>.filter fun n => (env.find? n).isSome
+  -- the library's constants by the strings that `.ilean` files write for them, and the names their sources cite
+  let mut byStr : Std.HashMap String Name := {}
+  for i in [:modNames.size] do
+    if !oursIdx[i]! then continue
+    for n in env.header.moduleData[i]!.constNames do
+      byStr := byStr.insert n.toString n |>.insert (n.toString (escape := false)) n
+      if let some u := privateToUserName? n then
+        byStr := byStr.insert u.toString n
+  let srcRefs ← sourceRefs (modNames.filter oursMods.contains) byStr
   -- every root, with its closed hypotheses
   let hyps := roots.map fun n => (n, closedHyps env (env.find? n).get!.type)
   let allow : Std.HashSet Name := (← readLines allowFile).foldl (fun s m => s.insert m.toName) {}
@@ -142,8 +173,8 @@ def main (args : List String) : IO UInt32 := do
   let sources := roots.filter isSource
   let rootSet : Std.HashSet Name := roots.foldl (fun s n => s.insert n) {}
   -- the sources first, so that a use by a source is seen as one; then the other roots
-  let w := walk env ours rootSet sources isSource
-  let w := walk env ours rootSet (roots.filter (!isSource ·)) isSource w
+  let w := walk env ours srcRefs rootSet sources isSource
+  let w := walk env ours srcRefs rootSet (roots.filter (!isSource ·)) isSource w
   let live := w.seen
   -- the unreached constants that another unreached one uses
   let mut usedDead : Std.HashSet Name := {}
@@ -153,6 +184,7 @@ def main (args : List String) : IO UInt32 := do
       if live.contains ci.name then continue
       let mut deps := ci.type.getUsedConstants
       if let some v := ci.value? (allowOpaque := true) then deps := deps ++ v.getUsedConstants
+      deps := deps ++ srcRefs.getD ci.name #[]
       for d in deps do
         -- a constant's own equation lemmas, matchers and auxiliary proofs (`d.eq_1`, `d._proof_1`) do not count
         if !d.isPrefixOf ci.name && ours d && !live.contains d then usedDead := usedDead.insert d

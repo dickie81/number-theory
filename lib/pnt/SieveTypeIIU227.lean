@@ -32,15 +32,6 @@ namespace SieveTypeIIU227
 
 open DirichletCharacter SieveTypeIIGen SieveCurveGlue
 
-set_option hygiene false in
-/-- The corner cases of `windowPiece_const` and `windowPiece_one`: the two values of `β`, the three of `m` where the
-side condition holds, the two of `w`, each closed by `norm_num` (a corner whose side condition is false, `m = m₂` with
-`m₂ ≤ 1` or `m = m₁` with `1 ≤ m₁`, is closed at `h`). -/
-macro "corners" : tactic =>
-  `(tactic| (intro β m w hb hm hw
-             rcases hb with rfl | rfl <;> rcases hm with ⟨rfl, h⟩ | ⟨rfl, h, h'⟩ | ⟨rfl, h⟩ <;>
-               rcases hw with rfl | rfl <;> (try norm_num at h) <;> norm_num ))
-
 /-- The curve: `1` below `4/7`, then the sixty steps of `LinnikStairs7` and `7/3 + 1/2000` on `[5/7, 16/21]` (each
 `A(1 − σ)` with the piece's constant `A`), the last step's constant from `73 / 80` on. -/
 def g7 (σ : ℝ) : ℝ :=

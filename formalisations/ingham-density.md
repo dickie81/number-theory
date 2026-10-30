@@ -78,5 +78,6 @@ The library's proof was written from the standard argument, not transcribed from
 
 ## Where the Linnik paper uses it
 
-The density curve `g7c` of the Linnik paper's Type II estimate (`SieveTypeIIU226C.counts_7c`) takes the twenty steps
-`LinnikStairs7.charDensity_in7_0` to `charDensity_in7_19` on `[4/7, 5/7]`.
+The density curve `g7d` of the Linnik paper's Type II estimate (`SieveCurve7D.counts_7d`) takes the nineteen steps
+`LinnikStairs7.charDensity_in7_0` to `charDensity_in7_18` on `[4/7, 99/140]`, and on `[99/140, 5/7]` the last step at
+`ε = 1/400000`, `LinnikCGLSteps.charDensity_inT`.
