@@ -13,7 +13,12 @@ joins the two:
   two kinds of moment);
 * `exists_wit_list`: **witnesses by compactness.** If at every point `α` of a compact set some `δ` with
   `Σ 1/δ_g = 1` is admissible for every `D_g(α)`, with continuous `a_g > κ`, then finitely many fixed pairs
-  `(a′, δ)`, all admissible, and a margin `μ > 0` cover the set: at every point one of them has `a′_g + μ ≤ a_g(α)`.
+  `(a′, δ)`, all admissible, and a margin `μ > 0` cover the set: at every point one of them has `a′_g + μ ≤ a_g(α)`;
+* `dreq`, `momentOK_of_dreq_lt`, `dreq_mono`: **Harman's exponent** `δ_req(D)` (`2` up to `1`, then `4D − 2m` on
+  `(m, m + 1/2]` and `2m + 2` on `(m + 1/2, m + 1]`), nondecreasing, with every `δ > δ_req(D)` admissible;
+* `test_of_sum_inv_dreq`: **the test from Harman's exponents.** `Σ_g 1/δ_req(D_g) > 1` gives admissible `δ_g` with
+  `Σ 1/δ_g = 1`, so the certificate need only bound `Σ_g 1/δ_req(D_g)` from below on a box, which `dreq_mono` reduces
+  to the groups' least exponents there.
 -/
 
 open Finset
@@ -140,7 +145,106 @@ theorem exists_wit_list {E : Type*} [TopologicalSpace E] {m : ℕ} {K : Set E} (
     have := ht hα
     simp [hne] at this
 
+/-! ### Harman's exponent and the test from it -/
+
+/-- **Harman's exponent** `δ_req(D)`: `2` for `D ≤ 1`, and for `m < D ≤ m + 1`, `m = ⌈D⌉ − 1 ≥ 1`: `4D − 2m` up to
+`m + 1/2`, then `2m + 2`. -/
+noncomputable def dreq (D : ℝ) : ℝ :=
+  if D ≤ 1 then 2 else if D ≤ (⌈D⌉₊ - 1 : ℕ) + 1 / 2 then 4 * D - 2 * ((⌈D⌉₊ - 1 : ℕ) : ℝ)
+    else 2 * ((⌈D⌉₊ - 1 : ℕ) : ℝ) + 2
+
+/-- For `D > 1`, `m = ⌈D⌉ − 1` has `1 ≤ m`, `m < D ≤ m + 1`. -/
+theorem ceil_sub_one_spec {D : ℝ} (hD : 1 < D) :
+    1 ≤ ⌈D⌉₊ - 1 ∧ ((⌈D⌉₊ - 1 : ℕ) : ℝ) < D ∧ D ≤ ((⌈D⌉₊ - 1 : ℕ) : ℝ) + 1 := by
+  have h1 : 2 ≤ ⌈D⌉₊ := by
+    have : (1 : ℝ) < ⌈D⌉₊ := lt_of_lt_of_le hD (Nat.le_ceil D)
+    exact_mod_cast this
+  have hc : ((⌈D⌉₊ - 1 : ℕ) : ℝ) = (⌈D⌉₊ : ℝ) - 1 := by
+    rw [Nat.cast_sub (by omega), Nat.cast_one]
+  refine ⟨by omega, ?_, ?_⟩
+  · rw [hc]
+    have := Nat.ceil_lt_add_one (show (0 : ℝ) ≤ D by linarith)
+    linarith
+  · rw [hc]
+    linarith [Nat.le_ceil D]
+
+/-- `δ_req(D) ≥ 2`. -/
+theorem two_le_dreq (D : ℝ) : 2 ≤ dreq D := by
+  unfold dreq
+  split_ifs with h1 h2
+  · exact le_rfl
+  · obtain ⟨-, hm, -⟩ := ceil_sub_one_spec (not_le.1 h1)
+    have : (1 : ℝ) ≤ ((⌈D⌉₊ - 1 : ℕ) : ℝ) := by exact_mod_cast (ceil_sub_one_spec (not_le.1 h1)).1
+    linarith
+  · have : (1 : ℝ) ≤ ((⌈D⌉₊ - 1 : ℕ) : ℝ) := by exact_mod_cast (ceil_sub_one_spec (not_le.1 h1)).1
+    linarith
+
+/-- **Every moment above Harman's exponent is admissible.** -/
+theorem momentOK_of_dreq_lt {D δ : ℝ} (h : dreq D < δ) : MomentOK D δ := by
+  unfold dreq at h
+  split_ifs at h with h1 h2
+  · exact Or.inr ⟨1, le_rfl, by exact_mod_cast h1, by norm_num; linarith⟩
+  · obtain ⟨hm1, hmD, -⟩ := ceil_sub_one_spec (not_le.1 h1)
+    exact Or.inl ⟨⌈D⌉₊ - 1, hm1, hmD, h2, h⟩
+  · obtain ⟨hm1, -, hDm⟩ := ceil_sub_one_spec (not_le.1 h1)
+    refine Or.inr ⟨⌈D⌉₊ - 1 + 1, by omega, by push_cast; linarith, by push_cast; linarith⟩
+
+/-- `δ_req` on `(m, m + 1]` by its two pieces, for any `m ≥ 1` with `m < D ≤ m + 1`. -/
+theorem dreq_eq_of {D : ℝ} {m : ℕ} (hm : 1 ≤ m) (hmD : (m : ℝ) < D) (hDm : D ≤ m + 1) :
+    dreq D = if D ≤ m + 1 / 2 then 4 * D - 2 * m else 2 * m + 2 := by
+  have h1 : ¬ D ≤ 1 := by
+    have : (1 : ℝ) ≤ m := by exact_mod_cast hm
+    linarith
+  -- `m = ⌈D⌉ − 1`
+  have hceil : ⌈D⌉₊ = m + 1 := by
+    refine le_antisymm (Nat.ceil_le.2 (by push_cast; linarith)) ?_
+    exact Nat.succ_le_of_lt (Nat.lt_ceil.2 hmD)
+  unfold dreq
+  rw [ite_eq_right h1, hceil, Nat.add_sub_cancel]
+
+/-- **Harman's exponent is nondecreasing.** -/
+theorem dreq_mono {D D' : ℝ} (h : D ≤ D') : dreq D ≤ dreq D' := by
+  by_cases hD' : D' ≤ 1
+  · have hD : D ≤ 1 := h.trans hD'
+    unfold dreq; rw [ite_eq_left hD, ite_eq_left hD']
+  by_cases hD : D ≤ 1
+  · unfold dreq
+    rw [ite_eq_left hD]
+    exact two_le_dreq D'
+  obtain ⟨hm1, hmD, hDm⟩ := ceil_sub_one_spec (not_le.1 hD)
+  obtain ⟨hm1', hmD', hDm'⟩ := ceil_sub_one_spec (not_le.1 hD')
+  set m := ⌈D⌉₊ - 1 with hm
+  set m' := ⌈D'⌉₊ - 1 with hm'
+  rw [dreq_eq_of hm1 hmD hDm, dreq_eq_of hm1' hmD' hDm']
+  -- `m ≤ m'`, and the pieces in order
+  have hmm : m ≤ m' := by
+    have : (m : ℝ) < m' + 1 := by linarith
+    exact_mod_cast Nat.lt_succ_iff.1 (by exact_mod_cast this)
+  rcases eq_or_lt_of_le hmm with heq | hlt
+  · rw [← heq]
+    split_ifs <;> linarith
+  · have hlt' : (m : ℝ) + 1 ≤ m' := by exact_mod_cast hlt
+    split_ifs <;> linarith
+
+/-- **The test from Harman's exponents.** If `Σ_g 1/δ_req(D_g) > 1`, then `δ_g = s·δ_req(D_g)`, `s = Σ_g 1/δ_req(D_g)`,
+are admissible with `Σ 1/δ_g = 1`. -/
+theorem test_of_sum_inv_dreq {G : ℕ} {D : Fin G → ℝ} (h : 1 < ∑ g, 1 / dreq (D g)) :
+    ∃ δ : Fin G → ℝ, (∀ g, 0 < δ g) ∧ ∑ g, 1 / δ g = 1 ∧ ∀ g, MomentOK (D g) (δ g) := by
+  set s := ∑ g, 1 / dreq (D g) with hs
+  have hs0 : 0 < s := by linarith
+  have hd : ∀ g, 0 < dreq (D g) := fun g => lt_of_lt_of_le two_pos (two_le_dreq _)
+  refine ⟨fun g => s * dreq (D g), fun g => mul_pos hs0 (hd g), ?_, fun g => momentOK_of_dreq_lt ?_⟩
+  · have e : ∀ g, 1 / (s * dreq (D g)) = 1 / s * (1 / dreq (D g)) := fun g => by
+      rw [one_div_mul_one_div]
+    simp only [e]
+    rw [← mul_sum, ← hs, one_div_mul_cancel hs0.ne']
+  · have := hd g
+    nlinarith
+
 end ShortSieveWit
 
 #print axioms ShortSieveWit.momentOK_of_le_add
 #print axioms ShortSieveWit.exists_wit_list
+#print axioms ShortSieveWit.momentOK_of_dreq_lt
+#print axioms ShortSieveWit.dreq_mono
+#print axioms ShortSieveWit.test_of_sum_inv_dreq
