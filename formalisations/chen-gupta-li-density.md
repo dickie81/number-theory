@@ -73,7 +73,7 @@ The formalisation is in `lib/pnt`, in the modules whose names begin with `Linnik
 - **The range.** The source's Theorem 1.2 holds for `1/2 < σ < 1`. Their §12 says that "Theorem 1.2 follows from
   Ingham’s result (1.4) when σ ≤ 0.7 and Huxley’s result (1.5) when σ ≥ 0.8", so the paper's own argument is needed
   only on `[0.7, 0.8]`. The Lean statement covers only `[5/7, 16/21]`, which lies inside `[0.7, 0.8]`. The Linnik
-  paper uses it there and nowhere else.
+  paper uses Proposition 3.1 on `[5/7, 131/168]`, also inside `[0.7, 0.8]`, through its steps (below).
 - **Their Theorem 1.1 is not formalised.** The step needs the large-values count only at `V = N^σ/Z` with
   `5/7 ≤ σ ≤ 16/21`. That lies inside Proposition 3.1's range `[N^{7/10}, N^{4/5}]`, where the paper's reduction is
   the three-part split of the polynomial alone (`LinnikCGLLV.lv_range`). The subdivision in `T`, the mean value
@@ -137,8 +137,9 @@ this repository claims it.
 
 ## Where the Linnik paper uses it
 
-The density curve of the Linnik paper's Type II estimate (`g7c`, `SieveTypeIIU226C.counts_7c`) is built from these
-pieces:
+The density curve of the Linnik paper's Type II estimate is `g7d` (`SieveCurve7D.counts_7d`), which takes their
+Proposition 3.1 directly, on 30 steps of `[5/7, 131/168]` (next section), and not `CGLDensity`. An earlier curve, `g7c`
+(`SieveTypeIIU226C.counts_7c`), used `CGLDensity`; it is built from these pieces:
 
 - the trivial count below `4/7`;
 - twenty steps from Ingham's estimate;
@@ -147,10 +148,10 @@ pieces:
 - twenty steps from Huxley's estimate up to `5/6`;
 - the library's `(101/50)(1 − σ)` from `5/6` on (`LinnikStep.charDensity_step`).
 
-The theorem of the proof built on this curve, at an earlier exponent (`899/400`), is no longer in the tree: it was
+The theorem of the proof built on `g7c`, at an earlier exponent (`899/400`), is no longer in the tree: it was
 superseded, and is in the git history. `cglDensity` stays and is printed by `lib/check/CheckAll.lean`.
 
-## Proposition 3.1 on `[5/7, 131/168]`: the second route
+## Proposition 3.1 on `[5/7, 131/168]`: the Linnik paper's steps
 
 `LinnikCGLSteps` uses the same step (`LinnikCGLStep.charDensity_cglGen`, from Proposition 3.1,
 `LinnikCGLHB101.prop31`) at other parameters, 30 steps of `[5/7, 131/168]`: fourteen of width `1/1680` from `5/7`, then

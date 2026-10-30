@@ -3,9 +3,9 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean` and `lib/check/Check.lean` print the axioms of 758
+`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean` and `lib/check/Check.lean` print the axioms of 759
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
-import) and the papers' theorems, of which there are 144, marked *paper*. Each line gives a theorem's
+import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 The last section lists the 97 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
@@ -13,7 +13,7 @@ headline theorems (those whose docstring opens with a bold title).
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 725 | 6 | 20 |
+| `lib/pnt` | 223 | 726 | 6 | 20 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1044,7 +1044,7 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveCurve7D.g7d_le_one`: `g7d ≤ 1` *paper*
 - `SieveCurve7D.g7d_half` *paper*
 - `SieveCurve7D.g7d_le_lin`: `g7d σ ≤ (11667 / 5000)(1 − σ)` for `σ ≤ 1` *paper* ([note](../formalisations/chen-gupta-li-density.md))
-- `SieveCurve7D.counts_7d`: The counts of the curve *paper*
+- `SieveCurve7D.counts_7d`: The counts of the curve *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `SieveDecomp`: Families of prime tuples, and Buchstab's identity on them
 
@@ -1055,6 +1055,7 @@ headline theorems (those whose docstring opens with a bold title).
 #### `SieveDeep`: The certificate to depth 8: its rule and its decisions
 
 - `SieveDeep.surelyEval4_of_lmask`: A bit of the mask of `l` makes the box `(i, j, k, l)` surely evaluable *paper*
+- `SieveDeep.surelyEval5_of_emask`: A bit `b` of the coarse mask of one cell makes the box `(i, j, k, l, b)` surely evaluable *paper*
 - `SieveDeep.surelyEval6_of_emask`: A bit `c` of the coarse mask of one cell, or `b + c` of that of two, makes the box `(i, j, k, l, b, c)` surely evaluable *paper*
 - `SieveDeep.okIB_of_okD`: The block test is sound *paper*
 - `SieveDeep.scheme`: The certificate's scheme of decisions *paper*
@@ -1105,7 +1106,6 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveExact`: Type II for exact products of chains of primes
 
-- `SieveExact.chainT0_bound`: Exact products of chains with a product of some of their primes in the window *paper*
 - `SieveExact.T0_spec`: Exact products, on a family of atoms
 
 #### `SieveFamily`: Type II families
@@ -1165,7 +1165,7 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveLeaves.TU_spec`: The upper window, on a family of atoms
 - `SieveLeaves.TR_spec`: The reflected window, on a family of atoms
 - `SieveLeaves.P6_spec`: Proposition 6, on a family of atoms ([note](../formalisations/harman-sieve.md))
-- `SieveLeaves.P6IB_spec`: Proposition 6 with the bilinear estimate, on a family of atoms
+- `SieveLeaves.P6IB_spec`: Proposition 6 with the bilinear estimate, on a family of atoms ([note](../formalisations/harman-sieve.md))
 
 #### `SieveLemma1`: Weighted prime sums at a height inside a zero-free rectangle (Lemma 1 of the sieve route, `Λ` form)
 
@@ -1212,7 +1212,7 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveP6ib`: Proposition 6 with the bilinear estimate
 
-- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate *paper*
+- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate *paper* ([note](../formalisations/harman-sieve.md))
 
 #### `SieveProp6`: Proposition 6, Harman's fundamental theorem in the form used
 
@@ -1222,7 +1222,8 @@ headline theorems (those whose docstring opens with a bold title).
 #### `SieveQ`: The decomposition at `x = q^L`, and its leaves for large `q`
 
 - `SieveQ.good_of_large`: The decomposition's hypotheses hold for large `q`
-- `SieveQ.P6IB_boxes`: Proposition 6-ib, uniformly over finitely many boxes
+- `SieveQ.P6IB_box`: Proposition 6-ib on a box the bilinear rule passes *paper*
+- `SieveQ.P6IB_boxes`: Proposition 6-ib, uniformly over finitely many boxes ([note](../formalisations/harman-sieve.md))
 - `SieveQ.leaves_ev`: The leaves, for large `q`
 
 #### `SieveQ8`: The leaves of the decomposition to depth 8, for large `q`
@@ -1242,7 +1243,7 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveRough.evLe_cell_ex`: On a grid with `GridOK`, the cell's `log x · Σ 1/(p log p)` is at most `exB(e_k, H) = H·DEN/(e_k(e_k + H))`, the exact `DEN(1/e_k − 1/(e_k + H))`, up to `o(1)`. *paper*
 - `SieveRough.share2`: The share of a cell of depth 2
 - `SieveRough.share4`: The share of a cell of depth 4
-- `SieveRough.share2_of_cand`: `share2` on a candidate cell, on a grid with `GridOK`. ([note](../formalisations/harman-sieve.md))
+- `SieveRough.share2_of_cand`: `share2` on a candidate cell, on a grid with `GridOK`. *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveRough.share4_of_counted4`: `share4` on a counted cell, on a grid with `GridOK`. ([note](../formalisations/harman-sieve.md))
 
 #### `SieveRoughLo`: Sums over the primes of a cell, from below
@@ -1261,7 +1262,7 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveRule`: The certificate under a decomposition rule, in the reals and over `Finset`
 
-- `SieveCert.ibOK_sound`: The bilinear Type I rule's witnesses *paper*
+- `SieveCert.ibOK_sound`: The bilinear Type I rule's witnesses *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveCert.okIB_cases`: `okIB` passes a box only when `limOK` does, or `ibOK` and `nbOK` do. *paper*
 
 #### `SieveSep`: Separation of smooth comparisons by Fourier inversion over `ℝ^J`
