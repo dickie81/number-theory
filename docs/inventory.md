@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 103 modules that none of the three imports, directly or not, with their
+The last section lists the 105 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 12 | 77 |
+| `lib/pnt` | 223 | 726 | 14 | 84 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1718,6 +1718,13 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `Architect`
 
+#### `ShortSieveBoxes`: Sieve terms as counts over boxes of primes
+
+- `ShortSieveBoxes.card_dvd_rough_eq_sum`: Rough cofactors as sorted tuples of primes
+- `ShortSieveBoxes.abs_sum_sub_le_boxes`: The box sandwich
+- `ShortSieveBoxes.mem_box_idxG`: A number lies in its box
+- `ShortSieveBoxes.mem_tuples_idxG`: A tuple of primes lies in the tuples of its boxes
+
 #### `ShortSieveCount`: Counts of large values of a Dirichlet polynomial through its powers
 
 - `ShortSieveCount.card_le_mv`: The mean value count for a power
@@ -1794,6 +1801,12 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveMoment.moment_le_of_counts`: The moment lemma from counts of large values
 - `ShortSieveMoment.moment_le_hux`: Harman's moment lemma from the mean value theorem and the Halász–Montgomery count
 - `ShortSieveMoment.moment_le_mv`: Harman's moment lemma from the mean value theorem
+
+#### `ShortSieveThin`: Thin sets of prime tuples in the comparison interval
+
+- `ShortSieveThin.sum_inv_le_of_Icc`: Chebyshev's bound on `[X, KX]`
+- `ShortSieveThin.card_primes_comparison_le`: Primes pinned by a product in the comparison interval
+- `ShortSieveThin.card_thin_le`: The thin tuples
 
 #### `ShortSieveTwist`: A twisted prime number theorem with a power saving
 
