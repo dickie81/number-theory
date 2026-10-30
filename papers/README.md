@@ -23,7 +23,8 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README,
 
 In a paper's directory, `latexmk -pdf main.tex`, and then, for a supplement, `latexmk -pdf supplement.tex`. On every
 pull request and push to `main`, CI compiles every `papers/<name>/main.tex` and then every
-`papers/<name>/supplement.tex`, and keeps the PDFs as an artifact for 14 days (`.github/workflows/ci.yml`).
+`papers/<name>/supplement.tex`, and keeps the PDFs as an artifact for 14 days (`.github/workflows/ci.yml`); on a pull
+request, a comment links them, so they can be downloaded from the pull request's page.
 
 On every push to `main`, `.github/workflows/pages.yml` compiles the papers and their supplements in the same way and
 publishes the PDFs to <https://dickie81.github.io/number-theory/>, each paper as `<name>.pdf` and its supplement as
