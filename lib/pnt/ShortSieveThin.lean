@@ -11,9 +11,9 @@ pinned, by the other coordinates, to an interval `[X, KX]` of bounded ratio. In 
 * `sum_inv_le_of_Icc`: Chebyshev, `Σ_{p ∈ F} 1/p ≤ K log 4/log X` for primes `F ⊆ [X, KX]`, `X ≥ 2`;
 * `card_primes_comparison_le`: for `x` large, `Z ≥ x^c`, `12ρ < c`, `P ≥ 1`: the primes `b ≥ x^c` with
   `P b ∈ (x − x^{1−ρ}, x]` number at most `2x^{1−ρ}/(P c log x)`;
-* `card_thin_le`: **the thin tuples.** For `d`-tuples of primes in `[x^c, x²)` with `g_u ∈ [X, KX]`, where `X`
-  depends only on the coordinates other than `u` and `v ≠ u`, and with product in `(x − x^{1−ρ}, x]`: at most
-  `C x^{1−ρ}/log² x` of them, with `C` depending on `d`, `c`, `K` only.
+* `card_thin_le`: **the thin tuples.** For tuples `g` of primes in `[x^c, x²)`, indexed by a finite type `ι`, with
+  `g_u ∈ [X, KX]`, where `X` depends only on the coordinates other than `u` and `v ≠ u`, and with product in
+  `(x − x^{1−ρ}, x]`: at most `C x^{1−ρ}/log² x` of them, with `C` depending on `ι`, `c`, `K` only.
 -/
 
 open Finset Real
@@ -127,27 +127,28 @@ theorem card_primes_comparison_le {c ρ : ℝ} (hc : 0 < c) (hρ : 0 < ρ) (hρc
     rw [hempty, card_empty, Nat.cast_zero]
     positivity
 
-/-- A product over `Fin d` splits into the coordinates other than `u`, `v`, and `u`, `v`. -/
-theorem prod_split {d : ℕ} {u v : Fin d} (huv : u ≠ v) (f : Fin d → ℝ) :
-    ∏ j, f j = (∏ j : {j : Fin d // j ≠ u ∧ j ≠ v}, f j) * (f u * f v) := by
+/-- A product over a finite type splits into the coordinates other than `u`, `v`, and `u`, `v`. -/
+theorem prod_split {ι : Type*} [Fintype ι] [DecidableEq ι] {u v : ι} (huv : u ≠ v) (f : ι → ℝ) :
+    ∏ j, f j = (∏ j : {j : ι // j ≠ u ∧ j ≠ v}, f j) * (f u * f v) := by
   rw [← prod_filter_mul_prod_filter_not univ (fun j => j ≠ u ∧ j ≠ v)]
   congr 1
   · exact prod_subtype _ (fun j => by simp) f
-  · have e : univ.filter (fun j : Fin d => ¬ (j ≠ u ∧ j ≠ v)) = {u, v} := by
+  · have e : univ.filter (fun j : ι => ¬ (j ≠ u ∧ j ≠ v)) = {u, v} := by
       ext j
       simp only [mem_filter, mem_univ, true_and, mem_insert, mem_singleton]
       tauto
     rw [e, prod_pair huv]
 
 /-- **The thin tuples.** Let `0 < c ≤ 1`, `12ρ < c` and `K ≥ 1`. There are `C ≥ 0` and `x₀` such that for `x ≥ x₀`,
-coordinates `u ≠ v` and any `X` of the coordinates other than `u` and `v`: the `d`-tuples `g` of primes in `[x^c, x²)`
-with `X ≤ g_u ≤ KX` and `x − x^{1−ρ} < ∏g ≤ x` number at most `C x^{1−ρ}/log² x`. The prime `g_v` is pinned by the
-product (`card_primes_comparison_le`, a factor `1/(c log x)`), and `Σ_{X ≤ g_u ≤ KX} 1/g_u ≤ K log 4/(c log x)`. -/
-theorem card_thin_le (d : ℕ) {c K ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hK : 1 ≤ K) (hρ : 0 < ρ)
-    (hρc : 12 * ρ < c) :
-    ∃ C x₀ : ℝ, 0 ≤ C ∧ ∀ x : ℝ, x₀ ≤ x → ∀ u v : Fin d, u ≠ v →
-      ∀ X : ({j : Fin d // j ≠ u ∧ j ≠ v} → ℕ) → ℝ,
-        (((Fintype.piFinset fun _ : Fin d => SieveRough.primesIn (x ^ c) (x ^ (2 : ℝ))).filter fun g =>
+coordinates `u ≠ v` and any `X` of the coordinates other than `u` and `v`: the tuples `g : ι → ℕ` of primes in
+`[x^c, x²)` with `X ≤ g_u ≤ KX` and `x − x^{1−ρ} < ∏g ≤ x` number at most `C x^{1−ρ}/log² x`. The prime `g_v` is
+pinned by the product (`card_primes_comparison_le`, a factor `1/(c log x)`), and
+`Σ_{X ≤ g_u ≤ KX} 1/g_u ≤ K log 4/(c log x)`. -/
+theorem card_thin_le (ι : Type*) [Fintype ι] [DecidableEq ι] {c K ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hK : 1 ≤ K)
+    (hρ : 0 < ρ) (hρc : 12 * ρ < c) :
+    ∃ C x₀ : ℝ, 0 ≤ C ∧ ∀ x : ℝ, x₀ ≤ x → ∀ u v : ι, u ≠ v →
+      ∀ X : ({j : ι // j ≠ u ∧ j ≠ v} → ℕ) → ℝ,
+        (((Fintype.piFinset fun _ : ι => SieveRough.primesIn (x ^ c) (x ^ (2 : ℝ))).filter fun g =>
           X (fun j => g j) ≤ g u ∧ (g u : ℝ) ≤ K * X (fun j => g j) ∧
             x - x ^ (1 - ρ) < ∏ j, (g j : ℝ) ∧ ∏ j, (g j : ℝ) ≤ x).card : ℝ) ≤
           C * x ^ (1 - ρ) / Real.log x ^ 2 := by
@@ -158,7 +159,7 @@ theorem card_thin_le (d : ℕ) {c K ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hK :
     (SieveRough.evLe_sum_inv hc (by linarith : c ≤ (2 : ℝ)) 1 one_pos)
   obtain ⟨x₂, hx₂⟩ := card_primes_comparison_le hc hρ hρc
   obtain ⟨x₃, hx₃⟩ := Filter.eventually_atTop.1 ((tendsto_rpow_atTop hc).eventually_ge_atTop (2 : ℝ))
-  refine ⟨2 / c * (K * Real.log 4 / c) * S₀ ^ d, max (max x₁ x₂) (max x₃ 2), by positivity,
+  refine ⟨2 / c * (K * Real.log 4 / c) * S₀ ^ Fintype.card ι, max (max x₁ x₂) (max x₃ 2), by positivity,
     fun x hx u v huv X => ?_⟩
   have hx1 : x₁ ≤ x := le_trans (le_trans (le_max_left _ _) (le_max_left _ _)) hx
   have hx2 : x₂ ≤ x := le_trans (le_trans (le_max_right _ _) (le_max_left _ _)) hx
@@ -177,11 +178,11 @@ theorem card_thin_le (d : ℕ) {c K ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hK :
     exact this.trans (by rw [hS₀]; exact le_max_left _ _)
   have hS0 : 0 ≤ ∑ p ∈ Q, 1 / (p : ℝ) := sum_nonneg fun p _ => by positivity
   set y₁ : ℝ := x ^ (1 - ρ) with hy₁
-  set T := Fintype.piFinset fun _ : Fin d => Q with hT
+  set T := Fintype.piFinset fun _ : ι => Q with hT
   set F := T.filter fun g => X (fun j => g j) ≤ g u ∧ (g u : ℝ) ≤ K * X (fun j => g j) ∧
     x - y₁ < ∏ j, (g j : ℝ) ∧ ∏ j, (g j : ℝ) ≤ x with hF
-  set TR := Fintype.piFinset fun _ : {j : Fin d // j ≠ u ∧ j ≠ v} => Q with hTR
-  set rest : (Fin d → ℕ) → ({j : Fin d // j ≠ u ∧ j ≠ v} → ℕ) := fun g j => g j with hrest
+  set TR := Fintype.piFinset fun _ : {j : ι // j ≠ u ∧ j ≠ v} => Q with hTR
+  set rest : (ι → ℕ) → ({j : ι // j ≠ u ∧ j ≠ v} → ℕ) := fun g j => g j with hrest
   -- one fiber `rest g = h, g u = a`: `g v` is pinned by the product
   have hfib : ∀ h ∈ TR, ∀ a ∈ Q, ((F.filter fun g => rest g = h ∧ g u = a).card : ℝ) ≤
       2 * y₁ / ((∏ j, (h j : ℝ)) * a * (c * Real.log x)) := by
@@ -198,13 +199,13 @@ theorem card_thin_le (d : ℕ) {c K ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hK :
       intro g hg
       obtain ⟨hgF, hgh, hga⟩ := mem_filter.1 hg
       obtain ⟨hgT, -, -, hp1, hp2⟩ := mem_filter.1 hgF
-      have hsplit : ∏ j, (g j : ℝ) = (∏ j : {j : Fin d // j ≠ u ∧ j ≠ v}, (g j : ℝ)) * ((g u : ℝ) * (g v : ℝ)) :=
+      have hsplit : ∏ j, (g j : ℝ) = (∏ j : {j : ι // j ≠ u ∧ j ≠ v}, (g j : ℝ)) * ((g u : ℝ) * (g v : ℝ)) :=
         prod_split huv (fun j => (g j : ℝ))
-      have hrestprod : ∏ j : {j : Fin d // j ≠ u ∧ j ≠ v}, (g j : ℝ) = ∏ j, (h j : ℝ) := by
+      have hrestprod : ∏ j : {j : ι // j ≠ u ∧ j ≠ v}, (g j : ℝ) = ∏ j, (h j : ℝ) := by
         rw [← hgh]
       rw [hsplit, hrestprod, hga, ← mul_assoc] at hp1 hp2
       exact mem_filter.2 ⟨(Fintype.mem_piFinset.1 hgT) v, by rw [← hy₁]; exact hp1, hp2⟩
-    have hinj : Set.InjOn (fun g : Fin d → ℕ => g v) ↑(F.filter (fun g => rest g = h ∧ g u = a)) := by
+    have hinj : Set.InjOn (fun g : ι → ℕ => g v) ↑(F.filter (fun g => rest g = h ∧ g u = a)) := by
       intro g hg g' hg' hgg'
       obtain ⟨-, hgh, hga⟩ := mem_filter.1 (mem_coe.1 hg)
       obtain ⟨-, hgh', hga'⟩ := mem_filter.1 (mem_coe.1 hg')
@@ -214,9 +215,9 @@ theorem card_thin_le (d : ℕ) {c K ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hK :
       by_cases hjv : j = v
       · rw [hjv]; exact hgg'
       exact congrFun (hgh.trans hgh'.symm) ⟨j, hju, hjv⟩
-    exact_mod_cast card_le_card_of_injOn (fun g : Fin d → ℕ => g v) hmaps hinj
+    exact_mod_cast card_le_card_of_injOn (fun g : ι → ℕ => g v) hmaps hinj
   -- the sum over `g_u ∈ [X, KX]`
-  have hsumA : ∀ h : {j : Fin d // j ≠ u ∧ j ≠ v} → ℕ,
+  have hsumA : ∀ h : {j : ι // j ≠ u ∧ j ≠ v} → ℕ,
       ∑ a ∈ Q.filter (fun a : ℕ => X h ≤ (a : ℝ) ∧ (a : ℝ) ≤ K * X h), 1 / (a : ℝ) ≤
       K * Real.log 4 / (c * Real.log x) := by
     intro h
@@ -245,7 +246,7 @@ theorem card_thin_le (d : ℕ) {c K ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hK :
       intro g hg
       obtain ⟨hgF, hgh⟩ := mem_filter.1 hg
       obtain ⟨hgT, h1, h2, -⟩ := mem_filter.1 hgF
-      have e : (fun j : {j : Fin d // j ≠ u ∧ j ≠ v} => g j) = h := hgh
+      have e : (fun j : {j : ι // j ≠ u ∧ j ≠ v} => g j) = h := hgh
       rw [e] at h1 h2
       exact mem_filter.2 ⟨(Fintype.mem_piFinset.1 hgT) u, h1, h2⟩
     rw [card_eq_sum_card_fiberwise hmaps']
@@ -272,19 +273,19 @@ theorem card_thin_le (d : ℕ) {c K ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hK :
         refine mul_le_mul_of_nonneg_left (sum_le_sum fun h _ => ?_) (by positivity)
         exact mul_le_mul_of_nonneg_left (hsumA h) (prod_nonneg fun j _ => by positivity)
     _ = 2 * y₁ / (c * Real.log x) * (K * Real.log 4 / (c * Real.log x)) *
-          ∏ _j : {j : Fin d // j ≠ u ∧ j ≠ v}, ∑ p ∈ Q, 1 / (p : ℝ) := by
+          ∏ _j : {j : ι // j ≠ u ∧ j ≠ v}, ∑ p ∈ Q, 1 / (p : ℝ) := by
         rw [← sum_mul, prod_univ_sum]
         ring
-    _ ≤ 2 * y₁ / (c * Real.log x) * (K * Real.log 4 / (c * Real.log x)) * S₀ ^ d := by
+    _ ≤ 2 * y₁ / (c * Real.log x) * (K * Real.log 4 / (c * Real.log x)) * S₀ ^ Fintype.card ι := by
         refine mul_le_mul_of_nonneg_left ?_ (by positivity)
         rw [prod_const]
-        have hcard : (univ : Finset {j : Fin d // j ≠ u ∧ j ≠ v}).card ≤ d := by
+        have hcard : (univ : Finset {j : ι // j ≠ u ∧ j ≠ v}).card ≤ Fintype.card ι := by
           rw [card_univ]
-          exact (Fintype.card_subtype_le _).trans (Fintype.card_fin d).le
-        calc (∑ p ∈ Q, 1 / (p : ℝ)) ^ (univ : Finset {j : Fin d // j ≠ u ∧ j ≠ v}).card ≤
-              S₀ ^ (univ : Finset {j : Fin d // j ≠ u ∧ j ≠ v}).card := pow_le_pow_left₀ hS0 hS _
-          _ ≤ S₀ ^ d := pow_le_pow_right₀ hS₀1 hcard
-    _ = 2 / c * (K * Real.log 4 / c) * S₀ ^ d * x ^ (1 - ρ) / Real.log x ^ 2 := by
+          exact Fintype.card_subtype_le _
+        calc (∑ p ∈ Q, 1 / (p : ℝ)) ^ (univ : Finset {j : ι // j ≠ u ∧ j ≠ v}).card ≤
+              S₀ ^ (univ : Finset {j : ι // j ≠ u ∧ j ≠ v}).card := pow_le_pow_left₀ hS0 hS _
+          _ ≤ S₀ ^ Fintype.card ι := pow_le_pow_right₀ hS₀1 hcard
+    _ = 2 / c * (K * Real.log 4 / c) * S₀ ^ Fintype.card ι * x ^ (1 - ρ) / Real.log x ^ 2 := by
         rw [hy₁]
         field_simp
 

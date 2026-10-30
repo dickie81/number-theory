@@ -5,7 +5,7 @@ import ShortSieveThin
 # Tuples of primes cut out by log-linear conditions
 
 A sieve term, once its rough cofactor is written as a tuple of primes (`ShortSieveBoxes.card_dvd_rough_eq_sum`),
-counts the `d`-tuples `g` of primes with `∏ g` in the interval and with finitely many conditions
+counts the tuples `g : ι → ℕ` of primes with `∏ g` in the interval and with finitely many conditions
 `Σ_j e_j log g_j ≤ b` (`LAtom`): the bounds of a cell, the order of the primes, the size of a product. This module
 proves its asymptotic formula from the grouped Type II estimate (`ShortSieveGroup`):
 
@@ -22,6 +22,8 @@ open Finset Real Filter
 namespace ShortSieveTerm
 
 open ShortSieveBoxes
+
+variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-! ### The grid -/
 
@@ -96,16 +98,16 @@ theorem exists_above_of_lt {G : Finset ℕ} {e p : ℕ} (hep : e < p) (hpn : p �
   omega
 
 /-- The tuples of the boxes of `J`. -/
-noncomputable def full {d : ℕ} (G : Finset ℕ) (J : Fin d → ℕ) : Finset (Fin d → ℕ) :=
+noncomputable def full (G : Finset ℕ) (J : ι → ℕ) : Finset (ι → ℕ) :=
   ShortSieveTypeII.tuples J fun j => nextG G (J j)
 
-theorem mem_full {d : ℕ} {G : Finset ℕ} {J g : Fin d → ℕ} :
+theorem mem_full {G : Finset ℕ} {J g : ι → ℕ} :
     g ∈ full G J ↔ ∀ j, J j < g j ∧ g j ≤ nextG G (J j) ∧ (g j).Prime := by
   simp only [full, ShortSieveTypeII.tuples, Fintype.mem_piFinset, ShortSieveTypeII.box, mem_filter, mem_Ioc,
     and_assoc]
 
 /-- A tuple of the boxes of `J`, with `J` on the grid, has index `J`. -/
-theorem idx_eq_of_mem_full {d : ℕ} {G : Finset ℕ} {J g : Fin d → ℕ} (hJ : ∀ j, J j ∈ G) (hg : g ∈ full G J) :
+theorem idx_eq_of_mem_full {G : Finset ℕ} {J g : ι → ℕ} (hJ : ∀ j, J j ∈ G) (hg : g ∈ full G J) :
     (fun j => idxG G (g j)) = J := by
   funext j
   obtain ⟨h1, h2, -⟩ := mem_full.1 hg j
@@ -113,13 +115,13 @@ theorem idx_eq_of_mem_full {d : ℕ} {G : Finset ℕ} {J g : Fin d → ℕ} (hJ 
 
 /-! ### Pinning a coordinate -/
 
-/-- A sum over `Fin d` splits into the coordinates other than `u`, `v`, and `u`, `v`. -/
-theorem sum_split {d : ℕ} {u v : Fin d} (huv : u ≠ v) (f : Fin d → ℝ) :
-    ∑ j, f j = (∑ j : {j : Fin d // j ≠ u ∧ j ≠ v}, f j) + (f u + f v) := by
+/-- A sum over a finite type splits into the coordinates other than `u`, `v`, and `u`, `v`. -/
+theorem sum_split {u v : ι} (huv : u ≠ v) (f : ι → ℝ) :
+    ∑ j, f j = (∑ j : {j : ι // j ≠ u ∧ j ≠ v}, f j) + (f u + f v) := by
   rw [← sum_filter_add_sum_filter_not univ (fun j => j ≠ u ∧ j ≠ v)]
   congr 1
   · exact sum_subtype _ (fun j => by simp) f
-  · have e : univ.filter (fun j : Fin d => ¬ (j ≠ u ∧ j ≠ v)) = {u, v} := by
+  · have e : univ.filter (fun j : ι => ¬ (j ≠ u ∧ j ≠ v)) = {u, v} := by
       ext j
       simp only [mem_filter, mem_univ, true_and, mem_insert, mem_singleton]
       tauto
@@ -127,13 +129,13 @@ theorem sum_split {d : ℕ} {u v : Fin d} (huv : u ≠ v) (f : Fin d → ℝ) :
 
 /-- **Pinning a coordinate.** If `|Σ e_j t_j − b| ≤ D₁` and `|Σ t_j − T| ≤ D₂`, then for `u ≠ v` with `e_u ≠ e_v`,
 `t_u` is within `(D₁ + |e_v| D₂)/|e_u − e_v|` of `(b − e_v T − Σ_{j ≠ u,v} (e_j − e_v) t_j)/(e_u − e_v)`. -/
-theorem pin {d : ℕ} {u v : Fin d} (huv : u ≠ v) (e t : Fin d → ℝ) (heuv : e u ≠ e v) {b T D₁ D₂ : ℝ}
+theorem pin {u v : ι} (huv : u ≠ v) (e t : ι → ℝ) (heuv : e u ≠ e v) {b T D₁ D₂ : ℝ}
     (h1 : |∑ j, e j * t j - b| ≤ D₁) (h2 : |∑ j, t j - T| ≤ D₂) :
-    |t u - (b - e v * T - ∑ j : {j : Fin d // j ≠ u ∧ j ≠ v}, (e j - e v) * t j) / (e u - e v)| ≤
+    |t u - (b - e v * T - ∑ j : {j : ι // j ≠ u ∧ j ≠ v}, (e j - e v) * t j) / (e u - e v)| ≤
       (D₁ + |e v| * D₂) / |e u - e v| := by
   have hne : e u - e v ≠ 0 := sub_ne_zero.2 heuv
   rw [sum_split huv] at h1 h2
-  set R := {j : Fin d // j ≠ u ∧ j ≠ v}
+  set R := {j : ι // j ≠ u ∧ j ≠ v}
   set δ₁ := (∑ j : R, e j * t j) + (e u * t u + e v * t v) - b with hδ₁
   set δ₂ := (∑ j : R, t j) + (t u + t v) - T with hδ₂
   have hR : ∑ j : R, (e j - e v) * t j = ∑ j : R, e j * t j - e v * ∑ j : R, t j := by
@@ -151,23 +153,23 @@ theorem pin {d : ℕ} {u v : Fin d} (huv : u ≠ v) (e t : Fin d → ℝ) (heuv 
 
 /-! ### Log-linear conditions and their boundaries -/
 
-/-- A log-linear condition on a `d`-tuple: `Σ e_j log g_j ≤ b(x)`, or `< b(x)` when `strict`. -/
-structure LAtom (d : ℕ) where
-  e : Fin d → ℝ
+/-- A log-linear condition on a tuple `g : ι → ℕ`: `Σ e_j log g_j ≤ b(x)`, or `< b(x)` when `strict`. -/
+structure LAtom (ι : Type*) where
+  e : ι → ℝ
   b : ℝ → ℝ
   strict : Bool
 
 /-- The value `Σ e_j log g_j`. -/
-noncomputable def LAtom.val {d : ℕ} (A : LAtom d) (g : Fin d → ℕ) : ℝ := ∑ j, A.e j * Real.log (g j)
+noncomputable def LAtom.val (A : LAtom ι) (g : ι → ℕ) : ℝ := ∑ j, A.e j * Real.log (g j)
 
 /-- The condition holds at `g`. -/
-def LAtom.Holds {d : ℕ} (A : LAtom d) (x : ℝ) (g : Fin d → ℕ) : Prop :=
+def LAtom.Holds (A : LAtom ι) (x : ℝ) (g : ι → ℕ) : Prop :=
   if A.strict then A.val g < A.b x else A.val g ≤ A.b x
 
 /-- The tuples of primes in `[x^c, x²)` within `D` of the condition's boundary, with product in
 `(x − x^{1−ρ}, x]`. -/
-noncomputable def near {d : ℕ} (c ρ D : ℝ) (A : LAtom d) (x : ℝ) : Finset (Fin d → ℕ) :=
-  (Fintype.piFinset fun _ : Fin d => SieveRough.primesIn (x ^ c) (x ^ (2 : ℝ))).filter fun g =>
+noncomputable def near (c ρ D : ℝ) (A : LAtom ι) (x : ℝ) : Finset (ι → ℕ) :=
+  (Fintype.piFinset fun _ : ι => SieveRough.primesIn (x ^ c) (x ^ (2 : ℝ))).filter fun g =>
     |A.val g - A.b x| ≤ D ∧ x - x ^ (1 - ρ) < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x
 
 /-- **The boundary of a condition is thin.** For a condition with `e_u ≠ e_v` for some `u ≠ v`, `0 < c ≤ 1`,
@@ -175,14 +177,14 @@ noncomputable def near {d : ℕ} (c ρ D : ℝ) (A : LAtom d) (x : ℝ) : Finset
 `C x^{1−ρ}/log² x`. The coordinate `u` is pinned (`pin`, with `|Σ log g_j − log x| ≤ log 2`) to an interval of ratio
 `K = exp(2δ')` around a function of the coordinates other than `u`, `v`, and `ShortSieveThin.card_thin_le` counts
 such tuples. -/
-theorem card_near_le {d : ℕ} {c ρ D : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hρ : 0 < ρ) (hρc : 12 * ρ < c) (hD : 0 ≤ D)
-    (A : LAtom d) {u v : Fin d} (huv : u ≠ v) (he : A.e u ≠ A.e v) :
+theorem card_near_le {c ρ D : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hρ : 0 < ρ) (hρc : 12 * ρ < c) (hD : 0 ≤ D)
+    (A : LAtom ι) {u v : ι} (huv : u ≠ v) (he : A.e u ≠ A.e v) :
     ∃ C x₀ : ℝ, 0 ≤ C ∧ ∀ x : ℝ, x₀ ≤ x → ((near c ρ D A x).card : ℝ) ≤ C * x ^ (1 - ρ) / Real.log x ^ 2 := by
   set δ' : ℝ := (D + |A.e v| * Real.log 2) / |A.e u - A.e v| with hδ'
   have hδ'0 : 0 ≤ δ' := by positivity
   set K : ℝ := Real.exp (2 * δ') with hK
   have hK1 : 1 ≤ K := Real.one_le_exp (by positivity)
-  obtain ⟨C, x₁, hC0, hC⟩ := ShortSieveThin.card_thin_le d hc hc1 hK1 hρ hρc
+  obtain ⟨C, x₁, hC0, hC⟩ := ShortSieveThin.card_thin_le ι hc hc1 hK1 hρ hρc
   obtain ⟨x₂, hx₂⟩ := Filter.eventually_atTop.1 ((tendsto_rpow_atTop hρ).eventually_ge_atTop (2 : ℝ))
   refine ⟨C, max (max x₁ x₂) 2, hC0, fun x hx => ?_⟩
   have hx1 : x₁ ≤ x := le_trans (le_trans (le_max_left _ _) (le_max_left _ _)) hx
@@ -190,10 +192,10 @@ theorem card_near_le {d : ℕ} {c ρ D : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hρ 
   have hx2 : 2 ≤ x := le_trans (le_max_right _ _) hx
   have hx0 : 0 < x := by linarith
   -- the pinned interval, as a function of the coordinates other than `u`, `v`
-  set L : ({j : Fin d // j ≠ u ∧ j ≠ v} → ℕ) → ℝ := fun h =>
-    (A.b x - A.e v * Real.log x - ∑ j : {j : Fin d // j ≠ u ∧ j ≠ v}, (A.e j - A.e v) * Real.log (h j)) /
+  set L : ({j : ι // j ≠ u ∧ j ≠ v} → ℕ) → ℝ := fun h =>
+    (A.b x - A.e v * Real.log x - ∑ j : {j : ι // j ≠ u ∧ j ≠ v}, (A.e j - A.e v) * Real.log (h j)) /
       (A.e u - A.e v) with hL
-  set X : ({j : Fin d // j ≠ u ∧ j ≠ v} → ℕ) → ℝ := fun h => Real.exp (L h - δ') with hX
+  set X : ({j : ι // j ≠ u ∧ j ≠ v} → ℕ) → ℝ := fun h => Real.exp (L h - δ') with hX
   refine le_trans ?_ (hC x hx1 u v huv X)
   refine Nat.cast_le.2 (card_le_card fun g hg => ?_)
   obtain ⟨hgQ, hval, hp1, hp2⟩ := mem_filter.1 hg
@@ -234,29 +236,30 @@ theorem card_near_le {d : ℕ} {c ρ D : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hρ 
 
 /-! ### Type II witnesses -/
 
-/-- A Type II witness for `d`-tuples: `m` groups (`grp`), their lower exponents `a` and Hölder exponents `δ`. -/
-structure Wit (d : ℕ) where
+/-- A Type II witness for tuples indexed by `ι`: `m` groups (`grp`), their lower exponents `a` and Hölder
+exponents `δ`. -/
+structure Wit (ι : Type*) where
   m : ℕ
-  grp : Fin d → Fin m
+  grp : ι → Fin m
   a : Fin m → ℝ
   δ : Fin m → ℝ
 
 /-- The witness is admissible at `θ` and `κ`: `κ < a_i`, `δ_i > 0`, `Σ 1/δ_i = 1`, and `δ_i` admissible for the
 moment lemmas at `D_i = (1 − θ + κ)/(a_i − κ)`. -/
-def Wit.OK {d : ℕ} (w : Wit d) (θ κ : ℝ) : Prop :=
+def Wit.OK (w : Wit ι) (θ κ : ℝ) : Prop :=
   (∀ i, κ < w.a i) ∧ (∀ i, 0 < w.δ i) ∧ ∑ i, 1 / w.δ i = 1 ∧
     ∀ i, ShortSieveTypeII.MomentOK ((1 - θ + κ) / (w.a i - κ)) (w.δ i)
 
 /-- The witness covers `g` with margin `μ` at `x`: each group's product is at least `x^{a_i + μ}`. -/
-def Wit.Covers {d : ℕ} (w : Wit d) (x μ : ℝ) (g : Fin d → ℕ) : Prop :=
+def Wit.Covers (w : Wit ι) (x μ : ℝ) (g : ι → ℕ) : Prop :=
   ∀ i, x ^ (w.a i + μ) ≤ ∏ j ∈ univ.filter (w.grp · = i), (g j : ℝ)
 
 /-- **The grouped Type II estimate for a list of witnesses**, with common constants
 (`ShortSieveGroup.abs_card_tuples_sub_le_group_of_pos` for each). -/
-theorem typeII_uniform {d : ℕ} (W : List (Wit d)) {c θ κ ρ : ℝ} (hc : 0 < c) (hκ : 0 < κ) (hθ : 0 < θ)
+theorem typeII_uniform (W : List (Wit ι)) {c θ κ ρ : ℝ} (hc : 0 < c) (hκ : 0 < κ) (hθ : 0 < θ)
     (hρ : 0 < ρ) (hθρ : θ + ρ ≤ 1) (hW : ∀ w ∈ W, w.OK θ κ) :
     ∃ η : ℝ, 0 < η ∧ ∃ C x₀ : ℝ, 0 ≤ C ∧ 1 ≤ x₀ ∧ ∀ w ∈ W, ∀ x : ℝ, x₀ ≤ x → ∀ y y₁ : ℝ, x ^ θ ≤ y → y ≤ y₁ →
-      y₁ ≤ x ^ (1 - ρ) → ∀ N M : Fin d → ℕ, (∀ j, x ^ c ≤ N j) → (∀ j, N j ≤ M j) →
+      y₁ ≤ x ^ (1 - ρ) → ∀ N M : ι → ℕ, (∀ j, x ^ c ≤ N j) → (∀ j, N j ≤ M j) →
         (∀ i, ∏ j ∈ univ.filter (w.grp · = i), M j ≤ 2 * ∏ j ∈ univ.filter (w.grp · = i), N j) →
         (∀ i, x ^ w.a i ≤ ∏ j ∈ univ.filter (w.grp · = i), (N j : ℝ)) →
         |(#{g ∈ ShortSieveTypeII.tuples N M | x - y < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x} : ℝ) -
@@ -289,8 +292,8 @@ theorem typeII_uniform {d : ℕ} (W : List (Wit d)) {c θ κ ρ : ℝ} (hc : 0 <
         (hmono (le_max_right _ _) (min_le_right _ _))
 
 /-- **The boundaries of a list of conditions**, with common constants (`card_near_le` for each). -/
-theorem near_uniform {d : ℕ} (v : Fin d) {c ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hρ : 0 < ρ) (hρc : 12 * ρ < c)
-    (D : LAtom d → ℝ) (hD : ∀ A, 0 ≤ D A) (atoms : List (LAtom d)) (hatoms : ∀ A ∈ atoms, ∃ u, u ≠ v ∧ A.e u ≠ A.e v) :
+theorem near_uniform (v : ι) {c ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hρ : 0 < ρ) (hρc : 12 * ρ < c)
+    (D : LAtom ι → ℝ) (hD : ∀ A, 0 ≤ D A) (atoms : List (LAtom ι)) (hatoms : ∀ A ∈ atoms, ∃ u, u ≠ v ∧ A.e u ≠ A.e v) :
     ∃ C x₀ : ℝ, 0 ≤ C ∧ ∀ A ∈ atoms, ∀ x : ℝ, x₀ ≤ x →
       ((near c ρ (D A) A x).card : ℝ) ≤ C * x ^ (1 - ρ) / Real.log x ^ 2 := by
   induction atoms with
@@ -322,21 +325,21 @@ theorem le_of_mem_box {e p : ℕ} (he : e ∈ grid a r I) (hep : e < p) (hpn : p
   le_trans (by exact_mod_cast hpn) (nextG_grid_le hr hr2 ha he (exists_above_of_lt hep hpn))
 
 /-- Two tuples in the same boxes have coordinates within ratio `r²`. -/
-theorem le_of_mem_full {d : ℕ} {J g g' : Fin d → ℕ} (hJ : ∀ j, J j ∈ grid a r I) (hg : g ∈ full (grid a r I) J)
-    (hg' : g' ∈ full (grid a r I) J) (j : Fin d) : (g j : ℝ) ≤ r ^ 2 * g' j := by
+theorem le_of_mem_full {J g g' : ι → ℕ} (hJ : ∀ j, J j ∈ grid a r I) (hg : g ∈ full (grid a r I) J)
+    (hg' : g' ∈ full (grid a r I) J) (j : ι) : (g j : ℝ) ≤ r ^ 2 * g' j := by
   obtain ⟨h1, h2, -⟩ := mem_full.1 hg j
   obtain ⟨h1', -, -⟩ := mem_full.1 hg' j
   calc (g j : ℝ) ≤ r ^ 2 * J j := le_of_mem_box hr hr2 ha (hJ j) h1 h2
     _ ≤ r ^ 2 * g' j := mul_le_mul_of_nonneg_left (by exact_mod_cast h1'.le) (by positivity)
 
 /-- Two tuples in the same boxes have logarithms within `2 log r`. -/
-theorem abs_log_sub_le {d : ℕ} {J g g' : Fin d → ℕ} (hJ : ∀ j, J j ∈ grid a r I) (hg : g ∈ full (grid a r I) J)
-    (hg' : g' ∈ full (grid a r I) J) (j : Fin d) :
+theorem abs_log_sub_le {J g g' : ι → ℕ} (hJ : ∀ j, J j ∈ grid a r I) (hg : g ∈ full (grid a r I) J)
+    (hg' : g' ∈ full (grid a r I) J) (j : ι) :
     |Real.log (g j) - Real.log (g' j)| ≤ 2 * Real.log r := by
-  have hp : ∀ g : Fin d → ℕ, g ∈ full (grid a r I) J → (0 : ℝ) < g j := fun g hg => by
+  have hp : ∀ g : ι → ℕ, g ∈ full (grid a r I) J → (0 : ℝ) < g j := fun g hg => by
     exact_mod_cast (mem_full.1 hg j).2.2.pos
   have hr0 : 0 < r := by linarith
-  have key : ∀ g g' : Fin d → ℕ, g ∈ full (grid a r I) J → g' ∈ full (grid a r I) J →
+  have key : ∀ g g' : ι → ℕ, g ∈ full (grid a r I) J → g' ∈ full (grid a r I) J →
       Real.log (g j) - Real.log (g' j) ≤ 2 * Real.log r := by
     intro g g' hg hg'
     have h := le_of_mem_full hr hr2 ha hJ hg hg' j
@@ -351,11 +354,11 @@ theorem abs_log_sub_le {d : ℕ} {J g g' : Fin d → ℕ} (hJ : ∀ j, J j ∈ g
 
 /-- **A box that straddles a condition lies near its boundary.** If `A` holds at `g₀` and fails at `g'`, both in the
 boxes of `J`, then every `g` in them has `|Σ e_j log g_j − b| ≤ (Σ |e_j|)·2 log r`. -/
-theorem abs_val_sub_le {d : ℕ} {J g₀ g' g : Fin d → ℕ} (hJ : ∀ j, J j ∈ grid a r I)
+theorem abs_val_sub_le {J g₀ g' g : ι → ℕ} (hJ : ∀ j, J j ∈ grid a r I)
     (hg₀ : g₀ ∈ full (grid a r I) J) (hg' : g' ∈ full (grid a r I) J) (hg : g ∈ full (grid a r I) J)
-    (A : LAtom d) {x : ℝ} (h₀ : A.Holds x g₀) (h' : ¬ A.Holds x g') :
+    (A : LAtom ι) {x : ℝ} (h₀ : A.Holds x g₀) (h' : ¬ A.Holds x g') :
     |A.val g - A.b x| ≤ (∑ j, |A.e j|) * (2 * Real.log r) := by
-  have hclose : ∀ g₁ : Fin d → ℕ, g₁ ∈ full (grid a r I) J →
+  have hclose : ∀ g₁ : ι → ℕ, g₁ ∈ full (grid a r I) J →
       |A.val g - A.val g₁| ≤ (∑ j, |A.e j|) * (2 * Real.log r) := by
     intro g₁ hg₁
     rw [LAtom.val, LAtom.val, ← sum_sub_distrib, sum_mul]
@@ -418,9 +421,9 @@ theorem eventually_card_pow_le {r η : ℝ} (hr : 1 < r) (hη : 0 < η) (d : ℕ
     _ = 1 / Real.log x ^ 2 := by rw [mul_comm, hxη]
 
 open Classical in
-/-- The `d`-tuples of primes in `(x^c, x²)` satisfying the conditions. -/
-noncomputable def cut {d : ℕ} (c : ℝ) (atoms : List (LAtom d)) (x : ℝ) : Finset (Fin d → ℕ) :=
-  (Fintype.piFinset fun _ : Fin d => (Ioo ⌊x ^ c⌋₊ ⌈x ^ (2 : ℝ)⌉₊).filter Nat.Prime).filter
+/-- The tuples `g : ι → ℕ` of primes in `(x^c, x²)` satisfying the conditions. -/
+noncomputable def cut (c : ℝ) (atoms : List (LAtom ι)) (x : ℝ) : Finset (ι → ℕ) :=
+  (Fintype.piFinset fun _ : ι => (Ioo ⌊x ^ c⌋₊ ⌈x ^ (2 : ℝ)⌉₊).filter Nat.Prime).filter
     fun g => ∀ A ∈ atoms, A.Holds x g
 
 /-- **Tuples of primes cut out by log-linear conditions.** Let `0 < c ≤ 1`, `θ, κ, ρ, μ > 0` with `12ρ < c` and
@@ -435,10 +438,10 @@ boxes' ratio `r²` loses at most `(r²)^d = 2` in each group's product. There ar
 errors `C y x^{−η}` add up to `O(y/log² x)` (`eventually_card_pow_le`). A box tuple that straddles the cut has its
 tuples with product in the comparison interval near the boundary of a condition (`abs_val_sub_le`), and the
 boundaries are thin (`near_uniform`); a box tuple that leaves `(x^c, x²)` has no tuple with product below `x`. -/
-theorem abs_card_cut_sub_le {d : ℕ} (v : Fin d) {c θ κ ρ μ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hθ : 0 < θ)
+theorem abs_card_cut_sub_le (v : ι) {c θ κ ρ μ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hθ : 0 < θ)
     (hκ : 0 < κ) (hρ : 0 < ρ) (hρc : 12 * ρ < c) (hθρ : θ + ρ ≤ 1) (hμ : 0 < μ)
-    (atoms : List (LAtom d)) (hatoms : ∀ A ∈ atoms, ∃ u, u ≠ v ∧ A.e u ≠ A.e v)
-    (W : List (Wit d)) (hW : ∀ w ∈ W, w.OK θ κ)
+    (atoms : List (LAtom ι)) (hatoms : ∀ A ∈ atoms, ∃ u, u ≠ v ∧ A.e u ≠ A.e v)
+    (W : List (Wit ι)) (hW : ∀ w ∈ W, w.OK θ κ)
     (hcov : ∀ᶠ x in atTop, ∀ g ∈ cut c atoms x, x / 4 < ∏ j, (g j : ℝ) → ∏ j, (g j : ℝ) ≤ 2 * x →
       ∃ w ∈ W, w.Covers x μ g) :
     ∃ C : ℝ, ∀ᶠ x in atTop, ∀ y : ℝ, x ^ θ ≤ y → y ≤ x ^ (1 - ρ) →
@@ -446,7 +449,8 @@ theorem abs_card_cut_sub_le {d : ℕ} (v : Fin d) {c θ κ ρ μ : ℝ} (hc : 0 
         y / x ^ (1 - ρ) * #{g ∈ cut c atoms x | x - x ^ (1 - ρ) < ((∏ j, g j : ℕ) : ℝ) ∧
           ((∏ j, g j : ℕ) : ℝ) ≤ x}| ≤ C * y / Real.log x ^ 2 := by
   classical
-  have hd : 0 < d := Fin.pos v
+  set d : ℕ := Fintype.card ι with hd_def
+  have hd : 0 < d := Fintype.card_pos_iff.2 ⟨v⟩
   have hd0 : (0 : ℝ) < d := by exact_mod_cast hd
   have hd1 : (1 : ℝ) ≤ d := by exact_mod_cast hd
   -- the grid's ratio `r = 2^{1/(2d)}`, with `(r²)^d = 2`
@@ -463,11 +467,11 @@ theorem abs_card_cut_sub_le {d : ℕ} (v : Fin d) {c θ κ ρ μ : ℝ} (hc : 0 
   have hr0 : 0 < r := by linarith
   have hr21 : 1 ≤ r ^ 2 := one_le_pow₀ hr1.le
   have hlr : 0 < Real.log r := Real.log_pos hr1
-  -- powers of `r²` over at most `d` coordinates
-  have hpowd : ∀ s : Finset (Fin d), (r ^ 2) ^ s.card ≤ 2 := fun s => by
-    rw [← hrd]; exact pow_le_pow_right₀ hr21 (card_le_univ s |>.trans (by simp))
+  -- powers of `r²` over at most `d = #ι` coordinates
+  have hpowd : ∀ s : Finset ι, (r ^ 2) ^ s.card ≤ 2 := fun s => by
+    rw [← hrd]; exact pow_le_pow_right₀ hr21 (card_le_univ s)
   -- the boundaries of the conditions
-  set D : LAtom d → ℝ := fun A => (∑ j, |A.e j|) * (2 * Real.log r) with hDdef
+  set D : LAtom ι → ℝ := fun A => (∑ j, |A.e j|) * (2 * Real.log r) with hDdef
   have hD0 : ∀ A, 0 ≤ D A := fun A => mul_nonneg (sum_nonneg fun j _ => abs_nonneg _) (by positivity)
   obtain ⟨Cn, xn, hCn, hnear⟩ := near_uniform v hc hc1 hρ hρc D hD0 atoms hatoms
   -- the Type II estimate for the witnesses
@@ -523,8 +527,8 @@ theorem abs_card_cut_sub_le {d : ℕ} (v : Fin d) {c θ κ ρ μ : ℝ} (hc : 0 
     obtain ⟨hIoo, hp⟩ := mem_filter.1 h
     obtain ⟨h1, h2⟩ := mem_Ioo.1 hIoo
     exact ⟨h1, Nat.lt_ceil.1 h2, hp⟩
-  set Js := Fintype.piFinset fun _ : Fin d => G with hJs
-  set box : (Fin d → ℕ) → (Fin d → ℕ) := fun g j => idxG G (g j) with hbox
+  set Js := Fintype.piFinset fun _ : ι => G with hJs
+  set box : (ι → ℕ) → (ι → ℕ) := fun g j => idxG G (g j) with hbox
   have hlo : ∀ g ∈ S, ∀ j, ∃ e ∈ G, e < g j := fun g hg j => ⟨_, hbot, (hSmem g hg j).1⟩
   have hhi : ∀ g ∈ S, ∀ j, ∃ e ∈ G, g j ≤ e := fun g hg j => by
     refine ⟨_, htopG, Nat.le_floor ?_⟩
@@ -534,13 +538,13 @@ theorem abs_card_cut_sub_le {d : ℕ} (v : Fin d) {c θ κ ρ μ : ℝ} (hc : 0 
   have hfull : ∀ g ∈ S, g ∈ full G (box g) := fun g hg =>
     mem_tuples_idxG (fun j => (hSmem g hg j).2.2) (hlo g hg) (hhi g hg)
   -- the weights
-  set fA : (Fin d → ℕ) → ℝ := fun g =>
+  set fA : (ι → ℕ) → ℝ := fun g =>
     if x - y < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x then 1 else 0 with hfA
-  set fB : (Fin d → ℕ) → ℝ := fun g =>
+  set fB : (ι → ℕ) → ℝ := fun g =>
     if x - y₁ < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x then 1 else 0 with hfB
   have hfA0 : ∀ g, 0 ≤ fA g := fun g => by simp only [hfA]; split_ifs <;> norm_num
   have hfB0 : ∀ g, 0 ≤ fB g := fun g => by simp only [hfB]; split_ifs <;> norm_num
-  have hprodcast : ∀ g : Fin d → ℕ, ((∏ j, g j : ℕ) : ℝ) = ∏ j, (g j : ℝ) := fun g => by push_cast; rfl
+  have hprodcast : ∀ g : ι → ℕ, ((∏ j, g j : ℕ) : ℝ) = ∏ j, (g j : ℝ) := fun g => by push_cast; rfl
   -- coordinates of tuples in the boxes of an index of the grid
   have hJG : ∀ J ∈ Js, ∀ j, J j ∈ G := fun J hJ j => (Fintype.mem_piFinset.1 hJ) j
   have hgt : ∀ J ∈ Js, ∀ g ∈ full G J, ∀ j, x ^ c < g j := by
@@ -555,7 +559,7 @@ theorem abs_card_cut_sub_le {d : ℕ} (v : Fin d) {c θ κ ρ μ : ℝ} (hc : 0 
     intro J hJ g hg g' hg'
     calc ∏ j, (g j : ℝ) ≤ ∏ j, (r ^ 2 * g' j) :=
           prod_le_prod₀ (fun j _ => by positivity) fun j _ => le_of_mem_full hr1 hr2 ha (hJG J hJ) hg hg' j
-      _ = (r ^ 2) ^ d * ∏ j, (g' j : ℝ) := by rw [prod_mul_distrib, prod_const, card_univ, Fintype.card_fin]
+      _ = (r ^ 2) ^ d * ∏ j, (g' j : ℝ) := by rw [prod_mul_distrib, prod_const, card_univ]
       _ = 2 * ∏ j, (g' j : ℝ) := by rw [hrd]
   -- the Type II estimate on a box tuple that meets the cut
   have hE : ∀ J ∈ Js, (∃ g ∈ S, box g = J) →
@@ -618,7 +622,7 @@ theorem abs_card_cut_sub_le {d : ℕ} (v : Fin d) {c θ κ ρ μ : ℝ} (hc : 0 
       simp only [card_empty, Nat.cast_zero, mul_zero, sub_zero, abs_zero]
       positivity
   -- a coordinate is at most the product
-  have hcoord : ∀ g : Fin d → ℕ, (∀ j, 0 < g j) → ∀ j, (g j : ℝ) ≤ ((∏ j, g j : ℕ) : ℝ) := fun g hg j => by
+  have hcoord : ∀ g : ι → ℕ, (∀ j, 0 < g j) → ∀ j, (g j : ℝ) ≤ ((∏ j, g j : ℕ) : ℝ) := fun g hg j => by
     exact_mod_cast Nat.le_of_dvd (prod_pos fun j _ => hg j) (dvd_prod_of_mem _ (mem_univ j))
   have hr2le : r ^ 2 ≤ 2 := by
     calc r ^ 2 ≤ (r ^ 2) ^ d := le_self_pow₀ hr21 hd.ne'
@@ -674,7 +678,7 @@ theorem abs_card_cut_sub_le {d : ℕ} (v : Fin d) {c θ κ ρ μ : ℝ} (hc : 0 
       rw [hempty, card_empty, Nat.cast_zero]
       exact sum_nonneg fun A _ => Nat.cast_nonneg _
   -- the boxes are disjoint
-  have hfib : ∀ N : Finset (Fin d → ℕ), ∑ J ∈ Js, (((full G J).filter (· ∈ N)).card : ℝ) ≤ N.card := by
+  have hfib : ∀ N : Finset (ι → ℕ), ∑ J ∈ Js, (((full G J).filter (· ∈ N)).card : ℝ) ≤ N.card := by
     intro N
     have h1 : ∀ J ∈ Js, (full G J).filter (· ∈ N) ⊆ N.filter (fun g => box g = J) := fun J hJ g hg => by
       obtain ⟨hgf, hgN⟩ := mem_filter.1 hg
@@ -686,7 +690,7 @@ theorem abs_card_cut_sub_le {d : ℕ} (v : Fin d) {c θ κ ρ μ : ℝ} (hc : 0 
           exact_mod_cast sum_card_fiberwise_eq_card_filter N Js box
       _ ≤ N.card := by exact_mod_cast card_filter_le _ _
   -- the straddling box tuples
-  set t : (Fin d → ℕ) → ℝ := fun J =>
+  set t : (ι → ℕ) → ℝ := fun J =>
     ∑ A ∈ atoms.toFinset, (((full G J).filter (· ∈ near c ρ (D A) A x)).card : ℝ) with ht
   have ht0 : ∀ J ∈ Js, 0 ≤ t J := fun J _ => sum_nonneg fun _ _ => Nat.cast_nonneg _
   have hT : ∑ J ∈ Js, t J ≤ atoms.length * (Cn * y₁ / Real.log x ^ 2) := by
@@ -702,7 +706,7 @@ theorem abs_card_cut_sub_le {d : ℕ} (v : Fin d) {c θ κ ρ μ : ℝ} (hc : 0 
   have hsand := abs_sum_sub_le_boxes S Js box hboxJs (full G) hfull hfA0 hfB0 (div_nonneg hy0.le hy₁0.le)
     (by positivity : 0 ≤ CW * y * x ^ (-η)) hE t ht0 hstrad
   have hJcard : (Js.card : ℝ) ≤ ((I + 1 : ℕ) : ℝ) ^ d := by
-    rw [hJs, Fintype.card_piFinset_const]
+    rw [hJs, Fintype.card_piFinset, prod_const, card_univ]
     push_cast
     exact pow_le_pow_left₀ (by positivity) (by exact_mod_cast card_grid_le _ _ _) d
   have hgA : (#{g ∈ S | x - y < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x} : ℝ) = ∑ g ∈ S, fA g := by
