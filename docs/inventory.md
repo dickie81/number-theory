@@ -3,8 +3,8 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 713 theorems: the library's final
-results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
+`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 710 theorems: the library's final
+results and the papers' theorems, of which there are 118, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 The last section lists the 99 modules that neither `Check` nor `CheckAll` imports, directly or
 not, with their headline theorems (those whose docstring opens with a bold title).
@@ -12,7 +12,7 @@ not, with their headline theorems (those whose docstring opens with a bold title
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 222 | 705 | 1 | 0 |
+| `lib/pnt` | 220 | 702 | 1 | 0 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -207,19 +207,15 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 #### `Linnik22000E`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 and its certificate at `n = 272`
 
-- `Linnik22000E.fits22000E`: `grid22000E` fits `route22000D`
-- `Linnik22000E.deepGrid22000E`: `grid22000E` holds the decomposition to depth 8
-- `Linnik22000E.linnik_22000e`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 at `n = 272`
-
-#### `Linnik22015R`: Linnik's theorem with exponent `4403 / 2000` by the bilinear Type I rule, from its certificate's inequality
-
-- `Linnik22015R.linnik_22015r_of_cert`: Linnik's theorem with exponent `4403 / 2000`, from the certificate's inequality
+- `Linnik22000E.routeOK22000D`: `route22000D` is a route *paper*
+- `Linnik22000E.fits22000E`: `grid22000E` fits `route22000D` *paper*
+- `Linnik22000E.deepGrid22000E`: `grid22000E` holds the decomposition to depth 8 *paper*
+- `Linnik22000E.linnik_22000e`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 at `n = 272` *paper*
 
 #### `Linnik22240R`: Linnik's theorem with exponent `278 / 125`, under the refined certificate at `n = 340`
 
-- `Linnik22240R.routeOK22240D`: `route22240D` is a route *paper*
-- `Linnik22240R.fits22240R`: `grid22240R` fits `route22240D` *paper*
-- `Linnik22240R.linnik_22240r`: Linnik's theorem with exponent `278 / 125`, by the refined certificate at `n = 340` *paper* ([note](../formalisations/chen-gupta-li-density.md))
+- `Linnik22240R.fits22240R`: `grid22240R` fits `route22240D`
+- `Linnik22240R.linnik_22240r`: Linnik's theorem with exponent `278 / 125`, by the refined certificate at `n = 340` ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikAFE`: The approximate functional equation for `L(s, χ)²`
 
@@ -1016,11 +1012,11 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 #### `SieveCert22000E`: The certificate to depth 8 of the sieve route's loss at `L = 11/5` with `n = 272`: `totalD < K`
 
-- `SieveDeep.totalD_lt_22000E`: The certificate to depth 8 on `grid22000E`
+- `SieveDeep.totalD_lt_22000E`: The certificate to depth 8 on `grid22000E` *paper*
 
 #### `SieveCert22240R`: The refined certificate of the sieve route's loss at `L = 278/125` with `n = 340`: `total2 < K`
 
-- `SieveCert.total2_lt_22240R`: The refined certificate on `grid22240R` *paper*
+- `SieveCert.total2_lt_22240R`: The refined certificate on `grid22240R`
 
 #### `SieveChain`: Type II for chains of primes
 
@@ -1099,13 +1095,13 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 #### `SieveGrid22000E`: The grid of the certificate to depth 8 at `L = 11/5` with `n = 272`
 
-- `SieveCert.gridOK22000E`
-- `SieveCert.gridOKC22000E`: The coarse grid `Gc` (`n / 4 = 68` cells) and the facts about it that the deepest levels use.
+- `SieveCert.gridOK22000E` *paper*
+- `SieveCert.gridOKC22000E`: The coarse grid `Gc` (`n / 4 = 68` cells) and the facts about it that the deepest levels use. *paper*
 
 #### `SieveGrid22240R`: The grid of the refined certificate at `L = 278/125` with `n = 340`
 
-- `SieveCert.gridOK22240R` *paper*
-- `SieveCert.gridOKC22240R`: The coarse grid `Gc` (`n / 4 = 85` cells) and the facts about it that the deepest levels use. *paper*
+- `SieveCert.gridOK22240R`
+- `SieveCert.gridOKC22240R`: The coarse grid `Gc` (`n / 4 = 85` cells) and the facts about it that the deepest levels use.
 
 #### `SieveHMBin`: Halász–Montgomery for one bin of characters at one height
 
@@ -1168,12 +1164,12 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 #### `SieveMain2`: Linnik's theorem by the sieve route, under the refined certificate
 
-- `SieveMain2.linnik_large2`: Linnik's theorem at `x = q^L`, for large `q`, under the refined certificate *paper*
-- `SieveMain2.linnik_route_lt2`: Linnik's theorem with exponent `L`, under a refined certificate whose total is below `K` *paper*
+- `SieveMain2.linnik_route_lt2`: Linnik's theorem with exponent `L`, under a refined certificate whose total is below `K`
 
 #### `SieveMain8`: Linnik's theorem by the sieve route, under the certificate of depth 8
 
-- `SieveMain8.linnik_route_lt8`: Linnik's theorem with exponent `L`, under a certificate of depth 8 whose total is below `K`
+- `SieveMain8.linnik_large8`: Linnik's theorem at `x = q^L`, for large `q`, under the certificate of depth 8 *paper*
+- `SieveMain8.linnik_route_lt8`: Linnik's theorem with exponent `L`, under a certificate of depth 8 whose total is below `K` *paper*
 
 #### `SieveOmegaB`: Buchstab's `ω` on `[2, 3]`, and the logarithm's bounds of the certificate's cells
 
@@ -1303,13 +1299,8 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 #### `SieveTypeIIU22000D`: Proposition 3′ at `L = 11 / 5` on the window `[43457/100000, 46959/100000]·L`, for the curve `g7d`
 
-- `SieveTypeIIU22000D.window_22000d`: The window's exponents
-- `SieveTypeIIU22000D.typeII_22000d`: Proposition 3′ at `L = 11 / 5` on `[43457/100000, 46959/100000]·L`, for the curve `g7d`
-
-#### `SieveTypeIIU22015D`: Proposition 3′ at `L = 4403 / 2000` on the window `[43336/100000, 46995/100000]·L`, for the curve `g7d`
-
-- `SieveTypeIIU22015D.window_22015d`: The window's exponents
-- `SieveTypeIIU22015D.typeII_22015d`: Proposition 3′ at `L = 4403 / 2000` on `[43336/100000, 46995/100000]·L`, for the curve `g7d`
+- `SieveTypeIIU22000D.window_22000d`: The window's exponents *paper*
+- `SieveTypeIIU22000D.typeII_22000d`: Proposition 3′ at `L = 11 / 5` on `[43457/100000, 46959/100000]·L`, for the curve `g7d` *paper*
 
 #### `SieveTypeIIU22240D`: Proposition 3′ at `L = 278 / 125` on the Halász–Montgomery window `[41556/100000, 47531/100000]·L`, for the curve `g7d`
 
@@ -1317,8 +1308,8 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveTypeIIU22240D.g7d_half` *paper*
 - `SieveTypeIIU22240D.g7d_le_lin`: `g7d σ ≤ (11667 / 5000)(1 − σ)` for `σ ≤ 1` *paper* ([note](../formalisations/chen-gupta-li-density.md))
 - `SieveTypeIIU22240D.counts_7d`: The counts of the curve *paper*
-- `SieveTypeIIU22240D.window_22240d`: The window's exponents *paper*
-- `SieveTypeIIU22240D.typeII_22240d`: Proposition 3′ at `L = 278 / 125` on `[41556/100000, 47531/100000]·L`, for the curve `g7d` *paper*
+- `SieveTypeIIU22240D.window_22240d`: The window's exponents
+- `SieveTypeIIU22240D.typeII_22240d`: Proposition 3′ at `L = 278 / 125` on `[41556/100000, 47531/100000]·L`, for the curve `g7d`
 
 #### `SieveTypeIIU226C`: The curve `g7` without Petrow–Young's bound, `g7c`, at `L = 226/100`: its Halász–Montgomery window and
 
