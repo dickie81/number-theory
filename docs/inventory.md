@@ -6,13 +6,13 @@ rewrites it, and CI checks that it is current (`--check`).
 `lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 694 theorems: the library's final
 results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 104 modules that neither `Check` nor `CheckAll` imports, directly or
+The last section lists the 107 modules that neither `Check` nor `CheckAll` imports, directly or
 not, with their headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 210 | 686 | 6 | 35 |
+| `lib/pnt` | 210 | 686 | 9 | 50 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -1590,6 +1590,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 #### `Architect`
 
+#### `SieveBox`: The share of a box of prime intervals
+
+- `SieveRough.shareBox`: The share of a box
+
 #### `SieveBuch8`: The decomposition to depth 8
 
 - `SieveBuch.Par.I_S7`: Depth 7
@@ -1634,6 +1638,26 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveDeep.Ch3_le`: The charges below a cell `(i, j)` are at most `SC⁸·refcost`
 
 #### `SieveDeepDefs`: The certificate to depth 8, without Mathlib
+
+#### `SieveDrop8`: The dropped terms' `B`-count, to depth 8
+
+- `SieveDrop8.drop4_le'`: A dropped cell of depth 4
+- `SieveDrop8.drop6_le'`: A dropped cell of depth 6
+- `SieveDrop8.drop8_le`: A dropped cell of depth 8
+- `SieveDrop8.share4D`: The share of a counted cell of depth 4
+- `SieveDrop8.share6D`: The share of a counted cell of depth 6
+- `SieveDrop8.share8D`: The share of a cell of depth 8 of the region
+- `SieveDrop8.E1_le`: The dropped terms' `B`-count
+- `SieveDrop8.sum_level`: A level of the sums
+- `SieveDrop8.dT_le_cost`: The dropped sums of a cell `(i, j)` against its cost
+- `SieveDrop8.shares_ev8`: The shares, eventually
+- `SieveDrop8.drop_ev8`: The dropped terms, for large `q`, with the loss as a parameter
+
+#### `SieveMain8`: Linnik's theorem by the sieve route, under the certificate of depth 8
+
+- `SieveMain8.linnik_large8`: Linnik's theorem at `x = q^L`, for large `q`, under the certificate of depth 8
+- `SieveMain8.linnik_route8`: Linnik's theorem with exponent `L`, under the certificate of depth 8
+- `SieveMain8.linnik_route_lt8`: Linnik's theorem with exponent `L`, under a certificate of depth 8 whose total is below `K`
 
 #### `SieveQ8`: The leaves of the decomposition to depth 8, for large `q`
 
