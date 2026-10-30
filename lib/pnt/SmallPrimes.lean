@@ -24,10 +24,9 @@ lemma exists_char_of_ne_top {q : ℕ} [NeZero q] {H : Subgroup (ZMod q)ˣ} (hH :
     ∃ χ : DirichletCharacter ℂ q, χ ≠ 1 ∧ ∀ u ∈ H, χ (u : ZMod q) = 1 := by
   obtain ⟨a, haH⟩ : ∃ a : (ZMod q)ˣ, a ∉ H := by
     by_contra h
-    push_neg at h
-    exact hH (eq_top_iff.2 fun a _ ↦ h a)
-  have hexp : Monoid.exponent ((ZMod q)ˣ ⧸ H) ≠ 0 := Monoid.exponent_ne_zero_of_finite
-  haveI : NeZero ((Monoid.exponent ((ZMod q)ˣ ⧸ H) : ℕ) : ℂ) := ⟨Nat.cast_ne_zero.2 hexp⟩
+    exact hH (eq_top_iff.2 fun a _ ↦ not_not.1 (not_exists.1 h a))
+  have hexp : Monoid.exponent ((ZMod q)ˣ ⧸ H) ≠ 0 := Monoid.exponent_ne_zero_of_finite (G := (ZMod q)ˣ ⧸ H)
+  have : NeZero ((Monoid.exponent ((ZMod q)ˣ ⧸ H) : ℕ) : ℂ) := ⟨Nat.cast_ne_zero.2 hexp⟩
   have ha : (QuotientGroup.mk a : (ZMod q)ˣ ⧸ H) ≠ 1 := by
     rwa [Ne, QuotientGroup.eq_one_iff]
   obtain ⟨φ, hφ⟩ := CommGroup.exists_apply_ne_one_of_hasEnoughRootsOfUnity ((ZMod q)ˣ ⧸ H) ℂ ha
