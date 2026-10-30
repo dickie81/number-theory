@@ -3,9 +3,9 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean` and `lib/check/Check.lean` print the axioms of 728
+`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean` and `lib/check/Check.lean` print the axioms of 758
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
-import) and the papers' theorems, of which there are 118, marked *paper*. Each line gives a theorem's
+import) and the papers' theorems, of which there are 144, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 The last section lists the 92 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
@@ -13,7 +13,7 @@ headline theorems (those whose docstring opens with a bold title).
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 217 | 695 | 1 | 0 |
+| `lib/pnt` | 223 | 725 | 1 | 0 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -210,6 +210,7 @@ headline theorems (those whose docstring opens with a bold title).
 
 - `Linnik22000E.routeOK22000D`: `route22000D` is a route *paper*
 - `Linnik22000E.fits22000E`: `grid22000E` fits `route22000D` *paper*
+- `Linnik22000E.ibFits22000E`: `ibPar22000E`'s exponent `Lnum/Lden` is the route's `L = 11 / 5`. *paper*
 - `Linnik22000E.deepGrid22000E`: `grid22000E` holds the decomposition to depth 8 *paper*
 - `Linnik22000E.linnik_22000e`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 at `n = 272` *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
@@ -954,7 +955,9 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveBox`: The share of a box of prime intervals
 
-- `SieveRough.shareBox`: The share of a box
+- `SieveRough.evLe_box_tr`: An interval's `Σ 1/p` is at most the trapezoid bound `trB(a, w)` of `log(1 + w/a)`, up to `o(1)`. *paper*
+- `SieveRough.evLe_box_ex`: An interval's `log x · Σ 1/(p log p)` is at most `exB(a, w) = w·DEN/(a(a + w))`, up to `o(1)`. *paper*
+- `SieveRough.shareBox`: The share of a box *paper*
 
 #### `SieveBrun`: Brun's sieve in product form, abstractly
 
@@ -982,12 +985,22 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveBuch2`: The decomposition with the kept parts of the dropped cells
 
-- `SieveBuch.Par.lvl1k`: Level 1 with the kept parts *paper*
-- `SieveBuch.Par.decompk`: The decomposition's inequality with the kept parts *paper*
+- `SieveBuch.Par.lvl1k`: Level 1 with the kept parts
+- `SieveBuch.Par.decompk`: The decomposition's inequality with the kept parts
 
 #### `SieveBuch8`: The decomposition to depth 8
 
-- `SieveBuch.Par.decomp8`: The decomposition's inequality to depth 8
+- `SieveBuch.Par.I_S6c`: Depth 6 *paper*
+- `SieveBuch.Par.I_S6cle`: Depth 6 *paper*
+- `SieveBuch.Par.I_S7`: Depth 7 *paper*
+- `SieveBuch.Par.I_S7c`: Depth 7 *paper*
+- `SieveBuch.Par.I_S7le`: Depth 7 *paper*
+- `SieveBuch.Par.I_S8`: Depth 8 *paper*
+- `SieveBuch.Par.I_S7c_vanish_lt`: Depth 7, `d > c` *paper*
+- `SieveBuch.Par.I_S8c_vanish_lt`: Depth 8, `f > d` *paper*
+- `SieveBuch.Par.I_S7c_vanish_reg`: Depth 7, outside the region *paper*
+- `SieveBuch.Par.I_S8c_vanish_reg`: Depth 8, outside the region *paper*
+- `SieveBuch.Par.decomp8`: The decomposition's inequality to depth 8 *paper*
 
 #### `SieveCert`: The certificate of the sieve route's loss, checked by the kernel
 
@@ -998,8 +1011,8 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveCert.omegaC_le_w`: `ω*` on a box *paper*
 - `SieveCert.omegaC_le`: `ω*` on a cell
 - `SieveCert.bound2_ge`: A cell of depth 2 with lower corner `(a, b)` costs at least `omK/K` times the first cell's trapezoid bound and the last cell's `DEN·H/(b(b + H))`. *paper*
-- `SieveCert.bound4_ge`: A cell of depth 4 with lower corner `(a, b, c, d)` costs at least `omK/K` times the trapezoid bounds of the first three cells and the last cell's… *paper*
-- `SieveCert.bound6_ge`: A cell of depth 6 (four fine cells and two coarse ones) with lower corner `(a, b, c, d, f, g)` costs at least `omKw/K` times the trapezoid bounds of the… *paper*
+- `SieveCert.bound4_ge`: A cell of depth 4 with lower corner `(a, b, c, d)` costs at least `omK/K` times the trapezoid bounds of the first three cells and the last cell's…
+- `SieveCert.bound6_ge`: A cell of depth 6 (four fine cells and two coarse ones) with lower corner `(a, b, c, d, f, g)` costs at least `omKw/K` times the trapezoid bounds of the…
 
 #### `SieveCert2`: The refined certificate, in the reals and over `Finset`
 
@@ -1019,7 +1032,7 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveChainR`: Type II for chains with part of their product in the reflection of the window
 
-- `SieveChainR.chainTR_bound`: Chains with part of their product in the reflection of the window
+- `SieveChainR.chainTR_bound`: Chains with part of their product in the reflection of the window *paper*
 
 #### `SieveCount`: Type I counts in a residue class
 
@@ -1041,7 +1054,10 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveDeep`: The certificate to depth 8: its rule and its decisions
 
-- `SieveDeep.okIB_of_okD`: The block test is sound
+- `SieveDeep.surelyEval4_of_lmask`: A bit of the mask of `l` makes the box `(i, j, k, l)` surely evaluable *paper*
+- `SieveDeep.surelyEval6_of_emask`: A bit `c` of the coarse mask of one cell, or `b + c` of that of two, makes the box `(i, j, k, l, b, c)` surely evaluable *paper*
+- `SieveDeep.okIB_of_okD`: The block test is sound *paper*
+- `SieveDeep.scheme`: The certificate's scheme of decisions *paper*
 
 #### `SieveDeepCert`: The certificate to depth 8, by parts
 
@@ -1049,7 +1065,7 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveDeepCost`: The certificate to depth 8: its costs bound the dropped cells' charges
 
-- `SieveDeep.Ch3_le`: The charges below a cell `(i, j)` are at most `SC⁸·refcost`
+- `SieveDeep.Ch3_le`: The charges below a cell `(i, j)` are at most `SC⁸·refcost` *paper*
 
 #### `SieveDiff`: The tree's weights, and a leaf's difference
 
@@ -1058,23 +1074,30 @@ headline theorems (those whose docstring opens with a bold title).
 #### `SieveDrop`: The dropped terms' `B`-count
 
 - `SieveDrop.drop2_le`: A dropped cell of depth 2 *paper*
-- `SieveDrop.drop4_le`: A dropped cell of depth 4 *paper*
-- `SieveDrop.drop6_le`: A dropped cell of depth 6 *paper*
+- `SieveDrop.drop4_le`: A dropped cell of depth 4
+- `SieveDrop.drop6_le`: A dropped cell of depth 6
 - `SieveDrop.corner_le`: A corner cell *paper*
 - `SieveDrop.corner_ev`: The corner is `o(x/log x)` *paper*
-- `SieveDrop.shares_ev`: The shares, eventually *paper*
+- `SieveDrop.shares_ev`: The shares, eventually
 - `SieveDrop.drop_ev`: The dropped terms, for large `q`
 
 #### `SieveDrop2`: The dropped terms less the kept parts
 
-- `SieveDrop2.drop_ev2`: The dropped terms less the kept parts, for large `q` *paper*
+- `SieveDrop2.drop_ev2`: The dropped terms less the kept parts, for large `q`
 
 #### `SieveDrop8`: The dropped terms' `B`-count, to depth 8
 
-- `SieveDrop8.share8D`: The share of a cell of depth 8 of the region
+- `SieveDrop8.drop4_le'`: A dropped cell of depth 4 *paper*
+- `SieveDrop8.drop6_le'`: A dropped cell of depth 6 *paper*
+- `SieveDrop8.drop8_le`: A dropped cell of depth 8 *paper*
+- `SieveDrop8.trB_le_trapF`: `trB ≤ trapF/SC`. *paper*
+- `SieveDrop8.exB_le_lastF`: `exB ≤ lastF/SC`. *paper*
+- `SieveDrop8.share4D`: The share of a counted cell of depth 4 *paper*
+- `SieveDrop8.share6D`: The share of a counted cell of depth 6 *paper*
+- `SieveDrop8.share8D`: The share of a cell of depth 8 of the region *paper*
 - `SieveDrop8.E1_le`: The dropped terms' `B`-count
-- `SieveDrop8.dT_le_cost`: The dropped sums of a cell `(i, j)` against its cost
-- `SieveDrop8.drop_ev8`: The dropped terms, for large `q`, with the loss as a parameter
+- `SieveDrop8.dT_le_cost`: The dropped sums of a cell `(i, j)` against its cost *paper*
+- `SieveDrop8.drop_ev8`: The dropped terms, for large `q`, with the loss as a parameter *paper*
 
 #### `SieveDyadic`: A dyadic partition of unity
 
@@ -1116,17 +1139,17 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveKept`: The kept parts of the dropped cells of depth 2
 
-- `SieveBuch.Par.Kp2_le`: The kept parts are terms of the dropped term *paper*
-- `SieveBuch.Par.Kk_eq`: The kept part as three sorted families *paper*
+- `SieveBuch.Par.Kp2_le`: The kept parts are terms of the dropped term
+- `SieveBuch.Par.Kk_eq`: The kept part as three sorted families
 
 #### `SieveKeptB`: The kept parts' `B`-count, from below
 
-- `SieveKeptB.Kk_gB_ge`: The kept part's `B`-count, from below *paper*
+- `SieveKeptB.Kk_gB_ge`: The kept part's `B`-count, from below
 
 #### `SieveKeptLeaf`: The kept parts' leaves at `x = q^L`
 
-- `SieveKeptLeaf.lf_Kk`: A kept part's leaf *paper*
-- `SieveKeptLeaf.leaves_ev2`: The leaves and the kept leaves, for large `q` *paper*
+- `SieveKeptLeaf.lf_Kk`: A kept part's leaf
+- `SieveKeptLeaf.leaves_ev2`: The leaves and the kept leaves, for large `q`
 
 #### `SieveLeaf`: The leaves of Buchstab's tree, by the fundamental lemma
 
@@ -1168,16 +1191,28 @@ headline theorems (those whose docstring opens with a bold title).
 #### `SieveOmegaB`: Buchstab's `ω` on `[2, 3]`, and the logarithm's bounds of the certificate's cells
 
 - `SieveOmegaB.log_le_half_sub_inv`: `log y ≤ (y − 1/y)/2` for `y ≥ 1` *paper*
-- `SieveOmegaB.two_mul_div_le_log`: `2(y − 1)/(y + 1) ≤ log y` for `y ≥ 1` *paper*
+- `SieveOmegaB.two_mul_div_le_log`: `2(y − 1)/(y + 1) ≤ log y` for `y ≥ 1`
 - `SieveOmegaB.omB_le_w1`: The maximum of Buchstab's `ω` on `[2, 3]` *paper*
 - `SieveOmegaB.omB_mono`: Buchstab's `ω` increases on `[2, 2.76]` *paper*
 - `SieveOmegaB.omB_anti`: Buchstab's `ω` decreases from `2.77` on *paper*
 - `SieveOmegaB.lnT_ge`: The table *paper*
 - `SieveOmegaB.omF_ge`: `omF` bounds Buchstab's `ω` *paper*
 
+#### `SieveP6Leaves`: Proposition 6 with the bilinear estimate: the large leaves
+
+- `SieveP6Leaves.leaves_chain`: The large leaves of a family, with Brun's weights *paper*
+
+#### `SieveP6Tree`: Proposition 6 with the bilinear estimate: Buchstab's tree on a family
+
+- `SieveP6Tree.tree_chains`: Buchstab's tree on a family, as chains *paper*
+
+#### `SieveP6TreeLeaves`: Proposition 6 with the bilinear estimate: the leaves of the tree
+
+- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper*
+
 #### `SieveP6ib`: Proposition 6 with the bilinear estimate
 
-- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate
+- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate *paper*
 
 #### `SieveProp6`: Proposition 6, Harman's fundamental theorem in the form used
 
@@ -1188,11 +1223,11 @@ headline theorems (those whose docstring opens with a bold title).
 
 - `SieveQ.good_of_large`: The decomposition's hypotheses hold for large `q`
 - `SieveQ.P6IB_boxes`: Proposition 6-ib, uniformly over finitely many boxes
-- `SieveQ.leaves_ev`: The leaves, for large `q` *paper*
+- `SieveQ.leaves_ev`: The leaves, for large `q`
 
 #### `SieveQ8`: The leaves of the decomposition to depth 8, for large `q`
 
-- `SieveQ8.leaves_ev8`: The leaves of the decomposition to depth 8, for large `q`
+- `SieveQ8.leaves_ev8`: The leaves of the decomposition to depth 8, for large `q` *paper*
 
 #### `SieveRanges`: The ranges of Brun's sieve
 
@@ -1213,7 +1248,7 @@ headline theorems (those whose docstring opens with a bold title).
 #### `SieveRoughLo`: Sums over the primes of a cell, from below
 
 - `SieveRoughLo.evGe_cell_inv`: The cell's `Σ 1/p`, from below
-- `SieveRoughLo.evGe_cell_tr`: The cell's `Σ 1/p`, from below, sharper *paper*
+- `SieveRoughLo.evGe_cell_tr`: The cell's `Σ 1/p`, from below, sharper
 
 #### `SieveRoughTuple`: Rough numbers as tuples of primes
 
@@ -1223,6 +1258,11 @@ headline theorems (those whose docstring opens with a bold title).
 
 - `SieveRoute.routeOK2333`
 - `SieveRoute.typeII2333`: `SieveTypeII.typeII_step` as `TypeIIAt`
+
+#### `SieveRule`: The certificate under a decomposition rule, in the reals and over `Finset`
+
+- `SieveCert.ibOK_sound`: The bilinear Type I rule's witnesses *paper*
+- `SieveCert.okIB_cases`: `okIB` passes a box only when `limOK` does, or `ibOK` and `nbOK` do. *paper*
 
 #### `SieveSep`: Separation of smooth comparisons by Fourier inversion over `ℝ^J`
 
@@ -1241,7 +1281,7 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveSpline.what_spl`: The spline's transform
 - `SieveSpline.norm_what_spl_tail`: The spline's tail
 - `SieveSpline.norm_Ew_spl_le`: `E_w` for a spline
-- `SieveSpline.typeIB_spline`: The bilinear Type I estimate with a spline weight
+- `SieveSpline.typeIB_spline`: The bilinear Type I estimate with a spline weight *paper*
 
 #### `SieveStops1`: A stop's cofactor, and the stops below the window
 
@@ -1258,10 +1298,18 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveTree.tree_pt`: The Buchstab tree at one `n` *paper*
 - `SieveTree.tree_sum`: The Buchstab tree over a finite set
 
+#### `SieveTreeStop`: Buchstab's tree with a stopping rule
+
+- `SieveTreeStop.tree_pt_stop`: Buchstab's tree with a stopping rule, at one `n` *paper*
+
 #### `SieveTypeIB`: A bilinear Type I estimate by Parseval's identity
 
 - `SieveTypeIB.sum_bilinear`: The bilinear sum in Fourier form
-- `SieveTypeIB.typeIB_bound`: The bilinear Type I estimate
+- `SieveTypeIB.typeIB_bound`: The bilinear Type I estimate *paper*
+
+#### `SieveTypeIBAsym`: The leaves by the bilinear estimate: the asymptotic form
+
+- `SieveTypeIBAsym.leaves_ib`: The leaves by the bilinear estimate, asymptotically *paper*
 
 #### `SieveTypeII`: The Type II estimate of the sieve route at small heights (Proposition 3′, pointwise in the heights)
 

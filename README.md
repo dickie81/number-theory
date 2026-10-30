@@ -7,7 +7,7 @@ from `main` on every push.
 
 | Paper | Read it |
 |---|---|
-| *Linnik's constant below the zero-density exponent: 278/125 from a zero-free half-plane and the Chen–Gupta–Li density estimate*. The library now proves the exponent 11/5: every reduced residue class mod `q` contains a prime `p ≤ Kq^{11/5}` (`Linnik22000E.linnik_22000e`), by the paper's route with a bilinear Type I estimate and a Buchstab decomposition two levels deeper. | [Paper (PDF)](https://dickie81.github.io/number-theory/linnik-exponent.pdf) · [Supplement (PDF)](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf) · [Source](papers/linnik-exponent/README.md) |
+| *Linnik's constant below the zero-density exponent: 11/5 from a zero-free half-plane and the Chen–Gupta–Li density estimate*. Every reduced residue class mod `q` contains a prime `p ≤ Kq^{11/5}` (`Linnik22000E.linnik_22000e`), by Harman's sieve with a Type II estimate over the zeros' real parts, a bilinear Type I estimate and a Buchstab decomposition to depth eight. | [Paper (PDF)](https://dickie81.github.io/number-theory/linnik-exponent.pdf) · [Supplement (PDF)](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf) · [Source](papers/linnik-exponent/README.md) |
 
 ## What is here
 

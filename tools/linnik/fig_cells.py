@@ -1,6 +1,6 @@
 """fig_cells.py [OUT.tex]: the figure of the cells of depth two of the paper's certificate (its Figure 1), as a TikZ
-picture, from the definitions `mirror2.py` mirrors (`cand`, `dec`, `sub2` and the tests before `cand`), on the paper's
-grid `41556 47531 340`.
+picture, from the definitions `mirror8.py` mirrors (`cand`, `okIB`, `allowedD`, `refcost`, `bound2`, `costD` and the
+tests before `cand`), on the paper's grid `43457 46959 272` under the bilinear Type I rule at `L = 11/5`.
 
 The picture also draws the diagonal, the line `α₁ + 2α₂ = 1` of the corner cells, the window's ends `α₁ = U₁/D` and
 `α₁ = U₂/D` (dashed), and the lines `α₁ + α₂ = U₁/D, U₂/D, 1 − U₂/D, 1 − U₁/D` (dotted, labelled by their constants),
@@ -8,10 +8,13 @@ and marks `v` on the `α₂` axis.
 
 Each cell `(i, j)` of the grid with `e_j < e_i + H` and `2e_i < DEN` is one of: in the window's strip (the cell `i` of
 `p₁` inside the window, so the term of depth one is evaluated and the cell does not arise), a corner cell
-(`e_i + 2e_j > DEN`) that is not surely evaluable, surely evaluable, or a candidate, which is decomposed (`dec`),
-dropped with kept parts (`sub2 > 0`) or dropped without. Runs of equal cells are merged into rectangles. Writes
-`papers/linnik-exponent/fig-cells.tex` by default and prints the counts and costs of the three kinds of candidate
-cell. Needs Python 3 only, and uses all cores (through `mirror2.py`).
+(`e_i + 2e_j > DEN`) that is not surely evaluable, surely evaluable, or a candidate, which is decomposed (`costD`'s
+`decD`) by the split at `X'` (`limOK`: the box's upper sum is below `lim = DEN − U₁`, so the cell lies below the line
+`α₁ + α₂ = 1 − U₁/D`), decomposed whole by the bilinear test (`ibOK` and `nbOK`, the box reaching that line), or
+dropped. Runs of equal cells are merged into rectangles. Writes `papers/linnik-exponent/fig-cells.tex` by default and
+prints the counts and costs of the three kinds of candidate cell, their total (`mirror8.py`'s `totalD`), and the
+dropped cells' cost on either side of the line `α₁ + α₂ = 1 − U₁/D`. Needs Python 3 only, and uses all cores (through
+`mirror8.py`); about two minutes on four cores.
 """
 import os
 import sys
@@ -20,31 +23,43 @@ from multiprocessing import Pool
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '..', '..', 'papers', 'linnik-exponent',
                                                           'fig-cells.tex')
-sys.argv = [sys.argv[0], '41556', '47531', '340']   # mirror2.py reads the grid from its arguments
 sys.path.insert(0, HERE)
-import mirror2 as m  # noqa: E402
+import mirror8 as m  # noqa: E402
 
+GRID = (43457, 46959, 272, '11/5')   # W1, W2, n and L of the paper's certificate (`SieveGrid22000E`, `ibPar22000E`)
 SCALE = 16           # centimetres per unit of exponent
-STYLE = {'dec': 'fill=black!72', 'kept': 'fill=black!42', 'drop': 'fill=black!16',
+STYLE = {'decX': 'fill=black!72', 'decIB': 'fill=black!42', 'drop': 'fill=black!16',
          'corner': 'pattern=north east lines, pattern color=black!45'}
 
 
 def kinds(i):
-    """The kind of each cell (i, j) of depth two: `strip`, `corner`, `eval`, `dec`, `kept` or `drop`."""
-    ei, out = m.E[i], {}
-    for j in range(m.n):
-        ej = m.E[j]
-        if not (ej < ei + m.H and 2 * ei < m.DEN):
+    """The kind of each cell (i, j) of depth two: `strip`, `corner`, `eval`, `decX`, `decIB` or `drop`; and, for the
+    candidate cells, their cost and whether their box reaches the line (`limOK` fails)."""
+    if m.G.get('key') != GRID:
+        m.setup(*GRID)
+        m.G['key'] = GRID
+    H, DEN, U1, U2 = m.G['H'], m.DEN, m.G['U1'], m.G['U2']
+    ei, out, cost = m.e(i), {}, {}
+    for j in range(m.G['n']):
+        ej = m.e(j)
+        if not (ej < ei + H and 2 * ei < DEN):
             continue
-        if m.U1 < ei and ei + m.H < m.U2:
+        if U1 < ei and ei + H < U2:
             out[j] = 'strip'
             continue
-        sev = m.surely([(ei, m.H), (ej, m.H)])
-        if not (ei + 2 * ej <= m.DEN):
+        sev = m.surelyEval([m.cell(i), m.cell(j)])
+        if not (ei + 2 * ej <= DEN):
             out[j] = 'eval' if sev else 'corner'
-        else:
-            out[j] = 'eval' if sev else None
-    return i, out
+            continue
+        if sev:
+            out[j] = 'eval'
+            continue
+        assert m.cand(i, j)
+        c, dec, _ = m.costD(i, j)
+        line = not m.hiSum([m.cell(i), m.cell(j)]) < m.G['lim']
+        out[j] = ('decIB' if line else 'decX') if dec else 'drop'
+        cost[j] = (c, line)
+    return i, out, cost
 
 
 def x(e):
@@ -52,21 +67,23 @@ def x(e):
 
 
 def main():
+    m.setup(*GRID)
+    m.G['key'] = GRID
+    n, H = m.G['n'], m.G['H']
     with Pool() as p:
-        rows = dict(p.imap_unordered(m.cell_row, range(m.n), chunksize=1))
-        kd = dict(p.imap_unordered(kinds, range(m.n), chunksize=1))
-    count, cost = {}, {}
-    for i in range(m.n):
-        for j, k in kd[i].items():
-            if k is None:
-                c, c1, *_, dec = rows[i][j]
-                k = 'dec' if dec else ('kept' if c < c1 else 'drop')
-                kd[i][j] = k
-                count[k] = count.get(k, 0) + 1
-                cost[k] = cost.get(k, 0) + c
+        res = {i: (kd, c) for i, kd, c in p.imap_unordered(kinds, range(n), chunksize=1)}
+    kd = {i: res[i][0] for i in range(n)}
+    count, cost, line = {}, {}, {}
+    for i in range(n):
+        for j, (c, ln) in res[i][1].items():
+            k = kd[i][j]
+            count[k] = count.get(k, 0) + 1
+            cost[k] = cost.get(k, 0) + c
+            if k == 'drop':
+                line[ln] = line.get(ln, 0) + c
     # runs of equal kinds along j, then columns with the same runs merged
     cols = []
-    for i in range(m.n):
+    for i in range(n):
         runs, prev = [], None
         for j in sorted(kd[i]):
             k = kd[i][j]
@@ -78,14 +95,14 @@ def main():
                     runs.append(prev)
         cols.append([tuple(r) for r in runs])
     rects, i = [], 0
-    while i < m.n:
+    while i < n:
         i1 = i + 1
-        while i1 < m.n and cols[i1] == cols[i]:
+        while i1 < n and cols[i1] == cols[i]:
             i1 += 1
         for k, j0, j1 in cols[i]:
-            rects.append((k, m.E[i], m.E[i1 - 1] + m.H, m.E[j0], m.E[j1 - 1] + m.H))
+            rects.append((k, m.e(i), m.e(i1 - 1) + H, m.e(j0), m.e(j1 - 1) + H))
         i = i1
-    u1, u2, v = m.U1 / m.DEN, m.U2 / m.DEN, (m.U2 - m.U1) / m.DEN
+    u1, u2, v = m.G['U1'] / m.DEN, m.G['U2'] / m.DEN, (m.G['U2'] - m.G['U1']) / m.DEN
     lines = ['% Generated by tools/linnik/fig_cells.py from the certificate\'s definitions; do not edit.',
              '\\begin{tikzpicture}[x=1cm, y=1cm]']
     for k, a0, a1, b0, b1 in rects:
@@ -115,8 +132,8 @@ def main():
     lines += [
         f'\\node[font=\\small, anchor=south] at ({s * (u1 + u2) / 2:.4f},{s * u2 + 0.05:.4f}) {{window}};',
         f'\\node[font=\\small, anchor=west, align=left] at (0.3,{s * 0.45:.4f}) {{%',
-        '  \\tikz\\path[fill=black!72] (0,0) rectangle (0.3,0.2); decomposed\\\\',
-        '  \\tikz\\path[fill=black!42] (0,0) rectangle (0.3,0.2); dropped, with kept parts\\\\',
+        '  \\tikz\\path[fill=black!72] (0,0) rectangle (0.3,0.2); decomposed, split at $X\'$\\\\',
+        '  \\tikz\\path[fill=black!42] (0,0) rectangle (0.3,0.2); decomposed whole, bilinear test\\\\',
         '  \\tikz\\path[fill=black!16] (0,0) rectangle (0.3,0.2); dropped\\\\',
         '  \\tikz\\path[pattern=north east lines, pattern color=black!45] (0,0) rectangle (0.3,0.2); corner\\\\',
         '  \\tikz\\draw (0,0) rectangle (0.3,0.2); evaluated};',
@@ -126,8 +143,15 @@ def main():
         fh.write('\n'.join(lines) + '\n')
     K = m.K
     print(f'{len(rects)} rectangles written to {OUT}')
-    for k in ('dec', 'kept', 'drop'):
-        print(f'{k}: {count[k]} cells, cost {cost[k] / K:.4f} K')
+    for k, name in (('decX', 'decomposed, split at X\' (limOK)'), ('decIB', 'decomposed whole (bilinear test only)'),
+                    ('drop', 'dropped')):
+        print(f'{k}: {count.get(k, 0)} cells, cost {cost.get(k, 0) / K:.4f} K ({name})')
+    tot = sum(cost.values())
+    print(f'candidate cells {sum(count.get(k, 0) for k in ("decX", "decIB", "drop"))}, total {tot / K:.7f} K ({tot}); '
+          f'dropped cells reaching the line a1 + a2 = 1 - U1/D: {line.get(True, 0) / K:.4f} K, below it: '
+          f'{line.get(False, 0) / K:.4f} K')
+    print('other cells of depth two: ' + ', '.join(f'{k} {sum(1 for i in range(n) for v in kd[i].values() if v == k)}'
+                                                   for k in ('corner', 'eval', 'strip')))
 
 
 if __name__ == '__main__':
