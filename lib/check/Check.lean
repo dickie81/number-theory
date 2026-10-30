@@ -22,9 +22,9 @@ tree: see the git history. -/
 #print axioms LinnikCGLSteps.charDensity_inT
 #print axioms LinnikCGLHB101.prop31
 #print axioms LinnikCGLSteps.charDensity_s29
-#print axioms SieveTypeIIU22240D.counts_7d
-#print axioms SieveTypeIIU22240D.g7d_le_one
-#print axioms SieveTypeIIU22240D.g7d_half
+#print axioms SieveCurve7D.counts_7d
+#print axioms SieveCurve7D.g7d_le_one
+#print axioms SieveCurve7D.g7d_half
 #print axioms SieveTypeIIU22000D.window_22000d
 
 /- Two results of the literature that it uses (`formalisations/`): the zero-free half-plane `Re s > 11/12` for
@@ -132,6 +132,6 @@ by section, then the results of the literature it uses, each with a note in `for
 #print axioms Linnik.linnik_twelve
 #print axioms LinnikIngham.linnik_thirtysix_thirteenths
 #print axioms LinnikTwelve.linnik_twelve_fifths
-#print axioms SieveTypeIIU22240D.g7d_le_lin
+#print axioms SieveCurve7D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d

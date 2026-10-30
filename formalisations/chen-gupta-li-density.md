@@ -169,7 +169,7 @@ pointwise, `3/(3σ − 1)` is below the step's exponent from `σ ≈ 0.7774` on,
 `3.2·10⁻⁴`. Between the exponents `11161/5000` and `89/40` the library took Huxley's bound on `[1307/1680, 131/168]`,
 in a file `LinnikHuxJunction.lean` (in the git history); at `11161/5000` the window's lower end was set near `7/9`.
 
-The curve is `g7d` (`SieveTypeIIU22240D.lean`): `g7c` with the Chen–Gupta–Li steps on `[5/7, 131/168]`, in place of the
+The curve is `g7d` (`SieveCurve7D.lean`): `g7c` with the Chen–Gupta–Li steps on `[5/7, 131/168]`, in place of the
 plateau and Huxley's steps `hx7_0` … `hx7_4`, and with Ingham's last step
 `[99/140, 5/7]` at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`: `LinnikInghamC.charDensity_ingham_c` has exponent `2 + 4c + 4ε`, so the slack is `4ε`, and the exponent is `7/3 + 1/100000` in place of `7/3 + 1/2000` at `ε = 1/8000`). Huxley's steps
 `hx7_5` … `hx7_19` stay, since their exponents are smaller than the Chen–Gupta–Li step's from `131/168` on. The first
@@ -178,7 +178,7 @@ the first step `[5/7, 1201/1680]`, at its right end; its exponent `2.3334` is th
 Ingham's and Chen–Gupta–Li's exponents meet. The corners' slack grows along the steps, and from `5/7 + 14/1680` on
 steps of `1/280` leave the window as it is (steps of `1/140` would move its lower end). `Linnik22000E.linnik_22000e` is Linnik's theorem with exponent `11/5` on `g7d` (and the paper's, at `278/125`, was `Linnik22240R.linnik_22240r`, now in the git history);
 the classical deduction from the same curve gives `2.3334 + ε` (`LinnikG7.linnik_g7d`, with
-`SieveTypeIIU22240D.g7d_le_lin`: `g7d σ ≤ 2.3334(1 − σ)`).
+`SieveCurve7D.g7d_le_lin`: `g7d σ ≤ 2.3334(1 − σ)`).
 What lets the certificate close at `278/125` is the two deeper levels of the Buchstab decomposition, the kept parts,
 and Buchstab's `ω` itself on `[2, 3]` in the cells' bounds; the trapezoid rule for the cells' prime sums leaves the room
 for the kernel's check of the parts (the Linnik paper, Section 5).

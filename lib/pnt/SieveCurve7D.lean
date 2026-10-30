@@ -10,7 +10,7 @@ place of `7/3 + 1/2000` on `[5/7, 16/21]` and Huxley's steps `hx7_0` … `hx7_4`
 `hx7_5` … `hx7_19`, then `(101/50)(1 − σ)` from `5/6`, `LinnikStep.charDensity_step`); below `5/7` it is `g7c` with
 Ingham's last step at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`: the exponent is `7/3 + 4ε = 7/3 + 1/100000` in place of `7/3 + 1/2000`).
 Its counts need no hypothesis. Its window and Proposition 3′ at `L = 11 / 5` are in `SieveTypeIIU22000D.lean`;
-those at `L = 278 / 125`, which this file had and is named for, are in the git history.
+those at `L = 278 / 125`, which an earlier version of this file had, are in the git history.
 
 * `g7d`, `g7d_le_one`, `g7d_half`; `g7d_le_lin`: `g7d σ ≤ (11667 / 5000)(1 − σ)` for `σ ≤ 1` (the curve's largest
   exponent is that of the first Chen–Gupta–Li step); `counts_7d`: `CurveCounts g7d`, with no hypothesis, glued by
@@ -32,7 +32,7 @@ noncomputable section
 deeply; the default recursion depth is not enough to elaborate them. -/
 set_option maxRecDepth 10000
 
-namespace SieveTypeIIU22240D
+namespace SieveCurve7D
 
 open DirichletCharacter SieveTypeIIGen SieveCurveGlue SieveTypeIIU227
 
@@ -722,7 +722,7 @@ theorem counts_7d : CurveCounts g7d :=
     rangeCounts_glue (rangeCounts_of_density LinnikStairs7.charDensity_hx7_19) <|
     rangeCounts_of_density LinnikStep.charDensity_step
 
-end SieveTypeIIU22240D
+end SieveCurve7D
 
-#print axioms SieveTypeIIU22240D.g7d_le_lin
-#print axioms SieveTypeIIU22240D.counts_7d
+#print axioms SieveCurve7D.g7d_le_lin
+#print axioms SieveCurve7D.counts_7d

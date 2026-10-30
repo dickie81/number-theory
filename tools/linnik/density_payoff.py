@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """density_payoff.py [VARIANT ...]: what a lower density curve would buy the route, by replaying its certificate.
 
-Each variant is a hypothetical density curve made from the committed curve `g7d` (`SieveTypeIIU22240D.lean`, read by
+Each variant is a hypothetical density curve made from the committed curve `g7d` (`SieveCurve7D.lean`, read by
 `route_limits.parse`). For each, the script computes an admissible window as `route_limits.py run` does (the sampled
 scan, then the exact corners, moving an end inward by `10⁻⁵` while a corner fails, here with no limit on the number of
 moves), replays the paper's certificate on it with `mirror2.py` (`total2`, depths up to 6, `n = 340`, in exact
