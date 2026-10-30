@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 101 modules that none of the three imports, directly or not, with their
+The last section lists the 102 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 10 | 54 |
+| `lib/pnt` | 223 | 726 | 11 | 63 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1764,6 +1764,18 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveLevel.volume_le_of_sep`: The measure of a set from counts of separated points
 - `ShortSieveLevel.lintegral_rpow_le_levels`: Moments from the measures of level sets
 - `ShortSieveLevel.lintegral_rpow_le_of_counts`: Moments from counts of large values
+
+#### `ShortSieveLong`: Primes and rough numbers in intervals of relative length `X^{−σ}`
+
+- `ShortSieveLong.abs_theta_sub_theta_le`: `θ` on short intervals
+- `ShortSieveLong.card_primes_short`: Primes in intervals of relative length `X^{−σ}`
+- `ShortSieveLong.primeCounting_short`: Primes in `(X − X^{1−ρ}, X]`
+- `ShortSieveLong.Psi_le_buchstab`: Buchstab's inequality
+- `ShortSieveLong.claim_step`: The induction step
+- `ShortSieveLong.psi_le`: Rough numbers of a short interval from above
+- `ShortSieveLong.psi_le_rpow`: Rough numbers of `(X − X^{1−ρ}, X]` from above
+- `ShortSieveLong.card_dvd_rough`: Rough cofactors in a short interval
+- `ShortSieveLong.card_dvd_rough_of_le`: Rough multiples in a short interval
 
 #### `ShortSieveMoment`: Harman's moment lemma with real exponents
 
