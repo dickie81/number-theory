@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 144, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 94 modules that none of the three imports, directly or not, with their
+The last section lists the 95 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 725 | 3 | 6 |
+| `lib/pnt` | 223 | 725 | 4 | 10 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1716,6 +1716,13 @@ headline theorems (those whose docstring opens with a bold title).
 ### `lib/pnt`
 
 #### `Architect`
+
+#### `ShortSieveDreq`: The exponent of Harman's moment lemma from the mean value theorem and Huxley's estimate
+
+- `ShortSieveDreq.mv_exp_le`: The mean value theorem on a long power
+- `ShortSieveDreq.mv_exp_le_of_le_three_quarters`: The mean value theorem below `3/4`
+- `ShortSieveDreq.hux_exp_le_of_three_quarters_le`: Huxley's estimate above `3/4`
+- `ShortSieveDreq.dreq_hux`: Harman's exponent from the mean value theorem and Huxley's estimate
 
 #### `ShortSieveHolder`: Hölder's inequality with real exponents for a product of factors
 
