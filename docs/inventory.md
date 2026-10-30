@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 109 modules that none of the three imports, directly or not, with their
+The last section lists the 110 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 18 | 103 |
+| `lib/pnt` | 223 | 726 | 19 | 107 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1724,6 +1724,13 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveBoxes.abs_sum_sub_le_boxes`: The box sandwich
 - `ShortSieveBoxes.mem_box_idxG`: A number lies in its box
 - `ShortSieveBoxes.mem_tuples_idxG`: A tuple of primes lies in the tuples of its boxes
+
+#### `ShortSieveBuch`: Buchstab's identity and role reversals for the terms of the certificate
+
+- `ShortSieveBuch.rough_eq_add`: Buchstab's identity at one number
+- `ShortSieveBuch.rough_eq_prime_add`: The role reversal at one number
+- `ShortSieveBuch.count_buchstab`: Buchstab's identity on a node
+- `ShortSieveBuch.count_rev`: The role reversal on a node
 
 #### `ShortSieveCount`: Counts of large values of a Dirichlet polynomial through its powers
 

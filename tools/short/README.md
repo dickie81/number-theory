@@ -82,8 +82,9 @@ of `0.106` against `0.033` at `0.519`, room for a coarse certificate. Stopping L
 not an option: the parts of region C that it decomposes to six primes through Type I information (his sets `D*`,
 `D‡`) would cost a loss of about `6.5` at four (`C4Dstop` in the experiment harness), so the certificate follows his
 decomposition to depth six or eight, as the Linnik certificate does. For this milestone the theorem takes as
-hypotheses Li's Lemmas 2.1 and 2.2 (Baker, Harman and Pintz's Lemmas 12 and 13, which rest on Watt's mean value
-theorem) and his Lemma 3.1 (their Lemma 9, two variables near `x^{1/2}`, which the real-exponent test does not reach).
+hypotheses Li's Lemmas 3.1 and 3.2 (Baker, Harman and Pintz's Lemmas 12 and 13, which rest on Watt's mean value
+theorem) and his Lemma 4.1 (their Lemma 9, two variables near `x^{1/2}`, which the real-exponent test does not reach);
+the numbers are those of arXiv:2308.04458v8.
 The comparison interval is `(x − x^{1−ρ}, x]` with `ρ < 1/300`, so that the prime number theorem with the half-plane's
 error term counts primes down to `x^{2θ−1}` in it (`ShortSieveLong`); the Type II estimate takes any `ρ > 0`
 (`ShortSieveTypeII.abs_card_tuples_sub_le_of_pos`).
@@ -117,8 +118,8 @@ The plan, with what is done:
 2. **Li's other arithmetic information.**
    - The reduction of sums over short intervals to mean values of Dirichlet polynomials (Baker, Harman and Pintz's
      Lemma 6), by Mellin inversion on `Re s = 1/2` with a window averaged `k` times: `ShortSieveInterval` (done).
-   - His Lemma 3.1 (their Lemma 9).
-   - His Lemmas 2.1 and 2.2 (their Lemmas 12 and 13) rest on Watt's mean value theorem (their Lemma 2), which rests on
+   - His Lemma 4.1 (their Lemma 9).
+   - His Lemmas 3.1 and 3.2 (their Lemmas 12 and 13) rest on Watt's mean value theorem (their Lemma 2), which rests on
      Deshouillers and Iwaniec's bounds for sums of Kloosterman sums: not in the library, and a hypothesis until it
      is.
 3. **The sieve.** Buchstab's identity on families of tuples (`SieveDecomp.buchstab_fam` has the form the Linnik route
@@ -129,7 +130,11 @@ The plan, with what is done:
    the order of the primes, the sizes of products), are split by the boxes of a grid of ratio `2^{1/d}`; the boxes
    inside the term get the grouped Type II estimate from a witness of the certificate, and those that straddle a
    condition lie near its boundary, which is thin in the comparison interval (`ShortSieveThin`). Together:
-   `ShortSieveTerm.abs_card_cut_sub_le`, with error `O(y/log² x)`.
+   `ShortSieveTerm.abs_card_cut_sub_le`, with error `O(y/log² x)`. The terms of the certificate are nodes, `k`
+   primes and `m` rough items with log-linear conditions, expanded into tuples of primes (`ShortSieveExpand`,
+   `ShortSieveNode`, done). Buchstab's identity and Li's role reversals are exact identities between node counts, the
+   Type I term (an item free of primes below a level `x^a ∏ p_j^{−b_j}`) being the node plus its child
+   (`ShortSieveBuch`, done).
 4. **The certificate.** Kernel-checked bounds for region A and the region-C terms at the chosen θ, with Li's
    predicates in exact arithmetic on cells, in the manner of the Linnik certificate (`SieveCert`). The terms reach
    dimension 8, so the cost of the cells is the main question.
