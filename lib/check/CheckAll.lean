@@ -518,7 +518,6 @@ import BohrLandauCore
 #print axioms LinnikWeyl.class2_empty
 #print axioms LinnikHuxStepY.charDensity_genY
 #print axioms LinnikStairs7.charDensity_in7_0
-#print axioms LinnikStairs7.charDensity_hx7_0
 #print axioms LinnikStairs7.charDensity_hy_0
 #print axioms LinnikStairs7.charDensity_hy_top
 #print axioms SieveTypeIIHM.dp_eq_pv
