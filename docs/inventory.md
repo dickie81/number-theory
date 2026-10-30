@@ -6,13 +6,13 @@ rewrites it, and CI checks that it is current (`--check`).
 `lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 694 theorems: the library's final
 results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 99 modules that neither `Check` nor `CheckAll` imports, directly or
+The last section lists the 100 modules that neither `Check` nor `CheckAll` imports, directly or
 not, with their headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 210 | 686 | 1 | 0 |
+| `lib/pnt` | 210 | 686 | 2 | 17 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -1589,6 +1589,26 @@ not, with their headline theorems (those whose docstring opens with a bold title
 ### `lib/pnt`
 
 #### `Architect`
+
+#### `SieveBuch8`: The decomposition to depth 8
+
+- `SieveBuch.Par.I_S7`: Depth 7
+- `SieveBuch.Par.I_S8`: Depth 8
+- `SieveBuch.Par.I_S7c_vanish_lt`: Depth 7, `d > c`
+- `SieveBuch.Par.I_S8c_vanish_lt`: Depth 8, `f > d`
+- `SieveBuch.Par.I_S7c_vanish_reg`: Depth 7, outside the region
+- `SieveBuch.Par.I_S8c_vanish_reg`: Depth 8, outside the region
+- `SieveBuch.Par.I_S8_eq`: The cells of depth 8 below a cell of depth 7
+- `SieveBuch.Par.lvl7`: Level 7
+- `SieveBuch.Par.lvl7row`: The cells of depth 7 below a decomposed cell of depth 6
+- `SieveBuch.Par.lvl6c`: A decomposed cell of depth 6
+- `SieveBuch.Par.lvl6'`: Level 6
+- `SieveBuch.Par.lvl5'`: Level 5
+- `SieveBuch.Par.lvl4'`: Level 4
+- `SieveBuch.Par.lvl3'`: Level 3
+- `SieveBuch.Par.lvl2'`: Level 2
+- `SieveBuch.Par.lvl1'`: Level 1
+- `SieveBuch.Par.decomp8`: The decomposition's inequality to depth 8
 
 ### `lib/dh`
 
