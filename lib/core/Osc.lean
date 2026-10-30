@@ -406,23 +406,6 @@ theorem inner_bound {S : ℝ → ℝ} (hS : OscS S) {G T Δ MS M1 : ℝ} (hG : 0
     _ ≤ 2 * M1 * DT T b + MS * (Real.arcosh (T / b) - Real.log (T / b)) := add_le_add hfar hnear
     _ = _ := by ring
 
-/-- `∫_T^∞ dr/r² = 1/T`. -/
-theorem Ioi_inv_sq {T : ℝ} (hT : 0 < T) :
-    IntegrableOn (fun r : ℝ => 1 / r ^ 2) (Set.Ioi T) ∧ ∫ r in Set.Ioi T, 1 / r ^ 2 = 1 / T := by
-  have hderiv : ∀ x ∈ Set.Ioi T, HasDerivAt (fun r : ℝ => -(1 / r)) (1 / x ^ 2) x := by
-    intro x hx
-    have hx0 : x ≠ 0 := (lt_trans hT hx).ne'
-    simpa [one_div] using (hasDerivAt_inv hx0).fun_neg
-  have hcont : ContinuousWithinAt (fun r : ℝ => -(1 / r)) (Set.Ici T) T :=
-    ((continuousAt_const.div continuousAt_id hT.ne').neg).continuousWithinAt
-  have hlim : Tendsto (fun r : ℝ => -(1 / r)) atTop (𝓝 0) := by
-    have := (tendsto_const_nhds (x := (1 : ℝ))).div_atTop tendsto_id
-    simpa using this.neg
-  have hint := integrableOn_Ioi_deriv_of_nonneg hcont hderiv (fun x _ => by positivity) hlim
-  refine ⟨hint, ?_⟩
-  rw [integral_Ioi_of_hasDerivAt_of_tendsto hcont hderiv hint hlim]
-  ring
-
 /-- `∫_T^∞ ln r/r² dr = (ln T + 1)/T` for `T ≥ 1`. -/
 theorem Ioi_log_div_sq {T : ℝ} (hT : 1 ≤ T) :
     IntegrableOn (fun r : ℝ => Real.log r * (1 / r ^ 2)) (Set.Ioi T) ∧
@@ -500,39 +483,6 @@ theorem osc_abs_le {S : ℝ → ℝ} (hS : OscS S) {G T Δ MS M1 OscInf TB : ℝ
   have h4 := mul_le_mul_of_nonneg_left hin (by norm_num : (0 : ℝ) ≤ 4)
   have h5 := mul_le_mul_of_nonneg_left htail (by norm_num : (0 : ℝ) ≤ 4)
   exact le_trans hsub (add_le_add h4 h5)
-
-/-- **1ca(iii), the displayed bound**: for every `Δ ∈ (0, T − γ₁)`, with `MS ≥ sup_{[T−Δ,T]}|S|`,
-`M1 ≥ sup_{[γ₁,T]}|S₁|` and `M2 ≥ sup_{[T,∞)}|S₁|`,
-`|Osc(T) − Osc_∞| ≤ 4MS[arccosh(T/(T−Δ)) − ln(T/(T−Δ))] + 8M1·D_T(T−Δ) + 8M2/T`. -/
-theorem osc_bound {S : ℝ → ℝ} (hS : OscS S) {G T Δ MS M1 M2 OscInf : ℝ} (hG : 0 < G)
-    (hΔ : 0 < Δ) (hΔT : Δ < T - G)
-    (hMS : ∀ r ∈ Set.Icc (T - Δ) T, |S r| ≤ MS)
-    (hM1 : ∀ r ∈ Set.Icc G T, |S1 S G r| ≤ M1)
-    (hM2 : ∀ r, T ≤ r → |S1 S G r| ≤ M2)
-    (hInf : Tendsto (fun X => ∫ r in G..X, S r * (4 / r)) atTop (𝓝 OscInf)) :
-    |Osc S G T - OscInf| ≤ 4 * MS * (Real.arcosh (T / (T - Δ)) - Real.log (T / (T - Δ)))
-      + 8 * M1 * DT T (T - Δ) + 8 * M2 / T := by
-  have hT : 0 < T := by linarith
-  obtain ⟨hIi, hIv⟩ := Ioi_inv_sq hT
-  have hB : IntegrableOn (fun r => (fun _ => M2) r * (1 / r ^ 2)) (Set.Ioi T) := hIi.const_mul M2
-  have hle : ∀ r, T < r → |S1 S G r| ≤ (fun _ => M2) r := fun r hr => hM2 r hr.le
-  have h1 : Tendsto (fun X => S1 S G X / X) atTop (𝓝 0) := by
-    apply squeeze_zero_norm' _ ((tendsto_const_nhds (x := M2)).div_atTop tendsto_id)
-    filter_upwards [eventually_ge_atTop T] with X hX
-    have hX0 : 0 < X := lt_of_lt_of_le hT hX
-    rw [Real.norm_eq_abs, abs_div, abs_of_pos hX0]
-    exact div_le_div_of_nonneg_right (hM2 X hX) hX0.le
-  have h2 := S1_div_sq_integrable hS hT hB hle
-  have hI := tail_abs_le hS hT hB hle
-  rw [MeasureTheory.integral_const_mul, hIv] at hI
-  have hS1T : |S1 S G T / T| ≤ M2 / T := by
-    rw [abs_div, abs_of_pos hT]; exact div_le_div_of_nonneg_right (hM2 T le_rfl) hT.le
-  have htail : |-(S1 S G T / T) + ∫ r in Set.Ioi T, S1 S G r * (1 / r ^ 2)| ≤ 2 * M2 / T := by
-    calc _ ≤ |-(S1 S G T / T)| + |∫ r in Set.Ioi T, S1 S G r * (1 / r ^ 2)| := abs_add_le _ _
-      _ ≤ M2 / T + M2 * (1 / T) := by rw [abs_neg]; exact add_le_add hS1T hI
-      _ = 2 * M2 / T := by ring
-  calc _ ≤ _ := osc_abs_le hS hG hΔ hΔT hMS hM1 h1 h2 hInf htail
-    _ = _ := by ring
 
 theorem arcosh_sub_log_le {x : ℝ} (hx : 1 ≤ x) :
     Real.arcosh x - Real.log x ≤ Real.sqrt (2 * (x - 1)) := by
@@ -905,7 +855,6 @@ end WeilForm
 #print axioms WeilForm.oscInf_eq
 #print axioms WeilForm.osc_decomp
 #print axioms WeilForm.inner_bound
-#print axioms WeilForm.osc_bound
 #print axioms WeilForm.near_term_le
 #print axioms WeilForm.DT_le
 #print axioms WeilForm.Ioi_log_div_sq

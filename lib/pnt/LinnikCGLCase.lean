@@ -72,25 +72,6 @@ section energy
 
 variable {ι : Type*} {q : ℕ} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ)
 
-/-- `|R|² ≤ E`: the quadruples `(i, j, i, j)`. -/
-lemma sq_le_energy : (R.card : ℝ) ^ 2 ≤ energy R χ t := by
-  classical
-  have h : (R ×ˢ R).card ≤ energy R χ t := by
-    unfold energy
-    refine Finset.card_le_card_of_injOn (fun p => (p.1, p.2, p.1, p.2)) ?_ ?_
-    · intro p hp
-      simp only [Finset.mem_coe, Finset.mem_product] at hp
-      have e : t p.1 + t p.2 - t p.1 - t p.2 = 0 := by ring
-      simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_product]
-      exact ⟨⟨hp.1, hp.2, hp.1, hp.2⟩, by rw [e, abs_zero]; norm_num, trivial⟩
-    · intro p _ p' _ h
-      simp only [Prod.mk.injEq] at h
-      exact Prod.ext h.1 h.2.1
-  rw [Finset.card_product] at h
-  have : ((R.card * R.card : ℕ) : ℝ) ≤ energy R χ t := by exact_mod_cast h
-  push_cast at this
-  nlinarith
-
 /-- `E ≤ |R|³` for spaced points (`Spaced`): in a quadruple of the energy, `χ_l` is determined by `χ_i`, `χ_j` and
 `χ_k`, and `t_l` to within `2` by `t_i`, `t_j` and `t_k`, so `l` is determined. -/
 lemma energy_le_cube (hsp : Spaced R χ t) : (energy R χ t : ℝ) ≤ (R.card : ℝ) ^ 3 := by

@@ -818,7 +818,6 @@ theorem sum_Ioc_filter_split {z m n : ℕ} (F : ℕ → ℝ) (hzm : z ≤ m) (hm
       ∑ p ∈ (Ioc z m).filter Nat.Prime, F p + ∑ p ∈ (Ioc m n).filter Nat.Prime, F p := by
   rw [Finset.sum_filter, Finset.sum_filter, Finset.sum_filter, Finset.sum_Ioc_consecutive _ hzm hmn]
 
-
 /-- The sum of `ω*((L − log p)/log p)/(p log p)` over the primes of `(z, b₂]`, with `2 log b₂ = L = u log z` and
 `2 ≤ u ≤ 3` (range B only). -/
 theorem sumW_le_three {z : ℕ} {b2 L u ε₃ : ℝ} (hez : Real.exp 1 ≤ z) (hzb2 : (z : ℝ) ≤ b2)
@@ -1033,7 +1032,6 @@ theorem units_eq {y lz L u Q z ε ε₃ M : ℝ} (hlz0 : 0 < lz) (hLu : L = u * 
   subst hLu hQ
   field_simp
   ring
-
 
 set_option maxHeartbeats 1000000 in
 /-- **The induction step**: the bound at level `K` gives it at level `K + 1`. -/
@@ -1477,23 +1475,6 @@ theorem mem_cellP {x : ℝ} (hx : 1 < x) {k p : ℕ} :
     rw [← not_le, key, not_le]
   rw [key, key', div_mul_cancel₀ _ hD.ne', div_mul_cancel₀ _ hD.ne']
 
-/-- On a grid with `GridOK`, the cell's `Σ 1/p` is at most `h/a = H/e_k`, up to `o(1)`. -/
-theorem evLe_cell_inv (k : ℕ) : EvLe (fun x => ∑ p ∈ cellP x k, 1 / (p : ℝ)) ((H : ℝ) / SieveCert.e k) := by
-  have hek : (0 : ℝ) < SieveCert.e k := by exact_mod_cast e_pos k
-  have hH : (0 : ℝ) < H := by exact_mod_cast H_pos
-  have hD := DEN_pos'
-  have ha : (0 : ℝ) < (SieveCert.e k : ℝ) / DEN := div_pos hek hD
-  have hac : (SieveCert.e k : ℝ) / DEN ≤ ((SieveCert.e k : ℝ) + H) / DEN := div_le_div_of_nonneg_right (by linarith) hD.le
-  have hlog : Real.log (((SieveCert.e k : ℝ) + H) / DEN) - Real.log ((SieveCert.e k : ℝ) / DEN) ≤ (H : ℝ) / SieveCert.e k := by
-    rw [← Real.log_div (by positivity) (by positivity)]
-    have heq : ((SieveCert.e k : ℝ) + H) / DEN / ((SieveCert.e k : ℝ) / DEN) = 1 + (H : ℝ) / SieveCert.e k := by field_simp
-    rw [heq]
-    have := Real.log_le_sub_one_of_pos (show 0 < 1 + (H : ℝ) / SieveCert.e k by positivity)
-    linarith
-  intro δ hδ
-  filter_upwards [evLe_sum_inv ha hac δ hδ] with x hx
-  exact le_trans hx (by linarith)
-
 /-- On a grid with `GridOK`, the cell's `Σ 1/p` is at most the trapezoid bound
 `trB(e_k, H) = H(2e_k + H)/(2e_k(e_k + H))` of `log(1 + H/e_k)`, up to `o(1)`. -/
 theorem evLe_cell_tr (k : ℕ) : EvLe (fun x => ∑ p ∈ cellP x k, 1 / (p : ℝ)) (trB (SieveCert.e k) H) := by
@@ -1727,288 +1708,12 @@ theorem share2 {i j : ℕ} (hij : SieveCert.e i + 2 * SieveCert.e j ≤ DEN) {δ
         Finset.sum_le_sum fun p₁ hp₁ => Finset.sum_le_sum fun p₂ hp₂ => hterm p₁ hp₁ p₂ hp₂
     _ = _ := hsum_eq
 
-omit [Grid] [GridOK] in
-/-- A four-fold sum of a product is the product of the sums. -/
-theorem sum4_mul (s₁ s₂ s₃ s₄ : Finset ℕ) (f₁ f₂ f₃ f₄ : ℕ → ℝ) :
-    ∑ p₁ ∈ s₁, ∑ p₂ ∈ s₂, ∑ p₃ ∈ s₃, ∑ p₄ ∈ s₄, f₁ p₁ * f₂ p₂ * f₃ p₃ * f₄ p₄ =
-      (∑ p ∈ s₁, f₁ p) * (∑ p ∈ s₂, f₂ p) * (∑ p ∈ s₃, f₃ p) * (∑ p ∈ s₄, f₄ p) := by
-  simp only [← Finset.mul_sum, ← Finset.sum_mul]
-
-/-- **The share of a cell of depth 4.** On a grid with `GridOK`, for a cell `(i, j, k, l)` with
-`e_i + e_j + e_k + 2e_l ≤ DEN`, as for a counted cell, and every `δ > 0`: eventually
-`Σ_{p₁ ∈ cell i} Σ_{p₂ ∈ cell j} Σ_{p₃ ∈ cell k} Σ_{p₄ ∈ cell l} Ψ(x/(p₁p₂p₃p₄), p₄) ≤ (bound4/K + δ)·x/log x`. -/
-theorem share4 {i j k l : ℕ}
-    (hijkl : SieveCert.e i + SieveCert.e j + SieveCert.e k + 2 * SieveCert.e l ≤ DEN) {δ : ℝ} (hδ : 0 < δ) :
-    ∀ᶠ x : ℝ in atTop, ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-        (Psi (x / (p₁ * p₂ * p₃ * p₄)) p₄ : ℝ) ≤
-      ((bound4 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) : ℝ) / K + δ) *
-        (x / Real.log x) := by
-  have hD := DEN_pos'
-  have hH : (0 : ℝ) < H := by exact_mod_cast H_pos
-  have hei : (0 : ℝ) < SieveCert.e i := by exact_mod_cast e_pos i
-  have hej : (0 : ℝ) < SieveCert.e j := by exact_mod_cast e_pos j
-  have hek : (0 : ℝ) < SieveCert.e k := by exact_mod_cast e_pos k
-  have hel : (0 : ℝ) < SieveCert.e l := by exact_mod_cast e_pos l
-  have hK := K_pos'
-  have hfit : SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + 4 * H ≤ DEN := by
-    have h1 : V ≤ SieveCert.e l := by unfold SieveCert.e; omega
-    have h2 := four_H_le_V
-    omega
-  have hfit' : (SieveCert.e i : ℝ) + SieveCert.e j + SieveCert.e k + SieveCert.e l + 4 * H ≤ DEN := by
-    exact_mod_cast hfit
-  obtain ⟨W, hW⟩ : ∃ W, W = (omK (SieveCert.e i + SieveCert.e j + SieveCert.e k) (SieveCert.e l) 4 : ℝ) / K :=
-    ⟨_, rfl⟩
-  have hW0 : 0 ≤ W := by rw [hW]; positivity
-  have hPi : (0 : ℝ) ≤ trB (SieveCert.e i) H := trB_nonneg _ _
-  have hPj : (0 : ℝ) ≤ trB (SieveCert.e j) H := trB_nonneg _ _
-  have hPk : (0 : ℝ) ≤ trB (SieveCert.e k) H := trB_nonneg _ _
-  have hPl : (0 : ℝ) ≤ exB (SieveCert.e l) H := exB_nonneg _ _
-  have hWP : W * (trB (SieveCert.e i) H * trB (SieveCert.e j) H * trB (SieveCert.e k) H * exB (SieveCert.e l) H) ≤
-      (bound4 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) : ℝ) / K := by
-    have h := bound4_ge (e_pos i) (e_pos j) (e_pos k) (e_pos l)
-    rw [hW]
-    calc _ = trB (SieveCert.e i) H * trB (SieveCert.e j) H * trB (SieveCert.e k) H * exB (SieveCert.e l) H *
-          ((omK (SieveCert.e i + SieveCert.e j + SieveCert.e k) (SieveCert.e l) 4 : ℝ) / K) := by ring
-      _ ≤ _ := h
-  have hS : ∀ m, ∀ᶠ x : ℝ in atTop, 0 ≤ ∑ p ∈ cellP x m, 1 / (p : ℝ) :=
-    fun m => Filter.Eventually.of_forall fun x => sum_inv_nonneg (cellP x m)
-  have hR := EvLe.mul (mul_nonneg (mul_nonneg hPi hPj) hPk) hPl
-    (by filter_upwards [hS i, hS j, hS k] with x h1 h2 h3; exact mul_nonneg (mul_nonneg h1 h2) h3)
-    (ev_log_mul_nonneg fun x => cellP x l)
-    (EvLe.mul (mul_nonneg hPi hPj) hPk (by filter_upwards [hS i, hS j] with x h1 h2; exact mul_nonneg h1 h2)
-      (hS k) (EvLe.mul hPi hPj (hS i) (hS j) (evLe_cell_tr i) (evLe_cell_tr j)) (evLe_cell_tr k))
-    (evLe_cell_ex l)
-  refine evLe_finish hW0 (by positivity) hWP hR (fun ε hε => ?_) hδ
-  obtain ⟨z₀, hz₀⟩ := psi_le (2 * DEN / SieveCert.e l) hε
-  have hb : (0 : ℝ) < (SieveCert.e l : ℝ) / DEN := div_pos hel hD
-  filter_upwards [eventually_gt_atTop 1, Real.tendsto_log_atTop.eventually_gt_atTop (DEN * Real.log 2),
-    (tendsto_rpow_atTop hb).eventually_ge_atTop (z₀ : ℝ)] with x hx1 hlx2 hxz
-  have hlx : 0 < Real.log x := Real.log_pos hx1
-  have hτ : Real.log 2 / Real.log x * DEN < 1 := by
-    rw [div_mul_eq_mul_div, div_lt_one hlx]; linarith
-  have hterm : ∀ p₁ ∈ cellP x i, ∀ p₂ ∈ cellP x j, ∀ p₃ ∈ cellP x k, ∀ p₄ ∈ cellP x l,
-      (Psi (x / (p₁ * p₂ * p₃ * p₄)) p₄ : ℝ) ≤ (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * Real.log p₄)) := by
-    intro p₁ hp₁ p₂ hp₂ p₃ hp₃ p₄ hp₄
-    have hz : z₀ ≤ p₄ := by
-      have h1 : (z₀ : ℝ) ≤ p₄ := le_trans hxz (mem_primesIn.1 hp₄).2.1
-      exact_mod_cast h1
-    rw [mem_cellP hx1] at hp₁ hp₂ hp₃ hp₄
-    obtain ⟨hp₁p, hc₁l, hc₁r⟩ := hp₁
-    obtain ⟨hp₂p, hc₂l, hc₂r⟩ := hp₂
-    obtain ⟨hp₃p, hc₃l, hc₃r⟩ := hp₃
-    obtain ⟨hp₄p, hc₄l, hc₄r⟩ := hp₄
-    have h1 : (1 : ℝ) ≤ p₁ := by exact_mod_cast hp₁p.one_lt.le
-    have h2 : (1 : ℝ) ≤ p₂ := by exact_mod_cast hp₂p.one_lt.le
-    have h3 : (1 : ℝ) ≤ p₃ := by exact_mod_cast hp₃p.one_lt.le
-    have hlogd : Real.log ((p₁ : ℝ) * p₂ * p₃) / Real.log x * DEN =
-        Real.log p₁ / Real.log x * DEN + Real.log p₂ / Real.log x * DEN + Real.log p₃ / Real.log x * DEN := by
-      rw [Real.log_mul (by positivity) (by positivity), Real.log_mul (by positivity) (by positivity)]; ring
-    have hd1 : (1 : ℝ) ≤ (p₁ : ℝ) * p₂ * p₃ := one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le h1 h2) h3
-    rw [hW]
-    refine psi_point (s := SieveCert.e i + SieveCert.e j + SieveCert.e k) (t := SieveCert.e l) (m := 4)
-      (e_pos l) hz₀ hx1 hτ hd1 hp₄p.two_le hz ?_ hc₄l hc₄r.le ?_ ?_
-    · rw [hlogd]; push_cast; linarith
-    · rw [add_mul, hlogd]; push_cast; linarith
-    · push_cast; linarith
-  have hsum_eq : ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-      (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * Real.log p₄)) =
-      (W + ε) * (x / Real.log x) * ((∑ p ∈ cellP x i, 1 / (p : ℝ)) * (∑ p ∈ cellP x j, 1 / (p : ℝ)) *
-        (∑ p ∈ cellP x k, 1 / (p : ℝ)) * (Real.log x * ∑ p ∈ cellP x l, 1 / ((p : ℝ) * Real.log p))) := by
-    have h1 : ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-        (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * Real.log p₄)) =
-        ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-          (W + ε) * x * (1 / (p₁ : ℝ)) * (1 / (p₂ : ℝ)) * (1 / (p₃ : ℝ)) * (1 / ((p₄ : ℝ) * Real.log p₄)) := by
-      refine Finset.sum_congr rfl fun p₁ _ => Finset.sum_congr rfl fun p₂ _ =>
-        Finset.sum_congr rfl fun p₃ _ => Finset.sum_congr rfl fun p₄ _ => ?_
-      ring
-    rw [h1, sum4_mul (f₁ := fun p => (W + ε) * x * (1 / (p : ℝ))), ← Finset.mul_sum]
-    have := hlx.ne'
-    field_simp
-  calc ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-        (Psi (x / (p₁ * p₂ * p₃ * p₄)) p₄ : ℝ)
-      ≤ ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-          (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * Real.log p₄)) :=
-        Finset.sum_le_sum fun p₁ hp₁ => Finset.sum_le_sum fun p₂ hp₂ => Finset.sum_le_sum fun p₃ hp₃ =>
-          Finset.sum_le_sum fun p₄ hp₄ => hterm p₁ hp₁ p₂ hp₂ p₃ hp₃ p₄ hp₄
-    _ = _ := hsum_eq
-
-omit [Grid] [GridOK] in
-/-- A six-fold sum of a product is the product of the sums. -/
-theorem sum6_mul (s₁ s₂ s₃ s₄ s₅ s₆ : Finset ℕ) (f₁ f₂ f₃ f₄ f₅ f₆ : ℕ → ℝ) :
-    ∑ p₁ ∈ s₁, ∑ p₂ ∈ s₂, ∑ p₃ ∈ s₃, ∑ p₄ ∈ s₄, ∑ p₅ ∈ s₅, ∑ p₆ ∈ s₆,
-        f₁ p₁ * f₂ p₂ * f₃ p₃ * f₄ p₄ * f₅ p₅ * f₆ p₆ =
-      (∑ p ∈ s₁, f₁ p) * (∑ p ∈ s₂, f₂ p) * (∑ p ∈ s₃, f₃ p) * (∑ p ∈ s₄, f₄ p) * (∑ p ∈ s₅, f₅ p) *
-        (∑ p ∈ s₆, f₆ p) := by
-  simp only [← Finset.mul_sum, ← Finset.sum_mul]
-
-/-- **The share of a cell of depth 6** (four fine cells, then two coarse ones). On a grid with `GridOKC`, for a cell
-`(i, j, k, l, b, c)` with `e_i + e_j + e_k + e_l + eC_b + 2eC_c ≤ DEN`, as for a counted one, and every `δ > 0`: eventually
-`Σ Ψ(x/(p₁⋯p₆), p₆) ≤ (bound6/K + δ)·x/log x`, the sum over `p₁ ∈ cell i, …, p₄ ∈ cell l`,
-`p₅ ∈ coarse cell b`, `p₆ ∈ coarse cell c`. -/
-theorem share6 [GridOKC] {i j k l b c : ℕ}
-    (hfit6 : SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b + 2 * eC c ≤ DEN)
-    {δ : ℝ} (hδ : 0 < δ) :
-    ∀ᶠ x : ℝ in atTop, ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-        ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c, (Psi (x / (p₁ * p₂ * p₃ * p₄ * p₅ * p₆)) p₆ : ℝ) ≤
-      ((bound6 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) (eC b) (eC c) : ℝ) / K + δ) *
-        (x / Real.log x) := by
-  have hD := DEN_pos'
-  have hH : (0 : ℝ) < H := by exact_mod_cast H_pos
-  have hHC : (0 : ℝ) < HC := by exact_mod_cast (@H_pos Gc GridOKC.ok)
-  have hei : (0 : ℝ) < SieveCert.e i := by exact_mod_cast e_pos i
-  have hej : (0 : ℝ) < SieveCert.e j := by exact_mod_cast e_pos j
-  have hek : (0 : ℝ) < SieveCert.e k := by exact_mod_cast e_pos k
-  have hel : (0 : ℝ) < SieveCert.e l := by exact_mod_cast e_pos l
-  have hpb : 0 < eC b := @e_pos Gc GridOKC.ok b
-  have hpc : 0 < eC c := @e_pos Gc GridOKC.ok c
-  have heb : (0 : ℝ) < eC b := by exact_mod_cast hpb
-  have hec : (0 : ℝ) < eC c := by exact_mod_cast hpc
-  have hK := K_pos'
-  have hVc : V ≤ eC c := by unfold eC SieveCert.e; simp only [SieveCert.V]; omega
-  have hfit0 := GridOKC.fit
-  have hDEN : SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b + eC c + (4 * H + 2 * HC) ≤ DEN := by
-    omega
-  have hDEN' : ((SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b : ℕ) : ℝ) + (eC c : ℕ) +
-      ((4 * H + 2 * HC : ℕ) : ℝ) ≤ DEN := by exact_mod_cast hDEN
-  obtain ⟨W, hW⟩ : ∃ W, W = (omKw (SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b) (eC c)
-      (4 * H + 2 * HC) HC : ℝ) / K := ⟨_, rfl⟩
-  have hW0 : 0 ≤ W := by rw [hW]; positivity
-  have hPi : (0 : ℝ) ≤ trB (SieveCert.e i) H := trB_nonneg _ _
-  have hPj : (0 : ℝ) ≤ trB (SieveCert.e j) H := trB_nonneg _ _
-  have hPk : (0 : ℝ) ≤ trB (SieveCert.e k) H := trB_nonneg _ _
-  have hPl : (0 : ℝ) ≤ trB (SieveCert.e l) H := trB_nonneg _ _
-  have hPb : (0 : ℝ) ≤ trB (eC b) HC := trB_nonneg _ _
-  have hPc : (0 : ℝ) ≤ exB (eC c) HC := exB_nonneg _ _
-  have hWP : W * (trB (SieveCert.e i) H * trB (SieveCert.e j) H * trB (SieveCert.e k) H * trB (SieveCert.e l) H *
-      trB (eC b) HC * exB (eC c) HC) ≤
-      (bound6 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) (eC b) (eC c) : ℝ) / K := by
-    have h := bound6_ge (e_pos i) (e_pos j) (e_pos k) (e_pos l) hpb hpc
-    rw [hW]
-    calc _ = trB (SieveCert.e i) H * trB (SieveCert.e j) H * trB (SieveCert.e k) H * trB (SieveCert.e l) H *
-          trB (eC b) HC * exB (eC c) HC * ((omKw (SieveCert.e i + SieveCert.e j + SieveCert.e k +
-          SieveCert.e l + eC b) (eC c) (4 * H + 2 * HC) HC : ℝ) / K) := by ring
-      _ ≤ _ := h
-  have hS : ∀ m, ∀ᶠ x : ℝ in atTop, 0 ≤ ∑ p ∈ cellP x m, 1 / (p : ℝ) :=
-    fun m => Filter.Eventually.of_forall fun x => sum_inv_nonneg (cellP x m)
-  have hSb : ∀ᶠ x : ℝ in atTop, 0 ≤ ∑ p ∈ @cellP Gc x b, 1 / (p : ℝ) :=
-    Filter.Eventually.of_forall fun x => sum_inv_nonneg (@cellP Gc x b)
-  have hEb : EvLe (fun x => ∑ p ∈ @cellP Gc x b, 1 / (p : ℝ)) (trB (eC b) HC) :=
-    @evLe_cell_tr Gc GridOKC.ok b
-  have hEc : EvLe (fun x => Real.log x * ∑ p ∈ @cellP Gc x c, 1 / ((p : ℝ) * Real.log p))
-      (exB (eC c) HC) := @evLe_cell_ex Gc GridOKC.ok c
-  have hR4 := EvLe.mul (mul_nonneg (mul_nonneg hPi hPj) hPk) hPl
-    (by filter_upwards [hS i, hS j, hS k] with x h1 h2 h3; exact mul_nonneg (mul_nonneg h1 h2) h3) (hS l)
-    (EvLe.mul (mul_nonneg hPi hPj) hPk (by filter_upwards [hS i, hS j] with x h1 h2; exact mul_nonneg h1 h2)
-      (hS k) (EvLe.mul hPi hPj (hS i) (hS j) (evLe_cell_tr i) (evLe_cell_tr j)) (evLe_cell_tr k))
-    (evLe_cell_tr l)
-  have hR5 := EvLe.mul (mul_nonneg (mul_nonneg (mul_nonneg hPi hPj) hPk) hPl) hPb
-    (by filter_upwards [hS i, hS j, hS k, hS l] with x h1 h2 h3 h4
-        exact mul_nonneg (mul_nonneg (mul_nonneg h1 h2) h3) h4) hSb hR4 hEb
-  have hR := EvLe.mul (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg hPi hPj) hPk) hPl) hPb) hPc
-    (by filter_upwards [hS i, hS j, hS k, hS l, hSb] with x h1 h2 h3 h4 h5
-        exact mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg h1 h2) h3) h4) h5)
-    (ev_log_mul_nonneg fun x => @cellP Gc x c) hR5 hEc
-  refine evLe_finish hW0 (by positivity) hWP hR (fun ε hε => ?_) hδ
-  obtain ⟨z₀, hz₀⟩ := psi_le (2 * DEN / eC c) hε
-  have hb : (0 : ℝ) < (eC c : ℝ) / DEN := div_pos hec hD
-  filter_upwards [eventually_gt_atTop 1, Real.tendsto_log_atTop.eventually_gt_atTop (DEN * Real.log 2),
-    (tendsto_rpow_atTop hb).eventually_ge_atTop (z₀ : ℝ)] with x hx1 hlx2 hxz
-  have hlx : 0 < Real.log x := Real.log_pos hx1
-  have hτ : Real.log 2 / Real.log x * DEN < 1 := by
-    rw [div_mul_eq_mul_div, div_lt_one hlx]; linarith
-  have hterm : ∀ p₁ ∈ cellP x i, ∀ p₂ ∈ cellP x j, ∀ p₃ ∈ cellP x k, ∀ p₄ ∈ cellP x l,
-      ∀ p₅ ∈ @cellP Gc x b, ∀ p₆ ∈ @cellP Gc x c,
-      (Psi (x / (p₁ * p₂ * p₃ * p₄ * p₅ * p₆)) p₆ : ℝ) ≤
-        (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * p₅ * p₆ * Real.log p₆)) := by
-    intro p₁ hp₁ p₂ hp₂ p₃ hp₃ p₄ hp₄ p₅ hp₅ p₆ hp₆
-    have hz : z₀ ≤ p₆ := by
-      have h1 : (z₀ : ℝ) ≤ p₆ := le_trans hxz (mem_primesIn.1 hp₆).2.1
-      exact_mod_cast h1
-    rw [mem_cellP hx1] at hp₁ hp₂ hp₃ hp₄
-    obtain ⟨hp₁p, hc₁l, hc₁r⟩ := hp₁
-    obtain ⟨hp₂p, hc₂l, hc₂r⟩ := hp₂
-    obtain ⟨hp₃p, hc₃l, hc₃r⟩ := hp₃
-    obtain ⟨hp₄p, hc₄l, hc₄r⟩ := hp₄
-    obtain ⟨hp₅p, hc₅l, hc₅r⟩ := (@mem_cellP Gc x hx1 b p₅).1 hp₅
-    obtain ⟨hp₆p, hc₆l, hc₆r⟩ := (@mem_cellP Gc x hx1 c p₆).1 hp₆
-    have hc₅l' : ((eC b : ℕ) : ℝ) ≤ Real.log p₅ / Real.log x * DEN := hc₅l
-    have hc₅r' : Real.log p₅ / Real.log x * DEN < ((eC b : ℕ) : ℝ) + HC := hc₅r
-    have hc₆l' : ((eC c : ℕ) : ℝ) ≤ Real.log p₆ / Real.log x * DEN := hc₆l
-    have hc₆r' : Real.log p₆ / Real.log x * DEN < ((eC c : ℕ) : ℝ) + HC := hc₆r
-    have h1 : (1 : ℝ) ≤ p₁ := by exact_mod_cast hp₁p.one_lt.le
-    have h2 : (1 : ℝ) ≤ p₂ := by exact_mod_cast hp₂p.one_lt.le
-    have h3 : (1 : ℝ) ≤ p₃ := by exact_mod_cast hp₃p.one_lt.le
-    have h4 : (1 : ℝ) ≤ p₄ := by exact_mod_cast hp₄p.one_lt.le
-    have h5 : (1 : ℝ) ≤ p₅ := by exact_mod_cast hp₅p.one_lt.le
-    have hlogd : Real.log ((p₁ : ℝ) * p₂ * p₃ * p₄ * p₅) / Real.log x * DEN =
-        Real.log p₁ / Real.log x * DEN + Real.log p₂ / Real.log x * DEN + Real.log p₃ / Real.log x * DEN +
-          Real.log p₄ / Real.log x * DEN + Real.log p₅ / Real.log x * DEN := by
-      rw [Real.log_mul (by positivity) (by positivity), Real.log_mul (by positivity) (by positivity),
-        Real.log_mul (by positivity) (by positivity), Real.log_mul (by positivity) (by positivity)]; ring
-    have hd1 : (1 : ℝ) ≤ (p₁ : ℝ) * p₂ * p₃ * p₄ * p₅ :=
-      one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le
-        (one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le h1 h2) h3) h4) h5
-    rw [hW]
-    refine psi_point_w (s := SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l + eC b) (t := eC c)
-      (W := 4 * H + 2 * HC) (w := HC) hpc hz₀ hx1 hτ hd1 hp₆p.two_le hz ?_ hc₆l' hc₆r'.le ?_ ?_
-    · rw [hlogd]; push_cast; linarith
-    · rw [add_mul, hlogd]; push_cast; linarith
-    · exact hDEN'
-  have hsum_eq : ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-      ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c,
-      (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * p₅ * p₆ * Real.log p₆)) =
-      (W + ε) * (x / Real.log x) * ((∑ p ∈ cellP x i, 1 / (p : ℝ)) * (∑ p ∈ cellP x j, 1 / (p : ℝ)) *
-        (∑ p ∈ cellP x k, 1 / (p : ℝ)) * (∑ p ∈ cellP x l, 1 / (p : ℝ)) *
-        (∑ p ∈ @cellP Gc x b, 1 / (p : ℝ)) *
-        (Real.log x * ∑ p ∈ @cellP Gc x c, 1 / ((p : ℝ) * Real.log p))) := by
-    have h1 : ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-        ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c,
-        (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * p₅ * p₆ * Real.log p₆)) =
-        ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-          ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c,
-          (W + ε) * x * (1 / (p₁ : ℝ)) * (1 / (p₂ : ℝ)) * (1 / (p₃ : ℝ)) * (1 / (p₄ : ℝ)) * (1 / (p₅ : ℝ)) *
-            (1 / ((p₆ : ℝ) * Real.log p₆)) := by
-      refine Finset.sum_congr rfl fun p₁ _ => Finset.sum_congr rfl fun p₂ _ =>
-        Finset.sum_congr rfl fun p₃ _ => Finset.sum_congr rfl fun p₄ _ => Finset.sum_congr rfl fun p₅ _ =>
-          Finset.sum_congr rfl fun p₆ _ => ?_
-      ring
-    rw [h1, sum6_mul (f₁ := fun p => (W + ε) * x * (1 / (p : ℝ))), ← Finset.mul_sum]
-    have := hlx.ne'
-    field_simp
-  calc ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-        ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c, (Psi (x / (p₁ * p₂ * p₃ * p₄ * p₅ * p₆)) p₆ : ℝ)
-      ≤ ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-        ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c,
-          (W + ε) * (x / ((p₁ : ℝ) * p₂ * p₃ * p₄ * p₅ * p₆ * Real.log p₆)) :=
-        Finset.sum_le_sum fun p₁ hp₁ => Finset.sum_le_sum fun p₂ hp₂ => Finset.sum_le_sum fun p₃ hp₃ =>
-          Finset.sum_le_sum fun p₄ hp₄ => Finset.sum_le_sum fun p₅ hp₅ => Finset.sum_le_sum fun p₆ hp₆ =>
-            hterm p₁ hp₁ p₂ hp₂ p₃ hp₃ p₄ hp₄ p₅ hp₅ p₆ hp₆
-    _ = _ := hsum_eq
-
-/-- `share6` on a counted cell of depth 6. -/
-theorem share6_of_counted6 [GridOKC] {i j k l b c : ℕ} (h : counted6 i j k l b c = true) {δ : ℝ} (hδ : 0 < δ) :
-    ∀ᶠ x : ℝ in atTop, ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-        ∑ p₅ ∈ @cellP Gc x b, ∑ p₆ ∈ @cellP Gc x c, (Psi (x / (p₁ * p₂ * p₃ * p₄ * p₅ * p₆)) p₆ : ℝ) ≤
-      ((bound6 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) (eC b) (eC c) : ℝ) / K + δ) *
-        (x / Real.log x) := by
-  simp only [counted6, Bool.and_eq_true, decide_eq_true_eq] at h
-  exact share6 h.1 hδ
-
 /-- `share2` on a candidate cell, on a grid with `GridOK`. -/
 theorem share2_of_cand {i j : ℕ} (h : cand i j = true) {δ : ℝ} (hδ : 0 < δ) :
     ∀ᶠ x : ℝ in atTop, ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, (Psi (x / (p₁ * p₂)) p₂ : ℝ) ≤
       ((bound2 (SieveCert.e i) (SieveCert.e j) : ℝ) / K + δ) * (x / Real.log x) := by
   simp only [cand, Bool.and_eq_true, decide_eq_true_eq] at h
   exact share2 h.1.1.2 hδ
-
-/-- `share4` on a counted cell, on a grid with `GridOK`. -/
-theorem share4_of_counted4 {i j k l : ℕ} (h : counted4 i j k l = true) {δ : ℝ} (hδ : 0 < δ) :
-    ∀ᶠ x : ℝ in atTop, ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, ∑ p₃ ∈ cellP x k, ∑ p₄ ∈ cellP x l,
-        (Psi (x / (p₁ * p₂ * p₃ * p₄)) p₄ : ℝ) ≤
-      ((bound4 (SieveCert.e i) (SieveCert.e j) (SieveCert.e k) (SieveCert.e l) : ℝ) / K + δ) *
-        (x / Real.log x) := by
-  simp only [counted4, Bool.and_eq_true, decide_eq_true_eq] at h
-  exact share4 h.1 hδ
 
 end Shares
 
@@ -2025,11 +1730,8 @@ end SieveRough
 #print axioms SieveRough.claim_step
 #print axioms SieveRough.psi_le
 #print axioms SieveRough.mem_cellP
-#print axioms SieveRough.evLe_cell_inv
 #print axioms SieveRough.evLe_cell_tr
 #print axioms SieveRough.evLe_cell_ex
 #print axioms SieveRough.psi_point
 #print axioms SieveRough.share2
-#print axioms SieveRough.share4
 #print axioms SieveRough.share2_of_cand
-#print axioms SieveRough.share4_of_counted4

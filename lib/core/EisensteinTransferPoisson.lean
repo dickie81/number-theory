@@ -53,11 +53,6 @@ theorem aXi_idl_mul_conj [NeZero m] (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) {C 
 (7.3) before its expansion in characters. -/
 def pairPsiDual (C1 C2 : Finset Pr) : ℂ := (-1 : ℂ) ^ C1.card * (-1) ^ C2.card * pairPsi C1 C2
 
-theorem norm_pairPsiDual (C1 C2 : Finset Pr) : ‖pairPsiDual C1 C2‖ = 1 := by
-  unfold pairPsiDual
-  rw [norm_mul, norm_mul, norm_pow, norm_pow, norm_neg, norm_one, one_pow, one_pow, one_mul,
-    one_mul, norm_pairPsi]
-
 open Classical in
 /-- **Poisson summation for one pair of columns, in the dual direction** (the companion paper's
 (7.3) in its first Poisson summation): `a(C₁)ā(C₂)·Σ_u χ_{A₁}(u)χ̄_{A₂}(u)·Φ(u/√H)` is
@@ -211,7 +206,6 @@ end
 #print axioms Eis.aF_mul_conj
 #print axioms Eis.norm_xi_cls
 #print axioms Eis.aXi_idl_mul_conj
-#print axioms Eis.norm_pairPsiDual
 #print axioms Eis.pairSum_poisson_dual
 #print axioms Eis.alpha_pair
 #print axioms Eis.colSum_eq_powerset_one

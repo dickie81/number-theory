@@ -70,13 +70,6 @@ theorem dhRH_iff_cross : DHRH ↔ DHRHcross := by
     have hsr : s = ((s.re : ℝ) : ℂ) := Complex.ext (by simp) (by simp [him])
     exact dh_ne_zero_of_real h0 (by rw [← hsr]; exact hs)
 
-/-- `dhRH_of_cross` with its named input `hreal` discharged by `dh_ne_zero_of_real`. -/
-theorem dhRH_of_cross' {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ}
-    (hint : ∀ n, IntervalIntegrable (g n) volume (-(a n)) (a n))
-    (hcross : ∀ᶠ n in atTop, ∀ z, ghatC (g n) (a n) z = 0 → z.re = 0 ∨ z.im = 0)
-    (hconv : HypConvDH a g) : DHRH :=
-  dhRH_of_cross hint hcross hconv fun _ hσ => dh_ne_zero_of_real hσ
-
 /-! ## Conjugation symmetry -/
 
 section Conj
@@ -362,7 +355,6 @@ theorem negIndex_ge_five : ∃ b, 0 < b ∧ ∃ W : Submodule ℝ (ℝ → ℝ),
 end DHNegIndex
 
 #print axioms PsiOmega.dhRH_iff_cross
-#print axioms PsiOmega.dhRH_of_cross'
 #print axioms PsiOmega.dh_conj
 #print axioms PsiOmega.dh_conj_zero
 #print axioms PsiOmega.QDHu_add_even_odd

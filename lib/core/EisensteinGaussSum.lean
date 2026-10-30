@@ -138,14 +138,6 @@ theorem gaussSum_cubCharC_cube {π : 𝓞 K} (hπ : Primary π) (hP : P = span {
   rw [cubCharC, jacobiSum_ringHomComp, jacobiSum_eq_neg P hP3 hπ hP, absNorm_eq_card]
   simp
 
-/-- `|g(χ_P, ψ)|² = N(P)`. -/
-theorem norm_gaussSum_cubCharC_sq {ψ : AddChar (𝓞 K ⧸ P) ℂ} (hψ : ψ.IsPrimitive) :
-    ‖gaussSum (cubCharC P hP3) ψ‖ ^ 2 = (absNorm P : ℝ) := by
-  have h := gaussSum_mul_gaussSum_eq_card (cubCharC_ne_one P hP3) hψ
-  rw [← star_gaussSum_eq, RCLike.star_def, Complex.mul_conj, ← absNorm_eq_card] at h
-  rw [← Complex.normSq_eq_norm_sq]
-  exact_mod_cast h
-
 end GaussCube
 
 /-- The residue ring `𝓞/P` has characteristic `≠ 2` when `2 ∉ P` (`ringChar_ne_two` and
@@ -289,7 +281,6 @@ end Eis
 #print axioms Eis.gaussSum_dup
 #print axioms Eis.orderOf_cubCharC
 #print axioms Eis.gaussSum_cubCharC_cube
-#print axioms Eis.norm_gaussSum_cubCharC_sq
 #print axioms Eis.chi6_sq
 #print axioms Eis.chi6_cube
 #print axioms Eis.gaussSum_chi6

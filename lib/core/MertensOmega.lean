@@ -271,17 +271,6 @@ theorem rh_of_liouville_bound (hε : ε ≠ 0) (h : ∀ x : ℝ, 1 < x → ε * 
     RiemannHypothesis :=
   rh_of_zeroFree_half fun _ hρ => zeta_ne_zero_of_liouville (le_refl _) (by norm_num) hε h hρ
 
-/-- The hypothesis "`L(x) ≤ 0` for every `x > 1`" is refutable: `L(3/2) = λ(1) = 1`. Pólya's
-conjecture starts at `x = 2`. -/
-theorem polya_hyp_false : ¬ (∀ x : ℝ, 1 < x → summ fLi x ≤ 0) := by
-  intro h
-  have h1 := h (3 / 2) (by norm_num)
-  have e : summ fLi (3 / 2) = 1 := by
-    unfold summ
-    have : ⌊(3 / 2 : ℝ)⌋₊ = 1 := by rw [Nat.floor_eq_iff (by norm_num)]; norm_num
-    rw [this]; simp [fLi, ArithmeticFunction.liouville_apply]
-  linarith
-
 /-- **Pólya's conjecture implies RH**: if `L(x) ≤ 0` for every `x ≥ 2`, Mathlib's `RiemannHypothesis`
 holds. (Pólya's conjecture is false: Haselgrove 1958; Tanaka 1980, `L(906150257) = 1`.) The
 hypothesis is stated for `x ≥ 2`, since for every `x > 1` it is refutable (`polya_hyp_false`); on
@@ -305,5 +294,4 @@ end PsiOmega
 #print axioms PsiOmega.LSeries_liouville
 #print axioms PsiOmega.zeta_ne_zero_of_liouville
 #print axioms PsiOmega.rh_of_liouville_bound
-#print axioms PsiOmega.polya_hyp_false
 #print axioms PsiOmega.rh_of_polya

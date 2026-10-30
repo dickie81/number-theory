@@ -203,16 +203,6 @@ theorem dhRHcross_of_cross {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ}
   · right; rwa [re_ordinate] at hre
   · left; exact re_eq_half_of_Xi_real him
 
-/-- **dh instance of `rh_of_prime_side_cross`**, with the real-zero exclusion as a named input. -/
-theorem dhRH_of_cross {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ}
-    (hint : ∀ n, IntervalIntegrable (g n) volume (-(a n)) (a n))
-    (hcross : ∀ᶠ n in atTop, ∀ z, ghatC (g n) (a n) z = 0 → z.re = 0 ∨ z.im = 0)
-    (hconv : HypConvDH a g) (hreal : ∀ σ : ℝ, 0 < σ → dh (σ : ℂ) ≠ 0) : DHRH := by
-  intro s hs h0
-  refine (dhRHcross_of_cross hint hcross hconv s hs h0).resolve_right fun him => ?_
-  have hsr : s = ((s.re : ℝ) : ℂ) := Complex.ext (by simp) (by simp [him])
-  exact hreal s.re h0 (by rw [← hsr]; exact hs)
-
 /-- **Refutation of the cross chain for dh**: no integrable sequence with transforms eventually
 vanishing only on `ℝ ∪ iℝ` satisfies `HypConvDH`. -/
 theorem not_hypConvDH_of_cross {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ}
@@ -628,22 +618,6 @@ theorem finrank_le_quadruples_gen {a : ℝ} {ι : Type*} {t : ι → ℂ} {c : �
       exact im_ghat_of_orbit (hV v v.2) ha hw horb
   linarith
 
-/-- The ζ statement is the instance `c = 1`, `t = (ρ − ½)/i`, `Q = weilQ a`. -/
-theorem finrank_le_quadruples' {a : ℝ} {ι : Type*} {ρ : ι → ℂ} (V : Submodule ℝ (ℝ → ℝ))
-    [FiniteDimensional ℝ V] (ha : 0 < a)
-    (hV : ∀ v ∈ V, Probe a v) (hneg : ∀ v ∈ V, v ≠ 0 → weilQ a v < 0)
-    (hEF : ∀ v ∈ V, WeilExplicit ρ (fun z => ghatC v a z ^ 2) (hsq v a))
-    (R : Finset ι)
-    (hR : ∀ i, (ρ i).re = 1 / 2 ∨ ∃ r ∈ R,
-      let t := (ρ i - 1 / 2) / Complex.I
-      let w := (ρ r - 1 / 2) / Complex.I
-      t = w ∨ t = -w ∨ t = (starRingEnd ℂ) w ∨ t = -(starRingEnd ℂ) w) :
-    Module.finrank ℝ V ≤ R.card :=
-  finrank_le_quadruples_gen (t := fun i => (ρ i - 1 / 2) / Complex.I) (c := fun _ => 1)
-    (fun _ => zero_le_one) (weilQ a) V ha hV hneg
-    (fun v hv => by simpa using weilQ_eq_zero_sum (hV v hv) ha (hEF v hv)) R
-    (fun i => (hR i).imp_left ordinate_im_zero)
-
 /-- **The Davenport–Heilbronn instance**: `Q_dh` negative definite on `V` (probes with the width-3
 strip test) gives `dim V ≤ |R|` for every representative set `R` of the off-line zeros of `dh`. -/
 theorem finrank_le_quadruples_dh {a : ℝ} (V : Submodule ℝ (ℝ → ℝ)) [FiniteDimensional ℝ V]
@@ -660,21 +634,6 @@ theorem finrank_le_quadruples_dh {a : ℝ} (V : Submodule ℝ (ℝ → ℝ)) [Fi
       obtain ⟨K, hK⟩ := hS v hv
       simpa using QDHu_hasSum (hV v hv) ha hK) R hR
 
-/-- The scaled instance: `QDH a`, test point `tau3 i`, width-1 strip test. -/
-theorem finrank_le_quadruples_dh_scaled {a : ℝ} (V : Submodule ℝ (ℝ → ℝ)) [FiniteDimensional ℝ V]
-    (ha : 0 < a) (hV : ∀ v ∈ V, Probe a v)
-    (hS : ∀ v ∈ V, ∃ K, StripTest (fun z => ghatC v a z ^ 2) K)
-    (hneg : ∀ v ∈ V, v ≠ 0 → QDH a v < 0)
-    (R : Finset (ZeroIdx (sqF XiDH3)))
-    (hR : ∀ i, (tau3 i).im = 0 ∨ ∃ r ∈ R,
-      tau3 i = tau3 r ∨ tau3 i = -tau3 r ∨ tau3 i = (starRingEnd ℂ) (tau3 r)
-        ∨ tau3 i = -(starRingEnd ℂ) (tau3 r)) :
-    Module.finrank ℝ V ≤ R.card :=
-  finrank_le_quadruples_gen (t := tau3) (c := fun _ => 2) (fun _ => by norm_num)
-    (QDH a) V ha hV hneg (fun v hv => by
-      obtain ⟨K, hK⟩ := hS v hv
-      simpa using QDH_hasSum (hV v hv) ha hK) R hR
-
 end PsiOmega
 
 #print axioms PsiOmega.dh_ne_zero_of_two_le
@@ -683,7 +642,6 @@ end PsiOmega
 #print axioms PsiOmega.dhRH_of_realRooted
 #print axioms PsiOmega.not_hypConvDH_of_realRooted
 #print axioms PsiOmega.dhRHcross_of_cross
-#print axioms PsiOmega.dhRH_of_cross
 #print axioms PsiOmega.not_hypConvDH_of_cross
 #print axioms PsiOmega.dhRHcross_of_strip
 #print axioms PsiOmega.not_hypConvStripDH_of_cross
@@ -702,6 +660,4 @@ end PsiOmega
 #print axioms PsiOmega.weil_criterion_dh
 #print axioms PsiOmega.not_GRH_dh
 #print axioms PsiOmega.finrank_le_quadruples_gen
-#print axioms PsiOmega.finrank_le_quadruples'
 #print axioms PsiOmega.finrank_le_quadruples_dh
-#print axioms PsiOmega.finrank_le_quadruples_dh_scaled

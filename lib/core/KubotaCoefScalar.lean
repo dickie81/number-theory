@@ -401,20 +401,6 @@ theorem tauTh_δ3_ne_zero {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) : tauTh 
   rw [hz] at hI
   exact const_theta_ne_zero one_pos hI.symm
 
-/-- **θ's coefficients at the unit multiples by `ω`**: `τ(δ₃x) ≠ 0` only if `3 ∣ x`, `x` primary or `−x`
-primary; so `τ(δ₃x) = 0` for `x = ±ωy` and `x = ±ω²y` with `y` primary, and for `λ ∥ x`. -/
-theorem tauTh_mask {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) {x : 𝓞 K} (hx : tauTh r Y hY (δ3 * x) ≠ 0) :
-    (3 : 𝓞 K) ∣ x ∨ Primary x ∨ Primary (-x) := by
-  have hx0 : x ≠ 0 := by
-    rintro rfl
-    rw [mul_zero, tauTh_zero] at hx
-    exact hx rfl
-  have hρ : rhoM x r Y hY ≠ 0 := by
-    intro hz
-    apply hx
-    rw [tauTh_δ3_mul r Y hY hx0, hz, zero_div]
-  exact mask_of_ebr (ebr_eq_one_of_rhoM_ne_zero hr hY hx0 hρ)
-
 /-- **The display's coefficient clause for θ**: `C = τ(δ₃) ≠ 0` (`tauTh_δ3_ne_zero`) with
 `tauTh_display_coef`, in the form of `KubotaTheta`. -/
 theorem exists_display_coef {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) :
@@ -447,5 +433,4 @@ end
 #print axioms Eis.kub_perW_ne_one
 #print axioms Eis.thS_eq_zero_of_scalar
 #print axioms Eis.tauTh_δ3_ne_zero
-#print axioms Eis.tauTh_mask
 #print axioms Eis.exists_display_coef

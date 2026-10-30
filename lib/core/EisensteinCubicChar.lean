@@ -437,9 +437,6 @@ theorem cubChar_ne_one : cubChar P hP3 ≠ 1 := by
   have h3d := three_dvd_card_sub_one P hP3
   unfold m3 at hle hm; omega
 
-theorem orderOf_cubChar : orderOf (cubChar P hP3) = 3 :=
-  orderOf_eq_prime (cubChar_pow_three P hP3) (cubChar_ne_one P hP3)
-
 /-- `J(χ_P, χ_P) ∈ P`: modulo `P` it is `Σ_x x^m(1 − x)^m`, a polynomial sum of degree
 `2m < N(P) − 1`. -/
 theorem jacobiSum_mem : jacobiSum (cubChar P hP3) (cubChar P hP3) ∈ P := by

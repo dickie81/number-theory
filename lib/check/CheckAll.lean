@@ -1,13 +1,13 @@
 /- This file prints the axioms of every final theorem of the library. It is not built by default. Every line it
 prints must be `[propext, Classical.choice, Quot.sound]`, a subset of them, or none. -/
-import WanderLadderPNT
-import Rung3
+import PrimeNumberTheoremAnd.Consequences
 import PNTKV
 import KaiserKV
 import TwinKV
 import DetectEM
-import KVSubsumes
-import Domination
+import WeilIndexInfinite
+import StripConv
+import PhiDExp
 import LogDerivDisc
 import HalfPlanePNT
 import BohrKV
@@ -59,9 +59,9 @@ import LinnikTwelveBins
 import LinnikTwelveSizes
 import LinnikTwelve
 import LinnikMoment
-import LinnikLines
-import LinnikSplit
-import LinnikS2
+import Mathlib.NumberTheory.MulChar.Lemmas
+import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
 import LinnikPoints
 import SieveSmooth
 import LinnikStep
@@ -104,12 +104,10 @@ import SieveCurveGlue
 import LinnikWeyl
 import LinnikHuxStepY
 import LinnikStairs7
-import SieveTypeIIU227
 import SieveHMBin
 import SieveHMBins
 import SieveHMWindow
 import SieveTypeIIHM
-import SieveTypeIIU226C
 import LinnikCGLLV
 import LinnikCGLStep
 import LinnikCGLMat
@@ -173,15 +171,6 @@ import LinnikCGLHBRefl
 import LinnikCGLHBIter
 import LinnikCGLHB101
 import LinnikCGLDensity
-import SieveCert2Defs
-import SieveCert2
-import SieveRoughLo
-import SieveExact
-import SieveKept
-import SieveBuch2
-import SieveKeptLeaf
-import SieveKeptB
-import SieveDrop2
 import SieveMain2
 import LinnikCGLSteps
 import SieveCurve7D

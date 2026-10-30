@@ -111,18 +111,6 @@ def It {ι : Type*} {q : ℕ} [NeZero q] (N : ℝ) (R : Finset ι) (χ : ι → 
     (X M₂ : ℝ) (m₁ m₂ m₃ : ℤ) : ℝ :=
   ∫ v₁ in Icc (1 / 2 : ℝ) 2, Itg N R χ t X M₂ m₁ m₂ m₃ v₁
 
-lemma Itg_nonneg {ι : Type*} {q : ℕ} [NeZero q] (N : ℝ) (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
-    (t : ι → ℝ) (X M₂ : ℝ) (m₁ m₂ m₃ : ℤ) (v₁ : ℝ) : 0 ≤ Itg N R χ t X M₂ m₁ m₂ m₃ v₁ := by
-  unfold Itg
-  refine Finset.sum_nonneg fun b₁ _ => Finset.sum_nonneg fun b₂ _ => ?_
-  have := Rt_nonneg N R χ t X M₂ ((m₁ * v₁ + m₃) / (m₂ * v₁)) ((b₁⁻¹ * b₂ : (ZMod q)ˣ) : ZMod q)
-  have := Rt_nonneg N R χ t X M₂ ((m₁ * v₁ + m₃) / m₂) (b₂ : ZMod q)
-  positivity
-
-lemma It_nonneg {ι : Type*} {q : ℕ} [NeZero q] (N : ℝ) (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
-    (t : ι → ℝ) (X M₂ : ℝ) (m₁ m₂ m₃ : ℤ) : 0 ≤ It N R χ t X M₂ m₁ m₂ m₃ :=
-  setIntegral_nonneg measurableSet_Icc fun v₁ _ => Itg_nonneg N R χ t X M₂ m₁ m₂ m₃ v₁
-
 /-- The integrand is integrable on `[1/2, 2]` for `NM₂/q ≥ 0`. -/
 lemma integrableOn_Itg {ι : Type*} {q : ℕ} [NeZero q] {N : ℝ} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
     (t : ι → ℝ) {X M₂ : ℝ} (hL : 0 ≤ N * M₂ / q) (m₁ m₂ m₃ : ℤ) :

@@ -371,77 +371,6 @@ theorem ghat_sq_le_pair (hint : ∫ x, Hr L η α x = 0) (ha : 0 < a) {τ : ℂ}
         have := mul_le_mul_of_nonneg_left hsum hE
         nlinarith
 
-/-- **The zero side at the density level**: if `e^{2a|Im τ|} ≤ κ` at every zero, then
-`Q(g) ≤ 4κ ∫ W(x) ‖F(x − i)‖² dx`. -/
-theorem weilQ_le_W (hint : ∫ x, Hr L η α x = 0) (ha : 0 < a) {κ : ℝ} (hκ0 : 0 ≤ κ)
-    (hκ : ∀ i : ZeroIdx (sqF Xi), Real.exp (2 * a * |(tau i).im|) ≤ κ)
-    (hW : Integrable fun x => Wf x * ‖FT (PsiK L η α a) x‖ ^ 2) :
-    weilQ a (gK L η α a) ≤ 4 * κ * ∫ x, Wf x * ‖FT (PsiK L η α a) x‖ ^ 2 := by
-  have hp := ht.par
-  set F := FT (PsiK L η α a)
-  have H := weilQ_eq_zero_sum (probe_gK hp hint ha.le) ha (weilExplicit_gK hp hint ha)
-  have Hre := Complex.hasSum_re H
-  simp only [Complex.ofReal_re] at Hre
-  set c : ZeroIdx (sqF Xi) → ℝ := fun i => 2 * κ * ∫ x, Vz (tau i) x * ‖F x‖ ^ 2
-  have hV0 : ∀ i x, 0 ≤ Vz (tau i) x * ‖F x‖ ^ 2 := fun i x =>
-    mul_nonneg (Vz_nonneg (tau_im i) x) (sq_nonneg _)
-  have hc0 : ∀ i, 0 ≤ c i := fun i => mul_nonneg (by positivity) (integral_nonneg fun x => hV0 i x)
-  -- each term
-  have hterm : ∀ p : Bool × ZeroIdx (sqF Xi),
-      (ghatC (gK L η α a) a ((rhoXi p - 1 / 2) / I) ^ 2).re ≤ c p.2 := by
-    intro p
-    set t := (rhoXi p - 1 / 2) / I
-    have hpair := ghat_sq_le_pair ht hLa hint ha (im_rhoXi p) (Xi_rhoXi p)
-    have hV : (fun x => Vz t x * ‖F x‖ ^ 2) = fun x => Vz (tau p.2) x * ‖F x‖ ^ 2 := by
-      funext x; simp only [t, ordinate_rhoXi]; split_ifs
-      · rfl
-      · rw [Vz_neg]
-    have hI : |t.im| = |(tau p.2).im| := by
-      simp only [t, ordinate_rhoXi]; split_ifs
-      · rfl
-      · rw [neg_im, abs_neg]
-    rw [hV, hI] at hpair
-    have hint0 : 0 ≤ ∫ x, Vz (tau p.2) x * ‖F x‖ ^ 2 := integral_nonneg fun x => hV0 p.2 x
-    calc (ghatC (gK L η α a) a t ^ 2).re ≤ ‖ghatC (gK L η α a) a t ^ 2‖ := Complex.re_le_norm _
-      _ = ‖ghatC (gK L η α a) a t‖ ^ 2 := norm_pow _ _
-      _ ≤ 2 * Real.exp (2 * a * |(tau p.2).im|) * ∫ x, Vz (tau p.2) x * ‖F x‖ ^ 2 := hpair
-      _ ≤ c p.2 := by
-          simp only [c]; gcongr; exact hκ p.2
-  -- finite sums
-  have hfin : ∀ T : Finset (ZeroIdx (sqF Xi)), ∑ i ∈ T, c i ≤ 2 * κ * ∫ x, Wf x * ‖F x‖ ^ 2 := by
-    intro T
-    have hint : ∀ i ∈ T, Integrable fun x => Vz (tau i) x * ‖F x‖ ^ 2 := by
-      intro i _
-      have hs := abs_lt.1 (tau_im i)
-      have i1 := integrable_pk_FT ht hLa (by linarith : 0 < 1 + (tau i).im) (tau i).re
-      have i2 := integrable_pk_FT ht hLa (by linarith : 0 < 1 - (tau i).im) (-(tau i).re)
-      simp only [sub_neg_eq_add] at i2
-      refine (i1.add i2).congr (ae_of_all _ fun x => ?_)
-      simp only [Pi.add_apply, Vz, add_mul, F]
-    have e : ∑ i ∈ T, c i = 2 * κ * ∫ x, (∑ i ∈ T, Vz (tau i) x) * ‖F x‖ ^ 2 := by
-      simp only [c]; rw [← Finset.mul_sum, ← integral_finsetSum _ hint]
-      congr 1; congr 1; funext x; rw [Finset.sum_mul]
-    rw [e]
-    refine mul_le_mul_of_nonneg_left ?_ (by positivity)
-    refine integral_mono_of_nonneg (ae_of_all _ fun x => ?_) hW (ae_of_all _ fun x => ?_)
-    · exact mul_nonneg (Finset.sum_nonneg fun i _ => Vz_nonneg (tau_im i) x) (sq_nonneg _)
-    · refine mul_le_mul_of_nonneg_right ?_ (sq_nonneg _)
-      refine le_trans ?_ (tsum_Vz_le x)
-      exact (hasSum_Vz x).summable.sum_le_tsum T (fun i _ => Vz_nonneg (tau_im i) x)
-  rw [← Hre.tsum_eq]
-  refine Hre.summable.tsum_le_of_sum_le fun S => ?_
-  set T := S.image Prod.snd
-  calc ∑ p ∈ S, (ghatC (gK L η α a) a ((rhoXi p - 1 / 2) / I) ^ 2).re ≤ ∑ p ∈ S, c p.2 :=
-        Finset.sum_le_sum fun p _ => hterm p
-    _ ≤ ∑ p ∈ (Finset.univ : Finset Bool) ×ˢ T, c p.2 :=
-        Finset.sum_le_sum_of_subset_of_nonneg (fun p hp => by
-          simp only [Finset.mem_product, Finset.mem_univ, true_and, T]
-          exact Finset.mem_image_of_mem _ hp) (fun p _ _ => hc0 p.2)
-    _ = 2 * ∑ i ∈ T, c i := by
-        rw [Finset.sum_product]; simp [Finset.sum_const]
-    _ ≤ 2 * (2 * κ * ∫ x, Wf x * ‖F x‖ ^ 2) := by gcongr; exact hfin T
-    _ = _ := by ring
-
 end Zero
 
 /-! ## Numbers -/
@@ -607,16 +536,6 @@ theorem prefactor_data {a : ℝ} (ha : 4 ≤ a) :
       _ = 1638400 * (Real.exp (16 * a) * Real.exp (4 * a) * Real.exp (-(2 * a))) := by ring
       _ = 1638400 * Real.exp (18 * a) := by rw [he]
 
-/-- **The zero side at `η = 1/L`**: `Q(g) ≤ 16 κ Kz (a + 1) e^{9a}`. -/
-theorem weilQ_prefactor {a : ℝ} (ha : 4 ≤ a) {κ : ℝ} (hκ0 : 0 ≤ κ)
-    (hκ : ∀ i : ZeroIdx (sqF Xi), Real.exp (2 * a * |(tau i).im|) ≤ κ) :
-    weilQ a (gK (Real.exp a) (1 / Real.exp a) (kα (Real.exp a)) a) ≤ 16 * κ * Kz * (a + 1) * Real.exp (9 * a) := by
-  obtain ⟨ht, hint, hW, hJ, -⟩ := prefactor_data ha
-  calc _ ≤ 4 * κ * ∫ x, Wf x * ‖FT (PsiK (Real.exp a) (1 / Real.exp a) (kα (Real.exp a)) a) x‖ ^ 2 :=
-        weilQ_le_W ht rfl hint (by linarith) hκ0 hκ hW
-    _ ≤ 4 * κ * (4 * Kz * (a + 1) * Real.exp (9 * a)) := by gcongr
-    _ = 16 * κ * Kz * (a + 1) * Real.exp (9 * a) := by ring
-
 /-! ## The ground energy -/
 
 /-- **From `Q` to `λ₁`**: `Q(g_a) ≤ q` gives `λ₁(a) ≤ C q e^{−4πe^{2a}}` for `a ≥ 4`, since `‖g_a‖²` is at
@@ -652,29 +571,6 @@ theorem lam_le_of_weilQ : ∃ C, 0 ≤ C ∧ ∀ a, 4 ≤ a → ∀ q, 0 ≤ q �
     simp only [C]; field_simp
   linarith
 
-/-- `λ₁(a) ≤ K (a + 1) κ e^{9a − 4πe^{2a}}` whenever `e^{2a|Im τ|} ≤ κ` at every zero. -/
-theorem lam_le_kappa : ∃ K, 0 ≤ K ∧ ∀ a, 4 ≤ a → ∀ κ, 0 ≤ κ →
-    (∀ i : ZeroIdx (sqF Xi), Real.exp (2 * a * |(tau i).im|) ≤ κ) →
-    lam a ≤ K * (a + 1) * κ * Real.exp (9 * a - 4 * π * Real.exp (2 * a)) := by
-  obtain ⟨C, hC, h⟩ := lam_le_of_weilQ
-  have hKz := Kz_nonneg
-  refine ⟨16 * Kz * C, by positivity, fun a ha κ hκ0 hκ => ?_⟩
-  have ha1 : 0 ≤ a + 1 := by linarith
-  refine (h a ha _ (by positivity) (weilQ_prefactor ha hκ0 hκ)).trans (le_of_eq ?_)
-  rw [sub_eq_add_neg, Real.exp_add]; ring
-
-/-- **Rung 0 at the density level**: `λ₁(a) ≤ K (a + 1) e^{10a − 4πe^{2a}}` for `a ≥ 4`, no RH input.
-The factor `e^a` over Connes' `e^{9a}` is `κ = e^a`: a zero with `|Im t| = δ` enters with `e^{2aδ}`. -/
-theorem lam_prefactor :
-    ∃ K, 0 ≤ K ∧ ∀ a, 4 ≤ a → lam a ≤ K * (a + 1) * Real.exp (10 * a - 4 * π * Real.exp (2 * a)) := by
-  obtain ⟨K, hK, h⟩ := lam_le_kappa
-  refine ⟨K, hK, fun a ha => ?_⟩
-  have ha0 : 0 < a := by linarith
-  have hk : ∀ i : ZeroIdx (sqF Xi), Real.exp (2 * a * |(tau i).im|) ≤ Real.exp a := fun i =>
-    Real.exp_le_exp.2 (by nlinarith [tau_im i, abs_nonneg (tau i).im])
-  refine (h a ha _ (Real.exp_pos a).le hk).trans (le_of_eq ?_)
-  rw [mul_assoc (K * (a + 1)), ← Real.exp_add]; ring_nf
-
 end Kaiser
 
 #print axioms Kaiser.tail_ibp_line
@@ -682,8 +578,5 @@ end Kaiser
 #print axioms Kaiser.Tt_eq
 #print axioms Kaiser.weighted_FT_le
 #print axioms Kaiser.ghat_sq_le_pair
-#print axioms Kaiser.weilQ_le_W
 #print axioms Kaiser.prefactor_data
-#print axioms Kaiser.weilQ_prefactor
 #print axioms Kaiser.lam_le_of_weilQ
-#print axioms Kaiser.lam_prefactor

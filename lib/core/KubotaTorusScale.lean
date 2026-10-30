@@ -180,24 +180,6 @@ theorem integral_fundP3_affine {f : ℂ → ℂ} (hf : Measurable f) (hper : ∀
   simp only [e] at h1
   rw [h1, integral_fundP3_mul hf hper hμ hint]
 
-/-! ### θ's constant term from the affine images of `3P` -/
-
-/-- θ's series is integrable on `3P` at every height (`continuous_thS_slice`). -/
-theorem integrableOn_thS_slice {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) {v : ℝ} (hv : 0 < v) :
-    IntegrableOn (fun z => thS r Y hY (z, v)) fundP3 :=
-  ((continuous_thS_slice hr hY hv).continuousOn.integrableOn_compact
-    (isCompact_closedBall (0 : ℂ) 6)).mono_set
-    fun _ hz => mem_closedBall_zero_iff.2 (norm_le_six_of_mem_fundP3 hz)
-
-/-- **θ's constant term from an affine image of `3P`**: `∫_{3P} thS(μz + t, v) dz = (9√3/2)·Res φ·v^{2/3}` for
-`v > 0`, `μ ∈ ℤ[ω]` nonzero and `t ∈ ℂ` (`integral_thS`). -/
-theorem integral_thS_affine {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) {v : ℝ} (hv : 0 < v) {μ : 𝓞 K}
-    (hμ : μ ≠ 0) (t : ℂ) :
-    ∫ z in fundP3, thS r Y hY (σO μ * z + t, v) =
-      ((9 * (Real.sqrt 3 / 2) : ℝ) : ℂ) * (phiG (4 / 3) / 3) * ((v ^ (2 / 3 : ℝ) : ℝ) : ℂ) := by
-  rw [integral_fundP3_affine (f := fun z => thS r Y hY (z, v)) (continuous_thS_slice hr hY hv).measurable
-    (fun z u => thS_add_period r Y hY z u v) hμ (integrableOn_thS_slice hr hY hv) t, integral_thS hr hY hv]
-
 end Eis
 
 end
@@ -211,5 +193,3 @@ end
 #print axioms Eis.integral_fundP3_mul_real
 #print axioms Eis.integral_fundP3_mul
 #print axioms Eis.integral_fundP3_affine
-#print axioms Eis.integrableOn_thS_slice
-#print axioms Eis.integral_thS_affine

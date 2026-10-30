@@ -29,9 +29,6 @@ def rough (z n : ℕ) : Prop := ∀ p < z, p.Prime → ¬ p ∣ n
 
 instance (z n : ℕ) : Decidable (rough z n) := by unfold rough; infer_instance
 
-/-- `S(C_m, z)`: the `n ∈ C` divisible by `m` with no prime factor below `z`. -/
-def S (C : Finset ℕ) (m z : ℕ) : ℕ := #{n ∈ C | m ∣ n ∧ rough z n}
-
 /-- The primes of `[w, z)`. -/
 def primesIco (w z : ℕ) : Finset ℕ := (Finset.Ico w z).filter Nat.Prime
 
@@ -256,41 +253,5 @@ theorem tree_pt (n : ℕ) {r X w z₀ : ℕ} (hwz : w ≤ z₀) (hr : ∀ p : �
       simp [h]
     rw [ite_eq_right hL0, Finset.sum_eq_zero h1, Finset.sum_congr rfl fun p hp => Finset.sum_eq_zero (h2 p hp),
       Finset.sum_const_zero, add_zero]
-
-theorem S_eq_sum (C : Finset ℕ) (m z : ℕ) :
-    (S C m z : ℤ) = ∑ n ∈ C, (if m ∣ n ∧ rough z n then (1 : ℤ) else 0) := by
-  rw [S, Finset.card_filter]
-  push_cast
-  rfl
-
-/-- **The Buchstab tree over a finite set.** For `w ≤ z₀`, `r ≤ X` with all primes of `r` at least `z₀`:
-`S(C_r, z₀) = Σ_{P ⊆ [w, z₀), r∏P ≤ X} (−1)^{|P|} S(C_{r∏P}, w)
-  + Σ_{w ≤ p < z₀} Σ_{P ⊆ (p, z₀), r∏P ≤ X < r∏P·p} (−1)^{|P|+1} S(C_{r∏P·p}, p)`, the sets `P` of primes. -/
-theorem tree_sum (C : Finset ℕ) {r X w z₀ : ℕ} (hwz : w ≤ z₀) (hr : ∀ p : ℕ, p.Prime → p ∣ r → z₀ ≤ p)
-    (hrX : r ≤ X) :
-    (S C r z₀ : ℤ) =
-      ∑ P ∈ (primesIco w z₀).powerset, (-1 : ℤ) ^ P.card *
-          (if r * ∏ p ∈ P, p ≤ X then (S C (r * ∏ p ∈ P, p) w : ℤ) else 0) +
-        ∑ p ∈ primesIco w z₀, ∑ P ∈ (primesIco (p + 1) z₀).powerset, (-1 : ℤ) ^ (P.card + 1) *
-          (if r * ∏ p' ∈ P, p' ≤ X ∧ X < r * (∏ p' ∈ P, p') * p then
-            (S C (r * (∏ p' ∈ P, p') * p) p : ℤ) else 0) := by
-  rw [S_eq_sum, Finset.sum_congr rfl fun n _ => tree_pt n hwz hr hrX, Finset.sum_add_distrib]
-  congr 1
-  · rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun P _ => ?_
-    rw [← Finset.mul_sum]
-    congr 1
-    split_ifs with h
-    · rw [S_eq_sum]
-    · simp
-  · rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun p _ => ?_
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun P _ => ?_
-    rw [← Finset.mul_sum]
-    congr 1
-    split_ifs with h
-    · rw [S_eq_sum]
-    · simp
 
 end SieveTree

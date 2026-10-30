@@ -102,9 +102,6 @@ structure ZData (Z : ℂ → ℂ) (θ : ℝ) : Prop where
   ne_zero_re_ge_one : ∀ s : ℂ, 1 ≤ s.re → Z s ≠ 0
   real_ne_zero : ∀ σ : ℝ, θ < σ → Z σ ≠ 0
 
-theorem ZData.mono {θ θ' : ℝ} (hZ : ZData Z θ) (h : θ ≤ θ') : ZData Z θ' :=
-  ⟨hZ.diff, hZ.ne_zero_re_ge_one, fun σ hσ => hZ.real_ne_zero σ (by linarith)⟩
-
 /-- **The zeros of `Z` are finite in every compact set.** -/
 theorem ZData.zeros_finite {θ : ℝ} (hZ : ZData Z θ) {S : Set ℂ} (hS : IsCompact S) :
     (S ∩ Z ⁻¹' {0}).Finite := by
@@ -308,10 +305,6 @@ end Generic
 theorem zData_Zr {θ : ℝ} (hθ : 0 ≤ θ) : ZData Zr θ :=
   ⟨differentiable_Zr, fun s hs h => zeta_ne_zero_re_ge_one hs (Zr_eq_zero h).2,
     fun σ hσ => Zr_real_ne (by linarith)⟩
-
-/-- **A zero-free strip around the real half-line `[a, ∞)`**, `a > 0`. -/
-theorem strip_free {a : ℝ} (ha : 0 < a) : ∃ η > 0, ∀ s : ℂ, a ≤ s.re → |s.im| < η → Zr s ≠ 0 :=
-  (zData_Zr le_rfl).strip_free ha
 
 /-- **The generic zero-free theorem for `ζ`.** -/
 theorem zeta_ne_zero_of_mellin {A : ℝ → ℝ} {θ R0 σ₁ : ℝ} {F : ℂ → ℂ} (hθ : 0 < θ)

@@ -59,10 +59,6 @@ theorem LSeries_muK_mul {s : ℂ} (hs : 1 < s.re) :
   calc _ = (L 1 s * L ↗μ s) * (L ↗chi3 s * L (↗chi3 * ↗μ) s) := by ring
     _ = 1 := by rw [h1, h2, one_mul]
 
-/-- `L(r, s) · L(μ_K, s) = 1` on `Re s > 1`: `μ_K` is the Dirichlet inverse of `r` there. -/
-theorem LSeries_rK_mul_muK {s : ℂ} (hs : 1 < s.re) : L rK s * L muK s = 1 := by
-  rw [LSeries_rK hs, mul_comm]; exact LSeries_muK_mul hs
-
 /-- A weight of the hypothesis: smooth, with compact support inside `(0, ∞)`. -/
 structure Weight (W : ℝ → ℝ) : Prop where
   smooth : ContDiff ℝ ∞ W
@@ -319,7 +315,6 @@ end HalfPlaneS0
 
 #print axioms HalfPlaneS0.LSeries_rK
 #print axioms HalfPlaneS0.LSeries_muK_mul
-#print axioms HalfPlaneS0.LSeries_rK_mul_muK
 #print axioms HalfPlaneS0.Weight.differentiable_mellin
 #print axioms HalfPlaneS0.Weight.differentiableAt_mellin_smoothSum
 #print axioms HalfPlaneS0.Weight.mellin_smoothSum

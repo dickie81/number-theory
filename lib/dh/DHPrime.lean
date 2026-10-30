@@ -269,9 +269,6 @@ theorem norm_aDH_le (n : ℕ) : ‖aDH χ n‖ ≤ ‖1 + rootNumber χ⁻¹‖ 
   · exact mul_le_of_le_one_right (norm_nonneg _) (norm_le_one χ _)
   · exact mul_le_of_le_one_right (norm_nonneg _) (norm_le_one χ⁻¹ _)
 
-theorem LSeriesSummable_aDH {s : ℂ} (hs : 1 < s.re) : LSeriesSummable (aDH χ) s :=
-  LSeriesSummable_of_bounded_of_one_lt_re (fun n _ => norm_aDH_le n) hs
-
 theorem abscissa_aDH_le : LSeries.abscissaOfAbsConv (aDH χ) ≤ 1 :=
   LSeries.abscissaOfAbsConv_le_of_le_const ⟨_, fun n _ => norm_aDH_le n⟩
 
@@ -319,14 +316,6 @@ theorem LSeries_aDH_eq (h1 : aDH χ 1 ≠ 0) (s : ℂ) :
   rw [← LSeries_smul]
   exact LSeries_congr (fun {n} hn => aDH_eq_of_ne_zero h1 hn) s
 
-theorem LSeriesSummable_delta_add_uDH {s : ℂ} (hs : 1 < s.re) :
-    LSeriesSummable (LSeries.delta + uDH χ) s := by
-  refine LSeriesSummable_of_bounded_of_one_lt_re (m := 1 + (‖1 + rootNumber χ⁻¹‖ + ‖1 + rootNumber χ‖) / ‖aDH χ 1‖) (fun n _ => ?_) hs
-  refine (norm_add_le _ _).trans ?_
-  gcongr
-  · simp only [LSeries.delta]; split_ifs <;> simp
-  · exact norm_uDH_le n
-
 theorem abscissa_delta_add_uDH_le : LSeries.abscissaOfAbsConv (LSeries.delta + uDH χ) ≤ 1 :=
   LSeries.abscissaOfAbsConv_le_of_le_const ⟨1 + (‖1 + rootNumber χ⁻¹‖ + ‖1 + rootNumber χ‖) / ‖aDH χ 1‖,
     fun n _ => (norm_add_le _ _).trans (by
@@ -344,7 +333,6 @@ theorem aDH_one_ne_zero (hχ1 : χ ≠ 1) (hprim : χ.IsPrimitive) (h1 : 1 + roo
     aDH χ 1 ≠ 0 := by
   rw [aDH_one_eq hχ1 hprim]
   exact mul_ne_zero h1 (one_add_rootNumber_inv_ne_zero hχ1 hprim h1)
-
 
 /-! ## Numeric facts about `ε_{χ₅}` -/
 
@@ -484,8 +472,6 @@ theorem sum_Icc_rpow_neg_two_le (N : ℕ) :
         refine Finset.sum_congr rfl fun n _ => ?_
         rw [Real.rpow_neg (Nat.cast_nonneg n), Real.rpow_two]
     _ ≤ 7 / 10 := sum_Icc_inv_sq_le N
-
-
 
 /-! ## The prime side: `−DH′/DH = Σ c(n) n^{−s}` -/
 

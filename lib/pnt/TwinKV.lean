@@ -20,7 +20,6 @@ i.e. `−C·exp(λ − c·λ^{1/3}(log 8λ)^{−1/3})`. The exponent `1/3` is an
 open Complex Real Set Filter
 open WeilForm WeilTest WeilStrip KaiserKV
 
-
 namespace TwinKV
 
 /-- The `Ξ`-coordinate `τ` of a zero of `ζ` (through `zetaEquiv`). -/
@@ -53,11 +52,6 @@ theorem im_ordi (q : ZIdx) : (ordi zetaZeroFamily q).im = -(poleP q).re / 2 := b
 
 /-- `K₀ = 2·box 1 (0)·cosh(1/2)`, the constant in `|ĝ₀(t_ρ)| ≤ K₀/|t_ρ|`. -/
 noncomputable def K0 : ℝ := 2 * box 1 0 * Real.cosh (1 / 2)
-
-theorem K0_nonneg : 0 ≤ K0 := by
-  unfold K0
-  have := box_nonneg 0 ⟨le_rfl, zero_le_one⟩
-  positivity
 
 theorem norm_ghat_ordi_le (q : ZIdx) : ‖ghatC (box 1) 1 (ordi zetaZeroFamily q)‖ ≤ K0 / ‖tz q‖ := by
   have hz : ordi zetaZeroFamily q ≠ 0 := by
@@ -266,7 +260,6 @@ theorem twins_lower_KV' : ∃ C c : ℝ, 0 < c ∧ ∀ l : ℝ, 1 ≤ l →
   have := h l hl
   rwa [E] at this
 
-
 /-- **The lower bound with a free cutoff `u`** (`T = e^u`). -/
 theorem twins_lower_cut : ∃ C A : ℝ, 0 ≤ C ∧ 0 < A ∧ ∀ l u : ℝ, 0 ≤ l → 3 ≤ u →
     -(C * (Real.exp ((1 - 2 * A / fKV (Real.exp u)) * l) + Real.exp (l - u / 4))) ≤
@@ -334,66 +327,6 @@ theorem twins_lower_cut : ∃ C A : ℝ, 0 ≤ C ∧ 0 < A ∧ ∀ l u : ℝ, 0 
     have := mul_le_mul_of_nonneg_left hbound (by norm_num : (0 : ℝ) ≤ 4)
     linarith
   exact this.trans hQ
-
-/-- **Exponent `3/5`**: the cutoff `u = 3λ^{3/5}` gives `Q(twin (box 1) λ) ≥ −C·exp(λ − c λ^{3/5}(log 3λ^{3/5})^{−1/3})`. -/
-theorem twins_lower_KV35 : ∃ C c : ℝ, 0 < c ∧ ∀ l : ℝ, 1 ≤ l →
-    -(C * Real.exp (l - c * l ^ ((3 : ℝ) / 5) / Real.log (3 * l ^ ((3 : ℝ) / 5)) ^ ((1 : ℝ) / 3))) ≤
-      weilQ (l + 1) (twin (box 1) l) := by
-  obtain ⟨C, A, hC, hA, h⟩ := twins_lower_cut
-  have h32 : (0 : ℝ) < (3 : ℝ) ^ ((2 : ℝ) / 3) := by positivity
-  have hcpos : 0 < min (2 * A / (3 : ℝ) ^ ((2 : ℝ) / 3)) (3 / 4) := lt_min (by positivity) (by norm_num)
-  refine ⟨2 * C, min (2 * A / (3 : ℝ) ^ ((2 : ℝ) / 3)) (3 / 4), hcpos, fun l hl => ?_⟩
-  have hl0 : 0 < l := by linarith
-  obtain ⟨v, hv⟩ : ∃ v : ℝ, v = l ^ ((3 : ℝ) / 5) := ⟨_, rfl⟩
-  obtain ⟨w, hw⟩ : ∃ w : ℝ, w = l ^ ((2 : ℝ) / 5) := ⟨_, rfl⟩
-  have hv1 : 1 ≤ v := by rw [hv]; exact Real.one_le_rpow hl (by norm_num)
-  have hw0 : 0 < w := by rw [hw]; positivity
-  have hvw : v * w = l := by
-    rw [hv, hw, ← Real.rpow_add hl0]; norm_num
-  have hv23 : v ^ ((2 : ℝ) / 3) = w := by
-    rw [hv, hw, ← Real.rpow_mul hl0.le]; norm_num
-  have hu3 : (3 : ℝ) ≤ 3 * v := by linarith
-  obtain ⟨M, hM⟩ : ∃ M : ℝ, M = Real.log (3 * v) ^ ((1 : ℝ) / 3) := ⟨_, rfl⟩
-  have hL1 : 1 ≤ Real.log (3 * v) := by
-    have h3 : Real.log 3 ≤ Real.log (3 * v) := Real.log_le_log (by norm_num) hu3
-    have h3' : 1 < Real.log 3 := by
-      rw [Real.lt_log_iff_exp_lt (by norm_num)]
-      have := Real.exp_one_lt_d9; linarith
-    linarith
-  have hM1 : 1 ≤ M := by rw [hM]; exact Real.one_le_rpow hL1 (by norm_num)
-  have hM0 : 0 < M := by linarith
-  have hf : fKV (Real.exp (3 * v)) = (3 : ℝ) ^ ((2 : ℝ) / 3) * w * M := by
-    unfold fKV
-    rw [Real.log_exp, Real.mul_rpow (x := 3) (y := v) (by norm_num) (by linarith), hv23, ← hM]
-  have H := h l (3 * v) hl0.le hu3
-  rw [hf] at H
-  rw [← hv, ← hM]
-  set c := min (2 * A / (3 : ℝ) ^ ((2 : ℝ) / 3)) (3 / 4) with hc
-  have hc1 : c ≤ 2 * A / (3 : ℝ) ^ ((2 : ℝ) / 3) := min_le_left _ _
-  have hc2 : c ≤ 3 / 4 := min_le_right _ _
-  have hw' : w ≠ 0 := hw0.ne'
-  have hM' : M ≠ 0 := hM0.ne'
-  have h32' : (3 : ℝ) ^ ((2 : ℝ) / 3) ≠ 0 := h32.ne'
-  have e1 : (1 - 2 * A / ((3 : ℝ) ^ ((2 : ℝ) / 3) * w * M)) * l ≤ l - c * v / M := by
-    have hx : 2 * A / ((3 : ℝ) ^ ((2 : ℝ) / 3) * w * M) * l =
-        2 * A / (3 : ℝ) ^ ((2 : ℝ) / 3) * v / M := by
-      rw [← hvw]; field_simp
-    have hy : c * v / M ≤ 2 * A / (3 : ℝ) ^ ((2 : ℝ) / 3) * v / M :=
-      div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hc1 (by linarith)) hM0.le
-    nlinarith
-  have e2 : l - 3 * v / 4 ≤ l - c * v / M := by
-    have : c * v / M ≤ 3 * v / 4 := by
-      rw [div_le_iff₀ hM0]
-      nlinarith [mul_le_mul_of_nonneg_right hc2 (by linarith : (0 : ℝ) ≤ v),
-        mul_nonneg (by linarith : (0 : ℝ) ≤ v) (by linarith : (0 : ℝ) ≤ M - 1)]
-    linarith
-  have E1 := Real.exp_le_exp.2 e1
-  have E2 := Real.exp_le_exp.2 e2
-  have H' : -(2 * C * Real.exp (l - c * v / M)) ≤
-      -(C * (Real.exp ((1 - 2 * A / ((3 : ℝ) ^ ((2 : ℝ) / 3) * w * M)) * l) +
-        Real.exp (l - 3 * v / 4))) := by
-    nlinarith [mul_le_mul_of_nonneg_left E1 hC, mul_le_mul_of_nonneg_left E2 hC]
-  exact H'.trans H
 
 /-! ## The optimal cutoff: exponent `3/5` with `(log λ)^{−1/5}`, the shape of `PNT_KV` -/
 
@@ -550,5 +483,4 @@ end TwinKV
 #print axioms TwinKV.twins_lower_KV
 #print axioms TwinKV.twins_lower_KV'
 #print axioms TwinKV.twins_lower_cut
-#print axioms TwinKV.twins_lower_KV35
 #print axioms TwinKV.twins_lower_KV_sharp

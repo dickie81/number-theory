@@ -144,41 +144,6 @@ theorem no_isometry_of_square {V : Type*} [SeminormedAddCommGroup V] (g : (Fin 2
   rw [Function.comp_apply, Function.comp_apply, hf _ (hm x hx) _ (hm y hy), dist_eq_norm, hsub, hg,
     ← dist_eq_norm]
 
-/-- The square on the first two coordinates of the infinite cube's space `ℓ^∞(ℕ)`. -/
-noncomputable def sqInf (x : Fin 2 → ℝ) : lp (fun _ : ℕ => ℝ) ∞ :=
-  lp.single ∞ 0 (x 0) + lp.single ∞ 1 (x 1)
-
-lemma sqInf_apply (x : Fin 2 → ℝ) (j : ℕ) :
-    sqInf x j = (if j = 0 then x 0 else 0) + (if j = 1 then x 1 else 0) := by
-  simp [sqInf, Pi.single_apply]
-
-lemma norm_sqInf (x : Fin 2 → ℝ) : ‖sqInf x‖ = ‖x‖ := by
-  apply le_antisymm
-  · refine lp.norm_le_of_forall_le (norm_nonneg x) fun j => ?_
-    rw [sqInf_apply]
-    by_cases h0 : j = 0
-    · subst h0; simpa using norm_le_pi_norm x 0
-    · by_cases h1 : j = 1
-      · subst h1; simpa using norm_le_pi_norm x 1
-      · simp [h0, h1]
-  · refine (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun i => ?_
-    fin_cases i
-    · simpa [sqInf_apply] using lp.norm_apply_le_norm (by simp) (sqInf x) 0
-    · simpa [sqInf_apply] using lp.norm_apply_le_norm (by simp) (sqInf x) 1
-
-lemma sqInf_sub (x y : Fin 2 → ℝ) : sqInf x - sqInf y = sqInf (x - y) := by
-  ext j
-  simp only [lp.coeFn_sub, Pi.sub_apply, sqInf_apply]
-  split_ifs <;> ring
-
-include 𝕜 in
-/-- **The infinite cube has no isometric copy in an inner product space**: no map of the closed unit ball of
-`ℓ^∞(ℕ)` into an inner product space preserves distances. -/
-theorem no_isometry_infCube (f : lp (fun _ : ℕ => ℝ) ∞ → E)
-    (hf : ∀ x ∈ closedBall (0 : lp (fun _ : ℕ => ℝ) ∞) 1, ∀ y ∈ closedBall (0 : lp (fun _ : ℕ => ℝ) ∞) 1,
-      dist (f x) (f y) = dist x y) : False :=
-  no_isometry_of_square (𝕜 := 𝕜) sqInf norm_sqInf sqInf_sub f hf
-
 /-- The square on the first two coordinates of the cube's space `ℝⁿ`, `n ≥ 2`. -/
 def sqFin {n : ℕ} (x : Fin 2 → ℝ) : Fin n → ℝ := fun i =>
   (if (i : ℕ) = 0 then x 0 else 0) + (if (i : ℕ) = 1 then x 1 else 0)
@@ -209,11 +174,6 @@ theorem no_isometry_cube {n : ℕ} (hn : 2 ≤ n) (f : (Fin n → ℝ) → E)
     (hf : ∀ x ∈ closedBall (0 : Fin n → ℝ) 1, ∀ y ∈ closedBall (0 : Fin n → ℝ) 1,
       dist (f x) (f y) = dist x y) : False :=
   no_isometry_of_square (𝕜 := 𝕜) sqFin (norm_sqFin hn) sqFin_sub f hf
-
-include 𝕜 in
-/-- No isometry, onto or not, from the infinite cube's space `ℓ^∞(ℕ)` into an inner product space. -/
-theorem not_isometry_infCube (f : lp (fun _ : ℕ => ℝ) ∞ → E) (hf : Isometry f) : False :=
-  no_isometry_infCube (𝕜 := 𝕜) f fun x _ y _ => hf.dist_eq x y
 
 end Metric
 
@@ -298,88 +258,9 @@ theorem cube_distortion {n : ℕ} (T : (Fin n → ℝ) →+ E) {c C : ℝ} (hc :
         _ = C := mul_one C
   simpa using key
 
-/-- **The bound is attained**: the identity from the cube's space to Euclidean `ℝⁿ` has `c = 1` and `C = √n`. -/
-theorem euclidean_sandwich {n : ℕ} (x : Fin n → ℝ) :
-    ‖x‖ ≤ ‖WithLp.toLp 2 x‖ ∧ ‖WithLp.toLp 2 x‖ ≤ √n * ‖x‖ := by
-  constructor
-  · exact (pi_norm_le_iff_of_nonneg (norm_nonneg _)).2 fun i => by
-      simpa using PiLp.norm_apply_le (WithLp.toLp 2 x) i
-  · rw [EuclideanSpace.norm_eq, ← Real.sqrt_sq (norm_nonneg x), ← Real.sqrt_mul (Nat.cast_nonneg n)]
-    refine Real.sqrt_le_sqrt ?_
-    calc ∑ i, ‖(WithLp.toLp 2 x) i‖ ^ 2 ≤ ∑ _i : Fin n, ‖x‖ ^ 2 :=
-          Finset.sum_le_sum fun i _ => pow_le_pow_left₀ (norm_nonneg _) (by simpa using norm_le_pi_norm x i) 2
-      _ = n * ‖x‖ ^ 2 := by simp
-
-include 𝕜 in
-/-- **The infinite cube is not the infinite ball, up to any bounded distortion.** No additive map `T` from the
-cube's space `ℓ^∞(ℕ)` into an inner product space satisfies `c‖x‖ ≤ ‖T x‖ ≤ C‖x‖` with `c > 0`. -/
-theorem infCube_not_ball (T : lp (fun _ : ℕ => ℝ) ∞ →+ E) {c C : ℝ} (hc : 0 < c)
-    (hlow : ∀ x, c * ‖x‖ ≤ ‖T x‖) (hup : ∀ x, ‖T x‖ ≤ C * ‖x‖) : False := by
-  classical
-  have he : ∀ i : ℕ, ‖lp.single (E := fun _ : ℕ => ℝ) ∞ i (1 : ℝ)‖ = 1 := fun i => by
-    rw [lp.norm_single (by simp), norm_one]
-  have hC0 : 0 ≤ C := by
-    have := hup (lp.single (E := fun _ : ℕ => ℝ) ∞ 0 1)
-    rw [he, mul_one] at this
-    exact (norm_nonneg _).trans this
-  have key : ∀ n : ℕ, (n : ℝ) * c ^ 2 ≤ C ^ 2 := by
-    intro n
-    have := card_mul_sq_le_of_signs (𝕜 := 𝕜) (Finset.range n)
-      (fun i => T (lp.single (E := fun _ : ℕ => ℝ) ∞ i 1)) hc.le
-      (fun i _ => by simpa [he] using hlow (lp.single (E := fun _ : ℕ => ℝ) ∞ i 1)) fun ε hε => by
-        have hsum : ∑ i ∈ Finset.range n, ε i • T (lp.single (E := fun _ : ℕ => ℝ) ∞ i (1 : ℝ)) =
-            T (∑ i ∈ Finset.range n, lp.single (E := fun _ : ℕ => ℝ) ∞ i ((ε i : ℤ) : ℝ)) := by
-          rw [map_sum]
-          refine Finset.sum_congr rfl fun i _ => ?_
-          rw [← map_zsmul, ← lp.singleAddMonoidHom_apply, ← lp.singleAddMonoidHom_apply, ← map_zsmul,
-            zsmul_eq_mul, mul_one]
-        have hvec : ‖∑ i ∈ Finset.range n, lp.single (E := fun _ : ℕ => ℝ) ∞ i ((ε i : ℤ) : ℝ)‖ ≤ 1 := by
-          refine lp.norm_le_of_forall_le zero_le_one fun j => ?_
-          rw [lp.coeFn_sum, Finset.sum_apply]
-          simp only [lp.coeFn_single, Pi.single_apply]
-          rw [Finset.sum_ite_eq]
-          split_ifs
-          · rcases hε j with h | h <;> simp [h]
-          · simp
-        rw [hsum]
-        calc ‖T _‖ ≤ C * ‖∑ i ∈ Finset.range n, lp.single (E := fun _ : ℕ => ℝ) ∞ i ((ε i : ℤ) : ℝ)‖ := hup _
-          _ ≤ C * 1 := mul_le_mul_of_nonneg_left hvec hC0
-          _ = C := mul_one C
-    simpa using this
-  obtain ⟨n, hn⟩ := exists_nat_gt (C ^ 2 / c ^ 2)
-  rw [div_lt_iff₀ (by positivity)] at hn
-  linarith [key n]
-
-include 𝕜 in
-/-- In particular no isomorphism of normed spaces (continuous linear equivalence) identifies `ℓ^∞(ℕ)` with an
-inner product space. -/
-theorem not_continuousLinearEquiv [NormedSpace ℝ E] (e : lp (fun _ : ℕ => ℝ) ∞ ≃L[ℝ] E) : False := by
-  set x₀ : lp (fun _ : ℕ => ℝ) ∞ := lp.single ∞ 0 1
-  have hx₀ : ‖x₀‖ = 1 := by rw [lp.norm_single (by simp), norm_one]
-  have hs : 0 < ‖(e.symm : E →L[ℝ] lp (fun _ : ℕ => ℝ) ∞)‖ := by
-    refine norm_pos_iff.2 fun h => ?_
-    have h1 : e.symm (e x₀) = x₀ := e.symm_apply_apply x₀
-    have h2 : (e.symm : E →L[ℝ] lp (fun _ : ℕ => ℝ) ∞) (e x₀) = 0 := by rw [h]; rfl
-    rw [ContinuousLinearEquiv.coe_coe, h1] at h2
-    rw [h2, norm_zero] at hx₀
-    exact zero_ne_one hx₀
-  refine infCube_not_ball (𝕜 := 𝕜) (e : lp (fun _ : ℕ => ℝ) ∞ →L[ℝ] E).toLinearMap.toAddMonoidHom
-    (inv_pos.2 hs) (C := ‖(e : lp (fun _ : ℕ => ℝ) ∞ →L[ℝ] E)‖) (fun x => ?_) fun x => ?_
-  · have := (e.symm : E →L[ℝ] lp (fun _ : ℕ => ℝ) ∞).le_opNorm (e x)
-    rw [ContinuousLinearEquiv.coe_coe, e.symm_apply_apply] at this
-    rw [inv_mul_le_iff₀ hs]
-    exact this
-  · exact (e : lp (fun _ : ℕ => ℝ) ∞ →L[ℝ] E).le_opNorm x
-
 end Distortion
 
 /-! ## Part C: the Euclidean ball's share of the cube -/
-
-/-- The Euclidean unit ball of `ℝⁿ`, as a subset of the cube's space, lies inside the cube `(−1, 1)ⁿ`. -/
-theorem ball_subset_cube (n : ℕ) :
-    {x : Fin n → ℝ | ‖WithLp.toLp 2 x‖ < 1} ⊆ ball (0 : Fin n → ℝ) 1 := fun x hx => by
-  rw [mem_ball, dist_zero_right]
-  exact (euclidean_sandwich x).1.trans_lt hx
 
 /-- Its volume is that of the unit ball of `EuclideanSpace ℝ (Fin n)`. -/
 theorem volume_euclideanBall (n : ℕ) :
@@ -695,21 +576,12 @@ end CubeBall
 #print axioms CubeBall.norm_vec2
 #print axioms CubeBall.no_isometry_square
 #print axioms CubeBall.no_isometry_of_square
-#print axioms CubeBall.sqInf_apply
-#print axioms CubeBall.norm_sqInf
-#print axioms CubeBall.sqInf_sub
-#print axioms CubeBall.no_isometry_infCube
 #print axioms CubeBall.norm_sqFin
 #print axioms CubeBall.sqFin_sub
 #print axioms CubeBall.no_isometry_cube
-#print axioms CubeBall.not_isometry_infCube
 #print axioms CubeBall.exists_signs_sum_sq_le
 #print axioms CubeBall.card_mul_sq_le_of_signs
 #print axioms CubeBall.cube_distortion
-#print axioms CubeBall.euclidean_sandwich
-#print axioms CubeBall.infCube_not_ball
-#print axioms CubeBall.not_continuousLinearEquiv
-#print axioms CubeBall.ball_subset_cube
 #print axioms CubeBall.volume_euclideanBall
 #print axioms CubeBall.tendsto_ball_div_cube
 #print axioms CubeBall.memℓp_top_bohr_iff

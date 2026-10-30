@@ -665,44 +665,6 @@ theorem poly_bound_FE {ι κ : Type*} (S : Finset ι) (T : Finset κ) {Ka Ca Cc 
     hgrowth
   exact ⟨C₁ * 2 ^ 12 * (2 - -5 / 2 + 1) ^ 12, fun s h1 h2 => hPL s h1 h2⟩
 
-open Classical in
-/-- **Polynomial bounds for the twisted `θ̄`** (the paper's "`polynomial bounds in |Im s|`" for `𝒯(s, Ψ)`,
-inside the strip by Phragmén–Lindelöf): with the data of `twisted_theta_dbar`,
-`|𝒥(s)/(Γ(s + 1/3)Γ(s + 2/3))| ≤ C(1 + |Im s|)^{12}` for `−5/2 ≤ Re s ≤ 2`. -/
-theorem twisted_theta_poly {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {c0 cP cM : ℂ} {τ tP tM : 𝓞 K → ℂ}
-    (hd : KubotaData θ Kc c0 cP cM τ tP tM) {L : 𝓞 K} (hL : L ≠ 0) (φ₀ : 𝓞 K → ℂ)
-    (hφ : ∀ z u, φ₀ (z + L * u) = φ₀ z) (hφ0 : φ₀ 0 = 0) (Ps : Finset Pr) (hPs : ∀ P ∈ Ps, L ∉ P.1)
-    (j : Pr → ℕ) :
-    ∃ C, ∀ s : ℂ, -5 / 2 ≤ s.re → s.re ≤ 2 →
-      ‖mellin (dSer (fun m => twAt (fun x => φ₀ x * ∏ P ∈ Ps, chiPow P.1 (j P) x) m *
-        conj (τ (-m))) fun m => 2 * Real.pi * I * conj (σO m) / 9) (2 * s) *
-        (Gamma (s + 1 / 3))⁻¹ * (Gamma (s + 2 / 3))⁻¹‖ ≤ C * (1 + |s.im|) ^ 12 := by
-  obtain ⟨D, C₀, dH, y, hDATA, hid⟩ := twisted_theta_dbar hd hL φ₀ hφ hφ0 Ps hPs j
-  obtain ⟨B₀, hB₀⟩ := exists_bound_of_periodic L hL φ₀ hφ
-  have hB₀0 : 0 ≤ B₀ := (norm_nonneg _).trans (hB₀ 0)
-  have hF : ∀ x, ‖φ₀ x * ∏ P ∈ Ps, chiPow P.1 (j P) x‖ ≤ B₀ := by
-    intro x
-    rw [norm_mul, norm_prod]
-    exact (mul_le_of_le_one_right (norm_nonneg _) (Finset.prod_le_one₀ (fun _ _ => norm_nonneg _)
-      (fun P _ => norm_chiPow_le _ _ _))).trans (hB₀ x)
-  have ha := thetaSupp_twisted hd.1 hB₀0 hF
-  have hcne : ∀ (h₀ : 𝓞 K ⧸ span {L}), ∀ A ∈ Ps.powerset, σO (D h₀ A * ∏ P ∈ A, πP P) ≠ 0 := by
-    intro h₀ A hA
-    have hD := (hDATA h₀ A hA).1
-    have hprod : (∏ P ∈ A, πP P) ≠ 0 := Finset.prod_ne_zero_iff.2 fun P _ => ne_zero_of_maximal (πP P)
-    have hc : D h₀ A * ∏ P ∈ A, πP P ≠ 0 := mul_ne_zero hD hprod
-    exact fun h => hc (σO_injective (h.trans (map_zero σO).symm))
-  have := finite_quot L hL
-  let _ : Fintype (𝓞 K ⧸ span {L}) := Fintype.ofFinite _
-  exact poly_bound_FE Finset.univ Ps.powerset ha (fun m => norm_phiInf_le m)
-    (fun m => norm_phiCusp_le m) (fun h₀ => fCoef L φ₀ (repQ L h₀))
-    (fun A => ∏ P ∈ Ps \ A, locCoef P (j P) 0) C₀
-    (fun h₀ A m => conj (dH h₀ A (-m)) * ψc (δ3 ^ 3 * D h₀ A) (-(m * y h₀ A)) *
-      ∏ P : A, Bloc P.1.1 (j P.1) m)
-    (fun h₀ A => D h₀ A * ∏ P ∈ A, πP P) (fun _ A => (∏ P : A, Real.sqrt (absNorm P.1.1)) * Kc)
-    (fun h₀ _ A hA => ⟨thetaSupp_cuspCoef (hDATA h₀ A hA).2.2.2 _ _ A j, hcne h₀ A hA⟩)
-    (fun v hv => by rw [← finsum_eq_sum_of_fintype]; exact hid v hv)
-
 end Eis
 
 end
@@ -723,4 +685,3 @@ end
 #print axioms Eis.norm_mellin_dSer_le
 #print axioms Eis.norm_nested_sum_le
 #print axioms Eis.poly_bound_FE
-#print axioms Eis.twisted_theta_poly

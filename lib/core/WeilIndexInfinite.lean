@@ -118,7 +118,6 @@ theorem hasSum_twinComb {c : NNReal →₀ ℝ} {A : ℝ} (h : Fits c A) (hA : 0
   convert this using 2 with i
   rw [ghatC_twinComb h]; rfl
 
-
 /-! ## B–E, for any family of ordinates
 
 The argument (§B–E below) uses only: ordinates `t_i` with `|Im t_i| < ½`, `Re t_i ≠ 0` and
@@ -149,7 +148,6 @@ theorem orb_symm {t w : ℂ} (h : Orb t w) : Orb w t := by
   · exact Or.inr (Or.inl (neg_neg _).symm)
   · exact Or.inr (Or.inr (Or.inl (Complex.conj_conj _).symm))
   · exact Or.inr (Or.inr (Or.inr (by rw [map_neg, Complex.conj_conj, neg_neg])))
-
 
 /-- **Ordinates for the negative-index argument.** -/
 structure NegData where
@@ -213,10 +211,6 @@ theorem NegData.summable_mul_of_sq (D : NegData) {f g : D.ι → ℂ} (hf : Summ
     (hg : Summable fun i => ‖g i‖ ^ 2) : Summable fun i => ‖f i * g i‖ :=
   ((hf.add hg).div_const 2).of_nonneg_of_le (fun _ => norm_nonneg _) fun i => by
     rw [norm_mul]; have := two_mul_le_add_sq ‖f i‖ ‖g i‖; linarith
-
-theorem NegData.t_mem_strip (D : NegData) (i : D.ι) : D.t i ∈ WeilStrip.strip (-1) 1 := by
-  have := abs_lt.1 (D.t_im i)
-  exact ⟨by linarith [this.1], by linarith [this.2]⟩
 
 def NegData.vfun (D : NegData) (s : ℝ) (i : D.ι) : ℂ := 2 * Complex.cos (s * ((D.κ : ℂ) * D.t i)) * D.G0 i
 
@@ -675,7 +669,6 @@ theorem NegData.negDirections (D : NegData) (R : Finset D.ι)
   · rintro v ⟨x, rfl⟩ hv
     have hx : x ≠ 0 := fun h => hv (by rw [h, map_zero])
     rw [hLQ]; exact mul_neg_of_pos_of_neg D.w_pos (hBre x hx)
-
 
 /-! ## ζ as an instance -/
 

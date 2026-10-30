@@ -274,14 +274,6 @@ theorem exists_groundStateDH {a : ℝ} (ha : 0 < a) : ∃ g, IsGroundStateDH a g
   obtain ⟨g, hp, hn, hmin⟩ := exists_min_QDHu ha
   exact ⟨g, (isGroundStateDH_iff_min ha).2 ⟨hp, hn, hmin⟩⟩
 
-/-- Ground states at every support of a sequence `a_n > 0` (the dh column of `exists_groundStates`,
-GroundStateExists.lean:455). -/
-theorem exists_groundStatesDH {a : ℕ → ℝ} (ha : ∀ n, 0 < a n) :
-    ∃ g : ℕ → ℝ → ℝ, ∀ n, IsGroundStateDH (a n) (g n) :=
-  ⟨fun n => (exists_groundStateDH (ha n)).choose,
-    fun n => (exists_groundStateDH (ha n)).choose_spec⟩
-
-
 /-! ## Stage 2: the bilinear form and the Euler–Lagrange equation -/
 
 /-- **The bilinear form of `QDHu`** at support `a`:
@@ -292,10 +284,6 @@ theorem exists_groundStatesDH {a : ℕ → ℝ} (ha : ∀ n, 0 < a n) :
 def bilDH (a : ℝ) (φ ψ : ℝ → ℝ) : ℝ :=
   constDH * xcorr φ ψ 0 + (∫ u in Ioi 0, archXQ (3 / 4) φ ψ u)
     - 2 * ∑ n ∈ Finset.range (primeCut a), fDH n / Real.sqrt n * xcorr φ ψ (Real.log n)
-
-/-- `B_dh` is symmetric (the dh column of `bil0_comm`, UniquenessQ.lean:29). -/
-theorem bilDH_comm (a : ℝ) (φ ψ : ℝ → ℝ) : bilDH a φ ψ = bilDH a ψ φ := by
-  unfold bilDH archXQ; simp only [xcorr_comm φ ψ]
 
 /-- `Q_dh(φ + sψ) = Q_dh(φ) + 2sB_dh(φ, ψ) + s²Q_dh(ψ)` on probes (the dh column of
 `weilQ0_add_smul`, StrictPositivity.lean:99). -/
@@ -519,7 +507,6 @@ theorem green_mem_groundSpaceDH {g : ℝ → ℝ} {a : ℝ} {w : ℂ} (ha : 0 < 
     have := (groundSpaceDH a).add_mem hu ((groundSpaceDH a).smul_mem (-1) hg)
     exact (groundSpaceDH a).smul_mem _ (by convert this using 1)
 
-
 /-! ## Stage 4: Theorem D for `QDHu`
 
 The port of StructureD.lean. The Green operator `Gpole` of the pole (DegenerateFlat.lean:32) is a
@@ -723,9 +710,6 @@ theorem theoremDDH {a : ℝ} (ha : 0 < a) :
 
 /-! ### The top-of-chain ground state -/
 
-/-- A nonzero `w` with a full-length Green chain in `V_dh`. -/
-abbrev chainBaseDH (a : ℝ) : ℝ → ℝ := dhGD.chainBase a
-
 /-- **The top-of-chain ground state of `QDHu`**: `G^{m−1}w`, normalised (the dh column of `topGS`). -/
 abbrev topGSDH (a : ℝ) : ℝ → ℝ := dhGD.topGS a
 
@@ -755,30 +739,6 @@ theorem not_hypConvDH_top {a : ℕ → ℝ} (ha : ∀ n, 0 < a n) :
     (fun n => (probe_integrable (topGSDH_isGroundState (ha n)).1).intervalIntegrable)
     (Eventually.of_forall fun n z hz => topGSDH_cross (ha n) z hz)
 
-/-- If the ground states `g n` of `QDHu` are eventually simple, they agree with the top-of-chain
-ground states up to scalars, so `HypConvDH` transfers (the dh column of `hypConv_top_of_simple`,
-StructureD.lean:199). -/
-theorem hypConvDH_top_of_simple {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ} (ha : ∀ n, 0 < a n)
-    (hsimple : ∀ᶠ n in atTop, SimpleGroundDH (a n) (g n)) (hconv : HypConvDH a g) :
-    HypConvDH a fun n => topGSDH (a n) := by
-  have heq : ∀ᶠ n in atTop, ∀ z : ℂ,
-      ghatC (topGSDH (a n)) (a n) z / ghatC (topGSDH (a n)) (a n) 0
-        = ghatC (g n) (a n) z / ghatC (g n) (a n) 0 := by
-    filter_upwards [hsimple] with n hs z
-    obtain ⟨c, hcg⟩ := hs.2 _ (isGroundStateDH_iff.1 (topGSDH_isGroundState (ha n))).1
-    have hc0 : c ≠ 0 := by
-      rintro rfl
-      have := normSq_congr_ae hcg
-      rw [(topGSDH_isGroundState (ha n)).2.1] at this
-      simp [WeilForm.normSq] at this
-    rw [ghatC_congr_ae hcg, ghatC_congr_ae hcg, ghatC_smul, ghatC_smul,
-      mul_div_mul_left _ _ (by exact_mod_cast hc0)]
-  intro u hu x
-  obtain ⟨t, ht, hev⟩ := hconv u hu x
-  refine ⟨t, ht, ?_⟩
-  filter_upwards [hev, heq] with n hn he y hy
-  rw [he y]; exact hn y hy
-
 end PsiOmega
 
 #print axioms PsiOmega.isGroundStateDH_iff
@@ -786,7 +746,6 @@ end PsiOmega
 #print axioms PsiOmega.arch_of_archQ
 #print axioms PsiOmega.exists_min_QDHu
 #print axioms PsiOmega.exists_groundStateDH
-#print axioms PsiOmega.exists_groundStatesDH
 #print axioms PsiOmega.QDHu_add_smul
 #print axioms PsiOmega.bilDH_polar
 #print axioms PsiOmega.euler_lagrangeDH_mem
@@ -807,4 +766,3 @@ end PsiOmega
 #print axioms PsiOmega.topGSDH_cross
 #print axioms PsiOmega.dhRHcross_of_hypConv_top
 #print axioms PsiOmega.not_hypConvDH_top
-#print axioms PsiOmega.hypConvDH_top_of_simple

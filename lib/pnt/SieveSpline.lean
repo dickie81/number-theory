@@ -143,12 +143,6 @@ theorem norm_sum_range_le (u Y : ℕ) {t : ℤ} (ht : t ≠ 0) (htq : 2 * |t| �
   rw [show (1 : ℝ) / (2 * (|(t : ℝ)| / q)) = q / (2 * |(t : ℝ)|) by field_simp]
   rw [Int.cast_abs]
 
-/-- **The interval's transform**: for an integer `t ≠ 0` with `2|t| ≤ q`, `|Σ_{A<k≤B} e(tk)| ≤ q/(2|t|)`. -/
-theorem norm_sum_Ioc_le (A B : ℕ) {t : ℤ} (ht : t ≠ 0) (htq : 2 * |t| ≤ q) :
-    ‖∑ k ∈ Ioc A B, eq ((t : ZMod q) * (k : ZMod q))‖ ≤ q / (2 * |t|) := by
-  rw [← Finset.Ico_add_one_add_one_eq_Ioc, Finset.sum_Ico_eq_sum_range]
-  exact norm_sum_range_le (A + 1) (B + 1 - (A + 1)) ht htq
-
 /-! ### Splines -/
 
 /-- `e(Σ_m f(m)) = Π_m e(f(m))`. -/
@@ -438,12 +432,6 @@ theorem norm_sum_Ioc_unit_le (C D : ℕ) :
   calc ‖((ArithmeticFunction.moebius d : ℤ) : ℂ)‖ * ‖(((D / d - C / d : ℕ) : ℂ) - ((D : ℂ) - C) / d)‖
       ≤ 1 * 1 := mul_le_mul hμ hb (norm_nonneg _) zero_le_one
     _ = 1 := one_mul 1
-
-/-- **`E_w` for the indicator of an interval**: `|E_1((C, D])| ≤ d(q)`. -/
-theorem norm_Ew_Ioc_le (C D : ℕ) : ‖Ew (q := q) (Ioc C D) (fun _ => 1)‖ ≤ q.divisors.card := by
-  rw [Ew_eq]
-  simp only [one_mul]
-  exact norm_sum_Ioc_unit_le C D
 
 /-- **`E_w` for a spline**: `|E_w| ≤ d(q)`, as the spline averages the indicators of intervals. -/
 theorem norm_Ew_spl_le (A B ℓ r : ℕ) (hℓ : 1 ≤ ℓ) :

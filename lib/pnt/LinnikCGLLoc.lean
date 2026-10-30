@@ -139,13 +139,6 @@ section loc
 
 variable {κ : Type*} (s : Finset κ) (c : κ → ℂ) (lam : κ → ℝ)
 
-/-- The integrand of the local average is integrable. -/
-lemma integrable_loc (H x : ℝ) : Integrable fun ξ => ‖kloc ξ‖ * ‖esum s c lam (x + 2 * π * ξ / H)‖ := by
-  refine (integrable_kloc.norm.mul_const (∑ k ∈ s, ‖c k‖)).mono' ?_ (Eventually.of_forall fun ξ => ?_)
-  · exact (continuous_kloc.norm.mul ((continuous_esum s c lam).comp (by fun_prop)).norm).aestronglyMeasurable
-  · rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
-    exact mul_le_mul_of_nonneg_left (norm_esum_le s c lam _) (norm_nonneg _)
-
 /-- **The local average, as an identity**: for `H > 0` and every `|λ_k − Λ| ≤ H`,
 `F(x) = ∫k(ξ)e^{−2πiξΛ/H}F(x + 2πξ/H) dξ`. -/
 theorem esum_eq_integral {Λ H : ℝ} (hH : 0 < H) (hlam : ∀ k ∈ s, |lam k - Λ| ≤ H) (x : ℝ) :

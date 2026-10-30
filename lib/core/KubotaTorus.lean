@@ -72,24 +72,6 @@ theorem frq_neg (x : 𝓞 K) : frq (-x) = -frq x := by
   ext i
   fin_cases i <;> simp; ring
 
-theorem frq_injective : Function.Injective frq := by
-  intro x x' h
-  obtain ⟨c, rfl⟩ := crdEquiv.surjective x
-  obtain ⟨d, rfl⟩ := crdEquiv.surjective x'
-  have h' : frq (crd c) = frq (crd d) := h
-  rw [frq_crd, frq_crd] at h'
-  have h0 := congrFun h' 0
-  have h1 := congrFun h' 1
-  simp at h0 h1
-  have e : c = d := by
-    ext i
-    fin_cases i
-    · show c 0 = d 0
-      omega
-    · show c 1 = d 1
-      omega
-  rw [e]
-
 theorem eq_zero_of_frq_eq_zero {x : 𝓞 K} (h : frq x = 0) : x = 0 := by
   obtain ⟨c, rfl⟩ := crdEquiv.surjective x
   have h' : frq (crd c) = 0 := h
@@ -341,7 +323,6 @@ end
 #print axioms Eis.frq_crd
 #print axioms Eis.frq_frqInv
 #print axioms Eis.frq_neg
-#print axioms Eis.frq_injective
 #print axioms Eis.eq_zero_of_frq_eq_zero
 #print axioms Eis.ebr_tch
 #print axioms Eis.ebr_neg_tch

@@ -102,7 +102,6 @@ theorem nontrivial_iff_Xi (z : ℂ) : IsNontrivialZero z ↔ Xi ((z - 1 / 2) / I
       simp at this
       linarith [Nat.cast_nonneg (α := ℝ) n]
 
-
 /-! ## The two zero families agree -/
 
 /-- The common multiplicity at `z`: the order of `Ξ(√·)` at `((z − ½)/i)²`. -/
@@ -249,14 +248,8 @@ theorem weilExplicit_zeta {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven
     {hR : ℝ → ℝ} (hreal : ∀ r : ℝ, h r = hR r) : WeilExplicit zetaZeroFamily h hR :=
   weilExplicit_zeta_of (weilExplicit_Xi H heven hreal)
 
-/-- The corollary over the zeros of `ζ`, with its named inputs discharged. -/
-theorem lam_decay_zeta_uncond (B : ℝ) : ∃ K, 0 ≤ K ∧ ∀ a, 1 ≤ a → lam a ≤ K * Real.exp (-B * a) :=
-  lam_decay_zeta (fun a ha => weilExplicit_zeta_of (weilExplicit_PhiA (by linarith)))
-    (weilExplicit_zeta_of (weilExplicit_Xi striptest_four (fun t => by simp) (fun r => by push_cast; rfl))) B
-
 end WeilForm
 
 #print axioms WeilForm.order_xi_zeta
 #print axioms WeilForm.zetaEquiv
 #print axioms WeilForm.weilExplicit_zeta
-#print axioms WeilForm.lam_decay_zeta_uncond

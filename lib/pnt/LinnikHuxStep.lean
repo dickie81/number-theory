@@ -898,57 +898,6 @@ theorem parStep_good : parStep.Good where
   hA := by simp only [parStep]; norm_num
   hA16 := by simp only [parStep]; norm_num
 
-/-- The parameters of the step `7/3 + 1/2000` on `[16/21, 5/6]`: the power trick's target `Q^{7/9+3ε}`, powers
-`m ≤ 1556`, and the inner exponent `7/3 + 25ε`. -/
-def parHux73 : Par where
-  M := 1556
-  a := 7 / 9 + 2 * εs
-  lam := 7 / 6 + 9 / 2 * εs
-  lo := 16 / 21
-  hi := 5 / 6
-  Ai := 7 / 3 + 25 * εs
-  A := 7 / 3 + 1 / 2000
-
-theorem parHux73_good : parHux73.Good where
-  hM := by simp [parHux73]
-  ha := by simp only [parHux73, εs]; norm_num
-  hat := by simp only [parHux73, εs]; norm_num
-  hlam1 := by simp only [parHux73, εs]; norm_num
-  hlam2 := by simp only [parHux73, εs]; norm_num
-  hlam3 := by simp only [parHux73, εs]; norm_num
-  hlo := by simp only [parHux73]; norm_num
-  hhi := by simp only [parHux73]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parHux73, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parHux73, εs] at *
-    nlinarith
-  h3 := by
-    intro σ h1 h2
-    simp only [parHux73, εs] at *
-    nlinarith
-  h4 := by
-    intro σ h2
-    simp only [parHux73, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parHux73]; norm_num
-  hA16 := by simp only [parHux73]; norm_num
-
-open scoped Classical in
-/-- **The step `7/3 + 1/2000` on `[16/21, 5/6]`**: there is `C ≥ 0` such that for every `q ≥ 1`, `16/21 ≤ σ ≤ 5/6`
-and `T ≥ 2` at most `C(qT)^{(7/3+1/2000)(1−σ)}(log qT)^{10}` characters mod `q` have a zero of `L(·, χ)` in
-`Re s ≥ σ`, `|Im s| ≤ T`. -/
-theorem charDensity_hux73 :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 16 / 21 ≤ σ → σ ≤ 5 / 6 → 2 ≤ T →
-      ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
-        ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          C * ((q : ℝ) * T) ^ ((7 / 3 + 1 / 2000) * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) :=
-  charDensity_gen parHux73 parHux73_good
-
 open scoped Classical in
 /-- **The step from the parameters**: there is `C ≥ 0` such that for every `q ≥ 1`, `5/6 ≤ σ ≤ 11/12` and
 `T ≥ 2` at most `C(qT)^{(101/50)(1−σ)}(log qT)^{10}` characters mod `q` have a zero of `L(·, χ)` in `Re s ≥ σ`,
@@ -962,5 +911,4 @@ theorem charDensity_step' :
 
 end LinnikHuxStep
 
-#print axioms LinnikHuxStep.charDensity_hux73
 #print axioms LinnikHuxStep.charDensity_step'

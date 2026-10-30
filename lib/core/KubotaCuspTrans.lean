@@ -384,17 +384,6 @@ theorem exists_cuspClass (t : 𝓞 K) (ht : t = ω ∨ t = ω ^ 2) :
   have hx : (a : 𝓞 K) + b * ω = ((a + b : ℤ) : 𝓞 K) * 1 + (ω - 1) * b := by push_cast; ring
   rw [hx, chiT_add, ebr_add_period, chiT_lam_mul t ht, ebr_lam_mul, key]
 
-/-- **The twisted function is periodic**: for `m₀` in the class, `z ↦ θ(γ_t(z, v))·ĕ(−m₀z/9)` is periodic
-under `3ℤ[ω]` (`conj_ebr`). -/
-theorem thS_lowT_twist_add {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) (t : 𝓞 K) {m₀ : 𝓞 K}
-    (hm : ∀ x : 𝓞 K, ebr (σO m₀ * σO (3 * x) / 9) = chiT t x) (x : 𝓞 K) (z : ℂ) {v : ℝ} (hv : 0 < v) :
-    thS r Y hY (slAct (lowT t) (z + σO (3 * x), v)) * ebr (-(σO m₀ * (z + σO (3 * x))) / 9) =
-      thS r Y hY (slAct (lowT t) (z, v)) * ebr (-(σO m₀ * z) / 9) := by
-  rw [thS_lowT_add hr hY t x z hv, show -(σO m₀ * (z + σO (3 * x))) / 9 =
-    -(σO m₀ * z) / 9 + -(σO m₀ * σO (3 * x) / 9) by ring, ebr_add, ← conj_ebr, hm]
-  have h := chiT_mul_conj t x
-  linear_combination (thS r Y hY (slAct (lowT t) (z, v)) * ebr (-(σO m₀ * z) / 9)) * h
-
 /-! ### The conjugated character -/
 
 /-- **The conjugated character** `κ_t(γ) = κ(γ_t·γ·γ_t⁻¹)`. -/
@@ -460,7 +449,6 @@ end
 #print axioms Eis.ebr_add_period
 #print axioms Eis.ebr_nsmul
 #print axioms Eis.exists_cuspClass
-#print axioms Eis.thS_lowT_twist_add
 #print axioms Eis.lowT_conj_mem
 #print axioms Eis.isUChar_kubT
 #print axioms Eis.kubT_slT

@@ -341,8 +341,6 @@ theorem sym6_mul_right (a : 𝓞 K) {I J : Ideal (𝓞 K)} (hI : I ≠ 0) (hJ : 
 theorem sym6_one_right (a : 𝓞 K) : sym6 a 1 = 1 := by
   rw [sym6, UniqueFactorizationMonoid.normalizedFactors_one, Multiset.map_zero, Multiset.prod_zero]
 
-/-- The cubic and quadratic symbols are the square and the cube. -/
-noncomputable def sym3 (a : 𝓞 K) (I : Ideal (𝓞 K)) : ℂ := sym6 a I ^ 2
 noncomputable def sym2 (a : 𝓞 K) (I : Ideal (𝓞 K)) : ℂ := sym6 a I ^ 3
 
 end IdealSymbol

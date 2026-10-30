@@ -167,22 +167,6 @@ theorem inner_sum_prime (χ : MulChar (𝓞 K ⧸ span {π}) ℂ) (hχ : χ ≠ 
     have := gaussSum_mulShift_eq χ (ψQ π (ne_zero_of_maximal π)) hu.unit
     rwa [IsUnit.unit_spec] at this
 
-/-- **Poisson summation twisted by a character modulo a prime**: for `χ ≠ 1`,
-`Σ_z χ(z)F(σz) = 2/(√3·N(π))·g(χ, ψ_π)·Σ_{μ∈ℤ[ω]} χ⁻¹(μ)·𝓕F(conj(2σ(μ)/σ(δπ)))`. -/
-theorem eis_poisson_char (F : SchwartzMap ℂ ℂ) (χ : MulChar (𝓞 K ⧸ span {π}) ℂ) (hχ : χ ≠ 1) :
-    ∑' z : 𝓞 K, χ (Ideal.Quotient.mk (span {π}) z) * F (σO z) =
-      ((2 / (Real.sqrt 3 * (absNorm (span {π}) : ℝ)) : ℝ) : ℂ) *
-        gaussSum χ (ψQ π (ne_zero_of_maximal π)) *
-        ∑' μ : 𝓞 K, χ⁻¹ (Ideal.Quotient.mk (span {π}) μ) *
-          𝓕 (F : ℂ → ℂ) (conj (2 * σO μ / σO (δ3 * π))) := by
-  rw [eis_poisson_quot F π (ne_zero_of_maximal π) (fun r => χ r)]
-  simp_rw [inner_sum_prime π χ hχ]
-  have h : ∀ μ : 𝓞 K, χ⁻¹ (Ideal.Quotient.mk (span {π}) μ) *
-      gaussSum χ (ψQ π (ne_zero_of_maximal π)) * 𝓕 (F : ℂ → ℂ) (conj (2 * σO μ / σO (δ3 * π))) =
-      gaussSum χ (ψQ π (ne_zero_of_maximal π)) * (χ⁻¹ (Ideal.Quotient.mk (span {π}) μ) *
-        𝓕 (F : ℂ → ℂ) (conj (2 * σO μ / σO (δ3 * π)))) := fun μ => by ring
-  rw [tsum_congr h, tsum_mul_left, mul_assoc]
-
 end Prime
 
 /-- `ψ_{ab}(b y) = ψ_a(y)`. -/
@@ -428,7 +412,6 @@ end
 #print axioms Eis.ψc_ne_one
 #print axioms Eis.ψQ_isPrimitive
 #print axioms Eis.inner_sum_prime
-#print axioms Eis.eis_poisson_char
 #print axioms Eis.ψc_mul_right
 #print axioms Eis.gaussTr_eq_sum
 #print axioms Eis.crt_rep_bijective

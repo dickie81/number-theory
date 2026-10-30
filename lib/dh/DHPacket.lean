@@ -56,12 +56,6 @@ theorem packet_of_lt {a ω u : ℝ} (hu : a < |u|) : packet a ω u = 0 := by
 theorem packet_even (a ω u : ℝ) : packet a ω (-u) = packet a ω u := by
   rw [packet_apply, packet_apply, abs_neg, mul_neg, Real.cos_neg]
 
-theorem abs_packet_le (a ω u : ℝ) : |packet a ω u| ≤ 1 := by
-  rw [packet_apply]
-  split_ifs
-  · exact Real.abs_cos_le_one _
-  · simp
-
 /-- `κ = 2 sin(π/5)/(√5 + 2 sin(2π/5)) = Im ε/(1 + Re ε)`: the value `u(2) = a(2)/a(1)` of the
 normalised Dirichlet coefficients of `dh`. -/
 def kappa : ℝ := 2 * Real.sin (π / 5) / (Real.sqrt 5 + 2 * Real.sin (2 * π / 5))
@@ -155,23 +149,6 @@ theorem packet_autocorr_of_le {a ω : ℝ} (ha : 0 < a) {u : ℝ} (hu : 2 * a �
   rw [Real.volume_Icc, ENNReal.ofReal_eq_zero]
   linarith
 
-theorem packet_autocorr_of_abs_le {a ω : ℝ} (ha : 0 < a) {u : ℝ} (hu : 2 * a ≤ |u|) :
-    autocorr (packet a ω) u = 0 := by
-  rcases le_total 0 u with h | h
-  · rw [abs_of_nonneg h] at hu
-    exact packet_autocorr_of_le ha hu
-  · rw [abs_of_nonpos h] at hu
-    have hneg : autocorr (packet a ω) u = autocorr (packet a ω) (-u) := by
-      unfold autocorr
-      have := integral_add_right_eq_self (μ := (volume : Measure ℝ))
-        (fun t => packet a ω t * packet a ω (t + u)) (-u)
-      rw [← this]
-      congr 1
-      funext t
-      rw [show t + -u + u = t by ring, mul_comm]
-    rw [hneg]
-    exact packet_autocorr_of_le ha hu
-
 /-- `‖g‖² = a + sin(2ωa)/(2ω)`. -/
 theorem packet_normSq {a ω : ℝ} (ha : 0 < a) (hω : 0 < ω) :
     normSq (packet a ω) = a + Real.sin (2 * ω * a) / (2 * ω) := by
@@ -188,13 +165,6 @@ theorem packet_memLp (a ω : ℝ) : MemLp (packet a ω) 2 volume := by
   unfold packet
   exact memLp_indicator_of_continuous (f := fun u => Real.cos (ω * u)) (by fun_prop)
     measurableSet_Icc measure_Icc_lt_top.ne (C := 1) fun x _ => Real.abs_cos_le_one _
-
-theorem packet_measurable (a ω : ℝ) : Measurable (packet a ω) := by
-  unfold packet
-  exact (by fun_prop : Measurable fun u => Real.cos (ω * u)).indicator measurableSet_Icc
-
-theorem packet_intervalIntegrable (a ω : ℝ) : IntervalIntegrable (packet a ω) volume (-a) a :=
-  memLp_intervalIntegrable (packet_memLp a ω) _ _
 
 /-- `f(0) − f(u) ≤ (aω² u + 1) u` for `u ≥ 0`: the shifted packet differs by at most `ωu` inside and by at most
 `1` on two edge intervals of length `u`. -/
@@ -447,8 +417,6 @@ theorem packet_striptest {a ω : ℝ} (ha : 0 < a) (hω : 0 < ω) :
           have := Real.exp_pos (3 * a)
           nlinarith
 
-/-! ## The κ-structure of the coefficients -/
-
 /-! ## The two sines -/
 
 theorem sin_sq_pi_div_five : Real.sin (π / 5) ^ 2 = (5 - Real.sqrt 5) / 8 := by
@@ -486,13 +454,6 @@ theorem kappa_pos : 0 < kappa :=
 theorem sqrt_five_gt : (22360679 : ℝ) / 10000000 < Real.sqrt 5 :=
   (Real.lt_sqrt (by norm_num)).2 (by norm_num)
 
-theorem sqrt_five_lt : Real.sqrt 5 < (2236068 : ℝ) / 1000000 :=
-  (Real.sqrt_lt' (by norm_num)).2 (by norm_num)
-
-theorem sin_pi_div_five_gt : (5877852 : ℝ) / 10000000 < Real.sin (π / 5) :=
-  lt_of_pow_lt_pow_left₀ 2 sin_pi_div_five_pos.le (by
-    rw [sin_sq_pi_div_five]; nlinarith [sqrt_five_lt])
-
 theorem sin_pi_div_five_lt : Real.sin (π / 5) < (5877853 : ℝ) / 10000000 :=
   lt_of_pow_lt_pow_left₀ 2 (by norm_num) (by
     rw [sin_sq_pi_div_five]; nlinarith [sqrt_five_gt])
@@ -500,15 +461,6 @@ theorem sin_pi_div_five_lt : Real.sin (π / 5) < (5877853 : ℝ) / 10000000 :=
 theorem sin_two_pi_div_five_gt : (9510565 : ℝ) / 10000000 < Real.sin (2 * π / 5) :=
   lt_of_pow_lt_pow_left₀ 2 sin_two_pi_div_five_pos.le (by
     rw [sin_sq_two_pi_div_five]; nlinarith [sqrt_five_gt])
-
-theorem sin_two_pi_div_five_lt : Real.sin (2 * π / 5) < (9510566 : ℝ) / 10000000 :=
-  lt_of_pow_lt_pow_left₀ 2 (by norm_num) (by
-    rw [sin_sq_two_pi_div_five]; nlinarith [sqrt_five_lt])
-
-theorem kappa_gt : (28407 : ℝ) / 100000 < kappa := by
-  unfold kappa
-  rw [lt_div_iff₀ kappa_den_pos]
-  linarith [sqrt_five_lt, sin_two_pi_div_five_lt, sin_pi_div_five_gt]
 
 theorem kappa_lt : kappa < (28408 : ℝ) / 100000 := by
   unfold kappa
@@ -571,10 +523,6 @@ theorem uDH_chi5_eq_ofReal (n : ℕ) : uDH chi5 n = (uR n : ℂ) :=
 theorem dinv_uDH_chi5_eq_ofReal (n : ℕ) : DInv.dinv (uDH chi5) n = (dinvR n : ℂ) :=
   (Complex.conj_eq_iff_re.1 (conjFixed_uDH_chi5.dinv n)).symm
 
-theorem dinvR_zero : dinvR 0 = 0 := by
-  show (DInv.dinv (uDH chi5) 0).re = 0
-  rw [DInv.dinv_zero, Complex.zero_re]
-
 theorem dinvR_one : dinvR 1 = 1 := by
   show (DInv.dinv (uDH chi5) 1).re = 1
   rw [DInv.dinv_one, Complex.one_re]
@@ -608,13 +556,6 @@ theorem cDH_one {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) : cDH χ 1 
   rw [LSeries.convolution_def]
   simp [Nat.divisorsAntidiagonal_one, LSeries.logMul]
 
-theorem cDH_zero {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) : cDH χ 0 = 0 := by
-  unfold cDH
-  exact LSeries.convolution_map_zero _ _
-
-theorem fDH_zero : fDH 0 = 0 := by
-  simp [fDH, cDH_zero]
-
 theorem fDH_one : fDH 1 = 0 := by
   simp [fDH, cDH_one]
 
@@ -642,7 +583,6 @@ theorem two_mul_le_log_of_floor_exp_lt {a : ℝ} {n : ℕ} (h : ⌊Real.exp (2 *
   have he : Real.exp (2 * a) < n := (Nat.floor_lt (Real.exp_pos _).le).1 h
   have hn : (0 : ℝ) < n := (Real.exp_pos _).trans he
   exact (Real.le_log_iff_exp_le hn).2 he.le
-
 
 /-! ## The assembled closed form -/
 
@@ -693,7 +633,6 @@ end PsiOmega
 #print axioms PsiOmega.packet_normSq
 #print axioms PsiOmega.packet_ghatC
 #print axioms PsiOmega.packet_striptest
-#print axioms PsiOmega.kappa_gt
 #print axioms PsiOmega.kappa_lt
 #print axioms PsiOmega.uDH_chi5_eq
 #print axioms PsiOmega.dinvR_of_two_le

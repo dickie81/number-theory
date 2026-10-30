@@ -604,22 +604,9 @@ theorem reflect_aux {f q : ℕ} [NeZero f] [NeZero q] (hfq : f ∣ q) {ψ : Diri
   rw [integral_congr_ae (Eventually.of_forall hpt), integral_add hint1 hintR1, hRR,
     integral_congr_ae (Eventually.of_forall hT)]
 
-/-- **The reflection of the smoothed character sum** (the identity of `reflect_aux`). -/
-theorem reflect {f q : ℕ} [NeZero f] [NeZero q] (hfq : f ∣ q) {ψ : DirichletCharacter ℂ f}
-    (hprim : ψ.IsPrimitive) (hψ : ψ ≠ 1) {Λ : ℝ} (hΛ : 0 < Λ) {z : ℂ} {c₁ c₂ : ℝ}
-    (hc₂0 : c₂ < 0) (hc₁0 : 0 < c₁) (hc₂ : -1 / 2 ≤ c₂) (hc₁ : c₁ ≤ 2) (hs1 : -5 / 16 ≤ z.re + c₂)
-    (hs3 : z.re + c₂ < 0) (hs2 : z.re + c₁ ≤ 13 / 16) (Z : ℕ) :
-    (∫ v : ℝ, LFunction ψ (z + (c₁ + v * I)) * kW Λ (c₁ + v * I)) =
-      (∫ v : ℝ, kW Λ (c₁ + v * I) * Phi ψ q (z + (c₁ + v * I)) *
-          dualS (changeLevel hfq ψ)⁻¹ Z (z + (c₁ + v * I))) +
-      ∫ v : ℝ, kW Λ (c₂ + v * I) * Phi ψ q (z + (c₂ + v * I)) *
-          dualT (changeLevel hfq ψ)⁻¹ Z (z + (c₂ + v * I)) :=
-  (reflect_aux hfq hprim hψ hΛ hc₂0 hc₁0 hc₂ hc₁ hs1 hs3 hs2 Z).1
-
 end LinnikReflect
 
 #print axioms LinnikReflect.LFunction_eq_Phi
 #print axioms LinnikReflect.norm_Phi_le
 #print axioms LinnikReflect.kW_isBigO
 #print axioms LinnikReflect.reflect_aux
-#print axioms LinnikReflect.reflect

@@ -115,17 +115,12 @@ noncomputable def S8c (i j k l b c d f : ℕ) : List (Atom 8) := P.S8 i j k l b 
 
 theorem chain_S6cle {Y : ℕ} (i j k l b c : ℕ) : ∀ rt ∈ famSet 6 Y (P.S6cle i j k l b c), Chain P.z₀ P.ztop rt :=
   chain_append _ (P.chain_S6c i j k l b c)
-theorem chain_S6cgt {Y : ℕ} (i j k l b c : ℕ) : ∀ rt ∈ famSet 6 Y (P.S6cgt i j k l b c), Chain P.z₀ P.ztop rt :=
-  chain_append _ (P.chain_S6c i j k l b c)
 theorem chain_S7 {Y : ℕ} (i j k l b c : ℕ) : ∀ rt ∈ famSet 7 Y (P.S7 i j k l b c), Chain P.z₀ P.ztop rt :=
   chain_ext (P.chain_S6cle i j k l b c)
 theorem chain_S7c {Y : ℕ} (i j k l b c d : ℕ) : ∀ rt ∈ famSet 7 Y (P.S7c i j k l b c d), Chain P.z₀ P.ztop rt :=
   chain_append _ (P.chain_S7 i j k l b c)
 theorem chain_S7le {Y : ℕ} (i j k l b c d : ℕ) :
     ∀ rt ∈ famSet 7 Y (P.S7le i j k l b c d), Chain P.z₀ P.ztop rt :=
-  chain_append _ (P.chain_S7c i j k l b c d)
-theorem chain_S7gt {Y : ℕ} (i j k l b c d : ℕ) :
-    ∀ rt ∈ famSet 7 Y (P.S7gt i j k l b c d), Chain P.z₀ P.ztop rt :=
   chain_append _ (P.chain_S7c i j k l b c d)
 theorem chain_S8 {Y : ℕ} (i j k l b c d : ℕ) : ∀ rt ∈ famSet 8 Y (P.S8 i j k l b c d), Chain P.z₀ P.ztop rt :=
   chain_ext (P.chain_S7le i j k l b c d)

@@ -70,104 +70,9 @@ def frobOff {ι : Type*} [DecidableEq ι] {q : ℕ} (N : ℝ) (R : Finset ι) (�
     (t : ι → ℝ) : ℝ :=
   ∑ i ∈ R, ∑ k ∈ R, if i = k then 0 else ‖gramP N χ t i k‖ ^ 2
 
-/-- **The triples of distinct points**: `tr(E³) = Re Σ G(i, j)G(j, k)G(k, i)` over `i, j, k` pairwise distinct. -/
-def tri3 {ι : Type*} [DecidableEq ι] {q : ℕ} (N : ℝ) (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
-    (t : ι → ℝ) : ℝ :=
-  (∑ i ∈ R, ∑ j ∈ R, ∑ k ∈ R,
-    if i ≠ j ∧ j ≠ k ∧ k ≠ i then gramP N χ t i j * gramP N χ t j k * gramP N χ t k i else 0).re
-
 lemma frobOff_nonneg {ι : Type*} [DecidableEq ι] {q : ℕ} (N : ℝ) (R : Finset ι)
     (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) : 0 ≤ frobOff N R χ t :=
   sum_nonneg fun _ _ => sum_nonneg fun _ _ => by split_ifs <;> positivity
-
-/-- The not-all-equal triples: two equal points in one of three positions, or three distinct points. -/
-lemma split_triple {ι : Type*} [DecidableEq ι] (P : ι → ι → ι → ℂ) (i j k : ι) :
-    (if i = j ∧ j = k then (0 : ℂ) else P i j k) =
-      (if i = j ∧ j ≠ k then P i j k else 0) + (if j = k ∧ k ≠ i then P i j k else 0) +
-      (if k = i ∧ i ≠ j then P i j k else 0) + (if i ≠ j ∧ j ≠ k ∧ k ≠ i then P i j k else 0) := by
-  by_cases h1 : i = j <;> by_cases h2 : j = k <;> by_cases h3 : k = i <;> simp_all
-
-/-- **The cubic trace's off-diagonal**: `X = 3μ‖E‖_F² + tr(E³)`. -/
-theorem X3_eq {ι : Type*} [DecidableEq ι] {q : ℕ} {N : ℝ} (hN : 0 < N) (R : Finset ι)
-    (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) :
-    X3 N R χ t = 3 * muP q N * frobOff N R χ t + tri3 N R χ t := by
-  have hdiag : ∀ i, gramP N χ t i i = (muP q N : ℂ) := gramP_diag hN χ t
-  have hsq : ∀ i k, gramP N χ t i k * gramP N χ t k i = ((‖gramP N χ t i k‖ ^ 2 : ℝ) : ℂ) := by
-    intro i k
-    rw [gramP_swap N χ t i k, Complex.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq]
-  unfold X3 tri3
-  set G := gramP N χ t with hG
-  set μ := muP q N with hμ
-  set c : ι → ι → ℂ := fun i k => (μ : ℂ) * ((‖G i k‖ ^ 2 : ℝ) : ℂ) with hc
-  have hF : (μ : ℂ) * ((frobOff N R χ t : ℝ) : ℂ) = ∑ i ∈ R, ∑ k ∈ R, if i = k then 0 else c i k := by
-    unfold frobOff
-    rw [Complex.ofReal_sum, mul_sum]
-    refine sum_congr rfl fun i _ => ?_
-    rw [Complex.ofReal_sum, mul_sum]
-    refine sum_congr rfl fun k _ => ?_
-    split_ifs <;> simp [hc, hG]
-  -- the pattern `i = j ≠ k`: the sum over `j` collapses to `j = i`
-  have s1 : ∑ i ∈ R, ∑ j ∈ R, ∑ k ∈ R, (if i = j ∧ j ≠ k then G i j * G j k * G k i else 0) =
-      ∑ i ∈ R, ∑ k ∈ R, if i = k then 0 else c i k := by
-    refine sum_congr rfl fun i hi => ?_
-    rw [sum_eq_single i]
-    · refine sum_congr rfl fun k _ => ?_
-      by_cases hk : i = k
-      · simp [hk]
-      · rw [ite_eq_left_of_eq_true _ _ (eq_true ⟨rfl, hk⟩), ite_eq_right_of_eq_false _ _ (eq_false hk), hdiag,
-          mul_assoc, hsq]
-    · intro j _ hji
-      exact sum_eq_zero fun k _ => ite_eq_right_of_eq_false _ _ (eq_false fun h => hji h.1.symm)
-    · intro h; exact absurd hi h
-  -- the pattern `j = k ≠ i`: the sum over `k` collapses to `k = j`
-  have s2 : ∑ i ∈ R, ∑ j ∈ R, ∑ k ∈ R, (if j = k ∧ k ≠ i then G i j * G j k * G k i else 0) =
-      ∑ i ∈ R, ∑ j ∈ R, if i = j then 0 else c i j := by
-    refine sum_congr rfl fun i _ => sum_congr rfl fun j hj => ?_
-    rw [sum_eq_single j]
-    · by_cases hij : i = j
-      · subst hij; simp
-      · rw [ite_eq_left_of_eq_true _ _ (eq_true ⟨rfl, Ne.symm hij⟩), ite_eq_right_of_eq_false _ _ (eq_false hij),
-          hdiag, hc]
-        dsimp only
-        rw [← hsq i j]
-        ring
-    · intro k _ hkj
-      exact ite_eq_right_of_eq_false _ _ (eq_false fun h => hkj h.1.symm)
-    · intro h; exact absurd hj h
-  -- the pattern `k = i ≠ j`: the sum over `k` collapses to `k = i`
-  have s3 : ∑ i ∈ R, ∑ j ∈ R, ∑ k ∈ R, (if k = i ∧ i ≠ j then G i j * G j k * G k i else 0) =
-      ∑ i ∈ R, ∑ j ∈ R, if i = j then 0 else c i j := by
-    refine sum_congr rfl fun i hi => sum_congr rfl fun j _ => ?_
-    rw [sum_eq_single i]
-    · by_cases hij : i = j
-      · subst hij; simp
-      · rw [ite_eq_left_of_eq_true _ _ (eq_true ⟨rfl, hij⟩), ite_eq_right_of_eq_false _ _ (eq_false hij), hdiag,
-          hc]
-        dsimp only
-        rw [← hsq i j]
-        ring
-    · intro k _ hki
-      exact ite_eq_right_of_eq_false _ _ (eq_false fun h => hki h.1)
-    · intro h; exact absurd hi h
-  have hsum : (∑ i ∈ R, ∑ j ∈ R, ∑ k ∈ R, if i = j ∧ j = k then (0 : ℂ) else G i j * G j k * G k i) =
-      3 * ((μ : ℂ) * ((frobOff N R χ t : ℝ) : ℂ)) +
-      ∑ i ∈ R, ∑ j ∈ R, ∑ k ∈ R, (if i ≠ j ∧ j ≠ k ∧ k ≠ i then G i j * G j k * G k i else 0) := by
-    have e : (∑ i ∈ R, ∑ j ∈ R, ∑ k ∈ R, if i = j ∧ j = k then (0 : ℂ) else G i j * G j k * G k i) =
-        ∑ i ∈ R, ∑ j ∈ R, ∑ k ∈ R, (if i = j ∧ j ≠ k then G i j * G j k * G k i else 0) +
-        ∑ i ∈ R, ∑ j ∈ R, ∑ k ∈ R, (if j = k ∧ k ≠ i then G i j * G j k * G k i else 0) +
-        ∑ i ∈ R, ∑ j ∈ R, ∑ k ∈ R, (if k = i ∧ i ≠ j then G i j * G j k * G k i else 0) +
-        ∑ i ∈ R, ∑ j ∈ R, ∑ k ∈ R, (if i ≠ j ∧ j ≠ k ∧ k ≠ i then G i j * G j k * G k i else 0) := by
-      simp only [← sum_add_distrib]
-      exact sum_congr rfl fun i _ => sum_congr rfl fun j _ => sum_congr rfl fun k _ =>
-        split_triple (fun i j k => G i j * G j k * G k i) i j k
-    rw [e, s1, s2, s3, hF]
-    ring
-  rw [hsum, Complex.add_re]
-  have e3 : (3 * ((μ : ℂ) * ((frobOff N R χ t : ℝ) : ℂ))).re = 3 * μ * frobOff N R χ t := by
-    rw [show (3 : ℂ) * ((μ : ℂ) * ((frobOff N R χ t : ℝ) : ℂ)) = ((3 * μ * frobOff N R χ t : ℝ) : ℂ) by
-      push_cast; ring]
-    exact Complex.ofReal_re _
-  rw [e3]
 
 /-! ### The two hypotheses -/
 
@@ -282,6 +187,5 @@ theorem third_of_s23 (h2 : CGLS2) (h3 : CGLS3) : CGLThird := by
 
 end LinnikCGLS23
 
-#print axioms LinnikCGLS23.X3_eq
 #print axioms LinnikCGLS23.mu0_le
 #print axioms LinnikCGLS23.third_of_s23

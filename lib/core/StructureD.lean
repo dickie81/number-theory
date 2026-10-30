@@ -113,39 +113,6 @@ abbrev gdim (a : ℝ) : ℕ := zetaGD.gdim a
 abbrev chainVec {a : ℝ} {j : ℕ} {w : ℝ → ℝ} (hc : IsChain a j w) (i : Fin (j + 1)) : groundSpace a :=
   zetaGD.chainVec hc i
 
-/-- **A Green chain of full length.** -/
-theorem exists_long_chain {a : ℝ} (ha : 0 < a) : ∃ w, IsChain a (gdim a - 1) w ∧ 0 < normSq w :=
-  zetaGD.exists_long_chain ha
-
-/-- **The Green chain is independent.** -/
-theorem chain_linearIndependent {a : ℝ} (ha : 0 < a) {j : ℕ} {w : ℝ → ℝ} (hc : IsChain a j w)
-    (hpos : 0 < normSq w) :
-    LinearIndependent ℝ (fun i => (iotaGS a).rangeRestrict (chainVec hc i)) :=
-  zetaGD.chain_linearIndependent ha hc hpos
-
-/-- **Theorem D, spanning (pointwise a.e. form).** -/
-theorem chain_span_ae {a : ℝ} (ha : 0 < a) {w : ℝ → ℝ} (hc : IsChain a (gdim a - 1) w)
-    (hpos : 0 < normSq w) {v : ℝ → ℝ} (hv : v ∈ groundSpace a) :
-    ∃ c : Fin (gdim a - 1 + 1) → ℝ, v =ᵐ[volume] fun x => ∑ i, c i * Gi a i w x :=
-  zetaGD.chain_span_ae ha hc hpos hv
-
-/-- **Theorem D, spanning (Fourier form).** -/
-theorem chain_span_hat {a : ℝ} (ha : 0 < a) {w : ℝ → ℝ} (hc : IsChain a (gdim a - 1) w)
-    (hpos : 0 < normSq w) {v : ℝ → ℝ} (hv : v ∈ groundSpace a) :
-    ∃ c : Fin (gdim a - 1 + 1) → ℝ, ∀ t : ℝ,
-      ghatC v a t = (∑ i : Fin (gdim a - 1 + 1), (c i : ℂ) * ((qr t : ℝ) : ℂ) ^ (i : ℕ)) * ghatC w a t :=
-  zetaGD.chain_span_hat ha hc hpos hv
-
-/-- **Each off-cross zero of `v̂` is a root of `P_v`.** -/
-theorem offcross_root {a : ℝ} (ha : 0 < a) {w : ℝ → ℝ} (hc : IsChain a (gdim a - 1) w)
-    (hwpos : 0 < normSq w) {v : ℝ → ℝ} (hv : v ∈ groundSpace a)
-    {ev : Fin (gdim a - 1 + 1) → ℝ}
-    (hev : ∀ t : ℝ, ghatC v a t
-      = (∑ i : Fin (gdim a - 1 + 1), (ev i : ℂ) * ((qr t : ℝ) : ℂ) ^ (i : ℕ)) * ghatC w a t)
-    {ω : ℂ} (hω : ghatC v a ω = 0) (hσ : (ω ^ 2).im ≠ 0) :
-    (polyOf fun i : Fin (gdim a - 1 + 1) => (ev i : ℂ)).IsRoot (-1 / (1 / 4 + ω ^ 2)) :=
-  zetaGD.offcross_root ha hc hwpos hv hev hω hσ
-
 /-- **Theorem D, zeros on the cross.** -/
 theorem chain_top_zeros {a : ℝ} (ha : 0 < a) {w : ℝ → ℝ} (hc : IsChain a (gdim a - 1) w)
     (hpos : 0 < normSq w) {ω : ℂ} (hω : ghatC (Gi a (gdim a - 1) w) a ω = 0) :
@@ -165,18 +132,10 @@ theorem theoremD {a : ℝ} (ha : 0 < a) :
       ∀ ω : ℂ, ghatC (Gi a (gdim a - 1) w) a ω = 0 → (ω ^ 2).im = 0 :=
   zetaGD.theoremD ha
 
-
 /-! ## Consequence for the RH chain: simplicity is no longer a separate input -/
-
-/-- A nonzero `w` with a full-length Green chain (`exists_long_chain`). -/
-abbrev chainBase (a : ℝ) : ℝ → ℝ := zetaGD.chainBase a
 
 /-- **The top-of-chain ground state**: `G^{m−1}w`, normalised. -/
 abbrev topGS (a : ℝ) : ℝ → ℝ := zetaGD.topGS a
-
-theorem chainBase_spec {a : ℝ} (ha : 0 < a) :
-    IsChain a (gdim a - 1) (chainBase a) ∧ 0 < normSq (chainBase a) :=
-  zetaGD.chainBase_spec ha
 
 theorem topGS_isGroundState {a : ℝ} (ha : 0 < a) : IsGroundState a (topGS a) :=
   (isGroundState_iff ha).2 (zetaGD.topGS_mem ha)
@@ -194,39 +153,10 @@ theorem rh_of_hypConv_top {a : ℕ → ℝ} (ha : ∀ n, 0 < a n)
   rh_of_prime_side_cross (fun n => topGS_isGroundState (ha n))
     (Eventually.of_forall fun n z hz => topGS_cross (ha n) z hz) hconv zetaNoZeroInUnitInterval
 
-/-- The new hypothesis is implied by the old pair: if the ground states `g n` are eventually simple
-and satisfy (a), then so do the top-of-chain ground states. -/
-theorem hypConv_top_of_simple {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ} (ha : ∀ n, 0 < a n)
-    (hsimple : ∀ᶠ n in atTop, SimpleGround (a n) (g n)) (hconv : HypConv a g) :
-    HypConv a fun n => topGS (a n) := by
-  have heq : ∀ᶠ n in atTop, ∀ z : ℂ,
-      ghatC (topGS (a n)) (a n) z / ghatC (topGS (a n)) (a n) 0
-        = ghatC (g n) (a n) z / ghatC (g n) (a n) 0 := by
-    filter_upwards [hsimple] with n hs z
-    obtain ⟨c, hcg⟩ := hs.2 _ ((isGroundState_iff (ha n)).1 (topGS_isGroundState (ha n))).1
-    have hc0 : c ≠ 0 := by
-      rintro rfl
-      have := normSq_congr_ae hcg
-      rw [(topGS_isGroundState (ha n)).2.1] at this
-      simp [normSq] at this
-    rw [ghatC_congr_ae hcg, ghatC_congr_ae hcg, ghatC_smul, ghatC_smul,
-      mul_div_mul_left _ _ (by exact_mod_cast hc0)]
-  intro u hu x
-  obtain ⟨t, ht, hev⟩ := hconv u hu x
-  refine ⟨t, ht, ?_⟩
-  filter_upwards [hev, heq] with n hn he y hy
-  rw [he y]; exact hn y hy
-
 end WeilForm
 
 #print axioms WeilForm.finiteDimensional_groundL2
-#print axioms WeilForm.exists_long_chain
-#print axioms WeilForm.chain_linearIndependent
-#print axioms WeilForm.chain_span_ae
-#print axioms WeilForm.chain_span_hat
-#print axioms WeilForm.offcross_root
 #print axioms WeilForm.chain_top_zeros
 #print axioms WeilForm.theoremD
 #print axioms WeilForm.topGS_cross
 #print axioms WeilForm.rh_of_hypConv_top
-#print axioms WeilForm.hypConv_top_of_simple

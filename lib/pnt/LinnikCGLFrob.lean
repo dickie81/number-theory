@@ -461,10 +461,6 @@ lemma resT_nonneg {ι : Type*} {q : ℕ} (χ : ι → DirichletCharacter ℂ q) 
     0 ≤ resT χ t i k := by
   unfold resT; split_ifs <;> positivity
 
-lemma resP_nonneg {ι : Type*} {q : ℕ} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) :
-    0 ≤ resP R χ t :=
-  Finset.sum_nonneg fun i _ => Finset.sum_nonneg fun k _ => resT_nonneg χ t i k
-
 /-- At one point per character there are no residues. -/
 lemma resP_eq_zero_of_injOn {ι : Type*} {q : ℕ} {R : Finset ι} {χ : ι → DirichletCharacter ℂ q}
     (hinj : Set.InjOn χ R) (t : ι → ℝ) : resP R χ t = 0 := by

@@ -154,16 +154,6 @@ theorem gamF_pow (j : ℕ) (hj : j ∈ ({1, 2, 3} : Finset ℕ)) :
   rw [MulChar.pow_apply' _ hj0]
 
 include hcop in
-/-- **`γ₂(n)³ = μ(n)α(n)`** for `n = ∏_{i∈S} π_i` with distinct primary primes `π_i ∤ 6`. -/
-theorem gamF_two_cube (hpr : ∀ i ∈ S, Primary (π i)) :
-    gamF π S (fun i => chiF π h6 i ^ 2) ^ 3 = (-1) ^ S.card * ∏ i ∈ S, alphaN (π i) := by
-  rw [gamF_pow π h6 S hcop 2 (by simp), ← Finset.prod_pow, Finset.pow_card_mul_prod]
-  refine Finset.prod_congr rfl fun i hi => ?_
-  rw [mul_pow, gamN_two_cube (π i) (h6 i) (hpr i hi), ← pow_mul,
-    show 2 * 3 = 6 by rfl, chi6_pow_six_of_ne_zero _ _ (mk_cofactor_ne_zero π S hcop hi)]
-  ring
-
-include hcop in
 /-- **`γ₁(n)γ₂(n) = μ(n)α(n)G(n)`** with `G(n) = χ̄_n(4)γ₃(n)`. -/
 theorem gamF_one_mul_two (hpr : ∀ i ∈ S, Primary (π i)) :
     gamF π S (fun i => chiF π h6 i ^ 1) * gamF π S (fun i => chiF π h6 i ^ 2) =
@@ -268,7 +258,6 @@ end
 
 #print axioms Eis.gamF_eq
 #print axioms Eis.gamF_union
-#print axioms Eis.gamF_two_cube
 #print axioms Eis.gamF_one_mul_two
 #print axioms Eis.gamF_one_mul_inv
 #print axioms Eis.chi6_sq_recip

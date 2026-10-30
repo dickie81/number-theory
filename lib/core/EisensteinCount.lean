@@ -43,10 +43,6 @@ theorem mem_ofNorm {n : ℕ} {I : Ideal (𝓞 K)} : I ∈ ofNorm n ↔ absNorm I
 /-- `m(n) = Σ_{N𝔞 = n} μ(𝔞)`. -/
 noncomputable def mI (n : ℕ) : ℤ := ∑ I ∈ ofNorm n, moebius I
 
-/-- The norm of `a·𝓞 K` is a power of `a`. -/
-theorem absNorm_natCast_span (a : ℕ) :
-    absNorm (span {(a : 𝓞 K)}) = a ^ Module.finrank ℤ (𝓞 K) := Ideal.absNorm_span_natCast a
-
 theorem natCast_span_le (I : Ideal (𝓞 K)) : span {((absNorm I : ℕ) : 𝓞 K)} ≤ I :=
   QuadIdeals.natCast_span_le I
 
@@ -84,8 +80,6 @@ end Mult
 
 section PrimePowers
 
-theorem finrank_O : Module.finrank ℤ (𝓞 K) = 2 := QuadIdeals.finrank_O finrank_K
-
 theorem absNorm_natCast_span_sq (a : ℕ) : absNorm (span {(a : 𝓞 K)}) = a ^ 2 :=
   QuadIdeals.absNorm_natCast_span_sq finrank_K a
 
@@ -100,14 +94,6 @@ theorem mem_pFactors {p : ℕ} (hp : p ≠ 0) {P : Ideal (𝓞 K)} :
 
 theorem prod_pFactors {p : ℕ} (hp : p ≠ 0) : (pFactors p).prod = span {(p : 𝓞 K)} :=
   QuadIdeals.prod_pFactors hp
-
-/-- The norms of the prime factors of `p·𝓞 K` multiply to `p²`. -/
-theorem prod_norm_pFactors {p : ℕ} (hp : p ≠ 0) : ((pFactors p).map absNorm).prod = p ^ 2 :=
-  QuadIdeals.prod_norm_pFactors finrank_K hp
-
-/-- A prime factor of `p·𝓞 K` has norm `p` or `p²`. -/
-theorem norm_of_mem_pFactors {p : ℕ} (hp : p.Prime) {P : Ideal (𝓞 K)} (hP : P ∈ pFactors p) :
-    absNorm P = p ∨ absNorm P = p ^ 2 := QuadIdeals.norm_of_mem_pFactors finrank_K hp hP
 
 /-- The Möbius function of a product of distinct nonzero primes. -/
 theorem moebius_finset_prod {T : Finset (Ideal (𝓞 K))} (hT : ∀ P ∈ T, P.IsPrime ∧ P ≠ ⊥) :
@@ -129,7 +115,6 @@ theorem pFactors_cases {p : ℕ} (hp : p.Prime) :
   QuadIdeals.pFactors_cases finrank_K hp
 
 end PrimePowers
-
 
 /-- A product of distinct nonzero primes is squarefree, with exactly those prime factors. -/
 theorem finset_prod_spec {T : Finset (Ideal (𝓞 K))} (hT : ∀ P ∈ T, P.IsPrime ∧ P ≠ ⊥) :
@@ -197,14 +182,10 @@ theorem mI_prime_pow {p : ℕ} (hp : p.Prime) (k : ℕ) :
 end Eis
 
 #print axioms Eis.finrank_K
-#print axioms Eis.absNorm_natCast_span
 #print axioms Eis.span_sup_span_eq_top
 #print axioms Eis.ofNorm_mul
 #print axioms Eis.injOn_mul
 #print axioms Eis.mI_mul
-#print axioms Eis.finrank_O
-#print axioms Eis.prod_norm_pFactors
-#print axioms Eis.norm_of_mem_pFactors
 #print axioms Eis.moebius_finset_prod
 #print axioms Eis.pFactors_cases
 #print axioms Eis.finset_prod_spec

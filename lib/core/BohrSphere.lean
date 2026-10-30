@@ -89,62 +89,6 @@ theorem memℓp_two_bohr_iff (s : ℂ) : Memℓp (bohr s) 2 ↔ 1 / 2 < s.re := 
   rw [memℓp_bohr_iff (by norm_num) s]
   norm_num
 
-/-! ## Part B: the reflection in the line is Hölder conjugation -/
-
-/-- The reflection in the critical line, `s ↦ 1 − s̄`. -/
-noncomputable def lineRefl (s : ℂ) : ℂ := 1 - (starRingEnd ℂ) s
-
-@[simp] lemma lineRefl_re (s : ℂ) : (lineRefl s).re = 1 - s.re := by simp [lineRefl]
-
-@[simp] lemma lineRefl_im (s : ℂ) : (lineRefl s).im = s.im := by simp [lineRefl]
-
-/-- No pair of Hölder conjugate exponents holds a point and its mirror image together. -/
-theorem not_summable_and_summable_lineRefl {q q' : ℝ} (h : q.HolderConjugate q') (s : ℂ) :
-    ¬ (Summable (fun p : Nat.Primes => ‖bohr s p‖ ^ q) ∧
-      Summable (fun p : Nat.Primes => ‖bohr (lineRefl s) p‖ ^ q')) := by
-  rintro ⟨h1, h2⟩
-  rw [summable_norm_bohr_rpow_iff h.left_pos] at h1
-  rw [summable_norm_bohr_rpow_iff h.right_pos, lineRefl_re] at h2
-  have e := h.inv_add_inv_eq_inv
-  rw [inv_one] at e
-  rw [one_div] at h1 h2
-  linarith
-
-/-- The critical exponents `1/σ` and `1/(1 − σ)` of a point and of its mirror image are Hölder
-conjugate. -/
-theorem holderConjugate_critExp {σ : ℝ} (h0 : 0 < σ) (h1 : σ < 1) :
-    (1 / σ).HolderConjugate (1 / (1 - σ)) where
-  inv_add_inv_eq_inv := by rw [one_div, one_div, inv_inv, inv_inv, inv_one]; ring
-  left_pos := by positivity
-  right_pos := by
-    have : 0 < 1 - σ := by linarith
-    positivity
-
-/-- The two critical exponents coincide exactly on the critical line. -/
-theorem critExp_eq_iff {σ : ℝ} (h1 : σ < 1) : 1 / σ = 1 / (1 - σ) ↔ σ = 1 / 2 := by
-  constructor
-  · intro h
-    have h0 : σ ≠ 0 := by
-      rintro rfl
-      norm_num at h
-    have h1' : 1 - σ ≠ 0 := by linarith
-    field_simp at h
-    linarith
-  · rintro rfl
-    norm_num
-
-/-- `2` is the only self-conjugate exponent. -/
-theorem holderConjugate_self_iff {q : ℝ} : q.HolderConjugate q ↔ q = 2 := by
-  constructor
-  · intro h
-    have e := h.inv_add_inv_eq_inv
-    have hq := h.left_pos
-    rw [inv_one] at e
-    field_simp at e
-    linarith
-  · rintro rfl
-    exact ⟨by norm_num, by norm_num, by norm_num⟩
-
 /-! ## Part C: in every finite dimension the line is exactly the unit sphere -/
 
 /-- The pairing constant `c_F = Σ_{p ∈ F} 1/p`. -/
@@ -227,124 +171,6 @@ theorem norm_vF_lt_norm_vF {F : Finset Nat.Primes} (hF : F.Nonempty) {s s' : ℂ
 theorem norm_vF_eq_of_re_eq (F : Finset Nat.Primes) {s s' : ℂ} (h : s.re = s'.re) :
     ‖vF F s‖ = ‖vF F s'‖ := by
   rw [norm_vF, norm_vF, h]
-
-/-! ## Part D: the reflection is the polarity of the unit sphere -/
-
-lemma conj_bohr (s : ℂ) (p : Nat.Primes) :
-    (starRingEnd ℂ) (bohr s p) = bohr ((starRingEnd ℂ) s) p := by
-  have h := Complex.cpow_conj ((p : ℕ) : ℂ) (-s)
-    (by rw [Complex.natCast_arg]; exact Real.pi_ne_zero.symm)
-  rw [Complex.conj_natCast, map_neg] at h
-  rw [bohr, bohr, h]
-
-lemma bohr_conj_mul_bohr_lineRefl (s : ℂ) (p : Nat.Primes) :
-    bohr ((starRingEnd ℂ) s) p * bohr (lineRefl s) p = ((((p : ℕ) : ℝ)⁻¹ : ℝ) : ℂ) := by
-  rw [bohr, bohr, ← Complex.cpow_add _ _ (Nat.cast_ne_zero.2 p.prop.ne_zero),
-    show -(starRingEnd ℂ) s + -lineRefl s = -1 by simp [lineRefl]; ring, Complex.cpow_neg_one]
-  push_cast
-  rfl
-
-/-- The unnormalised vector `z_F(s) = (p^{−s})_{p ∈ F}`. -/
-noncomputable def zF (F : Finset Nat.Primes) (s : ℂ) : EuclideanSpace ℂ F :=
-  WithLp.toLp 2 fun p : F => bohr s p
-
-lemma zF_apply (F : Finset Nat.Primes) (s : ℂ) (p : F) : zF F s p = bohr s p := rfl
-
-/-- The pairing of a point with its mirror image does not depend on the point: it is `c_F`. -/
-theorem inner_zF_lineRefl (F : Finset Nat.Primes) (s : ℂ) :
-    inner ℂ (zF F s) (zF F (lineRefl s)) = (cF F : ℂ) := by
-  rw [PiLp.inner_apply]
-  simp_rw [RCLike.inner_apply', zF_apply, conj_bohr, bohr_conj_mul_bohr_lineRefl]
-  rw [cF, Complex.ofReal_sum,
-    Finset.sum_coe_sort F (fun p : Nat.Primes => ((((p : ℕ) : ℝ)⁻¹ : ℝ) : ℂ))]
-
-/-- **The polarity.** The normalised vectors of a point and of its mirror image pair to `1`. -/
-theorem inner_vF_lineRefl {F : Finset Nat.Primes} (hF : F.Nonempty) (s : ℂ) :
-    inner ℂ (vF F s) (vF F (lineRefl s)) = 1 := by
-  have hc := cF_pos hF
-  have key : ∀ p : F, (starRingEnd ℂ) (vF F s p) * vF F (lineRefl s) p =
-      (((((p : Nat.Primes) : ℕ) : ℝ)⁻¹ / cF F : ℝ) : ℂ) := by
-    intro p
-    rw [vF_apply, vF_apply, map_div₀, Complex.conj_ofReal, conj_bohr, div_mul_div_comm,
-      bohr_conj_mul_bohr_lineRefl, ← Complex.ofReal_mul, Real.mul_self_sqrt hc.le,
-      ← Complex.ofReal_div]
-  rw [PiLp.inner_apply]
-  simp_rw [RCLike.inner_apply', key]
-  rw [← Complex.ofReal_sum,
-    Finset.sum_coe_sort F (fun p : Nat.Primes => ((p : ℕ) : ℝ)⁻¹ / cF F), ← Finset.sum_div,
-    ← cF, div_self hc.ne', Complex.ofReal_one]
-
-/-- The normalisation is forced: rescaling `z_F` by `1/r` makes mirror pairs pair to `1` exactly when
-`r = √c_F`. -/
-theorem inner_smul_zF_lineRefl_eq_one_iff {F : Finset Nat.Primes} (hF : F.Nonempty) {r : ℝ}
-    (hr : 0 < r) (s : ℂ) :
-    inner ℂ ((r : ℂ)⁻¹ • zF F s) ((r : ℂ)⁻¹ • zF F (lineRefl s)) = 1 ↔ r = √(cF F) := by
-  rw [inner_smul_left, inner_smul_right, inner_zF_lineRefl, map_inv₀, Complex.conj_ofReal,
-    ← mul_assoc, ← mul_inv, ← Complex.ofReal_mul, ← Complex.ofReal_inv, ← Complex.ofReal_mul,
-    Complex.ofReal_eq_one]
-  have hc := cF_pos hF
-  constructor
-  · intro h
-    have hrr : r * r = cF F := by
-      have hr0 : r * r ≠ 0 := by positivity
-      field_simp at h
-      linarith
-    rw [← hrr, Real.sqrt_mul_self hr.le]
-  · rintro rfl
-    rw [Real.mul_self_sqrt hc.le, inv_mul_cancel₀ hc.ne']
-
-/-! ## Part E: Cauchy–Schwarz -/
-
-/-- `‖v_F(s)‖ · ‖v_F(1 − s̄)‖ ≥ 1`. -/
-theorem one_le_norm_vF_mul_norm_vF_lineRefl {F : Finset Nat.Primes} (hF : F.Nonempty) (s : ℂ) :
-    1 ≤ ‖vF F s‖ * ‖vF F (lineRefl s)‖ := by
-  have h := norm_inner_le_norm (𝕜 := ℂ) (vF F s) (vF F (lineRefl s))
-  rwa [inner_vF_lineRefl hF, norm_one] at h
-
-/-- With two distinct primes, equality holds exactly on the critical line. -/
-theorem norm_vF_mul_norm_vF_lineRefl_eq_one_iff {F : Finset Nat.Primes} {p₁ p₂ : Nat.Primes}
-    (h₁ : p₁ ∈ F) (h₂ : p₂ ∈ F) (hne : p₁ ≠ p₂) (s : ℂ) :
-    ‖vF F s‖ * ‖vF F (lineRefl s)‖ = 1 ↔ s.re = 1 / 2 := by
-  have hF : F.Nonempty := ⟨p₁, h₁⟩
-  have hc := cF_pos hF
-  constructor
-  · intro h
-    have hx : vF F s ≠ 0 := by
-      intro h0
-      rw [h0, norm_zero, zero_mul] at h
-      exact zero_ne_one h
-    have hy : vF F (lineRefl s) ≠ 0 := by
-      intro h0
-      rw [h0, norm_zero, mul_zero] at h
-      exact zero_ne_one h
-    have h' : ‖inner ℂ (vF F s) (vF F (lineRefl s))‖ = ‖vF F s‖ * ‖vF F (lineRefl s)‖ := by
-      rw [inner_vF_lineRefl hF, norm_one, h]
-    obtain ⟨r, -, hr⟩ := (norm_inner_eq_norm_iff hx hy).1 h'
-    have key : ∀ p : F, (((p : Nat.Primes) : ℕ) : ℝ) ^ (2 * s.re - 1) = ‖r‖ := by
-      intro p
-      have hp : (0 : ℝ) < ((p : Nat.Primes) : ℕ) := Nat.cast_pos.2 (p : Nat.Primes).prop.pos
-      have e : ‖vF F (lineRefl s) p‖ = ‖r‖ * ‖vF F s p‖ := by
-        rw [hr]
-        simp
-      rw [vF_apply, vF_apply, norm_div, norm_div, norm_bohr, norm_bohr, lineRefl_re] at e
-      have hs : (0 : ℝ) < ‖((√(cF F) : ℝ) : ℂ)‖ := by
-        rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (Real.sqrt_pos.2 hc)]
-        exact Real.sqrt_pos.2 hc
-      rw [← mul_div_assoc, div_left_inj' hs.ne'] at e
-      rw [show 2 * s.re - 1 = -(1 - s.re) + s.re by ring, Real.rpow_add hp, e, mul_assoc,
-        ← Real.rpow_add hp, neg_add_cancel, Real.rpow_zero, mul_one]
-    by_contra hσ
-    have ha : 2 * s.re - 1 ≠ 0 := fun h0 => hσ (by linarith)
-    have e := (key ⟨p₁, h₁⟩).trans (key ⟨p₂, h₂⟩).symm
-    have e2 := congrArg (fun x : ℝ => x ^ (2 * s.re - 1)⁻¹) e
-    simp only at e2
-    rw [Real.rpow_rpow_inv (Nat.cast_nonneg _) ha, Real.rpow_rpow_inv (Nat.cast_nonneg _) ha]
-      at e2
-    exact hne (Subtype.ext (Nat.cast_injective e2))
-  · intro h
-    have h2 : (lineRefl s).re = 1 / 2 := by rw [lineRefl_re, h]; norm_num
-    rw [mem_sphere_zero_iff_norm.1 ((vF_mem_sphere_iff hF s).2 h),
-      mem_sphere_zero_iff_norm.1 ((vF_mem_sphere_iff hF _).2 h2), one_mul]
 
 /-! ## Part F: the infinite-dimensional limit -/
 
@@ -545,38 +371,6 @@ theorem summable_regTerm {s : ℂ} (hs : 1 / 2 < s.re) : Summable (regTerm s) :=
     ((Nat.Primes.summable_rpow.2 (by linarith : -(2 * s.re) < -1)).mul_left _)
     (norm_regTerm_le hs.le le_rfl)
 
-lemma differentiableAt_regTerm {s : ℂ} (hs : 0 < s.re) (p : Nat.Primes) :
-    DifferentiableAt ℂ (fun w => regTerm w p) s := by
-  have hp0 : ((p : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 p.prop.ne_zero
-  have hb : DifferentiableAt ℂ (fun w => bohr w p) s :=
-    differentiableAt_id.neg.const_cpow (Or.inl hp0)
-  have hlt : ‖bohr s p‖ < 1 := by
-    rw [norm_bohr]
-    exact Real.rpow_lt_one_of_one_lt_of_neg (by exact_mod_cast p.prop.one_lt) (by linarith)
-  have hslit : 1 - bohr s p ∈ Complex.slitPlane := by
-    refine Complex.mem_slitPlane_iff.2 (Or.inl ?_)
-    rw [Complex.sub_re, Complex.one_re]
-    linarith [Complex.re_le_norm (bohr s p)]
-  exact (((differentiableAt_const _).sub hb).clog hslit).neg.sub hb
-
-/-- `log D₂ = Σ_p (−log(1 − p^{−s}) − p^{−s})` is holomorphic on `Re s > ½`. -/
-theorem differentiableOn_logD2 :
-    DifferentiableOn ℂ (fun s => ∑' p, regTerm s p) {s | 1 / 2 < s.re} := by
-  intro s₀ hs₀
-  have hs₀' : 1 / 2 < s₀.re := hs₀
-  have h1 : 1 / 2 < (s₀.re + 1 / 2) / 2 := by linarith
-  have h2 : (s₀.re + 1 / 2) / 2 < s₀.re := by linarith
-  have hU : IsOpen {s : ℂ | (s₀.re + 1 / 2) / 2 < s.re} :=
-    isOpen_lt continuous_const Complex.continuous_re
-  have hd : DifferentiableOn ℂ (fun s => ∑' p, regTerm s p) {s : ℂ | (s₀.re + 1 / 2) / 2 < s.re} :=
-    differentiableOn_tsum_of_summable_norm
-      ((Nat.Primes.summable_rpow.2 (by linarith : -(2 * ((s₀.re + 1 / 2) / 2)) < -1)).mul_left
-        ((1 - (2 : ℝ) ^ (-(1 / 2 : ℝ)))⁻¹ / 2))
-      (fun p w hw => (differentiableAt_regTerm
-        (by linarith [show (s₀.re + 1 / 2) / 2 < w.re from hw]) p).differentiableWithinAt) hU
-      (fun p w hw => norm_regTerm_le h1.le (le_of_lt hw) p)
-  exact (hd.differentiableAt (hU.mem_nhds h2)).differentiableWithinAt
-
 /-- **The split of the Euler product** (`Re s > 1`): `ζ(s) = exp(Σ_p p^{−s}) · D₂(s)`, with
 `D₂ = exp(log D₂)`. -/
 theorem riemannZeta_eq_exp_mul_exp {s : ℂ} (hs : 1 < s.re) :
@@ -593,47 +387,12 @@ theorem riemannZeta_eq_exp_mul_exp {s : ℂ} (hs : 1 < s.re) :
   simp only [regTerm, bohr]
   ring
 
-/-- `ζ` with the ball's factor removed: `ζ(s) · exp(−log D₂(s))`. -/
-noncomputable def zetaReduced (s : ℂ) : ℂ := riemannZeta s * Complex.exp (-(∑' p, regTerm s p))
-
-/-- On `Re s > 1` it is `exp(Σ_p p^{−s})`, the exponential of the pairing of `z(s)` with the
-all-ones vector. -/
-theorem zetaReduced_eq {s : ℂ} (hs : 1 < s.re) :
-    zetaReduced s = Complex.exp (∑' p : Nat.Primes, bohr s p) := by
-  rw [zetaReduced, riemannZeta_eq_exp_mul_exp hs, mul_assoc, ← Complex.exp_add, add_neg_cancel,
-    Complex.exp_zero, mul_one]
-
-/-- It is holomorphic on `Re s > ½`, `s ≠ 1`. -/
-theorem differentiableOn_zetaReduced :
-    DifferentiableOn ℂ zetaReduced ({s | 1 / 2 < s.re} \ {1}) := by
-  intro s hs
-  have hopen : IsOpen {s : ℂ | 1 / 2 < s.re} := isOpen_lt continuous_const Complex.continuous_re
-  have hdAt := differentiableOn_logD2.differentiableAt (hopen.mem_nhds hs.1)
-  exact ((differentiableAt_riemannZeta hs.2).mul hdAt.neg.cexp).differentiableWithinAt
-
-/-- Its zeros are exactly the zeros of `ζ`. -/
-theorem zetaReduced_eq_zero_iff (s : ℂ) : zetaReduced s = 0 ↔ riemannZeta s = 0 := by
-  rw [zetaReduced, mul_eq_zero, or_iff_left (Complex.exp_ne_zero _)]
-
-/-- The all-ones vector lies in no `ℓ^q` with `q < ∞`. -/
-theorem not_memℓp_one {q : ENNReal} (hq : 0 < q.toReal) :
-    ¬ Memℓp (fun _ : Nat.Primes => (1 : ℂ)) q := by
-  rw [memℓp_gen_iff hq]
-  simp only [norm_one, Real.one_rpow]
-  exact fun h => one_ne_zero ((summable_const_iff _).1 h)
-
 end BohrSphere
 
 #print axioms BohrSphere.norm_bohr
 #print axioms BohrSphere.summable_norm_bohr_rpow_iff
 #print axioms BohrSphere.memℓp_bohr_iff
 #print axioms BohrSphere.memℓp_two_bohr_iff
-#print axioms BohrSphere.lineRefl_re
-#print axioms BohrSphere.lineRefl_im
-#print axioms BohrSphere.not_summable_and_summable_lineRefl
-#print axioms BohrSphere.holderConjugate_critExp
-#print axioms BohrSphere.critExp_eq_iff
-#print axioms BohrSphere.holderConjugate_self_iff
 #print axioms BohrSphere.cF_nonneg
 #print axioms BohrSphere.cF_pos
 #print axioms BohrSphere.bohrSqSum_nonneg
@@ -647,14 +406,6 @@ end BohrSphere
 #print axioms BohrSphere.one_lt_norm_vF_iff
 #print axioms BohrSphere.norm_vF_lt_norm_vF
 #print axioms BohrSphere.norm_vF_eq_of_re_eq
-#print axioms BohrSphere.conj_bohr
-#print axioms BohrSphere.bohr_conj_mul_bohr_lineRefl
-#print axioms BohrSphere.zF_apply
-#print axioms BohrSphere.inner_zF_lineRefl
-#print axioms BohrSphere.inner_vF_lineRefl
-#print axioms BohrSphere.inner_smul_zF_lineRefl_eq_one_iff
-#print axioms BohrSphere.one_le_norm_vF_mul_norm_vF_lineRefl
-#print axioms BohrSphere.norm_vF_mul_norm_vF_lineRefl_eq_one_iff
 #print axioms BohrSphere.mem_primesLT
 #print axioms BohrSphere.primesLT_nonempty
 #print axioms BohrSphere.tendsto_cF_primesLT
@@ -668,10 +419,4 @@ end BohrSphere
 #print axioms BohrSphere.norm_bohr_le_two_rpow
 #print axioms BohrSphere.norm_regTerm_le
 #print axioms BohrSphere.summable_regTerm
-#print axioms BohrSphere.differentiableAt_regTerm
-#print axioms BohrSphere.differentiableOn_logD2
 #print axioms BohrSphere.riemannZeta_eq_exp_mul_exp
-#print axioms BohrSphere.zetaReduced_eq
-#print axioms BohrSphere.differentiableOn_zetaReduced
-#print axioms BohrSphere.zetaReduced_eq_zero_iff
-#print axioms BohrSphere.not_memℓp_one

@@ -105,69 +105,6 @@ theorem hadamard_zeta :
 
 /-! ## Theorem 1bt(i) with the explicit formula and Hadamard's identity discharged -/
 
-theorem WeilExplicit.hasSum_rhs {ι : Type*} {ρ : ι → ℂ} {h : ℂ → ℂ} {hR : ℝ → ℝ}
-    (H : WeilExplicit ρ h hR) : HasSum (fun i => h ((ρ i - 1 / 2) / I)) (weilRHS h hR) := H.2
-
-/-- The real values of the witness' squared transform on `ℝ`. -/
-def hRbt (a r : ℝ) : ℝ := (ghat a r).re ^ 2
-
-/-- **`ĝ(iy) = ∫ g(u) e^{−yu} du`, a real number**, for every real `g` (`CrossCriteria`'s
-`ghatC_I_mul` and the `ghatC_mul_I_im` of `ChiHalfSharp.lean` and `OddProbe.lean` are its cases). -/
-theorem ghatC_I_mul_eq_ofReal (g : ℝ → ℝ) (a y : ℝ) :
-    ghatC g a (I * y) = ((∫ u in (-a)..a, g u * Real.exp (-(y * u)) : ℝ) : ℂ) := by
-  unfold ghatC
-  rw [← intervalIntegral.integral_ofReal]
-  apply intervalIntegral.integral_congr
-  intro u _
-  have e : I * (I * (y : ℂ)) * (u : ℂ) = ((-(y * u) : ℝ) : ℂ) := by
-    push_cast
-    linear_combination (y * u : ℂ) * I_mul_I
-  simp only
-  rw [e, ← ofReal_exp]
-  push_cast
-  ring
-
-theorem ghat_eq_ghatC (a : ℝ) : ghat a = ghatC (fun u => Real.cosh (u / 2)) a := rfl
-
-theorem V_nonneg (a : ℝ) : 0 ≤ V a := by
-  unfold V; linarith [Real.one_le_cosh (a / 2)]
-
-/-- **`ĝ_a²` is a strip test function** (the 1bt witness `cosh(u/2)` on `[−a, a]`). -/
-theorem striptest_ghat_bt {a : ℝ} (ha : 0 ≤ a) : ∃ K, StripTest (fun z => ghat a z ^ 2) K := by
-  have hint : IntervalIntegrable (fun u : ℝ => Real.cosh (u / 2)) volume (-a) a :=
-    (by fun_prop : Continuous fun u : ℝ => Real.cosh (u / 2)).intervalIntegrable _ _
-  obtain ⟨K, hK⟩ := ghat_strip_of_inv ha (B := V a * Real.exp a)
-    (mul_nonneg (V_nonneg a) (Real.exp_pos a).le) hint fun t ht ht0 => by
-      rw [← ghat_eq_ghatC]
-      refine (ghat_bound a ha t ht0).trans (div_le_div_of_nonneg_right
-        (mul_le_mul_of_nonneg_left (Real.exp_le_exp.2 ?_) (V_nonneg a)) (norm_nonneg _))
-      exact mul_le_of_le_one_right ha (abs_le.2 ⟨ht.1, ht.2⟩)
-  exact ⟨K, striptest_sq (ghatC_differentiable hint) hK⟩
-
-theorem weilExplicit_ghat_bt {a : ℝ} (ha : 0 ≤ a) :
-    WeilExplicit zetaZeroFamily (fun z => ghat a z ^ 2) (hRbt a) := by
-  obtain ⟨K, hK⟩ := striptest_ghat_bt ha
-  have hev : ∀ u : ℝ, Real.cosh (-u / 2) = Real.cosh (u / 2) := fun u => by
-    rw [neg_div, Real.cosh_neg]
-  have hint : IntervalIntegrable (fun u : ℝ => Real.cosh (u / 2)) volume (-a) a :=
-    (by fun_prop : Continuous fun u : ℝ => Real.cosh (u / 2)).intervalIntegrable _ _
-  refine weilExplicit_zeta hK (fun t => ?_) (fun r => ?_)
-  · simp only [ghat_eq_ghatC]; rw [ghatC_even (fun u => hev u)]
-  · have him := ghatC_im_eq_zero (fun u => hev u) hint r
-    rw [← ghat_eq_ghatC] at him
-    have e : ghat a r = ((ghat a r).re : ℂ) := Complex.ext (by simp) (by simp [him])
-    unfold hRbt; rw [e]; push_cast; simp
-
-/-- **Theorem 1bt(i) over the zeros of `ζ`, with Hadamard's identity and Weil's explicit formula
-discharged.** The value of Weil's form on the witness is the explicit formula's prime side
-`W = weilRHS`; it satisfies `‖W‖ < 2(a + sinh a)²`, so the pole-free form is negative. No named
-input remains: the first zero's height, formerly `γ₁ ≥ 14`, is not needed. -/
-theorem pole_free_form_negative_zeta_explicit (a : ℝ) (ha : 1 / 5 ≤ a) :
-    ‖weilRHS (fun z => ghat a z ^ 2) (hRbt a)‖ < 2 * (a + Real.sinh a) ^ 2 ∧
-      (weilRHS (fun z => ghat a z ^ 2) (hRbt a) - 2 * ghat a (I / 2) ^ 2).re < 0 :=
-  pole_free_form_negative_zeta hadamard_zeta a ha _
-    (weilExplicit_ghat_bt (by linarith)).hasSum_rhs
-
 /-- **Every nontrivial zero of `ζ` has `|Im ρ| > 4`**, from Hadamard's identity alone:
 `1 ≤ K(γ² + 5/4)` with `K < 0.0539` gives `γ² > 17`. -/
 theorem four_lt_abs_im_zero (p : Σ w : NontrivialZero, Fin (zeroMult w)) :
@@ -256,9 +193,6 @@ theorem pinned_zeta {g : ℝ → ℝ} {a : ℝ} (ha : 0 < a) (hp : Probe a g)
 end WeilForm
 
 #print axioms WeilForm.hadamard_zeta
-#print axioms WeilForm.weilExplicit_ghat_bt
-#print axioms WeilForm.pole_free_form_negative_zeta_explicit
 #print axioms WeilForm.four_lt_abs_im_zero
 #print axioms WeilForm.summable_tail_zeta
 #print axioms WeilForm.pinned_zeta
-#print axioms WeilForm.ghatC_I_mul_eq_ofReal

@@ -241,13 +241,6 @@ theorem inner_thetaL_eq_zero (r : ℝ) {Y : ℝ} (hY : 0 < Y) {f : Lp ℂ 2 (muR
   | add x y _ _ hx hy => rw [inner_add_left, hx, hy, add_zero]
   | smul a x _ hx => rw [inner_smul_left, hx, mul_zero]
 
-/-- **θ is in the closed span of the pseudo-Eisenstein series** of admissible profiles, for every `r` and
-`Y > 0` (Mathlib's `Submodule.orthogonal_orthogonal_eq_closure`). -/
-theorem thetaL_mem_closure (r : ℝ) {Y : ℝ} (hY : 0 < Y) :
-    thetaL r Y hY ∈ (Submodule.span ℂ psSet).topologicalClosure := by
-  rw [← Submodule.orthogonal_orthogonal_eq_closure, Submodule.mem_orthogonal']
-  exact fun f hf => inner_thetaL_eq_zero_of_mem r hY hf
-
 /-! ### The constant-term principle at `∞` -/
 
 /-- `|u|` is invariant under `Γ_1(3)` for `u` automorphic with Kubota's character. -/
@@ -301,6 +294,5 @@ end
 #print axioms Eis.gL_mem_psSet
 #print axioms Eis.inner_thetaL_eq_zero_of_mem
 #print axioms Eis.inner_thetaL_eq_zero
-#print axioms Eis.thetaL_mem_closure
 #print axioms Eis.enorm_slAct_of_isAut
 #print axioms Eis.inner_thetaL_eq_zero_of_const

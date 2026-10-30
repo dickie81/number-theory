@@ -89,26 +89,10 @@ theorem detectHyp {δ : ℝ} (hδ0 : 0 < δ) (hδ1 : δ ≤ 1 / 4) : DetectHyp �
 theorem density_unconditional {δ : ℝ} (hδ0 : 0 < δ) (hδ1 : δ ≤ 1 / 4) : DensityXi (4 * (1 + δ)) 11 :=
   density_of_detect hδ0 hδ1 (detectHyp hδ0 hδ1)
 
-/-- **Primes in short intervals**: for every `θ > ¾`, every large `y` has a prime in `(y, y + y^θ]`. -/
-theorem short_primes {θ : ℝ} (hθ : 3 / 4 < θ) :
-    ∀ᶠ y : ℝ in atTop, ∃ p : ℕ, p.Prime ∧ y < p ∧ (p : ℝ) ≤ y + y ^ θ := by
-  set δ := min (1 / 4) ((4 * θ - 3) / 8) with hδ
-  have hδ0 : 0 < δ := lt_min (by norm_num) (by linarith)
-  have hδ1 : δ ≤ 1 / 4 := min_le_left _ _
-  have hδ2 : δ ≤ (4 * θ - 3) / 8 := min_le_right _ _
-  have hA : 0 < 4 * (1 + δ) := by positivity
-  refine short_primes_KV_of_density hA (density_unconditional hδ0 hδ1) (by linarith) ?_
-  -- `1 − 1/(4(1+δ)) < θ`
-  rw [sub_lt_iff_lt_add, ← sub_lt_iff_lt_add', lt_div_iff₀ hA]
-  rcases le_or_gt 1 θ with h1 | h1
-  · nlinarith
-  · nlinarith
-
 end DetectEM
 
 #print axioms DetectEM.detectHyp
 #print axioms DetectEM.density_unconditional
-#print axioms DetectEM.short_primes
 
 #print axioms DetectEM.norm_partial_zeta_le
 #print axioms DetectEM.emBound

@@ -341,12 +341,6 @@ theorem polyOf_coeff {n : ℕ} (c : Fin n → ℂ) (i : Fin n) : (polyOf c).coef
     intro h; exact absurd (Fin.ext h.symm) hji
   · intro h; exact absurd (Finset.mem_univ i) h
 
-theorem polyOf_coeff_ge {n : ℕ} (c : Fin n → ℂ) {k : ℕ} (hk : n ≤ k) : (polyOf c).coeff k = 0 := by
-  rw [polyOf, Polynomial.finsetSum_coeff]
-  refine Finset.sum_eq_zero fun j _ => ?_
-  rw [Polynomial.coeff_C_mul_X_pow, ite_eq_right_iff]
-  intro h; have := j.2; omega
-
 /-- A polynomial vanishing at `q(t)` for all `t` in an interval of positive reals is zero. -/
 theorem poly_eq_zero_of_interval (P : Polynomial ℂ) {α ε : ℝ} (hα : 0 ≤ α) (hε : 0 < ε)
     (h : ∀ t ∈ Ioo α (α + ε), P.eval ((qr t : ℝ) : ℂ) = 0) : P = 0 := by

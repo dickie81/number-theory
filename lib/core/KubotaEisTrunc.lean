@@ -184,7 +184,6 @@ theorem pseis_add {f g : ℝ → ℂ} {C C' τ : ℝ} (hτ : 2 < τ)
   rw [← (summable_psTerm hτ hf hp).tsum_add (summable_psTerm hτ hg hp)]
   exact tsum_congr fun cd => psTerm_add f g p cd
 
-
 theorem pseis_const_mul (a : ℂ) (f : ℝ → ℂ) (p : ℂ × ℝ) :
     pseis (fun v => a * f v) p = a * pseis f p := by
   unfold pseis
@@ -450,16 +449,6 @@ theorem bavg_pseis {R : ℝ} (hR : 0 ≤ R) {f : ℝ → ℂ} (hfm : Measurable 
   rw [integral_tsum (fun cd => (measurable_psTerm hfm cd).aestronglyMeasurable) hfin]
   exact tsum_congr fun cd => bavg_psTerm R hfm hp cd
 
-/-- **`E_s` is an eigenfunction of the ball average**: `T_R E_s = ĥ_R(s)·E_s` for `R ≥ 0` and `Re s > 2`. -/
-theorem bavg_eis1 {R : ℝ} (hR : 0 ≤ R) {s : ℂ} (hs : 2 < s.re) {p : ℂ × ℝ} (hp : p ∈ UHS) :
-    bavg R (eis1 s) p = hhat R s * eis1 s p := by
-  have hf : ∀ v, 0 < v → ‖((v : ℝ) : ℂ) ^ s‖ ≤ 1 * v ^ s.re := fun v hv => by
-    rw [one_mul, Complex.norm_cpow_eq_rpow_re_of_pos hv]
-  rw [eis1_eq_pseis, bavg_pseis hR (by fun_prop) zero_le_one hs hf hp,
-    ← pseis_const_mul]
-  refine pseis_congr (fun v hv => ?_) hp
-  rw [bTrans, bavg_cpow R s (show ((0 : ℂ), v) ∈ UHS from hv)]
-
 /-! ### The truncation -/
 
 /-- `v^s` below height `Y`. -/
@@ -685,32 +674,6 @@ theorem norm_gProf_le {R : ℝ} (hR : 0 ≤ R) {s : ℂ} (hs : 0 ≤ s.re) {Y : 
         gcongr
     _ = _ := by ring
 
-/-- **`G_s` under a power bound**: `|G_s(v)| ≤ M·((R + 2)/Y)³·v³` with `M = (V_R + |ĥ(s)|)·Y^σ`, since `G_s`
-vanishes below `Y/(R + 2)`. -/
-theorem norm_gProf_le_pow {R : ℝ} (hR : 0 ≤ R) {s : ℂ} (hs : 0 ≤ s.re) {Y : ℝ} (hY : 0 < Y)
-    {v : ℝ} (hv : 0 < v) :
-    ‖gProf R s Y v‖ ≤
-      (uhsMeasure.real (hball R (0, 1)) + ‖hhat R s‖) * Y ^ s.re * ((R + 2) / Y) ^ (3 : ℝ) *
-        v ^ (3 : ℝ) := by
-  set M := (uhsMeasure.real (hball R (0, 1)) + ‖hhat R s‖) * Y ^ s.re with hM
-  have hM0 : 0 ≤ M := by
-    rw [hM]
-    have : 0 ≤ uhsMeasure.real (hball R (0, 1)) := measureReal_nonneg
-    exact mul_nonneg (by positivity) (Real.rpow_nonneg hY.le _)
-  by_cases hlt : (R + 2) * v < Y
-  · rw [gProf_eq_zero_of_lt hR s hv hlt, norm_zero]
-    positivity
-  · push Not at hlt
-    have h1 : 1 ≤ ((R + 2) / Y) ^ (3 : ℝ) * v ^ (3 : ℝ) := by
-      rw [← Real.mul_rpow (by positivity) hv.le]
-      refine Real.one_le_rpow ?_ (by norm_num)
-      rw [div_mul_eq_mul_div, le_div_iff₀ hY, one_mul]
-      exact hlt
-    calc ‖gProf R s Y v‖ ≤ M := norm_gProf_le hR hs hY.le hv
-      _ = M * 1 := (mul_one M).symm
-      _ ≤ M * (((R + 2) / Y) ^ (3 : ℝ) * v ^ (3 : ℝ)) := mul_le_mul_of_nonneg_left h1 hM0
-      _ = _ := by ring
-
 end Eis
 
 end
@@ -745,7 +708,6 @@ end
 #print axioms Eis.psTerm_eq_of_row
 #print axioms Eis.bavg_psTerm
 #print axioms Eis.bavg_pseis
-#print axioms Eis.bavg_eis1
 #print axioms Eis.measurable_lowF
 #print axioms Eis.norm_lowF_le
 #print axioms Eis.norm_lowF_le_Y
@@ -764,4 +726,3 @@ end
 #print axioms Eis.measurable_bTrans
 #print axioms Eis.measurable_gProf
 #print axioms Eis.norm_gProf_le
-#print axioms Eis.norm_gProf_le_pow

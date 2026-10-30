@@ -401,14 +401,6 @@ theorem ghat_curvature {g : ℝ → ℝ} {a : ℝ} (ha : 0 ≤ a) (hg : Interval
   congr 1; funext i
   exact (inv_zero_eq_norm hg heven h0 hRR i).symm
 
-/-- `Ξ`'s curvature: `Σ'_j v_j` is the `z²` coefficient of `Ξ(z)/Ξ(0)`
-(numerically `−Ξ''(0)/(2Ξ(0)) = 0.023105`, Theorem 1bu(ii)). -/
-theorem xi_expansion (z : ℂ)
-    (hz : ‖z‖ ^ 2 * ∑' j : ZeroIdx (sqF Xi), ‖j.1⁻¹‖ ≤ 1) :
-    ‖Xi z / Xi 0 - (1 - z ^ 2 * ∑' j : ZeroIdx (sqF Xi), j.1⁻¹)‖
-      ≤ (‖z‖ ^ 2 * ∑' j : ZeroIdx (sqF Xi), ‖j.1⁻¹‖) ^ 2 :=
-  (hadamardW_Xi xiGrowth Xi_zero_ne_zero).expansion z hz
-
 /-! ## C. The chain for the explicit factorisations -/
 
 /-- **Roadmap item 1 ⇒ `RiemannHypothesis`, with dodging D alone.**
@@ -444,5 +436,4 @@ end WeilForm
 #print axioms WeilForm.ghat_expansion
 #print axioms WeilForm.ghat_sum_rule
 #print axioms WeilForm.ghat_curvature
-#print axioms WeilForm.xi_expansion
 #print axioms WeilForm.rh_of_dodging_final

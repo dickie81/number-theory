@@ -137,8 +137,6 @@ theorem chi4_ne_one : chi4 ≠ 1 := fun h => by
   simp only [MulChar.one_apply h3, chi4_nat, ZMod.χ₄_nat_eq_if_mod_four] at this
   norm_num at this
 
-theorem chi4_isReal : IsReal chi4 := fun n => by rw [chi4_nat]; simp
-
 /-- `ψ(x; q, a) = Σ_{n ≤ x, n ≡ a (q)} Λ(n)`. -/
 def psiAP (q a : ℕ) (x : ℝ) : ℝ :=
   ∑ k ∈ Finset.Icc 1 ⌊x⌋₊, if k % q = a then (vonMangoldt k : ℝ) else 0
@@ -152,17 +150,7 @@ theorem summ_fχ_chi4 (x : ℝ) : summ (fχ chi4) x = psiAP 4 1 x - psiAP 4 3 x 
   have h2 : k % 2 = k % 4 % 2 := (Nat.mod_mod_of_dvd k (by norm_num)).symm
   interval_cases hk : k % 4 <;> simp_all
 
-/-- **The prime race mod 4 changes lead infinitely often.** If `L(s, χ₄)` has a zero `ρ` with
-`Re ρ > θ > 0` and no real zero in `(θ, 1)`, then for every `c` and `X` there are `x, x' > X` with
-`ψ(x; 4, 1) − ψ(x; 4, 3) > c·x^θ` and `ψ(x'; 4, 1) − ψ(x'; 4, 3) < −c·x'^θ`. -/
-theorem race_four {ρ : ℂ} (hρ : LFunction chi4 ρ = 0) (hθ : 0 < θ) (hθρ : θ < ρ.re)
-    (hS : ∀ σ : ℝ, θ < σ → σ < 1 → LFunction chi4 σ ≠ 0) (c X : ℝ) :
-    (∃ x, X < x ∧ c * x ^ θ < psiAP 4 1 x - psiAP 4 3 x) ∧
-      (∃ x, X < x ∧ psiAP 4 1 x - psiAP 4 3 x < -(c * x ^ θ)) := by
-  simpa only [summ_fχ_chi4] using psiChi_omega chi4_ne_one chi4_isReal hρ hθ hθρ hS c X
-
 end PsiOmega
 
 #print axioms PsiOmega.LFunction_ne_zero_of_psiChi
 #print axioms PsiOmega.psiChi_omega
-#print axioms PsiOmega.race_four

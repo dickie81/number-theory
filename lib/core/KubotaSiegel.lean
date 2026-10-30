@@ -1,4 +1,4 @@
-import KubotaEnergy
+import KubotaMeasure
 import KubotaCharacter
 
 /-! # Reduction theory for `SL_2(ℤ[ω])`: the Siegel set, a partition of unity, finite volume
