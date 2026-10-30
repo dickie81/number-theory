@@ -1,0 +1,101 @@
+# Primes in short intervals: Li's sieve with real-exponent Type II information
+
+R. Li, *The number of primes in short intervals and numerical calculations for Harman's sieve* (arXiv:2308.04458v8),
+proves that `[x − x^0.52, x]` contains primes for large `x`. These tools recompute his lower bound with more Type II
+information, and find that the constant stays positive down to `θ ≈ 0.5182`. They reuse his published C++ predicates
+(the arXiv ancillary file `LB_521_160_1.cpp`, which `build.sh` downloads; it is not redistributed here) and change only
+the Type II_n regions of his Lemmas 4.2, 4.4 and 4.5. The computation is Monte Carlo, not a proof; the Lean side is
+below.
+
+## The variants
+
+All four use Harman's moment lemma (Lemma 7.21 of *Prime-Detecting Sieves*): for a prime-factored Dirichlet polynomial
+`L = T^{1/D}`, `∫_T |L(1/2+it)|^δ ≪ L^{δ/2}(log x)^{−K}` once `δ > δ_req(D)`. `dtable.py` computes `δ_req(D)` from large
+values estimates for the powers `L^k`: the mean value theorem, Huxley's estimate, and optionally Guth–Maynard's Theorem
+1.1 on `σ ∈ [7/10, 4/5]` (the library's `ZetaGMLV.gm_large_values`). With Huxley it reproduces Li's `δ_0 = (δ − 1)/2`
+at even `δ` and Harman's `δ ≥ 4δ_0 − 2h` for real `δ`.
+
+- **V0**: Li's predicates as published: Hölder with `δ_1 = 2` for a factor `≥ T`, even `δ_j` by the mean value
+  theorem for the middle factors, and the moment lemma (Huxley) for the last factor only.
+- **V1**: V0, with each tuple's last threshold from the Guth–Maynard table.
+- **V2**: V0, or any Hölder assignment with real exponents: every factor takes the mean value theorem (an even moment,
+  or any larger real one through the trivial bound `|L| ≤ L^{1/2}`) or the moment lemma (real `δ`), at least one takes
+  the moment lemma (the saving), and `Σ 1/δ_j = 1` (Huxley).
+- **V3**: V1, or V2's test with the Guth–Maynard table.
+
+The general test runs once per set of factors: Li's wrappers present each set with every factor in turn as the
+implicit one (`1 − Σ t_j`) and the explicit ones in every order, and the test takes the call with the explicit factors
+in decreasing order and the implicit one smallest. Groupings of factors come from his wrappers too.
+
+Guth–Maynard's estimate alone adds nothing to the mean value theorem here: `dreq_variants.py` prints `δ_req` with each
+subset of the three estimates, and the gain of V2 comes from Huxley's, with Guth–Maynard's improving on it (V3).
+
+## Files
+
+| File | What it does |
+|---|---|
+| `build.sh` | Downloads `LB_521_160_1.cpp` from arXiv (checked by SHA-256), runs `make_li_param.py`, tabulates `δ_req` if `dtables.h` is missing (about 8 minutes), and compiles `harness_theta`. With `--validate` it also compiles `val_orig.cpp` and `val_param.cpp` and checks that they print the same thing. |
+| `make_li_param.py` | Writes `li521_orig.inc` (Li's predicates, unchanged but for line endings), `li_param.inc` (the same with θ a parameter `TH`, `γ(θ)` from his Lemma 4.1, `ν(α)` from its definition, and his Type II_n predicates renamed `Li{3,4,5}DL722`) and `li_tuples.h` (the Hölder tuples inside them). |
+| `val_orig.cpp`, `val_param.cpp` | Integrate every loss term at θ = 0.521 on the same sampled points with Li's predicates and with the parametric ones. |
+| `dtable.py`, `gen_table.py` | `δ_req(D)` for Huxley (closed form) and Guth–Maynard (numerical); `gen_table.py` writes `dtables.h`. |
+| `dreq_variants.py` | `δ_req` with the mean value theorem alone, with Huxley, with Guth–Maynard, and with all three. |
+| `harness_theta.cpp` | Every region-C term of Li's final bound and region A, by Monte Carlo inside each term's domain in log coordinates, all variants on the same points. `./harness_theta N threads term seed theta`. |
+| `runs.sh` | The runs behind `logs/runs1.txt` … `runs4.txt` (about four hours on four cores), then `summarize_full.py`. |
+| `summarize_full.py` | The accounting below, from the logs: `python3 summarize_full.py logs/runs*.txt`. |
+| `region_a_check.py` | No grouping of region A's three primes passes the general test, so region A is the same for every variant. |
+
+## Accounting
+
+Li's lower bound is `1 − 2·A − C`, with `A < 0.240227` (his bound (12), which his lower bound uses as is) and `C`
+the region-C loss. `C` here is the sum of the terms his final bound adds, `U_C01 + U_C03 + U_C04 + U_C05 + U_C06 + U_C07 +
+U_C08 + U_C12 + U_C13`, each integrated with his `ω_1`. Two choices make it a little larger than his:
+
+- the savings are dropped: `U_C02` is subtracted, and `U_C09 + U_C10 − U_C11` counts, once each, the part of
+  `U_C08`'s set where at least one of its two further decompositions is asymptotic, so it is `≥ 0`;
+- `U_C05`–`U_C07` are integrated without their `G_7`, `G_8` exclusions.
+
+At θ = 0.520 the terms come out at `C = 0.472 ± 0.004` against Li's printed `C < 0.514`: his printed bound rounds each
+term up (`U_C01`: 0.2045 → 0.21, `U_C08`: 0.2125 → 0.22, `U_C04`: 0.034 → 0.05, …), and his own trapezoid values
+agree with these.
+
+## Results
+
+Monte Carlo standard errors in brackets, in units of the last digit (`C` for V0; the variants' differences are
+computed on the same points). θ = 0.5185 combines two independent runs (V3: +0.0248 and +0.0221).
+
+| θ | C (V0) | V0 | V1 | V2 | V3 |
+|---|---|---|---|---|---|
+| 0.5180 | 0.6415 (63) | −0.1220 | −0.1176 | −0.0652 (67) | −0.0170 (71) |
+| 0.5182 | 0.6303 (44) | −0.1108 | −0.1069 | −0.0508 (47) | −0.0005 (49) |
+| 0.5185 | 0.6063 (29) | −0.0867 | −0.0831 | −0.0234 (31) | +0.0234 (33) |
+| 0.5190 | 0.5546 (31) | −0.0350 | −0.0319 | +0.0333 (33) | +0.0720 (34) |
+| 0.5195 | 0.5083 (33) | +0.0113 | +0.0144 | +0.0780 (36) | +0.1143 (38) |
+| 0.5200 | 0.4723 (43) | +0.0473 | +0.0497 | +0.1059 (47) | +0.1392 (48) |
+
+The constant crosses zero at θ ≈ 0.5194 for V0 (Li's decomposition and lemmas, integrated without rounding),
+0.5187 for V2 and 0.5182 for V3. V1 (Guth–Maynard only inside Li's tuples) gains almost nothing.
+
+## Toward a proof in Lean
+
+The computation is not a proof: it needs the new Type II_n lemma proved, Li's other inputs, and certified integrals.
+The plan, with what is done:
+
+1. **The real-exponent Type II_n lemma.**
+   - Hölder's inequality for `n` factors with real exponents, the Type II combination, and a moment raised through a
+     pointwise bound: `ShortSieveHolder` (done).
+   - Moments from counts of large values: the measure of a level set from the number of `1`-separated points in it,
+     and the dyadic sum over levels: `ShortSieveLevel` (done).
+   - The counts for powers of a Dirichlet polynomial from the mean value theorem (`DirMean.large_values`), Huxley's
+     argument (`ZetaKernel.power_count_pts`) and Guth–Maynard's estimate (`ZetaGMLV.gm_large_values`, with
+     `ZetaGMWin.pow_piece_pick` for the powers), and the exponent arithmetic that gives `δ_req`.
+   - The saving near `σ = 1`, a pointwise bound for prime-factored polynomials (from the zero-free half-plane).
+2. **Li's other arithmetic information.** His Lemma 3.1 (Baker, Harman and Pintz's Lemma 9), and the reduction of
+   sums over short intervals to mean values of Dirichlet polynomials (their Lemma 6), by Perron's formula. His Lemmas
+   2.1 and 2.2 (their Lemmas 12 and 13) rest on Watt's mean value theorem (their Lemma 2), which rests on
+   Deshouillers and Iwaniec's bounds for sums of Kloosterman sums: not in the library, and a hypothesis until it is.
+3. **The sieve.** Buchstab's identity on families of tuples (`SieveDecomp.buchstab_fam` has the form the Linnik route
+   uses), the comparison of `(x − x^θ, x]` with a long interval, the main terms through Buchstab's `ω`
+   (`SieveRough`), and Li's decomposition into the regions `A`, `B` and `C`.
+4. **The certificate.** Kernel-checked bounds for region A and the region-C terms at the chosen θ, with Li's
+   predicates in exact arithmetic on cells, in the manner of the Linnik certificate (`SieveCert`). The terms reach
+   dimension 8, so the cost of the cells is the main question.
