@@ -757,8 +757,6 @@ import BohrLandauCore
 #print axioms LinnikCGLSteps.charDensity_s29
 #print axioms LinnikCGLSteps.charDensity_inT
 #print axioms SieveTypeIIU22240D.counts_7d
-#print axioms SieveTypeIIU22240D.window_22240d
-#print axioms SieveTypeIIU22240D.typeII_22240d
 #print axioms SieveBuch.Par.decomp8
 #print axioms SieveQ8.leaves_ev8
 #print axioms SieveDeep.okIB_of_okD

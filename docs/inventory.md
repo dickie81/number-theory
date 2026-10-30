@@ -3,7 +3,7 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 705 theorems: the library's final
+`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 703 theorems: the library's final
 results and the papers' theorems, of which there are 118, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 The last section lists the 99 modules that neither `Check` nor `CheckAll` imports, directly or
@@ -12,7 +12,7 @@ not, with their headline theorems (those whose docstring opens with a bold title
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 217 | 697 | 1 | 0 |
+| `lib/pnt` | 217 | 695 | 1 | 0 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -1288,14 +1288,12 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveTypeIIU22000D.window_22000d`: The window's exponents *paper*
 - `SieveTypeIIU22000D.typeII_22000d`: Proposition 3′ at `L = 11 / 5` on `[43457/100000, 46959/100000]·L`, for the curve `g7d` *paper*
 
-#### `SieveTypeIIU22240D`: Proposition 3′ at `L = 278 / 125` on the Halász–Montgomery window `[41556/100000, 47531/100000]·L`, for the curve `g7d`
+#### `SieveTypeIIU22240D`: The curve `g7d` and its counts
 
 - `SieveTypeIIU22240D.g7d_le_one`: `g7d ≤ 1` *paper*
 - `SieveTypeIIU22240D.g7d_half` *paper*
 - `SieveTypeIIU22240D.g7d_le_lin`: `g7d σ ≤ (11667 / 5000)(1 − σ)` for `σ ≤ 1` *paper* ([note](../formalisations/chen-gupta-li-density.md))
 - `SieveTypeIIU22240D.counts_7d`: The counts of the curve *paper*
-- `SieveTypeIIU22240D.window_22240d`: The window's exponents
-- `SieveTypeIIU22240D.typeII_22240d`: Proposition 3′ at `L = 278 / 125` on `[41556/100000, 47531/100000]·L`, for the curve `g7d`
 
 #### `SieveTypeIIU226C`: The curve `g7` without Petrow–Young's bound, `g7c`, at `L = 226/100`: its Halász–Montgomery window and
 
