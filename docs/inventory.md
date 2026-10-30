@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 99 modules that none of the three imports, directly or not, with their
+The last section lists the 100 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 8 | 31 |
+| `lib/pnt` | 223 | 726 | 9 | 45 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1741,6 +1741,23 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveHolder.lintegral_prod_le`: Hölder's inequality for `n` factors with real exponents
 - `ShortSieveHolder.lintegral_prod_le_of_moments`: The Type II combination
 - `ShortSieveHolder.lintegral_rpow_le_of_le`: A moment raised through a pointwise bound
+
+#### `ShortSieveInterval`: Short intervals from mean values of Dirichlet polynomials
+
+- `ShortSieveInterval.norm_cpow_sub_cpow_le`: Differences of powers
+- `ShortSieveInterval.W_eq_integral`: Mellin inversion for the averaged smoothing
+- `ShortSieveInterval.sum_W_eq`: Mellin inversion for a Dirichlet polynomial on `Re s = 1/2`
+- `ShortSieveInterval.sum_smooth1_eq`: Mellin inversion for a Dirichlet polynomial against `Smooth1`
+- `ShortSieveInterval.norm_powDiff_sub_le`: The kernel near `t = 0`
+- `ShortSieveInterval.norm_MW_powDiff_le`: The kernel of one window, for all `t`
+- `ShortSieveInterval.norm_MW_le_tail`: The tail of `𝓜(W_k)`
+- `ShortSieveInterval.norm_MW_powDiff_le_tail`: The kernel of one window, in the tail
+- `ShortSieveInterval.sum_win_sub_eq`: The two windows as one integral
+- `ShortSieveInterval.norm_sum_win_sub_le`: The smoothed comparison
+- `ShortSieveInterval.norm_sum_ind_sub_W_le`: Unsmoothing at one endpoint
+- `ShortSieveInterval.norm_sum_sharp_sub_win_le`: A sharp interval against its smooth window
+- `ShortSieveInterval.norm_sum_Ioc_sub_le_of_bump`: The sharp comparison, for a bump `ν`
+- `ShortSieveInterval.norm_sum_Ioc_sub_le`: Sums over short intervals by mean values of Dirichlet polynomials
 
 #### `ShortSieveLevel`: Moments from counts of large values
 
