@@ -482,7 +482,101 @@ theorem abs_count_sub_le (N : Node) (hk : 0 < N.k) (hm : 0 < N.m) {c θ κ ρ μ
   rw [hsum y, hsum (x ^ (1 - ρ)), mul_sum, ← sum_sub_distrib, sum_mul, sum_div]
   exact (abs_sum_le_sum_abs _ _).trans (sum_le_sum fun len hlen => hall len hlen y hy1 hy2)
 
+/-! ### Witnesses from a pointwise test -/
+
+/-- The exponents `log p_a/log x` and `log ρ_i/log x` of a pair's items. -/
+noncomputable def expo {k m : ℕ} (x : ℝ) (v : (Fin k → ℕ) × (Fin m → ℕ)) : Fin k ⊕ Fin m → ℝ :=
+  Sum.elim (fun a => Real.log (v.1 a) / Real.log x) fun i => Real.log (v.2 i) / Real.log x
+
+/-- A group's exponent: the sum of its items' exponents. -/
+def grpExp {k m G : ℕ} (grp : Fin k ⊕ Fin m → Fin G) (g : Fin G) (α : Fin k ⊕ Fin m → ℝ) : ℝ :=
+  ∑ t ∈ univ.filter (fun t => grp t = g), α t
+
+/-- `x^{a} ≤ ∏ items` from `a ≤ Σ exponents`, for `x > 1` and positive items. -/
+theorem rpow_le_prod_of_le {k m G : ℕ} (grp : Fin k ⊕ Fin m → Fin G) {x : ℝ} (hx : 1 < x)
+    {v : (Fin k → ℕ) × (Fin m → ℕ)} (hv1 : ∀ a, 0 < v.1 a) (hv2 : ∀ i, 0 < v.2 i) (g : Fin G) {s : ℝ}
+    (hs : s ≤ grpExp grp g (expo x v)) :
+    x ^ s ≤ (∏ a ∈ univ.filter (fun a => grp (Sum.inl a) = g), (v.1 a : ℝ)) *
+      ∏ j ∈ univ.filter (fun j => grp (Sum.inr j) = g), (v.2 j : ℝ) := by
+  have hx0 : 0 < x := by linarith
+  have hlx : 0 < Real.log x := Real.log_pos hx
+  have hP1 : 0 < ∏ a ∈ univ.filter (fun a => grp (Sum.inl a) = g), (v.1 a : ℝ) :=
+    prod_pos fun a _ => by exact_mod_cast hv1 a
+  have hP2 : 0 < ∏ j ∈ univ.filter (fun j => grp (Sum.inr j) = g), (v.2 j : ℝ) :=
+    prod_pos fun j _ => by exact_mod_cast hv2 j
+  -- the logarithm of the product is `log x` times the group's exponent
+  have hlog : Real.log ((∏ a ∈ univ.filter (fun a => grp (Sum.inl a) = g), (v.1 a : ℝ)) *
+      ∏ j ∈ univ.filter (fun j => grp (Sum.inr j) = g), (v.2 j : ℝ)) = Real.log x * grpExp grp g (expo x v) := by
+    rw [Real.log_mul hP1.ne' hP2.ne', Real.log_prod (fun a _ => by exact_mod_cast (hv1 a).ne'),
+      Real.log_prod (fun j _ => by exact_mod_cast (hv2 j).ne'), grpExp, sum_filter, sum_filter, sum_filter,
+      Fintype.sum_sum_type, mul_add, mul_sum, mul_sum]
+    congr 1
+    · refine sum_congr rfl fun t _ => ?_
+      simp only [expo, Sum.elim_inl]
+      split_ifs
+      · field_simp
+      · simp
+    · refine sum_congr rfl fun t _ => ?_
+      simp only [expo, Sum.elim_inr]
+      split_ifs
+      · field_simp
+      · simp
+  rw [← Real.exp_log (Real.rpow_pos_of_pos hx0 s), ← Real.exp_log (mul_pos hP1 hP2), Real.log_rpow hx0, hlog]
+  exact Real.exp_le_exp.2 (by rw [mul_comm]; exact mul_le_mul_of_nonneg_left hs hlx.le)
+
+/-- **Covers from a pointwise test on a compact set.** Let `K` be a compact set of item exponents on which every
+group's exponent exceeds `κ` and the Type II test holds (some `δ` with `Σ 1/δ_g = 1`, admissible for every group).
+If for large `x` the exponents of every term with product in `(x/4, 2x]` lie in `K`, then finitely many Hölder data,
+all admissible, cover those terms with a margin (`ShortSieveWit.exists_wit_list`). -/
+theorem cover_of_test (N : Node) {K : Set (Fin N.k ⊕ Fin N.m → ℝ)} (hK : IsCompact K) {G : ℕ}
+    (grp : Fin N.k ⊕ Fin N.m → Fin G) {θ κ : ℝ} (hθ : θ < 1) (hκ : 0 < κ)
+    (hpos : ∀ α ∈ K, ∀ g, κ < grpExp grp g α)
+    (htest : ∀ α ∈ K, ∃ δ : Fin G → ℝ, (∀ g, 0 < δ g) ∧ ∑ g, 1 / δ g = 1 ∧
+      ∀ g, ShortSieveTypeII.MomentOK ((1 - θ + κ) / (grpExp grp g α - κ)) (δ g))
+    (hmem : ∀ᶠ x in atTop, ∀ v ∈ N.terms x, x / 4 < (prodP v : ℝ) → (prodP v : ℝ) ≤ 2 * x → expo x v ∈ K) :
+    ∃ W : List ((Fin G → ℝ) × (Fin G → ℝ)), ∃ μ : ℝ, 0 < μ ∧
+      (∀ w ∈ W, (∀ i, κ < w.1 i) ∧ (∀ i, 0 < w.2 i) ∧ ∑ i, 1 / w.2 i = 1 ∧
+        ∀ i, ShortSieveTypeII.MomentOK ((1 - θ + κ) / (w.1 i - κ)) (w.2 i)) ∧
+      ∀ᶠ x in atTop, ∀ v ∈ N.terms x, x / 4 < (prodP v : ℝ) → (prodP v : ℝ) ≤ 2 * x →
+        ∃ w ∈ W, ∀ i, x ^ (w.1 i + μ) ≤ (∏ a ∈ univ.filter (fun a => grp (Sum.inl a) = i), (v.1 a : ℝ)) *
+          ∏ j ∈ univ.filter (fun j => grp (Sum.inr j) = i), (v.2 j : ℝ) := by
+  have hcont : ∀ g, Continuous (grpExp grp g) := fun g =>
+    continuous_finsetSum _ fun t _ => continuous_apply t
+  obtain ⟨W, μ, hμ, hW, hcov⟩ := ShortSieveWit.exists_wit_list hK (fun g => grpExp grp g) hcont hθ hκ hpos htest
+  refine ⟨W, μ, hμ, hW, ?_⟩
+  filter_upwards [hmem, eventually_gt_atTop (1 : ℝ)] with x hmx hx1
+  intro v hv h1 h2
+  obtain ⟨w, hwW, hw⟩ := hcov _ (hmx v hv h1 h2)
+  refine ⟨w, hwW, fun i => ?_⟩
+  -- the items of a term are positive
+  obtain ⟨hvp, hr, -⟩ := mem_filter.1 hv
+  obtain ⟨hp, hρ⟩ := mem_product.1 hvp
+  have hv1 : ∀ a, 0 < v.1 a := fun a => (SieveTypeIIU.mem_primesLe.1 (Fintype.mem_piFinset.1 hp a)).2.pos
+  have hv2 : ∀ j, 0 < v.2 j := fun j => (mem_Icc.1 (Fintype.mem_piFinset.1 hρ j)).1
+  exact rpow_le_prod_of_le grp hx1 hv1 hv2 i (hw i)
+
+/-- **The asymptotic formula for a node from a pointwise test.** `abs_count_sub_le` with the covers of
+`cover_of_test`: when the exponents of the node's terms with product in `(x/4, 2x]` lie, for large `x`, in a compact
+set on which the groups' exponents exceed `κ` and the Type II test holds, the node's terms in `(x − y, x]` number
+`(y/x^{1−ρ})` times those in `(x − x^{1−ρ}, x]`, up to `C y/log² x`. -/
+theorem abs_count_sub_le_of_test (N : Node) (hk : 0 < N.k) (hm : 0 < N.m) {c θ κ ρ : ℝ} (hc : 0 < c)
+    (hc1 : c ≤ 1) (hθ : 0 < θ) (hκ : 0 < κ) (hρ : 0 < ρ) (hρc : 12 * ρ < c) (hθρ : θ + ρ ≤ 1)
+    (hcond : ∀ C ∈ N.conds, ∃ u w : Fin N.k ⊕ Fin N.m, Sum.elim C.e C.f u ≠ Sum.elim C.e C.f w)
+    (hbig : ∀ᶠ x in atTop, ∀ v ∈ N.terms x, (∀ a, x ^ c < v.1 a) ∧ ∀ i, 1 < v.2 i)
+    {K : Set (Fin N.k ⊕ Fin N.m → ℝ)} (hK : IsCompact K) {G : ℕ} (grp : Fin N.k ⊕ Fin N.m → Fin G)
+    (hpos : ∀ α ∈ K, ∀ g, κ < grpExp grp g α)
+    (htest : ∀ α ∈ K, ∃ δ : Fin G → ℝ, (∀ g, 0 < δ g) ∧ ∑ g, 1 / δ g = 1 ∧
+      ∀ g, ShortSieveTypeII.MomentOK ((1 - θ + κ) / (grpExp grp g α - κ)) (δ g))
+    (hmem : ∀ᶠ x in atTop, ∀ v ∈ N.terms x, x / 4 < (prodP v : ℝ) → (prodP v : ℝ) ≤ 2 * x → expo x v ∈ K) :
+    ∃ C : ℝ, ∀ᶠ x in atTop, ∀ y : ℝ, x ^ θ ≤ y → y ≤ x ^ (1 - ρ) →
+      |(N.count x y : ℝ) - y / x ^ (1 - ρ) * N.count x (x ^ (1 - ρ))| ≤ C * y / Real.log x ^ 2 := by
+  have hθ1 : θ < 1 := by linarith
+  obtain ⟨W, μ, hμ, hW, hcov⟩ := cover_of_test N hK grp hθ1 hκ hpos htest hmem
+  exact abs_count_sub_le N hk hm hc hc1 hθ hκ hρ hρc hθρ hμ hcond hbig grp W hW hcov
+
 end ShortSieveNode
 
 #print axioms ShortSieveNode.count_eq_sum
 #print axioms ShortSieveNode.abs_count_sub_le
+#print axioms ShortSieveNode.cover_of_test
+#print axioms ShortSieveNode.abs_count_sub_le_of_test

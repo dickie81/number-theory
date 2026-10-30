@@ -13,7 +13,7 @@ headline theorems (those whose docstring opens with a bold title).
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 18 | 98 |
+| `lib/pnt` | 223 | 726 | 18 | 100 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1812,6 +1812,8 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveNode.count_eq_sum`: The count as a sum over the patterns
 - `ShortSieveNode.contract_mem_terms`: A tuple of the cut is a term
 - `ShortSieveNode.abs_count_sub_le`: The asymptotic formula for a node
+- `ShortSieveNode.cover_of_test`: Covers from a pointwise test on a compact set
+- `ShortSieveNode.abs_count_sub_le_of_test`: The asymptotic formula for a node from a pointwise test
 
 #### `ShortSieveTerm`: Tuples of primes cut out by log-linear conditions
 
