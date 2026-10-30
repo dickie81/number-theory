@@ -35,7 +35,7 @@ claims it.
 ## The density curve
 
 The Type II estimate of the Linnik paper counts characters by a density curve, `g7d`
-(`SieveTypeIIU22240D.counts_7d`). It is glued from these pieces:
+(`SieveCurve7D.counts_7d`). It is glued from these pieces:
 
 - the trivial count below `4/7`;
 - Ingham's estimate, on twenty steps of `[4/7, 5/7]` ([ingham-density.md](ingham-density.md));

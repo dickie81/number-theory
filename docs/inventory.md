@@ -1025,6 +1025,13 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveCount.card_A`: Type I for `A` *paper*
 - `SieveCount.card_B`: Type I for `B` *paper*
 
+#### `SieveCurve7D`: The curve `g7d` and its counts
+
+- `SieveCurve7D.g7d_le_one`: `g7d ≤ 1` *paper*
+- `SieveCurve7D.g7d_half` *paper*
+- `SieveCurve7D.g7d_le_lin`: `g7d σ ≤ (11667 / 5000)(1 − σ)` for `σ ≤ 1` *paper* ([note](../formalisations/chen-gupta-li-density.md))
+- `SieveCurve7D.counts_7d`: The counts of the curve *paper*
+
 #### `SieveDecomp`: Families of prime tuples, and Buchstab's identity on them
 
 - `SieveDecomp.buchstab_fam`: Buchstab's identity on a family *paper* ([note](../formalisations/harman-sieve.md))
@@ -1287,13 +1294,6 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 - `SieveTypeIIU22000D.window_22000d`: The window's exponents *paper*
 - `SieveTypeIIU22000D.typeII_22000d`: Proposition 3′ at `L = 11 / 5` on `[43457/100000, 46959/100000]·L`, for the curve `g7d` *paper*
-
-#### `SieveTypeIIU22240D`: The curve `g7d` and its counts
-
-- `SieveTypeIIU22240D.g7d_le_one`: `g7d ≤ 1` *paper*
-- `SieveTypeIIU22240D.g7d_half` *paper*
-- `SieveTypeIIU22240D.g7d_le_lin`: `g7d σ ≤ (11667 / 5000)(1 − σ)` for `σ ≤ 1` *paper* ([note](../formalisations/chen-gupta-li-density.md))
-- `SieveTypeIIU22240D.counts_7d`: The counts of the curve *paper*
 
 #### `SieveTypeIIU226C`: The curve `g7` without Petrow–Young's bound, `g7c`, at `L = 226/100`: its Halász–Montgomery window and
 

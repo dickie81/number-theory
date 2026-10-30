@@ -11,7 +11,7 @@ gives for Linnik's exponent. Each of its numbers that a theorem of the library s
 statement:
 - the half-plane, the band of `ζ`'s zeros, the bounds for `Θ` and the Korobov–Vinogradov region;
 - the density exponents of `ζ`;
-- the curve `g*` of the Linnik paper (`SieveTypeIIU22240D.g7d`), with the theorem that counts each of its pieces, read
+- the curve `g*` of the Linnik paper (`SieveCurve7D.g7d`), with the theorem that counts each of its pieces, read
   from the proof of `counts_7d` and checked against the piece's range and exponent;
 - the Linnik exponents;
 - the sieve's window condition (`SieveCurveGlue.WindowOKHM`), with its constants, and the window and the exponent of
@@ -292,8 +292,8 @@ def extract():
 
     # The Linnik paper's curve, and the theorem that counts each piece.
     pieces = route_limits.parse("g7d")
-    cited.add("SieveTypeIIU22240D.g7d")
-    proof = definition(res("SieveTypeIIU22240D.counts_7d"))
+    cited.add("SieveCurve7D.g7d")
+    proof = definition(res("SieveCurve7D.counts_7d"))
     chain = [x or TRIVIAL for x in re.findall(r"rangeCounts_(?:trivial|of_density ([\w.']+))", proof)]
     need(len(chain) == len(pieces), f"counts_7d glues {len(chain)} counts, but g7d has {len(pieces)} pieces")
     gstar = []
@@ -511,7 +511,7 @@ def theorem_rows(hp, band, th_lo, th_hi, zeta, c524, Lmain):
         rows.append((f"{m('N(σ, T) ≪ T')}<sup class=\"math\">{a}(1−σ)</sup>{m('(log T)')}<sup>{z['B']}</sup>{tail}",
                      [z["lean"]]))
     rows.append((f"At most {m('C(qT)')}<sup class=\"math\">g*(σ)</sup>{m('(1 + log qT)')}<sup>10</sup> characters mod "
-                 f"{m('q')} have a zero with {m('β ≥ σ')}, {m('|γ| ≤ T')}", ["SieveTypeIIU22240D.counts_7d"]))
+                 f"{m('q')} have a zero with {m('β ≥ σ')}, {m('|γ| ≤ T')}", ["SieveCurve7D.counts_7d"]))
     rows.append((f"Every reduced residue class mod {m('q')} contains a prime {m('p ≤ Kq')}"
                  f"<sup class=\"math\">{t(Lmain)}</sup>", ["Linnik22000E.linnik_22000e"]))
     return "\n".join(f"          <tr><td>{a}</td>\n            <td>{', '.join(f'<code>{n}</code>' for n in ns)}</td></tr>"

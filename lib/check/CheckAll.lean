@@ -184,7 +184,7 @@ import SieveKeptB
 import SieveDrop2
 import SieveMain2
 import LinnikCGLSteps
-import SieveTypeIIU22240D
+import SieveCurve7D
 import SieveBuch8
 import SieveQ8
 import SieveDeep
@@ -756,7 +756,7 @@ import BohrLandauCore
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_s29
 #print axioms LinnikCGLSteps.charDensity_inT
-#print axioms SieveTypeIIU22240D.counts_7d
+#print axioms SieveCurve7D.counts_7d
 #print axioms SieveBuch.Par.decomp8
 #print axioms SieveQ8.leaves_ev8
 #print axioms SieveDeep.okIB_of_okD
@@ -776,7 +776,7 @@ import BohrLandauCore
 #print axioms Linnik22000E.fits22000E
 #print axioms Linnik22000E.deepGrid22000E
 #print axioms Linnik22000E.linnik_22000e
-#print axioms SieveTypeIIU22240D.g7d_le_lin
+#print axioms SieveCurve7D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d
 #print axioms LinnikDetect.LSeries_aXχ
