@@ -249,8 +249,8 @@ Every step is `(parS_k, parS_k_good, charDensity_s_k)`: the parameters `ParC` (`
 parameters are numerals), and the density estimate by `charDensity_cglGen LinnikCGLHB101.prop31`.
 
 The file also holds Ingham's last step at a smaller slack, `charDensity_inT`: `LinnikInghamC.charDensity_ingham_c` at
-`ε = 1/400000` on `[99/140, 5/7]`, with the exponent `7/3 + 1/100000`, in place of `LinnikStairs7.charDensity_in7_19`'s
-`7/3 + 1/2000`. The largest exponent of the curve is at `5/7`, and it bounds the window's upper end.
+`ε = 1/400000` on `[99/140, 5/7]`, with the exponent `7/3 + 1/100000`, in place of the `7/3 + 1/2000` of Ingham's
+step there at `ε = 1/8000`. The largest exponent of the curve is at `5/7`, and it bounds the window's upper end.
 
 The file imports `LinnikCGLHB101.lean` and `LinnikInghamC.lean`.
 -/

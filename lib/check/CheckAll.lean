@@ -792,7 +792,7 @@ import BohrLandauCore
 #print axioms LinnikWeylBridge.weylBound_of_PYWeyl
 
 /- Results that no paper uses and nothing else printed here uses, kept for their own sake: each is named in
-`formalisations/README.md` (`scripts/dead_code.py`). -/
+`formalisations/` (`scripts/dead_code.py`). -/
 #print axioms BallTower.ballVol_lt_five
 #print axioms BallTower.sphereArea_lt_seven
 #print axioms BallTower.completing_factor_unique
@@ -813,6 +813,11 @@ import BohrLandauCore
 #print axioms Orthogonality.pythagoras_lpGauge_iff
 #print axioms Orthogonality.tendsto_mean_sq_norm_primeSum
 #print axioms Eis.quadR_neg_one
+#print axioms Eis.quad_recip
+#print axioms Eis.kub_int
+#print axioms Eis.kub2_mul
+#print axioms Eis.summable_eisTerm
+#print axioms Eis.eis1_slAct
 #print axioms QuadIdeals.trichotomy
 #print axioms VinoRec.vmvt_weak
 #print axioms WeilForm.rh_of_relgap

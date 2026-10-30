@@ -25,27 +25,21 @@ character is counted at `σ > 1/2`, and at most `φ(q)` characters at `σ = 1/2`
 `Eis.LFunction_ne_zero_of_re_gt`, so this is not a statement independent of it. The unconditional exponents of the Linnik
 paper are different statements.
 
-## `ShortPrimesHalfPlane`: the `θ > 11/17` short-primes result from the half-plane
+## `ShortPrimesHalfPlane`: the zero-free region of the short-primes theorems from the half-plane
 
 ```lean
 theorem ShortPrimesHalfPlane.zeroFreeXi_of_halfplane {α : ℝ} (hα : 0 ≤ α) : ZeroFreeXi α
-
-theorem ShortPrimesHalfPlane.short_primes_11_17_noKV {θ : ℝ} (hθ : 11 / 17 < θ) :
-    ∀ᶠ y : ℝ in Filter.atTop, ∃ p : ℕ, p.Prime ∧ y < p ∧ (p : ℝ) ≤ y + y ^ θ
 ```
 
 `zeroFreeXi_of_halfplane` takes the zero-free region input of `ShortWeil.short_primes_of_density` from
-`HalfPlaneJoins.abs_im_tau_le_five_twelfths` (`lib/core/HalfPlaneJoinsFinal.lean`), a region of constant width `1/12`.
-`short_primes_11_17_noKV` is the statement of `InghamDensity.short_primes_11_17`, proved without the Korobov–Vinogradov
-region (`ShortKV.zeroFreeXi_KV`).
+`HalfPlaneJoins.abs_im_tau_le_five_twelfths` (`lib/core/HalfPlaneJoinsFinal.lean`), a region of constant width `1/12`,
+in place of the Korobov–Vinogradov region (`ShortKV.zeroFreeXi_KV`). `ZetaHuxley.short_primes_of_density_eps_hp` uses
+it, and through it `ZetaHuxley.short_primes_seven_twelfths` (`θ > 7/12`) and
+`ZetaGMDensity.short_primes_seventeen_thirtieths` (`θ > 17/30`).
 
-*Implication.* It is a second proof of the same result, not a stronger one: the density `DensityXi (17/6 + ε) 12` fixes
-`11/17`. It removes the Korobov–Vinogradov dependency of `InghamDensity.short_primes_11_17` and leaves the zero-free
-half-plane as the only analytic input. The half-plane was already an input of `InghamDensity.short_primes_11_17`: the
-density `InghamDensity.densityXi_17_6` goes through `Subconvexity.zetaCritBound_five_24`, whose closure contains `Eis.ne_zero_of_re_gt_eleven_twelfths`. So
-`short_primes_11_17_noKV` does not swap one input for another and is not independent of the half-plane.
-The library keeps `InghamDensity.short_primes_11_17` on the Korobov–Vinogradov region, and `DetectEM.short_primes`
-(`θ > 3/4`), whose closure contains the Korobov–Vinogradov region and not the half-plane, is unchanged.
+*Implication.* The short-primes theorems take their zero-free region from the half-plane, not from Korobov and
+Vinogradov's. The module's first theorem, `θ > 11/17` without the Korobov–Vinogradov region, and the library's two
+earlier proofs of short primes (`θ > 11/17` and `θ > 3/4`) are in the git history: `θ > 17/30` is stronger.
 
 (Checked by walking the constants each declaration depends on, with a one-off Lean script outside the repository. This
 is not part of the library's checks.)
