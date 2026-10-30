@@ -3,10 +3,10 @@
 `43457 46959 272` at `L = 11/5`. It evaluates `mirror8.py`'s functions, so the total is `mirror8.py`'s to the integer,
 and prints the counts and costs that §S6 of the paper's supplement quotes:
 
-* depth 2 (the candidate cells (i, j)): decomposed or dropped; whether the box (i, j) passes `limOK` (its upper sum below
-  `lim = DEN − U1`, so that it lies below the line `α₁ + α₂ = 1 − U₁/D`) or reaches the line; for a dropped cell the
-  reason: the rule `okIB` fails on (i, j), the rule fails on a counted box (i, j, k) of depth 3 (`ok3D`, which at
-  depth 3 is the rule itself), or the cell is allowed but `refcost > bound2` (cheaper dropped);
+* depth 2 (the candidate cells (i, j)): decomposed or dropped; whether the box (i, j) passes `limOK` (its upper sum
+  below `lim = DEN − U1`, so that it lies below the line `α₁ + α₂ = 1 − U₁/D`) or reaches the line; for a dropped
+  cell the reason: the rule `okIB` fails on (i, j), the rule fails on a counted box (i, j, k) of depth 3 (`ok3D`,
+  which at depth 3 is the rule itself), or the cell is allowed but `refcost > bound2` (cheaper dropped);
 * depth 3 and 4, below the decomposed cells: the counted boxes (i, j, k), the surely evaluable ones (`inKK` but not
   `ne3`); the cells l of depth 4, masked (surely evaluable, cost 0) or counted, and of the counted ones those dropped
   because the block test `okD` fails, because a box of depth 5 fails (`bad5 > 0`), or because the depth-4 bound is
@@ -273,8 +273,9 @@ def report(cells):
         c = cat.get(name, [0, 0])
         print(f'  {desc}: {c[0]} cells, {f(c[1]):.7f} K')
     U = m.SC ** 8 * K
-    for kind, sel in (('decomposed', lambda v: v[1]), ('decomposed, limOK', lambda v: v[1] and v[2]),
-                      ('decomposed whole, by the bilinear test', lambda v: v[1] and not v[2])):
+    for kind, sel in (('decomposed cells of depth 2', lambda v: v[1]),
+                      ('decomposed cells of depth 2 that pass limOK', lambda v: v[1] and v[2]),
+                      ('cells of depth 2 taken whole by the bilinear test', lambda v: v[1] and not v[2])):
         A = dict.fromkeys(KEYS, 0)
         rawsum = 0
         for v in cells:
@@ -289,8 +290,7 @@ def report(cells):
         n4drop = A['n4_drop_rule'] + A['n4_drop_bad5'] + A['n4_drop_cost_pure'] + A['n4_drop_cost_mask']
         assert n4dec + n4drop == A['n4']
         c4drop = g('c4_drop_rule') + g('c4_drop_bad5') + g('c4_drop_cost_pure') + g('c4_drop_cost_mask')
-        print(f'\n[below the {kind} cells of depth 2] (costs before refcost\'s rounding up, '
-              f'sum {float(Fr(rawsum, U)):.7f} K)')
+        print(f'\n[below the {kind}] (costs before refcost\'s rounding up, sum {float(Fr(rawsum, U)):.7f} K)')
         print(f"  depth 3: counted boxes (i,j,k) {A['n_c3']} (upper sum below lim {A['n_c3_lim']}, by the bilinear "
               f"test {A['n_c3_blk']}); surely evaluable {A['n_c3_eval']}")
         print(f"  depth 4: cells l {A['n4'] + A['n4_masked']}: masked (surely evaluable, cost 0) {A['n4_masked']}; "
