@@ -6,13 +6,13 @@ rewrites it, and CI checks that it is current (`--check`).
 `lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 694 theorems: the library's final
 results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 100 modules that neither `Check` nor `CheckAll` imports, directly or
+The last section lists the 101 modules that neither `Check` nor `CheckAll` imports, directly or
 not, with their headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 210 | 686 | 2 | 17 |
+| `lib/pnt` | 210 | 686 | 3 | 18 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -1609,6 +1609,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveBuch.Par.lvl2'`: Level 2
 - `SieveBuch.Par.lvl1'`: Level 1
 - `SieveBuch.Par.decomp8`: The decomposition's inequality to depth 8
+
+#### `SieveQ8`: The leaves of the decomposition to depth 8, for large `q`
+
+- `SieveQ8.leaves_ev8`: The leaves of the decomposition to depth 8, for large `q`
 
 ### `lib/dh`
 
