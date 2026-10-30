@@ -543,6 +543,9 @@ import BohrLandauCore
 #print axioms SieveQ.good_of_large
 #print axioms SieveQ.P6IB_boxes
 #print axioms SieveQ.leaves_ev
+#print axioms SieveDrop.drop4_le
+#print axioms SieveDrop.drop6_le
+#print axioms SieveDrop.shares_ev
 #print axioms SieveDrop.drop_ev
 #print axioms SieveMain.TB_ev
 #print axioms SieveMain.linnik_large
@@ -748,7 +751,9 @@ import BohrLandauCore
 #print axioms SieveExact.T0_spec
 #print axioms SieveBuch.Par.Kp2_le
 #print axioms SieveBuch.Par.Kk_eq
+#print axioms SieveBuch.Par.lvl1k
 #print axioms SieveBuch.Par.decompk
+#print axioms SieveKeptLeaf.lf_Kk
 #print axioms SieveKeptLeaf.leaves_ev2
 #print axioms SieveKeptB.Kk_gB_ge
 #print axioms SieveDrop2.drop_ev2

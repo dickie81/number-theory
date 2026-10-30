@@ -19,10 +19,10 @@ history).
 The first steps are narrow because both ends of the window are set where a step's exponent most exceeds the curve it
 bounds, on the first step `[5/7, 1201/1680]`, at its right end: its exponent `2.3334` is the curve's largest, `7/3` at
 `5/7`, where Ingham's last step and the first Chen-Gupta-Li step meet. The corners' slack grows along `[5/7, 131/168]`:
-from `5/7 + 14/1680` on, steps of `1/280` leave the window as it is (steps of `1/140` do not). Ingham's theorem
-(`LinnikInghamC.charDensity_ingham_c`) takes any `ε > 0`, so its slack there is cut to `10⁻⁵`. (With steps of `1/280`
-from `5/7`, at larger `L`, the lower end was set at the step containing `7/9`, where `4/(1 + σ)` meets Huxley's
-`3/(3σ − 1)`; that constraint binds only above `L = 107/48`.)
+from `5/7 + 14/1680` on, steps of `1/280` leave the window as it is (steps of `1/140` would too at `11/5`, but moved
+its lower end at `278/125`). Ingham's theorem (`LinnikInghamC.charDensity_ingham_c`) takes any `ε > 0`, so its slack
+there is cut to `10⁻⁵`. (With steps of `1/280` from `5/7`, at larger `L`, the lower end was set at the step containing
+`7/9`, where `4/(1 + σ)` meets Huxley's `3/(3σ − 1)`; that constraint binds only above `L = 107/48`.)
 
 Writes `lib/pnt/LinnikCGLSteps.lean` (the Chen-Gupta-Li steps, and Ingham's last step `charDensity_inT`),
 `lib/pnt/SieveCurve7D.lean` (`g7d`, `g7d_le_one`, `g7d_half`, `g7d_le_lin` and its counts), and, at `L = 11/5`,
