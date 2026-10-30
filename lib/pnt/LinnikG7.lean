@@ -13,7 +13,7 @@ Plain statements.
   `p ≡ a (mod q)` with `p ≤ K q^{11667/5000 + η}`: `Linnik.linnik_of_charDensity` at `charDensity_g7d`.
 
 The exponent `11667/5000 = 2.3334` is the curve's largest, that of the first Chen–Gupta–Li step; the Linnik paper's
-Section 8 sets this deduction beside the sieve's `278/125`. No hypothesis.
+Section 8 sets this deduction beside the sieve's `11/5`. No hypothesis.
 
 The file imports `SieveCurve7D.lean` and `LinnikDeduction.lean`.
 -/
