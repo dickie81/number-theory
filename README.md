@@ -12,8 +12,8 @@ from `main` on every push.
 ## What is here
 
 - `lib/`: the Lean library, built with Lake against Mathlib. [`docs/inventory.md`](docs/inventory.md) lists its
-  results: every theorem of `lib/check/Check.lean` and `lib/check/CheckAll.lean` with its headline, and the headline
-  theorems of the modules that neither imports.
+  results: every theorem of `lib/check/Check.lean`, `lib/check/CheckAll.lean` and `lib/check/CheckZeta23.lean` with
+  its headline, and the headline theorems of the modules that none of them imports.
 - [`formalisations/`](formalisations/README.md): a note for each published result that a paper uses, and for a few
   others that the library formalises. Each note gives the result's source and attribution, and any differences
   between the Lean statement and the published one.
@@ -29,12 +29,13 @@ from `main` on every push.
 | Path | Contents |
 |---|---|
 | `lib/core` | The library's modules that need only Mathlib: 349 files. |
-| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 604 files. |
+| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 359 files. |
 | `lib/dh` | The Davenport–Heilbronn function and its zeros: 53 files. |
 | `lib/zeta23` | The modules that also use `zeta23`: 11 files. |
 | `lib/vendor/pnt-plus`, `lib/vendor/zeta23` | Two upstream libraries, ported to this toolchain, each with its license and its port patch. See their READMEs. |
 | `lib/check/Check.lean` | The axioms of the papers' theorems. This is the default build target. |
 | `lib/check/CheckAll.lean` | The axioms of every final theorem of the library. Not built by default; CI builds it whenever it builds the Lean. |
+| `lib/check/CheckZeta23.lean` | The axioms of the final theorems of `lib/zeta23`, which `CheckAll` cannot import: zeta23's copies of PrimeNumberTheoremAnd's files declare the same names. Not built by default; CI builds it whenever it builds the Lean. |
 | `formalisations/` | The notes on the results from the literature. See its [README](formalisations/README.md), the index of the notes. |
 | `papers/` | The papers. See its [README](papers/README.md). |
 | `scripts/` | The build script and the checks (see [`docs/building.md`](docs/building.md)), and `build_site.py`, which builds the papers' web site. |
