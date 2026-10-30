@@ -31,6 +31,9 @@ noncomputable section
 
 namespace Eis
 
+/-- `diagL a` on coordinates. (In `KubotaMeasure` on main, where only this file used it.) -/
+theorem diagL_apply (a : ℂ) (p : ℂ × ℝ) : diagL a p = (a ^ 2 * p.1, Complex.normSq a * p.2) := rfl
+
 local notation "E3" => EuclideanSpace ℝ (Fin 3)
 
 /-- **The energy density** of a real-linear map `L : ℂ × ℝ → ℂ`: `|L(1, 0)|² + |L(i, 0)|² + |L(0, 1)|²`,

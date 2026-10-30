@@ -14,6 +14,71 @@ open scoped Real
 
 noncomputable section
 
+namespace GammaIntegrals
+
+/-- The Mittag-Leffler expansion: `φ(s) = Σ_{n≥1} 2s/(s² + 4π²n²)`. (In `BinetProof` on main, where only this
+file used it.) -/
+theorem hasSum_phiB {s : ℝ} (hs : 0 < s) :
+    HasSum (fun n : ℕ => 2 * s / (s ^ 2 + (2 * π * ((n : ℝ) + 1)) ^ 2)) (phiB s) := by
+  set x : ℂ := (s : ℂ) * Complex.I / (2 * π)
+  have hπ : (π : ℂ) ≠ 0 := Complex.ofReal_ne_zero.2 Real.pi_ne_zero
+  have hs0 : (s : ℂ) ≠ 0 := Complex.ofReal_ne_zero.2 hs.ne'
+  have hxim : x.im = s / (2 * π) := by
+    simp only [x]; rw [Complex.div_im]; simp [Complex.normSq]; field_simp
+  have hx : x ∈ Complex.integerComplement := by
+    rw [Complex.mem_integerComplement_iff]
+    rintro ⟨n, hn⟩
+    have := congrArg Complex.im hn
+    rw [hxim, Complex.intCast_im] at this
+    have : 0 < s / (2 * π) := by positivity
+    linarith
+  have H := ((Summable.hasSum_iff_tendsto_nat (summable_cotTerm hx)).mpr
+    (tendsto_logDeriv_euler_cot_sub hx)).mul_left (Complex.I / (2 * π))
+  rw [← Complex.hasSum_ofReal]
+  convert H using 1
+  · funext n
+    set m : ℂ := (n : ℂ) + 1
+    have h3 : (s : ℂ) ^ 2 + (2 * π * m) ^ 2 ≠ 0 := by
+      simp only [m]
+      exact_mod_cast (by positivity : (0 : ℝ) < s ^ 2 + (2 * π * ((n : ℝ) + 1)) ^ 2).ne'
+    have hxx : x ^ 2 = -(s : ℂ) ^ 2 / (4 * π ^ 2) := by
+      simp only [x]; rw [div_pow, mul_pow, Complex.I_sq]; ring
+    have hIx : Complex.I / (2 * π) * x = -(s : ℂ) / (4 * π ^ 2) := by
+      simp only [x]
+      rw [show Complex.I / (2 * π) * ((s : ℂ) * Complex.I / (2 * π))
+        = (s : ℂ) * (Complex.I * Complex.I) / (4 * π ^ 2) by ring, Complex.I_mul_I]
+      ring
+    have hden : x ^ 2 - m ^ 2 = -((s : ℂ) ^ 2 + (2 * π * m) ^ 2) / (4 * π ^ 2) := by
+      rw [hxx]; field_simp; ring
+    have e1 : Complex.I / (2 * π) * cotTerm x n = 2 * (Complex.I / (2 * π) * x) / (x ^ 2 - m ^ 2) := by
+      rw [cotTerm_identity hx n, show (x + ((n : ℂ) + 1)) * (x - ((n : ℂ) + 1)) = x ^ 2 - m ^ 2 by
+        simp only [m]; ring]
+      ring
+    rw [e1, hIx, hden]
+    push_cast
+    field_simp
+    rfl
+  · have hc : Complex.cot (π * x)
+        = (Complex.exp (-(s : ℂ)) + 1) / (Complex.I * (1 - Complex.exp (-(s : ℂ)))) := by
+      rw [Complex.cot_eq_exp_ratio]
+      have : 2 * Complex.I * (π * x) = -(s : ℂ) := by
+        simp only [x]
+        rw [show 2 * Complex.I * (π * ((s : ℂ) * Complex.I / (2 * π)))
+          = (s : ℂ) * (Complex.I * Complex.I) * (π / π) by ring, Complex.I_mul_I, div_self hπ]
+        ring
+      rw [this]
+    have hd : (1 : ℂ) - Complex.exp (-(s : ℂ)) ≠ 0 := by
+      rw [show Complex.exp (-(s : ℂ)) = ((Real.exp (-s) : ℝ) : ℂ) by push_cast; rfl]
+      exact_mod_cast (one_sub_exp_neg_pos hs).ne'
+    have hI : Complex.I ≠ 0 := Complex.I_ne_zero
+    rw [hc]
+    simp only [phiB, x]
+    push_cast
+    field_simp
+    ring_nf
+
+end GammaIntegrals
+
 namespace Electron
 
 open GammaIntegrals
