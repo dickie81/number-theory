@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 144, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 95 modules that none of the three imports, directly or not, with their
+The last section lists the 97 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 725 | 4 | 10 |
+| `lib/pnt` | 223 | 725 | 6 | 20 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1717,11 +1717,17 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `Architect`
 
+#### `ShortSieveCount`: Counts of large values of a Dirichlet polynomial through its powers
+
+- `ShortSieveCount.card_le_mv`: The mean value count for a power
+- `ShortSieveCount.card_le_hux`: The Halász–Montgomery count for a power, in windows
+
 #### `ShortSieveDreq`: The exponent of Harman's moment lemma from the mean value theorem and Huxley's estimate
 
 - `ShortSieveDreq.mv_exp_le`: The mean value theorem on a long power
 - `ShortSieveDreq.mv_exp_le_of_le_three_quarters`: The mean value theorem below `3/4`
 - `ShortSieveDreq.hux_exp_le_of_three_quarters_le`: Huxley's estimate above `3/4`
+- `ShortSieveDreq.hm_exp_le_of_three_quarters_le`: The library's count above `3/4`
 - `ShortSieveDreq.dreq_hux`: Harman's exponent from the mean value theorem and Huxley's estimate
 
 #### `ShortSieveHolder`: Hölder's inequality with real exponents for a product of factors
@@ -1735,6 +1741,16 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveLevel.volume_le_of_sep`: The measure of a set from counts of separated points
 - `ShortSieveLevel.lintegral_rpow_le_levels`: Moments from the measures of level sets
 - `ShortSieveLevel.lintegral_rpow_le_of_counts`: Moments from counts of large values
+
+#### `ShortSieveMoment`: Harman's moment lemma with real exponents
+
+- `ShortSieveMoment.card_le_mv_exp`: The mean value count as a power of `N`
+- `ShortSieveMoment.card_le_hm_exp`: The Halász–Montgomery count as a power of `N`
+- `ShortSieveMoment.integral_rpow_le_of_counts`: Moments from counts of large values, for a real function
+- `ShortSieveMoment.integral_le_of_level_counts`: Moments from counts at every level
+- `ShortSieveMoment.moment_le_of_counts`: The moment lemma from counts of large values
+- `ShortSieveMoment.moment_le_hux`: Harman's moment lemma from the mean value theorem and the Halász–Montgomery count
+- `ShortSieveMoment.moment_le_mv`: Harman's moment lemma from the mean value theorem
 
 ### `lib/dh`
 
