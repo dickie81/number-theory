@@ -823,3 +823,129 @@ import BohrLandauCore
 #print axioms WeilForm.rh_of_relgap
 #print axioms HalfPlaneJoins.QK3_rate_eleven_twelfths
 #print axioms HalfPlaneJoins.chi3_rate_eleven_twelfths
+
+/- Criteria for RH and GRH: Weil's for `ζ` and its forms, the library's own, those for Dirichlet and Dedekind
+`L`-functions, Pólya's, and the sphere of the Bohr vectors. -/
+#print axioms AngularFamily.rh_of_member_zero
+#print axioms CrossCriteria.rh_of_liouville_theta
+#print axioms Dedekind4.rh_grh_iff_QK_subexp
+#print axioms Dedekind4.rh_grh_iff_QK_twins
+#print axioms Dedekind4.rh_grh_of_member_zero
+#print axioms PsiOmega.grh_iff_QC_subexp
+#print axioms PsiOmega.grh_iff_QC_subexp_all
+#print axioms PsiOmega.grh_iff_QC_subexp_chi4
+#print axioms PsiOmega.grh_iff_twins_chi3
+#print axioms PsiOmega.grh_iff_twins_chi4
+#print axioms PsiOmega.grh_iff_twins_chi8
+#print axioms PsiOmega.rh_of_liouville_bound
+#print axioms PsiOmega.rh_of_polya
+#print axioms WeilForm.line_of_RH
+#print axioms WeilForm.line_of_weil_twins
+#print axioms WeilForm.rh_iff_lam_subexp
+#print axioms WeilForm.rh_iff_twins_subexp
+#print axioms WeilForm.rh_of_D_and_realRooted
+#print axioms WeilForm.rh_of_D_and_realRooted_final
+#print axioms WeilForm.rh_of_D_and_realRooted_proved
+#print axioms WeilForm.rh_of_Xi_params
+#print axioms WeilForm.rh_of_dodging
+#print axioms WeilForm.rh_of_dodging_final
+#print axioms WeilForm.rh_of_eventually_simple
+#print axioms WeilForm.rh_of_groundStates_dodging
+#print axioms WeilForm.rh_of_ground_states
+#print axioms WeilForm.rh_of_hypConv_top
+#print axioms WeilForm.rh_of_no_crossing
+#print axioms WeilForm.rh_of_pairing_and_realRooted
+#print axioms WeilForm.rh_of_parity_gap
+#print axioms WeilForm.rh_of_prime_side
+#print axioms WeilForm.rh_of_prime_side_cross
+#print axioms WeilForm.rh_of_realRooted_limit
+#print axioms WeilForm.rh_of_simple_ground_states
+#print axioms WeilForm.rh_of_simple_ground_states'
+#print axioms WeilForm.rh_of_weil
+#print axioms WeilForm.rh_of_weil_twins
+#print axioms WeilForm.weil_criterion_finite
+#print axioms WeilForm.weil_criterion_zeta
+#print axioms WeilTwinGeneral.grh_iff_twins_chi7
+#print axioms WeilTwinGeneral.line_of_twins_g
+#print axioms WeilTwinGeneral.rh_grh_iff_QKχ_twins
+#print axioms WeilTwinGeneral.rh_grh_iff_twins_Q3
+#print axioms WeilTwinGeneral.rh_grh_iff_twins_Q4
+#print axioms WeilTwinGeneral.rh_grh_iff_twins_Q7
+#print axioms WeilTwinGeneral.rh_grh_iff_twins_Q8
+#print axioms WeilTwinGeneral.rh_iff_twins_box
+#print axioms WeilTwinGeneral.rh_iff_twins_concave
+#print axioms WeilTwinGeneral.rh_iff_twins_realRooted
+#print axioms BohrSphere.riemannHypothesis_iff_mem_sphere
+#print axioms BohrSphere.riemannHypothesis_iff_tendsto
+
+/- The Weil form of `ζ`: the bounds for its ground energies, the uniqueness of its ground state at small supports,
+its negative index, and the structure of its ground states. -/
+#print axioms WeilForm.first_failure
+#print axioms WeilForm.lam_fails_exponentially
+#print axioms WeilForm.lam_decay_uncond
+#print axioms WeilForm.lamO_decay_uncond
+#print axioms WeilForm.lam2_decay_uncond
+#print axioms WeilForm.lam_dexp
+#print axioms WeilForm.lamO_dexp
+#print axioms WeilForm.lam2_dexp
+#print axioms Kaiser.lam_kaiser
+#print axioms HalfPlaneJoins.lam_prefactor_eleven_twelfths
+#print axioms HalfPlaneJoins.weil_rate_eleven_twelfths
+#print axioms WeilForm.groundState_energy_ge
+#print axioms WeilForm.groundState_unique_035
+#print axioms WeilForm.groundState_unique_below_log2
+#print axioms WeilForm.groundState_unique_of_gap
+#print axioms WeilForm.simpleGround_of_gap
+#print axioms WeilForm.simple_of_pole_overlap
+#print axioms WeilForm.pole_overlap_identity
+#print axioms WeilForm.weilQg_ge_twentieth_all
+#print axioms WeilForm.weilQ0_abs_le
+#print axioms WeilForm.weilQ_symbol
+#print axioms WeilForm.bil_zero_sum
+#print axioms WeilForm.negIndex_eq_quadruples
+#print axioms WeilForm.negDirections_unbounded
+#print axioms WeilForm.exists_offline_of_neg_C2
+#print axioms WeilForm.finrank_le_offline_zeta
+#print axioms WeilForm.finrank_le_quadruples_C2
+#print axioms WeilForm.theoremD
+#print axioms WeilForm.chain_top_zeros
+#print axioms WeilForm.zeros_real_or_imag'
+#print axioms WeilForm.simple_iff_no_flat
+#print axioms WeilForm.simple_not_flat
+#print axioms WeilForm.simple_iff_no_green_pair
+#print axioms WeilForm.degenerate_flat_fourier
+#print axioms WeilForm.not_simple_iff_secular
+#print axioms WeilForm.first_degeneracy_036
+#print axioms WeilForm.hypConv_of_D
+#print axioms WeilForm.pinned_zeta
+#print axioms WeilForm.pinned_unconditional_zero
+#print axioms WeilForm.realRooted_of_ae_concaveOn
+#print axioms WeilForm.ghat_curvature
+#print axioms WeilForm.exists_groundStates
+#print axioms PsiOmega.QC_fails_rate
+#print axioms PsiOmega.twins_rate_chi4
+#print axioms WeilTwinGeneral.twins_rate_realRooted
+#print axioms Dedekind4.QC_chi4_littleO
+#print axioms Dedekind4.QK_littleO
+#print axioms Dedekind4.QK_nonneg_of_member_zero
+
+/- `ψ(x) − x` and `M(x)` are `Ω±(x^θ)` for every `θ < 1/2`, and the prime races mod 3, 4, 7 and 8; the Hadamard
+product of `L(s, χ₋₄)`, and `ζ·L(χ₋₄)` as the radial member of the angular family. -/
+#print axioms PsiOmega.psi_omega_half
+#print axioms PsiOmega.mertens_omega_half
+#print axioms PsiOmega.race_three_half
+#print axioms PsiOmega.race_four_half
+#print axioms PsiOmega.race_eight_half
+#print axioms WeilTwinGeneral.race_seven_half
+#print axioms PsiOmega.hadamard_chi4
+#print axioms AngularFamily.member_zero_eq
+
+/- The ideals of `ℤ[ω]` of prime-power norm; Heath-Brown's Lemmas 2 and 10 in general form; Kubota's `θ` is
+nonzero and automorphic on `Γ_2`. -/
+#print axioms Eis.card_ofNorm_inert
+#print axioms Eis.card_ofNorm_split
+#print axioms Eis.card_ofNorm_three
+#print axioms Eis.fBound_gcd
+#print axioms Eis.fBound_sep
+#print axioms Eis.thetaL_ne_zero
+#print axioms Eis.isAut_thS_Gam2
