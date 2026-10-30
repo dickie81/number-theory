@@ -13,13 +13,13 @@ For `ψ` primitive mod `f`, `f | q`, and `χ` the character mod `q` induced by `
 * `LFunction_sub_dualS`: `L(1 − s, χ) − Σ_{m ≤ Z}χ(m)m^{s−1} = Σ_{m > Z}χ(m)m^{s−1}` for `Re s < 0`.
 * `kW_isBigO`: `kW_Λ` is bounded near `0`, where `Γ` has its pole and `Λ^w − (Λ/2)^w` vanishes.
 * `strip_bound`, `integrable_line`, `decay_strip`: the bounds that move a contour across the strip.
-* `reflect`: for `ψ ≠ 1`, `Λ > 0`, lines `c₂ < 0 < c₁` with `−1/2 ≤ c₂`, `c₁ ≤ 2`, `−5/16 ≤ Re z + c₂ < 0` and
-  `Re z + c₁ ≤ 13/16`, and any truncation `Z`,
+* `reflect_aux`: for `ψ ≠ 1`, `Λ > 0`, lines `c₂ < 0 < c₁` with `−1/2 ≤ c₂`, `c₁ ≤ 2`, `−5/16 ≤ Re z + c₂ < 0`
+  and `Re z + c₁ ≤ 13/16`, and any truncation `Z`,
   `∫ L(z + c₁ + iv, ψ)kW_Λ(c₁ + iv) dv = ∫ kW_Λ(c₁ + iv)Φ(z + c₁ + iv)Σ_{m ≤ Z}χ⁻¹(m)m^{z+c₁+iv−1} dv
-  + ∫ kW_Λ(c₂ + iv)Φ(z + c₂ + iv)Σ_{m > Z}χ⁻¹(m)m^{z+c₂+iv−1} dv`. On `Re w = c₁` the functional equation splits
-  `L(1 − z − w, χ⁻¹)` into its first `Z` terms and the rest, and the rest is moved to `Re w = c₂` (
-  `LinnikGamma.verticalIntegral_sub_eq`, with residue `0` because `kW_Λ` is bounded at `0`), where it is the tail of
-  the dual series. `reflect_aux` adds the integrability of both integrands on the right.
+  + ∫ kW_Λ(c₂ + iv)Φ(z + c₂ + iv)Σ_{m > Z}χ⁻¹(m)m^{z+c₂+iv−1} dv`, and both integrands on the right are
+  integrable. On `Re w = c₁` the functional equation splits `L(1 − z − w, χ⁻¹)` into its first `Z` terms and the
+  rest, and the rest is moved to `Re w = c₂` (`LinnikGamma.verticalIntegral_sub_eq`, with residue `0` because `kW_Λ`
+  is bounded at `0`), where it is the tail of the dual series.
 -/
 
 import LinnikGammaRatio

@@ -273,8 +273,8 @@ theorem rh_of_liouville_bound (hε : ε ≠ 0) (h : ∀ x : ℝ, 1 < x → ε * 
 
 /-- **Pólya's conjecture implies RH**: if `L(x) ≤ 0` for every `x ≥ 2`, Mathlib's `RiemannHypothesis`
 holds. (Pólya's conjecture is false: Haselgrove 1958; Tanaka 1980, `L(906150257) = 1`.) The
-hypothesis is stated for `x ≥ 2`, since for every `x > 1` it is refutable (`polya_hyp_false`); on
-`1 < x < 2` one has `L(x) = 1 ≤ √x`, which is what `c = 1` absorbs. -/
+hypothesis is stated for `x ≥ 2`, since for every `x > 1` it is refutable; on `1 < x < 2` one has
+`L(x) = 1 ≤ √x`, which is what `c = 1` absorbs. -/
 theorem rh_of_polya (h : ∀ x : ℝ, 2 ≤ x → summ fLi x ≤ 0) : RiemannHypothesis :=
   rh_of_liouville_bound (c := 1) (ε := 1) one_ne_zero fun x hx => by
     have hx0 : (0 : ℝ) ≤ x := by linarith

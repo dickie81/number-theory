@@ -149,7 +149,7 @@ def rcls (L : 𝓞 K) (A : Finset Pr) : 𝓞 K ⧸ span {9 * L} := Ideal.Quotien
 
 open Classical in
 /-- **The twisted `θ̄` in cusp coordinates, with uniform data** (the companion paper's (A.4) with its
-Lemma 6.3): the data `D`, `c_H`, `d_H` and `y` of `twisted_theta_expansion` can be chosen as
+Lemma 6.3): the data `D`, `c_H`, `d_H` and `y` of the expansion can be chosen as
 functions of the residue `h₀` and of the class of `∏_{P∈A}π_P` modulo `9L` alone, before the twist
 `φ₀`, the primes `Ps` and the exponents `j` are given. Only the unimodular `C₀` depends on the group. -/
 theorem twisted_theta_expansion_unif {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {c0 cP cM : ℂ} {τ tP tM : 𝓞 K → ℂ}

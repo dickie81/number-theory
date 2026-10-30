@@ -3,9 +3,7 @@ import KubotaSiegel
 /-! # Integrals over `Γ\H³`, and unfolding
 
 `SL_2(ℤ[ω])` has a measurable partition of unity `ρ`. This file defines partitions of unity for every
-subgroup `Γ`. It proves that `∫ρ·F dz dv/v³` does not depend on the choice, for `F` invariant under `Γ`. It
-also proves the unfolding over `H\Γ` for `H ≤ Γ`, with an explicit partition of unity for the stabilizer
-`B_∞` of the cusp `∞`.
+subgroup `Γ`. It proves that `∫ρ·F dz dv/v³` does not depend on the choice, for `F` invariant under `Γ`.
 
 * **Partitions of unity** (`IsPU`, a definition; `isPU_top` and `IsPU.tsum_inv`, with `lintegral_slAct`,
   `ae_UHS`, `slAct_inv_slAct` and `slAct_slAct_inv`): `IsPU Γ ρ` says that `ρ` is measurable and
@@ -18,13 +16,7 @@ also proves the unfolding over `H\Γ` for `H ≤ Γ`, with an explicit partition
   `isPU_puLe_top`; **`lintegral_puLe`**): for `Γ′ ≤ Γ`, `Σ_{q∈Γ/Γ′} ρ(q·p)` is a partition of unity for `Γ′`,
   and with it `∫ρ′F = #(Γ/Γ′)·∫ρF`. For `Γ` of finite index in `SL_2(ℤ[ω])`, `∫ρ_Γ dz dv/v³ < ∞` is the case
   `F = 1` of `KubotaEisTrunc`'s `lintegral_puLe_top_mul_lt_top`.
-* **Folding** (**`tsum_fold`**): for `f` invariant under `H ≤ Γ` and a partition of unity `ρ_H` for `H`,
-  `Σ_{γ∈Γ} ρ_H(γ·p)f(γ·p) = Σ_{q∈Γ/H} f(q⁻¹·p)`, a sum over the cosets `Hq⁻¹` of `H\Γ`.
-* **Unfolding over `H\Γ`** (**`lintegral_unfold_cosets`**): `∫ρ·F·Σ_{q∈Γ/H} f(q⁻¹·) = ∫ρ_H·F·f`.
-* **The cusp `∞`** (`bInf`, `bInfEquiv` and `rhoInf`, definitions; **`isPU_rhoInf`**, with `mem_bInf`,
-  `bInf_det`, `slAct_bInf` and `tsum_fundP`; **`lintegral_rhoInf`**): the upper triangular elements act by
-  `(z, v) ↦ (a²z + ab, v)`, and `ρ_∞(z, v) = 1_P(z)/#ℤ[ω]ˣ` is a partition of unity for them. Then
-  `∫ρ_∞G dz dv/v³ = (1/#ℤ[ω]ˣ)·∫_{P×(0,∞)} G v⁻³ dz dv`.
+* **Translates of `P`** (`tsum_fundP`): `Σ_{t∈ℤ[ω]} 1_P(w + σ(t)) = 1`.
 -/
 
 open MeasureTheory Set Module Filter NumberField Ideal PlanePoisson

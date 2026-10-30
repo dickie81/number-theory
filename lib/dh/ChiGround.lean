@@ -25,8 +25,8 @@ argument. At `q = ¾` it uses DHGround's transfer `archE_le_DH` (`E ≤ e^{2a}E_
 `UData.finiteDimensional_groundL2` and `UData.gd : GroundData`; GroundChain.lean then gives Theorem D
 and the top-of-chain ground state with every zero of its transform on `ℝ ∪ iℝ` (`UData.topGS_cross`).
 
-**The χ column.** `(chiU χ).Q = QCu χ` and `(chiU χ).lam = lamC χ` by definition (`chiU_Q`,
-`chiU_lam`). `chiGD χ : GroundData`, `exists_groundStateC`, `theoremDC`, `topGSC_cross`.
+**The χ column.** `(chiU χ).Q = QCu χ` and `(chiU χ).lam = lamC χ` by definition. `chiGD χ : GroundData`,
+`exists_groundStateC`, `theoremDC`, `topGSC_cross`.
 
 **The chain to GRH(χ).** `HypConvC χ` is `HypConv` (PrimeSide.lean:37) with `Ξ_χ = XiC χ` as the
 target. For `GoodChar χ`, `grhCross_of_cross` is the Hurwitz step of `rh_of_prime_side_cross`
@@ -34,7 +34,7 @@ target. For `GoodChar χ`, `grhCross_of_cross` is the Hurwitz step of `rh_of_pri
 `ℝ ∪ iℝ`, with `HypConvC χ`, give GRH for `χ` off the real axis (`CrossCriteria.GRHCross`). So
 `HypConvC χ` for the top-of-chain ground states gives `GRHCross χ` (`grhCross_of_hypConvC_top`), and
 with no real zero in `(0, 1)`, GRH for `χ` (`grh_of_hypConvC_top`, the χ column of `rh_of_hypConv_top`,
-StructureD.lean:192). The same for eventually simple ground states (`grh_of_eventually_simpleC`).
+StructureD.lean:151). The same for eventually simple ground states (`grh_of_eventually_simpleC`).
 Instances: `χ₋₃`, `χ₋₄`, `χ₋₈`, `χ₋₇`.
 -/
 
@@ -770,13 +770,13 @@ theorem grhCross_of_hypConvC_top (hG : GoodChar χ) {a : ℕ → ℝ} (ha : ∀ 
     (Eventually.of_forall fun n z hz => topGSC_cross (ha n) z hz) hconv
 
 /-- **GRH for `χ` from `HypConvC χ` for the top-of-chain ground states**, given no zero of `L(σ, χ)` in
-`(0, 1)` (the χ column of `rh_of_hypConv_top`, StructureD.lean:192). -/
+`(0, 1)` (the χ column of `rh_of_hypConv_top`, StructureD.lean:151). -/
 theorem grh_of_hypConvC_top (hG : GoodChar χ) (hS : ∀ σ : ℝ, 0 < σ → σ < 1 → LFunction χ σ ≠ 0)
     {a : ℕ → ℝ} (ha : ∀ n, 0 < a n) (hconv : HypConvC χ a fun n => topGSC χ (a n)) : GRH χ :=
   CrossCriteria.grh_of_cross (grhCross_of_hypConvC_top hG ha hconv) hS
 
 /-- **GRH for `χ` from eventually simple ground states with `HypConvC χ`** (the χ column of
-`rh_of_eventually_simple`, SwapRealize.lean:412: the chain of HurwitzCross.lean with the swap
+`rh_of_eventually_simple`, SwapRealize.lean:408: the chain of HurwitzCross.lean with the swap
 realisation proved). -/
 theorem grh_of_eventually_simpleC (hG : GoodChar χ)
     (hS : ∀ σ : ℝ, 0 < σ → σ < 1 → LFunction χ σ ≠ 0) {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ}

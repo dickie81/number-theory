@@ -11,8 +11,8 @@ For `x ∈ (0, 1]`, `M ≥ 1`, `K ≥ 1`, `Re s > 0`, `s ≠ 1` (`norm_hurwitzZe
 `‖R‖ ≤ |B_{2K}|/(2K)! · ‖s(s+1)⋯(s+2K−1)‖ · (M+x)^{1−Re s−2K}/(Re s+2K−1)`,
 
 with `|B_{2K}|/(2K)! = 2ζ(2K)/(2π)^{2K} ≤ (π²/3)/(2π)^{2K}` (`hasSum_zeta_CB`, `CB_le`).
-`R = Σ_n ∫_0^1 B_{2K}(u)/(2K)! · (s)_{2K} (M+x+n+u)^{-s-2K} du` (`hurwitzZeta_eq_EM_explicit`).
-A version uniform on boxes `σ₀ ≤ Re s ≤ σ₁, |Im s| ≤ τ` is `norm_hurwitzZeta_sub_EM_le_box`.
+`R = Σ_n ∫_0^1 B_{2K}(u)/(2K)! · (s)_{2K} (M+x+n+u)^{-s-2K} du` (`EMrem`).
+A bound on `R` uniform on boxes `σ₀ ≤ Re s ≤ σ₁, |Im s| ≤ τ` is `norm_EMrem_le_box`.
 
 Route. §1: `|B_{2K}(u)| ≤ |B_{2K}|` on `[0,1]` from Mathlib's Fourier series of `B_{2K}`.
 §2–4: `2K` integrations by parts on one unit interval give, for every `s ≠ 1` and `c > 0`,
@@ -669,7 +669,8 @@ theorem norm_poch_sq_le {s : ℂ} {σ₁ τ : ℝ} (h0 : 0 ≤ s.re) (h1 : s.re 
 
 /-- **Uniform bound on a box** `σ₀ ≤ Re s ≤ σ₁`, `|Im s| ≤ τ` (`σ₀ > 0`), for any `B ≥ 0` with
 `Π_{i<2K} ((σ₁+i)² + τ²) ≤ B²`:
-`‖EMrem x M K s‖ ≤ (π²/3)/(2π)^{2K} · B · (M+x)^{1−σ₀−2K}/(σ₀+2K−1)`; for `x ≤ 1`, `s ≠ 1` this bounds `‖ζ(s,x) − EM‖` (`norm_hurwitzZeta_sub_EM_le_box`). -/
+`‖EMrem x M K s‖ ≤ (π²/3)/(2π)^{2K} · B · (M+x)^{1−σ₀−2K}/(σ₀+2K−1)`; for `x ≤ 1`, `s ≠ 1` this bounds
+`‖ζ(s,x) − EM‖` (through `hurwitzZeta_eq_EM`). -/
 theorem norm_EMrem_le_box {x : ℝ} (hx : 0 < x) {M K : ℕ} (hM : 1 ≤ M) (hK : 1 ≤ K)
     {σ₀ σ₁ τ B : ℝ} (hσ₀ : 0 < σ₀) (hB : 0 ≤ B)
     (hPB : ∏ i ∈ Finset.range (2 * K), ((σ₁ + i) ^ 2 + τ ^ 2) ≤ B ^ 2)

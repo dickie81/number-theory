@@ -6,10 +6,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 The hypothesis `LinnikCGLMat.CGLThird` bounds `X`, the cubic trace of the points' Gram matrix `G` without its
 diagonal. This file splits it into two hypotheses, one for each of the paper's Propositions 6.1 and 11.1.
 
-Plain statement (`X3_eq`). With `E` the off-diagonal part of `G` and `μ` its constant diagonal,
-`X = 3μ‖E‖_F² + tr(E³)`, where `‖E‖_F² = Σ_{i≠k}|G(i, k)|²` (`frobOff`) and `tr(E³)` is the real part of
-`Σ G(i, j)G(j, k)G(k, i)` over the triples of distinct points (`tri3`): a triple that is not all equal either has
-exactly two equal points, `G(i, i)G(i, k)G(k, i) = μ|G(i, k)|²` in each of three positions, or has none.
+With `E` the off-diagonal part of `G`, `‖E‖_F² = Σ_{i≠k}|G(i, k)|²` (`frobOff`).
 
 Plain statement (`CGLS2`, a hypothesis). For every `ε > 0` there is `C ≥ 0` such that, under the conditions of
 `CGLThird`, `‖E‖_F² ≤ C(qTN)^ε·qT|R|N^{2−2σ}`.
@@ -39,8 +36,6 @@ So `F(1, 2)F(2, 1) = (q/N)²|G(1, 2)|²`, `S₂ = 3μ₀‖E‖_F²` with `μ₀
 for `R` not empty the right sides are at least a positive constant, since `N ≥ 1/2`.
 
 * `gramP_swap`: `G(k, i) = conj G(i, k)`.
-* `split_triple`: a not-all-equal triple has two equal points in one of three positions, or none.
-* `X3_eq`: `X = 3μ‖E‖_F² + tr(E³)`.
 * `mu0_nonneg`, `mu0_le`: `0 ≤ μ₀ ≤ N`.
 * `third_of_s23`: `CGLS2` and `CGLS3` imply `CGLThird`, with the constant `3C₂ + C₃`.
 

@@ -1,6 +1,6 @@
 import KubotaUnfold
 
-/-! # The cubic Eisenstein series on `Γ_1(3)`: convergence, automorphy, holomorphy
+/-! # The cubic Eisenstein series on `Γ_1(3)`: convergence and automorphy
 
 The series is `E(w, s) = Σ_{(c, d)} (c/d)₃·(v/(|cz + d|² + |c|²v²))^s` over the bottom rows of `Γ_1(3)`: the
 coprime `(c, d)` with `3 ∣ c` and `d ≡ 1 (mod 3)`. Its term at the bottom row of `γ` is `conj κ(γ)·v(γ·w)^s`.
@@ -19,12 +19,10 @@ coprime `(c, d)` with `3 ∣ c` and `d ≡ 1 (mod 3)`. Its term at the bottom ro
   `norm_eisTerm_le` and `summable_height_rpow`): `Q_w(c, d) ≥ m(|c|² + |d|²)` with
   `m = v²/(2v² + 4|z|² + 2)`, and `(1 + |σc|)(1 + |σd|) ≤ 9(|σc|² + |σd|²)` for `(c, d) ≠ 0`, so the series
   converges absolutely for `Re s > 2`.
-* **Automorphy** (**`eis1_slAct`**, with `eisTerm_rowMul`; `eis1_transl`, with `slT_mem_Gam3`):
-  `E(γ·w, s) = κ(γ)E(w, s)` for `γ ∈ Γ_1(3)`, and `E` has period `3ℤ[ω]` in `z`.
+* **Automorphy** (**`eis1_slAct`**, with `eisTerm_rowMul`; `slT_mem_Gam3`): `E(γ·w, s) = κ(γ)E(w, s)` for
+  `γ ∈ Γ_1(3)`, and the translation `slT t` lies in `Γ_1(3)` for `3 ∣ t`.
 * **The term `v^s`** (**`eis1_eq`**, with `bRow_zero_iff` and `eisTerm_zero_one`): the only bottom row with
   `c = 0` is `(0, 1)`, and its term is `v^s`.
-* **Holomorphy** (**`differentiableOn_eis1`**, with `rpow_le_add_rpow`): `s ↦ E(w, s)` is holomorphic on
-  `Re s > 2`.
 -/
 
 open MeasureTheory Set Module Filter NumberField Ideal PlanePoisson

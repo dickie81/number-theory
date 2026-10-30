@@ -21,8 +21,8 @@ probe whose `ĝ(3·)²` is a strip test function gives a zero of `dh` with `Re s
 
 For even, nonnegative profiles non-increasing on `[0, a]` the strip test at width 3 is automatic
 (`striptest_antitone3`, from `norm_ghatC_le_of_antitone` with `cosh(3a)` and the bound
-`‖ĝ(z)‖ ≤ e^{a|Im z|}∫|g|`, `norm_ghatC_le_exp_im`), so **`exists_offline_dh_of_neg_antitone`** and
-**`exists_offline_dh_of_neg_box`** (`Q_dh(box a) < 0` for one `a > 0`) need no strip hypothesis.
+`‖ĝ(z)‖ ≤ e^{a|Im z|}∫|g|`, `norm_ghatC_le_exp_im`), so the strip hypothesis of `exists_offline_dh_of_neg_u` holds
+for them.
 An off-line zero of `dh` follows from one real inequality, `QDHu g < 0` for an explicit `g`, which
 `QDHu_packet_neg` and `dh_offline_zero` (`DHCertificate`) close. Its ingredients are the finitely many `c(n)` with
 `log n ≤ 2a` (`f(log n) = 0` beyond the support of the autocorrelation), `Re ψ(¾)`, and the elementary integral

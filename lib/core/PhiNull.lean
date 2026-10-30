@@ -1,24 +1,12 @@
 import Mathlib
 import WeilConverse
 
-/-! # Riemann's kernel is a null vector of the explicit formula
+/-! # The bilinear Weil form is the bilinear zero sum
 
 Weil's explicit formula (`WeilExplicit`) equates the zero sum `Σ_ρ h(t_ρ)` with its prime side
-`weilRHS h hR` (pole terms, archimedean integral, prime sum). At every nontrivial zero of `ζ`,
-`Ξ(t_ρ) = ξ(ρ) = 0` (`Xi_zeta_zero`). So every test transform divisible by `Ξ` is annihilated:
-
-* `explicit_null_of_Xi`: `h = Ξ·m` ⟹ `weilRHS h hR = 0`;
-* `explicit_null_RPhi`: Riemann's formula `Φ̂ = Ξ/2` (`RPhiHat_eq`, RiemannKernel.lean) makes
-  `Φ̂·m` null for every `m`: **`Φ` is a null vector of the bilinear Weil functional**;
-* `weil_energy_RPhi`: for `h = Φ̂²` the pole terms are `Ξ(±i/2)²/4 = ξ(0)²/4 = ξ(1)²/4 = 1/16`, so the
-  archimedean-plus-prime side of `Φ̂²` equals exactly `−1/8`: Weil's energy of `Φ` is `0`.
-
-`bil_zero_sum` is the polarised bridge for probes: `Σ_ρ ĝ(t_ρ)k̂(t_ρ) = (Q(g + k) − Q(g − k))/4`.
-
-**Not formalised**: identifying the explicit formula's `g_h` for `h = Φ̂k̂` with the library's
-cross-correlation `∫Φ(t)k(t + u) dt` (Fourier inversion and a signed Fubini for a non-compactly
-supported `Φ`), which would state the nullity as `B(Φ, k) = 0` in the library's own prime-side form.
-Scope: a restatement of the explicit formula at a function vanishing on the zeros; no bearing on RH.
+`weilRHS h hR` (pole terms, archimedean integral, prime sum). `bil_zero_sum` is the polarised bridge for
+probes: given the explicit formula for `h = ĝ²` at `g + k` and at `g − k`,
+`Σ_ρ ĝ(t_ρ)k̂(t_ρ) = (Q(g + k) − Q(g − k))/4`.
 -/
 
 open Real Complex

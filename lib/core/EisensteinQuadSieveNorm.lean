@@ -20,10 +20,8 @@ After Goldmakher and Louvel's Theorem 1.1 and Heath-Brown's 1995 proof.
   (`QBound.mono`), in place of Heath-Brown's Lemma 9.
 * **Symmetry** (`QBound.symm`, Heath-Brown's Lemma 1): `QBound N M Δ → QBound M N (N((4))·Δ)`, the
   columns split by class modulo `4` and turned into rows by duality.
-* **The trivial bound** (`qBound_trivial`): `QBound M N ((2κ+5)²MN)`, from the ideal
-  count (`card_adm_le`).
-* **The exponent `(E_α)`** (`QExp`), and its transpose `B(M, N) ≪ (MN)^ε(N + M^α)`
-  (`QExp.reverse`).
+* **The ideal count** (`card_adm_le`): at most `idealCount X` admissible elements have norm at most `X`.
+* **The exponent `(E_α)`** (`QExp`).
 * **`quadLargeSieve_of_exp`**: `QExp 1 → QuadLargeSieve`. Odd columns are admissible
   (`coprime6_of_primary`); an even column is `−2x` with `x` admissible (`qadm_of_neg_two_mul`), and
   `(−2x/k)₂ = (−2/k)₂(x/k)₂`.

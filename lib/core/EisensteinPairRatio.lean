@@ -2,8 +2,8 @@ import EisensteinSecondPoisson
 
 /-! # The paired factor through the ratio class, and Lemma 7.2 in one character
 
-`Mq_rowcol` expands the twisted paired factor in pairs `(ξ_a, ξ_b)` of characters (modulo `m`), and its
-row factor `ā_{ξ_a}(w)a_{ξ_b}(w)` does not cancel when `ξ_a ≠ ξ_b`. The companion paper expands
+Expanded in pairs `(ξ_a, ξ_b)` of characters (modulo `m`), the twisted paired factor leaves the row factor
+`ā_{ξ_a}(w)a_{ξ_b}(w)`, which does not cancel when `ξ_a ≠ ξ_b`. The companion paper expands
 `ξ_1(z)G(z^{-1})` in single characters ("`\xi_1(z)G(z^{-1})=\sum_{\xi'}c_{\xi'}\xi'(z)`"), through its
 (4.7), "`\chi_a(-1)\overline{G(a)}G(b)\mathcal R(a,b)=G(ba^{-1})`". This file proves the library's form
 of (4.7) and that expansion.
@@ -329,7 +329,8 @@ theorem pairTerm_expandD [NeZero m] [Fact ((4 : 𝓞 K) ∣ m)] (ξ1 : MulChar (
 
 open Classical in
 /-- **One pair of twisted Möbius columns after Poisson summation, in one character modulo `m`**
-(`pair_char_formTw` with `pairTerm_expandD` in place of the double expansion). -/
+(`pair_char_form` with the twist `ξ̄₁(A₁∖A₂)ξ₁(A₂∖A₁)`, and with `pairTerm_expandD` in place of the double
+expansion). -/
 theorem pair_char_formD [NeZero m] [Fact ((4 : 𝓞 K) ∣ m)] (ξ1 : MulChar (𝓞 K ⧸ span {m}) ℂ)
     (H : ℝ) (hH : 0 < H) {R : ℝ} (hR0 : 0 < R) (hR : ∀ ρ, R ≤ ρ → dualG ρ = 0) {M Y : ℝ}
     (hY : 3 * R ^ 2 * M ^ 2 ≤ 4 * H * Y) {A1 A2 : Finset Pr} (h1 : nI A1 ≤ M) (h2 : nI A2 ≤ M)
@@ -390,8 +391,8 @@ theorem pair_char_formD [NeZero m] [Fact ((4 : 𝓞 K) ∣ m)] (ξ1 : MulChar (�
 open Classical in
 /-- **The second mean square in row/column form, in one character modulo `m`** (the companion
 paper's Lemma 7.2 before its regrouping, with its single expansion
-"`\xi_1(z)G(z^{-1})=\sum_{\xi'}c_{\xi'}\xi'(z)`"): `Mq_rowcol` with `Σ_ξ ĉ(ξ)·Σ rcQ(ξ, ξ)` in place of
-the sum over pairs of characters, `ĉ` the coefficients of `pairH ξ₁`. -/
+"`\xi_1(z)G(z^{-1})=\sum_{\xi'}c_{\xi'}\xi'(z)`"): the row/column form of `𝓜 = Σ_y Φ(N(y)/Y)|P(y)|²`
+with `Σ_ξ ĉ(ξ)·Σ rcQ(ξ, ξ)` in place of a sum over pairs of characters, `ĉ` the coefficients of `pairH ξ₁`. -/
 theorem Mq_rowcolD [NeZero m] [Fact ((4 : 𝓞 K) ∣ m)] (ξ1 : MulChar (𝓞 K ⧸ span {m}) ℂ)
     {U : ℝ → ℂ} {β L : ℝ} (hβ : 0 ≤ β) (hL : 0 < L) (hU : ∀ x, 2 * β < x → U x = 0)
     (b T V : Finset Pr) {Y : ℝ} (hY : 0 < Y) {R : ℝ} (hR0 : 0 < R)

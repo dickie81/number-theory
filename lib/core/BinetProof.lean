@@ -1,19 +1,16 @@
 import Mathlib
 import DigammaGauss
 
-/-! # Binet's second formula, proved: discharging `BinetFormula`
+/-! # `ψ` as a Laplace transform
 
-`ψ(z) = log z − 1/(2z) − 2∫_0^∞ t dt/((t² + z²)(e^{2πt} − 1))` for `Re z > 0`.
+Step C of a proof of Binet's second formula `ψ(z) = log z − 1/(2z) − 2∫_0^∞ t dt/((t² + z²)(e^{2πt} − 1))`,
+after the steps A and B of `DigammaGauss.lean`; the later steps, and the formula itself, are in the git history.
 
-* **C. ψ as a Laplace transform.** `ψ(z) = log z − 1/(2z) − ∫_0^∞ e^{−zs}φ(s) ds`, with
+* **C. ψ as a Laplace transform.** `ψ(z) = log z − 1/(2z) − ∫_0^∞ e^{−zs}φ(s) ds` for `Re z > 0`, with
   `φ(s) = 1/(1 − e^{−s}) − 1/s − 1/2` (`|φ| ≤ ½`). Gauss's formula, the complex Frullani
   integral `log z − log w = ∫_0^∞ (e^{−ws} − e^{−zs})/s ds` (Fubini over the segment `[w, z]`) and
   `1/z = ∫e^{−zs}` show that `ψ(z) − log z + 1/(2z) + ∫e^{−zs}φ` does not depend on `z`. At `z = n + 1`
   it tends to `0` (`H_n − log(n + 1) → γ`).
-* **D. φ as a sine transform.** `φ(s) = 2∫_0^∞ sin(st)/(e^{2πt} − 1) dt`: expand
-  `1/(e^{2πt} − 1) = Σ_{n≥1} e^{−2πnt}`, integrate termwise to `Σ 2s/(s² + 4π²n²)`, and sum by the
-  Mittag-Leffler expansion of `cot` (Mathlib's `cot_series_rep'`) at `x = is/2π`.
-* **E. Fubini.** `∫_0^∞ e^{−zs} sin(st) ds = t/(z² + t²)`.
 -/
 
 open Filter Topology MeasureTheory Set

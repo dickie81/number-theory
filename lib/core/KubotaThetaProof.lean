@@ -27,9 +27,8 @@ proved for θ's Fourier series. This file assembles it, at `r = Y = 1`, and with
 * **The twisted family** (**`meanSquareNu`**): for a character
   `ν` modulo any `md ≠ 0` with `4 ∣ md`, the mean square of the family with the coefficients `ν(pgen 𝔞 mod md)`
   at every `σ > 0` (`MeanSquareC`, through `meanSquareNu_of_dualMeanSquareM`).
-* **The half-plane** (**`ne_zero_of_re_gt_eleven_twelfths`** and **`exists_zeroFree_halfPlane`**): `ζ(s) ≠ 0`
-  and `L(s, χ₋₃) ≠ 0` for every `s` with `Re s > 11/12` (`ne_zero_of_kubotaTheta`), so there is
-  `θ < 1` with `ζ(s) ≠ 0` on `Re s > θ`.
+* **The half-plane** (**`ne_zero_of_re_gt_eleven_twelfths`**): `ζ(s) ≠ 0` and `L(s, χ₋₃) ≠ 0` for every `s`
+  with `Re s > 11/12` (`ne_zero_of_kubotaTheta`).
 -/
 
 open Complex NumberField Ideal

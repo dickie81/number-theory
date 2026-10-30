@@ -3,8 +3,8 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveTypeIIGen.typeII_gen` takes a curve `g` with `CurveCounts g` and `WindowOK g L m₁ m₂`. A curve made of many
-constant pieces `A_i(1 − σ)` (a staircase above a density curve) is glued here piece by piece.
+`SieveTypeIIHM.typeII_gen_hm` takes a curve `g` with `CurveCounts g` and the window condition `WindowOKHM`. A curve
+made of many constant pieces `A_i(1 − σ)` (a staircase above a density curve) is glued here piece by piece.
 
 *  `RangeCounts g lo hi`: the counts of `g` on `lo ≤ σ ≤ hi` (`CurveCounts` restricted to a range).
 *  `rangeCounts_of_density`: a density estimate `C(qT)^{A(1−σ)}(log qT)^{10}` on `[lo, hi]` gives
@@ -14,8 +14,8 @@ constant pieces `A_i(1 − σ)` (a staircase above a density curve) is glued her
 *  `rangeCounts_glue`: `RangeCounts g lo mid` and `RangeCounts g' mid hi` give
   `RangeCounts (fun σ => if σ < mid then g σ else g' σ) lo hi`.
 *  `curveCounts_of_range`: `RangeCounts g (1/2) 1` is `CurveCounts g`.
-*  `WindowPiece g L m₁ m₂ lo hi`: the two inequalities of `WindowOK` for `lo ≤ β ≤ hi`; `windowPiece_glue` glues two
-  pieces across an `if`; `windowOK_of_piece`: a piece on `[1/2, 11/12]` is `WindowOK`.
+*  `WindowPiece g L m₁ m₂ lo hi`: the window's two inequalities, the orthogonality branch of `WindowOKHM`, for
+  `lo ≤ β ≤ hi`.
 *  `windowPiece_affine` (and its forms `windowPiece_const` for `A(1 − β)` and `windowPiece_one` for `1`): for
   `g β = p − Aβ` on `[lo, hi]` (`A(1 − β)` is `p = A`; the trivial piece `1` is `p = 1`, `A = 0`), with `lo ≤ hi` and
   `m₁ ≤ m₂`, the inequalities at the corners `β ∈ {lo, hi}`, `m ∈ {m₁, 1, m₂}` (each where it lies in the range of its
@@ -105,7 +105,7 @@ theorem rangeCounts_glue {g g' : ℝ → ℝ} {lo mid hi : ℝ} (h₁ : RangeCou
       _ ≤ max C₁ C₂ * ((q : ℝ) * T) ^ g' σ * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
           gcongr; exact le_max_right _ _
 
-/-- **The window's inequalities on a range of `β`**: `WindowOK g L m₁ m₂` restricted to `lo ≤ β ≤ hi`. -/
+/-- **The window's inequalities on a range of `β`**: the orthogonality branch of `WindowOKHM`, for `lo ≤ β ≤ hi`. -/
 def WindowPiece (g : ℝ → ℝ) (L m₁ m₂ lo hi : ℝ) : Prop :=
   ∀ β m w : ℝ, lo ≤ β → β ≤ hi → m₁ ≤ m → m ≤ m₂ → 0 ≤ w → w ≤ 4 / 10 ^ 6 →
     (m ≤ 1 → (L - m) * (β + w) + g β / 2 + (1 + m) / 2 ≤ L - 1 / 25000) ∧

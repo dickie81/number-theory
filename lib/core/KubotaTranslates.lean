@@ -1,17 +1,18 @@
 import KubotaTheta
 
-/-! # The companion paper's Lemma 6.1 from the Kubota–Patterson display
+/-! # Translates of `θ̄`, and the coefficient identity of the companion paper's Lemma 6.1
 
 The twisted theta function of the companion paper's (6.2) and
 (A.2) is a finite sum of translates of `θ̄` (its (6.4) and (A.4)), and its coefficients at `λnb³` are the
-coefficients of the completed sum (the identity in the proof of its (6.3)).
+coefficients of the completed sum (the identity in the proof of its (6.3)). This file proves that identity, and the
+finite Fourier inversion and the lemmas on translates that `KubotaGroups.lean` uses for the sum of translates.
 
 * **Primitivity** (`dvd_of_ψc_mul_eq_one`, **`ψQ_isPrimitive_of_ne_zero`**): the trace
   character `ψ_c` is primitive modulo every `c ≠ 0`, not only at primes: if `ψ_c(hx) = 1` for all `x`,
   then `N(c)` divides both coordinates of `h c̄`, so `c ∣ h`.
-* **Finite Fourier inversion modulo `c`** (`fCoef`, `sum_ψc_mul`, **`fourier_inv`**, `sum_fCoef`,
-  `norm_fCoef_le`): for `F` periodic modulo `c`, `F(x) = Σ_{h mod c} F̂(h)ψ_c(hx)` with
-  `F̂(h) = N(c)⁻¹Σ_{y mod c} F(y)ψ_c(−hy)`; `Σ_h F̂(h) = F(0)`; `|F̂| ≤ sup|F|`.
+* **Finite Fourier inversion modulo `c`** (`fCoef`, `sum_ψc_mul`, **`fourier_inv`**, `norm_fCoef_le`): for `F`
+  periodic modulo `c`, `F(x) = Σ_{h mod c} F̂(h)ψ_c(hx)` with `F̂(h) = N(c)⁻¹Σ_{y mod c} F(y)ψ_c(−hy)`;
+  `|F̂| ≤ sup|F|`.
 * **The shift in the phase** (`ebr_add`, **`ebr_shift`**): `ĕ(σ(δ₃x)·σ(δ₃²h)/(9σ(q))) = ψ_q(hx)`, since
   `σ(δ₃)⁴ = 9`: multiplying the mode `m = λx` by `e(xh/q)` translates `z` by `λ²h/q`.
 * **Translates** (**`thSer_translates`**): for any finite family, if `G(m) = Σ_i a_i ĕ(mw_i/9)` on the
@@ -19,14 +20,11 @@ coefficients of the completed sum (the identity in the proof of its (6.3)).
 * **`K_{1/3}` is real and `θ̄` is a theta-type series** (`besselK_ofReal`, `conj_besselK_third`,
   `conj_ebr`, **`conj_thSer`**, `thetaSupp_conj`): the coefficient of `θ̄` at `m` is `conj τ(−m)`, the
   paper's `d_0(ℓ) = conj τ(−ℓ)`, and it satisfies the same support and size condition.
-* **The twisted series as translates** (`twAt`, **`thSer_twist`**, **`conj_theta_translates`**): for
-  `F` periodic modulo `q ≠ 0` and `θ = thSer(c₀, τ)` with `τ` supported on `δ₃𝒪`,
-  `Σ_{h mod q} F̂(h)·θ̄(z + λ²h/q, v) = F(0)·conj c₀·v^{2/3} + Σ_m F(m/λ)·conj τ(−m)·vK_{1/3}(4π|m|v/9)·ĕ(mz/9)`;
-  the constant terms cancel when `F(0) = 0`.
+* **The twist at the frequencies** (`twAt`, a definition, and `twAt_mul`): the twist at `m = δ₃x` is `F(x)`, and
+  `0` off `δ₃𝒪`.
 * **The coefficient identity** (`phiTw`, **`coef_realization`**): with `φ(x) = χ_x(λ)²Ψ(x)` on primary
   `x` of norm prime to `6`, `conj τ(−λnb³)·φ(nb³) = conj C·N(b)^{1/2}γ₂(n)Ψ(n)Ψ(b)³` for completely
   multiplicative `Ψ`, from the display's values (the paper's `c_θ(nb³)φ_k(nb³) = 3^{5/2}|b|γ₂(n)Ψ_k(n)Ψ_k(b)³`).
-* **Lemma 6.1 from the display** (**`lemma61_of_kubotaTheta`**).
 -/
 
 open Complex Set NumberField Ideal MeasureTheory UniqueFactorizationMonoid

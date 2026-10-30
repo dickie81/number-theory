@@ -1,11 +1,11 @@
 /-
-# The smooth cut-off, and the separation of two variables
+# The smooth cut-off and its Fourier transform
 
 Plain statement. Let `g` be Mathlib's `Real.smoothTransition`, which is `0` on `(−∞, 0]` and `1` on `[1, ∞)`. For
 `θ > 0` and `Λ ≥ 0` put `G(u) = g(u/θ) − g((u − 2Λ)/θ)` (`G`, and `GC` with complex values). Then:
 
-* `G` is smooth, takes values in `[0, 1]` when `θ ≤ 2Λ`, and vanishes outside `[0, 2Λ + θ]` (`contDiff_G`, `G_nonneg`,
-  `G_le_one`, `G_eq_zero`).
+* `G` takes values in `[0, 1]` when `θ ≤ 2Λ` and vanishes outside `[0, 2Λ + θ]` (`G_nonneg`, `G_le_one`,
+  `G_eq_zero`), and `GC` is smooth (`contDiff_GC`).
 * For `u ≤ Λ`, the indicator `1[u > 0]` or `1[u ≥ 0]` minus `G(u)` lies in `[0, 1]` and vanishes unless `0 ≤ u < θ`
   (`indicator_sub_G`). This is the smoothing error.
 * `G^{(K)}(u) = θ^{−K}(g^{(K)}(u/θ) − g^{(K)}((u − 2Λ)/θ))` (`iteratedDeriv_GC`), and for `K ≥ 1` the derivative
@@ -14,9 +14,6 @@ Plain statement. Let `g` be Mathlib's `Real.smoothTransition`, which is `0` on `
 * `(2π|ξ|)^K‖𝓕G(ξ)‖ ≤ 2θ^{1−K}‖g^{(K)}‖₁` for `K ≥ 1` (`pow_mul_norm_fourier_GC_le`), from
   `(2π|ξ|)^K‖𝓕f(ξ)‖ ≤ ‖f^{(K)}‖₁` (`pow_mul_norm_fourier_le`, by Mathlib's `Real.fourier_iteratedDeriv`).
 * `𝓕G` is integrable (`integrable_fourier_GC`): `(1 + ξ²)‖𝓕G(ξ)‖ ≤ ‖G‖₁ + ‖G″‖₁/(4π²)`.
-* **Separation.** `G(a − b) = ∫ e^{2πiξa} e^{−2πiξb} 𝓕G(ξ) dξ` for real `a` and `b` (`GC_sub_eq_integral`, by
-  Mathlib's `Continuous.fourierInv_fourier_eq`). With `a = log Z` and `b = log Y`, the smoothed comparison
-  `G(log Z − log Y)` is an integral of `Z^{2πiξ}Y^{−2πiξ}` against `𝓕G`, which decays like `(θ|ξ|)^{−K}`.
 
 A cut-off `g(u/θ)c(u/Λ)` with a second bump `c` agrees with `G` on `u ≤ Λ`; `G` has the properties above, with
 support `[0, 2Λ + θ]` in place of `[0, 2Λ]`. Mathlib's `𝓕` is

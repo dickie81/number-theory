@@ -13,7 +13,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 * `integral_dsum`: through the primitive character `ψ*` of `ψ`,
   `∫ L(z + c + iv, ψ)kW_U(c + iv) dv = Σ_T(−1)^{|T|}ψ*(d_T)d_T^{−z}∫ L(z + c + iv, ψ*)kW_{U/d_T}(c + iv) dv`, the sum
   over the sets `T` of primes dividing `q`, `d_T = ∏_{p∈T} p` (Mathlib's `LFunction_changeLevel`).
-* `norm_hTerm_le_reflect`: part 2's `reflect` in each term, for any truncations `Z_T`:
+* `norm_hTerm_le_reflect`: part 2's `reflect_aux` in each term, for any truncations `Z_T`:
   `|H_U(ψ, z)| ≤ (1/2π)Σ_T(∫|kW·Φ·Σ_{m ≤ Z_T}| + ∫|kW·Φ·Σ_{m > Z_T}|)` with `Λ = U/d_T`.
 * `pv_mul`, `mass_mulCo_le`: the product of two Dirichlet polynomials is the polynomial with the convolved
   coefficients, and `Σ_k|c_k|² ≤ τΣ|b_n|²Σ|e_m|²` when `d(k) ≤ τ` on its support.
@@ -491,7 +491,7 @@ theorem integral_dsum {q : ℕ} [NeZero q] {ψ : DirichletCharacter ℂ q} (hψ 
 `c₂ < 0 < c₁` with `−1/2 ≤ c₂`, `c₁ ≤ 2`, `−5/16 ≤ Re z + c₂ < 0`, `Re z + c₁ ≤ 13/16`, and any truncations `Z_T`,
 `|H_U(ψ, z)| ≤ (1/2π)Σ_T (∫|kW·Φ·Σ_{m ≤ Z_T}| + ∫|kW·Φ·Σ_{m > Z_T}|)` over `T ⊆ primes of q`, with `Λ = U/d_T` in
 `kW`, `Φ` for the primitive character `ψ*` and the dual character `ψ⁻¹` (`hTerm_tsum_eq`, `integral_dsum`,
-`reflect`). -/
+`reflect_aux`). -/
 theorem norm_hTerm_le_reflect {q : ℕ} [NeZero q] {ψ : DirichletCharacter ℂ q} (hψ : ψ ≠ 1) {U : ℝ} (hU : 2 ≤ U)
     {z : ℂ} (hz0 : 0 ≤ z.re) (hz1 : z.re ≤ 1) {c₁ c₂ : ℝ} (hc₂0 : c₂ < 0) (hc₁0 : 0 < c₁) (hc₂ : -1 / 2 ≤ c₂)
     (hc₁ : c₁ ≤ 2) (hs1 : -5 / 16 ≤ z.re + c₂) (hs3 : z.re + c₂ < 0) (hs2 : z.re + c₁ ≤ 13 / 16)

@@ -5,10 +5,10 @@ import ArchShift
 
 /-! # The explicit-formula bridge: `weilQ` is the zero side of Weil's explicit formula
 
-Four places in the library assume "Weil's explicit formula" in four shapes: `T1bt`'s `h_explicit`,
-Exterior.lean's `WeilExplicit`, and the `hQ` hypotheses of Saturation.lean and Unconditional.lean.
-Nothing connected `WeilExplicit` (the classical Guinand–Weil statement, for a test function `h`) to
-the library's own `weilQ` (the prime-side form of Theorem 1bn(i)). This file proves the connection:
+Two places in the library assume "Weil's explicit formula", in two shapes: Exterior.lean's `WeilExplicit`, and
+the `hQ` hypotheses of Unconditional.lean. Nothing connected `WeilExplicit` (the classical Guinand–Weil statement,
+for a test function `h`) to the library's own `weilQ` (the prime-side form of Theorem 1bn(i)). This file proves the
+connection:
 
   `WeilExplicit ρ ĝ² ĝ²|ℝ`  ⟹  `Σ_ρ ĝ(t_ρ)² = weilQ a g`   (`weilQ_eq_zero_sum`)
 
@@ -21,12 +21,13 @@ SwapRealize.lean also uses it).
 * **`∫ĝ² < ∞`** (`integrable_hsq`), by Gaussian regularisation and monotone convergence.
 * **Fourier inversion** (`gh_hsq`): `g_h = f`, i.e. `(1/2π)∫ĝ(r)² cos(ru) dr = f(u)`. So the
   constant and prime terms of `WeilExplicit` are `weilQ`'s.
-* **The archimedean term**, from `DigammaDiff` (next item), by Tonelli and `t = 2u`:
+* **The archimedean term**, from the digamma difference (next item), by Tonelli and `t = 2u`:
   `(1/2π)∫ĝ² Re ψ(¼ + ir/2) = Re ψ(¼)‖g‖² + archE g`.
 
-**`DigammaDiff`**: `ψ(z) − ψ(w) = ∫_0^∞ (e^{−wt} − e^{−zt})/(1 − e^{−t}) dt` for `Re z, Re w > 0`,
+**The digamma difference**: `ψ(z) − ψ(w) = ∫_0^∞ (e^{−wt} − e^{−zt})/(1 − e^{−t}) dt` for `Re z, Re w > 0`,
 Gauss's integral representation of the digamma function, in difference form. Mathlib's `Digamma.lean`
-lists it as a TODO. `digammaDiff`, proved from `DigammaGauss.lean`, gives it, so no theorem here assumes it.
+lists it as a TODO. `GammaIntegrals.digamma_sub_eq_integral` (DigammaGauss.lean) proves it, so no theorem here
+assumes it.
 -/
 
 open Real Filter Topology Complex MeasureTheory Set
@@ -78,7 +79,7 @@ theorem weilQ_eq_zero_sum {ι : Type*} {ρ : ι → ℂ} (hp : Probe a g) (ha : 
   rw [hpole1, hpole2, hg0, hpr, arch_term hp ha, hz0, weilQ_eq', weilConst]
   push_cast; ring
 
-/-! ## C. The symbol form and the jump form
+/-! ## C. The symbol form
 
 With no `WeilExplicit` input, Weil's form is a rank-one pole term plus a Toeplitz
 (truncated Wiener–Hopf) form with an explicit symbol:
@@ -86,12 +87,7 @@ With no `WeilExplicit` input, Weil's form is a rank-one pole term plus a Toeplit
   `Q(g) = 2ĝ(i/2)² + (1/2π)∫ ĝ(r)² σ_a(r) dr`,
   `σ_a(r) = Re ψ(¼ + ir/2) − log π − 2 Σ_{n ≤ e^{2a}} Λ(n) n^{−1/2} cos(r log n)`   (`weilQ_symbol`).
 
-With no named input at all, the pole-free form is a jump-type Dirichlet form minus a constant:
-`Q₀(g) = (c₀ − 2P(a))‖g‖² + E(g) + Σ_{n ≤ e^{2a}} Λ(n) n^{−1/2} ‖g − g(· + log n)‖²` (`weilQ0_jump`). The
-archimedean kernel `e^{u/2}/sinh u = 2Σ_k e^{−(2k+½)u}` is completely monotone, and each prime power
-is a jump of size `log n` at rate `Λ(n)/√n`: `Q₀ + (2P(a) − c₀)` is the energy of a symmetric Lévy
-process killed outside `[−a, a]`, and `psiRe_sub` is its Lévy–Khintchine formula (`psiRe_ge`: the
-exponent is `≥ 0`).
+`psiRe_ge`: `Re ψ(¼) ≤ Re ψ(¼ + ir/2)` for every real `r`.
 -/
 
 /-- Weil's symbol at support `a`. -/

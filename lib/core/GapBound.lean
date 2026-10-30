@@ -1,7 +1,7 @@
 import Mathlib
 import TheoremC
 
-/-! # The pole-overlap gap bound, and the Galerkin transfer
+/-! # The pole-overlap gap bound
 
 **Gap bound (operator level, no spectral decomposition).** Let `φ₀` be the ground state of the
 pole-free form `Q₀` (`μ₁ = λ₀`), and `ψ` a normalised probe `⊥ φ₀` attaining
@@ -15,10 +15,8 @@ pole-free form `Q₀` (`μ₁ = λ₀`), and `ψ` a normalised probe `⊥ φ₀`
 
 So `c₂ ≠ 0` and `μ₂ > μ₁` give simplicity with an explicit gap (`simple_of_pole_overlap`).
 
-**Galerkin transfer.** If truncation spaces `T K` (of probes) approximate every probe in `L²` and
-archimedean energy, and the truncated forms have `λ₂(T K) ≥ λ₁(T K) + γ` eventually, then
-`λ₂(Q) ≥ λ₁(Q) + γ` and the ground state is simple (`simple_of_trunc_gap`). The truncated `λ₂` is in
-min–max form (`Lam2GeT`).
+**Continuity of `Q_λ`.** `Q_λ(x + y) ≤ (1 + t)Q_λ(x) + (1 + 1/t)Q_λ(y)` (`Qlam_add_le`), and `Q_λ` is dominated
+by the `L²` norm plus the archimedean energy (`Qlam_le_d`).
 -/
 
 open Real Filter Topology Complex MeasureTheory Set

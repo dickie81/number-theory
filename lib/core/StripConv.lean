@@ -9,8 +9,7 @@ uniformly on that strip alone gives RH for the top-of-chain ground states
 (`hurwitz_closed_on`, `rh_of_strip_cross`, `rh_of_hypConvStrip_top`).
 
 **An `L²` criterion.** `|ĝ(z) − φ̂(z)| ≤ √(2a) e^{a|Im z|} ‖g − φ‖` (`norm_ghatC_sub_le`). So if
-comparison functions `φ_n` have transforms converging to `cΞ` on the strip (`KernelApprox`; proved
-for Riemann's kernel in RiemannKernel.lean), then
+comparison functions `φ_n` have transforms converging to `cΞ` on the strip (`KernelApprox`), then
 
   `‖σ_n·topGS(a_n) − φ_n‖ = o(e^{−b a_n}/√a_n)` for every `b < ½`   ⇒   RH   (`rh_of_close_top`).
 
@@ -20,9 +19,6 @@ The threshold `½` is the half-width of the critical strip.
 probe `φ` with `⟨g, φ⟩ ≥ 0` (`normSq_sub_le_of_gap`), hence `rh_of_relgap`. For `φ = Φ_a` its
 hypothesis is false numerically: `λ₂` is itself double-exponentially small,
 far below `Q(Φ_a)`.
-
-**The moment conditions.** (a) on the strip makes every Taylor coefficient of `ĝ_n/ĝ_n(0)` at `0`
-converge (`moments_of_hypConvStrip`); `k = 2` is the second-moment condition `κ(a) → 0`.
 -/
 
 open Real Filter Topology Complex MeasureTheory Set
@@ -376,8 +372,7 @@ theorem normSq_sub_le_of_gap {a s : ℝ} (ha : 0 < a) {g φ : ℝ → ℝ} (hg :
 /-! ## RH from `L²` closeness to a kernel, and from a relative spectral gap -/
 
 /-- **The kernel hypothesis.** Comparison functions `φ_n ∈ L²` whose transforms on `[−a_n, a_n]`
-converge to a nonzero multiple of `Ξ`, locally uniformly on the strip `|Im z| < ½`. Riemann's kernel
-`φ_n = Φ` satisfies it whenever `a_n → ∞` (`kernelApprox_RPhi`, RiemannKernel.lean). -/
+converge to a nonzero multiple of `Ξ`, locally uniformly on the strip `|Im z| < ½`. -/
 def KernelApprox (a : ℕ → ℝ) (φ : ℕ → ℝ → ℝ) : Prop :=
   (∀ n, MemLp (φ n) 2 volume) ∧ ∃ c : ℂ, c ≠ 0 ∧
     TendstoLocallyUniformlyOn (fun n z => ghatC (φ n) (a n) z) (fun z => c * Xi z) atTop stripSet

@@ -2,8 +2,8 @@ import KubotaEisenstein
 
 /-! # The growth of the cubic Eisenstein series at the cusps
 
-For `σ = Re s > 2` and `v ≥ 1/2`, `E(g·w, s) = a_g·v^s + O(v^{2−σ})` at every cusp `g·∞`,
-`g ∈ SL_2(ℤ[ω])`, with a constant that depends only on `σ`.
+For `σ = Re s > 2` and `v ≥ 1/2`, `E(w, s) = v^s + O(v^{2−σ})` at the cusp `∞`, with a constant that
+depends only on `σ`.
 
 * **The period parallelogram** (**`volume_fundP`**, with `fundP_eq_image`, `norm_varpi` and
   `norm_le_two_of_mem_fundP`): `P` has area `√3/2` and lies in the closed disc of radius `2`.
@@ -17,10 +17,10 @@ For `σ = Re s > 2` and `v ≥ 1/2`, `E(g·w, s) = a_g·v^s + O(v^{2−σ})` at 
   `cuspC_nonneg`, `rpow_mul_sq_rpow`, `tsum_height_c_le`, `tsum_norm_σO_rpow_le` and `tsum_height_ne_le`):
   `Σ_{c≠0, d} (v/Q_w(c, d))^σ ≤ cuspC(σ)·v^{2−σ}` over all pairs of `ℤ[ω]` with `c ≠ 0`, for `σ > 2` and
   `v ≥ 1/2`, with `Q_w(c, d) = |cz + d|² + |c|²v²`.
-* **The cusps** (`cuspA`, a definition; **`norm_eis1_sub_le`** and **`norm_eis1_slAct_sub_le`**, with
-  `cuspA_one`, `isUnit_rowMul_snd` and `eisTerm_slAct_of_fst`): `|E(w, s) − v^s| ≤ cuspC(σ)·v^{2−σ}`, and
-  `|E(g·w, s) − a_g·v^s| ≤ cuspC(σ)·v^{2−σ}` for every `g ∈ SL_2(ℤ[ω])`, where `a_g = Σ (c/d)₃` over the
-  bottom rows `(c, d)` of `Γ_1(3)` with `(c, d)g = (0, *)`; `a_1 = 1`.
+* **The cusps** (`cuspA`, a definition; **`norm_eis1_sub_le`**, with `isUnit_rowMul_snd`):
+  `|E(w, s) − v^s| ≤ cuspC(σ)·v^{2−σ}`. The coefficient of `v^s` at the cusp `g·∞`, `g ∈ SL_2(ℤ[ω])`, is
+  `a_g = Σ (c/d)₃` over the bottom rows `(c, d)` of `Γ_1(3)` with `(c, d)g = (0, *)`; each such row has
+  `(c, d)g = (0, u)` with `u` a unit.
 -/
 
 open MeasureTheory Set Module Filter NumberField Ideal PlanePoisson

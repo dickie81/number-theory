@@ -1,31 +1,19 @@
 /-
-# The certificate under a decomposition rule, in the reals and over `Finset`
+# The certificate under a decomposition rule, over `Finset`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statements about `SieveRuleDefs.lean`'s definitions, as `SieveCert.lean` and `SieveCert2.lean` state them for the
-certificate's own.
+Plain statements about `SieveRuleDefs.lean`'s definitions, as `SieveCert.lean` states them for the certificate's own.
 
-* `allowedR_lim`, `allowed4R_lim`, `decR_lim`, `dec4R_lim`, `costR_lim`, `totalR_lim`, `cost2R_lim`, `total2R_lim`:
-  under `limRule` the definitions are the certificate's own.
-* `totalR_eq`, `total2R_eq`, `rows2R_eq`, `rowsJ2R_eq`, `refcostR_eq`: the sums as `Finset` sums.
-* `rows2R_eq_rowsJ2R`, `rowsJ2R_split`, `rows2R_split`, `total2R_eq_rows2R_full`, `rows2R_le_of_split`,
-  `rowsJ2R_le_of_split`, `rows2R_le_of_rowsJ2R`: the steps that assemble a bound on `total2R` from its parts' bounds.
-* `totalR_div_le`, `total2R_div_lt`: the totals' bounds in the reals.
-* `allowedR_of_decR`, `allowed4R_of_dec4R`, `costR_of_decR`, `costR_of_not_decR`, `cost4R_of_dec4R`,
-  `cost4R_of_not_dec4R`, `cost4R_of_not_counted4`, `cost2R_of_decR`, `cost2R_of_not_decR`, `cost2R_of_not_cand`,
-  `cost2R_ge`: the costs by cases.
-* `limOK_cells2` … `limOK_cells5`, `nbOK_cells2` … `nbOK_cells5`: the tests on a box of cells, as inequalities;
-  `ok2_of_decR`, `ok3_of_decR`, `ok4_of_dec4R`, `ok5_of_dec4R`: the boxes that the decomposition decomposes pass the
-  rule.
-* `subsetSums_ofFn`, `hiSum_ofFn`, `lastHi_ofFn`, `tstar_mem`: a box's subset sums are its sums over the `Finset`s of
-  its cells, and `tstar` is attained.
+* `limOK_cells2` … `limOK_cells5`, `nbOK_cells2` … `nbOK_cells5`: the tests on a box of cells, as inequalities.
+* `subsetSums_ofFn`, `hiSum_ofFn`, `tstar_mem`: a box's subset sums are its sums over the `Finset`s of its cells, and
+  `tstar` is attained.
 * `ibOK_sound`: `ibOK`'s witnesses, a set `S₀` of the box's cells with `T = cIB` there and a split `(S₁, eIn₁)` of its
   leaves, as sums over `Finset`s; `okIB_cases`: `okIB` is `limOK`, or `ibOK` and `nbOK`.
 * `RuleNB`, `RuleIB`: what a rule guarantees of the boxes it passes (`limOK`, or no boundary term; `limOK`, or `ibOK`
-  with no boundary term), for `limRule` and `ibRule`.
+  with no boundary term), for `ibRule` (`ibRule_ib`).
 
-The file imports `SieveCert2.lean` and `SieveRuleDefs.lean`.
+The file imports `SieveCert.lean` and `SieveRuleDefs.lean`.
 -/
 import SieveCert
 import SieveRuleDefs

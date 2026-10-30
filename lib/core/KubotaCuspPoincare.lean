@@ -11,9 +11,8 @@ and `ν = ρ_G dμ`:
   `measurable_pmSerT` and `norm_pmTermT`): for `m` with `ĕ(m·3x/9) = χ_t(x)` for every `x`,
   `P^{(t)}_m(ψ)(w) = Σ_{(c, d)} conj κ_t(γ_{(c, d)})·ψ(v(γ_{(c, d)}w))·ĕ(m·z(γ_{(c, d)}w)/9)` is automorphic
   with `κ_t`.
-* **The series at the cusp** (`pmSerC`, a definition; `kubT_conj_inv`, **`isAut_pmSerC`**,
-  `measurable_pmSerC`, `tsum_enorm_pmTermT_eq`, **`memLp_pmSerC`** and `memLp_pmSerC_Icc`):
-  `Q_t = P^{(t)}_m(ψ)∘γ_t⁻¹` is automorphic with Kubota's character, and it is in `L²(ν)` under the
+* **The series at the cusp** (`pmSerC`, a definition; `measurable_pmSerC`, `tsum_enorm_pmTermT_eq`,
+  **`memLp_pmSerC`** and `memLp_pmSerC_Icc`): `Q_t = P^{(t)}_m(ψ)∘γ_t⁻¹` is in `L²(ν)` under the
   conditions on `ψ`, since its terms have the absolute values of the terms of `E(ψ)` at `γ_t⁻¹·w`.
 * **Unfolding** (**`integral_conj_lowT_inv_mul`**, `conj_pmTermT_mul`, `conj_pmSerT_mul`,
   **`integral_conj_pmSerT_mul`** and **`inner_toLp_pmSerC`**): the change of variables by `γ_t`, with the

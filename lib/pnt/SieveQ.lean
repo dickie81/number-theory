@@ -20,17 +20,15 @@ decomposition's rule (`SieveCert.Rule`) splits a box at `X'` when `limOK` passes
 * `P6IB_box`, `P6IB_boxes`: for a box that the bilinear Type I test passes, `ibOK_sound`'s witnesses are
   `SieveP6ib.prop6ib`'s conditions, so Proposition 6-ib holds on its families (`P6IBat`); uniformly over finitely many
   boxes.
-* `leaves_ev`: for a rule with `RuleIB`, given the route's Type II estimate (`hII`), for `η > 0` there are `δ > 0` and
-  `q₀` such that for `q ≥ q₀` and `a` a unit mod `q`, `LargeQ q` holds and every leaf of `(parQ q).Leaves` is within
+* `TLat`, `TUat`, `TRat`, `P6at`, `P6IBat`, `Err`: the estimates at one `q`, with an error `E`, of the lower, upper
+  and reflected windows, of Proposition 6 and of Proposition 6-ib; and the leaves' error
   `Err η δ q = ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)`.
 
-The proof of `leaves_ev`: for the tuple lengths of the tree, `SieveLeaves.TL_spec` (one to six primes), `TU_spec` (two
-to five), `TR_spec` (two to six), `P6_spec` (none to five) and `P6IB_boxes` (the grid's boxes of two to five cells)
-give `δ` and `q₀`; `δ` is at most each of theirs and `q₀` is their sum. Each leaf is then one of those estimates
-(`lf_j0` … `lf_e6`): its family has at most `40` atoms with thresholds in `[1, q^{L+1}]` (`len_*`, `thrOK_*`), and its
-windows are the integer ranges `P₁ = ⌊x^{u₁}⌋`, `P₂ = ⌊x^{u₂}⌋`, `W₀ = X'` and `W₁ = ⌊x^{1−u₁}⌋` (`P1_ok`, `P2_ok`,
-`W1_div`, `W0_div`). A split box's term above `X'` goes by the upper window and its term at or below `X'` by
-Proposition 6; a whole box's term above `N₁` is empty, and its term at or below `N₁` goes by Proposition 6-ib.
+The leaves (`lf_j0` … `lf_e6`): each leaf of `(parQ q).Leaves` is within `E` by one of those estimates at `E`. Its
+family has at most `40` atoms with thresholds in `[1, q^{L+1}]` (`len_*`, `thrOK_*`), and its windows are the
+integer ranges `P₁ = ⌊x^{u₁}⌋`, `P₂ = ⌊x^{u₂}⌋`, `W₀ = X'` and `W₁ = ⌊x^{1−u₁}⌋` (`P1_ok`, `P2_ok`, `W1_div`,
+`W0_div`). A split box's term above `X'` goes by the upper window and its term at or below `X'` by Proposition 6; a
+whole box's term above `N₁` is empty, and its term at or below `N₁` goes by Proposition 6-ib.
 
 The route's numbers, the certificate's grid parameters and the Type II estimate are hypotheses (`hII`); the case
 of the library's theorem is `Linnik22000E.route22000D` and `SieveCert.grid22000E` (`Linnik22000E.fits22000E`),

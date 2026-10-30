@@ -8,10 +8,9 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 `C_δ` the divisor constant and `Q = q(1 + 2T)`, and proves the displayed hypothesis `CGLT101`
 (Heath-Brown's Theorem 10.1 with characters). With `LinnikCGLP81.cgls3_t101` and `LinnikCGLP81.prop31_t101` it gives,
 with no hypothesis, Chen–Gupta–Li's Propositions 11.1 and 3.1 at one point per character (`cgls3`, `prop31`), from which
-`LinnikCGLStep.charDensity_cgl` counts the characters with a zero at the exponent `(7/3 + 1/2000)(1 − σ)` on
-`[5/7, 16/21]` and `LinnikCGLSteps` derives the steps of the Linnik paper. The theorems that gave Linnik's exponents
-`9/4` and `226/100` from it (`linnik_225c_t101`, `linnik_226c_t101`) were removed; see the git history. `CGLDensity` itself, the count at `(7/3)(1 − σ) + ε` for every `ε > 0`, is not proved here
-(`LinnikCGLDensity.cglDensity` proves it).
+`LinnikCGLSteps` derives the steps of the Linnik paper. The theorems that gave Linnik's exponents `9/4` and `226/100`
+from it (`linnik_225c_t101`, `linnik_226c_t101`) were removed; see the git history. `CGLDensity` itself, the count at
+`(7/3)(1 − σ) + ε` for every `ε > 0`, is not proved here (`LinnikCGLDensity.cglDensity` proves it).
 
 The library's form.
 * For `0 < δ ≤ 1`, `q ≥ 1` and `T ≥ 0`: `d(q)`, `Q^δ` and `J + 1` (with `J = ⌊log₂⌊4Q⌋⌋`, through `2^J ≤ 4Q` and
@@ -38,9 +37,6 @@ Plain statements, with `q ≥ 1` where `[NeZero q]`, `R` the number of points an
 * `cglt101`: `CGLT101`.
 * `cgls3`, `prop31`: `CGLS3` and `CGLProp31` (their Propositions 11.1 and 3.1 at one point
   per character).
-* `char_density`: there is `C ≥ 0` such that, for `q ≥ 1`, `5/7 ≤ σ ≤ 16/21` and `T ≥ 2`, at most
-  `C(qT)^{(7/3+1/2000)(1−σ)}(log qT)^{10}` characters mod `q` have an `L`-function with a zero in `Re s ≥ σ`,
-  `|Im s| ≤ T`.
 * `linnik_225`, `linnik_226` (formerly in `LinnikCGLLegacy.lean`, since removed; see the git history): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime
   `p ≡ a (mod q)` with `p ≤ Kq^{9/4}`; and likewise with `p ≤ Kq^{226/100}`.
 

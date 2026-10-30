@@ -15,7 +15,7 @@ termwise sum `D2sum`, and the three point values at `c`.
   bounds (`5^{-σ₀}`, `(M + j/5)^{1-σ₀-24}`) and the box product (`K = 12`).
 * `norm_deriv2_fEM_ballG`: `‖DEM″ + GEM″‖ ≤ D2sum + 2C/R²` on `closedBall c r` (termwise for `DEM`,
   Cauchy on circles of radius `R` for `GEM`).
-* `cCG`, `sCG`, `PReG`, `PImG`, `QDG`, `AReG`, `AImG`: the elementary forms of `fEM(c)`, `fEM′(c)`;
+* `cCG`, `sCG`, `PReG`, `PImG`, `QDG`, `AReG`: the elementary forms of `fEM(c)`, `fEM′(c)`;
   `dh_zero_near_of_elementaryG`: the ladder in elementary form.
 -/
 

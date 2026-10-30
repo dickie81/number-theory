@@ -9,19 +9,19 @@ on `θ' ≤ σ < 3/2`, where `Kld` and `Rld` depend on `θ < θ' < 3/2` only (`l
 `|F(s)| ≤ c(|Im s| + 2)` on `θ ≤ Re s ≤ 3`, `1/|F(3/2 + it)| ≤ A` and `|F′/F| ≤ C₀` on `Re s ≥ 3/2`, this gives
 `|F′/F(σ + it)| ≤ Kld θ θ' · (log(2 + 2cA) + log(|t| + 4)) + C₀` for `σ ≥ θ'` (`logDeriv_le_uniform_of`).
 
-* `disc_point`: PNT+'s `FinalBound` (Borel–Carathéodory with the zeros divided out) for `locG`, the quotient
+* `disc_point_ball`: PNT+'s `FinalBound` (Borel–Carathéodory with the zeros divided out) for `locG`, the quotient
   `F(3/2 + it + ρw)/F(3/2 + it)`, on the unit disc, which holds no zero of `F`.
-* `logDeriv_le_Kld`: `disc_point` at the radii `r' = (3/2 − θ')/ρ`, `r = r' + (1 − r')/4`, `R' = r' + (1 − r')/2`
-  and `R = r' + 3(1 − r')/4` (`Rld`).
-* `logDeriv_le_uniform_of`, `logDeriv_le_uniform`: `logDeriv_le_Kld` with `B = 2 + 2cA(|t| + 4)`.
-* `disc_point_ball`, `logDeriv_le_Kld_ball`, `logDeriv_le_ball`: the same three steps with no zero of
-  `F` in the disc of radius `3/2 − θ` about `3/2 + it` only, which is what a zero-free region of bounded height
-  supplies (`Linnik.logDeriv_LFunction_le`). The half-plane forms above follow from them, since that disc lies
-  in `Re s > θ` (`re_gt_of_mem_ball`).
+* `logDeriv_le_Kld_ball`: `disc_point_ball` at the radii `r' = (3/2 − θ')/ρ`, `r = r' + (1 − r')/4`,
+  `R' = r' + (1 − r')/2` and `R = r' + 3(1 − r')/4` (`Rld`).
+* `logDeriv_le_ball`: `logDeriv_le_Kld_ball` with `B = 2 + 2cA(|t| + 4)`.
+* These three steps assume only that `F` has no zero in the disc of radius `3/2 − θ` about `3/2 + it`, which is
+  what a zero-free region of bounded height supplies (`Linnik.logDeriv_LFunction_le`). The half-plane forms
+  `logDeriv_le_Kld` and `logDeriv_le_uniform_of` follow from them, since that disc lies in `Re s > θ`
+  (`re_gt_of_mem_ball`).
 
 The disc step is stated for an `F` holomorphic on the disc, which covers `ζ` at `|t| > 3`, and the radii are stated
-once (`logDeriv_le_Kld`). The disc helpers (`ctr`, `re_ge`, `one_lt_log_three`) come from `HalfPlanePNT`, `locG` and
-`disc_point` from `ChiPNT`, and `Kld` and the two bounds from `ChiUniform`. The disc step is proved for a zero-free
+once (`logDeriv_le_Kld`). The disc helpers (`ctr`, `re_ge`, `one_lt_log_three`) come from `HalfPlanePNT`, `locG`
+from `ChiPNT`, and `Kld` and `logDeriv_le_uniform_of` from `ChiUniform`. The disc step is proved for a zero-free
 disc, and the half-plane forms are derived from it.
 -/
 import Landau

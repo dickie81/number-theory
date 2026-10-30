@@ -5,8 +5,8 @@ import EisensteinPoissonExcl
 
 This file twists the family by a coefficient `c` on the ideals:
 `A^c_Z(u) = Σ_𝔞 c(𝔞)μ(𝔞)(u/𝔞)₆W(N𝔞/Z)` (`famSumC`; `famSum` is `c = 1`, `famSumC_one`), and states
-`famSumC_eq`, `norm_famSumC_le` and `famSumC_majorant_eq` for it; `famSum_eq`, `norm_famSum_le` and
-`famSum_majorant_eq` are their cases `c = 1`.
+`famSumC_eq`, `norm_famSumC_le` and `famSumC_majorant_eq` for it; `norm_famSum_le` and `famSum_majorant_eq` are
+the cases `c = 1` of the last two.
 
 The first half of the assembly of the companion paper's
 Proposition 4.5, as exact identities.
@@ -17,8 +17,6 @@ Proposition 4.5, as exact identities.
   `A` (`primeSet_idl`), its primary generator is `∏_{P∈A} π_P` (`pgen_idl`), its sextic symbol is
   `χ_A = ∏_{P∈A} χ_P` (`chiS`, `sym6_idl`), and `μ(idl A) = (−1)^{|A|}` (`moebius_idl`). `fsLe Y` is
   the finite set of `A` with `N(idl A) ≤ ⌊Y⌋` (`mem_fsLe`).
-* **The family as a finite sum** (`famSum_eq`): `A_Z(u) = Σ_A (−1)^{|A|}·χ_A(u)·W(N(A)/Z)` over
-  `A ∈ fsLe ⌈βZ⌉`, for `W` vanishing beyond `β`.
 * **The majorant** (`sum_sq_le_majorant`): with `Φ` (`Φ ≥ 1` on the unit disc and
   `Φ ≥ 0`), `Σ_{z∈T} |g(z)|² ≤ Re Σ_u g(u)ḡ(u)·Φ(u/√H)` when `N(z) ≤ H` on `T`. The sum converges for
   bounded `g` (`summable_mul_Phi`).
@@ -35,7 +33,6 @@ Proposition 4.5, as exact identities.
   Σ_{T⊆B} (−1)^{|T|}·2H/(√3·√N(c)·N(d_T))·ā(C₁)a(C₂)Ψ(C₁, C₂)·F(d_T)·Σ_μ F̄(μ)·Φ̂(√(4HN(μ)/(3N(c)N(d_T))))`,
   with `d_T = ∏_{P∈T} π_P` and the paired factor `Ψ` (`pairPsi`). The signs are
   `μ(A₁)μ(A₂) = μ(C₁)μ(C₂)` (`sign_sdiff`, in this file).
-* `majorant_poisson` combines the last two.
 -/
 
 open NumberField Complex Ideal UniqueFactorizationMonoid
@@ -176,7 +173,7 @@ theorem normSum_wsymC_zero (c : Ideal (𝓞 K) → ℂ) (u : 𝓞 K) :
 open Classical in
 /-- **The twisted family as a finite sum over sets of primes**: for `W` vanishing beyond `β` and `Z > 0`,
 `A^c_Z(u) = Σ_A c(𝔞_A)·(−1)^{|A|}·χ_A(u)·W(N(A)/Z)` over the sets of primes `A` with `N(A) ≤ ⌈βZ⌉`, where
-`𝔞_A = ∏_{P∈A}P` (`famSum_eq` is `c = 1`). -/
+`𝔞_A = ∏_{P∈A}P`. -/
 theorem famSumC_eq (c : Ideal (𝓞 K) → ℂ) {W : ℝ → ℝ} {β : ℝ} (hW : ∀ x, β < x → W x = 0) {Z : ℝ}
     (hZ : 0 < Z) (u : 𝓞 K) :
     famSumC c W Z u = ∑ A ∈ fsLe (⌈β * Z⌉₊ : ℝ), c (idl A) * ((-1 : ℂ) ^ A.card * chiS A u) *

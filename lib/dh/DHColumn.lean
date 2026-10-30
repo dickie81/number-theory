@@ -24,13 +24,13 @@ unsatisfiable.
 Each declaration (left) and the library declaration it is the dh column of (right):
 
 * zero-free half-plane and strip
-  - `dh_ne_zero_of_two_le` — `dh_ne_zero_of_two_lt` (DHPrime.lean:580), with `≤` in place of `<`
-  - `XiDH_ne_zero_of_le` — `XiDH_ne_zero_of_lt` (DHExplicit.lean:128), with `≤` in place of `<`
-  - `tau3_im_lt` — `tau_im` (WeilAssemble.lean:32); the strict form of `tau3_im` (DHExplicit.lean:138)
+  - `dh_ne_zero_of_two_le` — `dh_ne_zero_of_two_lt` (DHPrime.lean:566), with `≤` in place of `<`
+  - `XiDH_ne_zero_of_le` — `XiDH_ne_zero_of_lt` (DHExplicit.lean:126), with `≤` in place of `<`
+  - `tau3_im_lt` — `tau_im` (WeilAssemble.lean:32); the strict form of `tau3_im` (DHExplicit.lean:136)
 * the ordinate map; the certificate in `Ξ`-coordinates
-  - `XiDH_at_ordinate` — `Xi_at_ordinate` (Roadmap.lean:113)
+  - `XiDH_at_ordinate` — `Xi_at_ordinate` (Roadmap.lean:110)
   - `XiDH_nonreal_zero` — no ζ counterpart (for `ζ` it would be `¬ RiemannHypothesis`):
-    `dh_offline_zero` carried through `XiDH_at_ordinate` and `re_eq_half_of_Xi_real` (Roadmap.lean:146)
+    `dh_offline_zero` carried through `XiDH_at_ordinate` and `re_eq_half_of_Xi_real` (Roadmap.lean:138)
 * the prime-side chains (Hurwitz at `Ξ_dh`)
   - `HypConvDH` — `HypConv` (PrimeSide.lean:37)
   - `eventually_ne_on` — `eventually_ghatC_zero_ne` (PrimeSide.lean:49)
@@ -38,17 +38,15 @@ Each declaration (left) and the library declaration it is the dh column of (righ
   - `dhRH_of_realRooted`, `not_hypConvDH_of_realRooted` — `rh_of_prime_side` (HurwitzCross.lean:78),
     with the ground-state hypothesis replaced by the integrability it is used for
     (HurwitzCross.lean:52–53)
-  - `DHRHcross` — the χ-side `GRHCross` (CrossCriteria.lean:116); for `ζ` the cross occurs only
+  - `DHRHcross` — the χ-side `GRHCross` (CrossCriteria.lean:77); for `ζ` the cross occurs only
     inside `rh_of_prime_side_cross`
-  - `dhRHcross_of_cross`, `dhRH_of_cross`, `not_hypConvDH_of_cross` — `rh_of_prime_side_cross`
-    (HurwitzCross.lean:45); `dhRHcross_of_cross` has no real-zero input and concludes the cross,
-    `dhRH_of_cross` takes the real-zero exclusion as `hreal` (the column of
-    `hζ : ZetaNoZeroInUnitInterval`, over all `σ > 0`)
-  - `stripW`, `isOpen_stripW` — `stripSet`, `isOpen_stripSet` (StripConv.lean:39, 41)
-  - `HypConvStripDH` — `HypConvStrip` (StripConv.lean:48)
-  - `ordinate_mem_stripW` — `ordinate_mem_strip` (StripConv.lean:56)
-  - `dhRHcross_of_strip`, `not_hypConvStripDH_of_cross` — `rh_of_strip_cross` (StripConv.lean:64)
-  - `not_realRooted_limit_XiDH` — `rh_of_realRooted_limit` (Roadmap.lean:260)
+  - `dhRHcross_of_cross`, `not_hypConvDH_of_cross` — `rh_of_prime_side_cross`
+    (HurwitzCross.lean:45); `dhRHcross_of_cross` has no real-zero input and concludes the cross
+  - `stripW`, `isOpen_stripW` — `stripSet`, `isOpen_stripSet` (StripConv.lean:35, 37)
+  - `HypConvStripDH` — `HypConvStrip` (StripConv.lean:44)
+  - `ordinate_mem_stripW` — `ordinate_mem_strip` (StripConv.lean:48)
+  - `dhRHcross_of_strip`, `not_hypConvStripDH_of_cross` — `rh_of_strip_cross` (StripConv.lean:56)
+  - `not_realRooted_limit_XiDH` — `rh_of_realRooted_limit` (Roadmap.lean:230)
 * the pairing / Hypothesis D route
   - `tendstoLocallyUniformly_of_pairing_gen` — `tendstoLocallyUniformly_of_pairing` (Limit.lean:135)
   - `real_of_pairing` — `rh_of_pairing_and_realRooted` (Limit.lean:191)
@@ -57,22 +55,20 @@ Each declaration (left) and the library declaration it is the dh column of (righ
     `rh_of_D_and_realRooted_proved` (HadamardApply.lean:181); its named inputs `XiGrowth` and
     `Xi 0 ≠ 0` are replaced by `hadamard_dh'`
 * the dodging route
-  - `real_of_params` — `rh_of_Xi_params` (Curvature.lean:53)
-  - `real_of_dodging` — `rh_of_dodging` (Curvature.lean:86)
-  - `not_dodging_dh` — `rh_of_dodging_final` (Curvature.lean:421)
+  - `real_of_params` — `rh_of_Xi_params` (Curvature.lean:52)
+  - `real_of_dodging` — `rh_of_dodging` (Curvature.lean:85)
+  - `not_dodging_dh` — `rh_of_dodging_final` (Curvature.lean:412)
 * Weil positivity
-  - `tau3_cross_of_DHRHcross` — the cross form of `tau3_real_of_DHRH` (DHExplicit.lean:387)
-  - `QDHu_nonneg_of_DHRHcross` — the χ-side `QC_nonneg_of_cross` (CrossCriteria.lean:34); the
-    every-probe form of `QDHu_packet_nonneg_of_line_or_real` (DHOffCross.lean:35)
+  - `tau3_cross_of_DHRHcross` — the cross form of `tau3_real_of_DHRH` (DHExplicit.lean:385)
+  - `QDHu_nonneg_of_DHRHcross` — the every-probe form of `QDHu_packet_nonneg_of_line_or_real`
+    (DHOffCross.lean:35)
   - `not_weil_positivity_dh` — `rh_of_weil` (WeilLandau.lean:153)
-  - `weil_criterion_dh` — `weil_criterion_zeta` (WeilRH.lean:143)
+  - `weil_criterion_dh` — `weil_criterion_zeta` (WeilRH.lean:142)
   - `not_GRH_dh` — `GRHMemberZero` / `rh_of_member_zero` (AngularFamily.lean:97, 102)
 * the Weil index
-  - `nonneg_of_hasSum_sq`, `finrank_le_quadruples_gen`, `finrank_le_quadruples'` —
-    `finrank_le_quadruples` (ExplicitBridge.lean:282), with the form and the zero-sum identity
-    abstracted; `finrank_le_quadruples'` re-derives the ζ statement from the abstract one
-  - `finrank_le_quadruples_dh`, `finrank_le_quadruples_dh_scaled` — `finrank_le_quadruples_zeta`
-    (WeilIndexZeta.lean:52), for `Q_dh`
+  - `nonneg_of_hasSum_sq`, `finrank_le_quadruples_gen` — `finrank_le_quadruples` (ExplicitBridge.lean:217),
+    with the form and the zero-sum identity abstracted
+  - `finrank_le_quadruples_dh` — `finrank_le_quadruples_zeta` (WeilIndexZeta.lean:52), for `Q_dh`
 
 Both sides of `weil_criterion_dh` are false (`not_weil_positivity_dh`, `dh_offline_zero`); it is
 proved by refuting each side and so needs no strip-test hypothesis on the probes. -/
@@ -439,7 +435,7 @@ theorem real_of_params {κ : Type*} {F : ℂ → ℂ} {v : κ → ℂ} (hX : Had
   exact this rfl
 
 /-- `rh_of_dodging` with `Ξ` replaced by any `F` with a Hadamard factorisation: the proof text of
-Curvature.lean:94–116, with `real_of_params` in place of `rh_of_Xi_params` in its opening `refine`. -/
+Curvature.lean:85–116, with `real_of_params` in place of `rh_of_Xi_params` in its opening `refine`. -/
 theorem real_of_dodging {F : ℂ → ℂ} {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ} (hRR : ∀ n, RealRooted (a n) (g n))
     {ι : ℕ → Type} {κ : Type} {w : ∀ n, ι n → ℂ} {v : κ → ℂ}
     (hF : ∀ n, HadamardW (ghatC (g n) (a n)) (w n)) (hX : HadamardW F v)

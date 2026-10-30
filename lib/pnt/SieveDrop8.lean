@@ -22,7 +22,7 @@ certificate's scheme of decisions (`SieveDeep.scheme`), on a grid with `HC = 4H`
   `M = 1 + n²(1 + nC²(nC² + 1))`, level by level (`sum_level`) against the charges `SieveDeep.Ch8` … `Ch3`, and
   `Ch3 ≤ SC⁸·refcost` (`SieveDeep.Ch3_le`).
 * `shares_ev8`, `drop_ev8`: **the dropped terms, for large `q`**: if `totalD/K ≤ c` in the reals, then for `ε > 0`,
-  `E1(g_B) ≤ φ(q)⁻¹(c + ε)x/log x`, as `SieveDrop.drop_ev_of`.
+  `E1(g_B) ≤ φ(q)⁻¹(c + ε)x/log x`.
 
 The file imports `SieveDeepCost.lean`, `SieveBox.lean` and `SieveDrop.lean`.
 -/

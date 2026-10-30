@@ -11,11 +11,10 @@ between the two pairings with `ũ_s` it gives, for `tt′ = 1`, `m` in the class
   with `eq_of_mk_eq_of_periodic`): for `G` periodic modulo `c`, the sum of `G` over the classes modulo `c` is
   the sum over the classes modulo `c′` when `(c) = (c′)` (Mathlib's `Ideal.quotEquivOfEq`), and is unchanged
   by `r ↦ αr + β` for `α` prime to `c`.
-* **The summands** (`kubTermT` and `kubTerm0`, definitions; **`kubTermT_periodic`**, **`kubTerm0_periodic`**,
-  **`cuspSmT_eq_zero`** and **`cuspSm0_eq_zero`**, with `cuspSmT_eq` and `cuspSm0_eq`): the summand of
-  `S^t_m(c)` is periodic modulo `3c` (`wtCuspT_add` and `conj_chiT_of_class`), and that of
-  `S⁰_m(c)` for `m = δ₃x` (`ebr_period`); `S^t_m(c) = 0` unless `c ≡ t (mod 3)`, and `S⁰_m(c) = 0`
-  unless `c` is primary.
+* **The summands** (`kubTermT` and `kubTerm0`, definitions; **`kubTermT_periodic`**, **`cuspSmT_eq_zero`** and
+  **`cuspSm0_eq_zero`**, with `cuspSmT_eq` and `cuspSm0_eq`): the summand of `S^t_m(c)` is periodic modulo `3c`
+  (`wtCuspT_add` and `conj_chiT_of_class`); `S^t_m(c) = 0` unless `c ≡ t (mod 3)`, and `S⁰_m(c) = 0` unless `c`
+  is primary.
 * **The termwise identity** (`kubPoly`, a definition; **`kubTermT_affine`**, with `δ3_eq_lam_neg` and
   `kubota_sum_poly`): for `a` primary, `3u + va = 1` and every `b`, the summand of `S^t_m(ta)` at
   `d = (va − 3uλ³t²)b + va` is `ĕ(mt′/9)` times the summand of `S⁰_{m′}(a)` at `b`. The supports agree, since

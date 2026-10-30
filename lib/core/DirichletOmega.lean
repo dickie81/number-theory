@@ -13,16 +13,15 @@ L-series is `−L′/L(s, χ)` (`LSeries_twist_vonMangoldt_eq`).
   `εψ(x, χ) ≤ c·x^θ` makes `L(s, χ) ≠ 0` on `Re s > θ`.
 * `psiChi_omega`: under the same real-zero hypothesis, any zero `ρ` of `L(s, χ)` with `Re ρ > θ` makes
   `ψ(x, χ) = Ω±(x^θ)`.
-* `race_four`: for `χ₄`, `ψ(x, χ₄) = ψ(x; 4, 1) − ψ(x; 4, 3)`, so a zero of `L(s, χ₄)` with
-  `Re ρ > θ` and no real zero in `(θ, 1)` make the lead in the race between primes `≡ 1` and `≡ 3`
-  (mod 4), weighted by `log p`, change sign infinitely often, by more than `c·x^θ` each way.
+* `summ_fχ_chi4`: for `χ₄`, `ψ(x, χ₄) = ψ(x; 4, 1) − ψ(x; 4, 3)`, the lead in the race between primes `≡ 1`
+  and `≡ 3` (mod 4), weighted by `log p`.
 
 **The two hypotheses are real restrictions.** A real zero `β ∈ (θ, 1)` of `L(s, χ)` (a Siegel zero, if
 `β` is near 1) is a singularity on the real axis, which Landau's theorem permits, so the zero-free
 conclusion needs `L(σ, χ) ≠ 0` there; numerically `L(σ, χ₄) > 0` on `(0, 1)`, which is not proved
 here. The existence of a zero of `L(s, χ)` needs a Hadamard product for `L`; the library has one only
-for `Ξ` (`PsiOmega.exists_zero_re_ge_half`), so the zero is a hypothesis. With both, this is the
-`ψ`-form of Littlewood's 1914 theorem that the race mod 4 changes lead infinitely often.
+for `Ξ` (`PsiOmega.exists_zero_re_ge_half`), so the zero is a hypothesis. With both, `psiChi_omega` for `χ₄` is
+the `ψ`-form of Littlewood's 1914 theorem that the race mod 4 changes lead infinitely often.
 Both hypotheses are proved for `χ₄` (and `χ₋₃`, `χ₋₈`) in `RealDirichlet.lean` and
 `PrimeRaces.lean`, giving `race_four_half` with no hypotheses.
 

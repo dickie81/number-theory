@@ -17,8 +17,7 @@ value `d` the coefficients aggregate to `A₁(d) = Σ_{π₁(y₁) = d} |a₁(y�
   `n = B + r(ℓ − 1) − A`. `bdIB` is this bound without the factor `∏_j ‖𝓕g_j‖₁`.
 * `typeIB_sharp0`: `J` comparisons `I_j(y₁, y₂) ∈ [0, 1]`, replaced by smooth `G_j ∈ [0, 1]` of the forms `ℓ_j` with
   `|I_j − G_j| ≤ M_j(ℓ_j)` for smooth `M_j`. Then `|Σ_{y₁,y₂} a₁a₂ ∏_j I_j Σ_k w(k)dw(π₁π₂k)|` is at most
-  `∏_j ‖𝓕G_j‖₁·bdIB + Σ_j (2φ(q)⁻¹(B − A)Σ_y |a₁||a₂|M_j(ℓ_j) + ‖𝓕M_j‖₁·bdIB)`. `typeIB_sharp` is the same with a
-  smooth weight `h(ℓ₀) ≥ 0` on every term, and the factor `‖𝓕h‖₁` on the smooth terms.
+  `∏_j ‖𝓕G_j‖₁·bdIB + Σ_j (2φ(q)⁻¹(B − A)Σ_y |a₁||a₂|M_j(ℓ_j) + ‖𝓕M_j‖₁·bdIB)`.
 
 The proof:
 
@@ -27,7 +26,7 @@ The proof:
   fibres (`sum_fiber`) and restricted to the values prime to `q` (`dw_of_not_isUnit`), the twisted sum is the
   bilinear form of `SieveSpline.typeIB_spline`, with coefficients of size at most `A₁` and `A₂`;
   `norm_integral_prod_le` integrates the bound.
-* `typeIB_sharp0`, `typeIB_sharp`: `SieveFamily.norm_Dsum_sharp_le` over the triples `(y₁, y₂, k)`. Its smoothed sum
+* `typeIB_sharp0`: `SieveFamily.norm_Dsum_sharp_le` over the triples `(y₁, y₂, k)`. Its smoothed sum
   and near-boundary sums are `typeIB_smooth`'s, with the coefficients `|a₁|`, `|a₂|` for the latter (`bdIB_norm`), and
   the near-boundary masses carry the spline's mass `B − A` (`SieveSpline.sum_spl`).
 
@@ -259,7 +258,7 @@ theorem bdIB_norm {ι₁ ι₂ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι�
       bdIB q Y₁ Y₂ π₁ π₂ a₁ a₂ A B ℓ r H F m := by
   simp only [bdIB, Complex.norm_real, Real.norm_eq_abs, abs_norm]
 
-/-- **Sharp comparisons, with no base weight**: `typeIB_sharp` without `h`. The bound is
+/-- **Sharp comparisons, with no base weight**: the bound is
 `∏_j ‖𝓕G_j‖₁·bd + Σ_j (2φ(q)⁻¹(B − A)Σ_y |a₁||a₂|M_j(ℓ_j) + ‖𝓕M_j‖₁·bd)`. -/
 theorem typeIB_sharp0 (a : ZMod q) (ha : IsUnit a) {ι₁ ι₂ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂)
     (π₁ : ι₁ → ℕ) (π₂ : ι₂ → ℕ) (a₁ : ι₁ → ℂ) (a₂ : ι₂ → ℂ) {J : ℕ} (I : Fin J → ι₁ → ι₂ → ℝ)

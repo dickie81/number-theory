@@ -11,13 +11,12 @@ Gauss transform at frequency `1`.
   (**`gamF_union`**), `γ(ab) = γ(a)·γ(b)·∏_{i∣a} χ_i(b)·∏_{k∣b} χ_k(a)`.
 * **The sextic characters** `χ_i = χ_{π_i}` of distinct primary primes `π_i ∤ 6` (`chiF`), with
   `γ_j(n)` the Gauss sum of the `χ_i^j` and `μ(n) = (−1)^{|S|}`:
-  - **`gamF_two_cube`**: `γ₂(n)³ = μ(n)·∏_i α(π_i)`, and `∏_i α(π_i)` is `α(n) = σn/|σn|`;
-  - **`gamF_one_mul_two`**: `γ₁(n)γ₂(n) = μ(n)·∏_i α(π_i)·G(n)`, where `G(n) = ∏_i χ_i(4)⁻¹·γ₃(n)`
-    (`GF`);
+  - **`gamF_one_mul_two`**: `γ₁(n)γ₂(n) = μ(n)·∏_i α(π_i)·G(n)`, where `∏_i α(π_i)` is `α(n) = σn/|σn|`
+    and `G(n) = ∏_i χ_i(4)⁻¹·γ₃(n)` (`GF`);
   - **`gamF_one_mul_inv`**: `γ₁(n)γ₋₁(n) = ∏_i χ_i(−1)`.
 
-  The cross phases are sixth roots of unity, so they cancel in the cube and in `γ₁γ₋₁`, and combine
-  to `χ_i(n/π_i)³` in `γ₁γ₂`.
+  The cross phases are sixth roots of unity, so they cancel in `γ₁γ₋₁`, and combine to `χ_i(n/π_i)³` in
+  `γ₁γ₂`.
 * **The multiplicative laws** for disjoint sets of primes `A, B`:
   - **`GF_union`**: `G(ab) = G(a)·G(b)·∏_{p∣a, q∣b} ρ_p(q)ρ_q(p)`. Each factor is the
     paper's `R(p, q)`.

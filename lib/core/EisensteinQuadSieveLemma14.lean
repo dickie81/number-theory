@@ -15,11 +15,8 @@ for the majorant `Φ`, whose transform is `𝓕Φ(w) = G(|w|)` (`dualG`).
   Fubini applies on each side (`integrable_norm_mul_inv_norm`).
 * **Polar coordinates** (`integral_radial_mul_inv_norm`, `integral_radial_sq`):
   `∫ h(|w|)|w|⁻¹ dw = 2π∫_0^∞ h` and `∫ h(κ|z|²) dz = (π/κ)∫_0^∞ h` for `κ > 0`.
-* **On the ray** (`integral_dualG_Ioi`): `∫_0^∞ G = ∫_0^∞ Φ`, the self-duality for the radial `Φ`.
-* **The planar Lemma 14** (`integral_fourier_Phi_sq`): `∫_ℂ 𝓕Φ(αz²) dz = |α|⁻¹∫_ℂ Φ(z²) dz` for
-  `α ≠ 0`. Heath-Brown's factor `1 − sign(α)i` has no counterpart: `Φ` and `𝓕Φ` are radial. The
-  form used for the main terms is `integral_dualG_sq`, `∫_ℂ G(a|z|²) dz = (π/a)∫_0^∞ Φ` for
-  `a > 0`, with `integral_radial_sq` for `∫_ℂ Φ(b|z|²) dz`.
+* **The planar Lemma 14 on the ray** (`integral_dualG_Ioi`): `∫_0^∞ G = ∫_0^∞ Φ`, the self-duality for the
+  radial `Φ`.
 -/
 
 open Complex MeasureTheory Set

@@ -19,7 +19,6 @@ Plain statements, with `q = 1`, `N > 0`, `F(i, k)` the terms `m ≠ 0` of a Gram
 `F′ = F + Z` (`Fp`), `S₃ = X − 3μ₀‖E‖_F²` (`LinnikCGLS23.S3`) and `μ`, `μ₀` as in `LinnikCGLDiag`.
 * `char_one_apply`, `sum_range_one_mul_star`: a character modulo `1` is `1` everywhere, so
   `Σ_{a<1}χ(a)conj(ψ(a)) = 1`.
-* `norm_Wt_le`, `integrable_wsq`, `integral_wsq`, `norm_hhat_zero_le`: `|W_τ(u)| ≤ w(u)²`, and `|ĥ_τ(0)| ≤ ∫w² ≤ 1`.
 * `fourier_Wt_zero_eq`, `exists_hhat_zero_bound`: `ĥ_τ(0) = H(1 + iτ)`, and for every `K` there is `B ≥ 0` with
   `(1 + |τ|)^{K+3}|ĥ_τ(0)| ≤ B`.
 * `Em_eq_gen`: for any `q ≥ 1` and any points,
@@ -27,8 +26,8 @@ Plain statements, with `q = 1`, `N > 0`, `F(i, k)` the terms `m ≠ 0` of a Gram
   `LinnikCGLTrace.Em_eq` without its orthogonality step.
 * `Em_eq_one`, `S3_eq_Fp`: at `q = 1`, `E′(i, k) = N^{iτ}F′(i, k)`, and `S₃ = Re Σ F′(i, j)F′(j, k)F′(k, i)` over the
   triples that are not all equal.
-* `Zm_diag`, `Fp_diag`, `Fm_diag_one`, `norm_Fp_le`, `norm_Zm_le`, `norm_Zm_le_sep`: `Z(i, i) = 0`,
-  `F′(i, i) = F(i, i) = μ − μ₀`, `|F′| ≤ 2N + 1`, `|Z| ≤ N`, and `|Z(i, k)| ≤ NB(1 + X)^{−(K+3)}` when `i ≠ k` gives
+* `Zm_diag`, `Fp_diag`, `Fm_diag_one`, `norm_Fp_le`, `norm_Zm_le_sep`: `Z(i, i) = 0`,
+  `F′(i, i) = F(i, i) = μ − μ₀`, `|F′| ≤ 2N + 1`, and `|Z(i, k)| ≤ NB(1 + X)^{−(K+3)}` when `i ≠ k` gives
   `|t_i − t_k| ≥ X`.
 * `S3_eq_all_one`: if `|Z| ≤ z` on `R`, then `|S₃ − (Re Σ_{i,j,k∈R}F(i, j)F(j, k)F(k, i) − |R|(μ − μ₀)³)| ≤
   3|R|³z(2N + 1 + z)²` (`LinnikCGLDiag.S3_eq_all`, which has no error at one point per character).

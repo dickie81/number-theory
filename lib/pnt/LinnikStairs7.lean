@@ -3,18 +3,20 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Sixty density estimates, each an instance of a parametric argument of the library, and the count above `11/12`:
+Thirty-six density estimates, each an instance of a parametric argument of the library, and the count above `11/12`:
 
-* `charDensity_in7_0` … `charDensity_in7_19`: `LinnikInghamC.charDensity_ingham_c` at `ε = 1/8000` on twenty equal
-  steps `[σ₁, σ₂]` from `4/7` to `5/7`, with the exponent `3/(2 − σ₂) + 1/2000`, Ingham's curve at the right end plus
-  `1/2000`.
-* `parHx7_0` … `parHx7_19`, `charDensity_hx7_0` … `charDensity_hx7_19`: `LinnikHuxStep.charDensity_gen` at parameters
-  found by a linear program and checked in rational arithmetic on twenty equal steps from `16/21` to `5/6`,
-  with the exponent `3/(3σ₁ − 1) + 1/2000`, Huxley's curve at the left end plus `1/2000`.
-* `parHy_0` … `parHy_19`, `charDensity_hy_0` … `charDensity_hy_19`: `LinnikHuxStepY.charDensity_genY`, under
-  `LinnikWeyl.PYWeyl`, on twenty equal steps from `5/6` to `11/12`, with the exponent `3/(3σ₁ − 1) + 1/2000` on steps
-  `1` to `19` and the least the step allows, `50159 / 25000`, on step `0` (where `3/(3σ₁ − 1) + 1/2000 = 4001/2000` is
-  not reachable: the height `y ≥ 3(1/6 + 2ε + 1/2000)` and the first Huxley term force `A ≥ 4y + 2ε`).
+* `charDensity_in7_0` … `charDensity_in7_18`: `LinnikInghamC.charDensity_ingham_c` at `ε = 1/8000` on the first
+  nineteen of twenty equal steps `[σ₁, σ₂]` from `4/7` to `5/7`, which cover `[4/7, 99/140]`, with the exponent
+  `3/(2 − σ₂) + 1/2000`, Ingham's curve at the right end plus `1/2000`.
+* `parHx7_5` … `parHx7_19`, `charDensity_hx7_5` … `charDensity_hx7_19`: `LinnikHuxStep.charDensity_gen` at parameters
+  found by a linear program and checked in rational arithmetic on the last fifteen of twenty equal steps from `16/21`
+  to `5/6`, which cover `[131/168, 5/6]`, with the exponent `3/(3σ₁ − 1) + 1/2000`, Huxley's curve at the left end
+  plus `1/2000`.
+* `parHy_0`, `parHy_19`, `charDensity_hy_0`, `charDensity_hy_19`: `LinnikHuxStepY.charDensity_genY`, under
+  `LinnikWeyl.PYWeyl`, on the first and the last of twenty equal steps from `5/6` to `11/12`, `[5/6, 67/80]` and
+  `[73/80, 11/12]`, with the exponent `3/(3σ₁ − 1) + 1/2000` on step `19` and the least the step allows,
+  `50159 / 25000`, on step `0` (where `3/(3σ₁ − 1) + 1/2000 = 4001/2000` is not reachable: the height
+  `y ≥ 3(1/6 + 2ε + 1/2000)` and the first Huxley term force `A ≥ 4y + 2ε`).
 * `card_le_one_of_gt`: above `11/12` at most one character is counted (the zero-free half-plane); `charDensity_hy_top`:
   the last step's exponent on `[73 / 80, 1]`, under `PYWeyl`.
 

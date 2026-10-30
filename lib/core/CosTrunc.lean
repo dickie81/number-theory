@@ -1,33 +1,11 @@
 import Mathlib
 import GapBound
 
-/-! # Density of the cosine truncations
+/-! # Energy of a truncated `½`-Hölder function
 
-The Galerkin transfer (`lam2Ge_of_trunc`, `simple_of_trunc_gap`) assumed `TruncDense`: every
-probe is a limit, in `L²` plus archimedean energy, of vectors from the truncation spaces. This file
-proves it for the cosine basis:
-
-  `cosTrunc a K = span{1_{[−a,a]}·cos(kπt/a) : k < K}`   (`cosTrunc_dense`).
-
-The proof has four steps.
-
-* **Smooth approximant** (`av3_dense`, `av3_C2`). A probe is approximated by `h = Av_δ³ψ`,
-  which is `C²` with `h, h', h''` vanishing outside `[−a, a]`.
-* **Cosine series** (`cos_series`). Two integrations by parts (Mathlib's
-  `fourierCoeffOn_of_hasDerivAt`; the edge terms vanish because `h, h'` vanish at `±a`) give
-  `|ĉ_n| ≤ (a/π)² sup|h''|/n²`. Mathlib's pointwise Fourier theorem for summable coefficients, on the
-  circle of length `2a`, then gives `h(t) = Σ d_n cos(nπt/a) − r` on `[−a, a]`. Evenness removes the
-  sines.
-* **Tails** (`trunc_error`). The error `S_K − h` is uniformly `≤ μ_K = Σ_{n≥K}|d_n|`, and `½`-Hölder
-  with constant `ν_K = Σ_{n≥K}|d_n|√(2nπ/a)`, from `|cos x − cos y| ≤ √(2|x − y|)`. Both tails tend
-  to `0` since `|d_n| = O(n⁻²)`.
-* **Energy of a truncated Hölder function** (`ind_energy`). If `φ² ≤ M` and
-  `(φ(t) − φ(s))² ≤ D|t − s|` on `[−a, a]`, then `1_{[−a,a]}φ` has `f(0) − f(u) ≤ (aD + M)u`. So
-  `E_arch ≤ (aD + M)·∫16e^{−u/4}` and `‖·‖² ≤ 2aM`. The jump at `±a` costs only `M·u`.
-
-A diagonal choice (`truncDense_of_approx`) turns "every accuracy is reached in some `T K`" into
-`TruncDense`, using that the spaces increase. Corollaries: `simple_of_cos_gap` and `lam2Ge_of_cos`,
-the transfer for this basis with no density hypothesis left.
+If `φ² ≤ M` and `(φ(t) − φ(s))² ≤ D|t − s|` on `[−a, a]`, then `1_{[−a,a]}φ` has `f(0) − f(u) ≤ (aD + M)u`
+(`ind_autocorr_le`). So `E_arch ≤ (aD + M)·∫16e^{−u/4}` and `‖·‖² ≤ 2aM` (`ind_energy`; `E0` is the integral).
+The jump at `±a` costs only `M·u`.
 -/
 
 open Real Filter Topology MeasureTheory Set

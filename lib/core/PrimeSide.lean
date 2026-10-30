@@ -4,7 +4,7 @@ import Concave
 
 /-! # §11 item 1, restated with prime-side hypotheses only
 
-The chain to `RiemannHypothesis` used to carry Hypothesis D (`DFamW`, `HypD`). D says the zeros of
+The chain to `RiemannHypothesis` used to carry Hypothesis D (`DFamW`). D says the zeros of
 `ĝ_n` below `T_D` *are* the zeros of `ζ`, so it presupposes the zeros it is meant to locate. Here
 the chain is restated so that no zero of `ζ` appears in any hypothesis:
 

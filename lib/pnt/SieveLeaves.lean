@@ -12,8 +12,6 @@ Plain statements. `gA q a m = 1[m ≡ a]` and `gB q m = 1[(m, q) = 1]/φ(q)`; `L
 * `window_lo`, `window_hi`: for `x > 1` and primes in their cells, `⌊x^{B/DEN}⌋ < ∏_T rt` when `B` is below the box's
   lower sum over `T`, and `∏_T rt ≤ ⌊x^{B/DEN}⌋` when `B` is above its upper sum; `window_lo_gen` and
   `window_hi_gen` for primes in ranges of any widths.
-* `prod_proper_le`: a proper subset of a strictly decreasing tuple of positive integers has product at most that of all
-  but the last entry.
 * `TL_spec`, `TU_spec`, `TR_spec`: `SieveChain.chainTL_bound`, `chainTU_bound` and `SieveChainR.chainTR_bound` (with
   `RouteOK` and `hII`) on a family of at most `40` atoms with `ThrOK`, as bounds on `|famI(g_A) − famI(g_B)|`: the
   product of a set of the primes in the lower window, the product of all of them in the upper one, and the product of
