@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 772 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 886 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 17 | 38 |
+| `lib/core` | 69 | 152 |
 | `lib/pnt` | 202 | 641 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
@@ -19,6 +19,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 ## The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`
 
 ### `lib/core`
+
+#### `AngularFamily`: RH is the radial member of the ball's angular grinding family
+
+- `AngularFamily.member_zero_eq`: The radial member is `ζ · L(χ₄)` ([note](../formalisations/weil-positivity.md))
+- `AngularFamily.rh_of_member_zero`: RH is in the family ([note](../formalisations/weil-positivity.md))
 
 #### `BallTower`: The ball tower from integers and primes (formalised)
 
@@ -37,6 +42,19 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `BohrLandauCore.tendsto_NX_div_of_lower`: For every `w > 0`, almost every zero lies within `w` of the critical line
 
+#### `BohrSphere`: The critical line is the unit sphere of the Bohr lift
+
+- `BohrSphere.riemannHypothesis_iff_mem_sphere`: For every nonempty finite set of primes, RH says that every nontrivial zero lies on the unit sphere. ([note](../formalisations/weil-positivity.md))
+- `BohrSphere.riemannHypothesis_iff_tendsto`: The same in the limit. ([note](../formalisations/weil-positivity.md))
+
+#### `Concave`: Pólya's theorem for even concave probes, with no representation hypothesis
+
+- `WeilForm.realRooted_of_ae_concaveOn`: For probes ([note](../formalisations/weil-positivity.md))
+
+#### `CrossCriteria`: Weil positivity modulo real zeros, and the missing Props stated
+
+- `CrossCriteria.rh_of_liouville_theta`: RH from one-sided Liouville bounds at every exponent `θ > ½` ([note](../formalisations/weil-positivity.md))
+
 #### `CubeBall`: The infinite cube and the infinite ball are different objects
 
 - `CubeBall.no_isometry_cube`: For every `n ≥ 2` the cube `[−1, 1]ⁿ` has no isometric copy in an inner product space
@@ -49,6 +67,18 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `CubeBall.tendsto_inner_ellUnit`: The norm is not weakly continuous
 - `CubeBall.isEmpty_homeomorph_ball_hilbertCube`: So, with the norm topology, the infinite ball is not homeomorphic to the Hilbert cube
 
+#### `Curvature`: Dodging D, and the curvature sum rule
+
+- `WeilForm.rh_of_Xi_params`: RH from real parameters ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_dodging`: Dodging D and real-rootedness alone give RH ([note](../formalisations/weil-positivity.md))
+- `WeilForm.ghat_curvature`: The curvature sum rule, real-rooted ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_dodging_final`: Roadmap item 1 ⇒ `RiemannHypothesis`, with dodging D alone ([note](../formalisations/weil-positivity.md))
+
+#### `DegenerateFlat`: Degenerate ⇒ edge-flat (the converse direction, formal)
+
+- `WeilForm.degenerate_flat_fourier`: The edge-flat structure, in Fourier form ([note](../formalisations/weil-positivity.md))
+- `WeilForm.simple_iff_no_green_pair`: Formal equivalence (both directions) ([note](../formalisations/weil-positivity.md))
+
 #### `DirichletCharHalfPlane`: Every Dirichlet character, `L(s, χ) ≠ 0` on `Re s > 11/12`
 
 - `Eis.LFunction_ne_zero_of_re_gt`: The half-plane `Re s > 11/12` for every Dirichlet character *paper* ([note](../formalisations/openai-half-plane.md))
@@ -56,6 +86,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `EisensteinCubicRecip`: S1, part 3b: cubic reciprocity on `ℤ[ω]`
 
 - `Eis.cub_recip`: Cubic reciprocity *paper*
+
+#### `EisensteinIdealCount`: The ideals of `ℤ[ω]` of bounded norm
+
+- `Eis.card_ofNorm_split`: Split
+- `Eis.card_ofNorm_inert`: Inert
+- `Eis.card_ofNorm_three`: Ramified
 
 #### `EisensteinQuadRecip`: Quadratic and sextic reciprocity in `ℤ[ω]`
 
@@ -66,12 +102,65 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `Eis.quadLargeSieve`: The companion paper's Lemma 6.5 is proved *paper* ([note](../formalisations/quadratic-large-sieve.md))
 
+#### `EisensteinQuadSieveSep`: The quadratic large sieve, part 3: Heath-Brown's Lemmas 2 and 10
+
+- `Eis.fBound_gcd`: Heath-Brown's Lemma 2
+- `Eis.fBound_sep`: Heath-Brown's Lemma 10
+
+#### `ExplicitBridge`: The explicit-formula bridge: `weilQ` is the zero side of Weil's explicit formula
+
+- `WeilForm.weilQ_symbol`: The symbol form ([note](../formalisations/weil-positivity.md))
+
+#### `FirstFailure`: The first positivity failure
+
+- `WeilForm.first_failure`: The first positivity failure ([note](../formalisations/weil-positivity.md))
+
+#### `FourierGap`: A certified lower bound on `Q₀` orthogonally to `w`, for every `0 < a ≤ 0.35`
+
+- `WeilForm.groundState_unique_below_log2`: The ground state of `Q` is unique up to sign for every `a > 0` with `2a < log 2` ([note](../formalisations/weil-positivity.md))
+- `WeilForm.groundState_unique_035`: The ground state of `Q` is unique up to sign for every `0 < a ≤ 0.35` ([note](../formalisations/weil-positivity.md))
+
+#### `GapBound`: The pole-overlap gap bound, and the Galerkin transfer
+
+- `WeilForm.simple_of_pole_overlap`: Simplicity from a nonzero pole overlap ([note](../formalisations/weil-positivity.md))
+
+#### `GapCriterion`: The energy-gap criterion, the pole-overlap identity, and the Jacobi lemma (formal)
+
+- `WeilForm.pole_overlap_identity`: The pole-overlap identity ([note](../formalisations/weil-positivity.md))
+- `WeilForm.simpleGround_of_gap`: Energy gap ⇒ simplicity ([note](../formalisations/weil-positivity.md))
+
+#### `GroundState`: Ground states of Weil's form: the structural facts
+
+- `WeilForm.groundState_energy_ge`: The ground energy is bounded below ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_groundStates_dodging`: Roadmap item 1 ⇒ `RiemannHypothesis`, for the ground states of Weil's form ([note](../formalisations/weil-positivity.md))
+
+#### `GroundStateExists`: Existence of the ground state, stage 3: the minimiser
+
+- `WeilForm.exists_groundStates`: Ground states at every support of a sequence `a_n > 0` ([note](../formalisations/weil-positivity.md))
+
+#### `HadamardApply`: Hadamard's factorisation for even functions, applied to `ĝ` and `Ξ`
+
+- `WeilForm.rh_of_D_and_realRooted_proved`: §11 item 1 ⇒ RH with Hadamard's factorisation proved ([note](../formalisations/weil-positivity.md))
+
 #### `HalfPlaneJoinsFinal`: The half-plane's joins with no hypothesis
 
 - `HalfPlaneJoins.zeta_band_eleven_twelfths`: Every nontrivial zero of `ζ` has `|2 Re ρ − 1| ≤ 5/6`.
+- `HalfPlaneJoins.weil_rate_eleven_twelfths`: `ζ`'s twin form ([note](../formalisations/weil-positivity.md))
 - `HalfPlaneJoins.chi3_rate_eleven_twelfths`: `L(s, χ₋₃)`'s twin form
 - `HalfPlaneJoins.QK3_rate_eleven_twelfths`: The twin form `2Q_ζ + Q_{χ₋₃}` of `ζ·ζ_{ℚ(√−3)}`
+- `HalfPlaneJoins.lam_prefactor_eleven_twelfths`: The prefactor ([note](../formalisations/weil-positivity.md))
 - `BohrJoins.shell_eleven_twelfths`: The Bohr shell at `11/12`
+
+#### `HurwitzCross`: The chain with zeros on `ℝ ∪ iℝ`
+
+- `WeilForm.rh_of_prime_side_cross`: The chain with zeros on the cross ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_prime_side`: §11 item 1 ⇒ RH, with prime-side hypotheses only ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_simple_ground_states`: The chain with the zero-swap lemma plugged in ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_simple_ground_states'`: The chain, with `ζ ≠ 0` on `(0, 1)` discharged ([note](../formalisations/weil-positivity.md))
+
+#### `KaiserBulk`: The bulk of the Kaiser probe and the doubled rate
+
+- `Kaiser.lam_kaiser`: Rung 0, doubled rate ([note](../formalisations/weil-positivity.md))
 
 #### `KubotaCharacter`: Kubota's character
 
@@ -83,31 +172,212 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Eis.summable_eisTerm`: Absolute convergence ([note](../formalisations/cubic-theta.md))
 - `Eis.eis1_slAct`: Automorphy ([note](../formalisations/cubic-theta.md))
 
+#### `KubotaThetaInv`: θ is invariant under `SL_2(ℤ)`
+
+- `Eis.isAut_thS_Gam2`: θ's Fourier series is automorphic on `Γ_2 = SL_2(ℤ)Γ_1(3)` ([note](../formalisations/cubic-theta.md))
+
+#### `KubotaThetaPair`: The pairing with pseudo-Eisenstein series, and θ ≠ 0
+
+- `Eis.thetaL_ne_zero`: θ ≠ 0 ([note](../formalisations/cubic-theta.md))
+
 #### `KubotaThetaProof`: The Kubota–Patterson display, proved
 
 - `Eis.kubotaTheta`: The display `KubotaTheta`, proved *paper* ([note](../formalisations/cubic-theta.md))
 - `Eis.ne_zero_of_re_gt_eleven_twelfths`: The half-plane ([note](../formalisations/openai-half-plane.md))
+
+#### `Limit`: Step (iii): Theorem 1bu(ii)'s limit shape, and the chain to `RiemannHypothesis`
+
+- `WeilForm.rh_of_pairing_and_realRooted`: 1bu(ii) + item 6, assembled ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_D_and_realRooted`: Theorem 1bu(ii) + item 6 in the paper's own terms ([note](../formalisations/weil-positivity.md))
+
+#### `MertensOmega`: Mertens and Liouville: one-sided bounds give zero-free half-planes
+
+- `PsiOmega.mertens_omega_half`: `M(x) = Ω±(x^θ)` for every `0 < θ < ½`, unconditionally
+- `PsiOmega.rh_of_liouville_bound`: A one-sided bound `εL(x) ≤ c√x` gives RH ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.rh_of_polya`: Pólya's conjecture implies RH ([note](../formalisations/weil-positivity.md))
 
 #### `Orthogonality`: Orthogonality forces the Euclidean structure
 
 - `Orthogonality.tendsto_mean_sq_norm_primeSum`: The radius is the root mean square of the prime sum
 - `Orthogonality.pythagoras_lpGauge_iff`: Orthogonality forces `p = 2`
 
+#### `ParityCont`: The parity gap by continuation in the support
+
+- `WeilForm.rh_of_no_crossing`: RH from no crossing ([note](../formalisations/weil-positivity.md))
+
+#### `ParityGap`: Real zeros from the parity gap
+
+- `WeilForm.rh_of_parity_gap`: RH from the parity gap ([note](../formalisations/weil-positivity.md))
+
+#### `ParitySplit`: Weil's form splits by parity: positivity for every real `g`
+
+- `WeilForm.weilQg_ge_twentieth_all`: Weil positivity for every real `g`, pure Lean ([note](../formalisations/weil-positivity.md))
+
+#### `PhiDExp`: Double-exponential upper bounds on the first three rungs
+
+- `WeilForm.lam_dexp`: Rung 0, double-exponential ([note](../formalisations/weil-positivity.md))
+- `WeilForm.lamO_dexp`: Rung 1, double-exponential ([note](../formalisations/weil-positivity.md))
+- `WeilForm.lam2_dexp`: Rung 2, double-exponential ([note](../formalisations/weil-positivity.md))
+
+#### `PhiNull`: Riemann's kernel is a null vector of the explicit formula
+
+- `WeilForm.bil_zero_sum`: The bilinear Weil form is the bilinear zero sum ([note](../formalisations/weil-positivity.md))
+
+#### `Positivity`: The pole-free form `Q₀`: existence, one sign, uniqueness
+
+- `WeilForm.weilQ0_abs_le`: Beurling–Deny for `Q₀` ([note](../formalisations/weil-positivity.md))
+
+#### `PrimeRaces`: Prime races mod 3, 4 and 8, unconditionally
+
+- `PsiOmega.race_four_half`: The race mod 4
+- `PsiOmega.hadamard_chi4`: The Hadamard product for `L(s, χ₄)`
+- `PsiOmega.race_three_half`: The race mod 3
+- `PsiOmega.race_eight_half`: The race mod 8
+
+#### `PrimeSide`: §11 item 1, restated with prime-side hypotheses only
+
+- `WeilForm.hypConv_of_D`: The D-route is a special case of (a) ([note](../formalisations/weil-positivity.md))
+
+#### `PsiOmega`: Zeros of `ζ` from one-sided bounds on summatory functions
+
+- `PsiOmega.psi_omega_half`: `ψ(x) − x = Ω±(x^θ)` for every `0 < θ < ½`, unconditionally
+
 #### `QuadIdeals`: The ideals of a quadratic field of each norm, and its Dedekind zeta function
 
 - `QuadIdeals.trichotomy`: Every prime splits, is inert or ramifies
+
+#### `Roadmap`: §11 roadmap, item 1: the target stated, and the reduction to RH proved
+
+- `WeilForm.rh_of_realRooted_limit`: Item 6's step, proved ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_ground_states`: The roadmap's endpoint, as a theorem ([note](../formalisations/weil-positivity.md))
+
+#### `SimpleCont`: Continuation for simplicity
+
+- `WeilForm.first_degeneracy_036`: Simplicity route, with its start discharged ([note](../formalisations/weil-positivity.md))
+- `WeilForm.not_simple_iff_secular`: The exact secular characterisation ([note](../formalisations/weil-positivity.md))
 
 #### `StripConv`: (a) on the critical strip, and an `L²` route to it
 
 - `WeilForm.rh_of_relgap`: RH from a relative spectral gap
 
+#### `StructureD`: Theorem D, formal
+
+- `WeilForm.chain_top_zeros`: Theorem D, zeros on the cross ([note](../formalisations/weil-positivity.md))
+- `WeilForm.theoremD`: Theorem D, formal ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_hypConv_top`: The RH chain with simplicity removed ([note](../formalisations/weil-positivity.md))
+
+#### `SwapRealize`: The swap realisation, proved
+
+- `WeilForm.zeros_real_or_imag'`: Zeros of a simple ground state lie on `ℝ ∪ iℝ` ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_eventually_simple`: RH from (a) and eventual simplicity ([note](../formalisations/weil-positivity.md))
+
+#### `TheoremC`: Theorem C, formal, in `H²` generality
+
+- `WeilForm.simple_iff_no_flat`: The corollary, formal in `H²` form: the ground state is simple iff no nonzero ground-space element is `H²`-flat at the edges ([note](../formalisations/weil-positivity.md))
+- `WeilForm.simple_not_flat`: A simple ground state is never edge-flat ([note](../formalisations/weil-positivity.md))
+
 #### `TwinLandau`: The Landau argument for twin forms, for any zero family
 
 - `TwinLandau.Q_ge_of_rates`: The converse bound with a rate per pole
 
+#### `Unconditional`: Saturation without RH: verified zeros, a zero-counting bound, and monotonicity
+
+- `WeilForm.pinned_unconditional_zero`: Pinning without RH, as a zero of `ĝ` ([note](../formalisations/weil-positivity.md))
+
+#### `Uniqueness`: The ground-state space, and when the ground state is unique
+
+- `WeilForm.groundState_unique_of_gap`: Uniqueness up to sign, gap form ([note](../formalisations/weil-positivity.md))
+
 #### `VinoRec`: Vinogradov's mean value theorem, step I.3b: bad count and the one-step inequality
 
 - `VinoRec.vmvt_weak`: Vinogradov's mean value theorem (weak classical form)
+
+#### `WeilChiCriterion`: Weil's criterion for Dirichlet L-functions
+
+- `PsiOmega.grh_iff_QC_subexp`: GRH for `χ` ⟺ `Q_χ/‖g‖²` has no negative part of exponential rate ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.QC_fails_rate`: An off-line zero makes `Q_χ` fail at an exponential rate ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.grh_iff_twins_chi4`: Weil's criterion for `L(s, χ₋₄)` ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.grh_iff_twins_chi3` ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.grh_iff_twins_chi8` ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.twins_rate_chi4`: The graded criterion for `χ₋₄` ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.grh_iff_QC_subexp_chi4`: GRH for `χ₋₄` ⟺ `Q_{χ₋₄}/‖g‖²` has no negative part of exponential rate ([note](../formalisations/weil-positivity.md))
+
+#### `WeilChiDensity`: GRH(χ) gives `Q_χ ≥ 0` on every probe
+
+- `PsiOmega.grh_iff_QC_subexp_all`: The rate form over every probe ([note](../formalisations/weil-positivity.md))
+
+#### `WeilConverse`: The converse: an off-line zero makes Weil's form negative somewhere
+
+- `WeilForm.weil_criterion_finite`: Weil's criterion, both directions, for a family with finitely many off-line zeros ([note](../formalisations/weil-positivity.md))
+
+#### `WeilDedekind`: A twin form for `ζ_{ℚ(i)} = ζ · L(s, χ₋₄)`, with the `ζ` zeros doubled
+
+- `Dedekind4.rh_grh_iff_QK_twins`: Weil's criterion for `ζ_{ℚ(i)}`, twin boxes ([note](../formalisations/weil-positivity.md))
+- `Dedekind4.rh_grh_iff_QK_subexp`: `RH ∧ GRH(χ₋₄)` ⟺ the Dedekind twin form's defect is subexponential ([note](../formalisations/weil-positivity.md))
+- `Dedekind4.rh_grh_of_member_zero`: `GRHMemberZero` gives both RH and GRH(χ₋₄) ([note](../formalisations/weil-positivity.md))
+- `Dedekind4.QK_nonneg_of_member_zero`: `GRHMemberZero` forces the Dedekind twin form to be nonnegative ([note](../formalisations/weil-positivity.md))
+- `Dedekind4.QC_chi4_littleO`: `Q_{χ₋₄}(twin (box 1) λ) ≥ −ε e^λ` eventually ([note](../formalisations/weil-positivity.md))
+- `Dedekind4.QK_littleO`: The Dedekind twin form is `≥ −o(e^λ)` ([note](../formalisations/weil-positivity.md))
+
+#### `WeilDischarge`: Discharging `WeilExplicit` for the library's test functions
+
+- `WeilForm.lam_decay_uncond`: The decay of the ground energy, unconditional ([note](../formalisations/weil-positivity.md))
+- `WeilForm.lamO_decay_uncond`: Rung 1, unconditional ([note](../formalisations/weil-positivity.md))
+- `WeilForm.lam2_decay_uncond`: Rung 2, unconditional ([note](../formalisations/weil-positivity.md))
+
+#### `WeilIndexConverse`: Off-line zero quadruples force negative directions of `Q`
+
+- `WeilForm.negIndex_eq_quadruples`: The negative index of Weil's form counts the off-line quadruples ([note](../formalisations/weil-positivity.md))
+
+#### `WeilIndexInfinite`: Every off-line quadruple gives a negative direction of `Q`
+
+- `WeilForm.negDirections_unbounded`: Infinitely many off-line quadruples make the negative index unbounded ([note](../formalisations/weil-positivity.md))
+
+#### `WeilIndexZeta`: Negative directions of `Q` count off-line zeros of ζ, with no named input
+
+- `WeilForm.finrank_le_offline_zeta`: The crude count ([note](../formalisations/weil-positivity.md))
+- `WeilForm.finrank_le_quadruples_C2`: The same for a space of `C²` probes vanishing near `±a` ([note](../formalisations/weil-positivity.md))
+- `WeilForm.exists_offline_of_neg_C2`: One `C²` probe with `Q < 0` exhibits an off-line zero of ζ ([note](../formalisations/weil-positivity.md))
+
+#### `WeilLandau`: Weil's criterion for `ζ` with no finiteness hypothesis
+
+- `WeilForm.line_of_weil_twins`: Weil's criterion, twin boxes only ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_weil_twins`: Weil's criterion for `ζ`, twin boxes only, no finiteness hypothesis ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_weil`: Weil's criterion for `ζ`, no finiteness hypothesis ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_iff_twins_subexp`: RH ⟺ the twin form's defect is subexponential ([note](../formalisations/weil-positivity.md))
+
+#### `WeilRH`: RH gives `Q ≥ 0` on every probe, and Weil's criterion for `ζ`
+
+- `WeilForm.line_of_RH` ([note](../formalisations/weil-positivity.md))
+- `WeilForm.weil_criterion_zeta`: Weil's criterion for `ζ`, both directions, no named input, no finiteness hypothesis ([note](../formalisations/weil-positivity.md))
+
+#### `WeilRate`: The ground energy's rate of failure measures the zeros
+
+- `WeilForm.rh_iff_lam_subexp`: RH ⟺ `λ₁` has no negative part of exponential rate ([note](../formalisations/weil-positivity.md))
+- `WeilForm.lam_fails_exponentially`: If RH fails, `λ₁` fails exponentially ([note](../formalisations/weil-positivity.md))
+
+#### `WeilTwinGeneral`: The twin criterion for every real-rooted base and every good character
+
+- `WeilTwinGeneral.line_of_twins_g` ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_iff_twins_realRooted`: Weil's twin criterion with any real-rooted monotone base probe ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.twins_rate_realRooted`: The graded form ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_iff_twins_concave`: Weil's twin criterion with any concave base probe ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_iff_twins_box`: `rh_of_weil_twins` (both directions), as the box instance. ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.grh_iff_twins_chi7` ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.race_seven_half`: The race mod 7 (quadratic residues against non-residues), unconditional `Ω±(x^θ)`, `θ < ½`.
+- `WeilTwinGeneral.rh_grh_iff_QKχ_twins`: The twin-box criterion for every good character ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_grh_iff_twins_Q3`: `ζ_{ℚ(√−3)}`. ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_grh_iff_twins_Q8`: `ζ_{ℚ(√−2)}`. ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_grh_iff_twins_Q7`: `ζ_{ℚ(√−7)}`. ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_grh_iff_twins_Q4`: The theorem recovered as an instance. ([note](../formalisations/weil-positivity.md))
+
+#### `XiBounds`: The order of `Ξ`, from Riemann's theta kernel
+
+- `WeilForm.rh_of_D_and_realRooted_final`: Roadmap item 1, final form ([note](../formalisations/weil-positivity.md))
+
+#### `ZetaInputs`: Discharging the remaining classical inputs over the zeros of `ζ`
+
+- `WeilForm.pinned_zeta`: The pinning theorem over the zeros of `ζ` ([note](../formalisations/weil-positivity.md))
 
 ### `lib/pnt`
 
