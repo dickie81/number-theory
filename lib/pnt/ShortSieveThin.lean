@@ -216,7 +216,8 @@ theorem card_thin_le (d : ℕ) {c K ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hK :
       exact congrFun (hgh.trans hgh'.symm) ⟨j, hju, hjv⟩
     exact_mod_cast card_le_card_of_injOn (fun g : Fin d → ℕ => g v) hmaps hinj
   -- the sum over `g_u ∈ [X, KX]`
-  have hsumA : ∀ h : {j : Fin d // j ≠ u ∧ j ≠ v} → ℕ, ∑ a ∈ Q.filter (fun a : ℕ => X h ≤ (a : ℝ) ∧ (a : ℝ) ≤ K * X h), 1 / (a : ℝ) ≤
+  have hsumA : ∀ h : {j : Fin d // j ≠ u ∧ j ≠ v} → ℕ,
+      ∑ a ∈ Q.filter (fun a : ℕ => X h ≤ (a : ℝ) ∧ (a : ℝ) ≤ K * X h), 1 / (a : ℝ) ≤
       K * Real.log 4 / (c * Real.log x) := by
     intro h
     set X' : ℝ := max (X h) (x ^ c) with hX'
@@ -277,13 +278,12 @@ theorem card_thin_le (d : ℕ) {c K ρ : ℝ} (hc : 0 < c) (hc1 : c ≤ 1) (hK :
     _ ≤ 2 * y₁ / (c * Real.log x) * (K * Real.log 4 / (c * Real.log x)) * S₀ ^ d := by
         refine mul_le_mul_of_nonneg_left ?_ (by positivity)
         rw [prod_const]
-        calc (∑ p ∈ Q, 1 / (p : ℝ)) ^ (univ : Finset {j : Fin d // j ≠ u ∧ j ≠ v}).card ≤ S₀ ^ (univ : Finset {j : Fin d // j ≠ u ∧ j ≠ v}).card :=
-              pow_le_pow_left₀ hS0 hS _
-          _ ≤ S₀ ^ d := by
-              refine pow_le_pow_right₀ hS₀1 ?_
-              calc (univ : Finset {j : Fin d // j ≠ u ∧ j ≠ v}).card = Fintype.card {j : Fin d // j ≠ u ∧ j ≠ v} := card_univ
-                _ ≤ Fintype.card (Fin d) := Fintype.card_subtype_le _
-                _ = d := Fintype.card_fin d
+        have hcard : (univ : Finset {j : Fin d // j ≠ u ∧ j ≠ v}).card ≤ d := by
+          rw [card_univ]
+          exact (Fintype.card_subtype_le _).trans (Fintype.card_fin d).le
+        calc (∑ p ∈ Q, 1 / (p : ℝ)) ^ (univ : Finset {j : Fin d // j ≠ u ∧ j ≠ v}).card ≤
+              S₀ ^ (univ : Finset {j : Fin d // j ≠ u ∧ j ≠ v}).card := pow_le_pow_left₀ hS0 hS _
+          _ ≤ S₀ ^ d := pow_le_pow_right₀ hS₀1 hcard
     _ = 2 / c * (K * Real.log 4 / c) * S₀ ^ d * x ^ (1 - ρ) / Real.log x ^ 2 := by
         rw [hy₁]
         field_simp

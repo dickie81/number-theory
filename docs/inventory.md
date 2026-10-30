@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 105 modules that none of the three imports, directly or not, with their
+The last section lists the 106 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 14 | 84 |
+| `lib/pnt` | 223 | 726 | 15 | 91 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1801,6 +1801,16 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveMoment.moment_le_of_counts`: The moment lemma from counts of large values
 - `ShortSieveMoment.moment_le_hux`: Harman's moment lemma from the mean value theorem and the Halász–Montgomery count
 - `ShortSieveMoment.moment_le_mv`: Harman's moment lemma from the mean value theorem
+
+#### `ShortSieveTerm`: Tuples of primes cut out by log-linear conditions
+
+- `ShortSieveTerm.nextG_grid_le`: Consecutive points of the grid
+- `ShortSieveTerm.pin`: Pinning a coordinate
+- `ShortSieveTerm.card_near_le`: The boundary of a condition is thin
+- `ShortSieveTerm.typeII_uniform`: The grouped Type II estimate for a list of witnesses
+- `ShortSieveTerm.near_uniform`: The boundaries of a list of conditions
+- `ShortSieveTerm.abs_val_sub_le`: A box that straddles a condition lies near its boundary
+- `ShortSieveTerm.abs_card_cut_sub_le`: Tuples of primes cut out by log-linear conditions
 
 #### `ShortSieveThin`: Thin sets of prime tuples in the comparison interval
 

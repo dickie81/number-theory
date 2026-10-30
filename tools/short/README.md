@@ -110,8 +110,10 @@ The plan, with what is done:
    - The Type II estimate for products of primes in boxes `x^{αⱼ}/2 ≤ Nⱼ < pⱼ ≤ Mⱼ ≤ 2Nⱼ`, one Hölder factor per
      prime: the reduction of item 2, the moments of the boxes from the heights `Nⱼ^κ` and Hölder's inequality, for
      any comparison interval `(x − x^{1−ρ}, x]`, `ρ > 0`: `ShortSieveTypeII` (done).
-   - Still to do: Guth–Maynard's estimate in the counts (V3; V2 needs only Huxley's), Hölder factors that are products
-     of several primes, and the rough cofactor, which Li's terms leave as a sum over its prime factorisations.
+   - Hölder factors that are groups of boxes, uniformly over all boxes whose groups' products are at least `x^{a_i}`:
+     `ShortSieveGroup` (done). The rough cofactor of a term is the monotone tuple of its prime factors
+     (`ShortSieveBoxes`), so a group that holds all of them is the cofactor as one factor, as the certificate needs.
+   - Still to do: Guth–Maynard's estimate in the counts (V3; V2 needs only Huxley's).
 2. **Li's other arithmetic information.**
    - The reduction of sums over short intervals to mean values of Dirichlet polynomials (Baker, Harman and Pintz's
      Lemma 6), by Mellin inversion on `Re s = 1/2` with a window averaged `k` times: `ShortSieveInterval` (done).
@@ -122,7 +124,12 @@ The plan, with what is done:
 3. **The sieve.** Buchstab's identity on families of tuples (`SieveDecomp.buchstab_fam` has the form the Linnik route
    uses), the comparison of `(x − x^θ, x]` with `(x − x^{1−ρ}, x]`, and Li's decomposition into the regions `A`, `B`
    and `C`. The main terms in the comparison interval: the prime number theorem there and the upper bound with
-   Buchstab's `ω` for its rough numbers, uniformly in the cofactors, are `ShortSieveLong` (done).
+   Buchstab's `ω` for its rough numbers, uniformly in the cofactors, are `ShortSieveLong` (done). The asymptotic
+   formula for a term (done): its tuples of primes, cut out by conditions `Σ e_j log p_j ≤ b` (the bounds of a cell,
+   the order of the primes, the sizes of products), are split by the boxes of a grid of ratio `2^{1/d}`; the boxes
+   inside the term get the grouped Type II estimate from a witness of the certificate, and those that straddle a
+   condition lie near its boundary, which is thin in the comparison interval (`ShortSieveThin`). Together:
+   `ShortSieveTerm.abs_card_cut_sub_le`, with error `O(y/log² x)`.
 4. **The certificate.** Kernel-checked bounds for region A and the region-C terms at the chosen θ, with Li's
    predicates in exact arithmetic on cells, in the manner of the Linnik certificate (`SieveCert`). The terms reach
    dimension 8, so the cost of the cells is the main question.

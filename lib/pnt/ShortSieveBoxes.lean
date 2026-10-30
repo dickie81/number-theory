@@ -14,9 +14,9 @@ in boxes `(Nⱼ, Mⱼ]` by their products. This module joins the two:
   `Σ_{r ≤ R} #{q monotone, primes in [z, Y], P·∏q ∈ I}` once `z^{R+1} > Y`.
 * `abs_sum_sub_le_boxes`: **the box sandwich.** A finite set `S` split into classes `J`, each inside a set `full J`
   on which the two weights `f_A`, `f_B` compare with error `E`, satisfies
-  `|Σ_S f_A − c Σ_S f_B| ≤ #classes·E + c Σ_{J straddling} Σ_{full J} f_B`, where `J` straddles when it meets `S`
-  without lying in it. Classes inside `S` cost `E`, classes outside cost nothing, and a straddling class costs at most
-  the larger of its two sides, which the comparison on `full J` bounds by `c Σ_{full J} f_B + E`.
+  `|Σ_S f_A − c Σ_S f_B| ≤ #classes·E + c Σ_J t J` when `t J ≥ Σ_{full J} f_B` for the classes `J` that straddle `S`
+  (meet it without lying in it). Classes inside `S` cost `E`, classes outside cost nothing, and a straddling class
+  costs at most the larger of its two sides, which the comparison on `full J` bounds by `c Σ_{full J} f_B + E`.
 * The grid of boxes: for a finite set `G` of naturals, `nextG G e` is the least point of `G` above `e` and `idxG G p`
   the greatest point of `G` below `p`, so `p ∈ (idxG G p, nextG G (idxG G p)]` for `min G < p ≤ max G`
   (`mem_box_idxG`); a tuple of primes lies in the tuples of its boxes (`mem_tuples_idxG`).
@@ -135,16 +135,18 @@ theorem card_dvd_rough_eq_sum {P z Y R : ℕ} (hP : 0 < P) (I : Finset ℕ) (hI 
 /-! ### The box sandwich -/
 
 /-- **The box sandwich.** Let `S` be split by `box` into classes `J ∈ Js`, with `g ∈ full (box g)` for `g ∈ S`, and
-let `f_A, f_B ≥ 0`, `c ≥ 0`. If every class `J` that meets `S` has `|Σ_{full J} f_A − c Σ_{full J} f_B| ≤ E`, then
-`|Σ_S f_A − c Σ_S f_B| ≤ #Js·E + c Σ_J Σ_{full J} f_B` over the classes `J` that meet `S` and are not inside it. -/
+let `f_A, f_B ≥ 0`, `c ≥ 0`. If every class `J` that meets `S` has `|Σ_{full J} f_A − c Σ_{full J} f_B| ≤ E`, and every
+class that meets `S` without lying in it has `Σ_{full J} f_B ≤ t J`, with `t ≥ 0`, then
+`|Σ_S f_A − c Σ_S f_B| ≤ #Js·E + c Σ_J t J`. -/
 theorem abs_sum_sub_le_boxes {α κ : Type*} (S : Finset α) (Js : Finset κ) (box : α → κ)
     (hbox : ∀ g ∈ S, box g ∈ Js) (full : κ → Finset α) (hfull : ∀ g ∈ S, g ∈ full (box g))
     {fA fB : α → ℝ} (hA : ∀ g, 0 ≤ fA g) (hB : ∀ g, 0 ≤ fB g) {c E : ℝ} (hc : 0 ≤ c) (hE0 : 0 ≤ E)
     (hE : ∀ J ∈ Js, (∃ g ∈ S, box g = J) →
-      |∑ g ∈ full J, fA g - c * ∑ g ∈ full J, fB g| ≤ E) :
-    |∑ g ∈ S, fA g - c * ∑ g ∈ S, fB g| ≤
-      Js.card * E + c * ∑ J ∈ Js.filter (fun J => (∃ g ∈ S, box g = J) ∧ ∃ g ∈ full J, ¬ (g ∈ S ∧ box g = J)),
-        ∑ g ∈ full J, fB g := by
+      |∑ g ∈ full J, fA g - c * ∑ g ∈ full J, fB g| ≤ E)
+    (t : κ → ℝ) (ht0 : ∀ J ∈ Js, 0 ≤ t J)
+    (ht : ∀ J ∈ Js, (∃ g ∈ S, box g = J) → (∃ g ∈ full J, ¬ (g ∈ S ∧ box g = J)) →
+      ∑ g ∈ full J, fB g ≤ t J) :
+    |∑ g ∈ S, fA g - c * ∑ g ∈ S, fB g| ≤ Js.card * E + c * ∑ J ∈ Js, t J := by
   set T : κ → Finset α := fun J => S.filter (box · = J) with hT
   have hTsub : ∀ J, T J ⊆ full J := fun J g hg => by
     obtain ⟨hgS, rfl⟩ := mem_filter.1 hg
@@ -152,13 +154,13 @@ theorem abs_sum_sub_le_boxes {α κ : Type*} (S : Finset α) (Js : Finset κ) (b
   have hsplit : ∀ f : α → ℝ, ∑ g ∈ S, f g = ∑ J ∈ Js, ∑ g ∈ T J, f g := fun f =>
     (sum_fiberwise_of_maps_to hbox f).symm
   -- the bound for one class
-  have hone : ∀ J ∈ Js, |∑ g ∈ T J, fA g - c * ∑ g ∈ T J, fB g| ≤
-      E + if (∃ g ∈ S, box g = J) ∧ ∃ g ∈ full J, ¬ (g ∈ S ∧ box g = J) then c * ∑ g ∈ full J, fB g else 0 := by
+  have hone : ∀ J ∈ Js, |∑ g ∈ T J, fA g - c * ∑ g ∈ T J, fB g| ≤ E + c * t J := by
     intro J hJ
+    have hct : 0 ≤ c * t J := mul_nonneg hc (ht0 J hJ)
     by_cases hmeet : ∃ g ∈ S, box g = J
     · by_cases hstr : ∃ g ∈ full J, ¬ (g ∈ S ∧ box g = J)
-      · simp only [hmeet, hstr, and_self, ite_true]
-        have hEJ := abs_le.1 (hE J hJ hmeet)
+      · have hEJ := abs_le.1 (hE J hJ hmeet)
+        have htJ := ht J hJ hmeet hstr
         have hAT : ∑ g ∈ T J, fA g ≤ ∑ g ∈ full J, fA g := sum_le_sum_of_subset_of_nonneg (hTsub J)
           fun g _ _ => hA g
         have hBT : ∑ g ∈ T J, fB g ≤ ∑ g ∈ full J, fB g := sum_le_sum_of_subset_of_nonneg (hTsub J)
@@ -166,27 +168,24 @@ theorem abs_sum_sub_le_boxes {α κ : Type*} (S : Finset α) (Js : Finset κ) (b
         have hA0 : 0 ≤ ∑ g ∈ T J, fA g := sum_nonneg fun g _ => hA g
         have hB0 : 0 ≤ ∑ g ∈ T J, fB g := sum_nonneg fun g _ => hB g
         have hcB : c * ∑ g ∈ T J, fB g ≤ c * ∑ g ∈ full J, fB g := mul_le_mul_of_nonneg_left hBT hc
+        have hcB' : c * ∑ g ∈ full J, fB g ≤ c * t J := mul_le_mul_of_nonneg_left htJ hc
         rw [abs_le]
         constructor <;> nlinarith [mul_nonneg hc hB0]
-      · have hns : ¬ ((∃ g ∈ S, box g = J) ∧ ∃ g ∈ full J, ¬ (g ∈ S ∧ box g = J)) := fun h => hstr h.2
-        simp only [hns, ite_false, add_zero]
-        push Not at hstr
+      · push Not at hstr
         have heq : T J = full J := by
           refine Subset.antisymm (hTsub J) fun g hg => ?_
           obtain ⟨hgS, hgJ⟩ := hstr g hg
           exact mem_filter.2 ⟨hgS, hgJ⟩
         rw [heq]
-        exact hE J hJ hmeet
-    · have hns : ¬ ((∃ g ∈ S, box g = J) ∧ ∃ g ∈ full J, ¬ (g ∈ S ∧ box g = J)) := fun h => hmeet h.1
-      simp only [hns, ite_false]
-      have h0 : T J = ∅ := by
+        exact (hE J hJ hmeet).trans (le_add_of_nonneg_right hct)
+    · have h0 : T J = ∅ := by
         refine filter_eq_empty_iff.2 fun g hg hgJ => hmeet ⟨g, hg, hgJ⟩
       rw [h0]
-      simpa using hE0
+      simpa using add_nonneg hE0 hct
   rw [hsplit fA, hsplit fB, mul_sum, ← sum_sub_distrib]
   refine (abs_sum_le_sum_abs _ _).trans ?_
   refine (sum_le_sum hone).trans ?_
-  rw [sum_add_distrib, sum_const, nsmul_eq_mul, sum_ite, sum_const_zero, add_zero, ← mul_sum]
+  rw [sum_add_distrib, sum_const, nsmul_eq_mul, ← mul_sum]
 
 /-! ### The grid of boxes -/
 
