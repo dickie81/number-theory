@@ -12,32 +12,36 @@ boxes `(Nⱼ, Mⱼ]`, `j ∈ ι`, the tuples `(pⱼ)ⱼ` with `pⱼ` prime in `(
 module proves, with no hypothesis (the analytic input beyond the large values estimates of `ShortSieveMoment` is the
 zero-free half-plane `Re s > 11/12` behind `ShortSieveTwist`):
 
-* `norm_dp_boxWt_le`: `|P(t)| ≤ C N^{99/100}` for `N^{1/100} ≤ |t| ≤ N^A`: Abel summation
-  (`ShortSieveTwist.norm_sum_mul_le`) with the nonincreasing weights over `ShortSieveTwist.norm_dp_primes_Ioc_le`, which
-  is uniform in the endpoint;
-* `moment_boxWt_hux`, `moment_boxWt_mv`, `moment_boxWt`: Harman's moment lemma for `P`, `∫ |P|^δ ≤ C N^{δ−η}` over
-  `[a, b]` and over `[−b, −a]` for `N^{1/100} ≤ a ≤ b ≤ N^D`, when `δ` is admissible for `D` (`MomentOK`:
-  `m < D ≤ m + 1/2` and `δ > 4D − 2m`, or `D ≤ k` and `δ > 2k`). The lemmas of `ShortSieveMoment` hold on any interval
-  of length at most `N^D` on which `|P| ≤ N^{1−1/200}`, and the pointwise bound depends on `|t|` only, so the negative
-  heights need no reflection;
+* `norm_dp_boxWt_le_of`: `|P(t)| ≤ C N^{1−κ}` for `κ < 1/50` and `N^κ ≤ |t| ≤ N^A`: Abel summation
+  (`ShortSieveTwist.norm_sum_mul_le`) with the nonincreasing weights over `ShortSieveTwist.norm_dp_primes_Ioc_le_of`,
+  which is uniform in the endpoint; `norm_dp_boxWt_le` is the case `κ = 1/100`;
+* `moment_boxWt_hux_from`, `moment_boxWt_mv_from`, `moment_boxWt_from`: Harman's moment lemma for `P` on the heights
+  from `N^κ`, `0 < κ < 1/50`: `∫ |P|^δ ≤ C N^{δ−η}` over `[a, b]` and over `[−b, −a]` for `N^κ ≤ a ≤ b ≤ N^D`, with
+  `η > 0` depending on `κ`, when `δ` is admissible for `D` (`MomentOK`: `m < D ≤ m + 1/2` and `δ > 4D − 2m`, or
+  `D ≤ k` and `δ > 2k`). The lemmas of `ShortSieveMoment` hold on any interval of length at most `N^D` on which
+  `|P| ≤ N^{1−κ/2}` (`pointwise_boxWt_of`), and the pointwise bound depends on `|t|` only, so the negative heights
+  need no reflection. `moment_boxWt_hux`, `moment_boxWt_mv` and `moment_boxWt` are the case `κ = 1/100`;
 * `integral_prod_le`: Hölder's inequality `∫_a^b ∏ fⱼ ≤ ∏ Kⱼ` from `∫_a^b fⱼ^{δⱼ} ≤ Kⱼ^{δⱼ}`, `Σ 1/δⱼ = 1`
   (`ShortSieveHolder.lintegral_prod_le_of_moments` on `(a, b]`);
 * `dp_prods`: the product formula `Σ_n cnt(n) n^{−1/2−it} = ∏ⱼ Nⱼ^{−1/2} Pⱼ(t)`, that is
   `A(s) = ∏ⱼ Σ_{Nⱼ<p≤Mⱼ} p^{−s}` on `Re s = 1/2` for `A(s) = Σ_n cnt(n) n^{−s}`; `sum_cnt_filter` counts the tuples
   by their products;
-* `abs_card_tuples_sub_le`, the Type II estimate: for `αⱼ > κ > 0` with `Σ αⱼ ≤ 1`, `θ > 0`, `ρ > 1/50` with
-  `θ + ρ ≤ 1`, and `δⱼ > 0` with `Σ 1/δⱼ = 1`, each admissible for `Dⱼ = (1 − θ + κ)/(αⱼ − κ)`, there are `η > 0`, `C`
-  and `x₀` with `|#{∏ pⱼ ∈ (x − y, x]} − (y/y₁)·#{∏ pⱼ ∈ (x − y₁, x]}| ≤ C y x^{−η}` for `x ≥ x₀`,
-  `x^θ ≤ y ≤ y₁ ≤ x^{1−ρ}` and all boxes with `x^{αⱼ}/2 ≤ Nⱼ ≤ x^{αⱼ}`, `Nⱼ ≤ Mⱼ ≤ 2Nⱼ`.
+* `abs_card_tuples_sub_le_of`, the Type II estimate: for `αⱼ > κ > 0` with `Σ αⱼ ≤ 1`, `θ > 0`, `κ₀ > 0` and
+  `ρ > 2κ₀` with `θ + ρ ≤ 1`, and `δⱼ > 0` with `Σ 1/δⱼ = 1`, each admissible for `Dⱼ = (1 − θ + κ)/(αⱼ − κ)`, there
+  are `η > 0`, `C` and `x₀` with `|#{∏ pⱼ ∈ (x − y, x]} − (y/y₁)·#{∏ pⱼ ∈ (x − y₁, x]}| ≤ C y x^{−η}` for `x ≥ x₀`,
+  `x^θ ≤ y ≤ y₁ ≤ x^{1−ρ}` and all boxes with `x^{αⱼ}/2 ≤ Nⱼ ≤ x^{αⱼ}`, `Nⱼ ≤ Mⱼ ≤ 2Nⱼ`. The conclusion does not
+  involve `κ₀`, so every `ρ > 0` will do (`abs_card_tuples_sub_le_of_pos`, `κ₀ = ρ/4`); `abs_card_tuples_sub_le` is
+  the case `κ₀ = 1/100`, `ρ > 1/50`. For three primes near `x^{1/3}` and `θ = 3/5`: `abs_card_tuples_sub_le_three`
+  (`ρ = 1/25`) and `abs_card_tuples_sub_le_three_long` (`κ₀ = 1/2000`, `ρ = 1/400`).
 
 The route of the Type II estimate: `ShortSieveInterval.norm_sum_Ioc_sub_le` for the coefficients `cnt` on `prods`, with
-`T₀ = x^{1/100}`, `T = x^{1−θ+κ}`, `ε = y x^{−1−κ/2}` and `k = ⌈(6 + κ)/κ⌉` averages, and its four terms.
-* The middle range `T₀ ≤ |t| ≤ T`. For large `x`, `Nⱼ ≥ x^{αⱼ−κ}`, so `T ≤ Nⱼ^{Dⱼ}`, and `Nⱼ ≤ x`, so `T₀ ≥ Nⱼ^{1/100}`:
-  the moments of the boxes apply on `[T₀, T]` and `[−T, −T₀]`. Hölder gives `∫|A| ≤ ∏ⱼ Cⱼ^{1/δⱼ} Nⱼ^{1/2−ηⱼ/δⱼ}`
-  (`integral_norm_dp_prods_le`), at most `C x^{1/2} x^{−η}` since `∏ Nⱼ ≤ x` (`prod_le_rpow`); the term is
-  `C(y/√x)∫|A| ≤ C y x^{−η}` (`mid_term_le`).
+`T₀ = x^{κ₀}`, `T = x^{1−θ+κ}`, `ε = y x^{−1−κ/2}` and `k = ⌈(6 + κ)/κ⌉` averages, and its four terms.
+* The middle range `T₀ ≤ |t| ≤ T`. For large `x`, `Nⱼ ≥ x^{αⱼ−κ}`, so `T ≤ Nⱼ^{Dⱼ}`, and `Nⱼ ≤ x`, so
+  `T₀ ≥ Nⱼ^{κ'}` for `κ' = min(κ₀, 1/100)`: the moments of the boxes from the heights `Nⱼ^{κ'}` apply on `[T₀, T]`
+  and `[−T, −T₀]`. Hölder gives `∫|A| ≤ ∏ⱼ Cⱼ^{1/δⱼ} Nⱼ^{1/2−ηⱼ/δⱼ}` (`integral_norm_dp_prods_le`), at most
+  `C x^{1/2} x^{−η}` since `∏ Nⱼ ≤ x` (`prod_le_rpow`); the term is `C(y/√x)∫|A| ≤ C y x^{−η}` (`mid_term_le`).
 * The low range `|t| ≤ T₀`: `|A| ≤ Σ_n cnt(n) n^{−1/2} ≤ (∏ Nⱼ)^{1/2} ≤ x^{1/2}` (`sum_norm_coef_le`), and the factor
-  `(1 + T₀)(y₁/x) ≤ 2T₀ x^{−ρ}` leaves `4C y x^{1/50−ρ}` (`low_term_le`): this is where `ρ > 1/50` is needed.
+  `(1 + T₀)(y₁/x) ≤ 2T₀ x^{−ρ}` leaves `4C y x^{2κ₀−ρ}` (`low_term_le_of`): this is where `ρ > 2κ₀` is needed.
 * The tail: `εT ≥ x^{κ/2}`, so the term is at most `C 2^k x^{2+κ/2−kκ/2}/y ≤ C 2^k y x^{−1}` (`tail_term_le`).
 * The transitions: `cnt(n) ≤ d(n)^r ≤ C x^β` for the `r` boxes and `β = min(κ, θ)/4` (`norm_cnt_le`,
   `norm_cnt_le_rpow`, `LinnikPower.card_divisors_le`), so `8B(xε(k + 3) + 1) ≤ C y x^{−β}` (`trans_term_le`).
@@ -73,14 +77,14 @@ lemma norm_boxWt_le {N p : ℕ} (hp : N < p) : ‖boxWt N p‖ ≤ 1 := by
   rw [boxWt, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
   exact Real.rpow_le_one (by positivity) hle (by norm_num)
 
-/-- **The weighted prime polynomial, pointwise.** For every `A > 0` there is `C` with
-`|Σ_{N<p≤M} (N/p)^{1/2} p^{−it}| ≤ C N^{99/100}` for all `N ≥ 2`, `N ≤ M ≤ 2N` and `N^{1/100} ≤ |t| ≤ N^A`:
-Abel summation (`ShortSieveTwist.norm_sum_mul_le`) with the nonincreasing weights `(N/n)^{1/2} ≤ 1` over the partial
-sums `Σ_{N<p≤m} p^{−it}`, `N ≤ m ≤ M`, which `ShortSieveTwist.norm_dp_primes_Ioc_le` bounds uniformly in `m`. -/
-theorem norm_dp_boxWt_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N : ℕ, 2 ≤ N → ∀ M : ℕ, N ≤ M →
-    M ≤ 2 * N → ∀ t : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ |t| → |t| ≤ (N : ℝ) ^ A →
-      ‖dp (box N M) (boxWt N) t‖ ≤ C * (N : ℝ) ^ (99 / 100 : ℝ) := by
-  obtain ⟨C, hC0, hC⟩ := ShortSieveTwist.norm_dp_primes_Ioc_le hA
+/-- **The weighted prime polynomial, pointwise, for a general exponent.** For `κ < 1/50` and `A > 0` there is `C`
+with `|Σ_{N<p≤M} (N/p)^{1/2} p^{−it}| ≤ C N^{1−κ}` for all `N ≥ 2`, `N ≤ M ≤ 2N` and `N^κ ≤ |t| ≤ N^A`: Abel
+summation (`ShortSieveTwist.norm_sum_mul_le`) with the nonincreasing weights `(N/n)^{1/2} ≤ 1` over the partial sums
+`Σ_{N<p≤m} p^{−it}`, `N ≤ m ≤ M`, which `ShortSieveTwist.norm_dp_primes_Ioc_le_of` bounds uniformly in `m`. -/
+theorem norm_dp_boxWt_le_of {κ A : ℝ} (hκ : κ < 1 / 50) (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N : ℕ, 2 ≤ N →
+    ∀ M : ℕ, N ≤ M → M ≤ 2 * N → ∀ t : ℝ, (N : ℝ) ^ κ ≤ |t| → |t| ≤ (N : ℝ) ^ A →
+      ‖dp (box N M) (boxWt N) t‖ ≤ C * (N : ℝ) ^ (1 - κ) := by
+  obtain ⟨C, hC0, hC⟩ := ShortSieveTwist.norm_dp_primes_Ioc_le_of hκ hA
   refine ⟨C, hC0, fun N hN M hNM hM t ht1 ht2 => ?_⟩
   set a : ℕ → ℂ := fun n => if n.Prime then Complex.exp (-(Complex.I * ((t * Real.log n : ℝ) : ℂ))) else 0
     with ha
@@ -90,7 +94,7 @@ theorem norm_dp_boxWt_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N
     refine sum_congr rfl fun n _ => ?_
     simp only [ha, hw, boxWt]
     split_ifs <;> simp
-  have hpart : ∀ m, N ≤ m → m ≤ M → ‖∑ n ∈ Ioc N m, a n‖ ≤ C * (N : ℝ) ^ (99 / 100 : ℝ) := by
+  have hpart : ∀ m, N ≤ m → m ≤ M → ‖∑ n ∈ Ioc N m, a n‖ ≤ C * (N : ℝ) ^ (1 - κ) := by
     intro m hNm hmM
     have e : ∑ n ∈ Ioc N m, a n = dp ((Ioc N m).filter Nat.Prime) (fun _ => 1) t := by
       rw [dp, sum_filter]
@@ -114,43 +118,68 @@ theorem norm_dp_boxWt_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N
     push_cast
     linarith
   rw [hdp]
-  calc ‖∑ n ∈ Ioc N M, (w n : ℂ) * a n‖ ≤ C * (N : ℝ) ^ (99 / 100 : ℝ) * w (N + 1) :=
+  calc ‖∑ n ∈ Ioc N M, (w n : ℂ) * a n‖ ≤ C * (N : ℝ) ^ (1 - κ) * w (N + 1) :=
         ShortSieveTwist.norm_sum_mul_le hNM hwmono hw0 hpart
-    _ ≤ C * (N : ℝ) ^ (99 / 100 : ℝ) * 1 := by gcongr
-    _ = C * (N : ℝ) ^ (99 / 100 : ℝ) := mul_one _
+    _ ≤ C * (N : ℝ) ^ (1 - κ) * 1 := by gcongr
+    _ = C * (N : ℝ) ^ (1 - κ) := mul_one _
+
+/-- **The weighted prime polynomial, pointwise.** For every `A > 0` there is `C` with
+`|Σ_{N<p≤M} (N/p)^{1/2} p^{−it}| ≤ C N^{99/100}` for all `N ≥ 2`, `N ≤ M ≤ 2N` and `N^{1/100} ≤ |t| ≤ N^A`:
+`norm_dp_boxWt_le_of` at `κ = 1/100`. -/
+theorem norm_dp_boxWt_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N : ℕ, 2 ≤ N → ∀ M : ℕ, N ≤ M →
+    M ≤ 2 * N → ∀ t : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ |t| → |t| ≤ (N : ℝ) ^ A →
+      ‖dp (box N M) (boxWt N) t‖ ≤ C * (N : ℝ) ^ (99 / 100 : ℝ) := by
+  obtain ⟨C, hC0, hC⟩ := norm_dp_boxWt_le_of (κ := 1 / 100) (by norm_num) hA
+  refine ⟨C, hC0, fun N hN M hNM hM t ht1 ht2 => ?_⟩
+  have h := hC N hN M hNM hM t ht1 ht2
+  rwa [show (1 : ℝ) - 1 / 100 = 99 / 100 by norm_num] at h
+
+/-- The pointwise bound in the form of `ShortSieveMoment`'s hypothesis, with `η₁ = κ/2`, for both signs of `t`, on
+the heights `N^κ ≤ |t| ≤ N^D`, `0 < κ < 1/50`, for `N` large: `norm_dp_boxWt_le_of`, with `C ≤ N^{κ/2}`. -/
+lemma pointwise_boxWt_of {κ Dx : ℝ} (hκ0 : 0 < κ) (hκ : κ < 1 / 50) (hDx : 0 < Dx) :
+    ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ M : ℕ, N ≤ M → M ≤ 2 * N → ∀ t : ℝ, (N : ℝ) ^ κ ≤ |t| →
+      |t| ≤ (N : ℝ) ^ Dx → ‖dp (box N M) (boxWt N) t‖ ≤ (N : ℝ) ^ (1 - κ / 2) := by
+  obtain ⟨C, hC0, hC⟩ := norm_dp_boxWt_le_of hκ hDx
+  obtain ⟨N₁, hN₁⟩ : ∃ N₁ : ℕ, ∀ N : ℕ, N₁ ≤ N → C ≤ (N : ℝ) ^ (κ / 2) := by
+    refine ⟨⌈C ^ (2 / κ)⌉₊, fun N hN => ?_⟩
+    have hN' : C ^ (2 / κ) ≤ N := (Nat.le_ceil _).trans (by exact_mod_cast hN)
+    calc C = (C ^ (2 / κ)) ^ (κ / 2) := by
+          rw [← Real.rpow_mul hC0, show 2 / κ * (κ / 2) = 1 by field_simp, Real.rpow_one]
+      _ ≤ (N : ℝ) ^ (κ / 2) := Real.rpow_le_rpow (by positivity) hN' (by positivity)
+  refine ⟨max N₁ 2, fun N hN M hNM hM t ht1 ht2 => ?_⟩
+  have hN2 : 2 ≤ N := le_trans (le_max_right _ _) hN
+  have hN0 : (0 : ℝ) < N := by positivity
+  calc ‖dp (box N M) (boxWt N) t‖ ≤ C * (N : ℝ) ^ (1 - κ) := hC N hN2 M hNM hM t ht1 ht2
+    _ ≤ (N : ℝ) ^ (κ / 2) * (N : ℝ) ^ (1 - κ) := by
+        gcongr
+        exact hN₁ N (le_trans (le_max_left _ _) hN)
+    _ = (N : ℝ) ^ (1 - κ / 2) := by
+        rw [← Real.rpow_add hN0]
+        congr 1
+        ring
 
 /-- The pointwise bound in the form of `ShortSieveMoment`'s hypothesis, with `η₁ = 1/200`, for both signs of `t`. -/
 lemma pointwise_boxWt {Dx : ℝ} (hDx : 0 < Dx) : ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ M : ℕ, N ≤ M → M ≤ 2 * N →
     ∀ t : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ |t| → |t| ≤ (N : ℝ) ^ Dx →
       ‖dp (box N M) (boxWt N) t‖ ≤ (N : ℝ) ^ (1 - 1 / 200 : ℝ) := by
-  obtain ⟨C, hC0, hC⟩ := norm_dp_boxWt_le hDx
-  obtain ⟨N₁, hN₁⟩ : ∃ N₁ : ℕ, ∀ N : ℕ, N₁ ≤ N → C ≤ (N : ℝ) ^ (1 / 200 : ℝ) := by
-    refine ⟨⌈C ^ (200 : ℝ)⌉₊, fun N hN => ?_⟩
-    have hN' : C ^ (200 : ℝ) ≤ N := (Nat.le_ceil _).trans (by exact_mod_cast hN)
-    calc C = (C ^ (200 : ℝ)) ^ (1 / 200 : ℝ) := by rw [← Real.rpow_mul hC0]; norm_num
-      _ ≤ (N : ℝ) ^ (1 / 200 : ℝ) := Real.rpow_le_rpow (by positivity) hN' (by norm_num)
-  refine ⟨max N₁ 2, fun N hN M hNM hM t ht1 ht2 => ?_⟩
-  have hN2 : 2 ≤ N := le_trans (le_max_right _ _) hN
-  have hN0 : (0 : ℝ) < N := by positivity
-  calc ‖dp (box N M) (boxWt N) t‖ ≤ C * (N : ℝ) ^ (99 / 100 : ℝ) := hC N hN2 M hNM hM t ht1 ht2
-    _ ≤ (N : ℝ) ^ (1 / 200 : ℝ) * (N : ℝ) ^ (99 / 100 : ℝ) := by
-        gcongr
-        exact hN₁ N (le_trans (le_max_left _ _) hN)
-    _ = (N : ℝ) ^ (1 - 1 / 200 : ℝ) := by rw [← Real.rpow_add hN0]; norm_num
+  obtain ⟨N₀, h⟩ := pointwise_boxWt_of (κ := 1 / 100) (by norm_num) (by norm_num) hDx
+  refine ⟨N₀, fun N hN M hNM hM t ht1 ht2 => ?_⟩
+  have h' := h N hN M hNM hM t ht1 ht2
+  rwa [show (1 : ℝ) - 1 / 100 / 2 = 1 - 1 / 200 by norm_num] at h'
 
-/-- The two-sided moment of the weighted prime polynomial from a moment lemma of `ShortSieveMoment` with
-`η₁ = 1/200`. -/
-lemma moment_boxWt_of {Dx δ : ℝ} (hDx : 0 < Dx)
+/-- The two-sided moment of the weighted prime polynomial on the heights from `N^κ`, `0 < κ < 1/50`, from one of
+the moment lemmas of `ShortSieveMoment` with `η₁ = κ/2` (`pointwise_boxWt_of`). -/
+lemma moment_boxWt_from_of {κ Dx δ : ℝ} (hκ0 : 0 < κ) (hκ : κ < 1 / 50) (hDx : 0 < Dx)
     (h : ∃ η₂ : ℝ, 0 < η₂ ∧ ∃ C : ℝ, ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ S : Finset ℕ, S ⊆ Ioc N (2 * N) →
       ∀ c : ℕ → ℂ, (∀ j ∈ S, ‖c j‖ ≤ 1) → ∀ a b : ℝ, a ≤ b → b - a ≤ (N : ℝ) ^ Dx →
-      (∀ t ∈ Set.Icc a b, ‖dp S c t‖ ≤ (N : ℝ) ^ (1 - 1 / 200 : ℝ)) →
+      (∀ t ∈ Set.Icc a b, ‖dp S c t‖ ≤ (N : ℝ) ^ (1 - κ / 2)) →
       ∫ t in a..b, ‖dp S c t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η₂)) :
     ∃ η : ℝ, 0 < η ∧ ∃ C : ℝ, 0 ≤ C ∧ ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ M : ℕ, N ≤ M → M ≤ 2 * N →
-      ∀ a b : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ a → a ≤ b → b ≤ (N : ℝ) ^ Dx →
+      ∀ a b : ℝ, (N : ℝ) ^ κ ≤ a → a ≤ b → b ≤ (N : ℝ) ^ Dx →
         (∫ t in a..b, ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η)) ∧
           ∫ t in (-b)..(-a), ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η) := by
   obtain ⟨η, hη, C, N₀, hmom⟩ := h
-  obtain ⟨N₁, hpt⟩ := pointwise_boxWt hDx
+  obtain ⟨N₁, hpt⟩ := pointwise_boxWt_of hκ0 hκ hDx
   refine ⟨η, hη, max C 0, le_max_right _ _, max N₀ N₁, fun N hN M hNM hM a b ha hab hb => ?_⟩
   have ha0 : 0 ≤ a := le_trans (by positivity) ha
   have hc : ∀ j ∈ box N M, ‖boxWt N j‖ ≤ 1 := fun j hj =>
@@ -169,18 +198,54 @@ lemma moment_boxWt_of {Dx δ : ℝ} (hDx : 0 < Dx)
     have ht0 : t ≤ 0 := le_trans ht.2 (by linarith)
     exact hpt' t (by rw [abs_of_nonpos ht0]; linarith [ht.2]) (by rw [abs_of_nonpos ht0]; linarith [ht.1])
 
+/-- The two-sided moment of the weighted prime polynomial from a moment lemma of `ShortSieveMoment` with
+`η₁ = 1/200`: `moment_boxWt_from_of` at `κ = 1/100`. -/
+lemma moment_boxWt_of {Dx δ : ℝ} (hDx : 0 < Dx)
+    (h : ∃ η₂ : ℝ, 0 < η₂ ∧ ∃ C : ℝ, ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ S : Finset ℕ, S ⊆ Ioc N (2 * N) →
+      ∀ c : ℕ → ℂ, (∀ j ∈ S, ‖c j‖ ≤ 1) → ∀ a b : ℝ, a ≤ b → b - a ≤ (N : ℝ) ^ Dx →
+      (∀ t ∈ Set.Icc a b, ‖dp S c t‖ ≤ (N : ℝ) ^ (1 - 1 / 200 : ℝ)) →
+      ∫ t in a..b, ‖dp S c t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η₂)) :
+    ∃ η : ℝ, 0 < η ∧ ∃ C : ℝ, 0 ≤ C ∧ ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ M : ℕ, N ≤ M → M ≤ 2 * N →
+      ∀ a b : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ a → a ≤ b → b ≤ (N : ℝ) ^ Dx →
+        (∫ t in a..b, ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η)) ∧
+          ∫ t in (-b)..(-a), ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η) := by
+  refine moment_boxWt_from_of (κ := 1 / 100) (by norm_num) (by norm_num) hDx ?_
+  rwa [show (1 : ℝ) - 1 / 100 / 2 = 1 - 1 / 200 by norm_num]
+
+/-- **Harman's moment lemma for the weighted primes on the heights from `N^κ`, from the Halász–Montgomery
+count.** For `0 < κ < 1/50`, `m ≥ 1`, `m < D ≤ m + 1/2` and `δ > 4D − 2m` there are `η > 0`, `C ≥ 0` and `N₀` such
+that for `N ≥ N₀`, `N ≤ M ≤ 2N` and `N^κ ≤ a ≤ b ≤ N^D` both `∫_a^b |P|^δ` and `∫_{−b}^{−a} |P|^δ` are at most
+`C N^{δ−η}`, where `P(t) = Σ_{N<p≤M} (N/p)^{1/2} p^{−it}`: `ShortSieveMoment.moment_le_hux` with `η₁ = κ/2`. -/
+theorem moment_boxWt_hux_from {κ : ℝ} (hκ0 : 0 < κ) (hκ : κ < 1 / 50) {m : ℕ} (hm : 1 ≤ m) {Dx δ : ℝ}
+    (hD : (m : ℝ) < Dx) (hD' : Dx ≤ m + 1 / 2) (hδ : 4 * Dx - 2 * m < δ) :
+    ∃ η : ℝ, 0 < η ∧ ∃ C : ℝ, 0 ≤ C ∧ ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ M : ℕ, N ≤ M → M ≤ 2 * N →
+      ∀ a b : ℝ, (N : ℝ) ^ κ ≤ a → a ≤ b → b ≤ (N : ℝ) ^ Dx →
+        (∫ t in a..b, ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η)) ∧
+          ∫ t in (-b)..(-a), ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η) :=
+  moment_boxWt_from_of hκ0 hκ (lt_of_le_of_lt (Nat.cast_nonneg m) hD)
+    (ShortSieveMoment.moment_le_hux hm hD hD' hδ (by positivity))
+
+/-- **Harman's moment lemma for the weighted primes on the heights from `N^κ`, from the mean value theorem.** For
+`0 < κ < 1/50`, `k ≥ 1`, `0 < D ≤ k` and `δ > 2k`, the conclusion of `moment_boxWt_hux_from`. -/
+theorem moment_boxWt_mv_from {κ : ℝ} (hκ0 : 0 < κ) (hκ : κ < 1 / 50) {k : ℕ} (hk : 1 ≤ k) {Dx δ : ℝ}
+    (hDx : 0 < Dx) (hD : Dx ≤ k) (hδ : 2 * k < δ) :
+    ∃ η : ℝ, 0 < η ∧ ∃ C : ℝ, 0 ≤ C ∧ ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ M : ℕ, N ≤ M → M ≤ 2 * N →
+      ∀ a b : ℝ, (N : ℝ) ^ κ ≤ a → a ≤ b → b ≤ (N : ℝ) ^ Dx →
+        (∫ t in a..b, ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η)) ∧
+          ∫ t in (-b)..(-a), ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η) :=
+  moment_boxWt_from_of hκ0 hκ hDx (ShortSieveMoment.moment_le_mv hk hD hδ (by positivity))
+
 /-- **Harman's moment lemma for the weighted primes, from the Halász–Montgomery count.** For `m ≥ 1`,
 `m < D ≤ m + 1/2` and `δ > 4D − 2m` there are `η > 0`, `C ≥ 0` and `N₀` such that for `N ≥ N₀`, `N ≤ M ≤ 2N` and
 `N^{1/100} ≤ a ≤ b ≤ N^D` both `∫_a^b |P|^δ` and `∫_{−b}^{−a} |P|^δ` are at most `C N^{δ−η}`, where
-`P(t) = Σ_{N<p≤M} (N/p)^{1/2} p^{−it}`. -/
+`P(t) = Σ_{N<p≤M} (N/p)^{1/2} p^{−it}`: `moment_boxWt_hux_from` at `κ = 1/100`. -/
 theorem moment_boxWt_hux {m : ℕ} (hm : 1 ≤ m) {Dx δ : ℝ} (hD : (m : ℝ) < Dx) (hD' : Dx ≤ m + 1 / 2)
     (hδ : 4 * Dx - 2 * m < δ) :
     ∃ η : ℝ, 0 < η ∧ ∃ C : ℝ, 0 ≤ C ∧ ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ M : ℕ, N ≤ M → M ≤ 2 * N →
       ∀ a b : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ a → a ≤ b → b ≤ (N : ℝ) ^ Dx →
         (∫ t in a..b, ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η)) ∧
           ∫ t in (-b)..(-a), ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η) :=
-  moment_boxWt_of (lt_of_le_of_lt (Nat.cast_nonneg m) hD)
-    (ShortSieveMoment.moment_le_hux hm hD hD' hδ (by norm_num))
+  moment_boxWt_hux_from (κ := 1 / 100) (by norm_num) (by norm_num) hm hD hD' hδ
 
 /-- **Harman's moment lemma for the weighted primes, from the mean value theorem.** For `k ≥ 1`, `0 < D ≤ k` and
 `δ > 2k`, the conclusion of `moment_boxWt_hux`. -/
@@ -189,23 +254,32 @@ theorem moment_boxWt_mv {k : ℕ} (hk : 1 ≤ k) {Dx δ : ℝ} (hDx : 0 < Dx) (h
       ∀ a b : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ a → a ≤ b → b ≤ (N : ℝ) ^ Dx →
         (∫ t in a..b, ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η)) ∧
           ∫ t in (-b)..(-a), ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η) :=
-  moment_boxWt_of hDx (ShortSieveMoment.moment_le_mv hk hD hδ (by norm_num))
+  moment_boxWt_mv_from (κ := 1 / 100) (by norm_num) (by norm_num) hk hDx hD hδ
 
 /-- `δ` is an admissible moment for heights up to `N^D`: `moment_boxWt_hux` (`m < D ≤ m + 1/2`, `δ > 4D − 2m`) or
 `moment_boxWt_mv` (`D ≤ k`, `δ > 2k`) applies. -/
 def MomentOK (D δ : ℝ) : Prop :=
   (∃ m : ℕ, 1 ≤ m ∧ (m : ℝ) < D ∧ D ≤ m + 1 / 2 ∧ 4 * D - 2 * m < δ) ∨ (∃ k : ℕ, 1 ≤ k ∧ D ≤ k ∧ 2 * k < δ)
 
+/-- **The weighted moment lemma on the heights from `N^κ` for an admissible moment.** For `0 < κ < 1/50`, `D > 0`
+and `MomentOK D δ`, the conclusion of `moment_boxWt_hux_from`. -/
+theorem moment_boxWt_from {κ Dx δ : ℝ} (hκ0 : 0 < κ) (hκ : κ < 1 / 50) (hDx : 0 < Dx) (hok : MomentOK Dx δ) :
+    ∃ η : ℝ, 0 < η ∧ ∃ C : ℝ, 0 ≤ C ∧ ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ M : ℕ, N ≤ M → M ≤ 2 * N →
+      ∀ a b : ℝ, (N : ℝ) ^ κ ≤ a → a ≤ b → b ≤ (N : ℝ) ^ Dx →
+        (∫ t in a..b, ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η)) ∧
+          ∫ t in (-b)..(-a), ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η) := by
+  rcases hok with ⟨m, hm, hD, hD', hδ⟩ | ⟨k, hk, hD, hδ⟩
+  · exact moment_boxWt_hux_from hκ0 hκ hm hD hD' hδ
+  · exact moment_boxWt_mv_from hκ0 hκ hk hDx hD hδ
+
 /-- **The weighted moment lemma for an admissible moment.** For `D > 0` and `MomentOK D δ`, the conclusion of
-`moment_boxWt_hux`. -/
+`moment_boxWt_hux`: `moment_boxWt_from` at `κ = 1/100`. -/
 theorem moment_boxWt {Dx δ : ℝ} (hDx : 0 < Dx) (hok : MomentOK Dx δ) :
     ∃ η : ℝ, 0 < η ∧ ∃ C : ℝ, 0 ≤ C ∧ ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N → ∀ M : ℕ, N ≤ M → M ≤ 2 * N →
       ∀ a b : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ a → a ≤ b → b ≤ (N : ℝ) ^ Dx →
         (∫ t in a..b, ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η)) ∧
-          ∫ t in (-b)..(-a), ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η) := by
-  rcases hok with ⟨m, hm, hD, hD', hδ⟩ | ⟨k, hk, hD, hδ⟩
-  · exact moment_boxWt_hux hm hD hD' hδ
-  · exact moment_boxWt_mv hk hDx hD hδ
+          ∫ t in (-b)..(-a), ‖dp (box N M) (boxWt N) t‖ ^ δ ≤ C * (N : ℝ) ^ (δ - η) :=
+  moment_boxWt_from (κ := 1 / 100) (by norm_num) (by norm_num) hDx hok
 
 /-! ### Hölder's inequality on an interval -/
 
@@ -511,33 +585,41 @@ lemma mid_term_le {C₀ x y K η I₁ I₂ : ℝ} (hC₀ : 0 ≤ C₀) (hx : 0 <
     _ = 2 * C₀ * K * y * x ^ (-η) * (x ^ (1 / 2 : ℝ) / √x) := by ring
     _ = 2 * C₀ * K * y * x ^ (-η) := by rw [← Real.sqrt_eq_rpow, div_self hs.ne', mul_one]
 
-/-- The low range: `C₀(1 + T₀)(y/√x)(y₁/x) I ≤ 4C₀ y x^{1/50−ρ}` for `T₀ = x^{1/100}`, `y₁ ≤ x^{1−ρ}` and
-`I ≤ 2T₀ x^{1/2}`. -/
-lemma low_term_le {C₀ x y y₁ ρ I : ℝ} (hC₀ : 0 ≤ C₀) (hx : 1 ≤ x) (hy : 0 ≤ y) (hy₁ : 0 ≤ y₁)
-    (hy₁x : y₁ ≤ x ^ (1 - ρ)) (hI : I ≤ 2 * x ^ (1 / 100 : ℝ) * x ^ (1 / 2 : ℝ)) :
-    C₀ * (1 + x ^ (1 / 100 : ℝ)) * (y / √x) * (y₁ / x) * I ≤ 4 * C₀ * y * x ^ (1 / 50 - ρ) := by
+/-- The low range for a general height: `C₀(1 + T₀)(y/√x)(y₁/x) I ≤ 4C₀ y x^{2κ₀−ρ}` for `T₀ = x^{κ₀}`, `κ₀ ≥ 0`,
+`y₁ ≤ x^{1−ρ}` and `I ≤ 2T₀ x^{1/2}`. -/
+lemma low_term_le_of {C₀ x y y₁ ρ κ₀ I : ℝ} (hC₀ : 0 ≤ C₀) (hx : 1 ≤ x) (hκ₀ : 0 ≤ κ₀) (hy : 0 ≤ y)
+    (hy₁ : 0 ≤ y₁) (hy₁x : y₁ ≤ x ^ (1 - ρ)) (hI : I ≤ 2 * x ^ κ₀ * x ^ (1 / 2 : ℝ)) :
+    C₀ * (1 + x ^ κ₀) * (y / √x) * (y₁ / x) * I ≤ 4 * C₀ * y * x ^ (2 * κ₀ - ρ) := by
   have hx0 : 0 < x := by linarith
   have hs : 0 < √x := Real.sqrt_pos.2 hx0
-  have hT₀ : 1 ≤ x ^ (1 / 100 : ℝ) := Real.one_le_rpow hx (by norm_num)
-  have hc : 0 ≤ C₀ * (1 + x ^ (1 / 100 : ℝ)) * (y / √x) * (y₁ / x) := by positivity
+  have hT₀ : 1 ≤ x ^ κ₀ := Real.one_le_rpow hx hκ₀
+  have hc : 0 ≤ C₀ * (1 + x ^ κ₀) * (y / √x) * (y₁ / x) := by positivity
   have hy₁' : y₁ / x ≤ x ^ (-ρ) := by
     rw [div_le_iff₀ hx0]
     calc y₁ ≤ x ^ (1 - ρ) := hy₁x
       _ = x ^ (-ρ) * x := by
           rw [show (1 : ℝ) - ρ = -ρ + 1 by ring, Real.rpow_add hx0, Real.rpow_one]
-  calc C₀ * (1 + x ^ (1 / 100 : ℝ)) * (y / √x) * (y₁ / x) * I
-      ≤ C₀ * (1 + x ^ (1 / 100 : ℝ)) * (y / √x) * (y₁ / x) * (2 * x ^ (1 / 100 : ℝ) * x ^ (1 / 2 : ℝ)) :=
+  calc C₀ * (1 + x ^ κ₀) * (y / √x) * (y₁ / x) * I
+      ≤ C₀ * (1 + x ^ κ₀) * (y / √x) * (y₁ / x) * (2 * x ^ κ₀ * x ^ (1 / 2 : ℝ)) :=
         mul_le_mul_of_nonneg_left hI hc
-    _ ≤ C₀ * (2 * x ^ (1 / 100 : ℝ)) * (y / √x) * x ^ (-ρ) * (2 * x ^ (1 / 100 : ℝ) * x ^ (1 / 2 : ℝ)) := by
+    _ ≤ C₀ * (2 * x ^ κ₀) * (y / √x) * x ^ (-ρ) * (2 * x ^ κ₀ * x ^ (1 / 2 : ℝ)) := by
         gcongr
         linarith
-    _ = 4 * C₀ * y * (x ^ (1 / 100 : ℝ) * x ^ (1 / 100 : ℝ) * x ^ (-ρ)) * (x ^ (1 / 2 : ℝ) / √x) := by ring
-    _ = 4 * C₀ * y * x ^ (1 / 50 - ρ) := by
-        have e : x ^ (1 / 100 : ℝ) * x ^ (1 / 100 : ℝ) * x ^ (-ρ) = x ^ (1 / 50 - ρ) := by
+    _ = 4 * C₀ * y * (x ^ κ₀ * x ^ κ₀ * x ^ (-ρ)) * (x ^ (1 / 2 : ℝ) / √x) := by ring
+    _ = 4 * C₀ * y * x ^ (2 * κ₀ - ρ) := by
+        have e : x ^ κ₀ * x ^ κ₀ * x ^ (-ρ) = x ^ (2 * κ₀ - ρ) := by
           rw [← Real.rpow_add hx0, ← Real.rpow_add hx0]
           congr 1
           ring
         rw [← Real.sqrt_eq_rpow, div_self hs.ne', mul_one, e]
+
+/-- The low range: `C₀(1 + T₀)(y/√x)(y₁/x) I ≤ 4C₀ y x^{1/50−ρ}` for `T₀ = x^{1/100}`, `y₁ ≤ x^{1−ρ}` and
+`I ≤ 2T₀ x^{1/2}`: `low_term_le_of` at `κ₀ = 1/100`. -/
+lemma low_term_le {C₀ x y y₁ ρ I : ℝ} (hC₀ : 0 ≤ C₀) (hx : 1 ≤ x) (hy : 0 ≤ y) (hy₁ : 0 ≤ y₁)
+    (hy₁x : y₁ ≤ x ^ (1 - ρ)) (hI : I ≤ 2 * x ^ (1 / 100 : ℝ) * x ^ (1 / 2 : ℝ)) :
+    C₀ * (1 + x ^ (1 / 100 : ℝ)) * (y / √x) * (y₁ / x) * I ≤ 4 * C₀ * y * x ^ (1 / 50 - ρ) := by
+  have h := low_term_le_of hC₀ hx (by norm_num : (0 : ℝ) ≤ 1 / 100) hy hy₁ hy₁x hI
+  rwa [show (2 : ℝ) * (1 / 100) - ρ = 1 / 50 - ρ by ring] at h
 
 /-- The tail: with `ε = y x^{−1−κ/2}`, `T = x^{1−θ+κ}`, `x^θ ≤ y`, `1 ≤ y`, `L ≤ x^{1/2}` and `kκ ≥ 6 + κ`,
 `C₀√x L ε^{−1}(2/(εT))^k ≤ C₀2^k y x^{−1}`. -/
@@ -619,17 +701,19 @@ lemma trans_term_le {CB x y κ β : ℝ} (k : ℕ) (hCB : 0 ≤ CB) (hx : 1 ≤ 
 
 /-! ### The Type II estimate -/
 
-/-- **Type II estimates for products of primes in boxes.** Let `αⱼ > κ > 0` with `Σⱼ αⱼ ≤ 1`, `θ > 0`,
-`ρ > 1/50` with `θ + ρ ≤ 1`, and `δⱼ > 0` with `Σⱼ 1/δⱼ = 1`, each `δⱼ` admissible (`MomentOK`) for
-`Dⱼ = (1 − θ + κ)/(αⱼ − κ)`. There are `η > 0`, `C` and `x₀` such that for `x ≥ x₀`, `x^θ ≤ y ≤ y₁ ≤ x^{1−ρ}` and
-boxes `x^{αⱼ}/2 ≤ Nⱼ ≤ x^{αⱼ}`, `Nⱼ ≤ Mⱼ ≤ 2Nⱼ`, the numbers of tuples `(pⱼ)ⱼ`, `pⱼ` prime in `(Nⱼ, Mⱼ]`, with
-`∏ⱼ pⱼ ∈ (x − y, x]` and with `∏ⱼ pⱼ ∈ (x − y₁, x]` satisfy
-`|#{∏ⱼ pⱼ ∈ (x − y, x]} − (y/y₁)·#{∏ⱼ pⱼ ∈ (x − y₁, x]}| ≤ C y x^{−η}`; in particular for `y = x^θ` and
-`y₁ = x^{1−ρ}`. The proof is `ShortSieveInterval.norm_sum_Ioc_sub_le` with the four terms bounded as in the module
-docstring. -/
-theorem abs_card_tuples_sub_le {α δ : ι → ℝ} {θ κ ρ : ℝ} (hκ : 0 < κ) (hα : ∀ j, κ < α j)
-    (hαs : ∑ j, α j ≤ 1) (hθ : 0 < θ) (hρ : 1 / 50 < ρ) (hθρ : θ + ρ ≤ 1) (hδ : ∀ j, 0 < δ j) (hδs : ∑ j, 1 / δ j = 1)
-    (hok : ∀ j, MomentOK ((1 - θ + κ) / (α j - κ)) (δ j)) :
+/-- **Type II estimates for products of primes in boxes, with the low range up to `x^{κ₀}`.** Let `αⱼ > κ > 0`
+with `Σⱼ αⱼ ≤ 1`, `θ > 0`, `κ₀ > 0` and `ρ > 2κ₀` with `θ + ρ ≤ 1`, and `δⱼ > 0` with `Σⱼ 1/δⱼ = 1`, each `δⱼ`
+admissible (`MomentOK`) for `Dⱼ = (1 − θ + κ)/(αⱼ − κ)`. There are `η > 0`, `C` and `x₀` such that for `x ≥ x₀`,
+`x^θ ≤ y ≤ y₁ ≤ x^{1−ρ}` and boxes `x^{αⱼ}/2 ≤ Nⱼ ≤ x^{αⱼ}`, `Nⱼ ≤ Mⱼ ≤ 2Nⱼ`, the numbers of tuples `(pⱼ)ⱼ`, `pⱼ`
+prime in `(Nⱼ, Mⱼ]`, with `∏ⱼ pⱼ ∈ (x − y, x]` and with `∏ⱼ pⱼ ∈ (x − y₁, x]` satisfy
+`|#{∏ⱼ pⱼ ∈ (x − y, x]} − (y/y₁)·#{∏ⱼ pⱼ ∈ (x − y₁, x]}| ≤ C y x^{−η}`. The proof is
+`ShortSieveInterval.norm_sum_Ioc_sub_le` with `T₀ = x^{κ₀}` and the four terms bounded as in the module docstring:
+the low range costs `4C₀ y x^{2κ₀−ρ}` (`low_term_le_of`), which is where `ρ > 2κ₀` is needed, and the middle range
+takes the moments of the boxes from the heights `Nⱼ^{κ'} ≤ x^{κ'} ≤ T₀`, `κ' = min(κ₀, 1/100)`
+(`moment_boxWt_from`). -/
+theorem abs_card_tuples_sub_le_of {α δ : ι → ℝ} {θ κ κ₀ ρ : ℝ} (hκ : 0 < κ) (hα : ∀ j, κ < α j)
+    (hαs : ∑ j, α j ≤ 1) (hθ : 0 < θ) (hκ₀ : 0 < κ₀) (hρ : 2 * κ₀ < ρ) (hθρ : θ + ρ ≤ 1) (hδ : ∀ j, 0 < δ j)
+    (hδs : ∑ j, 1 / δ j = 1) (hok : ∀ j, MomentOK ((1 - θ + κ) / (α j - κ)) (δ j)) :
     ∃ η : ℝ, 0 < η ∧ ∃ C x₀ : ℝ, ∀ x : ℝ, x₀ ≤ x → ∀ y y₁ : ℝ, x ^ θ ≤ y → y ≤ y₁ → y₁ ≤ x ^ (1 - ρ) →
       ∀ N M : ι → ℕ, (∀ j, x ^ α j / 2 ≤ N j ∧ (N j : ℝ) ≤ x ^ α j) → (∀ j, N j ≤ M j ∧ M j ≤ 2 * N j) →
         |(#{g ∈ tuples N M | x - y < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x} : ℝ) -
@@ -647,8 +731,13 @@ theorem abs_card_tuples_sub_le {α δ : ι → ℝ} {θ κ ρ : ℝ} (hκ : 0 < 
     (single_le_sum (fun i _ => (hκ.trans (hα i)).le) (mem_univ j)).trans hαs
   have hκ1 : κ < 1 := (hα j₀).trans_le (hα1 j₀)
   have hD0 : ∀ j, 0 < (1 - θ + κ) / (α j - κ) := fun j => div_pos (by linarith) (hακ j)
+  -- the start `κ' = min(κ₀, 1/100)` of the moments
+  set κ' : ℝ := min κ₀ (1 / 100) with hκ'
+  have hκ'0 : 0 < κ' := lt_min hκ₀ (by norm_num)
+  have hκ'1 : κ' < 1 / 50 := (min_le_right _ _).trans_lt (by norm_num)
+  have hκ'κ₀ : κ' ≤ κ₀ := min_le_left _ _
   -- the moments of the boxes and the comparison
-  choose η₁ hη₁ C₁ hC₁ N₁ hmom using fun j => moment_boxWt (hD0 j) (hok j)
+  choose η₁ hη₁ C₁ hC₁ N₁ hmom using fun j => moment_boxWt_from hκ'0 hκ'1 (hD0 j) (hok j)
   obtain ⟨C₀, hC₀, hcmp⟩ := ShortSieveInterval.norm_sum_Ioc_sub_le
   -- the parameters
   set ηm : ℝ := (α j₀ - κ) * (η₁ j₀ / δ j₀) with hηm
@@ -669,10 +758,10 @@ theorem abs_card_tuples_sub_le {α δ : ι → ℝ} {θ κ ρ : ℝ} (hκ : 0 < 
     refine pow_nonneg (le_trans zero_le_one (LinnikPower.one_le_Cdiv (by positivity) ?_)) _
     rw [div_le_one (by positivity)]
     linarith
-  set η : ℝ := min (min ηm (ρ - 1 / 50)) β with hη
+  set η : ℝ := min (min ηm (ρ - 2 * κ₀)) β with hη
   have hη0 : 0 < η := lt_min (lt_min hηm0 (by linarith)) hβ0
   have hηm' : η ≤ ηm := (min_le_left _ _).trans (min_le_left _ _)
-  have hηρ : η ≤ ρ - 1 / 50 := (min_le_left _ _).trans (min_le_right _ _)
+  have hηρ : η ≤ ρ - 2 * κ₀ := (min_le_left _ _).trans (min_le_right _ _)
   have hηβ : η ≤ β := min_le_right _ _
   -- the threshold
   set N₀ : ℕ := ∑ j, N₁ j + 1 with hN₀
@@ -711,21 +800,23 @@ theorem abs_card_tuples_sub_le {α δ : ι → ℝ} {θ κ ρ : ℝ} (hκ : 0 < 
   have hNpos : ∀ j, 0 < N j := fun j => by
     have h2 := hN₀N j
     omega
-  -- the heights `T₀ = x^{1/100}` and `T = x^{1−θ+κ}`
-  have hT₀1 : 1 ≤ x ^ (1 / 100 : ℝ) := Real.one_le_rpow hx1 (by norm_num)
-  have hT₀T : x ^ (1 / 100 : ℝ) ≤ x ^ (1 - θ + κ) := Real.rpow_le_rpow_of_exponent_le hx1 (by linarith)
+  -- the heights `T₀ = x^{κ₀}` and `T = x^{1−θ+κ}`
+  have hT₀1 : 1 ≤ x ^ κ₀ := Real.one_le_rpow hx1 hκ₀.le
+  have hT₀T : x ^ κ₀ ≤ x ^ (1 - θ + κ) := Real.rpow_le_rpow_of_exponent_le hx1 (by linarith)
   have hTN : ∀ j, x ^ (1 - θ + κ) ≤ (N j : ℝ) ^ ((1 - θ + κ) / (α j - κ)) := by
     intro j
     calc x ^ (1 - θ + κ) = (x ^ (α j - κ)) ^ ((1 - θ + κ) / (α j - κ)) := by
           rw [← Real.rpow_mul hx0.le, mul_div_cancel₀ _ (hακ j).ne']
       _ ≤ (N j : ℝ) ^ ((1 - θ + κ) / (α j - κ)) :=
           Real.rpow_le_rpow (by positivity) (hNα j) (hD0 j).le
-  have hT₀N : ∀ j, (N j : ℝ) ^ (1 / 100 : ℝ) ≤ x ^ (1 / 100 : ℝ) := by
+  have hT₀N : ∀ j, (N j : ℝ) ^ κ' ≤ x ^ κ₀ := by
     intro j
-    refine Real.rpow_le_rpow (Nat.cast_nonneg _) ?_ (by norm_num)
-    calc (N j : ℝ) ≤ x ^ α j := (hNb j).2
-      _ ≤ x ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le hx1 (hα1 j)
-      _ = x := Real.rpow_one x
+    calc (N j : ℝ) ^ κ' ≤ x ^ κ' := by
+          refine Real.rpow_le_rpow (Nat.cast_nonneg _) ?_ hκ'0.le
+          calc (N j : ℝ) ≤ x ^ α j := (hNb j).2
+            _ ≤ x ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le hx1 (hα1 j)
+            _ = x := Real.rpow_one x
+      _ ≤ x ^ κ₀ := Real.rpow_le_rpow_of_exponent_le hx1 hκ'κ₀
   -- the middle range
   have hm := fun j => hmom j (N j) (hN₁ j) (M j) (hMb j).1 (hMb j).2 _ _ (hT₀N j) hT₀T (hTN j)
   have hprod := prod_le_rpow (N := N) hx1 hαs (fun j => (hNb j).2) (fun j => hNpos j)
@@ -741,10 +832,10 @@ theorem abs_card_tuples_sub_le {α δ : ι → ℝ} {θ κ ρ : ℝ} (hκ : 0 < 
       _ = x ^ ∑ j, α j := (Real.rpow_sum_of_pos hx0 _ _).symm
       _ ≤ x ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le hx1 hαs
       _ = x := Real.rpow_one x
-  have hI₀ : ∫ t in (-x ^ (1 / 100 : ℝ))..x ^ (1 / 100 : ℝ),
-      ‖dp (prods N M) (ShortSieveInterval.coef (cnt N M)) t‖ ≤ 2 * x ^ (1 / 100 : ℝ) * x ^ (1 / 2 : ℝ) := by
+  have hI₀ : ∫ t in (-x ^ κ₀)..x ^ κ₀,
+      ‖dp (prods N M) (ShortSieveInterval.coef (cnt N M)) t‖ ≤ 2 * x ^ κ₀ * x ^ (1 / 2 : ℝ) := by
     refine (ShortSieveInterval.integral_norm_dp_le _ _ (by linarith)).trans ?_
-    rw [show x ^ (1 / 100 : ℝ) - -x ^ (1 / 100 : ℝ) = 2 * x ^ (1 / 100 : ℝ) by ring]
+    rw [show x ^ κ₀ - -x ^ κ₀ = 2 * x ^ κ₀ by ring]
     exact mul_le_mul_of_nonneg_left hL₁ (by positivity)
   -- the comparison
   have hx1' : 1 < x := by
@@ -763,7 +854,7 @@ theorem abs_card_tuples_sub_le {α δ : ι → ℝ} {θ κ ρ : ℝ} (hκ : 0 < 
       _ ≤ x / 2 := div_le_div_of_nonneg_left hx0.le (by norm_num) hxρ
   have hB : ∀ n ∈ prods N M, ‖cnt N M n‖ ≤ CB * x ^ β := fun n hn =>
     norm_cnt_le_rpow N M hxr hx1 hαs (fun j => (hNb j).2) (fun j => (hMb j).2) hβ0 hβ1 hι hn
-  have h := hcmp (y * x ^ (-1 - κ / 2)) hε0 hε1 k x y y₁ (x ^ (1 / 100 : ℝ)) (x ^ (1 - θ + κ)) hx0 hy0 hyy₁
+  have h := hcmp (y * x ^ (-1 - κ / 2)) hε0 hε1 k x y y₁ (x ^ κ₀) (x ^ (1 - θ + κ)) hx0 hy0 hyy₁
     hy₁x (by positivity) hT₀T (prods N M) (fun n hn => pos_of_mem_prods hn) (cnt N M) (CB * x ^ β)
     (by positivity) hB
   rw [sum_cnt_filter, sum_cnt_filter] at h
@@ -776,19 +867,49 @@ theorem abs_card_tuples_sub_le {α δ : ι → ℝ} {θ κ ρ : ℝ} (hκ : 0 < 
   have hy2β : x ^ (2 * β) ≤ y :=
     le_trans (Real.rpow_le_rpow_of_exponent_le hx1 (by linarith)) hy
   have t1 := mid_term_le hC₀.le hx0 hy0.le hI₁ hI₂
-  have t2 := low_term_le hC₀.le hx1 hy0.le hy₁0.le hy₁ hI₀
+  have t2 := low_term_le_of hC₀.le hx1 hκ₀.le hy0.le hy₁0.le hy₁ hI₀
   have t3 := tail_term_le hC₀.le hx1 hy hy1 hL₁ hkκ
   have t4 := trans_term_le k hCB0 hx1 hβκ hy2β
   have hX : ∀ e : ℝ, η ≤ e → ∀ c : ℝ, 0 ≤ c → c * x ^ (-e) ≤ c * x ^ (-η) := fun e he c hc =>
     mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le hx1 (by linarith)) hc
   have u1 := hX ((α j₀ - κ) * (η₁ j₀ / δ j₀)) hηm' (2 * C₀ * (∏ j, C₁ j ^ (1 / δ j)) * y) (by positivity)
-  have u2 := hX (ρ - 1 / 50) hηρ (4 * C₀ * y) (by positivity)
+  have u2 := hX (ρ - 2 * κ₀) hηρ (4 * C₀ * y) (by positivity)
   rw [neg_sub] at u2
   have u3 := hX 1 (by linarith) (C₀ * 2 ^ k * y) (by positivity)
   have u4 := hX β hηβ (8 * CB * (k + 4) * y) (by positivity)
   refine h.trans (le_of_le_of_eq (add_le_add (add_le_add (add_le_add (t1.trans u1) (t2.trans u2))
     (t3.trans u3)) (t4.trans u4)) ?_)
   ring
+
+/-- **Type II estimates for products of primes in boxes.** Let `αⱼ > κ > 0` with `Σⱼ αⱼ ≤ 1`, `θ > 0`,
+`ρ > 1/50` with `θ + ρ ≤ 1`, and `δⱼ > 0` with `Σⱼ 1/δⱼ = 1`, each `δⱼ` admissible (`MomentOK`) for
+`Dⱼ = (1 − θ + κ)/(αⱼ − κ)`. There are `η > 0`, `C` and `x₀` such that for `x ≥ x₀`, `x^θ ≤ y ≤ y₁ ≤ x^{1−ρ}` and
+boxes `x^{αⱼ}/2 ≤ Nⱼ ≤ x^{αⱼ}`, `Nⱼ ≤ Mⱼ ≤ 2Nⱼ`, the numbers of tuples `(pⱼ)ⱼ`, `pⱼ` prime in `(Nⱼ, Mⱼ]`, with
+`∏ⱼ pⱼ ∈ (x − y, x]` and with `∏ⱼ pⱼ ∈ (x − y₁, x]` satisfy
+`|#{∏ⱼ pⱼ ∈ (x − y, x]} − (y/y₁)·#{∏ⱼ pⱼ ∈ (x − y₁, x]}| ≤ C y x^{−η}`; in particular for `y = x^θ` and
+`y₁ = x^{1−ρ}`. This is `abs_card_tuples_sub_le_of` at `κ₀ = 1/100`, that is with `T₀ = x^{1/100}`. -/
+theorem abs_card_tuples_sub_le {α δ : ι → ℝ} {θ κ ρ : ℝ} (hκ : 0 < κ) (hα : ∀ j, κ < α j)
+    (hαs : ∑ j, α j ≤ 1) (hθ : 0 < θ) (hρ : 1 / 50 < ρ) (hθρ : θ + ρ ≤ 1) (hδ : ∀ j, 0 < δ j) (hδs : ∑ j, 1 / δ j = 1)
+    (hok : ∀ j, MomentOK ((1 - θ + κ) / (α j - κ)) (δ j)) :
+    ∃ η : ℝ, 0 < η ∧ ∃ C x₀ : ℝ, ∀ x : ℝ, x₀ ≤ x → ∀ y y₁ : ℝ, x ^ θ ≤ y → y ≤ y₁ → y₁ ≤ x ^ (1 - ρ) →
+      ∀ N M : ι → ℕ, (∀ j, x ^ α j / 2 ≤ N j ∧ (N j : ℝ) ≤ x ^ α j) → (∀ j, N j ≤ M j ∧ M j ≤ 2 * N j) →
+        |(#{g ∈ tuples N M | x - y < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x} : ℝ) -
+          y / y₁ * #{g ∈ tuples N M | x - y₁ < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x}| ≤
+          C * y * x ^ (-η) :=
+  abs_card_tuples_sub_le_of (κ₀ := 1 / 100) hκ hα hαs hθ (by norm_num) (by linarith) hθρ hδ hδs hok
+
+/-- **Type II estimates for products of primes in boxes, for every `ρ > 0`.** The conclusion of
+`abs_card_tuples_sub_le` under its hypotheses with `ρ > 0` in place of `ρ > 1/50`: `abs_card_tuples_sub_le_of` with
+`κ₀ = ρ/4`. -/
+theorem abs_card_tuples_sub_le_of_pos {α δ : ι → ℝ} {θ κ ρ : ℝ} (hκ : 0 < κ) (hα : ∀ j, κ < α j)
+    (hαs : ∑ j, α j ≤ 1) (hθ : 0 < θ) (hρ : 0 < ρ) (hθρ : θ + ρ ≤ 1) (hδ : ∀ j, 0 < δ j) (hδs : ∑ j, 1 / δ j = 1)
+    (hok : ∀ j, MomentOK ((1 - θ + κ) / (α j - κ)) (δ j)) :
+    ∃ η : ℝ, 0 < η ∧ ∃ C x₀ : ℝ, ∀ x : ℝ, x₀ ≤ x → ∀ y y₁ : ℝ, x ^ θ ≤ y → y ≤ y₁ → y₁ ≤ x ^ (1 - ρ) →
+      ∀ N M : ι → ℕ, (∀ j, x ^ α j / 2 ≤ N j ∧ (N j : ℝ) ≤ x ^ α j) → (∀ j, N j ≤ M j ∧ M j ≤ 2 * N j) →
+        |(#{g ∈ tuples N M | x - y < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x} : ℝ) -
+          y / y₁ * #{g ∈ tuples N M | x - y₁ < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x}| ≤
+          C * y * x ^ (-η) :=
+  abs_card_tuples_sub_le_of (κ₀ := ρ / 4) hκ hα hαs hθ (by positivity) (by linarith) hθρ hδ hδs hok
 
 /-- **Three primes near `x^{1/3}` in intervals of length `x^{3/5}`.** `abs_card_tuples_sub_le` for three boxes
 `x^{1/3}/2 ≤ Nⱼ ≤ x^{1/3}` with `δⱼ = 3`, `κ = 1/1000`, `θ = 3/5` and `ρ = 1/25`: there
@@ -808,14 +929,39 @@ theorem abs_card_tuples_sub_le_three : ∃ η : ℝ, 0 < η ∧ ∃ C x₀ : ℝ
   norm_num
   exact hy₁
 
+/-- **Three primes near `x^{1/3}` in intervals of length `x^{3/5}`, against intervals of length `x^{399/400}`.**
+`abs_card_tuples_sub_le_of` for three boxes `x^{1/3}/2 ≤ Nⱼ ≤ x^{1/3}` with `δⱼ = 3`, `κ = 1/1000`, `θ = 3/5`,
+`T₀ = x^{1/2000}` and `ρ = 1/400 > 2/2000`: the exponents `Dⱼ = 1203/997` are those of
+`abs_card_tuples_sub_le_three`, and the comparison interval `(x − y₁, x]` may be as long as `x^{1−1/400}`. -/
+theorem abs_card_tuples_sub_le_three_long : ∃ η : ℝ, 0 < η ∧ ∃ C x₀ : ℝ, ∀ x : ℝ, x₀ ≤ x → ∀ y y₁ : ℝ,
+    x ^ (3 / 5 : ℝ) ≤ y → y ≤ y₁ → y₁ ≤ x ^ (399 / 400 : ℝ) → ∀ N M : Fin 3 → ℕ,
+      (∀ j, x ^ (1 / 3 : ℝ) / 2 ≤ N j ∧ (N j : ℝ) ≤ x ^ (1 / 3 : ℝ)) → (∀ j, N j ≤ M j ∧ M j ≤ 2 * N j) →
+        |(#{g ∈ tuples N M | x - y < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x} : ℝ) -
+          y / y₁ * #{g ∈ tuples N M | x - y₁ < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x}| ≤
+          C * y * x ^ (-η) := by
+  obtain ⟨η, hη, C, x₀, h⟩ := abs_card_tuples_sub_le_of (ι := Fin 3) (α := fun _ => 1 / 3) (δ := fun _ => 3)
+    (θ := 3 / 5) (κ := 1 / 1000) (κ₀ := 1 / 2000) (ρ := 1 / 400) (by norm_num) (fun _ => by norm_num) (by simp)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (fun _ => by norm_num) (by simp)
+    (fun _ => Or.inl ⟨1, le_rfl, by norm_num, by norm_num, by norm_num⟩)
+  refine ⟨η, hη, C, x₀, fun x hx y y₁ hy hyy₁ hy₁ N M hN hM => h x hx y y₁ hy hyy₁ ?_ N M hN hM⟩
+  norm_num
+  exact hy₁
+
 end ShortSieveTypeII
 
+#print axioms ShortSieveTypeII.norm_dp_boxWt_le_of
 #print axioms ShortSieveTypeII.norm_dp_boxWt_le
+#print axioms ShortSieveTypeII.moment_boxWt_hux_from
+#print axioms ShortSieveTypeII.moment_boxWt_mv_from
+#print axioms ShortSieveTypeII.moment_boxWt_from
 #print axioms ShortSieveTypeII.moment_boxWt_hux
 #print axioms ShortSieveTypeII.moment_boxWt_mv
 #print axioms ShortSieveTypeII.moment_boxWt
 #print axioms ShortSieveTypeII.integral_prod_le
 #print axioms ShortSieveTypeII.dp_prods
 #print axioms ShortSieveTypeII.sum_cnt_filter
+#print axioms ShortSieveTypeII.abs_card_tuples_sub_le_of
 #print axioms ShortSieveTypeII.abs_card_tuples_sub_le
+#print axioms ShortSieveTypeII.abs_card_tuples_sub_le_of_pos
 #print axioms ShortSieveTypeII.abs_card_tuples_sub_le_three
+#print axioms ShortSieveTypeII.abs_card_tuples_sub_le_three_long

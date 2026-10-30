@@ -13,7 +13,7 @@ headline theorems (those whose docstring opens with a bold title).
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 11 | 63 |
+| `lib/pnt` | 223 | 726 | 11 | 72 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1793,23 +1793,32 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveTwist.verticalIntegral'_integrand_eq`: Moving the Perron integral past a simple pole
 - `ShortSieveTwist.smoothedSum_eq_verticalIntegral_add`: The smoothed sum as an integral on a line left of a simple pole
 - `ShortSieveTwist.norm_psi_twist_le`: The twisted prime number theorem, uniformly in the twist
+- `ShortSieveTwist.norm_sum_Ioc_le_of`: The twisted prime number theorem on `(N, m]`, `N ≤ m ≤ 2N`, with a general exponent
 - `ShortSieveTwist.norm_sum_Ioc_le`: The twisted prime number theorem on `(N, m]`, `N ≤ m ≤ 2N`
 - `ShortSieveTwist.norm_sum_vonMangoldt_twist_le`: A twisted prime number theorem with a power saving
 - `ShortSieveTwist.norm_sum_mul_le`: Abel summation, as an inequality
+- `ShortSieveTwist.norm_dp_primes_Ioc_le_of`: Primes in `(N, M]`, `M ≤ 2N`, twisted, with a power saving, for a general exponent
 - `ShortSieveTwist.norm_dp_primes_Ioc_le`: Primes in `(N, M]`, `M ≤ 2N`, twisted, with a power saving
 - `ShortSieveTwist.norm_dp_primes_le`: Primes in a dyadic interval, twisted, with a power saving
 
 #### `ShortSieveTypeII`: Type II estimates for products of primes in boxes
 
+- `ShortSieveTypeII.norm_dp_boxWt_le_of`: The weighted prime polynomial, pointwise, for a general exponent
 - `ShortSieveTypeII.norm_dp_boxWt_le`: The weighted prime polynomial, pointwise
+- `ShortSieveTypeII.moment_boxWt_hux_from`: Harman's moment lemma for the weighted primes on the heights from `N^κ`, from the Halász–Montgomery count
+- `ShortSieveTypeII.moment_boxWt_mv_from`: Harman's moment lemma for the weighted primes on the heights from `N^κ`, from the mean value theorem
 - `ShortSieveTypeII.moment_boxWt_hux`: Harman's moment lemma for the weighted primes, from the Halász–Montgomery count
 - `ShortSieveTypeII.moment_boxWt_mv`: Harman's moment lemma for the weighted primes, from the mean value theorem
+- `ShortSieveTypeII.moment_boxWt_from`: The weighted moment lemma on the heights from `N^κ` for an admissible moment
 - `ShortSieveTypeII.moment_boxWt`: The weighted moment lemma for an admissible moment
 - `ShortSieveTypeII.integral_prod_le`: Hölder's inequality on an interval
 - `ShortSieveTypeII.dp_prods`: The product formula
 - `ShortSieveTypeII.integral_norm_dp_prods_le`: The middle range by Hölder
+- `ShortSieveTypeII.abs_card_tuples_sub_le_of`: Type II estimates for products of primes in boxes, with the low range up to `x^{κ₀}`
 - `ShortSieveTypeII.abs_card_tuples_sub_le`: Type II estimates for products of primes in boxes
+- `ShortSieveTypeII.abs_card_tuples_sub_le_of_pos`: Type II estimates for products of primes in boxes, for every `ρ > 0`
 - `ShortSieveTypeII.abs_card_tuples_sub_le_three`: Three primes near `x^{1/3}` in intervals of length `x^{3/5}`
+- `ShortSieveTypeII.abs_card_tuples_sub_le_three_long`: Three primes near `x^{1/3}` in intervals of length `x^{3/5}`, against intervals of length `x^{399/400}`
 
 ### `lib/dh`
 

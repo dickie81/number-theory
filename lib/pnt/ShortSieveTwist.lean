@@ -6,12 +6,12 @@ import DirMean
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statement. There is `κ > 0` (`κ = 1/100`) such that for every `A > 0`, uniformly in `N^κ ≤ |t| ≤ N^A`,
-`Σ_{N < n ≤ 2N} Λ(n) n^{−it} = O(N^{1−κ})` (`norm_sum_vonMangoldt_twist_le`) and `Σ_{N < p ≤ 2N} p^{−it} = O(N^{1−κ})`,
-the Dirichlet polynomial `DirMean.dp` of the primes with coefficient `1` (`norm_dp_primes_le`; for `(N, M]`,
-`M ≤ 2N`, `norm_dp_primes_Ioc_le`). There is no hypothesis: the only analytic input is the half-plane `Re s > 11/12`
-free of zeros of `ζ` (`Eis.ne_zero_of_re_gt_eleven_twelfths`), through the log-derivative bound
-`HalfPlanePNT.logDeriv_le_of_zeroFree`.
+Plain statement. For every `κ < 1/50` and `A > 0`, uniformly in `N^κ ≤ |t| ≤ N^A` and `N ≤ M ≤ 2N`,
+`Σ_{N < n ≤ M} Λ(n) n^{−it} = O(N^{1−κ})` (`norm_sum_Ioc_le_of`) and `Σ_{N < p ≤ M} p^{−it} = O(N^{1−κ})`, the
+Dirichlet polynomial `DirMean.dp` of the primes with coefficient `1` (`norm_dp_primes_Ioc_le_of`). At `κ = 1/100`:
+`norm_sum_Ioc_le`, `norm_dp_primes_Ioc_le`, and for `M = 2N` `norm_sum_vonMangoldt_twist_le`, `norm_dp_primes_le`.
+There is no hypothesis: the only analytic input is the half-plane `Re s > 11/12` free of zeros of `ζ`
+(`Eis.ne_zero_of_re_gt_eleven_twelfths`), through the log-derivative bound `HalfPlanePNT.logDeriv_le_of_zeroFree`.
 
 The Dirichlet series of `Λ(n)n^{−it}` is `−ζ′/ζ(s + it)` (`LSeries_twist_eq`), holomorphic on `Re s > 11/12` but for a
 simple pole of residue `1` at `s = 1 − it` (`isBigO_logDerivTwist`, from PNT+'s `riemannZetaLogDerivResidueBigO`).
@@ -31,11 +31,13 @@ the residue `𝓜(Smooth1)(1 − it)X^{1−it}`, of size `O(X/(1 + |t|))`: small
   every real `t`: the residue through `SmoothPerron.mellin_le_geom` at `κ = 0`, the integral on `Re s = 23/24`
   through `mellin_le_geom` at `κ = 1/2` and `logDeriv_bounds`, and the unsmoothing
   `SmoothPerron.norm_smoothedSum_sub_le`.
-* `norm_sum_Ioc_le`: `|Σ_{N < n ≤ m} Λ(n)n^{−it}| ≤ C N^{99/100}` for `N ≤ m ≤ 2N` and `N^{1/100} ≤ |t| ≤ N^A`, the
-  difference of `norm_psi_twist_le` at `X = m` and `X = N`.
-* `norm_dp_primes_Ioc_le`: Abel summation with the weights `1/log n` (`norm_sum_mul_le`) over the partial sums of
-  `Λ(p)p^{−it}` on the primes, which are those of `norm_sum_Ioc_le` up to the prime powers; these contribute at most
-  `ψ(2N) − θ(2N) = O(N^{3/4})` (`sum_not_prime_le`, from Mathlib's `Chebyshev.psi_sub_theta_le`).
+* `norm_sum_Ioc_le_of`: `|Σ_{N < n ≤ m} Λ(n)n^{−it}| ≤ C N^{1−κ}` for `κ < 1/50`, `N ≤ m ≤ 2N` and
+  `N^κ ≤ |t| ≤ N^A`, the difference of `norm_psi_twist_le` at `X = m` and `X = N`: there `X/(1 + |t|) ≤ 2N^{1−κ}`,
+  and `log(1 + |t|) = O(N^{1/50−κ})` against `X^{49/50}`. `norm_sum_Ioc_le` is the case `κ = 1/100`.
+* `norm_dp_primes_Ioc_le_of`: Abel summation with the weights `1/log n` (`norm_sum_mul_le`) over the partial sums of
+  `Λ(p)p^{−it}` on the primes, which are those of `norm_sum_Ioc_le_of` up to the prime powers; these contribute at
+  most `ψ(2N) − θ(2N) = O(N^{3/4})` (`sum_not_prime_le_rpow`, from Mathlib's `Chebyshev.psi_sub_theta_le`).
+  `norm_dp_primes_Ioc_le` is the case `κ = 1/100`.
 -/
 
 set_option lang.lemmaCmd true
@@ -571,20 +573,22 @@ lemma sum_Ioc_eq_sub (g : ℕ → ℂ) {N m : ℕ} (h : N ≤ m) :
   rw [Nat.floor_natCast, Nat.floor_natCast, e, e]
   exact eq_sub_of_add_eq' (Finset.sum_Ioc_consecutive g (Nat.zero_le N) h)
 
-/-- **The twisted prime number theorem on `(N, m]`, `N ≤ m ≤ 2N`.** For every `A > 0` there is `C` with
-`|Σ_{N < n ≤ m} Λ(n)n^{−it}| ≤ C N^{99/100}` for all `N ≥ 2`, `N ≤ m ≤ 2N` and `N^{1/100} ≤ |t| ≤ N^A`: the
-difference of `norm_psi_twist_le` at `X = m` and `X = N`, where `X/(1 + |t|) ≤ 2N^{99/100}` and
-`1 + log(1 + |t|) ≤ (2 + 100A)N^{1/100}`. -/
-theorem norm_sum_Ioc_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N : ℕ, 2 ≤ N → ∀ m : ℕ, N ≤ m →
-    m ≤ 2 * N → ∀ t : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ |t| → |t| ≤ (N : ℝ) ^ A →
+/-- **The twisted prime number theorem on `(N, m]`, `N ≤ m ≤ 2N`, with a general exponent.** For `κ < 1/50` and
+`A > 0` there is `C` with `|Σ_{N < n ≤ m} Λ(n)n^{−it}| ≤ C N^{1−κ}` for all `N ≥ 2`, `N ≤ m ≤ 2N` and
+`N^κ ≤ |t| ≤ N^A`: the difference of `norm_psi_twist_le` at `X = m` and `X = N`, where `X/(1 + |t|) ≤ 2N^{1−κ}`
+and `1 + log(1 + |t|) ≤ (2 + A/ε)N^ε` for `ε = 1/50 − κ`, so that `N^ε X^{49/50} ≤ 2N^{1−κ}`. -/
+theorem norm_sum_Ioc_le_of {κ A : ℝ} (hκ : κ < 1 / 50) (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N : ℕ, 2 ≤ N →
+    ∀ m : ℕ, N ≤ m → m ≤ 2 * N → ∀ t : ℝ, (N : ℝ) ^ κ ≤ |t| → |t| ≤ (N : ℝ) ^ A →
       ‖∑ n ∈ Finset.Ioc N m, (ArithmeticFunction.vonMangoldt n : ℂ) * (n : ℂ) ^ (-(t * I))‖ ≤
-        C * (N : ℝ) ^ (99 / 100 : ℝ) := by
+        C * (N : ℝ) ^ (1 - κ) := by
   obtain ⟨K₁, K₂, hK₁, hK₂, hb⟩ := norm_psi_twist_le
-  refine ⟨2 * (2 * K₁ + 2 * K₂ * (2 + 100 * A)), by positivity, fun N hN m hNm hm2 t ht1 ht2 ↦ ?_⟩
+  set ε : ℝ := 1 / 50 - κ with hεdef
+  have hε : 0 < ε := by rw [hεdef]; linarith
+  refine ⟨2 * (2 * K₁ + 2 * K₂ * (2 + A / ε)), by positivity, fun N hN m hNm hm2 t ht1 ht2 ↦ ?_⟩
   have hN1 : (1 : ℝ) < N := by exact_mod_cast hN
   have hNpos : (0 : ℝ) < N := by linarith
-  have hNκ : 1 ≤ (N : ℝ) ^ (1 / 100 : ℝ) := Real.one_le_rpow hN1.le (by norm_num)
-  have hlogt : 1 + Real.log (1 + |t|) ≤ (2 + 100 * A) * (N : ℝ) ^ (1 / 100 : ℝ) := by
+  have hNε : 1 ≤ (N : ℝ) ^ ε := Real.one_le_rpow hN1.le hε.le
+  have hlogt : 1 + Real.log (1 + |t|) ≤ (2 + A / ε) * (N : ℝ) ^ ε := by
     have h1 : 1 + |t| ≤ 2 * (N : ℝ) ^ A := by
       have : 1 ≤ (N : ℝ) ^ A := Real.one_le_rpow hN1.le hA.le
       linarith
@@ -593,26 +597,29 @@ theorem norm_sum_Ioc_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N 
             Real.log_le_log (by linarith [abs_nonneg t]) h1
         _ = Real.log 2 + A * Real.log N := by
             rw [Real.log_mul (by norm_num) (by positivity), Real.log_rpow hNpos]
-    have h3 : Real.log N ≤ 100 * (N : ℝ) ^ (1 / 100 : ℝ) := by
-      have := Real.log_le_rpow_div (x := (N : ℝ)) hNpos.le (ε := 1 / 100) (by norm_num)
-      linarith
+    have h3 : A * Real.log N ≤ A / ε * (N : ℝ) ^ ε := by
+      have := Real.log_le_rpow_div (x := (N : ℝ)) hNpos.le hε
+      calc A * Real.log N ≤ A * ((N : ℝ) ^ ε / ε) := by gcongr
+        _ = A / ε * (N : ℝ) ^ ε := by ring
     have hlog2 : Real.log 2 < 1 := by have := Real.log_two_lt_d9; linarith
     nlinarith
-  have hNN : (N : ℝ) ^ (1 / 100 : ℝ) * (N : ℝ) ^ (49 / 50 : ℝ) = (N : ℝ) ^ (99 / 100 : ℝ) := by
-    rw [← Real.rpow_add hNpos]; norm_num
-  have hNN' : (N : ℝ) ^ (99 / 100 : ℝ) * (N : ℝ) ^ (1 / 100 : ℝ) = N := by
-    rw [← Real.rpow_add hNpos]; norm_num
+  have hNN : (N : ℝ) ^ ε * (N : ℝ) ^ (49 / 50 : ℝ) = (N : ℝ) ^ (1 - κ) := by
+    rw [← Real.rpow_add hNpos, hεdef]
+    congr 1
+    ring
+  have hNN' : (N : ℝ) ^ (1 - κ) * (N : ℝ) ^ κ = N := by
+    rw [← Real.rpow_add hNpos, sub_add_cancel, Real.rpow_one]
   have key : ∀ X : ℝ, (N : ℝ) ≤ X → X ≤ 2 * N →
       K₁ * X / (1 + |t|) + K₂ * (1 + Real.log (1 + |t|)) * X ^ (49 / 50 : ℝ) ≤
-        (2 * K₁ + 2 * K₂ * (2 + 100 * A)) * (N : ℝ) ^ (99 / 100 : ℝ) := by
+        (2 * K₁ + 2 * K₂ * (2 + A / ε)) * (N : ℝ) ^ (1 - κ) := by
     intro X hX1 hX2
     have hXpos : 0 < X := by linarith
-    have h1 : K₁ * X / (1 + |t|) ≤ 2 * K₁ * (N : ℝ) ^ (99 / 100 : ℝ) := by
+    have h1 : K₁ * X / (1 + |t|) ≤ 2 * K₁ * (N : ℝ) ^ (1 - κ) := by
       rw [div_le_iff₀ (by positivity)]
       calc K₁ * X ≤ K₁ * (2 * N) := by gcongr
-        _ = 2 * K₁ * ((N : ℝ) ^ (99 / 100 : ℝ) * (N : ℝ) ^ (1 / 100 : ℝ)) := by rw [hNN']; ring
-        _ ≤ 2 * K₁ * ((N : ℝ) ^ (99 / 100 : ℝ) * (1 + |t|)) := by gcongr; linarith
-        _ = 2 * K₁ * (N : ℝ) ^ (99 / 100 : ℝ) * (1 + |t|) := by ring
+        _ = 2 * K₁ * ((N : ℝ) ^ (1 - κ) * (N : ℝ) ^ κ) := by rw [hNN']; ring
+        _ ≤ 2 * K₁ * ((N : ℝ) ^ (1 - κ) * (1 + |t|)) := by gcongr; linarith
+        _ = 2 * K₁ * (N : ℝ) ^ (1 - κ) * (1 + |t|) := by ring
     have hX49 : X ^ (49 / 50 : ℝ) ≤ 2 * (N : ℝ) ^ (49 / 50 : ℝ) := by
       calc X ^ (49 / 50 : ℝ) ≤ (2 * (N : ℝ)) ^ (49 / 50 : ℝ) := Real.rpow_le_rpow hXpos.le hX2 (by norm_num)
         _ = 2 ^ (49 / 50 : ℝ) * (N : ℝ) ^ (49 / 50 : ℝ) := Real.mul_rpow (by norm_num) hNpos.le
@@ -625,11 +632,11 @@ theorem norm_sum_Ioc_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N 
       have := Real.log_nonneg (by linarith [abs_nonneg t] : (1 : ℝ) ≤ 1 + |t|)
       linarith
     have h2 : K₂ * (1 + Real.log (1 + |t|)) * X ^ (49 / 50 : ℝ) ≤
-        2 * K₂ * (2 + 100 * A) * (N : ℝ) ^ (99 / 100 : ℝ) := by
+        2 * K₂ * (2 + A / ε) * (N : ℝ) ^ (1 - κ) := by
       calc K₂ * (1 + Real.log (1 + |t|)) * X ^ (49 / 50 : ℝ)
-          ≤ K₂ * ((2 + 100 * A) * (N : ℝ) ^ (1 / 100 : ℝ)) * (2 * (N : ℝ) ^ (49 / 50 : ℝ)) := by gcongr
-        _ = 2 * K₂ * (2 + 100 * A) * ((N : ℝ) ^ (1 / 100 : ℝ) * (N : ℝ) ^ (49 / 50 : ℝ)) := by ring
-        _ = 2 * K₂ * (2 + 100 * A) * (N : ℝ) ^ (99 / 100 : ℝ) := by rw [hNN]
+          ≤ K₂ * ((2 + A / ε) * (N : ℝ) ^ ε) * (2 * (N : ℝ) ^ (49 / 50 : ℝ)) := by gcongr
+        _ = 2 * K₂ * (2 + A / ε) * ((N : ℝ) ^ ε * (N : ℝ) ^ (49 / 50 : ℝ)) := by ring
+        _ = 2 * K₂ * (2 + A / ε) * (N : ℝ) ^ (1 - κ) := by rw [hNN]
     linarith
   have hNm' : (N : ℝ) ≤ m := by exact_mod_cast hNm
   have hm2' : (m : ℝ) ≤ 2 * N := by exact_mod_cast hm2
@@ -637,11 +644,23 @@ theorem norm_sum_Ioc_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N 
   calc _ ≤ ‖∑ n ∈ Finset.Icc 1 ⌊(m : ℝ)⌋₊, (ArithmeticFunction.vonMangoldt n : ℂ) * (n : ℂ) ^ (-(t * I))‖ +
         ‖∑ n ∈ Finset.Icc 1 ⌊(N : ℝ)⌋₊, (ArithmeticFunction.vonMangoldt n : ℂ) * (n : ℂ) ^ (-(t * I))‖ :=
         norm_sub_le _ _
-    _ ≤ (2 * K₁ + 2 * K₂ * (2 + 100 * A)) * (N : ℝ) ^ (99 / 100 : ℝ) +
-        (2 * K₁ + 2 * K₂ * (2 + 100 * A)) * (N : ℝ) ^ (99 / 100 : ℝ) :=
+    _ ≤ (2 * K₁ + 2 * K₂ * (2 + A / ε)) * (N : ℝ) ^ (1 - κ) +
+        (2 * K₁ + 2 * K₂ * (2 + A / ε)) * (N : ℝ) ^ (1 - κ) :=
         add_le_add ((hb m (by linarith) t).trans (key m hNm' hm2'))
           ((hb N hN1 t).trans (key N le_rfl (by linarith)))
-    _ = 2 * (2 * K₁ + 2 * K₂ * (2 + 100 * A)) * (N : ℝ) ^ (99 / 100 : ℝ) := by ring
+    _ = 2 * (2 * K₁ + 2 * K₂ * (2 + A / ε)) * (N : ℝ) ^ (1 - κ) := by ring
+
+/-- **The twisted prime number theorem on `(N, m]`, `N ≤ m ≤ 2N`.** For every `A > 0` there is `C` with
+`|Σ_{N < n ≤ m} Λ(n)n^{−it}| ≤ C N^{99/100}` for all `N ≥ 2`, `N ≤ m ≤ 2N` and `N^{1/100} ≤ |t| ≤ N^A`:
+`norm_sum_Ioc_le_of` at `κ = 1/100`. -/
+theorem norm_sum_Ioc_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N : ℕ, 2 ≤ N → ∀ m : ℕ, N ≤ m →
+    m ≤ 2 * N → ∀ t : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ |t| → |t| ≤ (N : ℝ) ^ A →
+      ‖∑ n ∈ Finset.Ioc N m, (ArithmeticFunction.vonMangoldt n : ℂ) * (n : ℂ) ^ (-(t * I))‖ ≤
+        C * (N : ℝ) ^ (99 / 100 : ℝ) := by
+  obtain ⟨C, hC0, hC⟩ := norm_sum_Ioc_le_of (κ := 1 / 100) (by norm_num) hA
+  refine ⟨C, hC0, fun N hN m hNm hm2 t ht1 ht2 ↦ ?_⟩
+  have h := hC N hN m hNm hm2 t ht1 ht2
+  rwa [show (1 : ℝ) - 1 / 100 = 99 / 100 by norm_num] at h
 
 /-- **A twisted prime number theorem with a power saving.** There is `κ > 0` (`κ = 1/100`) such that for
 every `A > 0`, `|Σ_{N < n ≤ 2N} Λ(n)n^{−it}| ≤ C N^{1−κ}` for all large `N` and `N^κ ≤ |t| ≤ N^A`:
@@ -707,10 +726,10 @@ lemma exp_eq_cpow (t : ℝ) {j : ℕ} (hj : j ≠ 0) :
   push_cast
   ring
 
-/-- The prime powers: `Σ_{N < n ≤ m, n not prime} Λ(n) ≤ ψ(2N) − θ(2N) ≤ 16N^{99/100}` for `1 ≤ N ≤ m ≤ 2N`
-(Mathlib's `Chebyshev.psi_sub_theta_le`). -/
-lemma sum_not_prime_le {N m : ℕ} (hN : 1 ≤ N) (hm : m ≤ 2 * N) :
-    ∑ n ∈ Finset.Ioc N m with ¬ n.Prime, ArithmeticFunction.vonMangoldt n ≤ 16 * (N : ℝ) ^ (99 / 100 : ℝ) := by
+/-- The prime powers: `Σ_{N < n ≤ m, n not prime} Λ(n) ≤ ψ(2N) − θ(2N) ≤ 16N^e` for `1 ≤ N ≤ m ≤ 2N` and
+`e ≥ 3/4` (Mathlib's `Chebyshev.psi_sub_theta_le`). -/
+lemma sum_not_prime_le_rpow {N m : ℕ} (hN : 1 ≤ N) (hm : m ≤ 2 * N) {e : ℝ} (he : 3 / 4 ≤ e) :
+    ∑ n ∈ Finset.Ioc N m with ¬ n.Prime, ArithmeticFunction.vonMangoldt n ≤ 16 * (N : ℝ) ^ e := by
   have hNpos : (0 : ℝ) < N := by exact_mod_cast hN
   have hN1 : (1 : ℝ) ≤ N := by exact_mod_cast hN
   set x : ℝ := ((2 * N : ℕ) : ℝ) with hxdef
@@ -735,28 +754,33 @@ lemma sum_not_prime_le {N m : ℕ} (hN : 1 ≤ N) (hm : m ≤ 2 * N) :
         rw [show 2 * x ^ (1 / 2 : ℝ) * (4 * x ^ (1 / 4 : ℝ)) = 8 * (x ^ (1 / 2 : ℝ) * x ^ (1 / 4 : ℝ)) by ring,
           ← Real.rpow_add (by linarith)]
         norm_num
-    _ ≤ 8 * (2 * (N : ℝ) ^ (99 / 100 : ℝ)) := by
+    _ ≤ 8 * (2 * (N : ℝ) ^ e) := by
         have h2 : (2 : ℝ) ^ (3 / 4 : ℝ) ≤ 2 := by
           calc (2 : ℝ) ^ (3 / 4 : ℝ) ≤ 2 ^ (1 : ℝ) :=
                 Real.rpow_le_rpow_of_exponent_le (by norm_num) (by norm_num)
             _ = 2 := Real.rpow_one 2
-        have h3 : (N : ℝ) ^ (3 / 4 : ℝ) ≤ (N : ℝ) ^ (99 / 100 : ℝ) :=
-          Real.rpow_le_rpow_of_exponent_le hN1 (by norm_num)
-        have h4 : x ^ (3 / 4 : ℝ) ≤ 2 * (N : ℝ) ^ (99 / 100 : ℝ) := by
+        have h3 : (N : ℝ) ^ (3 / 4 : ℝ) ≤ (N : ℝ) ^ e := Real.rpow_le_rpow_of_exponent_le hN1 he
+        have h4 : x ^ (3 / 4 : ℝ) ≤ 2 * (N : ℝ) ^ e := by
           rw [hx, Real.mul_rpow (by norm_num) hNpos.le]
           exact mul_le_mul h2 h3 (by positivity) (by norm_num)
         linarith
-    _ = 16 * (N : ℝ) ^ (99 / 100 : ℝ) := by ring
+    _ = 16 * (N : ℝ) ^ e := by ring
 
-/-- **Primes in `(N, M]`, `M ≤ 2N`, twisted, with a power saving.** For every `A > 0` there is `C` with
-`|Σ_{N < p ≤ M} p^{−it}| ≤ C N^{99/100}` for all `N ≥ 2`, `N ≤ M ≤ 2N` and `N^{1/100} ≤ |t| ≤ N^A`, as the
-Dirichlet polynomial `DirMean.dp` of the primes with coefficient `1`. Abel summation (`norm_sum_mul_le`) with the
-weights `1/log n` over the partial sums of `Λ(p)p^{−it}`, which are those of `norm_sum_Ioc_le` up to the prime
-powers (`sum_not_prime_le`). -/
-theorem norm_dp_primes_Ioc_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N : ℕ, 2 ≤ N → ∀ M : ℕ, N ≤ M →
-    M ≤ 2 * N → ∀ t : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ |t| → |t| ≤ (N : ℝ) ^ A →
-      ‖DirMean.dp ((Finset.Ioc N M).filter Nat.Prime) (fun _ => 1) t‖ ≤ C * (N : ℝ) ^ (99 / 100 : ℝ) := by
-  obtain ⟨C, hC0, hC⟩ := norm_sum_Ioc_le hA
+/-- The prime powers: `Σ_{N < n ≤ m, n not prime} Λ(n) ≤ ψ(2N) − θ(2N) ≤ 16N^{99/100}` for `1 ≤ N ≤ m ≤ 2N`
+(`sum_not_prime_le_rpow`). -/
+lemma sum_not_prime_le {N m : ℕ} (hN : 1 ≤ N) (hm : m ≤ 2 * N) :
+    ∑ n ∈ Finset.Ioc N m with ¬ n.Prime, ArithmeticFunction.vonMangoldt n ≤ 16 * (N : ℝ) ^ (99 / 100 : ℝ) :=
+  sum_not_prime_le_rpow hN hm (by norm_num)
+
+/-- **Primes in `(N, M]`, `M ≤ 2N`, twisted, with a power saving, for a general exponent.** For `κ < 1/50` and
+`A > 0` there is `C` with `|Σ_{N < p ≤ M} p^{−it}| ≤ C N^{1−κ}` for all `N ≥ 2`, `N ≤ M ≤ 2N` and
+`N^κ ≤ |t| ≤ N^A`, as the Dirichlet polynomial `DirMean.dp` of the primes with coefficient `1`. Abel summation
+(`norm_sum_mul_le`) with the weights `1/log n` over the partial sums of `Λ(p)p^{−it}`, which are those of
+`norm_sum_Ioc_le_of` up to the prime powers (`sum_not_prime_le_rpow`, as `1 − κ > 3/4`). -/
+theorem norm_dp_primes_Ioc_le_of {κ A : ℝ} (hκ : κ < 1 / 50) (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N : ℕ, 2 ≤ N →
+    ∀ M : ℕ, N ≤ M → M ≤ 2 * N → ∀ t : ℝ, (N : ℝ) ^ κ ≤ |t| → |t| ≤ (N : ℝ) ^ A →
+      ‖DirMean.dp ((Finset.Ioc N M).filter Nat.Prime) (fun _ => 1) t‖ ≤ C * (N : ℝ) ^ (1 - κ) := by
+  obtain ⟨C, hC0, hC⟩ := norm_sum_Ioc_le_of hκ hA
   refine ⟨C + 16, by positivity, fun N hN' M hNM hM2 t ht1 ht2 ↦ ?_⟩
   set a : ℕ → ℂ := fun n ↦
     if n.Prime then (ArithmeticFunction.vonMangoldt n : ℂ) * (n : ℂ) ^ (-(t * I)) else 0 with hadef
@@ -773,7 +797,7 @@ theorem norm_dp_primes_Ioc_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ 
     · simp
   rw [hdp]
   have hpart : ∀ m, N ≤ m → m ≤ M →
-      ‖∑ n ∈ Finset.Ioc N m, a n‖ ≤ (C + 16) * (N : ℝ) ^ (99 / 100 : ℝ) := by
+      ‖∑ n ∈ Finset.Ioc N m, a n‖ ≤ (C + 16) * (N : ℝ) ^ (1 - κ) := by
     intro m hNm hm
     have e : ∑ n ∈ Finset.Ioc N m, a n =
         ∑ n ∈ Finset.Ioc N m, (ArithmeticFunction.vonMangoldt n : ℂ) * (n : ℂ) ^ (-(t * I)) -
@@ -786,9 +810,9 @@ theorem norm_dp_primes_Ioc_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ 
     rw [e]
     have h2 : ‖∑ n ∈ Finset.Ioc N m,
         (if n.Prime then 0 else (ArithmeticFunction.vonMangoldt n : ℂ) * (n : ℂ) ^ (-(t * I)))‖ ≤
-          16 * (N : ℝ) ^ (99 / 100 : ℝ) := by
+          16 * (N : ℝ) ^ (1 - κ) := by
       refine (norm_sum_le _ _).trans ?_
-      refine le_trans ?_ (sum_not_prime_le (by omega) (by omega : m ≤ 2 * N))
+      refine le_trans ?_ (sum_not_prime_le_rpow (by omega) (by omega : m ≤ 2 * N) (by linarith))
       rw [Finset.sum_filter]
       refine Finset.sum_le_sum fun n hn ↦ ?_
       have hn0 : 0 < n := by have := (Finset.mem_Ioc.1 hn).1; omega
@@ -798,9 +822,9 @@ theorem norm_dp_primes_Ioc_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ 
         rw [norm_mul, norm_natCast_cpow_of_pos hn0]
         simp [abs_of_nonneg ArithmeticFunction.vonMangoldt_nonneg]
     calc _ ≤ _ := norm_sub_le _ _
-      _ ≤ C * (N : ℝ) ^ (99 / 100 : ℝ) + 16 * (N : ℝ) ^ (99 / 100 : ℝ) :=
+      _ ≤ C * (N : ℝ) ^ (1 - κ) + 16 * (N : ℝ) ^ (1 - κ) :=
           add_le_add (hC N hN' m hNm (by omega) t ht1 ht2) h2
-      _ = (C + 16) * (N : ℝ) ^ (99 / 100 : ℝ) := by ring
+      _ = (C + 16) * (N : ℝ) ^ (1 - κ) := by ring
   have hlog : ∀ n : ℕ, 2 ≤ n → 0 < Real.log n := fun n hn ↦
     Real.log_pos (by exact_mod_cast (show 1 < n by omega))
   have hw : ∀ n, N < n → n ≤ M → w (n + 1) ≤ w n := by
@@ -823,9 +847,20 @@ theorem norm_dp_primes_Ioc_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ 
       exact he
     rw [div_le_one (by linarith)]
     exact h1
-  calc _ ≤ (C + 16) * (N : ℝ) ^ (99 / 100 : ℝ) * w (N + 1) := norm_sum_mul_le hNM hw hw0 hpart
-    _ ≤ (C + 16) * (N : ℝ) ^ (99 / 100 : ℝ) * 1 := by gcongr
-    _ = (C + 16) * (N : ℝ) ^ (99 / 100 : ℝ) := mul_one _
+  calc _ ≤ (C + 16) * (N : ℝ) ^ (1 - κ) * w (N + 1) := norm_sum_mul_le hNM hw hw0 hpart
+    _ ≤ (C + 16) * (N : ℝ) ^ (1 - κ) * 1 := by gcongr
+    _ = (C + 16) * (N : ℝ) ^ (1 - κ) := mul_one _
+
+/-- **Primes in `(N, M]`, `M ≤ 2N`, twisted, with a power saving.** For every `A > 0` there is `C` with
+`|Σ_{N < p ≤ M} p^{−it}| ≤ C N^{99/100}` for all `N ≥ 2`, `N ≤ M ≤ 2N` and `N^{1/100} ≤ |t| ≤ N^A`, as the
+Dirichlet polynomial `DirMean.dp` of the primes with coefficient `1`: `norm_dp_primes_Ioc_le_of` at `κ = 1/100`. -/
+theorem norm_dp_primes_Ioc_le {A : ℝ} (hA : 0 < A) : ∃ C : ℝ, 0 ≤ C ∧ ∀ N : ℕ, 2 ≤ N → ∀ M : ℕ, N ≤ M →
+    M ≤ 2 * N → ∀ t : ℝ, (N : ℝ) ^ (1 / 100 : ℝ) ≤ |t| → |t| ≤ (N : ℝ) ^ A →
+      ‖DirMean.dp ((Finset.Ioc N M).filter Nat.Prime) (fun _ => 1) t‖ ≤ C * (N : ℝ) ^ (99 / 100 : ℝ) := by
+  obtain ⟨C, hC0, hC⟩ := norm_dp_primes_Ioc_le_of (κ := 1 / 100) (by norm_num) hA
+  refine ⟨C, hC0, fun N hN M hNM hM2 t ht1 ht2 ↦ ?_⟩
+  have h := hC N hN M hNM hM2 t ht1 ht2
+  rwa [show (1 : ℝ) - 1 / 100 = 99 / 100 by norm_num] at h
 
 /-- **Primes in a dyadic interval, twisted, with a power saving.** There is `κ > 0` (`κ = 1/100`) such that for
 every `A > 0`, `|Σ_{N < p ≤ 2N} p^{−it}| ≤ C N^{1−κ}` for all large `N` and `N^κ ≤ |t| ≤ N^A`, as the Dirichlet
@@ -846,7 +881,9 @@ end ShortSieveTwist
 #print axioms ShortSieveTwist.verticalIntegral'_integrand_eq
 #print axioms ShortSieveTwist.smoothedSum_eq_verticalIntegral_add
 #print axioms ShortSieveTwist.norm_psi_twist_le
+#print axioms ShortSieveTwist.norm_sum_Ioc_le_of
 #print axioms ShortSieveTwist.norm_sum_Ioc_le
 #print axioms ShortSieveTwist.norm_sum_vonMangoldt_twist_le
+#print axioms ShortSieveTwist.norm_dp_primes_Ioc_le_of
 #print axioms ShortSieveTwist.norm_dp_primes_Ioc_le
 #print axioms ShortSieveTwist.norm_dp_primes_le
