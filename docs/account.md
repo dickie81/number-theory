@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 886 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 892 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -147,6 +147,40 @@ The deductions are stated for any input, against Mathlib's `ζ` and `LFunction`,
 | Petrow and Young's Weyl bound for every `L(s, χ)`, uniformly (`LinnikWeyl.PYWeyl`) | Weyl's bound for `ζ`, and Huxley's exponents above `5/6` for the characters | `LinnikWeylBridge.weylBound_of_PYWeyl`, `LinnikStairs7.charDensity_hy_0`, `LinnikStairs7.charDensity_hy_top` |
 | that RH fails | `ψ(x) − x = Ω±(√x)` | `HalfPlaneJoinsPNT.psiOmegaSqrt_of_not_RH` |
 | a Type II estimate on a window (`SieveRoute.TypeIIAt`) | Harman's comparison for the primes in a class mod `q` | `SieveProp6.prop6` |
+
+## Connections
+
+What the results give in other parts of number theory, and in physics. Every row is a theorem with no hypothesis,
+whose axioms are Lean's three; H is as above.
+
+| Connection | Lean | H |
+|---|---|---|
+| Algorithms: every proper subgroup of `(ℤ/qℤ)ˣ` misses a prime `p ≤ C(log q)^A`, `A > 12`, so these primes generate `(ℤ/qℤ)ˣ`. Under GRH this is E. Bach's bound, which makes G. L. Miller's primality test deterministic | `SmallPrimes.exists_prime_not_mem`, `SmallPrimes.closure_primes_eq_top` | yes |
+| Power residues: for every `k ≥ 2` dividing `p − 1`, a prime `ℓ ≤ C(log p)^A` that is not a `k`-th power mod `p` | `SmallPrimes.exists_prime_not_pow` | yes |
+| Class groups: Gauss's class number problem with an explicit bound, `\|D_K\| ≤ (320π e^{2·10²¹} h_K)⁴` for imaginary quadratic `K`, polynomial in `h_K` as under GRH | `ClassNumberBound.abs_discr_le` | yes |
+| Physics, crystals: `Σ_{n≥1} (−1)^n r₂(n) n^{−s} = −4(1 − 2^{1−s}) ζ(s) L(s, χ₋₄)`, holomorphic off `s = 1`. At `s = 1/2` it is `−M`, where `M ≈ 1.6155` is the Madelung constant of the square lattice: an ion of a two-dimensional ionic crystal has electrostatic energy `−Me²/a` | `Madelung.lseries_coeff`, `Madelung.differentiableOn_rhs` | no |
+| Physics, the primon gas: `Σ μ(n) n^{−β}` is the partition function of B. Julia's primon gas with the sign `(−1)^F` of D. Spector's fermion number. It converges for `β > Θ` and diverges for `β < Θ`, with `1/2 ≤ Θ ≤ 11/12`: past the bosonic gas's Hagedorn point `β = 1` | `MertensExponent.moebiusAbscissa_eq_Theta`, `PsiExponent.half_le_Theta`, `PsiExponent.Theta_le` | yes |
+| Noncommutative geometry: the least value `λ₁(a)` of Weil's form on supports `[−a, a]`, which A. Connes and C. Consani study, is positive for `a ≤ 1/12`, has a unique ground state for `2a < log 2` (the range of their archimedean positivity theorem), and is at most `Ke^{16a − 2πe^{2a}}` | `WeilForm.weilQg_ge_twentieth_all`, `WeilForm.groundState_unique_below_log2`, `WeilForm.lam_dexp` | no |
+
+Within reach, with no hypothesis, from results the library has:
+
+- **Short character sums**: `Σ_{n≤x} χ(n) = o(x)` uniformly for `x ≥ q^δ`, every `δ > 0`, where Burgess's method
+  needs `x ≥ q^{1/4+ε}`: Perron's formula with the Lindelöf bound on `Re s > 11/12` (`LinnikLindelof.lindelof`).
+- **Pell's equation**: the least solution of `x² − dy² = 1`, `d` squarefree, has `log(x₁ + y₁√d) ≪ √d log log d`:
+  `QuadClassNumber.regulator_mul_classNumber_le`, and `x₁ + y₁√d = ε^m` with `ε` the fundamental unit of `ℚ(√d)` and
+  `m` dividing 6.
+- **Primitive roots**: the least prime primitive root mod `p` is `≪_ε p^ε`, where Burgess's method gives `p^{1/4+ε}`
+  for the least primitive root: the characters of order dividing `p − 1` against the bound
+  `ψ(x, χ) ≪ log q · x^{11/12+η}`, uniform in `q` (`ChiUniform.psiChi_le_uniform`).
+- **Binary quadratic forms**: `2` is a cube mod a prime `p ≡ 1 (mod 3)` if and only if `p = x² + 27y²` (Gauss), from
+  cubic reciprocity (`Eis.cub_recip`) and its supplementary laws.
+- **Weil positivity past the prime 2**, to supports `2a < log 3`, beyond Connes and Consani's `log 2`. The module
+  PrimeRelax3, in the git history, proves it from 60 mode energies that arb computes, taken as a hypothesis; a
+  certificate that the kernel checks, as the Linnik sieve's is, would remove the hypothesis.
+- **Hyperbolic 3-space**: Kubota's `θ` (`Eis.kubotaTheta`) as an eigenfunction of the Laplacian at `s(2 − s) = 8/9`,
+  below the continuous spectrum `[1, ∞)`: a bound state of a free particle on the cubic metaplectic cover.
+- **The half-plane's `dh` column**: `dh` vanishes somewhere in `Re s > 1` (Davenport and Heilbronn), so a located zero
+  there would show in Lean that the half-plane needs the Euler product.
 
 ## The frontier
 

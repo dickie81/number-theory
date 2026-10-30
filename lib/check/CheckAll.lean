@@ -194,6 +194,9 @@ import ZetaHuxley
 import AlmostAllPrimes
 import ZetaGMDensity
 import BohrLandauCore
+import SmallPrimes
+import ClassNumberBound
+import Madelung
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -938,3 +941,13 @@ nonzero and automorphic on `Γ_2`. -/
 #print axioms Eis.fBound_sep
 #print axioms Eis.thetaL_ne_zero
 #print axioms Eis.isAut_thS_Gam2
+
+/- Bridges to other parts of number theory and to physics, each named in `formalisations/`: the small primes generate
+`(ℤ/qℤ)ˣ`, and the least `k`-th power non-residue, from the half-plane; Gauss's class number problem with an explicit
+bound; the Madelung constant of the square lattice, from Jacobi's two-square theorem. -/
+#print axioms SmallPrimes.exists_prime_not_mem
+#print axioms SmallPrimes.closure_primes_eq_top
+#print axioms SmallPrimes.exists_prime_not_pow
+#print axioms ClassNumberBound.abs_discr_le
+#print axioms Madelung.lseries_coeff
+#print axioms Madelung.differentiableOn_rhs

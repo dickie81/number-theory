@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 886 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 892 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 69 | 152 |
-| `lib/pnt` | 202 | 641 |
+| `lib/core` | 70 | 154 |
+| `lib/pnt` | 204 | 645 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
 
@@ -189,6 +189,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.rh_of_pairing_and_realRooted`: 1bu(ii) + item 6, assembled ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_D_and_realRooted`: Theorem 1bu(ii) + item 6 in the paper's own terms ([note](../formalisations/weil-positivity.md))
+
+#### `Madelung`: The Madelung constant of the square lattice
+
+- `Madelung.lseries_coeff`: The alternating lattice sum of the square lattice
+- `Madelung.differentiableOn_rhs`: The continuation
 
 #### `MertensOmega`: Mertens and Liouville: one-sided bounds give zero-free half-planes
 
@@ -412,6 +417,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ChiUniform.logDeriv_LFunction_right`: `‖L′/L(s, χ)‖ ≤ −ζ′/ζ(3/2)` on `Re s ≥ 3/2` (a step of `psiChi_le_uniform_of`).
 - `ChiUniform.psiChi_le_uniform_of`: `ψ(x, χ)` uniformly in the modulus, from the constants of `sum_le_uniform`
 - `ChiUniform.psiChi_le_uniform`: `ψ(x, χ)` uniformly in the modulus
+
+#### `ClassNumberBound`: Gauss's class number problem, with an explicit bound
+
+- `ClassNumberBound.abs_discr_le`: Gauss's class number problem, with an explicit bound
 
 #### `DetectEM`: Zero detection by Euler–Maclaurin, and primes in short intervals
 
@@ -1543,6 +1552,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveWeight.exists_mellin_bound`: The Mellin transform of `ψ_P`, uniformly in `P ≥ 4`
 - `SieveWeight.norm_Sw_wy_le`: Lemma 1 for the weights `ψ_P`, in `Λ` form, uniformly in `P ≥ 4`
 - `SieveWeight.norm_Sp_le`: Lemma 1 for primes *paper*
+
+#### `SmallPrimes`: The small primes generate the units mod `q`
+
+- `SmallPrimes.exists_prime_not_mem`: The least prime outside a proper subgroup
+- `SmallPrimes.closure_primes_eq_top`: The small primes generate `(ℤ/qℤ)ˣ`
+- `SmallPrimes.exists_prime_not_pow`: The least `k`-th power non-residue
 
 #### `SmoothPerron`: A smoothed Perron formula for a general Dirichlet series
 
