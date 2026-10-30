@@ -5,11 +5,12 @@
     python3 scripts/inventory.py --check   # exit 1 if docs/inventory.md is not what this script writes
     python3 scripts/inventory.py --json    # the inventory as JSON, on standard output
 
-The inventory lists the theorems whose axioms lib/check/CheckAll.lean (the library's final results) and
-lib/check/Check.lean (the papers' theorems) print, module by module: each with the headline of its docstring (its bold
-title, or else its first sentence), whether it is a paper's, and the note of formalisations/ that names it, if one does.
-It then lists the modules that neither Check nor CheckAll imports, directly or not, with their headline theorems,
-those whose docstring opens with a bold title. Modules, layers and imports are read as import_cone.py reads them.
+The inventory lists the theorems whose axioms lib/check/CheckAll.lean (the library's final results),
+lib/check/CheckZeta23.lean (those of the zeta23 layer, which CheckAll cannot import) and lib/check/Check.lean (the
+papers' theorems) print, module by module: each with the headline of its docstring (its bold title, or else its first
+sentence), whether it is a paper's, and the note of formalisations/ that names it, if one does. It then lists the
+modules that none of the three imports, directly or not, with their headline theorems, those whose docstring opens
+with a bold title. Modules, layers and imports are read as import_cone.py reads them.
 """
 import json
 import os
@@ -21,6 +22,7 @@ import import_cone  # noqa: E402
 
 ROOT = import_cone.ROOT
 OUT = os.path.join(ROOT, "docs", "inventory.md")
+CHECKS = ["Check", "CheckAll", "CheckZeta23"]
 DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|nonrec|unsafe|partial)\s+)*"
                   r"(theorem|lemma|def|abbrev|instance|structure|inductive|class)\s+([^\s:(\[{]+)")
 
@@ -100,15 +102,14 @@ def inventory():
     mods, imports = import_cone.sources()
     decls = {m: declarations(os.path.join(ROOT, p)) for m, p in mods.items()}
     where = {full: m for m, ds in decls.items() for full, *_ in ds}
-    check, named = printed("Check"), notes()
-    listed = printed("CheckAll") + [n for n in check if n not in set(printed("CheckAll"))]
-    check = set(check)
-    reached = import_cone.cone(imports, ["Check"]) | import_cone.cone(imports, ["CheckAll"])
+    check, named = set(printed("Check")), notes()
+    listed = sorted({n for c in CHECKS for n in printed(c)})
+    reached = import_cone.cone(imports, CHECKS)
     layer = {m: mods[m].split(os.sep)[1] for m in mods}
     results = {}
     missing = sorted(set(listed) - set(where))
     if missing:
-        sys.exit("Check or CheckAll prints names that no module declares: " + ", ".join(missing[:5]))
+        sys.exit("a check file prints names that no module declares: " + ", ".join(missing[:5]))
     for full in listed:
         results.setdefault(where[full], set()).add(full)
     entries = []
@@ -134,12 +135,13 @@ def markdown(entries):
     out = ["# Inventory of the library's results", "",
            "Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`",
            "rewrites it, and CI checks that it is current (`--check`).", "",
-           f"`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of {n_res} theorems: the library's final",
-           f"results and the papers' theorems, of which there are {n_paper}, marked *paper*. Each line gives a theorem's",
+           f"`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean` and `lib/check/Check.lean` print the axioms of {n_res}",
+           "theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot",
+           f"import) and the papers' theorems, of which there are {n_paper}, marked *paper*. Each line gives a theorem's",
            "name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.",
-           f"The last section lists the {len(outside)} modules that neither `Check` nor `CheckAll` imports, directly or",
-           "not, with their headline theorems (those whose docstring opens with a bold title).",
-           "", "| Layer | Modules with results | Results | Modules outside both | Their headline theorems |",
+           f"The last section lists the {len(outside)} modules that none of the three imports, directly or not, with their",
+           "headline theorems (those whose docstring opens with a bold title).",
+           "", "| Layer | Modules with results | Results | Modules outside them | Their headline theorems |",
            "|---|---|---|---|---|"]
     for d in import_cone.DIRS[:-1]:
         a = [e for e in inside if e["layer"] == d]
@@ -163,8 +165,8 @@ def markdown(entries):
                             (f" ([note](../formalisations/{r['note']}))" if r["note"] else "")
                     out.append(f"- `{r['name']}`" + (f": {r['headline']}" if r["headline"] else "") + marks)
 
-    section(inside, "The results of `CheckAll`")
-    section(outside, "Modules outside `Check` and `CheckAll`")
+    section(inside, "The results of `CheckAll`, `CheckZeta23` and `Check`")
+    section(outside, "Modules outside `Check`, `CheckAll` and `CheckZeta23`")
     return "\n".join(out) + "\n"
 
 

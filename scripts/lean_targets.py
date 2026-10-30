@@ -5,12 +5,14 @@
     python3 scripts/lean_targets.py --all  # every library of the lakefile
 
 A change to a module is validated by building the module and every module that imports it, directly or not; Lake
-builds their own imports. So the targets are `Check` (the papers' theorems) and `CheckAll` (every final theorem of
-the library), always, and, as `+Module`:
+builds their own imports. So the targets are `Check` (the papers' theorems), `CheckAll` (every final theorem of the
+library) and `CheckZeta23` (those of the zeta23 layer, which `CheckAll` cannot import), always, and, as `+Module`:
 - every module of `lib/` that the change adds or edits, the vendored libraries' included;
-- every module that imports one of these, or a module that the change deletes or renames.
+- every module that imports one of these, or a module that the change deletes or renames;
+- every library that the change adds to `lakefile.lean`.
 They are every library of the lakefile instead when `lean-toolchain` or `lake-manifest.json` changes, or
-`lakefile.lean` changes outside its module lists, since such a change reaches every module.
+`lakefile.lean` changes outside its module lists in another way than by adding a library, since such a change can
+reach every module.
 
 The import graph is read from the working tree, which should be at HEAD, as `import_cone.py` reads it, with the
 vendored libraries' modules under their hierarchical names.
@@ -25,7 +27,7 @@ import import_cone  # noqa: E402
 
 ROOT = import_cone.ROOT
 WHOLE = {"lean-toolchain", "lake-manifest.json"}
-ALWAYS = ["Check", "CheckAll"]
+ALWAYS = ["Check", "CheckAll", "CheckZeta23"]
 
 
 def graph():
@@ -59,13 +61,28 @@ def git(*args):
 
 def lakefile_settings(rev):
     """`lakefile.lean` at `rev` without its module lists, which `gen_lakefile.py` writes as `.one` rows under a
-    `/-- lib/<layer>: <n> modules. -/` line."""
+    `/-- lib/<layer>: <n> modules. -/` line, and without blank lines: its preamble, under the key None, and each
+    library's lines, from the docstring and attributes above its `lean_lib` line, under the library's name."""
     try:
         text = git("show", f"{rev}:lakefile.lean")
     except subprocess.CalledProcessError:
         return None
-    return [line for line in text.splitlines()
-            if not line.lstrip().startswith(".one ") and not re.fullmatch(r"/-- lib/\w+: \d+ modules\. -/", line)]
+    blocks, name, above = {None: []}, None, []
+    for line in text.splitlines():
+        if (not line.strip() or line.lstrip().startswith(".one ")
+                or re.fullmatch(r"/-- lib/\w+: \d+ modules\. -/", line)):
+            continue
+        m = re.match(r"lean_lib\s+(\S+)\s+where", line)
+        if m:
+            name = m.group(1)
+            blocks[name], above = above + [line], []
+        elif line.startswith(("/--", "@[")):
+            above.append(line)
+        else:
+            blocks[name] += above + [line]
+            above = []
+    blocks[name] += above
+    return blocks
 
 
 def libraries():
@@ -74,13 +91,17 @@ def libraries():
 
 
 def targets(base):
-    changed, whole = set(), False
+    changed, added, whole = set(), set(), False
     for line in git("diff", "--name-status", "--no-renames", base, "HEAD").splitlines():
         path = line.split("\t", 1)[1]
         if path in WHOLE:
             whole = True
         elif path == "lakefile.lean":
-            whole = whole or lakefile_settings(base) != lakefile_settings("HEAD")
+            old, new = lakefile_settings(base), lakefile_settings("HEAD")
+            if old is None or new is None or any(new.get(k) != v for k, v in old.items()):
+                whole = True
+            else:
+                added = set(new) - set(old)
         elif module_of(path):
             changed.add(module_of(path))
     if whole:
@@ -96,7 +117,7 @@ def targets(base):
             if m not in reached:
                 reached.add(m)
                 stack.append(m)
-    return ALWAYS + sorted("+" + m for m in reached if m in mods and m not in ALWAYS)
+    return ALWAYS + sorted(added - set(ALWAYS)) + sorted("+" + m for m in reached if m in mods and m not in ALWAYS)
 
 
 def main(argv):

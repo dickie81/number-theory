@@ -3,20 +3,21 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 703 theorems: the library's final
-results and the papers' theorems, of which there are 118, marked *paper*. Each line gives a theorem's
+`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean` and `lib/check/Check.lean` print the axioms of 728
+theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
+import) and the papers' theorems, of which there are 118, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 99 modules that neither `Check` nor `CheckAll` imports, directly or
-not, with their headline theorems (those whose docstring opens with a bold title).
+The last section lists the 92 modules that none of the three imports, directly or not, with their
+headline theorems (those whose docstring opens with a bold title).
 
-| Layer | Modules with results | Results | Modules outside both | Their headline theorems |
+| Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
 | `lib/pnt` | 217 | 695 | 1 | 0 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
-| `lib/zeta23` | 0 | 0 | 11 | 25 |
+| `lib/zeta23` | 7 | 25 | 4 | 0 |
 
-## The results of `CheckAll`
+## The results of `CheckAll`, `CheckZeta23` and `Check`
 
 ### `lib/core`
 
@@ -1397,7 +1398,55 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `ZetaKernel.norm_kz_le`: The kernel bound ([note](../formalisations/zeta-density.md))
 - `ZetaKernel.power_count_pts`: Large values of a power at well-spaced heights
 
-## Modules outside `Check` and `CheckAll`
+### `lib/zeta23`
+
+#### `BohrLandau`: Bohr and Landau's theorem in the library's zero family
+
+- `BohrLandau.tendsto_NX_div_pos`: For every `w > 0`, the proportion of zero pairs up to height `T` with `|β − ½| ≥ w` tends to `0`
+- `BohrLandau.tendsto_outside_div_pos`: The same in sphere form
+
+#### `CountCompare`: The two local zero counts compared
+
+- `CountCompare.local_count_le`: zeta23's local count from the library's zero weight, with the library's explicit constant
+
+#### `HybridCertificate`: The same-space hybrid certificate on zeta23's zero side, with the off-line term displayed
+
+- `HybridCert.cert_general`: The rank–trace certificate in units c
+- `HybridCert.cert_offline`: The certificate with the off-line pairs written out
+- `HybridCert.hybrid_cert`: The same-space hybrid certificate
+- `HybridCert.hybrid_cert_pairs`: The certificate on pair representatives
+- `HybridCert.hybrid_cert_of_offline`: The certificate with the off-line input displayed
+- `HybridCert.hybrid_cert_of_moments`: The off-line input split by order in η
+- `HybridCert.hybrid_cert_of_no_offline`: No off-line zeros
+- `HybridCert.hybrid_cert_eta_zero`: Consistency (η = 0)
+
+#### `ShellDensity`: For every `w > ¼`, almost every zero lies within `w` of the critical line, in Bohr-shell form
+
+- `ShellDensity.emBound_zeta23`: The Euler–Maclaurin bound at a zero
+- `ShellDensity.density_zeta23`: Zero density
+- `ShellDensity.Ncount_le_NX`: zeta23's zeros with `T < γ ≤ 2T` inject into the library's pairs up to height `2T`
+- `ShellDensity.NX_zero_ge`: Riemann–von Mangoldt in the library's family
+- `ShellDensity.tendsto_NX_div_quarter`: For every `w > ¼`, the proportion of pairs up to height `T` with `|β − ½| ≥ w` tends to `0`
+- `ShellDensity.tendsto_outside_div_quarter`: The same in sphere form
+- `ShellDensity.ncard_outside_le_unconditional`: The count
+
+#### `ShellSixth`: For every w > 1/6, almost every zero lies within w of the critical line
+
+- `ShellSixth.emApprox_zeta23`: The Euler–Maclaurin approximation of `ζ` by its partial sums
+- `ShellSixth.tendsto_NX_div_sixth`: For every `w > 1/6`, the proportion of zero pairs up to height `T` with `|β − ½| ≥ w` tends to `0`
+- `ShellSixth.tendsto_outside_div_sixth`: The same in sphere form
+
+#### `SlogZeta`
+
+- `SlogZeta.Slog_eventually`: `S(T) = O(log T)`, eventually
+- `SlogZeta.Slog_zeta`: `S(t) = O(log t)` on `t ≥ 14`
+- `SlogZeta.wall_law_zeta_S`: 1ca(i)–(iii) for ζ, with von Mangoldt's bound proved
+
+#### `ZeroWindow`: Bounded gaps between the ordinates of the zeros of `ζ`
+
+- `ZeroWindow.zero_in_window`: Bounded gaps between the zeros of `ζ`
+
+## Modules outside `Check`, `CheckAll` and `CheckZeta23`
 
 ### `lib/core`
 
@@ -2069,56 +2118,10 @@ not, with their headline theorems (those whose docstring opens with a bold title
 
 ### `lib/zeta23`
 
-#### `BohrLandau`: Bohr and Landau's theorem in the library's zero family
-
-- `BohrLandau.tendsto_NX_div_pos`: For every `w > 0`, the proportion of zero pairs up to height `T` with `|β − ½| ≥ w` tends to `0`
-- `BohrLandau.tendsto_outside_div_pos`: The same in sphere form
-
 #### `CoImportGamma`: The pnt layer and zeta23's Gamma facts co-import
 
 #### `CoImportMV`: The pnt layer and zeta23's mean-value module co-import
 
-#### `CountCompare`: The two local zero counts compared
-
-- `CountCompare.local_count_le`: zeta23's local count from the library's zero weight, with the library's explicit constant
-
 #### `Dictionary`: The zeta23 ↔ library dictionary
 
-#### `HybridCertificate`: The same-space hybrid certificate on zeta23's zero side, with the off-line term displayed
-
-- `HybridCert.cert_general`: The rank–trace certificate in units c
-- `HybridCert.cert_offline`: The certificate with the off-line pairs written out
-- `HybridCert.hybrid_cert`: The same-space hybrid certificate
-- `HybridCert.hybrid_cert_pairs`: The certificate on pair representatives
-- `HybridCert.hybrid_cert_of_offline`: The certificate with the off-line input displayed
-- `HybridCert.hybrid_cert_of_moments`: The off-line input split by order in η
-- `HybridCert.hybrid_cert_of_no_offline`: No off-line zeros
-- `HybridCert.hybrid_cert_eta_zero`: Consistency (η = 0)
-
 #### `HybridExamples`: Concrete instances of the hybrid certificate
-
-#### `ShellDensity`: For every `w > ¼`, almost every zero lies within `w` of the critical line, in Bohr-shell form
-
-- `ShellDensity.emBound_zeta23`: The Euler–Maclaurin bound at a zero
-- `ShellDensity.density_zeta23`: Zero density
-- `ShellDensity.Ncount_le_NX`: zeta23's zeros with `T < γ ≤ 2T` inject into the library's pairs up to height `2T`
-- `ShellDensity.NX_zero_ge`: Riemann–von Mangoldt in the library's family
-- `ShellDensity.tendsto_NX_div_quarter`: For every `w > ¼`, the proportion of pairs up to height `T` with `|β − ½| ≥ w` tends to `0`
-- `ShellDensity.tendsto_outside_div_quarter`: The same in sphere form
-- `ShellDensity.ncard_outside_le_unconditional`: The count
-
-#### `ShellSixth`: For every w > 1/6, almost every zero lies within w of the critical line
-
-- `ShellSixth.emApprox_zeta23`: The Euler–Maclaurin approximation of `ζ` by its partial sums
-- `ShellSixth.tendsto_NX_div_sixth`: For every `w > 1/6`, the proportion of zero pairs up to height `T` with `|β − ½| ≥ w` tends to `0`
-- `ShellSixth.tendsto_outside_div_sixth`: The same in sphere form
-
-#### `SlogZeta`
-
-- `SlogZeta.Slog_eventually`: `S(T) = O(log T)`, eventually
-- `SlogZeta.Slog_zeta`: `S(t) = O(log t)` on `t ≥ 14`
-- `SlogZeta.wall_law_zeta_S`: 1ca(i)–(iii) for ζ, with von Mangoldt's bound proved
-
-#### `ZeroWindow`: Bounded gaps between the ordinates of the zeros of `ζ`
-
-- `ZeroWindow.zero_in_window`: Bounded gaps between the zeros of `ζ`

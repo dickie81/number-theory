@@ -244,3 +244,8 @@ lean_lib Check where
 lean_lib CheckAll where
   srcDir := "lib/check"
   roots := #[`CheckAll]
+
+/-- The axioms of the zeta23 layer's results, which CheckAll cannot import; not a default target. -/
+lean_lib CheckZeta23 where
+  srcDir := "lib/check"
+  roots := #[`CheckZeta23]

@@ -50,15 +50,15 @@ adding, removing or renaming a module.
 
 | Command | What it checks |
 |---|---|
-| `python3 scripts/check_axioms.py` | After `lake build`: every theorem in `lib/check/Check.lean` depends only on `propext`, `Classical.choice` and `Quot.sound`. With `--all` it checks `CheckAll.lean` instead, which must be built first with `lake build CheckAll`. |
+| `python3 scripts/check_axioms.py` | After `lake build`: every theorem in `lib/check/Check.lean` depends only on `propext`, `Classical.choice` and `Quot.sound`. With `--all` it checks `CheckAll.lean` instead, which must be built first with `lake build CheckAll`, and with `--zeta23` `CheckZeta23.lean`, the axioms of the `lib/zeta23` layer's results, which `CheckAll` cannot import (`lake build CheckZeta23`). |
 | `python3 scripts/check_hygiene.py` | The library's own sources contain no `sorry`, `admit`, `native_decide`, declared `axiom`, `implemented_by`, `extern`, `unsafe`, `ofReduceBool`, `skipKernelTC` or `#exit`. |
 | `python3 scripts/gen_lakefile.py --check` | `lakefile.lean` matches `lib/`. |
-| `python3 scripts/inventory.py --check` | `docs/inventory.md` is what `scripts/inventory.py` writes from the sources: every theorem that `Check.lean` or `CheckAll.lean` prints, by module, with the headline of its docstring and its note in `formalisations/`, and the headline theorems of the modules that neither imports. Run `python3 scripts/inventory.py` after changing those theorems, their docstrings or the notes. |
-| `python3 scripts/zeros_page.py --check` | The site's page on the zeros (`site/zeros.html`) agrees with the Lean and the paper. The script reads each number the page shows from the statement of the theorem that proves it: the half-plane, the bounds for `Θ`, the density exponents, the Linnik exponents, the curve `g*` with the theorem that `counts_7d` glues in for each piece (checked against the piece's range and exponent), and the window condition `SieveCurveGlue.WindowOKHM` with its constants. Every theorem the page presents as a result must be printed by `Check.lean` or `CheckAll.lean`, and the window's exact ends, computed from the Lean's curve and condition, must be the paper's. The other numbers are read from the paper's sources. Without `--check` it writes the page, as `scripts/build_site.py` does. |
+| `python3 scripts/inventory.py --check` | `docs/inventory.md` is what `scripts/inventory.py` writes from the sources: every theorem that `Check.lean`, `CheckAll.lean` or `CheckZeta23.lean` prints, by module, with the headline of its docstring and its note in `formalisations/`, and the headline theorems of the modules that none of them imports. Run `python3 scripts/inventory.py` after changing those theorems, their docstrings or the notes. |
+| `python3 scripts/zeros_page.py --check` | The site's page on the zeros (`site/zeros.html`) agrees with the Lean and the paper. The script reads each number the page shows from the statement of the theorem that proves it: the half-plane, the bounds for `Θ`, the range of `S(t) = O(log t)`, the density exponents, the Linnik exponents, the curve `g*` with the theorem that `counts_7d` glues in for each piece (checked against the piece's range and exponent), and the window condition `SieveCurveGlue.WindowOKHM` with its constants. Every theorem the page presents as a result must be printed by `Check.lean`, `CheckAll.lean` or `CheckZeta23.lean`, and the window's exact ends, computed from the Lean's curve and condition, must be the paper's. The other numbers are read from the paper's sources. Without `--check` it writes the page, as `scripts/build_site.py` does. |
 | `python3 scripts/check_vendor.py` | `lib/vendor` holds the upstream files at the pinned commits with the port patches applied (needs network access). |
 | `python3 scripts/census.py MODULE CONSTANT` | After `lake build MODULE`: the library's modules whose declarations the proof of `CONSTANT` uses, with the count from each. |
 | `python3 tools/linnik/check_certificate.py` | The certificate's Lean files in `lib/pnt` are the ones `tools/linnik` generates, for `22000E` (about a minute and a half). |
-| `python3 scripts/lean_targets.py BASE` | Not a gate: the Lake targets that CI's Lean build builds for the changes from `BASE` to `HEAD`: `Check`, `CheckAll`, and every module of `lib/` that the changes add or edit, the vendored libraries' included, with every module that imports one of them or a deleted module, directly or not. A change to `lean-toolchain`, `lake-manifest.json` or `lakefile.lean` outside its module lists gives every library instead, as does `--all`. |
+| `python3 scripts/lean_targets.py BASE` | Not a gate: the Lake targets that CI's Lean build builds for the changes from `BASE` to `HEAD`: `Check`, `CheckAll`, `CheckZeta23`, and every module of `lib/` that the changes add or edit, the vendored libraries' included, with every module that imports one of them or a deleted module, directly or not, and every library that the changes add to `lakefile.lean`. Any other change to `lakefile.lean` outside its module lists, or a change to `lean-toolchain` or `lake-manifest.json`, gives every library instead, as does `--all`. |
 | `python3 scripts/import_cone.py [ROOT]` | Not a gate: the modules, source size and certificate part files in the import cone of `ROOT` (default `Check`, the default build), from the sources alone. `--why MODULE` prints the chain of imports that puts `MODULE` in the cone. |
 
 ## CI
@@ -76,14 +76,15 @@ adding, removing or renaming a module.
   The library's build directory, `.lake/build`, is restored from the GitHub Actions cache and saved back after
   every stage, including a stage that fails or is cancelled. Lake then rebuilds only what changed. A cold build
   takes longer than one job may run (six hours), so the build runs in up to three chained stages, each continuing
-  from the previous stage's cache. The stage that finishes the build runs `check_axioms.py` and
-  `check_axioms.py --all`.
+  from the previous stage's cache. The stage that finishes the build runs `check_axioms.py`,
+  `check_axioms.py --all` and `check_axioms.py --zeta23`.
   The build's targets are those of `scripts/lean_targets.py`, so that every change to the Lean is validated by
-  building what it can break: `Check`, `CheckAll`, every module that the change adds or edits, and every module that
-  imports one of them, directly or not. A pull request is compared with its base, a push to `main` with the commit it
-  replaced; a manual run, or a change to the toolchain, to Mathlib's pin or to the lakefile's settings, builds every
-  library. Modules that no target imports, among them the `lib/dh` and `lib/zeta23` layers, are built when a change
-  reaches them.
+  building what it can break: `Check`, `CheckAll`, `CheckZeta23`, every module that the change adds or edits, and
+  every module that imports one of them, directly or not. A pull request is compared with its base, a push to `main`
+  with the commit it replaced; a manual run, or a change to the toolchain, to Mathlib's pin or to the lakefile's
+  settings, builds every library, and a change that only adds a library to the lakefile builds that library as well.
+  Modules that no target imports, among them the `lib/dh` layer and four modules of `lib/zeta23`, are built when a
+  change reaches them.
 
 The job **CI passed** summarises the others: it passes when each passed or was skipped, and fails if any failed or
 was cancelled. It is the check that `main`'s branch protection requires, so a pull request merges only when CI is

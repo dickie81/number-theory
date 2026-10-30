@@ -9,7 +9,8 @@ The page, `site/zeros.html`, shows what the library's theorems say about the zer
 L-functions: where in the critical strip a zero can be, how many lie to the right of a line `Re s = σ`, and what that
 gives for Linnik's exponent. Each of its numbers that a theorem of the library states is read from that theorem's
 statement:
-- the half-plane, the band of `ζ`'s zeros, the bounds for `Θ` and the Korobov–Vinogradov region;
+- the half-plane, the band of `ζ`'s zeros, the bounds for `Θ`, the Korobov–Vinogradov region and the range of
+  `S(t) = O(log t)`;
 - the density exponents of `ζ`;
 - the curve `g*` of the Linnik paper (`SieveCurve7D.g7d`), with the theorem that counts each of its pieces, read
   from the proof of `counts_7d` and checked against the piece's range and exponent;
@@ -17,9 +18,9 @@ statement:
 - the sieve's window condition (`SieveCurveGlue.WindowOKHM`), with its constants, and the window and the exponent of
   `window_22000d`;
 - the bound of the certificate (`SieveDeep.totalD_lt_22000E`).
-Every theorem the page presents as a result must be printed by `lib/check/Check.lean` or `lib/check/CheckAll.lean`,
-whose axioms CI checks. The window's exact ends, computed here from the Lean's curve and condition, must contain the
-Lean's window.
+Every theorem the page presents as a result must be printed by one of the check files `lib/check/Check.lean`,
+`CheckAll.lean` and `CheckZeta23.lean`, whose axioms CI checks. The window's exact ends, computed here from the Lean's
+curve and condition, must contain the Lean's window.
 The numbers that are not theorems of the library (the literature's exponents and the paper's computations) are read
 from the paper's sources, and the numbers of the paper's sections and statements from its `.aux` files when it is
 compiled. A change to the Lean or to the paper that the page does not follow makes this script fail; CI runs it with
@@ -113,7 +114,7 @@ def definition(name):
 
 def printed():
     names = set()
-    for f in ("Check", "CheckAll"):
+    for f in inventory.CHECKS:
         text = open(os.path.join(ROOT, "lib", "check", f + ".lean"), encoding="utf-8").read()
         names |= set(re.findall(r"^#print axioms (\S+)", text, re.M))
     return names
@@ -268,9 +269,15 @@ def extract():
     th_lo = q(grab(r": (.+?) ≤ Theta$", statement(res("PsiExponent.half_le_Theta")), "the lower bound for Θ").group(1))
     kv = grab(r"Real\.log \|t\| \^ \(\((\d+) : ℝ\) / (\d+)\) \* Real\.log \(Real\.log \|t\|\) \^ \(\((\d+) : ℝ\) / (\d+)\)",
               statement(res("LandauKV.zeroFree_KV")), "the exponents of the Korobov–Vinogradov region")
-    bl = statement(res("BohrLandauCore.tendsto_NX_div_of_lower"))
-    need("c * (T * Real.log T) ≤ NX 0 T" in bl and "Tendsto (fun T => (NX w T : ℝ) / NX 0 T) atTop (𝓝 0)" in bl,
-         "BohrLandauCore.tendsto_NX_div_of_lower no longer says that almost every zero is near the line")
+    need(statement(res("BohrLandau.tendsto_NX_div_pos")) == "theorem tendsto_NX_div_pos {w : ℝ} (hw : 0 < w) : "
+         "Tendsto (fun T => (NX w T : ℝ) / NX 0 T) atTop (𝓝 0)",
+         "BohrLandau.tendsto_NX_div_pos no longer says, for every w > 0 and with no other hypothesis, that almost "
+         "every zero is near the line")
+    slog = grab(r"^theorem Slog_zeta : ∃ C : ℝ, 0 ≤ C ∧ ∀ t : ℝ, (\d+) ≤ t → \|Sz zetaOrd t\| ≤ C \* "
+                r"Real\.log t$", statement(res("SlogZeta.Slog_zeta")), "the range of S(t) = O(log t)").group(1)
+    need(statement(res("ZeroWindow.zero_in_window")) == "theorem zero_in_window : ∃ H T₀ : ℝ, 0 < H ∧ "
+         "∀ t : ℝ, T₀ ≤ t → ∃ p : PosZeroIdx, t ≤ zetaOrd p ∧ zetaOrd p < t + H",
+         "ZeroWindow.zero_in_window no longer says that the gaps between the ordinates of the zeros are bounded")
 
     # How many zeros of ζ lie right of σ.
     zeta = []
@@ -453,8 +460,7 @@ def extract():
     sha, day = commit()
     named, shown = results | cited, printed()
     missing = sorted(n for n in results if n not in shown)
-    need(not missing, "the page presents as results theorems that neither Check nor CheckAll prints: " +
-         ", ".join(missing))
+    need(not missing, "the page presents as results theorems that no check file prints: " + ", ".join(missing))
     data = {
         "hp": {"x": float(hp), "t": t(hp)}, "band": [{"x": float(x), "t": t(x)} for x in band],
         "theta": [{"x": float(x), "t": t(x)} for x in (th_lo, th_hi)],
@@ -481,7 +487,7 @@ def extract():
         "commit": f'<a href="{REPO}/tree/{sha}">{sha[:7]}</a>' if sha else "the working tree",
         "date": html.escape(day or ""),
         **{k: html.escape(v) for k, v in r.items()},
-        "theorems": theorem_rows(hp, band, th_lo, th_hi, zeta, c524, Lmain),
+        "theorems": theorem_rows(hp, band, th_lo, th_hi, slog, zeta, c524, Lmain),
     }
     for k in ("hp", "hpWidth", "bandLo", "bandHi", "thetaLo", "thetaHi", "kvA", "kvB", "nzeta", "npieces", "gmax",
               "gmaxLo", "gmaxHi", "cgl", "floor", "grh", "L", "Ldec", "u1", "u2", "exactLo", "exactHi", "nresults"):
@@ -489,7 +495,7 @@ def extract():
     return data, texts, named, results
 
 
-def theorem_rows(hp, band, th_lo, th_hi, zeta, c524, Lmain):
+def theorem_rows(hp, band, th_lo, th_hi, slog, zeta, c524, Lmain):
     """The rows of the page's table of theorems, as HTML."""
     m = lambda s: f'<span class="math">{s}</span>'  # noqa: E731
     rows = [
@@ -500,8 +506,11 @@ def theorem_rows(hp, band, th_lo, th_hi, zeta, c524, Lmain):
          f"{m('s')} = 1 aside)", ["Eis.LFunction_ne_zero_of_re_gt"]),
         (f"{t(th_lo)} ≤ {m('Θ')} ≤ {t(th_hi)}", ["PsiExponent.half_le_Theta", "PsiExponent.Theta_le"]),
         ("The Korobov–Vinogradov zero-free region", ["LandauKV.zeroFree_KV"]),
-        (f"For every {m('w')} &gt; 0, almost every zero lies within {m('w')} of {m('Re s')} = ½, given "
-         f"{m('N(T) ≥ cT log T')}", ["BohrLandauCore.tendsto_NX_div_of_lower"]),
+        (f"For every {m('w')} &gt; 0, almost every zero lies within {m('w')} of {m('Re s')} = ½",
+         ["BohrLandau.tendsto_NX_div_pos"]),
+        (f"{m('S(t) = O(log t)')} for {m('t')} ≥ {slog}", ["SlogZeta.Slog_zeta"]),
+        (f"There is an {m('H')} such that, for large {m('t')}, every window {m('[t, t + H)')} contains the ordinate of "
+         f"a zero of {m('ζ')}", ["ZeroWindow.zero_in_window"]),
     ]
     for z in zeta:
         a = f"({z['f']} + ε)" if z["shape"] == "eps" else f"{z['f']}(1+δ)"
@@ -548,9 +557,9 @@ def main(argv):
         return 0
     if "--check" in argv:
         print(f"zeros_page: the page agrees with the Lean and the paper: {len(results)} theorems named as results, all "
-              f"printed by Check or CheckAll; g*'s {len(data['g7d'])} pieces each counted by the theorem counts_7d "
-              f"glues in; the exact window [{texts['exactLo']}…, {texts['exactHi']}…] contains the Lean's, which fits "
-              f"down to L = {data['cert']['corners']}…")
+              f"printed by Check, CheckAll or CheckZeta23; g*'s {len(data['g7d'])} pieces each counted by the "
+              f"theorem counts_7d glues in; the exact window [{texts['exactLo']}…, {texts['exactHi']}…] contains the "
+              f"Lean's, which fits down to L = {data['cert']['corners']}…")
         return 0
     out = argv[0] if argv else OUT
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)

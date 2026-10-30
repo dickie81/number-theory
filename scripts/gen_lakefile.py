@@ -47,7 +47,9 @@ def lakefile():
                 f'  globs := {globs(ms)}', '']
     out += ["/-- The axioms of the papers' theorems; the default target. -/", '@[default_target]',
             'lean_lib Check where', '  srcDir := "lib/check"', '  roots := #[`Check]', '',
-            '/-- The axioms of every final theorem of the library; not a default target. -/', 'lean_lib CheckAll where', '  srcDir := "lib/check"', '  roots := #[`CheckAll]', '']
+            '/-- The axioms of every final theorem of the library; not a default target. -/', 'lean_lib CheckAll where', '  srcDir := "lib/check"', '  roots := #[`CheckAll]', '',
+            '/-- The axioms of the zeta23 layer\'s results, which CheckAll cannot import; not a default target. -/',
+            'lean_lib CheckZeta23 where', '  srcDir := "lib/check"', '  roots := #[`CheckZeta23]', '']
     return "\n".join(out)
 
 

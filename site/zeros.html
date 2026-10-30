@@ -70,7 +70,7 @@ code { font-family: var(--font-mono); font-size: 0.86em; color: var(--ink-2); ov
 a { color: var(--accent); }
 .plate { background: var(--surface); border-radius: 6px; box-shadow: 0 0 0 1px var(--ring); padding: 16px; display: grid;
   gap: 12px; min-width: 0; }
-.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 12px; }
 .fact { display: grid; gap: 4px; align-content: start; padding: 12px 14px; border-left: 2px solid var(--axis); min-width: 0; }
 .fact .claim { font-family: var(--font-display); font-size: 19px; line-height: 1.25; }
 .leans { display: grid; gap: 2px; margin-top: 4px; }
@@ -183,14 +183,23 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
           <div class="leans"><code>PsiExponent.<wbr>half_le_Theta</code><code>PsiExponent.<wbr>Theta_le</code></div></div>
         <div class="fact"><div class="claim">Almost every zero is near the line</div>
           <p class="note">For every <span class="math">w</span> &gt; 0, the share of zeros with <span class="math">|β − ½| ≥ w</span>
-            tends to 0, given <span class="math">N(T) ≥ cT log T</span>.</p>
-          <div class="leans"><code>BohrLandauCore.<wbr>tendsto_NX_div_of_lower</code></div></div>
+            tends to 0, as Bohr and Landau proved in 1914.</p>
+          <div class="leans"><code>BohrLandau.<wbr>tendsto_NX_div_pos</code></div></div>
+        <div class="fact"><div class="claim">The gaps between zeros are bounded</div>
+          <p class="note">There is an <span class="math">H</span> such that, for large <span class="math">t</span>, every window
+            <span class="math">[t, t + H)</span> contains the ordinate of a zero of <span class="math">ζ</span>. It follows from
+            <span class="math">S(t) = O(log t)</span>.</p>
+          <div class="leans"><code>ZeroWindow.<wbr>zero_in_window</code><code>SlogZeta.<wbr>Slog_zeta</code></div></div>
       </div>
       <p class="note">The library also proves the Korobov–Vinogradov zero-free region (<code>LandauKV.zeroFree_KV</code>), whose
         width shrinks like <span class="math">(log t)<sup>−{{kvA}}</sup>(log log t)<sup>−{{kvB}}</sup></span>, so at large
         heights the half-plane, of width {{hpWidth}} at every height, says more. The half-plane and the route to it are
         OpenAI's (2026); the library formalises them
-        (<a href="https://github.com/dickie81/number-theory/blob/main/formalisations/openai-half-plane.md">its note</a>).</p>
+        (<a href="https://github.com/dickie81/number-theory/blob/main/formalisations/openai-half-plane.md">its note</a>).
+        Bohr and Landau's theorem and the bounded gaps use
+        <a href="https://github.com/dickie81/number-theory/blob/main/lib/vendor/zeta23/README.md">zeta23</a>, a library
+        vendored from anthropics/formal-math: its Riemann–von Mangoldt formula, and the argument principle, Backlund's
+        bound and Stirling's formula behind it.</p>
     </div>
   </section>
 
@@ -300,8 +309,9 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
 {{theorems}}
         </tbody>
       </table></div>
-      <p class="note">Each of these theorems is printed by <code>lib/check/Check.lean</code> or <code>lib/check/CheckAll.lean</code>,
-        so CI checks that it depends only on <code>propext</code>, <code>Classical.choice</code> and <code>Quot.sound</code>.
+      <p class="note">Each of these theorems is printed by <code>lib/check/Check.lean</code>,
+        <code>lib/check/CheckAll.lean</code> or <code>lib/check/CheckZeta23.lean</code>, so CI checks that it depends only on
+        <code>propext</code>, <code>Classical.choice</code> and <code>Quot.sound</code>.
         The curve of Ingham, Guth–Maynard and Huxley is drawn for comparison only: the library proves its maximum, 30/13 at
         <span class="math">σ</span> = 0.7, as a constant exponent, not the curve, and better exponents are published for
         parts of the range.</p>
@@ -312,7 +322,8 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     <p>Written by <code>scripts/zeros_page.py</code> from the Lean sources at {{commit}} ({{date}}). Each number above that a
       theorem states is read from that theorem's statement; each piece of <span class="math">g*</span> is checked against the
       range and exponent of the theorem that counts it; and the script fails, and with it CI, if the Lean changes in a way
-      the page does not follow. <code>Check.lean</code> and <code>CheckAll.lean</code> print {{nresults}} theorems in all,
+      the page does not follow. <code>Check.lean</code>, <code>CheckAll.lean</code> and <code>CheckZeta23.lean</code> print
+      {{nresults}} theorems in all,
       listed in <a href="https://github.com/dickie81/number-theory/blob/main/docs/inventory.md">docs/inventory.md</a>.</p>
     <p>The window's ends are computed in the page from <span class="math">g*</span> and the condition of
       <code>SieveCurveGlue.WindowOKHM</code>, with its margins; at {{L}} they give the window [{{exactLo}}…, {{exactHi}}…],
