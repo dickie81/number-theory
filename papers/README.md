@@ -17,7 +17,7 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README,
 
 | Paper | Its theorem | Lean | State |
 |---|---|---|---|
-| [Linnik's exponent](linnik-exponent/README.md) ([PDF](https://dickie81.github.io/number-theory/linnik-exponent.pdf), [supplement](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf)) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{278/125}` | `Linnik22240R.linnik_22240r` | A full draft: every section is written; the bibliography is checked except Buchstab (1937), which is unverified |
+| [Linnik's exponent](linnik-exponent/README.md) ([PDF](https://dickie81.github.io/number-theory/linnik-exponent.pdf), [supplement](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf)) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{278/125}` | `Linnik22240R.linnik_22240r` at [`8ba053b`](https://github.com/dickie81/number-theory/tree/8ba053b75eb56a65dcfd1cf986ecb3d58c6945bb); the library now proves `11/5` (`Linnik22000E.linnik_22000e`) | A full draft: every section is written; the bibliography is checked except Buchstab (1937), which is unverified |
 
 ## Building
 
