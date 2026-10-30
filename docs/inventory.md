@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 100 modules that none of the three imports, directly or not, with their
+The last section lists the 101 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 9 | 45 |
+| `lib/pnt` | 223 | 726 | 10 | 54 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1786,6 +1786,18 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveTwist.norm_sum_mul_le`: Abel summation, as an inequality
 - `ShortSieveTwist.norm_dp_primes_Ioc_le`: Primes in `(N, M]`, `M ≤ 2N`, twisted, with a power saving
 - `ShortSieveTwist.norm_dp_primes_le`: Primes in a dyadic interval, twisted, with a power saving
+
+#### `ShortSieveTypeII`: Type II estimates for products of primes in boxes
+
+- `ShortSieveTypeII.norm_dp_boxWt_le`: The weighted prime polynomial, pointwise
+- `ShortSieveTypeII.moment_boxWt_hux`: Harman's moment lemma for the weighted primes, from the Halász–Montgomery count
+- `ShortSieveTypeII.moment_boxWt_mv`: Harman's moment lemma for the weighted primes, from the mean value theorem
+- `ShortSieveTypeII.moment_boxWt`: The weighted moment lemma for an admissible moment
+- `ShortSieveTypeII.integral_prod_le`: Hölder's inequality on an interval
+- `ShortSieveTypeII.dp_prods`: The product formula
+- `ShortSieveTypeII.integral_norm_dp_prods_le`: The middle range by Hölder
+- `ShortSieveTypeII.abs_card_tuples_sub_le`: Type II estimates for products of primes in boxes
+- `ShortSieveTypeII.abs_card_tuples_sub_le_three`: Three primes near `x^{1/3}` in intervals of length `x^{3/5}`
 
 ### `lib/dh`
 
