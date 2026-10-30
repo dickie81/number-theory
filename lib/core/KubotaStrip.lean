@@ -26,8 +26,6 @@ Stirling's formula.
 * **The strip bound** (**`poly_bound_FE`**, with `summable_dSer_abs`, `norm_mellin_dSer_le` and
   `norm_nested_sum_le`): under the hypotheses of `mellin_FE`,
   `|𝒥(s)/(Γ(s + 1/3)Γ(s + 2/3))| ≤ C(1 + |Im s|)^{12}` for `−5/2 ≤ Re s ≤ 2`.
-* **For the twisted `θ̄`** (**`twisted_theta_poly`**): the same bound with the data of
-  `twisted_theta_dbar`.
 -/
 
 open Real Set Filter MeasureTheory Complex NumberField Ideal Asymptotics

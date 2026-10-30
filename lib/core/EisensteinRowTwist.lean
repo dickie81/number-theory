@@ -5,13 +5,9 @@ import EisensteinQuadSupplement
 For the rows `k = u₀tk₀`, the companion paper's (6.17)
 writes the twist as "`\Psi_k(n)=\Psi_0(n)\prod_{p\in\mathcal P}\chi_p^{j_p}(n),`" with
 "`j_p\equiv v_p(k)+4v_p(g)\pmod6`", and Appendix A.2 expands `φ = χ_n(λ)²Ψ₀` modulo a fixed `L`. This file
-proves it in the form the translates use (**`twist_617`**): `φ(x) = χ_x(λ)²Ψ(x)`
-(`phiTw`) is `φ₀(x)·∏_{P ∣ tg}χ_P^{j_P}(x)·∏_{P ∣ k₀}χ_P(x)` with `jFix` and `chiPow`, where `φ₀` is
-periodic modulo `72`, depends on `k₀` only modulo `4`, has modulus at most `1` and vanishes at `0`.
-
-**`twist_617M`** is (6.17) for the characters `ξ`
-modulo any `md ≠ 0`, with `φ₀` periodic modulo every common multiple of `72` and `md`; `twist_617` is its
-case `md = 4`, `L = 72`.
+proves it (**`twist_617M`**) for the characters `ξ` modulo any `md ≠ 0`: `φ(x) = χ_x(λ)²Ψ(x)` (`phiTw`) is
+`φ₀(x)·∏_{P ∣ tg}χ_P^{j_P}(x)·∏_{P ∣ k₀}χ_P(x)` with `jFix` and `chiPow`, where `φ₀` is periodic modulo every
+common multiple of `72` and `md`, depends on `k₀` only modulo `4`, has modulus at most `1` and vanishes at `0`.
 
 * **The part prime to `6`** (`absNorm_span_δ3`, **`exists_S_decomp`**): every `z ≠ 0` is `ε·δ₃^a·2^b·z'` with
   `ε` a unit and `z'` primary and odd, by induction on the norm.
@@ -24,7 +20,7 @@ case `md = 4`, `L = 72`.
   prime to `6` of `z` and their multiplicities are those of `z'`; the product of `χ_P(x)` over them with
   multiplicity is `(x/z')₆`; and at `x` in no prime of `tg`,
   `∏_{P ∣ tg}χ_P^{j_P}(x) = (x/t')₆(x/g')₆⁴`.
-* **(6.17)** (`key_617`, **`twist_617`**): with `t = ε_tδ₃^{a}2^{b}t'` and `g = ε_gδ₃^{c}2^{d}g'`,
+* **(6.17)** (`key_617`, **`twist_617M`**): with `t = ε_tδ₃^{a}2^{b}t'` and `g = ε_gδ₃^{c}2^{d}g'`,
   `φ₀(x) = χ_x(λ)²·ξ(x)·(u₀ε_tδ₃^a2^b/x)₆·(ε_gδ₃^c2^d/x)₆⁴·R(t'k₀, x)` on primary `x` of norm prime to `6`.
   At `x` prime to `t'g'k₀`, sextic reciprocity turns `(t'/x)₆(k₀/x)₆(g'/x)₆⁴` into
   `R(t'k₀, x)·(x/t')₆(x/g')₆⁴(x/k₀)₆` (the fourth power of `R(g', x) = ±1` is `1`); at any other `x` a
@@ -378,7 +374,7 @@ theorem key_617 {εt εg : (𝓞 K)ˣ} {at' bt ag bg : ℕ} {t' g' k₀ x : 𝓞
 /-- **The companion paper's (6.17)**: for the twist `Ψ = Ψ_{u₀tk₀, g}` of the rows, with `ξ` a character
 modulo `md ≠ 0`, `φ(x) = χ_x(λ)²Ψ(x)` is `φ₀(x)·∏_{P ∣ tg}χ_P^{j_P}(x)·∏_{P ∣ k₀}χ_P(x)` with `j_P = jFix`,
 where `φ₀` is periodic modulo every common multiple of `72` and `md`, depends on `k₀` only modulo `4`, has
-modulus at most `1`, and vanishes at `0` (the statement at `md = 4` is `twist_617`). -/
+modulus at most `1`, and vanishes at `0`. -/
 theorem twist_617M {md : 𝓞 K} [NeZero md] (ξ : MulChar (𝓞 K ⧸ span {md}) ℂ) (u₀ : (𝓞 K)ˣ) {t g : 𝓞 K}
     (ht : t ≠ 0) (hg : g ≠ 0) :
     ∃ φ₀ : 𝓞 K → 𝓞 K → ℂ,

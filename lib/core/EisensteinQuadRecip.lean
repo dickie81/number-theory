@@ -16,13 +16,11 @@ of the release's companion paper (the proof of its Lemma 4.1).
   (`gaussSum_quadR_coords`).
 * **The first supplementary law** (`quadR_neg_one`): `4ρ_p(−1) = Φ(x, y)²`, from Mathlib's
   `gaussSum_sq`, `g(ρ_p, ψ_p)² = ρ_p(−1)·N(p)`.
-* **Quadratic reciprocity** (**`quad_recip`**, **`quad_recip_coords`**): for coprime primes `a, b ∤ 2`,
-  `G(ab) = ρ_a(b)ρ_b(a)·G(a)G(b)` with `G(c) = Σ_{x mod c} ψ_c(x²)`. In coordinates,
-  `ρ_a(b)ρ_b(a)·Φ(a)Φ(b) = 2Φ(ab)`, with `ab = (a₀b₀ − a₁b₁) + (a₀b₁ + a₁b₀ − a₁b₁)ω`.
-* **Sextic reciprocity** (**`sextic_recip`**, **`sextic_recip_coords`**): the sextic character
-  is `χ₆ = ρ·χ₃²` (`chi6_eq_quadR_mul`, from `chi6_sq` and `chi6_cube`). With the
-  cubic reciprocity, for coprime primary primes `a, b ∤ 6`, `χ_b(a) = ρ_a(b)ρ_b(a)·χ_a(b)` and
-  `χ_b(a)·Φ(a)Φ(b) = 2Φ(ab)·χ_a(b)`. This is the paper's `χ_b(a) = R(a, b)χ_a(b)`, with its
+* **Quadratic reciprocity** (**`quad_recip`**): for coprime primes `a, b ∤ 2`, `G(ab) = ρ_a(b)ρ_b(a)·G(a)G(b)` with
+  `G(c) = Σ_{x mod c} ψ_c(x²)`.
+* **Sextic reciprocity** (**`sextic_recip`**): the sextic character is `χ₆ = ρ·χ₃²` (`chi6_eq_quadR_mul`, from
+  `chi6_sq` and `chi6_cube`). With the cubic reciprocity, for coprime primary primes `a, b ∤ 6`,
+  `χ_b(a) = ρ_a(b)ρ_b(a)·χ_a(b)`. This is the paper's `χ_b(a) = R(a, b)χ_a(b)`, with its
   `R(a, b) = Γ_quad(ab)/(Γ_quad(a)Γ_quad(b))` and `Γ_quad = Φ/2`.
 -/
 

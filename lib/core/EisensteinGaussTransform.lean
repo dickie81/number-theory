@@ -10,8 +10,7 @@ with the trace character `ψ_c(x) = e(Re(2σ(x)/σ(δc)))`.
   `trPhase_mul_absNorm`: `N(c)·Re(2σ(x)/σ(δc)) = Re(2σ(xc̄)/σ(δ))`, the `ω`-coordinate of `xc̄`. So
   `ψ_c ≢ 1` for a non-unit `c` (`ψc_ne_one`), and at a prime `π` it is primitive (`ψQ_isPrimitive`).
 * **At a prime** (`inner_sum_prime`): `Σ_{r mod π} χ(r)ψ_π(rμ) = χ⁻¹(μ)·g(χ, ψ_π)` for `χ ≠ 1`, by
-  Mathlib's `gaussSum_mulShift_eq`. Hence **`eis_poisson_char`**:
-  `Σ_z χ(z)F(σz) = 2/(√3·N(π))·g(χ, ψ_π)·Σ_{μ∈ℤ[ω]} χ⁻¹(μ)·𝓕F(conj(2σ(μ)/σ(δπ)))`.
+  Mathlib's `gaussSum_mulShift_eq`.
 * **The Gauss transform** is a sum over any complete residue system (`gaussTr_eq_sum`), and
   **`eis_poisson_gaussTr`**: `Σ_z f(z)F(σz) = 2/(√3·N(c))·Σ_{μ∈ℤ[ω]} G_c(f, μ)·𝓕F(conj(2σ(μ)/σ(δc)))`.
 * **Chinese remainders** (`crt_rep_bijective`): for coprime `a, b`, the elements `b·r + a·s` run over

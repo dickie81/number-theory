@@ -13,7 +13,7 @@ set of primes `p` with `x^{a/DEN} ≤ p < x^{(a + w)/DEN}`, and `SB x a w` the s
 * `shareBox`: **the share of a box.** If the intervals' lower ends are positive, the box fits
   (`s + t + W ≤ DEN`, with `s` the sum of the lower ends but the last, `t` the last, `W` the widths' sum), and
   `B ≥ (omKw s t W w_last/K)·∏_{t < m} trB(a_t, w_t)·exB(a_last, w_last)`, then for every `δ > 0`, eventually
-  `SB x a w ≤ (B + δ)·x/log x`. The proof is that of `SieveRough.share6`, for any number of intervals.
+  `SB x a w ≤ (B + δ)·x/log x`.
 
 The file imports `SieveRough.lean`.
 -/

@@ -3,9 +3,8 @@ import HalfPlaneTwistMean
 /-!
 # Every real Dirichlet L-function is zero-free on `Re s > 11/12`
 
-* **Real characters in `ℤ`** (`toInt`, `isQuadratic_of_im`): a complex Dirichlet character with
-  real values takes only the values `0` and `±1`, and is the image of a character with values in
-  `ℤ`.
+* **Real characters in `ℤ`** (`toInt`): a quadratic complex Dirichlet character, one with values `0`
+  and `±1`, is the image of a character with values in `ℤ`.
 * **Conductors from the unit kernel** (`isPrimitive_iff_of_ker`): two characters mod `q`, with
   values in any rings, that take the value `1` at the same units factor through the same levels
   (Mathlib's `factorsThrough_iff_ker_unitsMap`), so one is primitive if and only if the other is.
@@ -29,13 +28,10 @@ import HalfPlaneTwistMean
   `LFunction_changeLevel`, `L(s, χ') = L(s, χ)·∏_{p ∣ 6q}(1 − χ(p)p^{−s})`, returns to `L(s, χ)`. If
   `χ'χ₋₃ = 1`, `χ'` is the lift of `χ₋₃`; the conductors give `q = 3`, and `χ = χ₋₃`
   (`LFunction_eq_chi3`), whose half-plane is `ne_zero_of_re_gt_eleven_twelfths`.
-* **Every real character** (`LFunction_ne_zero_of_isQuadratic`, `LFunction_ne_zero_of_real`):
-  through Mathlib's `primitiveCharacter`, with the Euler factors `1 − ψ(p)p^{−s}` nonzero for
-  `Re s > 0` (`one_sub_mul_cpow_ne_zero`); the trivial character, away from `s = 1`, is
-  `ζ` times such factors (Mathlib's `LFunctionTrivChar_eq_mul_riemannZeta`).
-* **The release's `SiegelZeros.lean` statements** (`dirichletRealZeroBound`,
-  `exists_absolute_real_zero_gap`), with `c = (log 3)/12`: a real zero `β ∈ (0, 1)` has `β ≤ 11/12`,
-  and `log q ≥ log 3`.
+* **Every real character** (`LFunction_ne_zero_of_isQuadratic`): through Mathlib's
+  `primitiveCharacter`, with the Euler factors `1 − ψ(p)p^{−s}` nonzero for `Re s > 0`
+  (`one_sub_mul_cpow_ne_zero`); the trivial character, away from `s = 1`, is `ζ` times such factors
+  (Mathlib's `LFunctionTrivChar_eq_mul_riemannZeta`).
 -/
 
 open Complex DirichletCharacter

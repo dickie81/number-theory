@@ -34,8 +34,8 @@ $\NK(\ell)X/\NK(c)^2$.`" This file proves these steps for `𝒥(s)`, with the bo
   `Re s = 2` is the sum over the cusp terms and the coefficients `m` of `d(m)φ(m)N(c)x_m^{−2}·2πV^♯(x_m²Z/(4N(c)²))`.
   This holds for every smooth weight supported in `[α, β] ⊂ (0, ∞)` whose first `14` derivatives are bounded.
 * **For the twisted `θ̄`** (**`twisted_theta_voronoi_of`**): the identity for any data given with
-  the `∂_{z̄}` identity. The form at the data of `twisted_theta_dbar` is the case of `KubotaUniform`'s
-  `twisted_theta_voronoi_unif` with the data taken at the class of `∏_{P∈A}π_P`.
+  the `∂_{z̄}` identity. `KubotaUniform`'s `twisted_theta_voronoi_unif` is its case with the data taken at
+  the class of `∏_{P∈A}π_P`.
 -/
 
 open Real Set Filter MeasureTheory Complex NumberField Ideal Asymptotics
@@ -705,8 +705,8 @@ theorem voronoi_FE {ι κ : Type*} (S : Finset ι) (T : Finset κ) {Ka Ca Cc : �
 
 open Classical in
 /-- **The Voronoi-type identity from the `∂_{z̄}` identity**: the identity for the
-twisted `θ̄`, for data `(D, C₀, d_H, y)` given with the identity of `twisted_theta_dbar` at every
-height, rather than chosen by it. -/
+twisted `θ̄`, for any data `(D, C₀, d_H, y)` given with the `∂_{z̄}` identity (`twisted_theta_dbar_of`) at
+every height. -/
 theorem twisted_theta_voronoi_of {τ : 𝓞 K → ℂ} {Kc : ℝ} (hτ : ThetaSupp Kc τ) {L : 𝓞 K} (hL : L ≠ 0)
     (φ₀ : 𝓞 K → ℂ) (hφ : ∀ z u, φ₀ (z + L * u) = φ₀ z) (Ps : Finset Pr) (j : Pr → ℕ)
     (D : (𝓞 K ⧸ span {L}) → Finset Pr → 𝓞 K) (C₀ : (𝓞 K ⧸ span {L}) → Finset Pr → ℂ)

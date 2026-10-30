@@ -1,29 +1,14 @@
 /-
-# Linnik's theorem by the sieve route, under the refined certificate
+# Linnik's theorem by the sieve route: the small moduli
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statements. The route and the grid are as in `SieveQ` (`RouteOK`, `GridOK` and `Fits`), and the decomposition's
-rule (`SieveCert.Rule`) splits and decomposes a box only when `limOK` passes, or the bilinear Type I test with no
-boundary term does (`RuleIB`), with the test's exponent the route's (`IBFits`); `total2` is the refined certificate's
-total under the rule (`SieveCert.total2R`).
+Plain statement (`route_of_large`). For `L ≥ 0`, if for large `q` every unit `a` mod `q` has a prime `p ≡ a (mod q)`
+with `q^L < p ≤ 2q^L`, there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime
+`p ≡ a (mod q)` with `p ≤ K·q^L`. For the finitely many smaller moduli, Mathlib's
+`Nat.forall_exists_prime_gt_and_modEq` (Dirichlet's theorem) gives the primes.
 
-* `route_of_large`: for `L ≥ 0`, if for large `q` every unit `a` mod `q` has a prime `p ≡ a (mod q)` with
-  `q^L < p ≤ 2q^L`, there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime
-  `p ≡ a (mod q)` with `p ≤ K·q^L`.
-* `linnik_large2`: given the route's Type II estimate (`hII`) and the refined certificate's total `total2/K ≤ c` in the
-  reals for some `c < 1` (`htot`), there is `q₀` such that for `q ≥ 1` with `q ≥ q₀` and `a` a unit mod `q` there is
-  a prime `p ≡ a (mod q)` with `q^L < p ≤ 2q^L`.
-* `linnik_route2`: given `hII` and `htot`, there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there
-  is a prime `p ≡ a (mod q)` with `p ≤ K·q^L`; `linnik_route_lt2`: the same for `total2 < K`.
-
-The proof is `SieveMain.linnik_large_of`'s, with `SieveBuch.Par.decompk` (the decomposition with the kept parts) for
-`SieveBuch.Par.decomp`, `SieveKeptLeaf.leaves_ev2` (with the kept leaves) for `SieveQ.leaves_ev`,
-`SieveDrop2.drop_ev2` (the dropped terms less the kept parts) for `SieveDrop.drop_ev_of`, and the decomposition's
-constant `Ck = 1 + n(1 + n(ec2 + 2 + 3n))` for `Cdec`; `route_of_large` is `SieveMain.linnik_route_of`'s step
-for the small moduli (Mathlib's `Nat.forall_exists_prime_gt_and_modEq`, Dirichlet's theorem).
-
-The file imports `SieveDrop2.lean`.
+The file imports `SieveMain.lean`.
 -/
 import SieveMain
 

@@ -2,19 +2,16 @@ import Mathlib
 import T1bt
 import Exterior
 
-/-! # §11 roadmap, item 1: the target stated, and the reduction to RH proved
+/-! # §11 roadmap, item 1: the objects stated, and the reduction to RH proved
 
 **(i) The objects, prime side only.** `weilQ a g` is Theorem 1bn(i)'s true form
 `Q(g) = 2ĝ(i/2)² + (ψ(¼) − log π)‖g‖² + ∫₀^∞ [f(0) − f(u)] e^{u/2}/sinh u du − 2Σ Λ(n)n^{−1/2} f(log n)`
 (`f` the autocorrelation) on real even probes supported in `[−a, a]`, `δ = 2a`: no zero of `ζ`
 enters. `IsGroundState a g` is its normalised minimiser. Riemann's `Ξ(t) = ξ(½ + it)` is built from
-Mathlib's `completedRiemannZeta₀`. Item 1's (a) is `HypD` (Hypothesis D of Theorem 1bu(ii): below
-`T_D` the zero multisets of `ĝ₁` and `Ξ` coincide, as analytic orders) and (b) is `RealRooted`.
+Mathlib's `completedRiemannZeta₀`. Item 1's (b) is `RealRooted`; its (a), Hypothesis D of Theorem 1bu(ii)
+(below `T_D` the zero multisets of `ĝ₁` and `Ξ` coincide, as analytic orders), is not stated here.
 
 **(ii) The reductions, proved.**
-* `zeros_on_line_below`: D at one support plus real-rootedness there puts every nontrivial zero of
-  `riemannZeta` with `|t_ρ| < T_D` on the critical line (item 5's finite advance). Only the
-  inclusion "every zero of `Ξ` below `T_D` is a zero of `ĝ₁`" is used.
 * `rh_of_realRooted_limit`: real-rooted entire functions whose rescalings converge locally uniformly
   to `Ξ` give Mathlib's `RiemannHypothesis` (item 6's step). The Hurwitz lemma it needs is
   proved here from the maximum modulus principle, on any open set and for any closed target set
@@ -131,7 +128,7 @@ theorem xi_two_ne_zero : xi 2 ≠ 0 := by
   have hπ : (π : ℂ) ≠ 0 := ofReal_ne_zero.2 Real.pi_ne_zero
   exact (div_ne_zero (pow_ne_zero 2 hπ) (by norm_num : (6 : ℂ) ≠ 0)) hz
 
-/-! ### Item 1's (a) and (b) as propositions -/
+/-! ### Item 1's (b) as a proposition -/
 
 /-- **Real-rootedness** (item 1(b), item 6): every zero of `ĝ` is real. -/
 def RealRooted (a : ℝ) (g : ℝ → ℝ) : Prop := ∀ z : ℂ, ghatC g a z = 0 → z.im = 0

@@ -3,9 +3,9 @@ import KaiserPrefactor
 
 /-! # The prefactor with the zeros split by height
 
-`lam_le_kappa` weights every zero `τ` by one bound `κ ≥ e^{2a|Im τ|}`, and without a zero-free
-region the only uniform choice is `κ = eᵃ`. A zero-free region that shrinks with the height, such as
-Korobov–Vinogradov's, gives a better weight only below a height `T`. This file splits the zeros there.
+If every zero `τ` is weighted by one bound `κ ≥ e^{2a|Im τ|}`, then without a zero-free region the only uniform
+choice is `κ = eᵃ`. A zero-free region that shrinks with the height, such as Korobov–Vinogradov's, gives a better
+weight only below a height `T`. This file splits the zeros there.
 
 * **Far zeros barely see the window** (`Vz_le_int`, `sum_high_le`). For `|Re τ| > T ≥ 2` and `|x| ≤ T/2`,
   the Poisson pair satisfies `V_τ(x) ≤ (45/2)∫ g_T V_τ`, with `g_T(u) = 1/u²` on `|u| ≥ T/2`. Summing over far

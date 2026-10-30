@@ -1,14 +1,14 @@
 /-
-# The density step from Chen–Gupta–Li's Proposition 3.1, `7/3 + 1/2000` on `[5/7, 16/21]`
+# The density step from Chen–Gupta–Li's Proposition 3.1, with parameters
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statement (`charDensity_cgl`). Assume `LinnikCGLLV.CGLProp31`. There is `C ≥ 0` such that for every `q ≥ 1`,
-`5/7 ≤ σ ≤ 16/21` and `T ≥ 2`, at most `C(qT)^{(7/3+1/2000)(1−σ)}(log qT)^{10}` characters mod `q` have a zero of
-`L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`.
+Plain statement (`charDensity_cglGen`). Assume `LinnikCGLLV.CGLProp31`. For parameters with `ParC.Good` there is
+`C ≥ 0` such that for every `q ≥ 1`, `lo ≤ σ ≤ hi` and `T ≥ 2`, at most `C(qT)^{A(1−σ)}(log qT)^{10}` characters mod
+`q` have a zero of `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`.
 
-This is the step (`LinnikHuxStep`) with Chen–Gupta–Li's estimate in place of Huxley's, at `parHux73`'s
-parameters on `[5/7, 16/21]`. The step uses the estimate only at thresholds `N^σ/Z` with `5/7 ≤ σ ≤ 16/21` and
+This is the step (`LinnikHuxStep`) with Chen–Gupta–Li's estimate in place of Huxley's, on a range with
+`5/7 ≤ lo` and `hi ≤ 4/5`. The step uses the estimate only at thresholds `N^σ/Z` with `lo ≤ σ ≤ hi` and
 `Z ≤ N^{1/70}`, inside `[N^{7/10}, N^{4/5}]`, where `LinnikCGLLV.lv_range` gives it from Proposition 3.1.
 
 * `block_bin_cgl`: one dyadic block and one bin of the polynomial class. The power `F^m` normalised at `σ_b`
@@ -25,12 +25,10 @@ parameters on `[5/7, 16/21]`. The step uses the estimate only at thresholds `N^�
 * `count_cgl_at`, `eventually_cgl`, `count_cgl`: the range `[lo, hi]` at one large `Q`, then for every `q` and
   `T ≥ 2`, with `cgl_shift` at `ε = e/400`, the divisor bound `τ₀ = C(ε_d)Q^{2ε_d}`, `ε_d = e/(1600M)`, and
   `K_T = ⌈log 8Q³⌉ + 1` terms of the Taylor series.
-* `charDensity_cglGen`, `parCGL`, `parCGL_good`, `charDensity_cgl`: the density estimate, at `parHux73`'s values on
-  `[5/7, 16/21]`, with `e = εs`.
+* `charDensity_cglGen`: the density estimate, for parameters with `ParC.Good`.
 
 The step's internal `ε` is a field of the parameters, `ParC.e`, and `ParC.Good` asks `0 < e ≤ 1/100000`. The proofs
-use only those two facts of it, so the step holds at every such `e`; `parCGL` takes `e = εs`
-(`LinnikHuxStep.εs = 1/100000`). `LinnikCGLDensity` takes `e` to `0`.
+use only those two facts of it, so the step holds at every such `e`; `LinnikCGLDensity` takes `e` to `0`.
 
 The file imports `LinnikCGLLV.lean` and `LinnikHuxStep.lean`.
 -/

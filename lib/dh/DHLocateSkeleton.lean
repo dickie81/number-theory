@@ -16,9 +16,8 @@ zero (`exists_zero_of_bounds`).
 **Decomposition** (`dhEM_eq`): `dhEM M K = a(1)·fEM M K`, `fEM = DEM + GEM`, with `u = 1, κ, −κ, −1`,
 `DEM M s = Σ_{m<M} Σ_j u(j)(5m+j)^{-s}` (the Dirichlet polynomial over `n < 5M`) and
 `GEM M K s = Σ_j u(j)(5M+j)^{-s} Q_{M+j/5}(s)`,
-`Q_x(s) = x/(s−1) + 1/2 + Σ_{k<K} B_{2k+2}/(2k+2)! · s(s+1)⋯(s+2k)/x^{2k+1}` (`QEM`; for `K = 12` with
-rational coefficients in `QEM_twelve`; `5^{-s} EM(j/5) = Σ_m (5m+j)^{-s} + (100+j)^{-s} Q` is
-`EMmain_explicit`; `B₂, …, B₂₄` are `bernoulli_vals`, by Mathlib's recursion for `bernoulli'`).
+`Q_x(s) = x/(s−1) + 1/2 + Σ_{k<K} B_{2k+2}/(2k+2)! · s(s+1)⋯(s+2k)/x^{2k+1}` (`QEM`; `B₂, …, B₂₄` are
+computed as rationals by Mathlib's recursion for `bernoulli'`).
 
 **The second-derivative bound: termwise for `DEM`, Cauchy for `GEM`.** `(n^{-s})″ = log²n·n^{-s}`
 gives `‖DEM″‖ ≤ D2sum(1597/2000, 20) ≤ 36` (true value 34.003; `D2sum_le`), and Cauchy's estimate
@@ -30,19 +29,19 @@ above the admissible `m₂ < 124`; a termwise bound for `GEM″` needs `(s)_n″
 about 5 of a slack of ~80. The termwise `D2sum` is far above the true `sup ‖fEM″‖ ≈ 0.75`, but the
 margin absorbs it: `m₂ r² = 4.26·10⁻³` against `|fEM′(c)| r = 1.256·10⁻²`.
 
-**Proved numeric inputs.** Euler–Maclaurin error on the ball `‖dh − dhEM 20 12‖ ≤ ‖a(1)‖·16·10⁻⁶
-≤ 6·10⁻⁵` (`norm_dh_sub_dhEM_le_ball`, `norm_dh_sub_dhEM_le_ball'`; true bound 1.482·10⁻⁵ per unit
-of `a(1)`), from the box `1597/2000 ≤ Re ≤ 1637/2000`, `|Im| ≤ 857093/10000`, `B = 34·10⁴⁵`
+**Proved numeric inputs.** Euler–Maclaurin error on the ball `‖dh − dhEM 20 12‖ ≤ ‖a(1)‖·16·10⁻⁶`
+(`norm_dh_sub_dhEM_le_ball`; true bound 1.482·10⁻⁵ per unit of `a(1)`), from the box
+`1597/2000 ≤ Re ≤ 1637/2000`, `|Im| ≤ 857093/10000`, `B = 34·10⁴⁵`
 (`prod_box_eq`: `Π_{i<24}((1637/2000 + i)² + (857093/10000)²) = 1.15358…·10⁹³` exactly, `prod_box_le`),
 `5^{−1597/2000} ≤ 0.2805` (`five_rpow_le`), `(20 + j/5)^{−47597/2000} ≤ 8.8246, 6.9807, 5.5348, 4.3982
 ·10⁻³²` (`x1_rpow_le` … `x4_rpow_le`), `(π²/3)/(2π)²⁴ ≤ 1/(3·2²⁴·3.141592²²)` (`pi_const_le`),
-`‖a(1)‖ = ‖a(4)‖ ≤ 3.7014`, `‖a(2)‖ = ‖a(3)‖ = κ‖a(1)‖ ≤ 1.0515` (`norm_aDH_le`), `κ ≤ 0.28408`.
-Second derivative `‖dhEM″‖ ≤ ‖a(1)‖(36 + 53/8) ≤ 158` on the ball (`norm_deriv2_dhEM_ball`).
+`‖a(4)‖ = ‖a(1)‖`, `‖a(2)‖ = ‖a(3)‖ = κ‖a(1)‖` (`norm_aDH_two` … `norm_aDH_four`), `κ ≤ 0.28408` (`kappa_le`).
+Second derivative `‖dhEM″‖ ≤ ‖a(1)‖(36 + 53/8)` on the ball (`norm_deriv2_dhEM_ball`).
 Exact Gaussian rationals `Q_{20+j/5}(c)`, `Q′_{20+j/5}(c)` (`QEM_cLoc_j`, `QEMd_cLoc_j`, through
 `poch_cLoc_n`, `pochD_cLoc_n`).
 
 **Theorem ladder.** `dh_zero_near_of_numerics` (five hypotheses, `dh` units) →
-`dh_zero_near_of_fEM` (normalised; `dh_zero_near_of_dhEM`, with `hM2`, `hE` discharged in `dh` units, is a side branch off `dh_zero_near_of_numerics`) →
+`dh_zero_near_of_fEM` (normalised) →
 `dh_zero_near_of_elementary` (Re/Im split, `fEM_cLoc_re`, `fEM_cLoc_im`, `fEMd_cLoc_re`) →
 `dh_zero_near_of_center` (`D2sum` discharged) → `dh_zero_near_of_center'` (fixed tolerances).
 

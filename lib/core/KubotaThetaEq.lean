@@ -1,6 +1,6 @@
 import KubotaThetaSeries
 
-/-! # `θ̃ = S` almost everywhere, and three clauses of `KubotaTheta`
+/-! # `θ̃ = S` almost everywhere, and the automorphy clause of `KubotaTheta`
 
 This file proves `θ̃ = S` almost everywhere, with `S` θ's Fourier series (`thS`), and `S` automorphic at every
 point, for `r > 0` and `Y > 0`:
@@ -18,9 +18,8 @@ point, for `r > 0` and `Y > 0`:
   `γ ∈ Γ_1(3)` and every `p` in upper half-space, almost everywhere by `isAut_thetaF`, since the
   action preserves `dz dv/v³` (`lintegral_slAct`), and everywhere by continuity (Mathlib's
   `Measure.eqOn_open_of_ae_eq`).
-* **Three clauses of `KubotaTheta`** (**`exists_theta_series`**, with `atG_thS`): a function equal to
-  `thSer c₀ τ` at every point of upper half-space, with `τ` supported on `δ₃ℤ[ω]`, and automorphic on `Γ_1(3)`
-  in the form of `KubotaTheta`, which agrees almost everywhere with `θ̃`.
+* **The automorphy clause of `KubotaTheta`** (`atG_thS`): `S` is automorphic on `Γ_1(3)` in the form of
+  `KubotaTheta`, in the notation `atG`.
 -/
 
 open MeasureTheory Set Filter NumberField Complex
@@ -278,7 +277,7 @@ theorem isAut_thS {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) :
     continuousOn_const.mul (continuousOn_thS hr hY)
   exact Measure.eqOn_open_of_ae_eq hae hU hc1 hc2 hp
 
-/-! ### Three clauses of `KubotaTheta` -/
+/-! ### The automorphy clause of `KubotaTheta` -/
 
 /-- **The automorphy clause of `KubotaTheta` for `S`**: for `γ ≡ I (mod 3)` of determinant `1`,
 `S(γ(z + vj)) = κ(γ)·S(z + vj)` for `v > 0`, in the notation `atG`. -/

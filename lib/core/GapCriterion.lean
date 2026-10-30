@@ -1,7 +1,7 @@
 import Mathlib
 import SimpleStructure
 
-/-! # The energy-gap criterion, the pole-overlap identity, and the Jacobi lemma (formal)
+/-! # The energy-gap criterion and the pole-overlap identity (formal)
 
 * `euler_lagrange_Q`: a ground state `g` of `Q` satisfies `B₀(g, ψ) + 2 ĝ(i/2) ψ̂(i/2) = λ₁⟨g, ψ⟩`
   for every probe `ψ`.
@@ -12,9 +12,6 @@ import SimpleStructure
 * `simpleGround_of_gap`: the strict energy gap `λ₁(Q) < Q₀(ψ)` on the unit sphere of `φ₀^⊥` gives a
   simple ground state. `not_simple_gap` is the converse information: without simplicity, `λ₁(Q)` is
   attained by `Q₀` on `φ₀^⊥`, so it equals `μ₂(Q₀)`.
-* `jacobi_eigvec_unique`: for a Jacobi recurrence with nonzero off-diagonals, the
-  eigen-solutions at a given level form a line. This is the finite-dimensional fact behind the
-  rotation to the pole's Krylov basis.
 -/
 
 open Real Filter Topology Complex MeasureTheory Set

@@ -20,9 +20,7 @@ This is Zhu's parity splitting (his Lemma 6.1), formalised on the library's own 
 
 **Consequences.** The sector bounds combine into positivity for every real `g`:
 * `weilQg_ge_twentieth_all`: `Q(g) ≥ ‖g‖²/20` for `0 < a ≤ 1/12`, **pure Lean** (even sector
-  `weilQ_ge_twentieth`, odd sector `weilQodd_ge`);
-* `weilQg_ge_all`: `Q(g) ≥ ‖g‖²/1000` for `0 < a ≤ 1/4`, granted the arb certificate `Cert14`
-  (even sector `weilQ_ge_pole`).
+  `weilQ_ge_twentieth`, odd sector `weilQodd_ge`).
 
 Scope: positivity at these supports is known (Connes–Consani for `2a ≤ log 2`, as recalled). What is
 new is a checked proof for every real `g`, both parities, on the library's definitions. It has no bearing

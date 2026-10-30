@@ -1,41 +1,32 @@
 /-
 # The certificate of the sieve route's loss, checked by the kernel
 
-Plain statements (`total_div_le`). The loss certificate of the sieve route is computed here in natural numbers on a grid
-of cells (`Grid`: the window's ends, the number `n` of cells a side and the cells' multiplier). Each cell's bound is
-computed from its corners, rounding up twice (the value of `ω*`, then the bound), and is a multiple of `2^{−60}`. The
-library's certificate is on `grid22000E`, the grid of the curve `g7d` at `L = 11/5` on the window
-`[43457/100000, 46959/100000]` with `n = 272` (`SieveGrid22000E.lean`), and is the one of `SieveDeepDefs.lean`, to
-depth 8; the kernel checks it by `decide +kernel` (`SieveCert22000E.lean`).
+The loss certificate of the sieve route is computed here in natural numbers on a grid of cells (`Grid`: the window's
+ends, the number `n` of cells a side and the cells' multiplier). Each cell's bound is computed from its corners,
+rounding up twice (the value of `ω*`, then the bound), and is a multiple of `2^{−60}`. The library's certificate is on
+`grid22000E`, the grid of the curve `g7d` at `L = 11/5` on the window `[43457/100000, 46959/100000]` with `n = 272`
+(`SieveGrid22000E.lean`), and is the one of `SieveDeepDefs.lean`, to depth 8; the kernel checks it by
+`decide +kernel` (`SieveCert22000E.lean`).
 
 * The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. The window's ends are `U1 < U2` (for `grid22000E`,
   `U1 = ⌈(43457/100000)DEN⌉` and `U2 = ⌊(46959/100000)DEN⌋`), `V = U2 − U1`, and the cells of side
   `H = ⌈(DEN/2 − V)/n⌉` start at `e k = V + Hk`. `GridOK` lists the facts about the grid that the semantic lemmas below
   and the route's proofs use; for a given grid each is checked by `decide`.
 * The tests, as in the certificate: `cand` (a cell of `(α₁, α₂)` that may meet the region and may be non-evaluable),
-  `allowed` (the sharp rule for decomposition), `inKK` and `ne3` (the cells of `α₃`), and `counted4` (the cells of
-  depth 4). Evaluability is a subset sum of the cell's corners inside `U = (u₁, u₂) ∪ (1 − u₂, 1 − u₁)`
-  (`surelyEval`).
+  `inKK` and `ne3` (the cells of `α₃`), and `counted4` (the cells of depth 4). Evaluability is a subset sum of the
+  cell's corners inside `U = (u₁, u₂) ∪ (1 − u₂, 1 − u₁)` (`surelyEval`).
 * The bound `ω*` for Buchstab's `ω` (`omegaC`): `0` below `1`, `1/u` on `[1, 2)`, Buchstab's `(1 + log(u − 1))/u` on
   `[2, 3]` and `0.565073` above. On a cell, `omKw` (and `omK`, its case of `m` cells of side `H`) bounds it on the
   arguments the cell's points can have, from its corners.
 * The bounds: `omK/K` times a factor for each cell, the trapezoid bound `trB a H = H(2a + H)/(2a(a + H))` of the cell's
   `Σ 1/p` for the first ones and the exact `exB a H = DEN·H/(a(a + H))` of the last cell's `log x · Σ 1/(p log p)`,
-  rounded up to a multiple of `2^{−60}` (`bound2`, `bound4`, `bound6`). A cell of depth 2 costs the smaller of its own
-  bound and the sum of its cells of depth 4 when it may be decomposed (`dec`, `cost`).
+  rounded up to a multiple of `2^{−60}` (`bound2`).
 
-What the tests say about points (the semantic lemmas):
+The semantic lemmas:
 
-* `eval_of_surelyEval`: if `surelyEval` holds on a box, every point of the box is evaluable (`Eval`).
-* `cover2`: a point of the region of depth 2 that is not evaluable lies in a candidate cell.
-* `sum_le_of_allowed`, `cover3`: on a cell that may be decomposed, a non-evaluable point keeps `α₁ + α₂ ≤ 1 − u₂`,
-  and each non-evaluable `α₃` of the region of depth 3 keeps `α₁ + α₂ + α₃ ≤ 1 − u₂` and lies in a counted row.
-* `cover4`: a point of depth 4 that is not evaluable lies in a counted cell.
-* `omegaC_le_w`, `omegaC_le`: `ω*` on the box's arguments, widened by `τ < 1/DEN`, is at most `omKw/K` (`omK/K`); on
-  `[2, 3]` by Buchstab's `ω` at the box's ends where it is monotone (`SieveOmegaB`).
-* `bound2_ge`, `bound4_ge`, `bound6_ge`: each bound is at least `omK/K` (`omKw/K`) times the cells' `trB` and `exB`.
-* `total_eq`, `total_div_le`: the total is the double sum of the costs, and if it is at most `0.88K` in natural numbers
-  it is at most `0.88` in the reals.
+* `omegaC_le_w`: `ω*` on the box's arguments, widened by `τ < 1/DEN`, is at most `omKw/K`; on `[2, 3]` by Buchstab's
+  `ω` at the box's ends where it is monotone (`SieveOmegaB`).
+* `bound2_ge`: the bound is at least `omK/K` times the cells' `trB` and `exB`.
 
 The grid is a parameter (`Grid`, with `GridOK`); the certificates' grids are in `SieveGrid…`.
 
@@ -47,7 +38,7 @@ import SieveOmegaB
 
 namespace SieveCert
 
-/-! The definitions of the certificate (`DEN` … `total`), `rows` and the class `GridOK` are in
+/-! The definitions that the certificate builds on (`DEN` … `counted6`) and the class `GridOK` are in
 `SieveCertDefs.lean`. -/
 
 variable [Grid]

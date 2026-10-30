@@ -4,13 +4,13 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 `LinnikCGL.CGLDensity` states Chen–Gupta–Li's zero-density estimate on `[5/7, 16/21]` as a hypothesis.
-The step (`LinnikCGLStep`) gives the count at the exponent `(7/3 + 1/2000)(1 − σ)` from their Proposition
+The step (`LinnikCGLStep`) gives the count at the exponent `A(1 − σ)` of its parameters from their Proposition
 3.1 (`LinnikCGLHB101.prop31`). The step's internal `ε` is a field of its
 parameters (`LinnikCGLStep.ParC.e`). This file takes it to `0`, proves `CGLDensity`, and so gives
 Chen–Gupta–Li's density estimate with no hypothesis (the two Linnik exponents `9/4` and `226/100` that it gave were in `LinnikCGLLegacy.lean`, since removed; see the git history).
 
 The library's form.
-* `parCGLe e` is `parCGL`'s parameters at the internal `ε = e`: `a = 7/9 + 2e`, `λ = 7/6 + 9e/2`, `A_i = 7/3 + 25e`
+* `parCGLe e` is the step's parameters at the internal `ε = e`: `a = 7/9 + 2e`, `λ = 7/6 + 9e/2`, `A_i = 7/3 + 25e`
   and `A = 7/3 + 26e`. For `0 < e ≤ 1/100000` they are `Good`: the exponent conditions are linear in `σ` with
   coefficients linear in `e`, and `nlinarith` closes them with `e(σ − 5/7) ≥ 0` and `e(16/21 − σ) ≥ 0`.
 * At `e = min(1/100000, ε/16)`, `26e(1 − σ) ≤ ε/2` on `[5/7, 16/21]`, and Mathlib's `Real.log_le_rpow_div` gives
@@ -44,8 +44,8 @@ namespace LinnikCGLDensity
 
 open LinnikCGLStep
 
-/-- The step's parameters at the internal `ε = e`: `parCGL`'s, with `a = 7/9 + 2e`, `λ = 7/6 + 9e/2`,
-`A_i = 7/3 + 25e` and `A = 7/3 + 26e`. -/
+/-- The step's parameters at the internal `ε = e`: `a = 7/9 + 2e`, `λ = 7/6 + 9e/2`, `A_i = 7/3 + 25e` and
+`A = 7/3 + 26e`. -/
 def parCGLe (e : ℝ) : ParC where
   M := 1556
   a := 7 / 9 + 2 * e

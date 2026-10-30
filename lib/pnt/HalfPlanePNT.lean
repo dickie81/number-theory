@@ -12,7 +12,7 @@ Plain statement. If `ζ(s) ≠ 0` for `Re s > θ`, `θ < 1`, then `ψ(x) − x =
 * `logDeriv_le_of_zeroFree`: under a zero-free half-plane `Re s > θ ≥ 0`, `|ζ'/ζ(σ + it)| ≤ C log|t|` on
   `σ ≥ θ'`, `|t| > 3`, for every `θ' > θ`. Left of `3/2` this is PNT+'s `FinalBound` (Borel–Carathéodory with
   the zeros divided out) on the disc of radius `3/2 − θ` around `3/2 + it`, which holds no zero, with radii
-  fixed by `θ'` (`disc_point`); right of `3/2`, PNT+'s `LogDerivZetaBdd_of_Re_ge_three_halves`. The
+  fixed by `θ'`; right of `3/2`, PNT+'s `LogDerivZetaBdd_of_Re_ge_three_halves`. The
   disc step is `LogDerivDisc.logDeriv_le_Kld` at `F = ζ`, which is holomorphic on the disc of radius `2(3/2 − θ)`
   when `|t| > 3` (`differentiableOn_zeta_ball`); `ctr`, `re_ge` and `one_lt_log_three` are in `LogDerivDisc.lean`.
 * `psi_isBigO_of_zeroFree`: `MediumPNTW.GenPNTWNoEps` at the constant depth `1 − θ'`.

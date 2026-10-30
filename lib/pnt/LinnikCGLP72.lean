@@ -39,8 +39,7 @@ Plain statements, with `L = NM₂/q`, `X > 0`, `q ≥ 1` and `B = {m : 0 < |m| �
   + 3(2M)³E(K′) + |R||μ − μ₀|³ + 3|R|³τ_M(2N + 1 + τ_M)²`, with `τ_M`.
 
 * `measurable_Rt`, `Rt_le`: `R̃` in its centre.
-* `Itg`, `It`, `Itg_nonneg`, `It_nonneg`, `integrableOn_Itg`, `Itg_neg`: their `Ĩ`, and `Ĩ` at `−m₂` as the
-  sum.
+* `Itg`, `It`, `integrableOn_Itg`, `Itg_neg`: their `Ĩ`, and `Ĩ` at `−m₂` as the sum.
 * `Ip_le_It`: their bound for `|I′(m⃗)|`.
 * `mem_boxM`, `card_boxM`, `two_pow_log_le`, `sum_dyadic`, `sum_neg_m₂`: the dyadic regrouping and `m₂ ↦ −m₂`.
 * `Ak`, `E71`, `sum_Ak_regroup`, `prop72`: their Proposition 7.2.

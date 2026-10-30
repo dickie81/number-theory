@@ -18,9 +18,8 @@ The display `KubotaTheta` asks for θ's expansions at the cusps
   `chiT_lam`, **`chiT_lam_mul`** and **`chiT_one`**): through `(ω/b)₃ = ω^{(N(b)−1)/3}` at the
   elements `1 − 3tx` of norm `28`, `19`, `37` and `13`, `χ_t` is trivial on `λℤ[ω]` and `χ_t(1) = σ(t)`.
 * **The class of the modes** (`ebr_third`, `ebr_neg_third`, `varpi_eq_ebr`, `ebr_one_eq_one`, `ebr_lam_mul`,
-  `ebr_add_period`, `ebr_nsmul`, **`exists_cuspClass`** and **`thS_lowT_twist_add`**): there is `m₀ = ±1` with
-  `ĕ(m₀·3x/9) = χ_t(x)` for every `x`, so `z ↦ θ(γ_t(z, v))·ĕ(−m₀z/9)` is periodic under `3ℤ[ω]`. The sign of
-  `m₀` is fixed by whether `σ(ω)` is `ĕ(1/3)` or `ĕ(−1/3)`.
+  `ebr_add_period`, `ebr_nsmul` and **`exists_cuspClass`**): there is `m₀ = ±1` with
+  `ĕ(m₀·3x/9) = χ_t(x)` for every `x`. The sign of `m₀` is fixed by whether `σ(ω)` is `ĕ(1/3)` or `ĕ(−1/3)`.
 * **The conjugated character** (`kubT`, a definition; `lowT_conj_mem`, `isUChar_kubT`, `kubT_slT` and
   **`isAut_comp_lowT`**): `κ_t(γ) = κ(γ_t·γ·γ_t⁻¹)` is a unitary character on `Γ_1(3)`,
   `κ_t(T_{3x}) = χ_t(x)`, and `u∘γ_t` is automorphic with `κ_t` when `u` is automorphic with Kubota's

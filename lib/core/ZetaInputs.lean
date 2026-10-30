@@ -8,9 +8,6 @@ import Zeta
   nontrivial zeros of `ζ` with multiplicity. Proof: the logarithmic derivative of Hadamard's product
   (`hasSum_logDeriv_Xi`) at `t = −i/2`, where `Ξ(−i/2) = ξ(1) = ½`, gives
   `Σ_u 1/(u + ¼) = ξ′(1)/ξ(1) = Λ₀(1)`, and Mathlib's `completedRiemannZeta₀_one` evaluates `Λ₀(1)`.
-* `pole_free_form_negative_zeta_explicit`: **Theorem 1bt(i)** with Hadamard's identity and the
-  explicit formula discharged. It has no named input: the first zero's height,
-  `γ₁ ≥ 14`, follows from Hadamard's identity (`one_le_hadamard_height`).
 * `four_lt_abs_im_zero`: every nontrivial zero has `|Im ρ| > 4`, from Hadamard's identity alone.
 * `pinned_zeta`: `Unconditional.lean`'s pinning theorem with the explicit formula (`hQ`), the
   strip (`hstrip`), and the tail summability (`hS`) discharged. Left: verified RH to height `H`

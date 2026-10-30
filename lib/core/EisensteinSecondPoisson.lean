@@ -10,14 +10,14 @@ through `w`. This is the direction of `pair_char_form` (Möbius columns to Gauss
 columns twisted by `ξ₁(n)χ_n(c)`, `c = C⁴d·t⁶`, and complex test functions.
 
 Lemma 7.2 is stated for the characters modulo any `m` with `4 ∣ m`. The
-expansions need unit classes (`pairTerm_expandTw`, `pair_char_formTw`, `alphaQ_pair`), a Möbius
-column through a set with a non-unit class vanishes (`alphaQ_eq_zero`), and the zero frequency of
-`Mq_rowcol` runs over the sets with a unit class modulo `m` (`sum_sum_filter_eq`).
+expansion needs unit classes (`alphaQ_pair`), a Möbius column through a set with a non-unit class
+vanishes (`alphaQ_eq_zero`), and the zero frequency of the row/column form runs over the sets with a
+unit class modulo `m` (`sum_sum_filter_eq`). `Mq_rowcolD` (`EisensteinPairRatio.lean`) writes `𝓜` in
+row/column form, in one character modulo `m`.
 
-* **The twisted paired factor** (`pairTerm_expandTw`) and **the split** (`pair_char_formTw`).
 * **The expansion** (`conj_Pcol`, `Mq_expand`, `alphaQ_pair`).
 * **The column factorization** (`UU_kapC`, `rcQ`, `term_factorQ`) and **the chain** (`xi_chainQ`).
-* **`Mq_rowcol`**: `𝓜` in row/column form; **`zero_Mq_le`**: its zero frequency.
+* **`zero_Mq_le`**: the zero frequency of the row/column form.
 -/
 
 open NumberField Complex Ideal UniqueFactorizationMonoid
@@ -220,8 +220,8 @@ theorem alphaQ_eq_zero (ξ1 : MulChar (𝓞 K ⧸ span {m}) ℂ) (U : ℝ → �
   unfold alphaQ; rw [MulChar.map_nonunit ξ1 hM]; simp
 
 /-- **The zero frequency of the second mean square** (the companion paper's "`|Z|≪_{I_*,Φ}Yℓ‖U‖_∞^2`"
-of its Lemma 7.2): with `|U| ≤ N_U`, the zero frequency of `Mq_rowcol` over a family `𝒜` has norm at
-most `#𝒜·N_U²·2Y/√3·|Φ̂(0)|`; for `𝒜 = fsLe (2βℓ)`, `#𝒜 ≤ (2κ+5)·max(2βℓ, 1)` (`card_fsLe_le_max`). -/
+of its Lemma 7.2): with `|U| ≤ N_U`, the zero frequency of the row/column form over a family `𝒜` has
+norm at most `#𝒜·N_U²·2Y/√3·|Φ̂(0)|`. -/
 theorem zero_Mq_le {U : ℝ → ℂ} {NU : ℝ} (hNU : ∀ x, ‖U x‖ ≤ NU) (ℓ : ℝ) (c : 𝓞 K) {Y : ℝ}
     (hY : 0 ≤ Y) (𝒜 : Finset (Finset Pr)) :
     ‖∑ A ∈ 𝒜, wQ U ℓ c A A *

@@ -4,14 +4,14 @@
 Plain statement.
 * `J s k N` counts the pairs `(x, y)` of `s`-tuples from `{1, …, N}` whose power sums agree in
   every degree `1, …, k`: `x₁ʲ + … + x_sʲ = y₁ʲ + … + y_sʲ` for `j = 1..k`. This is Vinogradov's
-  mean value `∫|Σ_{n≤N} e(α₁n + … + α_k nᵏ)|^{2s} dα` (`J_eq_integral_norm`).
-* Always `N^s ≤ J ≤ N^{2s}` (`J_ge`, `J_le`), and more equations mean fewer solutions (`J_anti`).
+  mean value `∫|Σ_{n≤N} e(α₁n + … + α_k nᵏ)|^{2s} dα`, by orthogonality on the torus
+  (`count_eq_integral`, for any finite set of points of `ℤᵏ`).
+* Always `J ≤ N^{2s}` (`J_le`).
 * **The rigid range `s ≤ k`** (`agree_iff`): the power sums in degrees `1..k` pin down the tuple
   up to rearrangement (Newton's identities, then Vieta). Hence `J s k N ≤ s!·N^s`
   (`J_le_diag`): only the rearrangements count.
-* **Adding a variable costs at most `N²`** (`J_succ_le`). The shifted count
-  `#{f x = f y + w}` never exceeds the unshifted one (`shiftCount_le`: `2ab ≤ a² + b²`, which is
-  Cauchy–Schwarz in counting form).
+* **The shifted count** `#{f x = f y + w}` never exceeds the unshifted one (`shiftCount_le`:
+  `2ab ≤ a² + b²`, which is Cauchy–Schwarz in counting form).
 
 The theorem itself (Bourgain–Demeter–Guth 2016; Wooley 2016 for `k = 3`, 2019 in general):
 `J s k N ≤ C·N^{s+ε} + C·N^{2s − k(k+1)/2 + ε}`. That is NOT proved here. The classical
@@ -173,7 +173,7 @@ theorem agree_shift {s k : ℕ} (x y : Fin s → ℤ) (h : ℤ)
   · simp
   · rw [hA m (mem_Icc.mpr ⟨hpos, by omega⟩)]
 
-/-! ## Step I.2: adding a variable costs at most `N²` -/
+/-! ## Step I.2: the shifted count never exceeds the unshifted one -/
 
 /-- Shifted pair count: `#{(x, y) ∈ P² : f x = f y + w}`. -/
 noncomputable def shiftCount {α β : Type*} [AddCommGroup β] (P : Finset α) (f : α → β) (w : β) :

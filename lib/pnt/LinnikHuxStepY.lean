@@ -23,10 +23,6 @@ empty once `2·KG·CL·X·(q(T + 2))^{1/6+ε} < δ·Y^{σ−1/2}`, `δ = lo − 
 * `count_gen_atY`: the range `[lo, hi]` at one large `Q`: `LinnikDetect.dichotomy`, `class1_genY` and
   `LinnikWeyl.class2_empty` (no character is of the integral class).
 * `Yw_genY`, `count_genY`, `charDensity_genY`: as `Yw_gen`, `count_gen` and `charDensity_gen`.
-* `parY_example`, `parY_example_good`: a worked instance on `[5/6, 101/120]` with `A = 5021/2500`; at `lo = 5/6`,
-  `h5`, `hlam1` and `h1` force `A ≥ 4y + 2ε ≥ 2.00626`, so the exponent `3/(3σ₁ − 1) + 1/2000 = 2.0005` is not
-  attainable there. `parY_example'`, `parY_example'_good`: on `[17/20, 11/12]` with `A = 60/31 + 1/2000`, which is
-  `3/(3σ₁ − 1) + 1/2000`.
 
 The file imports `LinnikHuxStep.lean` and `LinnikWeyl.lean`.
 -/

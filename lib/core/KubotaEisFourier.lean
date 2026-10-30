@@ -14,8 +14,6 @@ file computes that coefficient, with
   `r^{−s} = Γ(s)⁻¹∫_0^∞ t^{s−1}e^{−rt} dt`, Fubini, Mathlib's Gaussian integral
   `integral_cexp_neg_mul_sq_norm_add`, and `besselK` as a Mellin transform, rescaled by `2π|ξ|`
   (Mathlib's `mellin_comp_mul_left`).
-* **`K_ν` is entire in `ν`** (**`differentiable_besselK`**), with the bounds of
-  `mellinConvergent_bkK`.
 * **One term** (**`integral_ebr_height_cpow`**): for `c ≠ 0`,
   `∫_ℂ ĕ(−ξz)(v/Q_z(c, d))^s dz = ĕ(ξd/c)·|c|^{−2s}·(2π/Γ(s))(2π|ξ|)^{s−1}·v·K_{s−1}(4π|ξ|v)`, by
   `height_cpow_eq`, the shift `z ↦ z − d/c` and the scaling `z ↦ vz`.
