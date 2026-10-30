@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 892 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 914 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 70 | 154 |
+| `lib/core` | 76 | 176 |
 | `lib/pnt` | 204 | 645 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
@@ -24,6 +24,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `AngularFamily.member_zero_eq`: The radial member is `ζ · L(χ₄)` ([note](../formalisations/weil-positivity.md))
 - `AngularFamily.rh_of_member_zero`: RH is in the family ([note](../formalisations/weil-positivity.md))
+
+#### `AngularResidue`: The residue of the radial member and `L(1, χ₋₄) = π/4`
+
+- `AngularResidue.residue_angular`: The residue of the radial member
+- `AngularResidue.LFunction_chi4_one`: `L(1, χ₋₄) = π/4`
 
 #### `BallTower`: The ball tower from integers and primes (formalised)
 
@@ -46,6 +51,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `BohrSphere.riemannHypothesis_iff_mem_sphere`: For every nonempty finite set of primes, RH says that every nontrivial zero lies on the unit sphere. ([note](../formalisations/weil-positivity.md))
 - `BohrSphere.riemannHypothesis_iff_tendsto`: The same in the limit. ([note](../formalisations/weil-positivity.md))
+
+#### `BohrTorus`: The Bohr torus: Vinogradov's orthogonality on the lift of a vertical line
+
+- `BohrTorus.eq_zero_of_sum_log`: The logarithms of distinct primes are linearly independent over `ℤ`
+- `BohrTorus.tendsto_mean_character`: The character means along the Bohr line
+- `BohrTorus.sum_norm_sq_torus`: Every point of the torus has the same norm
+- `BohrTorus.prod_eq_iff_map_eq`: The multiplicative system is rigid at every `ℓ`
+- `BohrTorus.agree_not_rigid`: The additive system is not rigid beyond its dimension
+- `BohrTorus.tendsto_mean_moment_rearrangements`: The limiting means of `|Σ_{p∈F} p^{−it}|^{2ℓ}` count the pairs of rearrangements
 
 #### `Concave`: Pólya's theorem for even concave probes, with no representation hypothesis
 
@@ -142,6 +156,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.rh_of_D_and_realRooted_proved`: §11 item 1 ⇒ RH with Hadamard's factorisation proved ([note](../formalisations/weil-positivity.md))
 
+#### `HalfPlaneJoinsChar`: The band for every `L(s, χ)` and the twin-form rates at `11/12`
+
+- `HalfPlaneJoins.LFunction_band_eleven_twelfths`: The band `|2 Re ρ − 1| ≤ 5/6` for every `L(s, χ)`, `χ ≠ 1`
+- `HalfPlaneJoins.chi4_rate_eleven_twelfths`: `L(s, χ₋₄)`'s twin form
+- `HalfPlaneJoins.chi8_rate_eleven_twelfths`: `L(s, χ₋₈)`'s twin form
+- `HalfPlaneJoins.QK4_rate_eleven_twelfths`: The twin form `2Q_ζ + Q_{χ₋₄}` of `ζ·ζ_{ℚ(i)}`
+- `HalfPlaneJoins.QC_rate_eleven_twelfths`: Every good character
+- `HalfPlaneJoins.QKχ_rate_eleven_twelfths`: The twin form `2Q_ζ + Q_χ` of `ζ·L(χ)`, every good character
+- `HalfPlaneJoins.realRooted_rate_eleven_twelfths`: Every real-rooted monotone base probe
+
 #### `HalfPlaneJoinsFinal`: The half-plane's joins with no hypothesis
 
 - `HalfPlaneJoins.zeta_band_eleven_twelfths`: Every nontrivial zero of `ζ` has `|2 Re ρ − 1| ≤ 5/6`.
@@ -185,10 +209,26 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Eis.kubotaTheta`: The display `KubotaTheta`, proved *paper* ([note](../formalisations/cubic-theta.md))
 - `Eis.ne_zero_of_re_gt_eleven_twelfths`: The half-plane ([note](../formalisations/openai-half-plane.md))
 
+#### `LSeriesLandau`: Landau's theorem for Dirichlet series with nonnegative coefficients
+
+- `LandauLaplace.LSeries_landau`: Landau's theorem for L-series with nonnegative coefficients
+- `LandauLaplace.LSeries_not_holomorphic_at_abscissa`: An L-series with nonnegative coefficients is singular at the real point of its abscissa
+
+#### `LatticeCount`: The ball tower from counting integer points
+
+- `BallTower.count_div_pow_tendsto_ballVol`: Same statement by radius
+- `BallTower.counted_volume_max_five`: The counted volume (the limit of `latticeCount n R / Rⁿ`) is largest in dimension 5.
+
 #### `Limit`: Step (iii): Theorem 1bu(ii)'s limit shape, and the chain to `RiemannHypothesis`
 
 - `WeilForm.rh_of_pairing_and_realRooted`: 1bu(ii) + item 6, assembled ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_D_and_realRooted`: Theorem 1bu(ii) + item 6 in the paper's own terms ([note](../formalisations/weil-positivity.md))
+
+#### `LocalTeeth`: The teeth, one prime at a time
+
+- `LocalTeeth.card_two_sq`: 2D teeth mod `p`, nonzero shell
+- `LocalTeeth.card_four_sq`: 4D teeth mod `p`, nonzero shell
+- `LocalTeeth.teeth_mod_prime`: At a prime `p`
 
 #### `Madelung`: The Madelung constant of the square lattice
 

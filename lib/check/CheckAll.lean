@@ -197,6 +197,12 @@ import BohrLandauCore
 import SmallPrimes
 import ClassNumberBound
 import Madelung
+import LatticeCount
+import AngularResidue
+import LocalTeeth
+import BohrTorus
+import LSeriesLandau
+import HalfPlaneJoinsChar
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -951,3 +957,29 @@ bound; the Madelung constant of the square lattice, from Jacobi's two-square the
 #print axioms ClassNumberBound.abs_discr_le
 #print axioms Madelung.lseries_coeff
 #print axioms Madelung.differentiableOn_rhs
+
+/- More bridges, each named in `formalisations/`: integer points in balls and `L(1, χ₋₄) = π/4` from them; the local
+densities of sums of two and four squares; Bohr's torus; Landau's theorem for Dirichlet series with nonnegative
+coefficients; the band `1/12 ≤ Re ρ ≤ 11/12` for every Dirichlet `L`-function, and the twin-form rates at `11/12`. -/
+#print axioms BallTower.count_div_pow_tendsto_ballVol
+#print axioms BallTower.counted_volume_max_five
+#print axioms AngularResidue.residue_angular
+#print axioms AngularResidue.LFunction_chi4_one
+#print axioms LocalTeeth.card_two_sq
+#print axioms LocalTeeth.card_four_sq
+#print axioms LocalTeeth.teeth_mod_prime
+#print axioms BohrTorus.eq_zero_of_sum_log
+#print axioms BohrTorus.tendsto_mean_character
+#print axioms BohrTorus.sum_norm_sq_torus
+#print axioms BohrTorus.prod_eq_iff_map_eq
+#print axioms BohrTorus.agree_not_rigid
+#print axioms BohrTorus.tendsto_mean_moment_rearrangements
+#print axioms LandauLaplace.LSeries_landau
+#print axioms LandauLaplace.LSeries_not_holomorphic_at_abscissa
+#print axioms HalfPlaneJoins.LFunction_band_eleven_twelfths
+#print axioms HalfPlaneJoins.chi4_rate_eleven_twelfths
+#print axioms HalfPlaneJoins.chi8_rate_eleven_twelfths
+#print axioms HalfPlaneJoins.QK4_rate_eleven_twelfths
+#print axioms HalfPlaneJoins.QC_rate_eleven_twelfths
+#print axioms HalfPlaneJoins.QKχ_rate_eleven_twelfths
+#print axioms HalfPlaneJoins.realRooted_rate_eleven_twelfths

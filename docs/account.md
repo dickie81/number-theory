@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 892 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 914 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -60,6 +60,7 @@ result's note finds it unused; blank where neither has been checked.
 |---|---|---|
 | No zero of `L(s, χ)` on `Re s > 11/12`, for every `χ` mod every `q` | `Eis.LFunction_ne_zero_of_re_gt` | input |
 | Every nontrivial zero of `ζ` has `1/12 ≤ Re ρ ≤ 11/12`, so `Θ = sup Re ρ` has `1/2 ≤ Θ ≤ 11/12` | `HalfPlaneJoins.zeta_band_eleven_twelfths`, `PsiExponent.half_le_Theta`, `PsiExponent.Theta_le` | yes, for the upper bounds |
+| Every zero of every Dirichlet `L(s, χ)`, `χ ≠ 1`, with `0 < Re ρ < 1` has `1/12 ≤ Re ρ ≤ 11/12`, by the half-plane and the functional equation | `HalfPlaneJoins.LFunction_band_eleven_twelfths` | yes |
 | Korobov–Vinogradov: no zero of `ζ` with `σ ≥ 1 − A(log t)^{−2/3}(log log t)^{−1/3}`; regions of width `(log t)^{−n}` for every `n > 2/3` | `LandauKV.zeroFree_KV`, `KVBridge.zeroFree_kv` | no |
 | Bohr–Landau: for every `w > 0`, almost every zero has `\|β − 1/2\| < w` | `BohrLandau.tendsto_NX_div_pos` | no |
 | `S(t) = O(log t)`, and the gaps between the ordinates are bounded | `SlogZeta.Slog_zeta`, `ZeroWindow.zero_in_window` | no |
@@ -160,6 +161,10 @@ whose axioms are Lean's three; H is as above.
 | Class groups: Gauss's class number problem with an explicit bound, `\|D_K\| ≤ (320π e^{2·10²¹} h_K)⁴` for imaginary quadratic `K`, polynomial in `h_K` as under GRH | `ClassNumberBound.abs_discr_le` | yes |
 | Physics, crystals: `Σ_{n≥1} (−1)^n r₂(n) n^{−s} = −4(1 − 2^{1−s}) ζ(s) L(s, χ₋₄)`, holomorphic off `s = 1`. At `s = 1/2` it is `−M`, where `M ≈ 1.6155` is the Madelung constant of the square lattice: an ion of a two-dimensional ionic crystal has electrostatic energy `−Me²/a` | `Madelung.lseries_coeff`, `Madelung.differentiableOn_rhs` | no |
 | Physics, the primon gas: `Σ μ(n) n^{−β}` is the partition function of B. Julia's primon gas with the sign `(−1)^F` of D. Spector's fermion number. It converges for `β > Θ` and diverges for `β < Θ`, with `1/2 ≤ Θ ≤ 11/12`: past the bosonic gas's Hagedorn point `β = 1` | `MertensExponent.moebiusAbscissa_eq_Theta`, `PsiExponent.half_le_Theta`, `PsiExponent.Theta_le` | yes |
+| Geometry of numbers: the points of `ℤⁿ` in a ball of radius `R` number `V_n Rⁿ(1 + o(1))`, `V_n = π^{n/2}/Γ(n/2 + 1)`, most in dimension 5; in the plane they give `L(1, χ₋₄) = π/4`, Leibniz's series | `BallTower.count_div_pow_tendsto_ballVol`, `BallTower.counted_volume_max_five`, `AngularResidue.LFunction_chi4_one` | no |
+| Quadratic forms: over a finite field of odd size `q`, `x² + y² = a` has `q − χ₋₄(q)` solutions and `x² + y² + z² + w² = a` has `q³ − q`, for `a ≠ 0`: the local factors of Jacobi's and Siegel's formulas | `LocalTeeth.card_two_sq`, `LocalTeeth.card_four_sq` | no |
+| Ergodic theory: the logarithms of the primes are linearly independent over `ℤ`, and a vertical line equidistributes on Bohr's torus (Kronecker and Weyl) | `BohrTorus.eq_zero_of_sum_log`, `BohrTorus.tendsto_mean_character` | no |
+| Analysis: Landau's theorem, a Dirichlet series with nonnegative coefficients is singular at the real point of its abscissa; Mathlib does not have it | `LandauLaplace.LSeries_landau` | no |
 | Noncommutative geometry: the least value `λ₁(a)` of Weil's form on supports `[−a, a]`, which A. Connes and C. Consani study, is positive for `a ≤ 1/12`, has a unique ground state for `2a < log 2` (the range of their archimedean positivity theorem), and is at most `Ke^{16a − 2πe^{2a}}` | `WeilForm.weilQg_ge_twentieth_all`, `WeilForm.groundState_unique_below_log2`, `WeilForm.lam_dexp` | no |
 
 Within reach, with no hypothesis, from results the library has:
