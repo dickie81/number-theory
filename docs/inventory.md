@@ -51,7 +51,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.realRooted_of_ae_concaveOn`: For probes ([note](../formalisations/weil-positivity.md))
 
-#### `CrossCriteria`: Weil positivity modulo real zeros, and the missing Props stated
+#### `CrossCriteria`: GRH modulo real zeros, and the missing Props stated
 
 - `CrossCriteria.rh_of_liouville_theta`: RH from one-sided Liouville bounds at every exponent `θ > ½` ([note](../formalisations/weil-positivity.md))
 
@@ -120,11 +120,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilForm.groundState_unique_below_log2`: The ground state of `Q` is unique up to sign for every `a > 0` with `2a < log 2` ([note](../formalisations/weil-positivity.md))
 - `WeilForm.groundState_unique_035`: The ground state of `Q` is unique up to sign for every `0 < a ≤ 0.35` ([note](../formalisations/weil-positivity.md))
 
-#### `GapBound`: The pole-overlap gap bound, and the Galerkin transfer
+#### `GapBound`: The pole-overlap gap bound
 
 - `WeilForm.simple_of_pole_overlap`: Simplicity from a nonzero pole overlap ([note](../formalisations/weil-positivity.md))
 
-#### `GapCriterion`: The energy-gap criterion, the pole-overlap identity, and the Jacobi lemma (formal)
+#### `GapCriterion`: The energy-gap criterion and the pole-overlap identity (formal)
 
 - `WeilForm.pole_overlap_identity`: The pole-overlap identity ([note](../formalisations/weil-positivity.md))
 - `WeilForm.simpleGround_of_gap`: Energy gap ⇒ simplicity ([note](../formalisations/weil-positivity.md))
@@ -167,7 +167,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Eis.kub_int`: `κ` is trivial on `SL_2(ℤ) ∩ Γ_1(3)` ([note](../formalisations/cubic-theta.md))
 - `Eis.kub2_mul`: `κ` is a homomorphism on `Γ_2` ([note](../formalisations/cubic-theta.md))
 
-#### `KubotaEisenstein`: The cubic Eisenstein series on `Γ_1(3)`: convergence, automorphy, holomorphy
+#### `KubotaEisenstein`: The cubic Eisenstein series on `Γ_1(3)`: convergence and automorphy
 
 - `Eis.summable_eisTerm`: Absolute convergence ([note](../formalisations/cubic-theta.md))
 - `Eis.eis1_slAct`: Automorphy ([note](../formalisations/cubic-theta.md))
@@ -219,7 +219,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilForm.lamO_dexp`: Rung 1, double-exponential ([note](../formalisations/weil-positivity.md))
 - `WeilForm.lam2_dexp`: Rung 2, double-exponential ([note](../formalisations/weil-positivity.md))
 
-#### `PhiNull`: Riemann's kernel is a null vector of the explicit formula
+#### `PhiNull`: The bilinear Weil form is the bilinear zero sum
 
 - `WeilForm.bil_zero_sum`: The bilinear Weil form is the bilinear zero sum ([note](../formalisations/weil-positivity.md))
 
@@ -246,7 +246,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `QuadIdeals.trichotomy`: Every prime splits, is inert or ramifies
 
-#### `Roadmap`: §11 roadmap, item 1: the target stated, and the reduction to RH proved
+#### `Roadmap`: §11 roadmap, item 1: the objects stated, and the reduction to RH proved
 
 - `WeilForm.rh_of_realRooted_limit`: Item 6's step, proved ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_ground_states`: The roadmap's endpoint, as a theorem ([note](../formalisations/weil-positivity.md))
@@ -413,7 +413,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ChiUniform.psiChi_le_uniform_of`: `ψ(x, χ)` uniformly in the modulus, from the constants of `sum_le_uniform`
 - `ChiUniform.psiChi_le_uniform`: `ψ(x, χ)` uniformly in the modulus
 
-#### `DetectEM`: Zero detection by Euler–Maclaurin, and primes in short intervals
+#### `DetectEM`: Zero detection by Euler–Maclaurin
 
 - `DetectEM.density_unconditional`: Zero density
 
@@ -455,7 +455,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `HalfPlanePNT.psi_isBigO_eleven_twelfths`: The prime number theorem with error `O(x^{11/12+ε})` *paper* ([note](../formalisations/harman-sieve.md))
 
-#### `HalfPlaneJoinsPNT`: Joins from the exponent `Θ` and the half-plane into older sockets
+#### `HalfPlaneJoinsPNT`: Joins from the exponent `Θ` into older sockets
 
 - `HalfPlaneJoinsPNT.weil_twins_rate_Theta`: The exponential rate of the negative part of `ζ`'s twin form is exactly `2Θ − 1`
 - `HalfPlaneJoinsPNT.psiOmegaSqrt_of_not_RH`: If RH fails, `ψ(x) − x = Ω±(√x)`
@@ -849,7 +849,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LinnikCGLSig2.sum_psi_norm_Phi_sq_le`: Their `Σ_II`, expanded
 - `LinnikCGLSig2.norm_S2_le`: For `q ≥ 1` and `N₀ > 0`, `|S₂(k₀, x)| ≤ N₀Σ_k|ψ̂₀(N₀(k − x + k₀/q))|`, a convergent series.
 
-#### `LinnikCGLStep`: The density step from Chen–Gupta–Li's Proposition 3.1, `7/3 + 1/2000` on `[5/7, 16/21]`
+#### `LinnikCGLStep`: The density step from Chen–Gupta–Li's Proposition 3.1, with parameters
 
 - `LinnikCGLStep.block_bin_cgl`: One dyadic block and one bin, by Chen–Gupta–Li's estimate
 - `LinnikCGLStep.class1_cgl`: The polynomial class with Chen–Gupta–Li's estimate on `[lo, hi]`
@@ -965,7 +965,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LinnikDensity.critBoundχ_half`: `CritBoundχ (1/2)`, with constant `11`.
 - `LinnikDensity.linnik_four`: Linnik's theorem with exponent `4 + η`
 
-#### `LinnikHuxStep`: A step of Huxley's bound with parameters, `7/3 + 1/2000` on `[16/21, 5/6]` (the second goal's input D3)
+#### `LinnikHuxStep`: A step of Huxley's bound with parameters
 
 - `LinnikHuxStep.class1_gen`: The polynomial class with Huxley's estimate on `[lo, hi]`
 - `LinnikHuxStep.count_gen`: The range `[lo, hi]`
@@ -1228,7 +1228,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `ShortKV.zeroFreeXi_KV`: The Korobov–Vinogradov region as `ZeroFreeXi (3/4)` ([note](../formalisations/zeta-density.md))
 
-#### `ShortPrimesHalfPlane`: Primes in short intervals for every `θ > 11/17`, from the zero-free half-plane instead of Korobov–Vinogradov
+#### `ShortPrimesHalfPlane`: The zero-free region `ZeroFreeXi α` from the zero-free half-plane instead of Korobov–Vinogradov
 
 - `ShortPrimesHalfPlane.zeroFreeXi_of_halfplane`: The zero-free half-plane gives `ZeroFreeXi α` for every `α` (here `α < 1` is what `short_primes_of_density` takes), with no Korobov–Vinogradov input. ([note](../formalisations/zeta-density.md))
 
@@ -1402,7 +1402,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveLemma1.perron_weight`: Perron's formula with a weight `w`
 - `SieveLemma1.norm_Sw_le`: Lemma 1 in `Λ` form
 
-#### `SieveMain`: Linnik's theorem by the sieve route
+#### `SieveMain`: The primes of `(x, 2x]` prime to `q`, for Linnik's theorem by the sieve route
 
 - `SieveMain.TB_ev`: For a route with `RouteOK` and a grid with `GridOK` that fit (`Fits`), and `ε > 0`
 
@@ -1469,7 +1469,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveRoughTuple.sum_rough_eq`: Rough numbers as tuples of primes
 
-#### `SieveRule`: The certificate under a decomposition rule, in the reals and over `Finset`
+#### `SieveRule`: The certificate under a decomposition rule, over `Finset`
 
 - `SieveCert.ibOK_sound`: The bilinear Type I rule's witnesses *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveCert.okIB_cases`: `okIB` passes a box only when `limOK` does, or `ibOK` and `nbOK` do. *paper*
@@ -1479,7 +1479,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveSep.sum_sep`: Separation of a finite sum
 - `SieveSep.sep_bound`: The bound after separation
 
-#### `SieveSmooth`: The smooth cut-off, and the separation of two variables
+#### `SieveSmooth`: The smooth cut-off and its Fourier transform
 
 - `SieveSmooth.indicator_sub_G`: The cut-off against the indicator
 - `SieveSmooth.pow_mul_norm_fourier_GC_le`: Decay of the cut-off's Fourier transform
@@ -1497,7 +1497,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveStops2.typeII_cmp`: Type II with a list of comparisons
 - `SieveStops2.stops2_bound`: The stops above the threshold *paper* ([note](../formalisations/harman-sieve.md))
 
-#### `SieveTree`: Buchstab's tree over a finite set
+#### `SieveTree`: Buchstab's tree
 
 - `SieveTree.tree_pt`: The Buchstab tree at one `n` *paper*
 
@@ -1514,11 +1514,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIBAsym.leaves_ib`: The leaves by the bilinear estimate, asymptotically *paper*
 
-#### `SieveTypeII`: The Type II estimate of the sieve route at small heights (Proposition 3′, pointwise in the heights)
+#### `SieveTypeII`: Parts of the Type II estimate of the sieve route (Proposition 3′, pointwise in the heights)
 
 - `SieveTypeII.sum_chars_dp_sq_le`: Orthogonality (T1) *paper* ([note](../formalisations/mean-values.md))
 
-#### `SieveTypeIIGen`: The Type II estimate for a curve and a window (Proposition 3′ with parameters)
+#### `SieveTypeIIGen`: Parts of the Type II estimate for a curve and a window (Proposition 3′ with parameters)
 
 - `SieveTypeIIGen.card_bin_gen`: The count of a bin of the grid
 - `SieveTypeIIGen.prod_MB_le_gen`: The product of Lemma 1's bounds
@@ -1729,8 +1729,8 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `DHOddPacket`: The sine packet: Weil's form of `dh` is negative on an odd probe
 
-- `PsiOmega.not_odd_lower_dh`: The `dh` column of `rh_of_lamO_lower`'s hypothesis, refuted ([note](../formalisations/davenport-heilbronn.md))
-- `PsiOmega.not_lamODH_lower`: `rh_of_lamO_lower`'s hypothesis with `λ_dh^odd` in place of `λ_odd`, refuted ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_odd_lower_dh`: The odd lower bound for `dh`, refuted ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_lamODH_lower`: The lower bound `λ_dh^odd(b) ≥ c·e^{(9+δ)b − 4πe^{2b}}`, refuted ([note](../formalisations/davenport-heilbronn.md))
 
 #### `DHOffCross`: The certificate's zero is off the cross
 
