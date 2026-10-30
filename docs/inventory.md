@@ -6,13 +6,13 @@ rewrites it, and CI checks that it is current (`--check`).
 `lib/check/CheckAll.lean` and `lib/check/Check.lean` print the axioms of 694 theorems: the library's final
 results and the papers' theorems, of which there are 117, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 103 modules that neither `Check` nor `CheckAll` imports, directly or
+The last section lists the 104 modules that neither `Check` nor `CheckAll` imports, directly or
 not, with their headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside both | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 210 | 686 | 5 | 28 |
+| `lib/pnt` | 210 | 686 | 6 | 35 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 0 | 0 | 11 | 25 |
 
@@ -1622,6 +1622,16 @@ not, with their headline theorems (those whose docstring opens with a bold title
 - `SieveDeep.dmax3_sound`: `dmax3` is sound
 - `SieveDeep.okIB_of_okD`: The block test is sound
 - `SieveDeep.cstar_sound`: `cstar` is sound
+
+#### `SieveDeepCost`: The certificate to depth 8: its costs bound the dropped cells' charges
+
+- `SieveDeep.term6_le`: A counted cell of depth 6 at its cost
+- `SieveDeep.Ch6_le`: The cells of depth 6 below `(i, j, k, l, b)`
+- `SieveDeep.Ch5_le_cost6`: Below a decomposed cell of depth 4, not every box passing
+- `SieveDeep.Ch5_le_Fpure`: Below a decomposed cell of depth 4 whose boxes below all pass
+- `SieveDeep.term4_le`: A counted cell of depth 4 at its cost
+- `SieveDeep.Ch4_le_row`: The row `(i, j, k)`
+- `SieveDeep.Ch3_le`: The charges below a cell `(i, j)` are at most `SC⁸·refcost`
 
 #### `SieveDeepDefs`: The certificate to depth 8, without Mathlib
 

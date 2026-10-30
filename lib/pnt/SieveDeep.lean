@@ -21,6 +21,10 @@ bilinear rule's exponent (`SieveCert.IBPar`).
   of `lmask`, `emask 1` or `emask 2` makes the box of depth 4, 5 or 6 surely evaluable. The bit comes from a global
   mask (`lbase`, `sbase`) shifted by the index sum of a set of the box's cells (`lbase_bit`, `smask_bit`), and the set
   with the deeper cells is a subset sum of the box (`mem_subsetSums_sel`).
+* `lt_creg_iff`, `lt_lreg_iff`, `lt_bcnt_iff`, `inKK5_iff`: the regions in closed form, for `HC = 4H`.
+* `dec4D`, `dec6D`, `scheme`: **the certificate's decisions** at depths 4 and 6 (those of `cost4` and `vR`), with
+  `decD` at depth 2, as a scheme of `SieveBuch8.lean` under the bilinear rule: each passes the rule on the boxes it
+  decomposes (`allowedR_of_decD`, `allowed4R_of_dec4D`, `allowed6R_of_dec6D`), by the block test and the masks.
 
 The file imports `SieveDeepDefs.lean` and `SieveBuch8.lean`.
 -/
@@ -655,5 +659,190 @@ theorem cstar_sound {hi3 Dm hl hb c : ℕ} (hHC : 0 < HC) (h : c < cstar hi3 Dm 
         omega
       · rw [blt_false (not_lt.1 ht), Bool.cond_false] at h2
         omega
+
+end SieveDeep
+
+namespace SieveDeep
+
+open SieveCert
+
+/-! ### The regions in closed form -/
+
+section Regions
+
+variable [Grid]
+
+/-- A cell's lower end. -/
+theorem e_eq (l : ℕ) : SieveCert.e l = V + H * l := rfl
+
+theorem lt_creg_iff {S c : ℕ} (hHC : 0 < HC) : c < creg S ↔ S + 2 * eC c ≤ DEN := by
+  unfold creg
+  rw [eC_eq]
+  have e2 : 2 * (V + HC * c) = 2 * V + c * (2 * HC) := by ring
+  rw [e2]
+  by_cases h : S + 2 * V ≤ DEN
+  · rw [ble_true h, Bool.cond_true]
+    rw [Nat.lt_succ_iff, Nat.le_div_iff_mul_le (by omega)]
+    omega
+  · rw [ble_false (not_le.1 h), Bool.cond_false]
+    omega
+
+theorem lt_lreg_iff {S l : ℕ} (hH : 0 < H) : l < lreg S ↔ S + 2 * SieveCert.e l ≤ DEN := by
+  unfold lreg
+  rw [e_eq]
+  have e2 : 2 * (V + H * l) = 2 * V + l * (2 * H) := by ring
+  rw [e2]
+  by_cases h : S + 2 * V ≤ DEN
+  · rw [ble_true h, Bool.cond_true]
+    rw [Nat.lt_succ_iff, Nat.le_div_iff_mul_le (by omega)]
+    omega
+  · rw [ble_false (not_le.1 h), Bool.cond_false]
+    omega
+
+/-- The region's coarse cells `b` below the cell `l`, for `HC = 4H`. -/
+theorem lt_bcnt_iff {I4 l b : ℕ} (hHC : HC = 4 * H) (hH : 0 < H) :
+    b < bcnt I4 l ↔ 4 * b ≤ l ∧ 4 * V + H * I4 + 2 * eC b ≤ DEN := by
+  unfold bcnt
+  rw [nmin_eq, lt_min_iff, lt_creg_iff (by omega), Nat.lt_succ_iff, Nat.le_div_iff_mul_le (by norm_num), Nat.mul_comm]
+
+/-- `inKK5` is the region of `bcnt`, for `HC = 4H`. -/
+theorem inKK5_iff {i j k l b : ℕ} (hHC : HC = 4 * H) (hH : 0 < H) :
+    inKK5 i j k l b = true ↔ b < bcnt (i + j + k + l) l := by
+  rw [lt_bcnt_iff hHC hH]
+  unfold inKK5
+  simp only [Bool.and_eq_true, decide_eq_true_eq]
+  have e1 : SieveCert.e i + SieveCert.e j + SieveCert.e k + SieveCert.e l = 4 * V + H * (i + j + k + l) := by
+    simp only [e_eq]; ring
+  rw [e1]
+  refine and_congr_left fun _ => ?_
+  rw [eC_eq, e_eq, hHC]
+  constructor
+  · intro h
+    have : H * (4 * b) < H * (l + 1) := by nlinarith
+    have := (Nat.mul_lt_mul_left hH).1 this
+    omega
+  · intro h
+    have : H * (4 * b) ≤ H * l := Nat.mul_le_mul_left _ h
+    nlinarith
+
+end Regions
+
+/-! ### The certificate's decisions -/
+
+section Scheme
+
+variable [Grid] [IBPar]
+
+/-- The upper sum of the box `(i, j, k)`. -/
+def hi3 (i j k : ℕ) : ℕ := SieveCert.e i + SieveCert.e j + SieveCert.e k + 3 * H
+
+/-- **The certificate's decision at depth 4**: `cost4` takes the cell's cells of depths 5 and 6. Its box passes `okD`,
+and either every box below passes (`pureOK`) and `Fpure` is cheaper than the cell's bound, or the boxes of depth 5 that
+the mask leaves pass (`bad5 = 0`) and `cost6` is cheaper. -/
+def dec4D (i j k l : ℕ) : Bool :=
+  okD (hi3 i j k) (dmax3 i j k) (SieveCert.e l + H) (SieveCert.e l + H) &&
+    cond (pureOK (hi3 i j k) (dmax3 i j k) (i + j + k + l) l)
+      (Nat.blt (trapF (SieveCert.e l) H * Fpure (i + j + k + l) l) (Q4 (i + j + k) l * SC ^ 4))
+      (Nat.beq (bad5 (hi3 i j k) (dmax3 i j k) (i + j + k + l) l (emask 1 i j k l)) 0 &&
+        Nat.blt (trapF (SieveCert.e l) H *
+          cost6 (hi3 i j k) (dmax3 i j k) (i + j + k + l) l (emask 1 i j k l) (emask 2 i j k l))
+          (Q4 (i + j + k) l * SC ^ 4))
+
+/-- **The certificate's decision at depth 6**: the cell `c` below `(i, j, k, l, b)` lies in the prefix whose worst box
+of depth 7 passes `okD` (`cstar`), and its cells of depths 7 and 8 are cheaper than its bound. -/
+def dec6D (i j k l b c : ℕ) : Bool :=
+  Nat.blt c (cstar (hi3 i j k) (dmax3 i j k) (SieveCert.e l + H) (eC b + HC)) &&
+    Nat.blt (trapF (eC c) HC * R8 (i + j + k + l + 4 * b + 4 * c) c) (q6 (i + j + k + l + 4 * b) c * SC * SC)
+
+/-- The decision at depth 2 passes the rule on the box `(i, j)` and on the boxes of its counted rows. -/
+theorem allowedR_of_decD {i j : ℕ} (h : decD i j = true) : @allowedR _ ibRule i j = true := by
+  unfold decD allowedD at h
+  simp only [Bool.and_eq_true, List.all_eq_true, List.mem_range, Bool.or_eq_true] at h
+  unfold allowedR
+  simp only [Bool.and_eq_true, List.all_eq_true, List.mem_range, Bool.or_eq_true]
+  refine ⟨h.1.1, fun k hk => ?_⟩
+  rcases h.1.2 k hk with h' | h'
+  · exact Or.inl h'
+  · right
+    exact okIB_of_okD (i := i) (j := j) (k := k) [] (by simpa [ok3D, hiSum, lastHi, cell] using h')
+
+/-- The decision at depth 4 passes the rule on the box `(i, j, k, l)` and on the boxes of its counted cells of
+depth 5, for `HC = 4H`. -/
+theorem allowed4R_of_dec4D (hHC : HC = 4 * H) (hH : 0 < H) {i j k l : ℕ} (h : dec4D i j k l = true) :
+    @allowed4R _ ibRule i j k l = true := by
+  unfold dec4D at h
+  rw [Bool.and_eq_true] at h
+  obtain ⟨h4, hrest⟩ := h
+  unfold allowed4R
+  simp only [Bool.and_eq_true, List.all_eq_true, List.mem_range, Bool.or_eq_true]
+  refine ⟨okIB_of_okD (i := i) (j := j) (k := k) [cell l] (by simpa [hi3, hiSum, lastHi, cell] using h4),
+    fun b hb => ?_⟩
+  by_cases hK : inKK5 i j k l b = true ∧ ne5 i j k l b = true
+  · right
+    have hb' : b < bcnt (i + j + k + l) l := (inKK5_iff hHC hH).1 hK.1
+    have h5 : okD (hi3 i j k) (dmax3 i j k) (SieveCert.e l + H + (eC b + HC)) (eC b + HC) = true := by
+      cases hp : pureOK (hi3 i j k) (dmax3 i j k) (i + j + k + l) l
+      · rw [hp, Bool.cond_false, Bool.and_eq_true] at hrest
+        have h0 := Nat.eq_of_beq_eq_true hrest.1
+        rw [bad5, sumTo_eq, Finset.sum_eq_zero_iff] at h0
+        have hb0 := h0 b (Finset.mem_range.2 hb')
+        have hnb : bit (emask 1 i j k l) b = false := by
+          rw [bit_eq]
+          by_contra hc
+          have := surelyEval5_of_emask hHC hH (by simpa using hc)
+          simp only [ne5, this, Bool.not_true] at hK
+          exact absurd hK.2 (by simp)
+        rw [hnb] at hb0
+        cases hok : okD (hi3 i j k) (dmax3 i j k) (SieveCert.e l + H + eC b + HC) (eC b + HC)
+        · rw [hok] at hb0; simp at hb0
+        · exact okD_mono hok (by omega) le_rfl
+      · unfold pureOK at hp
+        simp only [Bool.and_eq_true, Bool.not_eq_true'] at hp
+        obtain ⟨⟨hbc, hm⟩, -⟩ := hp
+        have hbc' : bcnt (i + j + k + l) l ≠ 0 := Nat.ne_of_beq_eq_false hbc
+        have hle : eC b ≤ eC (bcnt (i + j + k + l) l - 1) := by
+          rw [eC_eq, eC_eq]
+          exact Nat.add_le_add_left (Nat.mul_le_mul_left _ (by omega)) _
+        exact okD_mono hm (by omega) (by omega)
+    exact okIB_of_okD (i := i) (j := j) (k := k) [cell l, cellC b]
+      (by simpa [hi3, hiSum, lastHi, cell, cellC, Nat.add_assoc] using h5)
+  · left
+    revert hK
+    cases inKK5 i j k l b <;> cases ne5 i j k l b <;> simp
+
+/-- The decision at depth 6 passes the rule on the box `(i, j, k, l, b, c)` and on the boxes of depth 7 of its
+region, for `HC = 4H`. -/
+theorem allowed6R_of_dec6D (hHC : HC = 4 * H) (hH : 0 < H) {i j k l b c : ℕ} (h : dec6D i j k l b c = true) :
+    @SieveBuch.allowed6R _ ibRule i j k l b c = true := by
+  unfold dec6D at h
+  rw [Bool.and_eq_true, blt_iff] at h
+  have hc7 : okD (SieveCert.e i + SieveCert.e j + SieveCert.e k + 3 * H) (dmax3 i j k)
+      (SieveCert.e l + H + (eC b + HC) + 2 * (eC c + HC)) (eC c + HC) = true := cstar_sound (by omega : 0 < HC) h.1
+  unfold SieveBuch.allowed6R
+  simp only [Bool.and_eq_true, List.all_eq_true, List.mem_range, Bool.or_eq_true]
+  refine ⟨okIB_of_okD (i := i) (j := j) (k := k) [cell l, cellC b, cellC c]
+    (okD_mono hc7 (by simp only [hiSum, cell, cellC]; omega) (by simp [lastHi, cellC])), fun d hd => ?_⟩
+  by_cases hK : SieveBuch.inKK7 i j k l b c d = true
+  · right
+    have hdc : eC d ≤ eC c := by
+      unfold SieveBuch.inKK7 at hK
+      simp only [Bool.and_eq_true, decide_eq_true_eq] at hK
+      have h1 := hK.1
+      rw [eC_eq, eC_eq] at h1 ⊢
+      have : HC * d < HC * (c + 1) := by nlinarith
+      have := (Nat.mul_lt_mul_left (by omega : 0 < HC)).1 this
+      exact Nat.add_le_add_left (Nat.mul_le_mul_left _ (by omega)) _
+    exact okIB_of_okD (i := i) (j := j) (k := k) [cell l, cellC b, cellC c, cellC d]
+      (okD_mono hc7 (by simp only [hiSum, cell, cellC]; omega)
+        (by simp only [lastHi, cellC, List.cons_append, List.nil_append]; omega))
+  · left
+    simpa using hK
+
+/-- **The certificate's scheme of decisions** under the bilinear rule, for `HC = 4H`: `decD`, `dec4D` and `dec6D`. -/
+@[instance_reducible] def scheme (hHC : HC = 4 * H) (hH : 0 < H) : @SieveBuch.Scheme8 _ ibRule :=
+  @SieveBuch.Scheme8.mk _ ibRule decD dec4D dec6D allowedR_of_decD (allowed4R_of_dec4D hHC hH)
+    (allowed6R_of_dec6D hHC hH)
+
+end Scheme
 
 end SieveDeep
