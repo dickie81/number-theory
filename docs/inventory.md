@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 97 modules that none of the three imports, directly or not, with their
+The last section lists the 98 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 6 | 20 |
+| `lib/pnt` | 223 | 726 | 7 | 29 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1752,6 +1752,18 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveMoment.moment_le_of_counts`: The moment lemma from counts of large values
 - `ShortSieveMoment.moment_le_hux`: Harman's moment lemma from the mean value theorem and the Halász–Montgomery count
 - `ShortSieveMoment.moment_le_mv`: Harman's moment lemma from the mean value theorem
+
+#### `ShortSieveTwist`: A twisted prime number theorem with a power saving
+
+- `ShortSieveTwist.verticalIntegral_sub_eq`: Moving the line of integration past a simple pole
+- `ShortSieveTwist.verticalIntegral'_integrand_eq`: Moving the Perron integral past a simple pole
+- `ShortSieveTwist.smoothedSum_eq_verticalIntegral_add`: The smoothed sum as an integral on a line left of a simple pole
+- `ShortSieveTwist.norm_psi_twist_le`: The twisted prime number theorem, uniformly in the twist
+- `ShortSieveTwist.norm_sum_Ioc_le`: The twisted prime number theorem on `(N, m]`, `N ≤ m ≤ 2N`
+- `ShortSieveTwist.norm_sum_vonMangoldt_twist_le`: A twisted prime number theorem with a power saving
+- `ShortSieveTwist.norm_sum_mul_le`: Abel summation, as an inequality
+- `ShortSieveTwist.norm_dp_primes_Ioc_le`: Primes in `(N, M]`, `M ≤ 2N`, twisted, with a power saving
+- `ShortSieveTwist.norm_dp_primes_le`: Primes in a dyadic interval, twisted, with a power saving
 
 ### `lib/dh`
 
