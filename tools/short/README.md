@@ -85,7 +85,8 @@ decomposition to depth six or eight, as the Linnik certificate does. For this mi
 hypotheses Li's Lemmas 2.1 and 2.2 (Baker, Harman and Pintz's Lemmas 12 and 13, which rest on Watt's mean value
 theorem) and his Lemma 3.1 (their Lemma 9, two variables near `x^{1/2}`, which the real-exponent test does not reach).
 The comparison interval is `(x − x^{1−ρ}, x]` with `ρ < 1/300`, so that the prime number theorem with the half-plane's
-error term counts primes down to `x^{2θ−1}` in it; the Type II estimate then takes `T₀ = x^{κ₀}` with `κ₀ < ρ/2`.
+error term counts primes down to `x^{2θ−1}` in it (`ShortSieveLong`); the Type II estimate takes any `ρ > 0`
+(`ShortSieveTypeII.abs_card_tuples_sub_le_of_pos`).
 
 ## Toward a proof in Lean
 
@@ -106,8 +107,11 @@ The plan, with what is done:
    - The pointwise bound for the primes from the zero-free half-plane, a twisted prime number theorem
      (`ShortSieveTwist`, done), and the two together, the moment lemma for the primes with no hypothesis
      (`ShortSieveHarman`, done).
-   - Still to do: Guth–Maynard's estimate in the counts (V3; V2 needs only Huxley's), and the polynomials of the other
-     factors (the rough cofactor, products of primes) with their pointwise bounds.
+   - The Type II estimate for products of primes in boxes `x^{αⱼ}/2 ≤ Nⱼ < pⱼ ≤ Mⱼ ≤ 2Nⱼ`, one Hölder factor per
+     prime: the reduction of item 2, the moments of the boxes from the heights `Nⱼ^κ` and Hölder's inequality, for
+     any comparison interval `(x − x^{1−ρ}, x]`, `ρ > 0`: `ShortSieveTypeII` (done).
+   - Still to do: Guth–Maynard's estimate in the counts (V3; V2 needs only Huxley's), Hölder factors that are products
+     of several primes, and the rough cofactor, which Li's terms leave as a sum over its prime factorisations.
 2. **Li's other arithmetic information.**
    - The reduction of sums over short intervals to mean values of Dirichlet polynomials (Baker, Harman and Pintz's
      Lemma 6), by Mellin inversion on `Re s = 1/2` with a window averaged `k` times: `ShortSieveInterval` (done).
@@ -116,8 +120,9 @@ The plan, with what is done:
      Deshouillers and Iwaniec's bounds for sums of Kloosterman sums: not in the library, and a hypothesis until it
      is.
 3. **The sieve.** Buchstab's identity on families of tuples (`SieveDecomp.buchstab_fam` has the form the Linnik route
-   uses), the comparison of `(x − x^θ, x]` with a long interval, the main terms through Buchstab's `ω`
-   (`SieveRough`), and Li's decomposition into the regions `A`, `B` and `C`.
+   uses), the comparison of `(x − x^θ, x]` with `(x − x^{1−ρ}, x]`, and Li's decomposition into the regions `A`, `B`
+   and `C`. The main terms in the comparison interval: the prime number theorem there and the upper bound with
+   Buchstab's `ω` for its rough numbers, uniformly in the cofactors, are `ShortSieveLong` (done).
 4. **The certificate.** Kernel-checked bounds for region A and the region-C terms at the chosen θ, with Li's
    predicates in exact arithmetic on cells, in the manner of the Linnik certificate (`SieveCert`). The terms reach
    dimension 8, so the cost of the cells is the main question.
