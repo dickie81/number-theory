@@ -75,6 +75,18 @@ computed on the same points). θ = 0.5185 combines two independent runs (V3: +0.
 The constant crosses zero at θ ≈ 0.5194 for V0 (Li's decomposition and lemmas, integrated without rounding),
 0.5187 for V2 and 0.5182 for V3. V1 (Guth–Maynard only inside Li's tuples) gains almost nothing.
 
+## The first milestone: θ = 0.52
+
+The first complete proof in Lean aims at `θ = 0.52`, where the real-exponent Type II information (V2) leaves a margin
+of `0.106` against `0.033` at `0.519`, room for a coarse certificate. Stopping Li's decomposition at four primes is
+not an option: the parts of region C that it decomposes to six primes through Type I information (his sets `D*`,
+`D‡`) would cost a loss of about `6.5` at four (`C4Dstop` in the experiment harness), so the certificate follows his
+decomposition to depth six or eight, as the Linnik certificate does. For this milestone the theorem takes as
+hypotheses Li's Lemmas 2.1 and 2.2 (Baker, Harman and Pintz's Lemmas 12 and 13, which rest on Watt's mean value
+theorem) and his Lemma 3.1 (their Lemma 9, two variables near `x^{1/2}`, which the real-exponent test does not reach).
+The comparison interval is `(x − x^{1−ρ}, x]` with `ρ < 1/300`, so that the prime number theorem with the half-plane's
+error term counts primes down to `x^{2θ−1}` in it; the Type II estimate then takes `T₀ = x^{κ₀}` with `κ₀ < ρ/2`.
+
 ## Toward a proof in Lean
 
 The computation is not a proof: it needs the new Type II_n lemma proved, Li's other inputs, and certified integrals.
