@@ -25,12 +25,12 @@ for `r > 0`, `Y > 0` and θ's representative `θ̃` (`thetaF`):
   `3ℤ[ω]` and every `c ∈ ℂ`, by Mathlib's `integral_preimage` on the unit torus at the offsets `0` and `a`
   with `tch(a) = c`. With `thetaF_add_period` this gives `θ̃∘T = θ̃` almost everywhere,
   `T = (1, 1; 0, 1)`.
-* **At every point** (**`thS_slAct_of_ae`**, **`thS_slAct_toSL`**, **`isAut_thS_Gam2`**, **`atG_thS_int`** and
-  **`exists_theta_series_inv`**, with `restrict_UHS_ac`, `map_toSL_σO` and `atG_thS_toSL`):
+* **At every point** (**`thS_slAct_of_ae`**, **`thS_slAct_toSL`**, **`isAut_thS_Gam2`** and **`atG_thS_int`**,
+  with `restrict_UHS_ac`, `map_toSL_σO` and `atG_thS_toSL`):
   `thS(h·p) = thS(p)` for every `h ∈ SL_2(ℤ)` and every `p` in upper half-space, by continuity as in
   `isAut_thS` and Mathlib's `SpecialLinearGroup.SL2Z_generators`; `thS` is automorphic on
-  `Γ_2 = SL_2(ℤ)Γ_1(3)` with the extension `κ₂` of `κ`; and with the three clauses
-  (`exists_theta_series`) this gives four clauses of `KubotaTheta` for `thS`.
+  `Γ_2 = SL_2(ℤ)Γ_1(3)` with the extension `κ₂` of `κ`; and in the notation `atG` the invariance is the
+  `SL_2(ℤ)` clause of `KubotaTheta` for `thS`.
 -/
 
 open MeasureTheory Set Filter NumberField Complex UnitAddTorus

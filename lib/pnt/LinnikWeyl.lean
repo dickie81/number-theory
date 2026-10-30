@@ -20,9 +20,6 @@ constant `CL`.
   `|I_χ(ρ)| ≤ (1/2π)·A·X·CL (q(T + 2))^{1/6+ε}·π = A X CL (q(T + 2))^{1/6+ε}/2 < ¼`. The weight `(1 + |v|)^{−4}`, whose
   integral is `2/3`, would need `ε ≤ 5/6`; at `ε ≤ 1` the weight `(1 + |v|)^{1/6+ε−5}` is only `(1 + |v|)^{−23/6}`,
   so the threshold's constant is `2` here, not `4/(3π)`.
-* `class2_finset_empty`, `class2_card_eq_zero`: a finite set of characters detected as in `class2_count_small`'s
-  `hdet` (`χ ≠ 1`, a zero `β_χ + iγ_χ` with `σ ≤ β_χ < 1`, `|γ_χ| ≤ T`, `|I_χ(ρ_χ)| ≥ ¼`) is empty under the same
-  threshold.
 
 The file imports `LinnikHuxley`, for `LinnikIngham.Gχ_left_le'` and `wt5`, `LinnikDetect.Ivχ`, `Gχ`, `mollχ` and
 `norm_mollχ_le_X`, and `InghamDensity.KG` and `integrable_real_of_le`.

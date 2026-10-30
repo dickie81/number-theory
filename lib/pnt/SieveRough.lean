@@ -13,16 +13,10 @@ Plain statements.
   (`SieveCert.Grid`, `mem_cellP`). On a grid with `GridOK`, for a cell `(i, j)` with `e_i + 2e_j ≤ DEN`, as for a
   candidate cell, and every `δ > 0`, eventually in `x`:
   `Σ_{p₁ ∈ cellP x i} Σ_{p₂ ∈ cellP x j} Ψ(x/(p₁p₂), p₂) ≤ (bound2(e_i, e_j)/K + δ)x/log x`.
-* `share4`: on a grid with `GridOK`, for a cell `(i, j, k, l)` with `e_i + e_j + e_k + 2e_l ≤ DEN`, as for a counted
-  cell, and every `δ > 0`, eventually in `x`: the sum of `Ψ(x/(p₁p₂p₃p₄), p₄)` over the primes of the four cells is at
-  most `(bound4(e_i, e_j, e_k, e_l)/K + δ)x/log x`.
-* `share6`: the same at depth 6, four cells of the grid and two of its coarse grid.
-* `share2_of_cand`, `share4_of_counted4`, `share6_of_counted6`: the three on the cells that pass `SieveCert.cand`,
-  `SieveCert.counted4` and `SieveCert.counted6`.
+* `share2_of_cand`: `share2` on the cells that pass `SieveCert.cand`.
 
-`Ψ(x/d, p)` counts the integers `n = dm ∈ (x, 2x]`
-whose cofactor `m` has no prime factor below `p`. The shares bound these counts, summed over a cell's primes, by the
-certificate's own bounds `bound2/K` and `bound4/K`, from which `SieveCert.total` is summed.
+`Ψ(x/d, p)` counts the integers `n = dm ∈ (x, 2x]` whose cofactor `m` has no prime factor below `p`. The share bounds
+these counts, summed over a cell's primes, by the certificate's own bound `bound2/K`.
 
 The proof:
 
@@ -42,17 +36,16 @@ The proof:
   `ω*((L − log p)/log p)/(p log p)` over the primes of `(z, √(2y)]`: `ω* ≤ 0.565073` for `log p ≤ L/4`,
   `ω* ≤ 0.5671433` for `log p ≤ L/3`, and `ω* = log p/(L − log p)` above.
 * `Claim`, `claim_step`, `claim_nat`, `psi_le`: the induction on the level `K` in `log 2y ≤ K log z`.
-* `evLe_sum_inv`, `evLe_sum_inv_log`, `evLe_cell_inv`, `evLe_cell_tr`, `evLe_cell_ex`: for `0 < a ≤ c` and large `x`,
-  the primes of `[x^a, x^c)` have `Σ 1/p ≤ log c − log a + δ` and `log x · Σ 1/(p log p) ≤ 1/a − 1/c + δ`; on the cell
-  `k` of a grid with `GridOK`, whose side is `h = H/DEN` and whose lower corner is `a = e_k/DEN`, these are at most
-  `h/a + δ`, at most the trapezoid bound `h(2a + h)/(2a(a + h)) + δ` of `log(1 + h/a)` (`SieveCert.trB`), and
-  `h/(a(a + h)) + δ` (`SieveCert.exB`).
-* `psi_point`: at a point of a cell, `psi_le` and `SieveCert.omegaC_le` give
+* `evLe_sum_inv`, `evLe_sum_inv_log`, `evLe_cell_tr`, `evLe_cell_ex`: for `0 < a ≤ c` and large `x`, the primes of
+  `[x^a, x^c)` have `Σ 1/p ≤ log c − log a + δ` and `log x · Σ 1/(p log p) ≤ 1/a − 1/c + δ`; on the cell `k` of a grid
+  with `GridOK`, whose side is `h = H/DEN` and whose lower corner is `a = e_k/DEN`, these are at most the trapezoid
+  bound `h(2a + h)/(2a(a + h)) + δ` of `log(1 + h/a)` (`SieveCert.trB`) and `h/(a(a + h)) + δ` (`SieveCert.exB`).
+* `psi_point`: at a point of a cell, `psi_le` and `SieveCert.omegaC_le_w` (through `psi_point_w`) give
   `Ψ(x/(dp), p) ≤ (omK/K + ε)x/(dp log p)`.
-* `evLe_finish`, `share2`, `share4`, `share6`: each share is at most `(omK/K + ε)x/log x` times the product of the
-  cells' prime sums (`Σ 1/p`, and `log x · Σ 1/(p log p)` for the last cell). For large `x` that product is at most the
-  product of the cells' `trB` and the last cell's `exB`, plus `δ`, and `SieveCert.bound2_ge`, `bound4_ge` and
-  `bound6_ge` bound `omK/K` times the product by `bound2/K`, `bound4/K` and `bound6/K`.
+* `evLe_finish`, `share2`: the share is at most `(omK/K + ε)x/log x` times the product of the cells' prime sums
+  (`Σ 1/p`, and `log x · Σ 1/(p log p)` for the last cell). For large `x` that product is at most the product of the
+  cells' `trB` and the last cell's `exB`, plus `δ`, and `SieveCert.bound2_ge` bounds `omK/K` times the product by
+  `bound2/K`.
 
 The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
 case `SieveCert.grid22000E` is the grid of exponent `11/5`.

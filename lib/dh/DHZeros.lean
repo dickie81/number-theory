@@ -12,8 +12,7 @@ function of `χ₅` has real part `0, 0, 1, 1, 1` by the residue of `⌊x⌋ + 1
 (`LFunction_chi5_half_ne_zero`), and the Hadamard product is unconditional (`hadamard_dh'`).
 
 The zero side of Weil's explicit formula for `Ξ_{DH}` then follows as for `Ξ_χ`: off the
-zeros, `Ξ_{DH}′(t)/Ξ_{DH}(t) = Σ_u 2t/(t² − u)` (`hasSum_logDeriv_XiDH`, `hasSum_logDeriv_dh`), and
-`Σ |u|^{−7/8} < ∞` (`summable_XiDH_zeros_rpow`). The prime
+zeros, `Ξ_{DH}′(t)/Ξ_{DH}(t) = Σ_u 2t/(t² − u)` (`hasSum_logDeriv_XiDH`, `hasSum_logDeriv_dh`). The prime
 side, the Dirichlet series of `−dh′/dh`, is in `DHPrime.lean` and `DHExplicit.lean`, for the scaled
 `Ξ₃(t) = Ξ_dh(3t)` with its own zero side (`hasSum_logDeriv_XiDH3`, `summable_XiDH3_zeros_rpow`); this file's
 zero side has no downstream use.

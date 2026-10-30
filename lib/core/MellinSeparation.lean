@@ -25,14 +25,14 @@ Mellin transform instead and records the resulting bounds.
   derivatives bounded by `N`, then the weights `W₀(ρ_r x)·x^s` with row-dependent `ρ_r ∈ [ρ₀, ρ₁]`
   satisfy `Σ_r ‖S_r(W₀(ρ_r ·)·(·)^s)‖² ≤ K·M·(1+|s|)^{2J}`, with `K` independent of the rows, the
   columns, the coefficients, the points, `M`, the dilations and `s`.
-* **The bilinear form with the dual kernel** (`bilinear_dual_bound`): under the same hypothesis,
-  `|Σ_r w_r Σ_{n₁,n₂} a_r(n₁)·conj a_r(n₂)·W₀(ρ_r x_{n₁})·conj W₀(ρ_r x_{n₂})·G(√(A_r/(x_{n₁}x_{n₂})))|
-  ≤ K·A_min^{−σ}·M` for `|w_r| ≤ 1` and `A_r ≥ A_min > 0`, with `K` independent of the same data
-  and of `w`, `A`. The cost of the dual weight's `y^{−σ}` is the factor `A_min^{−σ}`.
+* **The bilinear form with the dual kernel** (`bilinear_dual_bound_of_dilated`): for coefficient families `a` and `b`
+  with the dilated bounds `Σ_r ‖Σ_n a_r(n)·W₀(ρ_r x_n)·x_n^s‖² ≤ K_d(1+|s|)^{2J}` on `Re s = σ`, and the same for `b`,
+  `|Σ_r w_r Σ_{n₁,n₂} a_r(n₁)·conj b_r(n₂)·W₀(ρ_r x_{n₁})·conj W₀(ρ_r x_{n₂})·G(√(A_r/(x_{n₁}x_{n₂})))|
+  ≤ K·K_d·A_min^{−σ}` for `|w_r| ≤ 1` and `A_r ≥ A_min > 0`, with `K` depending only on `G`, `σ` and `J`. The cost
+  of the dual weight's `y^{−σ}` is the factor `A_min^{−σ}`.
 * **The coefficient as data** (in this file):
-  `dilated_meanSquare_of_coeff` takes any Schwartz coefficient `c` representing `W₀`, and
-  `bilinear_dual_bound_of_dilated` takes the dilated bounds of two coefficient families on `Re s = σ`
-  as hypotheses. `dilated_meanSquare` and `bilinear_dual_bound` are derived from them.
+  `dilated_meanSquare_of_coeff` takes any Schwartz coefficient `c` representing `W₀`, and `dilated_meanSquare` is
+  derived from it.
 
 The paper bounds the contribution of its kernels through their `C^{2m+4}` norms, which tracks the
 dependence on the weight `W`. Here the constants depend on `W₀`, `V`, `G`, `σ`, `J` and `[ρ₀, ρ₁]`

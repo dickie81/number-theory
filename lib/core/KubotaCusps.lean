@@ -12,8 +12,8 @@ display (`KubotaData`).
 * **Rotated and shifted coordinates** (`norm_σO_unit`, **`thSer_affine`**, `thetaSupp_affine`): for a unit
   `ε` and any `b`, `thSer(c, d)(εz + b) = thSer(c, d′)(z)` with `d′(m) = d(ε⁻¹m)ĕ(σ(ε⁻¹m)b/9)`, and `d′` keeps
   the support and size condition.
-* **The display's data** (`KubotaData`, `kubotaData_of`): the expansions, the invariance under `SL_2(ℤ)` and
-  the automorphy on `Γ_1(3)`, extracted from `KubotaTheta`.
+* **The display's data** (`KubotaData`): the expansions, the invariance under `SL_2(ℤ)` and the automorphy on
+  `Γ_1(3)`.
 * **Matrices** (`det_map_σO`, `atG_mul`, `map_int_σO`, `det_map_int`, `atG_int_left`, `atG_kub_left`,
   `lowerThree`, `upperThree`, `uhsAct_one`, `atG_one`, `uhsAct_upper`, `TωJ`, `Tω2J`, `lowerδ3_eq`,
   `lowerNegδ3_eq`, `shapeT_zero`, `shapeT_one`, `shapeT_two`): the action of products, the invariances at any

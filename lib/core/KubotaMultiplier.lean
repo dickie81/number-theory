@@ -18,7 +18,6 @@ the group identity uses, and the tools for constructing the cusp matrices.
   of `d` prime to `6`).
 * **The splitting** (`cub_split_left`, **`σO_cub_prod`**): `(er/a)₃ = (e/a)₃(a/r)₃`, and
   `σ((a/∏_{P∈A}π_P)₃) = ∏_{P∈A}χ_P(a)²`.
-* **The fixed factor** (**`cub_S_congr`**): `(uλʲ2ⁱ/a)₃` depends only on `a` modulo `9` and `2`.
 * **Tools for the construction** (`isCoprime_δ3_of_primary`, `cub_pow_left`, `theta_add_three`,
   `exists_reduced`, `mod_lam`, `lam_shape`): `θ(z + 3t, v) = θ(z, v)`, lowest terms in the principal ideal
   ring `𝓞`, residues modulo `λ`, and `c ≡ ±λ (mod 3)` at `v_λ(c) = 1`.

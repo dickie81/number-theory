@@ -9,13 +9,11 @@ The Bohr lift puts a zero `ρ` on the unit sphere of `ℂ^F` exactly when `Re ρ
 strictly decreasing in `Re ρ`. So the zeros counted by `NX w T` (`|γ| ≤ T`, `β ≥ ½ + w`, one per pair `ρ`, `1 − ρ`)
 are exactly the pairs whose Bohr vectors lie outside the open shell between the radii at `½ + w` and `½ − w`.
 
-* **`le_im_iff_outside`**, **`le_im_iff_outside_refl`**: the pair `i` is counted by `NX w T` if and only if its zero
-  `ρ` with `β ≥ ½` (`rhoS i`) has radius at most the radius at `½ + w`, if and only if the reflection `1 − ρ̄` of `ρ`
-  in the line has radius at least the radius at `½ − w`, for every nonempty finite set `F` of primes. The radius
-  depends only on the real part (`norm_vF_eq_of_re_eq`), so `1 − ρ̄` has the radius of the pair's other zero `1 − ρ`.
+* **`le_im_iff_outside`**: the pair `i` is counted by `NX w T` if and only if its zero `ρ` with `β ≥ ½` (`rhoS i`)
+  has radius at most the radius at `½ + w`, for every nonempty finite set `F` of primes.
 * **`NX_eq_ncard_outside`**: `NX w T` is the number of pairs up to height `T` outside that shell.
 * **`ncard_outside_le`**: a density estimate `DensityXi A B` bounds that number by `C T^{A(½−w)}(log T)^B`.
-* **`tendsto_outside_div`**: if moreover `A(½ − w) < 1` and the total number of pairs up to height `T` is at least
+* **`tendsto_NX_div`**: if moreover `A(½ − w) < 1` and the total number of pairs up to height `T` is at least
   `cT` for large `T`, the proportion of pairs outside the shell tends to `0`.
 
 Not proved: that proportion for every `w > 0` (the theorem of Bohr and Landau); with the library's

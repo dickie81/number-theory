@@ -2,24 +2,19 @@ import EisensteinQuadRecip
 
 /-! # The companion paper's Lemma 4.1 at a prime
 
-The Gauss-sum identities of the companion paper's Lemma 4.1 for a
+Some of the Gauss-sum identities of the companion paper's Lemma 4.1 for a
 primary prime `p ∤ 6`. They concern the normalized Gauss sums `γ_j(p) = g(χ_p^j, ψ_p)/|σp|` (`gamN`) of
 the sextic character `χ_p`, with `α(p) = σp/|σp|` (`alphaN`) and `μ(p) = −1`.
 
-* **`γ₂(p)³ = μ(p)α(p)`** (`gamN_two_cube`), from `gaussSum_cubCharC_cube`,
-  `g(χ₃)³ = −N(p)·σp`.
-* **`γ₁(p)γ₂(p) = μ(p)α(p)G(p)`** with `G(p) = χ_p(4)⁻¹γ₃(p)` (`Gp`, `gamN_one_mul_two`), from
+* **`γ₁(p)γ₂(p) = μ(p)α(p)G(p)`** with `G(p) = χ_p(4)⁻¹γ₃(p)` (`gamN_one_mul_two`), from
   `gaussSum_chi6`, `χ_p(4)·g(χ₆)·N(p) = g(χ₃)²·g(ρ)`.
 * **`γ₁(p)γ₋₁(p) = χ_p(−1)`** (`gamN_one_mul_inv`), from Mathlib's `gaussSum_mul_gaussSum_eq_card` and
   `mul_gaussSum_inv_eq_gaussSum`.
-* **`γ₃(p) = Φ(x, y)/2`** for `p = x + yω` (`gamN_three`): `gaussSum_quadR_coords`, with
-  `χ₆³ = ρ`. This is the paper's `γ₃(p) = Γ_quad(p)`.
 * **`χ_p(4)` through `p mod 2`** (`chi6_four`): `2` is inert (`span_two_isMaximal`, from
   `inert_of_mod_two`) and `−2` is primary (`primary_neg_two`), so cubic reciprocity gives
   `χ_p(4) = (2/p)₃ = (p/2)₃ = σ(u)` for the cube root of unity `u ≡ p (mod 2)`.
-* **`G` on classes modulo `4`**: `G(p) = σ(u)⁻¹·Φ(x, y)/2` (`Gp_coords`); `|G(p)| = 1` (`norm_Gp`,
-  from `|γ| = 1` for every nontrivial character, `norm_gamN`); and `G(p) = G(q)` for `p ≡ q (mod 4)`
-  (`Gp_eq_of_mod_four`).
+* **`|γ| = 1`** for every nontrivial character (`norm_gamN`).
+* **`Φ` modulo `4`**: `Φ(x, y)` (`quadPhi`) depends only on `x` and `y` modulo `4` (`quadPhi_add_four`).
 -/
 
 open NumberField Complex Ideal

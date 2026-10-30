@@ -1,34 +1,25 @@
 /-
-# A step of Huxley's bound with parameters, `7/3 + 1/2000` on `[16/21, 5/6]` (the second goal's input D3)
+# A step of Huxley's bound with parameters
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statement (`charDensity_hux73`). There is `C ≥ 0` such that for every `q ≥ 1`, `16/21 ≤ σ ≤ 5/6` and `T ≥ 2`,
-at most `C(qT)^{(7/3+1/2000)(1−σ)}(log qT)^{10}` characters mod `q` have a zero of `L(·, χ)` in `Re s ≥ σ`,
-`|Im s| ≤ T`.
+Plain statement (`charDensity_gen`). For parameters with `Par.Good` there is `C ≥ 0` such that for every `q ≥ 1`,
+`lo ≤ σ ≤ hi` and `T ≥ 2`, at most `C(qT)^{A(1−σ)}(log qT)^{10}` characters mod `q` have a zero of `L(·, χ)` in
+`Re s ≥ σ`, `|Im s| ≤ T`.
 
 This is the step (`LinnikStep`) with its numbers as parameters. A `Par` holds the largest power `M`, the power
 trick's target `Q^a`, the exponent `lam` of the powers' lengths, the range `[lo, hi]` of `σ`, the inner exponent `Ai`
 and the exponent `A`. `Par.Good` lists what the step needs of them at the internal `ε = 1/100000` (`εs`): `M ≥ 1`,
 `0 < a` and `a + ε ≤ M/2000`, the bounds on `lam`, `3/4 ≤ lo`, `hi ≤ 11/12`, `0 ≤ A ≤ 16`, and four exponent
 inequalities: on `[lo, hi]`, one for each term of `block_bin_hux` and one for the integral class; for every
-`σ ≤ hi`, one for the number of dyadic blocks
-. At `parHux73` (`a = 7/9 + 2ε`, `m ≤ 1556`, `lam = 7/6 + 9ε/2`, `Ai = 7/3 + 25ε`), up to powers of `Q^ε`, for
-`16/21 ≤ σ ≤ 5/6`:
-* the first term carries `Λ^{2−2σ}`, and `Λ ≤ Q^{7/6}`, so it is at most `Q^{(7/3)(1−σ)}`;
-* the second carries `Λ^{4−6σ}Q ≤ Q^{(7/9)(4−6σ)+1}`, since `Λ ≥ Q^{7/9}` and `4 − 6σ < 0`, and
-  `(7/3)(1 − σ) − ((7/9)(4 − 6σ) + 1) = 7σ/3 − 16/9`, which is `0` at `σ = 16/21`; the power trick's target
-  `Q^{7/9+3ε}` closes the gap;
-* the integral class carries `Q^{(201/100)(1/2−σ)+1/500+1}`, as.
-At `parStep` the step is the again, on `5/6 ≤ σ ≤ 11/12`.
+`σ ≤ hi`, one for the number of dyadic blocks.
 
 * `choose_m_gen`, `term1_gen`, `Gm_le_gen`, `Gm3_gen`, `final2_gen`, `term2_gen`: the lemmas with `M`, `a`,
   `lam` and `Ai` as arguments.
 * `class1_gen`, `class2_bound_gen`: the polynomial class and the integral class.
 * `eventually_gen`, `absorb_K_gen`, `count_gen_at`, `count_gen`: the range `[lo, hi]` for all large `Q`, and below.
 * `charDensity_gen`: for parameters with `Good`, the density estimate with exponent `A` on `[lo, hi]`.
-* `charDensity_hux73` (`parHux73`) and `charDensity_step'` (`parStep`), the latter `LinnikStep.charDensity_step`
-  below `11/12`.
+* `charDensity_step'` (`parStep`): `101/50` on `[5/6, 11/12]`, `LinnikStep.charDensity_step` below `11/12`.
 
 The file imports `LinnikTwelve.lean`.
 -/

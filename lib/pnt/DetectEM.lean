@@ -3,7 +3,7 @@ import KaiserKV
 import ShortKV
 import DetectCore
 
-/-! # Zero detection by Euler–Maclaurin, and primes in short intervals
+/-! # Zero detection by Euler–Maclaurin
 
 At a zero `ρ = β + iγ` of `ζ`, PNT+'s Euler–Maclaurin formula (`Zeta0EqZeta`, `ZetaBnd_aux1`) gives
 `|Σ_{n≤N} n^{−ρ}| ≤ N^{1−β}/|γ| + N^{−β}/2 + 2|γ|N^{−β}/β` (`norm_partial_zeta_le`), that is `DetectCore.EMBound`
@@ -11,9 +11,7 @@ At a zero `ρ = β + iγ` of `ζ`, PNT+'s Euler–Maclaurin formula (`Zeta0EqZet
 choice `X = ⌊U^{2σ−1}⌋`, `N = ⌊U^{3−2σ+2δ}⌋` gives `|D(ρ)| ≥ 1 − (1 + log U)(U^{−1/4} + 14U^{−3δ/2})` for
 `U ≤ |γ| ≤ 2U`, `β ≥ σ ≥ ¾`: the two exponents are `(2+2δ)(1−σ) − 1 ≤ −¼` and `−2δσ`.
 So `DetectHyp δ` holds (`detectHyp`), hence `N(σ, T) ≪ T^{4(1+δ)(1−σ)}(log T)^{11}`
-(`density_unconditional`), and with the Korobov–Vinogradov region:
-
-**`short_primes`**: for every `θ > ¾`, every large `y` has a prime in `(y, y + y^θ]`.
+(`density_unconditional`).
 
 The detection argument is `lib/core/DetectCore.lean` (`detectHyp_of_EMBound`), so that zeta23's layer,
 which cannot import this file, runs it from its own copy of PNT+'s `ZetaBounds`

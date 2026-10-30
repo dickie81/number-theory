@@ -1,34 +1,20 @@
 /-
-# The Type II estimate of the sieve route at small heights (Proposition 3′, pointwise in the heights)
+# Parts of the Type II estimate of the sieve route (Proposition 3′, pointwise in the heights)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statement (`typeII_step`). Let `L = 2333/1000`, `f0` smooth and real with support in `[1/2, 2]`, `K₀ ≥ 0`,
-`e₁ > 0` and `0 < η ≤ 10⁻⁵`. For every large `q`, every `P` with `q^{(401/1000)L} ≤ P ≤ q^{(485/1000)L}`, every
-`S ⊆ (P, 2P]`, `a_m` and `h₀`, every `K ≤ K₀`, and every `Q_j ≥ q^{e₁}` and `|h_j| ≤ q^η` (`j < K`) with
-`∏_j Q_j ≤ 2^{K₀}q^L/P`:
-`Σ_{χ≠1} |Σ_{m∈S} a_mχ(m)m^{−ih₀}||∏_{j<K} Σ_{p≤2Q_j} χ(p)(p/Q_j)^{−ih_j}f0(p/Q_j)|` is at most
-`q^{L−1/50000}(Σ_m |a_m|²/P)^{1/2}`.
-
-This is Proposition 3′ for the curve step, on the window
-`[401/1000, 485/1000]` inside the step's proved window, pointwise in the heights. The bins of the characters do not
-depend on the heights. In each bin Lemma 1 (`SieveWeight.norm_Sp_le`) bounds the prime sums, (H2′) counts the characters
-(`LinnikTwelve.charDensity_twelve_fifths`, `LinnikStep.charDensity_step`, and at most `q` characters), and
-Cauchy–Schwarz with orthogonality (T1) bounds the sum.
+The proof of Proposition 3′ goes by bins of the characters, which do not depend on the heights. In each bin Lemma 1
+(`SieveWeight.norm_Sp_le`) bounds the prime sums, (H2′) counts the characters, and Cauchy–Schwarz with orthogonality
+(T1) bounds the sum. This file has (T1), the bins, Lemma 1's bound and the grid of the bins; it does not state the
+estimate.
 
 * `card_class_le`, `sum_chars_dp_sq_le`: (T1), `Σ_χ |Σ_{j∈S} c_jχ(j)j^{−it}|² ≤ (P + q)Σ_{j∈S} |c_j|²` for
   `S ⊆ (P, 2P]` (`LinnikHybrid.sum_chars_norm_sq_le` with `dp_twist_eq`, and Cauchy–Schwarz in each class).
-* `sum_bins_le`: if `|B(a)| ≤ M_i` on the bin `i` of a partition of `s`, then
-  `Σ_{a∈s} |W(a)||B(a)| ≤ Σ_i M_i(#bin i)^{1/2}(Σ_{a∈s} |W(a)|²)^{1/2}`.
-* `bin`, `bin_rect`, `card_bin_le`, `sum_typeII_bins`: the bin of `χ` is the largest `i` with a zero in
-  `Re s > β_i`, `|Im s| ≤ T`; above it lies the zero-free rectangle of Lemma 1, and in it a zero counted by (H2′).
-* `typeII_pointwise`: the bound by bins, with Lemma 1 and (T1).
-* `card_zero_step`: the counts of the curve step, `C(qT)^{g(σ)}(1 + log qT)^{10}`.
+* `bin`, `bin_rect`, `card_bin_le`: the bin of `χ` is the largest `i` with a zero in `Re s > β_i`, `|Im s| ≤ T`;
+  above it lies the zero-free rectangle of Lemma 1, and in it a zero counted by (H2′).
 * `MB_le`: for all large `q`, Lemma 1's bound is at most `2Q^{θ+2δ}`.
-* `exponent_le`: the exponents on the window, at most `L − 1/25000`. Before the width they lie at least `5.5·10⁻⁵`
-  below `L` and `1.5·10⁻⁵` below `L − 1/25000`, least at `β = 11/12`.
-* `qpow_combine`, `bin_bound`, `prod_MB_le`, `card_bin_step`: one bin.
-* `typeII_step`: the sum over the 500000 bins of width `1/1200000`.
+* `qpow_combine`: the factors of one bin as powers of `q`.
+* `βg`: the grid of the bins, `β_i = 1/2 + (5/12)(i/500000)`, of width `1/1200000`.
 -/
 import LinnikStep
 import SieveWeight
@@ -447,7 +433,7 @@ lemma qpow_combine {q P V T η g θ' L m : ℝ} (hq : 1 < q) (hPm : P = q ^ m) (
       _ = 2 * Real.sqrt 3 * (q ^ ((L - m) * θ') * q ^ (g / 2 + η / 2) * q ^ m) * Real.sqrt (V / P) := by ring
       _ = _ := by rw [eq]
 
-/-! ### Proposition 3′ for the curve step -/
+/-! ### The grid of the bins -/
 
 /-- The grid of the bins: `β_i = 1/2 + (5/12)(i/500000)`, of width `1/1200000`. -/
 noncomputable def βg (i : ℕ) : ℝ := 1 / 2 + 5 / 12 * ((i : ℝ) / 500000)

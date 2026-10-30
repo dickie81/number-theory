@@ -11,12 +11,10 @@ import WeilTwinGeneral
 
 Results whose parts the layer already had, but which no file stated. None needs new analysis.
 
-**`DHRH ↔ DHRHcross`** (`dhRH_iff_cross`). `dhRH_of_cross` (DHColumn) takes the exclusion of
-positive real zeros as a named input `hreal`, and `dh_ne_zero_of_real` (DHRealAxis)
-proves it; DHColumn does not import DHRealAxis. So RH for `dh` and its cross form are equivalent, and
-`dhRH_of_cross'` is `dhRH_of_cross` with `hreal` discharged. Both propositions are false:
-`dh_offline_zero` refutes `DHRH`, and `dh_offline_nonreal_zero` (DHOffCross)
-refutes `DHRHcross`.
+**`DHRH ↔ DHRHcross`** (`dhRH_iff_cross`). `dh` has no zero on the positive real axis
+(`dh_ne_zero_of_real`, DHRealAxis), so a zero on the cross is on the line, and RH for `dh` and its cross
+form are equivalent. Both propositions are false: `dh_offline_zero` refutes `DHRH`, and
+`dh_offline_nonreal_zero` (DHOffCross) refutes `DHRHcross`.
 
 **Conjugation symmetry** (`dh_conj`, `dh_conj_zero`): `dh(s̄) = conj dh(s)` for every `s`.
 It needs the Gauss-sum identity `ε_{χ⁻¹} = conj ε_χ`. That identity holds for `χ₅` without a Gauss sum

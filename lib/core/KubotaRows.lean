@@ -28,7 +28,7 @@ The assembly also runs at every modulus `md ≠ 0` (**`thetaRowsM_of_kubota`**: 
 with `M = 9·72·md` and the residues modulo `72·md` as the indices `i`; the active sets run over
 `admissible md t g` and the inactive primes over `tgPrimes md t g` (`sum_rowPs_admissible`).
 `thetaRows_of_kubota` is the case `md = 4`, and at `md = 4` the display's hypothesis `IsCoprime k₀ md` holds
-for every row of norm prime to `6` (`isCoprime_four_of_coprime6`).
+for every row of norm prime to `6`.
 -/
 
 open Real Set Filter MeasureTheory Complex NumberField Ideal Asymptotics UniqueFactorizationMonoid

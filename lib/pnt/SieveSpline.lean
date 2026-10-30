@@ -5,8 +5,7 @@ Plain statements, with `e(x) = e^{2πix/q}` (`SieveTypeIB.eq`), `ŵ(h) = Σ_{k�
 `E_w = Σ_{k∈S} w(k)1[(k, q) = 1] − (φ(q)/q)Σ_{k∈S} w(k)` (`SieveTypeIB.Ew`).
 
 * `sum_norm_what_sq_le`: if each residue class holds at most `M` elements of `S`, `Σ_h |ŵ(h)|² ≤ qMΣ_{k∈S}|w(k)|²`.
-* `norm_sum_range_le`, `norm_sum_Ioc_le`: for an integer `t` with `0 < |t|` and `2|t| ≤ q`,
-  `|Σ_{i<Y} e(t(u + i))| ≤ q/(2|t|)` and `|Σ_{A<k≤B} e(tk)| ≤ q/(2|t|)`.
+* `norm_sum_range_le`: for an integer `t` with `0 < |t|` and `2|t| ≤ q`, `|Σ_{i<Y} e(t(u + i))| ≤ q/(2|t|)`.
 * `spl`, the spline `w(k) = ℓ^{−r}#{(i, j) : A < i ≤ B, j ∈ [0, ℓ)^r, i + Σj = k}` (`ℓ ≥ 1`), an average of the
   indicators of the intervals `(A + Σj, B + Σj]` (`sum_spl_mul`), of mass `B − A` (`sum_spl`): `spl_nonneg`,
   `spl_le_one` and `spl_eq_one`
@@ -14,7 +13,8 @@ Plain statements, with `e(x) = e^{2πix/q}` (`SieveTypeIB.eq`), `ŵ(h) = Σ_{k�
   `what_spl` (`ŵ(h) = ℓ^{−r}(Σ_{A<i≤B} e(hi))(Σ_{j<ℓ} e(hj))^r`), `norm_what_spl_le` (for `0 < |t|`, `2|t| ≤ q`:
   `|ŵ(t)| ≤ (B − A)(q/(2ℓ|t|))^r`) and `norm_what_spl_tail` (for `h ≠ 0` off the image of `[−H, H]`:
   `|ŵ(h)| ≤ (B − A)(q/(2ℓ(H + 1)))^r`).
-* `norm_Ew_Ioc_le`, `norm_Ew_spl_le`: `|E_w| ≤ d(q)` for the indicator of an interval and for a spline.
+* `norm_sum_Ioc_unit_le`, `norm_Ew_spl_le`: `|E_w| ≤ d(q)` for the indicator of an interval (as the termwise sum of
+  `Ew_eq`) and for a spline.
 * `typeIB_spline`: `SieveTypeIB.typeIB_bound` with a spline weight on its support. For `D₁`, `D₂` prime to `q` with
   `D₂ ⊆ [1, Dm]`, `2HDm < q`, every residue the inverse of at most `m` elements of `D₁` and every `|t|d`
   (`0 < |t| ≤ H`, `d ∈ D₂`) with at most `F` divisors, `|Σ_{d₁,d₂} α(d₁)β(d₂)Σ_k w(k)dw(d₁d₂k)|` is at most

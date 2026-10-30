@@ -9,12 +9,6 @@ where the zeros of `ζ` are.
 * **The `ℓ^q` threshold** (**`summable_norm_bohr_rpow_iff`**, **`memℓp_bohr_iff`** and **`memℓp_two_bohr_iff`**,
   with `norm_bohr`): for `q > 0`, `z(s) ∈ ℓ^q(primes)` if and only if `Re s > 1/q`. In the Hilbert space `ℓ²` the
   domain is the half-plane `Re s > ½`, whose boundary is the critical line.
-* **The reflection in the line is Hölder conjugation** (`lineRefl`, a definition, `s ↦ 1 − s̄`;
-  **`not_summable_and_summable_lineRefl`**, **`holderConjugate_critExp`**, **`critExp_eq_iff`** and
-  **`holderConjugate_self_iff`**, with `lineRefl_re` and `lineRefl_im`): for `0 < σ < 1` the critical exponents
-  `1/σ` of `s` and `1/(1 − σ)` of its mirror image
-  are Hölder conjugate, and they coincide only at `σ = ½`, where both are `2`, the only self-conjugate exponent. No
-  Hölder pair `(q, q′)` has both `z(s) ∈ ℓ^q` and `z(1 − s̄) ∈ ℓ^{q′}`.
 * **The unit sphere in every finite dimension** (`cF`, `bohrSqSum` and `vF`, definitions; **`vF_mem_sphere_iff`**,
   **`norm_vF_lt_norm_vF`** and **`norm_vF_eq_of_re_eq`**, with `cF_nonneg`, `cF_pos`, `bohrSqSum_nonneg`,
   `bohrSqSum_half`, `strictAnti_bohrSqSum`, `vF_apply`, `norm_vF_sq` and `norm_vF`): for a nonempty finite set `F`
@@ -23,14 +17,6 @@ where the zeros of `ζ` are.
   only if `Re s = ½`. The radius `‖v_F(s)‖` is strictly decreasing in `Re s` and does not depend on `Im s`.
   By **`norm_vF_lt_one_iff`** and **`one_lt_norm_vF_iff`**, `v_F(s)` is strictly inside the ball if
   and only if `Re s > ½`, and strictly outside if and only if `Re s < ½`.
-* **The polarity** (`zF`, a definition; **`inner_zF_lineRefl`**, **`inner_vF_lineRefl`** and
-  **`inner_smul_zF_lineRefl_eq_one_iff`**, with `conj_bohr`, `bohr_conj_mul_bohr_lineRefl` and `zF_apply`):
-  `⟨z_F(s), z_F(1 − s̄)⟩ = c_F` for every `s`, so `⟨v_F(s), v_F(1 − s̄)⟩ = 1`: a point and its mirror image are
-  conjugate in the polarity of the unit sphere, whose self-conjugate points are the points of the sphere. The
-  scale `√c_F` is the only one with this property.
-* **Cauchy–Schwarz** (**`one_le_norm_vF_mul_norm_vF_lineRefl`** and
-  **`norm_vF_mul_norm_vF_lineRefl_eq_one_iff`**): `‖v_F(s)‖·‖v_F(1 − s̄)‖ ≥ 1`; when `F` contains two primes,
-  equality holds exactly on the line.
 * **The infinite-dimensional limit** (`primesLT`, a definition; **`tendsto_cF_primesLT`**,
   **`tendsto_norm_vF_of_half_lt`**, **`norm_vF_primesLT_of_re_eq_half`**, **`tendsto_norm_vF_of_lt_half`** and
   **`tendsto_norm_vF_one_iff`**, with `mem_primesLT` and `primesLT_nonempty`): with `F` the primes below `N`,
@@ -41,22 +27,16 @@ where the zeros of `ζ` are.
   and only if every nontrivial zero lies on the unit sphere of `ℂ^F`, for any one nonempty `F`, and if and only
   if the radius of every nontrivial zero tends to `1`. These are restatements; nothing in this file constrains a
   zero.
-* **The part of the Euler product that converges on `ℓ²` has no zeros** (`regTerm` and `zetaReduced`,
-  definitions; **`summable_regTerm`**, **`differentiableOn_logD2`**, **`riemannZeta_eq_exp_mul_exp`**,
-  **`zetaReduced_eq`**, **`differentiableOn_zetaReduced`**, **`zetaReduced_eq_zero_iff`** and
-  **`not_memℓp_one`**, with `two_rpow_neg_half_lt_one`, `norm_bohr_le_two_rpow`, `norm_regTerm_le` and
-  `differentiableAt_regTerm`): `log D₂(s) = Σ_p (−log(1 − p^{−s}) − p^{−s})` converges, its terms bounded by
-  a constant times `p^{−2 Re s}`, and is holomorphic on `Re s > ½`, where `z(s) ∈ ℓ²`, so `D₂ = exp(log D₂)` has no zero there. For `Re s > 1`,
-  `ζ(s) = exp(Σ_p p^{−s})·D₂(s)`. The function `ζ/D₂` is holomorphic on `Re s > ½`, `s ≠ 1`, equals
-  `exp(Σ_p p^{−s})` on `Re s > 1`, and has the same zeros as `ζ`. The sum `Σ_p p^{−s}` pairs `z(s)` with the
-  all-ones vector, which lies in no `ℓ^q` with `q < ∞`.
+* **The part of the Euler product that converges on `ℓ²` has no zeros** (`regTerm`, a definition;
+  **`summable_regTerm`** and **`riemannZeta_eq_exp_mul_exp`**, with `two_rpow_neg_half_lt_one`,
+  `norm_bohr_le_two_rpow` and `norm_regTerm_le`): `log D₂(s) = Σ_p (−log(1 − p^{−s}) − p^{−s})` converges on
+  `Re s > ½`, where `z(s) ∈ ℓ²`, its terms bounded by a constant times `p^{−2 Re s}`, so `D₂ = exp(log D₂)` has no
+  zero there. For `Re s > 1`, `ζ(s) = exp(Σ_p p^{−s})·D₂(s)`.
 
 What this file does not prove: anything about the location of the zeros of `ζ`. It supplies a radial
 coordinate, strictly monotone in `Re s`, whose unit sphere is the line, in every finite dimension, and a pointwise
 statement in the limit (the radius of every point off the line tends to `0` or to `∞`, never to `1`); there is no
 probability measure here. That the zeros lie on the sphere is RH itself (`riemannHypothesis_iff_mem_sphere`).
-Every zero of `ζ` with `Re s > ½` is a zero of `ζ/D₂`, which on `Re s > 1` is the exponential of the pairing of
-`z(s)` with a vector outside every `ℓ^q`, `q < ∞`.
 -/
 
 open Complex Filter Topology

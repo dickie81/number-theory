@@ -8,8 +8,7 @@ Plain statements. `tuples z Y n` is the set of non-increasing `n`-tuples of prim
 * `sum_rough_eq`: for `z ≥ 2` and `Y < z^{K+1}`, a sum over the `k ∈ [2, Y]` with no prime factor below `z` is the
   sum over the tuples `tuples z Y n`, `1 ≤ n ≤ K`, of its value at the tuple's product.
 
-This turns a rough cofactor into a family of primes for the Type II estimate (`SieveTypeIIR`). The file imports only
-Mathlib.
+This turns a rough cofactor into a family of primes (`SieveChain.sum_rough_tuples`). The file imports only Mathlib.
 -/
 import Mathlib
 

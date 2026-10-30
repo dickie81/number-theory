@@ -9,15 +9,13 @@ argument by `S`. For `r > 0`, `Y > 0`, θ's representative `θ̃` (`thetaF`), an
 measurable and bounded, vanishing outside `[α, β]` with `0 < α ≤ β`:
 
 * **Conjugation by `S`** (**`isAut_comp_sS`**, **`isPU_rhoG_comp`**, **`memLp_comp`** and
-  **`integral_conj_sS_inv_mul`**, with `slAct_conj`, `kub_sS_conj`, `kub_sS_inv_conj`, `isAut_comp_sS_inv`,
-  `lintegral_comp_eq` and `lintegral_enorm_comp_lt_top`): `u∘S` is automorphic on `Γ_1(3)` with `κ` when `u`
-  is; `ρ_G∘g` is a partition of unity for `Γ_1(3)` for every `g ∈ SL_2(ℤ[ω])`; `u∘g` is in `L²(ν)` when `u` is
-  and `|u|` is invariant; and `∫conj u(S⁻¹·p)·w(p) dν = ∫conj u(p)·w(S·p) dν` for `u` and `w` automorphic, by
-  the change of variables and independence of the partition of unity.
-* **θ at `S·p`** (`thetaFS`, a definition; **`setLIntegral_sS_lt_top`** and **`integrableOn_sS`**, with
-  `isAut_thetaFS` and `memLp_thetaFS`): `θ̃∘S` is automorphic and in `L²(ν)`, and an
-  automorphic `u` in `L²(ν)`, moved by `S`, is integrable on `3P × [α, β]` (
-  `lintegral_boxZ_lt_top`).
+  **`integral_conj_sS_inv_mul`**, with `slAct_conj`, `kub_sS_conj`, `lintegral_comp_eq` and
+  `lintegral_enorm_comp_lt_top`): `u∘S` is automorphic on `Γ_1(3)` with `κ` when `u` is; `ρ_G∘g` is a partition
+  of unity for `Γ_1(3)` for every `g ∈ SL_2(ℤ[ω])`; `u∘g` is in `L²(ν)` when `u` is and `|u|` is invariant; and
+  `∫conj u(S⁻¹·p)·w(p) dν = ∫conj u(p)·w(S·p) dν` for `u` and `w` automorphic, by the change of variables and
+  independence of the partition of unity.
+* **θ at `S·p`** (`thetaFS`, a definition; **`setLIntegral_sS_lt_top`** and **`integrableOn_sS`**): an
+  automorphic `u` in `L²(ν)`, moved by `S`, is integrable on `3P × [α, β]` (`lintegral_boxZ_lt_top`).
 * **The band at `S·p`** (**`eisLow_sS_eq_band`**, with `height_sS_le` and `eisHigh_sS_eq_band`): every height
   at `S·p` is at most `1/v` (`rowMul_sS`, `height_le_inv`), so
   `E_s − h_s = E_s − E(1[Y ≤ v ≤ Y + β + 1/α]v^s)` at `S·p` for `v ≥ α`, as `eisLow_eq_band` on

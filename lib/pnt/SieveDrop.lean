@@ -8,25 +8,15 @@ takes them. `xq q = q^L`, and `cornerP z` is the set of primes of `(⌊z/4⌋, z
 
 * `card_le_Psi`, `famI_gB_le`: a family's `B`-count is at most `φ(q)⁻¹ Σ_rt Ψ(x/∏rt, rt_last)`, since the `n = Wc ∈
   (x, 2x]` with no prime factor below `z` inject into `Ψ(x/W, z)`.
-* `drop2_le`, `drop4_le`, `drop6_le`: a dropped cell's `B`-count is at most `φ(q)⁻¹` times its sum over the primes of
-  its cells (`SieveRough.cellP`), `Σ Ψ(x/(p₁p₂), p₂)`, `Σ Ψ(x/(p₁p₂p₃p₄), p₄)` or the same at depth 6.
+* `drop2_le`, `S2`: a dropped cell's `B`-count at depth 2 is at most `φ(q)⁻¹` times its sum over the primes of its
+  cells (`SieveRough.cellP`), `Σ Ψ(x/(p₁p₂), p₂)`.
 * `corner_le`, `corner_ev`: for `(parQ q).Good` and `z_top² ≤ 4N₁`, a corner cell (not a candidate, not surely
   evaluable, `p₁`'s cell not inside the window) counts only the `n = p₁p₂`, both primes in `cornerP z_top`, so it is at
   most `φ(q)⁻¹|cornerP|²`; for `ε > 0` and large `q`, `z_top² ≤ 4N₁` and `n²|cornerP|² ≤ εx/log x` (`n` the grid's
   number of cells a side), by `cornerP_card_ev`.
-* `D1_le`, `dropS_le_cost`, `shares_ev`, `sum_cost_div`: the dropped cells' sums are at most their certificate costs
-  `cost/K` times `x/log x`, plus `δ′(1 + n²)x/log x` for `δ′ > 0` and large `x`, by `SieveRough.share2_of_cand`,
-  `share4_of_counted4` and `share6_of_counted6` simultaneously for the finitely many cells, and the costs total at most `0.88` when the
-  certificate's total is at most `0.88K` (`htot`, `SieveCert.totalR_div_le`).
-* `drop_ev`: given `htot`, for `ε > 0`, eventually `D1(g_B) ≤ φ(q)⁻¹(0.88 + ε)x/log x`.
-* `sum_cost_div_of`, `drop_ev_of`, `total_div_lt`: the same with the loss as a parameter, `total/K ≤ c` in
-  the reals, so `D1(g_B) ≤ φ(q)⁻¹(c + ε)x/log x`; and `total < K` gives `total/K < 1`. The `0.88` forms are their cases.
 
-This is the loss: the shares of the dropped cells and the certificate's total bound the dropped
-families' `B`-counts, and the corner near `(1/2, 1/2)` is `o(x/log x)`.
-
-The route's numbers, the certificate's grid parameters and the certificate's total are a hypothesis (`htot`); the
-library's theorem (`Linnik22000E`) instantiates its version to depth 8 (`SieveDrop8`).
+So the corner near `(1/2, 1/2)` is `o(x/log x)`. The library's theorem (`Linnik22000E`) bounds the dropped terms to
+depth 8 (`SieveDrop8`), with the shares of the dropped cells and the certificate's total.
 
 The file imports `SieveQ.lean`.
 -/

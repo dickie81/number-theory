@@ -15,10 +15,11 @@ Riemann's kernel `Φ` is a null vector of the explicit formula (`Φ̂ = Ξ/2`). 
   (`∫Φ'e^{itu} = −itΦ̂(t) = 0`), `‖t‖‖ĝ(t)‖ ≤ 2|Φ(a)|e^{a/2} + ‖tail Φ'‖` (`zero_bounds`);
 * **F**: summing with the weight `‖1/(t² + 4)‖`: `Q(Φ_a) ≤ (τ₁² + 4τ₀²) Σ_ρ ‖1/(t_ρ² + 4)‖`;
 * **G**: `λ₁(a)‖Φ_a‖² ≤ Q(Φ_a)`, `‖Φ_a‖² ≥ ‖Φ_1‖² > 0`, so **`λ₁(a) ≤ K_B e^{−Ba}` for every `B`**
-  (`lam_decay`; over the zeros of `ζ`, `lam_decay_zeta`).
+  (`lam_decay`).
 
-Named input: `WeilExplicit` for each `Φ_a` and for `1/(z² + 4)` (`DigammaDiff` is proved). The bound holds for every zero family on which `Ξ` vanishes inside the strip, on or off the critical line: it is an
-upper bound on `λ₁`, and RH is the lower bound `λ₁ ≥ 0`. No bearing on RH.
+Named input: `WeilExplicit` for each `Φ_a`. The bound holds for every zero family on which `Ξ` vanishes inside
+the strip, on or off the critical line: it is an upper bound on `λ₁`, and RH is the lower bound `λ₁ ≥ 0`. No
+bearing on RH.
 -/
 
 open Real MeasureTheory Set Filter Topology

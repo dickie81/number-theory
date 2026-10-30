@@ -1,20 +1,16 @@
 /-
-# The Type II estimate for a curve and a window (Proposition 3′ with parameters)
+# Parts of the Type II estimate for a curve and a window (Proposition 3′ with parameters)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statement (`typeII_gen`). Let `g ≤ 1` with `g(1/2) = 1` be a curve whose counts hold (`CurveCounts g`: for
-some `C`, at most `C(qT)^{g(σ)}(1 + log qT)^{10}` characters mod `q` have a zero with `Re s ≥ σ` and `|Im s| ≤ T`,
-for every `q ≥ 1`, `1/2 ≤ σ ≤ 1` and `T ≥ 2`), and let the window `[m₁, m₂]` keep the exponents of `g` at `L` at most
-`L − 1/25000` (`WindowOK g L m₁ m₂`). Then `SieveTypeII.typeII_step` holds with `L` in place of `2333/1000` and
-`q^{m₁} ≤ P ≤ q^{m₂}` in place of `q^{(401/1000)L} ≤ P ≤ q^{(485/1000)L}`.
+The counts of a curve `g` (`CurveCounts g`): for some `C`, at most `C(qT)^{g(σ)}(1 + log qT)^{10}` characters mod `q`
+have a zero with `Re s ≥ σ` and `|Im s| ≤ T`, for every `q ≥ 1`, `1/2 ≤ σ ≤ 1` and `T ≥ 2`. This file has that
+hypothesis, the count of one bin for `g` and the product of Lemma 1's bounds at `L`; `SieveTypeIIHM.typeII_gen_hm`
+states the estimate for a curve on a window, with the Halász–Montgomery branch.
 
-* `CurveCounts`, `WindowOK`: the hypotheses.
-* `card_bin_gen`, `bin_bound_gen`, `prod_MB_le_gen`: `SieveTypeII.card_bin_step`, `bin_bound` and `prod_MB_le` for
-  `g`, `L` and the window.
-* `typeII_gen`: `SieveTypeII.typeII_step`'s proof, with the scales at most `q^{1+L}`.
-* The last `example` is `SieveTypeII.typeII_step` again, as the case `g = gStep`, `L = 2333/1000`,
-  `m₁ = (401/1000)L` and `m₂ = (485/1000)L`.
+* `CurveCounts`: the hypothesis.
+* `card_bin_gen`, `prod_MB_le_gen`: the count of one bin for `g` with `g(1/2) = 1`, and the product of Lemma 1's
+  bounds at `L`.
 
 The file imports `SieveTypeII.lean`.
 -/
@@ -42,7 +38,7 @@ def CurveCounts (g : ℝ → ℝ) : Prop :=
 
 /-- **The count of a bin of the grid** for a curve `g` with `g(1/2) = 1`: with the counts `C(qT)^{g(σ)}(…)` for the
 zeros, every bin `i < N` of a grid with `N > 0`, `β_0 = 1/2` and `1/2 ≤ β_i ≤ 1` holds, for `T ≥ 2`, at most
-`max(C, 1)(qT)^{g(β_i)}(1 + log qT)^{10}` characters `χ ≠ 1` (`SieveTypeII.card_bin_step`). -/
+`max(C, 1)(qT)^{g(β_i)}(1 + log qT)^{10}` characters `χ ≠ 1`. -/
 lemma card_bin_gen {g : ℝ → ℝ} (hg0 : g (1 / 2) = 1) {q : ℕ} [NeZero q] {β : ℕ → ℝ} {N : ℕ} (hN : 0 < N)
     (hβ0 : β 0 = 1 / 2) (hβ : ∀ i < N, 1 / 2 ≤ β i ∧ β i ≤ 1) {T Cd : ℝ} (hT : 2 ≤ T)
     (hCd : ∀ σ : ℝ, 1 / 2 ≤ σ → σ ≤ 1 →
@@ -77,7 +73,7 @@ lemma card_bin_gen {g : ℝ → ℝ} (hg0 : g (1 / 2) = 1) {q : ℕ} [NeZero q] 
       _ ≤ max Cd 1 * ((q : ℝ) * T) ^ g (β i) * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
           apply mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hMC hP) (by linarith)
 
-/-- **The product of Lemma 1's bounds** (`SieveTypeII.prod_MB_le` at `L`). For `q > 0` and `P > 0`: if each factor's
+/-- **The product of Lemma 1's bounds**, at `L`. For `q > 0` and `P > 0`: if each factor's
 bound is at most `2Q_j^{θ′}` and nonnegative, `Q_j ≥ 1` and `∏ Q_j ≤ 2^{K₀}q^L/P` with `K ≤ K₀`, then the product is at
 most `2^{K₀}·2^{K₀}(q^L/P)^{θ′}` when `0 ≤ θ′ ≤ 1`. -/
 lemma prod_MB_le_gen {L : ℝ} {K K₀ : ℕ} {M Q : ℕ → ℝ} {q P θ' : ℝ} (hK : K ≤ K₀) (hq : 0 < q) (hP : 0 < P)
@@ -103,21 +99,6 @@ lemma prod_MB_le_gen {L : ℝ} {K K₀ : ℕ} {M Q : ℕ → ℝ} {q P θ' : ℝ
         calc ((2 : ℝ) ^ K₀) ^ θ' ≤ ((2 : ℝ) ^ K₀) ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le h2K₀ hθ1
           _ = 2 ^ K₀ := Real.rpow_one _
     _ = 2 ^ K₀ * 2 ^ K₀ * (q ^ L / P) ^ θ' := by ring
-
-/-- `SieveTypeII.typeII_step` as the case `g = gStep`, `L = 2333/1000`, `m₁ = (401/1000)L`, `m₂ = (485/1000)L`. -/
-example {f0 : ℝ → ℝ} (hf0 : ContDiff ℝ ∞ f0) (hsupp : Function.support f0 ⊆ Set.Icc (1 / 2) 2)
-    (K₀ : ℕ) {e₁ η : ℝ} (he₁ : 0 < e₁) (hη : 0 < η) (hη1 : η ≤ 1 / 100000) :
-    ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q →
-      ∀ (P : ℕ) (S : Finset ℕ), S ⊆ Finset.Ioc P (2 * P) →
-      (q : ℝ) ^ (401 / 1000 * (2333 / 1000) : ℝ) ≤ P → (P : ℝ) ≤ (q : ℝ) ^ (485 / 1000 * (2333 / 1000) : ℝ) →
-      ∀ (a : ℕ → ℂ) (h₀ : ℝ) (K : ℕ), K ≤ K₀ → ∀ Q h : ℕ → ℝ,
-      (∀ j < K, (q : ℝ) ^ e₁ ≤ Q j ∧ |h j| ≤ (q : ℝ) ^ η) →
-      ∏ j ∈ Finset.range K, Q j ≤ 2 ^ K₀ * (q : ℝ) ^ (2333 / 1000 : ℝ) / P →
-      ∑ χ ∈ Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1),
-          ‖dp S (fun m => a m * χ m) h₀‖ * ‖∏ j ∈ Finset.range K, SieveWeight.Sp χ f0 (Q j) (h j)‖ ≤
-        (q : ℝ) ^ (2333 / 1000 - 1 / 50000 : ℝ) * Real.sqrt ((∑ m ∈ S, ‖a m‖ ^ 2) / P) :=
-  typeII_gen gStep_le_one (by unfold gStep; norm_num) card_zero_step
-    (fun _ _ _ hβ hβ1 hm1 hm2 hw hw1 => exponent_le hβ hβ1 hm1 hm2 hw hw1) hf0 hsupp K₀ he₁ hη hη1
 
 end Gen
 

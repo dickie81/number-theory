@@ -21,17 +21,16 @@ The proof:
 * The tree (`SieveDiff.tree_weighted`) runs from `z₀` down to `w = ⌈q^{ε_w}⌉`, `ε_w = c/(2k + 4)`,
   `c = (L − 1 − b₀)/4`, at the threshold `X'`. `SieveStops2.stops2_bound` bounds its stops (`window_lo`,
   `window_hi`).
-* `leaf_bound`: at a leaf `d = r∏P ≤ X'`, `SieveLeaf.leaf_A` and `leaf_B` (as in `SieveDiff.leaf_diff`) with the
-  ranges' levels `k + 2j` (`Jw_spec`, `SieveLeaf.leaf_gap`) give `2ζ(k)·YV + 2·rem`, `Y = (N₂ − N₁)/(dq)`, and
-  `V ≤ q/(φ(q) log w)` (`SieveLeaf.prod_T_le`, Mertens' product bound in its elementary form).
+* `leaf_bound`: at a leaf `d = r∏P ≤ X'`, `SieveLeaf.leaf_A` and `leaf_B` with the ranges' levels `k + 2j`
+  (`Jw_spec`, `SieveLeaf.leaf_gap`) give `2ζ(k)·YV + 2·rem`, `Y = (N₂ − N₁)/(dq)`, and `V ≤ q/(φ(q) log w)`
+  (`SieveLeaf.prod_T_le`, Mertens' product bound in its elementary form).
 * `leaves_sum_le`: with `N₂ − N₁ ≤ X + 1`, `X = q^L`, the leaves total at most
   `(2ζ(k)(X + 1)/(φ(q) log w) + 2·rem·X')·Σ_{rt} Σ_P 1/(r∏P)`, and the double sum is `Σ_{rt} 1/r ∏_{w ≤ p < z₀} (1 + 1/p)`
   (`sum_leaves_inv`), bounded by `sum_RT_inv_le` and `SieveRough.evLe_sum_inv`.
 * `exists_k`, `main_coef`, `main_term`: an even `k` with `(2k + 4)²ζ(k)` small puts the main terms below
   `ηq^L/(φ(q) log q)`; `rem_le`, `rem_term`: the remainders total at most `q^{L−c}/φ(q)`.
 
-`L`, `w₁` and `w₂` are a route's parameters and the Type II estimate is a hypothesis (`hII`); for the route
-`SieveRoute.route2333`, take `SieveRoute.typeII2333` for `hII`.
+`L`, `w₁` and `w₂` are a route's parameters and the Type II estimate is a hypothesis (`hII`).
 
 The file imports `SieveStops2.lean`.
 -/

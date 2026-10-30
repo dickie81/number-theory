@@ -21,9 +21,10 @@ modulo `c` and the dual lattice described through `ℤ[ω]`. Here `σ` is the em
   `μ_k = (k₀ + k₁) + k₀ω`, and `k ↦ μ_k` is a bijection `ℤ² ≃ ℤ[ω]` (`μEquiv`).
 * **The trace character** `ψ_c(x) = e(Re(2σ(x)/σ(δc)))` (classically `e(Tr(x/(δc)))`, since
   `Tr = 2 Re σ` on `K`) is additive (`ψc_add`) and periodic modulo `c` (`ψc_add_mul`).
-* **`eis_poisson_trace`** and **`eis_poisson_quot`**: for `P` on `ℤ[ω]/c`,
-  `Σ_z P(z mod c)F(σz) = 2/(√3·N(c))·Σ_{μ∈ℤ[ω]} (Σ_{r∈ℤ[ω]/c} P(r)ψ_c(rμ))·𝓕F(conj(2σ(μ)/σ(δc)))`.
-  The inner sums are the twisted Gauss sums of the S3.
+* **`eis_poisson_trace`**: for `f` periodic modulo `c` and representatives `rep` of `ℤ[ω]/c`,
+  `Σ_z f(z)F(σz) = 2/(√3·N(c))·Σ_{μ∈ℤ[ω]} (Σ_i f(rep i)ψ_c(rep i·μ))·𝓕F(conj(2σ(μ)/σ(δc)))`.
+  The inner sums are the twisted Gauss sums of the S3. The representatives `repQ` of `ℤ[ω]/c` satisfy the
+  hypothesis on `rep` (`repQ_bijective`).
 -/
 
 open NumberField Complex MeasureTheory PlanePoisson Ideal

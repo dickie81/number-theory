@@ -18,10 +18,9 @@ vanishes. The results hold for every `r` and every `Y > 0`.
   of such a profile, set to `0` on `(−∞, 0]`, is one again, vanishing outside `[α/(R + 2), (R + 2)β]`, and the
   ball operator `K` sends `E(ψ)` to `E(Bψ)` (`bavg_pseis`, `ballOp_toLp_ae_eq_bavg`).
   `g_s` is `E(ψ)` for an admissible `ψ` equal to `G_s` on `(0, ∞)`, for `Re s ≥ 0`.
-* **θ in the closed span** (`psSet`, a definition; **`ballOp_mem_span_psSet`**,
-  **`inner_thetaL_eq_zero_of_mem`**, **`inner_thetaL_eq_zero`** and **`thetaL_mem_closure`**): `K` preserves
-  the span `S` of the `E(ψ)`, and `θ = −ĥ′(4/3)⁻¹·P g_{4/3}` with `g_{4/3} ∈ S`, so `θ ⊥ Sᗮ` and θ is in the
-  closure of `S`.
+* **θ in the closed span** (`psSet`, a definition; **`ballOp_mem_span_psSet`**, **`inner_thetaL_eq_zero_of_mem`**
+  and **`inner_thetaL_eq_zero`**): `K` preserves the span `S` of the `E(ψ)`, and `θ = −ĥ′(4/3)⁻¹·P g_{4/3}` with
+  `g_{4/3} ∈ S`, so `θ ⊥ Sᗮ`.
 * **The constant-term principle at `∞`** (**`inner_thetaL_eq_zero_of_const`**, with `enorm_slAct_of_isAut`):
   for `u` measurable, automorphic on `Γ_1(3)` with Kubota's character and in `L²(ν)`, with
   `∫_{3P} u(z, v) dz = 0` for almost every `v > 0`, `⟨θ, u⟩ = 0`, by the unfolding and the

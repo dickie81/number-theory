@@ -30,8 +30,7 @@ into a family of `(j + s + 1)`-tuples with the comparisons `cmps`: the region `�
 `y_1 < z₀` (or `p < z₀`), `p ≥ w`, the threshold, the cofactor's roughness and the range (`cmps_iff`). Their
 `m`-parts are at most `(Λ₁ + L + 1) log q` (`cmps_c_le`), and `typeII_cmp` bounds each size.
 
-`L`, `w₁` and `w₂` are a route's parameters and the Type II estimate is a hypothesis (`hII`); the
-case `SieveRoute.route2333` has `SieveRoute.typeII2333` for `hII`.
+`L`, `w₁` and `w₂` are a route's parameters and the Type II estimate is a hypothesis (`hII`).
 
 
 The file imports `SieveCmp.lean` and `SieveStops1.lean`.

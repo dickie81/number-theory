@@ -4,9 +4,8 @@ import Saturation
 
 /-! # Saturation without RH: verified zeros, a zero-counting bound, and monotonicity
 
-`Saturation.lean` proved the pinning step from the explicit formula with every zero on the line,
-i.e. from RH. Here RH is replaced by inputs that are theorems, or a numerically observed property
-of the ground state.
+The pinning step puts a zero of `ĝ` near each zero of `ζ` at which `|ĝ'|` is bounded below. Here it is proved
+without RH, from inputs that are theorems, or a numerically observed property of the ground state.
 * The unconditional explicit formula `Q = Σ_ρ ĝ(t_ρ)²`, summed over all nontrivial zeros with
   multiplicity (named input `hQ`).
 * Verified RH up to height `H` (named input `hRH`: zeros with `|Re t| ≤ H` are real; Platt–Trudgian,

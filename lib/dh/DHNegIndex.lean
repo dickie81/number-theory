@@ -20,7 +20,7 @@ combinations from `QDHu_hasSum` with a width-3 strip test for twin combinations
 (WeilIndexInfinite.lean) at the instance `dhND`. **The payoff** (`negIndex_ge_of_located`): `n` located
 off-line zeros — `‖ρ_k − c_k‖ < 1/100` with centres `c_k` right of `Re s = 1/100`, at least `1/100`
 from the line and pairwise at least `2/100` from each other's quadruple images — give an
-`n`-dimensional negative space of `Q_dh`, at every larger support (`negIndex_ge_mono`). Not ported:
+`n`-dimensional negative space of `Q_dh`. Not ported:
 `negDirections_above`, `negDirections_of_quadruples`, `negIndex_eq_quadruples`, whose
 finiteness hypotheses fail for `dh` (infinitely many off-line zeros). -/
 

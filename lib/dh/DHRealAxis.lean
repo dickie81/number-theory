@@ -13,9 +13,7 @@ import DHCertificate
 (`dh_eq_integral_real`, `dh_div_a1_real_ge`). Hence `dh(σ) ≠ 0` for `σ > 0`
 (`dh_ne_zero_of_real`), `Λ_{dh}(σ) ≠ 0` for every real `σ` by the functional equation
 (`dhLam_real_ne_zero`), `Ξ_{dh}` has no zero on the imaginary axis (`XiDH_I_mul_ne_zero`), and the
-certificate's off-line zero is off the real axis as well (`dh_offcross_zero`). On the negative real axis `dh`
-does vanish: `dh(−1) = 0` (`dh_neg_one_eq_zero`), the trivial zero shared by `L(s, χ₅)` and `L(s, χ₅⁻¹)`,
-both characters being odd.
+certificate's off-line zero is off the real axis as well (`dh_offcross_zero`).
 -/
 
 open Real Complex DirichletCharacter MeasureTheory Set Filter Topology

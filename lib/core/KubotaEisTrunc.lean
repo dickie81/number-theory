@@ -25,11 +25,10 @@ resolvent acts on.
   argument for `E(v^s)`. A function bounded on the Siegel set at every cusp has a finite integral over `Γ\H³`
   for `Γ` of finite index. So `E(f)` is in `L²(ν)`, `ν = ρ_G dμ`, for `f` measurable and bounded with
   `|f(v)| ≤ C·v^τ`.
-* **The ball average** (`bTrans`, a definition; **`bavg_pseis`** and **`bavg_eis1`**, with
-  `le_snd_of_mem_hball`, `snd_le_of_mem_hball`, `height_le_of_mem_hball`, `bavg_snd_eq`, `psTerm_eq_of_row`
-  and `bavg_psTerm`): heights on `B_R(p)` lie between `v(p)/(R + 2)` and `(R + 2)v(p)`, and for `R ≥ 0` and
-  `f` measurable under that bound, `T_R E(f) = E(Bf)` with `Bf(v) = ∫_{B_R(0, v)} f(v') dμ` (Mathlib's
-  `integral_tsum`). For `f = v^s`, `bavg_cpow` gives `T_R E_s = ĥ(s)·E_s` for `Re s > 2`.
+* **The ball average** (`bTrans`, a definition; **`bavg_pseis`**, with `le_snd_of_mem_hball`,
+  `snd_le_of_mem_hball`, `height_le_of_mem_hball`, `bavg_snd_eq`, `psTerm_eq_of_row` and `bavg_psTerm`): heights
+  on `B_R(p)` lie between `v(p)/(R + 2)` and `(R + 2)v(p)`, and for `R ≥ 0` and `f` measurable under that bound,
+  `T_R E(f) = E(Bf)` with `Bf(v) = ∫_{B_R(0, v)} f(v') dμ` (Mathlib's `integral_tsum`).
 * **The truncation** (`lowF`, `highF`, `eisLow` and `eisHigh`, definitions; **`eis1_eq_eisLow_add_eisHigh`**
   and **`memLp_eisLow`**, with `measurable_lowF`, `norm_lowF_le`, `norm_lowF_le_Y`,
   `norm_highF_le`, `isAut_eisLow` and `measurable_eisLow`): `h_s = E(1[v ≥ Y]v^s)` and
@@ -38,7 +37,7 @@ resolvent acts on.
 * **`g_s`** (`gProf` and `gfun`, definitions, and the instance `sFinite_uhsMeasure`; **`ballOp_eisLow_sub`**,
   **`gProf_eq_zero_of_lt`** and **`gProf_eq_zero_of_ge`**, with
   `uhsMeasure_hball_lt_top_of_mem`, `norm_bTrans_le_const`, `norm_bTrans_le`, `bavg_eisLow_sub`,
-  `measurable_bTrans`, `measurable_gProf`, `norm_gProf_le` and `norm_gProf_le_pow`): `g_s = E(G_s)` with
+  `measurable_bTrans`, `measurable_gProf` and `norm_gProf_le`): `g_s = E(G_s)` with
   `G_s(v) = B(1[v′ < Y]v′^s)(v) − ĥ(s)·1[v < Y]v^s`. Then `(K − ĥ(s))(E_s − h_s) = g_s` in `L²(ν)` for
   `Re s > 2`, `R ≥ 0` and `Y ≥ 0` (`ballOp_toLp_ae_eq_bavg`). For `R ≥ 0` and `v > 0`,
   `G_s(v) = 0` unless `Y/(R + 2) ≤ v < (R + 2)Y`. For `R ≥ 0` and `Y > 0`, `g_s` is in `L²(ν)` for every `s`

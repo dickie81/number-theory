@@ -8,8 +8,7 @@ multiplier, the additive Chinese remainder theorem (its (A.11),
 local transformation (A.12): "`Consequently, for each fixed $h_0$ and active set $\mathcal A$, combining the
 Fourier coefficients $d_\sigma(\ell)$ of $\overline{\theta(H(z,v))}$ with the sums over $h_p\ne0$ gives`"
 "`d_\sigma(\ell)\psi(\lambda^4\ell) \prod_{p\in\mathcal A}B_{p,j_p}(\lambda^4\ell),`" "`up to a scalar
-independent of $\ell$.`" This file proves it and, with the grouping, the expansion of the twisted
-`θ̄` in cusp coordinates.
+independent of $\ell$.`" This file proves it for a group of translates.
 
 * **Tools** (`conj_ψc`, `conj_chiP_sq`, `πP_mem`, `thetaSupp_mul`, **`sum_thSer_mul`**, `thSer_mul_const`):
   a finite combination of theta-type series on a common support is one theta-type series.
@@ -19,12 +18,9 @@ independent of $\ell$.`" This file proves it and, with the grouping, the expansi
   `δ′ ≡ δ₀ (mod 9D)`, by `ψc_prod_crt`. There `ur ≡ 1 (mod λ³D)` (`ψc_prod_crt_inv`).
 * **The sum over a group at one frequency** (**`group_local_sum`**): `local_transform` at every
   prime of `A`, through the expansion of a product of sums.
-* **The per-group identity** (**`group_sum`**, **`group_expansion`**): the sum over a group of
-  `∏_PC_{P,j_P}(h_P)·θ̄(z + z_h, v)` is a unimodular `C₀` times one theta-type series at `(−W, V)`, with
-  coefficients `d̄_H(−m)ψ_{λ³D}(−my)∏_PB_{P,j_P}(m)`. In `group_sum`, `y = δ₀u` with `u∏_Pπ_P ≡ 1
-  (mod λ³D)`.
-* **The expansion** (**`twisted_theta_expansion`**): the twisted `θ̄` as a sum over `h₀` and the
-  active sets of these series.
+* **The per-group identity** (**`group_sum`**): under the cusp data, the sum over a group of
+  `∏_PC_{P,j_P}(h_P)·θ̄(z + z_h, v)` is a constant times one theta-type series at `(−W, V)`, with coefficients
+  `d̄_H(−m)ψ_{λ³D}(−my)∏_PB_{P,j_P}(m)`, where `y = δ₀u` with `u∏_Pπ_P ≡ 1 (mod λ³D)`.
 -/
 
 open NumberField Ideal UniqueFactorizationMonoid Complex
