@@ -341,6 +341,9 @@ def dropTwo (E : ℤ) (S : Shp) (Γ : List Con) (B : Box) (acts : List ℕ) (cha
         twoParts chain E Γ B it K sc sg (S.chain 0) (S.chain 1))) (SieveCert.K * SieveCert.K))
   else none
 
+/-- The constraint `C + c D`, of `C`'s strictness: it holds where `C` and `D` do. -/
+def combCon (C D : Con) (c : ℕ) : Con := ⟨C.L.add (D.L.smul c), C.strict⟩
+
 /-- **A certificate**: the decisions on a node and its descendants. -/
 inductive Cert
   | out
@@ -348,6 +351,7 @@ inductive Cert
   | outE (j : ℕ)
   | tighten (t : Cert)
   | up (j : ℕ) (lower : Bool) (i : ℕ) (v : ℤ) (t : Cert)
+  | comb (i j c : ℕ) (t : Cert)
   | split (C : Con) (u w : ℕ) (t₁ t₂ : Cert)
   | cut (j : ℕ) (p : ℤ) (u w : ℕ) (t₁ t₂ : Cert)
   | tii (acts labels : List ℕ) (ng : ℕ)
@@ -366,6 +370,10 @@ def run (E : ℤ) : Cert → Shp → List Con → Box → Bool → Option ℕ
   | .tighten t, S, Γ, B, b => run E t S Γ (tightenList E Γ B) b
   | .up j lower i v t, S, Γ, B, b =>
     if i < Γ.length ∧ upOK (Γ.getD i ⟨LF.zero, false⟩) E B j lower v = true then run E t S Γ (cutAt B j lower v) b
+    else none
+  | .comb i j c t, S, Γ, B, b =>
+    if i < Γ.length ∧ j < Γ.length then
+      run E t S (combCon (Γ.getD i ⟨LF.zero, false⟩) (Γ.getD j ⟨LF.zero, false⟩) c :: Γ) B b
     else none
   | .split C u w t₁ t₂, S, Γ, B, b =>
     if fits [C] S.n = true ∧ u < S.k + S.m ∧ w < S.k + S.m ∧ wtN S C.L u ≠ wtN S C.L w then
@@ -407,6 +415,25 @@ def run (E : ℤ) : Cert → Shp → List Con → Box → Bool → Option ℕ
   | .drop _ _, _, _, _, false => none
 
 /-! ### The checker's soundness -/
+
+theorem combCon_holds {C D : Con} {c : ℕ} {X : ℕ → ℝ} {H : ℝ} (hC : C.Holds X H) (hD : D.Holds X H) :
+    (combCon C D c).Holds X H := by
+  have hD' := Con.val_le hD
+  have hc : (0 : ℝ) ≤ c := Nat.cast_nonneg c
+  have hcD : (c : ℝ) * D.L.val X H ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hc hD'
+  unfold combCon Con.Holds at *
+  simp only [LF.val_add, LF.val_smul, Int.cast_natCast]
+  split_ifs at hC ⊢ <;> linarith
+
+/-- A constraint combined from two of the constraints keeps the invariant. -/
+theorem Sound.comb {N : Node} {A : Rows N.k N.m} {E : ℤ} {Γ : List Con} {B : Box} (h : Sound N A E Γ B) {C D : Con}
+    (hC : C ∈ Γ) (hD : D ∈ Γ) (c : ℕ) : Sound N A E (combCon C D c :: Γ) B := by
+  intro x hx v hv1 hv2 hc hH
+  obtain ⟨hB, hΓ⟩ := h x hx v hv1 hv2 hc hH
+  refine ⟨hB, fun c' hc' => ?_⟩
+  rcases List.mem_cons.1 hc' with rfl | hc'
+  · exact combCon_holds (hΓ C hC) (hΓ D hD)
+  · exact hΓ c' hc'
 
 /-- A form's weight on an item is the one computed from the shape's rows. -/
 theorem Desc.wt_eq {S : Shp} {k m : ℕ} {s : Fin m → Fin k} {A : Rows k m} {items : List LF} {n : ℕ}
@@ -918,6 +945,22 @@ theorem run_sound {ρ c : ℝ} (H : Hyps ρ c) {E : ℤ} (hE : 0 < E) (t : Cert)
     split_ifs at hrun with hcheck
     obtain rfl := (Option.some.inj hrun).symm
     simpa using h.OK_of_noPt hE (noPt_of_empty hcheck.1 hcheck.2) H.hρ hθρ
+  | comb i j c t ih =>
+    intro S k m s A items n hD conds Γ B b L h hinv hcond hlen hf hrun
+    simp only [run] at hrun
+    split_ifs at hrun with hcheck
+    have hCi : Γ.getD i ⟨LF.zero, false⟩ ∈ Γ := by
+      rw [List.getD_eq_getElem _ _ hcheck.1]; exact List.getElem_mem _
+    have hCj : Γ.getD j ⟨LF.zero, false⟩ ∈ Γ := by
+      rw [List.getD_eq_getElem _ _ hcheck.2]; exact List.getElem_mem _
+    have hf' : fits (combCon (Γ.getD i ⟨LF.zero, false⟩) (Γ.getD j ⟨LF.zero, false⟩) c :: Γ) n = true := by
+      rw [fits_iff] at hf ⊢
+      intro C hC
+      rcases List.mem_cons.1 hC with rfl | hC
+      · simp only [combCon, LF.add, LF.smul, length_addC, List.length_map]
+        exact max_le (hf _ hCi) (hf _ hCj)
+      · exact hf C hC
+    exact ih S hD conds _ B b L (h.comb hCi hCj c) hinv hcond hlen hf' hrun
   | tighten t ih =>
     intro S k m s A items n hD conds Γ B b L h hinv hcond hlen hf hrun
     simp only [run] at hrun
