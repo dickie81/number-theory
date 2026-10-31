@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 110 modules that none of the three imports, directly or not, with their
+The last section lists the 112 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 19 | 107 |
+| `lib/pnt` | 223 | 726 | 21 | 115 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1791,6 +1791,13 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveLevel.lintegral_rpow_le_levels`: Moments from the measures of level sets
 - `ShortSieveLevel.lintegral_rpow_le_of_counts`: Moments from counts of large values
 
+#### `ShortSieveLi`: Li's Lemma 4.1 as a hypothesis, and the asymptotic formula for nodes from it
+
+- `ShortSieveLi.grpProd_le_prod_le`: A box that holds a term has its groups' exponents near the term's
+- `ShortSieveLi.abs_count_sub_le_G2`: The asymptotic formula for a node from Li's Lemma 4.1
+- `ShortSieveLi.count_B_le`: A node's terms in the comparison interval number `O(x^{1−ρ}/log x)`
+- `ShortSieveLi.abs_count_sub_le_G2_eps`: The asymptotic formula for a node from Li's Lemma 4.1, with error `ε y/log x`
+
 #### `ShortSieveLong`: Primes and rough numbers in intervals of relative length `X^{−σ}`
 
 - `ShortSieveLong.abs_theta_sub_theta_le`: `θ` on short intervals
@@ -1821,6 +1828,13 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveNode.abs_count_sub_le`: The asymptotic formula for a node
 - `ShortSieveNode.cover_of_test`: Covers from a pointwise test on a compact set
 - `ShortSieveNode.abs_count_sub_le_of_test`: The asymptotic formula for a node from a pointwise test
+
+#### `ShortSieveRel`: Tuples of primes cut out by log-linear conditions, from a relative estimate on boxes
+
+- `ShortSieveRel.abs_sum_sub_le_boxes_rel`: The box sandwich with relative errors
+- `ShortSieveRel.card_tuples_le_psi`: Tuples of primes by their products
+- `ShortSieveRel.card_tuples_B_le`: The tuples of primes with product in the comparison interval number `O(x^{1−ρ}/log x)`
+- `ShortSieveRel.abs_card_cut_sub_le_rel`: Tuples of primes cut out by log-linear conditions, from a relative estimate on boxes
 
 #### `ShortSieveTerm`: Tuples of primes cut out by log-linear conditions
 
