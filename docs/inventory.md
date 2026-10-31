@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 886 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 891 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 69 | 152 |
-| `lib/pnt` | 202 | 641 |
+| `lib/pnt` | 203 | 646 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
 
@@ -1123,6 +1123,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `MertensChi`: Mertens' function twisted by a character, uniformly in the modulus
 
 - `MertensChi.LSeries_fχμ`: `L(χμ, s) = 1/L(s, χ)` on `Re s > 1` (Mathlib's `LSeries.mul_mu_eq_one`).
+- `MertensChi.norm_sum_le_of`: Perron's formula with a Lindelöf bound
 - `MertensChi.norm_sum_le`: Mertens' function twisted by a character, uniformly in the modulus
 - `MertensChi.isBigO`: For one character `χ ≠ 1`
 
@@ -1223,6 +1224,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `QuadSplit.inert₁`: `d` not a square mod `p`
 - `QuadSplit.split_two₁`: `d ≡ 1 (mod 8)`
 - `QuadSplit.inert_two₁`: `d ≡ 5 (mod 8)`
+
+#### `ShortCharSums`: Short character sums
+
+- `ShortCharSums.norm_sum_le`: Character sums, uniformly in the modulus
+- `ShortCharSums.norm_sum_le_rpow`: Short character sums
+- `ShortCharSums.norm_sum_le_mul`: Short character sums are `o(X)`
+- `ShortCharSums.card_squares_sub_le`: Quadratic residues in short intervals
 
 #### `ShortKV`: Primes in short intervals: the Korobov–Vinogradov input
 
