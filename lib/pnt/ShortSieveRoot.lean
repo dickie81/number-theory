@@ -17,6 +17,9 @@ varies with `p₁`. Their asymptotic formulas, from Li's Lemma 3.1 as a hypothes
   is `O(y/log² x)` per unit of `Σ 1/p` (`sB_gap_le`, from Chebyshev's `θ(t) ≤ t log 4`). The first block, where the
   lemma may not apply at the upper level, is `O(y/log² x)` by the lemma at a constant level below both
   (`abs_block_zero_le`).
+* `abs_S2_liNu_sub_le`: the second sum with Li's level `liNu θ γ` on `(x^{a₀}, x^{1/2}]`: on each piece
+  `(1/2 − h(2θ − 1), 1/2 − (h − 1)(2θ − 1)]` the level is `min(2(θ − α)/(2h − 1), γ)` (`liNu_eq_nuPiece`), which is
+  nonincreasing, `2`-Lipschitz and at least `2θ − 1`, so `abs_S2_sub_le` applies piece by piece.
 -/
 
 open Finset Real Filter
@@ -1037,8 +1040,188 @@ theorem abs_S2_sub_le {θ γ ρ a b νmin νmax K : ℝ} (hLi : LiLemma31 θ γ 
     _ ≤ y * (ε / Real.log x) + ε * D₂ * Sp * y / Real.log x := add_le_add (mul_le_mul_of_nonneg_left hk hy0) le_rfl
     _ = ε * (D₂ * Sp + 1) * y / Real.log x := by ring
 
+/-! ### Li's level, piece by piece -/
+
+/-- Li's level on the piece `h`: `min(2(θ − α)/(2h − 1), γ)`. -/
+noncomputable def nuPiece (θ γ : ℝ) (h : ℕ) (α : ℝ) : ℝ := min (2 * (θ - α) / (2 * h - 1)) γ
+
+/-- On `(1/2 − h(2θ − 1), 1/2 − (h − 1)(2θ − 1)]`, `h ≥ 1`, Li's level is `nuPiece θ γ h`. -/
+theorem liNu_eq_nuPiece {θ γ α : ℝ} {h : ℕ} (hθ : 1 / 2 < θ) (hh : 1 ≤ h)
+    (h1 : 1 / 2 - h * (2 * θ - 1) < α) (h2 : α ≤ 1 / 2 - (h - 1) * (2 * θ - 1)) :
+    liNu θ γ α = nuPiece θ γ h α := by
+  have hd : 0 < 2 * θ - 1 := by linarith
+  have hh1 : (1 : ℝ) ≤ h := by exact_mod_cast hh
+  have hfl : ⌊(1 / 2 - α) / (2 * θ - 1)⌋₊ = h - 1 := by
+    rw [Nat.floor_eq_iff (div_nonneg (by nlinarith) hd.le)]
+    push_cast [Nat.cast_sub hh]
+    constructor
+    · rw [le_div_iff₀ hd]; linarith
+    · rw [div_lt_iff₀ hd]; linarith
+  unfold liNu nuPiece
+  rw [hfl]
+  push_cast [Nat.cast_sub hh]
+  ring_nf
+
+theorem nuPiece_anti (θ γ : ℝ) {h : ℕ} (hh : 1 ≤ h) {α α' : ℝ} (hαα : α ≤ α') :
+    nuPiece θ γ h α' ≤ nuPiece θ γ h α := by
+  have hh1 : (0 : ℝ) < 2 * h - 1 := by have : (1 : ℝ) ≤ h := (by exact_mod_cast hh); linarith
+  unfold nuPiece
+  exact min_le_min_right _ (div_le_div_of_nonneg_right (by linarith) hh1.le)
+
+theorem nuPiece_lip (θ γ : ℝ) {h : ℕ} (hh : 1 ≤ h) {α α' : ℝ} (hαα : α ≤ α') :
+    nuPiece θ γ h α - nuPiece θ γ h α' ≤ 2 * (α' - α) := by
+  have hh1 : (1 : ℝ) ≤ 2 * h - 1 := by have : (1 : ℝ) ≤ h := (by exact_mod_cast hh); linarith
+  have hu : 2 * (θ - α') / (2 * h - 1) ≤ 2 * (θ - α) / (2 * h - 1) :=
+    div_le_div_of_nonneg_right (by linarith) (by linarith)
+  have hd : 2 * (θ - α) / (2 * h - 1) - 2 * (θ - α') / (2 * h - 1) ≤ 2 * (α' - α) := by
+    rw [← sub_div, div_le_iff₀ (by linarith)]
+    nlinarith
+  unfold nuPiece
+  rcases le_total (2 * (θ - α) / (2 * h - 1)) γ with h1 | h1 <;>
+    rcases le_total (2 * (θ - α') / (2 * h - 1)) γ with h2 | h2
+  · rw [min_eq_left h1, min_eq_left h2]; exact hd
+  · rw [min_eq_left h1, min_eq_right h2]; linarith
+  · rw [min_eq_right h1, min_eq_left h2]; linarith
+  · rw [min_eq_right h1, min_eq_right h2]; linarith
+
+/-- At the right end of the piece `h` the level is `min(2θ − 1, γ)`, its least value on the piece. -/
+theorem le_nuPiece {θ γ α : ℝ} {h : ℕ} (hh : 1 ≤ h) (hγ : 2 * θ - 1 ≤ γ)
+    (h2 : α ≤ 1 / 2 - (h - 1) * (2 * θ - 1)) : 2 * θ - 1 ≤ nuPiece θ γ h α := by
+  have hh1 : (0 : ℝ) < 2 * h - 1 := by have : (1 : ℝ) ≤ h := (by exact_mod_cast hh); linarith
+  unfold nuPiece
+  refine le_min ?_ hγ
+  rw [le_div_iff₀ hh1]
+  nlinarith
+
+/-- Splitting the range of `sTwo`. -/
+theorem sTwo_split (ν : ℝ → ℝ) {a b c x y : ℝ} (hx : 1 ≤ x) (hab : a ≤ b) (hbc : b ≤ c) :
+    sTwo ν a c x y = sTwo ν a b x y + sTwo ν b c x y := by
+  have h1 : ⌊x ^ a⌋₊ ≤ ⌊x ^ b⌋₊ := Nat.floor_le_floor (Real.rpow_le_rpow_of_exponent_le hx hab)
+  have h2 : ⌊x ^ b⌋₊ ≤ ⌊x ^ c⌋₊ := Nat.floor_le_floor (Real.rpow_le_rpow_of_exponent_le hx hbc)
+  unfold sTwo
+  rw [← sum_union]
+  · refine sum_congr ?_ fun _ _ => rfl
+    ext g
+    rw [mem_union, mem_tuples_one, mem_tuples_one, mem_tuples_one]
+    constructor
+    · rintro ⟨h3, h4, hp⟩
+      by_cases h5 : g 0 ≤ ⌊x ^ b⌋₊
+      · exact Or.inl ⟨h3, h5, hp⟩
+      · exact Or.inr ⟨not_le.1 h5, h4, hp⟩
+    · rintro (⟨h3, h4, hp⟩ | ⟨h3, h4, hp⟩)
+      · exact ⟨h3, le_trans h4 h2, hp⟩
+      · exact ⟨lt_of_le_of_lt h1 h3, h4, hp⟩
+  · rw [Finset.disjoint_left]
+    intro g hg hg'
+    rw [mem_tuples_one] at hg hg'
+    omega
+
+/-- `sTwo` only sees the level on `(a, b]`. -/
+theorem sTwo_congr {ν ν' : ℝ → ℝ} {a b x y : ℝ} (hx : 1 < x)
+    (h : ∀ α, a < α → α ≤ b → ν α = ν' α) : sTwo ν a b x y = sTwo ν' a b x y := by
+  have hx0 : 0 < x := by linarith
+  have hlx : 0 < Real.log x := Real.log_pos hx
+  unfold sTwo
+  refine sum_congr rfl fun g hg => ?_
+  obtain ⟨h1, h2, -⟩ := mem_tuples_one.1 hg
+  have h1' : x ^ a < g 0 := Nat.lt_of_floor_lt h1
+  have h2' : (g 0 : ℝ) ≤ x ^ b := le_trans (Nat.cast_le.2 h2) (Nat.floor_le (Real.rpow_nonneg hx0.le _))
+  have hg0 : (0 : ℝ) < g 0 := lt_trans (Real.rpow_pos_of_pos hx0 _) h1'
+  rw [h]
+  · rw [lt_div_iff₀ hlx, ← Real.log_rpow hx0]; exact Real.log_lt_log (Real.rpow_pos_of_pos hx0 _) h1'
+  · rw [div_le_iff₀ hlx, ← Real.log_rpow hx0]; exact Real.log_le_log hg0 h2'
+
+/-- **The second root term with Li's level.** With Li's Lemma 3.1 (`1/2 < θ ≤ 1`, `2θ − 1 ≤ γ < 1/2`) and
+`12ρ < 2θ − 1`, for `0 < a₀ ≤ 1/2` there is `C` with: for every `ε ∈ (0, 1]`, for large `x` and
+`y ∈ [x^θ, x^{1−ρ}]`, the sums `Σ_{x^{a₀} < p ≤ x^{1/2}} S(·_p, x^{ν(log p/log x)})` with `ν = liNu θ γ` satisfy
+`|Σ₂(A) − (y/x^{1−ρ}) Σ₂(B)| ≤ εC y/log x`: `abs_S2_sub_le` on each piece of `liNu`. -/
+theorem abs_S2_liNu_sub_le {θ γ ρ a₀ : ℝ} (hLi : LiLemma31 θ γ ρ) (hθ : 1 / 2 < θ) (hθ1 : θ ≤ 1)
+    (hγ : 2 * θ - 1 ≤ γ) (hγ2 : γ < 1 / 2) (hρ : 0 < ρ) (hρθ : 12 * ρ < 2 * θ - 1) (ha₀ : 0 < a₀)
+    (ha₀2 : a₀ ≤ 1 / 2) :
+    ∃ C : ℝ, ∀ ε : ℝ, 0 < ε → ε ≤ 1 → ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, x ^ θ ≤ y → y ≤ x ^ (1 - ρ) →
+      |sTwo (liNu θ γ) a₀ (1 / 2) x y - y / x ^ (1 - ρ) * sTwo (liNu θ γ) a₀ (1 / 2) x (x ^ (1 - ρ))| ≤
+        ε * C * y / Real.log x := by
+  set d := 2 * θ - 1 with hd
+  have hd0 : 0 < d := by rw [hd]; linarith
+  -- the claim for the ranges `(max(a₀, 1/2 − hd), 1/2]`
+  have key : ∀ h : ℕ, ∃ C : ℝ, ∀ ε : ℝ, 0 < ε → ε ≤ 1 → ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, x ^ θ ≤ y →
+      y ≤ x ^ (1 - ρ) → |sTwo (liNu θ γ) (max a₀ (1 / 2 - h * d)) (1 / 2) x y -
+        y / x ^ (1 - ρ) * sTwo (liNu θ γ) (max a₀ (1 / 2 - h * d)) (1 / 2) x (x ^ (1 - ρ))| ≤
+          ε * C * y / Real.log x := by
+    intro h
+    induction h with
+    | zero =>
+      refine ⟨0, fun ε _ _ => Filter.Eventually.of_forall fun x y _ _ => ?_⟩
+      have hm : max a₀ (1 / 2 - ((0 : ℕ) : ℝ) * d) = 1 / 2 := by
+        rw [Nat.cast_zero, zero_mul, sub_zero]; exact max_eq_right ha₀2
+      rw [hm]
+      have he : ∀ y', sTwo (liNu θ γ) (1 / 2) (1 / 2) x y' = 0 := fun y' => by
+        unfold sTwo
+        refine sum_eq_zero fun g hg => ?_
+        obtain ⟨h1, h2, -⟩ := mem_tuples_one.1 hg
+        omega
+      rw [he, he]
+      simp
+    | succ h ih =>
+      obtain ⟨C₁, hC₁⟩ := ih
+      set a' := max a₀ (1 / 2 - ((h + 1 : ℕ) : ℝ) * d) with ha'
+      set b' := max a₀ (1 / 2 - (h : ℝ) * d) with hb'
+      have hab' : a' ≤ b' := max_le_max le_rfl (by push_cast; nlinarith)
+      have hb'2 : b' ≤ 1 / 2 := max_le ha₀2 (by nlinarith [(Nat.cast_nonneg h : (0 : ℝ) ≤ h)])
+      by_cases hlt : a' < b'
+      · -- the piece `h + 1`
+        have hb'eq : b' = 1 / 2 - (h : ℝ) * d := by
+          rcases le_total a₀ (1 / 2 - (h : ℝ) * d) with h1 | h1
+          · rw [hb', max_eq_right h1]
+          · exfalso; rw [hb', max_eq_left h1] at hlt; exact absurd hlt (not_lt.2 (le_max_left _ _))
+        have ha'lo : 1 / 2 - ((h + 1 : ℕ) : ℝ) * d ≤ a' := le_max_right _ _
+        have hh1 : 1 ≤ h + 1 := Nat.succ_pos h
+        have hpiece : ∀ α, a' < α → α ≤ b' → liNu θ γ α = nuPiece θ γ (h + 1) α := fun α h1 h2 =>
+          liNu_eq_nuPiece hθ hh1 (lt_of_le_of_lt ha'lo h1) (by rw [hb'eq] at h2; push_cast; linarith)
+        have hS := abs_S2_sub_le (νmin := d) (νmax := γ) (K := 2) hLi hθ hθ1 hγ hρ
+          (lt_of_lt_of_le ha₀ (le_max_left _ _))
+          hlt hb'2 (nuPiece θ γ (h + 1)) (fun α _ α' _ hαα => nuPiece_anti θ γ hh1 hαα)
+          (fun α hα => le_of_eq (hpiece α hα.1 hα.2).symm)
+          (fun α hα => le_nuPiece hh1 hγ (by rw [hb'eq] at hα; push_cast; linarith [hα.2]))
+          (fun α _ => min_le_right _ _) hd0 (by rw [min_self]; exact hρθ) (by linarith) (by norm_num)
+          (fun α _ α' _ hαα => nuPiece_lip θ γ hh1 hαα)
+        obtain ⟨C₂, hC₂⟩ := hS
+        refine ⟨C₂ + C₁, fun ε hε hε1 => ?_⟩
+        filter_upwards [hC₁ ε hε hε1, hC₂ ε hε hε1, eventually_gt_atTop 1] with x h1 h2 hx1 y hy1 hy2
+        have hsplit : ∀ y', sTwo (liNu θ γ) a' (1 / 2) x y' =
+            sTwo (nuPiece θ γ (h + 1)) a' b' x y' + sTwo (liNu θ γ) b' (1 / 2) x y' := fun y' => by
+          rw [sTwo_split _ hx1.le hab' hb'2, sTwo_congr hx1 hpiece]
+        rw [hsplit, hsplit]
+        have e1 := h1 y hy1 hy2
+        have e2 := h2 y hy1 hy2
+        calc |sTwo (nuPiece θ γ (h + 1)) a' b' x y + sTwo (liNu θ γ) b' (1 / 2) x y -
+            y / x ^ (1 - ρ) * (sTwo (nuPiece θ γ (h + 1)) a' b' x (x ^ (1 - ρ)) +
+              sTwo (liNu θ γ) b' (1 / 2) x (x ^ (1 - ρ)))| ≤
+            |sTwo (nuPiece θ γ (h + 1)) a' b' x y -
+              y / x ^ (1 - ρ) * sTwo (nuPiece θ γ (h + 1)) a' b' x (x ^ (1 - ρ))| +
+            |sTwo (liNu θ γ) b' (1 / 2) x y - y / x ^ (1 - ρ) * sTwo (liNu θ γ) b' (1 / 2) x (x ^ (1 - ρ))| := by
+              rw [mul_add]
+              refine le_trans (le_of_eq (by ring_nf)) (abs_add_le _ _)
+          _ ≤ ε * C₂ * y / Real.log x + ε * C₁ * y / Real.log x := add_le_add e2 e1
+          _ = ε * (C₂ + C₁) * y / Real.log x := by ring
+      · -- an empty piece
+        have heq : a' = b' := le_antisymm hab' (not_lt.1 hlt)
+        refine ⟨C₁, fun ε hε hε1 => ?_⟩
+        rw [heq]
+        exact hC₁ ε hε hε1
+  -- enough pieces
+  obtain ⟨C, hC⟩ := key ⌈(1 / 2 - a₀) / d⌉₊
+  have hm : max a₀ (1 / 2 - (⌈(1 / 2 - a₀) / d⌉₊ : ℝ) * d) = a₀ := by
+    refine max_eq_left ?_
+    have := Nat.le_ceil ((1 / 2 - a₀) / d)
+    rw [div_le_iff₀ hd0] at this
+    linarith
+  rw [hm] at hC
+  exact ⟨C, hC⟩
+
 end ShortSieveRoot
 
 #print axioms ShortSieveRoot.abs_S1_sub_le
 #print axioms ShortSieveRoot.sA_sub_le
 #print axioms ShortSieveRoot.abs_S2_sub_le
+#print axioms ShortSieveRoot.abs_S2_liNu_sub_le

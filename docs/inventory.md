@@ -13,7 +13,7 @@ headline theorems (those whose docstring opens with a bold title).
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 25 | 145 |
+| `lib/pnt` | 223 | 726 | 25 | 146 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1868,6 +1868,7 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveRoot.abs_block_pos_le`: A regular block
 - `ShortSieveRoot.abs_block_zero_le`: The first block
 - `ShortSieveRoot.abs_S2_sub_le`: The second root term
+- `ShortSieveRoot.abs_S2_liNu_sub_le`: The second root term with Li's level
 
 #### `ShortSieveTerm`: Tuples of primes cut out by log-linear conditions
 
