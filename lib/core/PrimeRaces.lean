@@ -82,7 +82,6 @@ theorem hadamard_chi4 : WeilForm.HadamardW (fG chi4) (fun i : WeilForm.ZeroIdx (
 /-! ## Mod 3: `χ₋₃` -/
 
 /-- The character mod 3 of `ℚ(√−3)`: `1 ↦ 1`, `2 ↦ −1`. -/
-@[simps]
 def χ₃ : MulChar (ZMod 3) ℤ where
   toFun a :=
     match a with

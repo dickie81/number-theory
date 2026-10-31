@@ -1161,8 +1161,6 @@ omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] [SieveCert.Rule] in
 theorem inCC_iff {x : ℝ} {b p : ℕ} : InCC x b p ↔
     x ^ ((SieveCert.eC b : ℝ) / DEN) ≤ p ∧ (p : ℝ) < x ^ (((SieveCert.eC b : ℝ) + SieveCert.HC) / DEN) := Iff.rfl
 
-omit hL in
-
 theorem lf_e4gt [SieveCert.RuleNB] (hE : 0 ≤ E) (hT : TUat q a 3 E) {i j k l : ℕ}
     (hx : i < SieveCert.n ∧ j < SieveCert.n ∧ k < SieveCert.n ∧ l < SieveCert.n)
     (hok : SieveCert.Rule.ok [cell i, cell j, cell k, cell l] = true) :
