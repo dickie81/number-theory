@@ -13,7 +13,7 @@ headline theorems (those whose docstring opens with a bold title).
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 24 | 131 |
+| `lib/pnt` | 223 | 726 | 24 | 133 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1917,6 +1917,8 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveWit.momentOK_of_dreq_lt`: Every moment above Harman's exponent is admissible
 - `ShortSieveWit.dreq_mono`: Harman's exponent is nondecreasing
 - `ShortSieveWit.test_of_sum_inv_dreq`: The test from Harman's exponents
+- `ShortSieveWit.inv_dreq_ge_tangent`: The tangent on a ramp
+- `ShortSieveWit.lt_sum_inv_dreq_of_linear`: The linearised test
 
 ### `lib/dh`
 

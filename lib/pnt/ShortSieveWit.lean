@@ -18,7 +18,12 @@ joins the two:
   `(m, m + 1/2]` and `2m + 2` on `(m + 1/2, m + 1]`), nondecreasing, with every `δ > δ_req(D)` admissible;
 * `test_of_sum_inv_dreq`: **the test from Harman's exponents.** `Σ_g 1/δ_req(D_g) > 1` gives admissible `δ_g` with
   `Σ 1/δ_g = 1`, so the certificate need only bound `Σ_g 1/δ_req(D_g)` from below on a box, which `dreq_mono` reduces
-  to the groups' least exponents there.
+  to the groups' least exponents there;
+* `inv_dreq_ge_tangent`, `lt_sum_inv_dreq_of_linear`: **the linearised test.** On a ramp of `δ_req`,
+  `a ↦ 1/δ_req(c/(a − κ))` is convex, so it lies above its tangent at the least exponent `lo`. The certificate's
+  check `Σ_g (F_g + s_g(a_g − lo_g)) > 1`, with `F_g ≤ 1/δ_req(c/(lo_g − κ))` and each slope `s_g` either `≤ 0` or at
+  most the tangent's on a ramp, gives `Σ_g 1/δ_req(c′/(b_g − κ′)) > 1` at every point. Here `c′ ≤ c` and
+  `b_g − κ′ ≥ a_g − κ`, so a smaller `κ′` absorbs a small deficit `b_g < a_g` in the exponents.
 -/
 
 open Finset
@@ -241,6 +246,85 @@ theorem test_of_sum_inv_dreq {G : ℕ} {D : Fin G → ℝ} (h : 1 < ∑ g, 1 / d
   · have := hd g
     nlinarith
 
+/-! ### The linearised test -/
+
+/-- `1/δ_req(c/(a − κ))` is nondecreasing in `a > κ`, for `c ≥ 0`. -/
+theorem inv_dreq_mono {c κ a b : ℝ} (hc : 0 ≤ c) (ha : κ < a) (hab : a ≤ b) :
+    1 / dreq (c / (a - κ)) ≤ 1 / dreq (c / (b - κ)) :=
+  one_div_le_one_div_of_le (lt_of_lt_of_le two_pos (two_le_dreq _))
+    (dreq_mono (div_le_div_of_nonneg_left hc (by linarith) (by linarith)))
+
+/-- **The tangent on a ramp.** On a ramp `m < D ≤ m + 1/2` of `δ_req` (`m ≥ 1`), `a ↦ 1/δ_req(c/(a − κ))` is
+`u/(4c − 2mu)` with `u = a − κ`, which is convex, so it lies above its tangent at `lo`: for `κ < lo ≤ a` with
+`m < c/(a − κ)` and `c/(lo − κ) ≤ m + 1/2`, the value at `a` is at least the value at `lo` plus
+`4c/(4c − 2m(lo − κ))²·(a − lo)`. -/
+theorem inv_dreq_ge_tangent {c κ lo a : ℝ} {m : ℕ} (hm : 1 ≤ m) (hc : 0 < c) (hlo : κ < lo) (hla : lo ≤ a)
+    (h1 : (m : ℝ) < c / (a - κ)) (h2 : c / (lo - κ) ≤ m + 1 / 2) :
+    1 / dreq (c / (lo - κ)) + 4 * c / (4 * c - 2 * m * (lo - κ)) ^ 2 * (a - lo) ≤ 1 / dreq (c / (a - κ)) := by
+  have hu₀ : 0 < lo - κ := by linarith
+  have hu : 0 < a - κ := by linarith
+  have hm1 : (1 : ℝ) ≤ m := by exact_mod_cast hm
+  have hD : c / (a - κ) ≤ c / (lo - κ) := div_le_div_of_nonneg_left hc.le hu₀ (by linarith)
+  -- both points on the ramp
+  have hea : dreq (c / (a - κ)) = 4 * (c / (a - κ)) - 2 * m := by
+    rw [dreq_eq_of hm h1 (by linarith), ite_eq_left (by linarith)]
+  have hel : dreq (c / (lo - κ)) = 4 * (c / (lo - κ)) - 2 * m := by
+    rw [dreq_eq_of hm (lt_of_lt_of_le h1 hD) (by linarith), ite_eq_left h2]
+  -- `4c − 2mu > 0` at both points
+  have hma : (m : ℝ) * (a - κ) < c := by rwa [lt_div_iff₀ hu] at h1
+  have hml : (m : ℝ) * (lo - κ) ≤ (m : ℝ) * (a - κ) := mul_le_mul_of_nonneg_left (by linarith) (by linarith)
+  have hQ : 0 < 4 * c - 2 * m * (a - κ) := by nlinarith
+  have hP : 0 < 4 * c - 2 * m * (lo - κ) := by nlinarith
+  have ea : 1 / dreq (c / (a - κ)) = (a - κ) / (4 * c - 2 * m * (a - κ)) := by
+    rw [hea]; field_simp
+  have el : 1 / dreq (c / (lo - κ)) = (lo - κ) / (4 * c - 2 * m * (lo - κ)) := by
+    rw [hel]; field_simp
+  rw [ea, el]
+  -- with `P, Q` the two denominators, the difference is `2m(a − lo)²(P + 2m(lo − κ))/(QP²) ≥ 0`
+  obtain ⟨P, hPd⟩ : ∃ P, P = 4 * c - 2 * m * (lo - κ) := ⟨_, rfl⟩
+  obtain ⟨Q, hQd⟩ : ∃ Q, Q = 4 * c - 2 * m * (a - κ) := ⟨_, rfl⟩
+  rw [← hPd] at hP ⊢
+  rw [← hQd] at hQ ⊢
+  have e1 : (lo - κ) / P + 4 * c / P ^ 2 * (a - lo) = ((lo - κ) * P + 4 * c * (a - lo)) / P ^ 2 := by
+    have := hP.ne'
+    field_simp
+  rw [e1, div_le_div_iff₀ (by positivity) hQ]
+  have e2 : (a - κ) * P ^ 2 - ((lo - κ) * P + 4 * c * (a - lo)) * Q =
+      2 * m * (a - lo) ^ 2 * (P + 2 * m * (lo - κ)) := by
+    rw [hPd, hQd]; ring
+  have : 0 ≤ 2 * (m : ℝ) * (a - lo) ^ 2 * (P + 2 * m * (lo - κ)) := by positivity
+  linarith
+
+/-- **The linearised test.** Let `0 < c′ ≤ c`, and for each group `κ < lo_g ≤ a_g`, `a_g − κ ≤ b_g − κ′`,
+`F_g ≤ 1/δ_req(c/(lo_g − κ))`, and a slope `s_g` that is `≤ 0` or at most the tangent's slope
+`4c/(4c − 2m(lo_g − κ))²` on a ramp `m < c/(a_g − κ) ≤ c/(lo_g − κ) ≤ m + 1/2`. If
+`Σ_g (F_g + s_g(a_g − lo_g)) > 1`, then `Σ_g 1/δ_req(c′/(b_g − κ′)) > 1`. -/
+theorem lt_sum_inv_dreq_of_linear {G : ℕ} {c c' κ κ' : ℝ} (hc' : 0 < c') (hcc : c' ≤ c) (a b lo F s : Fin G → ℝ)
+    (hlo : ∀ g, κ < lo g ∧ lo g ≤ a g) (hab : ∀ g, a g - κ ≤ b g - κ')
+    (hF : ∀ g, F g ≤ 1 / dreq (c / (lo g - κ)))
+    (hs : ∀ g, s g ≤ 0 ∨ ∃ m : ℕ, 1 ≤ m ∧ (m : ℝ) < c / (a g - κ) ∧ c / (lo g - κ) ≤ m + 1 / 2 ∧
+      s g ≤ 4 * c / (4 * c - 2 * m * (lo g - κ)) ^ 2)
+    (hsum : 1 < ∑ g, (F g + s g * (a g - lo g))) :
+    1 < ∑ g, 1 / dreq (c' / (b g - κ')) := by
+  have hc : 0 < c := lt_of_lt_of_le hc' hcc
+  refine lt_of_lt_of_le hsum (sum_le_sum fun g _ => ?_)
+  obtain ⟨hlo1, hlo2⟩ := hlo g
+  have hd0 : 0 ≤ a g - lo g := by linarith
+  -- from `(c, κ, a_g)` to `(c′, κ′, b_g)`
+  have hshift : 1 / dreq (c / (a g - κ)) ≤ 1 / dreq (c' / (b g - κ')) := by
+    have ha0 : 0 < a g - κ := by linarith
+    have hb0 : 0 < b g - κ' := lt_of_lt_of_le ha0 (hab g)
+    refine one_div_le_one_div_of_le (lt_of_lt_of_le two_pos (two_le_dreq _)) (dreq_mono ?_)
+    calc c' / (b g - κ') ≤ c / (b g - κ') := div_le_div_of_nonneg_right hcc hb0.le
+      _ ≤ c / (a g - κ) := div_le_div_of_nonneg_left hc.le ha0 (hab g)
+  refine le_trans ?_ hshift
+  rcases hs g with hs0 | ⟨m, hm, h1, h2, hsm⟩
+  · have := mul_nonpos_of_nonpos_of_nonneg hs0 hd0
+    linarith [hF g, inv_dreq_mono hc.le hlo1 hlo2]
+  · have ht := inv_dreq_ge_tangent hm hc hlo1 hlo2 h1 h2
+    have := mul_le_mul_of_nonneg_right hsm hd0
+    linarith [hF g]
+
 end ShortSieveWit
 
 #print axioms ShortSieveWit.momentOK_of_le_add
@@ -248,3 +332,5 @@ end ShortSieveWit
 #print axioms ShortSieveWit.momentOK_of_dreq_lt
 #print axioms ShortSieveWit.dreq_mono
 #print axioms ShortSieveWit.test_of_sum_inv_dreq
+#print axioms ShortSieveWit.inv_dreq_ge_tangent
+#print axioms ShortSieveWit.lt_sum_inv_dreq_of_linear
