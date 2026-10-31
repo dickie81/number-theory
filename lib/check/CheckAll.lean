@@ -194,6 +194,8 @@ import ZetaHuxley
 import AlmostAllPrimes
 import ZetaGMDensity
 import BohrLandauCore
+import ShortSieveThree
+import ShortSieveCertRev
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -938,3 +940,38 @@ nonzero and automorphic on `Γ_2`. -/
 #print axioms Eis.fBound_sep
 #print axioms Eis.thetaL_ne_zero
 #print axioms Eis.isAut_thS_Gam2
+
+/- R. Li's primes in short intervals at `θ = 13/25`, in progress (`formalisations/short-intervals.md`): the lower
+bound for primes from loss bounds on the certificate's root cells, and the certificate's decisions. -/
+#print axioms ShortSieveThree.primes_of_cells
+#print axioms ShortSieveCert.Sound.OK_of_out
+#print axioms ShortSieveCert.Sound.cut_lt
+#print axioms ShortSieveCert.Sound.cut_ge
+#print axioms ShortSieveCert.Sound.asym_of_tii
+#print axioms ShortSieveCert.Sound.asym_of_g2
+#print axioms ShortSieveCert.Sound.buch
+#print axioms ShortSieveCert.count_cons_of_implied
+#print axioms ShortSieveCert.itemsOK_std
+#print axioms ShortSieveCert.buchRows_std
+#print axioms ShortSieveDrop.count_le_drop1
+#print axioms ShortSieveDrop.count_le_drop2
+#print axioms ShortSieveBuch.count_buchstab
+#print axioms ShortSieveBuch.count_rev
+#print axioms ShortSieveTypeI.abs_count_sub_le_typeI
+#print axioms ShortSieveTree.OK_sub
+#print axioms ShortSieveTree.OK_of_asym
+#print axioms ShortSieveTree.OK_mono
+#print axioms ShortSieveTree.count_split
+#print axioms ShortSieveCert.OK_of_split
+#print axioms ShortSieveCert.CondsOK.split
+#print axioms ShortSieveCert.StdInv.cons
+#print axioms ShortSieveCert.Sound.OK_of_dec
+#print axioms ShortSieveCert.Sound.std_child
+#print axioms ShortSieveCert.StdInv.child
+#print axioms ShortSieveCert.CondsOK.child
+#print axioms ShortSieveCert.Sound.OK_of_drop
+#print axioms ShortSieveCert.omegaC_le_omUpK
+#print axioms ShortSieveCert.Sound.OK_of_rev
+#print axioms ShortSieveCert.Sound.rev_child
+#print axioms ShortSieveCert.StdInv.rev
+#print axioms ShortSieveCert.CondsOK.rev

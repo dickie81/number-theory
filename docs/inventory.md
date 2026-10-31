@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 886 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 918 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 69 | 152 |
-| `lib/pnt` | 202 | 641 |
+| `lib/pnt` | 214 | 673 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
 
@@ -1231,6 +1231,74 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `ShortPrimesHalfPlane`: The zero-free region `ZeroFreeXi α` from the zero-free half-plane instead of Korobov–Vinogradov
 
 - `ShortPrimesHalfPlane.zeroFreeXi_of_halfplane`: The zero-free half-plane gives `ZeroFreeXi α` for every `α` (here `α < 1` is what `short_primes_of_density` takes), with no Korobov–Vinogradov input. ([note](../formalisations/zeta-density.md))
+
+#### `ShortSieveBuch`: Buchstab's identity and role reversals for the terms of the certificate
+
+- `ShortSieveBuch.count_buchstab`: Buchstab's identity on a node ([note](../formalisations/short-intervals.md))
+- `ShortSieveBuch.count_rev`: The role reversal on a node ([note](../formalisations/short-intervals.md))
+
+#### `ShortSieveCertAsym`: The certificate's Type II decision on a node
+
+- `ShortSieveCert.Sound.asym_of_tii`: The Type II decision ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Sound.asym_of_g2`: The decision by Li's Lemma 4.1 ([note](../formalisations/short-intervals.md))
+
+#### `ShortSieveCertBuch`: Buchstab's step on a certificate node
+
+- `ShortSieveCert.Sound.buch`: The Buchstab child is sound ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.count_cons_of_implied`: An implied condition
+
+#### `ShortSieveCertDec`: The certificate's decompositions of standard nodes
+
+- `ShortSieveCert.StdInv.cons`: More conditions keep the invariant. ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.CondsOK.split`: A split keeps the conditions not functions of the product alone ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.OK_of_split`: A split's losses add up ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.StdInv.child`: The child keeps the invariant ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.CondsOK.child`: The child's conditions are not functions of the product alone ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Sound.std_child`: The child's coordinates ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Sound.OK_of_dec`: The decomposition of a standard node ([note](../formalisations/short-intervals.md))
+
+#### `ShortSieveCertDrop`: The certificate's dropped boxes
+
+- `ShortSieveCert.Sound.OK_of_drop`: A dropped standard node ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.omegaC_le_omUpK`: `omUpK` bounds `ω*` ([note](../formalisations/short-intervals.md))
+
+#### `ShortSieveCertRev`: The certificate's role reversals
+
+- `ShortSieveCert.StdInv.rev`: The reversed child keeps the invariant ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.CondsOK.rev`: The reversed child's conditions are not functions of the product alone ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Sound.rev_child`: The reversed child's coordinates ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Sound.OK_of_rev`: The role reversal of a standard node ([note](../formalisations/short-intervals.md))
+
+#### `ShortSieveCertSem`: The certificate's coordinates on a node's terms
+
+- `ShortSieveCert.Sound.cut_lt`: A cut of the box along the coordinate `j` at `p` ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Sound.cut_ge`: A cut of the box along the coordinate `j` at `p` ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Sound.OK_of_out`: An empty region has no loss ([note](../formalisations/short-intervals.md))
+
+#### `ShortSieveCertStd`: The standard nodes of the certificate
+
+- `ShortSieveCert.itemsOK_std`: The items of a standard node
+- `ShortSieveCert.buchRows_std`: The Buchstab child of a standard node is standard
+
+#### `ShortSieveDrop`: Upper bounds for the certificate's dropped nodes in the comparison interval
+
+- `ShortSieveDrop.count_le_drop1`: A dropped node with one rough item ([note](../formalisations/short-intervals.md))
+- `ShortSieveDrop.count_le_drop2`: A dropped node with two rough items ([note](../formalisations/short-intervals.md))
+
+#### `ShortSieveThree`: Li's third sum, split into the certificate's root cells
+
+- `ShortSieveThree.primes_of_cells`: Primes in short intervals from the root cells ([note](../formalisations/short-intervals.md))
+
+#### `ShortSieveTree`: The certificate's tree: what each decision proves
+
+- `ShortSieveTree.OK_of_asym`: An asymptotic term has no loss
+- `ShortSieveTree.OK_sub`: Buchstab's step
+- `ShortSieveTree.OK_mono`: A larger loss.
+- `ShortSieveTree.count_split`: Splitting a node by a condition ([note](../formalisations/short-intervals.md))
+
+#### `ShortSieveTypeI`: Type I terms of the certificate and their asymptotic formula from Li's Lemmas 3.1 and 3.2
+
+- `ShortSieveTypeI.abs_count_sub_le_typeI`: The asymptotic formula for a Type I term from Li's Lemmas 3.1 and 3.2 ([note](../formalisations/short-intervals.md))
 
 #### `SieveBox`: The share of a box of prime intervals
 
