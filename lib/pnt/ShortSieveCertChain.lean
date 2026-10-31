@@ -16,6 +16,8 @@ the dynamic programme over the intervals and the runs.
   from the exact split of a chain at a threshold (`ShortSieveChain.chainSum_split`), for any run bounds.
 * `rbG`: the run bounds of a chain of primes, its sifting primes weighted by `log x/(p log p)`, and their soundness
   (`evLe_rbG`).
+* `dpRunF`: the programme as the kernel computes it, each start's runs extended member by member up to the first
+  member that misses the interval (`runsF`), equal to `dpRun` with the run bounds `rbG` (`dpRunF_eq`).
 * `chainDP`: **the chain bound**, the programme over the ends of the members' ranges, and its soundness
   (`chainDP_sound`).
 * `Sound.OK_of_dropC`: **a dropped standard node** has the loss `ω*` times any limit superior of its chain sum.
@@ -520,6 +522,139 @@ theorem rbZ_eq (lo hi : ℕ → ℤ) (w : ℕ → Bool) : rbZ lo hi w = rbG lo h
       foldl_cdiv_eq_zero _ _ (List.mem_map.2 ⟨i, List.mem_range.2 hir, clipG_eq_zero (fun h' => by
         have := hne h'.1; omega)⟩), Nat.zero_min]
 
+/-! ### The programme, incrementally -/
+
+/-- The member's factor on `[e, f)`, as `clipG`: a member is its range's ends and whether it is a sifting prime. -/
+def clipM (e f : ℤ) (x : ℤ × ℤ × Bool) : ℕ :=
+  if x.2.2 then invF (max x.1 e) (min x.2.1 f) else trF (max x.1 e) (min x.2.1 f)
+
+/-- The run bounds on `[e, f)` of the runs that continue `r` members (with the products `prod` of their factors and
+`q` of `r` factors `t = trF(e, f)`, and `n₂` sifting primes) by the members of the list: one run per further member, up
+to the first member whose range misses `[e, f)`. -/
+def runsF (e f : ℤ) (t : ℕ) : ℕ → ℕ → ℕ → ℕ → List (ℤ × ℤ × Bool) → List ℕ
+  | _, _, _, _, [] => []
+  | r, prod, q, n2, x :: ms =>
+    if x.1 < f ∧ e < x.2.1 then
+      let prod' := SieveCert.cdiv (prod * clipM e f x) SC
+      let q' := SieveCert.cdiv (q * t) SC
+      let n2' := n2 + if x.2.2 then 1 else 0
+      min prod' (SieveCert.cdiv (mulDE e n2' q') (r + 1).factorial) :: runsF e f t (r + 1) prod' q' n2' ms
+    else []
+
+theorem length_runsF (e f : ℤ) (t : ℕ) :
+    ∀ (ms : List (ℤ × ℤ × Bool)) (r prod q n2 : ℕ), (runsF e f t r prod q n2 ms).length ≤ ms.length
+  | [], _, _, _, _ => by simp [runsF]
+  | x :: ms, r, prod, q, n2 => by
+    by_cases hx : x.1 < f ∧ e < x.2.1
+    · rw [runsF, ite_eq_left hx]
+      dsimp only
+      rw [List.length_cons, List.length_cons]
+      exact Nat.succ_le_succ (length_runsF e f t ms _ _ _ _)
+    · rw [runsF, ite_eq_right hx]
+      exact Nat.zero_le _
+
+/-- The run bound of the run continued by the first `i + 1` members of the list. -/
+theorem getD_runsF (e f : ℤ) (t : ℕ) :
+    ∀ (ms : List (ℤ × ℤ × Bool)) (r prod q n2 i : ℕ), i < ms.length →
+      (runsF e f t r prod q n2 ms).getD i 0 =
+        if (ms.take (i + 1)).all (fun x => decide (x.1 < f ∧ e < x.2.1)) then
+          min ((ms.take (i + 1)).foldl (fun acc x => SieveCert.cdiv (acc * clipM e f x) SC) prod)
+            (SieveCert.cdiv (mulDE e (n2 + ((ms.take (i + 1)).filter fun x => x.2.2).length)
+              ((List.replicate (i + 1) t).foldl (fun acc g => SieveCert.cdiv (acc * g) SC) q)) (r + i + 1).factorial)
+        else 0
+  | [], _, _, _, _, _, h => absurd h (by simp)
+  | x :: ms, r, prod, q, n2, i, h => by
+    by_cases hx : x.1 < f ∧ e < x.2.1
+    · rw [runsF, ite_eq_left hx]
+      dsimp only
+      have hall : ∀ l : List (ℤ × ℤ × Bool), (x :: l).all (fun x => decide (x.1 < f ∧ e < x.2.1)) =
+          l.all (fun x => decide (x.1 < f ∧ e < x.2.1)) := fun l => by
+        rw [List.all_cons, decide_eq_true hx, Bool.true_and]
+      have hcnt : ∀ l : List (ℤ × ℤ × Bool), ((x :: l).filter fun x => x.2.2).length =
+          (if x.2.2 then 1 else 0) + (l.filter fun x => x.2.2).length := fun l => by
+        cases hw : x.2.2
+        · rw [List.filter_cons_of_neg (by simp [hw])]
+          simp
+        · rw [List.filter_cons_of_pos (by simp [hw]), List.length_cons]
+          simp [add_comm]
+      rcases i with _ | i
+      · rw [List.getD_cons_zero, List.take_succ_cons, List.take_zero, hall, List.all_nil, ite_eq_left rfl,
+          List.foldl_cons, List.foldl_nil, hcnt, List.filter_nil, List.length_nil, add_zero, List.replicate_succ,
+          List.replicate_zero, List.foldl_cons, List.foldl_nil]
+      · rw [List.getD_cons_succ, getD_runsF e f t ms _ _ _ _ i (by simpa using h), List.take_succ_cons, hall,
+          List.foldl_cons, hcnt, List.replicate_succ (a := t) (n := i + 1), List.foldl_cons, ← add_assoc,
+          show r + 1 + i + 1 = r + (i + 1) + 1 by ring]
+    · rw [runsF, ite_eq_right hx, List.take_succ_cons, List.all_cons, decide_eq_false hx, Bool.false_and,
+        ite_eq_right Bool.false_ne_true]
+      simp
+
+/-- One step of the programme with the run bounds of each start from `runsF`: as `dpStep`, the inner sum over the
+tails. -/
+def dpStepF (m : ℕ) (ms : List (ℤ × ℤ × Bool)) (e f : ℤ) (P : List ℕ) : List ℕ :=
+  (List.range (m + 1)).map fun j => P.getD j 0 +
+    (List.zipWith (fun rb q => SieveCert.cdiv (rb * q) SC) (runsF e f (trF e f) 0 SC SC 0 (ms.drop j))
+      (P.drop (j + 1))).sum
+
+/-- The programme with the steps `dpStepF`. -/
+def dpRunF (m : ℕ) (ms : List (ℤ × ℤ × Bool)) : ℤ → List ℤ → List ℕ → List ℕ
+  | _, [], P => P
+  | e, f :: rest, P => dpRunF m ms f rest (dpStepF m ms e f P)
+
+theorem sum_zipWith_eq (g : ℕ → ℕ → ℕ) (hg : ∀ q, g 0 q = 0) (hg' : ∀ r, g r 0 = 0) :
+    ∀ (n : ℕ) (R Q : List ℕ), R.length ≤ n →
+      (List.zipWith g R Q).sum = ((List.range n).map fun i => g (R.getD i 0) (Q.getD i 0)).sum
+  | n, [], Q, _ => by simp [hg]
+  | 0, _ :: _, _, h => absurd h (by simp)
+  | n + 1, r :: R, [], _ => by simp [hg']
+  | n + 1, r :: R, q :: Q, h => by
+    rw [List.zipWith_cons_cons, List.sum_cons, List.range_succ_eq_map, List.map_cons, List.sum_cons, List.map_map,
+      sum_zipWith_eq g hg hg' n R Q (by simpa using h)]
+    rfl
+
+theorem cdiv_zero_mul (b c : ℕ) : SieveCert.cdiv (0 * b) c = 0 := by rw [zero_mul, cdiv_zero_left]
+
+theorem cdiv_mul_zero (b c : ℕ) : SieveCert.cdiv (b * 0) c = 0 := by rw [mul_zero, cdiv_zero_left]
+
+/-- **The incremental step is the step**, for the members of the chain's ranges. -/
+theorem dpStepF_eq (lo hi : ℕ → ℤ) (w : ℕ → Bool) (m : ℕ) (e f : ℤ) (P : List ℕ) :
+    dpStepF m ((List.range m).map fun i => (lo i, hi i, w i)) e f P = dpStep m (rbZ lo hi w e f) P := by
+  unfold dpStepF dpStep
+  refine List.map_congr_left fun j hj => ?_
+  rw [List.mem_range] at hj
+  congr 1
+  set ms := (List.range m).map fun i => (lo i, hi i, w i) with hms
+  have hlen : (ms.drop j).length = m - j := by simp [hms]
+  rw [sum_zipWith_eq _ (fun q => cdiv_zero_mul q SC) (fun r => cdiv_mul_zero r SC) (m - j) _ _
+    ((length_runsF e f _ _ _ _ _ _).trans hlen.le)]
+  refine congrArg List.sum (List.map_congr_left fun i hi' => ?_)
+  rw [List.mem_range] at hi'
+  have hP : (P.drop (j + 1)).getD i 0 = P.getD (j + i + 1) 0 := by
+    rw [List.getD_eq_getElem?_getD, List.getElem?_drop, List.getD_eq_getElem?_getD]
+    congr 2
+    ring
+  rw [hP]
+  congr 2
+  rw [getD_runsF e f _ _ _ _ _ _ i (by omega)]
+  -- the first `i + 1` members from `j`
+  have htake : (ms.drop j).take (i + 1) =
+      (List.range (i + 1)).map fun i' => (lo (j + i'), hi (j + i'), w (j + i')) := by
+    refine List.ext_getElem (by simp [hms]; omega) fun n h1 h2 => ?_
+    simp only [List.getElem_take, List.getElem_drop, hms, List.getElem_map, List.getElem_range]
+  rw [htake]
+  unfold rbZ rbG ordG prodSC
+  rw [List.all_map, List.filter_map, List.length_map, zero_add, zero_add]
+  simp only [List.foldl_map]
+  rfl
+
+/-- **The incremental programme is the programme.** -/
+theorem dpRunF_eq (lo hi : ℕ → ℤ) (w : ℕ → Bool) (m : ℕ) :
+    ∀ (e : ℤ) (rest : List ℤ) (P : List ℕ),
+      dpRunF m ((List.range m).map fun i => (lo i, hi i, w i)) e rest P = dpRun m (rbZ lo hi w) e rest P
+  | _, [], _ => rfl
+  | e, f :: rest, P => by
+    rw [dpRunF, dpRun, dpStepF_eq]
+    exact dpRunF_eq lo hi w m f rest _
+
 /-! ### The chain bound -/
 
 /-- Consecutive duplicates removed. -/
@@ -532,15 +667,16 @@ def chainBps (lo hi : ℕ → ℤ) (m : ℕ) : List ℤ :=
   dedupC ((((List.range m).map lo) ++ (List.range m).map hi).insertionSort (· ≤ ·))
 
 /-- **The chain bound** of the chain of `m` members with the ranges `[lo_i, hi_i)` and the sifting primes `w`, units
-`1/SC`, and its last breakpoint: the programme over the ends of the ranges with the run bounds `rbG` (as `rbZ`), if the
-ends are positive. -/
+`1/SC`, and its last breakpoint: the programme over the ends of the ranges with the run bounds `rbG` (as `dpRunF`), if
+the ends are positive. -/
 def chainDP (lo hi : ℕ → ℤ) (w : ℕ → Bool) (m : ℕ) : Option (ℕ × ℤ) :=
   match chainBps lo hi m with
   | [] => none
   | e :: rest =>
     if 0 < e ∧ rest.all (fun f => decide (0 < f)) = true ∧ incr e rest = true ∧
         (List.range m).all (fun j => decide (e ≤ lo j ∧ hi j ≤ lastD e rest)) = true then
-      some ((dpRun m (rbZ lo hi w) e rest (List.replicate m 0 ++ [SC])).getD 0 0, lastD e rest)
+      some ((dpRunF m ((List.range m).map fun i => (lo i, hi i, w i)) e rest (List.replicate m 0 ++ [SC])).getD 0 0,
+        lastD e rest)
     else none
 
 /-- **The chain bound is sound**: the chain sum below the last breakpoint has the limit superior at most the bound. -/
@@ -556,7 +692,7 @@ theorem chainDP_sound {lo hi : ℕ → ℤ} {w : ℕ → Bool} {m D : ℕ} {eK :
     obtain ⟨he, hpos, hinc, hrng⟩ := hcheck
     simp only [List.all_eq_true, decide_eq_true_eq, List.mem_range] at hpos hrng
     refine ⟨fun j hj => (hrng j hj).2, ?_⟩
-    rw [rbZ_eq]
+    rw [dpRunF_eq, rbZ_eq]
     refine dpRun_sound (genMem_nonneg lo hi w) (fun e f he hef j _ r _ hr2 => evLe_rbG lo hi w he hef hr2) e rest _
       he hpos hinc (fun j hj => ?_) 0 (Nat.zero_le _)
     by_cases hjm : j < m
