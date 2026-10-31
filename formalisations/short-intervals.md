@@ -3,7 +3,8 @@
 R. Li proves that `(x − x^θ, x]` contains primes for `θ = 0.52` and large `x` (arXiv:2308.04458v8), by Harman's
 sieve with Baker, Harman and Pintz's decomposition. The library is formalising that proof, with Hölder's inequality
 with real exponents and Huxley's large values in place of Li's Type II lemmas. The formalisation is not finished: the
-results below are its parts so far, and no paper of the repository claims them.
+results below are its parts so far, and no paper of the repository claims them. They are stated at `θ = 13/25`; the
+first certificate will be at `θ = 21/40 = 0.525`, where the margin leaves room for one (`tools/short/README.md`).
 
 ## The assembly
 

@@ -75,16 +75,19 @@ computed on the same points). θ = 0.5185 combines two independent runs (V3: +0.
 The constant crosses zero at θ ≈ 0.5194 for V0 (Li's decomposition and lemmas, integrated without rounding),
 0.5187 for V2 and 0.5182 for V3. V1 (Guth–Maynard only inside Li's tuples) gains almost nothing.
 
-## The first milestone: θ = 0.52
+## The first milestone: θ = 0.525
 
-The first complete proof in Lean aims at `θ = 0.52`, where the real-exponent Type II information (V2) leaves a margin
-of `0.106` against `0.033` at `0.519`, room for a coarse certificate. Stopping Li's decomposition at four primes is
-not an option: the parts of region C that it decomposes to six primes through Type I information (his sets `D*`,
-`D‡`) would cost a loss of about `6.5` at four (`C4Dstop` in the experiment harness), so the certificate follows his
-decomposition to depth six or eight, as the Linnik certificate does. For this milestone the theorem takes as
-hypotheses Li's Lemmas 3.1 and 3.2 (Baker, Harman and Pintz's Lemmas 12 and 13, which rest on Watt's mean value
-theorem) and his Lemma 4.1 (their Lemma 9, two variables near `x^{1/2}`, which the real-exponent test does not reach);
-the numbers are those of arXiv:2308.04458v8.
+The first complete proof in Lean aims at `θ = 0.525` (`21/40`). At `0.52` the real-exponent Type II information (V2)
+leaves a margin of `0.106` (against `0.033` at `0.519`), which is too little for a certificate that the kernel can
+replay: a prototype generator's boxes certify the heavy cells of region C at 50–80 % above their true loss, and within
+the ~10⁷ nodes the kernel can replay its projected total exceeds the budget. At `0.525` the margin is wider.
+
+Stopping Li's decomposition at four primes is not an option: the parts of region C that it decomposes to six primes
+through Type I information (his sets `D*`, `D‡`) would cost a loss of about `6.5` at four (`C4Dstop` in the experiment
+harness), so the certificate follows his decomposition to depth six or eight, as the Linnik certificate does. For this
+milestone the theorem takes as hypotheses Li's Lemmas 3.1 and 3.2 (Baker, Harman and Pintz's Lemmas 12 and 13, which
+rest on Watt's mean value theorem) and his Lemma 4.1 (their Lemma 9, two variables near `x^{1/2}`, which the
+real-exponent test does not reach); the numbers are those of arXiv:2308.04458v8.
 The comparison interval is `(x − x^{1−ρ}, x]` with `ρ < 1/300`, so that the prime number theorem with the half-plane's
 error term counts primes down to `x^{2θ−1}` in it (`ShortSieveLong`); the Type II estimate takes any `ρ > 0`
 (`ShortSieveGroup.abs_card_tuples_sub_le_group_of_pos`).
@@ -148,5 +151,10 @@ The plan, with what is done:
    loss bounds on the cells give the lower bound for the primes (`ShortSieveThree.primes_of_cells`, done). What
    remains is the loss bound on each cell, from the certificate.
 4. **The certificate.** Kernel-checked bounds for region A and the region-C terms at the chosen θ, with Li's
-   predicates in exact arithmetic on cells, in the manner of the Linnik certificate (`SieveCert`). The terms reach
-   dimension 8, so the cost of the cells is the main question.
+   predicates in exact arithmetic on cells, in the manner of the Linnik certificate (`SieveCert`). The checker is done
+   (`ShortSieveCert…`): it replays a certificate's decisions on a root cell (empty regions, splits and box cuts, the
+   Type II and Lemma 4.1 tests, Buchstab's steps, role reversals, swaps, and drops with the chain bound, which keeps
+   the order of the primes), and its soundness turns certificates for the root cells into the lower bound for primes
+   (`ShortSieveCert.primes_of_certs`; `formalisations/short-intervals.md`). It is stated at `θ = 13/25`, and the
+   milestone restates its constants at `21/40`. What remains is the certificate itself, generated, encoded and
+   replayed by the kernel. The terms reach dimension 8, so the cost of the cells is the main question.
