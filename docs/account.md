@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 967 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1034 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -22,9 +22,10 @@ sections of MSC 2020's Number theory (11):
 | 11F Automorphic forms | One object: Kubota's cubic theta function on hyperbolic 3-space, with Patterson's coefficients |
 | 11A, 11R, 11T Elementary, global fields, finite fields | Over `ℤ[ω]`: quadratic, cubic and sextic reciprocity, Gauss and Jacobi sums, the ideals of each norm. Quadratic fields: the splitting law, `ζ_K = ζ·L(s, χ_K)`, class numbers. The least quadratic non-residue |
 | 11Y Computational number theory | Certificates that the kernel checks: the sieve's loss (1136 parts), four zeros of the Davenport–Heilbronn function, explicit constants |
-| 11B, 11C, 11D, 11E, 11G, 11H, 11J, 11K, 11P, 11S, 11U, 11Z | Nothing beyond Mathlib: no Diophantine equations, quadratic forms, elliptic curves, modular forms in general, Diophantine approximation, additive problems or local fields |
+| 11G Arithmetic algebraic geometry | One family: Hasse's bound for `y² = x³ + D` over finite fields, with the Frobenius an Eisenstein integer of norm `q` |
+| 11B, 11C, 11D, 11E, 11H, 11J, 11K, 11P, 11S, 11U, 11Z | Nothing beyond Mathlib: no Diophantine equations, quadratic forms, elliptic curves in general, modular forms in general, Diophantine approximation, additive problems or local fields |
 
-Two of the twenty sections in depth, six in part, twelve not at all. Mathlib supplies the floor: `ζ` and Dirichlet
+Two of the twenty sections in depth, seven in part, eleven not at all. Mathlib supplies the floor: `ζ` and Dirichlet
 `L`-functions with their functional equations and their non-vanishing on `Re s = 1`, Dirichlet's theorem, and number
 fields with their class groups and the class number formula.
 
@@ -177,6 +178,7 @@ whose axioms are Lean's three; H is as above.
 | Physics, the primon gas: `Σ μ(n) n^{−β}` is the partition function of B. Julia's primon gas with the sign `(−1)^F` of D. Spector's fermion number. It converges for `β > Θ` and diverges for `β < Θ`, with `1/2 ≤ Θ ≤ 11/12`: past the bosonic gas's Hagedorn point `β = 1` | `MertensExponent.moebiusAbscissa_eq_Theta`, `PsiExponent.half_le_Theta`, `PsiExponent.Theta_le` | yes |
 | Geometry of numbers: the points of `ℤⁿ` in a ball of radius `R` number `V_n Rⁿ(1 + o(1))`, `V_n = π^{n/2}/Γ(n/2 + 1)`, most in dimension 5; in the plane they give `L(1, χ₋₄) = π/4`, Leibniz's series | `BallTower.count_div_pow_tendsto_ballVol`, `BallTower.counted_volume_max_five`, `AngularResidue.LFunction_chi4_one` | no |
 | Quadratic forms: over a finite field of odd size `q`, `x² + y² = a` has `q − χ₋₄(q)` solutions and `x² + y² + z² + w² = a` has `q³ − q`, for `a ≠ 0`: the local factors of Jacobi's and Siegel's formulas | `LocalTeeth.card_two_sq`, `LocalTeeth.card_four_sq` | no |
+| Elliptic curves: Hasse's bound `\|q + 1 − #E(𝔽_q)\| ≤ 2√q` for `y² = x³ + D` over every finite field of characteristic neither 2 nor 3. When `q ≡ 1 (mod 3)` the Frobenius is an Eisenstein integer `u + vω` of norm `q`, a point of the lattice `ℤ[ω]` on the circle of radius `√q`, and `#E(𝔽_q) = q + 1 − (2u − v)`; when `q ≡ 2 (mod 3)`, `#E(𝔽_q) = q + 1` | `HasseEisenstein.abs_trace_le`, `HasseEisenstein.exists_eisenstein_trace`, `HasseEisenstein.card_points_of_mod_three_eq_two` | no |
 | Ergodic theory: the logarithms of the primes are linearly independent over `ℤ`, and a vertical line equidistributes on Bohr's torus (Kronecker and Weyl) | `BohrTorus.eq_zero_of_sum_log`, `BohrTorus.tendsto_mean_character` | no |
 | Analysis: Landau's theorem, a Dirichlet series with nonnegative coefficients is singular at the real point of its abscissa; Mathlib does not have it | `LandauLaplace.LSeries_landau` | no |
 | Noncommutative geometry: the least value `λ₁(a)` of Weil's form on supports `[−a, a]`, which A. Connes and C. Consani study, is positive for `a ≤ 1/12`, has a unique ground state for `2a < log 2` (the range of their archimedean positivity theorem), and is at most `Ke^{16a − 2πe^{2a}}` | `WeilForm.weilQg_ge_twentieth_all`, `WeilForm.groundState_unique_below_log2`, `WeilForm.lam_dexp` | no |
@@ -229,7 +231,9 @@ In order of what is in reach.
    sharper estimate enters through the deductions above.
 5. **The Riemann hypothesis.** The library reduces RH to properties of Weil's form in about forty ways, proves none of
    their hypotheses, and shows, through `dh`, that no argument which applies to `dh` as well can prove them. A new
-   criterion should come with its `dh` column, which tests it before any work on `ζ`.
+   criterion should come with its `dh` column, which tests it before any work on `ζ`. A geometric direction, that the
+   analogue for `ζ` of the surface `C × C` in Weil's proof for curves is the discretisation of the infinite unit ball,
+   is set out in [ball-conjecture.md](ball-conjecture.md), with its rank-two case (`HasseEisenstein.abs_trace_le`).
 6. **Tools that are missing.** The large sieve over all moduli `q ≤ Q` (the library has one modulus at a time), so no
    Bombieri–Vinogradov; bounds for Kloosterman sums, which the bilinear Type I estimate avoids; exponent pairs (the
    Weyl bound is only a hypothesis); Selberg's and Rosser's sieves; anything in the twelve sections the library does

@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1031 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1034 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 85 | 199 |
+| `lib/core` | 86 | 202 |
 | `lib/pnt` | 229 | 730 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 8 | 34 |
@@ -183,6 +183,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `HalfPlaneJoins.QK3_rate_eleven_twelfths`: The twin form `2Q_ζ + Q_{χ₋₃}` of `ζ·ζ_{ℚ(√−3)}`
 - `HalfPlaneJoins.lam_prefactor_eleven_twelfths`: The prefactor ([note](../formalisations/weil-positivity.md))
 - `BohrJoins.shell_eleven_twelfths`: The Bohr shell at `11/12`
+
+#### `HasseEisenstein`: Hasse's bound for the curves `y² = x³ + D`: the Frobenius is an Eisenstein integer of norm `q`
+
+- `HasseEisenstein.card_points_of_mod_three_eq_two`: `y² = x³ + D` has `q + 1` points when `q ≡ 2 (mod 3)`
+- `HasseEisenstein.exists_eisenstein_trace`: The Frobenius of `y² = x³ + D` is an Eisenstein integer of norm `q`
+- `HasseEisenstein.abs_trace_le`: Hasse's bound for `y² = x³ + D`
 
 #### `HurwitzCross`: The chain with zeros on `ℝ ∪ iℝ`
 
