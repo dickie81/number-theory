@@ -263,17 +263,27 @@ def ordOK (Γ : List Con) (k : ℕ) : Bool :=
   (List.range k).all fun j => Γ.any fun C => C.strict && decide (C.L.c0 = 0) && decide (C.L.ce = 0) &&
     decide (C.L.c = List.replicate j 0 ++ [-1, 1])
 
+/-- The factor of the prime `j` of a dropped standard node with `k + 1` primes. -/
+def stdFactor (k : ℕ) (B : Box) (j : ℕ) : ℕ :=
+  if j = k then invF (B.getD j (0, 0)).1 (B.getD j (0, 0)).2 else trF (B.getD j (0, 0)).1 (B.getD j (0, 0)).2
+
+/-- The primes' part of a dropped standard node's loss, units `1/SC`: the chain bound (`chain`, when the constraints
+order the primes), or else the product of their factors. On disjoint ranges the two agree, and the kernel computes the
+product in a few multiplications. -/
+def stdPart (k : ℕ) (B : Box) (chain : Bool) : Option ℕ :=
+  if chain then (chainDP (fun i => (B.getD i (0, 0)).1) (fun i => (B.getD i (0, 0)).2) (fun i => decide (i = k))
+      (k + 1)).map Prod.fst
+  else some (prodSC ((List.range (k + 1)).map (stdFactor k B)))
+
 /-- **The dropped standard node's loss**, units `1/SC`: `ω*`'s bound on the box (`omUpK`, units `1/K`) times the
-chain bound of its primes, if the box's lower ends are positive, `DEN − Σ_j X_j ≥ 0` on it and the constraints order
-the primes. -/
-def dropStd (E : ℤ) (k : ℕ) (Γ : List Con) (B : Box) (acts : List ℕ) : Option ℕ :=
+primes' part (`stdPart`), if the box's lower ends are positive and `DEN − Σ_j X_j ≥ 0` on it. -/
+def dropStd (E : ℤ) (k : ℕ) (Γ : List Con) (B : Box) (acts : List ℕ) (chain : Bool) : Option ℕ :=
   if actsOK Γ acts B.length = true ∧ k + 1 ≤ B.length ∧
       (List.range (k + 1)).all (fun j => decide (0 < (B.getD j (0, 0)).1 ∧
         (B.getD j (0, 0)).1 ≤ (B.getD j (0, 0)).2)) = true ∧
-      0 ≤ (numF k).minD B E (actsOf Γ acts) ∧ ordOK Γ k = true then
-    (chainDP (fun i => (B.getD i (0, 0)).1) (fun i => (B.getD i (0, 0)).2) (fun i => decide (i = k)) (k + 1)).map
-      fun D => SieveCert.cdiv (omUpK ((numF k).minD B E (actsOf Γ acts)).toNat (B.getD k (0, 0)).2.toNat
-        ((numF k).maxD B E (actsOf Γ acts)).toNat (B.getD k (0, 0)).1.toNat * D.1) SieveCert.K
+      0 ≤ (numF k).minD B E (actsOf Γ acts) ∧ (!chain || ordOK Γ k) = true then
+    (stdPart k B chain).map fun D => SieveCert.cdiv (omUpK ((numF k).minD B E (actsOf Γ acts)).toNat
+      (B.getD k (0, 0)).2.toNat ((numF k).maxD B E (actsOf Γ acts)).toNat (B.getD k (0, 0)).1.toNat * D) SieveCert.K
   else none
 
 /-- The item in the coordinate `0` of a node with two rough items. -/
@@ -297,17 +307,18 @@ def chainTwo (E : ℤ) (Γ : List Con) (B : Box) (it : List LF) (K sc sg : ℕ) 
     | _, _ => none
   else none
 
-/-- The primes' factors of a dropped node with two rough items, units `1/SC`: its two chain bounds, or else each
-prime's factor. -/
-def twoParts (E : ℤ) (Γ : List Con) (B : Box) (it : List LF) (K sc sg : ℕ) (c₁ c₂ : List ℕ) : List ℕ :=
-  match chainTwo E Γ B it K sc sg c₁ c₂ with
+/-- The primes' factors of a dropped node with two rough items, units `1/SC`: its two chain bounds (`chain`), or else
+each prime's factor. -/
+def twoParts (chain : Bool) (E : ℤ) (Γ : List Con) (B : Box) (it : List LF) (K sc sg : ℕ) (c₁ c₂ : List ℕ) :
+    List ℕ :=
+  match if chain then chainTwo E Γ B it K sc sg c₁ c₂ else none with
   | some (D₁, D₂) => [D₁, D₂]
   | none => (List.range K).map (twoFactor it B E sc sg)
 
 /-- **The dropped node with two rough items' loss**, units `1/SC`: the bounds of `ω*` for the two items (units `1/K`),
 the coordinate `0`'s width and the primes' factors (`twoParts`), if the coordinate `0` is the item `g` times the primes
 with coefficient `1`. -/
-def dropTwo (E : ℤ) (S : Shp) (Γ : List Con) (B : Box) (acts : List ℕ) : Option ℕ :=
+def dropTwo (E : ℤ) (S : Shp) (Γ : List Con) (B : Box) (acts : List ℕ) (chain : Bool) : Option ℕ :=
   let g := gOf S
   let c := 1 - g
   let K := S.k
@@ -327,7 +338,7 @@ def dropTwo (E : ℤ) (S : Shp) (Γ : List Con) (B : Box) (acts : List ℕ) : Op
       omUpK (max 0 ((B.getD 0 (0, 0)).1 - ∑ a ∈ J, hiF it B E a)).toNat (hiF it B E sg).toNat
         (max 0 ((B.getD 0 (0, 0)).2 - ∑ a ∈ J, loF it B E a)).toNat (loF it B E sg).toNat *
       prodSC (SieveCert.cdiv (SC * ((B.getD 0 (0, 0)).2 - (B.getD 0 (0, 0)).1).toNat) DEN ::
-        twoParts E Γ B it K sc sg (S.chain 0) (S.chain 1))) (SieveCert.K * SieveCert.K))
+        twoParts chain E Γ B it K sc sg (S.chain 0) (S.chain 1))) (SieveCert.K * SieveCert.K))
   else none
 
 /-- **A certificate**: the decisions on a node and its descendants. -/
@@ -341,7 +352,7 @@ inductive Cert
   | dec (acts labels : List ℕ) (kind : ℕ) (t : Cert)
   | rev (acts labels : List ℕ) (kind : ℕ) (t : Cert)
   | swap (t : Cert)
-  | drop (acts : List ℕ)
+  | drop (acts : List ℕ) (chain : Bool)
 
 /-- **The checker**: the loss of a node with shape `S`, constraints `Γ` and box `B`, of sign `+` (`b`) or `−`, in units
 `1/SC`, if the certificate's decisions pass. -/
@@ -383,9 +394,9 @@ def run (E : ℤ) : Cert → Shp → List Con → Box → Bool → Option ℕ
     else none
   | .rev _ _ _ _, _, _, _, _ => none
   | .swap t, S, Γ, B, b => if S.m = 2 then run E t (.swap S) Γ B b else none
-  | .drop acts, .std k, Γ, B, true => dropStd E k Γ B acts
-  | .drop acts, S, Γ, B, true => if S.m = 2 then dropTwo E S Γ B acts else none
-  | .drop _, _, _, _, false => none
+  | .drop acts c, .std k, Γ, B, true => dropStd E k Γ B acts c
+  | .drop acts c, S, Γ, B, true => if S.m = 2 then dropTwo E S Γ B acts c else none
+  | .drop _ _, _, _, _, false => none
 
 /-! ### The checker's soundness -/
 
@@ -510,11 +521,11 @@ theorem ordOK_mem {Γ : List Con} {k : ℕ} (h : ordOK Γ k = true) : ∀ j < k,
 /-- **The dropped standard node's loss is sound.** -/
 theorem dropStd_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) {E : ℤ} (hE : 0 < E) {k : ℕ}
     {conds : List (Cond (k + 1) 1)} {Γ : List Con} {B : Box} (h : Sound (std k conds) (stdRows (k + 1)) E Γ B)
-    (hinv : StdInv k conds) {acts : List ℕ} {L : ℕ} (hd : dropStd E k Γ B acts = some L) :
+    (hinv : StdInv k conds) {acts : List ℕ} {chain : Bool} {L : ℕ} (hd : dropStd E k Γ B acts chain = some L) :
     OK (21 / 40) ρ 1 (fun x y => ((std k conds).count x y : ℝ)) (L / SC) := by
   unfold dropStd at hd
   split_ifs at hd with hcheck
-  obtain ⟨⟨D, eK⟩, hD, rfl⟩ := Option.map_eq_some_iff.1 hd
+  obtain ⟨D, hD, rfl⟩ := Option.map_eq_some_iff.1 hd
   obtain ⟨hacts, hlen, hbox, hn0, hord⟩ := hcheck
   obtain ⟨ha1, ha2⟩ := acts_of_OK hacts
   simp only [List.all_eq_true, List.mem_range, decide_eq_true_eq] at hbox
@@ -538,16 +549,60 @@ theorem dropStd_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) {E : 
       have e2 : ((lo.toNat : ℕ) : ℝ) = lo := by exact_mod_cast Int.toNat_of_nonneg (by omega)
       rw [e2]
       exact h2.trans (div_le_div_of_nonneg_right e1 (by exact_mod_cast hlo0.le))
-  obtain ⟨heK, hP⟩ := chainDP_sound hD
   have hS := SC_pos
-  have hdrop := h.OK_of_dropC hE hinv hlen (fun j hj => (hbox j hj).1) (ordOK_mem hord) ha1 ha2 hn0 hΩ0 hω heK
-    (by positivity) hP (θ := 21 / 40) hρ hρ20
+  -- the primes' part: the product of their factors, or the chain bound
+  have key : ∃ X : ℝ, X ≤ (D : ℝ) / SC ∧ OK (21 / 40) ρ 1 (fun x y => ((std k conds).count x y : ℝ)) (Ω * X) := by
+    cases chain
+    · simp only [stdPart, Bool.false_eq_true, ↓reduceIte, Option.some.injEq] at hD
+      subst hD
+      refine ⟨_, ?_, h.OK_of_drop hE hinv hlen (fun j hj => (hbox j hj).1) (fun j hj => (hbox j hj).2) ha1 ha2 hn0
+        hΩ0 hω (θ := 21 / 40) hρ hρ20⟩
+      have hfac : ∀ j : Fin (k + 1), (if j = Fin.last k then (DEN : ℝ) / (B.getD j (0, 0)).1 -
+          DEN / (B.getD j (0, 0)).2 else trB (B.getD j (0, 0)).1 (B.getD j (0, 0)).2) ≤
+            (stdFactor k B j : ℝ) / SC := by
+        intro j
+        obtain ⟨h1, h2⟩ := hbox j j.isLt
+        unfold stdFactor
+        by_cases hj : j = Fin.last k
+        · rw [ite_eq_left hj, ite_eq_left (by rw [hj]; rfl)]
+          exact inv_le_invF h1 h2
+        · rw [ite_eq_right hj, ite_eq_right (fun h' => hj (Fin.ext (by simpa using h')))]
+          exact trB_le_trF h1 h2
+      have hfac0 : ∀ j : Fin (k + 1), 0 ≤ (if j = Fin.last k then (DEN : ℝ) / (B.getD j (0, 0)).1 -
+          DEN / (B.getD j (0, 0)).2 else trB (B.getD j (0, 0)).1 (B.getD j (0, 0)).2) := by
+        intro j
+        obtain ⟨h1, h2⟩ := hbox j j.isLt
+        have h1' : (0 : ℝ) < (B.getD j (0, 0)).1 := by exact_mod_cast h1
+        have h2' : ((B.getD j (0, 0)).1 : ℝ) ≤ (B.getD j (0, 0)).2 := by exact_mod_cast h2
+        split_ifs
+        · have := div_le_div_of_nonneg_left DEN_pos.le h1' h2'
+          linarith
+        · unfold trB
+          have h3 : (0 : ℝ) ≤ ((B.getD j (0, 0)).2 - (B.getD j (0, 0)).1) := by linarith
+          have h4 : (0 : ℝ) ≤ ((B.getD j (0, 0)).2 + (B.getD j (0, 0)).1) := by linarith
+          have h5 : (0 : ℝ) < 2 * (B.getD j (0, 0)).1 * (B.getD j (0, 0)).2 :=
+            mul_pos (mul_pos two_pos h1') (by linarith)
+          exact div_nonneg (mul_nonneg h3 h4) h5.le
+      refine le_trans (Finset.prod_le_prod₀ (fun j _ => hfac0 j) fun j _ => hfac j) ?_
+      have e : (∏ j : Fin (k + 1), (stdFactor k B j : ℝ) / SC) =
+          (((List.range (k + 1)).map (stdFactor k B)).map fun f : ℕ => (f : ℝ) / SC).prod := by
+        rw [List.map_map, list_prod_map_range]
+        exact Fin.prod_univ_eq_prod_range (fun j => (stdFactor k B j : ℝ) / SC) (k + 1)
+      rw [e]
+      exact prod_le_prodSC _
+    · simp only [stdPart, ↓reduceIte] at hD
+      obtain ⟨⟨D', eK⟩, hD', rfl⟩ := Option.map_eq_some_iff.1 hD
+      simp only [Bool.not_true, Bool.false_or] at hord
+      obtain ⟨heK, hP⟩ := chainDP_sound hD'
+      exact ⟨_, le_rfl, h.OK_of_dropC hE hinv hlen (fun j hj => (hbox j hj).1) (ordOK_mem hord) ha1 ha2 hn0 hΩ0 hω
+        heK (by positivity) hP (θ := 21 / 40) hρ hρ20⟩
+  obtain ⟨X, hXD, hdrop⟩ := key
   refine OK_mono ?_ hdrop
   have hc := SieveOmegaB.div_le_cdiv (omUpK a.toNat hi.toNat b.toNat lo.toNat * D) SieveCert.K
     (by norm_num [SieveCert.K])
   push_cast at hc
-  calc Ω * ((D : ℝ) / SC) = ((omUpK a.toNat hi.toNat b.toNat lo.toNat : ℝ) * D / SieveCert.K) / SC := by
-        rw [hΩ]; ring
+  calc Ω * X ≤ Ω * ((D : ℝ) / SC) := mul_le_mul_of_nonneg_left hXD hΩ0
+    _ = ((omUpK a.toNat hi.toNat b.toNat lo.toNat : ℝ) * D / SieveCert.K) / SC := by rw [hΩ]; ring
     _ ≤ _ := div_le_div_of_nonneg_right hc hS.le
 
 /-- A sum over the primes with a property of their positions. -/
@@ -591,8 +646,8 @@ theorem chainTwo_sound {E : ℤ} {Γ : List Con} {B : Box} {it : List LF} {K sc 
 theorem dropTwo_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) {E : ℤ} (hE : 0 < E) {S : Shp} {k : ℕ}
     {s : Fin 2 → Fin k} {A : Rows k 2} {items : List LF} {n : ℕ} (hD : Desc S k 2 s A items n)
     {conds : List (Cond k 2)} {Γ : List Con} {B : Box} (h : Sound ⟨k, 2, s, conds⟩ A E Γ B)
-    (hinv : Inv ⟨k, 2, s, conds⟩) (hlen : B.length = n) {acts : List ℕ} {L : ℕ}
-    (hd : dropTwo E S Γ B acts = some L) :
+    (hinv : Inv ⟨k, 2, s, conds⟩) (hlen : B.length = n) {acts : List ℕ} {chain : Bool} {L : ℕ}
+    (hd : dropTwo E S Γ B acts chain = some L) :
     OK (21 / 40) ρ 1 (fun x y => ((⟨k, 2, s, conds⟩ : Node).count x y : ℝ)) (L / SC) := by
   obtain ⟨hk, -, -, hit, hs, hA⟩ := hD.data
   unfold dropTwo at hd
@@ -701,7 +756,7 @@ theorem dropTwo_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) {E : 
       exact h2.trans (div_le_div_of_nonneg_right e1 (by exact_mod_cast hlg0.le))
   -- the primes' part: the chain bounds, or else the primes' factors
   set W := SieveCert.cdiv (SC * ((B.getD 0 (0, 0)).2 - (B.getD 0 (0, 0)).1).toNat) DEN with hW
-  set Fs := twoParts E Γ B items k (s g.rev) (s g) (S.chain 0) (S.chain 1) with hFs
+  set Fs := twoParts chain E Γ B items k (s g.rev) (s g) (S.chain 0) (S.chain 1) with hFs
   set P := prodSC (W :: Fs) with hP
   have hS := SC_pos
   have hD0 := DEN_pos
@@ -725,7 +780,8 @@ theorem dropTwo_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) {E : 
   have key : ∃ X : ℝ, 0 ≤ X ∧ X ≤ (Fs.map fun f : ℕ => (f : ℝ) / SC).prod ∧
       OK (21 / 40) ρ 1 (fun x y => ((⟨k, 2, s, conds⟩ : Node).count x y : ℝ))
         (Ωc * Ωg * ((((B.getD 0 (0, 0)).2 : ℝ) - (B.getD 0 (0, 0)).1) / DEN) * X) := by
-    rcases hct : chainTwo E Γ B items k (s g.rev) (s g) (S.chain 0) (S.chain 1) with _ | ⟨D₁, D₂⟩
+    rcases hct : (if chain then chainTwo E Γ B items k (s g.rev) (s g) (S.chain 0) (S.chain 1) else none) with
+      _ | ⟨D₁, D₂⟩
     · -- each prime's factor
       have hFs' : Fs = (List.range k).map (twoFactor items B E (s g.rev) (s g)) := by
         rw [hFs, twoParts, hct]
@@ -768,7 +824,11 @@ theorem dropTwo_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) {E : 
       exact Fin.prod_univ_eq_prod_range (fun j => (twoFactor items B E (s g.rev) (s g) j : ℝ) / SC) k
     · -- the chain bounds
       have hFs' : Fs = [D₁, D₂] := by rw [hFs, twoParts, hct]
-      obtain ⟨hnd, hcov, hc1, hc2, e₁, e₂, he1, he2, hP1, hP2⟩ := chainTwo_sound hct
+      have hct' : chainTwo E Γ B items k (s g.rev) (s g) (S.chain 0) (S.chain 1) = some (D₁, D₂) := by
+        cases chain
+        · simp at hct
+        · simpa using hct
+      obtain ⟨hnd, hcov, hc1, hc2, e₁, e₂, he1, he2, hP1, hP2⟩ := chainTwo_sound hct'
       refine ⟨(D₁ : ℝ) / SC * ((D₂ : ℝ) / SC), by positivity, by rw [hFs']; simp, ?_⟩
       exact h.OK_of_drop2C hD.itemsOK hE hinv hfit' hB0 hsg' hA0 hAg' hAc' hlo hlohi hNU hlo0 hlohi0 ha1 ha2 hn0
         hΩc0 hΩg0 hωc hωg hnd hcov hc1 hc2 he1 he2 (by positivity) (by positivity) hP1 hP2 (θ := 21 / 40) hρ hρ20
@@ -994,7 +1054,7 @@ theorem run_sound {ρ c : ℝ} (H : Hyps ρ c) {E : ℤ} (hE : 0 < E) (t : Cert)
     have o := ih (.swap S) (Desc.swap hD) (conds.map Cond.swap2) Γ B b L h.swap hinv.swap hcond.swap hlen hf hrun
     refine OK_congr (Filter.Eventually.of_forall fun x y _ _ => ?_) hθρ o
     rw [count_swap]
-  | drop acts =>
+  | drop acts c =>
     intro S k m s A items n hD conds Γ B b L h hinv hcond hlen hf hrun
     cases b
     · cases S <;> simp [run] at hrun
@@ -1004,7 +1064,7 @@ theorem run_sound {ρ c : ℝ} (H : Hyps ρ c) {E : ℤ} (hE : 0 < E) (t : Cert)
         simp only [run] at hrun
         simpa using dropStd_sound H.hρ (by linarith [H.hρc, H.hc1]) hE h hinv.std hrun
       · push Not at hS
-        have hrun' : (if S.m = 2 then dropTwo E S Γ B acts else none) = some L := by
+        have hrun' : (if S.m = 2 then dropTwo E S Γ B acts c else none) = some L := by
           cases S with
           | std k' => exact absurd rfl (hS k')
           | rev _ => exact hrun
