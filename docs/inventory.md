@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 114 modules that none of the three imports, directly or not, with their
+The last section lists the 115 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 23 | 123 |
+| `lib/pnt` | 223 | 726 | 24 | 131 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1744,6 +1744,17 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveDreq.hux_exp_le_of_three_quarters_le`: Huxley's estimate above `3/4`
 - `ShortSieveDreq.hm_exp_le_of_three_quarters_le`: The library's count above `3/4`
 - `ShortSieveDreq.dreq_hux`: Harman's exponent from the mean value theorem and Huxley's estimate
+
+#### `ShortSieveDrop`: Upper bounds for the certificate's dropped nodes in the comparison interval
+
+- `ShortSieveDrop.card_fiber_le`: One fiber of the cofactor
+- `ShortSieveDrop.count_le_sum_cof`: The cofactor's count
+- `ShortSieveDrop.evLe_box`: The prime sums of a box
+- `ShortSieveDrop.evLe_finish`: The finish
+- `ShortSieveDrop.count_le_drop1`: A dropped node with one rough item
+- `ShortSieveDrop.sum_inv_rough_le`: Reciprocals of rough numbers
+- `ShortSieveDrop.sum_gams_le`: The rough items of a product coordinate
+- `ShortSieveDrop.count_le_drop2`: A dropped node with two rough items
 
 #### `ShortSieveExpand`: Sieve terms with several rough items as tuples of primes
 

@@ -134,7 +134,11 @@ The plan, with what is done:
    primes and `m` rough items with log-linear conditions, expanded into tuples of primes (`ShortSieveExpand`,
    `ShortSieveNode`, done). Buchstab's identity and Li's role reversals are exact identities between node counts, the
    Type I term (an item free of primes below a level `x^a ∏ p_j^{−b_j}`) being the node plus its child
-   (`ShortSieveBuch`, done).
+   (`ShortSieveBuch`, done). With Li's Lemma 4.1 as a hypothesis the terms with two grouped variables are
+   asymptotic (`ShortSieveLi`, done), and with his Lemmas 3.1 and 3.2 the Type I terms at a constant level `x^ν`,
+   `ν ≤ 2θ − 1` (`ShortSieveJ`, `ShortSieveTypeI`, done). A dropped term needs only an upper bound in the comparison
+   interval: its rough cofactor is counted with Buchstab's `ω` there, its primes by Mertens' sums on a box, and a
+   second rough item, as in the role reversals, by the reciprocals of rough numbers (`ShortSieveDrop`, done).
 4. **The certificate.** Kernel-checked bounds for region A and the region-C terms at the chosen θ, with Li's
    predicates in exact arithmetic on cells, in the manner of the Linnik certificate (`SieveCert`). The terms reach
    dimension 8, so the cost of the cells is the main question.
