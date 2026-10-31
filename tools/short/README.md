@@ -40,7 +40,7 @@ subset of the three estimates, and the gain of V2 comes from Huxley's, with Guth
 | `dtable.py`, `gen_table.py` | `δ_req(D)` for Huxley (closed form) and Guth–Maynard (numerical); `gen_table.py` writes `dtables.h`. |
 | `dreq_variants.py` | `δ_req` with the mean value theorem alone, with Huxley, with Guth–Maynard, and with all three. |
 | `harness_theta.cpp` | Every region-C term of Li's final bound and region A, by Monte Carlo inside each term's domain in log coordinates, all variants on the same points. `./harness_theta N threads term seed theta`. |
-| `runs.sh` | The runs behind `logs/runs1.txt` … `runs4.txt` (about four hours on four cores), then `summarize_full.py`. |
+| `runs.sh` | The runs behind `logs/runs1.txt` … `runs4.txt` and `runs525.txt` (about four hours on four cores), then `summarize_full.py`. |
 | `summarize_full.py` | The accounting below, from the logs: `python3 summarize_full.py logs/runs*.txt`. |
 | `region_a_check.py` | No grouping of region A's three primes passes the general test, so region A is the same for every variant. |
 
@@ -71,6 +71,7 @@ computed on the same points). θ = 0.5185 combines two independent runs (V3: +0.
 | 0.5190 | 0.5546 (31) | −0.0350 | −0.0319 | +0.0333 (33) | +0.0720 (34) |
 | 0.5195 | 0.5083 (33) | +0.0113 | +0.0144 | +0.0780 (36) | +0.1143 (38) |
 | 0.5200 | 0.4723 (43) | +0.0473 | +0.0497 | +0.1059 (47) | +0.1392 (48) |
+| 0.5250 | 0.2417 (15) | +0.2778 | +0.2795 | +0.3137 (16) | +0.3441 (17) |
 
 The constant crosses zero at θ ≈ 0.5194 for V0 (Li's decomposition and lemmas, integrated without rounding),
 0.5187 for V2 and 0.5182 for V3. V1 (Guth–Maynard only inside Li's tuples) gains almost nothing.
@@ -80,7 +81,11 @@ The constant crosses zero at θ ≈ 0.5194 for V0 (Li's decomposition and lemmas
 The first complete proof in Lean aims at `θ = 0.525` (`21/40`). At `0.52` the real-exponent Type II information (V2)
 leaves a margin of `0.106` (against `0.033` at `0.519`), which is too little for a certificate that the kernel can
 replay: a prototype generator's boxes certify the heavy cells of region C at 50–80 % above their true loss, and within
-the ~10⁷ nodes the kernel can replay its projected total exceeds the budget. At `0.525` the margin is wider.
+the ~10⁷ nodes the kernel can replay its projected total exceeds the budget. At `0.525` the margin is wider: region C
+loses `0.2417` with Li's Type II information and `0.2059` with the real exponents (V2), and region A `0.24031 ± 0.00007`
+(`A2DLoss`; nothing in it is asymptotic at `0.525` either). The prototype generator's bound for region A is `0.240706`,
+so a certificate whose region-C total stays below `1 − 2·0.240706 = 0.5186`, `2.5` times the true loss, proves the
+milestone.
 
 Stopping Li's decomposition at four primes is not an option: the parts of region C that it decomposes to six primes
 through Type I information (his sets `D*`, `D‡`) would cost a loss of about `6.5` at four (`C4Dstop` in the experiment
@@ -88,7 +93,7 @@ harness), so the certificate follows his decomposition to depth six or eight, as
 milestone the theorem takes as hypotheses Li's Lemmas 3.1 and 3.2 (Baker, Harman and Pintz's Lemmas 12 and 13, which
 rest on Watt's mean value theorem) and his Lemma 4.1 (their Lemma 9, two variables near `x^{1/2}`, which the
 real-exponent test does not reach); the numbers are those of arXiv:2308.04458v8.
-The comparison interval is `(x − x^{1−ρ}, x]` with `ρ < 1/300`, so that the prime number theorem with the half-plane's
+The comparison interval is `(x − x^{1−ρ}, x]` with `ρ < 1/240`, so that the prime number theorem with the half-plane's
 error term counts primes down to `x^{2θ−1}` in it (`ShortSieveLong`); the Type II estimate takes any `ρ > 0`
 (`ShortSieveGroup.abs_card_tuples_sub_le_group_of_pos`).
 
@@ -145,16 +150,17 @@ The plan, with what is done:
    from Lemma 3.1 on blocks of `p₁` between two constant levels (`ShortSieveRoot`, done). Li's identity holds exactly
    in any interval (`ShortSieveTop`), and with the root terms it turns a lower bound
    `Σ₃(A) ≥ (y/x^{1−ρ}) Σ₃(B) − (L + ε) y/log x` into `π(x) − π(x − y) ≥ (1 − L − ε) y/log x`
-   (`ShortSieveLower.primes_lower`, done). At `θ = 13/25` the terms of `Σ₃` with a cofactor `m ≥ q` are exactly
-   the counts of the certificate's root cells, `(k/50, (k + 1)/50] × [j/50, (j + 1)/50)` of `(α₁, α₂)` (253 in region
-   `C`, 91 outside it), each a node with log-linear conditions, and the products `pq` themselves have no loss; so
-   loss bounds on the cells give the lower bound for the primes (`ShortSieveThree.primes_of_cells`, done). What
-   remains is the loss bound on each cell, from the certificate.
+   (`ShortSieveLower.primes_lower`, done). At `θ = 21/40` Li's level exceeds `α` just above `2θ − 1` (there
+   `1/(4θ − 2)` is an integer), so the level is held at `2θ − 1` on the first cell (`ShortSieveRoot.nuH`,
+   `abs_S2_held_sub_le`). The terms of `Σ₃` with a cofactor `m ≥ q` are then exactly the counts of the certificate's
+   root cells, `(k/40, (k + 1)/40] × [j/40, (j + 1)/40)` of `(α₁, α₂)` (144 in region `C`, 60 outside it), each a
+   node with log-linear conditions, and the products `pq` themselves have no loss; so loss bounds on the cells give
+   the lower bound for the primes (`ShortSieveThree.primes_of_cells`, done). What remains is the loss bound on each
+   cell, from the certificate.
 4. **The certificate.** Kernel-checked bounds for region A and the region-C terms at the chosen θ, with Li's
    predicates in exact arithmetic on cells, in the manner of the Linnik certificate (`SieveCert`). The checker is done
    (`ShortSieveCert…`): it replays a certificate's decisions on a root cell (empty regions, splits and box cuts, the
    Type II and Lemma 4.1 tests, Buchstab's steps, role reversals, swaps, and drops with the chain bound, which keeps
    the order of the primes), and its soundness turns certificates for the root cells into the lower bound for primes
-   (`ShortSieveCert.primes_of_certs`; `formalisations/short-intervals.md`). It is stated at `θ = 13/25`, and the
-   milestone restates its constants at `21/40`. What remains is the certificate itself, generated, encoded and
-   replayed by the kernel. The terms reach dimension 8, so the cost of the cells is the main question.
+   (`ShortSieveCert.primes_of_certs`; `formalisations/short-intervals.md`). It is stated at the milestone's
+   `θ = 21/40`. What remains is the certificate itself, generated, encoded and replayed by the kernel. The terms reach dimension 8, so the cost of the cells is the main question.

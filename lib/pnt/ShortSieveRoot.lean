@@ -1219,9 +1219,51 @@ theorem abs_S2_liNu_sub_le {θ γ ρ a₀ : ℝ} (hLi : LiLemma31 θ γ ρ) (hθ
   rw [hm] at hC
   exact ⟨C, hC⟩
 
+/-- Li's level held at `2θ − 1` up to `a₁`, and Li's above. Where `1/(4θ − 2)` is an integer (`θ = 21/40`), Li's
+level is `2θ − 1` at `0` but exceeds `α` just above `2θ − 1`, and Buchstab's step at `x^{ν(α_p)}` needs
+`x^{ν(α_p)} ≤ p`. -/
+noncomputable def nuH (θ γ a₁ α : ℝ) : ℝ := if α ≤ a₁ then 2 * θ - 1 else liNu θ γ α
+
+/-- **The second root term with the held level.** With Li's Lemma 3.1 (`1/2 < θ ≤ 1`, `2θ − 1 ≤ γ < 1/2`),
+`12ρ < 2θ − 1` and `2θ − 1 < a₁ ≤ 1/2`, there is `C` with: for every `ε ∈ (0, 1]`, for large `x` and
+`y ∈ [x^θ, x^{1−ρ}]`, the sums `Σ_{x^{2θ−1} < p ≤ x^{1/2}} S(·_p, x^{ν(log p/log x)})` with `ν = nuH θ γ a₁`
+satisfy `|Σ₂(A) − (y/x^{1−ρ}) Σ₂(B)| ≤ εC y/log x`: `abs_S2_sub_le` at the constant level up to `x^{a₁}`, and
+`abs_S2_liNu_sub_le` above. -/
+theorem abs_S2_held_sub_le {θ γ ρ a₁ : ℝ} (hLi : LiLemma31 θ γ ρ) (hθ : 1 / 2 < θ) (hθ1 : θ ≤ 1)
+    (hγ : 2 * θ - 1 ≤ γ) (hγ2 : γ < 1 / 2) (hρ : 0 < ρ) (hρθ : 12 * ρ < 2 * θ - 1) (ha₁ : 2 * θ - 1 < a₁)
+    (ha₁2 : a₁ ≤ 1 / 2) :
+    ∃ C : ℝ, ∀ ε : ℝ, 0 < ε → ε ≤ 1 → ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, x ^ θ ≤ y → y ≤ x ^ (1 - ρ) →
+      |sTwo (nuH θ γ a₁) (2 * θ - 1) (1 / 2) x y -
+        y / x ^ (1 - ρ) * sTwo (nuH θ γ a₁) (2 * θ - 1) (1 / 2) x (x ^ (1 - ρ))| ≤ ε * C * y / Real.log x := by
+  obtain ⟨C₁, hC₁⟩ := abs_S2_sub_le hLi hθ hθ1 hγ hρ (by linarith) ha₁ ha₁2 (fun _ => 2 * θ - 1)
+    (fun _ _ _ _ _ => le_rfl) (fun α hα => ShortSieveTypeI.le_liNu hθ hγ (le_trans hα.2 ha₁2))
+    (νmin := 2 * θ - 1) (νmax := 2 * θ - 1) (fun _ _ => le_rfl) (fun _ _ => le_rfl) (by linarith)
+    (by rw [min_self]; exact hρθ) (by linarith) le_rfl (fun _ _ _ _ _ => by simp)
+  obtain ⟨C₂, hC₂⟩ := abs_S2_liNu_sub_le hLi hθ hθ1 hγ hγ2 hρ hρθ (by linarith) ha₁2
+  refine ⟨C₁ + C₂, fun ε hε hε1 => ?_⟩
+  filter_upwards [hC₁ ε hε hε1, hC₂ ε hε hε1, eventually_gt_atTop 1] with x h1 h2 hx y hy1 hy2
+  have hsplit : ∀ y', sTwo (nuH θ γ a₁) (2 * θ - 1) (1 / 2) x y' =
+      sTwo (fun _ => 2 * θ - 1) (2 * θ - 1) a₁ x y' + sTwo (liNu θ γ) a₁ (1 / 2) x y' := fun y' => by
+    rw [sTwo_split _ hx.le ha₁.le ha₁2]
+    congr 1
+    · exact sTwo_congr hx fun α _ hα => ite_eq_left hα
+    · exact sTwo_congr hx fun α hα _ => ite_eq_right (not_le.2 hα)
+  rw [hsplit, hsplit]
+  set c := y / x ^ (1 - ρ)
+  set F := sTwo (fun _ => 2 * θ - 1) (2 * θ - 1) a₁ x
+  set G := sTwo (liNu θ γ) a₁ (1 / 2) x
+  have e : F y + G y - c * (F (x ^ (1 - ρ)) + G (x ^ (1 - ρ))) =
+      (F y - c * F (x ^ (1 - ρ))) + (G y - c * G (x ^ (1 - ρ))) := by ring
+  rw [e]
+  calc |(F y - c * F (x ^ (1 - ρ))) + (G y - c * G (x ^ (1 - ρ)))| ≤
+      |F y - c * F (x ^ (1 - ρ))| + |G y - c * G (x ^ (1 - ρ))| := abs_add_le _ _
+    _ ≤ ε * C₁ * y / Real.log x + ε * C₂ * y / Real.log x := add_le_add (h1 y hy1 hy2) (h2 y hy1 hy2)
+    _ = ε * (C₁ + C₂) * y / Real.log x := by ring
+
 end ShortSieveRoot
 
 #print axioms ShortSieveRoot.abs_S1_sub_le
 #print axioms ShortSieveRoot.sA_sub_le
 #print axioms ShortSieveRoot.abs_S2_sub_le
 #print axioms ShortSieveRoot.abs_S2_liNu_sub_le
+#print axioms ShortSieveRoot.abs_S2_held_sub_le
