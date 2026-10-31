@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 964 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 967 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -170,6 +170,7 @@ whose axioms are Lean's three; H is as above.
 | Character sums: `Σ_{n≤x} χ(n) = O(x^{11/12+ε})`, so `o(x)`, uniformly in `q` and `χ ≠ 1` on `x ≥ q^δ`, every `δ > 0`, where Burgess's method needs `x ≥ q^{1/4+ε}`; the quadratic residues and the non-residues mod `p` in `[1, x]` differ in number by `O(x^{11/12+ε})` for `x ≥ p^δ` | `ShortCharSums.norm_sum_le_rpow`, `ShortCharSums.norm_sum_le_mul`, `ShortCharSums.card_squares_sub_le` | yes |
 | Primitive roots: every prime `p` has a prime primitive root `ℓ ≤ C_ε p^ε`, where Burgess's method gives `p^{1/4+ε}` for the least primitive root and GRH `(log p)^6`; so does every modulus with a primitive root, and for a safe prime `p = 2r + 1`, `ℓ ≤ C(log p)^A`, `A > 12` | `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_prime`, `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow`, `LeastPrimitiveRoot.exists_prime_primRoot_le_safe` | yes |
 | Primality certificates: `n ≥ 2` is prime if and only if some `a ≤ C_ε n^ε` passes Lucas's test (`a^{n−1} ≡ 1`, `a^{(n−1)/r} ≢ 1` for every prime `r ∣ n − 1`); for `n = 2r + 1`, `r` an odd prime, some `a ≤ C(log n)^A` does, so given `r` the test runs in polynomial time | `LucasWitness.prime_iff_exists_lucas_le_rpow`, `LucasWitness.prime_iff_exists_lucas_le_safe` | yes |
+| Primality testing: an odd `n ≥ 3` is prime if and only if it is a strong probable prime to every base `a ≤ C(log n)^A` prime to it, `A > 12`: G. L. Miller's deterministic test, which needed the extended Riemann hypothesis | `MillerTest.prime_iff_forall_strongProbablePrime`, `MillerTest.exists_witness_le` | yes |
 | Galois theory: the Frobenius elements `ζ ↦ ζ^ℓ` of the primes `ℓ ≤ C(log q)^A` generate `Gal(ℚ(ζ_q)/ℚ)`, and when that group is cyclic one of them with `ℓ ≤ C_ε q^ε` does: effective Chebotarev for the cyclotomic fields, Bach's bound under GRH | `CyclotomicFrobenius.closure_frob_eq_top`, `CyclotomicFrobenius.exists_frob_generator` | yes |
 | Class groups: Gauss's class number problem with an explicit bound, `\|D_K\| ≤ (320π e^{2·10²¹} h_K)⁴` for imaginary quadratic `K`, polynomial in `h_K` as under GRH | `ClassNumberBound.abs_discr_le` | yes |
 | Physics, crystals: `Σ_{n≥1} (−1)^n r₂(n) n^{−s} = −4(1 − 2^{1−s}) ζ(s) L(s, χ₋₄)`, holomorphic off `s = 1`. At `s = 1/2` it is `−M`, where `M ≈ 1.6155` is the Madelung constant of the square lattice: an ion of a two-dimensional ionic crystal has electrostatic energy `−Me²/a` | `Madelung.lseries_coeff`, `Madelung.differentiableOn_rhs` | no |
