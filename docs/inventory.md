@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 933 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 937 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 69 | 152 |
-| `lib/pnt` | 216 | 688 |
+| `lib/pnt` | 217 | 692 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
 
@@ -1246,6 +1246,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `ShortSieveCert.Sound.buch`: The Buchstab child is sound ([note](../formalisations/short-intervals.md))
 - `ShortSieveCert.count_cons_of_implied`: An implied condition
+
+#### `ShortSieveCertCell`: The certificate's root cells
+
+- `ShortSieveCert.cell_eq_std` ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.StdInv.cell`: The cell keeps the standard nodes' invariant ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.CondsOK.cell`: The cell's conditions are not functions of the product alone ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Sound.cell`: The cell is sound ([note](../formalisations/short-intervals.md))
 
 #### `ShortSieveCertDec`: The certificate's decompositions of standard nodes
 

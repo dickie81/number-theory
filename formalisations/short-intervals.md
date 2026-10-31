@@ -26,6 +26,13 @@ In words: Li's identity `S(A, √x) = S(A, x^{ν(0)}) − Σ_p S(A_p, x^{ν(α_p
 `π(x) − π(x − y) ≥ (1 − ΣL − ε) y/log x` for `x^{13/25} ≤ y ≤ x^{1−ρ}`. The certificate is to supply the bounds,
 with `ΣL < 1`.
 
+## The root cells
+
+Each root cell is a standard node with two primes (`ShortSieveCert.cell_eq_std`), and the certificate starts it with the box
+`[k DEN/50, (k + 1) DEN/50 + 1) × [j DEN/50, (j + 1) DEN/50)` of the primes' coordinates and the constraints `q < p`,
+`q ≤ ρ`, Li's level and the region: `ShortSieveCert.Sound.cell`. The cell's conditions keep the invariants of the
+standard nodes: `ShortSieveCert.StdInv.cell`, `ShortSieveCert.CondsOK.cell`.
+
 ## The certificate's decisions
 
 A cell's bound comes from a tree of decisions on nodes of Li's decomposition (`ShortSieveNode.Node`: primes and

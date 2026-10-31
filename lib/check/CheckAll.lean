@@ -196,6 +196,7 @@ import ZetaGMDensity
 import BohrLandauCore
 import ShortSieveThree
 import ShortSieveCertDrop2
+import ShortSieveCertCell
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -990,3 +991,7 @@ bound for primes from loss bounds on the certificate's root cells, and the certi
 #print axioms ShortSieveCert.itemsOK_swap
 #print axioms ShortSieveCert.itemsOK_rev
 #print axioms ShortSieveCert.Sound.OK_of_drop2
+#print axioms ShortSieveCert.cell_eq_std
+#print axioms ShortSieveCert.Sound.cell
+#print axioms ShortSieveCert.StdInv.cell
+#print axioms ShortSieveCert.CondsOK.cell
