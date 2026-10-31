@@ -55,9 +55,10 @@ rough items with log-linear conditions). Each decision is a theorem:
 - a dropped box is bounded in the comparison interval: `ShortSieveDrop.count_le_drop1`, `ShortSieveDrop.count_le_drop2`;
   for a standard node (primes and one rough item, sifted by the last prime), by `ω*` and Mertens' sums over the box:
   `ShortSieveCert.Sound.OK_of_drop`, with `ω*` bounded on the box's range by Buchstab's `ω`
-  (`ShortSieveCert.omegaC_le_omUpK`). The checker uses the chain bound instead, which keeps the order
-  `p₀ > p₁ > ⋯ > p_k` of the primes: a dropped standard node's loss is `ω*` times any limit superior of the sum over
-  the strictly decreasing tuples of its box (`ShortSieveCert.Sound.OK_of_dropC`). That sum is a chain sum
+  (`ShortSieveCert.omegaC_le_omUpK`); the kernel computes this product in a few multiplications. Where the primes'
+  ranges overlap, the certificate asks for the chain bound instead, which keeps the order `p₀ > p₁ > ⋯ > p_k` of the
+  primes: a dropped standard node's loss is `ω*` times any limit superior of the sum over the strictly decreasing
+  tuples of its box (`ShortSieveCert.Sound.OK_of_dropC`). That sum is a chain sum
   (`ShortSieveChain.sum_filter_strictAnti`), and a chain splits exactly at a threshold by the number of its primes
   above it (`ShortSieveChain.chainSum_split`). So cutting the primes' range at the ends of their ranges gives a
   dynamic programme over the intervals and the runs, the primes that share an interval (`ShortSieveCert.dpRun_sound`).
