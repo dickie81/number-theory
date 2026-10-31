@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 118 modules that none of the three imports, directly or not, with their
+The last section lists the 119 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 27 | 149 |
+| `lib/pnt` | 223 | 726 | 28 | 155 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1894,6 +1894,15 @@ headline theorems (those whose docstring opens with a bold title).
 
 - `ShortSieveTop.sD_buchstab`: Buchstab's identity on an interval
 - `ShortSieveTop.top_identity`: Li's identity on an interval
+
+#### `ShortSieveTree`: The certificate's tree: what each decision proves
+
+- `ShortSieveTree.OK_of_asym`: An asymptotic term has no loss
+- `ShortSieveTree.OK_of_drop`: A dropped term
+- `ShortSieveTree.OK_add`: The losses of a split add up
+- `ShortSieveTree.OK_sub`: Buchstab's step
+- `ShortSieveTree.OK_sum`: The losses of a finite split add up
+- `ShortSieveTree.count_split`: Splitting a node by a condition
 
 #### `ShortSieveTwist`: A twisted prime number theorem with a power saving
 
