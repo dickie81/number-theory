@@ -97,11 +97,12 @@ A certificate (`ShortSieveCert.Cert`) records the decisions on a root cell and i
 a constraint and box cuts, the Type II and Lemma 4.1 tests, Buchstab's steps, role reversals, swaps of two rough items
 and drops. It can name the constraint behind a step, so the kernel evaluates one form instead of tightening the box by
 every constraint: a constraint that moves one end of a range (`ShortSieveCert.Sound.up`), and a constraint that fails on
-the box or a range that is empty, either leaving no point (`ShortSieveCert.Sound.OK_of_noPt`). The checker
-(`ShortSieveCert.run`) replays them on the node's shape, constraints and box, and returns the loss in units `2^{−50}`,
-each drop's bound rounded up. Its soundness, by induction over the certificate: if the checker passes with the loss `L`,
-the node is `OK` for its sign with the loss `L/2^{50}` (`ShortSieveCert.run_sound`). So certificates for the 204 root
-cells give primes in short intervals, with the sum of their losses: `ShortSieveCert.primes_of_certs`.
+the box or a range that is empty, either leaving no point (`ShortSieveCert.Sound.OK_of_noPt`). It can also add the sum
+of a constraint and a multiple of another (`ShortSieveCert.Sound.comb`), for the tests' domain-aware extremes. The
+checker (`ShortSieveCert.run`) replays them on the node's shape, constraints and box, and returns the loss in units
+`2^{−50}`, each drop's bound rounded up. Its soundness, by induction over the certificate: if the checker passes with
+the loss `L`, the node is `OK` for its sign with the loss `L/2^{50}` (`ShortSieveCert.run_sound`). So certificates for
+the 204 root cells give primes in short intervals, with the sum of their losses: `ShortSieveCert.primes_of_certs`.
 
 ## How the Lean statements differ from Li's
 
