@@ -44,6 +44,7 @@ import LinnikFE
 import LinnikLindelof
 import LinnikSubconvex
 import MertensChi
+import ShortCharSums
 import LinnikAFE
 import LinnikFourth
 import LinnikIngham
@@ -731,8 +732,13 @@ import BohrLandauCore
 #print axioms LinnikSubconvex.critBoundχ
 #print axioms LinnikSubconvex.linnik_seventeen_sixths
 #print axioms MertensChi.LSeries_fχμ
+#print axioms MertensChi.norm_sum_le_of
 #print axioms MertensChi.norm_sum_le
 #print axioms MertensChi.isBigO
+#print axioms ShortCharSums.norm_sum_le
+#print axioms ShortCharSums.norm_sum_le_rpow
+#print axioms ShortCharSums.norm_sum_le_mul
+#print axioms ShortCharSums.card_squares_sub_le
 #print axioms LinnikGamma.norm_gammaFactor_ratio_le
 #print axioms LinnikGamma.verticalIntegral_sub_eq
 #print axioms LinnikGamma.afe
