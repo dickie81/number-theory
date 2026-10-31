@@ -378,12 +378,13 @@ def grpData (B : Box) (E : ℤ) (acts : List LF) (L : LF) : LF × ℤ × ℤ :=
   (L, L.minD B E acts, -((L.smul (-1)).minD B E acts))
 
 /-- **The linearised Type II check** (the generator's `checkTIIlin`): every group's least exponent exceeds `K`, and
-`Σ_g ⌊SCF/δ_req(lo_g)⌋ + ⌊max(0, min_B Σ_g tan_g)/DEN⌋ > SCF`. -/
+`Σ_g ⌊SCF/δ_req(lo_g)⌋ + ⌊max(0, min Σ_g tan_g)/DEN⌋ > SCF`, the tangent terms' least value domain-aware, as the
+groups' extremes. -/
 def tiiCheck (P K E : ℤ) (B : Box) (acts : List LF) (items : List LF) (labels : List ℕ) (ng : ℕ) : Bool :=
   let lh := (List.range ng).map fun g => grpData B E acts (grpLF items labels g)
   lh.all (fun t => decide (K < t.2.1)) &&
     decide (SCF < (lh.map fun t => fexact P K t.2.1).sum +
-      max 0 ((sumLF (fun t => tanLF P K t.1 t.2.1 t.2.2) lh).min B E) / DEN)
+      max 0 ((sumLF (fun t => tanLF P K t.1 t.2.1 t.2.2) lh).minD B E acts) / DEN)
 
 theorem list_sum_map_range (f : ℕ → ℝ) : ∀ n : ℕ, ((List.range n).map f).sum = ∑ i ∈ range n, f i
   | 0 => by simp
@@ -498,8 +499,8 @@ theorem lt_sum_of_tiiCheck {P K E : ℤ} (hP : 0 < P) {B : Box} {acts items : Li
       · exact mul_nonneg (by exact_mod_cast (fslope_le hP hs.1).2) (by linarith [hlo_le g])
       · exact le_rfl
     have hT0 : 0 ≤ T.val X H := by rw [hTval]; exact sum_nonneg fun g _ => hterm g
-    have hTmin : (T.min B E : ℝ) ≤ T.val X H :=
-      T.min_leC (length_sumLF _ _ fun t ht => by
+    have hTmin : (T.minD B E acts : ℝ) ≤ T.val X H :=
+      T.minD_le acts hX hH hacts (length_sumLF _ _ fun t ht => by
         obtain ⟨g, -, rfl⟩ := List.mem_map.1 ht
         unfold tanLF grpData
         split_ifs
@@ -507,10 +508,10 @@ theorem lt_sum_of_tiiCheck {P K E : ℤ} (hP : 0 < P) {B : Box} {acts items : Li
           have := hfitG g
           simp only [hLg] at this
           omega
-        · simp [LF.zero]) hX hH
+        · simp [LF.zero]) hfa
     -- `⌊max(0, min T)/DEN⌋ ≤ T(X)/DEN`
-    have hmax : ((max 0 (T.min B E) / DEN : ℤ) : ℝ) ≤ T.val X H / DEN := by
-      have h1 := ediv_le_div (max 0 (T.min B E)) DEN (by norm_num [DEN])
+    have hmax : ((max 0 (T.minD B E acts) / DEN : ℤ) : ℝ) ≤ T.val X H / DEN := by
+      have h1 := ediv_le_div (max 0 (T.minD B E acts)) DEN (by norm_num [DEN])
       refine h1.trans (div_le_div_of_nonneg_right ?_ hD.le)
       push_cast
       exact max_le hT0 hTmin
@@ -521,7 +522,8 @@ theorem lt_sum_of_tiiCheck {P K E : ℤ} (hP : 0 < P) {B : Box} {acts items : Li
       exact cast_list_sum_map_range _ ng
     have hS' : (SCF : ℝ) < ∑ g ∈ range ng, (fexact P K (lo g) : ℝ) + T.val X H / DEN := by
       have h1 : (SCF : ℝ) < ((((List.range ng).map fun g => grpData B E acts (grpLF items labels g)).map
-          fun t => fexact P K t.2.1).sum : ℝ) + ((max 0 (T.min B E) / DEN : ℤ) : ℝ) := by exact_mod_cast hS
+          fun t => fexact P K t.2.1).sum : ℝ) + ((max 0 (T.minD B E acts) / DEN : ℤ) : ℝ) := by
+        exact_mod_cast hS
       rw [hfx] at h1
       linarith
     have e2 : ∀ g ∈ range ng, (fexact P K (lo g) : ℝ) / SCF + (if fpiece P K (lo g) ≠ 0 ∧
