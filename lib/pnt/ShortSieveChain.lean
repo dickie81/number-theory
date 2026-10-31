@@ -365,6 +365,87 @@ theorem sum_filter_strictAnti : ∀ (n : ℕ) (M : ℕ → Finset ℕ × (ℕ �
     · rw [ite_eq_right haU]
       exact sum_eq_zero fun t _ => ite_eq_right fun h => haU (by simpa using h.2 0)
 
+/-- The primes of a chain of positions `c`: `p_{c_i}`, and `0` outside `p`'s positions. -/
+def chT {K : ℕ} (p : Fin K → ℕ) (c : List ℕ) : Fin c.length → ℕ :=
+  fun i => if h : c.getD i 0 < K then p ⟨c.getD i 0, h⟩ else 0
+
+open Classical in
+/-- **Two chains**: if the positions of the tuples split into two chains `c` and `d`, the sum over the tuples whose
+chains decrease below `U` and `V` is at most the product of the two chain sums. -/
+theorem sum_le_two_chains {K : ℕ} (M : ℕ → Finset ℕ × (ℕ → ℝ)) (hM : ∀ a q, 0 ≤ (M a).2 q) (c d : List ℕ)
+    (hnd : (c ++ d).Nodup) (hcov : ∀ a, a ∈ c ++ d ↔ a < K) (U V : ℕ) :
+    ∑ p ∈ (Fintype.piFinset fun j : Fin K => (M j).1).filter (fun p =>
+        (StrictAnti (chT p c) ∧ ∀ i, chT p c i < U) ∧ StrictAnti (chT p d) ∧ ∀ i, chT p d i < V),
+      ∏ j : Fin K, (M j).2 (p j) ≤
+    chainSum (sfx (fun i => M (c.getD i 0)) c.length 0) U * chainSum (sfx (fun i => M (d.getD i 0)) d.length 0) V := by
+  rw [← sum_filter_strictAnti c.length (fun i => M (c.getD i 0)) U,
+    ← sum_filter_strictAnti d.length (fun i => M (d.getD i 0)) V, sum_mul_sum, ← sum_product']
+  have hcK : ∀ i : Fin c.length, c.getD i 0 < K := fun i => by
+    rw [List.getD_eq_getElem _ _ i.isLt]
+    exact (hcov _).1 (List.mem_append_left _ (List.getElem_mem _))
+  have hdK : ∀ i : Fin d.length, d.getD i 0 < K := fun i => by
+    rw [List.getD_eq_getElem _ _ i.isLt]
+    exact (hcov _).1 (List.mem_append_right _ (List.getElem_mem _))
+  -- the product over the positions splits over the two chains
+  have hsplit : ∀ p : Fin K → ℕ, ∏ j : Fin K, (M j).2 (p j) =
+      (∏ i : Fin c.length, (M (c.getD i 0)).2 (chT p c i)) * ∏ i : Fin d.length, (M (d.getD i 0)).2 (chT p d i) := by
+    intro p
+    set f : ℕ → ℝ := fun a => if h : a < K then (M a).2 (p ⟨a, h⟩) else 1 with hf
+    have e1 : ∏ j : Fin K, (M j).2 (p j) = ∏ a ∈ range K, f a := by
+      rw [← Fin.prod_univ_eq_prod_range]
+      exact prod_congr rfl fun j _ => by simp [hf, j.isLt]
+    have e2 : (c ++ d).toFinset = range K := by
+      ext a
+      simp only [List.mem_toFinset, mem_range]
+      exact hcov a
+    rw [e1, ← e2, List.prod_toFinset f hnd, List.map_append, List.prod_append, ← Fin.prod_univ_fun_getElem,
+      ← Fin.prod_univ_fun_getElem]
+    congr 1
+    · refine prod_congr rfl fun i _ => ?_
+      have hi := List.getD_eq_getElem c 0 i.isLt
+      simp only [hf, chT, dite_eq_left (hcK i)]
+      rw [dite_eq_left (hi ▸ hcK i)]
+      simp only [hi]
+    · refine prod_congr rfl fun i _ => ?_
+      have hi := List.getD_eq_getElem d 0 i.isLt
+      simp only [hf, chT, dite_eq_left (hdK i)]
+      rw [dite_eq_left (hi ▸ hdK i)]
+      simp only [hi]
+  -- the chains determine the tuple
+  have hinj : Set.InjOn (fun p : Fin K → ℕ => (chT p c, chT p d))
+      ((Fintype.piFinset fun j : Fin K => (M j).1).filter (fun p =>
+        (StrictAnti (chT p c) ∧ ∀ i, chT p c i < U) ∧ StrictAnti (chT p d) ∧ ∀ i, chT p d i < V) : Set _) := by
+    intro p _ p' _ h
+    obtain ⟨h1, h2⟩ := Prod.mk.inj h
+    funext j
+    rcases List.mem_append.1 ((hcov j).2 j.isLt) with hj | hj
+    · obtain ⟨i, hi, hij⟩ := List.getElem_of_mem hj
+      have := congrFun h1 ⟨i, hi⟩
+      simp only [chT, dite_eq_left (hcK ⟨i, hi⟩)] at this
+      have e : (⟨c.getD i 0, hcK ⟨i, hi⟩⟩ : Fin K) = j :=
+        Fin.ext (show c.getD i 0 = j by rw [List.getD_eq_getElem _ _ hi, hij])
+      rwa [e] at this
+    · obtain ⟨i, hi, hij⟩ := List.getElem_of_mem hj
+      have := congrFun h2 ⟨i, hi⟩
+      simp only [chT, dite_eq_left (hdK ⟨i, hi⟩)] at this
+      have e : (⟨d.getD i 0, hdK ⟨i, hi⟩⟩ : Fin K) = j :=
+        Fin.ext (show d.getD i 0 = j by rw [List.getD_eq_getElem _ _ hi, hij])
+      rwa [e] at this
+  rw [sum_congr rfl fun p _ => hsplit p, ← sum_image (g := fun p : Fin K → ℕ => (chT p c, chT p d))
+    (f := fun q => (∏ i : Fin c.length, (M (c.getD i 0)).2 (q.1 i)) *
+      ∏ i : Fin d.length, (M (d.getD i 0)).2 (q.2 i)) hinj]
+  refine sum_le_sum_of_subset_of_nonneg (fun q hq => ?_) fun q _ _ =>
+    mul_nonneg (prod_nonneg fun i _ => hM _ _) (prod_nonneg fun i _ => hM _ _)
+  obtain ⟨p, hp, rfl⟩ := mem_image.1 hq
+  obtain ⟨hp1, ⟨hc1, hc2⟩, hd1, hd2⟩ := mem_filter.1 hp
+  have hpm := Fintype.mem_piFinset.1 hp1
+  refine mem_product.2 ⟨mem_filter.2 ⟨Fintype.mem_piFinset.2 fun i => ?_, hc1, hc2⟩,
+    mem_filter.2 ⟨Fintype.mem_piFinset.2 fun i => ?_, hd1, hd2⟩⟩
+  · simp only [chT, dite_eq_left (hcK i)]
+    exact hpm _
+  · simp only [chT, dite_eq_left (hdK i)]
+    exact hpm _
+
 /-! ### Limits superior -/
 
 open SieveRough

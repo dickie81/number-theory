@@ -58,8 +58,8 @@ rough items with log-linear conditions). Each decision is a theorem:
   above it (`ShortSieveChain.chainSum_split`). So cutting the primes' range at the ends of their ranges gives a
   dynamic programme over the intervals and the runs, the primes that share an interval (`ShortSieveCert.dpRun_sound`).
   A run of `r` primes costs at most the product of its members' Mertens sums, or `(Σ 1/p)^r/r!` with the sifting
-  prime's weight bounded on the interval (`ShortSieveChain.decSum_le`, `ShortSieveCert.evLe_rbStd`); the checker's
-  bound is the programme's value (`ShortSieveCert.chainStd_sound`);
+  prime's weight bounded on the interval (`ShortSieveChain.decSum_le`, `ShortSieveCert.evLe_rbG`); the checker's
+  bound is the programme's value (`ShortSieveCert.chainDP_sound`);
 - Buchstab's identity and Li's role reversals are exact identities between counts: `ShortSieveBuch.count_buchstab`,
   `ShortSieveBuch.count_rev`, with the certificate's coordinates kept by `ShortSieveCert.Sound.buch`; the Type I terms
   they leave are asymptotic by Li's Lemmas 3.1 and 3.2 (`ShortSieveTypeI.abs_count_sub_le_typeI`). For a standard node,
@@ -79,7 +79,12 @@ rough items with log-linear conditions). Each decision is a theorem:
   item forms (`ShortSieveCert.count_swap`, `ShortSieveCert.Sound.swap`, `ShortSieveCert.Inv.swap`,
   `ShortSieveCert.CondsOK.swap`, `ShortSieveCert.itemsOK_swap`), so the first item can be decomposed as the last. A
   dropped node with two rough items, the second's product with some of the primes being the coordinate `0`, is
-  bounded by `ω*` for each item and Mertens' sums over the box: `ShortSieveCert.Sound.OK_of_drop2`.
+  bounded by `ω*` for each item and Mertens' sums over the box (`ShortSieveCert.Sound.OK_of_drop2`), or by the sum
+  over the box's primes that satisfy any condition the box and the constraints imply
+  (`ShortSieveCert.Sound.OK_of_drop2Q`). Its primes form two chains, one below each item's sifting prime, which the
+  constraints order, and the sum over the primes that keep both orders is at most the product of the two chain sums
+  (`ShortSieveChain.sum_le_two_chains`). So the checker bounds the node by the two chain bounds
+  (`ShortSieveCert.Sound.OK_of_drop2C`, `ShortSieveCert.chainTwo_sound`), and otherwise by each prime's factor.
 
 ## The checker
 

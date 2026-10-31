@@ -7,9 +7,11 @@ A node with two rough items and positive sign may be dropped (`ShortSieveDrop.co
 cofactor, bounded by `ω*` and the rough numbers of the comparison interval. The item `g` is summed over its range:
 its product with the primes `J` is the coordinate `0`, in the box's range.
 
-* `Sound.OK_of_drop2`: on a sound node with two rough items whose coordinate `0` is the product of the item `g` and the
-  primes with coefficient `1`, the node is `OK` for `σ = 1` with loss
-  `Ω_c Ω_g (hi_0 − lo_0)/DEN · ∏_j (DEN/lo_j − DEN/hi_j or trB(lo_j, hi_j))`, the primes' ranges from their forms.
+* `Sound.OK_of_drop2Q`: on a sound node with two rough items whose coordinate `0` is the product of the item `g` and the
+  primes with coefficient `1`, the node is `OK` for `σ = 1` with loss `Ω_c Ω_g (hi_0 − lo_0)/DEN · P`, for any limit
+  superior `P` of the sum over the primes of the box that satisfy a condition the node's primes satisfy, the primes'
+  ranges from their forms.
+* `Sound.OK_of_drop2`: the same with `P = ∏_j (DEN/lo_j − DEN/hi_j or trB(lo_j, hi_j))`.
 -/
 
 open Finset Real Filter
@@ -62,15 +64,16 @@ theorem sum_fin_two_rev (f : Fin 2 → ℝ) (g : Fin 2) : ∑ i, f i = f g.rev +
 
 theorem rev_ne_self (g : Fin 2) : g.rev ≠ g := by fin_cases g <;> decide
 
-/-- **A dropped node with two rough items.** On a sound node with two rough items whose coordinate `0` is the product
-of the item `g` and the primes with coefficient `1`, the other item `c` (the cofactor) and `g` sifted by distinct
-primes, and with `Ω_c`, `Ω_g` bounds for `ω*` on the box's ranges of the cofactor's argument
-`log(x/(∏p · γ_g))/log p_{s(c)}` and of `log γ/log p_{s(g)}`, the node is `OK` for `σ = 1` with loss
-`Ω_c Ω_g (hi_0 − lo_0)/DEN · ∏_j (DEN/lo_j − DEN/hi_j or trB(lo_j, hi_j))`. -/
-theorem Sound.OK_of_drop2 {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 2)} {A : Rows K 2}
+/-- **A dropped node with two rough items, its primes in a set.** On a sound node with two rough items whose
+coordinate `0` is the product of the item `g` and the primes with coefficient `1`, with `Ω_c`, `Ω_g` bounds for `ω*` on
+the box's ranges of the cofactor's argument `log(x/(∏p · γ_g))/log p_{s(c)}` (`c` the other item) and of
+`log γ/log p_{s(g)}`, the node is `OK` for `σ = 1` with loss `Ω_c Ω_g (hi_0 − lo_0)/DEN · P`, if the node's primes
+satisfy `Q` (from the box and the constraints) and `P` bounds the limit superior of the sum over the box's primes that
+satisfy `Q`. -/
+theorem Sound.OK_of_drop2Q {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 2)} {A : Rows K 2}
     {items : List LF} (hI : ItemsOK A items) {E : ℤ} {Γ : List Con} {B : Box}
     (h : Sound ⟨K, 2, s, conds⟩ A E Γ B) (hE : 0 < E) (hinv : Inv ⟨K, 2, s, conds⟩)
-    (hfit : ∀ L ∈ items, L.c.length ≤ B.length) (hB0 : 0 < B.length) {g : Fin 2} (hsg : s g.rev ≠ s g)
+    (hfit : ∀ L ∈ items, L.c.length ≤ B.length) (hB0 : 0 < B.length) {g : Fin 2}
     (hA0 : ∀ a, A 0 (Sum.inl a) = 0 ∨ A 0 (Sum.inl a) = 1) (hAg : A 0 (Sum.inr g) = 1)
     (hAc : A 0 (Sum.inr g.rev) = 0) (hlo : ∀ a : Fin K, 0 < loF items B E a)
     (hlohi : ∀ a : Fin K, loF items B E a ≤ hiF items B E a) (hNU : NU0 ≤ loF items B E (s g))
@@ -84,11 +87,16 @@ theorem Sound.OK_of_drop2 {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 
         (hiF items B E a : ℝ)) / hiF items B E (s g) ≤ u →
       u ≤ (((B.getD 0 (0, 0)).2 : ℝ) - ∑ a ∈ univ.filter (fun a => A 0 (Sum.inl a) = 1), (loF items B E a : ℝ)) /
         loF items B E (s g) → SieveCert.omegaC u ≤ Ωg)
+    (Q : ℝ → (Fin K → ℕ) → Prop)
+    (hQ : ∀ x : ℝ, 1 < x → ∀ v : (Fin K → ℕ) × (Fin 2 → ℕ), (∀ a, 0 < v.1 a) → |slack x v| ≤ E →
+      InBox B (coords A x v) → (∀ c ∈ Γ, c.Holds (coords A x v) (slack x v)) → Q x v.1)
+    {P : ℝ} (hP0 : 0 ≤ P)
+    (hF : SieveRough.EvLe (fun x => ∑ p ∈ (Fintype.piFinset fun j : Fin K => SieveRough.primesIn
+        (x ^ ((loF items B E j : ℝ) / DEN)) (x ^ ((hiF items B E j : ℝ) / DEN))).filter (Q x),
+      Real.log x ^ 2 / ((∏ j, (p j : ℝ)) * Real.log (p (s g.rev)) * Real.log (p (s g)))) P)
     {θ ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) :
     OK θ ρ 1 (fun x y => ((⟨K, 2, s, conds⟩ : Node).count x y : ℝ))
-      (Ωc * Ωg * ((((B.getD 0 (0, 0)).2 : ℝ) - (B.getD 0 (0, 0)).1) / DEN) *
-        ∏ j : Fin K, if j ∈ ({s g.rev, s g} : Finset (Fin K)) then (DEN : ℝ) / loF items B E j -
-          DEN / hiF items B E j else trB (loF items B E j) (hiF items B E j)) := by
+      (Ωc * Ωg * ((((B.getD 0 (0, 0)).2 : ℝ) - (B.getD 0 (0, 0)).1) / DEN) * P) := by
   have hD := DEN_pos
   set J := univ.filter (fun a : Fin K => A 0 (Sum.inl a) = 1) with hJ
   set lo : Fin K → ℝ := fun j => (loF items B E j : ℝ) / DEN with hlo_def
@@ -101,12 +109,6 @@ theorem Sound.OK_of_drop2 {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 
   set H0 : ℝ := ((B.getD 0 (0, 0)).2 : ℝ) with hH0
   have hL0pos : 0 < L0 := by rw [hL0]; exact_mod_cast hlo0
   have hL0H0 : L0 ≤ H0 := by rw [hL0, hH0]; exact_mod_cast hlohi0
-  set P : ℝ := ∏ j, if j ∈ ({s g.rev, s g} : Finset (Fin K)) then 1 / lo j - 1 / hi j
-    else Real.log (hi j) - Real.log (lo j) with hP_def
-  have hP0 : 0 ≤ P := prod_nonneg fun j _ => by
-    split_ifs
-    · have := one_div_le_one_div_of_le (hlo' j) (hlohi' j); linarith
-    · have := Real.log_le_log (hlo' j) (hlohi' j); linarith
   -- the primes' exponents at a pair in the box
   have hrange : ∀ (x : ℝ) (v : (Fin K → ℕ) × (Fin 2 → ℕ)), InBox B (coords A x v) → |slack x v| ≤ E →
       ∀ a : Fin K, (loF items B E a : ℝ) ≤ DEN * expo x v (Sum.inl a) ∧
@@ -123,7 +125,7 @@ theorem Sound.OK_of_drop2 {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 
   -- the node's terms in the comparison interval
   have hterm : ∀ᶠ x : ℝ in atTop, ∀ v ∈ pairs K 2 ⌊x⌋₊, (∀ i, SieveTree.rough (v.1 (s i)) (v.2 i)) →
       (⟨K, 2, s, conds⟩ : Node).InI x (x ^ (1 - ρ)) v.1 v.2 →
-        v.1 ∈ (Fintype.piFinset fun j => SieveRough.primesIn (x ^ lo j) (x ^ hi j)) ∧
+        v.1 ∈ (Fintype.piFinset fun j => SieveRough.primesIn (x ^ lo j) (x ^ hi j)).filter (Q x) ∧
           x ^ (1 / 25 : ℝ) ≤ v.1 (s g.rev) ∧ (v.1 (s g.rev) : ℝ) ≤ v.2 g.rev ∧ (v.1 (s g) : ℝ) ≤ v.2 g ∧
           x ^ (L0 / DEN) ≤ (∏ j ∈ J, (v.1 j : ℝ)) * v.2 g ∧ (∏ j ∈ J, (v.1 j : ℝ)) * v.2 g ≤ x ^ (H0 / DEN) ∧
           SieveCert.omegaC (Real.log (x / ((∏ j, (v.1 j : ℝ)) * v.2 g)) / Real.log (v.1 (s g.rev))) ≤ Ωc := by
@@ -156,7 +158,8 @@ theorem Sound.OK_of_drop2 {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 
       rw [add_div, sum_div]
     have hb0 := inBox_getD B _ 0 hB hB0
     rw [hprod] at hb0
-    refine ⟨Fintype.mem_piFinset.2 fun j => SieveRough.mem_primesIn.2 ⟨(hp j).2, ?_, ?_⟩, hall _,
+    refine ⟨mem_filter.2 ⟨Fintype.mem_piFinset.2 fun j => SieveRough.mem_primesIn.2 ⟨(hp j).2, ?_, ?_⟩,
+      hQ x hx1 v hv1 hH hB hΓ⟩, hall _,
       by exact_mod_cast hge g.rev, by exact_mod_cast hge g, ?_, ?_, ?_⟩
     · refine rpow_le_of_le_div hx1 (hpj j) ?_
       rw [hlo_def, div_le_iff₀ hD]
@@ -214,13 +217,14 @@ theorem Sound.OK_of_drop2 {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 
       · exact div_le_div₀ (hn0'.trans hmin) hmin hDpos hDhi.le
       · exact div_le_div₀ ((hn0'.trans hmin).trans hmax) hmax (hloR _) hDlo
   -- the boxes of primes: the range of `log γ/log p_{s(g)}`
-  have hPB : ∀ᶠ x : ℝ in atTop, ∀ p ∈ (Fintype.piFinset fun j => SieveRough.primesIn (x ^ lo j) (x ^ hi j)),
+  have hPB : ∀ᶠ x : ℝ in atTop, ∀ p ∈ (Fintype.piFinset fun j => SieveRough.primesIn (x ^ lo j) (x ^ hi j)).filter
+      (Q x),
       x ^ (1 / 25 : ℝ) ≤ p (s g) ∧ (∀ j, 1 ≤ p j) ∧ ∀ X : ℝ, x ^ (L0 / DEN) / ∏ j ∈ J, (p j : ℝ) ≤ X →
         X ≤ x ^ (H0 / DEN) / ∏ j ∈ J, (p j : ℝ) → SieveCert.omegaC (Real.log X / Real.log (p (s g))) ≤ Ωg := by
     filter_upwards [eventually_gt_atTop 1] with x hx1 p hp
     have hx0 : 0 < x := by linarith
     have hlx : 0 < Real.log x := Real.log_pos hx1
-    have hpm := fun j => SieveRough.mem_primesIn.1 (Fintype.mem_piFinset.1 hp j)
+    have hpm := fun j => SieveRough.mem_primesIn.1 (Fintype.mem_piFinset.1 (mem_filter.1 hp).1 j)
     have hpj : ∀ j, (0 : ℝ) < p j := fun j => by exact_mod_cast (hpm j).1.pos
     have hlogp : ∀ j, lo j * Real.log x ≤ Real.log (p j) ∧ Real.log (p j) < hi j * Real.log x := fun j => by
       have h1 := Real.log_le_log (Real.rpow_pos_of_pos hx0 _) (hpm j).2.1
@@ -298,6 +302,59 @@ theorem Sound.OK_of_drop2 {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 
       have e : N * (loF items B E (s g) / DEN * Real.log x) = N / DEN * Real.log x * loF items B E (s g) := by
         ring
       linarith
+  have hdrop : OK θ ρ 1 (fun x y => ((⟨K, 2, s, conds⟩ : Node).count x y : ℝ))
+      (Ωc * Ωg * (H0 / DEN - L0 / DEN) * P) :=
+    ShortSieveTree.OK_of_drop (fun x y => Nat.cast_nonneg _) fun δ hδ =>
+      ShortSieveDrop.count_le_drop2 s conds (rev_ne_self g) J (lo := 1 / 25) (by norm_num) hρ hρ25
+        (div_pos hL0pos hD) (div_le_div_of_nonneg_right hL0H0 hD.le) hΩc hΩg hP0 _ hterm hPB hF hδ
+  refine OK_mono (le_of_eq ?_) hdrop
+  ring
+
+/-- **A dropped node with two rough items.** On a sound node with two rough items whose coordinate `0` is the product
+of the item `g` and the primes with coefficient `1`, the other item `c` (the cofactor) and `g` sifted by distinct
+primes, and with `Ω_c`, `Ω_g` bounds for `ω*` on the box's ranges of the cofactor's argument
+`log(x/(∏p · γ_g))/log p_{s(c)}` and of `log γ/log p_{s(g)}`, the node is `OK` for `σ = 1` with loss
+`Ω_c Ω_g (hi_0 − lo_0)/DEN · ∏_j (DEN/lo_j − DEN/hi_j or trB(lo_j, hi_j))`. -/
+theorem Sound.OK_of_drop2 {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 2)} {A : Rows K 2}
+    {items : List LF} (hI : ItemsOK A items) {E : ℤ} {Γ : List Con} {B : Box}
+    (h : Sound ⟨K, 2, s, conds⟩ A E Γ B) (hE : 0 < E) (hinv : Inv ⟨K, 2, s, conds⟩)
+    (hfit : ∀ L ∈ items, L.c.length ≤ B.length) (hB0 : 0 < B.length) {g : Fin 2} (hsg : s g.rev ≠ s g)
+    (hA0 : ∀ a, A 0 (Sum.inl a) = 0 ∨ A 0 (Sum.inl a) = 1) (hAg : A 0 (Sum.inr g) = 1)
+    (hAc : A 0 (Sum.inr g.rev) = 0) (hlo : ∀ a : Fin K, 0 < loF items B E a)
+    (hlohi : ∀ a : Fin K, loF items B E a ≤ hiF items B E a) (hNU : NU0 ≤ loF items B E (s g))
+    (hlo0 : 0 < (B.getD 0 (0, 0)).1) (hlohi0 : (B.getD 0 (0, 0)).1 ≤ (B.getD 0 (0, 0)).2)
+    {acts : List LF} (hacts : ∀ g ∈ acts, ∃ c ∈ Γ, c.L = g) (hfa : ∀ g ∈ acts, g.c.length ≤ B.length)
+    (hn0 : 0 ≤ (numC (items.getD (K + g.rev) LF.zero)).minD B E acts) {Ωc Ωg : ℝ} (hΩc : 0 ≤ Ωc) (hΩg : 0 ≤ Ωg)
+    (hωc : ∀ u : ℝ, ((numC (items.getD (K + g.rev) LF.zero)).minD B E acts : ℝ) / hiF items B E (s g.rev) ≤ u →
+      u ≤ ((numC (items.getD (K + g.rev) LF.zero)).maxD B E acts : ℝ) / loF items B E (s g.rev) →
+        SieveCert.omegaC u ≤ Ωc)
+    (hωg : ∀ u : ℝ, (((B.getD 0 (0, 0)).1 : ℝ) - ∑ a ∈ univ.filter (fun a => A 0 (Sum.inl a) = 1),
+        (hiF items B E a : ℝ)) / hiF items B E (s g) ≤ u →
+      u ≤ (((B.getD 0 (0, 0)).2 : ℝ) - ∑ a ∈ univ.filter (fun a => A 0 (Sum.inl a) = 1), (loF items B E a : ℝ)) /
+        loF items B E (s g) → SieveCert.omegaC u ≤ Ωg)
+    {θ ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) :
+    OK θ ρ 1 (fun x y => ((⟨K, 2, s, conds⟩ : Node).count x y : ℝ))
+      (Ωc * Ωg * ((((B.getD 0 (0, 0)).2 : ℝ) - (B.getD 0 (0, 0)).1) / DEN) *
+        ∏ j : Fin K, if j ∈ ({s g.rev, s g} : Finset (Fin K)) then (DEN : ℝ) / loF items B E j -
+          DEN / hiF items B E j else trB (loF items B E j) (hiF items B E j)) := by
+  have hD := DEN_pos
+  set J := univ.filter (fun a : Fin K => A 0 (Sum.inl a) = 1) with hJ
+  set lo : Fin K → ℝ := fun j => (loF items B E j : ℝ) / DEN with hlo_def
+  set hi : Fin K → ℝ := fun j => (hiF items B E j : ℝ) / DEN with hhi_def
+  have hloR : ∀ j : Fin K, (0 : ℝ) < loF items B E j := fun j => by exact_mod_cast hlo j
+  have hlohiR : ∀ j : Fin K, (loF items B E j : ℝ) ≤ hiF items B E j := fun j => by exact_mod_cast hlohi j
+  have hlo' : ∀ j, 0 < lo j := fun j => div_pos (hloR j) hD
+  have hlohi' : ∀ j, lo j ≤ hi j := fun j => div_le_div_of_nonneg_right (hlohiR j) hD.le
+  set L0 : ℝ := ((B.getD 0 (0, 0)).1 : ℝ) with hL0
+  set H0 : ℝ := ((B.getD 0 (0, 0)).2 : ℝ) with hH0
+  have hL0pos : 0 < L0 := by rw [hL0]; exact_mod_cast hlo0
+  have hL0H0 : L0 ≤ H0 := by rw [hL0, hH0]; exact_mod_cast hlohi0
+  set P : ℝ := ∏ j, if j ∈ ({s g.rev, s g} : Finset (Fin K)) then 1 / lo j - 1 / hi j
+    else Real.log (hi j) - Real.log (lo j) with hP_def
+  have hP0 : 0 ≤ P := prod_nonneg fun j _ => by
+    split_ifs
+    · have := one_div_le_one_div_of_le (hlo' j) (hlohi' j); linarith
+    · have := Real.log_le_log (hlo' j) (hlohi' j); linarith
   -- Mertens' sums over the box
   have hF : SieveRough.EvLe (fun x => ∑ p ∈ Fintype.piFinset (fun j => SieveRough.primesIn (x ^ lo j) (x ^ hi j)),
       Real.log x ^ 2 / ((∏ j, (p j : ℝ)) * Real.log (p (s g.rev)) * Real.log (p (s g)))) P := by
@@ -311,14 +368,10 @@ theorem Sound.OK_of_drop2 {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 
     rw [prod_congr rfl fun j _ => e1 j, prod_mul_distrib, prod_ite_mem, univ_inter, prod_pair hsg,
       prod_div_distrib, prod_const_one]
     ring
-  have hdrop : OK θ ρ 1 (fun x y => ((⟨K, 2, s, conds⟩ : Node).count x y : ℝ))
-      (Ωc * Ωg * (H0 / DEN - L0 / DEN) * P) :=
-    ShortSieveTree.OK_of_drop (fun x y => Nat.cast_nonneg _) fun δ hδ =>
-      ShortSieveDrop.count_le_drop2 s conds (rev_ne_self g) J (lo := 1 / 25) (by norm_num) hρ hρ25
-        (div_pos hL0pos hD) (div_le_div_of_nonneg_right hL0H0 hD.le) hΩc hΩg hP0 _ hterm hPB hF hδ
+  have hdrop := h.OK_of_drop2Q hI hE hinv hfit hB0 hA0 hAg hAc hlo hlohi hNU hlo0 hlohi0 hacts hfa hn0 hΩc hΩg hωc hωg
+    (fun _ _ => True) (fun _ _ _ _ _ _ _ => trivial) hP0
+    (by convert hF using 3; ext p; simp only [mem_filter, and_true]; exact Iff.rfl) (θ := θ) hρ hρ25
   refine OK_mono ?_ hdrop
-  have e0 : H0 / DEN - L0 / DEN = (H0 - L0) / DEN := by ring
-  rw [e0]
   refine mul_le_mul_of_nonneg_left (Finset.prod_le_prod₀ (fun j _ => ?_) fun j _ => ?_)
     (mul_nonneg (mul_nonneg hΩc hΩg) (div_nonneg (by linarith) hD.le))
   · split_ifs

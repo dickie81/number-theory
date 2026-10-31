@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1005 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1009 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 85 | 199 |
-| `lib/pnt` | 224 | 713 |
+| `lib/pnt` | 225 | 717 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
 
@@ -1364,12 +1364,17 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `ShortSieveCertChain`: The chain bound of a dropped standard node
 
 - `ShortSieveCert.dpRun_sound`: The programme is sound ([note](../formalisations/short-intervals.md))
-- `ShortSieveCert.evLe_rbStd`: The run bounds of a standard node are sound ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.evLe_rbG`: The run bounds of a chain are sound ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.chainDP_sound`: The chain bound is sound ([note](../formalisations/short-intervals.md))
 - `ShortSieveCert.Sound.OK_of_dropC`: A dropped standard node with the chain bound ([note](../formalisations/short-intervals.md))
+
+#### `ShortSieveCertChain2`: The chain bound of a dropped node with two rough items
+
+- `ShortSieveCert.Sound.OK_of_drop2C`: A dropped node with two rough items, with the chain bound ([note](../formalisations/short-intervals.md))
 
 #### `ShortSieveCertCheck`: The certificate's checker
 
-- `ShortSieveCert.chainStd_sound`: The chain bound is sound ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.chainTwo_sound`: The chain bounds of a node with two rough items are sound ([note](../formalisations/short-intervals.md))
 - `ShortSieveCert.run_sound`: The checker is sound ([note](../formalisations/short-intervals.md))
 - `ShortSieveCert.primes_of_certs`: Primes in short intervals from the certificates ([note](../formalisations/short-intervals.md))
 
@@ -1390,6 +1395,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `ShortSieveCertDrop2`: The certificate's dropped boxes with two rough items
 
+- `ShortSieveCert.Sound.OK_of_drop2Q`: A dropped node with two rough items, its primes in a set ([note](../formalisations/short-intervals.md))
 - `ShortSieveCert.Sound.OK_of_drop2`: A dropped node with two rough items ([note](../formalisations/short-intervals.md))
 
 #### `ShortSieveCertRev`: The certificate's role reversals
@@ -1432,6 +1438,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ShortSieveChain.chainSum_split`: A chain split at `a ≤ U` ([note](../formalisations/short-intervals.md))
 - `ShortSieveChain.decSum_le`: The ordered sum ([note](../formalisations/short-intervals.md))
 - `ShortSieveChain.sum_filter_strictAnti`: The tuples of a box as a chain ([note](../formalisations/short-intervals.md))
+- `ShortSieveChain.sum_le_two_chains`: Two chains ([note](../formalisations/short-intervals.md))
 
 #### `ShortSieveDrop`: Upper bounds for the certificate's dropped nodes in the comparison interval
 

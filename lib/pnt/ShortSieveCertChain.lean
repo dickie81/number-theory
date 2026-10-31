@@ -14,7 +14,10 @@ the dynamic programme over the intervals and the runs.
 
 * `dpStep`, `dpRun`: the programme in fixed point (units `1/SC`), and its soundness (`dpStep_sound`, `dpRun_sound`)
   from the exact split of a chain at a threshold (`ShortSieveChain.chainSum_split`), for any run bounds.
-* `rbStd`: the run bounds of a standard node's primes, and their soundness (`evLe_rbStd`).
+* `rbG`: the run bounds of a chain of primes, its sifting primes weighted by `log x/(p log p)`, and their soundness
+  (`evLe_rbG`).
+* `chainDP`: **the chain bound**, the programme over the ends of the members' ranges, and its soundness
+  (`chainDP_sound`).
 * `Sound.OK_of_dropC`: **a dropped standard node** has the loss `ω*` times any limit superior of its chain sum.
 -/
 
@@ -200,28 +203,36 @@ theorem dpRun_sound {m : ℕ} {Mx : ℝ → ℕ → Finset ℕ × (ℕ → ℝ)}
       (fun g hg => hpos g (by simp [hg])) hch' (dpStep_sound hw hef (hRB e f he hef) hP)
     simpa [dpRun, lastD] using this
 
-/-! ### The run bounds of a standard node -/
+/-! ### The run bounds of a chain -/
 
-/-- The members of a dropped standard node's chain: the primes of the box's ranges, with the weights `1/p` and, for
-the sifting prime `k`, `log x/(p log p)`. -/
-noncomputable def stdMem (B : Box) (k : ℕ) (x : ℝ) (i : ℕ) : Finset ℕ × (ℕ → ℝ) :=
-  (primesIn (x ^ (((B.getD i (0, 0)).1 : ℝ) / DEN)) (x ^ (((B.getD i (0, 0)).2 : ℝ) / DEN)),
-    if i = k then fun p => Real.log x / (p * Real.log p) else fun p => 1 / p)
+/-- The members of a chain: the member `i` takes the primes of `[x^{lo_i/DEN}, x^{hi_i/DEN})`, with the weight `1/p`,
+or `log x/(p log p)` if it is a sifting prime (`w i`). -/
+noncomputable def genMem (lo hi : ℕ → ℤ) (w : ℕ → Bool) (x : ℝ) (i : ℕ) : Finset ℕ × (ℕ → ℝ) :=
+  (primesIn (x ^ ((lo i : ℝ) / DEN)) (x ^ ((hi i : ℝ) / DEN)),
+    if w i then fun p => Real.log x / (p * Real.log p) else fun p => 1 / p)
 
 /-- The factor of the member `i` on `[e, f)`: its range clipped to the interval, units `1/SC`. -/
-def clipF (B : Box) (k : ℕ) (e f : ℤ) (i : ℕ) : ℕ :=
-  if i = k then invF (max (B.getD i (0, 0)).1 e) (min (B.getD i (0, 0)).2 f)
-  else trF (max (B.getD i (0, 0)).1 e) (min (B.getD i (0, 0)).2 f)
+def clipG (lo hi : ℕ → ℤ) (w : ℕ → Bool) (e f : ℤ) (i : ℕ) : ℕ :=
+  if w i then invF (max (lo i) e) (min (hi i) f) else trF (max (lo i) e) (min (hi i) f)
+
+/-- `y (DEN/e)^n`, units `1/SC`, each step rounded up. -/
+def mulDE (e : ℤ) : ℕ → ℕ → ℕ
+  | 0, y => y
+  | n + 1, y => mulDE e n (SieveCert.cdiv (y * DEN) e.toNat)
 
 /-- The ordered bound of the run of the members `j, …, j + r − 1` on `[e, f)`, units `1/SC`:
-`(DEN/e)^{n₂} trB(e, f)^r/r!`, with `n₂ = 1` if the run holds the sifting prime `k`. -/
-def ordF (k : ℕ) (e f : ℤ) (j r : ℕ) : ℕ :=
-  SieveCert.cdiv (if j ≤ k ∧ k < j + r then SieveCert.cdiv (prodSC (List.replicate r (trF e f)) * DEN) e.toNat
-    else prodSC (List.replicate r (trF e f))) r.factorial
+`(DEN/e)^{n₂} trB(e, f)^r/r!`, with `n₂` the number of the run's sifting primes. -/
+def ordG (w : ℕ → Bool) (e f : ℤ) (j r : ℕ) : ℕ :=
+  SieveCert.cdiv (mulDE e ((List.range r).filter fun i => w (j + i)).length (prodSC (List.replicate r (trF e f))))
+    r.factorial
 
-/-- **The run bounds of a standard node**: the least of the product of the clipped factors and the ordered bound. -/
-def rbStd (B : Box) (k : ℕ) (e f : ℤ) (j r : ℕ) : ℕ :=
-  min (prodSC ((List.range r).map fun i => clipF B k e f (j + i))) (ordF k e f j r)
+/-- **The run bounds of a chain**: the least of the product of the clipped factors and the ordered bound. -/
+def rbG (lo hi : ℕ → ℤ) (w : ℕ → Bool) (e f : ℤ) (j r : ℕ) : ℕ :=
+  min (prodSC ((List.range r).map fun i => clipG lo hi w e f (j + i))) (ordG w e f j r)
+
+/-- The members of a dropped standard node's chain: the primes of the box's ranges, the last the sifting prime. -/
+noncomputable def stdMem (B : Box) (k : ℕ) : ℝ → ℕ → Finset ℕ × (ℕ → ℝ) :=
+  genMem (fun i => (B.getD i (0, 0)).1) (fun i => (B.getD i (0, 0)).2) (fun i => decide (i = k))
 
 theorem rpow_div_max {x : ℝ} (hx : 1 ≤ x) (a b : ℤ) :
     x ^ (((max a b : ℤ) : ℝ) / DEN) = max (x ^ ((a : ℝ) / DEN)) (x ^ ((b : ℝ) / DEN)) := by
@@ -243,17 +254,16 @@ theorem filter_primesIn_thr {x : ℝ} (hx : 1 ≤ x) (lo hi e f : ℤ) :
   tauto
 
 /-- **A member's sum on an interval** is at most its clipped factor. -/
-theorem evLe_clip (B : Box) (k : ℕ) {e f : ℤ} (he : 0 < e) (i : ℕ) :
-    EvLe (fun x => ∑ p ∈ (stdMem B k x i).1.filter (fun p => thr x e ≤ p ∧ p < thr x f), (stdMem B k x i).2 p)
-      (clipF B k e f i / SC) := by
-  have hset : ∀ᶠ x : ℝ in atTop, (stdMem B k x i).1.filter (fun p => thr x e ≤ p ∧ p < thr x f) =
-      primesIn (x ^ (((max (B.getD i (0, 0)).1 e : ℤ) : ℝ) / DEN))
-        (x ^ (((min (B.getD i (0, 0)).2 f : ℤ) : ℝ) / DEN)) := by
+theorem evLe_clip (lo hi : ℕ → ℤ) (w : ℕ → Bool) {e f : ℤ} (he : 0 < e) (i : ℕ) :
+    EvLe (fun x => ∑ p ∈ (genMem lo hi w x i).1.filter (fun p => thr x e ≤ p ∧ p < thr x f),
+      (genMem lo hi w x i).2 p) (clipG lo hi w e f i / SC) := by
+  have hset : ∀ᶠ x : ℝ in atTop, (genMem lo hi w x i).1.filter (fun p => thr x e ≤ p ∧ p < thr x f) =
+      primesIn (x ^ (((max (lo i) e : ℤ) : ℝ) / DEN)) (x ^ (((min (hi i) f : ℤ) : ℝ) / DEN)) := by
     filter_upwards [eventually_ge_atTop 1] with x hx
     exact filter_primesIn_thr hx _ _ e f
-  unfold clipF
-  set a := max (B.getD i (0, 0)).1 e with ha
-  set b := min (B.getD i (0, 0)).2 f with hb
+  unfold clipG
+  set a := max (lo i) e with ha
+  set b := min (hi i) f with hb
   have ha0 : 0 < a := lt_of_lt_of_le he (le_max_right _ _)
   have hD := DEN_pos
   have ha0r : (0 : ℝ) < a := by exact_mod_cast ha0
@@ -261,7 +271,7 @@ theorem evLe_clip (B : Box) (k : ℕ) {e f : ℤ} (he : 0 < e) (i : ℕ) :
   by_cases hab : a ≤ b
   · have hb0r : (0 : ℝ) < b := by exact_mod_cast ha0.trans_le hab
     have hab' : (a : ℝ) / DEN ≤ (b : ℝ) / DEN := div_le_div_of_nonneg_right (by exact_mod_cast hab) hD.le
-    by_cases hik : i = k
+    by_cases hik : w i = true
     · have h := evLe_sum_inv_log ha0' hab'
       refine evLe_of_le (evLe_mono h ?_) ?_
       · have e1 : 1 / ((a : ℝ) / DEN) - 1 / ((b : ℝ) / DEN) = (DEN : ℝ) / a - DEN / b := by
@@ -271,7 +281,7 @@ theorem evLe_clip (B : Box) (k : ℕ) {e f : ℤ} (he : 0 < e) (i : ℕ) :
       · filter_upwards [hset] with x hx
         rw [hx, mul_sum]
         refine le_of_eq (sum_congr rfl fun p _ => ?_)
-        simp only [stdMem, ite_eq_left hik]
+        simp only [genMem, ite_eq_left hik]
         rw [mul_one_div]
     · have h := evLe_sum_inv ha0' hab'
       refine evLe_of_le (evLe_mono h ?_) ?_
@@ -286,7 +296,7 @@ theorem evLe_clip (B : Box) (k : ℕ) {e f : ℤ} (he : 0 < e) (i : ℕ) :
       · filter_upwards [hset] with x hx
         rw [hx]
         refine le_of_eq (sum_congr rfl fun p _ => ?_)
-        simp only [stdMem, ite_eq_right hik]
+        simp only [genMem, ite_eq_right hik]
   · -- the clipped range is empty
     refine fun δ hδ => ?_
     filter_upwards [hset, eventually_ge_atTop 1] with x hx hx1
@@ -298,81 +308,100 @@ theorem evLe_clip (B : Box) (k : ℕ) {e f : ℤ} (he : 0 < e) (i : ℕ) :
       refine le_trans (Real.rpow_le_rpow_of_exponent_le hx1 ?_) hp
       exact div_le_div_of_nonneg_right (by exact_mod_cast (not_le.1 hab).le) hD.le
     rw [hemp, sum_empty]
-    have : (0 : ℝ) ≤ (if i = k then invF a b else trF a b : ℕ) / SC := by positivity
+    have : (0 : ℝ) ≤ (if w i = true then invF a b else trF a b : ℕ) / SC := by positivity
     linarith
 
-theorem stdMem_nonneg (B : Box) (k : ℕ) : ∀ᶠ x : ℝ in atTop, ∀ i p, 0 ≤ (stdMem B k x i).2 p := by
+theorem genMem_nonneg (lo hi : ℕ → ℤ) (w : ℕ → Bool) :
+    ∀ᶠ x : ℝ in atTop, ∀ i p, 0 ≤ (genMem lo hi w x i).2 p := by
   filter_upwards [eventually_ge_atTop 1] with x hx i p
-  unfold stdMem
+  unfold genMem
   split_ifs
   · exact div_nonneg (Real.log_nonneg hx) (mul_nonneg (Nat.cast_nonneg _) (Real.log_natCast_nonneg _))
   · positivity
 
 /-- **A run's product bound**: the product of its members' clipped factors. -/
-theorem evLe_run_prod (B : Box) (k : ℕ) {e f : ℤ} (he : 0 < e) {j r : ℕ} (hr : r ≤ k + 1 - j) :
-    EvLe (fun x => runSum r (sfx (stdMem B k x) (k + 1) j) (thr x e) (thr x f))
-      (prodSC ((List.range r).map fun i => clipF B k e f (j + i)) / SC) := by
-  have hle : ∀ᶠ x : ℝ in atTop, runSum r (sfx (stdMem B k x) (k + 1) j) (thr x e) (thr x f) ≤
-      ∏ i ∈ range r, ∑ p ∈ (stdMem B k x (j + i)).1.filter (fun p => thr x e ≤ p ∧ p < thr x f),
-        (stdMem B k x (j + i)).2 p := by
-    filter_upwards [stdMem_nonneg B k] with x hx
-    have h := runSum_le_prod r (sfx (stdMem B k x) (k + 1) j) (thr x e) (thr x f) (thr x f) le_rfl
+theorem evLe_run_prod (lo hi : ℕ → ℤ) (w : ℕ → Bool) {m : ℕ} {e f : ℤ} (he : 0 < e) {j r : ℕ}
+    (hr : r ≤ m - j) :
+    EvLe (fun x => runSum r (sfx (genMem lo hi w x) m j) (thr x e) (thr x f))
+      (prodSC ((List.range r).map fun i => clipG lo hi w e f (j + i)) / SC) := by
+  have hle : ∀ᶠ x : ℝ in atTop, runSum r (sfx (genMem lo hi w x) m j) (thr x e) (thr x f) ≤
+      ∏ i ∈ range r, ∑ p ∈ (genMem lo hi w x (j + i)).1.filter (fun p => thr x e ≤ p ∧ p < thr x f),
+        (genMem lo hi w x (j + i)).2 p := by
+    filter_upwards [genMem_nonneg lo hi w] with x hx
+    have h := runSum_le_prod r (sfx (genMem lo hi w x) m j) (thr x e) (thr x f) (thr x f) le_rfl
       (fun M hM p => by obtain ⟨i, -, -, rfl⟩ := mem_sfx hM; exact hx i p)
     rwa [prod_take_sfx, min_eq_left hr] at h
-  have hprod : EvLe (fun x => ∏ i ∈ range r, ∑ p ∈ (stdMem B k x (j + i)).1.filter
-      (fun p => thr x e ≤ p ∧ p < thr x f), (stdMem B k x (j + i)).2 p)
-      (∏ i ∈ range r, (clipF B k e f (j + i) : ℝ) / SC) := by
-    have h := EvLe.prod (fun (t : Fin r) x => ∑ p ∈ (stdMem B k x (j + t)).1.filter
-      (fun p => thr x e ≤ p ∧ p < thr x f), (stdMem B k x (j + t)).2 p)
-      (fun t => (clipF B k e f (j + t) : ℝ) / SC) (fun t => by positivity)
+  have hprod : EvLe (fun x => ∏ i ∈ range r, ∑ p ∈ (genMem lo hi w x (j + i)).1.filter
+      (fun p => thr x e ≤ p ∧ p < thr x f), (genMem lo hi w x (j + i)).2 p)
+      (∏ i ∈ range r, (clipG lo hi w e f (j + i) : ℝ) / SC) := by
+    have h := EvLe.prod (fun (t : Fin r) x => ∑ p ∈ (genMem lo hi w x (j + t)).1.filter
+      (fun p => thr x e ≤ p ∧ p < thr x f), (genMem lo hi w x (j + t)).2 p)
+      (fun t => (clipG lo hi w e f (j + t) : ℝ) / SC) (fun t => by positivity)
       (fun t => by
-        filter_upwards [stdMem_nonneg B k] with x hx
+        filter_upwards [genMem_nonneg lo hi w] with x hx
         exact sum_nonneg fun p _ => hx _ p)
-      (fun t => evLe_clip B k he (j + t))
+      (fun t => evLe_clip lo hi w he (j + t))
     simpa only [Finset.prod_range] using h
   refine evLe_mono (evLe_of_le hprod hle) ?_
-  have h := prod_le_prodSC ((List.range r).map fun i => clipF B k e f (j + i))
+  have h := prod_le_prodSC ((List.range r).map fun i => clipG lo hi w e f (j + i))
   rwa [List.map_map, Function.comp_def, list_prod_map_range] at h
 
-theorem prod_range_window (j k : ℕ) (a : ℝ) : ∀ r : ℕ,
-    ∏ i ∈ range r, (if j + i = k then a else 1) = if j ≤ k ∧ k < j + r then a else 1
-  | 0 => by
-    rw [prod_range_zero, ite_eq_right (by omega)]
+/-- The product of `a` over the run's sifting primes. -/
+theorem prod_range_ite (w : ℕ → Bool) (j : ℕ) (a : ℝ) : ∀ r : ℕ,
+    ∏ i ∈ range r, (if w (j + i) = true then a else 1) = a ^ ((List.range r).filter fun i => w (j + i)).length
+  | 0 => by simp
   | r + 1 => by
-    rw [prod_range_succ, prod_range_window j k a r]
-    by_cases h1 : j + r = k
-    · rw [ite_eq_right (by omega), ite_eq_left h1, ite_eq_left (by omega), one_mul]
-    · rw [ite_eq_right h1, mul_one]
-      by_cases h2 : j ≤ k ∧ k < j + r
-      · rw [ite_eq_left h2, ite_eq_left (by omega)]
-      · rw [ite_eq_right h2, ite_eq_right (by omega)]
+    rw [prod_range_succ, prod_range_ite w j a r, List.range_succ, List.filter_append, List.length_append]
+    by_cases h : w (j + r) = true
+    · rw [ite_eq_left h]
+      simp [List.filter, h, pow_succ]
+    · rw [ite_eq_right h]
+      simp [List.filter, h]
+
+theorem mulDE_ge {e : ℤ} (he : 0 < e) : ∀ (n y : ℕ), ((DEN : ℝ) / e) ^ n * ((y : ℝ) / SC) ≤ (mulDE e n y : ℝ) / SC
+  | 0, y => by simp [mulDE]
+  | n + 1, y => by
+    have hS := SC_pos
+    have he0 : 0 < e.toNat := by omega
+    have e2 : ((e.toNat : ℕ) : ℝ) = e := by exact_mod_cast Int.toNat_of_nonneg he.le
+    have heR : (0 : ℝ) < e := by exact_mod_cast he
+    have h1 := SieveOmegaB.div_le_cdiv (y * DEN) e.toNat he0
+    push_cast at h1
+    rw [e2] at h1
+    refine le_trans ?_ (mulDE_ge he n _)
+    calc ((DEN : ℝ) / e) ^ (n + 1) * ((y : ℝ) / SC) = ((DEN : ℝ) / e) ^ n * (((y : ℝ) * DEN / e) / SC) := by
+          rw [pow_succ]; ring
+      _ ≤ ((DEN : ℝ) / e) ^ n * ((SieveCert.cdiv (y * DEN) e.toNat : ℝ) / SC) :=
+          mul_le_mul_of_nonneg_left (div_le_div_of_nonneg_right h1 hS.le) (by positivity)
 
 /-- **A run's ordered bound**: its primes are strictly decreasing in `[x^{e/DEN}, x^{f/DEN})`, so the run is at most
 `(DEN/e)^{n₂} (Σ 1/p)^r/r!`. -/
-theorem evLe_run_ord (B : Box) (k : ℕ) {e f : ℤ} (he : 0 < e) (hef : e ≤ f) {j r : ℕ} (hr : r ≤ k + 1 - j) :
-    EvLe (fun x => runSum r (sfx (stdMem B k x) (k + 1) j) (thr x e) (thr x f)) (ordF k e f j r / SC) := by
+theorem evLe_run_ord (lo hi : ℕ → ℤ) (w : ℕ → Bool) {m : ℕ} {e f : ℤ} (he : 0 < e) (hef : e ≤ f) {j r : ℕ}
+    (hr : r ≤ m - j) :
+    EvLe (fun x => runSum r (sfx (genMem lo hi w x) m j) (thr x e) (thr x f)) (ordG w e f j r / SC) := by
   have hD := DEN_pos
   have heR : (0 : ℝ) < e := by exact_mod_cast he
   have he' : (0 : ℝ) < (e : ℝ) / DEN := div_pos heR hD
   have hef' : (e : ℝ) / DEN ≤ (f : ℝ) / DEN := div_le_div_of_nonneg_right (by exact_mod_cast hef) hD.le
-  set C : ℝ := if j ≤ k ∧ k < j + r then (DEN : ℝ) / e else 1 with hC
-  have hC0 : 0 ≤ C := by rw [hC]; split_ifs <;> positivity
-  set c : ℕ → ℝ := fun i => if i = k then (DEN : ℝ) / e else 1 with hc
+  set n₂ := ((List.range r).filter fun i => w (j + i)).length with hn₂
+  set C : ℝ := ((DEN : ℝ) / e) ^ n₂ with hC
+  have hC0 : 0 ≤ C := by rw [hC]; positivity
+  set c : ℕ → ℝ := fun i => if w i = true then (DEN : ℝ) / e else 1 with hc
   have hc0 : ∀ i, 0 ≤ c i := fun i => by rw [hc]; dsimp only; split_ifs <;> positivity
   have hfac : (0 : ℝ) < r.factorial := by exact_mod_cast Nat.factorial_pos r
   -- pointwise: the run is at most `C (Σ_{x^{e/DEN} ≤ p < x^{f/DEN}} 1/p)^r/r!`
-  have hle : ∀ᶠ x : ℝ in atTop, runSum r (sfx (stdMem B k x) (k + 1) j) (thr x e) (thr x f) ≤
+  have hle : ∀ᶠ x : ℝ in atTop, runSum r (sfx (genMem lo hi w x) m j) (thr x e) (thr x f) ≤
       C * ((∑ p ∈ primesIn (x ^ ((e : ℝ) / DEN)) (x ^ ((f : ℝ) / DEN)), 1 / (p : ℝ)) ^ r / r.factorial) := by
-    filter_upwards [eventually_gt_atTop 1, stdMem_nonneg B k] with x hx hw
+    filter_upwards [eventually_gt_atTop 1, genMem_nonneg lo hi w] with x hx hw
     have hlx : 0 < Real.log x := Real.log_pos hx
-    have h := runSum_sfx_le_dec (stdMem B k x) (k + 1) (primesIn (x ^ ((e : ℝ) / DEN)) (x ^ ((f : ℝ) / DEN)))
+    have h := runSum_sfx_le_dec (genMem lo hi w x) m (primesIn (x ^ ((e : ℝ) / DEN)) (x ^ ((f : ℝ) / DEN)))
       (f := fun p => 1 / (p : ℝ)) (fun p => by positivity) c hc0 hw r j (thr x e) (thr x f)
       (fun i _ _ p hp hp1 hp2 => by
         have hp' := (mem_primesIn.1 hp).1
         have hxe : x ^ ((e : ℝ) / DEN) ≤ p := Nat.ceil_le.1 hp1
         refine ⟨mem_primesIn.2 ⟨hp', hxe, Nat.lt_ceil.1 hp2⟩, ?_⟩
-        simp only [stdMem, hc]
-        by_cases hik : i = k
+        simp only [genMem, hc]
+        by_cases hik : w i = true
         · rw [ite_eq_left hik, ite_eq_left hik]
           have hp0 : (0 : ℝ) < p := by exact_mod_cast hp'.pos
           have hlp : (e : ℝ) / DEN * Real.log x ≤ Real.log p := by
@@ -390,7 +419,7 @@ theorem evLe_run_ord (B : Box) (k : ℕ) {e f : ℤ} (he : 0 < e) (hef : e ≤ f
             _ = (DEN : ℝ) / e * (1 / p) * (p * Real.log p) := by field_simp
         · rw [ite_eq_right hik, ite_eq_right hik, one_mul])
     rw [min_eq_left hr, show (∏ i ∈ range r, c (j + i)) = C by
-      rw [hC, ← prod_range_window j k ((DEN : ℝ) / e) r]] at h
+      rw [hC, hn₂, ← prod_range_ite w j ((DEN : ℝ) / e) r]] at h
     refine h.trans (mul_le_mul_of_nonneg_left ((decSum_le _ (fun p => by positivity) _ r _).trans
       (le_of_eq ?_)) hC0)
     rw [filter_true_of_mem fun p hp => by
@@ -415,38 +444,82 @@ theorem evLe_run_ord (B : Box) (k : ℕ) {e f : ℤ} (he : 0 < e) (hef : e ≤ f
     have := prod_le_prodSC (List.replicate r (trF e f))
     rwa [List.map_replicate, List.prod_replicate] at this
   have hS := SC_pos
-  unfold ordF
-  rw [← ht]
-  have hcd := SieveOmegaB.div_le_cdiv (if j ≤ k ∧ k < j + r then SieveCert.cdiv (t * DEN) e.toNat else t)
-    r.factorial (Nat.factorial_pos r)
-  -- `C t/SC ≤ (the inner value)/SC`
-  have hin : C * ((t : ℝ) / SC) ≤
-      ((if j ≤ k ∧ k < j + r then SieveCert.cdiv (t * DEN) e.toNat else t : ℕ) : ℝ) / SC := by
-    rw [hC]
-    split_ifs with hn
-    · have he0 : 0 < e.toNat := by omega
-      have h2 := SieveOmegaB.div_le_cdiv (t * DEN) e.toNat he0
-      have e2 : ((e.toNat : ℕ) : ℝ) = e := by exact_mod_cast Int.toNat_of_nonneg he.le
-      push_cast at h2
-      rw [e2] at h2
-      calc (DEN : ℝ) / e * ((t : ℝ) / SC) = ((t : ℝ) * DEN / e) / SC := by ring
-        _ ≤ _ := div_le_div_of_nonneg_right h2 hS.le
-    · rw [one_mul]
+  unfold ordG
+  rw [← ht, ← hn₂]
+  have hcd := SieveOmegaB.div_le_cdiv (mulDE e n₂ t) r.factorial (Nat.factorial_pos r)
   calc C / r.factorial * ((trF e f : ℝ) / SC) ^ r ≤ C / r.factorial * ((t : ℝ) / SC) :=
         mul_le_mul_of_nonneg_left htr (by positivity)
     _ = (C * ((t : ℝ) / SC)) / r.factorial := by ring
-    _ ≤ (((if j ≤ k ∧ k < j + r then SieveCert.cdiv (t * DEN) e.toNat else t : ℕ) : ℝ) / SC) / r.factorial :=
-        div_le_div_of_nonneg_right hin hfac.le
-    _ = (((if j ≤ k ∧ k < j + r then SieveCert.cdiv (t * DEN) e.toNat else t : ℕ) : ℝ) / r.factorial) / SC := by
-        ring
+    _ ≤ ((mulDE e n₂ t : ℝ) / SC) / r.factorial := div_le_div_of_nonneg_right (mulDE_ge he n₂ t) hfac.le
+    _ = ((mulDE e n₂ t : ℝ) / r.factorial) / SC := by ring
     _ ≤ _ := div_le_div_of_nonneg_right hcd hS.le
 
-/-- **The run bounds of a standard node are sound.** -/
-theorem evLe_rbStd (B : Box) (k : ℕ) {e f : ℤ} (he : 0 < e) (hef : e ≤ f) {j r : ℕ} (hr : r ≤ k + 1 - j) :
-    EvLe (fun x => runSum r (sfx (stdMem B k x) (k + 1) j) (thr x e) (thr x f)) (rbStd B k e f j r / SC) := by
-  unfold rbStd
+/-- **The run bounds of a chain are sound.** -/
+theorem evLe_rbG (lo hi : ℕ → ℤ) (w : ℕ → Bool) {m : ℕ} {e f : ℤ} (he : 0 < e) (hef : e ≤ f) {j r : ℕ}
+    (hr : r ≤ m - j) :
+    EvLe (fun x => runSum r (sfx (genMem lo hi w x) m j) (thr x e) (thr x f)) (rbG lo hi w e f j r / SC) := by
+  unfold rbG
   rw [Nat.cast_min, ← min_div_div_right SC_pos.le]
-  exact evLe_min (evLe_run_prod B k he hr) (evLe_run_ord B k he hef hr)
+  exact evLe_min (evLe_run_prod lo hi w he hr) (evLe_run_ord lo hi w he hef hr)
+
+/-! ### The chain bound -/
+
+/-- Consecutive duplicates removed. -/
+def dedupC : List ℤ → List ℤ
+  | a :: b :: l => if a = b then dedupC (b :: l) else a :: dedupC (b :: l)
+  | l => l
+
+/-- The breakpoints of a chain of `m` members: the ends of their ranges, in increasing order. -/
+def chainBps (lo hi : ℕ → ℤ) (m : ℕ) : List ℤ :=
+  dedupC ((((List.range m).map lo) ++ (List.range m).map hi).insertionSort (· ≤ ·))
+
+/-- **The chain bound** of the chain of `m` members with the ranges `[lo_i, hi_i)` and the sifting primes `w`, units
+`1/SC`, and its last breakpoint: the programme over the ends of the ranges with the run bounds `rbG`, if the ends are
+positive. -/
+def chainDP (lo hi : ℕ → ℤ) (w : ℕ → Bool) (m : ℕ) : Option (ℕ × ℤ) :=
+  match chainBps lo hi m with
+  | [] => none
+  | e :: rest =>
+    if 0 < e ∧ rest.all (fun f => decide (0 < f)) = true ∧ incr e rest = true ∧
+        (List.range m).all (fun j => decide (e ≤ lo j ∧ hi j ≤ lastD e rest)) = true then
+      some ((dpRun m (rbG lo hi w) e rest (List.replicate m 0 ++ [SC])).getD 0 0, lastD e rest)
+    else none
+
+/-- **The chain bound is sound**: the chain sum below the last breakpoint has the limit superior at most the bound. -/
+theorem chainDP_sound {lo hi : ℕ → ℤ} {w : ℕ → Bool} {m D : ℕ} {eK : ℤ} (hc : chainDP lo hi w m = some (D, eK)) :
+    (∀ j < m, hi j ≤ eK) ∧ EvLe (fun x => chainSum (sfx (genMem lo hi w x) m 0) (thr x eK)) (D / SC) := by
+  unfold chainDP at hc
+  split at hc
+  · exact absurd hc (by simp)
+  · rename_i e rest _
+    split_ifs at hc with hcheck
+    obtain ⟨hD, heK⟩ := Prod.mk.inj (Option.some.inj hc)
+    subst hD heK
+    obtain ⟨he, hpos, hinc, hrng⟩ := hcheck
+    simp only [List.all_eq_true, decide_eq_true_eq, List.mem_range] at hpos hrng
+    refine ⟨fun j hj => (hrng j hj).2, ?_⟩
+    refine dpRun_sound (genMem_nonneg lo hi w) (fun e f he hef j _ r _ hr2 => evLe_rbG lo hi w he hef hr2) e rest _
+      he hpos hinc (fun j hj => ?_) 0 (Nat.zero_le _)
+    by_cases hjm : j < m
+    · have hP0 : (List.replicate m 0 ++ [SC]).getD j 0 = 0 := by
+        rw [List.getD_eq_getElem _ _ (by simp; omega), List.getElem_append_left (by simpa using hjm)]
+        simp
+      rw [hP0, Nat.cast_zero, zero_div]
+      refine fun δ hδ => ?_
+      filter_upwards [eventually_ge_atTop 1] with x hx
+      rw [sfx_of_lt _ hjm, chainSum_eq_zero fun p hp => ?_]
+      · linarith
+      obtain ⟨-, h1, -⟩ := mem_primesIn.1 hp
+      exact Nat.ceil_le.2 (le_trans (Real.rpow_le_rpow_of_exponent_le hx
+        (div_le_div_of_nonneg_right (by exact_mod_cast (hrng j hjm).1) DEN_pos.le)) h1)
+    · obtain rfl : j = m := by omega
+      have hP : (List.replicate j 0 ++ [SC]).getD j 0 = SC := by simp
+      rw [hP, div_self SC_pos.ne']
+      exact fun δ hδ => Eventually.of_forall fun x => by
+        dsimp only
+        rw [sfx_of_le _ le_rfl]
+        simp only [chainSum]
+        linarith
 
 /-! ### The dropped standard node -/
 
@@ -555,10 +628,10 @@ theorem Sound.OK_of_dropC {k : ℕ} {conds : List (Cond (k + 1) 1)} {E : ℤ} {�
     refine sum_congr rfl fun p _ => ?_
     have e1 : ∀ i : Fin k, (stdMem B k x (Fin.castSucc i : ℕ)).2 (p (Fin.castSucc i)) =
         1 / (p (Fin.castSucc i) : ℝ) := fun i => by
-      simp only [stdMem, Fin.val_castSucc, ite_eq_right (ne_of_lt i.isLt)]
+      simp only [stdMem, genMem, Fin.val_castSucc, decide_eq_true_eq, ite_eq_right (ne_of_lt i.isLt)]
     have e2 : (stdMem B k x (Fin.last k : ℕ)).2 (p (Fin.last k)) =
         Real.log x / (p (Fin.last k) * Real.log (p (Fin.last k))) := by
-      simp only [stdMem, Fin.val_last, ite_true]
+      simp only [stdMem, genMem, Fin.val_last, decide_true, ite_true]
     rw [Fin.prod_univ_castSucc (fun i : Fin (k + 1) => (stdMem B k x i).2 (p i)), e2,
       prod_congr rfl fun i _ => e1 i, Fin.prod_univ_castSucc (fun i : Fin (k + 1) => (p i : ℝ)), prod_div_distrib,
       prod_const_one]
