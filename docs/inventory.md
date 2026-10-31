@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 918 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 933 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 69 | 152 |
-| `lib/pnt` | 214 | 673 |
+| `lib/pnt` | 216 | 688 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
 
@@ -1262,6 +1262,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ShortSieveCert.Sound.OK_of_drop`: A dropped standard node ([note](../formalisations/short-intervals.md))
 - `ShortSieveCert.omegaC_le_omUpK`: `omUpK` bounds `ω*` ([note](../formalisations/short-intervals.md))
 
+#### `ShortSieveCertDrop2`: The certificate's dropped boxes with two rough items
+
+- `ShortSieveCert.Sound.OK_of_drop2`: A dropped node with two rough items ([note](../formalisations/short-intervals.md))
+
 #### `ShortSieveCertRev`: The certificate's role reversals
 
 - `ShortSieveCert.StdInv.rev`: The reversed child keeps the invariant ([note](../formalisations/short-intervals.md))
@@ -1279,6 +1283,23 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `ShortSieveCert.itemsOK_std`: The items of a standard node
 - `ShortSieveCert.buchRows_std`: The Buchstab child of a standard node is standard
+
+#### `ShortSieveCertTwo`: Buchstab's step on the last rough item of a node
+
+- `ShortSieveCert.Inv.cons`: More conditions keep the invariant. ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.StdInv.inv` ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.RevInv.inv` ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Inv.last`: The child keeps the invariant ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.CondsOK.last`: The child's conditions are not functions of the product alone ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.itemsOK_last`: The child's items ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Sound.OK_of_decL`: Buchstab's step on the last item ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Sound.last_child`: The child's coordinates ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.count_swap` ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Sound.swap`: The swapped node is sound ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.Inv.swap` ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.CondsOK.swap` ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.itemsOK_swap` ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.itemsOK_rev`: The reversed node's items ([note](../formalisations/short-intervals.md))
 
 #### `ShortSieveDrop`: Upper bounds for the certificate's dropped nodes in the comparison interval
 

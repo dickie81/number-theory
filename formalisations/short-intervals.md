@@ -54,6 +54,17 @@ rough items with log-linear conditions). Each decision is a theorem:
   of a standard node, its first prime the Type I term's cofactor, likewise leaves the node the reversed child's loss:
   `ShortSieveCert.Sound.OK_of_rev`, with `ShortSieveCert.Sound.rev_child`, `ShortSieveCert.StdInv.rev` and
   `ShortSieveCert.CondsOK.rev` for the child.
+- The reversed nodes have two rough items, and the certificate decomposes either one. Buchstab's step on the last
+  rough item of any node, its box in Li's Type I regions, leaves the node the child's loss:
+  `ShortSieveCert.Sound.OK_of_decL`. The child keeps the coordinates (`ShortSieveCert.Sound.last_child`), the item
+  forms (`ShortSieveCert.itemsOK_last`) and the invariants (`ShortSieveCert.Inv.last`, `ShortSieveCert.CondsOK.last`).
+  The invariant `ShortSieveCert.Inv` covers the standard and the reversed nodes (`ShortSieveCert.StdInv.inv`,
+  `ShortSieveCert.RevInv.inv`) and survives splits (`ShortSieveCert.Inv.cons`); the reversed node's item forms are
+  `ShortSieveCert.itemsOK_rev`. Swapping the two items keeps the count, the coordinates, the invariants and the
+  item forms (`ShortSieveCert.count_swap`, `ShortSieveCert.Sound.swap`, `ShortSieveCert.Inv.swap`,
+  `ShortSieveCert.CondsOK.swap`, `ShortSieveCert.itemsOK_swap`), so the first item can be decomposed as the last. A
+  dropped node with two rough items, the second's product with some of the primes being the coordinate `0`, is
+  bounded by `ω*` for each item and Mertens' sums over the box: `ShortSieveCert.Sound.OK_of_drop2`.
 
 ## How the Lean statements differ from Li's
 

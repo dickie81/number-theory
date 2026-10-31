@@ -408,16 +408,16 @@ theorem LF.le_maxD (L : LF) {B : Box} {E : ℤ} (acts : List LF) {X : ℕ → �
   push_cast at h ⊢
   linarith
 
-/-- Li's Type I regions at `θ = 13/25` for the groups `0, 1, 2` of a standard node's items, the item `c0` (the Type I
-term's cofactor) in group `3`: `kind = 1` is his `D′₀` (Lemma 3.1, no group `2`), `kind = 2` and `kind = 3` his `D′₁`
-and `D′₂` (Lemma 3.2), with the groups' total exponent below `1`. -/
-def typeICheck (k c0 : ℕ) (E : ℤ) (B : Box) (acts : List LF) (labels : List ℕ) (kind : ℕ) : Bool :=
-  let g0 := grpLF (stdItems (k + 1)) labels 0
-  let g1 := grpLF (stdItems (k + 1)) labels 1
-  let g2 := grpLF (stdItems (k + 1)) labels 2
+/-- Li's Type I regions at `θ = 13/25` for the groups `0, 1, 2` of a node's items (their forms in canonical order), the
+item `c0` (the Type I term's cofactor) in group `3`: `kind = 1` is his `D′₀` (Lemma 3.1, no group `2`), `kind = 2` and
+`kind = 3` his `D′₁` and `D′₂` (Lemma 3.2), with the groups' total exponent below `1`. -/
+def typeICheck (items : List LF) (c0 : ℕ) (E : ℤ) (B : Box) (acts : List LF) (labels : List ℕ) (kind : ℕ) : Bool :=
+  let g0 := grpLF items labels 0
+  let g1 := grpLF items labels 1
+  let g2 := grpLF items labels 2
   let mx := fun L : LF => L.maxD B E acts
-  decide (labels.length = k + 2) && decide (labels.getD c0 0 = 3) &&
-    ((List.range (k + 2)).all fun a => decide (a = c0 ∨ labels.getD a 0 < if kind = 1 then 2 else 3)) &&
+  decide (labels.length = items.length) && decide (labels.getD c0 0 = 3) &&
+    ((List.range items.length).all fun a => decide (a = c0 ∨ labels.getD a 0 < if kind = 1 then 2 else 3)) &&
     decide (2 * mx g0 ≤ DEN) && decide (mx ((g0.add g1).add g2) < DEN) &&
     match kind with
     | 1 => decide (25 * mx g1 < 7 * DEN)
@@ -426,12 +426,12 @@ def typeICheck (k c0 : ℕ) (E : ℤ) (B : Box) (acts : List LF) (labels : List 
     | 3 => decide (25 * mx g1 < 6 * DEN) && decide (100 * mx g2 < 7 * DEN)
     | _ => false
 
-/-- The labels of a passing check: `k + 2` of them, the cofactor's `3`, the others below `3`, and below `2` for
+/-- The labels of a passing check: one for each item, the cofactor's `3`, the others below `3`, and below `2` for
 `kind = 1`. -/
-theorem labels_of_check {k c0 : ℕ} {E : ℤ} {B : Box} {acts : List LF} {labels : List ℕ} {kind : ℕ}
-    (hcheck : typeICheck k c0 E B acts labels kind = true) :
-    labels.length = k + 2 ∧ labels.getD c0 0 = 3 ∧
-      ∀ a < k + 2, a ≠ c0 → labels.getD a 0 < if kind = 1 then 2 else 3 := by
+theorem labels_of_check {items : List LF} {c0 : ℕ} {E : ℤ} {B : Box} {acts : List LF} {labels : List ℕ} {kind : ℕ}
+    (hcheck : typeICheck items c0 E B acts labels kind = true) :
+    labels.length = items.length ∧ labels.getD c0 0 = 3 ∧
+      ∀ a < items.length, a ≠ c0 → labels.getD a 0 < if kind = 1 then 2 else 3 := by
   unfold typeICheck at hcheck
   simp only [Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, List.mem_range] at hcheck
   obtain ⟨⟨⟨⟨⟨hl, h3⟩, hall⟩, -⟩, -⟩, -⟩ := hcheck
@@ -484,22 +484,20 @@ theorem tExp_std {k : ℕ} (conds : List (Cond (k + 1) 1)) {labels : List ℕ}
 
 /-- **The regions from the check**, at a point of the box: group values `t_i` whose multiples `DEN t_i` are the
 groups' forms lie in Li's regions, with the margin `1/(100 DEN)`. -/
-theorem typeIReg_core {k c0 : ℕ} {E : ℤ} {B : Box} (hlen : k + 1 ≤ B.length) {acts : List LF}
-    (hfa : ∀ g ∈ acts, g.c.length ≤ B.length) {labels : List ℕ} {kind : ℕ}
-    (hcheck : typeICheck k c0 E B acts labels kind = true) {X : ℕ → ℝ} {H : ℝ} (hB : InBoxC B X) (hH : |H| ≤ E)
+theorem typeIReg_core {items : List LF} {c0 : ℕ} {E : ℤ} {B : Box} (hfit : ∀ L ∈ items, L.c.length ≤ B.length)
+    {acts : List LF} (hfa : ∀ g ∈ acts, g.c.length ≤ B.length) {labels : List ℕ} {kind : ℕ}
+    (hcheck : typeICheck items c0 E B acts labels kind = true) {X : ℕ → ℝ} {H : ℝ} (hB : InBoxC B X) (hH : |H| ≤ E)
     (hacts : ∀ g ∈ acts, g.val X H ≤ 0) {t : Fin 3 → ℝ}
-    (ht : ∀ i : Fin 3, (grpLF (stdItems (k + 1)) labels i).val X H = DEN * t i) :
+    (ht : ∀ i : Fin 3, (grpLF items labels i).val X H = DEN * t i) :
     TypeIReg (13 / 25) (1 / (100 * DEN)) (decide (kind ≠ 1)) t ∧ t 0 + t 1 + t 2 ≤ 1 - 1 / (100 * DEN) := by
   unfold typeICheck at hcheck
   simp only [Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, List.mem_range] at hcheck
   obtain ⟨⟨⟨⟨⟨-, -⟩, -⟩, hm0⟩, hsum⟩, hk⟩ := hcheck
-  have hfit : ∀ L ∈ stdItems (k + 1), L.c.length ≤ B.length := fun L hL =>
-    (stdItems_length_le _ L hL).trans hlen
   have mxle : ∀ L : LF, L.c.length ≤ B.length → L.val X H ≤ L.maxD B E acts := fun L hL =>
     L.le_maxD acts hB hH hacts hL hfa
-  set g0 := grpLF (stdItems (k + 1)) labels 0 with hg0
-  set g1 := grpLF (stdItems (k + 1)) labels 1 with hg1
-  set g2 := grpLF (stdItems (k + 1)) labels 2 with hg2
+  set g0 := grpLF items labels 0 with hg0
+  set g1 := grpLF items labels 1 with hg1
+  set g2 := grpLF items labels 2 with hg2
   have hf0 : g0.c.length ≤ B.length := length_grpLF hfit labels 0
   have hf1 : g1.c.length ≤ B.length := length_grpLF hfit labels 1
   have hf2 : g2.c.length ≤ B.length := length_grpLF hfit labels 2
@@ -576,13 +574,15 @@ theorem typeIReg_core {k c0 : ℕ} {E : ℤ} {B : Box} (hlen : k + 1 ≤ B.lengt
 theorem typeIReg_of_check {k : ℕ} {conds : List (Cond (k + 1) 1)} {E : ℤ} {Γ : List Con} {B : Box}
     (h : Sound (std k conds) (stdRows (k + 1)) E Γ B) (hE : 0 < E) (hlen : k + 1 ≤ B.length)
     {acts : List LF} (hacts : ∀ g ∈ acts, ∃ c ∈ Γ, c.L = g) (hfa : ∀ g ∈ acts, g.c.length ≤ B.length)
-    {labels : List ℕ} {kind : ℕ} (hcheck : typeICheck k (k + 1) E B acts labels kind = true) :
+    {labels : List ℕ} {kind : ℕ} (hcheck : typeICheck (stdItems (k + 1)) (k + 1) E B acts labels kind = true) :
     ∃ (role : Fin (k + 1) ⊕ Fin 0 → Fin 3) (kd : Bool), (kd = false → ∀ t, role t ≠ 2) ∧
       ∀ᶠ x in atTop, ∀ w ∈ (stdT k conds).terms x, x / 2 < (prodP w : ℝ) → (prodP w : ℝ) ≤ x →
         TypeIReg (13 / 25) (1 / (100 * DEN)) kd (tExp (stdT k conds) role x w) ∧
           tExp (stdT k conds) role x w 0 + tExp (stdT k conds) role x w 1 + tExp (stdT k conds) role x w 2 ≤
             1 - 1 / (100 * DEN) := by
   obtain ⟨hl, h3, hall⟩ := labels_of_check hcheck
+  have hn : (stdItems (k + 1)).length = k + 2 := by simp [stdItems]
+  rw [hn] at hl hall
   have hlt3 : ∀ a : Fin (k + 1), labels.getD a 0 < 3 := fun a =>
     lt_of_lt_of_le (hall a (by omega) (by omega)) (by split_ifs <;> norm_num)
   have hlt4 : ∀ t : Fin (k + 1) ⊕ Fin 1, labels.getD (canon t) 0 < 4 := by
@@ -608,7 +608,8 @@ theorem typeIReg_of_check {k : ℕ} {conds : List (Cond (k + 1) 1)} {E : ℤ} {�
   have hw2 : ∀ i, 0 < w.2 i := fun i => (hρ i).1
   have hH := hsl w hw1 hw2 (by linarith) (by linarith)
   obtain ⟨hB, hΓ⟩ := h x hx1 w hw1 hw2 hc hH
-  refine typeIReg_core hlen hfa hcheck (inBoxC_of_inBox hB) hH (fun g hg => ?_) fun i => ?_
+  refine typeIReg_core (fun L hL => (stdItems_length_le _ L hL).trans hlen) hfa hcheck (inBoxC_of_inBox hB) hH
+    (fun g hg => ?_) fun i => ?_
   · obtain ⟨c, hc', rfl⟩ := hacts g hg
     exact Con.val_le (hΓ c hc')
   · rw [tExp_std conds hlt4 h3 hlt3]
@@ -623,7 +624,8 @@ theorem Sound.OK_of_dec {k : ℕ} {conds : List (Cond (k + 1) 1)} {E : ℤ} {Γ 
     (h : Sound (std k conds) (stdRows (k + 1)) E Γ B) (hE : 0 < E) (hinv : StdInv k conds)
     (hcond : CondsOK conds) (hlen : k + 1 ≤ B.length) {acts : List LF} (hacts : ∀ g ∈ acts, ∃ c ∈ Γ, c.L = g)
     (hfa : ∀ g ∈ acts, g.c.length ≤ B.length) {labels : List ℕ} {kind : ℕ}
-    (hcheck : typeICheck k (k + 1) E B acts labels kind = true) {c ρ σ L : ℝ} (hc : 0 < c) (hc1 : c < 1 / 25)
+    (hcheck : typeICheck (stdItems (k + 1)) (k + 1) E B acts labels kind = true) {c ρ σ L : ℝ} (hc : 0 < c)
+    (hc1 : c < 1 / 25)
     (hρ : 0 < ρ) (hρc : 12 * ρ < c) (hσ : |σ| ≤ 1) (hLi31 : ShortSieveLi.LiLemma31 (13 / 25) (2 / 25) ρ)
     (hLi32 : ShortSieveLi.LiLemma32 (13 / 25) (2 / 25) ρ)
     (hG : OK (13 / 25) ρ (-σ) (fun x y => ((std (k + 1) (stdChild k conds)).count x y : ℝ)) L) :

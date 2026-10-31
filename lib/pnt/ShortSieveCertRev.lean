@@ -362,13 +362,16 @@ theorem Sound.OK_of_rev {k : ℕ} {conds : List (Cond (k + 2) 1)} {E : ℤ} {Γ 
     (h : Sound (std (k + 1) conds) (stdRows (k + 2)) E Γ B) (hE : 0 < E) (hinv : StdInv (k + 1) conds)
     (hcond : CondsOK conds) (hlen : k + 2 ≤ B.length) {acts : List LF} (hacts : ∀ g ∈ acts, ∃ c ∈ Γ, c.L = g)
     (hfa : ∀ g ∈ acts, g.c.length ≤ B.length) {labels : List ℕ} {kind : ℕ}
-    (hcheck : typeICheck (k + 1) 0 E B acts labels kind = true) {c ρ σ L : ℝ} (hc : 0 < c) (hc1 : c < 1 / 25)
+    (hcheck : typeICheck (stdItems (k + 2)) 0 E B acts labels kind = true) {c ρ σ L : ℝ} (hc : 0 < c)
+    (hc1 : c < 1 / 25)
     (hρ : 0 < ρ) (hρc : 12 * ρ < c) (hσ : |σ| ≤ 1) (hLi31 : ShortSieveLi.LiLemma31 (13 / 25) (2 / 25) ρ)
     (hLi32 : ShortSieveLi.LiLemma32 (13 / 25) (2 / 25) ρ)
     (hG : OK (13 / 25) ρ (-σ) (fun x y => ((revN (k + 1) (revConds (k + 1) conds)).count x y : ℝ)) L) :
     OK (13 / 25) ρ σ (fun x y => ((std (k + 1) conds).count x y : ℝ)) L := by
   have hθρ : (13 / 25 : ℝ) ≤ 1 - ρ := by linarith
   obtain ⟨hl, h3, hall⟩ := labels_of_check hcheck
+  have hn : (stdItems (k + 2)).length = k + 3 := by simp [stdItems]
+  rw [hn] at hl hall
   have hlt3 : ∀ a : Fin (k + 1), labels.getD (a + 1) 0 < 3 := fun a =>
     lt_of_lt_of_le (hall (a + 1) (by omega) (by omega)) (by split_ifs <;> norm_num)
   have hρ3 : labels.getD (k + 2) 0 < 3 :=
@@ -427,7 +430,8 @@ theorem Sound.OK_of_rev {k : ℕ} {conds : List (Cond (k + 2) 1)} {E : ℤ} {Γ 
       obtain ⟨hu1, hu2, hcu, hpu⟩ := hpar x hx1 w hw
       have hH := hsl (revParent w) hu1 hu2 (by rw [hpu]; linarith) (by rw [hpu]; linarith)
       obtain ⟨hB, hΓ⟩ := h x hx1 (revParent w) hu1 hu2 hcu hH
-      refine typeIReg_core hlen hfa hcheck (inBoxC_of_inBox hB) hH (fun g hg => ?_) fun i => ?_
+      refine typeIReg_core (fun L hL => (stdItems_length_le _ L hL).trans hlen) hfa hcheck (inBoxC_of_inBox hB) hH
+        (fun g hg => ?_) fun i => ?_
       · obtain ⟨c, hc', rfl⟩ := hacts g hg
         exact Con.val_le (hΓ c hc')
       · rw [tExp_rev conds hlt4 h3 hlt3 hρ3]
