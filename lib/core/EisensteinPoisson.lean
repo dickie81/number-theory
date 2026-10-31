@@ -21,9 +21,10 @@ modulo `c` and the dual lattice described through `ℤ[ω]`. Here `σ` is the em
   `μ_k = (k₀ + k₁) + k₀ω`, and `k ↦ μ_k` is a bijection `ℤ² ≃ ℤ[ω]` (`μEquiv`).
 * **The trace character** `ψ_c(x) = e(Re(2σ(x)/σ(δc)))` (classically `e(Tr(x/(δc)))`, since
   `Tr = 2 Re σ` on `K`) is additive (`ψc_add`) and periodic modulo `c` (`ψc_add_mul`).
-* **`eis_poisson_trace`** and **`eis_poisson_quot`**: for `P` on `ℤ[ω]/c`,
-  `Σ_z P(z mod c)F(σz) = 2/(√3·N(c))·Σ_{μ∈ℤ[ω]} (Σ_{r∈ℤ[ω]/c} P(r)ψ_c(rμ))·𝓕F(conj(2σ(μ)/σ(δc)))`.
-  The inner sums are the twisted Gauss sums of the S3.
+* **`eis_poisson_trace`**: for `f` periodic modulo `c` and representatives `rep` of `ℤ[ω]/c`,
+  `Σ_z f(z)F(σz) = 2/(√3·N(c))·Σ_{μ∈ℤ[ω]} (Σ_i f(rep i)ψ_c(rep i·μ))·𝓕F(conj(2σ(μ)/σ(δc)))`.
+  The inner sums are the twisted Gauss sums of the S3. The representatives `repQ` of `ℤ[ω]/c` satisfy the
+  hypothesis on `rep` (`repQ_bijective`).
 -/
 
 open NumberField Complex MeasureTheory PlanePoisson Ideal
@@ -523,21 +524,6 @@ theorem repQ_bijective (c : 𝓞 K) (hc : c ≠ 0) :
     simp only
     linear_combination ha
 
-/-- **Poisson summation over `ℤ[ω]` twisted by a function on `ℤ[ω]/c`**:
-`Σ_z P(z mod c)F(σz) = 2/(√3·N(c)) Σ_{μ∈ℤ[ω]} (Σ_{r∈ℤ[ω]/c} P(r)ψ_c(rμ))·𝓕F(conj(2σ(μ)/σ(δc)))`. -/
-theorem eis_poisson_quot (F : SchwartzMap ℂ ℂ) (c : 𝓞 K) (hc : c ≠ 0)
-    [Fintype (𝓞 K ⧸ span {c})] (P : 𝓞 K ⧸ span {c} → ℂ) :
-    ∑' z : 𝓞 K, P (Ideal.Quotient.mk (span {c}) z) * F (σO z) =
-      ((2 / (Real.sqrt 3 * (absNorm (span {c}) : ℝ)) : ℝ) : ℂ) *
-        ∑' μ : 𝓞 K, (∑ r, P r * ψc c (repQ c r * μ)) *
-          𝓕 (F : ℂ → ℂ) (conj (2 * σO μ / σO (δ3 * c))) := by
-  have hf : ∀ z u, P (Ideal.Quotient.mk (span {c}) (z + c * u)) =
-      P (Ideal.Quotient.mk (span {c}) z) := by
-    intro z u; rw [map_add, mk_mul_left, add_zero]
-  rw [eis_poisson_trace F c hc (fun z => P (Ideal.Quotient.mk (span {c}) z)) hf (repQ c)
-    (repQ_bijective c hc)]
-  simp only [repQ_mk]
-
 end Eis
 
 end
@@ -558,4 +544,3 @@ end
 #print axioms Eis.abs_det_Mw
 #print axioms Eis.eis_poisson_trace
 #print axioms Eis.repQ_bijective
-#print axioms Eis.eis_poisson_quot

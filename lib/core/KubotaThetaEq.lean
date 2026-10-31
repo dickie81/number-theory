@@ -1,6 +1,6 @@
 import KubotaThetaSeries
 
-/-! # `θ̃ = S` almost everywhere, and three clauses of `KubotaTheta`
+/-! # `θ̃ = S` almost everywhere, and the automorphy clause of `KubotaTheta`
 
 This file proves `θ̃ = S` almost everywhere, with `S` θ's Fourier series (`thS`), and `S` automorphic at every
 point, for `r > 0` and `Y > 0`:
@@ -18,9 +18,8 @@ point, for `r > 0` and `Y > 0`:
   `γ ∈ Γ_1(3)` and every `p` in upper half-space, almost everywhere by `isAut_thetaF`, since the
   action preserves `dz dv/v³` (`lintegral_slAct`), and everywhere by continuity (Mathlib's
   `Measure.eqOn_open_of_ae_eq`).
-* **Three clauses of `KubotaTheta`** (**`exists_theta_series`**, with `atG_thS`): a function equal to
-  `thSer c₀ τ` at every point of upper half-space, with `τ` supported on `δ₃ℤ[ω]`, and automorphic on `Γ_1(3)`
-  in the form of `KubotaTheta`, which agrees almost everywhere with `θ̃`.
+* **The automorphy clause of `KubotaTheta`** (`atG_thS`): `S` is automorphic on `Γ_1(3)` in the form of
+  `KubotaTheta`, in the notation `atG`.
 -/
 
 open MeasureTheory Set Filter NumberField Complex
@@ -278,7 +277,7 @@ theorem isAut_thS {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) :
     continuousOn_const.mul (continuousOn_thS hr hY)
   exact Measure.eqOn_open_of_ae_eq hae hU hc1 hc2 hp
 
-/-! ### Three clauses of `KubotaTheta` -/
+/-! ### The automorphy clause of `KubotaTheta` -/
 
 /-- **The automorphy clause of `KubotaTheta` for `S`**: for `γ ≡ I (mod 3)` of determinant `1`,
 `S(γ(z + vj)) = κ(γ)·S(z + vj)` for `v > 0`, in the notation `atG`. -/
@@ -288,20 +287,6 @@ theorem atG_thS {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) (γ : Matrix (Fin 
   have hγ : (⟨γ, hdet⟩ : SL(2, 𝓞 K)) ∈ Gam3 := mem_Gam3.2 h3
   have h := isAut_thS hr hY ⟨γ, hdet⟩ hγ (z, v) hv
   exact h
-
-/-- **Three clauses of `KubotaTheta`**, for θ's Fourier series: a function on upper half-space,
-equal to a theta-type series `thSer c₀ τ` at every point, with `τ` supported on `δ₃ℤ[ω]`, and automorphic
-on `Γ_1(3)` with Kubota's character; it agrees almost everywhere with θ's representative (
-`thetaF`). -/
-theorem exists_theta_series {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) :
-    ∃ (θ : ℂ → ℝ → ℂ) (c₀ : ℂ) (τ : 𝓞 K → ℂ),
-      (∀ z v, 0 < v → θ z v = thSer c₀ τ z v) ∧ (∀ m, τ m ≠ 0 → δ3 ∣ m) ∧
-      (∀ γ : Matrix (Fin 2) (Fin 2) (𝓞 K), γ.det = 1 → ModThree γ → ∀ z v, 0 < v →
-        atG θ (γ.map σO) z v = kub γ * θ z v) ∧
-      ∀ᵐ p ∂(volume.restrict UHS), thetaF r Y hY p = θ p.1 p.2 :=
-  ⟨fun z v => thS r Y hY (z, v), phiG (4 / 3) / 3, tauTh r Y hY, fun _ _ _ => rfl,
-    fun _ h => dvd_of_tauTh_ne_zero h, fun γ hdet h3 z _ hv => atG_thS hr hY γ hdet h3 z hv,
-    ae_thetaF_eq_thS hr hY⟩
 
 end Eis
 
@@ -320,4 +305,3 @@ end
 #print axioms Eis.ae_slAct
 #print axioms Eis.isAut_thS
 #print axioms Eis.atG_thS
-#print axioms Eis.exists_theta_series

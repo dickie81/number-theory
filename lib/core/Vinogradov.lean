@@ -4,14 +4,14 @@
 Plain statement.
 * `J s k N` counts the pairs `(x, y)` of `s`-tuples from `{1, …, N}` whose power sums agree in
   every degree `1, …, k`: `x₁ʲ + … + x_sʲ = y₁ʲ + … + y_sʲ` for `j = 1..k`. This is Vinogradov's
-  mean value `∫|Σ_{n≤N} e(α₁n + … + α_k nᵏ)|^{2s} dα` (`J_eq_integral_norm`).
-* Always `N^s ≤ J ≤ N^{2s}` (`J_ge`, `J_le`), and more equations mean fewer solutions (`J_anti`).
+  mean value `∫|Σ_{n≤N} e(α₁n + … + α_k nᵏ)|^{2s} dα`, by orthogonality on the torus
+  (`count_eq_integral`, for any finite set of points of `ℤᵏ`).
+* Always `J ≤ N^{2s}` (`J_le`).
 * **The rigid range `s ≤ k`** (`agree_iff`): the power sums in degrees `1..k` pin down the tuple
   up to rearrangement (Newton's identities, then Vieta). Hence `J s k N ≤ s!·N^s`
   (`J_le_diag`): only the rearrangements count.
-* **Adding a variable costs at most `N²`** (`J_succ_le`). The shifted count
-  `#{f x = f y + w}` never exceeds the unshifted one (`shiftCount_le`: `2ab ≤ a² + b²`, which is
-  Cauchy–Schwarz in counting form).
+* **The shifted count** `#{f x = f y + w}` never exceeds the unshifted one (`shiftCount_le`:
+  `2ab ≤ a² + b²`, which is Cauchy–Schwarz in counting form).
 
 The theorem itself (Bourgain–Demeter–Guth 2016; Wooley 2016 for `k = 3`, 2019 in general):
 `J s k N ≤ C·N^{s+ε} + C·N^{2s − k(k+1)/2 + ε}`. That is NOT proved here. The classical
@@ -44,24 +44,6 @@ theorem J_le (s k N : ℕ) : J s k N ≤ N ^ (2 * s) := by
   unfold J
   refine (card_filter_le _ _).trans ?_
   rw [card_product, card_box, ← pow_add, two_mul]
-
-/-- The diagonal `x = y` always solves the system. -/
-theorem J_ge (s k N : ℕ) : N ^ s ≤ J s k N := by
-  rw [← card_box s N]
-  unfold J
-  refine card_le_card_of_injOn (fun x => (x, x)) ?_ ?_
-  · intro x hx
-    exact mem_filter.mpr ⟨mem_product.mpr ⟨hx, hx⟩, fun j _ => rfl⟩
-  · intro a _ b _ h
-    exact (Prod.ext_iff.mp h).1
-
-theorem J_anti (s N : ℕ) {k k' : ℕ} (h : k ≤ k') : J s k' N ≤ J s k N := by
-  unfold J
-  apply card_le_card
-  intro p hp
-  rw [mem_filter] at hp ⊢
-  refine ⟨hp.1, fun j hj => hp.2 j ?_⟩
-  rw [mem_Icc] at hj ⊢; omega
 
 /-! ## Newton's identities: power sums determine the elementary symmetric functions -/
 
@@ -191,7 +173,7 @@ theorem agree_shift {s k : ℕ} (x y : Fin s → ℤ) (h : ℤ)
   · simp
   · rw [hA m (mem_Icc.mpr ⟨hpos, by omega⟩)]
 
-/-! ## Step I.2: adding a variable costs at most `N²` -/
+/-! ## Step I.2: the shifted count never exceeds the unshifted one -/
 
 /-- Shifted pair count: `#{(x, y) ∈ P² : f x = f y + w}`. -/
 noncomputable def shiftCount {α β : Type*} [AddCommGroup β] (P : Finset α) (f : α → β) (w : β) :
@@ -279,52 +261,6 @@ lemma J_eq_shiftCount (s k N : ℕ) : J s k N = shiftCount (box s N) (pv k) 0 :=
   ext p
   simp only [mem_filter, agree_iff_pv, add_zero]
 
-/-- **Step I.2.** `J_{s+1,k}(N) ≤ N² · J_{s,k}(N)`. -/
-theorem J_succ_le (s k N : ℕ) : J (s + 1) k N ≤ N ^ 2 * J s k N := by
-  set S := (box (s + 1) N ×ˢ box (s + 1) N).filter fun p => Agree k p.1 p.2 with hS
-  set ν : ℕ → Fin k → ℤ := fun a j => ((a ^ (j.val + 1) : ℕ) : ℤ) with hν
-  have hpv : ∀ x : Fin (s + 1) → ℕ, pv k x = ν (x 0) + pv k (Fin.tail x) := by
-    intro x; funext j
-    simp [pv, hν, Fin.sum_univ_succ, Fin.tail]
-  have hfib : ∀ ab ∈ Icc 1 N ×ˢ Icc 1 N,
-      (S.filter fun p => (p.1 0, p.2 0) = ab).card ≤ J s k N := by
-    intro ab _
-    rw [J_eq_shiftCount]
-    refine le_trans ?_ (shiftCount_le (box s N) (pv k) (ν ab.2 - ν ab.1))
-    unfold shiftCount
-    refine card_le_card_of_injOn (fun p => (Fin.tail p.1, Fin.tail p.2)) ?_ ?_
-    · intro p hp
-      rw [coe_filter, Set.mem_ofPred_eq, hS, mem_filter, mem_product] at hp
-      obtain ⟨⟨⟨hx, hy⟩, hag⟩, hab⟩ := hp
-      have ha : p.1 0 = ab.1 := congrArg Prod.fst hab
-      have hb : p.2 0 = ab.2 := congrArg Prod.snd hab
-      rw [agree_iff_pv, hpv, hpv, ha, hb] at hag
-      simp only [coe_filter, Set.mem_ofPred_eq, mem_product]
-      refine ⟨⟨?_, ?_⟩, ?_⟩
-      · rw [box, Fintype.mem_piFinset] at hx ⊢; exact fun i => hx i.succ
-      · rw [box, Fintype.mem_piFinset] at hy ⊢; exact fun i => hy i.succ
-      · rw [← sub_eq_zero] at hag ⊢; rw [← hag]; abel
-    · intro p hp q hq hpq
-      rw [coe_filter, Set.mem_ofPred_eq] at hp hq
-      simp only [Prod.mk.injEq] at hpq
-      have h2 : p.2 0 = q.2 0 := by
-        have := congrArg Prod.snd (hp.2.trans hq.2.symm); exact this
-      have h1' : p.1 0 = q.1 0 := by
-        have := congrArg Prod.fst (hp.2.trans hq.2.symm); exact this
-      refine Prod.ext ?_ ?_
-      · rw [← Fin.cons_self_tail p.1, ← Fin.cons_self_tail q.1, hpq.1, h1']
-      · rw [← Fin.cons_self_tail p.2, ← Fin.cons_self_tail q.2, hpq.2, h2]
-  unfold J
-  rw [← hS, card_eq_sum_card_fiberwise (f := fun p => (p.1 0, p.2 0)) (t := Icc 1 N ×ˢ Icc 1 N)]
-  · calc ∑ ab ∈ Icc 1 N ×ˢ Icc 1 N, (S.filter fun p => (p.1 0, p.2 0) = ab).card
-        ≤ ∑ _ab ∈ Icc 1 N ×ˢ Icc 1 N, J s k N := sum_le_sum hfib
-      _ = N ^ 2 * J s k N := by rw [sum_const, card_product, Nat.card_Icc, smul_eq_mul, Nat.add_sub_cancel]; ring
-  · intro p hp
-    rw [coe_filter, Set.mem_ofPred_eq, mem_product] at hp
-    obtain ⟨⟨hx, hy⟩, _⟩ := hp
-    rw [box, Fintype.mem_piFinset] at hx hy
-    exact mem_coe.mpr (mem_product.mpr ⟨hx 0, hy 0⟩)
-
 /-! ## Step I.1: orthogonality — the count is the moment of a Weyl sum -/
 
 section Orthogonality
@@ -392,29 +328,6 @@ lemma integral_torus {k : ℕ} (m : Fin k → ℤ) :
   congr 1
   exact propext ⟨fun h => funext h, fun h j => congrFun h j⟩
 
-/-- The Weyl sum `Σ_{n ≤ N} e(α₁n + α₂n² + … + α_k nᵏ)`. -/
-noncomputable def wsum (k N : ℕ) (α : Fin k → ℝ) : ℂ :=
-  ∑ n ∈ Icc 1 N, ee (∑ j : Fin k, α j * (n : ℝ) ^ (j.val + 1))
-
-lemma wsum_pow (s k N : ℕ) (α : Fin k → ℝ) :
-    wsum k N α ^ s = ∑ x ∈ box s N, ee (∑ j, (pv k x j : ℝ) * α j) := by
-  have h1 : wsum k N α ^ s = ∏ _i : Fin s, wsum k N α := by
-    rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
-  rw [h1, wsum, Finset.prod_univ_sum]
-  apply sum_congr rfl
-  intro x _
-  rw [← ee_sum]
-  congr 1
-  simp only [pv]
-  push_cast
-  rw [Finset.sum_comm]
-  apply sum_congr rfl
-  intro j _
-  rw [Finset.sum_mul]
-  apply sum_congr rfl
-  intro i _
-  ring
-
 lemma integrable_ee {k : ℕ} (g : (Fin k → ℝ) → ℝ) (hg : Continuous g) :
     Integrable (fun α => ee (g α)) (torus k) :=
   Integrable.of_bound (continuous_ee.comp hg).aestronglyMeasurable 1
@@ -462,27 +375,6 @@ theorem count_eq_integral {β : Type*} {k : ℕ} (X : Finset β) (φ : β → Fi
     rw [Complex.mul_conj, Complex.normSq_eq_norm_sq]
   simp_rw [e2, integral_complex_ofReal] at hc
   exact_mod_cast hc
-
-/-- **Step I.1 (orthogonality).** `J_{s,k}(N) = ∫_{(0,1]^k} |Σ_{n ≤ N} e(α₁n + … + α_k nᵏ)|^{2s} dα`:
-`count_eq_integral` at `X = box s N`, `φ = pv k`. -/
-theorem J_eq_integral_norm (s k N : ℕ) :
-    (J s k N : ℝ) = ∫ α, ‖wsum k N α‖ ^ (2 * s) ∂torus k := by
-  have h := count_eq_integral (box s N) (pv k)
-  simp only [E, ← wsum_pow, norm_pow, ← pow_mul, mul_comm s 2] at h
-  rw [J_eq_shiftCount, shiftCount, ← h]
-  simp only [add_zero]
-
-/-- **Step I.1 (orthogonality), complex form.** `J = ∫ f^s · conj(f)^s` over the torus (from
-`J_eq_integral_norm`). -/
-theorem J_eq_integral (s k N : ℕ) :
-    (J s k N : ℂ) = ∫ α, wsum k N α ^ s * (starRingEnd ℂ) (wsum k N α) ^ s ∂torus k := by
-  have e : ∀ α, wsum k N α ^ s * (starRingEnd ℂ) (wsum k N α) ^ s =
-      ((‖wsum k N α‖ ^ (2 * s) : ℝ) : ℂ) := by
-    intro α
-    rw [← mul_pow, Complex.mul_conj, Complex.normSq_eq_norm_sq]
-    push_cast; ring
-  simp_rw [e, integral_complex_ofReal]
-  exact_mod_cast J_eq_integral_norm s k N
 
 end Orthogonality
 

@@ -32,8 +32,8 @@ symbol in the inert prime `2`. It does not evaluate the supplementary laws.
   `9` (`exists_odd_rep`, by induction on the norm).
 * **At `x ≡ 1 (mod 9)`** (`cub_δ3_of_nine`, `cub_unit_of_nine`): `(δ₃/x)₃ = 1` and `(u/x)₃ = 1` for every
   unit `u`, the vanishing of the supplementary factors that the paper's (A.10) uses.
-* **In the sextic symbol** (`chiP_sq`, `sym6_sq_eq_cub`, `sym6_sq_δ3_congr`, `sym6_sq_omega_congr`):
-  `(a/𝔫)₆² = σ((a/𝔫)₃)` for `N(𝔫)` prime to `6`, so `χ_n(δ₃)²` and `χ_n(ω)²` depend only on `n mod 9`.
+* **In the sextic symbol** (`chiP_sq`, `sym6_sq_eq_cub`, `sym6_sq_δ3_congr`):
+  `(a/𝔫)₆² = σ((a/𝔫)₃)` for `N(𝔫)` prime to `6`, so `χ_n(δ₃)²` depends only on `n mod 9`.
 -/
 
 open NumberField Ideal UniqueFactorizationMonoid
@@ -458,12 +458,6 @@ theorem sym6_sq_δ3_congr {n n' : 𝓞 K} (hn : Primary n) (hn' : Primary n')
     (h9 : (9 : 𝓞 K) ∣ n - n') : sym6 δ3 (span {n}) ^ 2 = sym6 δ3 (span {n'}) ^ 2 := by
   rw [sym6_sq_eq_cub h6, sym6_sq_eq_cub h6', cub_δ3_congr hn hn' h9]
 
-/-- **Periodicity of `χ_n(ω)²`** modulo `9`. -/
-theorem sym6_sq_omega_congr {n n' : 𝓞 K} (hn : Primary n) (hn' : Primary n')
-    (h6 : (absNorm (span {n})).Coprime 6) (h6' : (absNorm (span {n'})).Coprime 6)
-    (h9 : (9 : 𝓞 K) ∣ n - n') : sym6 ω (span {n}) ^ 2 = sym6 ω (span {n'}) ^ 2 := by
-  rw [sym6_sq_eq_cub h6, sym6_sq_eq_cub h6', cub_omega_congr hn hn' h9]
-
 end Eis
 
 end
@@ -510,4 +504,3 @@ end
 #print axioms Eis.chiP_sq
 #print axioms Eis.sym6_sq_eq_cub
 #print axioms Eis.sym6_sq_δ3_congr
-#print axioms Eis.sym6_sq_omega_congr

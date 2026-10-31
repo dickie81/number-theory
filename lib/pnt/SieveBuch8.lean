@@ -17,16 +17,16 @@ takes the decisions to decompose as parameters (`Scheme8`).
 * `Scheme8`: which cells are decomposed: `dec2` (depth 2), `dec4` (depth 4) and `dec6` (depth 6), each implying that
   the rule passes the boxes its decomposition needs (`SieveCert.allowedR`, `SieveCert.allowed4R`, `allowed6R`: the
   box of depth 6 and every box of depth 7 of its region).
-* `E1` … `E8`: the dropped terms. As `SieveBuch.Par.D1`, with `dec2` and `dec4`; below a counted cell of depth 6
-  that `dec6` decomposes, every cell of depth 8 of its region.
-* `Leaves8`: the estimates the leaves need: `SieveBuch.Par.Leaves`'s, and at depths 6 and 7 the parts of the
-  decomposed boxes above their thresholds (`e6gt`, `e7gt`) and Proposition 6's families (`p6`, `p7`).
+* `E1` … `E8`: the dropped terms, as the certificate drops them, with `dec2` and `dec4`; below a counted cell of
+  depth 6 that `dec6` decomposes, every cell of depth 8 of its region.
+* `Leaves8`: the estimates the leaves need: those of the decomposition to depth 6 (`j0`, `e1` … `e6`, `p1` … `p5`),
+  with the scheme's decisions, and at depths 6 and 7 the parts of the decomposed boxes above their thresholds
+  (`e6gt`, `e7gt`) and Proposition 6's families (`p6`, `p7`).
 * `decomp8`: for a grid with `GridOK` and `GridOKC`, a rule with `RuleNB`, a scheme, `P.Good`, weights `g_A ≥ 0` and
   `g_B`, and leaves within `Err ≥ 0`, `S_{g_A}(z_top) ≥ S_{g_B}(z_top) − E1(g_B) − Cdec8·Err`.
 
 The proof: `lvl8b` (the cells of depth 8 below a cell of depth 7: dropped), `lvl7` (a cell of depth 7: sign `−`),
-`lvl6c` (a decomposed cell of depth 6), and then `lvl6'` … `lvl1'` as `SieveBuch.Par.lvl6` … `lvl1`, with the scheme's
-decisions.
+`lvl6c` (a decomposed cell of depth 6), and then `lvl6'` … `lvl1'` (levels 6 to 1), with the scheme's decisions.
 
 The file imports `SieveBuch.lean`.
 -/
@@ -115,17 +115,12 @@ noncomputable def S8c (i j k l b c d f : ℕ) : List (Atom 8) := P.S8 i j k l b 
 
 theorem chain_S6cle {Y : ℕ} (i j k l b c : ℕ) : ∀ rt ∈ famSet 6 Y (P.S6cle i j k l b c), Chain P.z₀ P.ztop rt :=
   chain_append _ (P.chain_S6c i j k l b c)
-theorem chain_S6cgt {Y : ℕ} (i j k l b c : ℕ) : ∀ rt ∈ famSet 6 Y (P.S6cgt i j k l b c), Chain P.z₀ P.ztop rt :=
-  chain_append _ (P.chain_S6c i j k l b c)
 theorem chain_S7 {Y : ℕ} (i j k l b c : ℕ) : ∀ rt ∈ famSet 7 Y (P.S7 i j k l b c), Chain P.z₀ P.ztop rt :=
   chain_ext (P.chain_S6cle i j k l b c)
 theorem chain_S7c {Y : ℕ} (i j k l b c d : ℕ) : ∀ rt ∈ famSet 7 Y (P.S7c i j k l b c d), Chain P.z₀ P.ztop rt :=
   chain_append _ (P.chain_S7 i j k l b c)
 theorem chain_S7le {Y : ℕ} (i j k l b c d : ℕ) :
     ∀ rt ∈ famSet 7 Y (P.S7le i j k l b c d), Chain P.z₀ P.ztop rt :=
-  chain_append _ (P.chain_S7c i j k l b c d)
-theorem chain_S7gt {Y : ℕ} (i j k l b c d : ℕ) :
-    ∀ rt ∈ famSet 7 Y (P.S7gt i j k l b c d), Chain P.z₀ P.ztop rt :=
   chain_append _ (P.chain_S7c i j k l b c d)
 theorem chain_S8 {Y : ℕ} (i j k l b c d : ℕ) : ∀ rt ∈ famSet 8 Y (P.S8 i j k l b c d), Chain P.z₀ P.ztop rt :=
   chain_ext (P.chain_S7le i j k l b c d)
@@ -509,8 +504,8 @@ noncomputable def E2 (g : ℕ → ℝ) (i : ℕ) : ℝ :=
 /-- All the dropped terms. -/
 noncomputable def E1 (g : ℕ → ℝ) : ℝ := ∑ i ∈ range SieveCert.n, if inW i then 0 else P.E2 g i
 
-/-- The leaves' estimates: `Leaves`'s, with the scheme's decisions, and at depths 6 and 7 the parts of the decomposed
-boxes above their thresholds and Proposition 6's families. -/
+/-- The leaves' estimates: those of the decomposition to depth 6, with the scheme's decisions, and at depths 6 and 7
+the parts of the decomposed boxes above their thresholds and Proposition 6's families. -/
 structure Leaves8 (gA gB : ℕ → ℝ) (Err : ℝ) : Prop where
   j0 : |P.J0 gA - P.J0 gB| ≤ Err
   e1 : ∀ i < SieveCert.n, inW i → |P.I gA (P.S1c i) - P.I gB (P.S1c i)| ≤ Err
@@ -553,7 +548,7 @@ variable {P}
 /-! ### The levels below a cell of depth 6 -/
 
 /-- The error constants of the decomposition to depth 8: one cell of depth 6 decomposed (`ec6'`), one cell of
-depth 5 (`ec5'`), one of depth 4 (`ec4'`), and the levels above, as `ec3` … `ec0`. -/
+depth 5 (`ec5'`), one of depth 4 (`ec4'`), and the levels above (`ec3'` … `ec0'`). -/
 noncomputable def ec6' : ℝ := 2 + 2 * (nC : ℝ)
 /-- See `ec6'`. -/
 noncomputable def ec5' : ℝ := (nC : ℝ) * ec6' + 2

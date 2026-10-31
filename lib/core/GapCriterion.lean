@@ -1,7 +1,7 @@
 import Mathlib
 import SimpleStructure
 
-/-! # The energy-gap criterion, the pole-overlap identity, and the Jacobi lemma (formal)
+/-! # The energy-gap criterion and the pole-overlap identity (formal)
 
 * `euler_lagrange_Q`: a ground state `g` of `Q` satisfies `B₀(g, ψ) + 2 ĝ(i/2) ψ̂(i/2) = λ₁⟨g, ψ⟩`
   for every probe `ψ`.
@@ -12,9 +12,6 @@ import SimpleStructure
 * `simpleGround_of_gap`: the strict energy gap `λ₁(Q) < Q₀(ψ)` on the unit sphere of `φ₀^⊥` gives a
   simple ground state. `not_simple_gap` is the converse information: without simplicity, `λ₁(Q)` is
   attained by `Q₀` on `φ₀^⊥`, so it equals `μ₂(Q₀)`.
-* `jacobi_eigvec_unique`: for a Jacobi recurrence with nonzero off-diagonals, the
-  eigen-solutions at a given level form a line. This is the finite-dimensional fact behind the
-  rotation to the pole's Krylov basis.
 -/
 
 open Real Filter Topology Complex MeasureTheory Set
@@ -106,54 +103,6 @@ theorem simpleGround_of_gap {a : ℝ} (ha : 0 < a) (hgap : EnergyGap a) {g : ℝ
   have := hgap φ hφ v hv hn hx
   linarith
 
-/-! ## The Jacobi lemma -/
-
-/-- `v` solves the eigen-recurrence of the `n × n` Jacobi matrix with diagonal `d` and off-diagonal
-`b` at level `l`. -/
-def JacobiEig (n : ℕ) (d b : ℕ → ℝ) (l : ℝ) (v : ℕ → ℝ) : Prop :=
-  (1 < n → d 0 * v 0 + b 0 * v 1 = l * v 0) ∧
-    ∀ k, k + 2 < n → b k * v k + d (k + 1) * v (k + 1) + b (k + 1) * v (k + 2) = l * v (k + 1)
-
-theorem jacobi_zero {n : ℕ} {d b : ℕ → ℝ} {l : ℝ} {v : ℕ → ℝ} (hb : ∀ k, k + 1 < n → b k ≠ 0)
-    (h : JacobiEig n d b l v) (h0 : v 0 = 0) : ∀ k, k < n → v k = 0 := by
-  have step : ∀ k, k + 1 < n → v k = 0 ∧ v (k + 1) = 0 := by
-    intro k
-    induction k with
-    | zero =>
-      intro hk
-      refine ⟨h0, ?_⟩
-      have e := h.1 hk
-      rw [h0, mul_zero, zero_add, mul_zero] at e
-      exact (mul_eq_zero.1 e).resolve_left (hb 0 hk)
-    | succ k ih =>
-      intro hk
-      obtain ⟨e0, e1⟩ := ih (by omega)
-      refine ⟨e1, ?_⟩
-      have e := h.2 k (by omega)
-      rw [e0, e1] at e
-      simp only [mul_zero, zero_add] at e
-      exact (mul_eq_zero.1 e).resolve_left (hb (k + 1) hk)
-  intro k hk
-  rcases Nat.eq_zero_or_pos k with rfl | hpos
-  · exact h0
-  · obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
-    exact (step j hk).2
-
-/-- **Eigen-solutions of a Jacobi recurrence with nonzero off-diagonals form a line**: any two
-satisfy `w₀·u = u₀·w`. -/
-theorem jacobi_eigvec_unique {n : ℕ} {d b : ℕ → ℝ} {l : ℝ} {u w : ℕ → ℝ}
-    (hb : ∀ k, k + 1 < n → b k ≠ 0) (hu : JacobiEig n d b l u) (hw : JacobiEig n d b l w) :
-    ∀ k, k < n → w 0 * u k = u 0 * w k := by
-  have hz : JacobiEig n d b l (fun k => w 0 * u k - u 0 * w k) := by
-    refine ⟨fun h1 => ?_, fun k hk => ?_⟩
-    · have e1 := hu.1 h1; have e2 := hw.1 h1
-      linear_combination w 0 * e1 - u 0 * e2
-    · have e1 := hu.2 k hk; have e2 := hw.2 k hk
-      linear_combination w 0 * e1 - u 0 * e2
-  intro k hk
-  have := jacobi_zero hb hz (by ring) k hk
-  linarith
-
 end WeilForm
 
 #print axioms WeilForm.euler_lagrange_Q
@@ -161,4 +110,3 @@ end WeilForm
 #print axioms WeilForm.lam_le_of_perp
 #print axioms WeilForm.simpleGround_of_gap
 #print axioms WeilForm.not_simple_gap
-#print axioms WeilForm.jacobi_eigvec_unique

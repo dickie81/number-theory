@@ -25,14 +25,13 @@ Three inputs of the companion paper's proof of its Proposition 4.5.
   `exists_apply_ne_one_of_hasEnoughRootsOfUnity`); `1_{x = c} = N⁻¹·Σ_ξ ξ(c⁻¹)ξ(x)`
   (`indicator_eq_sum_mulChar`); and a function `Ψ` of two unit classes is
   `Σ_{ξ₁,ξ₂} ĉ(ξ₁, ξ₂)·ξ₁(x)·ξ₂(y)` (`pair_eq_sum_mulChar`) with `|ĉ| ≤ max |Ψ|`
-  (`norm_pairCoeff_le`; a character's values at units have norm `1`, `norm_mulChar_unit`). Primary generators of
-  squarefree ideals of norm prime to `6` are prime to `2` (`isCoprime_pgen_two`), so their classes modulo `4` are
-  units (`isUnit_mk_four`). With
-  `M = ℤ[ω]/4` this expands the paired factor, which depends only on the classes of `z₁, z₂`
-  modulo `4` (`pairFactor_eq_of_mod_four`), into products of characters. The paper instead reduces its
+  (`norm_pairCoeff_le`; a character's values at units have norm `1`, `norm_mulChar_unit`). An element prime to
+  `2`, such as a primary generator of a squarefree ideal of norm prime to `6`, has a unit class modulo `4`
+  (`isUnit_mk_four`). With `M = ℤ[ω]/4` this expands the paired factor, which depends only on the classes of
+  `z₁, z₂` modulo `4` (`pairFactor_eq_of_mod_four`), into products of characters. The paper instead reduces its
   pair factor to a function of one class with its (4.7) and expands that.
-* **Two coefficient families** (`MellinSep.bilinear_dual_bound₂`): `bilinear_dual_bound`
-  with coefficient families `a` and `b` on the two columns, each satisfying the mean-square hypothesis
+* **Two coefficient families** (`MellinSep.bilinear_dual_bound₂`): the bound on the bilinear form with the dual
+  kernel, with coefficient families `a` and `b` on the two columns, each satisfying the mean-square hypothesis
   with the same `M`. It is an instance of `bilinear_dual_bound_of_dilated`
   (`MellinSeparation.lean`), whose AM–GM step combines the dilated bounds of the two families.
 -/
@@ -98,7 +97,6 @@ theorem aXi_mul_left (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) {D M : Ideal (𝓞
       refine ⟨Nat.Coprime.coprime_dvd_left ?_ h.1, Squarefree.of_mul_right h.2⟩
       rw [map_mul]; exact dvd_mul_left _ _
 
-
 /-- A product of distinct primes from `Pr` divides `I` iff each does. -/
 theorem prod_Pr_dvd_iff (T : Finset Pr) (I : Ideal (𝓞 K)) :
     (∏ P ∈ T, P.1) ∣ I ↔ ∀ P ∈ T, P.1 ∣ I := by
@@ -132,7 +130,6 @@ theorem isRelPrime_iff_primeSet {I R : Ideal (𝓞 K)} (hI : I ≠ ⊥) (hR6 : (
     obtain ⟨Q, hQ, hQI⟩ := exists_common_factor hI hsR.ne_zero hrel
     exact h ⟨Q, isMaximal_of_factor hQ, six_not_mem_of_factor hR6 hQ⟩ (mem_primeSet.2 hQ) hQI
 
-
 open Classical in
 /-- `Σ_I 1_{𝔡 ∣ I}·h(I) = Σ_𝔪 h(𝔡𝔪)` over the ideals, for `𝔡 ≠ 0` (`tsum_ite_dvd_eq`). -/
 theorem tsum_ideal_dvd_eq (D : Ideal (𝓞 K)) (hD : D ≠ ⊥) (h : Ideal (𝓞 K) → ℂ) :
@@ -164,7 +161,6 @@ theorem colSum_summand_eq_zero (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) {W : ℝ
       · have : (0 : ℝ) ≤ absNorm I := Nat.cast_nonneg _
         linarith
     rw [hW _ (by rw [lt_div_iff₀ hX]; linarith), mul_zero]
-
 
 /-- A product of primes of `R` is squarefree, of norm prime to `6`, and divides `R`. -/
 theorem prod_sub_primeSet {R : Ideal (𝓞 K)} (hR6 : (absNorm R).Coprime 6) (hsR : Squarefree R)
@@ -242,7 +238,6 @@ theorem colSum_excl (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) {W : ℝ → ℂ} {
       field_simp
     rw [hw]
     ring
-
 
 /-! ### Norm bounds -/
 
@@ -439,7 +434,6 @@ theorem dualMeanSquare_excl [NeZero m] {ϑ : ℝ} (hDM : DualMeanSquareM m ϑ) :
         rw [← mul_pow]
         norm_num
 
-
 /-! ### Classes modulo `4` through characters -/
 
 section CharExpand
@@ -577,13 +571,6 @@ theorem isUnit_mk_four {z : 𝓞 K} (hz : IsCoprime z 2) :
     Ideal.mem_span_singleton']
   exact ⟨-b, by linear_combination -h⟩
 
-/-- The primary generator of a squarefree ideal of norm prime to `6` is prime to `2`. -/
-theorem isCoprime_pgen_two {I : Ideal (𝓞 K)} (hI : (absNorm I).Coprime 6) (hsq : Squarefree I) :
-    IsCoprime (pgen I) 2 := by
-  rw [pgen_eq_prod hI hsq]
-  exact IsCoprime.prod_left fun P _ => isCoprime_two (πP P) (h6Pr P)
-
-
 end Eis
 
 namespace MellinSep
@@ -591,8 +578,8 @@ namespace MellinSep
 open Complex MeasureTheory Set
 open scoped FourierTransform RealInnerProductSpace ContDiff SchwartzMap Nat ComplexConjugate
 
-/-- **The bilinear form with two coefficient families**: `bilinear_dual_bound` with the
-family `a` on the first column and `b` on the second, both satisfying the mean-square hypothesis with
+/-- **The bilinear form with two coefficient families**: the bound on the bilinear form with the dual kernel, with
+the family `a` on the first column and `b` on the second, both satisfying the mean-square hypothesis with
 the same `M`. -/
 theorem bilinear_dual_bound₂ (W0 : ℝ → ℂ) (hW0 : ContDiff ℝ ∞ W0) {α β : ℝ} (hα : 0 < α)
     (hW0s : ∀ y, y < α ∨ β < y → W0 y = 0) (V : ℝ → ℂ) (hV : ContDiff ℝ ∞ V)
@@ -653,5 +640,4 @@ end
 #print axioms Eis.pair_eq_sum_mulChar
 #print axioms Eis.norm_pairCoeff_le
 #print axioms Eis.isUnit_mk_four
-#print axioms Eis.isCoprime_pgen_two
 #print axioms MellinSep.bilinear_dual_bound₂

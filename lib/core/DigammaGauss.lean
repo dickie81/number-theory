@@ -1,6 +1,6 @@
 import Mathlib
 
-/-! # Gauss's digamma integral, proved: discharging `DigammaDiff`
+/-! # Gauss's digamma integral, proved
 
 `ψ(z) − ψ(w) = ∫_0^∞ (e^{−wt} − e^{−zt})/(1 − e^{−t}) dt` for `Re z, Re w > 0`.
 

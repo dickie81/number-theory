@@ -3,9 +3,8 @@ import HalfPlaneTwistMean
 /-!
 # Every real Dirichlet L-function is zero-free on `Re s > 11/12`
 
-* **Real characters in `ℤ`** (`toInt`, `isQuadratic_of_im`): a complex Dirichlet character with
-  real values takes only the values `0` and `±1`, and is the image of a character with values in
-  `ℤ`.
+* **Real characters in `ℤ`** (`toInt`): a quadratic complex Dirichlet character, one with values `0`
+  and `±1`, is the image of a character with values in `ℤ`.
 * **Conductors from the unit kernel** (`isPrimitive_iff_of_ker`): two characters mod `q`, with
   values in any rings, that take the value `1` at the same units factor through the same levels
   (Mathlib's `factorsThrough_iff_ker_unitsMap`), so one is primitive if and only if the other is.
@@ -29,13 +28,10 @@ import HalfPlaneTwistMean
   `LFunction_changeLevel`, `L(s, χ') = L(s, χ)·∏_{p ∣ 6q}(1 − χ(p)p^{−s})`, returns to `L(s, χ)`. If
   `χ'χ₋₃ = 1`, `χ'` is the lift of `χ₋₃`; the conductors give `q = 3`, and `χ = χ₋₃`
   (`LFunction_eq_chi3`), whose half-plane is `ne_zero_of_re_gt_eleven_twelfths`.
-* **Every real character** (`LFunction_ne_zero_of_isQuadratic`, `LFunction_ne_zero_of_real`):
-  through Mathlib's `primitiveCharacter`, with the Euler factors `1 − ψ(p)p^{−s}` nonzero for
-  `Re s > 0` (`one_sub_mul_cpow_ne_zero`); the trivial character, away from `s = 1`, is
-  `ζ` times such factors (Mathlib's `LFunctionTrivChar_eq_mul_riemannZeta`).
-* **The release's `SiegelZeros.lean` statements** (`dirichletRealZeroBound`,
-  `exists_absolute_real_zero_gap`), with `c = (log 3)/12`: a real zero `β ∈ (0, 1)` has `β ≤ 11/12`,
-  and `log q ≥ log 3`.
+* **Every real character** (`LFunction_ne_zero_of_isQuadratic`): through Mathlib's
+  `primitiveCharacter`, with the Euler factors `1 − ψ(p)p^{−s}` nonzero for `Re s > 0`
+  (`one_sub_mul_cpow_ne_zero`); the trivial character, away from `s = 1`, is `ζ` times such factors
+  (Mathlib's `LFunctionTrivChar_eq_mul_riemannZeta`).
 -/
 
 open Complex DirichletCharacter
@@ -74,20 +70,6 @@ theorem isQuadratic_toInt {χ : DirichletCharacter ℂ q} (hχ : χ.IsQuadratic)
   show intOf (χ a) = 0 ∨ intOf (χ a) = 1 ∨ intOf (χ a) = -1
   unfold intOf
   split_ifs <;> simp
-
-/-- A Dirichlet character with real values is quadratic. -/
-theorem isQuadratic_of_im {χ : DirichletCharacter ℂ q} (h : ∀ a, (χ a).im = 0) :
-    χ.IsQuadratic := by
-  intro a
-  by_cases ha : IsUnit a
-  · right
-    have h1 : ‖χ a‖ = 1 := by simpa using χ.unit_norm_eq_one ha.unit
-    have hre : χ a = ((χ a).re : ℂ) := Complex.ext rfl (by simp [h a])
-    rw [hre, Complex.norm_real, Real.norm_eq_abs] at h1
-    rcases abs_eq zero_le_one |>.1 h1 with h' | h'
-    · left; rw [hre, h']; simp
-    · right; rw [hre, h']; simp
-  · left; exact χ.map_nonunit ha
 
 /-! ### Conductors are determined by the unit kernel -/
 
@@ -379,52 +361,12 @@ theorem LFunction_ne_zero_of_isQuadratic [NeZero q] {χ : DirichletCharacter ℂ
     exact one_sub_mul_cpow_ne_zero (Nat.prime_of_mem_primeFactors hp)
       (DirichletCharacter.norm_le_one _ _) hs0
 
-/-- **Every Dirichlet character with real values**: the same, with "real" read as `Im χ(a) = 0`. -/
-theorem LFunction_ne_zero_of_real [NeZero q] {χ : DirichletCharacter ℂ q}
-    (hre : ∀ a, (χ a).im = 0) {s : ℂ} (hs : 11 / 12 < s.re) (hχs : χ ≠ 1 ∨ s ≠ 1) :
-    LFunction χ s ≠ 0 :=
-  LFunction_ne_zero_of_isQuadratic (isQuadratic_of_im hre) hs hχs
-
-/-- **The release's `dirichletRealZeroBound_proof` statement**, with `c = (log 3)/12`: a real zero
-`β ∈ (0, 1)` of `L(s, χ)` for a primitive real character `χ ≠ 1` mod `q ≥ 3` has
-`(1 − β)·log q ≥ (log 3)/12`. -/
-theorem dirichletRealZeroBound :
-    ∃ c : ℝ, 0 < c ∧ ∀ (q : ℕ) [NeZero q], 3 ≤ q →
-      ∀ χ : DirichletCharacter ℂ q,
-        χ.IsPrimitive → χ ≠ 1 → (∀ a : ZMod q, (χ a).im = 0) →
-        ∀ β : ℝ,
-          (0 < β ∧ β < 1 ∧ DirichletCharacter.LFunction χ (β : ℂ) = 0) →
-            c ≤ (1 - β) * Real.log (q : ℝ) := by
-  refine ⟨Real.log 3 / 12, div_pos (Real.log_pos (by norm_num)) (by norm_num),
-    fun q _ hq3 χ _ hχ hre β ⟨_, _, hL⟩ => ?_⟩
-  have hβ : β ≤ 11 / 12 := by
-    rcases le_or_gt β (11 / 12) with h | h
-    · exact h
-    · exact absurd hL (LFunction_ne_zero_of_real hre (by simpa using h) (Or.inl hχ))
-  have hlog : Real.log 3 ≤ Real.log q := Real.log_le_log (by norm_num) (by exact_mod_cast hq3)
-  have hlog3 : 0 ≤ Real.log 3 := Real.log_nonneg (by norm_num)
-  nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ 1 - β - 1 / 12)
-    (by linarith : (0 : ℝ) ≤ Real.log q)]
-
-/-- **The release's `exists_absolute_real_zero_gap` statement**, the same with the hypotheses on `β`
-curried. -/
-theorem exists_absolute_real_zero_gap :
-    ∃ c : ℝ, 0 < c ∧
-      ∀ (q : ℕ) [NeZero q], 3 ≤ q →
-      ∀ χ : DirichletCharacter ℂ q,
-        χ.IsPrimitive → χ ≠ 1 → (∀ a : ZMod q, (χ a).im = 0) →
-        ∀ β : ℝ, 0 < β → β < 1 → χ.LFunction (β : ℂ) = 0 →
-          c ≤ (1 - β) * Real.log (q : ℝ) := by
-  obtain ⟨c, hc, h⟩ := dirichletRealZeroBound
-  exact ⟨c, hc, fun q _ hq3 χ hprim hχ hre β h0 h1 hL => h q hq3 χ hprim hχ hre β ⟨h0, h1, hL⟩⟩
-
 end Real
 
 end RealChar
 
 end Eis
 
-#print axioms Eis.RealChar.isQuadratic_of_im
 #print axioms Eis.RealChar.isPrimitive_iff_of_ker
 #print axioms Eis.RealChar.gaussSum_mul_gaussSum_inv
 #print axioms Eis.RealChar.gaussSum_sq_of_isQuadratic
@@ -434,6 +376,3 @@ end Eis
 #print axioms Eis.RealChar.LFunction_ne_zero_of_isPrimitive
 #print axioms Eis.RealChar.one_sub_mul_cpow_ne_zero
 #print axioms Eis.RealChar.LFunction_ne_zero_of_isQuadratic
-#print axioms Eis.RealChar.LFunction_ne_zero_of_real
-#print axioms Eis.RealChar.dirichletRealZeroBound
-#print axioms Eis.RealChar.exists_absolute_real_zero_gap

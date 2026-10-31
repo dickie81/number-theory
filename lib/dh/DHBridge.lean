@@ -21,8 +21,8 @@ probe whose `ĝ(3·)²` is a strip test function gives a zero of `dh` with `Re s
 
 For even, nonnegative profiles non-increasing on `[0, a]` the strip test at width 3 is automatic
 (`striptest_antitone3`, from `norm_ghatC_le_of_antitone` with `cosh(3a)` and the bound
-`‖ĝ(z)‖ ≤ e^{a|Im z|}∫|g|`, `norm_ghatC_le_exp_im`), so **`exists_offline_dh_of_neg_antitone`** and
-**`exists_offline_dh_of_neg_box`** (`Q_dh(box a) < 0` for one `a > 0`) need no strip hypothesis.
+`‖ĝ(z)‖ ≤ e^{a|Im z|}∫|g|`, `norm_ghatC_le_exp_im`), so the strip hypothesis of `exists_offline_dh_of_neg_u` holds
+for them.
 An off-line zero of `dh` follows from one real inequality, `QDHu g < 0` for an explicit `g`, which
 `QDHu_packet_neg` and `dh_offline_zero` (`DHCertificate`) close. Its ingredients are the finitely many `c(n)` with
 `log n ≤ 2a` (`f(log n) = 0` beyond the support of the autocorrelation), `Re ψ(¾)`, and the elementary integral
@@ -175,13 +175,6 @@ theorem striptest_antitone3 (ha : 0 < a) (hev : ∀ u, g (-u) = g u)
   obtain ⟨K, hK⟩ := ghat3_antitone_bound ha hev hmono hnn hint
   exact ⟨K, striptest_sq ((ghatC_differentiable hint).comp (differentiable_id.const_mul 3)) hK⟩
 
-/-- **The certificate for monotone probes**: no strip hypothesis. -/
-theorem exists_offline_dh_of_neg_antitone (ha : 0 < a) (hp : Probe a g)
-    (hmono : AntitoneOn g (Icc 0 a)) (hnn : ∀ u ∈ Icc 0 a, 0 ≤ g u) (hneg : QDHu g < 0) :
-    ∃ s : ℂ, dh s = 0 ∧ 0 < s.re ∧ s.re ≠ 1 / 2 := by
-  obtain ⟨K, hK⟩ := striptest_antitone3 ha hp.even hmono hnn hp.intervalIntegrable
-  exact exists_offline_dh_of_neg_u hp ha hK hneg
-
 theorem box_antitone' (a : ℝ) : AntitoneOn (box a) (Icc 0 a) := fun x hx y hy _ => by
   have h1 : |x| ≤ a := by rw [abs_of_nonneg hx.1]; exact hx.2
   have h2 : |y| ≤ a := by rw [abs_of_nonneg hy.1]; exact hy.2
@@ -189,11 +182,6 @@ theorem box_antitone' (a : ℝ) : AntitoneOn (box a) (Icc 0 a) := fun x hx y hy 
 
 theorem box_nonneg' (a : ℝ) : ∀ u ∈ Icc (0 : ℝ) a, 0 ≤ box a u := fun u _ => by
   rw [box_apply]; split_ifs <;> positivity
-
-/-- **The certificate for the box**: `Q_dh(box a) < 0` for one `a > 0` gives an off-line zero. -/
-theorem exists_offline_dh_of_neg_box (ha : 0 < a) (hneg : QDHu (box a) < 0) :
-    ∃ s : ℂ, dh s = 0 ∧ 0 < s.re ∧ s.re ≠ 1 / 2 :=
-  exists_offline_dh_of_neg_antitone ha (box_probe a) (box_antitone' a) (box_nonneg' a) hneg
 
 end PsiOmega
 
@@ -205,5 +193,3 @@ end PsiOmega
 #print axioms PsiOmega.exists_offline_dh_of_neg_u
 #print axioms PsiOmega.norm_ghatC_le_exp_im
 #print axioms PsiOmega.striptest_antitone3
-#print axioms PsiOmega.exists_offline_dh_of_neg_antitone
-#print axioms PsiOmega.exists_offline_dh_of_neg_box

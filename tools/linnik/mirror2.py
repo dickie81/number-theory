@@ -1,4 +1,5 @@
 """mirror2.py W1 W2 N [OUT.json] [--depth4] [--ib a/b]: the deep certificate of SieveCertDefs.lean / SieveCert2Defs.lean
+(the theorem at 278/125's, in the git history)
 on the grid U1 = ⌈(W1/10⁵)DEN⌉, U2 = ⌊(W2/10⁵)DEN⌋, n = N (a multiple of 4, with the coarse grid of N/4 cells), in exact integers,
 cell by cell as the Lean definitions read: `cand`, `allowed`, `counted4`, `allowed4`, `inKK5`, `ne5`, `counted6`,
 `omF`, `invKw`, `omKw`, `bound2`, `bound4`, `bound6`, `refcost5`, `dec4`, `cost4`, `refcost`, `dec`, and the kept parts

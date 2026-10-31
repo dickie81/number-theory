@@ -25,12 +25,12 @@ for `r > 0`, `Y > 0` and θ's representative `θ̃` (`thetaF`):
   `3ℤ[ω]` and every `c ∈ ℂ`, by Mathlib's `integral_preimage` on the unit torus at the offsets `0` and `a`
   with `tch(a) = c`. With `thetaF_add_period` this gives `θ̃∘T = θ̃` almost everywhere,
   `T = (1, 1; 0, 1)`.
-* **At every point** (**`thS_slAct_of_ae`**, **`thS_slAct_toSL`**, **`isAut_thS_Gam2`**, **`atG_thS_int`** and
-  **`exists_theta_series_inv`**, with `restrict_UHS_ac`, `map_toSL_σO` and `atG_thS_toSL`):
+* **At every point** (**`thS_slAct_of_ae`**, **`thS_slAct_toSL`**, **`isAut_thS_Gam2`** and **`atG_thS_int`**,
+  with `restrict_UHS_ac`, `map_toSL_σO` and `atG_thS_toSL`):
   `thS(h·p) = thS(p)` for every `h ∈ SL_2(ℤ)` and every `p` in upper half-space, by continuity as in
   `isAut_thS` and Mathlib's `SpecialLinearGroup.SL2Z_generators`; `thS` is automorphic on
-  `Γ_2 = SL_2(ℤ)Γ_1(3)` with the extension `κ₂` of `κ`; and with the three clauses
-  (`exists_theta_series`) this gives four clauses of `KubotaTheta` for `thS`.
+  `Γ_2 = SL_2(ℤ)Γ_1(3)` with the extension `κ₂` of `κ`; and in the notation `atG` the invariance is the
+  `SL_2(ℤ)` clause of `KubotaTheta` for `thS`.
 -/
 
 open MeasureTheory Set Filter NumberField Complex UnitAddTorus
@@ -425,20 +425,6 @@ theorem atG_thS_int {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) (γ : Matrix (
   have h := atG_thS_toSL hr hY ⟨γ, hdet⟩ z hv
   exact (congrArg (fun M => atG (fun z v => thS r Y hY (z, v)) M z v) e).trans h
 
-/-- **Four clauses of `KubotaTheta`**, for θ's Fourier series: the three
-(`exists_theta_series`) and invariance under `SL_2(ℤ)`. -/
-theorem exists_theta_series_inv {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) :
-    ∃ (θ : ℂ → ℝ → ℂ) (c₀ : ℂ) (τ : 𝓞 K → ℂ),
-      (∀ z v, 0 < v → θ z v = thSer c₀ τ z v) ∧ (∀ m, τ m ≠ 0 → δ3 ∣ m) ∧
-      (∀ γ : Matrix (Fin 2) (Fin 2) ℤ, γ.det = 1 → ∀ z v, 0 < v →
-        atG θ (γ.map (Int.castRingHom ℂ)) z v = θ z v) ∧
-      (∀ γ : Matrix (Fin 2) (Fin 2) (𝓞 K), γ.det = 1 → ModThree γ → ∀ z v, 0 < v →
-        atG θ (γ.map σO) z v = kub γ * θ z v) ∧
-      ∀ᵐ p ∂(volume.restrict UHS), thetaF r Y hY p = θ p.1 p.2 :=
-  ⟨fun z v => thS r Y hY (z, v), phiG (4 / 3) / 3, tauTh r Y hY, fun _ _ _ => rfl,
-    fun _ h => dvd_of_tauTh_ne_zero h, fun γ hdet z _ hv => atG_thS_int hr hY γ hdet z hv,
-    fun γ hdet h3 z _ hv => atG_thS hr hY γ hdet h3 z hv, ae_thetaF_eq_thS hr hY⟩
-
 end Eis
 
 end
@@ -466,4 +452,3 @@ end
 #print axioms Eis.map_toSL_σO
 #print axioms Eis.atG_thS_toSL
 #print axioms Eis.atG_thS_int
-#print axioms Eis.exists_theta_series_inv

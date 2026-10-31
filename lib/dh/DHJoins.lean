@@ -11,12 +11,10 @@ import WeilTwinGeneral
 
 Results whose parts the layer already had, but which no file stated. None needs new analysis.
 
-**`DHRH ↔ DHRHcross`** (`dhRH_iff_cross`). `dhRH_of_cross` (DHColumn) takes the exclusion of
-positive real zeros as a named input `hreal`, and `dh_ne_zero_of_real` (DHRealAxis)
-proves it; DHColumn does not import DHRealAxis. So RH for `dh` and its cross form are equivalent, and
-`dhRH_of_cross'` is `dhRH_of_cross` with `hreal` discharged. Both propositions are false:
-`dh_offline_zero` refutes `DHRH`, and `dh_offline_nonreal_zero` (DHOffCross)
-refutes `DHRHcross`.
+**`DHRH ↔ DHRHcross`** (`dhRH_iff_cross`). `dh` has no zero on the positive real axis
+(`dh_ne_zero_of_real`, DHRealAxis), so a zero on the cross is on the line, and RH for `dh` and its cross
+form are equivalent. Both propositions are false: `dh_offline_zero` refutes `DHRH`, and
+`dh_offline_nonreal_zero` (DHOffCross) refutes `DHRHcross`.
 
 **Conjugation symmetry** (`dh_conj`, `dh_conj_zero`): `dh(s̄) = conj dh(s)` for every `s`.
 It needs the Gauss-sum identity `ε_{χ⁻¹} = conj ε_χ`. That identity holds for `χ₅` without a Gauss sum
@@ -69,13 +67,6 @@ theorem dhRH_iff_cross : DHRH ↔ DHRHcross := by
     refine (h s hs h0).resolve_right fun him => ?_
     have hsr : s = ((s.re : ℝ) : ℂ) := Complex.ext (by simp) (by simp [him])
     exact dh_ne_zero_of_real h0 (by rw [← hsr]; exact hs)
-
-/-- `dhRH_of_cross` with its named input `hreal` discharged by `dh_ne_zero_of_real`. -/
-theorem dhRH_of_cross' {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ}
-    (hint : ∀ n, IntervalIntegrable (g n) volume (-(a n)) (a n))
-    (hcross : ∀ᶠ n in atTop, ∀ z, ghatC (g n) (a n) z = 0 → z.re = 0 ∨ z.im = 0)
-    (hconv : HypConvDH a g) : DHRH :=
-  dhRH_of_cross hint hcross hconv fun _ hσ => dh_ne_zero_of_real hσ
 
 /-! ## Conjugation symmetry -/
 
@@ -362,7 +353,6 @@ theorem negIndex_ge_five : ∃ b, 0 < b ∧ ∃ W : Submodule ℝ (ℝ → ℝ),
 end DHNegIndex
 
 #print axioms PsiOmega.dhRH_iff_cross
-#print axioms PsiOmega.dhRH_of_cross'
 #print axioms PsiOmega.dh_conj
 #print axioms PsiOmega.dh_conj_zero
 #print axioms PsiOmega.QDHu_add_even_odd

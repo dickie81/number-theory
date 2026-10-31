@@ -15,9 +15,8 @@ The cosine packet `packet a ω = 1_{[−a,a]}·cos(ω·)` certifies `Q_dh < 0` o
 
 **Closed forms** (every `0 < a`, `0 < ω`): `‖g‖² = a − sin(2ωa)/(2ω)` (`sinPacket_normSq`),
 `f(u) = ½(2a − u) cos(ωu) − sin(ω(2a − u))/(2ω)` on `0 ≤ u ≤ 2a` and `0` beyond (`sinPacket_autocorr`,
-`sinPacket_autocorr_of_le`: the cosine packet's autocorrelation with the sidelobe sign flipped),
-`ĝ(z) = i[sin((z − ω)a)/(z − ω) − sin((z + ω)a)/(z + ω)]` (`sinPacket_ghatC`), the width-3 strip test
-(`sinPacket_striptest`), and the odd probe (`sinPacket_oprobe : OProbe a (sinPacket a ω)`).
+`sinPacket_autocorr_of_le`: the cosine packet's autocorrelation with the sidelobe sign flipped), and the
+odd probe (`sinPacket_oprobe : OProbe a (sinPacket a ω)`).
 **The form** (`QDHu_sinPacket_eq`): `QDHu` has no pole term (`dh` is entire), so on an odd `g` it is the
 same expression as on an even one,
 `Q_dh(g) = (Re ψ(¾) + log(5/π))(a − sin(2ωa)/(2ω)) + E_{3/4}(g) − 2 Σ_{2 ≤ n ≤ ⌊e^{2a}⌋} c(n) n^{−1/2} f(log n)`.
@@ -28,7 +27,7 @@ packet, since only `|β′| = |β| ≤ 1/(2ω)` enters.
 **The certificate** (`QDHu_sinPacket_le`): `Q_dh(sinPacket 12/5 169/2) ≤ −111/100`, from the generated
 `oddPartial_121` (DHOddTerms.lean, `gen_oddterms.py`) and DHConstants' bounds; numerically
 `Q_dh = −1.24351…` (`−0.51771‖g‖²`, `‖g‖² = 2.4019428…`).
-**The `dh` column of `rh_of_lamO_lower`** (`not_odd_lower_dh`, `not_lamODH_lower`): `QDHu` sees the probe,
+**No odd lower bound for `dh`** (`not_odd_lower_dh`, `not_lamODH_lower`): `QDHu` sees the probe,
 not the window, so the normalised sine packet is a negative odd unit probe at every `b ≥ 12/5`
 (`exists_oprobe_QDHu_neg`), the odd ground energy `λ_dh^odd(b)` (`lamODH`) is negative there (`lamODH_neg`),
 and no positive lower bound `c·e^{(9+δ)b − 4πe^{2b}}` on the odd sector of `dh` holds eventually.
@@ -53,9 +52,6 @@ theorem sinPacket_apply (a ω u : ℝ) :
   rw [Set.indicator_apply]
   congr 1
   simp [abs_le]
-
-theorem sinPacket_of_le {a ω u : ℝ} (hu : |u| ≤ a) : sinPacket a ω u = Real.sin (ω * u) := by
-  simp [sinPacket_apply, hu]
 
 theorem sinPacket_of_lt {a ω u : ℝ} (hu : a < |u|) : sinPacket a ω u = 0 := by
   simp [sinPacket_apply, not_le.2 hu]
@@ -156,14 +152,6 @@ theorem sinPacket_memLp (a ω : ℝ) : MemLp (sinPacket a ω) 2 volume := by
   exact memLp_indicator_of_continuous (f := fun u => Real.sin (ω * u)) (by fun_prop)
     measurableSet_Icc measure_Icc_lt_top.ne (C := 1) fun x _ => Real.abs_sin_le_one _
 
-theorem sinPacket_measurable (a ω : ℝ) : Measurable (sinPacket a ω) := by
-  unfold sinPacket
-  exact (by fun_prop : Measurable fun u => Real.sin (ω * u)).indicator measurableSet_Icc
-
-theorem sinPacket_integrable (a ω : ℝ) : Integrable (sinPacket a ω) := by
-  unfold sinPacket
-  exact (Continuous.integrableOn_Icc (by fun_prop)).integrable_indicator measurableSet_Icc
-
 /-- `f(0) − f(u) ≤ (aω² u + 1) u` for `u ≥ 0`: the shifted packet differs by at most `ωu` inside and by at
 most `1` on two edge intervals of length `u`. -/
 theorem sinPacket_autocorr_diff_le {a ω : ℝ} (ha : 0 < a) (hω : 0 ≤ ω) {u : ℝ} (hu : 0 ≤ u) :
@@ -252,131 +240,6 @@ theorem sinPacket_arch {a ω : ℝ} (ha : 0 < a) (hω : 0 ≤ ω) :
 /-- **The sine packet is an odd probe.** -/
 theorem sinPacket_oprobe {a ω : ℝ} (ha : 0 < a) (hω : 0 ≤ ω) : OProbe a (sinPacket a ω) :=
   ⟨sinPacket_odd a ω, fun _ hu => sinPacket_of_lt hu, sinPacket_memLp a ω, sinPacket_arch ha hω⟩
-
-/-! ## The transform and the width-3 strip test -/
-
-/-- `ĝ(z) = i[sin((z − ω)a)/(z − ω) − sin((z + ω)a)/(z + ω)]`. -/
-theorem sinPacket_ghatC {a ω : ℝ} (ha : 0 ≤ a) (z : ℂ) (h1 : z + ω ≠ 0) (h2 : z - ω ≠ 0) :
-    ghatC (sinPacket a ω) a z
-      = Complex.I * (Complex.sin ((z - ω) * a) / (z - ω) - Complex.sin ((z + ω) * a) / (z + ω)) := by
-  unfold ghatC
-  have hcongr : EqOn (fun u : ℝ => ((sinPacket a ω u : ℝ) : ℂ) * Complex.exp (Complex.I * z * u))
-      (fun u : ℝ => (Complex.exp (Complex.I * (z - ω) * u) - Complex.exp (Complex.I * (z + ω) * u))
-        * Complex.I / 2)
-      (Set.uIcc (-a) a) := by
-    intro u hu
-    rw [Set.uIcc_of_le (by linarith)] at hu
-    have hu' : |u| ≤ a := abs_le.2 hu
-    simp only
-    rw [sinPacket_of_le hu', Complex.ofReal_sin, Complex.sin]
-    have e1 : Complex.exp (Complex.I * (z + ω) * u)
-        = Complex.exp ((ω * u : ℂ) * Complex.I) * Complex.exp (Complex.I * z * u) := by
-      rw [← Complex.exp_add]; congr 1; ring
-    have e2 : Complex.exp (Complex.I * (z - ω) * u)
-        = Complex.exp (-(ω * u : ℂ) * Complex.I) * Complex.exp (Complex.I * z * u) := by
-      rw [← Complex.exp_add]; congr 1; ring
-    rw [e1, e2]
-    push_cast
-    ring
-  rw [intervalIntegral.integral_congr hcongr, intervalIntegral.integral_div,
-    intervalIntegral.integral_mul_const,
-    intervalIntegral.integral_sub (by apply Continuous.intervalIntegrable; fun_prop)
-      (by apply Continuous.intervalIntegrable; fun_prop),
-    integral_cexp_I_mul h2, integral_cexp_I_mul h1]
-  ring
-
-/-- **`ĝ(3z)²` is a strip test function** for the sine packet. -/
-theorem sinPacket_striptest {a ω : ℝ} (ha : 0 < a) (hω : 0 < ω) :
-    ∃ K, StripTest (fun z => ghatC (sinPacket a ω) a (3 * z) ^ 2) K := by
-  have hint : IntervalIntegrable (sinPacket a ω) volume (-a) a :=
-    (sinPacket_integrable a ω).intervalIntegrable
-  set τ0 := Real.exp (3 * a) * ∫ u in (-a)..a, |sinPacket a ω u| with hτ0
-  have hI : 0 ≤ ∫ u in (-a)..a, |sinPacket a ω u| :=
-    intervalIntegral.integral_nonneg (by linarith) fun u _ => abs_nonneg _
-  have hτ0nn : 0 ≤ τ0 := mul_nonneg (Real.exp_pos _).le hI
-  refine ⟨τ0 ^ 2 + ((1 + ω) / 3 * (2 * Real.exp (3 * a) + τ0)) ^ 2,
-    striptest_sq ((ghatC_differentiable hint).comp (differentiable_id.const_mul 3))
-      fun t ht => ?_⟩
-  have h3im : (3 * t).im = 3 * t.im := by simp
-  have htim : |t.im| ≤ 1 := abs_le.2 ⟨ht.1, ht.2⟩
-  have h3 : |(3 * t).im| ≤ 3 := by
-    rw [h3im, abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 3)]; linarith
-  have hG0 : ‖ghatC (sinPacket a ω) a (3 * t)‖ ≤ τ0 := by
-    refine (norm_ghatC_le_exp_im ha.le hint _).trans ?_
-    refine mul_le_mul_of_nonneg_right (Real.exp_le_exp.2 ?_) hI
-    linarith [mul_le_mul_of_nonneg_left h3 ha.le]
-  refine sq_strip_bound hG0 ?_
-  show ‖t‖ * ‖ghatC (sinPacket a ω) a (3 * t)‖ ≤ _
-  have hn3 : ‖(3 : ℂ) * t‖ = 3 * ‖t‖ := by rw [norm_mul]; norm_num
-  have hnω : ‖(ω : ℂ)‖ = ω := by rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos hω]
-  have hGn := norm_nonneg (ghatC (sinPacket a ω) a (3 * t))
-  have htn := norm_nonneg t
-  by_cases hbig : 1 ≤ ‖3 * t + ω‖ ∧ 1 ≤ ‖3 * t - ω‖
-  · obtain ⟨hp, hm⟩ := hbig
-    have hp0 : (3 * t + ω : ℂ) ≠ 0 := norm_pos_iff.1 (by linarith)
-    have hm0 : (3 * t - ω : ℂ) ≠ 0 := norm_pos_iff.1 (by linarith)
-    -- the sine bounds
-    have hs : ∀ w : ℂ, w.im = (3 * t).im → ‖Complex.sin (w * a)‖ ≤ Real.exp (3 * a) := by
-      intro w hw
-      refine (norm_csin_le_exp _).trans (Real.exp_le_exp.2 ?_)
-      have e : (w * a).im = w.im * a := by simp
-      rw [e, abs_mul, abs_of_pos ha, hw]
-      nlinarith
-    have hsp := hs (3 * t + ω) (by simp)
-    have hsm := hs (3 * t - ω) (by simp)
-    -- `‖t‖ ≤ (1 + ω)/3 · ‖3t ± ω‖`
-    have htp : ‖t‖ ≤ (1 + ω) / 3 * ‖3 * t + ω‖ := by
-      have := norm_sub_le (3 * t + ω) (ω : ℂ)
-      rw [add_sub_cancel_right, hn3, hnω] at this
-      nlinarith
-    have htm : ‖t‖ ≤ (1 + ω) / 3 * ‖3 * t - ω‖ := by
-      have := norm_add_le (3 * t - ω) (ω : ℂ)
-      rw [sub_add_cancel, hn3, hnω] at this
-      nlinarith
-    rw [sinPacket_ghatC ha.le _ hp0 hm0]
-    have hpn : 0 < ‖3 * t + ω‖ := by linarith
-    have hmn : 0 < ‖3 * t - ω‖ := by linarith
-    have hq1 : ‖t‖ * ‖Complex.sin ((3 * t + ω) * a) / (3 * t + ω)‖
-        ≤ (1 + ω) / 3 * Real.exp (3 * a) := by
-      rw [norm_div, mul_div_assoc', div_le_iff₀ hpn]
-      calc ‖t‖ * ‖Complex.sin ((3 * t + ω) * a)‖ ≤ ‖t‖ * Real.exp (3 * a) :=
-            mul_le_mul_of_nonneg_left hsp htn
-        _ ≤ (1 + ω) / 3 * ‖3 * t + ω‖ * Real.exp (3 * a) :=
-            mul_le_mul_of_nonneg_right htp (Real.exp_pos _).le
-        _ = _ := by ring
-    have hq2 : ‖t‖ * ‖Complex.sin ((3 * t - ω) * a) / (3 * t - ω)‖
-        ≤ (1 + ω) / 3 * Real.exp (3 * a) := by
-      rw [norm_div, mul_div_assoc', div_le_iff₀ hmn]
-      calc ‖t‖ * ‖Complex.sin ((3 * t - ω) * a)‖ ≤ ‖t‖ * Real.exp (3 * a) :=
-            mul_le_mul_of_nonneg_left hsm htn
-        _ ≤ (1 + ω) / 3 * ‖3 * t - ω‖ * Real.exp (3 * a) :=
-            mul_le_mul_of_nonneg_right htm (Real.exp_pos _).le
-        _ = _ := by ring
-    calc ‖t‖ * ‖Complex.I * (Complex.sin ((3 * t - ω) * a) / (3 * t - ω)
-          - Complex.sin ((3 * t + ω) * a) / (3 * t + ω))‖
-        = ‖t‖ * ‖Complex.sin ((3 * t - ω) * a) / (3 * t - ω)
-          - Complex.sin ((3 * t + ω) * a) / (3 * t + ω)‖ := by
-          rw [norm_mul Complex.I, Complex.norm_I, one_mul]
-      _ ≤ ‖t‖ * (‖Complex.sin ((3 * t - ω) * a) / (3 * t - ω)‖
-          + ‖Complex.sin ((3 * t + ω) * a) / (3 * t + ω)‖) :=
-          mul_le_mul_of_nonneg_left (norm_sub_le _ _) htn
-      _ ≤ (1 + ω) / 3 * Real.exp (3 * a) + (1 + ω) / 3 * Real.exp (3 * a) := by
-          rw [mul_add]; exact add_le_add hq2 hq1
-      _ ≤ (1 + ω) / 3 * (2 * Real.exp (3 * a) + τ0) := by nlinarith
-  · -- near `±ω/3`: `‖t‖ ≤ (1 + ω)/3`
-    have htsmall : ‖t‖ ≤ (1 + ω) / 3 := by
-      rcases not_and_or.1 hbig with hp | hm
-      · have := norm_sub_le (3 * t + ω) (ω : ℂ)
-        rw [add_sub_cancel_right, hn3, hnω] at this
-        linarith [not_le.1 hp]
-      · have := norm_add_le (3 * t - ω) (ω : ℂ)
-        rw [sub_add_cancel, hn3, hnω] at this
-        linarith [not_le.1 hm]
-    calc ‖t‖ * ‖ghatC (sinPacket a ω) a (3 * t)‖ ≤ (1 + ω) / 3 * τ0 :=
-          mul_le_mul htsmall hG0 hGn (by linarith)
-      _ ≤ (1 + ω) / 3 * (2 * Real.exp (3 * a) + τ0) := by
-          have := Real.exp_pos (3 * a)
-          nlinarith
 
 /-! ## The assembled closed form -/
 
@@ -593,7 +456,7 @@ theorem QDHu_sinPacket_neg : QDHu (sinPacket (12 / 5) (169 / 2)) < 0 := by
   have := QDHu_sinPacket_le
   linarith
 
-/-! ## The `dh` column of `rh_of_lamO_lower` -/
+/-! ## No odd lower bound for `dh` -/
 
 /-- **A negative normalised odd probe at every support `b ≥ 12/5`**: the normalised sine packet
 (`QDHu` sees the probe, not the window). -/
@@ -613,8 +476,8 @@ theorem exists_oprobe_QDHu_neg {b : ℝ} (hb : 12 / 5 ≤ b) :
   · rw [normSq_smul]; exact hc2
   · rw [QDHu_smul]; exact mul_neg_of_pos_of_neg (pow_pos hc0 2) QDHu_sinPacket_neg
 
-/-- **The `dh` column of `rh_of_lamO_lower`'s hypothesis, refuted**: for no `c > 0` (and any `δ`) is
-Weil's form of `dh` eventually `≥ c·e^{(9+δ)b − 4πe^{2b}}` on every normalised odd probe at support `b`. -/
+/-- **The odd lower bound for `dh`, refuted**: for no `c > 0` (and any `δ`) is Weil's form of `dh` eventually
+`≥ c·e^{(9+δ)b − 4πe^{2b}}` on every normalised odd probe at support `b`. -/
 theorem not_odd_lower_dh {δ c : ℝ} (hc : 0 < c) :
     ¬ ∀ᶠ b in atTop, ∀ o, OProbe b o → normSq o = 1 →
       c * Real.exp ((9 + δ) * b - 4 * π * Real.exp (2 * b)) ≤ QDHu o := by
@@ -648,7 +511,8 @@ theorem lamODH_neg {b : ℝ} (hb : 12 / 5 ≤ b) : lamODH b < 0 := by
   obtain ⟨o, hp, hn, hneg⟩ := exists_oprobe_QDHu_neg hb
   exact (lamODH_le hp hn).trans_lt hneg
 
-/-- **`rh_of_lamO_lower`'s hypothesis with `λ_dh^odd` in place of `λ_odd`, refuted.** -/
+/-- **The lower bound `λ_dh^odd(b) ≥ c·e^{(9+δ)b − 4πe^{2b}}`, refuted**: for no `c > 0` (and any `δ`) does it hold
+eventually. -/
 theorem not_lamODH_lower {δ c : ℝ} (hc : 0 < c) :
     ¬ ∀ᶠ b in atTop, c * Real.exp ((9 + δ) * b - 4 * π * Real.exp (2 * b)) ≤ lamODH b := by
   intro h
@@ -662,8 +526,6 @@ end PsiOmega
 #print axioms PsiOmega.sinPacket_oprobe
 #print axioms PsiOmega.sinPacket_autocorr
 #print axioms PsiOmega.sinPacket_normSq
-#print axioms PsiOmega.sinPacket_ghatC
-#print axioms PsiOmega.sinPacket_striptest
 #print axioms PsiOmega.QDHu_sinPacket_eq
 #print axioms PsiOmega.sinPacket_archEQ_le
 #print axioms PsiOmega.sinPacket_arch_total_le

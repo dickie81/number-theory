@@ -42,7 +42,7 @@ truncated (it is integrated against `|H(1/2 + iu)|`, whence `I_H`), and the pair
 * `Bmax`, `gram_sq_le`, `gram_sq_le0`: `|G(i, k)|² ≤ N·Q₀(q)²(∫|H(1/2 + iu)||D_{ik}(u)| du)² + B²` for
   `χ_i ≠ χ_k`; and for `χ_i = χ_k` the same with `2(N|H(1 + i(t_i − t_k))|)²` added
   (`LinnikCGLRefl0.norm_gram_le0`).
-* `resT`, `resP`, `resT_nonneg`, `resP_nonneg`, `resP_eq_zero_of_injOn`: the residues.
+* `resT`, `resP`, `resT_nonneg`, `resP_eq_zero_of_injOn`: the residues.
 * `frobOff_le`: Cauchy–Schwarz in `u` for each pair, and the sum over the pairs.
 
 The file imports `LinnikCGLPair.lean`, `LinnikCGLRefl0.lean`, `LinnikDual.lean` and `LinnikWeighted.lean`.
@@ -460,10 +460,6 @@ def resP {ι : Type*} {q : ℕ} (R : Finset ι) (χ : ι → DirichletCharacter 
 lemma resT_nonneg {ι : Type*} {q : ℕ} (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) (i k : ι) :
     0 ≤ resT χ t i k := by
   unfold resT; split_ifs <;> positivity
-
-lemma resP_nonneg {ι : Type*} {q : ℕ} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ) :
-    0 ≤ resP R χ t :=
-  Finset.sum_nonneg fun i _ => Finset.sum_nonneg fun k _ => resT_nonneg χ t i k
 
 /-- At one point per character there are no residues. -/
 lemma resP_eq_zero_of_injOn {ι : Type*} {q : ℕ} {R : Finset ι} {χ : ι → DirichletCharacter ℂ q}

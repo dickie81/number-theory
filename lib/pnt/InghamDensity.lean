@@ -8,8 +8,6 @@ Plain statement. If `|ζ(1/2 + it)| ≤ C|t|^c` for `|t| ≥ 2` (`CrossCriteria.
 (`densityXi_of_zetaCrit`). Hence:
 * `inghamFromC`: `CrossCriteria.InghamFromC c` for every `c ≥ 0`;
 * `densityXi_17_6`: with `c = 5/24 + ε`, `N(σ, T) ≪ T^{(17/6 + ε)(1−σ)}(log T)^{12}` for every `ε > 0`;
-* `short_primes_11_17`: a prime in `(y, y + y^θ]` for every `θ > 11/17` and all large `y` (
-  `DetectEM.short_primes` has `θ > 3/4`);
 * `densityXi_Theta`, `short_primes_Theta`: at `Θ`, the exponent `1 + 2Θ + ε` and every
   `θ > 2Θ/(1 + 2Θ)`;
 * `densityHypothesis_of_lindelof`: `CrossCriteria.Lindelof` implies `CrossCriteria.DensityHypothesis`.
@@ -1415,12 +1413,6 @@ theorem short_primes_of_density_eps {A₀ : ℝ} (hA₀ : 0 < A₀)
     have : 0 < 1 / (A₀ + 1) := by positivity
     linarith
 
-/-- **Primes in short intervals for every `θ > 11/17`**: from `densityXi_17_6`. -/
-theorem short_primes_11_17 {θ : ℝ} (hθ : 11 / 17 < θ) :
-    ∀ᶠ y : ℝ in atTop, ∃ p : ℕ, p.Prime ∧ y < p ∧ (p : ℝ) ≤ y + y ^ θ :=
-  short_primes_of_density_eps (A₀ := 17 / 6) (by norm_num) (fun ε hε => ⟨12, densityXi_17_6 hε⟩)
-    (by linarith) (by norm_num; linarith)
-
 /-- **Primes in short intervals at `Θ`**: for every `θ > 2Θ/(1 + 2Θ)`. -/
 theorem short_primes_Theta {θ : ℝ} (hθ : 2 * PsiExponent.Theta / (1 + 2 * PsiExponent.Theta) < θ) :
     ∀ᶠ y : ℝ in atTop, ∃ p : ℕ, p.Prime ∧ y < p ∧ (p : ℝ) ≤ y + y ^ θ := by
@@ -1445,5 +1437,4 @@ end InghamDensity
 #print axioms InghamDensity.densityXi_17_6
 #print axioms InghamDensity.densityXi_Theta
 #print axioms InghamDensity.densityHypothesis_of_lindelof
-#print axioms InghamDensity.short_primes_11_17
 #print axioms InghamDensity.short_primes_Theta

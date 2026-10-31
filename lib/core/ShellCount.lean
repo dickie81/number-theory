@@ -9,13 +9,11 @@ The Bohr lift puts a zero `ρ` on the unit sphere of `ℂ^F` exactly when `Re ρ
 strictly decreasing in `Re ρ`. So the zeros counted by `NX w T` (`|γ| ≤ T`, `β ≥ ½ + w`, one per pair `ρ`, `1 − ρ`)
 are exactly the pairs whose Bohr vectors lie outside the open shell between the radii at `½ + w` and `½ − w`.
 
-* **`le_im_iff_outside`**, **`le_im_iff_outside_refl`**: the pair `i` is counted by `NX w T` if and only if its zero
-  `ρ` with `β ≥ ½` (`rhoS i`) has radius at most the radius at `½ + w`, if and only if the reflection `1 − ρ̄` of `ρ`
-  in the line has radius at least the radius at `½ − w`, for every nonempty finite set `F` of primes. The radius
-  depends only on the real part (`norm_vF_eq_of_re_eq`), so `1 − ρ̄` has the radius of the pair's other zero `1 − ρ`.
+* **`le_im_iff_outside`**: the pair `i` is counted by `NX w T` if and only if its zero `ρ` with `β ≥ ½` (`rhoS i`)
+  has radius at most the radius at `½ + w`, for every nonempty finite set `F` of primes.
 * **`NX_eq_ncard_outside`**: `NX w T` is the number of pairs up to height `T` outside that shell.
 * **`ncard_outside_le`**: a density estimate `DensityXi A B` bounds that number by `C T^{A(½−w)}(log T)^B`.
-* **`tendsto_outside_div`**: if moreover `A(½ − w) < 1` and the total number of pairs up to height `T` is at least
+* **`tendsto_NX_div`**: if moreover `A(½ − w) < 1` and the total number of pairs up to height `T` is at least
   `cT` for large `T`, the proportion of pairs outside the shell tends to `0`.
 
 Not proved: that proportion for every `w > 0` (the theorem of Bohr and Landau); with the library's
@@ -53,14 +51,6 @@ has radius at most the radius at `½ + w`. -/
 theorem le_im_iff_outside {F : Finset Nat.Primes} (hF : F.Nonempty) (i : ZeroIdx (sqF Xi)) (w : ℝ) :
     w ≤ |(tau i).im| ↔ ‖vF F (rhoS i)‖ ≤ ‖vF F ((1 / 2 + w : ℝ) : ℂ)‖ := by
   rw [norm_vF_le_iff hF, rhoS_re, ofReal_re]
-  constructor <;> intro h <;> linarith
-
-/-- The same through the reflection `1 − ρ̄` of `ρ = rhoS i` in the line: its radius is at least the radius at `½ − w`. -/
-theorem le_im_iff_outside_refl {F : Finset Nat.Primes} (hF : F.Nonempty) (i : ZeroIdx (sqF Xi)) (w : ℝ) :
-    w ≤ |(tau i).im| ↔ ‖vF F ((1 / 2 - w : ℝ) : ℂ)‖ ≤ ‖vF F (lineRefl (rhoS i))‖ := by
-  rw [norm_vF_le_iff hF]
-  have e : (lineRefl (rhoS i)).re = 1 - (rhoS i).re := by simp [lineRefl]
-  rw [e, rhoS_re, ofReal_re]
   constructor <;> intro h <;> linarith
 
 /-- **`NX w T` counts the pairs up to height `T` outside the shell.** -/
@@ -131,27 +121,13 @@ theorem tendsto_NX_div {A B : ℝ} (h : DensityXi A B) {w : ℝ} (hw0 : 0 ≤ w)
         have hl : 0 ≤ Real.log T := Real.log_nonneg (by linarith)
         gcongr
 
-/-- **The same in sphere form**: for every nonempty finite set `F` of primes, the proportion of pairs up to height
-`T` whose Bohr vectors lie outside the shell between the radii at `½ + w` and `½ − w` tends to `0`. -/
-theorem tendsto_outside_div {A B : ℝ} (h : DensityXi A B) {w : ℝ} (hw0 : 0 ≤ w)
-    (hw : A * (1 / 2 - w) < 1) (hN : ∃ c : ℝ, 0 < c ∧ ∀ᶠ T in atTop, c * T ≤ NX 0 T)
-    {F : Finset Nat.Primes} (hF : F.Nonempty) :
-    Tendsto (fun T => (Set.ncard {i : ZeroIdx (sqF Xi) |
-        |(tau i).re| ≤ T ∧ ‖vF F (rhoS i)‖ ≤ ‖vF F ((1 / 2 + w : ℝ) : ℂ)‖} : ℝ) /
-      Set.ncard {i : ZeroIdx (sqF Xi) | |(tau i).re| ≤ T}) atTop (𝓝 0) := by
-  have h' := tendsto_NX_div h hw0 hw hN
-  refine h'.congr fun T => ?_
-  rw [NX_eq_ncard_outside hF, NX_zero_eq]
-
 end ShellCount
 
 #print axioms ShellCount.rhoS_re
 #print axioms ShellCount.norm_vF_le_iff
 #print axioms ShellCount.le_im_iff_outside
-#print axioms ShellCount.le_im_iff_outside_refl
 #print axioms ShellCount.NX_eq_ncard_outside
 #print axioms ShellCount.NX_zero_eq
 #print axioms ShellCount.NX_eq_zero
 #print axioms ShellCount.ncard_outside_le
 #print axioms ShellCount.tendsto_NX_div
-#print axioms ShellCount.tendsto_outside_div

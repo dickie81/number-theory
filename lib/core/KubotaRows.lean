@@ -28,7 +28,7 @@ The assembly also runs at every modulus `md ≠ 0` (**`thetaRowsM_of_kubota`**: 
 with `M = 9·72·md` and the residues modulo `72·md` as the indices `i`; the active sets run over
 `admissible md t g` and the inactive primes over `tgPrimes md t g` (`sum_rowPs_admissible`).
 `thetaRows_of_kubota` is the case `md = 4`, and at `md = 4` the display's hypothesis `IsCoprime k₀ md` holds
-for every row of norm prime to `6` (`isCoprime_four_of_coprime6`).
+for every row of norm prime to `6`.
 -/
 
 open Real Set Filter MeasureTheory Complex NumberField Ideal Asymptotics UniqueFactorizationMonoid
@@ -501,12 +501,6 @@ theorem thetaRows_of_data {md : 𝓞 K} [NeZero md] {θ : ℂ → ℝ → ℂ} {
     push_cast
     field_simp
 
-/-- A row of norm prime to `6` is prime to `4`: at `md = 4` the hypothesis `IsCoprime k₀ md` of
-`ThetaRowsM` holds for every row of the display. -/
-theorem isCoprime_four_of_coprime6 {k : 𝓞 K} (h : (absNorm (span {k})).Coprime 6) : IsCoprime k 4 := by
-  have h2 := (isCoprime_two_of_odd (Nat.Coprime.coprime_dvd_right (by norm_num) h)).pow_right (n := 2)
-  rwa [show (2 : 𝓞 K) ^ 2 = 4 by norm_num] at h2
-
 /-- **The theta transformation for the rows, from the Kubota–Patterson theorem, at every modulus**:
 the display `KubotaTheta` implies `ThetaRowsM md` for every `md ≠ 0`. -/
 theorem thetaRowsM_of_kubota {md : 𝓞 K} [NeZero md] (hK : KubotaTheta) : ThetaRowsM md := by
@@ -542,7 +536,6 @@ end
 #print axioms Eis.finsum_eq_sum_range
 #print axioms Eis.rcls_rows
 #print axioms Eis.thetaRows_of_data
-#print axioms Eis.isCoprime_four_of_coprime6
 #print axioms Eis.thetaRowsM_of_kubota
 #print axioms Eis.thetaRows_of_kubota
 #print axioms Eis.ne_zero_of_kubotaTheta

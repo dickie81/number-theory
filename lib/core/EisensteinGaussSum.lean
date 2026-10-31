@@ -9,7 +9,6 @@ additive character `ψ` of `𝓞/P` with values in `ℂ`:
   - **`gaussSum_cubCharC_cube`**: `g(χ_P, ψ)³ = −N(P)·π` for `P = (π)` with `π ≡ 1 (mod 3)`. Mathlib's
     `gaussSum_pow_eq_prod_jacobiSum` gives `g³ = χ(−1)·N(P)·J(χ, χ)`, and `jacobiSum_eq_neg` gives
     `J = −π`. This is the release's `cubicGauss_normalized_cube_breveE` before normalization.
-  - `norm_gaussSum_cubCharC_sq`: `|g(χ_P, ψ)|² = N(P)`.
 * **Duplication** (general finite fields of odd characteristic, `ρ` the quadratic character):
   - `jacobiSum_self_dup`: `χ(4)·J(χ, χ) = J(χ, ρ)`, from `4x(1 − x) = 1 − (2x − 1)²` and the count
     `#{u : u² = t} = 1 + ρ(t)` (`sum_sq_eq`, from Mathlib's `quadraticChar_card_sqrts`);
@@ -137,14 +136,6 @@ theorem gaussSum_cubCharC_cube {π : 𝓞 K} (hπ : Primary π) (hP : P = span {
   simp only [show Finset.Ico 1 (3 - 1) = {1} by rfl, Finset.prod_singleton, pow_one]
   rw [cubCharC, jacobiSum_ringHomComp, jacobiSum_eq_neg P hP3 hπ hP, absNorm_eq_card]
   simp
-
-/-- `|g(χ_P, ψ)|² = N(P)`. -/
-theorem norm_gaussSum_cubCharC_sq {ψ : AddChar (𝓞 K ⧸ P) ℂ} (hψ : ψ.IsPrimitive) :
-    ‖gaussSum (cubCharC P hP3) ψ‖ ^ 2 = (absNorm P : ℝ) := by
-  have h := gaussSum_mul_gaussSum_eq_card (cubCharC_ne_one P hP3) hψ
-  rw [← star_gaussSum_eq, RCLike.star_def, Complex.mul_conj, ← absNorm_eq_card] at h
-  rw [← Complex.normSq_eq_norm_sq]
-  exact_mod_cast h
 
 end GaussCube
 
@@ -289,7 +280,6 @@ end Eis
 #print axioms Eis.gaussSum_dup
 #print axioms Eis.orderOf_cubCharC
 #print axioms Eis.gaussSum_cubCharC_cube
-#print axioms Eis.norm_gaussSum_cubCharC_sq
 #print axioms Eis.chi6_sq
 #print axioms Eis.chi6_cube
 #print axioms Eis.gaussSum_chi6

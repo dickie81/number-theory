@@ -3,12 +3,12 @@ import DHPacket
 
 /-! # The verified-numerics toolkit for the certificate
 
-Interval arithmetic by lemmas (`mul_bounds`, `add_bounds`, `inv_bounds`); two-sided Taylor bounds for `cos` and
-`sin` on `|x| ≤ 1` and `0 ≤ x ≤ 1` respectively, from the alternating series (`cos_bounds`, `sin_bounds`, error `x^12/12!` and `x^13/13!`);
-the tail bound of Mathlib's `Real.hasSum_log_one_add_inv`, giving `log(1 + 1/m)` to any precision by rational
-arithmetic (`log_one_add_inv_bounds`); and `κ` to fifteen decimals (`kappa_bounds`, from `√5` and the two sines
-). The tables downstream (`DHLogBounds`, `DHTrigBounds`, `DHCoeffs`, `DHTerms`; not the hand-written `DHConstants`) are
-generated from these lemmas and checked by the kernel. -/
+Interval arithmetic by lemmas (`mul_bounds`, `inv_bounds`); two-sided Taylor bounds for `cos` and `sin` on
+`|x| ≤ 1` and `0 ≤ x ≤ 1` respectively, from the alternating series (`cos_bounds`, `sin_bounds`, error `x^12/12!`
+and `x^13/13!`); the tail bound of Mathlib's `Real.hasSum_log_one_add_inv`, giving `log(1 + 1/m)` to any
+precision by rational arithmetic (`log_one_add_inv_bounds`); and `κ` to fifteen decimals (`kappa_bounds`, from
+`√5` and the two sines). The tables downstream (`DHLogBounds`, `DHTrigBounds`, `DHCoeffs`, `DHTerms`; not the
+hand-written `DHConstants`) are generated from these lemmas and checked by the kernel. -/
 
 namespace PsiOmega.Num
 
@@ -43,13 +43,6 @@ theorem mul_bounds {x y lo₁ hi₁ lo₂ hi₂ : ℝ} (h₁ : lo₁ ≤ x ∧ x
     rw [mul_comm y lo₁, mul_comm lo₂ lo₁, mul_comm hi₂ lo₁] at a
     rw [mul_comm y hi₁, mul_comm lo₂ hi₁, mul_comm hi₂ hi₁] at b
     exact max_le (a.trans (le_max_left _ _)) (b.trans (le_max_right _ _))
-
-theorem add_bounds {x y lo₁ hi₁ lo₂ hi₂ : ℝ} (h₁ : lo₁ ≤ x ∧ x ≤ hi₁) (h₂ : lo₂ ≤ y ∧ y ≤ hi₂) :
-    lo₁ + lo₂ ≤ x + y ∧ x + y ≤ hi₁ + hi₂ :=
-  ⟨add_le_add h₁.1 h₂.1, add_le_add h₁.2 h₂.2⟩
-
-theorem neg_bounds {x lo hi : ℝ} (h : lo ≤ x ∧ x ≤ hi) : -hi ≤ -x ∧ -x ≤ -lo :=
-  ⟨neg_le_neg h.2, neg_le_neg h.1⟩
 
 theorem inv_bounds {x lo hi : ℝ} (h : lo ≤ x ∧ x ≤ hi) (hlo : 0 < lo) : hi⁻¹ ≤ x⁻¹ ∧ x⁻¹ ≤ lo⁻¹ :=
   ⟨inv_anti₀ (hlo.trans_le h.1) h.2, inv_anti₀ hlo h.1⟩

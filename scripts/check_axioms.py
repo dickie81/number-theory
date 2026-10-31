@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Check the axioms of the papers' theorems: elaborate lib/check/Check.lean (with --all, CheckAll.lean; with
---zeta23, CheckZeta23.lean) after `lake build` and gate its output.
+--zeta23, CheckZeta23.lean; with --dh, CheckDH.lean) after `lake build` and gate its output.
 
 Every `#print axioms` line of the file must produce exactly one report, and every report must name only `propext`,
 `Classical.choice` and `Quot.sound` (any subset), or say that the declaration depends on no axioms. Any other axiom
@@ -17,7 +17,8 @@ STD = {"propext", "Classical.choice", "Quot.sound"}
 
 
 def main():
-    name = "CheckAll" if "--all" in sys.argv else "CheckZeta23" if "--zeta23" in sys.argv else "Check"
+    name = ("CheckAll" if "--all" in sys.argv else "CheckZeta23" if "--zeta23" in sys.argv
+            else "CheckDH" if "--dh" in sys.argv else "Check")
     path = os.path.join("lib", "check", name + ".lean")
     want = len(re.findall(r"^#print axioms ", open(os.path.join(ROOT, path), encoding="utf-8").read(), re.M))
     r = subprocess.run(["lake", "env", "lean", path], cwd=ROOT, capture_output=True, text=True)

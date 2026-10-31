@@ -17,8 +17,7 @@ value `d` the coefficients aggregate to `A₁(d) = Σ_{π₁(y₁) = d} |a₁(y�
   `n = B + r(ℓ − 1) − A`. `bdIB` is this bound without the factor `∏_j ‖𝓕g_j‖₁`.
 * `typeIB_sharp0`: `J` comparisons `I_j(y₁, y₂) ∈ [0, 1]`, replaced by smooth `G_j ∈ [0, 1]` of the forms `ℓ_j` with
   `|I_j − G_j| ≤ M_j(ℓ_j)` for smooth `M_j`. Then `|Σ_{y₁,y₂} a₁a₂ ∏_j I_j Σ_k w(k)dw(π₁π₂k)|` is at most
-  `∏_j ‖𝓕G_j‖₁·bdIB + Σ_j (2φ(q)⁻¹(B − A)Σ_y |a₁||a₂|M_j(ℓ_j) + ‖𝓕M_j‖₁·bdIB)`. `typeIB_sharp` is the same with a
-  smooth weight `h(ℓ₀) ≥ 0` on every term, and the factor `‖𝓕h‖₁` on the smooth terms.
+  `∏_j ‖𝓕G_j‖₁·bdIB + Σ_j (2φ(q)⁻¹(B − A)Σ_y |a₁||a₂|M_j(ℓ_j) + ‖𝓕M_j‖₁·bdIB)`.
 
 The proof:
 
@@ -27,7 +26,7 @@ The proof:
   fibres (`sum_fiber`) and restricted to the values prime to `q` (`dw_of_not_isUnit`), the twisted sum is the
   bilinear form of `SieveSpline.typeIB_spline`, with coefficients of size at most `A₁` and `A₂`;
   `norm_integral_prod_le` integrates the bound.
-* `typeIB_sharp0`, `typeIB_sharp`: `SieveFamily.norm_Dsum_sharp_le` over the triples `(y₁, y₂, k)`. Its smoothed sum
+* `typeIB_sharp0`: `SieveFamily.norm_Dsum_sharp_le` over the triples `(y₁, y₂, k)`. Its smoothed sum
   and near-boundary sums are `typeIB_smooth`'s, with the coefficients `|a₁|`, `|a₂|` for the latter (`bdIB_norm`), and
   the near-boundary masses carry the spline's mass `B − A` (`SieveSpline.sum_spl`).
 
@@ -71,11 +70,6 @@ theorem sum_fiber {ι : Type*} (Y : Finset ι) (π : ι → ℕ) (c : ι → ℂ
   rw [Finset.sum_mul]
   refine Finset.sum_congr rfl fun y hy => ?_
   rw [(Finset.mem_filter.1 hy).2]
-
-/-- The aggregate of `|c|` on a fibre bounds the aggregate of `c`. -/
-theorem norm_fiber_le {ι : Type*} (Y : Finset ι) (π : ι → ℕ) (c : ι → ℂ) (d : ℕ) :
-    ‖∑ y ∈ Y.filter (fun y => π y = d), c y‖ ≤ ∑ y ∈ Y.filter (fun y => π y = d), ‖c y‖ :=
-  norm_sum_le _ _
 
 /-- The fibres' aggregates of `|c|` sum to `Σ_{y∈Y} |c(y)|`. -/
 theorem sum_fiber_norm {ι : Type*} (Y : Finset ι) (π : ι → ℕ) (c : ι → ℂ) :
@@ -264,132 +258,7 @@ theorem bdIB_norm {ι₁ ι₂ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι�
       bdIB q Y₁ Y₂ π₁ π₂ a₁ a₂ A B ℓ r H F m := by
   simp only [bdIB, Complex.norm_real, Real.norm_eq_abs, abs_norm]
 
-/-- **Sharp comparisons.** Let `h ≥ 0` be a smooth weight of the form `ℓ₀ = φ₀(y₁) + ψ₀(y₂)`, and let `J` comparisons
-`I_j(y₁, y₂) ∈ [0, 1]` be replaced by smooth `G_j ∈ [0, 1]` of the forms `ℓ_j = φ_j(y₁) + ψ_j(y₂)`, with
-`|I_j − G_j| ≤ M_j(ℓ_j)` for smooth `M_j`. Then `|Σ_{y₁,y₂} a₁a₂h(ℓ₀) ∏_j I_j Σ_k w(k)dw(π₁π₂k)|` is at most
-`‖𝓕h‖₁∏_j ‖𝓕G_j‖₁·bd + Σ_j (2φ(q)⁻¹(B − A)Σ_y |a₁||a₂|h(ℓ₀)M_j(ℓ_j) + ‖𝓕h‖₁‖𝓕M_j‖₁·bd)`, with `bd = bdIB` of the
-coefficients. -/
-theorem typeIB_sharp (a : ZMod q) (ha : IsUnit a) {ι₁ ι₂ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂)
-    (π₁ : ι₁ → ℕ) (π₂ : ι₂ → ℕ) (a₁ : ι₁ → ℂ) (a₂ : ι₂ → ℂ) (h : ℝ → ℝ) (hh0 : ∀ u, 0 ≤ h u)
-    (hhc : Continuous (fun u => ((h u : ℝ) : ℂ))) (hhi : Integrable (fun u => ((h u : ℝ) : ℂ)))
-    (hhf : Integrable (𝓕 (fun u => ((h u : ℝ) : ℂ)))) (φ₀ : ι₁ → ℝ) (ψ₀ : ι₂ → ℝ)
-    {J : ℕ} (I : Fin J → ι₁ → ι₂ → ℝ)
-    (Gs Ms : Fin J → ℝ → ℝ) (hGc : ∀ j, Continuous (fun u => ((Gs j u : ℝ) : ℂ)))
-    (hGi : ∀ j, Integrable (fun u => ((Gs j u : ℝ) : ℂ))) (hGf : ∀ j, Integrable (𝓕 (fun u => ((Gs j u : ℝ) : ℂ))))
-    (hMc : ∀ j, Continuous (fun u => ((Ms j u : ℝ) : ℂ))) (hMi : ∀ j, Integrable (fun u => ((Ms j u : ℝ) : ℂ)))
-    (hMf : ∀ j, Integrable (𝓕 (fun u => ((Ms j u : ℝ) : ℂ))))
-    (φ : Fin J → ι₁ → ℝ) (ψ : Fin J → ι₂ → ℝ)
-    (hI : ∀ j y₁ y₂, 0 ≤ I j y₁ y₂ ∧ I j y₁ y₂ ≤ 1) (hG : ∀ j u, 0 ≤ Gs j u ∧ Gs j u ≤ 1)
-    (hIG : ∀ j y₁ y₂, |I j y₁ y₂ - Gs j (φ j y₁ + ψ j y₂)| ≤ Ms j (φ j y₁ + ψ j y₂))
-    (A B ℓ r : ℕ) (hℓ : 1 ≤ ℓ) {H Dm F m : ℕ}
-    (hπ₂ : ∀ y ∈ Y₂, 0 < π₂ y) (hDm : ∀ y ∈ Y₂, π₂ y ≤ Dm) (hDm1 : 1 ≤ Dm) (hq : 2 * H * Dm < q)
-    (hm : ∀ r : ZMod q, #((Y₁.image π₁).filter (fun d : ℕ => IsUnit (d : ZMod q) ∧ ((d : ZMod q))⁻¹ = r)) ≤ m)
-    (hF : ∀ t : ℤ, t ≠ 0 → t.natAbs ≤ H → ∀ y ∈ Y₂, (t.natAbs * π₂ y).divisors.card ≤ F) :
-    ‖∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, a₁ y₁ * a₂ y₂ * (((h (φ₀ y₁ + ψ₀ y₂) : ℝ) : ℂ) * ∏ j, (I j y₁ y₂ : ℂ)) *
-        ∑ k ∈ supp A B ℓ r, ((spl A B ℓ r k : ℝ) : ℂ) * SieveFamily.dw q a (π₁ y₁ * π₂ y₂ * k)‖ ≤
-      (∫ t, ‖𝓕 (fun u => ((h u : ℝ) : ℂ)) t‖) * (∏ j, ∫ t, ‖𝓕 (fun u => ((Gs j u : ℝ) : ℂ)) t‖) *
-          bdIB q Y₁ Y₂ π₁ π₂ a₁ a₂ A B ℓ r H F m +
-        ∑ j, (2 * (q.totient : ℝ)⁻¹ * (((B - A : ℕ) : ℝ) *
-            ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, ‖a₁ y₁‖ * ‖a₂ y₂‖ * h (φ₀ y₁ + ψ₀ y₂) * Ms j (φ j y₁ + ψ j y₂)) +
-          (∫ t, ‖𝓕 (fun u => ((h u : ℝ) : ℂ)) t‖) * (∫ t, ‖𝓕 (fun u => ((Ms j u : ℝ) : ℂ)) t‖) *
-            bdIB q Y₁ Y₂ π₁ π₂ a₁ a₂ A B ℓ r H F m) := by
-  classical
-  -- the family as a weighted difference over the triples `(y₁, y₂, k)`
-  set T := Y₁ ×ˢ (Y₂ ×ˢ supp A B ℓ r) with hT
-  set nn : ι₁ × ι₂ × ℕ → ℕ := fun x => π₁ x.1 * π₂ x.2.1 * x.2.2 with hnn
-  set w : ι₁ × ι₂ × ℕ → ℂ := fun x => a₁ x.1 * a₂ x.2.1 * ((h (φ₀ x.1 + ψ₀ x.2.1) : ℝ) : ℂ) *
-    ((spl A B ℓ r x.2.2 : ℝ) : ℂ) with hw
-  set ℓf : Fin J → ι₁ × ι₂ × ℕ → ℝ := fun j x => φ j x.1 + ψ j x.2.1 with hℓf
-  have hregroup : ∀ (b₁ : ι₁ → ℂ) (b₂ : ι₂ → ℂ) (c : ι₁ → ι₂ → ℂ),
-      SieveFamily.Dsum q a T nn (fun x => b₁ x.1 * b₂ x.2.1 * ((spl A B ℓ r x.2.2 : ℝ) : ℂ) * c x.1 x.2.1) =
-        ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, b₁ y₁ * b₂ y₂ * c y₁ y₂ *
-          ∑ k ∈ supp A B ℓ r, ((spl A B ℓ r k : ℝ) : ℂ) * SieveFamily.dw q a (π₁ y₁ * π₂ y₂ * k) := by
-    intro b₁ b₂ c
-    rw [SieveFamily.Dsum, hT, Finset.sum_product]
-    refine Finset.sum_congr rfl fun y₁ _ => ?_
-    rw [Finset.sum_product]
-    refine Finset.sum_congr rfl fun y₂ _ => ?_
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    simp only [hnn]
-    ring
-  -- a product over `Fin (J + 1)`: the weight `h` first
-  set g : Fin (J + 1) → ℝ → ℂ := Fin.cons (fun u => ((h u : ℝ) : ℂ)) (fun j u => ((Gs j u : ℝ) : ℂ)) with hgdef
-  set φ' : Fin (J + 1) → ι₁ → ℝ := Fin.cons φ₀ φ with hφ'
-  set ψ' : Fin (J + 1) → ι₂ → ℝ := Fin.cons ψ₀ ψ with hψ'
-  have hprod : ∀ y₁ y₂, ∏ i, g i (φ' i y₁ + ψ' i y₂) =
-      ((h (φ₀ y₁ + ψ₀ y₂) : ℝ) : ℂ) * ∏ j, ((Gs j (φ j y₁ + ψ j y₂) : ℝ) : ℂ) := by
-    intro y₁ y₂
-    rw [Fin.prod_univ_succ]
-    simp [hgdef, hφ', hψ']
-  have hgc : ∀ i, Continuous (g i) := fun i => Fin.cases hhc (fun j => hGc j) i
-  have hgi : ∀ i, Integrable (g i) := fun i => Fin.cases hhi (fun j => hGi j) i
-  have hgf : ∀ i, Integrable (𝓕 (g i)) := fun i => Fin.cases hhf (fun j => hGf j) i
-  have hsharp := SieveFamily.norm_Dsum_sharp_le (a := a) T nn w (fun j x => I j x.1 x.2.1)
-    (fun j x => Gs j (ℓf j x)) (fun j x => Ms j (ℓf j x)) (fun j x => hI j x.1 x.2.1) (fun j x => hG j (ℓf j x))
-    (fun j x => hIG j x.1 x.2.1)
-  have hw1 : ∀ c : ι₁ → ι₂ → ℂ, (fun x : ι₁ × ι₂ × ℕ => w x * c x.1 x.2.1) =
-      fun x => a₁ x.1 * a₂ x.2.1 * ((spl A B ℓ r x.2.2 : ℝ) : ℂ) *
-        (((h (φ₀ x.1 + ψ₀ x.2.1) : ℝ) : ℂ) * c x.1 x.2.1) := by
-    intro c; funext x; simp only [hw]; ring
-  have eI := hregroup a₁ a₂ (fun y₁ y₂ => ((h (φ₀ y₁ + ψ₀ y₂) : ℝ) : ℂ) * ∏ j, (I j y₁ y₂ : ℂ))
-  beta_reduce at eI
-  rw [hw1 (fun y₁ y₂ => ∏ j, (I j y₁ y₂ : ℂ)), eI] at hsharp
-  refine hsharp.trans (add_le_add ?_ (Finset.sum_le_sum fun j _ => add_le_add ?_ ?_))
-  · -- the smoothed family
-    have eG := hregroup a₁ a₂
-      (fun y₁ y₂ => ((h (φ₀ y₁ + ψ₀ y₂) : ℝ) : ℂ) * ∏ j, ((Gs j (φ j y₁ + ψ j y₂) : ℝ) : ℂ))
-    beta_reduce at eG
-    rw [hw1 (fun y₁ y₂ => ∏ j, ((Gs j (φ j y₁ + ψ j y₂) : ℝ) : ℂ)), eG]
-    have h1 := typeIB_smooth a ha Y₁ Y₂ π₁ π₂ a₁ a₂ hgc hgi hgf φ' ψ' A B ℓ r hℓ hπ₂ hDm hDm1 hq hm hF
-    simp only [hprod] at h1
-    refine h1.trans (le_of_eq ?_)
-    rw [Fin.prod_univ_succ]
-    simp only [hgdef, Fin.cons_zero, Fin.cons_succ, bdIB]
-  · -- the near-boundary mass
-    have hmass : ∑ x ∈ T, ‖w x‖ * Ms j (ℓf j x) =
-        ((B - A : ℕ) : ℝ) * ∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂,
-          ‖a₁ y₁‖ * ‖a₂ y₂‖ * h (φ₀ y₁ + ψ₀ y₂) * Ms j (φ j y₁ + ψ j y₂) := by
-      rw [hT, Finset.sum_product, Finset.mul_sum]
-      refine Finset.sum_congr rfl fun y₁ _ => ?_
-      rw [Finset.sum_product, Finset.mul_sum]
-      refine Finset.sum_congr rfl fun y₂ _ => ?_
-      have hk : ∀ k, ‖w (y₁, y₂, k)‖ * Ms j (ℓf j (y₁, y₂, k)) =
-          ‖a₁ y₁‖ * ‖a₂ y₂‖ * h (φ₀ y₁ + ψ₀ y₂) * Ms j (φ j y₁ + ψ j y₂) * spl A B ℓ r k := by
-        intro k
-        simp only [hw, hℓf, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (spl_nonneg _ _ _ _ _),
-          abs_of_nonneg (hh0 _)]
-        ring
-      simp only [hk]
-      rw [← Finset.mul_sum, sum_spl A B ℓ r hℓ]
-      ring
-    rw [hmass]
-  · -- the near-boundary family, smooth
-    set g2 : Fin 2 → ℝ → ℂ := ![fun u => ((h u : ℝ) : ℂ), fun u => ((Ms j u : ℝ) : ℂ)] with hg2
-    have hw' : (fun x : ι₁ × ι₂ × ℕ => ((‖w x‖ * Ms j (ℓf j x) : ℝ) : ℂ)) =
-        fun x => ((‖a₁ x.1‖ : ℝ) : ℂ) * ((‖a₂ x.2.1‖ : ℝ) : ℂ) * ((spl A B ℓ r x.2.2 : ℝ) : ℂ) *
-          ∏ i, g2 i (![φ₀, φ j] i x.1 + ![ψ₀, ψ j] i x.2.1) := by
-      funext x
-      simp only [hw, hℓf, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (spl_nonneg _ _ _ _ _),
-        abs_of_nonneg (hh0 _), Fin.prod_univ_two, hg2, Matrix.cons_val_zero, Matrix.cons_val_one]
-      push_cast
-      ring
-    have eM := hregroup (fun y => ((‖a₁ y‖ : ℝ) : ℂ)) (fun y => ((‖a₂ y‖ : ℝ) : ℂ))
-      (fun y₁ y₂ => ∏ i, g2 i (![φ₀, φ j] i y₁ + ![ψ₀, ψ j] i y₂))
-    beta_reduce at eM
-    rw [hw', eM]
-    have hg2c : ∀ i, Continuous (g2 i) := fun i => by fin_cases i <;> simp [hg2, hhc, hMc j]
-    have hg2i : ∀ i, Integrable (g2 i) := fun i => by fin_cases i <;> simp [hg2, hhi, hMi j]
-    have hg2f : ∀ i, Integrable (𝓕 (g2 i)) := fun i => by fin_cases i <;> simp [hg2, hhf, hMf j]
-    have h1 := typeIB_smooth a ha Y₁ Y₂ π₁ π₂ (fun y => ((‖a₁ y‖ : ℝ) : ℂ)) (fun y => ((‖a₂ y‖ : ℝ) : ℂ))
-      hg2c hg2i hg2f ![φ₀, φ j] ![ψ₀, ψ j] A B ℓ r hℓ hπ₂ hDm hDm1 hq hm hF
-    refine h1.trans (le_of_eq ?_)
-    have h2 := bdIB_norm (q := q) Y₁ Y₂ π₁ π₂ a₁ a₂ A B ℓ r H F m
-    rw [bdIB] at h2
-    rw [h2, Fin.prod_univ_two, bdIB]
-    simp [hg2]
-
-/-- **Sharp comparisons, with no base weight**: `typeIB_sharp` without `h`. The bound is
+/-- **Sharp comparisons, with no base weight**: the bound is
 `∏_j ‖𝓕G_j‖₁·bd + Σ_j (2φ(q)⁻¹(B − A)Σ_y |a₁||a₂|M_j(ℓ_j) + ‖𝓕M_j‖₁·bd)`. -/
 theorem typeIB_sharp0 (a : ZMod q) (ha : IsUnit a) {ι₁ ι₂ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂)
     (π₁ : ι₁ → ℕ) (π₂ : ι₂ → ℕ) (a₁ : ι₁ → ℂ) (a₂ : ι₂ → ℂ) {J : ℕ} (I : Fin J → ι₁ → ι₂ → ℝ)

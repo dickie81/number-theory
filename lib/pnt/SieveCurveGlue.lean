@@ -3,8 +3,8 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveTypeIIGen.typeII_gen` takes a curve `g` with `CurveCounts g` and `WindowOK g L m₁ m₂`. A curve made of many
-constant pieces `A_i(1 − σ)` (a staircase above a density curve) is glued here piece by piece.
+`SieveTypeIIHM.typeII_gen_hm` takes a curve `g` with `CurveCounts g` and the window condition `WindowOKHM`. A curve
+made of many constant pieces `A_i(1 − σ)` (a staircase above a density curve) is glued here piece by piece.
 
 *  `RangeCounts g lo hi`: the counts of `g` on `lo ≤ σ ≤ hi` (`CurveCounts` restricted to a range).
 *  `rangeCounts_of_density`: a density estimate `C(qT)^{A(1−σ)}(log qT)^{10}` on `[lo, hi]` gives
@@ -14,13 +14,14 @@ constant pieces `A_i(1 − σ)` (a staircase above a density curve) is glued her
 *  `rangeCounts_glue`: `RangeCounts g lo mid` and `RangeCounts g' mid hi` give
   `RangeCounts (fun σ => if σ < mid then g σ else g' σ) lo hi`.
 *  `curveCounts_of_range`: `RangeCounts g (1/2) 1` is `CurveCounts g`.
-*  `WindowPiece g L m₁ m₂ lo hi`: the two inequalities of `WindowOK` for `lo ≤ β ≤ hi`; `windowPiece_glue` glues two
-  pieces across an `if`; `windowOK_of_piece`: a piece on `[1/2, 11/12]` is `WindowOK`.
+*  `WindowPiece g L m₁ m₂ lo hi`: the window's two inequalities, the orthogonality branch of `WindowOKHM`, for
+  `lo ≤ β ≤ hi`.
 *  `windowPiece_affine` (and its forms `windowPiece_const` for `A(1 − β)` and `windowPiece_one` for `1`): for
   `g β = p − Aβ` on `[lo, hi]` (`A(1 − β)` is `p = A`; the trivial piece `1` is `p = 1`, `A = 0`), with `lo ≤ hi` and
   `m₁ ≤ m₂`, the inequalities at the corners `β ∈ {lo, hi}`, `m ∈ {m₁, 1, m₂}` (each where it lies in the range of its
   inequality) and `w ∈ {0, 4·10⁻⁶}` give the piece: on each range of `m` the exponent is affine in `w`, in `β` and in
-  `m` separately, so it is at most its values at the corners of the box.
+  `m` separately, so it is at most its values at the corners of the box; the tactic `corners` closes the corner
+  cases of `windowPiece_const` and `windowPiece_one`.
 
 The file imports `SieveTypeIIGen.lean`.
 -/
@@ -104,23 +105,11 @@ theorem rangeCounts_glue {g g' : ℝ → ℝ} {lo mid hi : ℝ} (h₁ : RangeCou
       _ ≤ max C₁ C₂ * ((q : ℝ) * T) ^ g' σ * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
           gcongr; exact le_max_right _ _
 
-/-- **The window's inequalities on a range of `β`**: `WindowOK g L m₁ m₂` restricted to `lo ≤ β ≤ hi`. -/
+/-- **The window's inequalities on a range of `β`**: the orthogonality branch of `WindowOKHM`, for `lo ≤ β ≤ hi`. -/
 def WindowPiece (g : ℝ → ℝ) (L m₁ m₂ lo hi : ℝ) : Prop :=
   ∀ β m w : ℝ, lo ≤ β → β ≤ hi → m₁ ≤ m → m ≤ m₂ → 0 ≤ w → w ≤ 4 / 10 ^ 6 →
     (m ≤ 1 → (L - m) * (β + w) + g β / 2 + (1 + m) / 2 ≤ L - 1 / 25000) ∧
     (1 ≤ m → (L - m) * (β + w) + g β / 2 + m ≤ L - 1 / 25000)
-
-theorem windowOK_of_piece {g : ℝ → ℝ} {L m₁ m₂ : ℝ} (h : WindowPiece g L m₁ m₂ (1 / 2) (11 / 12)) :
-    WindowOK g L m₁ m₂ := h
-
-/-- Gluing two pieces across `mid`. -/
-theorem windowPiece_glue {g g' : ℝ → ℝ} {L m₁ m₂ lo mid hi : ℝ} (h₁ : WindowPiece g L m₁ m₂ lo mid)
-    (h₂ : WindowPiece g' L m₁ m₂ mid hi) :
-    WindowPiece (fun β => if β < mid then g β else g' β) L m₁ m₂ lo hi := by
-  intro β m w hβ hβ1 hm hm1 hw hw1
-  by_cases hb : β < mid
-  · simp only [hb, ite_true]; exact h₁ β m w hβ hb.le hm hm1 hw hw1
-  · simp only [hb, ite_false]; exact h₂ β m w (not_lt.1 hb) hβ1 hm hm1 hw hw1
 
 /-- **A piece with an affine exponent `g β = p − Aβ`** (`A(1 − β)` is `p = A`; the trivial piece is `p = 1`, `A = 0`):
 for `lo ≤ hi` and `m₁ ≤ m₂`, the corner inequalities give the piece. For the inequality with `m ≤ 1` the corners are
@@ -239,5 +228,14 @@ theorem windowPiece_one {L m₁ m₂ lo hi : ℝ} (hlo : lo ≤ hi) (hm : m₁ �
       (w = 0 ∨ w = 4 / 10 ^ 6) → (L - m) * (β + w) + (1 - 0 * β) / 2 + m ≤ L - 1 / 25000) :
     WindowPiece (fun _ => (1 : ℝ)) L m₁ m₂ lo hi :=
   windowPiece_congr (fun β => by ring) (windowPiece_affine hlo hm hL1 hL2)
+
+set_option hygiene false in
+/-- The corner cases of `windowPiece_const` and `windowPiece_one`: the two values of `β`, the three of `m` where the
+side condition holds, the two of `w`, each closed by `norm_num` (a corner whose side condition is false, `m = m₂` with
+`m₂ ≤ 1` or `m = m₁` with `1 ≤ m₁`, is closed at `h`). -/
+macro "corners" : tactic =>
+  `(tactic| (intro β m w hb hm hw
+             rcases hb with rfl | rfl <;> rcases hm with ⟨rfl, h⟩ | ⟨rfl, h, h'⟩ | ⟨rfl, h⟩ <;>
+               rcases hw with rfl | rfl <;> (try norm_num at h) <;> norm_num ))
 
 end SieveCurveGlue

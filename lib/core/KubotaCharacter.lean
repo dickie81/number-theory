@@ -26,12 +26,8 @@ and the supplementary laws as periodicity modulo `9`.
 * **Trivial on `SL_2(ℤ) ∩ Γ_1(3)`** (**`kub_int`**, with `cub_cj`, `eq_one_of_cube_of_cj` and
   `cub_intCast`): `(x̄/ā)₃ = conj((x/a)₃)` from `chi3_map_cj`, so the symbol of rational integers
   is a cube root of unity fixed by conjugation.
-* **The extension** (`Gam3`, `Gam2`, `kub2` and `kubHom`, definitions; **`kub2_mul`**, with `mem_Gam3`,
-  `mem_Gam2`, `kub2_eq`, `kub2_toSL` and `kub2_Gam3`): `κ(hγ) = κ(γ)` for `h ∈ SL_2(ℤ)`, `γ ∈ Γ_1(3)` is
-  well defined and a homomorphism on `Γ_2`, `1` on `SL_2(ℤ)` and `κ` on `Γ_1(3)`.
-* **The cusps** (`mul_inv_mem_Gam3_of_cong`, Dunn and Radziwiłł's (5.3); **`gamPlus_not_mem_Gam2`**,
-  `gamMinus_not_mem_Gam2`, `gamPlus_mul_inv_gamMinus_not_mem_Gam2`): `Γ_2`, `Γ_2γ_+` and `Γ_2γ_−` are three
-  distinct cosets of `Γ_2\Γ`.
+* **The extension** (`Gam3`, `Gam2` and `kub2`, definitions; **`kub2_mul`**, with `mem_Gam3`, `mem_Gam2` and
+  `kub2_eq`): `κ(hγ) = κ(γ)` for `h ∈ SL_2(ℤ)`, `γ ∈ Γ_1(3)` is well defined and a homomorphism on `Γ_2`.
 -/
 
 open NumberField Ideal UniqueFactorizationMonoid Complex
@@ -480,92 +476,6 @@ theorem kub2_mul {g g' : SL(2, 𝓞 K)} (hg : g ∈ Gam2) (hg' : g' ∈ Gam2) :
   rw [kub2_eq (h * h') (by rw [e]; exact mul_mem hc hh'), kub2_eq h hh, kub2_eq h' hh', e,
     kub_mul_Gam3 hc hh', kub_conj_toSL h' hh]
 
-theorem kub2_toSL (h : SL(2, ℤ)) : kub2 (toSL h) = 1 := by
-  rw [kub2_eq h (by rw [inv_mul_cancel]; exact one_mem _), inv_mul_cancel,
-    Matrix.SpecialLinearGroup.coe_one, kub_one]
-
-theorem kub2_Gam3 {γ : SL(2, 𝓞 K)} (hγ : γ ∈ Gam3) : kub2 γ = kub ↑γ := by
-  rw [kub2_eq 1 (by rwa [map_one, inv_one, one_mul]), map_one, inv_one, one_mul]
-
-/-- **Kubota's character as a homomorphism `Γ_2 → ℂ`**. -/
-def kubHom : Gam2 →* ℂ where
-  toFun g := kub2 g
-  map_one' := by
-    show kub2 1 = 1
-    rw [← map_one toSL]; exact kub2_toSL 1
-  map_mul' g g' := kub2_mul g.2 g'.2
-
-/-- **Dunn and Radziwiłł's (5.3)**: `g ≡ g′ (mod 3)` gives `g′g⁻¹ ∈ Γ_1(3) ⊆ Γ_2`, so `Γ_2g = Γ_2g′`. -/
-theorem mul_inv_mem_Gam3_of_cong {g g' : SL(2, 𝓞 K)}
-    (h : Matrix.SpecialLinearGroup.map (Ideal.Quotient.mk (span {(3 : 𝓞 K)})) g =
-      Matrix.SpecialLinearGroup.map (Ideal.Quotient.mk (span {(3 : 𝓞 K)})) g') :
-    g' * g⁻¹ ∈ Gam3 := by
-  rw [Gam3, MonoidHom.mem_ker, map_mul, map_inv, h, mul_inv_cancel]
-
-theorem Gam3_le_Gam2 : Gam3 ≤ Gam2 := le_sup_right
-
-/-- `3 ∣ m + nω` forces `3 ∣ n`. -/
-theorem three_dvd_of_dvd_coords {m n : ℤ} (h : (3 : 𝓞 K) ∣ (m : 𝓞 K) + n * ω) : (3 : ℤ) ∣ n := by
-  obtain ⟨z, hz⟩ := h
-  obtain ⟨x, y, rfl⟩ := exists_coords z
-  have e : crd ![m, n] = crd ![3 * x, 3 * y] := by
-    simp only [crd, Matrix.cons_val_zero, Matrix.cons_val_one]
-    push_cast; rw [hz]; ring
-  have := congrFun (crd_injective e) 1
-  simp only [Matrix.cons_val_one] at this
-  exact ⟨y, this⟩
-
-/-- An element of `Γ_2` has its lower-left entry congruent to a rational integer modulo `3`. -/
-theorem exists_int_of_mem_Gam2 {g : SL(2, 𝓞 K)} (hg : g ∈ Gam2) :
-    ∃ n : ℤ, (3 : 𝓞 K) ∣ (g : Matrix (Fin 2) (Fin 2) (𝓞 K)) 1 0 - n := by
-  obtain ⟨h, hh⟩ := mem_Gam2.1 hg
-  have e : g = toSL h * ((toSL h)⁻¹ * g) := by group
-  have h3 := mem_Gam3.1 hh
-  set γ := (toSL h)⁻¹ * g
-  refine ⟨(h : Matrix (Fin 2) (Fin 2) ℤ) 1 0, ?_⟩
-  rw [e, Matrix.SpecialLinearGroup.coe_mul, coe_toSL]
-  obtain ⟨a, b, c, d, hγ⟩ := exists_fin_two_eq (γ : Matrix (Fin 2) (Fin 2) (𝓞 K))
-  rw [hγ] at h3 ⊢
-  rw [modThree_iff] at h3
-  obtain ⟨⟨t, ht⟩, -, ⟨l, hl⟩, -⟩ := h3
-  simp only [Matrix.mul_apply, Fin.sum_univ_two, Matrix.map_apply, eq_intCast, Matrix.of_apply,
-    Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.empty_val',
-    Matrix.cons_val_fin_one]
-  exact ⟨(h : Matrix (Fin 2) (Fin 2) ℤ) 1 0 * t + (h : Matrix (Fin 2) (Fin 2) ℤ) 1 1 * l, by
-    linear_combination ((h : Matrix (Fin 2) (Fin 2) ℤ) 1 0 : 𝓞 K) * ht +
-      ((h : Matrix (Fin 2) (Fin 2) ℤ) 1 1 : 𝓞 K) * hl⟩
-
-/-- The cusp representative `γ_+` as an element of `SL_2(𝓞)`. -/
-def gamPlusSL : SL(2, 𝓞 K) := ⟨gamPlus, by simp [gamPlus, Matrix.det_fin_two_of]⟩
-/-- The cusp representative `γ_−` as an element of `SL_2(𝓞)`. -/
-def gamMinusSL : SL(2, 𝓞 K) := ⟨gamMinus, by simp [gamMinus, Matrix.det_fin_two_of]⟩
-
-theorem not_mem_Gam2_of_entry {g : SL(2, 𝓞 K)} {m k : ℤ}
-    (hg : (g : Matrix (Fin 2) (Fin 2) (𝓞 K)) 1 0 = (m : 𝓞 K) + k * ω) (hk : ¬ (3 : ℤ) ∣ k) :
-    g ∉ Gam2 := by
-  intro hmem
-  obtain ⟨n, hn⟩ := exists_int_of_mem_Gam2 hmem
-  rw [hg] at hn
-  apply hk
-  apply three_dvd_of_dvd_coords (m := m - n)
-  convert hn using 1; push_cast; ring
-
-/-- **The three cusps of the display lie in distinct cosets of `Γ_2\Γ`**: `γ_+`, `γ_−` and `γ_+γ_−⁻¹`
-are not in `Γ_2`, so `Γ_2`, `Γ_2γ_+` and `Γ_2γ_−` are distinct. -/
-theorem gamPlus_not_mem_Gam2 : gamPlusSL ∉ Gam2 :=
-  not_mem_Gam2_of_entry (m := 0) (k := 1) (by simp [gamPlusSL, gamPlus]) (by norm_num)
-
-theorem gamMinus_not_mem_Gam2 : gamMinusSL ∉ Gam2 :=
-  not_mem_Gam2_of_entry (m := -1) (k := -1)
-    (by simp [gamMinusSL, gamMinus]; linear_combination ω_sq_add) (by norm_num)
-
-theorem gamPlus_mul_inv_gamMinus_not_mem_Gam2 : gamPlusSL * gamMinusSL⁻¹ ∉ Gam2 := by
-  refine not_mem_Gam2_of_entry (m := 1) (k := 2) ?_ (by norm_num)
-  rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_inv]
-  simp [gamPlusSL, gamMinusSL, gamPlus, gamMinus, Matrix.adjugate_fin_two_of, Matrix.mul_apply,
-    Fin.sum_univ_two]
-  linear_combination (-1 : 𝓞 K) * ω_sq_add
-
 end Eis
 
 #print axioms Eis.cub_sub_comp
@@ -599,13 +509,3 @@ end Eis
 #print axioms Eis.mem_Gam2
 #print axioms Eis.kub2_eq
 #print axioms Eis.kub2_mul
-#print axioms Eis.kub2_toSL
-#print axioms Eis.kub2_Gam3
-#print axioms Eis.mul_inv_mem_Gam3_of_cong
-#print axioms Eis.Gam3_le_Gam2
-#print axioms Eis.three_dvd_of_dvd_coords
-#print axioms Eis.exists_int_of_mem_Gam2
-#print axioms Eis.not_mem_Gam2_of_entry
-#print axioms Eis.gamPlus_not_mem_Gam2
-#print axioms Eis.gamMinus_not_mem_Gam2
-#print axioms Eis.gamPlus_mul_inv_gamMinus_not_mem_Gam2

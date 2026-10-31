@@ -27,9 +27,8 @@ proved for θ's Fourier series. This file assembles it, at `r = Y = 1`, and with
 * **The twisted family** (**`meanSquareNu`**): for a character
   `ν` modulo any `md ≠ 0` with `4 ∣ md`, the mean square of the family with the coefficients `ν(pgen 𝔞 mod md)`
   at every `σ > 0` (`MeanSquareC`, through `meanSquareNu_of_dualMeanSquareM`).
-* **The half-plane** (**`ne_zero_of_re_gt_eleven_twelfths`** and **`exists_zeroFree_halfPlane`**): `ζ(s) ≠ 0`
-  and `L(s, χ₋₃) ≠ 0` for every `s` with `Re s > 11/12` (`ne_zero_of_kubotaTheta`), so there is
-  `θ < 1` with `ζ(s) ≠ 0` on `Re s > θ`.
+* **The half-plane** (**`ne_zero_of_re_gt_eleven_twelfths`**): `ζ(s) ≠ 0` and `L(s, χ₋₃) ≠ 0` for every `s`
+  with `Re s > 11/12` (`ne_zero_of_kubotaTheta`).
 -/
 
 open Complex NumberField Ideal
@@ -105,15 +104,9 @@ theorem ne_zero_of_re_gt_eleven_twelfths {s : ℂ} (hs : 11 / 12 < s.re) :
     riemannZeta s ≠ 0 ∧ DirichletCharacter.LFunction PsiOmega.chi3 s ≠ 0 :=
   ne_zero_of_kubotaTheta kubotaTheta hs
 
-/-- **A zero-free half-plane for `ζ`**: there is `θ < 1` with `ζ(s) ≠ 0` for every `s` with `Re s > θ`
-(`θ = 11/12`). -/
-theorem exists_zeroFree_halfPlane : ∃ θ : ℝ, θ < 1 ∧ ∀ s : ℂ, θ < s.re → riemannZeta s ≠ 0 :=
-  ⟨11 / 12, by norm_num, fun _ hs => (ne_zero_of_re_gt_eleven_twelfths hs).1⟩
-
 end Eis
 
 end
-
 
 #print axioms Eis.kubotaTheta
 #print axioms Eis.thetaRows
@@ -127,4 +120,3 @@ end
 #print axioms Eis.dualMeanSquareM
 #print axioms Eis.meanSquareNu
 #print axioms Eis.ne_zero_of_re_gt_eleven_twelfths
-#print axioms Eis.exists_zeroFree_halfPlane

@@ -40,7 +40,6 @@ theorem gA_nonneg (q : ℕ) (a : ZMod q) (n : ℕ) : 0 ≤ gA q a n := by unfold
 theorem gU_nonneg (q n : ℕ) : 0 ≤ gU q n := by unfold gU; split_ifs <;> norm_num
 theorem gU_le_one (q n : ℕ) : gU q n ≤ 1 := by unfold gU; split_ifs <;> norm_num
 theorem rng_nonneg (N₁ N₂ d k : ℕ) : 0 ≤ rng N₁ N₂ d k := by unfold rng; split_ifs <;> norm_num
-theorem dv_nonneg (f m : ℕ) : 0 ≤ dv f m := by unfold dv; split_ifs <;> norm_num
 
 /-- `dw = gA − gU/φ(q)`. -/
 theorem dw_eq (q : ℕ) (a : ZMod q) (n : ℕ) :

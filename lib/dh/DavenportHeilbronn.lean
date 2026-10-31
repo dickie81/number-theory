@@ -122,15 +122,6 @@ theorem chi5_inv_apply (a : ZMod 5) : chi5⁻¹ a = (starRingEnd ℂ) (chi5 a) :
 
 theorem chi5_inv_ne_one : chi5⁻¹ ≠ 1 := fun h => chi5_ne_one (inv_eq_one.mp h)
 
-theorem chi5_inv_odd : chi5⁻¹.Odd := by
-  show chi5⁻¹ (-1) = -1
-  rw [chi5_inv_apply, zmod5_neg_one, chi5_apply_four, map_neg, map_one]
-
-theorem chi5_inv_isPrimitive : chi5⁻¹.IsPrimitive := by
-  show conductor chi5⁻¹ = 5
-  rw [conductor_inv]
-  exact chi5_isPrimitive
-
 /-! ## The Gauss sum -/
 
 theorem zmod5_univ : (Finset.univ : Finset (ZMod 5)) = {0, 1, 2, 3, 4} := by decide
@@ -291,10 +282,6 @@ theorem dhLam_eq (hodd : χ.Odd) {s : ℂ} (hs : 0 < s.re) :
   rw [completed_eq_mul hs, completed_eq_mul hs, hodd.gammaFactor_def, hodd'.gammaFactor_def]
   ring
 
-/-- Zeros of `Λ_{DH}` are symmetric under `s ↦ 1 − s`. -/
-theorem dhLam_one_sub_eq_zero_iff (hχ : χ ≠ 1) (hprim : χ.IsPrimitive) (s : ℂ) :
-    dhLam χ (1 - s) = 0 ↔ dhLam χ s = 0 := by rw [dhLam_one_sub χ hχ hprim]
-
 /-- On `Re s > 0` the zeros of `DH` are those of `Λ_{DH}`. -/
 theorem dhL_eq_zero_iff (hodd : χ.Odd) {s : ℂ} (hs : 0 < s.re) :
     dhL χ s = 0 ↔ dhLam χ s = 0 := by
@@ -379,10 +366,6 @@ theorem dh_eq_zero_iff {s : ℂ} (hs : 0 < s.re) : dh s = 0 ↔ dhLam chi5 s = 0
 theorem dh_zero_symm {s : ℂ} (hs : 0 < s.re) (hs1 : s.re < 1) : dh (1 - s) = 0 ↔ dh s = 0 := by
   have h1 : 0 < (1 - s).re := by simp; linarith
   rw [dh_eq_zero_iff h1, dh_eq_zero_iff hs, dh_functional_equation]
-
-theorem dh_tendsto :
-    Tendsto (fun x : ℝ => dh x) atTop (𝓝 (2 + rootNumber chi5 + rootNumber chi5⁻¹)) :=
-  dhL_tendsto chi5
 
 end PsiOmega
 

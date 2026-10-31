@@ -7,9 +7,9 @@ Riemann's kernel `Φ(u) = Σ_{n≥1} (2π²n⁴e^{9u/2} − 3πn²e^{5u/2}) e^{�
 
   `∫_ℝ Φ(u) e^{izu} du = Ξ(z)/2`   for every `z ∈ ℂ`   (`RPhiHat_eq`),
 
-with `Ξ(z) = ξ(½ + iz)` built from Mathlib's `completedRiemannZeta₀`. This discharges
-`KernelApprox` for `φ_n = Φ` (KernelChain.lean). Since `Φ > 0` (`RPhi_pos`), `Ξ(it) = 2∫Φ(u)e^{−tu}du > 0`,
-so `ξ(σ) ≠ 0` for real `σ` (`xi_real_ne_zero`), giving `Ξ(0) ≠ 0` and `ζ(σ) ≠ 0` on `(0, 1)`.
+with `Ξ(z) = ξ(½ + iz)` built from Mathlib's `completedRiemannZeta₀`. Since `Φ > 0` (`RPhi_pos`),
+`Ξ(it) = 2∫Φ(u)e^{−tu}du > 0`, so `ξ(σ) ≠ 0` for real `σ` (`xi_real_ne_zero`), giving `Ξ(0) ≠ 0` and `ζ(σ) ≠ 0`
+on `(0, 1)`.
 
 * **Half-plane (`integral_RPhi_halfplane`).** For `Im z < −½` (`Re s > 1`, `s = ½ + iz`), each term
   integrates to `(s(s−1)/4)(πn²)^{−s/2}Γ(s/2)` by the substitution `x = e^{2u}` and Euler's integral
@@ -681,10 +681,6 @@ theorem RPhi_decay_gen (B : ℝ) : ∃ C, 0 ≤ C ∧ ∀ u, |RPhi u| ≤ C * Re
   · rw [abs_of_nonneg hu]; exact hpos u hu
   · rw [abs_of_neg hu, ← RPhi_even]; exact hpos (-u) (by linarith)
 
-/-- **Decay of Riemann's kernel**: `|Φ(u)| ≤ C e^{−2|u|}`. -/
-theorem RPhi_decay : ∃ C, 0 ≤ C ∧ ∀ u, |RPhi u| ≤ C * Real.exp (-2 * |u|) :=
-  RPhi_decay_gen 2
-
 theorem continuous_RPhi : Continuous RPhi := by
   refine continuous_iff_continuousAt.2 fun y => ?_
   have hc : ContinuousOn RPhi (Ioo (y - 1) (y + 1)) :=
@@ -869,18 +865,6 @@ theorem riemannZeta_ne_zero_of_mem_Ioo {σ : ℝ} (h0 : 0 < σ) (h1 : σ < 1) :
     have : (0 : ℝ) ≤ n := n.cast_nonneg
     linarith⟩
 
-theorem memLp_RPhi : MemLp RPhi 2 volume := by
-  obtain ⟨C, hC0, hC⟩ := RPhi_decay
-  have hg : MemLp (fun u : ℝ => C * Real.exp (-2 * |u|)) 2 volume := by
-    rw [memLp_two_iff_integrable_sq (by fun_prop)]
-    refine ((integrable_exp_neg_abs (by norm_num : (0 : ℝ) < 4)).const_mul (C ^ 2)).congr
-      (Eventually.of_forall fun u => ?_)
-    simp only; rw [mul_pow, ← Real.exp_nat_mul]; ring_nf
-  refine hg.of_le continuous_RPhi.aestronglyMeasurable (Eventually.of_forall fun u => ?_)
-  rw [Real.norm_eq_abs, Real.norm_eq_abs,
-    abs_of_nonneg (show 0 ≤ C * Real.exp (-2 * |u|) from mul_nonneg hC0 (Real.exp_pos _).le)]
-  exact hC u
-
 end WeilForm
 
 #print axioms WeilForm.integral_exp_theta_term
@@ -895,7 +879,3 @@ end WeilForm
 #print axioms WeilForm.xi_real_ne_zero
 #print axioms WeilForm.Xi_zero_ne_zero
 #print axioms WeilForm.riemannZeta_ne_zero_of_mem_Ioo
-
-
-
-

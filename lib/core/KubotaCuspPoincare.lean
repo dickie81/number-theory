@@ -11,9 +11,8 @@ and `ν = ρ_G dμ`:
   `measurable_pmSerT` and `norm_pmTermT`): for `m` with `ĕ(m·3x/9) = χ_t(x)` for every `x`,
   `P^{(t)}_m(ψ)(w) = Σ_{(c, d)} conj κ_t(γ_{(c, d)})·ψ(v(γ_{(c, d)}w))·ĕ(m·z(γ_{(c, d)}w)/9)` is automorphic
   with `κ_t`.
-* **The series at the cusp** (`pmSerC`, a definition; `kubT_conj_inv`, **`isAut_pmSerC`**,
-  `measurable_pmSerC`, `tsum_enorm_pmTermT_eq`, **`memLp_pmSerC`** and `memLp_pmSerC_Icc`):
-  `Q_t = P^{(t)}_m(ψ)∘γ_t⁻¹` is automorphic with Kubota's character, and it is in `L²(ν)` under the
+* **The series at the cusp** (`pmSerC`, a definition; `measurable_pmSerC`, `tsum_enorm_pmTermT_eq`,
+  **`memLp_pmSerC`** and `memLp_pmSerC_Icc`): `Q_t = P^{(t)}_m(ψ)∘γ_t⁻¹` is in `L²(ν)` under the
   conditions on `ψ`, since its terms have the absolute values of the terms of `E(ψ)` at `γ_t⁻¹·w`.
 * **Unfolding** (**`integral_conj_lowT_inv_mul`**, `conj_pmTermT_mul`, `conj_pmSerT_mul`,
   **`integral_conj_pmSerT_mul`** and **`inner_toLp_pmSerC`**): the change of variables by `γ_t`, with the
@@ -109,19 +108,6 @@ theorem norm_pmTermT (t m : 𝓞 K) (ψ : ℝ → ℂ) (p : ℂ × ℝ) (cd : BR
 
 /-- **The Poincaré series at the cusp `γ_t`**: `Q_t = P^{(t)}_m(ψ)∘γ_t⁻¹`. -/
 def pmSerC (t m : 𝓞 K) (ψ : ℝ → ℂ) (p : ℂ × ℝ) : ℂ := pmSerT t m ψ (slAct (lowT t)⁻¹ p)
-
-/-- `κ_t(γ_t⁻¹·g·γ_t) = κ(g)`. -/
-theorem kubT_conj_inv (t : 𝓞 K) {g : SL(2, 𝓞 K)} : kubT t ((lowT t)⁻¹ * g * lowT t) = kub ↑g := by
-  unfold kubT
-  rw [show lowT t * ((lowT t)⁻¹ * g * lowT t) * (lowT t)⁻¹ = g by group]
-
-/-- **`Q_t` is automorphic with Kubota's character**, for `m` in the class (`conj_mem_Gam3`). -/
-theorem isAut_pmSerC {t m : 𝓞 K} (hm : CuspClass t m) (ψ : ℝ → ℂ) :
-    IsAut Gam3 (fun g => kub ↑g) (pmSerC t m ψ) := by
-  intro g hg p hp
-  show pmSerT t m ψ (slAct (lowT t)⁻¹ (slAct g p)) = kub ↑g * pmSerT t m ψ (slAct (lowT t)⁻¹ p)
-  rw [← slAct_mul _ _ hp, show (lowT t)⁻¹ * g = ((lowT t)⁻¹ * g * lowT t) * (lowT t)⁻¹ by group,
-    slAct_mul _ _ hp, isAut_pmSerT hm ψ _ (conj_mem_Gam3 hg (lowT t)) _ (slAct_mem _ hp), kubT_conj_inv]
 
 /-- `Q_t` is measurable. -/
 theorem measurable_pmSerC (t m : 𝓞 K) {ψ : ℝ → ℂ} (hψ : Measurable ψ) : Measurable (pmSerC t m ψ) :=
@@ -386,8 +372,6 @@ end
 #print axioms Eis.measurable_pmTermT
 #print axioms Eis.measurable_pmSerT
 #print axioms Eis.norm_pmTermT
-#print axioms Eis.kubT_conj_inv
-#print axioms Eis.isAut_pmSerC
 #print axioms Eis.measurable_pmSerC
 #print axioms Eis.tsum_enorm_pmTermT_eq
 #print axioms Eis.memLp_pmSerC

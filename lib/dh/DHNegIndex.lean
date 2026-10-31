@@ -20,7 +20,7 @@ combinations from `QDHu_hasSum` with a width-3 strip test for twin combinations
 (WeilIndexInfinite.lean) at the instance `dhND`. **The payoff** (`negIndex_ge_of_located`): `n` located
 off-line zeros — `‖ρ_k − c_k‖ < 1/100` with centres `c_k` right of `Re s = 1/100`, at least `1/100`
 from the line and pairwise at least `2/100` from each other's quadruple images — give an
-`n`-dimensional negative space of `Q_dh`, at every larger support (`negIndex_ge_mono`). Not ported:
+`n`-dimensional negative space of `Q_dh`. Not ported:
 `negDirections_above`, `negDirections_of_quadruples`, `negIndex_eq_quadruples`, whose
 finiteness hypotheses fail for `dh` (infinitely many off-line zeros). -/
 
@@ -43,17 +43,6 @@ theorem tau3_re_ne (i : ZD) : (tau3 i).re ≠ 0 := PsiOmega.tau3_re_ne i
 
 def PD (i : ZD) : ℂ := 2 * I * tau3 i
 
-theorem re_PD (i : ZD) : (PD i).re = -(2 * (tau3 i).im) := by simp [PD]
-
-theorem im_PD (i : ZD) : (PD i).im = 2 * (tau3 i).re := by simp [PD]
-
-theorem abs_re_PD (i : ZD) : |(PD i).re| < 1 := by
-  rw [re_PD, abs_neg, abs_mul, abs_two]
-  have := tau3_im_lt i; linarith
-
-theorem im_PD_ne (i : ZD) : (PD i).im ≠ 0 := by
-  rw [im_PD]; exact mul_ne_zero two_ne_zero (tau3_re_ne i)
-
 /-- Local finiteness from the Hadamard product of `Ξ₃` (the column of `finite_poleP`; DHTwin's
 `finite_tau3`). -/
 theorem finite_PD (R : ℝ) : {i : ZD | ‖PD i‖ ≤ R}.Finite := PsiOmega.finite_tau3 R
@@ -71,9 +60,6 @@ theorem summable_G0D_sq : Summable fun i : ZD => ‖G0D i‖ ^ 2 := by
     summable_norm_iff.2 h.summable
   refine (hs.div_const 2).congr fun i => ?_
   simp only [G0D, norm_mul, norm_pow, Complex.norm_two]; ring
-
-theorem twinPoles_dh : TwinLandau.TwinPoles PD (fun i => G0D i ^ 2) :=
-  ⟨summable_G0D_sq.congr fun i => by rw [norm_pow], abs_re_PD, im_PD_ne, finite_PD⟩
 
 /-- **Twin combinations pass the width-3 strip test.** -/
 theorem striptest_twinComb3 {c : NNReal →₀ ℝ} {A : ℝ} (h : Fits c A) :
@@ -191,7 +177,6 @@ theorem quad_of_orb {ρ ρ' : ℂ} {t t' : ℂ}
     have := cancel _ _ e
     linear_combination this
 
-
 /-! ## An instance of `NegData` at `dh` -/
 
 /-- **The zeros of `Ξ₃` as negative-index data** (`κ = 3`, `w = 2`, the width-3 strip test). -/
@@ -291,18 +276,7 @@ theorem negIndex_ge_of_located {n : ℕ} (c : Fin n → ℂ)
       exact hno k l (fun h => hrs (by rw [h])))
   exact ⟨a, ha, V, hV.trans hcard, hpr, hneg⟩
 
-/-- Monotonicity: the same space works at every larger support (`QDHu` has no window). -/
-theorem negIndex_ge_mono {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) {V : Submodule ℝ (ℝ → ℝ)}
-    (hpr : ∀ v ∈ V, Probe a v ∧ ∃ K, StripTest (fun z => ghatC v a (3 * z) ^ 2) K) :
-    ∀ v ∈ V, Probe b v ∧ ∃ K, StripTest (fun z => ghatC v b (3 * z) ^ 2) K := by
-  intro v hv
-  refine ⟨(hpr v hv).1.mono hab, ?_⟩
-  obtain ⟨K, hK⟩ := (hpr v hv).2
-  have hg : ∀ z, ghatC v b z = ghatC v a z := fun z => ghatC_mono ha hab (hpr v hv).1.supp z
-  exact ⟨K, by simpa only [hg] using hK⟩
-
 end DHNegIndex
 
 #print axioms DHNegIndex.negDirections_offline_dh
 #print axioms DHNegIndex.negIndex_ge_of_located
-#print axioms DHNegIndex.negIndex_ge_mono

@@ -21,7 +21,7 @@ constructs these data and proves the expansion of every translate of a group at 
   with its series, and the class `δ₀` of `δ′` modulo `9εc₀`), every translate is `κ₀∏_Pχ_P(s_Ph_P)²` times
   the series at `H` in the coordinates of (A.9), with the cusp shift as the phase `ψ_{λ³c}(−mδ′)`. Here
   `‖κ₀‖ = 1`, `δ′ ≡ δ₀ (mod 9εc₀)` and `δ′s_Ph_P ≡ 1 (mod π_P)`.
-* **The parameters exist** (`group_params`, **`group_cusp_exists`**).
+* **The parameters exist** (`group_params`).
 -/
 
 open NumberField Ideal UniqueFactorizationMonoid Complex
@@ -594,32 +594,6 @@ theorem group_params {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {c0 cP cM : ℂ} {τ 
     exact ⟨g₀, a₀, c₀, x, ε, _, cH, dH, 9 * p, hg, hLg, hac, hx, hdH, hs,
       Or.inr ⟨hε', ⟨p, rfl⟩, ⟨-q, by linear_combination hpq⟩, _, by simp, rfl⟩⟩
 
-/-- **The cusp data of a group**, with the parameters chosen: for a group `(h₀, A)` with the
-primes of `A` prime to `L`, there are `D ∣ L`, a unimodular `κ₀`, a series `(c_H, d_H)` under the
-support and size condition, a class `δ₀` and factors `s_P ∉ P` such that every translate of the
-group is `κ₀∏_Pχ_P(s_Ph_P)²` times the series at `−W` with the phase `ψ_{λ³c}(−mδ′)`, `c = D∏_Pπ_P`,
-`δ′ ≡ δ₀ (mod 9D)` and `δ′s_Ph_P ≡ 1 (mod π_P)`. -/
-theorem group_cusp_exists {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {c0 cP cM : ℂ} {τ tP tM : 𝓞 K → ℂ}
-    (hd : KubotaData θ Kc c0 cP cM τ tP tM) {L : 𝓞 K} (hL : L ≠ 0) (h₀ : 𝓞 K ⧸ span {L}) (A : Finset Pr)
-    (hA : ∀ P ∈ A, L ∉ P.1) :
-    ∃ (D : 𝓞 K) (cH : ℂ) (dH : 𝓞 K → ℂ) (κ₀ : ℂ) (δ₀ : 𝓞 K) (s : Pr → 𝓞 K),
-      D ≠ 0 ∧ D ∣ L ∧ ThetaSupp Kc dH ∧ ‖κ₀‖ = 1 ∧ (∀ P ∈ A, s P ∉ P.1) ∧
-      ∀ h : (P : A) → 𝓞 K ⧸ span {πP P.1}, (∀ P, h P ≠ 0) →
-        ∃ δ : 𝓞 K, 9 * D ∣ δ - δ₀ ∧ (∀ P : A, δ * (s P.1 * repQ (πP P.1) (h P)) - 1 ∈ P.1.1) ∧
-          ∀ z (v : ℝ), 0 < v → θ (z + trShift L ⟨(h₀, A), h⟩) v =
-            κ₀ * (∏ P : A, chiP P.1.1 (s P.1 * repQ (πP P.1) (h P)) ^ 2) *
-              thSer cH (fun m => dH m * ψc (δ3 ^ 3 * (D * ∏ P ∈ A, πP P)) (-(m * δ)))
-                (-cuspW (D * ∏ P ∈ A, πP P) z v) (cuspV (D * ∏ P ∈ A, πP P) z v) := by
-  obtain ⟨g₀, a₀, c₀, x, ε, H, cH, dH, δ₀, hg, hLg, hac, hx, hdH, hs, hcase⟩ :=
-    group_params hd hL h₀ A hA
-  have hc₀ : c₀ ≠ 0 := by rintro rfl; exact hL (by rw [hLg, mul_zero])
-  obtain ⟨κ₀, hκ, hall⟩ := group_cusp hd.2.2.2.2.2.2.2.2 hL h₀ A hA hg hLg hac (fun P _ => hx P) ε hs hcase
-  refine ⟨(ε : 𝓞 K) * c₀, cH, dH, κ₀, δ₀, fun P => (ε : 𝓞 K) * c₀ * δ3 ^ 2 * rP A P,
-    mul_ne_zero ε.ne_zero hc₀, ⟨(↑ε⁻¹ : 𝓞 K) * g₀, ?_⟩, hdH, hκ,
-    fun P hP => cuspS_not_mem ε (fun hm => hA P hP (by rw [hLg]; exact P.1.mul_mem_left _ hm)), hall⟩
-  rw [hLg]
-  linear_combination (-(g₀ * c₀)) * ε.mul_inv
-
 end Eis
 
 end
@@ -657,4 +631,3 @@ end
 #print axioms Eis.isCoprime_three_of_primary
 #print axioms Eis.exists_nine_inv
 #print axioms Eis.group_params
-#print axioms Eis.group_cusp_exists

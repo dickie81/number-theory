@@ -27,8 +27,7 @@ Plain statements, with `F = esum s c λ`.
 
 * `integrable_psiC`, `kloc`, `continuous_kloc`, `integrable_kloc`, `kloc_inv`, `kloc_inv_one`: the kernel.
 * `esum`, `continuous_esum`, `norm_esum_le`, `esum_mul`, `conj_esum`: finite exponential sums.
-* `esum_eq_integral`, `integrable_loc`, `norm_esum_le_integral`, `norm_sq_esum_le`, `norm_cube_esum_le`: the local
-  averages.
+* `esum_eq_integral`, `norm_esum_le_integral`, `norm_sq_esum_le`, `norm_cube_esum_le`: the local averages.
 
 The file imports `LinnikCGL112.lean`.
 -/
@@ -138,13 +137,6 @@ end esum
 section loc
 
 variable {κ : Type*} (s : Finset κ) (c : κ → ℂ) (lam : κ → ℝ)
-
-/-- The integrand of the local average is integrable. -/
-lemma integrable_loc (H x : ℝ) : Integrable fun ξ => ‖kloc ξ‖ * ‖esum s c lam (x + 2 * π * ξ / H)‖ := by
-  refine (integrable_kloc.norm.mul_const (∑ k ∈ s, ‖c k‖)).mono' ?_ (Eventually.of_forall fun ξ => ?_)
-  · exact (continuous_kloc.norm.mul ((continuous_esum s c lam).comp (by fun_prop)).norm).aestronglyMeasurable
-  · rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
-    exact mul_le_mul_of_nonneg_left (norm_esum_le s c lam _) (norm_nonneg _)
 
 /-- **The local average, as an identity**: for `H > 0` and every `|λ_k − Λ| ≤ H`,
 `F(x) = ∫k(ξ)e^{−2πiξΛ/H}F(x + 2πξ/H) dξ`. -/

@@ -3,11 +3,11 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`WindowOKHM g L m₁ m₂ d e`: for every `β`, `m`, `w` of the window, either `WindowOK`'s inequality (the orthogonality
-branch) or, for `m ≤ 1`, the Halász–Montgomery branch: both
+`WindowOKHM g L m₁ m₂ d e`: for every `β`, `m`, `w` of the window, either the orthogonality branch (the inequality of
+`WindowPiece` for that `m`) or, for `m ≤ 1`, the Halász–Montgomery branch: both
 `(L − m)(β + w) + g β/2 + m/2 + m/2 ≤ L − 1/25000` (the `|R|Λ` term) and
 `(L − m)(β + w) + g β/2 + m/2 + (g β + b)/2 ≤ L − 1/25000` with `b = 5/12 + m/12 + d(1 − m) + 2e` (the `|R|²B` term).
-Pieces (`WindowPieceHM`) glue as `WindowPiece` does; a piece that holds by orthogonality lifts; an affine piece holds
+Pieces (`WindowPieceHM`) glue (`windowPieceHM_glue`); a piece that holds by orthogonality lifts; an affine piece holds
 by the Halász–Montgomery branch if both its bilinear inequalities hold at the corners of the box.
 `windowPieceHM_congr` and `windowPieceHM_const_split` (the piece `A(1 − β)`, as `windowPiece_const`) let an affine
 piece stand for a curve's step written `A(1 − σ)`.
@@ -25,7 +25,7 @@ def hmBound (L d e gβ β m w : ℝ) : Prop :=
   (L - m) * (β + w) + gβ / 2 + m / 2 + (gβ + (5 / 12 + m / 12 + d * (1 - m) + 2 * e)) / 2 ≤ L - 1 / 25000
 
 /-- **The window's exponents with the Halász–Montgomery branch**: for `1/2 ≤ β ≤ 11/12`, `m₁ ≤ m ≤ m₂`,
-`0 ≤ w ≤ 4·10⁻⁶`: either `WindowOK`'s inequality for that `m`, or `m ≤ 1` and `hmBound`. -/
+`0 ≤ w ≤ 4·10⁻⁶`: either the orthogonality inequality for that `m`, or `m ≤ 1` and `hmBound`. -/
 def WindowOKHM (g : ℝ → ℝ) (L m₁ m₂ d e : ℝ) : Prop :=
   ∀ β m w : ℝ, 1 / 2 ≤ β → β ≤ 11 / 12 → m₁ ≤ m → m ≤ m₂ → 0 ≤ w → w ≤ 4 / 10 ^ 6 →
     ((m ≤ 1 → (L - m) * (β + w) + g β / 2 + (1 + m) / 2 ≤ L - 1 / 25000) ∧
@@ -48,7 +48,7 @@ theorem windowPieceHM_of_piece {g : ℝ → ℝ} {L m₁ m₂ d e lo hi : ℝ} (
     WindowPieceHM g L m₁ m₂ d e lo hi :=
   fun β m w hβ hβ1 hm hm1 hw hw1 => Or.inl (h β m w hβ hβ1 hm hm1 hw hw1)
 
-/-- Gluing two pieces across `mid` (`h₁` on `[lo, mid]`, `h₂` on `[mid, hi]`), as `windowPiece_glue`. -/
+/-- Gluing two pieces across `mid` (`h₁` on `[lo, mid]`, `h₂` on `[mid, hi]`). -/
 theorem windowPieceHM_glue {g g' : ℝ → ℝ} {L m₁ m₂ d e lo mid hi : ℝ} (h₁ : WindowPieceHM g L m₁ m₂ d e lo mid)
     (h₂ : WindowPieceHM g' L m₁ m₂ d e mid hi) :
     WindowPieceHM (fun β => if β < mid then g β else g' β) L m₁ m₂ d e lo hi := by
@@ -114,28 +114,6 @@ theorem affine_corner_bound {p A L lo hi ma mb t₀ t₁ β m w : ℝ} (hlo : lo
     rw [hθ]
     nlinarith [mul_le_mul_of_nonneg_left h0 hθ0, mul_le_mul_of_nonneg_left h1 hθ1]
 
-/-- **An affine piece by the Halász–Montgomery branch**, for `lo ≤ hi` (`hlo`) and a window with `m₂ ≤ 1` (`hm2`):
-if both bilinear inequalities hold at the eight corners `β ∈ {lo, hi}`, `m ∈ {m₁, m₂}`, `w ∈ {0, 4·10⁻⁶}` (`h1`,
-`h2`), the piece holds. The first is
-`affine_corner_bound` with `t(m) = m`; the second with `p, A` doubled (its `(p − Aβ)` appears twice) and
-`t(m) = (5/12 + d + 2e)/2 + ((13/12 − d)/2)m`. -/
-theorem windowPieceHM_affine {p A L m₁ m₂ d e lo hi : ℝ} (hlo : lo ≤ hi) (hm2 : m₂ ≤ 1)
-    (h1 : ∀ β m w, (β = lo ∨ β = hi) → (m = m₁ ∨ m = m₂) → (w = 0 ∨ w = 4 / 10 ^ 6) →
-      (L - m) * (β + w) + (p - A * β) / 2 + m / 2 + m / 2 ≤ L - 1 / 25000)
-    (h2 : ∀ β m w, (β = lo ∨ β = hi) → (m = m₁ ∨ m = m₂) → (w = 0 ∨ w = 4 / 10 ^ 6) →
-      (L - m) * (β + w) + (p - A * β) / 2 + m / 2 +
-        ((p - A * β) + (5 / 12 + m / 12 + d * (1 - m) + 2 * e)) / 2 ≤ L - 1 / 25000) :
-    WindowPieceHM (fun β => p - A * β) L m₁ m₂ d e lo hi := by
-  intro β m w hβ hβ1 hm1 hm2' hw hw1
-  refine Or.inr ⟨hm2'.trans hm2, ?_, ?_⟩
-  · have := affine_corner_bound (p := p) (A := A) (L := L) (t₀ := 0) (t₁ := 1) hlo hβ hβ1 hm1 hm2' hw hw1
-      (fun β' m' w' hb' hm' hw' => by have := h1 β' m' w' hb' hm' hw'; linarith)
-    linarith
-  · have := affine_corner_bound (p := 2 * p) (A := 2 * A) (L := L) (t₀ := (5 / 12 + d + 2 * e) / 2)
-      (t₁ := (13 / 12 - d) / 2) hlo hβ hβ1 hm1 hm2' hw hw1
-      (fun β' m' w' hb' hm' hw' => by have := h2 β' m' w' hb' hm' hw'; linarith)
-    linarith
-
 /-- **An affine piece by the Halász–Montgomery branch below `m = 1` and by orthogonality above it**, for
 `lo ≤ hi` (`hlo`): the two bilinear inequalities at the corners `m ∈ {m₁, 1}` (`h1`, `h2`) give the branch for
 `m ≤ 1`, and orthogonality's inequality for `m ≥ 1` (whose exponent `(L − m)(β + w) + gβ/2 + m` is the first of the
@@ -188,6 +166,5 @@ theorem windowPieceHM_const_split {A L m₁ m₂ d e lo hi : ℝ} (hlo : lo ≤ 
 end SieveCurveGlue
 
 #print axioms SieveCurveGlue.affine_corner_bound
-#print axioms SieveCurveGlue.windowPieceHM_affine
 #print axioms SieveCurveGlue.windowPieceHM_affine_split
 #print axioms SieveCurveGlue.windowPieceHM_const_split

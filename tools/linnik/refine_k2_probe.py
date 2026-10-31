@@ -1,8 +1,8 @@
 """refine_k2_probe.py (the depth-4 certificate, before the deeper levels; the library's `total2` is `mirror2.py`'s): the certificate's total with the evaluable two-prime parts of the dropped depth-2 terms kept, in
 exact integers on the grid of `route_limits.replay`. This is a replay of the refined certificate, not a certificate.
-In Lean the refined total is `SieveCert.total2` (`SieveCert2Defs.lean`), and `SieveMain2.linnik_route_lt2` takes
-`total2 < K`, which the kernel checks. The Lean definition (`SieveCert.cost2`) decides with `dec` on the unrefined
-bound, under which a decomposed cell costs `ref`. The probe's rule, `min(ref, b2 − sub)`, gives the same total on every
+In Lean the refined total was `SieveCert.total2` (`SieveCert2Defs.lean`), and `SieveMain2.linnik_route_lt2` took
+`total2 < K`, which the kernel checked; both are in the git history. The Lean definition (`SieveCert.cost2`) decided
+with `dec` on the unrefined bound, under which a decomposed cell costs `ref`. The probe's rule, `min(ref, b2 − sub)`, gives the same total on every
 grid tried, since its depth-4 test counts agree, so no decomposed cell has `b2 − sub < ref`. `replay2`'s fifth value is
 the total by the certificate's own decisions.
 

@@ -12,8 +12,8 @@ the exponent `11/12 + ε`:
 * `smoothBound_eleven_twelfths`: `SmoothBound (11/12)`.
 
 The joins at `θ = 11/12`:
-* `zeta_band_eleven_twelfths`, `chi3_band_eleven_twelfths`: every nontrivial zero of `ζ`, and every zero of
-  `L(s, χ₋₃)` in the critical strip, has `|2 Re ρ − 1| ≤ 5/6`, so `1/12 ≤ Re ρ ≤ 11/12`;
+* `zeta_band_eleven_twelfths`: every nontrivial zero `ρ` of `ζ` has `|2 Re ρ − 1| ≤ 5/6`, so
+  `1/12 ≤ Re ρ ≤ 11/12`;
 * `abs_im_tau_le_five_twelfths`: every zero `τ` of `Ξ` has `|Im τ| ≤ 5/12`;
 * `weil_rate_eleven_twelfths`, `chi3_rate_eleven_twelfths`, `QK3_rate_eleven_twelfths`: the twin forms of `ζ`,
   of `L(s, χ₋₃)` and of `ζ·ζ_{ℚ(√−3)}` are at least `−C e^{5λ/6}` at `λ ≥ 0`;
@@ -42,13 +42,6 @@ theorem smoothBound_eleven_twelfths : SmoothBound (11 / 12) := by
 /-- Every nontrivial zero of `ζ` has `|2 Re ρ − 1| ≤ 5/6`. -/
 theorem zeta_band_eleven_twelfths {s : ℂ} (hs : IsNontrivialZero s) : |2 * s.re - 1| ≤ 5 / 6 := by
   have := zeta_band smoothBound_eleven_twelfths hs
-  norm_num at this ⊢
-  linarith
-
-/-- Every zero of `L(s, χ₋₃)` in the critical strip has `|2 Re ρ − 1| ≤ 5/6`. -/
-theorem chi3_band_eleven_twelfths {s : ℂ} (hs : DirichletCharacter.LFunction chi3 s = 0)
-    (h0 : 0 < s.re) (h1 : s.re < 1) : |2 * s.re - 1| ≤ 5 / 6 := by
-  have := chi3_band smoothBound_eleven_twelfths hs h0 h1
   norm_num at this ⊢
   linarith
 
@@ -108,7 +101,6 @@ end BohrJoins
 
 #print axioms HalfPlaneJoins.smoothBound_eleven_twelfths
 #print axioms HalfPlaneJoins.zeta_band_eleven_twelfths
-#print axioms HalfPlaneJoins.chi3_band_eleven_twelfths
 #print axioms HalfPlaneJoins.abs_im_tau_le_five_twelfths
 #print axioms HalfPlaneJoins.weil_rate_eleven_twelfths
 #print axioms HalfPlaneJoins.chi3_rate_eleven_twelfths

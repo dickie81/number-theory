@@ -17,9 +17,10 @@ under a scheme of decisions (`SieveBuch.Scheme8`).
   estimate (`hII`): for `η > 0` there are `δ > 0` and `q₀` such that for `q ≥ q₀` and `a` a unit mod `q`, `LargeQ q`
   holds and every leaf of `(parQ q).Leaves8` is within `Err η δ q`.
 
-The proof of `leaves_ev8` is that of `SieveQ.leaves_ev`, with the upper window for six and seven primes, Proposition 6
-for six and seven, and Proposition 6-ib on `boxes6` and `boxes7` besides; a decision of the scheme gives the rule's
-verdict on the boxes it decomposes (`SieveBuch.ok2_of_dec2` … `SieveBuch.ok7_of_allowed6R`).
+The proof of `leaves_ev8` takes the leaves of `SieveQ.lean` (`lf_j0` … `lf_e6`), with the upper window for six and
+seven primes, Proposition 6 for six and seven, and Proposition 6-ib on `boxes6` and `boxes7` besides; a decision of
+the scheme gives the rule's verdict on the boxes it decomposes (`SieveBuch.ok2_of_dec2` …
+`SieveBuch.ok7_of_allowed6R`).
 
 The file imports `SieveBuch8.lean` and `SieveQ.lean`.
 -/

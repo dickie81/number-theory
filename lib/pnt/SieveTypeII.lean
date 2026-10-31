@@ -1,34 +1,20 @@
 /-
-# The Type II estimate of the sieve route at small heights (Proposition 3′, pointwise in the heights)
+# Parts of the Type II estimate of the sieve route (Proposition 3′, pointwise in the heights)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statement (`typeII_step`). Let `L = 2333/1000`, `f0` smooth and real with support in `[1/2, 2]`, `K₀ ≥ 0`,
-`e₁ > 0` and `0 < η ≤ 10⁻⁵`. For every large `q`, every `P` with `q^{(401/1000)L} ≤ P ≤ q^{(485/1000)L}`, every
-`S ⊆ (P, 2P]`, `a_m` and `h₀`, every `K ≤ K₀`, and every `Q_j ≥ q^{e₁}` and `|h_j| ≤ q^η` (`j < K`) with
-`∏_j Q_j ≤ 2^{K₀}q^L/P`:
-`Σ_{χ≠1} |Σ_{m∈S} a_mχ(m)m^{−ih₀}||∏_{j<K} Σ_{p≤2Q_j} χ(p)(p/Q_j)^{−ih_j}f0(p/Q_j)|` is at most
-`q^{L−1/50000}(Σ_m |a_m|²/P)^{1/2}`.
-
-This is Proposition 3′ for the curve step, on the window
-`[401/1000, 485/1000]` inside the step's proved window, pointwise in the heights. The bins of the characters do not
-depend on the heights. In each bin Lemma 1 (`SieveWeight.norm_Sp_le`) bounds the prime sums, (H2′) counts the characters
-(`LinnikTwelve.charDensity_twelve_fifths`, `LinnikStep.charDensity_step`, and at most `q` characters), and
-Cauchy–Schwarz with orthogonality (T1) bounds the sum.
+The proof of Proposition 3′ goes by bins of the characters, which do not depend on the heights. In each bin Lemma 1
+(`SieveWeight.norm_Sp_le`) bounds the prime sums, (H2′) counts the characters, and Cauchy–Schwarz with orthogonality
+(T1) bounds the sum. This file has (T1), the bins, Lemma 1's bound and the grid of the bins; it does not state the
+estimate.
 
 * `card_class_le`, `sum_chars_dp_sq_le`: (T1), `Σ_χ |Σ_{j∈S} c_jχ(j)j^{−it}|² ≤ (P + q)Σ_{j∈S} |c_j|²` for
   `S ⊆ (P, 2P]` (`LinnikHybrid.sum_chars_norm_sq_le` with `dp_twist_eq`, and Cauchy–Schwarz in each class).
-* `sum_bins_le`: if `|B(a)| ≤ M_i` on the bin `i` of a partition of `s`, then
-  `Σ_{a∈s} |W(a)||B(a)| ≤ Σ_i M_i(#bin i)^{1/2}(Σ_{a∈s} |W(a)|²)^{1/2}`.
-* `bin`, `bin_rect`, `card_bin_le`, `sum_typeII_bins`: the bin of `χ` is the largest `i` with a zero in
-  `Re s > β_i`, `|Im s| ≤ T`; above it lies the zero-free rectangle of Lemma 1, and in it a zero counted by (H2′).
-* `typeII_pointwise`: the bound by bins, with Lemma 1 and (T1).
-* `card_zero_step`: the counts of the curve step, `C(qT)^{g(σ)}(1 + log qT)^{10}`.
+* `bin`, `bin_rect`, `card_bin_le`: the bin of `χ` is the largest `i` with a zero in `Re s > β_i`, `|Im s| ≤ T`;
+  above it lies the zero-free rectangle of Lemma 1, and in it a zero counted by (H2′).
 * `MB_le`: for all large `q`, Lemma 1's bound is at most `2Q^{θ+2δ}`.
-* `exponent_le`: the exponents on the window, at most `L − 1/25000`. Before the width they lie at least `5.5·10⁻⁵`
-  below `L` and `1.5·10⁻⁵` below `L − 1/25000`, least at `β = 11/12`.
-* `qpow_combine`, `bin_bound`, `prod_MB_le`, `card_bin_step`: one bin.
-* `typeII_step`: the sum over the 500000 bins of width `1/1200000`.
+* `qpow_combine`: the factors of one bin as powers of `q`.
+* `βg`: the grid of the bins, `β_i = 1/2 + (5/12)(i/500000)`, of width `1/1200000`.
 -/
 import LinnikStep
 import SieveWeight
@@ -118,47 +104,6 @@ theorem sum_chars_dp_sq_le {P : ℕ} {S : Finset ℕ} (hS : S ⊆ Finset.Ioc P (
     _ ≤ q * (P / q + 1) * ∑ j ∈ S, ‖c j‖ ^ 2 := by gcongr
     _ = (P + q) * ∑ j ∈ S, ‖c j‖ ^ 2 := by field_simp
 
-/-! ### Bins -/
-
-/-- `Σ_{a∈T} x_a ≤ (#T)^{1/2}(Σ_{a∈T} x_a²)^{1/2}` (Cauchy–Schwarz). -/
-lemma sum_le_sqrt_card_mul_sqrt {α : Type*} (T : Finset α) (x : α → ℝ) :
-    ∑ a ∈ T, x a ≤ Real.sqrt T.card * Real.sqrt (∑ a ∈ T, x a ^ 2) := by
-  rw [← Real.sqrt_mul (by positivity)]
-  have h := sq_sum_le_card_mul_sum_sq (s := T) (f := x)
-  calc ∑ a ∈ T, x a ≤ |∑ a ∈ T, x a| := le_abs_self _
-    _ = Real.sqrt ((∑ a ∈ T, x a) ^ 2) := (Real.sqrt_sq_eq_abs _).symm
-    _ ≤ Real.sqrt (T.card * ∑ a ∈ T, x a ^ 2) := Real.sqrt_le_sqrt h
-
-/-- **Bins.** Let `ι` send `s` into `I`, and `|B(a)| ≤ M(ι a)` on `s`. Then
-`Σ_{a∈s} |W(a)||B(a)| ≤ Σ_{i∈I} M_i(#{a ∈ s : ι a = i})^{1/2}(Σ_{a∈s} |W(a)|²)^{1/2}`. -/
-theorem sum_bins_le {α β : Type*} [DecidableEq β] (s : Finset α) (I : Finset β) (ι : α → β)
-    (hι : ∀ a ∈ s, ι a ∈ I) (W B : α → ℂ) (M : β → ℝ) (hB : ∀ a ∈ s, ‖B a‖ ≤ M (ι a)) :
-    ∑ a ∈ s, ‖W a‖ * ‖B a‖ ≤
-      ∑ i ∈ I, M i * Real.sqrt (s.filter fun a => ι a = i).card * Real.sqrt (∑ a ∈ s, ‖W a‖ ^ 2) := by
-  rw [← Finset.sum_fiberwise_of_maps_to hι]
-  refine Finset.sum_le_sum fun i _ => ?_
-  set F := s.filter fun a => ι a = i with hF
-  rcases F.eq_empty_or_nonempty with hFe | ⟨a₀, ha₀⟩
-  · rw [hFe, Finset.sum_empty, Finset.card_empty, Nat.cast_zero, Real.sqrt_zero, mul_zero, zero_mul]
-  have hM : 0 ≤ M i := by
-    have h := Finset.mem_filter.1 ha₀
-    exact (norm_nonneg _).trans (h.2 ▸ hB a₀ h.1)
-  have h1 : ∑ a ∈ F, ‖W a‖ * ‖B a‖ ≤ M i * ∑ a ∈ F, ‖W a‖ := by
-    rw [Finset.mul_sum]
-    refine Finset.sum_le_sum fun a ha => ?_
-    have h := Finset.mem_filter.1 ha
-    have hb := h.2 ▸ hB a h.1
-    rw [mul_comm (M i)]
-    exact mul_le_mul_of_nonneg_left hb (norm_nonneg _)
-  have h2 : ∑ a ∈ F, ‖W a‖ ^ 2 ≤ ∑ a ∈ s, ‖W a‖ ^ 2 :=
-    Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _) fun a _ _ => by positivity
-  calc ∑ a ∈ F, ‖W a‖ * ‖B a‖ ≤ M i * ∑ a ∈ F, ‖W a‖ := h1
-    _ ≤ M i * (Real.sqrt F.card * Real.sqrt (∑ a ∈ F, ‖W a‖ ^ 2)) := by
-        gcongr; exact sum_le_sqrt_card_mul_sqrt F fun a => ‖W a‖
-    _ ≤ M i * (Real.sqrt F.card * Real.sqrt (∑ a ∈ s, ‖W a‖ ^ 2)) := by
-        gcongr
-    _ = M i * Real.sqrt F.card * Real.sqrt (∑ a ∈ s, ‖W a‖ ^ 2) := by ring
-
 /-! ### The bins of characters -/
 
 section Bins
@@ -234,127 +179,12 @@ lemma card_bin_le {β : ℕ → ℝ} {N : ℕ} {T : ℝ} (hN : 0 < N) {i : ℕ} 
   rw [h.2] at hs
   exact Finset.mem_filter.2 ⟨Finset.mem_univ _, s, hs.le, hT, h0⟩
 
-/-- **Proposition 3′ pointwise, by bins.** If `|B(χ)| ≤ M_i` for `χ ≠ 1` in bin `i`, then
-`Σ_{χ≠1} |W(χ)||B(χ)| ≤ Σ_{i<N} M_i(#bin i)^{1/2}(Σ_χ |W(χ)|²)^{1/2}`. -/
-theorem sum_typeII_bins {β : ℕ → ℝ} {N : ℕ} (hN : 0 < N) (T : ℝ) (W B : DirichletCharacter ℂ q → ℂ)
-    (M : ℕ → ℝ) (hB : ∀ χ : DirichletCharacter ℂ q, χ ≠ 1 → ‖B χ‖ ≤ M (bin β N T χ)) :
-    ∑ χ ∈ Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1), ‖W χ‖ * ‖B χ‖ ≤
-      ∑ i ∈ Finset.range N, M i *
-        Real.sqrt (Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ bin β N T χ = i).card *
-          Real.sqrt (∑ χ, ‖W χ‖ ^ 2) := by
-  have h := sum_bins_le (Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1) (Finset.range N)
-    (bin β N T) (fun χ _ => Finset.mem_range.2 (bin_lt hN T χ)) W B M
-    (fun χ hχ => hB χ (Finset.mem_filter.1 hχ).2)
-  refine h.trans (Finset.sum_le_sum fun i _ => ?_)
-  rw [Finset.filter_filter]
-  have hM : 0 ≤ M i * Real.sqrt (Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
-      χ ≠ 1 ∧ bin β N T χ = i).card ∨
-      (Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ bin β N T χ = i) = ∅ := by
-    rcases (Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ bin β N T χ = i).eq_empty_or_nonempty
-      with he | ⟨χ, hχ⟩
-    · exact Or.inr he
-    · left
-      have hm := Finset.mem_filter.1 hχ
-      have := (norm_nonneg _).trans (hm.2.2 ▸ hB χ hm.2.1)
-      positivity
-  rcases hM with hM | he
-  · gcongr
-    exact Finset.filter_subset _ _
-  · rw [he, Finset.card_empty, Nat.cast_zero, Real.sqrt_zero, mul_zero, zero_mul, zero_mul]
-
 /-- The bound of `SieveWeight.norm_Sp_le` for one prime sum at scale `Q` and height `y`, with `θ`, `δ`, `H`, the
 decay `Kd` and its constants `Bc`, `Cc`. -/
 noncomputable def MB (q : ℕ) (Bc Cc : ℝ) (Kd : ℕ) (θ δ H Q y : ℝ) : ℝ :=
   (Linnik.KL θ (θ + δ) + Linnik.KL (11 / 12) (11 / 12 + δ)) * (Real.log (q + 2) + Real.log (|y| + 4) + 1) * Bc *
       (Q ^ (θ + δ) + Q ^ (11 / 12 + δ) * ((1 + H) ^ Kd)⁻¹) / Real.log Q +
     Cc * ((Nat.sqrt ⌊2 * Q⌋₊ + 1) * (Nat.log 2 ⌊2 * Q⌋₊ + 1))
-
-/-- **Proposition 3′ pointwise, with Lemma 1 and (T1).** For a smooth `f0` with support in `[1/2, 2]` and a decay
-`Kd` there are constants such that, for `W(χ) = Σ_{m∈S} a_mχ(m)m^{−ih₀}`, `S ⊆ (P, 2P]`, and
-`B(χ) = ∏_{j<K} Σ_{p ≤ 2Q_j} χ(p)(p/Q_j)^{−ih_j}f0(p/Q_j)` with `Q_j ≥ 4` and `|h_j| + H + 1 ≤ T`,
-`Σ_{χ≠1} |W(χ)||B(χ)| ≤ Σ_{i<N} (∏_j MB_j(β_{i+1}))(#bin i)^{1/2}((P + q)Σ|a_m|²)^{1/2}`. -/
-theorem typeII_pointwise {f0 : ℝ → ℝ} (hf0 : ContDiff ℝ ∞ f0) (hsupp : Function.support f0 ⊆ Set.Icc (1 / 2) 2)
-    (Kd : ℕ) : ∃ Bc Cc : ℝ, 0 ≤ Bc ∧ 0 ≤ Cc ∧ ∀ (q : ℕ) [NeZero q] (β : ℕ → ℝ) (N : ℕ), 0 < N → β N = 11 / 12 →
-      (∀ i ≤ N, 1 / 2 ≤ β i ∧ β i ≤ 11 / 12) → ∀ T δ H : ℝ, 0 < δ → δ ≤ 1 / 24 → 0 ≤ H →
-      ∀ (K : ℕ) (Q h : ℕ → ℝ), (∀ j < K, 4 ≤ Q j ∧ |h j| + H + 1 ≤ T) →
-      ∀ (P : ℕ) (S : Finset ℕ), S ⊆ Finset.Ioc P (2 * P) → ∀ (a : ℕ → ℂ) (h₀ : ℝ),
-      ∑ χ ∈ Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1),
-          ‖dp S (fun m => a m * χ m) h₀‖ * ‖∏ j ∈ Finset.range K, SieveWeight.Sp χ f0 (Q j) (h j)‖ ≤
-        ∑ i ∈ Finset.range N, (∏ j ∈ Finset.range K, MB q Bc Cc Kd (β (i + 1)) δ H (Q j) (h j)) *
-          Real.sqrt (Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ bin β N T χ = i).card *
-            Real.sqrt ((P + q) * ∑ m ∈ S, ‖a m‖ ^ 2) := by
-  obtain ⟨Bc, Cc, hBc, hCc, hL1⟩ := SieveWeight.norm_Sp_le hf0 hsupp Kd
-  refine ⟨Bc, Cc, hBc, hCc, fun q _ β N hN hβN hβ T δ H hδ hδ1 hH K Q h hQh P S hS a h₀ => ?_⟩
-  have hB : ∀ χ : DirichletCharacter ℂ q, χ ≠ 1 →
-      ‖∏ j ∈ Finset.range K, SieveWeight.Sp χ f0 (Q j) (h j)‖ ≤
-        ∏ j ∈ Finset.range K, MB q Bc Cc Kd (β (bin β N T χ + 1)) δ H (Q j) (h j) := by
-    intro χ hχ
-    have hb := bin_lt (β := β) hN T χ
-    have hθ := hβ (bin β N T χ + 1) (by omega)
-    rw [norm_prod]
-    refine Finset.prod_le_prod₀ (fun j _ => norm_nonneg _) fun j hj => ?_
-    have hj' := hQh j (Finset.mem_range.1 hj)
-    exact hL1 q χ hχ (β (bin β N T χ + 1)) δ H (Q j) (h j) hθ.1 hθ.2 hδ hδ1 hH hj'.1
-      (bin_rect hβN hχ hN hj'.2)
-  have hsum := sum_typeII_bins (β := β) hN T (fun χ => dp S (fun m => a m * χ m) h₀)
-    (fun χ => ∏ j ∈ Finset.range K, SieveWeight.Sp χ f0 (Q j) (h j))
-    (fun i => ∏ j ∈ Finset.range K, MB q Bc Cc Kd (β (i + 1)) δ H (Q j) (h j)) hB
-  refine hsum.trans (Finset.sum_le_sum fun i hi => ?_)
-  have hT1 := sum_chars_dp_sq_le hS a q h₀
-  rcases (Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ bin β N T χ = i).eq_empty_or_nonempty
-    with he | ⟨χ, hχ⟩
-  · rw [he, Finset.card_empty, Nat.cast_zero, Real.sqrt_zero, mul_zero, zero_mul, zero_mul]
-  · have hm := Finset.mem_filter.1 hχ
-    have hM : 0 ≤ ∏ j ∈ Finset.range K, MB q Bc Cc Kd (β (i + 1)) δ H (Q j) (h j) :=
-      (norm_nonneg _).trans (hm.2.2 ▸ hB χ hm.2.1)
-    gcongr
-
-/-! ### The counts of the curve step -/
-
-/-- The exponent `A(σ)(1 − σ)` of the curve step: `1` below `2801/4801` (the trivial count), `(4801/2000)(1 − σ)`
-below `5/6` and `(101/50)(1 − σ)` from `5/6` on. -/
-noncomputable def gStep (σ : ℝ) : ℝ :=
-  if σ < 2801 / 4801 then 1 else if σ < 5 / 6 then 4801 / 2000 * (1 - σ) else 101 / 50 * (1 - σ)
-
-/-- **The counts of the curve step**: at most `C(qT)^{g(σ)}(1 + log qT)^{10}` characters have a zero with
-`Re s ≥ σ` and `|Im s| ≤ T` (`LinnikTwelve.charDensity_twelve_fifths` at `ε = 1/108000`,
-`LinnikStep.charDensity_step`, and at most `q` characters). -/
-theorem card_zero_step : ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (σ T : ℝ), 1 / 2 ≤ σ → σ ≤ 1 → 2 ≤ T →
-    ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
-      ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-        C * ((q : ℝ) * T) ^ gStep σ * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
-  obtain ⟨C₁, hC₁0, hC₁⟩ := LinnikTwelve.charDensity_twelve_fifths (ε := 1 / 108000) (by norm_num) (by norm_num)
-  obtain ⟨C₂, hC₂0, hC₂⟩ := LinnikStep.charDensity_step
-  refine ⟨max 1 (max C₁ C₂), by positivity, fun q _ σ T hσ hσ1 hT => ?_⟩
-  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
-  have hqT : 2 ≤ (q : ℝ) * T := by nlinarith
-  have hqT0 : 0 < (q : ℝ) * T := by linarith
-  have hl : 0 ≤ Real.log ((q : ℝ) * T) := Real.log_nonneg (by linarith)
-  have hlog : Real.log ((q : ℝ) * T) ^ (10 : ℝ) ≤ (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
-    rw [show (10 : ℝ) = ((10 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
-    exact pow_le_pow_left₀ hl (by linarith) 10
-  have hl1 : 1 ≤ (1 + Real.log ((q : ℝ) * T)) ^ 10 := one_le_pow₀ (by linarith)
-  have hM1 : 1 ≤ max 1 (max C₁ C₂) := le_max_left _ _
-  have hMC₁ : C₁ ≤ max 1 (max C₁ C₂) := (le_max_left _ _).trans (le_max_right _ _)
-  have hMC₂ : C₂ ≤ max 1 (max C₁ C₂) := (le_max_right _ _).trans (le_max_right _ _)
-  unfold gStep
-  split_ifs with h1 h2
-  · have hc := LinnikDensity.card_chars_le (q := q) (Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
-      ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0)
-    rw [Real.rpow_one]
-    calc _ ≤ (q : ℝ) := hc
-      _ ≤ 1 * ((q : ℝ) * T) * 1 := by nlinarith
-      _ ≤ max 1 (max C₁ C₂) * ((q : ℝ) * T) * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by gcongr
-  · have hc := hC₁ q σ T hσ hσ1 hT
-    have e : (12 / 5 + 54 * (1 / 108000) : ℝ) = 4801 / 2000 := by norm_num
-    rw [e] at hc
-    calc _ ≤ C₁ * ((q : ℝ) * T) ^ (4801 / 2000 * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := hc
-      _ ≤ max 1 (max C₁ C₂) * ((q : ℝ) * T) ^ (4801 / 2000 * (1 - σ)) * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
-          gcongr
-  · have hc := hC₂ q σ T (not_lt.1 h2) hσ1 hT
-    calc _ ≤ C₂ * ((q : ℝ) * T) ^ (101 / 50 * (1 - σ)) * Real.log ((q : ℝ) * T) ^ (10 : ℝ) := hc
-      _ ≤ max 1 (max C₁ C₂) * ((q : ℝ) * T) ^ (101 / 50 * (1 - σ)) * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
-          gcongr
 
 /-! ### Lemma 1's bound, eventually -/
 
@@ -525,37 +355,6 @@ lemma MB_le {Bc Cc KLmax δ e₁ η U : ℝ} {Kd : ℕ} (hBc : 0 ≤ Bc) (hCc : 
 
 /-! ### The exponents on the window -/
 
-/-- **The window's exponents** for the curve step at `L = 2333/1000` on `m ∈ [401/1000, 485/1000]·L`: for
-`1/2 ≤ β ≤ 11/12` and `0 ≤ w ≤ 4·10⁻⁶`,
-`(L − m)(β + w) + g(β)/2 + (1 + m)/2 ≤ L − 1/25000` when `m ≤ 1`, and with `m` in place of `(1 + m)/2` when `m ≥ 1`.
-The left sides are linear in `β` on each piece of `g`, so their largest values lie at the pieces' ends. Before the
-width they lie at least `5.5·10⁻⁵` below `L` and `1.5·10⁻⁵` below `L − 1/25000`, least at `β = 11/12` and
-`m = (401/1000)L`; at `w = 4·10⁻⁶`, at least `9.8·10⁻⁶` below `L − 1/25000`. -/
-theorem exponent_le {β m w : ℝ} (hβ : 1 / 2 ≤ β) (hβ1 : β ≤ 11 / 12) (hm : 401 / 1000 * (2333 / 1000) ≤ m)
-    (hm1 : m ≤ 485 / 1000 * (2333 / 1000)) (hw : 0 ≤ w) (hw1 : w ≤ 4 / 10 ^ 6) :
-    (m ≤ 1 → (2333 / 1000 - m) * (β + w) + gStep β / 2 + (1 + m) / 2 ≤ 2333 / 1000 - 1 / 25000) ∧
-    (1 ≤ m → (2333 / 1000 - m) * (β + w) + gStep β / 2 + m ≤ 2333 / 1000 - 1 / 25000) := by
-  have hwm : (2333 / 1000 - m) * w ≤ 6 / 10 ^ 6 := by
-    calc (2333 / 1000 - m) * w ≤ (3 / 2) * (4 / 10 ^ 6) := by
-          apply mul_le_mul (by linarith) hw1 hw (by norm_num)
-      _ = 6 / 10 ^ 6 := by norm_num
-  unfold gStep
-  constructor
-  · intro hm2
-    split_ifs with h1 h2
-    · nlinarith [mul_nonneg (sub_nonneg.2 hβ) (sub_nonneg.2 hm)]
-    · nlinarith [mul_nonneg (sub_nonneg.2 (not_lt.1 h1)) (sub_nonneg.2 hm),
-        mul_nonneg (sub_nonneg.2 h2.le) (sub_nonneg.2 hm)]
-    · nlinarith [mul_nonneg (sub_nonneg.2 (not_lt.1 h2)) (sub_nonneg.2 hm),
-        mul_nonneg (sub_nonneg.2 hβ1) (sub_nonneg.2 hm)]
-  · intro hm2
-    split_ifs with h1 h2
-    · nlinarith [mul_nonneg (sub_nonneg.2 hβ) (sub_nonneg.2 hm1), mul_nonneg (sub_nonneg.2 h1.le) (sub_nonneg.2 hm1)]
-    · nlinarith [mul_nonneg (sub_nonneg.2 (not_lt.1 h1)) (sub_nonneg.2 hm1),
-        mul_nonneg (sub_nonneg.2 h2.le) (sub_nonneg.2 hm1)]
-    · nlinarith [mul_nonneg (sub_nonneg.2 (not_lt.1 h2)) (sub_nonneg.2 hm1),
-        mul_nonneg (sub_nonneg.2 hβ1) (sub_nonneg.2 hm1)]
-
 /-- **The factors as powers of `q`.** With `P = q^m`, `1 ≤ T ≤ 3q^η` and `g ≤ 1`:
 `(q^L/P)^{θ′}((qT)^g)^{1/2}((P + q)V)^{1/2} ≤ 2√3·q^{(L−m)θ′ + g/2 + t + η/2}(V/P)^{1/2}`, where `t = (1 + m)/2` if
 `m ≤ 1` and `t = m` if `m ≥ 1`, for `q > 1`. -/
@@ -634,141 +433,7 @@ lemma qpow_combine {q P V T η g θ' L m : ℝ} (hq : 1 < q) (hPm : P = q ^ m) (
       _ = 2 * Real.sqrt 3 * (q ^ ((L - m) * θ') * q ^ (g / 2 + η / 2) * q ^ m) * Real.sqrt (V / P) := by ring
       _ = _ := by rw [eq]
 
-lemma gStep_le_one (σ : ℝ) : gStep σ ≤ 1 := by
-  unfold gStep
-  split_ifs with h1 h2
-  · exact le_rfl
-  · have : 4801 / 2000 * (1 - σ) ≤ 4801 / 2000 * (1 - 2801 / 4801) := by
-      have := not_lt.1 h1; nlinarith
-    linarith
-  · have := not_lt.1 h2; nlinarith
-
-lemma gStep_nonneg {σ : ℝ} (hσ1 : σ ≤ 1) : 0 ≤ gStep σ := by
-  unfold gStep
-  split_ifs <;> nlinarith
-
-/-- **One bin.** With `P = q^m` on the window, `1 ≤ T ≤ 3q^η`, `1/2 ≤ β ≤ 11/12` and a width `w ≤ 4·10⁻⁶`: if the
-product of Lemma 1's bounds is at most `C₀(q^L/P)^{β+w}` and the bin holds at most `C_d(qT)^{g(β)}(1 + log qT)^{10}`
-characters, then the bin's term is at most `2√3·C₀C_d^{1/2}(1 + log qT)^5 q^{L−1/25000+η/2}(V/P)^{1/2}`. -/
-lemma bin_bound {q P m T η β w Mp cnt V C₀ Cd : ℝ} (hq : 1 < q) (hPm : P = q ^ m)
-    (hm1 : 401 / 1000 * (2333 / 1000) ≤ m) (hm2 : m ≤ 485 / 1000 * (2333 / 1000)) (hT1 : 1 ≤ T)
-    (hT : T ≤ 3 * q ^ η) (hβ : 1 / 2 ≤ β) (hβ1 : β ≤ 11 / 12) (hw : 0 ≤ w) (hw1 : w ≤ 4 / 10 ^ 6)
-    (hC₀ : 0 ≤ C₀) (hCd : 0 ≤ Cd) (hMp : Mp ≤ C₀ * (q ^ (2333 / 1000 : ℝ) / P) ^ (β + w))
-    (hcnt : cnt ≤ Cd * (q * T) ^ gStep β * (1 + Real.log (q * T)) ^ 10) :
-    Mp * Real.sqrt cnt * Real.sqrt ((P + q) * V) ≤
-      2 * Real.sqrt 3 * C₀ * Real.sqrt Cd * (1 + Real.log (q * T)) ^ 5 *
-        q ^ (2333 / 1000 - 1 / 25000 + η / 2 : ℝ) * Real.sqrt (V / P) := by
-  have hq0 : 0 < q := by linarith
-  have hqT : 1 ≤ q * T := by nlinarith
-  have hl : 0 ≤ Real.log (q * T) := Real.log_nonneg hqT
-  have hg1 := gStep_le_one β
-  have hcomb := qpow_combine (V := V) (θ' := β + w) (L := 2333 / 1000) hq hPm hT1 hT hg1
-  have hexp := exponent_le hβ hβ1 hm1 hm2 hw hw1
-  have hsq : Real.sqrt cnt ≤ Real.sqrt Cd * Real.sqrt ((q * T) ^ gStep β) * (1 + Real.log (q * T)) ^ 5 := by
-    have e : Real.sqrt ((1 + Real.log (q * T)) ^ 10) = (1 + Real.log (q * T)) ^ 5 := by
-      rw [show (10 : ℕ) = 5 * 2 by norm_num, pow_mul, Real.sqrt_sq (by positivity)]
-    calc Real.sqrt cnt ≤ Real.sqrt (Cd * (q * T) ^ gStep β * (1 + Real.log (q * T)) ^ 10) := Real.sqrt_le_sqrt hcnt
-      _ = Real.sqrt Cd * Real.sqrt ((q * T) ^ gStep β) * (1 + Real.log (q * T)) ^ 5 := by
-          rw [Real.sqrt_mul (by positivity), Real.sqrt_mul hCd, e]
-  have hA : 0 ≤ (q ^ (2333 / 1000 : ℝ) / P) ^ (β + w) := by
-    have : 0 < P := by rw [hPm]; positivity
-    positivity
-  have hpow : ∀ E : ℝ, E ≤ 2333 / 1000 - 1 / 25000 → q ^ (E + η / 2) ≤ q ^ (2333 / 1000 - 1 / 25000 + η / 2 : ℝ) :=
-    fun E hE => Real.rpow_le_rpow_of_exponent_le hq.le (by linarith)
-  have key : (q ^ (2333 / 1000 : ℝ) / P) ^ (β + w) * Real.sqrt ((q * T) ^ gStep β) * Real.sqrt ((P + q) * V) ≤
-      2 * Real.sqrt 3 * q ^ (2333 / 1000 - 1 / 25000 + η / 2 : ℝ) * Real.sqrt (V / P) := by
-    have hs3 : 0 ≤ 2 * Real.sqrt 3 := by positivity
-    have hVP : 0 ≤ Real.sqrt (V / P) := Real.sqrt_nonneg _
-    rcases le_total m 1 with hm | hm
-    · refine (hcomb.1 hm).trans ?_
-      have h := hpow _ (hexp.1 hm)
-      have e : (2333 / 1000 - m) * (β + w) + gStep β / 2 + (1 + m) / 2 + η / 2 =
-          ((2333 / 1000 - m) * (β + w) + gStep β / 2 + (1 + m) / 2) + η / 2 := by ring
-      rw [e]; gcongr
-    · refine (hcomb.2 hm).trans ?_
-      have h := hpow _ (hexp.2 hm)
-      have e : (2333 / 1000 - m) * (β + w) + gStep β / 2 + m + η / 2 =
-          ((2333 / 1000 - m) * (β + w) + gStep β / 2 + m) + η / 2 := by ring
-      rw [e]; gcongr
-  have hs1 : 0 ≤ Real.sqrt ((q * T) ^ gStep β) := Real.sqrt_nonneg _
-  have hs2 : 0 ≤ Real.sqrt ((P + q) * V) := Real.sqrt_nonneg _
-  calc Mp * Real.sqrt cnt * Real.sqrt ((P + q) * V)
-      ≤ (C₀ * (q ^ (2333 / 1000 : ℝ) / P) ^ (β + w)) *
-          (Real.sqrt Cd * Real.sqrt ((q * T) ^ gStep β) * (1 + Real.log (q * T)) ^ 5) *
-            Real.sqrt ((P + q) * V) := by gcongr
-    _ = C₀ * Real.sqrt Cd * (1 + Real.log (q * T)) ^ 5 *
-          ((q ^ (2333 / 1000 : ℝ) / P) ^ (β + w) * Real.sqrt ((q * T) ^ gStep β) * Real.sqrt ((P + q) * V)) := by
-        ring
-    _ ≤ C₀ * Real.sqrt Cd * (1 + Real.log (q * T)) ^ 5 *
-          (2 * Real.sqrt 3 * q ^ (2333 / 1000 - 1 / 25000 + η / 2 : ℝ) * Real.sqrt (V / P)) := by gcongr
-    _ = _ := by ring
-
-/-- **The product of Lemma 1's bounds.** If each factor's bound is at most `2Q_j^{θ+2δ}`, `Q_j ≥ 1` and
-`∏ Q_j ≤ 2^{K₀}q^L/P` with `K ≤ K₀`, then the product is at most `2^{K₀}·2^{K₀}(q^L/P)^{θ+2δ}` when
-`0 ≤ θ + 2δ ≤ 1`. -/
-lemma prod_MB_le {K K₀ : ℕ} {M Q : ℕ → ℝ} {q P θ' : ℝ} (hK : K ≤ K₀) (hq : 0 < q) (hP : 0 < P)
-    (hθ0 : 0 ≤ θ') (hθ1 : θ' ≤ 1) (hM0 : ∀ j < K, 0 ≤ M j) (hM : ∀ j < K, M j ≤ 2 * Q j ^ θ')
-    (hQ1 : ∀ j < K, 1 ≤ Q j) (hprod : ∏ j ∈ Finset.range K, Q j ≤ 2 ^ K₀ * q ^ (2333 / 1000 : ℝ) / P) :
-    ∏ j ∈ Finset.range K, M j ≤ 2 ^ K₀ * 2 ^ K₀ * (q ^ (2333 / 1000 : ℝ) / P) ^ θ' := by
-  have hQ0 : ∀ j ∈ Finset.range K, 0 ≤ Q j := fun j hj => by linarith [hQ1 j (Finset.mem_range.1 hj)]
-  have h2K : (2 : ℝ) ^ K ≤ 2 ^ K₀ := pow_le_pow_right₀ (by norm_num) hK
-  have hA : 0 ≤ ∏ j ∈ Finset.range K, Q j := Finset.prod_nonneg hQ0
-  have h2K₀ : (1 : ℝ) ≤ 2 ^ K₀ := one_le_pow₀ (by norm_num)
-  have hqL : 0 ≤ q ^ (2333 / 1000 : ℝ) / P := div_nonneg (Real.rpow_nonneg hq.le _) hP.le
-  calc ∏ j ∈ Finset.range K, M j ≤ ∏ j ∈ Finset.range K, (2 * Q j ^ θ') :=
-        Finset.prod_le_prod₀ (fun j hj => hM0 j (Finset.mem_range.1 hj)) fun j hj => hM j (Finset.mem_range.1 hj)
-    _ = 2 ^ K * (∏ j ∈ Finset.range K, Q j) ^ θ' := by
-        rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_range, Real.finsetProd_rpow _ _ hQ0]
-    _ ≤ 2 ^ K₀ * (2 ^ K₀ * q ^ (2333 / 1000 : ℝ) / P) ^ θ' := by
-        apply mul_le_mul h2K (Real.rpow_le_rpow hA hprod hθ0) (Real.rpow_nonneg hA _) (by positivity)
-    _ = 2 ^ K₀ * ((2 ^ K₀) ^ θ' * (q ^ (2333 / 1000 : ℝ) / P) ^ θ') := by
-        rw [mul_div_assoc, Real.mul_rpow (by positivity) hqL]
-    _ ≤ 2 ^ K₀ * (2 ^ K₀ * (q ^ (2333 / 1000 : ℝ) / P) ^ θ') := by
-        apply mul_le_mul_of_nonneg_left _ (by positivity)
-        apply mul_le_mul_of_nonneg_right _ (Real.rpow_nonneg hqL _)
-        calc ((2 : ℝ) ^ K₀) ^ θ' ≤ ((2 : ℝ) ^ K₀) ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le h2K₀ hθ1
-          _ = 2 ^ K₀ := Real.rpow_one _
-    _ = 2 ^ K₀ * 2 ^ K₀ * (q ^ (2333 / 1000 : ℝ) / P) ^ θ' := by ring
-
-/-- **The count of a bin of the grid.** With `card_zero_step`'s bound for the zeros, every bin `i < N` of a grid
-with `β_0 = 1/2` (where `g = 1`) holds at most `max(C, 1)(qT)^{g(β_i)}(1 + log qT)^{10}` characters `χ ≠ 1`. -/
-lemma card_bin_step {q : ℕ} [NeZero q] {β : ℕ → ℝ} {N : ℕ} (hN : 0 < N) (hβ0 : β 0 = 1 / 2)
-    (hβ : ∀ i < N, 1 / 2 ≤ β i ∧ β i ≤ 1) {T Cd : ℝ} (hT : 2 ≤ T)
-    (hCd : ∀ σ : ℝ, 1 / 2 ≤ σ → σ ≤ 1 →
-      ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
-        ∃ s : ℂ, σ ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) ≤
-          Cd * ((q : ℝ) * T) ^ gStep σ * (1 + Real.log ((q : ℝ) * T)) ^ 10) {i : ℕ} (hi : i < N) :
-    ((Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ bin β N T χ = i).card : ℝ) ≤
-      max Cd 1 * ((q : ℝ) * T) ^ gStep (β i) * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
-  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
-  have hqT : 1 ≤ (q : ℝ) * T := by nlinarith
-  have hl1 : 1 ≤ (1 + Real.log ((q : ℝ) * T)) ^ 10 := one_le_pow₀ (by linarith [Real.log_nonneg hqT])
-  have hM1 : 1 ≤ max Cd 1 := le_max_right _ _
-  have hMC : Cd ≤ max Cd 1 := le_max_left _ _
-  have hP : 0 ≤ ((q : ℝ) * T) ^ gStep (β i) := Real.rpow_nonneg (by linarith) _
-  rcases Nat.eq_zero_or_pos i with h0 | hpos
-  · subst h0
-    have hc := LinnikDensity.card_chars_le (q := q)
-      (Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ bin β N T χ = 0)
-    have hg : gStep (β 0) = 1 := by rw [hβ0]; unfold gStep; norm_num
-    rw [hg, Real.rpow_one]
-    calc _ ≤ (q : ℝ) := hc
-      _ ≤ 1 * ((q : ℝ) * T) * 1 := by
-          rw [one_mul, mul_one]; exact le_mul_of_one_le_right (by linarith) (by linarith)
-      _ ≤ max Cd 1 * ((q : ℝ) * T) * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
-          apply mul_le_mul (mul_le_mul_of_nonneg_right hM1 (by linarith)) hl1 (by norm_num)
-          exact mul_nonneg (by linarith) (by linarith)
-  · have hc1 := card_bin_le (q := q) (β := β) (T := T) hN hpos
-    have hc2 := hCd (β i) (hβ i hi).1 (hβ i hi).2
-    have hc2' : 0 ≤ Cd * ((q : ℝ) * T) ^ gStep (β i) * (1 + Real.log ((q : ℝ) * T)) ^ 10 :=
-      le_trans (Nat.cast_nonneg _) hc2
-    calc _ ≤ ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
-          ∃ s : ℂ, β i ≤ s.re ∧ |s.im| ≤ T ∧ LFunction χ s = 0).card : ℝ) := by exact_mod_cast hc1
-      _ ≤ Cd * ((q : ℝ) * T) ^ gStep (β i) * (1 + Real.log ((q : ℝ) * T)) ^ 10 := hc2
-      _ ≤ max Cd 1 * ((q : ℝ) * T) ^ gStep (β i) * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
-          apply mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hMC hP) (by linarith)
-
-/-! ### Proposition 3′ for the curve step -/
+/-! ### The grid of the bins -/
 
 /-- The grid of the bins: `β_i = 1/2 + (5/12)(i/500000)`, of width `1/1200000`. -/
 noncomputable def βg (i : ℕ) : ℝ := 1 / 2 + 5 / 12 * ((i : ℝ) / 500000)
@@ -801,190 +466,13 @@ lemma MB_nonneg {q : ℕ} {Bc Cc : ℝ} {Kd : ℕ} {θ δ H Q y : ℝ} (hBc : 0 
   have hQ0 : 0 < Q := by linarith
   positivity
 
-/-- **Proposition 3′ for the curve step at `L = 2333/1000`, pointwise in the heights.** Let `f0` be smooth with
-support in `[1/2, 2]`, `K₀ ≥ 0`, `e₁ > 0` and `0 < η ≤ 10⁻⁵`. For every large `q`, every `P` with
-`q^{(401/1000)L} ≤ P ≤ q^{(485/1000)L}`, `W(χ) = Σ_{m∈S} a_mχ(m)m^{−ih₀}` with `S ⊆ (P, 2P]`, and
-`B(χ) = ∏_{j<K} Σ_{p ≤ 2Q_j} χ(p)(p/Q_j)^{−ih_j}f0(p/Q_j)` with `K ≤ K₀`, `Q_j ≥ q^{e₁}`, `|h_j| ≤ q^η` and
-`∏_j Q_j ≤ 2^{K₀}q^L/P`:
-`Σ_{χ≠1} |W(χ)||B(χ)| ≤ q^{L−1/50000}(Σ_m |a_m|²/P)^{1/2}`. -/
-theorem typeII_step {f0 : ℝ → ℝ} (hf0 : ContDiff ℝ ∞ f0) (hsupp : Function.support f0 ⊆ Set.Icc (1 / 2) 2)
-    (K₀ : ℕ) {e₁ η : ℝ} (he₁ : 0 < e₁) (hη : 0 < η) (hη1 : η ≤ 1 / 100000) :
-    ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q →
-      ∀ (P : ℕ) (S : Finset ℕ), S ⊆ Finset.Ioc P (2 * P) →
-      (q : ℝ) ^ (401 / 1000 * (2333 / 1000) : ℝ) ≤ P → (P : ℝ) ≤ (q : ℝ) ^ (485 / 1000 * (2333 / 1000) : ℝ) →
-      ∀ (a : ℕ → ℂ) (h₀ : ℝ) (K : ℕ), K ≤ K₀ → ∀ Q h : ℕ → ℝ,
-      (∀ j < K, (q : ℝ) ^ e₁ ≤ Q j ∧ |h j| ≤ (q : ℝ) ^ η) →
-      ∏ j ∈ Finset.range K, Q j ≤ 2 ^ K₀ * (q : ℝ) ^ (2333 / 1000 : ℝ) / P →
-      ∑ χ ∈ Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1),
-          ‖dp S (fun m => a m * χ m) h₀‖ * ‖∏ j ∈ Finset.range K, SieveWeight.Sp χ f0 (Q j) (h j)‖ ≤
-        (q : ℝ) ^ (2333 / 1000 - 1 / 50000 : ℝ) * Real.sqrt ((∑ m ∈ S, ‖a m‖ ^ 2) / P) := by
-  -- the parameters
-  obtain ⟨δ, hδ⟩ : ∃ δ : ℝ, δ = 1 / 10 ^ 6 := ⟨_, rfl⟩
-  obtain ⟨U, hU⟩ : ∃ U : ℝ, U = 3333 / 1000 := ⟨_, rfl⟩
-  obtain ⟨Kd, hKd⟩ : ∃ Kd : ℕ, Kd = ⌈5 * U / 12 / η⌉₊ := ⟨_, rfl⟩
-  have hKdη : 5 * U / 12 ≤ η * Kd := by
-    have h : 5 * U / 12 / η ≤ (Kd : ℝ) := hKd ▸ Nat.le_ceil (5 * U / 12 / η)
-    rw [div_le_iff₀ hη] at h
-    calc 5 * U / 12 ≤ (Kd : ℝ) * η := h
-      _ = η * Kd := mul_comm _ _
-  obtain ⟨Bc, Cc, hBc, hCc, hpt⟩ := typeII_pointwise hf0 hsupp Kd
-  obtain ⟨KLmax, hKLmax⟩ : ∃ K : ℝ, K = ∑ i ∈ Finset.range 500001, Linnik.KL (βg i) (βg i + δ) := ⟨_, rfl⟩
-  have hKLnn : ∀ i ≤ 500000, 0 ≤ Linnik.KL (βg i) (βg i + δ) := fun i hi =>
-    (Linnik.KL_pos (by rw [hδ]; linarith) (by have := (βg_range hi).2; rw [hδ]; linarith)).le
-  have hKLle : ∀ i ≤ 500000, Linnik.KL (βg i) (βg i + δ) ≤ KLmax := fun i hi => hKLmax ▸
-    Finset.single_le_sum (f := fun i => Linnik.KL (βg i) (βg i + δ))
-      (fun j hj => hKLnn j (Nat.lt_succ_iff.1 (Finset.mem_range.1 hj))) (Finset.mem_range.2 (by omega))
-  have hKLmax0 : 0 ≤ KLmax := (hKLnn 0 (by norm_num)).trans (hKLle 0 (by norm_num))
-  obtain ⟨q₁, hMB⟩ := MB_le hBc hCc hKLmax0 (δ := δ) (by rw [hδ]; norm_num) (by rw [hδ]; norm_num) he₁ hη
-    (by linarith) hKdη
-  obtain ⟨Cd, hCd0, hCd⟩ := card_zero_step
-  obtain ⟨C₁, hC₁⟩ : ∃ C : ℝ, C = 2 * Real.sqrt 3 * (2 ^ K₀ * 2 ^ K₀) * Real.sqrt (max Cd 1) := ⟨_, rfl⟩
-  have hC₁0 : 0 ≤ C₁ := by
-    rw [hC₁]
-    exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) (Real.sqrt_nonneg _)) (by positivity))
-      (Real.sqrt_nonneg _)
-  obtain ⟨Q₂, hQ₂⟩ := Filter.eventually_atTop.1
-    (LinnikTwelve.ev_log_pow (500000 * C₁ * 3 ^ 5) (3 / 200000) 5 (by norm_num))
-  have hev : ∀ᶠ q : ℕ in Filter.atTop, q₁ ≤ q ∧ (2 : ℝ) ^ K₀ ≤ q ∧ 4 ≤ (q : ℝ) ^ e₁ ∧ Q₂ ≤ (q : ℝ) ∧ 2 ≤ q :=
-    (Filter.eventually_ge_atTop q₁).and
-      ((tendsto_natCast_atTop_atTop.eventually_ge_atTop ((2 : ℝ) ^ K₀)).and
-        ((((tendsto_rpow_atTop he₁).comp tendsto_natCast_atTop_atTop).eventually_ge_atTop 4).and
-          ((tendsto_natCast_atTop_atTop.eventually_ge_atTop Q₂).and (Filter.eventually_ge_atTop 2))))
-  obtain ⟨q₀, hq₀⟩ := Filter.eventually_atTop.1 hev
-  refine ⟨q₀, fun q _ hq P S hS hP1 hP2 a h₀ K hK Q h hQh hprod => ?_⟩
-  obtain ⟨hq₁, hq2K, hqe, hqQ₂, hq2⟩ := hq₀ q hq
-  have hq2' : (2 : ℝ) ≤ q := by exact_mod_cast hq2
-  have hq1 : (1 : ℝ) < q := by linarith
-  have hq0 : (0 : ℝ) < q := by linarith
-  -- `P = q^m` on the window
-  have hm1pos : (0 : ℝ) < (q : ℝ) ^ (401 / 1000 * (2333 / 1000) : ℝ) := Real.rpow_pos_of_pos hq0 _
-  have hP0 : (0 : ℝ) < P := lt_of_lt_of_le hm1pos hP1
-  have hPge1 : (1 : ℝ) ≤ P := le_trans (Real.one_le_rpow hq1.le (by norm_num)) hP1
-  obtain ⟨m, hm⟩ : ∃ m : ℝ, m = Real.logb q P := ⟨_, rfl⟩
-  have hPm : (P : ℝ) = (q : ℝ) ^ m := by rw [hm]; exact (Real.rpow_logb hq0 hq1.ne' hP0).symm
-  have hm1 : 401 / 1000 * (2333 / 1000) ≤ m := by
-    rw [hPm] at hP1; exact (Real.rpow_le_rpow_left_iff hq1).1 hP1
-  have hm2 : m ≤ 485 / 1000 * (2333 / 1000) := by
-    rw [hPm] at hP2; exact (Real.rpow_le_rpow_left_iff hq1).1 hP2
-  -- the heights
-  obtain ⟨H, hH⟩ : ∃ H : ℝ, H = (q : ℝ) ^ η := ⟨_, rfl⟩
-  have hH1 : 1 ≤ H := hH ▸ Real.one_le_rpow hq1.le hη.le
-  obtain ⟨T, hT⟩ : ∃ T : ℝ, T = 2 * H + 1 := ⟨_, rfl⟩
-  have hT1 : 1 ≤ T := by linarith
-  have hT2 : 2 ≤ T := by linarith
-  have hT3 : T ≤ 3 * (q : ℝ) ^ η := by rw [hT, ← hH]; linarith
-  have hQh' : ∀ j < K, 4 ≤ Q j ∧ |h j| + H + 1 ≤ T := fun j hj =>
-    ⟨hqe.trans (hQh j hj).1, by have := (hQh j hj).2; rw [hT, hH]; rw [hH] at hH1; linarith⟩
-  -- each scale is at most `q^U`
-  have hQ1 : ∀ j < K, 1 ≤ Q j := fun j hj => by linarith [(hQh' j hj).1]
-  have hQU : ∀ j < K, Q j ≤ (q : ℝ) ^ U := by
-    intro j hj
-    have hjK : j ∈ Finset.range K := Finset.mem_range.2 hj
-    have hrest : 1 ≤ ∏ k ∈ (Finset.range K).erase j, Q k := Finset.one_le_prod₀ fun k hk =>
-      hQ1 k (Finset.mem_range.1 (Finset.mem_of_mem_erase hk))
-    have hQj := Finset.mul_prod_erase (Finset.range K) Q hjK
-    have hQj0 : 0 ≤ Q j := by linarith [hQ1 j hj]
-    have hqL : 0 ≤ (q : ℝ) ^ (2333 / 1000 : ℝ) := Real.rpow_nonneg hq0.le _
-    calc Q j ≤ Q j * ∏ k ∈ (Finset.range K).erase j, Q k := le_mul_of_one_le_right hQj0 hrest
-      _ = ∏ k ∈ Finset.range K, Q k := hQj
-      _ ≤ 2 ^ K₀ * (q : ℝ) ^ (2333 / 1000 : ℝ) / P := hprod
-      _ ≤ 2 ^ K₀ * (q : ℝ) ^ (2333 / 1000 : ℝ) := div_le_self (mul_nonneg (by norm_num) hqL) hPge1
-      _ ≤ (q : ℝ) * (q : ℝ) ^ (2333 / 1000 : ℝ) := mul_le_mul_of_nonneg_right hq2K hqL
-      _ = (q : ℝ) ^ U := by
-          rw [hU, show (3333 / 1000 : ℝ) = 1 + 2333 / 1000 by norm_num, Real.rpow_add hq0, Real.rpow_one]
-  -- the pointwise bound
-  have hδ0 : 0 < δ := by rw [hδ]; norm_num
-  have hδ1 : δ ≤ 1 / 24 := by rw [hδ]; norm_num
-  have hptq := hpt q βg 500000 (by norm_num) βg_top (fun i hi => βg_range hi) T δ H hδ0 hδ1 (by linarith)
-    K Q h hQh' P S hS a h₀
-  refine hptq.trans ?_
-  obtain ⟨V, hV⟩ : ∃ V : ℝ, V = ∑ m ∈ S, ‖a m‖ ^ 2 := ⟨_, rfl⟩
-  rw [← hV]
-  have hbin : ∀ i ∈ Finset.range 500000,
-      (∏ j ∈ Finset.range K, MB q Bc Cc Kd (βg (i + 1)) δ H (Q j) (h j)) *
-        Real.sqrt (Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ bin βg 500000 T χ = i).card *
-          Real.sqrt ((P + q) * V) ≤
-        C₁ * (1 + Real.log ((q : ℝ) * T)) ^ 5 * (q : ℝ) ^ (2333 / 1000 - 1 / 25000 + η / 2 : ℝ) *
-          Real.sqrt (V / P) := by
-    intro i hi
-    have hi' : i < 500000 := Finset.mem_range.1 hi
-    have hβi := βg_range hi'.le
-    have hβi1 := βg_range (Nat.succ_le_of_lt hi')
-    have hθ0 : 0 ≤ βg (i + 1) + 2 * δ := by linarith [hβi1.1]
-    have hθ1 : βg (i + 1) + 2 * δ ≤ 1 := by rw [hδ]; linarith [hβi1.2]
-    have hMp := prod_MB_le (M := fun j => MB q Bc Cc Kd (βg (i + 1)) δ H (Q j) (h j)) (Q := Q)
-      (θ' := βg (i + 1) + 2 * δ) hK hq0 hP0 hθ0 hθ1
-      (fun j hj => MB_nonneg hBc hCc hβi1.2 hδ0 hδ1 (by linarith) (by linarith [(hQh' j hj).1]))
-      (fun j hj => by
-        rw [hH]
-        exact hMB q hq₁ _ _ _ hβi1.1 hβi1.2 (hKLle (i + 1) (by omega)) (hQh j hj).1 (hQU j hj) (hQh j hj).2)
-      hQ1 hprod
-    have he : βg (i + 1) + 2 * δ = βg i + (1 / 1200000 + 2 * δ) := by rw [βg_succ]; ring
-    rw [he] at hMp
-    have hcnt := card_bin_step (q := q) (β := βg) (N := 500000) (by norm_num) βg_zero
-      (fun k hk => ⟨(βg_range hk.le).1, by linarith [(βg_range hk.le).2]⟩) hT2
-      (fun σ h1 h2 => hCd q σ T h1 h2 hT2) hi'
-    have hw0 : (0 : ℝ) ≤ 1 / 1200000 + 2 * δ := by linarith
-    have hw1 : 1 / 1200000 + 2 * δ ≤ 4 / 10 ^ 6 := by rw [hδ]; norm_num
-    have hb := bin_bound (V := V) hq1 hPm hm1 hm2 hT1 hT3 hβi.1 hβi.2 hw0 hw1
-      (by positivity : (0 : ℝ) ≤ 2 ^ K₀ * 2 ^ K₀) (le_trans zero_le_one (le_max_right Cd 1)) hMp hcnt
-    rw [hC₁]
-    exact hb
-  refine (Finset.sum_le_sum hbin).trans ?_
-  rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-  -- absorbing the constants
-  have hlq : 0 ≤ Real.log q := Real.log_nonneg hq1.le
-  have hlogT : 1 + Real.log ((q : ℝ) * T) ≤ 3 * (1 + Real.log q) := by
-    have hT0 : 0 < T := by linarith
-    have h1 : Real.log ((q : ℝ) * T) = Real.log q + Real.log T := Real.log_mul hq0.ne' hT0.ne'
-    have h2 : Real.log T ≤ Real.log 3 + η * Real.log q := by
-      rw [← Real.log_rpow hq0, ← Real.log_mul (by norm_num) (Real.rpow_pos_of_pos hq0 η).ne']
-      exact Real.log_le_log hT0 hT3
-    have h3 : Real.log 3 ≤ 2 := by
-      rw [Real.log_le_iff_le_exp (by norm_num)]
-      have := Real.add_one_le_exp (2 : ℝ); linarith
-    have h4 : η * Real.log q ≤ Real.log q := by
-      have : η ≤ 1 := by linarith
-      exact mul_le_of_le_one_left hlq this
-    linarith
-  have hqT1 : 1 ≤ (q : ℝ) * T := by
-    calc (1 : ℝ) = 1 * 1 := by ring
-      _ ≤ (q : ℝ) * T := mul_le_mul hq1.le hT1 zero_le_one hq0.le
-  have hlq0 : 0 ≤ 1 + Real.log ((q : ℝ) * T) := by linarith [Real.log_nonneg hqT1]
-  have habs : 500000 * C₁ * (1 + Real.log ((q : ℝ) * T)) ^ 5 ≤ (q : ℝ) ^ (3 / 200000 : ℝ) := by
-    have h := hQ₂ (q : ℝ) hqQ₂
-    calc 500000 * C₁ * (1 + Real.log ((q : ℝ) * T)) ^ 5 ≤ 500000 * C₁ * (3 * (1 + Real.log q)) ^ 5 := by
-          apply mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hlq0 hlogT 5) (by linarith)
-      _ = 500000 * C₁ * 3 ^ 5 * (1 + Real.log q) ^ 5 := by ring
-      _ ≤ (q : ℝ) ^ (3 / 200000 : ℝ) := h
-  have hVP : 0 ≤ Real.sqrt (V / P) := Real.sqrt_nonneg _
-  have hE : 0 ≤ (q : ℝ) ^ (2333 / 1000 - 1 / 25000 + η / 2 : ℝ) := Real.rpow_nonneg hq0.le _
-  have hfin : (q : ℝ) ^ (3 / 200000 : ℝ) * (q : ℝ) ^ (2333 / 1000 - 1 / 25000 + η / 2 : ℝ) ≤
-      (q : ℝ) ^ (2333 / 1000 - 1 / 50000 : ℝ) := by
-    rw [← Real.rpow_add hq0]
-    exact Real.rpow_le_rpow_of_exponent_le hq1.le (by linarith)
-  calc (500000 : ℝ) * (C₁ * (1 + Real.log ((q : ℝ) * T)) ^ 5 * (q : ℝ) ^ (2333 / 1000 - 1 / 25000 + η / 2 : ℝ) *
-        Real.sqrt (V / P)) = 500000 * C₁ * (1 + Real.log ((q : ℝ) * T)) ^ 5 *
-        (q : ℝ) ^ (2333 / 1000 - 1 / 25000 + η / 2 : ℝ) * Real.sqrt (V / P) := by ring
-    _ ≤ (q : ℝ) ^ (3 / 200000 : ℝ) * (q : ℝ) ^ (2333 / 1000 - 1 / 25000 + η / 2 : ℝ) * Real.sqrt (V / P) := by
-        apply mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right habs hE) hVP
-    _ ≤ (q : ℝ) ^ (2333 / 1000 - 1 / 50000 : ℝ) * Real.sqrt (V / P) :=
-        mul_le_mul_of_nonneg_right hfin hVP
-
 end Bins
 
 end SieveTypeII
 
 #print axioms SieveTypeII.card_class_le
 #print axioms SieveTypeII.sum_chars_dp_sq_le
-#print axioms SieveTypeII.sum_bins_le
 #print axioms SieveTypeII.bin_rect
 #print axioms SieveTypeII.card_bin_le
-#print axioms SieveTypeII.sum_typeII_bins
-#print axioms SieveTypeII.typeII_pointwise
-#print axioms SieveTypeII.card_zero_step
 #print axioms SieveTypeII.MB_le
-#print axioms SieveTypeII.exponent_le
 #print axioms SieveTypeII.qpow_combine
-#print axioms SieveTypeII.bin_bound
-#print axioms SieveTypeII.typeII_step

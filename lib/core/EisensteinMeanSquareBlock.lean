@@ -72,8 +72,6 @@ theorem colA_eq_zero (ξ : MulChar (𝓞 K ⧸ span {m}) ℂ) (k f : 𝓞 K) {M 
     {P : Pr} (hP : P ∈ M) (hf : πP P ∣ f) : colA ξ k f M = 0 := by
   unfold colA; rw [chiS_eq_zero_of_dvd hP hf]; ring
 
-theorem sym6_idl_eq (u : 𝓞 K) (M : Finset Pr) : sym6 u (idl M) = chiS M u := sym6_idl M u
-
 open Classical in
 /-- **The column sum as a sum over subsets**: if `W` vanishes beyond `β'`, `X > 0`, and `U` contains the
 primes of norm at most `β'X` whose classes modulo `m` are units, then
@@ -518,7 +516,6 @@ end
 #print axioms Eis.isRelPrime_idl
 #print axioms Eis.chiS_eq_zero_of_dvd
 #print axioms Eis.colA_eq_zero
-#print axioms Eis.sym6_idl_eq
 #print axioms Eis.colSum_eq_powerset
 #print axioms Eis.contDiff_conj_comp
 #print axioms Eis.norm_iteratedDeriv_conj_comp

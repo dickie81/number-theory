@@ -366,8 +366,6 @@ theorem hasDerivAt_dp (S : Finset ℕ) (c : ℕ → ℂ) (t : ℝ) :
     ring
   convert HasDerivAt.fun_sum hterm using 1
 
-theorem continuous_dp' (S : Finset ℕ) (c : ℕ → ℂ) : Continuous (dp S c) := continuous_dp S c
-
 /-- **Large values** at 1-separated points of `[a + ½, b − ½]`. -/
 theorem large_values {P : ℕ} (hP : 1 ≤ P) {S : Finset ℕ} (hS : S ⊆ Finset.Ioc P (2 * P)) (c : ℕ → ℂ)
     {a b : ℝ} (hab : a ≤ b) (R : Finset ℝ) (hsep : ∀ x ∈ R, ∀ y ∈ R, x ≠ y → 1 ≤ |x - y|)

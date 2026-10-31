@@ -86,10 +86,6 @@ theorem inv_mul_inv {x y : ZMod q} (hx : IsUnit x) (hy : IsUnit y) : (x * y)⁻�
   calc x * y * (x⁻¹ * y⁻¹) = (x * x⁻¹) * (y * y⁻¹) := by ring
     _ = 1 := by rw [ZMod.mul_inv_of_unit x hx, ZMod.mul_inv_of_unit y hy, one_mul]
 
-omit [NeZero q] in
-theorem isUnit_inv {x : ZMod q} (hx : IsUnit x) : IsUnit x⁻¹ :=
-  IsUnit.of_mul_eq_one x (by rw [mul_comm]; exact ZMod.mul_inv_of_unit x hx)
-
 /-! ### The Fourier form of a weighted difference -/
 
 /-- The weight's transform, `ŵ(h) = Σ_{k∈S} w(k)e(hk)`. -/

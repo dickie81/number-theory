@@ -25,14 +25,14 @@ Mellin transform instead and records the resulting bounds.
   derivatives bounded by `N`, then the weights `W₀(ρ_r x)·x^s` with row-dependent `ρ_r ∈ [ρ₀, ρ₁]`
   satisfy `Σ_r ‖S_r(W₀(ρ_r ·)·(·)^s)‖² ≤ K·M·(1+|s|)^{2J}`, with `K` independent of the rows, the
   columns, the coefficients, the points, `M`, the dilations and `s`.
-* **The bilinear form with the dual kernel** (`bilinear_dual_bound`): under the same hypothesis,
-  `|Σ_r w_r Σ_{n₁,n₂} a_r(n₁)·conj a_r(n₂)·W₀(ρ_r x_{n₁})·conj W₀(ρ_r x_{n₂})·G(√(A_r/(x_{n₁}x_{n₂})))|
-  ≤ K·A_min^{−σ}·M` for `|w_r| ≤ 1` and `A_r ≥ A_min > 0`, with `K` independent of the same data
-  and of `w`, `A`. The cost of the dual weight's `y^{−σ}` is the factor `A_min^{−σ}`.
+* **The bilinear form with the dual kernel** (`bilinear_dual_bound_of_dilated`): for coefficient families `a` and `b`
+  with the dilated bounds `Σ_r ‖Σ_n a_r(n)·W₀(ρ_r x_n)·x_n^s‖² ≤ K_d(1+|s|)^{2J}` on `Re s = σ`, and the same for `b`,
+  `|Σ_r w_r Σ_{n₁,n₂} a_r(n₁)·conj b_r(n₂)·W₀(ρ_r x_{n₁})·conj W₀(ρ_r x_{n₂})·G(√(A_r/(x_{n₁}x_{n₂})))|
+  ≤ K·K_d·A_min^{−σ}` for `|w_r| ≤ 1` and `A_r ≥ A_min > 0`, with `K` depending only on `G`, `σ` and `J`. The cost
+  of the dual weight's `y^{−σ}` is the factor `A_min^{−σ}`.
 * **The coefficient as data** (in this file):
-  `dilated_meanSquare_of_coeff` takes any Schwartz coefficient `c` representing `W₀`, and
-  `bilinear_dual_bound_of_dilated` takes the dilated bounds of two coefficient families on `Re s = σ`
-  as hypotheses. `dilated_meanSquare` and `bilinear_dual_bound` are derived from them.
+  `dilated_meanSquare_of_coeff` takes any Schwartz coefficient `c` representing `W₀`, and `dilated_meanSquare` is
+  derived from it.
 
 The paper bounds the contribution of its kernels through their `C^{2m+4}` norms, which tracks the
 dependence on the weight `W`. Here the constants depend on `W₀`, `V`, `G`, `σ`, `J` and `[ρ₀, ρ₁]`
@@ -102,7 +102,6 @@ theorem mellin_of_compact (W : ℝ → ℂ) (hW : ContDiff ℝ ∞ W) {α β : �
   rw [← e2, e]
   refine integral_congr_ae (Filter.Eventually.of_forall fun t => ?_)
   rw [SchwartzMap.fourier_coe]
-
 
 /-! ### The dual weight -/
 
@@ -219,7 +218,6 @@ theorem schwartz_exp_comp (G : ℝ → ℂ) (hG : ContDiff ℝ ∞ G)
     rw [this, norm_zero, mul_zero]
     positivity
 
-
 /-- **Mellin separation of the dual weight.** If `G` has bounded derivatives and vanishes on
 `[R, ∞)`, then for `σ > 0` there is a Schwartz `c` with `G(√y) = ∫ c(t)·y^{−σ+2πit} dt` for
 `y > 0`. -/
@@ -250,7 +248,6 @@ theorem mellin_of_dual (G : ℝ → ℂ) (hG : ContDiff ℝ ∞ G)
         refine integral_congr_ae (Filter.Eventually.of_forall fun t => ?_)
         simp only [SchwartzMap.fourier_coe]
         rw [Complex.cpow_add _ _ hy']; ring
-
 
 /-! ### Test functions `V(x)·x^s` -/
 
@@ -393,8 +390,6 @@ theorem testFun_bound (V : ℝ → ℂ) (hV : ContDiff ℝ ∞ V) (hVc : HasComp
     simp only [Pi.zero_apply, norm_zero]
     positivity
 
-
-
 /-! ### Cauchy–Schwarz for Mellin integrals -/
 
 theorem one_add_pow_le (a : ℝ) (ha : 0 ≤ a) (k : ℕ) : (1 + a) ^ k ≤ 2 ^ k * (1 + a ^ k) := by
@@ -499,8 +494,6 @@ theorem sum_norm_integral_sq_le {ι : Type*} (T : Finset ι) (c : 𝓢(ℝ, ℂ)
               gcongr; exact hb t
           _ = M * (‖c t‖ * (1 + |t|) ^ k) := by ring
     _ = _ := by rw [integral_const_mul]
-
-
 
 /-! ### Dilated weights -/
 
@@ -842,41 +835,6 @@ theorem bilinear_dual_bound_of_dilated (J : ℕ) (G : ℝ → ℂ) (hG : ContDif
   rw [integral_const_mul]
   ring
 
-/-- **The bilinear form with the dual kernel.** Under the hypotheses of `dilated_meanSquare`,
-for unimodular-bounded row coefficients `w_r`, dilations `ρ_r ∈ [ρ₀, ρ₁]` and kernel parameters
-`A_r ≥ A_min > 0`, the bilinear form
-`Σ_r w_r Σ_{n₁,n₂} a_r(n₁)·conj a_r(n₂)·W₀(ρ_r x_{n₁})·conj W₀(ρ_r x_{n₂})·G(√(A_r/(x_{n₁}x_{n₂})))`
-is at most `K·A_min^{−σ}·M`, with `K` independent of the rows, columns, coefficients, points,
-`M`, dilations, `w` and `A`. Here `G` is smooth with bounded derivatives and vanishes on `[R, ∞)`,
-and `σ > 0`. -/
-theorem bilinear_dual_bound (W0 : ℝ → ℂ) (hW0 : ContDiff ℝ ∞ W0) {α β : ℝ} (hα : 0 < α)
-    (hW0s : ∀ y, y < α ∨ β < y → W0 y = 0) (V : ℝ → ℂ) (hV : ContDiff ℝ ∞ V)
-    (hVc : HasCompactSupport V) (hVp : tsupport V ⊆ Ioi 0) {ρ0 ρ1 : ℝ} (hρ0 : 0 < ρ0)
-    (hV1 : ∀ y, α / ρ1 ≤ y → y ≤ β / ρ0 → V y = 1) (J : ℕ)
-    (G : ℝ → ℂ) (hG : ContDiff ℝ ∞ G)
-    (hGb : ∀ n : ℕ, ∃ C, ∀ ρ, ‖iteratedFDeriv ℝ n G ρ‖ ≤ C)
-    {R : ℝ} (hR : ∀ ρ, R ≤ ρ → G ρ = 0) {σ : ℝ} (hσ : 0 < σ) :
-    ∃ K, ∀ {ι κ : Type} (T : Finset ι) (C : Finset κ) (a : ι → κ → ℂ) (x : κ → ℝ),
-      (∀ n ∈ C, 0 < x n) → ∀ M : ℝ, 0 ≤ M →
-      (∀ U : ℝ → ℂ, ContDiff ℝ ∞ U → tsupport U ⊆ tsupport V → ∀ N : ℝ,
-        (∀ j ≤ J, ∀ y, ‖iteratedDeriv j U y‖ ≤ N) →
-        ∑ r ∈ T, ‖∑ n ∈ C, a r n * U (x n)‖ ^ 2 ≤ M * N ^ 2) →
-      ∀ ρ : ι → ℝ, (∀ r ∈ T, ρ0 ≤ ρ r ∧ ρ r ≤ ρ1) →
-      ∀ w : ι → ℂ, (∀ r ∈ T, ‖w r‖ ≤ 1) → ∀ (Ar : ι → ℝ) (Amin : ℝ), 0 < Amin →
-      (∀ r ∈ T, Amin ≤ Ar r) →
-      ‖∑ r ∈ T, w r * ∑ n1 ∈ C, ∑ n2 ∈ C, a r n1 * conj (a r n2) *
-          (W0 (ρ r * x n1) * conj (W0 (ρ r * x n2)) *
-            G (Real.sqrt (Ar r / (x n1 * x n2))))‖ ≤ K * Amin ^ (-σ) * M := by
-  obtain ⟨Kd, hKd⟩ := dilated_meanSquare W0 hW0 hα hW0s V hV hVc hVp hρ0 hV1 σ J
-  obtain ⟨Kg, -, hKg⟩ := bilinear_dual_bound_of_dilated J G hG hGb hR hσ
-  refine ⟨Kg * Kd, fun T C a x hx M hM hyp ρ hρ w hw Ar Amin hAmin hAr => ?_⟩
-  have hs : ∀ s : ℂ, s.re = σ → |s.re| ≤ σ := fun s hs => by rw [hs, abs_of_pos hσ]
-  have h := hKg W0 T C a a x hx ρ (Kd * M)
-    (fun s hsr => hKd T C a x hx M hM hyp ρ hρ s (hs s hsr))
-    (fun s hsr => hKd T C a x hx M hM hyp ρ hρ s (hs s hsr)) w hw Ar Amin hAmin hAr
-  calc _ ≤ Kg * (Kd * M) * Amin ^ (-σ) := h
-    _ = Kg * Kd * Amin ^ (-σ) * M := by ring
-
 end MellinSep
 
 end
@@ -893,4 +851,3 @@ end
 #print axioms MellinSep.dilated_meanSquare_of_coeff
 #print axioms MellinSep.dilated_meanSquare
 #print axioms MellinSep.bilinear_dual_bound_of_dilated
-#print axioms MellinSep.bilinear_dual_bound

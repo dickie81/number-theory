@@ -11,8 +11,8 @@ For `x ∈ (0, 1]`, `M ≥ 1`, `K ≥ 1`, `Re s > 0`, `s ≠ 1` (`norm_hurwitzZe
 `‖R‖ ≤ |B_{2K}|/(2K)! · ‖s(s+1)⋯(s+2K−1)‖ · (M+x)^{1−Re s−2K}/(Re s+2K−1)`,
 
 with `|B_{2K}|/(2K)! = 2ζ(2K)/(2π)^{2K} ≤ (π²/3)/(2π)^{2K}` (`hasSum_zeta_CB`, `CB_le`).
-`R = Σ_n ∫_0^1 B_{2K}(u)/(2K)! · (s)_{2K} (M+x+n+u)^{-s-2K} du` (`hurwitzZeta_eq_EM_explicit`).
-A version uniform on boxes `σ₀ ≤ Re s ≤ σ₁, |Im s| ≤ τ` is `norm_hurwitzZeta_sub_EM_le_box`.
+`R = Σ_n ∫_0^1 B_{2K}(u)/(2K)! · (s)_{2K} (M+x+n+u)^{-s-2K} du` (`EMrem`).
+A bound on `R` uniform on boxes `σ₀ ≤ Re s ≤ σ₁, |Im s| ≤ τ` is `norm_EMrem_le_box`.
 
 Route. §1: `|B_{2K}(u)| ≤ |B_{2K}|` on `[0,1]` from Mathlib's Fourier series of `B_{2K}`.
 §2–4: `2K` integrations by parts on one unit interval give, for every `s ≠ 1` and `c > 0`,
@@ -613,25 +613,6 @@ theorem norm_hurwitzZeta_sub_EM_le {x : ℝ} (hx : x ∈ Ioc (0 : ℝ) 1) {M K :
   rw [e, hurwitzZeta_eq_EM hx hM hK hs hs1, sub_sub_cancel_left, norm_neg]
   exact norm_EMrem_le hx.1 hM hK hs
 
-/-- The same, as an exact identity with the remainder given explicitly as a sum of integrals
-`R = -Σ_n ∫_0^1 B_{2K}(u)/(2K)! · (s)_{2K} (M+x+n+u)^{-s-2K} du`. -/
-theorem hurwitzZeta_eq_EM_explicit {x : ℝ} (hx : x ∈ Ioc (0 : ℝ) 1) {M K : ℕ} (hM : 1 ≤ M)
-    (hK : 1 ≤ K) {s : ℂ} (hs : 0 < s.re) (hs1 : s ≠ 1) :
-    hurwitzZeta x s =
-        ∑ m ∈ Finset.range M, ((m + x : ℝ) : ℂ) ^ (-s) +
-          ((M + x : ℝ) : ℂ) ^ (1 - s) / (s - 1) + ((M + x : ℝ) : ℂ) ^ (-s) / 2 +
-          ∑ k ∈ Finset.range K, (bernoulli (2 * k + 2) : ℂ) / ((2 * k + 2)! : ℂ) *
-            (∏ i ∈ Finset.range (2 * k + 1), (s + i)) * ((M + x : ℝ) : ℂ) ^ (-s - (2 * k + 1)) -
-        ∑' n : ℕ, ∫ u in (0 : ℝ)..1,
-          ((bernoulliFun (2 * K) u / ((2 * K)! : ℝ) : ℝ) : ℂ) *
-            ((∏ i ∈ Finset.range (2 * K), (s + i)) * (((M + x + n : ℝ) + u : ℝ) : ℂ) ^ (-s - (2 * K : ℕ))) := by
-  rw [hurwitzZeta_eq_EM hx hM hK hs hs1]
-  unfold EMmain EMrem R Iint T Pb D poch
-  congr 1
-  · ring
-  · congr 1; ext n; congr 1; ext u
-    rw [Even.neg_one_pow ⟨K, by ring⟩, one_mul]
-
 /-! ## 10. The constant, and a bound uniform on a box (for the minimum-modulus certificate) -/
 
 /-- `C_K = 2ζ(2K)/(2π)^{2K}`, in `HasSum` form: `Σ_n 1/n^{2K} = C_K (2π)^{2K}/2`. -/
@@ -688,7 +669,8 @@ theorem norm_poch_sq_le {s : ℂ} {σ₁ τ : ℝ} (h0 : 0 ≤ s.re) (h1 : s.re 
 
 /-- **Uniform bound on a box** `σ₀ ≤ Re s ≤ σ₁`, `|Im s| ≤ τ` (`σ₀ > 0`), for any `B ≥ 0` with
 `Π_{i<2K} ((σ₁+i)² + τ²) ≤ B²`:
-`‖EMrem x M K s‖ ≤ (π²/3)/(2π)^{2K} · B · (M+x)^{1−σ₀−2K}/(σ₀+2K−1)`; for `x ≤ 1`, `s ≠ 1` this bounds `‖ζ(s,x) − EM‖` (`norm_hurwitzZeta_sub_EM_le_box`). -/
+`‖EMrem x M K s‖ ≤ (π²/3)/(2π)^{2K} · B · (M+x)^{1−σ₀−2K}/(σ₀+2K−1)`; for `x ≤ 1`, `s ≠ 1` this bounds
+`‖ζ(s,x) − EM‖` (through `hurwitzZeta_eq_EM`). -/
 theorem norm_EMrem_le_box {x : ℝ} (hx : 0 < x) {M K : ℕ} (hM : 1 ≤ M) (hK : 1 ≤ K)
     {σ₀ σ₁ τ B : ℝ} (hσ₀ : 0 < σ₀) (hB : 0 ≤ B)
     (hPB : ∏ i ∈ Finset.range (2 * K), ((σ₁ + i) ^ 2 + τ ^ 2) ≤ B ^ 2)
@@ -718,35 +700,10 @@ theorem norm_EMrem_le_box {x : ℝ} (hx : 0 < x) {M K : ℕ} (hM : 1 ≤ M) (hK 
         exact mul_le_mul (CB_le hK0) hP (norm_nonneg _) (by positivity)
     _ ≤ _ := mul_le_mul_of_nonneg_left hden (by positivity)
 
-/-- The box version of the main theorem, with the main term written out. -/
-theorem norm_hurwitzZeta_sub_EM_le_box {x : ℝ} (hx : x ∈ Ioc (0 : ℝ) 1) {M K : ℕ} (hM : 1 ≤ M)
-    (hK : 1 ≤ K) {σ₀ σ₁ τ B : ℝ} (hσ₀ : 0 < σ₀) (hB : 0 ≤ B)
-    (hPB : ∏ i ∈ Finset.range (2 * K), ((σ₁ + i) ^ 2 + τ ^ 2) ≤ B ^ 2)
-    {s : ℂ} (hs0 : σ₀ ≤ s.re) (hs1 : s.re ≤ σ₁) (hsT : |s.im| ≤ τ) (hs : s ≠ 1) :
-    ‖hurwitzZeta x s -
-        (∑ m ∈ Finset.range M, ((m + x : ℝ) : ℂ) ^ (-s) +
-          ((M + x : ℝ) : ℂ) ^ (1 - s) / (s - 1) + ((M + x : ℝ) : ℂ) ^ (-s) / 2 +
-          ∑ k ∈ Finset.range K, (bernoulli (2 * k + 2) : ℂ) / ((2 * k + 2)! : ℂ) *
-            (∏ i ∈ Finset.range (2 * k + 1), (s + i)) * ((M + x : ℝ) : ℂ) ^ (-s - (2 * k + 1)))‖
-      ≤ (Real.pi ^ 2 / 3) / (2 * Real.pi) ^ (2 * K) * B *
-          ((M + x : ℝ) ^ (1 - σ₀ - 2 * K) / (σ₀ + 2 * K - 1)) := by
-  have e : (∑ m ∈ Finset.range M, ((m + x : ℝ) : ℂ) ^ (-s) +
-          ((M + x : ℝ) : ℂ) ^ (1 - s) / (s - 1) + ((M + x : ℝ) : ℂ) ^ (-s) / 2 +
-          ∑ k ∈ Finset.range K, (bernoulli (2 * k + 2) : ℂ) / ((2 * k + 2)! : ℂ) *
-            (∏ i ∈ Finset.range (2 * k + 1), (s + i)) * ((M + x : ℝ) : ℂ) ^ (-s - (2 * k + 1)))
-      = EMmain x M K s := by
-    unfold EMmain T poch; ring
-  rw [e, hurwitzZeta_eq_EM hx hM hK (by linarith) hs, sub_sub_cancel_left, norm_neg]
-  exact norm_EMrem_le_box hx.1 hM hK hσ₀ hB hPB hs0 hs1 hsT
-
 end HurwitzEM
 
 open HurwitzEM in
 #print axioms norm_hurwitzZeta_sub_EM_le
-open HurwitzEM in
-#print axioms hurwitzZeta_eq_EM_explicit
-open HurwitzEM in
-#print axioms norm_hurwitzZeta_sub_EM_le_box
 open HurwitzEM in
 #print axioms hasSum_zeta_CB
 open HurwitzEM in

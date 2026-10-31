@@ -15,7 +15,7 @@ The companion paper's Lemma 4.2 in the library's normalization, and its form for
 * **The dual weight** `G(ρ) = 𝓕Φ(ρ)` (`dualG`): `𝓕Φ(w) = G(|w|)` (`fourier_Phi_eq_dualG`, by
   `fourier_Phi_rot`); `G` is smooth (`dualG_contDiff`), its derivatives are bounded
   (`dualG_bounded`), and it vanishes on `[R, ∞)` (`exists_dualG_eq_zero`). These are the
-  hypotheses on `G` in `MellinSep.mellin_of_dual` and `MellinSep.bilinear_dual_bound`.
+  hypotheses on `G` in `MellinSep.mellin_of_dual`.
 * **`poisson_excl_Phi`**: for `H > 0`,
   `Σ_{u : π_i ∤ u ∀i} f(u)·Φ(σu/√H) = Σ_{T⊆S} (−1)^{|T|}·2H/(√3·N(c)·N(d_T))
   ·Σ_μ G_c(f(d_T·), μ)·G(√(4H·N(μ)/(3·N(c)·N(d_T))))`, using `|σ(δ)|² = 3` (`normSq_σO_δ3`).

@@ -9,15 +9,13 @@ argument by `S`. For `r > 0`, `Y > 0`, θ's representative `θ̃` (`thetaF`), an
 measurable and bounded, vanishing outside `[α, β]` with `0 < α ≤ β`:
 
 * **Conjugation by `S`** (**`isAut_comp_sS`**, **`isPU_rhoG_comp`**, **`memLp_comp`** and
-  **`integral_conj_sS_inv_mul`**, with `slAct_conj`, `kub_sS_conj`, `kub_sS_inv_conj`, `isAut_comp_sS_inv`,
-  `lintegral_comp_eq` and `lintegral_enorm_comp_lt_top`): `u∘S` is automorphic on `Γ_1(3)` with `κ` when `u`
-  is; `ρ_G∘g` is a partition of unity for `Γ_1(3)` for every `g ∈ SL_2(ℤ[ω])`; `u∘g` is in `L²(ν)` when `u` is
-  and `|u|` is invariant; and `∫conj u(S⁻¹·p)·w(p) dν = ∫conj u(p)·w(S·p) dν` for `u` and `w` automorphic, by
-  the change of variables and independence of the partition of unity.
-* **θ at `S·p`** (`thetaFS`, a definition; **`setLIntegral_sS_lt_top`** and **`integrableOn_sS`**, with
-  `isAut_thetaFS` and `memLp_thetaFS`): `θ̃∘S` is automorphic and in `L²(ν)`, and an
-  automorphic `u` in `L²(ν)`, moved by `S`, is integrable on `3P × [α, β]` (
-  `lintegral_boxZ_lt_top`).
+  **`integral_conj_sS_inv_mul`**, with `slAct_conj`, `kub_sS_conj`, `lintegral_comp_eq` and
+  `lintegral_enorm_comp_lt_top`): `u∘S` is automorphic on `Γ_1(3)` with `κ` when `u` is; `ρ_G∘g` is a partition
+  of unity for `Γ_1(3)` for every `g ∈ SL_2(ℤ[ω])`; `u∘g` is in `L²(ν)` when `u` is and `|u|` is invariant; and
+  `∫conj u(S⁻¹·p)·w(p) dν = ∫conj u(p)·w(S·p) dν` for `u` and `w` automorphic, by the change of variables and
+  independence of the partition of unity.
+* **θ at `S·p`** (`thetaFS`, a definition; **`setLIntegral_sS_lt_top`** and **`integrableOn_sS`**): an
+  automorphic `u` in `L²(ν)`, moved by `S`, is integrable on `3P × [α, β]` (`lintegral_boxZ_lt_top`).
 * **The band at `S·p`** (**`eisLow_sS_eq_band`**, with `height_sS_le` and `eisHigh_sS_eq_band`): every height
   at `S·p` is at most `1/v` (`rowMul_sS`, `height_le_inv`), so
   `E_s − h_s = E_s − E(1[Y ≤ v ≤ Y + β + 1/α]v^s)` at `S·p` for `v ≥ α`, as `eisLow_eq_band` on
@@ -55,11 +53,6 @@ theorem kub_sS_conj {γ : SL(2, 𝓞 K)} (hγ : γ ∈ Gam3) : kub ↑(sS * γ *
   rw [map_inv, inv_inv] at h
   exact h
 
-/-- **`κ` is invariant under conjugation by `S⁻¹`** (`kub_conj_toSL` at `S`). -/
-theorem kub_sS_inv_conj {γ : SL(2, 𝓞 K)} (hγ : γ ∈ Gam3) : kub ↑(sS⁻¹ * γ * sS⁻¹⁻¹) = kub ↑γ := by
-  rw [inv_inv]
-  exact kub_conj_toSL ModularGroup.S hγ
-
 /-- **Composing with `S` keeps automorphy**: `u∘S` is automorphic on `Γ_1(3)` with `κ` when `u` is, since
 `Γ_1(3)` is normal and `κ(SγS⁻¹) = κ(γ)`. -/
 theorem isAut_comp_sS {u : ℂ × ℝ → ℂ} (hu : IsAut Gam3 (fun g => kub ↑g) u) :
@@ -69,15 +62,6 @@ theorem isAut_comp_sS {u : ℂ × ℝ → ℂ} (hu : IsAut Gam3 (fun g => kub �
   rw [slAct_conj sS γ hp, hu _ (gam3_normal.conj_mem γ hγ sS) _ (slAct_mem _ hp)]
   dsimp only
   rw [kub_sS_conj hγ]
-
-/-- **Composing with `S⁻¹` keeps automorphy.** -/
-theorem isAut_comp_sS_inv {u : ℂ × ℝ → ℂ} (hu : IsAut Gam3 (fun g => kub ↑g) u) :
-    IsAut Gam3 (fun g => kub ↑g) fun p => u (slAct sS⁻¹ p) := by
-  intro γ hγ p hp
-  show u (slAct sS⁻¹ (slAct γ p)) = kub ↑γ * u (slAct sS⁻¹ p)
-  rw [slAct_conj sS⁻¹ γ hp, hu _ (gam3_normal.conj_mem γ hγ sS⁻¹) _ (slAct_mem _ hp)]
-  dsimp only
-  rw [kub_sS_inv_conj hγ]
 
 /-- **`ρ_G∘g` is a partition of unity for `Γ_1(3)`**, for every `g ∈ SL_2(ℤ[ω])`, since `Γ_1(3)` is
 normal. -/
@@ -171,13 +155,6 @@ theorem integral_conj_sS_inv_mul {u w : ℂ × ℝ → ℂ} (hum : Measurable u)
 
 /-- `θ̃∘S`: θ's representative (`thetaF`) at `S·p`. -/
 def thetaFS (r Y : ℝ) (hY : 0 < Y) (p : ℂ × ℝ) : ℂ := thetaF r Y hY (slAct sS p)
-
-theorem isAut_thetaFS (r Y : ℝ) (hY : 0 < Y) : IsAut Gam3 (fun g => kub ↑g) (thetaFS r Y hY) :=
-  isAut_comp_sS (isAut_thetaF r Y hY)
-
-theorem memLp_thetaFS {r : ℝ} (hr : 0 < r) {Y : ℝ} (hY : 0 < Y) :
-    MemLp (thetaFS r Y hY) 2 (muR rhoG) :=
-  memLp_comp sS (measurable_thetaF r Y hY) (enorm_thetaF_slAct r Y hY) (memLp_thetaF hr hY)
 
 /-- **An automorphic function in `L²(ν)`, moved by `S`, is integrable on `3P × [α, β]`** against `dz dv/v³`
 (`lintegral_boxZ_lt_top`). -/
@@ -609,16 +586,12 @@ end
 
 #print axioms Eis.slAct_conj
 #print axioms Eis.kub_sS_conj
-#print axioms Eis.kub_sS_inv_conj
 #print axioms Eis.isAut_comp_sS
-#print axioms Eis.isAut_comp_sS_inv
 #print axioms Eis.isPU_rhoG_comp
 #print axioms Eis.lintegral_comp_eq
 #print axioms Eis.memLp_comp
 #print axioms Eis.lintegral_enorm_comp_lt_top
 #print axioms Eis.integral_conj_sS_inv_mul
-#print axioms Eis.isAut_thetaFS
-#print axioms Eis.memLp_thetaFS
 #print axioms Eis.setLIntegral_sS_lt_top
 #print axioms Eis.integrableOn_sS
 #print axioms Eis.height_sS_le

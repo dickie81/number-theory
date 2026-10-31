@@ -12,8 +12,8 @@ display (`KubotaData`).
 * **Rotated and shifted coordinates** (`norm_σO_unit`, **`thSer_affine`**, `thetaSupp_affine`): for a unit
   `ε` and any `b`, `thSer(c, d)(εz + b) = thSer(c, d′)(z)` with `d′(m) = d(ε⁻¹m)ĕ(σ(ε⁻¹m)b/9)`, and `d′` keeps
   the support and size condition.
-* **The display's data** (`KubotaData`, `kubotaData_of`): the expansions, the invariance under `SL_2(ℤ)` and
-  the automorphy on `Γ_1(3)`, extracted from `KubotaTheta`.
+* **The display's data** (`KubotaData`): the expansions, the invariance under `SL_2(ℤ)` and the automorphy on
+  `Γ_1(3)`.
 * **Matrices** (`det_map_σO`, `atG_mul`, `map_int_σO`, `det_map_int`, `atG_int_left`, `atG_kub_left`,
   `lowerThree`, `upperThree`, `uhsAct_one`, `atG_one`, `uhsAct_upper`, `TωJ`, `Tω2J`, `lowerδ3_eq`,
   `lowerNegδ3_eq`, `shapeT_zero`, `shapeT_one`, `shapeT_two`): the action of products, the invariances at any
@@ -90,12 +90,6 @@ def KubotaData (θ : ℂ → ℝ → ℂ) (Kc : ℝ) (c₀ cP cM : ℂ) (τ tP t
       atG θ (γ.map (Int.castRingHom ℂ)) z v = θ z v) ∧
     (∀ γ : Matrix (Fin 2) (Fin 2) (𝓞 K), γ.det = 1 → ModThree γ → ∀ z v, 0 < v →
       atG θ (γ.map σO) z v = kub γ * θ z v)
-
-theorem kubotaData_of (hK : KubotaTheta) :
-    ∃ (θ : ℂ → ℝ → ℂ) (Kc : ℝ) (c₀ cP cM : ℂ) (τ tP tM : 𝓞 K → ℂ),
-      KubotaData θ Kc c₀ cP cM τ tP tM := by
-  obtain ⟨θ, Kc, C, c₀, cP, cM, τ, tP, tM, -, h1, h2, h3, h4, h5, h6, h7, h8, h9, -⟩ := hK
-  exact ⟨θ, Kc, c₀, cP, cM, τ, tP, tM, h1, h2, h3, h4, h5, h6, h7, h8, h9⟩
 
 theorem det_map_σO {γ : Matrix (Fin 2) (Fin 2) (𝓞 K)} (h : γ.det = 1) : (γ.map σO).det = 1 := by
   rw [← RingHom.mapMatrix_apply, ← RingHom.map_det, h, map_one]
@@ -441,7 +435,6 @@ end
 #print axioms Eis.norm_σO_unit
 #print axioms Eis.thSer_affine
 #print axioms Eis.thetaSupp_affine
-#print axioms Eis.kubotaData_of
 #print axioms Eis.det_map_σO
 #print axioms Eis.atG_mul
 #print axioms Eis.map_int_σO

@@ -3,9 +3,7 @@ import KubotaSiegel
 /-! # Integrals over `Γ\H³`, and unfolding
 
 `SL_2(ℤ[ω])` has a measurable partition of unity `ρ`. This file defines partitions of unity for every
-subgroup `Γ`. It proves that `∫ρ·F dz dv/v³` does not depend on the choice, for `F` invariant under `Γ`. It
-also proves the unfolding over `H\Γ` for `H ≤ Γ`, with an explicit partition of unity for the stabilizer
-`B_∞` of the cusp `∞`.
+subgroup `Γ`. It proves that `∫ρ·F dz dv/v³` does not depend on the choice, for `F` invariant under `Γ`.
 
 * **Partitions of unity** (`IsPU`, a definition; `isPU_top` and `IsPU.tsum_inv`, with `lintegral_slAct`,
   `ae_UHS`, `slAct_inv_slAct` and `slAct_slAct_inv`): `IsPU Γ ρ` says that `ρ` is measurable and
@@ -18,13 +16,7 @@ also proves the unfolding over `H\Γ` for `H ≤ Γ`, with an explicit partition
   `isPU_puLe_top`; **`lintegral_puLe`**): for `Γ′ ≤ Γ`, `Σ_{q∈Γ/Γ′} ρ(q·p)` is a partition of unity for `Γ′`,
   and with it `∫ρ′F = #(Γ/Γ′)·∫ρF`. For `Γ` of finite index in `SL_2(ℤ[ω])`, `∫ρ_Γ dz dv/v³ < ∞` is the case
   `F = 1` of `KubotaEisTrunc`'s `lintegral_puLe_top_mul_lt_top`.
-* **Folding** (**`tsum_fold`**): for `f` invariant under `H ≤ Γ` and a partition of unity `ρ_H` for `H`,
-  `Σ_{γ∈Γ} ρ_H(γ·p)f(γ·p) = Σ_{q∈Γ/H} f(q⁻¹·p)`, a sum over the cosets `Hq⁻¹` of `H\Γ`.
-* **Unfolding over `H\Γ`** (**`lintegral_unfold_cosets`**): `∫ρ·F·Σ_{q∈Γ/H} f(q⁻¹·) = ∫ρ_H·F·f`.
-* **The cusp `∞`** (`bInf`, `bInfEquiv` and `rhoInf`, definitions; **`isPU_rhoInf`**, with `mem_bInf`,
-  `bInf_det`, `slAct_bInf` and `tsum_fundP`; **`lintegral_rhoInf`**): the upper triangular elements act by
-  `(z, v) ↦ (a²z + ab, v)`, and `ρ_∞(z, v) = 1_P(z)/#ℤ[ω]ˣ` is a partition of unity for them. Then
-  `∫ρ_∞G dz dv/v³ = (1/#ℤ[ω]ˣ)·∫_{P×(0,∞)} G v⁻³ dz dv`.
+* **Translates of `P`** (`tsum_fundP`): `Σ_{t∈ℤ[ω]} 1_P(w + σ(t)) = 1`.
 -/
 
 open MeasureTheory Set Module Filter NumberField Ideal PlanePoisson
@@ -149,44 +141,6 @@ theorem isPU_puLe {Γ Γ' : Subgroup SL(2, 𝓞 K)} (hle : Γ' ≤ Γ) {ρ : ℂ
 theorem isPU_puLe_top (Γ : Subgroup SL(2, 𝓞 K)) : IsPU Γ (puLe ⊤ Γ rhoK) :=
   isPU_puLe le_top isPU_top
 
-/-- **Folding**: for `f` invariant under `H ≤ Γ`, and `ρ` a partition of unity for `H`,
-`Σ_{γ∈Γ} ρ(γ·p)f(γ·p) = Σ_{q∈Γ/H} f(q⁻¹·p)`, a sum over the cosets `Hq⁻¹` of `H\Γ`. -/
-theorem tsum_fold {Γ H : Subgroup SL(2, 𝓞 K)} (hle : H ≤ Γ) {ρ : ℂ × ℝ → ℝ≥0∞} (hρ : IsPU H ρ)
-    {f : ℂ × ℝ → ℝ≥0∞} (hf : ∀ h ∈ H, ∀ p ∈ UHS, f (slAct h p) = f p) {p : ℂ × ℝ}
-    (hp : p ∈ UHS) :
-    ∑' γ : Γ, ρ (slAct γ p) * f (slAct γ p) =
-      ∑' q : Γ ⧸ H.subgroupOf Γ, f (slAct (q.out : SL(2, 𝓞 K))⁻¹ p) := by
-  calc ∑' γ : Γ, ρ (slAct γ p) * f (slAct γ p)
-      = ∑' x : (Γ ⧸ H.subgroupOf Γ) × H.subgroupOf Γ,
-          ρ (slAct (((x.1.out * x.2)⁻¹ : Γ) : SL(2, 𝓞 K)) p) *
-            f (slAct (((x.1.out * x.2)⁻¹ : Γ) : SL(2, 𝓞 K)) p) :=
-        (((outMul _).trans (Equiv.inv Γ)).tsum_eq
-          (fun γ : Γ => ρ (slAct (γ : SL(2, 𝓞 K)) p) * f (slAct (γ : SL(2, 𝓞 K)) p))).symm
-    _ = ∑' q : Γ ⧸ H.subgroupOf Γ, ∑' c : H.subgroupOf Γ,
-          ρ (slAct (((q.out * c)⁻¹ : Γ) : SL(2, 𝓞 K)) p) *
-            f (slAct (((q.out * c)⁻¹ : Γ) : SL(2, 𝓞 K)) p) :=
-        ENNReal.tsum_prod (f := fun (q : Γ ⧸ H.subgroupOf Γ) (c : H.subgroupOf Γ) =>
-          ρ (slAct (((q.out * c)⁻¹ : Γ) : SL(2, 𝓞 K)) p) *
-            f (slAct (((q.out * c)⁻¹ : Γ) : SL(2, 𝓞 K)) p))
-    _ = ∑' q : Γ ⧸ H.subgroupOf Γ, ∑' c : H.subgroupOf Γ,
-          ρ (slAct ((c : Γ) : SL(2, 𝓞 K))⁻¹ (slAct (q.out : SL(2, 𝓞 K))⁻¹ p)) *
-            f (slAct (q.out : SL(2, 𝓞 K))⁻¹ p) := by
-        refine tsum_congr fun q => tsum_congr fun c => ?_
-        have hq : slAct (q.out : SL(2, 𝓞 K))⁻¹ p ∈ UHS := slAct_mem _ hp
-        have e : slAct (((q.out * c)⁻¹ : Γ) : SL(2, 𝓞 K)) p =
-            slAct ((c : Γ) : SL(2, 𝓞 K))⁻¹ (slAct (q.out : SL(2, 𝓞 K))⁻¹ p) := by
-          rw [Subgroup.coe_inv, Subgroup.coe_mul, mul_inv_rev, slAct_mul _ _ hp]
-        rw [e, hf _ (H.inv_mem (Subgroup.mem_subgroupOf.mp c.2)) _ hq]
-    _ = ∑' q : Γ ⧸ H.subgroupOf Γ, f (slAct (q.out : SL(2, 𝓞 K))⁻¹ p) := by
-        refine tsum_congr fun q => ?_
-        have hq : slAct (q.out : SL(2, 𝓞 K))⁻¹ p ∈ UHS := slAct_mem _ hp
-        have h1 : ∑' c : H.subgroupOf Γ,
-            ρ (slAct ((c : Γ) : SL(2, 𝓞 K))⁻¹ (slAct (q.out : SL(2, 𝓞 K))⁻¹ p)) = 1 := by
-          rw [← hρ.tsum_inv hq]
-          exact (Subgroup.subgroupOfEquivOfLe hle).toEquiv.tsum_eq
-            (fun h : H => ρ (slAct ((h⁻¹ : H) : SL(2, 𝓞 K)) (slAct (q.out : SL(2, 𝓞 K))⁻¹ p)))
-        rw [ENNReal.tsum_mul_right, h1, one_mul]
-
 /-- **The index**: `∫ρ′F = [Γ : Γ′]·∫ρF` for `ρ′ = Σ_{q∈Γ/Γ′} ρ(q·)` and `F` invariant under `Γ`. -/
 theorem lintegral_puLe {Γ Γ' : Subgroup SL(2, 𝓞 K)} {ρ : ℂ × ℝ → ℝ≥0∞} (hρ : IsPU Γ ρ)
     {F : ℂ × ℝ → ℝ≥0∞} (hF : Measurable F) (hinv : ∀ γ ∈ Γ, ∀ p ∈ UHS, F (slAct γ p) = F p) :
@@ -207,85 +161,6 @@ theorem lintegral_puLe {Γ Γ' : Subgroup SL(2, 𝓞 K)} {ρ : ℂ × ℝ → �
     _ = ∑' _q : Γ ⧸ Γ'.subgroupOf Γ, ∫⁻ p, ρ p * F p ∂uhsMeasure := tsum_congr h1
     _ = _ := ENNReal.tsum_const _
 
-/-- **The stabilizer of the cusp `∞`**: the upper triangular elements of `SL_2(ℤ[ω])`. -/
-def bInf : Subgroup SL(2, 𝓞 K) where
-  carrier := {γ | γ 1 0 = 0}
-  mul_mem' {a b} ha hb := by
-    have ha' : (a : Matrix (Fin 2) (Fin 2) (𝓞 K)) 1 0 = 0 := ha
-    have hb' : (b : Matrix (Fin 2) (Fin 2) (𝓞 K)) 1 0 = 0 := hb
-    change ((a * b : SL(2, 𝓞 K)) : Matrix (Fin 2) (Fin 2) (𝓞 K)) 1 0 = 0
-    rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two, ha', hb']
-    ring
-  one_mem' := by
-    change ((1 : SL(2, 𝓞 K)) : Matrix (Fin 2) (Fin 2) (𝓞 K)) 1 0 = 0
-    simp
-  inv_mem' {a} ha := by
-    have ha' : (a : Matrix (Fin 2) (Fin 2) (𝓞 K)) 1 0 = 0 := ha
-    change ((a⁻¹ : SL(2, 𝓞 K)) : Matrix (Fin 2) (Fin 2) (𝓞 K)) 1 0 = 0
-    rw [Matrix.SpecialLinearGroup.coe_inv, Matrix.adjugate_fin_two]
-    simp [ha']
-
-theorem mem_bInf {γ : SL(2, 𝓞 K)} : γ ∈ bInf ↔ γ 1 0 = 0 := Iff.rfl
-
-theorem bInf_det {γ : SL(2, 𝓞 K)} (hγ : γ ∈ bInf) : γ 0 0 * γ 1 1 = 1 := by
-  have h := γ.2
-  rw [Matrix.det_fin_two, show (γ : Matrix (Fin 2) (Fin 2) (𝓞 K)) 1 0 = 0 from hγ, mul_zero,
-    sub_zero] at h
-  exact h
-
-/-- `B_∞` acts by `(z, v) ↦ (a²z + ab, v)`. -/
-theorem slAct_bInf {γ : SL(2, 𝓞 K)} (hγ : γ ∈ bInf) (p : ℂ × ℝ) :
-    slAct γ p = (σO (γ 0 0) ^ 2 * p.1 + σO (γ 0 0 * γ 0 1), p.2) := by
-  have h1 := bInf_det hγ
-  have hc : σO (γ 1 0) = 0 := by rw [show (γ : Matrix (Fin 2) (Fin 2) (𝓞 K)) 1 0 = 0 from hγ,
-    map_zero]
-  have h1' : σO (γ 0 0) * σO (γ 1 1) = 1 := by rw [← map_mul, h1, map_one]
-  have hd : σO (γ 1 1) ≠ 0 := right_ne_zero_of_mul_eq_one h1'
-  have hn : Complex.normSq (σO (γ 1 1)) = 1 := by
-    rw [normSq_σO, Ideal.span_singleton_eq_top.2 (IsUnit.of_mul_eq_one_right _ h1),
-      Ideal.absNorm_top, Nat.cast_one]
-  refine Prod.ext ?_ ?_
-  · change uhsZ (σO (γ 0 0)) (σO (γ 0 1)) (σO (γ 1 0)) (σO (γ 1 1)) p.1 p.2 = _
-    unfold uhsZ uhsDen
-    simp only [hc, zero_mul, zero_add, map_zero, mul_zero, add_zero]
-    rw [hn]
-    have hconj : conj (σO (γ 1 1)) = σO (γ 0 0) := by
-      have := Complex.mul_conj (σO (γ 1 1))
-      rw [hn, Complex.ofReal_one] at this
-      linear_combination (-(conj (σO (γ 1 1)))) * h1' + σO (γ 0 0) * this
-    simp only [Complex.ofReal_one, div_one, hconj, map_mul]
-    ring
-  · change p.2 / uhsDen (σO (γ 1 0)) (σO (γ 1 1)) p.1 p.2 = p.2
-    unfold uhsDen
-    simp only [hc, zero_mul, zero_add, Complex.normSq_zero]
-    rw [hn]
-    simp
-
-/-- `B_∞ ≃ ℤ[ω]ˣ × ℤ[ω]`: `(a, b; 0, a⁻¹) ↦ (a, ab)`. -/
-def bInfEquiv : bInf ≃ (𝓞 K)ˣ × 𝓞 K where
-  toFun γ := (⟨(γ : SL(2, 𝓞 K)) 0 0, (γ : SL(2, 𝓞 K)) 1 1, bInf_det γ.2,
-      by rw [mul_comm]; exact bInf_det γ.2⟩, (γ : SL(2, 𝓞 K)) 0 0 * (γ : SL(2, 𝓞 K)) 0 1)
-  invFun x := ⟨⟨!![(x.1 : 𝓞 K), ((x.1⁻¹ : (𝓞 K)ˣ) : 𝓞 K) * x.2; 0, ((x.1⁻¹ : (𝓞 K)ˣ) : 𝓞 K)],
-      by simp [Matrix.det_fin_two]⟩, mem_bInf.2 rfl⟩
-  left_inv γ := by
-    have h1 := bInf_det γ.2
-    apply Subtype.ext
-    apply Subtype.ext
-    have hγ : (γ : SL(2, 𝓞 K)) 1 0 = 0 := γ.2
-    refine Matrix.ext fun i j => ?_
-    fin_cases i <;> fin_cases j
-    · simp
-    · simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one,
-        Matrix.empty_val', Matrix.cons_val_fin_one, Fin.zero_eta, Fin.mk_one, Fin.isValue]
-      change (γ : SL(2, 𝓞 K)) 1 1 * ((γ : SL(2, 𝓞 K)) 0 0 * (γ : SL(2, 𝓞 K)) 0 1) = _
-      rw [← mul_assoc, mul_comm ((γ : SL(2, 𝓞 K)) 1 1), h1, one_mul]
-    · simp [hγ]
-    · simp
-  right_inv x := by
-    refine Prod.ext (Units.ext ?_) ?_
-    · simp
-    · simp [← mul_assoc]
-
 /-- **Translates of `P`**: `Σ_{t∈ℤ[ω]} 1_P(w + σ(t)) = 1`. -/
 theorem tsum_fundP (w : ℂ) : ∑' t : 𝓞 K, fundP.indicator (1 : ℂ → ℝ≥0∞) (w + σO t) = 1 := by
   obtain ⟨t₀, ht₀⟩ := exists_transl_mem_fundP w
@@ -295,76 +170,6 @@ theorem tsum_fundP (w : ℂ) : ∑' t : 𝓞 K, fundP.indicator (1 : ℂ → ℝ
     have e : w + σO t₀ + σO (t - t₀) = w + σO t := by rw [map_sub]; ring
     have := eq_zero_of_mem_fundP ht₀ (by rw [e]; exact h)
     exact sub_eq_zero.1 this
-
-/-- **The partition of unity for `B_∞`**: `ρ_∞(z, v) = 1_P(z)/#ℤ[ω]ˣ`. -/
-def rhoInf (p : ℂ × ℝ) : ℝ≥0∞ := (Fintype.card (𝓞 K)ˣ : ℝ≥0∞)⁻¹ * fundP.indicator 1 p.1
-
-theorem isPU_rhoInf : IsPU bInf rhoInf := by
-  refine ⟨measurable_const.mul ((measurable_one.indicator measurableSet_fundP).comp measurable_fst),
-    fun p _ => ?_⟩
-  unfold rhoInf
-  rw [ENNReal.tsum_mul_left]
-  have h : ∑' γ : bInf, fundP.indicator (1 : ℂ → ℝ≥0∞) (slAct γ p).1 =
-      Fintype.card (𝓞 K)ˣ := by
-    calc ∑' γ : bInf, fundP.indicator (1 : ℂ → ℝ≥0∞) (slAct γ p).1
-        = ∑' x : (𝓞 K)ˣ × 𝓞 K, fundP.indicator (1 : ℂ → ℝ≥0∞)
-            (σO (x.1 : 𝓞 K) ^ 2 * p.1 + σO x.2) := by
-          rw [← bInfEquiv.symm.tsum_eq]
-          refine tsum_congr fun x => ?_
-          rw [slAct_bInf (bInfEquiv.symm x).2]
-          simp [bInfEquiv, ← mul_assoc]
-      _ = ∑' u : (𝓞 K)ˣ, ∑' t : 𝓞 K, fundP.indicator (1 : ℂ → ℝ≥0∞)
-            (σO (u : 𝓞 K) ^ 2 * p.1 + σO t) :=
-          ENNReal.tsum_prod (f := fun (u : (𝓞 K)ˣ) (t : 𝓞 K) =>
-            fundP.indicator (1 : ℂ → ℝ≥0∞) (σO (u : 𝓞 K) ^ 2 * p.1 + σO t))
-      _ = ∑' _u : (𝓞 K)ˣ, (1 : ℝ≥0∞) := tsum_congr fun u => tsum_fundP _
-      _ = Fintype.card (𝓞 K)ˣ := by rw [tsum_fintype, Finset.sum_const, Finset.card_univ]; simp
-  rw [h]
-  exact ENNReal.inv_mul_cancel (by simp) (by simp)
-
-/-- **Unfolding over `H\Γ`**: `∫_{Γ\H³} F·Σ_{q∈Γ/H} f(q⁻¹·) = ∫_{H\H³} F·f`, for `F` invariant under `Γ` and
-`f` invariant under `H ≤ Γ`, with any partitions of unity `ρ` for `Γ` and `ρ_H` for `H`. -/
-theorem lintegral_unfold_cosets {Γ H : Subgroup SL(2, 𝓞 K)} (hle : H ≤ Γ) {ρ ρH : ℂ × ℝ → ℝ≥0∞}
-    (hρ : IsPU Γ ρ) (hρH : IsPU H ρH) {F f : ℂ × ℝ → ℝ≥0∞} (hF : Measurable F) (hf : Measurable f)
-    (hFinv : ∀ γ ∈ Γ, ∀ p ∈ UHS, F (slAct γ p) = F p)
-    (hfinv : ∀ h ∈ H, ∀ p ∈ UHS, f (slAct h p) = f p) :
-    ∫⁻ p, ρ p * (F p * ∑' q : Γ ⧸ H.subgroupOf Γ, f (slAct (q.out : SL(2, 𝓞 K))⁻¹ p))
-      ∂uhsMeasure = ∫⁻ p, ρH p * (F p * f p) ∂uhsMeasure := by
-  have e : ∫⁻ p, ρ p * (F p * ∑' q : Γ ⧸ H.subgroupOf Γ, f (slAct (q.out : SL(2, 𝓞 K))⁻¹ p))
-      ∂uhsMeasure = ∫⁻ p, ρ p * ∑' γ : Γ, F p * (ρH (slAct γ p) * f (slAct γ p)) ∂uhsMeasure := by
-    refine lintegral_congr_ae ?_
-    filter_upwards [ae_UHS] with p hp
-    rw [ENNReal.tsum_mul_left, tsum_fold hle hρH hfinv hp]
-  rw [e]
-  refine lintegral_unfold hρ
-    (fun γ => hF.mul ((hρH.1.comp (measurable_slAct _)).mul (hf.comp (measurable_slAct _))))
-    (hρH.1.mul (hF.mul hf)) fun γ q hq => ?_
-  rw [Subgroup.coe_inv, slAct_slAct_inv _ hq, hFinv _ (Γ.inv_mem γ.2) q hq]
-  ring
-
-/-- **The integral over `B_∞\H³`**: `∫ρ_∞G dz dv/v³ = (1/#ℤ[ω]ˣ)·∫_{P×(0,∞)} G v⁻³ dz dv`. -/
-theorem lintegral_rhoInf {G : ℂ × ℝ → ℝ≥0∞} (hG : Measurable G) :
-    ∫⁻ p, rhoInf p * G p ∂uhsMeasure =
-      (Fintype.card (𝓞 K)ˣ : ℝ≥0∞)⁻¹ * ∫⁻ p in fundP ×ˢ Ioi 0, G p * uhsW p := by
-  have hm : Measurable fun p : ℂ × ℝ => fundP.indicator (1 : ℂ → ℝ≥0∞) p.1 :=
-    (measurable_one.indicator measurableSet_fundP).comp measurable_fst
-  have hP : MeasurableSet (Prod.fst ⁻¹' fundP : Set (ℂ × ℝ)) := measurable_fst measurableSet_fundP
-  rw [lintegral_uhsMeasure (F := fun p => rhoInf p * G p) (isPU_rhoInf.1.mul hG)]
-  unfold rhoInf
-  simp_rw [mul_assoc]
-  rw [lintegral_const_mul' _ _ (ENNReal.inv_ne_top.2 (by simp))]
-  congr 1
-  have e : ∀ p : ℂ × ℝ, fundP.indicator (1 : ℂ → ℝ≥0∞) p.1 * (G p * uhsW p) =
-      (Prod.fst ⁻¹' fundP).indicator (fun p => G p * uhsW p) p := by
-    intro p
-    by_cases h : p.1 ∈ fundP
-    · rw [Set.indicator_of_mem h, Set.indicator_of_mem (show p ∈ Prod.fst ⁻¹' fundP from h),
-        Pi.one_apply, one_mul]
-    · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem (show p ∉ Prod.fst ⁻¹' fundP from h),
-        zero_mul]
-  simp_rw [e]
-  rw [lintegral_indicator hP, Measure.restrict_restrict hP]
-  congr 2
 
 end Eis
 
@@ -380,12 +185,5 @@ end
 #print axioms Eis.lintegral_isPU_eq
 #print axioms Eis.isPU_puLe
 #print axioms Eis.isPU_puLe_top
-#print axioms Eis.tsum_fold
 #print axioms Eis.lintegral_puLe
-#print axioms Eis.mem_bInf
-#print axioms Eis.bInf_det
-#print axioms Eis.slAct_bInf
 #print axioms Eis.tsum_fundP
-#print axioms Eis.isPU_rhoInf
-#print axioms Eis.lintegral_unfold_cosets
-#print axioms Eis.lintegral_rhoInf

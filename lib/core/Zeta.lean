@@ -79,13 +79,6 @@ theorem zetaOrd_finite (T : ℝ) : ({p : PosZeroIdx | zetaOrd p < T}).Finite := 
   intro p hp
   exact ⟨p.2, hp⟩
 
-/-- **1ca(i), the split, for the zeros of `riemannZeta`**: for every `T > G`, with every positive
-ordinate `≥ G > 0` (the first-zero height, a named input),
-`F_k(T) = F_k^s(T) + Osc(T)`, `S = N − N₀ − 7/8` with `N` ζ's own zero count. -/
-theorem split_zeta {G a T : ℝ} {H : Finset ℝ} (hγ : ∀ p, G ≤ zetaOrd p) (hG : 0 < G)
-    (hGT : G < T) : Fk zetaOrd a H T = Fs G a H T + Osc (Sz zetaOrd) G T :=
-  split (zetaOrd_finite T) hγ hG hGT
-
 /-- **1ca(i)–(iii) assembled for the zeros of `riemannZeta`.** The family is no longer a
 hypothesis: `γ` is the positive ordinates of Mathlib's `riemannZeta` with multiplicity, locally
 finite by `zetaOrd_finite`. The named inputs left are the first-zero height (`G ≤ γ` for every
@@ -108,28 +101,8 @@ theorem wall_law_zeta {G a L Δ C lo hi Ts Tu : ℝ} {H : Finset ℝ}
   wall_law_zeros zetaOrd_finite h_height hG14 hGe hLG hH hΔ hC hSlog hS1log hlo hloΔ hTG hTs hTu
     hcrit hminu
 
-/-- `14 ≤ 2πe`, so `G = 14` is admissible. -/
-theorem fourteen_le_two_pi_e : (14 : ℝ) ≤ 2 * π * Real.exp 1 := by
-  nlinarith [Real.pi_gt_d2, Real.exp_one_gt_d9]
-
-/-- **1ca(iv) for the zeros of `riemannZeta`**: the exterior identity with the zero side summed over
-Mathlib's nontrivial zeros with multiplicity (Weil's explicit formula, a named input). -/
-theorem exterior_identity_zeta {h : ℂ → ℂ} {hR : ℝ → ℝ}
-    (hEF : WeilExplicit zetaZeroFamily h hR) (hevenC : ∀ z, h (-z) = h z)
-    (hi0 : MeasureTheory.IntegrableOn hR (Set.Ioi 0))
-    (hi1 : MeasureTheory.IntegrableOn (fun r => hR r * Real.log (r / (2 * π))) (Set.Ioi 0))
-    (hi2 : MeasureTheory.IntegrableOn (fun r => hR r * (psiRe r - Real.log (r / 2))) (Set.Ioi 0)) :
-    HasSum (fun p => h ((zetaZeroFamily p - 1 / 2) / Complex.I))
-      (((1 / π * (∫ r in Set.Ioi (0 : ℝ), hR r * Real.log (r / (2 * π))) + Earch hR
-          - 2 * ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / Real.sqrt n * fchi hR (Real.log n) : ℝ) : ℂ)
-        + 2 * h (Complex.I / 2)) :=
-  exterior_identity hEF hevenC hi0 hi1 hi2
-
 end WeilForm
 
 #print axioms WeilForm.finite_zeros_below
 #print axioms WeilForm.zetaOrd_finite
-#print axioms WeilForm.split_zeta
 #print axioms WeilForm.wall_law_zeta
-#print axioms WeilForm.fourteen_le_two_pi_e
-#print axioms WeilForm.exterior_identity_zeta

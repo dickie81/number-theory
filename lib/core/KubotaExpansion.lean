@@ -8,8 +8,7 @@ multiplier, the additive Chinese remainder theorem (its (A.11),
 local transformation (A.12): "`Consequently, for each fixed $h_0$ and active set $\mathcal A$, combining the
 Fourier coefficients $d_\sigma(\ell)$ of $\overline{\theta(H(z,v))}$ with the sums over $h_p\ne0$ gives`"
 "`d_\sigma(\ell)\psi(\lambda^4\ell) \prod_{p\in\mathcal A}B_{p,j_p}(\lambda^4\ell),`" "`up to a scalar
-independent of $\ell$.`" This file proves it and, with the grouping, the expansion of the twisted
-`θ̄` in cusp coordinates.
+independent of $\ell$.`" This file proves it for a group of translates.
 
 * **Tools** (`conj_ψc`, `conj_chiP_sq`, `πP_mem`, `thetaSupp_mul`, **`sum_thSer_mul`**, `thSer_mul_const`):
   a finite combination of theta-type series on a common support is one theta-type series.
@@ -19,12 +18,9 @@ independent of $\ell$.`" This file proves it and, with the grouping, the expansi
   `δ′ ≡ δ₀ (mod 9D)`, by `ψc_prod_crt`. There `ur ≡ 1 (mod λ³D)` (`ψc_prod_crt_inv`).
 * **The sum over a group at one frequency** (**`group_local_sum`**): `local_transform` at every
   prime of `A`, through the expansion of a product of sums.
-* **The per-group identity** (**`group_sum`**, **`group_expansion`**): the sum over a group of
-  `∏_PC_{P,j_P}(h_P)·θ̄(z + z_h, v)` is a unimodular `C₀` times one theta-type series at `(−W, V)`, with
-  coefficients `d̄_H(−m)ψ_{λ³D}(−my)∏_PB_{P,j_P}(m)`. In `group_sum`, `y = δ₀u` with `u∏_Pπ_P ≡ 1
-  (mod λ³D)`.
-* **The expansion** (**`twisted_theta_expansion`**): the twisted `θ̄` as a sum over `h₀` and the
-  active sets of these series.
+* **The per-group identity** (**`group_sum`**): under the cusp data, the sum over a group of
+  `∏_PC_{P,j_P}(h_P)·θ̄(z + z_h, v)` is a constant times one theta-type series at `(−W, V)`, with coefficients
+  `d̄_H(−m)ψ_{λ³D}(−my)∏_PB_{P,j_P}(m)`, where `y = δ₀u` with `u∏_Pπ_P ≡ 1 (mod λ³D)`.
 -/
 
 open NumberField Ideal UniqueFactorizationMonoid Complex
@@ -301,83 +297,6 @@ theorem group_sum {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {L : 𝓞 K} (h₀ : �
     thSer_mul_const]
   ring
 
-open Classical in
-/-- **The expansion of a group** (from the display): for a group `(h₀, A)` with the primes of
-`A` prime to `L`, the sum over the group of `∏_PC_{P,j_P}(h_P)·θ̄(z + z_h, v)` is a unimodular `C₀` times
-the theta-type series at `(−W, V)` with constant term `c̄_H∏_PB_{P,j_P}(0)` and coefficients
-`d̄_H(−m)ψ_{λ³D}(−my)∏_PB_{P,j_P}(m)`, for some `D ∣ L` and `y`, with `d_H` under the support and
-size condition. -/
-theorem group_expansion {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {c0 cP cM : ℂ} {τ tP tM : 𝓞 K → ℂ}
-    (hd : KubotaData θ Kc c0 cP cM τ tP tM) {L : 𝓞 K} (hL : L ≠ 0) (h₀ : 𝓞 K ⧸ span {L}) (A : Finset Pr)
-    (hA : ∀ P ∈ A, L ∉ P.1) (j : Pr → ℕ) :
-    ∃ (D : 𝓞 K) (C₀ cH : ℂ) (dH : 𝓞 K → ℂ) (y : 𝓞 K), D ≠ 0 ∧ D ∣ L ∧ ‖C₀‖ = 1 ∧ ThetaSupp Kc dH ∧
-      ∀ z (v : ℝ), 0 < v →
-        ∑ h ∈ Fintype.piFinset (fun P : A => (Finset.univ : Finset (𝓞 K ⧸ span {πP P.1})).erase 0),
-            (∏ P : A, locCoef P.1 (j P.1) (repQ (πP P.1) (h P))) *
-              conj (θ (z + trShift L ⟨(h₀, A), h⟩) v) =
-          C₀ * thSer (conj cH * ∏ P : A, Bloc P.1.1 (j P.1) 0)
-            (fun m => conj (dH (-m)) * ψc (δ3 ^ 3 * D) (-(m * y)) * ∏ P : A, Bloc P.1.1 (j P.1) m)
-            (-cuspW (D * ∏ P ∈ A, πP P) z v) (cuspV (D * ∏ P ∈ A, πP P) z v) := by
-  obtain ⟨D, cH, dH, κ₀, δ₀, s, hD, hDL, hdH, hκ, hs, hall⟩ := group_cusp_exists hd hL h₀ A hA
-  have hDA : ∀ P ∈ A, D ∉ P.1 := fun P hP hm => hA P hP (by
-    obtain ⟨k, hk⟩ := hDL
-    rw [hk]; exact P.1.mul_mem_right _ hm)
-  obtain ⟨u, e, -, he, hsum⟩ := group_sum h₀ A j hD hDA hdH hs hall
-  refine ⟨D, conj κ₀ * ∏ P : A, (chiP P.1.1 (s P.1) ^ 2)⁻¹ * ωloc P.1 (j P.1) (e P.1), cH, dH, δ₀ * u, hD,
-    hDL, ?_, hdH, fun z v hv => ?_⟩
-  · rw [norm_mul, Complex.norm_conj, hκ, one_mul, norm_prod]
-    refine Finset.prod_eq_one fun P _ => ?_
-    rw [norm_mul, norm_inv, norm_pow, norm_chiP_of_not_mem P.1 (hs P.1 P.2), one_pow, inv_one, one_mul,
-      norm_ωloc P.1 (j P.1) (he P.1 P.2)]
-  · rw [hsum z v hv]
-    congr 2
-    funext m
-    rw [show -(m * (δ₀ * u)) = -(m * δ₀) * u by ring]
-
-open Classical in
-/-- **The twisted `θ̄` in cusp coordinates** (the companion paper's (A.4) with
-(A.8)–(A.12)): the twisted series is a sum over the residues `h₀ mod L` and the active sets `A ⊆ Ps`
-of `φ̂₀(h₀)∏_{P∉A}C_{P,j_P}(0)` times a unimodular `C₀(h₀, A)` times one theta-type series at the
-coordinates `(−W, V)` of the group's cusp, with coefficients `d̄_H(−m)ψ_{λ³D}(−my)∏_{P∈A}B_{P,j_P}(m)`. -/
-theorem twisted_theta_expansion {θ : ℂ → ℝ → ℂ} {Kc : ℝ} {c0 cP cM : ℂ} {τ tP tM : 𝓞 K → ℂ}
-    (hd : KubotaData θ Kc c0 cP cM τ tP tM) {L : 𝓞 K} (hL : L ≠ 0) (φ₀ : 𝓞 K → ℂ)
-    (hφ : ∀ z u, φ₀ (z + L * u) = φ₀ z) (hφ0 : φ₀ 0 = 0) (Ps : Finset Pr) (hPs : ∀ P ∈ Ps, L ∉ P.1)
-    (j : Pr → ℕ) :
-    ∃ (D : (𝓞 K ⧸ span {L}) → Finset Pr → 𝓞 K) (C₀ cH : (𝓞 K ⧸ span {L}) → Finset Pr → ℂ)
-      (dH : (𝓞 K ⧸ span {L}) → Finset Pr → 𝓞 K → ℂ) (y : (𝓞 K ⧸ span {L}) → Finset Pr → 𝓞 K),
-      (∀ h₀, ∀ A ∈ Ps.powerset, D h₀ A ≠ 0 ∧ D h₀ A ∣ L ∧ ‖C₀ h₀ A‖ = 1 ∧ ThetaSupp Kc (dH h₀ A)) ∧
-      ∀ z (v : ℝ), 0 < v →
-        ∑' m : 𝓞 K, twAt (fun x => φ₀ x * ∏ P ∈ Ps, chiPow P.1 (j P) x) m * conj (τ (-m)) * (v : ℂ) *
-            besselK (1 / 3) (4 * Real.pi * ‖σO m‖ * v / 9) * ebr (σO m * z / 9) =
-          ∑ᶠ h₀ : 𝓞 K ⧸ span {L}, fCoef L φ₀ (repQ L h₀) *
-            ∑ A ∈ Ps.powerset, (∏ P ∈ Ps \ A, locCoef P (j P) 0) *
-              (C₀ h₀ A * thSer (conj (cH h₀ A) * ∏ P : A, Bloc P.1.1 (j P.1) 0)
-                (fun m => conj (dH h₀ A (-m)) * ψc (δ3 ^ 3 * D h₀ A) (-(m * y h₀ A)) *
-                  ∏ P : A, Bloc P.1.1 (j P.1) m)
-                (-cuspW (D h₀ A * ∏ P ∈ A, πP P) z v) (cuspV (D h₀ A * ∏ P ∈ A, πP P) z v)) := by
-  have hex : ∀ (h₀ : 𝓞 K ⧸ span {L}) (A : Finset Pr), ∃ (D : 𝓞 K) (C₀ cH : ℂ) (dH : 𝓞 K → ℂ) (y : 𝓞 K),
-      A ∈ Ps.powerset → (D ≠ 0 ∧ D ∣ L ∧ ‖C₀‖ = 1 ∧ ThetaSupp Kc dH) ∧
-        ∀ z (v : ℝ), 0 < v →
-          ∑ h ∈ Fintype.piFinset (fun P : A => (Finset.univ : Finset (𝓞 K ⧸ span {πP P.1})).erase 0),
-              (∏ P : A, locCoef P.1 (j P.1) (repQ (πP P.1) (h P))) *
-                conj (θ (z + trShift L ⟨(h₀, A), h⟩) v) =
-            C₀ * thSer (conj cH * ∏ P : A, Bloc P.1.1 (j P.1) 0)
-              (fun m => conj (dH (-m)) * ψc (δ3 ^ 3 * D) (-(m * y)) * ∏ P : A, Bloc P.1.1 (j P.1) m)
-              (-cuspW (D * ∏ P ∈ A, πP P) z v) (cuspV (D * ∏ P ∈ A, πP P) z v) := by
-    intro h₀ A
-    by_cases hA : A ∈ Ps.powerset
-    · obtain ⟨D, C₀, cH, dH, y, hD, hDL, hC, hdH, hid⟩ :=
-        group_expansion hd hL h₀ A (fun P hP => hPs P (Finset.mem_powerset.1 hA hP)) j
-      exact ⟨D, C₀, cH, dH, y, fun _ => ⟨⟨hD, hDL, hC, hdH⟩, hid⟩⟩
-    · exact ⟨1, 1, 0, 0, 0, fun h => absurd h hA⟩
-  choose D C₀ cH dH y hDATA using hex
-  refine ⟨D, C₀, cH, dH, y, fun h₀ A hA => (hDATA h₀ A hA).1, fun z v hv => ?_⟩
-  rw [twisted_theta_groups hd.2.2.2.2.1 hd.1 hd.2.2.2.1 hL φ₀ hφ hφ0 Ps j z hv]
-  refine finsum_congr fun h₀ => ?_
-  congr 1
-  refine Finset.sum_congr rfl fun A hA => ?_
-  rw [(hDATA h₀ A hA).2 z v hv]
-
 end Eis
 
 end
@@ -393,5 +312,3 @@ end
 #print axioms Eis.phase_split
 #print axioms Eis.ψc_prod_crt_inv
 #print axioms Eis.group_sum
-#print axioms Eis.group_expansion
-#print axioms Eis.twisted_theta_expansion

@@ -11,11 +11,10 @@ between the two pairings with `ũ_s` it gives, for `tt′ = 1`, `m` in the class
   with `eq_of_mk_eq_of_periodic`): for `G` periodic modulo `c`, the sum of `G` over the classes modulo `c` is
   the sum over the classes modulo `c′` when `(c) = (c′)` (Mathlib's `Ideal.quotEquivOfEq`), and is unchanged
   by `r ↦ αr + β` for `α` prime to `c`.
-* **The summands** (`kubTermT` and `kubTerm0`, definitions; **`kubTermT_periodic`**, **`kubTerm0_periodic`**,
-  **`cuspSmT_eq_zero`** and **`cuspSm0_eq_zero`**, with `cuspSmT_eq` and `cuspSm0_eq`): the summand of
-  `S^t_m(c)` is periodic modulo `3c` (`wtCuspT_add` and `conj_chiT_of_class`), and that of
-  `S⁰_m(c)` for `m = δ₃x` (`ebr_period`); `S^t_m(c) = 0` unless `c ≡ t (mod 3)`, and `S⁰_m(c) = 0`
-  unless `c` is primary.
+* **The summands** (`kubTermT` and `kubTerm0`, definitions; **`kubTermT_periodic`**, **`cuspSmT_eq_zero`** and
+  **`cuspSm0_eq_zero`**, with `cuspSmT_eq` and `cuspSm0_eq`): the summand of `S^t_m(c)` is periodic modulo `3c`
+  (`wtCuspT_add` and `conj_chiT_of_class`); `S^t_m(c) = 0` unless `c ≡ t (mod 3)`, and `S⁰_m(c) = 0` unless `c`
+  is primary.
 * **The termwise identity** (`kubPoly`, a definition; **`kubTermT_affine`**, with `δ3_eq_lam_neg` and
   `kubota_sum_poly`): for `a` primary, `3u + va = 1` and every `b`, the summand of `S^t_m(ta)` at
   `d = (va − 3uλ³t²)b + va` is `ĕ(mt′/9)` times the summand of `S⁰_{m′}(a)` at `b`. The supports agree, since
@@ -111,18 +110,6 @@ theorem kubTermT_periodic {t m : 𝓞 K} (hm : CuspClass t m) {c : 𝓞 K} (hc :
   have h1 : ebr (-(σO m / 9 * σO (3 * y))) * ebr (σO m / 9 * σO (3 * y)) = 1 := by
     rw [← ebr_add, neg_add_cancel, ebr_zero]
   linear_combination (wtCuspT t c d * ebr (σO m / 9 * (σO d / σO c))) * h1
-
-/-- **The summand of `S⁰_m(c)` is periodic modulo `3c`** for `m = δ₃x`. -/
-theorem kubTerm0_periodic (x : 𝓞 K) {c : 𝓞 K} (hc : c ≠ 0) (d y : 𝓞 K) :
-    kubTerm0 (δ3 * x) c (d + 3 * c * y) = kubTerm0 (δ3 * x) c d := by
-  unfold kubTerm0
-  rw [wtCusp0_add]
-  have hc' : σO c ≠ 0 := σO_ne_zero hc
-  have e : σO (δ3 * x) / 9 * (σO (d + 3 * c * y) / σO c) =
-      σO (δ3 * x) / 9 * (σO d / σO c) + σO (δ3 * x) * σO (3 * y) / 9 := by
-    simp only [map_add, map_mul]
-    field_simp
-  rw [e, ebr_add, ebr_period, mul_one]
 
 /-- **`S^t_m(c)` vanishes unless `c ≡ t (mod 3)`**: a nonzero summand needs `(c − dt, d)` to be a bottom
 row, so `3 ∣ c − dt` and `d ≡ 1 (mod 3)`. -/
@@ -475,7 +462,6 @@ end
 #print axioms Eis.cuspSmT_eq
 #print axioms Eis.cuspSm0_eq
 #print axioms Eis.kubTermT_periodic
-#print axioms Eis.kubTerm0_periodic
 #print axioms Eis.cuspSmT_eq_zero
 #print axioms Eis.cuspSm0_eq_zero
 #print axioms Eis.δ3_eq_lam_neg

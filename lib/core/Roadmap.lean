@@ -2,19 +2,16 @@ import Mathlib
 import T1bt
 import Exterior
 
-/-! # §11 roadmap, item 1: the target stated, and the reduction to RH proved
+/-! # §11 roadmap, item 1: the objects stated, and the reduction to RH proved
 
 **(i) The objects, prime side only.** `weilQ a g` is Theorem 1bn(i)'s true form
 `Q(g) = 2ĝ(i/2)² + (ψ(¼) − log π)‖g‖² + ∫₀^∞ [f(0) − f(u)] e^{u/2}/sinh u du − 2Σ Λ(n)n^{−1/2} f(log n)`
 (`f` the autocorrelation) on real even probes supported in `[−a, a]`, `δ = 2a`: no zero of `ζ`
 enters. `IsGroundState a g` is its normalised minimiser. Riemann's `Ξ(t) = ξ(½ + it)` is built from
-Mathlib's `completedRiemannZeta₀`. Item 1's (a) is `HypD` (Hypothesis D of Theorem 1bu(ii): below
-`T_D` the zero multisets of `ĝ₁` and `Ξ` coincide, as analytic orders) and (b) is `RealRooted`.
+Mathlib's `completedRiemannZeta₀`. Item 1's (b) is `RealRooted`; its (a), Hypothesis D of Theorem 1bu(ii)
+(below `T_D` the zero multisets of `ĝ₁` and `Ξ` coincide, as analytic orders), is not stated here.
 
 **(ii) The reductions, proved.**
-* `zeros_on_line_below`: D at one support plus real-rootedness there puts every nontrivial zero of
-  `riemannZeta` with `|t_ρ| < T_D` on the critical line (item 5's finite advance). Only the
-  inclusion "every zero of `Ξ` below `T_D` is a zero of `ĝ₁`" is used.
 * `rh_of_realRooted_limit`: real-rooted entire functions whose rescalings converge locally uniformly
   to `Ξ` give Mathlib's `RiemannHypothesis` (item 6's step). The Hurwitz lemma it needs is
   proved here from the maximum modulus principle, on any open set and for any closed target set
@@ -131,12 +128,7 @@ theorem xi_two_ne_zero : xi 2 ≠ 0 := by
   have hπ : (π : ℂ) ≠ 0 := ofReal_ne_zero.2 Real.pi_ne_zero
   exact (div_ne_zero (pow_ne_zero 2 hπ) (by norm_num : (6 : ℂ) ≠ 0)) hz
 
-/-! ### Item 1's (a) and (b) as propositions -/
-
-/-- **Hypothesis D at support `2a` below `T_D`** (Theorem 1bu(ii), item 1(a), item 5): the zero
-multisets of `ĝ` and `Ξ` coincide in the disc `|z| < T_D` (equal analytic orders at every point). -/
-def HypD (a : ℝ) (g : ℝ → ℝ) (TD : ℝ) : Prop :=
-  ∀ z : ℂ, ‖z‖ < TD → analyticOrderAt (ghatC g a) z = analyticOrderAt Xi z
+/-! ### Item 1's (b) as a proposition -/
 
 /-- **Real-rootedness** (item 1(b), item 6): every zero of `ĝ` is real. -/
 def RealRooted (a : ℝ) (g : ℝ → ℝ) : Prop := ∀ z : ℂ, ghatC g a z = 0 → z.im = 0
@@ -148,28 +140,6 @@ theorem re_eq_half_of_Xi_real {s : ℂ} (h : ((s - 1 / 2) / I).im = 0) : s.re = 
   rw [e] at h
   simp at h
   linarith
-
-/-- **The finite advance (item 5), proved**: if every zero of `Ξ` in `|z| < T` is a zero of `F`
-(the direction of D that matters) and `F`'s zeros there are real, every nontrivial zero `ρ` of
-`riemannZeta` with `|t_ρ| < T`, `t_ρ = (ρ − ½)/i`, has `Re ρ = ½`. -/
-theorem zeros_on_line_below {F : ℂ → ℂ} {T : ℝ}
-    (hD : ∀ z : ℂ, ‖z‖ < T → analyticOrderAt Xi z ≠ 0 → analyticOrderAt F z ≠ 0)
-    (hRR : ∀ z : ℂ, ‖z‖ < T → F z = 0 → z.im = 0) :
-    ∀ s, IsNontrivialZero s → ‖(s - 1 / 2) / I‖ < T → s.re = 1 / 2 := by
-  intro s hs hT
-  set t := (s - 1 / 2) / I
-  have hXi : Xi t = 0 := by rw [Xi_at_ordinate]; exact xi_eq_zero_of_nontrivial hs
-  have hord : analyticOrderAt Xi t ≠ 0 :=
-    analyticOrderAt_ne_zero.2 ⟨differentiable_Xi.analyticAt t, hXi⟩
-  have hF := (analyticOrderAt_ne_zero.1 (hD t hT hord)).2
-  exact re_eq_half_of_Xi_real (hRR t hT hF)
-
-/-- **Item 1 at one support, as the roadmap states it**: a ground state satisfying D below `T_D` and
-real-rooted puts every zeta zero with `|t_ρ| < T_D` on the line. -/
-theorem finite_advance {a TD : ℝ} {g : ℝ → ℝ} (_hg : IsGroundState a g) (hD : HypD a g TD)
-    (hRR : RealRooted a g) :
-    ∀ s, IsNontrivialZero s → ‖(s - 1 / 2) / I‖ < TD → s.re = 1 / 2 :=
-  zeros_on_line_below (fun z hz h => by rw [hD z hz]; exact h) (fun z _ h => hRR z h)
 
 /-- **Hurwitz for a closed set, on an open set `U`.** -/
 theorem hurwitz_closed_on {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ} {U : Set ℂ} (hU : IsOpen U)
@@ -343,8 +313,6 @@ end WeilForm
 #print axioms WeilForm.differentiable_Xi
 #print axioms WeilForm.xi_eq_zero_of_nontrivial
 #print axioms WeilForm.xi_two_ne_zero
-#print axioms WeilForm.zeros_on_line_below
-#print axioms WeilForm.finite_advance
 #print axioms WeilForm.hurwitz_closed_on
 #print axioms WeilForm.hurwitz_real
 #print axioms WeilForm.rh_of_realRooted_limit

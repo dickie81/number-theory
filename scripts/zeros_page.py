@@ -19,8 +19,8 @@ statement:
   `window_22000d`;
 - the bound of the certificate (`SieveDeep.totalD_lt_22000E`).
 Every theorem the page presents as a result must be printed by one of the check files `lib/check/Check.lean`,
-`CheckAll.lean` and `CheckZeta23.lean`, whose axioms CI checks. The window's exact ends, computed here from the Lean's
-curve and condition, must contain the Lean's window.
+`CheckAll.lean`, `CheckZeta23.lean` and `CheckDH.lean`, whose axioms CI checks. The window's exact ends, computed
+here from the Lean's curve and condition, must contain the Lean's window.
 The numbers that are not theorems of the library (the literature's exponents and the paper's computations) are read
 from the paper's sources, and the numbers of the paper's sections and statements from its `.aux` files when it is
 compiled. A change to the Lean or to the paper that the page does not follow makes this script fail; CI runs it with
@@ -557,7 +557,7 @@ def main(argv):
         return 0
     if "--check" in argv:
         print(f"zeros_page: the page agrees with the Lean and the paper: {len(results)} theorems named as results, all "
-              f"printed by Check, CheckAll or CheckZeta23; g*'s {len(data['g7d'])} pieces each counted by the "
+              f"printed by Check, CheckAll, CheckZeta23 or CheckDH; g*'s {len(data['g7d'])} pieces each counted by the "
               f"theorem counts_7d glues in; the exact window [{texts['exactLo']}…, {texts['exactHi']}…] contains the "
               f"Lean's, which fits down to L = {data['cert']['corners']}…")
         return 0

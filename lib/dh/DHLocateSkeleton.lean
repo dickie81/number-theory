@@ -16,9 +16,8 @@ zero (`exists_zero_of_bounds`).
 **Decomposition** (`dhEM_eq`): `dhEM M K = a(1)·fEM M K`, `fEM = DEM + GEM`, with `u = 1, κ, −κ, −1`,
 `DEM M s = Σ_{m<M} Σ_j u(j)(5m+j)^{-s}` (the Dirichlet polynomial over `n < 5M`) and
 `GEM M K s = Σ_j u(j)(5M+j)^{-s} Q_{M+j/5}(s)`,
-`Q_x(s) = x/(s−1) + 1/2 + Σ_{k<K} B_{2k+2}/(2k+2)! · s(s+1)⋯(s+2k)/x^{2k+1}` (`QEM`; for `K = 12` with
-rational coefficients in `QEM_twelve`; `5^{-s} EM(j/5) = Σ_m (5m+j)^{-s} + (100+j)^{-s} Q` is
-`EMmain_explicit`; `B₂, …, B₂₄` are `bernoulli_vals`, by Mathlib's recursion for `bernoulli'`).
+`Q_x(s) = x/(s−1) + 1/2 + Σ_{k<K} B_{2k+2}/(2k+2)! · s(s+1)⋯(s+2k)/x^{2k+1}` (`QEM`; `B₂, …, B₂₄` are
+computed as rationals by Mathlib's recursion for `bernoulli'`).
 
 **The second-derivative bound: termwise for `DEM`, Cauchy for `GEM`.** `(n^{-s})″ = log²n·n^{-s}`
 gives `‖DEM″‖ ≤ D2sum(1597/2000, 20) ≤ 36` (true value 34.003; `D2sum_le`), and Cauchy's estimate
@@ -30,19 +29,19 @@ above the admissible `m₂ < 124`; a termwise bound for `GEM″` needs `(s)_n″
 about 5 of a slack of ~80. The termwise `D2sum` is far above the true `sup ‖fEM″‖ ≈ 0.75`, but the
 margin absorbs it: `m₂ r² = 4.26·10⁻³` against `|fEM′(c)| r = 1.256·10⁻²`.
 
-**Proved numeric inputs.** Euler–Maclaurin error on the ball `‖dh − dhEM 20 12‖ ≤ ‖a(1)‖·16·10⁻⁶
-≤ 6·10⁻⁵` (`norm_dh_sub_dhEM_le_ball`, `norm_dh_sub_dhEM_le_ball'`; true bound 1.482·10⁻⁵ per unit
-of `a(1)`), from the box `1597/2000 ≤ Re ≤ 1637/2000`, `|Im| ≤ 857093/10000`, `B = 34·10⁴⁵`
+**Proved numeric inputs.** Euler–Maclaurin error on the ball `‖dh − dhEM 20 12‖ ≤ ‖a(1)‖·16·10⁻⁶`
+(`norm_dh_sub_dhEM_le_ball`; true bound 1.482·10⁻⁵ per unit of `a(1)`), from the box
+`1597/2000 ≤ Re ≤ 1637/2000`, `|Im| ≤ 857093/10000`, `B = 34·10⁴⁵`
 (`prod_box_eq`: `Π_{i<24}((1637/2000 + i)² + (857093/10000)²) = 1.15358…·10⁹³` exactly, `prod_box_le`),
 `5^{−1597/2000} ≤ 0.2805` (`five_rpow_le`), `(20 + j/5)^{−47597/2000} ≤ 8.8246, 6.9807, 5.5348, 4.3982
 ·10⁻³²` (`x1_rpow_le` … `x4_rpow_le`), `(π²/3)/(2π)²⁴ ≤ 1/(3·2²⁴·3.141592²²)` (`pi_const_le`),
-`‖a(1)‖ = ‖a(4)‖ ≤ 3.7014`, `‖a(2)‖ = ‖a(3)‖ = κ‖a(1)‖ ≤ 1.0515` (`norm_aDH_le`), `κ ≤ 0.28408`.
-Second derivative `‖dhEM″‖ ≤ ‖a(1)‖(36 + 53/8) ≤ 158` on the ball (`norm_deriv2_dhEM_ball`).
+`‖a(4)‖ = ‖a(1)‖`, `‖a(2)‖ = ‖a(3)‖ = κ‖a(1)‖` (`norm_aDH_two` … `norm_aDH_four`), `κ ≤ 0.28408` (`kappa_le`).
+Second derivative `‖dhEM″‖ ≤ ‖a(1)‖(36 + 53/8)` on the ball (`norm_deriv2_dhEM_ball`).
 Exact Gaussian rationals `Q_{20+j/5}(c)`, `Q′_{20+j/5}(c)` (`QEM_cLoc_j`, `QEMd_cLoc_j`, through
 `poch_cLoc_n`, `pochD_cLoc_n`).
 
 **Theorem ladder.** `dh_zero_near_of_numerics` (five hypotheses, `dh` units) →
-`dh_zero_near_of_fEM` (normalised; `dh_zero_near_of_dhEM`, with `hM2`, `hE` discharged in `dh` units, is a side branch off `dh_zero_near_of_numerics`) →
+`dh_zero_near_of_fEM` (normalised) →
 `dh_zero_near_of_elementary` (Re/Im split, `fEM_cLoc_re`, `fEM_cLoc_im`, `fEMd_cLoc_re`) →
 `dh_zero_near_of_center` (`D2sum` discharged) → `dh_zero_near_of_center'` (fixed tolerances).
 
@@ -276,7 +275,6 @@ theorem five_cpow_mul_EMmain (M K : ℕ) {j : ℕ} (hj : 1 ≤ j) (s : ℂ) :
     congr 2
     push_cast; ring
 
-theorem uval_one : uval 1 = 1 := by simp [uval]
 theorem uval_two : uval 2 = kappa := by simp [uval]
 theorem uval_three : uval 3 = -kappa := by simp [uval]
 theorem uval_four : uval 4 = -1 := by simp [uval]
@@ -348,9 +346,6 @@ theorem hasDerivAt_DEMk (k M : ℕ) (s : ℂ) : HasDerivAt (DEMk k M) (DEMk (k +
   exact ((((hasDerivAt_npsD k (by omega) s).add
     ((hasDerivAt_npsD k (by omega) s).const_mul _)).sub
     ((hasDerivAt_npsD k (by omega) s).const_mul _)).sub (hasDerivAt_npsD k (by omega) s))
-
-theorem deriv_DEMk (k M : ℕ) : deriv (DEMk k M) = DEMk (k + 1) M := by
-  funext s; exact (hasDerivAt_DEMk k M s).deriv
 
 /-- The derivative of the rising factorial, `d/ds (s)_n`. -/
 def pochD (s : ℂ) : ℕ → ℂ
@@ -921,15 +916,6 @@ theorem bernoulli_22_eq : bernoulli 22 = 854513 / 138 := by
 theorem bernoulli_24_eq : bernoulli 24 = -236364091 / 2730 := by
   rw [bernoulli_eq_bernoulli'_of_ne_one (by norm_num), bernoulli'_24_val]
 
-/-- The twelve Bernoulli values used by `EM_{20,12}`. -/
-theorem bernoulli_vals :
-    bernoulli 2 = 1 / 6 ∧ bernoulli 4 = -1 / 30 ∧ bernoulli 6 = 1 / 42 ∧ bernoulli 8 = -1 / 30 ∧
-      bernoulli 10 = 5 / 66 ∧ bernoulli 12 = -691 / 2730 ∧ bernoulli 14 = 7 / 6 ∧
-      bernoulli 16 = -3617 / 510 ∧ bernoulli 18 = 43867 / 798 ∧ bernoulli 20 = -174611 / 330 ∧
-      bernoulli 22 = 854513 / 138 ∧ bernoulli 24 = -236364091 / 2730 :=
-  ⟨bernoulli_2_eq, bernoulli_4_eq, bernoulli_6_eq, bernoulli_8_eq, bernoulli_10_eq, bernoulli_12_eq, bernoulli_14_eq, bernoulli_16_eq, bernoulli_18_eq, bernoulli_20_eq, bernoulli_22_eq, bernoulli_24_eq⟩
-
-
 /-! ## 7. `G″` on the ball, by Cauchy's estimate on circles of radius `2/5` -/
 
 /-- `√(Π (a_i² + τ²)) ≤ Π (τ + a_i²/(2τ))` (`√(τ² + a²) ≤ τ + a²/(2τ)`), a rational bound. -/
@@ -1186,21 +1172,6 @@ def ARe (M K : ℕ) : ℝ :=
       - ex (1617 / 2000) (5 * M + 4) * (cC (5 * M + 4) * (QD K (M + 4 / 5) (5 * M + 4)).re
         + sC (5 * M + 4) * (QD K (M + 4 / 5) (5 * M + 4)).im))
 
-/-- `Im fEM′(c)`, elementary. -/
-def AIm (M K : ℕ) : ℝ :=
-  (∑ m ∈ Finset.range M, (Real.log (5 * m + 1 : ℕ) * (ex (1617 / 2000) (5 * m + 1) * sC (5 * m + 1))
-      + kappa * (Real.log (5 * m + 2 : ℕ) * (ex (1617 / 2000) (5 * m + 2) * sC (5 * m + 2)))
-      - kappa * (Real.log (5 * m + 3 : ℕ) * (ex (1617 / 2000) (5 * m + 3) * sC (5 * m + 3)))
-      - Real.log (5 * m + 4 : ℕ) * (ex (1617 / 2000) (5 * m + 4) * sC (5 * m + 4)))) +
-    (ex (1617 / 2000) (5 * M + 1) * (cC (5 * M + 1) * (QD K (M + 1 / 5) (5 * M + 1)).im
-        - sC (5 * M + 1) * (QD K (M + 1 / 5) (5 * M + 1)).re)
-      + kappa * (ex (1617 / 2000) (5 * M + 2) * (cC (5 * M + 2) * (QD K (M + 2 / 5) (5 * M + 2)).im
-        - sC (5 * M + 2) * (QD K (M + 2 / 5) (5 * M + 2)).re))
-      - kappa * (ex (1617 / 2000) (5 * M + 3) * (cC (5 * M + 3) * (QD K (M + 3 / 5) (5 * M + 3)).im
-        - sC (5 * M + 3) * (QD K (M + 3 / 5) (5 * M + 3)).re))
-      - ex (1617 / 2000) (5 * M + 4) * (cC (5 * M + 4) * (QD K (M + 4 / 5) (5 * M + 4)).im
-        - sC (5 * M + 4) * (QD K (M + 4 / 5) (5 * M + 4)).re))
-
 theorem re_npsMul {n : ℕ} (hn : 1 ≤ n) (z : ℂ) :
     (nps n cLoc * z).re = ex (1617 / 2000) n * (cC n * z.re + sC n * z.im) := by
   obtain ⟨h1, h2⟩ := nps_cLoc hn
@@ -1247,18 +1218,6 @@ theorem fEMd_cLoc_re (M K : ℕ) : (DEMk 1 M cLoc + GEMd M K cLoc).re = ARe M K 
   simp only [npsD_one, Complex.neg_re, Complex.re_ofReal_mul, neg_mul]
   rw [(nps_cLoc (n := 5 * m + 1) (by omega)).1, (nps_cLoc (n := 5 * m + 2) (by omega)).1,
     (nps_cLoc (n := 5 * m + 3) (by omega)).1, (nps_cLoc (n := 5 * m + 4) (by omega)).1]
-  ring
-
-theorem fEMd_cLoc_im (M K : ℕ) : (DEMk 1 M cLoc + GEMd M K cLoc).im = AIm M K := by
-  unfold DEMk GEMd AIm
-  rw [GEMd_term, GEMd_term, GEMd_term, GEMd_term]
-  simp only [Complex.add_im, Complex.sub_im, Complex.im_sum, Complex.im_ofReal_mul]
-  rw [im_npsMul (by omega), im_npsMul (by omega), im_npsMul (by omega), im_npsMul (by omega)]
-  congr 1
-  refine Finset.sum_congr rfl fun m _ => ?_
-  simp only [npsD_one, Complex.neg_im, Complex.im_ofReal_mul, neg_mul]
-  rw [(nps_cLoc (n := 5 * m + 1) (by omega)).2, (nps_cLoc (n := 5 * m + 2) (by omega)).2,
-    (nps_cLoc (n := 5 * m + 3) (by omega)).2, (nps_cLoc (n := 5 * m + 4) (by omega)).2]
   ring
 
 /-! ## 10. Exact Gaussian-rational values of `Q_x(c)` and `Q′_x(c)`, `x = 20 + j/5`
@@ -1616,7 +1575,6 @@ theorem pochD_cLoc_23 : (pochD cLoc 23).re = (1215507690239974191266698609619205
   simp only [Complex.add_re, Complex.add_im, Complex.natCast_re, Complex.natCast_im, cLoc_re, cLoc_im]
   norm_num
 
-
 /-- `Q_x(s)` with real coefficients. -/
 theorem QEM_eq_real (K : ℕ) (x : ℝ) (s : ℂ) :
     QEM K x s = (x : ℂ) / (s - 1) + 1 / 2 +
@@ -1725,40 +1683,6 @@ theorem QEMd_cLoc_4 : (QEMd 12 (20 + 4 / 5) cLoc).re = (946845925481881047385604
 
 /-! ## 11. The explicit Euler–Maclaurin main term, and the elementary certificate -/
 
-/-- **`Q_x` for `K = 12` with the Bernoulli coefficients `B_{2k+2}/(2k+2)!` as rationals.** -/
-theorem QEM_twelve (x : ℝ) (s : ℂ) :
-    QEM 12 x s = (x : ℂ) / (s - 1) + 1 / 2 +
-      (1 / 12 * HurwitzEM.poch s 1 / (x : ℂ) +
-        -1 / 720 * HurwitzEM.poch s 3 / (x : ℂ) ^ 3 +
-        1 / 30240 * HurwitzEM.poch s 5 / (x : ℂ) ^ 5 +
-        -1 / 1209600 * HurwitzEM.poch s 7 / (x : ℂ) ^ 7 +
-        1 / 47900160 * HurwitzEM.poch s 9 / (x : ℂ) ^ 9 +
-        -691 / 1307674368000 * HurwitzEM.poch s 11 / (x : ℂ) ^ 11 +
-        1 / 74724249600 * HurwitzEM.poch s 13 / (x : ℂ) ^ 13 +
-        -3617 / 10670622842880000 * HurwitzEM.poch s 15 / (x : ℂ) ^ 15 +
-        43867 / 5109094217170944000 * HurwitzEM.poch s 17 / (x : ℂ) ^ 17 +
-        -174611 / 802857662698291200000 * HurwitzEM.poch s 19 / (x : ℂ) ^ 19 +
-        77683 / 14101100039391805440000 * HurwitzEM.poch s 21 / (x : ℂ) ^ 21 +
-        -236364091 / 1693824136731743669452800000 * HurwitzEM.poch s 23 / (x : ℂ) ^ 23) := by
-  unfold QEM
-  congr 1
-  simp only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.reduceMul, Nat.reduceAdd,
-    bernoulli_2_eq, bernoulli_4_eq, bernoulli_6_eq, bernoulli_8_eq, bernoulli_10_eq, bernoulli_12_eq,
-    bernoulli_14_eq, bernoulli_16_eq, bernoulli_18_eq, bernoulli_20_eq, bernoulli_22_eq,
-    bernoulli_24_eq]
-  push_cast
-  norm_num [Nat.factorial]
-
-/-- **`EMmain_explicit`**: for `j = 1, …, 4`,
-`5^{-s} EM_{20,12}(j/5, s) = Σ_{m<20} (5m+j)^{-s} + (100+j)^{-s} Q_{20+j/5}(s)`, with `Q` explicit by
-`QEM_twelve` (every `s`; at `s = 1` both sides use Lean's `x/0 = 0`). -/
-theorem EMmain_explicit {j : ℕ} (hj : 1 ≤ j) (s : ℂ) :
-    (5 : ℂ) ^ (-s) * HurwitzEM.EMmain ((j : ℝ) / 5) 20 12 s =
-      ∑ m ∈ Finset.range 20, ((5 * m + j : ℕ) : ℂ) ^ (-s) +
-        ((100 + j : ℕ) : ℂ) ^ (-s) * QEM 12 (20 + (j : ℝ) / 5) s := by
-  rw [five_cpow_mul_EMmain 20 12 hj s]
-  simp only [nps, Nat.cast_ofNat]
-
 theorem QD_re (K : ℕ) (x : ℝ) (N : ℕ) :
     (QD K x N).re = (QEMd K x cLoc).re - Real.log N * (QEM K x cLoc).re := by
   rw [QD, Complex.sub_re, Complex.re_ofReal_mul]
@@ -1766,38 +1690,6 @@ theorem QD_re (K : ℕ) (x : ℝ) (N : ℕ) :
 theorem QD_im (K : ℕ) (x : ℝ) (N : ℕ) :
     (QD K x N).im = (QEMd K x cLoc).im - Real.log N * (QEM K x cLoc).im := by
   rw [QD, Complex.sub_im, Complex.im_ofReal_mul]
-
-/-- `a(1) = 2(1 + 2 sin(2π/5)/√5) ≤ 3.7014`. -/
-theorem norm_aDH_one_le : ‖aDH chi5 1‖ ≤ 37014 / 10000 := by
-  have h5 := sqrt_five_bounds
-  have h2 := sin_two_pi_div_five_bounds
-  have hs : 0 < Real.sqrt 5 := by linarith
-  rw [aDH_chi5_eq 1]
-  simp only [Nat.cast_one, chi5_apply_one, Complex.one_re, Complex.one_im, mul_one, mul_zero,
-    add_zero, Complex.norm_real, Real.norm_eq_abs]
-  have hq : 2 * Real.sin (2 * Real.pi / 5) / Real.sqrt 5 ≤ 850651 / 1000000 := by
-    rw [div_le_iff₀ hs]; nlinarith
-  have hq0 : 0 ≤ 2 * Real.sin (2 * Real.pi / 5) / Real.sqrt 5 := by
-    apply div_nonneg _ hs.le; linarith
-  rw [abs_of_nonneg (by linarith)]
-  linarith
-
-/-- The four coefficient norms: `‖a(1)‖ = ‖a(4)‖ ≤ 3.7014`, `‖a(2)‖ = ‖a(3)‖ = κ‖a(1)‖ ≤ 1.0515`. -/
-theorem norm_aDH_le : ‖aDH chi5 1‖ ≤ 37014 / 10000 ∧ ‖aDH chi5 2‖ ≤ 10515 / 10000 ∧
-    ‖aDH chi5 3‖ ≤ 10515 / 10000 ∧ ‖aDH chi5 4‖ ≤ 37014 / 10000 := by
-  have h1 := norm_aDH_one_le
-  have hk := kappa_le
-  have hk0 := kappa_pos
-  have h0 := norm_nonneg (aDH chi5 1)
-  rw [norm_aDH_two, norm_aDH_three, norm_aDH_four]
-  refine ⟨h1, ?_, ?_, h1⟩ <;> nlinarith
-
-/-- **The Euler–Maclaurin error on the ball, in `dh` units**: `‖dh z − dhEM 20 12 z‖ ≤ 6·10⁻⁵`. -/
-theorem norm_dh_sub_dhEM_le_ball' {z : ℂ} (hz : z ∈ closedBall cLoc (1 / 100)) :
-    ‖dh z - dhEM 20 12 z‖ ≤ 6 / 10 ^ 5 := by
-  refine (norm_dh_sub_dhEM_le_ball hz).trans ?_
-  have := norm_aDH_one_le
-  nlinarith [norm_nonneg (aDH chi5 1)]
 
 /-- **Stage 2, elementary form.** A zero of `dh` within `1/100` of `c` follows from four real
 inequalities about explicit elementary expressions (`PRe`, `PIm`, `ARe`, `D2sum`: finite sums of
@@ -2488,29 +2380,6 @@ theorem dh_zero_near_of_center' (hPr : |PRe 20 12| ≤ 1 / 1000) (hPi : |PIm 20 
     (hAr : 1 ≤ ARe 20 12) : ∃ ρ, dh ρ = 0 ∧ ‖ρ - cLoc‖ < 1 / 100 :=
   dh_zero_near_of_center hPr hPi (hAr.trans (le_abs_self _)) (by norm_num)
 
-/-- **Stage 2 in `dh` units**, with `hM2` (`m₂ = 158 ≥ ‖a(1)‖(36 + 53/8)`) and `hE` (`e₀ = 6·10⁻⁵`)
-of `dh_zero_near_of_numerics` discharged: only `‖P(c)‖` and `‖P′(c)‖` remain. -/
-theorem dh_zero_near_of_dhEM {p₀ a₀ : ℝ}
-    (hP : ‖dhEM 20 12 cLoc‖ ≤ p₀)
-    (hA : a₀ ≤ ‖deriv (dhEM 20 12) cLoc‖)
-    (hmargin : 2 * (p₀ + 6 / 10 ^ 5) < a₀ * (1 / 100) - 158 * (1 / 100) ^ 2) :
-    ∃ ρ, dh ρ = 0 ∧ ‖ρ - cLoc‖ < 1 / 100 := by
-  refine dh_zero_near_of_numerics hP hA (fun z hz => ?_)
-    (fun z hz => norm_dh_sub_dhEM_le_ball' hz) hmargin
-  refine (norm_deriv2_dhEM_ball hz).trans ?_
-  have h1 := norm_aDH_one_le
-  have h2 := D2sum_le
-  have h0 := norm_nonneg (aDH chi5 1)
-  have h3 : 0 ≤ D2sum (1597 / 2000) 20 := by
-    unfold D2sum
-    refine Finset.sum_nonneg fun m _ => ?_
-    have hk := kappa_pos.le
-    have e : ∀ n : ℕ, 0 ≤ Real.log n ^ 2 * ex (1597 / 2000) n :=
-      fun n => mul_nonneg (sq_nonneg _) (Real.exp_pos _).le
-    have := e (5 * m + 1); have := e (5 * m + 2); have := e (5 * m + 3); have := e (5 * m + 4)
-    positivity
-  nlinarith
-
 /-! ## 14. The three open quantities with every constant substituted
 
 `PRe 20 12`, `PIm 20 12`, `ARe 20 12` (and `AIm 20 12`) with the numerals normalised and the
@@ -2551,43 +2420,25 @@ theorem ARe_20 : ARe 20 12 = -(∑ m ∈ Finset.range 20, (Real.log (5 * m + 1 :
   simp only [ARe, Nat.reduceMul, Nat.reduceAdd, Nat.cast_ofNat, QD_re, QD_im]
   rw [(QEM_cLoc_1).1, (QEM_cLoc_1).2, (QEM_cLoc_2).1, (QEM_cLoc_2).2, (QEM_cLoc_3).1, (QEM_cLoc_3).2, (QEM_cLoc_4).1, (QEM_cLoc_4).2, (QEMd_cLoc_1).1, (QEMd_cLoc_1).2, (QEMd_cLoc_2).1, (QEMd_cLoc_2).2, (QEMd_cLoc_3).1, (QEMd_cLoc_3).2, (QEMd_cLoc_4).1, (QEMd_cLoc_4).2]
 
-theorem AIm_20 : AIm 20 12 = (∑ m ∈ Finset.range 20, (Real.log (5 * m + 1 : ℕ) * (ex (1617 / 2000) (5 * m + 1) * sC (5 * m + 1))
-      + kappa * (Real.log (5 * m + 2 : ℕ) * (ex (1617 / 2000) (5 * m + 2) * sC (5 * m + 2)))
-      - kappa * (Real.log (5 * m + 3 : ℕ) * (ex (1617 / 2000) (5 * m + 3) * sC (5 * m + 3)))
-      - Real.log (5 * m + 4 : ℕ) * (ex (1617 / 2000) (5 * m + 4) * sC (5 * m + 4)))) +
-    (ex (1617 / 2000) 101 * (cC 101 * ((-1064630512486098047888168366920574934903847366924349598008270039926369535731293511372741440556389376865652085649994020977963104834581438646013109503430523988729 / 463975814208221458235478491484279255325916014831862220935685185158786229852118589344885768192000000000000000000000000000000000000000000000000000000000000000000000 : ℝ) - Real.log 101 * (3353835990324371144726438027332712899319995400723845311266438266912677859536935433992851321962228199688966769098239368394800644930488755468604294323757811 / 11148359327814929380567648275816054334558036729916318944442663538607207541322547200000000000000000000000000000000000000000000000000000000000000000000000000 : ℝ)) - sC 101 * ((4062534435001535897631391326612736708413799470767175451491986571945897549454229338059873756702041719321122904222524872783593324766810958458884054296061946434603 / 248558471897261495483292049009435315353169293659926189786974206335064051706492101434760232960000000000000000000000000000000000000000000000000000000000000000000000 : ℝ) - Real.log 101 * (1190979929041446726999457807134989214471695938821919712525122123393529666400641050533437654647067794172432490735455400515144752890792321729324555344242957 / 2229671865562985876113529655163210866911607345983263788888532707721441508264509440000000000000000000000000000000000000000000000000000000000000000000000000 : ℝ)))
-      + kappa * (ex (1617 / 2000) 102 * (cC 102 * ((-1219659500633426508063042930171230862734953982065129831112089265997692675080233106693082972201153799186794638521276921032467747245640946349247867387708923988729 / 581979512083268847283945572715245641090038537868812613243123464143346887750185288402611470336000000000000000000000000000000000000000000000000000000000000000000000 : ℝ) - Real.log 102 * (236366703060234863719383057863146618666060383785704374484884927948017375744657609556231819515512121073660152942515625086977973555158771196906779670809283 / 822572886654690648082698732016246843064160524054884683081596660561024408931532800000000000000000000000000000000000000000000000000000000000000000000000000 : ℝ)) - sC 102 * ((4941689565801366052991808983873389372287911332829936783595373321388329926356303061783882277836481711118720366898723279268645671514210290227931446681309126434603 / 311774738616036882473542271097453022012520645286863899951673284362507261294742118787113287680000000000000000000000000000000000000000000000000000000000000000000000 : ℝ) - Real.log 102 * (87521824476252905384790759558776093854434110660856494171179368332450564125407138331543669202089432190196666264730930497241131346580176154593739250837821 / 164514577330938129616539746403249368612832104810976936616319332112204881786306560000000000000000000000000000000000000000000000000000000000000000000000000 : ℝ))))
-      - kappa * (ex (1617 / 2000) 103 * (cC 103 * ((-714132179625915652877586514468613301940492448299689784172039572806559058895957842262833864166220218114728761818847995952488523016508589026215368556531897797 / 372193760352687279333850181871414638893457139970494540947818688338402906607382545156800512000000000000000000000000000000000000000000000000000000000000000000000 : ℝ) - Real.log 103 * (46622702772654304966126202405642008886514484613192779654207030958817270771428506540342355341421754782208326879206100685193772686036757807548119157318037 / 169917576316348748777545894737871015787670153900385968136183236138186954296524800000000000000000000000000000000000000000000000000000000000000000000000000 : ℝ)) - sC 103 * ((58303743459644229511923791396491964414270150893817410250254574065788964476237573824540195449669166453443933892403135429868848017013247939539233715184916761501 / 3788400775018424093219546494048327574451260174699676577504583077730172442253715191774576640000000000000000000000000000000000000000000000000000000000000000000000 : ℝ) - Real.log 103 * (18012782937291409480695304145138750985231783649877274925924873825452997442471993536989268164234822562786214916734279136816266251804116795619184159847019 / 33983515263269749755509178947574203157534030780077193627236647227637390859304960000000000000000000000000000000000000000000000000000000000000000000000000 : ℝ))))
-      - ex (1617 / 2000) 104 * (cC 104 * ((-1601663719740837563823295303084705554971846812202509248314348280101585508728605032921168927142536995260527183323546349229976259686602082762312530055702523988729 / 909642094335581103926982187497343594236036376491447785981435909976901484074415245793257586688000000000000000000000000000000000000000000000000000000000000000000000 : ℝ) - Real.log 104 * (5724338185339266402939689475597035034726939950262251262523501481187284067122435982452135536517941295605359502424959301705678171134843979141767350723757811 / 21856779204461146972890918968358104820917796704131304736482569153470724047686860800000000000000000000000000000000000000000000000000000000000000000000000000 : ℝ)) - sC 104 * ((94684592548188104738560433227215102180904138616576374054858832429611327250231786861744254088731142313241412752826795792200531575666175164451225688367192810839 / 6328678763930295249955812992792279180677433046090777731781789726184379527419401060713758720000000000000000000000000000000000000000000000000000000000000000000000 : ℝ) - Real.log 104 * (2309218327566718778641256678297635129407951541622408380589239386384798384393088686445184825971500019944085939950566666213096323458106877448811758944242957 / 4371355840892229394578183793671620964183559340826260947296513830694144809537372160000000000000000000000000000000000000000000000000000000000000000000000000 : ℝ)))) := by
-  simp only [AIm, Nat.reduceMul, Nat.reduceAdd, Nat.cast_ofNat, QD_re, QD_im]
-  rw [(QEM_cLoc_1).1, (QEM_cLoc_1).2, (QEM_cLoc_2).1, (QEM_cLoc_2).2, (QEM_cLoc_3).1, (QEM_cLoc_3).2, (QEM_cLoc_4).1, (QEM_cLoc_4).2, (QEMd_cLoc_1).1, (QEMd_cLoc_1).2, (QEMd_cLoc_2).1, (QEMd_cLoc_2).2, (QEMd_cLoc_3).1, (QEMd_cLoc_3).2, (QEMd_cLoc_4).1, (QEMd_cLoc_4).2]
-
 end Locate
 
 end PsiOmega
 
 #print axioms PsiOmega.Locate.dh_zero_near_of_numerics
-#print axioms PsiOmega.Locate.dh_zero_near_of_dhEM
 #print axioms PsiOmega.Locate.dh_zero_near_of_fEM
 #print axioms PsiOmega.Locate.dh_zero_near_of_elementary
 #print axioms PsiOmega.Locate.dh_zero_near_of_center
 #print axioms PsiOmega.Locate.dh_zero_near_of_center'
 #print axioms PsiOmega.Locate.norm_dh_sub_dhEM_le_ball
-#print axioms PsiOmega.Locate.norm_dh_sub_dhEM_le_ball'
 #print axioms PsiOmega.Locate.norm_deriv2_dhEM_ball
 #print axioms PsiOmega.Locate.D2sum_le
 #print axioms PsiOmega.Locate.Gsup_ball_le
-#print axioms PsiOmega.Locate.bernoulli_vals
-#print axioms PsiOmega.Locate.QEM_twelve
-#print axioms PsiOmega.Locate.EMmain_explicit
 #print axioms PsiOmega.Locate.dhEM_eq
 #print axioms PsiOmega.Locate.fEM_cLoc_re
 #print axioms PsiOmega.Locate.fEM_cLoc_im
 #print axioms PsiOmega.Locate.fEMd_cLoc_re
-#print axioms PsiOmega.Locate.fEMd_cLoc_im
 #print axioms PsiOmega.Locate.QEM_cLoc_1
 #print axioms PsiOmega.Locate.QEMd_cLoc_4
 #print axioms PsiOmega.Locate.PRe_20
 #print axioms PsiOmega.Locate.PIm_20
 #print axioms PsiOmega.Locate.ARe_20
-#print axioms PsiOmega.Locate.AIm_20

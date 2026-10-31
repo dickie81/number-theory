@@ -12,8 +12,7 @@ function of `χ₅` has real part `0, 0, 1, 1, 1` by the residue of `⌊x⌋ + 1
 (`LFunction_chi5_half_ne_zero`), and the Hadamard product is unconditional (`hadamard_dh'`).
 
 The zero side of Weil's explicit formula for `Ξ_{DH}` then follows as for `Ξ_χ`: off the
-zeros, `Ξ_{DH}′(t)/Ξ_{DH}(t) = Σ_u 2t/(t² − u)` (`hasSum_logDeriv_XiDH`, `hasSum_logDeriv_dh`), and
-`Σ |u|^{−7/8} < ∞` (`summable_XiDH_zeros_rpow`). The prime
+zeros, `Ξ_{DH}′(t)/Ξ_{DH}(t) = Σ_u 2t/(t² − u)` (`hasSum_logDeriv_XiDH`, `hasSum_logDeriv_dh`). The prime
 side, the Dirichlet series of `−dh′/dh`, is in `DHPrime.lean` and `DHExplicit.lean`, for the scaled
 `Ξ₃(t) = Ξ_dh(3t)` with its own zero side (`hasSum_logDeriv_XiDH3`, `summable_XiDH3_zeros_rpow`); this file's
 zero side has no downstream use.
@@ -175,32 +174,6 @@ theorem hasSum_logDeriv_dh {t : ℂ} (ht : XiDH chi5 t ≠ 0) :
     HasSum (fun i : ZeroIdx (sqF (XiDH chi5)) => 2 * t / (t ^ 2 - i.1)) (logDeriv (XiDH chi5) t) :=
   hasSum_logDeriv_XiDH chi5_ne_one chi5_isPrimitive one_add_rootNumber_chi5_ne_zero dhHalf ht
 
-/-- `Σ_i |u_i|^{−7/8} < ∞` over the zeros of `Ξ_{DH}(√w)`. -/
-theorem summable_XiDH_zeros_rpow (hχ1 : χ ≠ 1) (hprim : χ.IsPrimitive) (h1 : 1 + rootNumber χ ≠ 0)
-    (hhalf : LFunction χ (1 / 2) ≠ 0) :
-    Summable (fun i : ZeroIdx (sqF (XiDH χ)) => (‖i.1‖ ^ (7 / 8 : ℝ))⁻¹) := by
-  have hF := sqF_differentiable (differentiable_XiDH χ hχ1) (XiDH_even χ hχ1 hprim)
-  have hF0 : sqF (XiDH χ) 0 ≠ 0 := by rw [sqF_zero]; exact XiDH_zero_ne hχ1 hprim h1 hhalf
-  have hgF : ∀ w, ‖sqF (XiDH χ) w‖ ≤ KDH χ * Real.exp (36 * ‖w‖ ^ (3 / 4 : ℝ)) := by
-    intro w
-    refine (norm_XiDH_le hχ1 hprim _).trans ?_
-    have hn : ‖w ^ ((2 : ℂ)⁻¹)‖ = ‖w‖ ^ (2⁻¹ : ℝ) := by
-      rw [show ((2 : ℂ)⁻¹) = ((2⁻¹ : ℝ) : ℂ) by push_cast; ring, norm_cpow_real]
-    rw [hn, ← Real.rpow_mul (norm_nonneg _)]
-    norm_num
-  have hs := summable_ord_div_rpow hF hF0 one_le_KDH (by norm_num) (by norm_num)
-    (by norm_num : (3 / 4 : ℝ) < 7 / 8) hgF
-  rw [summable_sigma_of_nonneg (fun _ => by positivity)]
-  refine ⟨fun u => (hasSum_fintype _).summable, ?_⟩
-  refine hs.congr fun u => ?_
-  rw [tsum_fintype]
-  show _ = ∑ _b : Fin (ordN (sqF (XiDH χ)) u), (‖u‖ ^ (7 / 8 : ℝ))⁻¹
-  rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, div_eq_mul_inv]
-
-theorem summable_dh_zeros_rpow :
-    Summable (fun i : ZeroIdx (sqF (XiDH chi5)) => (‖i.1‖ ^ (7 / 8 : ℝ))⁻¹) :=
-  summable_XiDH_zeros_rpow chi5_ne_one chi5_isPrimitive one_add_rootNumber_chi5_ne_zero dhHalf
-
 end PsiOmega
 
 #print axioms PsiOmega.re_sum_range_cC_chi5
@@ -212,5 +185,3 @@ end PsiOmega
 #print axioms PsiOmega.ZeroIdxDH_ne_zero
 #print axioms PsiOmega.hasSum_logDeriv_XiDH
 #print axioms PsiOmega.hasSum_logDeriv_dh
-#print axioms PsiOmega.summable_XiDH_zeros_rpow
-#print axioms PsiOmega.summable_dh_zeros_rpow

@@ -5,11 +5,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 The sieve route runs at `x = q^L` with a Type II window `[w₁L, w₂L]`. `Route`
 holds `L`, `w₁` and `w₂`, and `RouteOK` the facts about them that the route's proofs use. `TypeIIAt` is the Type II
-estimate the route takes as its input: Proposition 3′ at `L` on the window, the conclusion of
-`SieveTypeII.typeII_step` with `L`, `w₁` and `w₂` in place of `2333/1000`, `401/1000` and `485/1000`.
-
-* `route2333`, `routeOK2333`, `typeII2333`: the first goal's parameters, `L = 2333/1000` on `[401/1000, 485/1000]`,
-  and `SieveTypeII.typeII_step` as `TypeIIAt`.
+estimate the route takes as its input: Proposition 3′ at `L` on the window, pointwise in the heights.
 
 The file imports `SieveTypeII.lean`.
 -/
@@ -44,8 +40,7 @@ class RouteOK : Prop where
   L_le : L ≤ 5 / 2
 
 open scoped Classical ContDiff in
-/-- **Proposition 3′ at `L` on the window `[w₁L, w₂L]`, pointwise in the heights**: the conclusion of
-`SieveTypeII.typeII_step` with `L`, `w₁` and `w₂` in place of `2333/1000`, `401/1000` and `485/1000`. -/
+/-- **Proposition 3′ at `L` on the window `[w₁L, w₂L]`, pointwise in the heights.** -/
 def TypeIIAt : Prop :=
   ∀ {f0 : ℝ → ℝ}, ContDiff ℝ ∞ f0 → Function.support f0 ⊆ Set.Icc (1 / 2) 2 → ∀ (K₀ : ℕ) {e₁ η : ℝ}, 0 < e₁ →
     0 < η → η ≤ 1 / 100000 →
@@ -80,22 +75,3 @@ macro "route_num" : tactic =>
 
 end SieveRoute
 
-namespace SieveRoute
-
-/-- **The first goal's parameters**: `L = 2333/1000` on the window `[401/1000, 485/1000]`. -/
-@[instance_reducible] def route2333 : Route := ⟨2333 / 1000, 401 / 1000, 485 / 1000⟩
-
-theorem routeOK2333 : @RouteOK route2333 :=
-  @RouteOK.mk route2333 (show (2 : ℝ) < 2333 / 1000 by norm_num) (show (0 : ℝ) < 401 / 1000 by norm_num)
-    (show (401 / 1000 : ℝ) < 485 / 1000 by norm_num) (show (485 / 1000 : ℝ) < 1 by norm_num)
-    (show (2333 / 1000 : ℝ) ≤ 5 / 2 by norm_num)
-
-/-- **`SieveTypeII.typeII_step` as `TypeIIAt`** at the first goal's parameters. -/
-theorem typeII2333 : @TypeIIAt route2333 := by
-  intro f0 hf0 hsupp K₀ e₁ η he₁ hη hη1
-  exact SieveTypeII.typeII_step hf0 hsupp K₀ he₁ hη hη1
-
-end SieveRoute
-
-#print axioms SieveRoute.routeOK2333
-#print axioms SieveRoute.typeII2333

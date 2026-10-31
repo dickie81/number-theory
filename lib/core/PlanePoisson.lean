@@ -36,8 +36,6 @@ section Decay
 /-- The point `x₀ + x₁ i` of `ℂ`. -/
 def cpt (x : Fin 2 → ℝ) : ℂ := (x 0 : ℂ) + (x 1 : ℂ) * I
 
-theorem cpt_eq (x : Fin 2 → ℝ) : cpt x = measurableEquivPi.symm x := rfl
-
 theorem cpt_add (x y : Fin 2 → ℝ) : cpt (x + y) = cpt x + cpt y := by
   simp [cpt]; ring
 
@@ -79,20 +77,6 @@ theorem summable_lattice_decay :
     _ ≤ ((1 + |x 0|) * (1 + |x 1|)) ^ (-(3 / 2 : ℝ)) := by
         apply Real.rpow_le_rpow_of_nonpos (by positivity) _ (by norm_num)
         rw [Real.rpow_two]; exact hx
-
-/-- Schwartz functions on `ℂ` decay like `(1 + |z|)^{−3}`. -/
-theorem schwartz_decay (F : SchwartzMap ℂ ℂ) :
-    ∃ C, 0 ≤ C ∧ ∀ z, ‖F z‖ ≤ C * (1 + ‖z‖) ^ (-3 : ℝ) := by
-  set C := 2 ^ 3 * (Finset.Iic ((3 : ℕ), (0 : ℕ))).sup
-    (fun m => SchwartzMap.seminorm ℝ m.1 m.2) F
-  refine ⟨C, by positivity, fun z => ?_⟩
-  have h := SchwartzMap.one_add_le_sup_seminorm_apply (𝕜 := ℝ) (m := (3, 0)) (k := 3) (n := 0)
-    le_rfl le_rfl F z
-  rw [norm_iteratedFDeriv_zero] at h
-  have hpos : 0 < 1 + ‖z‖ := by positivity
-  have h' : (1 + ‖z‖) ^ 3 * ‖F z‖ ≤ C := by simpa [C] using h
-  rw [Real.rpow_neg hpos.le, ← div_eq_mul_inv, le_div_iff₀ (by positivity)]
-  rw [mul_comm]; exact_mod_cast h'
 
 end Decay
 

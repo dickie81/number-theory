@@ -65,8 +65,6 @@ theorem ks_sq (s : ℂ) : s * ks (s ^ 2) = Complex.sinh s := by
   rw [Complex.sinh_eq_tsum, ks, ← tsum_mul_left]
   congr 1; funext n; rw [← pow_mul, pow_succ]; ring
 
-theorem kc_zero : kc 0 = 1 := by simpa using kc_sq 0
-
 theorem ks_zero : ks 0 = 1 := by
   rw [ks, tsum_eq_single 0 (fun n hn => by simp [zero_pow hn])]; simp
 

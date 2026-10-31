@@ -20,10 +20,8 @@ After Goldmakher and Louvel's Theorem 1.1 and Heath-Brown's 1995 proof.
   (`QBound.mono`), in place of Heath-Brown's Lemma 9.
 * **Symmetry** (`QBound.symm`, Heath-Brown's Lemma 1): `QBound N M Δ → QBound M N (N((4))·Δ)`, the
   columns split by class modulo `4` and turned into rows by duality.
-* **The trivial bound** (`qBound_trivial`): `QBound M N ((2κ+5)²MN)`, from the ideal
-  count (`card_adm_le`).
-* **The exponent `(E_α)`** (`QExp`), and its transpose `B(M, N) ≪ (MN)^ε(N + M^α)`
-  (`QExp.reverse`).
+* **The ideal count** (`card_adm_le`): at most `idealCount X` admissible elements have norm at most `X`.
+* **The exponent `(E_α)`** (`QExp`).
 * **`quadLargeSieve_of_exp`**: `QExp 1 → QuadLargeSieve`. Odd columns are admissible
   (`coprime6_of_primary`); an even column is `−2x` with `x` admissible (`qadm_of_neg_two_mul`), and
   `(−2x/k)₂ = (−2/k)₂(x/k)₂`.
@@ -477,45 +475,10 @@ theorem card_adm_le {Ks : Finset (𝓞 K)} {X : ℝ}
   rw [Finset.card_image_of_injOn hinj, card_idealsLe] at this
   exact_mod_cast this
 
-/-- **The trivial bound**: `QBound M N (c₀²MN)` with `c₀ = 2κ + 5`. -/
-theorem qBound_trivial {M N : ℝ} (hM : 1 ≤ M) (hN : 1 ≤ N) :
-    QBound M N ((2 * kappa + 5) ^ 2 * M * N) := by
-  intro Ks Ns a hK hNs
-  have hk0 := kappa_pos
-  have hcK : (Ks.card : ℝ) ≤ (2 * kappa + 5) * M := (card_adm_le hK).trans (idealCount_le hM)
-  have hcN : (Ns.card : ℝ) ≤ (2 * kappa + 5) * N := (card_adm_le hNs).trans (idealCount_le hN)
-  have hrow : ∀ k ∈ Ks, ‖∑ n ∈ Ns, a n * sym2 n (span {k})‖ ^ 2 ≤
-      (Ns.card : ℝ) * ∑ n ∈ Ns, ‖a n‖ ^ 2 := by
-    intro k _
-    refine (norm_sum_sq_le_card Ns _).trans (mul_le_mul_of_nonneg_left
-      (Finset.sum_le_sum fun n _ => ?_) (Nat.cast_nonneg _))
-    rw [norm_mul, mul_pow]
-    exact mul_le_of_le_one_right (sq_nonneg _) (pow_le_one₀ (norm_nonneg _) (norm_sym2_le _ _))
-  have hS : 0 ≤ ∑ n ∈ Ns, ‖a n‖ ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
-  calc ∑ k ∈ Ks, ‖∑ n ∈ Ns, a n * sym2 n (span {k})‖ ^ 2
-      ≤ ∑ _k ∈ Ks, (Ns.card : ℝ) * ∑ n ∈ Ns, ‖a n‖ ^ 2 := Finset.sum_le_sum hrow
-    _ = (Ks.card : ℝ) * ((Ns.card : ℝ) * ∑ n ∈ Ns, ‖a n‖ ^ 2) := by
-        rw [Finset.sum_const, nsmul_eq_mul]
-    _ ≤ ((2 * kappa + 5) * M) * (((2 * kappa + 5) * N) * ∑ n ∈ Ns, ‖a n‖ ^ 2) :=
-        mul_le_mul hcK (mul_le_mul_of_nonneg_right hcN hS)
-          (mul_nonneg (Nat.cast_nonneg _) hS) (by positivity)
-    _ = (2 * kappa + 5) ^ 2 * M * N * ∑ n ∈ Ns, ‖a n‖ ^ 2 := by ring
-
 /-- **The exponent `(E_α)`** of Goldmakher and Louvel: `B(M, N) ≪_ε (MN)^ε(M + N^α)`. -/
 def QExp (α : ℝ) : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ C : ℝ, 0 ≤ C ∧ ∀ M N : ℝ, 1 ≤ M → 1 ≤ N →
     QBound M N (C * (M * N) ^ ε * (M + N ^ α))
-
-/-- **The transposed exponent** (Heath-Brown's use of his Lemma 1): `(E_α)` gives
-`B(M, N) ≪_ε (MN)^ε(N + M^α)`. -/
-theorem QExp.reverse {α : ℝ} (h : QExp α) (ε : ℝ) (hε : 0 < ε) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ M N : ℝ, 1 ≤ M → 1 ≤ N → QBound M N (C * (M * N) ^ ε * (N + M ^ α)) := by
-  obtain ⟨C, hC0, hC⟩ := h ε hε
-  refine ⟨(absNorm (span {(4 : 𝓞 K)}) : ℝ) * C, mul_nonneg (Nat.cast_nonneg _) hC0,
-    fun M N hM hN => ?_⟩
-  have hs := (hC N M hN hM).symm (by positivity)
-  rw [mul_comm N M] at hs
-  exact hs.mono le_rfl le_rfl (le_of_eq (by ring))
 
 theorem primary_of_neg_two_mul {n : 𝓞 K} (h : Primary (-2 * n)) : Primary n := by
   obtain ⟨t, ht⟩ := h
@@ -665,7 +628,5 @@ end
 #print axioms Eis.coprime6_of_primary
 #print axioms Eis.QBound.symm
 #print axioms Eis.card_adm_le
-#print axioms Eis.qBound_trivial
-#print axioms Eis.QExp.reverse
 #print axioms Eis.qadm_of_neg_two_mul
 #print axioms Eis.quadLargeSieve_of_exp

@@ -20,9 +20,6 @@ constant `CL`.
   `|I_χ(ρ)| ≤ (1/2π)·A·X·CL (q(T + 2))^{1/6+ε}·π = A X CL (q(T + 2))^{1/6+ε}/2 < ¼`. The weight `(1 + |v|)^{−4}`, whose
   integral is `2/3`, would need `ε ≤ 5/6`; at `ε ≤ 1` the weight `(1 + |v|)^{1/6+ε−5}` is only `(1 + |v|)^{−23/6}`,
   so the threshold's constant is `2` here, not `4/(3π)`.
-* `class2_finset_empty`, `class2_card_eq_zero`: a finite set of characters detected as in `class2_count_small`'s
-  `hdet` (`χ ≠ 1`, a zero `β_χ + iγ_χ` with `σ ≤ β_χ < 1`, `|γ_χ| ≤ T`, `|I_χ(ρ_χ)| ≥ ¼`) is empty under the same
-  threshold.
 
 The file imports `LinnikHuxley`, for `LinnikIngham.Gχ_left_le'` and `wt5`, `LinnikDetect.Ivχ`, `Gχ`, `mollχ` and
 `norm_mollχ_le_X`, and `InghamDensity.KG` and `integrable_real_of_le`.
@@ -155,39 +152,6 @@ theorem class2_empty {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) {CL : ℝ} (
     linarith
   linarith
 
-/-- **A finite integral class is empty.** Under the hypotheses of `class2_empty` (`hε0 : 0 ≤ ε`, `hε1 : ε ≤ 1`,
-`hCL : 0 ≤ CL`, the pointwise bound `hL`, `hX : 1 ≤ X`, `hδ : 0 < δ`, `hσδ : ½ + δ ≤ σ`, `hT : 0 ≤ T`, `hY : 1 ≤ Y` and
-the threshold `hbig`), a finite set `Rs` of characters each with `χ ≠ 1`, a zero `β_χ + iγ_χ` of `L(·, χ)`,
-`σ ≤ β_χ < 1`, `|γ_χ| ≤ T` and `‖I_χ(ρ_χ)‖ ≥ ¼` (`hdet`, as in `LinnikHuxley.class2_count_small`) is empty. -/
-theorem class2_finset_empty {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) {CL : ℝ} (hCL : 0 ≤ CL)
-    (hL : ∀ (χ : DirichletCharacter ℂ q) (t : ℝ),
-      ‖LFunction χ (1 / 2 + t * I)‖ ≤ CL * ((q : ℝ) * (1 + |t|)) ^ (1 / 6 + ε))
-    {X : ℕ} (hX : 1 ≤ X) {σ δ T Y : ℝ} (hδ : 0 < δ) (hσδ : 1 / 2 + δ ≤ σ) (hT : 0 ≤ T) (hY : 1 ≤ Y)
-    (hbig : KG * CL * X * ((q : ℝ) * (T + 2)) ^ (1 / 6 + ε) * 2 < δ * Y ^ (σ - 1 / 2))
-    (Rs : Finset (DirichletCharacter ℂ q)) (β γ : DirichletCharacter ℂ q → ℝ)
-    (hdet : ∀ χ ∈ Rs, χ ≠ 1 ∧ σ ≤ β χ ∧ β χ < 1 ∧ |γ χ| ≤ T ∧ LFunction χ ((β χ : ℂ) + γ χ * I) = 0
-      ∧ 1 / 4 ≤ ‖Ivχ χ X Y ((β χ : ℂ) + γ χ * I)‖) :
-    Rs = ∅ := by
-  refine Finset.eq_empty_of_forall_notMem fun χ hχ => ?_
-  obtain ⟨hχ1, hσβ, hβ1, hγ, hz, hI⟩ := hdet χ hχ
-  exact absurd hI (not_le.2 (class2_empty hε0 hε1 hCL hL hX hδ hσδ hT hY hbig hχ1 hσβ hβ1 hγ hz))
-
-/-- **A finite integral class has no members**: `class2_finset_empty` as `Rs.card = 0`, under the same hypotheses
-(`hε0`, `hε1`, `hCL`, `hL`, `hX`, `hδ`, `hσδ`, `hT`, `hY`, `hbig`, `hdet`). -/
-theorem class2_card_eq_zero {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) {CL : ℝ} (hCL : 0 ≤ CL)
-    (hL : ∀ (χ : DirichletCharacter ℂ q) (t : ℝ),
-      ‖LFunction χ (1 / 2 + t * I)‖ ≤ CL * ((q : ℝ) * (1 + |t|)) ^ (1 / 6 + ε))
-    {X : ℕ} (hX : 1 ≤ X) {σ δ T Y : ℝ} (hδ : 0 < δ) (hσδ : 1 / 2 + δ ≤ σ) (hT : 0 ≤ T) (hY : 1 ≤ Y)
-    (hbig : KG * CL * X * ((q : ℝ) * (T + 2)) ^ (1 / 6 + ε) * 2 < δ * Y ^ (σ - 1 / 2))
-    (Rs : Finset (DirichletCharacter ℂ q)) (β γ : DirichletCharacter ℂ q → ℝ)
-    (hdet : ∀ χ ∈ Rs, χ ≠ 1 ∧ σ ≤ β χ ∧ β χ < 1 ∧ |γ χ| ≤ T ∧ LFunction χ ((β χ : ℂ) + γ χ * I) = 0
-      ∧ 1 / 4 ≤ ‖Ivχ χ X Y ((β χ : ℂ) + γ χ * I)‖) :
-    Rs.card = 0 := by
-  rw [Finset.card_eq_zero]
-  exact class2_finset_empty hε0 hε1 hCL hL hX hδ hσδ hT hY hbig Rs β γ hdet
-
 end LinnikWeyl
 
 #print axioms LinnikWeyl.class2_empty
-#print axioms LinnikWeyl.class2_finset_empty
-#print axioms LinnikWeyl.class2_card_eq_zero

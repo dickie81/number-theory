@@ -8,9 +8,9 @@ of `3ℤ[ω]` and the uniqueness of Fourier coefficients there. This file proves
 `tch(y) = 3(y₀ + y₁ϖ)` from `ℝ²` onto `ℂ` and Mathlib's Fourier analysis on the unit torus `ℝ²/ℤ²`:
 
 * **The chart** (`tch`, `frq` and `frqInv`, definitions; **`ebr_tch`**, with `tch_apply`, `frq_crd`,
-  `frq_frqInv`, `frq_neg`, `frq_injective`, `eq_zero_of_frq_eq_zero`, `ebr_neg_tch` and `continuous_tch`): for
+  `frq_frqInv`, `frq_neg`, `eq_zero_of_frq_eq_zero`, `ebr_neg_tch` and `continuous_tch`): for
   `x = a + bω`, `ĕ(σ(δ₃x)·tch(y)/9) = e(−b·y₀ + (b − a)·y₁)`, Mathlib's `mFourier` at the frequency
-  `frq(x) = (−b, b − a)`, and `x ↦ frq(x)` is a bijection of `ℤ[ω]` onto `ℤ²`.
+  `frq(x) = (−b, b − a)`; `frqInv` is a right inverse of `frq`, and `frq(x) = 0` only for `x = 0`.
 * **The change of variables** (`Mw3` and `tchE`, definitions; **`map_tchE`**, **`integral_box_tch`** and
   **`lintegral_box_tch`**, with `Mw3_apply`, `abs_det_Mw3`, `tchE_apply`, `tch_mem_fundP3_iff`,
   `preimage_tchE_fundP3`, `measurableSet_box` and `box_Ico_ae_eq_Ioc`):
@@ -71,24 +71,6 @@ theorem frq_neg (x : 𝓞 K) : frq (-x) = -frq x := by
   rw [frq_crd]
   ext i
   fin_cases i <;> simp; ring
-
-theorem frq_injective : Function.Injective frq := by
-  intro x x' h
-  obtain ⟨c, rfl⟩ := crdEquiv.surjective x
-  obtain ⟨d, rfl⟩ := crdEquiv.surjective x'
-  have h' : frq (crd c) = frq (crd d) := h
-  rw [frq_crd, frq_crd] at h'
-  have h0 := congrFun h' 0
-  have h1 := congrFun h' 1
-  simp at h0 h1
-  have e : c = d := by
-    ext i
-    fin_cases i
-    · show c 0 = d 0
-      omega
-    · show c 1 = d 1
-      omega
-  rw [e]
 
 theorem eq_zero_of_frq_eq_zero {x : 𝓞 K} (h : frq x = 0) : x = 0 := by
   obtain ⟨c, rfl⟩ := crdEquiv.surjective x
@@ -341,7 +323,6 @@ end
 #print axioms Eis.frq_crd
 #print axioms Eis.frq_frqInv
 #print axioms Eis.frq_neg
-#print axioms Eis.frq_injective
 #print axioms Eis.eq_zero_of_frq_eq_zero
 #print axioms Eis.ebr_tch
 #print axioms Eis.ebr_neg_tch

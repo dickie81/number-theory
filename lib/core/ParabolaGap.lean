@@ -44,9 +44,6 @@ theorem par_nonneg {a : ℝ} (ha : 0 < a) (t : ℝ) : 0 ≤ par a t := by
     exact mul_nonneg (parC_nonneg a) (by linarith)
   · exact le_rfl
 
-theorem par_measurable (a : ℝ) : Measurable (par a) :=
-  (Measurable.indicator (by fun_prop) measurableSet_Icc)
-
 theorem par_memLp (a : ℝ) : MemLp (par a) 2 volume := by
   obtain ⟨C, hC⟩ := (isCompact_Icc (a := -a) (b := a)).exists_bound_of_continuousOn
     (show Continuous (fun t : ℝ => parC a * (1 - t ^ 2 / a ^ 2)) by fun_prop).continuousOn
@@ -143,7 +140,6 @@ theorem par_probe {a : ℝ} (ha : 0 < a) : Probe a (par a) :=
   ⟨fun u => by rw [par_apply, par_apply, abs_neg]; ring_nf, fun u hu => by
     rw [par_apply]; simp [not_le.2 hu], par_memLp a,
     archIntegrand_integrableOn_of_lin (par_memLp a) (by positivity) fun _ hu => par_autocorr_diff_le ha hu⟩
-
 
 theorem integral_mono5 (α β c : ℝ) : (∫ t in α..β, c * t ^ 5) = c * (β ^ 6 - α ^ 6) / 6 := by
   rw [intervalIntegral.integral_const_mul, integral_pow]; ring
@@ -244,7 +240,6 @@ theorem pole_par_le {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 2) :
 theorem autocorr_par_nonneg {a : ℝ} (ha : 0 < a) (u : ℝ) : 0 ≤ autocorr (par a) u :=
   integral_nonneg fun t => mul_nonneg (par_nonneg ha t) (par_nonneg ha _)
 
-
 /-! ## B. The segment `0.35 ≤ a ≤ 0.36` -/
 
 theorem primeD_smallC {a : ℝ} (ha1 : 0.35 ≤ a) (ha2 : a ≤ 0.36) (n : ℤ) :
@@ -308,7 +303,6 @@ theorem tailC_pos {a : ℝ} (ha1 : 0.35 ≤ a) (ha2 : a ≤ 0.36) {c : ℝ} (hc0
       (primeD_le_two a (Real.log 2) n)
     linarith
 
-
 theorem tailC_all {a : ℝ} (ha1 : 0.35 ≤ a) (ha2 : a ≤ 0.36) {c : ℝ} (hc0 : 0 ≤ c) (hc : c ≤ 0.9803)
     (n : ℤ) (hn : n ∉ lowS) : 2.7 ≤ modeE a n - c * primeD a (Real.log 2) n := by
   rcases not_mem_lowS hn with h | h
@@ -317,7 +311,6 @@ theorem tailC_all {a : ℝ} (ha1 : 0.35 ≤ a) (ha2 : a ≤ 0.36) {c : ℝ} (hc0
     have e2 := primeD_neg a (Real.log 2) (-n)
     rw [neg_neg] at e e2
     rw [e, e2]; exact tailC_pos ha1 ha2 hc0 hc (by omega)
-
 
 theorem pm_leC1 {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 0.36) {g : ℝ → ℝ} (hp : Probe a g)
     (hn : normSq g = 1) (h0 : poleR g a = 0) : pm a g 1 ≤ (0.00323 : ℝ) :=

@@ -6,8 +6,8 @@ import ParityCont
 
 `lam_decay` bounds rung 0: `λ₁(a) ≤ K e^{−Ba}` for every `B`, from the truncated null
 vector `Φ_a`. This file bounds the next two rungs in the same way, with the same named input
-(`WeilExplicit` for the trial functions used; `DigammaDiff` is proved) and **no RH
-input**: the zero family may lie anywhere in the strip `|Im t| ≤ ½`.
+(`WeilExplicit` for the trial functions used) and **no RH input**: the zero family may lie
+anywhere in the strip `|Im t| ≤ ½`.
 
 The trial functions are copies of `Φ_b`, `b = a/8`, shifted to disjoint positions:
 * **twins** `T_l = Φ_b(· − l) + Φ_b(· + l)` (`twin`), with `T̂_l = 2cos(lz)Φ̂_b`;

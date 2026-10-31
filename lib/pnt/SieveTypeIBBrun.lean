@@ -165,9 +165,6 @@ theorem prod_ind_eq_dv (T : ι → Finset ℕ) (hT : ∀ j, ∀ p ∈ T j, p.Pri
     intro hd
     exact h fun p hp => (Finset.dvd_prod_of_mem _ hp).trans hd
 
-omit [Fintype ι] [DecidableEq ι] in
-theorem ind_mem (n p : ℕ) : 0 ≤ ind n p ∧ ind n p ≤ 1 := ⟨ind_nonneg n p, ind_le_one n p⟩
-
 /-- The weights above have their primes in the ranges. -/
 theorem sub_of_mem_wS₁ {T : ι → Finset ℕ} {k : ι → ℕ} {σ : Idx ι} (hσ : σ ∈ wS₁ T k) : ∀ j, (σ j).2 ⊆ T j :=
   fun j => mem_Ftr_sub (Fintype.mem_piFinset.1 hσ j)

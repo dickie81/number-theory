@@ -5,8 +5,8 @@ import EisensteinPoissonExcl
 
 This file twists the family by a coefficient `c` on the ideals:
 `A^c_Z(u) = Σ_𝔞 c(𝔞)μ(𝔞)(u/𝔞)₆W(N𝔞/Z)` (`famSumC`; `famSum` is `c = 1`, `famSumC_one`), and states
-`famSumC_eq`, `norm_famSumC_le` and `famSumC_majorant_eq` for it; `famSum_eq`, `norm_famSum_le` and
-`famSum_majorant_eq` are their cases `c = 1`.
+`famSumC_eq`, `norm_famSumC_le` and `famSumC_majorant_eq` for it; `norm_famSum_le` and `famSum_majorant_eq` are
+the cases `c = 1` of the last two.
 
 The first half of the assembly of the companion paper's
 Proposition 4.5, as exact identities.
@@ -17,8 +17,6 @@ Proposition 4.5, as exact identities.
   `A` (`primeSet_idl`), its primary generator is `∏_{P∈A} π_P` (`pgen_idl`), its sextic symbol is
   `χ_A = ∏_{P∈A} χ_P` (`chiS`, `sym6_idl`), and `μ(idl A) = (−1)^{|A|}` (`moebius_idl`). `fsLe Y` is
   the finite set of `A` with `N(idl A) ≤ ⌊Y⌋` (`mem_fsLe`).
-* **The family as a finite sum** (`famSum_eq`): `A_Z(u) = Σ_A (−1)^{|A|}·χ_A(u)·W(N(A)/Z)` over
-  `A ∈ fsLe ⌈βZ⌉`, for `W` vanishing beyond `β`.
 * **The majorant** (`sum_sq_le_majorant`): with `Φ` (`Φ ≥ 1` on the unit disc and
   `Φ ≥ 0`), `Σ_{z∈T} |g(z)|² ≤ Re Σ_u g(u)ḡ(u)·Φ(u/√H)` when `N(z) ≤ H` on `T`. The sum converges for
   bounded `g` (`summable_mul_Phi`).
@@ -35,7 +33,6 @@ Proposition 4.5, as exact identities.
   Σ_{T⊆B} (−1)^{|T|}·2H/(√3·√N(c)·N(d_T))·ā(C₁)a(C₂)Ψ(C₁, C₂)·F(d_T)·Σ_μ F̄(μ)·Φ̂(√(4HN(μ)/(3N(c)N(d_T))))`,
   with `d_T = ∏_{P∈T} π_P` and the paired factor `Ψ` (`pairPsi`). The signs are
   `μ(A₁)μ(A₂) = μ(C₁)μ(C₂)` (`sign_sdiff`, in this file).
-* `majorant_poisson` combines the last two.
 -/
 
 open NumberField Complex Ideal UniqueFactorizationMonoid
@@ -176,7 +173,7 @@ theorem normSum_wsymC_zero (c : Ideal (𝓞 K) → ℂ) (u : 𝓞 K) :
 open Classical in
 /-- **The twisted family as a finite sum over sets of primes**: for `W` vanishing beyond `β` and `Z > 0`,
 `A^c_Z(u) = Σ_A c(𝔞_A)·(−1)^{|A|}·χ_A(u)·W(N(A)/Z)` over the sets of primes `A` with `N(A) ≤ ⌈βZ⌉`, where
-`𝔞_A = ∏_{P∈A}P` (`famSum_eq` is `c = 1`). -/
+`𝔞_A = ∏_{P∈A}P`. -/
 theorem famSumC_eq (c : Ideal (𝓞 K) → ℂ) {W : ℝ → ℝ} {β : ℝ} (hW : ∀ x, β < x → W x = 0) {Z : ℝ}
     (hZ : 0 < Z) (u : 𝓞 K) :
     famSumC c W Z u = ∑ A ∈ fsLe (⌈β * Z⌉₊ : ℝ), c (idl A) * ((-1 : ℂ) ^ A.card * chiS A u) *
@@ -217,16 +214,6 @@ theorem famSumC_eq (c : Ideal (𝓞 K) → ℂ) {W : ℝ → ℝ} {β : ℝ} (hW
     obtain ⟨-, h6', hsq'⟩ := Finset.mem_filter.1 hJ
     rw [← idl_primeSet h6 hsq, ← idl_primeSet h6' hsq']
     exact congrArg idl hIJ
-
-open Classical in
-/-- **The family as a finite sum over sets of primes**: for `W` vanishing beyond `β` and `Z > 0`,
-`A_Z(u) = Σ_A (−1)^{|A|}·χ_A(u)·W(N(A)/Z)` over the sets of primes `A` with `N(A) ≤ ⌈βZ⌉`. -/
-theorem famSum_eq {W : ℝ → ℝ} {β : ℝ} (hW : ∀ x, β < x → W x = 0) {Z : ℝ} (hZ : 0 < Z)
-    (u : 𝓞 K) :
-    famSum W Z u = ∑ A ∈ fsLe (⌈β * Z⌉₊ : ℝ), (-1 : ℂ) ^ A.card * chiS A u *
-      (W ((absNorm (idl A) : ℝ) / Z) : ℂ) := by
-  rw [← famSumC_one, famSumC_eq _ hW hZ]
-  exact Finset.sum_congr rfl fun A _ => by ring
 
 /-! ### One pair of columns -/
 
@@ -478,7 +465,6 @@ theorem pairSum_poisson (H : ℝ) (hH : 0 < H) (A1 A2 : Finset Pr) :
   rw [← hK, hsign, ← hpg]
   ring
 
-
 /-! ### The majorant and the expansion of the mean square -/
 
 theorem norm_chiS_le (A : Finset Pr) (u : 𝓞 K) : ‖chiS A u‖ ≤ 1 := by
@@ -628,27 +614,6 @@ theorem famSum_majorant_eq {W : ℝ → ℝ} {β : ℝ} (hW : ∀ x, β < x → 
   refine Finset.sum_congr rfl fun A1 _ => Finset.sum_congr rfl fun A2 _ => ?_
   simp only [map_one, one_mul]
 
-
-/-- **The mean square after Poisson summation**: `famSum_majorant_eq` with `pairSum_poisson` in each
-pair. -/
-theorem majorant_poisson {W : ℝ → ℝ} {β : ℝ} (hW : ∀ x, β < x → W x = 0) {Z : ℝ} (hZ : 0 < Z)
-    (H : ℝ) (hH : 0 < H) :
-    ∑' u : 𝓞 K, famSum W Z u * conj (famSum W Z u) * Majorant.Phi (σO u / (Real.sqrt H : ℂ)) =
-      ∑ A1 ∈ fsLe (⌈β * Z⌉₊ : ℝ), ∑ A2 ∈ fsLe (⌈β * Z⌉₊ : ℝ),
-        ((W ((absNorm (idl A1) : ℝ) / Z) * W ((absNorm (idl A2) : ℝ) / Z) : ℝ) : ℂ) *
-        ∑ T ∈ (A1 ∩ A2).powerset, (-1 : ℂ) ^ T.card *
-          ((2 * H / (Real.sqrt 3 * Real.sqrt (absNorm (span {∏ P ∈ A1 \ A2 ∪ A2 \ A1, πP P}) : ℝ) *
-            (absNorm (span {∏ P ∈ T, πP P}) : ℝ)) : ℝ) : ℂ) *
-          (conj (aF πP h6Pr (A1 \ A2)) * aF πP h6Pr (A2 \ A1) * pairPsi (A1 \ A2) (A2 \ A1)) *
-          (chiS (A1 \ A2) (∏ P ∈ T, πP P) * conj (chiS (A2 \ A1) (∏ P ∈ T, πP P))) *
-          ∑' μ : 𝓞 K, conj (chiS (A1 \ A2) μ * conj (chiS (A2 \ A1) μ)) *
-            dualG (Real.sqrt (4 * H * (absNorm (span {μ}) : ℝ) /
-              (3 * (absNorm (span {∏ P ∈ A1 \ A2 ∪ A2 \ A1, πP P}) : ℝ) *
-                (absNorm (span {∏ P ∈ T, πP P}) : ℝ)))) := by
-  rw [famSum_majorant_eq hW hZ H hH]
-  refine Finset.sum_congr rfl fun A1 _ => Finset.sum_congr rfl fun A2 _ => ?_
-  rw [pairSum_poisson H hH A1 A2]
-
 end Eis
 
 end
@@ -672,7 +637,6 @@ end
 #print axioms Eis.famSumC_one
 #print axioms Eis.normSum_wsymC_zero
 #print axioms Eis.famSumC_eq
-#print axioms Eis.famSum_eq
 #print axioms Eis.conj_chi6
 #print axioms Eis.chi6_mul_conj
 #print axioms Eis.mk_πP_eq_zero_iff
@@ -697,4 +661,3 @@ end
 #print axioms Eis.majorant_expand
 #print axioms Eis.famSumC_majorant_eq
 #print axioms Eis.famSum_majorant_eq
-#print axioms Eis.majorant_poisson

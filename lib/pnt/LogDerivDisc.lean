@@ -9,19 +9,19 @@ on `θ' ≤ σ < 3/2`, where `Kld` and `Rld` depend on `θ < θ' < 3/2` only (`l
 `|F(s)| ≤ c(|Im s| + 2)` on `θ ≤ Re s ≤ 3`, `1/|F(3/2 + it)| ≤ A` and `|F′/F| ≤ C₀` on `Re s ≥ 3/2`, this gives
 `|F′/F(σ + it)| ≤ Kld θ θ' · (log(2 + 2cA) + log(|t| + 4)) + C₀` for `σ ≥ θ'` (`logDeriv_le_uniform_of`).
 
-* `disc_point`: PNT+'s `FinalBound` (Borel–Carathéodory with the zeros divided out) for `locG`, the quotient
+* `disc_point_ball`: PNT+'s `FinalBound` (Borel–Carathéodory with the zeros divided out) for `locG`, the quotient
   `F(3/2 + it + ρw)/F(3/2 + it)`, on the unit disc, which holds no zero of `F`.
-* `logDeriv_le_Kld`: `disc_point` at the radii `r' = (3/2 − θ')/ρ`, `r = r' + (1 − r')/4`, `R' = r' + (1 − r')/2`
-  and `R = r' + 3(1 − r')/4` (`Rld`).
-* `logDeriv_le_uniform_of`, `logDeriv_le_uniform`: `logDeriv_le_Kld` with `B = 2 + 2cA(|t| + 4)`.
-* `disc_point_ball`, `logDeriv_le_Kld_ball`, `logDeriv_le_ball`: the same three steps with no zero of
-  `F` in the disc of radius `3/2 − θ` about `3/2 + it` only, which is what a zero-free region of bounded height
-  supplies (`Linnik.logDeriv_LFunction_le`). The half-plane forms above follow from them, since that disc lies
-  in `Re s > θ` (`re_gt_of_mem_ball`).
+* `logDeriv_le_Kld_ball`: `disc_point_ball` at the radii `r' = (3/2 − θ')/ρ`, `r = r' + (1 − r')/4`,
+  `R' = r' + (1 − r')/2` and `R = r' + 3(1 − r')/4` (`Rld`).
+* `logDeriv_le_ball`: `logDeriv_le_Kld_ball` with `B = 2 + 2cA(|t| + 4)`.
+* These three steps assume only that `F` has no zero in the disc of radius `3/2 − θ` about `3/2 + it`, which is
+  what a zero-free region of bounded height supplies (`Linnik.logDeriv_LFunction_le`). The half-plane forms
+  `logDeriv_le_Kld` and `logDeriv_le_uniform_of` follow from them, since that disc lies in `Re s > θ`
+  (`re_gt_of_mem_ball`).
 
 The disc step is stated for an `F` holomorphic on the disc, which covers `ζ` at `|t| > 3`, and the radii are stated
-once (`logDeriv_le_Kld`). The disc helpers (`ctr`, `re_ge`, `one_lt_log_three`) come from `HalfPlanePNT`, `locG` and
-`disc_point` from `ChiPNT`, and `Kld` and the two bounds from `ChiUniform`. The disc step is proved for a zero-free
+once (`logDeriv_le_Kld`). The disc helpers (`ctr`, `re_ge`, `one_lt_log_three`) come from `HalfPlanePNT`, `locG`
+from `ChiPNT`, and `Kld` and `logDeriv_le_uniform_of` from `ChiUniform`. The disc step is proved for a zero-free
 disc, and the half-plane forms are derived from it.
 -/
 import Landau
@@ -162,17 +162,6 @@ lemma disc_point_ball {F : ℂ → ℂ} {θ σ t r' r R' R B : ℝ}
   rw [hsum, sub_zero, locG_logDeriv hFdz hF0 hFz, norm_mul, Complex.norm_real,
     Real.norm_eq_abs, abs_of_pos hρ, hsz] at FB
   exact FB
-
-/-- **The disc step** with no zero in `Re s > θ` (`disc_point_ball`, as that half-plane contains the disc). -/
-lemma disc_point {F : ℂ → ℂ} {θ σ t r' r R' R B : ℝ}
-    (hFd : DifferentiableOn ℂ F (Metric.ball (ctr t) (2 * (3 / 2 - θ)))) (hθσ : θ < σ)
-    (hr'0 : 0 < r') (hr'r : r' < r) (hr1 : r < 1) (hrR' : r < R') (hR'R : R' < R) (hR1 : R < 1)
-    (hz : 3 / 2 - σ ≤ r' * (3 / 2 - θ)) (hσ32 : σ < 3 / 2)
-    (hzf : ∀ s : ℂ, θ < s.re → F s ≠ 0) (hB : 1 < B)
-    (hfb : ∀ w : ℂ, ‖w‖ ≤ R → ‖locG F (ctr t) (3 / 2 - θ) w‖ ≤ B) :
-    (3 / 2 - θ) * ‖deriv F (σ + t * I) / F (σ + t * I)‖ ≤
-      (16 * r ^ 2 / (r - r') ^ 3 + 1 / ((R ^ 2 / R' - R') * Real.log (R / R'))) * Real.log B :=
-  disc_point_ball hFd hθσ hr'0 hr'r hr1 hrR' hR'R hR1 hz hσ32 (fun s hs => hzf s (re_gt_of_mem_ball hs)) hB hfb
 
 /-- The constant of `logDeriv_le_Kld`. With `ρ = 3/2 − θ`, `r' = (3/2 − θ')/ρ`, `r = r' + (1 − r')/4`,
 `R' = r' + (1 − r')/2` and `R = r' + 3(1 − r')/4`, it is `(16r²/(r − r')³ + 1/((R²/R' − R') log(R/R')))/ρ`. -/
@@ -338,28 +327,10 @@ theorem logDeriv_le_uniform_of {θ θ' : ℝ} (hθ0 : 0 < θ) (hθθ' : θ < θ'
     logDeriv_le_ball hθ0 hθθ' hθ'32 hF hc0 hA0 hgrowth hright hσ (hlow t)
       (fun s hs => hzf s (re_gt_of_mem_ball hs))⟩
 
-/-- **The log-derivative of an entire function in a zero-free half-plane, with its constants.** Let `F`
-be entire with no zero in `Re s > θ`, `0 < θ < θ' < 3/2`, with `|F(s)| ≤ c(|Im s| + 2)` on
-`θ ≤ Re s ≤ 3`, `1/|F(3/2 + it)| ≤ A` for every `t`, and `|F′/F| ≤ C₀` on `Re s ≥ 3/2`. Then
-`|F′/F(σ + it)| ≤ K(log(2 + 2cA) + log(|t| + 4)) + C₀` for `σ ≥ θ'` and every `t`, with `K` depending on
-`θ` and `θ'` only (`Kld θ θ'`, `logDeriv_le_uniform_of`). -/
-theorem logDeriv_le_uniform {θ θ' : ℝ} (hθ0 : 0 < θ) (hθθ' : θ < θ') (hθ'32 : θ' < 3 / 2) :
-    ∃ K : ℝ, 0 < K ∧ ∀ {F : ℂ → ℂ}, Differentiable ℂ F → (∀ s : ℂ, θ < s.re → F s ≠ 0) →
-      ∀ {c A C₀ : ℝ}, 0 ≤ c → 0 ≤ A →
-      (∀ s : ℂ, θ ≤ s.re → s.re ≤ 3 → ‖F s‖ ≤ c * (|s.im| + 2)) →
-      (∀ t : ℝ, ‖F (ctr t)‖⁻¹ ≤ A) →
-      (∀ s : ℂ, 3 / 2 ≤ s.re → ‖deriv F s / F s‖ ≤ C₀) →
-      ∀ σ t : ℝ, θ' ≤ σ →
-        ‖deriv F (σ + t * I) / F (σ + t * I)‖ ≤
-          K * (Real.log (2 + 2 * c * A) + Real.log (|t| + 4)) + C₀ :=
-  ⟨Kld θ θ', (logDeriv_le_uniform_of hθ0 hθθ' hθ'32).1, (logDeriv_le_uniform_of hθ0 hθθ' hθ'32).2⟩
-
 end LogDerivDisc
 
 #print axioms LogDerivDisc.disc_point_ball
-#print axioms LogDerivDisc.disc_point
 #print axioms LogDerivDisc.logDeriv_le_Kld_ball
 #print axioms LogDerivDisc.logDeriv_le_ball
 #print axioms LogDerivDisc.logDeriv_le_Kld
 #print axioms LogDerivDisc.logDeriv_le_uniform_of
-#print axioms LogDerivDisc.logDeriv_le_uniform

@@ -53,9 +53,6 @@ lemma ee_add (x y : ℝ) : ee (x + y) = ee x * ee y := by
 lemma continuous_ee : Continuous ee := by
   unfold ee; fun_prop
 
-lemma norm_ee (x : ℝ) : ‖ee x‖ = 1 := by
-  unfold ee; exact Complex.norm_exp_ofReal_mul_I _
-
 lemma fourier_eq (f : ℝ → ℂ) (ξ : ℝ) : 𝓕 f ξ = ∫ u : ℝ, ee (u * ξ) * f u := by
   rw [Real.fourier_real_eq_integral_exp_smul]
   refine integral_congr_ae (Filter.Eventually.of_forall fun u => ?_)

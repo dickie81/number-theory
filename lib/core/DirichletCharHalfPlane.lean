@@ -1,4 +1,5 @@
-import SexticCharHalfPlane
+import HalfPlaneTwistMean
+import RealCharHalfPlane
 
 /-!
 # Every Dirichlet character, `L(s, χ) ≠ 0` on `Re s > 11/12`
@@ -17,8 +18,7 @@ family.
 * **The half-plane** (**`LFunction_ne_zero_of_sq_ne_one`**): for `χ² ≠ 1`, `ne_zero_of_famTwist` at
   level `3q`, with the family twisted by `ν_χ` modulo `4q` (`meanSquareNu`) and the member `1`, gives
   `L(s, χ)L(s, χχ₋₃) ≠ 0` at level `3q` on `Re s > 11/12`; Mathlib's `LFunction_changeLevel` returns to
-  `L(s, χ)`, as in `LFunction_ne_zero_of_member`. With `RealChar.LFunction_ne_zero_of_isQuadratic` for the real
-  characters:
+  `L(s, χ)`. With `RealChar.LFunction_ne_zero_of_isQuadratic` for the real characters:
   **`LFunction_ne_zero_of_re_gt`**: `L(s, χ) ≠ 0` for every Dirichlet character `χ` of every modulus `q ≥ 1` and
   every `s` with `Re s > 11/12`, the trivial character excepted at `s = 1`.
 -/

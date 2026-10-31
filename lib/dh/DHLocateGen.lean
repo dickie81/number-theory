@@ -15,7 +15,7 @@ termwise sum `D2sum`, and the three point values at `c`.
   bounds (`5^{-σ₀}`, `(M + j/5)^{1-σ₀-24}`) and the box product (`K = 12`).
 * `norm_deriv2_fEM_ballG`: `‖DEM″ + GEM″‖ ≤ D2sum + 2C/R²` on `closedBall c r` (termwise for `DEM`,
   Cauchy on circles of radius `R` for `GEM`).
-* `cCG`, `sCG`, `PReG`, `PImG`, `QDG`, `AReG`, `AImG`: the elementary forms of `fEM(c)`, `fEM′(c)`;
+* `cCG`, `sCG`, `PReG`, `PImG`, `QDG`, `AReG`: the elementary forms of `fEM(c)`, `fEM′(c)`;
   `dh_zero_near_of_elementaryG`: the ladder in elementary form.
 -/
 
@@ -274,21 +274,6 @@ def AReG (c : ℂ) (M K : ℕ) : ℝ :=
       - ex c.re (5 * M + 4) * (cCG c (5 * M + 4) * (QDG c K (M + 4 / 5) (5 * M + 4)).re
         + sCG c (5 * M + 4) * (QDG c K (M + 4 / 5) (5 * M + 4)).im))
 
-/-- `Im fEM′(c)`, elementary. -/
-def AImG (c : ℂ) (M K : ℕ) : ℝ :=
-  (∑ m ∈ Finset.range M, (Real.log (5 * m + 1 : ℕ) * (ex c.re (5 * m + 1) * sCG c (5 * m + 1))
-      + kappa * (Real.log (5 * m + 2 : ℕ) * (ex c.re (5 * m + 2) * sCG c (5 * m + 2)))
-      - kappa * (Real.log (5 * m + 3 : ℕ) * (ex c.re (5 * m + 3) * sCG c (5 * m + 3)))
-      - Real.log (5 * m + 4 : ℕ) * (ex c.re (5 * m + 4) * sCG c (5 * m + 4)))) +
-    (ex c.re (5 * M + 1) * (cCG c (5 * M + 1) * (QDG c K (M + 1 / 5) (5 * M + 1)).im
-        - sCG c (5 * M + 1) * (QDG c K (M + 1 / 5) (5 * M + 1)).re)
-      + kappa * (ex c.re (5 * M + 2) * (cCG c (5 * M + 2) * (QDG c K (M + 2 / 5) (5 * M + 2)).im
-        - sCG c (5 * M + 2) * (QDG c K (M + 2 / 5) (5 * M + 2)).re))
-      - kappa * (ex c.re (5 * M + 3) * (cCG c (5 * M + 3) * (QDG c K (M + 3 / 5) (5 * M + 3)).im
-        - sCG c (5 * M + 3) * (QDG c K (M + 3 / 5) (5 * M + 3)).re))
-      - ex c.re (5 * M + 4) * (cCG c (5 * M + 4) * (QDG c K (M + 4 / 5) (5 * M + 4)).im
-        - sCG c (5 * M + 4) * (QDG c K (M + 4 / 5) (5 * M + 4)).re))
-
 theorem re_npsMulG (c : ℂ) {n : ℕ} (hn : 1 ≤ n) (z : ℂ) :
     (nps n c * z).re = ex c.re n * (cCG c n * z.re + sCG c n * z.im) := by
   obtain ⟨h1, h2⟩ := nps_G c hn
@@ -340,19 +325,6 @@ theorem fEMd_reG (c : ℂ) (M K : ℕ) : (DEMk 1 M c + GEMd M K c).re = AReG c M
     (nps_G c (n := 5 * m + 3) (by omega)).1, (nps_G c (n := 5 * m + 4) (by omega)).1]
   ring
 
-theorem fEMd_imG (c : ℂ) (M K : ℕ) : (DEMk 1 M c + GEMd M K c).im = AImG c M K := by
-  unfold DEMk GEMd AImG
-  rw [GEMd_termG, GEMd_termG, GEMd_termG, GEMd_termG]
-  simp only [Complex.add_im, Complex.sub_im, Complex.im_sum, Complex.im_ofReal_mul]
-  rw [im_npsMulG c (by omega), im_npsMulG c (by omega), im_npsMulG c (by omega),
-    im_npsMulG c (by omega)]
-  congr 1
-  refine Finset.sum_congr rfl fun m _ => ?_
-  simp only [npsD_one, Complex.neg_im, Complex.im_ofReal_mul, neg_mul]
-  rw [(nps_G c (n := 5 * m + 1) (by omega)).2, (nps_G c (n := 5 * m + 2) (by omega)).2,
-    (nps_G c (n := 5 * m + 3) (by omega)).2, (nps_G c (n := 5 * m + 4) (by omega)).2]
-  ring
-
 theorem QDG_re (c : ℂ) (K : ℕ) (x : ℝ) (N : ℕ) :
     (QDG c K x N).re = (QEMd K x c).re - Real.log N * (QEM K x c).re := by
   rw [QDG, Complex.sub_re, Complex.re_ofReal_mul]
@@ -384,11 +356,6 @@ theorem kappaBG : (284079043840412 / 1000000000000000 : ℝ) ≤ kappa ∧
     kappa ≤ (284079043840413 / 1000000000000000 : ℝ) := by
   have h := PsiOmega.kappa_bounds
   constructor <;> linarith [h.1, h.2]
-
-/-- `|x| ≤ t` from an enclosure. -/
-theorem abs_le_of_mem {x lo hi t : ℝ} (h : lo ≤ x ∧ x ≤ hi) (h1 : -t ≤ lo) (h2 : hi ≤ t) :
-    |x| ≤ t := by
-  rw [abs_le]; constructor <;> linarith [h.1, h.2]
 
 end Locate
 

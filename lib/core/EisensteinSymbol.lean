@@ -14,8 +14,7 @@ ideal domain (Mathlib's `three_pid`), and its units are `±1, ±ω, ±ω²` (`un
   `χ_P⁶ = 1` (`chi6_pow_six`).
 * **The symbol** `(a/𝔞)₆ = Π_{P ∣ 𝔞} χ_P(a)` (`sym6`) is the product over the prime factors of `𝔞`,
   with multiplicity. It is multiplicative in `a` and in `𝔞` (`sym6_mul_left`, `sym6_mul_right`), and
-  `χ_P(a) = 0` when `a ∈ P` (`chiP_eq_zero_of_mem`). The cubic and quadratic symbols are its square
-  and cube (`sym3`, `sym2`).
+  `χ_P(a) = 0` when `a ∈ P` (`chiP_eq_zero_of_mem`). The quadratic symbol is its cube (`sym2`).
 
 The definitions use no primary normalisation: given `σ` they are canonical. Primary generators,
 cubic reciprocity, the ideal counts and the split-prime count are later parts of S1.
@@ -341,8 +340,6 @@ theorem sym6_mul_right (a : 𝓞 K) {I J : Ideal (𝓞 K)} (hI : I ≠ 0) (hJ : 
 theorem sym6_one_right (a : 𝓞 K) : sym6 a 1 = 1 := by
   rw [sym6, UniqueFactorizationMonoid.normalizedFactors_one, Multiset.map_zero, Multiset.prod_zero]
 
-/-- The cubic and quadratic symbols are the square and the cube. -/
-noncomputable def sym3 (a : 𝓞 K) (I : Ideal (𝓞 K)) : ℂ := sym6 a I ^ 2
 noncomputable def sym2 (a : 𝓞 K) (I : Ideal (𝓞 K)) : ℂ := sym6 a I ^ 3
 
 end IdealSymbol

@@ -91,10 +91,6 @@ theorem archIntegrand_eq_kerKS {a : ℝ} (ha : 0 ≤ a) {g : ℝ → ℝ} (hg : 
   rw [autocorr_zero, hn, autocorr_eq_zero hg.supp (by rwa [abs_of_pos (by linarith)])]
   ring
 
-theorem archIntegrand_eq_kerK {a : ℝ} (ha : 0 ≤ a) {g : ℝ → ℝ} (hg : Probe a g) (hn : normSq g = 1) {u : ℝ}
-    (hu : 2 * a < u) : archIntegrand g u = kerK u :=
-  archIntegrand_eq_kerKS ha hg.toS hn hu
-
 /-- `archE g = ∫_{(0,2a]} A_g + ∫_{u > 2a} K` for a normalised probe. -/
 theorem archE_splitS {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hp : SProbe a g) (hn : normSq g = 1) :
     archE g = (∫ u in Ioc 0 (2 * a), archIntegrand g u) + ∫ u in Ioi (2 * a), kerK u := by
@@ -143,12 +139,6 @@ theorem hasSum_one_sub_autocorrS {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hp : 
     rw [show 2 * π * (n : ℝ) * u / (4 * (2 * a)) = π * n * u / (4 * a) by field_simp]
     ring
   · field_simp
-
-theorem hasSum_one_sub_autocorr {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hp : Probe a g)
-    (hn : normSq g = 1) {u : ℝ} (hu0 : 0 ≤ u) (hu : u ≤ 2 * a) :
-    HasSum (fun n : ℤ => pm a g n * (1 - Real.cos (π * n * u / (4 * a)))) (1 - autocorr g u) :=
-  hasSum_one_sub_autocorrS ha hp.toS hn hu0 hu
-
 
 /-! ## B. The energy as a sum over modes -/
 
@@ -960,7 +950,6 @@ theorem pm_even {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hp : Probe a g) (n : �
     pm a g n = (∫ t, g t * Real.cos (π * n * t / (4 * a))) ^ 2 / (8 * a) := by
   unfold pm; rw [cf_even ha hp, Complex.norm_real, Real.norm_eq_abs, sq_abs]; field_simp
 
-
 theorem integral_suppS {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hp : SProbe a g) (h : ℝ → ℝ) :
     (∫ t, g t * h t) = ∫ t in (-a)..a, g t * h t := by
   rw [intervalIntegral.integral_of_le (by linarith), ← integral_Icc_eq_integral_Ioc,
@@ -1308,7 +1297,6 @@ theorem pole_box_le {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 2) :
   have := pow_le_pow_left₀ hs0 hb 2
   nlinarith
 
-
 /-- `ψ_n ≥ Cin(πn/2) + a(1 − 0.31831/3) − err(a)` for `n ≥ 6`. -/
 theorem modeE_tail_base {a : ℝ} (ha : 0 < a) (ha1 : a ≤ 1) {n : ℤ} (hn : 6 ≤ n) :
     Cin (π * n / 2) + a * (1 - 0.31831 / 3) - errK a ≤ modeE a n := by
@@ -1484,16 +1472,6 @@ theorem weilQ_perp_ge_fourier {a : ℝ} (ha : 0 < a) (hlog : 2 * a < Real.log 2)
   unfold tauF at hG hsmall
   nlinarith
 
-/-- **Certified lower bound orthogonally to `w`, for every `a` with `2a < log 2`**:
-`Q₀(g) = Q(g) ≥ λ₁ + 1/10`. -/
-theorem weilQ0_perp_ge_fourier {a : ℝ} (ha : 0 < a) (hlog : 2 * a < Real.log 2) {g : ℝ → ℝ}
-    (hp : Probe a g) (hn : normSq g = 1) (h0 : poleR g a = 0) :
-    lam a + 1 / 10 ≤ weilQ0 a g := by
-  have hQ := weilQ_perp_ge_fourier ha hlog hp hn h0
-  have hQ0 : weilQ0 a g = weilQ a g := by unfold weilQ0; rw [h0]; ring
-  have hlam := lam_le (box_probe a) (normSq_box ha)
-  rw [hQ0]; linarith
-
 /-- **The ground state of `Q` is unique up to sign for every `a > 0` with `2a < log 2`.** -/
 theorem groundState_unique_below_log2 {a : ℝ} (ha : 0 < a) (hlog : 2 * a < Real.log 2)
     {g h : ℝ → ℝ} (hg : IsGroundState a g) (hh : IsGroundState a h) :
@@ -1658,8 +1636,6 @@ theorem energy_prime_trunc {a : ℝ} (ha : 0 < a) {g : ℝ → ℝ} (hp : Probe 
   rw [← hsplit, mul_add] at *
   rw [← hsplit2] at hsum
   nlinarith
-
-theorem primeD_nonneg (a u₀ : ℝ) (n : ℤ) : 0 ≤ primeD a u₀ n := abs_nonneg _
 
 theorem primeD_small {a : ℝ} (hlo : Real.log 2 ≤ 2 * a) (ha2 : a ≤ 0.35) (n : ℤ) :
     primeD a (Real.log 2) n ≤ 0.01553 * |(n : ℝ)| := by
@@ -1881,7 +1857,6 @@ theorem groundState_unique_035 {a : ℝ} (ha : 0 < a) (ha2 : a ≤ 0.35) {g h : 
 
 end WeilForm
 
-#print axioms WeilForm.hasSum_one_sub_autocorr
 #print axioms WeilForm.energy_ge_trunc
 #print axioms WeilForm.kerK_ge_taylor
 #print axioms WeilForm.modeE_ge
@@ -1897,7 +1872,6 @@ end WeilForm
 #print axioms WeilForm.pm_le
 #print axioms WeilForm.nearField_fourier
 #print axioms WeilForm.weilQ_perp_ge_fourier
-#print axioms WeilForm.weilQ0_perp_ge_fourier
 #print axioms WeilForm.groundState_unique_below_log2
 #print axioms WeilForm.primeS_eq_two
 #print axioms WeilForm.energy_prime_trunc

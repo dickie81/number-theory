@@ -16,13 +16,11 @@ of the release's companion paper (the proof of its Lemma 4.1).
   (`gaussSum_quadR_coords`).
 * **The first supplementary law** (`quadR_neg_one`): `4ρ_p(−1) = Φ(x, y)²`, from Mathlib's
   `gaussSum_sq`, `g(ρ_p, ψ_p)² = ρ_p(−1)·N(p)`.
-* **Quadratic reciprocity** (**`quad_recip`**, **`quad_recip_coords`**): for coprime primes `a, b ∤ 2`,
-  `G(ab) = ρ_a(b)ρ_b(a)·G(a)G(b)` with `G(c) = Σ_{x mod c} ψ_c(x²)`. In coordinates,
-  `ρ_a(b)ρ_b(a)·Φ(a)Φ(b) = 2Φ(ab)`, with `ab = (a₀b₀ − a₁b₁) + (a₀b₁ + a₁b₀ − a₁b₁)ω`.
-* **Sextic reciprocity** (**`sextic_recip`**, **`sextic_recip_coords`**): the sextic character
-  is `χ₆ = ρ·χ₃²` (`chi6_eq_quadR_mul`, from `chi6_sq` and `chi6_cube`). With the
-  cubic reciprocity, for coprime primary primes `a, b ∤ 6`, `χ_b(a) = ρ_a(b)ρ_b(a)·χ_a(b)` and
-  `χ_b(a)·Φ(a)Φ(b) = 2Φ(ab)·χ_a(b)`. This is the paper's `χ_b(a) = R(a, b)χ_a(b)`, with its
+* **Quadratic reciprocity** (**`quad_recip`**): for coprime primes `a, b ∤ 2`, `G(ab) = ρ_a(b)ρ_b(a)·G(a)G(b)` with
+  `G(c) = Σ_{x mod c} ψ_c(x²)`.
+* **Sextic reciprocity** (**`sextic_recip`**): the sextic character is `χ₆ = ρ·χ₃²` (`chi6_eq_quadR_mul`, from
+  `chi6_sq` and `chi6_cube`). With the cubic reciprocity, for coprime primary primes `a, b ∤ 6`,
+  `χ_b(a) = ρ_a(b)ρ_b(a)·χ_a(b)`. This is the paper's `χ_b(a) = R(a, b)χ_a(b)`, with its
   `R(a, b) = Γ_quad(ab)/(Γ_quad(a)Γ_quad(b))` and `Γ_quad = Φ/2`.
 -/
 
@@ -205,43 +203,6 @@ theorem quadR_neg_one (p : 𝓞 K) [(span {p} : Ideal (𝓞 K)).IsMaximal]
   field_simp at hsq
   linear_combination (-1 : ℂ) * hsq
 
-open Classical in
-/-- **Quadratic reciprocity in coordinates**: for coprime primes `a = a₀ + a₁ω`, `b = b₀ + b₁ω`
-not dividing `2`, `ρ_a(b)·ρ_b(a)·Φ(a)·Φ(b) = 2·Φ(ab)`, with
-`ab = (a₀b₀ − a₁b₁) + (a₀b₁ + a₁b₀ − a₁b₁)ω`. -/
-theorem quad_recip_coords (a b : 𝓞 K) [(span {a} : Ideal (𝓞 K)).IsMaximal]
-    [(span {b} : Ideal (𝓞 K)).IsMaximal] (ha2 : (2 : 𝓞 K) ∉ span {a})
-    (hb2 : (2 : 𝓞 K) ∉ span {b}) (hab : IsCoprime a b) (a₀ a₁ b₀ b₁ : ℤ)
-    (ha : a = a₀ + a₁ * ω) (hb : b = b₀ + b₁ * ω) :
-    quadR (𝓞 K ⧸ span {a}) ℂ (Ideal.Quotient.mk (span {a}) b) *
-        quadR (𝓞 K ⧸ span {b}) ℂ (Ideal.Quotient.mk (span {b}) a) *
-          (quadPhi a₀ a₁ * quadPhi b₀ b₁) =
-      2 * quadPhi (a₀ * b₀ - a₁ * b₁) (a₀ * b₁ + a₁ * b₀ - a₁ * b₁) := by
-  have h := quad_recip a b ha2 hb2 hab
-  have ha0 := ne_zero_of_maximal a
-  have hb0 := ne_zero_of_maximal b
-  have hprod : a * b = ((a₀ * b₀ - a₁ * b₁ : ℤ) : 𝓞 K) +
-      ((a₀ * b₁ + a₁ * b₀ - a₁ * b₁ : ℤ) : 𝓞 K) * ω := by
-    rw [ha, hb]; push_cast; linear_combination (a₁ : 𝓞 K) * (b₁ : 𝓞 K) * ω_sq_add
-  have hGab := quad_gauss_coords (a₀ * b₀ - a₁ * b₁) (a₀ * b₁ + a₁ * b₀ - a₁ * b₁)
-    (by rw [← hprod]; exact mul_ne_zero ha0 hb0)
-  rw [← hprod] at hGab
-  have hGa := quad_gauss_coords a₀ a₁ (by rw [← ha]; exact ha0)
-  rw [← ha] at hGa
-  have hGb := quad_gauss_coords b₀ b₁ (by rw [← hb]; exact hb0)
-  rw [← hb] at hGb
-  rw [hGab, hGa, hGb, map_mul, norm_mul] at h
-  have hσa : ((‖σO a‖ : ℝ) : ℂ) ≠ 0 := by
-    have : σO a ≠ 0 := fun h => ha0 (σO_injective (h.trans (map_zero σO).symm))
-    exact_mod_cast (norm_pos_iff.2 this).ne'
-  have hσb : ((‖σO b‖ : ℝ) : ℂ) ≠ 0 := by
-    have : σO b ≠ 0 := fun h => hb0 (σO_injective (h.trans (map_zero σO).symm))
-    exact_mod_cast (norm_pos_iff.2 this).ne'
-  unfold quadPhi
-  push_cast at h
-  field_simp at h
-  linear_combination (-1 : ℂ) * h
-
 end Recip
 
 section Sextic
@@ -289,21 +250,6 @@ theorem sextic_recip (a b : 𝓞 K) [(span {a} : Ideal (𝓞 K)).IsMaximal]
   linear_combination (-(quadR (𝓞 K ⧸ span {b}) ℂ (Ideal.Quotient.mk _ a) *
     cubCharC (span {a}) h3a (Ideal.Quotient.mk _ b) ^ 2)) * h1
 
-open Classical in
-/-- **Sextic reciprocity in coordinates**: for coprime primary primes `a = a₀ + a₁ω`,
-`b = b₀ + b₁ω` not dividing `6`, `χ_b(a)·Φ(a)·Φ(b) = 2Φ(ab)·χ_a(b)`, i.e. `R(a, b) = 2Φ(ab)/(Φ(a)Φ(b))`
-is the paper's `Γ_quad(ab)/(Γ_quad(a)Γ_quad(b))`. -/
-theorem sextic_recip_coords (a b : 𝓞 K) [(span {a} : Ideal (𝓞 K)).IsMaximal]
-    [(span {b} : Ideal (𝓞 K)).IsMaximal] (ha6 : (6 : 𝓞 K) ∉ span {a})
-    (hb6 : (6 : 𝓞 K) ∉ span {b}) (ha : Primary a) (hb : Primary b) (hab : IsCoprime a b)
-    (a₀ a₁ b₀ b₁ : ℤ) (ha' : a = a₀ + a₁ * ω) (hb' : b = b₀ + b₁ * ω) :
-    chi6 (span {b}) hb6 (Ideal.Quotient.mk _ a) * (quadPhi a₀ a₁ * quadPhi b₀ b₁) =
-      2 * quadPhi (a₀ * b₀ - a₁ * b₁) (a₀ * b₁ + a₁ * b₀ - a₁ * b₁) *
-        chi6 (span {a}) ha6 (Ideal.Quotient.mk _ b) := by
-  rw [sextic_recip a b ha6 hb6 ha hb hab, ← quad_recip_coords a b
-    (two_not_mem_of_six _ ha6) (two_not_mem_of_six _ hb6) hab a₀ a₁ b₀ b₁ ha' hb']
-  ring
-
 end Sextic
 
 end Eis
@@ -317,7 +263,5 @@ end
 #print axioms Eis.quad_recip
 #print axioms Eis.gaussSum_quadR_coords
 #print axioms Eis.quadR_neg_one
-#print axioms Eis.quad_recip_coords
 #print axioms Eis.chi6_eq_quadR_mul
 #print axioms Eis.sextic_recip
-#print axioms Eis.sextic_recip_coords

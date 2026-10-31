@@ -11,12 +11,12 @@ Dirichlet character `χ ≠ 1` mod `N` and every `x > 1` (`psiChi_le_uniform`). 
   half-plane `Re s > 11/12`.
 * `psiChi_le_uniform_of`: `psiChi_le_uniform` from given constants `C₁`, `C₂` of `sum_le_uniform`.
 
-The two bounds for an entire `F` with their constants kept are `logDeriv_le_uniform`
+The two bounds for an entire `F` with their constants kept are `logDeriv_le_uniform_of`
 (`|F′/F(σ + it)| ≤ K(log(2 + 2cA) + log(|t| + 4)) + C₀` for `σ ≥ θ'`) and `sum_le_uniform`
 (`|Σ_{n ≤ X} f(n)| ≤ (C₁(log(2 + 2cA) + C₀) + C₂)X^{θ+η}` for `X > 1`), with their constants as
-formulas (`Kld`, `logDeriv_le_uniform_of`, `eta0`, `sum_le_uniform_of`, `integral_one_add_abs_rpow`). `Kld` and
-the two log-derivative bounds are in `LogDerivDisc.lean` and the rest in `ChiPNT.lean`, where the bounds
-without constants are corollaries; their namespaces are `LogDerivDisc` and `ChiPNT`.
+formulas (`Kld`, `eta0`, `sum_le_uniform_of`, `integral_one_add_abs_rpow`). `Kld` and the log-derivative bound
+are in `LogDerivDisc.lean` and the rest in `ChiPNT.lean`, where the bounds without constants are corollaries;
+their namespaces are `LogDerivDisc` and `ChiPNT`.
 -/
 import ChiPNT
 

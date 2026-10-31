@@ -23,10 +23,6 @@ empty once `2·KG·CL·X·(q(T + 2))^{1/6+ε} < δ·Y^{σ−1/2}`, `δ = lo − 
 * `count_gen_atY`: the range `[lo, hi]` at one large `Q`: `LinnikDetect.dichotomy`, `class1_genY` and
   `LinnikWeyl.class2_empty` (no character is of the integral class).
 * `Yw_genY`, `count_genY`, `charDensity_genY`: as `Yw_gen`, `count_gen` and `charDensity_gen`.
-* `parY_example`, `parY_example_good`: a worked instance on `[5/6, 101/120]` with `A = 5021/2500`; at `lo = 5/6`,
-  `h5`, `hlam1` and `h1` force `A ≥ 4y + 2ε ≥ 2.00626`, so the exponent `3/(3σ₁ − 1) + 1/2000 = 2.0005` is not
-  attainable there. `parY_example'`, `parY_example'_good`: on `[17/20, 11/12]` with `A = 60/31 + 1/2000`, which is
-  `3/(3σ₁ − 1) + 1/2000`.
 
 The file imports `LinnikHuxStep.lean` and `LinnikWeyl.lean`.
 -/
@@ -586,88 +582,6 @@ theorem charDensity_genY (Pa : ParY) (G : Pa.Good) (hPY : LinnikWeyl.PYWeyl) :
     _ ≤ CT * ((q : ℝ) * (T + 6)) ^ E + ((q : ℝ) * T) ^ E * (2 ^ 10 * ℓ ^ 10) := add_le_add hZ h1
     _ ≤ (2 ^ 10 + 256 * 2 ^ 10 * CT) * ((q : ℝ) * T) ^ E * ℓ ^ 10 := by linarith
 
-/-! ### Two worked instances -/
-
-/-- A worked instance on `[5/6, 101/120]`: `y = 251/500` (`cy = 1003/2`, from `h5`), `lam = 10041/10000`
-(`2y + ε` rounded up), `a = 6693/10000` (`3(a + ε)/2 ≤ lam`), `m ≤ 1339`, `Ai = 20083/10000` and `A = 5021/2500`.
-At `lo = 5/6`, `h5`, `hlam1` and `h1` force `A ≥ 4y + 2ε ≥ 2.00626`. -/
-def parY_example : ParY where
-  M := 1339
-  a := 6693 / 10000
-  lam := 10041 / 10000
-  lo := 5 / 6
-  hi := 101 / 120
-  Ai := 20083 / 10000
-  A := 5021 / 2500
-  cy := 1003 / 2
-
-theorem parY_example_good : parY_example.Good where
-  hM := by simp [parY_example]
-  ha := by simp only [parY_example]; norm_num
-  hat := by simp only [parY_example, εs]; norm_num
-  hlam1 := by simp only [parY_example, εs]; norm_num
-  hlam2 := by simp only [parY_example, εs]; norm_num
-  hlam3 := by simp only [parY_example]; norm_num
-  hlo := by simp only [parY_example]; norm_num
-  hhi := by simp only [parY_example]; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parY_example, εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parY_example, εs] at *
-    nlinarith
-  h5 := by simp only [parY_example, εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parY_example, εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parY_example]; norm_num
-  hA16 := by simp only [parY_example]; norm_num
-
-/-- A worked instance on `[17/20, 11/12]` with the exponent `A = 3/(3σ₁ − 1) + 1/2000 = 60/31 + 1/2000` at
-`σ₁ = 17/20`: `y = 239/500` (`cy = 955/2`), `lam = 96777/100000`, `a = 64517/100000`, `m ≤ 1291` and
-`Ai = 1935667/1000000`. -/
-def parY_example' : ParY where
-  M := 1291
-  a := 64517 / 100000
-  lam := 96777 / 100000
-  lo := 17 / 20
-  hi := 11 / 12
-  Ai := 1935667 / 1000000
-  A := 60 / 31 + 1 / 2000
-  cy := 955 / 2
-
-theorem parY_example'_good : parY_example'.Good where
-  hM := by simp [parY_example']
-  ha := by simp only [parY_example']; norm_num
-  hat := by simp only [parY_example', εs]; norm_num
-  hlam1 := by simp only [parY_example', εs]; norm_num
-  hlam2 := by simp only [parY_example', εs]; norm_num
-  hlam3 := by simp only [parY_example']; norm_num
-  hlo := by simp only [parY_example']; norm_num
-  hhi := by simp only [parY_example']; norm_num
-  h1 := by
-    intro σ h1 h2
-    simp only [parY_example', εs] at *
-    nlinarith
-  h2 := by
-    intro σ h1 h2
-    simp only [parY_example', εs] at *
-    nlinarith
-  h5 := by simp only [parY_example', εs]; norm_num
-  h4 := by
-    intro σ h2
-    simp only [parY_example', εs] at *
-    push_cast
-    nlinarith
-  hA := by simp only [parY_example']; norm_num
-  hA16 := by simp only [parY_example']; norm_num
-
 end LinnikHuxStepY
 
 #print axioms LinnikHuxStepY.charDensity_genY
-#print axioms LinnikHuxStepY.parY_example_good
-#print axioms LinnikHuxStepY.parY_example'_good

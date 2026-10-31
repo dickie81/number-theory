@@ -39,8 +39,7 @@ Plain statements, with `L = NM₂/q`, `X > 0`, `q ≥ 1` and `B = {m : 0 < |m| �
   + 3(2M)³E(K′) + |R||μ − μ₀|³ + 3|R|³τ_M(2N + 1 + τ_M)²`, with `τ_M`.
 
 * `measurable_Rt`, `Rt_le`: `R̃` in its centre.
-* `Itg`, `It`, `Itg_nonneg`, `It_nonneg`, `integrableOn_Itg`, `Itg_neg`: their `Ĩ`, and `Ĩ` at `−m₂` as the
-  sum.
+* `Itg`, `It`, `integrableOn_Itg`, `Itg_neg`: their `Ĩ`, and `Ĩ` at `−m₂` as the sum.
 * `Ip_le_It`: their bound for `|I′(m⃗)|`.
 * `mem_boxM`, `card_boxM`, `two_pow_log_le`, `sum_dyadic`, `sum_neg_m₂`: the dyadic regrouping and `m₂ ↦ −m₂`.
 * `Ak`, `E71`, `sum_Ak_regroup`, `prop72`: their Proposition 7.2.
@@ -110,18 +109,6 @@ def Itg {ι : Type*} {q : ℕ} [NeZero q] (N : ℝ) (R : Finset ι) (χ : ι →
 def It {ι : Type*} {q : ℕ} [NeZero q] (N : ℝ) (R : Finset ι) (χ : ι → DirichletCharacter ℂ q) (t : ι → ℝ)
     (X M₂ : ℝ) (m₁ m₂ m₃ : ℤ) : ℝ :=
   ∫ v₁ in Icc (1 / 2 : ℝ) 2, Itg N R χ t X M₂ m₁ m₂ m₃ v₁
-
-lemma Itg_nonneg {ι : Type*} {q : ℕ} [NeZero q] (N : ℝ) (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
-    (t : ι → ℝ) (X M₂ : ℝ) (m₁ m₂ m₃ : ℤ) (v₁ : ℝ) : 0 ≤ Itg N R χ t X M₂ m₁ m₂ m₃ v₁ := by
-  unfold Itg
-  refine Finset.sum_nonneg fun b₁ _ => Finset.sum_nonneg fun b₂ _ => ?_
-  have := Rt_nonneg N R χ t X M₂ ((m₁ * v₁ + m₃) / (m₂ * v₁)) ((b₁⁻¹ * b₂ : (ZMod q)ˣ) : ZMod q)
-  have := Rt_nonneg N R χ t X M₂ ((m₁ * v₁ + m₃) / m₂) (b₂ : ZMod q)
-  positivity
-
-lemma It_nonneg {ι : Type*} {q : ℕ} [NeZero q] (N : ℝ) (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)
-    (t : ι → ℝ) (X M₂ : ℝ) (m₁ m₂ m₃ : ℤ) : 0 ≤ It N R χ t X M₂ m₁ m₂ m₃ :=
-  setIntegral_nonneg measurableSet_Icc fun v₁ _ => Itg_nonneg N R χ t X M₂ m₁ m₂ m₃ v₁
 
 /-- The integrand is integrable on `[1/2, 2]` for `NM₂/q ≥ 0`. -/
 lemma integrableOn_Itg {ι : Type*} {q : ℕ} [NeZero q] {N : ℝ} (R : Finset ι) (χ : ι → DirichletCharacter ℂ q)

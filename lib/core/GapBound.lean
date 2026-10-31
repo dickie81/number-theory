@@ -1,7 +1,7 @@
 import Mathlib
 import TheoremC
 
-/-! # The pole-overlap gap bound, and the Galerkin transfer
+/-! # The pole-overlap gap bound
 
 **Gap bound (operator level, no spectral decomposition).** Let `φ₀` be the ground state of the
 pole-free form `Q₀` (`μ₁ = λ₀`), and `ψ` a normalised probe `⊥ φ₀` attaining
@@ -15,10 +15,8 @@ pole-free form `Q₀` (`μ₁ = λ₀`), and `ψ` a normalised probe `⊥ φ₀`
 
 So `c₂ ≠ 0` and `μ₂ > μ₁` give simplicity with an explicit gap (`simple_of_pole_overlap`).
 
-**Galerkin transfer.** If truncation spaces `T K` (of probes) approximate every probe in `L²` and
-archimedean energy, and the truncated forms have `λ₂(T K) ≥ λ₁(T K) + γ` eventually, then
-`λ₂(Q) ≥ λ₁(Q) + γ` and the ground state is simple (`simple_of_trunc_gap`). The truncated `λ₂` is in
-min–max form (`Lam2GeT`).
+**Continuity of `Q_λ`.** `Q_λ(x + y) ≤ (1 + t)Q_λ(x) + (1 + 1/t)Q_λ(y)` (`Qlam_add_le`), and `Q_λ` is dominated
+by the `L²` norm plus the archimedean energy (`Qlam_le_d`).
 -/
 
 open Real Filter Topology Complex MeasureTheory Set
@@ -160,9 +158,6 @@ theorem Qlam_add_le {a : ℝ} {x y : ℝ → ℝ} (hx : Probe a x) (hy : Probe a
   have : (1 + 1 / t) * Qy = Qy + Qy / t := by field_simp
   rw [e1]; nlinarith
 
-theorem Qlam_smul (a c : ℝ) (f : ℝ → ℝ) : Qlam a (fun u => c * f u) = c ^ 2 * Qlam a f := by
-  unfold Qlam; rw [weilQ_smul, normSq_smul]; ring
-
 /-- `Q_λ` is dominated by `L²` norm plus archimedean energy. -/
 theorem Qlam_le_d {a : ℝ} (ha : 0 < a) : ∃ C, 0 < C ∧ ∀ f, Probe a f →
     Qlam a f ≤ C * (normSq f + archE f) := by
@@ -179,281 +174,9 @@ theorem Qlam_le_d {a : ℝ} (ha : 0 < a) : ∃ C, 0 < C ∧ ∀ f, Probe a f →
   have hE := archE_nonneg hf
   nlinarith
 
-/-! ## The Galerkin transfer -/
-
-/-- **Galerkin density.** Every probe is the limit, in `L²` and archimedean energy, of vectors from
-the truncation spaces. -/
-def TruncDense (a : ℝ) (T : ℕ → Submodule ℝ (ℝ → ℝ)) : Prop :=
-  ∀ f, Probe a f → ∃ F : ℕ → ℝ → ℝ, (∀ᶠ K in atTop, F K ∈ T K) ∧
-    Tendsto (fun K => normSq (fun t => F K t - f t) + archE (fun t => F K t - f t)) atTop (𝓝 0)
-
-/-- **`λ₂(Q|S) ≥ s`** in min–max form: every span of two vectors of `S` contains a vector with
-`Q ≥ s‖·‖²`. -/
-def Lam2GeT (a : ℝ) (S : Submodule ℝ (ℝ → ℝ)) (s : ℝ) : Prop :=
-  ∀ g ∈ S, ∀ h ∈ S, ∃ α β : ℝ, α ^ 2 + β ^ 2 = 1 ∧
-    s * normSq (fun t => α * g t + β * h t) ≤ weilQ a (fun t => α * g t + β * h t)
-
-theorem Lam2GeT.anti {a s s' : ℝ} {S : Submodule ℝ (ℝ → ℝ)} (h : Lam2GeT a S s) (hs : s' ≤ s) :
-    Lam2GeT a S s' := by
-  intro g hg k hk
-  obtain ⟨α, β, hab, hQ⟩ := h g hg k hk
-  exact ⟨α, β, hab, (mul_le_mul_of_nonneg_right hs (normSq_nonneg _)).trans hQ⟩
-
-/-- **Transfer of `λ₂` lower bounds from truncations to the operator.** -/
-theorem lam2Ge_of_trunc {a : ℝ} (ha : 0 < a) {T : ℕ → Submodule ℝ (ℝ → ℝ)}
-    (hsub : ∀ K f, f ∈ T K → Probe a f) (hdense : TruncDense a T) {s : ℕ → ℝ} {s₀ : ℝ}
-    (hs : Tendsto s atTop (𝓝 s₀)) (hT : ∀ᶠ K in atTop, Lam2GeT a (T K) (s K)) {ε : ℝ}
-    (hε : 0 < ε) : Lam2Ge a (s₀ - ε) := by
-  intro g h hg hh hng hnh hx
-  have hNx : ∀ α β : ℝ, α ^ 2 + β ^ 2 = 1 → normSq (fun t => α * g t + β * h t) = 1 := by
-    intro α β hab; rw [normSq_comb hg.memL2 hh.memL2, hng, hnh, hx]; linarith
-  set l := lam a
-  set σ := s₀ - l
-  by_cases hσ : σ - ε ≤ 0
-  · refine ⟨1, 0, by norm_num, ?_⟩
-    have h1 := Qlam_nonneg (a := a) (f := fun t => 1 * g t + 0 * h t) (by
-      have := probe_add_smul (probe_smul hg 1) hh 0; simpa using this)
-    rw [hNx 1 0 (by norm_num), mul_one] at h1
-    linarith
-  push Not at hσ
-  obtain ⟨G, hGT, hGd⟩ := hdense g hg
-  obtain ⟨H, hHT, hHd⟩ := hdense h hh
-  obtain ⟨C, hC, hCle⟩ := Qlam_le_d ha
-  set t := min 1 (ε / (6 * σ))
-  have hσ0 : 0 < σ := by linarith
-  have ht : 0 < t := lt_min one_pos (by positivity)
-  have ht1 : t ≤ 1 := min_le_left _ _
-  have htσ : t * σ ≤ ε / 6 := by
-    have := min_le_right 1 (ε / (6 * σ))
-    calc t * σ ≤ ε / (6 * σ) * σ := mul_le_mul_of_nonneg_right this hσ0.le
-      _ = ε / 6 := by field_simp
-  set u := 1 + t
-  set v := 1 + 1 / t
-  have hu : 0 < u := by positivity
-  have hv : 0 < v := by positivity
-  set D : ℕ → ℝ := fun K => (normSq (fun x => G K x - g x) + archE (fun x => G K x - g x))
-    + (normSq (fun x => H K x - h x) + archE (fun x => H K x - h x))
-  have hD : Tendsto D atTop (𝓝 0) := by simpa using hGd.add hHd
-  set L : ℕ → ℝ := fun K => ((s K - l) * (1 - v * (2 * D K)) - u * v * (2 * C * D K)) / u ^ 2
-  have hL : Tendsto L atTop (𝓝 (σ / u ^ 2)) := by
-    have := ((((hs.sub_const l).mul ((tendsto_const_nhds (x := (1 : ℝ))).sub ((hD.const_mul 2).const_mul v))).sub
-      (((hD.const_mul C).const_mul 2).const_mul (u * v))).div_const (u ^ 2))
-    convert this using 2
-    · simp only [L]; ring
-    · simp [σ]
-  have hlim : σ - ε < σ / u ^ 2 := by
-    have hu2 : u ^ 2 ≤ 1 + 3 * t := by simp only [u]; nlinarith
-    have : σ * (1 - 3 * t) ≤ σ / u ^ 2 := by
-      rw [le_div_iff₀ (by positivity)]
-      nlinarith [mul_le_mul_of_nonneg_left hu2 hσ0.le, sq_nonneg t]
-    nlinarith
-  have hsK : ∀ᶠ K in atTop, 0 < s K - l := by
-    have := hs.eventually (Ioi_mem_nhds (show l < s₀ by linarith))
-    filter_upwards [this] with K hK; linarith [show l < s K from hK]
-  obtain ⟨K, hLK, hsK', hGK, hHK, hTK⟩ :=
-    ((hL.eventually (Ioi_mem_nhds hlim)).and (hsK.and (hGT.and (hHT.and hT)))).exists
-  have hLK' : σ - ε < L K := hLK
-  obtain ⟨α, β, hab, hQy⟩ := hTK (G K) hGK (H K) hHK
-  refine ⟨α, β, hab, ?_⟩
-  -- the probes involved
-  have pG := hsub K _ hGK
-  have pH := hsub K _ hHK
-  have pdG : Probe a (fun x => G K x - g x) := (probe_add_sub pG hg).2
-  have pdH : Probe a (fun x => H K x - h x) := (probe_add_sub pH hh).2
-  have comb : ∀ {p q : ℝ → ℝ}, Probe a p → Probe a q → Probe a (fun x => α * p x + β * q x) :=
-    fun hp hq => by have := probe_add_smul (probe_smul hp α) hq β; simpa using this
-  have px := comb hg hh
-  have py := comb pG pH
-  have pe := comb pdG pdH
-  have hα : α ^ 2 ≤ 1 := by nlinarith [sq_nonneg β]
-  have hβ : β ^ 2 ≤ 1 := by nlinarith [sq_nonneg α]
-  -- names for the quantities involved
-  set x : ℝ → ℝ := fun x => α * g x + β * h x with hxdef
-  set y : ℝ → ℝ := fun x => α * G K x + β * H K x with hydef
-  set e : ℝ → ℝ := fun x => α * (G K x - g x) + β * (H K x - h x) with hedef
-  set Qx := Qlam a x
-  set Qy := Qlam a y
-  set Qe := Qlam a e
-  set Ny := normSq y
-  set Ne := normSq e
-  set d1 := normSq (fun x => G K x - g x) + archE (fun x => G K x - g x)
-  set d2 := normSq (fun x => H K x - h x) + archE (fun x => H K x - h x)
-  have hDK : D K = d1 + d2 := rfl
-  -- size of the error `e = y − x`
-  have hQe : Qe ≤ 2 * C * D K := by
-    have h1 := Qlam_add_le (probe_smul pdG α) (probe_smul pdH β) one_pos
-    rw [Qlam_smul, Qlam_smul] at h1
-    have q1 : Qlam a (fun x => G K x - g x) ≤ C * d1 := hCle _ pdG
-    have q2 : Qlam a (fun x => H K x - h x) ≤ C * d2 := hCle _ pdH
-    have n1 : 0 ≤ Qlam a (fun x => G K x - g x) := Qlam_nonneg pdG
-    have n2 : 0 ≤ Qlam a (fun x => H K x - h x) := Qlam_nonneg pdH
-    have m1 := mul_le_mul_of_nonneg_right hα n1
-    have m2 := mul_le_mul_of_nonneg_right hβ n2
-    have : Qe ≤ (1 + 1) * (α ^ 2 * Qlam a (fun x => G K x - g x))
-        + (1 + 1 / 1) * (β ^ 2 * Qlam a (fun x => H K x - h x)) := h1
-    rw [hDK]; norm_num at this; linarith
-  have hNe : Ne ≤ 2 * D K := by
-    have h1 := normSq_add_le (pdG.memL2.const_mul α) (pdH.memL2.const_mul β)
-    have e1 : normSq (fun x => α * (G K x - g x)) = α ^ 2 * normSq (fun x => G K x - g x) :=
-      normSq_smul _ _
-    have e2 : normSq (fun x => β * (H K x - h x)) = β ^ 2 * normSq (fun x => H K x - h x) :=
-      normSq_smul _ _
-    rw [e1, e2] at h1
-    have n1 := normSq_nonneg (fun x => G K x - g x)
-    have n2 := normSq_nonneg (fun x => H K x - h x)
-    have a1 := archE_nonneg pdG
-    have a2 := archE_nonneg pdH
-    have m1 := mul_le_mul_of_nonneg_right hα n1
-    have m2 := mul_le_mul_of_nonneg_right hβ n2
-    have : Ne ≤ 2 * (α ^ 2 * normSq (fun x => G K x - g x))
-        + 2 * (β ^ 2 * normSq (fun x => H K x - h x)) := h1
-    rw [hDK]; linarith
-  -- `y = x + e` and `x = y + (x − y)`
-  have hy : Qy ≤ u * Qx + v * Qe := by
-    have := Qlam_add_le px pe ht
-    have eq : (fun t => x t + e t) = y := by funext t; simp only [x, y, e]; ring
-    rw [eq] at this; exact this
-  have hxN : 1 ≤ u * Ny + v * Ne := by
-    have := normSq_add_le_t (x := y) (y := fun t => x t - y t) py.memL2
-      (by exact px.memL2.sub py.memL2) ht
-    have eq : (fun t => y t + (x t - y t)) = x := by funext t; ring
-    have en : normSq (fun t => x t - y t) = Ne := by
-      unfold Ne normSq; congr 1; funext t; simp only [x, y, e]; ring
-    rw [eq, hNx α β hab, en] at this
-    exact this
-  -- the truncated inequality in `Q_λ` form
-  have hyQ : (s K - l) * Ny ≤ Qy := by
-    have : Qy = weilQ a y - l * Ny := rfl
-    linarith
-  have hQx0 : 0 ≤ Qx := Qlam_nonneg px
-  have hQe0 : 0 ≤ Qe := Qlam_nonneg pe
-  have hNe0 : 0 ≤ Ne := normSq_nonneg _
-  -- combine
-  have hNy : 1 - v * (2 * D K) ≤ u * Ny := by
-    have := mul_le_mul_of_nonneg_left hNe hv.le
-    linarith
-  have k1 : (s K - l) * (1 - v * (2 * D K)) ≤ (s K - l) * (u * Ny) :=
-    mul_le_mul_of_nonneg_left hNy hsK'.le
-  have k2 : u * ((s K - l) * Ny) ≤ u * Qy := mul_le_mul_of_nonneg_left hyQ hu.le
-  have k3 : u * Qy ≤ u * (u * Qx + v * Qe) := mul_le_mul_of_nonneg_left hy hu.le
-  have k4 : u * v * Qe ≤ u * v * (2 * C * D K) :=
-    mul_le_mul_of_nonneg_left hQe (mul_nonneg hu.le hv.le)
-  have hmain : (s K - l) * (1 - v * (2 * D K)) - u * v * (2 * C * D K) ≤ u ^ 2 * Qx := by
-    have e1 : (s K - l) * (u * Ny) = u * ((s K - l) * Ny) := by ring
-    have e2 : u * (u * Qx + v * Qe) = u ^ 2 * Qx + u * v * Qe := by ring
-    linarith
-  have hQx : L K ≤ Qx := by
-    simp only [L]; rw [div_le_iff₀ (by positivity)]; linarith
-  have : weilQ a x = Qx + l := by
-    show weilQ a x = Qlam a x + l
-    unfold Qlam; rw [hNx α β hab]; ring
-  rw [this]; linarith
-
-/-- **Galerkin: a uniform truncated gap gives simplicity.** If truncation spaces are dense (in `L²` and energy) and
-eventually `λ₂(T K) ≥ Q(f)/‖f‖² + γ` for every nonzero `f ∈ T K` (i.e. `λ₂(T K) ≥ λ₁(T K) + γ`), then
-`λ₂(Q) ≥ λ₁(Q) + γ/2` and every ground state is simple. The hypothesis is "eventually `λ₂(Q|T K) ≥ λ₁ + γ`"; since
-`λ₁(T K) ≥ λ₁` (`lam_mul_le`), it follows from `λ₂(T K) ≥ λ₁(T K) + γ`. The form `Lam2GeT a (T K) (Q(f)/‖f‖² + γ)` for
-*every* nonzero `f ∈ T K` is refutable as soon as `dim T K ≥ 2` (take `f` maximising the Rayleigh quotient on a
-two-dimensional subspace); `simple_of_trunc_gap_of_forall` takes that form. -/
-theorem simple_of_trunc_gap {a : ℝ} (ha : 0 < a) {T : ℕ → Submodule ℝ (ℝ → ℝ)}
-    (hsub : ∀ K f, f ∈ T K → Probe a f) (hdense : TruncDense a T) {γ : ℝ} (hγ : 0 < γ)
-    (hgap : ∀ᶠ K in atTop, Lam2GeT a (T K) (lam a + γ))
-    {g : ℝ → ℝ} (hg : IsGroundState a g) : SimpleGround a g := by
-  obtain ⟨F, hFT, hFd⟩ := hdense g hg.1
-  obtain ⟨C, hC, hCle⟩ := Qlam_le_d ha
-  have hgV := ((isGroundState_iff ha).1 hg)
-  have hQg : Qlam a g = 0 := by unfold Qlam; rw [hgV.1.2, hgV.2]; ring
-  -- `‖F K − g‖² → 0` and `Q_λ(F K − g) → 0`
-  have hNd : Tendsto (fun K => normSq (fun t => F K t - g t)) atTop (𝓝 0) := by
-    refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hFd
-      (Eventually.of_forall fun K => normSq_nonneg _) ?_
-    filter_upwards [hFT] with K hK
-    have := archE_nonneg (probe_add_sub (hsub K _ hK) hg.1).2
-    linarith
-  have hQd : Tendsto (fun K => Qlam a (fun t => F K t - g t)) atTop (𝓝 0) := by
-    refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds
-      (by simpa using hFd.const_mul C) ?_ ?_
-    · filter_upwards [hFT] with K hK
-      exact Qlam_nonneg (probe_add_sub (hsub K _ hK) hg.1).2
-    · filter_upwards [hFT] with K hK
-      exact hCle _ (probe_add_sub (hsub K _ hK) hg.1).2
-  -- the Rayleigh quotient of `F K` tends to `λ₁`
-  have hsmall : ∀ᶠ K in atTop, normSq (fun t => F K t - g t) < 1 / 4 :=
-    hNd.eventually (Iio_mem_nhds (by norm_num))
-  have hR : Tendsto (fun K => weilQ a (F K) / normSq (F K)) atTop (𝓝 (lam a)) := by
-    have hbound : ∀ᶠ K in atTop, 1 / 4 ≤ normSq (F K) ∧ Qlam a (F K) ≤ 2 * Qlam a (fun t => F K t - g t) := by
-      filter_upwards [hFT, hsmall] with K hK hs
-      have pF := hsub K _ hK
-      have pd := (probe_add_sub pF hg.1).2
-      constructor
-      · have := normSq_add_le_t (x := F K) (y := fun t => g t - F K t) pF.memL2
-          (by exact hg.1.memL2.sub pF.memL2) one_pos
-        have e : (fun u => F K u + (g u - F K u)) = g := by funext u; ring
-        rw [e, hg.2.1, normSq_neg_sub] at this
-        norm_num at this; linarith
-      · have := Qlam_add_le hg.1 pd one_pos
-        have e : (fun u => g u + (F K u - g u)) = F K := by funext u; ring
-        rw [e, hQg] at this; norm_num at this; linarith
-    have hq : Tendsto (fun K => Qlam a (F K) / normSq (F K)) atTop (𝓝 0) := by
-      refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds
-        (by simpa using hQd.const_mul 8) ?_ ?_
-      · filter_upwards [hbound, hFT] with K ⟨h1, _⟩ hK
-        exact div_nonneg (Qlam_nonneg (hsub K _ hK)) (by linarith)
-      · filter_upwards [hbound, hFT] with K ⟨h1, h2⟩ hK
-        have hQd0 : 0 ≤ Qlam a (fun t => F K t - g t) :=
-          Qlam_nonneg (probe_add_sub (hsub K _ hK) hg.1).2
-        rw [div_le_iff₀ (by linarith)]
-        nlinarith [mul_le_mul_of_nonneg_left h1 hQd0]
-    have := hq.const_add (lam a)
-    rw [add_zero] at this
-    refine this.congr' ?_
-    filter_upwards [hbound] with K ⟨h1, _⟩
-    unfold Qlam; field_simp; ring
-  have hT : ∀ᶠ K in atTop, Lam2GeT a (T K) (weilQ a (F K) / normSq (F K) + γ / 2) := by
-    have hev : ∀ᶠ K in atTop, weilQ a (F K) / normSq (F K) < lam a + γ / 2 :=
-      hR.eventually (Iio_mem_nhds (by linarith))
-    filter_upwards [hgap, hev] with K hK hle
-    exact hK.anti (by linarith)
-  have h2 := lam2Ge_of_trunc ha hsub hdense (hR.add_const (γ / 2)) hT (half_pos (half_pos hγ))
-  exact simpleGround_of_lam2 ha (s := lam a + γ / 4) (by linarith) (h2.anti (by linarith)) hg
-
-/-- The gap hypothesis in the form `λ₂(Q|T K) ≥ Q(f)/‖f‖² + γ` for every nonzero `f ∈ T K` implies the hypothesis of
-`simple_of_trunc_gap` (apply it to the approximants of the ground state, whose Rayleigh quotient is at least `λ₁`). That
-form is refutable once `dim T K ≥ 2`, so this corollary only records that `simple_of_trunc_gap` is the stronger
-statement. -/
-theorem simple_of_trunc_gap_of_forall {a : ℝ} (ha : 0 < a) {T : ℕ → Submodule ℝ (ℝ → ℝ)}
-    (hsub : ∀ K f, f ∈ T K → Probe a f) (hdense : TruncDense a T) {γ : ℝ} (hγ : 0 < γ)
-    (hgap : ∀ᶠ K in atTop, ∀ f ∈ T K, 0 < normSq f →
-      Lam2GeT a (T K) (weilQ a f / normSq f + γ))
-    {g : ℝ → ℝ} (hg : IsGroundState a g) : SimpleGround a g := by
-  obtain ⟨F, hFT, hFd⟩ := hdense g hg.1
-  refine simple_of_trunc_gap ha hsub hdense hγ ?_ hg
-  have hNd : Tendsto (fun K => normSq (fun t => F K t - g t)) atTop (𝓝 0) := by
-    refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hFd
-      (Eventually.of_forall fun K => normSq_nonneg _) ?_
-    filter_upwards [hFT] with K hK
-    have := archE_nonneg (probe_add_sub (hsub K _ hK) hg.1).2
-    linarith
-  have hsmall : ∀ᶠ K in atTop, normSq (fun t => F K t - g t) < 1 / 4 :=
-    hNd.eventually (Iio_mem_nhds (by norm_num))
-  filter_upwards [hgap, hFT, hsmall] with K hK hFK hs
-  have pF := hsub K _ hFK
-  have hpos : 0 < normSq (F K) := by
-    have := normSq_add_le_t (x := F K) (y := fun t => g t - F K t) pF.memL2
-      (by exact hg.1.memL2.sub pF.memL2) one_pos
-    have e : (fun u => F K u + (g u - F K u)) = g := by funext u; ring
-    rw [e, hg.2.1, normSq_neg_sub] at this
-    norm_num at this; linarith
-  have hR : lam a ≤ weilQ a (F K) / normSq (F K) := by
-    rw [le_div_iff₀ hpos]; exact lam_mul_le pF
-  exact (hK (F K) hFK hpos).anti (by linarith)
-
 end WeilForm
 
 #print axioms WeilForm.lam_le_trial
 #print axioms WeilForm.lam2Ge_of_Q0
 #print axioms WeilForm.lam2Ge_gap
 #print axioms WeilForm.simple_of_pole_overlap
-#print axioms WeilForm.lam2Ge_of_trunc
-#print axioms WeilForm.simple_of_trunc_gap
-#print axioms WeilForm.simple_of_trunc_gap_of_forall

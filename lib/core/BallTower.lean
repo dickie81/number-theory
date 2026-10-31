@@ -3,9 +3,9 @@
 
 Plain statement of what this file proves.
 
-* **The tower.** `ballVol n = √π ^ n / Γ(n/2 + 1)` is the volume of the unit ball in `ℝⁿ`: it is exactly
-  Mathlib's `EuclideanSpace.volume_ball` (`ballVol_eq_volume`). `sphereArea n = n · ballVol n` is the area
-  of the unit sphere `S^{n-1}`.
+* **The tower.** `ballVol n = √π ^ n / Γ(n/2 + 1)` is the volume of the unit ball in `ℝⁿ` (the formula of
+  Mathlib's `EuclideanSpace.volume_ball`). `sphereArea n = n · ballVol n` is the area of the unit sphere
+  `S^{n-1}`.
 * **The two tower maxima.** Among all whole-number dimensions the ball volume is largest at `n = 5`
   (`ballVol_lt_five`) and the sphere area is largest at `n = 7`, i.e. on `S⁶` (`sphereArea_lt_seven`).
   Both follow from the two-step recurrences `ballVol (n+2) = 2π/(n+2) · ballVol n` and
@@ -38,12 +38,6 @@ noncomputable def sphereArea (n : ℕ) : ℝ := n * ballVol n
 lemma ballVol_pos (n : ℕ) : 0 < ballVol n := by
   unfold ballVol
   exact div_pos (pow_pos (Real.sqrt_pos.2 Real.pi_pos) _) (Real.Gamma_pos_of_pos (by positivity))
-
-/-- `ballVol` is Mathlib's volume of the Euclidean unit ball. -/
-theorem ballVol_eq_volume (n : ℕ) [NeZero n] :
-    (MeasureTheory.volume (ball (0 : EuclideanSpace ℝ (Fin n)) 1)).toReal = ballVol n := by
-  rw [EuclideanSpace.volume_ball, Fintype.card_fin, ENNReal.ofReal_one, one_pow, one_mul]
-  exact ENNReal.toReal_ofReal (ballVol_pos n).le
 
 /-- The two-step recurrence: `ballVol (n+2) = 2π/(n+2) · ballVol n`. -/
 lemma ballVol_add_two (n : ℕ) : ballVol (n + 2) = 2 * π / (n + 2) * ballVol n := by
@@ -203,11 +197,6 @@ theorem Gammaℝ_mul_sphereArea (n : ℕ) (hn : 1 ≤ n) :
   rw [hcast, ← Complex.ofReal_mul, hreal]; norm_num
 
 /-! ## Part B: primes + mirror symmetry force the completing factor -/
-
-/-- The primes: `ζ` is the product over primes of `(1 - p^{-s})⁻¹` (Mathlib). -/
-theorem zeta_from_primes {s : ℂ} (hs : 1 < s.re) :
-    ∏' p : Nat.Primes, (1 - (p : ℂ) ^ (-s))⁻¹ = riemannZeta s :=
-  riemannZeta_eulerProduct_tprod hs
 
 /-- A zero-free entire function is `exp` of an entire function. -/
 theorem exists_exp_of_ne_zero {h : ℂ → ℂ} (hd : Differentiable ℂ h) (hne : ∀ z, h z ≠ 0) :

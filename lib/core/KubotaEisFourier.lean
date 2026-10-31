@@ -14,8 +14,6 @@ file computes that coefficient, with
   `r^{−s} = Γ(s)⁻¹∫_0^∞ t^{s−1}e^{−rt} dt`, Fubini, Mathlib's Gaussian integral
   `integral_cexp_neg_mul_sq_norm_add`, and `besselK` as a Mellin transform, rescaled by `2π|ξ|`
   (Mathlib's `mellin_comp_mul_left`).
-* **`K_ν` is entire in `ν`** (**`differentiable_besselK`**), with the bounds of
-  `mellinConvergent_bkK`.
 * **One term** (**`integral_ebr_height_cpow`**): for `c ≠ 0`,
   `∫_ℂ ĕ(−ξz)(v/Q_z(c, d))^s dz = ĕ(ξd/c)·|c|^{−2s}·(2π/Γ(s))(2π|ξ|)^{s−1}·v·K_{s−1}(4π|ξ|v)`, by
   `height_cpow_eq`, the shift `z ↦ z − d/c` and the scaling `z ↦ vz`.
@@ -210,33 +208,6 @@ theorem integral_ebr_inv_cpow {ξ : ℂ} (hξ : ξ ≠ 0) {s : ℂ} (hs : 1 < s.
     ring
   rw [h4, show 2 * a = 4 * Real.pi * ‖ξ‖ by rw [ha]; ring, ha]
   field_simp
-
-/-- **`K_ν(x)` is entire in `ν`** for `x > 0` (Mathlib's `mellin_differentiableAt_of_isBigO_rpow_exp`, with
-the bounds of `mellinConvergent_bkK`). -/
-theorem differentiable_besselK {x : ℝ} (hx : 0 < x) : Differentiable ℂ fun ν => besselK ν x := by
-  intro ν
-  have hx2 : 0 < x / 2 := by positivity
-  unfold besselK
-  refine DifferentiableAt.const_mul ?_ _
-  refine mellin_differentiableAt_of_isBigO_rpow_exp hx2 (locInt_bkK x) ?_ ?_ (b := ν.re - 1)
-    (by linarith)
-  · refine IsBigO.of_bound 1 ?_
-    filter_upwards [eventually_gt_atTop 0] with t ht
-    rw [Complex.norm_real, Real.norm_of_nonneg (bkK_pos x t).le, one_mul,
-      Real.norm_of_nonneg (Real.exp_pos _).le]
-    exact bkK_le_top hx ht
-  · have h1 := (isLittleO_exp_neg_mul_rpow_atTop hx2 (ν.re - 1)).comp_tendsto tendsto_inv_nhdsGT_zero
-    have h2 : ((fun x : ℝ => x ^ (ν.re - 1)) ∘ fun t : ℝ => t⁻¹) =ᶠ[𝓝[>] 0]
-        fun t => t ^ (-(ν.re - 1)) := by
-      filter_upwards [self_mem_nhdsWithin] with t ht
-      simp only [Function.comp_apply]
-      rw [Real.inv_rpow (le_of_lt ht), Real.rpow_neg (le_of_lt ht)]
-    refine IsBigO.trans ?_ (h1.isBigO.congr' EventuallyEq.rfl h2)
-    refine IsBigO.of_bound 1 ?_
-    filter_upwards [self_mem_nhdsWithin] with t ht
-    rw [Complex.norm_real, Real.norm_of_nonneg (bkK_pos x t).le, one_mul, Function.comp_apply,
-      Real.norm_of_nonneg (Real.exp_pos _).le]
-    exact bkK_le_bot hx ht
 
 /-- **The Fourier integral of one term**: for `c ≠ 0`, `v > 0`, `ξ ≠ 0` and `Re s > 1`,
 `∫_ℂ ĕ(−ξz)(v/Q_z(c, d))^s dz = ĕ(ξd/c)·|c|^{−2s}·(2π/Γ(s))·(2π|ξ|)^{s−1}·v·K_{s−1}(4π|ξ|v)`. -/
@@ -482,7 +453,6 @@ end
 #print axioms Eis.norm_ftInt
 #print axioms Eis.integrable_ftInt
 #print axioms Eis.integral_ebr_inv_cpow
-#print axioms Eis.differentiable_besselK
 #print axioms Eis.integral_ebr_height_cpow
 #print axioms Eis.measurable_ebr
 #print axioms Eis.ebr_period

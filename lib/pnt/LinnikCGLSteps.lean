@@ -11,7 +11,7 @@ such that for every `q ≥ 1`, `lo ≤ σ ≤ hi` and `T ≥ 2` at most `C(qT)^{
 zero of `L(·, χ)` in `Re s ≥ σ`, `|Im s| ≤ T`. There is no hypothesis: `LinnikCGLHB101.prop31` proves Chen–Gupta–Li's
 Proposition 3.1.
 
-This is `LinnikCGLStep.charDensity_cglGen` (the library's step from Proposition 3.1, as `charDensity_cgl` on
+This is `LinnikCGLStep.charDensity_cglGen` (the library's step from Proposition 3.1, which an earlier curve took on
 `[5/7, 16/21]`) at new `ParC` parameters. `ParC.Good` has one exponent condition per use of Proposition 3.1: on `[lo, hi]`
 the six of `hc` (they are affine in `σ`, so they ask for the step's two ends), `h3` for the integral class and `h4` for
 the number of dyadic blocks; the other fields are `M = 1556`, `e = 1/100000`, `2/3 ≤ a`, `a + e ≤ M/2000` and the
@@ -59,8 +59,8 @@ Every step is `(parS_k, parS_k_good, charDensity_s_k)`: the parameters `ParC` (`
 parameters are numerals), and the density estimate by `charDensity_cglGen LinnikCGLHB101.prop31`.
 
 The file also holds Ingham's last step at a smaller slack, `charDensity_inT`: `LinnikInghamC.charDensity_ingham_c` at
-`ε = 1/400000` on `[99/140, 5/7]`, with the exponent `7/3 + 1/100000`, in place of `LinnikStairs7.charDensity_in7_19`'s
-`7/3 + 1/2000`. The largest exponent of the curve is at `5/7`, and it bounds the window's upper end.
+`ε = 1/400000` on `[99/140, 5/7]`, with the exponent `7/3 + 1/100000`, in place of the `7/3 + 1/2000` of Ingham's
+step there at `ε = 1/8000`. The largest exponent of the curve is at `5/7`, and it bounds the window's upper end.
 
 The file imports `LinnikCGLHB101.lean` and `LinnikInghamC.lean`.
 -/

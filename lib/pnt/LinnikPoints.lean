@@ -7,8 +7,7 @@ Plain statement. Let `S ⊆ (P, 2P]`, `c_j ∈ ℂ` and `q ≥ 1`, and write `D_
 Take finitely many points `(χ_i, x_i)` with `x_i ∈ [lo + ½, hi − ½]`, where any two points of the same character are
 at distance at least `1`. Then `Σ_i |D_{χ_i}(x_i)|² ≤ (q(hi − lo) + 8P(1 + log P))(2 + log²(2P))Σ|c_j|²`
 (`large_values_points`). That is the bound of `LinnikHybrid.large_values_chars`, which is the case of one point per
-character (`large_values_chars_of_points`). A count of zeros detects several zeros of one character, at ordinates
-at least `1` apart.
+character. A count of zeros detects several zeros of one character, at ordinates at least `1` apart.
 
 * `large_values_points`: group the points by their character. For each character, `DirMean.gallagher` (Gallagher's
   lemma for a `1`-separated set) bounds the sum over its points by the integral of `|D_χ|² + 2|D_χ||D_χ′|` over
@@ -126,13 +125,5 @@ theorem large_values_points {ι : Type*} {P : ℕ} {S : Finset ℕ} (hS : S ⊆ 
     _ ≤ 2 * (L * ∑ j ∈ S, ‖c j‖ ^ 2) + L * (Real.log (2 * P) ^ 2 * ∑ j ∈ S, ‖c j‖ ^ 2) := by
         have := mul_le_mul_of_nonneg_left hc'le hL0; linarith
     _ = L * (2 + Real.log (2 * P) ^ 2) * ∑ j ∈ S, ‖c j‖ ^ 2 := by ring
-
-/-- `LinnikHybrid.large_values_chars` is the case of one point per character. -/
-theorem large_values_chars_of_points {P : ℕ} {S : Finset ℕ} (hS : S ⊆ Finset.Ioc P (2 * P)) (c : ℕ → ℂ)
-    (q : ℕ) [NeZero q] {lo hi : ℝ} (hab : lo ≤ hi) (Rs : Finset (DirichletCharacter ℂ q))
-    (x : DirichletCharacter ℂ q → ℝ) (hR : ∀ χ ∈ Rs, lo + 1 / 2 ≤ x χ ∧ x χ ≤ hi - 1 / 2) :
-    ∑ χ ∈ Rs, ‖dp S (fun j => c j * χ j) (x χ)‖ ^ 2
-      ≤ (q * (hi - lo) + 8 * P * (1 + Real.log P)) * (2 + Real.log (2 * P) ^ 2) * ∑ j ∈ S, ‖c j‖ ^ 2 :=
-  large_values_points hS c q hab Rs id x hR fun _ _ _ _ hne heq => absurd heq hne
 
 end LinnikPoints

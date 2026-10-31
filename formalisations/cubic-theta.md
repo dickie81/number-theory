@@ -81,14 +81,15 @@ the theorem as its own.
   `KubotaResidue`, `KubotaThetaPair`). A self-adjoint operator of averages over hyperbolic balls has `v^s` among its
   eigenfunctions. From a truncated Eisenstein series `g_s` and the operator's resolvent the library builds an `L²`
   function `ũ_s` attached to the Eisenstein series. `θ` is the limit of `(s − 4/3)ũ_s` along `s = 4/3 + iε`
-  (`Eis.tendsto_uL_thetaL`), and `θ ≠ 0` (`KubotaThetaPair`).
+  (`Eis.tendsto_uL_thetaL`), and `θ ≠ 0` (`Eis.thetaL_ne_zero`, `KubotaThetaPair`).
 - **The Fourier coefficients and the constant term** (`KubotaEisFourier`, `KubotaPoincare`, `KubotaPmPair`,
   `KubotaPmTheta`, `KubotaThetaCoef`, `KubotaThetaConst`, `KubotaThetaSeries`, `KubotaThetaEq`). They are identified by
   pairing `θ` with Poincaré series, and `θ` equals its Fourier series almost everywhere. The integral of `θ` over a
   period parallelogram is `(9√3/2)·Res φ·v^{2/3}` for almost every `v` (`KubotaThetaConst`).
 - **Invariance under `SL_2(ℤ)`** (`KubotaCTPrinciple`, `KubotaCTCover`, `KubotaCuspZero`, `KubotaCuspZeroPhi`,
   `KubotaThetaZero`, `KubotaThetaInv`): by a constant-term principle, `θ ∘ S = θ` and `θ ∘ T = θ` almost everywhere
-  (`Eis.thetaF_sS_ae`).
+  (`Eis.thetaF_sS_ae`), and `θ`'s Fourier series is automorphic on `Γ_2` with the extension of Kubota's character
+  (`Eis.isAut_thS_Gam2`).
 - **Patterson's coefficients** (`KubotaCubeSum`, `KubotaCubeDecomp`, `KubotaCubeCover`, `KubotaCubeEigen`,
   `KubotaCubeCoef`, `KubotaCoefResidue`, `KubotaSmFactor`, `KubotaLocTable`, `KubotaDirSplit`, `KubotaCoefPrime`,
   `KubotaCoefSqfree`, `KubotaCoefUnit`, `KubotaCoefScalar`, `KubotaCoefSupp`, `KubotaLamCube`). A cube eigenrelation

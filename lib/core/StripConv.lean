@@ -9,8 +9,7 @@ uniformly on that strip alone gives RH for the top-of-chain ground states
 (`hurwitz_closed_on`, `rh_of_strip_cross`, `rh_of_hypConvStrip_top`).
 
 **An `L²` criterion.** `|ĝ(z) − φ̂(z)| ≤ √(2a) e^{a|Im z|} ‖g − φ‖` (`norm_ghatC_sub_le`). So if
-comparison functions `φ_n` have transforms converging to `cΞ` on the strip (`KernelApprox`; proved
-for Riemann's kernel in RiemannKernel.lean), then
+comparison functions `φ_n` have transforms converging to `cΞ` on the strip (`KernelApprox`), then
 
   `‖σ_n·topGS(a_n) − φ_n‖ = o(e^{−b a_n}/√a_n)` for every `b < ½`   ⇒   RH   (`rh_of_close_top`).
 
@@ -20,9 +19,6 @@ The threshold `½` is the half-width of the critical strip.
 probe `φ` with `⟨g, φ⟩ ≥ 0` (`normSq_sub_le_of_gap`), hence `rh_of_relgap`. For `φ = Φ_a` its
 hypothesis is false numerically: `λ₂` is itself double-exponentially small,
 far below `Q(Φ_a)`.
-
-**The moment conditions.** (a) on the strip makes every Taylor coefficient of `ĝ_n/ĝ_n(0)` at `0`
-converge (`moments_of_hypConvStrip`); `k = 2` is the second-moment condition `κ(a) → 0`.
 -/
 
 open Real Filter Topology Complex MeasureTheory Set
@@ -48,10 +44,6 @@ uniformly on `|Im z| < ½` only. -/
 def HypConvStrip (a : ℕ → ℝ) (g : ℕ → ℝ → ℝ) : Prop :=
   TendstoLocallyUniformlyOn (fun n z => ghatC (g n) (a n) z / ghatC (g n) (a n) 0)
     (fun z => Xi z / Xi 0) atTop stripSet
-
-theorem hypConvStrip_of_hypConv {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ} (h : HypConv a g) :
-    HypConvStrip a g :=
-  h.tendstoLocallyUniformlyOn
 
 theorem ordinate_mem_strip {s : ℂ} (hs : IsNontrivialZero s) : (s - 1 / 2) / I ∈ stripSet := by
   have e : (s - 1 / 2) / I = -I * (s - 1 / 2) := by field_simp; rw [I_sq]; ring
@@ -380,8 +372,7 @@ theorem normSq_sub_le_of_gap {a s : ℝ} (ha : 0 < a) {g φ : ℝ → ℝ} (hg :
 /-! ## RH from `L²` closeness to a kernel, and from a relative spectral gap -/
 
 /-- **The kernel hypothesis.** Comparison functions `φ_n ∈ L²` whose transforms on `[−a_n, a_n]`
-converge to a nonzero multiple of `Ξ`, locally uniformly on the strip `|Im z| < ½`. Riemann's kernel
-`φ_n = Φ` satisfies it whenever `a_n → ∞` (`kernelApprox_RPhi`, RiemannKernel.lean). -/
+converge to a nonzero multiple of `Ξ`, locally uniformly on the strip `|Im z| < ½`. -/
 def KernelApprox (a : ℕ → ℝ) (φ : ℕ → ℝ → ℝ) : Prop :=
   (∀ n, MemLp (φ n) 2 volume) ∧ ∃ c : ℂ, c ≠ 0 ∧
     TendstoLocallyUniformlyOn (fun n z => ghatC (φ n) (a n) z) (fun z => c * Xi z) atTop stripSet
@@ -493,39 +484,10 @@ theorem rh_of_relgap {a : ℕ → ℝ} (ha : ∀ n, 0 < a n) {φ : ℕ → ℝ �
     _ = 4 * (a n * Real.exp (2 * b * a n)
           * ((weilQ (a n) (φ n) - lam (a n)) / (s n - lam (a n)))) := by ring
 
-/-! ## Every moment condition follows from (a) on the strip -/
-
-/-- Locally uniform convergence of entire functions on an open set carries over to every
-iterated derivative. -/
-theorem tendstoLocallyUniformlyOn_iteratedDeriv {F : ℕ → ℂ → ℂ} {f : ℂ → ℂ} {U : Set ℂ}
-    (hU : IsOpen U) (hF : ∀ n, Differentiable ℂ (F n))
-    (h : TendstoLocallyUniformlyOn F f atTop U) (k : ℕ) :
-    TendstoLocallyUniformlyOn (fun n => iteratedDeriv k (F n)) (iteratedDeriv k f) atTop U := by
-  induction k with
-  | zero => simpa using h
-  | succ k ih =>
-      simp only [iteratedDeriv_succ]
-      refine ih.deriv (Eventually.of_forall fun n => ?_) hU
-      have hd : Differentiable ℂ (iteratedDeriv k (F n)) :=
-        ((hF n).contDiff (n := ⊤)).differentiable_iteratedDeriv k (by simp)
-      exact hd.differentiableOn
-
-/-- **The moment conditions.** (a) on the strip makes every Taylor coefficient at `0` of
-`ĝ_n/ĝ_n(0)` converge to that of `Ξ/Ξ(0)`. For `k = 2` this is the second-moment condition
-`m₂(g_n) → M₂(Φ)`, i.e. `κ(a_n) → 0`, since `ĝ(z)/ĝ(0) = 1 − (m₂/2)z² + O(z⁴)`. -/
-theorem moments_of_hypConvStrip {a : ℕ → ℝ} {g : ℕ → ℝ → ℝ}
-    (hg : ∀ n, IntervalIntegrable (g n) volume (-(a n)) (a n)) (h : HypConvStrip a g) (k : ℕ) :
-    Tendsto (fun n => iteratedDeriv k (fun z => ghatC (g n) (a n) z / ghatC (g n) (a n) 0) 0)
-      atTop (𝓝 (iteratedDeriv k (fun z => Xi z / Xi 0) 0)) := by
-  have hk := tendstoLocallyUniformlyOn_iteratedDeriv isOpen_stripSet
-    (fun n => (ghatC_differentiable (hg n)).div_const _) h k
-  exact hk.tendsto_at zero_mem_stripSet
-
 end WeilForm
 
 #print axioms WeilForm.rh_of_strip_cross
 #print axioms WeilForm.rh_of_hypConvStrip_top
-#print axioms WeilForm.hypConvStrip_of_hypConv
 #print axioms WeilForm.norm_ghatC_sub_le
 #print axioms WeilForm.tendstoLocallyUniformlyOn_of_close
 #print axioms WeilForm.tendstoLocallyUniformlyOn_ratio
@@ -533,5 +495,3 @@ end WeilForm
 #print axioms WeilForm.hypConvStrip_of_close
 #print axioms WeilForm.rh_of_close_top
 #print axioms WeilForm.rh_of_relgap
-#print axioms WeilForm.tendstoLocallyUniformlyOn_iteratedDeriv
-#print axioms WeilForm.moments_of_hypConvStrip

@@ -57,10 +57,11 @@ The library's proof was written from the standard argument, not transcribed from
   second has, up to a constant and a power of `log Q`, at most `Q^{(4/3)(1+2c)(1/2−σ)+1+ε/3}` members, which `hexp`
   puts below `Q^{(2+4c+4ε)(1−σ)}` (`LinnikInghamC.bound_class2_c`).
 
-`LinnikStairs7` applies the theorem on twenty equal steps `[σ₁, σ₂]` of `[4/7, 5/7]` at `ε = 1/8000`, with
-`2 + 4c = 3/(2 − σ₂)`. The exponent on each step is `3/(2 − σ₂) + 1/2000`. The first step is
+`LinnikStairs7` applies the theorem on the first nineteen of the twenty equal steps `[σ₁, σ₂]` of `[4/7, 5/7]` at
+`ε = 1/8000`, with `2 + 4c = 3/(2 − σ₂)`. The exponent on each step is `3/(2 − σ₂) + 1/2000`. The first step is
 `LinnikStairs7.charDensity_in7_0`, with the exponent `840199/398000` on `[4/7, 81/140]`, and the last is
-`LinnikStairs7.charDensity_in7_19`.
+`LinnikStairs7.charDensity_in7_18`, on `[7/10, 99/140]`. The twentieth, `[99/140, 5/7]`, is
+`LinnikCGLSteps.charDensity_inT`, at `ε = 1/400000`.
 
 ## Differences from the source
 
@@ -78,5 +79,6 @@ The library's proof was written from the standard argument, not transcribed from
 
 ## Where the Linnik paper uses it
 
-The density curve `g7c` of the Linnik paper's Type II estimate (`SieveTypeIIU226C.counts_7c`) takes the twenty steps
-`LinnikStairs7.charDensity_in7_0` to `charDensity_in7_19` on `[4/7, 5/7]`.
+The density curve `g7d` of the Linnik paper's Type II estimate (`SieveCurve7D.counts_7d`) takes the nineteen steps
+`LinnikStairs7.charDensity_in7_0` to `charDensity_in7_18` on `[4/7, 99/140]`, and on `[99/140, 5/7]` the last step at
+`ε = 1/400000`, `LinnikCGLSteps.charDensity_inT`.

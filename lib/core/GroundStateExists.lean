@@ -193,9 +193,6 @@ theorem box_memLp (a : ℝ) : MemLp (box a) 2 volume :=
   memLp_indicator_of_continuous continuous_const measurableSet_Icc measure_Icc_lt_top.ne
     (C := |1 / Real.sqrt (2 * a)|) fun _ _ => le_rfl
 
-theorem box_measurable (a : ℝ) : Measurable (box a) :=
-  measurable_const.indicator measurableSet_Icc
-
 theorem normSq_box {a : ℝ} (ha : 0 < a) : normSq (box a) = 1 := by
   unfold normSq
   have : (fun t => box a t ^ 2) = Set.indicator (Icc (-a) a) fun _ => (1 / Real.sqrt (2 * a)) ^ 2 := by

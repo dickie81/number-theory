@@ -3,27 +3,81 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean` and `lib/check/Check.lean` print the axioms of 759
-theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
-import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
-name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 124 modules that none of the three imports, directly or not, with their
-headline theorems (those whose docstring opens with a bold title).
+`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
+`lib/check/Check.lean` print the axioms of 886 theorems: the library's final results (those of the
+zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
+papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
+headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
-| Layer | Modules with results | Results | Modules outside them | Their headline theorems |
-|---|---|---|---|---|
-| `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 33 | 175 |
-| `lib/dh` | 0 | 0 | 53 | 303 |
-| `lib/zeta23` | 7 | 25 | 4 | 0 |
+| Layer | Modules with results | Results |
+|---|---|---|
+| `lib/core` | 69 | 152 |
+| `lib/pnt` | 202 | 641 |
+| `lib/dh` | 20 | 68 |
+| `lib/zeta23` | 7 | 25 |
 
-## The results of `CheckAll`, `CheckZeta23` and `Check`
+## The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`
 
 ### `lib/core`
+
+#### `AngularFamily`: RH is the radial member of the ball's angular grinding family
+
+- `AngularFamily.member_zero_eq`: The radial member is `ζ · L(χ₄)` ([note](../formalisations/weil-positivity.md))
+- `AngularFamily.rh_of_member_zero`: RH is in the family ([note](../formalisations/weil-positivity.md))
+
+#### `BallTower`: The ball tower from integers and primes (formalised)
+
+- `BallTower.ballVol_lt_five`: The ball volume is largest in dimension 5
+- `BallTower.sphereArea_lt_seven`: The sphere area is largest in dimension 7 (the sphere `S⁶`)
+- `BallTower.completing_factor_unique`: Uniqueness of the completing factor
+
+#### `BohrJoins`: The geometric picture joined to the library
+
+- `BohrJoins.shell_unconditional`: Unconditionally
+- `BohrJoins.shell_radii_tendsto`: In the limit no shell short of the sphere constrains the radius
+- `BohrJoins.zero_pair_of_not_RH`: If RH fails, some zero pair straddles the sphere
+- `BohrJoins.completed_eq_sphereArea_bohr`: The ball tower and the Bohr lift in one identity
 
 #### `BohrLandauCore`: For every w > 0, almost every zero lies within w of the critical line
 
 - `BohrLandauCore.tendsto_NX_div_of_lower`: For every `w > 0`, almost every zero lies within `w` of the critical line
+
+#### `BohrSphere`: The critical line is the unit sphere of the Bohr lift
+
+- `BohrSphere.riemannHypothesis_iff_mem_sphere`: For every nonempty finite set of primes, RH says that every nontrivial zero lies on the unit sphere. ([note](../formalisations/weil-positivity.md))
+- `BohrSphere.riemannHypothesis_iff_tendsto`: The same in the limit. ([note](../formalisations/weil-positivity.md))
+
+#### `Concave`: Pólya's theorem for even concave probes, with no representation hypothesis
+
+- `WeilForm.realRooted_of_ae_concaveOn`: For probes ([note](../formalisations/weil-positivity.md))
+
+#### `CrossCriteria`: GRH modulo real zeros, and the missing Props stated
+
+- `CrossCriteria.rh_of_liouville_theta`: RH from one-sided Liouville bounds at every exponent `θ > ½` ([note](../formalisations/weil-positivity.md))
+
+#### `CubeBall`: The infinite cube and the infinite ball are different objects
+
+- `CubeBall.no_isometry_cube`: For every `n ≥ 2` the cube `[−1, 1]ⁿ` has no isometric copy in an inner product space
+- `CubeBall.cube_distortion`: The cube against any ball, in dimension `n`
+- `CubeBall.tendsto_ball_div_cube`: The Euclidean ball's share of the cube tends to `0`
+- `CubeBall.norm_zCube_eq_one_iff`: The cube's surface is the line `Re s = 0`
+- `CubeBall.line_inside_cube_not_in_ell2`: The critical line lies strictly inside the infinite cube, and outside `ℓ²`
+- `CubeBall.vLp_mem_sphere_iff`: For every `ℓ^r` norm, `1 ≤ r ≤ ∞`, the cube's included, the normalised Bohr vector lies on the unit sphere if and only if `Re s = ½`
+- `CubeBall.exists_unit_seq_tendsto_inner`: In infinite dimension every point of the closed unit ball is a weak limit of points of the unit sphere
+- `CubeBall.tendsto_inner_ellUnit`: The norm is not weakly continuous
+- `CubeBall.isEmpty_homeomorph_ball_hilbertCube`: So, with the norm topology, the infinite ball is not homeomorphic to the Hilbert cube
+
+#### `Curvature`: Dodging D, and the curvature sum rule
+
+- `WeilForm.rh_of_Xi_params`: RH from real parameters ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_dodging`: Dodging D and real-rootedness alone give RH ([note](../formalisations/weil-positivity.md))
+- `WeilForm.ghat_curvature`: The curvature sum rule, real-rooted ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_dodging_final`: Roadmap item 1 ⇒ `RiemannHypothesis`, with dodging D alone ([note](../formalisations/weil-positivity.md))
+
+#### `DegenerateFlat`: Degenerate ⇒ edge-flat (the converse direction, formal)
+
+- `WeilForm.degenerate_flat_fourier`: The edge-flat structure, in Fourier form ([note](../formalisations/weil-positivity.md))
+- `WeilForm.simple_iff_no_green_pair`: Formal equivalence (both directions) ([note](../formalisations/weil-positivity.md))
 
 #### `DirichletCharHalfPlane`: Every Dirichlet character, `L(s, χ) ≠ 0` on `Re s > 11/12`
 
@@ -33,22 +87,297 @@ headline theorems (those whose docstring opens with a bold title).
 
 - `Eis.cub_recip`: Cubic reciprocity *paper*
 
+#### `EisensteinIdealCount`: The ideals of `ℤ[ω]` of bounded norm
+
+- `Eis.card_ofNorm_split`: Split
+- `Eis.card_ofNorm_inert`: Inert
+- `Eis.card_ofNorm_three`: Ramified
+
+#### `EisensteinQuadRecip`: Quadratic and sextic reciprocity in `ℤ[ω]`
+
+- `Eis.quad_recip`: Quadratic reciprocity in `ℤ[ω]`
+- `Eis.quadR_neg_one`: The first supplementary law
+
 #### `EisensteinQuadSieveFinal`: The quadratic large sieve, part 8: Theorem 2, `(E_1)` and Lemma 6.5
 
 - `Eis.quadLargeSieve`: The companion paper's Lemma 6.5 is proved *paper* ([note](../formalisations/quadratic-large-sieve.md))
 
+#### `EisensteinQuadSieveSep`: The quadratic large sieve, part 3: Heath-Brown's Lemmas 2 and 10
+
+- `Eis.fBound_gcd`: Heath-Brown's Lemma 2
+- `Eis.fBound_sep`: Heath-Brown's Lemma 10
+
+#### `ExplicitBridge`: The explicit-formula bridge: `weilQ` is the zero side of Weil's explicit formula
+
+- `WeilForm.weilQ_symbol`: The symbol form ([note](../formalisations/weil-positivity.md))
+
+#### `FirstFailure`: The first positivity failure
+
+- `WeilForm.first_failure`: The first positivity failure ([note](../formalisations/weil-positivity.md))
+
+#### `FourierGap`: A certified lower bound on `Q₀` orthogonally to `w`, for every `0 < a ≤ 0.35`
+
+- `WeilForm.groundState_unique_below_log2`: The ground state of `Q` is unique up to sign for every `a > 0` with `2a < log 2` ([note](../formalisations/weil-positivity.md))
+- `WeilForm.groundState_unique_035`: The ground state of `Q` is unique up to sign for every `0 < a ≤ 0.35` ([note](../formalisations/weil-positivity.md))
+
+#### `GapBound`: The pole-overlap gap bound
+
+- `WeilForm.simple_of_pole_overlap`: Simplicity from a nonzero pole overlap ([note](../formalisations/weil-positivity.md))
+
+#### `GapCriterion`: The energy-gap criterion and the pole-overlap identity (formal)
+
+- `WeilForm.pole_overlap_identity`: The pole-overlap identity ([note](../formalisations/weil-positivity.md))
+- `WeilForm.simpleGround_of_gap`: Energy gap ⇒ simplicity ([note](../formalisations/weil-positivity.md))
+
+#### `GroundState`: Ground states of Weil's form: the structural facts
+
+- `WeilForm.groundState_energy_ge`: The ground energy is bounded below ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_groundStates_dodging`: Roadmap item 1 ⇒ `RiemannHypothesis`, for the ground states of Weil's form ([note](../formalisations/weil-positivity.md))
+
+#### `GroundStateExists`: Existence of the ground state, stage 3: the minimiser
+
+- `WeilForm.exists_groundStates`: Ground states at every support of a sequence `a_n > 0` ([note](../formalisations/weil-positivity.md))
+
+#### `HadamardApply`: Hadamard's factorisation for even functions, applied to `ĝ` and `Ξ`
+
+- `WeilForm.rh_of_D_and_realRooted_proved`: §11 item 1 ⇒ RH with Hadamard's factorisation proved ([note](../formalisations/weil-positivity.md))
+
 #### `HalfPlaneJoinsFinal`: The half-plane's joins with no hypothesis
 
 - `HalfPlaneJoins.zeta_band_eleven_twelfths`: Every nontrivial zero of `ζ` has `|2 Re ρ − 1| ≤ 5/6`.
+- `HalfPlaneJoins.weil_rate_eleven_twelfths`: `ζ`'s twin form ([note](../formalisations/weil-positivity.md))
+- `HalfPlaneJoins.chi3_rate_eleven_twelfths`: `L(s, χ₋₃)`'s twin form
+- `HalfPlaneJoins.QK3_rate_eleven_twelfths`: The twin form `2Q_ζ + Q_{χ₋₃}` of `ζ·ζ_{ℚ(√−3)}`
+- `HalfPlaneJoins.lam_prefactor_eleven_twelfths`: The prefactor ([note](../formalisations/weil-positivity.md))
+- `BohrJoins.shell_eleven_twelfths`: The Bohr shell at `11/12`
+
+#### `HurwitzCross`: The chain with zeros on `ℝ ∪ iℝ`
+
+- `WeilForm.rh_of_prime_side_cross`: The chain with zeros on the cross ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_prime_side`: §11 item 1 ⇒ RH, with prime-side hypotheses only ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_simple_ground_states`: The chain with the zero-swap lemma plugged in ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_simple_ground_states'`: The chain, with `ζ ≠ 0` on `(0, 1)` discharged ([note](../formalisations/weil-positivity.md))
+
+#### `KaiserBulk`: The bulk of the Kaiser probe and the doubled rate
+
+- `Kaiser.lam_kaiser`: Rung 0, doubled rate ([note](../formalisations/weil-positivity.md))
+
+#### `KubotaCharacter`: Kubota's character
+
+- `Eis.kub_int`: `κ` is trivial on `SL_2(ℤ) ∩ Γ_1(3)` ([note](../formalisations/cubic-theta.md))
+- `Eis.kub2_mul`: `κ` is a homomorphism on `Γ_2` ([note](../formalisations/cubic-theta.md))
+
+#### `KubotaEisenstein`: The cubic Eisenstein series on `Γ_1(3)`: convergence and automorphy
+
+- `Eis.summable_eisTerm`: Absolute convergence ([note](../formalisations/cubic-theta.md))
+- `Eis.eis1_slAct`: Automorphy ([note](../formalisations/cubic-theta.md))
+
+#### `KubotaThetaInv`: θ is invariant under `SL_2(ℤ)`
+
+- `Eis.isAut_thS_Gam2`: θ's Fourier series is automorphic on `Γ_2 = SL_2(ℤ)Γ_1(3)` ([note](../formalisations/cubic-theta.md))
+
+#### `KubotaThetaPair`: The pairing with pseudo-Eisenstein series, and θ ≠ 0
+
+- `Eis.thetaL_ne_zero`: θ ≠ 0 ([note](../formalisations/cubic-theta.md))
 
 #### `KubotaThetaProof`: The Kubota–Patterson display, proved
 
 - `Eis.kubotaTheta`: The display `KubotaTheta`, proved *paper* ([note](../formalisations/cubic-theta.md))
 - `Eis.ne_zero_of_re_gt_eleven_twelfths`: The half-plane ([note](../formalisations/openai-half-plane.md))
 
+#### `Limit`: Step (iii): Theorem 1bu(ii)'s limit shape, and the chain to `RiemannHypothesis`
+
+- `WeilForm.rh_of_pairing_and_realRooted`: 1bu(ii) + item 6, assembled ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_D_and_realRooted`: Theorem 1bu(ii) + item 6 in the paper's own terms ([note](../formalisations/weil-positivity.md))
+
+#### `MertensOmega`: Mertens and Liouville: one-sided bounds give zero-free half-planes
+
+- `PsiOmega.mertens_omega_half`: `M(x) = Ω±(x^θ)` for every `0 < θ < ½`, unconditionally
+- `PsiOmega.rh_of_liouville_bound`: A one-sided bound `εL(x) ≤ c√x` gives RH ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.rh_of_polya`: Pólya's conjecture implies RH ([note](../formalisations/weil-positivity.md))
+
+#### `Orthogonality`: Orthogonality forces the Euclidean structure
+
+- `Orthogonality.tendsto_mean_sq_norm_primeSum`: The radius is the root mean square of the prime sum
+- `Orthogonality.pythagoras_lpGauge_iff`: Orthogonality forces `p = 2`
+
+#### `ParityCont`: The parity gap by continuation in the support
+
+- `WeilForm.rh_of_no_crossing`: RH from no crossing ([note](../formalisations/weil-positivity.md))
+
+#### `ParityGap`: Real zeros from the parity gap
+
+- `WeilForm.rh_of_parity_gap`: RH from the parity gap ([note](../formalisations/weil-positivity.md))
+
+#### `ParitySplit`: Weil's form splits by parity: positivity for every real `g`
+
+- `WeilForm.weilQg_ge_twentieth_all`: Weil positivity for every real `g`, pure Lean ([note](../formalisations/weil-positivity.md))
+
+#### `PhiDExp`: Double-exponential upper bounds on the first three rungs
+
+- `WeilForm.lam_dexp`: Rung 0, double-exponential ([note](../formalisations/weil-positivity.md))
+- `WeilForm.lamO_dexp`: Rung 1, double-exponential ([note](../formalisations/weil-positivity.md))
+- `WeilForm.lam2_dexp`: Rung 2, double-exponential ([note](../formalisations/weil-positivity.md))
+
+#### `PhiNull`: The bilinear Weil form is the bilinear zero sum
+
+- `WeilForm.bil_zero_sum`: The bilinear Weil form is the bilinear zero sum ([note](../formalisations/weil-positivity.md))
+
+#### `Positivity`: The pole-free form `Q₀`: existence, one sign, uniqueness
+
+- `WeilForm.weilQ0_abs_le`: Beurling–Deny for `Q₀` ([note](../formalisations/weil-positivity.md))
+
+#### `PrimeRaces`: Prime races mod 3, 4 and 8, unconditionally
+
+- `PsiOmega.race_four_half`: The race mod 4
+- `PsiOmega.hadamard_chi4`: The Hadamard product for `L(s, χ₄)`
+- `PsiOmega.race_three_half`: The race mod 3
+- `PsiOmega.race_eight_half`: The race mod 8
+
+#### `PrimeSide`: §11 item 1, restated with prime-side hypotheses only
+
+- `WeilForm.hypConv_of_D`: The D-route is a special case of (a) ([note](../formalisations/weil-positivity.md))
+
+#### `PsiOmega`: Zeros of `ζ` from one-sided bounds on summatory functions
+
+- `PsiOmega.psi_omega_half`: `ψ(x) − x = Ω±(x^θ)` for every `0 < θ < ½`, unconditionally
+
+#### `QuadIdeals`: The ideals of a quadratic field of each norm, and its Dedekind zeta function
+
+- `QuadIdeals.trichotomy`: Every prime splits, is inert or ramifies
+
+#### `Roadmap`: §11 roadmap, item 1: the objects stated, and the reduction to RH proved
+
+- `WeilForm.rh_of_realRooted_limit`: Item 6's step, proved ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_ground_states`: The roadmap's endpoint, as a theorem ([note](../formalisations/weil-positivity.md))
+
+#### `SimpleCont`: Continuation for simplicity
+
+- `WeilForm.first_degeneracy_036`: Simplicity route, with its start discharged ([note](../formalisations/weil-positivity.md))
+- `WeilForm.not_simple_iff_secular`: The exact secular characterisation ([note](../formalisations/weil-positivity.md))
+
+#### `StripConv`: (a) on the critical strip, and an `L²` route to it
+
+- `WeilForm.rh_of_relgap`: RH from a relative spectral gap
+
+#### `StructureD`: Theorem D, formal
+
+- `WeilForm.chain_top_zeros`: Theorem D, zeros on the cross ([note](../formalisations/weil-positivity.md))
+- `WeilForm.theoremD`: Theorem D, formal ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_hypConv_top`: The RH chain with simplicity removed ([note](../formalisations/weil-positivity.md))
+
+#### `SwapRealize`: The swap realisation, proved
+
+- `WeilForm.zeros_real_or_imag'`: Zeros of a simple ground state lie on `ℝ ∪ iℝ` ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_eventually_simple`: RH from (a) and eventual simplicity ([note](../formalisations/weil-positivity.md))
+
+#### `TheoremC`: Theorem C, formal, in `H²` generality
+
+- `WeilForm.simple_iff_no_flat`: The corollary, formal in `H²` form: the ground state is simple iff no nonzero ground-space element is `H²`-flat at the edges ([note](../formalisations/weil-positivity.md))
+- `WeilForm.simple_not_flat`: A simple ground state is never edge-flat ([note](../formalisations/weil-positivity.md))
+
 #### `TwinLandau`: The Landau argument for twin forms, for any zero family
 
 - `TwinLandau.Q_ge_of_rates`: The converse bound with a rate per pole
+
+#### `Unconditional`: Saturation without RH: verified zeros, a zero-counting bound, and monotonicity
+
+- `WeilForm.pinned_unconditional_zero`: Pinning without RH, as a zero of `ĝ` ([note](../formalisations/weil-positivity.md))
+
+#### `Uniqueness`: The ground-state space, and when the ground state is unique
+
+- `WeilForm.groundState_unique_of_gap`: Uniqueness up to sign, gap form ([note](../formalisations/weil-positivity.md))
+
+#### `VinoRec`: Vinogradov's mean value theorem, step I.3b: bad count and the one-step inequality
+
+- `VinoRec.vmvt_weak`: Vinogradov's mean value theorem (weak classical form)
+
+#### `WeilChiCriterion`: Weil's criterion for Dirichlet L-functions
+
+- `PsiOmega.grh_iff_QC_subexp`: GRH for `χ` ⟺ `Q_χ/‖g‖²` has no negative part of exponential rate ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.QC_fails_rate`: An off-line zero makes `Q_χ` fail at an exponential rate ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.grh_iff_twins_chi4`: Weil's criterion for `L(s, χ₋₄)` ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.grh_iff_twins_chi3` ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.grh_iff_twins_chi8` ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.twins_rate_chi4`: The graded criterion for `χ₋₄` ([note](../formalisations/weil-positivity.md))
+- `PsiOmega.grh_iff_QC_subexp_chi4`: GRH for `χ₋₄` ⟺ `Q_{χ₋₄}/‖g‖²` has no negative part of exponential rate ([note](../formalisations/weil-positivity.md))
+
+#### `WeilChiDensity`: GRH(χ) gives `Q_χ ≥ 0` on every probe
+
+- `PsiOmega.grh_iff_QC_subexp_all`: The rate form over every probe ([note](../formalisations/weil-positivity.md))
+
+#### `WeilConverse`: The converse: an off-line zero makes Weil's form negative somewhere
+
+- `WeilForm.weil_criterion_finite`: Weil's criterion, both directions, for a family with finitely many off-line zeros ([note](../formalisations/weil-positivity.md))
+
+#### `WeilDedekind`: A twin form for `ζ_{ℚ(i)} = ζ · L(s, χ₋₄)`, with the `ζ` zeros doubled
+
+- `Dedekind4.rh_grh_iff_QK_twins`: Weil's criterion for `ζ_{ℚ(i)}`, twin boxes ([note](../formalisations/weil-positivity.md))
+- `Dedekind4.rh_grh_iff_QK_subexp`: `RH ∧ GRH(χ₋₄)` ⟺ the Dedekind twin form's defect is subexponential ([note](../formalisations/weil-positivity.md))
+- `Dedekind4.rh_grh_of_member_zero`: `GRHMemberZero` gives both RH and GRH(χ₋₄) ([note](../formalisations/weil-positivity.md))
+- `Dedekind4.QK_nonneg_of_member_zero`: `GRHMemberZero` forces the Dedekind twin form to be nonnegative ([note](../formalisations/weil-positivity.md))
+- `Dedekind4.QC_chi4_littleO`: `Q_{χ₋₄}(twin (box 1) λ) ≥ −ε e^λ` eventually ([note](../formalisations/weil-positivity.md))
+- `Dedekind4.QK_littleO`: The Dedekind twin form is `≥ −o(e^λ)` ([note](../formalisations/weil-positivity.md))
+
+#### `WeilDischarge`: Discharging `WeilExplicit` for the library's test functions
+
+- `WeilForm.lam_decay_uncond`: The decay of the ground energy, unconditional ([note](../formalisations/weil-positivity.md))
+- `WeilForm.lamO_decay_uncond`: Rung 1, unconditional ([note](../formalisations/weil-positivity.md))
+- `WeilForm.lam2_decay_uncond`: Rung 2, unconditional ([note](../formalisations/weil-positivity.md))
+
+#### `WeilIndexConverse`: Off-line zero quadruples force negative directions of `Q`
+
+- `WeilForm.negIndex_eq_quadruples`: The negative index of Weil's form counts the off-line quadruples ([note](../formalisations/weil-positivity.md))
+
+#### `WeilIndexInfinite`: Every off-line quadruple gives a negative direction of `Q`
+
+- `WeilForm.negDirections_unbounded`: Infinitely many off-line quadruples make the negative index unbounded ([note](../formalisations/weil-positivity.md))
+
+#### `WeilIndexZeta`: Negative directions of `Q` count off-line zeros of ζ, with no named input
+
+- `WeilForm.finrank_le_offline_zeta`: The crude count ([note](../formalisations/weil-positivity.md))
+- `WeilForm.finrank_le_quadruples_C2`: The same for a space of `C²` probes vanishing near `±a` ([note](../formalisations/weil-positivity.md))
+- `WeilForm.exists_offline_of_neg_C2`: One `C²` probe with `Q < 0` exhibits an off-line zero of ζ ([note](../formalisations/weil-positivity.md))
+
+#### `WeilLandau`: Weil's criterion for `ζ` with no finiteness hypothesis
+
+- `WeilForm.line_of_weil_twins`: Weil's criterion, twin boxes only ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_weil_twins`: Weil's criterion for `ζ`, twin boxes only, no finiteness hypothesis ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_of_weil`: Weil's criterion for `ζ`, no finiteness hypothesis ([note](../formalisations/weil-positivity.md))
+- `WeilForm.rh_iff_twins_subexp`: RH ⟺ the twin form's defect is subexponential ([note](../formalisations/weil-positivity.md))
+
+#### `WeilRH`: RH gives `Q ≥ 0` on every probe, and Weil's criterion for `ζ`
+
+- `WeilForm.line_of_RH` ([note](../formalisations/weil-positivity.md))
+- `WeilForm.weil_criterion_zeta`: Weil's criterion for `ζ`, both directions, no named input, no finiteness hypothesis ([note](../formalisations/weil-positivity.md))
+
+#### `WeilRate`: The ground energy's rate of failure measures the zeros
+
+- `WeilForm.rh_iff_lam_subexp`: RH ⟺ `λ₁` has no negative part of exponential rate ([note](../formalisations/weil-positivity.md))
+- `WeilForm.lam_fails_exponentially`: If RH fails, `λ₁` fails exponentially ([note](../formalisations/weil-positivity.md))
+
+#### `WeilTwinGeneral`: The twin criterion for every real-rooted base and every good character
+
+- `WeilTwinGeneral.line_of_twins_g` ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_iff_twins_realRooted`: Weil's twin criterion with any real-rooted monotone base probe ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.twins_rate_realRooted`: The graded form ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_iff_twins_concave`: Weil's twin criterion with any concave base probe ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_iff_twins_box`: `rh_of_weil_twins` (both directions), as the box instance. ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.grh_iff_twins_chi7` ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.race_seven_half`: The race mod 7 (quadratic residues against non-residues), unconditional `Ω±(x^θ)`, `θ < ½`.
+- `WeilTwinGeneral.rh_grh_iff_QKχ_twins`: The twin-box criterion for every good character ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_grh_iff_twins_Q3`: `ζ_{ℚ(√−3)}`. ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_grh_iff_twins_Q8`: `ζ_{ℚ(√−2)}`. ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_grh_iff_twins_Q7`: `ζ_{ℚ(√−7)}`. ([note](../formalisations/weil-positivity.md))
+- `WeilTwinGeneral.rh_grh_iff_twins_Q4`: The theorem recovered as an instance. ([note](../formalisations/weil-positivity.md))
+
+#### `XiBounds`: The order of `Ξ`, from Riemann's theta kernel
+
+- `WeilForm.rh_of_D_and_realRooted_final`: Roadmap item 1, final form ([note](../formalisations/weil-positivity.md))
+
+#### `ZetaInputs`: Discharging the remaining classical inputs over the zeros of `ζ`
+
+- `WeilForm.pinned_zeta`: The pinning theorem over the zeros of `ζ` ([note](../formalisations/weil-positivity.md))
 
 ### `lib/pnt`
 
@@ -71,7 +400,6 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `ChiPNT`: `ψ(x, χ) = O(x^{11/12+η})` for every Dirichlet character `χ ≠ 1`
 
-- `ChiPNT.logDeriv_le_of_zeroFree`: The log-derivative of an entire function in a zero-free half-plane
 - `ChiPNT.sum_le_uniform_of`: Sums of the coefficients of `−F′/F`, with explicit constants
 - `ChiPNT.sum_le_uniform`: Sums of the coefficients of `−F′/F`, with their constants
 - `ChiPNT.sum_isBigO_of_zeroFree`: Sums of the coefficients of `−F′/F` in a zero-free half-plane
@@ -85,10 +413,9 @@ headline theorems (those whose docstring opens with a bold title).
 - `ChiUniform.psiChi_le_uniform_of`: `ψ(x, χ)` uniformly in the modulus, from the constants of `sum_le_uniform`
 - `ChiUniform.psiChi_le_uniform`: `ψ(x, χ)` uniformly in the modulus
 
-#### `DetectEM`: Zero detection by Euler–Maclaurin, and primes in short intervals
+#### `DetectEM`: Zero detection by Euler–Maclaurin
 
 - `DetectEM.density_unconditional`: Zero density
-- `DetectEM.short_primes`: Primes in short intervals
 
 #### `DivisorExponent`: The divisor problems in a zero-free half-plane
 
@@ -104,10 +431,6 @@ headline theorems (those whose docstring opens with a bold title).
 - `DivisorExponent.divisor_isBigO_of_zeroFree`: The divisor problems in a zero-free half-plane
 - `DivisorExponent.divisor_isBigO_eleven_twelfths`: The divisor problems at `11/12`
 - `DivisorExponent.divisor_isBigO_Theta`: The divisor problems at `Θ`
-
-#### `Domination`: Domination corollaries
-
-- `Domination.lam_prefactor_KV'`: The statement of `KaiserKV.lam_prefactor_KV`, from `lam_nine` (`c = 1`).
 
 #### `ExplicitConstants`: Explicit constants for Littlewood's bounds and the least quadratic nonresidue
 
@@ -132,11 +455,10 @@ headline theorems (those whose docstring opens with a bold title).
 
 - `HalfPlanePNT.psi_isBigO_eleven_twelfths`: The prime number theorem with error `O(x^{11/12+ε})` *paper* ([note](../formalisations/harman-sieve.md))
 
-#### `HalfPlaneJoinsPNT`: Joins from the exponent `Θ` and the half-plane into older sockets
+#### `HalfPlaneJoinsPNT`: Joins from the exponent `Θ` into older sockets
 
 - `HalfPlaneJoinsPNT.weil_twins_rate_Theta`: The exponential rate of the negative part of `ζ`'s twin form is exactly `2Θ − 1`
 - `HalfPlaneJoinsPNT.psiOmegaSqrt_of_not_RH`: If RH fails, `ψ(x) − x = Ω±(√x)`
-- `HalfPlaneJoinsPNT.zeroFree_KV_explicit`: `LandauKV.zeroFree_KV` with `A = 1/6`
 
 #### `HalfPlaneLindelof`: A Lindelöf bound in a zero-free half-plane
 
@@ -151,8 +473,6 @@ headline theorems (those whose docstring opens with a bold title).
 
 - `HalfPlanePNT.logDeriv_le_of_zeroFree`: The log-derivative under a zero-free half-plane
 - `HalfPlanePNT.psi_isBigO_of_zeroFree`: A zero-free half-plane gives a power saving in the prime number theorem
-- `HalfPlanePNT.psi_isBigO_of_smoothBound`: Under `SmoothBound β`, `β < 1`
-- `HalfPlanePNT.psi_isBigO_of_completed`: Under the completed mean square (`Eis.CompletedMeanSquare`, the companion paper's Proposition 5.2), which gives `ζ(s) ≠ 0` on `Re s > 11/12`
 
 #### `InghamDensity`: Ingham's zero-density exponent `2 + 4c` from `|ζ(1/2 + it)| ≪ |t|^c`
 
@@ -161,7 +481,6 @@ headline theorems (those whose docstring opens with a bold title).
 - `InghamDensity.densityXi_17_6`: Zero density at the exponent
 - `InghamDensity.densityXi_Theta`: Zero density at `Θ`
 - `InghamDensity.densityHypothesis_of_lindelof`: Lindelöf implies the density hypothesis
-- `InghamDensity.short_primes_11_17`: Primes in short intervals for every `θ > 11/17`
 - `InghamDensity.short_primes_Theta`: Primes in short intervals at `Θ`
 
 #### `InghamDetect`: A zero detector with the line moved to `Re s = 1/2`
@@ -176,10 +495,6 @@ headline theorems (those whose docstring opens with a bold title).
 - `KVBridge.polylogGrowth_sharp`: The growth hypothesis holds for every `2/3 < a ≤ 1`
 - `KVBridge.zeroFree_kv`: Zero-free region
 - `KVBridge.rung3_kv`: Rung 3
-
-#### `KVSubsumes`: The Korobov–Vinogradov width subsumes the growth chain
-
-- `KVSubsumes.kvInput_of_KV`: The named input `KVInput`, discharged for every `n₁ > 2/3` (with `n₂ = 3`).
 
 #### `KaiserKV`: The Korobov–Vinogradov region in the Kaiser prefactor
 
@@ -330,7 +645,6 @@ headline theorems (those whose docstring opens with a bold title).
 - `LinnikCGLHB101.cglt101`: Heath-Brown's Theorem 10.1 with characters *paper* ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikCGLHB101.cgls3`: Their Proposition 11.1, at one point per character, with no hypothesis *paper* ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikCGLHB101.prop31`: Their Proposition 3.1, at one point per character, with no hypothesis *paper* ([note](../formalisations/chen-gupta-li-density.md))
-- `LinnikCGLHB101.char_density`: The density count with no hypothesis
 
 #### `LinnikCGLHBIter`: Kerr's iteration with characters
 
@@ -436,7 +750,7 @@ headline theorems (those whose docstring opens with a bold title).
 #### `LinnikCGLP71`: Their Proposition 7.1 (the `S₃` side)
 
 - `LinnikCGLP71.norm_Psi_le`: The integrand of their (7.3), bounded
-- `LinnikCGLP71.prop71`: Their Proposition 7.1
+- `LinnikCGLP71.prop71`: Their Proposition 7.1 ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLP72`: Their Proposition 7.2 (the `S₃` side)
 
@@ -518,7 +832,6 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `LinnikCGLS23`: The off-diagonal of the cubic trace as Chen–Gupta–Li's `S₂ + S₃`
 
-- `LinnikCGLS23.X3_eq`: The cubic trace's off-diagonal
 - `LinnikCGLS23.third_of_s23`: `CGLThird` from the two hypotheses
 
 #### `LinnikCGLS3`: Their Proposition 11.1, `CGLS3` from `CGLP81` and `CGLT101`
@@ -536,12 +849,11 @@ headline theorems (those whose docstring opens with a bold title).
 - `LinnikCGLSig2.sum_psi_norm_Phi_sq_le`: Their `Σ_II`, expanded
 - `LinnikCGLSig2.norm_S2_le`: For `q ≥ 1` and `N₀ > 0`, `|S₂(k₀, x)| ≤ N₀Σ_k|ψ̂₀(N₀(k − x + k₀/q))|`, a convergent series.
 
-#### `LinnikCGLStep`: The density step from Chen–Gupta–Li's Proposition 3.1, `7/3 + 1/2000` on `[5/7, 16/21]`
+#### `LinnikCGLStep`: The density step from Chen–Gupta–Li's Proposition 3.1, with parameters
 
 - `LinnikCGLStep.block_bin_cgl`: One dyadic block and one bin, by Chen–Gupta–Li's estimate
 - `LinnikCGLStep.class1_cgl`: The polynomial class with Chen–Gupta–Li's estimate on `[lo, hi]`
 - `LinnikCGLStep.count_cgl`: The range `[lo, hi]`
-- `LinnikCGLStep.charDensity_cgl`: Chen–Gupta–Li's density step `7/3 + 1/2000` on `[5/7, 16/21]`, from their Proposition 3.1
 
 #### `LinnikCGLSteps`: Chen–Gupta–Li's Proposition 3.1 at every point of `[5/7, 131/168]`: 30 density steps with the exponent
 
@@ -653,19 +965,16 @@ headline theorems (those whose docstring opens with a bold title).
 - `LinnikDensity.critBoundχ_half`: `CritBoundχ (1/2)`, with constant `11`.
 - `LinnikDensity.linnik_four`: Linnik's theorem with exponent `4 + η`
 
-#### `LinnikHuxStep`: A step of Huxley's bound with parameters, `7/3 + 1/2000` on `[16/21, 5/6]` (the second goal's input D3)
+#### `LinnikHuxStep`: A step of Huxley's bound with parameters
 
 - `LinnikHuxStep.class1_gen`: The polynomial class with Huxley's estimate on `[lo, hi]`
 - `LinnikHuxStep.count_gen`: The range `[lo, hi]`
 - `LinnikHuxStep.charDensity_gen`: A density estimate over the characters mod `q` with exponent `A` on `[lo, hi]` *paper* ([note](../formalisations/huxley-density.md))
-- `LinnikHuxStep.charDensity_hux73`: The step `7/3 + 1/2000` on `[16/21, 5/6]`
 - `LinnikHuxStep.charDensity_step'`: The step from the parameters ([note](../formalisations/huxley-density.md))
 
 #### `LinnikHuxStepY`: The step of Huxley's bound with the detector's height as a parameter, class II empty under the Weyl bound
 
 - `LinnikHuxStepY.charDensity_genY`: A density estimate over the characters mod `q` with exponent `A` on `[lo, hi]`, class II empty under the Weyl bound
-- `LinnikHuxStepY.parY_example_good`
-- `LinnikHuxStepY.parY_example'_good`
 
 #### `LinnikHuxley`: The power trick on `23/29 ≤ σ ≤ 11/12`, and Linnik's exponent `87/35 + η`
 
@@ -707,14 +1016,6 @@ headline theorems (those whose docstring opens with a bold title).
 - `LinnikLindelof.logDeriv_le_interp`: The interpolated bound on `L′/L`
 - `LinnikLindelof.lindelof`: A Lindelöf bound for `L(s, χ)`, uniformly in the modulus *paper* ([note](../formalisations/halasz-montgomery.md))
 
-#### `LinnikLines`: The line-sum identity for prime moduli
-
-- `LinnikLines.triple_eq`: Step 1
-- `LinnikLines.line_sum_identity`: The line-sum identity
-- `LinnikLines.line_sum_identity_of_zero`: The line-sum identity for weights off `0`
-- `LinnikLines.gram_eq_gramZ`: The Gram matrix on `S` is the Gram matrix with the residue weights of `c`.
-- `LinnikLines.large_values_lines`: Large values and the line sums
-
 #### `LinnikMoment`: Third-moment bounds for the largest singular value
 
 - `LinnikMoment.moment_three`: The simple bound at `r = 3`
@@ -731,7 +1032,6 @@ headline theorems (those whose docstring opens with a bold title).
 #### `LinnikPoints`: Large values at several points per character
 
 - `LinnikPoints.large_values_points`: Large values at several points per character
-- `LinnikPoints.large_values_chars_of_points`: `LinnikHybrid.large_values_chars` is the case of one point per character.
 
 #### `LinnikPower`: The divisor bound, powers of Dirichlet polynomials and the Halász–Montgomery inequality
 
@@ -739,26 +1039,10 @@ headline theorems (those whose docstring opens with a bold title).
 - `LinnikPower.pv_pow`: The power of a Dirichlet polynomial ([note](../formalisations/huxley-density.md))
 - `LinnikPower.hm_duality`: The Halász–Montgomery duality inequality over the characters mod `q` *paper* ([note](../formalisations/halasz-montgomery.md))
 
-#### `LinnikReflect`: The reflection of the smoothed character sum
-
-- `LinnikReflect.reflect`: The reflection of the smoothed character sum
-
-#### `LinnikS2`: The closed form of `S₂`, and the socket for prime moduli
-
-- `LinnikS2.S2_closed`: The closed form of `S₂`
-- `LinnikS2.large_values_socket`: The socket for prime moduli at one point per character
-
-#### `LinnikSplit`: The zero frequency and the degenerate lines
-
-- `LinnikSplit.lineSum_zero`: The zero frequency
-- `LinnikSplit.sum_lines_split`: The split
-- `LinnikSplit.large_values_split`: Large values through `S₂` and `S₃`
-
 #### `LinnikStairs7`: The staircase of the Weyl-conditional route (Ingham steps on `[4/7, 5/7]`, Huxley's on `[16/21, 11/12]`)
 
 - `LinnikStairs7.charDensity_in7_0`: Ingham's step `0` *paper* ([note](../formalisations/ingham-density.md))
-- `LinnikStairs7.charDensity_in7_18`: Ingham's step `18` *paper*
-- `LinnikStairs7.charDensity_hx7_0`: Huxley's step `0` ([note](../formalisations/huxley-density.md))
+- `LinnikStairs7.charDensity_in7_18`: Ingham's step `18` *paper* ([note](../formalisations/ingham-density.md))
 - `LinnikStairs7.charDensity_hx7_5`: Huxley's step `5` *paper* ([note](../formalisations/huxley-density.md))
 - `LinnikStairs7.charDensity_hx7_19`: Huxley's step `19` *paper*
 - `LinnikStairs7.charDensity_hy_0`: The step `0` above `5/6`, under `PYWeyl`
@@ -803,8 +1087,6 @@ headline theorems (those whose docstring opens with a bold title).
 #### `LinnikWeyl`: The integral class is empty under a pointwise bound on the critical line
 
 - `LinnikWeyl.class2_empty`: The integral class is empty under a pointwise bound
-- `LinnikWeyl.class2_finset_empty`: A finite integral class is empty
-- `LinnikWeyl.class2_card_eq_zero`: A finite integral class has no members
 
 #### `LinnikWeylBridge`: `PYWeyl` contains `WeylBound`: the Weyl bound for every character gives the Weyl bound for ζ
 
@@ -825,10 +1107,8 @@ headline theorems (those whose docstring opens with a bold title).
 #### `LogDerivDisc`: The log-derivative of a function with no zero in a half-plane, by the disc step
 
 - `LogDerivDisc.disc_point_ball`: The disc step
-- `LogDerivDisc.disc_point`: The disc step
 - `LogDerivDisc.logDeriv_le_ball`: The log-derivative of an entire function with no zero in one disc
 - `LogDerivDisc.logDeriv_le_uniform_of`: The log-derivative of an entire function in a zero-free half-plane, with its constants
-- `LogDerivDisc.logDeriv_le_uniform`: The log-derivative of an entire function in a zero-free half-plane, with its constants
 
 #### `LogDerivKV`: R4a: the log-derivative bound on the Korobov–Vinogradov region
 
@@ -948,10 +1228,9 @@ headline theorems (those whose docstring opens with a bold title).
 
 - `ShortKV.zeroFreeXi_KV`: The Korobov–Vinogradov region as `ZeroFreeXi (3/4)` ([note](../formalisations/zeta-density.md))
 
-#### `ShortPrimesHalfPlane`: Primes in short intervals for every `θ > 11/17`, from the zero-free half-plane instead of Korobov–Vinogradov
+#### `ShortPrimesHalfPlane`: The zero-free region `ZeroFreeXi α` from the zero-free half-plane instead of Korobov–Vinogradov
 
 - `ShortPrimesHalfPlane.zeroFreeXi_of_halfplane`: The zero-free half-plane gives `ZeroFreeXi α` for every `α` (here `α < 1` is what `short_primes_of_density` takes), with no Korobov–Vinogradov input. ([note](../formalisations/zeta-density.md))
-- `ShortPrimesHalfPlane.short_primes_11_17_noKV`: With it, `short_primes_of_density` at the density `DensityXi (17/6 + ε) 12` of `InghamDensity` needs no KV region (the same statement as…
 
 #### `SieveBox`: The share of a box of prime intervals
 
@@ -981,12 +1260,6 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveBuch.Par.I_S5c_vanish_reg`: Depth 5, outside the region *paper*
 - `SieveBuch.Par.I_S6c_vanish_lt`: Depth 6, `c > b` *paper*
 - `SieveBuch.Par.I_S6c_vanish_reg`: Depth 6, outside the region *paper*
-- `SieveBuch.Par.decomp`: The decomposition's inequality
-
-#### `SieveBuch2`: The decomposition with the kept parts of the dropped cells
-
-- `SieveBuch.Par.lvl1k`: Level 1 with the kept parts
-- `SieveBuch.Par.decompk`: The decomposition's inequality with the kept parts
 
 #### `SieveBuch8`: The decomposition to depth 8
 
@@ -1004,20 +1277,8 @@ headline theorems (those whose docstring opens with a bold title).
 
 #### `SieveCert`: The certificate of the sieve route's loss, checked by the kernel
 
-- `SieveCert.total_div_le`: The certificate in the reals
-- `SieveCert.cover2`: On a grid with `GridOK`, a point of the region of depth 2 that is not evaluable lies in a candidate cell.
-- `SieveCert.cover3`: On a grid with `GridOK`, on a cell that may be decomposed, a non-evaluable `α₃` of the region of depth 3 keeps `α₁ + α₂ + α₃ ≤ 1 − u₂`, and lies in a…
-- `SieveCert.cover4`: On a grid with `GridOK`, a non-evaluable point of the region of depth 4 lies in a counted cell, with `l ≤ k`.
 - `SieveCert.omegaC_le_w`: `ω*` on a box *paper*
-- `SieveCert.omegaC_le`: `ω*` on a cell
 - `SieveCert.bound2_ge`: A cell of depth 2 with lower corner `(a, b)` costs at least `omK/K` times the first cell's trapezoid bound and the last cell's `DEN·H/(b(b + H))`. *paper*
-- `SieveCert.bound4_ge`: A cell of depth 4 with lower corner `(a, b, c, d)` costs at least `omK/K` times the trapezoid bounds of the first three cells and the last cell's…
-- `SieveCert.bound6_ge`: A cell of depth 6 (four fine cells and two coarse ones) with lower corner `(a, b, c, d, f, g)` costs at least `omKw/K` times the trapezoid bounds of the…
-
-#### `SieveCert2`: The refined certificate, in the reals and over `Finset`
-
-- `SieveCert.cost2_ge`: A dropped candidate cell's refined cost is at least its bound less `sub2`, in the reals.
-- `SieveCert.keepK_le`: The kept share's bound
 
 #### `SieveCert22000E`: The certificate to depth 8 of the sieve route's loss at `L = 11/5` with `n = 272`: `totalD < K`
 
@@ -1068,23 +1329,11 @@ headline theorems (those whose docstring opens with a bold title).
 
 - `SieveDeep.Ch3_le`: The charges below a cell `(i, j)` are at most `SC⁸·refcost` *paper*
 
-#### `SieveDiff`: The tree's weights, and a leaf's difference
-
-- `SieveDiff.leaf_diff`: A leaf's difference
-
 #### `SieveDrop`: The dropped terms' `B`-count
 
 - `SieveDrop.drop2_le`: A dropped cell of depth 2 *paper*
-- `SieveDrop.drop4_le`: A dropped cell of depth 4
-- `SieveDrop.drop6_le`: A dropped cell of depth 6
 - `SieveDrop.corner_le`: A corner cell *paper*
 - `SieveDrop.corner_ev`: The corner is `o(x/log x)` *paper*
-- `SieveDrop.shares_ev`: The shares, eventually
-- `SieveDrop.drop_ev`: The dropped terms, for large `q`
-
-#### `SieveDrop2`: The dropped terms less the kept parts
-
-- `SieveDrop2.drop_ev2`: The dropped terms less the kept parts, for large `q`
 
 #### `SieveDrop8`: The dropped terms' `B`-count, to depth 8
 
@@ -1103,10 +1352,6 @@ headline theorems (those whose docstring opens with a bold title).
 #### `SieveDyadic`: A dyadic partition of unity
 
 - `SieveDyadic.sum_bump`: The dyadic partition of unity
-
-#### `SieveExact`: Type II for exact products of chains of primes
-
-- `SieveExact.T0_spec`: Exact products, on a family of atoms
 
 #### `SieveFamily`: Type II families
 
@@ -1133,23 +1378,8 @@ headline theorems (those whose docstring opens with a bold title).
 #### `SieveHMWindow`: The window condition with the Halász–Montgomery branch
 
 - `SieveCurveGlue.affine_corner_bound`: A function affine in each of `w`, `β`, `m` separately is at most its maximum over the corners of a box
-- `SieveCurveGlue.windowPieceHM_affine`: An affine piece by the Halász–Montgomery branch
 - `SieveCurveGlue.windowPieceHM_affine_split`: An affine piece by the Halász–Montgomery branch below `m = 1` and by orthogonality above it
 - `SieveCurveGlue.windowPieceHM_const_split`: The piece `g β = A(1 − β)` by `windowPieceHM_affine_split` at `p = A` (as `windowPiece_const`), for `lo ≤ hi` (`hlo`) and the corner inequalities `h1`, `h2`…
-
-#### `SieveKept`: The kept parts of the dropped cells of depth 2
-
-- `SieveBuch.Par.Kp2_le`: The kept parts are terms of the dropped term
-- `SieveBuch.Par.Kk_eq`: The kept part as three sorted families
-
-#### `SieveKeptB`: The kept parts' `B`-count, from below
-
-- `SieveKeptB.Kk_gB_ge`: The kept part's `B`-count, from below
-
-#### `SieveKeptLeaf`: The kept parts' leaves at `x = q^L`
-
-- `SieveKeptLeaf.lf_Kk`: A kept part's leaf
-- `SieveKeptLeaf.leaves_ev2`: The leaves and the kept leaves, for large `q`
 
 #### `SieveLeaf`: The leaves of Buchstab's tree, by the fundamental lemma
 
@@ -1172,16 +1402,9 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveLemma1.perron_weight`: Perron's formula with a weight `w`
 - `SieveLemma1.norm_Sw_le`: Lemma 1 in `Λ` form
 
-#### `SieveMain`: Linnik's theorem by the sieve route
+#### `SieveMain`: The primes of `(x, 2x]` prime to `q`, for Linnik's theorem by the sieve route
 
 - `SieveMain.TB_ev`: For a route with `RouteOK` and a grid with `GridOK` that fit (`Fits`), and `ε > 0`
-- `SieveMain.linnik_large`: Linnik's theorem at `x = q^L`, for large `q`
-- `SieveMain.linnik_route`: Linnik's theorem with exponent `L`
-- `SieveMain.linnik_route_lt`: Linnik's theorem with exponent `L`, under a certificate whose total is below `K`
-
-#### `SieveMain2`: Linnik's theorem by the sieve route, under the refined certificate
-
-- `SieveMain2.linnik_route_lt2`: Linnik's theorem with exponent `L`, under a refined certificate whose total is below `K`
 
 #### `SieveMain8`: Linnik's theorem by the sieve route, under the certificate of depth 8
 
@@ -1191,7 +1414,6 @@ headline theorems (those whose docstring opens with a bold title).
 #### `SieveOmegaB`: Buchstab's `ω` on `[2, 3]`, and the logarithm's bounds of the certificate's cells
 
 - `SieveOmegaB.log_le_half_sub_inv`: `log y ≤ (y − 1/y)/2` for `y ≥ 1` *paper*
-- `SieveOmegaB.two_mul_div_le_log`: `2(y − 1)/(y + 1) ≤ log y` for `y ≥ 1`
 - `SieveOmegaB.omB_le_w1`: The maximum of Buchstab's `ω` on `[2, 3]` *paper*
 - `SieveOmegaB.omB_mono`: Buchstab's `ω` increases on `[2, 2.76]` *paper*
 - `SieveOmegaB.omB_anti`: Buchstab's `ω` decreases from `2.77` on *paper*
@@ -1224,7 +1446,6 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveQ.good_of_large`: The decomposition's hypotheses hold for large `q`
 - `SieveQ.P6IB_box`: Proposition 6-ib on a box the bilinear rule passes *paper*
 - `SieveQ.P6IB_boxes`: Proposition 6-ib, uniformly over finitely many boxes ([note](../formalisations/harman-sieve.md))
-- `SieveQ.leaves_ev`: The leaves, for large `q`
 
 #### `SieveQ8`: The leaves of the decomposition to depth 8, for large `q`
 
@@ -1242,25 +1463,13 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveRough.evLe_cell_tr`: On a grid with `GridOK`, the cell's `Σ 1/p` is at most the trapezoid bound `trB(e_k, H) = H(2e_k + H)/(2e_k(e_k + H))` of `log(1 + H/e_k)`, up to `o(1)`. *paper*
 - `SieveRough.evLe_cell_ex`: On a grid with `GridOK`, the cell's `log x · Σ 1/(p log p)` is at most `exB(e_k, H) = H·DEN/(e_k(e_k + H))`, the exact `DEN(1/e_k − 1/(e_k + H))`, up to `o(1)`. *paper*
 - `SieveRough.share2`: The share of a cell of depth 2
-- `SieveRough.share4`: The share of a cell of depth 4
 - `SieveRough.share2_of_cand`: `share2` on a candidate cell, on a grid with `GridOK`. *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveRough.share4_of_counted4`: `share4` on a counted cell, on a grid with `GridOK`. ([note](../formalisations/harman-sieve.md))
-
-#### `SieveRoughLo`: Sums over the primes of a cell, from below
-
-- `SieveRoughLo.evGe_cell_inv`: The cell's `Σ 1/p`, from below
-- `SieveRoughLo.evGe_cell_tr`: The cell's `Σ 1/p`, from below, sharper
 
 #### `SieveRoughTuple`: Rough numbers as tuples of primes
 
 - `SieveRoughTuple.sum_rough_eq`: Rough numbers as tuples of primes
 
-#### `SieveRoute`: The parameters of the sieve route, and its Type II input
-
-- `SieveRoute.routeOK2333`
-- `SieveRoute.typeII2333`: `SieveTypeII.typeII_step` as `TypeIIAt`
-
-#### `SieveRule`: The certificate under a decomposition rule, in the reals and over `Finset`
+#### `SieveRule`: The certificate under a decomposition rule, over `Finset`
 
 - `SieveCert.ibOK_sound`: The bilinear Type I rule's witnesses *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveCert.okIB_cases`: `okIB` passes a box only when `limOK` does, or `ibOK` and `nbOK` do. *paper*
@@ -1270,12 +1479,11 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveSep.sum_sep`: Separation of a finite sum
 - `SieveSep.sep_bound`: The bound after separation
 
-#### `SieveSmooth`: The smooth cut-off, and the separation of two variables
+#### `SieveSmooth`: The smooth cut-off and its Fourier transform
 
 - `SieveSmooth.indicator_sub_G`: The cut-off against the indicator
 - `SieveSmooth.pow_mul_norm_fourier_GC_le`: Decay of the cut-off's Fourier transform
 - `SieveSmooth.integrable_fourier_GC`
-- `SieveSmooth.GC_sub_eq_integral`: Separation by Fourier inversion
 
 #### `SieveSpline`: Weights for the bilinear Type I estimate: Parseval for the weight, intervals and splines
 
@@ -1284,20 +1492,14 @@ headline theorems (those whose docstring opens with a bold title).
 - `SieveSpline.norm_Ew_spl_le`: `E_w` for a spline
 - `SieveSpline.typeIB_spline`: The bilinear Type I estimate with a spline weight *paper*
 
-#### `SieveStops1`: A stop's cofactor, and the stops below the window
-
-- `SieveStops1.stops1_bound`: The stops below the window
-- `SieveStops1.window_bound`: The terms inside the window
-
 #### `SieveStops2`: The stops of Buchstab's tree above the threshold
 
 - `SieveStops2.typeII_cmp`: Type II with a list of comparisons
 - `SieveStops2.stops2_bound`: The stops above the threshold *paper* ([note](../formalisations/harman-sieve.md))
 
-#### `SieveTree`: Buchstab's tree over a finite set
+#### `SieveTree`: Buchstab's tree
 
 - `SieveTree.tree_pt`: The Buchstab tree at one `n` *paper*
-- `SieveTree.tree_sum`: The Buchstab tree over a finite set
 
 #### `SieveTreeStop`: Buchstab's tree with a stopping rule
 
@@ -1312,29 +1514,20 @@ headline theorems (those whose docstring opens with a bold title).
 
 - `SieveTypeIBAsym.leaves_ib`: The leaves by the bilinear estimate, asymptotically *paper*
 
-#### `SieveTypeII`: The Type II estimate of the sieve route at small heights (Proposition 3′, pointwise in the heights)
+#### `SieveTypeII`: Parts of the Type II estimate of the sieve route (Proposition 3′, pointwise in the heights)
 
 - `SieveTypeII.sum_chars_dp_sq_le`: Orthogonality (T1) *paper* ([note](../formalisations/mean-values.md))
-- `SieveTypeII.typeII_pointwise`: Proposition 3′ pointwise, with Lemma 1 and (T1)
-- `SieveTypeII.exponent_le`: The window's exponents
-- `SieveTypeII.typeII_step`: Proposition 3′ for the curve step at `L = 2333/1000`, pointwise in the heights
 
-#### `SieveTypeIIGen`: The Type II estimate for a curve and a window (Proposition 3′ with parameters)
+#### `SieveTypeIIGen`: Parts of the Type II estimate for a curve and a window (Proposition 3′ with parameters)
 
 - `SieveTypeIIGen.card_bin_gen`: The count of a bin of the grid
-- `SieveTypeIIGen.bin_bound_gen`: One bin
 - `SieveTypeIIGen.prod_MB_le_gen`: The product of Lemma 1's bounds
-- `SieveTypeIIGen.typeII_gen`: Proposition 3′ for a curve and a window, pointwise in the heights
 
 #### `SieveTypeIIHM`: The bin bound with the Halász–Montgomery branch, and Proposition 3′ for a curve on a window
 
 - `SieveTypeIIHM.bin_bound_pt`: One bin by orthogonality, at one point
 - `SieveTypeIIHM.bin_bound_gen_hm`: One bin, with the better bound *paper*
 - `SieveTypeIIHM.typeII_gen_hm`: Proposition 3′ for a curve and a window with the Halász–Montgomery branch, pointwise in the heights *paper*
-
-#### `SieveTypeIIR`: Type II for a variable times a rough cofactor
-
-- `SieveTypeIIR.typeII_rough`: Type II for a variable times a rough cofactor
 
 #### `SieveTypeIIU`: Type II families with sharp prime ranges
 
@@ -1344,18 +1537,6 @@ headline theorems (those whose docstring opens with a bold title).
 
 - `SieveTypeIIU22000D.window_22000d`: The window's exponents *paper*
 - `SieveTypeIIU22000D.typeII_22000d`: Proposition 3′ at `L = 11 / 5` on `[43457/100000, 46959/100000]·L`, for the curve `g7d` *paper*
-
-#### `SieveTypeIIU226C`: The curve `g7` without Petrow–Young's bound, `g7c`, at `L = 226/100`: its Halász–Montgomery window and
-
-- `SieveTypeIIU226C.counts_7c`: The counts of the curve ([note](../formalisations/chen-gupta-li-density.md))
-- `SieveTypeIIU226C.window_226c`: The window's exponents
-- `SieveTypeIIU226C.typeII_226c`: Proposition 3′ at `L = 226/100` on `[4075/10000, 4835/10000]·L`, for the curve `g7c`
-
-#### `SieveTypeIIU227`: The Weyl-conditional curve at `L = 227/100`: Ingham's and Huxley's staircases, Huxley's curve above `5/6`
-
-- `SieveTypeIIU227.counts_7`: The counts of the curve
-- `SieveTypeIIU227.window_7`: The window's exponents
-- `SieveTypeIIU227.typeII_227`: Proposition 3′ at `L = 227/100` on `[4048/10000, 4858/10000]·L`, for the curve `g7`
 
 #### `SieveWeight`: Lemma 1 of the sieve route for primes, with weights uniform in the scale
 
@@ -1411,8 +1592,8 @@ headline theorems (those whose docstring opens with a bold title).
 #### `ZetaGMDensity`: The density exponent `30/13` for `ζ`, and primes in short intervals for `θ > 17/30`
 
 - `ZetaGMDensity.densityXi_thirty_thirteenths`: Zero density at Guth and Maynard's exponent `30/13` ([note](../formalisations/zeta-density.md))
-- `ZetaGMDensity.short_primes_seventeen_thirtieths`: Primes in short intervals for every `θ > 17/30`
-- `ZetaGMDensity.almost_all_short_primes_two_fifteenths`: Primes in almost all short intervals for every `θ > 2/15`
+- `ZetaGMDensity.short_primes_seventeen_thirtieths`: Primes in short intervals for every `θ > 17/30` ([note](../formalisations/zeta-density.md))
+- `ZetaGMDensity.almost_all_short_primes_two_fifteenths`: Primes in almost all short intervals for every `θ > 2/15` ([note](../formalisations/zeta-density.md))
 
 #### `ZetaGMHux`: Huxley's count for `ζ` on `4/5 ≤ σ ≤ 11/12`, at the exponent `30/13`
 
@@ -1446,6 +1627,136 @@ headline theorems (those whose docstring opens with a bold title).
 - `ZetaKernel.hm_duality_pts`: The Halász–Montgomery duality inequality at points
 - `ZetaKernel.norm_kz_le`: The kernel bound ([note](../formalisations/zeta-density.md))
 - `ZetaKernel.power_count_pts`: Large values of a power at well-spaced heights
+
+### `lib/dh`
+
+#### `ChiFirstFailure`: Continuity and the first positivity failure for every u-space form
+
+- `PsiOmega.continuousOn_lamC`: `λ_χ` is continuous on `(0, ∞)` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.lamC_pos_small`: `λ_χ ≥ log 2 − ¼` at small support ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.first_failureC`: The first positivity failure for `L(s, χ)` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.first_failureDH`: The first positivity failure of `Q_dh`, unconditionally ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.continuousOn_lamDH`: `λ_dh` is continuous on `(0, ∞)` ([note](../formalisations/davenport-heilbronn.md))
+
+#### `ChiGround`: The ground-state stack for `L(s, χ)`
+
+- `PsiOmega.exists_groundStateC`: A ground state of `QCu χ` exists at every support `a > 0` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.euler_lagrangeC_mem`: Euler–Lagrange for `QCu χ` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.theoremDC`: Theorem D for `QCu χ` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.grh_of_eventually_simpleC`: GRH for `χ` from eventually simple ground states with `HypConvC χ` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.grh_chi3_of_hypConvC_top`: GRH for `χ₋₃` from `HypConvC` for its top-of-chain ground states ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.grh_chi4_of_hypConvC_top`: GRH for `χ₋₄` from `HypConvC` for its top-of-chain ground states ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.grh_chi8_of_hypConvC_top`: GRH for `χ₋₈` from `HypConvC` for its top-of-chain ground states ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.grh_chi7_of_hypConvC_top`: GRH for `χ₋₇` from `HypConvC` for its top-of-chain ground states ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHBohrSphere`: A zero pair off the sphere
+
+- `PsiOmega.dh_zero_pair_off_sphere`: A zero pair of the Davenport–Heilbronn function off the unit sphere ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHCertificate`: The certificate — `Q_dh(packet 12/5 169/2) < 0`, hence an off-line zero of `dh` (stage 4)
+
+- `PsiOmega.dh_offline_zero`: The Davenport–Heilbronn function has a zero off the critical line ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHChannels`: The two channels of the Davenport–Heilbronn function
+
+- `PsiOmega.chi5_channel_fe`: (1) for `χ₅` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.chi5_phase_lock`: (2) for `χ₅`, the phase lock ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.chi5_channel_ratio_real`: On the critical line, `L(½ + it, χ₅)/(ε L(½ + it, χ₅⁻¹))` is real. ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.chi5_channel_ratio`: (4) The channel ratio of `χ₅` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.dh_line_zero_iff`: On the critical line the zero condition is one real equation ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHColumn`: The dh column of the substitution matrix, part 1
+
+- `PsiOmega.not_D_dh`: The dh column of `rh_of_D_and_realRooted_proved` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.QDHu_nonneg_of_DHRHcross`: `DHRHcross ⟹ Q_dh ≥ 0` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.weil_criterion_dh`: The dh column of `weil_criterion_zeta` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_GRH_dh`: GRH fails for `dh` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.finrank_le_quadruples_dh`: The Davenport–Heilbronn instance ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHColumnRest`: The dh column, part 4: the remaining G rows and the strip row of the P block
+
+- `PsiOmega.not_ground_states_dh`: The dh column of `rh_of_ground_states` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_groundStates_dodging_dh`: The dh column of `rh_of_groundStates_dodging` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_D_and_realRooted_hadamard`: The dh column of `rh_of_D_and_realRooted` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_hypConvStripDH_top`: The dh column of `rh_of_hypConvStrip_top` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_XiDH_params`: The dh column of `rh_of_Xi_params` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_dodging_hadamard`: The dh column of `rh_of_dodging` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_pairing_and_realRooted`: The dh column of `rh_of_pairing_and_realRooted` ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHExplicit`: The explicit formula for the Davenport–Heilbronn function
+
+- `PsiOmega.exists_offline_dh_of_neg`: A negative Weil form certifies an off-line zero of `dh` ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHForm`: Weil's u-space form for `dh` is a `ProbeForm`; the DH ground energy
+
+- `PsiOmega.exists_lamDH_neg`: The `dh` column of `exists_lam_neg_of_not_RH`, unconditional ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHGround`: The dh column, part 3: the ground-state stack of `QDHu`
+
+- `PsiOmega.bilDH_polar`: `B_dh` is the polarisation of `QDHu` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.euler_lagrangeDH`: Euler–Lagrange at a ground state ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.dhRHcross_of_eventually_simple`: The chain for `dh` with eventual simplicity ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_simple_hypConvDH`: The refutation ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.theoremDDH`: Theorem D for `QDHu` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.dhRHcross_of_hypConv_top`: The chain for `dh` with simplicity removed ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_hypConvDH_top`: `HypConvDH` fails for the top-of-chain ground states of `QDHu` ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHHurwitzEM`: The Euler–Maclaurin approximant of the Davenport–Heilbronn function `dh`
+
+- `PsiOmega.norm_dh_sub_EM_le`: The Euler–Maclaurin bound for `dh` ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHInert`: Coefficient localisation of the Davenport–Heilbronn prime side
+
+- `PsiOmega.cDH_chi5_eq_of_dvd`: Coefficient localisation ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHJoins`: Joins in the Davenport–Heilbronn layer
+
+- `PsiOmega.dhRH_iff_cross`: `DHRH ↔ DHRHcross` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.dh_conj_zero`: The zeros of `dh` are symmetric under conjugation. ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.QDHu_packet_plane_neg`: A negative-definite plane of `Q_dh` from the two packet certificates ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.lamC_nonneg_of_GRH`: Under GRH(χ), `λ_χ ≥ 0` at every support ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.grh_iff_lamC_eventually_nonneg`: GRH(χ) iff `λ_χ ≥ 0` at all large supports ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.grh_iff_lamC_nonneg_chi3`: GRH for `χ₋₃` iff `λ_{χ₋₃} ≥ 0` at every support ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.grh_iff_lamC_nonneg_chi4`: GRH for `χ₋₄` iff `λ_{χ₋₄} ≥ 0` at every support ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.grh_iff_lamC_nonneg_chi8`: GRH for `χ₋₈` iff `λ_{χ₋₈} ≥ 0` at every support ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.grh_iff_lamC_nonneg_chi7`: GRH for `χ₋₇` iff `λ_{χ₋₇} ≥ 0` at every support ([note](../formalisations/davenport-heilbronn.md))
+- `DHNegIndex.negIndex_ge_five`: The Weil index of `Q_dh` on probes of either parity is at least `5` ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHLocateFour`: Four located off-line zeros of `dh`, and the Weil index of `Q_dh` is at least `4`
+
+- `PsiOmega.Locate.dh_zeros_located_four_box`: The four located zeros in coordinates ([note](../formalisations/davenport-heilbronn.md))
+- `DHNegIndex.negIndex_ge_four`: The Weil index of `Q_dh` is at least `4` ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHOddPacket`: The sine packet: Weil's form of `dh` is negative on an odd probe
+
+- `PsiOmega.not_odd_lower_dh`: The odd lower bound for `dh`, refuted ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_lamODH_lower`: The lower bound `λ_dh^odd(b) ≥ c·e^{(9+δ)b − 4πe^{2b}}`, refuted ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHOffCross`: The certificate's zero is off the cross
+
+- `PsiOmega.dh_offline_nonreal_zero`: The certificate's zero is non-real ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.dh_offline_zero_right`: The free strengthening ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHRealAxis`: `dh` has no zero on the positive real axis
+
+- `PsiOmega.dh_div_a1_real_ge`: `dh(σ)/a(1) ≥ 1 − 2^{−σ}` ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.dh_offcross_zero`: An off-line zero of `dh` off the real axis ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHTwin`: The dh column of the substitution matrix, part 2: the twin form
+
+- `PsiOmega.not_twins_nonneg_dh`: The twin form of `dh` is negative somewhere ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_twins_subexp_dh`: The twin form of `dh` has a negative part of exponential rate ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.lamDH_fails_exponentially`: `λ_dh` fails exponentially, unconditionally ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_lamDH_subexp`: `λ_dh` has a negative part of exponential rate ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHZeros`: `L(½, χ₅) ≠ 0` and the zero side for `Ξ_{DH}`
+
+- `PsiOmega.hasSum_logDeriv_dh`: The zero side for the Davenport–Heilbronn `Ξ` ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DavenportHeilbronn`: Davenport–Heilbronn in Lean, stage 1
+
+- `PsiOmega.dh_ne_zero`: `dh` is not identically zero ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.dh_functional_equation`: The functional equation ([note](../formalisations/davenport-heilbronn.md))
 
 ### `lib/zeta23`
 
@@ -1494,954 +1805,3 @@ headline theorems (those whose docstring opens with a bold title).
 #### `ZeroWindow`: Bounded gaps between the ordinates of the zeros of `ζ`
 
 - `ZeroWindow.zero_in_window`: Bounded gaps between the zeros of `ζ`
-
-## Modules outside `Check`, `CheckAll` and `CheckZeta23`
-
-### `lib/core`
-
-#### `AngularResidue`: The residue of the radial member and `L(1, χ₋₄) = π/4`
-
-- `AngularResidue.latticeCount_two_sqrt`: Lattice count = shell sum
-- `AngularResidue.residue_angular`: The residue of the radial member
-- `AngularResidue.LFunction_chi4_one`: `L(1, χ₋₄) = π/4`
-
-#### `BohrTorus`: The Bohr torus: Vinogradov's orthogonality on the lift of a vertical line
-
-- `BohrTorus.eq_zero_of_sum_log`: The logarithms of distinct primes are linearly independent over `ℤ`
-- `BohrTorus.tendsto_mean_character`: The character means along the Bohr line
-- `BohrTorus.bohr_line`: The Bohr lift of the line `Re s = σ` runs on the torus
-- `BohrTorus.sum_norm_sq_torus`: Every point of the torus has the same norm
-- `BohrTorus.tendsto_mean_trigSum`: For every trigonometric polynomial on the torus, the mean along the Bohr line tends to the integral over the torus
-- `BohrTorus.tendsto_mean_moment`: The moments along the line are the torus moments
-- `BohrTorus.integral_moment_eq_count`: The torus moment of the unweighted prime sum is a Vinogradov count
-- `BohrTorus.tendsto_mean_moment_count`: The limiting means of `|Σ_{p∈F} p^{−it}|^{2ℓ}` are the count
-- `BohrTorus.prod_eq_iff_map_eq`: The multiplicative system is rigid at every `ℓ`
-- `BohrTorus.agree_not_rigid`: The additive system is not rigid beyond its dimension
-- `BohrTorus.tendsto_mean_moment_rearrangements`: The limiting means of `|Σ_{p∈F} p^{−it}|^{2ℓ}` count the pairs of rearrangements
-
-#### `CertInstances`: The certificate theorems as instances of the weighted certificate
-
-#### `ChiHalfSharp`: `GoodChar.half` from `hS`; kernel identities; sharper local constants
-
-- `ChiHalf.grh_half_iff`: The decomposition
-- `ChiHalf.QC_nonneg_of_GRH'`: Real zeros are invisible to the `ĝ²` form
-- `ChiHalf.grh_of_twin_criterion`: The twin criterion without `hS` would decide the Siegel question
-- `ArchKerQuarter.archKer_quarter_add`: The `Γ_ℂ` kernel
-- `LocalSharp.card_local_le_sharp`: The local count with `5/2` in place of `13/2`
-
-#### `DecayCorollaries`: Decay corollaries and the weak VMVT
-
-#### `EuclideanForcing`: The forcing of the Euclidean unit ball
-
-- `EuclideanForcing.eq_closedBall_of_innerPolar_eq`: Uniqueness
-- `EuclideanForcing.innerPolar_eq_self_iff`: The Euclidean ball is forced by self-duality
-- `EuclideanForcing.ell2_innerPolar_eq_self_iff`: The infinite-dimensional case
-- `EuclideanForcing.innerPolar_lpBall`: Hölder duality
-- `EuclideanForcing.innerPolar_lpBall_critExp`: The reflection in the critical line acts as the polarity
-- `EuclideanForcing.innerPolar_lpBall_eq_self_iff`: Among the `ℓ^p` balls, self-duality forces `p = 2`
-- `EuclideanForcing.innerPolar_lpBall_critExp_eq_self_iff`: The threshold ball is its own polar, hence Euclidean, exactly on the line
-- `EuclideanForcing.tendsto_inner_fraction_cube`: The cube concentrates at its surface too
-
-#### `EulerGammaBinet`: Euler's constant to seven digits, from Binet's formula
-
-- `Electron.eulerMascheroni_bounds`: Euler's constant to seven digits
-
-#### `ExteriorZeta`: The exterior identity over the zeros of `ζ`, for every probe
-
-- `WeilForm.chi_strip`: `χ` in the strip class
-- `WeilForm.exterior_identity_probe_zeta`: 1ca(iv) over the zeros of `ζ`, for every even probe, with no named input
-
-#### `GhatSamples`: The Fourier coefficients of a probe are samples of `ĝ`
-
-- `GhatSamples.hasSum_ghat_samples`: Sampled Plancherel
-
-#### `GroundBlock`: The ground space as a negative block of Weil's form
-
-- `WeilForm.striptest_Gpole`: The transform of a Green image is a strip test function
-- `WeilForm.exists_ground_block`: A ground space with `λ₁ < 0` carries a negative block of `Q` of codimension one
-- `WeilForm.gdim_sub_one_le_quadruples`: `gdim − 1` is at most the number of off-line quadruples
-- `WeilForm.gdim_le_of_lam_neg`: Under the join, `λ₁ < 0` forces `gdim ≤ ⌊(M − 1)/2⌋ + 1`
-- `WeilForm.rh_of_dim_bounded`: RH from (a) and any eventual dimension bound
-- `WeilForm.rh_or_gdim_tendsto`: The dichotomy
-
-#### `GroundIndex`: The ground-state ↔ Weil-index join
-
-- `WeilForm.zeta_upper_offline_card_le`: At most `⌊(M − 1)/2⌋` zeros of `ζ` with `Re s > ½` and `Im s > 0`
-- `WeilForm.finrank_le_ground_index`: The join: negative directions of Weil's form are at most `⌊(M − 1)/2⌋`
-- `WeilForm.finrank_le_ground_index_C2`: The same for `C²` probes vanishing near `±b`
-- `WeilForm.gdim_lower_of_neg_block`: Contrapositive: a certified negative block forces a ground-space dimension
-
-#### `HalfPlaneJoinsChar`: The band for every `L(s, χ)` and the twin-form rates at `11/12`
-
-- `HalfPlaneJoins.LFunction_band_of_isPrimitive`: The band for a primitive `χ ≠ 1`
-- `HalfPlaneJoins.LFunction_band_eleven_twelfths`: The band `|2 Re ρ − 1| ≤ 5/6` for every `L(s, χ)`, `χ ≠ 1`
-- `HalfPlaneJoins.chi4_rate_eleven_twelfths`: `L(s, χ₋₄)`'s twin form
-- `HalfPlaneJoins.chi8_rate_eleven_twelfths`: `L(s, χ₋₈)`'s twin form
-- `HalfPlaneJoins.QK4_rate_eleven_twelfths`: The twin form `2Q_ζ + Q_{χ₋₄}` of `ζ·ζ_{ℚ(i)}`
-- `HalfPlaneJoins.QC_rate_eleven_twelfths`: Every good character
-- `HalfPlaneJoins.QKχ_rate_eleven_twelfths`: The twin form `2Q_ζ + Q_χ` of `ζ·L(χ)`, every good character
-- `HalfPlaneJoins.realRooted_rate_eleven_twelfths`: Every real-rooted monotone base probe
-
-#### `HalfPlaneTrivial`: The trivial range of S0's hypothesis
-
-- `HalfPlaneS0.smoothBound_of_one_le`: The trivial range of the hypothesis
-
-#### `KernelChain`: RH from `L²` closeness to Riemann's kernel
-
-- `WeilForm.kernelApprox_RPhi`: `KernelApprox` holds for Riemann's kernel
-- `WeilForm.rh_of_close_RPhi`: RH from `L²` closeness to Riemann's kernel
-
-#### `LSeriesLandau`: Landau's theorem for Dirichlet series with nonnegative coefficients
-
-- `LandauLaplace.LSeries_landau`: Landau's theorem for L-series with nonnegative coefficients
-- `LandauLaplace.LSeries_not_holomorphic_at_abscissa`: An L-series with nonnegative coefficients is singular at the real point of its abscissa
-
-#### `LatticeCount`: The ball tower from counting integer points
-
-- `BallTower.count_div_tendsto_ballVol`: Counting integer points gives the ball tower
-- `BallTower.count_div_pow_tendsto_ballVol`: Same statement by radius
-
-#### `LocalTeeth`: The teeth, one prime at a time
-
-- `LocalTeeth.card_two_sq`: 2D teeth mod `p`, nonzero shell
-- `LocalTeeth.card_two_sq_zero`: 2D teeth mod `p`, zero shell
-- `LocalTeeth.card_four_sq`: 4D teeth mod `p`, nonzero shell
-- `LocalTeeth.teeth_mod_prime`: At a prime `p`
-
-#### `OddProbe`: Odd probes and real characters
-
-#### `ParityCert`: Weil positivity in both parity sectors, as far as the relaxation reaches
-
-- `WeilForm.weilQ_ge_E`: Even-sector positivity up to `a* = 0.80`
-- `WeilForm.weilQ_ge_O`: Odd-sector positivity up to `a* = 0.80`
-- `WeilForm.weilQg_ge_both`: Weil positivity for every real `g`
-
-#### `ParityGapLower`: A parity gap from a one-sector lower bound at the prefactor scale
-
-- `ParityGapLower.parityGap_of_lamO_lower`: The eventual parity gap from an odd lower bound at the Connes scale
-- `ParityGapLower.rh_of_lamO_lower`: RH from `HypConv` and an odd lower bound at the Connes scale
-- `ParityGapLower.ghatC_re_eq_zero_of_odd`: Odd transforms are purely imaginary on `ℝ`
-
-#### `ParityRelax`: The relaxation for both parities and every prime power below the support
-
-- `WeilForm.trunc_W`: Truncation with a weight
-- `WeilForm.primeS_range`: The prime side below `e^{2a}`
-- `WeilForm.weilQ_ge_relaxW`: The even relaxation with a general weight
-- `WeilForm.weilQodd_ge_relaxW`: The odd relaxation with a general weight
-- `WeilForm.weilQ_ge_of_certW`: The even certificate theorem
-- `WeilForm.weilQodd_ge_of_certW`: The odd certificate theorem
-- `WeilForm.weilQg_ge_min`: Both parities
-
-#### `PrimeRelax`: Weil positivity past the first prime: every support `2a ≤ 0.8`
-
-- `WeilForm.weilQ_ge_of_certP`: The certificate theorem below `log 3`
-- `WeilForm.weilQ_ge_prime`: Weil positivity through the first prime
-
-#### `PrimeRelax3`: Weil positivity up to the second prime: every support `2a ≤ 1.0986 < log 3`
-
-- `WeilForm.weilQ_ge_prime3`: Weil positivity up to the second prime
-
-#### `PsiReQDup`: The duplication formula for `Re ψ`
-
-#### `ResponseKernel`: Response kernel and tone calculus, unconditional
-
-- `RespKernel.response_kernel`: The response kernel (the first order), unconditional
-
-#### `SixteenPi`: The constant `1/(16π)`: the Gaussian-multiplier time
-
-- `WeilForm.wall_quadratic`: Quadratic stationarity at the wall
-- `WeilForm.tau_at_wall`: The constant (3.6)
-- `WeilForm.balayageSide_eq`: The rescaling `t = Xs`
-- `WeilForm.J_eq`: `J(X)`
-- `WeilForm.exteriorMoment_eq`: The exterior moment, given the balayage identity
-- `WeilForm.sixteenPi_of_balayage`: The chain (iii)–(v), assembled
-- `WeilForm.inv_sq_sub_le`: One displaced zero
-- `WeilForm.defect_sub_tail`: (3.2): matched zeros cancel
-- `WeilForm.defect_eq_tail_of_D`: Exact D ⇒ the exterior form (3.2)
-- `WeilForm.defect_sub_tail_le`: D within tolerance (the paper's census)
-- `WeilForm.multiplier_expansion`: (3.1), exactly
-- `WeilForm.kBal_pair`: The pair kernel
-- `WeilForm.balayage_identity`: The balayage identity, proved
-- `WeilForm.exteriorMoment_reduced`: The exterior moment of the reduced problem, with no hypothesis
-- `WeilForm.sixteenPi_reduced`: `1/(16π)` in the reduced problem, with no hypothesis
-- `WeilForm.fBalExp_le`: The wall
-- `WeilForm.integral_logRep`: The logarithm as an integral
-- `WeilForm.integral_Qv`: The `v`-integral
-- `WeilForm.Ibal_closed`: The Cauchy integral in closed form
-- `WeilForm.tauBal_closed`: The balayage density in closed form
-- `WeilForm.tauBal_two`: Admissibility at the wall, proved
-
-#### `SphereDimensions`: Every point of the unit sphere is a dimension, and the sphere is the line
-
-- `SphereDimensions.mem_orthonormalBasis_iff`: In finite dimension the points of the unit sphere are exactly the basis directions
-- `SphereDimensions.mem_hilbertBasis_iff`: In a Hilbert space of any dimension the points of the unit sphere are exactly the Hilbert-basis directions
-- `SphereDimensions.ell2_mem_hilbertBasis_iff`: The infinite-dimensional case
-- `SphereDimensions.vF_mem_orthonormalBasis_iff`: The sphere is the line
-
-#### `ToneHyperbola`: The tone law as hyperbolic geometry
-
-- `ToneHyperbola.tone_law`: The tone law, assembled with `ToneCalc`
-
-#### `VolumeShell`: At the limit all the volume is at the surface, and points carry no volume
-
-- `VolumeShell.tendsto_inner_fraction`: At the limit all the volume is at the surface
-- `VolumeShell.volume_countable_eq_zero`: Points carry no volume
-
-#### `WallKernel`: The wall law under the involution `X ↦ 4/X`, and the `Γ_ℂ` kernel
-
-- `ArchKerGammaC.archKer_three_quarter_eq`: The odd-character kernel
-- `ArchKerGammaC.kerK_eq_gammaC`: FourierGap's split, read through the Γ-factors
-
-#### `WanderBound`: Bounding the wander, rung 0
-
-- `WanderBound.wander_rung0`: Rung 0 (Chebyshev level)
-
-#### `WeilChiRoots`: The root locus of `Ξ_χ` and the `hS` blind spot
-
-- `ChiRoots.grh'_iff_cross`: `GRH'` ⟺ every `τ` lies on the cross
-- `ChiRoots.grh'_iff_roots_real`: `GRH'` ⟺ every zero `w` of `Ξ_χ(√w)` is real
-- `ChiRoots.hS_iff_no_nonpos_root`: `hS` ⟺ no zero `w ≤ 0`
-- `ChiRoots.grh_iff_roots_pos`: `GRH` ⟺ every zero `w` of `Ξ_χ(√w)` is real and positive
-
-#### `ZeroCount`: Off-line zeros counted by the dimension of the ground space
-
-- `WeilForm.card_offcross_le`: At most `m − 1` off-cross values of `ω²`
-- `WeilForm.card_offcross_le_even`: Per support, with parity: at most `2⌊(m − 1)/2⌋` off-cross values of `ω²`
-- `WeilForm.zeros_cross_of_dim_le_two`: `dim V ≤ 2` ⇒ zeros on the cross
-- `WeilForm.xi_offcross_card_le`: Off-cross zeros of `Ξ`, counted by `z²`, number at most `2⌊(M − 1)/2⌋`
-- `WeilForm.zeta_offline_card_le`: At most `2⌊(M − 1)/2⌋` zeros of `ζ` with `Re s > ½`
-- `WeilForm.rh_of_dim_le_two`: RH from (a) for any ground states with eventually `dim V ≤ 2`
-
-#### `ZetaJoins`: Joins on the `ζ` side
-
-### `lib/pnt`
-
-#### `Architect`
-
-#### `ShortSieveBoxes`: Sieve terms as counts over boxes of primes
-
-- `ShortSieveBoxes.card_dvd_rough_eq_sum`: Rough cofactors as sorted tuples of primes
-- `ShortSieveBoxes.abs_sum_sub_le_boxes`: The box sandwich
-- `ShortSieveBoxes.mem_box_idxG`: A number lies in its box
-- `ShortSieveBoxes.mem_tuples_idxG`: A tuple of primes lies in the tuples of its boxes
-
-#### `ShortSieveBuch`: Buchstab's identity and role reversals for the terms of the certificate
-
-- `ShortSieveBuch.rough_eq_add`: Buchstab's identity at one number
-- `ShortSieveBuch.rough_eq_prime_add`: The role reversal at one number
-- `ShortSieveBuch.count_buchstab`: Buchstab's identity on a node
-- `ShortSieveBuch.count_rev`: The role reversal on a node
-
-#### `ShortSieveCertAsym`: The certificate's Type II decision on a node
-
-- `ShortSieveCert.Sound.mem_K`: The terms' exponents lie in `K`
-- `ShortSieveCert.val_grpLF_eq`: A group's form is `DEN` times its exponent
-- `ShortSieveCert.Sound.asym_of_tii`: The Type II decision
-
-#### `ShortSieveCertBox`: Exact boxes and linear forms for the certificate of Li's region `C`
-
-- `ShortSieveCert.LF.minA_le`: Domain-aware least values
-
-#### `ShortSieveCertSem`: The certificate's coordinates on a node's terms
-
-- `ShortSieveCert.holds_toCond`: Constraints are node conditions
-- `ShortSieveCert.abs_slack_le`: The slack is small
-- `ShortSieveCert.Sound.count_eq_zero`: No terms
-- `ShortSieveCert.Sound.OK_of_out`: An empty region has no loss
-
-#### `ShortSieveCertTII`: The certificate's Type II test on a box
-
-- `ShortSieveCert.LF.minD_le`: The deterministic domain-aware least value bounds the form
-- `ShortSieveCert.fexact_le`: `fexact` is below `SCF/δ_req`
-- `ShortSieveCert.fslope_le`: `fslope` is below the tangent slope
-- `ShortSieveCert.lt_sum_of_tiiCheck`: A passing check gives Harman's test
-
-#### `ShortSieveCount`: Counts of large values of a Dirichlet polynomial through its powers
-
-- `ShortSieveCount.card_le_mv`: The mean value count for a power
-- `ShortSieveCount.card_le_hux`: The Halász–Montgomery count for a power, in windows
-
-#### `ShortSieveDreq`: The exponent of Harman's moment lemma from the mean value theorem and Huxley's estimate
-
-- `ShortSieveDreq.mv_exp_le`: The mean value theorem on a long power
-- `ShortSieveDreq.mv_exp_le_of_le_three_quarters`: The mean value theorem below `3/4`
-- `ShortSieveDreq.hux_exp_le_of_three_quarters_le`: Huxley's estimate above `3/4`
-- `ShortSieveDreq.hm_exp_le_of_three_quarters_le`: The library's count above `3/4`
-- `ShortSieveDreq.dreq_hux`: Harman's exponent from the mean value theorem and Huxley's estimate
-
-#### `ShortSieveDrop`: Upper bounds for the certificate's dropped nodes in the comparison interval
-
-- `ShortSieveDrop.card_fiber_le`: One fiber of the cofactor
-- `ShortSieveDrop.count_le_sum_cof`: The cofactor's count
-- `ShortSieveDrop.evLe_box`: The prime sums of a box
-- `ShortSieveDrop.evLe_finish`: The finish
-- `ShortSieveDrop.count_le_drop1`: A dropped node with one rough item
-- `ShortSieveDrop.sum_inv_rough_le`: Reciprocals of rough numbers
-- `ShortSieveDrop.sum_gams_le`: The rough items of a product coordinate
-- `ShortSieveDrop.count_le_drop2`: A dropped node with two rough items
-
-#### `ShortSieveExpand`: Sieve terms with several rough items as tuples of primes
-
-- `ShortSieveExpand.card_expand`: The expansion
-
-#### `ShortSieveGroup`: Type II estimates for groups of prime boxes
-
-- `ShortSieveGroup.moment_group_from`: Harman's moment lemma for a group of boxes
-- `ShortSieveGroup.integral_norm_dp_prods_le_group`: The middle range by Hölder over the groups
-- `ShortSieveGroup.abs_card_tuples_sub_le_group`: Type II estimates for groups of prime boxes, with the low range up to `x^{κ₀}`
-- `ShortSieveGroup.abs_card_tuples_sub_le_group_of_pos`: Type II estimates for groups of prime boxes, for every `ρ > 0`
-- `ShortSieveGroup.abs_card_tuples_sub_le_four`: Four primes in three groups
-
-#### `ShortSieveHarman`: Harman's moment lemma for the primes
-
-- `ShortSieveHarman.moment_primes_hux`: Harman's moment lemma for the primes, with real exponents
-- `ShortSieveHarman.moment_primes_mv`: Harman's moment lemma for the primes from the mean value theorem
-
-#### `ShortSieveHolder`: Hölder's inequality with real exponents for a product of factors
-
-- `ShortSieveHolder.lintegral_prod_le`: Hölder's inequality for `n` factors with real exponents
-- `ShortSieveHolder.lintegral_prod_le_of_moments`: The Type II combination
-- `ShortSieveHolder.lintegral_rpow_le_of_le`: A moment raised through a pointwise bound
-
-#### `ShortSieveInterval`: Short intervals from mean values of Dirichlet polynomials
-
-- `ShortSieveInterval.norm_cpow_sub_cpow_le`: Differences of powers
-- `ShortSieveInterval.W_eq_integral`: Mellin inversion for the averaged smoothing
-- `ShortSieveInterval.sum_W_eq`: Mellin inversion for a Dirichlet polynomial on `Re s = 1/2`
-- `ShortSieveInterval.sum_smooth1_eq`: Mellin inversion for a Dirichlet polynomial against `Smooth1`
-- `ShortSieveInterval.norm_powDiff_sub_le`: The kernel near `t = 0`
-- `ShortSieveInterval.norm_MW_powDiff_le`: The kernel of one window, for all `t`
-- `ShortSieveInterval.norm_MW_le_tail`: The tail of `𝓜(W_k)`
-- `ShortSieveInterval.norm_MW_powDiff_le_tail`: The kernel of one window, in the tail
-- `ShortSieveInterval.sum_win_sub_eq`: The two windows as one integral
-- `ShortSieveInterval.norm_sum_win_sub_le`: The smoothed comparison
-- `ShortSieveInterval.norm_sum_ind_sub_W_le`: Unsmoothing at one endpoint
-- `ShortSieveInterval.norm_sum_sharp_sub_win_le`: A sharp interval against its smooth window
-- `ShortSieveInterval.norm_sum_Ioc_sub_le_of_bump`: The sharp comparison, for a bump `ν`
-- `ShortSieveInterval.norm_sum_Ioc_sub_le`: Sums over short intervals by mean values of Dirichlet polynomials
-
-#### `ShortSieveJ`: Type I terms: tuples of primes with a sifted cofactor, cut out by log-linear conditions
-
-- `ShortSieveJ.card_nearJ_le`: The boundary of a condition on pairs is thin
-- `ShortSieveJ.sum_full_eq`: The pairs of a box are the box's Type I sums
-- `ShortSieveJ.abs_jval_sub_le`: The variation of a condition over a box
-- `ShortSieveJ.abs_card_jcut_sub_le`: Type I terms cut out by log-linear conditions, from a relative estimate on boxes
-
-#### `ShortSieveLevel`: Moments from counts of large values
-
-- `ShortSieveLevel.volume_le_of_sep`: The measure of a set from counts of separated points
-- `ShortSieveLevel.lintegral_rpow_le_levels`: Moments from the measures of level sets
-- `ShortSieveLevel.lintegral_rpow_le_of_counts`: Moments from counts of large values
-
-#### `ShortSieveLi`: Li's Lemma 4.1 as a hypothesis, and the asymptotic formula for nodes from it
-
-- `ShortSieveLi.grpProd_le_prod_le`: A box that holds a term has its groups' exponents near the term's
-- `ShortSieveLi.abs_count_sub_le_G2`: The asymptotic formula for a node from Li's Lemma 4.1
-- `ShortSieveLi.count_B_le`: A node's terms in the comparison interval number `O(x^{1−ρ}/log x)`
-- `ShortSieveLi.abs_count_sub_le_G2_eps`: The asymptotic formula for a node from Li's Lemma 4.1, with error `ε y/log x`
-
-#### `ShortSieveLong`: Primes and rough numbers in intervals of relative length `X^{−σ}`
-
-- `ShortSieveLong.abs_theta_sub_theta_le`: `θ` on short intervals
-- `ShortSieveLong.card_primes_short`: Primes in intervals of relative length `X^{−σ}`
-- `ShortSieveLong.primeCounting_short`: Primes in `(X − X^{1−ρ}, X]`
-- `ShortSieveLong.Psi_le_buchstab`: Buchstab's inequality
-- `ShortSieveLong.claim_step`: The induction step
-- `ShortSieveLong.psi_le`: Rough numbers of a short interval from above
-- `ShortSieveLong.psi_le_rpow`: Rough numbers of `(X − X^{1−ρ}, X]` from above
-- `ShortSieveLong.card_dvd_rough`: Rough cofactors in a short interval
-- `ShortSieveLong.card_dvd_rough_of_le`: Rough multiples in a short interval
-
-#### `ShortSieveLower`: The lower bound from Li's identity
-
-- `ShortSieveLower.primes_lower`: The lower bound from Li's identity
-
-#### `ShortSieveMoment`: Harman's moment lemma with real exponents
-
-- `ShortSieveMoment.card_le_mv_exp`: The mean value count as a power of `N`
-- `ShortSieveMoment.card_le_hm_exp`: The Halász–Montgomery count as a power of `N`
-- `ShortSieveMoment.integral_rpow_le_of_counts`: Moments from counts of large values, for a real function
-- `ShortSieveMoment.integral_le_of_level_counts`: Moments from counts at every level
-- `ShortSieveMoment.moment_le_of_counts`: The moment lemma from counts of large values
-- `ShortSieveMoment.moment_le_hux`: Harman's moment lemma from the mean value theorem and the Halász–Montgomery count
-- `ShortSieveMoment.moment_le_mv`: Harman's moment lemma from the mean value theorem
-
-#### `ShortSieveNode`: Sieve terms of the certificate and their asymptotic formula
-
-- `ShortSieveNode.forall_atoms`: The expanded conditions
-- `ShortSieveNode.count_eq_sum`: The count as a sum over the patterns
-- `ShortSieveNode.contract_mem_terms`: A tuple of the cut is a term
-- `ShortSieveNode.abs_count_sub_le`: The asymptotic formula for a node
-- `ShortSieveNode.cover_of_test`: Covers from a pointwise test on a compact set
-- `ShortSieveNode.abs_count_sub_le_of_test`: The asymptotic formula for a node from a pointwise test
-
-#### `ShortSieveRel`: Tuples of primes cut out by log-linear conditions, from a relative estimate on boxes
-
-- `ShortSieveRel.abs_sum_sub_le_boxes_rel`: The box sandwich with relative errors
-- `ShortSieveRel.card_tuples_le_psi`: Tuples of primes by their products
-- `ShortSieveRel.card_tuples_B_le`: The tuples of primes with product in the comparison interval number `O(x^{1−ρ}/log x)`
-- `ShortSieveRel.abs_card_cut_sub_le_rel`: Tuples of primes cut out by log-linear conditions, from a relative estimate on boxes
-
-#### `ShortSieveRoot`: The root terms of Li's decomposition
-
-- `ShortSieveRoot.psi_level_le`: Rough numbers at a level, uniformly
-- `ShortSieveRoot.abs_S1_sub_le`: The first root term
-- `ShortSieveRoot.sA_sub_le`: The gap between two levels
-- `ShortSieveRoot.sum_inv_primes_Ico_le`: Chebyshev's bound for a short range of primes
-- `ShortSieveRoot.abs_sub_le_of_sandwich`: The sandwich
-- `ShortSieveRoot.sB_one_le`: One prime in the comparison interval
-- `ShortSieveRoot.sB_gap_le`: The gap between two levels in the comparison interval
-- `ShortSieveRoot.sum_blocks`: The blocks
-- `ShortSieveRoot.abs_block_le`: A block, between two levels
-- `ShortSieveRoot.abs_block_pos_le`: A regular block
-- `ShortSieveRoot.abs_block_zero_le`: The first block
-- `ShortSieveRoot.abs_S2_sub_le`: The second root term
-- `ShortSieveRoot.abs_S2_liNu_sub_le`: The second root term with Li's level
-
-#### `ShortSieveTerm`: Tuples of primes cut out by log-linear conditions
-
-- `ShortSieveTerm.nextG_grid_le`: Consecutive points of the grid
-- `ShortSieveTerm.pin`: Pinning a coordinate
-- `ShortSieveTerm.card_near_le`: The boundary of a condition is thin
-- `ShortSieveTerm.typeII_uniform`: The grouped Type II estimate for a list of witnesses
-- `ShortSieveTerm.near_uniform`: The boundaries of a list of conditions
-- `ShortSieveTerm.abs_val_sub_le`: A box that straddles a condition lies near its boundary
-- `ShortSieveTerm.abs_card_cut_sub_le`: Tuples of primes cut out by log-linear conditions
-
-#### `ShortSieveThin`: Thin sets of prime tuples in the comparison interval
-
-- `ShortSieveThin.sum_inv_le_of_Icc`: Chebyshev's bound on `[X, KX]`
-- `ShortSieveThin.card_primes_comparison_le`: Primes pinned by a product in the comparison interval
-- `ShortSieveThin.card_thin_le`: The thin tuples
-
-#### `ShortSieveThree`: Li's third sum, split into the certificate's root cells
-
-- `ShortSieveThree.sThree_eq`: Li's third sum, split by the cofactor
-- `ShortSieveThree.OK_rOne`: The products have no loss
-- `ShortSieveThree.count_eq_n2`: A node of two primes and a cofactor
-- `ShortSieveThree.n2_eq_sum`: Cells
-- `ShortSieveThree.bigThree_eq_n2`: Li's third sum as pairs of primes
-- `ShortSieveThree.bigThree_eq_cells`: The root cells
-- `ShortSieveThree.OK_sThree`: Li's third sum from its root cells
-- `ShortSieveThree.primes_of_cells`: Primes in short intervals from the root cells
-
-#### `ShortSieveTop`: The top of Li's decomposition: exact identities in an interval
-
-- `ShortSieveTop.sD_buchstab`: Buchstab's identity on an interval
-- `ShortSieveTop.top_identity`: Li's identity on an interval
-
-#### `ShortSieveTree`: The certificate's tree: what each decision proves
-
-- `ShortSieveTree.OK_of_asym`: An asymptotic term has no loss
-- `ShortSieveTree.OK_of_drop`: A dropped term
-- `ShortSieveTree.OK_add`: The losses of a split add up
-- `ShortSieveTree.OK_sub`: Buchstab's step
-- `ShortSieveTree.OK_sum`: The losses of a finite split add up
-- `ShortSieveTree.count_split`: Splitting a node by a condition
-
-#### `ShortSieveTwist`: A twisted prime number theorem with a power saving
-
-- `ShortSieveTwist.verticalIntegral_sub_eq`: Moving the line of integration past a simple pole
-- `ShortSieveTwist.verticalIntegral'_integrand_eq`: Moving the Perron integral past a simple pole
-- `ShortSieveTwist.smoothedSum_eq_verticalIntegral_add`: The smoothed sum as an integral on a line left of a simple pole
-- `ShortSieveTwist.norm_psi_twist_le`: The twisted prime number theorem, uniformly in the twist
-- `ShortSieveTwist.norm_sum_Ioc_le_of`: The twisted prime number theorem on `(N, m]`, `N ≤ m ≤ 2N`, with a general exponent
-- `ShortSieveTwist.norm_sum_Ioc_le`: The twisted prime number theorem on `(N, m]`, `N ≤ m ≤ 2N`
-- `ShortSieveTwist.norm_sum_vonMangoldt_twist_le`: A twisted prime number theorem with a power saving
-- `ShortSieveTwist.norm_sum_mul_le`: Abel summation, as an inequality
-- `ShortSieveTwist.norm_dp_primes_Ioc_le_of`: Primes in `(N, M]`, `M ≤ 2N`, twisted, with a power saving, for a general exponent
-- `ShortSieveTwist.norm_dp_primes_Ioc_le`: Primes in `(N, M]`, `M ≤ 2N`, twisted, with a power saving
-- `ShortSieveTwist.norm_dp_primes_le`: Primes in a dyadic interval, twisted, with a power saving
-
-#### `ShortSieveTypeI`: Type I terms of the certificate and their asymptotic formula from Li's Lemmas 3.1 and 3.2
-
-- `ShortSieveTypeI.forall_atoms`: The expanded conditions
-- `ShortSieveTypeI.TNode.count_eq_sum`: The count as a sum over the patterns
-- `ShortSieveTypeI.contract_mem_terms`: A pair of the cut is a term
-- `ShortSieveTypeI.abs_count_sub_le_typeI`: The asymptotic formula for a Type I term from Li's Lemmas 3.1 and 3.2
-
-#### `ShortSieveTypeII`: Type II estimates for products of primes in boxes
-
-- `ShortSieveTypeII.norm_dp_boxWt_le_of`: The weighted prime polynomial, pointwise, for a general exponent
-- `ShortSieveTypeII.norm_dp_boxWt_le`: The weighted prime polynomial, pointwise
-- `ShortSieveTypeII.moment_boxWt_hux_from`: Harman's moment lemma for the weighted primes on the heights from `N^κ`, from the Halász–Montgomery count
-- `ShortSieveTypeII.moment_boxWt_mv_from`: Harman's moment lemma for the weighted primes on the heights from `N^κ`, from the mean value theorem
-- `ShortSieveTypeII.moment_boxWt_hux`: Harman's moment lemma for the weighted primes, from the Halász–Montgomery count
-- `ShortSieveTypeII.moment_boxWt_mv`: Harman's moment lemma for the weighted primes, from the mean value theorem
-- `ShortSieveTypeII.moment_boxWt_from`: The weighted moment lemma on the heights from `N^κ` for an admissible moment
-- `ShortSieveTypeII.moment_boxWt`: The weighted moment lemma for an admissible moment
-- `ShortSieveTypeII.integral_prod_le`: Hölder's inequality on an interval
-- `ShortSieveTypeII.dp_prods`: The product formula
-- `ShortSieveTypeII.integral_norm_dp_prods_le`: The middle range by Hölder
-- `ShortSieveTypeII.abs_card_tuples_sub_le_of`: Type II estimates for products of primes in boxes, with the low range up to `x^{κ₀}`
-- `ShortSieveTypeII.abs_card_tuples_sub_le`: Type II estimates for products of primes in boxes
-- `ShortSieveTypeII.abs_card_tuples_sub_le_of_pos`: Type II estimates for products of primes in boxes, for every `ρ > 0`
-- `ShortSieveTypeII.abs_card_tuples_sub_le_three`: Three primes near `x^{1/3}` in intervals of length `x^{3/5}`
-- `ShortSieveTypeII.abs_card_tuples_sub_le_three_long`: Three primes near `x^{1/3}` in intervals of length `x^{3/5}`, against intervals of length `x^{399/400}`
-
-#### `ShortSieveWit`: Type II witnesses from a pointwise test
-
-- `ShortSieveWit.momentOK_of_le_add`: Admissibility is open in `D`
-- `ShortSieveWit.exists_wit_list`: Witnesses by compactness
-- `ShortSieveWit.momentOK_of_dreq_lt`: Every moment above Harman's exponent is admissible
-- `ShortSieveWit.dreq_mono`: Harman's exponent is nondecreasing
-- `ShortSieveWit.test_of_sum_inv_dreq`: The test from Harman's exponents
-- `ShortSieveWit.inv_dreq_ge_tangent`: The tangent on a ramp
-- `ShortSieveWit.lt_sum_inv_dreq_of_linear`: The linearised test
-
-### `lib/dh`
-
-#### `ChiFirstFailure`: Continuity and the first positivity failure for every u-space form
-
-- `PsiOmega.tendsto_archEQ_dil`: The `q`-energy is continuous under dilation
-- `PsiOmega.farField_ge_log`: `∫_{u > 2a} K ≥ log 2 − log a − a`
-- `PsiOmega.farQ_ge`: The far field of `K_q`
-- `PsiOmega.archEQ_ge_far`: `E_q(g) ≥ ∫_{u > 2a} K_q`
-- `PsiOmega.UData.lam_antitone`: `λ` is non-increasing in the support
-- `PsiOmega.UData.lsc`: Lower semicontinuity along shrinking supports
-- `PsiOmega.UData.lam_right`: Right-continuity of `λ`
-- `PsiOmega.UData.tendsto_Q_dil`: `Q` is continuous under dilation
-- `PsiOmega.UData.lam_left`: Left-continuity of `λ`
-- `PsiOmega.UData.continuousOn_lam`: `λ` is continuous on `(0, ∞)`
-- `PsiOmega.UData.Q_ge_small`: `Q(g) ≥ c − 2f(1) + log 2 − log a − a − 4`
-- `PsiOmega.UData.lam_pos_small`: `λ ≥ log 2 − ¼` at small support
-- `PsiOmega.UData.first_failure`: The first positivity failure for a u-space form
-- `PsiOmega.continuousOn_lamC`: `λ_χ` is continuous on `(0, ∞)`
-- `PsiOmega.lamC_pos_small`: `λ_χ ≥ log 2 − ¼` at small support
-- `PsiOmega.first_failureC`: The first positivity failure for `L(s, χ)`
-- `PsiOmega.first_failureDH`: The first positivity failure of `Q_dh`, unconditionally
-- `PsiOmega.continuousOn_lamDH`: `λ_dh` is continuous on `(0, ∞)`
-
-#### `ChiGround`: The ground-state stack for `L(s, χ)`
-
-- `PsiOmega.UData.Q_ge`: `Q(g) ≥ −M(a)‖g‖²`
-- `PsiOmega.UData.form`: `Q` is a `ProbeForm`
-- `PsiOmega.UData.archE_le`: `E(g) ≤ e^{2a}E_q(g) + ‖g‖²·T(a)`
-- `PsiOmega.UData.arch_of_archQU`: The archimedean condition of a probe from the `q`-integrand
-- `PsiOmega.UData.exists_min`: A minimiser of `Q` exists at every support `a > 0`
-- `PsiOmega.UData.exists_groundState`: A ground state exists at every support `a > 0`
-- `PsiOmega.UData.euler_lagrange_mem`: Euler–Lagrange for any element of the ground space
-- `PsiOmega.UData.split_mem`: Splitting a ground-space element
-- `PsiOmega.UData.zero_swap_false`: The zero-swap lemma, core
-- `PsiOmega.UData.zeros_real_or_imag`: Zeros of a simple ground state lie on `ℝ ∪ iℝ`
-- `PsiOmega.UData.zeros_real_or_imag'`: Zeros of a simple ground state lie on `ℝ ∪ iℝ`
-- `PsiOmega.UData.green_mem`: Swap closure
-- `PsiOmega.UData.Gpole_annihilates`: `Q − λ` pairs `G v` with every pole-free probe to zero
-- `PsiOmega.UData.G_mem_partner`: Rank-one step
-- `PsiOmega.UData.finiteDimensional_groundL2`: The ground space is finite-dimensional
-- `PsiOmega.UData.topGS_cross`: Every zero of the top-of-chain ground state's transform lies on `ℝ ∪ iℝ`
-- `PsiOmega.exists_groundStateC`: A ground state of `QCu χ` exists at every support `a > 0`
-- `PsiOmega.euler_lagrangeC_mem`: Euler–Lagrange for `QCu χ`
-- `PsiOmega.theoremDC`: Theorem D for `QCu χ`
-- `PsiOmega.topGSC_cross`: Every zero of `ĝ` for the top-of-chain ground state of `QCu χ` lies on `ℝ ∪ iℝ`
-- `PsiOmega.grhCross_of_cross`: The Hurwitz step of `rh_of_prime_side_cross`
-- `PsiOmega.grhCross_of_hypConvC_top`: GRH for `χ` off the real axis from `HypConvC χ` for the top-of-chain ground states
-- `PsiOmega.grh_of_hypConvC_top`: GRH for `χ` from `HypConvC χ` for the top-of-chain ground states
-- `PsiOmega.grh_of_eventually_simpleC`: GRH for `χ` from eventually simple ground states with `HypConvC χ`
-- `PsiOmega.grh_chi3_of_hypConvC_top`: GRH for `χ₋₃` from `HypConvC` for its top-of-chain ground states
-- `PsiOmega.grh_chi4_of_hypConvC_top`: GRH for `χ₋₄` from `HypConvC` for its top-of-chain ground states
-- `PsiOmega.grh_chi8_of_hypConvC_top`: GRH for `χ₋₈` from `HypConvC` for its top-of-chain ground states
-- `PsiOmega.grh_chi7_of_hypConvC_top`: GRH for `χ₋₇` from `HypConvC` for its top-of-chain ground states
-
-#### `DHArch`: The archimedean term of the packet, bounded (certificate stage 2)
-
-- `PsiOmega.integral_exp_sub_exp_div`: Frullani
-- `PsiOmega.abs_integral_hK_cos_le`: The oscillatory integral of `h` is `O(1/c)`
-- `PsiOmega.bq_frullani`: Frullani for exponentials
-- `PsiOmega.integral_exp_mul_phi2_eq_eulerMascheroni`: The Euler–Mascheroni integral
-- `PsiOmega.integral_hK_eq`: Binet at `3/4`
-- `PsiOmega.psiReQ_three_quarters_sub`: The Gauss integral at shift `¾`, split
-- `PsiOmega.psiReQ_three_quarters_le`: `Re ψ(¾ + iω/2) ≤ log √(9/16 + ω²/4) + 3/ω`
-- `PsiOmega.psiReQ_three_quarters_sub_u`: The Gauss integral in the `u`-variable
-- `PsiOmega.packet_archEQ_le`: The archimedean term of the packet
-- `PsiOmega.packet_arch_total_le`: The archimedean total of the packet
-
-#### `DHBohrSphere`: A zero pair off the sphere
-
-- `PsiOmega.dh_zero_pair_off_sphere`: A zero pair of the Davenport–Heilbronn function off the unit sphere
-
-#### `DHBridge`: Weil's form for the Davenport–Heilbronn function in u-space
-
-- `PsiOmega.QDHu_hasSum`: The explicit formula for a probe, unscaled
-- `PsiOmega.QDHu_nonneg_of_DHRH`: `DHRH ⟹ Q_dh ≥ 0`
-- `PsiOmega.exists_offline_dh_of_neg_u`: A negative u-space Weil form certifies an off-line zero of `dh`
-- `PsiOmega.ghat3_antitone_bound`: The raw width-3 strip bound
-- `PsiOmega.striptest_antitone3`: `ĝ(3z)²` is a strip test function
-- `PsiOmega.exists_offline_dh_of_neg_antitone`: The certificate for monotone probes
-- `PsiOmega.exists_offline_dh_of_neg_box`: The certificate for the box
-
-#### `DHCertificate`: The certificate — `Q_dh(packet 12/5 169/2) < 0`, hence an off-line zero of `dh` (stage 4)
-
-- `PsiOmega.QDHu_packet_neg`: `Q_dh(packet 12/5 169/2) < 0`
-- `PsiOmega.dh_offline_zero`: The Davenport–Heilbronn function has a zero off the critical line
-
-#### `DHChannels`: The two channels of the Davenport–Heilbronn function
-
-- `PsiOmega.conj_LFunction`: Conjugation symmetry
-- `PsiOmega.LFunction_mul_one_sub`: The archimedean-free functional equation
-- `PsiOmega.LFunction_ratio_mul`: The channel ratio
-- `PsiOmega.phase_lock`: The phase lock
-- `PsiOmega.dhL_eq_zero_iff_channel`: The zero condition
-- `PsiOmega.chi5_channel_fe`: (1) for `χ₅`
-- `PsiOmega.chi5_phase_lock`: (2) for `χ₅`, the phase lock
-- `PsiOmega.dh_eq_zero_iff_channel`: (3) The zero condition of `dh`
-- `PsiOmega.chi5_channel_ratio`: (4) The channel ratio of `χ₅`
-- `PsiOmega.dh_line_zero_iff`: On the critical line the zero condition is one real equation
-
-#### `DHCoeffs`: Generated: interval bounds for `u(d)`, `dinv(n)`, `c(n)`, `n ≤ 121` (certificate stage 3)
-
-#### `DHColumn`: The dh column of the substitution matrix, part 1
-
-- `PsiOmega.tau3_im_lt`: The zeros of `Ξ₃` lie in the open strip `|Im τ| < ½`
-- `PsiOmega.dhRH_of_realRooted`: dh instance of `rh_of_prime_side`
-- `PsiOmega.not_hypConvDH_of_realRooted`: The refutation
-- `PsiOmega.dhRHcross_of_cross`: dh instance of `rh_of_prime_side_cross`
-- `PsiOmega.dhRH_of_cross`: dh instance of `rh_of_prime_side_cross`
-- `PsiOmega.not_hypConvDH_of_cross`: Refutation of the cross chain for dh
-- `PsiOmega.dhRHcross_of_strip`: dh instance of `rh_of_strip_cross`
-- `PsiOmega.not_realRooted_limit_XiDH`: The dh column of `rh_of_realRooted_limit`
-- `PsiOmega.hypConvDH_of_D`: dh instance of `hypConv_of_D`
-- `PsiOmega.dhRH_of_D_and_realRooted_proved`: dh instance of `rh_of_D_and_realRooted_proved`
-- `PsiOmega.not_D_and_realRooted`: The refutation of the D route
-- `PsiOmega.not_D_dh`: The dh column of `rh_of_D_and_realRooted_proved`
-- `PsiOmega.not_dodging_dh`: The dh column of `rh_of_dodging_final`
-- `PsiOmega.QDHu_nonneg_of_DHRHcross`: `DHRHcross ⟹ Q_dh ≥ 0`
-- `PsiOmega.not_weil_positivity_dh`: Weil positivity fails for `dh`
-- `PsiOmega.weil_criterion_dh`: The dh column of `weil_criterion_zeta`
-- `PsiOmega.not_GRH_dh`: GRH fails for `dh`
-- `PsiOmega.finrank_le_quadruples_dh`: The Davenport–Heilbronn instance
-
-#### `DHColumnRest`: The dh column, part 4: the remaining G rows and the strip row of the P block
-
-- `PsiOmega.not_ground_states_dh`: The dh column of `rh_of_ground_states`
-- `PsiOmega.not_groundStates_dodging_dh`: The dh column of `rh_of_groundStates_dodging`
-- `PsiOmega.not_D_and_realRooted_hadamard`: The dh column of `rh_of_D_and_realRooted`
-- `PsiOmega.not_hypConvStripDH_top`: The dh column of `rh_of_hypConvStrip_top`
-- `PsiOmega.not_XiDH_params`: The dh column of `rh_of_Xi_params`
-- `PsiOmega.not_dodging_hadamard`: The dh column of `rh_of_dodging`
-- `PsiOmega.not_pairing_and_realRooted`: The dh column of `rh_of_pairing_and_realRooted`
-
-#### `DHConstants`: The constants of the archimedean bound at `(a, ω) = (12/5, 169/2)` (certificate stage 3)
-
-#### `DHExplicit`: The explicit formula for the Davenport–Heilbronn function
-
-- `PsiOmega.tau3_im`: The zeros of `Ξ₃` lie in `|Im τ| ≤ ½`
-- `PsiOmega.logDeriv_XiDH_eq`: `Ξ_dh′/Ξ_dh` on `Re s > 2`
-- `PsiOmega.logDeriv_XiDH3_eq`: `Ξ₃′/Ξ₃` on the line `Im t = −1`
-- `PsiOmega.zero_side3`: The zero side
-- `PsiOmega.conjFixed_cDH_chi5`: `c(n)` is real
-- `PsiOmega.weil_XiDH3`: Weil's explicit formula for the Davenport–Heilbronn function
-- `PsiOmega.QDH_hasSum`: The explicit formula for a probe
-- `PsiOmega.QDH_nonneg_of_DHRH`: `DHRH ⟹ Q_dh ≥ 0`
-- `PsiOmega.exists_offline_dh_of_neg`: A negative Weil form certifies an off-line zero of `dh`
-
-#### `DHForm`: Weil's u-space form for `dh` is a `ProbeForm`; the DH ground energy
-
-- `PsiOmega.QDHu_add_sub`: The parallelogram law for `QDHu`
-- `PsiOmega.QDHu_ge_of_supp`: `Q_dh(g) ≥ −M_dh(a)‖g‖²`
-- `PsiOmega.QDHu_ge`: `Q_dh(g) ≥ −M_dh(a)‖g‖²`
-- `PsiOmega.QDHu_form`: `QDHu` is a `ProbeForm`
-- `PsiOmega.lamDH_antitone`: `λ_dh` is non-increasing in the support
-- `PsiOmega.lamDH_neg`: `λ_dh(b) < 0` for every `b ≥ 12/5`
-- `PsiOmega.exists_lamDH_neg`: The `dh` column of `exists_lam_neg_of_not_RH`, unconditional
-
-#### `DHGround`: The dh column, part 3: the ground-state stack of `QDHu`
-
-- `PsiOmega.archIntegrand_le_dom`: The pointwise domination
-- `PsiOmega.archE_le_DH`: `E(g) ≤ e^{2a}E_{3/4}(g) + ‖g‖²·T(a)`
-- `PsiOmega.arch_of_archQ`: The archimedean condition of a probe from the `¾`-integrand
-- `PsiOmega.exists_min_QDHu`: A minimiser of `QDHu` exists at every support `a > 0`
-- `PsiOmega.exists_groundStateDH`: A ground state of `QDHu` exists at every support `a > 0`
-- `PsiOmega.bilDH_polar`: `B_dh` is the polarisation of `QDHu`
-- `PsiOmega.euler_lagrangeDH_mem`: Euler–Lagrange for any element of the ground space of `QDHu`
-- `PsiOmega.euler_lagrangeDH`: Euler–Lagrange at a ground state
-- `PsiOmega.split_mem_groundSpaceDH`: Splitting a ground-space element
-- `PsiOmega.zero_swap_falseDH`: The zero-swap lemma for `QDHu`, core
-- `PsiOmega.zeros_real_or_imagDH`: Zeros of a simple ground state of `QDHu` lie on `ℝ ∪ iℝ`
-- `PsiOmega.zeros_real_or_imagDH'`: Zeros of a simple ground state of `QDHu` lie on `ℝ ∪ iℝ`
-- `PsiOmega.dhRHcross_of_eventually_simple`: The chain for `dh` with eventual simplicity
-- `PsiOmega.not_simple_hypConvDH`: The refutation
-- `PsiOmega.green_mem_groundSpaceDH`: Swap closure
-- `PsiOmega.Gpole_annihilatesDH`: `Q_dh − λ_dh` pairs `G v` with every pole-free probe to zero
-- `PsiOmega.G_mem_partnerDH`: Rank-one step
-- `PsiOmega.finiteDimensional_groundL2DH`: The ground space of `QDHu` is finite-dimensional
-- `PsiOmega.theoremDDH`: Theorem D for `QDHu`
-- `PsiOmega.topGSDH_cross`: Every zero of the top-of-chain ground state's transform lies on `ℝ ∪ iℝ`
-- `PsiOmega.dhRHcross_of_hypConv_top`: The chain for `dh` with simplicity removed
-- `PsiOmega.not_hypConvDH_top`: `HypConvDH` fails for the top-of-chain ground states of `QDHu`
-
-#### `DHHadamard`: Davenport–Heilbronn in Lean, stage 2: the Hadamard product of `Ξ_{DH}`
-
-- `PsiOmega.norm_XiC_le'`: The order of `Ξ_χ` for every primitive `χ ≠ 1`
-- `PsiOmega.norm_XiDH_le`: The order of `Ξ_{DH}`
-- `PsiOmega.XiDH_zero_ne`: `Ξ_{DH}(0) ≠ 0`
-- `PsiOmega.hadamard_XiDH`: The Hadamard product of `Ξ_{DH}`
-- `PsiOmega.hadamard_dh`: The Hadamard product of the Davenport–Heilbronn `Ξ`
-
-#### `DHHurwitzEM`: The Euler–Maclaurin approximant of the Davenport–Heilbronn function `dh`
-
-- `PsiOmega.dh_eq_hurwitz`: The bridge
-- `PsiOmega.norm_dh_sub_EM_le`: The Euler–Maclaurin bound for `dh`
-- `PsiOmega.norm_dh_sub_EM_le_box`: Box version
-
-#### `DHInert`: Coefficient localisation of the Davenport–Heilbronn prime side
-
-- `PsiOmega.smoothInd_conv_eq_one`: Unique factorisation into a `P`-part and a `Q`-part
-- `PsiOmega.chi5_inv_eq_of_split`: `χ₅` is real on split-smooth integers
-- `PsiOmega.splitSeq_conv_chi5Seq`: `χ₅ = s ⍟ t`
-- `PsiOmega.splitSeq_conv_chi5InvSeq`: `χ₅⁻¹ = s ⍟ t̄`
-- `PsiOmega.logDer_mul`: `log` is a derivation of Dirichlet convolution
-- `PsiOmega.dhA_eq_splitA_mul_inertA`: `δ + u = s ⍟ b`
-- `PsiOmega.logDer_dhA_mul_dhInvA`: The logarithmic derivative splits
-- `PsiOmega.cDH_chi5_decomp`: The split/inert decomposition of the prime side
-- `PsiOmega.cDH_chi5_eq_of_dvd`: Coefficient localisation
-
-#### `DHJoins`: Joins in the Davenport–Heilbronn layer
-
-- `PsiOmega.dhRH_iff_cross`: `DHRH ↔ DHRHcross`
-- `PsiOmega.dh_conj`: `dh(s̄) = conj dh(s)`
-- `PsiOmega.QDHu_add_even_odd`: The parity split of `Q_dh`
-- `PsiOmega.QDHu_packet_plane_neg`: A negative-definite plane of `Q_dh` from the two packet certificates
-- `PsiOmega.QCu_form`: `QCu χ` is a `ProbeForm`
-- `PsiOmega.lamC_antitone`: `λ_χ` is non-increasing in the support
-- `PsiOmega.probe_nonneg_iff_lamC_nonneg`: `Q_χ ≥ 0` on every probe at every support iff `λ_χ ≥ 0` at every support
-- `PsiOmega.lamC_nonneg_of_GRH`: Under GRH(χ), `λ_χ ≥ 0` at every support
-- `PsiOmega.grh_iff_lamC_nonneg`: GRH(χ) iff `λ_χ ≥ 0` at every support
-- `PsiOmega.grh_iff_lamC_eventually_nonneg`: GRH(χ) iff `λ_χ ≥ 0` at all large supports
-- `PsiOmega.exists_lamC_neg_of_not_GRH`: If GRH(χ) fails, `λ_χ` is negative from some support on
-- `PsiOmega.grh_iff_lamC_nonneg_chi3`: GRH for `χ₋₃` iff `λ_{χ₋₃} ≥ 0` at every support
-- `PsiOmega.grh_iff_lamC_nonneg_chi4`: GRH for `χ₋₄` iff `λ_{χ₋₄} ≥ 0` at every support
-- `PsiOmega.grh_iff_lamC_nonneg_chi8`: GRH for `χ₋₈` iff `λ_{χ₋₈} ≥ 0` at every support
-- `PsiOmega.grh_iff_lamC_nonneg_chi7`: GRH for `χ₋₇` iff `λ_{χ₋₇} ≥ 0` at every support
-- `DHNegIndex.negIndex_ge_five`: The Weil index of `Q_dh` on probes of either parity is at least `5`
-
-#### `DHLocate2Base`: A zero of `dh` within `1 / 200` of `c = 65083 / 100000 + (11416334 / 100000) i`: the certificate instance (generated)
-
-- `PsiOmega.Locate.Z2.norm_dh_sub_dhEM_le_ball`: The Euler–Maclaurin error on the ball
-- `PsiOmega.Locate.Z2.D2sum_le`: `D2sum(64583 / 100000, 28) ≤ 8109 / 100`
-- `PsiOmega.Locate.Z2.m2_ball`: The second-derivative bound on the ball
-- `PsiOmega.Locate.Z2.dh_zero_near_of_center`: The certificate at `cZ`, ball-uniform inputs discharged
-- `PsiOmega.Locate.Z2.dh_zero_near_of_center'`: The open inputs with fixed tolerances
-
-#### `DHLocate2Exp`: Generated (`gen_locate_zero.py 2`): two-sided bounds for `ex σ n = exp(-σ log n)`, `σ = 65083 / 100000`, `n ∈ NS`
-
-#### `DHLocate2Num`: Generated (`gen_locate_zero.py 2`): the interval evaluation of `PReG cZ 28 12`, `PImG cZ 28 12`, `AReG cZ 28 12`
-
-- `PsiOmega.Locate.Z2.PReG_mem`: The enclosure of `Re fEM(c)`
-- `PsiOmega.Locate.Z2.PImG_mem`: The enclosure of `Im fEM(c)`
-- `PsiOmega.Locate.Z2.AReG_mem`: The enclosure of `Re fEM′(c)`
-- `PsiOmega.Locate.Z2.dh_zero_located`: The located zero
-- `PsiOmega.Locate.dh_zero_located_2`: Zero 2
-- `PsiOmega.Locate.dh_zero_located_box_2`: Zero 2
-
-#### `DHLocate2Trig`: Generated (`gen_locate_zero.py 2`): bounds for `cCG cZ n = cos(t log n)`, `sCG cZ n = sin(t log n)`, `t = 11416334 / 100000`, `n ∈ NS`
-
-#### `DHLocate3Base`: A zero of `dh` within `1 / 500` of `c = 57436 / 100000 + (16647931 / 100000) i`: the certificate instance (generated)
-
-- `PsiOmega.Locate.Z3.norm_dh_sub_dhEM_le_ball`: The Euler–Maclaurin error on the ball
-- `PsiOmega.Locate.Z3.D2sum_le`: `D2sum(14309 / 25000, 41) ≤ 1567 / 10`
-- `PsiOmega.Locate.Z3.m2_ball`: The second-derivative bound on the ball
-- `PsiOmega.Locate.Z3.dh_zero_near_of_center`: The certificate at `cZ`, ball-uniform inputs discharged
-- `PsiOmega.Locate.Z3.dh_zero_near_of_center'`: The open inputs with fixed tolerances
-
-#### `DHLocate3Exp`: Generated (`gen_locate_zero.py 3`): two-sided bounds for `ex σ n = exp(-σ log n)`, `σ = 57436 / 100000`, `n ∈ NS`
-
-#### `DHLocate3Num`: Generated (`gen_locate_zero.py 3`): the interval evaluation of `PReG cZ 41 12`, `PImG cZ 41 12`, `AReG cZ 41 12`
-
-- `PsiOmega.Locate.Z3.PReG_mem`: The enclosure of `Re fEM(c)`
-- `PsiOmega.Locate.Z3.PImG_mem`: The enclosure of `Im fEM(c)`
-- `PsiOmega.Locate.Z3.AReG_mem`: The enclosure of `Re fEM′(c)`
-- `PsiOmega.Locate.Z3.dh_zero_located`: The located zero
-- `PsiOmega.Locate.dh_zero_located_3`: Zero 3
-- `PsiOmega.Locate.dh_zero_located_box_3`: Zero 3
-
-#### `DHLocate3Trig`: Generated (`gen_locate_zero.py 3`): bounds for `cCG cZ n = cos(t log n)`, `sCG cZ n = sin(t log n)`, `t = 16647931 / 100000`, `n ∈ NS` (part 1 of 2: `2 ≤ n ≤ 104`)
-
-#### `DHLocate3Trig2`: Generated (`gen_locate_zero.py 3`): bounds for `cCG cZ n = cos(t log n)`, `sCG cZ n = sin(t log n)`, `t = 16647931 / 100000`, `n ∈ NS` (part 2 of 2: `106 ≤ n ≤ 209`)
-
-#### `DHLocate4Base`: A zero of `dh` within `1 / 150` of `c = 72426 / 100000 + (17670246 / 100000) i`: the certificate instance (generated)
-
-- `PsiOmega.Locate.Z4.norm_dh_sub_dhEM_le_ball`: The Euler–Maclaurin error on the ball
-- `PsiOmega.Locate.Z4.D2sum_le`: `D2sum(107639 / 150000, 41) ≤ 8377 / 100`
-- `PsiOmega.Locate.Z4.m2_ball`: The second-derivative bound on the ball
-- `PsiOmega.Locate.Z4.dh_zero_near_of_center`: The certificate at `cZ`, ball-uniform inputs discharged
-- `PsiOmega.Locate.Z4.dh_zero_near_of_center'`: The open inputs with fixed tolerances
-
-#### `DHLocate4Exp`: Generated (`gen_locate_zero.py 4`): two-sided bounds for `ex σ n = exp(-σ log n)`, `σ = 72426 / 100000`, `n ∈ NS`
-
-#### `DHLocate4Num`: Generated (`gen_locate_zero.py 4`): the interval evaluation of `PReG cZ 41 12`, `PImG cZ 41 12`, `AReG cZ 41 12`
-
-- `PsiOmega.Locate.Z4.PReG_mem`: The enclosure of `Re fEM(c)`
-- `PsiOmega.Locate.Z4.PImG_mem`: The enclosure of `Im fEM(c)`
-- `PsiOmega.Locate.Z4.AReG_mem`: The enclosure of `Re fEM′(c)`
-- `PsiOmega.Locate.Z4.dh_zero_located`: The located zero
-- `PsiOmega.Locate.dh_zero_located_4`: Zero 4
-- `PsiOmega.Locate.dh_zero_located_box_4`: Zero 4
-
-#### `DHLocate4Trig`: Generated (`gen_locate_zero.py 4`): bounds for `cCG cZ n = cos(t log n)`, `sCG cZ n = sin(t log n)`, `t = 17670246 / 100000`, `n ∈ NS` (part 1 of 2: `2 ≤ n ≤ 104`)
-
-#### `DHLocate4Trig2`: Generated (`gen_locate_zero.py 4`): bounds for `cCG cZ n = cos(t log n)`, `sCG cZ n = sin(t log n)`, `t = 17670246 / 100000`, `n ∈ NS` (part 2 of 2: `106 ≤ n ≤ 209`)
-
-#### `DHLocateExp`: Generated (gen_locate.py): two-sided bounds for `ex (1617/2000) n = exp(-(1617/2000) log n)`, `n ∈ NS`
-
-#### `DHLocateFour`: Four located off-line zeros of `dh`, and the Weil index of `Q_dh` is at least `4`
-
-- `PsiOmega.Locate.negIndex_ge_four_of`: Four located off-line zeros give a `4`-dimensional negative space of `Q_dh`
-- `PsiOmega.Locate.dh_zeros_located_four`: Four located zeros of `dh` off the critical line
-- `PsiOmega.Locate.dh_zeros_located_four_box`: The four located zeros in coordinates
-- `DHNegIndex.negIndex_ge_four`: The Weil index of `Q_dh` is at least `4`
-
-#### `DHLocateGen`: The zero-location certificate for a general centre
-
-- `PsiOmega.Locate.dh_zero_near_of_fEMG`: The certificate for a general centre
-- `PsiOmega.Locate.norm_dh_sub_dhEM_le_ballG`: The Euler–Maclaurin error on `closedBall c r`
-- `PsiOmega.Locate.norm_deriv2_GEM_ballG`: Cauchy for `G″` at a point of `closedBall c r`
-- `PsiOmega.Locate.norm_deriv2_fEM_ballG`: The second-derivative bound on a ball
-- `PsiOmega.Locate.dh_zero_near_of_elementaryG`: The ladder in elementary form
-
-#### `DHLocateNum`: Generated (gen_locate.py): the interval evaluation of `PRe 20 12`, `PIm 20 12`, `ARe 20 12`
-
-- `PsiOmega.Locate.PRe_20_mem`: The enclosure of `Re fEM(c)`
-- `PsiOmega.Locate.PIm_20_mem`: The enclosure of `Im fEM(c)`
-- `PsiOmega.Locate.ARe_20_mem`: The enclosure of `Re fEM′(c)`
-- `PsiOmega.Locate.dh_zero_located`: A kernel-checked zero of the Davenport–Heilbronn function off the critical line
-
-#### `DHLocateSkeleton`: A zero of `dh` within `1/100` of `c = 1617/2000 + (856993/10000) i`: the certificate skeleton
-
-- `PsiOmega.Locate.exists_zero_of_approx`: Localisation in approximant form
-- `PsiOmega.Locate.norm_sub_linear_le_ball`: The linearisation bound on a ball
-- `PsiOmega.Locate.exists_zero_of_bounds`: The skeleton, abstract form
-- `PsiOmega.Locate.dhEM_eq`: The approximant, normalised
-- `PsiOmega.Locate.norm_deriv2_GEM_le`: Cauchy's estimate for `GEM″`
-- `PsiOmega.Locate.prod_box_eq`: The Pochhammer box constant, exactly
-- `PsiOmega.Locate.norm_dh_sub_dhEM_le_ball`: The Euler–Maclaurin error on the ball
-- `PsiOmega.Locate.Gsup_ball_le`: The sup of `GEM 20 12` on `closedBall cLoc (41/100)`
-- `PsiOmega.Locate.norm_deriv2_GEM_ball`: Cauchy for `G″` on the ball
-- `PsiOmega.Locate.norm_deriv2_dhEM_ball`: The second-derivative bound on the ball
-- `PsiOmega.Locate.dh_zero_near_of_numerics`: Stage 2, abstract form
-- `PsiOmega.Locate.dh_zero_near_of_fEM`: Stage 2, normalised form
-- `PsiOmega.Locate.QEM_twelve`: `Q_x` for `K = 12` with the Bernoulli coefficients `B_{2k+2}/(2k+2)!` as rationals
-- `PsiOmega.Locate.EMmain_explicit`: `EMmain_explicit`
-- `PsiOmega.Locate.norm_dh_sub_dhEM_le_ball'`: The Euler–Maclaurin error on the ball, in `dh` units
-- `PsiOmega.Locate.dh_zero_near_of_elementary`: Stage 2, elementary form
-- `PsiOmega.Locate.D2sum_le`: `D2sum(1597/2000, 20) ≤ 36`
-- `PsiOmega.Locate.dh_zero_near_of_center`: Stage 2 with every ball-uniform input discharged
-- `PsiOmega.Locate.dh_zero_near_of_center'`: The certificate's open inputs, packaged with fixed tolerances
-- `PsiOmega.Locate.dh_zero_near_of_dhEM`: Stage 2 in `dh` units
-
-#### `DHLocateTrig`: Generated (gen_locate.py): bounds for `cC n = cos(t log n)`, `sC n = sin(t log n)`, `t = 856993/10000`, `n ∈ NS`
-
-#### `DHLogBounds`: Generated: rational bounds for `Real.log n`, `2 ≤ n ≤ 121` (certificate stage 3)
-
-#### `DHLogBoundsExt`: Generated (gen_logext.py): rational bounds for `Real.log n`, `122 ≤ n ≤ 209`
-
-#### `DHNegIndex`: Every off-line quadruple of `dh` gives a negative direction of `Q_dh`
-
-- `DHNegIndex.striptest_twinComb3`: Twin combinations pass the width-3 strip test
-- `DHNegIndex.negDirections_offline_dh`: Every off-line quadruple of `dh` gives a negative direction of `Q_dh`
-- `DHNegIndex.negIndex_ge_of_located`: `n` located off-line zeros of `dh` give an `n`-dimensional negative space of `Q_dh`
-
-#### `DHNumerics`: The verified-numerics toolkit for the certificate
-
-- `PsiOmega.Num.mul_bounds`: Interval product
-
-#### `DHOddPacket`: The sine packet: Weil's form of `dh` is negative on an odd probe
-
-- `PsiOmega.sinPacket_oprobe`: The sine packet is an odd probe
-- `PsiOmega.sinPacket_striptest`: `ĝ(3z)²` is a strip test function
-- `PsiOmega.QDHu_sinPacket_eq`: Weil's form of `dh` on the sine packet, in closed form
-- `PsiOmega.oprobe_archIntegrandQ_integrable`: Integrability for `q ≥ ¼`
-- `PsiOmega.sinPacket_archEQ_le`: The archimedean term of the sine packet
-- `PsiOmega.sinPacket_arch_total_le`: The archimedean total of the sine packet
-- `PsiOmega.QDHu_sinPacket_le`: `Q_dh(sinPacket 12/5 169/2) ≤ −111/100`
-- `PsiOmega.QDHu_sinPacket_neg`: `Q_dh(sinPacket 12/5 169/2) < 0`
-- `PsiOmega.exists_oprobe_QDHu_neg`: A negative normalised odd probe at every support `b ≥ 12/5`
-- `PsiOmega.not_odd_lower_dh`: The `dh` column of `rh_of_lamO_lower`'s hypothesis, refuted
-- `PsiOmega.QDHu_ge_odd`: `Q_dh(o) ≥ −M_dh(a)‖o‖²`
-- `PsiOmega.lamODH_neg`: `λ_dh^odd(b) < 0` for every `b ≥ 12/5`
-- `PsiOmega.not_lamODH_lower`: `rh_of_lamO_lower`'s hypothesis with `λ_dh^odd` in place of `λ_odd`, refuted
-
-#### `DHOddTerms`: Generated (gen_oddterms.py): lower bounds for the prime terms of the sine packet and their partial sums
-
-#### `DHOffCross`: The certificate's zero is off the cross
-
-- `PsiOmega.dh_offline_nonreal_zero`: The certificate's zero is non-real
-- `PsiOmega.dh_offline_zero_right`: The free strengthening
-
-#### `DHPacket`: The box wave packet: Weil's form of `dh` on `cos(ωu)·1_{[−a,a]}` in closed form
-
-- `PsiOmega.packet_striptest`: `ĝ(3z)²` is a strip test function
-- `PsiOmega.QDHu_packet_eq`: Weil's form of `dh` on the packet, in closed form
-- `PsiOmega.packet_QDHu_hasSum`: The explicit formula on the packet
-- `PsiOmega.exists_offline_dh_of_neg_packet`: A negative Weil form on a packet certifies an off-line zero of `dh`
-
-#### `DHPrime`: The prime side of the Davenport–Heilbronn function
-
-- `PsiOmega.dhL_eq_LSeries`: `DH_χ(s) = Σ a(n) n^{−s}` on `Re s > 1`
-- `PsiOmega.LSeries_aDH_eq`: `Σ a(n) n^{−s} = a(1) · Σ (δ + u)(n) n^{−s}`
-- `PsiOmega.aDH_one_eq`: `a(1) = (1 + ε_χ)(1 + ε_{χ⁻¹})`
-- `PsiOmega.logDeriv_dhL_eq`: The logarithmic derivative of `DH_χ` is a Dirichlet series
-- `PsiOmega.logDeriv_dh_eq`: The prime side of the Davenport–Heilbronn function
-
-#### `DHRealAxis`: `dh` has no zero on the positive real axis
-
-- `PsiOmega.aDH_chi5_eq_mul`: `a(n) = a(1)·u(n mod 5)`
-- `PsiOmega.sum_range_aDH_chi5`: The partial sums of `a`
-- `PsiOmega.Bval_values`: `B = 0, 0, 1, 1 + κ, 1`
-- `PsiOmega.Bval_mod_five`: `B(m mod 5) ∈ {0, 1, 1 + κ}`
-- `PsiOmega.BDH_eq_one`: `B = 1` on `[1, 2)`
-- `PsiOmega.dh_eq_integral`: `dh(s) = s∫_1^∞ A(x)x^{−s−1}dx` on `Re s > 0`
-- `PsiOmega.dh_eq_integral_real`: `dh(σ) = a(1)·σ∫_1^∞ B(x)x^{−σ−1}dx`
-- `PsiOmega.integral_BDH_ge`: `σ∫_1^∞ B(x)x^{−σ−1}dx ≥ 1 − 2^{−σ}`
-- `PsiOmega.dh_div_a1_real`: `dh(σ)/a(1)` is real
-- `PsiOmega.dh_div_a1_real_ge`: `dh(σ)/a(1) ≥ 1 − 2^{−σ}`
-- `PsiOmega.dh_ne_zero_of_real`: `dh(σ) ≠ 0` for `σ > 0`
-- `PsiOmega.dhLam_real_ne_zero`: `Λ_{dh}(σ) ≠ 0` for every real `σ`
-- `PsiOmega.XiDH_I_mul_ne_zero`: `Ξ_{dh}` has no zero on the imaginary axis
-- `PsiOmega.dh_offcross_zero`: An off-line zero of `dh` off the real axis
-
-#### `DHTerms`: Generated: lower bounds for the prime terms and their partial sums (certificate stage 3)
-
-#### `DHTrigBounds`: Generated: rational bounds for `cos(ω log n)`, `sin(ω log n)`, `ω = 169/2`, `2 ≤ n ≤ 121`,
-
-#### `DHTwin`: The dh column of the substitution matrix, part 2: the twin form
-
-- `PsiOmega.twinData_dh`: The data of the twin-form Landau argument for `dh`
-- `PsiOmega.dhRH_of_twins`: The dh column of `line_of_weil_twins`/`rh_of_weil_twins`
-- `PsiOmega.not_twins_nonneg_dh`: The twin form of `dh` is negative somewhere
-- `PsiOmega.dh_twins_rate`: The dh column of `weil_twins_rate`
-- `PsiOmega.not_twins_subexp_dh`: The twin form of `dh` has a negative part of exponential rate
-- `PsiOmega.twinData_dhu`: The u-space twin data for `dh`
-- `PsiOmega.zeros_of_lamDH_ge`: A lower bound on `λ_dh` of exponential rate `σ` is a zero-free region
-- `PsiOmega.lamDH_rate`: A zero with `|2 Re s − 1| > σ` makes `λ_dh(a) < −C·e^{σa}` at arbitrarily large `a`
-- `PsiOmega.lamDH_fails_exponentially`: `λ_dh` fails exponentially, unconditionally
-- `PsiOmega.not_lamDH_subexp`: `λ_dh` has a negative part of exponential rate
-
-#### `DHZeros`: `L(½, χ₅) ≠ 0` and the zero side for `Ξ_{DH}`
-
-- `PsiOmega.re_sum_range_cC_chi5`: The partial sums of `χ₅` have real part `0, 0, 1, 1, 1`
-- `PsiOmega.re_LFunction_chi5_half_ge`: `Re L(½, χ₅) ≥ ½`
-- `PsiOmega.LFunction_chi5_half_ne_zero`: `L(½, χ₅) ≠ 0`
-- `PsiOmega.hadamard_dh'`: The Hadamard product of the Davenport–Heilbronn `Ξ`, unconditional
-- `PsiOmega.hasSum_logDeriv_XiDH`: The logarithmic derivative of Hadamard's product
-- `PsiOmega.hasSum_logDeriv_dh`: The zero side for the Davenport–Heilbronn `Ξ`
-
-#### `DavenportHeilbronn`: Davenport–Heilbronn in Lean, stage 1
-
-- `PsiOmega.rootNumber_mul_rootNumber_inv`: The root numbers of `χ` and `χ⁻¹` are inverse
-- `PsiOmega.dhLam_one_sub`: The functional equation `Λ_{DH}(1 − s) = Λ_{DH}(s)`
-- `PsiOmega.dhLam_eq`: `Λ_{DH} = N^{s/2} Γ_ℝ(s + 1) · DH`
-- `PsiOmega.dhL_ne_zero`: `DH` is not identically zero
-- `PsiOmega.dh_ne_zero`: `dh` is not identically zero
-- `PsiOmega.dh_functional_equation`: The functional equation
-- `PsiOmega.dh_zero_symm`: Zeros of `dh` in the strip are symmetric under `s ↦ 1 − s`
-
-### `lib/zeta23`
-
-#### `CoImportGamma`: The pnt layer and zeta23's Gamma facts co-import
-
-#### `CoImportMV`: The pnt layer and zeta23's mean-value module co-import
-
-#### `Dictionary`: The zeta23 ↔ library dictionary
-
-#### `HybridExamples`: Concrete instances of the hybrid certificate

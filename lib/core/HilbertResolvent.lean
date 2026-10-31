@@ -7,12 +7,11 @@ complex Hilbert space `E`, with Mathlib's `resolvent A z = (z − A)⁻¹`. Noth
 
 * **The lower bound** (**`abs_im_mul_norm_le`**, with `im_inner_apply_self`): `|Im z|·‖x‖ ≤ ‖(z − A)x‖`,
   since `⟪Ax, x⟫` is real.
-* **The resolvent** (**`mem_resolventSet_of_im_ne_zero`**, **`norm_resolvent_le`** and
-  **`hasDerivAt_resolvent_of_im_ne_zero`**, with `sub_apply_resolvent`, `resolvent_sub_apply`,
-  `abs_im_mul_norm_resolvent_le`, `algebraMap_sub_apply_eq` and `resolvent_apply_sub`): every `z` with
-  `Im z ≠ 0` is in the resolvent set (Mathlib's `IsSelfAdjoint.im_eq_zero_of_mem_spectrum`), there
-  `‖R(z)‖ ≤ |Im z|⁻¹`, and `R` is complex-differentiable (Mathlib's
-  `spectrum.hasDerivAt_resolvent_const_left`).
+* **The resolvent** (**`mem_resolventSet_of_im_ne_zero`** and **`hasDerivAt_resolvent_of_im_ne_zero`**, with
+  `sub_apply_resolvent`, `resolvent_sub_apply`, `abs_im_mul_norm_resolvent_le`, `algebraMap_sub_apply_eq` and
+  `resolvent_apply_sub`): every `z` with `Im z ≠ 0` is in the resolvent set (Mathlib's
+  `IsSelfAdjoint.im_eq_zero_of_mem_spectrum`), there `|Im z|·‖R(z)x‖ ≤ ‖x‖`, and `R` is complex-differentiable
+  (Mathlib's `spectrum.hasDerivAt_resolvent_const_left`).
 * **The limit at a real point** (`kerAt`, a definition; **`tendsto_resolvent_ker`**, with `kerAt_complete`,
   `isSelfAdjoint_sub_real`, `orthogonal_kerAt`, `im_real_add_I_mul`, `resolvent_apply_of_mem_ker`,
   `norm_smul_resolvent_apply_le`, `resolvent_apply_range`, `tendsto_resolvent_range` and
@@ -87,14 +86,6 @@ theorem abs_im_mul_norm_resolvent_le {A : E →L[ℂ] E} (hA : IsSelfAdjoint A) 
     (hz : z.im ≠ 0) (x : E) : |z.im| * ‖resolvent A z x‖ ≤ ‖x‖ := by
   have h := abs_im_mul_norm_le hA z (resolvent A z x)
   rwa [sub_apply_resolvent (mem_resolventSet_of_im_ne_zero hA hz)] at h
-
-/-- `‖R(z)‖ ≤ |Im z|⁻¹`. -/
-theorem norm_resolvent_le {A : E →L[ℂ] E} (hA : IsSelfAdjoint A) {z : ℂ} (hz : z.im ≠ 0) :
-    ‖resolvent A z‖ ≤ |z.im|⁻¹ := by
-  have hpos : 0 < |z.im| := abs_pos.2 hz
-  refine ContinuousLinearMap.opNorm_le_bound _ (inv_nonneg.2 hpos.le) fun x => ?_
-  rw [inv_mul_eq_div, le_div_iff₀ hpos, mul_comm]
-  exact abs_im_mul_norm_resolvent_le hA hz x
 
 /-- **The resolvent is holomorphic off the real axis** (Mathlib's
 `spectrum.hasDerivAt_resolvent_const_left`). -/
@@ -358,7 +349,6 @@ end
 #print axioms Eis.sub_apply_resolvent
 #print axioms Eis.resolvent_sub_apply
 #print axioms Eis.abs_im_mul_norm_resolvent_le
-#print axioms Eis.norm_resolvent_le
 #print axioms Eis.hasDerivAt_resolvent_of_im_ne_zero
 #print axioms Eis.algebraMap_sub_apply_eq
 #print axioms Eis.resolvent_apply_sub

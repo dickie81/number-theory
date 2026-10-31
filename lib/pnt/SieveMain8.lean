@@ -14,10 +14,8 @@ Plain statements. The route and the grid are as in `SieveQ` (`RouteOK`, `GridOK`
 * `linnik_route8`: given `hII` and `htot`, there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there
   is a prime `p ≡ a (mod q)` with `p ≤ K·q^L`; `linnik_route_lt8`: the same for `totalD < K`.
 
-The proof is `SieveMain2.linnik_large2`'s, with `SieveBuch.Par.decomp8` (the decomposition to depth 8) for
-`SieveBuch.Par.decompk`, `SieveQ8.leaves_ev8` for `SieveKeptLeaf.leaves_ev2`, `SieveDrop8.drop_ev8` for
-`SieveDrop2.drop_ev2` and the decomposition's constant `Cdec8` for `Ck`; the small moduli are
-`SieveMain2.route_of_large`'s.
+The proof combines `SieveBuch.Par.decomp8` (the decomposition to depth 8), `SieveQ8.leaves_ev8`,
+`SieveDrop8.drop_ev8` and the decomposition's constant `Cdec8`; the small moduli are `SieveMain2.route_of_large`'s.
 
 The file imports `SieveDrop8.lean`, `SieveQ8.lean` and `SieveMain2.lean`.
 -/
@@ -51,8 +49,8 @@ theorem totalD_div_lt [SieveCert.IBPar] (htot : totalD < SieveCert.K) : (totalD 
 a grid with `GridOK`, `GridOKC` and `DeepGrid` that fit (`Fits`), under the bilinear Type I rule with the route's
 exponent (`IBFits`), given the route's Type II estimate (`hII`) and `totalD/K ≤ c` in the reals for some `c < 1`
 (`htot`), there is `q₀` such that for `q ≥ 1` with `q ≥ q₀` and `a` a unit mod `q` there is a prime `p ≡ a (mod q)`
-with `q^L < p ≤ 2q^L`. The losses are `SieveMain2.linnik_large2`'s five shares `ε = (1 − c)/10` of `X = x/log x`,
-leaving `(1 − c)X/2` of `S(A, z_top)`. -/
+with `q^L < p ≤ 2q^L`. The losses are five shares `ε = (1 − c)/10` of `X = x/log x`, leaving `(1 − c)X/2` of
+`S(A, z_top)`. -/
 theorem linnik_large8 [SieveCert.IBPar] [IBFits] [DeepGrid] (hII : TypeIIAt) {c : ℝ} (hc : c < 1)
     (htot : (totalD : ℝ) / SieveCert.K ≤ c) :
     ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
