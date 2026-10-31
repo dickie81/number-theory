@@ -3,15 +3,16 @@ import ShortSieveTop
 /-!
 # The lower bound from Li's identity
 
-Li's identity (`ShortSieveTop.top_identity`) with `z₁ = ⌈x^{ν(0)}⌉`, `z₂ = ⌊√x⌋ + 1` and the levels
-`L_p = ⌈x^{ν(log p/log x)}⌉` (`lev`), `ν = liNu θ γ`, splits `S(I, √x)` into the root terms, whose asymptotic formulas
-are `ShortSieveRoot.abs_S1_sub_le` and `abs_S2_liNu_sub_le`, and the third sum `Σ₃` (`sThree`).
+Li's identity (`ShortSieveTop.top_identity`) with `z₁ = ⌈x^{a₀}⌉`, `z₂ = ⌊√x⌋ + 1` and the levels
+`L_p = ⌈x^{ν(log p/log x)}⌉` (`lev`), for a level `ν` (Li's `liNu θ γ`, or `ShortSieveRoot.nuH` where Li's exceeds
+the primes), splits `S(I, √x)` into the root terms, whose asymptotic formulas are `ShortSieveRoot.abs_S1_sub_le` and
+`abs_S2_liNu_sub_le` (`abs_S2_held_sub_le`), and the third sum `Σ₃` (`sThree`).
 
 * `primes_lower`: if `Σ₃(A) ≥ (y/x^{1−ρ}) Σ₃(B) − (L + ε) y/log x` for every `ε > 0` (what the certificate
   provides), then the primes of `(x − y, x]` number at least `(1 − L − ε) y/log x` for every `ε > 0`, large `x` and
   `y ∈ [x^θ, x^{1−ρ}]`. The primes of `A` are at least `S(A, √x)`; those of `B` are at most `S(B, √x)` and at
-  least `(1 − ε) x^{1−ρ}/log x` (`ShortSieveLong.primeCounting_short`). The prime `p = x^{ν(0)}`, when it is one,
-  is in Li's range but not in `sTwo`'s, and costs at most `y x^{−ν(0)} + 1`.
+  least `(1 − ε) x^{1−ρ}/log x` (`ShortSieveLong.primeCounting_short`). The prime `p = x^{a₀}`, when it is one,
+  is in Li's range but not in `sTwo`'s, and costs at most `y x^{−a₀} + 1`.
 -/
 
 open Finset Real Filter
@@ -23,12 +24,12 @@ open ShortSieveTop ShortSieveRoot ShortSieveLi
 open Classical
 
 /-- The level of Li's second sum at `p`: `⌈x^{ν(log p/log x)}⌉`. -/
-noncomputable def lev (θ γ x : ℝ) (p : ℕ) : ℕ := ⌈x ^ liNu θ γ (Real.log p / Real.log x)⌉₊
+noncomputable def lev (ν : ℝ → ℝ) (x : ℝ) (p : ℕ) : ℕ := ⌈x ^ ν (Real.log p / Real.log x)⌉₊
 
-/-- Li's third sum: `Σ_{x^{ν(0)} ≤ p ≤ √x} Σ_{L_p ≤ q < p} S(I_{pq}, q)`. -/
-noncomputable def sThree (θ γ x y : ℝ) : ℕ :=
-  ∑ p ∈ SieveTree.primesIco ⌈x ^ liNu θ γ 0⌉₊ (⌊Real.sqrt x⌋₊ + 1),
-    ∑ q ∈ SieveTree.primesIco (lev θ γ x p) p, sD (p * q) q x y
+/-- Li's third sum: `Σ_{x^{a₀} ≤ p ≤ √x} Σ_{L_p ≤ q < p} S(I_{pq}, q)`. -/
+noncomputable def sThree (ν : ℝ → ℝ) (a₀ x y : ℝ) : ℕ :=
+  ∑ p ∈ SieveTree.primesIco ⌈x ^ a₀⌉₊ (⌊Real.sqrt x⌋₊ + 1),
+    ∑ q ∈ SieveTree.primesIco (lev ν x p) p, sD (p * q) q x y
 
 /-- `S(I_d, z) ≤ y/d + 1` for `d ≥ 1` and `y ≥ 0`. -/
 theorem sD_le {d z : ℕ} (hd : 1 ≤ d) {x y : ℝ} (hy : 0 ≤ y) (hyx : y ≤ x) :
@@ -125,23 +126,24 @@ theorem eventually_log_le {r δ : ℝ} (hr : 0 < r) (hδ : 0 < δ) : ∀ᶠ x : 
     Real.norm_of_nonneg (Real.rpow_nonneg (by linarith) _)] at hx
   exact hx
 
-/-- **The lower bound from Li's identity.** With Li's Lemma 3.1 (`1/2 < θ < 1`, `2θ − 1 ≤ γ < 1/2`, `12ρ < 2θ − 1`),
-Li's levels below the primes (`ν(α) ≤ α` on `[ν(0), 1/2]`), and a lower bound
+/-- **The lower bound from Li's identity.** With Li's Lemma 3.1 (`γ < 1/2`, `12ρ < 2θ − 1`), the
+first prime `x^{a₀}`, `2θ − 1 ≤ a₀ ≤ ν(0)` (Li's), levels below the primes (`ν(α) ≤ α` on `[a₀, 1/2]`), the second
+sum asymptotic at the levels `ν` (`ShortSieveRoot.abs_S2_liNu_sub_le`, `abs_S2_held_sub_le`), and a lower bound
 `Σ₃(A) ≥ (y/x^{1−ρ}) Σ₃(B) − (L + ε) y/log x` for every `ε > 0`: for every `ε > 0`, large `x` and
 `y ∈ [x^θ, x^{1−ρ}]`, the primes of `(x − y, x]` number at least `(1 − L − ε) y/log x`. -/
-theorem primes_lower {θ γ ρ L : ℝ} (hLi : LiLemma31 θ γ ρ) (hθ : 1 / 2 < θ) (hθ1 : θ < 1)
-    (hγ : 2 * θ - 1 ≤ γ) (hγ2 : γ < 1 / 2) (hρ : 0 < ρ) (hρθ : 12 * ρ < 2 * θ - 1)
-    (hν : ∀ α ∈ Set.Icc (liNu θ γ 0) (1 / 2), liNu θ γ α ≤ α)
+theorem primes_lower {θ γ ρ L a₀ : ℝ} {ν : ℝ → ℝ} (hLi : LiLemma31 θ γ ρ) (hγ2 : γ < 1 / 2) (hρ : 0 < ρ)
+    (hρθ : 12 * ρ < 2 * θ - 1) (ha₀lo : 2 * θ - 1 ≤ a₀) (ha₀ : a₀ ≤ liNu θ γ 0)
+    (hν : ∀ α ∈ Set.Icc a₀ (1 / 2), ν α ≤ α)
+    (hS2 : ∃ C : ℝ, ∀ ε : ℝ, 0 < ε → ε ≤ 1 → ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, x ^ θ ≤ y → y ≤ x ^ (1 - ρ) →
+      |sTwo ν a₀ (1 / 2) x y - y / x ^ (1 - ρ) * sTwo ν a₀ (1 / 2) x (x ^ (1 - ρ))| ≤ ε * C * y / Real.log x)
     (h3 : ∀ ε : ℝ, 0 < ε → ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, x ^ θ ≤ y → y ≤ x ^ (1 - ρ) →
-      y / x ^ (1 - ρ) * sThree θ γ x (x ^ (1 - ρ)) - (L + ε) * y / Real.log x ≤ sThree θ γ x y) :
+      y / x ^ (1 - ρ) * sThree ν a₀ x (x ^ (1 - ρ)) - (L + ε) * y / Real.log x ≤ sThree ν a₀ x y) :
     ∀ ε : ℝ, 0 < ε → ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, x ^ θ ≤ y → y ≤ x ^ (1 - ρ) →
       (1 - L - ε) * y / Real.log x ≤ ((Ioc ⌊x - y⌋₊ ⌊x⌋₊).filter Nat.Prime).card := by
-  set a₀ := liNu θ γ 0 with ha₀
-  have ha₀lo : 2 * θ - 1 ≤ a₀ := ShortSieveTypeI.le_liNu hθ hγ (by norm_num)
-  have ha₀hi : a₀ ≤ γ := min_le_right _ _
+  have ha₀hi : a₀ ≤ γ := le_trans ha₀ (min_le_right _ _)
   have ha₀0 : 0 < a₀ := by linarith
-  obtain ⟨C₁, hC₁⟩ := abs_S1_sub_le hLi (by linarith) hρ ha₀0 (by linarith) (by linarith) le_rfl
-  obtain ⟨C₂, hC₂⟩ := abs_S2_liNu_sub_le hLi hθ hθ1.le hγ hγ2 hρ hρθ ha₀0 (by linarith)
+  obtain ⟨C₁, hC₁⟩ := abs_S1_sub_le hLi (by linarith) hρ ha₀0 (by linarith) (by linarith) ha₀
+  obtain ⟨C₂, hC₂⟩ := hS2
   intro ε hε
   set ε₁ := min 1 (ε / (4 * (|C₁| + |C₂| + 1))) with hε₁
   have hε₁0 : 0 < ε₁ := lt_min one_pos (by positivity)
@@ -176,7 +178,7 @@ theorem primes_lower {θ γ ρ L : ℝ} (hLi : LiLemma31 θ γ ρ) (hθ : 1 / 2 
   have hsx1 : 1 ≤ Real.sqrt x := by rw [hsq]; exact Real.one_le_rpow hx1.le (by norm_num)
   have hA1 : 1 ≤ x - y := by linarith
   -- the levels are at most the primes
-  have hlev : ∀ p ∈ SieveTree.primesIco ⌈x ^ a₀⌉₊ (⌊Real.sqrt x⌋₊ + 1), lev θ γ x p ≤ p := by
+  have hlev : ∀ p ∈ SieveTree.primesIco ⌈x ^ a₀⌉₊ (⌊Real.sqrt x⌋₊ + 1), lev ν x p ≤ p := by
     intro p hp
     rw [SieveTree.primesIco, mem_filter, mem_Ico] at hp
     have hp0 : (0 : ℝ) < p := by exact_mod_cast hp.2.pos
@@ -189,7 +191,7 @@ theorem primes_lower {θ γ ρ L : ℝ} (hLi : LiLemma31 θ γ ρ) (hθ : 1 / 2 
       · rw [div_le_iff₀ hlx, ← Real.log_rpow hx0, ← hsq]; exact Real.log_le_log hp0 h2
     unfold lev
     apply Nat.ceil_le.2
-    calc x ^ liNu θ γ (Real.log p / Real.log x) ≤ x ^ (Real.log p / Real.log x) :=
+    calc x ^ ν (Real.log p / Real.log x) ≤ x ^ (Real.log p / Real.log x) :=
           Real.rpow_le_rpow_of_exponent_le hx1.le (hν _ hα)
       _ = p := rpow_log_div_log hx1 hp0
   -- Li's identity in `A` and in `B`
@@ -197,15 +199,15 @@ theorem primes_lower {θ γ ρ L : ℝ} (hLi : LiLemma31 θ γ ρ) (hθ : 1 / 2 
       calc x ^ a₀ ≤ x ^ (1 / 2 : ℝ) := Real.rpow_le_rpow_of_exponent_le hx1.le (by linarith)
         _ = Real.sqrt x := hsq.symm
         _ ≤ ((⌊Real.sqrt x⌋₊ + 1 : ℕ) : ℝ) := by push_cast; exact le_of_lt (Nat.lt_floor_add_one _)))
-    (lev θ γ x) hlev x y
+    (lev ν x) hlev x y
   have hidB := top_identity (Nat.ceil_le.2 (by
       calc x ^ a₀ ≤ x ^ (1 / 2 : ℝ) := Real.rpow_le_rpow_of_exponent_le hx1.le (by linarith)
         _ = Real.sqrt x := hsq.symm
         _ ≤ ((⌊Real.sqrt x⌋₊ + 1 : ℕ) : ℝ) := by push_cast; exact le_of_lt (Nat.lt_floor_add_one _)))
-    (lev θ γ x) hlev x (x ^ (1 - ρ))
+    (lev ν x) hlev x (x ^ (1 - ρ))
   have hidA' : (sD 1 (⌊Real.sqrt x⌋₊ + 1) x y : ℝ) = sOne a₀ x y -
-      ∑ p ∈ SieveTree.primesIco ⌈x ^ a₀⌉₊ (⌊Real.sqrt x⌋₊ + 1), (sD p (lev θ γ x p) x y : ℝ) +
-        sThree θ γ x y := by
+      ∑ p ∈ SieveTree.primesIco ⌈x ^ a₀⌉₊ (⌊Real.sqrt x⌋₊ + 1), (sD p (lev ν x p) x y : ℝ) +
+        sThree ν a₀ x y := by
     rw [sOne_eq]
     have := congrArg (Int.cast : ℤ → ℝ) hidA
     push_cast at this
@@ -214,8 +216,8 @@ theorem primes_lower {θ γ ρ L : ℝ} (hLi : LiLemma31 θ γ ρ) (hθ : 1 / 2 
     push_cast
     ring
   have hidB' : (sD 1 (⌊Real.sqrt x⌋₊ + 1) x (x ^ (1 - ρ)) : ℝ) = sOne a₀ x (x ^ (1 - ρ)) -
-      ∑ p ∈ SieveTree.primesIco ⌈x ^ a₀⌉₊ (⌊Real.sqrt x⌋₊ + 1), (sD p (lev θ γ x p) x (x ^ (1 - ρ)) : ℝ) +
-        sThree θ γ x (x ^ (1 - ρ)) := by
+      ∑ p ∈ SieveTree.primesIco ⌈x ^ a₀⌉₊ (⌊Real.sqrt x⌋₊ + 1), (sD p (lev ν x p) x (x ^ (1 - ρ)) : ℝ) +
+        sThree ν a₀ x (x ^ (1 - ρ)) := by
     rw [sOne_eq]
     have := congrArg (Int.cast : ℤ → ℝ) hidB
     push_cast at this
@@ -224,19 +226,19 @@ theorem primes_lower {θ γ ρ L : ℝ} (hLi : LiLemma31 θ γ ρ) (hθ : 1 / 2 
     push_cast
     ring
   -- the second sums against `sTwo`
-  have hT2 : ∀ y' : ℝ, ShortSieveRoot.sTwo (liNu θ γ) a₀ (1 / 2) x y' =
-      ∑ p ∈ (Ioc ⌊x ^ a₀⌋₊ ⌊Real.sqrt x⌋₊).filter Nat.Prime, (sD p (lev θ γ x p) x y' : ℝ) := fun y' => by
+  have hT2 : ∀ y' : ℝ, ShortSieveRoot.sTwo ν a₀ (1 / 2) x y' =
+      ∑ p ∈ (Ioc ⌊x ^ a₀⌋₊ ⌊Real.sqrt x⌋₊).filter Nat.Prime, (sD p (lev ν x p) x y' : ℝ) := fun y' => by
     rw [sTwo_eq, hsq]
     rfl
-  have hbA := sum_Ioc_le_sum_Ico (fun p => (sD p (lev θ γ x p) x y : ℝ)) (fun _ => Nat.cast_nonneg _)
+  have hbA := sum_Ioc_le_sum_Ico (fun p => (sD p (lev ν x p) x y : ℝ)) (fun _ => Nat.cast_nonneg _)
     (x ^ a₀) (Real.sqrt x)
-  have hbB := sum_Ioc_le_sum_Ico (fun p => (sD p (lev θ γ x p) x (x ^ (1 - ρ)) : ℝ)) (fun _ => Nat.cast_nonneg _)
+  have hbB := sum_Ioc_le_sum_Ico (fun p => (sD p (lev ν x p) x (x ^ (1 - ρ)) : ℝ)) (fun _ => Nat.cast_nonneg _)
     (x ^ a₀) (Real.sqrt x)
   rw [← hT2] at hbA hbB
   -- the boundary prime
   have hxa : (1 : ℝ) ≤ x ^ a₀ := Real.one_le_rpow hx1.le ha₀0.le
-  have hbd : (sD ⌈x ^ a₀⌉₊ (lev θ γ x ⌈x ^ a₀⌉₊) x y : ℝ) ≤ ε / 4 * y / Real.log x := by
-    have h1 := sD_le (d := ⌈x ^ a₀⌉₊) (z := lev θ γ x ⌈x ^ a₀⌉₊) (Nat.one_le_iff_ne_zero.2 (by
+  have hbd : (sD ⌈x ^ a₀⌉₊ (lev ν x ⌈x ^ a₀⌉₊) x y : ℝ) ≤ ε / 4 * y / Real.log x := by
+    have h1 := sD_le (d := ⌈x ^ a₀⌉₊) (z := lev ν x ⌈x ^ a₀⌉₊) (Nat.one_le_iff_ne_zero.2 (by
       intro h; rw [Nat.ceil_eq_zero] at h; linarith)) hy0.le (by
         calc y ≤ x ^ (1 - ρ) := hy2
           _ ≤ x := by
@@ -276,9 +278,9 @@ theorem primes_lower {θ γ ρ L : ℝ} (hLi : LiLemma31 θ γ ρ) (hθ : 1 / 2 
     calc (1 - ε / 4) * y / Real.log x = y / x ^ (1 - ρ) * ((1 - ε / 4) * x ^ (1 - ρ) / Real.log x) := by
           field_simp
       _ ≤ _ := this
-  have hcT2 : y / x ^ (1 - ρ) * ShortSieveRoot.sTwo (liNu θ γ) a₀ (1 / 2) x (x ^ (1 - ρ)) ≤
+  have hcT2 : y / x ^ (1 - ρ) * ShortSieveRoot.sTwo ν a₀ (1 / 2) x (x ^ (1 - ρ)) ≤
       y / x ^ (1 - ρ) * ∑ p ∈ SieveTree.primesIco ⌈x ^ a₀⌉₊ (⌊Real.sqrt x⌋₊ + 1),
-        (sD p (lev θ γ x p) x (x ^ (1 - ρ)) : ℝ) := mul_le_mul_of_nonneg_left hbB.1 hc
+        (sD p (lev ν x p) x (x ^ (1 - ρ)) : ℝ) := mul_le_mul_of_nonneg_left hbB.1 hc
   have hπA' : (sD 1 (⌊Real.sqrt x⌋₊ + 1) x y : ℝ) ≤ ((Ioc ⌊x - y⌋₊ ⌊x⌋₊).filter Nat.Prime).card := by
     exact_mod_cast hπA
   -- everything in units of `u = y/log x`

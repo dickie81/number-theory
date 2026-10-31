@@ -536,7 +536,7 @@ theorem Sound.OK_of_dropC {k : ℕ} {conds : List (Cond (k + 1) 1)} {E : ℤ} {�
       u ≤ ((numF k).maxD B E acts : ℝ) / (B.getD k (0, 0)).1 → SieveCert.omegaC u ≤ Ω)
     {eK : ℤ} (heK : ∀ j < k + 1, (B.getD j (0, 0)).2 ≤ eK) {P : ℝ} (hP0 : 0 ≤ P)
     (hP : EvLe (fun x => chainSum (sfx (stdMem B k x) (k + 1) 0) (thr x eK)) P)
-    {θ ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) :
+    {θ ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) :
     OK θ ρ 1 (fun x y => ((std k conds).count x y : ℝ)) (Ω * P) := by
   have hD := DEN_pos
   have hloR : ∀ j : Fin (k + 1), (0 : ℝ) < (B.getD j (0, 0)).1 := fun j => by exact_mod_cast hlo j j.isLt
@@ -545,7 +545,7 @@ theorem Sound.OK_of_dropC {k : ℕ} {conds : List (Cond (k + 1) 1)} {E : ℤ} {�
   -- the node's terms in the comparison interval
   have hterm : ∀ᶠ x : ℝ in atTop, ∀ v ∈ pairs (k + 1) 1 ⌊x⌋₊, SieveTree.rough (v.1 (Fin.last k)) (v.2 0) →
       (std k conds).InI x (x ^ (1 - ρ)) v.1 v.2 →
-        v.1 ∈ PB x ∧ x ^ (1 / 25 : ℝ) ≤ v.1 (Fin.last k) ∧ (v.1 (Fin.last k) : ℝ) ≤ v.2 0 ∧
+        v.1 ∈ PB x ∧ x ^ (1 / 20 : ℝ) ≤ v.1 (Fin.last k) ∧ (v.1 (Fin.last k) : ℝ) ≤ v.2 0 ∧
           SieveCert.omegaC (Real.log (x / ∏ j, (v.1 j : ℝ)) / Real.log (v.1 (Fin.last k))) ≤ Ω := by
     filter_upwards [abs_slack_le hE (k + 1) 1, eventually_gt_atTop 1,
       (tendsto_rpow_atTop hρ).eventually_ge_atTop 2] with x hsl hx1 hxr v hv _ hI
@@ -637,7 +637,7 @@ theorem Sound.OK_of_dropC {k : ℕ} {conds : List (Cond (k + 1) 1)} {E : ℤ} {�
       prod_const_one]
     ring
   exact ShortSieveTree.OK_of_drop (fun x y => Nat.cast_nonneg _) fun δ hδ =>
-    ShortSieveDrop.count_le_drop1 (fun _ => Fin.last k) conds (lo := 1 / 25) (by norm_num) hρ hρ25 hΩ hP0 _
+    ShortSieveDrop.count_le_drop1 (fun _ => Fin.last k) conds (lo := 1 / 20) (by norm_num) hρ hρ20 hΩ hP0 _
       hterm hsum hδ
 
 end ShortSieveCert
