@@ -1,4 +1,5 @@
 import ShortSieveCertTII
+import ShortSieveLi
 
 /-!
 # The certificate's Type II decision on a node
@@ -304,9 +305,95 @@ theorem Sound.asym_of_tii {N : Node} (hk : 0 < N.k) (hm : 0 < N.m) {A : Rows N.k
   exact asym_of_log_sq (abs_count_sub_le_of_test N hk hm hc hc1 hθ hκ hρ hρc hθρ hcond hbig
     (isCompact_KSet A E Γ B) grp hpos htest (h.mem_K hE))
 
+/-! ### The decision by Li's Lemma 4.1 -/
+
+/-- **Li's Lemma 4.1 on a box** (the generator's `checkG2`, with the slack in the forms): the groups `M` (label `0`)
+and `N` (label `1`) have `|a_M − a_N| < D₁` and `a_M + a_N > D₂` (in units of `1/DEN`) at every point of the box,
+by the domain-aware extremes. -/
+def g2Check (D1 D2 E : ℤ) (B : Box) (acts : List LF) (items : List LF) (labels : List ℕ) : Bool :=
+  let LM := grpLF items labels 0
+  let LN := grpLF items labels 1
+  decide (-(LN.add (LM.smul (-1))).minD B E acts < D1) && decide (-(LM.add (LN.smul (-1))).minD B E acts < D1) &&
+    decide (D2 < (LM.add LN).minD B E acts)
+
+theorem length_add_le {L M : LF} {n : ℕ} (hL : L.c.length ≤ n) (hM : M.c.length ≤ n) : (L.add M).c.length ≤ n := by
+  simp only [LF.add, length_addC]; omega
+
+theorem length_smul_le {L : LF} {n : ℕ} (μ : ℤ) (hL : L.c.length ≤ n) : (L.smul μ).c.length ≤ n := by
+  simpa [LF.smul] using hL
+
+/-- **The decision by Li's Lemma 4.1.** On a sound node whose box passes `g2Check` with `D₁ = (2θ − 1) DEN` and
+`D₂ = (1 − γ) DEN`, groups `0`, `1` and the rest `2` in canonical order, the node's count is asymptotic. -/
+theorem Sound.asym_of_g2 {N : Node} (hk : 0 < N.k) (hm : 0 < N.m) {A : Rows N.k N.m} {E : ℤ} (hE : 0 < E)
+    {Γ : List Con} {B : Box} (h : Sound N A E Γ B) {items : List LF} (hI : ItemsOK A items)
+    {labels : List ℕ} (hlab : labels.length = N.k + N.m)
+    (hlt : ∀ t : Fin N.k ⊕ Fin N.m, labels.getD (canon t) 0 < 3)
+    {θ γ : ℝ} {D1 D2 : ℤ} (hD1 : (D1 : ℝ) = (2 * θ - 1) * DEN) (hD2 : (D2 : ℝ) = (1 - γ) * DEN)
+    (acts : List LF) (hacts : ∀ g ∈ acts, ∃ c ∈ Γ, c.L = g) (hcheck : g2Check D1 D2 E B acts items labels = true)
+    (hfit : ∀ L ∈ items, L.c.length ≤ B.length) (hfa : ∀ g ∈ acts, g.c.length ≤ B.length)
+    {c ρ : ℝ} (hc : 0 < c) (hc1 : c < 1) (hρ : 0 < ρ) (hρc : 12 * ρ < c) (hLi : ShortSieveLi.LiLemma41 θ γ ρ)
+    (hcond : ∀ C ∈ N.conds, ∃ u w : Fin N.k ⊕ Fin N.m, Sum.elim C.e C.f u ≠ Sum.elim C.e C.f w)
+    (hbig : ∀ᶠ x in atTop, ∀ v ∈ N.terms x, (∀ a, x ^ c < v.1 a) ∧ ∀ i, 1 < v.2 i) :
+    Asym θ ρ (fun x y => (N.count x y : ℝ)) := by
+  have hD := DEN_pos
+  unfold g2Check at hcheck
+  simp only [Bool.and_eq_true, decide_eq_true_eq] at hcheck
+  obtain ⟨⟨h1, h2⟩, h3⟩ := hcheck
+  set grp := grpOf labels 3 hlt with hgrp
+  set LM := grpLF items labels 0
+  set LN := grpLF items labels 1
+  have hfM : LM.c.length ≤ B.length := length_grpLF hfit labels 0
+  have hfN : LN.c.length ≤ B.length := length_grpLF hfit labels 1
+  have hreg : ∀ᶠ x in atTop, ∀ v ∈ N.terms x, x / 4 < (prodP v : ℝ) → (prodP v : ℝ) ≤ 2 * x →
+      |grpExp grp 0 (expo x v) - grpExp grp 1 (expo x v)| ≤ 2 * θ - 1 - 1 / DEN ∧
+        1 - γ + 1 / DEN ≤ grpExp grp 0 (expo x v) + grpExp grp 1 (expo x v) := by
+    filter_upwards [h.mem_K hE] with x hx v hv h4 h5
+    obtain ⟨-, hB, hH, hΓ⟩ := hx v hv h4 h5
+    have hacts' : ∀ g ∈ acts, g.val (cX A (expo x v)) (cH (expo x v)) ≤ 0 := fun g hg => by
+      obtain ⟨c, hc, rfl⟩ := hacts g hg
+      exact hΓ c hc
+    have eM : LM.val (cX A (expo x v)) (cH (expo x v)) = DEN * grpExp grp 0 (expo x v) :=
+      val_grpLF_eq hI hlab hlt 0 (expo x v)
+    have eN : LN.val (cX A (expo x v)) (cH (expo x v)) = DEN * grpExp grp 1 (expo x v) :=
+      val_grpLF_eq hI hlab hlt 1 (expo x v)
+    -- the three extremes at the point
+    have k1 := (LN.add (LM.smul (-1))).minD_le acts hB hH hacts'
+      (length_add_le hfN (length_smul_le _ hfM)) hfa
+    have k2 := (LM.add (LN.smul (-1))).minD_le acts hB hH hacts'
+      (length_add_le hfM (length_smul_le _ hfN)) hfa
+    have k3 := (LM.add LN).minD_le acts hB hH hacts' (length_add_le hfM hfN) hfa
+    simp only [LF.val_add, LF.val_smul] at k1 k2 k3
+    rw [eM, eN] at k1 k2 k3
+    -- strict integer checks leave a unit of margin
+    have i1 : -(LN.add (LM.smul (-1))).minD B E acts ≤ D1 - 1 := by omega
+    have i2 : -(LM.add (LN.smul (-1))).minD B E acts ≤ D1 - 1 := by omega
+    have i3 : D2 + 1 ≤ (LM.add LN).minD B E acts := by omega
+    have r1 : (-((LN.add (LM.smul (-1))).minD B E acts : ℝ)) ≤ D1 - 1 := by exact_mod_cast i1
+    have r2 : (-((LM.add (LN.smul (-1))).minD B E acts : ℝ)) ≤ D1 - 1 := by exact_mod_cast i2
+    have r3 : (D2 : ℝ) + 1 ≤ (LM.add LN).minD B E acts := by exact_mod_cast i3
+    rw [hD1] at r1 r2
+    rw [hD2] at r3
+    push_cast at k1 k2 k3
+    have e1 : 1 / (DEN : ℝ) * DEN = 1 := by field_simp
+    constructor
+    · rw [abs_le]
+      constructor
+      · have : (grpExp grp 1 (expo x v) - grpExp grp 0 (expo x v)) * DEN ≤ (2 * θ - 1 - 1 / DEN) * DEN := by
+          nlinarith
+        have := le_of_mul_le_mul_right this hD
+        linarith
+      · have : (grpExp grp 0 (expo x v) - grpExp grp 1 (expo x v)) * DEN ≤ (2 * θ - 1 - 1 / DEN) * DEN := by
+          nlinarith
+        exact le_of_mul_le_mul_right this hD
+    · have : (1 - γ + 1 / DEN) * DEN ≤ (grpExp grp 0 (expo x v) + grpExp grp 1 (expo x v)) * DEN := by
+        nlinarith
+      exact le_of_mul_le_mul_right this hD
+  exact ShortSieveLi.abs_count_sub_le_G2_eps N hk hm hc hc1 hρ hρc (one_div_pos.2 hD) hLi hcond hbig grp hreg
+
 end ShortSieveCert
 
 #print axioms ShortSieveCert.isCompact_KSet
 #print axioms ShortSieveCert.Sound.mem_K
 #print axioms ShortSieveCert.val_grpLF_eq
 #print axioms ShortSieveCert.Sound.asym_of_tii
+#print axioms ShortSieveCert.Sound.asym_of_g2
