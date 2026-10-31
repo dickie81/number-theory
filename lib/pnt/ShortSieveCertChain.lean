@@ -588,12 +588,45 @@ theorem getD_runsF (e f : ℤ) (t : ℕ) :
         ite_eq_right Bool.false_ne_true]
       simp
 
-/-- One step of the programme with the run bounds of each start from `runsF`: as `dpStep`, the inner sum over the
-tails. -/
-def dpStepF (m : ℕ) (ms : List (ℤ × ℤ × Bool)) (e f : ℤ) (P : List ℕ) : List ℕ :=
+/-- A member on `[e, f)`: whether its range meets the interval, its factor there, and whether it is a sifting prime. -/
+def memAt (e f : ℤ) (x : ℤ × ℤ × Bool) : Bool × ℕ × Bool := (decide (x.1 < f ∧ e < x.2.1), clipM e f x, x.2.2)
+
+/-- `runsF` with the members' factors on the interval computed once (`memAt`). -/
+def runsG (e : ℤ) (t : ℕ) : ℕ → ℕ → ℕ → ℕ → List (Bool × ℕ × Bool) → List ℕ
+  | _, _, _, _, [] => []
+  | r, prod, q, n2, y :: ys =>
+    if y.1 then
+      let prod' := SieveCert.cdiv (prod * y.2.1) SC
+      let q' := SieveCert.cdiv (q * t) SC
+      let n2' := n2 + if y.2.2 then 1 else 0
+      min prod' (SieveCert.cdiv (mulDE e n2' q') (r + 1).factorial) :: runsG e t (r + 1) prod' q' n2' ys
+    else []
+
+theorem runsG_map (e f : ℤ) (t : ℕ) :
+    ∀ (ms : List (ℤ × ℤ × Bool)) (r prod q n2 : ℕ),
+      runsG e t r prod q n2 (ms.map (memAt e f)) = runsF e f t r prod q n2 ms
+  | [], _, _, _, _ => rfl
+  | x :: ms, r, prod, q, n2 => by
+    rw [List.map_cons, runsG, runsF]
+    by_cases hx : x.1 < f ∧ e < x.2.1
+    · have hm : (memAt e f x).1 = true := by simp [memAt, hx]
+      rw [ite_eq_left hm, ite_eq_left hx]
+      dsimp only
+      rw [runsG_map e f t ms]
+      rfl
+    · have hm : ¬(memAt e f x).1 = true := by simp [memAt, hx]
+      rw [ite_eq_right hm, ite_eq_right hx]
+
+/-- One step of the programme over the members on the interval, `cs`, with `t = trF(e, f)`: as `dpStep`, the inner sum
+over the tails. -/
+def dpStepG (m : ℕ) (cs : List (Bool × ℕ × Bool)) (e : ℤ) (t : ℕ) (P : List ℕ) : List ℕ :=
   (List.range (m + 1)).map fun j => P.getD j 0 +
-    (List.zipWith (fun rb q => SieveCert.cdiv (rb * q) SC) (runsF e f (trF e f) 0 SC SC 0 (ms.drop j))
-      (P.drop (j + 1))).sum
+    (List.zipWith (fun rb q => SieveCert.cdiv (rb * q) SC) (runsG e t 0 SC SC 0 (cs.drop j)) (P.drop (j + 1))).sum
+
+/-- One step of the programme with the run bounds of each start from `runsG`, the members' factors and `trF(e, f)`
+computed once. -/
+def dpStepF (m : ℕ) (ms : List (ℤ × ℤ × Bool)) (e f : ℤ) (P : List ℕ) : List ℕ :=
+  dpStepG m (ms.map (memAt e f)) e (trF e f) P
 
 /-- The programme with the steps `dpStepF`. -/
 def dpRunF (m : ℕ) (ms : List (ℤ × ℤ × Bool)) : ℤ → List ℤ → List ℕ → List ℕ
@@ -618,8 +651,9 @@ theorem cdiv_mul_zero (b c : ℕ) : SieveCert.cdiv (b * 0) c = 0 := by rw [mul_z
 /-- **The incremental step is the step**, for the members of the chain's ranges. -/
 theorem dpStepF_eq (lo hi : ℕ → ℤ) (w : ℕ → Bool) (m : ℕ) (e f : ℤ) (P : List ℕ) :
     dpStepF m ((List.range m).map fun i => (lo i, hi i, w i)) e f P = dpStep m (rbZ lo hi w e f) P := by
-  unfold dpStepF dpStep
+  unfold dpStepF dpStepG dpStep
   refine List.map_congr_left fun j hj => ?_
+  rw [← List.map_drop, runsG_map]
   rw [List.mem_range] at hj
   congr 1
   set ms := (List.range m).map fun i => (lo i, hi i, w i) with hms
