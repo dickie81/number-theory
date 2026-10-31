@@ -140,7 +140,11 @@ The plan, with what is done:
    interval: its rough cofactor is counted with Buchstab's `ω` there, its primes by Mertens' sums on a box, and a
    second rough item, as in the role reversals, by the reciprocals of rough numbers (`ShortSieveDrop`, done). The
    root's Type I sums, `S(A, x^{ν(0)})` and `Σ_{p₁} S(A_{p₁}, x^{ν(α₁)})` with its level varying with `p₁`, follow
-   from Lemma 3.1 on blocks of `p₁` between two constant levels (`ShortSieveRoot`, done).
+   from Lemma 3.1 on blocks of `p₁` between two constant levels (`ShortSieveRoot`, done). Li's identity holds exactly
+   in any interval (`ShortSieveTop`), and with the root terms it turns a lower bound
+   `Σ₃(A) ≥ (y/x^{1−ρ}) Σ₃(B) − (L + ε) y/log x` into `π(x) − π(x − y) ≥ (1 − L − ε) y/log x`
+   (`ShortSieveLower.primes_lower`, done). What remains is that bound for `Σ₃` with `L = 2A + C`, from the
+   certificate.
 4. **The certificate.** Kernel-checked bounds for region A and the region-C terms at the chosen θ, with Li's
    predicates in exact arithmetic on cells, in the manner of the Linnik certificate (`SieveCert`). The terms reach
    dimension 8, so the cost of the cells is the main question.
