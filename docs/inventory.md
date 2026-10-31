@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 945 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 951 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 85 | 199 |
-| `lib/pnt` | 206 | 653 |
+| `lib/pnt` | 207 | 659 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
 
@@ -619,6 +619,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LeastNonresidue.exists_nonsquare_le`: Vinogradov's least quadratic nonresidue conjecture, in Ankeny's form
 - `LeastNonresidue.exists_nonsquare_le_rpow_of`: `n(p) ≤ C₀(13/δ)^{13}p^δ` from `n(p) ≤ C₀(log p)^{13}`
 - `LeastNonresidue.exists_nonsquare_le_rpow`: `n(p) ≪_δ p^δ`
+
+#### `LeastPrimitiveRoot`: The least primitive root
+
+- `LeastPrimitiveRoot.norm_sum_primRoot_sub_le`: The prime powers that are primitive roots
+- `LeastPrimitiveRoot.exists_prime_primRoot_le`: The least prime primitive root
+- `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow`: The least prime primitive root is at most `q^ε`
+- `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_prime`: The least prime primitive root mod a prime
+- `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow`: The least prime primitive root mod a prime power
+- `LeastPrimitiveRoot.exists_prime_primRoot_le_safe`: Safe primes
 
 #### `Linnik22000E`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 and its certificate at `n = 272`
 
