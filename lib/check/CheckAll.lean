@@ -199,6 +199,9 @@ import ZetaHuxley
 import AlmostAllPrimes
 import ZetaGMDensity
 import BohrLandauCore
+import ShortSieveThree
+import ShortSieveCertDrop2
+import ShortSieveCertCheck
 import SmallPrimes
 import ClassNumberBound
 import Madelung
@@ -979,6 +982,73 @@ nonzero and automorphic on `Γ_2`. -/
 #print axioms Eis.fBound_sep
 #print axioms Eis.thetaL_ne_zero
 #print axioms Eis.isAut_thS_Gam2
+
+/- R. Li's primes in short intervals at `θ = 13/25`, in progress (`formalisations/short-intervals.md`): the lower
+bound for primes from loss bounds on the certificate's root cells, and the certificate's decisions. -/
+#print axioms ShortSieveThree.primes_of_cells
+#print axioms ShortSieveCert.Sound.OK_of_out
+#print axioms ShortSieveCert.Sound.cut_lt
+#print axioms ShortSieveCert.Sound.cut_ge
+#print axioms ShortSieveCert.Sound.asym_of_tii
+#print axioms ShortSieveCert.Sound.asym_of_g2
+#print axioms ShortSieveCert.Sound.buch
+#print axioms ShortSieveCert.count_cons_of_implied
+#print axioms ShortSieveCert.itemsOK_std
+#print axioms ShortSieveCert.buchRows_std
+#print axioms ShortSieveDrop.count_le_drop1
+#print axioms ShortSieveDrop.count_le_drop2
+#print axioms ShortSieveBuch.count_buchstab
+#print axioms ShortSieveBuch.count_rev
+#print axioms ShortSieveTypeI.abs_count_sub_le_typeI
+#print axioms ShortSieveTree.OK_sub
+#print axioms ShortSieveTree.OK_of_asym
+#print axioms ShortSieveTree.OK_mono
+#print axioms ShortSieveTree.count_split
+#print axioms ShortSieveCert.OK_of_split
+#print axioms ShortSieveCert.CondsOK.split
+#print axioms ShortSieveCert.StdInv.cons
+#print axioms ShortSieveCert.Sound.OK_of_dec
+#print axioms ShortSieveCert.Sound.std_child
+#print axioms ShortSieveCert.StdInv.child
+#print axioms ShortSieveCert.CondsOK.child
+#print axioms ShortSieveCert.Sound.OK_of_drop
+#print axioms ShortSieveCert.omegaC_le_omUpK
+#print axioms ShortSieveCert.Sound.OK_of_rev
+#print axioms ShortSieveCert.Sound.rev_child
+#print axioms ShortSieveCert.StdInv.rev
+#print axioms ShortSieveCert.CondsOK.rev
+#print axioms ShortSieveCert.StdInv.inv
+#print axioms ShortSieveCert.RevInv.inv
+#print axioms ShortSieveCert.Inv.cons
+#print axioms ShortSieveCert.Sound.OK_of_decL
+#print axioms ShortSieveCert.Sound.last_child
+#print axioms ShortSieveCert.Inv.last
+#print axioms ShortSieveCert.CondsOK.last
+#print axioms ShortSieveCert.itemsOK_last
+#print axioms ShortSieveCert.count_swap
+#print axioms ShortSieveCert.Sound.swap
+#print axioms ShortSieveCert.Inv.swap
+#print axioms ShortSieveCert.CondsOK.swap
+#print axioms ShortSieveCert.itemsOK_swap
+#print axioms ShortSieveCert.itemsOK_rev
+#print axioms ShortSieveCert.Sound.OK_of_drop2
+#print axioms ShortSieveCert.cell_eq_std
+#print axioms ShortSieveCert.Sound.cell
+#print axioms ShortSieveCert.StdInv.cell
+#print axioms ShortSieveCert.CondsOK.cell
+#print axioms ShortSieveChain.chainSum_split
+#print axioms ShortSieveChain.decSum_le
+#print axioms ShortSieveChain.sum_filter_strictAnti
+#print axioms ShortSieveCert.dpRun_sound
+#print axioms ShortSieveCert.evLe_rbG
+#print axioms ShortSieveCert.Sound.OK_of_dropC
+#print axioms ShortSieveCert.chainDP_sound
+#print axioms ShortSieveChain.sum_le_two_chains
+#print axioms ShortSieveCert.Sound.OK_of_drop2Q
+#print axioms ShortSieveCert.Sound.OK_of_drop2C
+#print axioms ShortSieveCert.chainTwo_sound
+#print axioms ShortSieveCert.run_sound
+#print axioms ShortSieveCert.primes_of_certs
 
 /- Bridges to other parts of number theory and to physics, each named in `formalisations/`: the small primes generate
 `(ℤ/qℤ)ˣ`, and the least `k`-th power non-residue, from the half-plane; Gauss's class number problem with an explicit
