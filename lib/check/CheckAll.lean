@@ -196,6 +196,24 @@ import ZetaHuxley
 import AlmostAllPrimes
 import ZetaGMDensity
 import BohrLandauCore
+import SmallPrimes
+import ClassNumberBound
+import Madelung
+import LatticeCount
+import AngularResidue
+import LocalTeeth
+import BohrTorus
+import LSeriesLandau
+import HalfPlaneJoinsChar
+import KubotaEnergy
+import EulerGammaBinet
+import WindowForm
+import PoleRelax
+import PrimeRelax
+import PrimeRelax3
+import ParityRelax
+import ParityCert
+import CertInstances
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -948,3 +966,66 @@ nonzero and automorphic on `Γ_2`. -/
 #print axioms Eis.fBound_sep
 #print axioms Eis.thetaL_ne_zero
 #print axioms Eis.isAut_thS_Gam2
+
+/- Bridges to other parts of number theory and to physics, each named in `formalisations/`: the small primes generate
+`(ℤ/qℤ)ˣ`, and the least `k`-th power non-residue, from the half-plane; Gauss's class number problem with an explicit
+bound; the Madelung constant of the square lattice, from Jacobi's two-square theorem. -/
+#print axioms SmallPrimes.exists_prime_not_mem
+#print axioms SmallPrimes.closure_primes_eq_top
+#print axioms SmallPrimes.exists_prime_not_pow
+#print axioms ClassNumberBound.abs_discr_le
+#print axioms Madelung.lseries_coeff
+#print axioms Madelung.differentiableOn_rhs
+
+/- More bridges, each named in `formalisations/`: integer points in balls and `L(1, χ₋₄) = π/4` from them; the local
+densities of sums of two and four squares; Bohr's torus; Landau's theorem for Dirichlet series with nonnegative
+coefficients; the band `1/12 ≤ Re ρ ≤ 11/12` for every Dirichlet `L`-function, and the twin-form rates at `11/12`. -/
+#print axioms BallTower.count_div_pow_tendsto_ballVol
+#print axioms BallTower.counted_volume_max_five
+#print axioms AngularResidue.residue_angular
+#print axioms AngularResidue.LFunction_chi4_one
+#print axioms LocalTeeth.card_two_sq
+#print axioms LocalTeeth.card_four_sq
+#print axioms LocalTeeth.teeth_mod_prime
+#print axioms BohrTorus.eq_zero_of_sum_log
+#print axioms BohrTorus.tendsto_mean_character
+#print axioms BohrTorus.sum_norm_sq_torus
+#print axioms BohrTorus.prod_eq_iff_map_eq
+#print axioms BohrTorus.agree_not_rigid
+#print axioms BohrTorus.tendsto_mean_moment_rearrangements
+#print axioms LandauLaplace.LSeries_landau
+#print axioms LandauLaplace.LSeries_not_holomorphic_at_abscissa
+#print axioms HalfPlaneJoins.LFunction_band_eleven_twelfths
+#print axioms HalfPlaneJoins.chi4_rate_eleven_twelfths
+#print axioms HalfPlaneJoins.chi8_rate_eleven_twelfths
+#print axioms HalfPlaneJoins.QK4_rate_eleven_twelfths
+#print axioms HalfPlaneJoins.QC_rate_eleven_twelfths
+#print axioms HalfPlaneJoins.QKχ_rate_eleven_twelfths
+#print axioms HalfPlaneJoins.realRooted_rate_eleven_twelfths
+
+/- Kept with the bridges, each named in `formalisations/`: the invariant energy on `ℍ³`; Euler's constant to seven
+digits; and Weil positivity at small supports from arb certificates, a conditional result, with the window form and
+the linear algebra of its certificates. -/
+#print axioms Eis.lintegral_energy_actP
+#print axioms Eis.edens_automorphic
+#print axioms Electron.eulerMascheroni_bounds
+#print axioms WeilForm.weilQ_ge_pole
+#print axioms WeilForm.weilQ_ge_prime
+#print axioms WeilForm.weilQ_ge_prime3
+#print axioms WeilForm.weilQg_ge_both
+#print axioms CertInstances.weilQ_ge_of_cert'
+#print axioms CertInstances.weilQ_ge_of_certP'
+#print axioms WindowForm.posDef_of_cholesky
+#print axioms WindowForm.gram_pos
+#print axioms WindowForm.offline_negative
+#print axioms WindowForm.quadruple_sum
+#print axioms WindowForm.ghat_cos
+#print axioms WindowForm.ghat_pole
+#print axioms WindowForm.product_dd
+#print axioms WindowForm.hasDerivAt_uA
+#print axioms WindowForm.phi_u_trig
+#print axioms WindowForm.basis_trig
+#print axioms WeilForm.memLp_ind
+#print axioms WeilForm.ind_mul_ind
+#print axioms WeilForm.wP_zero
+#print axioms WeilForm.log_three_le

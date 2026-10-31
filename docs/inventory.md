@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 894 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 945 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 69 | 152 |
-| `lib/pnt` | 204 | 649 |
+| `lib/core` | 85 | 199 |
+| `lib/pnt` | 206 | 653 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
 
@@ -24,6 +24,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `AngularFamily.member_zero_eq`: The radial member is `ζ · L(χ₄)` ([note](../formalisations/weil-positivity.md))
 - `AngularFamily.rh_of_member_zero`: RH is in the family ([note](../formalisations/weil-positivity.md))
+
+#### `AngularResidue`: The residue of the radial member and `L(1, χ₋₄) = π/4`
+
+- `AngularResidue.residue_angular`: The residue of the radial member
+- `AngularResidue.LFunction_chi4_one`: `L(1, χ₋₄) = π/4`
 
 #### `BallTower`: The ball tower from integers and primes (formalised)
 
@@ -46,6 +51,20 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `BohrSphere.riemannHypothesis_iff_mem_sphere`: For every nonempty finite set of primes, RH says that every nontrivial zero lies on the unit sphere. ([note](../formalisations/weil-positivity.md))
 - `BohrSphere.riemannHypothesis_iff_tendsto`: The same in the limit. ([note](../formalisations/weil-positivity.md))
+
+#### `BohrTorus`: The Bohr torus: Vinogradov's orthogonality on the lift of a vertical line
+
+- `BohrTorus.eq_zero_of_sum_log`: The logarithms of distinct primes are linearly independent over `ℤ`
+- `BohrTorus.tendsto_mean_character`: The character means along the Bohr line
+- `BohrTorus.sum_norm_sq_torus`: Every point of the torus has the same norm
+- `BohrTorus.prod_eq_iff_map_eq`: The multiplicative system is rigid at every `ℓ`
+- `BohrTorus.agree_not_rigid`: The additive system is not rigid beyond its dimension
+- `BohrTorus.tendsto_mean_moment_rearrangements`: The limiting means of `|Σ_{p∈F} p^{−it}|^{2ℓ}` count the pairs of rearrangements
+
+#### `CertInstances`: The certificate theorems as instances of the weighted certificate
+
+- `CertInstances.weilQ_ge_of_cert'`: `PoleRelax.weilQ_ge_of_cert`, verbatim statement, as the `(K, N, T) = (2, 6, 3.033953)` instance.
+- `CertInstances.weilQ_ge_of_certP'`: `PrimeRelax.weilQ_ge_of_certP`, verbatim statement, as the `(K, N, T) = (3, 60, 5.098076)` instance.
 
 #### `Concave`: Pólya's theorem for even concave probes, with no representation hypothesis
 
@@ -107,6 +126,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Eis.fBound_gcd`: Heath-Brown's Lemma 2
 - `Eis.fBound_sep`: Heath-Brown's Lemma 10
 
+#### `EulerGammaBinet`: Euler's constant to seven digits, from Binet's formula
+
+- `Electron.eulerMascheroni_bounds`: Euler's constant to seven digits
+
 #### `ExplicitBridge`: The explicit-formula bridge: `weilQ` is the zero side of Weil's explicit formula
 
 - `WeilForm.weilQ_symbol`: The symbol form ([note](../formalisations/weil-positivity.md))
@@ -142,6 +165,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.rh_of_D_and_realRooted_proved`: §11 item 1 ⇒ RH with Hadamard's factorisation proved ([note](../formalisations/weil-positivity.md))
 
+#### `HalfPlaneJoinsChar`: The band for every `L(s, χ)` and the twin-form rates at `11/12`
+
+- `HalfPlaneJoins.LFunction_band_eleven_twelfths`: The band `|2 Re ρ − 1| ≤ 5/6` for every `L(s, χ)`, `χ ≠ 1`
+- `HalfPlaneJoins.chi4_rate_eleven_twelfths`: `L(s, χ₋₄)`'s twin form
+- `HalfPlaneJoins.chi8_rate_eleven_twelfths`: `L(s, χ₋₈)`'s twin form
+- `HalfPlaneJoins.QK4_rate_eleven_twelfths`: The twin form `2Q_ζ + Q_{χ₋₄}` of `ζ·ζ_{ℚ(i)}`
+- `HalfPlaneJoins.QC_rate_eleven_twelfths`: Every good character
+- `HalfPlaneJoins.QKχ_rate_eleven_twelfths`: The twin form `2Q_ζ + Q_χ` of `ζ·L(χ)`, every good character
+- `HalfPlaneJoins.realRooted_rate_eleven_twelfths`: Every real-rooted monotone base probe
+
 #### `HalfPlaneJoinsFinal`: The half-plane's joins with no hypothesis
 
 - `HalfPlaneJoins.zeta_band_eleven_twelfths`: Every nontrivial zero of `ζ` has `|2 Re ρ − 1| ≤ 5/6`.
@@ -172,6 +205,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Eis.summable_eisTerm`: Absolute convergence ([note](../formalisations/cubic-theta.md))
 - `Eis.eis1_slAct`: Automorphy ([note](../formalisations/cubic-theta.md))
 
+#### `KubotaEnergy`: The conformality of the action, and the invariant energy
+
+- `Eis.lintegral_energy_actP`: The energy `∫ v²·edens(F′) dz dv/v³` is invariant under `SL_2(ℂ)`
+- `Eis.edens_automorphic`: The energy density of an automorphic function is invariant
+
 #### `KubotaThetaInv`: θ is invariant under `SL_2(ℤ)`
 
 - `Eis.isAut_thS_Gam2`: θ's Fourier series is automorphic on `Γ_2 = SL_2(ℤ)Γ_1(3)` ([note](../formalisations/cubic-theta.md))
@@ -185,10 +223,31 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Eis.kubotaTheta`: The display `KubotaTheta`, proved *paper* ([note](../formalisations/cubic-theta.md))
 - `Eis.ne_zero_of_re_gt_eleven_twelfths`: The half-plane ([note](../formalisations/openai-half-plane.md))
 
+#### `LSeriesLandau`: Landau's theorem for Dirichlet series with nonnegative coefficients
+
+- `LandauLaplace.LSeries_landau`: Landau's theorem for L-series with nonnegative coefficients
+- `LandauLaplace.LSeries_not_holomorphic_at_abscissa`: An L-series with nonnegative coefficients is singular at the real point of its abscissa
+
+#### `LatticeCount`: The ball tower from counting integer points
+
+- `BallTower.count_div_pow_tendsto_ballVol`: Same statement by radius
+- `BallTower.counted_volume_max_five`: The counted volume (the limit of `latticeCount n R / Rⁿ`) is largest in dimension 5.
+
 #### `Limit`: Step (iii): Theorem 1bu(ii)'s limit shape, and the chain to `RiemannHypothesis`
 
 - `WeilForm.rh_of_pairing_and_realRooted`: 1bu(ii) + item 6, assembled ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_D_and_realRooted`: Theorem 1bu(ii) + item 6 in the paper's own terms ([note](../formalisations/weil-positivity.md))
+
+#### `LocalTeeth`: The teeth, one prime at a time
+
+- `LocalTeeth.card_two_sq`: 2D teeth mod `p`, nonzero shell
+- `LocalTeeth.card_four_sq`: 4D teeth mod `p`, nonzero shell
+- `LocalTeeth.teeth_mod_prime`: At a prime `p`
+
+#### `Madelung`: The Madelung constant of the square lattice
+
+- `Madelung.lseries_coeff`: The alternating lattice sum of the square lattice
+- `Madelung.differentiableOn_rhs`: The continuation
 
 #### `MertensOmega`: Mertens and Liouville: one-sided bounds give zero-free half-planes
 
@@ -201,6 +260,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Orthogonality.tendsto_mean_sq_norm_primeSum`: The radius is the root mean square of the prime sum
 - `Orthogonality.pythagoras_lpGauge_iff`: Orthogonality forces `p = 2`
 
+#### `ParityCert`: Weil positivity in both parity sectors, as far as the relaxation reaches
+
+- `WeilForm.log_three_le`
+- `WeilForm.weilQg_ge_both`: Weil positivity for every real `g`
+
 #### `ParityCont`: The parity gap by continuation in the support
 
 - `WeilForm.rh_of_no_crossing`: RH from no crossing ([note](../formalisations/weil-positivity.md))
@@ -208,6 +272,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `ParityGap`: Real zeros from the parity gap
 
 - `WeilForm.rh_of_parity_gap`: RH from the parity gap ([note](../formalisations/weil-positivity.md))
+
+#### `ParityRelax`: The relaxation for both parities and every prime power below the support
+
+- `WeilForm.wP_zero`
 
 #### `ParitySplit`: Weil's form splits by parity: positivity for every real `g`
 
@@ -223,6 +291,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.bil_zero_sum`: The bilinear Weil form is the bilinear zero sum ([note](../formalisations/weil-positivity.md))
 
+#### `PoleRelax`: Past `λ₀ = 0`: the pole term through a finite relaxation
+
+- `WeilForm.memLp_ind`
+- `WeilForm.ind_mul_ind`
+- `WeilForm.weilQ_ge_pole`: Weil positivity with the pole term, for every support `0 < a ≤ 1/4`
+
 #### `Positivity`: The pole-free form `Q₀`: existence, one sign, uniqueness
 
 - `WeilForm.weilQ0_abs_le`: Beurling–Deny for `Q₀` ([note](../formalisations/weil-positivity.md))
@@ -233,6 +307,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PsiOmega.hadamard_chi4`: The Hadamard product for `L(s, χ₄)`
 - `PsiOmega.race_three_half`: The race mod 3
 - `PsiOmega.race_eight_half`: The race mod 8
+
+#### `PrimeRelax`: Weil positivity past the first prime: every support `2a ≤ 0.8`
+
+- `WeilForm.weilQ_ge_prime`: Weil positivity through the first prime
+
+#### `PrimeRelax3`: Weil positivity up to the second prime: every support `2a ≤ 1.0986 < log 3`
+
+- `WeilForm.weilQ_ge_prime3`: Weil positivity up to the second prime
 
 #### `PrimeSide`: §11 item 1, restated with prime-side hypotheses only
 
@@ -371,6 +453,19 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilTwinGeneral.rh_grh_iff_twins_Q7`: `ζ_{ℚ(√−7)}`. ([note](../formalisations/weil-positivity.md))
 - `WeilTwinGeneral.rh_grh_iff_twins_Q4`: The theorem recovered as an instance. ([note](../formalisations/weil-positivity.md))
 
+#### `WindowForm`: The prime-side window form: its algebra, its certification logic, and the counterexample mechanism
+
+- `WindowForm.ghat_cos`: The window basis transform
+- `WindowForm.ghat_pole`: The pole value
+- `WindowForm.product_dd`: Products of transforms are divided differences
+- `WindowForm.hasDerivAt_uA`: On the diagonal, the divided difference becomes the `A`-derivative of `u_A = A c/(s − A)`, which is `c s/(s − A)²`.
+- `WindowForm.phi_u_trig`: The prime term's trigonometric reduction
+- `WindowForm.basis_trig`: At the basis frequencies `ω_k = kπ/a`
+- `WindowForm.posDef_of_cholesky`: A Cholesky certificate
+- `WindowForm.gram_pos`: A positive-definite Gram matrix makes the form strictly positive on every nonzero combination of the basis
+- `WindowForm.quadruple_sum`: The off-line quadruple.
+- `WindowForm.offline_negative`: The mechanism of positivity loss
+
 #### `XiBounds`: The order of `Ξ`, from Riemann's theta kernel
 
 - `WeilForm.rh_of_D_and_realRooted_final`: Roadmap item 1, final form ([note](../formalisations/weil-positivity.md))
@@ -412,6 +507,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ChiUniform.logDeriv_LFunction_right`: `‖L′/L(s, χ)‖ ≤ −ζ′/ζ(3/2)` on `Re s ≥ 3/2` (a step of `psiChi_le_uniform_of`).
 - `ChiUniform.psiChi_le_uniform_of`: `ψ(x, χ)` uniformly in the modulus, from the constants of `sum_le_uniform`
 - `ChiUniform.psiChi_le_uniform`: `ψ(x, χ)` uniformly in the modulus
+
+#### `ClassNumberBound`: Gauss's class number problem, with an explicit bound
+
+- `ClassNumberBound.abs_discr_le`: Gauss's class number problem, with an explicit bound
 
 #### `DetectEM`: Zero detection by Euler–Maclaurin
 
@@ -1551,6 +1650,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveWeight.exists_mellin_bound`: The Mellin transform of `ψ_P`, uniformly in `P ≥ 4`
 - `SieveWeight.norm_Sw_wy_le`: Lemma 1 for the weights `ψ_P`, in `Λ` form, uniformly in `P ≥ 4`
 - `SieveWeight.norm_Sp_le`: Lemma 1 for primes *paper*
+
+#### `SmallPrimes`: The small primes generate the units mod `q`
+
+- `SmallPrimes.exists_prime_not_mem`: The least prime outside a proper subgroup
+- `SmallPrimes.closure_primes_eq_top`: The small primes generate `(ℤ/qℤ)ˣ`
+- `SmallPrimes.exists_prime_not_pow`: The least `k`-th power non-residue
 
 #### `SmoothPerron`: A smoothed Perron formula for a general Dirichlet series
 
