@@ -45,6 +45,7 @@ import LinnikLindelof
 import LinnikSubconvex
 import MertensChi
 import ShortCharSums
+import LeastPrimitiveRoot
 import LinnikAFE
 import LinnikFourth
 import LinnikIngham
@@ -757,6 +758,12 @@ import CertInstances
 #print axioms ShortCharSums.norm_sum_le_rpow
 #print axioms ShortCharSums.norm_sum_le_mul
 #print axioms ShortCharSums.card_squares_sub_le
+#print axioms LeastPrimitiveRoot.norm_sum_primRoot_sub_le
+#print axioms LeastPrimitiveRoot.exists_prime_primRoot_le
+#print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_rpow
+#print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_prime
+#print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow
+#print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_safe
 #print axioms LinnikGamma.norm_gammaFactor_ratio_le
 #print axioms LinnikGamma.verticalIntegral_sub_eq
 #print axioms LinnikGamma.afe
