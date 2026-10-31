@@ -1,4 +1,5 @@
 import ShortSieveCertCell
+import ShortSieveCertChain
 import ShortSieveCertDrop2
 
 /-!
@@ -240,9 +241,6 @@ def g2D1 : ℤ := 4 * 2 ^ 30
 /-- Lemma 4.1's `D₂ = (1 − γ) DEN` at `γ = 2/25`. -/
 def g2D2 : ℤ := 92 * 2 ^ 30
 
-/-- The fixed-point unit of the losses, `2^{50}`. -/
-def SC : ℕ := 2 ^ 50
-
 /-- The active constraints' forms, by their positions among the constraints. -/
 def actsOf (Γ : List Con) (acts : List ℕ) : List LF := acts.map fun i => (Γ.getD i ⟨LF.zero, false⟩).L
 
@@ -253,29 +251,43 @@ def actsOK (Γ : List Con) (acts : List ℕ) (n : ℕ) : Bool :=
 /-- The weight of a form on the item at the canonical position `p`, from the shape's rows. -/
 def wtN (S : Shp) (L : LF) (p : ℕ) : ℤ := ((List.range L.c.length).map fun j => L.c.getD j 0 * S.AN j p).sum - L.ce
 
-/-- A product in units `1/SC`, each step rounded up. -/
-def prodSC (fs : List ℕ) : ℕ := fs.foldl (fun acc f => SieveCert.cdiv (acc * f) SC) SC
+/-- The constraints order the primes of a standard node with `k + 1` primes: they hold `ordCon j` for `j < k`. -/
+def ordOK (Γ : List Con) (k : ℕ) : Bool :=
+  (List.range k).all fun j => Γ.any fun C => C.strict && decide (C.L.c0 = 0) && decide (C.L.ce = 0) &&
+    decide (C.L.c = List.replicate j 0 ++ [-1, 1])
 
-/-- The factor `trB(lo, hi)` of a prime of a dropped node in units `1/SC`, rounded up. -/
-def trF (lo hi : ℤ) : ℕ := SieveCert.cdiv (SC * (hi.toNat - lo.toNat) * (hi.toNat + lo.toNat)) (2 * lo.toNat * hi.toNat)
+/-- Consecutive duplicates removed. -/
+def dedupC : List ℤ → List ℤ
+  | a :: b :: l => if a = b then dedupC (b :: l) else a :: dedupC (b :: l)
+  | l => l
 
-/-- The factor `DEN/lo − DEN/hi` of a sifting prime of a dropped node in units `1/SC`, rounded up. -/
-def invF (lo hi : ℤ) : ℕ := SieveCert.cdiv (SC * DEN * (hi.toNat - lo.toNat)) (lo.toNat * hi.toNat)
+/-- The breakpoints of a dropped standard node: the ends of its primes' ranges, in increasing order. -/
+def stdBps (k : ℕ) (B : Box) : List ℤ :=
+  dedupC ((((List.range (k + 1)).map fun j => (B.getD j (0, 0)).1) ++
+    (List.range (k + 1)).map fun j => (B.getD j (0, 0)).2).insertionSort (· ≤ ·))
 
-/-- The factor of the prime `j` of a dropped standard node with `k + 1` primes. -/
-def stdFactor (k : ℕ) (B : Box) (j : ℕ) : ℕ :=
-  if j = k then invF (B.getD j (0, 0)).1 (B.getD j (0, 0)).2 else trF (B.getD j (0, 0)).1 (B.getD j (0, 0)).2
+/-- **The chain bound of a dropped standard node**, units `1/SC`: the programme over its breakpoints with the run
+bounds `rbStd`, if the breakpoints are positive, increase and hold the primes' ranges. -/
+def chainStd (k : ℕ) (B : Box) : Option ℕ :=
+  match stdBps k B with
+  | [] => none
+  | e :: rest =>
+    if 0 < e ∧ rest.all (fun f => decide (0 < f)) = true ∧ incr e rest = true ∧
+        (List.range (k + 1)).all (fun j => decide (e ≤ (B.getD j (0, 0)).1 ∧
+          (B.getD j (0, 0)).2 ≤ lastD e rest)) = true then
+      some ((dpRun (k + 1) (rbStd B k) e rest (List.replicate (k + 1) 0 ++ [SC])).getD 0 0)
+    else none
 
 /-- **The dropped standard node's loss**, units `1/SC`: `ω*`'s bound on the box (`omUpK`, units `1/K`) times the
-primes' factors, if the box's lower ends are positive and `DEN − Σ_j X_j ≥ 0` on it. -/
+chain bound of its primes, if the box's lower ends are positive, `DEN − Σ_j X_j ≥ 0` on it and the constraints order
+the primes. -/
 def dropStd (E : ℤ) (k : ℕ) (Γ : List Con) (B : Box) (acts : List ℕ) : Option ℕ :=
   if actsOK Γ acts B.length = true ∧ k + 1 ≤ B.length ∧
       (List.range (k + 1)).all (fun j => decide (0 < (B.getD j (0, 0)).1 ∧
         (B.getD j (0, 0)).1 ≤ (B.getD j (0, 0)).2)) = true ∧
-      0 ≤ (numF k).minD B E (actsOf Γ acts) then
-    some (SieveCert.cdiv (omUpK ((numF k).minD B E (actsOf Γ acts)).toNat (B.getD k (0, 0)).2.toNat
-      ((numF k).maxD B E (actsOf Γ acts)).toNat (B.getD k (0, 0)).1.toNat *
-        prodSC ((List.range (k + 1)).map (stdFactor k B))) SieveCert.K)
+      0 ≤ (numF k).minD B E (actsOf Γ acts) ∧ ordOK Γ k = true then
+    (chainStd k B).map fun D => SieveCert.cdiv (omUpK ((numF k).minD B E (actsOf Γ acts)).toNat
+      (B.getD k (0, 0)).2.toNat ((numF k).maxD B E (actsOf Γ acts)).toNat (B.getD k (0, 0)).1.toNat * D) SieveCert.K
   else none
 
 /-- The item in the coordinate `0` of a node with two rough items. -/
@@ -478,70 +490,53 @@ theorem Inv.std {k : ℕ} {conds : List (Cond (k + 1) 1)} (h : Inv (std k conds)
 
 /-! ### The drops' losses in fixed point -/
 
-theorem SC_pos : (0 : ℝ) < SC := by norm_num [SC]
+theorem ordOK_mem {Γ : List Con} {k : ℕ} (h : ordOK Γ k = true) : ∀ j < k, ordCon j ∈ Γ := by
+  intro j hj
+  simp only [ordOK, List.all_eq_true, List.mem_range, List.any_eq_true, Bool.and_eq_true,
+    decide_eq_true_eq] at h
+  obtain ⟨C, hC, ⟨⟨hs, h0⟩, he⟩, hc⟩ := h j hj
+  obtain ⟨⟨c0, c, ce⟩, st⟩ := C
+  simp only at hs h0 he hc
+  subst hs h0 he hc
+  exact hC
 
-theorem foldl_SC_ge : ∀ (fs : List ℕ) (acc : ℕ),
-    (acc : ℝ) / SC * (fs.map fun f : ℕ => (f : ℝ) / SC).prod ≤
-      ((fs.foldl (fun acc f => SieveCert.cdiv (acc * f) SC) acc : ℕ) : ℝ) / SC
-  | [], acc => by simp
-  | f :: fs, acc => by
-    rw [List.foldl_cons, List.map_cons, List.prod_cons]
-    refine le_trans ?_ (foldl_SC_ge fs _)
-    have h := SieveOmegaB.div_le_cdiv (acc * f) SC (by norm_num [SC])
-    push_cast at h
-    have hp : 0 ≤ (fs.map fun f : ℕ => (f : ℝ) / SC).prod := List.prod_nonneg fun x hx => by
-      obtain ⟨f', -, rfl⟩ := List.mem_map.1 hx
-      positivity
-    have hS := SC_pos
-    calc (acc : ℝ) / SC * ((f : ℝ) / SC * (fs.map fun f : ℕ => (f : ℝ) / SC).prod)
-        = ((acc : ℝ) * f / SC) / SC * (fs.map fun f : ℕ => (f : ℝ) / SC).prod := by ring
-      _ ≤ (SieveCert.cdiv (acc * f) SC : ℝ) / SC * (fs.map fun f : ℕ => (f : ℝ) / SC).prod := by gcongr
-
-/-- **The fixed-point product** bounds the product of the factors. -/
-theorem prod_le_prodSC (fs : List ℕ) : (fs.map fun f : ℕ => (f : ℝ) / SC).prod ≤ (prodSC fs : ℝ) / SC := by
-  have h := foldl_SC_ge fs SC
-  rw [div_self SC_pos.ne', one_mul] at h
-  exact h
-
-theorem list_prod_map_range (g : ℕ → ℝ) : ∀ n : ℕ, ((List.range n).map g).prod = ∏ i ∈ range n, g i
-  | 0 => by simp
-  | n + 1 => by rw [List.range_succ, List.map_append, List.prod_append, list_prod_map_range g n, prod_range_succ]; simp
-
-theorem trB_le_trF {lo hi : ℤ} (hlo : 0 < lo) (hlh : lo ≤ hi) : trB lo hi ≤ (trF lo hi : ℝ) / SC := by
-  have hl : ((lo.toNat : ℕ) : ℝ) = lo := by exact_mod_cast Int.toNat_of_nonneg hlo.le
-  have hh : ((hi.toNat : ℕ) : ℝ) = hi := by exact_mod_cast Int.toNat_of_nonneg (hlo.le.trans hlh)
-  have hlh' : lo.toNat ≤ hi.toNat := by omega
-  have hl0 : 0 < lo.toNat := by omega
-  have hh0 : 0 < hi.toNat := by omega
-  have hpos : 0 < 2 * lo.toNat * hi.toNat := by positivity
-  have h := SieveOmegaB.div_le_cdiv (SC * (hi.toNat - lo.toNat) * (hi.toNat + lo.toNat)) (2 * lo.toNat * hi.toNat)
-    hpos
-  rw [Nat.cast_mul, Nat.cast_mul, Nat.cast_sub hlh', Nat.cast_add, Nat.cast_mul, Nat.cast_mul, hl, hh] at h
-  unfold trF
-  have hS := SC_pos
-  rw [le_div_iff₀ hS]
-  refine le_trans (le_of_eq ?_) h
-  unfold trB
-  push_cast
-  field_simp
-
-theorem inv_le_invF {lo hi : ℤ} (hlo : 0 < lo) (hlh : lo ≤ hi) :
-    (DEN : ℝ) / lo - DEN / hi ≤ (invF lo hi : ℝ) / SC := by
-  have hl : ((lo.toNat : ℕ) : ℝ) = lo := by exact_mod_cast Int.toNat_of_nonneg hlo.le
-  have hh : ((hi.toNat : ℕ) : ℝ) = hi := by exact_mod_cast Int.toNat_of_nonneg (hlo.le.trans hlh)
-  have hlh' : lo.toNat ≤ hi.toNat := by omega
-  have hl0 : 0 < lo.toNat := by omega
-  have hh0 : 0 < hi.toNat := by omega
-  have hpos : 0 < lo.toNat * hi.toNat := by positivity
-  have h := SieveOmegaB.div_le_cdiv (SC * DEN * (hi.toNat - lo.toNat)) (lo.toNat * hi.toNat) hpos
-  rw [Nat.cast_mul, Nat.cast_mul, Nat.cast_sub hlh', Nat.cast_mul, hl, hh] at h
-  unfold invF
-  have hS := SC_pos
-  have hlo' : (0 : ℝ) < lo := by exact_mod_cast hlo
-  have hhi' : (0 : ℝ) < hi := by exact_mod_cast hlo.trans_le hlh
-  rw [le_div_iff₀ hS]
-  refine le_trans (le_of_eq ?_) h
-  field_simp
+/-- **The chain bound is sound**: the chain sum of the box's primes below its last breakpoint has the limit superior
+at most the bound. -/
+theorem chainStd_sound {k : ℕ} {B : Box} {D : ℕ} (hc : chainStd k B = some D) :
+    ∃ eK : ℤ, (∀ j < k + 1, (B.getD j (0, 0)).2 ≤ eK) ∧
+      SieveRough.EvLe (fun x => ShortSieveChain.chainSum (ShortSieveChain.sfx (stdMem B k x) (k + 1) 0) (thr x eK))
+        (D / SC) := by
+  unfold chainStd at hc
+  split at hc
+  · exact absurd hc (by simp)
+  · rename_i e rest _
+    split_ifs at hc with hcheck
+    obtain rfl := (Option.some.inj hc).symm
+    obtain ⟨he, hpos, hinc, hrng⟩ := hcheck
+    simp only [List.all_eq_true, decide_eq_true_eq, List.mem_range] at hpos hrng
+    refine ⟨lastD e rest, fun j hj => (hrng j hj).2, ?_⟩
+    refine dpRun_sound (stdMem_nonneg B k) (fun e f he hef j _ r _ hr2 => evLe_rbStd B k he hef hr2) e rest _ he
+      hpos hinc (fun j hj => ?_) 0 (Nat.zero_le _)
+    by_cases hjm : j < k + 1
+    · have hP0 : (List.replicate (k + 1) 0 ++ [SC]).getD j 0 = 0 := by
+        rw [List.getD_eq_getElem _ _ (by simp; omega), List.getElem_append_left (by simpa using hjm)]
+        simp
+      rw [hP0, Nat.cast_zero, zero_div]
+      refine fun δ hδ => ?_
+      filter_upwards [eventually_ge_atTop 1] with x hx
+      rw [ShortSieveChain.sfx_of_lt _ hjm, ShortSieveChain.chainSum_eq_zero fun p hp => ?_]
+      · linarith
+      obtain ⟨-, h1, -⟩ := SieveRough.mem_primesIn.1 hp
+      exact Nat.ceil_le.2 (le_trans (Real.rpow_le_rpow_of_exponent_le hx
+        (div_le_div_of_nonneg_right (by exact_mod_cast (hrng j hjm).1) DEN_pos.le)) h1)
+    · obtain rfl : j = k + 1 := by omega
+      have hP : (List.replicate (k + 1) 0 ++ [SC]).getD (k + 1) 0 = SC := by simp
+      rw [hP, div_self SC_pos.ne']
+      exact fun δ hδ => Eventually.of_forall fun x => by
+        dsimp only
+        rw [ShortSieveChain.sfx_of_le _ le_rfl]
+        simp only [ShortSieveChain.chainSum]
+        linarith
 
 /-- **The dropped standard node's loss is sound.** -/
 theorem dropStd_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) {E : ℤ} (hE : 0 < E) {k : ℕ}
@@ -550,8 +545,8 @@ theorem dropStd_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) {E : 
     OK (13 / 25) ρ 1 (fun x y => ((std k conds).count x y : ℝ)) (L / SC) := by
   unfold dropStd at hd
   split_ifs at hd with hcheck
-  obtain rfl := (Option.some.inj hd).symm
-  obtain ⟨hacts, hlen, hbox, hn0⟩ := hcheck
+  obtain ⟨D, hD, rfl⟩ := Option.map_eq_some_iff.1 hd
+  obtain ⟨hacts, hlen, hbox, hn0, hord⟩ := hcheck
   obtain ⟨ha1, ha2⟩ := acts_of_OK hacts
   simp only [List.all_eq_true, List.mem_range, decide_eq_true_eq] at hbox
   set a := (numF k).minD B E (actsOf Γ acts) with ha
@@ -574,52 +569,16 @@ theorem dropStd_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) {E : 
       have e2 : ((lo.toNat : ℕ) : ℝ) = lo := by exact_mod_cast Int.toNat_of_nonneg (by omega)
       rw [e2]
       exact h2.trans (div_le_div_of_nonneg_right e1 (by exact_mod_cast hlo0.le))
-  have hdrop := h.OK_of_drop hE hinv hlen (fun j hj => (hbox j hj).1) (fun j hj => (hbox j hj).2) ha1 ha2 hn0 hΩ0 hω
-    (θ := 13 / 25) hρ hρ25
-  refine OK_mono ?_ hdrop
-  -- the factors in fixed point
-  set P := prodSC ((List.range (k + 1)).map (stdFactor k B)) with hP
-  have hfac : ∀ j : Fin (k + 1), (if j = Fin.last k then (DEN : ℝ) / (B.getD j (0, 0)).1 - DEN / (B.getD j (0, 0)).2
-      else trB (B.getD j (0, 0)).1 (B.getD j (0, 0)).2) ≤ (stdFactor k B j : ℝ) / SC := by
-    intro j
-    obtain ⟨h1, h2⟩ := hbox j j.isLt
-    unfold stdFactor
-    by_cases hj : j = Fin.last k
-    · rw [ite_eq_left hj, ite_eq_left (by rw [hj]; rfl)]
-      exact inv_le_invF h1 h2
-    · rw [ite_eq_right hj, ite_eq_right (fun h' => hj (Fin.ext (by simpa using h')))]
-      exact trB_le_trF h1 h2
-  have hfac0 : ∀ j : Fin (k + 1), 0 ≤ (if j = Fin.last k then (DEN : ℝ) / (B.getD j (0, 0)).1 -
-      DEN / (B.getD j (0, 0)).2 else trB (B.getD j (0, 0)).1 (B.getD j (0, 0)).2) := by
-    intro j
-    obtain ⟨h1, h2⟩ := hbox j j.isLt
-    have h1' : (0 : ℝ) < (B.getD j (0, 0)).1 := by exact_mod_cast h1
-    have h2' : ((B.getD j (0, 0)).1 : ℝ) ≤ (B.getD j (0, 0)).2 := by exact_mod_cast h2
-    split_ifs
-    · have := div_le_div_of_nonneg_left DEN_pos.le h1' h2'
-      linarith
-    · unfold trB
-      have h3 : (0 : ℝ) ≤ ((B.getD j (0, 0)).2 - (B.getD j (0, 0)).1) := by linarith
-      have h4 : (0 : ℝ) ≤ ((B.getD j (0, 0)).2 + (B.getD j (0, 0)).1) := by linarith
-      have h5 : (0 : ℝ) < 2 * (B.getD j (0, 0)).1 * (B.getD j (0, 0)).2 :=
-        mul_pos (mul_pos two_pos h1') (by linarith)
-      exact div_nonneg (mul_nonneg h3 h4) h5.le
-  have hprod : (∏ j : Fin (k + 1), (if j = Fin.last k then (DEN : ℝ) / (B.getD j (0, 0)).1 -
-      DEN / (B.getD j (0, 0)).2 else trB (B.getD j (0, 0)).1 (B.getD j (0, 0)).2)) ≤ (P : ℝ) / SC := by
-    refine le_trans (Finset.prod_le_prod₀ (fun j _ => hfac0 j) fun j _ => hfac j) ?_
-    have e : (∏ j : Fin (k + 1), (stdFactor k B j : ℝ) / SC) =
-        (((List.range (k + 1)).map (stdFactor k B)).map fun f : ℕ => (f : ℝ) / SC).prod := by
-      rw [List.map_map, list_prod_map_range]
-      exact Fin.prod_univ_eq_prod_range (fun j => (stdFactor k B j : ℝ) / SC) (k + 1)
-    rw [e]
-    exact prod_le_prodSC _
-  have hc := SieveOmegaB.div_le_cdiv (omUpK a.toNat hi.toNat b.toNat lo.toNat * P) SieveCert.K (by norm_num [SieveCert.K])
-  push_cast at hc
+  obtain ⟨eK, heK, hP⟩ := chainStd_sound hD
   have hS := SC_pos
-  calc Ω * (∏ j : Fin (k + 1), (if j = Fin.last k then (DEN : ℝ) / (B.getD j (0, 0)).1 -
-        DEN / (B.getD j (0, 0)).2 else trB (B.getD j (0, 0)).1 (B.getD j (0, 0)).2))
-      ≤ Ω * ((P : ℝ) / SC) := mul_le_mul_of_nonneg_left hprod hΩ0
-    _ = ((omUpK a.toNat hi.toNat b.toNat lo.toNat : ℝ) * P / SieveCert.K) / SC := by rw [hΩ]; ring
+  have hdrop := h.OK_of_dropC hE hinv hlen (fun j hj => (hbox j hj).1) (ordOK_mem hord) ha1 ha2 hn0 hΩ0 hω heK
+    (by positivity) hP (θ := 13 / 25) hρ hρ25
+  refine OK_mono ?_ hdrop
+  have hc := SieveOmegaB.div_le_cdiv (omUpK a.toNat hi.toNat b.toNat lo.toNat * D) SieveCert.K
+    (by norm_num [SieveCert.K])
+  push_cast at hc
+  calc Ω * ((D : ℝ) / SC) = ((omUpK a.toNat hi.toNat b.toNat lo.toNat : ℝ) * D / SieveCert.K) / SC := by
+        rw [hΩ]; ring
     _ ≤ _ := div_le_div_of_nonneg_right hc hS.le
 
 /-- A sum over the primes with a property of their positions. -/

@@ -999,5 +999,12 @@ bound for primes from loss bounds on the certificate's root cells, and the certi
 #print axioms ShortSieveCert.Sound.cell
 #print axioms ShortSieveCert.StdInv.cell
 #print axioms ShortSieveCert.CondsOK.cell
+#print axioms ShortSieveChain.chainSum_split
+#print axioms ShortSieveChain.decSum_le
+#print axioms ShortSieveChain.sum_filter_strictAnti
+#print axioms ShortSieveCert.dpRun_sound
+#print axioms ShortSieveCert.evLe_rbStd
+#print axioms ShortSieveCert.Sound.OK_of_dropC
+#print axioms ShortSieveCert.chainStd_sound
 #print axioms ShortSieveCert.run_sound
 #print axioms ShortSieveCert.primes_of_certs
