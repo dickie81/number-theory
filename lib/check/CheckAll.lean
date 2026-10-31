@@ -209,6 +209,7 @@ import Madelung
 import LatticeCount
 import AngularResidue
 import LocalTeeth
+import HasseEisenstein
 import BohrTorus
 import LSeriesLandau
 import HalfPlaneJoinsChar
@@ -1065,7 +1066,8 @@ bound; the Madelung constant of the square lattice, from Jacobi's two-square the
 #print axioms Madelung.differentiableOn_rhs
 
 /- More bridges, each named in `formalisations/`: integer points in balls and `L(1, χ₋₄) = π/4` from them; the local
-densities of sums of two and four squares; Bohr's torus; Landau's theorem for Dirichlet series with nonnegative
+densities of sums of two and four squares; Hasse's bound for the curves `y² = x³ + D`, whose Frobenius is an
+Eisenstein integer; Bohr's torus; Landau's theorem for Dirichlet series with nonnegative
 coefficients; the band `1/12 ≤ Re ρ ≤ 11/12` for every Dirichlet `L`-function, and the twin-form rates at `11/12`. -/
 #print axioms BallTower.count_div_pow_tendsto_ballVol
 #print axioms BallTower.counted_volume_max_five
@@ -1074,6 +1076,9 @@ coefficients; the band `1/12 ≤ Re ρ ≤ 11/12` for every Dirichlet `L`-functi
 #print axioms LocalTeeth.card_two_sq
 #print axioms LocalTeeth.card_four_sq
 #print axioms LocalTeeth.teeth_mod_prime
+#print axioms HasseEisenstein.card_points_of_mod_three_eq_two
+#print axioms HasseEisenstein.exists_eisenstein_trace
+#print axioms HasseEisenstein.abs_trace_le
 #print axioms BohrTorus.eq_zero_of_sum_log
 #print axioms BohrTorus.tendsto_mean_character
 #print axioms BohrTorus.sum_norm_sq_torus
