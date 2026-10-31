@@ -46,6 +46,8 @@ import LinnikSubconvex
 import MertensChi
 import ShortCharSums
 import LeastPrimitiveRoot
+import LucasWitness
+import CyclotomicFrobenius
 import LinnikAFE
 import LinnikFourth
 import LinnikIngham
@@ -764,6 +766,10 @@ import CertInstances
 #print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_prime
 #print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow
 #print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_safe
+#print axioms LucasWitness.prime_iff_exists_lucas_le_rpow
+#print axioms LucasWitness.prime_iff_exists_lucas_le_safe
+#print axioms CyclotomicFrobenius.closure_frob_eq_top
+#print axioms CyclotomicFrobenius.exists_frob_generator
 #print axioms LinnikGamma.norm_gammaFactor_ratio_le
 #print axioms LinnikGamma.verticalIntegral_sub_eq
 #print axioms LinnikGamma.afe
