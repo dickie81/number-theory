@@ -7,9 +7,9 @@ Li's decomposition takes a term apart in two ways.
 
 * **Buchstab's identity** on a rough item `ρ_{i₀}` (free of primes below `P = p_{s(i₀)}`): with a lower level `z ≤ P`,
   `ρ` is free of primes below `z` exactly when it is free of primes below `P`, or its least prime factor `p'` lies in
-  `[z, P)`, and then `ρ = p' ρ'` with `ρ'` free of primes below `p'` (`rough_eq_add`).
+  `[z, P)`, and then `ρ = p' ρ'` with `ρ'` free of primes below `p'`.
 * **A role reversal** on a prime `p₀`: a number `v ≥ z ≥ 2` free of primes below `z` is a prime, or `v = p β` with
-  `p` its least prime factor, `p ≥ z` and `β ≥ p` free of primes below `p` (`rough_eq_prime_add`).
+  `p` its least prime factor, `p ≥ z` and `β ≥ p` free of primes below `p`.
 
 On nodes (`ShortSieveNode.Node`) they are exact identities between counts, in `ℕ`: the term with the lower level
 (`JNode`, a Type I term) is the node plus its child.
@@ -59,108 +59,6 @@ theorem dvd_rough_div_iff {p n : ℕ} (hp : p.Prime) (hn : 2 ≤ n) :
 
 /-- `1` is free of primes below any level. -/
 theorem rough_one (z : ℕ) : SieveTree.rough z 1 := fun _ _ hp hd => hp.one_lt.ne' (Nat.dvd_one.1 hd)
-
-/-- **Buchstab's identity at one number.** For `1 ≤ ρ` and `z ≤ P`:
-`[ρ free of primes below z] = [ρ free of primes below P] + #{p ∈ [z, P) prime : p ∣ ρ, ρ/p free of primes below p}`;
-the prime counted is `ρ`'s least prime factor. -/
-theorem rough_eq_add {z P ρ : ℕ} (hρ : 1 ≤ ρ) (hzP : z ≤ P) :
-    (if SieveTree.rough z ρ then 1 else 0) =
-      (if SieveTree.rough P ρ then 1 else 0) +
-        #{p ∈ SieveTree.primesIco z P | p ∣ ρ ∧ SieveTree.rough p (ρ / p)} := by
-  rcases Nat.lt_or_ge ρ 2 with h1 | h2
-  · -- `ρ = 1`: no prime divides it
-    obtain rfl : ρ = 1 := by omega
-    have h0 : (SieveTree.primesIco z P).filter (fun p => p ∣ 1 ∧ SieveTree.rough p (1 / p)) = ∅ := by
-      refine filter_eq_empty_iff.2 fun p hp h => ?_
-      exact (SieveTree.mem_primesIco.1 hp).2.2.one_lt.ne' (Nat.dvd_one.1 h.1)
-    rw [h0, card_empty, ite_eq_left (rough_one z), ite_eq_left (rough_one P)]
-  · have hq := Nat.minFac_prime (by omega : ρ ≠ 1)
-    -- the filter is the least prime factor, when it lies in `[z, P)`
-    have hf : (SieveTree.primesIco z P).filter (fun p => p ∣ ρ ∧ SieveTree.rough p (ρ / p)) =
-        if z ≤ Nat.minFac ρ ∧ Nat.minFac ρ < P then {Nat.minFac ρ} else ∅ := by
-      ext p
-      simp only [mem_filter, SieveTree.mem_primesIco]
-      split_ifs with h
-      · rw [mem_singleton]
-        constructor
-        · rintro ⟨⟨-, -, hp⟩, hd⟩
-          exact (dvd_rough_div_iff hp h2).1 hd
-        · rintro rfl
-          exact ⟨⟨h.1, h.2, hq⟩, (dvd_rough_div_iff hq h2).2 rfl⟩
-      · simp only [notMem_empty, iff_false, not_and]
-        rintro ⟨hzp, hpP, hp⟩ hd hr
-        rw [(dvd_rough_div_iff hp h2).1 ⟨hd, hr⟩] at hzp hpP
-        exact h ⟨hzp, hpP⟩
-    have e1 : SieveTree.rough z ρ ↔ z ≤ Nat.minFac ρ := SieveStops2.rough_iff_le_minFac h2
-    have e2 : SieveTree.rough P ρ ↔ P ≤ Nat.minFac ρ := SieveStops2.rough_iff_le_minFac h2
-    rw [hf]
-    simp only [e1, e2]
-    by_cases ha : P ≤ Nat.minFac ρ
-    · have hb : z ≤ Nat.minFac ρ := le_trans hzP ha
-      simp [ha, hb, not_lt.2 ha]
-    · by_cases hb : z ≤ Nat.minFac ρ
-      · simp [ha, hb, not_le.1 ha]
-      · simp [ha, hb]
-
-/-- **The role reversal at one number.** For `2 ≤ z ≤ v`: `[v free of primes below z] = [v prime] +
-#{p ∈ [z, v] prime : p ∣ v, p ≤ v/p, v/p free of primes below p}`; the prime counted is `v`'s least prime factor,
-when `v` is composite. -/
-theorem rough_eq_prime_add {z v : ℕ} (hz : 2 ≤ z) (hzv : z ≤ v) :
-    (if SieveTree.rough z v then 1 else 0) =
-      (if v.Prime then 1 else 0) +
-        #{p ∈ SieveTree.primesIco z (v + 1) | p ∣ v ∧ p ≤ v / p ∧ SieveTree.rough p (v / p)} := by
-  have hv2 : 2 ≤ v := le_trans hz hzv
-  by_cases hv : v.Prime
-  · -- a prime: free of primes below `z ≤ v`, and no proper factorisation
-    have hr : SieveTree.rough z v := fun r hr hrp hd => by
-      rw [(Nat.prime_dvd_prime_iff_eq hrp hv).1 hd] at hr
-      omega
-    have h0 : (SieveTree.primesIco z (v + 1)).filter
-        (fun p => p ∣ v ∧ p ≤ v / p ∧ SieveTree.rough p (v / p)) = ∅ := by
-      refine filter_eq_empty_iff.2 fun p hp ⟨hd, hle, _⟩ => ?_
-      have hp' := (SieveTree.mem_primesIco.1 hp).2.2
-      rw [(Nat.prime_dvd_prime_iff_eq hp' hv).1 hd, Nat.div_self hv.pos] at hle
-      exact absurd hle (not_le.2 hv.one_lt)
-    rw [h0, card_empty, ite_eq_left hr, ite_eq_left hv]
-  · have hq := Nat.minFac_prime (by omega : v ≠ 1)
-    have hqv : Nat.minFac v < v := lt_of_le_of_ne (Nat.minFac_le (by omega)) fun h => hv (h ▸ hq)
-    -- the cofactor of the least prime factor is at least it
-    have hco : Nat.minFac v ≤ v / Nat.minFac v := by
-      obtain ⟨c, hc⟩ := Nat.minFac_dvd v
-      have hc' : v / Nat.minFac v = c := Nat.div_eq_of_eq_mul_right hq.pos hc
-      rw [hc']
-      have h2 : 2 ≤ c := by
-        rcases Nat.lt_or_ge c 2 with hlt | hge
-        · interval_cases c
-          · omega
-          · rw [mul_one] at hc
-            exact absurd (hc ▸ hq) hv
-        · exact hge
-      have h4 : Nat.minFac v ≤ Nat.minFac c :=
-        Nat.minFac_le_of_dvd (Nat.minFac_prime (by omega)).two_le
-          (dvd_trans (Nat.minFac_dvd c) (Dvd.intro_left _ hc.symm))
-      exact le_trans h4 (Nat.minFac_le (by omega))
-    have hf : (SieveTree.primesIco z (v + 1)).filter
-        (fun p => p ∣ v ∧ p ≤ v / p ∧ SieveTree.rough p (v / p)) =
-        if z ≤ Nat.minFac v then {Nat.minFac v} else ∅ := by
-      ext p
-      simp only [mem_filter, SieveTree.mem_primesIco]
-      split_ifs with h
-      · rw [mem_singleton]
-        constructor
-        · rintro ⟨⟨-, -, hp⟩, hd, -, hr⟩
-          exact (dvd_rough_div_iff hp hv2).1 ⟨hd, hr⟩
-        · rintro rfl
-          have hdr := (dvd_rough_div_iff hq hv2).2 rfl
-          exact ⟨⟨h, by omega, hq⟩, hdr.1, hco, hdr.2⟩
-      · simp only [notMem_empty, iff_false, not_and]
-        rintro ⟨hzp, -, hp⟩ hd - hr
-        rw [(dvd_rough_div_iff hp hv2).1 ⟨hd, hr⟩] at hzp
-        exact h hzp
-    have e1 : SieveTree.rough z v ↔ z ≤ Nat.minFac v := SieveStops2.rough_iff_le_minFac hv2
-    rw [hf, ite_eq_right hv, zero_add]
-    simp only [e1]
-    split_ifs <;> simp
 
 
 /-! ### Type I terms, and the level conditions -/
@@ -845,7 +743,5 @@ theorem count_rev (k m : ℕ) (s : Fin m → Fin (k + 1)) (hs : ∀ i, s i ≠ 0
 
 end ShortSieveBuch
 
-#print axioms ShortSieveBuch.rough_eq_add
-#print axioms ShortSieveBuch.rough_eq_prime_add
 #print axioms ShortSieveBuch.count_buchstab
 #print axioms ShortSieveBuch.count_rev

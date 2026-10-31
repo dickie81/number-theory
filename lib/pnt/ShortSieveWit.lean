@@ -16,9 +16,6 @@ joins the two:
   `(a′, δ)`, all admissible, and a margin `μ > 0` cover the set: at every point one of them has `a′_g + μ ≤ a_g(α)`;
 * `dreq`, `momentOK_of_dreq_lt`, `dreq_mono`: **Harman's exponent** `δ_req(D)` (`2` up to `1`, then `4D − 2m` on
   `(m, m + 1/2]` and `2m + 2` on `(m + 1/2, m + 1]`), nondecreasing, with every `δ > δ_req(D)` admissible;
-* `test_of_sum_inv_dreq`: **the test from Harman's exponents.** `Σ_g 1/δ_req(D_g) > 1` gives admissible `δ_g` with
-  `Σ 1/δ_g = 1`, so the certificate need only bound `Σ_g 1/δ_req(D_g)` from below on a box, which `dreq_mono` reduces
-  to the groups' least exponents there;
 * `inv_dreq_ge_tangent`, `lt_sum_inv_dreq_of_linear`: **the linearised test.** On a ramp of `δ_req`,
   `a ↦ 1/δ_req(c/(a − κ))` is convex, so it lies above its tangent at the least exponent `lo`. The certificate's
   check `Σ_g (F_g + s_g(a_g − lo_g)) > 1`, with `F_g ≤ 1/δ_req(c/(lo_g − κ))` and each slope `s_g` either `≤ 0` or at
@@ -231,21 +228,6 @@ theorem dreq_mono {D D' : ℝ} (h : D ≤ D') : dreq D ≤ dreq D' := by
   · have hlt' : (m : ℝ) + 1 ≤ m' := by exact_mod_cast hlt
     split_ifs <;> linarith
 
-/-- **The test from Harman's exponents.** If `Σ_g 1/δ_req(D_g) > 1`, then `δ_g = s·δ_req(D_g)`, `s = Σ_g 1/δ_req(D_g)`,
-are admissible with `Σ 1/δ_g = 1`. -/
-theorem test_of_sum_inv_dreq {G : ℕ} {D : Fin G → ℝ} (h : 1 < ∑ g, 1 / dreq (D g)) :
-    ∃ δ : Fin G → ℝ, (∀ g, 0 < δ g) ∧ ∑ g, 1 / δ g = 1 ∧ ∀ g, MomentOK (D g) (δ g) := by
-  set s := ∑ g, 1 / dreq (D g) with hs
-  have hs0 : 0 < s := by linarith
-  have hd : ∀ g, 0 < dreq (D g) := fun g => lt_of_lt_of_le two_pos (two_le_dreq _)
-  refine ⟨fun g => s * dreq (D g), fun g => mul_pos hs0 (hd g), ?_, fun g => momentOK_of_dreq_lt ?_⟩
-  · have e : ∀ g, 1 / (s * dreq (D g)) = 1 / s * (1 / dreq (D g)) := fun g => by
-      rw [one_div_mul_one_div]
-    simp only [e]
-    rw [← mul_sum, ← hs, one_div_mul_cancel hs0.ne']
-  · have := hd g
-    nlinarith
-
 /-! ### The linearised test -/
 
 /-- `1/δ_req(c/(a − κ))` is nondecreasing in `a > κ`, for `c ≥ 0`. -/
@@ -331,6 +313,5 @@ end ShortSieveWit
 #print axioms ShortSieveWit.exists_wit_list
 #print axioms ShortSieveWit.momentOK_of_dreq_lt
 #print axioms ShortSieveWit.dreq_mono
-#print axioms ShortSieveWit.test_of_sum_inv_dreq
 #print axioms ShortSieveWit.inv_dreq_ge_tangent
 #print axioms ShortSieveWit.lt_sum_inv_dreq_of_linear

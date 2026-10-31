@@ -29,8 +29,6 @@ Plain statements.
   for `m ∈ ((x − y₁)/d, x/d]` (`X = x/d`, `H = y₁/d`) it reads `z^{−σ} ≤ y₁/x`. For `y₁ = x^{1−ρ}` and `z ≥ x^c` it
   holds with `σ = ρ/c`, and `σ < 1/12` is `ρ < c/12` (`ρ < 1/300` for `c = 2θ − 1 = 1/25` at `θ = 0.52`).
   `psi_le_rpow` is the case `H = X^{1−ρ}`, `z ≤ X`, with `ρU < 1/12`.
-* `card_dvd_rough`, `card_dvd_rough_of_le`: the `n ∈ (X − H, X]` with `d | n` and `n/d` rough for `z` number
-  `Ψ(X/d, H/d; z)`, and so do those with `d | n` and `n` rough for `z` when `d`'s prime factors are at least `z`.
 
 The proof:
 
@@ -694,63 +692,6 @@ theorem psi_le_rpow {ρ U : ℝ} (hρ : 0 < ρ) (hρU : ρ * U < 1 / 12) {ε : �
 
 /-! ### Rough cofactors -/
 
-/-- **Rough cofactors in a short interval.** For `d ≥ 1` and `0 ≤ H ≤ X`, the `n ∈ (X − H, X]` with `d | n` and `n/d`
-free of prime factors below `z` number `Ψ(X/d, H/d; z)`: `n = dm` with `m ∈ ((X − H)/d, X/d]`. -/
-theorem card_dvd_rough {d : ℕ} (hd : 0 < d) {X H : ℝ} (hH : 0 ≤ H) (hHX : H ≤ X) (z : ℕ) :
-    ((Ioc ⌊X - H⌋₊ ⌊X⌋₊).filter fun n => d ∣ n ∧ ∀ p ∈ (n / d).primeFactors, z ≤ p).card =
-      Psi (X / d) (H / d) z := by
-  have hd0 : (0 : ℝ) < d := by exact_mod_cast hd
-  have hXH : 0 ≤ X - H := by linarith
-  have hXHd : X / d - H / d = (X - H) / d := (sub_div _ _ _).symm
-  have hXHd0 : 0 ≤ X / d - H / d := by rw [hXHd]; exact div_nonneg hXH hd0.le
-  unfold Psi
-  rw [← Finset.card_image_of_injective (roughSet (X / d) (H / d) z) (mul_right_injective₀ hd.ne')]
-  congr 1
-  ext n
-  simp only [Finset.mem_filter, Finset.mem_image, roughSet]
-  constructor
-  · rintro ⟨hn, ⟨m, rfl⟩, hr⟩
-    rw [Nat.mul_div_cancel_left m hd] at hr
-    rw [mem_Ioc_floor hXH hH] at hn
-    push_cast at hn
-    refine ⟨m, ⟨?_, hr⟩, rfl⟩
-    rw [mem_Ioc_floor hXHd0 (div_nonneg hH hd0.le), hXHd]
-    constructor
-    · rw [div_lt_iff₀ hd0]; linarith [hn.1]
-    · rw [le_div_iff₀ hd0]; linarith [hn.2]
-  · rintro ⟨m, ⟨hm, hr⟩, rfl⟩
-    rw [mem_Ioc_floor hXHd0 (div_nonneg hH hd0.le), hXHd, div_lt_iff₀ hd0, le_div_iff₀ hd0] at hm
-    refine ⟨?_, ⟨m, rfl⟩, by rwa [Nat.mul_div_cancel_left m hd]⟩
-    rw [mem_Ioc_floor hXH hH]
-    push_cast
-    constructor
-    · linarith [hm.1]
-    · linarith [hm.2]
-
-/-- **Rough multiples in a short interval.** When the prime factors of `d ≥ 1` are at least `z`, the `n ∈ (X − H, X]`
-with `d | n` and no prime factor below `z` number `Ψ(X/d, H/d; z)`, for `0 ≤ H ≤ X`. -/
-theorem card_dvd_rough_of_le {d z : ℕ} (hd : 0 < d) (hdz : ∀ p ∈ d.primeFactors, z ≤ p) {X H : ℝ} (hH : 0 ≤ H)
-    (hHX : H ≤ X) :
-    ((Ioc ⌊X - H⌋₊ ⌊X⌋₊).filter fun n => d ∣ n ∧ ∀ p ∈ n.primeFactors, z ≤ p).card = Psi (X / d) (H / d) z := by
-  rw [← card_dvd_rough hd hH hHX z]
-  congr 1
-  refine Finset.filter_congr fun n hn => ?_
-  have hn0 : n ≠ 0 := by have := (Finset.mem_Ioc.1 hn).1; omega
-  constructor
-  · rintro ⟨⟨m, rfl⟩, hr⟩
-    refine ⟨⟨m, rfl⟩, ?_⟩
-    rw [Nat.mul_div_cancel_left m hd]
-    exact fun p hp => hr p (Nat.primeFactors_mono (Dvd.intro_left d rfl) hn0 hp)
-  · rintro ⟨⟨m, rfl⟩, hr⟩
-    refine ⟨⟨m, rfl⟩, ?_⟩
-    rw [Nat.mul_div_cancel_left m hd] at hr
-    have hm0 : m ≠ 0 := by rintro rfl; exact hn0 (mul_zero d)
-    intro p hp
-    rw [Nat.primeFactors_mul hd.ne' hm0, Finset.mem_union] at hp
-    rcases hp with hp | hp
-    · exact hdz p hp
-    · exact hr p hp
-
 end ShortSieveLong
 
 #print axioms ShortSieveLong.abs_theta_sub_theta_le
@@ -760,5 +701,3 @@ end ShortSieveLong
 #print axioms ShortSieveLong.claim_step
 #print axioms ShortSieveLong.psi_le
 #print axioms ShortSieveLong.psi_le_rpow
-#print axioms ShortSieveLong.card_dvd_rough
-#print axioms ShortSieveLong.card_dvd_rough_of_le

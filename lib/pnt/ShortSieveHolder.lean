@@ -9,10 +9,7 @@ mean value theorem for an even `δⱼ`, Harman's moment lemma for a real one. Th
 combine them, for functions with values in `ℝ≥0∞` on any measure space:
 
 * `lintegral_prod_le`: `∫ ∏ fⱼ ≤ ∏ (∫ fⱼ^{δⱼ})^{1/δⱼ}` for `δⱼ > 0` with `Σ 1/δⱼ = 1`;
-* `lintegral_prod_le_of_moments`: if `∫ fⱼ^{δⱼ} ≤ Aⱼ^{δⱼ}` for each factor, then `∫ ∏ fⱼ ≤ ∏ Aⱼ`;
-* `lintegral_rpow_le_of_le`: a moment raised through a pointwise bound, `∫ f^q ≤ M^{q−p} ∫ f^p` for `f ≤ M` and
-  `0 ≤ p ≤ q`. With `M` the trivial bound of a Dirichlet polynomial, an even moment from the mean value theorem
-  serves as any larger real one.
+* `lintegral_prod_le_of_moments`: if `∫ fⱼ^{δⱼ} ≤ Aⱼ^{δⱼ}` for each factor, then `∫ ∏ fⱼ ≤ ∏ Aⱼ`.
 -/
 
 open MeasureTheory ENNReal Finset
@@ -44,19 +41,5 @@ theorem lintegral_prod_le_of_moments (s : Finset ι) {f : ι → α → ℝ≥0�
   calc (∫⁻ a, f i a ^ δ i ∂μ) ^ (1 / δ i) ≤ (A i ^ δ i) ^ (1 / δ i) :=
         ENNReal.rpow_le_rpow (hA i hi) (one_div_pos.mpr (hδ i hi)).le
     _ = A i := by rw [← ENNReal.rpow_mul, mul_one_div_cancel (hδ i hi).ne', ENNReal.rpow_one]
-
-/-- **A moment raised through a pointwise bound.** If `f ≤ M < ∞` almost everywhere and `0 ≤ p ≤ q`, then
-`∫ f^q ≤ M^{q−p} ∫ f^p`. -/
-theorem lintegral_rpow_le_of_le {f : α → ℝ≥0∞} {M : ℝ≥0∞} (hM : M ≠ ⊤) (hfM : ∀ᵐ a ∂μ, f a ≤ M) {p q : ℝ}
-    (hp : 0 ≤ p) (hpq : p ≤ q) :
-    ∫⁻ a, f a ^ q ∂μ ≤ M ^ (q - p) * ∫⁻ a, f a ^ p ∂μ := by
-  have hqp : 0 ≤ q - p := sub_nonneg.mpr hpq
-  calc ∫⁻ a, f a ^ q ∂μ ≤ ∫⁻ a, M ^ (q - p) * f a ^ p ∂μ := by
-        refine lintegral_mono_ae (hfM.mono fun a ha => ?_)
-        calc f a ^ q = f a ^ (q - p) * f a ^ p := by
-              rw [← ENNReal.rpow_add_of_nonneg _ _ hqp hp, sub_add_cancel]
-          _ ≤ M ^ (q - p) * f a ^ p := by gcongr
-    _ = M ^ (q - p) * ∫⁻ a, f a ^ p ∂μ :=
-        lintegral_const_mul' _ _ (ENNReal.rpow_ne_top_of_nonneg hqp hM)
 
 end ShortSieveHolder

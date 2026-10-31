@@ -4,7 +4,7 @@ import ShortSieveThin
 /-!
 # Tuples of primes cut out by log-linear conditions
 
-A sieve term, once its rough cofactor is written as a tuple of primes (`ShortSieveBoxes.card_dvd_rough_eq_sum`),
+A sieve term, once its rough cofactor is written as a tuple of primes (`ShortSieveExpand.card_expand`),
 counts the tuples `g : ι → ℕ` of primes with `∏ g` in the interval and with finitely many conditions
 `Σ_j e_j log g_j ≤ b` (`LAtom`): the bounds of a cell, the order of the primes, the size of a product. This module
 proves its asymptotic formula from the grouped Type II estimate (`ShortSieveGroup`):

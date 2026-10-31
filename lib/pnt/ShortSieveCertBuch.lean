@@ -63,16 +63,6 @@ theorem coords_buch {k m : ℕ} (A : Rows k m) (i₀ : Fin m) {d : ℕ} (x : ℝ
   rw [sum_congr rfl fun i _ => e i, sum_add_distrib, sum_ite_eq' univ i₀, ite_eq_left (mem_univ i₀)]
   ring
 
-/-- The coordinate `d` of a child pair is the new prime's exponent. -/
-theorem coords_buch_new {k m : ℕ} (A : Rows k m) (i₀ : Fin m) (d : ℕ) (x : ℝ) (v : (Fin (k + 1) → ℕ) × (Fin m → ℕ)) :
-    coords (buchRows A i₀ d) x v d = DEN * expo x v (Sum.inl (Fin.last k)) := by
-  unfold coords
-  congr 1
-  rw [Fintype.sum_sum_type]
-  simp only [buchRows, ite_true, Sum.elim_inl, Sum.elim_inr, Int.cast_zero, zero_mul, sum_const_zero, add_zero]
-  rw [sum_eq_single (Fin.last k) (fun a _ ha => by simp [ha]) (fun h => absurd (mem_univ _) h)]
-  simp
-
 /-- **The slack of a child pair** is its parent pair's. -/
 theorem slack_buch {k m : ℕ} (i₀ : Fin m) (x : ℝ) {v : (Fin (k + 1) → ℕ) × (Fin m → ℕ)} (hv1 : ∀ a, 0 < v.1 a)
     (hv2 : ∀ i, 0 < v.2 i) : slack x v = slack x (merge i₀ v) := by

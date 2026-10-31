@@ -35,32 +35,6 @@ noncomputable def cH {k m : ℕ} (α : Fin k ⊕ Fin m → ℝ) : ℝ := DEN * (
 theorem coords_eq {k m : ℕ} (A : Rows k m) (x : ℝ) (v : (Fin k → ℕ) × (Fin m → ℕ)) :
     coords A x v = cX A (expo x v) := rfl
 
-theorem slack_eq {k m : ℕ} (x : ℝ) (v : (Fin k → ℕ) × (Fin m → ℕ)) : slack x v = cH (expo x v) := rfl
-
-/-- A form at the coordinates and slack of `α`: `c₀ + c_η DEN + DEN Σ_t w_t α_t`. -/
-theorem LF.val_cX {k m : ℕ} (A : Rows k m) (L : LF) (α : Fin k ⊕ Fin m → ℝ) :
-    L.val (cX A α) (cH α) = (L.c0 + L.ce * DEN) + DEN * ∑ t, wt A L t * α t := by
-  unfold LF.val cX cH wt
-  rw [dotR_eq_sum]
-  have h1 : ∑ j ∈ range L.c.length, (L.c.getD j 0 : ℝ) * (DEN * ∑ t, (A j t : ℝ) * α t) =
-      DEN * ∑ t, (∑ j ∈ range L.c.length, (L.c.getD j 0 : ℝ) * A j t) * α t := by
-    calc ∑ j ∈ range L.c.length, (L.c.getD j 0 : ℝ) * (DEN * ∑ t, (A j t : ℝ) * α t)
-        = ∑ j ∈ range L.c.length, ∑ t, (DEN : ℝ) * ((L.c.getD j 0 : ℝ) * A j t * α t) := by
-          refine sum_congr rfl fun j _ => ?_
-          rw [mul_sum, mul_sum]
-          exact sum_congr rfl fun t _ => by ring
-      _ = ∑ t, ∑ j ∈ range L.c.length, (DEN : ℝ) * ((L.c.getD j 0 : ℝ) * A j t * α t) := sum_comm
-      _ = DEN * ∑ t, (∑ j ∈ range L.c.length, (L.c.getD j 0 : ℝ) * A j t) * α t := by
-          rw [mul_sum]
-          refine sum_congr rfl fun t _ => ?_
-          rw [sum_mul, mul_sum]
-  have h2 : ∑ t, ((∑ j ∈ range L.c.length, (L.c.getD j 0 : ℝ) * A j t) - L.ce) * α t =
-      ∑ t, (∑ j ∈ range L.c.length, (L.c.getD j 0 : ℝ) * A j t) * α t - L.ce * ∑ t, α t := by
-    simp_rw [sub_mul]
-    rw [sum_sub_distrib, mul_sum]
-  rw [h1, h2]
-  ring
-
 theorem continuous_dotR {k m : ℕ} : ∀ (c : List ℤ) (R : ℕ → Fin k ⊕ Fin m → ℤ),
     Continuous fun α : Fin k ⊕ Fin m → ℝ => dotR c (cX R α)
   | [], _ => by simp only [dotR]; exact continuous_const
@@ -168,11 +142,6 @@ theorem Sound.mem_K {N : Node} {A : Rows N.k N.m} {E : ℤ} {Γ : List Con} {B :
 
 /-- The canonical position of an item: the primes first, then the rough items. -/
 def canon {k m : ℕ} : Fin k ⊕ Fin m → ℕ := Sum.elim (fun a => a.val) fun i => k + i.val
-
-theorem canon_lt {k m : ℕ} (t : Fin k ⊕ Fin m) : canon t < k + m := by
-  rcases t with a | i
-  · simp only [canon, Sum.elim_inl]; omega
-  · simp only [canon, Sum.elim_inr]; omega
 
 /-- A sum over the positions `0, …, k + m − 1` is a sum over the items. -/
 theorem sum_range_canon {k m : ℕ} (f : ℕ → ℝ) : ∑ p ∈ range (k + m), f p = ∑ t : Fin k ⊕ Fin m, f (canon t) := by

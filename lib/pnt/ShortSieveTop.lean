@@ -5,9 +5,9 @@ import ShortSieveRoot
 
 For an interval `I = (x − y, x]`, `S(I_d, z)` counts the `m` free of primes below `z` with `dm ∈ I` (`sD`).
 
-* `sD_buchstab`: **Buchstab's identity**, `S(I_d, z) = S(I_d, P) + Σ_{z ≤ p < P} S(I_{dp}, p)` for `z ≤ P`, from
-  `ShortSieveBuch.rough_eq_add` (an `m` free of primes below `z` but not below `P` is `p·m′` with `p` its least
-  prime factor and `m′` free of primes below `p`).
+* `sD_buchstab`: **Buchstab's identity**, `S(I_d, z) = S(I_d, P) + Σ_{z ≤ p < P} S(I_{dp}, p)` for `z ≤ P`: an `m`
+  free of primes below `z` but not below `P` is `p·m′` with `p` its least prime factor and `m′` free of primes below
+  `p`.
 * `card_primes_ge_sD`: the primes of `I` are at least `S(I, ⌊√x⌋ + 1)` when `x − y ≥ 1`.
 * `top_identity`: Li's identity (his (9)) in any interval: with `z₁ ≤ z₂` and levels `L_p ≤ p`,
   `S(I, z₂) = S(I, z₁) − Σ_{z₁ ≤ p < z₂} S(I_p, L_p) + Σ_{z₁ ≤ p < z₂} Σ_{L_p ≤ q < p} S(I_{pq}, q)`.

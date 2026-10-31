@@ -335,10 +335,6 @@ theorem prod_group {k m G : ℕ} {len : Fin m → ℕ} (grp : Fin k ⊕ Fin m �
   · push_cast; rfl
   · simp
 
-/-- The coefficients of a lifted condition: `e` on the primes, `f_i` on block `i`. -/
-theorem lift_e {k m : ℕ} (C : Cond k m) (len : Fin m → ℕ) (t : Idx k m len) :
-    (C.lift len).e t = Sum.elim C.e (fun ij => C.f ij.1) t := rfl
-
 /-- Every expanded condition has a coordinate whose coefficient differs from that of the first prime. -/
 theorem atoms_ne (N : Node) (hk : 0 < N.k) {len : Fin N.m → ℕ} (hlen : ∀ i, 0 < len i)
     (hcond : ∀ C ∈ N.conds, ∃ u w : Fin N.k ⊕ Fin N.m, Sum.elim C.e C.f u ≠ Sum.elim C.e C.f w) :

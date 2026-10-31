@@ -3,14 +3,14 @@ import ShortSieveTypeII
 /-!
 # Type II estimates for groups of prime boxes
 
-`ShortSieveTypeII` proves the Type II estimate with one Hölder factor per prime, each prime in a box `(Nⱼ, Mⱼ]` with
-`x^{αⱼ}/2 ≤ Nⱼ ≤ x^{αⱼ}`. Harman's sieve, as in R. Li's proof that `(x − x^{0.52}, x]` contains primes
-(arXiv:2308.04458), needs more: its asymptotic tests group several primes into one Hölder factor, and the rough
+Harman's sieve, as in R. Li's proof that `(x − x^{0.52}, x]` contains primes (arXiv:2308.04458), needs a Type II
+estimate for products of primes in boxes whose asymptotic tests group several primes into one Hölder factor; the rough
 cofactor of a sieve term (a number with no prime factor below `x^c`), expanded into its prime factors, goes into one
-group. This module proves the Type II estimate with one Hölder factor per group of boxes and with the sizes of the
-boxes ranging over intervals: for boxes `(Nⱼ, Mⱼ]`, `j ∈ ι`, sorted into groups by `grp : ι → G`, it asks only for
-`Nⱼ ≥ x^c`, for `N_i ≥ x^{a_i}` and for `∏_{grp j = i} Mⱼ ≤ 2N_i`, where `N_i = ∏_{grp j = i} Nⱼ` is the product of the
-group. It proves, with no hypothesis (the analytic input is that of `ShortSieveTypeII`):
+group. The pieces are in `ShortSieveTypeII`. This module proves the Type II estimate with one Hölder factor per group
+of boxes and with the sizes of the boxes ranging over intervals: for boxes `(Nⱼ, Mⱼ]`, `j ∈ ι`, sorted into groups by
+`grp : ι → G`, it asks only for `Nⱼ ≥ x^c`, for `N_i ≥ x^{a_i}` and for `∏_{grp j = i} Mⱼ ≤ 2N_i`, where
+`N_i = ∏_{grp j = i} Nⱼ` is the product of the group. It proves, with no hypothesis (the analytic input is that of
+`ShortSieveTypeII`):
 
 * `norm_cnt_le_pow`: a number has at most `r^r` representations as an ordered product of primes from `r` boxes, since
   each entry of a representation is one of the `r` entries of a fixed one;
@@ -28,11 +28,9 @@ group. It proves, with no hypothesis (the analytic input is that of `ShortSieveT
   `η > 0`, `C` and `x₀` with `|#{∏ pⱼ ∈ (x − y, x]} − (y/y₁)·#{∏ pⱼ ∈ (x − y₁, x]}| ≤ C y x^{−η}` for `x ≥ x₀`,
   `x^θ ≤ y ≤ y₁ ≤ x^{1−ρ}` and all boxes with `x^c ≤ Nⱼ ≤ Mⱼ`, `∏_{grp j = i} Mⱼ ≤ 2N_i` and `N_i ≥ x^{a_i}`. The
   conclusion does not involve `κ₀`, so every `ρ > 0` will do (`abs_card_tuples_sub_le_group_of_pos`, `κ₀ = ρ/4`).
-  `abs_card_tuples_sub_le_four` is an instance: four primes in the groups `{0, 1}`, `{2}`, `{3}`, with `θ = 13/20`.
 
-The route of the Type II estimate is that of `ShortSieveTypeII.abs_card_tuples_sub_le_of`:
-`ShortSieveInterval.norm_sum_Ioc_sub_le` for the coefficients `cnt` on `prods`, with `T₀ = x^{κ₀}`, `T = x^{1−θ+κ}`,
-`ε = y x^{−1−κ/2}` and `k = ⌈(6 + κ)/κ⌉` averages, and its four terms.
+The route of the Type II estimate: `ShortSieveInterval.norm_sum_Ioc_sub_le` for the coefficients `cnt` on `prods`, with
+`T₀ = x^{κ₀}`, `T = x^{1−θ+κ}`, `ε = y x^{−1−κ/2}` and `k = ⌈(6 + κ)/κ⌉` averages, and its four terms.
 * No upper bounds. Every product of a tuple exceeds `∏ Nⱼ`, so if `∏ Nⱼ ≥ x` both counts vanish. Otherwise
   `Nⱼ ≤ ∏ Nⱼ < x` for every `j`, and `Mⱼ ≤ 2Nⱼ`, since the other factors of the ratio of its group are at least `1`
   (`le_two_mul_of_prod_le`). A group with no box has `N_i = 1 < x^{a_i}`, so for `x > 1` every group has a box.
@@ -40,8 +38,12 @@ The route of the Type II estimate is that of `ShortSieveTypeII.abs_card_tuples_s
   `T ≤ Nⱼ^A` for `A = (1 − θ + κ)/c`, and `N_i ≥ x^{a_i}` gives `T ≤ N_i^{D_i}`: the moments of the groups apply on
   `[T₀, T]` and on `[−T, −T₀]`. Hölder gives `∫|A| ≤ ∏_i C_i^{1/δ_i} N_i^{1/2−η_i/δ_i}`, at most `C x^{1/2} x^{−η}`
   since `∏_i N_i = ∏ Nⱼ ≤ x` and `N_i ≥ 1` (`prod_le_rpow_of_prod_le`).
-* The low range and the tail, as in `ShortSieveTypeII`, with `Σ_n cnt(n) n^{−1/2} ≤ (∏ Nⱼ)^{1/2} ≤ x^{1/2}`.
-* The transitions, with `cnt(n) ≤ r^r` (`norm_cnt_le_pow`) for the `r` boxes in place of the divisor bound.
+  The term is `C(y/√x)∫|A| ≤ C y x^{−η}` (`ShortSieveTypeII.mid_term_le`).
+* The low range `|t| ≤ T₀`: `|A| ≤ Σ_n cnt(n) n^{−1/2} ≤ (∏ Nⱼ)^{1/2} ≤ x^{1/2}` (`ShortSieveTypeII.sum_norm_coef_le`),
+  and the factor `(1 + T₀)(y₁/x) ≤ 2T₀ x^{−ρ}` leaves `4C y x^{2κ₀−ρ}` (`ShortSieveTypeII.low_term_le_of`): this is
+  where `ρ > 2κ₀` is needed.
+* The tail: `εT ≥ x^{κ/2}`, so the term is at most `C 2^k y x^{−1}` (`ShortSieveTypeII.tail_term_le`).
+* The transitions, with `cnt(n) ≤ r^r` (`norm_cnt_le_pow`) for the `r` boxes (`ShortSieveTypeII.trans_term_le`).
 -/
 
 open Finset Real MeasureTheory DirMean ShortSieveTypeII
@@ -317,11 +319,11 @@ and `x₀` such that for `x ≥ x₀`, `x^θ ≤ y ≤ y₁ ≤ x^{1−ρ}` and 
 products `N_i = ∏_{grp j = i} Nⱼ ≥ x^{a_i}` and ratios `∏_{grp j = i} Mⱼ ≤ 2N_i`, the numbers of tuples `(pⱼ)ⱼ`, `pⱼ`
 prime in `(Nⱼ, Mⱼ]`, with `∏ⱼ pⱼ ∈ (x − y, x]` and with `∏ⱼ pⱼ ∈ (x − y₁, x]` satisfy
 `|#{∏ⱼ pⱼ ∈ (x − y, x]} − (y/y₁)·#{∏ⱼ pⱼ ∈ (x − y₁, x]}| ≤ C y x^{−η}`. The boxes have no upper bounds: if
-`∏ Nⱼ ≥ x` both counts vanish, and otherwise `Nⱼ < x` and `Mⱼ ≤ 2Nⱼ` (`le_two_mul_of_prod_le`). The proof is that of
-`ShortSieveTypeII.abs_card_tuples_sub_le_of` with one Hölder factor per group (`integral_norm_dp_prods_le_group`),
-each with the moment lemma of its group (`moment_group_from`) on the heights from `Nⱼ^{κ'} ≤ x^{κ'} ≤ T₀`,
-`κ' = min(κ₀, 1/100)`, up to `T = x^{1−θ+κ}`, which is at most `Nⱼ^{(1−θ+κ)/c}` and `N_i^{D_i}`; the transitions take
-`cnt(n) ≤ r^r` (`norm_cnt_le_pow`). -/
+`∏ Nⱼ ≥ x` both counts vanish, and otherwise `Nⱼ < x` and `Mⱼ ≤ 2Nⱼ` (`le_two_mul_of_prod_le`). The proof bounds the
+four terms of `ShortSieveInterval.norm_sum_Ioc_sub_le`, with one Hölder factor per group
+(`integral_norm_dp_prods_le_group`), each with the moment lemma of its group (`moment_group_from`) on the heights
+from `Nⱼ^{κ'} ≤ x^{κ'} ≤ T₀`, `κ' = min(κ₀, 1/100)`, up to `T = x^{1−θ+κ}`, which is at most `Nⱼ^{(1−θ+κ)/c}` and
+`N_i^{D_i}`; the transitions take `cnt(n) ≤ r^r` (`norm_cnt_le_pow`). -/
 theorem abs_card_tuples_sub_le_group (grp : ι → G) {a δ : G → ℝ} {c θ κ κ₀ ρ : ℝ} (hc : 0 < c) (hκ : 0 < κ)
     (ha : ∀ i, κ < a i) (hθ : 0 < θ) (hκ₀ : 0 < κ₀) (hρ : 2 * κ₀ < ρ) (hθρ : θ + ρ ≤ 1) (hδ : ∀ i, 0 < δ i)
     (hδs : ∑ i, 1 / δ i = 1) (hok : ∀ i, MomentOK ((1 - θ + κ) / (a i - κ)) (δ i)) :
@@ -531,43 +533,9 @@ theorem abs_card_tuples_sub_le_group_of_pos (grp : ι → G) {a δ : G → ℝ} 
           C * y * x ^ (-η) :=
   abs_card_tuples_sub_le_group grp (κ₀ := ρ / 4) hc hκ ha hθ (by positivity) (by linarith) hθρ hδ hδs hok
 
-/-- **Four primes in three groups.** `abs_card_tuples_sub_le_group_of_pos` for four boxes in the groups `{0, 1}`,
-`{2}` and `{3}`, with `Nⱼ ≥ x^{1/5}`, `N₀N₁ ≥ x^{49/100}`, `N₂, N₃ ≥ x^{49/200}`, `θ = 13/20`, `κ = 1/1000`,
-`ρ = 1/100` and `δ = (19/9, 19/5, 19/5)`, `Σ 1/δ_i = 1`. For the pair `D = (7/20 + 1/1000)/(49/100 − 1/1000)` is
-`351/489 ≤ 1` and `19/9 > 2` (the mean value theorem, `k = 1`); for each single prime `D = 351/244 ∈ (1, 3/2]` and
-`4D − 2 = 229/61 < 19/5` (Harman's moment lemma, `m = 1`). The exponents `49/100`, `49/200`, `49/200` sum to
-`49/50 < 1`, so boxes with `∏ Nⱼ < x < ∏ Mⱼ` meet the hypotheses for large `x`, for example with the products of the
-groups near `x^{1/2}`, `x^{1/4}` and `x^{1/4}`; with exponents summing to `1` the hypotheses would force `∏ Nⱼ ≥ x`,
-and both counts would vanish. -/
-theorem abs_card_tuples_sub_le_four : ∃ η : ℝ, 0 < η ∧ ∃ C x₀ : ℝ, ∀ x : ℝ, x₀ ≤ x → ∀ y y₁ : ℝ,
-    x ^ (13 / 20 : ℝ) ≤ y → y ≤ y₁ → y₁ ≤ x ^ (99 / 100 : ℝ) → ∀ N M : Fin 4 → ℕ,
-      (∀ j, x ^ (1 / 5 : ℝ) ≤ N j) → (∀ j, N j ≤ M j) → M 0 * M 1 ≤ 2 * (N 0 * N 1) → M 2 ≤ 2 * N 2 →
-      M 3 ≤ 2 * N 3 → x ^ (49 / 100 : ℝ) ≤ (N 0 : ℝ) * N 1 → x ^ (49 / 200 : ℝ) ≤ N 2 →
-      x ^ (49 / 200 : ℝ) ≤ N 3 →
-        |(#{g ∈ tuples N M | x - y < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x} : ℝ) -
-          y / y₁ * #{g ∈ tuples N M | x - y₁ < ((∏ j, g j : ℕ) : ℝ) ∧ ((∏ j, g j : ℕ) : ℝ) ≤ x}| ≤
-          C * y * x ^ (-η) := by
-  obtain ⟨η, hη, C, x₀, h⟩ := abs_card_tuples_sub_le_group_of_pos (ι := Fin 4) (G := Fin 3) ![0, 0, 1, 2]
-    (a := ![49 / 100, 49 / 200, 49 / 200]) (δ := ![19 / 9, 19 / 5, 19 / 5]) (c := 1 / 5) (θ := 13 / 20)
-    (κ := 1 / 1000) (ρ := 1 / 100) (by norm_num) (by norm_num) (fun i => by fin_cases i <;> norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (fun i => by fin_cases i <;> norm_num)
-    (by simp [Fin.sum_univ_three]; norm_num)
-    (fun i => by
-      fin_cases i
-      · exact Or.inr ⟨1, le_rfl, by norm_num, by norm_num⟩
-      · exact Or.inl ⟨1, le_rfl, by norm_num, by norm_num, by norm_num⟩
-      · exact Or.inl ⟨1, le_rfl, by norm_num, by norm_num, by norm_num⟩)
-  refine ⟨η, hη, C, x₀, fun x hx y y₁ hy hyy₁ hy₁ N M hN hNM h01 h2 h3 hN01 hN2 hN3 =>
-    h x hx y y₁ hy hyy₁ ?_ N M hN hNM (fun i => ?_) (fun i => ?_)⟩
-  · norm_num
-    exact hy₁
-  · fin_cases i <;> simp [prod_filter, Fin.prod_univ_four] <;> assumption
-  · fin_cases i <;> simp [prod_filter, Fin.prod_univ_four] <;> assumption
-
 end ShortSieveGroup
 
 #print axioms ShortSieveGroup.moment_group_from
 #print axioms ShortSieveGroup.integral_norm_dp_prods_le_group
 #print axioms ShortSieveGroup.abs_card_tuples_sub_le_group
 #print axioms ShortSieveGroup.abs_card_tuples_sub_le_group_of_pos
-#print axioms ShortSieveGroup.abs_card_tuples_sub_le_four

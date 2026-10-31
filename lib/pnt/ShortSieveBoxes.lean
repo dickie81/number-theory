@@ -8,10 +8,9 @@ The terms of Li's decomposition count the `n` of an interval with `P ∣ n` and 
 `z`, summed over tuples of primes `P = p₁ ⋯ p_k`. The Type II estimates of `ShortSieveGroup` count tuples of primes
 in boxes `(Nⱼ, Mⱼ]` by their products. This module joins the two:
 
-* `card_dvd_rough_eq_sum`: **rough cofactors as sorted tuples of primes.** The cofactor `n/P` is the product of the
-  monotone tuple of its prime factors (`monoPrimes`), and that tuple is unique (`ofFn_eq_primeFactorsList`): the `n`
-  of a set `I ⊆ [1, Y]` with `P ∣ n` and `n/P` free of primes below `z` number
-  `Σ_{r ≤ R} #{q monotone, primes in [z, Y], P·∏q ∈ I}` once `z^{R+1} > Y`.
+* `ofFn_eq_primeFactorsList`: **rough cofactors as sorted tuples of primes.** A monotone tuple of primes is the
+  sorted list of the prime factors of its product, so a cofactor `n/P` is the product of exactly one monotone tuple
+  of primes.
 * `abs_sum_sub_le_boxes`: **the box sandwich.** A finite set `S` split into classes `J`, each inside a set `full J`
   on which the two weights `f_A`, `f_B` compare with error `E`, satisfies
   `|Σ_S f_A − c Σ_S f_B| ≤ #classes·E + c Σ_J t J` when `t J ≥ Σ_{full J} f_B` for the classes `J` that straddle `S`
@@ -30,14 +29,6 @@ open Classical
 
 /-! ### Rough cofactors as sorted tuples of primes -/
 
-/-- The monotone `r`-tuples of primes in `[z, Y]`. -/
-noncomputable def monoPrimes (r z Y : ℕ) : Finset (Fin r → ℕ) :=
-  (Fintype.piFinset fun _ : Fin r => (Icc z Y).filter Nat.Prime).filter fun q => Monotone q
-
-theorem mem_monoPrimes {r z Y : ℕ} {q : Fin r → ℕ} :
-    q ∈ monoPrimes r z Y ↔ (∀ i, z ≤ q i ∧ q i ≤ Y ∧ (q i).Prime) ∧ Monotone q := by
-  simp only [monoPrimes, mem_filter, Fintype.mem_piFinset, mem_Icc, and_assoc]
-
 /-- A monotone tuple of primes is the sorted list of the prime factors of its product. -/
 theorem ofFn_eq_primeFactorsList {r : ℕ} {q : Fin r → ℕ} (hq : ∀ i, (q i).Prime) (hm : Monotone q) :
     List.ofFn q = (∏ i, q i).primeFactorsList := by
@@ -46,91 +37,6 @@ theorem ofFn_eq_primeFactorsList {r : ℕ} {q : Fin r → ℕ} (hq : ∀ i, (q i
     obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hp
     exact hq i
   exact hperm.eq_of_sortedLE (List.sortedLE_ofFn_iff.2 hm) (Nat.primeFactorsList_sorted _)
-
-/-- A product of `r` numbers at least `z` is at least `z^r`. -/
-theorem pow_le_prod {r z : ℕ} {q : Fin r → ℕ} (hq : ∀ i, z ≤ q i) : z ^ r ≤ ∏ i, q i := by
-  calc z ^ r = ∏ _i : Fin r, z := by simp
-    _ ≤ ∏ i, q i := prod_le_prod fun i _ => hq i
-
-/-- **Rough cofactors as sorted tuples of primes.** Let `P ≥ 1` and `I` a finite set of naturals in `[1, Y]` with
-`Y < z^{R+1}`. The `n ∈ I` with `P ∣ n` and `n/P` free of primes below `z` are the products `P·∏q` of the monotone
-`r`-tuples `q` of primes in `[z, Y]`, `r ≤ R`, one `q` for each `n`. -/
-theorem card_dvd_rough_eq_sum {P z Y R : ℕ} (hP : 0 < P) (I : Finset ℕ) (hI : ∀ n ∈ I, 0 < n ∧ n ≤ Y)
-    (hR : Y < z ^ (R + 1)) :
-    #{n ∈ I | P ∣ n ∧ SieveTree.rough z (n / P)} =
-      ∑ r ∈ range (R + 1), #{q ∈ monoPrimes r z Y | P * ∏ i, q i ∈ I} := by
-  rw [← card_sigma]
-  symm
-  refine card_nbij' (fun x => P * ∏ i, x.2 i)
-    (fun n => ⟨(n / P).primeFactorsList.length, fun i => (n / P).primeFactorsList.get i⟩) ?_ ?_ ?_ ?_
-  · -- the products lie in the left side
-    rintro ⟨r, q⟩ hx
-    rw [mem_coe, mem_sigma, mem_filter, mem_monoPrimes] at hx
-    obtain ⟨-, ⟨hq, -⟩, hI'⟩ := hx
-    rw [mem_coe, mem_filter]
-    refine ⟨hI', Dvd.intro _ rfl, ?_⟩
-    dsimp only
-    rw [Nat.mul_div_cancel_left _ hP]
-    intro p hpz hp hdvd
-    obtain ⟨i, -, hi⟩ := (Prime.dvd_finsetProd_iff hp.prime _).1 hdvd
-    have := (Nat.prime_dvd_prime_iff_eq hp (hq i).2.2).1 hi
-    have := (hq i).1
-    omega
-  · -- the sorted prime factors of the cofactor
-    intro n hn
-    rw [mem_coe, mem_filter] at hn
-    obtain ⟨hnI, hPn, hr⟩ := hn
-    obtain ⟨hn0, hnY⟩ := hI n hnI
-    set m := n / P with hm
-    have hm0 : m ≠ 0 := by
-      rw [hm]
-      exact (Nat.div_pos (Nat.le_of_dvd hn0 hPn) hP).ne'
-    have hmn : m ≤ n := Nat.div_le_self n P
-    have hmem : ∀ i : Fin m.primeFactorsList.length,
-        z ≤ m.primeFactorsList.get i ∧ m.primeFactorsList.get i ≤ Y ∧ (m.primeFactorsList.get i).Prime := by
-      intro i
-      have hi : m.primeFactorsList.get i ∈ m.primeFactorsList := List.get_mem _ _
-      have hp := Nat.prime_of_mem_primeFactorsList hi
-      refine ⟨?_, (Nat.le_of_mem_primeFactorsList hi).trans (hmn.trans hnY), hp⟩
-      by_contra hlt
-      exact hr _ (not_le.1 hlt) hp (Nat.dvd_of_mem_primeFactorsList hi)
-    have hprod : ∏ i, m.primeFactorsList.get i = m := by
-      rw [← List.prod_ofFn, List.ofFn_get, Nat.prod_primeFactorsList hm0]
-    rw [mem_coe, mem_sigma, mem_range, mem_filter, mem_monoPrimes]
-    refine ⟨?_, ⟨hmem, Nat.primeFactorsList_sorted m⟩, ?_⟩
-    · -- `z^r ≤ m ≤ Y < z^{R+1}`
-      have h1 : z ^ m.primeFactorsList.length ≤ m := by
-        have := pow_le_prod (q := fun i => m.primeFactorsList.get i) fun i => (hmem i).1
-        rwa [hprod] at this
-      have h2 : z ^ m.primeFactorsList.length < z ^ (R + 1) := lt_of_le_of_lt (h1.trans (hmn.trans hnY)) hR
-      have hz0 : z ≠ 0 := by
-        rintro rfl
-        simp at hR
-      have hz1 : z ≠ 1 := by
-        rintro rfl
-        simp at hR
-        omega
-      have hz : 1 < z := by omega
-      exact (Nat.pow_lt_pow_iff_right (by omega)).1 h2
-    · dsimp only
-      rw [hprod, hm, Nat.mul_div_cancel' hPn]
-      exact hnI
-  · -- the left inverse: the sorted factors of `∏q` are `q`
-    rintro ⟨r, q⟩ hx
-    rw [mem_coe, mem_sigma, mem_filter, mem_monoPrimes] at hx
-    obtain ⟨-, ⟨hq, hmono⟩, -⟩ := hx
-    dsimp only
-    rw [Nat.mul_div_cancel_left _ hP]
-    have h := ofFn_eq_primeFactorsList (fun i => (hq i).2.2) hmono
-    rw [← List.ofFn_inj', ← h, List.ofFn_get]
-  · -- the right inverse
-    intro n hn
-    rw [mem_coe, mem_filter] at hn
-    obtain ⟨hnI, hPn, -⟩ := hn
-    have hn0 := (hI n hnI).1
-    have hm0 : n / P ≠ 0 := (Nat.div_pos (Nat.le_of_dvd hn0 hPn) hP).ne'
-    show P * ∏ i, (n / P).primeFactorsList.get i = n
-    rw [← List.prod_ofFn, List.ofFn_get, Nat.prod_primeFactorsList hm0, Nat.mul_div_cancel' hPn]
 
 /-! ### The box sandwich -/
 
@@ -246,6 +152,5 @@ theorem mem_tuples_idxG {ι : Type*} [Fintype ι] [DecidableEq ι] {G : Finset �
 
 end ShortSieveBoxes
 
-#print axioms ShortSieveBoxes.card_dvd_rough_eq_sum
 #print axioms ShortSieveBoxes.abs_sum_sub_le_boxes
 #print axioms ShortSieveBoxes.mem_tuples_idxG

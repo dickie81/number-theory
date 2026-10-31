@@ -25,7 +25,7 @@ The route.
   the dilations `u ↦ u e^v`, `0 ≤ v ≤ ε`: `W₀ = Smooth1 ν ε`, `W_{k+1}(u) = (1/ε) ∫_0^ε W_k(u e^v) dv` (`W`). Then
   `W_k(u) = 1` for `u ≤ (1 − ε log 2)e^{−kε}`, `W_k(u) = 0` for `u ≥ 1 + 2ε log 2` and `|W_k| ≤ 1` (`W_eq_one`,
   `W_eq_zero`, `abs_W_le_one`). The window of `(x − y, x]` is `w_y(n) = W_k(n/x) − W_k(n/(x − y))` (`win`).
-* Mellin inversion on `Re s = 1/2` (`W_eq_integral`, `sum_W_eq`; `sum_smooth1_eq` for `k = 0`). For `k = 0` this is
+* Mellin inversion on `Re s = 1/2` (`W_eq_integral`, `sum_W_eq`). For `k = 0` this is
   Mathlib's `mellinInv_mellin_eq` at `σ = 1/2`, the transform being integrable on the line by PNT+'s bound
   `|𝓜(Smooth1)(s)| ≤ C/(ε|s|²)` (`MellinOfSmooth1b`). Each average multiplies the transform by
   `G(s) = (1/ε) ∫_0^ε e^{−vs} dv` (Fubini, `integral_integral_swap`), and `|G| ≤ 1`, `|G(s)| ≤ 2/(ε|s|)` on
@@ -480,17 +480,6 @@ theorem sum_W_eq (hν : Bump ν) (εpos : 0 < ε) (ε_lt_one : ε < 1) (k : ℕ)
   congr 2
   funext t
   rw [dp_coef hS a t, Finset.sum_mul, Finset.sum_mul]
-
-/-- **Mellin inversion for a Dirichlet polynomial against `Smooth1`.** For a finite set `S` of positive integers
-and `X > 0`, `Σ_{n∈S} a_n Smooth1(n/X) = (1/2π) ∫ A(1/2 + it) 𝓜(Smooth1 ν ε)(1/2 + it) X^{1/2+it} dt`
-(`sum_W_eq` for `k = 0`; `cl t = 1/2 + it`). -/
-theorem sum_smooth1_eq (hν : Bump ν) (εpos : 0 < ε) (ε_lt_one : ε < 1) {S : Finset ℕ}
-    (hS : ∀ n ∈ S, 0 < n) (a : ℕ → ℂ) {X : ℝ} (hX : 0 < X) :
-    ∑ n ∈ S, a n * (Smooth1 ν ε (n / X) : ℂ) = (1 / (2 * π) : ℝ) • ∫ t : ℝ,
-      DirMean.dp S (coef a) t * 𝓜 (fun x ↦ (Smooth1 ν ε x : ℂ)) (cl t) * (X : ℂ) ^ cl t := by
-  have h := sum_W_eq hν εpos ε_lt_one 0 hS a hX
-  simp only [MW, pow_zero, mul_one] at h
-  exact h
 
 /-! ### The kernels -/
 
@@ -1137,6 +1126,5 @@ end ShortSieveInterval
 
 #print axioms ShortSieveInterval.W_eq_integral
 #print axioms ShortSieveInterval.sum_W_eq
-#print axioms ShortSieveInterval.sum_smooth1_eq
 #print axioms ShortSieveInterval.norm_sum_win_sub_le
 #print axioms ShortSieveInterval.norm_sum_Ioc_sub_le

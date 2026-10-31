@@ -9,11 +9,9 @@ of its items). Boxes, linear forms and every check of the certificate are intege
 A linear form `L = c₀ + Σ_j c_j X_j + c_η H` also involves the slack `H = η · DEN`, `η = 1 − log n/log x`, by which
 the exponents of a term's items fall short of summing to `1`; a check uses only `|H| ≤ E`.
 
-* `LF.min_le`, `LF.le_max`: the least and largest values of a form on a box (`lo_j ≤ X_j < hi_j`) bound it there.
+* `LF.min_le`: the least value of a form on a box (`lo_j ≤ X_j < hi_j`) bounds it there.
 * `tightenOne_sound`, `tighten_sound`: shrinking a box by a constraint `L < 0` or `L ≤ 0` keeps every point of the box
   that satisfies it, and an empty result means there is no such point.
-* `minA_le`: the least value on a box of `6L + Σ_i μ_i g_i` (`μ_i ≥ 0`), divided by `6` and rounded down, bounds `L`
-  on the points of the box with every `g_i ≤ 0` (Lagrange duality, as the generator's domain-aware extremes).
 -/
 
 open Finset
@@ -27,7 +25,6 @@ structure LF where
   c0 : ℤ
   c : List ℤ
   ce : ℤ
-deriving DecidableEq, Repr
 
 /-- `Σ_j c_j X_j`. -/
 noncomputable def dotR : List ℤ → (ℕ → ℝ) → ℝ
@@ -60,12 +57,6 @@ def minDot : List ℤ → Box → ℤ
   | _ :: _, [] => 0
   | a :: l, b :: B => (if 0 ≤ a then a * b.1 else a * b.2) + minDot l B
 
-/-- `Σ_j max(c_j lo_j, c_j hi_j)`, the largest value of `Σ_j c_j X_j` on the box. -/
-def maxDot : List ℤ → Box → ℤ
-  | [], _ => 0
-  | _ :: _, [] => 0
-  | a :: l, b :: B => (if 0 ≤ a then a * b.2 else a * b.1) + maxDot l B
-
 theorem minDot_le : ∀ (c : List ℤ) (B : Box), c.length ≤ B.length → ∀ X, InBoxC B X →
     (minDot c B : ℝ) ≤ dotR c X
   | [], _, _, _, _ => by simp [minDot, dotR]
@@ -83,27 +74,8 @@ theorem minDot_le : ∀ (c : List ℤ) (B : Box), c.length ≤ B.length → ∀ 
         nlinarith
     linarith
 
-theorem le_maxDot : ∀ (c : List ℤ) (B : Box), c.length ≤ B.length → ∀ X, InBoxC B X → dotR c X ≤ maxDot c B
-  | [], _, _, _, _ => by simp [maxDot, dotR]
-  | a :: l, [], h, _, _ => by simp at h
-  | a :: l, b :: B, h, X, hX => by
-    obtain ⟨h1, h2, hB⟩ := hX
-    have ih := le_maxDot l B (by simpa using h) _ hB
-    simp only [maxDot, dotR, Int.cast_add]
-    have : (a : ℝ) * X 0 ≤ ((if 0 ≤ a then a * b.2 else a * b.1 : ℤ) : ℝ) := by
-      split_ifs with ha
-      · push_cast
-        exact mul_le_mul_of_nonneg_left h2 (by exact_mod_cast ha)
-      · push_cast
-        have ha' : (a : ℝ) < 0 := by exact_mod_cast not_le.1 ha
-        nlinarith
-    linarith
-
 /-- The least value of a form on the box with `|H| ≤ E`. -/
 def LF.min (L : LF) (B : Box) (E : ℤ) : ℤ := L.c0 + minDot L.c B - |L.ce| * E
-
-/-- The largest value of a form on the box with `|H| ≤ E`. -/
-def LF.max (L : LF) (B : Box) (E : ℤ) : ℤ := L.c0 + maxDot L.c B + |L.ce| * E
 
 theorem abs_mul_le {c : ℤ} {E : ℤ} {H : ℝ} (hH : |H| ≤ E) : |(c : ℝ) * H| ≤ |(c : ℝ)| * E := by
   rw [abs_mul]
@@ -118,20 +90,8 @@ theorem LF.min_leC (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ}
   push_cast
   linarith
 
-theorem LF.le_maxC (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} {X : ℕ → ℝ} (hX : InBoxC B X)
-    {H : ℝ} (hH : |H| ≤ E) : L.val X H ≤ L.max B E := by
-  have h1 := le_maxDot L.c B hlen X hX
-  have h2 := abs_mul_le (c := L.ce) hH
-  have h3 := le_abs_self ((L.ce : ℝ) * H)
-  unfold LF.max LF.val
-  push_cast
-  linarith
-
 theorem LF.min_le (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} {X : ℕ → ℝ} (hX : InBox B X)
     {H : ℝ} (hH : |H| ≤ E) : (L.min B E : ℝ) ≤ L.val X H := L.min_leC hlen (inBoxC_of_inBox hX) hH
-
-theorem LF.le_max (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} {X : ℕ → ℝ} (hX : InBox B X)
-    {H : ℝ} (hH : |H| ≤ E) : L.val X H ≤ L.max B E := L.le_maxC hlen (inBoxC_of_inBox hX) hH
 
 /-! ### Constraints -/
 
@@ -139,7 +99,6 @@ theorem LF.le_max (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} 
 structure Con where
   L : LF
   strict : Bool
-deriving DecidableEq, Repr
 
 /-- The constraint holds at `(X, H)`. -/
 def Con.Holds (C : Con) (X : ℕ → ℝ) (H : ℝ) : Prop := if C.strict then C.L.val X H < 0 else C.L.val X H ≤ 0
@@ -318,13 +277,6 @@ theorem not_isEmpty : ∀ {B : Box} {X : ℕ → ℝ}, InBox B X → B.isEmpty =
 
 /-! ### Domain-aware least values -/
 
-/-- `6L + Σ_i μ_i g_i`. -/
-def LF.addMul (L : LF) : List (ℤ × LF) → LF
-  | [] => ⟨6 * L.c0, L.c.map (6 * ·), 6 * L.ce⟩
-  | (μ, g) :: l => let M := L.addMul l
-    ⟨M.c0 + μ * g.c0, List.zipWith (· + ·) (M.c ++ List.replicate (g.c.length - M.c.length) 0)
-      (g.c.map (μ * ·) ++ List.replicate (M.c.length - g.c.length) 0), M.ce + μ * g.ce⟩
-
 theorem dotR_map_mul (a : ℤ) : ∀ (c : List ℤ) (X : ℕ → ℝ), dotR (c.map (a * ·)) X = a * dotR c X
   | [], _ => by simp [dotR]
   | b :: l, X => by
@@ -345,73 +297,9 @@ theorem dotR_append : ∀ (c d : List ℤ) (X : ℕ → ℝ), dotR (c ++ d) X = 
     rw [this]
     ring
 
-theorem dotR_zipWith_add : ∀ (c d : List ℤ) (X : ℕ → ℝ), c.length = d.length →
-    dotR (List.zipWith (· + ·) c d) X = dotR c X + dotR d X
-  | [], [], _, _ => by simp [dotR]
-  | a :: l, b :: m, X, h => by
-    simp only [List.zipWith_cons_cons, dotR, dotR_zipWith_add l m _ (by simpa using h)]
-    push_cast
-    ring
-  | [], _ :: _, _, h => by simp at h
-  | _ :: _, [], _, h => by simp at h
-
-theorem dotR_pad (c : List ℤ) (n : ℕ) (X : ℕ → ℝ) : dotR (c ++ List.replicate n 0) X = dotR c X := by
-  rw [dotR_append, dotR_replicate_zero, add_zero]
-
-theorem LF.val_addMul (L : LF) (X : ℕ → ℝ) (H : ℝ) :
-    ∀ l : List (ℤ × LF), (L.addMul l).val X H = 6 * L.val X H + (l.map fun p => (p.1 : ℝ) * p.2.val X H).sum
-  | [] => by
-    simp only [LF.addMul, LF.val, dotR_map_mul, List.map_nil, List.sum_nil]
-    push_cast
-    ring
-  | (μ, g) :: l => by
-    have ih := L.val_addMul X H l
-    simp only [LF.addMul, List.map_cons, List.sum_cons]
-    unfold LF.val at ih ⊢
-    rw [dotR_zipWith_add _ _ _ (by simp; omega), dotR_pad, dotR_pad, dotR_map_mul]
-    push_cast
-    linarith
-
-/-- The domain-aware least value: `⌊min_B (6L + Σ_i μ_i g_i)/6⌋`. -/
-def LF.minA (L : LF) (B : Box) (E : ℤ) (l : List (ℤ × LF)) : ℤ := (L.addMul l).min B E / 6
-
-theorem length_addMul (L : LF) : ∀ l : List (ℤ × LF), (L.addMul l).c.length = max L.c.length
-    ((l.map fun p => p.2.c.length).foldr max 0)
-  | [] => by simp [LF.addMul]
-  | (μ, g) :: l => by
-    have ih := length_addMul L l
-    simp only [LF.addMul, List.length_zipWith, List.length_append, List.length_replicate, List.length_map,
-      List.map_cons, List.foldr_cons]
-    rw [ih]
-    omega
-
-theorem sum_map_nonpos {α : Type*} {l : List α} (f : α → ℝ) (h : ∀ p ∈ l, f p ≤ 0) : (l.map f).sum ≤ 0 := by
-  induction l with
-  | nil => simp
-  | cons a l ih =>
-    simp only [List.map_cons, List.sum_cons]
-    have h1 := h a List.mem_cons_self
-    have h2 := ih fun p hp => h p (List.mem_cons_of_mem _ hp)
-    linarith
-
-/-- **Domain-aware least values.** At a point of the box where every `g_i ≤ 0`, `L ≥ ⌊min_B (6L + Σ μ_i g_i)/6⌋`
-for any `μ_i ≥ 0`. -/
-theorem LF.minA_le (L : LF) {B : Box} {E : ℤ} (l : List (ℤ × LF)) (hlen : (L.addMul l).c.length ≤ B.length)
-    {X : ℕ → ℝ} (hX : InBox B X) {H : ℝ} (hH : |H| ≤ E) (hl : ∀ p ∈ l, 0 ≤ p.1 ∧ p.2.val X H ≤ 0) :
-    (L.minA B E l : ℝ) ≤ L.val X H := by
-  have h1 := (L.addMul l).min_le hlen hX hH
-  rw [L.val_addMul X H l] at h1
-  have h2 : (l.map fun p => (p.1 : ℝ) * p.2.val X H).sum ≤ 0 :=
-    sum_map_nonpos _ fun p hp => mul_nonpos_of_nonneg_of_nonpos (by exact_mod_cast (hl p hp).1) (hl p hp).2
-  have h3 := Int.ediv_mul_le ((L.addMul l).min B E) (by norm_num : (6 : ℤ) ≠ 0)
-  have h3' : (((L.addMul l).min B E / 6 : ℤ) : ℝ) * 6 ≤ (L.addMul l).min B E := by exact_mod_cast h3
-  unfold LF.minA
-  linarith
-
 end ShortSieveCert
 
 #print axioms ShortSieveCert.LF.min_le
 #print axioms ShortSieveCert.Con.not_holds_of_fails
 #print axioms ShortSieveCert.tightenList_sound
 #print axioms ShortSieveCert.not_isEmpty
-#print axioms ShortSieveCert.LF.minA_le

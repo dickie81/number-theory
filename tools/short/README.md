@@ -87,7 +87,7 @@ theorem) and his Lemma 4.1 (their Lemma 9, two variables near `x^{1/2}`, which t
 the numbers are those of arXiv:2308.04458v8.
 The comparison interval is `(x − x^{1−ρ}, x]` with `ρ < 1/300`, so that the prime number theorem with the half-plane's
 error term counts primes down to `x^{2θ−1}` in it (`ShortSieveLong`); the Type II estimate takes any `ρ > 0`
-(`ShortSieveTypeII.abs_card_tuples_sub_le_of_pos`).
+(`ShortSieveGroup.abs_card_tuples_sub_le_group_of_pos`).
 
 ## Toward a proof in Lean
 
@@ -106,11 +106,10 @@ The plan, with what is done:
      (`ZetaKernel.power_count_pts`): `ShortSieveCount` (done).
    - Harman's moment lemma with real exponents given a pointwise bound `|L| ≤ N^{1−η}`: `ShortSieveMoment` (done).
    - The pointwise bound for the primes from the zero-free half-plane, a twisted prime number theorem
-     (`ShortSieveTwist`, done), and the two together, the moment lemma for the primes with no hypothesis
-     (`ShortSieveHarman`, done).
-   - The Type II estimate for products of primes in boxes `x^{αⱼ}/2 ≤ Nⱼ < pⱼ ≤ Mⱼ ≤ 2Nⱼ`, one Hölder factor per
-     prime: the reduction of item 2, the moments of the boxes from the heights `Nⱼ^κ` and Hölder's inequality, for
-     any comparison interval `(x − x^{1−ρ}, x]`, `ρ > 0`: `ShortSieveTypeII` (done).
+     (`ShortSieveTwist`, done).
+   - The pieces of the Type II estimate for products of primes in boxes `Nⱼ < pⱼ ≤ Mⱼ ≤ 2Nⱼ`: the reduction of
+     item 2, the pointwise bound for a box from the heights `Nⱼ^κ` and Hölder's inequality, for any comparison
+     interval `(x − x^{1−ρ}, x]`, `ρ > 0`: `ShortSieveTypeII` (done).
    - Hölder factors that are groups of boxes, uniformly over all boxes whose groups' products are at least `x^{a_i}`:
      `ShortSieveGroup` (done). The rough cofactor of a term is the monotone tuple of its prime factors
      (`ShortSieveBoxes`), so a group that holds all of them is the cofactor as one factor, as the certificate needs.
