@@ -102,7 +102,7 @@ lean_lib Core where
     .one `ZeroSwap, .one `Zeta, .one `ZetaDiscs, .one `ZetaDiscsR,
     .one `ZetaInputs]
 
-/-- lib/pnt: 381 modules. -/
+/-- lib/pnt: 382 modules. -/
 lean_lib PNT where
   srcDir := "lib/pnt"
   globs := #[
@@ -197,11 +197,11 @@ lean_lib PNT where
     .one `SieveTypeIBEv, .one `SieveTypeIBFam, .one `SieveTypeIBLeaf, .one `SieveTypeIBSum,
     .one `SieveTypeII, .one `SieveTypeIIGen, .one `SieveTypeIIHM, .one `SieveTypeIIR,
     .one `SieveTypeIIU, .one `SieveTypeIIU22000D, .one `SieveWeight, .one `SmoothPerron,
-    .one `SquarefreeCount, .one `Subconvexity, .one `TwinKV, .one `ZetaAFE,
-    .one `ZetaFourth, .one `ZetaGMBlock, .one `ZetaGMDensity, .one `ZetaGMHux,
-    .one `ZetaGMIngham, .one `ZetaGMLV, .one `ZetaGMProp, .one `ZetaGMS3,
-    .one `ZetaGMTrace, .one `ZetaGMWin, .one `ZetaHuxley, .one `ZetaIngham,
-    .one `ZetaKernel]
+    .one `SquarefreeCount, .one `Subconvexity, .one `SubconvexityCrit, .one `TwinKV,
+    .one `ZetaAFE, .one `ZetaFourth, .one `ZetaGMBlock, .one `ZetaGMDensity,
+    .one `ZetaGMHux, .one `ZetaGMIngham, .one `ZetaGMLV, .one `ZetaGMProp,
+    .one `ZetaGMS3, .one `ZetaGMTrace, .one `ZetaGMWin, .one `ZetaHuxley,
+    .one `ZetaIngham, .one `ZetaKernel]
 
 /-- lib/dh: 53 modules. -/
 lean_lib DH where
