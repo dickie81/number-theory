@@ -1,0 +1,156 @@
+import SieveDecomp
+import ShortSieveGroup
+
+/-!
+# Sieve terms as counts over boxes of primes
+
+The terms of Li's decomposition count the `n` of an interval with `P ∣ n` and `n/P` free of primes below a threshold
+`z`, summed over tuples of primes `P = p₁ ⋯ p_k`. The Type II estimates of `ShortSieveGroup` count tuples of primes
+in boxes `(Nⱼ, Mⱼ]` by their products. This module joins the two:
+
+* `ofFn_eq_primeFactorsList`: **rough cofactors as sorted tuples of primes.** A monotone tuple of primes is the
+  sorted list of the prime factors of its product, so a cofactor `n/P` is the product of exactly one monotone tuple
+  of primes.
+* `abs_sum_sub_le_boxes`: **the box sandwich.** A finite set `S` split into classes `J`, each inside a set `full J`
+  on which the two weights `f_A`, `f_B` compare with error `E`, satisfies
+  `|Σ_S f_A − c Σ_S f_B| ≤ #classes·E + c Σ_J t J` when `t J ≥ Σ_{full J} f_B` for the classes `J` that straddle `S`
+  (meet it without lying in it). Classes inside `S` cost `E`, classes outside cost nothing, and a straddling class
+  costs at most the larger of its two sides, which the comparison on `full J` bounds by `c Σ_{full J} f_B + E`.
+* The grid of boxes: for a finite set `G` of naturals, `nextG G e` is the least point of `G` above `e` and `idxG G p`
+  the greatest point of `G` below `p`, so `p ∈ (idxG G p, nextG G (idxG G p)]` for `min G < p ≤ max G`
+  (`mem_box_idxG`); a tuple of primes lies in the tuples of its boxes (`mem_tuples_idxG`).
+-/
+
+open Finset
+
+namespace ShortSieveBoxes
+
+open Classical
+
+/-! ### Rough cofactors as sorted tuples of primes -/
+
+/-- A monotone tuple of primes is the sorted list of the prime factors of its product. -/
+theorem ofFn_eq_primeFactorsList {r : ℕ} {q : Fin r → ℕ} (hq : ∀ i, (q i).Prime) (hm : Monotone q) :
+    List.ofFn q = (∏ i, q i).primeFactorsList := by
+  have hperm : List.Perm (List.ofFn q) (∏ i, q i).primeFactorsList := by
+    refine Nat.primeFactorsList_unique List.prod_ofFn fun p hp => ?_
+    obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hp
+    exact hq i
+  exact hperm.eq_of_sortedLE (List.sortedLE_ofFn_iff.2 hm) (Nat.primeFactorsList_sorted _)
+
+/-! ### The box sandwich -/
+
+/-- **The box sandwich.** Let `S` be split by `box` into classes `J ∈ Js`, with `g ∈ full (box g)` for `g ∈ S`, and
+let `f_A, f_B ≥ 0`, `c ≥ 0`. If every class `J` that meets `S` has `|Σ_{full J} f_A − c Σ_{full J} f_B| ≤ E`, and every
+class that meets `S` without lying in it has `Σ_{full J} f_B ≤ t J`, with `t ≥ 0`, then
+`|Σ_S f_A − c Σ_S f_B| ≤ #Js·E + c Σ_J t J`. -/
+theorem abs_sum_sub_le_boxes {α κ : Type*} (S : Finset α) (Js : Finset κ) (box : α → κ)
+    (hbox : ∀ g ∈ S, box g ∈ Js) (full : κ → Finset α) (hfull : ∀ g ∈ S, g ∈ full (box g))
+    {fA fB : α → ℝ} (hA : ∀ g, 0 ≤ fA g) (hB : ∀ g, 0 ≤ fB g) {c E : ℝ} (hc : 0 ≤ c) (hE0 : 0 ≤ E)
+    (hE : ∀ J ∈ Js, (∃ g ∈ S, box g = J) →
+      |∑ g ∈ full J, fA g - c * ∑ g ∈ full J, fB g| ≤ E)
+    (t : κ → ℝ) (ht0 : ∀ J ∈ Js, 0 ≤ t J)
+    (ht : ∀ J ∈ Js, (∃ g ∈ S, box g = J) → (∃ g ∈ full J, ¬ (g ∈ S ∧ box g = J)) →
+      ∑ g ∈ full J, fB g ≤ t J) :
+    |∑ g ∈ S, fA g - c * ∑ g ∈ S, fB g| ≤ Js.card * E + c * ∑ J ∈ Js, t J := by
+  set T : κ → Finset α := fun J => S.filter (box · = J) with hT
+  have hTsub : ∀ J, T J ⊆ full J := fun J g hg => by
+    obtain ⟨hgS, rfl⟩ := mem_filter.1 hg
+    exact hfull g hgS
+  have hsplit : ∀ f : α → ℝ, ∑ g ∈ S, f g = ∑ J ∈ Js, ∑ g ∈ T J, f g := fun f =>
+    (sum_fiberwise_of_maps_to hbox f).symm
+  -- the bound for one class
+  have hone : ∀ J ∈ Js, |∑ g ∈ T J, fA g - c * ∑ g ∈ T J, fB g| ≤ E + c * t J := by
+    intro J hJ
+    have hct : 0 ≤ c * t J := mul_nonneg hc (ht0 J hJ)
+    by_cases hmeet : ∃ g ∈ S, box g = J
+    · by_cases hstr : ∃ g ∈ full J, ¬ (g ∈ S ∧ box g = J)
+      · have hEJ := abs_le.1 (hE J hJ hmeet)
+        have htJ := ht J hJ hmeet hstr
+        have hAT : ∑ g ∈ T J, fA g ≤ ∑ g ∈ full J, fA g := sum_le_sum_of_subset_of_nonneg (hTsub J)
+          fun g _ _ => hA g
+        have hBT : ∑ g ∈ T J, fB g ≤ ∑ g ∈ full J, fB g := sum_le_sum_of_subset_of_nonneg (hTsub J)
+          fun g _ _ => hB g
+        have hA0 : 0 ≤ ∑ g ∈ T J, fA g := sum_nonneg fun g _ => hA g
+        have hB0 : 0 ≤ ∑ g ∈ T J, fB g := sum_nonneg fun g _ => hB g
+        have hcB : c * ∑ g ∈ T J, fB g ≤ c * ∑ g ∈ full J, fB g := mul_le_mul_of_nonneg_left hBT hc
+        have hcB' : c * ∑ g ∈ full J, fB g ≤ c * t J := mul_le_mul_of_nonneg_left htJ hc
+        rw [abs_le]
+        constructor <;> nlinarith [mul_nonneg hc hB0]
+      · push Not at hstr
+        have heq : T J = full J := by
+          refine Subset.antisymm (hTsub J) fun g hg => ?_
+          obtain ⟨hgS, hgJ⟩ := hstr g hg
+          exact mem_filter.2 ⟨hgS, hgJ⟩
+        rw [heq]
+        exact (hE J hJ hmeet).trans (le_add_of_nonneg_right hct)
+    · have h0 : T J = ∅ := by
+        refine filter_eq_empty_iff.2 fun g hg hgJ => hmeet ⟨g, hg, hgJ⟩
+      rw [h0]
+      simpa using add_nonneg hE0 hct
+  rw [hsplit fA, hsplit fB, mul_sum, ← sum_sub_distrib]
+  refine (abs_sum_le_sum_abs _ _).trans ?_
+  refine (sum_le_sum hone).trans ?_
+  rw [sum_add_distrib, sum_const, nsmul_eq_mul, ← mul_sum]
+
+/-! ### The grid of boxes -/
+
+/-- The least point of `G` above `e` (or `e` itself when there is none). -/
+noncomputable def nextG (G : Finset ℕ) (e : ℕ) : ℕ :=
+  if h : (G.filter (e < ·)).Nonempty then (G.filter (e < ·)).min' h else e
+
+/-- The greatest point of `G` below `p` (or `0` when there is none). -/
+noncomputable def idxG (G : Finset ℕ) (p : ℕ) : ℕ :=
+  if h : (G.filter (· < p)).Nonempty then (G.filter (· < p)).max' h else 0
+
+/-- The index of `p` is a point of `G` below `p`, when one exists. -/
+theorem idxG_mem {G : Finset ℕ} {p : ℕ} (h : ∃ e ∈ G, e < p) : idxG G p ∈ G ∧ idxG G p < p := by
+  have hne : (G.filter (· < p)).Nonempty := by
+    obtain ⟨e, he, hep⟩ := h
+    exact ⟨e, mem_filter.2 ⟨he, hep⟩⟩
+  rw [idxG, dite_eq_left hne]
+  exact mem_filter.1 (max'_mem _ hne)
+
+/-- No point of `G` lies strictly between the index of `p` and `p`. -/
+theorem le_idxG {G : Finset ℕ} {p e : ℕ} (he : e ∈ G) (hep : e < p) : e ≤ idxG G p := by
+  have hne : (G.filter (· < p)).Nonempty := ⟨e, mem_filter.2 ⟨he, hep⟩⟩
+  rw [idxG, dite_eq_left hne]
+  exact le_max' _ e (mem_filter.2 ⟨he, hep⟩)
+
+/-- The next point above `e`, when one exists, is a point of `G` above `e` with none in between. -/
+theorem nextG_spec {G : Finset ℕ} {e : ℕ} (h : ∃ e' ∈ G, e < e') :
+    nextG G e ∈ G ∧ e < nextG G e ∧ ∀ e' ∈ G, e < e' → nextG G e ≤ e' := by
+  have hne : (G.filter (e < ·)).Nonempty := by
+    obtain ⟨e', he', hee'⟩ := h
+    exact ⟨e', mem_filter.2 ⟨he', hee'⟩⟩
+  rw [nextG, dite_eq_left hne]
+  refine ⟨(mem_filter.1 (min'_mem _ hne)).1, (mem_filter.1 (min'_mem _ hne)).2, fun e' he' hee' => ?_⟩
+  exact min'_le _ e' (mem_filter.2 ⟨he', hee'⟩)
+
+/-- **A number lies in its box.** If some point of `G` lies below `p` and some point at or above it, then
+`idxG G p < p ≤ nextG G (idxG G p)`. -/
+theorem mem_box_idxG {G : Finset ℕ} {p : ℕ} (hlo : ∃ e ∈ G, e < p) (hhi : ∃ e ∈ G, p ≤ e) :
+    idxG G p < p ∧ p ≤ nextG G (idxG G p) := by
+  obtain ⟨hmem, hlt⟩ := idxG_mem hlo
+  refine ⟨hlt, ?_⟩
+  obtain ⟨e, he, hpe⟩ := hhi
+  obtain ⟨hnm, hnlt, hnmin⟩ := nextG_spec ⟨e, he, lt_of_lt_of_le hlt hpe⟩
+  by_contra hcon
+  push Not at hcon
+  -- `nextG < p` is a point of `G` below `p` above the index
+  have := le_idxG hnm hcon
+  omega
+
+/-- **A tuple of primes lies in the tuples of its boxes.** -/
+theorem mem_tuples_idxG {ι : Type*} [Fintype ι] [DecidableEq ι] {G : Finset ℕ} {g : ι → ℕ}
+    (hp : ∀ j, (g j).Prime) (hlo : ∀ j, ∃ e ∈ G, e < g j) (hhi : ∀ j, ∃ e ∈ G, g j ≤ e) :
+    g ∈ ShortSieveTypeII.tuples (fun j => idxG G (g j)) (fun j => nextG G (idxG G (g j))) := by
+  rw [ShortSieveTypeII.tuples, Fintype.mem_piFinset]
+  intro j
+  obtain ⟨h1, h2⟩ := mem_box_idxG (hlo j) (hhi j)
+  exact mem_filter.2 ⟨mem_Ioc.2 ⟨h1, h2⟩, hp j⟩
+
+end ShortSieveBoxes
+
+#print axioms ShortSieveBoxes.abs_sum_sub_le_boxes
+#print axioms ShortSieveBoxes.mem_tuples_idxG
