@@ -1,6 +1,6 @@
 # zeta23 (vendored)
 
-These are 59 files of the `zeta23` folder of `https://github.com/anthropics/formal-math` at commit
+These are 117 files of the `zeta23` folder of `https://github.com/anthropics/formal-math` at commit
 `fbdc36bbf17d20af3fd0447c6d1a8a02773c9844`. They are the files that the library's modules import, directly or
 through each other. zeta23 is Copyright 2026 Anthropic, PBC, and is released under the Apache License 2.0, with the
 notice in `NOTICE` and the license in `LICENSE`. Its files under `Zeta23/FromPNTPlus/` derive from

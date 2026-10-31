@@ -278,6 +278,15 @@ def extract():
     need(statement(res("ZeroWindow.zero_in_window")) == "theorem zero_in_window : ∃ H T₀ : ℝ, 0 < H ∧ "
          "∀ t : ℝ, T₀ ≤ t → ∃ p : PosZeroIdx, t ≤ zetaOrd p ∧ zetaOrd p < t + H",
          "ZeroWindow.zero_in_window no longer says that the gaps between the ordinates of the zeros are bounded")
+    need(statement(res("CriticalLine.infinite_zeros")) == "theorem infinite_zeros : {ρ : ℂ | riemannZeta ρ = 0 ∧ "
+         "ρ.re = 1 / 2}.Infinite",
+         "CriticalLine.infinite_zeros no longer says that infinitely many zeros of ζ lie on the critical line")
+    sel = grab(r"^theorem ncard_zeros_ge : ∀ᶠ T : ℝ in atTop, T \* Real\.log T / \((\d+) \* π\) ≤ \(\(\{ρ : ℂ \| "
+               r"riemannZeta ρ = 0 ∧ ρ\.re = 1 / 2\} ∩ \{ρ \| T < ρ\.im ∧ ρ\.im ≤ 2 \* T\}\)\.ncard : ℝ\)$",
+               statement(res("CriticalLine.ncard_zeros_ge")), "the zeros on the line with T < Im ρ ≤ 2T").group(1)
+    two = q(grab(r"^theorem two_thirds : ∀ ε > 0, ∃ T₀ : ℝ, ∀ T ≥ T₀, \((.+?) - ε\) \* \(Ncount T \(2 \* T\) : ℝ\) "
+                 r"≤ N0star T \(2 \* T\)$", statement(res("CriticalLine.two_thirds")),
+                 "the share of the zeros on the critical line").group(1))
 
     # How many zeros of ζ lie right of σ.
     zeta = []
@@ -476,7 +485,7 @@ def extract():
     }
     texts = {
         "hp": t(hp), "hpWidth": t(1 - hp), "bandLo": t(band[0]), "bandHi": t(band[1]),
-        "thetaLo": t(th_lo), "thetaHi": t(th_hi),
+        "thetaLo": t(th_lo), "thetaHi": t(th_hi), "selberg": sel, "onLine": t(two),
         "kvA": f"{kv.group(1)}/{kv.group(2)}", "kvB": f"{kv.group(3)}/{kv.group(4)}",
         "nzeta": {1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}.get(len(zeta), str(len(zeta))),
         "npieces": str(len(pieces)), "gmax": dec(gmax, 4), "gmaxLo": t(pieces[peak][0]), "gmaxHi": t(pieces[peak][1]),
@@ -487,15 +496,16 @@ def extract():
         "commit": f'<a href="{REPO}/tree/{sha}">{sha[:7]}</a>' if sha else "the working tree",
         "date": html.escape(day or ""),
         **{k: html.escape(v) for k, v in r.items()},
-        "theorems": theorem_rows(hp, band, th_lo, th_hi, slog, zeta, c524, Lmain),
+        "theorems": theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain),
     }
-    for k in ("hp", "hpWidth", "bandLo", "bandHi", "thetaLo", "thetaHi", "kvA", "kvB", "nzeta", "npieces", "gmax",
+    for k in ("hp", "hpWidth", "bandLo", "bandHi", "thetaLo", "thetaHi", "selberg", "onLine", "kvA", "kvB", "nzeta",
+              "npieces", "gmax",
               "gmaxLo", "gmaxHi", "cgl", "floor", "grh", "L", "Ldec", "u1", "u2", "exactLo", "exactHi", "nresults"):
         texts[k] = html.escape(texts[k])
     return data, texts, named, results
 
 
-def theorem_rows(hp, band, th_lo, th_hi, slog, zeta, c524, Lmain):
+def theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain):
     """The rows of the page's table of theorems, as HTML."""
     m = lambda s: f'<span class="math">{s}</span>'  # noqa: E731
     rows = [
@@ -511,6 +521,13 @@ def theorem_rows(hp, band, th_lo, th_hi, slog, zeta, c524, Lmain):
         (f"{m('S(t) = O(log t)')} for {m('t')} ≥ {slog}", ["SlogZeta.Slog_zeta"]),
         (f"There is an {m('H')} such that, for large {m('t')}, every window {m('[t, t + H)')} contains the ordinate of "
          f"a zero of {m('ζ')}", ["ZeroWindow.zero_in_window"]),
+        (f"Infinitely many zeros of {m('ζ')} lie on the critical line {m('Re s')} = ½",
+         ["CriticalLine.infinite_zeros"]),
+        (f"For large {m('T')}, at least {m('T log T')}/{sel}{m('π')} zeros on the critical line have "
+         f"{m('T &lt; Im ρ ≤ 2T')}", ["CriticalLine.ncard_zeros_ge"]),
+        (f"For every {m('ε')} &gt; 0 and large {m('T')}, at least ({t(two)} − {m('ε')}){m('N(T, 2T)')} distinct zeros "
+         f"with {m('T &lt; Im ρ ≤ 2T')} lie on the critical line, {m('N(T, 2T)')} counting all of them with "
+         f"multiplicity", ["CriticalLine.two_thirds"]),
     ]
     for z in zeta:
         a = f"({z['f']} + ε)" if z["shape"] == "eps" else f"{z['f']}(1+δ)"

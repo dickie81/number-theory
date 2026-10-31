@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 955 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 964 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -10,12 +10,13 @@ that every Lean name and path on this page exists.
 
 A deep vertical slice, not a survey: the zeros of `ζ` and of Dirichlet `L`-functions, and what they say about primes.
 In that slice the library reaches current research (Guth and Maynard's large values estimate, Chen, Gupta and Li's
-density estimate, OpenAI's zero-free half-plane) and proves a Linnik exponent of its own. Outside it the library has
-what its proofs needed and nothing more. By the sections of MSC 2020's Number theory (11):
+density estimate, OpenAI's zero-free half-plane, Alpöge and Furman's two thirds of the zeros on the critical line) and
+proves a Linnik exponent of its own. Outside it the library has what its proofs needed and nothing more. By the
+sections of MSC 2020's Number theory (11):
 
 | Section | Here |
 |---|---|
-| 11M `ζ` and `L`-functions | In depth: zero-free regions, zero counting, zero density, moments, approximate functional equations, explicit formulae, criteria for RH |
+| 11M `ζ` and `L`-functions | In depth: zero-free regions, zero counting, zero density, the zeros on the critical line, moments, approximate functional equations, explicit formulae, criteria for RH |
 | 11N Multiplicative number theory | In depth: the prime number theorem and its error terms, primes in progressions, Linnik's theorem, primes in short intervals, Mertens' function, divisor problems, squarefree numbers, sieves |
 | 11L Exponential and character sums | What the routes need: mean and large values of Dirichlet polynomials, the Halász–Montgomery inequality, the quadratic large sieve over `ℤ[ω]`, Vinogradov's mean value theorem in a weak form |
 | 11F Automorphic forms | One object: Kubota's cubic theta function on hyperbolic 3-space, with Patterson's coefficients |
@@ -47,6 +48,11 @@ fields with their class groups and the class number formula.
   everything below is a theorem if Lean's kernel and Mathlib are sound. What is missing is review of the mathematics:
   OpenAI's own catalogue marks its Lean "unchecked", and no review of the Dirichlet case independent of OpenAI and this
   library is known.
+- **An input whose journal review is pending**: Alpöge and Furman's theorem that two thirds of the zeros of `ζ` lie on
+  the critical line (arXiv:2608.13637), which `zeta23` proves with no hypothesis (`CriticalLine.two_thirds`). zeta23's
+  [metadata](https://github.com/anthropics/formal-math/blob/fbdc36bbf17d20af3fd0447c6d1a8a02773c9844/zeta23/formalization.yaml)
+  records that an analytic number theorist reviewed the paper and wrote an independent condensed proof of its main
+  result, and that Furman checked zeta23's statements against the paper.
 
 ## The results
 
@@ -64,6 +70,8 @@ result's note finds it unused; blank where neither has been checked.
 | Korobov–Vinogradov: no zero of `ζ` with `σ ≥ 1 − A(log t)^{−2/3}(log log t)^{−1/3}`; regions of width `(log t)^{−n}` for every `n > 2/3` | `LandauKV.zeroFree_KV`, `KVBridge.zeroFree_kv` | no |
 | Bohr–Landau: for every `w > 0`, almost every zero has `\|β − 1/2\| < w` | `BohrLandau.tendsto_NX_div_pos` | no |
 | `S(t) = O(log t)`, and the gaps between the ordinates are bounded | `SlogZeta.Slog_zeta`, `ZeroWindow.zero_in_window` | no |
+| Hardy: infinitely many zeros of `ζ` lie on the critical line. Selberg: for large `T`, at least `T log T/(12π)` of them have `T < Im ρ ≤ 2T`, a positive proportion, and at least `T log T/(16π)` simple ones | `CriticalLine.infinite_zeros`, `CriticalLine.ncard_zeros_ge`, `CriticalLine.ncard_simple_zeros_ge` | no |
+| Alpöge and Furman: of the zeros with `T < Im ρ ≤ 2T`, counted with multiplicity, shares of at least `2/3 − ε` are matched by distinct zeros on the critical line, `1/2 − ε` by simple zeros on it, and `3/4 − ε` by distinct zeros | `CriticalLine.two_thirds`, `CriticalLine.half_simple`, `CriticalLine.three_quarters_distinct` | no |
 
 ### How many zeros
 

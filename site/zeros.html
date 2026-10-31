@@ -190,16 +190,23 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
             <span class="math">[t, t + H)</span> contains the ordinate of a zero of <span class="math">ζ</span>. It follows from
             <span class="math">S(t) = O(log t)</span>.</p>
           <div class="leans"><code>ZeroWindow.<wbr>zero_in_window</code><code>SlogZeta.<wbr>Slog_zeta</code></div></div>
+        <div class="fact"><div class="claim">At least {{onLine}} of the zeros are on the line</div>
+          <p class="note">Infinitely many zeros of <span class="math">ζ</span> lie on the line, as Hardy proved in 1914.
+            For large <span class="math">T</span>, at least <span class="math">T log T</span>/{{selberg}}<span class="math">π</span>
+            of them have <span class="math">T &lt; Im ρ ≤ 2T</span>, a positive proportion (Selberg, 1942). Of the zeros there,
+            counted with multiplicity, a share of at least {{onLine}} − <span class="math">ε</span> is matched by distinct
+            zeros on the line (Alpöge and Furman, 2026).</p>
+          <div class="leans"><code>CriticalLine.<wbr>infinite_zeros</code><code>CriticalLine.<wbr>ncard_zeros_ge</code><code>CriticalLine.<wbr>two_thirds</code></div></div>
       </div>
       <p class="note">The library also proves the Korobov–Vinogradov zero-free region (<code>LandauKV.zeroFree_KV</code>), whose
         width shrinks like <span class="math">(log t)<sup>−{{kvA}}</sup>(log log t)<sup>−{{kvB}}</sup></span>, so at large
         heights the half-plane, of width {{hpWidth}} at every height, says more. The half-plane and the route to it are
         OpenAI's (2026); the library formalises them
         (<a href="https://github.com/dickie81/number-theory/blob/main/formalisations/openai-half-plane.md">its note</a>).
-        Bohr and Landau's theorem and the bounded gaps use
+        Bohr and Landau's theorem, the bounded gaps and the zeros on the line use
         <a href="https://github.com/dickie81/number-theory/blob/main/lib/vendor/zeta23/README.md">zeta23</a>, a library
         vendored from anthropics/formal-math: its Riemann–von Mangoldt formula, and the argument principle, Backlund's
-        bound and Stirling's formula behind it.</p>
+        bound and Stirling's formula behind it, and for the line its proof of Alpöge and Furman's theorem.</p>
     </div>
   </section>
 
