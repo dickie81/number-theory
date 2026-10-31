@@ -45,6 +45,15 @@ def InBox : Box → (ℕ → ℝ) → Prop
   | [], _ => True
   | b :: B, X => (b.1 : ℝ) ≤ X 0 ∧ X 0 < b.2 ∧ InBox B fun j => X (j + 1)
 
+/-- The point `X` lies in the closed box `lo_j ≤ X_j ≤ hi_j`. -/
+def InBoxC : Box → (ℕ → ℝ) → Prop
+  | [], _ => True
+  | b :: B, X => (b.1 : ℝ) ≤ X 0 ∧ X 0 ≤ b.2 ∧ InBoxC B fun j => X (j + 1)
+
+theorem inBoxC_of_inBox : ∀ {B : Box} {X : ℕ → ℝ}, InBox B X → InBoxC B X
+  | [], _, _ => trivial
+  | _ :: _, _, ⟨h1, h2, hB⟩ => ⟨h1, h2.le, inBoxC_of_inBox hB⟩
+
 /-- `Σ_j min(c_j lo_j, c_j hi_j)`, the least value of `Σ_j c_j X_j` on the box. -/
 def minDot : List ℤ → Box → ℤ
   | [], _ => 0
@@ -57,7 +66,8 @@ def maxDot : List ℤ → Box → ℤ
   | _ :: _, [] => 0
   | a :: l, b :: B => (if 0 ≤ a then a * b.2 else a * b.1) + maxDot l B
 
-theorem minDot_le : ∀ (c : List ℤ) (B : Box), c.length ≤ B.length → ∀ X, InBox B X → (minDot c B : ℝ) ≤ dotR c X
+theorem minDot_le : ∀ (c : List ℤ) (B : Box), c.length ≤ B.length → ∀ X, InBoxC B X →
+    (minDot c B : ℝ) ≤ dotR c X
   | [], _, _, _, _ => by simp [minDot, dotR]
   | a :: l, [], h, _, _ => by simp at h
   | a :: l, b :: B, h, X, hX => by
@@ -73,7 +83,7 @@ theorem minDot_le : ∀ (c : List ℤ) (B : Box), c.length ≤ B.length → ∀ 
         nlinarith
     linarith
 
-theorem le_maxDot : ∀ (c : List ℤ) (B : Box), c.length ≤ B.length → ∀ X, InBox B X → dotR c X ≤ maxDot c B
+theorem le_maxDot : ∀ (c : List ℤ) (B : Box), c.length ≤ B.length → ∀ X, InBoxC B X → dotR c X ≤ maxDot c B
   | [], _, _, _, _ => by simp [maxDot, dotR]
   | a :: l, [], h, _, _ => by simp at h
   | a :: l, b :: B, h, X, hX => by
@@ -83,7 +93,7 @@ theorem le_maxDot : ∀ (c : List ℤ) (B : Box), c.length ≤ B.length → ∀ 
     have : (a : ℝ) * X 0 ≤ ((if 0 ≤ a then a * b.2 else a * b.1 : ℤ) : ℝ) := by
       split_ifs with ha
       · push_cast
-        exact mul_le_mul_of_nonneg_left h2.le (by exact_mod_cast ha)
+        exact mul_le_mul_of_nonneg_left h2 (by exact_mod_cast ha)
       · push_cast
         have ha' : (a : ℝ) < 0 := by exact_mod_cast not_le.1 ha
         nlinarith
@@ -99,7 +109,7 @@ theorem abs_mul_le {c : ℤ} {E : ℤ} {H : ℝ} (hH : |H| ≤ E) : |(c : ℝ) *
   rw [abs_mul]
   exact mul_le_mul_of_nonneg_left hH (abs_nonneg _)
 
-theorem LF.min_le (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} {X : ℕ → ℝ} (hX : InBox B X)
+theorem LF.min_leC (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} {X : ℕ → ℝ} (hX : InBoxC B X)
     {H : ℝ} (hH : |H| ≤ E) : (L.min B E : ℝ) ≤ L.val X H := by
   have h1 := minDot_le L.c B hlen X hX
   have h2 := abs_mul_le (c := L.ce) hH
@@ -108,7 +118,7 @@ theorem LF.min_le (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} 
   push_cast
   linarith
 
-theorem LF.le_max (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} {X : ℕ → ℝ} (hX : InBox B X)
+theorem LF.le_maxC (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} {X : ℕ → ℝ} (hX : InBoxC B X)
     {H : ℝ} (hH : |H| ≤ E) : L.val X H ≤ L.max B E := by
   have h1 := le_maxDot L.c B hlen X hX
   have h2 := abs_mul_le (c := L.ce) hH
@@ -116,6 +126,12 @@ theorem LF.le_max (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} 
   unfold LF.max LF.val
   push_cast
   linarith
+
+theorem LF.min_le (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} {X : ℕ → ℝ} (hX : InBox B X)
+    {H : ℝ} (hH : |H| ≤ E) : (L.min B E : ℝ) ≤ L.val X H := L.min_leC hlen (inBoxC_of_inBox hX) hH
+
+theorem LF.le_max (L : LF) {B : Box} (hlen : L.c.length ≤ B.length) {E : ℤ} {X : ℕ → ℝ} (hX : InBox B X)
+    {H : ℝ} (hH : |H| ≤ E) : L.val X H ≤ L.max B E := L.le_maxC hlen (inBoxC_of_inBox hX) hH
 
 /-! ### Constraints -/
 
