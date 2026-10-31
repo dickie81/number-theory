@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 955 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 958 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 85 | 199 |
-| `lib/pnt` | 209 | 663 |
+| `lib/pnt` | 210 | 666 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
 
@@ -1257,6 +1257,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `MertensExponent.moebius_tendsto_of_Theta_lt`: `Σ μ(n) n^{−s}` converges for `Re s > Θ`
 - `MertensExponent.moebius_not_tendsto_of_lt_Theta`: `Σ μ(n) n^{−s}` diverges for `Re s < Θ`
 - `MertensExponent.moebiusAbscissa_eq_Theta`: The abscissa of convergence of `Σ μ(n) n^{−s}` is `Θ`
+
+#### `MillerTest`: Miller's primality test with small bases
+
+- `MillerTest.strongProbablePrime_of_prime`: Every odd prime passes
+- `MillerTest.exists_witness_le`: Miller's test with small bases
+- `MillerTest.prime_iff_forall_strongProbablePrime`: Miller's test, deterministic
 
 #### `PNTKV`: The prime number theorem with the Korobov–Vinogradov error term
 

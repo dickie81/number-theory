@@ -13,7 +13,8 @@ Bach's form is what makes G. L. Miller's primality test deterministic: for a com
 passes lie in a proper subgroup of `(ℤ/nℤ)ˣ`, so a base below the bound exposes `n`. Here the bounds follow from the
 zero-free half-plane, through `LeastNonresidue.exists_prime_ne_one`, with no hypothesis: a proper subgroup lies in the
 kernel of a nontrivial character (Mathlib's `CommGroup.exists_apply_ne_one_of_hasEnoughRootsOfUnity`, on the quotient),
-and the least prime at which that character is not `1` lies outside it. The primality test itself is not formalised.
+and the least prime at which that character is not `1` lies outside it. Miller's test itself is
+`MillerTest.prime_iff_forall_strongProbablePrime`.
 -/
 import LeastNonresidue
 
