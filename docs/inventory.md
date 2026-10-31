@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 119 modules that none of the three imports, directly or not, with their
+The last section lists the 120 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 28 | 155 |
+| `lib/pnt` | 223 | 726 | 29 | 163 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1889,6 +1889,17 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveThin.sum_inv_le_of_Icc`: Chebyshev's bound on `[X, KX]`
 - `ShortSieveThin.card_primes_comparison_le`: Primes pinned by a product in the comparison interval
 - `ShortSieveThin.card_thin_le`: The thin tuples
+
+#### `ShortSieveThree`: Li's third sum, split into the certificate's root cells
+
+- `ShortSieveThree.sThree_eq`: Li's third sum, split by the cofactor
+- `ShortSieveThree.OK_rOne`: The products have no loss
+- `ShortSieveThree.count_eq_n2`: A node of two primes and a cofactor
+- `ShortSieveThree.n2_eq_sum`: Cells
+- `ShortSieveThree.bigThree_eq_n2`: Li's third sum as pairs of primes
+- `ShortSieveThree.bigThree_eq_cells`: The root cells
+- `ShortSieveThree.OK_sThree`: Li's third sum from its root cells
+- `ShortSieveThree.primes_of_cells`: Primes in short intervals from the root cells
 
 #### `ShortSieveTop`: The top of Li's decomposition: exact identities in an interval
 

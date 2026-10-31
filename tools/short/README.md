@@ -143,8 +143,11 @@ The plan, with what is done:
    from Lemma 3.1 on blocks of `p₁` between two constant levels (`ShortSieveRoot`, done). Li's identity holds exactly
    in any interval (`ShortSieveTop`), and with the root terms it turns a lower bound
    `Σ₃(A) ≥ (y/x^{1−ρ}) Σ₃(B) − (L + ε) y/log x` into `π(x) − π(x − y) ≥ (1 − L − ε) y/log x`
-   (`ShortSieveLower.primes_lower`, done). What remains is that bound for `Σ₃` with `L = 2A + C`, from the
-   certificate.
+   (`ShortSieveLower.primes_lower`, done). At `θ = 13/25` the terms of `Σ₃` with a cofactor `m ≥ q` are exactly
+   the counts of the certificate's root cells, `(k/50, (k + 1)/50] × [j/50, (j + 1)/50)` of `(α₁, α₂)` (253 in region
+   `C`, 91 outside it), each a node with log-linear conditions, and the products `pq` themselves have no loss; so
+   loss bounds on the cells give the lower bound for the primes (`ShortSieveThree.primes_of_cells`, done). What
+   remains is the loss bound on each cell, from the certificate.
 4. **The certificate.** Kernel-checked bounds for region A and the region-C terms at the chosen θ, with Li's
    predicates in exact arithmetic on cells, in the manner of the Linnik certificate (`SieveCert`). The terms reach
    dimension 8, so the cost of the cells is the main question.
