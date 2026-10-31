@@ -48,6 +48,7 @@ import ShortCharSums
 import LeastPrimitiveRoot
 import LucasWitness
 import CyclotomicFrobenius
+import MillerTest
 import LinnikAFE
 import LinnikFourth
 import LinnikIngham
@@ -773,6 +774,9 @@ import CertInstances
 #print axioms LucasWitness.prime_iff_exists_lucas_le_safe
 #print axioms CyclotomicFrobenius.closure_frob_eq_top
 #print axioms CyclotomicFrobenius.exists_frob_generator
+#print axioms MillerTest.strongProbablePrime_of_prime
+#print axioms MillerTest.exists_witness_le
+#print axioms MillerTest.prime_iff_forall_strongProbablePrime
 #print axioms LinnikGamma.norm_gammaFactor_ratio_le
 #print axioms LinnikGamma.verticalIntegral_sub_eq
 #print axioms LinnikGamma.afe
