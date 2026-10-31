@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 123 modules that none of the three imports, directly or not, with their
+The last section lists the 124 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 32 | 172 |
+| `lib/pnt` | 223 | 726 | 33 | 175 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1731,6 +1731,12 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveBuch.rough_eq_prime_add`: The role reversal at one number
 - `ShortSieveBuch.count_buchstab`: Buchstab's identity on a node
 - `ShortSieveBuch.count_rev`: The role reversal on a node
+
+#### `ShortSieveCertAsym`: The certificate's Type II decision on a node
+
+- `ShortSieveCert.Sound.mem_K`: The terms' exponents lie in `K`
+- `ShortSieveCert.val_grpLF_eq`: A group's form is `DEN` times its exponent
+- `ShortSieveCert.Sound.asym_of_tii`: The Type II decision
 
 #### `ShortSieveCertBox`: Exact boxes and linear forms for the certificate of Li's region `C`
 
