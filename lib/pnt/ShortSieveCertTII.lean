@@ -65,14 +65,15 @@ theorem LF.val_smul (μ : ℤ) (L : LF) (X : ℕ → ℝ) (H : ℝ) : (L.smul μ
 /-! ### Domain-aware least values, with the multipliers chosen deterministically -/
 
 /-- The best multiple of the active constraint `g` to add to `M` (and the value reached), from the candidates
-`q − 1, q, q + 1` with `q = −M_j/g_j` for each coordinate `j` with `g_j ≠ 0`; `0` when none improves on `best`. -/
+`q − 1, q, q + 1` with `q = −M_j/g_j` for each coordinate `j` with `g_j ≠ 0`, the last of the best (a tie takes the
+multiple, which can open a later improvement); `0` when every candidate is worse than `best`. -/
 def bestMu (B : Box) (E : ℤ) (M g : LF) (best : ℤ) : ℤ × ℤ :=
   ((List.range g.c.length).filter fun j => g.c.getD j 0 ≠ 0).foldl (fun acc j =>
     let q := -(M.c.getD j 0) / g.c.getD j 0
     [q - 1, q, q + 1].foldl (fun acc' μ =>
       if 0 < μ then
         let v := (M.add (g.smul μ)).min B E
-        if acc'.2 < v then (μ, v) else acc'
+        if acc'.2 ≤ v then (μ, v) else acc'
       else acc') acc) (0, best)
 
 /-- One pass over the active constraints: `M ↦ M + μ g` with the best multiple of each. -/
@@ -94,7 +95,7 @@ theorem bestMu_nonneg (B : Box) (E : ℤ) (M g : LF) (best : ℤ) : 0 ≤ (bestM
       [q - 1, q, q + 1].foldl (fun acc' μ =>
         if 0 < μ then
           let v := (M.add (g.smul μ)).min B E
-          if acc'.2 < v then (μ, v) else acc'
+          if acc'.2 ≤ v then (μ, v) else acc'
         else acc') acc) acc).1 from h _ _ le_rfl
   intro l
   induction l with
@@ -115,7 +116,7 @@ theorem bestMu_spec (B : Box) (E : ℤ) (M g : LF) (best : ℤ) :
         [q - 1, q, q + 1].foldl (fun acc' μ =>
           if 0 < μ then
             let v := (M.add (g.smul μ)).min B E
-            if acc'.2 < v then (μ, v) else acc'
+            if acc'.2 ≤ v then (μ, v) else acc'
           else acc') acc) acc
       r.1 = 0 ∧ r.2 = best ∨ r.2 = (M.add (g.smul r.1)).min B E from h _ _ (Or.inl ⟨rfl, rfl⟩)
   intro l
