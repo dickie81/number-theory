@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 951 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 955 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 85 | 199 |
-| `lib/pnt` | 207 | 659 |
+| `lib/pnt` | 209 | 663 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 7 | 25 |
 
@@ -511,6 +511,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `ClassNumberBound`: Gauss's class number problem, with an explicit bound
 
 - `ClassNumberBound.abs_discr_le`: Gauss's class number problem, with an explicit bound
+
+#### `CyclotomicFrobenius`: Small Frobenius elements generate the cyclotomic Galois groups
+
+- `CyclotomicFrobenius.closure_frob_eq_top`: The Frobenius elements of the small primes generate the cyclotomic Galois group
+- `CyclotomicFrobenius.exists_frob_generator`: A single small Frobenius element generates the cyclotomic Galois group
 
 #### `DetectEM`: Zero detection by Euler–Maclaurin
 
@@ -1221,6 +1226,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LogDerivKV`: R4a: the log-derivative bound on the Korobov–Vinogradov region
 
 - `LogDerivKV.logDerivBnd_KV`: R4a: `ζ'/ζ = O((log|t|)³)` on the Korobov–Vinogradov region
+
+#### `LucasWitness`: Lucas's primality test with small witnesses
+
+- `LucasWitness.prime_iff_exists_lucas_le_rpow`: Lucas's test with small witnesses
+- `LucasWitness.prime_iff_exists_lucas_le_safe`: Lucas's test for `2r + 1` in polynomial time
 
 #### `MediumPNTW`: PNT+'s contour bounds for a zero-free region of general width
 
