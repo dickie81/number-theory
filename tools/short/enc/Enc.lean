@@ -247,6 +247,15 @@ def activesOf (E : Int) (Γ : List Con) (B : Box) : List Nat :=
     let C := Γ.getD i ⟨LF.zero, false⟩
     (C.L.c.filter (· ≠ 0)).length ≥ 2 && C.L.min B E < 0 && 0 < -((C.L.smul (-1)).min B E)
 
+/-- Two constraints with the same form and strictness. -/
+def sameCon (C D : Con) : Bool :=
+  C.L.c0 == D.L.c0 && trimZ C.L.c == trimZ D.L.c && C.L.ce == D.L.ce && C.strict == D.strict
+
+/-- The active constraints with repeats removed (the first index of each). -/
+def dedupActs (Γ : List Con) (A : List Nat) : List Nat :=
+  A.foldl (fun acc i => if acc.any fun j => sameCon (Γ.getD j ⟨LF.zero, false⟩) (Γ.getD i ⟨LF.zero, false⟩) then acc
+    else acc ++ [i]) []
+
 /-- Orders of the active constraints to try (the checker's multiplier search is greedy, in order). -/
 def actCands (E : Int) (Γ : List Con) (B : Box) : List (List Nat) :=
   let A := activesOf E Γ B
@@ -261,7 +270,7 @@ def actCands (E : Int) (Γ : List Con) (B : Box) : List (List Nat) :=
 candidate orders (shrunk). -/
 def findActs (E : Int) (Γ : List Con) (B : Box) (ok : List Nat → Bool) : Option (List Nat) := Id.run do
   if ok [] then return some []
-  let A := activesOf E Γ B
+  let A := dedupActs Γ (activesOf E Γ B)
   for a in A do
     if ok [a] then return some [a]
   for a in A do
@@ -280,6 +289,30 @@ def findActs (E : Int) (Γ : List Con) (B : Box) (ok : List Nat → Bool) : Opti
         if ok c then cur := c
       return some cur
   return none
+
+/-- A leaf test's constraints: `Γ`, or `Γ` with a combination of two active constraints in front (`Cert.comb`). -/
+def findComb (E : Int) (Γ : List Con) (B : Box) (chk : List Con → List Nat → Bool) :
+    Option (Option (Nat × Nat × Nat) × List Nat) := Id.run do
+  match findActs E Γ B (chk Γ) with
+  | some a => return some (none, a)
+  | none =>
+    let A := dedupActs Γ (activesOf E Γ B)
+    for i in A do
+      for j in A do
+        for c in [1, 2] do
+          if i != j then
+            let Γc := combCon (Γ.getD i ⟨LF.zero, false⟩) (Γ.getD j ⟨LF.zero, false⟩) c :: Γ
+            let ok := chk Γc
+            if ok [0] then return some (some (i, j, c), [0])
+            for a in A do
+              if ok [0, a + 1] then return some (some (i, j, c), [0, a + 1])
+              if ok [a + 1, 0] then return some (some (i, j, c), [a + 1, 0])
+    return none
+
+def withComb (cb : Option (Nat × Nat × Nat)) (c : Cert) : Cert :=
+  match cb with
+  | some (i, j, k) => .comb i j k c
+  | none => c
 
 /-- A passing list of active constraints, shrunk greedily: each constraint is dropped when the check still passes. -/
 def shrinkActs (ok : List Nat → Bool) (acts : List Nat) : List Nat := Id.run do
@@ -314,6 +347,7 @@ structure St where
   fails : Array String := #[]
   drops : Nat := 0
   prodDrops : Nat := 0
+  decRepairs : Nat := 0
 deriving Inhabited
 
 abbrev M := StateM St
@@ -321,6 +355,15 @@ abbrev M := StateM St
 def failM (msg : String) : M Cert := do
   modify fun s => { s with fails := s.fails.push msg }
   return .out
+
+/-- The position after the subtree at `pos` (preorder; cuts and splits have two children, decompositions one). -/
+partial def skipSub (tr : GTree) (pos : Nat) : Nat :=
+  match (tr.nodes[pos]!).dec with
+  | 4 | 8 => skipSub tr (skipSub tr (pos + 1))
+  | 5 | 6 => skipSub tr (pos + 1)
+  | _ => pos + 1
+
+def setPos (p : Nat) : M Unit := modify fun s => { s with pos := p }
 
 def next (tr : GTree) : M GNode := do
   let s ← get
@@ -498,6 +541,8 @@ def child (E : Int) (op : Op) (S : Shp) (Γ : List Con) (B : Box) : Option (Shp 
       (Shp.swap S).k + 1)
   | _, _ => none
 
+mutual
+
 partial def walk (o : Opt) (tr : GTree) (E : Int) (t : Nat) (S : Shp) (Γ : List Con) (B0 : Box) (b : Bool)
     (pend : Option Pend) : M Cert := do
   let N ← next tr
@@ -549,11 +594,12 @@ partial def walk (o : Opt) (tr : GTree) (E : Int) (t : Nat) (S : Shp) (Γ : List
           match (List.range gi).find? (fun i => cp.getD i 0 == p) with
           | some i => grp i
           | none => 0
-        let chk : Box → List Nat → Bool := fun B' a => (run E (.tii a labels ng) S Γ B' b).isSome
-        match ← repairLeaf o E S Γ B 4 (fun B' => match (findActs E Γ B' (chk B')).map fun a => Cert.tii a labels ng with
+        let chk : Box → List Con → List Nat → Bool := fun B' Γc a => (run E (.tii a labels ng) S Γc B' b).isSome
+        match ← repairLeaf o E S Γ B 4 (fun B' => match (findComb E Γ B' (chk B')).map fun (cb, a) =>
+              withComb cb (Cert.tii a labels ng) with
             | some c => some c
             | none => let (u2, B2) := upRounds E Γ B' 3
-              (findActs E Γ B2 (chk B2)).map fun a => wrapUps u2 (Cert.tii a labels ng)) with
+              (findComb E Γ B2 (chk B2)).map fun (cb, a) => wrapUps u2 (withComb cb (Cert.tii a labels ng))) with
         | some c => return c
         | none => failM s!"tii fails at type {t}"
     | 1 =>
@@ -567,11 +613,12 @@ partial def walk (o : Opt) (tr : GTree) (E : Int) (t : Nat) (S : Shp) (Γ : List
           match (List.range gi).find? (fun i => cp.getD i 0 == p) with
           | some i => if (Mm / 2 ^ i) % 2 == 1 then 0 else if (Rm / 2 ^ i) % 2 == 1 then 2 else 1
           | none => 1
-        let chk : Box → List Nat → Bool := fun B' a => (run E (.g2 a labels) S Γ B' b).isSome
-        match ← repairLeaf o E S Γ B 4 (fun B' => match (findActs E Γ B' (chk B')).map fun a => Cert.g2 a labels with
+        let chk : Box → List Con → List Nat → Bool := fun B' Γc a => (run E (.g2 a labels) S Γc B' b).isSome
+        match ← repairLeaf o E S Γ B 4 (fun B' => match (findComb E Γ B' (chk B')).map fun (cb, a) =>
+              withComb cb (Cert.g2 a labels) with
             | some c => some c
             | none => let (u2, B2) := upRounds E Γ B' 3
-              (findActs E Γ B2 (chk B2)).map fun a => wrapUps u2 (Cert.g2 a labels)) with
+              (findComb E Γ B2 (chk B2)).map fun (cb, a) => wrapUps u2 (withComb cb (Cert.g2 a labels))) with
         | some c => return c
         | none =>
           let acts := actsOf Γ (activesOf E Γ B)
@@ -636,7 +683,7 @@ partial def walk (o : Opt) (tr : GTree) (E : Int) (t : Nat) (S : Shp) (Γ : List
                 match findActs E Γ B (chk Γ) with
                 | some a => some (none, a)
                 | none => Id.run do
-                  let A := activesOf E Γ B
+                  let A := dedupActs Γ (activesOf E Γ B)
                   for i in A do
                     for j in A do
                       for c in [1, 2] do
@@ -649,27 +696,12 @@ partial def walk (o : Opt) (tr : GTree) (E : Int) (t : Nat) (S : Shp) (Γ : List
                             if ok [a + 1, 0] then return some (some (i, j, c), [a + 1, 0])
                   return none
                 return res
-              -- on the box, or else after moving every end that moves
-              let (u2, B2) := upRounds E Γ B 3
-              let (found, B, wrapU) : Option (Option (Nat × Nat × Nat) × List Nat) × Box × List Up :=
-                match findOn B with
-                | some r => (some r, B, [])
-                | none => (findOn B2, B2, u2)
-              match found with
-              | some (cb, a) =>
-                let Γc := match cb with
-                  | some (i, j, c) => combCon (Γ.getD i ⟨LF.zero, false⟩) (Γ.getD j ⟨LF.zero, false⟩) c :: Γ
-                  | none => Γ
-                match child E op S Γc B with
-                | none => failM "no child"
-                | some (S'', Γ'', B'', _, _) =>
-                  let tc ← walk o tr E t' S'' Γ'' B'' (!b) pend'
-                  modify fun s => { s with ups := s.ups + wrapU.length }
-                  match cb with
-                  | some (i, j, c) => return wrapUps wrapU (.comb i j c (mk a tc))
-                  | none => return wrapUps wrapU (mk a tc)
+              -- on the box, or else after moving every end that moves; failing that, on the halves of a cut box
+              let pos0 := (← get).pos
+              match ← decTry o tr E t' op S Γ b pend' findOn mk B 3 with
+              | some c => return c
               | none =>
-                let _ ← walk o tr E t' S' Γ' B' (!b) pend'
+                setPos (skipSub tr pos0)
                 let acts := actsOf Γ (activesOf E Γ B)
                 let g := fun i => grpLF items labels i
                 let mx := fun (L : LF) => L.maxD B E acts
@@ -681,6 +713,58 @@ partial def walk (o : Opt) (tr : GTree) (E : Int) (t : Nat) (S : Shp) (Γ : List
     | d => failM s!"decision {d}"
   let c ← body
   return wrapUpsL o ups B c
+
+/-- A decomposition on the box `B`: the check on `B` (or after moving its ends), then the child's subtree; failing
+that, cut the widest coordinate at its midpoint and try each half (to `depth` levels), walking the subtree again for
+each. `none` when it fails (the position is then anywhere in the subtree; the caller skips it). -/
+partial def decTry (o : Opt) (tr : GTree) (E : Int) (t' : Nat) (op : Op) (S : Shp) (Γ : List Con) (b : Bool)
+    (pend' : Option Pend) (findOn : Box → Option (Option (Nat × Nat × Nat) × List Nat))
+    (mk : List Nat → Cert → Cert) (B : Box) (depth : Nat) : M (Option Cert) := do
+  let (u2, B2) := upRounds E Γ B 3
+  let (found, B, wrapU) : Option (Option (Nat × Nat × Nat) × List Nat) × Box × List Up :=
+    match findOn B with
+    | some r => (some r, B, [])
+    | none => (findOn B2, B2, u2)
+  match found with
+  | some (cb, a) =>
+    let Γc := match cb with
+      | some (i, j, c) => combCon (Γ.getD i ⟨LF.zero, false⟩) (Γ.getD j ⟨LF.zero, false⟩) c :: Γ
+      | none => Γ
+    match child E op S Γc B with
+    | none => return none
+    | some (S'', Γ'', B'', _, _) =>
+      let tc ← walk o tr E t' S'' Γ'' B'' (!b) pend'
+      modify fun s => { s with ups := s.ups + wrapU.length }
+      match cb with
+      | some (i, j, c) => return some (wrapUps wrapU (.comb i j c (mk a tc)))
+      | none => return some (wrapUps wrapU (mk a tc))
+  | none =>
+    if depth == 0 then return none
+    let ws := (List.range B.length).map fun j => ((B.getD j (0, 0)).2 - (B.getD j (0, 0)).1, j)
+    let (w, q) := ws.foldl (fun acc x => if x.1 > acc.1 then x else acc) (0, 0)
+    if w < 2 then return none
+    let p := (B.getD q (0, 0)).1 + w / 2
+    match findUW S (ltCon q p).L with
+    | none => return none
+    | some (u, w') =>
+      let pos0 := (← get).pos
+      let half := fun (B1 : Box) => do
+        setPos pos0
+        let (ups, B3) := upRounds E Γ B1 o.partRounds
+        modify fun s => { s with ups := s.ups + ups.length, nodes := s.nodes + 1 }
+        match closeEmpty E Γ B3 with
+        | some c => return some (wrapUps ups c)
+        | none => return (← decTry o tr E t' op S Γ b pend' findOn mk B3 (depth - 1)).map (wrapUps ups)
+      let c1 ← half (B.modify q fun b' => (b'.1, min b'.2 p))
+      let c2 ← half (B.modify q fun b' => (max b'.1 p, b'.2))
+      setPos (skipSub tr pos0)
+      match c1, c2 with
+      | some c1, some c2 =>
+        modify fun s => { s with nodes := s.nodes + 1, decRepairs := s.decRepairs + 1 }
+        return some (.cut q p u w' c1 c2)
+      | _, _ => return none
+
+end
 
 /-! ## Output -/
 
@@ -755,6 +839,32 @@ partial def enumStates (E : Int) (acc : Array (Shp × List Con × Box × Bool ×
     | _ => acc
   | _ => acc
 
+/-! The compact form read by `cert_data%` (CertData.lean). -/
+
+def natLC (l : List Nat) : String := " ".intercalate (toString l.length :: l.map toString)
+def intLC (l : List Int) : String := " ".intercalate (toString l.length :: l.map toString)
+def conC (C : Con) : String := s!"{C.L.c0} {intLC C.L.c} {C.L.ce} {if C.strict then 1 else 0}"
+
+/-- The compact form, written into a buffer (no repeated copying of long strings). -/
+partial def certCB (acc : Array String) : Cert → Array String
+  | .out => acc.push "o"
+  | .outC i => acc.push s!"C {i}"
+  | .outE j => acc.push s!"E {j}"
+  | .tighten t => certCB (acc.push "T") t
+  | .up j l i v t => certCB (acc.push s!"u {j} {if l then 1 else 0} {i} {v}") t
+  | .comb i j c t => certCB (acc.push s!"m {i} {j} {c}") t
+  | .split C u w t1 t2 => certCB (certCB (acc.push s!"s {conC C} {u} {w}") t1) t2
+  | .cut j p u w t1 t2 => certCB (certCB (acc.push s!"c {j} {p} {u} {w}") t1) t2
+  | .tii a l ng => acc.push s!"t {natLC a} {natLC l} {ng}"
+  | .g2 a l => acc.push s!"g {natLC a} {natLC l}"
+  | .dec a l k t => certCB (acc.push s!"d {natLC a} {natLC l} {k}") t
+  | .rev a l k t => certCB (acc.push s!"r {natLC a} {natLC l} {k}") t
+  | .swap t => certCB (acc.push "w") t
+  | .drop a none => acc.push s!"x {natLC a} N"
+  | .drop a (some (b1, b2)) => acc.push s!"x {natLC a} S {intLC b1} {intLC b2}"
+
+def certC (c : Cert) : String := " ".intercalate (certCB #[] c).toList
+
 partial def certSize : Cert → Nat
   | .up _ _ _ _ t | .tighten t | .swap t | .dec _ _ _ t | .rev _ _ _ t | .comb _ _ _ t => 1 + certSize t
   | .split _ _ _ t1 t2 | .cut _ _ _ _ t1 t2 => 1 + certSize t1 + certSize t2
@@ -819,8 +929,173 @@ def dropBench (args : List String) : IO Unit := do
     | _ => pure ()
   IO.FS.writeFile out txt
 
+/-- The compact form wrapped into lines of at most 100 characters. -/
+def wrapC (s : String) : String := Id.run do
+  let mut lines : Array String := #[]
+  let mut cur := ""
+  for t in s.splitOn " " do
+    if cur.length + t.length + 1 > 100 then
+      lines := lines.push cur
+      cur := t
+    else cur := if cur.isEmpty then t else cur ++ " " ++ t
+  return "\n".intercalate (lines.push cur).toList
+
+open Enc in
+/-- sub TREE k j r PREFIX lo hi n: for the first n subtrees whose size is in [lo, hi), a file PREFIX_<node>.lean
+holding the subtree (compact data) and its theorem at the literal state. -/
+def subMain (args : List String) : IO Unit := do
+  let path := args.getD 1 ""
+  let k := (args.getD 2 "0").toNat!
+  let j := (args.getD 3 "0").toNat!
+  let r := args.getD 4 "1" == "1"
+  let pre := args.getD 5 ""
+  let lo := (args.getD 6 "0").toNat!
+  let hi := (args.getD 7 "0").toNat!
+  let nmax := (args.getD 8 "1").toNat!
+  let head ← IO.FS.readFile (args.getD 9 "")
+  let tr := parseTree (← IO.FS.readFile path)
+  let (c, _) := (walk {} tr 1 0 (.std 1) (cellCons k r) (cellBox k j) true none).run {}
+  let st := enumStates 1 #[] c (.std 1) (cellCons k r) (cellBox k j) true
+  let mut n := 0
+  for i in [0:st.size] do
+    let (S, Γ, B, b, ci, _) := st[i]!
+    let sz := certSize ci
+    if n < nmax && lo ≤ sz && sz < hi then
+      match run 1 ci S Γ B b with
+      | some L =>
+        n := n + 1
+        let txt := head ++ "\nopen ShortSieveCert\n\n" ++
+          s!"noncomputable def c : Cert := cert_data% \"{wrapC (certC ci)}\"\n\n" ++
+          s!"set_option Elab.async false\nset_option profiler true\n" ++
+          s!"theorem t : run 1 c {shpS S} {consS Γ} {boxS B} {b} = some {L} := by decide +kernel\n"
+        IO.FS.writeFile s!"{pre}_{i}.lean" txt
+        IO.println s!"node {i} size {sz} L {L}"
+      | none => IO.println s!"node {i} fails"
+
+namespace Enc
+
+/-- An estimate of a node's own kernel cost (ms). -/
+def ownCost : Cert → Nat
+  | .up .. => 2 | .comb .. => 3 | .split .. => 14 | .cut .. => 14 | .dec .. => 140 | .rev .. => 140
+  | .swap .. => 2 | .tighten .. => 70 | .tii .. => 30 | .g2 .. => 20 | .drop .. => 85 | _ => 3
+
+partial def costOf : Cert → Nat
+  | c@(.up _ _ _ _ t) | c@(.tighten t) | c@(.swap t) | c@(.dec _ _ _ t) | c@(.rev _ _ _ t) | c@(.comb _ _ _ t) =>
+    ownCost c + costOf t
+  | c@(.split _ _ _ t1 t2) | c@(.cut _ _ _ _ t1 t2) => ownCost c + costOf t1 + costOf t2
+  | c => ownCost c
+
+/-- The certificate's top: the nodes above the cut points, which become subtrees of their own. -/
+inductive Top
+  | node (c : Cert) (kids : List Top)   -- `c` with its subtrees replaced by the kids
+  | sub (i : Nat) (c : Cert)            -- cut point `i`
+
+instance : Inhabited Top := ⟨.sub 0 .out⟩
+
+structure CellOut where
+  subs : Array (Cert × Nat) := #[]      -- the cut points' subtrees and their losses
+deriving Inhabited
+
+/-- Cut the certificate: a node whose cost is at most `cap`, or whose kind has no lemma, is a cut point. -/
+partial def cutTop (cap : Nat) (c : Cert) (S : Shp) (Γ : List Con) (B : Box) (b : Bool) : StateM CellOut Top := do
+  let asSub : StateM CellOut Top := do
+    let st ← get
+    let L := (run 1 c S Γ B b).getD 0
+    set { st with subs := st.subs.push (c, L) }
+    return .sub st.subs.size c
+  if costOf c ≤ cap then return ← asSub
+  match c, S with
+  | .up j l _ v t, _ => return .node c [← cutTop cap t S Γ (cutAt B j l v) b]
+  | .comb i j k t, _ =>
+    return .node c [← cutTop cap t S (combCon (Γ.getD i ⟨LF.zero, false⟩) (Γ.getD j ⟨LF.zero, false⟩) k :: Γ) B b]
+  | .split C _ _ t1 t2, _ =>
+    let a ← cutTop cap t1 S (C :: Γ) B b
+    return .node c [a, ← cutTop cap t2 S (C.neg :: Γ) B b]
+  | .cut j p _ _ t1 t2, _ =>
+    let a ← cutTop cap t1 S Γ (B.modify j fun b' => (b'.1, min b'.2 p)) b
+    return .node c [a, ← cutTop cap t2 S Γ (B.modify j fun b' => (max b'.1 p, b'.2)) b]
+  | .dec _ _ _ t, .std k =>
+    return .node c [← cutTop cap t (.std (k + 1)) (geCon (k + 1) :: (Γ ++ [ordCon k]))
+      (B ++ [(NU0, (B.getD k (0, 0)).2)]) (!b)]
+  | .rev _ _ _ t, .std (k + 1) =>
+    return .node c [← cutTop cap t (.rev k) (Γ ++ [halfCon k]) (B ++ [(NU0, (B.getD 0 (0, 0)).2)]) (!b)]
+  | _, _ => asSub
+
+/-- The top as compact data, with the cut points as references `@pre_i`. -/
+partial def topC (pre : String) : Top → Array String → Array String
+  | .sub i _, acc => acc.push s!"@{pre}_{i}"
+  | .node c kids, acc =>
+    match c, kids with
+    | .up j l i v _, [k] => topC pre k (acc.push s!"u {j} {if l then 1 else 0} {i} {v}")
+    | .comb i j k _, [t] => topC pre t (acc.push s!"m {i} {j} {k}")
+    | .split C u w _ _, [k1, k2] => topC pre k2 (topC pre k1 (acc.push s!"s {conC C} {u} {w}"))
+    | .cut j p u w _ _, [k1, k2] => topC pre k2 (topC pre k1 (acc.push s!"c {j} {p} {u} {w}"))
+    | .dec a l k _, [t] => topC pre t (acc.push s!"d {natLC a} {natLC l} {k}")
+    | .rev a l k _, [t] => topC pre t (acc.push s!"r {natLC a} {natLC l} {k}")
+    | _, _ => acc.push "?"
+
+/-- The loss of a top node, from its cut points' losses. -/
+partial def topLoss (subs : Array (Cert × Nat)) : Top → Nat
+  | .sub i _ => (subs[i]!).2
+  | .node _ kids => kids.foldl (fun a k => a + topLoss subs k) 0
+
+/-- The proof that `run` gives the top's loss: the node lemmas down to the cut points, each cut point by
+`decide +kernel` (an auxiliary lemma of its own). -/
+partial def topProof (subs : Array (Cert × Nat)) : Top → String
+  | .sub _ _ => "(by decide +kernel)"
+  | .node c kids =>
+    match c, kids with
+    | .up .., [k] => s!"(run_up_of (by decide +kernel) {topProof subs k})"
+    | .comb .., [k] => s!"(run_comb_of (by decide +kernel) {topProof subs k})"
+    | .split .., [k1, k2] =>
+      s!"(run_split_of (L₁ := {topLoss subs k1}) (L₂ := {topLoss subs k2}) (by decide +kernel) {topProof subs k1} " ++
+        s!"{topProof subs k2} rfl)"
+    | .cut .., [k1, k2] =>
+      s!"(run_cut_of (L₁ := {topLoss subs k1}) (L₂ := {topLoss subs k2}) (by decide +kernel) {topProof subs k1} " ++
+        s!"{topProof subs k2} rfl)"
+    | .dec .., [k] => s!"(run_dec_std_of (by decide +kernel) {topProof subs k})"
+    | .rev .., [k] => s!"(run_rev_std_of (by decide +kernel) {topProof subs k})"
+    | _, _ => "(unsupportedTopNode)"
+
+end Enc
+
+open Enc in
+/-- cell TREE k j r OUT.lean NAME CAP HEADER: the cell's certificate as one file: the cut points' subtrees (compact
+data), the top, and the theorem by the node lemmas with each cut point by `decide +kernel`. -/
+def cellMain (args : List String) : IO Unit := do
+  let path := args.getD 1 ""
+  let k := (args.getD 2 "0").toNat!
+  let j := (args.getD 3 "0").toNat!
+  let r := args.getD 4 "1" == "1"
+  let out := args.getD 5 ""
+  let name := args.getD 6 "cell"
+  let cap := (args.getD 7 "15000").toNat!
+  let head ← IO.FS.readFile (args.getD 8 "")
+  let tr := parseTree (← IO.FS.readFile path)
+  let (c, st0) := (walk {} tr 1 0 (.std 1) (cellCons k r) (cellBox k j) true none).run {}
+  if st0.fails.size > 0 then
+    IO.println s!"failures {st0.fails.size}"
+    return
+  let some L := run 1 c (.std 1) (cellCons k r) (cellBox k j) true | IO.println "run: none"
+  let (top, co) := (cutTop cap c (.std 1) (cellCons k r) (cellBox k j) true).run {}
+  let pre := s!"ShortSieveCert.{name}"
+  let mut txt := head ++ "\nopen ShortSieveCert\n\nnamespace ShortSieveCert\n\n"
+  for i in [0:co.subs.size] do
+    let (ci, _) := co.subs[i]!
+    txt := txt ++ s!"noncomputable def {name}_{i} : Cert := cert_data% \"{wrapC (certC ci)}\"\n\n"
+  let topData := wrapC (" ".intercalate (topC pre top #[]).toList)
+  txt := txt ++ s!"noncomputable def {name} : Cert := cert_data% \"{topData}\"\n\n"
+  txt := txt ++ s!"set_option maxHeartbeats 0 in\nset_option Elab.async false in\nset_option profiler true in\n" ++
+    s!"theorem {name}_run : run 1 {name} (.std 1) (cellCons {k} {r}) (cellBox {k} {j}) true = some {L} :=\n  " ++
+    topProof co.subs top ++ "\n\nend ShortSieveCert\n"
+  IO.FS.writeFile out txt
+  let costs := co.subs.map fun (ci, _) => costOf ci
+  IO.println s!"L {L} cert size {certSize c} cost {costOf c} cut points {co.subs.size} max cost {costs.foldl max 0}"
+
 open Enc in
 def main (args : List String) : IO Unit := do
+  if args.head? == some "cell" then return ← cellMain args
+  if args.head? == some "sub" then return ← subMain args
   if args.head? == some "prof" then return ← profMain args
   if args.head? == some "dropbench" then return ← dropBench args
   let path := args.getD 0 ""
@@ -833,10 +1108,11 @@ def main (args : List String) : IO Unit := do
   let tr := parseTree txt
   let (c, st) := (walk o tr 1 0 (.std 1) (cellCons k r) (cellBox k j) true none).run {}
   IO.println s!"nodes read {st.pos}/{tr.nodes.size}, cert size {certSize c}, ups {st.ups}, drops {st.drops} \
-    (product {st.prodDrops}, adding {st.chainExtra}), failures {st.fails.size}"
+    (product {st.prodDrops}, adding {st.chainExtra}), dec repairs {st.decRepairs}, failures {st.fails.size}"
   for f in st.fails.toList.take 20 do IO.println s!"  {f}"
   match run 1 c (.std 1) (cellCons k r) (cellBox k j) true with
   | some L => IO.println s!"run: some {L} = {(L.toFloat) / (2 ^ 50 : Float)}"
   | none => IO.println "run: none"
   if out ≠ "" then
     IO.FS.writeFile out (certS c)
+    IO.FS.writeFile (out ++ ".cd") (certC c)

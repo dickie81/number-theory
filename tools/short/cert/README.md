@@ -15,3 +15,7 @@ replays the tree with the exact checks only and sums the dropped bounds (units `
 The generator's domain carries the checker's slack (`2 x_k ≤ S_k + E`, `E = 1`), and its thresholds and witness faces
 are Li's tightened by `MRG = 8` units of `1/DEN`, so that its decisions pass in the Lean checker, whose forms carry the
 slack `H` and whose domain-aware extremes round (`exact.h`). `mc.cpp` is the Monte Carlo of the trees' true losses.
+
+The root node is dropped as a last resort where no decision passes it: in the cells with `α₁` up to `1/2`, the
+checker's slack admits a sliver beyond the domain (`α₁ ∈ [1/2, 1/2 + 1/DEN)`) where no test holds; the drop's bound
+there is negligible, and the checker allows a drop of the shape `.std 1`.

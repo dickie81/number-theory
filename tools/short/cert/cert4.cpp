@@ -383,6 +383,8 @@ static void buildPalette(int ri, const Box& root, const RootCtx& rc, Palette& pa
 // ---------------- the generator ----------------
 static std::atomic<long long> CUTS[NT_COUNT][6];   // peel, midpoint, slack, minus-peel, diagonal, alt-minus
 struct VS { int q1 = 0, k1 = 1, q2 = 0, k2 = 1; };
+static std::atomic<long long> ROOTDROPS(0);   // the root's last-resort drops
+
 struct Gen {
     Tree tr;
     std::vector<TNode>& T = tr.T;
@@ -834,6 +836,14 @@ struct Gen {
         auto score = [&](i64 v) { return (double)v + (double)LAM * (double)(T.size() - mark); };
         auto better = [&](i64 v) { return v < INF && (!canDrop || score(v) < (double)drop + LAM * dropNodes); };
         if (canDrop && drop <= 2 * LAM) return toDrop();
+        // the root's last resort: where no decision passes (a sliver of the checker's slack), drop it
+        auto lastResort = [&]() -> i64 {
+            if (!(d.plus && t == N2)) return INF;
+            drop = bestDrop(t, B, rc, K, act, vs, LAM);
+            if (drop >= INF) return INF;
+            ROOTDROPS++;
+            return toDrop();
+        };
         std::vector<Samp> S;
         bool sampled = false;
         // separate the asymptotic parts first (the - nodes always; + nodes when cheaper)
@@ -1004,6 +1014,7 @@ struct Gen {
         }
         if (lvl >= MAXLVL) {
             if (canDrop) return toDrop();
+            { i64 v = lastResort(); if (v < INF) return v; }
             T.resize(mark); return INF;
         }
         bool done;
@@ -1018,10 +1029,11 @@ struct Gen {
         }
         if (!done) {
             if (canDrop) return toDrop();
+            { i64 v = lastResort(); if (v < INF) return v; }
             T.resize(mark); return INF;
         }
         if (canDrop && !better(v)) return toDrop();
-        if (v >= INF) { T.resize(mark); return INF; }
+        if (v >= INF) { { i64 w = lastResort(); if (w < INF) return w; } T.resize(mark); return INF; }
         return v;
     }
 };
@@ -1095,7 +1107,7 @@ struct Ver {
                 return 0;
             }
             case D_DROP: {
-                if (!d.plus || t == N2) { fail("drop of a - node", t); return 0; }
+                if (!d.plus) { fail("drop of a - node", t); return 0; }
                 if (N.k1 < 1 || N.k2 < 1 || N.k1 > 64 || N.k2 > 64 || N.sc >= B.n || N.q2 >= B.n) { fail("bad virtual split", t); return 0; }
                 long long p0 = WK_VSPARTS;
                 i64 c = dropCostVS(t, B, rc, K, N.sc, N.k1, N.q2, N.k2);
@@ -1375,6 +1387,7 @@ int main(int argc, char** argv) {
         printf(" %s %lld/%lld/%lld/%lld/%lld/%lld", ND[a].name.c_str(), CUTS[a][0].load(), CUTS[a][1].load(), CUTS[a][2].load(),
                CUTS[a][3].load(), CUTS[a][4].load(), CUTS[a][5].load());
     printf("\n");
+    printf("root drops (last resort) %lld\n", (long long)ROOTDROPS);
     printf("kernel work: outside %lld, G2 %lld, TII %lld (f evals %lld), TypeI %lld, bounds %lld; linear forms %lld (domain-aware %lld), "
            "omega* %lld, chain DP steps %lld, virtual parts %lld; nodes with cuts %lld (mean %.2f cuts, max %lld); multiplier evaluations %lld\n",
            WK.out, WK.g2, WK.tii, WK.tiiGroups, WK.tyI, WK.bound, WK_LF, WK_LFA, WK_OM, WK_CHAINOPS, tot.vsParts, tot.nodesWithCuts,
