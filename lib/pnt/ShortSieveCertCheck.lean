@@ -236,17 +236,17 @@ theorem length_tightenList (E : ℤ) : ∀ (cs : List Con) (B : Box), (tightenLi
     show (tightenList E cs (tightenCon E B C)).length = B.length
     rw [length_tightenList E cs, h1]
 
-/-- The Type II check's `P = (1 − θ + κ) DEN` and `K = κ DEN` at `θ = 13/25`, `κ = 2^{−20}`. -/
-def tiiP : ℤ := 48 * 2 ^ 30 + 102400
+/-- The Type II check's `P = (1 − θ + κ) DEN` and `K = κ DEN` at `θ = 21/40`, `κ = 2^{−20}`. -/
+def tiiP : ℤ := 95 * 2 ^ 29 + 102400
 
 /-- The Type II check's `K = κ DEN`, `κ = 2^{−20}`. -/
 def tiiK : ℤ := 102400
 
-/-- Lemma 4.1's `D₁ = (2θ − 1) DEN` at `θ = 13/25`. -/
-def g2D1 : ℤ := 4 * 2 ^ 30
+/-- Lemma 4.1's `D₁ = (2θ − 1) DEN` at `θ = 21/40`. -/
+def g2D1 : ℤ := 5 * 2 ^ 30
 
-/-- Lemma 4.1's `D₂ = (1 − γ) DEN` at `γ = 2/25`. -/
-def g2D2 : ℤ := 92 * 2 ^ 30
+/-- Lemma 4.1's `D₂ = (1 − γ) DEN` at `γ = 1/10`. -/
+def g2D2 : ℤ := 90 * 2 ^ 30
 
 /-- The active constraints' forms, by their positions among the constraints. -/
 def actsOf (Γ : List Con) (acts : List ℕ) : List LF := acts.map fun i => (Γ.getD i ⟨LF.zero, false⟩).L
@@ -508,10 +508,10 @@ theorem ordOK_mem {Γ : List Con} {k : ℕ} (h : ordOK Γ k = true) : ∀ j < k,
   exact hC
 
 /-- **The dropped standard node's loss is sound.** -/
-theorem dropStd_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) {E : ℤ} (hE : 0 < E) {k : ℕ}
+theorem dropStd_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) {E : ℤ} (hE : 0 < E) {k : ℕ}
     {conds : List (Cond (k + 1) 1)} {Γ : List Con} {B : Box} (h : Sound (std k conds) (stdRows (k + 1)) E Γ B)
     (hinv : StdInv k conds) {acts : List ℕ} {L : ℕ} (hd : dropStd E k Γ B acts = some L) :
-    OK (13 / 25) ρ 1 (fun x y => ((std k conds).count x y : ℝ)) (L / SC) := by
+    OK (21 / 40) ρ 1 (fun x y => ((std k conds).count x y : ℝ)) (L / SC) := by
   unfold dropStd at hd
   split_ifs at hd with hcheck
   obtain ⟨⟨D, eK⟩, hD, rfl⟩ := Option.map_eq_some_iff.1 hd
@@ -541,7 +541,7 @@ theorem dropStd_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) {E : 
   obtain ⟨heK, hP⟩ := chainDP_sound hD
   have hS := SC_pos
   have hdrop := h.OK_of_dropC hE hinv hlen (fun j hj => (hbox j hj).1) (ordOK_mem hord) ha1 ha2 hn0 hΩ0 hω heK
-    (by positivity) hP (θ := 13 / 25) hρ hρ25
+    (by positivity) hP (θ := 21 / 40) hρ hρ20
   refine OK_mono ?_ hdrop
   have hc := SieveOmegaB.div_le_cdiv (omUpK a.toNat hi.toNat b.toNat lo.toNat * D) SieveCert.K
     (by norm_num [SieveCert.K])
@@ -588,12 +588,12 @@ theorem chainTwo_sound {E : ℤ} {Γ : List Con} {B : Box} {it : List LF} {K sc 
       exact ⟨hnd, fun a => ⟨hlt a, hall a⟩, hc1, hc2, e₁, e₂, he1, he2, hP1, hP2⟩
 
 /-- **The dropped node with two rough items' loss is sound.** -/
-theorem dropTwo_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) {E : ℤ} (hE : 0 < E) {S : Shp} {k : ℕ}
+theorem dropTwo_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) {E : ℤ} (hE : 0 < E) {S : Shp} {k : ℕ}
     {s : Fin 2 → Fin k} {A : Rows k 2} {items : List LF} {n : ℕ} (hD : Desc S k 2 s A items n)
     {conds : List (Cond k 2)} {Γ : List Con} {B : Box} (h : Sound ⟨k, 2, s, conds⟩ A E Γ B)
     (hinv : Inv ⟨k, 2, s, conds⟩) (hlen : B.length = n) {acts : List ℕ} {L : ℕ}
     (hd : dropTwo E S Γ B acts = some L) :
-    OK (13 / 25) ρ 1 (fun x y => ((⟨k, 2, s, conds⟩ : Node).count x y : ℝ)) (L / SC) := by
+    OK (21 / 40) ρ 1 (fun x y => ((⟨k, 2, s, conds⟩ : Node).count x y : ℝ)) (L / SC) := by
   obtain ⟨hk, -, -, hit, hs, hA⟩ := hD.data
   unfold dropTwo at hd
   simp only [hk, hit] at hd
@@ -723,7 +723,7 @@ theorem dropTwo_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) {E : 
       _ ≤ W := h1
   have hfit' : ∀ L ∈ items, L.c.length ≤ B.length := fun L hL => (hD.fit L hL).trans hlen.ge
   have key : ∃ X : ℝ, 0 ≤ X ∧ X ≤ (Fs.map fun f : ℕ => (f : ℝ) / SC).prod ∧
-      OK (13 / 25) ρ 1 (fun x y => ((⟨k, 2, s, conds⟩ : Node).count x y : ℝ))
+      OK (21 / 40) ρ 1 (fun x y => ((⟨k, 2, s, conds⟩ : Node).count x y : ℝ))
         (Ωc * Ωg * ((((B.getD 0 (0, 0)).2 : ℝ) - (B.getD 0 (0, 0)).1) / DEN) * X) := by
     rcases hct : chainTwo E Γ B items k (s g.rev) (s g) (S.chain 0) (S.chain 1) with _ | ⟨D₁, D₂⟩
     · -- each prime's factor
@@ -762,7 +762,7 @@ theorem dropTwo_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) {E : 
             mul_pos (mul_pos two_pos h1') (by linarith)
           exact div_nonneg (mul_nonneg h3 h4) h5.le
       refine ⟨_, prod_nonneg fun j _ => hfac0 j, ?_, h.OK_of_drop2 hD.itemsOK hE hinv hfit' hB0 hsg' hA0 hAg' hAc'
-        hlo hlohi hNU hlo0 hlohi0 ha1 ha2 hn0 hΩc0 hΩg0 hωc hωg (θ := 13 / 25) hρ hρ25⟩
+        hlo hlohi hNU hlo0 hlohi0 ha1 ha2 hn0 hΩc0 hΩg0 hωc hωg (θ := 21 / 40) hρ hρ20⟩
       refine le_trans (Finset.prod_le_prod₀ (fun j _ => hfac0 j) fun j _ => hfac j) (le_of_eq ?_)
       rw [hFs', List.map_map, list_prod_map_range]
       exact Fin.prod_univ_eq_prod_range (fun j => (twoFactor items B E (s g.rev) (s g) j : ℝ) / SC) k
@@ -771,7 +771,7 @@ theorem dropTwo_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) {E : 
       obtain ⟨hnd, hcov, hc1, hc2, e₁, e₂, he1, he2, hP1, hP2⟩ := chainTwo_sound hct
       refine ⟨(D₁ : ℝ) / SC * ((D₂ : ℝ) / SC), by positivity, by rw [hFs']; simp, ?_⟩
       exact h.OK_of_drop2C hD.itemsOK hE hinv hfit' hB0 hsg' hA0 hAg' hAc' hlo hlohi hNU hlo0 hlohi0 ha1 ha2 hn0
-        hΩc0 hΩg0 hωc hωg hnd hcov hc1 hc2 he1 he2 (by positivity) (by positivity) hP1 hP2 (θ := 13 / 25) hρ hρ25
+        hΩc0 hΩg0 hωc hωg hnd hcov hc1 hc2 he1 he2 (by positivity) (by positivity) hP1 hP2 (θ := 21 / 40) hρ hρ20
   obtain ⟨X, hX0, hXP, hdrop⟩ := key
   refine OK_mono ?_ hdrop
   have hprod : (((B.getD 0 (0, 0)).2 : ℝ) - (B.getD 0 (0, 0)).1) / DEN * X ≤ (P : ℝ) / SC := by
@@ -795,12 +795,12 @@ theorem dropTwo_sound {ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) {E : 
 the comparison interval). -/
 structure Hyps (ρ c : ℝ) : Prop where
   hc : 0 < c
-  hc1 : c < 1 / 25
+  hc1 : c < 1 / 20
   hρ : 0 < ρ
   hρc : 12 * ρ < c
-  li31 : ShortSieveLi.LiLemma31 (13 / 25) (2 / 25) ρ
-  li32 : ShortSieveLi.LiLemma32 (13 / 25) (2 / 25) ρ
-  li41 : ShortSieveLi.LiLemma41 (13 / 25) (2 / 25) ρ
+  li31 : ShortSieveLi.LiLemma31 (21 / 40) (1 / 10) ρ
+  li32 : ShortSieveLi.LiLemma32 (21 / 40) (1 / 10) ρ
+  li41 : ShortSieveLi.LiLemma41 (21 / 40) (1 / 10) ρ
 
 /-- The decomposition of a node with two rough items, in the checker. -/
 theorem run_dec_two (E : ℤ) (acts labels : List ℕ) (kind : ℕ) (t : Cert) {S : Shp} (hS : ∀ k, S ≠ .std k)
@@ -825,8 +825,8 @@ theorem run_sound {ρ c : ℝ} (H : Hyps ρ c) {E : ℤ} (hE : 0 < E) (t : Cert)
       Desc S k m s A items n → ∀ (conds : List (Cond k m)) (Γ : List Con) (B : Box) (b : Bool) (L : ℕ),
       Sound ⟨k, m, s, conds⟩ A E Γ B → Inv ⟨k, m, s, conds⟩ → CondsOK conds → B.length = n →
       fits Γ n = true → run E t S Γ B b = some L →
-      OK (13 / 25) ρ (if b then 1 else -1) (fun x y => ((⟨k, m, s, conds⟩ : Node).count x y : ℝ)) (L / SC) := by
-  have hθρ : (13 / 25 : ℝ) ≤ 1 - ρ := by have := H.hρc; have := H.hc1; linarith
+      OK (21 / 40) ρ (if b then 1 else -1) (fun x y => ((⟨k, m, s, conds⟩ : Node).count x y : ℝ)) (L / SC) := by
+  have hθρ : (21 / 40 : ℝ) ≤ 1 - ρ := by have := H.hρc; have := H.hc1; linarith
   have hσ : ∀ b : Bool, |(if b then (1 : ℝ) else -1)| ≤ 1 := fun b => by cases b <;> simp
   have hneg : ∀ b : Bool, (if !b then (1 : ℝ) else -1) = -(if b then 1 else -1) := fun b => by cases b <;> simp
   induction t with
@@ -904,7 +904,7 @@ theorem run_sound {ρ c : ℝ} (H : Hyps ρ c) {E : ℤ} (hE : 0 < E) (t : Cert)
       simp only [List.all_eq_true, List.mem_range, decide_eq_true_eq] at hlt
       exact hlt _ (canon_lt t)
     have hAsym := Sound.asym_of_tii (N := ⟨k, m, s, conds⟩) hk0 hm0 hE h hD.itemsOK hlab hlt'
-      (by norm_num [tiiP]) (by norm_num [tiiK]) (θ := 13 / 25) (κ := 1 / 2 ^ 20) (by norm_num [tiiP, DEN])
+      (by norm_num [tiiP]) (by norm_num [tiiK]) (θ := 21 / 40) (κ := 1 / 2 ^ 20) (by norm_num [tiiP, DEN])
       (by norm_num [tiiK, DEN]) (actsOf Γ acts) ha1 htii (fun L hL => (hD.fit L hL).trans hlen.ge) ha2 H.hc
       (by linarith [H.hc1]) (by norm_num) H.hρ H.hρc (by linarith [H.hρc, H.hc1]) hcond (hinv.big H.hc1)
     simpa using OK_of_asym (hσ b) hAsym
@@ -923,7 +923,7 @@ theorem run_sound {ρ c : ℝ} (H : Hyps ρ c) {E : ℤ} (hE : 0 < E) (t : Cert)
       simp only [List.all_eq_true, List.mem_range, decide_eq_true_eq] at hlt
       exact hlt _ (canon_lt t)
     have hAsym := Sound.asym_of_g2 (N := ⟨k, m, s, conds⟩) hk0 hm0 hE h hD.itemsOK hlab hlt'
-      (θ := 13 / 25) (γ := 2 / 25) (by norm_num [g2D1, DEN]) (by norm_num [g2D2, DEN]) (actsOf Γ acts) ha1 hg2
+      (θ := 21 / 40) (γ := 1 / 10) (by norm_num [g2D1, DEN]) (by norm_num [g2D2, DEN]) (actsOf Γ acts) ha1 hg2
       (fun L hL => (hD.fit L hL).trans hlen.ge) ha2 H.hc (by linarith [H.hc1]) H.hρ H.hρc H.li41 hcond
       (hinv.big H.hc1)
     simpa using OK_of_asym (hσ b) hAsym
@@ -1032,20 +1032,20 @@ theorem fits_cellCons (k : ℕ) (r : Bool) : fits (cellCons k r) 2 = true := by
 (`2 ≤ k`, `2 ≤ j`), the cell is `OK` for `σ = 1` with loss `L/SC`. -/
 theorem cell_OK {ρ c : ℝ} (H : Hyps ρ c) {E : ℤ} (hE : 0 < E) (t : Cert) {k j : ℕ} (r : Bool) (hk : 2 ≤ k)
     (hj : 2 ≤ j) {L : ℕ} (hrun : run E t (.std 1) (cellCons k r) (cellBox k j) true = some L) :
-    OK (13 / 25) ρ 1 (fun x y => ((ShortSieveThree.cell k j r).count x y : ℝ)) (L / SC) := by
+    OK (21 / 40) ρ 1 (fun x y => ((ShortSieveThree.cell k j r).count x y : ℝ)) (L / SC) := by
   have := run_sound H hE t (.std 1) (Desc.std 1) (ShortSieveThree.cellConds k j r) (cellCons k r) (cellBox k j)
     true L
     (Sound.cell r E) (StdInv.cell r hj hk).inv (CondsOK.cell k j r) rfl (fits_cellCons k r) hrun
   exact this
 
-/-- **Primes in short intervals from the certificates.** At `θ = 13/25`, given Li's Lemmas 3.1, 3.2 and 4.1 and a
+/-- **Primes in short intervals from the certificates.** At `θ = 21/40`, given Li's Lemmas 3.1, 3.2 and 4.1 and a
 certificate for every root cell that the checker passes with the loss `L r c` (units `1/SC`):
-`π(x) − π(x − y) ≥ (1 − Σ L/SC − ε) y/log x` for `x^{13/25} ≤ y ≤ x^{1−ρ}`. -/
+`π(x) − π(x − y) ≥ (1 − Σ L/SC − ε) y/log x` for `x^{21/40} ≤ y ≤ x^{1−ρ}`. -/
 theorem primes_of_certs {ρ c : ℝ} (H : Hyps ρ c) {E : ℤ} (hE : 0 < E) (cert : Bool → ℕ × ℕ → Cert)
     (L : Bool → ℕ × ℕ → ℕ)
     (hrun : ∀ r, ∀ c ∈ ShortSieveThree.cells r,
       run E (cert r c) (.std 1) (cellCons c.1 r) (cellBox c.1 c.2) true = some (L r c)) :
-    ∀ ε : ℝ, 0 < ε → ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, x ^ (13 / 25 : ℝ) ≤ y → y ≤ x ^ (1 - ρ) →
+    ∀ ε : ℝ, 0 < ε → ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, x ^ (21 / 40 : ℝ) ≤ y → y ≤ x ^ (1 - ρ) →
       (1 - (∑ c ∈ ShortSieveThree.cells true, (L true c : ℝ) / SC +
         ∑ c ∈ ShortSieveThree.cells false, (L false c : ℝ) / SC) - ε) * y / Real.log x ≤
         ((Ioc ⌊x - y⌋₊ ⌊x⌋₊).filter Nat.Prime).card := by

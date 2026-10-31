@@ -4,12 +4,12 @@ import ShortSieveCertDrop
 # The certificate's role reversals
 
 Li's role reversal on a standard node `S(A_{p₁⋯p_{k+2}}, p_{k+2})` turns `p₁` into an item free of primes below the
-level `x^{1/25}`. The result is a Type I term (`revT`) in which the rough item is a variable. The term is the node (the
-item a prime) plus the reversed child (the item `pβ`, with `p ≥ x^{1/25}` its least prime factor in `p₁`'s place and
+level `x^{1/20}`. The result is a Type I term (`revT`) in which the rough item is a variable. The term is the node (the
+item a prime) plus the reversed child (the item `pβ`, with `p ≥ x^{1/20}` its least prime factor in `p₁`'s place and
 `β ≥ p` free of primes below `p`) (`ShortSieveBuch.count_rev`). A reversed node (`revN`) has primes and two rough items:
 `ρ`, free of primes below the last prime, and `β`, free of primes below the first.
 
-* `RevInv`: the reversed node's invariant, its primes at least `x^{1/25}`, `ρ` at least the last prime and `β` at least
+* `RevInv`: the reversed node's invariant, its primes at least `x^{1/20}`, `ρ` at least the last prime and `β` at least
   the first; `StdInv.rev` and `CondsOK.rev` keep the invariants for the child.
 * `count_rev_std`: the Type I term is the node plus the child.
 -/
@@ -28,16 +28,16 @@ def revS (k : ℕ) : Fin 2 → Fin (k + 1) := Fin.snoc (fun _ : Fin 1 => Fin.las
 /-- A reversed node: `k + 1` primes, `ρ` free of primes below the last and `β` free of primes below the first. -/
 @[reducible] def revN (k : ℕ) (conds : List (Cond (k + 1) 2)) : Node := ⟨k + 1, 2, revS k, conds⟩
 
-/-- The conditions of a standard node's reversed child at the level `x^{1/25}`: the node's, with `p₁ = pβ`, the level
-`x^{1/25} ≤ p` and the order `p ≤ β`. -/
+/-- The conditions of a standard node's reversed child at the level `x^{1/20}`: the node's, with `p₁ = pβ`, the level
+`x^{1/20} ≤ p` and the order `p ≤ β`. -/
 noncomputable def revConds (k : ℕ) (conds : List (Cond (k + 1) 1)) : List (Cond (k + 1) 2) :=
-  conds.map Cond.revSplit ++ [lvlCond0 (1 / 25) (fun _ => 0), geCond0]
+  conds.map Cond.revSplit ++ [lvlCond0 (1 / 20) (fun _ => 0), geCond0]
 
-/-- The invariant of a reversed node's conditions: its primes are at least `x^{1/25}`, `ρ` is at least the last prime
+/-- The invariant of a reversed node's conditions: its primes are at least `x^{1/20}`, `ρ` is at least the last prime
 and `β` at least the first. -/
 def RevInv (k : ℕ) (conds : List (Cond (k + 1) 2)) : Prop :=
   ∀ x : ℝ, 1 < x → ∀ v : (Fin (k + 1) → ℕ) × (Fin 2 → ℕ), (∀ a, 0 < v.1 a) → (∀ i, 0 < v.2 i) →
-    (∀ C ∈ conds, C.Holds x v.1 v.2) → (∀ a, x ^ (1 / 25 : ℝ) ≤ v.1 a) ∧ v.1 (Fin.last k) ≤ v.2 0 ∧ v.1 0 ≤ v.2 1
+    (∀ C ∈ conds, C.Holds x v.1 v.2) → (∀ a, x ^ (1 / 20 : ℝ) ≤ v.1 a) ∧ v.1 (Fin.last k) ≤ v.2 0 ∧ v.1 0 ≤ v.2 1
 
 /-- The parent pair of a reversed child's pair: `p₁ = pβ`, the other primes and `ρ`. -/
 def revMerge {k : ℕ} (v : (Fin (k + 2) → ℕ) × (Fin 2 → ℕ)) : (Fin (k + 2) → ℕ) × (Fin 1 → ℕ) :=
@@ -54,7 +54,7 @@ theorem revMerge_pos {k : ℕ} {v : (Fin (k + 2) → ℕ) × (Fin 2 → ℕ)} (h
 theorem revConds_facts {k : ℕ} {conds : List (Cond (k + 2) 1)} {x : ℝ} (hx : 0 < x)
     {v : (Fin (k + 2) → ℕ) × (Fin 2 → ℕ)} (hv1 : ∀ a, 0 < v.1 a) (hv2 : ∀ i, 0 < v.2 i)
     (hc : ∀ C ∈ revConds (k + 1) conds, C.Holds x v.1 v.2) :
-    (∀ C ∈ conds, C.Holds x (revMerge v).1 (revMerge v).2) ∧ x ^ (1 / 25 : ℝ) ≤ v.1 0 ∧ v.1 0 ≤ v.2 1 := by
+    (∀ C ∈ conds, C.Holds x (revMerge v).1 (revMerge v).2) ∧ x ^ (1 / 20 : ℝ) ≤ v.1 0 ∧ v.1 0 ≤ v.2 1 := by
   have e1 : v.1 = Fin.cons (v.1 0) (Fin.tail v.1) := (Fin.cons_self_tail v.1).symm
   have e2 : v.2 = Fin.snoc (fun _ : Fin 1 => v.2 0) (v.2 1) := by
     funext i
@@ -65,7 +65,7 @@ theorem revConds_facts {k : ℕ} {conds : List (Cond (k + 2) 1)} {x : ℝ} (hx :
   · have h := hc _ (List.mem_append_left _ (List.mem_map_of_mem hC))
     rw [e1, e2, holds_revSplit C x _ _ (hv1 0) (hv2 1), holds_rev] at h
     exact h
-  · have h := hc (lvlCond0 (1 / 25) (fun _ => 0)) (List.mem_append_right _ (by simp))
+  · have h := hc (lvlCond0 (1 / 20) (fun _ => 0)) (List.mem_append_right _ (by simp))
     rw [e1, holds_lvlCond0 (p := Fin.tail v.1) _ _ hx (fun j => hv1 _) (hv1 0), lvlOf_zero, Nat.ceil_le] at h
     exact h
   · have h := hc geCond0 (List.mem_append_right _ (by simp))
@@ -105,12 +105,12 @@ theorem CondsOK.rev {k : ℕ} {conds : List (Cond (k + 2) 1)} (h : CondsOK conds
 theorem last_ne_zero_succ (k : ℕ) : Fin.last (k + 1) ≠ 0 := by simp [Fin.ext_iff]
 
 /-- The Type I term of a standard node's role reversal: its primes after the first, with its rough item (free of primes
-below the last) a variable, and the first prime's place free of primes below `x^{1/25}`. -/
+below the last) a variable, and the first prime's place free of primes below `x^{1/20}`. -/
 @[reducible] noncomputable def revT (k : ℕ) (conds : List (Cond (k + 2) 1)) : TNode :=
-  ⟨k + 1, 1, fun _ => Fin.last k, 1 / 25, conds.map Cond.rev⟩
+  ⟨k + 1, 1, fun _ => Fin.last k, 1 / 20, conds.map Cond.rev⟩
 
 theorem revT_toJ (k : ℕ) (conds : List (Cond (k + 2) 1)) :
-    (revT k conds).toJ = revJ (k + 1) 1 (fun _ => Fin.last (k + 1)) (fun _ => last_ne_zero_succ k) (1 / 25)
+    (revT k conds).toJ = revJ (k + 1) 1 (fun _ => Fin.last (k + 1)) (fun _ => last_ne_zero_succ k) (1 / 20)
       (fun _ => 0) conds := by
   simp only [TNode.toJ, revT, revJ]
   congr 1
@@ -120,15 +120,15 @@ theorem count_rev_std {k : ℕ} {conds : List (Cond (k + 2) 1)} (hinv : StdInv (
     (y : ℝ) : (revT k conds).toJ.count x y =
       (std (k + 1) conds).count x y + (revN (k + 1) (revConds (k + 1) conds)).count x y := by
   rw [revT_toJ]
-  refine count_rev (k + 1) 1 (fun _ => Fin.last (k + 1)) (fun _ => last_ne_zero_succ k) (1 / 25) (fun _ => 0) conds
+  refine count_rev (k + 1) 1 (fun _ => Fin.last (k + 1)) (fun _ => last_ne_zero_succ k) (1 / 20) (fun _ => 0) conds
     (by linarith) y fun w hw hc => ?_
   obtain ⟨hp, hρ⟩ := mem_pairs.1 hw
   rw [lvlOf_zero]
-  have hx25 : 1 < x ^ (1 / 25 : ℝ) := Real.one_lt_rpow hx (by norm_num)
+  have hx20 : 1 < x ^ (1 / 20 : ℝ) := Real.one_lt_rpow hx (by norm_num)
   refine ⟨?_, ?_⟩
-  · have := Nat.lt_ceil.2 (show ((1 : ℕ) : ℝ) < x ^ (1 / 25 : ℝ) by exact_mod_cast hx25)
+  · have := Nat.lt_ceil.2 (show ((1 : ℕ) : ℝ) < x ^ (1 / 20 : ℝ) by exact_mod_cast hx20)
     omega
-  · -- the first prime's place is at least `x^{1/25}`, by the node's invariant at the parent pair
+  · -- the first prime's place is at least `x^{1/20}`, by the node's invariant at the parent pair
     have e2 : w.2 = Fin.snoc (Fin.init w.2) (w.2 (Fin.last 1)) := (Fin.snoc_init_self w.2).symm
     have hc' : ∀ C ∈ conds, C.Holds x (Fin.cons (w.2 (Fin.last 1)) w.1) (Fin.init w.2) := fun C hC => by
       have h := hc C hC
@@ -174,14 +174,14 @@ theorem tExp_rev {k : ℕ} (conds : List (Cond (k + 2) 1)) {labels : List ℕ}
       Fin.castSucc_zero]
 
 
-/-- A reversed node's terms have primes above `x^c`, for `c < 1/25`, and rough items above `1`. -/
-theorem RevInv.big {k : ℕ} {conds : List (Cond (k + 1) 2)} (h : RevInv k conds) {c : ℝ} (hc1 : c < 1 / 25) :
+/-- A reversed node's terms have primes above `x^c`, for `c < 1/20`, and rough items above `1`. -/
+theorem RevInv.big {k : ℕ} {conds : List (Cond (k + 1) 2)} (h : RevInv k conds) {c : ℝ} (hc1 : c < 1 / 20) :
     ∀ᶠ x in atTop, ∀ v ∈ (revN k conds).terms x, (∀ a, x ^ c < v.1 a) ∧ ∀ i, 1 < v.2 i := by
   filter_upwards [eventually_gt_atTop 1] with x hx v hv
   obtain ⟨hvp, -, hcv⟩ := mem_filter.1 hv
   obtain ⟨hp, hρ⟩ := mem_pairs.1 hvp
   obtain ⟨h1, h2, h3⟩ := h x hx v (fun a => (hp a).2.pos) (fun i => (hρ i).1) hcv
-  have hxc : (1 : ℝ) < x ^ (1 / 25 : ℝ) := Real.one_lt_rpow hx (by norm_num)
+  have hxc : (1 : ℝ) < x ^ (1 / 20 : ℝ) := Real.one_lt_rpow hx (by norm_num)
   have key : ∀ a j, v.1 a ≤ v.2 j → 1 < v.2 j := fun a j hj => by
     have := (h1 a).trans (Nat.cast_le.2 hj)
     exact_mod_cast hxc.trans_le this
@@ -290,7 +290,7 @@ theorem holds_halfCon (k : ℕ) (X : ℕ → ℝ) (H : ℝ) : (halfCon k).Holds 
   push_cast
   constructor <;> intro h <;> [skip; skip] <;> ring_nf at h ⊢ <;> linarith
 
-/-- **The reversed child's coordinates**: the node's, the new prime's in `[DEN/25, hi_0)`, with the order `p ≤ β`. -/
+/-- **The reversed child's coordinates**: the node's, the new prime's in `[DEN/20, hi_0)`, with the order `p ≤ β`. -/
 theorem Sound.rev_child {k : ℕ} {conds : List (Cond (k + 2) 1)} {E : ℤ} {Γ : List Con} {B : Box}
     (h : Sound (std (k + 1) conds) (stdRows (k + 2)) E Γ B) (hlen : B.length = k + 2)
     (hf : fits Γ B.length = true) :
@@ -326,11 +326,11 @@ theorem Sound.rev_child {k : ℕ} {conds : List (Cond (k + 2) 1)} {E : ℤ} {Γ 
   refine ⟨inBox_append B _ _ (inBox_congr B hagree hB) ?_ ?_, fun c hc' => ?_⟩
   · -- the level
     rw [hlen, eN, NU0_eq]
-    have h2 : Real.log x / 25 ≤ Real.log (v.1 0) := by
+    have h2 : Real.log x / 20 ≤ Real.log (v.1 0) := by
       have := Real.log_le_log (Real.rpow_pos_of_pos hx0 _) hlvl
       rw [Real.log_rpow hx0] at this
       linarith
-    calc (DEN : ℝ) / 25 = DEN * ((Real.log x / 25) / Real.log x) := by field_simp
+    calc (DEN : ℝ) / 20 = DEN * ((Real.log x / 20) / Real.log x) := by field_simp
       _ ≤ DEN * (Real.log (v.1 0) / Real.log x) :=
         mul_le_mul_of_nonneg_left (div_le_div_of_nonneg_right h2 hlx.le) hD.le
   · rw [hlen, eN]
@@ -363,12 +363,12 @@ theorem Sound.OK_of_rev {k : ℕ} {conds : List (Cond (k + 2) 1)} {E : ℤ} {Γ 
     (hcond : CondsOK conds) (hlen : k + 2 ≤ B.length) {acts : List LF} (hacts : ∀ g ∈ acts, ∃ c ∈ Γ, c.L = g)
     (hfa : ∀ g ∈ acts, g.c.length ≤ B.length) {labels : List ℕ} {kind : ℕ}
     (hcheck : typeICheck (stdItems (k + 2)) 0 E B acts labels kind = true) {c ρ σ L : ℝ} (hc : 0 < c)
-    (hc1 : c < 1 / 25)
-    (hρ : 0 < ρ) (hρc : 12 * ρ < c) (hσ : |σ| ≤ 1) (hLi31 : ShortSieveLi.LiLemma31 (13 / 25) (2 / 25) ρ)
-    (hLi32 : ShortSieveLi.LiLemma32 (13 / 25) (2 / 25) ρ)
-    (hG : OK (13 / 25) ρ (-σ) (fun x y => ((revN (k + 1) (revConds (k + 1) conds)).count x y : ℝ)) L) :
-    OK (13 / 25) ρ σ (fun x y => ((std (k + 1) conds).count x y : ℝ)) L := by
-  have hθρ : (13 / 25 : ℝ) ≤ 1 - ρ := by linarith
+    (hc1 : c < 1 / 20)
+    (hρ : 0 < ρ) (hρc : 12 * ρ < c) (hσ : |σ| ≤ 1) (hLi31 : ShortSieveLi.LiLemma31 (21 / 40) (1 / 10) ρ)
+    (hLi32 : ShortSieveLi.LiLemma32 (21 / 40) (1 / 10) ρ)
+    (hG : OK (21 / 40) ρ (-σ) (fun x y => ((revN (k + 1) (revConds (k + 1) conds)).count x y : ℝ)) L) :
+    OK (21 / 40) ρ σ (fun x y => ((std (k + 1) conds).count x y : ℝ)) L := by
+  have hθρ : (21 / 40 : ℝ) ≤ 1 - ρ := by linarith
   obtain ⟨hl, h3, hall⟩ := labels_of_check hcheck
   have hn : (stdItems (k + 2)).length = k + 3 := by simp [stdItems]
   rw [hn] at hl hall
@@ -419,13 +419,13 @@ theorem Sound.OK_of_rev {k : ℕ} {conds : List (Cond (k + 2) 1)} {E : ℤ} {Γ 
       rw [prodP_rev]
       conv_rhs => rw [show w = (w.1, w.2) from rfl, e2]
   -- the Type I term
-  have hJ : Asym (13 / 25) ρ (fun x y => ((revT k conds).toJ.count x y : ℝ)) := by
+  have hJ : Asym (21 / 40) ρ (fun x y => ((revT k conds).toJ.count x y : ℝ)) := by
     have hreg : ∀ᶠ x in atTop, ∀ w ∈ (revT k conds).terms x, x / 2 < (prodP w : ℝ) → (prodP w : ℝ) ≤ x →
-        TypeIReg (13 / 25) (1 / (100 * DEN)) (decide (kind ≠ 1))
+        TypeIReg (21 / 40) (1 / (400 * DEN)) (decide (kind ≠ 1))
             (tExp (revT k conds) (revRole labels hlt3 hρ3) x w) ∧
           tExp (revT k conds) (revRole labels hlt3 hρ3) x w 0 +
               tExp (revT k conds) (revRole labels hlt3 hρ3) x w 1 +
-            tExp (revT k conds) (revRole labels hlt3 hρ3) x w 2 ≤ 1 - 1 / (100 * DEN) := by
+            tExp (revT k conds) (revRole labels hlt3 hρ3) x w 2 ≤ 1 - 1 / (400 * DEN) := by
       filter_upwards [abs_slack_le hE (k + 2) 1, eventually_gt_atTop 1] with x hsl hx1 w hw h1 h2
       obtain ⟨hu1, hu2, hcu, hpu⟩ := hpar x hx1 w hw
       have hH := hsl (revParent w) hu1 hu2 (by rw [hpu]; linarith) (by rw [hpu]; linarith)
@@ -441,7 +441,7 @@ theorem Sound.OK_of_rev {k : ℕ} {conds : List (Cond (k + 2) 1)} {E : ℤ} {Γ 
       filter_upwards [eventually_gt_atTop 1] with x hx w hw
       obtain ⟨hu1, hu2, hcu, -⟩ := hpar x hx w hw
       obtain ⟨h1, h2⟩ := hinv x hx (revParent w) hu1 hu2 hcu
-      have hxc : (1 : ℝ) < x ^ (1 / 25 : ℝ) := Real.one_lt_rpow hx (by norm_num)
+      have hxc : (1 : ℝ) < x ^ (1 / 20 : ℝ) := Real.one_lt_rpow hx (by norm_num)
       refine ⟨fun a => (Real.rpow_lt_rpow_of_exponent_lt hx hc1).trans_le ?_, fun i => ?_⟩
       · simpa [revParent] using h1 a.succ
       · have hi : i = 0 := Fin.fin_one_eq_zero i
@@ -450,8 +450,8 @@ theorem Sound.OK_of_rev {k : ℕ} {conds : List (Cond (k + 2) 1)} {E : ℤ} {Γ 
         have h' : (1 : ℝ) < (revParent w).2 0 := hxc.trans_le this
         simpa [revParent] using h'
     have hrel := abs_count_sub_le_typeI (revT k conds) (Nat.succ_pos k) hc (by linarith) hρ hρc
-      (show (0 : ℝ) < 1 / 25 by norm_num) (show 12 * ρ < (1 / 25 : ℝ) by linarith)
-      (show (1 / 25 : ℝ) ≤ 2 * (13 / 25) - 1 by norm_num) (by norm_num) (by norm_num)
+      (show (0 : ℝ) < 1 / 20 by norm_num) (show 12 * ρ < (1 / 20 : ℝ) by linarith)
+      (show (1 / 20 : ℝ) ≤ 2 * (21 / 40) - 1 by norm_num) (by norm_num) (by norm_num)
       (div_pos one_pos (mul_pos (by norm_num) DEN_pos)) hLi31 hLi32 hcond.revT hbigT
       (revRole labels hlt3 hρ3) (decide (kind ≠ 1)) hrole hreg
     refine asym_of_rel hrel ?_

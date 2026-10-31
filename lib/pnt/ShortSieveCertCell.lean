@@ -6,8 +6,8 @@ import ShortSieveThree
 
 Li's third sum is the counts of the root cells `ShortSieveThree.cell k j r` (`ShortSieveThree.bigThree_eq_cells`).
 Each cell is a standard node with two primes (`cell_eq_std`), and the certificate starts it with the box
-`[k DEN/50, (k + 1) DEN/50] × [j DEN/50, (j + 1) DEN/50)` of `(X₀, X₁)` (the upper end of `X₀` widened by a unit,
-since the cell is closed there) and the constraints `X₁ < X₀`, `q ≤ ρ`, Li's level and the region (`Sound.cell`).
+`[k DEN/40, (k + 1) DEN/40] × [j DEN/40, (j + 1) DEN/40)` of `(X₀, X₁)` (the upper end of `X₀` widened by a unit,
+since the cell is closed there) and the constraints `X₁ < X₀`, `q ≤ ρ`, the level and the region (`Sound.cell`).
 
 * `StdInv.cell`, `CondsOK.cell`: the cell's conditions keep the standard nodes' invariants.
 -/
@@ -18,10 +18,10 @@ namespace ShortSieveCert
 
 open ShortSieveNode ShortSieveThree
 
-/-- `DEN/50`. -/
-def D50 : ℤ := 2 * 2 ^ 30
+/-- `DEN/40`. -/
+def D40 : ℤ := 5 * 2 ^ 29
 
-theorem D50_eq : (D50 : ℝ) = DEN / 50 := by norm_num [D50, DEN]
+theorem D40_eq : (D40 : ℝ) = DEN / 40 := by norm_num [D40, DEN]
 
 theorem cell_eq_std (k j : ℕ) (r : Bool) : cell k j r = std 1 (cellConds k j r) := rfl
 
@@ -33,8 +33,8 @@ theorem vec_two (v : (Fin 2 → ℕ) × (Fin 1 → ℕ)) : v.1 = ![v.1 0, v.1 1]
 /-- The cell's conditions at a pair, in logarithms. -/
 theorem cell_logs {k j : ℕ} {r : Bool} {x : ℝ} {v : (Fin 2 → ℕ) × (Fin 1 → ℕ)}
     (hc : ∀ C ∈ cellConds k j r, C.Holds x v.1 v.2) :
-    k * Real.log x < 50 * Real.log (v.1 0) ∧ 50 * Real.log (v.1 0) ≤ (k + 1) * Real.log x ∧
-      j * Real.log x ≤ 50 * Real.log (v.1 1) ∧ 50 * Real.log (v.1 1) < (j + 1) * Real.log x ∧
+    k * Real.log x < 40 * Real.log (v.1 0) ∧ 40 * Real.log (v.1 0) ≤ (k + 1) * Real.log x ∧
+      j * Real.log x ≤ 40 * Real.log (v.1 1) ∧ 40 * Real.log (v.1 1) < (j + 1) * Real.log x ∧
       Real.log (v.1 1) < Real.log (v.1 0) ∧ Real.log (v.1 1) ≤ Real.log (v.2 0) ∧
       (nuCond k).Holds x v.1 v.2 ∧ (if r then regCond k else (regCond k).neg).Holds x v.1 v.2 := by
   obtain ⟨e1, e2⟩ := vec_two v
@@ -45,7 +45,7 @@ theorem cell_logs {k j : ℕ} {r : Bool} {x : ℝ} {v : (Fin 2 → ℕ) × (Fin 
   rw [holds_lc_le] at a2 a3 a10
   refine ⟨by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, a8, a9⟩
 
-/-- **The cell keeps the standard nodes' invariant** (for `2 ≤ j`): its primes are at least `x^{1/25}`, and the rough
+/-- **The cell keeps the standard nodes' invariant** (for `2 ≤ j`): its primes are at least `x^{1/20}`, and the rough
 item at least `q`. -/
 theorem StdInv.cell {k j : ℕ} (r : Bool) (hj : 2 ≤ j) (hk : 2 ≤ k) : StdInv 1 (cellConds k j r) := by
   intro x hx v hv1 hv2 hc
@@ -62,9 +62,9 @@ theorem StdInv.cell {k j : ℕ} (r : Bool) (hj : 2 ≤ j) (hk : 2 ≤ k) : StdIn
       exact_mod_cast hv1 a)]
     refine Real.exp_le_exp.2 ?_
     fin_cases a
-    · show 1 / 25 * Real.log x ≤ Real.log (v.1 0)
+    · show 1 / 20 * Real.log x ≤ Real.log (v.1 0)
       nlinarith
-    · show 1 / 25 * Real.log x ≤ Real.log (v.1 1)
+    · show 1 / 20 * Real.log x ≤ Real.log (v.1 1)
       nlinarith
   · exact_mod_cast (Real.log_le_log_iff hq0 hr0).1 a10
 
@@ -87,6 +87,7 @@ theorem CondsOK.cell (k j : ℕ) (r : Bool) : CondsOK (cellConds k j r) := by
   have hnu : CondsOK [nuCond k] := by
     unfold nuCond
     split_ifs
+    · exact condsOK_lc (Or.inr (by norm_num))
     · exact condsOK_lc (Or.inr (by norm_num))
     · exact condsOK_lc (Or.inl (by norm_num))
   have hreg : CondsOK [regCond k] := by
@@ -114,17 +115,18 @@ theorem CondsOK.cell (k j : ℕ) (r : Bool) : CondsOK (cellConds k j r) := by
 
 /-! ### The cell's box and constraints -/
 
-/-- Li's level as a constraint: `2X₀ + (2h − 1)X₁ ≥ (26/25)DEN`, `h = ⌊(26 − k)/2⌋`, or `X₁ ≥ (2/25)DEN` on the cell
-`k = 23`. -/
+/-- The level as a constraint: `X₁ ≥ DEN/20` on the cell `k = 2`, where it is held at `2θ − 1`; `X₁ ≥ DEN/10` on the
+cell `k = 18`, where Li's level is `γ`; and `2X₀ + (2h − 1)X₁ ≥ (21/20)DEN`, `h = ⌊(21 − k)/2⌋`, on the others. -/
 def levelCon (k : ℕ) : Con :=
-  if k = 23 then ⟨⟨8 * 2 ^ 30, [0, -1], 0⟩, false⟩
-  else ⟨⟨104 * 2 ^ 30, [-2, 1 - 2 * (((26 - k) / 2 : ℕ) : ℤ)], 0⟩, false⟩
+  if k = 2 then ⟨⟨5 * 2 ^ 30, [0, -1], 0⟩, false⟩
+  else if k = 18 then ⟨⟨10 * 2 ^ 30, [0, -1], 0⟩, false⟩
+  else ⟨⟨105 * 2 ^ 30, [-2, 1 - 2 * (((21 - k) / 2 : ℕ) : ℤ)], 0⟩, false⟩
 
-/-- The region as a constraint: `X₀ + 3X₁ < DEN` for `k ≤ 19`, `2X₁ < X₀` above. -/
-def regionCon (k : ℕ) : Con := if k ≤ 19 then ⟨⟨-DEN, [1, 3], 0⟩, true⟩ else ⟨⟨0, [-1, 2], 0⟩, true⟩
+/-- The region as a constraint: `X₀ + 3X₁ < DEN` for `k ≤ 15`, `2X₁ < X₀` above. -/
+def regionCon (k : ℕ) : Con := if k ≤ 15 then ⟨⟨-DEN, [1, 3], 0⟩, true⟩ else ⟨⟨0, [-1, 2], 0⟩, true⟩
 
-/-- The cell's box `[k DEN/50, (k + 1) DEN/50 + 1) × [j DEN/50, (j + 1) DEN/50)`. -/
-def cellBox (k j : ℕ) : Box := [(k * D50, (k + 1) * D50 + 1), (j * D50, (j + 1) * D50)]
+/-- The cell's box `[k DEN/40, (k + 1) DEN/40 + 1) × [j DEN/40, (j + 1) DEN/40)`. -/
+def cellBox (k j : ℕ) : Box := [(k * D40, (k + 1) * D40 + 1), (j * D40, (j + 1) * D40)]
 
 /-- The cell's constraints: `X₁ < X₀`, `q ≤ ρ`, the level and the region (or its complement). -/
 def cellCons (k : ℕ) (r : Bool) : List Con :=
@@ -206,12 +208,12 @@ theorem Sound.cell {k j : ℕ} (r : Bool) (E : ℤ) :
   obtain ⟨a1, a2, a3, a4, a6, a10, a8, a9⟩ := cell_logs hc
   have e0 : coords (stdRows 2) x v 0 = DEN * (Real.log (v.1 0) / Real.log x) := coords_std x v 0
   have e1 : coords (stdRows 2) x v 1 = DEN * (Real.log (v.1 1) / Real.log x) := coords_std x v 1
-  -- `DEN log p/log x` against multiples of `DEN/50`
-  have key : ∀ (c : ℝ) (P : ℕ), (c * Real.log x ≤ 50 * Real.log P → c * (DEN / 50) ≤ DEN * (Real.log P / Real.log x)) ∧
-      (50 * Real.log P < c * Real.log x → DEN * (Real.log P / Real.log x) < c * (DEN / 50)) ∧
-      (50 * Real.log P ≤ c * Real.log x → DEN * (Real.log P / Real.log x) ≤ c * (DEN / 50)) := by
+  -- `DEN log p/log x` against multiples of `DEN/40`
+  have key : ∀ (c : ℝ) (P : ℕ), (c * Real.log x ≤ 40 * Real.log P → c * (DEN / 40) ≤ DEN * (Real.log P / Real.log x)) ∧
+      (40 * Real.log P < c * Real.log x → DEN * (Real.log P / Real.log x) < c * (DEN / 40)) ∧
+      (40 * Real.log P ≤ c * Real.log x → DEN * (Real.log P / Real.log x) ≤ c * (DEN / 40)) := by
     intro c P
-    have e : DEN * (Real.log P / Real.log x) = (DEN / 50) * (50 * Real.log P) / Real.log x := by
+    have e : DEN * (Real.log P / Real.log x) = (DEN / 40) * (40 * Real.log P) / Real.log x := by
       field_simp
     rw [e]
     refine ⟨fun h => ?_, fun h => ?_, fun h => ?_⟩
@@ -226,7 +228,7 @@ theorem Sound.cell {k j : ℕ} (r : Bool) (E : ℤ) :
     have k3 := (key j (v.1 1)).1 a3
     have k4 := (key (j + 1) (v.1 1)).2.1 a4
     push_cast
-    rw [D50_eq]
+    rw [D40_eq]
     refine ⟨k1, by linarith, k3, k4, trivial⟩
   simp only [cellCons, List.mem_cons, List.not_mem_nil, or_false] at hc'
   rcases hc' with rfl | rfl | rfl | rfl
@@ -247,42 +249,54 @@ theorem Sound.cell {k j : ℕ} (r : Bool) (E : ℤ) :
   · -- the level
     obtain ⟨f1, f2⟩ := vec_two v
     rw [f1, f2] at a8
-    by_cases hk23 : k = 23
-    · have a8' : Real.log x * (2 / 25) ≤ Real.log (v.1 1) := by
-        have := a8
-        simp only [nuCond, hk23, ↓reduceIte] at this
-        rw [holds_lc_le] at this
-        linarith
-      have hc : levelCon k = ⟨⟨8 * 2 ^ 30, [0, -1], 0⟩, false⟩ := by simp [levelCon, hk23]
-      rw [hc]
+    -- the cases `X₁ ≥ c DEN`
+    have hlow : ∀ (c : ℝ) (n : ℕ), (n : ℝ) = c * DEN → Real.log x * c ≤ Real.log (v.1 1) →
+        (⟨⟨(n : ℤ), [0, -1], 0⟩, false⟩ : Con).Holds (coords (stdRows 2) x v) (slack x v) := by
+      intro c n hn hl
       unfold Con.Holds
       simp only [Bool.false_eq_true, ↓reduceIte]
-      rw [val_cell, show ((8 * 2 ^ 30 : ℤ) : ℝ) = 2 / 25 * DEN by norm_num [DEN]]
-      have h2 : (2 / 25 : ℝ) ≤ Real.log (v.1 1) / Real.log x := by rw [le_div_iff₀ hlx]; linarith
+      rw [val_cell]
+      have h2 : c ≤ Real.log (v.1 1) / Real.log x := by rw [le_div_iff₀ hlx]; linarith
       push_cast
+      rw [hn]
       nlinarith
-    · have a8' : -2 * Real.log (v.1 0) + (1 - 2 * (((26 - k) / 2 : ℕ) : ℝ)) * Real.log (v.1 1) ≤
-          -(26 / 25) * Real.log x := by
+    by_cases hk2 : k = 2
+    · have a8' : Real.log x * (1 / 20) ≤ Real.log (v.1 1) := by
         have := a8
-        simp only [nuCond, hk23, ↓reduceIte] at this
-        rw [holds_lc_le] at this
+        rw [nuCond, ite_eq_left hk2, holds_lc_le] at this
         linarith
-      have hc : levelCon k = ⟨⟨104 * 2 ^ 30, [-2, 1 - 2 * (((26 - k) / 2 : ℕ) : ℤ)], 0⟩, false⟩ := by
-        simp [levelCon, hk23]
+      have hc : levelCon k = ⟨⟨((5 * 2 ^ 30 : ℕ) : ℤ), [0, -1], 0⟩, false⟩ := by simp [levelCon, hk2]
       rw [hc]
-      unfold Con.Holds
-      simp only [Bool.false_eq_true, ↓reduceIte]
-      rw [val_cell, show ((104 * 2 ^ 30 : ℤ) : ℝ) = 26 / 25 * DEN by norm_num [DEN]]
-      simp only [Int.cast_sub, Int.cast_mul, Int.cast_one, Int.cast_ofNat, Int.cast_natCast, Int.cast_neg,
-        Int.cast_zero]
-      set h := (((26 - k) / 2 : ℕ) : ℝ) with hh
-      have h2 : (26 / 25 : ℝ) ≤ 2 * (Real.log (v.1 0) / Real.log x) +
-          (2 * h - 1) * (Real.log (v.1 1) / Real.log x) := by
-        have e : 2 * (Real.log (v.1 0) / Real.log x) + (2 * h - 1) * (Real.log (v.1 1) / Real.log x) =
-            (2 * Real.log (v.1 0) + (2 * h - 1) * Real.log (v.1 1)) / Real.log x := by field_simp
-        rw [e, le_div_iff₀ hlx]
+      exact hlow (1 / 20) _ (by norm_num [DEN]) a8'
+    by_cases hk18 : k = 18
+    · have a8' : Real.log x * (1 / 10) ≤ Real.log (v.1 1) := by
+        have := a8
+        rw [nuCond, ite_eq_right hk2, ite_eq_left hk18, holds_lc_le] at this
         linarith
-      nlinarith
+      have hc : levelCon k = ⟨⟨((10 * 2 ^ 30 : ℕ) : ℤ), [0, -1], 0⟩, false⟩ := by simp [levelCon, hk18]
+      rw [hc]
+      exact hlow (1 / 10) _ (by norm_num [DEN]) a8'
+    have a8' : -2 * Real.log (v.1 0) + (1 - 2 * (((21 - k) / 2 : ℕ) : ℝ)) * Real.log (v.1 1) ≤
+        -(21 / 20) * Real.log x := by
+      have := a8
+      rw [nuCond, ite_eq_right hk2, ite_eq_right hk18, holds_lc_le] at this
+      linarith
+    have hc : levelCon k = ⟨⟨105 * 2 ^ 30, [-2, 1 - 2 * (((21 - k) / 2 : ℕ) : ℤ)], 0⟩, false⟩ := by
+      simp [levelCon, hk2, hk18]
+    rw [hc]
+    unfold Con.Holds
+    simp only [Bool.false_eq_true, ↓reduceIte]
+    rw [val_cell, show ((105 * 2 ^ 30 : ℤ) : ℝ) = 21 / 20 * DEN by norm_num [DEN]]
+    simp only [Int.cast_sub, Int.cast_mul, Int.cast_one, Int.cast_ofNat, Int.cast_natCast, Int.cast_neg,
+      Int.cast_zero]
+    set h := (((21 - k) / 2 : ℕ) : ℝ) with hh
+    have h2 : (21 / 20 : ℝ) ≤ 2 * (Real.log (v.1 0) / Real.log x) +
+        (2 * h - 1) * (Real.log (v.1 1) / Real.log x) := by
+      have e : 2 * (Real.log (v.1 0) / Real.log x) + (2 * h - 1) * (Real.log (v.1 1) / Real.log x) =
+          (2 * Real.log (v.1 0) + (2 * h - 1) * Real.log (v.1 1)) / Real.log x := by field_simp
+      rw [e, le_div_iff₀ hlx]
+      linarith
+    nlinarith
   · -- the region
     cases r
     · simp only [Bool.false_eq_true, ↓reduceIte] at a9 ⊢
