@@ -23,8 +23,14 @@ places the Frobenius of a curve over `𝔽_q` on a sphere of radius `√q`.
   has degree `q`, so `π` lies on the sphere of radius `√q` in that lattice; Hasse's bound `|q + 1 − #E(𝔽_q)| ≤ 2√q`
   follows. For the curves `y² = x³ + D` the library proves this without isogenies: when `q ≡ 1 (mod 3)` the
   Frobenius is an Eisenstein integer `u + vω` of norm `q`, a point of the lattice `ℤ[ω]` on the circle of radius `√q`
-  (`HasseEisenstein.exists_eisenstein_trace`), and `HasseEisenstein.abs_trace_le` is Hasse's bound. Both are stated
-  against Mathlib's `WeierstrassCurve` and its points.
+  (`HasseEisenstein.exists_eisenstein_trace`), and `HasseEisenstein.abs_trace_le` is Hasse's bound. For every elliptic
+  curve over a finite field of odd characteristic the library proves Hasse's bound by Yu. I. Manin's argument, also
+  without isogenies (`ManinHasse.abs_trace_le`). It is this positivity in another guise. Over `𝔽_q(t)`, take the twist
+  of `E` by `s = f(t)`, with its points `P₀ = (st, s²)`, which plays the identity, and `P₁ = (st^q, s^{(q+3)/2})`, which
+  plays the Frobenius `π`. The degree of `x/s` obeys, along `P₀`, the parallelogram law of a quadratic form
+  (`ManinHasse.pdeg_add_add_pdeg_sub`). `P₀` has degree 1, `P₁` degree `q`, and `P₁ − P₀` degree `#E(𝔽_q)`
+  (`ManinHasse.pdeg_P1_sub_P0`). So the degree along `P₁ + nP₀` is `n² + (q + 1 − #E(𝔽_q))n + q`, the degree form on
+  `ℤ[π]`, and it is nonnegative. Both bounds are stated against Mathlib's `WeierstrassCurve` and its points.
 - **Curves of every genus.** The Néron–Severi lattice of `C × C`, definite away from an ample class. Not formalised:
   Mathlib has no intersection theory on surfaces, no Riemann–Roch for curves and no isogenies.
 
@@ -77,8 +83,10 @@ None of the following states the conjecture in this form; a search in October 20
 ## First steps
 
 1. Rank two: `HasseEisenstein`, done.
-2. Hasse's bound for every elliptic curve: isogenies on Mathlib's curves, and the degree as a positive definite form
-   on `End(E)`.
+2. Hasse's bound for every elliptic curve: done in odd characteristic, by Manin's proof (`ManinHasse`). There the
+   degree form on `ℤ[π] ⊂ End(E)` is the degree of points on a twist over `𝔽_q(t)`. Characteristic 2 remains: its
+   twist is by an Artin–Schreier extension rather than by a square root. The degree as a positive definite form on all
+   of `End(E)` needs isogenies on Mathlib's curves.
 3. Weil positivity for function fields, where it is a theorem, with a function-field analogue of `dh` to show which
    step uses the Euler product.
 4. For `ζ`, a candidate: the integers give, through unique factorisation, a lattice `ℤ^{(∞)}` of exponent vectors in

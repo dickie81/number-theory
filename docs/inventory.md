@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1034 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1038 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 86 | 202 |
+| `lib/core` | 88 | 206 |
 | `lib/pnt` | 229 | 730 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 8 | 34 |
@@ -254,6 +254,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `Madelung.lseries_coeff`: The alternating lattice sum of the square lattice
 - `Madelung.differentiableOn_rhs`: The continuation
+
+#### `ManinHasse`: Hasse's bound for every elliptic curve over a finite field of odd characteristic: Manin's proof
+
+- `ManinHasse.pdeg_P1_sub_P0`: `deg(P₁ − P₀) = #E(𝔽_q)`
+- `ManinHasse.trace_sq_le`: Hasse's bound for every elliptic curve over a finite field of odd characteristic
+- `ManinHasse.abs_trace_le`: Hasse's bound for every elliptic curve over a finite field of odd characteristic
+
+#### `ManinTwist`: Manin's twist: the degree of the `x`-coordinate is a quadratic form along `P₀`
+
+- `ManinHasse.pdeg_add_add_pdeg_sub`: `deg(P + P₀) + deg(P − P₀) = 2 deg P + 2`
 
 #### `MertensOmega`: Mertens and Liouville: one-sided bounds give zero-free half-planes
 
