@@ -462,6 +462,64 @@ theorem evLe_rbG (lo hi : ℕ → ℤ) (w : ℕ → Bool) {m : ℕ} {e f : ℤ} 
   rw [Nat.cast_min, ← min_div_div_right SC_pos.le]
   exact evLe_min (evLe_run_prod lo hi w he hr) (evLe_run_ord lo hi w he hef hr)
 
+theorem cdiv_zero_left (b : ℕ) : SieveCert.cdiv 0 b = 0 := by
+  unfold SieveCert.cdiv
+  rcases Nat.eq_zero_or_pos b with rfl | hb
+  · rfl
+  · exact Nat.div_eq_of_lt (by omega)
+
+theorem trF_eq_zero {lo hi : ℤ} (h : hi ≤ lo) : trF lo hi = 0 := by
+  unfold trF
+  rw [show hi.toNat - lo.toNat = 0 by omega, mul_zero, zero_mul, cdiv_zero_left]
+
+theorem invF_eq_zero {lo hi : ℤ} (h : hi ≤ lo) : invF lo hi = 0 := by
+  unfold invF
+  rw [show hi.toNat - lo.toNat = 0 by omega, mul_zero, cdiv_zero_left]
+
+/-- A member whose range misses `[e, f)` has the factor `0` there. -/
+theorem clipG_eq_zero {lo hi : ℕ → ℤ} {w : ℕ → Bool} {e f : ℤ} {i : ℕ} (h : ¬(lo i < f ∧ e < hi i)) :
+    clipG lo hi w e f i = 0 := by
+  have hm : min (hi i) f ≤ max (lo i) e := by
+    rcases not_and_or.1 h with h1 | h1
+    · exact (min_le_right _ _).trans ((not_lt.1 h1).trans (le_max_left _ _))
+    · exact (min_le_left _ _).trans ((not_lt.1 h1).trans (le_max_right _ _))
+  unfold clipG
+  split_ifs
+  · exact invF_eq_zero hm
+  · exact trF_eq_zero hm
+
+theorem foldl_cdiv_zero : ∀ fs : List ℕ, fs.foldl (fun acc f => SieveCert.cdiv (acc * f) SC) 0 = 0
+  | [] => rfl
+  | f :: fs => by rw [List.foldl_cons, zero_mul, cdiv_zero_left]; exact foldl_cdiv_zero fs
+
+/-- A product with a factor `0` is `0`. -/
+theorem foldl_cdiv_eq_zero : ∀ (fs : List ℕ) (acc : ℕ), 0 ∈ fs →
+    fs.foldl (fun acc f => SieveCert.cdiv (acc * f) SC) acc = 0
+  | [], _, h => absurd h List.not_mem_nil
+  | f :: fs, acc, h => by
+    rw [List.foldl_cons]
+    rcases List.mem_cons.1 h with rfl | h
+    · rw [mul_zero, cdiv_zero_left]; exact foldl_cdiv_zero fs
+    · exact foldl_cdiv_eq_zero fs _ h
+
+/-- The run bound, `0` at once when a member's range misses `[e, f)`: it is `rbG` (`rbZ_eq`), but the kernel then skips
+the run's products and its ordered bound. -/
+def rbZ (lo hi : ℕ → ℤ) (w : ℕ → Bool) (e f : ℤ) (j r : ℕ) : ℕ :=
+  if (List.range r).all (fun i => decide (lo (j + i) < f ∧ e < hi (j + i))) then rbG lo hi w e f j r else 0
+
+theorem rbZ_eq (lo hi : ℕ → ℤ) (w : ℕ → Bool) : rbZ lo hi w = rbG lo hi w := by
+  funext e f j r
+  unfold rbZ
+  split_ifs with h
+  · rfl
+  · simp only [List.all_eq_true, List.mem_range, decide_eq_true_eq] at h
+    push Not at h
+    obtain ⟨i, hir, hne⟩ := h
+    unfold rbG
+    rw [show prodSC ((List.range r).map fun i => clipG lo hi w e f (j + i)) = 0 from
+      foldl_cdiv_eq_zero _ _ (List.mem_map.2 ⟨i, List.mem_range.2 hir, clipG_eq_zero (fun h' => by
+        have := hne h'.1; omega)⟩), Nat.zero_min]
+
 /-! ### The chain bound -/
 
 /-- Consecutive duplicates removed. -/
@@ -474,15 +532,15 @@ def chainBps (lo hi : ℕ → ℤ) (m : ℕ) : List ℤ :=
   dedupC ((((List.range m).map lo) ++ (List.range m).map hi).insertionSort (· ≤ ·))
 
 /-- **The chain bound** of the chain of `m` members with the ranges `[lo_i, hi_i)` and the sifting primes `w`, units
-`1/SC`, and its last breakpoint: the programme over the ends of the ranges with the run bounds `rbG`, if the ends are
-positive. -/
+`1/SC`, and its last breakpoint: the programme over the ends of the ranges with the run bounds `rbG` (as `rbZ`), if the
+ends are positive. -/
 def chainDP (lo hi : ℕ → ℤ) (w : ℕ → Bool) (m : ℕ) : Option (ℕ × ℤ) :=
   match chainBps lo hi m with
   | [] => none
   | e :: rest =>
     if 0 < e ∧ rest.all (fun f => decide (0 < f)) = true ∧ incr e rest = true ∧
         (List.range m).all (fun j => decide (e ≤ lo j ∧ hi j ≤ lastD e rest)) = true then
-      some ((dpRun m (rbG lo hi w) e rest (List.replicate m 0 ++ [SC])).getD 0 0, lastD e rest)
+      some ((dpRun m (rbZ lo hi w) e rest (List.replicate m 0 ++ [SC])).getD 0 0, lastD e rest)
     else none
 
 /-- **The chain bound is sound**: the chain sum below the last breakpoint has the limit superior at most the bound. -/
@@ -498,6 +556,7 @@ theorem chainDP_sound {lo hi : ℕ → ℤ} {w : ℕ → Bool} {m D : ℕ} {eK :
     obtain ⟨he, hpos, hinc, hrng⟩ := hcheck
     simp only [List.all_eq_true, decide_eq_true_eq, List.mem_range] at hpos hrng
     refine ⟨fun j hj => (hrng j hj).2, ?_⟩
+    rw [rbZ_eq]
     refine dpRun_sound (genMem_nonneg lo hi w) (fun e f he hef j _ r _ hr2 => evLe_rbG lo hi w he hef hr2) e rest _
       he hpos hinc (fun j hj => ?_) 0 (Nat.zero_le _)
     by_cases hjm : j < m
