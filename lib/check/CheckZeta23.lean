@@ -7,6 +7,19 @@ import BohrLandau
 import ShellSixth
 import ZeroWindow
 import HybridCertificate
+import CriticalLine
+
+/- The zeros on the critical line: Hardy's theorem, Selberg's positive proportion, the same for the simple zeros, and
+Alpöge and Furman's Theorems A, B and C as zeta23 proves them, with no hypothesis. -/
+#print axioms CriticalLine.exists_zero_im_gt
+#print axioms CriticalLine.infinite_zeros
+#print axioms CriticalLine.ncard_zeros_ge
+#print axioms CriticalLine.ncard_simple_zeros_ge
+#print axioms CriticalLine.infinite_simple_zeros
+#print axioms CriticalLine.two_thirds
+#print axioms CriticalLine.two_thirds_cumulative
+#print axioms CriticalLine.half_simple
+#print axioms CriticalLine.three_quarters_distinct
 
 /- `S(T) = O(log T)` for the library's zeros of `riemannZeta`, from zeta23's Riemann–von Mangoldt formula, and the
 bounded gaps between their ordinates that it gives. -/

@@ -218,12 +218,12 @@ lean_lib DH where
     .one `DHTerms, .one `DHTrigBounds, .one `DHTwin, .one `DHZeros,
     .one `DavenportHeilbronn]
 
-/-- lib/zeta23: 7 modules. -/
+/-- lib/zeta23: 8 modules. -/
 lean_lib Zeta23Layer where
   srcDir := "lib/zeta23"
   globs := #[
-    .one `BohrLandau, .one `CountCompare, .one `HybridCertificate, .one `ShellDensity,
-    .one `ShellSixth, .one `SlogZeta, .one `ZeroWindow]
+    .one `BohrLandau, .one `CountCompare, .one `CriticalLine, .one `HybridCertificate,
+    .one `ShellDensity, .one `ShellSixth, .one `SlogZeta, .one `ZeroWindow]
 
 /-- The axioms of the papers' theorems; the default target. -/
 @[default_target]

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 958 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 967 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -14,7 +14,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | `lib/core` | 85 | 199 |
 | `lib/pnt` | 210 | 666 |
 | `lib/dh` | 20 | 68 |
-| `lib/zeta23` | 7 | 25 |
+| `lib/zeta23` | 8 | 34 |
 
 ## The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`
 
@@ -1912,6 +1912,18 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `CountCompare`: The two local zero counts compared
 
 - `CountCompare.local_count_le`: zeta23's local count from the library's zero weight, with the library's explicit constant
+
+#### `CriticalLine`: The zeros of `ζ` on the critical line: Hardy, Selberg, and Alpöge and Furman's two thirds
+
+- `CriticalLine.ncard_zeros_ge`: A positive proportion of the zeros of `ζ` lie on the critical line
+- `CriticalLine.exists_zero_im_gt`: The zeros of `ζ` on the critical line have unbounded ordinates
+- `CriticalLine.infinite_zeros`: Hardy's theorem
+- `CriticalLine.ncard_simple_zeros_ge`: A positive proportion of the zeros of `ζ` are simple and on the critical line
+- `CriticalLine.infinite_simple_zeros`: Infinitely many zeros of `ζ` on the critical line are simple
+- `CriticalLine.two_thirds`: Two thirds of the zeros of `ζ` lie on the critical line
+- `CriticalLine.two_thirds_cumulative`: Two thirds of the zeros of `ζ` up to height `T` lie on the critical line
+- `CriticalLine.half_simple`: Half of the zeros of `ζ` are simple and on the critical line
+- `CriticalLine.three_quarters_distinct`: Three quarters of the zeros of `ζ` are distinct
 
 #### `HybridCertificate`: The same-space hybrid certificate on zeta23's zero side, with the off-line term displayed
 
