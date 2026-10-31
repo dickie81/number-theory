@@ -13,11 +13,12 @@ generator's `x_j = α_j` for primes and sums of exponents after a role reversal.
   `w_t = Σ_j c_j A_{jt} − c_η` (`wt`).
 * `holds_toCond`: so a constraint in coordinates is a node condition, exactly (`toCond`).
 * `Sound`: the checker's invariant. At every pair satisfying the node's conditions with `|H| ≤ E` the coordinates lie
-  in the box and satisfy the constraints. Splits (`Sound.split`, `Sound.split_neg`), tightening (`Sound.tighten`) and
-  boxes cut along a coordinate (`Sound.cut_lt`, `Sound.cut_ge`) keep it.
+  in the box and satisfy the constraints. Splits (`Sound.split`, `Sound.split_neg`), tightening (`Sound.tighten`),
+  boxes cut along a coordinate (`Sound.cut_lt`, `Sound.cut_ge`) and a coordinate's end moved by one constraint
+  (`Sound.up`) keep it.
 * `abs_slack_le`: for large `x`, a pair with product in `(x/4, 2x]` has `|H| ≤ E`.
 * `OK_of_out`: a node whose tightened box is empty, or on whose box a constraint fails, has no terms for large `x`,
-  hence no loss.
+  hence no loss; so has a node with no point in its box (`Sound.OK_of_noPt`).
 -/
 
 open Finset Real Filter
@@ -232,6 +233,75 @@ theorem Sound.cut_ge {N : Node} {A : Rows N.k N.m} {E : ℤ} {Γ : List Con} {B 
   rw [Con.holds_neg, holds_ltCon, not_lt] at h1
   exact ⟨inBox_cut_ge B _ j p hB h1, fun c hc' => hΓ c (List.mem_cons_of_mem _ hc')⟩
 
+/-- The constraint `C` bounds the coordinate `j` by `v` on the box, as in `tightenOne`: `X_j ≥ v` (`lower`) or
+`X_j < v`. -/
+def upOK (C : Con) (E : ℤ) (B : Box) (j : ℕ) (lower : Bool) (v : ℤ) : Bool :=
+  if lower then decide (C.L.c.getD j 0 < 0 ∧ v ≤ (C.L.drop j).min B E / -C.L.c.getD j 0)
+  else decide (0 < C.L.c.getD j 0 ∧ (if C.strict then -((C.L.drop j).min B E / C.L.c.getD j 0)
+    else -(C.L.drop j).min B E / C.L.c.getD j 0 + 1) ≤ v)
+
+/-- The box with the coordinate `j`'s range cut at `v`: the part from `v` on (`lower`), or below `v`. -/
+def cutAt (B : Box) (j : ℕ) (lower : Bool) (v : ℤ) : Box :=
+  if lower then B.modify j fun b => (max b.1 v, b.2) else B.modify j fun b => (b.1, min b.2 v)
+
+theorem length_cutAt (B : Box) (j : ℕ) (lower : Bool) (v : ℤ) : (cutAt B j lower v).length = B.length := by
+  unfold cutAt
+  split_ifs <;> simp
+
+theorem upOK_sound {C : Con} {E : ℤ} {B : Box} (hlen : C.L.c.length ≤ B.length) {j : ℕ} {lower : Bool} {v : ℤ}
+    (hup : upOK C E B j lower v = true) {X : ℕ → ℝ} (hX : InBox B X) {H : ℝ} (hH : |H| ≤ E) (hC : C.Holds X H) :
+    InBox (cutAt B j lower v) X := by
+  unfold upOK at hup
+  unfold cutAt
+  have hj : j < C.L.c.length := by
+    by_contra hj
+    have h0 : C.L.c.getD j 0 = 0 := by simp [List.getD_eq_getElem?_getD, List.getElem?_eq_none (not_lt.1 hj)]
+    rw [h0] at hup
+    cases lower <;> simp at hup
+  have hval := C.L.val_drop hj X H
+  have hr := (C.L.drop j).min_le (by simpa [LF.drop] using hlen) hX hH
+  set cj := C.L.c.getD j 0 with hcj
+  set r := (C.L.drop j).min B E with hrdef
+  have hle := Con.val_le hC
+  cases lower
+  · simp only [Bool.false_eq_true, ↓reduceIte, decide_eq_true_eq] at hup ⊢
+    obtain ⟨h1, hv⟩ := hup
+    refine inBox_cut_lt B X j v hX ?_
+    have hc : (0 : ℝ) < cj := by exact_mod_cast h1
+    by_cases h2 : C.strict = true
+    · -- strict: `c_j X_j < −r`
+      rw [ite_eq_left h2] at hv
+      have hv' : ((-(r / cj) : ℤ) : ℝ) ≤ v := by exact_mod_cast hv
+      have hC' : C.L.val X H < 0 := by unfold Con.Holds at hC; rwa [ite_eq_left h2] at hC
+      have key : (cj : ℝ) * X j < -r := by linarith
+      have hd' : ((r / cj : ℤ) : ℝ) * cj ≤ r := by exact_mod_cast Int.ediv_mul_le r h1.ne'
+      push_cast at hv'
+      nlinarith
+    · -- `c_j X_j ≤ −r`
+      rw [ite_eq_right h2] at hv
+      have hv' : ((-r / cj + 1 : ℤ) : ℝ) ≤ v := by exact_mod_cast hv
+      have key : (cj : ℝ) * X j ≤ -r := by linarith
+      have hd' : (-(r : ℝ)) < (((-r) / cj : ℤ) + 1) * cj := by exact_mod_cast Int.lt_ediv_add_one_mul_self (-r) h1
+      push_cast at hv'
+      nlinarith
+  · -- `c_j < 0`: `X_j ≥ r/|c_j|`
+    simp only [↓reduceIte, decide_eq_true_eq] at hup ⊢
+    obtain ⟨h3, hv⟩ := hup
+    refine inBox_cut_ge B X j v hX ?_
+    have hc : (0 : ℝ) < -cj := by exact_mod_cast neg_pos.2 h3
+    have key : (cj : ℝ) * X j ≤ -r := by linarith
+    have hd' : ((r / -cj : ℤ) : ℝ) * (-cj) ≤ r := by exact_mod_cast Int.ediv_mul_le r (neg_ne_zero.2 (ne_of_lt h3))
+    have hv' : (v : ℝ) ≤ ((r / -cj : ℤ) : ℝ) := by exact_mod_cast hv
+    nlinarith
+
+/-- A coordinate's end moved by a constraint keeps the invariant. -/
+theorem Sound.up {N : Node} {A : Rows N.k N.m} {E : ℤ} {Γ : List Con} {B : Box} (h : Sound N A E Γ B) {C : Con}
+    (hC : C ∈ Γ) (hlen : C.L.c.length ≤ B.length) {j : ℕ} {lower : Bool} {v : ℤ}
+    (hup : upOK C E B j lower v = true) : Sound N A E Γ (cutAt B j lower v) := by
+  intro x hx w hv1 hv2 hc hH
+  obtain ⟨hB, hΓ⟩ := h x hx w hv1 hv2 hc hH
+  exact ⟨upOK_sound hlen hup hB hH (hΓ C hC), hΓ⟩
+
 /-! ### The slack, and nodes without terms -/
 
 /-- The exponents of a pair with positive items add up to `log n/log x`. -/
@@ -288,26 +358,40 @@ def Out (E : ℤ) (Γ : List Con) (B : Box) : Bool :=
   fits Γ B.length && ((tightenList E Γ (tightenList E Γ B)).isEmpty ||
     Γ.any fun c => c.fails (tightenList E Γ (tightenList E Γ B)) E)
 
-theorem Sound.false_of_out {N : Node} {A : Rows N.k N.m} {E : ℤ} {Γ : List Con} {B : Box} (h : Sound N A E Γ B)
-    (hout : Out E Γ B = true) {x : ℝ} (hx : 1 < x) {v : (Fin N.k → ℕ) × (Fin N.m → ℕ)} (hv1 : ∀ a, 0 < v.1 a)
-    (hv2 : ∀ i, 0 < v.2 i) (hc : ∀ C ∈ N.conds, C.Holds x v.1 v.2) (hH : |slack x v| ≤ E) : False := by
+/-- No point of the box with `|H| ≤ E` satisfies the constraints. -/
+def NoPt (E : ℤ) (Γ : List Con) (B : Box) : Prop :=
+  ∀ (X : ℕ → ℝ) (H : ℝ), |H| ≤ E → InBox B X → (∀ c ∈ Γ, c.Holds X H) → False
+
+theorem noPt_of_out {E : ℤ} {Γ : List Con} {B : Box} (hout : Out E Γ B = true) : NoPt E Γ B := by
+  intro X H hH hX hΓ
   unfold Out at hout
   rw [Bool.and_eq_true, Bool.or_eq_true] at hout
   obtain ⟨hf, hout⟩ := hout
-  have h2 := (h.tighten hf Γ fun c hc => hc).tighten
-  have hlen1 := (tightenList_sound hH Γ B hf (h x hx v hv1 hv2 hc hH).1 (h x hx v hv1 hv2 hc hH).2).2
-  have hf1 : fits Γ (tightenList E Γ B).length = true := by rw [hlen1]; exact hf
-  obtain ⟨hB, hΓ⟩ := (h2 hf1 Γ fun c hc => hc) x hx v hv1 hv2 hc hH
+  obtain ⟨h1, hl1⟩ := tightenList_sound hH Γ B hf hX hΓ
+  obtain ⟨h2, -⟩ := tightenList_sound hH Γ _ (by rw [hl1]; exact hf) h1 hΓ
   rcases hout with he | ha
-  · rw [not_isEmpty hB] at he
+  · rw [not_isEmpty h2] at he
     exact Bool.false_ne_true he
   · obtain ⟨c, hcΓ, hcf⟩ := List.any_eq_true.1 ha
-    exact Con.not_holds_of_fails hcf hB hH (hΓ c hcΓ)
+    exact Con.not_holds_of_fails hcf h2 hH (hΓ c hcΓ)
+
+/-- A constraint that fails on the box leaves no point. -/
+theorem noPt_of_fails {E : ℤ} {Γ : List Con} {B : Box} {C : Con} (hC : C ∈ Γ) (hf : C.fails B E = true) :
+    NoPt E Γ B :=
+  fun _ _ hH hX hΓ => Con.not_holds_of_fails hf hX hH (hΓ C hC)
+
+/-- An empty range leaves no point. -/
+theorem noPt_of_empty {E : ℤ} {Γ : List Con} {B : Box} {j : ℕ} (hj : j < B.length)
+    (he : (B.getD j (0, 0)).2 ≤ (B.getD j (0, 0)).1) : NoPt E Γ B := by
+  intro X _ _ hX _
+  obtain ⟨h1, h2⟩ := inBox_getD B X j hX hj
+  have : ((B.getD j (0, 0)).2 : ℝ) ≤ (B.getD j (0, 0)).1 := by exact_mod_cast he
+  linarith
 
 /-- **No terms.** If no point satisfies the constraints, the node counts nothing in `(x − y, x]` for `y ≤ x/2` and
 large `x`. -/
 theorem Sound.count_eq_zero {N : Node} {A : Rows N.k N.m} {E : ℤ} {Γ : List Con} {B : Box} (h : Sound N A E Γ B)
-    (hE : 0 < E) (hout : Out E Γ B = true) : ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, y ≤ x / 2 → N.count x y = 0 := by
+    (hE : 0 < E) (hno : NoPt E Γ B) : ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, y ≤ x / 2 → N.count x y = 0 := by
   filter_upwards [abs_slack_le hE N.k N.m, eventually_gt_atTop 1] with x hsl hx1 y hy
   unfold Node.count
   rw [card_eq_zero, filter_eq_empty_iff]
@@ -316,14 +400,16 @@ theorem Sound.count_eq_zero {N : Node} {A : Rows N.k N.m} {E : ℤ} {Γ : List C
   have hv1 : ∀ a, 0 < v.1 a := fun a => (hp a).2.pos
   have hv2 : ∀ i, 0 < v.2 i := fun i => (hρ i).1
   obtain ⟨-, hcond, hlo, hhi⟩ := hI
-  exact h.false_of_out hout hx1 hv1 hv2 hcond (hsl v hv1 hv2 (by linarith) (by linarith))
+  have hH := hsl v hv1 hv2 (by linarith) (by linarith)
+  obtain ⟨hB, hΓ⟩ := h x hx1 v hv1 hv2 hcond hH
+  exact hno _ _ hH hB hΓ
 
-/-- **An empty region has no loss.** -/
-theorem Sound.OK_of_out {N : Node} {A : Rows N.k N.m} {E : ℤ} {Γ : List Con} {B : Box} (h : Sound N A E Γ B)
-    (hE : 0 < E) (hout : Out E Γ B = true) {θ ρ σ : ℝ} (hρ : 0 < ρ) (hθρ : θ ≤ 1 - ρ) :
+/-- A box without points has no loss. -/
+theorem Sound.OK_of_noPt {N : Node} {A : Rows N.k N.m} {E : ℤ} {Γ : List Con} {B : Box} (h : Sound N A E Γ B)
+    (hE : 0 < E) (hno : NoPt E Γ B) {θ ρ σ : ℝ} (hρ : 0 < ρ) (hθρ : θ ≤ 1 - ρ) :
     OK θ ρ σ (fun x y => (N.count x y : ℝ)) 0 := by
   refine OK_zero hθρ ?_
-  filter_upwards [h.count_eq_zero hE hout, eventually_gt_atTop 1,
+  filter_upwards [h.count_eq_zero hE hno, eventually_gt_atTop 1,
     (tendsto_rpow_atTop hρ).eventually_ge_atTop 2] with x hx hx1 hxr y _ hy2
   have hx0 : 0 < x := by linarith
   have hyx : y ≤ x / 2 := by
@@ -335,6 +421,12 @@ theorem Sound.OK_of_out {N : Node} {A : Rows N.k N.m} {E : ℤ} {Γ : List Con} 
     linarith
   rw [hx y hyx]
   simp
+
+/-- **An empty region has no loss.** -/
+theorem Sound.OK_of_out {N : Node} {A : Rows N.k N.m} {E : ℤ} {Γ : List Con} {B : Box} (h : Sound N A E Γ B)
+    (hE : 0 < E) (hout : Out E Γ B = true) {θ ρ σ : ℝ} (hρ : 0 < ρ) (hθρ : θ ≤ 1 - ρ) :
+    OK θ ρ σ (fun x y => (N.count x y : ℝ)) 0 :=
+  h.OK_of_noPt hE (noPt_of_out hout) hρ hθρ
 
 end ShortSieveCert
 
