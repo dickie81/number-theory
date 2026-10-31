@@ -344,7 +344,10 @@ def dropTwo (E : ℤ) (S : Shp) (Γ : List Con) (B : Box) (acts : List ℕ) (cha
 /-- **A certificate**: the decisions on a node and its descendants. -/
 inductive Cert
   | out
+  | outC (i : ℕ)
+  | outE (j : ℕ)
   | tighten (t : Cert)
+  | up (j : ℕ) (lower : Bool) (i : ℕ) (v : ℤ) (t : Cert)
   | split (C : Con) (u w : ℕ) (t₁ t₂ : Cert)
   | cut (j : ℕ) (p : ℤ) (u w : ℕ) (t₁ t₂ : Cert)
   | tii (acts labels : List ℕ) (ng : ℕ)
@@ -358,7 +361,12 @@ inductive Cert
 `1/SC`, if the certificate's decisions pass. -/
 def run (E : ℤ) : Cert → Shp → List Con → Box → Bool → Option ℕ
   | .out, _, Γ, B, _ => if Out E Γ B = true then some 0 else none
+  | .outC i, _, Γ, B, _ => if i < Γ.length ∧ (Γ.getD i ⟨LF.zero, false⟩).fails B E = true then some 0 else none
+  | .outE j, _, _, B, _ => if j < B.length ∧ (B.getD j (0, 0)).2 ≤ (B.getD j (0, 0)).1 then some 0 else none
   | .tighten t, S, Γ, B, b => run E t S Γ (tightenList E Γ B) b
+  | .up j lower i v t, S, Γ, B, b =>
+    if i < Γ.length ∧ upOK (Γ.getD i ⟨LF.zero, false⟩) E B j lower v = true then run E t S Γ (cutAt B j lower v) b
+    else none
   | .split C u w t₁ t₂, S, Γ, B, b =>
     if fits [C] S.n = true ∧ u < S.k + S.m ∧ w < S.k + S.m ∧ wtN S C.L u ≠ wtN S C.L w then
       (run E t₁ S (C :: Γ) B b).bind fun L₁ => (run E t₂ S (C.neg :: Γ) B b).map (L₁ + ·)
@@ -896,11 +904,33 @@ theorem run_sound {ρ c : ℝ} (H : Hyps ρ c) {E : ℤ} (hE : 0 < E) (t : Cert)
     split_ifs at hrun with hout
     obtain rfl := (Option.some.inj hrun).symm
     simpa using h.OK_of_out hE hout H.hρ hθρ
+  | outC i =>
+    intro S k m s A items n hD conds Γ B b L h hinv hcond hlen hf hrun
+    simp only [run] at hrun
+    split_ifs at hrun with hcheck
+    obtain rfl := (Option.some.inj hrun).symm
+    have hC : Γ.getD i ⟨LF.zero, false⟩ ∈ Γ := by
+      rw [List.getD_eq_getElem _ _ hcheck.1]; exact List.getElem_mem _
+    simpa using h.OK_of_noPt hE (noPt_of_fails hC hcheck.2) H.hρ hθρ
+  | outE j =>
+    intro S k m s A items n hD conds Γ B b L h hinv hcond hlen hf hrun
+    simp only [run] at hrun
+    split_ifs at hrun with hcheck
+    obtain rfl := (Option.some.inj hrun).symm
+    simpa using h.OK_of_noPt hE (noPt_of_empty hcheck.1 hcheck.2) H.hρ hθρ
   | tighten t ih =>
     intro S k m s A items n hD conds Γ B b L h hinv hcond hlen hf hrun
     simp only [run] at hrun
     exact ih S hD conds Γ _ b L (h.tighten (hlen ▸ hf) Γ fun c hc => hc) hinv hcond
       ((length_tightenList E Γ B).trans hlen) hf hrun
+  | up j lower i v t ih =>
+    intro S k m s A items n hD conds Γ B b L h hinv hcond hlen hf hrun
+    simp only [run] at hrun
+    split_ifs at hrun with hcheck
+    have hC : Γ.getD i ⟨LF.zero, false⟩ ∈ Γ := by
+      rw [List.getD_eq_getElem _ _ hcheck.1]; exact List.getElem_mem _
+    have hCl : (Γ.getD i ⟨LF.zero, false⟩).L.c.length ≤ B.length := hlen ▸ fits_iff.1 hf _ hC
+    exact ih S hD conds Γ _ b L (h.up hC hCl hcheck.2) hinv hcond ((length_cutAt B j lower v).trans hlen) hf hrun
   | split C u w t₁ t₂ ih₁ ih₂ =>
     intro S k m s A items n hD conds Γ B b L h hinv hcond hlen hf hrun
     simp only [run] at hrun
