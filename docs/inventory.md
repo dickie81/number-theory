@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 112 modules that none of the three imports, directly or not, with their
+The last section lists the 113 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 21 | 115 |
+| `lib/pnt` | 223 | 726 | 22 | 119 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1784,6 +1784,13 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveInterval.norm_sum_sharp_sub_win_le`: A sharp interval against its smooth window
 - `ShortSieveInterval.norm_sum_Ioc_sub_le_of_bump`: The sharp comparison, for a bump `ν`
 - `ShortSieveInterval.norm_sum_Ioc_sub_le`: Sums over short intervals by mean values of Dirichlet polynomials
+
+#### `ShortSieveJ`: Type I terms: tuples of primes with a sifted cofactor, cut out by log-linear conditions
+
+- `ShortSieveJ.card_nearJ_le`: The boundary of a condition on pairs is thin
+- `ShortSieveJ.sum_full_eq`: The pairs of a box are the box's Type I sums
+- `ShortSieveJ.abs_jval_sub_le`: The variation of a condition over a box
+- `ShortSieveJ.abs_card_jcut_sub_le`: Type I terms cut out by log-linear conditions, from a relative estimate on boxes
 
 #### `ShortSieveLevel`: Moments from counts of large values
 
