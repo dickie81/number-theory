@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 113 modules that none of the three imports, directly or not, with their
+The last section lists the 114 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 22 | 119 |
+| `lib/pnt` | 223 | 726 | 23 | 123 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1872,6 +1872,13 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveTwist.norm_dp_primes_Ioc_le_of`: Primes in `(N, M]`, `M ≤ 2N`, twisted, with a power saving, for a general exponent
 - `ShortSieveTwist.norm_dp_primes_Ioc_le`: Primes in `(N, M]`, `M ≤ 2N`, twisted, with a power saving
 - `ShortSieveTwist.norm_dp_primes_le`: Primes in a dyadic interval, twisted, with a power saving
+
+#### `ShortSieveTypeI`: Type I terms of the certificate and their asymptotic formula from Li's Lemmas 3.1 and 3.2
+
+- `ShortSieveTypeI.forall_atoms`: The expanded conditions
+- `ShortSieveTypeI.TNode.count_eq_sum`: The count as a sum over the patterns
+- `ShortSieveTypeI.contract_mem_terms`: A pair of the cut is a term
+- `ShortSieveTypeI.abs_count_sub_le_typeI`: The asymptotic formula for a Type I term from Li's Lemmas 3.1 and 3.2
 
 #### `ShortSieveTypeII`: Type II estimates for products of primes in boxes
 

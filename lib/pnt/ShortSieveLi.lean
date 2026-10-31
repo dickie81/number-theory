@@ -1,5 +1,6 @@
 import ShortSieveRel
 import ShortSieveNode
+import ShortSieveJ
 
 /-!
 # Li's Lemma 4.1 as a hypothesis, and the asymptotic formula for nodes from it
@@ -282,6 +283,57 @@ theorem abs_count_sub_le_G2_eps (N : Node) (hk : 0 < N.k) (hm : 0 < N.m) {c θ �
   calc _ ≤ _ := hx y hy1 hy2
     _ ≤ ε / 2 * y / Real.log x + ε / 2 * y / Real.log x := add_le_add h1 h2
     _ = ε * y / Real.log x := by ring
+
+
+/-! ### Li's Lemmas 3.1 and 3.2 -/
+
+/-- Li's level `ν(α) = min(2(θ − α)/(2h − 1), γ)` for `α ∈ I_h = [1/2 − 2h(θ − 1/2), 1/2 − (2h − 2)(θ − 1/2)]`,
+`h ≥ 1` (his (3) and (4)), with `h = ⌊(1/2 − α)/(2θ − 1)⌋ + 1`: at an endpoint shared by `I_h` and `I_{h+1}` this
+takes `I_{h+1}`, the smaller value `2θ − 1`. -/
+noncomputable def liNu (θ γ α : ℝ) : ℝ :=
+  min (2 * (θ - α) / (2 * ((⌊(1 / 2 - α) / (2 * θ - 1)⌋₊ : ℝ) + 1) - 1)) γ
+
+/-- The `S(A_{∏g}, x^ν)` of a box's tuples, summed: Li's Type I sums. -/
+noncomputable def typeISum {ι : Type*} [Fintype ι] [DecidableEq ι] (ν x y : ℝ) (N M : ι → ℕ) : ℝ :=
+  ∑ g ∈ ShortSieveTypeII.tuples N M, (ShortSieveJ.sA ν x y g : ℝ)
+
+/-- **Li's Lemma 3.1** (Baker, Harman and Pintz's Lemma 12) for products of primes in boxes, with the comparison
+interval `(x − x^{1−ρ}, x]` and `α*` replaced by its upper bound `1/2` (his `D′₀`). For primes `x^c ≤ N_j < p_j ≤ M_j`
+grouped into `m` (group `0`) and `n` (group `1`), each group's products in a dyadic range, with lower ends `x^{α₁}`,
+`x^{α₂}`, `α₁ ≤ 1/2` and `α₂ ≤ min((3θ − 1)/2, (1 + θ)/5) − η`, and `0 < ν ≤ ν(α₁)`: the box's sums of
+`S(A_{mn}, x^ν)`, `A = (x − y, x]`, `x^θ ≤ y ≤ x^{1−ρ}`, are `(y/x^{1−ρ})(1 + o(1))` times those of
+`S(B_{mn}, x^ν)`, uniformly in the box and `ν`. -/
+def LiLemma31 (θ γ ρ : ℝ) : Prop :=
+  ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (role : ι → Fin 3) (c η ε : ℝ), 0 < c → 0 < η → 0 < ε →
+    ∀ᶠ x in atTop, ∀ y : ℝ, x ^ θ ≤ y → y ≤ x ^ (1 - ρ) → ∀ ν : ℝ, ∀ N M : ι → ℕ,
+      (∀ j, role j ≠ 2) → (∀ j, x ^ c ≤ N j) → (∀ j, N j ≤ M j) →
+      (∀ i, grpProd role i M ≤ 2 * grpProd role i N) →
+      Real.log (grpProd role 0 N) / Real.log x ≤ 1 / 2 →
+      Real.log (grpProd role 1 N) / Real.log x ≤ min ((3 * θ - 1) / 2) ((1 + θ) / 5) - η →
+      0 < ν → ν ≤ liNu θ γ (Real.log (grpProd role 0 N) / Real.log x) →
+      |typeISum ν x y N M - y / x ^ (1 - ρ) * typeISum ν x (x ^ (1 - ρ)) N M| ≤
+        ε * (y / x ^ (1 - ρ)) * typeISum ν x (x ^ (1 - ρ)) N M
+
+/-- **Li's Lemma 3.2** (Baker, Harman and Pintz's Lemma 13) for products of primes in boxes, with the comparison
+interval `(x − x^{1−ρ}, x]` and `α*` replaced by `1/2` (his `D′₁ ∪ D′₂`). For primes grouped into `m`, `n₁`, `n₂`
+(groups `0`, `1`, `2`) with lower ends `x^{α₁}`, `x^{α₂}`, `x^{α₃}`, `α₁ ≤ 1/2`, and either
+`α₃ ≤ (3θ − 1)/4 − η`, `2α₂ + α₃ ≤ θ − η`, `2α₂ + 3α₃ ≤ (1 + θ)/2 − η`, or `α₂ ≤ (1 − θ)/2`,
+`α₃ ≤ (3θ − 1)/8 − η`, and `0 < ν ≤ ν(α₁)`: the box's sums of `S(A_{mn₁n₂}, x^ν)` are `(y/x^{1−ρ})(1 + o(1))` times
+those of `S(B_{mn₁n₂}, x^ν)`, uniformly. -/
+def LiLemma32 (θ γ ρ : ℝ) : Prop :=
+  ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (role : ι → Fin 3) (c η ε : ℝ), 0 < c → 0 < η → 0 < ε →
+    ∀ᶠ x in atTop, ∀ y : ℝ, x ^ θ ≤ y → y ≤ x ^ (1 - ρ) → ∀ ν : ℝ, ∀ N M : ι → ℕ,
+      (∀ j, x ^ c ≤ N j) → (∀ j, N j ≤ M j) → (∀ i, grpProd role i M ≤ 2 * grpProd role i N) →
+      Real.log (grpProd role 0 N) / Real.log x ≤ 1 / 2 →
+      ((Real.log (grpProd role 2 N) / Real.log x ≤ (3 * θ - 1) / 4 - η ∧
+          2 * (Real.log (grpProd role 1 N) / Real.log x) + Real.log (grpProd role 2 N) / Real.log x ≤ θ - η ∧
+          2 * (Real.log (grpProd role 1 N) / Real.log x) + 3 * (Real.log (grpProd role 2 N) / Real.log x) ≤
+            (1 + θ) / 2 - η) ∨
+        (Real.log (grpProd role 1 N) / Real.log x ≤ (1 - θ) / 2 ∧
+          Real.log (grpProd role 2 N) / Real.log x ≤ (3 * θ - 1) / 8 - η)) →
+      0 < ν → ν ≤ liNu θ γ (Real.log (grpProd role 0 N) / Real.log x) →
+      |typeISum ν x y N M - y / x ^ (1 - ρ) * typeISum ν x (x ^ (1 - ρ)) N M| ≤
+        ε * (y / x ^ (1 - ρ)) * typeISum ν x (x ^ (1 - ρ)) N M
 
 end ShortSieveLi
 
