@@ -15,7 +15,9 @@ it. The numerical value is a remark, not a theorem.
 
 The proof: Jacobi's `r₂(n) = 4 Σ_{d ∣ n} χ₋₄(d)` (`GlobalTeeth.two_sq_count`) makes `Σ r₂(n) n^{−s} = 4 ζ(s) L(s, χ₋₄)`
 (`AngularFamily.member_zero_eq`), and `r₂(2m) = r₂(m)` (`GlobalTeeth.R_two_mul`) makes the even terms `2^{−s}` times the
-whole sum. The identity is classical; no source was read for this file.
+whole sum. The identity is classical: with `η(s) = (1 − 2^{1−s}) ζ(s)` and `β(s) = L(s, χ₋₄)` it reads
+`S(s) = −4η(s)β(s)`, the alternating lattice sum of the square lattice in J. M. Borwein, M. L. Glasser,
+R. C. McPhedran, J. G. Wan and I. J. Zucker, *Lattice Sums Then and Now* (Cambridge University Press, 2013).
 -/
 import AngularFamily
 
