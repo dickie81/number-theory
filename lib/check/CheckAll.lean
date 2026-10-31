@@ -31,6 +31,7 @@ import QuadSplit
 import QuadKronecker
 import QuadClassNumber
 import Subconvexity
+import SubconvexityCrit
 import InghamDetect
 import InghamDensity
 import LinnikChar
@@ -374,6 +375,9 @@ import BohrLandauCore
 #print axioms Subconvexity.convexityBound
 #print axioms Subconvexity.zetaCritBound_Theta
 #print axioms Subconvexity.lindelof_of_RH
+#print axioms Subconvexity.zeta_strip_of_crit
+#print axioms Subconvexity.zeta_strip_eleven_twelfths_of_crit
+#print axioms Subconvexity.zeta_strip_eleven_twelfths_of_weyl
 #print axioms InghamDensity.detect_identity
 #print axioms InghamDensity.trichotomy
 #print axioms InghamDensity.densityXi_of_zetaCrit
