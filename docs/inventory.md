@@ -7,13 +7,13 @@ rewrites it, and CI checks that it is current (`--check`).
 theorems: the library's final results (those of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot
 import) and the papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's
 name and the headline of its docstring, and links the note of `formalisations/` that names it, if one does.
-The last section lists the 115 modules that none of the three imports, directly or not, with their
+The last section lists the 116 modules that none of the three imports, directly or not, with their
 headline theorems (those whose docstring opens with a bold title).
 
 | Layer | Modules with results | Results | Modules outside them | Their headline theorems |
 |---|---|---|---|---|
 | `lib/core` | 7 | 8 | 34 | 118 |
-| `lib/pnt` | 223 | 726 | 24 | 133 |
+| `lib/pnt` | 223 | 726 | 25 | 145 |
 | `lib/dh` | 0 | 0 | 53 | 303 |
 | `lib/zeta23` | 7 | 25 | 4 | 0 |
 
@@ -1853,6 +1853,21 @@ headline theorems (those whose docstring opens with a bold title).
 - `ShortSieveRel.card_tuples_le_psi`: Tuples of primes by their products
 - `ShortSieveRel.card_tuples_B_le`: The tuples of primes with product in the comparison interval number `O(x^{1−ρ}/log x)`
 - `ShortSieveRel.abs_card_cut_sub_le_rel`: Tuples of primes cut out by log-linear conditions, from a relative estimate on boxes
+
+#### `ShortSieveRoot`: The root terms of Li's decomposition
+
+- `ShortSieveRoot.psi_level_le`: Rough numbers at a level, uniformly
+- `ShortSieveRoot.abs_S1_sub_le`: The first root term
+- `ShortSieveRoot.sA_sub_le`: The gap between two levels
+- `ShortSieveRoot.sum_inv_primes_Ico_le`: Chebyshev's bound for a short range of primes
+- `ShortSieveRoot.abs_sub_le_of_sandwich`: The sandwich
+- `ShortSieveRoot.sB_one_le`: One prime in the comparison interval
+- `ShortSieveRoot.sB_gap_le`: The gap between two levels in the comparison interval
+- `ShortSieveRoot.sum_blocks`: The blocks
+- `ShortSieveRoot.abs_block_le`: A block, between two levels
+- `ShortSieveRoot.abs_block_pos_le`: A regular block
+- `ShortSieveRoot.abs_block_zero_le`: The first block
+- `ShortSieveRoot.abs_S2_sub_le`: The second root term
 
 #### `ShortSieveTerm`: Tuples of primes cut out by log-linear conditions
 
