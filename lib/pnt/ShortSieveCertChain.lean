@@ -667,10 +667,10 @@ def chainBps (lo hi : ℕ → ℤ) (m : ℕ) : List ℤ :=
   dedupC ((((List.range m).map lo) ++ (List.range m).map hi).insertionSort (· ≤ ·))
 
 /-- **The chain bound** of the chain of `m` members with the ranges `[lo_i, hi_i)` and the sifting primes `w`, units
-`1/SC`, and its last breakpoint: the programme over the ends of the ranges with the run bounds `rbG` (as `dpRunF`), if
-the ends are positive. -/
-def chainDP (lo hi : ℕ → ℤ) (w : ℕ → Bool) (m : ℕ) : Option (ℕ × ℤ) :=
-  match chainBps lo hi m with
+`1/SC`, and its last breakpoint: the programme with the run bounds `rbG` (as `dpRunF`) over the breakpoints `bps`, or
+over the ends of the ranges when `bps` is empty, if they are positive, increasing and around the ranges. -/
+def chainDP (lo hi : ℕ → ℤ) (w : ℕ → Bool) (m : ℕ) (bps : List ℤ) : Option (ℕ × ℤ) :=
+  match (match bps with | [] => chainBps lo hi m | b => b) with
   | [] => none
   | e :: rest =>
     if 0 < e ∧ rest.all (fun f => decide (0 < f)) = true ∧ incr e rest = true ∧
@@ -680,7 +680,8 @@ def chainDP (lo hi : ℕ → ℤ) (w : ℕ → Bool) (m : ℕ) : Option (ℕ × 
     else none
 
 /-- **The chain bound is sound**: the chain sum below the last breakpoint has the limit superior at most the bound. -/
-theorem chainDP_sound {lo hi : ℕ → ℤ} {w : ℕ → Bool} {m D : ℕ} {eK : ℤ} (hc : chainDP lo hi w m = some (D, eK)) :
+theorem chainDP_sound {lo hi : ℕ → ℤ} {w : ℕ → Bool} {m D : ℕ} {bps : List ℤ} {eK : ℤ}
+    (hc : chainDP lo hi w m bps = some (D, eK)) :
     (∀ j < m, hi j ≤ eK) ∧ EvLe (fun x => chainSum (sfx (genMem lo hi w x) m 0) (thr x eK)) (D / SC) := by
   unfold chainDP at hc
   split at hc
