@@ -94,7 +94,7 @@ theorem Sound.OK_of_drop2Q {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K
     (hF : SieveRough.EvLe (fun x => ∑ p ∈ (Fintype.piFinset fun j : Fin K => SieveRough.primesIn
         (x ^ ((loF items B E j : ℝ) / DEN)) (x ^ ((hiF items B E j : ℝ) / DEN))).filter (Q x),
       Real.log x ^ 2 / ((∏ j, (p j : ℝ)) * Real.log (p (s g.rev)) * Real.log (p (s g)))) P)
-    {θ ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) :
+    {θ ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) :
     OK θ ρ 1 (fun x y => ((⟨K, 2, s, conds⟩ : Node).count x y : ℝ))
       (Ωc * Ωg * ((((B.getD 0 (0, 0)).2 : ℝ) - (B.getD 0 (0, 0)).1) / DEN) * P) := by
   have hD := DEN_pos
@@ -126,7 +126,7 @@ theorem Sound.OK_of_drop2Q {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K
   have hterm : ∀ᶠ x : ℝ in atTop, ∀ v ∈ pairs K 2 ⌊x⌋₊, (∀ i, SieveTree.rough (v.1 (s i)) (v.2 i)) →
       (⟨K, 2, s, conds⟩ : Node).InI x (x ^ (1 - ρ)) v.1 v.2 →
         v.1 ∈ (Fintype.piFinset fun j => SieveRough.primesIn (x ^ lo j) (x ^ hi j)).filter (Q x) ∧
-          x ^ (1 / 25 : ℝ) ≤ v.1 (s g.rev) ∧ (v.1 (s g.rev) : ℝ) ≤ v.2 g.rev ∧ (v.1 (s g) : ℝ) ≤ v.2 g ∧
+          x ^ (1 / 20 : ℝ) ≤ v.1 (s g.rev) ∧ (v.1 (s g.rev) : ℝ) ≤ v.2 g.rev ∧ (v.1 (s g) : ℝ) ≤ v.2 g ∧
           x ^ (L0 / DEN) ≤ (∏ j ∈ J, (v.1 j : ℝ)) * v.2 g ∧ (∏ j ∈ J, (v.1 j : ℝ)) * v.2 g ≤ x ^ (H0 / DEN) ∧
           SieveCert.omegaC (Real.log (x / ((∏ j, (v.1 j : ℝ)) * v.2 g)) / Real.log (v.1 (s g.rev))) ≤ Ωc := by
     filter_upwards [abs_slack_le hE K 2, eventually_gt_atTop 1,
@@ -219,7 +219,7 @@ theorem Sound.OK_of_drop2Q {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K
   -- the boxes of primes: the range of `log γ/log p_{s(g)}`
   have hPB : ∀ᶠ x : ℝ in atTop, ∀ p ∈ (Fintype.piFinset fun j => SieveRough.primesIn (x ^ lo j) (x ^ hi j)).filter
       (Q x),
-      x ^ (1 / 25 : ℝ) ≤ p (s g) ∧ (∀ j, 1 ≤ p j) ∧ ∀ X : ℝ, x ^ (L0 / DEN) / ∏ j ∈ J, (p j : ℝ) ≤ X →
+      x ^ (1 / 20 : ℝ) ≤ p (s g) ∧ (∀ j, 1 ≤ p j) ∧ ∀ X : ℝ, x ^ (L0 / DEN) / ∏ j ∈ J, (p j : ℝ) ≤ X →
         X ≤ x ^ (H0 / DEN) / ∏ j ∈ J, (p j : ℝ) → SieveCert.omegaC (Real.log X / Real.log (p (s g))) ≤ Ωg := by
     filter_upwards [eventually_gt_atTop 1] with x hx1 p hp
     have hx0 : 0 < x := by linarith
@@ -231,12 +231,12 @@ theorem Sound.OK_of_drop2Q {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K
       have h2 := Real.log_lt_log (hpj j) (hpm j).2.2
       rw [Real.log_rpow hx0] at h1 h2
       exact ⟨h1, h2⟩
-    have h25 : (1 / 25 : ℝ) ≤ lo (s g) := by
+    have h20 : (1 / 20 : ℝ) ≤ lo (s g) := by
       have h := (show ((NU0 : ℤ) : ℝ) ≤ loF items B E (s g) by exact_mod_cast hNU)
       rw [NU0_eq] at h
       rw [hlo_def, le_div_iff₀ hD]
       linarith
-    refine ⟨(Real.rpow_le_rpow_of_exponent_le hx1.le h25).trans (hpm (s g)).2.1,
+    refine ⟨(Real.rpow_le_rpow_of_exponent_le hx1.le h20).trans (hpm (s g)).2.1,
       fun j => (hpm j).1.one_lt.le, fun X hX1 hX2 => ?_⟩
     by_cases hu1 : Real.log X / Real.log (p (s g)) < 1
     · unfold SieveCert.omegaC
@@ -305,7 +305,7 @@ theorem Sound.OK_of_drop2Q {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K
   have hdrop : OK θ ρ 1 (fun x y => ((⟨K, 2, s, conds⟩ : Node).count x y : ℝ))
       (Ωc * Ωg * (H0 / DEN - L0 / DEN) * P) :=
     ShortSieveTree.OK_of_drop (fun x y => Nat.cast_nonneg _) fun δ hδ =>
-      ShortSieveDrop.count_le_drop2 s conds (rev_ne_self g) J (lo := 1 / 25) (by norm_num) hρ hρ25
+      ShortSieveDrop.count_le_drop2 s conds (rev_ne_self g) J (lo := 1 / 20) (by norm_num) hρ hρ20
         (div_pos hL0pos hD) (div_le_div_of_nonneg_right hL0H0 hD.le) hΩc hΩg hP0 _ hterm hPB hF hδ
   refine OK_mono (le_of_eq ?_) hdrop
   ring
@@ -332,7 +332,7 @@ theorem Sound.OK_of_drop2 {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 
         (hiF items B E a : ℝ)) / hiF items B E (s g) ≤ u →
       u ≤ (((B.getD 0 (0, 0)).2 : ℝ) - ∑ a ∈ univ.filter (fun a => A 0 (Sum.inl a) = 1), (loF items B E a : ℝ)) /
         loF items B E (s g) → SieveCert.omegaC u ≤ Ωg)
-    {θ ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) :
+    {θ ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) :
     OK θ ρ 1 (fun x y => ((⟨K, 2, s, conds⟩ : Node).count x y : ℝ))
       (Ωc * Ωg * ((((B.getD 0 (0, 0)).2 : ℝ) - (B.getD 0 (0, 0)).1) / DEN) *
         ∏ j : Fin K, if j ∈ ({s g.rev, s g} : Finset (Fin K)) then (DEN : ℝ) / loF items B E j -
@@ -370,7 +370,7 @@ theorem Sound.OK_of_drop2 {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K 
     ring
   have hdrop := h.OK_of_drop2Q hI hE hinv hfit hB0 hA0 hAg hAc hlo hlohi hNU hlo0 hlohi0 hacts hfa hn0 hΩc hΩg hωc hωg
     (fun _ _ => True) (fun _ _ _ _ _ _ _ => trivial) hP0
-    (by convert hF using 3; ext p; simp only [mem_filter, and_true]; exact Iff.rfl) (θ := θ) hρ hρ25
+    (by convert hF using 3; ext p; simp only [mem_filter, and_true]; exact Iff.rfl) (θ := θ) hρ hρ20
   refine OK_mono ?_ hdrop
   refine mul_le_mul_of_nonneg_left (Finset.prod_le_prod₀ (fun j _ => ?_) fun j _ => ?_)
     (mul_nonneg (mul_nonneg hΩc hΩg) (div_nonneg (by linarith) hD.le))

@@ -983,7 +983,7 @@ nonzero and automorphic on `Γ_2`. -/
 #print axioms Eis.thetaL_ne_zero
 #print axioms Eis.isAut_thS_Gam2
 
-/- R. Li's primes in short intervals at `θ = 13/25`, in progress (`formalisations/short-intervals.md`): the lower
+/- R. Li's primes in short intervals at `θ = 21/40`, in progress (`formalisations/short-intervals.md`): the lower
 bound for primes from loss bounds on the certificate's root cells, and the certificate's decisions. -/
 #print axioms ShortSieveThree.primes_of_cells
 #print axioms ShortSieveCert.Sound.OK_of_out
