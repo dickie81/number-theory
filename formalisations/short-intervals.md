@@ -73,6 +73,16 @@ rough items with log-linear conditions). Each decision is a theorem:
   dropped node with two rough items, the second's product with some of the primes being the coordinate `0`, is
   bounded by `ω*` for each item and Mertens' sums over the box: `ShortSieveCert.Sound.OK_of_drop2`.
 
+## The checker
+
+A certificate (`ShortSieveCert.Cert`) records the decisions on a root cell and its descendants: empty regions, splits
+by a constraint and box cuts, the Type II and Lemma 4.1 tests, Buchstab's steps, role reversals, swaps of two rough
+items and drops. The checker (`ShortSieveCert.run`) replays them on the node's shape, constraints and box, and returns
+the loss in units `2^{−50}`, each drop's bound rounded up. Its soundness, by induction over the certificate: if the
+checker passes with the loss `L`, the node is `OK` for its sign with the loss `L/2^{50}`
+(`ShortSieveCert.run_sound`). So certificates for the 344 root cells give primes in short intervals, with the sum of
+their losses: `ShortSieveCert.primes_of_certs`.
+
 ## How the Lean statements differ from Li's
 
 - Li's Lemmas 3.1, 3.2 and 4.1 (Baker, Harman and Pintz's Lemmas 12, 13 and 9) are hypotheses: `LiLemma31`,
