@@ -159,6 +159,7 @@ whose axioms are Lean's three; H is as above.
 |---|---|---|
 | Algorithms: every proper subgroup of `(ℤ/qℤ)ˣ` misses a prime `p ≤ C(log q)^A`, `A > 12`, so these primes generate `(ℤ/qℤ)ˣ`. Under GRH this is E. Bach's bound, which makes G. L. Miller's primality test deterministic | `SmallPrimes.exists_prime_not_mem`, `SmallPrimes.closure_primes_eq_top` | yes |
 | Power residues: for every `k ≥ 2` dividing `p − 1`, a prime `ℓ ≤ C(log p)^A` that is not a `k`-th power mod `p` | `SmallPrimes.exists_prime_not_pow` | yes |
+| Character sums: `Σ_{n≤x} χ(n) = O(x^{11/12+ε})`, so `o(x)`, uniformly in `q` and `χ ≠ 1` on `x ≥ q^δ`, every `δ > 0`, where Burgess's method needs `x ≥ q^{1/4+ε}`; the quadratic residues and the non-residues mod `p` in `[1, x]` differ in number by `O(x^{11/12+ε})` for `x ≥ p^δ` | `ShortCharSums.norm_sum_le_rpow`, `ShortCharSums.norm_sum_le_mul`, `ShortCharSums.card_squares_sub_le` | yes |
 | Class groups: Gauss's class number problem with an explicit bound, `\|D_K\| ≤ (320π e^{2·10²¹} h_K)⁴` for imaginary quadratic `K`, polynomial in `h_K` as under GRH | `ClassNumberBound.abs_discr_le` | yes |
 | Physics, crystals: `Σ_{n≥1} (−1)^n r₂(n) n^{−s} = −4(1 − 2^{1−s}) ζ(s) L(s, χ₋₄)`, holomorphic off `s = 1`. At `s = 1/2` it is `−M`, where `M ≈ 1.6155` is the Madelung constant of the square lattice: an ion of a two-dimensional ionic crystal has electrostatic energy `−Me²/a` | `Madelung.lseries_coeff`, `Madelung.differentiableOn_rhs` | no |
 | Physics, the primon gas: `Σ μ(n) n^{−β}` is the partition function of B. Julia's primon gas with the sign `(−1)^F` of D. Spector's fermion number. It converges for `β > Θ` and diverges for `β < Θ`, with `1/2 ≤ Θ ≤ 11/12`: past the bosonic gas's Hagedorn point `β = 1` | `MertensExponent.moebiusAbscissa_eq_Theta`, `PsiExponent.half_le_Theta`, `PsiExponent.Theta_le` | yes |
@@ -170,8 +171,6 @@ whose axioms are Lean's three; H is as above.
 
 Within reach, with no hypothesis, from results the library has:
 
-- **Short character sums**: `Σ_{n≤x} χ(n) = o(x)` uniformly for `x ≥ q^δ`, every `δ > 0`, where Burgess's method
-  needs `x ≥ q^{1/4+ε}`: Perron's formula with the Lindelöf bound on `Re s > 11/12` (`LinnikLindelof.lindelof`).
 - **Pell's equation**: the least solution of `x² − dy² = 1`, `d` squarefree, has `log(x₁ + y₁√d) ≪ √d log log d`:
   `QuadClassNumber.regulator_mul_classNumber_le`, and `x₁ + y₁√d = ε^m` with `ε` the fundamental unit of `ℚ(√d)` and
   `m` dividing 6.
