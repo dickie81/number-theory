@@ -19,9 +19,10 @@ then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallP
     python3 scripts/ball_orbit.py --zeros [M]   # which zeros carry d_k, from the first M zeros; needs mpmath, slow
     python3 scripts/ball_orbit.py --places [N]  # the Gram matrix as a sum over the places, and its rigidity
     python3 scripts/ball_orbit.py --weil [N]    # the intersection numbers D_m·D_n of BallWeil and the Weil bound
+    python3 scripts/ball_orbit.py --forward [N] # local pieces, reduced basis, and the coupling between the primes
 
 The first three options are the computations of "What a proof under RH would need" in docs/ball-conjecture.md,
---places is that of "Building the lattice forwards", and --weil that of "Weil's form".
+--places and --forward those of "Building the lattice forwards", and --weil that of "Weil's form".
 """
 
 import math
@@ -216,12 +217,146 @@ def weil(N):
             print(f"  D_{n}·D_1 = {d:13.6f}   (D_n·D_1 − n − 1)/(K_H(1)·√n) = {(d - n - 1) / (c0 * math.sqrt(n)):+.4f}")
 
 
+def lll(G, delta=0.99):
+    """LLL reduction of the lattice with Gram matrix G: an integer matrix B whose rows are the coefficients of the
+    reduced basis in the original one, and the reduced Gram matrix B·G·Bᵀ."""
+    n = G.shape[0]
+    B = np.eye(n, dtype=np.int64)
+
+    def gso(H):
+        L = np.linalg.cholesky(H)
+        return L / np.diag(L)[None, :], np.diag(L) ** 2
+
+    H = G.copy()
+    k = 1
+    while k < n:
+        mu, d = gso(H)
+        for j in range(k - 1, -1, -1):
+            q = round(mu[k, j])
+            if q:
+                B[k] -= q * B[j]
+                H = B @ G @ B.T
+                mu, d = gso(H)
+        if d[k] >= (delta - mu[k, k - 1] ** 2) * d[k - 1]:
+            k += 1
+        else:
+            B[[k - 1, k]] = B[[k, k - 1]]
+            H = B @ G @ B.T
+            k = max(k - 1, 1)
+    return B, H
+
+
+def hadamard_ratio(H):
+    """(det H)^(1/2n) over the geometric mean of the norms: 1 exactly for an orthogonal basis."""
+    sign, logdet = np.linalg.slogdet(H)
+    return math.exp(logdet / (2 * H.shape[0]) - 0.5 * np.log(np.diag(H)).mean())
+
+
+def divisor_sums(N):
+    """The rows of the change of basis w ↦ u, u_n = Σ_{d | n} w_d."""
+    T = np.zeros((N, N))
+    for n in range(1, N + 1):
+        T[n - 1, [d - 1 for d in range(1, n + 1) if n % d == 0]] = 1
+    return T
+
+
+def independent(N):
+    """The orbit's Gram matrix with independent prime directions: √(mn)·K_H(1)·Π_p κ_p(v_p(m) − v_p(n)), with the
+    exact one-prime values κ_p(j) = K_H(p^|j|)/K_H(1). It is the Gram matrix of the tensor product of the lattices of
+    the single primes, and positive definite when each of them is."""
+    A, B = tables(N + 1)
+    c0 = 2 + EULER_GAMMA - math.log(4 * math.pi)
+    n = np.arange(1, N + 1)
+    P = np.ones((N, N))
+    for p in primes_upto(N):
+        v = np.zeros(N, dtype=int)
+        q = p
+        while q <= N:
+            v[n % q == 0] += 1
+            q *= p
+        x = np.array([float(p) ** j for j in range(1, v.max() + 1)])
+        kap = np.concatenate([[1.0], kernel_over_sqrt(x, A, B) * np.sqrt(x) / c0])
+        P *= kap[np.abs(v[:, None] - v[None, :])]
+    return c0 * np.sqrt(np.outer(n, n).astype(float)) * P
+
+
+def forward(N):
+    """What a construction of the vectors place by place meets: the local pieces C_p are indefinite; making them
+    positive leaves an indefinite rest; the reduced basis is made of divisor sums; and the prime directions are coupled
+    by the real place, which cuts the pivots far below those of independent prime directions."""
+    n0 = 60
+    G = gram(n0)
+    m = np.arange(1, n0 + 1, dtype=float)
+    M, Nn = np.meshgrid(m, m, indexing="ij")
+    hi, lo = np.maximum(M, Nn), np.minimum(M, Nn)
+    A, B = tables(1000)
+    c0 = G[0, 0]
+    lam = np.diff(B, prepend=0.0)          # Λ(k) for k ≤ 1000
+    print(f"1. At N = {n0}, each prime's piece C_p of the sum over the places is indefinite (its diagonal is 0):")
+    for p in primes_upto(13):
+        C = np.zeros((n0, n0))
+        q = p
+        while q <= n0:
+            C += np.where(hi / q > lo, hi / q - lo, 0.0)
+            q *= p
+        e = np.linalg.eigvalsh(C)
+        print(f"   p = {p:2d}: eigenvalues from {e[0]:9.3f} to {e[-1]:8.3f}")
+    print(f"2. The positive pieces (Λ(k)/√k)·Gram(1_[0,n] − √k·1_[0,n/k]) over the prime powers k ≤ X leave a rest")
+    print(f"   whose smallest eigenvalue is (the whole matrix has {np.linalg.eigvalsh(G)[0]:.2e}):")
+    for X in [1, 2, 5, 10, 60, 1000]:
+        S = np.zeros((n0, n0))
+        for k in range(2, X + 1):
+            if lam[k] > 0:
+                S += lam[k] / math.sqrt(k) * (2 * lo - math.sqrt(k) * (np.minimum(M, Nn / k) + np.minimum(M / k, Nn)))
+        print(f"   X = {X:4d}: {np.linalg.eigvalsh(G - S)[0]: .3e}")
+    print("3. K_H(r)/K_H(1), against the value −1/(2√r) below which w_n + w_{n/r} is shorter than w_n:")
+    for r in [2, 3, 5, 7, 4, 8, 9, 6, 10, 1.5, 2.5, 3.5]:
+        k = float(kernel_over_sqrt(np.array([float(r)]), A, B)[0] * math.sqrt(r) / c0)
+        print(f"   r = {r:4}: {k:+.3f}   (−1/(2√r) = {-0.5 / math.sqrt(r):+.3f})")
+    Bl, H = lll(gram(40))
+    order = np.argsort(np.diag(H))
+    print("   the shortest vectors of the LLL-reduced basis at N = 40, squared norms in units of K_H(1):")
+    for i in order[:12]:
+        c = Bl[i] if Bl[i][np.nonzero(Bl[i])[0][-1]] > 0 else -Bl[i]
+        terms = " ".join(f"{'+' if v > 0 else '−'}{abs(v) if abs(v) != 1 else ''}w{j + 1}"
+                         for j, v in enumerate(c) if v)
+        print(f"   {H[i, i] / c0:7.3f}   {terms}")
+    print("   Hadamard ratios (1 for an orthogonal basis) of the bases w_n, w_n − w_{n−1}, Σ_{d|n} w_d and LLL's:")
+    for n1 in [40, 100, 200]:
+        G1 = gram(n1)
+        I = np.eye(n1) - np.eye(n1, k=-1)
+        T = divisor_sums(n1)
+        print(f"   N = {n1:3d}: {hadamard_ratio(G1):.3f}, {hadamard_ratio(I @ G1 @ I.T):.3f}, "
+              f"{hadamard_ratio(T @ G1 @ T.T):.3f}, {hadamard_ratio(lll(G1)[1]):.3f}")
+
+    def kr(r):
+        x = max(r, 1 / r)
+        return float(kernel_over_sqrt(np.array([x]), A, B)[0] * math.sqrt(x) / c0)
+    print("4. Independent prime directions would make K_H(ab) = K_H(a/b) = K_H(a)K_H(b)/K_H(1) for coprime a, b:")
+    for a, b in [(2, 3), (2, 5), (3, 5), (2, 7), (4, 3), (2, 9)]:
+        print(f"   a = {a}, b = {b}: K(ab) {kr(a * b):+.3f}, K(a/b) {kr(a / b):+.3f}, K(a)K(b) {kr(a) * kr(b):+.3f}"
+              "  (in units of K_H(1))")
+    G, Gi = gram(N), independent(N)
+    d, di = pivots(G) / c0, pivots(Gi) / c0
+    P = set(primes_upto(N))
+    isp = np.array([k in P for k in range(1, N + 1)])
+    r = d / di
+    print(f"   N = {N}: pivots d_k/d_1 with the true Gram matrix and with independent prime directions:")
+    for k in [2, 3, 5, 10, 30, 100, 300, 1000, 3000]:
+        if k <= N:
+            print(f"   k = {k:4d}: {d[k - 1]:9.3f}  {di[k - 1]:9.3f}   ratio {r[k - 1]:.3f}")
+    print(f"   the smallest is {d[1:].min():.3f} at k = {2 + int(np.argmin(d[1:]))} in both"
+          if np.argmin(d[1:]) == np.argmin(di[1:]) else "   the smallest pivots differ")
+    print(f"   median ratio {np.median(r[1:]):.3f}: {np.median(r[isp]):.3f} at the primes, "
+          f"{np.median(r[~isp][1:]):.3f} at the composites")
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1].startswith("--"):
         arg = int(sys.argv[2]) if len(sys.argv) > 2 else None
         {"--smooth": lambda: smooth(arg or 60), "--flat": lambda: flat(arg or 1000),
          "--zeros": lambda: zeros(arg or 2000), "--places": lambda: places(arg or 60),
-         "--weil": lambda: weil(arg or 1000)}[sys.argv[1]]()
+         "--weil": lambda: weil(arg or 1000), "--forward": lambda: forward(arg or 1000)}[sys.argv[1]]()
         return
     N = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
     G = gram(N)
