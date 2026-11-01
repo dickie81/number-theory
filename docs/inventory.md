@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1059 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1063 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 92 | 226 |
+| `lib/core` | 93 | 230 |
 | `lib/pnt` | 229 | 730 |
 | `lib/dh` | 21 | 69 |
 | `lib/zeta23` | 8 | 34 |
@@ -261,6 +261,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `Madelung.lseries_coeff`: The alternating lattice sum of the square lattice
 - `Madelung.differentiableOn_rhs`: The continuation
+
+#### `ManinFrobenius`: The Frobenius of Manin's twist: a similitude of the lattice
+
+- `ManinHasse.frobenius_similitude`: The Frobenius of Manin's twist is a similitude of factor `q` whose orbit of `P₀` is the Frobenius points
+- `ManinHasse.gram_orbit`: Along the orbit the form is Toeplitz up to `q^j`
+- `ManinHasse.gram_orbit_card`: The count kernel of `E` is the Gram kernel of an orbit of the similitude
+- `ManinHasse.normSq_eq_of_similitude`: A similitude of factor `q` of a positive-definite Hermitian form has every eigenvalue on `|α|² = q`
 
 #### `ManinHasse`: Hasse's bound for every elliptic curve over a finite field of odd characteristic: Manin's proof
 
