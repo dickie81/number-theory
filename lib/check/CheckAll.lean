@@ -221,6 +221,7 @@ import ZerosInfinite
 import ZerosDense
 import BallHadamard
 import BallPsi
+import BallFlat
 import BohrTorus
 import LSeriesLandau
 import HalfPlaneJoinsChar
@@ -1140,6 +1141,12 @@ twin-form rates at `11/12`. -/
 #print axioms BallPsi.gram_explicit
 #print axioms BallPsi.norm_sq_ge_of_dist
 #print axioms BallPsi.orbit_lattice
+#print axioms BallFlat.kerFlat_eq_integral
+#print axioms BallFlat.gram_flat
+#print axioms BallFlat.telescope
+#print axioms BallFlat.norm_sq_lattice
+#print axioms BallFlat.flat_pivot
+#print axioms BallFlat.flatOrbit_pivot
 #print axioms BohrTorus.eq_zero_of_sum_log
 #print axioms BohrTorus.tendsto_mean_character
 #print axioms BohrTorus.sum_norm_sq_torus

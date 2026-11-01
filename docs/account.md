@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1085 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1091 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -255,7 +255,8 @@ In order of what is in reach.
    realization of that kernel the gaps `‖w_{n+1} − w_n‖` are unbounded (`BallHadamard.unbounded_gaps`), because the
    number of zeros up to height `T` is not `O(T)` (`ZerosDense.not_linear`). That kernel is computed from the primes
    through Chebyshev's `ψ` (`BallPsi.kerH_explicit`), so RH is the positive-definiteness of a kernel that does not
-   mention the zeros (`BallPsi.rh_iff_posDef_psi`).
+   mention the zeros (`BallPsi.rh_iff_posDef_psi`). With Lebesgue measure in place of the zeros the orbit spans the
+   cubic lattice, and every Gram–Schmidt pivot equals the first (`BallFlat.flat_pivot`).
 6. **Tools that are missing.** The large sieve over all moduli `q ≤ Q` (the library has one modulus at a time), so no
    Bombieri–Vinogradov; bounds for Kloosterman sums, which the bilinear Type I estimate avoids; exponent pairs (the
    Weyl bound is only a hypothesis); Selberg's and Rosser's sieves; anything in the twelve sections the library does
