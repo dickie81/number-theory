@@ -11,7 +11,8 @@ for x ≥ 1, by
 This is BallPsi.kerH_explicit with its archimedean term in closed form. The closed form is checked numerically against
 the integral that defines BallPsi.archH, and is not proved. The script prints the squared Gram–Schmidt norms
 d_k = dist(w_k, span(w_1, …, w_{k−1}))² relative to d_1 = ‖w_1‖² = K_H(1) = 2 + γ − log 4π. If d_k ≥ d_1 for every k,
-then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallPsi.orbit_lattice).
+then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallPsi.orbit_lattice). It compares them with
+u_k = dist(w_k, span(w_{k−1}))² = log(k/2π) + 1 − γ + o(1), which bounds them above.
 
     python3 scripts/ball_orbit.py [N]           # default N = 1000; needs numpy
     python3 scripts/ball_orbit.py --smooth [N]  # the zeros replaced by their density, no primes; needs scipy
@@ -19,9 +20,14 @@ then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallP
     python3 scripts/ball_orbit.py --zeros [M]   # which zeros carry d_k, from the first M zeros; needs mpmath, slow
     python3 scripts/ball_orbit.py --places [N]  # the Gram matrix as a sum over the places, and its rigidity
     python3 scripts/ball_orbit.py --weil [N]    # the intersection numbers D_m·D_n of BallWeil and the Weil bound
+    python3 scripts/ball_orbit.py --forward [N] # local pieces, reduced basis, and the coupling between the primes
+    python3 scripts/ball_orbit.py --slices [X]  # the lattice of the numbers built from a fixed set of primes
+    python3 scripts/ball_orbit.py --lattice [N] # the Gram matrix as a form over the logarithms of the primes
+    python3 scripts/ball_orbit.py --frontier [N] # the lonely primes, above N/2, and what the Gram matrix needs of them
 
 The first three options are the computations of "What a proof under RH would need" in docs/ball-conjecture.md,
---places is that of "Building the lattice forwards", and --weil that of "Weil's form".
+--places, --forward and --slices those of "Building the lattice forwards", --weil that of "Weil's form", and --lattice
+and --frontier those of "The limit and the lattice".
 """
 
 import math
@@ -216,12 +222,327 @@ def weil(N):
             print(f"  D_{n}·D_1 = {d:13.6f}   (D_n·D_1 − n − 1)/(K_H(1)·√n) = {(d - n - 1) / (c0 * math.sqrt(n)):+.4f}")
 
 
+def lll(G, delta=0.99):
+    """LLL reduction of the lattice with Gram matrix G: an integer matrix B whose rows are the coefficients of the
+    reduced basis in the original one, and the reduced Gram matrix B·G·Bᵀ."""
+    n = G.shape[0]
+    B = np.eye(n, dtype=np.int64)
+
+    def gso(H):
+        L = np.linalg.cholesky(H)
+        return L / np.diag(L)[None, :], np.diag(L) ** 2
+
+    H = G.copy()
+    k = 1
+    while k < n:
+        mu, d = gso(H)
+        for j in range(k - 1, -1, -1):
+            q = round(mu[k, j])
+            if q:
+                B[k] -= q * B[j]
+                H = B @ G @ B.T
+                mu, d = gso(H)
+        if d[k] >= (delta - mu[k, k - 1] ** 2) * d[k - 1]:
+            k += 1
+        else:
+            B[[k - 1, k]] = B[[k, k - 1]]
+            H = B @ G @ B.T
+            k = max(k - 1, 1)
+    return B, H
+
+
+def hadamard_ratio(H):
+    """(det H)^(1/2n) over the geometric mean of the norms: 1 exactly for an orthogonal basis."""
+    sign, logdet = np.linalg.slogdet(H)
+    return math.exp(logdet / (2 * H.shape[0]) - 0.5 * np.log(np.diag(H)).mean())
+
+
+def divisor_sums(N):
+    """The rows of the change of basis w ↦ u, u_n = Σ_{d | n} w_d."""
+    T = np.zeros((N, N))
+    for n in range(1, N + 1):
+        T[n - 1, [d - 1 for d in range(1, n + 1) if n % d == 0]] = 1
+    return T
+
+
+def independent(N):
+    """The orbit's Gram matrix with independent prime directions: √(mn)·K_H(1)·Π_p κ_p(v_p(m) − v_p(n)), with the
+    exact one-prime values κ_p(j) = K_H(p^|j|)/K_H(1). It is the Gram matrix of the tensor product of the lattices of
+    the single primes, and positive definite when each of them is."""
+    A, B = tables(N + 1)
+    c0 = 2 + EULER_GAMMA - math.log(4 * math.pi)
+    n = np.arange(1, N + 1)
+    P = np.ones((N, N))
+    for p in primes_upto(N):
+        v = np.zeros(N, dtype=int)
+        q = p
+        while q <= N:
+            v[n % q == 0] += 1
+            q *= p
+        x = np.array([float(p) ** j for j in range(1, v.max() + 1)])
+        kap = np.concatenate([[1.0], kernel_over_sqrt(x, A, B) * np.sqrt(x) / c0])
+        P *= kap[np.abs(v[:, None] - v[None, :])]
+    return c0 * np.sqrt(np.outer(n, n).astype(float)) * P
+
+
+def forward(N):
+    """What a construction of the vectors place by place meets: the local pieces C_p are indefinite; making them
+    positive leaves an indefinite rest; the reduced basis is made of divisor sums; and the prime directions are coupled
+    by the real place, which cuts the pivots far below those of independent prime directions."""
+    n0 = 60
+    G = gram(n0)
+    m = np.arange(1, n0 + 1, dtype=float)
+    M, Nn = np.meshgrid(m, m, indexing="ij")
+    hi, lo = np.maximum(M, Nn), np.minimum(M, Nn)
+    A, B = tables(1000)
+    c0 = G[0, 0]
+    lam = np.diff(B, prepend=0.0)          # Λ(k) for k ≤ 1000
+    print(f"1. At N = {n0}, each prime's piece C_p of the sum over the places is indefinite (its diagonal is 0):")
+    for p in primes_upto(13):
+        C = np.zeros((n0, n0))
+        q = p
+        while q <= n0:
+            C += np.where(hi / q > lo, hi / q - lo, 0.0)
+            q *= p
+        e = np.linalg.eigvalsh(C)
+        print(f"   p = {p:2d}: eigenvalues from {e[0]:9.3f} to {e[-1]:8.3f}")
+    print(f"2. The positive pieces (Λ(k)/√k)·Gram(1_[0,n] − √k·1_[0,n/k]) over the prime powers k ≤ X leave a rest")
+    print(f"   whose smallest eigenvalue is (the whole matrix has {np.linalg.eigvalsh(G)[0]:.2e}):")
+    for X in [1, 2, 5, 10, 60, 1000]:
+        S = np.zeros((n0, n0))
+        for k in range(2, X + 1):
+            if lam[k] > 0:
+                S += lam[k] / math.sqrt(k) * (2 * lo - math.sqrt(k) * (np.minimum(M, Nn / k) + np.minimum(M / k, Nn)))
+        print(f"   X = {X:4d}: {np.linalg.eigvalsh(G - S)[0]: .3e}")
+    print("3. K_H(r)/K_H(1), against the value −1/(2√r) below which w_n + w_{n/r} is shorter than w_n:")
+    for r in [2, 3, 5, 7, 4, 8, 9, 6, 10, 1.5, 2.5, 3.5]:
+        k = float(kernel_over_sqrt(np.array([float(r)]), A, B)[0] * math.sqrt(r) / c0)
+        print(f"   r = {r:4}: {k:+.3f}   (−1/(2√r) = {-0.5 / math.sqrt(r):+.3f})")
+    Bl, H = lll(gram(40))
+    order = np.argsort(np.diag(H))
+    print("   the shortest vectors of the LLL-reduced basis at N = 40, squared norms in units of K_H(1):")
+    for i in order[:12]:
+        c = Bl[i] if Bl[i][np.nonzero(Bl[i])[0][-1]] > 0 else -Bl[i]
+        terms = " ".join(f"{'+' if v > 0 else '−'}{abs(v) if abs(v) != 1 else ''}w{j + 1}"
+                         for j, v in enumerate(c) if v)
+        print(f"   {H[i, i] / c0:7.3f}   {terms}")
+    print("   Hadamard ratios (1 for an orthogonal basis) of the bases w_n, w_n − w_{n−1}, Σ_{d|n} w_d and LLL's:")
+    for n1 in [40, 100, 200]:
+        G1 = gram(n1)
+        I = np.eye(n1) - np.eye(n1, k=-1)
+        T = divisor_sums(n1)
+        print(f"   N = {n1:3d}: {hadamard_ratio(G1):.3f}, {hadamard_ratio(I @ G1 @ I.T):.3f}, "
+              f"{hadamard_ratio(T @ G1 @ T.T):.3f}, {hadamard_ratio(lll(G1)[1]):.3f}")
+
+    def kr(r):
+        x = max(r, 1 / r)
+        return float(kernel_over_sqrt(np.array([x]), A, B)[0] * math.sqrt(x) / c0)
+    print("4. Independent prime directions would make K_H(ab) = K_H(a/b) = K_H(a)K_H(b)/K_H(1) for coprime a, b:")
+    for a, b in [(2, 3), (2, 5), (3, 5), (2, 7), (4, 3), (2, 9)]:
+        print(f"   a = {a}, b = {b}: K(ab) {kr(a * b):+.3f}, K(a/b) {kr(a / b):+.3f}, K(a)K(b) {kr(a) * kr(b):+.3f}"
+              "  (in units of K_H(1))")
+    G, Gi = gram(N), independent(N)
+    d, di = pivots(G) / c0, pivots(Gi) / c0
+    P = set(primes_upto(N))
+    isp = np.array([k in P for k in range(1, N + 1)])
+    r = d / di
+    print(f"   N = {N}: pivots d_k/d_1 with the true Gram matrix and with independent prime directions:")
+    for k in [2, 3, 5, 10, 30, 100, 300, 1000, 3000]:
+        if k <= N:
+            print(f"   k = {k:4d}: {d[k - 1]:9.3f}  {di[k - 1]:9.3f}   ratio {r[k - 1]:.3f}")
+    print(f"   the smallest is {d[1:].min():.3f} at k = {2 + int(np.argmin(d[1:]))} in both"
+          if np.argmin(d[1:]) == np.argmin(di[1:]) else "   the smallest pivots differ")
+    print(f"   median ratio {np.median(r[1:]):.3f}: {np.median(r[isp]):.3f} at the primes, "
+          f"{np.median(r[~isp][1:]):.3f} at the composites")
+
+
+def smooth_numbers(S, X):
+    """The numbers up to X whose prime factors all lie in S, in increasing order."""
+    out = [1]
+    for p in S:
+        new = []
+        for n in out:
+            while n <= X:
+                new.append(n)
+                n *= p
+        out = new
+    return sorted(out)
+
+
+def slices(X):
+    """The orbit lattice restricted to the S-smooth numbers: the directions of the primes of S alone."""
+    A, B = tables(X)
+    c0 = 2 + EULER_GAMMA - math.log(4 * math.pi)
+
+    def gram_on(ns):
+        n = np.array(ns, dtype=float)
+        hi, lo = np.maximum.outer(n, n), np.minimum.outer(n, n)
+        return hi * kernel_over_sqrt(hi / lo, A, B)
+
+    def kappa(r):
+        """K_H(r)/K_H(1) for r ≥ 1."""
+        return float(kernel_over_sqrt(np.array([float(r)]), A, B)[0] * math.sqrt(r) / c0)
+
+    def g_local(x, S):
+        """G(x, 1) with only the primes of S in the explicit formula: G_∞(x, 1) + Σ_{S-powers k ≤ x} Λ(k)(x/k − 1)."""
+        t = 0.5 * (x - 1) * np.log(np.maximum(x - 1, 1e-300)) * (x > 1)
+        out = ((x + 1) + EULER_GAMMA * x - math.log(2 * math.pi) - (x - 1) * np.log(x) + t
+               - 0.5 * (x + 1) * np.log(x + 1))
+        for p in S:
+            q = p
+            while q <= x.max():
+                out = out + np.where(x >= q, math.log(p) * (x / q - 1), 0.0)
+                q *= p
+        return out
+
+    def valuations(ns, S):
+        V = np.zeros((len(ns), len(S)), dtype=int)
+        for i, n in enumerate(ns):
+            for j, p in enumerate(S):
+                while n % p == 0:
+                    n //= p
+                    V[i, j] += 1
+        return V
+
+    def independent_on(ns, S):
+        V = valuations(ns, S)
+        P = np.ones((len(ns), len(ns)))
+        for j, p in enumerate(S):
+            D = np.abs(V[:, j][:, None] - V[:, j][None, :])
+            P *= np.array([1.0] + [kappa(float(p) ** e) for e in range(1, D.max() + 1)])[D]
+        n = np.array(ns, dtype=float)
+        return c0 * np.sqrt(np.outer(n, n)) * P
+
+    print(f"1. One prime, the slice {{p^j}} up to {X}: pivots d/d_1, and e = d(p^j)/(p^j·d_1), 1 for a free vector")
+    for p in [2, 3, 5]:
+        ns = smooth_numbers([p], X)
+        d = pivots(gram_on(ns)) / c0
+        e = d / np.array(ns, dtype=float)
+        print(f"   p = {p}: K_H(p^j)/K_H(1) = " + ", ".join(f"{kappa(p ** j):+.3f}" for j in range(1, 5))
+              + f", …; e from {e[1]:.3f} at j = 1 to {e[-1]:.3f} at j = {len(ns) - 1}")
+        n = np.array(ns, dtype=float)
+        hi, lo = np.maximum.outer(n, n), np.minimum.outer(n, n)
+        GS = lo * g_local(hi / lo, [p])
+        k = next((k for k in range(2, len(ns) + 1) if np.linalg.eigvalsh(GS[:k, :k])[0] < 0), None)
+        print(f"          with only the prime {p} and the real place it is indefinite from p^j = {ns[k - 1]}"
+              if k else f"          with only the prime {p} and the real place it stays positive")
+    print("2. Two primes: the real place couples 2 and 3 through the near-coincidences of their powers")
+    for a, b in [(3, 2), (8, 5), (19, 12)]:
+        r = max(3 ** b / 2 ** a, 2 ** a / 3 ** b)
+        print(f"   3^{b}/2^{a} = {3 ** b / 2 ** a:.5f}: cos(w_(3^{b}), w_(2^{a})) = {kappa(r):+.3f}, "
+              f"with independent directions {kappa(2 ** a) * kappa(3 ** b):+.4f}")
+    print("3. Growing sets of primes: the median of e over the top decade of each slice, true and with the primes of S")
+    print("   independent, and the smallest pivot after w_1")
+    for S, X0 in [([2], X), ([2, 3], X), ([2, 3, 5], X), ([2, 3, 5, 7], X), (primes_upto(13), X // 10),
+                  (primes_upto(31), X // 50), (primes_upto(3000), 3000)]:
+        ns = smooth_numbers(S, X0)
+        n = np.array(ns, dtype=float)
+        d = pivots(gram_on(ns)) / c0
+        di = pivots(independent_on(ns, S)) / c0
+        top = n >= X0 / 10
+        lab = "{" + ", ".join(map(str, S)) + "}" if len(S) <= 4 else f"primes ≤ {S[-1]}"
+        k = 1 + int(np.argmin(d[1:]))
+        print(f"   {lab:15s} up to {X0:>7}: {len(ns):4d} vectors; e {np.median((d / n)[top]):.3f}, "
+              f"independent {np.median((di / n)[top]):.3f}; smallest d/d_1 {d[k]:.3f} at n = {ns[k]}")
+
+
+def valuation(p, n):
+    k = 0
+    while n % p == 0:
+        n //= p
+        k += 1
+    return k
+
+
+def local_part(p, m, n):
+    """The rational coefficient Q_p(m, n) of log p in G(m, n): for m ≥ n,
+    Σ_{j ≥ 1, p^j ≤ m/n} (m/p^j − n) + m·v_p(n) − (m − n)·v_p(m) + ½(m − n)·v_p(m − n) − ½(m + n)·v_p(m + n)."""
+    from fractions import Fraction
+    if m < n:
+        m, n = n, m
+    s = Fraction(0)
+    q = p
+    while q * n <= m:
+        s += Fraction(m, q) - n
+        q *= p
+    s += m * valuation(p, n) - (m - n) * valuation(p, m) - Fraction(m + n, 2) * valuation(p, m + n)
+    if m > n:
+        s += Fraction(m - n, 2) * valuation(p, m - n)
+    return s
+
+
+def lattice(N):
+    """The Gram matrix as a form over 1, γ, log 2π and the log p: for m ≥ n,
+    G(m, n) = (1 + γ)(m + n) − (γ + log 2π)·n + Σ_p log p·Q_p(m, n), with Q_p rational (local_part), and the
+    Frobenius at p, multiplication by p, a similitude of factor p: G(pm, pn) = p·G(m, n)."""
+    G = gram(N)
+    P = primes_upto(2 * N)
+    err = 0.0
+    for m in range(1, N + 1):
+        for n in range(1, m + 1):
+            rec = (1 + EULER_GAMMA) * (m + n) - (EULER_GAMMA + math.log(2 * math.pi)) * n
+            rec += sum(math.log(p) * float(local_part(p, m, n)) for p in P if p <= m + n)
+            err = max(err, abs(rec - G[m - 1, n - 1]))
+    print(f"N = {N}: G(m, n) = (1 + γ)(m + n) − (γ + log 2π)·min(m, n) + Σ_p log p·Q_p(m, n) to {err:.1e}")
+    den = sorted({local_part(p, m, n).denominator for p in [2, 3, 5] for m in range(1, 61) for n in range(1, 61)})
+    print(f"  the denominators of Q_2, Q_3 and Q_5 for m, n ≤ 60: {den}")
+    for p in [2, 3]:
+        print(f"  Q_{p}(m, n) for m, n ≤ 6:")
+        for m in range(1, 7):
+            print("    " + "  ".join(f"{str(local_part(p, m, n)):>6}" for n in range(1, 7)))
+    half = N // 2
+    sim = max(abs(G[p * m - 1, p * n - 1] - p * G[m - 1, n - 1]) for p in [2, 3] for m in range(1, half // p + 1)
+              for n in range(1, half // p + 1))
+    print(f"  G(pm, pn) = p·G(m, n) for p = 2, 3 to {sim:.1e}: multiplication by p is a similitude of factor p")
+    print("  the trace Tr(n) = G(n, 1) = √n·K_H(n) = n + 1 − D_n·D_1, for n = 1, …, 8:",
+          ", ".join(f"{G[n - 1, 0]:+.4f}" for n in range(1, 9)))
+
+
+def frontier(N):
+    """The lonely primes of stage N, the primes above N/2 with no other multiple up to N (LonelyPrimes): their share,
+    how the Gram matrix of stage 60 needs each of them, and their weight in ⟨w_1, w_N⟩ for N up to the given one."""
+    for M in [60, 3000, 10 ** 4, 10 ** 6]:
+        P = primes_upto(M)
+        lone = [p for p in P if 2 * p > M]
+        print(f"N = {M:>7}: {len(lone):5d} of the {len(P):5d} primes up to N lie above N/2 ({len(lone) / len(P):.0%})")
+    n0 = 60
+    P = primes_upto(n0)
+
+    def table(drop):
+        lam = np.zeros(n0 + 1)
+        for p in P:
+            if p not in drop:
+                q = p
+                while q <= n0:
+                    lam[q] = math.log(p)
+                    q *= p
+        return lam
+    G = places_gram(n0, table(set()))
+    print(f"N = {n0}: the Gram matrix has smallest eigenvalue {np.linalg.eigvalsh(G)[0]:.2e}; "
+          "without one lonely prime:")
+    for p in [p for p in P if 2 * p > n0]:
+        H = places_gram(n0, table({p}))
+        touched = {tuple(sorted((i + 1, j + 1))) for i, j in np.argwhere(np.abs(H - G) > 1e-12)}
+        print(f"   without {p}: {np.linalg.eigvalsh(H)[0]: .2e}; it enters {len(touched)} entries, "
+              f"all of the form ⟨w_1, w_m⟩: {all(min(t) == 1 for t in touched)}")
+    print("their weight in ⟨w_1, w_N⟩, against (log 2 − ½)·N from the prime number theorem, and the entry itself:")
+    A, B = tables(N)
+    M = 1000
+    while M <= N:
+        lone = sum(math.log(p) * (M / p - 1) for p in primes_upto(M) if 2 * p > M)
+        g = float(kernel_over_sqrt(np.array([float(M)]), A, B)[0]) * M
+        print(f"   N = {M:>8}: {lone:12.1f} = {lone / M:.4f}·N; the entry is {g:+9.4f} = {g / math.sqrt(M):+.4f}·√N")
+        M *= 10
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1].startswith("--"):
         arg = int(sys.argv[2]) if len(sys.argv) > 2 else None
         {"--smooth": lambda: smooth(arg or 60), "--flat": lambda: flat(arg or 1000),
          "--zeros": lambda: zeros(arg or 2000), "--places": lambda: places(arg or 60),
-         "--weil": lambda: weil(arg or 1000)}[sys.argv[1]]()
+         "--weil": lambda: weil(arg or 1000), "--forward": lambda: forward(arg or 1000),
+         "--slices": lambda: slices(arg or 10 ** 6), "--lattice": lambda: lattice(arg or 120),
+         "--frontier": lambda: frontier(arg or 10 ** 6)}[sys.argv[1]]()
         return
     N = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
     G = gram(N)
@@ -232,9 +553,15 @@ def main():
     print(f"  the Gram matrix is positive definite (Cholesky succeeded); smallest eigenvalue "
           f"{np.linalg.eigvalsh(G)[0]:.3e}")
     print(f"  min over 2 ≤ k ≤ {N} of d_k/d_1 = {d[1:].min():.4f}, at k = {k_min}")
-    for k in [2, 3, 5, 10, 30, 100, 300, 1000, 2000, 3000, 5000]:
+    print("  u_k = dist(w_k, span(w_{k−1}))² ≥ d_k. For k ≥ 3 no prime enters G(k, k − 1), as k/(k − 1) < 2, and")
+    print("  u_k = log(k/2π) + 1 − γ + o(1), so d_k grows at most like log k:")
+    for k in [2, 3, 5, 10, 30, 100, 300, 1000, 2000, 3000, 5000, 10000]:
         if k <= N:
-            print(f"  k = {k:>5}: d_k/d_1 = {d[k - 1]:9.3f}   d_k/(d_1·log²k) = {d[k - 1] / math.log(k) ** 2:.3f}")
+            u = (G[k - 1, k - 1] - G[k - 1, k - 2] ** 2 / G[k - 2, k - 2]) / d1
+            a = (math.log(k / (2 * math.pi)) + 1 - EULER_GAMMA) / d1
+            print(f"  k = {k:>5}: d_k/d_1 = {d[k - 1]:8.3f}   d_k/(d_1·log²k) = {d[k - 1] / math.log(k) ** 2:.3f}   "
+                  f"u_k/d_1 = {u:8.3f}" + (f" (asymptotic {a:7.3f})" if k >= 100 else " " * 20)
+                  + f"   d_k/u_k = {d[k - 1] / u:.3f}")
     print("  so ±w_1 are the shortest nonzero vectors of the lattice spanned by w_1, …, w_N"
           if d[1:].min() > 1 else "  some d_k < d_1")
 

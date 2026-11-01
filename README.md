@@ -30,8 +30,8 @@ from `main` on every push.
 
 | Path | Contents |
 |---|---|
-| `lib/core` | The library's modules that need only Mathlib: 341 files. |
-| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 349 files. |
+| `lib/core` | The library's modules that need only Mathlib: 342 files. |
+| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 350 files. |
 | `lib/dh` | The Davenport–Heilbronn function and its zeros: 54 files. |
 | `lib/zeta23` | The modules that also use `zeta23`: 8 files. |
 | `lib/vendor/pnt-plus`, `lib/vendor/zeta23` | Two upstream libraries, ported to this toolchain, each with its license and its port patch. See their READMEs. |
@@ -41,7 +41,7 @@ from `main` on every push.
 | `lib/check/CheckDH.lean` | The axioms of the final theorems of `lib/dh`. `CheckAll` does not import the layer, so that its build leaves out the layer's numerical certificates. Not built by default; CI builds it whenever it builds the Lean. |
 | `formalisations/` | The notes on the results from the literature. See its [README](formalisations/README.md), the index of the notes. |
 | `papers/` | The papers. See its [README](papers/README.md). |
-| `scripts/` | The build script and the checks (see [`docs/building.md`](docs/building.md)), `build_site.py`, which builds the papers' web site, and `ball_orbit.py`, the numerical experiment of [`docs/ball-conjecture.md`](docs/ball-conjecture.md). |
+| `scripts/` | The build script and the checks (see [`docs/building.md`](docs/building.md)), `build_site.py`, which builds the papers' web site, `ball_orbit.py`, the numerical experiment of [`docs/ball-conjecture.md`](docs/ball-conjecture.md), and `ball_certificate.py`, which proves its pivot bound up to `N = 10^4`. |
 | `site/` | `zeros.html`, the template of the site's page on the zeros, which `scripts/zeros_page.py` fills from the Lean sources. |
 | `docs/` | [`account.md`](docs/account.md): the library on one page, with its frontier; `scripts/check_account.py` checks its Lean names. [`inventory.md`](docs/inventory.md): the library's results, written by `scripts/inventory.py`. [`building.md`](docs/building.md): building, memory, the checks and CI. [`dry-efficiency-survey.md`](docs/dry-efficiency-survey.md) and [`stack-bridges.md`](docs/stack-bridges.md): a survey of duplication and build cost, and three modules that join parts of the library. |
 | `tools/linnik/` | The Linnik paper's certificate tools: the route's computations outside Lean and the generator of the certificate's Lean files. See its README. |

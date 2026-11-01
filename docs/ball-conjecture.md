@@ -201,20 +201,40 @@ None of the following states the conjecture in this form; a search in October 20
 
    This makes the Gram matrices of `w_1, …, w_N` computable from the primes. The computation takes `A` in a closed form,
    `A(u) = γ·sinh(u/2) + sinh(u/2)·log(4sinh(u/2)) − cosh(u/2)·log cosh(u/2) − (u/2)e^{−u/2}`. The closed form is
-   checked numerically against the integral that defines `A`, and is not proved. The formula itself agrees with the
-   sum over the first 2000 zeros to within `10⁻⁴`. `scripts/ball_orbit.py` gives, up to `N = 3000`:
+   checked numerically against the integral that defines `A`, and is not proved in Lean. The whole formula is the
+   classical explicit formula with the kernel `1/(s(s − 1))`, from the residues at `1`, `0`, the zeros and the trivial
+   zeros; `scripts/ball_certificate.py` records the derivation. It agrees with the sum over the first 2000 zeros to
+   within `10⁻⁴`. `scripts/ball_orbit.py` gives, up to `N = 3000`:
    - The Gram matrices are positive definite, as RH requires.
    - Let `d_k` be the squared distance of `w_k` from the span of `w_1, …, w_{k−1}`. Then `d_k ≥ 1.718·d_1` for
      `2 ≤ k ≤ 3000`, and `d_k` grows, roughly like `1.87·d_1·log²k` for `k` between 1000 and 3000.
+   - That growth cannot last. No prime enters `G(k, k − 1)`, as `k/(k − 1) < 2`. So `w_{k−1}` alone leaves `w_k` at
+     squared distance `u_k = log(k/2π) + 1 − γ + o(1)`, about `21.6·d_1·(log k − 1.42)`, and `d_k ≤ u_k` whenever
+     `G_{k−1}` is positive definite. The pivots grow at most like `log k`, and `1.87·d_1·log²k` would pass `u_k` near
+     `k = 2·10⁴`. They bend towards `u_k` instead: `d_k/u_k` is 0.77 at `k = 1000`, 0.85 at 3000 and 0.90 at `10^4`,
+     where `d_k = 152·d_1` against `159·d_1` from the fit (`ball_orbit.py 10000`, in 2 minutes).
    - So `w_1, …, w_3000` span a lattice whose shortest nonzero vectors are `±w_1`, of squared length
      `d_1 = K_H(1) = 2 + γ − log 4π ≈ 0.0462` (`BallPsi.orbit_lattice`).
    - The smallest eigenvalue of the Gram matrix tends to `0` (`1.3·10⁻⁴` at `N = 3000`). The form degenerates on the
      space but not on the lattice.
 
+   Up to `N = 10^4` the bound is proved, not only observed (`scripts/ball_certificate.py`):
+   - The script encloses every entry of the matrix, computed from the primes by the explicit formula, in interval
+     arithmetic with all rounding errors bounded.
+   - It bounds the pivots through a congruence `T·G·Tᵀ`, with `T` unit lower-triangular so that the pivots do not
+     change, and Gershgorin's theorem.
+   - The result: `d_k > d_1` for `2 ≤ k ≤ 10^4`, and `d_k > d_2 = 1.7184·d_1` for `3 ≤ k ≤ 10^4`. Every pivot after
+     the second is at least `2.3713·d_1`, the least bound being at `k = 3`.
+   - So these matrices are positive definite, unconditionally. The lattice with Gram matrix `G_N`, `N ≤ 10^4`, has the
+     first basis vector and its negative as its shortest nonzero vectors (`BallPsi.norm_sq_ge_of_dist`). Under RH this
+     is the lattice spanned by `w_1, …, w_N` in any realization of `K_H`.
+
    So with Hadamard's weights the configuration of step 5 looks like a lattice. The precise statement:
 
    > **The orbit lattice.** The Gram–Schmidt pivots `d_k` of the matrices `(√(mn)·K_H(m/n))_{m,n ≤ N}`, which
    > `BallPsi.gram_explicit` writes through `ψ`, satisfy `d_k ≥ d_1` for every `k`.
+
+   It holds for `k ≤ 10^4`, by the certificate above.
 
    It is a statement about the primes. Under RH it says that in every realization of `K_H`, `w_{k+1}` keeps distance
    `‖w_1‖` from the span of `w_1, …, w_k`. The orbit then spans a lattice with `w_1` as a shortest vector
@@ -296,6 +316,74 @@ the `Spec ℤ × Spec ℤ` that the work under "Related work" looks for, Deninge
 arithmetic site among it. The conjecture adds what that work does not say: the lattice of such a surface should be a
 discretised infinite-dimensional ball, the cubic lattice in the flat model. No construction of these vectors is known.
 
+Building the vectors one place at a time fails in a definite way (`scripts/ball_orbit.py --forward`):
+
+- **No place gives a positive piece.** Each `C_p` has zero diagonal, so it is indefinite: for `p = 2` and `N = 60` its
+  eigenvalues run from −489 to 524. The pieces cannot be the Gram matrices of local vectors, one space for each prime.
+- **Making them positive costs more than the real place has.** At a prime power `k` the prime part can be completed to
+  `Λ(k)/√k` times the Gram matrix of the vectors `1_{[0,n]} − √k·1_{[0,n/k]}` of `L²(0, ∞)`, which is positive. Here
+  `⟨1_{[0,a]}, 1_{[0,b]}⟩ = min(a, b)`, as in the flat model. Once `X ≥ N` the rest is exactly
+  `G_∞ + (m + n)·Σ_{k ≤ X} Λ(k)/k − 2·min(m, n)·Σ_{k ≤ X} Λ(k)/√k`, where the last sum is about `2√X`. The archimedean
+  part cannot pay for that. The rest's smallest eigenvalue is −260 with the prime 2 alone and −2.5·10⁴ with the prime
+  powers up to 60, where the whole matrix has 0.0035. The positivity is a cancellation among all the places at once.
+- **The lattice does see each prime.** `K_H(r)/K_H(1)` is −0.375, −0.454, −0.453 and −0.442 at `r = 2, 3, 5, 7`; about
+  −0.05 at `4` and `8`; and positive at `6`, `10`, `3/2`, `5/2` and `7/2`. So `w_n` and `w_{n/p}` are anti-correlated
+  for each small prime `p`, enough that `w_n + w_{n/p}` is shorter than `w_n`. The LLL-reduced basis is then made of
+  divisor sums `Σ_{d | n} w_d`: `w_1 + w_2`, `w_1 + w_2 + w_4`, `w_1 + w_3 + w_5 + w_15`,
+  `w_1 + w_2 + w_3 + w_4 + w_6 + w_12`, and so on. For `n = Π_p p^{a_p}` such a sum is
+  `Π_p (1 + φ_p + ⋯ + φ_p^{a_p}) w_1` in a realization: a truncated Euler factor at each prime, applied to `w_1`. In the
+  flat model the reduced basis is the increments `w_{n+1} − w_n` instead. Up to `N = 40` the divisor sums are nearly as
+  good as LLL's basis, with Hadamard ratio 0.886 against 0.891. By `N = 200` they are no better than the increments,
+  0.703 and 0.712 against 0.754.
+- **The real place couples the prime directions.** Independent directions would make `K_H` multiplicative over coprime
+  parts: `K_H(ab) = K_H(a/b) = K_H(a)K_H(b)/K_H(1)`. Instead, in units of `K_H(1)`, `K_H(6) = 0.291` and
+  `K_H(2/3) = 0.116`, against `K_H(2)K_H(3) = 0.170`. The multiplicative kernel with the exact values at the prime
+  powers gives the Gram matrix of the tensor product of the lattices of the single primes. It is positive definite
+  here, as each of those lattices is under RH. Its pivots grow roughly in proportion to `k`, to `587·d_1` at
+  `k = 1000`, where the true ones grow at most like `log k`, to `89·d_1`. The coupling comes from the real place.
+  Integers that are close as real numbers have nearly parallel vectors, `cos(w_997, w_996) = 0.94`, where independent
+  directions make them orthogonal. It cuts the pivots by a factor of 0.15 at `k = 1000`, and by more at the primes.
+  It does not touch the smallest pivot. `d_2 = 2(1 − K_H(2)²/K_H(1)²)·d_1 = 1.718·d_1` involves only the prime 2,
+  and it is the minimum in both.
+
+Slicing the lattice by primes isolates the coupling (`--slices`). The slice of a set `S` of primes is the part of the
+lattice spanned by the `w_n` with every prime factor of `n` in `S`, so the directions of `S` alone. Let
+`e = d(n)/(n·d_1)` be the pivot as a fraction of `‖w_n‖² = n·d_1`; `e = 1` for a vector orthogonal to the earlier ones.
+
+- **One prime.** The slice `{p^j}` has the Gram matrix `p^{(i+j)/2}·K_H(p^{i−j})`. That is the shape of the Frobenius
+  orbit of an elliptic curve over `𝔽_p` (`ManinHasse.gram_orbit_card`), with `K_H(p^j)/K_H(1)` in the place of the
+  normalised traces. It is nearly free: `e` runs from 0.86 down to 0.6 for `p = 2, 3, 5` and `p^j ≤ 10^6`, where the
+  curve's orbit has `e = 0` after its rank 2. A prime's direction is not determined by that prime and the real place.
+  With only `p` in the explicit formula the slice is already indefinite at `p^j = 4` for `p = 2`, and at `p` itself for
+  `p = 3, 5`. For instance `⟨w_1, w_3⟩ = G_∞(3, 1) + (log 2)/2` carries the prime 2.
+- **Two primes.** The real place couples 2 and 3 through the near-coincidences of their powers. At the Pythagorean
+  comma `3^12/2^19 = 1.0136`, `cos(w_{3^12}, w_{2^19}) = 0.573`, against 0.003 for independent directions. Over the
+  `{2, 3}`-smooth numbers in `[10^5, 10^6]` the median `e` is 0.29, against 0.52 with the two directions independent.
+- **Two primes carry RH.** The logarithms of the slice of two distinct primes `p` and `q` are dense in `ℝ`, as
+  `log p/log q` is irrational (`BallSlice.irrational_log_div`). That is all the Landau argument of step 5 needs
+  (`BallSlice.re_eq_zero_of_dense_set`). So RH holds if and only if `K_H` is positive-definite on the slice
+  (`BallSlice.rh_iff_posDefOn_pair`), and if and only if `K_H(p^a q^b) ≥ −K_H(1)` for all integers `a, b`
+  (`BallSlice.rh_iff_bound_pair`; for `2` and `3`, `BallSlice.rh_iff_two_three`). In Weil's terms each of the upper
+  Weil bound and Castelnuovo–Severi, for the divisors `D_n` with `n = p^i q^j` alone, is equivalent to RH
+  (`BallSlice.rh_iff_weil_bound_pair`, `BallSlice.rh_iff_castelnuovo_severi_pair`). So the conjecture on a single
+  two-prime slice is already stronger than RH. One prime would not do: the logarithms of its powers are discrete.
+- **More primes.** The median `e` over the top decade of each slice falls as `S` grows:
+  - 0.61 for `{2}`, 0.29 for `{2, 3}`, 0.16 for `{2, 3, 5}` and 0.10 for `{2, 3, 5, 7}`, up to `10^6`;
+  - 0.073 for the primes up to 31, up to `2·10^4`;
+  - 0.064 for all the primes, up to 3000.
+
+  With the directions independent it stays between 0.42 and 0.74.
+- **The smallest pivot.** In every slice the smallest pivot is `d_2 = 1.718·d_1`, inside the direction of the prime 2.
+
+So the margin of the conjecture is set in a single prime's direction, at `n = 2`. The coupling between the primes
+grows with their number and brings the other pivots down towards it.
+
+So the true lattice lies between two extremes. One is the tensor product of the lattices of the single primes: all
+arithmetic, no real place. The other is the flat model, the cubic lattice: all real place, no primes. The conjecture
+says that the coupling never brings a pivot below the flat model's. A construction from the integers would have to
+produce that coupling, so it cannot be a direct sum of local pieces. It would be something shaped like an Euler
+product, a product of local factors, in which the real place ties the primes together.
+
 ## Weil's form
 
 The conjecture names the object; Weil's proof says what has to be true on it. In the form that Mattuck and Tate and
@@ -326,7 +414,8 @@ logarithms `log(p/q)` are dense, which is all the Landau argument of step 5 need
 Two differences from the curve case:
 
 - **One side of the Weil bound is enough.** RH holds if and only if `D_m·D_n ≤ m + n + K_H(1)·√(mn)` for all `m`, `n`
-  (`BallWeil.rh_iff_weil_bound`), the analogue of an upper bound on the point counts. For a curve such an upper bound,
+  (`BallWeil.rh_iff_weil_bound`), the analogue of an upper bound on the point counts, and the `m`, `n` of the form
+  `2^i 3^j` are enough (`BallSlice.rh_iff_weil_bound_pair`). For a curve such an upper bound,
   which Stepanov's method gives, is not enough by itself, and Bombieri derives the lower bound from upper bounds on a
   Galois cover. For `ζ` the upper bound suffices because no zero of `ζ` is real. The poles of the twin form then lie
   off the real axis, and Landau's theorem rules out any of them to the right of it. Numerically
@@ -363,3 +452,98 @@ How this sits with the existing programmes:
 What the library adds is a statement that is finite and checkable. For each `N`, Castelnuovo–Severi for the divisors
 supported on `e₁`, `e₂`, `D_1, …, D_N` is the positivity of an `N × N` matrix computed from the primes up to `N`. RH is
 that statement for every `N`.
+
+## The limit and the lattice
+
+**The limit is a Hilbert–Pólya space.** For each `N`, vectors `w_1, …, w_N` with the Gram matrix `G_N` exist exactly
+when `G_N` is positive semidefinite. `scripts/ball_certificate.py` proves this for `N ≤ 10^4`. If every `G_N` is, the
+Moore–Aronszajn theorem gives the limit: a Hilbert space with a point `w_r` for each positive rational `r`, on the
+unit sphere after scaling, and `⟨w_b, w_a⟩ = √(ab)·K_H(a/b)`. That limit exists if and only if RH holds
+(`BallHadamard.rh_iff_realizationH`).
+
+- In it each prime acts by a similitude `φ_p` of factor `p` with `φ_p(w_r) = w_{pr}`, so `U_p = φ_p/√p` is a rotation,
+  and the rotations commute.
+- Under RH, in `ℓ²` of the zeros, `U_n` multiplies the coordinate of `ρ` by `n^{iγ}`. So `U_n = n^{iD}`, with `D` the
+  diagonal operator of the ordinates.
+- One operator generates all the rotations because of the product formula. The size of `n` is the product of its
+  prime powers, so one real `t` fixes the angle `t·log p` of every prime at once.
+- An eigenvalue `p^ρ` of a similitude of factor `p` has `Re ρ = ½` (`BallLattice.re_eq_half_of_eigen`).
+
+So the configuration's limit is a Hilbert–Pólya space, and the conjecture adds that the orbit of `w_1` under the
+integers is a lattice in it.
+
+**The space of all relationships.** By Ostrowski's theorem the absolute values on `ℚ` are the real one and the `p`-adic
+ones, so two integers are close in size or in divisibility by powers of a prime, and in no other way. The adeles hold
+all of these at once. The integers sit in them diagonally, which imposes the product formula. Dividing by `ℚ^×` gives
+Connes's adele class space. There the explicit formula is a trace formula, and the decomposition of `G` over the places
+in "Building the lattice forwards" is its list of local terms.
+
+The outer product over the primes alone, with each prime's direction free, gives the tensor product of the
+single-prime lattices of that section. It is positive by Schur's product theorem.
+
+- Its spectral measure is spread over the torus `T^∞ = Π_p T`, one circle for each prime.
+- ζ's spectral measure lies on the line `t ↦ (t·log p)_p`, which is the product formula.
+- Multiplying in a factor for the real place cannot move a product measure onto that line. In outline: the spectral
+  measure of a product of kernels is the convolution of theirs. A convolution with a measure without atoms has no
+  atoms, while under RH ζ's measure is atomic, at the zeros.
+
+**The lattice.** The lattice the conjecture is about is the ring `ℤ[x_2, x_3, x_5, …]` of integer Dirichlet
+polynomials. In it `x_p` stands for `p^s` and `n` for `x^n = Π_p x_p^{v_p(n)}`, so the ring is the outer product over
+the primes of the rings `ℤ[x_p]`. Its inner product is a trace form:
+
+- the involution is `x_p* = p/x_p`, from the functional equation `s ↔ 1 − s`, so that `x_p·x_p* = p`;
+- the trace of a positive rational `r` is `Tr(r) = √r·K_H(r)`, computed from the primes. Then `Tr(1) = K_H(1)`, and in
+  the terms of `BallWeil` `Tr(n) = n + 1 − D_n·D_1`;
+- the form is `⟨x^m, x^n⟩ = Tr(x^m·(x^n)*) = n·Tr(m/n) = √(mn)·K_H(m/n) = G(m, n)`;
+- multiplication by `x_p` scales it by `p`, `G(pm, pn) = p·G(m, n)`. That is a Frobenius of norm `p` for each prime.
+
+This is the shape of Weil's first proof, through the Jacobian. For `E` it reads:
+
+- the endomorphism ring of `E`, with the dual isogeny `φ'` as involution;
+- the Frobenius `π`, with `ππ' = q`;
+- the traces `Tr(π^k) = q^k + 1 − #E(𝔽_{q^k})`;
+- the positivity `Tr(φφ') = 2 deg φ > 0`.
+
+For `E` the positivity is free, since the degree of an isogeny is a positive integer. For `ζ`, `Tr(DD*) ≥ 0` for every
+real `D` is RH (`BallPsi.rh_iff_posDef_psi`). The conjecture asks more: `Tr(DD*) ≥ Tr(1)` for every
+`D = x^k + Σ_{n < k} c_n x^n`. What is missing is the counterpart of the degree: a reading of `Tr(DD*)` as the size of
+something attached to `D`, a count or a dimension. The nearest thing is Connes and Consani's Riemann–Roch for `Spec ℤ`,
+whose dimensions are integers.
+
+**Its integral structure.** Write each logarithm of an integer in the explicit formula through the logarithms of the
+primes. For `m ≥ n` this gives `G(m, n) = (1 + γ)(m + n) − (γ + log 2π)·n + Σ_p log p·Q_p(m, n)`, where
+`Q_p(m, n) = Σ_{j ≥ 1, p^j ≤ m/n} (m/p^j − n) + m·v_p(n) − (m − n)·v_p(m) + ½(m − n)·v_p(m − n) − ½(m + n)·v_p(m + n)`.
+
+- So the form takes values in `ℚ + ℚγ + ℚ·log 2π + Σ_p ℚ·log p`.
+- Its coefficients are rational numbers made from the relations between `m` and `n`: the powers of `p` that divide
+  `m`, `n`, `m − n` and `m + n`, and the powers of `p` below `m/n`. Their denominators are `1`, `2`, powers of `p`
+  and twice those.
+- The numbers `m − n` and `m + n` come from the archimedean term.
+- On the diagonal `Q_2(n, n) = −n` and `Q_p(n, n) = 0` for odd `p`, which is how `G(n, n) = n·K_H(1)` comes out.
+
+`scripts/ball_orbit.py --lattice` checks the identity to `10⁻¹³`, and the similitude. So the lattice is integral over
+the logarithms of the primes, and each coefficient records how two integers are related at one prime. As for the
+elliptic curve, the open part is the positivity, and no single piece gives it. At `N = 60`, each of `Q_2`, `Q_3`,
+`Q_5`, `Q_7`, `Q_59` and `(1 + γ)(m + n) − (γ + log 2π)·min(m, n)` has eigenvalues of both signs.
+
+**The frontier.** At stage `N`, a prime `p ≤ N` has no other multiple up to `N` exactly when `N/2 < p`
+(`LonelyPrimes.lonely_iff`). Composites have not yet reached these lonely primes.
+
+- They are never absent (`LonelyPrimes.exists_lonely`, Bertrand's postulate).
+- They are asymptotically half of the primes up to `N` (`LonelyPrimes.tendsto_lonely_ratio`, from the prime number
+  theorem).
+- So they are a fraction bounded below at every stage (`LonelyPrimes.lonely_ratio_pos`). Numerically they are 41% at
+  `N = 60`, 44% at 3000, 46% at `10^4` and 47% at `10^6` (`scripts/ball_orbit.py --frontier`).
+
+In the sum over the prime powers in the Gram matrix of stage `N`, a lonely prime `p` enters only the entries
+`⟨w_1, w_m⟩` with `p < m ≤ N`, as `log p·(m/p − 1)`. For `m ≥ n ≥ 2` the ratio `m/n` is at most `N/2`, below `p`.
+
+- **Positivity needs each of them.** At `N = 60`, removing any one of the lonely primes 31, …, 59 makes the matrix
+  indefinite. Without 31 its smallest eigenvalue is −9.5. Without 59 it is −1.6·10⁻⁴, though 59 enters only
+  `⟨w_1, w_60⟩`.
+- **Their weight is large.** By the prime number theorem they contribute about `(log 2 − ½)·N ≈ 0.193·N` to
+  `⟨w_1, w_N⟩`: 192,928 at `N = 10^6`, where the entry itself is 9.20. Under RH the entry is at most `K_H(1)·√N`.
+  Holding the frontier in balance to within `√N` is the size of the error term in the prime number theorem.
+
+So a positive proportion of the prime directions is always the newest. They are held only through `w_1` and the
+comparisons of size, and their balance is as delicate as RH.

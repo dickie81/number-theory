@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1101 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1114 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -260,7 +260,11 @@ In order of what is in reach.
    `D_n` with intersection numbers `D_m·D_n = m + n − √(mn)·K_H(m/n)`, computed from the primes. Then RH is the
    Castelnuovo–Severi inequality for their integer combinations (`BallWeil.rh_iff_castelnuovo_severi`), and also the
    upper half of the Hasse–Weil bound for those numbers (`BallWeil.rh_iff_weil_bound`). The orbit-lattice conjecture
-   implies it (`BallWeil.rh_of_pivots`).
+   implies it (`BallWeil.rh_of_pivots`). Two primes already carry it: for distinct primes `p` and `q`, RH holds exactly
+   when `K_H(p^a q^b) ≥ −K_H(1)` for all integers `a` and `b` (`BallSlice.rh_iff_bound_pair`), so in particular for
+   `2^a 3^b` (`BallSlice.rh_iff_two_three`). At every stage `N` the primes above `N/2`, which have no other multiple
+   up to `N`, are never absent and are asymptotically half of all the primes (`LonelyPrimes.lonely_ratio_pos`,
+   `LonelyPrimes.tendsto_lonely_ratio`).
 6. **Tools that are missing.** The large sieve over all moduli `q ≤ Q` (the library has one modulus at a time), so no
    Bombieri–Vinogradov; bounds for Kloosterman sums, which the bilinear Type I estimate avoids; exponent pairs (the
    Weyl bound is only a hypothesis); Selberg's and Rosser's sieves; anything in the twelve sections the library does
