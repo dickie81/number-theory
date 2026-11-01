@@ -80,7 +80,7 @@ theorem Sound.OK_of_drop {k : ℕ} {conds : List (Cond (k + 1) 1)} {E : ℤ} {Γ
     (hn0 : 0 ≤ (numF k).minD B E acts) {Ω : ℝ} (hΩ : 0 ≤ Ω)
     (hω : ∀ u : ℝ, ((numF k).minD B E acts : ℝ) / (B.getD k (0, 0)).2 ≤ u →
       u ≤ ((numF k).maxD B E acts : ℝ) / (B.getD k (0, 0)).1 → SieveCert.omegaC u ≤ Ω)
-    {θ ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) :
+    {θ ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) :
     OK θ ρ 1 (fun x y => ((std k conds).count x y : ℝ))
       (Ω * ∏ j : Fin (k + 1), if j = Fin.last k then (DEN : ℝ) / (B.getD j (0, 0)).1 - DEN / (B.getD j (0, 0)).2
         else trB (B.getD j (0, 0)).1 (B.getD j (0, 0)).2) := by
@@ -102,7 +102,7 @@ theorem Sound.OK_of_drop {k : ℕ} {conds : List (Cond (k + 1) 1)} {E : ℤ} {Γ
   have hterm : ∀ᶠ x : ℝ in atTop, ∀ v ∈ pairs (k + 1) 1 ⌊x⌋₊, SieveTree.rough (v.1 (Fin.last k)) (v.2 0) →
       (std k conds).InI x (x ^ (1 - ρ)) v.1 v.2 →
         v.1 ∈ (Fintype.piFinset fun j => SieveRough.primesIn (x ^ lo j) (x ^ hi j)) ∧
-          x ^ (1 / 25 : ℝ) ≤ v.1 (Fin.last k) ∧ (v.1 (Fin.last k) : ℝ) ≤ v.2 0 ∧
+          x ^ (1 / 20 : ℝ) ≤ v.1 (Fin.last k) ∧ (v.1 (Fin.last k) : ℝ) ≤ v.2 0 ∧
           SieveCert.omegaC (Real.log (x / ∏ j, (v.1 j : ℝ)) / Real.log (v.1 (Fin.last k))) ≤ Ω := by
     filter_upwards [abs_slack_le hE (k + 1) 1, eventually_gt_atTop 1,
       (tendsto_rpow_atTop hρ).eventually_ge_atTop 2] with x hsl hx1 hxr v hv _ hI
@@ -170,7 +170,7 @@ theorem Sound.OK_of_drop {k : ℕ} {conds : List (Cond (k + 1) 1)} {E : ℤ} {Γ
   -- the bound in the comparison interval, and the loss
   have hdrop : OK θ ρ 1 (fun x y => ((std k conds).count x y : ℝ)) (Ω * P) :=
     ShortSieveTree.OK_of_drop (fun x y => Nat.cast_nonneg _) fun δ hδ =>
-      ShortSieveDrop.count_le_drop1 (fun _ => Fin.last k) conds (lo := 1 / 25) (by norm_num) hρ hρ25 hΩ hP0 _
+      ShortSieveDrop.count_le_drop1 (fun _ => Fin.last k) conds (lo := 1 / 20) (by norm_num) hρ hρ20 hΩ hP0 _
         hterm (evLe_std_box lo hi hlo0 hlohi') hδ
   refine OK_mono (mul_le_mul_of_nonneg_left (Finset.prod_le_prod₀ (fun j _ => ?_) fun j _ => ?_) hΩ) hdrop
   · split_ifs

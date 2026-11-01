@@ -167,7 +167,7 @@ theorem Sound.OK_of_drop2C {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K
       (thr x eC)) Pc)
     (hPd : EvLe (fun x => chainSum (sfx (fun i => twoMem items B E (s g.rev) (s g) x (d.getD i 0)) d.length 0)
       (thr x eD)) Pd)
-    {θ ρ : ℝ} (hρ : 0 < ρ) (hρ25 : 12 * ρ < 1 / 25) :
+    {θ ρ : ℝ} (hρ : 0 < ρ) (hρ20 : 12 * ρ < 1 / 20) :
     OK θ ρ 1 (fun x y => ((⟨K, 2, s, conds⟩ : Node).count x y : ℝ))
       (Ωc * Ωg * ((((B.getD 0 (0, 0)).2 : ℝ) - (B.getD 0 (0, 0)).1) / DEN) * (Pc * Pd)) := by
   have hD := DEN_pos
@@ -189,7 +189,7 @@ theorem Sound.OK_of_drop2C {K : ℕ} {s : Fin 2 → Fin K} {conds : List (Cond K
       ∀ i, chT p d i < thr x eD)
     (fun x hx v hv hH hB hΓ => ⟨⟨strictAnti_chT hI hc hcK hx hv hΓ, hbelow c eC hcK heC x hx v hv hB hH⟩,
       strictAnti_chT hI hd hdK hx hv hΓ, hbelow d eD hdK heD x hx v hv hB hH⟩)
-    (mul_nonneg hPc0 hPd0) ?_ hρ hρ25
+    (mul_nonneg hPc0 hPd0) ?_ hρ hρ20
   -- the sum over the ordered box is at most the product of the chain sums
   have hmul := EvLe.mul hPc0 hPd0
     ((genMem_nonneg _ _ _).mono fun x hx => chainSum_nonneg _ (fun M' hM' p => by

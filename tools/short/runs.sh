@@ -1,5 +1,6 @@
 #!/bin/bash
-# The runs behind logs/runs1.txt ... runs4.txt (four threads; the seed and sample count of each run as recorded).
+# The runs behind logs/runs1.txt ... runs4.txt and runs525.txt (four threads; the seed and sample count of each run as
+# recorded).
 set -euo pipefail
 cd "$(dirname "$0")"
 H=./harness_theta
@@ -38,4 +39,13 @@ H=./harness_theta
     $H 2000000 4 UC07 47 $TH | grep -v "^C total\|^theta"
     echo "=== done $TH"
   done; } > logs/runs4.txt
+{ TH=0.525
+  for P in C4DLoss C4DRRLoss C6DLoss2 C6DRRLoss2; do $H 4000000 4 $P 53 $TH | grep -v "^C total"; done
+  $H 1000000 4 C6DRRLoss3 53 $TH | grep -v "^C total\|^theta"
+  $H 600000 4 C6DLoss1 53 $TH | grep -v "^C total\|^theta"
+  $H 60000 4 UC05 53 $TH | grep -v "^C total\|^theta"
+  $H 20000000 4 UC06 53 $TH | grep -v "^C total\|^theta"
+  $H 2000000 4 UC07 53 $TH | grep -v "^C total\|^theta"
+  $H 4000000 4 A2DLoss 53 $TH | grep -v "^C total\|^theta"
+  echo "=== done $TH"; } > logs/runs525.txt
 python3 summarize_full.py logs/runs*.txt
