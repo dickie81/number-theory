@@ -21,9 +21,11 @@ then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallP
     python3 scripts/ball_orbit.py --weil [N]    # the intersection numbers D_m·D_n of BallWeil and the Weil bound
     python3 scripts/ball_orbit.py --forward [N] # local pieces, reduced basis, and the coupling between the primes
     python3 scripts/ball_orbit.py --slices [X]  # the lattice of the numbers built from a fixed set of primes
+    python3 scripts/ball_orbit.py --lattice [N] # the Gram matrix as a form over the logarithms of the primes
 
 The first three options are the computations of "What a proof under RH would need" in docs/ball-conjecture.md,
---places, --forward and --slices those of "Building the lattice forwards", and --weil that of "Weil's form".
+--places, --forward and --slices those of "Building the lattice forwards", --weil that of "Weil's form", and --lattice
+that of "The limit and the lattice".
 """
 
 import math
@@ -442,13 +444,65 @@ def slices(X):
               f"independent {np.median((di / n)[top]):.3f}; smallest d/d_1 {d[k]:.3f} at n = {ns[k]}")
 
 
+def valuation(p, n):
+    k = 0
+    while n % p == 0:
+        n //= p
+        k += 1
+    return k
+
+
+def local_part(p, m, n):
+    """The rational coefficient Q_p(m, n) of log p in G(m, n): for m ≥ n,
+    Σ_{j ≥ 1, p^j ≤ m/n} (m/p^j − n) + m·v_p(n) − (m − n)·v_p(m) + ½(m − n)·v_p(m − n) − ½(m + n)·v_p(m + n)."""
+    from fractions import Fraction
+    if m < n:
+        m, n = n, m
+    s = Fraction(0)
+    q = p
+    while q * n <= m:
+        s += Fraction(m, q) - n
+        q *= p
+    s += m * valuation(p, n) - (m - n) * valuation(p, m) - Fraction(m + n, 2) * valuation(p, m + n)
+    if m > n:
+        s += Fraction(m - n, 2) * valuation(p, m - n)
+    return s
+
+
+def lattice(N):
+    """The Gram matrix as a form over 1, γ, log 2π and the log p: for m ≥ n,
+    G(m, n) = (1 + γ)(m + n) − (γ + log 2π)·n + Σ_p log p·Q_p(m, n), with Q_p rational (local_part), and the
+    Frobenius at p, multiplication by p, a similitude of factor p: G(pm, pn) = p·G(m, n)."""
+    G = gram(N)
+    P = primes_upto(2 * N)
+    err = 0.0
+    for m in range(1, N + 1):
+        for n in range(1, m + 1):
+            rec = (1 + EULER_GAMMA) * (m + n) - (EULER_GAMMA + math.log(2 * math.pi)) * n
+            rec += sum(math.log(p) * float(local_part(p, m, n)) for p in P if p <= m + n)
+            err = max(err, abs(rec - G[m - 1, n - 1]))
+    print(f"N = {N}: G(m, n) = (1 + γ)(m + n) − (γ + log 2π)·min(m, n) + Σ_p log p·Q_p(m, n) to {err:.1e}")
+    den = sorted({local_part(p, m, n).denominator for p in [2, 3, 5] for m in range(1, 61) for n in range(1, 61)})
+    print(f"  the denominators of Q_2, Q_3 and Q_5 for m, n ≤ 60: {den}")
+    for p in [2, 3]:
+        print(f"  Q_{p}(m, n) for m, n ≤ 6:")
+        for m in range(1, 7):
+            print("    " + "  ".join(f"{str(local_part(p, m, n)):>6}" for n in range(1, 7)))
+    half = N // 2
+    sim = max(abs(G[p * m - 1, p * n - 1] - p * G[m - 1, n - 1]) for p in [2, 3] for m in range(1, half // p + 1)
+              for n in range(1, half // p + 1))
+    print(f"  G(pm, pn) = p·G(m, n) for p = 2, 3 to {sim:.1e}: multiplication by p is a similitude of factor p")
+    print("  the trace Tr(n) = G(n, 1) = √n·K_H(n) = n + 1 − D_n·D_1, for n = 1, …, 8:",
+          ", ".join(f"{G[n - 1, 0]:+.4f}" for n in range(1, 9)))
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1].startswith("--"):
         arg = int(sys.argv[2]) if len(sys.argv) > 2 else None
         {"--smooth": lambda: smooth(arg or 60), "--flat": lambda: flat(arg or 1000),
          "--zeros": lambda: zeros(arg or 2000), "--places": lambda: places(arg or 60),
          "--weil": lambda: weil(arg or 1000), "--forward": lambda: forward(arg or 1000),
-         "--slices": lambda: slices(arg or 10 ** 6)}[sys.argv[1]]()
+         "--slices": lambda: slices(arg or 10 ** 6), "--lattice": lambda: lattice(arg or 120)}[sys.argv[1]]()
         return
     N = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
     G = gram(N)
