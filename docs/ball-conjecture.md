@@ -447,3 +447,76 @@ How this sits with the existing programmes:
 What the library adds is a statement that is finite and checkable. For each `N`, Castelnuovo–Severi for the divisors
 supported on `e₁`, `e₂`, `D_1, …, D_N` is the positivity of an `N × N` matrix computed from the primes up to `N`. RH is
 that statement for every `N`.
+
+## The limit and the lattice
+
+**The limit is a Hilbert–Pólya space.** For each `N`, vectors `w_1, …, w_N` with the Gram matrix `G_N` exist exactly
+when `G_N` is positive semidefinite. `scripts/ball_certificate.py` proves this for `N ≤ 10^4`. If every `G_N` is, the
+Moore–Aronszajn theorem gives the limit: a Hilbert space with a point `w_r` for each positive rational `r`, on the
+unit sphere after scaling, and `⟨w_b, w_a⟩ = √(ab)·K_H(a/b)`. That limit exists if and only if RH holds
+(`BallHadamard.rh_iff_realizationH`).
+
+- In it each prime acts by a similitude `φ_p` of factor `p` with `φ_p(w_r) = w_{pr}`, so `U_p = φ_p/√p` is a rotation,
+  and the rotations commute.
+- Under RH, in `ℓ²` of the zeros, `U_n` multiplies the coordinate of `ρ` by `n^{iγ}`. So `U_n = n^{iD}`, with `D` the
+  diagonal operator of the ordinates.
+- One operator generates all the rotations because of the product formula. The size of `n` is the product of its
+  prime powers, so one real `t` fixes the angle `t·log p` of every prime at once.
+- An eigenvalue `p^ρ` of a similitude of factor `p` has `Re ρ = ½` (`BallLattice.re_eq_half_of_eigen`).
+
+So the configuration's limit is a Hilbert–Pólya space, and the conjecture adds that the orbit of `w_1` under the
+integers is a lattice in it.
+
+**The space of all relationships.** By Ostrowski's theorem the absolute values on `ℚ` are the real one and the `p`-adic
+ones, so two integers are close in size or in divisibility by powers of a prime, and in no other way. The adeles hold
+all of these at once. The integers sit in them diagonally, which imposes the product formula. Dividing by `ℚ^×` gives
+Connes's adele class space. There the explicit formula is a trace formula, and the decomposition of `G` over the places
+in "Building the lattice forwards" is its list of local terms.
+
+The outer product over the primes alone, with each prime's direction free, gives the tensor product of the
+single-prime lattices of that section. It is positive by Schur's product theorem.
+
+- Its spectral measure is spread over the torus `T^∞ = Π_p T`, one circle for each prime.
+- ζ's spectral measure lies on the line `t ↦ (t·log p)_p`, which is the product formula.
+- Multiplying in a factor for the real place cannot move a product measure onto that line. In outline: the spectral
+  measure of a product of kernels is the convolution of theirs. A convolution with a measure without atoms has no
+  atoms, while under RH ζ's measure is atomic, at the zeros.
+
+**The lattice.** The lattice the conjecture is about is the ring `ℤ[x_2, x_3, x_5, …]` of integer Dirichlet
+polynomials. In it `x_p` stands for `p^s` and `n` for `x^n = Π_p x_p^{v_p(n)}`, so the ring is the outer product over
+the primes of the rings `ℤ[x_p]`. Its inner product is a trace form:
+
+- the involution is `x_p* = p/x_p`, from the functional equation `s ↔ 1 − s`, so that `x_p·x_p* = p`;
+- the trace of a positive rational `r` is `Tr(r) = √r·K_H(r)`, computed from the primes. Then `Tr(1) = K_H(1)`, and in
+  the terms of `BallWeil` `Tr(n) = n + 1 − D_n·D_1`;
+- the form is `⟨x^m, x^n⟩ = Tr(x^m·(x^n)*) = n·Tr(m/n) = √(mn)·K_H(m/n) = G(m, n)`;
+- multiplication by `x_p` scales it by `p`, `G(pm, pn) = p·G(m, n)`. That is a Frobenius of norm `p` for each prime.
+
+This is the shape of Weil's first proof, through the Jacobian. For `E` it reads:
+
+- the endomorphism ring of `E`, with the dual isogeny `φ'` as involution;
+- the Frobenius `π`, with `ππ' = q`;
+- the traces `Tr(π^k) = q^k + 1 − #E(𝔽_{q^k})`;
+- the positivity `Tr(φφ') = 2 deg φ > 0`.
+
+For `E` the positivity is free, since the degree of an isogeny is a positive integer. For `ζ`, `Tr(DD*) ≥ 0` for every
+real `D` is RH (`BallPsi.rh_iff_posDef_psi`). The conjecture asks more: `Tr(DD*) ≥ Tr(1)` for every
+`D = x^k + Σ_{n < k} c_n x^n`. What is missing is the counterpart of the degree: a reading of `Tr(DD*)` as the size of
+something attached to `D`, a count or a dimension. The nearest thing is Connes and Consani's Riemann–Roch for `Spec ℤ`,
+whose dimensions are integers.
+
+**Its integral structure.** Write each logarithm of an integer in the explicit formula through the logarithms of the
+primes. For `m ≥ n` this gives `G(m, n) = (1 + γ)(m + n) − (γ + log 2π)·n + Σ_p log p·Q_p(m, n)`, where
+`Q_p(m, n) = Σ_{j ≥ 1, p^j ≤ m/n} (m/p^j − n) + m·v_p(n) − (m − n)·v_p(m) + ½(m − n)·v_p(m − n) − ½(m + n)·v_p(m + n)`.
+
+- So the form takes values in `ℚ + ℚγ + ℚ·log 2π + Σ_p ℚ·log p`.
+- Its coefficients are rational numbers made from the relations between `m` and `n`: the powers of `p` that divide
+  `m`, `n`, `m − n` and `m + n`, and the powers of `p` below `m/n`. Their denominators are `1`, `2`, powers of `p`
+  and twice those.
+- The numbers `m − n` and `m + n` come from the archimedean term.
+- On the diagonal `Q_2(n, n) = −n` and `Q_p(n, n) = 0` for odd `p`, which is how `G(n, n) = n·K_H(1)` comes out.
+
+`scripts/ball_orbit.py --lattice` checks the identity to `10⁻¹³`, and the similitude. So the lattice is integral over
+the logarithms of the primes, and each coefficient records how two integers are related at one prime. As for the
+elliptic curve, the open part is the positivity, and no single piece gives it. At `N = 60`, each of `Q_2`, `Q_3`,
+`Q_5`, `Q_7`, `Q_59` and `(1 + γ)(m + n) − (γ + log 2π)·min(m, n)` has eigenvalues of both signs.
