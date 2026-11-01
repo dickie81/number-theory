@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1109 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1114 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 101 | 274 |
-| `lib/pnt` | 229 | 730 |
+| `lib/pnt` | 230 | 735 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -1349,6 +1349,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LogDerivKV`: R4a: the log-derivative bound on the Korobov–Vinogradov region
 
 - `LogDerivKV.logDerivBnd_KV`: R4a: `ζ'/ζ = O((log|t|)³)` on the Korobov–Vinogradov region
+
+#### `LonelyPrimes`: The frontier of the orbit lattice: the primes above `N/2`, always some and asymptotically half
+
+- `LonelyPrimes.lonely_iff`: A prime `p ≤ N` has no multiple `kp ≤ N` with `k ≥ 2` exactly when `N/2 < p`.
+- `LonelyPrimes.exists_lonely`: Every stage has a lonely prime
+- `LonelyPrimes.lonely_pos`: The lonely primes are never absent
+- `LonelyPrimes.tendsto_lonely_ratio`: The lonely primes are asymptotically half of the primes
+- `LonelyPrimes.lonely_ratio_pos`: The lonely proportion is bounded below at every stage
 
 #### `LucasWitness`: Lucas's primality test with small witnesses
 

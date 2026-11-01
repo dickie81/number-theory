@@ -520,3 +520,25 @@ primes. For `m ≥ n` this gives `G(m, n) = (1 + γ)(m + n) − (γ + log 2π)·
 the logarithms of the primes, and each coefficient records how two integers are related at one prime. As for the
 elliptic curve, the open part is the positivity, and no single piece gives it. At `N = 60`, each of `Q_2`, `Q_3`,
 `Q_5`, `Q_7`, `Q_59` and `(1 + γ)(m + n) − (γ + log 2π)·min(m, n)` has eigenvalues of both signs.
+
+**The frontier.** At stage `N`, a prime `p ≤ N` has no other multiple up to `N` exactly when `N/2 < p`
+(`LonelyPrimes.lonely_iff`). Composites have not yet reached these lonely primes.
+
+- They are never absent (`LonelyPrimes.exists_lonely`, Bertrand's postulate).
+- They are asymptotically half of the primes up to `N` (`LonelyPrimes.tendsto_lonely_ratio`, from the prime number
+  theorem).
+- So they are a fraction bounded below at every stage (`LonelyPrimes.lonely_ratio_pos`). Numerically they are 41% at
+  `N = 60`, 44% at 3000, 46% at `10^4` and 47% at `10^6` (`scripts/ball_orbit.py --frontier`).
+
+In the sum over the prime powers in the Gram matrix of stage `N`, a lonely prime `p` enters only the entries
+`⟨w_1, w_m⟩` with `p < m ≤ N`, as `log p·(m/p − 1)`. For `m ≥ n ≥ 2` the ratio `m/n` is at most `N/2`, below `p`.
+
+- **Positivity needs each of them.** At `N = 60`, removing any one of the lonely primes 31, …, 59 makes the matrix
+  indefinite. Without 31 its smallest eigenvalue is −9.5. Without 59 it is −1.6·10⁻⁴, though 59 enters only
+  `⟨w_1, w_60⟩`.
+- **Their weight is large.** By the prime number theorem they contribute about `(log 2 − ½)·N ≈ 0.193·N` to
+  `⟨w_1, w_N⟩`: 192,928 at `N = 10^6`, where the entry itself is 9.20. Under RH the entry is at most `K_H(1)·√N`.
+  Holding the frontier in balance to within `√N` is the size of the error term in the prime number theorem.
+
+So a positive proportion of the prime directions is always the newest. They are held only through `w_1` and the
+comparisons of size, and their balance is as delicate as RH.
