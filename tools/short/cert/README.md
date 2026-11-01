@@ -19,3 +19,11 @@ slack `H` and whose domain-aware extremes round (`exact.h`). `mc.cpp` is the Mon
 The root node is dropped as a last resort where no decision passes it: in the cells with `α₁` up to `1/2`, the
 checker's slack admits a sliver beyond the domain (`α₁ ∈ [1/2, 1/2 + 1/DEN)`) where no test holds; the drop's bound
 there is negligible, and the checker allows a drop of the shape `.std 1`.
+
+`n2drop=1` lets the root drop wherever the generator's cost (loss plus `lambda` per node) says so, not only as a
+last resort, and `altminus=0` turns off the comparison of alternative decompositions for the `−` nodes, which only
+costs time. On the heaviest cells this drops the whole cell: root 125 (the cell `(17, 7)`) takes one node at loss
+0.0221, against 81,680 nodes at 0.0274 without it (its Monte Carlo truth is 0.0125). On the middle of region C it
+drops cells far above their truth (root 93: 0.0299 against 0.0043), and over all cells, with `lambda = 5e-8` and
+`vsw = 3`, region C comes to about 2.8 times its truth: 0.523 over 127 of the 144 cells, with the cells outside
+region C at 0.459 over 59 of 60, so the total is above 1.
