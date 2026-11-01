@@ -987,7 +987,7 @@ partial def costOf : Cert → Nat
 
 /-- The certificate's top: the nodes above the cut points, which become subtrees of their own. -/
 inductive Top
-  | node (c : Cert) (kids : List Top)   -- `c` with its subtrees replaced by the kids
+  | node (c : Cert) (S : Shp) (kids : List Top)   -- `c` at the shape `S`, its subtrees replaced by the kids
   | sub (i : Nat) (c : Cert)            -- cut point `i`
 
 instance : Inhabited Top := ⟨.sub 0 .out⟩
@@ -1005,26 +1005,33 @@ partial def cutTop (cap : Nat) (c : Cert) (S : Shp) (Γ : List Con) (B : Box) (b
     return .sub st.subs.size c
   if costOf c ≤ cap then return ← asSub
   match c, S with
-  | .up j l _ v t, _ => return .node c [← cutTop cap t S Γ (cutAt B j l v) b]
+  | .up j l _ v t, _ => return .node c S [← cutTop cap t S Γ (cutAt B j l v) b]
   | .comb i j k t, _ =>
-    return .node c [← cutTop cap t S (combCon (Γ.getD i ⟨LF.zero, false⟩) (Γ.getD j ⟨LF.zero, false⟩) k :: Γ) B b]
+    let C := combCon (Γ.getD i ⟨LF.zero, false⟩) (Γ.getD j ⟨LF.zero, false⟩) k
+    return .node c S [← cutTop cap t S (C :: Γ) B b]
   | .split C _ _ t1 t2, _ =>
     let a ← cutTop cap t1 S (C :: Γ) B b
-    return .node c [a, ← cutTop cap t2 S (C.neg :: Γ) B b]
+    return .node c S [a, ← cutTop cap t2 S (C.neg :: Γ) B b]
   | .cut j p _ _ t1 t2, _ =>
     let a ← cutTop cap t1 S Γ (B.modify j fun b' => (b'.1, min b'.2 p)) b
-    return .node c [a, ← cutTop cap t2 S Γ (B.modify j fun b' => (max b'.1 p, b'.2)) b]
+    return .node c S [a, ← cutTop cap t2 S Γ (B.modify j fun b' => (max b'.1 p, b'.2)) b]
   | .dec _ _ _ t, .std k =>
-    return .node c [← cutTop cap t (.std (k + 1)) (geCon (k + 1) :: (Γ ++ [ordCon k]))
+    return .node c S [← cutTop cap t (.std (k + 1)) (geCon (k + 1) :: (Γ ++ [ordCon k]))
       (B ++ [(NU0, (B.getD k (0, 0)).2)]) (!b)]
+  | .dec _ _ _ t, S =>
+    return .node c S [← cutTop cap t (.last S) (geL (S.items.getD (S.k + 1) LF.zero) B.length ::
+        (Γ ++ [ordL (S.items.getD (S.sN 1) LF.zero) B.length]))
+      (B ++ [(NU0, (S.items.getD (S.sN 1) LF.zero).maxB B 1)]) (!b)]
   | .rev _ _ _ t, .std (k + 1) =>
-    return .node c [← cutTop cap t (.rev k) (Γ ++ [halfCon k]) (B ++ [(NU0, (B.getD 0 (0, 0)).2)]) (!b)]
+    return .node c S [← cutTop cap t (.rev k) (Γ ++ [halfCon k]) (B ++ [(NU0, (B.getD 0 (0, 0)).2)]) (!b)]
+  | .swap t, S => return .node c S [← cutTop cap t (.swap S) Γ B b]
+  | .tighten t, _ => return .node c S [← cutTop cap t S Γ (tightenList 1 Γ B) b]
   | _, _ => asSub
 
 /-- The top as compact data, with the cut points as references `@pre_i`. -/
 partial def topC (pre : String) : Top → Array String → Array String
   | .sub i _, acc => acc.push s!"@{pre}_{i}"
-  | .node c kids, acc =>
+  | .node c _ kids, acc =>
     match c, kids with
     | .up j l i v _, [k] => topC pre k (acc.push s!"u {j} {if l then 1 else 0} {i} {v}")
     | .comb i j k _, [t] => topC pre t (acc.push s!"m {i} {j} {k}")
@@ -1032,18 +1039,20 @@ partial def topC (pre : String) : Top → Array String → Array String
     | .cut j p u w _ _, [k1, k2] => topC pre k2 (topC pre k1 (acc.push s!"c {j} {p} {u} {w}"))
     | .dec a l k _, [t] => topC pre t (acc.push s!"d {natLC a} {natLC l} {k}")
     | .rev a l k _, [t] => topC pre t (acc.push s!"r {natLC a} {natLC l} {k}")
+    | .swap _, [t] => topC pre t (acc.push "w")
+    | .tighten _, [t] => topC pre t (acc.push "T")
     | _, _ => acc.push "?"
 
 /-- The loss of a top node, from its cut points' losses. -/
 partial def topLoss (subs : Array (Cert × Nat)) : Top → Nat
   | .sub i _ => (subs[i]!).2
-  | .node _ kids => kids.foldl (fun a k => a + topLoss subs k) 0
+  | .node _ _ kids => kids.foldl (fun a k => a + topLoss subs k) 0
 
 /-- The proof that `run` gives the top's loss: the node lemmas down to the cut points, each cut point by
 `decide +kernel` (an auxiliary lemma of its own). -/
 partial def topProof (subs : Array (Cert × Nat)) : Top → String
   | .sub _ _ => "(by decide +kernel)"
-  | .node c kids =>
+  | .node c S kids =>
     match c, kids with
     | .up .., [k] => s!"(run_up_of (by decide +kernel) {topProof subs k})"
     | .comb .., [k] => s!"(run_comb_of (by decide +kernel) {topProof subs k})"
@@ -1053,7 +1062,12 @@ partial def topProof (subs : Array (Cert × Nat)) : Top → String
     | .cut .., [k1, k2] =>
       s!"(run_cut_of (L₁ := {topLoss subs k1}) (L₂ := {topLoss subs k2}) (by decide +kernel) {topProof subs k1} " ++
         s!"{topProof subs k2} rfl)"
-    | .dec .., [k] => s!"(run_dec_std_of (by decide +kernel) {topProof subs k})"
+    | .dec .., [k] =>
+      match S with
+      | .std _ => s!"(run_dec_std_of (by decide +kernel) {topProof subs k})"
+      | _ => s!"(run_dec_two_of (by intro _ h; cases h) (by decide +kernel) {topProof subs k})"
+    | .swap _, [k] => s!"(run_swap_of (by decide +kernel) {topProof subs k})"
+    | .tighten _, [k] => s!"(run_tighten_of {topProof subs k})"
     | .rev .., [k] => s!"(run_rev_std_of (by decide +kernel) {topProof subs k})"
     | _, _ => "(unsupportedTopNode)"
 

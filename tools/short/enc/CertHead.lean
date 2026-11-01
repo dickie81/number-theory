@@ -185,4 +185,25 @@ theorem run_rev_std_of {k : ℕ} {acts labels : List ℕ} {kind : ℕ} {t : Cert
     run E (.rev acts labels kind t) (.std (k + 1)) Γ B b = some L := by
   rw [run, if_pos h, ht]
 
+theorem run_dec_two_of {acts labels : List ℕ} {kind : ℕ} {t : Cert} (hS : ∀ k, S ≠ .std k)
+    (h : S.m = 2 ∧ actsOK Γ acts B.length = true ∧
+      typeICheck S.items (S.k + 1) E B (actsOf Γ acts) labels kind = true)
+    (ht : run E t (.last S) (geL (S.items.getD (S.k + 1) LF.zero) B.length ::
+          (Γ ++ [ordL (S.items.getD (S.sN 1) LF.zero) B.length]))
+        (B ++ [(NU0, (S.items.getD (S.sN 1) LF.zero).maxB B E)]) (!b) = some L) :
+    run E (.dec acts labels kind t) S Γ B b = some L := by
+  cases S with
+  | std k => exact absurd rfl (hS k)
+  | rev k => simp only [run]; rw [if_pos h]; exact ht
+  | last S' => simp only [run]; rw [if_pos h]; exact ht
+  | swap S' => simp only [run]; rw [if_pos h]; exact ht
+
+theorem run_swap_of {t : Cert} (h : S.m = 2) (ht : run E t (.swap S) Γ B b = some L) :
+    run E (.swap t) S Γ B b = some L := by
+  rw [run, if_pos h, ht]
+
+theorem run_tighten_of {t : Cert} (ht : run E t S Γ (tightenList E Γ B) b = some L) :
+    run E (.tighten t) S Γ B b = some L := by
+  rw [run, ht]
+
 end ShortSieveCert

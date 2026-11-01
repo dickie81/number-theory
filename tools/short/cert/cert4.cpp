@@ -384,6 +384,7 @@ static void buildPalette(int ri, const Box& root, const RootCtx& rc, Palette& pa
 static std::atomic<long long> CUTS[NT_COUNT][6];   // peel, midpoint, slack, minus-peel, diagonal, alt-minus
 struct VS { int q1 = 0, k1 = 1, q2 = 0, k2 = 1; };
 static std::atomic<long long> ROOTDROPS(0);   // the root's last-resort drops
+static int N2DROP = 0;                         // n2drop=1: the root may drop like any + node, by cost
 
 struct Gen {
     Tree tr;
@@ -823,7 +824,7 @@ struct Gen {
         if (USE_TII && searchTII(d.items, B, part)) { filtOff(); T[mark].dec = D_ASYM_TII; T[mark].w = part; traceNode(t, B, K, lvl, "ASYM-TII", nullptr); return 0; }
         filtOff();
         const i64 LAM = (i64)(LAMBDA * SC);
-        bool canDrop = d.plus && t != N2;
+        bool canDrop = d.plus && (t != N2 || N2DROP);
         VS vs;
         i64 drop = canDrop ? bestDrop(t, B, rc, K, act, vs, LAM) : INF;
         double dropNodes = 1 + (vs.k1 * vs.k2 > 1 ? VSW * vs.k1 * vs.k2 : 0);
@@ -1270,6 +1271,7 @@ int main(int argc, char** argv) {
         else if (k == "vsw") VSW = atof(v.c_str());
         else if (k == "altminus") ALTMINUS = atoi(v.c_str());
         else if (k == "altmin") ALTMIN = atof(v.c_str());
+        else if (k == "n2drop") N2DROP = atoi(v.c_str());
         else if (k == "r0") r0 = atoi(v.c_str());
         else if (k == "r1") r1 = atoi(v.c_str());
         else if (k == "tree") treeOut = v;
