@@ -10,6 +10,8 @@ multiplicity (`kerH`). At `ρ = ½ + iγ` the term is `r^{iγ}/(¼ + γ²)`.
 * Unlike `K`, `K_H` is not smooth at `1` in any realization: no `M` has `‖K_H(r) + K_H(1/r) − 2K_H(1)‖ ≤ M(log r)²`
   for `1 ≤ r ≤ 2` (`not_smooth`). So the obstruction of `BallLattice.tendsto_norm_sub_of_smooth`, which shows that no
   realization of `K` spans a lattice, does not apply to `K_H`.
+* In every realization of `K_H` the gaps `‖w_{n+1} − w_n‖` are unbounded (`unbounded_gaps`), so they do not tend to
+  `0` as they do for `K` (`BallLattice.not_discrete`).
 
 * The weight `1/(ρ(1 − ρ))` is `G(P) = 4/(1 − P²)` at the pole `P = 2(ρ − ½)` of the twin form (`hG`), so the
   `2 × 2` minors of `K_H` are the twin sum of `TwinLandau` with these weights, and the converse is the Landau argument
@@ -19,15 +21,20 @@ multiplicity (`kerH`). At `ρ = ½ + iγ` the term is `r^{iγ}/(¼ + γ²)`.
 * Under RH, `2K_H(1) − K_H(r) − K_H(1/r) = Σ_ρ (2 − 2cos(γ log r))/(¼ + γ²)`. Each of the infinitely many zeros with
   `|γ| ≥ 1` (`ZerosInfinite.infinite_ZIdx`) gives at least `(log r)²·(2/5)` once `|γ log r| ≤ 1`, so the sum is not
   `O((log r)²)`.
+* For the gaps, `‖w_{n+1} − w_n‖² ≥ n·Σ_ρ (2 − 2cos(γu))/(¼ + γ²)` with `u = log(1 + 1/n)` (`gap_sq_ge`), and each
+  zero with `1 < |γ| ≤ n` adds at least `(2/5)/(n + 1)²` (`sum_cos_term_ge`). The number of zeros up to height `T` is
+  not `O(T)` (`ZerosDense.not_linear`), so at some `n` there are enough of them to push the bound past any `C²`.
 
 The weights `1/(¼ + γ²)` decay like `γ^{−2}`, against the Gaussian `e^{−γ²/2}` of `K`: the cusp of `K_H` at `1` comes
 from the zeros high up. This is the kernel suggested in `docs/ball-conjecture.md` after `BallLattice`. Whether the orbit
-of a realization of `K_H` spans a lattice is not decided here: that needs the zeros to be dense enough, near every
-height, which the library does not prove.
+of a realization of `K_H` spans a lattice is still not decided here. A lattice needs `‖Σ a_r w_r‖` bounded below over
+all nonzero integer combinations. Unbounded gaps rule out only the failure seen for `K`, neighbours `w_{n+1} − w_n`
+shrinking to `0`.
 -/
 import Mathlib
 import BallLattice
 import ZerosInfinite
+import ZerosDense
 
 open Real Complex Finset Filter Topology ComplexConjugate WeilForm WeilTest
 open scoped ComplexOrder
@@ -259,6 +266,49 @@ lemma kerH_second_diff (hRH : RiemannHypothesis) (r : ℝ) :
   push_cast at hc ⊢
   linear_combination (1 / (1 / 4 + (t : ℂ) ^ 2)) * hc
 
+/-- Under RH, `ρ − ½ = iγ`. -/
+lemma zZF_sub_half (hRH : RiemannHypothesis) (q : ZIdx) :
+    zetaZeroFamily q - 1 / 2 = I * ((zetaZeroFamily q).im : ℂ) := by
+  have h := line_of_RH hRH q
+  apply Complex.ext <;> simp [h]
+
+lemma cos_term_nonneg (t u : ℝ) : 0 ≤ (2 - 2 * Real.cos (t * u)) / (1 / 4 + t ^ 2) :=
+  div_nonneg (by linarith [Real.cos_le_one (t * u)]) (by positivity)
+
+/-- **`(2/5)u² ≤ (2 − 2cos(tu))/(¼ + t²)`** when `1 ≤ |t|` and `|tu| ≤ 1`: there `1 − cos x ≥ x²/4`. -/
+lemma cos_term_ge {t u : ℝ} (ht : 1 ≤ |t|) (hx : |t * u| ≤ 1) :
+    2 / 5 * u ^ 2 ≤ (2 - 2 * Real.cos (t * u)) / (1 / 4 + t ^ 2) := by
+  have hcos := Real.cos_bound hx
+  have hx2 : (t * u) ^ 2 ≤ 1 := by
+    have := sq_abs (t * u)
+    nlinarith [abs_nonneg (t * u)]
+  have h4 : |t * u| ^ 4 = ((t * u) ^ 2) ^ 2 := by rw [← sq_abs (t * u)]; ring
+  have hlow : (t * u) ^ 2 / 4 ≤ 1 - Real.cos (t * u) := by
+    rw [h4] at hcos
+    have := (abs_le.1 hcos).2
+    nlinarith [sq_nonneg (t * u)]
+  have ht2 : 1 ≤ t ^ 2 := by nlinarith [sq_abs t]
+  rw [le_div_iff₀ (by positivity)]
+  nlinarith [sq_nonneg u]
+
+/-- Under RH the terms `(2 − 2cos(γu))/(¼ + γ²)` are summable: they are at most `4/|ρ(1 − ρ)|`. -/
+lemma summable_cos_term (hRH : RiemannHypothesis) (u : ℝ) :
+    Summable fun q : ZIdx =>
+      (2 - 2 * Real.cos ((zetaZeroFamily q).im * u)) / (1 / 4 + (zetaZeroFamily q).im ^ 2) := by
+  refine (summable_hw.mul_left 4).of_nonneg_of_le (fun q => cos_term_nonneg _ _) fun q => ?_
+  set t : ℝ := (zetaZeroFamily q).im with ht
+  have hline : zetaZeroFamily q - 1 / 2 = I * t := zZF_sub_half hRH q
+  have hrr : ‖1 / (zetaZeroFamily q * (1 - zetaZeroFamily q))‖ = 1 / (1 / 4 + t ^ 2) := by
+    have : zetaZeroFamily q = 1 / 2 + I * t := by linear_combination hline
+    rw [this, show (1 / 2 + I * t) * (1 - (1 / 2 + I * t)) = ((1 / 4 + t ^ 2 : ℝ) : ℂ) by
+      push_cast; linear_combination (-(t : ℂ) ^ 2) * Complex.I_sq]
+    rw [norm_div, norm_one, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
+  rw [hrr]
+  have := Real.neg_one_le_cos (t * u)
+  rw [div_le_iff₀ (by positivity)]
+  field_simp
+  linarith
+
 /-- **`K_H` is not smooth at `1`** in any realization: no `M` has `‖K_H(r) + K_H(1/r) − 2K_H(1)‖ ≤ M(log r)²` for
 `1 ≤ r ≤ 2`. A realization gives RH, and then each of the infinitely many zeros with `|γ| ≥ 1` adds at least
 `(2/5)(log r)²` to `2K_H(1) − K_H(r) − K_H(1/r)` once `|γ log r| ≤ 1`. -/
@@ -270,9 +320,7 @@ theorem not_smooth (R : Realization kerH) :
   -- the zeros with `|γ| ≥ 1` are infinitely many
   have hfin : {q : ZIdx | |t q| < 1}.Finite := by
     refine (finite_poleP 2).subset fun q hq => ?_
-    have hline : zetaZeroFamily q - 1 / 2 = I * t q := by
-      have h := line_of_RH hRH q
-      apply Complex.ext <;> simp [ht, h]
+    have hline : zetaZeroFamily q - 1 / 2 = I * t q := zZF_sub_half hRH q
     simp only [Set.mem_ofPred_eq] at hq ⊢
     unfold poleP
     rw [hline, norm_mul, norm_mul, Complex.norm_I, Complex.norm_real, Real.norm_eq_abs, Complex.norm_two]
@@ -300,57 +348,174 @@ theorem not_smooth (R : Realization kerH) :
   -- each term of `F` gives at least `(2/5)u²`
   have hterm : ∀ q ∈ F, 2 / 5 * u ^ 2 ≤ (2 - 2 * Real.cos (t q * u)) / (1 / 4 + t q ^ 2) := by
     intro q hq
-    have h1 : 1 ≤ |t q| := hFs hq
     have hle : |t q| ≤ T := by
       have := Finset.single_le_sum (f := fun q => |t q|) (fun q _ => abs_nonneg (t q)) hq
       linarith
-    have hx : |t q * u| ≤ 1 := by
-      rw [abs_mul, abs_of_pos hu0]
-      calc |t q| * u ≤ T * (1 / T) := mul_le_mul hle (min_le_right _ _) hu0.le (by linarith)
-        _ = 1 := by field_simp
-    have hcos := Real.cos_bound hx
-    have hx2 : (t q * u) ^ 2 ≤ 1 := by
-      have := sq_abs (t q * u)
-      nlinarith [abs_nonneg (t q * u)]
-    have h4 : |t q * u| ^ 4 = ((t q * u) ^ 2) ^ 2 := by rw [← sq_abs (t q * u)]; ring
-    have hlow : (t q * u) ^ 2 / 4 ≤ 1 - Real.cos (t q * u) := by
-      rw [h4] at hcos
-      have := (abs_le.1 hcos).2
-      nlinarith [sq_nonneg (t q * u)]
-    have ht2 : 1 ≤ t q ^ 2 := by nlinarith [sq_abs (t q)]
-    rw [le_div_iff₀ (by positivity)]
-    nlinarith [sq_nonneg u]
+    refine cos_term_ge (hFs hq) ?_
+    rw [abs_mul, abs_of_pos hu0]
+    calc |t q| * u ≤ T * (1 / T) := mul_le_mul hle (min_le_right _ _) hu0.le (by linarith)
+      _ = 1 := by field_simp
   have hS : ∑ q ∈ F, (2 - 2 * Real.cos (t q * u)) / (1 / 4 + t q ^ 2) ≤
-      ∑' q : ZIdx, (2 - 2 * Real.cos (t q * u)) / (1 / 4 + t q ^ 2) := by
-    refine Summable.sum_le_tsum F (fun q _ => ?_) ?_
-    · exact div_nonneg (by linarith [Real.cos_le_one (t q * u)]) (by positivity)
-    · refine (summable_hw.mul_left 4).of_nonneg_of_le (fun q => ?_) fun q => ?_
-      · exact div_nonneg (by linarith [Real.cos_le_one (t q * u)]) (by positivity)
-      · have hline : zetaZeroFamily q - 1 / 2 = I * t q := by
-          have h := line_of_RH hRH q
-          apply Complex.ext <;> simp [ht, h]
-        have hrr : ‖1 / (zetaZeroFamily q * (1 - zetaZeroFamily q))‖ = 1 / (1 / 4 + t q ^ 2) := by
-          have : zetaZeroFamily q = 1 / 2 + I * t q := by linear_combination hline
-          rw [this, show (1 / 2 + I * t q) * (1 - (1 / 2 + I * t q)) = ((1 / 4 + t q ^ 2 : ℝ) : ℂ) by
-            push_cast; linear_combination (-(t q : ℂ) ^ 2) * Complex.I_sq]
-          rw [norm_div, norm_one, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
-        rw [hrr]
-        have := Real.neg_one_le_cos (t q * u)
-        rw [div_le_iff₀ (by positivity)]
-        field_simp
-        linarith
+      ∑' q : ZIdx, (2 - 2 * Real.cos (t q * u)) / (1 / 4 + t q ^ 2) :=
+    Summable.sum_le_tsum F (fun q _ => cos_term_nonneg _ _) (summable_cos_term hRH u)
   have hsum : (⌈4 * M⌉₊ + 1 : ℝ) * (2 / 5 * u ^ 2) ≤ M * u ^ 2 := by
     have h := Finset.card_nsmul_le_sum F _ _ hterm
     rw [hFc, nsmul_eq_mul] at h
     push_cast at h
     have hnn : 0 ≤ ∑' q : ZIdx, (2 - 2 * Real.cos (t q * u)) / (1 / 4 + t q ^ 2) :=
-      tsum_nonneg fun q => div_nonneg (by linarith [Real.cos_le_one (t q * u)]) (by positivity)
+      tsum_nonneg fun q => cos_term_nonneg _ _
     rw [Real.norm_of_nonneg hnn] at hbound
     linarith
   have hu2 : 0 < u ^ 2 := by positivity
   have hceil : 4 * M ≤ ⌈4 * M⌉₊ := Nat.le_ceil _
   have hc0 : (0 : ℝ) ≤ ⌈4 * M⌉₊ := Nat.cast_nonneg _
   nlinarith
+
+/-! ## The gaps of a realization of `K_H` are unbounded -/
+
+/-- **`‖w_{n+1} − w_n‖² ≥ n·Σ_ρ (2 − 2cos(γu))/(¼ + γ²)`** with `u = log(1 + 1/n)`, in every realization of `K_H`:
+`‖w_{n+1} − w_n‖² = (2n + 1 − 2s)·K_H(1) + s·Σ_ρ …` with `s = √(n(n + 1)) ≥ n`, and `K_H(1) = ‖w_1‖² ≥ 0`. -/
+lemma gap_sq_ge (R : Realization kerH) {n : ℕ} (hn : 0 < n) :
+    (n : ℝ) * ∑' q : ZIdx, (2 - 2 * Real.cos ((zetaZeroFamily q).im * Real.log (((n : ℝ) + 1) / n))) /
+      (1 / 4 + (zetaZeroFamily q).im ^ 2) ≤ ‖R.w ((n : ℚ) + 1) - R.w n‖ ^ 2 := by
+  have hRH := rh_of_posDefH (posDefQ_of_realization R)
+  have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
+  have e := norm_sub_sq R (show (0 : ℚ) < (n : ℚ) + 1 by positivity) (show (0 : ℚ) < n by exact_mod_cast hn)
+  push_cast at e
+  set s := Real.sqrt (((n : ℝ) + 1) * n) with hs
+  set r : ℝ := ((n : ℝ) + 1) / n with hr
+  have hr' : (n : ℝ) / ((n : ℝ) + 1) = r⁻¹ := by rw [hr, inv_div]
+  rw [hr'] at e
+  set S : ℝ := ∑' q : ZIdx, (2 - 2 * Real.cos ((zetaZeroFamily q).im * Real.log r)) /
+    (1 / 4 + (zetaZeroFamily q).im ^ 2) with hS
+  set c : ℝ := 2 + eulerMascheroniConstant - Real.log (4 * π) with hc
+  have hsd : kerH r + kerH r⁻¹ - 2 * kerH 1 = -((S : ℝ) : ℂ) := kerH_second_diff hRH r
+  have hk1 : kerH 1 = ((c : ℝ) : ℂ) := kerH_one
+  have e2 : ((‖R.w ((n : ℚ) + 1) - R.w n‖ ^ 2 : ℝ) : ℂ) =
+      ((2 * n + 1 - 2 * s : ℝ) : ℂ) * kerH 1 - (s : ℂ) * (kerH r + kerH r⁻¹ - 2 * kerH 1) := by
+    rw [Complex.ofReal_pow, e]
+    push_cast
+    ring
+  rw [hsd, hk1] at e2
+  have e3 : ‖R.w ((n : ℚ) + 1) - R.w n‖ ^ 2 = (2 * n + 1 - 2 * s) * c + s * S := by
+    apply Complex.ofReal_injective
+    rw [e2]
+    push_cast
+    ring
+  have hc0 : 0 ≤ c := by
+    have h := norm_sq_w R (show (0 : ℚ) < 1 by norm_num)
+    rw [hk1, Rat.cast_one, one_mul] at h
+    have h' : ‖R.w 1‖ ^ 2 = c := Complex.ofReal_injective h
+    rw [← h']
+    positivity
+  have hS0 : 0 ≤ S := tsum_nonneg fun q => cos_term_nonneg _ _
+  have hs0 : 0 ≤ s := Real.sqrt_nonneg _
+  have hss : s ^ 2 = ((n : ℝ) + 1) * n := Real.sq_sqrt (by positivity)
+  have hsn : (n : ℝ) ≤ s := by nlinarith
+  have hsl : s ≤ (n : ℝ) + 1 / 2 := by nlinarith
+  rw [e3]
+  have hd : 0 ≤ (2 * (n : ℝ) + 1 - 2 * s) * c := mul_nonneg (by linarith) hc0
+  have h2 : (n : ℝ) * S ≤ s * S := mul_le_mul_of_nonneg_right hsn hS0
+  linarith
+
+/-- **`Σ_ρ (2 − 2cos(γu))/(¼ + γ²) ≥ (2/5)u²·(N(T) − N(1))`** under RH, for `u ≥ 0` with `Tu ≤ 1`: each zero pair `±τ`
+with `1 < |τ| ≤ T` gives the zero `½ + i|τ|`, whose term is at least `(2/5)u²` (`cos_term_ge`). -/
+lemma sum_cos_term_ge (hRH : RiemannHypothesis) {T u : ℝ} (hu0 : 0 ≤ u) (hTu : T * u ≤ 1) :
+    2 / 5 * u ^ 2 * ((ZerosDense.count T : ℝ) - ZerosDense.count 1) ≤
+      ∑' q : ZIdx, (2 - 2 * Real.cos ((zetaZeroFamily q).im * u)) / (1 / 4 + (zetaZeroFamily q).im ^ 2) := by
+  set D : Finset (ZeroIdx (sqF Xi)) := (ZerosDense.finite_le T).toFinset \ (ZerosDense.finite_le 1).toFinset
+    with hD
+  have hDc : (ZerosDense.count T : ℝ) - ZerosDense.count 1 ≤ D.card := by
+    have h1 : ZerosDense.count T = (ZerosDense.finite_le T).toFinset.card :=
+      Set.ncard_eq_toFinset_card _ (ZerosDense.finite_le T)
+    have h2 : ZerosDense.count 1 = (ZerosDense.finite_le 1).toFinset.card :=
+      Set.ncard_eq_toFinset_card _ (ZerosDense.finite_le 1)
+    have h3 : (ZerosDense.count T : ℝ) ≤ D.card + ZerosDense.count 1 := by
+      rw [h1, h2]
+      exact_mod_cast Finset.card_le_card_sdiff_add_card
+    linarith
+  have hinj : Function.Injective fun i : ZeroIdx (sqF Xi) => zetaEquiv.symm (true, i) :=
+    zetaEquiv.symm.injective.comp (Prod.mk_right_injective true)
+  set ι : ZeroIdx (sqF Xi) ↪ ZIdx := ⟨fun i => zetaEquiv.symm (true, i), hinj⟩ with hι
+  have hterm : ∀ q ∈ D.map ι, 2 / 5 * u ^ 2 ≤
+      (2 - 2 * Real.cos ((zetaZeroFamily q).im * u)) / (1 / 4 + (zetaZeroFamily q).im ^ 2) := by
+    intro q hq
+    obtain ⟨i, hi, rfl⟩ := Finset.mem_map.1 hq
+    obtain ⟨hiT, hi1⟩ := Finset.mem_sdiff.1 hi
+    simp only [Set.Finite.mem_toFinset, Set.mem_ofPred_eq, not_le] at hiT hi1
+    have habs : |(zetaZeroFamily (ι i)).im| = ‖tau i‖ := by
+      have h := norm_zZF_sub (ι i)
+      rw [zZF_sub_half hRH, norm_mul, Complex.norm_I, one_mul, Complex.norm_real, Real.norm_eq_abs] at h
+      rw [h, hι]
+      simp
+    refine cos_term_ge (by rw [habs]; exact hi1.le) ?_
+    rw [abs_mul, abs_of_nonneg hu0, habs]
+    exact (mul_le_mul_of_nonneg_right hiT hu0).trans hTu
+  have h1 := Finset.card_nsmul_le_sum (D.map ι) _ _ hterm
+  rw [Finset.card_map, nsmul_eq_mul] at h1
+  have h2 := Summable.sum_le_tsum (D.map ι) (fun q _ => cos_term_nonneg _ _) (summable_cos_term hRH u)
+  have h3 : 0 ≤ 2 / 5 * u ^ 2 := by positivity
+  linarith [mul_le_mul_of_nonneg_left hDc h3]
+
+/-- The arithmetic of `unbounded_gaps`: with `T ≤ n < T + 1`, `u ≥ 1/(n + 1)` and more than `(20C² + N₁)T` zero pairs
+below `T`, `n·(2/5)u²·(N(T) − N₁) ≥ C²`. -/
+lemma gap_arith {C T n u S x N₁ N : ℝ} (hT1 : 1 ≤ T) (hTn : T ≤ n) (hnT : n < T + 1) (hul : 1 / (n + 1) ≤ u)
+    (hN0 : 0 ≤ N₁) (hTA : (20 * C ^ 2 + N₁) * T < N) (h1 : n * S ≤ x) (h2 : 2 / 5 * u ^ 2 * (N - N₁) ≤ S) :
+    C ^ 2 ≤ x := by
+  have hn1 : 1 ≤ n := hT1.trans hTn
+  have hn0 : 0 < n := by linarith
+  have hD : 20 * C ^ 2 * T ≤ N - N₁ := by nlinarith [mul_nonneg hN0 (sub_nonneg.2 hT1)]
+  have hD0 : 0 ≤ N - N₁ := le_trans (by positivity) hD
+  have hu' : 1 ≤ u * (n + 1) := (div_le_iff₀ (by positivity)).1 hul
+  have hu2 : 1 ≤ (u * (n + 1)) ^ 2 := one_le_pow₀ hu'
+  have hn4 : (n + 1) ^ 2 ≤ 8 * T * n := by
+    nlinarith [mul_nonneg (sub_nonneg.2 hn1) (show 0 ≤ 3 * n + 1 by linarith),
+      mul_nonneg (show 0 ≤ 2 * T - n by linarith) hn0.le]
+  have key : C ^ 2 * (n + 1) ^ 2 ≤ (n * (2 / 5 * u ^ 2 * (N - N₁))) * (n + 1) ^ 2 := by
+    calc C ^ 2 * (n + 1) ^ 2 ≤ C ^ 2 * (8 * T * n) := mul_le_mul_of_nonneg_left hn4 (sq_nonneg C)
+      _ ≤ 2 / 5 * n * (N - N₁) := by nlinarith [mul_le_mul_of_nonneg_left hD hn0.le]
+      _ ≤ 2 / 5 * n * (N - N₁) * (u * (n + 1)) ^ 2 := le_mul_of_one_le_right (by positivity) hu2
+      _ = (n * (2 / 5 * u ^ 2 * (N - N₁))) * (n + 1) ^ 2 := by ring
+  have h3 : n * (2 / 5 * u ^ 2 * (N - N₁)) ≤ x := (mul_le_mul_of_nonneg_left h2 hn0.le).trans h1
+  exact (le_of_mul_le_mul_right key (by positivity)).trans h3
+
+/-- **The gaps are unbounded** in every realization of `K_H`: for every `C` some `n ≥ 1` has
+`‖w_{n+1} − w_n‖ ≥ C`, where for `K` they tend to `0` (`BallLattice.not_discrete`).
+
+A realization gives RH, and `‖w_{n+1} − w_n‖² ≥ n·Σ_ρ (2 − 2cos(γu))/(¼ + γ²)` with `u = log(1 + 1/n)` (`gap_sq_ge`).
+Each zero `½ + i|τ|` with `1 < |τ| ≤ n` adds at least `(2/5)u² ≥ (2/5)/(n + 1)²` (`sum_cos_term_ge`). By
+`ZerosDense.not_linear` some `T ≥ 1` has more than `(20C² + N(1))·T` zero pairs with `|τ| ≤ T`, and `n = ⌈T⌉` gives
+`‖w_{n+1} − w_n‖² ≥ C²`. -/
+theorem unbounded_gaps (R : Realization kerH) (C : ℝ) :
+    ∃ n : ℕ, 0 < n ∧ C ≤ ‖R.w ((n : ℚ) + 1) - R.w n‖ := by
+  have hRH := rh_of_posDefH (posDefQ_of_realization R)
+  obtain ⟨T, hT1, hTA⟩ : ∃ T : ℝ, 1 ≤ T ∧ (20 * C ^ 2 + ZerosDense.count 1) * T < ZerosDense.count T := by
+    by_contra h
+    push Not at h
+    exact ZerosDense.not_linear ⟨20 * C ^ 2 + ZerosDense.count 1, h⟩
+  have hTn : T ≤ ⌈T⌉₊ := Nat.le_ceil T
+  have hnT : (⌈T⌉₊ : ℝ) < T + 1 := Nat.ceil_lt_add_one (by linarith)
+  set n : ℕ := ⌈T⌉₊ with hn
+  have hn0 : (0 : ℝ) < n := by linarith
+  have h1 := gap_sq_ge R (n := n) (by exact_mod_cast hn0)
+  set u : ℝ := Real.log (((n : ℝ) + 1) / n) with hu
+  have hr0 : (0 : ℝ) < ((n : ℝ) + 1) / n := by positivity
+  have hu1 : u ≤ 1 / n := by
+    have h := Real.log_le_sub_one_of_pos hr0
+    have h' : ((n : ℝ) + 1) / n - 1 = 1 / n := by rw [div_sub_one hn0.ne']; ring
+    linarith
+  have hul : 1 / ((n : ℝ) + 1) ≤ u := by
+    have h := Real.one_sub_inv_le_log_of_pos hr0
+    have h' : 1 - (((n : ℝ) + 1) / n)⁻¹ = 1 / ((n : ℝ) + 1) := by
+      rw [inv_div, one_sub_div (by positivity)]
+      ring
+    linarith
+  have hu0 : 0 ≤ u := le_trans (by positivity) hul
+  have hTu : T * u ≤ 1 :=
+    (mul_le_mul hTn hu1 hu0 hn0.le).trans (mul_one_div_cancel hn0.ne').le
+  have h2 := sum_cos_term_ge hRH hu0 hTu
+  have hC2 := gap_arith hT1 hTn hnT hul (Nat.cast_nonneg _) hTA h1 h2
+  refine ⟨n, by exact_mod_cast hn0, (le_abs_self C).trans (abs_le_of_sq_le_sq hC2 (norm_nonneg _))⟩
 
 end BallHadamard
 
@@ -359,3 +524,4 @@ end BallHadamard
 #print axioms BallHadamard.rh_iff_posDefH
 #print axioms BallHadamard.rh_iff_realizationH
 #print axioms BallHadamard.not_smooth
+#print axioms BallHadamard.unbounded_gaps
