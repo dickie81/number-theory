@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1038 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1042 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 88 | 206 |
+| `lib/core` | 89 | 210 |
 | `lib/pnt` | 229 | 730 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 8 | 34 |
@@ -261,8 +261,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ManinHasse.trace_sq_le`: Hasse's bound for every elliptic curve over a finite field of odd characteristic
 - `ManinHasse.abs_trace_le`: Hasse's bound for every elliptic curve over a finite field of odd characteristic
 
-#### `ManinTwist`: Manin's twist: the degree of the `x`-coordinate is a quadratic form along `P₀`
+#### `ManinLattice`: The Frobenius lattice: the Riemann hypothesis for an elliptic curve in every degree, from a definite form
 
+- `ManinHasse.gram_nonneg`: The Gram matrix of the Frobenius points is positive semidefinite
+- `ManinHasse.toeplitz_nonneg`: The Riemann hypothesis for an elliptic curve in every degree, from a definite form
+- `ManinHasse.trace_two_ge`: A constraint between `#E(𝔽_q)` and `#E(𝔽_{q²})`
+
+#### `ManinTwist`: Manin's twist: the degree of the `x`-coordinate is a quadratic form
+
+- `ManinHasse.pdeg_parallelogram`: The parallelogram law
 - `ManinHasse.pdeg_add_add_pdeg_sub`: `deg(P + P₀) + deg(P − P₀) = 2 deg P + 2`
 
 #### `MertensOmega`: Mertens and Liouville: one-sided bounds give zero-free half-planes

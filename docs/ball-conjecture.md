@@ -25,12 +25,14 @@ places the Frobenius of a curve over `𝔽_q` on a sphere of radius `√q`.
   Frobenius is an Eisenstein integer `u + vω` of norm `q`, a point of the lattice `ℤ[ω]` on the circle of radius `√q`
   (`HasseEisenstein.exists_eisenstein_trace`), and `HasseEisenstein.abs_trace_le` is Hasse's bound. For every elliptic
   curve over a finite field of odd characteristic the library proves Hasse's bound by Yu. I. Manin's argument, also
-  without isogenies (`ManinHasse.abs_trace_le`). It is this positivity in another guise. Over `𝔽_q(t)`, take the twist
-  of `E` by `s = f(t)`, with its points `P₀ = (st, s²)`, which plays the identity, and `P₁ = (st^q, s^{(q+3)/2})`, which
-  plays the Frobenius `π`. The degree of `x/s` obeys, along `P₀`, the parallelogram law of a quadratic form
-  (`ManinHasse.pdeg_add_add_pdeg_sub`). `P₀` has degree 1, `P₁` degree `q`, and `P₁ − P₀` degree `#E(𝔽_q)`
-  (`ManinHasse.pdeg_P1_sub_P0`). So the degree along `P₁ + nP₀` is `n² + (q + 1 − #E(𝔽_q))n + q`, the degree form on
-  `ℤ[π]`, and it is nonnegative. Both bounds are stated against Mathlib's `WeierstrassCurve` and its points.
+  without isogenies (`ManinHasse.abs_trace_le`). It is this positivity in another guise, and the library makes the
+  lattice explicit (`ManinLattice`). Over `𝔽_q(t)`, take the twist of `E` by `s = f(t)`. On its points the degree of
+  `x/s` is a quadratic form (`ManinHasse.pdeg_parallelogram`). The point `P₀ = (st, s²)` plays the identity, and the
+  Frobenius points `P_k = (st^{q^k}, s^{(q^k+3)/2})` play `π^k`, with `deg P_k = q^k`. The vectors `P_k/q^{k/2}` lie on
+  the unit sphere of that form, with inner products the normalised traces
+  `c_{|i−j|} = (q^d + 1 − #E(𝔽_{q^d}))/(2q^{d/2})`, `d = |i − j|`. So `k ↦ c_k` is a positive-definite function on `ℤ`
+  (`ManinHasse.toeplitz_nonneg`): the Riemann hypothesis for `E` in every degree, from definiteness alone. The bounds
+  are stated against Mathlib's `WeierstrassCurve` and its points.
 - **Curves of every genus.** The Néron–Severi lattice of `C × C`, definite away from an ample class. Not formalised:
   Mathlib has no intersection theory on surfaces, no Riemann–Roch for curves and no isogenies.
 
@@ -85,14 +87,14 @@ None of the following states the conjecture in this form; a search in October 20
 1. Rank two: `HasseEisenstein`, done.
 2. Hasse's bound for every elliptic curve: done in odd characteristic, by Manin's proof (`ManinHasse`). Characteristic 2
    remains: its twist is by an Artin–Schreier extension rather than by a square root.
-3. **The lattice itself, in rank two.** Manin's proof uses the degree along one line only, `n ↦ deg(P₁ + nP₀)`. The
-   points of the twist are `End(E)`, up to 2-torsion, and on them the degree is a quadratic form:
-   `deg(P + Q) + deg(P − Q) = 2 deg P + 2 deg Q` for all `P` and `Q`. Take the Frobenius points
-   `P_k = (st^{q^k}, s^{(q^k+3)/2})`, with `deg(P_i − P_j) = q^j·#E(𝔽_{q^{i−j}})`. The vectors `P_k/q^{k/2}` lie on the
-   unit sphere, and their inner products are the normalised traces `c_k = (q^k + 1 − #E(𝔽_{q^k}))/(2q^{k/2})`. So
-   `k ↦ c_k` is a positive-definite function on `ℤ`. That is the Riemann hypothesis for `E` in every degree at once,
-   from definiteness alone: the Frobenius powers are points on the sphere of a definite lattice. It also gives
-   constraints between `#E(𝔽_q)`, `#E(𝔽_{q²})`, … that Hasse's bound field by field does not, such as `c₂ ≥ 2c₁² − 1`.
+3. **The lattice itself, in rank two**: done (`ManinLattice`). Manin's proof uses the degree along one line only,
+   `n ↦ deg(P₁ + nP₀)`. On all the points of the twist, which are `End(E)` up to 2-torsion, the degree is a quadratic
+   form: `deg(P + Q) + deg(P − Q) = 2 deg P + 2 deg Q` (`ManinHasse.pdeg_parallelogram`). The Frobenius points have
+   `deg(P_i − P_j) = q^j·#E(𝔽_{q^{i−j}})`, so their Gram matrix is positive semidefinite (`ManinHasse.gram_nonneg`), and
+   `k ↦ c_k` is a positive-definite function on `ℤ` (`ManinHasse.toeplitz_nonneg`). It gives constraints between
+   `#E(𝔽_q)`, `#E(𝔽_{q²})`, … that Hasse's bound field by field does not: `c₂ ≥ 2c₁² − 1`, that is
+   `(q + 1 − #E(𝔽_q))² − 2q ≤ q² + 1 − #E(𝔽_{q²})` (`ManinHasse.trace_two_ge`); the zeta function of `E` makes it an
+   equality.
 4. Weil positivity for function fields, where it is a theorem, with a function-field analogue of `dh` to show which step
    uses the Euler product.
 5. **The statement for `ζ`.** Replace the Frobenius powers, indexed by `ℤ`, by the positive rationals `ℚ₊^× ≅ ℤ^{(∞)}`,
