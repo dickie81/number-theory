@@ -211,6 +211,7 @@ import AngularResidue
 import LocalTeeth
 import HasseEisenstein
 import ManinHasse
+import ManinLattice
 import BohrTorus
 import LSeriesLandau
 import HalfPlaneJoinsChar
@@ -1068,9 +1069,10 @@ bound; the Madelung constant of the square lattice, from Jacobi's two-square the
 
 /- More bridges, each named in `formalisations/`: integer points in balls and `L(1, χ₋₄) = π/4` from them; the local
 densities of sums of two and four squares; Hasse's bound for the curves `y² = x³ + D`, whose Frobenius is an
-Eisenstein integer, and for every elliptic curve over a finite field of odd characteristic, by Manin's proof; Bohr's
-torus; Landau's theorem for Dirichlet series with nonnegative coefficients; the band `1/12 ≤ Re ρ ≤ 11/12` for every
-Dirichlet `L`-function, and the twin-form rates at `11/12`. -/
+Eisenstein integer, and for every elliptic curve over a finite field of odd characteristic, by Manin's proof, with the
+Riemann hypothesis for it in every degree from the lattice of Manin's twist; Bohr's torus; Landau's theorem for
+Dirichlet series with nonnegative coefficients; the band `1/12 ≤ Re ρ ≤ 11/12` for every Dirichlet `L`-function, and the
+twin-form rates at `11/12`. -/
 #print axioms BallTower.count_div_pow_tendsto_ballVol
 #print axioms BallTower.counted_volume_max_five
 #print axioms AngularResidue.residue_angular
@@ -1085,6 +1087,10 @@ Dirichlet `L`-function, and the twin-form rates at `11/12`. -/
 #print axioms ManinHasse.pdeg_P1_sub_P0
 #print axioms ManinHasse.trace_sq_le
 #print axioms ManinHasse.abs_trace_le
+#print axioms ManinHasse.pdeg_parallelogram
+#print axioms ManinHasse.gram_nonneg
+#print axioms ManinHasse.toeplitz_nonneg
+#print axioms ManinHasse.trace_two_ge
 #print axioms BohrTorus.eq_zero_of_sum_log
 #print axioms BohrTorus.tendsto_mean_character
 #print axioms BohrTorus.sum_norm_sq_torus
