@@ -10,7 +10,8 @@ space with vectors `w_r`, one for each positive rational `r`, and linear maps `�
 It is the object of the sixth of the first steps in `docs/ball-conjecture.md`, in a Hilbert space rather than a lattice.
 * Mathlib's `RiemannHypothesis` holds if and only if `K` has a realization (`rh_iff_realization`). Under RH one is `ℓ²`
   of the zeros, with `w_r = (e^{(ρ − ½)²/4} r^ρ)_ρ` and `φ_n` multiplying the coordinate of `ρ` by `n^ρ`
-  (`realization`), so that the eigenvalues of `φ_n` are the numbers `n^ρ` (`phi_single`).
+  (`realization`, from `realizationOf`, which takes any square-summable weights), so that the eigenvalues of `φ_n` are
+  the numbers `n^ρ` (`phi_single`).
 * The similitudes alone give the Gram matrix its shape, `⟨w_b, w_a⟩ = b·⟨w_1, w_{a/b}⟩` (`gram_shape`), and an
   eigenvalue `p^ρ` of a similitude of factor `p > 1` has `Re ρ = ½` (`re_eq_half_of_eigen`).
 * But in every realization of `K` the vectors `w_{n+1} − w_n` are nonzero and their norms tend to `0`
@@ -196,11 +197,12 @@ lemma norm_pw_of_rh (hRH : RiemannHypothesis) (q : ZIdx) (r : ℝ) : ‖pw q r�
   simp [h]
   ring
 
-/-- The vector `w_r = (c_ρ r^ρ)_ρ`. -/
-def wv (r : ℚ) : L2 :=
-  ⟨fun q => cw q * pw q r, memℓp_of_sq <| by
-    refine ((summable_gw.congr fun q => (norm_cw_sq q).symm).mul_right (Real.exp |Real.log r| ^ 2)).of_nonneg_of_le
-      (fun q => by positivity) fun q => ?_
+lemma summable_cw_sq : Summable fun q => ‖cw q‖ ^ 2 := summable_gw.congr fun q => (norm_cw_sq q).symm
+
+/-- The vector `w_r = (c_ρ r^ρ)_ρ`, for weights with `Σ_ρ |c_ρ|² < ∞`. -/
+def wvOf (c : ZIdx → ℂ) (hc : Summable fun q => ‖c q‖ ^ 2) (r : ℚ) : L2 :=
+  ⟨fun q => c q * pw q r, memℓp_of_sq <| by
+    refine (hc.mul_right (Real.exp |Real.log r| ^ 2)).of_nonneg_of_le (fun q => by positivity) fun q => ?_
     rw [norm_mul, mul_pow]
     exact mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (norm_nonneg _) (norm_pw_le q r) 2) (by positivity)⟩
 
@@ -223,7 +225,8 @@ def phiL (n : ℕ) : L2 →ₗ[ℂ] L2 where
 
 lemma phiL_apply (n : ℕ) (x : L2) (q : ZIdx) : phiL n x q = pw q n * x q := rfl
 
-lemma wv_apply (r : ℚ) (q : ZIdx) : wv r q = cw q * pw q r := rfl
+lemma wvOf_apply (c : ZIdx → ℂ) (hc : Summable fun q => ‖c q‖ ^ 2) (r : ℚ) (q : ZIdx) :
+    wvOf c hc r q = c q * pw q r := rfl
 
 lemma pw_mul (q : ZIdx) {s t : ℝ} (hs : s ≠ 0) (ht : t ≠ 0) : pw q (s * t) = pw q s * pw q t := by
   unfold pw
@@ -240,12 +243,15 @@ theorem phi_single (q : ZIdx) (n : ℕ) : phiL n (lp.single 2 q 1) = pw q n • 
   · rfl
   · rw [Pi.single_eq_of_ne h, mul_zero, mul_zero]
 
-/-- **Under RH, `K` has a realization**: `ℓ²` of the zeros, with `w_r = (e^{(ρ − ½)²/4} r^ρ)_ρ` and `φ_n` multiplying
-the coordinate of `ρ` by `n^ρ`. On the line `|n^ρ|² = n`, and `e^{(ρ−½)²/4}·r^ρ` paired with itself at `a` and `b`
-is `√(ab)·e^{−γ²/2}(a/b)^{iγ}`. -/
-def realization (hRH : RiemannHypothesis) : Realization BallKernel.kerK where
+/-- **A realization in `ℓ²` of the zeros, under RH**: for weights `c_ρ` with `Σ_ρ |c_ρ|² < ∞` and
+`Σ_ρ c_ρa^ρ·conj(c_ρb^ρ) = √(ab)·k(a/b)`, the vectors `w_r = (c_ρ r^ρ)_ρ` and the maps `φ_n` multiplying the coordinate
+of `ρ` by `n^ρ` realize `k`. On the line `|n^ρ|² = n`. -/
+def realizationOf (hRH : RiemannHypothesis) {k : ℝ → ℂ} (c : ZIdx → ℂ) (hc : Summable fun q => ‖c q‖ ^ 2)
+    (hk : ∀ a b : ℚ, 0 < a → 0 < b →
+      ∑' q, c q * pw q a * conj (c q * pw q b) = (Real.sqrt ((a : ℝ) * b) : ℂ) * k ((a : ℝ) / b)) :
+    Realization k where
   E := L2
-  w := wv
+  w := wvOf c hc
   φ := phiL
   similitude n hn x y := by
     rw [lp.inner_eq_tsum, lp.inner_eq_tsum, ← tsum_mul_left]
@@ -271,33 +277,43 @@ def realization (hRH : RiemannHypothesis) : Realization BallKernel.kerK where
     rw [pw_mul q (by exact_mod_cast hm.ne') (by exact_mod_cast hn.ne')]
   orbit n r hn hr := by
     ext q
-    rw [phiL_apply, wv_apply, wv_apply]
+    rw [phiL_apply, wvOf_apply, wvOf_apply]
     push_cast
     rw [pw_mul q (by exact_mod_cast hn.ne') (by exact_mod_cast hr.ne')]
     ring
   gram a b ha hb := by
-    rw [lp.inner_eq_tsum]
-    unfold BallKernel.kerK
-    rw [← tsum_mul_left]
+    rw [lp.inner_eq_tsum, ← hk a b ha hb]
     refine tsum_congr fun q => ?_
-    rw [wv_apply, wv_apply, RCLike.inner_apply]
-    have ha0 : (0 : ℝ) < a := by exact_mod_cast ha
-    have hb0 : (0 : ℝ) < b := by exact_mod_cast hb
-    set t : ℝ := (zetaZeroFamily q).im with ht
-    have hline : zetaZeroFamily q = 1 / 2 + I * t := by
-      have h := line_of_RH hRH q
-      apply Complex.ext <;> simp [ht, h]
-    have hsq : (Real.sqrt ((a : ℝ) * b) : ℂ) = cexp ((Real.log a + Real.log b) / 2) := by
-      rw [Real.sqrt_eq_rpow, Real.rpow_def_of_pos (mul_pos ha0 hb0), Real.log_mul ha0.ne' hb0.ne']
-      push_cast
-      ring_nf
-    unfold cw pw
-    rw [hsq, hline, Real.log_div ha0.ne' hb0.ne', map_mul, ← Complex.exp_conj, ← Complex.exp_conj, ← Complex.exp_add,
-      ← Complex.exp_add, ← Complex.exp_add, ← Complex.exp_add, ← Complex.exp_add]
-    congr 1
-    simp only [map_add, map_mul, map_div₀, map_pow, map_one, map_ofNat, Complex.conj_I, Complex.conj_ofReal, map_sub]
+    rw [wvOf_apply, wvOf_apply, RCLike.inner_apply]
+
+/-- Under RH, `e^{(ρ−½)²/4}·a^ρ` paired with `e^{(ρ−½)²/4}·b^ρ` is `√(ab)·e^{−γ²/2}(a/b)^{iγ}`. -/
+lemma gram_cw (hRH : RiemannHypothesis) (a b : ℚ) (ha : 0 < a) (hb : 0 < b) :
+    ∑' q, cw q * pw q a * conj (cw q * pw q b) = (Real.sqrt ((a : ℝ) * b) : ℂ) * BallKernel.kerK ((a : ℝ) / b) := by
+  unfold BallKernel.kerK
+  rw [← tsum_mul_left]
+  refine tsum_congr fun q => ?_
+  have ha0 : (0 : ℝ) < a := by exact_mod_cast ha
+  have hb0 : (0 : ℝ) < b := by exact_mod_cast hb
+  set t : ℝ := (zetaZeroFamily q).im with ht
+  have hline : zetaZeroFamily q = 1 / 2 + I * t := by
+    have h := line_of_RH hRH q
+    apply Complex.ext <;> simp [ht, h]
+  have hsq : (Real.sqrt ((a : ℝ) * b) : ℂ) = cexp ((Real.log a + Real.log b) / 2) := by
+    rw [Real.sqrt_eq_rpow, Real.rpow_def_of_pos (mul_pos ha0 hb0), Real.log_mul ha0.ne' hb0.ne']
     push_cast
-    ring
+    ring_nf
+  unfold cw pw
+  rw [hsq, hline, Real.log_div ha0.ne' hb0.ne', map_mul, ← Complex.exp_conj, ← Complex.exp_conj, ← Complex.exp_add,
+    ← Complex.exp_add, ← Complex.exp_add, ← Complex.exp_add, ← Complex.exp_add]
+  congr 1
+  simp only [map_add, map_mul, map_div₀, map_pow, map_one, map_ofNat, Complex.conj_I, Complex.conj_ofReal, map_sub]
+  push_cast
+  ring
+
+/-- **Under RH, `K` has a realization**: `ℓ²` of the zeros, with `w_r = (e^{(ρ − ½)²/4} r^ρ)_ρ` and `φ_n` multiplying
+the coordinate of `ρ` by `n^ρ` (`realizationOf`). -/
+def realization (hRH : RiemannHypothesis) : Realization BallKernel.kerK :=
+  realizationOf hRH cw summable_cw_sq (gram_cw hRH)
 
 /-- **The Riemann hypothesis is the existence of a realization of `K`**: an inner product space with commuting
 similitudes `φ_n` of factor `n` and an orbit `w_r` with `⟨w_b, w_a⟩ = √(ab)·K(a/b)`. -/
