@@ -22,10 +22,11 @@ then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallP
     python3 scripts/ball_orbit.py --forward [N] # local pieces, reduced basis, and the coupling between the primes
     python3 scripts/ball_orbit.py --slices [X]  # the lattice of the numbers built from a fixed set of primes
     python3 scripts/ball_orbit.py --lattice [N] # the Gram matrix as a form over the logarithms of the primes
+    python3 scripts/ball_orbit.py --frontier [N] # the lonely primes, above N/2, and what the Gram matrix needs of them
 
 The first three options are the computations of "What a proof under RH would need" in docs/ball-conjecture.md,
 --places, --forward and --slices those of "Building the lattice forwards", --weil that of "Weil's form", and --lattice
-that of "The limit and the lattice".
+and --frontier those of "The limit and the lattice".
 """
 
 import math
@@ -496,13 +497,51 @@ def lattice(N):
           ", ".join(f"{G[n - 1, 0]:+.4f}" for n in range(1, 9)))
 
 
+def frontier(N):
+    """The lonely primes of stage N, the primes above N/2 with no other multiple up to N (LonelyPrimes): their share,
+    how the Gram matrix of stage 60 needs each of them, and their weight in ⟨w_1, w_N⟩ for N up to the given one."""
+    for M in [60, 3000, 10 ** 4, 10 ** 6]:
+        P = primes_upto(M)
+        lone = [p for p in P if 2 * p > M]
+        print(f"N = {M:>7}: {len(lone):5d} of the {len(P):5d} primes up to N lie above N/2 ({len(lone) / len(P):.0%})")
+    n0 = 60
+    P = primes_upto(n0)
+
+    def table(drop):
+        lam = np.zeros(n0 + 1)
+        for p in P:
+            if p not in drop:
+                q = p
+                while q <= n0:
+                    lam[q] = math.log(p)
+                    q *= p
+        return lam
+    G = places_gram(n0, table(set()))
+    print(f"N = {n0}: the Gram matrix has smallest eigenvalue {np.linalg.eigvalsh(G)[0]:.2e}; "
+          "without one lonely prime:")
+    for p in [p for p in P if 2 * p > n0]:
+        H = places_gram(n0, table({p}))
+        touched = {tuple(sorted((i + 1, j + 1))) for i, j in np.argwhere(np.abs(H - G) > 1e-12)}
+        print(f"   without {p}: {np.linalg.eigvalsh(H)[0]: .2e}; it enters {len(touched)} entries, "
+              f"all of the form ⟨w_1, w_m⟩: {all(min(t) == 1 for t in touched)}")
+    print("their weight in ⟨w_1, w_N⟩, against (log 2 − ½)·N from the prime number theorem, and the entry itself:")
+    A, B = tables(N)
+    M = 1000
+    while M <= N:
+        lone = sum(math.log(p) * (M / p - 1) for p in primes_upto(M) if 2 * p > M)
+        g = float(kernel_over_sqrt(np.array([float(M)]), A, B)[0]) * M
+        print(f"   N = {M:>8}: {lone:12.1f} = {lone / M:.4f}·N; the entry is {g:+9.4f} = {g / math.sqrt(M):+.4f}·√N")
+        M *= 10
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1].startswith("--"):
         arg = int(sys.argv[2]) if len(sys.argv) > 2 else None
         {"--smooth": lambda: smooth(arg or 60), "--flat": lambda: flat(arg or 1000),
          "--zeros": lambda: zeros(arg or 2000), "--places": lambda: places(arg or 60),
          "--weil": lambda: weil(arg or 1000), "--forward": lambda: forward(arg or 1000),
-         "--slices": lambda: slices(arg or 10 ** 6), "--lattice": lambda: lattice(arg or 120)}[sys.argv[1]]()
+         "--slices": lambda: slices(arg or 10 ** 6), "--lattice": lambda: lattice(arg or 120),
+         "--frontier": lambda: frontier(arg or 10 ** 6)}[sys.argv[1]]()
         return
     N = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
     G = gram(N)

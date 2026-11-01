@@ -224,6 +224,7 @@ import BallPsi
 import BallFlat
 import BallWeil
 import BallSlice
+import LonelyPrimes
 import BohrTorus
 import LSeriesLandau
 import HalfPlaneJoinsChar
@@ -1167,6 +1168,11 @@ twin-form rates at `11/12`. -/
 #print axioms BallSlice.rh_iff_posDefOn_pair
 #print axioms BallSlice.rh_iff_weil_bound_pair
 #print axioms BallSlice.rh_iff_castelnuovo_severi_pair
+#print axioms LonelyPrimes.lonely_iff
+#print axioms LonelyPrimes.exists_lonely
+#print axioms LonelyPrimes.lonely_pos
+#print axioms LonelyPrimes.tendsto_lonely_ratio
+#print axioms LonelyPrimes.lonely_ratio_pos
 #print axioms BohrTorus.eq_zero_of_sum_log
 #print axioms BohrTorus.tendsto_mean_character
 #print axioms BohrTorus.sum_norm_sq_torus
