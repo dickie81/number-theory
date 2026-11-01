@@ -231,8 +231,9 @@ lemma pw_mul (q : ZIdx) {s t : ℝ} (hs : s ≠ 0) (ht : t ≠ 0) : pw q (s * t)
   push_cast
   ring_nf
 
+open scoped Classical in
 /-- **The eigenvalues of `φ_n` are the numbers `n^ρ`**: `φ_n` multiplies the basis vector of `ρ` by `n^ρ`. -/
-theorem phi_single [DecidableEq ZIdx] (q : ZIdx) (n : ℕ) : phiL n (lp.single 2 q 1) = pw q n • lp.single 2 q 1 := by
+theorem phi_single (q : ZIdx) (n : ℕ) : phiL n (lp.single 2 q 1) = pw q n • lp.single 2 q 1 := by
   ext i
   rw [phiL_apply, lp.coeFn_smul, Pi.smul_apply, smul_eq_mul, lp.single_apply]
   rcases eq_or_ne i q with rfl | h
