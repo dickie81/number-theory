@@ -2,9 +2,10 @@
 
 A conjecture of the library's author, recorded here as a direction for work. No theorem of the library proves it,
 though the library proves exactly what it would have to deliver for `ζ` (`BallKernel.rh_iff_posDef`), and the
-structure it asks for in the case of an elliptic curve over a finite field (`ManinHasse.frobenius_similitude`).
-This page says what it claims, what is proved in the finite-rank cases it generalises, what the library
-already has towards it, what any version of it must survive, and the first steps.
+structure it asks for in the case of an elliptic curve over a finite field (`ManinHasse.frobenius_similitude`). For
+`ζ` it also proves a constraint: with the kernel of step 5 the configuration spans no lattice
+(`BallLattice.not_discrete`). This page says what it claims, what is proved in the finite-rank cases it generalises,
+what the library already has towards it, what any version of it must survive, and the first steps.
 
 ## The conjecture
 
@@ -79,6 +80,15 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
   generalised primes give Euler products whose zeros leave the line, though without a functional equation
   (H. G. Diamond, H. L. Montgomery and U. M. A. Vorhauer, Math. Ann. 334 (2006)). So a candidate object for `ζ` has to
   use more than its Euler product and its functional equation, as the twist uses the curve itself.
+- **The real line.** The kernel of step 5 depends on `a/b` through the real line, where the positive rationals are
+  dense, and it is smooth at `1`: `‖K(r) + K(1/r) − 2K(1)‖ ≤ M(log r)²` (`BallLattice.kerK_smooth`). So in every
+  realization of `K` by similitudes, which exists exactly under RH (`BallLattice.rh_iff_realization`), the vectors
+  `w_{n+1} − w_n` are nonzero and their norms tend to `0` (`BallLattice.not_discrete`). The orbit spans no lattice,
+  and no positive multiple of the form takes integer values on it. The same holds for every kernel smooth at `1`
+  (`BallLattice.tendsto_norm_sub_of_smooth`). For the Frobenius points the ratios `q^d` stay away from `1`, and
+  `B(P_{k+1} − P_k, P_{k+1} − P_k) = 2q^k·#E(𝔽_q)` grows (`ManinHasse.gram_orbit_card`). So a lattice for `ζ` has to
+  carry a kernel that is not smooth in `a/b`. It has to see the primes separately, `ℚ₊^× ≅ ℤ^{(∞)}` with a direction for
+  each prime, rather than through `log(a/b) ∈ ℝ`.
 - **No estimate can supply the positivity.** The least value of Weil's form on supports `[−a, a]` is at most
   `Ke^{16a − 2πe^{2a}}` (`WeilForm.lam_dexp`), so positivity on growing supports has a double-exponentially small
   margin. It has to come from an exact structure, as the definiteness of a lattice would.
@@ -150,10 +160,14 @@ None of the following states the conjecture in this form; a search in October 20
    of `E` is the Gram kernel of an orbit of a similitude of an integral lattice. A similitude of factor `q` of a
    definite form has its eigenvalues on `|α| = √q` (`ManinHasse.normSq_eq_of_similitude`). That is how such a lattice
    gives the Riemann hypothesis; for `E` the library proves it from the positivity instead
-   (`ManinHasse.toeplitz_nonneg`). For `ζ` the analogue would be a lattice of infinite rank with a direction for each
-   prime, commuting similitudes `φ_p` of factor `p`, one for each prime `p`, and a point `P_1` whose orbit
-   `P_n = φ_n(P_1)`, with `φ_n` the product of the `φ_p` over the prime factors of `n`, has Gram kernel
-   `√(ab)·K(a/b)`. The similitudes alone give a kernel of that shape, as in rank two. The eigenvalues of `φ_p` would
-   be the numbers `p^ρ`, and `|p^ρ|² = p` is `Re ρ = ½`. Unlike the counts of `E`, `K` is not built from integers: the
-   explicit formula expresses it through `Λ(n)n^{−1/2}` and Gaussians, so for `ζ` "arithmetic" cannot mean integral in
-   the same way. What remains open is the lattice.
+   (`ManinHasse.toeplitz_nonneg`). For `ζ` the analogue in a Hilbert space exists exactly under RH (`BallLattice`):
+   vectors `w_r` for the positive rationals and commuting similitudes `φ_n` of factor `n` with `φ_n(w_r) = w_{nr}` and
+   Gram kernel `√(ab)·K(a/b)` (`BallLattice.rh_iff_realization`). Under RH one is `ℓ²` of the zeros, where `φ_n`
+   multiplies the coordinate of `ρ` by `n^ρ` (`BallLattice.phi_single`). The similitudes alone give a kernel of that
+   shape, `⟨w_b, w_a⟩ = b⟨w_1, w_{a/b}⟩` (`BallLattice.gram_shape`), as in rank two (`ManinHasse.gram_orbit`), and an
+   eigenvalue `p^ρ` of a similitude of factor `p > 1` has `Re ρ = ½` (`BallLattice.re_eq_half_of_eigen`). The kernel
+   of `dh` has no realization (`PsiOmega.not_realization_dh`). But `ℓ²` of the zeros presupposes them, and no
+   realization of `K` is a lattice: its orbit spans none (`BallLattice.not_discrete`, under "The real line" above).
+   Unlike the counts of `E`, `K` is not built from integers: the explicit formula expresses it through `Λ(n)n^{−1/2}`
+   and Gaussians. So for `ζ` "arithmetic" cannot mean integral in the same way, and a lattice needs a kernel that sees
+   the primes separately. What remains open is that lattice.

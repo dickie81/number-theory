@@ -14,9 +14,15 @@ some `Σ_{a,b ∈ S} x_a x̄_b K_dh(a/b)` with `S` a finite set of positive rati
 
 This is the dh column of `BallKernel.rh_iff_posDef`. `dh` has a functional equation of `ζ`'s kind and no Euler product,
 so positive-definiteness on `ℚ₊^×` does not follow from the functional equation.
+
+So `K_dh` has no realization by similitudes either (`not_realization_dh`): no inner product space carries vectors `w_r`
+and similitudes `φ_n` of factor `n` with `φ_n(w_r) = w_{nr}` and `⟨w_b, w_a⟩ = √(ab)·K_dh(a/b)`, since one would make
+`K_dh` positive-definite (`BallLattice.posDefQ_of_realization`). This is the dh column of
+`BallLattice.rh_iff_realization`.
 -/
 import Mathlib
 import BallKernel
+import BallLattice
 import DHTwin
 
 open Real Complex Finset ComplexConjugate WeilForm
@@ -132,8 +138,14 @@ theorem not_posDef_dh : ¬ BallKernel.PosDefQ kerDH := by
   rw [hre i, abs_zero, mul_zero, abs_eq_zero] at h1
   exact hne (by linarith)
 
+/-- **The kernel of `dh` has no realization by similitudes** (`BallLattice.Realization`): a realization would make it
+positive-definite on `ℚ₊^×` (`BallLattice.posDefQ_of_realization`), which `not_posDef_dh` refutes. -/
+theorem not_realization_dh : IsEmpty (BallLattice.Realization kerDH) :=
+  ⟨fun R => not_posDef_dh (BallLattice.posDefQ_of_realization R)⟩
+
 end PsiOmega
 
 #print axioms PsiOmega.summable_gwDH
 #print axioms PsiOmega.twin_eq_kerDH
 #print axioms PsiOmega.not_posDef_dh
+#print axioms PsiOmega.not_realization_dh

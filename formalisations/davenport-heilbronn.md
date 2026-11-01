@@ -86,13 +86,13 @@ in place of `ζ`, its **dh column**. RH fails for `dh`, so the hypotheses must f
 that they do: a proof of any of them for `ζ` must use what `dh` lacks, such as the Euler product. The dh columns: Weil's
 criterion (`PsiOmega.weil_criterion_dh`, `PsiOmega.QDHu_nonneg_of_DHRHcross`), Hypothesis D (`PsiOmega.not_D_dh`), the
 twin form (`PsiOmega.not_twins_nonneg_dh`, `PsiOmega.not_twins_subexp_dh`), the kernel on the positive rationals
-(`PsiOmega.not_posDef_dh`), the odd probes (`PsiOmega.not_odd_lower_dh`,
-`PsiOmega.not_lamODH_lower`), the ground states, with Theorem D, the polarisation and Euler–Lagrange
-(`PsiOmega.theoremDDH`, `PsiOmega.bilDH_polar`, `PsiOmega.euler_lagrangeDH`, `PsiOmega.dhRHcross_of_eventually_simple`,
-`PsiOmega.dhRHcross_of_hypConv_top`, `PsiOmega.not_simple_hypConvDH`, `PsiOmega.not_hypConvDH_top`), and the rest of the
-roadmap (`DHColumnRest.lean`: `PsiOmega.not_ground_states_dh`, `PsiOmega.not_groundStates_dodging_dh`,
-`PsiOmega.not_D_and_realRooted_hadamard`, `PsiOmega.not_hypConvStripDH_top`, `PsiOmega.not_XiDH_params`,
-`PsiOmega.not_dodging_hadamard`, `PsiOmega.not_pairing_and_realRooted`).
+(`PsiOmega.not_posDef_dh`) and its realizations by similitudes (`PsiOmega.not_realization_dh`), the odd probes
+(`PsiOmega.not_odd_lower_dh`, `PsiOmega.not_lamODH_lower`), the ground states, with Theorem D, the polarisation and
+Euler–Lagrange (`PsiOmega.theoremDDH`, `PsiOmega.bilDH_polar`, `PsiOmega.euler_lagrangeDH`,
+`PsiOmega.dhRHcross_of_eventually_simple`, `PsiOmega.dhRHcross_of_hypConv_top`, `PsiOmega.not_simple_hypConvDH`,
+`PsiOmega.not_hypConvDH_top`), and the rest of the roadmap (`DHColumnRest.lean`: `PsiOmega.not_ground_states_dh`,
+`PsiOmega.not_groundStates_dodging_dh`, `PsiOmega.not_D_and_realRooted_hadamard`, `PsiOmega.not_hypConvStripDH_top`,
+`PsiOmega.not_XiDH_params`, `PsiOmega.not_dodging_hadamard`, `PsiOmega.not_pairing_and_realRooted`).
 
 The **χ column** restates the same criteria for the `L`-function of a Dirichlet character `χ` (`ChiGround.lean`,
 `ChiFirstFailure.lean`, `DHJoins.lean`): the ground states and Theorem D (`PsiOmega.exists_groundStateC`,
