@@ -4,16 +4,16 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1063 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1071 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 93 | 230 |
+| `lib/core` | 94 | 237 |
 | `lib/pnt` | 229 | 730 |
-| `lib/dh` | 21 | 69 |
+| `lib/dh` | 21 | 70 |
 | `lib/zeta23` | 8 | 34 |
 
 ## The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`
@@ -36,6 +36,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallKernel.rh_iff_posDef`: The Riemann hypothesis is positive-definiteness on the positive rationals
 - `BallKernel.kerK_inv`: The kernel is even
 - `BallKernel.kerK_explicit`: The explicit formula computes the kernel from the primes
+
+#### `BallLattice`: The object of step 6 for `ζ`: an orbit of similitudes, whose span is not a lattice
+
+- `BallLattice.gram_shape`: The similitudes give the Gram matrix its shape
+- `BallLattice.re_eq_half_of_eigen`: An eigenvalue `p^ρ` of a similitude of factor `p > 1` has `Re ρ = ½`
+- `BallLattice.phi_single`: The eigenvalues of `φ_n` are the numbers `n^ρ`
+- `BallLattice.rh_iff_realization`: The Riemann hypothesis is the existence of a realization of `K`
+- `BallLattice.tendsto_norm_sub_of_smooth`: A kernel smooth at `1` has an orbit that spans no lattice
+- `BallLattice.kerK_smooth`: `K` is smooth at `1`
+- `BallLattice.not_discrete`: In every realization of `K`, the orbit spans no lattice
 
 #### `BallTower`: The ball tower from integers and primes (formalised)
 
@@ -1972,6 +1982,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `DHBallKernel`: The dh column of the ball kernel: the kernel of `dh` is not positive-definite
 
 - `PsiOmega.not_posDef_dh`: The kernel of `dh` is not positive-definite on the positive rationals ([note](../formalisations/davenport-heilbronn.md))
+- `PsiOmega.not_realization_dh`: The kernel of `dh` has no realization by similitudes ([note](../formalisations/davenport-heilbronn.md))
 
 #### `DHBohrSphere`: A zero pair off the sphere
 

@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1063 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1071 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -246,7 +246,9 @@ In order of what is in reach.
    the kernel of `dh` is not positive-definite (`PsiOmega.not_posDef_dh`). The structure the conjecture asks for is
    proved in the function-field case: the Frobenius of Manin's twist multiplies the degree form by `q` and carries
    `P_k` to `P_{k+1}` (`ManinHasse.frobenius_similitude`), so the point counts of `E` are the Gram kernel of an orbit
-   of a similitude of an integral lattice (`ManinHasse.gram_orbit_card`).
+   of a similitude of an integral lattice (`ManinHasse.gram_orbit_card`). For `ζ` such an orbit exists in a Hilbert
+   space exactly under RH, with `φ_n` acting on `ℓ²` of the zeros by `n^ρ` (`BallLattice.rh_iff_realization`), but it
+   spans no lattice: the vectors `w_{n+1} − w_n` are nonzero and their norms tend to `0` (`BallLattice.not_discrete`).
 6. **Tools that are missing.** The large sieve over all moduli `q ≤ Q` (the library has one modulus at a time), so no
    Bombieri–Vinogradov; bounds for Kloosterman sums, which the bilinear Type I estimate avoids; exponent pairs (the
    Weyl bound is only a hypothesis); Selberg's and Rosser's sieves; anything in the twelve sections the library does
