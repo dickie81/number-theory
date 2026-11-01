@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1059 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1063 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -243,7 +243,10 @@ In order of what is in reach.
    not positive-definite (`PurityTest.not_posDef`). For `ζ` the statement the conjecture must deliver is proved: RH
    holds exactly when `K(r) = Σ_ρ e^{(ρ − ½)²/2} r^{ρ − ½}` is positive-definite on the positive rationals
    (`BallKernel.rh_iff_posDef`), the explicit formula computes `K` from the primes (`BallKernel.kerK_explicit`), and
-   the kernel of `dh` is not positive-definite (`PsiOmega.not_posDef_dh`).
+   the kernel of `dh` is not positive-definite (`PsiOmega.not_posDef_dh`). The structure the conjecture asks for is
+   proved in the function-field case: the Frobenius of Manin's twist multiplies the degree form by `q` and carries
+   `P_k` to `P_{k+1}` (`ManinHasse.frobenius_similitude`), so the point counts of `E` are the Gram kernel of an orbit
+   of a similitude of an integral lattice (`ManinHasse.gram_orbit_card`).
 6. **Tools that are missing.** The large sieve over all moduli `q ≤ Q` (the library has one modulus at a time), so no
    Bombieri–Vinogradov; bounds for Kloosterman sums, which the bilinear Type I estimate avoids; exponent pairs (the
    Weyl bound is only a hypothesis); Selberg's and Rosser's sieves; anything in the twelve sections the library does

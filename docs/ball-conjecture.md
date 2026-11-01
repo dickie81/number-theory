@@ -1,7 +1,8 @@
 # The discretised infinite ball: a research direction
 
-A conjecture of the library's author, recorded here as a direction for work. No theorem of the library proves it or
-tests it yet, though the library proves exactly what it would have to deliver for `ζ` (`BallKernel.rh_iff_posDef`).
+A conjecture of the library's author, recorded here as a direction for work. No theorem of the library proves it,
+though the library proves exactly what it would have to deliver for `ζ` (`BallKernel.rh_iff_posDef`), and the
+structure it asks for in the case of an elliptic curve over a finite field (`ManinHasse.frobenius_similitude`).
 This page says what it claims, what is proved in the finite-rank cases it generalises, what the library
 already has towards it, what any version of it must survive, and the first steps.
 
@@ -36,7 +37,8 @@ places the Frobenius of a curve over `𝔽_q` on a sphere of radius `√q`.
   are stated against Mathlib's `WeierstrassCurve` and its points. This lattice is Weil's for `C = E`. The twist is the
   generic fibre of `(E × E)/±1 → E/±1 = ℙ¹`, and its points are the maps `E → E` that commute with `−1`. Up to
   2-torsion the lattice is `End(E)`, and the degree of `φ − ψ` is the intersection number of the graphs of `φ` and `ψ`
-  in `E × E`.
+  in `E × E`. The Frobenius acts on this lattice: composition with it, which on the twist is `t ↦ t^q` followed by a
+  rescaling, multiplies the degree by `q` and carries `P_k` to `P_{k+1}` (`ManinHasse.frobenius_similitude`).
 - **Curves of every genus.** The Néron–Severi lattice of `C × C`, definite away from an ample class. Not formalised:
   Mathlib has no intersection theory on surfaces, no Riemann–Roch for curves and no isogenies.
 
@@ -139,9 +141,19 @@ None of the following states the conjecture in this form; a search in October 20
    leave the line. So a candidate has to use unique factorisation, which is what `ℤ^{(∞)}` encodes, and, by the purity
    test, more: unique factorisation is also what Beurling's generalised integers have.
 6. **The conjecture itself**, open: that the configuration of step 5 is an arithmetic definite lattice, as the twist's
-   lattice is for `E`. In rank two, before normalising, the inner products of the Frobenius points are the integers
-   `q^{min(i,j)}(q^{|i−j|} + 1 − #E(𝔽_{q^{|i−j|}}))` (`ManinHasse.gram_nonneg`), and the Frobenius multiplies the form
-   by `q`. For `ζ` the analogue would be a lattice of infinite rank with a direction for each prime, on which
-   multiplication by `p` multiplies the form by `p`, and whose Gram kernel is `√(ab)·K(a/b)`. A first test is the
-   function-field case, where such a lattice exists (Weil's, in `C × C`) and the kernel is computed from the point
-   counts.
+   lattice is for `E`. The case of an elliptic curve over `𝔽_q`, `q` odd, is done (`ManinFrobenius`). The Frobenius
+   of the twist, `t ↦ t^q` followed by a rescaling, is an additive map `φ` with `deg φ(P) = q·deg P`, so a similitude
+   of factor `q` of the lattice, and the Frobenius points are the orbit of `P₀`: `φ^k(P₀) = P_k`
+   (`ManinHasse.frobenius_similitude`). The similitude alone makes the Gram matrix of the orbit Toeplitz up to powers
+   of `q`, `B(P_{j+d}, P_j) = q^j·B(P_d, P_0)` (`ManinHasse.gram_orbit`), and its entries are the point counts,
+   `B(φ^{j+d}P₀, φ^jP₀) = q^j(q^d + 1 − #E(𝔽_{q^d}))` for `d ≥ 1` (`ManinHasse.gram_orbit_card`). So the count kernel
+   of `E` is the Gram kernel of an orbit of a similitude of an integral lattice. A similitude of factor `q` of a
+   definite form has its eigenvalues on `|α| = √q` (`ManinHasse.normSq_eq_of_similitude`). That is how such a lattice
+   gives the Riemann hypothesis; for `E` the library proves it from the positivity instead
+   (`ManinHasse.toeplitz_nonneg`). For `ζ` the analogue would be a lattice of infinite rank with a direction for each
+   prime, commuting similitudes `φ_p` of factor `p`, one for each prime `p`, and a point `P_1` whose orbit
+   `P_n = φ_n(P_1)`, with `φ_n` the product of the `φ_p` over the prime factors of `n`, has Gram kernel
+   `√(ab)·K(a/b)`. The similitudes alone give a kernel of that shape, as in rank two. The eigenvalues of `φ_p` would
+   be the numbers `p^ρ`, and `|p^ρ|² = p` is `Re ρ = ½`. Unlike the counts of `E`, `K` is not built from integers: the
+   explicit formula expresses it through `Λ(n)n^{−1/2}` and Gaussians, so for `ζ` "arithmetic" cannot mean integral in
+   the same way. What remains open is the lattice.
