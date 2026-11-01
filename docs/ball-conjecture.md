@@ -296,6 +296,42 @@ the `Spec ℤ × Spec ℤ` that the work under "Related work" looks for, Deninge
 arithmetic site among it. The conjecture adds what that work does not say: the lattice of such a surface should be a
 discretised infinite-dimensional ball, the cubic lattice in the flat model. No construction of these vectors is known.
 
+Building the vectors one place at a time fails in a definite way (`scripts/ball_orbit.py --forward`):
+
+- **No place gives a positive piece.** Each `C_p` has zero diagonal, so it is indefinite: for `p = 2` and `N = 60` its
+  eigenvalues run from −489 to 524. The pieces cannot be the Gram matrices of local vectors, one space for each prime.
+- **Making them positive costs more than the real place has.** At a prime power `k` the prime part can be completed to
+  `Λ(k)/√k` times the Gram matrix of the vectors `1_{[0,n]} − √k·1_{[0,n/k]}` of `L²(0, ∞)`, which is positive. Here
+  `⟨1_{[0,a]}, 1_{[0,b]}⟩ = min(a, b)`, as in the flat model. Once `X ≥ N` the rest is exactly
+  `G_∞ + (m + n)·Σ_{k ≤ X} Λ(k)/k − 2·min(m, n)·Σ_{k ≤ X} Λ(k)/√k`, where the last sum is about `2√X`. The archimedean
+  part cannot pay for that. The rest's smallest eigenvalue is −260 with the prime 2 alone and −2.5·10⁴ with the prime
+  powers up to 60, where the whole matrix has 0.0035. The positivity is a cancellation among all the places at once.
+- **The lattice does see each prime.** `K_H(r)/K_H(1)` is −0.375, −0.454, −0.453 and −0.442 at `r = 2, 3, 5, 7`; about
+  −0.05 at `4` and `8`; and positive at `6`, `10`, `3/2`, `5/2` and `7/2`. So `w_n` and `w_{n/p}` are anti-correlated
+  for each small prime `p`, enough that `w_n + w_{n/p}` is shorter than `w_n`. The LLL-reduced basis is then made of
+  divisor sums `Σ_{d | n} w_d`: `w_1 + w_2`, `w_1 + w_2 + w_4`, `w_1 + w_3 + w_5 + w_15`,
+  `w_1 + w_2 + w_3 + w_4 + w_6 + w_12`, and so on. For `n = Π_p p^{a_p}` such a sum is
+  `Π_p (1 + φ_p + ⋯ + φ_p^{a_p}) w_1` in a realization: a truncated Euler factor at each prime, applied to `w_1`. In the
+  flat model the reduced basis is the increments `w_{n+1} − w_n` instead. Up to `N = 40` the divisor sums are nearly as
+  good as LLL's basis, with Hadamard ratio 0.886 against 0.891. By `N = 200` they are no better than the increments,
+  0.703 and 0.712 against 0.754.
+- **The real place couples the prime directions.** Independent directions would make `K_H` multiplicative over coprime
+  parts: `K_H(ab) = K_H(a/b) = K_H(a)K_H(b)/K_H(1)`. Instead, in units of `K_H(1)`, `K_H(6) = 0.291` and
+  `K_H(2/3) = 0.116`, against `K_H(2)K_H(3) = 0.170`. The multiplicative kernel with the exact values at the prime
+  powers gives the Gram matrix of the tensor product of the lattices of the single primes. It is positive definite
+  here, as each of those lattices is under RH. Its pivots grow roughly in proportion to `k`, to `587·d_1` at
+  `k = 1000`, where the true ones grow like `log²k`, to `89·d_1`. The coupling comes from the real place. Integers
+  that are close as real numbers have nearly parallel vectors, `cos(w_997, w_996) = 0.94`, where independent
+  directions make them orthogonal. It cuts the pivots by a factor of 0.15 at `k = 1000`, and by more at the primes.
+  It does not touch the smallest pivot. `d_2 = 2(1 − K_H(2)²/K_H(1)²)·d_1 = 1.718·d_1` involves only the prime 2,
+  and it is the minimum in both.
+
+So the true lattice lies between two extremes. One is the tensor product of the lattices of the single primes: all
+arithmetic, no real place. The other is the flat model, the cubic lattice: all real place, no primes. The conjecture
+says that the coupling never brings a pivot below the flat model's. A construction from the integers would have to
+produce that coupling, so it cannot be a direct sum of local pieces. It would be something shaped like an Euler
+product, a product of local factors, in which the real place ties the primes together.
+
 ## Weil's form
 
 The conjecture names the object; Weil's proof says what has to be true on it. In the form that Mattuck and Tate and
