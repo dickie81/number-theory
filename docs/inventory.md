@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1042 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1054 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 89 | 210 |
+| `lib/core` | 91 | 222 |
 | `lib/pnt` | 229 | 730 |
 | `lib/dh` | 20 | 68 |
 | `lib/zeta23` | 8 | 34 |
@@ -347,6 +347,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `PsiOmega.psi_omega_half`: `ψ(x) − x = Ω±(x^θ)` for every `0 < θ < ½`, unconditionally
 
+#### `PurityTest`: The purity test: an Euler product and a functional equation, without positivity
+
+- `PurityTest.dvd_necklace`: The necklace congruence
+- `PurityTest.card_Y`: The points of `Y`
+- `PurityTest.zeta_functional_equation`: The functional equation of an elliptic curve over `𝔽_27`
+- `PurityTest.euler_product`: The Euler product of `Y`
+- `PurityTest.not_posDef`: The kernel of `Y`'s counts is not positive-definite
+- `PurityTest.posDef_elliptic`: Every elliptic curve's kernel is positive-definite
+- `PurityTest.card_ne_countY`: No elliptic curve over `𝔽_27` has `Y`'s counts
+
 #### `QuadIdeals`: The ideals of a quadratic field of each norm, and its Dedekind zeta function
 
 - `QuadIdeals.trichotomy`: Every prime splits, is inert or ramifies
@@ -429,6 +439,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilForm.lam_decay_uncond`: The decay of the ground energy, unconditional ([note](../formalisations/weil-positivity.md))
 - `WeilForm.lamO_decay_uncond`: Rung 1, unconditional ([note](../formalisations/weil-positivity.md))
 - `WeilForm.lam2_decay_uncond`: Rung 2, unconditional ([note](../formalisations/weil-positivity.md))
+
+#### `WeilFF`: Weil's criterion over a finite field
+
+- `WeilFF.posDef_iff`: Weil's criterion over a finite field
+- `WeilFF.posDef_iff_bdd`: Positive-definite exactly when bounded
+- `WeilFF.posDef_of_real`: Real Toeplitz positivity is positive-definiteness
+- `WeilFF.countKernel_posDef_iff`: Weil's criterion from the point counts
+- `WeilFF.norm_eq_sqrt_of_bound`: A bound in every degree is enough
 
 #### `WeilIndexConverse`: Off-line zero quadruples force negative directions of `Q`
 

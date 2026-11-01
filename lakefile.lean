@@ -19,7 +19,7 @@ lean_lib Zeta23 where
   globs := #[.submodules `Zeta23]
   leanOptions := #[⟨`relaxedAutoImplicit, false⟩]
 
-/-- lib/core: 330 modules. -/
+/-- lib/core: 332 modules. -/
 lean_lib Core where
   srcDir := "lib/core"
   globs := #[
@@ -88,24 +88,24 @@ lean_lib Core where
     .one `PhiNull, .one `PlaneGaussian, .one `PlaneMajorant, .one `PlanePoisson,
     .one `PoleRelax, .one `Polya, .one `Positivity, .one `PrimeRaces,
     .one `PrimeRelax, .one `PrimeRelax3, .one `PrimeSide, .one `PsiOmega,
-    .one `QuadIdeals, .one `RealCharHalfPlane, .one `RealDirichlet, .one `RiemannKernel,
-    .one `Roadmap, .one `Saturation, .one `ShellCount, .one `ShellSixthCore,
-    .one `ShortPrimes, .one `ShortWeil, .one `ShortZeros, .one `SimpleCont,
-    .one `SimpleCover, .one `SimpleStructure, .one `SmallPositivity, .one `SmallPositivity2,
-    .one `Split, .one `StrictPositivity, .one `StripConv, .one `StripShift,
-    .one `StructureD, .one `SwapRealize, .one `T1bt, .one `T1ca,
-    .one `TheoremC, .one `TwinLandau, .one `Unconditional, .one `Uniqueness,
-    .one `UniquenessQ, .one `UpperHalfSpace, .one `VinoBad, .one `VinoConst,
-    .one `VinoConst2, .one `VinoFam, .one `VinoHolder, .one `VinoIter,
-    .one `VinoKV, .one `VinoPadic, .one `VinoRec, .one `VinoRec2,
-    .one `VinoSplit, .one `VinoStep, .one `Vinogradov, .one `WeilAssemble,
-    .one `WeilChi, .one `WeilChiBridge, .one `WeilChiCriterion, .one `WeilChiDensity,
-    .one `WeilConverse, .one `WeilCount, .one `WeilCriterion, .one `WeilDedekind,
-    .one `WeilDischarge, .one `WeilIndexConverse, .one `WeilIndexInfinite, .one `WeilIndexZeta,
-    .one `WeilLandau, .one `WeilRH, .one `WeilRate, .one `WeilTwinGeneral,
-    .one `WeilZeta, .one `WindowForm, .one `XiBounds, .one `XiLogDeriv,
-    .one `ZeroLocal, .one `ZeroSwap, .one `Zeta, .one `ZetaDiscs,
-    .one `ZetaDiscsR, .one `ZetaInputs]
+    .one `PurityTest, .one `QuadIdeals, .one `RealCharHalfPlane, .one `RealDirichlet,
+    .one `RiemannKernel, .one `Roadmap, .one `Saturation, .one `ShellCount,
+    .one `ShellSixthCore, .one `ShortPrimes, .one `ShortWeil, .one `ShortZeros,
+    .one `SimpleCont, .one `SimpleCover, .one `SimpleStructure, .one `SmallPositivity,
+    .one `SmallPositivity2, .one `Split, .one `StrictPositivity, .one `StripConv,
+    .one `StripShift, .one `StructureD, .one `SwapRealize, .one `T1bt,
+    .one `T1ca, .one `TheoremC, .one `TwinLandau, .one `Unconditional,
+    .one `Uniqueness, .one `UniquenessQ, .one `UpperHalfSpace, .one `VinoBad,
+    .one `VinoConst, .one `VinoConst2, .one `VinoFam, .one `VinoHolder,
+    .one `VinoIter, .one `VinoKV, .one `VinoPadic, .one `VinoRec,
+    .one `VinoRec2, .one `VinoSplit, .one `VinoStep, .one `Vinogradov,
+    .one `WeilAssemble, .one `WeilChi, .one `WeilChiBridge, .one `WeilChiCriterion,
+    .one `WeilChiDensity, .one `WeilConverse, .one `WeilCount, .one `WeilCriterion,
+    .one `WeilDedekind, .one `WeilDischarge, .one `WeilFF, .one `WeilIndexConverse,
+    .one `WeilIndexInfinite, .one `WeilIndexZeta, .one `WeilLandau, .one `WeilRH,
+    .one `WeilRate, .one `WeilTwinGeneral, .one `WeilZeta, .one `WindowForm,
+    .one `XiBounds, .one `XiLogDeriv, .one `ZeroLocal, .one `ZeroSwap,
+    .one `Zeta, .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaInputs]
 
 /-- lib/pnt: 392 modules. -/
 lean_lib PNT where

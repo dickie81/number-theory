@@ -212,6 +212,8 @@ import LocalTeeth
 import HasseEisenstein
 import ManinHasse
 import ManinLattice
+import WeilFF
+import PurityTest
 import BohrTorus
 import LSeriesLandau
 import HalfPlaneJoinsChar
@@ -1091,6 +1093,18 @@ twin-form rates at `11/12`. -/
 #print axioms ManinHasse.gram_nonneg
 #print axioms ManinHasse.toeplitz_nonneg
 #print axioms ManinHasse.trace_two_ge
+#print axioms WeilFF.posDef_iff
+#print axioms WeilFF.posDef_iff_bdd
+#print axioms WeilFF.countKernel_posDef_iff
+#print axioms WeilFF.norm_eq_sqrt_of_bound
+#print axioms WeilFF.posDef_of_real
+#print axioms PurityTest.dvd_necklace
+#print axioms PurityTest.card_Y
+#print axioms PurityTest.zeta_functional_equation
+#print axioms PurityTest.euler_product
+#print axioms PurityTest.not_posDef
+#print axioms PurityTest.posDef_elliptic
+#print axioms PurityTest.card_ne_countY
 #print axioms BohrTorus.eq_zero_of_sum_log
 #print axioms BohrTorus.tendsto_mean_character
 #print axioms BohrTorus.sum_norm_sq_torus
