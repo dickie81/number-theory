@@ -17,8 +17,10 @@ then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallP
     python3 scripts/ball_orbit.py --smooth [N]  # the zeros replaced by their density, no primes; needs scipy
     python3 scripts/ball_orbit.py --flat [N]    # the Gram matrix against the flat model d_1·min(m, n)
     python3 scripts/ball_orbit.py --zeros [M]   # which zeros carry d_k, from the first M zeros; needs mpmath, slow
+    python3 scripts/ball_orbit.py --places [N]  # the Gram matrix as a sum over the places, and its rigidity
 
-The three options are the computations of "What a proof under RH would need" in docs/ball-conjecture.md.
+The first three options are the computations of "What a proof under RH would need" in docs/ball-conjecture.md, and
+--places is that of "Building the lattice forwards".
 """
 
 import math
@@ -133,11 +135,68 @@ def zeros(M):
         print(f"  {k:3d}   {dk / G[0, 0]:7.3f}   {tot / dk:10.3f}        {shares}")
 
 
+def primes_upto(X):
+    sieve = np.ones(X + 1, dtype=bool)
+    sieve[:2] = False
+    for i in range(2, int(X ** 0.5) + 1):
+        if sieve[i]:
+            sieve[i * i::i] = False
+    return [int(p) for p in np.nonzero(sieve)[0]]
+
+
+def places_gram(N, lam):
+    """The Gram matrix from the closed form, for a given von Mangoldt table lam: for m ≥ n,
+    G(m, n) = Σ_{k ≤ m/n} Λ(k)(m/k − n)                                   (the primes)
+              + (m + n) + γm − n log 2π + m log n − (m − n)log m
+              + ½(m − n)log(m − n) − ½(m + n)log(m + n)                    (the archimedean place)."""
+    G = np.zeros((N, N))
+    for m in range(1, N + 1):
+        for n in range(1, m + 1):
+            a = (m + n) + EULER_GAMMA * m - math.log(2 * math.pi) * n + m * math.log(n) - (m - n) * math.log(m)
+            a += (0.5 * (m - n) * math.log(m - n) if m > n else 0.0) - 0.5 * (m + n) * math.log(m + n)
+            a += sum(lam[k] * (m / k - n) for k in range(2, m // n + 1))
+            G[m - 1, n - 1] = G[n - 1, m - 1] = a
+    return G
+
+
+def places(N):
+    """The Gram matrix as the archimedean part plus a part for each prime, and how its positivity needs every prime."""
+    def table(drop=(), add=None, scale=None):
+        lam = np.zeros(N + 1)
+        for p in primes_upto(N):
+            if p in drop:
+                continue
+            q = p
+            while q <= N:
+                lam[q] = math.log(p) * (scale.get(p, 1.0) if scale else 1.0)
+                q *= p
+        for k, v in (add or {}).items():
+            lam[k] += v
+        return lam
+    G = places_gram(N, table())
+    print(f"N = {N}: the sum over the places reproduces the Gram matrix to {np.abs(G - gram(N)).max():.1e}")
+    P = primes_upto(N)
+    e0 = np.linalg.eigvalsh(places_gram(N, np.zeros(N + 1)))[0]
+    print(f"  smallest eigenvalue with the archimedean part only: {e0: .3e}")
+    for k in range(len(P)):
+        e = np.linalg.eigvalsh(places_gram(N, table(drop=set(P[k + 1:]))))[0]
+        print(f"  with the primes up to {P[k]:4d}: {e: .3e}")
+    primes = set(P)
+    powers = {p ** j for p in P for j in range(2, 7)}
+    fake = max(k for k in range(9, N + 1, 2) if k not in primes and k not in powers)
+    tests = [(f"without the prime {P[-1]}", table(drop={P[-1]})),
+             (f"with a fake prime {fake}", table(add={fake: math.log(fake)})),
+             ("log 2 off by 0.1%", table(scale={2: 1.001})),
+             ("log 2 off by 0.01%", table(scale={2: 1.0001}))]
+    for name, lam in tests:
+        print(f"  {name:28s}: {np.linalg.eigvalsh(places_gram(N, lam))[0]: .3e}")
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1].startswith("--"):
         arg = int(sys.argv[2]) if len(sys.argv) > 2 else None
         {"--smooth": lambda: smooth(arg or 60), "--flat": lambda: flat(arg or 1000),
-         "--zeros": lambda: zeros(arg or 2000)}[sys.argv[1]]()
+         "--zeros": lambda: zeros(arg or 2000), "--places": lambda: places(arg or 60)}[sys.argv[1]]()
         return
     N = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
     G = gram(N)
