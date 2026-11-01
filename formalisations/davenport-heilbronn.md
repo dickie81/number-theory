@@ -85,7 +85,8 @@ The library proves criteria for RH, statements that some hypothesis on `ζ` impl
 in place of `ζ`, its **dh column**. RH fails for `dh`, so the hypotheses must fail for `dh` too, and the column proves
 that they do: a proof of any of them for `ζ` must use what `dh` lacks, such as the Euler product. The dh columns: Weil's
 criterion (`PsiOmega.weil_criterion_dh`, `PsiOmega.QDHu_nonneg_of_DHRHcross`), Hypothesis D (`PsiOmega.not_D_dh`), the
-twin form (`PsiOmega.not_twins_nonneg_dh`, `PsiOmega.not_twins_subexp_dh`), the odd probes (`PsiOmega.not_odd_lower_dh`,
+twin form (`PsiOmega.not_twins_nonneg_dh`, `PsiOmega.not_twins_subexp_dh`), the kernel on the positive rationals
+(`PsiOmega.not_posDef_dh`), the odd probes (`PsiOmega.not_odd_lower_dh`,
 `PsiOmega.not_lamODH_lower`), the ground states, with Theorem D, the polarisation and Euler–Lagrange
 (`PsiOmega.theoremDDH`, `PsiOmega.bilDH_polar`, `PsiOmega.euler_lagrangeDH`, `PsiOmega.dhRHcross_of_eventually_simple`,
 `PsiOmega.dhRHcross_of_hypConv_top`, `PsiOmega.not_simple_hypConvDH`, `PsiOmega.not_hypConvDH_top`), and the rest of the

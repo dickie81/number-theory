@@ -4,16 +4,16 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1054 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1059 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 91 | 222 |
+| `lib/core` | 92 | 226 |
 | `lib/pnt` | 229 | 730 |
-| `lib/dh` | 20 | 68 |
+| `lib/dh` | 21 | 69 |
 | `lib/zeta23` | 8 | 34 |
 
 ## The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`
@@ -29,6 +29,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `AngularResidue.residue_angular`: The residue of the radial member
 - `AngularResidue.LFunction_chi4_one`: `L(1, χ₋₄) = π/4`
+
+#### `BallKernel`: The kernel of the ball conjecture: the Riemann hypothesis as positive-definiteness on `ℚ₊^×`
+
+- `BallKernel.re_eq_zero_of_dense`: Twin positivity on the positive rationals puts every pole on the imaginary axis
+- `BallKernel.rh_iff_posDef`: The Riemann hypothesis is positive-definiteness on the positive rationals
+- `BallKernel.kerK_inv`: The kernel is even
+- `BallKernel.kerK_explicit`: The explicit formula computes the kernel from the primes
 
 #### `BallTower`: The ball tower from integers and primes (formalised)
 
@@ -1954,6 +1961,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PsiOmega.grh_chi4_of_hypConvC_top`: GRH for `χ₋₄` from `HypConvC` for its top-of-chain ground states ([note](../formalisations/davenport-heilbronn.md))
 - `PsiOmega.grh_chi8_of_hypConvC_top`: GRH for `χ₋₈` from `HypConvC` for its top-of-chain ground states ([note](../formalisations/davenport-heilbronn.md))
 - `PsiOmega.grh_chi7_of_hypConvC_top`: GRH for `χ₋₇` from `HypConvC` for its top-of-chain ground states ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHBallKernel`: The dh column of the ball kernel: the kernel of `dh` is not positive-definite
+
+- `PsiOmega.not_posDef_dh`: The kernel of `dh` is not positive-definite on the positive rationals ([note](../formalisations/davenport-heilbronn.md))
 
 #### `DHBohrSphere`: A zero pair off the sphere
 
