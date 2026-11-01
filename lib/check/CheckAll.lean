@@ -222,6 +222,7 @@ import ZerosDense
 import BallHadamard
 import BallPsi
 import BallFlat
+import BallWeil
 import BohrTorus
 import LSeriesLandau
 import HalfPlaneJoinsChar
@@ -1147,6 +1148,16 @@ twin-form rates at `11/12`. -/
 #print axioms BallFlat.norm_sq_lattice
 #print axioms BallFlat.flat_pivot
 #print axioms BallFlat.flatOrbit_pivot
+#print axioms BallWeil.inter_one
+#print axioms BallWeil.inter_mul
+#print axioms BallWeil.two_deg_sub_selfInt
+#print axioms BallWeil.form_eq_norm_sq
+#print axioms BallWeil.rh_iff_form
+#print axioms BallWeil.rh_iff_castelnuovo_severi
+#print axioms BallWeil.rh_iff_hodge_index
+#print axioms BallWeil.weil_bound
+#print axioms BallWeil.rh_iff_weil_bound
+#print axioms BallWeil.rh_of_pivots
 #print axioms BohrTorus.eq_zero_of_sum_log
 #print axioms BohrTorus.tendsto_mean_character
 #print axioms BohrTorus.sum_norm_sq_torus

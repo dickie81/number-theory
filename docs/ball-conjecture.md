@@ -6,8 +6,10 @@ structure it asks for in the case of an elliptic curve over a finite field (`Man
 `ζ` it also proves a constraint: with the kernel of step 5 the configuration spans no lattice
 (`BallLattice.not_discrete`). With Hadamard's weights in place of the Gaussian the kernel is computed from the primes
 through Chebyshev's `ψ` (`BallPsi.kerH_explicit`), and numerically its configuration does span a lattice, with `w_1` as
-a shortest vector (step 6). This page says what it claims, what is proved in the finite-rank cases it generalises,
-what the library already has towards it, what any version of it must survive, and the first steps.
+a shortest vector (step 6). In Weil's own terms, RH is the Castelnuovo–Severi inequality for formal divisors whose
+intersection numbers are computed from the primes, and that lattice statement implies it (`BallWeil`, "Weil's form"
+below). This page says what it claims, what is proved in the finite-rank cases it generalises, what the library already
+has towards it, what any version of it must survive, and the first steps.
 
 ## The conjecture
 
@@ -216,8 +218,9 @@ None of the following states the conjecture in this form; a search in October 20
 
    It is a statement about the primes. Under RH it says that in every realization of `K_H`, `w_{k+1}` keeps distance
    `‖w_1‖` from the span of `w_1, …, w_k`. The orbit then spans a lattice with `w_1` as a shortest vector
-   (`BallPsi.orbit_lattice`). Unconditionally it implies RH. Positive pivots make every such matrix positive definite,
-   and after clearing denominators that is the positive-definiteness of `BallPsi.rh_iff_posDef_psi`. It asks for more
+   (`BallPsi.orbit_lattice`). Unconditionally it implies RH (`BallWeil.rh_of_pivots`). Positive pivots make every such
+   matrix positive definite, and its `2 × 2` minors at the squares `(p/q)²` are enough for the Landau argument of
+   step 5. It asks for more
    than RH, a margin: where RH needs `d_k ≥ 0`, it asks for `d_k ≥ d_1`. It fails for the Gaussian kernel `K`, whose
    gaps tend to `0` (`BallLattice.not_discrete`). It fails for `dh`, whose kernel is not positive-definite
    (`PsiOmega.not_posDefH_dh`). For `E` such a margin comes from integrality: a positive-definite integral form has no
@@ -292,3 +295,71 @@ an arithmetic Hodge index theorem; Faltings and Hriljac proved one for arithmeti
 the `Spec ℤ × Spec ℤ` that the work under "Related work" looks for, Deninger's height pairings and Connes and Consani's
 arithmetic site among it. The conjecture adds what that work does not say: the lattice of such a surface should be a
 discretised infinite-dimensional ball, the cubic lattice in the flat model. No construction of these vectors is known.
+
+## Weil's form
+
+The conjecture names the object; Weil's proof says what has to be true on it. In the form that Mattuck and Tate and
+Grothendieck gave it, the proof for a curve `C` of genus `g` over `𝔽_q` uses the fibres `e₁ = pt × C` and
+`e₂ = C × pt` of `C × C` and the graphs `Γ_k` of the powers of the Frobenius. The Hodge index theorem on `C × C` gives
+the Castelnuovo–Severi inequality `D² ≤ 2(D·e₁)(D·e₂)` for every divisor `D`. Applied to the combinations of the
+diagonal `Δ = Γ_0` and `Γ_k`, it gives the Hasse–Weil bound. `BallWeil` writes down the same configuration for `ζ`,
+with the intersection numbers computed from the primes:
+
+| `C` over `𝔽_q` | `ζ` (`BallWeil`) |
+|---|---|
+| the fibres `e₁`, `e₂`: `e₁² = e₂² = 0`, `e₁·e₂ = 1` | classes `e₁`, `e₂`, with the same numbers |
+| `Γ_k`, of degree `q^k`: `Γ_k·e₁ = 1`, `Γ_k·e₂ = q^k` | `D_n`, `n ≥ 1`: `D_n·e₁ = 1`, `D_n·e₂ = n` |
+| `Γ_j·Γ_k = q^j + q^k − √(q^j q^k)·Σ_i (α_i/√q)^{j−k}` for `j ≥ k`, with the Frobenius eigenvalues `α_i` | `D_m·D_n = m + n − √(mn)·K_H(m/n)` (`BallWeil.inter`) |
+| `Δ² = 2 − 2g` | `D_1² = 2 − K_H(1)` (`BallWeil.inter_one`), so `K_H(1) = 2 + γ − log 4π` plays `2g` |
+| `#C(𝔽_{q^k}) = Γ_k·Δ` | `D_n·D_1 = n + 1 − √n·K_H(n)` |
+| `Γ_{i+j}·Γ_{i+k} = q^i·(Γ_j·Γ_k)` | `D_{km}·D_{kn} = k·(D_m·D_n)` (`BallWeil.inter_mul`) |
+| `D² ≤ 2(D·e₁)(D·e₂)`, Castelnuovo–Severi, a theorem | equivalent to RH (`BallWeil.rh_iff_castelnuovo_severi`) |
+| `D² ≤ 0` when `D·e₁ = D·e₂ = 0`, from the Hodge index theorem | equivalent to RH (`BallWeil.rh_iff_hodge_index`) |
+| `\|#C(𝔽_{q^k}) − q^k − 1\| ≤ 2g·q^{k/2}` | `\|D_m·D_n − m − n\| ≤ K_H(1)·√(mn)` under RH (`BallWeil.weil_bound`) |
+
+The equivalences hold for divisors with integer coefficients, as on `C × C`. On the coefficients of the `D_n`,
+`2(D·e₁)(D·e₂) − D²` is the form of the Gram matrix of the orbit, and the fibres drop out
+(`BallWeil.two_deg_sub_selfInt`). Under RH that form is `‖Σ_n c_n w_n‖²` in a realization (`BallWeil.form_eq_norm_sq`).
+In the other direction the divisor `q·D_{p²} + p·D_{q²}` gives the `2 × 2` minor `K_H((p/q)²) ≥ −K_H(1)`. The
+logarithms `log(p/q)` are dense, which is all the Landau argument of step 5 needs.
+
+Two differences from the curve case:
+
+- **One side of the Weil bound is enough.** RH holds if and only if `D_m·D_n ≤ m + n + K_H(1)·√(mn)` for all `m`, `n`
+  (`BallWeil.rh_iff_weil_bound`), the analogue of an upper bound on the point counts. For a curve such an upper bound,
+  which Stepanov's method gives, is not enough by itself, and Bombieri derives the lower bound from upper bounds on a
+  Galois cover. For `ζ` the upper bound suffices because no zero of `ζ` is real. The poles of the twin form then lie
+  off the real axis, and Landau's theorem rules out any of them to the right of it. Numerically
+  (`scripts/ball_orbit.py --weil`), `K_H(m/n)/K_H(1)` runs from −0.454 at `m/n = 3` to 0.976 for `m, n ≤ 3000`. So
+  the side that gives RH holds there with a factor 2 to spare. The margin is not uniform: if the ordinates of the zeros
+  are linearly independent over `ℚ`, Kronecker's theorem brings `K_H(r)` arbitrarily close to `−K_H(1)`.
+- **The intersection numbers are real.** `D_1² = 1.9538…` is not an integer, so the `D_n` cannot be divisors on an
+  algebraic surface. Intersection numbers on an arithmetic surface are real for the same reason. The real place
+  contributes a term that is not an integer, and each prime `p` contributes an integer multiple of `log p`. The
+  decomposition of the previous section has this shape, `G = Σ_p log p·C_p + G_∞`, though the `C_p` are rational with
+  powers of `p` in their denominators.
+
+The orbit-lattice conjecture implies RH (`BallWeil.rh_of_pivots`), as a statement about the Gram matrix alone. In
+Weil's terms it is about the primitive parts `D'_n = D_n − n·e₁ − e₂`, which have `D'_n·e₁ = D'_n·e₂ = 0` and
+`−D'_m·D'_n = √(mn)·K_H(m/n)`. The Hodge index theorem asks that `−D²` be a positive semidefinite form on their span.
+The conjecture asks that in the norm `√(−D²)` each `D'_k` keep distance `√K_H(1)` from the span of the earlier ones.
+
+How this sits with the existing programmes:
+
+- **Finitely many places.** A. Connes's semi-local trace formula (Selecta Math. 5, 1999) restricts Weil's positivity to
+  a finite set of places `{∞, 2, …, p}`, where it would still imply RH. The matrices here are in that regime. Their
+  entries up to `N` involve exactly the prime powers up to `N`, and "Building the lattice forwards" finds that their
+  positivity at `N = 60` needs every prime up to 59.
+- **The archimedean place.** A. Connes and C. Consani work out the case of the archimedean place alone. They account
+  for the positivity there by the trace of the scaling action, compressed by cutoff projections ("Weil positivity and
+  trace formula, the archimedean place", arXiv:2006.13771). In the matrices here no prime enters at `N = 1`, where the
+  form is `K_H(1) > 0`. At `N = 60` the archimedean part alone, `G_∞`, has smallest eigenvalue −983, and the primes are
+  needed.
+- **Integrality.** Connes and Consani also prove a Riemann–Roch theorem for the Arakelov compactification of
+  `Spec ℤ`, with integer-valued dimensions ("Riemann–Roch for `Spec ℤ`", arXiv:2205.01391; "Riemann–Roch for the ring
+  `ℤ`", arXiv:2306.00456). It is the kind of integrality the margin `d_k ≥ d_1` would need, on the curve rather than
+  on the surface.
+
+What the library adds is a statement that is finite and checkable. For each `N`, Castelnuovo–Severi for the divisors
+supported on `e₁`, `e₂`, `D_1, …, D_N` is the positivity of an `N × N` matrix computed from the primes up to `N`. RH is
+that statement for every `N`.
