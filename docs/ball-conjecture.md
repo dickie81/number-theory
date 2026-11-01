@@ -88,7 +88,12 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
   (`BallLattice.tendsto_norm_sub_of_smooth`). For the Frobenius points the ratios `q^d` stay away from `1`, and
   `B(P_{k+1} − P_k, P_{k+1} − P_k) = 2q^k·#E(𝔽_q)` grows (`ManinHasse.gram_orbit_card`). So a lattice for `ζ` has to
   carry a kernel that is not smooth in `a/b`. It has to see the primes separately, `ℚ₊^× ≅ ℤ^{(∞)}` with a direction for
-  each prime, rather than through `log(a/b) ∈ ℝ`.
+  each prime, rather than through `log(a/b) ∈ ℝ`. Or it can weight the zeros less steeply. With the weights of
+  Hadamard's identity, `K_H(r) = Σ_ρ r^{ρ − ½}/(ρ(1 − ρ))` has `K_H(1) = 2 + γ − log 4π` (`BallHadamard.kerH_one`),
+  RH is again its positive-definiteness (`BallHadamard.rh_iff_posDefH`), and it is not smooth at `1` in any
+  realization (`BallHadamard.not_smooth`). The reason is that `ζ` has infinitely many zeros
+  (`ZerosInfinite.infinite_ZIdx`), and each with `|γ| ≥ 1` adds about `(log r)²` to `2K_H(1) − K_H(r) − K_H(1/r)`. So
+  the obstruction does not apply to `K_H`.
 - **No estimate can supply the positivity.** The least value of Weil's form on supports `[−a, a]` is at most
   `Ke^{16a − 2πe^{2a}}` (`WeilForm.lam_dexp`), so positivity on growing supports has a double-exponentially small
   margin. It has to come from an exact structure, as the definiteness of a lattice would.
@@ -170,4 +175,10 @@ None of the following states the conjecture in this form; a search in October 20
    realization of `K` is a lattice: its orbit spans none (`BallLattice.not_discrete`, under "The real line" above).
    Unlike the counts of `E`, `K` is not built from integers: the explicit formula expresses it through `Λ(n)n^{−1/2}`
    and Gaussians. So for `ζ` "arithmetic" cannot mean integral in the same way, and a lattice needs a kernel that sees
-   the primes separately. What remains open is that lattice.
+   the primes separately, or one that is not smooth at `1`. The kernel `K_H` with Hadamard's weights `1/(ρ(1 − ρ))`
+   is the second kind (`BallHadamard`): RH is its positive-definiteness, and the obstruction does not apply to it. Its
+   realizations are not shown to span a lattice. A heuristic with the Riemann–von Mangoldt count of the zeros, which the
+   library does not prove, gives `‖w_{n+1} − w_n‖² ≈ log n` under RH, growing where for `K` it tends to `0`. Its
+   explicit formula would bring in Chebyshev's `ψ`, the nearest thing for `ζ` to the point counts of `E`, but the
+   weights `1/(¼ + γ²)` are the borderline case of the explicit formula, and the library does not prove it for them.
+   What remains open is that lattice.

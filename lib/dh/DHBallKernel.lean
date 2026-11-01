@@ -19,6 +19,12 @@ So `K_dh` has no realization by similitudes either (`not_realization_dh`): no in
 and similitudes `φ_n` of factor `n` with `φ_n(w_r) = w_{nr}` and `⟨w_b, w_a⟩ = √(ab)·K_dh(a/b)`, since one would make
 `K_dh` positive-definite (`BallLattice.posDefQ_of_realization`). This is the dh column of
 `BallLattice.rh_iff_realization`.
+
+The same holds for the kernel of `BallHadamard`: `K_{H,dh}(r) = Σ_s r^{s − ½}/(s(1 − s))` over the zeros of `dh`
+(`kerHDH`) is not positive-definite on the positive rationals (`not_posDefH_dh`). Its `2 × 2` minors are the twin sum
+with the weights `G(P) = 8/(1 − 9P²)`, twice `1/(s(1 − s))` at `P = 2iτ_u`, at `λ = (3/2)log r` (`twin_eq_kerHDH`). A
+zero at `s = 0` or `1`, should `dh` have one, is given the weight `½`. This is the dh column of
+`BallHadamard.rh_iff_posDefH`.
 -/
 import Mathlib
 import BallKernel
@@ -143,9 +149,129 @@ positive-definite on `ℚ₊^×` (`BallLattice.posDefQ_of_realization`), which `
 theorem not_realization_dh : IsEmpty (BallLattice.Realization kerDH) :=
   ⟨fun R => not_posDef_dh (BallLattice.posDefQ_of_realization R)⟩
 
+/-! ## The Hadamard kernel of `dh` -/
+
+/-- The Hadamard weight of `dh` in the pole variable, `G(P) = 8/(1 − 9P²)`: at `P = 2iτ` it is twice
+`1/(s(1 − s))` at the zeros `s = ½ ± 3iτ`. At `9P² = 1` it is set to `1`, so that it has no zero. -/
+def hGDH (p : ℂ) : ℂ := if 9 * p ^ 2 = 1 then 1 else 8 / (1 - 9 * p ^ 2)
+
+lemma hGDH_ne (p : ℂ) : hGDH p ≠ 0 := by
+  unfold hGDH
+  split_ifs with h
+  · exact one_ne_zero
+  · exact div_ne_zero (by norm_num) (sub_ne_zero.2 (Ne.symm h))
+
+lemma hGDH_neg (p : ℂ) : hGDH (-p) = hGDH p := by unfold hGDH; rw [neg_sq]
+
+/-- **The Hadamard weights of `dh` are summable**: `‖G(P_u)‖ ≤ ‖u‖^{−1}/4` once `‖P_u‖ ≥ 1`, and Hadamard's
+`Σ_u |u|^{−1} < ∞`. -/
+theorem summable_hGDH : Summable fun i : ZeroIdx (sqF XiDH3) => ‖hGDH (2 * I * tau3 i)‖ := by
+  have hs : Summable fun i : ZeroIdx (sqF XiDH3) => ‖i.1⁻¹‖ := hadamard_XiDH3.summ
+  refine (hs.mul_left (1 / 4)).of_norm_bounded_eventually ?_
+  refine (finite_tau3 1).eventually_cofinite_notMem.mono fun i hi => ?_
+  · simp only [Set.mem_ofPred_eq, not_le] at hi
+    rw [norm_norm]
+    set P := 2 * I * tau3 i with hP
+    have hP1 : 1 < ‖P‖ := hi
+    have e1 : ‖P‖ = 2 * ‖tau3 i‖ := by rw [hP]; simp
+    have e2 : ‖i.1‖ = ‖tau3 i‖ ^ 2 := by rw [← tau3_sq, norm_pow]
+    have hT : 0 < ‖tau3 i‖ := by linarith
+    have h9 : 9 * P ^ 2 ≠ 1 := fun h => by
+      have := congrArg norm h
+      rw [norm_mul, norm_pow, norm_one] at this
+      have : ‖(9 : ℂ)‖ = 9 := by norm_num
+      nlinarith
+    have hlow : 8 * ‖P‖ ^ 2 ≤ ‖1 - 9 * P ^ 2‖ := by
+      have h1 := norm_sub_norm_le (9 * P ^ 2) 1
+      rw [norm_mul, norm_pow, norm_one, show ‖(9 : ℂ)‖ = 9 by norm_num] at h1
+      rw [norm_sub_rev]
+      nlinarith
+    unfold hGDH
+    simp only [h9, ↓reduceIte]
+    rw [norm_div, show ‖(8 : ℂ)‖ = 8 by norm_num, norm_inv, e2, div_le_iff₀ (by nlinarith)]
+    rw [e1] at hlow
+    have : (1 / 4 : ℝ) * (‖tau3 i‖ ^ 2)⁻¹ * ‖1 - 9 * P ^ 2‖ ≥ (1 / 4) * (‖tau3 i‖ ^ 2)⁻¹ * (8 * (2 * ‖tau3 i‖) ^ 2) :=
+      by gcongr
+    have e3 : (1 / 4 : ℝ) * (‖tau3 i‖ ^ 2)⁻¹ * (8 * (2 * ‖tau3 i‖) ^ 2) = 8 := by field_simp; ring
+    linarith
+
+/-- The poles `P_u = 2iτ_u` of `dh` with the Hadamard weights. -/
+theorem twinPoles_hGDH :
+    TwinLandau.TwinPoles (fun i : ZeroIdx (sqF XiDH3) => 2 * I * tau3 i) fun i => hGDH (2 * I * tau3 i) :=
+  ⟨summable_hGDH, abs_re_pole3_lt, im_pole3_ne, finite_tau3⟩
+
+/-- **The Hadamard kernel of `dh`**: `K_{H,dh}(r) = Σ_u (G(P_u)/2)(r^{3iτ_u} + r^{−3iτ_u})`, the sum of
+`r^{s − ½}/(s(1 − s))` over the zeros `s = ½ ± 3iτ_u` of `dh`. -/
+def kerHDH (r : ℝ) : ℂ :=
+  ∑' i : ZeroIdx (sqF XiDH3), hGDH (2 * I * tau3 i) / 2 *
+    (cexp (3 * I * tau3 i * Real.log r) + cexp (-(3 * I * tau3 i) * Real.log r))
+
+lemma summable_kerHDH (l : ℝ) :
+    Summable fun i : ZeroIdx (sqF XiDH3) => hGDH (2 * I * tau3 i) * cexp (l * (2 * I * tau3 i)) :=
+  TwinLandau.summable_cw_mul twinPoles_hGDH (B := Real.exp |l|) fun i => by
+    rw [Complex.norm_exp]
+    refine Real.exp_le_exp.2 ?_
+    have h := abs_re_pole3_lt i
+    have e : ((l : ℂ) * (2 * I * tau3 i)).re = l * (2 * I * tau3 i).re := by simp
+    rw [e]
+    calc l * (2 * I * tau3 i).re ≤ |l * (2 * I * tau3 i).re| := le_abs_self _
+      _ = |l| * |(2 * I * tau3 i).re| := abs_mul _ _
+      _ ≤ |l| * 1 := mul_le_mul_of_nonneg_left h.le (abs_nonneg _)
+      _ = |l| := mul_one _
+
+lemma summable_kerHDH_term (L : ℝ) : Summable fun i : ZeroIdx (sqF XiDH3) =>
+    hGDH (2 * I * tau3 i) / 2 * (cexp (3 * I * tau3 i * L) + cexp (-(3 * I * tau3 i) * L)) := by
+  refine (((summable_kerHDH (3 / 2 * L)).div_const 2).add ((summable_kerHDH (-(3 / 2 * L))).div_const 2)).congr
+    fun i => ?_
+  obtain ⟨-, e2, e3⟩ := kerDH_exps i L
+  rw [e2, e3]
+  ring
+
+/-- **The `2 × 2` minors are the twin sum**: `2K_{H,dh}(1) + K_{H,dh}(r) + K_{H,dh}(1/r)` is the twin sum over the
+poles `2iτ_u` with the weights `G(P)`, at `λ = (3/2)log r`. -/
+theorem twin_eq_kerHDH (r : ℝ) :
+    TwinLandau.Wsum (fun i : ZeroIdx (sqF XiDH3) => 2 * I * tau3 i) (fun i => hGDH (2 * I * tau3 i))
+      (3 / 2 * Real.log r) = 2 * kerHDH 1 + kerHDH r + kerHDH r⁻¹ := by
+  unfold kerHDH
+  rw [Real.log_one, Real.log_inv, ← tsum_mul_left,
+    ← ((summable_kerHDH_term 0).mul_left 2).tsum_add (summable_kerHDH_term _),
+    ← (((summable_kerHDH_term 0).mul_left 2).add (summable_kerHDH_term _)).tsum_add (summable_kerHDH_term _)]
+  unfold TwinLandau.Wsum TwinLandau.wq
+  refine tsum_congr fun i => ?_
+  obtain ⟨-, e2, -⟩ := kerDH_exps i (Real.log r)
+  have e4 : cexp (3 * I * tau3 i * ((-Real.log r : ℝ) : ℂ)) = cexp (-(3 * I * tau3 i) * Real.log r) := by
+    congr 1; push_cast; ring
+  have e5 : cexp (-(3 * I * tau3 i) * ((-Real.log r : ℝ) : ℂ)) = cexp (3 * I * tau3 i * Real.log r) := by
+    congr 1; push_cast; ring
+  have e6 : cexp (-(((3 / 2 * Real.log r : ℝ) : ℂ) * (2 * I * tau3 i))) = cexp (-(3 * I * tau3 i) * Real.log r) := by
+    congr 1; push_cast; ring
+  dsimp only
+  rw [e2, e4, e5, e6]
+  simp only [Complex.ofReal_zero, mul_zero, Complex.exp_zero]
+  ring
+
+/-- **The Hadamard kernel of `dh` is not positive-definite on the positive rationals.** If it were, every pole `2iτ_u`
+would be on the imaginary axis (`BallKernel.re_eq_zero_of_dense`), so every zero of `dh` with `Re s > 0` on the line,
+which `dh_offline_zero` refutes. -/
+theorem not_posDefH_dh : ¬ BallKernel.PosDefQ kerHDH := by
+  intro hK
+  have := countable_ZeroIdx3
+  have hW : ∀ r : ℚ, 0 < r → 0 ≤ TwinLandau.Wsum (fun i : ZeroIdx (sqF XiDH3) => 2 * I * tau3 i)
+      (fun i => hGDH (2 * I * tau3 i)) (3 / 2 * Real.log r) := fun r hr => by
+    rw [twin_eq_kerHDH]
+    exact BallKernel.minor_nonneg hK hr
+  have hre := BallKernel.re_eq_zero_of_dense twinPoles_hGDH (G := hGDH) (fun _ => rfl) hGDH_neg
+    (fun p _ => hGDH_ne p) (by norm_num) hW
+  obtain ⟨s, hs, h0, hne⟩ := dh_offline_zero
+  obtain ⟨i, hi⟩ := tau3_of_dh_zero hs h0
+  have h1 := abs_two_re_sub_one_eq hi
+  rw [hre i, abs_zero, mul_zero, abs_eq_zero] at h1
+  exact hne (by linarith)
+
 end PsiOmega
 
 #print axioms PsiOmega.summable_gwDH
 #print axioms PsiOmega.twin_eq_kerDH
 #print axioms PsiOmega.not_posDef_dh
 #print axioms PsiOmega.not_realization_dh
+#print axioms PsiOmega.not_posDefH_dh
