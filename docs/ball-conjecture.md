@@ -201,8 +201,10 @@ None of the following states the conjecture in this form; a search in October 20
 
    This makes the Gram matrices of `w_1, …, w_N` computable from the primes. The computation takes `A` in a closed form,
    `A(u) = γ·sinh(u/2) + sinh(u/2)·log(4sinh(u/2)) − cosh(u/2)·log cosh(u/2) − (u/2)e^{−u/2}`. The closed form is
-   checked numerically against the integral that defines `A`, and is not proved. The formula itself agrees with the
-   sum over the first 2000 zeros to within `10⁻⁴`. `scripts/ball_orbit.py` gives, up to `N = 3000`:
+   checked numerically against the integral that defines `A`, and is not proved in Lean. The whole formula is the
+   classical explicit formula with the kernel `1/(s(s − 1))`, from the residues at `1`, `0`, the zeros and the trivial
+   zeros; `scripts/ball_certificate.py` records the derivation. It agrees with the sum over the first 2000 zeros to
+   within `10⁻⁴`. `scripts/ball_orbit.py` gives, up to `N = 3000`:
    - The Gram matrices are positive definite, as RH requires.
    - Let `d_k` be the squared distance of `w_k` from the span of `w_1, …, w_{k−1}`. Then `d_k ≥ 1.718·d_1` for
      `2 ≤ k ≤ 3000`, and `d_k` grows, roughly like `1.87·d_1·log²k` for `k` between 1000 and 3000.
@@ -211,10 +213,23 @@ None of the following states the conjecture in this form; a search in October 20
    - The smallest eigenvalue of the Gram matrix tends to `0` (`1.3·10⁻⁴` at `N = 3000`). The form degenerates on the
      space but not on the lattice.
 
+   Up to `N = 10^4` the bound is proved, not only observed (`scripts/ball_certificate.py`):
+   - The script encloses every entry of the matrix, computed from the primes by the explicit formula, in interval
+     arithmetic with all rounding errors bounded.
+   - It bounds the pivots through a congruence `T·G·Tᵀ`, with `T` unit lower-triangular so that the pivots do not
+     change, and Gershgorin's theorem.
+   - The result: `d_k > d_1` for `2 ≤ k ≤ 10^4`, and `d_k > d_2 = 1.7184·d_1` for `3 ≤ k ≤ 10^4`. Every pivot after
+     the second is at least `2.3713·d_1`, the least bound being at `k = 3`.
+   - So these matrices are positive definite, unconditionally. The lattice with Gram matrix `G_N`, `N ≤ 10^4`, has the
+     first basis vector and its negative as its shortest nonzero vectors (`BallPsi.norm_sq_ge_of_dist`). Under RH this
+     is the lattice spanned by `w_1, …, w_N` in any realization of `K_H`.
+
    So with Hadamard's weights the configuration of step 5 looks like a lattice. The precise statement:
 
    > **The orbit lattice.** The Gram–Schmidt pivots `d_k` of the matrices `(√(mn)·K_H(m/n))_{m,n ≤ N}`, which
    > `BallPsi.gram_explicit` writes through `ψ`, satisfy `d_k ≥ d_1` for every `k`.
+
+   It holds for `k ≤ 10^4`, by the certificate above.
 
    It is a statement about the primes. Under RH it says that in every realization of `K_H`, `w_{k+1}` keeps distance
    `‖w_1‖` from the span of `w_1, …, w_k`. The orbit then spans a lattice with `w_1` as a shortest vector
