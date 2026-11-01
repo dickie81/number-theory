@@ -30,9 +30,9 @@ from `main` on every push.
 
 | Path | Contents |
 |---|---|
-| `lib/core` | The library's modules that need only Mathlib: 332 files. |
+| `lib/core` | The library's modules that need only Mathlib: 333 files. |
 | `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 349 files. |
-| `lib/dh` | The Davenport–Heilbronn function and its zeros: 53 files. |
+| `lib/dh` | The Davenport–Heilbronn function and its zeros: 54 files. |
 | `lib/zeta23` | The modules that also use `zeta23`: 8 files. |
 | `lib/vendor/pnt-plus`, `lib/vendor/zeta23` | Two upstream libraries, ported to this toolchain, each with its license and its port patch. See their READMEs. |
 | `lib/check/Check.lean` | The axioms of the papers' theorems. This is the default build target. |

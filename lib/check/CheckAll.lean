@@ -214,6 +214,7 @@ import ManinHasse
 import ManinLattice
 import WeilFF
 import PurityTest
+import BallKernel
 import BohrTorus
 import LSeriesLandau
 import HalfPlaneJoinsChar
@@ -1105,6 +1106,10 @@ twin-form rates at `11/12`. -/
 #print axioms PurityTest.not_posDef
 #print axioms PurityTest.posDef_elliptic
 #print axioms PurityTest.card_ne_countY
+#print axioms BallKernel.rh_iff_posDef
+#print axioms BallKernel.kerK_explicit
+#print axioms BallKernel.kerK_inv
+#print axioms BallKernel.re_eq_zero_of_dense
 #print axioms BohrTorus.eq_zero_of_sum_log
 #print axioms BohrTorus.tendsto_mean_character
 #print axioms BohrTorus.sum_norm_sq_torus

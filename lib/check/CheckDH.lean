@@ -8,6 +8,7 @@ import DHInert
 import ChiFirstFailure
 import DHBohrSphere
 import DHColumnRest
+import DHBallKernel
 
 /- The function: `dh ≢ 0`, its functional equation, the conjugation symmetry of its zeros, the coefficients of
 `−dh′/dh`, the sum over its zeros and the Euler–Maclaurin bound. -/
@@ -57,6 +58,7 @@ cannot satisfy, since its RH fails. -/
 #print axioms PsiOmega.not_D_dh
 #print axioms PsiOmega.not_twins_nonneg_dh
 #print axioms PsiOmega.not_twins_subexp_dh
+#print axioms PsiOmega.not_posDef_dh
 #print axioms PsiOmega.not_odd_lower_dh
 #print axioms PsiOmega.not_lamODH_lower
 #print axioms PsiOmega.theoremDDH

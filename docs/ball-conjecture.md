@@ -1,7 +1,8 @@
 # The discretised infinite ball: a research direction
 
 A conjecture of the library's author, recorded here as a direction for work. No theorem of the library proves it or
-tests it yet. This page says what it claims, what is proved in the finite-rank cases it generalises, what the library
+tests it yet, though the library proves exactly what it would have to deliver for `ζ` (`BallKernel.rh_iff_posDef`).
+This page says what it claims, what is proved in the finite-rank cases it generalises, what the library
 already has towards it, what any version of it must survive, and the first steps.
 
 ## The conjecture
@@ -52,7 +53,9 @@ The infinite sphere, with the zeros on it exactly under RH:
   sphere, one strictly inside and one strictly outside, on every finite set of primes.
 
 So in the library's terms RH says that the zeros' Bohr vectors lie on the infinite unit sphere. What is missing is the
-discrete structure whose definiteness would force them there.
+discrete structure whose definiteness would force them there. The library states the target exactly: RH holds if and
+only if the kernel `K(r) = Σ_ρ e^{(ρ − ½)²/2} r^{ρ − ½}` is positive-definite on `ℚ₊^×` (`BallKernel.rh_iff_posDef`),
+and the explicit formula computes `K` from the primes (`BallKernel.kerK_explicit`).
 
 Discretised balls in finite dimension: `BallTower.count_div_pow_tendsto_ballVol` (the points of `ℤⁿ` in a ball),
 `BallTower.counted_volume_max_five` (their counted volume is largest in dimension 5), and `LocalTeeth.card_two_sq`
@@ -122,12 +125,23 @@ None of the following states the conjecture in this form; a search in October 20
    (`PurityTest.posDef_elliptic`), and the zeta function of `Y` above shows that no step that only uses an Euler product
    and a functional equation can give it. Remaining: the positivity itself past rank two. Ruiz Duarte and Top carry
    Manin's argument to genus 2; in general it needs the Néron–Severi lattice of `C × C`, which Mathlib does not have.
-5. **The statement for `ζ`.** Replace the Frobenius powers, indexed by `ℤ`, by the positive rationals `ℚ₊^× ≅ ℤ^{(∞)}`,
-   with a direction for each prime. Replace `c_k` by the kernel `K(r) = Σ_ρ ĥ(γ_ρ) r^{iγ_ρ}`, where `ρ = 1/2 + iγ_ρ` and
-   `h` is a Gaussian; the explicit formula computes `K` from the primes. RH holds exactly when `K` is positive-definite
-   on `ℚ₊^×`: the positive rationals then sit on a sphere in a Hilbert space, with `K` for their inner products. That
-   equivalence is Weil's criterion restated. The conjecture is that this configuration is an arithmetic definite
-   lattice, as the twist's lattice is for `E`. It comes with a test. The Davenport–Heilbronn function's kernel is
-   unbounded, as its zeros leave the line, so it is not positive-definite; a candidate has to use unique factorisation,
-   which is what `ℤ^{(∞)}` encodes. By the purity test it has to use more: unique factorisation is also what Beurling's
-   generalised integers have.
+5. **The statement for `ζ`**: done (`BallKernel`). Replace the Frobenius powers, indexed by `ℤ`, by the positive
+   rationals `ℚ₊^× ≅ ℤ^{(∞)}`, with a direction for each prime. Replace `c_k` by the kernel
+   `K(r) = Σ_ρ e^{(ρ − ½)²/2} r^{ρ − ½}`, which at `ρ = ½ + iγ_ρ` is `Σ_ρ ĥ(γ_ρ) r^{iγ_ρ}` with the Gaussian
+   `ĥ(γ) = e^{−γ²/2}`. RH holds exactly when `K` is positive-definite on `ℚ₊^×` (`BallKernel.rh_iff_posDef`): the
+   positive rationals then sit on a sphere in a Hilbert space, with `K` for their inner products. The `2 × 2` minors
+   `2K(1) + K(r) + K(1/r)` are the library's twin form with Gaussian weights, so the converse is its Landau argument
+   (`BallKernel.re_eq_zero_of_dense`). `K` is even (`BallKernel.kerK_inv`). The explicit formula computes it from the
+   primes (`BallKernel.kerK_explicit`): `K(r) = e^{1/8}(r^{1/2} + r^{−1/2})` from the poles, minus a sum over the prime
+   powers `n` of `Λ(n)n^{−1/2}` against Gaussians in `log n ∓ log r`, plus two archimedean terms. That equivalence is
+   Weil's criterion restated, and it is no evidence for RH. The test: the kernel of the Davenport–Heilbronn function,
+   built in the same way from its zeros, is not positive-definite (`PsiOmega.not_posDef_dh`), as some of its zeros
+   leave the line. So a candidate has to use unique factorisation, which is what `ℤ^{(∞)}` encodes, and, by the purity
+   test, more: unique factorisation is also what Beurling's generalised integers have.
+6. **The conjecture itself**, open: that the configuration of step 5 is an arithmetic definite lattice, as the twist's
+   lattice is for `E`. In rank two, before normalising, the inner products of the Frobenius points are the integers
+   `q^{min(i,j)}(q^{|i−j|} + 1 − #E(𝔽_{q^{|i−j|}}))` (`ManinHasse.gram_nonneg`), and the Frobenius multiplies the form
+   by `q`. For `ζ` the analogue would be a lattice of infinite rank with a direction for each prime, on which
+   multiplication by `p` multiplies the form by `p`, and whose Gram kernel is `√(ab)·K(a/b)`. A first test is the
+   function-field case, where such a lattice exists (Weil's, in `C × C`) and the kernel is computed from the point
+   counts.
