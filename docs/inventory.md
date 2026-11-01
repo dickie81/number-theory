@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1101 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1109 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 100 | 266 |
+| `lib/core` | 101 | 274 |
 | `lib/pnt` | 229 | 730 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -72,6 +72,17 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallPsi.gram_explicit`: The Gram matrix of the orbit, through `ψ`
 - `BallPsi.norm_sq_ge_of_dist`: A Gram–Schmidt bound gives a lattice
 - `BallPsi.orbit_lattice`: The orbit of `K_H` spans a lattice, if the Gram–Schmidt bound holds
+
+#### `BallSlice`: Two primes carry the Riemann hypothesis: positivity on the slice of `p` and `q`
+
+- `BallSlice.irrational_log_div`: `log p/log q` is irrational
+- `BallSlice.dense_log_pair`: `ℤ·log p + ℤ·log q` is dense in `ℝ`
+- `BallSlice.re_eq_zero_of_dense_set`: Twin positivity on a dense set puts every pole on the imaginary axis
+- `BallSlice.rh_iff_bound_pair`: The Riemann hypothesis is the lower Weil bound on the slice of two primes
+- `BallSlice.rh_iff_two_three`: For `2` and `3`
+- `BallSlice.rh_iff_posDefOn_pair`: The Riemann hypothesis is positive-definiteness on the slice of two primes
+- `BallSlice.rh_iff_weil_bound_pair`: The Riemann hypothesis is the upper Weil bound for the divisors of the slice
+- `BallSlice.rh_iff_castelnuovo_severi_pair`: The Riemann hypothesis is Castelnuovo–Severi for the divisors of the slice
 
 #### `BallTower`: The ball tower from integers and primes (formalised)
 

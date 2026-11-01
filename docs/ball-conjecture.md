@@ -339,6 +339,14 @@ lattice spanned by the `w_n` with every prime factor of `n` in `S`, so the direc
 - **Two primes.** The real place couples 2 and 3 through the near-coincidences of their powers. At the Pythagorean
   comma `3^12/2^19 = 1.0136`, `cos(w_{3^12}, w_{2^19}) = 0.573`, against 0.003 for independent directions. Over the
   `{2, 3}`-smooth numbers in `[10^5, 10^6]` the median `e` is 0.29, against 0.52 with the two directions independent.
+- **Two primes carry RH.** The logarithms of the slice of two distinct primes `p` and `q` are dense in `ℝ`, as
+  `log p/log q` is irrational (`BallSlice.irrational_log_div`). That is all the Landau argument of step 5 needs
+  (`BallSlice.re_eq_zero_of_dense_set`). So RH holds if and only if `K_H` is positive-definite on the slice
+  (`BallSlice.rh_iff_posDefOn_pair`), and if and only if `K_H(p^a q^b) ≥ −K_H(1)` for all integers `a, b`
+  (`BallSlice.rh_iff_bound_pair`; for `2` and `3`, `BallSlice.rh_iff_two_three`). In Weil's terms each of the upper
+  Weil bound and Castelnuovo–Severi, for the divisors `D_n` with `n = p^i q^j` alone, is equivalent to RH
+  (`BallSlice.rh_iff_weil_bound_pair`, `BallSlice.rh_iff_castelnuovo_severi_pair`). So the conjecture on a single
+  two-prime slice is already stronger than RH. One prime would not do: the logarithms of its powers are discrete.
 - **More primes.** The median `e` over the top decade of each slice falls as `S` grows:
   - 0.61 for `{2}`, 0.29 for `{2, 3}`, 0.16 for `{2, 3, 5}` and 0.10 for `{2, 3, 5, 7}`, up to `10^6`;
   - 0.073 for the primes up to 31, up to `2·10^4`;
@@ -386,7 +394,8 @@ logarithms `log(p/q)` are dense, which is all the Landau argument of step 5 need
 Two differences from the curve case:
 
 - **One side of the Weil bound is enough.** RH holds if and only if `D_m·D_n ≤ m + n + K_H(1)·√(mn)` for all `m`, `n`
-  (`BallWeil.rh_iff_weil_bound`), the analogue of an upper bound on the point counts. For a curve such an upper bound,
+  (`BallWeil.rh_iff_weil_bound`), the analogue of an upper bound on the point counts, and the `m`, `n` of the form
+  `2^i 3^j` are enough (`BallSlice.rh_iff_weil_bound_pair`). For a curve such an upper bound,
   which Stepanov's method gives, is not enough by itself, and Bombieri derives the lower bound from upper bounds on a
   Galois cover. For `ζ` the upper bound suffices because no zero of `ζ` is real. The poles of the twin form then lie
   off the real axis, and Landau's theorem rules out any of them to the right of it. Numerically
