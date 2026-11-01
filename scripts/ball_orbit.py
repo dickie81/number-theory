@@ -20,9 +20,10 @@ then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallP
     python3 scripts/ball_orbit.py --places [N]  # the Gram matrix as a sum over the places, and its rigidity
     python3 scripts/ball_orbit.py --weil [N]    # the intersection numbers D_m·D_n of BallWeil and the Weil bound
     python3 scripts/ball_orbit.py --forward [N] # local pieces, reduced basis, and the coupling between the primes
+    python3 scripts/ball_orbit.py --slices [X]  # the lattice of the numbers built from a fixed set of primes
 
 The first three options are the computations of "What a proof under RH would need" in docs/ball-conjecture.md,
---places and --forward those of "Building the lattice forwards", and --weil that of "Weil's form".
+--places, --forward and --slices those of "Building the lattice forwards", and --weil that of "Weil's form".
 """
 
 import math
@@ -351,12 +352,103 @@ def forward(N):
           f"{np.median(r[~isp][1:]):.3f} at the composites")
 
 
+def smooth_numbers(S, X):
+    """The numbers up to X whose prime factors all lie in S, in increasing order."""
+    out = [1]
+    for p in S:
+        new = []
+        for n in out:
+            while n <= X:
+                new.append(n)
+                n *= p
+        out = new
+    return sorted(out)
+
+
+def slices(X):
+    """The orbit lattice restricted to the S-smooth numbers: the directions of the primes of S alone."""
+    A, B = tables(X)
+    c0 = 2 + EULER_GAMMA - math.log(4 * math.pi)
+
+    def gram_on(ns):
+        n = np.array(ns, dtype=float)
+        hi, lo = np.maximum.outer(n, n), np.minimum.outer(n, n)
+        return hi * kernel_over_sqrt(hi / lo, A, B)
+
+    def kappa(r):
+        """K_H(r)/K_H(1) for r ≥ 1."""
+        return float(kernel_over_sqrt(np.array([float(r)]), A, B)[0] * math.sqrt(r) / c0)
+
+    def g_local(x, S):
+        """G(x, 1) with only the primes of S in the explicit formula: G_∞(x, 1) + Σ_{S-powers k ≤ x} Λ(k)(x/k − 1)."""
+        t = 0.5 * (x - 1) * np.log(np.maximum(x - 1, 1e-300)) * (x > 1)
+        out = ((x + 1) + EULER_GAMMA * x - math.log(2 * math.pi) - (x - 1) * np.log(x) + t
+               - 0.5 * (x + 1) * np.log(x + 1))
+        for p in S:
+            q = p
+            while q <= x.max():
+                out = out + np.where(x >= q, math.log(p) * (x / q - 1), 0.0)
+                q *= p
+        return out
+
+    def valuations(ns, S):
+        V = np.zeros((len(ns), len(S)), dtype=int)
+        for i, n in enumerate(ns):
+            for j, p in enumerate(S):
+                while n % p == 0:
+                    n //= p
+                    V[i, j] += 1
+        return V
+
+    def independent_on(ns, S):
+        V = valuations(ns, S)
+        P = np.ones((len(ns), len(ns)))
+        for j, p in enumerate(S):
+            D = np.abs(V[:, j][:, None] - V[:, j][None, :])
+            P *= np.array([1.0] + [kappa(float(p) ** e) for e in range(1, D.max() + 1)])[D]
+        n = np.array(ns, dtype=float)
+        return c0 * np.sqrt(np.outer(n, n)) * P
+
+    print(f"1. One prime, the slice {{p^j}} up to {X}: pivots d/d_1, and e = d(p^j)/(p^j·d_1), 1 for a free vector")
+    for p in [2, 3, 5]:
+        ns = smooth_numbers([p], X)
+        d = pivots(gram_on(ns)) / c0
+        e = d / np.array(ns, dtype=float)
+        print(f"   p = {p}: K_H(p^j)/K_H(1) = " + ", ".join(f"{kappa(p ** j):+.3f}" for j in range(1, 5))
+              + f", …; e from {e[1]:.3f} at j = 1 to {e[-1]:.3f} at j = {len(ns) - 1}")
+        n = np.array(ns, dtype=float)
+        hi, lo = np.maximum.outer(n, n), np.minimum.outer(n, n)
+        GS = lo * g_local(hi / lo, [p])
+        k = next((k for k in range(2, len(ns) + 1) if np.linalg.eigvalsh(GS[:k, :k])[0] < 0), None)
+        print(f"          with only the prime {p} and the real place it is indefinite from p^j = {ns[k - 1]}"
+              if k else f"          with only the prime {p} and the real place it stays positive")
+    print("2. Two primes: the real place couples 2 and 3 through the near-coincidences of their powers")
+    for a, b in [(3, 2), (8, 5), (19, 12)]:
+        r = max(3 ** b / 2 ** a, 2 ** a / 3 ** b)
+        print(f"   3^{b}/2^{a} = {3 ** b / 2 ** a:.5f}: cos(w_(3^{b}), w_(2^{a})) = {kappa(r):+.3f}, "
+              f"with independent directions {kappa(2 ** a) * kappa(3 ** b):+.4f}")
+    print("3. Growing sets of primes: the median of e over the top decade of each slice, true and with the primes of S")
+    print("   independent, and the smallest pivot after w_1")
+    for S, X0 in [([2], X), ([2, 3], X), ([2, 3, 5], X), ([2, 3, 5, 7], X), (primes_upto(13), X // 10),
+                  (primes_upto(31), X // 50), (primes_upto(3000), 3000)]:
+        ns = smooth_numbers(S, X0)
+        n = np.array(ns, dtype=float)
+        d = pivots(gram_on(ns)) / c0
+        di = pivots(independent_on(ns, S)) / c0
+        top = n >= X0 / 10
+        lab = "{" + ", ".join(map(str, S)) + "}" if len(S) <= 4 else f"primes ≤ {S[-1]}"
+        k = 1 + int(np.argmin(d[1:]))
+        print(f"   {lab:15s} up to {X0:>7}: {len(ns):4d} vectors; e {np.median((d / n)[top]):.3f}, "
+              f"independent {np.median((di / n)[top]):.3f}; smallest d/d_1 {d[k]:.3f} at n = {ns[k]}")
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1].startswith("--"):
         arg = int(sys.argv[2]) if len(sys.argv) > 2 else None
         {"--smooth": lambda: smooth(arg or 60), "--flat": lambda: flat(arg or 1000),
          "--zeros": lambda: zeros(arg or 2000), "--places": lambda: places(arg or 60),
-         "--weil": lambda: weil(arg or 1000), "--forward": lambda: forward(arg or 1000)}[sys.argv[1]]()
+         "--weil": lambda: weil(arg or 1000), "--forward": lambda: forward(arg or 1000),
+         "--slices": lambda: slices(arg or 10 ** 6)}[sys.argv[1]]()
         return
     N = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
     G = gram(N)
