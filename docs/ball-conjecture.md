@@ -83,12 +83,23 @@ None of the following states the conjecture in this form; a search in October 20
 ## First steps
 
 1. Rank two: `HasseEisenstein`, done.
-2. Hasse's bound for every elliptic curve: done in odd characteristic, by Manin's proof (`ManinHasse`). There the
-   degree form on `ℤ[π] ⊂ End(E)` is the degree of points on a twist over `𝔽_q(t)`. Characteristic 2 remains: its
-   twist is by an Artin–Schreier extension rather than by a square root. The degree as a positive definite form on all
-   of `End(E)` needs isogenies on Mathlib's curves.
-3. Weil positivity for function fields, where it is a theorem, with a function-field analogue of `dh` to show which
-   step uses the Euler product.
-4. For `ζ`, a candidate: the integers give, through unique factorisation, a lattice `ℤ^{(∞)}` of exponent vectors in
-   the space where the Bohr vectors live. Whether it carries a definite form whose unit sphere holds the zeros is the
-   question the conjecture poses.
+2. Hasse's bound for every elliptic curve: done in odd characteristic, by Manin's proof (`ManinHasse`). Characteristic 2
+   remains: its twist is by an Artin–Schreier extension rather than by a square root.
+3. **The lattice itself, in rank two.** Manin's proof uses the degree along one line only, `n ↦ deg(P₁ + nP₀)`. The
+   points of the twist are `End(E)`, up to 2-torsion, and on them the degree is a quadratic form:
+   `deg(P + Q) + deg(P − Q) = 2 deg P + 2 deg Q` for all `P` and `Q`. Take the Frobenius points
+   `P_k = (st^{q^k}, s^{(q^k+3)/2})`, with `deg(P_i − P_j) = q^j·#E(𝔽_{q^{i−j}})`. The vectors `P_k/q^{k/2}` lie on the
+   unit sphere, and their inner products are the normalised traces `c_k = (q^k + 1 − #E(𝔽_{q^k}))/(2q^{k/2})`. So
+   `k ↦ c_k` is a positive-definite function on `ℤ`. That is the Riemann hypothesis for `E` in every degree at once,
+   from definiteness alone: the Frobenius powers are points on the sphere of a definite lattice. It also gives
+   constraints between `#E(𝔽_q)`, `#E(𝔽_{q²})`, … that Hasse's bound field by field does not, such as `c₂ ≥ 2c₁² − 1`.
+4. Weil positivity for function fields, where it is a theorem, with a function-field analogue of `dh` to show which step
+   uses the Euler product.
+5. **The statement for `ζ`.** Replace the Frobenius powers, indexed by `ℤ`, by the positive rationals `ℚ₊^× ≅ ℤ^{(∞)}`,
+   with a direction for each prime. Replace `c_k` by the kernel `K(r) = Σ_ρ ĥ(γ_ρ) r^{iγ_ρ}`, where `ρ = 1/2 + iγ_ρ` and
+   `h` is a Gaussian; the explicit formula computes `K` from the primes. RH holds exactly when `K` is positive-definite
+   on `ℚ₊^×`: the positive rationals then sit on a sphere in a Hilbert space, with `K` for their inner products. That
+   equivalence is Weil's criterion restated. The conjecture is that this configuration is an arithmetic definite
+   lattice, as the twist's lattice is for `E`. It comes with a test. The Davenport–Heilbronn function's kernel is
+   unbounded, as its zeros leave the line, so it is not positive-definite; a candidate has to use unique factorisation,
+   which is what `ℤ^{(∞)}` encodes.
