@@ -18,9 +18,10 @@ then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallP
     python3 scripts/ball_orbit.py --flat [N]    # the Gram matrix against the flat model d_1·min(m, n)
     python3 scripts/ball_orbit.py --zeros [M]   # which zeros carry d_k, from the first M zeros; needs mpmath, slow
     python3 scripts/ball_orbit.py --places [N]  # the Gram matrix as a sum over the places, and its rigidity
+    python3 scripts/ball_orbit.py --weil [N]    # the intersection numbers D_m·D_n of BallWeil and the Weil bound
 
-The first three options are the computations of "What a proof under RH would need" in docs/ball-conjecture.md, and
---places is that of "Building the lattice forwards".
+The first three options are the computations of "What a proof under RH would need" in docs/ball-conjecture.md,
+--places is that of "Building the lattice forwards", and --weil that of "Weil's form".
 """
 
 import math
@@ -192,11 +193,35 @@ def places(N):
         print(f"  {name:28s}: {np.linalg.eigvalsh(places_gram(N, lam))[0]: .3e}")
 
 
+def weil(N):
+    """The intersection numbers D_m·D_n = m + n − √(mn)·K_H(m/n) of BallWeil against the Weil bound
+    |D_m·D_n − m − n| ≤ K_H(1)·√(mn), that is |K_H(m/n)| ≤ K_H(1)."""
+    G = gram(N)
+    c0 = G[0, 0]
+    m = np.arange(1, N + 1, dtype=float)
+    R = G / (c0 * np.sqrt(np.outer(m, m)))
+    np.fill_diagonal(R, np.nan)
+    def at(ij):
+        a, b = ij[0] + 1, ij[1] + 1
+        g = math.gcd(a, b)
+        return f"{R[ij]:.4f} at m/n = {a // g}/{b // g}"
+    lo = np.unravel_index(np.nanargmin(R), R.shape)
+    hi = np.unravel_index(np.nanargmax(R), R.shape)
+    print(f"N = {N}: D_1·D_1 = 2 − K_H(1) = {2 - c0:.6f}, so K_H(1) = {c0:.6f} plays 2g")
+    print(f"  over m ≠ n ≤ N, K_H(m/n)/K_H(1) runs from {at(lo)} to {at(hi)}")
+    print("  the Weil bound asks for [−1, 1]; the lower end alone gives RH (BallWeil.rh_iff_weil_bound)")
+    for n in [2, 3, 5, 10, 100, 1000, 10000]:
+        if n <= N:
+            d = n + 1 - G[n - 1, 0]
+            print(f"  D_{n}·D_1 = {d:13.6f}   (D_n·D_1 − n − 1)/(K_H(1)·√n) = {(d - n - 1) / (c0 * math.sqrt(n)):+.4f}")
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1].startswith("--"):
         arg = int(sys.argv[2]) if len(sys.argv) > 2 else None
         {"--smooth": lambda: smooth(arg or 60), "--flat": lambda: flat(arg or 1000),
-         "--zeros": lambda: zeros(arg or 2000), "--places": lambda: places(arg or 60)}[sys.argv[1]]()
+         "--zeros": lambda: zeros(arg or 2000), "--places": lambda: places(arg or 60),
+         "--weil": lambda: weil(arg or 1000)}[sys.argv[1]]()
         return
     N = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
     G = gram(N)

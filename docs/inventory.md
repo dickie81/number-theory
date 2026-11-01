@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1091 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1101 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 99 | 256 |
+| `lib/core` | 100 | 266 |
 | `lib/pnt` | 229 | 730 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -78,6 +78,19 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallTower.ballVol_lt_five`: The ball volume is largest in dimension 5
 - `BallTower.sphereArea_lt_seven`: The sphere area is largest in dimension 7 (the sphere `S⁶`)
 - `BallTower.completing_factor_unique`: Uniqueness of the completing factor
+
+#### `BallWeil`: The Riemann hypothesis in Weil's form: Castelnuovo–Severi for divisors built from the primes
+
+- `BallWeil.inter_one`: `D_1² = 2 − K_H(1)`
+- `BallWeil.inter_mul`: Multiplication by `k` acts like a Frobenius of degree `k`
+- `BallWeil.two_deg_sub_selfInt`: The fibres cancel
+- `BallWeil.form_eq_norm_sq`: The form is a squared norm in every realization of `K_H`
+- `BallWeil.rh_iff_form`: RH is the positivity of the form on integer vectors
+- `BallWeil.rh_iff_castelnuovo_severi`: The Riemann hypothesis is the Castelnuovo–Severi inequality for the divisors `D_n`
+- `BallWeil.rh_iff_hodge_index`: The Riemann hypothesis is the Hodge index theorem for the divisors `D_n`
+- `BallWeil.weil_bound`: The Weil bound
+- `BallWeil.rh_iff_weil_bound`: The upper Weil bound gives the Riemann hypothesis
+- `BallWeil.rh_of_pivots`: The orbit-lattice conjecture implies the Riemann hypothesis
 
 #### `BohrJoins`: The geometric picture joined to the library
 
