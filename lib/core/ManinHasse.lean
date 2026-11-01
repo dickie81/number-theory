@@ -344,6 +344,16 @@ lemma sum_two_sub_mult (hF : ringChar F ≠ 2) (hD : dsc a₂ a₄ a₆ ≠ 0) :
   rw [← sum_congr rfl fun c _ => two_sub_mult (a₂ := a₂) (a₄ := a₄) (a₆ := a₆) hF c] at h
   exact_mod_cast h.symm
 
+/-- **The count as a degree**: in lowest terms, `U/(X^q − X)²` has degree `#E(𝔽_q)`. -/
+lemma rdeg_Unum (hF : ringChar F ≠ 2) (hD : dsc a₂ a₄ a₆ ≠ 0) :
+    rdeg (ι (Unum a₂ a₄ a₆) / ι ((X ^ Fintype.card F - X) ^ 2)) = Nat.card (cubic a₂ a₄ a₆).toAffine.Point := by
+  have hsum : ∑ c : F, mult a₂ a₄ a₆ c + ∑ c : F, (2 - mult a₂ a₄ a₆ c) = 2 * Fintype.card F := by
+    rw [← sum_add_distrib, sum_congr rfl fun c _ => Nat.add_sub_cancel' (mult_le c), sum_const, card_univ,
+      smul_eq_mul, mul_comm]
+  rw [X_pow_card_sub_X_eq_prod, ← prod_pow, rdeg_div_prod (Unum_ne_zero hF) (mult a₂ a₄ a₆) mult_le
+    (pow_mult_dvd_Unum hF) (not_pow_mult_succ_dvd_Unum hF hD), natDegree_Unum hF, ← sum_two_sub_mult hF hD]
+  omega
+
 /-! ## The Frobenius point -/
 
 section twist
@@ -398,19 +408,13 @@ lemma pdeg_P1_sub_P0 (hF : ringChar F ≠ 2) (hD : dsc a₂ a₄ a₆ ≠ 0) :
     rw [pow_add, mul_div_cancel_right₀ _ (pow_ne_zero 2 hs0)]
   have hV : (ι X ^ Fintype.card F - ι X) ^ 2 ≠ 0 := pow_ne_zero 2 (sub_ne_zero.2 X_pow_card_ne_X)
   have hfrac : sf a₂ a₄ a₆ * (sf a₂ a₄ a₆ ^ (Fintype.card F / 2) + 1) ^ 2 / (ι X ^ Fintype.card F - ι X) ^ 2 -
-      (ι X ^ Fintype.card F + ι X + ι (C a₂)) = ι (Unum a₂ a₄ a₆) / ι (∏ c : F, (X - C c) ^ 2) := by
-    rw [prod_pow, ← X_pow_card_sub_X_eq_prod, div_sub' hV]
+      (ι X ^ Fintype.card F + ι X + ι (C a₂)) = ι (Unum a₂ a₄ a₆) / ι ((X ^ Fintype.card F - X) ^ 2) := by
+    rw [div_sub' hV]
     congr 1
     · simp only [Unum, sf, map_sub, map_mul, map_pow, map_add, map_one]; ring
     · simp only [map_pow, map_sub]
-  have hsum : ∑ c : F, mult a₂ a₄ a₆ c + ∑ c : F, (2 - mult a₂ a₄ a₆ c) = 2 * Fintype.card F := by
-    rw [← sum_add_distrib, sum_congr rfl fun c _ => Nat.add_sub_cancel' (mult_le c), sum_const, card_univ,
-      smul_eq_mul, mul_comm]
   unfold P1
-  rw [pdeg_some_sub_P0 _ hD _ hx, mul_div_cancel_left₀ _ hs0, hY, hfrac,
-    rdeg_div_prod (Unum_ne_zero hF) (mult a₂ a₄ a₆) mult_le (pow_mult_dvd_Unum hF)
-      (not_pow_mult_succ_dvd_Unum hF hD), natDegree_Unum hF, ← sum_two_sub_mult hF hD]
-  omega
+  rw [pdeg_some_sub_P0 _ hD _ hx, mul_div_cancel_left₀ _ hs0, hY, hfrac, rdeg_Unum hF hD]
 
 end twist
 
