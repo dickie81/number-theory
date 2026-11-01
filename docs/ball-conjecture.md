@@ -208,6 +208,11 @@ None of the following states the conjecture in this form; a search in October 20
    - The Gram matrices are positive definite, as RH requires.
    - Let `d_k` be the squared distance of `w_k` from the span of `w_1, …, w_{k−1}`. Then `d_k ≥ 1.718·d_1` for
      `2 ≤ k ≤ 3000`, and `d_k` grows, roughly like `1.87·d_1·log²k` for `k` between 1000 and 3000.
+   - That growth cannot last. No prime enters `G(k, k − 1)`, as `k/(k − 1) < 2`. So `w_{k−1}` alone leaves `w_k` at
+     squared distance `u_k = log(k/2π) + 1 − γ + o(1)`, about `21.6·d_1·(log k − 1.42)`, and `d_k ≤ u_k` whenever
+     `G_{k−1}` is positive definite. The pivots grow at most like `log k`, and `1.87·d_1·log²k` would pass `u_k` near
+     `k = 2·10⁴`. They bend towards `u_k` instead: `d_k/u_k` is 0.77 at `k = 1000`, 0.85 at 3000 and 0.90 at `10^4`,
+     where `d_k = 152·d_1` against `159·d_1` from the fit (`ball_orbit.py 10000`, in 2 minutes).
    - So `w_1, …, w_3000` span a lattice whose shortest nonzero vectors are `±w_1`, of squared length
      `d_1 = K_H(1) = 2 + γ − log 4π ≈ 0.0462` (`BallPsi.orbit_lattice`).
    - The smallest eigenvalue of the Gram matrix tends to `0` (`1.3·10⁻⁴` at `N = 3000`). The form degenerates on the
@@ -335,8 +340,8 @@ Building the vectors one place at a time fails in a definite way (`scripts/ball_
   `K_H(2/3) = 0.116`, against `K_H(2)K_H(3) = 0.170`. The multiplicative kernel with the exact values at the prime
   powers gives the Gram matrix of the tensor product of the lattices of the single primes. It is positive definite
   here, as each of those lattices is under RH. Its pivots grow roughly in proportion to `k`, to `587·d_1` at
-  `k = 1000`, where the true ones grow like `log²k`, to `89·d_1`. The coupling comes from the real place. Integers
-  that are close as real numbers have nearly parallel vectors, `cos(w_997, w_996) = 0.94`, where independent
+  `k = 1000`, where the true ones grow at most like `log k`, to `89·d_1`. The coupling comes from the real place.
+  Integers that are close as real numbers have nearly parallel vectors, `cos(w_997, w_996) = 0.94`, where independent
   directions make them orthogonal. It cuts the pivots by a factor of 0.15 at `k = 1000`, and by more at the primes.
   It does not touch the smallest pivot. `d_2 = 2(1 − K_H(2)²/K_H(1)²)·d_1 = 1.718·d_1` involves only the prime 2,
   and it is the minimum in both.

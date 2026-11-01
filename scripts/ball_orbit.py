@@ -11,7 +11,8 @@ for x ≥ 1, by
 This is BallPsi.kerH_explicit with its archimedean term in closed form. The closed form is checked numerically against
 the integral that defines BallPsi.archH, and is not proved. The script prints the squared Gram–Schmidt norms
 d_k = dist(w_k, span(w_1, …, w_{k−1}))² relative to d_1 = ‖w_1‖² = K_H(1) = 2 + γ − log 4π. If d_k ≥ d_1 for every k,
-then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallPsi.orbit_lattice).
+then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallPsi.orbit_lattice). It compares them with
+u_k = dist(w_k, span(w_{k−1}))² = log(k/2π) + 1 − γ + o(1), which bounds them above.
 
     python3 scripts/ball_orbit.py [N]           # default N = 1000; needs numpy
     python3 scripts/ball_orbit.py --smooth [N]  # the zeros replaced by their density, no primes; needs scipy
@@ -552,9 +553,15 @@ def main():
     print(f"  the Gram matrix is positive definite (Cholesky succeeded); smallest eigenvalue "
           f"{np.linalg.eigvalsh(G)[0]:.3e}")
     print(f"  min over 2 ≤ k ≤ {N} of d_k/d_1 = {d[1:].min():.4f}, at k = {k_min}")
-    for k in [2, 3, 5, 10, 30, 100, 300, 1000, 2000, 3000, 5000]:
+    print("  u_k = dist(w_k, span(w_{k−1}))² ≥ d_k. For k ≥ 3 no prime enters G(k, k − 1), as k/(k − 1) < 2, and")
+    print("  u_k = log(k/2π) + 1 − γ + o(1), so d_k grows at most like log k:")
+    for k in [2, 3, 5, 10, 30, 100, 300, 1000, 2000, 3000, 5000, 10000]:
         if k <= N:
-            print(f"  k = {k:>5}: d_k/d_1 = {d[k - 1]:9.3f}   d_k/(d_1·log²k) = {d[k - 1] / math.log(k) ** 2:.3f}")
+            u = (G[k - 1, k - 1] - G[k - 1, k - 2] ** 2 / G[k - 2, k - 2]) / d1
+            a = (math.log(k / (2 * math.pi)) + 1 - EULER_GAMMA) / d1
+            print(f"  k = {k:>5}: d_k/d_1 = {d[k - 1]:8.3f}   d_k/(d_1·log²k) = {d[k - 1] / math.log(k) ** 2:.3f}   "
+                  f"u_k/d_1 = {u:8.3f}" + (f" (asymptotic {a:7.3f})" if k >= 100 else " " * 20)
+                  + f"   d_k/u_k = {d[k - 1] / u:.3f}")
     print("  so ±w_1 are the shortest nonzero vectors of the lattice spanned by w_1, …, w_N"
           if d[1:].min() > 1 else "  some d_k < d_1")
 
