@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1080 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1085 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 97 | 245 |
+| `lib/core` | 98 | 250 |
 | `lib/pnt` | 229 | 730 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -55,6 +55,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallLattice.tendsto_norm_sub_of_smooth`: A kernel smooth at `1` has an orbit that spans no lattice
 - `BallLattice.kerK_smooth`: `K` is smooth at `1`
 - `BallLattice.not_discrete`: In every realization of `K`, the orbit spans no lattice
+
+#### `BallPsi`: The Hadamard kernel from the primes: `K_H` through Chebyshev's `ψ`
+
+- `BallPsi.kerH_explicit`: The explicit formula for `K_H`, through Chebyshev's `ψ`
+- `BallPsi.rh_iff_posDef_psi`: The Riemann hypothesis from the primes
+- `BallPsi.gram_explicit`: The Gram matrix of the orbit, through `ψ`
+- `BallPsi.norm_sq_ge_of_dist`: A Gram–Schmidt bound gives a lattice
+- `BallPsi.orbit_lattice`: The orbit of `K_H` spans a lattice, if the Gram–Schmidt bound holds
 
 #### `BallTower`: The ball tower from integers and primes (formalised)
 

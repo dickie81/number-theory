@@ -4,7 +4,9 @@ A conjecture of the library's author, recorded here as a direction for work. No 
 though the library proves exactly what it would have to deliver for `ζ` (`BallKernel.rh_iff_posDef`), and the
 structure it asks for in the case of an elliptic curve over a finite field (`ManinHasse.frobenius_similitude`). For
 `ζ` it also proves a constraint: with the kernel of step 5 the configuration spans no lattice
-(`BallLattice.not_discrete`). This page says what it claims, what is proved in the finite-rank cases it generalises,
+(`BallLattice.not_discrete`). With Hadamard's weights in place of the Gaussian the kernel is computed from the primes
+through Chebyshev's `ψ` (`BallPsi.kerH_explicit`), and numerically its configuration does span a lattice, with `w_1` as
+a shortest vector (step 6). This page says what it claims, what is proved in the finite-rank cases it generalises,
 what the library already has towards it, what any version of it must survive, and the first steps.
 
 ## The conjecture
@@ -58,7 +60,9 @@ The infinite sphere, with the zeros on it exactly under RH:
 So in the library's terms RH says that the zeros' Bohr vectors lie on the infinite unit sphere. What is missing is the
 discrete structure whose definiteness would force them there. The library states the target exactly: RH holds if and
 only if the kernel `K(r) = Σ_ρ e^{(ρ − ½)²/2} r^{ρ − ½}` is positive-definite on `ℚ₊^×` (`BallKernel.rh_iff_posDef`),
-and the explicit formula computes `K` from the primes (`BallKernel.kerK_explicit`).
+and the explicit formula computes `K` from the primes (`BallKernel.kerK_explicit`). With Hadamard's weights the
+kernel is a formula in Chebyshev's `ψ`, and RH holds if and only if that formula, which does not mention the zeros, is
+positive-definite (`BallPsi.rh_iff_posDef_psi`).
 
 Discretised balls in finite dimension: `BallTower.count_div_pow_tendsto_ballVol` (the points of `ℤⁿ` in a ball),
 `BallTower.counted_volume_max_five` (their counted volume is largest in dimension 5), and `LocalTeeth.card_two_sq`
@@ -182,7 +186,40 @@ None of the following states the conjecture in this form; a search in October 20
    realizations are not shown to span a lattice. But their gaps `‖w_{n+1} − w_n‖` are unbounded, where for `K` they
    tend to `0` (`BallHadamard.unbounded_gaps`). Each zero with `1 < |γ| ≤ n` adds at least `(2/5)n/(n + 1)²` to
    `‖w_{n+1} − w_n‖²`, and the zeros up to height `T` are not `O(T)` (`ZerosDense.not_linear`). The Riemann–von
-   Mangoldt count, which the library does not prove, would give `‖w_{n+1} − w_n‖² ≈ log n`. Its
-   explicit formula would bring in Chebyshev's `ψ`, the nearest thing for `ζ` to the point counts of `E`, but the
-   weights `1/(¼ + γ²)` are the borderline case of the explicit formula, and the library does not prove it for them.
-   What remains open is that lattice.
+   Mangoldt count, which the library does not prove, would give `‖w_{n+1} − w_n‖² ≈ log n`.
+
+   Its explicit formula brings in Chebyshev's `ψ`, the nearest thing for `ζ` to the point counts of `E`
+   (`BallPsi.kerH_explicit`). For `x ≥ 1`, with `u = log x`,
+   `K_H(x) = cosh(u/2)(2 + γ − log 4π) + sinh(u/2)(log π − 2u) + A(u) + √x·Σ_{n ≤ x} Λ(n)/n − ψ(x)/√x`, with an
+   archimedean term `A`. The weights `1/(¼ + γ²)` have poles at the edge of the strip where the library proves the
+   explicit formula. Subtracting `cosh(u/2)/(¼ + γ²)`, whose sum over the zeros is Hadamard's identity, removes them.
+   So RH holds exactly when a kernel built from the primes is positive-definite (`BallPsi.rh_iff_posDef_psi`). In a
+   realization the Gram matrix of the orbit has the prime part `Σ_{kn ≤ m} Λ(k)(m − kn)/k` (`BallPsi.gram_explicit`),
+   where that of `E` has the point counts.
+
+   This makes the Gram matrices of `w_1, …, w_N` computable from the primes. The computation takes `A` in a closed form,
+   `A(u) = γ·sinh(u/2) + sinh(u/2)·log(4sinh(u/2)) − cosh(u/2)·log cosh(u/2) − (u/2)e^{−u/2}`. The closed form is
+   checked numerically against the integral that defines `A`, and is not proved. The formula itself agrees with the
+   sum over the first 2000 zeros to within `10⁻⁴`. `scripts/ball_orbit.py` gives, up to `N = 3000`:
+   - The Gram matrices are positive definite, as RH requires.
+   - Let `d_k` be the squared distance of `w_k` from the span of `w_1, …, w_{k−1}`. Then `d_k ≥ 1.718·d_1` for
+     `2 ≤ k ≤ 3000`, and `d_k` grows, roughly like `1.87·d_1·log²k` for `k` between 1000 and 3000.
+   - So `w_1, …, w_3000` span a lattice whose shortest nonzero vectors are `±w_1`, of squared length
+     `d_1 = K_H(1) = 2 + γ − log 4π ≈ 0.0462` (`BallPsi.orbit_lattice`).
+   - The smallest eigenvalue of the Gram matrix tends to `0` (`1.3·10⁻⁴` at `N = 3000`). The form degenerates on the
+     space but not on the lattice.
+
+   So with Hadamard's weights the configuration of step 5 looks like a lattice. The precise statement:
+
+   > **The orbit lattice.** The Gram–Schmidt pivots `d_k` of the matrices `(√(mn)·K_H(m/n))_{m,n ≤ N}`, which
+   > `BallPsi.gram_explicit` writes through `ψ`, satisfy `d_k ≥ d_1` for every `k`.
+
+   It is a statement about the primes. Under RH it says that in every realization of `K_H`, `w_{k+1}` keeps distance
+   `‖w_1‖` from the span of `w_1, …, w_k`. The orbit then spans a lattice with `w_1` as a shortest vector
+   (`BallPsi.orbit_lattice`). Unconditionally it implies RH. Positive pivots make every such matrix positive definite,
+   and after clearing denominators that is the positive-definiteness of `BallPsi.rh_iff_posDef_psi`. It asks for more
+   than RH, a margin: where RH needs `d_k ≥ 0`, it asks for `d_k ≥ d_1`. It fails for the Gaussian kernel `K`, whose
+   gaps tend to `0` (`BallLattice.not_discrete`). It fails for `dh`, whose kernel is not positive-definite
+   (`PsiOmega.not_posDefH_dh`). For `E` such a margin comes from integrality: a positive-definite integral form has no
+   nonzero vector of norm below `1`. For `ζ` no such reason is known. What remains open is a proof, or the structure
+   that would give one.
