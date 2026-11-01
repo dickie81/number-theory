@@ -323,4 +323,226 @@ end twist
 
 end frobenius
 
+/-! ## The count over the extensions -/
+
+section counts
+
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F]
+
+local notation "ι" => algebraMap F[X] (RatFunc F)
+
+omit [Fintype F] [DecidableEq F] in
+lemma Ud_map {L : Type*} [Field L] (φ : F →+* L) (a₂ a₄ a₆ : F) (n : ℕ) :
+    (Ud a₂ a₄ a₆ n).map φ = Ud (φ a₂) (φ a₄) (φ a₆) n := by
+  simp [Ud, fpol, Polynomial.map_sub, Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_add]
+
+omit [DecidableEq F] in
+/-- **Over a field with `q^d` elements, `x(P_d − P_0)/s` has degree `#E(𝔽_{q^d})`.** -/
+lemma rdeg_Ud_eq_card {a₂ a₄ a₆ : F} (hF : ringChar F ≠ 2) (hD : dsc a₂ a₄ a₆ ≠ 0) {L : Type*} [Field L]
+    [Fintype L] [DecidableEq L] [Algebra F L] {d : ℕ} (hL : Fintype.card L = Fintype.card F ^ d) :
+    rdeg (ι (Ud a₂ a₄ a₆ (Fintype.card F ^ d)) / ι ((X ^ (Fintype.card F ^ d) - X) ^ 2)) =
+      Nat.card (cubic (algebraMap F L a₂) (algebraMap F L a₄) (algebraMap F L a₆)).toAffine.Point := by
+  have hLq : 1 < Fintype.card F ^ d := hL ▸ Fintype.one_lt_card
+  have hV : ((X ^ (Fintype.card F ^ d) - X) ^ 2 : F[X]) ≠ 0 := pow_ne_zero 2 fun h => by
+    have := congrArg natDegree (sub_eq_zero.1 h)
+    rw [natDegree_X_pow, natDegree_X] at this
+    omega
+  have hFL : ringChar L ≠ 2 := by rwa [← Algebra.ringChar_eq F L]
+  have hDL : dsc (algebraMap F L a₂) (algebraMap F L a₄) (algebraMap F L a₆) ≠ 0 := by
+    have e : dsc (algebraMap F L a₂) (algebraMap F L a₄) (algebraMap F L a₆) = algebraMap F L (dsc a₂ a₄ a₆) := by
+      simp only [dsc, map_sub, map_add, map_mul, map_pow, map_ofNat]
+    rw [e]
+    exact (map_ne_zero (algebraMap F L)).2 hD
+  rw [← rdeg_map (algebraMap F L) hV, Ud_map, Polynomial.map_pow, Polynomial.map_sub, Polynomial.map_pow,
+    Polynomial.map_X, ← hL]
+  exact rdeg_Unum hFL hDL
+
+omit [DecidableEq F] in
+/-- **The points of `E` over a field with `q^d` elements, as a degree over `𝔽_q(t)`.** -/
+lemma card_baseChange_eq (W : WeierstrassCurve F) [W.IsElliptic] (hF : ringChar F ≠ 2) {L : Type*} [Field L]
+    [Fintype L] [DecidableEq L] [Algebra F L] {d : ℕ} (hL : Fintype.card L = Fintype.card F ^ d) :
+    Nat.card (W.baseChange L).toAffine.Point =
+      rdeg (ι (Ud (W.b₂ / 4) (W.b₄ / 2) (W.b₆ / 4) (Fintype.card F ^ d)) / ι ((X ^ (Fintype.card F ^ d) - X) ^ 2)) := by
+  have hFL : ringChar L ≠ 2 := by rwa [← Algebra.ringChar_eq F L]
+  have : (W.baseChange L).IsElliptic := inferInstanceAs (W.map (algebraMap F L)).IsElliptic
+  have hΔL : (W.baseChange L).Δ ≠ 0 := (W.baseChange L).isUnit_Δ.ne_zero
+  have hb₂ : (W.baseChange L).b₂ / 4 = algebraMap F L (W.b₂ / 4) := by
+    change (W.map (algebraMap F L)).b₂ / 4 = _
+    rw [WeierstrassCurve.map_b₂, map_div₀, map_ofNat]
+  have hb₄ : (W.baseChange L).b₄ / 2 = algebraMap F L (W.b₄ / 2) := by
+    change (W.map (algebraMap F L)).b₄ / 2 = _
+    rw [WeierstrassCurve.map_b₄, map_div₀, map_ofNat]
+  have hb₆ : (W.baseChange L).b₆ / 4 = algebraMap F L (W.b₆ / 4) := by
+    change (W.map (algebraMap F L)).b₆ / 4 = _
+    rw [WeierstrassCurve.map_b₆, map_div₀, map_ofNat]
+  rw [Nat.card_congr (cubicEquiv (W.baseChange L) hFL hΔL), hb₂, hb₄, hb₆,
+    rdeg_Ud_eq_card hF (dsc_ne_zero W hF W.isUnit_Δ.ne_zero) hL]
+
+end counts
+
+/-! ## The Gram matrix of the Frobenius points -/
+
+section gram
+
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [DecidableEq (RatFunc F)] {a₂ a₄ a₆ : F}
+
+local notation "ι" => algebraMap F[X] (RatFunc F)
+
+variable (a₂ a₄ a₆) in
+/-- The degree of a point of the twist, as an integer. -/
+noncomputable def degZ (P : (twist a₂ a₄ a₆).toAffine.Point) : ℤ := pdeg a₂ a₄ a₆ P
+
+omit [Fintype F] [DecidableEq F] in
+lemma degZ_parallelogram (h2 : (2 : F) ≠ 0) (hD : dsc a₂ a₄ a₆ ≠ 0) (P R : (twist a₂ a₄ a₆).toAffine.Point) :
+    degZ a₂ a₄ a₆ (P + R) + degZ a₂ a₄ a₆ (P - R) = 2 * degZ a₂ a₄ a₆ P + 2 * degZ a₂ a₄ a₆ R := by
+  have := pdeg_parallelogram h2 hD P R
+  unfold degZ
+  exact_mod_cast this
+
+omit [DecidableEq F] in
+/-- **The Gram matrix of the Frobenius points is positive semidefinite**: for every integer vector `n`,
+`Σ nᵢnⱼ B(P_i, P_j) = 2 deg(Σ nᵢP_i) ≥ 0`. -/
+theorem gram_nonneg (hF : ringChar F ≠ 2) (hD : dsc a₂ a₄ a₆ ≠ 0) {K : ℕ} (n : Fin K → ℤ) :
+    0 ≤ ∑ i, ∑ j, n i * n j * polar (degZ a₂ a₄ a₆) (Pk hF hD i) (Pk hF hD j) := by
+  have := two_mul_sum_eq (degZ_parallelogram (Ring.two_ne_zero hF) hD) univ n (fun i : Fin K => Pk hF hD i)
+  rw [← this]
+  exact mul_nonneg (by norm_num) (Int.natCast_nonneg _)
+
+omit [DecidableEq F] in
+lemma gram_self (hF : ringChar F ≠ 2) (hD : dsc a₂ a₄ a₆ ≠ 0) (i : ℕ) :
+    polar (degZ a₂ a₄ a₆) (Pk hF hD i) (Pk hF hD i) = 2 * (Fintype.card F : ℤ) ^ i := by
+  rw [polar_self (degZ_parallelogram (Ring.two_ne_zero hF) hD), degZ, pdeg_Pk]
+  push_cast
+  ring
+
+omit [DecidableEq F] in
+lemma gram_lt (hF : ringChar F ≠ 2) (hD : dsc a₂ a₄ a₆ ≠ 0) {i j : ℕ} (hij : j < i) :
+    polar (degZ a₂ a₄ a₆) (Pk hF hD i) (Pk hF hD j) = (Fintype.card F : ℤ) ^ i + (Fintype.card F : ℤ) ^ j -
+      (Fintype.card F : ℤ) ^ j * (rdeg (ι (Ud a₂ a₄ a₆ (Fintype.card F ^ (i - j))) /
+        ι ((X ^ (Fintype.card F ^ (i - j)) - X) ^ 2)) : ℤ) := by
+  rw [polar_eq_sub (degZ_parallelogram (Ring.two_ne_zero hF) hD), degZ, degZ, degZ, pdeg_Pk, pdeg_Pk,
+    pdeg_Pk_sub_Pk hF hD hij]
+  push_cast
+  ring
+
+end gram
+
+/-! ## The Riemann hypothesis for `E` in every degree -/
+
+section toeplitz
+
+variable {F : Type*} [Field F] [Fintype F]
+
+/-- The normalised trace `c_d = (q^d + 1 − #E(L_d))/(2q^{d/2})` of `E` over the extension `L_d`, and `c_0 = 1`. -/
+noncomputable def ctrace (W : WeierstrassCurve F) (L : ℕ → Type*) [∀ d, Field (L d)] [∀ d, Algebra F (L d)]
+    (d : ℕ) : ℝ :=
+  if d = 0 then 1 else
+    ((Fintype.card F : ℝ) ^ d + 1 - Nat.card (W.baseChange (L d)).toAffine.Point) /
+      (2 * Real.sqrt (Fintype.card F) ^ d)
+
+/-- **The Riemann hypothesis for an elliptic curve in every degree, from a definite form.** The normalised traces
+`c_d = (q^d + 1 − #E(L_d))/(2q^{d/2})` form a positive-definite function on `ℤ`: `Σ_{i,j} x_i x_j c_{|i−j|} ≥ 0`. -/
+theorem toeplitz_nonneg (W : WeierstrassCurve F) [W.IsElliptic] (hF : ringChar F ≠ 2) (L : ℕ → Type*)
+    [∀ d, Field (L d)] [∀ d, Fintype (L d)] [∀ d, Algebra F (L d)]
+    (hL : ∀ d, 0 < d → Fintype.card (L d) = Fintype.card F ^ d) (K : ℕ) (x : Fin K → ℝ) :
+    0 ≤ ∑ i, ∑ j, x i * x j * ctrace W L (Nat.dist i j) := by
+  classical
+  have hq1 : 1 < Fintype.card F := Fintype.one_lt_card
+  have hD := dsc_ne_zero W hF W.isUnit_Δ.ne_zero
+  set q : ℝ := (Fintype.card F : ℝ) with hqdef
+  have hq0 : 0 < q := by rw [hqdef]; exact_mod_cast (by omega : 0 < Fintype.card F)
+  set s : ℝ := Real.sqrt q with hsdef
+  have hs : 0 < s := Real.sqrt_pos.2 hq0
+  have hsq : s ^ 2 = q := Real.sq_sqrt hq0.le
+  set G : Fin K → Fin K → ℤ := fun i j => polar (degZ (W.b₂ / 4) (W.b₄ / 2) (W.b₆ / 4)) (Pk hF hD i) (Pk hF hD j)
+    with hG
+  have hreal := quadratic_nonneg_of_int G (gram_nonneg hF hD) (fun i => x i / s ^ (i : ℕ))
+  -- the entries `G_ij = 2q^{(i+j)/2} c_{|i−j|}`
+  have hlt : ∀ i j : ℕ, j < i → (polar (degZ (W.b₂ / 4) (W.b₄ / 2) (W.b₆ / 4)) (Pk hF hD i) (Pk hF hD j) : ℝ) =
+      2 * s ^ i * s ^ j * ctrace W L (i - j) := fun i j hij => by
+    obtain ⟨d, rfl⟩ : ∃ d, i = j + d := ⟨i - j, by omega⟩
+    have hd0 : 0 < d := by omega
+    have hN := card_baseChange_eq W hF (L := L d) (hL d hd0)
+    rw [gram_lt hF hD hij, show j + d - j = d by omega, ← hN]
+    simp only [ctrace, ite_eq_right hd0.ne']
+    push_cast
+    rw [← hqdef]
+    have hsj : s ^ j ≠ 0 := pow_ne_zero _ hs.ne'
+    have hsd : s ^ d ≠ 0 := pow_ne_zero _ hs.ne'
+    have hqj : q ^ j = s ^ j * s ^ j := by rw [← mul_pow, ← sq, hsq]
+    have hqd : q ^ d = s ^ d * s ^ d := by rw [← mul_pow, ← sq, hsq]
+    rw [pow_add, pow_add, hqj, hqd]
+    field_simp
+    ring
+  have hentry : ∀ i j : Fin K, (G i j : ℝ) = 2 * s ^ (i : ℕ) * s ^ (j : ℕ) * ctrace W L (Nat.dist i j) := by
+    intro i j
+    rcases lt_trichotomy (i : ℕ) j with h | h | h
+    · rw [hG]
+      simp only
+      rw [polar_comm, hlt j i h, Nat.dist_eq_sub_of_le h.le]
+      ring
+    · rw [hG]
+      simp only
+      rw [show i = j from Fin.ext h, gram_self hF hD, Nat.dist_self]
+      simp only [ctrace]
+      push_cast
+      rw [← hqdef, mul_one, mul_assoc, ← pow_add, ← two_mul, pow_mul, hsq]
+    · rw [hG]
+      simp only
+      rw [hlt i j h, Nat.dist_eq_sub_of_le_right h.le]
+  have e : ∑ i, ∑ j, x i * x j * ctrace W L (Nat.dist i j) =
+      (1 / 2) * ∑ i, ∑ j, (x i / s ^ (i : ℕ)) * (x j / s ^ (j : ℕ)) * (G i j : ℝ) := by
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    rw [hentry]
+    have hi : s ^ (i : ℕ) ≠ 0 := pow_ne_zero _ hs.ne'
+    have hj : s ^ (j : ℕ) ≠ 0 := pow_ne_zero _ hs.ne'
+    field_simp
+  rw [e]
+  exact mul_nonneg (by norm_num) hreal
+
+/-- **A constraint between `#E(𝔽_q)` and `#E(𝔽_{q²})`**, from definiteness alone. With `a_d = q^d + 1 − #E(L_d)`,
+`a₁² − 2q ≤ a₂`: twice the degree of `qP₀ − a₁P₁ + P₂` is `2q(2q + a₂ − a₁²) ≥ 0`. (The zeta function of `E` gives
+`a₂ = a₁² − 2q`; the lattice gives the inequality without it, and Hasse's bound field by field does not.) -/
+theorem trace_two_ge (W : WeierstrassCurve F) [W.IsElliptic] (hF : ringChar F ≠ 2) {L₁ L₂ : Type*} [Field L₁]
+    [Fintype L₁] [Algebra F L₁] [Field L₂] [Fintype L₂] [Algebra F L₂] (h₁ : Fintype.card L₁ = Fintype.card F)
+    (h₂ : Fintype.card L₂ = Fintype.card F ^ 2) :
+    ((Fintype.card F : ℤ) + 1 - Nat.card (W.baseChange L₁).toAffine.Point) ^ 2 - 2 * Fintype.card F ≤
+      (Fintype.card F : ℤ) ^ 2 + 1 - Nat.card (W.baseChange L₂).toAffine.Point := by
+  classical
+  have hD := dsc_ne_zero W hF W.isUnit_Δ.ne_zero
+  have hq1 : 1 < Fintype.card F := Fintype.one_lt_card
+  have hN₁ := card_baseChange_eq W hF (L := L₁) (d := 1) (by rw [h₁, pow_one])
+  have hN₂ := card_baseChange_eq W hF (L := L₂) (d := 2) h₂
+  set Q := degZ (W.b₂ / 4) (W.b₄ / 2) (W.b₆ / 4)
+  set q : ℤ := (Fintype.card F : ℤ) with hq
+  set a : ℤ := q + 1 - Nat.card (W.baseChange L₁).toAffine.Point with ha
+  set b : ℤ := q ^ 2 + 1 - Nat.card (W.baseChange L₂).toAffine.Point with hb
+  have p00 : polar Q (Pk hF hD 0) (Pk hF hD 0) = 2 := by rw [gram_self hF hD 0, pow_zero, mul_one]
+  have p11 : polar Q (Pk hF hD 1) (Pk hF hD 1) = 2 * q := by rw [gram_self hF hD 1, pow_one]
+  have p22 : polar Q (Pk hF hD 2) (Pk hF hD 2) = 2 * q ^ 2 := gram_self hF hD 2
+  have p10 : polar Q (Pk hF hD 1) (Pk hF hD 0) = a := by
+    rw [gram_lt hF hD (show 0 < 1 by norm_num), show 1 - 0 = 1 from rfl, ← hN₁, ha, hq]
+    ring
+  have p20 : polar Q (Pk hF hD 2) (Pk hF hD 0) = b := by
+    rw [gram_lt hF hD (show 0 < 2 by norm_num), show 2 - 0 = 2 from rfl, ← hN₂, hb, hq]
+    ring
+  have p21 : polar Q (Pk hF hD 2) (Pk hF hD 1) = q * a := by
+    rw [gram_lt hF hD (show 1 < 2 by norm_num), show 2 - 1 = 1 from rfl, ← hN₁, ha, hq]
+    ring
+  have key := gram_nonneg hF hD (K := 3) ![q, -a, 1]
+  simp only [Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+    Matrix.tail_cons, Matrix.head_cons, Fin.val_zero, Fin.val_one, Fin.val_two] at key
+  rw [polar_comm (P := Pk hF hD 0) (R := Pk hF hD 1), polar_comm (P := Pk hF hD 0) (R := Pk hF hD 2),
+    polar_comm (P := Pk hF hD 1) (R := Pk hF hD 2), p00, p11, p22, p10, p20, p21] at key
+  have hq0 : 0 < q := by rw [hq]; exact_mod_cast (by omega : 0 < Fintype.card F)
+  nlinarith
+
+end toeplitz
+
 end ManinHasse
+
+#print axioms ManinHasse.toeplitz_nonneg
+#print axioms ManinHasse.trace_two_ge
