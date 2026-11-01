@@ -222,4 +222,46 @@ None of the following states the conjecture in this form; a search in October 20
    gaps tend to `0` (`BallLattice.not_discrete`). It fails for `dh`, whose kernel is not positive-definite
    (`PsiOmega.not_posDefH_dh`). For `E` such a margin comes from integrality: a positive-definite integral form has no
    nonzero vector of norm below `1`. For `ζ` no such reason is known. What remains open is a proof, or the structure
-   that would give one.
+   that would give one. The last section says what a proof under RH would need.
+
+## What a proof under RH would need
+
+The orbit-lattice conjecture of step 6 implies RH, so the question is whether RH implies it. It would then be another
+form of RH, and would not by itself prove RH. Four computations locate the difficulty; `scripts/ball_orbit.py`
+reproduces them.
+
+- **The flat model is the equality case** (`BallFlat`). Replace the zeros by Lebesgue measure, with the same weights
+  `1/(¼ + γ²)`. The kernel becomes `e^{−|log x|/2} = min(√x, 1/√x)` (`BallFlat.kerFlat_eq_integral`), and the orbit's
+  Gram matrix becomes `min(m, n)` (`BallFlat.gram_flat`), the covariance of Brownian motion. Its increments
+  `w_{n+1} − w_n` are orthogonal, each of squared norm `‖w_1‖²` (`BallFlat.inner_increments`). So the orbit spans a
+  copy of the cubic lattice `ℤ^∞` (`BallFlat.telescope`, `BallFlat.norm_sq_lattice`), and every pivot equals `d_1`
+  (`BallFlat.flat_pivot`; in `ℓ²`, `BallFlat.flatOrbit_pivot`). Here the conjecture holds with equality, and the
+  discretised infinite-dimensional ball is the cubic lattice. The conjecture says that the zeros of `ζ` never do worse
+  than Lebesgue measure.
+- **The density of the zeros gives a large margin.** Replace the zeros instead by their density `(1/2π)log(|γ|/2π)` on
+  `|γ| ≥ 2π`, without the primes (`--smooth`). The pivots become about `k·d_1`: `d_k/d_1` is 2.00, 3.00, 3.95 and 4.88
+  at `k = 2, 3, 4, 5`, and 38.8 at `k = 60`.
+- **The primes take back part of it.** For `k ≤ 60` the true pivots are 0.59 to 0.86 times those of the density model.
+  The ratio is about 0.8 at primes and lowest at numbers with several small prime factors, 0.59 at `k = 30` and 0.62 at
+  `k = 60`. This is the correlation of `w_k` with `w_j` when `k/j` is a prime power, through which the zeros see the
+  primes, as in Landau's formula `Σ_{0 < γ ≤ T} x^{iγ} ≈ −(T/2π)Λ(x)/√x`. Between 2000 and 3000 the effect is small:
+  the pivots at 2310, 2520 and 2880 are about 3% below those at nearby primes.
+- **It is not a positivity statement.** The Gram matrix does not dominate that of the flat model: `G − d_1·min(m, n)`
+  has negative eigenvalues, −0.44 at `N = 5` and −187 at `N = 100` (`--flat`). The reason is `ζ` itself. At each zero
+  the coordinate of `Σ_{m ≤ N} w_m/m` is a partial sum of the series of `ζ(ρ)`, which nearly vanishes, so
+  `‖Σ_{m ≤ N} w_m/m‖² = 0.012` at `N = 100`, against 9.0 in the flat model. The form degenerates along real directions,
+  and its smallest eigenvalue tends to `0`. The conjecture says that integer combinations cannot follow those
+  directions, as the coefficients `1/m` are far from any short integer vector. Whatever gives the margin has to see
+  integrality, as for `E`.
+
+Where the pivot is decided (`--zeros`, from the first 2000 zeros): at `k = 2`, 70% of `d_k` comes from zeros above
+height `4πk`. At `k = 30`, 80% comes from zeros below `4πk`, and 42% from zeros below `πk`. A proof under RH needs a
+lower bound for the pivot that holds uniformly in `k` and allows for the prime-power correlations. The mean-value
+theorems for Dirichlet polynomials at the zeros, built on Landau's formula, control `Σ_γ |D(γ)|²` well only where the
+zeros sample `D` above the critical rate by a fixed factor. A Dirichlet polynomial of length `k` has bandwidth `log k`,
+and the zeros near height `T` have density `(1/2π)log(T/2π)`, so this needs `T ≥ k^{1+ε}`. There the weights
+`1/(¼ + γ²)` leave mass of order `log k/k^{1+ε}`, and `k` times that tends to `0`, short of `d_1`. The pivot is decided
+at heights comparable to `k`, near the critical rate, where the correlation terms are as large as the main term. So RH,
+through the known theorems, does not give the conjecture. A proof would need sharper information about the zeros near
+height `k`, in the direction of their pair correlation, or the integral structure behind the lattice that the
+conjecture is about. Neither is in hand.

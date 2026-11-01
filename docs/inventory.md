@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1085 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1091 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 98 | 250 |
+| `lib/core` | 99 | 256 |
 | `lib/pnt` | 229 | 730 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -29,6 +29,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `AngularResidue.residue_angular`: The residue of the radial member
 - `AngularResidue.LFunction_chi4_one`: `L(1, χ₋₄) = π/4`
+
+#### `BallFlat`: The flat model: with Lebesgue measure for the zeros, the orbit spans the cubic lattice
+
+- `BallFlat.kerFlat_eq_integral`: `K₀` is `K_H` with Lebesgue measure for the zeros
+- `BallFlat.gram_flat`: The orbit Gram matrix of the flat kernel is `min(a, b)`
+- `BallFlat.telescope`: `v_n` is the sum of the increments below it.
+- `BallFlat.norm_sq_lattice`: The orbit spans the cubic lattice
+- `BallFlat.flat_pivot`: The pivots of the flat model are all `c = ‖v_1‖²`
+- `BallFlat.flatOrbit_pivot`: In `ℓ²` the flat orbit attains the bound of the orbit-lattice conjecture
 
 #### `BallHadamard`: A kernel with a cusp: `K_H(r) = Σ_ρ r^{ρ − ½}/(ρ(1 − ρ))`
 
