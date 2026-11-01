@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1042 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1054 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -236,7 +236,11 @@ In order of what is in reach.
    is set out in [ball-conjecture.md](ball-conjecture.md), with its rank-two case: Hasse's bound for every elliptic
    curve of odd characteristic (`ManinHasse.abs_trace_le`) and the Riemann hypothesis for it in every degree, from the
    lattice of Manin's twist (`ManinHasse.toeplitz_nonneg`), and for `y² = x³ + D` with the Frobenius an Eisenstein
-   integer (`HasseEisenstein.abs_trace_le`).
+   integer (`HasseEisenstein.abs_trace_le`). Over a finite field Weil's criterion is proved in both directions: the
+   kernel of the point counts is positive-definite exactly when the inverse zeros lie on `|α| = √q`
+   (`WeilFF.countKernel_posDef_iff`). Its test shows that an Euler product and a functional equation do not give the
+   positivity: `𝔾_m × (𝔸² ∖ 0)` over `𝔽_3` has both, in the shape of an elliptic curve over `𝔽_27`, and its kernel is
+   not positive-definite (`PurityTest.not_posDef`).
 6. **Tools that are missing.** The large sieve over all moduli `q ≤ Q` (the library has one modulus at a time), so no
    Bombieri–Vinogradov; bounds for Kloosterman sums, which the bilinear Type I estimate avoids; exponent pairs (the
    Weyl bound is only a hypothesis); Selberg's and Rosser's sieves; anything in the twelve sections the library does
