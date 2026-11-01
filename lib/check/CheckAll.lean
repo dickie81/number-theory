@@ -218,6 +218,7 @@ import BallKernel
 import ManinFrobenius
 import BallLattice
 import ZerosInfinite
+import ZerosDense
 import BallHadamard
 import BohrTorus
 import LSeriesLandau
@@ -1126,11 +1127,13 @@ twin-form rates at `11/12`. -/
 #print axioms BallLattice.tendsto_norm_sub_of_smooth
 #print axioms BallLattice.kerK_smooth
 #print axioms ZerosInfinite.infinite_ZIdx
+#print axioms ZerosDense.not_linear
 #print axioms BallHadamard.rh_iff_posDefH
 #print axioms BallHadamard.rh_iff_realizationH
 #print axioms BallHadamard.kerH_one
 #print axioms BallHadamard.kerH_inv
 #print axioms BallHadamard.not_smooth
+#print axioms BallHadamard.unbounded_gaps
 #print axioms BohrTorus.eq_zero_of_sum_log
 #print axioms BohrTorus.tendsto_mean_character
 #print axioms BohrTorus.sum_norm_sq_torus

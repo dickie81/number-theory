@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1078 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1080 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 96 | 243 |
+| `lib/core` | 97 | 245 |
 | `lib/pnt` | 229 | 730 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -37,6 +37,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallHadamard.rh_iff_posDefH`: The Riemann hypothesis is positive-definiteness of `K_H` on the positive rationals
 - `BallHadamard.rh_iff_realizationH`: The Riemann hypothesis is the existence of a realization of `K_H`
 - `BallHadamard.not_smooth`: `K_H` is not smooth at `1`
+- `BallHadamard.unbounded_gaps`: The gaps are unbounded
 
 #### `BallKernel`: The kernel of the ball conjecture: the Riemann hypothesis as positive-definiteness on `ℚ₊^×`
 
@@ -542,6 +543,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `XiBounds`: The order of `Ξ`, from Riemann's theta kernel
 
 - `WeilForm.rh_of_D_and_realRooted_final`: Roadmap item 1, final form ([note](../formalisations/weil-positivity.md))
+
+#### `ZerosDense`: The zeros of `ζ` are denser than any linear rate
+
+- `ZerosDense.not_linear`: The zeros of `ζ` are not `O(T)`
 
 #### `ZerosInfinite`: `ζ` has infinitely many nontrivial zeros
 
