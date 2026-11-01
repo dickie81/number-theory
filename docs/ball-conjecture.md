@@ -265,3 +265,30 @@ at heights comparable to `k`, near the critical rate, where the correlation term
 through the known theorems, does not give the conjecture. A proof would need sharper information about the zeros near
 height `k`, in the direction of their pair correlation, or the integral structure behind the lattice that the
 conjecture is about. Neither is in hand.
+
+## Building the lattice forwards
+
+A proof along the lines of the conjecture would build the lattice of step 6 from the integers, as Weil's surface is
+built from the curve, so that its definiteness has a reason of its own. Concretely, it would give vectors
+`v_1, v_2, …`, constructed without the zeros, whose inner products are the Gram matrix of the orbit,
+`G(m, n) = √(mn)·K_H(m/n)`. A Gram matrix is positive semidefinite, so such vectors would prove RH
+(`BallPsi.rh_iff_posDef_psi`), and the lattice they span would be the object of the conjecture. Three properties of `G`
+constrain them (`scripts/ball_orbit.py --places`, with the archimedean term in the closed form above):
+
+- **It is a sum over the places.** For `m ≥ n`, `G(m, n) = Σ_p log p·C_p(m, n) + G_∞(m, n)`, with
+  `C_p(m, n) = Σ_{j ≥ 1, p^j n ≤ m} (m/p^j − n) ≥ 0` and
+  `G_∞(m, n) = m + n + γm − n·log 2π + m·log n − (m − n)log m + ½(m − n)log(m − n) − ½(m + n)log(m + n)`.
+  This is the shape of an intersection number in Arakelov geometry: a local multiplicity at each prime, weighted by
+  `log p`, and a term at the real place. The prime part counts integer points:
+  `Σ_p log p·C_p(m, n) = Σ_k (Λ(k)/k)·#{t ∈ ℤ : kn < t ≤ m}`.
+- **Its positivity needs every prime.** For `N = 60` the archimedean part alone has smallest eigenvalue −983. Adding the
+  primes one at a time raises it, and it turns positive only with the last prime, 59; without 59 it is −1.6·10⁻⁴.
+- **It needs them exactly.** A fake prime 57, or `log 2` changed by 0.1%, also makes the matrix indefinite. A change of
+  0.01% does not.
+
+So the vectors cannot come from the primes approximately or statistically. They have to see each prime and its
+logarithm, as an arithmetic surface over `Spec ℤ` sees them through its fibres. A positivity statement of this shape is
+an arithmetic Hodge index theorem; Faltings and Hriljac proved one for arithmetic surfaces. For `ζ` the surface would be
+the `Spec ℤ × Spec ℤ` that the work under "Related work" looks for, Deninger's height pairings and Connes and Consani's
+arithmetic site among it. The conjecture adds what that work does not say: the lattice of such a surface should be a
+discretised infinite-dimensional ball, the cubic lattice in the flat model. No construction of these vectors is known.
