@@ -22,11 +22,13 @@ The certificate is cut at the subtrees whose estimated kernel cost is at most `C
 definition in a compact prefix form, read by the term elaborator `cert_data%` (one string per definition, so the
 elaborator never sees the certificate as syntax), and the nodes above them form the top, with the subtrees as
 references. The cell's theorem applies the node lemmas (`run_up_of`, `run_comb_of`, `run_split_of`, `run_cut_of`,
-`run_dec_std_of`, `run_rev_std_of`) down to the cut points, and proves each cut point by `decide +kernel`, which
+`run_dec_std_of`, `run_dec_two_of`, `run_rev_std_of`, `run_swap_of`, `run_tighten_of`) down to the cut points, and
+proves each cut point by `decide +kernel`, which
 checks it as an auxiliary lemma of its own, with its own kernel caches. `CertHead.lean` holds the elaborator and the
 node lemmas, read as the header of the files `cell` writes.
 
 The kernel's memory grows with the reductions of one check (about 80 MB per second of kernel time), so a whole cell
 cannot be one `decide +kernel`: root 53 (the cell `(8, 7)`: 27k generator nodes, 87k certificate nodes) needs more
 than 9 GB that way. Cut at `CAP = 15000` it has 171 cut points and takes 731 s of kernel time, at most 21 s and
-2.2 GB for a cut point.
+2.2 GB for a cut point; root 125 (82k generator nodes, 275k certificate nodes) has 608 and takes 2,490 s, at most
+30.5 s and 3.1 GB for one.
