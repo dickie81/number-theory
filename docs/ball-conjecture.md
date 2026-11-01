@@ -326,6 +326,30 @@ Building the vectors one place at a time fails in a definite way (`scripts/ball_
   It does not touch the smallest pivot. `d_2 = 2(1 − K_H(2)²/K_H(1)²)·d_1 = 1.718·d_1` involves only the prime 2,
   and it is the minimum in both.
 
+Slicing the lattice by primes isolates the coupling (`--slices`). The slice of a set `S` of primes is the part of the
+lattice spanned by the `w_n` with every prime factor of `n` in `S`, so the directions of `S` alone. Let
+`e = d(n)/(n·d_1)` be the pivot as a fraction of `‖w_n‖² = n·d_1`; `e = 1` for a vector orthogonal to the earlier ones.
+
+- **One prime.** The slice `{p^j}` has the Gram matrix `p^{(i+j)/2}·K_H(p^{i−j})`. That is the shape of the Frobenius
+  orbit of an elliptic curve over `𝔽_p` (`ManinHasse.gram_orbit_card`), with `K_H(p^j)/K_H(1)` in the place of the
+  normalised traces. It is nearly free: `e` runs from 0.86 down to 0.6 for `p = 2, 3, 5` and `p^j ≤ 10^6`, where the
+  curve's orbit has `e = 0` after its rank 2. A prime's direction is not determined by that prime and the real place.
+  With only `p` in the explicit formula the slice is already indefinite at `p^j = 4` for `p = 2`, and at `p` itself for
+  `p = 3, 5`. For instance `⟨w_1, w_3⟩ = G_∞(3, 1) + (log 2)/2` carries the prime 2.
+- **Two primes.** The real place couples 2 and 3 through the near-coincidences of their powers. At the Pythagorean
+  comma `3^12/2^19 = 1.0136`, `cos(w_{3^12}, w_{2^19}) = 0.573`, against 0.003 for independent directions. Over the
+  `{2, 3}`-smooth numbers in `[10^5, 10^6]` the median `e` is 0.29, against 0.52 with the two directions independent.
+- **More primes.** The median `e` over the top decade of each slice falls as `S` grows:
+  - 0.61 for `{2}`, 0.29 for `{2, 3}`, 0.16 for `{2, 3, 5}` and 0.10 for `{2, 3, 5, 7}`, up to `10^6`;
+  - 0.073 for the primes up to 31, up to `2·10^4`;
+  - 0.064 for all the primes, up to 3000.
+
+  With the directions independent it stays between 0.42 and 0.74.
+- **The smallest pivot.** In every slice the smallest pivot is `d_2 = 1.718·d_1`, inside the direction of the prime 2.
+
+So the margin of the conjecture is set in a single prime's direction, at `n = 2`. The coupling between the primes
+grows with their number and brings the other pivots down towards it.
+
 So the true lattice lies between two extremes. One is the tensor product of the lattices of the single primes: all
 arithmetic, no real place. The other is the flat model, the cubic lattice: all real place, no primes. The conjecture
 says that the coupling never brings a pivot below the flat model's. A construction from the integers would have to
