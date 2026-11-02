@@ -88,9 +88,6 @@ theorem hodge_no_pole_iff (g : ℕ → ℕ → ℝ) :
     (∀ (N : ℕ) (c : ℕ → ℝ), selfIntNP g N c ≤ 0) ↔ ∀ (N : ℕ) (c : ℕ → ℝ), 0 ≤ formG g N c := by
   simp only [selfIntNP, neg_nonpos]
 
-/-- With the kernel of `ζ`, `formG` is the form of `BallWeil`, and the pole classes are what `ζ` adds. -/
-theorem formG_gram : formG gram = form := rfl
-
 end BallPole
 
 #print axioms BallPole.pole_hyperbolic
