@@ -565,3 +565,15 @@ In the sum over the prime powers in the Gram matrix of stage `N`, a lonely prime
 
 So a positive proportion of the prime directions is always the newest. They are held only through `w_1` and the
 comparisons of size, and their balance is as delicate as RH.
+
+## Tests
+
+[ball-conjecture-tests.md](ball-conjecture-tests.md) collects:
+- a proof of the closed form of `K_H` from the explicit formula;
+- an exact criterion for `d_2 ≥ d_1`;
+- a certified check of `d_k ≥ d_1` for ζ for `k ≤ 500`;
+- a function-field analogue, where a null vector is forced at `k = q^{2g}`;
+- Dirichlet characters for which `d_2 < d_1` (for example χ mod 19 and χ₋₁₆₃);
+- results on the smallest eigenvalue of the orbit Gram matrix (it is positive definite under RH, with `λ_min ≪ log²N/N`).
+
+The scripts are in `scripts/ball_tests/`.
