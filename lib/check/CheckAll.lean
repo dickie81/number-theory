@@ -28,6 +28,7 @@ import D2GS
 import D2Prim
 import D2Tail
 import D2Hcount
+import MomentConv
 import ExplicitSmooth
 import ExplicitConstants
 import QuadRing
@@ -351,6 +352,8 @@ import CertInstances
 #print axioms GSTail.tail_neg
 #print axioms GSHcount.hcount_pos
 #print axioms GSHcount.hcount_neg
+#print axioms MomentConv.tendsto_of_moments
+#print axioms MomentConv.ext_of_moments
 #print axioms SquarefreeCount.abs_sub_sum_le
 #print axioms SquarefreeCount.abs_sum_sqf_sub_le
 #print axioms SquarefreeCount.squarefree_isBigO_of_zeroFree

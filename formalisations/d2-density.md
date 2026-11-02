@@ -62,6 +62,24 @@ and `GSHcount.hcount_neg`, the same for `CpNeg`. Möbius over odd `e ≤ √x` (
 `16r` for each `e` (`GSHcount.term_bound`), and the tail `Σ_{e>√x} 1/e²` (`GSHcount.tail_le`); the constant is
 identified with the density through `GSNu.delta_pos_closed`.
 
+## Method of moments (hypothesis B, milestone B1)
+
+`lib/pnt/MomentConv.lean`, unconditional:
+
+```lean
+theorem MomentConv.tendsto_of_moments (μ : ℕ → ProbabilityMeasure ℝ) (ν : ProbabilityMeasure ℝ)
+    (hi : ∀ n k, Integrable (fun x : ℝ => x ^ k) (μ n : Measure ℝ))
+    (hνi : ∀ k, Integrable (fun x : ℝ => x ^ k) (ν : Measure ℝ))
+    (hm : ∀ k, Tendsto (fun n => ∫ x, x ^ k ∂(μ n : Measure ℝ)) atTop (𝓝 (∫ x, x ^ k ∂(ν : Measure ℝ))))
+    {s : ℝ} (hs : 0 < s) (hνe : Integrable (fun x => Real.exp (s * |x|)) (ν : Measure ℝ)) :
+    Tendsto μ atTop (𝓝 ν)
+```
+
+Ingredients: `MomentConv.ext_of_moments` (moments plus a finite exponential moment determine the law, via the
+analytic `complexMGF`), `MomentConv.integrable_exp_of_moments`, `MomentConv.tight`, `MomentConv.even_moment_limit`
+and `MomentConv.moment_tendsto` (moments along a weakly convergent sequence), then Prokhorov
+(`isCompact_closure_of_isTightMeasureSet`) and a subsequence argument.
+
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
 **CONDITIONAL on the half-plane `Re s > 11/12`** (`Eis.LFunction_ne_zero_of_re_gt`, [openai-half-plane.md](openai-half-plane.md)),
