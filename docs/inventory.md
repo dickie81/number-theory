@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1136 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1138 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 101 | 274 |
-| `lib/pnt` | 235 | 757 |
+| `lib/pnt` | 236 | 759 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -629,7 +629,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ChiUniform.LFunction_ctr_inv_le`: `‖L(3/2 + it, χ)‖⁻¹ ≤ ζ(3/2)`, from `1/L(s, χ) = Σ χ(n)μ(n)n^{−s}` (a step of `psiChi_le_uniform_of`).
 - `ChiUniform.logDeriv_LFunction_right`: `‖L′/L(s, χ)‖ ≤ −ζ′/ζ(3/2)` on `Re s ≥ 3/2` (a step of `psiChi_le_uniform_of`).
 - `ChiUniform.psiChi_le_uniform_of`: `ψ(x, χ)` uniformly in the modulus, from the constants of `sum_le_uniform`
-- `ChiUniform.psiChi_le_uniform`: `ψ(x, χ)` uniformly in the modulus
+- `ChiUniform.psiChi_le_uniform`: `ψ(x, χ)` uniformly in the modulus ([note](../formalisations/d2-density.md))
 
 #### `ClassNumberBound`: Gauss's class number problem, with an explicit bound
 
@@ -654,6 +654,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `GSPrim.primitive_pos`: Positive fundamental discriminants
 - `GSPrim.primitive_neg`: Negative fundamental discriminants
+
+#### `D2Tail`: The tail identity for `L′/L(1, χ_D)` — CONDITIONAL on the half-plane
+
+- `GSTail.tail_pos`: CONDITIONAL. Tail identity for positive fundamental discriminants ([note](../formalisations/d2-density.md))
+- `GSTail.tail_neg`: CONDITIONAL. Tail identity for negative fundamental discriminants ([note](../formalisations/d2-density.md))
 
 #### `DetectEM`: Zero detection by Euler–Maclaurin
 
@@ -1345,7 +1350,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `Littlewood`: Littlewood's bounds for `L(1, χ)` at the real characters
 
-- `Littlewood.norm_LSeries_le_of_sum_le`: Partial summation for an L-series
+- `Littlewood.norm_LSeries_le_of_sum_le`: Partial summation for an L-series ([note](../formalisations/d2-density.md))
 - `Littlewood.logDeriv_le_loglog_of`: The log-derivative on `(1, 2]`, uniformly in the modulus, from a bound on `ψ(x, χ)`
 - `Littlewood.logDeriv_le_loglog`: `L′/L(σ, χ) ≪ log log q` on `(1, 2]`
 - `Littlewood.norm_LFunction_le_real`: `|L(σ, χ)| ≤ σ/(σ − 1)` and `1/|L(σ, χ)| ≤ σ/(σ − 1)` for `σ > 1`, from the partial sums of `χ` and of `χμ`, each at most `t` in absolute value.

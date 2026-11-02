@@ -49,6 +49,25 @@ reciprocity) and `QuadKronecker.jacTop (D/4)` for `4 ∣ D` (`GSPrim.kron_eq_jac
 `p ∣ |D|` there is an `a ≡ 1 (|D|/p)`, coprime to `D`, with `(D|a) = −1` (`GSPrim.wit_odd`, `GSPrim.wit_two`), so
 `χ` factors through no proper divisor (`GSPrim.isPrimitive_of_witness`). Unconditional.
 
+## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
+
+**CONDITIONAL on the half-plane `Re s > 11/12`** (`Eis.LFunction_ne_zero_of_re_gt`, [openai-half-plane.md](openai-half-plane.md)),
+through `ChiUniform.psiChi_le_uniform`. `lib/pnt/D2Tail.lean`:
+
+```lean
+theorem GSTail.logDeriv_one_tail {η : ℝ} (hη : 0 < η) (hη' : η < 1 / 24) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N), χ ≠ 1 → ∀ y : ℝ, 1 < y →
+      ‖deriv (DirichletCharacter.LFunction χ) 1 / DirichletCharacter.LFunction χ 1 +
+          ∑ n ∈ Icc 1 ⌊y⌋₊, χ n * (vonMangoldt n : ℂ) / n‖ ≤
+        C * Real.log (N + 2) * y ^ (2 * η - 1 / 12)
+```
+
+and `GSTail.tail_pos`, `GSTail.tail_neg`, the same for the primitive `χ_D` above with `χ_D(n) = (D|n)`, uniformly in
+`D`. Proof: partial summation for the tail `n > y` at `σ > 1` (`Littlewood.norm_LSeries_le_of_sum_le`), with
+`|ψ(t, χ) − ψ(y, χ)| ≤ 2C log(N + 2) t^{11/12+η} ≤ 2C log(N + 2) y^{2η−1/12} t^{1−η}`, then `σ → 1⁺`. Lean uses only
+the standard axioms, since the library proves the half-plane; the result is conditional in the sense that it
+rests on that input, and must be cited so.
+
 ## How the statements differ from the source
 
 Granville and Soundararajan state Lemma 4.1 as `Σ χ_D(n) = (main term) + O(x^{1/2} n^{1/4} log n)` with the main
@@ -65,7 +84,7 @@ the odd `D` into classes mod 4. `nu1 = 4/π²` follows from the density `6/π²`
 (`SquarefreeCount.squarefree_isBigO_twelve_25ths`), which split into odd ones and twice odd ones. The lemmas
 `μ² = Σ μ` and `d² ∣ e² m → ...` are `SquarefreeCount`'s.
 
-Everything here is unconditional. The theorems are printed in `lib/check/CheckAll.lean` and depend only on
+Everything here is unconditional except the tail identity (`lib/pnt/D2Tail.lean`), which is CONDITIONAL on the half-plane. The theorems are printed in `lib/check/CheckAll.lean` and depend only on
 `propext`, `Classical.choice` and `Quot.sound`. No paper of the repository uses them.
 
 ## Source
