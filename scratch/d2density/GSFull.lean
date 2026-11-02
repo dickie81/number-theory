@@ -728,5 +728,159 @@ theorem odd_sum_le (hn : Odd n) (hsq : ¬ IsSquare n) (x : ℕ) :
 
 end GSAssemble
 
-#print axioms GSAssemble.class_sum_le
-#print axioms GSAssemble.odd_sum_le
+namespace GSFund
+open Finset GSAssemble JChar
+
+/-- Positive fundamental discriminants: `d ≡ 1 (4)` squarefree, or `d = 4m` with `m ≡ 2, 3 (4)` squarefree. -/
+def fundPos (d : ℕ) : Prop :=
+  (Squarefree d ∧ d % 4 = 1) ∨ (4 ∣ d ∧ Squarefree (d / 4) ∧ ((d / 4) % 4 = 2 ∨ (d / 4) % 4 = 3))
+
+/-- `|D|` for negative fundamental discriminants `D = -d`: `d ≡ 3 (4)` squarefree, or `d = 4m`, `m ≡ 1, 2 (4)` squarefree. -/
+def fundNeg (d : ℕ) : Prop :=
+  (Squarefree d ∧ d % 4 = 3) ∨ (4 ∣ d ∧ Squarefree (d / 4) ∧ ((d / 4) % 4 = 1 ∨ (d / 4) % 4 = 2))
+
+instance : DecidablePred fundPos := fun d => by unfold fundPos; infer_instance
+instance : DecidablePred fundNeg := fun d => by unfold fundNeg; infer_instance
+
+/-- Reindexing `d = k m`. -/
+theorem sum_dvd_reindex (k : ℕ) (hk : 0 < k) (x : ℕ) (g : ℕ → ℂ) :
+    ∑ d ∈ Ioc 0 x, (if k ∣ d then g (d / k) else 0) = ∑ m ∈ Ioc 0 (x / k), g m := by
+  rw [← sum_filter]
+  apply sum_nbij' (fun d => d / k) (fun m => k * m)
+  · intro d hd; simp only [mem_coe, mem_filter, mem_Ioc] at hd ⊢
+    obtain ⟨⟨h0, h1⟩, ⟨j, rfl⟩⟩ := hd
+    rw [Nat.mul_div_cancel_left _ hk]
+    refine ⟨Nat.pos_of_ne_zero (by rintro rfl; simp at h0), ?_⟩
+    rw [Nat.le_div_iff_mul_le hk, mul_comm]; exact h1
+  · intro m hm; simp only [mem_coe, mem_Ioc, mem_filter] at hm ⊢
+    refine ⟨⟨Nat.mul_pos hk hm.1, ?_⟩, dvd_mul_right _ _⟩
+    have := (Nat.le_div_iff_mul_le hk).1 hm.2; linarith [mul_comm m k]
+  · intro d hd; simp only [mem_coe, mem_filter] at hd; exact Nat.mul_div_cancel' hd.2
+  · intro m _; simp [Nat.mul_div_cancel_left _ hk]
+  · intro d _; rfl
+
+variable {n : ℕ} [Fact (1 < n)]
+
+/-- `T(x) = 2√(xB) + B`. -/
+noncomputable def T (n x : ℕ) : ℝ := 2 * Real.sqrt (x * Bn n) + Bn n
+
+theorem T_mono {x y : ℕ} (h : y ≤ x) : T n y ≤ T n x := by
+  unfold T
+  have : (y:ℝ) * Bn n ≤ x * Bn n := mul_le_mul_of_nonneg_right (by exact_mod_cast h) (Bn_pos).le
+  linarith [Real.sqrt_le_sqrt this]
+
+theorem class_ite_le (hn : Odd n) (hsq : ¬ IsSquare n) (r : ℕ) (hr : r = 1 ∨ r = 3) (x : ℕ) :
+    ‖∑ d ∈ Ioc 0 x, (if Squarefree d ∧ d % 4 = r then (jacobiSym d n : ℂ) else 0)‖ ≤ T n x := by
+  have := class_sum_le hn hsq r hr x
+  rw [sum_filter] at this; simp_rw [ite_and]; exact this
+
+theorem odd_ite_le (hn : Odd n) (hsq : ¬ IsSquare n) (x : ℕ) :
+    ‖∑ d ∈ Ioc 0 x, (if Squarefree d ∧ d % 2 = 1 then (jacobiSym d n : ℂ) else 0)‖ ≤ T n x := by
+  have := odd_sum_le hn hsq x
+  rw [sum_filter] at this; simp_rw [ite_and]; exact this
+
+theorem norm_jac_le (a : ℤ) : ‖(jacobiSym a n : ℂ)‖ ≤ 1 := by
+  rcases jacobiSym.trichotomy a n with h | h | h <;> simp [h]
+
+/-- The `m ≡ 2 (4)` class: `‖Σ_{m ≤ y sqf, m ≡ 2 (4)} J(m|n)‖ ≤ T(y)`. -/
+theorem two_class_le (hn : Odd n) (hsq : ¬ IsSquare n) (y : ℕ) :
+    ‖∑ m ∈ Ioc 0 y, (if Squarefree m ∧ m % 4 = 2 then (jacobiSym m n : ℂ) else 0)‖ ≤ T n y := by
+  have hpt : ∀ m : ℕ, (if Squarefree m ∧ m % 4 = 2 then (jacobiSym m n : ℂ) else 0) =
+      if 2 ∣ m then (jacobiSym 2 n : ℂ) * (if Squarefree (m / 2) ∧ (m / 2) % 2 = 1 then (jacobiSym (m / 2 : ℕ) n : ℂ) else 0)
+      else 0 := by
+    intro m
+    by_cases h2 : 2 ∣ m
+    · obtain ⟨k, rfl⟩ := h2
+      rw [if_pos (dvd_mul_right 2 k), Nat.mul_div_cancel_left _ (by norm_num)]
+      have hiff : (Squarefree (2 * k) ∧ (2 * k) % 4 = 2) ↔ (Squarefree k ∧ k % 2 = 1) := by
+        rw [Nat.squarefree_mul_iff]
+        constructor
+        · rintro ⟨⟨hc, -, hk⟩, -⟩; refine ⟨hk, ?_⟩
+          have := (Nat.coprime_two_left).1 hc; exact Nat.odd_iff.1 this
+        · rintro ⟨hk, ho⟩
+          exact ⟨⟨(Nat.coprime_two_left).2 (Nat.odd_iff.2 ho), Nat.squarefree_two, hk⟩, by omega⟩
+      by_cases hc : Squarefree k ∧ k % 2 = 1
+      · rw [if_pos (hiff.2 hc), if_pos hc]; push_cast; rw [jacobiSym.mul_left]; push_cast; ring
+      · rw [if_neg (fun h => hc (hiff.1 h)), if_neg hc, mul_zero]
+    · rw [if_neg h2, if_neg]; rintro ⟨-, h⟩; exact h2 (by omega)
+  simp_rw [hpt]
+  rw [sum_dvd_reindex 2 (by norm_num) y (fun k => (jacobiSym 2 n : ℂ) * (if Squarefree k ∧ k % 2 = 1 then (jacobiSym (k : ℕ) n : ℂ) else 0)), ← mul_sum, norm_mul]
+  calc _ ≤ 1 * T n (y / 2) := mul_le_mul (norm_jac_le 2) (odd_ite_le hn hsq _) (norm_nonneg _) zero_le_one
+    _ ≤ T n y := by rw [one_mul]; exact T_mono (Nat.div_le_self _ _)
+
+/-- The `4m` part, for classes `r` (where `r = 2` is handled by `two_class_le`). -/
+theorem four_part_le (hn : Odd n) (hsq : ¬ IsSquare n) (r s : ℕ) (hr : r = 1 ∨ r = 3) (hs : s = 2) (x : ℕ) :
+    ‖∑ d ∈ Ioc 0 x, (if 4 ∣ d ∧ Squarefree (d / 4) ∧ ((d / 4) % 4 = r ∨ (d / 4) % 4 = s)
+        then (jacobiSym d n : ℂ) else 0)‖ ≤ 2 * T n x := by
+  have h4 : ∀ m : ℕ, jacobiSym ((4 * m : ℕ) : ℤ) n = jacobiSym m n := by
+    intro m; push_cast; rw [jacobiSym.mul_left, jacobiSym.at_four hn, one_mul]
+  have hpt : ∀ d : ℕ, (if 4 ∣ d ∧ Squarefree (d / 4) ∧ ((d / 4) % 4 = r ∨ (d / 4) % 4 = s)
+      then (jacobiSym d n : ℂ) else 0) =
+      if 4 ∣ d then ((if Squarefree (d / 4) ∧ (d / 4) % 4 = r then (jacobiSym (d / 4 : ℕ) n : ℂ) else 0) +
+        (if Squarefree (d / 4) ∧ (d / 4) % 4 = s then (jacobiSym (d / 4 : ℕ) n : ℂ) else 0)) else 0 := by
+    intro d
+    by_cases h : 4 ∣ d
+    · obtain ⟨m, rfl⟩ := h
+      rw [if_pos (dvd_mul_right 4 m), Nat.mul_div_cancel_left _ (by norm_num), h4]
+      have hrs : r ≠ s := by rcases hr with rfl | rfl <;> omega
+      by_cases h1 : Squarefree m <;> by_cases h2 : m % 4 = r <;> by_cases h3 : m % 4 = s <;>
+        simp_all
+    · simp [h]
+  simp_rw [hpt]
+  rw [sum_dvd_reindex 4 (by norm_num) x (fun m => (if Squarefree m ∧ m % 4 = r then (jacobiSym (m : ℕ) n : ℂ) else 0) + (if Squarefree m ∧ m % 4 = s then (jacobiSym (m : ℕ) n : ℂ) else 0)), sum_add_distrib]
+  have e1 := class_ite_le hn hsq r hr (x / 4)
+  have e2 := two_class_le hn hsq (x / 4)
+  rw [← hs] at e2
+  have m1 := T_mono (n := n) (Nat.div_le_self x 4)
+  calc _ ≤ _ := norm_add_le _ _
+    _ ≤ T n (x / 4) + T n (x / 4) := add_le_add e1 e2
+    _ ≤ 2 * T n x := by linarith
+
+/-- **Granville–Soundararajan Lemma 4.1, positive discriminants, odd `n`.** For odd non-square `n > 1`,
+`‖Σ_{0 < D ≤ x, D fundamental} χ_D(n)‖ ≤ 3 (2√(xB) + B)`, `B = d(4n)√(4n)(1 + log 4n)`; here `χ_D(n) = J(D|n)`. -/
+theorem gs_pos (hn : Odd n) (hsq : ¬ IsSquare n) (x : ℕ) :
+    ‖∑ d ∈ Ioc 0 x, (if fundPos d then (jacobiSym d n : ℂ) else 0)‖ ≤ 3 * T n x := by
+  have hpt : ∀ d : ℕ, (if fundPos d then (jacobiSym d n : ℂ) else 0) =
+      (if Squarefree d ∧ d % 4 = 1 then (jacobiSym d n : ℂ) else 0) +
+      (if 4 ∣ d ∧ Squarefree (d / 4) ∧ ((d / 4) % 4 = 3 ∨ (d / 4) % 4 = 2) then (jacobiSym d n : ℂ) else 0) := by
+    intro d; unfold fundPos
+    by_cases h1 : Squarefree d ∧ d % 4 = 1
+    · have : ¬ (4 ∣ d) := by omega
+      simp [h1, this]
+    · by_cases h2 : 4 ∣ d ∧ Squarefree (d / 4) ∧ ((d / 4) % 4 = 3 ∨ (d / 4) % 4 = 2)
+      · rw [if_pos (Or.inr ⟨h2.1, h2.2.1, h2.2.2.symm⟩), if_neg h1, if_pos h2, zero_add]
+      · rw [if_neg h1, if_neg h2, if_neg, add_zero]
+        rintro (h | ⟨a, b, c⟩); exact h1 h; exact h2 ⟨a, b, c.symm⟩
+  simp_rw [hpt]; rw [sum_add_distrib]
+  calc _ ≤ _ := norm_add_le _ _
+    _ ≤ T n x + 2 * T n x := add_le_add (class_ite_le hn hsq 1 (Or.inl rfl) x)
+        (four_part_le hn hsq 3 2 (Or.inr rfl) rfl x)
+    _ = 3 * T n x := by ring
+
+/-- **Granville–Soundararajan Lemma 4.1, negative discriminants, odd `n`.** Same bound for `D = -d`,
+`χ_D(n) = J(-d|n)`. -/
+theorem gs_neg (hn : Odd n) (hsq : ¬ IsSquare n) (x : ℕ) :
+    ‖∑ d ∈ Ioc 0 x, (if fundNeg d then (jacobiSym (-(d:ℤ)) n : ℂ) else 0)‖ ≤ 3 * T n x := by
+  have hm : ∀ d : ℕ, (jacobiSym (-(d:ℤ)) n : ℂ) = (jacobiSym (-1) n : ℂ) * (jacobiSym d n : ℂ) := by
+    intro d; rw [show (-(d:ℤ)) = -1 * d by ring, jacobiSym.mul_left]; push_cast; ring
+  have hpt : ∀ d : ℕ, (if fundNeg d then (jacobiSym (-(d:ℤ)) n : ℂ) else 0) =
+      (jacobiSym (-1) n : ℂ) * ((if Squarefree d ∧ d % 4 = 3 then (jacobiSym d n : ℂ) else 0) +
+      (if 4 ∣ d ∧ Squarefree (d / 4) ∧ ((d / 4) % 4 = 1 ∨ (d / 4) % 4 = 2) then (jacobiSym d n : ℂ) else 0)) := by
+    intro d; unfold fundNeg; rw [hm]
+    by_cases h1 : Squarefree d ∧ d % 4 = 3
+    · have : ¬ (4 ∣ d) := by omega
+      simp [h1, this]
+    · by_cases h2 : 4 ∣ d ∧ Squarefree (d / 4) ∧ ((d / 4) % 4 = 1 ∨ (d / 4) % 4 = 2)
+      · rw [if_pos (Or.inr h2), if_neg h1, if_pos h2, zero_add]
+      · rw [if_neg h1, if_neg h2, if_neg, add_zero, mul_zero]
+        rintro (h | h); exact h1 h; exact h2 h
+  simp_rw [hpt]; rw [← mul_sum, sum_add_distrib, norm_mul]
+  calc _ ≤ 1 * (T n x + 2 * T n x) := mul_le_mul (norm_jac_le (-1))
+        ((norm_add_le _ _).trans (add_le_add (class_ite_le hn hsq 3 (Or.inr rfl) x)
+          (four_part_le hn hsq 1 2 (Or.inl rfl) rfl x))) (norm_nonneg _) zero_le_one
+    _ = 3 * T n x := by ring
+
+end GSFund
+
+#print axioms GSFund.gs_pos
+#print axioms GSFund.gs_neg
