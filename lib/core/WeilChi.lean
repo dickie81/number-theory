@@ -208,20 +208,21 @@ theorem logDeriv_LamG (hχ1 : χ ≠ 1) (hq : χ.IsQuadratic) {s : ℂ} (hs : 1 
   field_simp
   ring
 
+omit hG in
 /-- **`Ξ_χ′/Ξ_χ` on the line `Re s > 1`**: with `s = ½ + it`,
 `Ξ_χ′(t)/Ξ_χ(t) = i(½ log N − ½ log π + ½ψ((s + δ)/2) − Σ Λ(n)χ(n)n^{−s})`. -/
-theorem logDeriv_XiC_eq {t : ℂ} (ht : 1 < (1 / 2 + I * t).re) :
+theorem logDeriv_XiC_eq (hχ1 : χ ≠ 1) (hq : χ.IsQuadratic) {t : ℂ} (ht : 1 < (1 / 2 + I * t).re) :
     logDeriv (XiC χ) t = I * ((Real.log N : ℂ) / 2 - (Real.log π : ℂ) / 2
       + Complex.digamma ((1 / 2 + I * t + parity χ) / 2) / 2
       - LSeries (fun n => (fχ χ n : ℂ)) (1 / 2 + I * t)) := by
   set s := 1 / 2 + I * t
   have hg : HasDerivAt (fun z : ℂ => 1 / 2 + I * z) I t := by
     simpa using ((hasDerivAt_id t).const_mul I).const_add (1 / 2)
-  have hdx : DifferentiableAt ℂ (LamG χ) s := differentiable_LamG hG.ne_one s
+  have hdx : DifferentiableAt ℂ (LamG χ) s := differentiable_LamG hχ1 s
   have e : XiC χ = LamG χ ∘ fun z : ℂ => 1 / 2 + I * z := by funext z; rfl
   have hsδ : 0 < (s + parity χ).re := by simp only [add_re, natCast_re]; linarith [parity_nonneg' χ]
   rw [e, logDeriv_comp (f := LamG χ) (g := fun z : ℂ => 1 / 2 + I * z) hdx hg.differentiableAt,
-    hg.deriv, logDeriv_LamG hG.ne_one hG.quad ht, logDeriv_Gammaℝ hsδ]
+    hg.deriv, logDeriv_LamG hχ1 hq ht, logDeriv_Gammaℝ hsδ]
   ring
 
 /-! ## The explicit formula -/
@@ -473,8 +474,9 @@ omit [NeZero N] hG in
 theorem LSeriesSummable_fχ' (hq : χ.IsQuadratic) {s : ℂ} (hs : 1 < s.re) :
     LSeriesSummable (fun n => (fχ χ n : ℂ)) s := LSeriesSummable_fχ (isReal_of_isQuadratic hq) hs
 
+omit hG in
 /-- **The prime term**: `∫_ℝ h(r − i) Σ Λ(n)χ(n)n^{−s} dr = 2π Σ Λ(n)χ(n)n^{−1/2} g_h(log n)`. -/
-theorem prime_lineC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ t, h (-t) = h t)
+theorem prime_lineC (hq : χ.IsQuadratic) {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ t, h (-t) = h t)
     {hR : ℝ → ℝ} (hreal : ∀ r : ℝ, h r = hR r) :
     HasSum (fun n : ℕ => ((2 * π * (fχ χ n / Real.sqrt n * gh hR (Real.log n)) : ℝ) : ℂ))
       (∫ r : ℝ, h ((r : ℂ) - I) * LSeries (fun n => (fχ χ n : ℂ)) (1 / 2 + I * ((r : ℂ) - I))) := by
@@ -499,7 +501,7 @@ theorem prime_lineC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀
     · rw [hD n hn]; exact (hline _).const_mul _
   have hsum : Summable fun n => ∫ r, ‖D n r‖ := by
     have hS : Summable fun n => ‖LSeries.term f (3 / 2 : ℂ) n‖ :=
-      summable_norm_iff.2 (LSeriesSummable_fχ' hG.quad (by norm_num))
+      summable_norm_iff.2 (LSeriesSummable_fχ' hq (by norm_num))
     refine (hS.mul_right (∫ r : ℝ, ‖h ((r : ℂ) - I)‖)).congr fun n => ?_
     simp only [D, s, f]
     simp_rw [norm_mul, norm_term_lineR]
@@ -519,7 +521,7 @@ theorem prime_lineC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀
   simp_rw [hval] at H1
   convert H1 using 1
   refine integral_congr_ae (Eventually.of_forall fun r => ?_)
-  have hs := ((LSeriesSummable_fχ' hG.quad (s := s r) (by rw [hsre]; norm_num)).LSeriesHasSum).mul_left
+  have hs := ((LSeriesSummable_fχ' hq (s := s r) (by rw [hsre]; norm_num)).LSeriesHasSum).mul_left
     (h ((r : ℂ) - I))
   exact hs.tsum_eq.symm
 
@@ -538,7 +540,8 @@ theorem integrable_psi_lineC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) :
   have := psi_strip_boundC (χ := χ) H (hmem r)
   simpa using this
 
-theorem integrable_prime_lineC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) :
+omit hG in
+theorem integrable_prime_lineC (hq : χ.IsQuadratic) {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) :
     Integrable fun r : ℝ => h ((r : ℂ) - I)
       * LSeries (fun n => (fχ χ n : ℂ)) (1 / 2 + I * ((r : ℂ) - I)) := by
   set f : ℕ → ℂ := fun n => (fχ χ n : ℂ)
@@ -548,7 +551,7 @@ theorem integrable_prime_lineC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) :
     refine this.congr (Eventually.of_forall fun r => ?_)
     simp only; push_cast; ring_nf
   have hab : LSeries.abscissaOfAbsConv f ≤ ((5 / 4 : ℂ).re : EReal) :=
-    (LSeriesSummable_fχ' hG.quad (by norm_num)).abscissaOfAbsConv_le
+    (LSeriesSummable_fχ' hq (by norm_num)).abscissaOfAbsConv_le
   have hmem : ∀ r : ℝ, (1 / 2 + I * ((r : ℂ) - I)) ∈ {s : ℂ | LSeries.abscissaOfAbsConv f < s.re} := by
     intro r
     show LSeries.abscissaOfAbsConv f < ((1 / 2 + I * ((r : ℂ) - I)).re : EReal)
@@ -563,7 +566,7 @@ theorem integrable_prime_lineC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) :
         (((LSeries_differentiableOn f).differentiableAt
           ((isOpen_re_gt_EReal _).mem_nhds (hmem r))).continuousAt) hcf.continuousAt
   have hS : Summable fun n => ‖LSeries.term f (3 / 2 : ℂ) n‖ :=
-    summable_norm_iff.2 (LSeriesSummable_fχ' hG.quad (by norm_num))
+    summable_norm_iff.2 (LSeriesSummable_fχ' hq (by norm_num))
   set M := ∑' n, ‖LSeries.term f (3 / 2 : ℂ) n‖
   have hb : ∀ r : ℝ, ‖LSeries f (1 / 2 + I * ((r : ℂ) - I))‖ ≤ M := fun r => by
     unfold LSeries
@@ -582,20 +585,41 @@ def weilRHSC (χ : DirichletCharacter ℂ N) (hR : ℝ → ℝ) : ℝ :=
   gh hR 0 * (Real.log N - Real.log π) + 1 / (2 * π) * (∫ r, hR r * psiReC χ r)
     - 2 * ∑' n : ℕ, fχ χ n / Real.sqrt n * gh hR (Real.log n)
 
-/-- **Weil's explicit formula over the zeros of `Ξ_χ`** (each pair `±τ` once, with multiplicity):
-for `h` even, holomorphic on `|Im t| ≤ 1` with `|h(t)| ≤ C/(1 + (Re t)²)` there, and real on `ℝ`,
-`Σ_u 2h(τ_u) = g_h(0) log(N/π) + (1/2π)∫h Re ψ((½ + δ)/2 + ir/2) − 2Σ Λ(n)χ(n)n^{−1/2}g_h(log n)`. -/
-theorem weil_XiC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ t, h (-t) = h t)
-    {hR : ℝ → ℝ} (hreal : ∀ r : ℝ, h r = hR r) :
-    HasSum (fun i : ZeroIdx (sqF (XiC χ)) => 2 * h (tauC i)) (weilRHSC χ hR : ℂ) := by
+omit hG in
+theorem integrable_line_logDeriv_XiC (hχ1 : χ ≠ 1) (hq : χ.IsQuadratic) {h : ℂ → ℂ} {C : ℝ}
+    (H : StripTest h C) :
+    Integrable fun r : ℝ => h ((r : ℂ) - I) * logDeriv (XiC χ) ((r : ℂ) - I) := by
   set LS : ℝ → ℂ := fun r => LSeries (fun n => (fχ χ n : ℂ)) (1 / 2 + I * ((r : ℂ) - I))
   set PS : ℝ → ℂ := fun r => Complex.digamma (zC χ ((r : ℂ) - I))
   set κ : ℂ := I * ((Real.log N : ℂ) - (Real.log π : ℂ)) / 2
-  have hZ := zero_sideC hG H heven
+  have hy : (-1 : ℝ) ∈ Icc (-1 : ℝ) 1 := ⟨le_rfl, by norm_num⟩
+  have hL : Integrable fun r : ℝ => h ((r : ℂ) - I) := by
+    have := integrable_line H.diff H.bound hy
+    refine this.congr (Eventually.of_forall fun r => ?_)
+    simp only; push_cast; ring_nf
+  have I2 : Integrable fun r : ℝ => κ * h ((r : ℂ) - I) := hL.const_mul _
+  have I3 : Integrable fun r : ℝ => I / 2 * (h ((r : ℂ) - I) * PS r) :=
+    (integrable_psi_lineC H).const_mul _
+  have I4 : Integrable fun r : ℝ => I * (h ((r : ℂ) - I) * LS r) :=
+    (integrable_prime_lineC hq H).const_mul _
+  refine ((I2.add I3).sub I4).congr (Eventually.of_forall fun r => ?_)
+  simp only [Pi.add_apply, Pi.sub_apply]
+  rw [logDeriv_XiC_eq hχ1 hq (by simp)]
+  simp only [LS, PS, κ, zC]
+  ring
+
+omit hG in
+/-- **The line integral of `h·Ξ_χ′/Ξ_χ`** on `Im t = −1` is `πi` times the right side of the explicit formula. -/
+theorem line_logDeriv_XiC (hχ1 : χ ≠ 1) (hq : χ.IsQuadratic) {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C)
+    (heven : ∀ t, h (-t) = h t) {hR : ℝ → ℝ} (hreal : ∀ r : ℝ, h r = hR r) :
+    ∫ r : ℝ, h ((r : ℂ) - I) * logDeriv (XiC χ) ((r : ℂ) - I) = π * I * (weilRHSC χ hR : ℂ) := by
+  set LS : ℝ → ℂ := fun r => LSeries (fun n => (fχ χ n : ℂ)) (1 / 2 + I * ((r : ℂ) - I))
+  set PS : ℝ → ℂ := fun r => Complex.digamma (zC χ ((r : ℂ) - I))
+  set κ : ℂ := I * ((Real.log N : ℂ) - (Real.log π : ℂ)) / 2
   have hpt : ∀ r : ℝ, h ((r : ℂ) - I) * logDeriv (XiC χ) ((r : ℂ) - I)
       = κ * h ((r : ℂ) - I) + I / 2 * (h ((r : ℂ) - I) * PS r) - I * (h ((r : ℂ) - I) * LS r) := by
     intro r
-    rw [logDeriv_XiC_eq hG (by simp)]
+    rw [logDeriv_XiC_eq hχ1 hq (by simp)]
     simp only [LS, PS, κ, zC]
     ring
   have hy : (-1 : ℝ) ∈ Icc (-1 : ℝ) 1 := ⟨le_rfl, by norm_num⟩
@@ -607,7 +631,7 @@ theorem weil_XiC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ t,
   have I3 : Integrable fun r : ℝ => I / 2 * (h ((r : ℂ) - I) * PS r) :=
     (integrable_psi_lineC H).const_mul _
   have I4 : Integrable fun r : ℝ => I * (h ((r : ℂ) - I) * LS r) :=
-    (integrable_prime_lineC hG H).const_mul _
+    (integrable_prime_lineC hq H).const_mul _
   have hsplit : ∫ r : ℝ, h ((r : ℂ) - I) * logDeriv (XiC χ) ((r : ℂ) - I)
       = (∫ r : ℝ, κ * h ((r : ℂ) - I)) + (∫ r : ℝ, I / 2 * (h ((r : ℂ) - I) * PS r))
         - ∫ r : ℝ, I * (h ((r : ℂ) - I) * LS r) := by
@@ -626,21 +650,33 @@ theorem weil_XiC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ t,
     rw [integral_const_mul]
     simp only [PS]
     rw [psi_lineC H, psi_realC H heven hreal]
-  have hP := prime_lineC hG H heven hreal
+  have hP := prime_lineC hq H heven hreal
   have v4 : ∫ r : ℝ, I * (h ((r : ℂ) - I) * LS r)
       = I * ((2 * π * ∑' n : ℕ, fχ χ n / Real.sqrt n * gh hR (Real.log n) : ℝ) : ℂ) := by
     rw [integral_const_mul]
     simp only [LS]
     rw [← hP.tsum_eq, ← Complex.ofReal_tsum, tsum_mul_left]
-  rw [hsplit, v2, v3, v4] at hZ
+  rw [hsplit, v2, v3, v4]
+  unfold weilRHSC κ
+  have hπ : (π : ℂ) ≠ 0 := Complex.ofReal_ne_zero.2 Real.pi_ne_zero
+  push_cast
+  field_simp
+
+/-- **Weil's explicit formula over the zeros of `Ξ_χ`** (each pair `±τ` once, with multiplicity):
+for `h` even, holomorphic on `|Im t| ≤ 1` with `|h(t)| ≤ C/(1 + (Re t)²)` there, and real on `ℝ`,
+`Σ_u 2h(τ_u) = g_h(0) log(N/π) + (1/2π)∫h Re ψ((½ + δ)/2 + ir/2) − 2Σ Λ(n)χ(n)n^{−1/2}g_h(log n)`. -/
+theorem weil_XiC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ t, h (-t) = h t)
+    {hR : ℝ → ℝ} (hreal : ∀ r : ℝ, h r = hR r) :
+    HasSum (fun i : ZeroIdx (sqF (XiC χ)) => 2 * h (tauC i)) (weilRHSC χ hR : ℂ) := by
+  have hZ := zero_sideC hG H heven
+  have hL := line_logDeriv_XiC hG.ne_one hG.quad H heven hreal
+  rw [show (fun r : ℝ => h (r - I) * logDeriv (XiC χ) (r - I)) =
+    fun r : ℝ => h ((r : ℂ) - I) * logDeriv (XiC χ) ((r : ℂ) - I) from rfl, hL] at hZ
   have hZ' := hZ.mul_left ((π * I)⁻¹)
   have hπ : (π : ℂ) ≠ 0 := Complex.ofReal_ne_zero.2 Real.pi_ne_zero
   convert hZ' using 1
   · funext i; field_simp
-  · unfold weilRHSC
-    simp only [κ]
-    push_cast
-    field_simp
+  · field_simp
 
 end PsiOmega
 

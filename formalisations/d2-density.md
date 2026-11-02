@@ -209,18 +209,33 @@ theorem applies at every `t`. `D2Hdist.d2_density_pos` and `D2Hdist.d2_density_n
 `hB` remain, and are only required on the discriminant sets (`D2Hdist.Apos`: `1 < D` fundamental; `D2Hdist.Aneg`: `D < −1`
 fundamental), through the set `A ⊇ S x` of `D2Density.d2_density_log`. `D2Density.K1_pos` gives the positivity of a summable zero sum `K₁`.
 
-## The parity of `χ_D`, and `GoodChar` from `L(½, χ_D) ≠ 0`
+## The parity of `χ_D`, and `K₁`
 
 `lib/pnt/D2Parity.lean`, unconditional. `D2Parity.kron_pos`: `(d | d − 1) = 1` for a positive fundamental
 discriminant `d > 1`; `D2Parity.kron_neg`: `(−d | d − 1) = −1`. Both by quadratic reciprocity (for `d = 4m`, via
 `J(m | 4m − 1) = 1`). With `D2Parity.chi_neg_one` this makes `χ_d` even and `χ_{−d}` odd.
 
-`lib/pnt/D2Good.lean`. `D2Good.good_of` builds `GoodChar χ_D` from `L(½, χ_D) ≠ 0` (primitivity, `χ_D ≠ 1`, and
-`χ_D` quadratic from `D2Good.kron_tri`). Then `D2Good.hK1_pos` / `D2Good.hK1_neg` prove `hK1` and `hpos` for
-`K₁ = PsiOmega.K1C χ_D` (`D2Good.K1pos`, `D2Good.K1neg`), with `κ = Re ψ(½)` resp. `Re ψ(1)`.
+`lib/pnt/D2Good.lean`. `D2Good.real_of` shows `χ_D` is a primitive real character `≠ 1` (`PsiOmega.RealChar`;
+`χ_D` quadratic from `D2Good.kron_tri`), with no hypothesis on `L(½, χ_D)`. Then `D2Good.hK1_pos` /
+`D2Good.hK1_neg` prove `hK1` and `hpos` for `K₁ = PsiOmega.K1Z χ_D` (`D2Good.K1pos`, `D2Good.K1neg`), with
+`κ = Re ψ(½)` resp. `Re ψ(1)`.
 
 **CONDITIONAL (half-plane).** `D2Good.d2_density_pos'` / `D2Good.d2_density_neg'`: the d₂ < d₁ density with only
-`L(½, χ_D) ≠ 0` (`D2Good.HalfPos`, `D2Good.HalfNeg`) and `hB` left as hypotheses.
+`hB` left as a hypothesis.
+
+## A zero at the centre
+
+`lib/core/WeilChiZ.lean`, `lib/core/WeilChiZB.lean`, unconditional; no hypothesis on `L(½, χ)`. Let `m = PsiOmega.mC χ`
+be the order of `Ξ_χ` at `0` and `Ξ_χ(t) = t^m Y(t)` (`PsiOmega.YC`, `PsiOmega.XiC_eq_pow_mul`, `Y(0) ≠ 0`). The
+functional equation forces the root number to be `(−1)^m` (`PsiOmega.rootNumber_eq_neg_one_pow`), so `Y` is even
+(`PsiOmega.YC_even`) and has Hadamard's product (`PsiOmega.hadamard_YC`); no Gauss-sum sign is needed. Since
+`Ξ_χ′/Ξ_χ = m/t + Y′/Y` (`PsiOmega.logDeriv_XiC_split`) and `∫h(r − i)/(r − i)dr = πi h(0)`, the zero side gains
+`mπi h(0)` (`PsiOmega.zero_sideZ`), and Weil's explicit formula reads `Σ_u 2h(τ_u) = weilRHSC − m h(0)` over the zeros of
+`Y` (`PsiOmega.weil_XiZ`; the line integral is `PsiOmega.line_logDeriv_XiC`). Counting `ρ = ½` with multiplicity `m`,
+`K₁ = Σ_u 2/(¼ + u) + 4m` (`PsiOmega.K1Z`) satisfies the same identity as before (`PsiOmega.K1Z_eq`, from
+`PsiOmega.hasSum_K1Z`), `K₁ > 0` (`PsiOmega.K1Z_pos`), and Theorem B holds for
+`K(x) = Σ_u 2cos(τ_u log x)/(¼ + u) + 4m` (`PsiOmega.KxZ`, `PsiOmega.KxZ_explicit`, `PsiOmega.theoremBZ`): the `m`
+terms cancel, since `H_u(0) = 4(1 − cosh(u/2))`.
 
 ## Theorem B for a good real character, and `hB`
 
@@ -233,7 +248,8 @@ the prime sum vanishes (`PsiOmega.prime_two`), giving **Theorem B** (`PsiOmega.t
 only on the parity `a`.
 
 **CONDITIONAL (half-plane).** `D2Good.d2_density_pos_B` / `D2Good.d2_density_neg_B` (from `D2Good.B_pos`,
-`D2Good.B_neg`): the d₂ < d₁ density with `K(2)` in place of `K₂`, limit `ν(−2c_a, ∞)`, given only `L(½, χ_D) ≠ 0`.
+`D2Good.B_neg`, via `PsiOmega.theoremBZ`): the d₂ < d₁ density with `K(2)` in place of `K₂`, limit `ν(−2c_a, ∞)`, with no
+hypothesis on `L(½, χ_D)`.
 
 ## The closed forms `c₀ = −¼ log(27/4)`, `c₁ = ¾ log(3/4)`
 
@@ -244,7 +260,7 @@ is integrated term by term against `H_{log 2}` (`CAClosed.hasSum_archA`, dominat
 `CAClosed.hasSum_zero`). Result: `CAClosed.cA_zero`, `CAClosed.cA_one`.
 
 **CONDITIONAL (half-plane).** `D2Good.d2_density_pos_closed` / `D2Good.d2_density_neg_closed`: the limits are
-`ν(½ log(27/4), ∞)` and `ν((3/2) log(4/3), ∞)`, given only `L(½, χ_D) ≠ 0`.
+`ν(½ log(27/4), ∞)` and `ν((3/2) log(4/3), ∞)`, with no hypothesis on `L(½, χ_D)`.
 
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
@@ -264,14 +280,6 @@ and `GSTail.tail_pos`, `GSTail.tail_neg`, the same for the primitive `χ_D` abov
 `|ψ(t, χ) − ψ(y, χ)| ≤ 2C log(N + 2) t^{11/12+η} ≤ 2C log(N + 2) y^{2η−1/12} t^{1−η}`, then `σ → 1⁺`. Lean uses only
 the standard axioms, since the library proves the half-plane; the result is conditional in the sense that it
 rests on that input, and must be cited so.
-
-## Conditional results
-
-These results have a hypothesis that the library does not prove, and no unconditional result uses them.
-
-| Result | Hypothesis | Lean |
-|---|---|---|
-| CONDITIONAL (half-plane): the d₂ < d₁ density over fundamental discriminants of each sign, with `hK1`, `hpos` discharged | `L(½, χ_D) ≠ 0` for every `D` (`D2Good.HalfPos`, `D2Good.HalfNeg`) | `D2Good.d2_density_pos'`, `D2Good.d2_density_neg'`, `D2Good.d2_density_pos_B`, `D2Good.d2_density_neg_B`, `D2Good.d2_density_pos_closed`, `D2Good.d2_density_neg_closed` |
 
 ## How the statements differ from the source
 

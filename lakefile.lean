@@ -19,7 +19,7 @@ lean_lib Zeta23 where
   globs := #[.submodules `Zeta23]
   leanOptions := #[⟨`relaxedAutoImplicit, false⟩]
 
-/-- lib/core: 346 modules. -/
+/-- lib/core: 348 modules. -/
 lean_lib Core where
   srcDir := "lib/core"
   globs := #[
@@ -103,13 +103,13 @@ lean_lib Core where
     .one `VinoRec, .one `VinoRec2, .one `VinoSplit, .one `VinoStep,
     .one `Vinogradov, .one `WeilAssemble, .one `WeilChi, .one `WeilChiB,
     .one `WeilChiBridge, .one `WeilChiCriterion, .one `WeilChiDensity, .one `WeilChiK1,
-    .one `WeilChiPos, .one `WeilConverse, .one `WeilCount, .one `WeilCriterion,
-    .one `WeilDedekind, .one `WeilDischarge, .one `WeilFF, .one `WeilIndexConverse,
-    .one `WeilIndexInfinite, .one `WeilIndexZeta, .one `WeilLandau, .one `WeilRH,
-    .one `WeilRate, .one `WeilTwinGeneral, .one `WeilZeta, .one `WindowForm,
-    .one `XiBounds, .one `XiLogDeriv, .one `ZeroLocal, .one `ZeroSwap,
-    .one `ZerosDense, .one `ZerosInfinite, .one `Zeta, .one `ZetaDiscs,
-    .one `ZetaDiscsR, .one `ZetaInputs]
+    .one `WeilChiPos, .one `WeilChiZ, .one `WeilChiZB, .one `WeilConverse,
+    .one `WeilCount, .one `WeilCriterion, .one `WeilDedekind, .one `WeilDischarge,
+    .one `WeilFF, .one `WeilIndexConverse, .one `WeilIndexInfinite, .one `WeilIndexZeta,
+    .one `WeilLandau, .one `WeilRH, .one `WeilRate, .one `WeilTwinGeneral,
+    .one `WeilZeta, .one `WindowForm, .one `XiBounds, .one `XiLogDeriv,
+    .one `ZeroLocal, .one `ZeroSwap, .one `ZerosDense, .one `ZerosInfinite,
+    .one `Zeta, .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaInputs]
 
 /-- lib/pnt: 616 modules. -/
 lean_lib PNT where

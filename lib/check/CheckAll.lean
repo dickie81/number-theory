@@ -42,6 +42,8 @@ import WeilChiPos
 import D2Parity
 import D2Good
 import WeilChiB
+import WeilChiZ
+import WeilChiZB
 import CAClosed
 import ExplicitSmooth
 import ExplicitConstants
@@ -395,6 +397,11 @@ import CertInstances
 #print axioms D2Good.d2_density_pos'
 #print axioms D2Good.d2_density_neg'
 #print axioms PsiOmega.theoremB
+#print axioms PsiOmega.rootNumber_eq_neg_one_pow
+#print axioms PsiOmega.weil_XiZ
+#print axioms PsiOmega.K1Z_eq
+#print axioms PsiOmega.K1Z_pos
+#print axioms PsiOmega.theoremBZ
 #print axioms D2Good.d2_density_pos_B
 #print axioms D2Good.d2_density_neg_B
 #print axioms CAClosed.cA_zero

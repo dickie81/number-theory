@@ -41,18 +41,8 @@ theorem tendsto_LFunction_atTop :
   filter_upwards [eventually_gt_atTop (1 : ℝ)] with σ hσ
   exact (LFunction_eq_LSeries χ (by simpa using hσ)).symm
 
-variable (hG : GoodChar χ)
-include hG
-
-/-- **`Ξ_χ` has a zero.** -/
-theorem nonempty_zeros : Nonempty (ZeroIdx (sqF (XiC χ))) := by
-  by_contra hne
-  rw [not_nonempty_iff] at hne
-  have hc : ∀ z, XiC χ z = XiC χ 0 := by
-    intro z
-    have h := ((hadamard_XiC hG).prod z).unique hasProd_empty
-    have h0 := XiC_zero_ne hG
-    field_simp at h; exact h
+/-- **`Ξ_χ` is not constant**. -/
+theorem XiC_not_const (hc : ∀ z, XiC χ z = XiC χ 0) : False := by
   -- `Λ*` is constant
   have hL : ∀ s, LamG χ s = XiC χ 0 := by
     intro s
@@ -102,6 +92,20 @@ theorem nonempty_zeros : Nonempty (ZeroIdx (sqF (XiC χ))) := by
   simp only [mul_one] at this
   have hπ : (π : ℂ) ≠ 0 := ofReal_ne_zero.2 Real.pi_ne_zero
   exact hN (by simpa using this)
+
+variable (hG : GoodChar χ)
+include hG
+
+/-- **`Ξ_χ` has a zero.** -/
+theorem nonempty_zeros : Nonempty (ZeroIdx (sqF (XiC χ))) := by
+  by_contra hne
+  rw [not_nonempty_iff] at hne
+  have hc : ∀ z, XiC χ z = XiC χ 0 := by
+    intro z
+    have h := ((hadamard_XiC hG).prod z).unique hasProd_empty
+    have h0 := XiC_zero_ne hG
+    field_simp at h; exact h
+  exact XiC_not_const hc
 
 /-- `K₁ = Re Σ_u 2/(¼ + u)`, the zero sum `Σ_ρ 1/(ρ(1 − ρ))`. -/
 def K1C (χ : DirichletCharacter ℂ N) : ℝ := (∑' i : ZeroIdx (sqF (XiC χ)), 2 / (1 / 4 + i.1)).re
