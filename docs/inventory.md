@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1183 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1189 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 112 | 330 |
+| `lib/core` | 113 | 336 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -274,6 +274,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.pole_overlap_identity`: The pole-overlap identity ([note](../formalisations/weil-positivity.md))
 - `WeilForm.simpleGround_of_gap`: Energy gap ⇒ simplicity ([note](../formalisations/weil-positivity.md))
+
+#### `GravastarTower`: The tower of spheres and asymptotic balance
+
+- `GravastarTower.excess_mono`: Monotonicity of the excess
+- `GravastarTower.rh_iff_balance`: RH is exact balance at every level
+- `GravastarTower.rh_of_frequently_balanced`: The collapse lemma
+- `GravastarTower.rh_of_tendsto`: Normalised asymptotic balance collapses
+- `GravastarTower.formS_union`: Gluing identity
+- `GravastarTower.rh_of_cofinal`: The junction collapse
 
 #### `GroundState`: Ground states of Weil's form: the structural facts
 

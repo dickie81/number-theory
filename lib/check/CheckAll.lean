@@ -229,6 +229,7 @@ import SmithLattice
 import Redheffer
 import HodgeAxioms
 import Transpose
+import GravastarTower
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1298,3 +1299,9 @@ the linear algebra of its certificates. -/
 #print axioms Transpose.transposed_ample_fails
 #print axioms Transpose.transposed_hodge_false
 #print axioms Transpose.posDef_iff_inv
+#print axioms GravastarTower.excess_mono
+#print axioms GravastarTower.rh_iff_balance
+#print axioms GravastarTower.rh_of_frequently_balanced
+#print axioms GravastarTower.rh_of_tendsto
+#print axioms GravastarTower.formS_union
+#print axioms GravastarTower.rh_of_cofinal
