@@ -27,7 +27,22 @@ theorem glued_nonneg_four (QS QT : ℝ) (p q : Fin 4 → ℝ) (hS : ∑ i, p i ^
     (hT : ∑ i, q i ^ 2 ≤ QT) : 0 ≤ QS + QT + 2 * ∑ i, p i * q i :=
   glued_nonneg QS QT p q hS hT
 
+/-- **Gluing by positive weights is a congruence** (area weighting). Scaling coordinate `i` by `√w_i` with all
+`w_i > 0`, i.e. the form `x ↦ Σ_{ij} G_ij √w_i √w_j x_i x_j`, is nonnegative iff `G` is. So weighting the spheres by
+surface areas (or any positive weights) cannot change whether the glued form is positive. -/
+theorem weighted_nonneg_iff {n : ℕ} (G : Fin n → Fin n → ℝ) (w : Fin n → ℝ) (hw : ∀ i, 0 < w i) :
+    (∀ x : Fin n → ℝ, 0 ≤ ∑ i, ∑ j, G i j * (Real.sqrt (w i) * x i) * (Real.sqrt (w j) * x j)) ↔
+      ∀ x : Fin n → ℝ, 0 ≤ ∑ i, ∑ j, G i j * x i * x j := by
+  have hs : ∀ i, Real.sqrt (w i) ≠ 0 := fun i => (Real.sqrt_pos.2 (hw i)).ne'
+  constructor
+  · intro h x
+    have := h fun i => x i / Real.sqrt (w i)
+    simpa [mul_div_cancel₀ _ (hs _)] using this
+  · intro h x
+    exact h fun i => Real.sqrt (w i) * x i
+
 end Junction4
 
 #print axioms Junction4.glued_nonneg
 #print axioms Junction4.glued_nonneg_four
+#print axioms Junction4.weighted_nonneg_iff

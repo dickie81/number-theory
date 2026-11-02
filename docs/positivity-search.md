@@ -286,3 +286,17 @@ Checks: `gram(2047)` agrees exactly with the top-left block of `gram(4095)` and 
 Directions: the top four common directions have block profiles in `u = n/2^a` stable across blocks (|corr| ≈ 0.7–0.95), and on the largest block they are fitted far better by `n^{±iγ}` with `γ` near the first zeta ordinates than by polynomials in `log u` or by `u^{±1/2}, u^{1/2}log u` (residual ≈ 0.07–0.11 against ≈ 0.5–0.9; control frequencies 10, 17 give 0.13–0.27). A single-frequency scan gives best `γ ≈ 13.6–14.5` for directions 1–4 and `≈ 21.4–23.4` for 5–8. A block spans only `log 2` in `log n`, so frequency resolution is ≈ `2π/log 2 ≈ 9`: this is consistent with `γ₁ = 14.13, γ₂ = 21.02` but does not pin them.
 
 Interpretation: this is expected and not zero-free. The Gram matrix is computed from primes, but by the explicit formula it is the zero-indexed `ℓ²` Gram (`BallLattice.gram_cw`), `Σ_ρ` of rank-two oscillating terms `n^{1/2 ± iγ}` plus a smooth part. The junction is the zeros, seen through the primes, with a slowly decaying tail (`k₉₉ = 26`), not a finite-rank structure. A gluing inequality on these directions would be a statement about the zeros. So it was not formalised: `Junction4.glued_nonneg` already covers the sufficient direction for any finite `k`, and no finite-rank hypothesis holds here.
+
+### Gluing by relative surface areas (Proved; uncertified numerics, `scripts/positivity/junction_area.py`)
+
+Weight dyadic block `k` (n in [2^k, 2^(k+1))) of the prime-side Gram matrix by a unit-sphere area
+`|S^(d-1)| = 2π^(d/2)/Γ(d/2)`, with `d = k+1`, `d = 2^k`, or the ratio `|S^d|/|S^(d-1)|`.
+
+- **Symmetric gluing** (cross terms by `√(w_a w_b)`) is the congruence `W^(1/2) G W^(1/2)`. `Junction4.weighted_nonneg_iff`
+  proves it is nonnegative iff the unweighted form is, for any positive weights. Numerically, the minimum eigenvalue stays
+  positive exactly when the unweighted one does (sizes 255 to 4095). With `d = 2^k` the weights fall below 1e-57, so the form is
+  numerically zero there; the tiny negative values (about -1e-35) are rounding, not a sign change.
+- **Blocks weighted, cross terms not**: strongly indefinite for every scheme and size (minimum eigenvalue from -0.3 down to -1.8e4).
+  Shrinking the blocks relative to the junction destroys positivity.
+- **Verdict**: area weighting cannot make the problem easier. Symmetric weighting changes nothing, and asymmetric weighting breaks
+  positivity. Positivity of the weighted form for all sizes is exactly as strong as the unweighted one.

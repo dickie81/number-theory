@@ -342,6 +342,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `Junction4.glued_nonneg`: Gluing through a `k`-dimensional junction
 - `Junction4.glued_nonneg_four`: The four-dimensional junction.
+- `Junction4.weighted_nonneg_iff`: Gluing by positive weights is a congruence (area weighting).
 
 #### `KaiserBulk`: The bulk of the Kaiser probe and the doubled rate
 

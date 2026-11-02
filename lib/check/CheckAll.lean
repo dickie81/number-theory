@@ -1308,3 +1308,4 @@ the linear algebra of its certificates. -/
 #print axioms GravastarTower.rh_of_cofinal
 #print axioms Junction4.glued_nonneg
 #print axioms Junction4.glued_nonneg_four
+#print axioms Junction4.weighted_nonneg_iff
