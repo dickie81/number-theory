@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1134 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1136 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 101 | 274 |
-| `lib/pnt` | 234 | 755 |
+| `lib/pnt` | 235 | 757 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -649,6 +649,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `GSNu.nu1_eq`: `ν(1) = 4/π²`
 - `GSNu.delta_pos_closed`: Closed form, positive discriminants ([note](../formalisations/d2-density.md))
 - `GSNu.delta_neg_closed`: Closed form, negative discriminants ([note](../formalisations/d2-density.md))
+
+#### `D2Prim`: The Kronecker character of a fundamental discriminant is primitive
+
+- `GSPrim.primitive_pos`: Positive fundamental discriminants
+- `GSPrim.primitive_neg`: Negative fundamental discriminants
 
 #### `DetectEM`: Zero detection by Euler–Maclaurin
 

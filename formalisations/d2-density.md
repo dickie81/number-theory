@@ -32,6 +32,23 @@ In words: for non-square `n`, `Σ_{0<D≤x} χ_D(n) ≪ x^{1/2} n^{1/4+ε}` over
 the `k`-th moment of `Σ_{p∈P} a_p χ_D(p)` over such `D` has, as `x → ∞`, the limit given by the tuples whose product
 is a square, each weighted by the density of the `D` coprime to it; and that density is `(3/π²)∏_{p∣r} p/(p+1)`.
 
+## The characters `χ_D` are primitive
+
+`lib/pnt/D2Prim.lean`:
+
+```lean
+theorem GSPrim.primitive_pos {d : ℕ} (hd : fundPos d) (h1 : 1 < d) :
+    ∃ χ : DirichletCharacter ℂ d, χ.IsPrimitive ∧ ∀ n : ℕ, n ≠ 0 → χ n = kron d n
+
+theorem GSPrim.primitive_neg {d : ℕ} (hd : fundNeg d) :
+    ∃ χ : DirichletCharacter ℂ d, χ.IsPrimitive ∧ ∀ n : ℕ, n ≠ 0 → χ n = kron (-d) n
+```
+
+The character is the library's `QuadKronecker.jacBot |D|` for `D ≡ 1 (4)` (`GSPrim.kron_eq_jacobi_one`, by quadratic
+reciprocity) and `QuadKronecker.jacTop (D/4)` for `4 ∣ D` (`GSPrim.kron_eq_jacTop`). Primitivity: for each prime
+`p ∣ |D|` there is an `a ≡ 1 (|D|/p)`, coprime to `D`, with `(D|a) = −1` (`GSPrim.wit_odd`, `GSPrim.wit_two`), so
+`χ` factors through no proper divisor (`GSPrim.isPrimitive_of_witness`). Unconditional.
+
 ## How the statements differ from the source
 
 Granville and Soundararajan state Lemma 4.1 as `Σ χ_D(n) = (main term) + O(x^{1/2} n^{1/4} log n)` with the main

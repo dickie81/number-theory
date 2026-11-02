@@ -25,6 +25,7 @@ import Littlewood
 import LeastNonresidue
 import SquarefreeCount
 import D2GS
+import D2Prim
 import ExplicitSmooth
 import ExplicitConstants
 import QuadRing
@@ -342,6 +343,8 @@ import CertInstances
 #print axioms GSNu.nu1_eq
 #print axioms GSNu.delta_pos_closed
 #print axioms GSNu.delta_neg_closed
+#print axioms GSPrim.primitive_pos
+#print axioms GSPrim.primitive_neg
 #print axioms SquarefreeCount.abs_sub_sum_le
 #print axioms SquarefreeCount.abs_sum_sqf_sub_le
 #print axioms SquarefreeCount.squarefree_isBigO_of_zeroFree
