@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1179 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1183 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 111 | 326 |
+| `lib/core` | 112 | 330 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -546,6 +546,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.simple_iff_no_flat`: The corollary, formal in `H²` form: the ground state is simple iff no nonzero ground-space element is `H²`-flat at the edges ([note](../formalisations/weil-positivity.md))
 - `WeilForm.simple_not_flat`: A simple ground state is never edge-flat ([note](../formalisations/weil-positivity.md))
+
+#### `Transpose`: Transposing the spheres: the negated form, the dual lattice and the pole plane
+
+- `Transpose.transposed_rr_fails`: The transposed dichotomy fails
+- `Transpose.transposed_ample_fails`: The transposed ampleness fails
+- `Transpose.transposed_hodge_false`: The transposed Hodge index statement is false
+- `Transpose.posDef_iff_inv`: The dual lattice
 
 #### `TwinLandau`: The Landau argument for twin forms, for any zero family
 

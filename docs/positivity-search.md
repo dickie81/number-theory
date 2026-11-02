@@ -238,3 +238,7 @@ effective, `B(D, h) = 0 ⇒ B(D, D) ≤ 0` (`HodgeAxioms.hodge_index`), and `B(D
 both ampleness and the Riemann–Roch dichotomy hold. On a surface it is `h^0(D) > 0`, and the dichotomy is the
 Riemann–Roch inequality `h^0(D) + h^0(K − D) ≥ D²/2 − D·K/2 + χ`; for `ζ` there is no cohomology `h^0` of the formal
 classes `D_n`, and both natural candidate cones fail, one on the dichotomy and the other by circularity.
+
+## Transposing the spheres (`Transpose`)
+
+Proved: for `B' = −B` the transposed dichotomy (`D² < 0 ⇒ ±D effective`) fails for the nonnegative cone (`e₁ − e₂`), the natural ample class `e₁ − e₂` is not positive on that cone, and the transposed index statement `D·h' = 0 ⇒ D² ≥ 0` is false unconditionally (`D_1 − e₁ − e₂`). `−B` has infinitely many positive directions under RH, so it is not of Hodge-index shape. On finite sections, positivity of the dual Gram matrix `G⁻¹` is equivalent to positivity of `G`. Remark (not formalised): any Lorentz-type reflection of the pole plane is an isometry, so it preserves the signature and cannot change the missing axiom. Conclusion: the missing axiom stays where it was — an effectivity notion, defined independently of the form, satisfying the Riemann–Roch dichotomy.

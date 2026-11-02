@@ -228,6 +228,7 @@ import FrobTower
 import SmithLattice
 import Redheffer
 import HodgeAxioms
+import Transpose
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1293,3 +1294,7 @@ the linear algebra of its certificates. -/
 #print axioms WeilForm.ind_mul_ind
 #print axioms WeilForm.wP_zero
 #print axioms WeilForm.log_three_le
+#print axioms Transpose.transposed_rr_fails
+#print axioms Transpose.transposed_ample_fails
+#print axioms Transpose.transposed_hodge_false
+#print axioms Transpose.posDef_iff_inv
