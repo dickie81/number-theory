@@ -230,10 +230,21 @@ discriminant `d > 1`; `D2Parity.kron_neg`: `(−d | d − 1) = −1`. Both by qu
 `K(x) = Σ_ρ x^{ρ−½}/(ρ(1 − ρ))` (`PsiOmega.KxC`), with the archimedean integral `A_χ(u)` (`PsiOmega.archC`). At `x = 2`
 the prime sum vanishes (`PsiOmega.prime_two`), giving **Theorem B** (`PsiOmega.theoremB`):
 `K(2) = √2(K₁/2 + c_a + ℓ/2)`, where `c_a = Re ψ((1 + a)/2)/4 + A_a(log 2)/√2` (`PsiOmega.cA`, `PsiOmega.archA`) depends
-only on the parity `a`. The closed forms `c₀ = −¼ log(27/4)`, `c₁ = ¾ log(3/4)` are not proved in Lean.
+only on the parity `a`.
 
 **CONDITIONAL (half-plane).** `D2Good.d2_density_pos_B` / `D2Good.d2_density_neg_B` (from `D2Good.B_pos`,
 `D2Good.B_neg`): the d₂ < d₁ density with `K(2)` in place of `K₂`, limit `ν(−2c_a, ∞)`, given only `L(½, χ_D) ≠ 0`.
+
+## The closed forms `c₀ = −¼ log(27/4)`, `c₁ = ¾ log(3/4)`
+
+`lib/core/CAClosed.lean`, unconditional. The digamma series `Re ψ(q + ir/2) = −γ + Σ_k (1/(k + 1) − 2s_k/(s_k² + r²))`
+is integrated term by term against `H_{log 2}` (`CAClosed.hasSum_archA`, dominated by `CAClosed.bd`). Each term is
+`∫e^{−s|x|}ĝ(x)dx` (`CAClosed.J_eq`, from `CAClosed.integral_exp_abs_cos`), elementary since `ĝ` vanishes beyond
+`log 2` (`CAClosed.J_closed`). The series sum to `log 2`, `log 3`, `log(4/3)` (`CAClosed.hasSum_one`,
+`CAClosed.hasSum_zero`). Result: `CAClosed.cA_zero`, `CAClosed.cA_one`.
+
+**CONDITIONAL (half-plane).** `D2Good.d2_density_pos_closed` / `D2Good.d2_density_neg_closed`: the limits are
+`ν(½ log(27/4), ∞)` and `ν((3/2) log(4/3), ∞)`, given only `L(½, χ_D) ≠ 0`.
 
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
@@ -260,7 +271,7 @@ These results have a hypothesis that the library does not prove, and no uncondit
 
 | Result | Hypothesis | Lean |
 |---|---|---|
-| CONDITIONAL (half-plane): the d₂ < d₁ density over fundamental discriminants of each sign, with `hK1`, `hpos` discharged | `L(½, χ_D) ≠ 0` for every `D` (`D2Good.HalfPos`, `D2Good.HalfNeg`) | `D2Good.d2_density_pos'`, `D2Good.d2_density_neg'`, `D2Good.d2_density_pos_B`, `D2Good.d2_density_neg_B` |
+| CONDITIONAL (half-plane): the d₂ < d₁ density over fundamental discriminants of each sign, with `hK1`, `hpos` discharged | `L(½, χ_D) ≠ 0` for every `D` (`D2Good.HalfPos`, `D2Good.HalfNeg`) | `D2Good.d2_density_pos'`, `D2Good.d2_density_neg'`, `D2Good.d2_density_pos_B`, `D2Good.d2_density_neg_B`, `D2Good.d2_density_pos_closed`, `D2Good.d2_density_neg_closed` |
 
 ## How the statements differ from the source
 

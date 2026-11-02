@@ -3,6 +3,7 @@ import D2Parity
 import D2Hdist
 import WeilChiPos
 import WeilChiB
+import CAClosed
 
 /-!
 # Wiring `K₁` into the d₂ density
@@ -14,7 +15,8 @@ import WeilChiB
 `D2Good.d2_density_pos'` / `D2Good.d2_density_neg'` keep only the hypotheses `L(½, χ_D) ≠ 0` and `hB`.
 With Theorem B (`PsiOmega.theoremB`, via `D2Good.B_pos`, `D2Good.B_neg`), `D2Good.d2_density_pos_B` /
 `D2Good.d2_density_neg_B` keep only `L(½, χ_D) ≠ 0`, with thresholds `−2c_a`, `c_a = PsiOmega.cA a` the archimedean
-constant (its closed form is not proved here).
+constant; with `CAClosed.cA_zero`, `CAClosed.cA_one`, `D2Good.d2_density_pos_closed` /
+`D2Good.d2_density_neg_closed` give the thresholds `½ log(27/4)` and `(3/2) log(4/3)`.
 **CONDITIONAL (half-plane)** through `D2Hdist`. See `formalisations/d2-density.md`.
 -/
 
@@ -243,5 +245,23 @@ theorem d2_density_neg_B (hh : ∀ D, Aneg D → HalfNeg (-D).toNat) :
       (𝓝 ((RandModel.ν : Measure ℝ) (Set.Ioi (-2 * cA 1))).toReal) :=
   d2_density_neg' (fun D => K2n (-D).toNat) (cA 1) hh fun D hD =>
     B_neg ⟨hD.2, by have := hD.1; omega⟩ (hh D hD)
+
+/-- **CONDITIONAL (half-plane). The d₂ < d₁ density, `D > 1`, with the explicit threshold**: given
+`L(½, χ_D) ≠ 0`, the proportion tends to `ν(½ log(27/4), ∞)` (`c₀ = −¼ log(27/4)`, `CAClosed.cA_zero`). -/
+theorem d2_density_pos_closed (hh : ∀ D, Apos D → HalfPos D.toNat) :
+    Tendsto (fun x => prop (Spos x) (fun D => 2 * (1 - K2p D.toNat ^ 2 / K1pos D ^ 2) < 1)) atTop
+      (𝓝 ((RandModel.ν : Measure ℝ) (Set.Ioi (Real.log (27 / 4) / 2))).toReal) := by
+  have h := d2_density_pos_B hh
+  rwa [CAClosed.cA_zero, show -2 * (-(1 / 4) * Real.log (27 / 4)) = Real.log (27 / 4) / 2 by ring] at h
+
+/-- **CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0`, with the explicit threshold**: the limit is
+`ν((3/2) log(4/3), ∞)` (`c₁ = ¾ log(3/4)`, `CAClosed.cA_one`). -/
+theorem d2_density_neg_closed (hh : ∀ D, Aneg D → HalfNeg (-D).toNat) :
+    Tendsto (fun x => prop (Sneg x) (fun D => 2 * (1 - K2n (-D).toNat ^ 2 / K1neg D ^ 2) < 1)) atTop
+      (𝓝 ((RandModel.ν : Measure ℝ) (Set.Ioi (3 / 2 * Real.log (4 / 3)))).toReal) := by
+  have h := d2_density_neg_B hh
+  have e : -2 * (3 / 4 * Real.log (3 / 4)) = 3 / 2 * Real.log (4 / 3) := by
+    rw [show (4 / 3 : ℝ) = (3 / 4)⁻¹ by norm_num, Real.log_inv]; ring
+  rwa [CAClosed.cA_one, e] at h
 
 end D2Good

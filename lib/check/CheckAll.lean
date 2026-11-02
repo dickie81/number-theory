@@ -42,6 +42,7 @@ import WeilChiPos
 import D2Parity
 import D2Good
 import WeilChiB
+import CAClosed
 import ExplicitSmooth
 import ExplicitConstants
 import QuadRing
@@ -396,6 +397,10 @@ import CertInstances
 #print axioms PsiOmega.theoremB
 #print axioms D2Good.d2_density_pos_B
 #print axioms D2Good.d2_density_neg_B
+#print axioms CAClosed.cA_zero
+#print axioms CAClosed.cA_one
+#print axioms D2Good.d2_density_pos_closed
+#print axioms D2Good.d2_density_neg_closed
 #print axioms SquarefreeCount.abs_sub_sum_le
 #print axioms SquarefreeCount.abs_sum_sqf_sub_le
 #print axioms SquarefreeCount.squarefree_isBigO_of_zeroFree

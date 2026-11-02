@@ -11,7 +11,7 @@ in `ball-conjecture-tests.md`, branch `ball-conjecture-tests`).
 
 1. **(Lean, given Theorem B and K₁ > 0)** d₂ ≥ d₁ ⇔ −2K₁ − 2c_a ≤ ℓ_D ≤ −2c_a, with c₀ = −¼ log(27/4) and
    c₁ = ¾ log(3/4). So the upper thresholds are ½ log(27/4) = 0.954771… (even) and (3/2) log(4/3) = 0.431523… (odd).
-   (`D2Criterion.criterion`, `c0_closed`, `c1_closed`.)
+   (`D2Criterion.criterion`, `c0_closed`, `c1_closed`; the identification of c_a with the archimedean constant of Theorem B: `CAClosed.cA_zero`, `CAClosed.cA_one`.)
 2. **(Lean)** K₁ = Σ_ρ 1/(ρ(1−ρ)) > 0 for any summable such sum over a nonempty set of zeros in the open strip (`D2Density.K1_pos`).
 3. **(Written proof; Lean assembly)** For each sign, #{D ∈ F±(x) : d₂ < d₁}/|F±(x)| → P(X > t_a), where X is
    Lamzouri's random model −Σ_p (log p) X(p)/(p − X(p)). The averaged limit is ½(0.051123 + 0.160911) = **0.10602**
@@ -143,7 +143,7 @@ model constant is marginally off. This is unresolved.
 | hypothesis | content | status |
 |---|---|---|
 | `hdist` | per-sign weak convergence of ℓ_D to X, at every `t` | **Lean, CONDITIONAL on the half-plane** `Re s > 11/12`: `D2Hdist.hdist_pos`, `D2Hdist.hdist_neg` (moments via GS Lemma 4.1, the method of moments, no atoms `NoAtoms.ν_singleton`, the tail identity). `D2Hdist.d2_density_pos` / `D2Hdist.d2_density_neg` are `D2Density.d2_density_log` with `hdist` discharged |
-| `hB` | Theorem B (closed form of K(2)) | Lean (`PsiOmega.theoremB`, `c_a` as the archimedean integral); closed form of `c_a` written proof |
+| `hB` | Theorem B (closed form of K(2)) | Lean (`PsiOmega.theoremB`, `c_a` as the archimedean integral); closed form of `c_a` Lean (`CAClosed.cA_zero`, `CAClosed.cA_one`) |
 | `hpos` | K₁ is the zero sum (summability) | positivity is Lean; the identification is open |
 
 ## Citations

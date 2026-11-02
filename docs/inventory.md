@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1171 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1175 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 104 | 277 |
-| `lib/pnt` | 248 | 789 |
+| `lib/core` | 105 | 279 |
+| `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -127,6 +127,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BohrTorus.prod_eq_iff_map_eq`: The multiplicative system is rigid at every `ℓ`
 - `BohrTorus.agree_not_rigid`: The additive system is not rigid beyond its dimension
 - `BohrTorus.tendsto_mean_moment_rearrangements`: The limiting means of `|Σ_{p∈F} p^{−it}|^{2ℓ}` count the pairs of rearrangements
+
+#### `CAClosed`: The closed forms `c₀ = −¼ log(27/4)` and `c₁ = ¾ log(3/4)`
+
+- `CAClosed.cA_zero`: `c₀ = −¼ log(27/4)` ([note](../formalisations/d2-density.md))
+- `CAClosed.cA_one`: `c₁ = ¾ log(3/4)` ([note](../formalisations/d2-density.md))
 
 #### `CertInstances`: The certificate theorems as instances of the weighted certificate
 
@@ -680,6 +685,8 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `D2Good.d2_density_neg'`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0` ([note](../formalisations/d2-density.md))
 - `D2Good.d2_density_pos_B`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D > 1` ([note](../formalisations/d2-density.md))
 - `D2Good.d2_density_neg_B`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0` ([note](../formalisations/d2-density.md))
+- `D2Good.d2_density_pos_closed`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D > 1`, with the explicit threshold ([note](../formalisations/d2-density.md))
+- `D2Good.d2_density_neg_closed`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0`, with the explicit threshold ([note](../formalisations/d2-density.md))
 
 #### `D2Hcount`: Quantitative `Hcount`: fundamental discriminants coprime to `r`, with an explicit error
 
