@@ -105,3 +105,35 @@ statement about the correlations of `{x/j}`, as RH is a statement about the osci
 expansion `{y} = 1/2 − Σ_h sin(2πhy)/(πh)` turns the Gram matrix into exponential sums over `Λ`. Positivity then asks
 for a structured (not size) property of these sums, the place where the large sieve or Montgomery–Vaughan mean values
 would enter.
+
+## The harmonics of the sawtooth (Proved split; Numerical test)
+
+`BallSaw` writes `C(k) = ψ(k)/2 + Σ_{j ≤ k} Λ(j)s(k/j)`, `s(y) = {y} − 1/2` (`BallSaw.fracPart_saw`), with
+`|C(k) − ψ(k)/2| ≤ ψ(k)/2` (`BallSaw.abs_fracPart_sub_le`). The Fourier series `s(y) = −Σ_h sin(2πhy)/(πh)` (classical,
+not formalised) takes the value `0` at the integers, so it misses `Σ_{j ∣ k} Λ(j)/2 = (log k)/2` (`BallSaw.jump_eq`);
+the numerics below add that jump back exactly, so `H → ∞` recovers `G`.
+
+**Numerical** (`scripts/positivity/harm.py`, floating point, uncertified): negative eigenvalues of the Gram matrix with
+`C` replaced by `ψ/2 −` (jump) `− Σ_{h ≤ H} Σ_j Λ(j) sin(2πh x/j)/(πh)`.
+
+| N | H = 0 | 8 | 32 | 128 | 512 | 1024 | 2048 | first `H` with none |
+|---|---|---|---|---|---|---|---|---|
+| 25 | 11 | 8 | 3 | 1 | 0 | 0 | 0 | 256 |
+| 50 | 20 | 17 | 10 | 3 | 1 | 0 | 0 | 1024 |
+| 100 | 44 | 41 | 34 | 19 | 4 | 1 | 0 | 2048 |
+| 200 | 89 | 88 | 76 | 58 | 25 | 13 | 4 | > 2048 |
+
+No low band of harmonics carries the positivity: the number of negative directions falls slowly and steadily with `H`,
+and the `H` needed grows roughly like `N²` (between `N^{1.5}` and `N²` in this range). That is the resolution of the
+ratios `m/n` with `m, n ≤ N`, whose arguments `x/j` are spaced by about `1/N²`.
+
+**The gap to mean values (Speculative estimate).** A large sieve / Montgomery–Vaughan bound controls
+`Σ_{h ≤ H} |Σ_j a_j e(h x/j)|²` by `(H + N²)·Σ|a_j|²` over well-spaced points: it bounds sizes. Here the tail
+`h > H` must be smaller in operator norm than the margin `λ_min ≈ 0.26/N`, while a mean-value bound on the tail gives
+about `ψ(N)/√H ≈ N/√H` per entry, so `H ≫ N⁴` before the bound alone suffices, against the observed `H ≈ N²`. The two
+missing factors of `N²` are cancellation between the harmonics that a size bound cannot see.
+
+**Obstruction (Speculative).** Positivity is spread over all scales up to the Farey resolution `1/N²` and is a
+cancellation between harmonics, not a dominant low-frequency term plus a bounded tail. A proof by truncation and mean
+values loses a power of `N` in this model. What would be needed is a positivity statement for the full sawtooth
+kernel `Σ_j Λ(j)s(x/j)` on Farey-type point sets, which is again a form of RH.

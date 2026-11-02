@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1154 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1157 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 106 | 301 |
+| `lib/core` | 107 | 304 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -114,6 +114,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallPsi.gram_explicit`: The Gram matrix of the orbit, through `ψ`
 - `BallPsi.norm_sq_ge_of_dist`: A Gram–Schmidt bound gives a lattice
 - `BallPsi.orbit_lattice`: The orbit of `K_H` spans a lattice, if the Gram–Schmidt bound holds
+
+#### `BallSaw`: The fractional-part correction as a sawtooth sum
+
+- `BallSaw.fracPart_saw`: `C(k) = ψ(k)/2 + Σ_{j ≤ k} Λ(j)·s(k/j)`
+- `BallSaw.abs_fracPart_sub_le`: `|C(k) − ψ(k)/2| ≤ ψ(k)/2`
+- `BallSaw.jump_eq`: The jump at the integers
 
 #### `BallSlice`: Two primes carry the Riemann hypothesis: positivity on the slice of `p` and `q`
 
