@@ -233,3 +233,99 @@ theorem polya_vinogradov {ψ : DirichletCharacter ℂ q} (hψ : ψ.IsPrimitive) 
 end PolyaVinogradov
 
 #print axioms PolyaVinogradov.polya_vinogradov
+
+namespace PolyaVinogradov
+open DirichletCharacter ZMod Finset
+
+theorem Ico_one_eq (Y : ℕ) : Ico 1 (1 + Y) = Ioc 0 Y := by ext k; simp only [mem_Ico, mem_Ioc]; omega
+
+/-- PV for initial segments: `‖Σ_{0<k≤Y} ψ(k)‖ ≤ √q (1 + log q)`. -/
+theorem pv_Ioc {q : ℕ} [NeZero q] {ψ : DirichletCharacter ℂ q} (hψ : ψ.IsPrimitive) (hq : 1 < q) (Y : ℕ) :
+    ‖∑ k ∈ Ioc 0 Y, ψ k‖ ≤ Real.sqrt q * (1 + Real.log q) := by
+  rw [← Ico_one_eq]; exact polya_vinogradov hψ hq 1 Y
+
+/-- **Pólya–Vinogradov for non-principal characters (imprimitive allowed).** For `χ ≠ 1` mod `n`,
+`‖Σ_{0<m≤y} χ(m)‖ ≤ d(n) · √n (1 + log n)`, where `d(n)` is the number of divisors. -/
+theorem pv_nonprincipal {n : ℕ} [NeZero n] {χ : DirichletCharacter ℂ n} (hχ : χ ≠ 1) (y : ℕ) :
+    ‖∑ m ∈ Ioc 0 y, χ m‖ ≤ (n.divisors.card : ℝ) * (Real.sqrt n * (1 + Real.log n)) := by
+  classical
+  set f := χ.conductor
+  haveI : NeZero f := ⟨conductor_ne_zero χ⟩
+  set ψ := χ.primitiveCharacter
+  have hψ : ψ.IsPrimitive := primitiveCharacter_isPrimitive χ
+  have hf1 : 1 < f := by
+    have h0 : f ≠ 0 := conductor_ne_zero χ
+    have h1 : f ≠ 1 := fun h => hχ (eq_one_iff_conductor_eq_one.2 h)
+    omega
+  have hfn : f ≤ n := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne n)) (conductor_dvd_level χ)
+  have hn0 : n ≠ 0 := NeZero.ne n
+  -- A: χ(m) = [gcd(m,n)=1] ψ(m)
+  have hA : ∀ m : ℕ, χ m = (if Nat.Coprime m n then 1 else 0) * ψ m := by
+    intro m
+    split_ifs with hc
+    · rw [one_mul]
+      have hc' : IsCoprime (m : ℤ) n := Nat.isCoprime_iff_coprime.2 hc
+      have := primitiveCharacter_apply_of_isCoprime χ hc'
+      simpa using this.symm
+    · rw [zero_mul]; apply MulChar.map_nonunit
+      rwa [ZMod.isUnit_iff_coprime]
+  -- B: [gcd(m,n)=1] = Σ_{d ∣ n, d ∣ m} μ(d)
+  have hB : ∀ m : ℕ, (if Nat.Coprime m n then (1:ℂ) else 0) =
+      ∑ d ∈ n.divisors.filter (· ∣ m), (ArithmeticFunction.moebius d : ℂ) := by
+    intro m
+    have hg : Nat.gcd m n ≠ 0 := Nat.gcd_ne_zero_right hn0
+    have hset : n.divisors.filter (· ∣ m) = (Nat.gcd m n).divisors := by
+      ext d; simp only [mem_filter, Nat.mem_divisors, Nat.dvd_gcd_iff]; tauto
+    rw [hset]
+    have h := congrArg (fun g : ArithmeticFunction ℤ ↦ g (Nat.gcd m n)) ArithmeticFunction.moebius_mul_coe_zeta
+    simp only [ArithmeticFunction.coe_mul_zeta_apply, ArithmeticFunction.one_apply] at h
+    rw [← Int.cast_sum, h]
+    simp [Nat.Coprime]
+  -- C: reorganise
+  have hC : ∑ m ∈ Ioc 0 y, χ m =
+      ∑ d ∈ n.divisors, (ArithmeticFunction.moebius d : ℂ) * (ψ d * ∑ k ∈ Ioc 0 (y / d), ψ k) := by
+    simp_rw [hA, hB, sum_filter, sum_mul]
+    rw [sum_comm]
+    refine sum_congr rfl fun d hd => ?_
+    have hd0 : 0 < d := Nat.pos_of_mem_divisors hd
+    simp_rw [ite_mul, zero_mul]
+    rw [← sum_filter, mul_sum, mul_sum]
+    symm
+    apply sum_nbij' (fun k => d * k) (fun m => m / d)
+    · intro k hk; simp only [mem_coe, mem_filter, mem_Ioc] at hk ⊢
+      refine ⟨⟨Nat.mul_pos hd0 hk.1, ?_⟩, dvd_mul_right _ _⟩
+      have := (Nat.le_div_iff_mul_le hd0).1 hk.2; linarith [mul_comm k d]
+    · intro m hm; simp only [mem_coe, mem_filter, mem_Ioc] at hm ⊢
+      obtain ⟨⟨h0, h1⟩, ⟨k, rfl⟩⟩ := hm
+      rw [Nat.mul_div_cancel_left _ hd0]
+      refine ⟨Nat.pos_of_ne_zero (by rintro rfl; simp at h0), ?_⟩
+      rw [Nat.le_div_iff_mul_le hd0, mul_comm]; exact h1
+    · intro k _; simp [Nat.mul_div_cancel_left _ hd0]
+    · intro m hm; simp only [mem_coe, mem_filter] at hm; exact Nat.mul_div_cancel' hm.2
+    · intro k _; push_cast; rw [map_mul]
+  rw [hC]
+  have hbound : ∀ d ∈ n.divisors, ‖(ArithmeticFunction.moebius d : ℂ) * (ψ d * ∑ k ∈ Ioc 0 (y / d), ψ k)‖ ≤
+      Real.sqrt n * (1 + Real.log n) := by
+    intro d _
+    have hμ : ‖(ArithmeticFunction.moebius d : ℂ)‖ ≤ 1 := by
+      rw [Complex.norm_intCast]; exact_mod_cast ArithmeticFunction.abs_moebius_le_one
+    have hψd : ‖ψ d‖ ≤ 1 := DirichletCharacter.norm_le_one ψ _
+    have hpv := pv_Ioc hψ hf1 (y / d)
+    have hmono : Real.sqrt f * (1 + Real.log f) ≤ Real.sqrt n * (1 + Real.log n) := by
+      have hfR : (1:ℝ) < f := by exact_mod_cast hf1
+      have hfnR : (f:ℝ) ≤ n := by exact_mod_cast hfn
+      apply mul_le_mul (Real.sqrt_le_sqrt hfnR)
+        (by linarith [Real.log_le_log (by linarith) hfnR]) (by linarith [Real.log_nonneg hfR.le])
+        (Real.sqrt_nonneg _)
+    rw [norm_mul, norm_mul]
+    calc _ ≤ 1 * (1 * (Real.sqrt f * (1 + Real.log f))) := by
+          gcongr
+      _ ≤ _ := by linarith
+  calc _ ≤ ∑ d ∈ n.divisors, ‖(ArithmeticFunction.moebius d : ℂ) * (ψ d * ∑ k ∈ Ioc 0 (y / d), ψ k)‖ :=
+        norm_sum_le _ _
+    _ ≤ ∑ d ∈ n.divisors, Real.sqrt n * (1 + Real.log n) := sum_le_sum hbound
+    _ = _ := by rw [sum_const, nsmul_eq_mul]
+
+end PolyaVinogradov
+
+#print axioms PolyaVinogradov.pv_nonprincipal
