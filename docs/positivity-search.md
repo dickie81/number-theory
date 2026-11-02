@@ -270,3 +270,19 @@ Best common junction = top-`k` singular directions of the off-block-diagonal par
 | Mellin frequency bands (dyadic) | 0.88–0.89 / 0.97–0.98 / 7–11 | — |
 
 The orbit Gram has no low-rank common junction (dyadic: `k ≈ 12` for 95%, stable in `M`; arithmetic families worse). The pole-complement form is `−Q(c)` on the same coefficients (`BallPole.selfInt_of_orth`), so its cross terms are the same up to sign. The dual's apparent rank-3 junction is an artefact: 91% of `‖G⁻¹‖²` sits in the single softest eigenvector of `G` (`λ_min ≈ 6e−4` at `M = 511`) and 99% in the softest four; removing those four, the dual needs `k ≈ 19–20` for 95%. A junction through the softest directions of `G` would need positivity margin there, which is exactly the RH-sensitive part, so it was not formalised.
+
+### Scaling of the dyadic junction (uncertified, `scripts/positivity/junction_scale.py`)
+
+| size | k for 90% | k for 95% | k for 99% |
+|---|---|---|---|
+| 255 | 8 | 12 | 26 |
+| 511 | 8 | 12 | 26 |
+| 1023 | 8 | 12 | 26 |
+| 2047 | 8 | 12 | 26 |
+| 4095 | 8 | 12 | 26 |
+
+Checks: `gram(2047)` agrees exactly with the top-left block of `gram(4095)` and the matrix is exactly symmetric; this checks cutoff consistency, not floating-point accuracy of `K_H` at large `n`. Successive singular-value ratios are size-independent (0.89, 0.93, 0.87, 0.49, 0.90, 0.99, …) but not geometric: the spectrum comes in groups of four with gaps. Coupling between blocks does not decay with the gap `|a − b|` (normalised ≈ 0.63–0.78 for gaps 1–8): it is not near-neighbour.
+
+Directions: the top four common directions have block profiles in `u = n/2^a` stable across blocks (|corr| ≈ 0.7–0.95), and on the largest block they are fitted far better by `n^{±iγ}` with `γ` near the first zeta ordinates than by polynomials in `log u` or by `u^{±1/2}, u^{1/2}log u` (residual ≈ 0.07–0.11 against ≈ 0.5–0.9; control frequencies 10, 17 give 0.13–0.27). A single-frequency scan gives best `γ ≈ 13.6–14.5` for directions 1–4 and `≈ 21.4–23.4` for 5–8. A block spans only `log 2` in `log n`, so frequency resolution is ≈ `2π/log 2 ≈ 9`: this is consistent with `γ₁ = 14.13, γ₂ = 21.02` but does not pin them.
+
+Interpretation: this is expected and not zero-free. The Gram matrix is computed from primes, but by the explicit formula it is the zero-indexed `ℓ²` Gram (`BallLattice.gram_cw`), `Σ_ρ` of rank-two oscillating terms `n^{1/2 ± iγ}` plus a smooth part. The junction is the zeros, seen through the primes, with a slowly decaying tail (`k₉₉ = 26`), not a finite-rank structure. A gluing inequality on these directions would be a statement about the zeros. So it was not formalised: `Junction4.glued_nonneg` already covers the sufficient direction for any finite `k`, and no finite-rank hypothesis holds here.
