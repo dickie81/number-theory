@@ -1171,5 +1171,192 @@ theorem gs_kron_neg {n : ℕ} (hn : 1 < n) (hsq : ¬ IsSquare n) (x : ℕ) :
 
 end GSKron
 
-#print axioms GSKron.gs_kron_pos
-#print axioms GSKron.gs_kron_neg
+namespace GSMoment
+open Finset GSFund GSEven GSKron
+
+theorem kron_one (D : ℤ) : kron D 1 = 1 := by simp [kron]
+
+theorem kron_mul (D : ℤ) {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) : kron D (m * n) = kron D m * kron D n := by
+  unfold kron
+  have h1 : (m * n).factorization 2 = m.factorization 2 + n.factorization 2 := by
+    rw [Nat.factorization_mul hm hn, Finsupp.add_apply]
+  have h2 : (m * n) / 2 ^ (m * n).factorization 2 = (m / 2 ^ m.factorization 2) * (n / 2 ^ n.factorization 2) :=
+    Nat.ordCompl_mul m n 2
+  have hm' : m / 2 ^ m.factorization 2 ≠ 0 := (Nat.ordCompl_pos 2 hm).ne'
+  have hn' : n / 2 ^ n.factorization 2 ≠ 0 := (Nat.ordCompl_pos 2 hn).ne'
+  rw [h2, h1, jacobiSym.mul_right' D hm' hn', pow_add]; push_cast; ring
+
+theorem kron_prod (D : ℤ) {k : ℕ} (f : Fin k → ℕ) (hf : ∀ i, f i ≠ 0) :
+    kron D (∏ i, f i) = ∏ i, kron D (f i) := by
+  induction k with
+  | zero => simp [kron_one]
+  | succ k ih =>
+    rw [Fin.prod_univ_succ, Fin.prod_univ_succ, kron_mul D (hf 0) (Finset.prod_ne_zero_iff.2 (fun i _ => hf _)),
+      ih (fun i => f i.succ) (fun i => hf _)]
+
+/-- Generic moment expansion. `χ d n` multiplicative in `n`; `F` the family of `d`. -/
+theorem moment_generic (F : ℕ → Prop) [DecidablePred F] (χ : ℕ → ℕ → ℂ)
+    (hprod : ∀ d (k : ℕ) (f : Fin k → ℕ), (∀ i, f i ≠ 0) → χ d (∏ i, f i) = ∏ i, χ d (f i))
+    (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k x : ℕ)
+    (c : ℕ → ℂ) (R G : ℕ → ℝ)
+    (Hcount : ∀ n, 0 < n → IsSquare n → ‖∑ d ∈ Ioc 0 x, (if F d then χ d n else 0) - c n * x‖ ≤ R n)
+    (HGS : ∀ n, 1 < n → ¬ IsSquare n → ‖∑ d ∈ Ioc 0 x, (if F d then χ d n else 0)‖ ≤ G n) :
+    ‖∑ d ∈ Ioc 0 x, (if F d then (∑ p ∈ P, a p * χ d p) ^ k else 0) -
+        (x : ℂ) * ∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
+          (∏ i, a (f i)) * c (∏ i, f i)‖ ≤
+      ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P),
+        ‖∏ i, a (f i)‖ * (if IsSquare (∏ i, f i) then R (∏ i, f i) else G (∏ i, f i)) := by
+  have hexp : ∀ d, (∑ p ∈ P, a p * χ d p) ^ k =
+      ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P), (∏ i, a (f i)) * χ d (∏ i, f i) := by
+    intro d
+    rw [← Fin.prod_const, prod_univ_sum (fun _ => P) (fun _ p => a p * χ d p)]
+    apply sum_congr rfl; intro f hf
+    rw [Fintype.mem_piFinset] at hf
+    rw [hprod d k f (fun i => (hP _ (hf i)).ne'), prod_mul_distrib]
+  simp_rw [hexp]
+  have hsplit : ∀ d, (if F d then ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P),
+        (∏ i, a (f i)) * χ d (∏ i, f i) else 0) =
+      ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P), (if F d then (∏ i, a (f i)) * χ d (∏ i, f i) else 0) := by
+    intro d; split_ifs <;> simp
+  rw [sum_congr rfl (fun d _ => hsplit d), sum_comm, mul_sum, sum_filter, ← sum_sub_distrib]
+  refine (norm_sum_le _ _).trans (sum_le_sum ?_)
+  intro f hf
+  rw [Fintype.mem_piFinset] at hf
+  have hpos : 0 < ∏ i, f i := Finset.prod_pos (fun i _ => hP _ (hf i))
+  have hS : ∑ d ∈ Ioc 0 x, (if F d then (∏ i, a (f i)) * χ d (∏ i, f i) else 0) =
+      (∏ i, a (f i)) * ∑ d ∈ Ioc 0 x, (if F d then χ d (∏ i, f i) else 0) := by
+    rw [mul_sum]; apply sum_congr rfl; intro d _; split_ifs <;> simp
+  rw [hS]
+  by_cases hsq : IsSquare (∏ i, f i)
+  · rw [if_pos hsq, if_pos hsq,
+      show (∏ i, a (f i)) * ∑ d ∈ Ioc 0 x, (if F d then χ d (∏ i, f i) else 0) - (x:ℂ) * ((∏ i, a (f i)) * c (∏ i, f i)) =
+        (∏ i, a (f i)) * (∑ d ∈ Ioc 0 x, (if F d then χ d (∏ i, f i) else 0) - c (∏ i, f i) * x) by ring,
+      norm_mul]
+    exact mul_le_mul_of_nonneg_left (Hcount _ hpos hsq) (norm_nonneg _)
+  · rw [if_neg hsq, if_neg hsq, sub_zero, norm_mul]
+    have h1 : 1 < ∏ i, f i := by
+      rcases Nat.lt_or_ge 1 (∏ i, f i) with h | h
+      · exact h
+      · exfalso; apply hsq; exact ⟨1, by omega⟩
+    exact mul_le_mul_of_nonneg_left (HGS _ h1 hsq) (norm_nonneg _)
+
+/-- **Moments of the short Euler-sum model, positive discriminants.** For a finite set `P` of positive
+integers (e.g. primes `≤ y`), weights `a`, and `S_D = Σ_{p∈P} a_p (D|p)`:
+`‖Σ_{0<D≤x fund.} S_D^k − x · Σ_{f ∈ P^k, ∏f = □} (∏ a_{f i}) c(∏ f)‖ ≤ Σ_{f ∈ P^k} ‖∏ a‖ · (R or GSB)`,
+**assuming** the square-`n` count hypothesis `Hcount` (main term `c(n) x`, error `R n`). -/
+theorem moment_pos (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k x : ℕ) (c : ℕ → ℂ) (R : ℕ → ℝ)
+    (Hcount : ∀ n, 0 < n → IsSquare n →
+      ‖∑ d ∈ Ioc 0 x, (if fundPos d then kron d n else 0) - c n * x‖ ≤ R n) :
+    ‖∑ d ∈ Ioc 0 x, (if fundPos d then (∑ p ∈ P, a p * kron d p) ^ k else 0) -
+        (x : ℂ) * ∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
+          (∏ i, a (f i)) * c (∏ i, f i)‖ ≤
+      ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P),
+        ‖∏ i, a (f i)‖ * (if IsSquare (∏ i, f i) then R (∏ i, f i) else GSB (∏ i, f i) x) :=
+  moment_generic fundPos (fun d n => kron d n) (fun d k f hf => kron_prod d f hf) P hP a k x c R
+    (fun n => GSB n x) Hcount (fun n h1 hs => gs_kron_pos h1 hs x)
+
+/-- **Moments, negative discriminants** (`D = -d`). -/
+theorem moment_neg (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k x : ℕ) (c : ℕ → ℂ) (R : ℕ → ℝ)
+    (Hcount : ∀ n, 0 < n → IsSquare n →
+      ‖∑ d ∈ Ioc 0 x, (if fundNeg d then kron (-(d:ℤ)) n else 0) - c n * x‖ ≤ R n) :
+    ‖∑ d ∈ Ioc 0 x, (if fundNeg d then (∑ p ∈ P, a p * kron (-(d:ℤ)) p) ^ k else 0) -
+        (x : ℂ) * ∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
+          (∏ i, a (f i)) * c (∏ i, f i)‖ ≤
+      ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P),
+        ‖∏ i, a (f i)‖ * (if IsSquare (∏ i, f i) then R (∏ i, f i) else GSB (∏ i, f i) x) :=
+  moment_generic fundNeg (fun d n => kron (-(d:ℤ)) n) (fun d k f hf => kron_prod _ f hf) P hP a k x c R
+    (fun n => GSB n x) Hcount (fun n h1 hs => gs_kron_neg h1 hs x)
+
+open Filter Topology in
+theorem sqrt_bound_div (B : ℝ) (hB : 0 ≤ B) :
+    Tendsto (fun x : ℕ => (2 * Real.sqrt (x * B) + B) / x) atTop (𝓝 0) := by
+  have hinv : Tendsto (fun x : ℕ => ((x:ℝ))⁻¹) atTop (𝓝 0) := tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop
+  have hs : Tendsto (fun x : ℕ => Real.sqrt ((x:ℝ))⁻¹) atTop (𝓝 0) := by
+    have := (Real.continuous_sqrt.tendsto 0).comp hinv; simpa [Function.comp_def] using this
+  have hsum : Tendsto (fun x : ℕ => 2 * Real.sqrt B * Real.sqrt ((x:ℝ))⁻¹ + B * ((x:ℝ))⁻¹) atTop (𝓝 0) := by
+    have := (hs.const_mul (2 * Real.sqrt B)).add (hinv.const_mul B); simpa using this
+  apply hsum.congr'
+  filter_upwards [eventually_gt_atTop 0] with x hx
+  have hx' : (0:ℝ) < x := by exact_mod_cast hx
+  rw [Real.sqrt_mul hx'.le, Real.sqrt_inv, add_div]
+  have h0 : Real.sqrt (x:ℝ) ≠ 0 := (Real.sqrt_pos.2 hx').ne'
+  have h2 := Real.mul_self_sqrt hx'.le
+  field_simp
+  first | linear_combination (-2 * Real.sqrt B) * h2 | linear_combination (2 * Real.sqrt B) * h2
+
+theorem Bn_nonneg (n : ℕ) : 0 ≤ GSAssemble.Bn n := by
+  unfold GSAssemble.Bn; have := Real.log_natCast_nonneg (4 * n); positivity
+
+theorem B8_nonneg (n : ℕ) : 0 ≤ B8 n := by
+  unfold B8; have := Real.log_natCast_nonneg (8 * n); positivity
+
+open Filter Topology in
+theorem GSB_div (n : ℕ) : Tendsto (fun x : ℕ => GSB n x / x) atTop (𝓝 0) := by
+  unfold GSB T T8
+  split_ifs
+  · have := (sqrt_bound_div _ (Bn_nonneg n)).const_mul 3
+    simp only [mul_zero] at this; refine this.congr (fun x => ?_); ring
+  · exact sqrt_bound_div _ (B8_nonneg _)
+
+open Filter Topology in
+/-- Generic normalised limit: from a bound `‖Σ − x M‖ ≤ b x` with `b x / x → 0`. -/
+theorem lim_of_bound (Sx : ℕ → ℂ) (M : ℂ) (b : ℕ → ℝ) (hb : ∀ x, ‖Sx x - (x:ℂ) * M‖ ≤ b x)
+    (hlim : Tendsto (fun x : ℕ => b x / x) atTop (𝓝 0)) :
+    Tendsto (fun x : ℕ => ((x:ℂ))⁻¹ * Sx x) atTop (𝓝 M) := by
+  rw [tendsto_iff_norm_sub_tendsto_zero]
+  refine squeeze_zero' (Eventually.of_forall (fun _ => norm_nonneg _)) ?_ hlim
+  filter_upwards [eventually_gt_atTop 0] with x hx
+  have hx' : (x:ℂ) ≠ 0 := by exact_mod_cast hx.ne'
+  rw [show ((x:ℂ))⁻¹ * Sx x - M = ((x:ℂ))⁻¹ * (Sx x - x * M) by field_simp, norm_mul, norm_inv,
+    Complex.norm_natCast, div_eq_inv_mul]
+  exact mul_le_mul_of_nonneg_left (hb x) (by positivity)
+
+open Filter Topology in
+/-- **Moments, positive discriminants, limit form.** Under `Hcount` for every `x` with `R n x = o(x)`,
+`(1/x) Σ_{0<D≤x fund.} S_D^k → Σ_{f ∈ P^k, ∏ f = □} (∏ a_{f i}) c(∏ f)`. -/
+theorem moment_pos_tendsto (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k : ℕ) (c : ℕ → ℂ)
+    (R : ℕ → ℕ → ℝ)
+    (Hcount : ∀ x n, 0 < n → IsSquare n →
+      ‖∑ d ∈ Ioc 0 x, (if fundPos d then kron d n else 0) - c n * x‖ ≤ R n x)
+    (hR : ∀ n, Tendsto (fun x : ℕ => R n x / x) atTop (𝓝 0)) :
+    Tendsto (fun x : ℕ => ((x:ℂ))⁻¹ *
+        ∑ d ∈ Ioc 0 x, (if fundPos d then (∑ p ∈ P, a p * kron d p) ^ k else 0)) atTop
+      (𝓝 (∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
+          (∏ i, a (f i)) * c (∏ i, f i))) := by
+  apply lim_of_bound _ _ _ (fun x => moment_pos P hP a k x c (fun n => R n x) (Hcount x))
+  simp_rw [sum_div]
+  rw [show (0:ℝ) = ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P), 0 by simp]
+  apply tendsto_finsetSum; intro f _
+  simp_rw [mul_div_assoc]
+  rw [show (0:ℝ) = ‖∏ i, a (f i)‖ * 0 by simp]
+  apply Tendsto.const_mul
+  split_ifs
+  · exact hR _
+  · exact GSB_div _
+
+open Filter Topology in
+/-- **Moments, negative discriminants, limit form.** -/
+theorem moment_neg_tendsto (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k : ℕ) (c : ℕ → ℂ)
+    (R : ℕ → ℕ → ℝ)
+    (Hcount : ∀ x n, 0 < n → IsSquare n →
+      ‖∑ d ∈ Ioc 0 x, (if fundNeg d then kron (-(d:ℤ)) n else 0) - c n * x‖ ≤ R n x)
+    (hR : ∀ n, Tendsto (fun x : ℕ => R n x / x) atTop (𝓝 0)) :
+    Tendsto (fun x : ℕ => ((x:ℂ))⁻¹ *
+        ∑ d ∈ Ioc 0 x, (if fundNeg d then (∑ p ∈ P, a p * kron (-(d:ℤ)) p) ^ k else 0)) atTop
+      (𝓝 (∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
+          (∏ i, a (f i)) * c (∏ i, f i))) := by
+  apply lim_of_bound _ _ _ (fun x => moment_neg P hP a k x c (fun n => R n x) (Hcount x))
+  simp_rw [sum_div]
+  rw [show (0:ℝ) = ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P), 0 by simp]
+  apply tendsto_finsetSum; intro f _
+  simp_rw [mul_div_assoc]
+  rw [show (0:ℝ) = ‖∏ i, a (f i)‖ * 0 by simp]
+  apply Tendsto.const_mul
+  split_ifs
+  · exact hR _
+  · exact GSB_div _
+
+end GSMoment
+
+#print axioms GSMoment.moment_pos_tendsto
+#print axioms GSMoment.moment_neg_tendsto
