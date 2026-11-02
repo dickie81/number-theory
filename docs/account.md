@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1114 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1127 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -193,7 +193,8 @@ Within reach, with no hypothesis, from results the library has:
 - **Weil positivity past the primes 2 and 3**, to supports `2a ≤ 1.6`, beyond Connes and Consani's `log 2`: the
   library proves it from hypotheses that arb computations support, lower bounds for 350 mode energies and the
   definiteness of two Gram matrices (`WeilForm.weilQg_ge_both`, and `WeilForm.weilQ_ge_prime3` for even probes below
-  `2a = log 3`). Certificates that the kernel checks, as the Linnik sieve's are, would remove the hypotheses.
+  `2a = log 3`). Certificates that the kernel checks, as the Linnik sieve's are, would remove the hypotheses. X. Zhu's
+  preprint arXiv:2608.24827 (2026) claims the same window by interval arithmetic.
 - **Hyperbolic 3-space**: Kubota's `θ` (`Eis.kubotaTheta`) as an eigenfunction of the Laplacian at `s(2 − s) = 8/9`,
   below the continuous spectrum `[1, ∞)`: a bound state of a free particle on the cubic metaplectic cover. The library
   has the energy `∫ v²|∇F|² dz dv/v³` and its invariance (`Eis.lintegral_energy_actP`), not the Laplacian.
@@ -264,7 +265,10 @@ In order of what is in reach.
    when `K_H(p^a q^b) ≥ −K_H(1)` for all integers `a` and `b` (`BallSlice.rh_iff_bound_pair`), so in particular for
    `2^a 3^b` (`BallSlice.rh_iff_two_three`). At every stage `N` the primes above `N/2`, which have no other multiple
    up to `N`, are never absent and are asymptotically half of all the primes (`LonelyPrimes.lonely_ratio_pos`,
-   `LonelyPrimes.tendsto_lonely_ratio`).
+   `LonelyPrimes.tendsto_lonely_ratio`). Weighted by `log p` they carry half of `x` with an error of exponent exactly
+   `Θ`, so RH holds when and only when the error is `O(x^{1/2+ε})` (`LonelyJoins.rh_iff_lonely_weight`), and for
+   `θ > 17/30` every interval `(y, y + y^θ]` of the frontier holds one (`LonelyJoins.lonely_in_window`).
+   [connes-links.md](connes-links.md) lists how this strand joins the rest of the library.
 6. **Tools that are missing.** The large sieve over all moduli `q ≤ Q` (the library has one modulus at a time), so no
    Bombieri–Vinogradov; bounds for Kloosterman sums, which the bilinear Type I estimate avoids; exponent pairs (the
    Weyl bound is only a hypothesis); Selberg's and Rosser's sieves; anything in the twelve sections the library does
