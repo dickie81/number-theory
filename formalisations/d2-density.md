@@ -113,6 +113,19 @@ theorem ModelMoments.moment_pos_model (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p)
 
 and `ModelMoments.moment_neg_model` for `D = -d`.
 
+## Model-side truncation (hypothesis B, toward B4)
+
+`lib/pnt/ModelTrunc.lean`, unconditional:
+
+```lean
+theorem ModelTrunc.moment_A_tendsto (k : ℕ) :
+    Tendsto (fun N => ∫ ω, A N ω ^ k ∂(RandModel.P)) atTop (𝓝 (∫ ω, (-X ω) ^ k ∂(RandModel.P)))
+```
+
+with `A N = Σ_{n ≤ N} Λ(n) X(n)/n`. Almost surely `|A_N + T_{N+1}| ≤ 2 log N (1 + log N)/√N`
+(`ModelTrunc.abs_A_add_T_le`, from `ModelTrunc.vm_regroup` and `ModelTrunc.trunc_prime`); the moments pass to the limit
+by `ModelTrunc.tendsto_integral_of_sq_bdd` (a.s. convergence with eventually bounded second moments).
+
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
 **CONDITIONAL on the half-plane `Re s > 11/12`** (`Eis.LFunction_ne_zero_of_re_gt`, [openai-half-plane.md](openai-half-plane.md)),
