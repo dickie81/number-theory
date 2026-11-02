@@ -1358,5 +1358,449 @@ theorem moment_neg_tendsto (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ �
 
 end GSMoment
 
-#print axioms GSMoment.moment_pos_tendsto
-#print axioms GSMoment.moment_neg_tendsto
+namespace GSDens
+open Finset Filter Topology
+
+theorem count_periodic (p : ℕ → Prop) [DecidablePred p] (L : ℕ) (hp : Function.Periodic p L) (q s : ℕ) :
+    Nat.count p (q * L + s) = q * Nat.count p L + Nat.count p s := by
+  induction q with
+  | zero => simp
+  | succ q ih =>
+    rw [show (q + 1) * L + s = L + (q * L + s) by ring, Nat.count_add]
+    have : Nat.count (fun k => p (L + k)) (q * L + s) = Nat.count p (q * L + s) := by
+      simp only [Nat.count_eq_card_filter_range]
+      congr 1; apply filter_congr; intro k _; rw [add_comm, hp k]
+    rw [this, ih]; ring
+
+/-- Periodic counting: `|count p x − x · count p L / L| ≤ L`. -/
+theorem periodic_dens (p : ℕ → Prop) [DecidablePred p] (L : ℕ) (hL : 0 < L) (hp : Function.Periodic p L) (x : ℕ) :
+    |(Nat.count p x : ℝ) - x * ((Nat.count p L : ℝ) / L)| ≤ L := by
+  have hx : x = x / L * L + x % L := (Nat.div_add_mod' x L).symm
+  have hc := count_periodic p L hp (x / L) (x % L)
+  rw [← hx] at hc
+  have hs : x % L < L := Nat.mod_lt _ hL
+  have h1 : Nat.count p (x % L) ≤ x % L := Nat.count_le p
+  have h2 : Nat.count p L ≤ L := Nat.count_le p
+  have hLr : (0:ℝ) < L := by exact_mod_cast hL
+  have hxr : (x:ℝ) = (x / L : ℕ) * L + (x % L : ℕ) := by exact_mod_cast hx
+  rw [hc, hxr]; push_cast
+  have e : ((x / L : ℕ) * (L:ℝ) + (x % L : ℕ)) * ((Nat.count p L : ℝ) / L) =
+      (x / L : ℕ) * (Nat.count p L : ℝ) + (x % L : ℕ) * (Nat.count p L : ℝ) / L := by
+    field_simp
+  rw [e]
+  have h3 : (0:ℝ) ≤ (x % L : ℕ) * (Nat.count p L : ℝ) / L := by positivity
+  have h4 : (x % L : ℕ) * (Nat.count p L : ℝ) / L ≤ (x % L : ℕ) := by
+    rw [div_le_iff₀ hLr]; exact mul_le_mul_of_nonneg_left (by exact_mod_cast h2) (by positivity)
+  have h5 : ((x % L : ℕ) : ℝ) < L := by exact_mod_cast hs
+  have h6 : ((Nat.count p (x % L) : ℕ) : ℝ) ≤ (x % L : ℕ) := by exact_mod_cast h1
+  rw [abs_le]; constructor <;> push_cast at * <;> nlinarith
+
+open Classical in
+/-- Multiples of `e²` below `x`, beyond `E`: `#{0 < d < x : ∃ e > E, e² ∣ d} ≤ x / E`. -/
+theorem tail_count (E : ℕ) (hE : 1 ≤ E) (x : ℕ) :
+    (Nat.count (fun d => d ≠ 0 ∧ ∃ e, E < e ∧ e ^ 2 ∣ d) x : ℝ) ≤ x / E := by
+  classical
+  rw [Nat.count_eq_card_filter_range]
+  have hsub : (range x).filter (fun d => d ≠ 0 ∧ ∃ e, E < e ∧ e ^ 2 ∣ d) ⊆
+      (Ioc E x).biUnion (fun e => (Ioc 0 x).filter (fun d => e ^ 2 ∣ d)) := by
+    intro d hd
+    simp only [mem_filter, mem_range] at hd
+    obtain ⟨hdx, hd0, e, he, hed⟩ := hd
+    simp only [mem_biUnion, mem_Ioc, mem_filter]
+    have : e ≤ d := by
+      have := Nat.le_of_dvd (Nat.pos_of_ne_zero hd0) hed
+      nlinarith
+    exact ⟨e, ⟨he, by omega⟩, ⟨Nat.pos_of_ne_zero hd0, by omega⟩, hed⟩
+  have hc := (card_le_card hsub).trans card_biUnion_le
+  have hc' : ((card ((range x).filter (fun d => d ≠ 0 ∧ ∃ e, E < e ∧ e ^ 2 ∣ d)) : ℕ) : ℝ) ≤
+      ∑ e ∈ Ioc E x, (x:ℝ) * ((e:ℝ) ^ 2)⁻¹ := by
+    refine (Nat.cast_le.2 hc).trans ?_
+    push_cast
+    apply sum_le_sum; intro e he
+    rw [Nat.Ioc_filter_dvd_card_eq_div]
+    have hpos : (0:ℝ) < (e:ℝ) ^ 2 := by
+      have : 0 < e := by simp at he; omega
+      positivity
+    refine (Nat.cast_div_le).trans ?_
+    push_cast; rw [div_eq_mul_inv]
+  refine hc'.trans ?_
+  rw [← mul_sum]
+  by_cases hxE : E ≤ x
+  · have ht := GSLemma.tail_inv_sq E hE (x - E)
+    rw [show E + (x - E) = x by omega] at ht
+    have hx0 : (0:ℝ) ≤ ((x:ℕ):ℝ)⁻¹ := by positivity
+    rw [div_eq_mul_inv]
+    exact mul_le_mul_of_nonneg_left (by linarith) (by positivity)
+  · rw [Ioc_eq_empty (by omega)]; simp; positivity
+
+/-- No odd square `e² > 1` divides `d`. -/
+def Odf (d : ℕ) : Prop := ∀ e, 1 < e → Odd e → ¬ e ^ 2 ∣ d
+
+/-- `Q d`: residue condition mod 16, coprime to `r`, no odd square factor. -/
+def Q (Cp : ℕ → Prop) (r d : ℕ) : Prop := Cp (d % 16) ∧ Nat.Coprime d r ∧ Odf d
+
+/-- Truncation of `Q` to odd squares `e² ≤ E²`; periodic. -/
+def PE (Cp : ℕ → Prop) (r E d : ℕ) : Prop :=
+  Cp (d % 16) ∧ Nat.Coprime d r ∧ ∀ e, 1 < e → e ≤ E → Odd e → ¬ e ^ 2 ∣ d
+
+open Classical in
+theorem PE_periodic (Cp : ℕ → Prop) (r E : ℕ) :
+    Function.Periodic (PE Cp r E) (16 * r * (E.factorial) ^ 2) := by
+  intro d
+  unfold PE
+  have h16 : (d + 16 * r * E.factorial ^ 2) % 16 = d % 16 := by
+    rw [show 16 * r * E.factorial ^ 2 = 16 * (r * E.factorial ^ 2) by ring, Nat.add_mul_mod_self_left]
+  have hr : Nat.Coprime (d + 16 * r * E.factorial ^ 2) r ↔ Nat.Coprime d r := by
+    rw [show 16 * r * E.factorial ^ 2 = (16 * E.factorial ^ 2) * r by ring]
+    exact Nat.coprime_add_mul_right_left _ _ _
+  have he : ∀ e, 1 < e → e ≤ E → (e ^ 2 ∣ d + 16 * r * E.factorial ^ 2 ↔ e ^ 2 ∣ d) := by
+    intro e he1 heE
+    have h1 : e ∣ E.factorial := Nat.dvd_factorial (by omega) heE
+    have h2 : e ^ 2 ∣ 16 * r * E.factorial ^ 2 := Dvd.dvd.mul_left (pow_dvd_pow_of_dvd h1 2) _
+    exact ⟨fun h => by simpa using Nat.dvd_sub h h2, fun h => dvd_add h h2⟩
+  rw [h16]
+  apply propext
+  constructor
+  · rintro ⟨a, b, c⟩; refine ⟨a, hr.1 b, fun e h1 h2 h3 h => c e h1 h2 h3 ((he e h1 h2).2 h)⟩
+  · rintro ⟨a, b, c⟩; refine ⟨a, hr.2 b, fun e h1 h2 h3 h => c e h1 h2 h3 ((he e h1 h2).1 h)⟩
+
+open Classical in
+theorem Q_le_PE (Cp : ℕ → Prop) (r E x : ℕ) : Nat.count (Q Cp r) x ≤ Nat.count (PE Cp r E) x :=
+  Nat.count_mono_left (fun d _ ⟨a, b, c⟩ => ⟨a, b, fun e h1 _ h3 => c e h1 h3⟩)
+
+open Classical in
+theorem PE_le_Q (Cp : ℕ → Prop) (hC0 : ¬ Cp 0) (r E x : ℕ) :
+    Nat.count (PE Cp r E) x ≤ Nat.count (Q Cp r) x + Nat.count (fun d => d ≠ 0 ∧ ∃ e, E < e ∧ e ^ 2 ∣ d) x := by
+  simp only [Nat.count_eq_card_filter_range]
+  refine (card_le_card ?_).trans (card_union_le _ _)
+  intro d hd
+  simp only [mem_filter, mem_range, mem_union] at hd ⊢
+  obtain ⟨hdx, a, b, c⟩ := hd
+  by_cases hq : Odf d
+  · left; exact ⟨hdx, a, b, hq⟩
+  · right
+    refine ⟨hdx, ?_, ?_⟩
+    · rintro rfl; exact hC0 (by simpa using a)
+    · unfold Odf at hq; push Not at hq
+      obtain ⟨e, h1, h2, h3⟩ := hq
+      refine ⟨e, ?_, h3⟩
+      by_contra h; exact c e h1 (by omega) h2 h3
+
+open Classical in
+theorem Q_approx (Cp : ℕ → Prop) (hC0 : ¬ Cp 0) (r : ℕ) (hr : 0 < r) (E : ℕ) (hE : 1 ≤ E) (x : ℕ) :
+    |(Nat.count (Q Cp r) x : ℝ) - x * ((Nat.count (PE Cp r E) (16 * r * E.factorial ^ 2) : ℝ) /
+        (16 * r * E.factorial ^ 2 : ℕ))| ≤ (16 * r * E.factorial ^ 2 : ℕ) + x / E := by
+  set L := 16 * r * E.factorial ^ 2
+  have hL : 0 < L := by have := E.factorial_pos; positivity
+  have hp := periodic_dens (PE Cp r E) L hL (PE_periodic Cp r E) x
+  have h1 : (Nat.count (Q Cp r) x : ℝ) ≤ Nat.count (PE Cp r E) x := by exact_mod_cast Q_le_PE Cp r E x
+  have h2 : (Nat.count (PE Cp r E) x : ℝ) ≤ Nat.count (Q Cp r) x +
+      Nat.count (fun d => d ≠ 0 ∧ ∃ e, E < e ∧ e ^ 2 ∣ d) x := by exact_mod_cast PE_le_Q Cp hC0 r E x
+  have h3 := tail_count E hE x
+  rw [abs_le] at hp ⊢; constructor <;> linarith [hp.1, hp.2]
+
+open Classical in
+/-- **Density.** `count (Q Cp r) x / x` converges. -/
+theorem Q_density (Cp : ℕ → Prop) (hC0 : ¬ Cp 0) (r : ℕ) (hr : 0 < r) :
+    ∃ c : ℝ, Tendsto (fun x : ℕ => (Nat.count (Q Cp r) x : ℝ) / x) atTop (𝓝 c) := by
+  apply cauchySeq_tendsto_of_complete
+  rw [Metric.cauchySeq_iff']
+  intro ε hε
+  obtain ⟨E, hE⟩ := exists_nat_gt (4 / ε)
+  have hE1 : 1 ≤ E := by
+    have : (0:ℝ) < 4 / ε := by positivity
+    have : (0:ℝ) < E := by linarith
+    exact_mod_cast this
+  set L := 16 * r * E.factorial ^ 2
+  obtain ⟨N, hN⟩ := exists_nat_gt (4 * L / ε)
+  have hEp : (0:ℝ) < E := by exact_mod_cast hE1
+  have hLp : (0:ℝ) ≤ L := by positivity
+  have hNp : (0:ℝ) < N := by
+    have : (0:ℝ) ≤ 4 * L / ε := by positivity
+    linarith
+  set δ := (Nat.count (PE Cp r E) L : ℝ) / (L : ℕ)
+  have key : ∀ x : ℕ, N ≤ x → |(Nat.count (Q Cp r) x : ℝ) / x - δ| < ε / 2 := by
+    intro x hx
+    have hxp : (0:ℝ) < x := lt_of_lt_of_le hNp (by exact_mod_cast hx)
+    have ha := Q_approx Cp hC0 r hr E hE1 x
+    have : (Nat.count (Q Cp r) x : ℝ) / x - δ = ((Nat.count (Q Cp r) x : ℝ) - x * δ) / x := by
+      field_simp
+    rw [this, abs_div, abs_of_pos hxp, div_lt_iff₀ hxp]
+    have hLx : (L:ℝ) < ε / 4 * x := by
+      have : 4 * L / ε < x := lt_of_lt_of_le hN (by exact_mod_cast hx)
+      rw [div_lt_iff₀ hε] at this; linarith
+    have hEx : (x:ℝ) / E < ε / 4 * x := by
+      rw [div_lt_iff₀ hEp]
+      have : 4 / ε < E := hE
+      rw [div_lt_iff₀ hε] at this; nlinarith
+    linarith
+  refine ⟨N, fun n hn => ?_⟩
+  rw [Real.dist_eq]
+  have := key n hn; have := key N le_rfl
+  calc _ ≤ |(Nat.count (Q Cp r) n : ℝ) / n - δ| + |(Nat.count (Q Cp r) N : ℝ) / N - δ| := by
+        rw [← abs_neg ((Nat.count (Q Cp r) N : ℝ) / N - δ)]
+        exact (le_of_eq (by ring_nf)).trans (abs_add_le _ _)
+    _ < ε := by linarith
+
+end GSDens
+
+namespace GSLink
+open Finset Filter Topology GSFund GSEven GSMoment GSDens ZMod
+
+theorem chi8_sq_nat (d : ℕ) : ((χ₈ (d : ZMod 8) : ℤ) : ℂ) * ((χ₈ (d : ZMod 8) : ℤ) : ℂ) =
+    if d % 2 = 1 then 1 else 0 := by
+  rw [χ₈_nat_eq_if_mod_eight]
+  by_cases h : d % 2 = 0
+  · simp [h]
+  · have h' : d % 2 = 1 := by omega
+    rw [if_neg h, if_pos h']; split_ifs <;> simp
+
+/-- `(d | r²) = 1` if `gcd(d, r) = 1`, else `0`. -/
+theorem kron_sq_nat (d : ℕ) {r : ℕ} (hr : 0 < r) :
+    kron d (r * r) = if Nat.Coprime d r then 1 else 0 := by
+  rw [kron_mul _ hr.ne' hr.ne']
+  unfold kron
+  set v := r.factorization 2
+  set r' := r / 2 ^ v
+  have hr' : r' ≠ 0 := (Nat.ordCompl_pos 2 hr.ne').ne'
+  haveI : NeZero r' := ⟨hr'⟩
+  have e : r = 2 ^ v * r' := (Nat.ordProj_mul_ordCompl_eq_self r 2).symm
+  have hsq : ∀ (A B : ℂ), A ^ v * B * (A ^ v * B) = (A * A) ^ v * (B * B) := by intro A B; ring
+  push_cast
+  rw [hsq, chi8_sq_nat]
+  have hJ : ((jacobiSym d r' : ℤ) : ℂ) * ((jacobiSym d r' : ℤ) : ℂ) = if Nat.Coprime d r' then 1 else 0 := by
+    by_cases hc : Nat.Coprime d r'
+    · have : jacobiSym d r' ^ 2 = 1 := jacobiSym.sq_one (by rw [Int.gcd_natCast_natCast]; exact hc)
+      rw [if_pos hc, ← Int.cast_mul, ← sq, this]; simp
+    · have : jacobiSym d r' = 0 := jacobiSym.eq_zero_iff_not_coprime.2 (by rw [Int.gcd_natCast_natCast]; exact hc)
+      rw [if_neg hc, this]; simp
+  rw [hJ]
+  have hiff : Nat.Coprime d r ↔ (v = 0 ∨ d % 2 = 1) ∧ Nat.Coprime d r' := by
+    rw [e, Nat.coprime_mul_iff_right]
+    constructor
+    · rintro ⟨h1, h2⟩; refine ⟨?_, h2⟩
+      by_cases hv : v = 0
+      · left; exact hv
+      · right; have := (Nat.coprime_pow_right_iff (Nat.pos_of_ne_zero hv) d 2).1 h1
+        exact Nat.odd_iff.1 ((Nat.coprime_two_right).1 this)
+    · rintro ⟨h1, h2⟩; refine ⟨?_, h2⟩
+      rcases h1 with h | h
+      · rw [h]; simp
+      · exact Nat.Coprime.pow_right _ ((Nat.coprime_two_right).2 (Nat.odd_iff.2 h))
+  by_cases hc : Nat.Coprime d r
+  · rw [if_pos hc]
+    obtain ⟨h1, h2⟩ := hiff.1 hc
+    rw [if_pos h2, mul_one]
+    rcases h1 with h | h
+    · rw [h, pow_zero]
+    · rw [if_pos h, one_pow]
+  · rw [if_neg hc]
+    by_cases h2 : Nat.Coprime d r'
+    · rw [if_pos h2, mul_one]
+      have hv : v ≠ 0 ∧ d % 2 ≠ 1 := by
+        by_contra h; apply hc; apply hiff.2; refine ⟨?_, h2⟩; by_cases hv : v = 0
+        · exact Or.inl hv
+        · right; by_contra h'; exact h ⟨hv, h'⟩
+      rw [if_neg hv.2, zero_pow hv.1]
+    · rw [if_neg h2, mul_zero]
+
+theorem kron_neg_sq_nat (d : ℕ) {r : ℕ} (hr : 0 < r) :
+    kron (-(d:ℤ)) (r * r) = kron d (r * r) := by
+  unfold kron
+  have hm : ((-(d:ℤ) : ℤ) : ZMod 8) = (-1 : ZMod 8) * (d : ZMod 8) := by push_cast; ring
+  have h1 : χ₈ (-1 : ZMod 8) = 1 := by decide
+  rw [hm, map_mul, h1, one_mul, show (-(d:ℤ)) = -1 * d by ring, jacobiSym.mul_left]
+  set m := r * r / 2 ^ (r * r).factorization 2
+  have hm0 : m ≠ 0 := (Nat.ordCompl_pos 2 (Nat.mul_pos hr hr).ne').ne'
+  -- `m` is a square, so `J(-1 | m) = 1`
+  have hmsq : m = (r / 2 ^ r.factorization 2) * (r / 2 ^ r.factorization 2) := Nat.ordCompl_mul r r 2
+  have hJ : jacobiSym (-1) m = 1 := by
+    rw [hmsq, jacobiSym.mul_right' _ (Nat.ordCompl_pos 2 hr.ne').ne' (Nat.ordCompl_pos 2 hr.ne').ne', ← sq,
+      jacobiSym.sq_one (by simp)]
+  rw [hJ]; push_cast; ring
+
+/-- No odd square factor and not divisible by 4 ⇔ squarefree. -/
+theorem sqf_iff (m : ℕ) : Squarefree m ↔ ¬ 4 ∣ m ∧ Odf m := by
+  constructor
+  · intro h
+    refine ⟨fun h4 => ?_, fun e he1 _ he => ?_⟩
+    · have := h 2 (by simpa using h4); simp at this
+    · have := h e (by simpa [sq] using he); rw [Nat.isUnit_iff] at this; omega
+  · rintro ⟨h4, ho⟩
+    rw [Nat.squarefree_iff_prime_squarefree]
+    intro p hp hpp
+    by_cases h2 : p = 2
+    · subst h2; exact h4 (by simpa using hpp)
+    · exact ho p hp.one_lt (hp.odd_of_ne_two h2) (by simpa [sq] using hpp)
+
+theorem Odf_four (m : ℕ) : Odf (4 * m) ↔ Odf m := by
+  constructor
+  · intro h e h1 h2 he; exact h e h1 h2 (Dvd.dvd.mul_left he 4)
+  · intro h e h1 h2 he
+    apply h e h1 h2
+    have hc : Nat.Coprime (e ^ 2) 4 := by
+      rw [show (4:ℕ) = 2 ^ 2 by norm_num]
+      exact Nat.Coprime.pow 2 2 ((Nat.coprime_two_right).2 h2)
+    exact hc.dvd_of_dvd_mul_left he
+
+def CpPos (t : ℕ) : Prop := t = 1 ∨ t = 5 ∨ t = 9 ∨ t = 13 ∨ t = 8 ∨ t = 12
+def CpNeg (t : ℕ) : Prop := t = 3 ∨ t = 7 ∨ t = 11 ∨ t = 15 ∨ t = 4 ∨ t = 8
+
+theorem fundPos_iff (d : ℕ) : fundPos d ↔ CpPos (d % 16) ∧ Odf d := by
+  unfold fundPos CpPos
+  constructor
+  · rintro (⟨hs, h4⟩ | ⟨⟨m, rfl⟩, hs, hm⟩)
+    · exact ⟨by omega, ((sqf_iff d).1 hs).2⟩
+    · rw [Nat.mul_div_cancel_left _ (by norm_num)] at hs hm
+      exact ⟨by omega, (Odf_four m).2 ((sqf_iff m).1 hs).2⟩
+  · rintro ⟨hc, ho⟩
+    by_cases h1 : d % 4 = 1
+    · left; exact ⟨(sqf_iff d).2 ⟨by omega, ho⟩, h1⟩
+    · right
+      obtain ⟨m, rfl⟩ : 4 ∣ d := by omega
+      rw [Nat.mul_div_cancel_left _ (by norm_num)]
+      exact ⟨dvd_mul_right _ _, (sqf_iff m).2 ⟨by omega, (Odf_four m).1 ho⟩, by omega⟩
+
+theorem fundNeg_iff (d : ℕ) : fundNeg d ↔ CpNeg (d % 16) ∧ Odf d := by
+  unfold fundNeg CpNeg
+  constructor
+  · rintro (⟨hs, h4⟩ | ⟨⟨m, rfl⟩, hs, hm⟩)
+    · exact ⟨by omega, ((sqf_iff d).1 hs).2⟩
+    · rw [Nat.mul_div_cancel_left _ (by norm_num)] at hs hm
+      exact ⟨by omega, (Odf_four m).2 ((sqf_iff m).1 hs).2⟩
+  · rintro ⟨hc, ho⟩
+    by_cases h1 : d % 4 = 3
+    · left; exact ⟨(sqf_iff d).2 ⟨by omega, ho⟩, h1⟩
+    · right
+      obtain ⟨m, rfl⟩ : 4 ∣ d := by omega
+      rw [Nat.mul_div_cancel_left _ (by norm_num)]
+      exact ⟨dvd_mul_right _ _, (sqf_iff m).2 ⟨by omega, (Odf_four m).1 ho⟩, by omega⟩
+
+end GSLink
+
+namespace GSUncond
+open Finset Filter Topology GSFund GSEven GSMoment GSDens GSLink
+
+theorem CpPos0 : ¬ CpPos 0 := by simp [CpPos]
+theorem CpNeg0 : ¬ CpNeg 0 := by simp [CpNeg]
+
+open Classical in
+theorem sum_eq_count (F : ℕ → Prop) [DecidablePred F] (Cp : ℕ → Prop) (hC0 : ¬ Cp 0)
+    (hF : ∀ d, F d ↔ Cp (d % 16) ∧ Odf d) (χ : ℕ → ℕ → ℂ) {r : ℕ} (hr : 0 < r)
+    (hχ : ∀ d, χ d (r * r) = if Nat.Coprime d r then 1 else 0) (x : ℕ) :
+    ∑ d ∈ Ioc 0 x, (if F d then χ d (r * r) else 0) = ((Nat.count (Q Cp r) (x + 1) : ℕ) : ℂ) := by
+  have hpt : ∀ d, (if F d then χ d (r * r) else 0) = if Q Cp r d then (1:ℂ) else 0 := by
+    intro d
+    have hq : Q Cp r d ↔ F d ∧ Nat.Coprime d r := by rw [hF]; unfold Q; tauto
+    rw [hχ]
+    by_cases h1 : F d <;> by_cases h2 : Nat.Coprime d r <;> simp [h1, h2, hq]
+  rw [sum_congr rfl (fun d _ => hpt d), sum_boole, Nat.count_eq_card_filter_range]
+  congr 2
+  ext d
+  simp only [mem_filter, mem_Ioc, mem_range]
+  constructor
+  · rintro ⟨⟨_, h⟩, hq⟩; exact ⟨by omega, hq⟩
+  · rintro ⟨h, hq⟩
+    refine ⟨⟨Nat.pos_of_ne_zero ?_, by omega⟩, hq⟩
+    rintro rfl; exact hC0 (by simpa using hq.1)
+
+theorem shift_lim (f : ℕ → ℕ) (hf : ∀ x, f (x + 1) ≤ f x + 1) (hf' : ∀ x, f x ≤ f (x + 1)) (δ : ℝ)
+    (h : Tendsto (fun x : ℕ => (f x : ℝ) / x) atTop (𝓝 δ)) :
+    Tendsto (fun x : ℕ => ‖((f (x + 1) : ℕ) : ℂ) - (δ : ℂ) * x‖ / x) atTop (𝓝 0) := by
+  have hinv : Tendsto (fun x : ℕ => ((x:ℝ))⁻¹) atTop (𝓝 0) :=
+    tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop
+  have hg : Tendsto (fun x : ℕ => |(f x : ℝ) / x - δ| + ((x:ℝ))⁻¹) atTop (𝓝 0) := by
+    have := ((h.sub_const δ).abs).add hinv; simpa using this
+  refine squeeze_zero' (Eventually.of_forall (fun _ => by positivity)) ?_ hg
+  filter_upwards [eventually_gt_atTop 0] with x hx
+  have hxp : (0:ℝ) < x := by exact_mod_cast hx
+  have e1 : ((f (x + 1) : ℕ) : ℂ) - (δ : ℂ) * x = (((f (x + 1) : ℝ) - δ * x : ℝ) : ℂ) := by push_cast; ring
+  rw [e1, Complex.norm_real, Real.norm_eq_abs]
+  have e2 : (f x : ℝ) / x - δ = ((f x : ℝ) - δ * x) / x := by field_simp
+  rw [e2, abs_div, abs_of_pos hxp]
+  have a1 : (f (x + 1) : ℝ) ≤ f x + 1 := by exact_mod_cast hf x
+  have a2 : (f x : ℝ) ≤ f (x + 1) := by exact_mod_cast hf' x
+  have key : |(f (x + 1) : ℝ) - δ * x| ≤ |(f x : ℝ) - δ * x| + 1 := by
+    rw [abs_le]; constructor <;> cases abs_cases ((f x : ℝ) - δ * x) <;> linarith
+  calc _ ≤ (|(f x : ℝ) - δ * x| + 1) / x := div_le_div_of_nonneg_right key hxp.le
+    _ = _ := by rw [add_div, one_div]
+
+open Classical in
+theorem count_succ_le (p : ℕ → Prop) (x : ℕ) : Nat.count p (x + 1) ≤ Nat.count p x + 1 := by
+  rw [Nat.count_succ]; split_ifs <;> omega
+
+open Classical in
+theorem count_le_succ (p : ℕ → Prop) (x : ℕ) : Nat.count p x ≤ Nat.count p (x + 1) := by
+  rw [Nat.count_succ]; omega
+
+/-- Density of `{d : Cp(d mod 16), gcd(d, r) = 1, no odd square factor}`. -/
+noncomputable def dens (Cp : ℕ → Prop) (hC0 : ¬ Cp 0) (r : ℕ) : ℝ :=
+  if h : 0 < r then Classical.choose (Q_density Cp hC0 r h) else 0
+
+open Classical in
+/-- Generic unconditional moment limit. -/
+theorem moment_uncond (F : ℕ → Prop) [DecidablePred F] (Cp : ℕ → Prop) (hC0 : ¬ Cp 0)
+    (hF : ∀ d, F d ↔ Cp (d % 16) ∧ Odf d) (χ : ℕ → ℕ → ℂ)
+    (hχ : ∀ d r, 0 < r → χ d (r * r) = if Nat.Coprime d r then 1 else 0)
+    (hprod : ∀ d (k : ℕ) (f : Fin k → ℕ), (∀ i, f i ≠ 0) → χ d (∏ i, f i) = ∏ i, χ d (f i))
+    (HGS : ∀ x n, 1 < n → ¬ IsSquare n → ‖∑ d ∈ Ioc 0 x, (if F d then χ d n else 0)‖ ≤ GSKron.GSB n x)
+    (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k : ℕ) :
+    Tendsto (fun x : ℕ => ((x:ℂ))⁻¹ *
+        ∑ d ∈ Ioc 0 x, (if F d then (∑ p ∈ P, a p * χ d p) ^ k else 0)) atTop
+      (𝓝 (∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
+          (∏ i, a (f i)) * (dens Cp hC0 (Nat.sqrt (∏ i, f i)) : ℂ))) := by
+  set c : ℕ → ℂ := fun n => (dens Cp hC0 (Nat.sqrt n) : ℂ)
+  set R : ℕ → ℕ → ℝ := fun n x => if IsSquare n ∧ 0 < n then
+    ‖∑ d ∈ Ioc 0 x, (if F d then χ d n else 0) - c n * x‖ else 0
+  apply lim_of_bound _ _ _ (fun x => moment_generic F χ hprod P hP a k x c (fun n => R n x) (fun n => GSKron.GSB n x)
+    (fun n hn hs => by simp only [R, if_pos (And.intro hs hn)]; exact le_rfl) (HGS x))
+  simp_rw [sum_div]
+  rw [show (0:ℝ) = ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P), 0 by simp]
+  apply tendsto_finsetSum; intro f _
+  simp_rw [mul_div_assoc]
+  rw [show (0:ℝ) = ‖∏ i, a (f i)‖ * 0 by simp]
+  apply Tendsto.const_mul
+  split_ifs with hsq
+  · set n := ∏ i, f i
+    by_cases hn : 0 < n
+    · simp only [R, if_pos (And.intro hsq hn)]
+      obtain ⟨r, hr⟩ := hsq
+      have hr0 : 0 < r := Nat.pos_of_ne_zero (by rintro rfl; simp at hr; omega)
+      rw [hr]
+      simp only [c, Nat.sqrt_eq]
+      simp_rw [sum_eq_count F Cp hC0 hF χ hr0 (hχ · r hr0)]
+      have hd : dens Cp hC0 r = Classical.choose (Q_density Cp hC0 r hr0) := by simp [dens, hr0]
+      rw [hd]
+      exact shift_lim (Nat.count (Q Cp r)) (count_succ_le _) (count_le_succ _) _
+        (Classical.choose_spec (Q_density Cp hC0 r hr0))
+    · have h0 : ∀ x, R n x = 0 := fun x => by simp only [R]; rw [if_neg (fun h => hn h.2)]
+      simp_rw [h0, zero_div]; exact tendsto_const_nhds
+  · exact GSB_div _
+
+/-- **Unconditional moments, positive fundamental discriminants.** For finite `P ⊂ ℕ>0`, weights `a`,
+`S_D = Σ_{p∈P} a_p (D|p)`: `(1/x) Σ_{0<D≤x fund.} S_D^k → Σ_{f∈P^k, ∏f=□} (∏ a_{f i}) δ₊(√∏f)`,
+`δ₊(r)` the natural density of positive fundamental discriminants coprime to `r`. -/
+theorem moment_pos_unconditional (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k : ℕ) :
+    Tendsto (fun x : ℕ => ((x:ℂ))⁻¹ *
+        ∑ d ∈ Ioc 0 x, (if fundPos d then (∑ p ∈ P, a p * kron d p) ^ k else 0)) atTop
+      (𝓝 (∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
+          (∏ i, a (f i)) * (dens CpPos CpPos0 (Nat.sqrt (∏ i, f i)) : ℂ))) :=
+  moment_uncond fundPos CpPos CpPos0 fundPos_iff (fun d n => kron d n)
+    (fun d r hr => kron_sq_nat d hr) (fun d k f hf => kron_prod d f hf)
+    (fun x n h1 hs => GSKron.gs_kron_pos h1 hs x) P hP a k
+
+/-- **Unconditional moments, negative fundamental discriminants** (`D = -d`). -/
+theorem moment_neg_unconditional (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k : ℕ) :
+    Tendsto (fun x : ℕ => ((x:ℂ))⁻¹ *
+        ∑ d ∈ Ioc 0 x, (if fundNeg d then (∑ p ∈ P, a p * kron (-(d:ℤ)) p) ^ k else 0)) atTop
+      (𝓝 (∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
+          (∏ i, a (f i)) * (dens CpNeg CpNeg0 (Nat.sqrt (∏ i, f i)) : ℂ))) :=
+  moment_uncond fundNeg CpNeg CpNeg0 fundNeg_iff (fun d n => kron (-(d:ℤ)) n)
+    (fun d r hr => by rw [kron_neg_sq_nat d hr]; exact kron_sq_nat d hr)
+    (fun d k f hf => kron_prod _ f hf)
+    (fun x n h1 hs => GSKron.gs_kron_neg h1 hs x) P hP a k
+
+end GSUncond
+
+#print axioms GSUncond.moment_pos_unconditional
+#print axioms GSUncond.moment_neg_unconditional
