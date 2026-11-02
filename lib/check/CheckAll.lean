@@ -230,6 +230,7 @@ import Redheffer
 import HodgeAxioms
 import Transpose
 import GravastarTower
+import Junction4
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1305,3 +1306,5 @@ the linear algebra of its certificates. -/
 #print axioms GravastarTower.rh_of_tendsto
 #print axioms GravastarTower.formS_union
 #print axioms GravastarTower.rh_of_cofinal
+#print axioms Junction4.glued_nonneg
+#print axioms Junction4.glued_nonneg_four
