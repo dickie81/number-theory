@@ -5,9 +5,9 @@ import ShortSieveCertRev
 
 The reversed nodes have two rough items, and the certificate decomposes either one by Buchstab's identity. This file
 treats a node `⟨k, m + 1, s, conds⟩` with any number of rough items and decomposes its last one at the level
-`x^{1/25}`; a node whose other item is to be decomposed first swaps its two items (`swapN`).
+`x^{1/20}`; a node whose other item is to be decomposed first swaps its two items (`swapN`).
 
-* `Inv`: the invariant of a node's conditions, its primes at least `x^{1/25}` and each rough item at least its sifting
+* `Inv`: the invariant of a node's conditions, its primes at least `x^{1/20}` and each rough item at least its sifting
   prime (`StdInv.inv`, `RevInv.inv` for the standard and reversed nodes).
 * `lastChild`: the Buchstab child, with the condition that its last item is at least the new prime, which its terms
   satisfy (`count_last`); it keeps the invariants (`Inv.last`, `CondsOK.last`).
@@ -21,20 +21,20 @@ open ShortSieveNode ShortSieveExpand ShortSieveBuch ShortSieveTree ShortSieveTyp
 
 open Classical
 
-/-- The invariant of a node's conditions: its primes are at least `x^{1/25}`, and each rough item is at least its
+/-- The invariant of a node's conditions: its primes are at least `x^{1/20}`, and each rough item is at least its
 sifting prime. -/
 def Inv (N : Node) : Prop :=
   ∀ x : ℝ, 1 < x → ∀ v : (Fin N.k → ℕ) × (Fin N.m → ℕ), (∀ a, 0 < v.1 a) → (∀ i, 0 < v.2 i) →
-    (∀ C ∈ N.conds, C.Holds x v.1 v.2) → (∀ a, x ^ (1 / 25 : ℝ) ≤ v.1 a) ∧ ∀ i, v.1 (N.s i) ≤ v.2 i
+    (∀ C ∈ N.conds, C.Holds x v.1 v.2) → (∀ a, x ^ (1 / 20 : ℝ) ≤ v.1 a) ∧ ∀ i, v.1 (N.s i) ≤ v.2 i
 
-/-- A node's terms have primes above `x^c`, for `c < 1/25`, and rough items above `1`. -/
-theorem Inv.big {N : Node} (h : Inv N) {c : ℝ} (hc1 : c < 1 / 25) :
+/-- A node's terms have primes above `x^c`, for `c < 1/20`, and rough items above `1`. -/
+theorem Inv.big {N : Node} (h : Inv N) {c : ℝ} (hc1 : c < 1 / 20) :
     ∀ᶠ x in atTop, ∀ v ∈ N.terms x, (∀ a, x ^ c < v.1 a) ∧ ∀ i, 1 < v.2 i := by
   filter_upwards [eventually_gt_atTop 1] with x hx v hv
   obtain ⟨hvp, -, hcv⟩ := mem_filter.1 hv
   obtain ⟨hp, hρ⟩ := mem_pairs.1 hvp
   obtain ⟨h1, h2⟩ := h x hx v (fun a => (hp a).2.pos) (fun i => (hρ i).1) hcv
-  have hxc : (1 : ℝ) < x ^ (1 / 25 : ℝ) := Real.one_lt_rpow hx (by norm_num)
+  have hxc : (1 : ℝ) < x ^ (1 / 20 : ℝ) := Real.one_lt_rpow hx (by norm_num)
   refine ⟨fun a => (Real.rpow_lt_rpow_of_exponent_lt hx hc1).trans_le (h1 a), fun i => ?_⟩
   have := (h1 (N.s i)).trans (Nat.cast_le.2 (h2 i))
   exact_mod_cast hxc.trans_le this
@@ -78,12 +78,12 @@ theorem holds_geLast {k m : ℕ} (x : ℝ) {v : (Fin (k + 1) → ℕ) × (Fin (m
   rw [← sub_eq_add_neg, sub_nonpos, Real.log_le_log_iff (by exact_mod_cast hv1 _) (by exact_mod_cast hv2 _),
     Nat.cast_le]
 
-/-- **The Buchstab child of the last item** at the level `x^{1/25}`, with the condition that its last item is at least
+/-- **The Buchstab child of the last item** at the level `x^{1/20}`, with the condition that its last item is at least
 the new prime. -/
 @[reducible] noncomputable def lastChild {k m : ℕ} (s : Fin (m + 1) → Fin k) (conds : List (Cond k (m + 1))) : Node :=
   ⟨k + 1, m + 1, Function.update (fun i => (s i).castSucc) (Fin.last m) (Fin.last k),
     geLast k m :: (conds.map (Cond.split · (Fin.last m)) ++
-      [lvlCond (1 / 25) (fun _ => 0), ltCond (s (Fin.last m))])⟩
+      [lvlCond (1 / 20) (fun _ => 0), ltCond (s (Fin.last m))])⟩
 
 theorem pos_merge {k m : ℕ} (i₀ : Fin m) {v : (Fin (k + 1) → ℕ) × (Fin m → ℕ)} (hv1 : ∀ a, 0 < v.1 a)
     (hv2 : ∀ i, 0 < v.2 i) : (∀ a, 0 < (merge i₀ v).1 a) ∧ ∀ i, 0 < (merge i₀ v).2 i := by
@@ -99,12 +99,12 @@ theorem pos_merge {k m : ℕ} (i₀ : Fin m) {v : (Fin (k + 1) → ℕ) × (Fin 
 /-- The Buchstab child's conditions at a pair: the node's at the merged pair, the level and the order. -/
 theorem lastConds_facts {k m : ℕ} {s : Fin (m + 1) → Fin k} {conds : List (Cond k (m + 1))} {x : ℝ} (hx : 0 < x)
     {v : (Fin (k + 1) → ℕ) × (Fin (m + 1) → ℕ)} (hv1 : ∀ a, 0 < v.1 a) (hv2 : ∀ i, 0 < v.2 i)
-    (hc : ∀ C ∈ ((⟨k, m + 1, s, conds⟩ : Node).buch (Fin.last m) (1 / 25) (fun _ => 0)).conds, C.Holds x v.1 v.2) :
+    (hc : ∀ C ∈ ((⟨k, m + 1, s, conds⟩ : Node).buch (Fin.last m) (1 / 20) (fun _ => 0)).conds, C.Holds x v.1 v.2) :
     (∀ C ∈ conds, C.Holds x (merge (Fin.last m) v).1 (merge (Fin.last m) v).2) ∧
-      x ^ (1 / 25 : ℝ) ≤ v.1 (Fin.last k) ∧ v.1 (Fin.last k) < v.1 (s (Fin.last m)).castSucc := by
+      x ^ (1 / 20 : ℝ) ≤ v.1 (Fin.last k) ∧ v.1 (Fin.last k) < v.1 (s (Fin.last m)).castSucc := by
   have e1 : v.1 = Fin.snoc (Fin.init v.1) (v.1 (Fin.last k)) := (Fin.snoc_init_self v.1).symm
   refine ⟨fun C hC => holds_merge C _ x hv1 hv2 (hc _ (List.mem_append_left _ (List.mem_map_of_mem hC))), ?_, ?_⟩
-  · have h := hc (lvlCond (1 / 25) (fun _ => 0)) (List.mem_append_right _ (by simp))
+  · have h := hc (lvlCond (1 / 20) (fun _ => 0)) (List.mem_append_right _ (by simp))
     rw [e1, holds_lvlCond (p := Fin.init v.1) _ _ hx (fun j => hv1 _) (hv1 _), lvlOf_zero, Nat.ceil_le] at h
     exact h
   · have h := hc (ltCond (s (Fin.last m))) (List.mem_append_right _ (by simp))
@@ -114,10 +114,10 @@ theorem lastConds_facts {k m : ℕ} {s : Fin (m + 1) → Fin k} {conds : List (C
 /-- **The child's terms satisfy the added condition**, so the child's count is the Buchstab child's. -/
 theorem count_last {k m : ℕ} {s : Fin (m + 1) → Fin k} {conds : List (Cond k (m + 1))}
     (hinv : Inv ⟨k, m + 1, s, conds⟩) {x : ℝ} (hx : 1 < x) (y : ℝ) :
-    ((⟨k, m + 1, s, conds⟩ : Node).buch (Fin.last m) (1 / 25) (fun _ => 0)).count x y =
+    ((⟨k, m + 1, s, conds⟩ : Node).buch (Fin.last m) (1 / 20) (fun _ => 0)).count x y =
       (lastChild s conds).count x y := by
   symm
-  refine count_cons_of_implied ((⟨k, m + 1, s, conds⟩ : Node).buch (Fin.last m) (1 / 25) (fun _ => 0)) _ x y
+  refine count_cons_of_implied ((⟨k, m + 1, s, conds⟩ : Node).buch (Fin.last m) (1 / 20) (fun _ => 0)) _ x y
     fun v hv hr hI => ?_
   obtain ⟨hp, hρ⟩ := mem_pairs.1 hv
   have hv1 : ∀ a, 0 < v.1 a := fun a => (hp a).2.pos
@@ -286,12 +286,12 @@ theorem itemsOK_last {k m : ℕ} {A : Rows k (m + 1)} {items : List LF} (hI : It
 /-! ### The Type I term and the decision -/
 
 /-- The Type I term of Buchstab's step on the last item: the other items sifted as in the node, the last free of
-primes below `x^{1/25}`, the term's cofactor. -/
+primes below `x^{1/20}`, the term's cofactor. -/
 @[reducible] noncomputable def lastT {k m : ℕ} (s : Fin (m + 1) → Fin k) (conds : List (Cond k (m + 1))) : TNode :=
-  ⟨k, m, fun i => s i.castSucc, 1 / 25, conds⟩
+  ⟨k, m, fun i => s i.castSucc, 1 / 20, conds⟩
 
 theorem lastT_toJ {k m : ℕ} (s : Fin (m + 1) → Fin k) (conds : List (Cond k (m + 1))) :
-    (lastT s conds).toJ = (⟨k, m + 1, s, conds⟩ : Node).toJ (Fin.last m) (1 / 25) (fun _ => 0) := by
+    (lastT s conds).toJ = (⟨k, m + 1, s, conds⟩ : Node).toJ (Fin.last m) (1 / 20) (fun _ => 0) := by
   simp only [TNode.toJ, Node.toJ, lastT]
   congr 1
   funext i
@@ -330,9 +330,9 @@ theorem typeIReg_of_checkL {k m : ℕ} {s : Fin (m + 1) → Fin k} {conds : List
     {labels : List ℕ} {kind : ℕ} (hcheck : typeICheck items (k + m) E B acts labels kind = true) :
     ∃ (role : Fin k ⊕ Fin m → Fin 3) (kd : Bool), (kd = false → ∀ t, role t ≠ 2) ∧
       ∀ᶠ x in atTop, ∀ w ∈ (lastT s conds).terms x, x / 2 < (prodP w : ℝ) → (prodP w : ℝ) ≤ x →
-        TypeIReg (13 / 25) (1 / (100 * DEN)) kd (tExp (lastT s conds) role x w) ∧
+        TypeIReg (21 / 40) (1 / (400 * DEN)) kd (tExp (lastT s conds) role x w) ∧
           tExp (lastT s conds) role x w 0 + tExp (lastT s conds) role x w 1 + tExp (lastT s conds) role x w 2 ≤
-            1 - 1 / (100 * DEN) := by
+            1 - 1 / (400 * DEN) := by
   obtain ⟨hl, h3, hall⟩ := labels_of_check hcheck
   rw [hI.1] at hl hall
   have hlt3 : ∀ t : Fin k ⊕ Fin m, labels.getD (canon t) 0 < 3 := by
@@ -373,36 +373,36 @@ theorem typeIReg_of_checkL {k m : ℕ} {s : Fin (m + 1) → Fin k} {conds : List
     exact val_grpLF_eq hI hl hlt4 ⟨i, by omega⟩ (expo x w)
 
 /-- **Buchstab's step on the last item.** On a sound node whose box passes the Type I check with the last item as the
-cofactor, Buchstab's identity at the level `x^{1/25}` leaves a Type I term, asymptotic by Li's Lemmas 3.1 and 3.2,
+cofactor, Buchstab's identity at the level `x^{1/20}` leaves a Type I term, asymptotic by Li's Lemmas 3.1 and 3.2,
 and the child: the node is `OK` for `σ` with the child's loss for `−σ`. -/
 theorem Sound.OK_of_decL {k m : ℕ} {s : Fin (m + 1) → Fin k} {conds : List (Cond k (m + 1))}
     {A : Rows k (m + 1)} {items : List LF} (hI : ItemsOK A items) {E : ℤ} {Γ : List Con} {B : Box}
     (h : Sound ⟨k, m + 1, s, conds⟩ A E Γ B) (hE : 0 < E) (hk : 0 < k) (hinv : Inv ⟨k, m + 1, s, conds⟩)
     (hcond : CondsOK conds) (hfit : ∀ L ∈ items, L.c.length ≤ B.length) {acts : List LF}
     (hacts : ∀ g ∈ acts, ∃ c ∈ Γ, c.L = g) (hfa : ∀ g ∈ acts, g.c.length ≤ B.length) {labels : List ℕ} {kind : ℕ}
-    (hcheck : typeICheck items (k + m) E B acts labels kind = true) {c ρ σ L : ℝ} (hc : 0 < c) (hc1 : c < 1 / 25)
-    (hρ : 0 < ρ) (hρc : 12 * ρ < c) (hσ : |σ| ≤ 1) (hLi31 : ShortSieveLi.LiLemma31 (13 / 25) (2 / 25) ρ)
-    (hLi32 : ShortSieveLi.LiLemma32 (13 / 25) (2 / 25) ρ)
-    (hG : OK (13 / 25) ρ (-σ) (fun x y => ((lastChild s conds).count x y : ℝ)) L) :
-    OK (13 / 25) ρ σ (fun x y => ((⟨k, m + 1, s, conds⟩ : Node).count x y : ℝ)) L := by
-  have hθρ : (13 / 25 : ℝ) ≤ 1 - ρ := by linarith
+    (hcheck : typeICheck items (k + m) E B acts labels kind = true) {c ρ σ L : ℝ} (hc : 0 < c) (hc1 : c < 1 / 20)
+    (hρ : 0 < ρ) (hρc : 12 * ρ < c) (hσ : |σ| ≤ 1) (hLi31 : ShortSieveLi.LiLemma31 (21 / 40) (1 / 10) ρ)
+    (hLi32 : ShortSieveLi.LiLemma32 (21 / 40) (1 / 10) ρ)
+    (hG : OK (21 / 40) ρ (-σ) (fun x y => ((lastChild s conds).count x y : ℝ)) L) :
+    OK (21 / 40) ρ σ (fun x y => ((⟨k, m + 1, s, conds⟩ : Node).count x y : ℝ)) L := by
+  have hθρ : (21 / 40 : ℝ) ≤ 1 - ρ := by linarith
   -- the level is at most the last item's sifting prime
   have hlvl : ∀ x : ℝ, 1 < x → ∀ v ∈ pairs k (m + 1) ⌊x⌋₊, (∀ C ∈ conds, C.Holds x v.1 v.2) →
-      lvlOf (1 / 25) (fun _ => 0) x v.1 ≤ v.1 (s (Fin.last m)) := by
+      lvlOf (1 / 20) (fun _ => 0) x v.1 ≤ v.1 (s (Fin.last m)) := by
     intro x hx v hv hcv
     obtain ⟨hp, hρ'⟩ := mem_pairs.1 hv
     obtain ⟨h2, -⟩ := hinv x hx v (fun a => (hp a).2.pos) (fun i => (hρ' i).1) hcv
     rw [lvlOf_zero, Nat.ceil_le]
     exact h2 _
   -- the child
-  have hG' : OK (13 / 25) ρ (-σ) (fun x y =>
-      (((⟨k, m + 1, s, conds⟩ : Node).buch (Fin.last m) (1 / 25) (fun _ => 0)).count x y : ℝ)) L := by
+  have hG' : OK (21 / 40) ρ (-σ) (fun x y =>
+      (((⟨k, m + 1, s, conds⟩ : Node).buch (Fin.last m) (1 / 20) (fun _ => 0)).count x y : ℝ)) L := by
     refine OK_congr ?_ hθρ hG
     filter_upwards [eventually_gt_atTop 1] with x hx y _ _
     rw [count_last hinv hx y]
   -- the Type I term
-  have hJ : Asym (13 / 25) ρ (fun x y =>
-      (((⟨k, m + 1, s, conds⟩ : Node).toJ (Fin.last m) (1 / 25) (fun _ => 0)).count x y : ℝ)) := by
+  have hJ : Asym (21 / 40) ρ (fun x y =>
+      (((⟨k, m + 1, s, conds⟩ : Node).toJ (Fin.last m) (1 / 20) (fun _ => 0)).count x y : ℝ)) := by
     obtain ⟨role, kd, hrole, hreg⟩ := typeIReg_of_checkL hI h hE hfit hacts hfa hcheck
     have hbigT : ∀ᶠ x in atTop, ∀ w ∈ (lastT s conds).terms x, (∀ a, x ^ c < w.1 a) ∧
         ∀ i : Fin (lastT s conds).m, 1 < w.2 i.castSucc := by
@@ -410,13 +410,13 @@ theorem Sound.OK_of_decL {k m : ℕ} {s : Fin (m + 1) → Fin k} {conds : List (
       obtain ⟨hwp, -, hcw⟩ := mem_filter.1 hw
       obtain ⟨hp, hρ'⟩ := mem_pairs.1 hwp
       obtain ⟨h1, h2⟩ := hinv x hx w (fun a => (hp a).2.pos) (fun i => (hρ' i).1) hcw
-      have hxc : (1 : ℝ) < x ^ (1 / 25 : ℝ) := Real.one_lt_rpow hx (by norm_num)
+      have hxc : (1 : ℝ) < x ^ (1 / 20 : ℝ) := Real.one_lt_rpow hx (by norm_num)
       refine ⟨fun a => (Real.rpow_lt_rpow_of_exponent_lt hx hc1).trans_le (h1 a), fun i => ?_⟩
       have := (h1 (s i.castSucc)).trans (Nat.cast_le.2 (h2 i.castSucc))
       exact_mod_cast hxc.trans_le this
     have hrel := abs_count_sub_le_typeI (lastT s conds) hk hc (by linarith) hρ hρc
-      (show (0 : ℝ) < 1 / 25 by norm_num) (show 12 * ρ < (1 / 25 : ℝ) by linarith)
-      (show (1 / 25 : ℝ) ≤ 2 * (13 / 25) - 1 by norm_num) (by norm_num) (by norm_num)
+      (show (0 : ℝ) < 1 / 20 by norm_num) (show 12 * ρ < (1 / 20 : ℝ) by linarith)
+      (show (1 / 20 : ℝ) ≤ 2 * (21 / 40) - 1 by norm_num) (by norm_num) (by norm_num)
       (div_pos one_pos (mul_pos (by norm_num) DEN_pos)) hLi31 hLi32 hcond hbigT role kd hrole hreg
     rw [lastT_toJ] at hrel
     refine asym_of_rel hrel ?_
@@ -427,14 +427,14 @@ theorem Sound.OK_of_decL {k m : ℕ} {s : Fin (m + 1) → Fin k} {conds : List (
       (hinv.last.big hc1)
     refine ⟨CN + CG, by positivity, ?_⟩
     filter_upwards [hCN, hCG, eventually_gt_atTop 1] with x h1 h2 hx
-    rw [count_buchstab (⟨k, m + 1, s, conds⟩ : Node) (Fin.last m) (1 / 25) (fun _ => 0) (by linarith) _
+    rw [count_buchstab (⟨k, m + 1, s, conds⟩ : Node) (Fin.last m) (1 / 20) (fun _ => 0) (by linarith) _
       (hlvl x hx), count_last hinv hx]
     push_cast
     have e : (CN + CG) * x ^ (1 - ρ) / Real.log x =
         CN * x ^ (1 - ρ) / Real.log x + CG * x ^ (1 - ρ) / Real.log x := by ring
     rw [e]
     exact add_le_add h1 h2
-  exact OK_of_buch (⟨k, m + 1, s, conds⟩ : Node) (Fin.last m) (1 / 25) (fun _ => 0)
+  exact OK_of_buch (⟨k, m + 1, s, conds⟩ : Node) (Fin.last m) (1 / 20) (fun _ => 0)
     ((eventually_gt_atTop 1).mono fun x hx => hlvl x hx) hθρ hσ hJ hG'
 
 /-! ### The child's coordinates -/
@@ -465,7 +465,7 @@ def ordL (F : LF) (d : ℕ) : Con := ⟨(unitLF d).add (F.smul (-1)), true⟩
 /-- The last item is at least the new prime: `2 X_d − G ≤ 0`, `G` the parent's last item's form. -/
 def geL (G : LF) (d : ℕ) : Con := ⟨((unitLF d).smul 2).add (G.smul (-1)), false⟩
 
-/-- **The child's coordinates**: the node's, the new prime's in `[DEN/25, max F)` with `F` its sifting prime's form,
+/-- **The child's coordinates**: the node's, the new prime's in `[DEN/20, max F)` with `F` its sifting prime's form,
 below the sifting prime, and the last item at least the new prime. -/
 theorem Sound.last_child {k m : ℕ} {s : Fin (m + 1) → Fin k} {conds : List (Cond k (m + 1))}
     {A : Rows k (m + 1)} {items : List LF} (hI : ItemsOK A items) {E : ℤ} {Γ : List Con} {B : Box}
@@ -500,7 +500,7 @@ theorem Sound.last_child {k m : ℕ} {s : Fin (m + 1) → Fin k} {conds : List (
     · rw [coords_eq, coords_eq, show slack x v = cH (expo x v) from rfl,
         show slack x (merge (Fin.last m) v) = cH (expo x (merge (Fin.last m) v)) from rfl, eF,
         expo_merge_eq (Fin.last m) x hv1 hv2]
-  have h1 := h.buch hf (Fin.last m) (1 / 25) (fun _ => 0) NU0 (F.maxB B E) [ordL F B.length] ?_
+  have h1 := h.buch hf (Fin.last m) (1 / 20) (fun _ => 0) NU0 (F.maxB B E) [ordL F B.length] ?_
   · intro x hx v hv1 hv2 hc hH
     have hge := (holds_geLast x hv1 hv2).1 (hc _ List.mem_cons_self)
     obtain ⟨hB, hΓ⟩ := h1 x hx v hv1 hv2 (fun C hC => hc C (List.mem_cons_of_mem _ hC)) hH
@@ -541,11 +541,11 @@ theorem Sound.last_child {k m : ℕ} {s : Fin (m + 1) → Fin k} {conds : List (
     refine ⟨?_, ?_, fun c hc' => ?_⟩
     · -- the level
       rw [eN, NU0_eq]
-      have h2 : Real.log x / 25 ≤ Real.log (v.1 (Fin.last k)) := by
+      have h2 : Real.log x / 20 ≤ Real.log (v.1 (Fin.last k)) := by
         have := Real.log_le_log (Real.rpow_pos_of_pos hx0 _) hlvl
         rw [Real.log_rpow hx0] at this
         linarith
-      calc (DEN : ℝ) / 25 = DEN * ((Real.log x / 25) / Real.log x) := by field_simp
+      calc (DEN : ℝ) / 20 = DEN * ((Real.log x / 20) / Real.log x) := by field_simp
         _ ≤ DEN * (Real.log (v.1 (Fin.last k)) / Real.log x) :=
           mul_le_mul_of_nonneg_left (div_le_div_of_nonneg_right h2 hlx.le) hD.le
     · calc _ < F.val (coords (buchRows A (Fin.last m) B.length) x v) (slack x v) := hord

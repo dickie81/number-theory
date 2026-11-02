@@ -1,37 +1,40 @@
-# Primes in short intervals at `θ = 13/25`, after R. Li: work in progress
+# Primes in short intervals at `θ = 21/40`, after R. Li: work in progress
 
 R. Li proves that `(x − x^θ, x]` contains primes for `θ = 0.52` and large `x` (arXiv:2308.04458v8), by Harman's
 sieve with Baker, Harman and Pintz's decomposition. The library is formalising that proof, with Hölder's inequality
 with real exponents and Huxley's large values in place of Li's Type II lemmas. The formalisation is not finished: the
-results below are its parts so far, and no paper of the repository claims them. They are stated at `θ = 13/25`; the
-first certificate will be at `θ = 21/40 = 0.525`, where the margin leaves room for one (`tools/short/README.md`).
+results below are its parts so far, and no paper of the repository claims them. They are stated at `θ = 21/40 = 0.525`,
+where the margin leaves room for a certificate (`tools/short/README.md`), before Li's `13/25`.
 
 ## The assembly
 
 **Lean:** `lib/pnt/ShortSieveThree.lean`:
 
 ```lean
-theorem ShortSieveThree.primes_of_cells {ρ : ℝ} (hLi : LiLemma31 (13 / 25) (2 / 25) ρ) (hρ : 0 < ρ)
-    (hρθ : 12 * ρ < 1 / 25) (L : Bool → ℕ × ℕ → ℝ)
-    (h : ∀ r, ∀ c ∈ cells r, OK (13 / 25) ρ 1 (fun x y => ((cell c.1 c.2 r).count x y : ℝ)) (L r c)) :
-    ∀ ε : ℝ, 0 < ε → ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, x ^ (13 / 25 : ℝ) ≤ y → y ≤ x ^ (1 - ρ) →
+theorem ShortSieveThree.primes_of_cells {ρ : ℝ} (hLi : LiLemma31 (21 / 40) (1 / 10) ρ) (hρ : 0 < ρ)
+    (hρθ : 12 * ρ < 1 / 20) (L : Bool → ℕ × ℕ → ℝ)
+    (h : ∀ r, ∀ c ∈ cells r, OK (21 / 40) ρ 1 (fun x y => ((cell c.1 c.2 r).count x y : ℝ)) (L r c)) :
+    ∀ ε : ℝ, 0 < ε → ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, x ^ (21 / 40 : ℝ) ≤ y → y ≤ x ^ (1 - ρ) →
       (1 - (∑ c ∈ cells true, L true c + ∑ c ∈ cells false, L false c) - ε) * y / Real.log x ≤
         ((Ioc ⌊x - y⌋₊ ⌊x⌋₊).filter Nat.Prime).card
 ```
 
-In words: Li's identity `S(A, √x) = S(A, x^{ν(0)}) − Σ_p S(A_p, x^{ν(α_p)}) + Σ₃` holds exactly in any interval
-(`ShortSieveTop.top_identity`). Its first two sums are asymptotic by Li's Lemma 3.1 (`ShortSieveRoot.abs_S1_sub_le`,
-`ShortSieveRoot.abs_S2_liNu_sub_le`), and the terms of `Σ₃` are the counts of the certificate's root cells, the cells
-`(k/50, (k + 1)/50] × [j/50, (j + 1)/50)` of `(α₁, α₂)`: 253 in Li's region `C` and 91 outside it
-(`ShortSieveThree.bigThree_eq_cells`). So loss bounds `L` on the cells, in the sense of `ShortSieveTree.OK`, give
-`π(x) − π(x − y) ≥ (1 − ΣL − ε) y/log x` for `x^{13/25} ≤ y ≤ x^{1−ρ}`. The certificate is to supply the bounds,
-with `ΣL < 1`.
+In words: Li's identity `S(A, √x) = S(A, x^{a₀}) − Σ_p S(A_p, x^{ν(α_p)}) + Σ₃` holds exactly in any interval
+(`ShortSieveTop.top_identity`). At `θ = 21/40`, `1/(4θ − 2) = 10` is an integer, and Li's level `ν` is `2θ − 1 = 1/20`
+at `0` but exceeds `α` on `(1/20, 21/380)`, where Buchstab's step at `x^{ν(α_p)}` would need `x^{ν(α_p)} ≤ p`; so the
+decomposition starts at `a₀ = 1/20` and holds the level at `1/20` up to `3/40` (`ShortSieveRoot.nuH`,
+`ShortSieveThree.nuC`). The first two sums are asymptotic by Li's Lemma 3.1 (`ShortSieveRoot.abs_S1_sub_le`, and
+`ShortSieveRoot.abs_S2_held_sub_le` from `abs_S2_liNu_sub_le` on Li's pieces), and the terms of `Σ₃` are the counts of
+the certificate's root cells, the cells `(k/40, (k + 1)/40] × [j/40, (j + 1)/40)` of `(α₁, α₂)`: 144 in Li's region
+`C` and 60 outside it (`ShortSieveThree.bigThree_eq_cells`). So loss bounds `L` on the cells, in the sense of
+`ShortSieveTree.OK`, give `π(x) − π(x − y) ≥ (1 − ΣL − ε) y/log x` for `x^{21/40} ≤ y ≤ x^{1−ρ}`. The certificate is
+to supply the bounds, with `ΣL < 1`.
 
 ## The root cells
 
 Each root cell is a standard node with two primes (`ShortSieveCert.cell_eq_std`), and the certificate starts it with the
-box `[k DEN/50, (k + 1) DEN/50 + 1) × [j DEN/50, (j + 1) DEN/50)` of the primes' coordinates and the constraints
-`q < p`, `q ≤ ρ`, Li's level and the region: `ShortSieveCert.Sound.cell`. The cell's conditions keep the invariants of
+box `[k DEN/40, (k + 1) DEN/40 + 1) × [j DEN/40, (j + 1) DEN/40)` of the primes' coordinates and the constraints
+`q < p`, `q ≤ ρ`, the level and the region: `ShortSieveCert.Sound.cell`. The cell's conditions keep the invariants of
 the standard nodes: `ShortSieveCert.StdInv.cell`, `ShortSieveCert.CondsOK.cell`.
 
 ## The certificate's decisions
@@ -52,9 +55,10 @@ rough items with log-linear conditions). Each decision is a theorem:
 - a dropped box is bounded in the comparison interval: `ShortSieveDrop.count_le_drop1`, `ShortSieveDrop.count_le_drop2`;
   for a standard node (primes and one rough item, sifted by the last prime), by `ω*` and Mertens' sums over the box:
   `ShortSieveCert.Sound.OK_of_drop`, with `ω*` bounded on the box's range by Buchstab's `ω`
-  (`ShortSieveCert.omegaC_le_omUpK`). The checker uses the chain bound instead, which keeps the order
-  `p₀ > p₁ > ⋯ > p_k` of the primes: a dropped standard node's loss is `ω*` times any limit superior of the sum over
-  the strictly decreasing tuples of its box (`ShortSieveCert.Sound.OK_of_dropC`). That sum is a chain sum
+  (`ShortSieveCert.omegaC_le_omUpK`); the kernel computes this product in a few multiplications. Where the primes'
+  ranges overlap, the certificate asks for the chain bound instead, which keeps the order `p₀ > p₁ > ⋯ > p_k` of the
+  primes: a dropped standard node's loss is `ω*` times any limit superior of the sum over the strictly decreasing
+  tuples of its box (`ShortSieveCert.Sound.OK_of_dropC`). That sum is a chain sum
   (`ShortSieveChain.sum_filter_strictAnti`), and a chain splits exactly at a threshold by the number of its primes
   above it (`ShortSieveChain.chainSum_split`). So cutting the primes' range at the ends of their ranges gives a
   dynamic programme over the intervals and the runs, the primes that share an interval (`ShortSieveCert.dpRun_sound`).
@@ -64,7 +68,7 @@ rough items with log-linear conditions). Each decision is a theorem:
 - Buchstab's identity and Li's role reversals are exact identities between counts: `ShortSieveBuch.count_buchstab`,
   `ShortSieveBuch.count_rev`, with the certificate's coordinates kept by `ShortSieveCert.Sound.buch`; the Type I terms
   they leave are asymptotic by Li's Lemmas 3.1 and 3.2 (`ShortSieveTypeI.abs_count_sub_le_typeI`). For a standard node,
-  Buchstab's step at the level `x^{1/25}` with the box in Li's regions `D′₀`, `D′₁` or `D′₂` leaves the node the child's
+  Buchstab's step at the level `x^{1/20}` with the box in Li's regions `D′₀`, `D′₁` or `D′₂` leaves the node the child's
   loss: `ShortSieveCert.Sound.OK_of_dec`; the child keeps the coordinates and the invariants:
   `ShortSieveCert.Sound.std_child`, `ShortSieveCert.StdInv.child`, `ShortSieveCert.CondsOK.child`. Li's role reversal
   of a standard node, its first prime the Type I term's cofactor, likewise leaves the node the reversed child's loss:
@@ -89,13 +93,16 @@ rough items with log-linear conditions). Each decision is a theorem:
 
 ## The checker
 
-A certificate (`ShortSieveCert.Cert`) records the decisions on a root cell and its descendants: empty regions, splits
-by a constraint and box cuts, the Type II and Lemma 4.1 tests, Buchstab's steps, role reversals, swaps of two rough
-items and drops. The checker (`ShortSieveCert.run`) replays them on the node's shape, constraints and box, and returns
-the loss in units `2^{−50}`, each drop's bound rounded up. Its soundness, by induction over the certificate: if the
-checker passes with the loss `L`, the node is `OK` for its sign with the loss `L/2^{50}`
-(`ShortSieveCert.run_sound`). So certificates for the 344 root cells give primes in short intervals, with the sum of
-their losses: `ShortSieveCert.primes_of_certs`.
+A certificate (`ShortSieveCert.Cert`) records the decisions on a root cell and its descendants: empty regions, splits by
+a constraint and box cuts, the Type II and Lemma 4.1 tests, Buchstab's steps, role reversals, swaps of two rough items
+and drops. It can name the constraint behind a step, so the kernel evaluates one form instead of tightening the box by
+every constraint: a constraint that moves one end of a range (`ShortSieveCert.Sound.up`), and a constraint that fails on
+the box or a range that is empty, either leaving no point (`ShortSieveCert.Sound.OK_of_noPt`). It can also add the sum
+of a constraint and a multiple of another (`ShortSieveCert.Sound.comb`), for the tests' domain-aware extremes. The
+checker (`ShortSieveCert.run`) replays them on the node's shape, constraints and box, and returns the loss in units
+`2^{−50}`, each drop's bound rounded up. Its soundness, by induction over the certificate: if the checker passes with
+the loss `L`, the node is `OK` for its sign with the loss `L/2^{50}` (`ShortSieveCert.run_sound`). So certificates for
+the 204 root cells give primes in short intervals, with the sum of their losses: `ShortSieveCert.primes_of_certs`.
 
 ## How the Lean statements differ from Li's
 
