@@ -227,6 +227,7 @@ import BallSaw
 import FrobTower
 import SmithLattice
 import Redheffer
+import HodgeAxioms
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1198,6 +1199,12 @@ twin-form rates at `11/12`. -/
 #print axioms Redheffer.det_smith
 #print axioms Redheffer.smith_entry
 #print axioms Redheffer.abs_mertens_le
+#print axioms HodgeAxioms.hodge_index
+#print axioms HodgeAxioms.hodge_cs
+#print axioms HodgeAxioms.rh_iff_hodge_h
+#print axioms HodgeAxioms.ample_naive
+#print axioms HodgeAxioms.rr_fails_naive
+#print axioms HodgeAxioms.rh_iff_ample_pos
 #print axioms ZerosInfinite.infinite_ZIdx
 #print axioms ZerosDense.not_linear
 #print axioms BallHadamard.rh_iff_posDefH

@@ -217,3 +217,24 @@ Cauchy–Schwarz, which loses because the vector `c = (M(n/j))_j` has `G`-norm `
 size `√n`: RH says that `c` is far from aligned with the dual vector of the first coordinate, an equidistribution
 statement about `M(n/j)` in Smith's metric, `|⟨e_1, c⟩| ≤ n^{−1/2+ε}·‖c‖_G·‖e_1‖_{G⁻¹}`. No inequality from positivity,
 interlacing or Hadamard alone sees that cancellation; it needs the sign changes of `μ`.
+
+## What forces the signature: the Hodge index axioms (Proved)
+
+`HodgeAxioms` proves the classical argument abstractly: for a symmetric bilinear form `B`, an effective set `Eff` and
+a class `h` with (ample) `B(D, h) > 0` for nonzero effective `D` and (Riemann–Roch) `B(D, D) > 0 ⇒ D` or `−D`
+effective, `B(D, h) = 0 ⇒ B(D, D) ≤ 0` (`HodgeAxioms.hodge_index`), and `B(D, D)B(h, h) ≤ B(D, h)²` when `B(h, h) > 0`
+(`HodgeAxioms.hodge_cs`). For Weil's form of `ζ` with `h = e₁ + e₂`:
+
+| axiom | status for `ζ` |
+|---|---|
+| `h² > 0` | `h² = 2`, unconditional (`BallPole.pole_hyperbolic`) |
+| ample on the cone of nonnegative classes | holds, unconditional (`HodgeAxioms.ample_naive`) |
+| effective classes meet nonnegatively, `D_m·D_n ≥ 0` | Numerical: minimum `1.9538` at `m = n = 1` over `m, n ≤ 200`; not proved |
+| Riemann–Roch dichotomy, nonnegative cone | fails, unconditional (`HodgeAxioms.rr_fails_naive`: `D = e₁ + e₂ − D_1/4`) |
+| Riemann–Roch dichotomy, positive cone `{D² ≥ 0, D·h ≥ 0}` | automatic, but then ampleness is RH (`HodgeAxioms.rh_iff_ample_pos`) |
+| conclusion (Hodge index for `h`) | equivalent to RH (`HodgeAxioms.rh_iff_hodge_h`) |
+
+**The single missing mechanism.** A notion of effectivity defined independently of the intersection form, for which
+both ampleness and the Riemann–Roch dichotomy hold. On a surface it is `h^0(D) > 0`, and the dichotomy is the
+Riemann–Roch inequality `h^0(D) + h^0(K − D) ≥ D²/2 − D·K/2 + χ`; for `ζ` there is no cohomology `h^0` of the formal
+classes `D_n`, and both natural candidate cones fail, one on the dichotomy and the other by circularity.
