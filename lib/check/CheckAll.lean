@@ -27,6 +27,7 @@ import SquarefreeCount
 import D2GS
 import D2Prim
 import D2Tail
+import D2Hcount
 import ExplicitSmooth
 import ExplicitConstants
 import QuadRing
@@ -348,6 +349,8 @@ import CertInstances
 #print axioms GSPrim.primitive_neg
 #print axioms GSTail.tail_pos
 #print axioms GSTail.tail_neg
+#print axioms GSHcount.hcount_pos
+#print axioms GSHcount.hcount_neg
 #print axioms SquarefreeCount.abs_sub_sum_le
 #print axioms SquarefreeCount.abs_sum_sqf_sub_le
 #print axioms SquarefreeCount.squarefree_isBigO_of_zeroFree

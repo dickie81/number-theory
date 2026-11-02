@@ -49,6 +49,19 @@ reciprocity) and `QuadKronecker.jacTop (D/4)` for `4 ∣ D` (`GSPrim.kron_eq_jac
 `p ∣ |D|` there is an `a ≡ 1 (|D|/p)`, coprime to `D`, with `(D|a) = −1` (`GSPrim.wit_odd`, `GSPrim.wit_two`), so
 `χ` factors through no proper divisor (`GSPrim.isPrimitive_of_witness`). Unconditional.
 
+## Quantitative `Hcount`
+
+`lib/pnt/D2Hcount.lean`, unconditional:
+
+```lean
+theorem GSHcount.hcount_pos (r : ℕ) (hr : 0 < r) (x : ℕ) :
+    |(Nat.count (Q CpPos r) x : ℝ) - 3 / Real.pi ^ 2 * gfac r * x| ≤ (16 * r + 3) * (Real.sqrt x + 1)
+```
+
+and `GSHcount.hcount_neg`, the same for `CpNeg`. Möbius over odd `e ≤ √x` (`GSHcount.sum_w`), a periodic count mod
+`16r` for each `e` (`GSHcount.term_bound`), and the tail `Σ_{e>√x} 1/e²` (`GSHcount.tail_le`); the constant is
+identified with the density through `GSNu.delta_pos_closed`.
+
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
 **CONDITIONAL on the half-plane `Re s > 11/12`** (`Eis.LFunction_ne_zero_of_re_gt`, [openai-half-plane.md](openai-half-plane.md)),
