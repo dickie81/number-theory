@@ -497,7 +497,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `WeilChiK1`: The zero sum `K₁ = Σ_ρ 1/(ρ(1 − ρ))` at `s = 1` for a good real character
 
-- `PsiOmega.hasSum_K1`: The zero sum at `s = 1`
+- `PsiOmega.hasSum_K1`: The zero sum at `s = 1` ([note](../formalisations/d2-density.md))
 
 #### `WeilConverse`: The converse: an off-line zero makes Weil's form negative somewhere
 
