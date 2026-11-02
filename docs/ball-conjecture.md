@@ -565,3 +565,15 @@ In the sum over the prime powers in the Gram matrix of stage `N`, a lonely prime
 
 So a positive proportion of the prime directions is always the newest. They are held only through `w_1` and the
 comparisons of size, and their balance is as delicate as RH.
+
+## The orbit curve
+
+`BallCurve` extends the realization of `BallLattice` from the positive rationals to the positive reals: vectors `w_x`
+for real `x > 0`, similitudes `ψ_s` of factor `s` for real `s > 0`, `ψ_s(w_x) = w_{sx}` and
+`⟨w_y, w_x⟩ = √(xy)·K(x/y)`. In log coordinates `v_t = e^{−t/2}w_{e^t}` is the orbit of `v_0` under the one-parameter
+group of isometries `U_s = e^{−s/2}ψ_{e^s}` (`BallCurve.flow_inner`, `BallCurve.flow_orbit`, `BallCurve.flow_add`).
+RH holds exactly when `K` has such a curve realization (`BallCurve.rh_iff_curveRealization`); every one is continuous
+and injective on `(0, ∞)` (`BallCurve.continuousOn_kerK`, `BallCurve.injective_kerK`), and at the integers its
+increments are nonzero with norms tending to `0` (`BallCurve.not_discrete`). Not proved: strong continuity of `s ↦ U_s`
+on the whole space (only along the curve), and anything about lattices spanned by points of the curve other than the
+integers.
