@@ -184,8 +184,37 @@ theorem d2_density (S : ℕ → Finset ℤ) (hS : Tendsto (fun x => ((S x).card 
   refine density_of_dist S hS ℓ (fun D => -(2/5) * (L0 D + c)) μ hdist (fun M => Bf (5/2 * M - c)) ?_ (-2 * c)
   intro M D h; apply hL0; linarith
 
+
+/-- `hL0` discharged: for `L0 D = log (|D|/π) + κ`, only the `D` with `|D| ≤ π e^{R-κ}` have `L0 D ≤ R`. -/
+theorem L0_finite (κ R : ℝ) (D : ℤ) (h : Real.log (|(D:ℝ)| / Real.pi) + κ ≤ R) :
+    D ∈ Finset.Icc (-(⌈Real.pi * Real.exp (R - κ)⌉)) ⌈Real.pi * Real.exp (R - κ)⌉ := by
+  rw [Finset.mem_Icc, ← abs_le]
+  have hb : |(D:ℝ)| ≤ Real.pi * Real.exp (R - κ) := by
+    rcases eq_or_ne D 0 with hD | hD
+    · subst hD; simp; positivity
+    have hpos : 0 < |(D:ℝ)| / Real.pi := div_pos (abs_pos.2 (by exact_mod_cast hD)) Real.pi_pos
+    have := (Real.log_le_iff_le_exp hpos (y := R - κ)).1 (by linarith)
+    rwa [div_le_iff₀ Real.pi_pos, mul_comm] at this
+  have : (|D| : ℝ) ≤ ⌈Real.pi * Real.exp (R - κ)⌉ := by
+    push_cast; exact hb.trans (Int.le_ceil _)
+  exact_mod_cast this
+
+/-- `d2_density` with `L0 D = log(|D|/π) + κ`: the hypothesis `hL0` is no longer needed. -/
+theorem d2_density_log (S : ℕ → Finset ℤ) (hS : Tendsto (fun x => ((S x).card : ℝ)) atTop atTop)
+    (ℓ K1 K2 : ℤ → ℝ) (c κ : ℝ) (μ : Measure ℝ) [IsProbabilityMeasure μ]
+    (hK1 : ∀ D, K1 D = (Real.log (|(D:ℝ)| / Real.pi) + κ) + 2 * ℓ D) (hpos : ∀ D, 0 < K1 D)
+    (hB : ∀ D, K2 D = √2 * (K1 D / 2 + c + ℓ D / 2))
+    (hdist : ∀ t, Tendsto (fun x => prop (S x) (fun D => t < ℓ D)) atTop (𝓝 (μ (Ioi t)).toReal)) :
+    Tendsto (fun x => prop (S x) (fun D => 2 * (1 - K2 D ^ 2 / K1 D ^ 2) < 1)) atTop
+      (𝓝 (μ (Ioi (-2 * c))).toReal) :=
+  d2_density S hS ℓ (fun D => Real.log (|(D:ℝ)| / Real.pi) + κ) K1 K2 c μ hK1 hpos hB hdist
+    (fun R => Finset.Icc (-(⌈Real.pi * Real.exp (R - κ)⌉)) ⌈Real.pi * Real.exp (R - κ)⌉)
+    (fun R D h => L0_finite κ R D h)
+
 end D2Density
 
 #print axioms D2Density.K1_pos
 #print axioms D2Density.density_of_dist
 #print axioms D2Density.d2_density
+
+#print axioms D2Density.d2_density_log
