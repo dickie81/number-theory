@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1157 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1162 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 107 | 304 |
+| `lib/core` | 108 | 309 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -257,6 +257,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.groundState_unique_below_log2`: The ground state of `Q` is unique up to sign for every `a > 0` with `2a < log 2` ([note](../formalisations/weil-positivity.md))
 - `WeilForm.groundState_unique_035`: The ground state of `Q` is unique up to sign for every `0 < a ≤ 0.35` ([note](../formalisations/weil-positivity.md))
+
+#### `FrobTower`: Toeplitz positivity along a tower, and the dictionary to the orbit curve
+
+- `FrobTower.ToeplitzPos.add`
+- `FrobTower.ToeplitzPos.of_tendsto`: Toeplitz positivity passes to pointwise limits
+- `FrobTower.manin_toeplitzPos`: The normalised traces of an elliptic curve over `𝔽_q`, `q` odd, are Toeplitz positive
+- `FrobTower.tower_limit`: Along a tower
+- `FrobTower.curve_toeplitzPos`: The dictionary
 
 #### `GapBound`: The pole-overlap gap bound
 

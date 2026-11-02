@@ -137,3 +137,27 @@ missing factors of `N²` are cancellation between the harmonics that a size boun
 cancellation between harmonics, not a dominant low-frequency term plus a bounded tail. A proof by truncation and mean
 values loses a power of `N` in this model. What would be needed is a positivity statement for the full sawtooth
 kernel `Σ_j Λ(j)s(x/j)` on Farey-type point sets, which is again a form of RH.
+
+## The tower (Proved: limits and dictionary; Speculative: what the limit lacks)
+
+`FrobTower` defines Toeplitz positivity of `c : ℕ → ℝ`, `Σ_{i,j<K} x_i x_j c(|i − j|) ≥ 0`, proves it closed under
+positive rescaling, sums and pointwise limits (`FrobTower.ToeplitzPos.of_tendsto`, `FrobTower.ToeplitzPos.add`,
+`FrobTower.tower_limit`), shows that the normalised traces of an elliptic curve over `𝔽_q`, `q` odd, have it
+(`FrobTower.manin_toeplitzPos`), and that in every curve realization of a kernel `k`, `d ↦ Re k(e^{dh})` has it for every
+step `h` (`FrobTower.curve_toeplitzPos`).
+
+**Dictionary.** `𝔽_q` and its extensions `𝔽_{q^d}` ↔ one step `h = log q` and its multiples; normalised trace `c_d` ↔
+`Re k(e^{dh})`; Frobenius ↔ `U_h`; a tower `E_m/𝔽_{q_m}` with normalisation `g_m` ↔ a family of kernels whose limit is
+Toeplitz positive. In the curve, every `h > 0` is a step at once: positivity on `ℝ` is positivity at all `h`, which a
+single tower over one `q` does not give.
+
+**What the limit loses (Speculative).** Positivity survives limits, but the finite-field proof does not come from
+positivity alone: it comes from an integral lattice (`End(E)`, the Néron–Severi group of `C × C`) on which the Gram
+entries are integers (point counts) and the Hodge index theorem holds. Limits of normalised traces keep the
+positivity and lose the integrality: the normalised entries `c_d` are real, and the limit kernel has no lattice. So a
+tower produces a kernel of the same shape as `ζ`'s with no extra structure that could prove positivity; it cannot be
+the missing input. Letting `q → 1`, i.e. `h → 0`, formally turns the samples `d·log q` into a continuum, which is the
+passage from `ℤ` to `ℝ` of `BallCurve`; that the kernel of `ζ` arises this way (an "`𝔽_1`" limit) is a heuristic only.
+Asymptotically, towers over a fixed `q` have `#C(𝔽_q)/g ≤ √q − 1` (Drinfeld–Vlăduţ) and towers attaining it exist for
+square `q` (Ihara; Garcia–Stichtenoth): there the normalised point counts have a limit distribution of Frobenius
+angles, but these are context, not checked here, and none of it is formalised.
