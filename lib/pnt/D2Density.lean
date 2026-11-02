@@ -2,7 +2,7 @@ import Mathlib
 
 /-! # The d₂ < d₁ density for real characters: analytic assembly
 
-What is proved here, and what is assumed (as explicit hypotheses, never `sorry`):
+What is proved here, and what is taken as an explicit hypothesis:
 
 * `re_inv_pos` / `K1_pos`: proved. Every zero with `0 < Re ρ < 1` gives `Re (1/(ρ(1-ρ))) > 0`, so a summable zero
   sum `K₁ = Σ 1/(ρ(1-ρ))` over a nonempty zero set has positive real part.
@@ -10,10 +10,9 @@ What is proved here, and what is assumed (as explicit hypotheses, never `sorry`)
   the hypothesis `hdist`. The "lower failures" `ℓ_D < low D` only happen for `low D → -∞`, which is the hypothesis `hlow`.
   Then the proportion of `D` with `ℓ_D > t₀ ∨ ℓ_D < low D` tends to `μ (Ioi t₀)`.
 
-Assumed inputs (not formalised; cited):
-* `hdist`: weak convergence per sign of the law of `L'/L(1,χ_D)` to the random model, at every `t`. This rests on
-  Lamzouri (arXiv:1410.1603, §2) per sign, Granville–Soundararajan Lemma 4.1 (Pólya–Vinogradov; not in Mathlib),
-  Carleman's moment theorem (not in Mathlib), and the random model having no atoms (Lévy).
+Inputs taken as hypotheses here:
+* `hdist`: the proportion of `ℓ_D > t` tends to `μ (Ioi t)` at every `t`. It is discharged, CONDITIONAL on the
+  half-plane, in `lib/pnt/D2Hdist.lean` (`D2Hdist.hdist_pos`, `D2Hdist.hdist_neg`).
 * Theorem B (the closed form of `K(2)`), from the explicit formula for `L(s,χ)` (not in Mathlib).
 -/
 
@@ -212,9 +211,3 @@ theorem d2_density_log (S : ℕ → Finset ℤ) (hS : Tendsto (fun x => ((S x).c
     (fun R D h => L0_finite κ R D h)
 
 end D2Density
-
-#print axioms D2Density.K1_pos
-#print axioms D2Density.density_of_dist
-#print axioms D2Density.d2_density
-
-#print axioms D2Density.d2_density_log

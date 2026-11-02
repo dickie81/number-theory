@@ -172,6 +172,20 @@ proof (`D2Dist.core`, unconditional given its hypotheses) takes the cutoff `Y(x)
 quantitative moments, the tail identity with `η = 1/48` (error `C log(d + 2) / ⌈log(x + 2)⌉²`), and the model
 moments; `D2Dist.emp_tendsto` then applies `MomentConv.tendsto_of_moments`.
 
+## CONDITIONAL: `hdist` at every `t`, and the d₂ < d₁ density
+
+**CONDITIONAL on the half-plane `Re s > 11/12`**, through `D2Dist.dist_pos` / `D2Dist.dist_neg`. `lib/pnt/D2Hdist.lean`:
+
+```lean
+theorem D2Hdist.hdist_pos (t : ℝ) : Tendsto (fun x => prop (Spos x) (fun D => t < ℓpos D)) atTop
+    (𝓝 ((RandModel.ν : Measure ℝ) (Set.Ioi t)).toReal)
+```
+
+and `D2Hdist.hdist_neg`. The frontier `{t}` of `Ioi t` is `ν`-null by `NoAtoms.ν_singleton`, so the portmanteau
+theorem applies at every `t`. `D2Hdist.d2_density_pos` and `D2Hdist.d2_density_neg` are `D2Density.d2_density_log`
+(`lib/pnt/D2Density.lean`, moved from `scratch/d2density/`) with `hdist` discharged; the hypotheses `hK1`, `hpos` and
+`hB` remain. `D2Density.K1_pos` gives the positivity of a summable zero sum `K₁`.
+
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
 **CONDITIONAL on the half-plane `Re s > 11/12`** (`Eis.LFunction_ne_zero_of_re_gt`, [openai-half-plane.md](openai-half-plane.md)),
@@ -207,7 +221,7 @@ the odd `D` into classes mod 4. `nu1 = 4/π²` follows from the density `6/π²`
 (`SquarefreeCount.squarefree_isBigO_twelve_25ths`), which split into odd ones and twice odd ones. The lemmas
 `μ² = Σ μ` and `d² ∣ e² m → ...` are `SquarefreeCount`'s.
 
-Everything here is unconditional except the tail identity (`lib/pnt/D2Tail.lean`) and the distribution of `L′/L(1, χ_d)` (`lib/pnt/D2Dist.lean`), which are CONDITIONAL on the half-plane. The theorems are printed in `lib/check/CheckAll.lean` and depend only on
+Everything here is unconditional except the tail identity (`lib/pnt/D2Tail.lean`) the distribution of `L′/L(1, χ_d)` (`lib/pnt/D2Dist.lean`) and `hdist` with the density (`lib/pnt/D2Hdist.lean`), which are CONDITIONAL on the half-plane. The theorems are printed in `lib/check/CheckAll.lean` and depend only on
 `propext`, `Classical.choice` and `Quot.sound`. No paper of the repository uses them.
 
 ## Source

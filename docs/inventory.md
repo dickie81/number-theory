@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1156 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1162 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 101 | 274 |
-| `lib/pnt` | 244 | 777 |
+| `lib/pnt` | 246 | 783 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -640,6 +640,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `CyclotomicFrobenius.closure_frob_eq_top`: The Frobenius elements of the small primes generate the cyclotomic Galois group
 - `CyclotomicFrobenius.exists_frob_generator`: A single small Frobenius element generates the cyclotomic Galois group
 
+#### `D2Density`: The d₂ < d₁ density for real characters: analytic assembly
+
+- `D2Density.K1_pos`: `K₁ > 0` ([note](../formalisations/d2-density.md))
+- `D2Density.d2_density_log`: `d2_density` with `L0 D = log(|D|/π) + κ` ([note](../formalisations/d2-density.md))
+
 #### `D2Dist`: The distribution of `L′/L(1, χ_d)` — CONDITIONAL on the half-plane
 
 - `D2Dist.moments_pos`: CONDITIONAL (half-plane). Moments of `L′/L(1, χ_d)`, d > 0 ([note](../formalisations/d2-density.md))
@@ -661,6 +666,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `GSHcount.hcount_pos`: Quantitative `Hcount`, positive discriminants ([note](../formalisations/d2-density.md))
 - `GSHcount.hcount_neg`: Quantitative `Hcount`, negative discriminants ([note](../formalisations/d2-density.md))
+
+#### `D2Hdist`: `hdist` at every `t`, and the d₂ < d₁ density — CONDITIONAL on the half-plane
+
+- `D2Hdist.hdist_pos`: CONDITIONAL (half-plane). `hdist` for `D > 0`, at every `t` ([note](../formalisations/d2-density.md))
+- `D2Hdist.hdist_neg`: CONDITIONAL (half-plane). `hdist` for `D < 0`, at every `t` ([note](../formalisations/d2-density.md))
+- `D2Hdist.d2_density_pos`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D > 0` ([note](../formalisations/d2-density.md))
+- `D2Hdist.d2_density_neg`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0` ([note](../formalisations/d2-density.md))
 
 #### `D2Prim`: The Kronecker character of a fundamental discriminant is primitive
 

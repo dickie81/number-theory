@@ -1,6 +1,6 @@
 # The density of real characters with d₂ < d₁
 
-Status labels: **Lean** (machine-checked in `scratch/d2density/`, no `sorry`, axioms `propext`, `Classical.choice`,
+Status labels: **Lean** (machine-checked in `scratch/d2density/` and `lib/pnt/`, no `sorry`, axioms `propext`, `Classical.choice`,
 `Quot.sound` only), **Written proof**, **Numerical**, **Conjecture**. Prepared with AI assistance; needs expert review.
 
 ## Statement
@@ -142,7 +142,7 @@ model constant is marginally off. This is unresolved.
 
 | hypothesis | content | status |
 |---|---|---|
-| `hdist` | per-sign weak convergence of ℓ_D to X | written proof (Lamzouri §2 + GS Lemma 4.1 + Carleman + Lévy). In Lean: Pólya–Vinogradov (primitive) and the GS squarefree sieve are proved; the Kronecker symbol, non-principality and imprimitive PV are open; Heath-Brown, Carleman and the method of moments are not formalised |
+| `hdist` | per-sign weak convergence of ℓ_D to X, at every `t` | **Lean, CONDITIONAL on the half-plane** `Re s > 11/12`: `D2Hdist.hdist_pos`, `D2Hdist.hdist_neg` (moments via GS Lemma 4.1, the method of moments, no atoms `NoAtoms.ν_singleton`, the tail identity). `D2Hdist.d2_density_pos` / `D2Hdist.d2_density_neg` are `D2Density.d2_density_log` with `hdist` discharged |
 | `hB` | Theorem B (closed form of K(2)) | written proof; needs the explicit formula for L(s, χ) |
 | `hpos` | K₁ is the zero sum (summability) | positivity is Lean; the identification is open |
 
