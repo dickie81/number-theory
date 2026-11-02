@@ -254,3 +254,19 @@ Numerics (uncertified, `scripts/positivity/tower.py`): `ε_N < 0` up to `N = 400
 Proved: if cross terms factor through `k` coordinates `p_i, q_i` and `Q_S ≥ Σp_i²`, `Q_T ≥ Σq_i²`, the glued form is nonnegative (`k = 4` stated). Sufficient only.
 
 Numerics (uncertified, `scripts/positivity/junction4.py`, dyadic blocks `[8,16) … [256,512)` of the orbit Gram): every cross block is numerically full rank (rank = smaller block size at tolerance 1e−10); `σ₅/σ₁ ≈ 0.18–0.36` and the relative Frobenius tail beyond rank 4 is ≈ 0.20–0.35; projecting out the candidate directions `1, n, √n, √n·log n` on both sides leaves 80–92% of the cross term; the top-4 singular subspaces of `[8,16)` against different partners have principal angles up to 51°–88°, so there is no common four-dimensional junction. The four-dimensional junction hypothesis is false for the orbit form; the pole-complement version was not tested.
+
+### Different hyperplanes (uncertified, `scripts/positivity/junction4.py`)
+
+Best common junction = top-`k` singular directions of the off-block-diagonal part of the form (jointly over all pairs), `M = 255, 511`:
+
+| family | orbit Gram: k=4 / k=16 / k for 95% | dual `G⁻¹`: k=4 / k for 95% |
+|---|---|---|
+| dyadic | 0.81 / 0.97 / 12 | 0.97 / 3 |
+| triadic | 0.79–0.81 / 0.98 / 11 | 0.97 / 4 |
+| largest prime `P(n)` | 0.72 / 0.89 / 31–34 | 0.98 / 3 |
+| `n mod 5` | 0.66–0.67 / 0.87–0.88 / 31–34 | 0.97 / 3 |
+| 2-adic `2^v·odd` | 0.63 / 0.90 / 28–30 | 0.99 / 3 |
+| 7-smooth / rough | 0.68–0.69 / 0.94–0.95 / 17–19 | 0.98 / 4 |
+| Mellin frequency bands (dyadic) | 0.88–0.89 / 0.97–0.98 / 7–11 | — |
+
+The orbit Gram has no low-rank common junction (dyadic: `k ≈ 12` for 95%, stable in `M`; arithmetic families worse). The pole-complement form is `−Q(c)` on the same coefficients (`BallPole.selfInt_of_orth`), so its cross terms are the same up to sign. The dual's apparent rank-3 junction is an artefact: 91% of `‖G⁻¹‖²` sits in the single softest eigenvector of `G` (`λ_min ≈ 6e−4` at `M = 511`) and 99% in the softest four; removing those four, the dual needs `k ≈ 19–20` for 95%. A junction through the softest directions of `G` would need positivity margin there, which is exactly the RH-sensitive part, so it was not formalised.

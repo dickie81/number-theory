@@ -27,3 +27,53 @@ us = U[0]
 for i in range(1, len(us)):
     ang = np.degrees(np.arccos(np.clip(np.linalg.svd(us[0].T @ us[i], compute_uv=False), -1, 1)))
     print("block [8,16) top-4 vs partner", i, "max principal angle", f"{ang.max():.2e} deg")
+
+# ---- Different hyperplanes: joint best common junction over all pairs (uncertified) ----
+def primefactors(x):
+    out, d = [], 2
+    while d * d <= x:
+        if x % d == 0:
+            out.append(d)
+            while x % d == 0: x //= d
+        d += 1
+    if x > 1: out.append(x)
+    return out
+def J_capture(H, labels, ks=(1, 4, 8, 16)):
+    """Off-block-diagonal part J of H; fraction of ‖J‖_F² captured by its best rank-k (common) junction."""
+    same = labels[:, None] == labels[None, :]
+    J = np.where(same, 0.0, H)
+    s = np.linalg.svd(J, compute_uv=False)
+    f = np.cumsum(s**2) / (s**2).sum()
+    k95 = int(np.searchsorted(f, 0.95) + 1)
+    return [f[k-1] for k in ks], k95, len(set(labels))
+def families(M):
+    n = np.arange(1, M + 1)
+    P = np.array([max(primefactors(int(x))) if x > 1 else 1 for x in n])
+    v2 = np.array([(int(x) & -int(x)).bit_length() - 1 for x in n])
+    return {
+        "dyadic": np.floor(np.log2(n)).astype(int),
+        "triadic": np.floor(np.log(n) / np.log(3) + 1e-12).astype(int),
+        "largest prime P(n)": np.where(P <= 13, P, 100 + np.floor(np.log2(np.maximum(P, 1))).astype(int)),
+        "residue n mod 5": n % 5,
+        "2-adic n=2^v·odd": v2,
+        "7-smooth / rough": (P <= 7).astype(int),
+    }
+def mellin(M):
+    t = np.log(np.arange(1, M + 1)); L = t[-1]
+    F = np.stack([np.cos(np.pi * f * t / L) for f in range(M)], 1)
+    Q, _ = np.linalg.qr(F)
+    return Q
+print("\nfamily | basis | capture k=1,4,8,16 | k for 95% | #blocks")
+for M in (255, 511):
+    H0 = G[:M, :M]
+    bases = {"orbit Gram": H0, "dual G^-1": np.linalg.inv(H0)}
+    Q = mellin(M); bases["Mellin (freq. blocks)"] = Q.T @ H0 @ Q
+    for fam, lab in families(M).items():
+        for bn, H in bases.items():
+            if bn.startswith("Mellin"):
+                if fam != "dyadic": continue
+                lab2 = np.floor(np.log2(np.arange(1, M + 1))).astype(int)  # dyadic frequency bands
+            else:
+                lab2 = lab
+            cap, k95, nb = J_capture(H, lab2)
+            print(f"M={M} | {fam} | {bn} | " + ", ".join(f"{c:.3f}" for c in cap) + f" | {k95} | {nb}")
