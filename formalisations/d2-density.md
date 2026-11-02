@@ -241,6 +241,14 @@ and `GSTail.tail_pos`, `GSTail.tail_neg`, the same for the primitive `χ_D` abov
 the standard axioms, since the library proves the half-plane; the result is conditional in the sense that it
 rests on that input, and must be cited so.
 
+## Conditional results
+
+These results have a hypothesis that the library does not prove, and no unconditional result uses them.
+
+| Result | Hypothesis | Lean |
+|---|---|---|
+| CONDITIONAL (half-plane): the d₂ < d₁ density over fundamental discriminants of each sign, with `hK1`, `hpos` discharged | `L(½, χ_D) ≠ 0` for every `D` (`D2Good.HalfPos`, `D2Good.HalfNeg`) | `D2Good.d2_density_pos'`, `D2Good.d2_density_neg'` |
+
 ## How the statements differ from the source
 
 Granville and Soundararajan state Lemma 4.1 as `Σ χ_D(n) = (main term) + O(x^{1/2} n^{1/4} log n)` with the main
