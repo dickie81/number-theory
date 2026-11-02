@@ -184,7 +184,7 @@ theorem PsiOmega.hasSum_K1 (hG : GoodChar χ) :
         + 2 * logDeriv (LFunction χ) 1)
 ```
 
-Hadamard's product for `Ξ_χ` (`PsiOmega.hasSum_logDeriv_XiC`) at `t = −i/2`, with `PsiOmega.logDeriv_LamG_of_ne` for
+`PsiOmega.hasSum_K1` is Hadamard's product for `Ξ_χ` (`PsiOmega.hasSum_logDeriv_XiC`) at `t = −i/2`, with `PsiOmega.logDeriv_LamG_of_ne` for
 `Λ*′/Λ*` at `s = 1`. Each `u = τ²` stands for the pair of zeros `ρ = ½ ± iτ`, so the sum is `K₁ = Σ_ρ 1/(ρ(1 − ρ))`.
 
 ## CONDITIONAL: `hdist` at every `t`, and the d₂ < d₁ density
