@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1155 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1156 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 101 | 274 |
-| `lib/pnt` | 243 | 776 |
+| `lib/pnt` | 244 | 777 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -1447,6 +1447,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `MomentConv.ext_of_moments`: Determinacy by moments ([note](../formalisations/d2-density.md))
 - `MomentConv.tendsto_of_moments`: Method of moments (B1, unconditional) ([note](../formalisations/d2-density.md))
+
+#### `NoAtoms`: The random model has no atoms
+
+- `NoAtoms.ν_singleton`: No atoms ([note](../formalisations/d2-density.md))
 
 #### `PNTKV`: The prime number theorem with the Korobov–Vinogradov error term
 

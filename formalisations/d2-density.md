@@ -141,6 +141,19 @@ theorem QuantMoments.moment_quant_pos (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p)
 and `QuantMoments.moment_quant_neg`. The error is `(Σ|a_n|)^k y^{3k} √x`, so `y = (log x)^A` is admissible.
 `QuantMoments.GSB_le` bounds the GS Lemma 4.1 error polynomially in `n`.
 
+## The random model has no atoms
+
+`lib/pnt/NoAtoms.lean`, unconditional:
+
+```lean
+theorem NoAtoms.ν_singleton (t : ℝ) : (RandModel.ν : Measure ℝ) {t} = 0
+```
+
+Along `K` sparse primes (`NoAtoms.exists_J`), each gap `|g(p, −1)|` exceeds the spread `Σ_{q > p} β(q)` of the later
+ones, so the partial sum over them lies in an interval of length `2δ` with probability at most `2^{−K}`
+(`NoAtoms.ball_le`). The rest of `T_N` is independent of it (`NoAtoms.indep_FR`), and `T_N → X` in measure, so
+`P(X = t) ≤ 2^{−K}` for every `K` (`NoAtoms.atom_zero`).
+
 ## CONDITIONAL: the distribution of `L′/L(1, χ_d)`
 
 **CONDITIONAL on the half-plane `Re s > 11/12`**, through the tail identity below. `lib/pnt/D2Dist.lean`:
