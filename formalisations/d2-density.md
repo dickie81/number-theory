@@ -141,6 +141,24 @@ theorem QuantMoments.moment_quant_pos (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p)
 and `QuantMoments.moment_quant_neg`. The error is `(Σ|a_n|)^k y^{3k} √x`, so `y = (log x)^A` is admissible.
 `QuantMoments.GSB_le` bounds the GS Lemma 4.1 error polynomially in `n`.
 
+## CONDITIONAL: the distribution of `L′/L(1, χ_d)`
+
+**CONDITIONAL on the half-plane `Re s > 11/12`**, through the tail identity below. `lib/pnt/D2Dist.lean`:
+
+```lean
+theorem D2Dist.moments_pos (k : ℕ) :
+    Tendsto (fun x : ℕ => (∑ d ∈ Ioc 0 x, (if fundPos d ∧ 1 < d then lpos d ^ k else 0)) / x) atTop
+      (𝓝 (κ * mν k))
+
+theorem D2Dist.dist_pos : Tendsto (emp fundPos lpos) atTop (𝓝 RandModel.ν)
+```
+
+with `lpos d = Re L′/L(1, χ_d)`, `κ = 3/π²`, `mν k = E[X^k]`, and `emp fundPos lpos x` the empirical law of `lpos d`
+over the fundamental discriminants `1 < d ≤ x`; likewise `D2Dist.moments_neg` and `D2Dist.dist_neg` for `-d`. The
+proof (`D2Dist.core`, unconditional given its hypotheses) takes the cutoff `Y(x) = ⌈log(x + 2)⌉^48` in the
+quantitative moments, the tail identity with `η = 1/48` (error `C log(d + 2) / ⌈log(x + 2)⌉²`), and the model
+moments; `D2Dist.emp_tendsto` then applies `MomentConv.tendsto_of_moments`.
+
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
 **CONDITIONAL on the half-plane `Re s > 11/12`** (`Eis.LFunction_ne_zero_of_re_gt`, [openai-half-plane.md](openai-half-plane.md)),
@@ -176,7 +194,7 @@ the odd `D` into classes mod 4. `nu1 = 4/π²` follows from the density `6/π²`
 (`SquarefreeCount.squarefree_isBigO_twelve_25ths`), which split into odd ones and twice odd ones. The lemmas
 `μ² = Σ μ` and `d² ∣ e² m → ...` are `SquarefreeCount`'s.
 
-Everything here is unconditional except the tail identity (`lib/pnt/D2Tail.lean`), which is CONDITIONAL on the half-plane. The theorems are printed in `lib/check/CheckAll.lean` and depend only on
+Everything here is unconditional except the tail identity (`lib/pnt/D2Tail.lean`) and the distribution of `L′/L(1, χ_d)` (`lib/pnt/D2Dist.lean`), which are CONDITIONAL on the half-plane. The theorems are printed in `lib/check/CheckAll.lean` and depend only on
 `propext`, `Classical.choice` and `Quot.sound`. No paper of the repository uses them.
 
 ## Source

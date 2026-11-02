@@ -33,6 +33,7 @@ import RandModel
 import ModelMoments
 import ModelTrunc
 import QuantMoments
+import D2Dist
 import ExplicitSmooth
 import ExplicitConstants
 import QuadRing
@@ -367,6 +368,10 @@ import CertInstances
 #print axioms ModelTrunc.moment_A_tendsto
 #print axioms QuantMoments.moment_quant_pos
 #print axioms QuantMoments.moment_quant_neg
+#print axioms D2Dist.moments_pos
+#print axioms D2Dist.moments_neg
+#print axioms D2Dist.dist_pos
+#print axioms D2Dist.dist_neg
 #print axioms SquarefreeCount.abs_sub_sum_le
 #print axioms SquarefreeCount.abs_sum_sqf_sub_le
 #print axioms SquarefreeCount.squarefree_isBigO_of_zeroFree

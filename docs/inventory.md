@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1151 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1155 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 101 | 274 |
-| `lib/pnt` | 242 | 772 |
+| `lib/pnt` | 243 | 776 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -639,6 +639,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `CyclotomicFrobenius.closure_frob_eq_top`: The Frobenius elements of the small primes generate the cyclotomic Galois group
 - `CyclotomicFrobenius.exists_frob_generator`: A single small Frobenius element generates the cyclotomic Galois group
+
+#### `D2Dist`: The distribution of `L′/L(1, χ_d)` — CONDITIONAL on the half-plane
+
+- `D2Dist.moments_pos`: CONDITIONAL (half-plane). Moments of `L′/L(1, χ_d)`, d > 0 ([note](../formalisations/d2-density.md))
+- `D2Dist.moments_neg`: CONDITIONAL (half-plane) ([note](../formalisations/d2-density.md))
+- `D2Dist.dist_pos`: CONDITIONAL (half-plane). Distribution of `L′/L(1, χ_d)`, d > 0 ([note](../formalisations/d2-density.md))
+- `D2Dist.dist_neg`: CONDITIONAL (half-plane) ([note](../formalisations/d2-density.md))
 
 #### `D2GS`: Real quadratic and imaginary quadratic fundamental discriminants: GS Lemma 4.1 and moments
 
