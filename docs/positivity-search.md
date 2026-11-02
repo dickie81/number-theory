@@ -71,3 +71,37 @@ statement about the complement alone, and nothing in this decomposition forces i
 **Next lead (Speculative).** Replace `k/j` by `⌊k/j⌋`, which gives the integral form `log k!` (the Chebyshev
 identity), and measure the difference: the fractional-part correction `Σ Λ(j){k/j}` is the obstruction term, and its
 size is controlled by the error term in the prime number theorem, which is where RH re-enters.
+
+## The integral part and the fractional parts (Proved split; Numerical test)
+
+`BallFract` proves Chebyshev's identity `log k! = Σ_{j ≤ k} Λ(j)⌊k/j⌋` (`BallFract.log_factorial_eq`), the split
+`P(k) = log k! − ψ(k) + C(k)` with `C(k) = Σ_{j ≤ k} Λ(j){k/j}` (`BallFract.primePart_split`), the bounds
+`0 ≤ C(k) ≤ ψ(k) ≤ k·log 4 + 2√k·log k` (`BallFract.fracPart_nonneg`, `BallFract.fracPart_le`), and
+`G(k, 1) = log k! − ψ(k) + C(k) + (pole and archimedean terms)` (`BallFract.gram_split`).
+
+**Numerical** (`scripts/positivity/intpart.py`, floating point, uncertified). Extend `C` to real ratios by
+`C(x) = Σ_{j ≤ x} Λ(j){x/j}` and compare the Gram matrix `G(m, n)`, `1 ≤ m, n ≤ N`, with two modifications:
+
+| N | full `G`: `λ_min`, negatives | integral part (`C` removed) | `C` replaced by its mean `(1 − γ)x` |
+|---|---|---|---|
+| 10 | 0.0137, 0 | −5.83, 3 | −1.85, 4 |
+| 50 | 0.0040, 0 | −198, 12 | −46.7, 14 |
+| 100 | 0.0023, 0 | −830, 26 | −189, 27 |
+| 200 | 0.0013, 0 | −3380, 50 | −753, 51 |
+
+The integral part alone is far from positive: about `N/4` negative eigenvalues, with `λ_min` of order `−N²/12`. Even
+replacing `C(x)` by its mean `(1 − γ)x` (the mean value is the classical one, not proved here) leaves about `N/4`
+negative directions.
+
+**Obstruction.** The positivity of `G` is not carried by an integral part with a small correction: it is carried by
+the fractional parts `{x/j}` themselves, whose fluctuations around their mean cancel negative eigenvalues of order
+`N²`, down to a margin `λ_min ≈ 0.26/N`. A bound on `C` of the form `|C(x) − (1 − γ)x| ≤ E(x)` can give positivity
+only through a perturbation argument, which needs `E` small against the margin; since the margin is `O(1/N)` while the
+negative part is `O(N²)`, no size bound on `C` suffices (Speculative but robust in these numerics): positivity is a
+statement about the correlations of `{x/j}`, as RH is a statement about the oscillation of `ψ(x) − x` (equivalently
+`ψ(x) = x + O(x^{1/2+ε})`, `LonelyJoins.rh_iff_lonely_weight` for the library's form).
+
+**Next lead (Speculative).** Treat the fractional parts as the object: `Σ_j Λ(j){x/j}` is a sawtooth sum, whose Fourier
+expansion `{y} = 1/2 − Σ_h sin(2πhy)/(πh)` turns the Gram matrix into exponential sums over `Λ`. Positivity then asks
+for a structured (not size) property of these sums, the place where the large sieve or Montgomery–Vaughan mean values
+would enter.

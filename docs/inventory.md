@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1149 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1154 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 105 | 296 |
+| `lib/core` | 106 | 301 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -52,6 +52,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallFlat.norm_sq_lattice`: The orbit spans the cubic lattice
 - `BallFlat.flat_pivot`: The pivots of the flat model are all `c = ‖v_1‖²`
 - `BallFlat.flatOrbit_pivot`: In `ℓ²` the flat orbit attains the bound of the orbit-lattice conjecture
+
+#### `BallFract`: The prime part of the Gram matrix: an integral part and the fractional parts
+
+- `BallFract.log_factorial_eq`: Chebyshev's identity
+- `BallFract.fracPart_nonneg`
+- `BallFract.fracPart_le`: An explicit bound
+- `BallFract.primePart_split`: The split
+- `BallFract.gram_split`: `G(k, 1)` as an integral part plus the fractional-part correction
 
 #### `BallFrobenius`: The Frobenius dictionary for the orbit curve
 

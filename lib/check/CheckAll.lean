@@ -222,6 +222,7 @@ import BallCurve
 import BallFrobenius
 import BallPole
 import BallPrimes
+import BallFract
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1169,6 +1170,11 @@ twin-form rates at `11/12`. -/
 #print axioms BallPrimes.gram_mul
 #print axioms BallPrimes.primePart_nonneg
 #print axioms BallPrimes.gram_explicit_int
+#print axioms BallFract.log_factorial_eq
+#print axioms BallFract.fracPart_nonneg
+#print axioms BallFract.fracPart_le
+#print axioms BallFract.primePart_split
+#print axioms BallFract.gram_split
 #print axioms ZerosInfinite.infinite_ZIdx
 #print axioms ZerosDense.not_linear
 #print axioms BallHadamard.rh_iff_posDefH
