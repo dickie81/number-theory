@@ -36,3 +36,14 @@ structure: `ζ` passes because `γ₁ ≈ 14.13` is high and `K(1)` small. So it
 Castelnuovo–Severi. The feature `ζ` has that the characters lack is the pole, whose terms `r^{±1/2}` play the classes
 `e₁, e₂` of `C × C` (the `m + n` in `BallWeil.inter`); the most promising lead is a statement that uses the pole in
 that role, negativity on its orthogonal complement, rather than a normalisation by `K(1)`.
+
+## The pole complement (Proved, reformulation)
+
+`BallPole` makes the lead precise. The pole classes `e₁`, `e₂` span a hyperbolic plane (`BallPole.pole_hyperbolic`),
+every class splits orthogonally as `D² = 2(D·e₁)(D·e₂) + D⊥²` (`BallPole.selfInt_decomp`), and RH is `D⊥² ≤ 0` on the
+complement with real coefficients (`BallPole.rh_iff_hodge_index_real`, `BallPole.rh_iff_cs_real`). On the complement
+`D² = −Q(c)`, so this is again positivity of the Gram form of the orbit: the pole splits off exactly and adds no
+constraint. Without a pole the complement is everything (`BallPole.hodge_no_pole_iff`). So the difference between `ζ`
+and the characters seen by the pivot test is not explained by the pole as a hyperbolic summand; what is open is a proof
+of negativity on the complement that does not pass through the zeros. The pivot normalisation by `d_1 = K(1)` is a
+statement about the complement alone, and nothing in this decomposition forces it.
