@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1134 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1138 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 102 | 281 |
+| `lib/core` | 102 | 285 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -39,6 +39,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallCurve.continuousOn_kerK`: Every curve realization of `K` is continuous on `(0, ∞)`
 - `BallCurve.injective_kerK`: In a curve realization of `K` the curve is injective on `(0, ∞)`
 - `BallCurve.not_discrete`: The orbit curve spans no lattice
+- `BallCurve.continuous_of_mem_closure_span`: ε/3
+- `BallCurve.flow_continuous_closure`: The flow is strongly continuous on the closed span of the curve
+- `BallCurve.flow_continuous_of_dense`: If the curve spans densely, the flow is strongly continuous on the whole space
+- `BallCurve.flow_continuous_model`: In the model `curveRealization`, the flow is strongly continuous on all of `ℓ²`
 
 #### `BallFlat`: The flat model: with Lebesgue measure for the zeros, the orbit spans the cubic lattice
 

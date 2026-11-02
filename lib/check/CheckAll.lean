@@ -1151,6 +1151,10 @@ twin-form rates at `11/12`. -/
 #print axioms BallCurve.continuousOn_kerK
 #print axioms BallCurve.injective_kerK
 #print axioms BallCurve.not_discrete
+#print axioms BallCurve.continuous_of_mem_closure_span
+#print axioms BallCurve.flow_continuous_closure
+#print axioms BallCurve.flow_continuous_of_dense
+#print axioms BallCurve.flow_continuous_model
 #print axioms ZerosInfinite.infinite_ZIdx
 #print axioms ZerosDense.not_linear
 #print axioms BallHadamard.rh_iff_posDefH

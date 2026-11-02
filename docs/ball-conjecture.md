@@ -574,6 +574,10 @@ for real `x > 0`, similitudes `ψ_s` of factor `s` for real `s > 0`, `ψ_s(w_x) 
 group of isometries `U_s = e^{−s/2}ψ_{e^s}` (`BallCurve.flow_inner`, `BallCurve.flow_orbit`, `BallCurve.flow_add`).
 RH holds exactly when `K` has such a curve realization (`BallCurve.rh_iff_curveRealization`); every one is continuous
 and injective on `(0, ∞)` (`BallCurve.continuousOn_kerK`, `BallCurve.injective_kerK`), and at the integers its
-increments are nonzero with norms tending to `0` (`BallCurve.not_discrete`). Not proved: strong continuity of `s ↦ U_s`
-on the whole space (only along the curve), and anything about lattices spanned by points of the curve other than the
-integers.
+increments are nonzero with norms tending to `0` (`BallCurve.not_discrete`). The flow `s ↦ U_s x` is continuous for
+every `x` in the closed span of the curve (`BallCurve.flow_continuous_closure`, by an ε/3 argument from
+`BallCurve.continuous_of_mem_closure_span`), hence on the whole space when the curve spans densely
+(`BallCurve.flow_continuous_of_dense`), and on the whole of `ℓ²` for the model of RH (`BallCurve.flow_continuous_model`).
+For an abstract realization it can fail off the closed span: on an orthogonal summand `ℂ` the definition allows `U_s`
+to act by any character of `ℝ`, including a discontinuous one built from a Hamel basis. Not proved: whether the curve
+spans `ℓ²` densely in the model, and anything about lattices spanned by points of the curve other than the integers.

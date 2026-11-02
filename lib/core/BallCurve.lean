@@ -313,6 +313,98 @@ theorem not_discrete (C : CurveRealization BallKernel.kerK) :
   · simp only [toRealization, e1, e2] at h2
     exact h2
 
+/-! ## Strong continuity of the flow
+
+For an abstract curve realization, `s ↦ U_s x` need not be continuous off the closed span of the curve: `U_s` is
+unconstrained there. (Take `E = ℓ²(zeros) ⊕ ℂ` with `U_s` acting on `ℂ` by a discontinuous character of `ℝ`, which
+exists by a Hamel basis.) So continuity is proved on the closed span of the curve, on the whole space when the curve
+spans densely, and on the whole of `ℓ²` for the model `curveRealization`. -/
+
+/-- **ε/3**: a family of isometric linear maps that is strongly continuous on a set is strongly continuous on the
+closure of its span. -/
+theorem continuous_of_mem_closure_span {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
+    (T : ℝ → E →ₗ[ℂ] E) (hT : ∀ s x, ‖T s x‖ = ‖x‖) (S : Set E) (hS : ∀ x ∈ S, Continuous fun s => T s x)
+    {x : E} (hx : x ∈ closure (Submodule.span ℂ S : Set E)) : Continuous fun s => T s x := by
+  have hspan : ∀ y ∈ Submodule.span ℂ S, Continuous fun s => T s y := by
+    intro y hy
+    induction hy using Submodule.span_induction with
+    | mem y h => exact hS y h
+    | zero => simpa using (continuous_const : Continuous fun _ : ℝ => (0 : E))
+    | add a b _ _ ha hb => simp only [map_add]; exact ha.add hb
+    | smul c a _ ha => simp only [map_smul]; exact ha.const_smul c
+  rw [Metric.continuous_iff]
+  intro s0 ε hε
+  obtain ⟨y, hy, hxy⟩ := Metric.mem_closure_iff.1 hx (ε / 3) (by positivity)
+  obtain ⟨δ, hδ, hδ'⟩ := Metric.continuous_iff.1 (hspan y hy) s0 (ε / 3) (by positivity)
+  refine ⟨δ, hδ, fun s hs => ?_⟩
+  have h1 := hδ' s hs
+  rw [dist_eq_norm] at h1 hxy ⊢
+  have e : T s x - T s0 x = T s (x - y) + (T s y - T s0 y) + T s0 (y - x) := by
+    simp only [map_sub]; abel
+  calc ‖T s x - T s0 x‖ ≤ ‖T s (x - y)‖ + ‖T s y - T s0 y‖ + ‖T s0 (y - x)‖ := by rw [e]; exact norm_add₃_le
+    _ = ‖x - y‖ + ‖T s y - T s0 y‖ + ‖x - y‖ := by rw [hT, hT, norm_sub_rev y x]
+    _ < ε := by linarith
+
+/-- `U_s` is an isometry. -/
+theorem norm_U (C : CurveRealization k) (s : ℝ) (x : C.E) : ‖C.U s x‖ = ‖x‖ := by
+  have h := flow_inner C s x x
+  rw [inner_self_eq_norm_sq_to_K, inner_self_eq_norm_sq_to_K] at h
+  have h2 : ‖C.U s x‖ ^ 2 = ‖x‖ ^ 2 := by exact_mod_cast h
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).1 h2
+
+/-- In a curve realization of `K`, the curve `t ↦ v_t` is continuous. -/
+theorem continuous_v_kerK (C : CurveRealization BallKernel.kerK) : Continuous C.v := by
+  have hw := continuousOn_kerK C
+  have hc : Continuous fun t => C.w (Real.exp t) :=
+    hw.comp_continuous Real.continuous_exp fun t => Real.exp_pos t
+  exact (Complex.continuous_ofReal.comp (Real.continuous_exp.comp (continuous_neg.div_const 2))).smul hc
+
+/-- **The flow is strongly continuous on the closed span of the curve.** -/
+theorem flow_continuous_closure (C : CurveRealization BallKernel.kerK) {x : C.E}
+    (hx : x ∈ closure (Submodule.span ℂ (Set.range C.v) : Set C.E)) : Continuous fun s => C.U s x := by
+  refine continuous_of_mem_closure_span C.U (norm_U C) _ ?_ hx
+  rintro _ ⟨t, rfl⟩
+  have e : (fun s => C.U s (C.v t)) = fun s => C.v (t + s) := funext fun s => (flow_orbit C s t).symm
+  rw [e]
+  exact (continuous_v_kerK C).comp (continuous_const.add continuous_id)
+
+/-- **If the curve spans densely, the flow is strongly continuous on the whole space.** -/
+theorem flow_continuous_of_dense (C : CurveRealization BallKernel.kerK)
+    (hd : Dense (Submodule.span ℂ (Set.range C.v) : Set C.E)) (x : C.E) : Continuous fun s => C.U s x :=
+  flow_continuous_closure C (hd.closure_eq ▸ Set.mem_univ x)
+
+open scoped Classical in
+lemma U_single (hRH : RiemannHypothesis) (q : ZIdx) (s : ℝ) :
+    (curveRealization hRH).U s (lp.single 2 q (1 : ℂ) : L2) =
+      ((Real.exp (-s / 2) : ℂ) * cexp (zetaZeroFamily q * s)) • (lp.single 2 q (1 : ℂ) : L2) := by
+  apply lp.ext
+  funext i
+  show (Real.exp (-s / 2) : ℂ) * (pw i (Real.exp s) * ((lp.single 2 q (1 : ℂ) : L2) : ZIdx → ℂ) i) = _
+  rw [lp.coeFn_smul, Pi.smul_apply, smul_eq_mul, lp.single_apply]
+  rcases eq_or_ne i q with rfl | h
+  · unfold pw; rw [Real.log_exp]; ring
+  · rw [Pi.single_eq_of_ne h, mul_zero, mul_zero, mul_zero]
+
+open scoped Classical in
+/-- **In the model `curveRealization`, the flow is strongly continuous on all of `ℓ²`.** -/
+theorem flow_continuous_model (hRH : RiemannHypothesis) (y : L2) :
+    Continuous fun s => (curveRealization hRH).U s y := by
+  refine continuous_of_mem_closure_span (curveRealization hRH).U (norm_U _)
+    (Set.range fun q : ZIdx => ((lp.single 2 q (1 : ℂ) : L2))) ?_ ?_
+  · rintro _ ⟨q, rfl⟩
+    have e := funext (U_single hRH q)
+    rw [e]
+    refine Continuous.smul (f := fun s : ℝ => (Real.exp (-s / 2) : ℂ) * cexp (zetaZeroFamily q * s)) ?_
+      (continuous_const : Continuous fun _ : ℝ => (lp.single 2 q (1 : ℂ) : L2))
+    exact (Complex.continuous_ofReal.comp (Real.continuous_exp.comp (continuous_neg.div_const 2))).mul
+      (Complex.continuous_exp.comp (continuous_const.mul Complex.continuous_ofReal))
+  · refine mem_closure_of_tendsto (lp.hasSum_single (by norm_num) y) (Eventually.of_forall fun F => ?_)
+    refine Submodule.sum_mem _ fun q _ => ?_
+    have : (lp.single 2 q (y q) : L2) = y q • (lp.single 2 q (1 : ℂ) : L2) := by
+      rw [← lp.single_smul, smul_eq_mul, mul_one]
+    rw [this]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨q, rfl⟩)
+
 end BallCurve
 
 #print axioms BallCurve.rh_iff_curveRealization
@@ -322,3 +414,7 @@ end BallCurve
 #print axioms BallCurve.continuousOn_kerK
 #print axioms BallCurve.injective_kerK
 #print axioms BallCurve.not_discrete
+#print axioms BallCurve.continuous_of_mem_closure_span
+#print axioms BallCurve.flow_continuous_closure
+#print axioms BallCurve.flow_continuous_of_dense
+#print axioms BallCurve.flow_continuous_model
