@@ -30,6 +30,7 @@ import D2Tail
 import D2Hcount
 import MomentConv
 import RandModel
+import ModelMoments
 import ExplicitSmooth
 import ExplicitConstants
 import QuadRing
@@ -359,6 +360,8 @@ import CertInstances
 #print axioms RandModel.integrable_exp_X
 #print axioms RandModel.integrable_exp_abs_ν
 #print axioms RandModel.integrable_pow_ν
+#print axioms ModelMoments.moment_pos_model
+#print axioms ModelMoments.moment_neg_model
 #print axioms SquarefreeCount.abs_sub_sum_le
 #print axioms SquarefreeCount.abs_sum_sqf_sub_le
 #print axioms SquarefreeCount.squarefree_isBigO_of_zeroFree

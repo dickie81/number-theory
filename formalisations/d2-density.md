@@ -97,6 +97,22 @@ term is sub-Gaussian with proxy `β(n)² ≪ n^{-3/2}` by Hoeffding's lemma (`Ra
 gives the mgf. The law `RandModel.ν` has `RandModel.integrable_exp_abs_ν` and `RandModel.integrable_pow_ν`, the
 hypotheses of `MomentConv.tendsto_of_moments` on the limit side.
 
+## Main-term moments are the model's (hypothesis B, milestone B3)
+
+`lib/pnt/ModelMoments.lean`, unconditional. With the completely multiplicative `ModelMoments.Xm`
+(`X(n) = ∏_p X(p)^{v_p(n)}`), `ModelMoments.integral_Xm` gives `E[X(m)] = ∏_{p ∣ m} p/(p+1)` for square `m` and `0`
+otherwise, and `ModelMoments.model_moment` expands `E[(Σ_{n ∈ P} a_n X(n))^k]`. The GS density is
+`(3/π²) ∏_{p ∣ r} p/(p+1)` (`ModelMoments.dens_pos_eq`, `ModelMoments.dens_neg_eq`), hence:
+
+```lean
+theorem ModelMoments.moment_pos_model (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℝ) (k : ℕ) :
+    Tendsto (fun x : ℕ => ((x : ℂ))⁻¹ *
+        ∑ d ∈ Ioc 0 x, (if fundPos d then (∑ p ∈ P, (a p : ℂ) * kron d p) ^ k else 0)) atTop
+      (𝓝 ((3 / Real.pi ^ 2 * ∫ ω, (∑ n ∈ P, a n * Xm n ω) ^ k ∂(RandModel.P) : ℝ) : ℂ))
+```
+
+and `ModelMoments.moment_neg_model` for `D = -d`.
+
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
 **CONDITIONAL on the half-plane `Re s > 11/12`** (`Eis.LFunction_ne_zero_of_re_gt`, [openai-half-plane.md](openai-half-plane.md)),
