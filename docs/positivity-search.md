@@ -47,3 +47,27 @@ constraint. Without a pole the complement is everything (`BallPole.hodge_no_pole
 and the characters seen by the pivot test is not explained by the pole as a hyperbolic summand; what is open is a proof
 of negativity on the complement that does not pass through the zeros. The pivot normalisation by `d_1 = K(1)` is a
 statement about the complement alone, and nothing in this decomposition forces it.
+
+## Integrality and the primes (Proved formulas; obstruction)
+
+`BallPrimes` evaluates the Gram matrix at integer ratios from the primes alone: `G(kn, n) = n·G(k, 1)`
+(`BallPrimes.gram_mul`), and `G(k, 1) = P(k) + ((k + 1)/2)K₁ + ((k − 1)/2)(log π − 2 log k) + √k·A(log k)`
+(`BallPrimes.gram_explicit_int`), with the prime part `P(k) = Σ_{j ≤ k} Λ(j)(k/j − 1) ≥ 0`
+(`BallPrimes.primePart_nonneg`).
+
+**Obstructions found.**
+1. *Integrality.* `P(k)` is a combination of the `log p` with coefficients `Σ_{p^a ≤ k}(k/p^a − 1)`, rational and not
+   integral, and `K₁`, `A` are transcendental-looking constants. The integral objects nearby are `e^{ψ(k)} = lcm(1..k)`
+   and `e^{Σ Λ(j)⌊k/j⌋} = k!`, but `G` uses `k/j`, not `⌊k/j⌋`: the fractional parts `{k/j}` are exactly what
+   separates `G` from an integral form (not formalised).
+2. *No tensor structure.* The Euler product makes the kernel additive over the primes (it comes from `ζ′/ζ`), so `G` is
+   a sum of per-prime pieces plus pole and archimedean terms, not a tensor product of per-prime kernels. Positivity
+   cannot reduce to local positivity: the prime pieces enter the kernel `K_H` with a minus sign (the `−ψ(x)/√x` of
+   `BallPsi.kerH_explicit`) and must be beaten by the archimedean and pole terms, a global cancellation.
+3. *Restricted families.* Unconditional positivity on a two-prime slice is already RH (`BallSlice.rh_iff_bound_pair`,
+   `BallSlice.rh_iff_two_three`), so extending slice positivity to more primes cannot be done unconditionally
+   without proving RH; any finite-prime bound has to be numerical or conditional.
+
+**Next lead (Speculative).** Replace `k/j` by `⌊k/j⌋`, which gives the integral form `log k!` (the Chebyshev
+identity), and measure the difference: the fractional-part correction `Σ Λ(j){k/j}` is the obstruction term, and its
+size is controlled by the error term in the prime number theorem, which is where RH re-enters.

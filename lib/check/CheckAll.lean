@@ -221,6 +221,7 @@ import BallLattice
 import BallCurve
 import BallFrobenius
 import BallPole
+import BallPrimes
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1165,6 +1166,9 @@ twin-form rates at `11/12`. -/
 #print axioms BallPole.rh_iff_hodge_index_real
 #print axioms BallPole.rh_iff_cs_real
 #print axioms BallPole.hodge_no_pole_iff
+#print axioms BallPrimes.gram_mul
+#print axioms BallPrimes.primePart_nonneg
+#print axioms BallPrimes.gram_explicit_int
 #print axioms ZerosInfinite.infinite_ZIdx
 #print axioms ZerosDense.not_linear
 #print axioms BallHadamard.rh_iff_posDefH

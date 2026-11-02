@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1146 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1149 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 104 | 293 |
+| `lib/core` | 105 | 296 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -92,6 +92,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallPole.rh_iff_hodge_index_real`: RH is the Hodge index theorem on the pole complement
 - `BallPole.rh_iff_cs_real`: RH is Castelnuovo–Severi
 - `BallPole.hodge_no_pole_iff`: Without a pole the complement is everything
+
+#### `BallPrimes`: The Gram matrix of the orbit from the primes, at integer ratios
+
+- `BallPrimes.gram_mul`: `G(jm, jn) = j·G(m, n)`
+- `BallPrimes.primePart_nonneg`: The prime part is nonnegative
+- `BallPrimes.gram_explicit_int`: The Gram matrix at integer ratios from the primes
 
 #### `BallPsi`: The Hadamard kernel from the primes: `K_H` through Chebyshev's `ψ`
 
