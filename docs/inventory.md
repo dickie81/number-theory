@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1138 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1141 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 102 | 285 |
+| `lib/core` | 103 | 288 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -52,6 +52,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallFlat.norm_sq_lattice`: The orbit spans the cubic lattice
 - `BallFlat.flat_pivot`: The pivots of the flat model are all `c = ‖v_1‖²`
 - `BallFlat.flatOrbit_pivot`: In `ℓ²` the flat orbit attains the bound of the orbit-lattice conjecture
+
+#### `BallFrobenius`: The Frobenius dictionary for the orbit curve
+
+- `BallFrobenius.gram_v`: The Gram kernel of the curve in log coordinates is stationary
+- `BallFrobenius.sample_orbit`: The samples at step `h` are an orbit of `U_h`
+- `BallFrobenius.toeplitz_nonneg`: Toeplitz positivity at every step
 
 #### `BallHadamard`: A kernel with a cusp: `K_H(r) = Σ_ρ r^{ρ − ½}/(ρ(1 − ρ))`
 

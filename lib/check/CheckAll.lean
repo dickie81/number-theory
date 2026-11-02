@@ -219,6 +219,7 @@ import BallKernel
 import ManinFrobenius
 import BallLattice
 import BallCurve
+import BallFrobenius
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1155,6 +1156,9 @@ twin-form rates at `11/12`. -/
 #print axioms BallCurve.flow_continuous_closure
 #print axioms BallCurve.flow_continuous_of_dense
 #print axioms BallCurve.flow_continuous_model
+#print axioms BallFrobenius.gram_v
+#print axioms BallFrobenius.sample_orbit
+#print axioms BallFrobenius.toeplitz_nonneg
 #print axioms ZerosInfinite.infinite_ZIdx
 #print axioms ZerosDense.not_linear
 #print axioms BallHadamard.rh_iff_posDefH
