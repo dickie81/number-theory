@@ -1,4 +1,21 @@
 import Mathlib
+import SquarefreeCount
+
+/-!
+# Real quadratic and imaginary quadratic fundamental discriminants: GS Lemma 4.1 and moments
+
+Unconditional. Uses only `SquarefreeCount` from the library.
+
+* `PolyaVinogradov.polya_vinogradov`: the Pólya–Vinogradov inequality.
+* `GSKron.gs_kron_pos`, `GSKron.gs_kron_neg`: Granville–Soundararajan, *The distribution of values of
+  L(1, χ_d)*, GAFA 13 (2003), Lemma 4.1, for every non-square `n`, with the Kronecker symbol `kron`.
+* `GSUncond.moment_pos_unconditional`, `GSUncond.moment_neg_unconditional`: the `k`-th moments of
+  `Σ_{n ≤ y} a_n kron(D, n)` over fundamental discriminants `D`, main term the square `n`.
+* `GSNu.delta_pos_closed`, `GSNu.delta_neg_closed`: fundamental discriminants coprime to `r` have density
+  `(3/π²) ∏_{p ∣ r} p/(p+1)` for each sign; `GSNu.nu1_eq`: odd squarefree numbers have density `4/π²`.
+
+See `formalisations/d2-density.md`.
+-/
 
 open Real Finset
 
@@ -378,54 +395,7 @@ open Finset
 
 namespace GSLemma
 
-/-! Copied from `lib/pnt/SquarefreeCount.lean` (to avoid building PNT+): `μ² = Σ_{d²∣n} μ(d)`. -/
-theorem dvd_of_sq_dvd_sq_mul {a b d : ℕ} (ha : Squarefree a) (hb : b ≠ 0) (hd : d ≠ 0)
-    (h : d ^ 2 ∣ b ^ 2 * a) : d ∣ b := by
-  have ha0 : a ≠ 0 := ha.ne_zero
-  rw [← Nat.factorization_le_iff_dvd hd hb, Finsupp.le_def]
-  have h2 := Finsupp.le_def.1 ((Nat.factorization_le_iff_dvd (pow_ne_zero 2 hd)
-    (mul_ne_zero (pow_ne_zero 2 hb) ha0)).2 h)
-  intro p
-  have hp := h2 p
-  rw [Nat.factorization_pow, Nat.factorization_mul (pow_ne_zero 2 hb) ha0, Nat.factorization_pow]
-    at hp
-  simp only [Finsupp.smul_apply, Finsupp.add_apply, smul_eq_mul] at hp
-  have h1 := ha.natFactorization_le_one p
-  omega
-
-/-- `Σ_{d² ∣ n} μ(d)` is `1` if `n ≥ 1` is squarefree and `0` otherwise. -/
-theorem sum_sq_dvd_moebius {n : ℕ} (hn : 0 < n) :
-    ∑ d ∈ (Finset.Ioc 0 n).filter (fun d ↦ d ^ 2 ∣ n), (ArithmeticFunction.moebius d : ℝ) =
-      if Squarefree n then 1 else 0 := by
-  obtain ⟨a, b, ha0, hb0, rfl, ha⟩ := Nat.sq_mul_squarefree_of_pos hn
-  have hset : (Finset.Ioc 0 (b ^ 2 * a)).filter (fun d ↦ d ^ 2 ∣ b ^ 2 * a) = b.divisors := by
-    ext d
-    simp only [Finset.mem_filter, Finset.mem_Ioc, Nat.mem_divisors]
-    constructor
-    · rintro ⟨⟨hd0, -⟩, hd⟩
-      exact ⟨dvd_of_sq_dvd_sq_mul ha hb0.ne' hd0.ne' hd, hb0.ne'⟩
-    · rintro ⟨hdb, -⟩
-      have hd0 : 0 < d := Nat.pos_of_dvd_of_pos hdb hb0
-      have hsq : d ^ 2 ∣ b ^ 2 * a := (pow_dvd_pow_of_dvd hdb 2).mul_right a
-      refine ⟨⟨hd0, ?_⟩, hsq⟩
-      calc d ≤ d ^ 2 := by nlinarith
-        _ ≤ b ^ 2 * a := Nat.le_of_dvd (by positivity) hsq
-  rw [hset]
-  have hμ : ∑ d ∈ b.divisors, (ArithmeticFunction.moebius d : ℝ) = if b = 1 then 1 else 0 := by
-    have h := congrArg (fun f : ArithmeticFunction ℤ ↦ f b) ArithmeticFunction.moebius_mul_coe_zeta
-    simp only [ArithmeticFunction.coe_mul_zeta_apply, ArithmeticFunction.one_apply] at h
-    rw [← Int.cast_sum, h]
-    split_ifs <;> simp
-  rw [hμ]
-  have hiff : b = 1 ↔ Squarefree (b ^ 2 * a) := by
-    constructor
-    · rintro rfl
-      simpa using ha
-    · intro hsq
-      exact Nat.isUnit_iff.1 (hsq b ⟨a, by ring⟩)
-  by_cases hb1 : b = 1
-  · rw [ite_eq_left hb1, ite_eq_left (hiff.1 hb1)]
-  · rw [ite_eq_right hb1, ite_eq_right (fun h ↦ hb1 (hiff.2 h))]
+open SquarefreeCount
 
 /-- `Σ_{L < l ≤ L+K} 1/l² ≤ 1/L − 1/(L+K)` for `L ≥ 1`. -/
 theorem tail_inv_sq (L : ℕ) (hL : 1 ≤ L) (K : ℕ) :
@@ -1240,32 +1210,6 @@ theorem moment_generic (F : ℕ → Prop) [DecidablePred F] (χ : ℕ → ℕ �
       · exfalso; apply hsq; exact ⟨1, by omega⟩
     exact mul_le_mul_of_nonneg_left (HGS _ h1 hsq) (norm_nonneg _)
 
-/-- **Moments of the short Euler-sum model, positive discriminants.** For a finite set `P` of positive
-integers (e.g. primes `≤ y`), weights `a`, and `S_D = Σ_{p∈P} a_p (D|p)`:
-`‖Σ_{0<D≤x fund.} S_D^k − x · Σ_{f ∈ P^k, ∏f = □} (∏ a_{f i}) c(∏ f)‖ ≤ Σ_{f ∈ P^k} ‖∏ a‖ · (R or GSB)`,
-**assuming** the square-`n` count hypothesis `Hcount` (main term `c(n) x`, error `R n`). -/
-theorem moment_pos (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k x : ℕ) (c : ℕ → ℂ) (R : ℕ → ℝ)
-    (Hcount : ∀ n, 0 < n → IsSquare n →
-      ‖∑ d ∈ Ioc 0 x, (if fundPos d then kron d n else 0) - c n * x‖ ≤ R n) :
-    ‖∑ d ∈ Ioc 0 x, (if fundPos d then (∑ p ∈ P, a p * kron d p) ^ k else 0) -
-        (x : ℂ) * ∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
-          (∏ i, a (f i)) * c (∏ i, f i)‖ ≤
-      ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P),
-        ‖∏ i, a (f i)‖ * (if IsSquare (∏ i, f i) then R (∏ i, f i) else GSB (∏ i, f i) x) :=
-  moment_generic fundPos (fun d n => kron d n) (fun d k f hf => kron_prod d f hf) P hP a k x c R
-    (fun n => GSB n x) Hcount (fun n h1 hs => gs_kron_pos h1 hs x)
-
-/-- **Moments, negative discriminants** (`D = -d`). -/
-theorem moment_neg (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k x : ℕ) (c : ℕ → ℂ) (R : ℕ → ℝ)
-    (Hcount : ∀ n, 0 < n → IsSquare n →
-      ‖∑ d ∈ Ioc 0 x, (if fundNeg d then kron (-(d:ℤ)) n else 0) - c n * x‖ ≤ R n) :
-    ‖∑ d ∈ Ioc 0 x, (if fundNeg d then (∑ p ∈ P, a p * kron (-(d:ℤ)) p) ^ k else 0) -
-        (x : ℂ) * ∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
-          (∏ i, a (f i)) * c (∏ i, f i)‖ ≤
-      ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P),
-        ‖∏ i, a (f i)‖ * (if IsSquare (∏ i, f i) then R (∏ i, f i) else GSB (∏ i, f i) x) :=
-  moment_generic fundNeg (fun d n => kron (-(d:ℤ)) n) (fun d k f hf => kron_prod _ f hf) P hP a k x c R
-    (fun n => GSB n x) Hcount (fun n h1 hs => gs_kron_neg h1 hs x)
 
 open Filter Topology in
 theorem sqrt_bound_div (B : ℝ) (hB : 0 ≤ B) :
@@ -1311,50 +1255,6 @@ theorem lim_of_bound (Sx : ℕ → ℂ) (M : ℂ) (b : ℕ → ℝ) (hb : ∀ x,
     Complex.norm_natCast, div_eq_inv_mul]
   exact mul_le_mul_of_nonneg_left (hb x) (by positivity)
 
-open Filter Topology in
-/-- **Moments, positive discriminants, limit form.** Under `Hcount` for every `x` with `R n x = o(x)`,
-`(1/x) Σ_{0<D≤x fund.} S_D^k → Σ_{f ∈ P^k, ∏ f = □} (∏ a_{f i}) c(∏ f)`. -/
-theorem moment_pos_tendsto (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k : ℕ) (c : ℕ → ℂ)
-    (R : ℕ → ℕ → ℝ)
-    (Hcount : ∀ x n, 0 < n → IsSquare n →
-      ‖∑ d ∈ Ioc 0 x, (if fundPos d then kron d n else 0) - c n * x‖ ≤ R n x)
-    (hR : ∀ n, Tendsto (fun x : ℕ => R n x / x) atTop (𝓝 0)) :
-    Tendsto (fun x : ℕ => ((x:ℂ))⁻¹ *
-        ∑ d ∈ Ioc 0 x, (if fundPos d then (∑ p ∈ P, a p * kron d p) ^ k else 0)) atTop
-      (𝓝 (∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
-          (∏ i, a (f i)) * c (∏ i, f i))) := by
-  apply lim_of_bound _ _ _ (fun x => moment_pos P hP a k x c (fun n => R n x) (Hcount x))
-  simp_rw [sum_div]
-  rw [show (0:ℝ) = ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P), 0 by simp]
-  apply tendsto_finsetSum; intro f _
-  simp_rw [mul_div_assoc]
-  rw [show (0:ℝ) = ‖∏ i, a (f i)‖ * 0 by simp]
-  apply Tendsto.const_mul
-  split_ifs
-  · exact hR _
-  · exact GSB_div _
-
-open Filter Topology in
-/-- **Moments, negative discriminants, limit form.** -/
-theorem moment_neg_tendsto (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k : ℕ) (c : ℕ → ℂ)
-    (R : ℕ → ℕ → ℝ)
-    (Hcount : ∀ x n, 0 < n → IsSquare n →
-      ‖∑ d ∈ Ioc 0 x, (if fundNeg d then kron (-(d:ℤ)) n else 0) - c n * x‖ ≤ R n x)
-    (hR : ∀ n, Tendsto (fun x : ℕ => R n x / x) atTop (𝓝 0)) :
-    Tendsto (fun x : ℕ => ((x:ℂ))⁻¹ *
-        ∑ d ∈ Ioc 0 x, (if fundNeg d then (∑ p ∈ P, a p * kron (-(d:ℤ)) p) ^ k else 0)) atTop
-      (𝓝 (∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
-          (∏ i, a (f i)) * c (∏ i, f i))) := by
-  apply lim_of_bound _ _ _ (fun x => moment_neg P hP a k x c (fun n => R n x) (Hcount x))
-  simp_rw [sum_div]
-  rw [show (0:ℝ) = ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P), 0 by simp]
-  apply tendsto_finsetSum; intro f _
-  simp_rw [mul_div_assoc]
-  rw [show (0:ℝ) = ‖∏ i, a (f i)‖ * 0 by simp]
-  apply Tendsto.const_mul
-  split_ifs
-  · exact hR _
-  · exact GSB_div _
 
 end GSMoment
 
@@ -2369,6 +2269,123 @@ theorem delta_neg (r : ℕ) (hr : 0 < r) :
 
 end GSDelta
 
-#print axioms GSDelta.delta_pos
-#print axioms GSDelta.delta_neg
-#print axioms GSUncond.moment_pos_unconditional
+namespace GSNu
+open Finset Filter Topology Asymptotics GSDens GSLink GSUncond GSRatio GSDelta
+
+open Classical
+
+theorem Qodd_one_iff (d : ℕ) : Q CpOdd 1 d ↔ Squarefree d ∧ d % 2 = 1 := by
+  unfold Q CpOdd
+  rw [Nat.mod_mod_of_dvd _ (by norm_num), sqf_iff]
+  constructor
+  · rintro ⟨h1, -, h3⟩; exact ⟨⟨by omega, h3⟩, h1⟩
+  · rintro ⟨⟨-, h3⟩, h1⟩; exact ⟨h1, Nat.coprime_one_right _, h3⟩
+
+theorem sqf_split (d : ℕ) : Squarefree d ↔ Q CpOdd 1 d ∨ (2 ∣ d ∧ Q CpOdd 1 (d / 2)) := by
+  rw [Qodd_one_iff]
+  constructor
+  · intro h
+    rcases Nat.mod_two_eq_zero_or_one d with h2 | h2
+    · right
+      obtain ⟨j, rfl⟩ : 2 ∣ d := by omega
+      rw [Nat.mul_div_cancel_left _ (by norm_num)]
+      rw [Nat.squarefree_mul_iff] at h
+      exact ⟨dvd_mul_right _ _, (Qodd_one_iff j).2
+        ⟨h.2.2, Nat.odd_iff.1 ((Nat.coprime_two_left).1 h.1)⟩⟩
+    · left; exact ⟨h, h2⟩
+  · rintro (⟨h, _⟩ | ⟨⟨j, rfl⟩, hq⟩)
+    · exact h
+    · rw [Nat.mul_div_cancel_left _ (by norm_num)] at hq
+      obtain ⟨hs, ho⟩ := (Qodd_one_iff j).1 hq
+      exact Nat.squarefree_mul_iff.2 ⟨(Nat.coprime_two_left).2 (Nat.odd_iff.2 ho), Nat.squarefree_two, hs⟩
+
+/-- The squarefree numbers have density `6/π²` (`SquarefreeCount.squarefree_isBigO_twelve_25ths`). -/
+theorem sqf_tendsto : Tendsto (fun x : ℕ => (Nat.count Squarefree x : ℝ) / x) atTop (𝓝 (6 / Real.pi ^ 2)) := by
+  have hO := SquarefreeCount.squarefree_isBigO_twelve_25ths (η := 1 / 50) (by norm_num)
+  have hO' := hO.comp_tendsto tendsto_natCast_atTop_atTop
+  have hinv : (fun n : ℕ => ((n:ℝ))⁻¹) =O[atTop] (fun n : ℕ => ((n:ℝ))⁻¹) := isBigO_refl _ _
+  have hq := hO'.mul hinv
+  have hg : Tendsto (fun n : ℕ => ((n:ℝ)) ^ (12 / 25 + 1 / 50 : ℝ) * ((n:ℝ))⁻¹) atTop (𝓝 0) := by
+    have h1 : Tendsto (fun n : ℕ => ((n:ℝ)) ^ (-(1 / 2 : ℝ))) atTop (𝓝 0) :=
+      (tendsto_rpow_neg_atTop (by norm_num)).comp tendsto_natCast_atTop_atTop
+    apply h1.congr'
+    filter_upwards [eventually_gt_atTop 0] with n hn
+    have hp : (0:ℝ) < n := by exact_mod_cast hn
+    rw [← Real.rpow_neg_one, ← Real.rpow_add hp]; norm_num
+  have h0 := hq.trans_tendsto hg
+  -- `summ sqf n = count Squarefree (n+1)`
+  have hs : ∀ n : ℕ, PsiOmega.summ SquarefreeCount.sqf n = (Nat.count Squarefree (n + 1) : ℝ) := by
+    intro n
+    unfold PsiOmega.summ SquarefreeCount.sqf
+    rw [Nat.floor_natCast, sum_boole, Nat.count_eq_card_filter_range]
+    congr 2; ext d; simp only [mem_filter, mem_Icc, mem_range]
+    constructor
+    · rintro ⟨⟨_, h⟩, hq⟩; exact ⟨by omega, hq⟩
+    · rintro ⟨h, hq⟩; refine ⟨⟨Nat.pos_of_ne_zero ?_, by omega⟩, hq⟩
+      rintro rfl; exact not_squarefree_zero hq
+  have h1 : Tendsto (fun n : ℕ => (Nat.count Squarefree (n + 1) : ℝ) / n) atTop (𝓝 (6 / Real.pi ^ 2)) := by
+    have := h0.const_add (6 / Real.pi ^ 2)
+    rw [add_zero] at this
+    apply this.congr'
+    filter_upwards [eventually_gt_atTop 0] with n hn
+    have hp : (n:ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    simp only [Function.comp, hs]; field_simp; ring
+  have hinv0 : Tendsto (fun n : ℕ => ((n:ℝ))⁻¹) atTop (𝓝 0) :=
+    tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop
+  have hlo := h1.sub hinv0
+  rw [sub_zero] at hlo
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' hlo h1 ?_ ?_
+  · filter_upwards [eventually_gt_atTop 0] with n hn
+    have hp : (0:ℝ) < n := by exact_mod_cast hn
+    have : Nat.count Squarefree (n + 1) ≤ Nat.count Squarefree n + 1 := by
+      convert GSUncond.count_succ_le Squarefree n
+    have h' : (Nat.count Squarefree (n + 1) : ℝ) ≤ Nat.count Squarefree n + 1 := by exact_mod_cast this
+    have he : (Nat.count Squarefree (n + 1) : ℝ) / n - (n:ℝ)⁻¹ = (Nat.count Squarefree (n + 1) - 1) / n := by
+      field_simp
+    rw [he]; exact div_le_div_of_nonneg_right (by linarith) hp.le
+  · filter_upwards [eventually_gt_atTop 0] with n hn
+    have hp : (0:ℝ) < n := by exact_mod_cast hn
+    have : Nat.count Squarefree n ≤ Nat.count Squarefree (n + 1) := by
+      convert GSUncond.count_le_succ Squarefree n
+    exact div_le_div_of_nonneg_right (by exact_mod_cast this) hp.le
+
+/-- **`ν(1) = 4/π²`**: odd squarefree numbers have density `4/π²`. -/
+theorem nu1_eq : nu1 = 4 / Real.pi ^ 2 := by
+  have hν := nu_formula 1 one_pos
+  have hg : godd 1 = 1 := by simp [godd]
+  rw [hg, mul_one] at hν
+  have hd := dilate_tendsto (fun d => 2 ∣ d ∧ Q CpOdd 1 (d / 2)) (Q CpOdd 1) 2 (by norm_num)
+    (fun d => Iff.rfl) nu1 hν
+  have hsum := hν.add hd
+  have hS : Tendsto (fun x : ℕ => (Nat.count Squarefree x : ℝ) / x) atTop (𝓝 (nu1 + nu1 / ((2:ℕ):ℝ))) := by
+    refine hsum.congr (fun x => ?_)
+    have hdis : ∀ d, ¬ (Q CpOdd 1 d ∧ (2 ∣ d ∧ Q CpOdd 1 (d / 2))) := by
+      rintro d ⟨h1, h2, -⟩; have := ((Qodd_one_iff d).1 h1).2; omega
+    have hc : Nat.count Squarefree x = Nat.count (Q CpOdd 1) x +
+        Nat.count (fun d => 2 ∣ d ∧ Q CpOdd 1 (d / 2)) x := by
+      calc Nat.count Squarefree x = Nat.count (fun d => Q CpOdd 1 d ∨ (2 ∣ d ∧ Q CpOdd 1 (d / 2))) x := by
+            simp only [Nat.count_eq_card_filter_range]; congr 1; apply filter_congr; intro d _; exact sqf_split d
+        _ = _ := by convert count_or _ _ hdis x
+    rw [hc, Nat.cast_add, add_div]; congr
+  have := tendsto_nhds_unique hS sqf_tendsto
+  push_cast at this
+  calc nu1 = 2 / 3 * (nu1 + nu1 / 2) := by ring
+    _ = 4 / Real.pi ^ 2 := by rw [this]; ring
+
+/-- **Closed form, positive discriminants.** Positive fundamental discriminants coprime to `r` have density
+`(3/π²) ∏_{p | r} p/(p+1)`. -/
+theorem delta_pos_closed (r : ℕ) (hr : 0 < r) :
+    Tendsto (fun x : ℕ => (Nat.count (Q CpPos r) x : ℝ) / x) atTop (𝓝 (3 / Real.pi ^ 2 * gfac r)) := by
+  have h := delta_pos r hr
+  rw [nu1_eq] at h
+  convert h using 2; ring
+
+/-- **Closed form, negative discriminants.** -/
+theorem delta_neg_closed (r : ℕ) (hr : 0 < r) :
+    Tendsto (fun x : ℕ => (Nat.count (Q CpNeg r) x : ℝ) / x) atTop (𝓝 (3 / Real.pi ^ 2 * gfac r)) := by
+  have h := delta_neg r hr
+  rw [nu1_eq] at h
+  convert h using 2; ring
+
+end GSNu
+

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1123 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1130 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 101 | 274 |
-| `lib/pnt` | 232 | 744 |
+| `lib/pnt` | 233 | 751 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -639,6 +639,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `CyclotomicFrobenius.closure_frob_eq_top`: The Frobenius elements of the small primes generate the cyclotomic Galois group
 - `CyclotomicFrobenius.exists_frob_generator`: A single small Frobenius element generates the cyclotomic Galois group
+
+#### `D2GS`: Real quadratic and imaginary quadratic fundamental discriminants: GS Lemma 4.1 and moments
+
+- `GSKron.gs_kron_pos`: Granville–Soundararajan Lemma 4.1, positive fundamental discriminants, all non-square `n > 1` ([note](../formalisations/d2-density.md))
+- `GSKron.gs_kron_neg`: Granville–Soundararajan Lemma 4.1, negative fundamental discriminants, all non-square `n > 1` ([note](../formalisations/d2-density.md))
+- `GSUncond.moment_pos_unconditional`: Unconditional moments, positive fundamental discriminants ([note](../formalisations/d2-density.md))
+- `GSUncond.moment_neg_unconditional`: Unconditional moments, negative fundamental discriminants ([note](../formalisations/d2-density.md))
+- `GSNu.nu1_eq`: `ν(1) = 4/π²`
+- `GSNu.delta_pos_closed`: Closed form, positive discriminants ([note](../formalisations/d2-density.md))
+- `GSNu.delta_neg_closed`: Closed form, negative discriminants ([note](../formalisations/d2-density.md))
 
 #### `DetectEM`: Zero detection by Euler–Maclaurin
 
@@ -1966,7 +1976,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SquarefreeCount.abs_sub_sum_le`: The tail of `Σ μ(d)/d²`
 - `SquarefreeCount.abs_sum_sqf_sub_le`: The count at an integer
 - `SquarefreeCount.squarefree_isBigO_of_zeroFree`: Squarefree numbers in a zero-free half-plane
-- `SquarefreeCount.squarefree_isBigO_twelve_25ths`: `Q(x) = 6x/π² + O(x^{12/25+η})`
+- `SquarefreeCount.squarefree_isBigO_twelve_25ths`: `Q(x) = 6x/π² + O(x^{12/25+η})` ([note](../formalisations/d2-density.md))
 - `SquarefreeCount.squarefree_isBigO_Theta`: `Q(x) = 6x/π² + O(x^{1/(3−Θ)+η})`
 
 #### `Subconvexity`: Subconvexity from a zero-free half-plane
