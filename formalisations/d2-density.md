@@ -187,6 +187,13 @@ theorem PsiOmega.hasSum_K1 (hG : GoodChar χ) :
 `PsiOmega.hasSum_K1` is Hadamard's product for `Ξ_χ` (`PsiOmega.hasSum_logDeriv_XiC`) at `t = −i/2`, with `PsiOmega.logDeriv_LamG_of_ne` for
 `Λ*′/Λ*` at `s = 1`. Each `u = τ²` stands for the pair of zeros `ρ = ½ ± iτ`, so the sum is `K₁ = Σ_ρ 1/(ρ(1 − ρ))`.
 
+## `K₁ > 0` (`hpos`), given `GoodChar`
+
+`lib/core/WeilChiPos.lean`, unconditional given `GoodChar χ`. `PsiOmega.nonempty_zeros`: `Ξ_χ` has a zero (otherwise
+Hadamard's product makes `Λ*` constant, and `Γ_ℝ(s + 2) = Γ_ℝ(s)s/(2π)` with `L(σ) → 1` gives a contradiction as
+`σ → ∞`). `PsiOmega.K1C_pos`: `K₁ = Re Σ_u 2/(¼ + u) > 0` (`PsiOmega.K1C`), each term being `2/(ρ(1 − ρ))` with
+`0 < Re ρ < 1` (`D2Density.re_inv_pos`).
+
 ## CONDITIONAL: `hdist` at every `t`, and the d₂ < d₁ density
 
 **CONDITIONAL on the half-plane `Re s > 11/12`**, through `D2Dist.dist_pos` / `D2Dist.dist_neg`. `lib/pnt/D2Hdist.lean`:
