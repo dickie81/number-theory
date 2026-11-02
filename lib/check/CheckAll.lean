@@ -203,6 +203,7 @@ import BohrLandauCore
 import ShortSieveThree
 import ShortSieveCertDrop2
 import ShortSieveCertCheck
+import ShortSieve525
 import SmallPrimes
 import ClassNumberBound
 import Madelung
@@ -1004,7 +1005,8 @@ nonzero and automorphic on `Γ_2`. -/
 #print axioms Eis.isAut_thS_Gam2
 
 /- R. Li's primes in short intervals at `θ = 21/40`, in progress (`formalisations/short-intervals.md`): the lower
-bound for primes from loss bounds on the certificate's root cells, and the certificate's decisions. -/
+bound for primes from loss bounds on the certificate's root cells, the certificate's decisions, the node lemmas that
+check a cell's certificate in parts, and the lower bound from the 204 cells' certificates. -/
 #print axioms ShortSieveThree.primes_of_cells
 #print axioms ShortSieveCert.Sound.OK_of_out
 #print axioms ShortSieveCert.Sound.cut_lt
@@ -1069,6 +1071,15 @@ bound for primes from loss bounds on the certificate's root cells, and the certi
 #print axioms ShortSieveCert.chainTwo_sound
 #print axioms ShortSieveCert.run_sound
 #print axioms ShortSieveCert.primes_of_certs
+#print axioms ShortSieveCert.run_up_of
+#print axioms ShortSieveCert.run_comb_of
+#print axioms ShortSieveCert.run_split_of
+#print axioms ShortSieveCert.run_cut_of
+#print axioms ShortSieveCert.run_dec_std_of
+#print axioms ShortSieveCert.run_dec_two_of
+#print axioms ShortSieveCert.run_rev_std_of
+#print axioms ShortSieveCert.run_swap_of
+#print axioms ShortSieve525.primes_525
 
 /- Bridges to other parts of number theory and to physics, each named in `formalisations/`: the small primes generate
 `(ℤ/qℤ)ˣ`, and the least `k`-th power non-residue, from the half-plane; Gauss's class number problem with an explicit
