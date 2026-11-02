@@ -226,6 +226,7 @@ import BallFract
 import BallSaw
 import FrobTower
 import SmithLattice
+import Redheffer
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1190,6 +1191,13 @@ twin-form rates at `11/12`. -/
 #print axioms SmithLattice.smith_nonneg
 #print axioms SmithLattice.smith_pos
 #print axioms SmithLattice.mertens_identity
+#print axioms Redheffer.det_E
+#print axioms Redheffer.sum_mertens_div
+#print axioms Redheffer.det_redheffer
+#print axioms Redheffer.det_gram_redheffer
+#print axioms Redheffer.det_smith
+#print axioms Redheffer.smith_entry
+#print axioms Redheffer.abs_mertens_le
 #print axioms ZerosInfinite.infinite_ZIdx
 #print axioms ZerosDense.not_linear
 #print axioms BallHadamard.rh_iff_posDefH

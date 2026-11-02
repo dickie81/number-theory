@@ -168,13 +168,13 @@ angles, but these are context, not checked here, and none of it is formalised.
 `Σ_{i,j ≤ N} x_i x_j gcd(i, j) = Σ_{d ≤ N} φ(d)(Σ_{d ∣ i} x_i)²` (`SmithLattice.smith_form`): the gcd matrix is
 `E·diag(φ)·Eᵀ`, `E` the divisibility matrix. It is an integral Gram matrix, positive (`SmithLattice.smith_nonneg`) and
 definite (`SmithLattice.smith_pos`), unconditionally, with the explicit basis `√φ(d)·(column d of E)`. Smith's
-determinant `∏φ(k)` follows from the factorisation (`det E = 1`) but is not formalised. In the same basis,
+determinant `∏φ(k)` is `Redheffer.det_smith`. In the same basis,
 `Σ_{d ≤ N} μ(d)⌊N/d⌋ = 1` (`SmithLattice.mertens_identity`).
 
 **Where RH sits.** `E` is unitriangular with inverse `E⁻¹(d, n) = μ(n/d)` for `d ∣ n`, so `μ` gives the coordinates of
 `δ_1` in the basis of divisibility vectors, and Mertens' `M(N) = Σ_{n ≤ N} μ(n)` is the sum of those coordinates.
 RH is equivalent to `M(N) = O(N^{1/2+ε})` (`MertensExponent.rh_iff_mertens`). The determinant of the Redheffer matrix
-(`1` where `i ∣ j` or `j = 1`) is `M(N)` (Redheffer 1977; not formalised, unverified here): that matrix is `Eᵀ` with its
+(`1` where `i ∣ j` or `j = 1`) is `M(N)` (Redheffer 1977; now `Redheffer.det_redheffer`): that matrix is `Eᵀ` with its
 first column replaced by ones, a rank-one change of the lattice basis. So in this lattice positivity is free, and RH is
 a growth bound on one coordinate functional, the covolume change under a rank-one perturbation, not a positivity
 statement.
@@ -195,3 +195,25 @@ critical line (Speculative link to Beurling–Nyman and Báez-Duarte, not explor
 **Next lead (Speculative).** Put the Redheffer perturbation inside the Smith form: the Gram matrix of the perturbed
 basis is `G + (rank two)`, and `M(N)` enters its determinant. A bound `|M(N)| ≤ N^{1/2+ε}` is then a statement on how
 far a rank-one change can shrink the covolume of an explicit positive integral lattice.
+
+## Redheffer inside Smith (Proved; Numerical)
+
+`Redheffer` proves `det E = 1` (`Redheffer.det_E`), that `Eᵀ·diag(φ)·E` is the gcd matrix (`Redheffer.smith_entry`)
+with determinant `∏φ(k)` (`Redheffer.det_smith`), `Σ_{m ≤ K} M(K/m) = 1` (`Redheffer.sum_mertens_div`), so that
+`c_j = M(n/j)` solves `E c = 1`, and by Cramer's rule Redheffer's theorem `det R_n = M(n)` (`Redheffer.det_redheffer`).
+The positive semidefinite integral form `R·diag(φ)·Rᵀ` has determinant `M(n)²·∏φ(k)` (`Redheffer.det_gram_redheffer`):
+`M(n)²` is the ratio of the covolumes of Redheffer's and Smith's forms. Unconditionally `|M(n)| ≤ n`
+(`Redheffer.abs_mertens_le`).
+
+**What positivity gives.** `M(n) = c_1` is a coordinate of `c` in Smith's form `G = Eᵀ·diag(φ)·E`, with
+`cᵀGc = (Ec)ᵀdiag(φ)(Ec) = Σ_{k ≤ n} φ(k)` and `(G⁻¹)_{11} = Σ_{k ≤ n} μ(k)²/φ(k)`. Cauchy–Schwarz in `G` gives
+`M(n)² ≤ Σφ(k)·Σμ(k)²/φ(k) ≈ (3/π²)n²·log n` (derived here, not formalised): about `1.3n` to `1.8n` for
+`n = 10²` to `10⁴`, worse than the trivial `n`. Hadamard's inequality for `R·diag(φ)·Rᵀ` gives `|M(n)| ≤ e^{6150}` at
+`n = 10⁴`. Numerical (`scripts/positivity/redh.py`): `M(10⁴) = −23`, `|M|/√n` = 0.10, 0.06, 0.11, 0.23 at
+`n` = 10², 10³, 3·10³, 10⁴.
+
+**What would be needed (Speculative).** Positivity of these forms costs nothing and bounds `M(n)` only through
+Cauchy–Schwarz, which loses because the vector `c = (M(n/j))_j` has `G`-norm `≈ n` while its first coordinate is of
+size `√n`: RH says that `c` is far from aligned with the dual vector of the first coordinate, an equidistribution
+statement about `M(n/j)` in Smith's metric, `|⟨e_1, c⟩| ≤ n^{−1/2+ε}·‖c‖_G·‖e_1‖_{G⁻¹}`. No inequality from positivity,
+interlacing or Hadamard alone sees that cancellation; it needs the sign changes of `μ`.

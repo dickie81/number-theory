@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1166 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1173 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 109 | 313 |
+| `lib/core` | 110 | 320 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -490,6 +490,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `QuadIdeals`: The ideals of a quadratic field of each norm, and its Dedekind zeta function
 
 - `QuadIdeals.trichotomy`: Every prime splits, is inert or ramifies
+
+#### `Redheffer`: Redheffer's matrix inside Smith's lattice: `det R_n = M(n)`
+
+- `Redheffer.sum_mertens_div`: `Σ_{m ≤ K} M(K/m) = 1`
+- `Redheffer.det_E`: `det E = 1`
+- `Redheffer.det_redheffer`: Redheffer's theorem: `det R_n = M(n)`
+- `Redheffer.det_gram_redheffer`: The determinant of Redheffer's form
+- `Redheffer.det_smith`: Smith's determinant
+- `Redheffer.smith_entry`: `Eᵀ·diag(φ)·E` is the gcd matrix
+- `Redheffer.abs_mertens_le`: The trivial bound `|M(n)| ≤ n`.
 
 #### `Roadmap`: §11 roadmap, item 1: the objects stated, and the reduction to RH proved
 
