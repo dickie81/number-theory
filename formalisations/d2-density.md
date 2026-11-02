@@ -172,6 +172,21 @@ proof (`D2Dist.core`, unconditional given its hypotheses) takes the cutoff `Y(x)
 quantitative moments, the tail identity with `η = 1/48` (error `C log(d + 2) / ⌈log(x + 2)⌉²`), and the model
 moments; `D2Dist.emp_tendsto` then applies `MomentConv.tendsto_of_moments`.
 
+## The zero sum `K₁` at `s = 1` (towards `hK1`), given `GoodChar`
+
+`lib/core/WeilChiK1.lean`, unconditional given the explicit hypothesis `GoodChar χ` (primitive, real, `χ ≠ 1`,
+`L(½, χ) ≠ 0`):
+
+```lean
+theorem PsiOmega.hasSum_K1 (hG : GoodChar χ) :
+    HasSum (fun i : ZeroIdx (sqF (XiC χ)) => 2 / (1 / 4 + i.1))
+      ((Real.log N : ℂ) - (Real.log π : ℂ) + Complex.digamma ((1 + parity χ) / 2)
+        + 2 * logDeriv (LFunction χ) 1)
+```
+
+Hadamard's product for `Ξ_χ` (`PsiOmega.hasSum_logDeriv_XiC`) at `t = −i/2`, with `PsiOmega.logDeriv_LamG_of_ne` for
+`Λ*′/Λ*` at `s = 1`. Each `u = τ²` stands for the pair of zeros `ρ = ½ ± iτ`, so the sum is `K₁ = Σ_ρ 1/(ρ(1 − ρ))`.
+
 ## CONDITIONAL: `hdist` at every `t`, and the d₂ < d₁ density
 
 **CONDITIONAL on the half-plane `Re s > 11/12`**, through `D2Dist.dist_pos` / `D2Dist.dist_neg`. `lib/pnt/D2Hdist.lean`:
