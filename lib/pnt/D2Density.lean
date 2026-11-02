@@ -156,29 +156,30 @@ theorem criterion' (K1 c l : ℝ) (hK : 0 < K1) :
     linarith
 
 
-/-- **The d₂ < d₁ density, one sign.** Per discriminant: `K1 D = L0 D + 2 ℓ D > 0` (I2; `K1_pos`), and Theorem B
+/-- **The d₂ < d₁ density, one sign.** The hypotheses `hK1`, `hpos`, `hB` are only required for `D` in `A ⊇ S x`. Per discriminant: `K1 D = L0 D + 2 ℓ D > 0` (I2; `K1_pos`), and Theorem B
 `K2 D = √2 (K1 D/2 + c + ℓ D/2)` (hypothesis `hB`, paper proof). Assume the distributional input `hdist`, and
 that `L0 D → ∞` in the sense `hL0` (only finitely many `D` with `L0 D ≤ R`; true as `L0 = log(|D|/π) + ψ_a`).
 Then the proportion of `D` with `d₂/d₁ = 2(1 - K2²/K1²) < 1` tends to `μ (Ioi (-2c))`. -/
 theorem d2_density (S : ℕ → Finset ℤ) (hS : Tendsto (fun x => ((S x).card : ℝ)) atTop atTop)
+    (A : ℤ → Prop) (hSA : ∀ x, ∀ D ∈ S x, A D)
     (ℓ L0 K1 K2 : ℤ → ℝ) (c : ℝ) (μ : Measure ℝ) [IsProbabilityMeasure μ]
-    (hK1 : ∀ D, K1 D = L0 D + 2 * ℓ D) (hpos : ∀ D, 0 < K1 D)
-    (hB : ∀ D, K2 D = √2 * (K1 D / 2 + c + ℓ D / 2))
+    (hK1 : ∀ D, A D → K1 D = L0 D + 2 * ℓ D) (hpos : ∀ D, A D → 0 < K1 D)
+    (hB : ∀ D, A D → K2 D = √2 * (K1 D / 2 + c + ℓ D / 2))
     (hdist : ∀ t, Tendsto (fun x => prop (S x) (fun D => t < ℓ D)) atTop (𝓝 (μ (Ioi t)).toReal))
     (Bf : ℝ → Finset ℤ) (hL0 : ∀ R D, L0 D ≤ R → D ∈ Bf R) :
     Tendsto (fun x => prop (S x) (fun D => 2 * (1 - K2 D ^ 2 / K1 D ^ 2) < 1)) atTop
       (𝓝 (μ (Ioi (-2 * c))).toReal) := by
   classical
-  have key : ∀ D, 2 * (1 - K2 D ^ 2 / K1 D ^ 2) < 1 ↔ (-2 * c < ℓ D ∨ ℓ D < -(2/5) * (L0 D + c)) := by
-    intro D
-    have h := criterion' (K1 D) c (ℓ D) (hpos D)
-    rw [← hB D] at h
-    rw [← not_le, h, hK1 D]; constructor
+  have key : ∀ D, A D → (2 * (1 - K2 D ^ 2 / K1 D ^ 2) < 1 ↔ (-2 * c < ℓ D ∨ ℓ D < -(2/5) * (L0 D + c))) := by
+    intro D hA
+    have h := criterion' (K1 D) c (ℓ D) (hpos D hA)
+    rw [← hB D hA] at h
+    rw [← not_le, h, hK1 D hA]; constructor
     · intro hn; by_contra hc; push_neg at hc; exact hn ⟨by linarith [hc.2], by linarith [hc.1]⟩
     · rintro (h1 | h1) ⟨h2, h3⟩ <;> linarith
   have hfun : (fun x => prop (S x) (fun D => 2 * (1 - K2 D ^ 2 / K1 D ^ 2) < 1)) =
       fun x => prop (S x) (fun D => -2 * c < ℓ D ∨ ℓ D < -(2/5) * (L0 D + c)) := by
-    funext x; unfold prop; congr 3; ext D; simp only [Finset.mem_filter, key D]
+    funext x; unfold prop; rw [Finset.filter_congr fun D hD => key D (hSA x D hD)]
   rw [hfun]
   refine density_of_dist S hS ℓ (fun D => -(2/5) * (L0 D + c)) μ hdist (fun M => Bf (5/2 * M - c)) ?_ (-2 * c)
   intro M D h; apply hL0; linarith
@@ -198,15 +199,17 @@ theorem L0_finite (κ R : ℝ) (D : ℤ) (h : Real.log (|(D:ℝ)| / Real.pi) + �
     push_cast; exact hb.trans (Int.le_ceil _)
   exact_mod_cast this
 
-/-- `d2_density` with `L0 D = log(|D|/π) + κ`: the hypothesis `hL0` is no longer needed. -/
+/-- `d2_density` with `L0 D = log(|D|/π) + κ`: the hypothesis `hL0` is no longer needed. The per-discriminant
+hypotheses `hK1`, `hpos`, `hB` are only required on the set `A ⊇ S x`. -/
 theorem d2_density_log (S : ℕ → Finset ℤ) (hS : Tendsto (fun x => ((S x).card : ℝ)) atTop atTop)
+    (A : ℤ → Prop) (hSA : ∀ x, ∀ D ∈ S x, A D)
     (ℓ K1 K2 : ℤ → ℝ) (c κ : ℝ) (μ : Measure ℝ) [IsProbabilityMeasure μ]
-    (hK1 : ∀ D, K1 D = (Real.log (|(D:ℝ)| / Real.pi) + κ) + 2 * ℓ D) (hpos : ∀ D, 0 < K1 D)
-    (hB : ∀ D, K2 D = √2 * (K1 D / 2 + c + ℓ D / 2))
+    (hK1 : ∀ D, A D → K1 D = (Real.log (|(D:ℝ)| / Real.pi) + κ) + 2 * ℓ D) (hpos : ∀ D, A D → 0 < K1 D)
+    (hB : ∀ D, A D → K2 D = √2 * (K1 D / 2 + c + ℓ D / 2))
     (hdist : ∀ t, Tendsto (fun x => prop (S x) (fun D => t < ℓ D)) atTop (𝓝 (μ (Ioi t)).toReal)) :
     Tendsto (fun x => prop (S x) (fun D => 2 * (1 - K2 D ^ 2 / K1 D ^ 2) < 1)) atTop
       (𝓝 (μ (Ioi (-2 * c))).toReal) :=
-  d2_density S hS ℓ (fun D => Real.log (|(D:ℝ)| / Real.pi) + κ) K1 K2 c μ hK1 hpos hB hdist
+  d2_density S hS A hSA ℓ (fun D => Real.log (|(D:ℝ)| / Real.pi) + κ) K1 K2 c μ hK1 hpos hB hdist
     (fun R => Finset.Icc (-(⌈Real.pi * Real.exp (R - κ)⌉)) ⌈Real.pi * Real.exp (R - κ)⌉)
     (fun R D h => L0_finite κ R D h)
 

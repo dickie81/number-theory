@@ -184,7 +184,8 @@ theorem D2Hdist.hdist_pos (t : ℝ) : Tendsto (fun x => prop (Spos x) (fun D => 
 and `D2Hdist.hdist_neg`. The frontier `{t}` of `Ioi t` is `ν`-null by `NoAtoms.ν_singleton`, so the portmanteau
 theorem applies at every `t`. `D2Hdist.d2_density_pos` and `D2Hdist.d2_density_neg` are `D2Density.d2_density_log`
 (`lib/pnt/D2Density.lean`, moved from `scratch/d2density/`) with `hdist` discharged; the hypotheses `hK1`, `hpos` and
-`hB` remain. `D2Density.K1_pos` gives the positivity of a summable zero sum `K₁`.
+`hB` remain, and are only required on the discriminant sets (`D2Hdist.Apos`: `1 < D` fundamental; `D2Hdist.Aneg`: `D < −1`
+fundamental), through the set `A ⊇ S x` of `D2Density.d2_density_log`. `D2Density.K1_pos` gives the positivity of a summable zero sum `K₁`.
 
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 

@@ -99,6 +99,24 @@ noncomputable def Spos (x : ℕ) : Finset ℤ := Sx fundPos (fun d : ℕ => (d :
 /-- The negative fundamental discriminants `-x ≤ D < -1`. -/
 noncomputable def Sneg (x : ℕ) : Finset ℤ := Sx fundNeg (fun d : ℕ => -(d : ℤ)) x
 
+/-- The positive fundamental discriminants `D > 1`. -/
+def Apos (D : ℤ) : Prop := 1 < D ∧ fundPos D.toNat
+
+/-- The negative fundamental discriminants `D < -1`. -/
+def Aneg (D : ℤ) : Prop := D < -1 ∧ fundNeg (-D).toNat
+
+theorem Spos_sub (x : ℕ) : ∀ D ∈ Spos x, Apos D := by
+  intro D hD
+  obtain ⟨d, hd, rfl⟩ := Finset.mem_image.1 hD
+  obtain ⟨-, hF, h1⟩ := Finset.mem_filter.1 hd
+  exact ⟨by exact_mod_cast h1, by simpa using hF⟩
+
+theorem Sneg_sub (x : ℕ) : ∀ D ∈ Sneg x, Aneg D := by
+  intro D hD
+  obtain ⟨d, hd, rfl⟩ := Finset.mem_image.1 hD
+  obtain ⟨-, hF, h1⟩ := Finset.mem_filter.1 hd
+  exact ⟨by omega, by simpa using hF⟩
+
 /-- `Re L′/L(1, χ_D)` for `D > 1` fundamental. -/
 noncomputable def ℓpos (D : ℤ) : ℝ := lpos D.toNat
 
@@ -118,20 +136,20 @@ theorem hdist_neg (t : ℝ) : Tendsto (fun x => prop (Sneg x) (fun D => t < ℓn
 /-- **CONDITIONAL (half-plane). The d₂ < d₁ density, `D > 0`.** `D2Density.d2_density_log` with `hdist`
 discharged: the proportion of `D` with `d₂/d₁ < 1` tends to `ν (Ioi (-2c))`. -/
 theorem d2_density_pos (K1 K2 : ℤ → ℝ) (c κ : ℝ)
-    (hK1 : ∀ D, K1 D = (Real.log (|(D:ℝ)| / Real.pi) + κ) + 2 * ℓpos D) (hpos : ∀ D, 0 < K1 D)
-    (hB : ∀ D, K2 D = √2 * (K1 D / 2 + c + ℓpos D / 2)) :
+    (hK1 : ∀ D, Apos D → K1 D = (Real.log (|(D:ℝ)| / Real.pi) + κ) + 2 * ℓpos D)
+    (hpos : ∀ D, Apos D → 0 < K1 D) (hB : ∀ D, Apos D → K2 D = √2 * (K1 D / 2 + c + ℓpos D / 2)) :
     Tendsto (fun x => prop (Spos x) (fun D => 2 * (1 - K2 D ^ 2 / K1 D ^ 2) < 1)) atTop
       (𝓝 ((RandModel.ν : Measure ℝ) (Set.Ioi (-2 * c))).toReal) :=
   d2_density_log Spos (card_tendsto fundPos lpos _ Int.toNat (fun d => by simp) D2Dist.κ κ_pos mom0_pos)
-    ℓpos K1 K2 c κ _ hK1 hpos hB hdist_pos
+    Apos Spos_sub ℓpos K1 K2 c κ _ hK1 hpos hB hdist_pos
 
 /-- **CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0`.** -/
 theorem d2_density_neg (K1 K2 : ℤ → ℝ) (c κ : ℝ)
-    (hK1 : ∀ D, K1 D = (Real.log (|(D:ℝ)| / Real.pi) + κ) + 2 * ℓneg D) (hpos : ∀ D, 0 < K1 D)
-    (hB : ∀ D, K2 D = √2 * (K1 D / 2 + c + ℓneg D / 2)) :
+    (hK1 : ∀ D, Aneg D → K1 D = (Real.log (|(D:ℝ)| / Real.pi) + κ) + 2 * ℓneg D)
+    (hpos : ∀ D, Aneg D → 0 < K1 D) (hB : ∀ D, Aneg D → K2 D = √2 * (K1 D / 2 + c + ℓneg D / 2)) :
     Tendsto (fun x => prop (Sneg x) (fun D => 2 * (1 - K2 D ^ 2 / K1 D ^ 2) < 1)) atTop
       (𝓝 ((RandModel.ν : Measure ℝ) (Set.Ioi (-2 * c))).toReal) :=
   d2_density_log Sneg (card_tendsto fundNeg lneg _ (fun D => (-D).toNat) (fun d => by simp) D2Dist.κ κ_pos mom0_neg)
-    ℓneg K1 K2 c κ _ hK1 hpos hB hdist_neg
+    Aneg Sneg_sub ℓneg K1 K2 c κ _ hK1 hpos hB hdist_neg
 
 end D2Hdist
