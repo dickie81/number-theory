@@ -1,0 +1,26 @@
+chars 29468 certified d2<d1: 5983 not certified >1: 5983 time 44.62550616264343
+ratio 0.41051 q=19 n=3 a=1 K1=4.3578 |K2|=3.8849 fail=True
+ratio 0.41051 q=19 n=13 a=1 K1=4.3578 |K2|=3.8849 fail=True
+ratio 0.49861 q=163 n=162 a=1 K1=7.7085 |K2|=6.6788 fail=True
+ratio 0.52071 q=31 n=11 a=1 K1=4.5373 |K2|=3.9022 fail=True
+ratio 0.52071 q=31 n=17 a=1 K1=4.5373 |K2|=3.9022 fail=True
+ratio 0.53433 q=17 n=5 a=1 K1=2.8393 |K2|=2.4306 fail=True
+ratio 0.53433 q=17 n=7 a=1 K1=2.8393 |K2|=2.4306 fail=True
+ratio 0.57730 q=37 n=5 a=1 K1=4.4783 |K2|=3.7771 fail=True
+ratio 0.57730 q=37 n=15 a=1 K1=4.4783 |K2|=3.7771 fail=True
+ratio 0.59199 q=59 n=27 a=0 K1=4.5764 |K2|=3.8398 fail=True
+ratio 0.59199 q=59 n=35 a=0 K1=4.5764 |K2|=3.8398 fail=True
+ratio 0.59440 q=49 n=6 a=1 K1=4.6342 |K2|=3.8850 fail=True
+ratio 0.59440 q=49 n=41 a=1 K1=4.6342 |K2|=3.8850 fail=True
+ratio 0.59865 q=41 n=3 a=1 K1=4.5137 |K2|=3.7782 fail=True
+ratio 0.59865 q=41 n=14 a=1 K1=4.5137 |K2|=3.7782 fail=True
+ratio 0.60459 q=43 n=19 a=1 K1=4.3513 |K2|=3.6346 fail=True
+ratio 0.60459 q=43 n=34 a=1 K1=4.3513 |K2|=3.6346 fail=True
+ratio 0.60534 q=389 n=21 a=1 K1=7.9939 |K2|=6.6754 fail=True
+ratio 0.60534 q=389 n=352 a=1 K1=7.9939 |K2|=6.6754 fail=True
+ratio 0.60540 q=29 n=14 a=1 K1=3.5713 |K2|=2.9822 fail=True
+ratio 0.60540 q=29 n=27 a=1 K1=3.5713 |K2|=2.9822 fail=True
+ratio 0.60828 q=53 n=33 a=1 K1=4.8552 |K2|=4.0501 fail=True
+ratio 0.60828 q=53 n=45 a=1 K1=4.8552 |K2|=4.0501 fail=True
+ratio 0.61072 q=367 n=116 a=1 K1=7.8312 |K2|=6.5270 fail=True
+ratio 0.61072 q=367 n=193 a=1 K1=7.8312 |K2|=6.5270 fail=True
