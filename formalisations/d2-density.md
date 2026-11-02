@@ -222,6 +222,19 @@ discriminant `d > 1`; `D2Parity.kron_neg`: `(−d | d − 1) = −1`. Both by qu
 **CONDITIONAL (half-plane).** `D2Good.d2_density_pos'` / `D2Good.d2_density_neg'`: the d₂ < d₁ density with only
 `L(½, χ_D) ≠ 0` (`D2Good.HalfPos`, `D2Good.HalfNeg`) and `hB` left as hypotheses.
 
+## Theorem B for a good real character, and `hB`
+
+`lib/core/WeilChiB.lean`, unconditional given `GoodChar χ`. `PsiOmega.KxC_explicit`: Weil's explicit formula
+(`PsiOmega.weil_XiC`) for BallPsi's test function `H_u(t) = (cos(tu) − cosh(u/2))/(t² + ¼)` gives
+`K(e^u) = cosh(u/2)K₁ − sinh(u/2)log(N/π) + A_χ(u) − 2Σ Λ(n)χ(n)n^{−1/2}ĝ_{H_u}(log n)` for
+`K(x) = Σ_ρ x^{ρ−½}/(ρ(1 − ρ))` (`PsiOmega.KxC`), with the archimedean integral `A_χ(u)` (`PsiOmega.archC`). At `x = 2`
+the prime sum vanishes (`PsiOmega.prime_two`), giving **Theorem B** (`PsiOmega.theoremB`):
+`K(2) = √2(K₁/2 + c_a + ℓ/2)`, where `c_a = Re ψ((1 + a)/2)/4 + A_a(log 2)/√2` (`PsiOmega.cA`, `PsiOmega.archA`) depends
+only on the parity `a`. The closed forms `c₀ = −¼ log(27/4)`, `c₁ = ¾ log(3/4)` are not proved in Lean.
+
+**CONDITIONAL (half-plane).** `D2Good.d2_density_pos_B` / `D2Good.d2_density_neg_B` (from `D2Good.B_pos`,
+`D2Good.B_neg`): the d₂ < d₁ density with `K(2)` in place of `K₂`, limit `ν(−2c_a, ∞)`, given only `L(½, χ_D) ≠ 0`.
+
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
 **CONDITIONAL on the half-plane `Re s > 11/12`** (`Eis.LFunction_ne_zero_of_re_gt`, [openai-half-plane.md](openai-half-plane.md)),
@@ -247,7 +260,7 @@ These results have a hypothesis that the library does not prove, and no uncondit
 
 | Result | Hypothesis | Lean |
 |---|---|---|
-| CONDITIONAL (half-plane): the d₂ < d₁ density over fundamental discriminants of each sign, with `hK1`, `hpos` discharged | `L(½, χ_D) ≠ 0` for every `D` (`D2Good.HalfPos`, `D2Good.HalfNeg`) | `D2Good.d2_density_pos'`, `D2Good.d2_density_neg'` |
+| CONDITIONAL (half-plane): the d₂ < d₁ density over fundamental discriminants of each sign, with `hK1`, `hpos` discharged | `L(½, χ_D) ≠ 0` for every `D` (`D2Good.HalfPos`, `D2Good.HalfNeg`) | `D2Good.d2_density_pos'`, `D2Good.d2_density_neg'`, `D2Good.d2_density_pos_B`, `D2Good.d2_density_neg_B` |
 
 ## How the statements differ from the source
 

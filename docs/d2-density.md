@@ -143,7 +143,7 @@ model constant is marginally off. This is unresolved.
 | hypothesis | content | status |
 |---|---|---|
 | `hdist` | per-sign weak convergence of ℓ_D to X, at every `t` | **Lean, CONDITIONAL on the half-plane** `Re s > 11/12`: `D2Hdist.hdist_pos`, `D2Hdist.hdist_neg` (moments via GS Lemma 4.1, the method of moments, no atoms `NoAtoms.ν_singleton`, the tail identity). `D2Hdist.d2_density_pos` / `D2Hdist.d2_density_neg` are `D2Density.d2_density_log` with `hdist` discharged |
-| `hB` | Theorem B (closed form of K(2)) | written proof; needs the explicit formula for L(s, χ) |
+| `hB` | Theorem B (closed form of K(2)) | Lean (`PsiOmega.theoremB`, `c_a` as the archimedean integral); closed form of `c_a` written proof |
 | `hpos` | K₁ is the zero sum (summability) | positivity is Lean; the identification is open |
 
 ## Citations
