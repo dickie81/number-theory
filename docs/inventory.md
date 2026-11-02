@@ -42,7 +42,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallCurve.continuous_of_mem_closure_span`: ε/3
 - `BallCurve.flow_continuous_closure`: The flow is strongly continuous on the closed span of the curve
 - `BallCurve.flow_continuous_of_dense`: If the curve spans densely, the flow is strongly continuous on the whole space
-- `BallCurve.flow_continuous_model`: In the model `curveRealization`, the flow is strongly continuous on all of `ℓ²`
+- `BallCurve.flow_continuous_model`: In the model `curveRealization`, the flow is strongly continuous on all of `ℓ²` ([note](../formalisations/weil-positivity.md))
 
 #### `BallFlat`: The flat model: with Lebesgue measure for the zeros, the orbit spans the cubic lattice
 

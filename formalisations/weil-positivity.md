@@ -106,6 +106,7 @@ These results have a hypothesis that the library does not prove, and no uncondit
 |---|---|---|
 | RH, RH with GRH for `χ₋₄`, and the Dedekind twin form of `ℚ(i)` nonnegative | GRH for the radial member of the angular family (`GRHMemberZero`) | `AngularFamily.rh_of_member_zero`, `Dedekind4.rh_grh_of_member_zero`, `Dedekind4.QK_nonneg_of_member_zero` |
 | RH | Pólya's conjecture, `L(x) ≤ 0` for every `x ≥ 2`, which is false | `PsiOmega.rh_of_polya` |
+| The flow of the model orbit curve in `ℓ²` of the zeros is strongly continuous on all of `ℓ²` | RH (the model exists only under it) | `BallCurve.flow_continuous_model` |
 | A first support at which Weil positivity is lost, and the exponential failure of `λ₁` | that RH fails | `WeilForm.first_failure`, `WeilForm.lam_fails_exponentially` |
 | The negative index of Weil's form is unbounded | that no finite set of quadruples holds every off-line zero of `ζ` | `WeilForm.negDirections_unbounded` |
 | RH, from ground states that satisfy `HypConv` | that the even and odd ground energies never coincide for `a ≥ 1/4` | `WeilForm.rh_of_no_crossing` |
