@@ -39,6 +39,8 @@ import D2Density
 import D2Hdist
 import WeilChiK1
 import WeilChiPos
+import D2Parity
+import D2Good
 import ExplicitSmooth
 import ExplicitConstants
 import QuadRing
@@ -386,6 +388,10 @@ import CertInstances
 #print axioms D2Hdist.d2_density_neg
 #print axioms PsiOmega.hasSum_K1
 #print axioms PsiOmega.K1C_pos
+#print axioms D2Parity.kron_pos
+#print axioms D2Parity.kron_neg
+#print axioms D2Good.d2_density_pos'
+#print axioms D2Good.d2_density_neg'
 #print axioms SquarefreeCount.abs_sub_sum_le
 #print axioms SquarefreeCount.abs_sum_sqf_sub_le
 #print axioms SquarefreeCount.squarefree_isBigO_of_zeroFree

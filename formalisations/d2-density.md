@@ -209,6 +209,19 @@ theorem applies at every `t`. `D2Hdist.d2_density_pos` and `D2Hdist.d2_density_n
 `hB` remain, and are only required on the discriminant sets (`D2Hdist.Apos`: `1 < D` fundamental; `D2Hdist.Aneg`: `D < −1`
 fundamental), through the set `A ⊇ S x` of `D2Density.d2_density_log`. `D2Density.K1_pos` gives the positivity of a summable zero sum `K₁`.
 
+## The parity of `χ_D`, and `GoodChar` from `L(½, χ_D) ≠ 0`
+
+`lib/pnt/D2Parity.lean`, unconditional. `D2Parity.kron_pos`: `(d | d − 1) = 1` for a positive fundamental
+discriminant `d > 1`; `D2Parity.kron_neg`: `(−d | d − 1) = −1`. Both by quadratic reciprocity (for `d = 4m`, via
+`J(m | 4m − 1) = 1`). With `D2Parity.chi_neg_one` this makes `χ_d` even and `χ_{−d}` odd.
+
+`lib/pnt/D2Good.lean`. `D2Good.good_of` builds `GoodChar χ_D` from `L(½, χ_D) ≠ 0` (primitivity, `χ_D ≠ 1`, and
+`χ_D` quadratic from `D2Good.kron_tri`). Then `D2Good.hK1_pos` / `D2Good.hK1_neg` prove `hK1` and `hpos` for
+`K₁ = PsiOmega.K1C χ_D` (`D2Good.K1pos`, `D2Good.K1neg`), with `κ = Re ψ(½)` resp. `Re ψ(1)`.
+
+**CONDITIONAL (half-plane).** `D2Good.d2_density_pos'` / `D2Good.d2_density_neg'`: the d₂ < d₁ density with only
+`L(½, χ_D) ≠ 0` (`D2Good.HalfPos`, `D2Good.HalfNeg`) and `hB` left as hypotheses.
+
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
 **CONDITIONAL on the half-plane `Re s > 11/12`** (`Eis.LFunction_ne_zero_of_re_gt`, [openai-half-plane.md](openai-half-plane.md)),

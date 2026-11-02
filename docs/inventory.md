@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1164 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1168 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 103 | 276 |
-| `lib/pnt` | 246 | 783 |
+| `lib/pnt` | 248 | 787 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -670,6 +670,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `GSNu.delta_pos_closed`: Closed form, positive discriminants ([note](../formalisations/d2-density.md))
 - `GSNu.delta_neg_closed`: Closed form, negative discriminants ([note](../formalisations/d2-density.md))
 
+#### `D2Good`: Wiring `K₁` into the d₂ density
+
+- `D2Good.d2_density_pos'`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D > 1` ([note](../formalisations/d2-density.md))
+- `D2Good.d2_density_neg'`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0` ([note](../formalisations/d2-density.md))
+
 #### `D2Hcount`: Quantitative `Hcount`: fundamental discriminants coprime to `r`, with an explicit error
 
 - `GSHcount.hcount_pos`: Quantitative `Hcount`, positive discriminants ([note](../formalisations/d2-density.md))
@@ -681,6 +686,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `D2Hdist.hdist_neg`: CONDITIONAL (half-plane). `hdist` for `D < 0`, at every `t` ([note](../formalisations/d2-density.md))
 - `D2Hdist.d2_density_pos`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D > 0` ([note](../formalisations/d2-density.md))
 - `D2Hdist.d2_density_neg`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0` ([note](../formalisations/d2-density.md))
+
+#### `D2Parity`: The parity of `χ_D`
+
+- `D2Parity.kron_pos`: `(d | d − 1) = 1` ([note](../formalisations/d2-density.md))
+- `D2Parity.kron_neg`: `(−d | d − 1) = −1` ([note](../formalisations/d2-density.md))
 
 #### `D2Prim`: The Kronecker character of a fundamental discriminant is primitive
 
