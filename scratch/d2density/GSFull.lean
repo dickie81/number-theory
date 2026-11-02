@@ -882,5 +882,294 @@ theorem gs_neg (hn : Odd n) (hsq : ¬ IsSquare n) (x : ℕ) :
 
 end GSFund
 
-#print axioms GSFund.gs_pos
-#print axioms GSFund.gs_neg
+namespace GSEven
+open DirichletCharacter ZMod Finset JChar GSFund
+
+/-- The Kronecker symbol `(D | n)` for `n > 0`: `χ₈(D)^{v₂(n)} · J(D | n / 2^{v₂(n)})`
+(Kronecker's `(D|2) = χ₈(D)`, extended multiplicatively in `n`). -/
+noncomputable def kron (D : ℤ) (n : ℕ) : ℂ :=
+  ((χ₈ (D : ZMod 8) : ℤ) : ℂ) ^ (n.factorization 2) * (jacobiSym D (n / 2 ^ n.factorization 2) : ℂ)
+
+theorem kron_odd {n : ℕ} (hn : Odd n) (D : ℤ) : kron D n = (jacobiSym D n : ℂ) := by
+  have : n.factorization 2 = 0 :=
+    Nat.factorization_eq_zero_of_not_dvd (fun h => by rw [Nat.odd_iff] at hn; omega)
+  simp [kron, this]
+
+theorem fact2 {a m : ℕ} (hm : Odd m) : (2 ^ a * m).factorization 2 = a := by
+  have hm0 : m ≠ 0 := by rintro rfl; simp at hm
+  rw [Nat.factorization_mul (by positivity) hm0, Finsupp.add_apply, Nat.factorization_pow,
+    Finsupp.smul_apply, Nat.Prime.factorization_self Nat.prime_two,
+    Nat.factorization_eq_zero_of_not_dvd (fun h => by rw [Nat.odd_iff] at hm; omega)]
+  simp
+
+theorem kron_even {a m : ℕ} (hm : Odd m) (D : ℤ) :
+    kron D (2 ^ a * m) = ((χ₈ (D : ZMod 8) : ℤ) : ℂ) ^ a * (jacobiSym D m : ℂ) := by
+  rw [kron, fact2 hm, Nat.mul_div_cancel_left _ (by positivity)]
+
+/-- `a ↦ J(a.val | m)` as a character mod `m`, any `m ≠ 0`. -/
+noncomputable def jcharN (m : ℕ) [NeZero m] : DirichletCharacter ℂ m where
+  toFun a := (jacobiSym (a.val : ℤ) m : ℂ)
+  map_one' := by
+    rcases Nat.lt_or_ge 1 m with h | h
+    · haveI : Fact (1 < m) := ⟨h⟩; simp [ZMod.val_one, jacobiSym.one_left]
+    · have : m = 1 := by have := NeZero.ne m; omega
+      subst this; simp [jacobiSym.one_right]
+  map_mul' a b := by
+    show (jacobiSym ((a*b).val : ℤ) m : ℂ) = (jacobiSym (a.val : ℤ) m : ℂ) * (jacobiSym (b.val : ℤ) m : ℂ)
+    rw [ZMod.val_mul, ← Int.cast_mul, ← jacobiSym.mul_left]
+    congr 1
+    apply jacobiSym.mod_left'
+    push_cast; exact Int.emod_emod_of_dvd _ (dvd_refl _)
+  map_nonunit' a ha := by
+    show (jacobiSym (a.val : ℤ) m : ℂ) = 0
+    have : ¬ Nat.Coprime a.val m := by
+      intro h; apply ha; rw [← ZMod.natCast_zmod_val a]; exact (ZMod.isUnit_iff_coprime _ _).2 h
+    have h0 : jacobiSym (a.val : ℤ) m = 0 := by
+      rw [jacobiSym.eq_zero_iff_not_coprime, Int.gcd_natCast_natCast]; exact this
+    rw [h0, Int.cast_zero]
+
+theorem jcharN_nat (m : ℕ) [NeZero m] (k : ℕ) : jcharN m (k : ZMod m) = (jacobiSym k m : ℂ) := by
+  show (jacobiSym (((k : ZMod m)).val : ℤ) m : ℂ) = _
+  congr 1
+  apply jacobiSym.mod_left'
+  rw [ZMod.val_natCast]; push_cast; exact Int.emod_emod_of_dvd _ (dvd_refl _)
+
+noncomputable def chi8C : DirichletCharacter ℂ 8 := ZMod.χ₈.ringHomComp (Int.castRingHom ℂ)
+noncomputable def chi8'C : DirichletCharacter ℂ 8 := ZMod.χ₈'.ringHomComp (Int.castRingHom ℂ)
+
+/-- `k ↦ J(k|m) e(k)` mod `8m`. -/
+noncomputable def psi8 (m : ℕ) [NeZero m] (e : DirichletCharacter ℂ 8) : DirichletCharacter ℂ (8 * m) :=
+  changeLevel (dvd_mul_left m 8) (jcharN m) * changeLevel (dvd_mul_right 8 m) e
+
+theorem psi8_nat (m : ℕ) [NeZero m] (e : DirichletCharacter ℂ 8) (k : ℕ) :
+    psi8 m e (k : ZMod (8 * m)) = (jacobiSym k m : ℂ) * e (k : ZMod 8) := by
+  rw [← jcharN_nat]
+  by_cases hc : Nat.Coprime k (8 * m)
+  · have hc' : IsCoprime (k : ℤ) (8 * m : ℕ) := Nat.isCoprime_iff_coprime.2 hc
+    simp only [psi8, MulChar.mul_apply]
+    have e1 := changeLevel_eq_cast_of_dvd' (jcharN m) (dvd_mul_left m 8) hc'
+    have e2 := changeLevel_eq_cast_of_dvd' e (dvd_mul_right 8 m) hc'
+    push_cast at e1 e2; rw [e1, e2]
+  · rw [MulChar.map_nonunit _ (by rwa [ZMod.isUnit_iff_coprime])]
+    by_cases h8 : Nat.Coprime k 8
+    · have hn' : ¬ Nat.Coprime k m := fun h' => hc (Nat.Coprime.mul_right h8 h')
+      rw [MulChar.map_nonunit (jcharN m) (by rwa [ZMod.isUnit_iff_coprime]), zero_mul]
+    · rw [MulChar.map_nonunit e (by rwa [ZMod.isUnit_iff_coprime]), mul_zero]
+
+theorem ne_one_of_neg {N : ℕ} (χ : DirichletCharacter ℂ N) (k : ℕ) (h : χ (k : ZMod N) = -1) : χ ≠ 1 := by
+  intro h1; rw [h1] at h
+  by_cases hu : IsUnit (k : ZMod N)
+  · rw [MulChar.one_apply hu] at h; norm_num at h
+  · rw [MulChar.map_nonunit _ hu] at h; norm_num at h
+
+theorem chi8_val (k : ℕ) : chi8C (k : ZMod 8) = ((χ₈ (k : ZMod 8) : ℤ) : ℂ) := rfl
+theorem chi8'_val (k : ℕ) : chi8'C (k : ZMod 8) = ((χ₈' (k : ZMod 8) : ℤ) : ℂ) := rfl
+
+/-- The two characters used for the class split, `e₁ = χ₈^a`, `e₂ = χ₈^{a+1} χ₈'`. -/
+noncomputable def e1 (a : ℕ) : DirichletCharacter ℂ 8 := chi8C ^ a
+noncomputable def e2 (a : ℕ) : DirichletCharacter ℂ 8 := chi8C ^ (a + 1) * chi8'C
+
+theorem e1_nat {a : ℕ} (ha : a ≠ 0) (k : ℕ) : e1 a (k : ZMod 8) = ((χ₈ (k : ZMod 8) : ℤ) : ℂ) ^ a := by
+  rw [e1, MulChar.pow_apply' _ ha, chi8_val]
+theorem e2_nat (a : ℕ) (k : ℕ) : e2 a (k : ZMod 8) =
+    ((χ₈ (k : ZMod 8) : ℤ) : ℂ) ^ (a + 1) * ((χ₈' (k : ZMod 8) : ℤ) : ℂ) := by
+  rw [e2, MulChar.mul_apply, MulChar.pow_apply' _ (Nat.succ_ne_zero a), chi8_val, chi8'_val]
+
+theorem crt8 {m : ℕ} (hm : Odd m) (u v : ℕ) : ∃ k : ℕ, k ≡ u [MOD m] ∧ k ≡ v [MOD 8] := by
+  have hcop : Nat.Coprime m 8 := by
+    rw [Nat.coprime_comm, show (8:ℕ) = 2 ^ 3 by norm_num]
+    exact Nat.Coprime.pow_left 3 ((Nat.coprime_two_left).2 hm)
+  exact ⟨_, (Nat.chineseRemainder hcop u v).2.1, (Nat.chineseRemainder hcop u v).2.2⟩
+
+theorem mod8_cast {k v : ℕ} (h : k ≡ v [MOD 8]) : (k : ZMod 8) = v := (ZMod.natCast_eq_natCast_iff k v 8).2 h
+
+/-- Non-principality: for odd `m`, `a ≥ 1`, and `m` non-square or `a` odd. -/
+theorem psi8_ne_one {m a : ℕ} [NeZero m] (hm : Odd m) (ha : a ≠ 0) (hns : ¬ IsSquare m ∨ Odd a)
+    (e : DirichletCharacter ℂ 8) (he : e = e1 a ∨ e = e2 a) : psi8 m e ≠ 1 := by
+  by_cases hsq : IsSquare m
+  · have hao : Odd a := hns.resolve_left (not_not.2 hsq)
+    obtain ⟨k, hk1, hk2⟩ := crt8 hm 1 5
+    apply ne_one_of_neg _ k
+    rw [psi8_nat]
+    have hJ : jacobiSym k m = 1 := by
+      rw [jacobiSym.mod_left' (show (k:ℤ) % m = (1:ℕ) % m by exact_mod_cast hk1)]
+      simp [jacobiSym.one_left]
+    rw [hJ]
+    have h5 : (k : ZMod 8) = 5 := by rw [mod8_cast hk2]; rfl
+    obtain ⟨j, rfl⟩ := hao
+    rcases he with rfl | rfl
+    · rw [e1_nat ha, h5]; simp [pow_succ, pow_mul]
+    · rw [e2_nat, h5]; simp [pow_succ, pow_mul]
+  · obtain ⟨D, hD⟩ := Kron.exists_jacobiSym_eq_neg_one hm hsq
+    have hm1 : 1 < m := by
+      rcases Nat.lt_or_ge 1 m with h | h
+      · exact h
+      · exfalso; apply hsq; have := NeZero.ne m; exact ⟨1, by omega⟩
+    obtain ⟨k, hk1, hk2⟩ := crt8 hm (D % m).toNat 1
+    have hnpos : (0:ℤ) < m := by omega
+    have hJ : jacobiSym k m = -1 := by
+      rw [← hD]; apply jacobiSym.mod_left'
+      have h1 : (k : ℤ) % m = ((D % m).toNat : ℤ) % m := by exact_mod_cast hk1
+      rw [h1, Int.toNat_of_nonneg (Int.emod_nonneg _ hnpos.ne'), Int.emod_emod_of_dvd _ (dvd_refl _)]
+    apply ne_one_of_neg _ k
+    rw [psi8_nat, hJ, mod8_cast hk2]
+    rcases he with rfl | rfl
+    · rw [show ((1:ℕ) : ZMod 8) = 1 by simp, MulChar.map_one]; simp
+    · rw [show ((1:ℕ) : ZMod 8) = 1 by simp, MulChar.map_one]; simp
+
+/-- `B₈ = d(8m) √(8m) (1 + log 8m)`. -/
+noncomputable def B8 (m : ℕ) : ℝ := ((8 * m).divisors.card : ℝ) * (Real.sqrt (8 * m : ℕ) * (1 + Real.log (8 * m : ℕ)))
+
+theorem B8_pos {m : ℕ} [NeZero m] : 0 < B8 m := by
+  have h1 : 0 < m := Nat.pos_of_ne_zero (NeZero.ne m)
+  have hc : 0 < (8 * m).divisors.card := Finset.card_pos.2 ⟨1, by simp; omega⟩
+  have : (1:ℝ) ≤ ((8 * m : ℕ) : ℝ) := by exact_mod_cast (show 1 ≤ 8 * m by omega)
+  unfold B8
+  have := Real.log_nonneg this
+  have : 0 < Real.sqrt ((8 * m : ℕ) : ℝ) := Real.sqrt_pos.2 (by linarith)
+  positivity
+
+noncomputable def T8 (m x : ℕ) : ℝ := 2 * Real.sqrt (x * B8 m) + B8 m
+
+theorem sqf_psi8_le {m a : ℕ} [NeZero m] (hm : Odd m) (ha : a ≠ 0) (hns : ¬ IsSquare m ∨ Odd a)
+    (e : DirichletCharacter ℂ 8) (he : e = e1 a ∨ e = e2 a) (x : ℕ) :
+    ‖∑ d ∈ (Ioc 0 x).filter Squarefree, psi8 m e (d : ZMod (8 * m))‖ ≤ T8 m x := by
+  haveI : NeZero (8 * m) := ⟨by have := NeZero.ne m; omega⟩
+  apply GSLemma.sqf_sum_le_sqrt (fun k => psi8 m e (k : ZMod (8 * m)))
+  · intro a b; push_cast; exact map_mul _ _ _
+  · intro k; exact DirichletCharacter.norm_le_one _ _
+  · exact B8_pos
+  · intro y; exact PolyaVinogradov.pv_nonprincipal (psi8_ne_one hm ha hns e he) y
+
+/-- Class sums with the `χ₈^a` twist (`n = 2^a m`). -/
+theorem class8_le {m a : ℕ} [NeZero m] (hm : Odd m) (ha : a ≠ 0) (hns : ¬ IsSquare m ∨ Odd a)
+    (r : ℕ) (hr : r = 1 ∨ r = 3) (x : ℕ) :
+    ‖∑ d ∈ Ioc 0 x, (if Squarefree d ∧ d % 4 = r then
+        ((χ₈ (d : ZMod 8) : ℤ) : ℂ) ^ a * (jacobiSym d m : ℂ) else 0)‖ ≤ T8 m x := by
+  set s : ℂ := if r = 1 then 1 else -1
+  have hs : ‖s‖ = 1 := by simp only [s]; split_ifs <;> simp
+  have hid : ∀ d : ℕ, (if Squarefree d ∧ d % 4 = r then
+      ((χ₈ (d : ZMod 8) : ℤ) : ℂ) ^ a * (jacobiSym d m : ℂ) else 0) =
+      if Squarefree d then (psi8 m (e1 a) (d : ZMod (8 * m)) + s * psi8 m (e2 a) (d : ZMod (8 * m))) / 2
+      else 0 := by
+    intro d
+    by_cases hq : Squarefree d
+    · rw [if_pos hq, psi8_nat, psi8_nat, e1_nat ha, e2_nat, χ₈_nat_eq_if_mod_eight, χ₈'_nat_eq_if_mod_eight]
+      have h4 : d % 4 = d % 8 % 4 := (Nat.mod_mod_of_dvd d (by norm_num)).symm
+      have h2 : d % 2 = d % 8 % 2 := (Nat.mod_mod_of_dvd d (by norm_num)).symm
+      rw [h4, h2]
+      have h8 : d % 8 < 8 := Nat.mod_lt _ (by norm_num)
+      simp only [s, hq, true_and]
+      rcases hr with rfl | rfl <;> interval_cases h : d % 8 <;> simp [zero_pow ha] <;> ring
+    · rw [if_neg (fun h => hq h.1), if_neg hq]
+  simp_rw [hid]
+  rw [← sum_filter, ← sum_div, sum_add_distrib, ← mul_sum, norm_div]
+  have h1 := sqf_psi8_le hm ha hns (e1 a) (Or.inl rfl) x
+  have h2 := sqf_psi8_le hm ha hns (e2 a) (Or.inr rfl) x
+  calc _ ≤ (‖∑ d ∈ (Ioc 0 x).filter Squarefree, psi8 m (e1 a) (d : ZMod (8 * m))‖ +
+        ‖s‖ * ‖∑ d ∈ (Ioc 0 x).filter Squarefree, psi8 m (e2 a) (d : ZMod (8 * m))‖) / ‖(2:ℂ)‖ := by
+        gcongr; rw [← norm_mul]; exact norm_add_le _ _
+    _ ≤ _ := by rw [hs, one_mul, Complex.norm_two]; linarith
+
+theorem chi8_four_dvd {d : ℕ} (h : 4 ∣ d) : χ₈ (d : ZMod 8) = 0 := by
+  rw [χ₈_nat_eq_if_mod_eight, if_pos (by omega)]
+
+/-- **GS Lemma 4.1, positive discriminants, even `n = 2^a m`** (`m` odd, `a ≥ 1`, `n` non-square):
+`‖Σ_{0<D≤x, D fund.} (D|n)‖ ≤ 2√(x B₈) + B₈`, `B₈ = d(8m)√(8m)(1 + log 8m)`. -/
+theorem gs_even_pos {m a : ℕ} [NeZero m] (hm : Odd m) (ha : a ≠ 0) (hns : ¬ IsSquare m ∨ Odd a) (x : ℕ) :
+    ‖∑ d ∈ Ioc 0 x, (if fundPos d then kron d (2 ^ a * m) else 0)‖ ≤ T8 m x := by
+  have hpt : ∀ d : ℕ, (if fundPos d then kron d (2 ^ a * m) else 0) =
+      (if Squarefree d ∧ d % 4 = 1 then ((χ₈ (d : ZMod 8) : ℤ) : ℂ) ^ a * (jacobiSym d m : ℂ) else 0) := by
+    intro d; rw [kron_even hm]; push_cast; unfold fundPos
+    by_cases h1 : Squarefree d ∧ d % 4 = 1
+    · rw [if_pos (Or.inl h1), if_pos h1]
+    · rw [if_neg h1]; split_ifs with h
+      · rcases h with h | ⟨h4, -⟩
+        · exact absurd h h1
+        · rw [chi8_four_dvd h4]; simp [zero_pow ha]
+      · rfl
+  simp_rw [hpt]; exact class8_le hm ha hns 1 (Or.inl rfl) x
+
+/-- **GS Lemma 4.1, negative discriminants, even `n = 2^a m`**: same bound for `D = -d`. -/
+theorem gs_even_neg {m a : ℕ} [NeZero m] (hm : Odd m) (ha : a ≠ 0) (hns : ¬ IsSquare m ∨ Odd a) (x : ℕ) :
+    ‖∑ d ∈ Ioc 0 x, (if fundNeg d then kron (-(d:ℤ)) (2 ^ a * m) else 0)‖ ≤ T8 m x := by
+  have hneg : ∀ d : ℕ, ((-(d:ℤ) : ℤ) : ZMod 8) = (-1 : ZMod 8) * (d : ZMod 8) := by intro d; push_cast; ring
+  have hm1 : χ₈ (-1 : ZMod 8) = 1 := by decide
+  have hpt : ∀ d : ℕ, (if fundNeg d then kron (-(d:ℤ)) (2 ^ a * m) else 0) =
+      (jacobiSym (-1) m : ℂ) *
+      (if Squarefree d ∧ d % 4 = 3 then ((χ₈ (d : ZMod 8) : ℤ) : ℂ) ^ a * (jacobiSym d m : ℂ) else 0) := by
+    intro d
+    rw [kron_even hm, hneg, map_mul, hm1, one_mul,
+      show (-(d:ℤ)) = -1 * d by ring, jacobiSym.mul_left]
+    push_cast; unfold fundNeg
+    by_cases h1 : Squarefree d ∧ d % 4 = 3
+    · rw [if_pos (Or.inl h1), if_pos h1]; ring
+    · rw [if_neg h1, mul_zero]; split_ifs with h
+      · rcases h with h | ⟨h4, -⟩
+        · exact absurd h h1
+        · rw [chi8_four_dvd h4]; simp [zero_pow ha]
+      · rfl
+  simp_rw [hpt]; rw [← mul_sum, norm_mul]
+  calc _ ≤ 1 * T8 m x := mul_le_mul (by rcases jacobiSym.trichotomy (-1) m with h | h | h <;> simp [h]) (class8_le hm ha hns 3 (Or.inr rfl) x)
+        (norm_nonneg _) zero_le_one
+    _ = T8 m x := one_mul _
+
+end GSEven
+
+namespace GSKron
+open Finset GSFund GSEven
+
+/-- The bound in GS Lemma 4.1: `3(2√(xB)+B)` with `B = d(4n)√(4n)(1+log 4n)` for odd `n`, and
+`2√(xB₈)+B₈` with `B₈ = d(8m)√(8m)(1+log 8m)`, `m = n / 2^{v₂(n)}`, for even `n`. -/
+noncomputable def GSB (n x : ℕ) : ℝ :=
+  if n % 2 = 1 then 3 * T n x else T8 (n / 2 ^ n.factorization 2) x
+
+theorem even_split {n : ℕ} (hn : 1 < n) (hsq : ¬ IsSquare n) (hev : ¬ n % 2 = 1) :
+    let a := n.factorization 2; let m := n / 2 ^ a;
+    n = 2 ^ a * m ∧ Odd m ∧ a ≠ 0 ∧ (¬ IsSquare m ∨ Odd a) := by
+  intro a m
+  have hn0 : n ≠ 0 := by omega
+  have e : n = 2 ^ a * m := (Nat.ordProj_mul_ordCompl_eq_self n 2).symm
+  have hm : Odd m := (Nat.coprime_two_left).1 (Nat.coprime_ordCompl Nat.prime_two hn0)
+  have ha : a ≠ 0 := (Nat.Prime.factorization_pos_of_dvd Nat.prime_two hn0 (by omega)).ne'
+  refine ⟨e, hm, ha, ?_⟩
+  by_contra h
+  push_neg at h
+  obtain ⟨⟨r, hr⟩, hae⟩ := h
+  obtain ⟨b, hb⟩ := Nat.not_odd_iff_even.1 hae
+  apply hsq; refine ⟨2 ^ b * r, ?_⟩
+  rw [e, hr, hb, pow_add]; ring
+
+/-- **Granville–Soundararajan Lemma 4.1, positive fundamental discriminants, all non-square `n > 1`**,
+with `(D|n)` the Kronecker symbol. -/
+theorem gs_kron_pos {n : ℕ} (hn : 1 < n) (hsq : ¬ IsSquare n) (x : ℕ) :
+    ‖∑ d ∈ Ioc 0 x, (if fundPos d then kron d n else 0)‖ ≤ GSB n x := by
+  unfold GSB
+  by_cases ho : n % 2 = 1
+  · haveI : Fact (1 < n) := ⟨hn⟩
+    have hodd : Odd n := Nat.odd_iff.2 ho
+    rw [if_pos ho]; simp_rw [kron_odd hodd]; exact gs_pos hodd hsq x
+  · rw [if_neg ho]
+    obtain ⟨e, hm, ha, hns⟩ := even_split hn hsq ho
+    haveI : NeZero (n / 2 ^ n.factorization 2) := ⟨by rintro h; rw [h] at hm; simp at hm⟩
+    have := gs_even_pos hm ha hns x
+    rwa [← e] at this
+
+/-- **Granville–Soundararajan Lemma 4.1, negative fundamental discriminants, all non-square `n > 1`.** -/
+theorem gs_kron_neg {n : ℕ} (hn : 1 < n) (hsq : ¬ IsSquare n) (x : ℕ) :
+    ‖∑ d ∈ Ioc 0 x, (if fundNeg d then kron (-(d:ℤ)) n else 0)‖ ≤ GSB n x := by
+  unfold GSB
+  by_cases ho : n % 2 = 1
+  · haveI : Fact (1 < n) := ⟨hn⟩
+    have hodd : Odd n := Nat.odd_iff.2 ho
+    rw [if_pos ho]; simp_rw [kron_odd hodd]; exact gs_neg hodd hsq x
+  · rw [if_neg ho]
+    obtain ⟨e, hm, ha, hns⟩ := even_split hn hsq ho
+    haveI : NeZero (n / 2 ^ n.factorization 2) := ⟨by rintro h; rw [h] at hm; simp at hm⟩
+    have := gs_even_neg hm ha hns x
+    rwa [← e] at this
+
+end GSKron
+
+#print axioms GSKron.gs_kron_pos
+#print axioms GSKron.gs_kron_neg

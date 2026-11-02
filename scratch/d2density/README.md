@@ -16,8 +16,7 @@ Two lemmas are copied verbatim, so that each file depends on Mathlib only: `gaus
 `lib/core/RealCharHalfPlane.lean`) and `sum_sq_dvd_moebius` (from `lib/pnt/SquarefreeCount.lean`).
 
 | `GSFull.lean` | self-contained concatenation of `PV`, `Kron` and `GS`, plus: `JChar.jchar` (D ↦ J(D|n) as a Dirichlet character mod n), `psiChar` (twist mod 4n by 1 or χ₄), `psiChar_ne_one` (non-principal for odd non-square n); `GSAssemble.class_sum_le` (for r ∈ {1,3}: ‖Σ_{d≤x sqf, d≡r (4)} J(d|n)‖ ≤ 2√(xB)+B) and `odd_sum_le`, with B = d(4n)√(4n)(1+log 4n) |
-| `GSFull.lean` (cont.) | `GSFund.fundPos` and `fundNeg` (fundamental discriminants by sign, through \|D\|); **`gs_pos`, `gs_neg`: GS Lemma 4.1 per sign for odd non-square n**: ‖Σ_{0<\|D\|≤x, D fund.} χ_D(n)‖ ≤ 3(2√(xB)+B), with χ_D(n) = J(D\|n) (the Kronecker symbol for odd n) |
-
-Open: even n (Kronecker at 2, via χ₈), which is not yet in Lean.
+| `GSFull.lean` (cont.) | `GSFund.fundPos` and `fundNeg` (fundamental discriminants by sign, through \|D\|); **`gs_pos`, `gs_neg`: GS Lemma 4.1 per sign for odd non-square n**: ‖Σ_{0<\|D\|≤x, D fund.} χ_D(n)‖ ≤ 3(2√(xB)+B), with χ_D(n) = J(D\|n) (the Kronecker symbol for odd n) | |
+| `GSFull.lean` (cont.) | `GSEven.kron D n := χ₈(D)^{v₂ n}·J(D \| n/2^{v₂ n})` (Kronecker symbol; checked against PARI `kronecker` for \|D\|<200, n<300); `psi8` mod 8m, non-principal when m non-square or v₂ odd; `gs_even_pos/neg`; **`GSKron.gs_kron_pos`, `gs_kron_neg`: GS Lemma 4.1 for every non-square n > 1, each sign**: ‖Σ_{0<\|D\|≤x fund.} (D\|n)‖ ≤ GSB n x ≪ √x·n^{1/4+ε} + n^{1/2+ε} |
 
 Remaining hypotheses of `d2_density_log`: `hdist`, `hB` and `hpos` (table in `docs/d2-density.md`).
