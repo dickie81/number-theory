@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1142 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1146 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 101 | 274 |
-| `lib/pnt` | 238 | 763 |
+| `lib/pnt` | 239 | 767 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -1516,6 +1516,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `QuadSplit.inert₁`: `d` not a square mod `p`
 - `QuadSplit.split_two₁`: `d ≡ 1 (mod 8)`
 - `QuadSplit.inert_two₁`: `d ≡ 5 (mod 8)`
+
+#### `RandModel`: Lamzouri's random model for `L'/L(1, χ_D)` (milestone B2, unconditional)
+
+- `RandModel.ae_tendsto_X` ([note](../formalisations/d2-density.md))
+- `RandModel.integrable_exp_X`: Finite mgf ([note](../formalisations/d2-density.md))
+- `RandModel.integrable_exp_abs_ν` ([note](../formalisations/d2-density.md))
+- `RandModel.integrable_pow_ν`: Every moment of `ν` is finite. ([note](../formalisations/d2-density.md))
 
 #### `ShortCharSums`: Short character sums
 

@@ -80,6 +80,23 @@ analytic `complexMGF`), `MomentConv.integrable_exp_of_moments`, `MomentConv.tigh
 and `MomentConv.moment_tendsto` (moments along a weakly convergent sequence), then Prokhorov
 (`isCompact_closure_of_isTightMeasureSet`) and a subsequence argument.
 
+## The random model (hypothesis B, milestone B2)
+
+`lib/pnt/RandModel.lean`, unconditional. On the product space `RandModel.P` of independent `X(n)`
+(`RandModel.law`: at a prime `p`, `0` with probability `1/(p+1)`, `±1` each with probability `p/(2(p+1))`; `0` at
+other `n`), Lamzouri's model `X = -Σ_p (log p) X(p)/(p - X(p))`:
+
+```lean
+theorem RandModel.ae_tendsto_X : ∀ᵐ ω ∂P, Tendsto (fun N => T N ω) atTop (𝓝 (X ω))
+theorem RandModel.integrable_exp_X (t : ℝ) : Integrable (fun ω => Real.exp (t * X ω)) P
+```
+
+The centred partial sums form a martingale for the filtration of the first coordinates (`RandModel.martingale`), each
+term is sub-Gaussian with proxy `β(n)² ≪ n^{-3/2}` by Hoeffding's lemma (`RandModel.subG`), so the sums are bounded in
+`L¹` (`RandModel.eLpNorm_S_le`) and converge a.s. (Doob); the means are `≪ n^{-7/4}` (`RandModel.abs_m_le`). Fatou
+gives the mgf. The law `RandModel.ν` has `RandModel.integrable_exp_abs_ν` and `RandModel.integrable_pow_ν`, the
+hypotheses of `MomentConv.tendsto_of_moments` on the limit side.
+
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
 **CONDITIONAL on the half-plane `Re s > 11/12`** (`Eis.LFunction_ne_zero_of_re_gt`, [openai-half-plane.md](openai-half-plane.md)),
