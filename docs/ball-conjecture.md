@@ -108,7 +108,9 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
 
 ## Related work
 
-None of the following states the conjecture in this form; a search in October 2026 found no statement of it.
+None of the following states the conjecture in this form; a search in October 2026 found no statement of it, and a
+second in November 2026 found none either. The closest in structure is the criterion of Nyman, Beurling and
+Báez-Duarte, the last entry.
 
 - A. Weil (1948) for curves, and his explicit formula and positivity criterion (1952). A. Grothendieck's standard
   conjectures isolate a Künneth formula and a Hodge index theorem as what the finite-field proof needs.
@@ -127,6 +129,22 @@ None of the following states the conjecture in this form; a search in October 20
   in characteristic 2, which Manin's argument excludes.
 - E. Ruiz Duarte and J. Top, "A proof of the Hasse–Weil inequality for genus 2 à la Manin" (arXiv:1904.08662): Manin's
   argument carried to curves of genus 2, the first case past rank two.
+- B. Nyman (thesis, Uppsala, 1950), A. Beurling, "A closure problem related to the Riemann zeta-function", Proc. Nat.
+  Acad. Sci. 41 (1955), and L. Báez-Duarte, "A strengthening of the Nyman–Beurling criterion for the Riemann
+  hypothesis", Rend. Lincei Mat. Appl. 14 (2003).
+  - **The criterion.** RH holds if and only if `d_N → 0`, where `d_N` is the distance in `L²(0, ∞)` from `1_{(0,1]}`
+    to the span of the dilates `{1/(kx)}`, `k ≤ N`, of the fractional part.
+  - **Its space is the flat model's.** `1_{(0,n]}` is the flat `w_n`, with Gram matrix `min(m, n)` (`BallFlat`), and
+    the target is `w_1`. Each `{1/(kx)} = 1/(kx) − Σ_{m≥1} 1_{(0, 1/(km)]}(x)` is a sum over divisions, of the kind
+    that Connes' map gives ([connes-links.md](connes-links.md), link 2).
+  - **The rate.** J.-F. Burnol, "A lower bound in an approximation problem involving the zeros of the Riemann zeta
+    function", Adv. Math. 170 (2002), proves `liminf d_N² log N ≥ Σ m_ρ²/|ρ|²` over the zeros on the line, with `m_ρ`
+    the multiplicity. S. Bettin, J. B. Conrey and D. W. Farmer, "An optimal choice of Dirichlet polynomials for the
+    Nyman–Beurling criterion" (arXiv:1211.5191), prove `d_N² log N → 2 + γ − log 4π` under RH and a bound for
+    `Σ 1/|ζ′(ρ)|²`.
+  - **The shared constant.** With simple zeros on the line that limit is `d_1 = K_H(1)`, the first pivot of the orbit
+    lattice. So the criterion's distance and the lattice's shortest vector carry the same constant. How the pivots `d_k`
+    relate to `d_N` is not worked out here.
 
 ## First steps
 

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1123 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1127 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 101 | 274 |
-| `lib/pnt` | 232 | 744 |
+| `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -1349,6 +1349,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LogDerivKV`: R4a: the log-derivative bound on the Korobov–Vinogradov region
 
 - `LogDerivKV.logDerivBnd_KV`: R4a: `ζ'/ζ = O((log|t|)³)` on the Korobov–Vinogradov region
+
+#### `LonelyJoins`: The lonely primes joined to the library: their half has the error exponent `Θ`, and they fill short windows
+
+- `LonelyJoins.isBigO_of_sub_half`: Telescoping
+- `LonelyJoins.lonely_weight_isBigO_iff`: The error of the lonely primes' half has the exponent `Θ`
+- `LonelyJoins.rh_iff_lonely_weight`: RH holds exactly when the lonely primes carry half of `x` to within `x^{½+ε}`
+- `LonelyJoins.lonely_in_window`: A lonely prime in every short window
 
 #### `LonelyPrimes`: The frontier of the orbit lattice: the primes above `N/2`, always some and asymptotically half
 

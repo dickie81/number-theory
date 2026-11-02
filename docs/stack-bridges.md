@@ -1,6 +1,6 @@
-# Three bridges between parts of the library
+# Four bridges between parts of the library
 
-Three small modules in `lib/pnt` state an implication between two parts of the library that had no import between
+Four small modules in `lib/pnt` state an implication between two parts of the library that had no import between
 them. Each proves an implication that is known or elementary; what the modules add is the machine-checked link. None of
 them is imported by `lib/check/Check.lean` or by a paper; their axioms are printed in `lib/check/CheckAll.lean`.
 
@@ -56,3 +56,31 @@ character; `CrossCriteria.WeylBound` (`lib/core/CrossCriteria.lean`) is the same
 
 *Implication.* A proof of the Weyl bound for ζ alone would not discharge `PYWeyl`, which is uniform in `q`; `PYWeyl` is
 the stronger hypothesis and `WeylBound` its case `q = 1`. Both are hypotheses in the library, and neither is proved here.
+
+## `LonelyJoins`: the lonely primes, the exponent `Θ` and short intervals
+
+```lean
+theorem LonelyJoins.lonely_weight_isBigO_iff {a : ℝ} (ha : 1 / 2 ≤ a) :
+    (∀ ε > 0, lonelyDev =O[atTop] fun x => x ^ (a + ε)) ↔ Theta ≤ a
+
+theorem LonelyJoins.rh_iff_lonely_weight :
+    RiemannHypothesis ↔ ∀ ε > 0, lonelyDev =O[atTop] fun x => x ^ ((1 : ℝ) / 2 + ε)
+
+theorem LonelyJoins.lonely_in_window {θ' : ℝ} (hθ : 17 / 30 < θ') :
+    ∃ X : ℝ, ∀ (N : ℕ) (y : ℝ), X ≤ y → (N : ℝ) / 2 ≤ y → y + y ^ θ' ≤ N →
+      ∃ p : ℕ, p.Prime ∧ (∀ k : ℕ, 2 ≤ k → N < k * p) ∧ p ≤ N ∧ y < p ∧ (p : ℝ) ≤ y + y ^ θ'
+```
+
+Here `lonelyDev x = θ(x) − θ(x/2) − x/2`, the log-weight of the primes in `(x/2, x]` less half of `x`. The module joins
+`LonelyPrimes` (`lib/pnt/LonelyPrimes.lean`), the frontier of the orbit lattice of `docs/ball-conjecture.md`, to
+`PsiExponent.Theta` and `MertensExponent.rh_iff_Theta_eq_half`, and to
+`ZetaGMDensity.short_primes_seventeen_thirtieths`.
+
+- **The first theorem.** It is proved by `LonelyJoins.isBigO_of_sub_half`, which telescopes over `x, x/2, x/4, …`.
+  That telescoping is played against `PsiExponent.psi_omega_Theta`.
+- **The third.** It is the short-primes theorem read at stage `N`, with `LonelyPrimes.lonely_iff`.
+
+*Implication.* The half in `LonelyPrimes.tendsto_lonely_ratio` is the prime number theorem. The size of its error is set
+exactly by the real parts of the zeros, so RH is the statement that the lonely primes carry half of `x` to within
+`x^{1/2+ε}`. Once `N/2` is large, the lonely primes also leave no gap longer than about `N^θ` anywhere in the frontier.
+[connes-links.md](connes-links.md) puts these with the other links of that strand.
