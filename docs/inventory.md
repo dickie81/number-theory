@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1149 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1151 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 101 | 274 |
-| `lib/pnt` | 241 | 770 |
+| `lib/pnt` | 242 | 772 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -1525,6 +1525,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `QuadSplit.inert₁`: `d` not a square mod `p`
 - `QuadSplit.split_two₁`: `d ≡ 1 (mod 8)`
 - `QuadSplit.inert_two₁`: `d ≡ 5 (mod 8)`
+
+#### `QuantMoments`: Quantitative moments, uniform in `P ⊆ [1, y]` (unconditional)
+
+- `QuantMoments.moment_quant_pos`: Quantitative moments, positive fundamental discriminants ([note](../formalisations/d2-density.md))
+- `QuantMoments.moment_quant_neg`: Quantitative moments, negative fundamental discriminants ([note](../formalisations/d2-density.md))
 
 #### `RandModel`: Lamzouri's random model for `L'/L(1, χ_D)` (milestone B2, unconditional)
 

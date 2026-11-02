@@ -126,6 +126,21 @@ with `A N = Σ_{n ≤ N} Λ(n) X(n)/n`. Almost surely `|A_N + T_{N+1}| ≤ 2 log
 (`ModelTrunc.abs_A_add_T_le`, from `ModelTrunc.vm_regroup` and `ModelTrunc.trunc_prime`); the moments pass to the limit
 by `ModelTrunc.tendsto_integral_of_sq_bdd` (a.s. convergence with eventually bounded second moments).
 
+## Quantitative moments, uniform in `P ⊆ [1, y]`
+
+`lib/pnt/QuantMoments.lean`, unconditional:
+
+```lean
+theorem QuantMoments.moment_quant_pos (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) {y : ℕ} (hPy : ∀ p ∈ P, p ≤ y)
+    (a : ℕ → ℝ) (k x : ℕ) :
+    ‖∑ d ∈ Ioc 0 x, (if fundPos d then (∑ p ∈ P, (a p : ℂ) * kron d p) ^ k else 0) -
+        (x : ℂ) * ((3 / Real.pi ^ 2 * ∫ ω, (∑ n ∈ P, a n * ModelMoments.Xm n ω) ^ k ∂(RandModel.P) : ℝ) : ℂ)‖ ≤
+      (∑ p ∈ P, |a p|) ^ k * (2048 * (y : ℝ) ^ (3 * k) * (Real.sqrt x + 2))
+```
+
+and `QuantMoments.moment_quant_neg`. The error is `(Σ|a_n|)^k y^{3k} √x`, so `y = (log x)^A` is admissible.
+`QuantMoments.GSB_le` bounds the GS Lemma 4.1 error polynomially in `n`.
+
 ## CONDITIONAL: the tail identity for `L′/L(1, χ_D)`
 
 **CONDITIONAL on the half-plane `Re s > 11/12`** (`Eis.LFunction_ne_zero_of_re_gt`, [openai-half-plane.md](openai-half-plane.md)),
