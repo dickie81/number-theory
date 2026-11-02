@@ -161,3 +161,37 @@ passage from `ℤ` to `ℝ` of `BallCurve`; that the kernel of `ζ` arises this 
 Asymptotically, towers over a fixed `q` have `#C(𝔽_q)/g ≤ √q − 1` (Drinfeld–Vlăduţ) and towers attaining it exist for
 square `q` (Ihara; Garcia–Stichtenoth): there the normalised point counts have a limit distribution of Frobenius
 angles, but these are context, not checked here, and none of it is formalised.
+
+## A different lattice: Smith's gcd lattice (Proved; Numerical; where RH sits)
+
+`SmithLattice` proves Smith's factorisation `gcd(i, j) = Σ_{d ∣ i, d ∣ j} φ(d)` (`SmithLattice.gcd_eq_sum_totient`), so
+`Σ_{i,j ≤ N} x_i x_j gcd(i, j) = Σ_{d ≤ N} φ(d)(Σ_{d ∣ i} x_i)²` (`SmithLattice.smith_form`): the gcd matrix is
+`E·diag(φ)·Eᵀ`, `E` the divisibility matrix. It is an integral Gram matrix, positive (`SmithLattice.smith_nonneg`) and
+definite (`SmithLattice.smith_pos`), unconditionally, with the explicit basis `√φ(d)·(column d of E)`. Smith's
+determinant `∏φ(k)` follows from the factorisation (`det E = 1`) but is not formalised. In the same basis,
+`Σ_{d ≤ N} μ(d)⌊N/d⌋ = 1` (`SmithLattice.mertens_identity`).
+
+**Where RH sits.** `E` is unitriangular with inverse `E⁻¹(d, n) = μ(n/d)` for `d ∣ n`, so `μ` gives the coordinates of
+`δ_1` in the basis of divisibility vectors, and Mertens' `M(N) = Σ_{n ≤ N} μ(n)` is the sum of those coordinates.
+RH is equivalent to `M(N) = O(N^{1/2+ε})` (`MertensExponent.rh_iff_mertens`). The determinant of the Redheffer matrix
+(`1` where `i ∣ j` or `j = 1`) is `M(N)` (Redheffer 1977; not formalised, unverified here): that matrix is `Eᵀ` with its
+first column replaced by ones, a rank-one change of the lattice basis. So in this lattice positivity is free, and RH is
+a growth bound on one coordinate functional, the covolume change under a rank-one perturbation, not a positivity
+statement.
+
+**Compared with the finite-field lattice.** Both are integral and unconditionally positive. In `End(E)` the RH content
+is that the Frobenius orbit sits in the lattice with Gram entries the point counts, and positivity gives the bound. In
+Smith's lattice nothing ties `M(N)` to the form: its Gram entries `gcd` carry no zeros, and the bound on `M` is not
+implied by positivity. The two halves (an integral positive lattice; the arithmetic quantity bounded by positivity)
+are realised separately and not together.
+
+**Numerical** (`scripts/positivity/gcdnum.py`, floating point): the normalised gcd matrix `gcd(i, j)/√(ij)` has
+`λ_min` = 0.0486, 0.0364, 0.0293, 0.0233, 0.0186 and `λ_max` = 8.47, 10.9, 13.8, 17.2, 21.1 at `N` = 50, 100, 200,
+400, 800. `λ_max` grows faster than `log N` (the size of GCD sums, studied by Aistleitner, Berkes and Seip, is the
+relevant literature; not checked here); `λ_min` decays slowly, about like `N^{−1/3}` in this range. This matrix is the
+`s = 1/2` member of the family `gcd(i, j)^{2s}/(ij)^s`, whose Dirichlet-series structure involves `ζ(2s)` near the
+critical line (Speculative link to Beurling–Nyman and Báez-Duarte, not explored).
+
+**Next lead (Speculative).** Put the Redheffer perturbation inside the Smith form: the Gram matrix of the perturbed
+basis is `G + (rank two)`, and `M(N)` enters its determinant. A bound `|M(N)| ≤ N^{1/2+ε}` is then a statement on how
+far a rank-one change can shrink the covolume of an explicit positive integral lattice.

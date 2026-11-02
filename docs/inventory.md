@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1162 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1166 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 108 | 309 |
+| `lib/core` | 109 | 313 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -500,6 +500,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.first_degeneracy_036`: Simplicity route, with its start discharged ([note](../formalisations/weil-positivity.md))
 - `WeilForm.not_simple_iff_secular`: The exact secular characterisation ([note](../formalisations/weil-positivity.md))
+
+#### `SmithLattice`: The gcd lattice of Smith, and Mertens' function inside the divisibility basis
+
+- `SmithLattice.smith_form`: Smith's form
+- `SmithLattice.smith_nonneg`: The gcd lattice is positive
+- `SmithLattice.smith_pos`: And definite
+- `SmithLattice.mertens_identity`: Mertens' identity in the divisibility basis
 
 #### `StripConv`: (a) on the critical strip, and an `L²` route to it
 

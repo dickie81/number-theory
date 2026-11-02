@@ -225,6 +225,7 @@ import BallPrimes
 import BallFract
 import BallSaw
 import FrobTower
+import SmithLattice
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1185,6 +1186,10 @@ twin-form rates at `11/12`. -/
 #print axioms FrobTower.manin_toeplitzPos
 #print axioms FrobTower.tower_limit
 #print axioms FrobTower.curve_toeplitzPos
+#print axioms SmithLattice.smith_form
+#print axioms SmithLattice.smith_nonneg
+#print axioms SmithLattice.smith_pos
+#print axioms SmithLattice.mertens_identity
 #print axioms ZerosInfinite.infinite_ZIdx
 #print axioms ZerosDense.not_linear
 #print axioms BallHadamard.rh_iff_posDefH
