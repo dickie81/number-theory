@@ -15,4 +15,6 @@ and every theorem depends only on `propext`, `Classical.choice` and `Quot.sound`
 Two lemmas are copied verbatim, so that each file depends on Mathlib only: `gaussSum_mul_gaussSum_inv` (from
 `lib/core/RealCharHalfPlane.lean`) and `sum_sq_dvd_moebius` (from `lib/pnt/SquarefreeCount.lean`).
 
+| `GSFull.lean` | self-contained concatenation of `PV`, `Kron` and `GS`, plus: `JChar.jchar` (D ↦ J(D|n) as a Dirichlet character mod n), `psiChar` (twist mod 4n by 1 or χ₄), `psiChar_ne_one` (non-principal for odd non-square n); `GSAssemble.class_sum_le` (for r ∈ {1,3}: ‖Σ_{d≤x sqf, d≡r (4)} J(d|n)‖ ≤ 2√(xB)+B) and `odd_sum_le`, with B = d(4n)√(4n)(1+log 4n) |
+
 Remaining hypotheses of `d2_density_log`: `hdist`, `hB` and `hpos` (table in `docs/d2-density.md`).
