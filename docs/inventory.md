@@ -652,7 +652,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `D2Prim`: The Kronecker character of a fundamental discriminant is primitive
 
-- `GSPrim.primitive_pos`: Positive fundamental discriminants
+- `GSPrim.primitive_pos`: Positive fundamental discriminants ([note](../formalisations/d2-density.md))
 - `GSPrim.primitive_neg`: Negative fundamental discriminants
 
 #### `D2Tail`: The tail identity for `L′/L(1, χ_D)` — CONDITIONAL on the half-plane
