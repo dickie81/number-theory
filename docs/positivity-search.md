@@ -936,3 +936,52 @@ The following are **named hypotheses**, not proved in Lean:
 Even then the conclusion is only Q ≥ 0 on the closure. The uniform margin m > 0 holds in the coefficient ℓ² norm, so the conclusion is in fact Q(f) ≥ m‖f‖² for the reduced form.
 
 **Not done.** The odd sector (pole term −2(∫f sinh)², and odd Legendre orders) and L = 0.8 were not done. At L = 0.8, T₁ grows and T#·L ≈ 160, so the head would need about 200 modes and the arb cost is out of reach in this session.
+
+## Closing the tail: unconditional Bessel and tail bounds, both sectors at L = 1/2 (`WeilTailB`)
+
+This section removes the tail and weight hypotheses of `WeilTail` and adds the odd sector. Credit: an AI assistant (Grok Bot).
+
+**Reuse from the stack.**
+- `WeilForm.norm_digamma_le`: ‖ψ(z)‖ ≤ 12√(1+‖z‖) for Re z ≥ 1/4.
+- `WeilTail.head_margin` and `WeilTail.block_margin`, with `ShellSchur.margin_of_coupling` underneath.
+- Mathlib: `intervalIntegral.norm_integral_le_of_norm_le_const`, `Real.pow_div_factorial_le_exp`, `Real.cosh_le_cosh`, and the d9 bounds for e, log 2 and π.
+
+Other material surveyed but not usable here:
+- Mathlib has a Bessel J definition through ₀F₁ (no integral representation and no bounds) and `shiftedLegendre` polynomials (no L² completeness).
+- The repo's explicit-formula modules (`WeilZeta`, `WeilCriterion`, `WeilAssemble`, …) give the explicit formula over zeta zeros for strip test functions. They contain neither Zhu's frequency-cutoff reduction nor the envelope Lemma 3.1.
+- `DigammaGauss` and `KaiserZeroWeight` give digamma symmetry and an upper bound for Re ψ.
+
+**Proved in Lean, using only the standard axioms:**
+- `jP_bound`: spherical Bessel functions are defined by Poisson's integral, j_n(x) = xⁿ/(2^{n+1}n!)∫₋₁¹cos(xt)(1−t²)ⁿdt. This gives |j_n(x)| ≤ (x/2)ⁿ/n! for x ≥ 0.
+- `iP_bound`: likewise |i_n(z)| ≤ 2(z/2)ⁿ/n! for 0 ≤ z ≤ 1.
+  - These are weaker than xⁿ/(2n+1)!!, but that does not matter for the tail, and no |j_n| ≤ 1 bound is needed.
+- `That_bound` and `pole_bound`: |T̂_n(t)| ≤ b_n on [0, 30] and |p_n| ≤ 2b_n, where b_n = (1+(2n+1)/4)(15/2)ⁿ/n!.
+- `βs_ge`: β* ≥ 0.37.
+- `wψ_bound`: |Ψ_L − β*| ≤ 55 on [0, 30]. Here Ψ_L = Re ψ(1/4+it/2) − log π − √2 log 2·cos(t log 2).
+- Every entry satisfies |R_ij − β*δ_ij| ≤ 558·b_{2i+par}·b_{2j+par} (`Rm_entry`), and `Rm_symm` proves symmetry.
+- `b_step`: b_{n+2} ≤ b_n/2 for n ≥ 20. A geometric-majorant lemma then gives, for **every** truncation size N:
+  - tail row sums ≤ 558·B0·2B0;
+  - tail diagonal ≥ 0.37 − 558·B0²;
+  - coupling ≤ 558²·28·190269²·2B0², using b_n ≤ 29·e^{15/2} on the head;
+  - where B0 = 5e-25 ≥ b_56 and b_57, checked by `norm_num`.
+- `sector_margin`, `even_margin`, `odd_margin`, `L05_even_full`, `L05_odd_full`.
+
+**Odd sector.** The basis is odd Legendre orders 1..55. The pole term enters with sign −: −2(∫f sinh(x/2))².
+- arb head: max radius 5.2e-37, λ_min(mid) = 4.66e-5.
+- Certificate: δ = 233/10⁷, ρ = 1.9e-24, n²ρ/δ = 6.4e-16.
+- Margin: m = 1e-5.
+
+The even sector margin is m = 5e-8.
+
+**Final theorems.** `WeilTailB.L05_even_full` and `L05_odd_full` cover any Q : ℕ → ℕ → ℝ (the Weil form in sector Legendre coordinates). Given `ZhuRed Q par σ` and the sector head enclosure, they conclude 0 < xᵀQ_N x for every N ≥ 28 and every x ≠ 0 supported in range N.
+
+**Hypotheses that remain:**
+1. `EvenHead` and `OddHead` (**arb numerics**). These are the entrywise enclosures of the 28×28 head of the reduced matrix, computed by `tailcert.py` at 256 bits.
+   - They also identify Lean's Poisson-integral j_n with arb's ₀F₁ evaluation (a classical identity).
+   - They identify Re ψ with arb's half-sum of conjugate digammas (`DigammaGauss.digamma_conj`).
+2. `ZhuRed` (**Zhu analytic**). This says Q_N ≥ R_N on every truncation, which is Zhu's Theorem 1.1 and envelope Lemma 3.1 written in Legendre coordinates. The quadratic form Q is abstract in Lean.
+3. Coefficients versus functions (**functional analysis**). Positivity is stated for coefficient vectors of every finite size. Turning it into Q(f) > 0 for every even or odd f ∈ L²[−1/2, 1/2] requires two things, neither formalised (Mathlib lacks them):
+   - L² completeness of the normalised Legendre basis;
+   - continuity of Q.
+
+**Not done.** L = 0.8 is not done; the head would need about 200 modes, which is out of reach for the arb cost.

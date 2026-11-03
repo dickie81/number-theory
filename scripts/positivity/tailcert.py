@@ -36,9 +36,9 @@ def entry(a):
     v=I.real/g['pi']; return n,m,(tuple(int(t) for t in v.mid().man_exp()),tuple(int(t) for t in v.rad().man_exp()))
 def pole(n,g): z=acb(g['L']/2); return (2*(g['L']*(n+arb(1)/2)).sqrt()*(z**n/dfact(n)*(z*z/4).hypgeom_0f1(acb(n)+acb(3)/2))).real
 if __name__=="__main__":
-    H=int(sys.argv[1]); g=setup()
+    H=int(sys.argv[1]); par=int(sys.argv[2]) if len(sys.argv)>2 else 0; g=setup()
     print("A_L",g['A'],"beta*",g['beta'],flush=True)
-    ords=[2*i for i in range(H)]; t0=time.time()
+    ords=[2*i+par for i in range(H)]; sg=-1 if par else 1; t0=time.time()
     tasks=[(ords[i],ords[j]) for i in range(H) for j in range(i,H)]
     with Pool(7) as P: res=P.map(entry,tasks,chunksize=4)
     mk=lambda a,b: arb(fmpq(a[0])*fmpq(2)**a[1] if a[1]>=0 else fmpq(a[0],2**(-a[1])), fmpq(b[0])*fmpq(2)**b[1] if b[1]>=0 else fmpq(b[0],2**(-b[1])))
@@ -47,8 +47,8 @@ if __name__=="__main__":
     Rm=[[None]*H for _ in range(H)]
     for i in range(H):
         for j in range(i,H):
-            v=C[(ords[i],ords[j])]+2*p[i]*p[j]+(g['beta'] if i==j else 0); Rm[i][j]=Rm[j][i]=v
+            v=C[(ords[i],ords[j])]+sg*2*p[i]*p[j]+(g['beta'] if i==j else 0); Rm[i][j]=Rm[j][i]=v
     me=lambda a:tuple(int(t) for t in a.man_exp())
     print("time %.0f maxrad %.2e"%(time.time()-t0,max(float(Rm[i][j].rad()) for i in range(H) for j in range(H))))
     pickle.dump(dict(H=H,mid=[[me(Rm[i][j].mid()) for j in range(H)] for i in range(H)],rad=[[me(Rm[i][j].rad()) for j in range(H)] for i in range(H)],
-                     beta=me(g['beta'].mid()),beta_rad=me(g['beta'].rad()),prec=PREC),open(f"/workspace/tail_L05_H{H}.pkl","wb"))
+                     beta=me(g['beta'].mid()),beta_rad=me(g['beta'].rad()),prec=PREC),open(f"/workspace/tail_L05_H{H}"+("_odd" if par else "")+".pkl","wb"))
