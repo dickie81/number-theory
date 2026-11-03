@@ -300,3 +300,104 @@ Weight dyadic block `k` (n in [2^k, 2^(k+1))) of the prime-side Gram matrix by a
   Shrinking the blocks relative to the junction destroys positivity.
 - **Verdict**: area weighting cannot make the problem easier. Symmetric weighting changes nothing, and asymmetric weighting breaks
   positivity. Positivity of the weighted form for all sizes is exactly as strong as the unweighted one.
+
+## A de Sitter tower of spheres (`DeSitterTower`)
+
+Construction: stack the unit spheres of the dyadic blocks as time slices, with time from the pole plane, and use the
+Lorentzian form `Q(t, x) = −t² + Σ_k q_k(x_k)`. Proved (no `sorry`, standard axioms only): at time `sinh τ` the
+hyperboloid `Q = 1` meets the tower in the sphere `Σ_k q_k = cosh² τ` (`slice_radius`); with every slice form
+nonnegative the tower is Lorentzian, with a negative direction (`time_neg`) and no negative-definite plane
+(`no_timelike_plane`, `tower_lorentz`). For the glued prime-side form, `−D² = −½(D·e₁ + D·e₂)² + ½(D·e₁ − D·e₂)² + Q(c)`
+(`neg_selfInt_eq`), the space-like part is nonnegative on every real class if and only if RH (`rh_iff_deSitter`), and
+under RH the glued form is Lorentzian (`deSitter_of_rh`). So "the glued tower is de Sitter" is RH, not a route to it.
+
+Numerics (uncertified, `scripts/positivity/desitter.py`): with blocks scaled by `cosh(k log 2)` (a congruence), the glued
+form has one negative direction for `M = 255, 511, 1023`; at `M = 2047` a second appears at size ~1e−9 against a top
+eigenvalue ~1e7, which is round-off. Time evolution `u = log x` of the prime-side kernel `K_H(e^u)`, by a matrix pencil
+on `u ∈ [log 20, log X]`, recovers the first ten zeros to about 1e−3 for `X = 10⁶` (resolution ≈ 0.6), with real parts
+`β − ½` between −0.004 and +0.0006. This is the explicit formula read from the primes (a classical fact), and it
+measures real parts only for low zeros and to the resolution of a finite range of `u`; it does not bound real parts
+for all zeros, which is what RH needs.
+
+## The junction as a sphere (`JunctionSphere`)
+
+Question: can the cross terms between neighbouring dyadic blocks be realised as inner products of explicit vectors built
+from primes, making the glued form a Gram matrix? Proved (no `sorry`): a Gram kernel has nonnegative form
+(`formG_gram`); for any split `gram = g₁ − g₂`, RH holds iff `Q_{g₂} ≤ Q_{g₁}` on every real vector
+(`rh_iff_remainder`), and a manifest Gram part with a bounded remainder gives positivity (`nonneg_of_remainder`).
+
+Numerics (uncertified, `scripts/positivity/junction_sphere.py`, sizes 255 to 4095). From
+`K_H(x)/√x = Σ_{k≤x} Λ(k)(1/k − 1/x) − log x + 1 + γ − log(2π)/x + tail(1/x)`, two natural splits: primes `P`
+(nonnegative weights, but zero diagonal) plus archimedean `A`; and a prime-free main part `C` plus the fluctuation
+`R = hi·∫₁^r (ψ(t) − t)/t² dt`. None of `P, A, C, R` is positive semidefinite: their smallest eigenvalues are of order
+`−M²` (−5e6 at 4095) while `λ_min(G) ≈ 1e−4`, and `‖R‖/‖C‖ = 1.000` on every block pair, so `G` is a near-total
+cancellation of two indefinite pieces. Neighbouring block pairs are positive, so the junction is realised by the
+blocks' own vectors, but the contraction `‖A^{−1/2} B C^{−1/2}‖` is 0.9699, 0.9903, 0.9970, 0.9991, 0.9997, 0.9999
+for the pairs up to `[1024,2047]×[2048,4095]`: the margin `1 − ‖·‖` falls by about a factor 3 per doubling. The
+non-Gram remainder sits exactly where RH lives, and no zero-free explicit Gram part was found.
+
+## The gravastar margin (`GravastarMargin`)
+
+Proved (no `sorry`): a nonnegative margin `f(N)·‖x‖² ≤ Q_N(x)` at every level gives RH (`rh_of_margin`), RH gives
+margin `0` (`margin_zero_of_rh`), and if RH fails a negative vector appears at some level and persists at every higher
+level (`exists_neg_of_not_rh`, `neg_persists`).
+
+Numerics (uncertified, `scripts/positivity/gravastar_margin.py`, `M = 2^k − 1` up to 8191): the junction margin
+`1 − ‖A^{−1/2}BC^{−1/2}‖` of the top two dyadic blocks is 9.7e−3, 3.0e−3, 9.2e−4, 3.1e−4, 9.9e−5, 2.9e−5 (pure power
+fit `M^{−1.66 ± 0.01}`); the global `λ_min(G)` is 1.07e−3 … 5.2e−5 (`M^{−0.87 ± 0.004}`, close to `1/M` with a slowly
+rising `M·λ_min` 0.27 → 0.42). Control: the arithmetic-free positive-definite kernel `x^{−1/2}` (that is `e^{−|u|/2}`)
+gives margin exactly halving per doubling (`a = 1.00`), so a power-law decay by itself is a normalisation effect; the
+prime-side exponent 1.66 differs, but smoother toy kernels (sech, Gaussian) were numerically singular and could not be
+compared. Synthetic off-line zero: replacing the pair at `½ ± 14.13i` by the quartet `½ ± δ ± 14.13i` (note `δ → 0` is a
+double zero, not the original kernel) makes the margin negative from `M ≈ 1023` (`δ = 0.05`), `4095` (`δ = 0.02`),
+`8191` (`δ = 0.01`); `δ = 0.005` stays positive to 8191. So the margin is a detector of off-line zeros with a reach
+growing as `δ` shrinks, but a positive margin at finite `M` says nothing about `δ` below the reach, and no finite run
+can prove RH.
+
+## The sphere tower at equilibrium (`SphereTower`)
+
+Construction: write `log ξ(s) = log(π^{−s/2}Γ(s/2+1)) + log((s−1)ζ(s))`. The first term is `−log V_s`, the unit-ball
+volume in dimension `s` (the sphere tower; `π^{−s/2}Γ(s/2) = 2/|S^{s−1}|`), the second is the prime radiation (Euler
+product). Proved (no `sorry`): `arch_eq_inv_area`, `arch_succ_eq_inv_vol`, `area_eq_mul_vol` (`|S^{s−1}| = s·V_s`),
+`vol_eq_volume_ball` (Mathlib's unit-ball volume of `ℝⁿ`), `gaussian_one`, `area_pos`, and the abstract
+`balance_iff` (`λ = a + b ≥ 0` iff `−b ≤ a`). Li's criterion (RH iff all `λ_n ≥ 0`) is not formalised.
+
+Numerics (uncertified, `scripts/positivity/sphere_tower.py`, 230 digits; radiation Taylor coefficients by a Cauchy
+integral of `log((s−1)ζ(s))` on `|s − 1| = 2.5`; `λ_n = Σ_k k·C(n,k)·ℓ_k`): `λ_1 = 0.0230957`, `λ_2 = 0.0923457`
+(match the known values), and the split is
+
+| n | sphere part | radiation part | λ_n | radiation / sphere |
+|---|---|---|---|---|
+| 1 | −0.5541 | 0.5772 | 0.0231 | −1.04 |
+| 10 | 0.9555 | 1.3238 | 2.2793 | 1.39 |
+| 100 | 117.975 | 0.629 | 118.604 | 0.0053 |
+| 500 | 989.237 | 2.664 | 991.900 | 0.0027 |
+| 1000 | 2324.297 | 1.756 | 2326.053 | 0.00076 |
+
+No `λ_n < 0` for `n ≤ 1000`. For small `n` the sphere part is negative and the radiation holds `λ_n` up; for large
+`n` the sphere part grows like `(n/2) log n` and the radiation stays `O(1)` here. Honest caveat: a zero off the line at
+height `T` makes the radiation part grow exponentially only once `n ≳ T²`, and all zeros below height ~3e12 are known
+to be on the line, so `n ≤ 1000` cannot see one; the finite balance is consistent with RH and proves nothing.
+
+## A tower of black holes (uncertified numerics, no Lean)
+
+Tangherlini black holes `f = 1 − (r_h/r)^{D−3}`, `D = 4 … 40`, massless scalar `l = 0, 1, 2`, overtones `n < 4`, first-order
+WKB (Schutz–Will; checks against the known `D = 4`, `l = 2` mode `0.967 − 0.194i` (units `r_h = 1`) to about 5%).
+Shells: `κ_D = (D−3)/2`, `T_H = κ/2π`, horizon area `|S^{D−2}|` (peaks near `D = 8`, then collapses), unit-area radius
+`|S^{D−2}|^{−1/(D−2)}`. No zeros were used as input; the first 30 zeros are only the comparison target (`scripts/positivity/bh_tower.py`).
+Best affine fit to the first 30 zeros (rms residual; mean zero spacing 3.0): Re `ω r_h` 2.73, Im `ω r_h` 2.38, the
+shells `κ_D` 2.57 (exactly a picket fence), `log |S^{D−2}|` 1.94, the asymptotic ladder `2πT_H(n+½)` 2.84; controls:
+picket fence 2.57, random uniform 4.21, and `k / log k` (the zero-count shape, no zeros) 1.06. Spacing statistic `⟨r⟩`:
+zeros 0.603 (GUE); black-hole spectra 0.37–0.39 (Poisson-like superpositions of ladders) or 0.74–1.0 (picket fences).
+Nothing beats the arithmetic-free `k / log k` control; the horizon ladders are evenly spaced by construction, and
+modes "stuck" with a common damping per level are a generic property of horizons, not of `ζ`.
+
+## Shell-to-shell relations of the tower (uncertified numerics, no Lean)
+
+Shells `D = 4 … 203` (`scripts/positivity/shell_relations.py`): `κ_D`, `T_H`, unit-area `r_h`, `log |S^{D−2}|` and its
+increments, the ratio `√π Γ((D−1)/2)/Γ(D/2)`, and cumulative sums, against the first 200 zeros (comparison target
+only). Unfolded to mean spacing 1, the zeros have `⟨r⟩ = 0.615` (GUE) with the GUE-like spacing histogram (few small
+gaps, a broad peak). Every shell sequence is smooth: `⟨r⟩` between 0.89 and 1.00, spacings piled at 1 (picket fence).
+The `T log T` thinning of the zero count is matched by `Σ log D` (`≈ log Γ`) and best by the arithmetic-free control
+`k/log k`; this is a smooth-growth fact, reproducible by any sequence of that growth, and carries none of the
+fluctuations of the zeros.

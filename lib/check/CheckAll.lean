@@ -229,8 +229,12 @@ import SmithLattice
 import Redheffer
 import HodgeAxioms
 import Transpose
+import GravastarMargin
 import GravastarTower
 import Junction4
+import JunctionSphere
+import DeSitterTower
+import SphereTower
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1309,3 +1313,28 @@ the linear algebra of its certificates. -/
 #print axioms Junction4.glued_nonneg
 #print axioms Junction4.glued_nonneg_four
 #print axioms Junction4.weighted_nonneg_iff
+#print axioms GravastarMargin.margin_iff_excess
+#print axioms GravastarMargin.rh_of_margin
+#print axioms GravastarMargin.margin_zero_of_rh
+#print axioms GravastarMargin.exists_neg_of_not_rh
+#print axioms GravastarMargin.neg_persists
+#print axioms JunctionSphere.formG_gram
+#print axioms JunctionSphere.formG_sub
+#print axioms JunctionSphere.form_eq_formG
+#print axioms JunctionSphere.rh_iff_remainder
+#print axioms JunctionSphere.nonneg_of_remainder
+#print axioms DeSitterTower.slice_radius
+#print axioms DeSitterTower.no_timelike_plane
+#print axioms DeSitterTower.time_neg
+#print axioms DeSitterTower.tower_lorentz
+#print axioms DeSitterTower.neg_selfInt_eq
+#print axioms DeSitterTower.rh_iff_form_real
+#print axioms DeSitterTower.rh_iff_deSitter
+#print axioms DeSitterTower.deSitter_of_rh
+#print axioms SphereTower.arch_eq_inv_area
+#print axioms SphereTower.arch_succ_eq_inv_vol
+#print axioms SphereTower.area_eq_mul_vol
+#print axioms SphereTower.vol_eq_volume_ball
+#print axioms SphereTower.gaussian_one
+#print axioms SphereTower.area_pos
+#print axioms SphereTower.balance_iff

@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1191 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1217 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 114 | 338 |
+| `lib/core` | 118 | 364 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -208,6 +208,17 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilForm.ghat_curvature`: The curvature sum rule, real-rooted ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_dodging_final`: Roadmap item 1 ⇒ `RiemannHypothesis`, with dodging D alone ([note](../formalisations/weil-positivity.md))
 
+#### `DeSitterTower`: A de Sitter tower of spheres
+
+- `DeSitterTower.slice_radius`: Slices of the hyperboloid
+- `DeSitterTower.no_timelike_plane`: No timelike plane
+- `DeSitterTower.time_neg`
+- `DeSitterTower.tower_lorentz`: Unglued tower is Lorentzian
+- `DeSitterTower.neg_selfInt_eq`: The glued prime-side form in Lorentzian coordinates
+- `DeSitterTower.rh_iff_form_real`
+- `DeSitterTower.rh_iff_deSitter`: RH iff the glued tower is de Sitter
+- `DeSitterTower.deSitter_of_rh`: Under RH the glued form is Lorentzian
+
 #### `DegenerateFlat`: Degenerate ⇒ edge-flat (the converse direction, formal)
 
 - `WeilForm.degenerate_flat_fourier`: The edge-flat structure, in Fourier form ([note](../formalisations/weil-positivity.md))
@@ -274,6 +285,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.pole_overlap_identity`: The pole-overlap identity ([note](../formalisations/weil-positivity.md))
 - `WeilForm.simpleGround_of_gap`: Energy gap ⇒ simplicity ([note](../formalisations/weil-positivity.md))
+
+#### `GravastarMargin`: The gravastar margin
+
+- `GravastarMargin.margin_iff_excess`
+- `GravastarMargin.rh_of_margin`: A nonnegative margin at every level gives RH
+- `GravastarMargin.margin_zero_of_rh`
+- `GravastarMargin.exists_neg_of_not_rh`: If RH fails, some level has a negative vector
+- `GravastarMargin.neg_persists`: Failures persist up the tower
 
 #### `GravastarTower`: The tower of spheres and asymptotic balance
 
@@ -342,7 +361,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `Junction4.glued_nonneg`: Gluing through a `k`-dimensional junction
 - `Junction4.glued_nonneg_four`: The four-dimensional junction.
-- `Junction4.weighted_nonneg_iff`: Gluing by positive weights is a congruence (area weighting).
+- `Junction4.weighted_nonneg_iff`: Gluing by positive weights is a congruence
+
+#### `JunctionSphere`: The junction as a sphere: Gram realisations and the remainder
+
+- `JunctionSphere.formG_gram`: A Gram kernel has nonnegative form
+- `JunctionSphere.formG_sub`
+- `JunctionSphere.form_eq_formG`
+- `JunctionSphere.rh_iff_remainder`: RH is the remainder bound
+- `JunctionSphere.nonneg_of_remainder`: Gram part plus bounded remainder gives positivity
 
 #### `KaiserBulk`: The bulk of the Kaiser probe and the doubled rate
 
@@ -541,6 +568,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SmithLattice.smith_nonneg`: The gcd lattice is positive
 - `SmithLattice.smith_pos`: And definite
 - `SmithLattice.mertens_identity`: Mertens' identity in the divisibility basis
+
+#### `SphereTower`: The sphere tower at equilibrium
+
+- `SphereTower.arch_eq_inv_area`
+- `SphereTower.arch_succ_eq_inv_vol`
+- `SphereTower.area_eq_mul_vol`
+- `SphereTower.vol_eq_volume_ball`
+- `SphereTower.gaussian_one`
+- `SphereTower.area_pos`
+- `SphereTower.balance_iff`: Balance
 
 #### `StripConv`: (a) on the critical strip, and an `L²` route to it
 
