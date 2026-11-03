@@ -27,9 +27,6 @@ structure RealChar (χ : DirichletCharacter ℂ N) : Prop where
   quad : χ.IsQuadratic
   prim : χ.IsPrimitive
 
-/-- A good character is real. -/
-theorem GoodChar.realChar (hG : GoodChar χ) : RealChar χ := ⟨hG.ne_one, hG.quad, hG.prim⟩
-
 /-- The order of `Ξ_χ` at `0`. -/
 def mC (χ : DirichletCharacter ℂ N) : ℕ := analyticOrderNatAt (XiC χ) 0
 

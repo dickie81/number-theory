@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1175 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1180 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 105 | 279 |
+| `lib/core` | 107 | 284 |
 | `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -511,6 +511,17 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `WeilChiPos`: `Ξ_χ` has a zero, and `K₁ > 0`, for a good real character
 
 - `PsiOmega.K1C_pos`: `K₁ > 0` ([note](../formalisations/d2-density.md))
+
+#### `WeilChiZ`: `Ξ_χ` with a zero at the centre
+
+- `PsiOmega.rootNumber_eq_neg_one_pow`: The root number is `(−1)^m` ([note](../formalisations/d2-density.md))
+- `PsiOmega.weil_XiZ`: Weil's explicit formula with a central zero of order `m` ([note](../formalisations/d2-density.md))
+
+#### `WeilChiZB`: `K₁` and Theorem B with a central zero
+
+- `PsiOmega.K1Z_eq`: `K₁` in closed form ([note](../formalisations/d2-density.md))
+- `PsiOmega.K1Z_pos`: `K₁ > 0` ([note](../formalisations/d2-density.md))
+- `PsiOmega.theoremBZ`: Theorem B ([note](../formalisations/d2-density.md))
 
 #### `WeilConverse`: The converse: an off-line zero makes Weil's form negative somewhere
 
