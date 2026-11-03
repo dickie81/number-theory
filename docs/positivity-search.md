@@ -1252,3 +1252,30 @@ is the intended input for rigorous enclosures of Re ψ(1/4 + it/2) (the C^ψ fam
 
 `re_digamma_quarter` (same module) gives the pointwise enclosure on the critical-line argument used by `Psi`. For every N and real b,
 |Re ψ(1/4 + ib) − psiApx N b| ≤ 1/(120 (N + 1/4)⁴). Here psiApx N b is ½ log r − a/(2r) − (a² − b²)/(12r²) − Σ_{k<N} (k + 1/4)/((k + 1/4)² + b²), with a = N + 1/4 and r = a² + b². It is a rational function of b plus one real logarithm. It comes from Mathlib's `digamma_apply_add_nat` together with `digamma_stirling`. For example, N = 100 gives an error below 10⁻¹⁰.
+
+## C^ψ enclosure proved: unconditional positivity at L = 1/2 (`Cm*` modules)
+
+Contributed with AI assistance (Grok Bot). The modules `CmBessel`, `CmPoly`, `CmW`, `CmNu`, `CmWProof`, `CmGlob`, `CmLhD`,
+`CmLhChk0–3`, `CmWD`, `CmMomDef`, `CmMomData`, `CmMomC0–7`, `CmMomProof`, `CmAsm`, `CmFinD`, `CmFinRe0–3`, `CmFinRo0–3`,
+`CmFinP`, `CmFinA` and `CmEncP` discharge `WeilConst.CmEnc` for both sectors. As a result, `CmFin.L05_even_uncond` and
+`CmFin.L05_odd_uncond` hold with no hypotheses. Their axioms are only `propext`, `Classical.choice` and `Quot.sound`.
+
+The proof works in the variable s = t/30 ∈ [0,1], where Cm wψ n m = (30/π) σₙσₘ √(2n+1)√(2m+1) ∫₀¹ wψ(30s) jₙ(15s) jₘ(15s) ds.
+
+* **Model (`w_model`, `w_data`).** On each of 128 pieces [p/128, (p+1)/128], wψ(30s) is within εw = 1.6·10⁻⁹ of
+  hev Gh(s²) − hev(Lh p)(s). The global part comes from the Stirling expansion around a = 48¼ plus Taylor series of
+  log, inverse and cos. The local part comes from the 48 digamma poles, geometrically expanded about each piece centre.
+  The coefficients are dyadic numbers on a 2⁻¹²⁸ grid. They are stored as data, and the kernel checks them piece by piece
+  against their definitions.
+* **Bessel polynomials (`jP_s`).** jₙ(15s) equals sⁿ Σ_{k<40} q̂ₖ s^{2k} up to an error eT ≈ 10⁻²³, using a
+  cosine Taylor bound and dyadic rounding.
+* **Moments (`nu_err`).** The model moments ∫ (model)·s^{2j}, j < 134, are floored per piece to the grid 2⁻¹²⁸. The chunk
+  sums are kernel-checked in eight chunks, which gives the moments ν̂ to within 128·2⁻¹²⁸.
+* **Quadrature error (`I_err`).** |∫₀¹ wψ jₙ jₘ − Σ q̂q̂ν| ≤ εw ∫₀¹|jₙjₘ| + 56·eJ. The factor εw is absorbed by
+  (1/π)∫₀³⁰|T̂ₙT̂ₘ| ≤ 1, which follows from AM–GM and `modeOrth`.
+* **Entry check (`entry`).** A rational bound R(n,m,c) combines the endpoint brackets for π and √(2n+1) with all the
+  error terms. The kernel checks R ≤ εc row by row: εc = 6·10⁻⁹ (even) and 1.3·10⁻⁶ (odd). The largest R is
+  ≈ 3.08·10⁻⁹ (even) and ≈ 2.95·10⁻⁹ (odd).
+
+The kernel checks are split into many small modules, each taking about 3 minutes and a few GB of memory. The total kernel
+time is roughly an hour.

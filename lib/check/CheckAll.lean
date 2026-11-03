@@ -253,6 +253,11 @@ import WeilConst
 import DigammaStirling
 import CmBessel
 import CmGlob
+import CmWD
+import CmMomProof
+import CmAsm
+import CmFinA
+import CmEncP
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1439,3 +1444,11 @@ the linear algebra of its certificates. -/
 #print axioms CmBessel.cos_tay
 #print axioms CmBessel.jP_s
 #print axioms CmGlob.w_model
+#print axioms CmWD.w_data
+#print axioms CmMom.nu_err
+#print axioms CmAsm.I_err
+#print axioms CmFin.entry
+#print axioms CmFin.cmEnc_even
+#print axioms CmFin.cmEnc_odd
+#print axioms CmFin.L05_even_uncond
+#print axioms CmFin.L05_odd_uncond
