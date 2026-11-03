@@ -1050,3 +1050,41 @@ This section's work was done by an AI assistant (Grok Bot).
 - `EvenBridge.arch` — Zhu analytic (Lemma 2.5): the archimedean distribution in |F|² form.
 - `EvenBridge.acorr` — Fourier: f⋆f(log 2) = (1/π)∫₀^∞cos(t log 2)F². This is Wiener–Khinchin, reachable from Mathlib's `Continuous.fourierInv_fourier_eq` once `ModeDecay` makes F² integrable, but not formalised here.
 - Odd sector — Zhu analytic: a concrete odd Weil form, with pole −2(∫f sinh)², is not in the repo, so the odd statement remains about the frequency form.
+
+## Rodrigues integration by parts: mode decay and the pole identity (`WeilModes`)
+
+This work was done by an AI assistant (Grok Bot).
+
+**Core identity (`rod_ibp`).** Write P̃ₙ for Mathlib's shifted Legendre polynomial and W = yⁿ(1−y)ⁿ. For every complex c,
+
+  n!·∫₀¹ e^{cy}P̃ₙ(y) dy = (−c)ⁿ ∫₀¹ e^{cy} yⁿ(1−y)ⁿ dy.
+
+The proof combines three ingredients:
+- Mathlib's Rodrigues formula `factorial_mul_shiftedLegendre_eq`, n!P̃ₙ = Dⁿ W.
+- Vanishing of DʲW at 0 and 1 for j < n, from `pow_sub_dvd_iterate_derivative_of_pow_dvd`.
+- n integrations by parts using `intervalIntegral.integral_mul_deriv_eq_deriv_mul`.
+
+**`pole_bridge` (closes `EvenBridge.pole`).** Take c = −1/2. Substitute s = 2y − 1, and use the symmetry W(1−y) = W(y) to replace cosh by a single exponential. This gives
+
+  ∫_{−1/2}^{1/2} T_n(u)e^{−u/2} du = √(2n+1)·iₙ(1/4) = pₙ
+
+for the repo's `legT` and the Poisson-defined iₙ, for every n. Summing over modes gives `poleR (fx N x) (1/2) = Σ xᵢ p_{2i}`.
+
+**`modeDecay` (closes `ModeDecay`).**
+1. With c = ±2ix, `cos_split` writes the Poisson integral as a combination of E(±2ix) = ∫₀¹e^{±2ixy}W.
+2. `rod_ibp` turns each into n!/(2x)ⁿ times a Legendre–Fourier integral.
+3. One more integration by parts (`ibp_bound`) bounds that integral by K/(2x), with K = |P̃ₙ(1)| + |P̃ₙ(0)| + sup_{[0,1]}|P̃ₙ'|. The supremum comes from compactness.
+4. The powers of x cancel exactly: `jP_decay` gives |jₙ(x)| ≤ K/(2x) for x > 0.
+5. Combined with |jₙ(x)| ≤ 1 for x ≤ 1, this gives |T̂ₙ(t)| ≤ Cₙ/(1+t) for every n.
+
+**Final theorems.**
+- `WeilModes.L05_even_final` concludes 0 < `weilQ (1/2)` applied to Σ_{i<N} xᵢT_{2i}, for N ≥ 28 and x ≠ 0. Its inputs are:
+  - `EvenHead` (arb numerics);
+  - `ModeOrth 0` (functional analysis);
+  - `EvenBridge2.arch` (Zhu analytic, Lemma 2.5);
+  - `EvenBridge2.acorr` (Fourier / Wiener–Khinchin at log 2).
+- `L05_odd_final` concludes positivity of the odd frequency form. Its inputs are `OddHead` and `ModeOrth 1`.
+
+**Notes.**
+- Mathlib's shifted Legendre polynomial satisfies P̃ₙ(y) = Pₙ(1 − 2y). So `legT n` is the reflected Legendre function, and equals the usual one only for even n. The even sector uses only even n.
+- `EvenBridge2.acorr` and `ModeOrth` remain. Both need Fourier inversion and Plancherel for the Legendre modes, and the autocorrelation-transform identity. Mathlib's L² Fourier isometry is not linked to the integral transform of L¹∩L² functions, and that bridge is not formalised here.
