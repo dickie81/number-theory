@@ -135,12 +135,12 @@ theorem YC_even (t : ℂ) : YC χ (-t) = YC χ t := by
   have h1 : ((-1 : ℂ) ^ mC χ) ≠ 0 := pow_ne_zero _ (by norm_num)
   exact mul_left_cancel₀ h1 h
 
-theorem norm_rootNumber : ‖rootNumber χ‖ = 1 := by
+theorem norm_rootNumberZ : ‖rootNumber χ‖ = 1 := by
   rw [rootNumber_eq_neg_one_pow hR, norm_pow, norm_neg, norm_one, one_pow]
 
-theorem norm_XiC_le' (t : ℂ) : ‖XiC χ t‖ ≤ KC χ * Real.exp (36 * ‖t‖ ^ (3 / 2 : ℝ)) := by
+theorem norm_XiC_leZ (t : ℂ) : ‖XiC χ t‖ ≤ KC χ * Real.exp (36 * ‖t‖ ^ (3 / 2 : ℝ)) := by
   have hf := norm_fG_le hR.ne_one hR.quad hR.prim t
-  rw [fG_eq hR.quad hR.prim, norm_mul, norm_rootNumber hR, one_mul, norm_pow] at hf
+  rw [fG_eq hR.quad hR.prim, norm_mul, norm_rootNumberZ hR, one_mul, norm_pow] at hf
   have he := Real.one_le_exp (show (0 : ℝ) ≤ 36 * ‖t‖ ^ (3 / 2 : ℝ) by positivity)
   have hK : 1 ≤ KC χ := one_le_KC
   change ‖XiC χ t‖ ^ 2 ≤ _ at hf
@@ -148,7 +148,7 @@ theorem norm_XiC_le' (t : ℂ) : ‖XiC χ t‖ ≤ KC χ * Real.exp (36 * ‖t�
   · nlinarith
   · have : ‖XiC χ t‖ ≤ ‖XiC χ t‖ ^ 2 := by nlinarith
     unfold KC at hK ⊢
-    rw [norm_rootNumber hR] at hK ⊢
+    rw [norm_rootNumberZ hR] at hK ⊢
     nlinarith [Real.exp_pos (36 * ‖t‖ ^ (3 / 2 : ℝ))]
 
 /-- The growth constant of `Y`. -/
@@ -168,7 +168,7 @@ theorem norm_YC_le (t : ℂ) : ‖YC χ t‖ ≤ KY χ * Real.exp (36 * ‖t‖ 
   rcases le_or_gt ‖t‖ 1 with h | h
   · have := le_csSup hbdd ⟨t, by simpa using h, rfl⟩
     nlinarith [norm_nonneg (YC χ t)]
-  · have hx := norm_XiC_le' hR t
+  · have hx := norm_XiC_leZ hR t
     rw [XiC_eq_pow_mul hR, norm_mul, norm_pow] at hx
     have h1 : 1 ≤ ‖t‖ ^ mC χ := one_le_pow₀ h.le
     have : ‖YC χ t‖ ≤ ‖t‖ ^ mC χ * ‖YC χ t‖ := le_mul_of_one_le_left (norm_nonneg _) h1
