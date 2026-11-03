@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1226 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1229 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 121 | 373 |
+| `lib/core` | 122 | 376 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -567,6 +567,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.rh_of_realRooted_limit`: Item 6's step, proved ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_ground_states`: The roadmap's endpoint, as a theorem ([note](../formalisations/weil-positivity.md))
+
+#### `ShellSchur`: Shell–interior coupling: Schur-type positivity and its finite chain
+
+- `ShellSchur.nonneg_of_coupling`: Coupling bound ⇒ nonnegativity
+- `ShellSchur.margin_of_coupling`: Coupling bound with margin
+- `ShellSchur.chain_nonneg`: Finite chain of shells
 
 #### `SimpleCont`: Continuation for simplicity
 

@@ -238,6 +238,7 @@ import SphereTower
 import OuterLimit
 import KreinNeutral
 import WeilHodge
+import ShellSchur
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1350,3 +1351,6 @@ the linear algebra of its certificates. -/
 #print axioms WeilHodge.castelnuovo
 #print axioms WeilHodge.weil_bound_sq
 #print axioms WeilHodge.weil_bound_of_hodge
+#print axioms ShellSchur.nonneg_of_coupling
+#print axioms ShellSchur.margin_of_coupling
+#print axioms ShellSchur.chain_nonneg

@@ -594,3 +594,32 @@ Scripts are in `scripts/positivity/`: `junction_slice.py` and `junction_shell.py
 - Junction directions are robustly positive. The archimedean slack of about 2 exceeds each single cost Λ(n)/√n, but those slices are not where W gets tight.
 - S-truncated forms are not positive once L is past the first prime outside S, so there is no slack to spend.
 A true semilocal Sonin trace might behave differently. That question remains open here.
+
+## Shell–interior Schur test (uncertified)
+
+**Lean (`lib/core/ShellSchur.lean`).** These are abstract lemmas, sorry-free and using only the standard axioms:
+- `ShellSchur.nonneg_of_coupling`: if A ≥ a s, C ≥ c t, B² ≤ b² s t and b² ≤ ac, then A + 2B + C ≥ 0.
+- `ShellSchur.margin_of_coupling`: if b² ≤ (a−m)(c−m), the glued form keeps margin m.
+- `ShellSchur.chain_nonneg`: over a finite chain of shells, if every step satisfies the margin condition then every form in the chain is ≥ 0.
+
+Nothing in these lemmas asserts that the Weil form meets the hypotheses.
+
+**Numerics** (`scripts/positivity/shell_schur.py`, results in `shell_schur_results.txt`; float64, uncertified):
+- Setup: at each prime-power entry n ≤ 49, with d = 0.02, the interior is |x| < L− (40 sines) and the shell is L− < |x| < L+ (10 sines per strip), on the pole-orthogonal subspace.
+- Quadrature check: a first run with coarser quadrature gave spurious whole-form values down to −0.3. With finer quadrature the whole form sits at the noise floor (|min| ≤ 4e−5, growing with n).
+
+| n | a (interior) | c (shell) | b = ‖B‖ | b²/(ac) | exact Schur | Λ(n)/√n |
+|---|---|---|---|---|---|---|
+| 2 | 0.615 | 1.37 | 0.61 | 0.43 | +1.11 | 0.49 |
+| 3 | 3.2e−3 | 1.24 | 0.70 | 123 | +0.75 | 0.63 |
+| 4 | 5.9e−7 | 1.53 | 0.89 | 8.8e5 | +0.66 | 0.35 |
+| 5–49 | noise (−1e−6 … −7e−10) | 1.17–1.78 | 0.91–1.36 | — | undefined (A not > 0) | 0.12–0.74 |
+
+- Synthetic off-line zero at γ = 14.13: it shows up in the **interior** block, not in the junction. For δ = 0.3 / 0.1, a = −0.087 / −0.009 at n = 7, a = −0.23 / −0.023 at n = 13 and a = −0.46 / −0.047 at n = 23. The shell block c stays at about 1.2–1.4.
+
+**Verdict.** The inductive Schur condition b² ≤ ac holds only at n = 2. It fails from n = 3 onwards.
+- The coupling norm b stays O(1). It is about 0.6–1.4, does not follow Λ(n)/√n, and grows slowly with L.
+- The interior margin a collapses to the noise floor once L ≳ 0.7. That is the known behaviour of the Weil form, whose infimum on growing supports tends to 0.
+- So there is no room to absorb the coupling. The exact Schur complement is positive while it is defined (n ≤ 4), but past that point it is undefined.
+
+Any proof along these lines would need control of B relative to the *near-null directions of A*, not a norm bound. Those near-null directions are exactly where an off-line zero would appear.
