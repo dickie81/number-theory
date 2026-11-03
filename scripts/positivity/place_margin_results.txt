@@ -1,0 +1,40 @@
+sanity L=1 random f: zero side (300 zeros) 35.690109 vs explicit formula 35.690549
+
+ L    2L    primes in   margin=min eig of (arch - primes) on pole-orthogonal
+0.10 0.20  0   (max   -)  arch-only +1.80002   full +1.800e+00
+0.20 0.40  0   (max   -)  arch-only +1.10630   full +1.106e+00
+0.30 0.60  0   (max   -)  arch-only +0.69983   full +6.998e-01
+0.40 0.80  1   (max   2)  arch-only +0.41070   full +2.413e-01
+0.50 1.00  1   (max   2)  arch-only +0.18563   full +1.384e-02
+0.60 1.20  2   (max   3)  arch-only +0.00085   full +8.051e-05
+0.70 1.40  3   (max   4)  arch-only -0.15637   full +6.826e-08
+0.80 1.60  3   (max   4)  arch-only -0.29369   full -1.782e-10
+0.90 1.80  4   (max   5)  arch-only -0.41606   full -1.167e-10
+1.00 2.00  5   (max   7)  arch-only -0.52694   full -9.677e-10
+1.10 2.20  7   (max   9)  arch-only -0.62882   full -1.315e-08
+1.20 2.40  8   (max  11)  arch-only -0.72357   full -1.698e-08
+1.30 2.60  9   (max  13)  arch-only -0.81266   full -1.847e-08
+1.40 2.80  10  (max  16)  arch-only -0.89724   full -1.523e-08
+1.50 3.00  12  (max  19)  arch-only -0.97824   full -2.463e-08
+1.60 3.20  13  (max  23)  arch-only -1.05644   full -1.534e-08
+1.70 3.40  16  (max  29)  arch-only -1.13245   full -5.557e-08
+1.80 3.60  18  (max  32)  arch-only -1.20682   full -8.269e-08
+1.90 3.80  21  (max  43)  arch-only -1.27997   full -6.983e-08
+2.00 4.00  24  (max  53)  arch-only -1.35227   full -9.783e-08
+2.10 4.20  27  (max  64)  arch-only -1.42400   full -4.818e-08
+2.20 4.40  32  (max  81)  arch-only -1.49541   full -9.938e-08
+2.30 4.60  35  (max  97)  arch-only -1.56668   full -1.431e-07
+2.40 4.80  41  (max 121)  arch-only -1.63794   full -1.070e-07
+2.50 5.00  47  (max 139)  arch-only -1.70930   full -1.526e-07
+2.60 5.20  56  (max 181)  arch-only -1.78080   full -2.378e-07
+2.70 5.40  61  (max 211)  arch-only -1.85248   full -2.059e-07
+2.80 5.60  73  (max 269)  arch-only -1.92434   full -1.854e-07
+2.90 5.80  83  (max 317)  arch-only -1.99635   full -3.675e-07
+3.00 6.00  98  (max 401)  arch-only -2.06846   full -3.691e-07
+Full margin sits at |m| < 4e-7 for L>=0.7: the discretisation noise floor (sanity check agrees to ~1e-5 rel.).
+The true margin is >=0 by the zero side but tends to 0 fast: a 38-dim space of f can nearly vanish at all low zeros.
+
+== synthetic off-line pair at gamma_1 = 14.13 moved to gamma_1 +- i delta (zero side) ==
+delta=0.30  L=0.50: +1.43e-02  L=0.75: -8.56e-04  L=1.00: -5.12e-02  L=2.00: -4.87e-01  L=3.00: -2.07e-01
+delta=0.10  L=0.50: +1.39e-02  L=0.75: -8.28e-05  L=1.00: -5.26e-03  L=2.00: -4.95e-02  L=3.00: -1.72e-02
+delta=0.03  L=0.50: +1.38e-02  L=0.75: -4.07e-06  L=1.00: -4.51e-04  L=2.00: -4.27e-03  L=3.00: -1.41e-03

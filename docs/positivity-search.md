@@ -544,3 +544,13 @@ The intersection numbers and the Hodge index property are hypotheses. Applied to
 3. The Hodge index property itself. Over ℤ, "exactly one positive direction" is our `DeSitterTower.rh_iff_deSitter` / BallWeil signature statement, which is RH (Weil positivity). Over F_q it is a theorem about surfaces; over ℤ it is the thing to prove.
 
 `WeilHodge` makes precise that only this last input is missing: given Hodge index, the rest is elementary.
+
+## Weil positivity place by place (uncertified numerics, no Lean)
+
+`scripts/positivity/place_margin.py` (results in `place_margin_results.txt`). The Weil form is restricted to test functions supported in [−L, L] on the log scale (40 sine modes) and orthogonal to the two pole functionals. Prime powers n enter as 2L passes log n. The explicit formula agrees with a 300-zero spectral sum to relative 10⁻⁵. Uncertified.
+
+- **Archimedean place alone** (exact for 2L < log 2): margin 1.80, 1.11, 0.70 at L = 0.1, 0.2, 0.3. It stays positive until L ≈ 0.6, then turns negative (−0.53 at L = 1, −2.07 at L = 3). The archimedean term alone is not positive for larger supports.
+- **Primes entering.** p = 2 enters at L = 0.35: the margin is 0.41 arch-only against 0.24 with the prime at L = 0.4, and 0.19 against 0.014 at L = 0.5. From L ≈ 0.7 on, the full margin sits at the discretisation noise floor (|m| < 4·10⁻⁷ up to L = 3, 98 prime powers). The true margin is ≥ 0 but tends to 0, because the prime terms cancel the archimedean deficit almost exactly. No per-prime drop law is visible: the cancellation is collective.
+- **Detector.** Moving γ₁ to γ₁ ± iδ makes the margin clearly negative from L ≈ 0.75. At L = 2 the margin is −0.49, −0.050 and −0.0043 for δ = 0.3, 0.1 and 0.03, far above the noise floor.
+
+Verdict: consistent with RH on every support tested, not a proof. Positivity is not built up place by place. Beyond the smallest supports the archimedean term is negative, and the primes restore positivity only collectively, to within 10⁻⁷ of zero. That is the explicit-formula cancellation, with no monotone per-prime mechanism.
