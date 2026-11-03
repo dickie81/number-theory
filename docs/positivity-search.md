@@ -654,3 +654,16 @@ The near-null dimension is roughly 38 − 2N(K) − (2 to 4). The shortfall come
 **GUE control.** I replaced the zeros with 600 GUE-spaced fake ordinates of the same smooth density. The near-null counts are almost the same: 7 / 25 / 31 below 1e−3 at L = 1 / 2 / 3, against 9 / 26 / 32 for the real zeros.
 
 **Verdict.** The near-null space is the interpolation kernel {f supported in [−L,L] : f̂(γ) ≈ 0 at the zeros below the bandwidth}. Its dimension is set by Paley–Wiener degrees of freedom minus 2N(T). Its shape depends on where the zeros sit and on the basis truncation, not on a universal profile, and it looks the same for GUE fake zeros. So the near-null directions encode the zeros themselves rather than a separate structured object. Positivity on them is equivalent to the zero-side statement. I found nothing intrinsic here to prove things about independently of the zeros.
+
+## Sum-of-squares certificates from local data (uncertified)
+
+Script: `scripts/positivity/sos.py`, output `sos_results.txt`, plot `sos.png`. The setup is the same truncated Weil form as the near-null study: pole-orthogonal test functions, support [-L,L], a 40-sine basis, and float64 numerics with Clarabel SDP. We looked for a certificate W − tI = (PSD) built only from archimedean and prime-side pieces, then maximised the slack t.
+
+- **C0, unstructured:** t = min eig, which is about 0 (|t| ≲ 1e-7) for every L in 0.7–2.5. This is plain eigen-decomposition.
+- **C1, per-prime scalar shares of the archimedean form:** infeasible for every L. The archimedean form on its own isn't positive definite.
+- **C2, per-prime local (AM–GM-type) domination:** each shift term P_n is bounded by a position-bin multiplier D_n, and arch − ΣD_n − tI must be PSD. The best slack is t = −0.94, −2.36, −5.37, −9.72, −15.9 at L = 0.7, 1, 1.5, 2, 2.5. That is roughly quadratic growth in L as the prime-power count rises from 3 to 47.
+- **C3, C2 plus per-prime archimedean shares:** t = −0.35, −1.53, −4.35, −8.54, −14.7.
+- **Certificate structure:** the multipliers are dense, with almost all bins active. Their singular values decay slowly (1, 0.43, 0.25, 0.17, …), so there is no low-rank shared profile.
+- **Controls:** we jittered log n (σ = 0.02–0.1) or flipped the signs of p = 3 or p = 5, 7 (Davenport–Heilbronn style). The true min eig breaks to between −0.5 and −3.2, but the C3 slack barely moves (−8.35 to −8.59 against −8.54 for the real primes). Local certificates can't tell real primes from fake ones.
+
+Verdict: positivity of the Weil form can't be certified place by place, even with generous local multipliers. The gap grows with L, and the only certificate that works is the global eigen-decomposition, which is Weil positivity restated. This agrees with the near-null study: the cancellation is collective, across primes and the archimedean place together. No new Lean lemma was added. "A sum of PSD forms is PSD" is already covered in spirit by the ShellSchur chain lemma. Numerics by Grok Bot.
