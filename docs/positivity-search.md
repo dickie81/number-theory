@@ -449,3 +449,20 @@ Conclusion: arithmetic horizons carry number theory (class numbers, Pell units, 
 - **One shell.** The modular cusp is cut at height Y (pseudo-Laplacian). The condition Y^{2s−1} = −φ(s) has only real solutions r on s = ½ + ir, spaced about π/log Y. They sit closer to γ_n/2 than chance (Y = 20: 0.08 against 0.26). That is the known phase-shift effect of the poles of φ at ρ/2, which sit a distance ¼ off the line: it reads off Im ρ once the zeros are known and says nothing about Re ρ. Roots seeded at ρ/2 drift with Y.
 - **Tower.** K shells of length 1 are joined by lossless Fresnel steps whose impedances are the sphere areas A_d. The spectrum is real by construction. Distances to γ_n and γ_n/2 are at or above the random baseline (K = 10: 0.137 and 0.109 against 0.098), and random-phase junction controls behave the same.
 - **Verdict.** Closing the leaks makes the tower self-adjoint, so it has a real cavity spectrum, but that spectrum is not the zeros. The zeros stay at the poles of φ, off the unitary line, and are neither moved onto it nor turned into eigenvalues. Losslessness gives no leverage on RH.
+
+## Looking for the geometric glue (uncertified numerics, no Lean)
+
+Known ways to turn the zeros into a spectrum, none of which is defined without ζ:
+- Pavlov–Faddeev / Lax–Phillips: the zeros are the spectrum of the generator of a non-unitary semigroup, and RH ⇔ the poles lie on the line (Lax–Phillips, Bull. AMS 1980).
+- Connes: the zeros as an absorption spectrum on the adele classes.
+- Burnol: causal Lax–Phillips scattering.
+- Berry–Keating, Sierra–Townsend, Bender–Brody–Müller: xp-type models with boundary conditions.
+- Wu–Sprung: a fractal 1D potential fitted to the zeros.
+- Lagarias: a de Branges space for ξ exists iff RH.
+
+`scripts/positivity/debranges_glue.py` (results in `debranges_glue_results.txt`) builds the Jacobi chain (a discrete Krein string, i.e. a chain of 2×2 de Branges "shells") whose spectral measure has atoms at ±γ_n for the first 100 zeros. Circular by construction.
+- With equal or Weil weights, the off-diagonals b_n match a GUE control with the same smooth density to within 4–7% over n ≤ 40. The smooth trend is fixed by the counting function N̄(T), i.e. by the Γ factor, and Poisson controls are only slightly rougher.
+- The ζ chain is a little smoother than the controls (roughness 0.21 against 0.27, one control sample each), consistent with the rigidity of the zeros.
+- No recognisable geometric pattern appears, nothing like the sphere-area ratios A_{d+1}/A_d.
+
+Verdict: the glue that makes the zeros a self-adjoint spectrum exists (under RH), but it is read off from the zeros. No glue defined independently of ζ is known.

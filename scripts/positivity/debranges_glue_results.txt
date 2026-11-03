@@ -1,0 +1,21 @@
+== weights: equal, N=100 zeros (+-gamma), first 40 Jacobi off-diagonals b_n ==
+zeta     b_1..b_8: 152.432 108.562 130.345 110.371 126.967 111.539 125.602 112.301
+zeta     roughness std(Delta^2 b)/mean b over n<=40: 0.2135; b_n/log(n+1) at n=10,20,40: 47.08 37.09 29.58
+GUE      b_1..b_8: 154.276 107.250 130.890 109.813 128.276 108.875 128.888 111.117
+GUE      roughness std(Delta^2 b)/mean b over n<=40: 0.2710; b_n/log(n+1) at n=10,20,40: 46.36 37.07 28.45
+Poisson  b_1..b_8: 166.897 118.699 137.562 130.190 136.269 118.793 146.701 115.399
+Poisson  roughness std(Delta^2 b)/mean b over n<=40: 0.2716; b_n/log(n+1) at n=10,20,40: 46.64 41.08 30.24
+max |b_zeta - b_GUE| / mean b = 0.042
+== weights: Weil 1/(1/4+g^2), N=100 zeros (+-gamma), first 40 Jacobi off-diagonals b_n ==
+zeta     b_1..b_8: 70.736 135.029 122.551 117.289 122.657 115.143 122.992 114.411
+zeta     roughness std(Delta^2 b)/mean b over n<=40: 0.2140; b_n/log(n+1) at n=10,20,40: 47.59 37.06 29.06
+GUE      b_1..b_8: 79.171 132.415 124.956 114.110 125.962 112.461 124.186 114.209
+GUE      roughness std(Delta^2 b)/mean b over n<=40: 0.2671; b_n/log(n+1) at n=10,20,40: 46.63 35.47 28.90
+Poisson  b_1..b_8: 76.316 148.430 133.465 123.287 145.265 120.070 134.820 132.124
+Poisson  roughness std(Delta^2 b)/mean b over n<=40: 0.3032; b_n/log(n+1) at n=10,20,40: 54.03 39.90 31.82
+max |b_zeta - b_GUE| / mean b = 0.072
+
+Sphere-area 'glue' for comparison: A_{d+1}/A_d for d=2..9: 2.000 1.571 1.333 1.178 1.067 0.982 0.914 0.859
+Verdict: the Jacobi/Krein glue for the zeros looks like the glue for GUE (and Poisson) controls with
+the same smooth density: the smooth part is fixed by Nbar(T) (the Gamma factor), the fluctuations
+by the individual zeros. Nothing in b_n is recognisably geometric, and it is defined only FROM the zeros.
