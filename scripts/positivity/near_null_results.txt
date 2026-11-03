@@ -1,0 +1,28 @@
+1. eigenvalue counts on pole-orth subspace (dim 38); bandwidth K=M*pi/(2L); 2*N(K) = real dims killed by zeros below K
+  L    min eig     #<1e-3  #<1e-6   N(K) zeros<K   38-2N(K)   ||W - Z600|| (rel)
+0.7  +6.83e-08    2       1        25          -12        1.12e-05
+1.0  -9.68e-10    9       7        14           10        5.31e-06
+1.5  -2.46e-08   20      18         7           24        4.94e-06
+2.0  -9.78e-08   26      24         4           30        5.55e-06
+3.0  -3.69e-07   32      29         1           36        6.90e-06
+
+2. bottom eigenvector: zero-side check  (eig vs 2*sum|fhat(gamma)|^2 over 600 zeros; max|fhat| at first 10 zeros vs max|fhat| on [0,K])
+L=1.0 eig=-9.68e-10  zero-sum=9.05e-10  max|fhat(gamma_1..10)|=1.54e-07  max|fhat|=7.78e-01
+L=2.0 eig=-9.78e-08  zero-sum=6.56e-08  max|fhat(gamma_1..10)|=2.88e-05  max|fhat|=6.08e-01
+
+3. shape test: |<f_L, f_L' rescaled>| for bottom eigvec; and best overlap with even/odd prolate xi_n(|x|/L) (n<8)
+L=0.7 vs 1.0: overlap 0.181
+L=1.0 vs 1.5: overlap 0.385
+L=1.5 vs 2.0: overlap 0.158
+L=2.0 vs 3.0: overlap 0.283
+L=0.7 best prolate overlap 0.785
+L=1.0 best prolate overlap 0.559
+L=1.5 best prolate overlap 0.443
+L=2.0 best prolate overlap 0.353
+L=3.0 best prolate overlap 0.237
+
+4. GUE control: zero-side form with 600 GUE fake ordinates (same smooth density), counts below thresholds
+fake ordinates first 5: [14.52 18.   24.12 27.7  30.81] real: [14.13 21.02 25.01 30.42 32.94]
+L=1.0  #<1e-3 real-zeros  9  GUE  7 | #<1e-6 real  7 GUE  6 | min real -3.8e-16 GUE 1.4e-16
+L=2.0  #<1e-3 real-zeros 26  GUE 25 | #<1e-6 real 24 GUE 22 | min real -1.2e-15 GUE -1.3e-15
+L=3.0  #<1e-3 real-zeros 32  GUE 31 | #<1e-6 real 30 GUE 28 | min real -1.5e-15 GUE -1.3e-15

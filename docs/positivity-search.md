@@ -623,3 +623,34 @@ Nothing in these lemmas asserts that the Weil form meets the hypotheses.
 - So there is no room to absorb the coupling. The exact Schur complement is positive while it is defined (n ≤ 4), but past that point it is undefined.
 
 Any proof along these lines would need control of B relative to the *near-null directions of A*, not a norm bound. Those near-null directions are exactly where an off-line zero would appear.
+
+## Near-null directions of the Weil form (uncertified)
+
+`scripts/positivity/near_null.py` (results in `near_null_results.txt`, plot `near_null.png`) uses the 40-sine basis on [−L,L], restricted to the 38-dimensional pole-orthogonal subspace. All values are float64 and uncertified.
+
+**Setup check.** On this subspace W equals the zero-side form Z = 2Σ_γ|f̂(γ)|² over the first 600 zeros, to a relative error of about 1e−5 at every L tested.
+
+**Near-null dimension against a zero count.** Here K = 40π/(2L) is the basis bandwidth and N(K) is the number of zeros below K. Each zero below K kills two real dimensions.
+
+| L | #eig < 1e−3 | #eig < 1e−6 | N(K) | 38 − 2N(K) |
+|---|---|---|---|---|
+| 0.7 | 2 | 1 | 25 | — |
+| 1.0 | 9 | 7 | 14 | 10 |
+| 1.5 | 20 | 18 | 7 | 24 |
+| 2.0 | 26 | 24 | 4 | 30 |
+| 3.0 | 32 | 29 | 1 | 36 |
+
+The near-null dimension is roughly 38 − 2N(K) − (2 to 4). The shortfall comes from the tails of zeros above K.
+
+**What the near-null directions are.** They are the functions whose transforms vanish at the low zeros. For the bottom eigenvector:
+- At L = 1, max|f̂(γ₁…γ₁₀)| = 1.5e−7, against max|f̂| = 0.78. The zero sum is 9.0e−10, against an eigenvalue of −9.7e−10.
+- At L = 2, max|f̂(γ₁…γ₁₀)| = 2.9e−5, against max|f̂| = 0.61.
+- In other words, |f̂|² carries O(1) energy between the zeros and has notches at them.
+
+**Shape test.** There is no fixed profile:
+- Overlaps of the bottom eigenvector with its rescaling to the next L are 0.18, 0.39, 0.16 and 0.28.
+- The best overlap with an even or odd prolate function ξ_n(|x|/L) falls from 0.79 (L = 0.7) to 0.24 (L = 3).
+
+**GUE control.** I replaced the zeros with 600 GUE-spaced fake ordinates of the same smooth density. The near-null counts are almost the same: 7 / 25 / 31 below 1e−3 at L = 1 / 2 / 3, against 9 / 26 / 32 for the real zeros.
+
+**Verdict.** The near-null space is the interpolation kernel {f supported in [−L,L] : f̂(γ) ≈ 0 at the zeros below the bandwidth}. Its dimension is set by Paley–Wiener degrees of freedom minus 2N(T). Its shape depends on where the zeros sit and on the basis truncation, not on a universal profile, and it looks the same for GUE fake zeros. So the near-null directions encode the zeros themselves rather than a separate structured object. Positivity on them is equivalent to the zero-side statement. I found nothing intrinsic here to prove things about independently of the zeros.
