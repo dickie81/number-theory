@@ -554,3 +554,21 @@ The intersection numbers and the Hodge index property are hypotheses. Applied to
 - **Detector.** Moving γ₁ to γ₁ ± iδ makes the margin clearly negative from L ≈ 0.75. At L = 2 the margin is −0.49, −0.050 and −0.0043 for δ = 0.3, 0.1 and 0.03, far above the noise floor.
 
 Verdict: consistent with RH on every support tested, not a proof. Positivity is not built up place by place. Beyond the smallest supports the archimedean term is negative, and the primes restore positivity only collectively, to within 10⁻⁷ of zero. That is the explicit-formula cancellation, with no monotone per-prime mechanism.
+
+## Sonin slice: Connes–Consani archimedean positivity in the place-by-place setup (uncertified)
+
+**What is proved** (Connes–Consani, "Weil positivity and trace formula, the archimedean place", arXiv:2006.13771, https://arxiv.org/abs/2006.13771):
+- Theorem 1: for g smooth, supported in [2^{-1/2}, 2^{1/2}] (log half-width log2/2 ≈ 0.3466), with ĝ(±i/2)=0 and ĝ(0)=0: W_∞(g∗g*) ≥ Tr(ϑ(g) S ϑ(g)*) ≥ 0, where S projects onto the Sonin space (even functions vanishing with their Fourier transform on [−1,1]). Theorem 11 relaxes ĝ(0)=0 at a cost of c|ĝ(0)|², with 13<c<17.
+- Theorems 3/7: Tr(ϑ(f)S) = W_∞(f) + E(f) for all f, where ε(ρ) is a sum over the prolate eigenfunctions (c=2π). So the Sonin trace is positive for every support; only the archimedean place is involved, and no prime terms appear.
+- Theorem 6, Corollary 8 and Remark 9 give the D∘Q bounds (≤0 up to u≈1.15; fails on [1/2,2]).
+- Connes–Moscovici, arXiv:2112.05500 (https://arxiv.org/abs/2112.05500), give the spectral realisation of the UV prolate operator. It does not prove positivity of the semilocal Weil form.
+
+**Numerics** (`scripts/positivity/sonin_prolate.py`, `sonin_slice.py`, results in `sonin_slice_results.txt`; float64, not certified):
+- Reproduced the paper's values: prolate eigenvalues 0.999971, −0.979485, 0.524086, −0.058977, 0.002732; Σλ² = 2.237484835; ε′(1⁺) ≈ 22.993 (paper 22.9965).
+- On the constrained subspace (ĝ(±i/2)=ĝ(0)=0):
+  - S = W_∞+E stays ≥ 0 at every L tested, down to −4e−5 at L=1.5, which is at quadrature level.
+  - −E = W_∞−S is ≥ 0 up to L≈0.6, beyond the proven 0.3466. It is negative by L=0.8.
+- The prime terms are a different matter. W−S = −E − primes turns negative the moment 2 enters: +1.4e−3 → −2.1e−2 across L=log2/2. After that it is O(1) negative (−0.48 at L=0.4, −1.9 at L≈1.3). Meanwhile the full Weil form W sits at the noise floor (≤5e−8 in magnitude), as in the place-by-place section.
+- Not done this round: the synthetic off-line zero injection. The run budget was used by the E-matrix build.
+
+**Verdict.** The Sonin trace absorbs the archimedean place exactly, and its positivity is a theorem. But it is not a lower bound that survives the primes: the margin it leaves (−E) is about 1e−3, while the prime 2 alone costs about 2e−2. Any route via "W ≥ Sonin trace" would need a semilocal Sonin space that includes the finite places. That is the open step in Connes–Consani's programme, and these numerics give no shortcut to it.
