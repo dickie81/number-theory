@@ -479,3 +479,13 @@ A short survey of established physics in which ζ, its zeros, or Weil positivity
 - **Black-hole chaos and microstates.** The SYK spectral form factor shows a random-matrix ramp (Cotler et al., arXiv 1611.04650), a statistic shared with the zeros but with no mechanism linking the two. Black-hole microstate counting uses modular forms and Rademacher sums (Dijkgraaf–Maldacena–Moore–Verlinde, arXiv hep-th/0005003). Zeta values appear; the zeros do not.
 
 Strongest clues for the "we see a slice" picture: (1) the modular bootstrap, where every 2d CFT's scalar spectrum contains the zeros and RH is a statement about physical operator densities; (2) Connes–Consani's archimedean Weil positivity from a compressed positive trace, which is positivity derived from a cut-off geometry and a projection. Bottom line: no established physical principle (unitarity, causality, reflection positivity, the second law) is known to imply full Weil or Li positivity; every route found reduces to RH-equivalent statements or to a single place.
+
+## Same-dimension black-hole networks: Ramanujan graphs (uncertified numerics, no Lean)
+
+`scripts/positivity/ramanujan_net.py` (results in `ramanujan_net_results.txt`) uses quotients of the Bruhat–Tits tree, the p-adic analogue of AdS, as a network of identical "black holes" (Lubotzky–Phillips–Sarnak, Combinatorica 1988; p-adic AdS/CFT: Gubser et al., arXiv 1605.01061; Heydeman et al., arXiv 1605.00599). Floating point, uncertified.
+
+- **Single prime.** LPS X^{p,13} on PGL(2,13) has 2184 vertices. Max nontrivial |λ| is 4.250 (p = 5, bound 2√5 = 4.472), 7.851 (p = 17, bound 8.246) and 9.932 (p = 29, bound 10.770). All Ihara poles satisfy |u| = p^{−1/2} to 10⁻¹⁶, which is RH for the graph. A random 6-regular graph is only just Ramanujan (4.464).
+- **Two primes on one quotient.** A₅ and A₁₇ commute exactly, and every joint eigenvector is Ramanujan at both primes. The product of local factors is the Satake/automorphic L-function picture. Ramanujan at every p is Ramanujan–Petersson, a theorem here (via Deligne), and it says nothing about ζ's zeros, which need the archimedean place.
+- **Bad gluing.** Two copies of X^{5,13} are joined by k edge swaps (out of 6552 edges per copy, staying 6-regular). The margin 2√5 − λ is −1.53 at k = 1, −1.16 at k = 300 and −0.43 at k = 1000. A weak junction breaks RH and is recovered only once the junction is a large fraction of the graph.
+
+Verdict: RH for these networks is a theorem, and it comes from arithmetic gluing (quaternion/Hecke structure), not from regularity: generic junctions fail it. That matches the junction-margin story, but it is the finite-place analogue, and it does not reach ζ.

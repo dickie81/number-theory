@@ -1,0 +1,22 @@
+== 1. LPS X^{p,13} on PGL(2,13) (bipartite if (p|q)=-1) ==
+LPS X^{5,13}                 n=2184 deg=6 trivial=2 max|lam_nontriv|=4.2497 2sqrt(p)=4.4721 Ramanujan=True max||u|-p^-1/2|=2.2e-16
+LPS X^{17,13}                n=2184 deg=18 trivial=2 max|lam_nontriv|=7.8509 2sqrt(p)=8.2462 Ramanujan=True max||u|-p^-1/2|=1.1e-16
+LPS X^{29,13}                n=2184 deg=30 trivial=2 max|lam_nontriv|=9.9323 2sqrt(p)=10.7703 Ramanujan=True max||u|-p^-1/2|=8.3e-17
+random 6-regular (Friedman)  n=2184 deg=6 trivial=1 max|lam_nontriv|=4.4643 2sqrt(p)=4.4721 Ramanujan=True max||u|-p^-1/2|=2.8e-16
+
+== 2. Two primes on one quotient: Hecke operators A_5, A_17 ==
+commute: max|[A5,A17]| = 0.0e+00
+joint eigenvectors: 2182 nontrivial; max|l5|=4.2497 (<=4.4721), max|l17|=7.8509 (<=8.2462): both Ramanujan simultaneously
+Satake angles l_p=2sqrt(p)cos(theta_p): sample (theta_5,theta_17) in degrees: [(18.1, 82.8), (18.3, 90.4), (34.3, 93.7), (36.3, 43.7), (37.2, 127.3), (37.2, 144.2)] (distinct pairs; eigenspaces are degenerate)
+partial L(s)=prod_{p=5,17}(1-l_p p^-s+p^{1-2s})^-1 at s=1/2+14.13i: |L|=32.549 (just a 2-factor Euler product; no zeros forced)
+Ramanujan at every p = Ramanujan-Petersson for this automorphic form; it is a theorem here (LPS via Deligne),
+and it says nothing about zeta's zeros: that needs the archimedean place.
+
+== 3. Bad gluing: two copies of X^{5,13} joined by k double-edge swaps (stays 6-regular) ==
+k=    1  max|lam_nontriv|=5.9988  margin 2sqrt5-lam=-1.5266  RH FAILS (Ihara pole off |u|=5^-1/2)
+k=    3  max|lam_nontriv|=5.9964  margin 2sqrt5-lam=-1.5242  RH FAILS (Ihara pole off |u|=5^-1/2)
+k=   10  max|lam_nontriv|=5.9878  margin 2sqrt5-lam=-1.5156  RH FAILS (Ihara pole off |u|=5^-1/2)
+k=   30  max|lam_nontriv|=5.9632  margin 2sqrt5-lam=-1.4911  RH FAILS (Ihara pole off |u|=5^-1/2)
+k=  100  max|lam_nontriv|=5.8783  margin 2sqrt5-lam=-1.4062  RH FAILS (Ihara pole off |u|=5^-1/2)
+k=  300  max|lam_nontriv|=5.6354  margin 2sqrt5-lam=-1.1632  RH FAILS (Ihara pole off |u|=5^-1/2)
+k= 1000  max|lam_nontriv|=4.8983  margin 2sqrt5-lam=-0.4262  RH FAILS (Ihara pole off |u|=5^-1/2)
