@@ -877,3 +877,62 @@ The gap of about 2e-17 at L = 0.8 is easily reachable at 200-bit precision.
 - the identification of A_ij with Q(s_i, s_j).
 
 The result covers only the 24-dimensional span of the modes, so it is not positivity for every f supported in [−L, L]. Zhu's certified theorem handles the infinite-dimensional tail with a separate frequency-split argument, which isn't reproduced here. Built with Grok Bot assistance.
+
+## Full-window tail certificate, even sector, L = 1/2 (`WeilTail`)
+
+This section extends the finite `WeilCert` check to every truncation size, so the infinitely many modes are covered. Credit: computations and Lean by an AI assistant (Grok Bot).
+
+**Reduction (Zhu, arXiv 2608.24827, Thm 1.1 and Lemma 3.1).** Let supp f ⊂ [−L, L], F = f̂, and T# > T₁ = 2π e^{A_L}. Then
+Q(f) ≥ R(f) = 2F(i/2)² + (1/π)∫₀^{T#}(Ψ_L(t) − β*)|F(t)|² dt + β*‖f‖², where β* = log(T#/2π) − 1/T# − A_L.
+The chain is as follows. Write Q as pole + archimedean − primes (eq. 17). In the frequency domain the archimedean and prime parts combine into (1/π)∫Ψ_L|F|². The envelope bound of Lemma 3.1 gives Ψ_L ≥ β* for t ≥ T#. Plancherel then turns the part with t ≥ T# into β*‖f‖² minus the integral over [0, T#].
+Settings here: L = 1/2, T# = 30, A_L = 2 log 2/√2 = 0.98026… (the only prime-power term is n = 2), and β* = 0.5497288384… (arb).
+
+**Basis.** T_n(x) = P̄_n(x/L)/√L, n even. This is an orthonormal basis of L² of the even functions on [−L, L], so it is complete in that space.
+- Transform: T̂_n(t) = (−1)^{n/2} 2√(Lν_n) j_n(tL), ν_n = n + ½.
+- Pole vector: p_n = 2√(Lν_n) i_n(L/2).
+- Matrix entries: R_nm = β*δ_nm + 2p_n p_m + C_nm, with C_nm = (1/π)∫₀^{T#}(Ψ_L − β*)T̂_n T̂_m.
+
+Mode index i corresponds to Legendre order 2i.
+
+**Head (orders 0..54, 28 modes).** All 406 entries C_nm were computed with arb `acb.integral` at 256 bits, max radius 4.1e-37 (`scripts/positivity/tailcert.py`).
+- λ_min of the midpoint matrix is about 2.24e-7, which is small but positive.
+- Exact-rational certificate (`tailheadcert.py`): M with D ≥ 0, δ = 7/62500000, ρ = 4.87e-24, n²ρ/δ = 3.4e-13. The head margin is λ0 = δ − 28²ρ.
+
+**Tail (orders ≥ 56).** The script `tailbounds.py` uses these bounds:
+- |j_n(x)| ≤ min(1, xⁿ/(2n+1)!!) for real x ≥ 0, from the Poisson integral.
+- 0 ≤ i_n(z) ≤ zⁿ cosh z/(2n+1)!!.
+- M_Ψ = sup_{[0,30]}|Ψ_L − β*| ≤ 6.9376, from an arb interval cover with 6000 boxes.
+
+These give:
+- |C_nm| ≤ (M_Ψ/π)·4L√(ν_nν_m)·L^{n+m}T^{n+m+1}/((n+m+1)(2n+1)!!(2m+1)!!).
+- Tail diagonal: d ≥ 0.5497 − 2·max|C_nn| (max|C_nn| ≈ 1.8e-52).
+- Off-diagonal row sums: e ≤ 1e-53.
+- Head–tail Frobenius coupling: c² ≤ 1e-48, using |j_head| ≤ 1.
+- Margin: m = λ0/2.
+
+The block condition c² ≤ (λ0 − m)(d − e − m) holds with about 40 orders of magnitude to spare.
+
+Caveats on rigour:
+- The scripts form the tail sums explicitly only up to order 600, and take the supremum of e over only the first 40 tail rows. Beyond that they rely on the super-exponential decay, which is obvious from the bound formula, but the scripts do not bound that remainder formally.
+- The analytic Bessel inequalities are standard but are not formalised.
+
+**Lean (`lib/core/WeilTail.lean`).** Fully proved, using only propext, Classical.choice and Quot.sound:
+- `head_margin`: an entrywise certificate gives the margin δ − h²ρ.
+- `tail_lower`: a symmetric Gershgorin bound.
+- `coupling_sq`: Cauchy–Schwarz over the product finset.
+- `block_margin`: an abstract head/tail theorem, uniform in the truncation size N ≥ h, built on `ShellSchur.margin_of_coupling`.
+- Concrete data `L05Tail` (M, D, δ, ρ, d, e, c², m), checked by `norm_num`.
+- `reduced_margin`: m‖x‖² ≤ xᵀR_N x for every N ≥ 28.
+- `L05_even_pos`: 0 < xᵀQ_N x for every N ≥ 28 and every x ≠ 0.
+
+The following are **named hypotheses**, not proved in Lean:
+- `ZhuReduction`: Q_N dominates R_N, which is Zhu's Thm 1.1 and Lemma 3.1.
+- `TailHyp`: symmetry, the arb head enclosure, and the tail bounds d, e, c² above.
+
+**What is stated.** Positivity is stated for coefficient sequences, uniformly over all finite truncations. It is not stated for functions. To pass to every even f ∈ L²[−L, L] you need two more things, neither formalised:
+- Legendre completeness, which holds;
+- continuity of Q in a norm controlled by the coefficients.
+
+Even then the conclusion is only Q ≥ 0 on the closure. The uniform margin m > 0 holds in the coefficient ℓ² norm, so the conclusion is in fact Q(f) ≥ m‖f‖² for the reduced form.
+
+**Not done.** The odd sector (pole term −2(∫f sinh)², and odd Legendre orders) and L = 0.8 were not done. At L = 0.8, T₁ grows and T#·L ≈ 160, so the head would need about 200 modes and the arb cost is out of reach in this session.

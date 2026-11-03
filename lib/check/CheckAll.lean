@@ -241,6 +241,7 @@ import WeilHodge
 import ShellSchur
 import ParityGround
 import WeilCert
+import WeilTail
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1361,3 +1362,6 @@ the linear algebra of its certificates. -/
 #print axioms WeilCert.L05_pos
 #print axioms WeilCert.L07_pos
 #print axioms WeilCert.L08_pos
+#print axioms WeilTail.block_margin
+#print axioms WeilTail.L05Tail.reduced_margin
+#print axioms WeilTail.L05Tail.L05_even_pos
