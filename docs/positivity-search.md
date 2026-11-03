@@ -687,3 +687,35 @@ Script: `scripts/positivity/flow.py`, output `flow_results.txt`, plot `flow.png`
   - The flows separate exactly where the real flow enters the near-null regime. That is the same information as the zero-side vanishing found in the near-null study.
 
 Verdict: the flow runs the wrong way. Monotonicity is exact but goes downward, and λ_min is pinned at zero from L ≈ 0.8 on, so it gives nothing beyond Weil positivity restated. No Lean lemma was added. Downward propagation along nested spaces is trivial, and the upward version would need the missing boundary sign, which is RH. Numerics by Grok Bot.
+
+## Symmetry splitting (uncertified)
+
+Script: `scripts/positivity/ideas256.py`, output `ideas256_results.txt`, plot `ideas256.png`. The setup is the same W_L as before: support [-L,L], a 40-sine basis, float64. Controls: log n jittered (σ = 0.05) and the sign of p = 3 flipped.
+
+- **Parity:** W_L commutes with x → −x, with a cross-block norm of about 1e-6 (quadrature level). Each block takes its own pole constraint (e^{x/2} ± e^{−x/2}).
+  - With the real primes, both blocks are positive at small L: min eig 1.4e-2 even / 0.21 odd at L = 0.5.
+  - Both collapse to 0 together. Even and odd reach 7e-8 and 8e-6 at L = 0.7, then sit at noise level from L ≈ 1 on.
+  - The near-null dimension splits evenly between the blocks (4/3, 9/9, 12/12, 14/13), so neither block carries the near-null directions.
+  - With the controls, both blocks fail at the same rate, about −0.5 to −2.8.
+- **Dirichlet twists (χ mod 3, 4, 5, 8; no pole):** every twisted form behaves the same way. It is positive at small L, collapses to 0 at roughly the L where the first zero of L(s,χ) comes into resolution, and from then on its near-null dimension grows like the twisted zero count. With a flipped prime, each fails at −0.25 to −2.2.
+
+Verdict: splitting gives smaller copies of the same problem. No block can be certified on its own while the controls fail.
+
+## Reweighted metric (uncertified)
+
+Same script. We computed c(L) = min of W/M on the pole-orthogonal space for M_w = ∫|f̂|² w(t), with w = 1, (1+t²)^{−1}, (1+t²)^{−2}, a Gaussian e^{−(t/10)²}, log(2+t), and a "zero-dip" weight that vanishes at the first 10 zeros.
+
+- For every weight that is positive at the zeros, c(L) is about 0 (within noise) from L ≈ 1 on. The smoother weights only rescale the noise.
+- With the jittered control, the same metrics give large negative c (down to −1e6 for H^{−2}).
+- The zero-dip weight doesn't help either: c is still 0. Removing the first 10 zeros isn't enough, because there are more near-null directions than that.
+- Any M that keeps c > 0 has to vanish on f̂ at every zero below the bandwidth. That metric is the zero-side form itself, so the argument is circular.
+
+## GUE bridge (uncertified)
+
+Same script. We compared the zero-side form 2Σ|f̂(γ)|² (600 ordinates) for the real zeros against 40 GUE fake-zero sets, all unfolded to the same smooth density.
+
+- **Near-null dimension:** at L = 1, real 7 against a GUE mean of 7.0 ± 0.8. At L = 2, real 24 against 23.5 ± 1.1.
+- **Eigenvalue percentiles:** the log-eigenvalue percentiles of the real zeros fall between 35% and 78% of the GUE spread. The lowest eigenvalues sit at the 1e-18 float floor for both, so those comparisons carry no information.
+- **Verdict:** the real configuration is typical of GUE on every statistic tested. Any real zero set gives a positive zero-side form, so positivity carries no information here. There is no atypicality to exploit.
+
+Overall: all three ideas reduce to Weil positivity restated. No Lean lemma was added, because "block-diagonal with nonnegative blocks implies nonnegative" is trivial. Numerics by Grok Bot.
