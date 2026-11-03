@@ -259,6 +259,7 @@ import CmAsm
 import CmFinA
 import CmEncP
 import WeilOddPos
+import WeilCoer
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1456,4 +1457,7 @@ the linear algebra of its certificates. -/
 #print axioms WeilOdd.weilQg_hx
 #print axioms WeilOdd.L05_odd_weilQg
 #print axioms WeilOdd.L05_odd_weilQ
+#print axioms WeilCoer.normSq_hx
+#print axioms WeilCoer.coer_hx
+#print axioms WeilCoer.coer_hx'
 #print axioms WeilOdd.L05_mixed

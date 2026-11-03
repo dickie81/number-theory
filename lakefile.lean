@@ -19,7 +19,7 @@ lean_lib Zeta23 where
   globs := #[.submodules `Zeta23]
   leanOptions := #[⟨`relaxedAutoImplicit, false⟩]
 
-/-- lib/core: 415 modules. -/
+/-- lib/core: 416 modules. -/
 lean_lib Core where
   srcDir := "lib/core"
   globs := #[
@@ -117,16 +117,16 @@ lean_lib Core where
     .one `VinoIter, .one `VinoKV, .one `VinoPadic, .one `VinoRec,
     .one `VinoRec2, .one `VinoSplit, .one `VinoStep, .one `Vinogradov,
     .one `WeilArch, .one `WeilAssemble, .one `WeilCert, .one `WeilChi,
-    .one `WeilChiBridge, .one `WeilChiCriterion, .one `WeilChiDensity, .one `WeilConst,
-    .one `WeilConverse, .one `WeilCount, .one `WeilCriterion, .one `WeilDedekind,
-    .one `WeilDischarge, .one `WeilFF, .one `WeilFourier, .one `WeilHead,
-    .one `WeilHodge, .one `WeilIndexConverse, .one `WeilIndexInfinite, .one `WeilIndexZeta,
-    .one `WeilLandau, .one `WeilModes, .one `WeilOdd, .one `WeilOddPos,
-    .one `WeilPlanch, .one `WeilRH, .one `WeilRate, .one `WeilTail,
-    .one `WeilTailB, .one `WeilTwinGeneral, .one `WeilZeta, .one `WeilZhuRed,
-    .one `WindowForm, .one `XiBounds, .one `XiLogDeriv, .one `ZeroLocal,
-    .one `ZeroSwap, .one `ZerosDense, .one `ZerosInfinite, .one `Zeta,
-    .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaInputs]
+    .one `WeilChiBridge, .one `WeilChiCriterion, .one `WeilChiDensity, .one `WeilCoer,
+    .one `WeilConst, .one `WeilConverse, .one `WeilCount, .one `WeilCriterion,
+    .one `WeilDedekind, .one `WeilDischarge, .one `WeilFF, .one `WeilFourier,
+    .one `WeilHead, .one `WeilHodge, .one `WeilIndexConverse, .one `WeilIndexInfinite,
+    .one `WeilIndexZeta, .one `WeilLandau, .one `WeilModes, .one `WeilOdd,
+    .one `WeilOddPos, .one `WeilPlanch, .one `WeilRH, .one `WeilRate,
+    .one `WeilTail, .one `WeilTailB, .one `WeilTwinGeneral, .one `WeilZeta,
+    .one `WeilZhuRed, .one `WindowForm, .one `XiBounds, .one `XiLogDeriv,
+    .one `ZeroLocal, .one `ZeroSwap, .one `ZerosDense, .one `ZerosInfinite,
+    .one `Zeta, .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaInputs]
 
 /-- lib/pnt: 601 modules. -/
 lean_lib PNT where
