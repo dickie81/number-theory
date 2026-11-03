@@ -746,3 +746,26 @@ Script: `scripts/positivity/entropy.py`, output `entropy_results.txt`, plot `ent
 - **Prime and Liouville entropy:** up to N = 10⁶, the block entropy of the Liouville function is indistinguishable from a random ±1 sequence, with deficits of 3.0e-3 against 3.1e-3 bits at block length 12. max|M(x)|/√x on [10³, 10⁶] is 0.47. RH ⇔ M(x) = O(x^{1/2+ε}) is the known equivalence. Entropy at this scale is a weaker statistic than M(x) itself and adds nothing.
 
 Verdict: none of the entropy routes adds anything beyond Weil positivity or a known RH equivalence. No Lean lemma was added. Numerics by Grok Bot.
+
+## Literature context
+
+Conventions: f is supported in [−L, L] in log scale, so f∗f̃ has support [−2L, 2L] and prime powers with log n < 2L enter. This is the same as our W_L. Literature survey compiled by Grok Bot; citations checked online except where marked.
+
+- **Weil (1952), "Sur les formules explicites…":** RH ⇔ the quadratic form is positive. Cited via Bombieri; the original wasn't rechecked.
+- **Yoshida (1992), Adv. Stud. Pure Math. 21, 281–325:** positivity for small support, verified at 2L = log 2, i.e. L ≤ 0.347. At L ≤ 0.347 no prime enters at all, so the result is archimedean only.
+- **Bombieri (2000), Rend. Lincei Mat. Appl. 11, 183–233:** the minimum is attained, Yoshida is reproved, and the number of negative eigenvalues equals half the number of off-line zeros. He calls the functional "as intractable as RH itself".
+- **Connes (1999), Selecta Math. 5, 29–106:** trace formula. **Connes–Consani (2021), Selecta Math. 27, arXiv 2006.13771:** archimedean positivity via the Sonin trace, at the same support log 2 / 2. **Connes–Consani (2023), Enseign. Math. 69, arXiv 2106.01715:** the very small eigenvalues of the Weil form come from prolate functions. **Connes–Consani–Moscovici (2024), Ann. Funct. Anal., arXiv 2310.18423.** **Connes–van Suijlekom (2025), CMP, arXiv 2511.23257:** a simple, even, isolated ground state implies its transform has only real zeros. **Connes–Consani–Moscovici, "Zeta spectral triples", arXiv 2511.22755:** convergence as λ → ∞ would give RH. The open steps are a simple even ground state at every scale, and convergence.
+- **Li (1997), JNT 65, 325–333; Bombieri–Lagarias (1999), JNT 77, 274–287:** Li coefficients, which are again Weil positivity. **de Branges:** Conrey–Li (arXiv math/9812166) showed his positivity condition fails for ζ. **Suzuki:** screw functions, JLMS 2023 and arXiv 2606.09096. **Groskin, arXiv 2607.02828:** an "inconclusive band" for truncated forms. **Burnol:** not checked.
+- **Zhu, arXiv 2608.24827 (2026 preprint, not refereed):** uses exactly our convention.
+  - Certified Q ≥ 8.9e-18‖f‖² for L ≤ 0.8. The true floor at L = 0.8 is about 1.7e-17.
+  - Measured law: −ln λ*(L) ≈ 2π² N(T*)/ln N(T*), with T* = 2πe^{2L}. This is double-exponential decay.
+  - Barrier: pointwise-envelope certificates need resolution up to T₁ = 2πe^{A_L}, which grows doubly exponentially. To go further one has to show that the phases t·log p cannot align.
+  - Float64 gives spurious negative eigenvalues.
+
+How this lines up with our results:
+
+- **Our "collapse at L ≈ 0.8" is not a threshold.** It is the float64 floor: the true λ_min goes below 1e-16 near L ≈ 0.8. Our "λ ≈ 0" readings for L ≳ 0.8 are noise around a positive but tiny value. Our numbers are also on the pole-orthogonal subspace with only 40 modes, so they aren't converged (for example 6.8e-8 against Zhu's 5e-13 at L = 0.7).
+- **Our near-null directions are the Landau–Widom suppression:** f̂ vanishes at the zeros below T* (at L = 0.8, the 4 zeros below 31.1). Each extra zero costs a double-exponentially small factor in λ.
+- **Our negative certificate results** (no local or SOS certificate, no reweighted metric) agree with Zhu's barrier theorem.
+- **Parity:** Zhu certifies that the ground state is even, with the odd sector about 10³ times higher at L = 0.8. Our float64 parity split couldn't resolve that difference.
+- **Open handle the literature points to:** cancellation in the prime comb, i.e. that the phases t·log p cannot all align. That is an arithmetic, Diophantine statement. A second handle is the Connes–van Suijlekom route: prove a simple, even ground state at every scale.
