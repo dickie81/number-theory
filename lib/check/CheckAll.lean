@@ -249,6 +249,7 @@ import WeilModes
 import WeilFourier
 import WeilArch
 import WeilHead
+import WeilConst
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1423,3 +1424,9 @@ the linear algebra of its certificates. -/
 #print axioms WeilHead.oddHead_of
 #print axioms WeilHead.L05_even
 #print axioms WeilHead.L05_odd
+#print axioms WeilConst.beta_enc_even
+#print axioms WeilConst.beta_enc_odd
+#print axioms WeilConst.pole_enc_even
+#print axioms WeilConst.pole_enc_odd
+#print axioms WeilConst.L05_even
+#print axioms WeilConst.L05_odd

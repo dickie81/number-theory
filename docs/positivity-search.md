@@ -1225,3 +1225,18 @@ A realistic route is Taylor models (degree about 10 on about 100 subintervals), 
 The other two families are within reach:
 - **`pole`** (10⁻¹⁰–10⁻¹²): iₙ(1/4) has a rapidly convergent power series, with rational square-root enclosures for √(2n+1).
 - **`beta`**: π is known to 20 digits in Mathlib, and log 2, log 3 and log 5 follow from Mathlib's `Real.abs_log_sub_add_sum_range_le` series bounds.
+
+## WeilConst: β* and pole values proved; only C^ψ remains
+
+`lib/core/WeilConst.lean` proves two of the three `HeadEnc` families outright (contributed with AI assistance (Grok Bot)).
+
+- **β\*** (`beta_enc_even`, `beta_enc_odd`): |β\* − b̂| ≤ 10⁻¹². The proof uses Mathlib's 20-digit bounds on π, the `log(1−x)` series remainder `Real.abs_log_sub_add_sum_range_le` (50 terms for log 2, 25 terms for log(15/(4π)) at both π endpoints), and rational bounds on √2. A `decide +kernel` check over ℚ confirms the resulting interval.
+- **Poles** (`pole_enc_even`, `pole_enc_odd`): |p_{2i+par} − p̂ᵢ| ≤ 10⁻¹² for i < 28.
+  - The moments J(k,n) = ∫₋₁¹ t^{2k}(1−t²)ⁿ satisfy J(k,0) = 2/(2k+1) and J(k,n+1) = J(k,n) − J(k+1,n). A kernel-evaluated list recursion computes them exactly.
+  - cosh(t/4) is replaced by its degree-10 Taylor polynomial, with remainder ≤ 4⁻¹²·13/(12!·12) from `Real.exp_bound`.
+  - The √(2n+1) factor is handled by comparing squares.
+- **Narrowed residual**: `WeilConst.L05_even` and `WeilConst.L05_odd` now take only `CmEnc par cq εc`. That is the entrywise enclosure of C^ψ_{nm} = (1/π)∫₀³⁰ wψ T̂ₙT̂ₘ, with εc = 6·10⁻⁹ for even and 1.3·10⁻⁶ for odd. Axioms: propext, Classical.choice, Quot.sound.
+
+C^ψ is still open because it needs rigorous enclosures of Re ψ(1/4 + it/2) on [0, 30] and a validated quadrature of an oscillatory integrand. Proposed plan:
+1. Shift ψ by recurrence to |z| ≥ 15, then apply Stirling with an explicit Bernoulli remainder. This needs a Mathlib-level bound on the remainder of the digamma asymptotic series, which is not available yet.
+2. Use piecewise Taylor models of T̂ₙ and wψ on subintervals with proved derivative bounds, combined with a kernel-checked ℚ sum.
