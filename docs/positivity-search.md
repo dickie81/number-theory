@@ -855,6 +855,17 @@ supported on the first `N` Legendre modes, the repo's Weil form at `L = 1/2` is 
 the even sector (`WeilForm.weilQ (1/2)`) and the odd sector (`WeilZhuRed.QF 1 (-1)`). All of the earlier named inputs
 are now proved: β*, the pole values, the C^ψ entry enclosures `CmEnc`, ModeOrth and the archimedean identity.
 
+**Odd and mixed probes** (`WeilOdd`, `WeilOddPos`). The library's `weilQ` is the Weil form for even probes only.
+For a general real probe the correct pole term is `2 ĝ(i/2) ĝ(−i/2)`, which gives `WeilForm.weilQg`. `weilQg_hx` proves
+`weilQg (1/2) (Σ xᵢ T_{2i} + Σ yᵢ T_{2i+1}) = QF 0 1 N x + QF 1 (−1) N y`, with no hypotheses. The proof uses three facts:
+the Fourier transform of the mixed probe is `F₀ + iF₁`, so its spectral density is `F₀² + F₁²` and the even/odd cross
+terms cancel; the pole term is `2(A + B)(A − B)`; and the parity-free versions of Wiener–Khinchin, the archimedean
+identity and the prime sum hold. From this:
+* `L05_odd_weilQg` gives `0 < weilQg (1/2) g` for every nonzero odd `g`.
+* `L05_mixed` gives `0 < weilQg (1/2) (f + g)` for every nonzero pair, with `N ≥ 28`.
+* `L05_odd_weilQ` gives `0 < weilQ (1/2) g` for odd `g`. This is weaker, because for odd `g`,
+  `weilQ = weilQg + 4 poleR²`.
+
 **Scope:** a single window length `L = 1/2` and finite mode expansions of arbitrary size. The statement says nothing
 about other `L` or about RH.
 
