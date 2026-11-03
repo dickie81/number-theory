@@ -228,4 +228,61 @@ theorem digamma_stirling {z : ℂ} (hz : 0 < z.re) :
       = ‖lap z - 1 / (12 * z ^ 2)‖ := by rw [← norm_neg]; congr 1; ring
     _ ≤ _ := key
 
+/-! ## Real part on the line `Re z = 1/4`, after `N` recurrence steps -/
+
+/-- Shifted Stirling approximation of `Re ψ(1/4 + ib)`: with `a = N + 1/4`, `r = a² + b²`,
+`½ log r − a/(2r) − (a² − b²)/(12 r²) − Σ_{k<N} (k + 1/4)/((k + 1/4)² + b²)`. -/
+def psiApx (N : ℕ) (b : ℝ) : ℝ :=
+  let a : ℝ := N + 1 / 4
+  let r : ℝ := a ^ 2 + b ^ 2
+  Real.log r / 2 - a / (2 * r) - (a ^ 2 - b ^ 2) / (12 * r ^ 2)
+    - ∑ k ∈ Finset.range N, ((k:ℝ) + 1 / 4) / (((k:ℝ) + 1 / 4) ^ 2 + b ^ 2)
+
+theorem re_digamma_quarter (N : ℕ) (b : ℝ) :
+    |(Complex.digamma (1 / 4 + b * Complex.I)).re - psiApx N b| ≤ 1 / (120 * ((N:ℝ) + 1 / 4) ^ 4) := by
+  set z : ℂ := 1 / 4 + b * Complex.I
+  have hzre : z.re = 1 / 4 := by simp [z]
+  have hs : ∀ m : ℕ, z ≠ -(m : ℂ) := by
+    intro m h; have := congrArg Complex.re h; simp [z] at this; linarith [m.cast_nonneg (α := ℝ)]
+  have hrec := Complex.digamma_apply_add_nat hs N
+  set w : ℂ := z + N
+  have hwre : w.re = N + 1 / 4 := by simp [w, hzre]; ring
+  have hwim : w.im = b := by simp [w, z]
+  have hw : 0 < w.re := by rw [hwre]; positivity
+  have hst := digamma_stirling hw
+  have hre : (Complex.digamma z).re = (Complex.digamma w).re
+      - (∑ k ∈ Finset.range N, (z + k)⁻¹).re := by rw [hrec]; simp
+  have hnsq : Complex.normSq w = ((N:ℝ) + 1/4) ^ 2 + b ^ 2 := by
+    rw [Complex.normSq_apply, hwre, hwim]; ring
+  have hr : 0 < ((N:ℝ) + 1/4) ^ 2 + b ^ 2 := by positivity
+  have hlog : (Complex.log w).re = Real.log (((N:ℝ) + 1/4) ^ 2 + b ^ 2) / 2 := by
+    rw [Complex.log_re, ← hnsq, Complex.normSq_eq_norm_sq, Real.log_pow]; push_cast; ring
+  have h2 : (1 / (2 * w)).re = ((N:ℝ) + 1/4) / (2 * (((N:ℝ) + 1/4) ^ 2 + b ^ 2)) := by
+    rw [one_div, mul_inv, Complex.mul_re, Complex.inv_re, Complex.inv_im, Complex.inv_re, hnsq, hwre]
+    simp [Complex.normSq_apply]; field_simp
+  have h12 : (1 / (12 * w ^ 2)).re
+      = (((N:ℝ) + 1/4) ^ 2 - b ^ 2) / (12 * (((N:ℝ) + 1/4) ^ 2 + b ^ 2) ^ 2) := by
+    rw [one_div, mul_inv, Complex.mul_re, Complex.inv_re (w ^ 2), Complex.inv_im (w ^ 2)]
+    have : Complex.normSq (w ^ 2) = (((N:ℝ) + 1/4) ^ 2 + b ^ 2) ^ 2 := by rw [map_pow, hnsq]
+    rw [this]
+    have e1 : (w ^ 2).re = ((N:ℝ) + 1/4) ^ 2 - b ^ 2 := by rw [pow_two, Complex.mul_re, hwre, hwim]; ring
+    rw [e1]; simp [Complex.normSq_apply]; field_simp
+  have hk : (∑ k ∈ Finset.range N, (z + k)⁻¹).re
+      = ∑ k ∈ Finset.range N, ((k:ℝ) + 1 / 4) / (((k:ℝ) + 1 / 4) ^ 2 + b ^ 2) := by
+    rw [Complex.re_sum]; apply Finset.sum_congr rfl; intro k _
+    rw [Complex.inv_re, Complex.normSq_apply]; simp [z]; ring_nf
+  have hre2 := Complex.re_le_norm (Complex.digamma w - (Complex.log w - 1 / (2 * w) - 1 / (12 * w ^ 2)))
+  have hre3 := Complex.abs_re_le_norm (Complex.digamma w - (Complex.log w - 1 / (2 * w) - 1 / (12 * w ^ 2)))
+  simp only [Complex.sub_re] at hre3
+  rw [hlog, h2, h12] at hre3
+  rw [hwre] at hst
+  rw [hre, hk]
+  unfold psiApx
+  simp only
+  have := hre3.trans hst
+  calc _ = |(Complex.digamma w).re - (Real.log (((N:ℝ) + 1/4) ^ 2 + b ^ 2) / 2
+        - ((N:ℝ) + 1/4) / (2 * (((N:ℝ) + 1/4) ^ 2 + b ^ 2))
+        - (((N:ℝ) + 1/4) ^ 2 - b ^ 2) / (12 * (((N:ℝ) + 1/4) ^ 2 + b ^ 2) ^ 2))| := by congr 1; ring
+    _ ≤ _ := this
+
 end DigammaStirling

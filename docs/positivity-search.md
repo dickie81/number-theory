@@ -1249,3 +1249,6 @@ It starts from the repo's Binet Laplace form `GammaIntegrals.digamma_eq_lap`, th
 −s³/720 ≤ φ(s) − s/12 ≤ 0 (`phiB_bounds`, via a chain of derivative-sign arguments for x cosh x − sinh x), the exact
 integral ∫₀^∞ s e^{−zs} ds = 1/z² (FTC on (0,∞)), and ∫₀^∞ s³e^{−cs} ds = 6/c⁴. Combined with ψ(z+1) = ψ(z) + 1/z this
 is the intended input for rigorous enclosures of Re ψ(1/4 + it/2) (the C^ψ family of the head certificate).
+
+`re_digamma_quarter` (same module) gives the pointwise enclosure on the critical-line argument used by `Psi`. For every N and real b,
+|Re ψ(1/4 + ib) − psiApx N b| ≤ 1/(120 (N + 1/4)⁴). Here psiApx N b is ½ log r − a/(2r) − (a² − b²)/(12r²) − Σ_{k<N} (k + 1/4)/((k + 1/4)² + b²), with a = N + 1/4 and r = a² + b². It is a rational function of b plus one real logarithm. It comes from Mathlib's `digamma_apply_add_nat` together with `digamma_stirling`. For example, N = 100 gives an error below 10⁻¹⁰.

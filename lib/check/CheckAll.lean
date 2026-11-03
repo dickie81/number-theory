@@ -1433,3 +1433,4 @@ the linear algebra of its certificates. -/
 #print axioms WeilConst.L05_odd
 #print axioms DigammaStirling.phiB_bounds
 #print axioms DigammaStirling.digamma_stirling
+#print axioms DigammaStirling.re_digamma_quarter
