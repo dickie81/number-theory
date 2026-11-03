@@ -1173,3 +1173,55 @@ This work was done by an AI assistant (Grok Bot).
 - **`cm`** is the real obstruction. It needs verified quadrature, inside Lean, of the complex digamma along Re s = 1/4 against oscillatory Bessel products on [0, 30]. That means enclosures of ψ(1/4 + it/2) on a fine grid (Stirling with remainder, available in the stack only as an O-bound), plus error control for the quadrature. None of this machinery exists in Lean or Mathlib.
 - **`pole`** is reachable in principle. iₙ(1/4) has a rapidly convergent series, and √(2n+1) admits rational enclosures. It is left as a hypothesis because it does not change the conditional status while `cm` remains.
 - **`beta`** needs log π, log 15 and √2 log 2 to about 10⁻¹⁰ or better. Mathlib provides π to 20 digits but log 2 only to 10, so further series bounds would be needed. It is left for the same reason as `pole`.
+
+## Robust head certificates: crude entry tolerances (`WeilHead`, revised)
+
+This work was done by an AI assistant (Grok Bot).
+
+**Smallest eigenvalues of the 28×28 reduced head matrices** (arb midpoints, high-precision `eigsy`; uncertified):
+
+| Sector | λ_min(R), 28 modes | Next eigenvalue | λ_min of leading 4 / 6 / 8 / 10 modes |
+|---|---|---|---|
+| Even | 2.2425·10⁻⁷ | 7.75·10⁻³ | 2.2·10⁻⁶ / 3.3·10⁻⁷ / 2.248·10⁻⁷ / 2.2425·10⁻⁷ |
+| Odd | 4.6591·10⁻⁵ | 0.2346 | 1.9·10⁻⁴ / 4.68·10⁻⁵ / 4.662·10⁻⁵ / 4.6591·10⁻⁵ |
+
+In each sector the bottleneck is a single near-null direction carried by the first 8–10 modes.
+
+**Sharper head bound.** `WeilTail.head_margin` now loses h·ρ instead of h²·ρ. The proof bounds |xᵀEx| ≤ ρ(Σ|xᵢ|)² ≤ hρ‖x‖² by Cauchy–Schwarz. So an entrywise error ρ costs 28ρ, a Gershgorin-type loss.
+
+**New certificates.** `L05Even2` and `L05Odd2` in `WeilTailB` are built as follows:
+- δ ≈ 0.9·λ_min.
+- The LDLᵀ factor of A − δI is rounded to 2⁻⁶⁴.
+- The tolerance ρ satisfies 28ρ ≤ δ − m.
+
+| Sector | δ | ρ | Final margin m | max \|A − MᵀDM − δI\| (kernel-checked bound) |
+|---|---|---|---|---|
+| Even | 2·10⁻⁷ | 6.7·10⁻⁹ | 10⁻⁸ | 10⁻¹⁸ (≤ 6.9·10⁻¹⁰) |
+| Odd | 4.2·10⁻⁵ | 1.4·10⁻⁶ | 2·10⁻⁶ | 1.4·10⁻¹⁸ (≤ 9.9·10⁻⁸) |
+
+The tail and coupling budget is negligible (B₀ ≈ 5·10⁻²⁵), so almost all of δ − 28ρ is available as margin.
+
+**Tolerances now demanded by `HeadEnc`:**
+
+| Sector | ε_β | ε_p | ε_c |
+|---|---|---|---|
+| Even | 10⁻¹² | 10⁻¹² | 6·10⁻⁹ |
+| Odd | 10⁻¹⁰ | 10⁻¹⁰ | 1.3·10⁻⁶ |
+
+The check is kernel-evaluated over ℚ: |A − C| ≤ ρ − (ε_β + 10ε_p + ε_c). Axioms: propext, Classical.choice, Quot.sound.
+
+**Can ε grow further?**
+- With 28 head modes, ε_c < λ_min/28 is the ceiling for an entrywise bound. That is about 8·10⁻⁹ (even) and 1.7·10⁻⁶ (odd).
+- Shrinking the head to 10 modes would keep λ_min and gain a factor of about 3. But the tail bound b(n) = (1 + (2n+1)/4)(15/2)ⁿ/n! is about 0.1 at n = 20, so the current geometric tail estimate could not absorb modes 10–27. It would need sharper, explicit Bessel decay.
+- A structured perturbation bound could tolerate larger errors in the high modes, where the eigenvector is negligible. One example is a weighted Schur bound with weights following the eigenvector.
+
+**Is `cm` now provable in Lean? Not yet.** Even 10⁻⁶ absolute accuracy for (1/π)∫₀³⁰ wψ·T̂ₙT̂ₘ needs three things:
+1. Rigorous pointwise enclosures of Re ψ(1/4 + it/2) to about 10⁻⁷. The stack has Stirling only with an O-type remainder, and the crude bound |ψ| ≤ 12√(1+|z|).
+2. Derivative bounds for the quadrature error. These need polygamma bounds, which Mathlib does not have.
+3. A quadrature fine enough for the target. A Lipschitz rule would need about 10¹⁰ nodes. A midpoint rule with a second-derivative bound would need about 10⁵–10⁷ nodes, each needing a digamma and a Bessel enclosure. That is out of reach for kernel evaluation.
+
+A realistic route is Taylor models (degree about 10 on about 100 subintervals), with proved remainders for ψ (via the Gauss integral or the series ψ(z) − ψ(1) = Σ(1/(k+1) − 1/(k+z)) with explicit tail) and for jₙ (via the Poisson integral). This is a substantial separate project.
+
+The other two families are within reach:
+- **`pole`** (10⁻¹⁰–10⁻¹²): iₙ(1/4) has a rapidly convergent power series, with rational square-root enclosures for √(2n+1).
+- **`beta`**: π is known to 20 digits in Mathlib, and log 2, log 3 and log 5 follow from Mathlib's `Real.abs_log_sub_add_sum_range_le` series bounds.

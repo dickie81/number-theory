@@ -9,6 +9,7 @@ def q(me): m,e=me; return F(m)*(F(2)**e) if e>=0 else F(m,2**(-e))
 def A(fr,r): return arb(fmpq(fr.numerator,fr.denominator),fmpq(r.numerator,r.denominator))
 def rnd(x,b=110): return F(round(x*2**b),2**b)
 EPS=F(1,10**30)
+FAM={}
 def go(par,certpkl,tag):
     d=pickle.load(open(f"/workspace/tail_L05_H28"+("_odd" if par else "")+".pkl","rb")); H=d['H']
     g=T.setup(); sg=-1 if par else 1
@@ -26,6 +27,7 @@ def go(par,certpkl,tag):
             Cij=R-sg*2*p[i]*p[j]-(beta if i==j else 0)
             c=rnd(tofr(Cij)); cq[i][j]=c; mx=max(mx,tor(Cij)+abs(tofr(Cij)-c))
     assert mx<EPS, float(mx)
+    FAM[par]=(bq,pq,cq)
     cert=pickle.load(open(certpkl,"rb")); cert=cert.get('c',cert)
     M,D,dl,rho=cert['M'],cert['D'],cert['delta'],cert['rho']
     worst=F(0)

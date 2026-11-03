@@ -30,7 +30,7 @@ lemma sq_le_sum {I : Finset ℕ} {x : ℕ → ℝ} {i : ℕ} (hi : i ∈ I) : x 
 /-- Head margin from an entrywise certificate (all of `range h`). -/
 theorem head_margin (h : ℕ) (R M : ℕ → ℕ → ℝ) (D : ℕ → ℝ) (δ ρ : ℝ) (hD : ∀ k, 0 ≤ D k) (hρ0 : 0 ≤ ρ)
     (hA : ∀ i < h, ∀ j < h, |R i j - certMat h M D δ i j| ≤ ρ) (x : ℕ → ℝ) :
-    (δ - (h : ℝ) ^ 2 * ρ) * ∑ i ∈ range h, x i ^ 2 ≤ qf R x (range h) (range h) := by
+    (δ - (h : ℝ) * ρ) * ∑ i ∈ range h, x i ^ 2 ≤ qf R x (range h) (range h) := by
   set S := ∑ i ∈ range h, x i ^ 2
   have hC : δ * S ≤ qf (certMat h M D δ) x (range h) (range h) := by
     have e1 : qf (certMat h M D δ) x (range h) (range h)
@@ -61,26 +61,25 @@ theorem head_margin (h : ℕ) (R M : ℕ → ℕ → ℝ) (D : ℕ → ℝ) (δ 
     have : 0 ≤ ∑ k ∈ range h, D k * (∑ i ∈ range h, M k i * x i) ^ 2 :=
       sum_nonneg (fun k _ => mul_nonneg (hD k) (sq_nonneg _))
     linarith
-  have hxx : ∀ i ∈ range h, ∀ j ∈ range h, |x i| * |x j| ≤ S := by
-    intro i hi j hj
-    have h1 := sq_le_sum (x := x) hi
-    have h2 := sq_le_sum (x := x) hj
-    have : |x i| * |x j| ≤ (x i ^ 2 + x j ^ 2) / 2 := by
-      nlinarith [sq_nonneg (|x i| - |x j|), sq_abs (x i), sq_abs (x j)]
-    linarith
-  have hE : |qf (fun i j => R i j - certMat h M D δ i j) x (range h) (range h)| ≤ (h : ℝ) ^ 2 * ρ * S := by
+  have hcs : (∑ i ∈ range h, |x i|) ^ 2 ≤ (h : ℝ) * S := by
+    have hc := sum_mul_sq_le_sq_mul_sq (range h) (fun _ => (1:ℝ)) (fun i => |x i|)
+    simp only [one_mul, one_pow, sum_const, card_range, nsmul_eq_mul, mul_one, sq_abs] at hc
+    exact hc
+  have hE : |qf (fun i j => R i j - certMat h M D δ i j) x (range h) (range h)| ≤ (h : ℝ) * ρ * S := by
     unfold qf
     calc |∑ i ∈ range h, ∑ j ∈ range h, x i * (R i j - certMat h M D δ i j) * x j|
         ≤ ∑ i ∈ range h, ∑ j ∈ range h, |x i * (R i j - certMat h M D δ i j) * x j| :=
           (abs_sum_le_sum_abs _ _).trans (sum_le_sum (fun i _ => abs_sum_le_sum_abs _ _))
-      _ ≤ ∑ i ∈ range h, ∑ j ∈ range h, ρ * S := by
+      _ ≤ ∑ i ∈ range h, ∑ j ∈ range h, ρ * (|x i| * |x j|) := by
           refine sum_le_sum (fun i hi => sum_le_sum (fun j hj => ?_))
           rw [abs_mul, abs_mul]
           have := hA i (mem_range.mp hi) j (mem_range.mp hj)
           calc |x i| * |R i j - certMat h M D δ i j| * |x j|
               = |R i j - certMat h M D δ i j| * (|x i| * |x j|) := by ring
-            _ ≤ ρ * S := mul_le_mul this (hxx i hi j hj) (by positivity) hρ0
-      _ = (h : ℝ) ^ 2 * ρ * S := by simp [sum_const, card_range]; ring
+            _ ≤ ρ * (|x i| * |x j|) := mul_le_mul_of_nonneg_right this (by positivity)
+      _ = ρ * (∑ i ∈ range h, |x i|) ^ 2 := by rw [sq, sum_mul_sum, mul_sum]; simp only [mul_sum]
+      _ ≤ ρ * ((h : ℝ) * S) := mul_le_mul_of_nonneg_left hcs hρ0
+      _ = (h : ℝ) * ρ * S := by ring
   have split : qf R x (range h) (range h) = qf (certMat h M D δ) x (range h) (range h)
       + qf (fun i j => R i j - certMat h M D δ i j) x (range h) (range h) := by
     unfold qf; rw [← sum_add_distrib]; refine sum_congr rfl (fun i _ => ?_)
@@ -257,7 +256,7 @@ theorem reduced_margin (R : ℕ → ℕ → ℝ) (H : TailHyp R) (N : ℕ) (hN :
     mT * ∑ i ∈ range N, x i ^ 2 ≤ qf R x (range N) (range N) := by
   have hρ0 : (0:ℝ) ≤ ρ := by simp only [ρ]; norm_num
   have hH := head_margin 28 R Mn Dn δ ρ hDn hρ0 H.head x
-  refine block_margin R H.symm 28 N hN (δ - ((28:ℕ):ℝ) ^ 2 * ρ) dT eT c2T mT x hH
+  refine block_margin R H.symm 28 N hN (δ - ((28:ℕ):ℝ) * ρ) dT eT c2T mT x hH
     (fun i hi => H.diag i (mem_Ico.mp hi).1) (H.row N) (H.coup N) (by simp only [c2T]; norm_num)
     ?_ ?_ ?_
   · simp only [mT, δ, ρ]; norm_num
