@@ -1240,3 +1240,12 @@ The other two families are within reach:
 C^ψ is still open because it needs rigorous enclosures of Re ψ(1/4 + it/2) on [0, 30] and a validated quadrature of an oscillatory integrand. Proposed plan:
 1. Shift ψ by recurrence to |z| ≥ 15, then apply Stirling with an explicit Bernoulli remainder. This needs a Mathlib-level bound on the remainder of the digamma asymptotic series, which is not available yet.
 2. Use piecewise Taylor models of T̂ₙ and wψ on subintervals with proved derivative bounds, combined with a kernel-checked ℚ sum.
+
+## DigammaStirling: explicit Stirling remainder for ψ
+
+`lib/core/DigammaStirling.lean` (contributed with AI assistance (Grok Bot)) proves `digamma_stirling`: for Re z > 0,
+‖ψ(z) − (log z − 1/(2z) − 1/(12z²))‖ ≤ 1/(120 (Re z)⁴).
+It starts from the repo's Binet Laplace form `GammaIntegrals.digamma_eq_lap`, then uses the elementary kernel bound
+−s³/720 ≤ φ(s) − s/12 ≤ 0 (`phiB_bounds`, via a chain of derivative-sign arguments for x cosh x − sinh x), the exact
+integral ∫₀^∞ s e^{−zs} ds = 1/z² (FTC on (0,∞)), and ∫₀^∞ s³e^{−cs} ds = 6/c⁴. Combined with ψ(z+1) = ψ(z) + 1/z this
+is the intended input for rigorous enclosures of Re ψ(1/4 + it/2) (the C^ψ family of the head certificate).

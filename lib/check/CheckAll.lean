@@ -250,6 +250,7 @@ import WeilFourier
 import WeilArch
 import WeilHead
 import WeilConst
+import DigammaStirling
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1430,3 +1431,5 @@ the linear algebra of its certificates. -/
 #print axioms WeilConst.pole_enc_odd
 #print axioms WeilConst.L05_even
 #print axioms WeilConst.L05_odd
+#print axioms DigammaStirling.phiB_bounds
+#print axioms DigammaStirling.digamma_stirling
