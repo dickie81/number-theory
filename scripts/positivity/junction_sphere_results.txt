@@ -1,0 +1,13 @@
+check P >= 0 entrywise: min -1.54e-12; diag of P max |.| 0.00e+00 (zero diagonal => P is not PSD)
+
+M=255: lambda_min  G 1.069e-03 | P(primes) -1.995e+04 | A(arch) -2.065e+04 | C(main) -2.069e+04 | R(psi-t) -3.274e+04
+  pair [32,63]x[64,127]: ||A^-1/2 B C^-1/2|| = 0.969866 (<=1 iff junction realisable by the blocks' own vectors); lambda_min pair G 3.260e-01, C -2.748e+03, R -4.277e+03; ||R||/||C|| = 1.000; margin of C on C-positive part vs remainder: max over top-|R| dir of -v'Rv/v'Cv = 0.999
+  pair [64,127]x[128,255]: ||A^-1/2 B C^-1/2|| = 0.990303 (<=1 iff junction realisable by the blocks' own vectors); lambda_min pair G 3.888e-01, C -1.099e+04, R -1.710e+04; ||R||/||C|| = 1.000; margin of C on C-positive part vs remainder: max over top-|R| dir of -v'Rv/v'Cv = 0.999
+
+M=1023: lambda_min  G 3.252e-04 | P(primes) -3.393e+05 | A(arch) -3.519e+05 | C(main) -3.332e+05 | R(psi-t) -5.271e+05
+  pair [128,255]x[256,511]: ||A^-1/2 B C^-1/2|| = 0.997042 (<=1 iff junction realisable by the blocks' own vectors); lambda_min pair G 4.546e-01, C -4.394e+04, R -6.838e+04; ||R||/||C|| = 1.000; margin of C on C-positive part vs remainder: max over top-|R| dir of -v'Rv/v'Cv = 0.999
+  pair [256,511]x[512,1023]: ||A^-1/2 B C^-1/2|| = 0.999082 (<=1 iff junction realisable by the blocks' own vectors); lambda_min pair G 5.182e-01, C -1.757e+05, R -2.735e+05; ||R||/||C|| = 1.000; margin of C on C-positive part vs remainder: max over top-|R| dir of -v'Rv/v'Cv = 0.999
+
+M=4095: lambda_min  G 9.593e-05 | P(primes) -5.552e+06 | A(arch) -5.763e+06 | C(main) -5.339e+06 | R(psi-t) -8.447e+06
+  pair [512,1023]x[1024,2047]: ||A^-1/2 B C^-1/2|| = 0.999694 (<=1 iff junction realisable by the blocks' own vectors); lambda_min pair G 5.788e-01, C -7.029e+05, R -1.094e+06; ||R||/||C|| = 1.000; margin of C on C-positive part vs remainder: max over top-|R| dir of -v'Rv/v'Cv = 0.999
+  pair [1024,2047]x[2048,4095]: ||A^-1/2 B C^-1/2|| = 0.999901 (<=1 iff junction realisable by the blocks' own vectors); lambda_min pair G 6.396e-01, C -2.812e+06, R -4.375e+06; ||R||/||C|| = 1.000; margin of C on C-positive part vs remainder: max over top-|R| dir of -v'Rv/v'Cv = 0.999

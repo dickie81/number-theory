@@ -1,0 +1,23 @@
+reference <r>: GUE 0.600, GOE 0.531, Poisson 0.386, picket fence 1.0
+spacing histogram bins (unfolded spacing s): [0,.25,.5,.75,1,1.25,1.5,2,3,inf)
+| zeta zeros (unfolded by Riemann-von Mangoldt) | <r>=0.615 | hist [0.0, 0.05, 0.24, 0.26, 0.2, 0.15, 0.1, 0.0, 0.0] |
+
+| sequence | <r> (unfolded) | spacing histogram | counting rms: linear / with x log x |
+| kappa_D (levels) | 1.000 | [0.0, 0.0, 0.0, 0.09, 0.91, 0.0, 0.0, 0.0, 0.0] | 0.000 / 0.000 |
+| T_H | 1.000 | [0.0, 0.0, 0.0, 0.94, 0.06, 0.0, 0.0, 0.0, 0.0] | 0.000 / 0.000 |
+| unit-area r_h | 1.000 | [0.0, 0.0, 0.0, 0.03, 0.97, 0.0, 0.0, 0.0, 0.0] | 11.126 / 1.934 |
+| log-area increments (cumsum of |diff|) | 0.974 | [0.03, 0.03, 0.04, 0.29, 0.59, 0.04, 0.0, 0.0, 0.0] | 6.782 / 1.644 |
+| -log |S^{D-2}| (levels) | 0.962 | [0.04, 0.02, 0.04, 0.27, 0.6, 0.04, 0.0, 0.0, 0.0] | 6.983 / 1.561 |
+| Gamma ratio sqrt(pi)G((D-1)/2)/G(D/2) (levels) | 0.888 | [0.04, 0.25, 0.25, 0.15, 0.1, 0.09, 0.13, 0.0, 0.01] | 38.666 / 18.567 |
+| cumsum of 1/Gamma-ratio | 0.992 | [0.0, 0.02, 0.06, 0.36, 0.54, 0.03, 0.0, 0.0, 0.0] | 7.985 / 1.029 |
+| cumsum of log D | 0.995 | [0.0, 0.0, 0.04, 0.35, 0.62, 0.0, 0.0, 0.0, 0.0] | 3.933 / 0.451 |
+| control: k/log k | 0.997 | [0.01, 0.0, 0.01, 0.27, 0.72, 0.0, 0.0, 0.0, 0.0] | 3.064 / 0.166 |
+| control: evenly spaced | 1.000 | [0.0, 0.0, 0.0, 0.1, 0.9, 0.0, 0.0, 0.0, 0.0] | 0.000 / 0.000 |
+| control: Poisson | 0.372 | [0.21, 0.17, 0.13, 0.14, 0.1, 0.05, 0.08, 0.1, 0.04] | 2.825 / 2.554 |
+| zeta zeros (raw) | — | — | 4.583 / 0.230 |
+
+zeros: gaps mean 1.921, gap ratio g_(k+1)/g_k median 1.018
+kappa_D (levels): gap ratio median 1.000, gap CV 0.000 (zeros 0.473)
+-log |S^{D-2}| (levels): gap ratio median 1.003, gap CV 0.338 (zeros 0.473)
+Gamma ratio sqrt(pi)G((D-1)/2)/G(D/2) (levels): gap ratio median 1.015, gap CV 3.337 (zeros 0.473)
+cumsum of log D: gap ratio median 1.002, gap CV 0.185 (zeros 0.473)

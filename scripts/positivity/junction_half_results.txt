@@ -1,0 +1,24 @@
+## Junction capture: frac by 4 directions / directions for 95%
+base sqrt2 (half-dyadic)         0.80/12  0.80/12  0.80/12  0.80/12
+base golden ratio                0.80/11  0.80/11  0.80/11  0.80/11
+squarefree vs not                0.67/19  0.66/21  0.66/22  0.65/22
+Liouville sign (Omega parity)    0.68/18  0.67/20  0.66/21  0.66/22
+mu sign classes (-1,0,1)         0.59/24  0.57/27  0.57/28  0.57/29
+QR class mod 3                   0.57/27  0.56/29  0.56/29  0.56/30
+QR class mod 5                   0.60/25  0.59/28  0.59/29  0.59/29
+QR class mod 7                   0.63/24  0.62/27  0.61/28  0.61/28
+reflection n<sqrtM vs n>sqrtM    0.74/12  0.66/15  0.72/17  0.74/19
+reflection dyadic in n/sqrtM     0.81/12  0.80/11  0.81/12  0.80/11
+dyadic (reference)               0.81/12  0.81/12  0.81/12  0.81/12
+
+## Best Mellin frequency of top-4 junction vectors (largest size), on n in [M/2, M]
+base sqrt2 (half-dyadic)         13.7(r=0.11) 14.4(r=0.16) 3.1(r=0.38) 21.1(r=0.72)
+base golden ratio                13.9(r=0.11) 14.6(r=0.13) 2.0(r=0.41) 19.6(r=0.69)
+reflection dyadic in n/sqrtM     14.0(r=0.14) 14.6(r=0.19) 2.0(r=0.38) 20.7(r=0.69)
+Liouville sign (Omega parity)    14.1(r=0.75) 14.3(r=0.73) 14.9(r=0.74) 15.1(r=0.75)
+
+## Half-dimensional area weights, dyadic blocks; min eigenvalue
+M=  255 unweighted +1.07e-03 | [d=k+1/2] B -7.62e-01 C +4.53e-02 | [d=2^k+1/2] B -7.09e+01 C +4.26e-02 | [d=k/2+1/2] B -4.64e+00 C +4.48e-02
+M=  511 unweighted +5.89e-04 | [d=k+1/2] B -6.02e+00 C +4.53e-02 | [d=2^k+1/2] B -2.84e+02 C +4.26e-02 | [d=k/2+1/2] B -1.58e+01 C +4.50e-02
+M= 1023 unweighted +3.25e-04 | [d=k+1/2] B -9.90e+01 C +4.52e-02 | [d=2^k+1/2] B -1.14e+03 C +4.26e-02 | [d=k/2+1/2] B -5.11e+01 C +4.51e-02
+M= 2047 unweighted +1.77e-04 | [d=k+1/2] B -8.81e+02 C +4.52e-02 | [d=2^k+1/2] B -4.56e+03 C +4.26e-02 | [d=k/2+1/2] B -1.58e+02 C +4.52e-02

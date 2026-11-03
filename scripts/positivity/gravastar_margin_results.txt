@@ -1,0 +1,22 @@
+
+# run Mmax=8191
+## prime-side K_H: per M = 2^k-1, margin of top pair, global lambda_min, M*lambda_min
+M=   255 margin=9.6968e-03 lambda_min=1.0689e-03 M*lambda_min=0.2726 ratio margin/lambda_min=9.072 (1s)
+M=   511 margin=2.9577e-03 lambda_min=5.8914e-04 M*lambda_min=0.3011 ratio margin/lambda_min=5.020 (3s)
+M=  1023 margin=9.1777e-04 lambda_min=3.2518e-04 M*lambda_min=0.3327 ratio margin/lambda_min=2.822 (3s)
+M=  2047 margin=3.0604e-04 lambda_min=1.7696e-04 M*lambda_min=0.3622 ratio margin/lambda_min=1.729 (18s)
+M=  4095 margin=9.9349e-05 lambda_min=9.5931e-05 M*lambda_min=0.3928 ratio margin/lambda_min=1.036 (22s)
+M=  8191 margin=2.9295e-05 lambda_min=5.1606e-05 M*lambda_min=0.4227 ratio margin/lambda_min=0.568 (114s)
+fit margin: pure power a=1.659 +- 0.012;  with log: a=1.638, b=-0.150 (3 params / 6 points: b poorly determined)
+fit lambda_min: pure power a=0.873 +- 0.004;  with log: a=0.980, b=0.768 (3 params / 6 points: b poorly determined)
+
+## toy controls (no arithmetic), margin per M
+toy sech(u): nan nan nan nan nan  -> slope a=nan
+toy exp(-|u|/2): 3.914e-03 1.955e-03 9.770e-04 4.884e-04 2.442e-04  -> slope a=1.001
+toy Gaussian exp(-u^2/8): nan nan nan nan nan  -> slope a=nan
+
+## synthetic off-line first zero: 1/2+i14.13 -> quartet 1/2 +- delta + i14.13 (margin; nan = block not PD)
+delta=0.05: margins 4.339e-03 8.582e-04 -3.340e-04 -1.288e-03 -2.535e-03 -5.914e-03 | lambda_min 9.62e-04 -2.64e-01 -2.28e+00 -1.06e+01
+delta=0.02: margins 4.841e-03 1.403e-03 3.758e-04 7.898e-05 -2.793e-05 -1.225e-04 | lambda_min 1.06e-03 5.66e-04 -3.44e-04 -1.20e+00
+delta=0.01: margins 4.910e-03 1.472e-03 4.426e-04 1.399e-04 3.971e-05 -2.575e-06 | lambda_min 1.07e-03 5.85e-04 3.22e-04 1.59e-04
+delta=0.005: margins 4.927e-03 1.488e-03 4.582e-04 1.517e-04 4.875e-05 1.238e-05 | lambda_min 1.07e-03 5.88e-04 3.24e-04 1.76e-04

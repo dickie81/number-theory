@@ -1,0 +1,40 @@
+(i) glued form -selfInt on (a,b,c), blocks scaled by cosh(k log2) (a congruence)
+ M=255: negative 1, positive 256, smallest |eig| 2.89e-08, eig nearest 0 from above 2.89e-08
+ M=511: negative 1, positive 512, smallest |eig| 4.05e-09, eig nearest 0 from above 4.05e-09
+ M=1023: negative 1, positive 1024, smallest |eig| 6.35e-10, eig nearest 0 from above 6.35e-10
+ M=2047: negative 2, positive 2047, smallest |eig| 1.08e-09, eig nearest 0 from above 1.08e-09
+
+(ii) matrix pencil on K_H(e^u), u in [u0, log X]
+ X=1e+04: resolution 2pi/(log X - log 20) = 1.01
+   gamma= 14.135 (nearest zero 14.1347, diff +0.001)   Re s = beta-1/2 = -0.0003
+   gamma= 21.023 (nearest zero 21.0220, diff +0.001)   Re s = beta-1/2 = -0.0002
+   gamma= 25.012 (nearest zero 25.0109, diff +0.001)   Re s = beta-1/2 = +0.0007
+   gamma= 30.428 (nearest zero 30.4249, diff +0.003)   Re s = beta-1/2 = -0.0019
+   gamma= 32.936 (nearest zero 32.9351, diff +0.001)   Re s = beta-1/2 = -0.0021
+   gamma= 37.586 (nearest zero 37.5862, diff -0.001)   Re s = beta-1/2 = +0.0015
+   gamma= 40.930 (nearest zero 40.9187, diff +0.011)   Re s = beta-1/2 = -0.0004
+   gamma= 43.343 (nearest zero 43.3271, diff +0.016)   Re s = beta-1/2 = -0.0119
+   gamma= 48.072 (nearest zero 48.0052, diff +0.067)   Re s = beta-1/2 = -0.0194
+   gamma= 49.872 (nearest zero 49.7738, diff +0.098)   Re s = beta-1/2 = -0.0030
+ X=1e+05: resolution 2pi/(log X - log 20) = 0.74
+   gamma= 14.135 (nearest zero 14.1347, diff +0.000)   Re s = beta-1/2 = -0.0002
+   gamma= 21.022 (nearest zero 21.0220, diff +0.000)   Re s = beta-1/2 = +0.0003
+   gamma= 25.011 (nearest zero 25.0109, diff +0.000)   Re s = beta-1/2 = +0.0002
+   gamma= 30.426 (nearest zero 30.4249, diff +0.001)   Re s = beta-1/2 = -0.0014
+   gamma= 32.937 (nearest zero 32.9351, diff +0.002)   Re s = beta-1/2 = -0.0014
+   gamma= 37.591 (nearest zero 37.5862, diff +0.005)   Re s = beta-1/2 = -0.0018
+   gamma= 40.924 (nearest zero 40.9187, diff +0.005)   Re s = beta-1/2 = -0.0043
+   gamma= 43.331 (nearest zero 43.3271, diff +0.004)   Re s = beta-1/2 = -0.0016
+   gamma= 48.016 (nearest zero 48.0052, diff +0.011)   Re s = beta-1/2 = +0.0010
+   gamma= 49.792 (nearest zero 49.7738, diff +0.018)   Re s = beta-1/2 = -0.0060
+ X=1e+06: resolution 2pi/(log X - log 20) = 0.58
+   gamma= 14.135 (nearest zero 14.1347, diff +0.000)   Re s = beta-1/2 = +0.0000
+   gamma= 21.022 (nearest zero 21.0220, diff -0.000)   Re s = beta-1/2 = -0.0000
+   gamma= 25.011 (nearest zero 25.0109, diff +0.000)   Re s = beta-1/2 = +0.0003
+   gamma= 30.425 (nearest zero 30.4249, diff -0.000)   Re s = beta-1/2 = -0.0006
+   gamma= 32.935 (nearest zero 32.9351, diff -0.000)   Re s = beta-1/2 = -0.0006
+   gamma= 37.586 (nearest zero 37.5862, diff -0.000)   Re s = beta-1/2 = -0.0000
+   gamma= 40.922 (nearest zero 40.9187, diff +0.003)   Re s = beta-1/2 = -0.0020
+   gamma= 43.328 (nearest zero 43.3271, diff +0.001)   Re s = beta-1/2 = -0.0027
+   gamma= 48.009 (nearest zero 48.0052, diff +0.004)   Re s = beta-1/2 = +0.0006
+   gamma= 49.774 (nearest zero 49.7738, diff +0.001)   Re s = beta-1/2 = -0.0039
