@@ -239,6 +239,7 @@ import OuterLimit
 import KreinNeutral
 import WeilHodge
 import ShellSchur
+import ParityGround
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1354,3 +1355,4 @@ the linear algebra of its certificates. -/
 #print axioms ShellSchur.nonneg_of_coupling
 #print axioms ShellSchur.margin_of_coupling
 #print axioms ShellSchur.chain_nonneg
+#print axioms ParityGround.parity_of_simple

@@ -626,6 +626,8 @@ Any proof along these lines would need control of B relative to the *near-null d
 
 ## Near-null directions of the Weil form (uncertified)
 
+> **Correction (high-precision rerun, see "High-precision Weil spectrum" below).** The float64 values reported here as "≈ 0", "near-null" or "pinned at zero" for L ≳ 0.7 were below float64 resolution. In the mpmath rerun the true minimum is positive and falls double-exponentially (5.0e-13 at L = 0.7, 2.3e-17 at 0.8, 8e-30 at 1.0, 9.9e-49 at 1.2). Counts of eigenvalues "< 1e-6" mostly measured that floor. Qualitative conclusions that compare real primes with controls are unaffected, because the controls fail at O(1).
+
 `scripts/positivity/near_null.py` (results in `near_null_results.txt`, plot `near_null.png`) uses the 40-sine basis on [−L,L], restricted to the 38-dimensional pole-orthogonal subspace. All values are float64 and uncertified.
 
 **Setup check.** On this subspace W equals the zero-side form Z = 2Σ_γ|f̂(γ)|² over the first 600 zeros, to a relative error of about 1e−5 at every L tested.
@@ -657,6 +659,8 @@ The near-null dimension is roughly 38 − 2N(K) − (2 to 4). The shortfall come
 
 ## Sum-of-squares certificates from local data (uncertified)
 
+> **Correction (high-precision rerun, see "High-precision Weil spectrum" below).** The float64 values reported here as "≈ 0", "near-null" or "pinned at zero" for L ≳ 0.7 were below float64 resolution. In the mpmath rerun the true minimum is positive and falls double-exponentially (5.0e-13 at L = 0.7, 2.3e-17 at 0.8, 8e-30 at 1.0, 9.9e-49 at 1.2). Counts of eigenvalues "< 1e-6" mostly measured that floor. Qualitative conclusions that compare real primes with controls are unaffected, because the controls fail at O(1).
+
 Script: `scripts/positivity/sos.py`, output `sos_results.txt`, plot `sos.png`. The setup is the same truncated Weil form as the near-null study: pole-orthogonal test functions, support [-L,L], a 40-sine basis, and float64 numerics with Clarabel SDP. We looked for a certificate W − tI = (PSD) built only from archimedean and prime-side pieces, then maximised the slack t.
 
 - **C0, unstructured:** t = min eig, which is about 0 (|t| ≲ 1e-7) for every L in 0.7–2.5. This is plain eigen-decomposition.
@@ -669,6 +673,8 @@ Script: `scripts/positivity/sos.py`, output `sos_results.txt`, plot `sos.png`. T
 Verdict: positivity of the Weil form can't be certified place by place, even with generous local multipliers. The gap grows with L, and the only certificate that works is the global eigen-decomposition, which is Weil positivity restated. This agrees with the near-null study: the cancellation is collective, across primes and the archimedean place together. No new Lean lemma was added. "A sum of PSD forms is PSD" is already covered in spirit by the ShellSchur chain lemma. Numerics by Grok Bot.
 
 ## Monotone flow in L (uncertified)
+
+> **Correction (high-precision rerun, see "High-precision Weil spectrum" below).** The float64 values reported here as "≈ 0", "near-null" or "pinned at zero" for L ≳ 0.7 were below float64 resolution. In the mpmath rerun the true minimum is positive and falls double-exponentially (5.0e-13 at L = 0.7, 2.3e-17 at 0.8, 8e-30 at 1.0, 9.9e-49 at 1.2). Counts of eigenvalues "< 1e-6" mostly measured that floor. Qualitative conclusions that compare real primes with controls are unaffected, because the controls fail at O(1).
 
 Script: `scripts/positivity/flow.py`, output `flow_results.txt`, plot `flow.png`. The setup is the same Weil form W_L as before: pole-orthogonal test functions supported in [-L,L], a 40-sine basis, float64. The grid runs over L = 0.3–3.0 in steps of 0.05.
 
@@ -690,6 +696,8 @@ Verdict: the flow runs the wrong way. Monotonicity is exact but goes downward, a
 
 ## Symmetry splitting (uncertified)
 
+> **Correction (high-precision rerun, see "High-precision Weil spectrum" below).** The float64 values reported here as "≈ 0", "near-null" or "pinned at zero" for L ≳ 0.7 were below float64 resolution. In the mpmath rerun the true minimum is positive and falls double-exponentially (5.0e-13 at L = 0.7, 2.3e-17 at 0.8, 8e-30 at 1.0, 9.9e-49 at 1.2). Counts of eigenvalues "< 1e-6" mostly measured that floor. Qualitative conclusions that compare real primes with controls are unaffected, because the controls fail at O(1).
+
 Script: `scripts/positivity/ideas256.py`, output `ideas256_results.txt`, plot `ideas256.png`. The setup is the same W_L as before: support [-L,L], a 40-sine basis, float64. Controls: log n jittered (σ = 0.05) and the sign of p = 3 flipped.
 
 - **Parity:** W_L commutes with x → −x, with a cross-block norm of about 1e-6 (quadrature level). Each block takes its own pole constraint (e^{x/2} ± e^{−x/2}).
@@ -703,6 +711,8 @@ Verdict: splitting gives smaller copies of the same problem. No block can be cer
 
 ## Reweighted metric (uncertified)
 
+> **Correction (high-precision rerun, see "High-precision Weil spectrum" below).** The float64 values reported here as "≈ 0", "near-null" or "pinned at zero" for L ≳ 0.7 were below float64 resolution. In the mpmath rerun the true minimum is positive and falls double-exponentially (5.0e-13 at L = 0.7, 2.3e-17 at 0.8, 8e-30 at 1.0, 9.9e-49 at 1.2). Counts of eigenvalues "< 1e-6" mostly measured that floor. Qualitative conclusions that compare real primes with controls are unaffected, because the controls fail at O(1).
+
 Same script. We computed c(L) = min of W/M on the pole-orthogonal space for M_w = ∫|f̂|² w(t), with w = 1, (1+t²)^{−1}, (1+t²)^{−2}, a Gaussian e^{−(t/10)²}, log(2+t), and a "zero-dip" weight that vanishes at the first 10 zeros.
 
 - For every weight that is positive at the zeros, c(L) is about 0 (within noise) from L ≈ 1 on. The smoother weights only rescale the noise.
@@ -711,6 +721,8 @@ Same script. We computed c(L) = min of W/M on the pole-orthogonal space for M_w 
 - Any M that keeps c > 0 has to vanish on f̂ at every zero below the bandwidth. That metric is the zero-side form itself, so the argument is circular.
 
 ## GUE bridge (uncertified)
+
+> **Correction (high-precision rerun, see "High-precision Weil spectrum" below).** The float64 values reported here as "≈ 0", "near-null" or "pinned at zero" for L ≳ 0.7 were below float64 resolution. In the mpmath rerun the true minimum is positive and falls double-exponentially (5.0e-13 at L = 0.7, 2.3e-17 at 0.8, 8e-30 at 1.0, 9.9e-49 at 1.2). Counts of eigenvalues "< 1e-6" mostly measured that floor. Qualitative conclusions that compare real primes with controls are unaffected, because the controls fail at O(1).
 
 Same script. We compared the zero-side form 2Σ|f̂(γ)|² (600 ordinates) for the real zeros against 40 GUE fake-zero sets, all unfolded to the same smooth density.
 
@@ -721,6 +733,8 @@ Same script. We compared the zero-side form 2Σ|f̂(γ)|² (600 ordinates) for t
 Overall: all three ideas reduce to Weil positivity restated. No Lean lemma was added, because "block-diagonal with nonnegative blocks implies nonnegative" is trivial. Numerics by Grok Bot.
 
 ## Entropy routes (uncertified)
+
+> **Correction (high-precision rerun, see "High-precision Weil spectrum" below).** The float64 values reported here as "≈ 0", "near-null" or "pinned at zero" for L ≳ 0.7 were below float64 resolution. In the mpmath rerun the true minimum is positive and falls double-exponentially (5.0e-13 at L = 0.7, 2.3e-17 at 0.8, 8e-30 at 1.0, 9.9e-49 at 1.2). Counts of eigenvalues "< 1e-6" mostly measured that floor. Qualitative conclusions that compare real primes with controls are unaffected, because the controls fail at O(1).
 
 Script: `scripts/positivity/entropy.py`, output `entropy_results.txt`, plot `entropy.png`. The setup is the same W_L as before. Controls: log n jittered (σ = 0.05) and the sign of p = 3 flipped. Fourier convention: f̂(t) = ∫f e^{−itx}, with density |f̂|²/(2π‖f‖²). In this convention the Hirschman–Beckner bound is H(|f|²) + H(|f̂|²) ≥ log(πe) ≈ 2.145.
 
@@ -769,3 +783,66 @@ How this lines up with our results:
 - **Our negative certificate results** (no local or SOS certificate, no reweighted metric) agree with Zhu's barrier theorem.
 - **Parity:** Zhu certifies that the ground state is even, with the odd sector about 10³ times higher at L = 0.8. Our float64 parity split couldn't resolve that difference.
 - **Open handle the literature points to:** cancellation in the prime comb, i.e. that the phases t·log p cannot all align. That is an arithmetic, Diophantine statement. A second handle is the Connes–van Suijlekom route: prove a simple, even ground state at every scale.
+
+## High-precision Weil spectrum (mpmath, not interval-certified)
+
+Scripts: `scripts/positivity/hpcore.py` and `hp1_run.py`; plot `hp1.png`. The convention is exactly Zhu's (arXiv 2608.24827, eq. 17):
+- f is supported in [−L, L], and g = f∗f̃;
+- the archimedean term is in exact time-domain form, and the prime sum has log n < 2L;
+- the pole term is included, +2(∫f cosh)² for even f and −2(∫f sinh)² for odd f, with **no** pole-orthogonal projection;
+- the eigenvalue is Q/‖f‖².
+
+The basis is orthonormal sines with Zhu's mode rule K = max(48, ⌊5LT*/π⌋ + 8). The arithmetic is mpmath at 40–80 digits, with Gauss–Legendre panel quadrature.
+
+| L | even λ₁ | Zhu Table 3 | even λ₂ | odd λ₁ |
+|---|---|---|---|---|
+| 0.5 | 1.05e-6 | 1.05e-6 | 2.1e-2 | 2.3e-4 |
+| 0.6 | 1.82e-9 | 1.82e-9 | 1.2e-4 | 7.0e-7 |
+| 0.7 | 4.99e-13 | 4.99e-13 | 1.0e-7 | 2.9e-10 |
+| 0.8 | 2.270e-17 | 2.27e-17 | 1.06e-11 | 2.24e-14 |
+| 0.9 | 5.91e-23 | 5.91e-23 | 1.0e-16 | 1.0e-19 |
+| 1.0 | 7.97e-30 | 8.08e-30 | 3.3e-23 | 2.2e-26 |
+| 1.1 | 2.76e-38 | 2.78e-38 | 2.0e-31 | 1.1e-34 |
+| 1.2 | 9.90e-49 | 9.98e-49 | 1.8e-41 | 6.2e-45 |
+
+- **Agreement with Zhu:** we reproduce Zhu's sine-basis upper bounds to 3 digits.
+- **Convergence in modes:** more modes lower the value, as a Galerkin method should. At L = 0.8, 48 → 64 modes gives 2.27e-17 → 2.02e-17, heading toward Zhu's Legendre value of 1.65e-17. At L = 1.0, 81 → 105 modes gives 7.97e-30 → 7.39e-30. Every value lies inside Zhu's certified enclosure where one exists, [8.9e-18, 2.27e-17] at L = 0.8.
+- **Why this differs from our earlier numbers:** those used a pole-orthogonal projection and only 40 modes, and they were float64.
+- **Fake-prime controls at proper precision (even λ₁):**
+  - Jitter σ = 0.05: −0.07, −0.085, −0.11, −0.49 at L = 0.5, 0.6, 0.8, 1.0.
+  - p = 3 flipped: −6e-3, −0.85, −1.27 at L = 0.6, 0.8, 1.0. At L = 0.5 the result is unchanged, because 3 is not yet in range.
+  - So the controls fail at O(1) as soon as the altered prime enters, while the real form stays positive at 1e-49.
+- **Near-null count:** the even eigenvalues below a fixed fraction of λ₂ track N(T*), but there is no sharp "null" dimension. The spectrum is a geometric ladder: λ₁ : λ₂ : λ₃ ≈ 1 : 1e7 : 1e14 at L = 1.2.
+- **Parity:** the odd sector sits 214 times higher at L = 0.5 and 6300 times higher at L = 1.2, so parity is well resolved.
+- **Not done:** L ≥ 1.4 was too costly here (L = 1.4 needs 123 modes at about 110 digits). Nothing is interval-certified.
+
+## Ground state on Connes' route (mpmath)
+
+Script: `scripts/positivity/hp2.py`; plot `hp2.png`. Lean: `lib/core/ParityGround.lean`, theorem `parity_of_simple`. It says that for an involution P, if v ≠ 0 and Pv = c·v, then c = ±1. So a simple eigenvector of a parity-commuting form is even or odd. This is abstract linear algebra only, and uses only standard axioms.
+
+- **The ground state is simple and even at every L tested.** λ₂/λ₁ in the even sector is 2e4, 4.7e5, 4.2e6, 1.8e7 at L = 0.5, 0.8, 1.0, 1.2, growing roughly like e^{3.4L} in log terms. λ₁(odd)/λ₁(even) is 214, 986, 2797, 6307 at the same L.
+- **The ground state's transform has only real zeros.** Write ξ̂(r) = cos(rL)·P(r²)/∏(α_k² − r²). The transform's zeros are then the roots of a polynomial P of degree n − 1, together with cos zeros beyond the basis.
+  - At every L in 0.5–1.2, all n − 1 roots of P are real and positive: 23, 30, 40, 53, 69 roots, with no complex or negative roots.
+  - This matches the Connes–van Suijlekom theorem, since the ground state is simple and even.
+- **Comparison with Ξ:** the real zeros reproduce the zeta zeros consecutively, well beyond T*.
+
+| L | N(T*) | zeros within 1e-6 | within 1e-3 | within 0.1 |
+|---|---|---|---|---|
+| 0.8 | 4 | 4 | 7 | 10 |
+| 1.0 | 8 | 13 | 18 | 22 |
+| 1.2 | 16 | 30 | 37 | 42 |
+
+  This is the ζ-cycle phenomenon of Connes–Consani, reproduced here from the geometric side alone, with no zero data entering the matrix.
+- **Verdict:** this is a strong numerical confirmation of the Connes route's first missing step (simple, even ground state) for L ≤ 1.2. It is not a proof at any scale: there is no interval certification, and the second step (convergence of the zeros as L → ∞, which would give RH) is untouched.
+
+## Prime-phase alignment and Zhu's barrier (float64 adequate; λ via mpmath)
+
+Scripts: `scripts/positivity/hp3.py` and `hp3b.py`; plot `hp3.png`. We measured S(t)/A, with S(t) = Σ 2Λ(n)n^{−½} cos(t log n) and A its total weight, on t ∈ [1, T*].
+
+- **Real primes avoid alignment better than random ones, increasingly with L.** The real maximum is 0.87, 0.73, 0.61, 0.49, 0.40 at L = 0.8, 1.0, 1.2, 1.5, 2.0. Twenty Cramér random prime sets give 0.89, 0.81, 0.79, 0.72, 0.62 (sd 0.04–0.11). At L = 2 the real value sits below every random set (minimum 0.50), about 3 sd low.
+- **Kronecker test:** the best simultaneous approximation of the prime phases on [1, T*] is max‖t log p/2π‖ = 0.066, 0.134, 0.206, 0.252 at L = 0.8, 1.0, 1.2, 1.5.
+- **But alignment does not track positivity:**
+  - Jittered and flipped sets have similar maxima: at L = 1, 0.72 and 0.75 against real 0.73.
+  - At L = 0.8 and 1.0, every Cramér set that differs from the real primes has λ_min between −0.35 and −0.93, including sets with *lower* alignment than the real primes (0.675 against 0.732 at L = 1).
+  - Sets identical to the real primes give λ ≈ +1e-17. That value comes from float64-rounded inputs; the exact value is 2.27e-17.
+- **Verdict:** in the range positivity cares about, it is decided by the exact arithmetic of log n and its weights, not by how close the phases come to aligning. The barrier phrase "the phases cannot align" refers to frequencies up to T₁ = 2πe^{A_L} ≫ T*, and low alignment on [1, T*] neither implies nor follows from positivity. Credit: Grok Bot numerics.
