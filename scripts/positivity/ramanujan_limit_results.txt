@@ -1,0 +1,26 @@
+== 1a. Size limit: closed-walk moments m_k = tr(A^k)/n of LPS X^{5,q} vs 6-regular tree (Kesten-McKay) ==
+tree      m_2..m_12 (even): [6, 66, 876, 12786, 197796, 3183156]
+q=13      m_2..m_12 (even): [6, 66, 876, 13266, 231156, 4755666]  first deviation at k=8 (girth-type effect; grows ~ log q)
+q=17      m_2..m_12 (even): [6, 66, 876, 12930, 209436, 3787908]  first deviation at k=8 (girth-type effect; grows ~ log q)
+q=29      m_2..m_12 (even): [6, 66, 876, 12786, 198876, 3268644]  first deviation at k=9 (girth-type effect; grows ~ log q)
+q=37      m_2..m_12 (even): [6, 66, 876, 12786, 198156, 3214908]  first deviation at k=10 (girth-type effect; grows ~ log q)
+q=41      m_2..m_12 (even): [6, 66, 876, 12786, 197922, 3198204]  first deviation at k=9 (girth-type effect; grows ~ log q)
+Moments agree up to k ~ girth, which grows with q, so spectral measure -> Kesten-McKay (weak convergence).
+
+== 1b. Hecke angles for 11a (S_2(Gamma_0(11))), 3243 primes < 30000 ==
+Hasse/Ramanujan |a_p|<=2sqrt p violations: 0
+a_2..: a_3=-1 a_5=1 a_7=-2 a_13=4 (LMFDB 11.a2: -1,1,-2,4)
+E[(2cos th)^2] = 0.993   Sato-Tate (Catalan) 1
+E[(2cos th)^4] = 1.973   Sato-Tate (Catalan) 2
+E[(2cos th)^6] = 4.911   Sato-Tate (Catalan) 5
+(p-adic Plancherel at fixed p would instead give the Kesten-McKay law; Sato-Tate is its p->inf limit.)
+
+== 2. L(11a,s): finite-prime Ramanujan holds, zeros need the archimedean Gamma factor ==
+functional-equation check Lam(1.3+2i)-Lam(0.7-2i) = 0.0 (symmetric by construction; real test is the zero match below)
+zeros of L(11a,1+it), t<20: [6.3626, 8.6035, 10.0355, 11.4513, 13.5686, 15.9141, 17.0336, 17.9414, 19.1857] (LMFDB first zero 6.3626)
+These sit on Re s=1 because of the completed function Lam = (sqrt N/2pi)^s Gamma(s) L; the Euler product
+over finite primes alone (with Ramanujan at every p) does not control zero location.
+
+Davenport-Heilbronn: f = (1-ik)/2 L(s,chi) + (1+ik)/2 L(s,chibar), chi mod 5, |coeffs|<=1, satisfies a
+Riemann-type functional equation, but has no Euler product -> zeros OFF the line:
+DH zero found: s = (0.8085171825 + 85.69934849j)  |f| = 0.0  (literature: 0.808517 + 85.699348i)

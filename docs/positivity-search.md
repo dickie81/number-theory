@@ -489,3 +489,12 @@ Strongest clues for the "we see a slice" picture: (1) the modular bootstrap, whe
 - **Bad gluing.** Two copies of X^{5,13} are joined by k edge swaps (out of 6552 edges per copy, staying 6-regular). The margin 2√5 − λ is −1.53 at k = 1, −1.16 at k = 300 and −0.43 at k = 1000. A weak junction breaks RH and is recovered only once the junction is a large fraction of the graph.
 
 Verdict: RH for these networks is a theorem, and it comes from arithmetic gluing (quaternion/Hecke structure), not from regularity: generic junctions fail it. That matches the junction-margin story, but it is the finite-place analogue, and it does not reach ζ.
+
+## Ramanujan networks in the limit (uncertified numerics, no Lean)
+
+`scripts/positivity/ramanujan_limit.py` (results in `ramanujan_limit_results.txt`), floating point and exact integer walk counts, uncertified.
+
+- **Size limit (q → ∞, p = 5).** The closed-walk moments tr(Aᵏ)/n of X^{5,q} match the 6-regular tree's (Kesten–McKay: 6, 66, 876, 12786, …) up to k = 8, 8, 9, 10, 9 for q = 13, 17, 29, 37, 41, and the k = 10 moment approaches the tree's value (231156 → 197922 against 197796). The spectral measure converges weakly to Kesten–McKay.
+- **Hecke angles (11a, 3243 primes < 30000).** No Hasse/Ramanujan violations. The moments of 2cos θ_p are 0.993, 1.973, 4.911 against Sato–Tate 1, 2, 5. Rescaled Kesten–McKay tends to Sato–Tate as p → ∞.
+- **Zeros need the archimedean place.** Using the completed Λ = (√11/2π)^s Γ(s) L(11a, s), the zeros on Re s = 1 below t = 20 are 6.3626, 8.6035, 10.0355, … (first zero matches LMFDB). Ramanujan at every finite p does not locate zeros: the Davenport–Heilbronn function (period-5 coefficients with |a_n| ≤ 1, a Riemann-type functional equation, no Euler product) has a zero at 0.8085171825 + 85.6993485i, matching Spira and Balanzario–Sánchez-Ortiz (Math. Comp. 2007).
+- **Archimedean limit.** No p → ∞ limit of the trees yields the hyperbolic plane. The object that combines all the trees with H is the adelic quotient GL₂(ℚ)\GL₂(𝔸)/K, whose continuous spectrum is the Eisenstein series, with ζ(2s) in the constant term. That brings us back to the modular-surface cusp, where the zeros are scattering poles.
