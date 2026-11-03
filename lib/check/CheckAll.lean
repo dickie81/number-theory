@@ -243,6 +243,7 @@ import ParityGround
 import WeilCert
 import WeilTail
 import WeilTailB
+import WeilZhuRed
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1375,3 +1376,12 @@ the linear algebra of its certificates. -/
 #print axioms WeilTailB.odd_margin
 #print axioms WeilTailB.L05_even_full
 #print axioms WeilTailB.L05_odd_full
+#print axioms WeilZhuRed.primes_L05
+#print axioms WeilZhuRed.prime_coeff_L05
+#print axioms WeilZhuRed.envelope
+#print axioms WeilZhuRed.QF_ge_R
+#print axioms WeilZhuRed.zhuRed_of
+#print axioms WeilZhuRed.L05_even
+#print axioms WeilZhuRed.L05_odd
+#print axioms WeilZhuRed.QF_even_pos
+#print axioms WeilZhuRed.QF_odd_pos

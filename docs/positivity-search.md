@@ -985,3 +985,33 @@ The even sector margin is m = 5e-8.
    - continuity of Q.
 
 **Not done.** L = 0.8 is not done; the head would need about 200 modes, which is out of reach for the arb cost.
+
+## Zhu's reduction at L = 1/2, formalised up to two named inputs (`WeilZhuRed`)
+
+This section works by an AI assistant (Grok Bot) and splits the earlier `ZhuRed` hypothesis into proved steps and two smaller named inputs.
+
+**Proof chain** (Zhu, arXiv 2608.24827, eq. 17, Lemma 2.5, Lemma 3.1, Thm 1.1), for supp f ⊂ [−L, L], g = f⋆f̃, ĝ = |F|²:
+1. Frequency form. Since g(x) = (1/π)∫₀^∞|F|²cos(tx)dt, the prime term becomes −(1/π)∫₀^∞|F|²Σ_{log n<2L}2Λ(n)n^{−1/2}cos(t log n). Lemma 2.5 writes the archimedean term as (1/π)∫₀^∞(Re ψ(1/4+it/2) − log π)|F|². Together, Q(f) = pole + (1/π)∫₀^∞Ψ_L|F|².
+2. At L = 1/2 only n = 2 has log n < 1, so Ψ_L(t) = Re ψ(1/4+it/2) − log π − √2 log 2·cos(t log 2).
+3. Envelope (Lemma 3.1): Ψ_L(t) ≥ β* for t ≥ T#.
+4. Split at T#. Use Ψ_L ≥ β* on (T#, ∞) and Plancherel ∫₀^∞|F|² = π‖f‖². This gives Q ≥ pole + (1/π)∫₀^{T#}(Ψ_L − β*)|F|² + β*‖f‖² = R.
+
+**Proved in Lean (standard axioms only):**
+- `primes_L05`: Λ(n) ≠ 0 and log n < 1 imply n = 2.
+- `prime_coeff_L05`: 2Λ(2)/√2 = √2 log 2.
+- `envelope`: Ψ_L(t) ≥ β* for all t ≥ 30. This reuses the vendored vertical-line Stirling bound `Zeta23.StirlingVert.re_digamma_stirling'`, |Re ψ(a+it) − log|t|| ≤ 5/t² for 0 < a ≤ 1 and |t| ≥ 1/2. The proof is: Re ψ(1/4+it/2) ≥ log(t/2) − 20/t² ≥ log(t/2) − 1/30, and log(t/2) − log π ≥ log(30/2π).
+- `QF_ge_R`: R_N(x) ≤ QF_N(x) for every truncation size N and every x. This is steps 3–4 done exactly in Lean: the set-integral split at 30, monotonicity on (30, ∞), the finite-sum expansion, and identifying the [0, 30] piece with the matrix C.
+- `zhuRed_of`: `FreqRep` and `ModePlancherel` together imply `ZhuRed`.
+- `L05_even` and `L05_odd`: positivity of the Weil form.
+- `QF_even_pos` and `QF_odd_pos`: positivity of the frequency form, assuming only `ModePlancherel` and the arb head.
+
+**Named inputs that remain:**
+- `ModePlancherel par` (**functional analysis**):
+  - (1/π)∫₀^∞T̂_nT̂_m = δ_nm within a sector, which follows from Legendre orthonormality plus Plancherel;
+  - integrability of T̂_nT̂_m and Ψ_L·T̂_nT̂_m on (0, ∞).
+  - Mathlib has the L² Fourier transform (`Analysis/Fourier/LpSpace`), but bridging it to these Poisson-integral modes, and the 1/t decay needed for integrability, are not done.
+- `FreqRep Q par σ` (**Zhu analytic**): the Weil functional (pole + archimedean − primes) equals the frequency form QF on sector modes. This is step 1, i.e. Lemma 2.5 and the cosine expansion of g.
+  - The repo's explicit-formula modules (`weilExplicit_*` in `WeilZeta`, `WeilCriterion`, `WeilAssemble`) work with strip-class test functions over zeta zeros. They do not express the archimedean term as a digamma integral against |F|² for compactly supported f, so this bridge is not formalised.
+  - `primes_L05` already settles the arithmetic part of step 1.
+- `EvenHead` / `OddHead` (**arb numerics**): unchanged.
+- Coefficients versus functions (**functional analysis**): unchanged; positivity is stated on coefficient vectors.
