@@ -247,6 +247,7 @@ import WeilZhuRed
 import WeilPlanch
 import WeilModes
 import WeilFourier
+import WeilArch
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1411,3 +1412,7 @@ the linear algebra of its certificates. -/
 #print axioms WeilFourier.acorr
 #print axioms WeilFourier.L05_even
 #print axioms WeilFourier.L05_odd
+#print axioms WeilFourier.acorr_gen
+#print axioms WeilArch.kerD
+#print axioms WeilArch.archBridge
+#print axioms WeilArch.L05_even

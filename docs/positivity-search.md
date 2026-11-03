@@ -1118,3 +1118,28 @@ The link from Mathlib's Fourier theory to the repo's mode transforms is built wi
 - `ArchBridge`: Zhu's Lemma 2.5, the digamma/archimedean identity.
 - The odd sector is stated for the frequency form. It is not yet tied to `weilQ` on odd functions.
 - The result is for finite coefficient vectors (every N ≥ 28). It is not stated for general L² functions on [−1/2, 1/2].
+
+## The archimedean identity (Zhu's Lemma 2.5) proved (`WeilArch`)
+
+This work was done by an AI assistant (Grok Bot).
+
+**What `ArchBridge` asserts.** Write f = Σ_{i<N} xᵢT_{2i}, h = f⋆f̃ for its autocorrelation, and F = Σ xᵢT̂_{2i}. Then
+
+  (Re ψ(1/4) − log π)·‖f‖² + ∫₀^∞ (h(0) − h(u)) e^{u/2}/sinh u du = (1/π)∫₀^∞ (Re ψ(1/4 + it/2) − log π)·F(t)² dt.
+
+**Proof.**
+1. **Kernel identity (`kerD`).** Take the repo's Gauss integral `digamma_sub_eq_integral` with z = 1/4 + it/2 and w = 1/4. Take real parts and substitute x = 2u. This gives
+
+   Re ψ(1/4 + it/2) − ψ(1/4) = ∫₀^∞ (1 − cos tu)·e^{u/2}/sinh u du,
+
+   with the integrand integrable for every t.
+2. **Wiener–Khinchin at every lag (`acorr_gen`).** h(v) = (1/π)∫₀^∞ cos(tv)F(t)² dt for |v| ≠ 1. To get this, `parseval` and the correlation-continuity lemma were extended from |v| < 1 to |v| ≠ 1, using the fact that h vanishes identically for |v| > 1. The single point u = 1 is a null set, which is enough for the u-integral.
+3. **Fubini.** The product integrand F(t)²(1 − cos tu)·e^{u/2}/sinh u is non-negative on (0,∞)². Its iterated integral is ∫ D·F², which is integrable by the Psi-integrability already proved in `WeilPlanch`. So `integrable_prod_iff` gives integrability, and the order of integration can be swapped.
+4. **Assembly.** The constant part uses ‖f‖² = h(0) = (1/π)∫F².
+
+**Final theorem.** `WeilArch.L05_even` proves 0 < `weilQ (1/2)` applied to Σ_{i<N} xᵢT_{2i}, for N ≥ 28 and x ≠ 0. Its only input is `EvenHead`, the arb head certificate. Axioms: propext, Classical.choice, Quot.sound.
+
+**What remains.**
+- `EvenHead` and `OddHead`: arb numerics, not checked inside Lean.
+- The odd sector is stated for the frequency form only.
+- The result is for coefficient vectors, not for general functions on [−1/2, 1/2].

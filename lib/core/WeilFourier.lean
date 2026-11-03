@@ -166,7 +166,7 @@ lemma corr_eq (p q : ℝ → ℝ) {w : ℝ} (hw : |w| ≤ 1) :
   rw [cut_mul, integral_indicator measurableSet_Icc, integral_Icc_eq_integral_Ioc,
     ← intervalIntegral.integral_of_le hab]
 
-lemma corr_contAt (p q : ℝ → ℝ) (hp : Continuous p) (hq : Continuous q) {v : ℝ} (hv : |v| < 1) :
+lemma corr_contAt_lt (p q : ℝ → ℝ) (hp : Continuous p) (hq : Continuous q) {v : ℝ} (hv : |v| < 1) :
     ContinuousAt (fun w => ∫ t, cut p t * cut q (t - w)) v := by
   set F : ℝ → ℝ → ℝ := fun w t => p t * q (t - w)
   have hF : Continuous F.uncurry := by
@@ -181,6 +181,20 @@ lemma corr_contAt (p q : ℝ → ℝ) (hp : Continuous p) (hq : Continuous q) {v
   rw [corr_eq p q hw.le]
   have hc : Continuous (F w) := by show Continuous fun t => p t * q (t - w); fun_prop
   exact (intervalIntegral.integral_interval_sub_left (hc.intervalIntegrable _ _) (hc.intervalIntegrable _ _)).symm
+
+lemma corr_zero (p q : ℝ → ℝ) {w : ℝ} (hw : 1 < |w|) : ∫ t, cut p t * cut q (t - w) = 0 := by
+  rw [cut_mul, Set.Icc_eq_empty, Set.indicator_empty, integral_zero]
+  intro h
+  simp only [max_le_iff, le_min_iff] at h
+  rcases lt_abs.mp hw with h' | h' <;> linarith [h.1.1, h.1.2, h.2.1, h.2.2]
+
+lemma corr_contAt (p q : ℝ → ℝ) (hp : Continuous p) (hq : Continuous q) {v : ℝ} (hv : |v| ≠ 1) :
+    ContinuousAt (fun w => ∫ t, cut p t * cut q (t - w)) v := by
+  rcases lt_or_gt_of_ne hv with h | h
+  · exact corr_contAt_lt p q hp hq h
+  · refine (continuousAt_const (y := (0:ℝ))).congr_of_eventuallyEq ?_
+    filter_upwards [(isOpen_lt continuous_const continuous_abs).mem_nhds h] with w hw
+    exact corr_zero p q hw
 
 /-- **Legendre orthonormality on `[−1/2, 1/2]`** for the repo's `legT`. -/
 theorem legT_orth (n m : ℕ) : ∫ t, legT n t * legT m t = if n = m then 1 else 0 := by
@@ -211,11 +225,11 @@ lemma cutC_int (p : ℝ → ℝ) (hp : Continuous p) : Integrable (fun t => ((cu
 
 open FourierTransform in
 /-- **Parseval / Wiener–Khinchin for cut-off functions.** If `𝓕f(ξ)·𝓕g(−ξ) = S(2πξ)` with `S` continuous,
-even and `O(1/(1+t)²)`, then `∫ f(t) g(t−v) dt = (1/π)∫₀^∞ cos(tv) S(t) dt` for `|v| < 1`. -/
+even and `O(1/(1+t)²)`, then `∫ f(t) g(t−v) dt = (1/π)∫₀^∞ cos(tv) S(t) dt` for `|v| ≠ 1`. -/
 theorem parseval (p q : ℝ → ℝ) (hp : Continuous p) (hq : Continuous q) (S : ℝ → ℝ) (hSc : Continuous S)
     (hSe : ∀ t, S (-t) = S t) (K : ℝ) (hK : ∀ t, 0 ≤ t → |S t| ≤ K / (1 + t) ^ 2)
     (hS : ∀ ξ : ℝ, 𝓕 (fun t => ((cut p t : ℝ) : ℂ)) ξ * 𝓕 (fun t => ((cut q t : ℝ) : ℂ)) (-ξ) = (S (2 * π * ξ) : ℂ))
-    {v : ℝ} (hv : |v| < 1) :
+    {v : ℝ} (hv : |v| ≠ 1) :
     ∫ t, cut p t * cut q (t - v) = (1 / π) * ∫ t in Set.Ioi 0, Real.cos (t * v) * S t := by
   set f₁ : ℝ → ℂ := fun t => ((cut p t : ℝ) : ℂ)
   set g : ℝ → ℂ := fun t => ((cut q t : ℝ) : ℂ)
@@ -487,9 +501,9 @@ lemma fourier_fx (N : ℕ) (x : ℕ → ℝ) (ξ : ℝ) :
     filter_upwards with v
     simp only [Pi.mul_apply, norm_mul, Complex.norm_exp_ofReal_mul_I, one_mul, le_refl]
 
-/-- **`EvenBridge2.acorr` closed** (Wiener–Khinchin at `log 2`, via `parseval`). -/
-theorem acorr (N : ℕ) (x : ℕ → ℝ) : WeilForm.autocorr (fx N x) (Real.log 2)
-    = (1 / π) * ∫ t in Set.Ioi 0, Real.cos (t * Real.log 2) * WeilZhuRed.Fx 0 N x t ^ 2 := by
+/-- **Wiener–Khinchin** for `fx`: `h(v) = (1/π)∫₀^∞ cos(tv) F(t)² dt` for `|v| ≠ 1`. -/
+theorem acorr_gen (N : ℕ) (x : ℕ → ℝ) {v : ℝ} (hv : |v| ≠ 1) : WeilForm.autocorr (fx N x) v
+    = (1 / π) * ∫ t in Set.Ioi 0, Real.cos (t * v) * WeilZhuRed.Fx 0 N x t ^ 2 := by
   obtain ⟨C, hC, hd⟩ := decay_sum 0 N x
   have hev : ∀ t, WeilZhuRed.Fx 0 N x (-t) = WeilZhuRed.Fx 0 N x t := by
     intro t; unfold WeilZhuRed.Fx
@@ -498,8 +512,7 @@ theorem acorr (N : ℕ) (x : ℕ → ℝ) : WeilForm.autocorr (fx N x) (Real.log
   have hc : Continuous (WeilZhuRed.Fx 0 N x) := by
     unfold WeilZhuRed.Fx
     exact continuous_finset_sum _ (fun i _ => continuous_const.mul (That_cont _))
-  have hl : |(-Real.log 2)| < 1 := by
-    rw [abs_neg, abs_of_pos (Real.log_pos one_lt_two)]; linarith [Real.log_two_lt_d9]
+  have hl : |(-v)| ≠ 1 := by rw [abs_neg]; exact hv
   have hQ : Continuous (Qx N x) := by
     unfold Qx; exact continuous_finset_sum _ (fun i _ => continuous_const.mul (P_cont _))
   have key := parseval (Qx N x) (Qx N x) hQ hQ (fun t => WeilZhuRed.Fx 0 N x t ^ 2) (hc.pow 2)
@@ -514,6 +527,12 @@ theorem acorr (N : ℕ) (x : ℕ → ℝ) : WeilForm.autocorr (fx N x) (Real.log
   rw [fx_eq]
   simp only [sub_neg_eq_add, mul_neg, Real.cos_neg] at key
   exact key
+
+/-- **`EvenBridge2.acorr` closed** (Wiener–Khinchin at `log 2`). -/
+theorem acorr (N : ℕ) (x : ℕ → ℝ) : WeilForm.autocorr (fx N x) (Real.log 2)
+    = (1 / π) * ∫ t in Set.Ioi 0, Real.cos (t * Real.log 2) * WeilZhuRed.Fx 0 N x t ^ 2 :=
+  acorr_gen N x (by
+    rw [abs_of_pos (Real.log_pos one_lt_two)]; exact ne_of_lt (by linarith [Real.log_two_lt_d9]))
 
 /-! ## Rewired final theorems -/
 
