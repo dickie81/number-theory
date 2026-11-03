@@ -441,3 +441,11 @@ Conclusion: arithmetic horizons carry number theory (class numbers, Pell units, 
 - **Frobenius mod p.** Reducing the 8704 primitive geodesics with trace ≤ 300 into SL(2, F_p) and sorting them by split / inert / t ≡ ±2 matches the SL(2, F_p) class proportions to within about 0.015 for p = 3, …, 13 (a Chebotarev-type equidistribution).
 - **Hecke operators.** Not computed.
 - **Scattering.** φ(s) = √π Γ(s − ½) ζ(2s − 1) / (Γ(s) ζ(2s)) has |φ(½ + it)| = 1 and poles at s = ρ/2, checked at the first five zeros. The modular surface's cusp resonances are exactly the Riemann zeros, halved. They all lie on Re s = ¼ iff RH, which is a restatement and not leverage, because the scattering problem is not self-adjoint.
+
+## A leaky gravastar tower of truncated cusps (uncertified numerics, no Lean)
+
+`scripts/positivity/leaky_tower.py` (results in `leaky_tower_results.txt`), uncertified.
+
+- **One shell.** The modular cusp is cut at height Y (pseudo-Laplacian). The condition Y^{2s−1} = −φ(s) has only real solutions r on s = ½ + ir, spaced about π/log Y. They sit closer to γ_n/2 than chance (Y = 20: 0.08 against 0.26). That is the known phase-shift effect of the poles of φ at ρ/2, which sit a distance ¼ off the line: it reads off Im ρ once the zeros are known and says nothing about Re ρ. Roots seeded at ρ/2 drift with Y.
+- **Tower.** K shells of length 1 are joined by lossless Fresnel steps whose impedances are the sphere areas A_d. The spectrum is real by construction. Distances to γ_n and γ_n/2 are at or above the random baseline (K = 10: 0.137 and 0.109 against 0.098), and random-phase junction controls behave the same.
+- **Verdict.** Closing the leaks makes the tower self-adjoint, so it has a real cavity spectrum, but that spectrum is not the zeros. The zeros stay at the poles of φ, off the unitary line, and are neither moved onto it nor turned into eigenvalues. Losslessness gives no leverage on RH.
