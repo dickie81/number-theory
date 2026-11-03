@@ -235,6 +235,7 @@ import Junction4
 import JunctionSphere
 import DeSitterTower
 import SphereTower
+import OuterLimit
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1338,3 +1339,6 @@ the linear algebra of its certificates. -/
 #print axioms SphereTower.gaussian_one
 #print axioms SphereTower.area_pos
 #print axioms SphereTower.balance_iff
+#print axioms OuterLimit.formG_outer_nonneg
+#print axioms OuterLimit.formG_nonneg_of_tendsto
+#print axioms OuterLimit.rh_of_outer_limit

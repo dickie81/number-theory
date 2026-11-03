@@ -401,3 +401,22 @@ gaps, a broad peak). Every shell sequence is smooth: `⟨r⟩` between 0.89 and 
 The `T log T` thinning of the zero count is matched by `Σ log D` (`≈ log Γ`) and best by the arithmetic-free control
 `k/log k`; this is a smooth-growth fact, reproducible by any sequence of that growth, and carries none of the
 fluctuations of the zeros.
+
+## Outer products in the limit (`OuterLimit`)
+
+Proved (no `sorry`): a kernel `Σ_i w_i f_i(m) f_i(n)` with `w_i ≥ 0` has nonnegative form (`formG_outer_nonneg`),
+positivity is closed under pointwise limits of kernels (`formG_nonneg_of_tendsto`), so if the prime-side Gram kernel is
+a pointwise limit of such sums then RH (`rh_of_outer_limit`).
+
+Numerics (uncertified, `scripts/positivity/outer_limit.py`). (a) In the log variable `m = 2^{k+u}`, `n = 2^{k+1+v}` the
+dyadic junction is exactly scale invariant: `G/(4^k ln 2)` converges to the fixed kernel
+`B_∞(u, v) = 2^u 2^{1+v} K_H(2^{1+v−u})` on `[0, 1]²`, with top singular values 0.0243, 0.0208, 0.0070, 0.0058, 0.0044,
+0.0042 (relative error to the discrete blocks 4e−3 at `k = 6`, 3e−4 at `k = 11`; leading singular functions agree to
+correlation 0.995). It is not an outer product: the leading term carries 51% and 4 terms reach 95%. This is why all the
+earlier junction spectra were independent of size. (b) The limit of the whole tower is convolution by
+`k(t) = K_H(e^{|t|})` on the log line. Its Fejér-windowed Fourier transform on `|t| ≤ log 10⁵` is nonnegative (minimum
+7e−6) with peaks at 14.14, 21.01, 25.02, 30.42, 32.94, 37.59, 40.93, 43.32: the outer-product (Bochner) decomposition
+`k(t − s) = ∫ (cos ξt cos ξs + sin ξt sin ξs) dμ(ξ)` exists numerically, and its measure sits at the zeros. Its
+positivity for all `t` is Weil's criterion, so the manifestly positive outer-product structure in the limit is the zero
+side, not a zero-free construction. (c) Averaged outer products of unit vectors of a block metric are `G⁻¹/d` (Monte
+Carlo error 1% at `d = 32`): positive iff `G` is, nothing new.

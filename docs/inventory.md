@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1217 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1220 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 118 | 364 |
+| `lib/core` | 119 | 367 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -463,6 +463,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `Orthogonality.tendsto_mean_sq_norm_primeSum`: The radius is the root mean square of the prime sum
 - `Orthogonality.pythagoras_lpGauge_iff`: Orthogonality forces `p = 2`
+
+#### `OuterLimit`: Outer products in the limit
+
+- `OuterLimit.formG_outer_nonneg`: Outer-product sums are positive
+- `OuterLimit.formG_nonneg_of_tendsto`: Positivity is closed under pointwise limits of kernels
+- `OuterLimit.rh_of_outer_limit`: An outer-product limit for the Gram kernel gives RH
 
 #### `ParityCert`: Weil positivity in both parity sectors, as far as the relaxation reaches
 

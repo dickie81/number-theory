@@ -1,0 +1,14 @@
+(a) continuum junction kernel B_inf(u,v) = 2^u 2^(1+v) K_H(2^(1+v-u)): top singular values
+   0.0243 0.0208 0.0070 0.0058 0.0044 0.0042 0.0024 0.0022 0.0013 0.0012   k95=4, rank-1 share 0.508
+   k= 6: top sv/(4^k ln2) 0.0242 0.0208 0.0070 0.0058 0.0044 0.0042 | max rel diff to continuum (top 6) 4.39e-03 | leading singular function corr 0.9944
+   k= 7: top sv/(4^k ln2) 0.0243 0.0208 0.0070 0.0058 0.0044 0.0042 | max rel diff to continuum (top 6) 2.42e-03 | leading singular function corr 0.9947
+   k= 8: top sv/(4^k ln2) 0.0243 0.0208 0.0070 0.0058 0.0044 0.0042 | max rel diff to continuum (top 6) 1.34e-03 | leading singular function corr 0.9948
+   k= 9: top sv/(4^k ln2) 0.0243 0.0208 0.0070 0.0058 0.0044 0.0042 | max rel diff to continuum (top 6) 7.60e-04 | leading singular function corr 0.9948
+   k=10: top sv/(4^k ln2) 0.0243 0.0208 0.0070 0.0058 0.0044 0.0042 | max rel diff to continuum (top 6) 4.60e-04 | leading singular function corr 0.9948
+   k=11: top sv/(4^k ln2) 0.0243 0.0208 0.0070 0.0058 0.0044 0.0042 | max rel diff to continuum (top 6) 3.07e-04 | leading singular function corr 0.9948
+
+(b) Fejer-windowed Fourier transform of k(t)=K_H(e^|t|) on |t| <= log 1e+05: min 7.233e-06 at xi=1.62, max 5.753e-02
+   peaks (outer-product frequencies of the limit, cos(xi t)cos(xi s)+sin sin): 14.14 21.01 25.02 30.42 32.94 37.59 40.93 43.32
+   (Bochner: k positive definite <=> transform >= 0 <=> the limit is a nonnegative superposition of outer products; under RH the measure sits at the zeros)
+
+(c) block [32,63]: ||E[vv^T] - G^-1/d|| / ||G^-1/d|| = 0.010 (Monte Carlo); the average is the inverse Gram, positive iff G is
