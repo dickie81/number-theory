@@ -1,0 +1,47 @@
+== 1. Class number formula h+(D) log eps+(D) = sqrt(D) L(1,chi_D), fundamental D ==
+D  h+  eps+=(t+u sqrtD)/2  lhs  rhs  |diff|
+5 1 2.618 0.96242365 0.96242365 0.0e+00
+8 1 5.8284 1.76274717 1.76274717 0.0e+00
+12 2 3.7321 2.63391579 2.63391579 4.4e-16
+13 1 10.9083 2.38952643 2.38952643 0.0e+00
+17 1 65.9848 4.18942509 4.18942509 0.0e+00
+21 2 4.7913 3.13359847 3.13359847 4.4e-16
+24 2 9.899 4.58486334 4.58486334 0.0e+00
+28 2 15.9373 5.53731877 5.53731877 0.0e+00
+29 1 26.9629 3.29446229 3.29446229 0.0e+00
+33 2 45.9783 7.65633694 7.65633694 0.0e+00
+37 1 145.9932 4.98355971 4.98355971 8.9e-16
+40 2 37.9737 7.27378584 7.27378584 0.0e+00
+41 1 4097.9998 8.31825427 8.31825427 0.0e+00
+44 2 19.9499 5.98644569 5.98644569 0.0e+00
+53 1 50.9804 3.93144094 3.93144094 0.0e+00
+56 2 29.9666 6.80016883 6.80016883 0.0e+00
+57 2 301.9967 11.42083211 11.42083211 0.0e+00
+worst |diff| over fundamental D<400 (Pell u<1e6): 3.6e-15
+So multiplicity x length = sqrt(D) L(1,chi_D) = sqrt(D) prod_p (1-chi_D(p)/p)^{-1}:
+rational primes enter through how they split in Q(sqrt D).
+
+== 2. Frobenius of geodesics mod p (Chebotarev in SL2(F_p)) ==
+weighted by multiplicity, t<=300 (8704 geodesics). split=(t^2-4|p)=+1, inert=-1, t=+-2 mod p
+p= 3 split 0.000 (SL2(F_p) 0.000) inert 0.255 (0.250) t=+-2 0.745 (0.750)
+p= 5 split 0.258 (SL2(F_p) 0.250) inert 0.332 (0.333) t=+-2 0.410 (0.417)
+p= 7 split 0.338 (SL2(F_p) 0.333) inert 0.377 (0.375) t=+-2 0.285 (0.292)
+p=11 split 0.400 (SL2(F_p) 0.400) inert 0.419 (0.417) t=+-2 0.181 (0.183)
+p=13 split 0.431 (SL2(F_p) 0.417) inert 0.426 (0.429) t=+-2 0.143 (0.155)
+(slow convergence; agreement approximate, uncertified)
+
+== 3. Hecke: not computed (needs Maass eigenfunctions). T_p acts via the p+1 index-p
+sublattices; these are the arithmetic 'pseudo-symmetries' (Bogomolny et al.).
+
+== 4. Scattering phi(s)=sqrt(pi)G(s-1/2)zeta(2s-1)/(G(s)zeta(2s)) ==
+unitarity |phi(1/2+3i)| = 1.0
+unitarity |phi(1/2+10i)| = 1.0
+unitarity |phi(1/2+25.7i)| = 1.0
+poles at s=rho/2 (zeta(2s)=0):
+gamma_1=14.13472514  s=1/4+7.067362571i  |phi(s+1e-6)|=5.146e+5  |phi(s+0.05)|=9.209
+gamma_2=21.02203964  s=1/4+10.51101982i  |phi(s+1e-6)|=5.342e+5  |phi(s+0.05)|=9.49
+gamma_3=25.01085758  s=1/4+12.50542879i  |phi(s+1e-6)|=5.414e+5  |phi(s+0.05)|=9.593
+gamma_4=30.42487613  s=1/4+15.21243806i  |phi(s+1e-6)|=5.704e+5  |phi(s+0.05)|=10.01
+gamma_5=32.93506159  s=1/4+16.46753079i  |phi(s+1e-6)|=5.753e+5  |phi(s+0.05)|=10.08
+Resonances of PSL2Z\H = {rho/2} (+ trivial): all on Re s=1/4 iff RH. Restatement, not leverage:
+the scattering problem is non-self-adjoint, so no spectral theorem forces the line.
