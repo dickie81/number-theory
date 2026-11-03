@@ -1143,3 +1143,33 @@ This work was done by an AI assistant (Grok Bot).
 - `EvenHead` and `OddHead`: arb numerics, not checked inside Lean.
 - The odd sector is stated for the frequency form only.
 - The result is for coefficient vectors, not for general functions on [−1/2, 1/2].
+
+## Head certificates checked in the Lean kernel; residual enclosure families (`WeilHead`)
+
+This work was done by an AI assistant (Grok Bot).
+
+**What `EvenHead`/`OddHead` assert.** For i, j < 28,
+
+  |R_ij − C_ij| ≤ ρ.
+
+- R is the reduced Zhu matrix, R_ij = β*·δ_ij + 2σ·p_{2i+par}·p_{2j+par} + C^ψ_{2i+par,2j+par}, where C^ψ_nm = (1/π)∫₀³⁰ (Ψ_L − β*)·T̂ₙT̂ₘ.
+- C = MᵀDM + δI is the exact-rational LDLᵀ certificate.
+- ρ is about 5·10⁻²³.
+
+**What is now proved.**
+- The certificate data M and D in `WeilTail`/`WeilTailB` are now stored as exact rationals (`List (List ℚ)`), and the real matrices are their casts. Non-negativity of D is checked by kernel evaluation.
+- `even_chk` / `odd_chk` check, by kernel evaluation over ℚ with `decide +kernel` (no `native_decide`), that |A_ij − C_ij| ≤ ρ − 12ε for all 784 entries. Here A = b̂·I + 2σp̂p̂ᵀ + ĉ is the rational centre matrix and ε = 10⁻³⁰. Each check takes about 25 s.
+- `Rm_near` is interval algebra: the three family enclosures give |R_ij − A_ij| ≤ 12ε, using |p̂| ≤ 2, which is also kernel-checked.
+- `evenHead_of` / `oddHead_of` derive `EvenHead` / `OddHead` from `HeadEnc`.
+- `WeilHead.L05_even` proves 0 < `weilQ (1/2)` applied to Σ xᵢT_{2i}, and `WeilHead.L05_odd` proves positivity of the odd frequency form. Their only input is `HeadEnc`.
+- Axioms: propext, Classical.choice, Quot.sound.
+
+**The residual hypothesis `HeadEnc`.** It consists of arb enclosures at ε = 10⁻³⁰, produced by `scripts/positivity/headsplit.py` (actual radii ≤ 4·10⁻³⁴), in three families:
+1. `beta`: |β* − b̂| ≤ ε, where β* = log(30/2π) − 1/30 − √2 log 2.
+2. `pole`: |p_{2i+par} − p̂ᵢ| ≤ ε for i < 28, where p_n = √(2n+1)·iₙ(1/4).
+3. `cm`: |C^ψ_{2i+par,2j+par} − ĉᵢⱼ| ≤ ε for i, j < 28.
+
+**Why these families remain.** The certificate leaves room for n²ρ < δ ≈ 10⁻⁷, so every entry must be known to about 10⁻¹⁰ (the present data use 10⁻²³). The three families fall short for different reasons:
+- **`cm`** is the real obstruction. It needs verified quadrature, inside Lean, of the complex digamma along Re s = 1/4 against oscillatory Bessel products on [0, 30]. That means enclosures of ψ(1/4 + it/2) on a fine grid (Stirling with remainder, available in the stack only as an O-bound), plus error control for the quadrature. None of this machinery exists in Lean or Mathlib.
+- **`pole`** is reachable in principle. iₙ(1/4) has a rapidly convergent series, and √(2n+1) admits rational enclosures. It is left as a hypothesis because it does not change the conditional status while `cm` remains.
+- **`beta`** needs log π, log 15 and √2 log 2 to about 10⁻¹⁰ or better. Mathlib provides π to 20 digits but log 2 only to 10, so further series bounds would be needed. It is left for the same reason as `pole`.
