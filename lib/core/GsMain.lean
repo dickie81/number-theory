@@ -199,4 +199,105 @@ theorem ground_state :
   ⟨v_even, v_normSq_pos, v_upper, μ₁_lt_μ₂, fun _ hf => gap_general hf, fun _ hf hv => gap_perp hf hv,
     fun _ hf ho => odd_sector hf ho⟩
 
+/-! ## The trial vector is itself a test function -/
+
+lemma cutp_cont {g : ℝ → ℝ} (hg : Continuous g) (h1 : g (1/2) = 0) (h2 : g (-(1/2)) = 0) :
+    Continuous (LegSpan.cutp g) := by
+  unfold LegSpan.cutp
+  refine Continuous.if_le hg continuous_const continuous_abs continuous_const (fun x hx => ?_)
+  rcases abs_eq (by norm_num : (0:ℝ) ≤ 1/2) |>.1 hx with h | h <;> rw [h] <;> assumption
+
+lemma cutp_hasDerivAt {φ : ℝ → ℝ} (hφ : ContDiff ℝ 1 φ) (h1 : φ (1/2) = 0) (h2 : φ (-(1/2)) = 0)
+    (d1 : deriv φ (1/2) = 0) (d2 : deriv φ (-(1/2)) = 0) (u : ℝ) :
+    HasDerivAt (LegSpan.cutp φ) (LegSpan.cutp (deriv φ) u) u := by
+  have hd : Differentiable ℝ φ := hφ.differentiable one_ne_zero
+  rcases lt_trichotomy |u| (1/2) with hu | hu | hu
+  · have ev : LegSpan.cutp φ =ᶠ[𝓝 u] φ := by
+      filter_upwards [(isOpen_lt continuous_abs continuous_const).mem_nhds hu] with t ht
+      unfold LegSpan.cutp; rw [if_pos (le_of_lt ht)]
+    have : LegSpan.cutp (deriv φ) u = deriv φ u := by unfold LegSpan.cutp; rw [if_pos hu.le]
+    rw [this]; exact (hd u).hasDerivAt.congr_of_eventuallyEq ev
+  · -- endpoints
+    have hz : LegSpan.cutp (deriv φ) u = 0 := by
+      unfold LegSpan.cutp; rw [if_pos hu.le]
+      rcases abs_eq (by norm_num : (0:ℝ) ≤ 1/2) |>.1 hu with h | h <;> rw [h] <;> assumption
+    rw [hz]
+    rcases abs_eq (by norm_num : (0:ℝ) ≤ 1/2) |>.1 hu with h | h <;> subst h
+    · have L : HasDerivWithinAt (LegSpan.cutp φ) 0 (Set.Iic (1/2)) (1/2) := by
+        have := (hd (1/2)).hasDerivAt.hasDerivWithinAt (s := Set.Iic (1/2))
+        rw [d1] at this
+        refine this.congr_of_eventuallyEq ?_ (by unfold LegSpan.cutp; rw [if_pos (by norm_num)])
+        filter_upwards [self_mem_nhdsWithin, inter_mem_nhdsWithin (Set.Iic (1/2:ℝ))
+          (Ioi_mem_nhds (by norm_num : (-(1/2):ℝ) < 1/2))] with t ht ht'
+        unfold LegSpan.cutp; rw [if_pos (abs_le.2 ⟨ht'.2.le, ht⟩)]
+      have R : HasDerivWithinAt (LegSpan.cutp φ) 0 (Set.Ici (1/2)) (1/2) := by
+        refine (hasDerivWithinAt_const (1/2:ℝ) (Set.Ici (1/2)) (0:ℝ)).congr (fun t ht => ?_) ?_
+        · unfold LegSpan.cutp; split_ifs with h
+          · have : t = 1/2 := le_antisymm (abs_le.1 h).2 ht
+            rw [this, h1]
+          · rfl
+        · unfold LegSpan.cutp; rw [if_pos (by norm_num), h1]
+      have := L.union R
+      rwa [Set.Iic_union_Ici, hasDerivWithinAt_univ] at this
+    · have R : HasDerivWithinAt (LegSpan.cutp φ) 0 (Set.Ici (-(1/2))) (-(1/2)) := by
+        have := (hd (-(1/2))).hasDerivAt.hasDerivWithinAt (s := Set.Ici (-(1/2)))
+        rw [d2] at this
+        refine this.congr_of_eventuallyEq ?_ (by unfold LegSpan.cutp; rw [if_pos (by norm_num)])
+        filter_upwards [self_mem_nhdsWithin, inter_mem_nhdsWithin (Set.Ici (-(1/2):ℝ))
+          (Iio_mem_nhds (by norm_num : (-(1/2):ℝ) < 1/2))] with t ht ht'
+        unfold LegSpan.cutp; rw [if_pos (abs_le.2 ⟨ht, ht'.2.le⟩)]
+      have L : HasDerivWithinAt (LegSpan.cutp φ) 0 (Set.Iic (-(1/2))) (-(1/2)) := by
+        refine (hasDerivWithinAt_const (-(1/2):ℝ) (Set.Iic (-(1/2))) (0:ℝ)).congr (fun t ht => ?_) ?_
+        · unfold LegSpan.cutp; split_ifs with h
+          · have : t = -(1/2) := le_antisymm ht (abs_le.1 h).1
+            rw [this, h2]
+          · rfl
+        · unfold LegSpan.cutp; rw [if_pos (by norm_num), h2]
+      have := L.union R
+      rwa [Set.Iic_union_Ici, hasDerivWithinAt_univ] at this
+  · have ev : LegSpan.cutp φ =ᶠ[𝓝 u] fun _ => 0 := by
+      filter_upwards [(isOpen_lt continuous_const continuous_abs).mem_nhds hu] with t ht
+      unfold LegSpan.cutp; rw [if_neg (not_le.2 ht)]
+    have : LegSpan.cutp (deriv φ) u = 0 := by unfold LegSpan.cutp; rw [if_neg (not_le.2 hu)]
+    rw [this]; exact (hasDerivAt_const u (0:ℝ)).congr_of_eventuallyEq ev
+
+/-- a `C¹` function vanishing to first order at `±1/2`, cut to `[−1/2, 1/2]`, is a test function -/
+theorem cutp_testFn {φ : ℝ → ℝ} (hφ : ContDiff ℝ 1 φ) (h1 : φ (1/2) = 0) (h2 : φ (-(1/2)) = 0)
+    (d1 : deriv φ (1/2) = 0) (d2 : deriv φ (-(1/2)) = 0) : WeilGen.TestFn (LegSpan.cutp φ) := by
+  refine ⟨contDiff_one_iff_deriv.2 ⟨fun u => (cutp_hasDerivAt hφ h1 h2 d1 d2 u).differentiableAt, ?_⟩, ?_⟩
+  · have e : deriv (LegSpan.cutp φ) = LegSpan.cutp (deriv φ) := funext fun u => (cutp_hasDerivAt hφ h1 h2 d1 d2 u).deriv
+    rw [e]; exact cutp_cont (hφ.continuous_deriv le_rfl) d1 d2
+  · intro u hu; unfold LegSpan.cutp; rw [if_neg (not_le.2 hu)]
+
+theorem v_testFn : WeilGen.TestFn v := by
+  have hv : v = LegSpan.cutp (fun u => (GsUpper.lp GsUpper.c0).eval (u + 1 / 2)) := GsUpper.fx_cutp
+  have hb := GsUpper.bc_chk
+  simp only [List.all_cons, List.all_nil, Bool.and_true, Bool.and_eq_true, beq_iff_eq] at hb
+  have ev0 : ∀ j r, (GsUpper.ev (GsUpper.cj j) r = 0) → (GsUpper.lp (GsUpper.cj j)).eval (r : ℝ) = 0 := by
+    intro j r h; rw [GsUpper.eval_lp_q, h]; simp
+  have D1 : Polynomial.derivative (GsUpper.lp GsUpper.c0) = GsUpper.lp (GsUpper.cj 1) := by
+    have := GsUpper.D_lp 1; simpa [GsFourier.D] using this
+  have hder : deriv (fun u => (GsUpper.lp GsUpper.c0).eval (u + 1 / 2))
+      = fun u => (GsUpper.lp (GsUpper.cj 1)).eval (u + 1 / 2) := by
+    funext u
+    rw [← D1]
+    exact ((GsUpper.lp GsUpper.c0).hasDerivAt (u + 1/2)).comp_add_const u (1/2) |>.deriv
+  rw [hv]
+  have hcd : ContDiff ℝ 1 (fun u : ℝ => (GsUpper.lp GsUpper.c0).eval (u + 1 / 2)) := by
+    have := (Polynomial.contDiff_aeval (𝕜 := ℝ) (GsUpper.lp GsUpper.c0) 1).comp (contDiff_id.add (contDiff_const (c := (1/2:ℝ))))
+    simpa [Function.comp_def, Polynomial.aeval_def] using this
+  refine cutp_testFn hcd ?_ ?_ ?_ ?_
+  · have := ev0 0 1 hb.1.1; norm_num at this ⊢; simpa [GsUpper.cj] using this
+  · have := ev0 0 0 hb.1.2; norm_num at this ⊢; simpa [GsUpper.cj] using this
+  · rw [hder]; have := ev0 1 1 hb.2.1.1; norm_num at this ⊢; exact this
+  · rw [hder]; have := ev0 1 0 hb.2.1.2; norm_num at this ⊢; exact this
+
+/-- **Rayleigh quotients on the test class**: the infimum is `≤ μ₁` (attained below by `v`), while every
+two-dimensional subspace reaches `≥ μ₂`. -/
+theorem ground_state_testFn :
+    WeilGen.TestFn v ∧ (∀ u, v (-u) = v u) ∧ 0 < normSq v ∧ weilQg (1 / 2) v ≤ μ₁ * normSq v ∧ μ₁ < μ₂ ∧
+    (∀ f₁ f₂, WeilGen.TestFn f₁ → WeilGen.TestFn f₂ → ∃ a b : ℝ, (a ≠ 0 ∨ b ≠ 0) ∧
+      μ₂ * normSq (fun u => a * f₁ u + b * f₂ u) ≤ weilQg (1 / 2) (fun u => a * f₁ u + b * f₂ u)) :=
+  ⟨v_testFn, v_even, v_normSq_pos, v_upper, μ₁_lt_μ₂, fun _ _ h₁ h₂ => minmax2 h₁ h₂⟩
+
 end GsMain
