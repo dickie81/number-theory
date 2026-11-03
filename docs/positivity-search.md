@@ -523,3 +523,24 @@ Verdict: orientation reversal mirrors s ↔ 1 − s, but it only reproduces the 
 - Injected synthetic off-line quadruples: with a basis symmetric in ±γ, 2 and 4 negative squares for 4 and 8 off-line zeros, exactly half as Bombieri predicts. A one-sided basis sees one per quadruple. Even δ = 0.01 is detected.
 
 Verdict: the doubled, indefinite-metric picture is an exact detector, with κ equal to half the number of off-line zeros. The form is built from the zeros, though, and its prime-side version (the explicit formula) gives no geometric reason for κ = 0. "RH ⇔ κ = 0" is Weil's criterion restated.
+
+## Weil's finite-field proof: Hodge index ⇒ Weil bound (`WeilHodge`, plus uncertified numerics)
+
+**Lean (`WeilHodge`, standard axioms only).**
+- `hodge_cs`: if the intersection form is negative semidefinite on H^⊥ with H·H > 0, then D·D · H·H ≤ (D·H)².
+- `castelnuovo`: with fibre classes e₁, e₂ and H = e₁ + e₂, D·D ≤ 2(D·e₁)(D·e₂).
+- `weil_bound_sq`, `weil_bound_of_hodge`: given the intersection numbers of the diagonal Δ and the Frobenius graph Γ on C × C, (N − q − 1)² ≤ 4g²q and |N − (q + 1)| ≤ 2g√q.
+
+The intersection numbers and the Hodge index property are hypotheses. Applied to every Frobenius power, the bound gives |α| = √q.
+
+**Numerics (`scripts/positivity/weil_hodge.py`, results in `weil_hodge_results.txt`; point counts exact, eigenvalues floating point).** For y² = x³ + x + 1 (q = 23, 101), y² = x³ − x (q = 29, 103) and the genus-2 curve y² = x⁵ + x + 3 (q = 13, 31):
+- the Gram matrix of ⟨e₁, e₂, Δ, Γ⟩ has signature (1, 3), exactly one positive direction;
+- N and the count over F_{q²} satisfy the Weil bounds;
+- every Frobenius eigenvalue has |α|/√q = 1.000000. The supersingular case q = 103 meets the F² bound with equality.
+
+**Spec ℤ.** The analogue of the Gram matrix is our BallWeil form: e₁, e₂ ↔ the pole plane, Δ·Γ ↔ the prime side of the explicit formula, the Frobenius graph ↔ the scaling action (Connes–Consani). What is missing:
+1. An intersection theory on "Spec ℤ × Spec ℤ" for which the scaling graphs are classes. Arakelov theory covers Spec ℤ alone, and Connes–Consani's Riemann–Roch for Spec ℤ (arXiv 2205.01391) is one-dimensional.
+2. Finiteness: the genus is infinite (infinitely many zeros), so the classes live in an infinite-dimensional space where Hodge index is a positivity statement, not a finite signature count.
+3. The Hodge index property itself. Over ℤ, "exactly one positive direction" is our `DeSitterTower.rh_iff_deSitter` / BallWeil signature statement, which is RH (Weil positivity). Over F_q it is a theorem about surfaces; over ℤ it is the thing to prove.
+
+`WeilHodge` makes precise that only this last input is missing: given Hodge index, the rest is elementary.

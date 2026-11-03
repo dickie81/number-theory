@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1222 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1226 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 120 | 369 |
+| `lib/core` | 121 | 373 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -673,6 +673,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilFF.posDef_of_real`: Real Toeplitz positivity is positive-definiteness
 - `WeilFF.countKernel_posDef_iff`: Weil's criterion from the point counts
 - `WeilFF.norm_eq_sqrt_of_bound`: A bound in every degree is enough
+
+#### `WeilHodge`: Hodge index ⇒ Weil bound
+
+- `WeilHodge.hodge_cs`: Reversed Cauchy–Schwarz from Hodge index
+- `WeilHodge.castelnuovo`: Castelnuovo–Severi
+- `WeilHodge.weil_bound_sq`: Hodge index ⇒ Weil bound
+- `WeilHodge.weil_bound_of_hodge`: Hodge index ⇒ Weil bound
 
 #### `WeilIndexConverse`: Off-line zero quadruples force negative directions of `Q`
 

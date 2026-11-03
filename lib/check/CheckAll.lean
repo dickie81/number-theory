@@ -237,6 +237,7 @@ import DeSitterTower
 import SphereTower
 import OuterLimit
 import KreinNeutral
+import WeilHodge
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1345,3 +1346,7 @@ the linear algebra of its certificates. -/
 #print axioms OuterLimit.rh_of_outer_limit
 #print axioms KreinNeutral.neutral_of_nonreal
 #print axioms KreinNeutral.im_eq_zero_of_pos
+#print axioms WeilHodge.hodge_cs
+#print axioms WeilHodge.castelnuovo
+#print axioms WeilHodge.weil_bound_sq
+#print axioms WeilHodge.weil_bound_of_hodge
