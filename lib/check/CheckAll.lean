@@ -252,6 +252,7 @@ import WeilHead
 import WeilConst
 import DigammaStirling
 import CmBessel
+import CmGlob
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1437,3 +1438,4 @@ the linear algebra of its certificates. -/
 #print axioms DigammaStirling.re_digamma_quarter
 #print axioms CmBessel.cos_tay
 #print axioms CmBessel.jP_s
+#print axioms CmGlob.w_model
