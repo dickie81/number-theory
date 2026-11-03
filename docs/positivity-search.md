@@ -667,3 +667,23 @@ Script: `scripts/positivity/sos.py`, output `sos_results.txt`, plot `sos.png`. T
 - **Controls:** we jittered log n (σ = 0.02–0.1) or flipped the signs of p = 3 or p = 5, 7 (Davenport–Heilbronn style). The true min eig breaks to between −0.5 and −3.2, but the C3 slack barely moves (−8.35 to −8.59 against −8.54 for the real primes). Local certificates can't tell real primes from fake ones.
 
 Verdict: positivity of the Weil form can't be certified place by place, even with generous local multipliers. The gap grows with L, and the only certificate that works is the global eigen-decomposition, which is Weil positivity restated. This agrees with the near-null study: the cancellation is collective, across primes and the archimedean place together. No new Lean lemma was added. "A sum of PSD forms is PSD" is already covered in spirit by the ShellSchur chain lemma. Numerics by Grok Bot.
+
+## Monotone flow in L (uncertified)
+
+Script: `scripts/positivity/flow.py`, output `flow_results.txt`, plot `flow.png`. The setup is the same Weil form W_L as before: pole-orthogonal test functions supported in [-L,L], a 40-sine basis, float64. The grid runs over L = 0.3–3.0 in steps of 0.05.
+
+- **Exact monotonicity, no numerics:** the test spaces are nested in L, so the true λ_min(L) is non-increasing. A flow can only lose positivity as L grows, never gain it. "Positive for all L" is the same as "positive in the limit", which is RH, so propagating from small L can't work. The 40-mode basis isn't exactly nested, and the largest spurious increase was 1.7e-7, which is at noise level.
+- **Collapse:**
+  - λ_min falls 0.70 → 0.24 → 1.4e-2 → 8e-5 → 7e-8 at L = 0.3, 0.4, 0.5, 0.6, 0.7.
+  - From L ≈ 0.8 on, it sits at 0 within float noise (between −4e-7 and +1e-9).
+  - The next eigenvalues follow one after another. From L ≈ 1 on, λ_1..λ_4 are all ≲ 1e-8.
+  - The Hadamard boundary term, the edge slope of the bottom eigenvector, drops from about 100 to about 0.3. Its finite-difference dλ/dL is ≤ 0 up to noise.
+- **Prime-power entries:** a new log n = 2L enters continuously. The overlap starts at zero support, so there is no jump, only a change in slope. Below L ≈ 0.8 the entries at n = 2, 3, 4 coincide with the steepest stretch of the descent. Above it, nothing can be resolved because everything is near-null.
+- **Riccati-type propagation:** there is no gap left to propagate. For L ≳ 0.8 the flow is degenerate, with several eigenvalues near 0, so a Hellmann–Feynman or Riccati ODE has nothing to protect. Its sign at the boundary is exactly the unknown.
+- **Fake-prime control:**
+  - With log n jittered (σ = 0.05), λ_min < −1e-4 first at L = 0.5. Its minimum over the grid is −3.6.
+  - With the sign of p = 3 flipped, it first breaks at L = 0.6. Its minimum over the grid is −2.3.
+  - Real primes instead approach zero from above and stay pinned at it.
+  - The flows separate exactly where the real flow enters the near-null regime. That is the same information as the zero-side vanishing found in the near-null study.
+
+Verdict: the flow runs the wrong way. Monotonicity is exact but goes downward, and λ_min is pinned at zero from L ≈ 0.8 on, so it gives nothing beyond Weil positivity restated. No Lean lemma was added. Downward propagation along nested spaces is trivial, and the upward version would need the missing boundary sign, which is RH. Numerics by Grok Bot.
