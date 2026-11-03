@@ -1,0 +1,43 @@
+== Primitive closed geodesics on PSL(2,Z)\H, trace t<=300 ==
+t  length=2arccosh(t/2)  mult  N=eps^2  nearest-int  |logN-log p| (p prime nearest N)
+3 1.924847 1 6.854102 7 0.0211
+4 2.633916 2 13.928203 14 0.069
+5 3.133598 2 22.956439 23 0.0019
+6 3.525494 3 33.970563 34 0.0915
+7 3.849695 2 46.978714 47 0.0005
+8 4.126874 4 61.983867 62 0.016
+9 4.369288 2 78.98734 79 0.0002
+10 4.584863 6 97.989795 98 0.0102
+11 4.779053 3 118.991596 119 0.0517
+12 4.955777 4 141.992957 142 0.0213
+13 5.117958 4 166.994012 167 0.0
+14 5.267832 6 193.994845 194 0.0051
+15 5.407152 4 222.995516 223 0.0
+N_t = eps^2 = ((t+sqrt(t^2-4))/2)^2 is a quadratic irrational (t>=3): never a rational prime;
+log N = log p would need N = p in Q, impossible. lengths ~ 2 log t, not log p.
+
+== Prime geodesic theorem: pi_G(x) = #{N<=x} vs Li(x) ==
+x=100 pi_G=22 Li=29.1 ratio=0.757
+x=1000 pi_G=155 Li=176.6 ratio=0.878
+x=10000 pi_G=1214 Li=1245.1 ratio=0.975
+x=90000 pi_G=8704 Li=8756.2 ratio=0.994
+mean multiplicity over t<=300: 29.21, max 140 (exponential degeneracy grows ~ e^{L/2}/L)
+
+== Maass r_j (PSL2Z, literature) vs zeta zeros gamma_n ==
+min |r_j - gamma_n| over pairs: 0.04 (expected for random sets of this density ~0.1; no alignment)
+ratios r_j/gamma_1: [0.674, 0.861, 0.975, 1.016, 1.142, 1.178]
+unfolded spacings (Weyl r^2/12): fraction s<0.3 = 0.16  [Poisson 0.26, GOE 0.07, GUE 0.03]
+  n=19 only: weak evidence; literature (Bogomolny et al., Steil) finds Poisson on 1000s of levels.
+zeta first-10 unfolded: fraction s<0.3 = 0.00 (GUE-like repulsion)
+
+== BTZ horizons from geodesics (AdS radius 1): circumference 2pi r+ = length, T_H = r+/2pi ==
+t=3  r+=0.30635  T_H=0.048757
+t=4  r+=0.41920  T_H=0.066718
+t=5  r+=0.49873  T_H=0.079375
+t=6  r+=0.56110  T_H=0.089302
+t=7  r+=0.61270  T_H=0.097514
+t=8  r+=0.65681  T_H=0.104535
+Prime family Gamma_p=<diag(p^1/2,p^-1/2)>: each cyclic, discrete, BTZ with length log p, T_p=log p/4pi^2.
+  but p is put in by hand (tautological). Joint group <all Gamma_p> is abelian with lengths
+  {a log2+b log3+...}: dense in R (log p rationally independent) => NOT discrete, no quotient manifold.
+  e.g. min |a log2 - b log3| for a<2000: 4.37e-05 at (a,b)=(1054,665) -> translation lengths accumulate at 0
