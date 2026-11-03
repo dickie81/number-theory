@@ -87,7 +87,7 @@ lean_lib Core where
     .one `ManinLattice, .one `ManinTwist, .one `MeanSquareHigh, .one `MeanSquareZeta,
     .one `MellinRowDep, .one `MellinSeparation, .one `MellinUniform, .one `MertensOmega,
     .one `MollId, .one `Mollify, .one `OddPositivity, .one `Orthogonality,
-    .one `Osc, .one `OuterLimit, .one `ParabolaGap, .one `ParityCert, .one `ParityCont,
+    .one `Osc, .one `OuterLimit, .one `KreinNeutral, .one `ParabolaGap, .one `ParityCert, .one `ParityCont,
     .one `ParityGap, .one `ParityRelax, .one `ParitySplit, .one `PhiDExp,
     .one `PhiDecay, .one `PhiLadder, .one `PhiNull, .one `PlaneGaussian,
     .one `PlaneMajorant, .one `PlanePoisson, .one `PoleRelax, .one `Polya,

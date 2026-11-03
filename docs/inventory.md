@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1220 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1222 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 119 | 367 |
+| `lib/core` | 120 | 369 |
 | `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -374,6 +374,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `KaiserBulk`: The bulk of the Kaiser probe and the doubled rate
 
 - `Kaiser.lam_kaiser`: Rung 0, doubled rate ([note](../formalisations/weil-positivity.md))
+
+#### `KreinNeutral`: Non-real eigenvectors are neutral in an indefinite metric
+
+- `KreinNeutral.neutral_of_nonreal`: Non-real eigenvectors are neutral
+- `KreinNeutral.im_eq_zero_of_pos`: No negative squares ⇒ real spectrum
 
 #### `KubotaCharacter`: Kubota's character
 

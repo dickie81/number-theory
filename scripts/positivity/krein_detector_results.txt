@@ -1,0 +1,13 @@
+basis: 222 Gaussians, width 1.2, centres 5..160; 60 zeros (+-gamma)
+RH zeros only: negative squares = 0
+inject [(30.0, 0.2)]: off-line zeros (counting +-gamma) = 4, negative squares = 1 (one-sided basis expects 1)
+inject [(30.0, 0.2), (60.0, 0.1)]: off-line zeros (counting +-gamma) = 8, negative squares = 2 (one-sided basis expects 2)
+inject [(30.0, 0.2), (60.0, 0.1), (95.0, 0.05)]: off-line zeros (counting +-gamma) = 12, negative squares = 3 (one-sided basis expects 3)
+inject [(30.0, 0.01)]: off-line zeros (counting +-gamma) = 4, negative squares = 1 (one-sided basis expects 1)
+
+symmetric basis (centres +-5..160, 444 functions):
+RH zeros only: negative squares = 0
+inject [(30.0, 0.2)]: off-line zeros = 4, negative squares = 2 (half = 1)
+inject [(30.0, 0.2), (60.0, 0.1)]: off-line zeros = 8, negative squares = 4 (half = 2)
+(one-sided basis sees only Im gamma>0 copies, hence one negative per quadruple there.)
+Detector works (kappa = #off-line/2) but kappa=0 for the true zeros is RH restated, not derived.

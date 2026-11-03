@@ -509,3 +509,17 @@ Verdict: RH for these networks is a theorem, and it comes from arithmetic gluing
 - **Can the zeros be modes?** φ(s) = c with c finite never holds at ζ(2s) = 0, because φ has a pole there. Roots converge to ρ/2 only as Y → 0 (distance 0.047 at Y = 0.01 and about 0.014–0.022 at 10⁻³, roughly like Y^{1/2}), where the cut lies below the cusp and the closure is no longer self-adjoint (roots move off the line).
 
 Verdict: orientation reversal mirrors s ↔ 1 − s, but it only reproduces the pseudo-Laplacian. The zeros are reached only in a degenerate, non-self-adjoint limit.
+
+## Doubling the cusp: an indefinite metric and its negative squares (`KreinNeutral`, plus uncertified numerics)
+
+**Lean (`KreinNeutral`, standard axioms only).** If `A` is self-adjoint for an indefinite form `[x, y] = ⟪Jx, y⟫` and `Av = μv` with μ non-real, then `[v, v] = 0` (`neutral_of_nonreal`). With a definite form the spectrum is therefore real (`im_eq_zero_of_pos`). The Pontryagin bound (at most κ non-real pairs when the form has κ negative squares) is not formalised.
+
+**Literature.**
+- Weil's quadratic functional is positive semidefinite iff RH. If only finitely many zeros are off the line, large enough truncations have exactly half that many negative eigenvalues (Bombieri, Rend. Lincei 2000; Yoshida 1992 for small supports).
+- Pontryagin de Branges spaces: a Hermite–Biehler-type E whose kernel has finitely many negative squares (Kaltenbäck–Woracek).
+
+**Numerics (`scripts/positivity/krein_detector.py`, results in `krein_detector_results.txt`).** The truncated Weil form uses 60 zeros and a Gaussian basis.
+- With the true zeros: 0 negative squares.
+- Injected synthetic off-line quadruples: with a basis symmetric in ±γ, 2 and 4 negative squares for 4 and 8 off-line zeros, exactly half as Bombieri predicts. A one-sided basis sees one per quadruple. Even δ = 0.01 is detected.
+
+Verdict: the doubled, indefinite-metric picture is an exact detector, with κ equal to half the number of off-line zeros. The form is built from the zeros, though, and its prime-side version (the explicit formula) gives no geometric reason for κ = 0. "RH ⇔ κ = 0" is Weil's criterion restated.
