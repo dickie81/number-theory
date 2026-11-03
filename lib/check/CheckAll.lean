@@ -263,6 +263,12 @@ import WeilCoer
 import LegSpan
 import WeilCont
 import WeilGen
+import GsGap
+import GsFourier
+import GsTail
+import GsUpper
+import OddMargin2
+import GsMain
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1469,4 +1475,20 @@ the linear algebra of its certificates. -/
 #print axioms WeilGen.pos
 #print axioms WeilGen.coer_even
 #print axioms WeilGen.pos_even
+#print axioms GsGap.even_gap
+#print axioms GsFourier.six_ibp
+#print axioms GsFourier.plancherel
+#print axioms GsTail.QF_eq
+#print axioms GsTail.psi_upper
+#print axioms GsTail.tail_bound
+#print axioms GsUpper.trial_upper
+#print axioms OddMargin2.odd_margin2
+#print axioms GsMain.gap_general
+#print axioms GsMain.gap_perp
+#print axioms GsMain.odd_sector
+#print axioms GsMain.v_upper
+#print axioms GsMain.minmax2
+#print axioms GsMain.v_testFn
+#print axioms GsMain.ground_state
+#print axioms GsMain.ground_state_testFn
 #print axioms WeilOdd.L05_mixed

@@ -1334,3 +1334,49 @@ The finite mode-sum results extend to a function class, with an explicit coerciv
   - for even `f`, the same two statements for `weilQ`, because the pole terms `ĝ(±i/2)` agree.
 
 These results use only the standard axioms.
+
+## Ground state at L = 1/2 (`GsGap`, `GsFourier`, `GsTail`, `GsUpper`, `OddMargin2`, `GsMain`)
+
+**Relation to CCM.** Connes–Consani–Moscovici ("Zeta spectral triples") work with the Weil quadratic form `QW_λ` on
+`L²([λ⁻¹, λ], d*u)`. Its restrictions `QW_λ^N` to the exponential spans `E_N` are real symmetric matrices commuting
+with the parity `γ`. Their main theorem assumes, for each `N`, that the smallest eigenvalue of `QW_λ^N` is simple and
+has an even eigenvector. Whether the lowest eigenvalue of `QW_λ` itself is simple and even is left open there.
+Our setting is `u = log x ∈ [−1/2, 1/2]`, i.e. `λ = e^{1/2}`, and `Q = weilQg (1/2)`.
+
+What is proved here is the min-max form of "simple, even, isolated", on the test class `TestFn`. That class consists of
+the `C¹` functions supported in `[−1/2, 1/2]`; it contains the real and imaginary parts of CCM's `V_n`, so its span
+is a form core. The theorems are stated for the form `Q`; nothing about an operator is formalized.
+
+- **Trial vector (`GsUpper.trial_upper`).** The vector is `v = Σ_{i<10} (yᵢ/√(4i+1)) T_{2i}`, which equals
+  `p(u+1/2)` cut to `[−1/2, 1/2]` for `p = Σ yᵢ P̃_{2i}` with rational `y`. The coefficients are chosen so that
+  `p, p', p⁽⁴⁾, p⁽⁵⁾` vanish at `0` and `1` (checked exactly), and the result is `Q(v) ≤ μ₁‖v‖²` with `μ₁ = 2·10⁻⁵`.
+  The exact rational value of the bound is `1.48·10⁻⁵ ‖v‖²`. The proof splits `Q` as follows:
+  - **Exact split.** `Q = R(xv) + (1/π)∫_{30}^∞ (Ψ − β*) F²` (`GsTail.QF_eq`).
+  - **Head.** The head `R(xv)` is bounded by the rational head matrix plus the proved entry enclosure.
+  - **Six integrations by parts.** `|F(t)| ≤ A₂/t³ + A₃/t⁴ + |Φ_{p⁽⁶⁾}(t)|/t⁶` (`GsFourier.six_ibp`).
+  - **Plancherel for cut polynomials.** `∫₀^∞ |Φ_q|² = π ∫₀¹ q²` (`GsFourier.plancherel`).
+  - **Stirling bound.** `Ψ − β* ≤ 1.02 + t/30` for `t ≥ 30` (`GsTail.psi_upper`).
+
+  All rational arithmetic is checked by `decide +kernel`.
+- **Even gap (`GsGap.even_gap`).** For `N ≥ 28`, `QF₀(x) + c(Σ xᵢ xvᵢ)² ≥ (6/1000) Σ xᵢ²` with `c = 162471/262144`.
+  The proof is an exact `LDLᵀ` certificate for `Rm + c·xh xhᵀ − (7/1000)I` on the 28-mode head (rounding `≤ 10⁻⁸`),
+  plus the geometric tail bounds.
+- **Odd sector (`OddMargin2.odd_margin2`).** `QF₁(y) ≥ 4·10⁻⁵ Σ yᵢ²`. Tightening the odd `C^ψ` enclosure to `6·10⁻⁹`
+  (`CmFinRp*`, `CmEncOdd6`) lets the existing certificate yield this margin.
+- **Lift (`GsMain`).** The two sector bounds above combine on mode sums. Approximation as in `WeilGen` then gives, for
+  every `f ∈ TestFn`:
+  - `Q(f) + c⟨f, v⟩² ≥ μ₂‖f‖²` with `μ₂ = 4·10⁻⁵` (`gap_general`);
+  - hence `Q(f) ≥ μ₂‖f‖²` for `f ⊥ v` (`gap_perp`) and for every odd `f` (`odd_sector`).
+
+  The trial vector `v` is itself in `TestFn`, since it is `C¹` because `p` and `p'` vanish at the ends (`v_testFn`).
+  It is even, and `μ₁ < μ₂`. Every two-dimensional span of test functions contains a nonzero `h` with
+  `Q(h) ≥ μ₂‖h‖²` (`minmax2`). Summary: `ground_state`, `ground_state_testFn`.
+
+**Consequence (not formalized).** The form is lower bounded and closable, and the test class is a core (CCM Props
+3.3–3.4). Granting those, together with identifying `weilQg (1/2)` with CCM's `QW_λ`, the Kato/Friedrichs operator
+`A_λ` satisfies `λ₁ ≤ μ₁ < μ₂ ≤ λ₂` by min-max. Hence `λ₁` is simple and isolated, with gap at least `2·10⁻⁵`. Its
+eigenvector is even, because the odd sector is bounded below by `μ₂ > λ₁` and `γ` commutes with `A_λ`. For the
+truncations `QW_λ^N` the same conclusion follows for all sufficiently large `N`, a non-explicit threshold coming from
+the core property. Mathlib has no form-closure / Friedrichs construction, so that step is cited rather than formalized.
+
+These results use only the standard axioms.
