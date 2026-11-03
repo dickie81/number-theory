@@ -1088,3 +1088,33 @@ for the repo's `legT` and the Poisson-defined iₙ, for every n. Summing over mo
 **Notes.**
 - Mathlib's shifted Legendre polynomial satisfies P̃ₙ(y) = Pₙ(1 − 2y). So `legT n` is the reflected Legendre function, and equals the usual one only for even n. The even sector uses only even n.
 - `EvenBridge2.acorr` and `ModeOrth` remain. Both need Fourier inversion and Plancherel for the Legendre modes, and the autocorrelation-transform identity. Mathlib's L² Fourier isometry is not linked to the integral transform of L¹∩L² functions, and that bridge is not formalised here.
+
+## Fourier bridge: Legendre orthonormality, the Legendre–Fourier identity and Parseval (`WeilFourier`)
+
+This work was done by an AI assistant (Grok Bot).
+
+The link from Mathlib's Fourier theory to the repo's mode transforms is built without abstract L². It uses Mathlib's pointwise Fourier inversion (`Integrable.fourierInv_fourier_eq`, which needs only continuity at the point) and its convolution theorem (`Real.fourier_mul_convolution_eq`).
+
+**What is proved.**
+- `beta_nat`: ∫₀¹ yᵃ(1−y)ᵇ = a!b!/(a+b+1)!, by induction with integration by parts.
+- `sL_orth`: ∫₀¹ P̃ₘP̃ₙ = δₘₙ/(2n+1). It uses Rodrigues and n integrations by parts with polynomial weights. Dⁿ kills P̃ₘ for m < n, and DⁿP̃ₙ = n!(−1)ⁿC(2n,n).
+- `legT_orth`: ∫_ℝ T_n T_m = δₙₘ for the repo's `legT`.
+- `parseval`: let f and g be cut-offs to [−1/2, 1/2] of continuous functions. Suppose 𝓕f(ξ)·𝓕g(−ξ) = S(2πξ), where S is continuous, even and O((1+t)⁻²). Then ∫ f(t)g(t−v) dt = (1/π)∫₀^∞ cos(tv) S(t) dt for |v| < 1. The proof has four parts:
+  - the correlation is a Mathlib convolution;
+  - its transform is the product;
+  - it is continuous for |v| < 1, written as a parametric integral with moving endpoints;
+  - inversion is applied at v.
+- `LF` (Legendre–Fourier identity, Mathlib normalisation 𝓕f(ξ) = ∫e^{−2πivξ}f(v)dv): 𝓕Tₙ(ξ) = iⁿ√(2n+1) jₙ(πξ). Equivalently, `LF_sec` gives 𝓕T_{2i+p}(ξ) = i^p·T̂_{2i+p}(2πξ). The proof uses `rod_ibp` at c = −2πiξ, the Poisson form of jₙ, and the symmetry E(c) = e^c E(−c).
+- `modeOrth` closes `ModeOrth 0` and `ModeOrth 1`: (1/π)∫₀^∞ T̂ₐT̂_b = δ within each parity sector. The per-mode factors i^p cancel against the parity (−1)^b of T̂_b(−t). So the sign of the reflected odd `legT` does not matter, and the statement is about the same T̂ₙ (including the (−1)^⌊n/2⌋ factor) used by the arb head matrices.
+- `acorr` closes `EvenBridge2.acorr`. It takes v = −log 2 in `parseval` with f = g = Σ xᵢT_{2i}.
+
+**Final theorems.**
+- `WeilFourier.L05_even` proves 0 < `weilQ (1/2)` applied to Σ_{i<N} xᵢT_{2i}, for N ≥ 28 and x ≠ 0. Its only inputs are `EvenHead` (arb numerics) and `ArchBridge`, the archimedean identity of Zhu's Lemma 2.5.
+- `WeilFourier.L05_odd` proves positivity of the odd frequency form `QF 1 (−1)`. Its only input is `OddHead`.
+- Axioms: propext, Classical.choice, Quot.sound only.
+
+**What remains.**
+- `EvenHead` and `OddHead`: arb interval numerics, not checked inside Lean.
+- `ArchBridge`: Zhu's Lemma 2.5, the digamma/archimedean identity.
+- The odd sector is stated for the frequency form. It is not yet tied to `weilQ` on odd functions.
+- The result is for finite coefficient vectors (every N ≥ 28). It is not stated for general L² functions on [−1/2, 1/2].
