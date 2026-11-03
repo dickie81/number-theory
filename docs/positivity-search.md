@@ -847,6 +847,21 @@ Scripts: `scripts/positivity/hp3.py` and `hp3b.py`; plot `hp3.png`. We measured 
   - Sets identical to the real primes give λ ≈ +1e-17. That value comes from float64-rounded inputs; the exact value is 2.27e-17.
 - **Verdict:** in the range positivity cares about, it is decided by the exact arithmetic of log n and its weights, not by how close the phases come to aligning. The barrier phrase "the phases cannot align" refers to frequencies up to T₁ = 2πe^{A_L} ≫ T*, and low alignment on [1, T*] neither implies nor follows from positivity. Credit: Grok Bot numerics.
 
+## Current status of the Weil certification at L = 1/2
+
+**Proved unconditionally** (Lean; axioms only `propext`, `Classical.choice`, `Quot.sound`):
+`CmFin.L05_even_uncond` and `CmFin.L05_odd_uncond`. For every `N ≥ 28` and every nonzero coefficient vector
+supported on the first `N` Legendre modes, the repo's Weil form at `L = 1/2` is strictly positive. This holds in both
+the even sector (`WeilForm.weilQ (1/2)`) and the odd sector (`WeilZhuRed.QF 1 (-1)`). All of the earlier named inputs
+are now proved: β*, the pole values, the C^ψ entry enclosures `CmEnc`, ModeOrth and the archimedean identity.
+
+**Scope:** a single window length `L = 1/2` and finite mode expansions of arbitrary size. The statement says nothing
+about other `L` or about RH.
+
+**Build notes:** the kernel checks (`CmLhChk*`, `CmMomC*`, `CmFinRe*`, `CmFinRo*`) are split into modules of about
+3 minutes each. Together they need roughly 1 hour of serial kernel time. Each one needs several GB of memory, so on a
+16 GB machine run at most 2 of them in parallel.
+
 ## Lean certificate for finite-mode Weil positivity (`WeilCert`)
 
 Scripts: `scripts/positivity/arbcert.py` (python-flint/arb ball arithmetic) and `certgen.py` (exact rationals).
