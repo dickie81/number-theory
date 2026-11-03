@@ -498,3 +498,14 @@ Verdict: RH for these networks is a theorem, and it comes from arithmetic gluing
 - **Hecke angles (11a, 3243 primes < 30000).** No Hasse/Ramanujan violations. The moments of 2cos θ_p are 0.993, 1.973, 4.911 against Sato–Tate 1, 2, 5. Rescaled Kesten–McKay tends to Sato–Tate as p → ∞.
 - **Zeros need the archimedean place.** Using the completed Λ = (√11/2π)^s Γ(s) L(11a, s), the zeros on Re s = 1 below t = 20 are 6.3626, 8.6035, 10.0355, … (first zero matches LMFDB). Ramanujan at every finite p does not locate zeros: the Davenport–Heilbronn function (period-5 coefficients with |a_n| ≤ 1, a Riemann-type functional equation, no Euler product) has a zero at 0.8085171825 + 85.6993485i, matching Spira and Balanzario–Sánchez-Ortiz (Math. Comp. 2007).
 - **Archimedean limit.** No p → ∞ limit of the trees yields the hyperbolic plane. The object that combines all the trees with H is the adelic quotient GL₂(ℚ)\GL₂(𝔸)/K, whose continuous spectrum is the Eisenstein series, with ζ(2s) in the constant term. That brings us back to the modular-surface cusp, where the zeros are scattering poles.
+
+## Closing the cusp as a Möbius loop (uncertified numerics, no Lean)
+
+`scripts/positivity/mobius_cusp.py` (results in `mobius_cusp_results.txt`), uncertified. With v = y^{−1/2} u = e^{irx} + φ e^{−irx}:
+
+- **Periodic closure.** e^{irL} = 1, and φ drops out entirely.
+- **Möbius closure.** The identification y → Y²/y with sign ε gives φ(s) = ε Y^{2s−1}, the pseudo-Laplacian condition. Twisted closures give φ(s) = e^{iα} Y^{2s−1}. For Y ≥ 2 all modes are real (s on Re = ½).
+- **Distances to γ_n/2.** At Y = 1000 they are 0.064 (ε = +1), 0.079 (ε = −1) and 0.072 (random twist), against chance 0.114. Möbius and random twists are alike; this is the known phase shift of φ near its poles.
+- **Can the zeros be modes?** φ(s) = c with c finite never holds at ζ(2s) = 0, because φ has a pole there. Roots converge to ρ/2 only as Y → 0 (distance 0.047 at Y = 0.01 and about 0.014–0.022 at 10⁻³, roughly like Y^{1/2}), where the cut lies below the cusp and the closure is no longer self-adjoint (roots move off the line).
+
+Verdict: orientation reversal mirrors s ↔ 1 − s, but it only reproduces the pseudo-Laplacian. The zeros are reached only in a degenerate, non-self-adjoint limit.

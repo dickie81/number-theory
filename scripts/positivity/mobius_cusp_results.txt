@@ -1,0 +1,38 @@
+Algebra:
+ (a) periodic v(X2)=v(X1), v'(X2)=v'(X1): both e^{+-irx} terms must vanish separately -> e^{irL}=1,
+     r=2pi n/L. phi drops out: no zeta at all.
+ (b) Mobius x->2c-x (y->Y^2/y, Y=sqrt(Y1Y2)), v(2c-x)=eps v(x): matching coefficients gives
+     phi(s) = eps Y^{2s-1}, eps=+1 (Neumann-type) or -1 (Dirichlet-type, = pseudo-Laplacian).
+ (c) twisted: phi(s) = e^{i alpha} Y^{2s-1}.
+ All are restrictions of a self-adjoint problem: |phi|=1=|Y^{2s-1}| on Re s=1/2 gives real r.
+
+== real-line modes, distance to gamma_n/2 and gamma_n (n<=10, within r<30) vs chance spacing/4 ==
+Y=    2 Mobius eps=+1   19 modes  d(gamma/2)=0.121  d(gamma)=0.441  chance~1.133
+Y=    2 Mobius eps=-1   20 modes  d(gamma/2)=0.275  d(gamma)=0.355  chance~1.133
+Y=    2 random twist    19 modes  d(gamma/2)=0.252  d(gamma)=0.418  chance~1.133
+Y=   10 Mobius eps=+1   35 modes  d(gamma/2)=0.155  d(gamma)=0.313  chance~0.341
+Y=   10 Mobius eps=-1   34 modes  d(gamma/2)=0.100  d(gamma)=0.105  chance~0.341
+Y=   10 random twist    34 modes  d(gamma/2)=0.108  d(gamma)=0.119  chance~0.341
+Y=  100 Mobius eps=+1   57 modes  d(gamma/2)=0.053  d(gamma)=0.085  chance~0.171
+Y=  100 Mobius eps=-1   56 modes  d(gamma/2)=0.131  d(gamma)=0.162  chance~0.171
+Y=  100 random twist    57 modes  d(gamma/2)=0.109  d(gamma)=0.135  chance~0.171
+Y= 1000 Mobius eps=+1   79 modes  d(gamma/2)=0.064  d(gamma)=0.102  chance~0.114
+Y= 1000 Mobius eps=-1   78 modes  d(gamma/2)=0.079  d(gamma)=0.081  chance~0.114
+Y= 1000 random twist    78 modes  d(gamma/2)=0.072  d(gamma)=0.065  chance~0.114
+
+== off-line search seeded at rho/2 ==
+Y=1000   eps=-1: (0.5 + 7.1681756j) (|z-rho/2|=2.7e-01) | (0.5 + 10.440127j) (|z-rho/2|=2.6e-01)
+Y=10     eps=-1: (0.5 + 6.9114245j) (|z-rho/2|=2.9e-01) | (0.5 + 10.591193j) (|z-rho/2|=2.6e-01)
+Y=2      eps=-1: (0.5 + 7.3361665j) (|z-rho/2|=3.7e-01) | (0.5 + 10.063307j) (|z-rho/2|=5.1e-01)
+Y=0.5    eps=-1: (-0.12954154 + 7.1938882j) (|z-rho/2|=4.0e-01) | (0.5 + 10.71855j) (|z-rho/2|=3.2e-01)
+Y=0.1    eps=-1: (0.5 + 7.2189156j) (|z-rho/2|=2.9e-01) | (0.13175721 + 10.470596j) (|z-rho/2|=1.2e-01)
+Y=0.01   eps=-1: (0.23646898 + 7.1123005j) (|z-rho/2|=4.7e-02) | (0.22998885 + 10.553169j) (|z-rho/2|=4.7e-02)
+Y=0.001  eps=-1: (0.23713453 + 7.0728711j) (|z-rho/2|=1.4e-02) | (0.27115723 + 10.506935j) (|z-rho/2|=2.2e-02)
+Y>=2: roots fall onto Re s=1/2 (real modes), never at rho/2.
+Y->0 (closing BELOW height 1, outside the cusp region of the fundamental domain): Y^{1-2s}->0 for
+Re s<1/2, so roots converge to zeros of 1/phi = poles of phi = rho/2. Distance shrinks like Y^{1/2}.
+
+Verdict: phi(s)=c with finite c never holds at zeta(2s)=0 (phi has a pole there, and zeta(2s-1),Gamma
+cannot cancel it). The spectrum is exactly {rho/2} only in the degenerate limit c=Y^{2s-1}->inf, i.e. Y->0,
+where the cut leaves the cusp and the self-adjoint truncation no longer exists. Mobius closure =
+pseudo-Laplacian: real modes, Im-parts near gamma_n/2 only through the known phase-shift effect.
