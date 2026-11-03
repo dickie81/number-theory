@@ -1305,3 +1305,32 @@ The proof works in the variable s = t/30 ∈ [0,1], where Cm wψ n m = (30/π) �
 
 The kernel checks are split into many small modules, each taking about 3 minutes and a few GB of memory. The total kernel
 time is roughly an hour.
+
+## General test functions at L = 1/2: coercivity (`WeilCoer`, `LegSpan`, `WeilCont`, `WeilGen`)
+
+The finite mode-sum results extend to a function class, with an explicit coercivity constant.
+
+- **Coercivity on mode sums (`WeilCoer`).** For `h = hx N x y = Σ xᵢ T_{2i} + Σ yᵢ T_{2i+1}`,
+  `‖h‖² = Σ xᵢ² + Σ yᵢ²` (Parseval and mode orthonormality). Combining the even margin (`10⁻⁸ Σ xᵢ²`) and the odd margin
+  (`2·10⁻⁶ Σ yᵢ²`) with `weilQg (1/2) h = QF₀ + QF₁` gives `weilQg (1/2) h ≥ 10⁻⁸ ‖h‖²` for every `N`
+  (pad short coefficient vectors with zeros up to `N ≥ 28`).
+- **Span (`LegSpan`).** Every polynomial cut to `[−1/2, 1/2]` is some `hx N x y`. The proof uses the triangular
+  shifted-Legendre basis, each `P̃_n` having exact degree `n`. The module also gives an explicit polynomial antiderivative.
+- **Continuity (`WeilCont`).** Let `Good B M g` mean that `g` is measurable, vanishes off `[−1/2, 1/2]`, satisfies
+  `|g| ≤ B`, and is `M`-Lipschitz on `[−1/2, 1/2]`. Jumps at `±1/2` are allowed, which matters because cut polynomials
+  have them. If every `g k` and `f` are `Good B M` and `g k → f` pointwise, then `weilQg (1/2) (g k) → weilQg (1/2) f`.
+  Each term is handled separately:
+  - The pole and norm terms, and the autocorrelation, follow from dominated convergence on a compact set.
+  - In the prime sum only `n = 2` survives, since `log n > 1` for `n ≥ 3`.
+  - For the archimedean term, `|A(0) − A(u)| ≤ ∫ |g(t)|·|g(t) − g(t+u)| ≤ B(M+B)·u`. The interior Lipschitz bound covers
+    the part where `t` and `t+u` both lie in `[−1/2, 1/2]`; the boundary layer `t ∈ (1/2−u, 1/2]` costs at most `B²u`.
+    With `u·e^{u/2}/sinh u ≤ 8e^{−u/4}` this gives an integrable dominating function.
+- **Conclusion (`WeilGen`).** Let `f` be `C¹` on `ℝ` with `f(u) = 0` for `|u| > 1/2`. Weierstrass-approximate `f'` by
+  polynomials `q_k` with error below `1/(k+1)`. Integrate them to `p_k` with `p_k(−1/2) = f(−1/2)` and cut to `[−1/2, 1/2]`.
+  The cut polynomials are uniformly bounded and uniformly interior-Lipschitz, and they converge pointwise to `f`. Passing
+  to the limit gives
+  - `weilQg (1/2) f ≥ 10⁻⁸ ‖f‖²`;
+  - `0 < weilQg (1/2) f` for `f ≠ 0`;
+  - for even `f`, the same two statements for `weilQ`, because the pole terms `ĝ(±i/2)` agree.
+
+These results use only the standard axioms.
