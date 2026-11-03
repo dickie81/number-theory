@@ -1,0 +1,24 @@
+(b) junction slice: margins of full W at L+ = log(n)/2+0.004
+ n   whole L+ space   old dirs (supp L-)   junction complement   drop(L- -> L+)
+ 2   +5.426e-01       +5.426e-01           +nan (dim 0)   +2.442e-15
+ 3   +9.036e-04       +9.036e-04           +nan (dim 0)   +2.536e-15
+ 4   +8.427e-08       +8.427e-08           +nan (dim 0)   -3.110e-15
+ 5   -1.662e-11       -1.662e-11           +nan (dim 0)   +1.852e-16
+ 7   -3.625e-09       -3.625e-09           +nan (dim 0)   -2.085e-16
+ 8   -3.812e-09       -3.812e-09           +nan (dim 0)   -8.347e-16
+ 9   -1.301e-09       -1.301e-09           +nan (dim 0)   -2.442e-16
+11   -4.741e-09       -4.741e-09           +nan (dim 0)   +3.482e-16
+13   -1.008e-08       -1.008e-08           +nan (dim 0)   +1.108e-16
+
+(a-partial) S-truncated Weil form: slack = min eig(W_inf - primes in S) on pole-orth; cost = max eig(sum of primes outside S)
+ L     S        slack        cost(outside S)   slack>=cost?
+0.6  {inf,2}  -4.225e-02   +6.261e-01        False
+0.6  {inf,2,3} +8.051e-05   +0.000e+00        True
+0.8  {inf,2}  -3.543e-01   +6.343e-01        False
+0.8  {inf,2,3} -1.782e-10   +0.000e+00        False
+1.0  {inf,2}  -5.042e-01   +1.256e+00        False
+1.0  {inf,2,3} -3.421e-01   +9.652e-01        False
+1.2  {inf,2}  -7.568e-01   +1.602e+00        False
+1.2  {inf,2,3} -6.426e-01   +1.255e+00        False
+1.5  {inf,2}  -1.004e+00   +2.026e+00        False
+1.5  {inf,2,3} -9.161e-01   +1.852e+00        False

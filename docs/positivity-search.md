@@ -572,3 +572,25 @@ Verdict: consistent with RH on every support tested, not a proof. Positivity is 
 - Not done this round: the synthetic off-line zero injection. The run budget was used by the E-matrix build.
 
 **Verdict.** The Sonin trace absorbs the archimedean place exactly, and its positivity is a theorem. But it is not a lower bound that survives the primes: the margin it leaves (−E) is about 1e−3, while the prime 2 alone costs about 2e−2. Any route via "W ≥ Sonin trace" would need a semilocal Sonin space that includes the finite places. That is the open step in Connes–Consani's programme, and these numerics give no shortcut to it.
+
+## A slice through the junction (uncertified)
+
+Scripts are in `scripts/positivity/`: `junction_slice.py` and `junction_shell.py`, with results in `junction_slice_results.txt` and `junction_shell_results.txt`. Everything is float64 and uncertified.
+
+**Junction slice.** As the support grows from L− = log(n)/2 − d to L+ = log(n)/2 + d, the orthogonal complement of L²[−L−,L−] inside L²[−L+,L+] is exactly the space of functions supported in the shell L− < |x| < L+.
+- A first attempt worked in the 40-mode sine basis (`junction_slice.py`). There the two spans coincide numerically, the complement is empty, and the measured "drop" is 1e−15. This is a basis artefact, not a result.
+- Done exactly with 10 sines per strip, on the pole-orthogonal shell:
+  - Earlier primes do not act on the shell, so W without n equals the archimedean term: about 2.04 at d = 0.05 and about 2.97 at d = 0.02.
+  - The entering prime power costs exactly Λ(n)/√n: 0.484 (n=2), 0.631 (3), 0.345 (4), 0.718 (5), 0.734 (7), 0.245 (8), 0.366 (9), 0.722 (11), 0.711 (13).
+  - The margin on the shell stays at least 1.3. The archimedean slack grows as the shell narrows, but the prime cost does not.
+- So the new directions are never where negativity enters. Any loss of positivity lives in how the shell couples to the old interior, and that coupling is what the 40-mode results above put at the noise floor.
+
+**Semilocal slice (scoped partial).** The semilocal Sonin projector, with its p-adic cutoff and semilocal Fourier transform (Connes, Selecta Math. 1999, https://arxiv.org/abs/math/9811068; Connes–Consani, https://arxiv.org/abs/2006.13771), was **not** built. Instead I took the S-truncated Weil form W_S = W_∞ − (terms of the primes in S) and compared its smallest eigenvalue on the pole-orthogonal subspace ("slack") with the largest eigenvalue of the prime terms outside S ("cost"):
+- At L = 0.6, W_{∞,2,3} has slack +8e−5, and its outside cost is 0 because 5 has not yet entered.
+- In every other case tested (L from 0.6 to 1.5, S = {∞,2} and {∞,2,3}) the slack is negative, from −0.04 to −1.0, while the outside cost is 0.6 to 2.0.
+- So truncating S destroys positivity rather than leaving slack. Positivity of W comes from cancellation across all primes, not from S-local slack absorbing the remaining primes.
+
+**Verdict.** No inductive mechanism appears in either slice:
+- Junction directions are robustly positive. The archimedean slack of about 2 exceeds each single cost Λ(n)/√n, but those slices are not where W gets tight.
+- S-truncated forms are not positive once L is past the first prime outside S, so there is no slack to spend.
+A true semilocal Sonin trace might behave differently. That question remains open here.
