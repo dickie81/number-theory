@@ -240,6 +240,7 @@ import KreinNeutral
 import WeilHodge
 import ShellSchur
 import ParityGround
+import WeilCert
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1356,3 +1357,7 @@ the linear algebra of its certificates. -/
 #print axioms ShellSchur.margin_of_coupling
 #print axioms ShellSchur.chain_nonneg
 #print axioms ParityGround.parity_of_simple
+#print axioms WeilCert.pos_of_cert
+#print axioms WeilCert.L05_pos
+#print axioms WeilCert.L07_pos
+#print axioms WeilCert.L08_pos

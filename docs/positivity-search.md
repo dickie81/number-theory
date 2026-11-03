@@ -846,3 +846,34 @@ Scripts: `scripts/positivity/hp3.py` and `hp3b.py`; plot `hp3.png`. We measured 
   - At L = 0.8 and 1.0, every Cramér set that differs from the real primes has λ_min between −0.35 and −0.93, including sets with *lower* alignment than the real primes (0.675 against 0.732 at L = 1).
   - Sets identical to the real primes give λ ≈ +1e-17. That value comes from float64-rounded inputs; the exact value is 2.27e-17.
 - **Verdict:** in the range positivity cares about, it is decided by the exact arithmetic of log n and its weights, not by how close the phases come to aligning. The barrier phrase "the phases cannot align" refers to frequencies up to T₁ = 2πe^{A_L} ≫ T*, and low alignment on [1, T*] neither implies nor follows from positivity. Credit: Grok Bot numerics.
+
+## Lean certificate for finite-mode Weil positivity (`WeilCert`)
+
+Scripts: `scripts/positivity/arbcert.py` (python-flint/arb ball arithmetic) and `certgen.py` (exact rationals).
+
+**Lean module `lib/core/WeilCert.lean`:**
+- **`pos_of_cert`, fully proved:** let C = MᵀDM + δI with D ≥ 0. If |A_ij − C_ij| ≤ ρ for all i, j and n²ρ < δ, then xᵀAx > 0 for every x ≠ 0.
+- **`WeilEnclosure`, a structure:** its field `encl` is the explicit hypothesis that the true Weil-matrix entries lie within ρ of C. This is the arb claim, and Lean does not check it.
+- **`L05_pos`, `L07_pos`, `L08_pos`:** positivity of the 24-mode even-sector Weil matrix at L = 1/2, 7/10, 4/5, *given* that hypothesis. The concrete checks (D ≥ 0 and n²ρ < δ) are done by `norm_num`; there is no `native_decide`.
+- **Axioms:** `#print axioms` shows only propext, Classical.choice and Quot.sound.
+
+**Enclosure (arb):**
+- **Setup:** Zhu's convention (eq. 17), with modes s_k, k odd ≤ 47. The prime and pole terms are in closed form.
+- **Archimedean integral:** on [η, 2L] it is computed with `acb.integral`. On [0, η] it is a Taylor series at 0, with the remainder bounded by Cauchy's estimate on |z| = R. The bound uses a ball cover of the circle, R = min(1, 7/α_max) and η = R/4.
+
+**Margins:** the certificate has far more room than needed at every L.
+
+| L | λ_min(mid) | δ | max arb radius | ρ | n²ρ/δ |
+|---|---|---|---|---|---|
+| 0.5 | 1.05e-6 | 5.3e-7 | 1.8e-30 | 1.8e-30 | 2e-21 |
+| 0.7 | 4.99e-13 | 2.5e-13 | 5.5e-40 | 5.5e-40 | 1e-24 |
+| 0.8 | 2.27e-17 | 1.1e-17 | 2.3e-51 | 2.4e-51 | 1e-31 |
+
+The gap of about 2e-17 at L = 0.8 is easily reachable at 200-bit precision.
+
+**What is not proved in Lean:**
+- the arb computation, including its quadrature, Taylor remainder and Cauchy bounds;
+- the explicit formula and Zhu's time-domain archimedean identity;
+- the identification of A_ij with Q(s_i, s_j).
+
+The result covers only the 24-dimensional span of the modes, so it is not positivity for every f supported in [−L, L]. Zhu's certified theorem handles the infinite-dimensional tail with a separate frequency-split argument, which isn't reproduced here. Built with Grok Bot assistance.
