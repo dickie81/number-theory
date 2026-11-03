@@ -1015,3 +1015,38 @@ This section works by an AI assistant (Grok Bot) and splits the earlier `ZhuRed`
   - `primes_L05` already settles the arithmetic part of step 1.
 - `EvenHead` / `OddHead` (**arb numerics**): unchanged.
 - Coefficients versus functions (**functional analysis**): unchanged; positivity is stated on coefficient vectors.
+
+## Plancherel inputs and the repo's Weil form on Legendre modes (`WeilPlanch`)
+
+This section's work was done by an AI assistant (Grok Bot).
+
+**Sign correction.** `WeilTailB.That` now carries the factor (−1)^{⌊n/2⌋}. This is the real part of iⁿ in the Legendre–Fourier identity, and it is the convention the arb head computation uses. Without it, the Lean matrix differed from the arb matrix by signs on the entries with i + j odd, so `EvenHead`/`OddHead` as stated would not have matched the numerics. All bounds are unaffected, because they only use |T̂ₙ|.
+
+**What the repo provides.**
+- `WeilForm.weilQ a g` (in `Roadmap`) is the concrete time-domain Weil form. It consists of:
+  - the pole term 2(∫g e^{−u/2})²;
+  - the archimedean part (Re ψ(1/4) − log π)‖g‖² + ∫₀^∞[g⋆g(0) − g⋆g(u)]e^{u/2}/sinh u du;
+  - the prime sum −2ΣΛ(n)n^{−1/2}g⋆g(log n).
+- It is defined for any real g and is the right form for even g. The `Probe` class adds evenness, support, L² and convergence of the archimedean integral. The strip class `StripTest` (analyticity of ĝ² on |Im| < 1 with 1/(1+Re²) decay) is only used to tie the form to zeta zeros, and is not needed here.
+- The Legendre functions T_n(u) = √(2n+1)·P̃_n(u + 1/2) on [−1/2, 1/2] are built from Mathlib's `shiftedLegendre`.
+
+**Proved (standard axioms only):**
+- `Psi_cont` and `That_cont`: continuity, using the stack's `differentiableOn_digamma` and Mathlib's parametric-integral continuity.
+- `Psi_growth`: |Ψ_L(t)| ≤ 21√(1+t), from `norm_digamma_le`.
+- `modePlancherel_of`: `ModePlancherel` follows from `ModeDecay` and `ModeOrth`. Integrability of T̂ₙT̂ₘ and Ψ_L·T̂ₙT̂ₘ on (0, ∞) is proved using the majorant K(1+|t|)^{−3/2} (Mathlib's `integrable_one_add_norm`).
+- `prime_sum_L05`: the repo's full prime series for f = Σxᵢ T_{2i} equals its n = 2 term. The autocorrelation vanishes for |u| > 1, and log n > 1 for n ≥ 3.
+- `weilQ_eq_QF`: weilQ(1/2)(f) = QF(x), given the bridge below. This uses the integral split Ψ_L = (Re ψ − log π) − √2 log 2·cos(t log 2) and 2Λ(2)/√2 = √2 log 2.
+- **Final theorem `L05_even_weilQ`:** for N ≥ 28 and x ≠ 0, 0 < weilQ(1/2)(Σ_{i<N} xᵢ T_{2i}).
+- **Odd sector `L05_odd_QF`:** positivity of the frequency form. The repo's `weilQ` covers only even g (its pole term has the even sign).
+
+**Named inputs left:**
+- `EvenHead` / `OddHead` — arb numerics.
+- `ModeDecay` — special functions: |T̂ₙ(t)| ≤ Cₙ/(1+t), i.e. jₙ(x) = O(1/x).
+- `ModeOrth par` — functional analysis: (1/π)∫₀^∞ T̂ₙT̂ₘ = δₙₘ. This follows from:
+  - the Legendre–Fourier identity ∫₋₁¹Pₙe^{ixt} = 2iⁿjₙ(t);
+  - Legendre orthonormality;
+  - Plancherel, which Mathlib has only as an abstract L² isometry, not linked to the integral formula for L¹ ∩ L² functions.
+- `EvenBridge.pole` — special functions: ∫₋₁¹Pₙ(x)e^{ax}dx = 2iₙ(a).
+- `EvenBridge.arch` — Zhu analytic (Lemma 2.5): the archimedean distribution in |F|² form.
+- `EvenBridge.acorr` — Fourier: f⋆f(log 2) = (1/π)∫₀^∞cos(t log 2)F². This is Wiener–Khinchin, reachable from Mathlib's `Continuous.fourierInv_fourier_eq` once `ModeDecay` makes F² integrable, but not formalised here.
+- Odd sector — Zhu analytic: a concrete odd Weil form, with pole −2(∫f sinh)², is not in the repo, so the odd statement remains about the frequency form.

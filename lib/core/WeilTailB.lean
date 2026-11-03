@@ -71,7 +71,8 @@ theorem iP_bound (n : ℕ) {x : ℝ} (hx : 0 ≤ x) (hx1 : x ≤ 1) : |iP n x| �
 
 /-! ## Transforms, pole vector and the reduced matrix (L = 1/2, T# = 30) -/
 
-noncomputable def That (n : ℕ) (t : ℝ) : ℝ := 2 * Real.sqrt ((1 / 2) * (n + 1 / 2)) * jP n (t / 2)
+/-- `T̂ₙ(t) = (−1)^{⌊n/2⌋} 2√(Lνₙ) jₙ(tL)`, `L = 1/2` (the sign `iⁿ` of the Legendre–Fourier identity, real part). -/
+noncomputable def That (n : ℕ) (t : ℝ) : ℝ := (-1) ^ (n / 2) * (2 * Real.sqrt ((1 / 2) * (n + 1 / 2)) * jP n (t / 2))
 noncomputable def pole (n : ℕ) : ℝ := 2 * Real.sqrt ((1 / 2) * (n + 1 / 2)) * iP n (1 / 4)
 noncomputable def b (n : ℕ) : ℝ := (1 + (2 * n + 1) / 4) * (15 / 2) ^ n / n !
 
@@ -84,6 +85,7 @@ lemma y_eq (n : ℕ) : (1 / 2 : ℝ) * (n + 1 / 2) = (2 * n + 1) / 4 := by ring
 
 theorem That_bound (n : ℕ) {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 30) : |That n t| ≤ b n := by
   unfold That b
+  rw [abs_mul, abs_pow, abs_neg, abs_one, one_pow, one_mul]
   have hy : (0:ℝ) ≤ (1 / 2) * (n + 1 / 2) := by positivity
   have hs := two_sqrt_le hy
   rw [y_eq] at hs hy

@@ -244,6 +244,7 @@ import WeilCert
 import WeilTail
 import WeilTailB
 import WeilZhuRed
+import WeilPlanch
 import ZerosInfinite
 import ZerosDense
 import BallHadamard
@@ -1385,3 +1386,10 @@ the linear algebra of its certificates. -/
 #print axioms WeilZhuRed.L05_odd
 #print axioms WeilZhuRed.QF_even_pos
 #print axioms WeilZhuRed.QF_odd_pos
+#print axioms WeilPlanch.Psi_cont
+#print axioms WeilPlanch.Psi_growth
+#print axioms WeilPlanch.modePlancherel_of
+#print axioms WeilPlanch.prime_sum_L05
+#print axioms WeilPlanch.weilQ_eq_QF
+#print axioms WeilPlanch.L05_even_weilQ
+#print axioms WeilPlanch.L05_odd_QF
