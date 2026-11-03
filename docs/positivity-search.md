@@ -719,3 +719,30 @@ Same script. We compared the zero-side form 2Σ|f̂(γ)|² (600 ordinates) for t
 - **Verdict:** the real configuration is typical of GUE on every statistic tested. Any real zero set gives a positive zero-side form, so positivity carries no information here. There is no atypicality to exploit.
 
 Overall: all three ideas reduce to Weil positivity restated. No Lean lemma was added, because "block-diagonal with nonnegative blocks implies nonnegative" is trivial. Numerics by Grok Bot.
+
+## Entropy routes (uncertified)
+
+Script: `scripts/positivity/entropy.py`, output `entropy_results.txt`, plot `entropy.png`. The setup is the same W_L as before. Controls: log n jittered (σ = 0.05) and the sign of p = 3 flipped. Fourier convention: f̂(t) = ∫f e^{−itx}, with density |f̂|²/(2π‖f‖²). In this convention the Hirschman–Beckner bound is H(|f|²) + H(|f̂|²) ≥ log(πe) ≈ 2.145.
+
+- **Entropic uncertainty:** every vector tested satisfies the bound, with entropy sums of 3.0–4.3 for real primes and controls alike.
+  - The real near-null vectors put only 0.04% (L = 1) and 0.09% (L = 2) of the mass of |f̂|² within 0.25 of a zero. Those windows cover 25% of [0, 400].
+  - The sign-flip control's bottom vector also hides its mass (0.01–0.06%), yet has eigenvalue −1.3 to −2.0.
+  - So low dip mass doesn't imply positivity. The entropy bound only says |f̂|² is spread out, and a function of exponential type can vanish at roughly N(K) prescribed points at no entropy cost. No entropic lower bound on W_L follows.
+- **Von Neumann entropy of W₊/Tr W₊:**
+  - For real primes it falls from 3.58 to 1.34 over L = 0.4–3, as the near-null directions drop out of the effective rank.
+  - The controls stay higher: 2.55 (jitter) and 2.76 (flip) at L = 3.
+  - The negative-mass ratio Tr W₋/Tr|W| is ≲ 2e-8 for real primes against 0.37–0.39 for the controls. That detects failure, but it is just the eigenvalue sign again.
+  - No data-processing monotonicity is available: restricting to a subspace is a compression, not a quantum channel acting on a fixed state, and S isn't monotone in any useful direction.
+- **Bost–Connes:**
+  - Z(β) = ζ(β), energy E = −ζ′/ζ, S = log Z + βE. Both diverge as β → 1⁺ (E = 99.4 and S = 105 at β = 1.01). This is the pole that drives the KMS phase transition.
+  - No positivity statement in the complex-β plane is known to be equivalent to RH beyond the explicit formula itself.
+  - Lee–Yang circle theorems need ferromagnetic pair interactions, and no such structure is known for this system.
+- **de Bruijn–Newman heat flow:**
+  - H_t is computed by quadrature over u ∈ [0, 1.2]. At t = 0, its zeros divided by 2 match γ to 2e-9.
+  - All 8 zeros below 90 stay real for t ∈ [−0.2, 0.2] and drift steadily, with dz/dt ≈ −0.5 to −1.
+  - The ODE dz_k/dt = 2Σ1/(z_k − z_j), truncated to the computed zeros, doesn't reproduce the drift, because the far zeros dominate.
+  - The near-null dimension at L = 2 stays at 24 for every t. The near-null structure depends only on the zero count, not on reality, so the heat flow doesn't interact with it.
+- **Literature:** RH ⇔ Λ ≤ 0. Rodgers and Tao proved Λ ≥ 0 (Forum Math. Pi 2020, arXiv 2018), so RH ⇔ Λ = 0. Λ = 0 itself is *not* known. Polymath15 proved Λ ≤ 0.22 and Platt–Trudgian improved it to Λ ≤ 0.2. Bost–Connes is from Selecta Math. 1995; that citation is from memory and wasn't rechecked.
+- **Prime and Liouville entropy:** up to N = 10⁶, the block entropy of the Liouville function is indistinguishable from a random ±1 sequence, with deficits of 3.0e-3 against 3.1e-3 bits at block length 12. max|M(x)|/√x on [10³, 10⁶] is 0.47. RH ⇔ M(x) = O(x^{1/2+ε}) is the known equivalence. Entropy at this scale is a weaker statistic than M(x) itself and adds nothing.
+
+Verdict: none of the entropy routes adds anything beyond Weil positivity or a known RH equivalence. No Lean lemma was added. Numerics by Grok Bot.

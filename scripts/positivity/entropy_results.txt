@@ -1,0 +1,70 @@
+1. entropic uncertainty (bound log(pi e)=2.1447; support bound H(p)<=log 2L)
+  L  set    vec        H(p)    H(q)    sum    mass within 0.25 of a zero (dips cover %s of [0,400])
+ 1.0 real  bottom eig-9.7e-10  -0.172  3.187  3.014  0.0004
+ 1.0 real  mid    eig+1.7e+00  -0.081  3.918  3.837  0.1353
+ 1.0 real  top    eig+3.7e+00  0.099  3.356  3.455  0.2902
+ 1.0 jit   bottom eig-5.8e-01  0.171  3.166  3.337  0.0112
+ 1.0 jit   mid    eig+1.6e+00  -0.101  3.196  3.095  0.1261
+ 1.0 jit   top    eig+3.8e+00  0.146  3.251  3.397  0.1416
+ 1.0 flip  bottom eig-1.3e+00  0.262  2.794  3.055  0.0001
+ 1.0 flip  mid    eig+1.6e+00  -0.226  3.838  3.612  0.1458
+ 1.0 flip  top    eig+3.6e+00  0.150  3.288  3.438  0.1935
+ 2.0 real  bottom eig-9.8e-08  0.655  3.595  4.250  0.0009
+ 2.0 real  mid    eig+1.5e-12  0.663  3.525  4.187  0.0032
+ 2.0 real  top    eig+4.7e+00  0.859  2.713  3.572  0.3583
+ 2.0 jit   bottom eig-1.8e+00  0.687  2.761  3.448  0.1244
+ 2.0 jit   mid    eig+2.9e-01  0.711  2.863  3.574  0.0136
+ 2.0 jit   top    eig+5.2e+00  0.886  2.459  3.345  0.2588
+ 2.0 flip  bottom eig-2.0e+00  0.773  2.335  3.109  0.0006
+ 2.0 flip  mid    eig+7.8e-01  0.668  3.088  3.755  0.0061
+ 2.0 flip  top    eig+3.8e+00  0.723  2.871  3.594  0.3371
+  dip measure fraction of [0,400]: 0.2525
+
+2. von Neumann entropy S of rho=W_+/Tr W_+, negative-mass ratio Tr W_-/Tr|W|, effective rank e^S
+ L=0.4  S real 3.575 jit 3.572 flip 3.575 | neg-mass real -0.0e+00 jit -0.000 flip -0.000
+ L=0.6  S real 3.508 jit 3.503 flip 3.516 | neg-mass real -0.0e+00 jit -0.000 flip 0.002
+ L=0.8  S real 3.398 jit 3.410 flip 3.461 | neg-mass real 2.8e-12 jit 0.001 flip 0.018
+ L=1.0  S real 3.228 jit 3.324 flip 3.348 | neg-mass real 2.6e-11 jit 0.021 flip 0.049
+ L=1.2  S real 3.009 jit 3.225 flip 3.287 | neg-mass real 3.7e-10 jit 0.047 flip 0.095
+ L=1.4  S real 2.781 jit 3.089 flip 3.138 | neg-mass real 4.2e-10 jit 0.088 flip 0.143
+ L=1.6  S real 2.517 jit 2.944 flip 3.071 | neg-mass real 5.0e-10 jit 0.142 flip 0.197
+ L=1.8  S real 2.324 jit 2.850 flip 3.038 | neg-mass real 2.4e-09 jit 0.182 flip 0.226
+ L=2.0  S real 2.108 jit 2.748 flip 3.026 | neg-mass real 3.2e-09 jit 0.246 flip 0.273
+ L=2.2  S real 1.857 jit 2.714 flip 3.007 | neg-mass real 4.0e-09 jit 0.261 flip 0.300
+ L=2.4  S real 1.819 jit 2.696 flip 2.939 | neg-mass real 4.0e-09 jit 0.288 flip 0.314
+ L=2.6  S real 1.547 jit 2.628 flip 2.906 | neg-mass real 1.1e-08 jit 0.316 flip 0.321
+ L=2.8  S real 1.436 jit 2.539 flip 2.806 | neg-mass real 8.7e-09 jit 0.330 flip 0.349
+ L=3.0  S real 1.336 jit 2.554 flip 2.761 | neg-mass real 1.9e-08 jit 0.365 flip 0.387
+
+3a. Bost-Connes: Z=zeta(beta), E=<H>=-zeta'/zeta, S=log Z+beta E (natural units)
+ beta=1.01  log Z=4.6109  E=99.4247  S=105.0298  F=-logZ/beta=-4.5653
+ beta=1.05  log Z=3.0244  E=19.4320  S=23.4280  F=-logZ/beta=-2.8803
+ beta=1.10  log Z=2.3594  E=9.4410  S=12.7445  F=-logZ/beta=-2.1449
+ beta=1.50  log Z=0.9603  E=1.5052  S=3.2181  F=-logZ/beta=-0.6402
+ beta=2.00  log Z=0.4977  E=0.5700  S=1.6376  F=-logZ/beta=-0.2489
+ beta=3.00  log Z=0.1840  E=0.1648  S=0.6785  F=-logZ/beta=-0.0613
+ beta=4.00  log Z=0.0791  E=0.0637  S=0.3338  F=-logZ/beta=-0.0198
+
+3b. de Bruijn-Newman: real zeros of H_t(z)=int_0^inf e^{t u^2} Phi(u) cos(zu) du; H_0 zeros = 2*gamma
+ t=-0.2  #real zeros<90: 8  first: [14.1927 21.0977 25.0694 30.521  32.9811 37.6703]
+ t=-0.1  #real zeros<90: 8  first: [14.1637 21.0598 25.0401 30.4728 32.9582 37.6282]
+ t=+0.0  #real zeros<90: 8  first: [14.1347 21.022  25.0109 30.4249 32.9351 37.5862]
+ t=+0.1  #real zeros<90: 8  first: [14.1058 20.9843 24.9815 30.3773 32.9117 37.5443]
+ t=+0.2  #real zeros<90: 8  first: [14.0768 20.9467 24.9522 30.3299 32.888  37.5025]
+  check H_0 zeros/2 vs gamma: max diff 2.13e-09
+  dz/dt (central diff) first 6: [-0.58  -0.755 -0.586 -0.955 -0.465 -0.839]
+  ODE dz_k/dt = 2 sum_{j!=k} 1/(z_k-z_j) (truncated to zeros<90, partial): [-0.278 -0.291 -0.017 -0.224  0.354  0.183]
+  near-null dim of zero-side form at L=2 using zeros of H_t/2 (<45) + G beyond:
+   t=-0.2  #<1e-6 24
+   t=-0.1  #<1e-6 24
+   t=+0.0  #<1e-6 24
+   t=+0.1  #<1e-6 24
+   t=+0.2  #<1e-6 24
+
+4. Liouville block entropy (bits) up to N=1e6 vs random +-1; Mertens max |M(x)|/sqrt x
+ k= 1  Liouville 1.00000  random 1.00000  max 1  deficit L 2.03e-07 R 6.93e-09
+ k= 2  Liouville 2.00000  random 2.00000  max 2  deficit L 1.29e-06 R 1.39e-08
+ k= 4  Liouville 3.99999  random 4.00000  max 4  deficit L 5.26e-06 R 3.24e-06
+ k= 8  Liouville 7.99983  random 7.99983  max 8  deficit L 1.71e-04 R 1.68e-04
+ k=12  Liouville 11.99701  random 11.99692  max 12  deficit L 2.99e-03 R 3.08e-03
+ max |M(x)|/sqrt x on [1e3,1e6]: 0.472
