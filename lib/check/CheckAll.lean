@@ -16,6 +16,7 @@ import PsiExponent
 import HalfPlaneLindelof
 import SmoothPerron
 import MertensExponent
+import LagariasCriterion
 import HalfPlaneJoinsPNT
 import DivisorExponent
 import ChiPNT
@@ -345,6 +346,12 @@ import ParityGround
 #print axioms MertensExponent.mertens_omega_Theta
 #print axioms MertensExponent.rh_iff_Theta_eq_half
 #print axioms MertensExponent.rh_iff_mertens
+
+/- Lagarias's criterion, RH iff `σ(n) ≤ H_n + e^{H_n} log H_n` for every `n ≥ 1`, from Robin's theorem taken as two
+hypotheses (`formalisations/lagarias-criterion.md`); its finite part, `1 ≤ n ≤ 5040`, is a certificate the kernel
+checks. -/
+#print axioms LagariasCriterion.lagarias_criterion
+#print axioms LagariasCriterion.lagarias_upto_5040
 #print axioms MertensExponent.limsup_mexpo
 #print axioms MertensExponent.moebius_tendsto_of_Theta_lt
 #print axioms MertensExponent.moebius_not_tendsto_of_lt_Theta

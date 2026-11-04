@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1313 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1315 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 150 | 417 |
+| `lib/core` | 151 | 419 |
 | `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -387,6 +387,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `LandauLaplace.LSeries_landau`: Landau's theorem for L-series with nonnegative coefficients
 - `LandauLaplace.LSeries_not_holomorphic_at_abscissa`: An L-series with nonnegative coefficients is singular at the real point of its abscissa
+
+#### `LagariasCriterion`: Lagarias's criterion for the Riemann hypothesis, from Robin's theorem
+
+- `LagariasCriterion.lagarias_upto_5040`: Lagarias's inequality for `1 ≤ n ≤ 5040` ([note](../formalisations/lagarias-criterion.md))
+- `LagariasCriterion.lagarias_criterion`: Lagarias's criterion ([note](../formalisations/lagarias-criterion.md))
 
 #### `LatticeCount`: The ball tower from counting integer points
 
