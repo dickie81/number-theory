@@ -280,8 +280,8 @@ are these, with the branch's own numbers (floating point, uncertified) checked a
   hub's vectors, and the shells would decouple if the hub carried the junction. By energy they nearly do: the off-shell
   energy left is 44%, 20% and 2% for hubs of the first 8, 16 and 63 integers. By positivity they do not: the
   contraction norms of adjacent shells move from `0.990`–`1.000` only to `0.868`–`0.995` at 63, and the directions
-  that carry 95% of the residual coupling grow from 12 to 55. Random integers below 64 and the smallest primes behave
-  like the first integers (14% and 15% left for 16 of them), so there is no arithmetic hub. The hub removes the few
+  that carry 95% of the residual coupling grow from 12 to 55. Random integers below 64 and the primes below 64 behave
+  like the first integers (14% left for 16 random ones, 12% for the 18 primes), so there is no arithmetic hub. The hub removes the few
   heavy zero directions and leaves a longer tail: the shared junction is `ℓ²` of all the zeros, the Hilbert–Pólya space
   of `BallLattice.rh_iff_realization`, which exists exactly under RH. In the finite-field case the shared junction is
   the Néron–Severi lattice of `C × C`, of finite rank `2g`; for `ζ` it is infinite-dimensional, the point that
