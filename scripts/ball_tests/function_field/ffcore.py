@@ -50,10 +50,11 @@ def gram(Pc, q, N, ctx=mp):
     return G
 
 def pivots(G):
-    """LDL pivots d_k (Gram-Schmidt squared norms). object-array mp arithmetic."""
+    """LDL pivots d_k (Gram-Schmidt squared norms) of a real symmetric or complex Hermitian object-array mp matrix.
+    The one LDL routine of scripts/ball_tests: dirichlet/dcore.py and zeta_mp.py import it."""
     A = G.copy(); N = A.shape[0]; d = []
     for k in range(N):
-        p = A[k, k]; d.append(p)
+        p = mp.re(A[k, k]); d.append(p)
         if p <= 0:
             d += [mp.mpf('nan')]*(N-k-1); break
         col = A[k+1:, k] / p

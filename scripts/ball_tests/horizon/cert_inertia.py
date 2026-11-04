@@ -1,17 +1,27 @@
-"""Certify lambda_min brackets by Sylvester inertia: LDL in arb of G - t*M; #negative pivots = #eigs < t (M=I or flat F)."""
-import sys, json
+"""Certify lambda_min brackets by Sylvester inertia: LDL in arb of G - t*M; #negative pivots = #eigs < t.
+M = I for lambda_min(G_N), or the flat model d_1*min(m, n) for the pencil.
+
+    python3 cert_inertia.py N [PREC] [DIGITS]   # bracket the float64 estimates to relative 10^-DIGITS (default 6)
+
+The float64 estimates are computed here from scripts/ball_orbit.py, so no data file is needed.
+"""
+import os, sys
 from fractions import Fraction
-sys.argv = [sys.argv[0], sys.argv[1]] + sys.argv[2:]
-N = int(sys.argv[1])
-sys.path.insert(0, __import__('os').path.join(__import__('os').path.dirname(__import__('os').path.abspath(__file__)), '..', 'hunt'))
-import importlib.util
+import numpy as np, scipy.linalg as sl
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, '..', 'hunt')); sys.path.insert(0, os.path.join(HERE, '..', '..'))
 from flint import arb, ctx
-ctx.prec = int(sys.argv[2]) if len(sys.argv)>2 else 200
-src = open(__import__('os').path.join(__import__('os').path.dirname(__import__('os').path.abspath(__file__)), '..', 'hunt', 'cert_zeta.py')).read().split('G = [[None]')[0]
-src = src.replace('ctx.prec = 256', 'ctx.prec = %d' % (int(sys.argv[2]) if len(sys.argv)>2 else 256)); exec(src)
-R = {r['N']: r for r in json.load(open('zeta_eigs.json'))}
+from cert_zeta import make_kover
+import ball_orbit as bo
+N = int(sys.argv[1])
+ctx.prec = int(sys.argv[2]) if len(sys.argv) > 2 else 256
+DIG = int(sys.argv[3]) if len(sys.argv) > 3 else 6
+Kover = make_kover(N)
+G = bo.gram(N); m = np.arange(1, N+1)
+EST = {'I': np.linalg.eigvalsh(G)[0],
+       'F': sl.eigh(G, G[0, 0]*np.minimum.outer(m, m).astype(float), eigvals_only=True, subset_by_index=[0, 0])[0]}
 def negcount(t, kind):
-    d1 = m_kover = Kover(Fraction(1))
+    d1 = Kover(Fraction(1))
     A = [[None]*N for _ in range(N)]
     for m in range(1, N+1):
         for n in range(1, m+1):
@@ -26,7 +36,8 @@ def negcount(t, kind):
             f = A[i][k]/p; Ai = A[i]
             for j in range(k+1, i+1): Ai[j] = Ai[j] - f*A[j][k]
     return neg
-for kind, key in [('I', 'lam'), ('F', 'gen')]:
-    lam = R[N][key]
-    lo, hi = arb(lam)*(1-arb(10)**-int(sys.argv[3] if len(sys.argv)>3 else 6)), arb(lam)*(1+arb(10)**-int(sys.argv[3] if len(sys.argv)>3 else 6))
+for kind in ['I', 'F']:
+    lam = float(EST[kind])
+    eps = arb(10)**-DIG
+    lo, hi = arb(lam)*(1-eps), arb(lam)*(1+eps)
     print(N, kind, 'float64 %.10e' % lam, 'eigs<lo:', negcount(lo, kind), 'eigs<hi:', negcount(hi, kind), flush=True)

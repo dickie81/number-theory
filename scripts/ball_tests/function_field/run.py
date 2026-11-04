@@ -1,7 +1,7 @@
 import sys, random, json, math, mpmath as mp, numpy as np
 from multiprocessing import Pool
 from ffcore import gram, pivots, power_sums
-from curves import random_curve, lpoly, rh_ok
+from curves import random_curve, lpoly, rh_ok, nonsingular
 mp.mp.dps = 50
 def analyse(args):
     label, Pc, q, N, mode = args
@@ -13,7 +13,8 @@ def analyse(args):
     tol = mp.mpf(10)**(-30)
     r = [x/d1 for x in d]
     zero = next((idx[k] for k, x in enumerate(r) if not (x > tol)), None)
-    below = next((idx[k] for k, x in enumerate(r) if x < 1), None)
+    # the entries are rational, so an exact tie d_k = d_1 can come out as 1 - eps at 50 digits: not a failure
+    below = next((idx[k] for k, x in enumerate(r) if x < 1 - tol), None)
     finite = [(x, idx[k]) for k, x in enumerate(r) if x > tol]
     mn = min(finite[1:]) if len(finite) > 1 else (None, None)
     return dict(label=label, Pc=Pc, q=q, g=(len(Pc)-1)//2, N=N, mode=mode, d1=float(d1),
@@ -28,14 +29,19 @@ def curves_list(rng, per=6):
             while len(seen) < per and tries < 60:
                 tries += 1
                 f, h = random_curve(q, g, rng)
+                if not nonsingular(q, f, h): continue  # a singular model's counts are not a genus-g curve's
                 c, Ns = lpoly(q, g, f, h)
                 if tuple(c) in seen or not rh_ok(c, q): continue
                 seen.add(tuple(c)); out.append((f"y2+({h})y={f}", c, q))
-        # extremal for square q: maximal (1+sqrt q T)^{2g}, minimal (1-sqrt q T)^{2g}
+        # extremal for square q: maximal (1+sqrt q T)^{2g}, minimal (1-sqrt q T)^{2g}, only where a curve has them.
+        # Elliptic curves of trace -+2 sqrt q exist for square q (Waterhouse), and the Hermitian quartic is maximal
+        # of genus 3 over F_9. The rest are no curve's: minimal g >= 2 would give #C(F_q) = q + 1 - 2g sqrt q < 0,
+        # maximal g >= 2 over F_4 breaks Ihara's bound g <= 1, and maximal g = 2 over F_9 would have 22 > N_9(2) = 20.
         r = math.isqrt(q)
         if r*r == q:
             for g in [1,2,3]:
                 for sgn, nm in [(1,'maximal'),(-1,'minimal')]:
+                    if not (g == 1 or (q, g, sgn) == (9, 3, 1)): continue
                     c = [math.comb(2*g,k)*(sgn*r)**k for k in range(2*g+1)]
                     out.append((f"{nm} g={g}" + (" (Hermitian)" if (q,g,sgn)==(9,3,1) or (q,g,sgn)==(4,1,1) else ""), c, q))
     return out

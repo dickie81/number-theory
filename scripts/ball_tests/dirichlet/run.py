@@ -22,7 +22,6 @@ def job(sp):
         idx = list(range(1, N+1)) if orbit == 'all' else [n for n in range(1, N+1) if math.gcd(n, q) == 1]
         for real in ([False, True] if cplx else [False]):
             G = gram(K, idx, real)
-            herm = max(abs(G[i, j]-mp.conj(G[j, i])) for i in range(0, len(idx), 37) for j in range(0, len(idx), 41))
             d = pivots(G); r = [x/d[0] for x in d]
             fin = [(float(x), idx[k]) for k, x in enumerate(r) if x == x]
             below = [(idx[k], float(x)) for k, x in enumerate(r) if x == x and x < 1][:5]
@@ -30,7 +29,7 @@ def job(sp):
                             PD=all(x == x and x > 0 for x in d), first_nonpos=next((idx[k] for k, x in enumerate(d) if not (x > 0)), None),
                             n_below=sum(1 for x, _ in fin[1:] if x < 1), below=below, min=min(fin[1:]),
                             at=[(k, float(r[i])) for i, k in enumerate(idx) if k in (2, 3, 5, 10, 50, 100, 200, 300, 500)],
-                            last=fin[-1], herm=float(herm)))
+                            last=fin[-1]))
     return out
 if __name__ == '__main__':
     with Pool(8) as P: res = sum(P.map(job, specs(), chunksize=1), [])

@@ -9,7 +9,7 @@ Proof. Under RH, $Q\ge0$. If $Q(v)=0$ with $v\ne0$, then $D(s)=\sum_{n\le N}v_nn
 Let $n_1$ be the largest index with $v_{n_1}\ne0$. For $\sigma_0$ large (depending on $v$), $|D(\sigma_0+it)|\ge\tfrac12|v_{n_1}|n_1^{\sigma_0}$ uniformly in $t$, and $|D|\le\sum|v_n|n^{\sigma_0+R}$ on the disc of radius $R=\sigma_0+1$ about $\sigma_0+it_0$.
 Jensen's formula then bounds the number of zeros of $D$ in each unit-height window of the strip $|\sigma-\tfrac12|\le1$ by a constant $C(v)$, uniformly in $t_0$. So $D$ has $O_v(T)$ zeros of height $\le T$. But $\zeta$ has $\sim\frac{T}{2\pi}\log T$ zeros on the critical line up to $T$ (all of them under RH; unconditionally Selberg gives $\gg T\log T$).
 Contradiction. ∎ (So the minimum is never attained at finite N; this is the "nothing crosses" statement.)
-The same argument without RH shows that the vectors $(n^\rho)_\rho$, $n\le N$, are linearly independent, i.e. $G_N$ (Hermitian, possibly indefinite) is nonsingular.
+The argument needs RH. It shows the vectors $(n^\rho)_\rho$, $n\le N$, are linearly independent as functions on the zeros, but without RH the form pairs $\rho$ with $1-\bar\rho$ and is indefinite, and independent vectors can have a singular Gram matrix under an indefinite pairing ($(1,1)$ under $\mathrm{diag}(1,-1)$ has Gram matrix $[0]$). So nonsingularity of $G_N$ without RH does not follow.
 
 **Theorem 2 (RH). $\lambda_{\min}(G_N)\ll\log^2N/N$** (notes.md, Thm 6; test vector $(-1)^{n-1}/n$; cites a discrete mean-value theorem over zeros).
 
