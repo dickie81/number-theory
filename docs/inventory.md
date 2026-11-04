@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1295 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1313 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 140 | 399 |
+| `lib/core` | 150 | 417 |
 | `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -581,6 +581,54 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `Uniqueness`: The ground-state space, and when the ground state is unique
 
 - `WeilForm.groundState_unique_of_gap`: Uniqueness up to sign, gap form ([note](../formalisations/weil-positivity.md))
+
+#### `V3Asm`: Quadrature of `∫₀¹ wψ(30s) jₙ(15λs) jₘ(15λs) ds`, `λ = log 3`, against the `L = 1/2` piecewise model
+
+- `V3Asm.I3_err`
+
+#### `V3Bessel`: Polynomial enclosure of `jₙ(15 λ s)` on `s ∈ [0,1]`, `λ = log 3`
+
+- `V3Bessel.jP_sX`
+- `V3Bessel.jP_lip`: `|jP n x − jP n y| ≤ (2n X₀^{n−1} + 2X₀ⁿ)/(2^{n+1} n!) · |x − y|` for `x, y ∈ [0, X₀]`.
+
+#### `V3Enc`: The entries `C3` enclosed at `λ = log 3`: every `|C3(2i+par, 2j+par) − ĉᵢⱼ| ≤ 3·10⁻⁹`, `i, j < 28`
+
+- `V3Fin.c3Enc_even`
+- `V3Fin.c3Enc_odd`
+
+#### `V3FinA`: The entry theorem at `λ = log 3`: a passing rational check gives `|C3 n m − c| ≤ εc`
+
+- `V3Fin.entry3`
+
+#### `V3Gen`: Weil positivity on `V'` for every `C¹` test function, at every support `L ≤ log 3 / 2`
+
+- `V3Gen.tendsto_weilQg_sc`: The rescaled form is continuous
+- `V3Gen.coer_vprime`: Weil positivity on `V'` at every support `L ≤ log 3 / 2`, with a coercivity constant
+- `V3Gen.pos_vprime`: Strict positivity on `V'`
+
+#### `V3Log`: Rational bounds on `log 3` to twenty digits
+
+- `V3Log.log_three_mem`
+
+#### `V3Main`: Weil positivity on Connes–Consani's subspace `V'` at support `log 3 / 2`, on rescaled Legendre mode sums
+
+- `V3Main.even_sector`: Even sector
+- `V3Main.odd_sector`: Odd sector
+- `V3Main.vprime_hx`: Weil positivity on `V'` at support `log 3 / 2`
+
+#### `V3Pole`: Connes–Consani's subspace `V'` in mode coefficients, and the pole vector at `λ = log 3`
+
+- `V3Pole.pole_mode_gen`
+- `V3Pole.pole3_enc`
+
+#### `V3Scale`: Rescaling `[−1/2, 1/2]` to `[−L*, L*]`, `L* = log 3 / 2`
+
+- `V3Scale.weilQg_sc`: The Weil form at support `log 3 / 2` of a rescaled mode sum
+
+#### `V3Zhu`: Zhu's reduction at support `log 3 / 2`, and the sector theorem on Connes–Consani's subspace
+
+- `V3Zhu.QF3_ge`: Zhu's reduction at support `log 3 / 2`
+- `V3Zhu.sector_margin3`: Sector theorem at support `log 3 / 2`
 
 #### `VinoRec`: Vinogradov's mean value theorem, step I.3b: bad count and the one-step inequality
 

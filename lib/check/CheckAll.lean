@@ -291,6 +291,7 @@ import GsTail
 import GsUpper
 import OddMargin2
 import GsMain
+import V3Gen
 import ParityGround
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
@@ -1454,4 +1455,22 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms GsMain.v_testFn
 #print axioms GsMain.ground_state
 #print axioms GsMain.ground_state_testFn
+#print axioms V3Log.log_three_mem
+#print axioms V3Scale.weilQg_sc
+#print axioms V3Zhu.QF3_ge
+#print axioms V3Zhu.sector_margin3
+#print axioms V3Bessel.jP_sX
+#print axioms V3Bessel.jP_lip
+#print axioms V3Asm.I3_err
+#print axioms V3Fin.entry3
+#print axioms V3Fin.c3Enc_even
+#print axioms V3Fin.c3Enc_odd
+#print axioms V3Pole.pole_mode_gen
+#print axioms V3Pole.pole3_enc
+#print axioms V3Main.even_sector
+#print axioms V3Main.odd_sector
+#print axioms V3Main.vprime_hx
+#print axioms V3Gen.tendsto_weilQg_sc
+#print axioms V3Gen.coer_vprime
+#print axioms V3Gen.pos_vprime
 #print axioms WeilOdd.L05_mixed
