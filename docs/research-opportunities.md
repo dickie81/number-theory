@@ -219,6 +219,12 @@ and the inventory would carry them.
 5. **`k`-free numbers:** `Q_k(x) = x/ζ(k) + O(x^{1/(k+1−Θ)+η})`, the argument of `SquarefreeCount` with `d^k` in
    place of `d²`.
 6. **Pell's equation** and **`p = x² + 27y²`**: already in `account.md`'s within-reach list.
+7. **Lagarias's criterion**, RH if and only if `σ(n) ≤ H_n + e^{H_n} log H_n` for every `n ≥ 1`: now in the library
+   as `LagariasCriterion.lagarias_criterion`, deduced from Robin's theorem taken as two hypotheses, with the finite
+   part `n ≤ 5040` a kernel-checked certificate ([lagarias-criterion.md](../formalisations/lagarias-criterion.md)).
+   It is the one criterion in the catalogue stated inside the Euler product alone, so it has no `dh` column. What
+   would make it unconditional is Robin's theorem itself: explicit bounds for `θ(x) − x` under RH and the analysis of
+   the colossally abundant numbers.
 
 ## 6. Directions looked at and not recommended now
 
