@@ -232,6 +232,53 @@ and the inventory would carry them.
   `account.md`, and §1 and §2 above would gain `23/24` and the constant `8` in place of `12`.
 - **Linnik below `2.198` by the present method:** not possible (§3.1).
 
+### 6.1 The `positivity-search` branch and its gravastar strand
+
+The branch (84 commits ahead of `main`, 3 November; `docs/positivity-search.md` there) is a search for the positivity
+of `ζ`'s Weil form without its zeros. Its proved part on the Weil form at `L = 1/2` is on `main`
+([weil-positivity-l05.md](weil-positivity-l05.md), pull request #81) and continues in #83. The rest is a sequence of
+constructions, each tested and each ending in a verdict; the "gravastar" ones, a tower of spheres joined at shells,
+are these, with the branch's own numbers (floating point, uncertified) checked against its results files:
+
+- **`GravastarTower` (proved).** On nested sections of the orbit Gram form the excess `ε_N = −λ_min(G_N)` is monotone,
+  RH is `ε_N ≤ 0` at every level, and balance up to every `δ > 0` at infinitely many levels is already RH
+  (`rh_of_frequently_balanced`, `rh_of_tendsto`). So "balanced in the limit" is exact balance: no finite certificate
+  and no asymptotic argument on nested sections can accumulate into RH. This is the strand's one real theorem, and it
+  is a closing one.
+- **`GravastarMargin` (proved) with `scripts/positivity/gravastar_margin.py`.** A nonnegative margin at every level is
+  RH; a failure, once present, persists up the tower. Numerically the junction margin `1 − ‖A^{−1/2}BC^{−1/2}‖` between
+  the top two dyadic blocks decays like `M^{−1.66}` and the global `λ_min` like `M^{−0.87}`, against `M^{−1}` for the
+  arithmetic-free kernel `e^{−|u|/2}`. Moving the first zero off the line to `1/2 ± δ ± 14.13i` turns the margin negative
+  from `M ≈ 1023, 4095, 8191` for `δ = 0.05, 0.02, 0.01`, so the margin detects an off-line zero of size `δ` from
+  `M ≈ 80/δ` on: a detector whose reach is far behind direct computation of the zeros, and no proof.
+- **The junction is the zeros.** The cross terms between dyadic blocks have no low-rank structure (about twelve
+  directions for 95%, independent of size), are exactly scale invariant in the log variable (the limit kernel
+  `B_∞(u, v)` has singular values `0.024, 0.021, 0.007, …`), and their leading directions are fitted by `n^{±iγ}` with
+  `γ` near `14.1` and `21.0`. Weighting the shells by sphere areas is a congruence, which changes nothing, and any
+  asymmetric weighting breaks positivity. The de Sitter and junction-sphere forms are RH restated
+  (`DeSitterTower.rh_iff_deSitter`, `JunctionSphere.rh_iff_remainder`), and the only outer-product decomposition of the
+  limit kernel is Bochner's sum over the zeros (`OuterLimit`).
+- **The physical towers.** Truncated modular cusps joined by lossless Fresnel junctions (`leaky_tower.py`) have a real
+  cavity spectrum whose distance to `γ_n` and `γ_n/2` is at the random baseline, like random junctions; the zeros sit at
+  the poles `ρ/2` of the scattering matrix, off the unitary line, and closing the system does not move them.
+  Tangherlini black holes in `D = 4…40` dimensions (`bh_tower.py`) and the shell sequences `κ_D`, `T_H`, `|S^{D−2}|`
+  fit the first zeros worse than the arithmetic-free control `k/log k`, and have picket-fence spacings against the
+  zeros' GUE repulsion. Closed geodesics of the modular surface as BTZ horizons carry class numbers and Pell units, but
+  their lengths are `2 arccosh(t/2)`, never `log p`, and the primes reach `ζ` through Hecke eigenvalues, not lengths.
+  The Li-coefficient split into a "sphere part" `−log V_s` and a "radiation part" is exact and shows `λ_n > 0` to
+  `n = 1000`, which, as the branch notes, cannot see a zero off the line below height `3·10¹²`.
+- **The verdict**, the branch's and mine after reading the numbers: every gravastar construction either restates RH
+  or produces a spectrum with none of `ζ`'s structure, and the branch's literature survey finds no established physical
+  principle that implies Weil or Li positivity. The strand is closed as a route; what it leaves are two handles the
+  branch itself names, the cancellation of the prime phases `t·log p` (Zhu's barrier) and Connes–van Suijlekom's
+  simple even ground state at every scale, the second of which is what #81 and #83 pursue.
+- **Worth keeping from the branch**, as reformulations for the criteria catalogue if the author wants them on `main`:
+  `BallPole` (RH as the Hodge index statement on the pole complement, with the hyperbolic pole plane),
+  `HodgeAxioms` (which of the three axioms of the Hodge index theorem Weil's form satisfies: the ample one yes, the
+  Riemann–Roch dichotomy no, unconditionally), `WeilHodge` (Hodge index gives the Weil bound for curves, with the
+  intersection numbers as hypotheses), `SmithLattice` and `Redheffer` (`M(n)²` as a covolume ratio of two integral
+  positive lattices) and `KreinNeutral`. None is a lead; each says precisely which single input is missing.
+
 ## 7. The missing tools, by what they unlock
 
 1. **Vaughan's identity with the bilinear exponential-sum bounds:** §1, the ternary Goldbach problem with a
