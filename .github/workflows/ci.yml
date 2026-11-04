@@ -38,6 +38,7 @@ jobs:
               - 'scripts/build.sh'
               - 'scripts/lean-slots.sh'
               - 'scripts/check_axioms.py'
+              - 'scripts/check_warnings.py'
               - 'scripts/lean_targets.py'
               - 'scripts/import_cone.py'
               - '.github/actions/lean-build/**'

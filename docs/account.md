@@ -33,8 +33,9 @@ fields with their class groups and the class number formula.
 
 - **The kernel, Mathlib and the toolchain**: Lean `v4.35.0-rc3` and Mathlib `0f64d30a`. CI fails unless every printed
   theorem depends on `propext`, `Classical.choice` and `Quot.sound` only (`scripts/check_axioms.py`), the sources hold
-  no `sorry`, `native_decide` or declared axiom (`scripts/check_hygiene.py`), and every declaration is used by a
-  printed theorem (`scripts/dead_code.py`).
+  no `sorry`, `native_decide` or declared axiom (`scripts/check_hygiene.py`), every declaration is used by a
+  printed theorem (`scripts/dead_code.py`), and the build emits no warning in the library's own sources beyond two
+  known ones (`scripts/check_warnings.py`).
 - **Two vendored libraries**, PrimeNumberTheoremAnd and `zeta23`, which `scripts/check_vendor.py` checks against
   upstream and the port patches. PrimeNumberTheoremAnd's `Wiener.lean` keeps two upstream `sorry`s; no printed theorem
   uses them.
