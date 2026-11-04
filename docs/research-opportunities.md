@@ -257,6 +257,9 @@ are these, with the branch's own numbers (floating point, uncertified) checked a
   (`rh_of_frequently_balanced`, `rh_of_tendsto`). So "balanced in the limit" is exact balance: no finite certificate
   and no asymptotic argument on nested sections can accumulate into RH. This is the strand's one real theorem, and it
   is a closing one.
+  It is now on `main`, re-proved in `BallRate` together with the quantitative picture around it (the explicit witness
+  level of a dominant crossing, the approach `lim sup λ_N ≤ 0`, the rate under a sampling hypothesis;
+  [ball-rate.md](../formalisations/ball-rate.md)).
 - **`GravastarMargin` (proved) with `scripts/positivity/gravastar_margin.py`.** A nonnegative margin at every level is
   RH; a failure, once present, persists up the tower. Numerically the junction margin `1 − ‖A^{−1/2}BC^{−1/2}‖` between
   the top two dyadic blocks decays like `M^{−1.66}` and the global `λ_min` like `M^{−0.87}`, against `M^{−1}` for the

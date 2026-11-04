@@ -17,6 +17,7 @@ import HalfPlaneLindelof
 import SmoothPerron
 import MertensExponent
 import LagariasCriterion
+import BallRate
 import HalfPlaneJoinsPNT
 import DivisorExponent
 import ChiPNT
@@ -352,6 +353,21 @@ hypotheses (`formalisations/lagarias-criterion.md`); its finite part, `1 ≤ n �
 checks. -/
 #print axioms LagariasCriterion.lagarias_criterion
 #print axioms LagariasCriterion.lagarias_upto_5040
+
+/- The evaporation rate of the orbit form (`formalisations/ball-rate.md`): the collapse lemma and its rate form, the
+persistence of a negative vector, the explicit witness level of a dominant crossing and of a single crossing, the
+approach `lim sup λ_N ≤ 0`, the form under RH as a sum over the zeros and the rate under a sampling hypothesis, and
+the flat model's uniform margin. -/
+#print axioms BallRate.rh_of_frequently_balanced
+#print axioms BallRate.rh_of_excess_le_inv
+#print axioms BallRate.neg_persists
+#print axioms BallRate.witness_level
+#print axioms BallRate.witness_level_single
+#print axioms BallRate.approach
+#print axioms BallRate.hasSum_form
+#print axioms BallRate.rate_of_sampling
+#print axioms BallRate.flatForm_eq_kerFlat
+#print axioms BallRate.flat_margin
 #print axioms MertensExponent.limsup_mexpo
 #print axioms MertensExponent.moebius_tendsto_of_Theta_lt
 #print axioms MertensExponent.moebius_not_tendsto_of_lt_Theta

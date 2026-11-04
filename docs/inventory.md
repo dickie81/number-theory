@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1315 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1325 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 151 | 419 |
+| `lib/core` | 152 | 429 |
 | `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -86,6 +86,19 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallPsi.gram_explicit`: The Gram matrix of the orbit, through `ψ`
 - `BallPsi.norm_sq_ge_of_dist`: A Gram–Schmidt bound gives a lattice
 - `BallPsi.orbit_lattice`: The orbit of `K_H` spans a lattice, if the Gram–Schmidt bound holds
+
+#### `BallRate`: The evaporation rate of the orbit form: witness level, approach, rate
+
+- `BallRate.rh_of_frequently_balanced`: The collapse lemma ([note](../formalisations/ball-rate.md))
+- `BallRate.rh_of_excess_le_inv`: Balance to within `1/N` collapses ([note](../formalisations/ball-rate.md))
+- `BallRate.neg_persists`: Failures persist up the tower ([note](../formalisations/ball-rate.md))
+- `BallRate.witness_level`: The witness level ([note](../formalisations/ball-rate.md))
+- `BallRate.witness_level_single`: A single crossing is seen at `N₀(β, γ)` ([note](../formalisations/ball-rate.md))
+- `BallRate.hasSum_form`: The form under RH as a sum over the zeros ([note](../formalisations/ball-rate.md))
+- `BallRate.rate_of_sampling`: The rate ([note](../formalisations/ball-rate.md))
+- `BallRate.flatForm_eq_kerFlat`: The flat form is the orbit form of the flat kernel, scaled by `H₀`. ([note](../formalisations/ball-rate.md))
+- `BallRate.flat_margin`: The flat model's margin ([note](../formalisations/ball-rate.md))
+- `BallRate.approach`: The approach, unconditionally ([note](../formalisations/ball-rate.md))
 
 #### `BallSlice`: Two primes carry the Riemann hypothesis: positivity on the slice of `p` and `q`
 

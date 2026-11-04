@@ -1019,4 +1019,389 @@ theorem flat_margin (N : ℕ) (x : ℕ → ℝ) : H₀ / 4 * ∑ n ∈ Icc 1 N, 
 
 end Flat
 
+/-! ## The approach: `lim sup λ_N ≤ 0`, unconditionally
+
+Under RH the two-point vector `x = δ_n − √n·δ_1` has `Q_N(x) = 2n(H₀ − K_H(n))` and `Σ x² = n + 1`
+(`form_twoPt`), with `H₀ − K_H(n) = Σ_ρ (1 − cos(γ log n))/(¼ + γ²)` (`defect_eq`, from
+`BallHadamard.kerH_second_diff`). The finitely many zeros that carry all but `ε/8` of the weight `Σ_ρ 1/(¼ + γ²) = H₀`
+are brought to within `η` of `2πℤ` at once, at an `n` as large as wanted, by simultaneous Dirichlet approximation on
+their ordinates (`exists_simultaneous`): so `λ_N ≤ ε` from some level on (`approach`). If RH fails, a negative
+vector appears at some level and persists (`neg_persists`). The test vector is explicit given the first ordinates;
+the level is not. -/
+
+section Approach
+
+open BallHadamard
+
+/-- **Simultaneous Dirichlet approximation**, by the pigeonhole principle: for finitely many reals `α_i` and `Q ≥ 1`
+there is `1 ≤ m ≤ Q^J` with every `m·α_i` within `1/Q` of an integer. -/
+theorem exists_simultaneous {ι : Type*} [Fintype ι] (α : ι → ℝ) {Q : ℕ} (hQ : 0 < Q) :
+    ∃ m : ℕ, 0 < m ∧ m ≤ Q ^ Fintype.card ι ∧ ∀ i, ∃ k : ℤ, |m * α i - k| ≤ 1 / Q := by
+  classical
+  have hQ' : (0 : ℝ) < Q := by exact_mod_cast hQ
+  let g : Fin (Q ^ Fintype.card ι + 1) → (ι → Fin Q) := fun j i =>
+    ⟨⌊Int.fract ((j : ℝ) * α i) * Q⌋₊, by
+      have h1 := Int.fract_lt_one ((j : ℝ) * α i)
+      rw [Nat.floor_lt (by positivity)]
+      nlinarith⟩
+  have hcard : Fintype.card (ι → Fin Q) < Fintype.card (Fin (Q ^ Fintype.card ι + 1)) := by
+    simp [Fintype.card_fin]
+  obtain ⟨j, j', hne, hjj⟩ := Fintype.exists_ne_map_eq_of_card_lt g hcard
+  wlog hlt : j < j' generalizing j j'
+  · exact this j' j hne.symm hjj.symm (lt_of_le_of_ne (not_lt.1 hlt) hne.symm)
+  have hjlt : (j : ℕ) < j' := hlt
+  refine ⟨j' - j, by omega, by omega, fun i => ?_⟩
+  have hbox : ⌊Int.fract ((j' : ℝ) * α i) * Q⌋₊ = ⌊Int.fract ((j : ℝ) * α i) * Q⌋₊ := by
+    have := congrArg (fun f => (f i : ℕ)) hjj
+    simpa [g] using this.symm
+  -- the two fractional parts are within `1/Q`
+  set a := Int.fract ((j : ℝ) * α i) with ha
+  set b := Int.fract ((j' : ℝ) * α i) with hb
+  have hfl : ∀ y : ℝ, 0 ≤ y → (⌊y * Q⌋₊ : ℝ) ≤ y * Q ∧ y * Q < ⌊y * Q⌋₊ + 1 := fun y hy =>
+    ⟨Nat.floor_le (by positivity), Nat.lt_floor_add_one _⟩
+  obtain ⟨ha1, ha2⟩ := hfl a (Int.fract_nonneg _)
+  obtain ⟨hb1, hb2⟩ := hfl b (Int.fract_nonneg _)
+  rw [hbox] at hb1 hb2
+  have h1 : b - a < 1 / Q := by rw [lt_div_iff₀ hQ']; linarith
+  have h2 : a - b < 1 / Q := by rw [lt_div_iff₀ hQ']; linarith
+  have hab : |b - a| ≤ 1 / Q := abs_le.2 ⟨by linarith, h1.le⟩
+  refine ⟨⌊(j' : ℝ) * α i⌋ - ⌊(j : ℝ) * α i⌋, ?_⟩
+  have e : ((j' - j : ℕ) : ℝ) * α i - ((⌊(j' : ℝ) * α i⌋ - ⌊(j : ℝ) * α i⌋ : ℤ) : ℝ) = b - a := by
+    rw [hb, ha, Nat.cast_sub hjlt.le]
+    push_cast
+    rw [← Int.self_sub_floor, ← Int.self_sub_floor]
+    ring
+  rw [e]
+  exact hab
+
+/-- The approximation with `m ≥ m₀`: `m₀·m` for the `m` of `exists_simultaneous` at `Q·m₀`. -/
+theorem exists_simultaneous_ge {ι : Type*} [Fintype ι] (α : ι → ℝ) {Q m₀ : ℕ} (hQ : 0 < Q) (hm₀ : 0 < m₀) :
+    ∃ m : ℕ, m₀ ≤ m ∧ ∀ i, ∃ k : ℤ, |m * α i - k| ≤ 1 / Q := by
+  obtain ⟨m, hm0, -, hm⟩ := exists_simultaneous α (Q := Q * m₀) (by positivity)
+  refine ⟨m₀ * m, Nat.le_mul_of_pos_right _ hm0, fun i => ?_⟩
+  obtain ⟨k, hk⟩ := hm i
+  refine ⟨m₀ * k, ?_⟩
+  have hm₀' : (0 : ℝ) < m₀ := by exact_mod_cast hm₀
+  have hQ' : (0 : ℝ) < Q := by exact_mod_cast hQ
+  have e : ((m₀ * m : ℕ) : ℝ) * α i - ((m₀ * k : ℤ) : ℝ) = m₀ * ((m : ℝ) * α i - k) := by
+    push_cast
+    ring
+  rw [e, abs_mul, abs_of_pos hm₀']
+  calc (m₀ : ℝ) * |(m : ℝ) * α i - k| ≤ m₀ * (1 / ((Q * m₀ : ℕ) : ℝ)) :=
+        mul_le_mul_of_nonneg_left hk hm₀'.le
+    _ = 1 / Q := by
+        push_cast
+        field_simp
+
+/-- `|sin x| ≤ |x|`. -/
+lemma abs_sin_le_abs' (x : ℝ) : |Real.sin x| ≤ |x| := by
+  have key : ∀ y : ℝ, 0 ≤ y → |Real.sin y| ≤ y := fun y hy => by
+    rw [abs_le]
+    refine ⟨?_, Real.sin_le hy⟩
+    rcases le_or_gt y π with h | h
+    · linarith [Real.sin_nonneg_of_nonneg_of_le_pi hy h]
+    · linarith [Real.neg_one_le_sin y, Real.pi_gt_three]
+  rcases le_or_gt 0 x with h | h
+  · rw [abs_of_nonneg h]; exact key x h
+  · rw [abs_of_neg h, ← abs_neg, ← Real.sin_neg]; exact key (-x) (by linarith)
+
+/-- `1 − cos θ ≤ θ²/2`. -/
+lemma one_sub_cos_le (θ : ℝ) : 1 - Real.cos θ ≤ θ ^ 2 / 2 := by
+  have h2 : Real.cos θ = 1 - 2 * Real.sin (θ / 2) ^ 2 := by
+    rw [show θ = 2 * (θ / 2) by ring, Real.cos_two_mul, Real.cos_sq']
+    ring_nf
+  have hs : Real.sin (θ / 2) ^ 2 ≤ (θ / 2) ^ 2 := by
+    rw [← sq_abs (Real.sin _), ← sq_abs (θ / 2)]
+    exact pow_le_pow_left₀ (abs_nonneg _) (abs_sin_le_abs' _) 2
+  rw [h2]
+  nlinarith
+
+/-- The two-point vector `δ_n − √n·δ_1`. -/
+def twoPt (n : ℕ) : ℕ → ℝ := fun i => if i = n then 1 else if i = 1 then -Real.sqrt n else 0
+
+/-- `Q_N(δ_n − √n·δ_1) = 2n(H₀ − K_H(n))` for `2 ≤ n ≤ N`. -/
+lemma form_twoPt {n N : ℕ} (hn : 2 ≤ n) (hN : n ≤ N) : form N (twoPt n) = 2 * n * (H₀ - kψ n) := by
+  have hmN : n ∈ Icc 1 N := Finset.mem_Icc.2 ⟨by omega, hN⟩
+  have h1N : 1 ∈ Icc 1 N := Finset.mem_Icc.2 ⟨le_rfl, by omega⟩
+  have hne : n ≠ 1 := by omega
+  unfold twoPt
+  rw [form_two hmN h1N hne, gram_self, gram_self, gram_comm, gram, kψ_one_eq]
+  have hsq : Real.sqrt ((1 : ℕ) * (n : ℕ) : ℝ) = Real.sqrt n := by simp
+  have hdiv : ((1 : ℕ) : ℝ) / (n : ℕ) = ((n : ℝ))⁻¹ := by simp
+  rw [hsq, hdiv, kψ_inv]
+  have := Real.mul_self_sqrt (Nat.cast_nonneg n : (0 : ℝ) ≤ n)
+  push_cast
+  linear_combination (H₀ - 2 * kψ ↑n) * this
+
+lemma sum_sq_twoPt {n N : ℕ} (hn : 2 ≤ n) (hN : n ≤ N) :
+    ∑ i ∈ Icc 1 N, twoPt n i ^ 2 = 1 + n := by
+  have hne : n ≠ 1 := by omega
+  have e : ∀ i, twoPt n i ^ 2 = (if i = n then (1 : ℝ) else 0) + (if i = 1 then (n : ℝ) else 0) := by
+    intro i
+    unfold twoPt
+    by_cases hi : i = n
+    · subst hi; simp [hne]
+    · by_cases hi1 : i = 1
+      · subst hi1; simp [Ne.symm hne, Real.sq_sqrt (Nat.cast_nonneg n)]
+      · simp [hi, hi1]
+  simp_rw [e]
+  rw [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq']
+  simp [Finset.mem_Icc.2 ⟨show 1 ≤ n by omega, hN⟩, Finset.mem_Icc.2 ⟨le_rfl, show 1 ≤ N by omega⟩]
+
+/-- Under RH, the weight of the zero `ρ_q` is `1/(¼ + γ_q²)`. -/
+lemma hw_re_rh (hRH : RiemannHypothesis) (q : ZIdx) : (hw q).re = 1 / (1 / 4 + (zetaZeroFamily q).im ^ 2) := by
+  set t : ℝ := (zetaZeroFamily q).im with ht
+  have hline : zetaZeroFamily q = 1 / 2 + Complex.I * t := by
+    have h := line_of_RH hRH q
+    apply Complex.ext <;> simp [ht, h]
+  have hrr : zetaZeroFamily q * (1 - zetaZeroFamily q) = ((1 / 4 + t ^ 2 : ℝ) : ℂ) := by
+    rw [hline]; push_cast; linear_combination (-(t : ℂ) ^ 2) * Complex.I_sq
+  unfold hw aw
+  rw [hrr, ← Complex.ofReal_one, ← Complex.ofReal_div, Complex.ofReal_re]
+
+/-- **The defect under RH**: `H₀ − K_H(n) = Σ_ρ (1 − cos(γ log n))/(¼ + γ²)`. -/
+lemma defect_eq (hRH : RiemannHypothesis) {n : ℕ} (hn : 0 < n) :
+    H₀ - kψ n = ∑' q, (1 - Real.cos ((zetaZeroFamily q).im * Real.log n)) /
+      (1 / 4 + (zetaZeroFamily q).im ^ 2) := by
+  have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
+  have h := kerH_second_diff hRH n
+  rw [kerH_inv, kerH_eq_kψ hn0, kerH_eq_kψ one_pos, kψ_one_eq] at h
+  have h2 : ((2 * kψ n - 2 * H₀ : ℝ) : ℂ) = ((-(∑' q : ZIdx, (2 - 2 * Real.cos ((zetaZeroFamily q).im *
+      Real.log n)) / (1 / 4 + (zetaZeroFamily q).im ^ 2)) : ℝ) : ℂ) := by
+    rw [Complex.ofReal_sub, Complex.ofReal_mul, Complex.ofReal_mul, Complex.ofReal_neg, Complex.ofReal_ofNat]
+    linear_combination h
+  have h3 := Complex.ofReal_injective h2
+  have e : ∑' q : ZIdx, (2 - 2 * Real.cos ((zetaZeroFamily q).im * Real.log n)) /
+      (1 / 4 + (zetaZeroFamily q).im ^ 2) = 2 * ∑' q : ZIdx, (1 - Real.cos ((zetaZeroFamily q).im * Real.log n)) /
+      (1 / 4 + (zetaZeroFamily q).im ^ 2) := by
+    rw [← tsum_mul_left]
+    exact tsum_congr fun q => by ring
+  rw [e] at h3
+  linarith
+
+/-- The summable weights `1/(¼ + γ²)` under RH, with sum `H₀`. -/
+lemma hasSum_weights (hRH : RiemannHypothesis) :
+    HasSum (fun q : ZIdx => 1 / (1 / 4 + (zetaZeroFamily q).im ^ 2)) H₀ := by
+  have h := Complex.hasSum_re hasSum_hw
+  rw [Complex.ofReal_re] at h
+  exact h.congr_fun fun q => (hw_re_rh hRH q).symm
+
+/-- Under RH, a term of the defect is at most twice the weight. -/
+lemma defect_term_le (q : ZIdx) (u : ℝ) :
+    (1 - Real.cos ((zetaZeroFamily q).im * u)) / (1 / 4 + (zetaZeroFamily q).im ^ 2) ≤
+      2 * (1 / (1 / 4 + (zetaZeroFamily q).im ^ 2)) := by
+  rw [mul_one_div]
+  exact div_le_div_of_nonneg_right (by linarith [Real.neg_one_le_cos ((zetaZeroFamily q).im * u)]) (by positivity)
+
+lemma defect_term_nonneg (q : ZIdx) (u : ℝ) :
+    0 ≤ (1 - Real.cos ((zetaZeroFamily q).im * u)) / (1 / 4 + (zetaZeroFamily q).im ^ 2) :=
+  div_nonneg (by linarith [Real.cos_le_one ((zetaZeroFamily q).im * u)]) (by positivity)
+
+/-- For a finite set of zeros and `η > 0`, some `n ≥ n₁` has every `γ_q log n` within `η` of `2πℤ`: simultaneous
+Dirichlet approximation on the ratios `γ_q/γ_{q₁}` gives `u = 2πm/γ_{q₁}`, and `n = ⌈e^u⌉` has `log n` within
+`e^{−u}` of `u`. -/
+lemma exists_near_two_pi (F : Finset ZIdx) {η : ℝ} (hη : 0 < η) (n₁ : ℕ) :
+    ∃ n : ℕ, n₁ ≤ n ∧ 2 ≤ n ∧
+      ∀ q ∈ F, ∃ k : ℤ, |(zetaZeroFamily q).im * Real.log n - k * (2 * π)| ≤ η := by
+  classical
+  have hπ := Real.pi_pos
+  set Γ : ℝ := ∑ q ∈ F, |(zetaZeroFamily q).im| + 1 with hΓdef
+  have hΓ1 : 1 ≤ Γ := by
+    have : 0 ≤ ∑ q ∈ F, |(zetaZeroFamily q).im| := Finset.sum_nonneg fun q _ => abs_nonneg _
+    linarith
+  have hΓ : ∀ q ∈ F, |(zetaZeroFamily q).im| ≤ Γ := fun q hq => by
+    have := Finset.single_le_sum (f := fun q => |(zetaZeroFamily q).im|) (fun q _ => abs_nonneg _) hq
+    linarith
+  rcases F.eq_empty_or_nonempty with hFe | ⟨q₁, hq₁⟩
+  · exact ⟨max n₁ 2, le_max_left _ _, le_max_right _ _, fun q hq => by simp [hFe] at hq⟩
+  set γ₁ : ℝ := |(zetaZeroFamily q₁).im| with hγ₁
+  have hγ₁0 : 0 < γ₁ := by
+    rw [hγ₁, abs_pos]
+    intro h
+    apply im_poleP_ne q₁
+    unfold poleP
+    simp [h]
+  set Q : ℕ := ⌈4 * π / η⌉₊ with hQ
+  have hQ0 : 0 < Q := Nat.ceil_pos.2 (by positivity)
+  have hQ' : 4 * π / η ≤ Q := Nat.le_ceil _
+  have hQR : (0 : ℝ) < Q := by exact_mod_cast hQ0
+  set u₀ : ℝ := Real.log ((2 * Γ / η + 1) * (n₁ + 2)) with hu₀
+  have hu₀pos : 0 < (2 * Γ / η + 1) * (n₁ + 2) := by positivity
+  have hn₁0 : (0 : ℝ) ≤ n₁ := Nat.cast_nonneg n₁
+  have h2Γ : 0 ≤ 2 * Γ / η := by positivity
+  set m₀ : ℕ := ⌈γ₁ * u₀ / (2 * π)⌉₊ + 1 with hm₀
+  obtain ⟨m, hm, hmk⟩ := exists_simultaneous_ge (fun q : F => (zetaZeroFamily q.1).im / γ₁) hQ0
+    (Nat.succ_pos _ : 0 < m₀)
+  set u : ℝ := 2 * π * m / γ₁ with hu
+  have hmR : (m₀ : ℝ) ≤ m := by exact_mod_cast hm
+  have hm₀R : γ₁ * u₀ / (2 * π) < m₀ := by
+    rw [hm₀]
+    push_cast
+    linarith [Nat.le_ceil (γ₁ * u₀ / (2 * π))]
+  have hu₀u : u₀ < u := by
+    rw [hu, lt_div_iff₀ hγ₁0]
+    have := (div_lt_iff₀ (by positivity)).1 (hm₀R.trans_le hmR)
+    linarith
+  have hexp0 : (n₁ : ℝ) + 2 ≤ Real.exp u₀ := by
+    rw [hu₀, Real.exp_log hu₀pos]
+    nlinarith
+  have hexpΓ : 2 * Γ / η ≤ Real.exp u₀ := by
+    rw [hu₀, Real.exp_log hu₀pos]
+    nlinarith
+  have hu0 : 0 < u := by
+    have : 0 < u₀ := Real.log_pos (by nlinarith)
+    linarith
+  set n : ℕ := ⌈Real.exp u⌉₊ with hn
+  have hn1 : Real.exp u ≤ n := Nat.le_ceil _
+  have hn2 : (n : ℝ) < Real.exp u + 1 := Nat.ceil_lt_add_one (Real.exp_pos _).le
+  have hexpu : Real.exp u₀ < Real.exp u := Real.exp_lt_exp.2 hu₀u
+  have hnpos : (0 : ℝ) < n := lt_of_lt_of_le (Real.exp_pos _) hn1
+  refine ⟨n, ?_, ?_, fun q hq => ?_⟩
+  · exact_mod_cast (by linarith : (n₁ : ℝ) ≤ n)
+  · exact_mod_cast (by linarith : (2 : ℝ) ≤ n)
+  · obtain ⟨k, hk⟩ := hmk ⟨q, hq⟩
+    refine ⟨k, ?_⟩
+    have hlog1 : u ≤ Real.log n := by rw [Real.le_log_iff_exp_le hnpos]; exact hn1
+    have hlog2 : Real.log n ≤ u + Real.exp (-u) := by
+      have h1 : Real.log n ≤ Real.log (Real.exp u + 1) := Real.log_le_log hnpos hn2.le
+      have h2 : Real.log (Real.exp u + 1) = u + Real.log (1 + Real.exp (-u)) := by
+        rw [show Real.exp u + 1 = Real.exp u * (1 + Real.exp (-u)) by
+          rw [mul_add, mul_one, ← Real.exp_add, add_neg_cancel, Real.exp_zero],
+          Real.log_mul (Real.exp_pos _).ne' (by positivity), Real.log_exp]
+      have h3 := Real.log_le_sub_one_of_pos (show 0 < 1 + Real.exp (-u) by positivity)
+      linarith
+    have hγ := hΓ q hq
+    have hpiece1 : |(zetaZeroFamily q).im * u - k * (2 * π)| ≤ η / 2 := by
+      have e : (zetaZeroFamily q).im * u - k * (2 * π) =
+          2 * π * ((m : ℝ) * ((zetaZeroFamily q).im / γ₁) - k) := by
+        rw [hu]
+        field_simp
+      rw [e, abs_mul, abs_of_pos (by positivity)]
+      calc 2 * π * |(m : ℝ) * ((zetaZeroFamily q).im / γ₁) - k| ≤ 2 * π * (1 / Q) :=
+            mul_le_mul_of_nonneg_left hk (by positivity)
+        _ ≤ η / 2 := by
+            rw [mul_one_div, div_le_div_iff₀ hQR two_pos]
+            have := (div_le_iff₀ hη).1 hQ'
+            nlinarith
+    have hpiece2 : |(zetaZeroFamily q).im * Real.log n - (zetaZeroFamily q).im * u| ≤ η / 2 := by
+      rw [← mul_sub, abs_mul]
+      have h1 : |Real.log n - u| ≤ Real.exp (-u) := by
+        rw [abs_le]
+        constructor <;> linarith [Real.exp_pos (-u)]
+      have h2 : Real.exp (-u) ≤ η / (2 * Γ) := by
+        rw [Real.exp_neg, inv_le_comm₀ (Real.exp_pos _) (by positivity), inv_div]
+        exact hexpΓ.trans hexpu.le
+      calc |(zetaZeroFamily q).im| * |Real.log n - u| ≤ Γ * (η / (2 * Γ)) :=
+            mul_le_mul hγ (h1.trans h2) (abs_nonneg _) (by linarith)
+        _ = η / 2 := by field_simp
+    calc |(zetaZeroFamily q).im * Real.log n - k * (2 * π)|
+        = |((zetaZeroFamily q).im * Real.log n - (zetaZeroFamily q).im * u) +
+            ((zetaZeroFamily q).im * u - k * (2 * π))| := by ring_nf
+      _ ≤ |(zetaZeroFamily q).im * Real.log n - (zetaZeroFamily q).im * u| +
+            |(zetaZeroFamily q).im * u - k * (2 * π)| := abs_add_le _ _
+      _ ≤ η / 2 + η / 2 := add_le_add hpiece2 hpiece1
+      _ = η := by ring
+
+/-- Under RH, for every `ε > 0` and `n₁`, some `n ≥ n₁` has `H₀ − K_H(n) ≤ ε`: the finitely many zeros that carry all
+but `ε/8` of the weight are brought near `2πℤ` at once. -/
+lemma exists_defect_le (hRH : RiemannHypothesis) {ε : ℝ} (hε : 0 < ε) (n₁ : ℕ) :
+    ∃ n : ℕ, n₁ ≤ n ∧ 2 ≤ n ∧ H₀ - kψ n ≤ ε := by
+  classical
+  set w : ZIdx → ℝ := fun q => 1 / (1 / 4 + (zetaZeroFamily q).im ^ 2) with hw_def
+  have hw0 : ∀ q, 0 ≤ w q := fun q => by positivity
+  have hws : HasSum w H₀ := hasSum_weights hRH
+  obtain ⟨F, hF⟩ : ∃ F : Finset ZIdx, ∑' q, (if q ∈ F then 0 else w q) ≤ ε / 8 := by
+    obtain ⟨F, hF⟩ := Metric.tendsto_atTop.1 hws (ε / 8) (by positivity)
+    refine ⟨F, ?_⟩
+    have h := hF F le_rfl
+    rw [Real.dist_eq, abs_lt] at h
+    have hsplit := tsum_split_finset hws.summable F
+    rw [hws.tsum_eq] at hsplit
+    linarith
+  have hH := H₀_pos
+  set η : ℝ := Real.sqrt (ε / (2 * H₀)) with hη
+  have hη0 : 0 < η := Real.sqrt_pos.2 (by positivity)
+  have hη2 : η ^ 2 = ε / (2 * H₀) := Real.sq_sqrt (by positivity)
+  obtain ⟨n, hn1, hn2, hnear⟩ := exists_near_two_pi F hη0 n₁
+  refine ⟨n, hn1, hn2, ?_⟩
+  rw [defect_eq hRH (by omega)]
+  set d : ZIdx → ℝ := fun q => (1 - Real.cos ((zetaZeroFamily q).im * Real.log n)) /
+    (1 / 4 + (zetaZeroFamily q).im ^ 2) with hd_def
+  have hd0 : ∀ q, 0 ≤ d q := fun q => defect_term_nonneg q _
+  have hd2 : ∀ q, d q ≤ 2 * w q := fun q => defect_term_le q _
+  have hds : Summable d := (hws.summable.mul_left 2).of_nonneg_of_le hd0 hd2
+  rw [tsum_split_finset hds F]
+  have hhead : ∑ q ∈ F, d q ≤ ε / 4 := by
+    have h1 : ∀ q ∈ F, d q ≤ η ^ 2 / 2 * w q := by
+      intro q hq
+      obtain ⟨k, hk⟩ := hnear q hq
+      have hc : 1 - Real.cos ((zetaZeroFamily q).im * Real.log n) ≤ η ^ 2 / 2 := by
+        rw [← Real.cos_sub_int_mul_two_pi _ k]
+        refine (one_sub_cos_le _).trans ?_
+        have : ((zetaZeroFamily q).im * Real.log n - k * (2 * π)) ^ 2 ≤ η ^ 2 := by
+          rw [← sq_abs]
+          exact pow_le_pow_left₀ (abs_nonneg _) hk 2
+        linarith
+      simp only [hd_def, hw_def]
+      rw [div_eq_mul_one_div]
+      exact mul_le_mul_of_nonneg_right hc (by positivity)
+    calc ∑ q ∈ F, d q ≤ ∑ q ∈ F, η ^ 2 / 2 * w q := Finset.sum_le_sum h1
+      _ = η ^ 2 / 2 * ∑ q ∈ F, w q := by rw [Finset.mul_sum]
+      _ ≤ η ^ 2 / 2 * H₀ := by
+          refine mul_le_mul_of_nonneg_left ?_ (by positivity)
+          rw [← hws.tsum_eq]
+          exact Summable.sum_le_tsum F (fun q _ => hw0 q) hws.summable
+      _ = ε / 4 := by
+          rw [hη2]
+          field_simp
+          ring
+  have htail : ∑' q, (if q ∈ F then 0 else d q) ≤ ε / 4 := by
+    have hs2 : Summable fun q => if q ∈ F then 0 else 2 * w q :=
+      (hws.summable.mul_left 2).of_nonneg_of_le (fun q => by split_ifs <;> positivity)
+        (fun q => by split_ifs <;> [positivity; exact le_rfl])
+    have hs1 : Summable fun q => if q ∈ F then 0 else d q :=
+      hs2.of_nonneg_of_le (fun q => by split_ifs <;> [exact le_rfl; exact hd0 q])
+        (fun q => by split_ifs <;> [exact le_rfl; exact hd2 q])
+    have h := Summable.tsum_le_tsum (fun q => by split_ifs <;> [exact le_rfl; exact hd2 q]) hs1 hs2
+    have e : ∑' q, (if q ∈ F then 0 else 2 * w q) = 2 * ∑' q, (if q ∈ F then 0 else w q) := by
+      rw [← tsum_mul_left]
+      exact tsum_congr fun q => by split_ifs <;> simp
+    linarith
+  linarith
+
+/-- **The approach, unconditionally**: `lim sup λ_N ≤ 0`. For every `ε > 0` there is a level `N₀` from which every
+level has a nonzero real vector `x` with `Q_N(x) ≤ ε·Σ x_n²`. Under RH the vector is `δ_n − √n·δ_1` for an `n` whose
+logarithm brings the heavy ordinates near `2πℤ` (`exists_defect_le`); if RH fails it is a negative vector, truncated
+(`neg_persists`). -/
+theorem approach {ε : ℝ} (hε : 0 < ε) :
+    ∃ N₀ : ℕ, ∀ N, N₀ ≤ N → ∃ x : ℕ → ℝ, (∃ i ∈ Icc 1 N, x i ≠ 0) ∧
+      form N x ≤ ε * ∑ i ∈ Icc 1 N, x i ^ 2 := by
+  by_cases hRH : RiemannHypothesis
+  · obtain ⟨n, -, hn2, hD⟩ := exists_defect_le hRH (half_pos hε) 0
+    refine ⟨n, fun N hN => ⟨twoPt n, ⟨1, Finset.mem_Icc.2 ⟨le_rfl, by omega⟩, ?_⟩, ?_⟩⟩
+    · have h1n : (1 : ℕ) ≠ n := by omega
+      have hn0 : (0 : ℝ) < n := by exact_mod_cast (show 0 < n by omega)
+      simp only [twoPt, h1n, ↓reduceIte, ne_eq, neg_eq_zero]
+      exact (Real.sqrt_pos.2 hn0).ne'
+    · rw [form_twoPt hn2 hN, sum_sq_twoPt hn2 hN]
+      have hn0 : (0 : ℝ) < n := by exact_mod_cast (show 0 < n by omega)
+      nlinarith
+  · obtain ⟨N₁, x, hx⟩ := exists_neg_of_not_rh hRH
+    refine ⟨N₁, fun N hN => ⟨trunc N₁ x, ?_, ?_⟩⟩
+    · by_contra hall
+      push Not at hall
+      have : form N₁ x = 0 := by
+        unfold form
+        refine Finset.sum_eq_zero fun m hm => Finset.sum_eq_zero fun n _ => ?_
+        have hm' : x m = 0 := by
+          have := hall m (Finset.mem_Icc.2 ⟨(Finset.mem_Icc.1 hm).1, (Finset.mem_Icc.1 hm).2.trans hN⟩)
+          simpa [trunc, (Finset.mem_Icc.1 hm).2] using this
+        simp [hm']
+      linarith
+    · rw [form_trunc hN]
+      have : 0 ≤ ε * ∑ i ∈ Icc 1 N, trunc N₁ x i ^ 2 := by positivity
+      linarith
+
+end Approach
+
 end BallRate
