@@ -21,7 +21,7 @@ in `ball-conjecture-tests.md` §2). By §5.1 there, for real χ with q ≤ 10⁴
    - In Lean, `D2Hdist.d2_density_pos` and `d2_density_neg` apply `D2Density.d2_density_log` with `hdist` discharged.
    - `hdist` comes from `D2Dist.dist_pos` and `dist_neg`. These use the zero-free half-plane Re s > 11/12 (`Eis.LFunction_ne_zero_of_re_gt`; see `formalisations/openai-half-plane.md`).
    - That half-plane is itself a Lean theorem here, using only the standard axioms. It formalises OpenAI's 2026 preprints, so the Lean results are labelled conditional on that input.
-   - The remaining hypotheses are listed at the end.
+   - `D2Good.d2_density_pos_closed` and `d2_density_neg_closed` also discharge `hK1`, `hpos` and `hB`. So the Lean statement has no hypotheses beyond the half-plane input (table at the end).
 
 ## Written proof (per-sign distribution)
 
@@ -148,13 +148,19 @@ frequency checks above were run with scripts (`res.py`, `res2.py`, `freq.py`) th
 **Open:** the odd (D < 0) rates stay about 1σ above 0.1609 up to 1e8. Either convergence there is slower, or the
 model constant is marginally off. This is unresolved.
 
-## Remaining hypotheses of the Lean theorem
+## The hypotheses of the Lean theorem, and where each is discharged
+
+All four are discharged. `D2Good.d2_density_pos_closed` and `D2Good.d2_density_neg_closed` take no hypotheses:
+- They state the per-sign limits ν(½ log(27/4), ∞) and ν((3/2) log(4/3), ∞) for the d₂ < d₁ proportion.
+- K₁ is the zero sum `PsiOmega.K1Z` and K(2) is `K2p`/`K2n`.
+- They are conditional only on the half-plane input, through `hdist`.
 
 | hypothesis | content | status |
 |---|---|---|
 | `hdist` | per-sign weak convergence of ℓ_D to X, at every `t` | **Lean, CONDITIONAL on the half-plane** `Re s > 11/12`: `D2Hdist.hdist_pos`, `D2Hdist.hdist_neg` (moments via GS Lemma 4.1, the method of moments, no atoms `NoAtoms.ν_singleton`, the tail identity). `D2Hdist.d2_density_pos` / `D2Hdist.d2_density_neg` are `D2Density.d2_density_log` with `hdist` discharged |
-| `hB` | Theorem B (closed form of K(2)) | Lean (`PsiOmega.theoremB`, `c_a` as the archimedean integral); closed form of `c_a` Lean (`CAClosed.cA_zero`, `CAClosed.cA_one`) |
-| `hpos` | K₁ is the zero sum (summability) | positivity is Lean; the identification is open |
+| `hB` | Theorem B (closed form of K(2)) | Lean (`PsiOmega.theoremB`, `PsiOmega.theoremBZ`, via `D2Good.B_pos`, `D2Good.B_neg`; `c_a` as the archimedean integral); closed form of `c_a` Lean (`CAClosed.cA_zero`, `CAClosed.cA_one`) |
+| `hK1` | K₁ = log(\|D\|/π) + Re ψ((1+a)/2) + 2ℓ_D | Lean, with K₁ the zero sum (central zeros of order m counted 4m): `PsiOmega.K1Z_eq`, via `D2Good.hK1_pos`, `D2Good.hK1_neg` |
+| `hpos` | K₁ > 0 | Lean (`PsiOmega.K1Z_pos`; also `D2Density.K1_pos` for any summable zero sum) |
 
 ## Citations
 - Y. Lamzouri, The distribution of Euler–Kronecker constants of quadratic fields, JMAA 2015, arXiv:1410.1603.
