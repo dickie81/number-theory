@@ -1,0 +1,28 @@
+{
+ "D>0": {
+  "X": 107600,
+  "n": 32708,
+  "upper_failures": 1984,
+  "lower_failures": 0,
+  "lower_examples": [],
+  "min_l": -1.9709771236760323,
+  "closest_to_lower": {
+   "D": 8,
+   "l": 0.6321149660398483,
+   "threshold": 0.602473598564839
+  }
+ },
+ "D<0": {
+  "X": 20800,
+  "n": 6316,
+  "upper_failures": 1045,
+  "lower_failures": 0,
+  "lower_examples": [],
+  "min_l": -2.08253042669063,
+  "closest_to_lower": {
+   "D": -7,
+   "l": 0.015635689993720378,
+   "threshold": -0.0032812175862178996
+  }
+ }
+}

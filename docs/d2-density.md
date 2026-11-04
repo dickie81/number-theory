@@ -70,7 +70,11 @@ Proof. Follow Lamzouri, Section 2 (Theorem 1.6), and change only the summation s
 
 ## Numerics
 
-Thresholds: ℓ > t_a, which is the same as d₂ < d₁ here (no lower failures occur: min ℓ ≥ −3.0, while the lower threshold is ≤ −3.2).
+Thresholds: ℓ > t_a, which is the same as d₂ < d₁ here, because no lower failure ℓ_D < −(2/5)(log(|D|/π) + ψ_a + c_a) occurs.
+- The lower threshold is ≤ −3.2 only for D ≥ 1.076e5 (D > 0) and |D| ≥ 2.07e4 (D < 0). Beyond that, min ℓ ≥ −3.0 in all the data rules lower failures out.
+- Below that the threshold is higher: −2.25 at D = 1e4, −2.53 at D = 2e4, and +0.79 at D = 5. So `lower.py` checks every fundamental discriminant with 1 < D ≤ 1.076e5 and every D < 0 with |D| ≤ 2.08e4 against its own threshold.
+- That is 32708 D > 0 and 6316 D < 0, and there are no lower failures (`lower.json`). The minimum ℓ is −1.97 (D > 0) and −2.08 (D < 0). The closest calls are the smallest conductors: D = 8 is 0.030 above its threshold and D = −7 is 0.019 above.
+- The same run reproduces the q ≤ 1e4 row, and `ball-conjecture-tests.md` §5.1 has the same counts from an independent flint scan.
 Values of L′/L(1, χ_D) come from PARI `lfun` (cypari2), cross-checked against flint/arb (`emp.py`, `k2.py`) to 1e-16.
 
 | window | + rate (n) | z | − rate (n) | z |
