@@ -8,6 +8,7 @@ namespace CmFin
 open Finset Real CmPoly CmW CmNu CmLhD CmBessel CmWD CmMom CmAsm CmData WeilTailB MeasureTheory
 
 set_option maxRecDepth 100000 in
+set_option exponentiation.threshold 400 in
 lemma X_eq (n m : ℕ) : (((XN n m : ℚ) / 2 ^ 384 : ℚ) : ℝ) = ∑ k ∈ range 40, ∑ l ∈ range 40,
     ((qQ n k : ℚ) : ℝ) * ((qQ m l : ℚ) : ℝ) * ((nuQ ((n + m) / 2 + k + l) : ℚ) : ℝ) := by
   unfold XN qQ nuQ

@@ -66,7 +66,7 @@ theorem sep_sum (δ : ℝ) (J : Finset ℕ) : (∀ p ∈ J, p.Prime) →
     have ha : a ∉ s := fun h => lt_irrefl a (has a h)
     rw [sum_insert ha, sum_insert ha] at hsum
     have hfa : (insert a s).filter (a < ·) = s := by
-      rw [filter_insert, if_neg (lt_irrefl a), filter_true_of_mem fun x hx => has x hx]
+      rw [filter_insert, ite_eq_right (lt_irrefl a), filter_true_of_mem fun x hx => has x hx]
     have hca := hc a (mem_insert_self a s)
     rw [hfa] at hca
     have hrest : |∑ p ∈ s, g p (ω p) - ∑ p ∈ s, g p (ω' p)| ≤ ∑ q ∈ s, β q := by
@@ -89,7 +89,7 @@ theorem sep_sum (δ : ℝ) (J : Finset ℕ) : (∀ p ∈ J, p.Prime) →
     refine ih (fun q hq => hJ q (mem_insert_of_mem hq)) (fun q hq => ?_) ω ω'
       (fun q hq => hω q (mem_insert_of_mem hq)) (fun q hq => hω' q (mem_insert_of_mem hq)) hs p hp
     have := hc q (mem_insert_of_mem hq)
-    rwa [filter_insert, if_neg (not_lt.2 (has q hq).le)] at this
+    rwa [filter_insert, ite_eq_right (not_lt.2 (has q hq).le)] at this
 
 theorem law_le {p : ℕ} (hp : p.Prime) (y : ℝ) : law p {y} ≤ 2⁻¹ := by
   have h1 : (1 : ℝ) ≤ p := by exact_mod_cast hp.one_lt.le
@@ -115,7 +115,7 @@ theorem cyl_le (J : Finset ℕ) (hJ : ∀ p ∈ J, p.Prime) (y : Ω) :
   have : {ω : Ω | ∀ p ∈ J, ω p = y p} = (↑J : Set ℕ).pi fun p => {y p} := by
     ext ω; simp [Set.mem_pi]
   rw [this, P, Measure.infinitePi_pi _ fun i _ => measurableSet_singleton _]
-  calc ∏ i ∈ J, law i {y i} ≤ ∏ _i ∈ J, (2⁻¹ : ℝ≥0∞) := prod_le_prod' fun i hi => law_le (hJ i hi) _
+  calc ∏ i ∈ J, law i {y i} ≤ ∏ _i ∈ J, (2⁻¹ : ℝ≥0∞) := prod_le_prod fun i hi => law_le (hJ i hi) _
     _ = _ := prod_const _
 
 /-- The partial sum over `J`. -/
@@ -198,9 +198,9 @@ theorem exists_J (K : ℕ) : ∃ J : Finset ℕ, J.card = K ∧ (∀ p ∈ J, p.
     have hm1 := min_le_left (δ / 2) (G p / 4)
     have hm2 := min_le_right (δ / 2) (G p / 4)
     rcases mem_insert.1 hq with rfl | hq
-    · rw [filter_insert, if_neg (lt_irrefl _), filter_false_of_mem fun x hx => not_lt.2 (hlt x hx).le]
+    · rw [filter_insert, ite_eq_right (lt_irrefl _), filter_false_of_mem fun x hx => not_lt.2 (hlt x hx).le]
       rw [eG] at hm2 ⊢; simp; linarith
-    · rw [filter_insert, if_pos (hlt q hq), sum_insert (fun h => hpJ (mem_filter.1 h).1)]
+    · rw [filter_insert, ite_eq_left (hlt q hq), sum_insert (fun h => hpJ (mem_filter.1 h).1)]
       have := hc q hq; linarith
 
 theorem atom_zero (t : ℝ) : P {ω | X ω = t} = 0 := by

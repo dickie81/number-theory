@@ -51,7 +51,7 @@ lemma geom_core (c b0 δ : ℝ) (hc : 0 < c) (d : ℕ) :
     have : q - 1 ≠ 0 := sub_ne_zero.2 hq1
     field_simp; ring
   rw [e, norm_div, norm_pow]
-  have hqn : ‖q‖ = |δ| / ‖z0‖ := by simp [q, norm_div, norm_mul]
+  have hqn : ‖q‖ = |δ| / ‖z0‖ := by simp [q]
   rw [hqn, div_pow]
   have hwn : c ≤ ‖w‖ := by rw [← hwre]; exact Complex.re_le_norm w
   have hz0n : 0 < ‖z0‖ := norm_pos_iff.2 hz0

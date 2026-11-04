@@ -49,7 +49,7 @@ theorem quad_of {d : ℕ} [NeZero d] (h1 : 1 < d) (D : ℤ) (χ : DirichletChara
   rw [← ZMod.natCast_zmod_val a]
   by_cases h0 : a.val = 0
   · left
-    haveI : Fact (1 < d) := ⟨h1⟩
+    have : Fact (1 < d) := ⟨h1⟩
     rw [h0, Nat.cast_zero]; exact MulChar.map_nonunit χ not_isUnit_zero
   · rw [hv _ h0]; exact kron_tri D _
 

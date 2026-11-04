@@ -120,7 +120,7 @@ theorem density_of_dist (S : ℕ → Finset ℤ) (hS : Tendsto (fun x => ((S x).
       · exact Or.inl h
       · right; by_cases hl : -(M:ℝ) ≤ low D
         · exact Or.inr hl
-        · left; push_neg at hl ⊢; linarith)).trans (prop_or_le _ _)
+        · left; push Not at hl ⊢; linarith)).trans (prop_or_le _ _)
   have up2 := prop_or_le (S := S x) (fun D => ¬ (-(M:ℝ)) < ℓ D) (fun D => -(M:ℝ) ≤ low D)
   have up3 := prop_not (S := S x) (fun D => (-(M:ℝ)) < ℓ D) hne
   have up4 := prop_finite_le (S := S x) (B M) (fun D => -(M:ℝ) ≤ low D) (fun D h => hlow M D h)
@@ -175,7 +175,7 @@ theorem d2_density (S : ℕ → Finset ℤ) (hS : Tendsto (fun x => ((S x).card 
     have h := criterion' (K1 D) c (ℓ D) (hpos D hA)
     rw [← hB D hA] at h
     rw [← not_le, h, hK1 D hA]; constructor
-    · intro hn; by_contra hc; push_neg at hc; exact hn ⟨by linarith [hc.2], by linarith [hc.1]⟩
+    · intro hn; by_contra hc; push Not at hc; exact hn ⟨by linarith [hc.2], by linarith [hc.1]⟩
     · rintro (h1 | h1) ⟨h2, h3⟩ <;> linarith
   have hfun : (fun x => prop (S x) (fun D => 2 * (1 - K2 D ^ 2 / K1 D ^ 2) < 1)) =
       fun x => prop (S x) (fun D => -2 * c < ℓ D ∨ ℓ D < -(2/5) * (L0 D + c)) := by
@@ -196,7 +196,7 @@ theorem L0_finite (κ R : ℝ) (D : ℤ) (h : Real.log (|(D:ℝ)| / Real.pi) + �
     have := (Real.log_le_iff_le_exp hpos (y := R - κ)).1 (by linarith)
     rwa [div_le_iff₀ Real.pi_pos, mul_comm] at this
   have : (|D| : ℝ) ≤ ⌈Real.pi * Real.exp (R - κ)⌉ := by
-    push_cast; exact hb.trans (Int.le_ceil _)
+    exact hb.trans (Int.le_ceil _)
   exact_mod_cast this
 
 /-- `d2_density` with `L0 D = log(|D|/π) + κ`: the hypothesis `hL0` is no longer needed. The per-discriminant

@@ -117,8 +117,8 @@ theorem anySub_eq (xs : List (ℕ × ℕ)) : ∀ a b : ℕ,
     simp only [anySub, ih, subsetSums, List.any_append, List.any_map, Function.comp_def]
     congr 2
     funext s
-    simp only [Nat.add_assoc, Nat.add_left_comm s.1 p.1, Nat.add_left_comm s.2 p.2]
-    simp [Nat.add_comm p.1, Nat.add_comm p.2, Nat.add_assoc, Nat.add_left_comm]
+    simp only [Nat.add_assoc]
+    simp [Nat.add_comm p.1, Nat.add_comm p.2]
 
 omit [GridOK] in
 /-- `surelyEval` (the unrolled search) is `surelyEvalSpec` (the list of all subset sums). -/

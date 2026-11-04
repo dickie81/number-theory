@@ -87,9 +87,9 @@ theorem sum_inv_norm_le (q : ℕ) [NeZero q] :
           have hqk : (0:ℝ) < ((q - k : ℕ):ℝ) := by exact_mod_cast (show 0 < q - k by omega)
           rcases min_choice k (q - k) with h | h <;> rw [h] <;>
             [linarith [inv_pos.2 hqk]; linarith [inv_pos.2 hk']]
-  have refl : ∑ k ∈ Ioo 0 q, ((q - k : ℕ):ℝ)⁻¹ = ∑ k ∈ Ioo 0 q, (k:ℝ)⁻¹ := by
+  have hrefl : ∑ k ∈ Ioo 0 q, ((q - k : ℕ):ℝ)⁻¹ = ∑ k ∈ Ioo 0 q, (k:ℝ)⁻¹ := by
     apply Finset.sum_nbij' (fun k => q - k) (fun k => q - k) <;> intro k hk <;>
-      simp only [coe_Ioo, Set.mem_Ioo, mem_Ioo] at hk ⊢ <;> first | omega | (congr 2; omega)
+      simp only [mem_Ioo] at hk ⊢ <;> omega
   have hH : ∑ k ∈ Ioo 0 q, (k:ℝ)⁻¹ ≤ 1 + Real.log q := by
     have e : Ioo 0 q ⊆ Icc 1 q := fun k hk => by simp only [mem_Ioo, mem_Icc] at hk ⊢; omega
     calc ∑ k ∈ Ioo 0 q, (k:ℝ)⁻¹ ≤ ∑ k ∈ Icc 1 q, (k:ℝ)⁻¹ :=
@@ -98,7 +98,7 @@ theorem sum_inv_norm_le (q : ℕ) [NeZero q] :
       _ ≤ 1 + Real.log q := harmonic_le_one_add_log q
   calc _ ≤ ∑ k ∈ Ioo 0 q, (q:ℝ) / 2 * ((k:ℝ)⁻¹ + ((q - k : ℕ):ℝ)⁻¹) := sum_le_sum step
     _ = (q:ℝ) / 2 * (2 * ∑ k ∈ Ioo 0 q, (k:ℝ)⁻¹) := by
-        rw [← mul_sum, sum_add_distrib, refl]; ring
+        rw [← mul_sum, sum_add_distrib, hrefl]; ring
     _ ≤ q * (1 + Real.log q) := by nlinarith
 
 
@@ -147,6 +147,7 @@ end Gauss
 
 variable {q : ℕ} [NeZero q]
 
+omit [NeZero q] in
 theorem isPrimitive_inv {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimitive) : χ⁻¹.IsPrimitive := by
   rw [isPrimitive_def, conductor_inv]; exact hχ
 
@@ -206,7 +207,7 @@ theorem polya_vinogradov {ψ : DirichletCharacter ℂ q} (hψ : ψ.IsPrimitive) 
     split_ifs with ha
     · have : χ a = 0 := by
         rw [ha]; apply MulChar.map_nonunit
-        haveI : Fact (1 < q) := ⟨hq⟩
+        have : Fact (1 < q) := ⟨hq⟩
         exact not_isUnit_zero
       simp [this]
     · rw [norm_mul]
@@ -226,7 +227,7 @@ theorem polya_vinogradov {ψ : DirichletCharacter ℂ q} (hψ : ψ.IsPrimitive) 
       · intro a _; simp [ZMod.val_lt]
       · intro k _; simp
       · intro a _; simp
-      · intro k hk; simp only [mem_coe, mem_range] at hk; exact ZMod.val_cast_of_lt hk
+      · intro k hk; simp only [mem_range] at hk; exact ZMod.val_cast_of_lt hk
       · intro a _; simp
     rw [e1, range_eq_Ico, sum_eq_sum_Ico_succ_bot (by omega)]
     simp only [Nat.cast_zero, ite_true, zero_add]
@@ -266,7 +267,7 @@ theorem pv_nonprincipal {n : ℕ} [NeZero n] {χ : DirichletCharacter ℂ n} (h�
     ‖∑ m ∈ Ioc 0 y, χ m‖ ≤ (n.divisors.card : ℝ) * (Real.sqrt n * (1 + Real.log n)) := by
   classical
   set f := χ.conductor
-  haveI : NeZero f := ⟨conductor_ne_zero χ⟩
+  have : NeZero f := ⟨conductor_ne_zero χ⟩
   set ψ := χ.primitiveCharacter
   have hψ : ψ.IsPrimitive := primitiveCharacter_isPrimitive χ
   have hf1 : 1 < f := by
@@ -308,16 +309,16 @@ theorem pv_nonprincipal {n : ℕ} [NeZero n] {χ : DirichletCharacter ℂ n} (h�
     rw [← sum_filter, mul_sum, mul_sum]
     symm
     apply sum_nbij' (fun k => d * k) (fun m => m / d)
-    · intro k hk; simp only [mem_coe, mem_filter, mem_Ioc] at hk ⊢
+    · intro k hk; simp only [mem_filter, mem_Ioc] at hk ⊢
       refine ⟨⟨Nat.mul_pos hd0 hk.1, ?_⟩, dvd_mul_right _ _⟩
       have := (Nat.le_div_iff_mul_le hd0).1 hk.2; linarith [mul_comm k d]
-    · intro m hm; simp only [mem_coe, mem_filter, mem_Ioc] at hm ⊢
+    · intro m hm; simp only [mem_filter, mem_Ioc] at hm ⊢
       obtain ⟨⟨h0, h1⟩, ⟨k, rfl⟩⟩ := hm
       rw [Nat.mul_div_cancel_left _ hd0]
       refine ⟨Nat.pos_of_ne_zero (by rintro rfl; simp at h0), ?_⟩
       rw [Nat.le_div_iff_mul_le hd0, mul_comm]; exact h1
     · intro k _; simp [Nat.mul_div_cancel_left _ hd0]
-    · intro m hm; simp only [mem_coe, mem_filter] at hm; exact Nat.mul_div_cancel' hm.2
+    · intro m hm; simp only [mem_filter] at hm; exact Nat.mul_div_cancel' hm.2
     · intro k _; push_cast; rw [map_mul]
   rw [hC]
   have hbound : ∀ d ∈ n.divisors, ‖(ArithmeticFunction.moebius d : ℂ) * (ψ d * ∑ k ∈ Ioc 0 (y / d), ψ k)‖ ≤
@@ -354,8 +355,8 @@ theorem exists_jacobiSym_eq_neg_one {n : ℕ} (hn : Odd n) (hsq : ¬ IsSquare n)
     ∃ D : ℤ, jacobiSym D n = -1 := by
   have hn0 : n ≠ 0 := by rintro rfl; exact hsq ⟨0, rfl⟩
   obtain ⟨p, hp, hodd⟩ : ∃ p, p.Prime ∧ ¬ Even (n.factorization p) := by
-    by_contra h; push_neg at h; exact hsq (Nat.isSquare_iff_even_factorization.2 h)
-  haveI : Fact p.Prime := ⟨hp⟩
+    by_contra h; push Not at h; exact hsq (Nat.isSquare_iff_even_factorization.2 h)
+  have : Fact p.Prime := ⟨hp⟩
   have hpdvd : p ∣ n := by
     by_contra h; rw [Nat.factorization_eq_zero_of_not_dvd h] at hodd; exact hodd ⟨0, rfl⟩
   have hp2 : p ≠ 2 := by
@@ -372,8 +373,8 @@ theorem exists_jacobiSym_eq_neg_one {n : ℕ} (hn : Odd n) (hsq : ¬ IsSquare n)
     ⟨Nat.chineseRemainder hcop r.val 1, (Nat.chineseRemainder hcop r.val 1).2.1,
       (Nat.chineseRemainder hcop r.val 1).2.2⟩
   refine ⟨k, ?_⟩
-  haveI : NeZero (p ^ v) := ⟨pow_ne_zero _ hp.ne_zero⟩
-  haveI : NeZero m := ⟨hm0⟩
+  have : NeZero (p ^ v) := ⟨pow_ne_zero _ hp.ne_zero⟩
+  have : NeZero m := ⟨hm0⟩
   rw [← hnm, jacobiSym.mul_right, jacobiSym.pow_right]
   have h1 : jacobiSym k p = -1 := by
     rw [← jacobiSym.legendreSym.to_jacobiSym, legendreSym.eq_neg_one_iff]
@@ -446,16 +447,16 @@ theorem sqf_sum_le (ψ : ℕ → ℂ) (hmul : ∀ a b, ψ (a * b) = ψ a * ψ b)
     have hl2 : 0 < l ^ 2 := pow_pos hl.1 2
     symm
     apply sum_nbij' (fun m => l ^ 2 * m) (fun d => d / l ^ 2)
-    · intro m hm; simp only [mem_coe, mem_filter, mem_Ioc] at hm ⊢
+    · intro m hm; simp only [mem_filter, mem_Ioc] at hm ⊢
       refine ⟨⟨Nat.mul_pos hl2 hm.1, ?_⟩, dvd_mul_right _ _⟩
       have := (Nat.le_div_iff_mul_le hl2).1 hm.2; linarith [mul_comm m (l^2)]
-    · intro d hd; simp only [mem_coe, mem_filter, mem_Ioc] at hd ⊢
+    · intro d hd; simp only [mem_filter, mem_Ioc] at hd ⊢
       obtain ⟨⟨h0, h1⟩, ⟨k, rfl⟩⟩ := hd
       rw [Nat.mul_div_cancel_left _ hl2]
       refine ⟨Nat.pos_of_ne_zero (by rintro rfl; simp at h0), ?_⟩
       rw [Nat.le_div_iff_mul_le hl2, mul_comm]; exact h1
     · intro m _; simp [Nat.mul_div_cancel_left _ hl2]
-    · intro d hd; simp only [mem_coe, mem_filter] at hd
+    · intro d hd; simp only [mem_filter] at hd
       exact Nat.mul_div_cancel' hd.2
     · intro m _; rw [hmul, show l ^ 2 = l * l by ring, hmul]; ring
   rw [hid]
@@ -467,7 +468,7 @@ theorem sqf_sum_le (ψ : ℕ → ℂ) (hmul : ∀ a b, ψ (a * b) = ψ a * ψ b)
       rw [Complex.norm_intCast]; exact_mod_cast ArithmeticFunction.abs_moebius_le_one
     have hψ2 : ‖ψ l ^ 2‖ ≤ 1 := by rw [norm_pow]; exact pow_le_one₀ (norm_nonneg _) (hle l)
     have hc : ‖(ArithmeticFunction.moebius l : ℂ) * ψ l ^ 2‖ ≤ 1 := by
-      rw [norm_mul]; exact mul_le_one₀ hμ (norm_nonneg _) hψ2
+      rw [norm_mul]; exact (mul_le_mul hμ hψ2 (norm_nonneg _) zero_le_one).trans_eq (one_mul 1)
     rw [norm_mul]
     have hinner_triv : ‖∑ m ∈ Ioc 0 (N / l ^ 2), ψ m‖ ≤ (N:ℝ) / l ^ 2 := by
       calc _ ≤ ∑ m ∈ Ioc 0 (N / l ^ 2), ‖ψ m‖ := norm_sum_le _ _
@@ -644,7 +645,7 @@ theorem Bn_pos : 0 < Bn n := by
 theorem sqf_psi_le (hn : Odd n) (hsq : ¬ IsSquare n) (c : DirichletCharacter ℂ 4) (x : ℕ) :
     ‖∑ d ∈ (Ioc 0 x).filter Squarefree, psiChar n c (d : ZMod (4 * n))‖ ≤
       2 * Real.sqrt (x * Bn n) + Bn n := by
-  haveI : NeZero (4 * n) := ⟨by have := (Fact.out : 1 < n); omega⟩
+  have : NeZero (4 * n) := ⟨by have := (Fact.out : 1 < n); omega⟩
   apply GSLemma.sqf_sum_le_sqrt (fun m => psiChar n c (m : ZMod (4 * n)))
   · intro a b; push_cast; exact map_mul _ _ _
   · intro m; exact DirichletCharacter.norm_le_one _ _
@@ -657,8 +658,8 @@ theorem unit4_iff (m : ℕ) : IsUnit (m : ZMod 4) ↔ m % 2 = 1 := by
 
 theorem one4_nat (m : ℕ) : (1 : DirichletCharacter ℂ 4) (m : ZMod 4) = if m % 2 = 1 then 1 else 0 := by
   by_cases h : m % 2 = 1
-  · rw [if_pos h, MulChar.one_apply ((unit4_iff m).2 h)]
-  · rw [if_neg h, MulChar.map_nonunit _ (fun hu => h ((unit4_iff m).1 hu))]
+  · rw [ite_eq_left h, MulChar.one_apply ((unit4_iff m).2 h)]
+  · rw [ite_eq_right h, MulChar.map_nonunit _ (fun hu => h ((unit4_iff m).1 hu))]
 
 theorem chi4_val (m : ℕ) : chi4 (m : ZMod 4) =
     if m % 2 = 0 then 0 else if m % 4 = 1 then 1 else -1 := by
@@ -678,7 +679,7 @@ theorem class_sum_le (hn : Odd n) (hsq : ¬ IsSquare n) (r : ℕ) (hr : r = 1 �
     have h2 : d % 2 = d % 4 % 2 := (Nat.mod_mod_of_dvd d (by norm_num)).symm
     have h4 : d % 4 < 4 := Nat.mod_lt _ (by norm_num)
     simp only [s]
-    rcases hr with rfl | rfl <;> interval_cases h : d % 4 <;> simp_all <;> ring
+    rcases hr with rfl | rfl <;> interval_cases h : d % 4 <;> simp_all
   simp_rw [hid]
   rw [← sum_div, sum_add_distrib, ← mul_sum, norm_div]
   have h1 := sqf_psi_le hn hsq 1 x
@@ -717,15 +718,15 @@ theorem sum_dvd_reindex (k : ℕ) (hk : 0 < k) (x : ℕ) (g : ℕ → ℂ) :
     ∑ d ∈ Ioc 0 x, (if k ∣ d then g (d / k) else 0) = ∑ m ∈ Ioc 0 (x / k), g m := by
   rw [← sum_filter]
   apply sum_nbij' (fun d => d / k) (fun m => k * m)
-  · intro d hd; simp only [mem_coe, mem_filter, mem_Ioc] at hd ⊢
+  · intro d hd; simp only [mem_filter, mem_Ioc] at hd ⊢
     obtain ⟨⟨h0, h1⟩, ⟨j, rfl⟩⟩ := hd
     rw [Nat.mul_div_cancel_left _ hk]
     refine ⟨Nat.pos_of_ne_zero (by rintro rfl; simp at h0), ?_⟩
     rw [Nat.le_div_iff_mul_le hk, mul_comm]; exact h1
-  · intro m hm; simp only [mem_coe, mem_Ioc, mem_filter] at hm ⊢
+  · intro m hm; simp only [mem_Ioc, mem_filter] at hm ⊢
     refine ⟨⟨Nat.mul_pos hk hm.1, ?_⟩, dvd_mul_right _ _⟩
     have := (Nat.le_div_iff_mul_le hk).1 hm.2; linarith [mul_comm m k]
-  · intro d hd; simp only [mem_coe, mem_filter] at hd; exact Nat.mul_div_cancel' hd.2
+  · intro d hd; simp only [mem_filter] at hd; exact Nat.mul_div_cancel' hd.2
   · intro m _; simp [Nat.mul_div_cancel_left _ hk]
   · intro d _; rfl
 
@@ -749,6 +750,7 @@ theorem odd_ite_le (hn : Odd n) (hsq : ¬ IsSquare n) (x : ℕ) :
   have := odd_sum_le hn hsq x
   rw [sum_filter] at this; simp_rw [ite_and]; exact this
 
+omit [Fact (1 < n)] in
 theorem norm_jac_le (a : ℤ) : ‖(jacobiSym a n : ℂ)‖ ≤ 1 := by
   rcases jacobiSym.trichotomy a n with h | h | h <;> simp [h]
 
@@ -761,7 +763,7 @@ theorem two_class_le (hn : Odd n) (hsq : ¬ IsSquare n) (y : ℕ) :
     intro m
     by_cases h2 : 2 ∣ m
     · obtain ⟨k, rfl⟩ := h2
-      rw [if_pos (dvd_mul_right 2 k), Nat.mul_div_cancel_left _ (by norm_num)]
+      rw [ite_eq_left (dvd_mul_right 2 k), Nat.mul_div_cancel_left _ (by norm_num)]
       have hiff : (Squarefree (2 * k) ∧ (2 * k) % 4 = 2) ↔ (Squarefree k ∧ k % 2 = 1) := by
         rw [Nat.squarefree_mul_iff]
         constructor
@@ -770,9 +772,9 @@ theorem two_class_le (hn : Odd n) (hsq : ¬ IsSquare n) (y : ℕ) :
         · rintro ⟨hk, ho⟩
           exact ⟨⟨(Nat.coprime_two_left).2 (Nat.odd_iff.2 ho), Nat.squarefree_two, hk⟩, by omega⟩
       by_cases hc : Squarefree k ∧ k % 2 = 1
-      · rw [if_pos (hiff.2 hc), if_pos hc]; push_cast; rw [jacobiSym.mul_left]; push_cast; ring
-      · rw [if_neg (fun h => hc (hiff.1 h)), if_neg hc, mul_zero]
-    · rw [if_neg h2, if_neg]; rintro ⟨-, h⟩; exact h2 (by omega)
+      · rw [ite_eq_left (hiff.2 hc), ite_eq_left hc]; push_cast; rw [jacobiSym.mul_left]; push_cast; ring
+      · rw [ite_eq_right (fun h => hc (hiff.1 h)), ite_eq_right hc, mul_zero]
+    · rw [ite_eq_right h2, ite_eq_right]; rintro ⟨-, h⟩; exact h2 (by omega)
   simp_rw [hpt]
   rw [sum_dvd_reindex 2 (by norm_num) y (fun k => (jacobiSym 2 n : ℂ) * (if Squarefree k ∧ k % 2 = 1 then (jacobiSym (k : ℕ) n : ℂ) else 0)), ← mul_sum, norm_mul]
   calc _ ≤ 1 * T n (y / 2) := mul_le_mul (norm_jac_le 2) (odd_ite_le hn hsq _) (norm_nonneg _) zero_le_one
@@ -791,7 +793,7 @@ theorem four_part_le (hn : Odd n) (hsq : ¬ IsSquare n) (r s : ℕ) (hr : r = 1 
     intro d
     by_cases h : 4 ∣ d
     · obtain ⟨m, rfl⟩ := h
-      rw [if_pos (dvd_mul_right 4 m), Nat.mul_div_cancel_left _ (by norm_num), h4]
+      rw [ite_eq_left (dvd_mul_right 4 m), Nat.mul_div_cancel_left _ (by norm_num), h4]
       have hrs : r ≠ s := by rcases hr with rfl | rfl <;> omega
       by_cases h1 : Squarefree m <;> by_cases h2 : m % 4 = r <;> by_cases h3 : m % 4 = s <;>
         simp_all
@@ -818,8 +820,8 @@ theorem gs_pos (hn : Odd n) (hsq : ¬ IsSquare n) (x : ℕ) :
     · have : ¬ (4 ∣ d) := by omega
       simp [h1, this]
     · by_cases h2 : 4 ∣ d ∧ Squarefree (d / 4) ∧ ((d / 4) % 4 = 3 ∨ (d / 4) % 4 = 2)
-      · rw [if_pos (Or.inr ⟨h2.1, h2.2.1, h2.2.2.symm⟩), if_neg h1, if_pos h2, zero_add]
-      · rw [if_neg h1, if_neg h2, if_neg, add_zero]
+      · rw [ite_eq_left (Or.inr ⟨h2.1, h2.2.1, h2.2.2.symm⟩), ite_eq_right h1, ite_eq_left h2, zero_add]
+      · rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right, add_zero]
         rintro (h | ⟨a, b, c⟩); exact h1 h; exact h2 ⟨a, b, c.symm⟩
   simp_rw [hpt]; rw [sum_add_distrib]
   calc _ ≤ _ := norm_add_le _ _
@@ -841,8 +843,8 @@ theorem gs_neg (hn : Odd n) (hsq : ¬ IsSquare n) (x : ℕ) :
     · have : ¬ (4 ∣ d) := by omega
       simp [h1, this]
     · by_cases h2 : 4 ∣ d ∧ Squarefree (d / 4) ∧ ((d / 4) % 4 = 1 ∨ (d / 4) % 4 = 2)
-      · rw [if_pos (Or.inr h2), if_neg h1, if_pos h2, zero_add]
-      · rw [if_neg h1, if_neg h2, if_neg, add_zero, mul_zero]
+      · rw [ite_eq_left (Or.inr h2), ite_eq_right h1, ite_eq_left h2, zero_add]
+      · rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right, add_zero, mul_zero]
         rintro (h | h); exact h1 h; exact h2 h
   simp_rw [hpt]; rw [← mul_sum, sum_add_distrib, norm_mul]
   calc _ ≤ 1 * (T n x + 2 * T n x) := mul_le_mul (norm_jac_le (-1))
@@ -881,7 +883,7 @@ noncomputable def jcharN (m : ℕ) [NeZero m] : DirichletCharacter ℂ m where
   toFun a := (jacobiSym (a.val : ℤ) m : ℂ)
   map_one' := by
     rcases Nat.lt_or_ge 1 m with h | h
-    · haveI : Fact (1 < m) := ⟨h⟩; simp [ZMod.val_one, jacobiSym.one_left]
+    · have : Fact (1 < m) := ⟨h⟩; simp [ZMod.val_one, jacobiSym.one_left]
     · have : m = 1 := by have := NeZero.ne m; omega
       subst this; simp [jacobiSym.one_right]
   map_mul' a b := by
@@ -1004,7 +1006,7 @@ noncomputable def T8 (m x : ℕ) : ℝ := 2 * Real.sqrt (x * B8 m) + B8 m
 theorem sqf_psi8_le {m a : ℕ} [NeZero m] (hm : Odd m) (ha : a ≠ 0) (hns : ¬ IsSquare m ∨ Odd a)
     (e : DirichletCharacter ℂ 8) (he : e = e1 a ∨ e = e2 a) (x : ℕ) :
     ‖∑ d ∈ (Ioc 0 x).filter Squarefree, psi8 m e (d : ZMod (8 * m))‖ ≤ T8 m x := by
-  haveI : NeZero (8 * m) := ⟨by have := NeZero.ne m; omega⟩
+  have : NeZero (8 * m) := ⟨by have := NeZero.ne m; omega⟩
   apply GSLemma.sqf_sum_le_sqrt (fun k => psi8 m e (k : ZMod (8 * m)))
   · intro a b; push_cast; exact map_mul _ _ _
   · intro k; exact DirichletCharacter.norm_le_one _ _
@@ -1024,14 +1026,14 @@ theorem class8_le {m a : ℕ} [NeZero m] (hm : Odd m) (ha : a ≠ 0) (hns : ¬ I
       else 0 := by
     intro d
     by_cases hq : Squarefree d
-    · rw [if_pos hq, psi8_nat, psi8_nat, e1_nat ha, e2_nat, χ₈_nat_eq_if_mod_eight, χ₈'_nat_eq_if_mod_eight]
+    · rw [ite_eq_left hq, psi8_nat, psi8_nat, e1_nat ha, e2_nat, χ₈_nat_eq_if_mod_eight, χ₈'_nat_eq_if_mod_eight]
       have h4 : d % 4 = d % 8 % 4 := (Nat.mod_mod_of_dvd d (by norm_num)).symm
       have h2 : d % 2 = d % 8 % 2 := (Nat.mod_mod_of_dvd d (by norm_num)).symm
       rw [h4, h2]
       have h8 : d % 8 < 8 := Nat.mod_lt _ (by norm_num)
       simp only [s, hq, true_and]
       rcases hr with rfl | rfl <;> interval_cases h : d % 8 <;> simp [zero_pow ha] <;> ring
-    · rw [if_neg (fun h => hq h.1), if_neg hq]
+    · rw [ite_eq_right (fun h => hq h.1), ite_eq_right hq]
   simp_rw [hid]
   rw [← sum_filter, ← sum_div, sum_add_distrib, ← mul_sum, norm_div]
   have h1 := sqf_psi8_le hm ha hns (e1 a) (Or.inl rfl) x
@@ -1042,7 +1044,7 @@ theorem class8_le {m a : ℕ} [NeZero m] (hm : Odd m) (ha : a ≠ 0) (hns : ¬ I
     _ ≤ _ := by rw [hs, one_mul, Complex.norm_two]; linarith
 
 theorem chi8_four_dvd {d : ℕ} (h : 4 ∣ d) : χ₈ (d : ZMod 8) = 0 := by
-  rw [χ₈_nat_eq_if_mod_eight, if_pos (by omega)]
+  rw [χ₈_nat_eq_if_mod_eight, ite_eq_left (by omega)]
 
 /-- **GS Lemma 4.1, positive discriminants, even `n = 2^a m`** (`m` odd, `a ≥ 1`, `n` non-square):
 `‖Σ_{0<D≤x, D fund.} (D|n)‖ ≤ 2√(x B₈) + B₈`, `B₈ = d(8m)√(8m)(1 + log 8m)`. -/
@@ -1052,8 +1054,8 @@ theorem gs_even_pos {m a : ℕ} [NeZero m] (hm : Odd m) (ha : a ≠ 0) (hns : ¬
       (if Squarefree d ∧ d % 4 = 1 then ((χ₈ (d : ZMod 8) : ℤ) : ℂ) ^ a * (jacobiSym d m : ℂ) else 0) := by
     intro d; rw [kron_even hm]; push_cast; unfold fundPos
     by_cases h1 : Squarefree d ∧ d % 4 = 1
-    · rw [if_pos (Or.inl h1), if_pos h1]
-    · rw [if_neg h1]; split_ifs with h
+    · rw [ite_eq_left (Or.inl h1), ite_eq_left h1]
+    · rw [ite_eq_right h1]; split_ifs with h
       · rcases h with h | ⟨h4, -⟩
         · exact absurd h h1
         · rw [chi8_four_dvd h4]; simp [zero_pow ha]
@@ -1073,8 +1075,8 @@ theorem gs_even_neg {m a : ℕ} [NeZero m] (hm : Odd m) (ha : a ≠ 0) (hns : ¬
       show (-(d:ℤ)) = -1 * d by ring, jacobiSym.mul_left]
     push_cast; unfold fundNeg
     by_cases h1 : Squarefree d ∧ d % 4 = 3
-    · rw [if_pos (Or.inl h1), if_pos h1]; ring
-    · rw [if_neg h1, mul_zero]; split_ifs with h
+    · rw [ite_eq_left (Or.inl h1), ite_eq_left h1]; ring
+    · rw [ite_eq_right h1, mul_zero]; split_ifs with h
       · rcases h with h | ⟨h4, -⟩
         · exact absurd h h1
         · rw [chi8_four_dvd h4]; simp [zero_pow ha]
@@ -1104,7 +1106,7 @@ theorem even_split {n : ℕ} (hn : 1 < n) (hsq : ¬ IsSquare n) (hev : ¬ n % 2 
   have ha : a ≠ 0 := (Nat.Prime.factorization_pos_of_dvd Nat.prime_two hn0 (by omega)).ne'
   refine ⟨e, hm, ha, ?_⟩
   by_contra h
-  push_neg at h
+  push Not at h
   obtain ⟨⟨r, hr⟩, hae⟩ := h
   obtain ⟨b, hb⟩ := Nat.not_odd_iff_even.1 hae
   apply hsq; refine ⟨2 ^ b * r, ?_⟩
@@ -1116,12 +1118,12 @@ theorem gs_kron_pos {n : ℕ} (hn : 1 < n) (hsq : ¬ IsSquare n) (x : ℕ) :
     ‖∑ d ∈ Ioc 0 x, (if fundPos d then kron d n else 0)‖ ≤ GSB n x := by
   unfold GSB
   by_cases ho : n % 2 = 1
-  · haveI : Fact (1 < n) := ⟨hn⟩
+  · have : Fact (1 < n) := ⟨hn⟩
     have hodd : Odd n := Nat.odd_iff.2 ho
-    rw [if_pos ho]; simp_rw [kron_odd hodd]; exact gs_pos hodd hsq x
-  · rw [if_neg ho]
+    rw [ite_eq_left ho]; simp_rw [kron_odd hodd]; exact gs_pos hodd hsq x
+  · rw [ite_eq_right ho]
     obtain ⟨e, hm, ha, hns⟩ := even_split hn hsq ho
-    haveI : NeZero (n / 2 ^ n.factorization 2) := ⟨by rintro h; rw [h] at hm; simp at hm⟩
+    have : NeZero (n / 2 ^ n.factorization 2) := ⟨by rintro h; rw [h] at hm; simp at hm⟩
     have := gs_even_pos hm ha hns x
     rwa [← e] at this
 
@@ -1130,12 +1132,12 @@ theorem gs_kron_neg {n : ℕ} (hn : 1 < n) (hsq : ¬ IsSquare n) (x : ℕ) :
     ‖∑ d ∈ Ioc 0 x, (if fundNeg d then kron (-(d:ℤ)) n else 0)‖ ≤ GSB n x := by
   unfold GSB
   by_cases ho : n % 2 = 1
-  · haveI : Fact (1 < n) := ⟨hn⟩
+  · have : Fact (1 < n) := ⟨hn⟩
     have hodd : Odd n := Nat.odd_iff.2 ho
-    rw [if_pos ho]; simp_rw [kron_odd hodd]; exact gs_neg hodd hsq x
-  · rw [if_neg ho]
+    rw [ite_eq_left ho]; simp_rw [kron_odd hodd]; exact gs_neg hodd hsq x
+  · rw [ite_eq_right ho]
     obtain ⟨e, hm, ha, hns⟩ := even_split hn hsq ho
-    haveI : NeZero (n / 2 ^ n.factorization 2) := ⟨by rintro h; rw [h] at hm; simp at hm⟩
+    have : NeZero (n / 2 ^ n.factorization 2) := ⟨by rintro h; rw [h] at hm; simp at hm⟩
     have := gs_even_neg hm ha hns x
     rwa [← e] at this
 
@@ -1198,12 +1200,12 @@ theorem moment_generic (F : ℕ → Prop) [DecidablePred F] (χ : ℕ → ℕ �
     rw [mul_sum]; apply sum_congr rfl; intro d _; split_ifs <;> simp
   rw [hS]
   by_cases hsq : IsSquare (∏ i, f i)
-  · rw [if_pos hsq, if_pos hsq,
+  · rw [ite_eq_left hsq, ite_eq_left hsq,
       show (∏ i, a (f i)) * ∑ d ∈ Ioc 0 x, (if F d then χ d (∏ i, f i) else 0) - (x:ℂ) * ((∏ i, a (f i)) * c (∏ i, f i)) =
         (∏ i, a (f i)) * (∑ d ∈ Ioc 0 x, (if F d then χ d (∏ i, f i) else 0) - c (∏ i, f i) * x) by ring,
       norm_mul]
     exact mul_le_mul_of_nonneg_left (Hcount _ hpos hsq) (norm_nonneg _)
-  · rw [if_neg hsq, if_neg hsq, sub_zero, norm_mul]
+  · rw [ite_eq_right hsq, ite_eq_right hsq, sub_zero, norm_mul]
     have h1 : 1 < ∏ i, f i := by
       rcases Nat.lt_or_ge 1 (∏ i, f i) with h | h
       · exact h
@@ -1212,7 +1214,7 @@ theorem moment_generic (F : ℕ → Prop) [DecidablePred F] (χ : ℕ → ℕ �
 
 
 open Filter Topology in
-theorem sqrt_bound_div (B : ℝ) (hB : 0 ≤ B) :
+theorem sqrt_bound_div (B : ℝ) (_hB : 0 ≤ B) :
     Tendsto (fun x : ℕ => (2 * Real.sqrt (x * B) + B) / x) atTop (𝓝 0) := by
   have hinv : Tendsto (fun x : ℕ => ((x:ℝ))⁻¹) atTop (𝓝 0) := tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop
   have hs : Tendsto (fun x : ℕ => Real.sqrt ((x:ℝ))⁻¹) atTop (𝓝 0) := by
@@ -1226,7 +1228,7 @@ theorem sqrt_bound_div (B : ℝ) (hB : 0 ≤ B) :
   have h0 : Real.sqrt (x:ℝ) ≠ 0 := (Real.sqrt_pos.2 hx').ne'
   have h2 := Real.mul_self_sqrt hx'.le
   field_simp
-  first | linear_combination (-2 * Real.sqrt B) * h2 | linear_combination (2 * Real.sqrt B) * h2
+  linear_combination (-2 * Real.sqrt B) * h2
 
 theorem Bn_nonneg (n : ℕ) : 0 ≤ GSAssemble.Bn n := by
   unfold GSAssemble.Bn; have := Real.log_natCast_nonneg (4 * n); positivity
@@ -1293,7 +1295,7 @@ theorem periodic_dens (p : ℕ → Prop) [DecidablePred p] (L : ℕ) (hL : 0 < L
     rw [div_le_iff₀ hLr]; exact mul_le_mul_of_nonneg_left (by exact_mod_cast h2) (by positivity)
   have h5 : ((x % L : ℕ) : ℝ) < L := by exact_mod_cast hs
   have h6 : ((Nat.count p (x % L) : ℕ) : ℝ) ≤ (x % L : ℕ) := by exact_mod_cast h1
-  rw [abs_le]; constructor <;> push_cast at * <;> nlinarith
+  rw [abs_le]; constructor <;> nlinarith
 
 open Classical in
 /-- Multiples of `e²` below `x`, beyond `E`: `#{0 < d < x : ∃ e > E, e² ∣ d} ≤ x / E`. -/
@@ -1366,7 +1368,7 @@ theorem PE_periodic (Cp : ℕ → Prop) (r E : ℕ) :
 
 open Classical in
 theorem Q_le_PE (Cp : ℕ → Prop) (r E x : ℕ) : Nat.count (Q Cp r) x ≤ Nat.count (PE Cp r E) x :=
-  Nat.count_mono_left (fun d _ ⟨a, b, c⟩ => ⟨a, b, fun e h1 _ h3 => c e h1 h3⟩)
+  Nat.count_mono_left (fun _d _ ⟨a, b, c⟩ => ⟨a, b, fun e h1 _ h3 => c e h1 h3⟩)
 
 open Classical in
 theorem PE_le_Q (Cp : ℕ → Prop) (hC0 : ¬ Cp 0) (r E x : ℕ) :
@@ -1453,7 +1455,7 @@ theorem chi8_sq_nat (d : ℕ) : ((χ₈ (d : ZMod 8) : ℤ) : ℂ) * ((χ₈ (d 
   by_cases h : d % 2 = 0
   · simp [h]
   · have h' : d % 2 = 1 := by omega
-    rw [if_neg h, if_pos h']; split_ifs <;> simp
+    rw [ite_eq_right h, ite_eq_left h']; split_ifs <;> simp
 
 /-- `(d | r²) = 1` if `gcd(d, r) = 1`, else `0`. -/
 theorem kron_sq_nat (d : ℕ) {r : ℕ} (hr : 0 < r) :
@@ -1463,7 +1465,7 @@ theorem kron_sq_nat (d : ℕ) {r : ℕ} (hr : 0 < r) :
   set v := r.factorization 2
   set r' := r / 2 ^ v
   have hr' : r' ≠ 0 := (Nat.ordCompl_pos 2 hr.ne').ne'
-  haveI : NeZero r' := ⟨hr'⟩
+  have : NeZero r' := ⟨hr'⟩
   have e : r = 2 ^ v * r' := (Nat.ordProj_mul_ordCompl_eq_self r 2).symm
   have hsq : ∀ (A B : ℂ), A ^ v * B * (A ^ v * B) = (A * A) ^ v * (B * B) := by intro A B; ring
   push_cast
@@ -1471,9 +1473,9 @@ theorem kron_sq_nat (d : ℕ) {r : ℕ} (hr : 0 < r) :
   have hJ : ((jacobiSym d r' : ℤ) : ℂ) * ((jacobiSym d r' : ℤ) : ℂ) = if Nat.Coprime d r' then 1 else 0 := by
     by_cases hc : Nat.Coprime d r'
     · have : jacobiSym d r' ^ 2 = 1 := jacobiSym.sq_one (by rw [Int.gcd_natCast_natCast]; exact hc)
-      rw [if_pos hc, ← Int.cast_mul, ← sq, this]; simp
+      rw [ite_eq_left hc, ← Int.cast_mul, ← sq, this]; simp
     · have : jacobiSym d r' = 0 := jacobiSym.eq_zero_iff_not_coprime.2 (by rw [Int.gcd_natCast_natCast]; exact hc)
-      rw [if_neg hc, this]; simp
+      rw [ite_eq_right hc, this]; simp
   rw [hJ]
   have hiff : Nat.Coprime d r ↔ (v = 0 ∨ d % 2 = 1) ∧ Nat.Coprime d r' := by
     rw [e, Nat.coprime_mul_iff_right]
@@ -1488,21 +1490,21 @@ theorem kron_sq_nat (d : ℕ) {r : ℕ} (hr : 0 < r) :
       · rw [h]; simp
       · exact Nat.Coprime.pow_right _ ((Nat.coprime_two_right).2 (Nat.odd_iff.2 h))
   by_cases hc : Nat.Coprime d r
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     obtain ⟨h1, h2⟩ := hiff.1 hc
-    rw [if_pos h2, mul_one]
+    rw [ite_eq_left h2, mul_one]
     rcases h1 with h | h
     · rw [h, pow_zero]
-    · rw [if_pos h, one_pow]
-  · rw [if_neg hc]
+    · rw [ite_eq_left h, one_pow]
+  · rw [ite_eq_right hc]
     by_cases h2 : Nat.Coprime d r'
-    · rw [if_pos h2, mul_one]
+    · rw [ite_eq_left h2, mul_one]
       have hv : v ≠ 0 ∧ d % 2 ≠ 1 := by
         by_contra h; apply hc; apply hiff.2; refine ⟨?_, h2⟩; by_cases hv : v = 0
         · exact Or.inl hv
         · right; by_contra h'; exact h ⟨hv, h'⟩
-      rw [if_neg hv.2, zero_pow hv.1]
-    · rw [if_neg h2, mul_zero]
+      rw [ite_eq_right hv.2, zero_pow hv.1]
+    · rw [ite_eq_right h2, mul_zero]
 
 theorem kron_neg_sq_nat (d : ℕ) {r : ℕ} (hr : 0 < r) :
     kron (-(d:ℤ)) (r * r) = kron d (r * r) := by
@@ -1586,7 +1588,7 @@ theorem CpNeg0 : ¬ CpNeg 0 := by simp [CpNeg]
 
 open Classical in
 theorem sum_eq_count (F : ℕ → Prop) [DecidablePred F] (Cp : ℕ → Prop) (hC0 : ¬ Cp 0)
-    (hF : ∀ d, F d ↔ Cp (d % 16) ∧ Odf d) (χ : ℕ → ℕ → ℂ) {r : ℕ} (hr : 0 < r)
+    (hF : ∀ d, F d ↔ Cp (d % 16) ∧ Odf d) (χ : ℕ → ℕ → ℂ) {r : ℕ} (_hr : 0 < r)
     (hχ : ∀ d, χ d (r * r) = if Nat.Coprime d r then 1 else 0) (x : ℕ) :
     ∑ d ∈ Ioc 0 x, (if F d then χ d (r * r) else 0) = ((Nat.count (Q Cp r) (x + 1) : ℕ) : ℂ) := by
   have hpt : ∀ d, (if F d then χ d (r * r) else 0) = if Q Cp r d then (1:ℂ) else 0 := by
@@ -1653,7 +1655,7 @@ theorem moment_uncond (F : ℕ → Prop) [DecidablePred F] (Cp : ℕ → Prop) (
   set R : ℕ → ℕ → ℝ := fun n x => if IsSquare n ∧ 0 < n then
     ‖∑ d ∈ Ioc 0 x, (if F d then χ d n else 0) - c n * x‖ else 0
   apply lim_of_bound _ _ _ (fun x => moment_generic F χ hprod P hP a k x c (fun n => R n x) (fun n => GSKron.GSB n x)
-    (fun n hn hs => by simp only [R, if_pos (And.intro hs hn)]; exact le_rfl) (HGS x))
+    (fun n hn hs => by simp only [R, ite_eq_left (And.intro hs hn)]; exact le_rfl) (HGS x))
   simp_rw [sum_div]
   rw [show (0:ℝ) = ∑ f ∈ Fintype.piFinset (fun _ : Fin k => P), 0 by simp]
   apply tendsto_finsetSum; intro f _
@@ -1663,7 +1665,7 @@ theorem moment_uncond (F : ℕ → Prop) [DecidablePred F] (Cp : ℕ → Prop) (
   split_ifs with hsq
   · set n := ∏ i, f i
     by_cases hn : 0 < n
-    · simp only [R, if_pos (And.intro hsq hn)]
+    · simp only [R, ite_eq_left (And.intro hsq hn)]
       obtain ⟨r, hr⟩ := hsq
       have hr0 : 0 < r := Nat.pos_of_ne_zero (by rintro rfl; simp at hr; omega)
       rw [hr]
@@ -1673,7 +1675,7 @@ theorem moment_uncond (F : ℕ → Prop) [DecidablePred F] (Cp : ℕ → Prop) (
       rw [hd]
       exact shift_lim (Nat.count (Q Cp r)) (count_succ_le _) (count_le_succ _) _
         (Classical.choose_spec (Q_density Cp hC0 r hr0))
-    · have h0 : ∀ x, R n x = 0 := fun x => by simp only [R]; rw [if_neg (fun h => hn h.2)]
+    · have h0 : ∀ x, R n x = 0 := fun x => by simp only [R]; rw [ite_eq_right (fun h => hn h.2)]
       simp_rw [h0, zero_div]; exact tendsto_const_nhds
   · exact GSB_div _
 
@@ -1686,8 +1688,8 @@ theorem moment_pos_unconditional (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a :
       (𝓝 (∑ f ∈ (Fintype.piFinset fun _ : Fin k => P).filter (fun f => IsSquare (∏ i, f i)),
           (∏ i, a (f i)) * (dens CpPos CpPos0 (Nat.sqrt (∏ i, f i)) : ℂ))) :=
   moment_uncond fundPos CpPos CpPos0 fundPos_iff (fun d n => kron d n)
-    (fun d r hr => kron_sq_nat d hr) (fun d k f hf => kron_prod d f hf)
-    (fun x n h1 hs => GSKron.gs_kron_pos h1 hs x) P hP a k
+    (fun d _r hr => kron_sq_nat d hr) (fun d _k f hf => kron_prod d f hf)
+    (fun x _n h1 hs => GSKron.gs_kron_pos h1 hs x) P hP a k
 
 /-- **Unconditional moments, negative fundamental discriminants** (`D = -d`). -/
 theorem moment_neg_unconditional (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℂ) (k : ℕ) :
@@ -1787,7 +1789,7 @@ theorem Q_congr (Cp : ℕ → Prop) {r r' : ℕ} (h : ∀ d, Nat.Coprime d r ↔
 
 theorem dens_spec (Cp : ℕ → Prop) (hC0 : ¬ Cp 0) {r : ℕ} (hr : 0 < r) :
     Tendsto (fun x : ℕ => (Nat.count (Q Cp r) x : ℝ) / x) atTop (𝓝 (dens Cp hC0 r)) := by
-  have hd : dens Cp hC0 r = Classical.choose (Q_density Cp hC0 r hr) := by unfold GSUncond.dens; rw [dif_pos hr]
+  have hd : dens Cp hC0 r = Classical.choose (Q_density Cp hC0 r hr) := by unfold GSUncond.dens; rw [dite_eq_left hr]
   rw [hd]; exact Classical.choose_spec (Q_density Cp hC0 r hr)
 
 theorem Odf_mul_prime {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) (j : ℕ) : Odf (p * j) ↔ Odf j ∧ ¬ p ∣ j := by
@@ -1899,8 +1901,8 @@ theorem godd_step {a p n : ℕ} (ha : 0 < a) (hp : p.Prime) (hpa : ¬ p ∣ a) (
   have hnot : p ∉ a.primeFactors := fun h => hpa (Nat.dvd_of_mem_primeFactors h)
   rw [hpf]
   by_cases h2 : p = 2
-  · rw [if_pos h2, one_mul, filter_insert, if_neg (by simp [h2])]
-  · rw [if_neg h2, filter_insert, if_pos h2, prod_insert (fun h => hnot (mem_filter.1 h).1)]
+  · rw [ite_eq_left h2, one_mul, filter_insert, ite_eq_right (by simp [h2])]
+  · rw [ite_eq_right h2, filter_insert, ite_eq_left h2, prod_insert (fun h => hnot (mem_filter.1 h).1)]
 
 /-- **Product formula for odd squarefree numbers coprime to `r`**: density `ν(1) ∏_{p | r odd} p/(p+1)`. -/
 theorem nu_formula (r : ℕ) (hr : 0 < r) :
@@ -1916,8 +1918,8 @@ theorem nu_formula (r : ℕ) (hr : 0 < r) :
       · exact h
     rw [Q_ppow CpOdd hn, godd_step ha hp hpa hn]
     by_cases h2 : p = 2
-    · subst h2; rw [Q_two, if_pos rfl, one_mul]; exact ih ha
-    · rw [if_neg h2, show nu1 * ((p:ℝ) / (p + 1) * godd a) = nu1 * godd a * (p / (p + 1)) by ring]
+    · subst h2; rw [Q_two, ite_eq_left rfl, one_mul]; exact ih ha
+    · rw [ite_eq_right h2, show nu1 * ((p:ℝ) / (p + 1) * godd a) = nu1 * godd a * (p / (p + 1)) by ring]
       exact step_odd ha hp h2 hpa _ (ih ha)
 
 end GSRatio
@@ -1936,8 +1938,8 @@ noncomputable def psi4 (r : ℕ) [NeZero r] : DirichletCharacter ℂ (4 * r) :=
 theorem one_nat (r : ℕ) [NeZero r] (k : ℕ) :
     (1 : DirichletCharacter ℂ r) (k : ZMod r) = if Nat.Coprime k r then 1 else 0 := by
   by_cases h : Nat.Coprime k r
-  · rw [if_pos h, MulChar.one_apply ((ZMod.isUnit_iff_coprime k r).2 h)]
-  · rw [if_neg h, MulChar.map_nonunit _ (fun hu => h ((ZMod.isUnit_iff_coprime k r).1 hu))]
+  · rw [ite_eq_left h, MulChar.one_apply ((ZMod.isUnit_iff_coprime k r).2 h)]
+  · rw [ite_eq_right h, MulChar.map_nonunit _ (fun hu => h ((ZMod.isUnit_iff_coprime k r).1 hu))]
 
 theorem psi4_nat (r : ℕ) [NeZero r] (k : ℕ) :
     psi4 r (k : ZMod (4 * r)) = JChar.chi4 (k : ZMod 4) * (1 : DirichletCharacter ℂ r) (k : ZMod r) := by
@@ -1963,7 +1965,7 @@ theorem psi4_ne_one (r : ℕ) [NeZero r] : psi4 r ≠ 1 := by
     have h2 : Nat.gcd r (4 * r - 1) ∣ 4 * r - 1 := Nat.gcd_dvd_right _ _
     have := Nat.dvd_sub h1 h2
     rwa [show 4 * r - (4 * r - 1) = 1 by omega] at this
-  rw [if_pos hc, if_neg (by omega), if_neg (by omega)]; simp
+  rw [ite_eq_left hc, ite_eq_right (by omega), ite_eq_right (by omega)]; simp
 
 theorem Q1_iff (r d : ℕ) : Q Cp1 r d ↔ Squarefree d ∧ d % 4 = 1 ∧ Nat.Coprime d r := by
   unfold Q Cp1; rw [Nat.mod_mod_of_dvd _ (by norm_num), sqf_iff]
@@ -2015,7 +2017,7 @@ theorem Q3_0 (r : ℕ) : ¬ Q Cp3 r 0 := by unfold Q Cp3; simp
 theorem diff_bound (r : ℕ) [NeZero r] (x : ℕ) :
     |(Nat.count (Q Cp1 r) (x + 1) : ℝ) - Nat.count (Q Cp3 r) (x + 1)| ≤
       2 * Real.sqrt (x * (GSAssemble.Bn r + 1)) + (GSAssemble.Bn r + 1) := by
-  haveI : NeZero (4 * r) := ⟨by have := NeZero.ne r; omega⟩
+  have : NeZero (4 * r) := ⟨by have := NeZero.ne r; omega⟩
   have hB := GSLemma.sqf_sum_le_sqrt (fun m => psi4 r (m : ZMod (4 * r)))
     (fun a b => by push_cast; exact map_mul _ _ _) (fun m => DirichletCharacter.norm_le_one _ _)
     (GSAssemble.Bn r + 1) (by linarith [Bn_nonneg r])
@@ -2028,7 +2030,9 @@ theorem diff_bound (r : ℕ) [NeZero r] (x : ℕ) :
     have h4 : d % 4 < 4 := Nat.mod_lt _ (by norm_num)
     rw [h2]
     by_cases hs : Squarefree d <;> by_cases hc : Nat.Coprime d r <;>
-      interval_cases h : d % 4 <;> simp [hs, hc] <;> split_ifs <;> simp_all
+      interval_cases h : d % 4 <;> simp [hs, hc]
+    split_ifs
+    simp_all
   rw [sum_filter] at hB
   simp_rw [hpt] at hB
   rw [sum_sub_distrib, sum_ite_count _ (Q1_0 r), sum_ite_count _ (Q3_0 r)] at hB
@@ -2051,7 +2055,7 @@ theorem odd_split (r d : ℕ) : Q CpOdd r d ↔ Q Cp1 r d ∨ Q Cp3 r d := by
 theorem class_half (r : ℕ) (hr : 0 < r) :
     Tendsto (fun x : ℕ => (Nat.count (Q Cp1 r) x : ℝ) / x) atTop (𝓝 (nu1 * godd r / 2)) ∧
     Tendsto (fun x : ℕ => (Nat.count (Q Cp3 r) x : ℝ) / x) atTop (𝓝 (nu1 * godd r / 2)) := by
-  haveI : NeZero r := ⟨hr.ne'⟩
+  have : NeZero r := ⟨hr.ne'⟩
   obtain ⟨L1, h1⟩ := Q_density Cp1 (by simp [Cp1]) r hr
   obtain ⟨L3, h3⟩ := Q_density Cp3 (by simp [Cp3]) r hr
   -- L1 = L3
@@ -2115,9 +2119,9 @@ theorem cond_tendsto (c : Prop) (B : ℕ → Prop) (L : ℝ)
     (h : Tendsto (fun x : ℕ => (Nat.count B x : ℝ) / x) atTop (𝓝 L)) :
     Tendsto (fun x : ℕ => (Nat.count (fun j => c ∧ B j) x : ℝ) / x) atTop (𝓝 (if c then L else 0)) := by
   by_cases hc : c
-  · rw [if_pos hc]; refine h.congr (fun x => ?_)
+  · rw [ite_eq_left hc]; refine h.congr (fun x => ?_)
     simp only [Nat.count_eq_card_filter_range]; congr 3; apply filter_congr; intro d _; simp [hc]
-  · rw [if_neg hc]; refine tendsto_const_nhds.congr (fun x => ?_)
+  · rw [ite_eq_right hc]; refine tendsto_const_nhds.congr (fun x => ?_)
     simp only [Nat.count_eq_card_filter_range]
     rw [filter_false_of_mem (fun d _ h => hc h.1)]; simp
 
@@ -2203,8 +2207,8 @@ theorem delta_pos (r : ℕ) (hr : 0 < r) :
       (if r % 2 = 1 then nu1 * godd r / 2 else 0) / ((4:ℕ):ℝ) = 3 / 4 * nu1 * gfac r := by
     rw [gfac_eq r hr]
     by_cases h : r % 2 = 1
-    · rw [if_pos h, if_pos h, if_neg (by omega)]; push_cast; ring
-    · rw [if_neg h, if_neg h, if_pos (by omega)]; push_cast; ring
+    · rw [ite_eq_left h, ite_eq_left h, ite_eq_right (by omega)]; push_cast; ring
+    · rw [ite_eq_right h, ite_eq_right h, ite_eq_left (by omega)]; push_cast; ring
   rw [← hval]
   refine hall.congr (fun x => ?_)
   rw [hcnt x]; push_cast; rw [add_div, add_div]; congr
@@ -2261,8 +2265,8 @@ theorem delta_neg (r : ℕ) (hr : 0 < r) :
       (if r % 2 = 1 then nu1 * godd r / 2 else 0) / ((4:ℕ):ℝ) = 3 / 4 * nu1 * gfac r := by
     rw [gfac_eq r hr]
     by_cases h : r % 2 = 1
-    · rw [if_pos h, if_pos h, if_neg (by omega)]; push_cast; ring
-    · rw [if_neg h, if_neg h, if_pos (by omega)]; push_cast; ring
+    · rw [ite_eq_left h, ite_eq_left h, ite_eq_right (by omega)]; push_cast; ring
+    · rw [ite_eq_right h, ite_eq_right h, ite_eq_left (by omega)]; push_cast; ring
   rw [← hval]
   refine hall.congr (fun x => ?_)
   rw [hcnt x]; push_cast; rw [add_div, add_div]; congr

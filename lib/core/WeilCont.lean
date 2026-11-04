@@ -34,7 +34,7 @@ lemma le_ind {φ : ℝ → ℝ} {C : ℝ} (hb : ∀ t, |φ t| ≤ C) (hs : ∀ t
   rw [Real.norm_eq_abs]
   by_cases ht : |t| ≤ 1 / 2
   · rw [ind_eq ht]; exact hb t
-  · push_neg at ht
+  · push Not at ht
     have : t ∉ Icc (-(1/2):ℝ) (1/2) := fun h => by
       have := abs_le.2 ⟨h.1, h.2⟩; linarith
     rw [hs t ht, ind, indicator_of_notMem this, abs_zero]
@@ -98,7 +98,7 @@ lemma autocorr_supp {g : ℝ → ℝ} (hs : ∀ t, 1 / 2 < |t| → g t = 0) {u :
     · have : 1 / 2 < |t + u| := by
         have := abs_sub_abs_le_abs_sub u (-(t)); rw [abs_neg] at this
         have e : u - -t = t + u := by ring
-        rw [e] at this; push_neg at ht; linarith
+        rw [e] at this; push Not at ht; linarith
       rw [hs _ this, mul_zero]
   simp [this]
 
@@ -166,7 +166,7 @@ lemma diff_bd {B M : ℝ} {g : ℝ → ℝ} (h : Good B M g) {u : ℝ} (hu : 0 <
         rw [show t - (t + u) = -u by ring, abs_neg, abs_of_pos hu] at this
         have := mul_le_mul (h.bd t) this (abs_nonneg _) hB
         linarith
-      · push_neg at htu
+      · push Not at htu
         have hJ : t ∈ J := by
           constructor
           · have := abs_le.1 ht
@@ -175,7 +175,7 @@ lemma diff_bd {B M : ℝ} {g : ℝ → ℝ} (h : Good B M g) {u : ℝ} (hu : 0 <
         rw [indicator_of_mem hJ, h.supp _ htu, sub_zero]
         have := mul_le_mul (h.bd t) (h.bd t) (abs_nonneg _) hB
         nlinarith [mul_nonneg (mul_nonneg hB hM) hu.le]
-    · push_neg at ht
+    · push Not at ht
       rw [h.supp t ht, abs_zero, zero_mul]
       exact add_nonneg (by unfold ind; exact indicator_nonneg (fun _ _ => mul_nonneg (mul_nonneg hB hM) hu.le) _) i1
   have iJ : Integrable (J.indicator fun _ => B * B) :=
