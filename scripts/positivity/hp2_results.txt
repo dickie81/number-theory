@@ -1,0 +1,26 @@
+L   n  dps  lam2/lam1(even)  lam1odd/lam1even | #roots z=r^2: real>0 / complex / real<0 | N(T*) | roots r below T* vs gamma (max |r-gamma|)
+0.5  24  40  1.951e+04        2.141e+02        | 23 / 0 / 0 | 1 | [14.1353]  max dev 6.24e-04
+     next real roots above T*: [21.06, 25.21, 31.38, 36.91, 41.99, 48.6]  alpha_k (k odd) first: [3.14, 9.42, 15.71, 21.99, 28.27, 34.56]
+0.6  24  40  6.666e+04        3.835e+02        | 23 / 0 / 0 | 1 | [14.1347]  max dev 2.00e-06
+     next real roots above T*: [21.02, 25.01, 30.52, 33.24, 38.18, 42.41]  alpha_k (k odd) first: [2.62, 7.85, 13.09, 18.33, 23.56, 28.8]
+0.7  24  43  2.030e+05        5.797e+02        | 23 / 0 / 0 | 3 | [14.1347, 21.022, 25.0109]  max dev 5.66e-06
+     next real roots above T*: [30.43, 32.94, 37.6, 41.06, 43.58, 48.62]  alpha_k (k odd) first: [2.24, 6.73, 11.22, 15.71, 20.2, 24.68]
+0.8  24  47  4.682e+05        9.860e+02        | 23 / 0 / 0 | 4 | [14.1347, 21.022, 25.0109, 30.4249]  max dev 1.51e-07
+     next real roots above T*: [32.94, 37.59, 40.92, 43.33, 48.03, 49.86]  alpha_k (k odd) first: [1.96, 5.89, 9.82, 13.74, 17.67, 21.6]
+0.9  31  53  1.730e+06        1.693e+03        | 30 / 0 / 0 | 6 | [14.1347, 21.022, 25.0109, 30.4249, 32.9351, 37.5862]  max dev 7.74e-10
+     next real roots above T*: [40.92, 43.33, 48.01, 49.77, 52.97, 56.45]  alpha_k (k odd) first: [1.75, 5.24, 8.73, 12.22, 15.71, 19.2]
+1.0  41  60  4.165e+06        2.797e+03        | 40 / 0 / 0 | 8 | [14.1347, 21.022, 25.0109, 30.4249, 32.9351, 37.5862, 40.9187, 43.3271]  max dev 2.34e-13
+     next real roots above T*: [48.01, 49.77, 52.97, 56.45, 59.35, 60.83]  alpha_k (k odd) first: [1.57, 4.71, 7.85, 11.0, 14.14, 17.28]
+1.1  54  68  7.367e+06        3.892e+03        | 53 / 0 / 0 | 12 | [14.1347, 21.022, 25.0109, 30.4249, 32.9351, 37.5862, 40.9187, 43.3271, 48.0052, 49.7738, 52.9703, 56.4462]  max dev 7.11e-15
+     next real roots above T*: [59.35, 60.83, 65.11, 67.08, 69.55, 72.07]  alpha_k (k odd) first: [1.43, 4.28, 7.14, 10.0, 12.85, 15.71]
+1.2  70  79  1.778e+07        6.307e+03        | 69 / 0 / 0 | 16 | [14.1347, 21.022, 25.0109, 30.4249, 32.9351, 37.5862, 40.9187, 43.3271, 48.0052, 49.7738, 52.9703, 56.4462, 59.347, 60.8318, 65.1125, 67.0798]  max dev 0.00e+00
+     next real roots above T*: [69.55, 72.07, 75.7, 77.14, 79.34, 82.91]  alpha_k (k odd) first: [1.31, 3.93, 6.54, 9.16, 11.78, 14.4]
+match of ground-state transform zeros to zeta zeros: count of leading roots within tol of consecutive gamma_j
+ L=0.5 N(T*)=1  consecutive matches  tol1e-6:0 tol1e-3:1 tol0.1:2  (of 23 real roots)
+ L=0.6 N(T*)=1  consecutive matches  tol1e-6:0 tol1e-3:2 tol0.1:4  (of 23 real roots)
+ L=0.7 N(T*)=3  consecutive matches  tol1e-6:2 tol1e-3:4 tol0.1:6  (of 23 real roots)
+ L=0.8 N(T*)=4  consecutive matches  tol1e-6:4 tol1e-3:7 tol0.1:10  (of 23 real roots)
+ L=0.9 N(T*)=6  consecutive matches  tol1e-6:8 tol1e-3:12 tol0.1:15  (of 30 real roots)
+ L=1.0 N(T*)=8  consecutive matches  tol1e-6:13 tol1e-3:18 tol0.1:22  (of 40 real roots)
+ L=1.1 N(T*)=12  consecutive matches  tol1e-6:21 tol1e-3:26 tol0.1:30  (of 53 real roots)
+ L=1.2 N(T*)=16  consecutive matches  tol1e-6:30 tol1e-3:37 tol0.1:42  (of 69 real roots)

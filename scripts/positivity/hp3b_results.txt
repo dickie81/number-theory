@@ -1,0 +1,54 @@
+1. alignment of the prime comb on [1, T*]: max S/A (1 = perfect alignment), min, mean, sd; A = total weight
+ L=0.8 real   #terms   3 A=2.942  max 0.871 at t=17.7  min -0.725  mean -0.020 sd 0.405
+ L=0.8 jit    #terms   3 A=2.942  max 0.686 at t=26.7  min -0.983  mean -0.057 sd 0.408
+ L=0.8 flip3  #terms   3 A=2.942  max 0.967 at t=8.8  min -0.706  mean -0.007 sd 0.420
+ L=0.8 cramer(20 sets): max S/A mean 0.890 sd 0.037 range 0.871-1.000
+ L=1.0 real   #terms   5 A=5.852  max 0.732 at t=35.4  min -0.680  mean -0.007 sd 0.313
+ L=1.0 jit    #terms   5 A=5.852  max 0.716 at t=16.4  min -0.702  mean -0.022 sd 0.319
+ L=1.0 flip3  #terms   5 A=5.852  max 0.746 at t=19.4  min -0.709  mean -0.005 sd 0.323
+ L=1.0 cramer(20 sets): max S/A mean 0.809 sd 0.111 range 0.675-0.996
+ L=1.2 real   #terms   8 A=8.521  max 0.611 at t=54.8  min -0.611  mean -0.009 sd 0.254
+ L=1.2 jit    #terms   8 A=8.521  max 0.665 at t=32.5  min -0.654  mean -0.008 sd 0.249
+ L=1.2 flip3  #terms   8 A=8.521  max 0.879 at t=54.7  min -0.692  mean -0.008 sd 0.259
+ L=1.2 cramer(20 sets): max S/A mean 0.790 sd 0.114 range 0.623-0.979
+ L=1.5 real   #terms  12 A=13.016  max 0.491 at t=117.5  min -0.603  mean -0.003 sd 0.215
+ L=1.5 jit    #terms  12 A=13.016  max 0.556 at t=99.8  min -0.610  mean -0.004 sd 0.205
+ L=1.5 flip3  #terms  12 A=13.016  max 0.678 at t=117.5  min -0.629  mean -0.002 sd 0.217
+ L=1.5 cramer(20 sets): max S/A mean 0.720 sd 0.088 range 0.537-0.930
+ L=2.0 real   #terms  24 A=24.383  max 0.401 at t=290.7  min -0.614  mean -0.001 sd 0.151
+ L=2.0 jit    #terms  24 A=24.383  max 0.582 at t=156.1  min -0.607  mean -0.000 sd 0.153
+ L=2.0 flip3  #terms  24 A=24.383  max 0.419 at t=316.6  min -0.662  mean -0.001 sd 0.151
+ L=2.0 cramer(20 sets): max S/A mean 0.623 sd 0.067 range 0.504-0.749
+
+2. Kronecker: min over t in [1,T*] of max over primes p of ||t log p / 2pi|| (0 = all phases aligned)
+ L=0.8 primes [2, 3]  best 0.0658 at t=17.53   (Dirichlet heuristic ~ T^{-1/k})
+ L=1.0 primes [2, 3, 5, 7]  best 0.1344 at t=35.08   (Dirichlet heuristic ~ T^{-1/k})
+ L=1.2 primes [2, 3, 5, 7, 11]  best 0.2061 at t=16.26   (Dirichlet heuristic ~ T^{-1/k})
+ L=1.5 primes [2, 3, 5, 7, 11, 13, 17, 19]  best 0.2524 at t=120.04   (Dirichlet heuristic ~ T^{-1/k})
+L=0.8 seed -1 lam_min +1.216e-17  maxalign 0.871  n:[2, 3, 4]
+L=0.8 seed  0 lam_min -5.298e-01  maxalign 0.881  n:[2, 3, 4]
+L=0.8 seed  1 lam_min +1.658e-17  maxalign 0.871  n:[2, 3, 4]
+L=0.8 seed  2 lam_min -6.985e-01  maxalign 1.000  n:[2, 4]
+L=0.8 seed  3 lam_min -5.298e-01  maxalign 0.881  n:[2, 3, 4]
+L=0.8 seed  4 lam_min -5.298e-01  maxalign 0.881  n:[2, 3, 4]
+L=0.8 seed  5 lam_min +1.658e-17  maxalign 0.871  n:[2, 3, 4]
+L=0.8 seed  6 lam_min -5.298e-01  maxalign 0.881  n:[2, 3, 4]
+L=0.8 seed  7 lam_min -5.298e-01  maxalign 0.881  n:[2, 3, 4]
+L=0.8 seed  8 lam_min -6.985e-01  maxalign 1.000  n:[2, 4]
+L=0.8 seed  9 lam_min -5.298e-01  maxalign 0.881  n:[2, 3, 4]
+L=0.8 seed 10 lam_min -5.298e-01  maxalign 0.881  n:[2, 3, 4]
+L=0.8 seed 11 lam_min +1.658e-17  maxalign 0.871  n:[2, 3, 4]
+L=0.8 seed 12 lam_min -5.298e-01  maxalign 0.881  n:[2, 3, 4]
+L=0.8 seed 13 lam_min -5.298e-01  maxalign 0.881  n:[2, 3, 4]
+L=0.8 seed 14 lam_min -5.298e-01  maxalign 0.881  n:[2, 3, 4]
+L=1.0 seed -1 lam_min -4.518e-16  maxalign 0.732  n:[2, 3, 4, 5, 7]
+L=1.0 seed  0 lam_min -9.179e-01  maxalign 0.699  n:[2, 3, 4, 5, 6, 7]
+L=1.0 seed  1 lam_min -5.066e-01  maxalign 0.766  n:[2, 3, 4, 5, 6, 7]
+L=1.0 seed  2 lam_min -9.336e-01  maxalign 0.996  n:[2, 4, 5]
+L=1.0 seed  3 lam_min -6.915e-01  maxalign 0.675  n:[2, 3, 4, 5, 7]
+L=1.0 seed  4 lam_min -9.179e-01  maxalign 0.699  n:[2, 3, 4, 5, 6, 7]
+L=1.0 seed  5 lam_min -3.479e-01  maxalign 0.974  n:[2, 3, 4]
+L=1.0 seed  6 lam_min -8.915e-01  maxalign 0.774  n:[2, 3, 4, 5, 6]
+L=1.0 seed  7 lam_min -9.179e-01  maxalign 0.699  n:[2, 3, 4, 5, 6, 7]
+L=1.0 seed  8 lam_min -8.979e-01  maxalign 0.968  n:[2, 4, 6, 7]
+L=1.0 seed  9 lam_min -9.300e-01  maxalign 0.960  n:[2, 3, 4, 6, 7]
