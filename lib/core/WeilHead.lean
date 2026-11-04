@@ -17,8 +17,6 @@ namespace WeilHead
 
 open Finset WeilTail WeilTailB
 
-noncomputable def ε : ℝ := 1 / 10 ^ 30
-
 def certq (Mq : List (List ℚ)) (Dq : List ℚ) (δ : ℚ) (i j : ℕ) : ℚ :=
   ((List.range 28).map fun k => getq Mq k i * Dq.getD k 0 * getq Mq k j).sum + if i = j then δ else 0
 

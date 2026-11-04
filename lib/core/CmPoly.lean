@@ -78,20 +78,6 @@ lemma hev_rnd (P : ℕ) (l : List ℚ) {x : ℝ} (hx : |x| ≤ 1) :
       _ ≤ 1 / 2 ^ P + l.length / 2 ^ P := (abs_add_le _ _).trans (add_le_add h1 this)
       _ = _ := by push_cast; ring
 
-/-- `Σ |lᵢ|`, a bound for `|hev l x|` on `|x| ≤ 1`. -/
-def pabs : List ℚ → ℚ
-  | [] => 0
-  | a :: l => |a| + pabs l
-
-lemma hev_abs (l : List ℚ) {x : ℝ} (hx : |x| ≤ 1) : |hev l x| ≤ (pabs l : ℝ) := by
-  induction l with
-  | nil => simp [hev, pabs]
-  | cons a l ih =>
-    simp only [hev, pabs]; push_cast
-    refine (abs_add_le _ _).trans (add_le_add le_rfl ?_)
-    rw [abs_mul]; calc |x| * |hev l x| ≤ 1 * pabs l := mul_le_mul hx ih (abs_nonneg _) zero_le_one
-      _ = _ := one_mul _
-
 /-! ## Moments `∫_α^β hev l (x^e) · x^j dx` -/
 
 def lsum (n : ℕ) (f : ℕ → ℚ) : ℚ := ((List.range n).map f).sum

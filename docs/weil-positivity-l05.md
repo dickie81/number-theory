@@ -275,7 +275,7 @@ Other material surveyed but not usable here:
   - tail diagonal ≥ 0.37 − 558·B0²;
   - coupling ≤ 558²·28·190269²·2B0², using b_n ≤ 29·e^{15/2} on the head;
   - where B0 = 5e-25 ≥ b_56 and b_57, checked by `norm_num`.
-- `sector_margin`, `even_margin`, `odd_margin`, `L05_even_full`, `L05_odd_full`.
+- `sector_margin`, `even_margin`, `odd_margin`.
 
 **Odd sector.** The basis is odd Legendre orders 1..55. The pole term enters with sign −: −2(∫f sinh(x/2))².
 - arb head: max radius 5.2e-37, λ_min(mid) = 4.66e-5.
@@ -284,7 +284,7 @@ Other material surveyed but not usable here:
 
 The even sector margin is m = 5e-8.
 
-**Final theorems.** `WeilTailB.L05_even_full` and `L05_odd_full` cover any Q : ℕ → ℕ → ℝ (the Weil form in sector Legendre coordinates). Given `ZhuRed Q par σ` and the sector head enclosure, they conclude 0 < xᵀQ_N x for every N ≥ 28 and every x ≠ 0 supported in range N.
+**Final theorems.** At this stage `WeilTailB.L05_even_full` and `L05_odd_full` covered any Q : ℕ → ℕ → ℝ (the Weil form in sector Legendre coordinates). Given `ZhuRed Q par σ` and the sector head enclosure, they conclude 0 < xᵀQ_N x for every N ≥ 28 and every x ≠ 0 supported in range N.
 
 **Hypotheses that remain:**
 1. `EvenHead` and `OddHead` (**arb numerics**). These are the entrywise enclosures of the 28×28 head of the reduced matrix, computed by `tailcert.py` at 256 bits.
@@ -300,6 +300,8 @@ The even sector margin is m = 5e-8.
 ## Zhu's reduction at L = 1/2, formalised up to two named inputs (`WeilZhuRed`)
 
 This section works by an AI assistant (Grok Bot) and splits the earlier `ZhuRed` hypothesis into proved steps and two smaller named inputs.
+
+*Later removed, as unused:* once the concrete route of the next sections had closed every input, nothing used the abstract one, so `ZhuRed` and `L05_even_full`/`L05_odd_full` (`WeilTailB`), `FreqRep`, `zhuRed_of` and the conditional `L05_even`/`L05_odd` (`WeilZhuRed`) were deleted, and `primes_L05` with them (the prime sum is reduced to `n = 2` directly, in `WeilPlanch.prime_sum_L05`). The entries below record the state at the time.
 
 **Proof chain** (Zhu, arXiv 2608.24827, eq. 17, Lemma 2.5, Lemma 3.1, Thm 1.1), for supp f ⊂ [−L, L], g = f⋆f̃, ĝ = |F|²:
 1. Frequency form. Since g(x) = (1/π)∫₀^∞|F|²cos(tx)dt, the prime term becomes −(1/π)∫₀^∞|F|²Σ_{log n<2L}2Λ(n)n^{−1/2}cos(t log n). Lemma 2.5 writes the archimedean term as (1/π)∫₀^∞(Re ψ(1/4+it/2) − log π)|F|². Together, Q(f) = pole + (1/π)∫₀^∞Ψ_L|F|².

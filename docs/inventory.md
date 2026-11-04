@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1301 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1295 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 140 | 405 |
+| `lib/core` | 140 | 399 |
 | `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -751,7 +751,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilOdd.L05_odd_weilQg`: Odd probes, general Weil form
 - `WeilOdd.L05_odd_weilQ`: Odd probes, the library's even-probe form `weilQ`
 
-#### `WeilPlanch`: Toward closing `ModePlancherel` and `FreqRep` at L = 1/2
+#### `WeilPlanch`: Toward closing `ModePlancherel` at L = 1/2, and the Weil form on Legendre modes
 
 - `WeilPlanch.Psi_cont`
 - `WeilPlanch.Psi_growth`
@@ -786,8 +786,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilTailB.sector_margin`: Sector theorem (unconditional except the head enclosure)
 - `WeilTailB.even_margin`
 - `WeilTailB.odd_margin`
-- `WeilTailB.L05_even_full`: L = 1/2, even sector
-- `WeilTailB.L05_odd_full`: L = 1/2, odd sector
 
 #### `WeilTwinGeneral`: The twin criterion for every real-rooted base and every good character
 
@@ -806,13 +804,9 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `WeilZhuRed`: Zhu's reduction `Q_N ≥ R_N` at `L = 1/2`, split into proved steps and named inputs
 
-- `WeilZhuRed.primes_L05`
 - `WeilZhuRed.prime_coeff_L05`
 - `WeilZhuRed.envelope`
 - `WeilZhuRed.QF_ge_R`: Zhu's reduction (Thm 1.1) at L = 1/2, T# = 30
-- `WeilZhuRed.zhuRed_of`: `ZhuRed` follows from the two named inputs.
-- `WeilZhuRed.L05_even`
-- `WeilZhuRed.L05_odd`
 - `WeilZhuRed.QF_even_pos`
 - `WeilZhuRed.QF_odd_pos`
 

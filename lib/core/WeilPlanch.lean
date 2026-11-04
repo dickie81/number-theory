@@ -3,7 +3,7 @@ import WeilZhuRed
 import Roadmap
 import DigammaGauss
 
-/-! # Toward closing `ModePlancherel` and `FreqRep` at L = 1/2
+/-! # Toward closing `ModePlancherel` at L = 1/2, and the Weil form on Legendre modes
 
 * `ModePlancherel` is derived from two smaller inputs: `ModeDecay` (`|T̂ₙ(t)| ≤ Cₙ/(1+t)`) and `ModeOrth`
   (Plancherel orthonormality). Integrability of `T̂ₙT̂ₘ` and `Ψ_L T̂ₙT̂ₘ` on `(0,∞)` is proved from the decay, the

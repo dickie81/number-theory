@@ -223,7 +223,6 @@ noncomputable def δ : ℝ := (7/62500000:ℝ)
 noncomputable def ρ : ℝ := (487/10000000000000000000000000:ℝ)
 lemma hDq : Dq.all (fun d => decide (0 ≤ d)) = true := by decide +kernel
 lemma hD : ∀ k, 0 ≤ D k := fun k => by unfold D; exact_mod_cast WeilTail.getD_nonneg Dq hDq k.1
-lemma hρ : (((28:ℕ)):ℝ) ^ 2 * ρ < δ := by simp only [ρ, δ]; norm_num
 
 
 /-- ℕ-indexed versions of the head factor and pivots. -/

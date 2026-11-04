@@ -106,11 +106,6 @@ lemma poleL_hx (N : ℕ) (x y : ℕ → ℝ) : WeilForm.poleL (hx N x y) (1 / 2)
 
 /-! ## Fourier transform and autocorrelation -/
 
-lemma hxC_int (N : ℕ) (x y : ℕ → ℝ) : Integrable (fun t => ((hx N x y t : ℝ) : ℂ)) := by
-  rw [hx_eq]
-  exact cutC_int _ ((continuous_finsetSum _ fun i _ => continuous_const.mul (P_cont _)).add
-    (continuous_finsetSum _ fun i _ => continuous_const.mul (P_cont _)))
-
 open FourierTransform in
 lemma fourier_gx (N : ℕ) (x : ℕ → ℝ) (ξ : ℝ) :
     𝓕 (fun t => ((gx N x t : ℝ) : ℂ)) ξ = Complex.I * (WeilZhuRed.Fx 1 N x (2 * π * ξ) : ℂ) := by

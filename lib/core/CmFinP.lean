@@ -51,8 +51,6 @@ lemma sg_eq (n : ℕ) : ((-1 : ℝ) ^ (n / 2)) = (sg n : ℝ) := by
   · rw [Even.neg_one_pow (Nat.even_iff.2 h)]; simp
   · rw [Odd.neg_one_pow (Nat.odd_iff.2 (by omega))]; simp
 
-lemma sg_sq (n : ℕ) : (sg n : ℝ) * sg n = 1 := by unfold sg; split_ifs <;> norm_num
-
 lemma That30 (n : ℕ) (s : ℝ) : That n (30 * s) = (sg n : ℝ) * (√(2 * n + 1) * jP n (15 * s)) := by
   unfold That; rw [sg_eq, cn_eq, show 30 * s / 2 = 15 * s by ring]
 

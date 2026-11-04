@@ -21,7 +21,6 @@ open Real Filter Topology MeasureTheory Set WeilForm Polynomial LegSpan WeilCont
 def TestFn (f : ℝ → ℝ) : Prop := ContDiff ℝ 1 f ∧ ∀ u, 1 / 2 < |u| → f u = 0
 
 lemma mem_Icc_of_abs {u : ℝ} (h : |u| ≤ 1 / 2) : u ∈ Icc (-(1/2):ℝ) (1/2) := ⟨by linarith [neg_abs_le u], by linarith [le_abs_self u]⟩
-lemma abs_of_mem_Icc {u : ℝ} (h : u ∈ Icc (-(1/2):ℝ) (1/2)) : |u| ≤ 1 / 2 := abs_le.2 ⟨h.1, h.2⟩
 
 lemma uIoc_sub {s t : ℝ} (hs : |s| ≤ 1 / 2) (ht : |t| ≤ 1 / 2) : uIoc t s ⊆ Icc (-(1/2):ℝ) (1/2) :=
   uIoc_subset_uIcc.trans (uIcc_subset_Icc (mem_Icc_of_abs ht) (mem_Icc_of_abs hs))

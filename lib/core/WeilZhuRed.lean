@@ -8,14 +8,14 @@ Frequency form of the Weil functional on `f = Σ xᵢ T_{2i+par}`:
 `QF(x) = σ·2(Σ xᵢ pᵢ)² + (1/π)∫₀^∞ Ψ_L(t) F(t)² dt`, `F = Σ xᵢ T̂_{2i+par}`.
 
 Proved here:
-* `primes_L05`: the only prime power `n` with `log n < 2L = 1` is `n = 2`, and `2Λ(2)/√2 = √2 log 2`,
-  so the prime part of `Ψ_L` is exactly the single cosine term in `WeilTailB.Psi`.
+* `prime_coeff_L05`: `2Λ(2)/√2 = √2 log 2`, the coefficient of the single cosine term in `WeilTailB.Psi` (the
+  only prime power `n` with `log n < 2L = 1` is `n = 2`; the prime sum itself is `WeilPlanch.prime_sum_L05`).
 * `envelope`: Zhu's Lemma 3.1 at `T# = 30`: `Ψ_L(t) ≥ β*` for all `t ≥ 30`, from the vendored Stirling bound
   `|Re ψ(a+it) − log|t|| ≤ 5/t²` (`Zeta23.StirlingVert.re_digamma_stirling'`).
 * `QF_ge_R`: Zhu's Thm 1.1 reduction `R_N(x) ≤ QF_N(x)` for every `N` and `x`, given `ModePlancherel`.
 
-Named inputs: `ModePlancherel` (orthonormality and integrability of the mode transforms on `(0,∞)`,
-functional analysis) and `FreqRep` (the Weil functional equals `QF` in these coordinates, Zhu analytic).
+Named input: `ModePlancherel` (orthonormality and integrability of the mode transforms on `(0,∞)`, functional
+analysis), proved in `WeilPlanch` (`modePlancherel_of`).
 -/
 
 namespace WeilZhuRed
@@ -23,19 +23,6 @@ namespace WeilZhuRed
 open Finset Real WeilTail WeilTailB MeasureTheory
 
 /-! ## The prime part at L = 1/2 -/
-
-theorem primes_L05 (n : ℕ) (hn : ArithmeticFunction.vonMangoldt n ≠ 0) (hl : Real.log n < 1) : n = 2 := by
-  by_contra h
-  have h2 : 2 ≤ n := by
-    rcases Nat.lt_or_ge n 2 with h' | h'
-    · interval_cases n <;> simp at hn
-    · exact h'
-  have h3 : (3:ℝ) ≤ n := by exact_mod_cast (show 3 ≤ n by omega)
-  have he := Real.exp_one_lt_d9
-  have : 1 < Real.log 3 := by
-    rw [Real.lt_log_iff_exp_lt (by norm_num)]; linarith
-  have := Real.log_le_log (by norm_num) h3
-  linarith
 
 theorem prime_coeff_L05 : 2 * ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 = Real.sqrt 2 * Real.log 2 := by
   rw [ArithmeticFunction.vonMangoldt_apply_prime Nat.prime_two]
@@ -205,26 +192,6 @@ theorem QF_ge_R (par : ℕ) (σ : ℝ) (P : ModePlancherel par) (N : ℕ) (x : �
       ≤ (1 / π) * ((∫ t in Set.Ioc 0 30, Psi t * Fx par N x t ^ 2) + ∫ t in Set.Ioi 30, Psi t * Fx par N x t ^ 2) := by
     rw [one_div, ← div_eq_inv_mul, le_div_iff₀ hπ]; linarith
   linarith
-
-/-- **Named input (Zhu analytic, frequency representation)**: `Q` is the Weil functional
-(pole + archimedean − primes, Zhu eq. 17) restricted to the span of the sector modes, and equals `QF`
-there (Zhu's Lemma 2.5: archimedean term = `(1/π)∫(Re ψ(1/4+it/2) − log π)|F|²`; prime term at L = 1/2
-is the single `n = 2` cosine by `primes_L05`). -/
-structure FreqRep (Q : ℕ → ℕ → ℝ) (par : ℕ) (σ : ℝ) : Prop where
-  rep : ∀ N x, qf Q x (range N) (range N) = QF par σ N x
-
-/-- `ZhuRed` follows from the two named inputs. -/
-theorem zhuRed_of (Q : ℕ → ℕ → ℝ) (par : ℕ) (σ : ℝ) (F : FreqRep Q par σ) (P : ModePlancherel par) :
-    ZhuRed Q par σ :=
-  ⟨fun N x => by rw [F.rep N x]; exact QF_ge_R par σ P N x⟩
-
-theorem L05_even (Q : ℕ → ℕ → ℝ) (F : FreqRep Q 0 1) (P : ModePlancherel 0) (H : EvenHead) (N : ℕ) (hN : 28 ≤ N)
-    (x : ℕ → ℝ) (hx : ∃ i ∈ range N, x i ≠ 0) : 0 < qf Q x (range N) (range N) :=
-  L05_even_full Q (zhuRed_of Q 0 1 F P) H N hN x hx
-
-theorem L05_odd (Q : ℕ → ℕ → ℝ) (F : FreqRep Q 1 (-1)) (P : ModePlancherel 1) (H : OddHead) (N : ℕ) (hN : 28 ≤ N)
-    (x : ℕ → ℝ) (hx : ∃ i ∈ range N, x i ≠ 0) : 0 < qf Q x (range N) (range N) :=
-  L05_odd_full Q (zhuRed_of Q 1 (-1) F P) H N hN x hx
 
 /-- Directly on the frequency form: positivity of `QF` needs only `ModePlancherel` and the arb head. -/
 theorem QF_pos_of (par : ℕ) (σ m : ℝ) (hm : 0 < m) (P : ModePlancherel par) (N : ℕ)

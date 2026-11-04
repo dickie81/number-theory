@@ -149,10 +149,6 @@ def eT (P K W n : ℕ) : ℚ :=
 noncomputable def jA (P K W n : ℕ) (s : ℝ) : ℝ :=
   s ^ n * ∑ k ∈ range K, (((qh P K W n).getD k 0 : ℚ) : ℝ) * s ^ (2 * k)
 
-lemma getD_map_range {K k : ℕ} (hk : k < K) (f : ℕ → ℚ) (g : ℚ → ℚ) :
-    (((List.range K).map f).map g).getD k 0 = g (f k) := by
-  simp [hk]
-
 theorem jP_s (P K W n : ℕ) (hW : K + n < W) (hK : 15 ≤ ((2 * K + 1 : ℕ) : ℝ) / 2) {s : ℝ} (h0 : 0 ≤ s) (h1 : s ≤ 1) :
     |jP n (15 * s) - jA P K W n s| ≤ (eT P K W n : ℝ) := by
   have hx : 0 ≤ 15 * s := by positivity
