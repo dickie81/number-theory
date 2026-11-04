@@ -11,6 +11,10 @@ intersection numbers are computed from the primes, and that lattice statement im
 below). This page says what it claims, what is proved in the finite-rank cases it generalises, what the library already
 has towards it, what any version of it must survive, and the first steps.
 
+The tests so far tell against that lattice statement as a route to RH. It fails for curves over finite fields, where RH
+is proved, and for a positive proportion of Dirichlet `L`-functions, where GRH is expected. So as stated it is specific
+to `ζ` ("What it must survive", the last item).
+
 ## The conjecture
 
 Weil proved the Riemann hypothesis for a curve `C` over a finite field from positivity on the surface `C × C`. On its
@@ -105,6 +109,30 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
 - **No estimate can supply the positivity.** The least value of Weil's form on supports `[−a, a]` is at most
   `Ke^{16a − 2πe^{2a}}` (`WeilForm.lam_dexp`), so positivity on growing supports has a double-exponentially small
   margin. It has to come from an exact structure, as the definiteness of a lattice would.
+- **The pivot inequality fails where RH holds.**
+  - **The statement.** The lattice statement that implies RH (`BallWeil.rh_of_pivots`) says that the pivots `d_k` of
+    the orbit's Gram matrix `√(mn)·K_H(m/n)` satisfy `d_k ≥ d_1`.
+  - **The analogues fail.** The statement has natural analogues for curves over finite fields and for Dirichlet
+    `L`-functions, and both fail ([ball-conjecture-tests.md](ball-conjecture-tests.md)).
+  - **For curves, where RH is a theorem.** The zeros repeat vertically, which forces a null vector at `k = q^{2g}`.
+    Of a sample of 148 curves, 98 have some `d_k < d_1` with `k ≤ 150` (§4).
+  - **For Dirichlet `L`-functions.** 5983 of the 29468 primitive characters with `q ≤ 400` have `d_2 < d_1` (§5).
+    - For a real character this happens exactly when the zero sum `Σ_ρ 1/|ρ|²` exceeds `log(q/π) + ψ((1+a)/2) − 4c_a`,
+      that is, when the low zeros carry more weight than their density accounts for (§5.1).
+    - In the range scanned, the first two or three pivots decide the whole inequality.
+  - **A positive proportion.** A positive proportion of quadratic characters fail. Per sign the proportion tends to
+    `P(X > ½ log(27/4)) = 0.0511` and `P(X > (3/2) log(4/3)) = 0.1609`, where `X` is Lamzouri's random model
+    ([d2-density.md](d2-density.md)). That is a written proof, unconditional, and a Lean proof,
+    `D2Good.d2_density_pos_closed`, conditional on the half-plane. These characters are expected to satisfy GRH, and
+    under GRH their Weil forms are positive.
+  - **The conclusion.** So the inequality does not follow from the structure that gives RH, or GRH, elsewhere: it fails
+    for curves, where RH is proved, and for characters where GRH is expected.
+  - **For `ζ`.** For `ζ` it holds as far as it has been checked: `scripts/ball_certificate.py` proves it for
+    `k ≤ 10⁴`, with a wide margin at `k = 2` (`d_2/d_1 = 1.718`). The data point to a reason particular to `ζ`:
+    conductor `1`, `K_H(1) = 0.046`, and no zero below `14.13`. So it reads as a property of `ζ`'s numbers rather than of
+    its structure, and as stated it is not a promising route to RH.
+  - **What a surviving version would need.** It would have to correct for the flat model, or depend on the conductor
+    and the low zeros. It would then no longer be a uniform statement about a lattice.
 
 ## Related work
 
