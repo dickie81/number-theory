@@ -43,7 +43,7 @@ lemma lam_err : |Real.log 2 - (lam : ℝ)| ≤ (elam : ℝ) := by
   have h := rnd_err 64 L2lo
   obtain ⟨a, b⟩ := log2_b
   unfold elam lam; push_cast
-  rw [abs_le] at h ⊢; constructor <;> push_cast at h <;> linarith [h.1, h.2]
+  rw [abs_le] at h ⊢; constructor <;> linarith [h.1, h.2]
 
 lemma kap_err : |Real.sqrt 2 * Real.log 2 - (kap : ℝ)| ≤ (ekap : ℝ) := by
   have h := rnd_err 64 (s2lo * L2lo)

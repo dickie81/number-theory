@@ -50,7 +50,7 @@ theorem pos_of_cert {n : ℕ} (A M : Fin n → Fin n → ℝ) (D : Fin n → ℝ
     0 < ∑ i, ∑ j, x i * A i j * x j := by
   set S := ∑ i, x i ^ 2 with hS
   obtain ⟨i0, hi0⟩ : ∃ i, x i ≠ 0 := by
-    by_contra h; push_neg at h; exact hx (funext h)
+    by_contra h; push Not at h; exact hx (funext h)
   have hSpos : 0 < S := by
     have : x i0 ^ 2 ≤ S := single_le_sum (f := fun i => x i ^ 2) (fun _ _ => sq_nonneg _) (mem_univ i0)
     have : 0 < x i0 ^ 2 := by positivity

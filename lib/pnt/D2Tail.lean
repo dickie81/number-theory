@@ -117,13 +117,13 @@ theorem logDeriv_one_tail {η : ℝ} (hη : 0 < η) (hη' : η < 1 / 24) :
       · refine sum_congr rfl fun n hn => ?_
         have hn1 : n ≠ 0 := by simp at hn; omega
         have hnY : n ≤ Y := by simp at hn; omega
-        rw [LSeries.term_def, if_neg hn1, hd, if_pos hnY]
+        rw [LSeries.term_def, ite_eq_right hn1, hd, ite_eq_left hnY]
       · intro n hn
         rw [LSeries.term_def]
         split_ifs with h0
         · rfl
         · simp only [mem_Icc, not_and, not_le] at hn
-          rw [hd, if_neg (by omega), zero_div]
+          rw [hd, ite_eq_right (by omega), zero_div]
     have hL1 := ChiPNT.LSeries_twist_vonMangoldt_eq_LFunction χ hre
     have hg : g σ = -LSeries (tl χ Y) σ := by
       have : LSeries (a χ) σ = P σ + LSeries (tl χ Y) σ := by
@@ -150,7 +150,7 @@ theorem logDeriv_one_tail {η : ℝ} (hη : 0 < η) (hη' : η < 1 / 24) :
       · exact (hF.continuous.continuousAt).comp (f := fun σ : ℝ => (σ : ℂ)) hc1
       · simpa using h10
     · apply Continuous.continuousAt
-      refine continuous_finset_sum _ fun n hn => ?_
+      refine continuous_finsetSum _ fun n hn => ?_
       have hn0 : (n : ℂ) ≠ 0 := by simp at hn; exact_mod_cast (show n ≠ 0 by omega)
       exact continuous_const.div (Complex.continuous_ofReal.const_cpow (Or.inl hn0))
         fun σ => Complex.cpow_ne_zero_iff.2 (Or.inl hn0)

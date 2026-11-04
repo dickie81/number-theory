@@ -55,6 +55,7 @@ adding, removing or renaming a module.
 | `python3 scripts/gen_lakefile.py --check` | `lakefile.lean` matches `lib/`. |
 | `python3 scripts/inventory.py --check` | `docs/inventory.md` is what `scripts/inventory.py` writes from the sources: every theorem that `Check.lean`, `CheckAll.lean`, `CheckZeta23.lean` or `CheckDH.lean` prints, by module, with the headline of its docstring and its note in `formalisations/`. Run `python3 scripts/inventory.py` after changing those theorems, their docstrings or the notes. |
 | `python3 scripts/dead_code.py` | After `lake build Check CheckAll CheckZeta23 CheckDH deadcode`, in about a minute: the library keeps no code that its results do not use. `lake exe deadcode` (`scripts/lean/DeadCode.lean`) imports the check files and walks what the theorems they print use, through statements and proofs. The check fails if a declaration of `lib/core`, `lib/pnt`, `lib/dh`, `lib/zeta23` or `lib/check` is used by none of those theorems (Lean's generated declarations, macros and syntax aside), or a module by no check file; if a printed theorem has a closed hypothesis, a proposition or an instance that mentions none of its variables (such as `RiemannHypothesis` or `[SieveCert.Grid]`), and no unconditional theorem uses it, unless a table "Conditional results" of `formalisations/` lists it; and if a printed theorem that no other uses is neither a paper's (printed by `Check.lean`), nor on the page on the zeros, nor named in `formalisations/`. A result that nothing uses is kept only with its entry there. `--json OUT` also writes the findings, with each declaration's lines. |
+| `python3 scripts/check_warnings.py LOG` | After a build, on its output (`scripts/build.sh … 2>&1 \| tee LOG`): the build emits no warning located in a source of `lib/core`, `lib/pnt`, `lib/dh`, `lib/zeta23` or `lib/check`. Lake replays the messages of the modules it does not rebuild, so the log of any build lists the warnings of every module in it. The vendored libraries' warnings and Lake's note that a file importing Mathlib is not a module of Lean's module system do not count. It reads `lake env lean FILE`'s output too. |
 | `python3 scripts/check_account.py` | Every Lean name that `docs/account.md` quotes is declared in the library, and every file, path and relative link it gives exists. The page is written by hand: update it when a result it names changes, is renamed or is removed. |
 | `python3 scripts/zeros_page.py --check` | The site's page on the zeros (`site/zeros.html`) agrees with the Lean and the paper. The script reads each number the page shows from the statement of the theorem that proves it: the half-plane, the bounds for `Θ`, the range of `S(t) = O(log t)`, the density exponents, the Linnik exponents, the curve `g*` with the theorem that `counts_7d` glues in for each piece (checked against the piece's range and exponent), and the window condition `SieveCurveGlue.WindowOKHM` with its constants. Every theorem the page presents as a result must be printed by `Check.lean`, `CheckAll.lean`, `CheckZeta23.lean` or `CheckDH.lean`, and the window's exact ends, computed from the Lean's curve and condition, must be the paper's. The other numbers are read from the paper's sources. Without `--check` it writes the page, as `scripts/build_site.py` does. |
 | `python3 scripts/check_vendor.py` | `lib/vendor` holds the upstream files at the pinned commits with the port patches applied (needs network access). |
@@ -69,14 +70,16 @@ adding, removing or renaming a module.
 
 - **Checks:** `check_hygiene.py`, `gen_lakefile.py --check`, `inventory.py --check`, `check_account.py`,
   `zeros_page.py --check`, `check_vendor.py` and `check_certificate.py`.
-- **The papers:** every `papers/<name>/main.tex`, and then every supplement `papers/<name>/supplement.tex`, is compiled
-  with LaTeX, and the PDFs are kept as the artifact `papers`, under the site's names (`<name>.pdf`,
-  `<name>-supplement.pdf`). On a pull request from this repository the job `pdf-preview` also puts them on a branch
-  of their own, `pdf-preview/pr-<number>` (one commit, replaced on every push), and a comment links each PDF there,
-  where GitHub's file view shows it in the browser, and the artifact's zip; the job updates the same comment on every
-  push, and `pdf-preview-cleanup.yml` deletes the branch when the pull request closes. Then the site is built
-  from them, as `pages.yml` builds it, and kept as the artifact `site`, so a pull request's page on the zeros can be
-  looked at before it is published.
+- **The papers:** the papers that the change touches are compiled with LaTeX, each `papers/<name>/main.tex` and then its
+  supplement `papers/<name>/supplement.tex`. A paper counts as touched when the change edits a file in its directory
+  other than Markdown. A change that touches no paper compiles none, and one that edits `ci.yml`,
+  `scripts/build_site.py`, `scripts/zeros_page.py` or `site/` compiles every paper, as does a manual run. The PDFs are
+  kept as the artifact `papers`, under the site's names (`<name>.pdf`, `<name>-supplement.pdf`). On a pull request from
+  this repository the job `pdf-preview` also puts them on a branch of their own, `pdf-preview/pr-<number>` (one commit,
+  replaced on every push), and a comment links each PDF there, where GitHub's file view shows it in the browser, and the
+  artifact's zip; the job updates the same comment on every push, and `pdf-preview-cleanup.yml` deletes the branch when
+  the pull request closes. If every paper was compiled, the site is then built from them, as `pages.yml` builds it, and
+  kept as the artifact `site`, so a pull request's page on the zeros can be looked at before it is published.
 - **The Lean build**, with a cache. On a pull request it runs only if the pull request changes `lib/`, the Lake
   files, `lean-toolchain`, the build scripts or the workflow; on pushes to `main` it always runs. Mathlib's prebuilt
   files come from Mathlib's own cache (`lake exe cache get`).
@@ -84,8 +87,9 @@ adding, removing or renaming a module.
   every stage, including a stage that fails or is cancelled. Lake then rebuilds only what changed. A cold build
   takes longer than one job may run (six hours), so the build runs in up to three chained stages, each continuing
   from the previous stage's cache. The stage that finishes the build runs `check_axioms.py`,
-  `check_axioms.py --all`, `check_axioms.py --zeta23` and `check_axioms.py --dh`, and then `dead_code.py`, which
-  needs every check file built.
+  `check_axioms.py --all`, `check_axioms.py --zeta23` and `check_axioms.py --dh`, then `dead_code.py`, which
+  needs every check file built, and then `check_warnings.py` on the build's log, so that warnings in the library's
+  own sources cannot pile up.
   The build's targets are those of `scripts/lean_targets.py`, so that every change to the Lean is validated by
   building what it can break: `Check`, `CheckAll`, `CheckZeta23`, `CheckDH`, every module that the change adds or edits, and
   every module that imports one of them, directly or not. A pull request is compared with its base, a push to `main`

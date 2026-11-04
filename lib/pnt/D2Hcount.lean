@@ -85,7 +85,7 @@ theorem sum_w (d E : ℕ) (hd : 0 < d) (hdE : ∀ e, e * e ≤ d → e ≤ E) :
       nlinarith
   · intro e he
     simp only [mem_filter] at he
-    simp [he.2]
+    simp
 
 theorem count_Q_eq (Cp : ℕ → Prop) (hC0 : ¬ Cp 0) (r x : ℕ) :
     (Nat.count (Q Cp r) x : ℝ) =
@@ -166,8 +166,8 @@ theorem term_bound (Cp : ℕ → Prop) (r : ℕ) (hr : 0 < r) (e : ℕ) (he : 0 
   have hyx : |(y : ℝ) - x / (e:ℝ) ^ 2| ≤ 1 := by
     have : (y : ℝ) - x / (e:ℝ) ^ 2 = ((y:ℝ) * (e:ℝ) ^ 2 - x) / (e:ℝ) ^ 2 := by field_simp
     rw [this, abs_le]; constructor
-    · rw [le_div_iff₀ he2r]; push_cast at hy1; nlinarith
-    · rw [div_le_iff₀ he2r]; push_cast at hy2; nlinarith
+    · rw [le_div_iff₀ he2r]; nlinarith
+    · rw [div_le_iff₀ he2r]; nlinarith
   have hρ0 := rho_nonneg Cp r e
   have hρ1 := rho_le_one Cp r e
   rw [hdil]
@@ -177,7 +177,6 @@ theorem term_bound (Cp : ℕ → Prop) (r : ℕ) (hr : 0 < r) (e : ℕ) (he : 0 
     unfold rho; push_cast at hp ⊢; exact hp
   have h2 : |((y:ℝ) - x / (e:ℝ) ^ 2) * rho Cp r e| ≤ 1 := by
     rw [abs_mul, abs_of_nonneg hρ0]; nlinarith [abs_nonneg ((y:ℝ) - x / (e:ℝ) ^ 2)]
-  push_cast
   rw [e1]
   exact (abs_add_le _ _).trans (add_le_add hp' h2)
 

@@ -474,7 +474,7 @@ omit [NeZero N] hG in
 theorem LSeriesSummable_fχ' (hq : χ.IsQuadratic) {s : ℂ} (hs : 1 < s.re) :
     LSeriesSummable (fun n => (fχ χ n : ℂ)) s := LSeriesSummable_fχ (isReal_of_isQuadratic hq) hs
 
-omit hG in
+omit hG [NeZero N] in
 /-- **The prime term**: `∫_ℝ h(r − i) Σ Λ(n)χ(n)n^{−s} dr = 2π Σ Λ(n)χ(n)n^{−1/2} g_h(log n)`. -/
 theorem prime_lineC (hq : χ.IsQuadratic) {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) (heven : ∀ t, h (-t) = h t)
     {hR : ℝ → ℝ} (hreal : ∀ r : ℝ, h r = hR r) :
@@ -540,7 +540,7 @@ theorem integrable_psi_lineC {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) :
   have := psi_strip_boundC (χ := χ) H (hmem r)
   simpa using this
 
-omit hG in
+omit hG [NeZero N] in
 theorem integrable_prime_lineC (hq : χ.IsQuadratic) {h : ℂ → ℂ} {C : ℝ} (H : StripTest h C) :
     Integrable fun r : ℝ => h ((r : ℂ) - I)
       * LSeries (fun n => (fχ χ n : ℂ)) (1 / 2 + I * ((r : ℂ) - I)) := by

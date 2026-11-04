@@ -171,7 +171,7 @@ lemma integral_s_cexp {z : ℂ} (hz : 0 < z.re) :
       simp only [F, norm_mul, norm_neg, GammaIntegrals.norm_cexp_neg_mul]
       gcongr
       refine (norm_add_le _ _).trans ?_
-      simp [norm_div, Complex.norm_real, abs_of_nonneg hs]
+      simp [Complex.norm_real, abs_of_nonneg hs]
     have ht : Tendsto (fun s : ℝ => (s / ‖z‖ + 1 / ‖z‖ ^ 2) * Real.exp (-(z.re * s))) atTop (𝓝 0) := by
       have a1 : Tendsto (fun s : ℝ => s * Real.exp (-(z.re * s))) atTop (𝓝 0) := by
         have := (tendsto_pow_mul_exp_neg_atTop_nhds_zero 1).comp (tendsto_id.const_mul_atTop hz)
@@ -266,7 +266,7 @@ theorem re_digamma_quarter (N : ℕ) (b : ℝ) :
     have : Complex.normSq (w ^ 2) = (((N:ℝ) + 1/4) ^ 2 + b ^ 2) ^ 2 := by rw [map_pow, hnsq]
     rw [this]
     have e1 : (w ^ 2).re = ((N:ℝ) + 1/4) ^ 2 - b ^ 2 := by rw [pow_two, Complex.mul_re, hwre, hwim]; ring
-    rw [e1]; simp [Complex.normSq_apply]; field_simp
+    rw [e1]; simp; field_simp
   have hk : (∑ k ∈ Finset.range N, (z + k)⁻¹).re
       = ∑ k ∈ Finset.range N, ((k:ℝ) + 1 / 4) / (((k:ℝ) + 1 / 4) ^ 2 + b ^ 2) := by
     rw [Complex.re_sum]; apply Finset.sum_congr rfl; intro k _

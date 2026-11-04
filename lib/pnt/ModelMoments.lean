@@ -83,7 +83,7 @@ theorem integral_Xm (m : ℕ) (hm : m ≠ 0) :
   split_ifs with hs
   · rw [Nat.isSquare_iff_even_factorization] at hs
     rw [gfac, ← Finset.prod_coe_sort m.primeFactors (fun p => (p : ℝ) / (p + 1))]
-    exact prod_congr rfl fun p _ => by rw [if_pos (hs p (Nat.prime_of_mem_primeFactors p.2))]
+    exact prod_congr rfl fun p _ => by rw [ite_eq_left (hs p (Nat.prime_of_mem_primeFactors p.2))]
   · rw [Nat.isSquare_iff_even_factorization] at hs
     push Not at hs
     obtain ⟨p, hp, hodd⟩ := hs
@@ -92,7 +92,7 @@ theorem integral_Xm (m : ℕ) (hm : m ≠ 0) :
       refine ⟨hp, ?_, hm⟩
       by_contra h
       exact hodd (by rw [Nat.factorization_eq_zero_of_not_dvd h]; exact ⟨0, rfl⟩)
-    exact prod_eq_zero (i := ⟨p, hpm⟩) (mem_univ _) (by rw [if_neg hodd])
+    exact prod_eq_zero (i := ⟨p, hpm⟩) (mem_univ _) (by rw [ite_eq_right hodd])
 
 
 /-- **Moments of the model**: `E[(Σ_{n ∈ P} a_n X(n))^k] = Σ_{f, ∏ f square} ∏ a(f i) · ∏_{p ∣ ∏ f} p/(p+1)`. -/
@@ -110,7 +110,7 @@ theorem model_moment (P : Finset ℕ) (hP : ∀ p ∈ P, 0 < p) (a : ℕ → ℝ
     refine sum_congr rfl fun f hf => ?_
     rw [Xm_prod univ f (fun i _ => (hP _ (Fintype.mem_piFinset.1 hf i)).ne'), ← prod_mul_distrib]
   simp_rw [e]
-  rw [integral_finset_sum _ (fun f _ => (integrable_Xm _).const_mul _), sum_filter]
+  rw [integral_finsetSum _ (fun f _ => (integrable_Xm _).const_mul _), sum_filter]
   refine sum_congr rfl fun f hf => ?_
   rw [integral_const_mul, integral_Xm _ (hne f hf)]
   split_ifs <;> simp
@@ -123,11 +123,11 @@ theorem gfac_sqrt {m : ℕ} (hm : IsSquare m) : gfac (Nat.sqrt m) = gfac m := by
   · unfold gfac; rw [Nat.primeFactors_mul hs.ne' hs.ne', union_self]
 
 theorem dens_pos_eq {r : ℕ} (hr : 0 < r) : GSUncond.dens GSLink.CpPos CpPos0 r = 3 / Real.pi ^ 2 * gfac r := by
-  unfold GSUncond.dens; rw [dif_pos hr]
+  unfold GSUncond.dens; rw [dite_eq_left hr]
   exact tendsto_nhds_unique (Classical.choose_spec (Q_density GSLink.CpPos CpPos0 r hr)) (delta_pos_closed r hr)
 
 theorem dens_neg_eq {r : ℕ} (hr : 0 < r) : GSUncond.dens GSLink.CpNeg CpNeg0 r = 3 / Real.pi ^ 2 * gfac r := by
-  unfold GSUncond.dens; rw [dif_pos hr]
+  unfold GSUncond.dens; rw [dite_eq_left hr]
   exact tendsto_nhds_unique (Classical.choose_spec (Q_density GSLink.CpNeg CpNeg0 r hr)) (delta_neg_closed r hr)
 
 open Classical in

@@ -48,8 +48,8 @@ theorem QF_eq (par : ℕ) (σ : ℝ) (P : ModePlancherel par) (N : ℕ) (x : ℕ
       intro i j; rw [← P.orth i j]; simp only [one_mul]; field_simp
     simp only [this]
     rw [mul_sum]; refine sum_congr rfl (fun i hi => ?_)
-    rw [Finset.sum_eq_single i (fun j _ hj => by rw [if_neg (Ne.symm hj)]; ring) (fun h => absurd hi h)]
-    rw [if_pos rfl]; ring
+    rw [Finset.sum_eq_single i (fun j _ hj => by rw [ite_eq_right (Ne.symm hj)]; ring) (fun h => absurd hi h)]
+    rw [ite_eq_left rfl]; ring
   -- the [0,30] piece is π Σ xᵢxⱼ Cmᵢⱼ
   have hC : ∫ t in Set.Ioc 0 30, wψ t * Fx par N x t ^ 2
       = π * ∑ i ∈ range N, ∑ j ∈ range N, x i * x j * Cm wψ (2 * i + par) (2 * j + par) := by
@@ -218,7 +218,6 @@ theorem tail_bound (N : ℕ) (x : ℕ → ℝ) (A2 A3 n6 : ℝ) (g : ℝ → ℝ
           + 6 * g t ^ 2 * ((202 / 100 - 1 + t / 30) * (1 / t ^ 12)) := by rw [ea, eb, ec]; ring
       _ ≤ _ := by
           have := mul_le_mul_of_nonneg_left hc12 (by positivity : (0:ℝ) ≤ 6 * g t ^ 2)
-          push_cast
           nlinarith
   have hR : ∫ t in Set.Ioi 30, (3 / 2 * A2 ^ 2 * ((202 / 100 - 1 + t / 30) * t ^ (-((6:ℕ):ℝ)))
           + 6 * A3 ^ 2 * ((202 / 100 - 1 + t / 30) * t ^ (-((8:ℕ):ℝ))))

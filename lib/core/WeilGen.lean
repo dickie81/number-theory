@@ -72,7 +72,7 @@ theorem approx {f : ℝ → ℝ} (hf : TestFn f) : ∃ (B M : ℝ) (g : ℕ → 
   refine ⟨B0 + 1, M0 + 1, g, fun k => ⟨?_, ?_, ?_, ?_⟩, ⟨hcd.continuous.measurable, hs, ?_, ?_⟩, ?_, fun k => ⟨p k, rfl⟩⟩
   · exact Measurable.ite (measurableSet_le continuous_abs.measurable measurable_const) (p k).continuous.measurable
       measurable_const
-  · intro u hu; simp only [g, cutp, if_neg (not_le.2 hu)]
+  · intro u hu; simp only [g, cutp, ite_eq_right (not_le.2 hu)]
   · intro u; simp only [g, cutp]; split_ifs with hu
     · have := perr k u hu; have := hB0 u (mem_Icc_of_abs hu); rw [Real.norm_eq_abs] at this
       have := eps1 k
@@ -81,7 +81,7 @@ theorem approx {f : ℝ → ℝ} (hf : TestFn f) : ∃ (B M : ℝ) (g : ℕ → 
         _ ≤ _ := by linarith
     · simp; linarith
   · intro s t hs' ht'
-    simp only [g, cutp, if_pos hs', if_pos ht']
+    simp only [g, cutp, ite_eq_left hs', ite_eq_left ht']
     rw [pftc]
     have := intervalIntegral.norm_integral_le_of_norm_le_const (a := t) (b := s) (C := M0 + 1)
       (f := fun y => (q k).eval y) (fun y hy => by rw [Real.norm_eq_abs]; exact qbd k y (uIoc_sub hs' ht' hy))
@@ -102,9 +102,9 @@ theorem approx {f : ℝ → ℝ} (hf : TestFn f) : ∃ (B M : ℝ) (g : ℕ → 
         (h := fun k => f t + 1 / ((k:ℝ) + 1)) ?_ ?_ (fun k => ?_) (fun k => ?_)
       · simpa using (tendsto_const_nhds (x := f t)).sub hε
       · simpa using (tendsto_const_nhds (x := f t)).add hε
-      · have := abs_le.1 (perr k t ht); simp only [g, cutp, if_pos ht]; linarith
-      · have := abs_le.1 (perr k t ht); simp only [g, cutp, if_pos ht]; linarith
-    · have : ∀ k, g k t = f t := fun k => by simp only [g, cutp, if_neg ht, hs t (not_le.1 ht)]
+      · have := abs_le.1 (perr k t ht); simp only [g, cutp, ite_eq_left ht]; linarith
+      · have := abs_le.1 (perr k t ht); simp only [g, cutp, ite_eq_left ht]; linarith
+    · have : ∀ k, g k t = f t := fun k => by simp only [g, cutp, ite_eq_right ht, hs t (not_le.1 ht)]
       simp only [this]; exact tendsto_const_nhds
 
 /-- **Coercivity on the test class**: `weilQg (1/2) f ≥ 10⁻⁸ ‖f‖²`. -/
@@ -116,13 +116,13 @@ theorem coer {f : ℝ → ℝ} (hf : TestFn f) : WeilCoer.cW * normSq f ≤ weil
   rw [hpk, ← hxy]; exact WeilCoer.coer_hx' N x y
 
 lemma normSq_pos {f : ℝ → ℝ} (hf : TestFn f) (hne : f ≠ 0) : 0 < normSq f := by
-  obtain ⟨u, hu⟩ : ∃ u, f u ≠ 0 := by by_contra h; push_neg at h; exact hne (funext h)
+  obtain ⟨u, hu⟩ : ∃ u, f u ≠ 0 := by by_contra h; push Not at h; exact hne (funext h)
   unfold normSq
   have hc : Continuous fun t => f t ^ 2 := (hf.1.continuous).pow 2
   refine hc.integral_pos_of_hasCompactSupport_nonneg_nonzero (x := u) ?_ (fun t => sq_nonneg _) (pow_ne_zero 2 hu)
   refine HasCompactSupport.intro (isCompact_Icc (a := -(1/2)) (b := 1/2)) fun t ht => ?_
   have : 1 / 2 < |t| := by
-    by_contra h; push_neg at h; exact ht (mem_Icc_of_abs h)
+    by_contra h; push Not at h; exact ht (mem_Icc_of_abs h)
   simp [hf.2 t this]
 
 /-- **`L = 1/2` positivity for general test functions.** -/

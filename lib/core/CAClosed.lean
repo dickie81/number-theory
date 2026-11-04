@@ -106,7 +106,7 @@ theorem J_eq (u : ℝ) {s : ℝ} (hs : 0 < s) :
         have := continuous_HuR u
         fun_prop))
     · obtain ⟨x, r⟩ := p
-      simp only [Function.uncurry_apply_pair, norm_mul, Real.norm_eq_abs, abs_abs]
+      simp only [Function.uncurry_apply_pair, norm_mul, Real.norm_eq_abs]
       rw [abs_of_pos (Real.exp_pos _)]
       refine mul_le_mul_of_nonneg_left ?_ (Real.exp_pos _).le
       calc |HuR u r| * |Real.cos (r * x)| ≤ |HuR u r| * 1 :=
@@ -157,7 +157,7 @@ theorem J_closed (m : ℕ) :
     funext x; simp only [f]; rw [gh_even]
   rw [e0, integral_comp_abs]
   have hsub : ∫ x in Ioi (0 : ℝ), f x = ∫ x in Ioc 0 L, f x :=
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero measurableSet_Ioi Ioc_subset_Ioi_self
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero measurableSet_Ioi Ioc_subset_Ioi_self
       fun x hx => by
         have hx1 : 0 < x := hx.1
         have hx2 : L < x := by
@@ -407,7 +407,6 @@ theorem term_succ (a k : ℕ) :
     funext r; ring
   rw [e, integral_sub hi1 hi2, mul_sub, integral_mul_const, ← mul_assoc, integral_HuR, J_eq _ hs, hsk,
     J_closed]
-  push_cast
   ring
 
 theorem hasSum_altH : HasSum (fun k : ℕ => 1 / (2 * (k : ℝ) + 1) - 1 / (2 * k + 2)) (Real.log 2) := by

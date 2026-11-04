@@ -3,10 +3,11 @@ description: >-
   One stage of the Lean build. It restores the library's build from the Actions cache, gets Mathlib's prebuilt
   files, builds the targets that validate the change (scripts/lean_targets.py) with scripts/build.sh for at most
   `minutes` minutes, and saves the build to the cache, even when the stage fails or is cancelled. If the build
-  finished, it then checks the axioms of Check, CheckAll, CheckZeta23 and CheckDH, and that the library has no dead
-  code (scripts/dead_code.py). A cold build takes longer than one job may run, so the workflow chains stages: each
-  one continues from the last one's cache. The job must check out the commit with its parent (fetch-depth 2), so
-  that a pull request's merge commit has its base.
+  finished, it then checks the axioms of Check, CheckAll, CheckZeta23 and CheckDH, that the library has no dead
+  code (scripts/dead_code.py), and that the build's log shows no warning in the library's own sources
+  (scripts/check_warnings.py; Lake replays the messages of the modules it does not rebuild). A cold build takes
+  longer than one job may run, so the workflow chains stages: each one continues from the last one's cache. The job
+  must check out the commit with its parent (fetch-depth 2), so that a pull request's merge commit has its base.
 inputs:
   stage:
     description: The stage's number, used in the cache key.
@@ -75,8 +76,9 @@ runs:
       shell: bash
       run: |
         set +e
-        timeout "${{ inputs.minutes }}m" scripts/build.sh ${{ steps.targets.outputs.list }}
-        rc=$?
+        timeout "${{ inputs.minutes }}m" scripts/build.sh ${{ steps.targets.outputs.list }} 2>&1 \
+          | tee "$RUNNER_TEMP/lean-build.log"
+        rc=${PIPESTATUS[0]}
         if [ "$rc" -eq 124 ]; then
           pkill -x lean
           sleep 5
@@ -112,3 +114,8 @@ runs:
       run: |
         lake build deadcode
         python3 scripts/dead_code.py
+
+    - name: No warnings in the library's sources
+      if: steps.build.outputs.partial != 'true'
+      shell: bash
+      run: python3 scripts/check_warnings.py "$RUNNER_TEMP/lean-build.log"

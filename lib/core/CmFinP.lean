@@ -79,7 +79,7 @@ lemma abs_eq30 (n m : ℕ) : ∫ t in (0:ℝ)..30, |That n t * That m t| =
 
 lemma L2 (par i : ℕ) (hp : par < 2) : ∫ t in (0:ℝ)..30, That (2 * i + par) t ^ 2 ≤ π := by
   have h := WeilFourier.modeOrth hp i i
-  rw [if_pos rfl] at h
+  rw [ite_eq_left rfl] at h
   have hπ := Real.pi_pos
   have hI : ∫ t in Set.Ioi 0, WeilZhuRed.G par i i t = π := by
     field_simp at h; linarith

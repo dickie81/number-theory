@@ -50,7 +50,7 @@ theorem head_margin (h : ℕ) (R M : ℕ → ℕ → ℝ) (D : ℕ → ℝ) (δ 
               ring
       have h2 : ∑ i ∈ range h, ∑ j ∈ range h, x i * (if i = j then δ else 0) * x j = δ * S := by
         simp [mul_ite, ite_mul, mul_sum, sq, S]
-        refine sum_congr rfl (fun i hi => ?_); rw [if_pos (mem_range.mp hi)]; ring
+        refine sum_congr rfl (fun i hi => ?_); rw [ite_eq_left (mem_range.mp hi)]; ring
       unfold qf
       rw [← h1, ← h2, ← sum_add_distrib]
       refine sum_congr rfl (fun i _ => ?_)
@@ -97,9 +97,9 @@ theorem tail_lower (R : ℕ → ℕ → ℝ) (hsym : ∀ i j, R i j = R j i) (T 
     have : ∑ j ∈ T, x i * R i j * x j = x i * R i i * x i + ∑ j ∈ T, x i * O i j * x j := by
       rw [← add_sum_erase T _ hi]
       have e2 : ∑ j ∈ T, x i * O i j * x j = ∑ j ∈ T.erase i, x i * R i j * x j := by
-        rw [← add_sum_erase T _ hi]; simp only [O, if_pos rfl]; simp only [mul_zero, zero_mul, zero_add]
+        rw [← add_sum_erase T _ hi]; simp only [O, ite_eq_left rfl]; simp only [mul_zero, zero_mul, zero_add]
         refine sum_congr rfl (fun j hj => ?_)
-        rw [if_neg (Ne.symm (ne_of_mem_erase hj))]
+        rw [ite_eq_right (Ne.symm (ne_of_mem_erase hj))]
       rw [e2]
     rw [this]; ring
   have hdiagS : d * ∑ i ∈ T, x i ^ 2 ≤ ∑ i ∈ T, R i i * x i ^ 2 := by
@@ -107,7 +107,7 @@ theorem tail_lower (R : ℕ → ℕ → ℝ) (hsym : ∀ i j, R i j = R j i) (T 
   have hOsym : ∀ i j, |O i j| = |O j i| := by
     intro i j; simp only [O]; by_cases h : i = j
     · subst h; rfl
-    · rw [if_neg h, if_neg (Ne.symm h), hsym]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h), hsym]
   have hoff : |qf O x T T| ≤ e * ∑ i ∈ T, x i ^ 2 := by
     have step1 : |qf O x T T| ≤ ∑ i ∈ T, ∑ j ∈ T, |O i j| * ((x i ^ 2 + x j ^ 2) / 2) := by
       unfold qf

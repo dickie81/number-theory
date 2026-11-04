@@ -38,12 +38,12 @@ theorem QF0_eq (N : ℕ) (x : ℕ → ℝ) : QF 0 1 N x = WeilForm.weilQ (1 / 2)
 lemma QF0_nonneg (N : ℕ) (hN : 28 ≤ N) (x : ℕ → ℝ) : 0 ≤ QF 0 1 N x := by
   by_cases h : ∃ i ∈ range N, x i ≠ 0
   · rw [QF0_eq]; exact (CmFin.L05_even_uncond N hN x h).le
-  · push_neg at h; rw [QF_eq_zero 0 1 N x h]
+  · push Not at h; rw [QF_eq_zero 0 1 N x h]
 
 lemma QF1_nonneg (N : ℕ) (hN : 28 ≤ N) (y : ℕ → ℝ) : 0 ≤ QF 1 (-1) N y := by
   by_cases h : ∃ i ∈ range N, y i ≠ 0
   · exact (CmFin.L05_odd_uncond N hN y h).le
-  · push_neg at h; rw [QF_eq_zero 1 (-1) N y h]
+  · push Not at h; rw [QF_eq_zero 1 (-1) N y h]
 
 /-- **Mixed probes.** For `N ≥ 28` and `(x, y) ≠ 0`, the general Weil form is positive on
 `Σ_{i<N} xᵢ T_{2i} + Σ_{i<N} yᵢ T_{2i+1}`. -/
