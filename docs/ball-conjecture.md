@@ -579,8 +579,22 @@ every `x` in the closed span of the curve (`BallCurve.flow_continuous_closure`, 
 `BallCurve.continuous_of_mem_closure_span`), hence on the whole space when the curve spans densely
 (`BallCurve.flow_continuous_of_dense`), and on the whole of `ℓ²` for the model of RH (`BallCurve.flow_continuous_model`).
 For an abstract realization it can fail off the closed span: on an orthogonal summand `ℂ` the definition allows `U_s`
-to act by any character of `ℝ`, including a discontinuous one built from a Hamel basis. Not proved: whether the curve
-spans `ℓ²` densely in the model, and anything about lattices spanned by points of the curve other than the integers.
+to act by any character of `ℝ`, including a discontinuous one built from a Hamel basis.
+
+Whether the curve spans `ℓ²` densely in the model is, under RH, exactly the simple-zeros conjecture. This is a
+written argument, not in Lean.
+- Why multiplicity matters. `ZIdx` counts a zero of multiplicity `m` with `m` indices, and every `w_x` has equal
+  coordinates at those indices. So if some zero is multiple, `e_q − e_{q′}` for two of its indices `q ≠ q′` is
+  orthogonal to the whole curve.
+- The converse. Suppose every zero is simple and `y` is orthogonal to every `w_x`. Then
+  `0 = ⟪w_{e^t}, y⟫ = e^{t/2} Σ_q a_q e^{−iγ_q t}` for all real `t`, where `a_q = \overline{c_q}\,y_q` and
+  `c_q = e^{(ρ_q−½)²/4}`. These coefficients are absolutely summable, since `c, y ∈ ℓ²`, and the frequencies `γ_q`
+  are distinct. So Bohr's mean value `a_q = lim_T (1/2T)∫_{−T}^{T} f(t)e^{iγ_q t}dt` gives every `a_q = 0`, hence
+  `y = 0` because `c_q ≠ 0`.
+- The same holds for the rational orbit of `BallLattice`, since `x ↦ ⟪w_x, y⟫` is continuous.
+
+`flow_continuous_model` does not need density. Not proved: anything about lattices spanned by points of the curve
+other than the integers.
 
 ## Tests
 
