@@ -70,14 +70,16 @@ adding, removing or renaming a module.
 
 - **Checks:** `check_hygiene.py`, `gen_lakefile.py --check`, `inventory.py --check`, `check_account.py`,
   `zeros_page.py --check`, `check_vendor.py` and `check_certificate.py`.
-- **The papers:** every `papers/<name>/main.tex`, and then every supplement `papers/<name>/supplement.tex`, is compiled
-  with LaTeX, and the PDFs are kept as the artifact `papers`, under the site's names (`<name>.pdf`,
-  `<name>-supplement.pdf`). On a pull request from this repository the job `pdf-preview` also puts them on a branch
-  of their own, `pdf-preview/pr-<number>` (one commit, replaced on every push), and a comment links each PDF there,
-  where GitHub's file view shows it in the browser, and the artifact's zip; the job updates the same comment on every
-  push, and `pdf-preview-cleanup.yml` deletes the branch when the pull request closes. Then the site is built
-  from them, as `pages.yml` builds it, and kept as the artifact `site`, so a pull request's page on the zeros can be
-  looked at before it is published.
+- **The papers:** the papers that the change touches are compiled with LaTeX, each `papers/<name>/main.tex` and then its
+  supplement `papers/<name>/supplement.tex`. A paper counts as touched when the change edits a file in its directory
+  other than Markdown. A change that touches no paper compiles none, and one that edits `ci.yml`,
+  `scripts/build_site.py`, `scripts/zeros_page.py` or `site/` compiles every paper, as does a manual run. The PDFs are
+  kept as the artifact `papers`, under the site's names (`<name>.pdf`, `<name>-supplement.pdf`). On a pull request from
+  this repository the job `pdf-preview` also puts them on a branch of their own, `pdf-preview/pr-<number>` (one commit,
+  replaced on every push), and a comment links each PDF there, where GitHub's file view shows it in the browser, and the
+  artifact's zip; the job updates the same comment on every push, and `pdf-preview-cleanup.yml` deletes the branch when
+  the pull request closes. If every paper was compiled, the site is then built from them, as `pages.yml` builds it, and
+  kept as the artifact `site`, so a pull request's page on the zeros can be looked at before it is published.
 - **The Lean build**, with a cache. On a pull request it runs only if the pull request changes `lib/`, the Lake
   files, `lean-toolchain`, the build scripts or the workflow; on pushes to `main` it always runs. Mathlib's prebuilt
   files come from Mathlib's own cache (`lake exe cache get`).
