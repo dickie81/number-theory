@@ -70,7 +70,7 @@ lemma abs_eq3 (n m : ℕ) : ∫ t in (0:ℝ)..(30 * V3Scale.lam), |That n t * Th
 
 lemma L2_3 (par i : ℕ) (hp : par < 2) : ∫ t in (0:ℝ)..(30 * V3Scale.lam), That (2 * i + par) t ^ 2 ≤ π := by
   have h := WeilFourier.modeOrth hp i i
-  rw [if_pos rfl] at h
+  rw [ite_eq_left rfl] at h
   have hπ := Real.pi_pos
   have hI : ∫ t in Set.Ioi 0, WeilZhuRed.G par i i t = π := by
     field_simp at h; linarith

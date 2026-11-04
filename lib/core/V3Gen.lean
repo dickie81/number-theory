@@ -188,12 +188,12 @@ lemma good_legT (n : ℕ) : ∃ B M, Good B M (WeilPlanch.legT n) := by
     rw [this]
     exact Measurable.ite (measurableSet_le continuous_abs.measurable measurable_const) hc.measurable
       measurable_const
-  · intro u hu; rw [hleg, if_neg (by linarith)]
+  · intro u hu; rw [hleg, ite_eq_right (by linarith)]
   · intro u; rw [hleg]; split_ifs with h
     · have := hB u (WeilGen.mem_Icc_of_abs h); rwa [Real.norm_eq_abs] at this
     · simpa using hB0
   · intro s t hs ht
-    rw [hleg, hleg, if_pos hs, if_pos ht]
+    rw [hleg, hleg, ite_eq_left hs, ite_eq_left ht]
     have := (convex_Icc (-(1/2):ℝ) (1/2)).norm_image_sub_le_of_norm_deriv_le (f := φ) (fun x _ => hd x)
       (fun x hx => hM x hx) (WeilGen.mem_Icc_of_abs ht) (WeilGen.mem_Icc_of_abs hs)
     simpa [Real.norm_eq_abs] using this
@@ -234,7 +234,7 @@ lemma corr_hx (N : ℕ) (hN : 2 ≤ N) (x y : ℕ → ℝ) :
   generalize c2 (WeilOdd.hx N x y) = c
   unfold WeilOdd.hx WeilPlanch.fx WeilOdd.gx
   simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_range,
-    if_pos (show 0 < N by omega), if_pos (show 1 < N by omega)]
+    ite_eq_left (show 0 < N by omega), ite_eq_left (show 1 < N by omega)]
   norm_num
   ring
 
@@ -250,7 +250,7 @@ lemma corr_V (N : ℕ) (hN : 2 ≤ N) (x y : ℕ → ℝ) :
   · unfold xc c0; rw [h0]; simp
   · unfold xc
     simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_range,
-      if_pos (show 0 < N by omega), if_pos (show 1 < N by omega)]
+      ite_eq_left (show 0 < N by omega), ite_eq_left (show 1 < N by omega)]
     unfold c0 c1
     rw [h0, hR, hL]
     norm_num
@@ -258,7 +258,7 @@ lemma corr_V (N : ℕ) (hN : 2 ≤ N) (x y : ℕ → ℝ) :
     ring
   · unfold yc
     simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_range,
-      if_pos (show 0 < N by omega)]
+      ite_eq_left (show 0 < N by omega)]
     unfold c2
     rw [hR, hL]
     norm_num

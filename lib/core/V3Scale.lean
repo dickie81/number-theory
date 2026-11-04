@@ -167,7 +167,7 @@ lemma Psi3_growth {t : ℝ} (h0 : 0 ≤ t) : |Psi3 t| ≤ 21 * Real.sqrt (1 + t)
     _ ≤ 21 * Real.sqrt (1 + t) := by gcongr
 
 lemma int_Psi3 (par : ℕ) (i j : ℕ) : IntegrableOn (fun t => Psi3 t * WeilZhuRed.G par i j t) (Ioi 0) :=
-  int_weight par Psi3 Psi3_cont (fun t ht => Psi3_growth ht) i j
+  int_weight par Psi3 Psi3_cont (fun _t ht => Psi3_growth ht) i j
 
 theorem arch_sc (N : ℕ) (x y : ℕ → ℝ) :
     WeilForm.weilConst * WeilForm.normSq (sc (hx N x y)) + WeilForm.archE (sc (hx N x y))

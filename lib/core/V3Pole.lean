@@ -88,7 +88,7 @@ lemma pole_sum_gen (a : ℝ) (N : ℕ) (x y : ℕ → ℝ) (s : ℝ) :
     refine intervalIntegral.integral_congr (fun u hu => ?_)
     rw [Set.uIcc_of_le (by norm_num)] at hu
     have hu' : |u| ≤ 1 / 2 := abs_le.mpr ⟨hu.1, hu.2⟩
-    simp only [fx, WeilOdd.gx, legT, if_pos hu', aeval_eq, Finset.sum_mul, Finset.mul_sum, add_mul]
+    simp only [fx, WeilOdd.gx, legT, ite_eq_left hu', aeval_eq, Finset.sum_mul, Finset.mul_sum, add_mul]
     congr 1
     · refine Finset.sum_congr rfl (fun i _ => ?_); push_cast; ring
     · refine Finset.sum_congr rfl (fun i _ => ?_); push_cast; ring
@@ -155,9 +155,9 @@ lemma iP_zero (n : ℕ) : iP n 0 = if n = 0 then 1 else 0 := by
   unfold iP
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp only [pow_zero, zero_add, pow_one, Nat.factorial_zero, Nat.cast_one, mul_one, zero_mul, Real.cosh_zero,
-      one_mul, intervalIntegral.integral_const, smul_eq_mul, if_true]
+      intervalIntegral.integral_const, smul_eq_mul, ite_true]
     norm_num
-  · rw [if_neg hn.ne', zero_pow hn.ne']; simp
+  · rw [ite_eq_right hn.ne', zero_pow hn.ne']; simp
 
 theorem int_sc_hx (N : ℕ) (hN : 1 ≤ N) (x y : ℕ → ℝ) :
     ∫ u in (-(lam / 2))..(lam / 2), sc (WeilOdd.hx N x y) u = Real.sqrt lam * x 0 := by
@@ -175,10 +175,10 @@ theorem int_sc_hx (N : ℕ) (hN : 1 ≤ N) (x y : ℕ → ℝ) :
   simp only [zero_mul, neg_zero, Real.exp_zero, mul_one, one_mul, zero_div] at h
   have e : ∀ u, WeilOdd.hx N x y u = fx N x u + WeilOdd.gx N y u := fun u => rfl
   simp_rw [e, h, iP_zero]
-  rw [Finset.sum_eq_single 0 (fun i _ hi => by rw [if_neg (by omega)]; ring) (fun h0 => absurd
+  rw [Finset.sum_eq_single 0 (fun i _ hi => by rw [ite_eq_right (by omega)]; ring) (fun h0 => absurd
     (Finset.mem_range.2 (by omega)) h0)]
-  rw [Finset.sum_eq_zero (fun i _ => by rw [if_neg (by omega)]; ring)]
-  simp only [mul_zero, Nat.cast_zero, add_zero, zero_add, Real.sqrt_one, if_true, mul_one]
+  rw [Finset.sum_eq_zero (fun i _ => by rw [ite_eq_right (by omega)]; ring)]
+  simp only [mul_zero, Nat.cast_zero, add_zero, zero_add, Real.sqrt_one, ite_true, mul_one]
   calc lam * (x 0 / Real.sqrt lam) = (lam / Real.sqrt lam) * x 0 := by ring
     _ = _ := by rw [hs]
 

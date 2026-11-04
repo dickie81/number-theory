@@ -97,7 +97,7 @@ lemma pp_even : ∀ i < 28, ∀ j < 28, |((1000 : ℚ) : ℝ) * pole3 (2 * i + 0
   linarith
 
 theorem head_even : ∀ i < 28, ∀ j < 28, |R3 0 1000 1000 i j - certMat 28
-    (fun k i => if h : k < 28 ∧ i < 28 then ((getq MqE k i : ℚ) : ℝ) else 0)
+    (fun k i => if _h : k < 28 ∧ i < 28 then ((getq MqE k i : ℚ) : ℝ) else 0)
     (fun k => if k < 28 then ((DqE.getD k 0 : ℚ) : ℝ) else 0) (((1 / 40 : ℚ)) : ℝ) i j| ≤ 1 / 10 ^ 8 := by
   intro i hi j hj
   have h1 := R3_near 0 1000 1000 WeilHead.EvenQ.bq pqE cqE WeilConst.beta_enc_even pp_even V3Fin.c3Enc_even hi hj
@@ -112,7 +112,7 @@ theorem head_even : ∀ i < 28, ∀ j < 28, |R3 0 1000 1000 i j - certMat 28
     _ = _ := by push_cast; norm_num
 
 theorem head_odd : ∀ i < 28, ∀ j < 28, |R3 1 0 0 i j - certMat 28
-    (fun k i => if h : k < 28 ∧ i < 28 then ((getq MqO k i : ℚ) : ℝ) else 0)
+    (fun k i => if _h : k < 28 ∧ i < 28 then ((getq MqO k i : ℚ) : ℝ) else 0)
     (fun k => if k < 28 then ((DqO.getD k 0 : ℚ) : ℝ) else 0) (((45 / 10 ^ 5 : ℚ)) : ℝ) i j| ≤ 1 / 10 ^ 8 := by
   intro i hi j hj
   have h1 := R3_near 1 0 0 WeilHead.EvenQ.bq [] cqO (εpp := 0) WeilConst.beta_enc_even
@@ -133,8 +133,8 @@ theorem even_sector (N : ℕ) (hN : 28 ≤ N) (x : ℕ → ℝ) :
   sector_margin3 0 (by norm_num) (by norm_num) 1000 _ _ (((1 / 40 : ℚ)) : ℝ) (1 / 10 ^ 8) (1 / 50) (1 / 10 ^ 22) 4605
     (by norm_num) (fun k => by
       by_cases hk : k < 28
-      · simp only [if_pos hk]; exact (chk3_spec even_chk3).2 k
-      · simp only [if_neg hk]; exact le_rfl)
+      · simp only [ite_eq_left hk]; exact (chk3_spec even_chk3).2 k
+      · simp only [ite_eq_right hk]; exact le_rfl)
     (by norm_num) head_even (by simpa using b3_56_le) (by norm_num) (by norm_num) (by norm_num) N hN x
 
 /-- **Odd sector**: the reduced form is at least `4·10⁻⁴‖y‖²` at every truncation `N ≥ 28`. -/
@@ -143,8 +143,8 @@ theorem odd_sector (N : ℕ) (hN : 28 ≤ N) (y : ℕ → ℝ) :
   sector_margin3 1 le_rfl le_rfl 0 _ _ (((45 / 10 ^ 5 : ℚ)) : ℝ) (1 / 10 ^ 8) (4 / 10 ^ 4) (1 / 10 ^ 22) 605
     (by norm_num) (fun k => by
       by_cases hk : k < 28
-      · simp only [if_pos hk]; exact (chk3_spec odd_chk3).2 k
-      · simp only [if_neg hk]; exact le_rfl)
+      · simp only [ite_eq_left hk]; exact (chk3_spec odd_chk3).2 k
+      · simp only [ite_eq_right hk]; exact le_rfl)
     (by norm_num) head_odd (by simpa using b3_57_le) (by norm_num) (by norm_num) (by norm_num) N hN y
 
 lemma QF3_even_V (N : ℕ) (hN : 28 ≤ N) (x : ℕ → ℝ) (h0 : x 0 = 0)

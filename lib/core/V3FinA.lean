@@ -8,6 +8,7 @@ namespace V3Fin
 open Finset Real CmBessel CmMom CmData WeilTailB MeasureTheory V3Asm V3Bessel
 
 set_option maxRecDepth 100000 in
+set_option exponentiation.threshold 400 in
 lemma X3_eq (n m : ℕ) : (((XN3 n m : ℚ) / 2 ^ 384 : ℚ) : ℝ) = ∑ k ∈ range 40, ∑ l ∈ range 40,
     ((qQ3 n k : ℚ) : ℝ) * ((qQ3 m l : ℚ) : ℝ) * ((nuQ ((n + m) / 2 + k + l) : ℚ) : ℝ) := by
   unfold XN3 qQ3 nuQ

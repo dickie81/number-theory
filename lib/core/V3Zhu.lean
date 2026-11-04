@@ -76,8 +76,8 @@ theorem QF3_ge (par : ℕ) (P : ModePlancherel par) (N : ℕ) (x : ℕ → ℝ) 
       intro i j; rw [← P.orth i j]; simp only [one_mul]; field_simp
     simp only [this]
     rw [mul_sum]; refine sum_congr rfl (fun i hi => ?_)
-    rw [Finset.sum_eq_single i (fun j _ hj => by rw [if_neg (Ne.symm hj)]; ring) (fun h => absurd hi h)]
-    rw [if_pos rfl]; ring
+    rw [Finset.sum_eq_single i (fun j _ hj => by rw [ite_eq_right (Ne.symm hj)]; ring) (fun h => absurd hi h)]
+    rw [ite_eq_left rfl]; ring
   have hC : ∫ t in Set.Ioc 0 T, (fun t => Psi3 t - βs) t * Fx par N x t ^ 2
       = π * ∑ i ∈ range N, ∑ j ∈ range N, x i * x j * C3 (2 * i + par) (2 * j + par) := by
     rw [hwa.2, mul_sum]; refine sum_congr rfl (fun i _ => ?_); rw [mul_sum]
@@ -193,11 +193,11 @@ theorem R3_symm (par : ℕ) (μp μ0 : ℝ) (i j : ℕ) : R3 par μp μ0 i j = R
   have e1 : (if i = j then βs else 0) = (if j = i then βs else 0) := by
     by_cases h : i = j
     · subst h; rfl
-    · rw [if_neg h, if_neg (Ne.symm h)]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
   have e2 : (if i = 0 ∧ j = 0 then μ0 else 0) = (if j = 0 ∧ i = 0 then μ0 else 0) := by
     by_cases h : i = 0 ∧ j = 0
-    · rw [if_pos h, if_pos ⟨h.2, h.1⟩]
-    · rw [if_neg h, if_neg (fun h' => h ⟨h'.2, h'.1⟩)]
+    · rw [ite_eq_left h, ite_eq_left ⟨h.2, h.1⟩]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h ⟨h'.2, h'.1⟩)]
   rw [e1, e2]; ring
 
 theorem R3_entry (par : ℕ) {μp : ℝ} (hμ : 0 ≤ μp) (μ0 : ℝ) (i j : ℕ) :
@@ -232,17 +232,17 @@ theorem qf_R3 (par : ℕ) (μp μ0 : ℝ) (N : ℕ) (hN : 1 ≤ N) (x : ℕ → 
   unfold qf R3
   have e1 : ∀ i ∈ range N, ∑ j ∈ range N, x i * (if i = j then βs else 0) * x j = βs * x i ^ 2 := by
     intro i hi
-    rw [Finset.sum_eq_single i (fun j _ hj => by rw [if_neg (Ne.symm hj)]; ring) (fun h => absurd hi h)]
-    rw [if_pos rfl]; ring
+    rw [Finset.sum_eq_single i (fun j _ hj => by rw [ite_eq_right (Ne.symm hj)]; ring) (fun h => absurd hi h)]
+    rw [ite_eq_left rfl]; ring
   have e2 : (∑ i ∈ range N, x i * pole3 (2 * i + par)) ^ 2
       = ∑ i ∈ range N, ∑ j ∈ range N, (x i * pole3 (2 * i + par)) * (x j * pole3 (2 * j + par)) := by
     rw [sq, sum_mul_sum]
   have h0 : 0 ∈ range N := mem_range.mpr (by omega)
   have e3 : ∑ i ∈ range N, ∑ j ∈ range N, x i * (if i = 0 ∧ j = 0 then μ0 else 0) * x j = μ0 * x 0 ^ 2 := by
-    rw [Finset.sum_eq_single 0 (fun i _ hi => sum_eq_zero (fun j _ => by rw [if_neg (fun h => hi h.1)]; ring))
+    rw [Finset.sum_eq_single 0 (fun i _ hi => sum_eq_zero (fun j _ => by rw [ite_eq_right (fun h => hi h.1)]; ring))
       (fun h => absurd h0 h)]
-    rw [Finset.sum_eq_single 0 (fun j _ hj => by rw [if_neg (fun h => hj h.2)]; ring) (fun h => absurd h0 h)]
-    rw [if_pos ⟨rfl, rfl⟩]; ring
+    rw [Finset.sum_eq_single 0 (fun j _ hj => by rw [ite_eq_right (fun h => hj h.2)]; ring) (fun h => absurd h0 h)]
+    rw [ite_eq_left ⟨rfl, rfl⟩]; ring
   have expand : ∀ i j, x i * ((if i = j then βs else 0) + μp * pole3 (2 * i + par) * pole3 (2 * j + par)
       + (if i = 0 ∧ j = 0 then μ0 else 0) + C3 (2 * i + par) (2 * j + par)) * x j
       = x i * (if i = j then βs else 0) * x j + μp * ((x i * pole3 (2 * i + par)) * (x j * pole3 (2 * j + par)))
@@ -348,14 +348,14 @@ theorem sector_margin3 (par : ℕ) (hpar : par ≤ 1) {μp : ℝ} (hμ : 0 ≤ �
     intro i j hij
     have e := hE i j
     have hz : ¬(i = 0 ∧ j = 0) := by rintro ⟨rfl, rfl⟩; omega
-    rw [if_neg hz, sub_zero] at e; exact e
+    rw [ite_eq_right hz, sub_zero] at e; exact e
   have hH := head_margin 28 R Mh Dh δ ρ hD hρ0 hhead x
   refine block_margin R (R3_symm par μp μ0) 28 N hN _ (0.37 - K * B0 ^ 2) (K * B0 * (2 * B0))
     (K ^ 2 * (28 * 128383 ^ 2) * (2 * B0 ^ 2)) m x hH ?_ ?_ ?_ (by positivity) hm1 hm2 hb
   · intro i hi
     have hi' := (mem_Ico.mp hi).1
     have e := hE' i i (Or.inl hi')
-    rw [if_pos rfl, abs_le] at e
+    rw [ite_eq_left rfl, abs_le] at e
     have hb := hbt i hi'
     have := b3_nonneg (2 * i + par)
     have := βs_ge
@@ -370,8 +370,8 @@ theorem sector_margin3 (par : ℕ) (hpar : par ≤ 1) {μp : ℝ} (hμ : 0 ≤ �
         ≤ ∑ j ∈ Ico 28 N, K * b3 (2 * i + par) * b3 (2 * j + par) := by
           refine sum_le_sum (fun j _ => ?_)
           by_cases h : i = j
-          · rw [if_pos h, abs_zero]; have := b3_nonneg (2 * j + par); positivity
-          · rw [if_neg h]; have := hE' i j (Or.inl hi'); rw [if_neg h, sub_zero] at this; exact this
+          · rw [ite_eq_left h, abs_zero]; have := b3_nonneg (2 * j + par); positivity
+          · rw [ite_eq_right h]; have := hE' i j (Or.inl hi'); rw [ite_eq_right h, sub_zero] at this; exact this
       _ = K * b3 (2 * i + par) * ∑ j ∈ Ico 28 N, b3 (2 * j + par) := by rw [mul_sum]
       _ ≤ K * B0 * (2 * B0) := by
           have ts := tail_sum3 par N hN
@@ -384,7 +384,7 @@ theorem sector_margin3 (par : ℕ) (hpar : par ≤ 1) {μp : ℝ} (hμ : 0 ≤ �
           have hij : i ≠ j := by
             have := mem_range.mp hi; have := (mem_Ico.mp hj).1; omega
           have e := hE' i j (Or.inr (mem_Ico.mp hj).1)
-          rw [if_neg hij, sub_zero] at e
+          rw [ite_eq_right hij, sub_zero] at e
           have : R i j ^ 2 ≤ (K * b3 (2 * i + par) * b3 (2 * j + par)) ^ 2 := by
             rw [← sq_abs]; exact pow_le_pow_left₀ (abs_nonneg _) e 2
           nlinarith

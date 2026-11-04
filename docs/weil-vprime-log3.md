@@ -92,6 +92,73 @@ The certificate needs much less precision than it gets.
   checks every bound before writing. Its inputs are `CmMomData.nuN`, `CmData.sqb` and `WeilHead.EvenQ.bq`. The
   outputs are `V3FinD` (Bessel coefficients, error bounds, entry centres), `V3FinR*` and `V3CertD`.
 
+## Beyond log 3/2 (Numerical)
+
+These are double-precision and mpmath computations, not certified. They show what the method would give past `log 3/2`,
+and why `log 3/2` is the natural end of the statement on `V'`.
+
+**The certifiable constant.** The table below gives the smallest eigenvalue on `V'` of the reduced form (Zhu's
+reduction at cutoff `T#`, every prime power with `log n < 2L` in the weight). This is the quantity a certificate like
+`V3Main`'s proves. The true form's value is listed alongside. The odd sector is the smaller of the two at every
+support.
+
+| `L` | prime powers | `T#` | reduced, on `V'` (odd) | true, on `V'` (odd) |
+|---|---|---|---|---|
+| `log 3/2 ≈ 0.549` | 2 | 30 | `4.8·10⁻⁴` (proved: `4·10⁻⁴`) | `4·10⁻²` |
+| `log 3/2` | 2 | 100 | `2.8·10⁻²` | |
+| 0.56 | 2, 3 | 100 | `1.5·10⁻²` | |
+| 0.60 | 2, 3 | 150 | `2.9·10⁻³` | `3.9·10⁻³` |
+| 0.65 | 2, 3 | 150 | `1.5·10⁻⁴` | `2.3·10⁻⁴` |
+| `log 2 ≈ 0.693` | 2, 3 (4 on the boundary) | 150–250 | `8–10·10⁻⁶` | |
+| 0.70 | 2, 3, 4 | 200 | `5.0·10⁻⁶` | `7.7·10⁻⁶` |
+| 0.75 | 2, 3, 4 | 300 | `7.9·10⁻⁸` | |
+| 0.80 | 2, 3, 4 | 300 | `8.5·10⁻¹⁰` | `1.3·10⁻⁹` |
+
+**What the numbers show:**
+
+- **Decay.** The constant falls roughly like `exp(−8.8·e^{2L})`, a factor of ten for every `0.03`–`0.05` in `L`. The
+  true form stays positive on `V'` throughout, as RH predicts, down to about `10⁻²⁰` at `L = 1`.
+- **The cutoff 30 is what limits the proved constant.** With `T# = 100` the same statement at `log 3/2` would give about
+  `3·10⁻²` instead of `4·10⁻⁴`. Past `log 3/2` the cutoff must grow anyway:
+  - `β* = log(T#/2π) − 1/T# − Σ 2Λ(n)/√n` must stay positive;
+  - the coefficients are `0.98` for `2`, `1.27` for `3`, `0.69` for `4` and `1.44` for `5`;
+  - so `β* ≈ 0.5` needs `T# ≈ 30` with `2` alone, `≈ 100` once `3` enters, `≈ 200` once `4` enters and `≈ 850` once
+    `5` enters at `L = log 5/2 ≈ 0.805`.
+- **The margin on `V'` is set by the next eigenvalue of the full form.** By interlacing it is at most `λ₃` in the even
+  sector, where `V'` removes two directions, and at most `λ₂` in the odd sector, where it removes one. In practice it
+  is within a factor of about 3 of them.
+
+  | `L` | even `λ₁, λ₂, λ₃` | odd `λ₁, λ₂` |
+  |---|---|---|
+  | 0.55 | `6·10⁻⁸, 1.6·10⁻³, 0.69` | `1.7·10⁻⁵, 9.3·10⁻²` |
+  | 0.60 | `2·10⁻⁹, 1.2·10⁻⁴, 0.24` | `7·10⁻⁷, 1.0·10⁻²` |
+  | 0.65 | `4·10⁻¹¹, 4·10⁻⁶, 3.8·10⁻²` | `2·10⁻⁸, 6·10⁻⁴` |
+  | 0.70 | `5·10⁻¹³, 1·10⁻⁷, 2.0·10⁻³` | `3·10⁻¹⁰, 2·10⁻⁵` |
+  | 0.80 | `2·10⁻¹⁷, 1·10⁻¹¹, 8·10⁻⁷` | `2·10⁻¹⁴, 3·10⁻⁹` |
+
+  At `log 3/2` the eigenvalues that `V'` leaves are large, which is why `V'` works so well there. Past about
+  `0.62`–`0.65` the odd constraint of `V'` no longer binds. Without it, the reduced matrix has the same odd minimum:
+  `9.9·10⁻⁴` against `9.7·10⁻⁴` at `0.62`, and equal at `0.70`. That matrix leaves out the pole term, which `V'` kills;
+  `v3past.py` prints both values.
+- **So the picture holds only near the first prime.** There, the low spectrum is one channel per sector, and the three
+  constraints of `V'` remove it. Each new prime power brings further near-null directions. Past `log 3/2`, positivity on
+  `V'` stays true but carries a constant that falls as fast as the full form's next eigenvalue.
+
+**Reproducing the tables.**
+
+- `python3 scripts/positivity/v3past.py 64 0.6:150 0.65:150` computes the reduced values.
+- `python3 scripts/positivity/v3beyond.py 48 40 0.6 0.65` computes the true values and the full-form eigenvalues, with
+  `hpcore`'s high-precision form.
+
+**What an extension would cost.**
+
+- **A longer weight model.** It would cover a range three to eight times longer, with Bessel polynomials of two to three
+  times the degree. The `L = 1/2` model reused here could no longer serve.
+- **A larger head.** It would need about 64 modes per parity instead of 28, because the tail bound `b3` is crude.
+- **Tighter entries.** They would need to be accurate to about `3·10⁻⁷` at `log 2`.
+
+It would be the first kernel-checked case in which two primes interact. It would not bear on RH, which needs every `L`.
+
 ## Scope
 
 This is Weil's form on `V'`, at supports up to `log 3/2`.
