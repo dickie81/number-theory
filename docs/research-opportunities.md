@@ -15,7 +15,7 @@ assistance (Claude); the literature positions in particular need expert review.
 | Exponential sums with `μ` and `Λ`, uniformly in `α`, with a power saving: `Σ_{n≤x} μ(n)e(nα) ≪ x^{35/36+ε}` | No unconditional power saving can exist without a zero-free half-plane for `ζ` (`α = 0` is Mertens' function); under GRH, Baker and Harman have `3/4` | Vaughan's identity and the bilinear exponential-sum bounds in Lean; the uniform major-arc inputs exist | [§1](#1-exponential-sums-over-primes-and-with-the-möbius-function) |
 | The Euler–Kronecker constants of the cyclotomic fields: `−C(log q)² ≤ Σ_{χ≠χ₀} L′/L(1, χ) ≤ (12 + o(1)) log q` | Unconditionally only `O(φ(q) log q)` is known for one `q`; the shape matches Ihara's GRH bound `(2 + o(1)) log q` | A sharp-cutoff uniform prime number theorem in progressions (short); Brun–Titchmarsh for the sharper lower bound (moderate) | [§2](#2-the-eulerkronecker-constants-of-the-cyclotomic-fields) |
 | The sieve programmes: Linnik at `2.199` by regeneration, a lever table for what would go lower; short intervals at `21/40`; the hybrid of the two | The hybrid, primes in `(x, x + x^θ]` in every class mod `q ≤ x^η` for `θ > 4/7`, needs density estimates that count zeros, not characters | Large | [§3](#3-the-sieve-programmes) |
-| A zero of the Davenport–Heilbronn function with `Re s > 1` (Numerical) | Known to exist since 1936; the library's `dh` column would show that the half-plane's proof must use the Euler product | A certificate at height above 2000: 20–50 times the existing boxes, or an approximate functional equation for `dh` | [§4](#4-the-davenportheilbronn-function-a-zero-with-re-s--1-numerical) |
+| A zero of the Davenport–Heilbronn function with `Re s > 1` (Numerical) | Known to exist since 1936; none below height 12000, by the scan here; the library's `dh` column would show that the half-plane's proof must use the Euler product | Finding one, then a certificate at that height: fifty times or more the existing boxes, or an approximate functional equation for `dh` | [§4](#4-the-davenportheilbronn-function-a-zero-with-re-s--1-numerical) |
 | The smaller harvest: the prime number theorem in progressions uniformly in `q` with a sharp cutoff, Liouville, `μ` in progressions, Mertens with a power saving, `k`-free numbers | Exercises given the half-plane, each a statement the literature has only under RH or GRH | A module or two each | [§5](#5-the-smaller-harvest) |
 | Not recommended now: the orbit-lattice conjecture, Weil positivity, the half-plane at `7/8` | | | [§6](#6-directions-looked-at-and-not-recommended-now) |
 | The missing tools, by what each unlocks | | | [§7](#7-the-missing-tools-by-what-they-unlock) |
@@ -176,18 +176,22 @@ positive real multiple of `dh`) by Euler–Maclaurin, checked against mpmath to 
 around each window `[1, 3/2] × [t, t + 1]` (beyond `Re s = 3/2` the first coefficient dominates), and Newton's method
 in each window with a nonzero winding number.
 
-**Results.** No zero with `1 ≤ Re s ≤ 3/2` and `0 ≤ Im s ≤ 3000`: every window has winding number `0` and no phase
-jump above `2.5` (so no zero sits near a window's boundary either). This agrees with a remark in the literature that none
-occurs below height `2100` (arXiv:2609.09366, found by search; not read in full). The scan of `3000 ≤ Im s ≤ 7500` was
-still running when this page was written; its outcome will be added here.
+**Results.** No zero with `1 ≤ Re s ≤ 3/2` and `0 ≤ Im s ≤ 12000`: every window has winding number `0` and no phase
+jump above `2.5` (so no zero sits within about `1/200` of a window's boundary either, `Re s = 1` included). This agrees
+with a remark in the literature that none occurs below height `2100` (arXiv:2609.09366, found by search; not read in
+full), and extends it. Davenport and Heilbronn's `cT` therefore has a small `c`: the first zero in the half-plane of
+absolute convergence lies above height `12000`. The scan to `12000` took about four hours of one core; the cost per
+unit height grows linearly, since the Euler–Maclaurin sum has about `t` terms.
 
 **The certificate in Lean.** The four located zeros, at heights up to `177`, use the Euler–Maclaurin approximant
 `dhEM 20 12` (a Dirichlet polynomial over `n < 100` and a twelve-term tail) with its error bound
 `PsiOmega.norm_dh_sub_EM_le`. At height `t` the approximant needs about `t/(2π)` terms before the tail converges, so
-`N ≈ 1000`–`2000` at the heights found, with `log n` and the trigonometric values of `t log n`, arguments up to
-`5·10⁴`, enclosed in rationals for the kernel: twenty to fifty times the cost of the existing boxes. The alternative is
-an approximate functional equation of Riemann–Siegel type, with about `√(5t/2π) ≈ 40`–`70` terms a side, which would
-first have to be proved for `dh` with an explicit error term. Either way a project, not a few modules.
+at least `2000` terms at the heights above `12000` where the first such zero lies, with `log n` and the trigonometric
+values of `t log n`, arguments above `10⁵`, enclosed in rationals for the kernel: fifty times or more the cost of the
+existing boxes. The alternative is an approximate functional equation of Riemann–Siegel type, with about
+`√(5t/2π) ≈ 100` terms a side, which would first have to be proved for `dh` with an explicit error term. Either way a
+project, not a few modules, and the zero itself still has to be found: the scan should continue, in parallel over
+height ranges, until one appears.
 
 ## 5. The smaller harvest
 
