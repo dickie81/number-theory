@@ -59,7 +59,36 @@ The $m=0$ term alone is $2g\log q\cdot\min(m,n)$, which is the flat model. $G$ i
 * $d_2<d_1$ for 5983 of the 29468 primitive characters with $q\le400$, and for 637 of the 6086 real primitive characters with $q\le10^4$.
 
 So $d_k\ge d_1$ is **not** a consequence of GRH or of Weil positivity. The failures go with large $K_1$ (a low zero, or $L'/L(1,\chi)$ large). Heuristically: the density of zeros alone gives the flat model $c\min(m,n)$, whose pivots all equal $d_1$, and fluctuations push the pivots to either side.
-**Suggested restatement (Conjecture).** The margin $d_k\ge d_1$ is specific to ζ (conductor 1, $K_1=0.046$, first zero at 14.13). A version for general $L$ would have to subtract the flat-model contribution, for example $d_k\ge d_1-\epsilon(K_1)$, or apply only when the conductor and the first zero satisfy explicit inequalities. (In the small sample $q\le47$ with $K_1\le2.6$, `dirichlet/`, no failures occurred.)
+**Suggested restatement (Conjecture).** The margin $d_k\ge d_1$ is specific to ζ (conductor 1, $K_1=0.046$, first zero at 14.13). A version for general $L$ would have to subtract the flat-model contribution, for example $d_k\ge d_1-\epsilon(K_1)$, or apply only when the conductor and the first zero satisfy explicit inequalities. §5.1 shows that, in the range scanned, the first two or three pivots already decide it. (The `dirichlet/` sample, $q\le47$, happens to contain no failure; the pair mod 13 with Conrey labels 6 and 11, $K_1=1.28$, fails at $k=3$.)
+
+### 5.1 Where the failures occur
+
+Write $B_{mn}=K(m/n)/K_1$ for the cosines between the orbit vectors. Then $d_k/d_1=k\det B_k/\det B_{k-1}$. So $d_k\ge d_1$ says that the $k$-th unit orbit vector has squared distance at least $1/k$ from the span of the earlier ones.
+
+**Theorem B′ ($k=3$).** Let $\lambda=\ell/K_1$ and $\kappa=1/K_1$. By Theorem A′, $S(2)=S(3/2)=0$ and $S(3)=\chi(2)\log2/6$, so the cosines $u=K(2)/K_1$, $v=K(3)/K_1$, $w=K(3/2)/K_1$ are affine in $\lambda$ and $\kappa$:
+$$u=\tfrac{1}{\sqrt2}(1+\lambda+2c_a\kappa),\qquad w=\tfrac{1}{\sqrt6}(2+\lambda+3e_a\kappa),\qquad v=\tfrac{1}{\sqrt3}\big(1+2\lambda+(\tfrac12\chi(2)\log2+3f_a)\kappa\big),$$
+$$\frac{d_3}{d_1}=\frac{3\,(1-|u|^2-|v|^2-|w|^2+2\,\mathrm{Re}(uw\bar v))}{1-|u|^2}.$$
+Here $e_0=-0.4170020196$, $e_1=-0.2195121487$, $f_0=-\tfrac23\log2$ and $f_1=-0.1744160479$, with $c_a$ as in Theorem B. At $\lambda=\kappa=0$ these are the cosines $\min(m,n)/\sqrt{mn}$ of the flat model, whose pivots all equal $d_1$.
+More generally, $G_k$ depends only on $K_1$, $\ell$, the parity and $\chi(p)$ for primes $p<k$.
+
+**Corollary (real $\chi$).** For real $\chi$, Theorem A′ gives $\ell=\tfrac12(K_1-\log\frac q\pi-\psi(\frac{1+a}2))$. With $L_a=\log\frac q\pi+\psi(\frac{1+a}2)-4c_a$, that is $\log\frac q\pi-0.0540$ (even) or $\log\frac q\pi+0.2858$ (odd), Theorem B becomes
+$$d_2\ge d_1\iff \tfrac15L_a\le K_1\le L_a .$$
+The upper end is $\ell\le-2c_a$. Since $2\ell=K_1-(\log\frac q\pi+\psi(\frac{1+a}2))$ is the excess of $\sum_\rho1/|\rho|^2$ over what the zeros' density gives, $d_2<d_1$ means the low zeros carry too much weight.
+
+**Certified + numerical (`hunt/kmin.py`).** For each primitive character, $d_k/d_1$ is certified for $k\le8$ by an LDL in arb of the closed-form $G_8$. It agrees with the $k\le3$ formula to $10^{-15}$. Beyond that, float64 pivots up to $k=300$ from the same closed form are checked against `dirichlet/dcore.py` to $3\times10^{-13}$.
+* *All primitive $\chi$, $q\le400$ (29468 characters; `kmin_all400.txt`).*
+  * 5983 have $d_2<d_1$ and 4 more have $d_3<d_1\le d_2$: the pairs mod 13 (labels 6, 11) and mod 61 (labels 6, 51), all odd and complex. No other character has a certified failure for $k\le8$.
+  * The remaining 23481 have $d_k\ge d_1$ for every $k\le300$. Their smallest margin, $5.7\times10^{-5}$ (mod 361, label 5, at $k=2$), is far above the float error.
+  * The minimum over $k$ sits at $k=2$ for 29378 characters, at $k=3$ for 69, at $k=4$ for 19 and at $k=5$ for 2. Of these, three passing characters have their minimum at $k=4$: mod 19 label 18 ($d_4/d_1=1.626$), and the pair mod 59 (labels 18, 23) with $d_4/d_1=1.0034$, a near miss.
+* *Real primitive $\chi$, $q\le10^4$ (6086 characters; `kmin_real10000.txt`).*
+  * All 637 failures occur at $k=2$, and every one is at the upper end: they are exactly the characters with $\ell>-2c_a$ (0.9548 even, 0.4315 odd). The other 5449 have $d_k\ge d_1$ for every $k\le300$.
+  * The failure rate by $q$ range ($<10^3$, $10^3$–$3\cdot10^3$, $3\cdot10^3$–$6\cdot10^3$, $6\cdot10^3$–$10^4$) is 2.3%, 4.4%, 5.5%, 5.7% for even $\chi$ and 10.2%, 15.5%, 17.0%, 16.7% for odd $\chi$.
+
+**Reading.** In the range scanned, the conjecture for a Dirichlet $L$-function is decided by its first pivots:
+- for real characters by $k=2$, that is by the size of $L'/L(1,\chi)$;
+- for every character with $q\le400$ by $k\le3$.
+
+The mod-59 near miss at $k=4$ means $k\le3$ should not be expected to decide in general. A bounded $k$ might. The real failure rate appears to settle at a positive proportion. This is what one expects if $L'/L(1,\chi_D)$ has a limiting distribution over fundamental discriminants (Mourtada–Murty; Ihara–Matsumoto's $M$-functions for the family of all characters). The limiting proportion would then be the mass above $-2c_a$.
 
 ## 6. The horizon: smallest eigenvalues
 
@@ -91,5 +120,6 @@ So $d_k\ge d_1$ is **not** a consequence of GRH or of Weil positivity. The failu
 * A lower bound for $\lambda_{\min}(G_N)$ under RH, even $\exp(-N^A)$.
 * $d_k\ge d_1$ for ζ for all $k$, even assuming RH; and a version of the conjecture that survives §4–5.
 * The limiting Euclidean eigenvector, and the effective functional that selects it.
+* Whether a bounded number of pivots decides $d_k\ge d_1$ for every Dirichlet $L$-function (§5.1), and the limiting failure rate for real characters.
 
 *Prepared with AI assistance (Grok Bot). Certified numbers rest on python-flint/arb ball arithmetic; everything marked Numerical is floating point.*

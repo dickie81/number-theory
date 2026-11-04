@@ -1,0 +1,14 @@
+chars 29468 | not PD 0 | time 206
+first certified d_k < d_1 (k <= 8, arb): [(2, 5983), (3, 4)] | undecided balls 0 | none for k <= 8 23481
+pass k <= 3 but some d_k < d_1 for k <= 300 (float): 0 | pass k <= 8 (arb) but some d_k < d_1 for k <= 300 (float): 0
+agreement: float vs arb at k <= 3 5.3e-15, LDL vs closed formula at k <= 3 9.4e-16
+argmin k: [(2, 29378), (3, 69), (4, 19), (5, 2)] (11 = k>10)
+closest passes (min ratio over k<=N among chars with no d_k<d_1):
+   q=361 n=5 a=0 K1=4.5569 d2/d1=1.0001 d3/d1=1.0602 min 1.00006@2
+   q=361 n=289 a=0 K1=4.5569 d2/d1=1.0001 d3/d1=1.0602 min 1.00006@2
+   q=337 n=62 a=1 K1=4.8847 d2/d1=1.0005 d3/d1=1.0951 min 1.00051@2
+   q=337 n=212 a=1 K1=4.8847 d2/d1=1.0005 d3/d1=1.0951 min 1.00051@2
+   q=101 n=33 a=0 K1=2.9138 d2/d1=1.0006 d3/d1=1.0358 min 1.00055@2
+   q=101 n=49 a=0 K1=2.9138 d2/d1=1.0006 d3/d1=1.0358 min 1.00055@2
+   q=213 n=38 a=1 K1=4.1264 d2/d1=1.0006 d3/d1=1.1167 min 1.00063@2
+   q=213 n=185 a=1 K1=4.1264 d2/d1=1.0006 d3/d1=1.1167 min 1.00063@2
