@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1180 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1290 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 107 | 284 |
+| `lib/core` | 139 | 394 |
 | `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -138,6 +138,38 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `CertInstances.weilQ_ge_of_cert'`: `PoleRelax.weilQ_ge_of_cert`, verbatim statement, as the `(K, N, T) = (2, 6, 3.033953)` instance.
 - `CertInstances.weilQ_ge_of_certP'`: `PrimeRelax.weilQ_ge_of_certP`, verbatim statement, as the `(K, N, T) = (3, 60, 5.098076)` instance.
 
+#### `CmAsm`: Quadrature of `∫₀¹ wψ(30s) jₙ(15s) jₘ(15s) ds` against the piecewise model and the Bessel polynomials
+
+- `CmAsm.I_err`
+
+#### `CmBessel`: Polynomial enclosure of `jₙ(15 s)` on `s ∈ [0,1]` (input to the `C^ψ` quadrature)
+
+- `CmBessel.cos_tay`
+- `CmBessel.jP_s`
+
+#### `CmEncP`: `CmEnc` discharged for both sectors: unconditional positivity of the Weil form at `L = 1/2`
+
+- `CmFin.cmEnc_even`
+- `CmFin.cmEnc_odd`
+- `CmFin.L05_even_uncond`: Unconditional even-sector positivity at `L = 1/2`
+- `CmFin.L05_odd_uncond`: Unconditional odd-sector positivity at `L = 1/2`
+
+#### `CmFinA`: The entry theorem: a passing rational row check gives `|Cm wψ n m − c| ≤ εc`
+
+- `CmFin.entry`
+
+#### `CmGlob`: Global part of the model and the pointwise bound for `wψ(30 s)`
+
+- `CmGlob.w_model`
+
+#### `CmMomProof`: The rounded moments `ν̂` are within `128·2^-128` of the exact model moments
+
+- `CmMom.nu_err`
+
+#### `CmWD`: The piecewise model with data coefficients, and the uniform pointwise bound `εw`
+
+- `CmWD.w_data`
+
 #### `Concave`: Pólya's theorem for even concave probes, with no representation hypothesis
 
 - `WeilForm.realRooted_of_ae_concaveOn`: For probes ([note](../formalisations/weil-positivity.md))
@@ -169,6 +201,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.degenerate_flat_fourier`: The edge-flat structure, in Fourier form ([note](../formalisations/weil-positivity.md))
 - `WeilForm.simple_iff_no_green_pair`: Formal equivalence (both directions) ([note](../formalisations/weil-positivity.md))
+
+#### `DigammaStirling`: Explicit Stirling remainder for the digamma function
+
+- `DigammaStirling.phiB_bounds`
+- `DigammaStirling.digamma_stirling`: Explicit digamma Stirling bound
+- `DigammaStirling.re_digamma_quarter`
 
 #### `DirichletCharHalfPlane`: Every Dirichlet character, `L(s, χ) ≠ 0` on `Re s > 11/12`
 
@@ -232,6 +270,36 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `GroundStateExists`: Existence of the ground state, stage 3: the minimiser
 
 - `WeilForm.exists_groundStates`: Ground states at every support of a sequence `a_n > 0` ([note](../formalisations/weil-positivity.md))
+
+#### `GsFourier`: Fourier transforms of cut polynomials: integration by parts and Plancherel
+
+- `GsFourier.six_ibp`: six integrations by parts when `q, q', q⁽⁴⁾, q⁽⁵⁾` vanish at both ends
+- `GsFourier.plancherel`: Plancherel for a cut polynomial
+
+#### `GsGap`: Ground state at `L = 1/2`: the even-sector gap on the complement of an explicit trial vector
+
+- `GsGap.even_gap`: Even-sector gap on the complement of the trial vector
+
+#### `GsMain`: The ground state of the Weil form at `L = 1/2` (min-max form)
+
+- `GsMain.gap_general`: Gap on the test class
+- `GsMain.gap_perp`
+- `GsMain.odd_sector`: Odd sector
+- `GsMain.v_upper`
+- `GsMain.minmax2`: Min-max, second level
+- `GsMain.ground_state`: Ground state at `L = 1/2`
+- `GsMain.v_testFn`
+- `GsMain.ground_state_testFn`: Rayleigh quotients on the test class
+
+#### `GsTail`: The tail of the frequency form above `T# = 30`
+
+- `GsTail.QF_eq`
+- `GsTail.psi_upper`
+- `GsTail.tail_bound`: Tail bound
+
+#### `GsUpper`: Ground state at `L = 1/2`: the Rayleigh quotient of the trial vector is below `2·10⁻⁵`
+
+- `GsUpper.trial_upper`: Upper bound for the ground state
 
 #### `HadamardApply`: Hadamard's factorisation for even functions, applied to `ĝ` and `Ξ`
 
@@ -311,6 +379,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallTower.count_div_pow_tendsto_ballVol`: Same statement by radius
 - `BallTower.counted_volume_max_five`: The counted volume (the limit of `latticeCount n R / Rⁿ`) is largest in dimension 5.
 
+#### `LegSpan`: Polynomials on `[−1/2, 1/2]` are finite Legendre mode sums `hx N x y`; polynomial antiderivatives
+
+- `LegSpan.poly_hx`: Every polynomial cut to `[−1/2, 1/2]` is a Legendre mode sum `hx N x y`
+
 #### `Limit`: Step (iii): Theorem 1bu(ii)'s limit shape, and the chain to `RiemannHypothesis`
 
 - `WeilForm.rh_of_pairing_and_realRooted`: 1bu(ii) + item 6, assembled ([note](../formalisations/weil-positivity.md))
@@ -357,6 +429,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PsiOmega.rh_of_liouville_bound`: A one-sided bound `εL(x) ≤ c√x` gives RH ([note](../formalisations/weil-positivity.md))
 - `PsiOmega.rh_of_polya`: Pólya's conjecture implies RH ([note](../formalisations/weil-positivity.md))
 
+#### `OddMargin2`: Odd-sector margin `4·10⁻⁵` at `L = 1/2`
+
+- `OddMargin2.odd_margin2`
+
 #### `Orthogonality`: Orthogonality forces the Euclidean structure
 
 - `Orthogonality.tendsto_mean_sq_norm_primeSum`: The radius is the root mean square of the prime sum
@@ -374,6 +450,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `ParityGap`: Real zeros from the parity gap
 
 - `WeilForm.rh_of_parity_gap`: RH from the parity gap ([note](../formalisations/weil-positivity.md))
+
+#### `ParityGround`: A simple ground state of a parity-invariant form is even or odd
+
+- `ParityGround.parity_of_simple`
 
 #### `ParityRelax`: The relaxation for both parities and every prime power below the support
 
@@ -445,6 +525,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilForm.rh_of_realRooted_limit`: Item 6's step, proved ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_ground_states`: The roadmap's endpoint, as a theorem ([note](../formalisations/weil-positivity.md))
 
+#### `ShellSchur`: Shell–interior coupling: Schur-type positivity and its finite chain
+
+- `ShellSchur.nonneg_of_coupling`: Coupling bound ⇒ nonnegativity
+- `ShellSchur.margin_of_coupling`: Coupling bound with margin
+- `ShellSchur.chain_nonneg`: Finite chain of shells
+
 #### `SimpleCont`: Continuation for simplicity
 
 - `WeilForm.first_degeneracy_036`: Simplicity route, with its start discharged ([note](../formalisations/weil-positivity.md))
@@ -486,6 +572,19 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `VinoRec.vmvt_weak`: Vinogradov's mean value theorem (weak classical form)
 
+#### `WeilArch`: Zhu's Lemma 2.5: the archimedean term in frequency form (`ArchBridge`)
+
+- `WeilArch.kerD`: Kernel identity
+- `WeilArch.archBridge`: `ArchBridge` (Zhu's Lemma 2.5) proved
+- `WeilArch.L05_even`: Even sector, unconditional except for the arb head certificate
+
+#### `WeilCert`: Finite-mode certificate for Weil positivity (Zhu convention)
+
+- `WeilCert.pos_of_cert`: Perturbation certificate
+- `WeilCert.L05_pos`: Positive definiteness of the 24-mode even-sector Weil matrix at the corresponding L, *given* the arb enclosure.
+- `WeilCert.L07_pos`: Positive definiteness of the 24-mode even-sector Weil matrix at the corresponding L, *given* the arb enclosure.
+- `WeilCert.L08_pos`: Positive definiteness of the 24-mode even-sector Weil matrix at the corresponding L, *given* the arb enclosure.
+
 #### `WeilChiB`: Theorem B for a good real character: `K(2) = √2(K₁/2 + c_a + ℓ/2)`
 
 - `PsiOmega.theoremB`: Theorem B ([note](../formalisations/d2-density.md))
@@ -523,6 +622,24 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PsiOmega.K1Z_pos`: `K₁ > 0` ([note](../formalisations/d2-density.md))
 - `PsiOmega.theoremBZ`: Theorem B ([note](../formalisations/d2-density.md))
 
+#### `WeilCoer`: Coercivity on mode sums: `weilQg (1/2) h ≥ 10⁻⁸ ‖h‖²` for `h = Σ xᵢT_{2i} + Σ yᵢT_{2i+1}`
+
+- `WeilCoer.normSq_hx`
+- `WeilCoer.coer_hx`
+
+#### `WeilConst`: Rigorous enclosures of `β*` and of the pole values `pₙ` (kernel-checked over `ℚ`)
+
+- `WeilConst.beta_enc_even`
+- `WeilConst.beta_enc_odd`
+- `WeilConst.pole_enc_even`
+- `WeilConst.pole_enc_odd`
+- `WeilConst.L05_even`
+- `WeilConst.L05_odd`
+
+#### `WeilCont`: Continuity of `weilQg (1/2)` under bounded pointwise convergence with a uniform interior Lipschitz bound
+
+- `WeilCont.tendsto_weilQg`: `weilQg (1/2)` is continuous along bounded, uniformly interior-Lipschitz pointwise convergence
+
 #### `WeilConverse`: The converse: an off-line zero makes Weil's form negative somewhere
 
 - `WeilForm.weil_criterion_finite`: Weil's criterion, both directions, for a family with finitely many off-line zeros ([note](../formalisations/weil-positivity.md))
@@ -550,6 +667,35 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilFF.countKernel_posDef_iff`: Weil's criterion from the point counts
 - `WeilFF.norm_eq_sqrt_of_bound`: A bound in every degree is enough
 
+#### `WeilFourier`: Fourier bridge: Legendre orthonormality, the Legendre–Fourier identity and Parseval
+
+- `WeilFourier.sL_orth`: `∫₀¹ P̃ₘ P̃ₙ = δₘₙ/(2n+1)`.
+- `WeilFourier.legT_orth`: Legendre orthonormality on `[−1/2, 1/2]`
+- `WeilFourier.parseval`: Parseval / Wiener–Khinchin for cut-off functions
+- `WeilFourier.LF`: Legendre–Fourier identity
+- `WeilFourier.LF_sec`: Sector form of the Legendre–Fourier identity
+- `WeilFourier.modeOrth`: `ModeOrth par` closed
+- `WeilFourier.acorr_gen`: Wiener–Khinchin
+- `WeilFourier.acorr`: `EvenBridge2.acorr` closed
+- `WeilFourier.L05_even`: Even sector
+- `WeilFourier.L05_odd`: Odd sector
+
+#### `WeilGen`: `L = 1/2` positivity for general test functions
+
+- `WeilGen.coer`: Coercivity on the test class
+- `WeilGen.pos`: `L = 1/2` positivity for general test functions
+- `WeilGen.coer_even`: Even corollary for the repo's `weilQ`
+- `WeilGen.pos_even`
+
+#### `WeilHead`: The head certificates, kernel-checked over ℚ
+
+- `WeilHead.even_chk`: Kernel-checked certificate inequalities (exact rational arithmetic).
+- `WeilHead.odd_chk`
+- `WeilHead.evenHead_of`
+- `WeilHead.oddHead_of`
+- `WeilHead.L05_even`: Even sector, final
+- `WeilHead.L05_odd`: Odd sector, final
+
 #### `WeilIndexConverse`: Off-line zero quadruples force negative directions of `Q`
 
 - `WeilForm.negIndex_eq_quadruples`: The negative index of Weil's form counts the off-line quadruples ([note](../formalisations/weil-positivity.md))
@@ -571,6 +717,36 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilForm.rh_of_weil`: Weil's criterion for `ζ`, no finiteness hypothesis ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_iff_twins_subexp`: RH ⟺ the twin form's defect is subexponential ([note](../formalisations/weil-positivity.md))
 
+#### `WeilModes`: Legendre modes: Rodrigues integration by parts, the pole identity and the decay of `T̂ₙ`
+
+- `WeilModes.rod_ibp`: Rodrigues integration by parts
+- `WeilModes.pole_mode`
+- `WeilModes.pole_bridge`: `EvenBridge.pole` closed
+- `WeilModes.jP_decay`: `|jₙ(x)| ≤ K/(2x)`
+- `WeilModes.modeDecay`: `ModeDecay` closed
+- `WeilModes.L05_even_final`: Even sector, final
+- `WeilModes.L05_odd_final`: Odd sector, final
+
+#### `WeilOdd`: Both sectors in the general Weil form `weilQg`: `weilQg (1/2) (f_even + g_odd) = QF₀ + QF₁`
+
+- `WeilOdd.weilQg_hx`: `weilQg (1/2) (f_even + g_odd) = QF₀(x) + QF₁(y)`
+
+#### `WeilOddPos`: Unconditional positivity at `L = 1/2` for odd probes and for mixed even + odd probes, in `weilQg`
+
+- `WeilOdd.L05_mixed`: Mixed probes
+- `WeilOdd.L05_odd_weilQg`: Odd probes, general Weil form
+- `WeilOdd.L05_odd_weilQ`: Odd probes, the library's even-probe form `weilQ`
+
+#### `WeilPlanch`: Toward closing `ModePlancherel` and `FreqRep` at L = 1/2
+
+- `WeilPlanch.Psi_cont`
+- `WeilPlanch.Psi_growth`
+- `WeilPlanch.modePlancherel_of`
+- `WeilPlanch.prime_sum_L05`: The prime sum at L = 1/2 is the single `n = 2` term
+- `WeilPlanch.weilQ_eq_QF`: `weilQ = QF`
+- `WeilPlanch.L05_even_weilQ`: Final even-sector theorem, concrete Weil form
+- `WeilPlanch.L05_odd_QF`: Final odd-sector theorem
+
 #### `WeilRH`: RH gives `Q ≥ 0` on every probe, and Weil's criterion for `ζ`
 
 - `WeilForm.line_of_RH` ([note](../formalisations/weil-positivity.md))
@@ -580,6 +756,24 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.rh_iff_lam_subexp`: RH ⟺ `λ₁` has no negative part of exponential rate ([note](../formalisations/weil-positivity.md))
 - `WeilForm.lam_fails_exponentially`: If RH fails, `λ₁` fails exponentially ([note](../formalisations/weil-positivity.md))
+
+#### `WeilTail`
+
+- `WeilTail.block_margin`: Block theorem (fully proved)
+- `WeilTail.L05Tail.reduced_margin`
+- `WeilTail.L05Tail.L05_even_pos`: Full-window even-sector positivity at L = 1/2 (conditional on the named hypotheses)
+
+#### `WeilTailB`: Unconditional tail for the L = 1/2 Legendre certificate
+
+- `WeilTailB.jP_bound`: `|j_n(x)| ≤ (x/2)ⁿ/n!` for `x ≥ 0`.
+- `WeilTailB.iP_bound`: `|i_n(x)| ≤ 2 (x/2)ⁿ/n!` for `0 ≤ x ≤ 1`.
+- `WeilTailB.βs_ge`
+- `WeilTailB.wψ_bound`: `|Ψ_L − β*| ≤ 55` on `[0, 30]`
+- `WeilTailB.sector_margin`: Sector theorem (unconditional except the head enclosure)
+- `WeilTailB.even_margin`
+- `WeilTailB.odd_margin`
+- `WeilTailB.L05_even_full`: L = 1/2, even sector
+- `WeilTailB.L05_odd_full`: L = 1/2, odd sector
 
 #### `WeilTwinGeneral`: The twin criterion for every real-rooted base and every good character
 
@@ -595,6 +789,18 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilTwinGeneral.rh_grh_iff_twins_Q8`: `ζ_{ℚ(√−2)}`. ([note](../formalisations/weil-positivity.md))
 - `WeilTwinGeneral.rh_grh_iff_twins_Q7`: `ζ_{ℚ(√−7)}`. ([note](../formalisations/weil-positivity.md))
 - `WeilTwinGeneral.rh_grh_iff_twins_Q4`: The theorem recovered as an instance. ([note](../formalisations/weil-positivity.md))
+
+#### `WeilZhuRed`: Zhu's reduction `Q_N ≥ R_N` at `L = 1/2`, split into proved steps and named inputs
+
+- `WeilZhuRed.primes_L05`
+- `WeilZhuRed.prime_coeff_L05`
+- `WeilZhuRed.envelope`
+- `WeilZhuRed.QF_ge_R`: Zhu's reduction (Thm 1.1) at L = 1/2, T# = 30
+- `WeilZhuRed.zhuRed_of`: `ZhuRed` follows from the two named inputs.
+- `WeilZhuRed.L05_even`
+- `WeilZhuRed.L05_odd`
+- `WeilZhuRed.QF_even_pos`
+- `WeilZhuRed.QF_odd_pos`
 
 #### `WindowForm`: The prime-side window form: its algebra, its certification logic, and the counterexample mechanism
 

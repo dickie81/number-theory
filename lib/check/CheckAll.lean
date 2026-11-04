@@ -260,6 +260,37 @@ import PrimeRelax3
 import ParityRelax
 import ParityCert
 import CertInstances
+import ShellSchur
+import WeilCert
+import WeilTail
+import WeilTailB
+import WeilZhuRed
+import WeilPlanch
+import WeilModes
+import WeilFourier
+import WeilArch
+import WeilHead
+import WeilConst
+import DigammaStirling
+import CmBessel
+import CmGlob
+import CmWD
+import CmMomProof
+import CmAsm
+import CmFinA
+import CmEncP
+import WeilOddPos
+import WeilCoer
+import LegSpan
+import WeilCont
+import WeilGen
+import GsGap
+import GsFourier
+import GsTail
+import GsUpper
+import OddMargin2
+import GsMain
+import ParityGround
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -1305,3 +1336,116 @@ the linear algebra of its certificates. -/
 #print axioms WeilForm.ind_mul_ind
 #print axioms WeilForm.wP_zero
 #print axioms WeilForm.log_three_le
+
+/-! Weil positivity at half-support 1/2: the finite-mode certificates, the C^psi enclosure, coercivity on C¹
+test functions and the ground state (see docs/weil-positivity-l05.md). -/
+#print axioms ParityGround.parity_of_simple
+#print axioms ShellSchur.nonneg_of_coupling
+#print axioms ShellSchur.margin_of_coupling
+#print axioms ShellSchur.chain_nonneg
+#print axioms WeilCert.pos_of_cert
+#print axioms WeilCert.L05_pos
+#print axioms WeilCert.L07_pos
+#print axioms WeilCert.L08_pos
+#print axioms WeilTail.block_margin
+#print axioms WeilTail.L05Tail.reduced_margin
+#print axioms WeilTail.L05Tail.L05_even_pos
+#print axioms WeilTailB.jP_bound
+#print axioms WeilTailB.iP_bound
+#print axioms WeilTailB.wψ_bound
+#print axioms WeilTailB.βs_ge
+#print axioms WeilTailB.sector_margin
+#print axioms WeilTailB.even_margin
+#print axioms WeilTailB.odd_margin
+#print axioms WeilTailB.L05_even_full
+#print axioms WeilTailB.L05_odd_full
+#print axioms WeilZhuRed.primes_L05
+#print axioms WeilZhuRed.prime_coeff_L05
+#print axioms WeilZhuRed.envelope
+#print axioms WeilZhuRed.QF_ge_R
+#print axioms WeilZhuRed.zhuRed_of
+#print axioms WeilZhuRed.L05_even
+#print axioms WeilZhuRed.L05_odd
+#print axioms WeilZhuRed.QF_even_pos
+#print axioms WeilZhuRed.QF_odd_pos
+#print axioms WeilPlanch.Psi_cont
+#print axioms WeilPlanch.Psi_growth
+#print axioms WeilPlanch.modePlancherel_of
+#print axioms WeilPlanch.prime_sum_L05
+#print axioms WeilPlanch.weilQ_eq_QF
+#print axioms WeilPlanch.L05_even_weilQ
+#print axioms WeilPlanch.L05_odd_QF
+#print axioms WeilModes.rod_ibp
+#print axioms WeilModes.pole_mode
+#print axioms WeilModes.pole_bridge
+#print axioms WeilModes.jP_decay
+#print axioms WeilModes.modeDecay
+#print axioms WeilModes.L05_even_final
+#print axioms WeilModes.L05_odd_final
+#print axioms WeilFourier.sL_orth
+#print axioms WeilFourier.legT_orth
+#print axioms WeilFourier.parseval
+#print axioms WeilFourier.LF
+#print axioms WeilFourier.LF_sec
+#print axioms WeilFourier.modeOrth
+#print axioms WeilFourier.acorr
+#print axioms WeilFourier.L05_even
+#print axioms WeilFourier.L05_odd
+#print axioms WeilFourier.acorr_gen
+#print axioms WeilArch.kerD
+#print axioms WeilArch.archBridge
+#print axioms WeilArch.L05_even
+#print axioms WeilHead.even_chk
+#print axioms WeilHead.odd_chk
+#print axioms WeilHead.evenHead_of
+#print axioms WeilHead.oddHead_of
+#print axioms WeilHead.L05_even
+#print axioms WeilHead.L05_odd
+#print axioms WeilConst.beta_enc_even
+#print axioms WeilConst.beta_enc_odd
+#print axioms WeilConst.pole_enc_even
+#print axioms WeilConst.pole_enc_odd
+#print axioms WeilConst.L05_even
+#print axioms WeilConst.L05_odd
+#print axioms DigammaStirling.phiB_bounds
+#print axioms DigammaStirling.digamma_stirling
+#print axioms DigammaStirling.re_digamma_quarter
+#print axioms CmBessel.cos_tay
+#print axioms CmBessel.jP_s
+#print axioms CmGlob.w_model
+#print axioms CmWD.w_data
+#print axioms CmMom.nu_err
+#print axioms CmAsm.I_err
+#print axioms CmFin.entry
+#print axioms CmFin.cmEnc_even
+#print axioms CmFin.cmEnc_odd
+#print axioms CmFin.L05_even_uncond
+#print axioms CmFin.L05_odd_uncond
+#print axioms WeilOdd.weilQg_hx
+#print axioms WeilOdd.L05_odd_weilQg
+#print axioms WeilOdd.L05_odd_weilQ
+#print axioms WeilCoer.normSq_hx
+#print axioms WeilCoer.coer_hx
+#print axioms LegSpan.poly_hx
+#print axioms WeilCont.tendsto_weilQg
+#print axioms WeilGen.coer
+#print axioms WeilGen.pos
+#print axioms WeilGen.coer_even
+#print axioms WeilGen.pos_even
+#print axioms GsGap.even_gap
+#print axioms GsFourier.six_ibp
+#print axioms GsFourier.plancherel
+#print axioms GsTail.QF_eq
+#print axioms GsTail.psi_upper
+#print axioms GsTail.tail_bound
+#print axioms GsUpper.trial_upper
+#print axioms OddMargin2.odd_margin2
+#print axioms GsMain.gap_general
+#print axioms GsMain.gap_perp
+#print axioms GsMain.odd_sector
+#print axioms GsMain.v_upper
+#print axioms GsMain.minmax2
+#print axioms GsMain.v_testFn
+#print axioms GsMain.ground_state
+#print axioms GsMain.ground_state_testFn
+#print axioms WeilOdd.L05_mixed
