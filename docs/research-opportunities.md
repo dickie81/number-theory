@@ -272,6 +272,18 @@ are these, with the branch's own numbers (floating point, uncertified) checked a
   principle that implies Weil or Li positivity. The strand is closed as a route; what it leaves are two handles the
   branch itself names, the cancellation of the prime phases `t·log p` (Zhu's barrier) and Connes–van Suijlekom's
   simple even ground state at every scale, the second of which is what #81 and #83 pursue.
+- **One junction shared by all the shells** (`scripts/hub_junction.py`, uncertified numerics; `N = 2047`, shells
+  `[64, 127]` to `[1024, 2047]`). The next form of the idea: a hub `H` of indices through which all the coupling
+  passes. Conditioning on it, the Schur complement `G_SS − G_SH G_HH⁻¹ G_HS`, is the form on the complement of the
+  hub's vectors, and the shells would decouple if the hub carried the junction. By energy they nearly do: the off-shell
+  energy left is 44%, 20% and 2% for hubs of the first 8, 16 and 63 integers. By positivity they do not: the
+  contraction norms of adjacent shells move from `0.990`–`1.000` only to `0.868`–`0.995` at 63, and the directions
+  that carry 95% of the residual coupling grow from 12 to 55. Random integers below 64 and the smallest primes behave
+  like the first integers (14% and 15% left for 16 of them), so there is no arithmetic hub. The hub removes the few
+  heavy zero directions and leaves a longer tail: the shared junction is `ℓ²` of all the zeros, the Hilbert–Pólya space
+  of `BallLattice.rh_iff_realization`, which exists exactly under RH. In the finite-field case the shared junction is
+  the Néron–Severi lattice of `C × C`, of finite rank `2g`; for `ζ` it is infinite-dimensional, the point that
+  `WeilHodge` isolates as the single missing input.
 - **Worth keeping from the branch**, as reformulations for the criteria catalogue if the author wants them on `main`:
   `BallPole` (RH as the Hodge index statement on the pole complement, with the hyperbolic pole plane),
   `HodgeAxioms` (which of the three axioms of the Hodge index theorem Weil's form satisfies: the ample one yes, the
