@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1127 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1180 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 101 | 274 |
-| `lib/pnt` | 233 | 748 |
+| `lib/core` | 107 | 284 |
+| `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -127,6 +127,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BohrTorus.prod_eq_iff_map_eq`: The multiplicative system is rigid at every `ℓ`
 - `BohrTorus.agree_not_rigid`: The additive system is not rigid beyond its dimension
 - `BohrTorus.tendsto_mean_moment_rearrangements`: The limiting means of `|Σ_{p∈F} p^{−it}|^{2ℓ}` count the pairs of rearrangements
+
+#### `CAClosed`: The closed forms `c₀ = −¼ log(27/4)` and `c₁ = ¾ log(3/4)`
+
+- `CAClosed.cA_zero`: `c₀ = −¼ log(27/4)` ([note](../formalisations/d2-density.md))
+- `CAClosed.cA_one`: `c₁ = ¾ log(3/4)` ([note](../formalisations/d2-density.md))
 
 #### `CertInstances`: The certificate theorems as instances of the weighted certificate
 
@@ -481,6 +486,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `VinoRec.vmvt_weak`: Vinogradov's mean value theorem (weak classical form)
 
+#### `WeilChiB`: Theorem B for a good real character: `K(2) = √2(K₁/2 + c_a + ℓ/2)`
+
+- `PsiOmega.theoremB`: Theorem B ([note](../formalisations/d2-density.md))
+
 #### `WeilChiCriterion`: Weil's criterion for Dirichlet L-functions
 
 - `PsiOmega.grh_iff_QC_subexp`: GRH for `χ` ⟺ `Q_χ/‖g‖²` has no negative part of exponential rate ([note](../formalisations/weil-positivity.md))
@@ -494,6 +503,25 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `WeilChiDensity`: GRH(χ) gives `Q_χ ≥ 0` on every probe
 
 - `PsiOmega.grh_iff_QC_subexp_all`: The rate form over every probe ([note](../formalisations/weil-positivity.md))
+
+#### `WeilChiK1`: The zero sum `K₁ = Σ_ρ 1/(ρ(1 − ρ))` at `s = 1` for a good real character
+
+- `PsiOmega.hasSum_K1`: The zero sum at `s = 1` ([note](../formalisations/d2-density.md))
+
+#### `WeilChiPos`: `Ξ_χ` has a zero, and `K₁ > 0`, for a good real character
+
+- `PsiOmega.K1C_pos`: `K₁ > 0` ([note](../formalisations/d2-density.md))
+
+#### `WeilChiZ`: `Ξ_χ` with a zero at the centre
+
+- `PsiOmega.rootNumber_eq_neg_one_pow`: The root number is `(−1)^m` ([note](../formalisations/d2-density.md))
+- `PsiOmega.weil_XiZ`: Weil's explicit formula with a central zero of order `m` ([note](../formalisations/d2-density.md))
+
+#### `WeilChiZB`: `K₁` and Theorem B with a central zero
+
+- `PsiOmega.K1Z_eq`: `K₁` in closed form ([note](../formalisations/d2-density.md))
+- `PsiOmega.K1Z_pos`: `K₁ > 0` ([note](../formalisations/d2-density.md))
+- `PsiOmega.theoremBZ`: Theorem B ([note](../formalisations/d2-density.md))
 
 #### `WeilConverse`: The converse: an off-line zero makes Weil's form negative somewhere
 
@@ -629,7 +657,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ChiUniform.LFunction_ctr_inv_le`: `‖L(3/2 + it, χ)‖⁻¹ ≤ ζ(3/2)`, from `1/L(s, χ) = Σ χ(n)μ(n)n^{−s}` (a step of `psiChi_le_uniform_of`).
 - `ChiUniform.logDeriv_LFunction_right`: `‖L′/L(s, χ)‖ ≤ −ζ′/ζ(3/2)` on `Re s ≥ 3/2` (a step of `psiChi_le_uniform_of`).
 - `ChiUniform.psiChi_le_uniform_of`: `ψ(x, χ)` uniformly in the modulus, from the constants of `sum_le_uniform`
-- `ChiUniform.psiChi_le_uniform`: `ψ(x, χ)` uniformly in the modulus
+- `ChiUniform.psiChi_le_uniform`: `ψ(x, χ)` uniformly in the modulus ([note](../formalisations/d2-density.md))
 
 #### `ClassNumberBound`: Gauss's class number problem, with an explicit bound
 
@@ -639,6 +667,64 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `CyclotomicFrobenius.closure_frob_eq_top`: The Frobenius elements of the small primes generate the cyclotomic Galois group
 - `CyclotomicFrobenius.exists_frob_generator`: A single small Frobenius element generates the cyclotomic Galois group
+
+#### `D2Density`: The d₂ < d₁ density for real characters: analytic assembly
+
+- `D2Density.K1_pos`: `K₁ > 0` ([note](../formalisations/d2-density.md))
+- `D2Density.d2_density_log`: `d2_density` with `L0 D = log(|D|/π) + κ` ([note](../formalisations/d2-density.md))
+
+#### `D2Dist`: The distribution of `L′/L(1, χ_d)` — CONDITIONAL on the half-plane
+
+- `D2Dist.moments_pos`: CONDITIONAL (half-plane). Moments of `L′/L(1, χ_d)`, d > 0 ([note](../formalisations/d2-density.md))
+- `D2Dist.moments_neg`: CONDITIONAL (half-plane) ([note](../formalisations/d2-density.md))
+- `D2Dist.dist_pos`: CONDITIONAL (half-plane). Distribution of `L′/L(1, χ_d)`, d > 0 ([note](../formalisations/d2-density.md))
+- `D2Dist.dist_neg`: CONDITIONAL (half-plane) ([note](../formalisations/d2-density.md))
+
+#### `D2GS`: Real quadratic and imaginary quadratic fundamental discriminants: GS Lemma 4.1 and moments
+
+- `GSKron.gs_kron_pos`: Granville–Soundararajan Lemma 4.1, positive fundamental discriminants, all non-square `n > 1` ([note](../formalisations/d2-density.md))
+- `GSKron.gs_kron_neg`: Granville–Soundararajan Lemma 4.1, negative fundamental discriminants, all non-square `n > 1` ([note](../formalisations/d2-density.md))
+- `GSUncond.moment_pos_unconditional`: Unconditional moments, positive fundamental discriminants ([note](../formalisations/d2-density.md))
+- `GSUncond.moment_neg_unconditional`: Unconditional moments, negative fundamental discriminants ([note](../formalisations/d2-density.md))
+- `GSNu.nu1_eq`: `ν(1) = 4/π²`
+- `GSNu.delta_pos_closed`: Closed form, positive discriminants ([note](../formalisations/d2-density.md))
+- `GSNu.delta_neg_closed`: Closed form, negative discriminants ([note](../formalisations/d2-density.md))
+
+#### `D2Good`: Wiring `K₁` into the d₂ density
+
+- `D2Good.d2_density_pos'`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D > 1` ([note](../formalisations/d2-density.md))
+- `D2Good.d2_density_neg'`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0` ([note](../formalisations/d2-density.md))
+- `D2Good.d2_density_pos_B`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D > 1` ([note](../formalisations/d2-density.md))
+- `D2Good.d2_density_neg_B`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0` ([note](../formalisations/d2-density.md))
+- `D2Good.d2_density_pos_closed`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D > 1`, with the explicit threshold ([note](../formalisations/d2-density.md))
+- `D2Good.d2_density_neg_closed`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0`, with the explicit threshold ([note](../formalisations/d2-density.md))
+
+#### `D2Hcount`: Quantitative `Hcount`: fundamental discriminants coprime to `r`, with an explicit error
+
+- `GSHcount.hcount_pos`: Quantitative `Hcount`, positive discriminants ([note](../formalisations/d2-density.md))
+- `GSHcount.hcount_neg`: Quantitative `Hcount`, negative discriminants ([note](../formalisations/d2-density.md))
+
+#### `D2Hdist`: `hdist` at every `t`, and the d₂ < d₁ density — CONDITIONAL on the half-plane
+
+- `D2Hdist.hdist_pos`: CONDITIONAL (half-plane). `hdist` for `D > 0`, at every `t` ([note](../formalisations/d2-density.md))
+- `D2Hdist.hdist_neg`: CONDITIONAL (half-plane). `hdist` for `D < 0`, at every `t` ([note](../formalisations/d2-density.md))
+- `D2Hdist.d2_density_pos`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D > 0` ([note](../formalisations/d2-density.md))
+- `D2Hdist.d2_density_neg`: CONDITIONAL (half-plane). The d₂ < d₁ density, `D < 0` ([note](../formalisations/d2-density.md))
+
+#### `D2Parity`: The parity of `χ_D`
+
+- `D2Parity.kron_pos`: `(d | d − 1) = 1` ([note](../formalisations/d2-density.md))
+- `D2Parity.kron_neg`: `(−d | d − 1) = −1` ([note](../formalisations/d2-density.md))
+
+#### `D2Prim`: The Kronecker character of a fundamental discriminant is primitive
+
+- `GSPrim.primitive_pos`: Positive fundamental discriminants ([note](../formalisations/d2-density.md))
+- `GSPrim.primitive_neg`: Negative fundamental discriminants
+
+#### `D2Tail`: The tail identity for `L′/L(1, χ_D)` — CONDITIONAL on the half-plane
+
+- `GSTail.tail_pos`: CONDITIONAL. Tail identity for positive fundamental discriminants ([note](../formalisations/d2-density.md))
+- `GSTail.tail_neg`: CONDITIONAL. Tail identity for negative fundamental discriminants ([note](../formalisations/d2-density.md))
 
 #### `DetectEM`: Zero detection by Euler–Maclaurin
 
@@ -1330,7 +1416,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `Littlewood`: Littlewood's bounds for `L(1, χ)` at the real characters
 
-- `Littlewood.norm_LSeries_le_of_sum_le`: Partial summation for an L-series
+- `Littlewood.norm_LSeries_le_of_sum_le`: Partial summation for an L-series ([note](../formalisations/d2-density.md))
 - `Littlewood.logDeriv_le_loglog_of`: The log-derivative on `(1, 2]`, uniformly in the modulus, from a bound on `ψ(x, χ)`
 - `Littlewood.logDeriv_le_loglog`: `L′/L(σ, χ) ≪ log log q` on `(1, 2]`
 - `Littlewood.norm_LFunction_le_real`: `|L(σ, χ)| ≤ σ/(σ − 1)` and `1/|L(σ, χ)| ≤ σ/(σ − 1)` for `σ > 1`, from the partial sums of `χ` and of `χμ`, each at most `t` in absolute value.
@@ -1401,6 +1487,24 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `MillerTest.strongProbablePrime_of_prime`: Every odd prime passes
 - `MillerTest.exists_witness_le`: Miller's test with small bases
 - `MillerTest.prime_iff_forall_strongProbablePrime`: Miller's test, deterministic
+
+#### `ModelMoments`: The main-term moments are the random model's (milestone B3, unconditional)
+
+- `ModelMoments.moment_pos_model`: B3, positive discriminants ([note](../formalisations/d2-density.md))
+- `ModelMoments.moment_neg_model`: B3, negative discriminants ([note](../formalisations/d2-density.md))
+
+#### `ModelTrunc`: Model-side truncation (unconditional)
+
+- `ModelTrunc.moment_A_tendsto`: Model-side `L^k` convergence ([note](../formalisations/d2-density.md))
+
+#### `MomentConv`: Method of moments on `ℝ` (milestone B1, unconditional)
+
+- `MomentConv.ext_of_moments`: Determinacy by moments ([note](../formalisations/d2-density.md))
+- `MomentConv.tendsto_of_moments`: Method of moments (B1, unconditional) ([note](../formalisations/d2-density.md))
+
+#### `NoAtoms`: The random model has no atoms
+
+- `NoAtoms.ν_singleton`: No atoms ([note](../formalisations/d2-density.md))
 
 #### `PNTKV`: The prime number theorem with the Korobov–Vinogradov error term
 
@@ -1486,6 +1590,18 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `QuadSplit.inert₁`: `d` not a square mod `p`
 - `QuadSplit.split_two₁`: `d ≡ 1 (mod 8)`
 - `QuadSplit.inert_two₁`: `d ≡ 5 (mod 8)`
+
+#### `QuantMoments`: Quantitative moments, uniform in `P ⊆ [1, y]` (unconditional)
+
+- `QuantMoments.moment_quant_pos`: Quantitative moments, positive fundamental discriminants ([note](../formalisations/d2-density.md))
+- `QuantMoments.moment_quant_neg`: Quantitative moments, negative fundamental discriminants ([note](../formalisations/d2-density.md))
+
+#### `RandModel`: Lamzouri's random model for `L'/L(1, χ_D)` (milestone B2, unconditional)
+
+- `RandModel.ae_tendsto_X` ([note](../formalisations/d2-density.md))
+- `RandModel.integrable_exp_X`: Finite mgf ([note](../formalisations/d2-density.md))
+- `RandModel.integrable_exp_abs_ν` ([note](../formalisations/d2-density.md))
+- `RandModel.integrable_pow_ν`: Every moment of `ν` is finite. ([note](../formalisations/d2-density.md))
 
 #### `ShortCharSums`: Short character sums
 
@@ -1973,7 +2089,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SquarefreeCount.abs_sub_sum_le`: The tail of `Σ μ(d)/d²`
 - `SquarefreeCount.abs_sum_sqf_sub_le`: The count at an integer
 - `SquarefreeCount.squarefree_isBigO_of_zeroFree`: Squarefree numbers in a zero-free half-plane
-- `SquarefreeCount.squarefree_isBigO_twelve_25ths`: `Q(x) = 6x/π² + O(x^{12/25+η})`
+- `SquarefreeCount.squarefree_isBigO_twelve_25ths`: `Q(x) = 6x/π² + O(x^{12/25+η})` ([note](../formalisations/d2-density.md))
 - `SquarefreeCount.squarefree_isBigO_Theta`: `Q(x) = 6x/π² + O(x^{1/(3−Θ)+η})`
 
 #### `Subconvexity`: Subconvexity from a zero-free half-plane
