@@ -104,6 +104,29 @@ checker (`ShortSieveCert.run`) replays them on the node's shape, constraints and
 the loss `L`, the node is `OK` for its sign with the loss `L/2^{50}` (`ShortSieveCert.run_sound`). So certificates for
 the 204 root cells give primes in short intervals, with the sum of their losses: `ShortSieveCert.primes_of_certs`.
 
+## The certificate
+
+**Lean:** `lib/pnt/ShortSieve525.lean`, with the 204 cells' certificates in `lib/pnt/ShortSieve525Ckkjj.lean`
+(region C) and `lib/pnt/ShortSieve525Okkjj.lean` (outside it):
+
+```lean
+theorem ShortSieve525.primes_525 {ρ c : ℝ} (H : ShortSieveCert.Hyps ρ c) :
+    ∀ ε : ℝ, 0 < ε → ∀ᶠ x : ℝ in atTop, ∀ y : ℝ, x ^ (21 / 40 : ℝ) ≤ y → y ≤ x ^ (1 - ρ) →
+      (1 - (L : ℝ) / SC - ε) * y / Real.log x ≤ ((Ioc ⌊x - y⌋₊ ⌊x⌋₊).filter Nat.Prime).card
+```
+
+with `L` the sum of the cells' losses, a literal in the file (`ShortSieve525.primes_525`). In words: each root cell's
+certificate is a module of its own, written by `tools/short/enc/cells.py`; the command `cert_cell`
+(`ShortSieveCertData`) reads it from a compressed string, rebuilds the certificate by replaying the checker's state, and
+proves that the checker returns the cell's loss (`ShortSieve525.C0807_run` for the cell `(8, 7)`, and so on). The
+kernel's memory grows with the reductions of one check, so a cell is checked in parts: its subtrees below cut points
+each by `decide +kernel`, and the nodes above them by the node lemmas, which give `run` on a node from `run` on its
+children (`ShortSieveCert.run_up_of`, `ShortSieveCert.run_comb_of`, `ShortSieveCert.run_split_of`,
+`ShortSieveCert.run_cut_of`, `ShortSieveCert.run_dec_std_of`, `ShortSieveCert.run_dec_two_of`,
+`ShortSieveCert.run_rev_std_of`, `ShortSieveCert.run_swap_of`). The assembly applies `ShortSieveCert.primes_of_certs` to
+the 204 cells. The bound is positive when `L < 2^50`; the certificates in the library do not reach that yet, and are
+replaced by better ones one cell at a time (`tools/short/enc/cells525.tsv` records each cell's loss and source).
+
 ## How the Lean statements differ from Li's
 
 - Li's Lemmas 3.1, 3.2 and 4.1 (Baker, Harman and Pintz's Lemmas 12, 13 and 9) are hypotheses: `LiLemma31`,

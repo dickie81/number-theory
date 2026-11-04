@@ -839,31 +839,11 @@ partial def enumStates (E : Int) (acc : Array (Shp × List Con × Box × Bool ×
     | _ => acc
   | _ => acc
 
-/-! The compact form read by `cert_data%` (CertData.lean). -/
+/-! The skeleton's lists and constraints. -/
 
 def natLC (l : List Nat) : String := " ".intercalate (toString l.length :: l.map toString)
 def intLC (l : List Int) : String := " ".intercalate (toString l.length :: l.map toString)
 def conC (C : Con) : String := s!"{C.L.c0} {intLC C.L.c} {C.L.ce} {if C.strict then 1 else 0}"
-
-/-- The compact form, written into a buffer (no repeated copying of long strings). -/
-partial def certCB (acc : Array String) : Cert → Array String
-  | .out => acc.push "o"
-  | .outC i => acc.push s!"C {i}"
-  | .outE j => acc.push s!"E {j}"
-  | .tighten t => certCB (acc.push "T") t
-  | .up j l i v t => certCB (acc.push s!"u {j} {if l then 1 else 0} {i} {v}") t
-  | .comb i j c t => certCB (acc.push s!"m {i} {j} {c}") t
-  | .split C u w t1 t2 => certCB (certCB (acc.push s!"s {conC C} {u} {w}") t1) t2
-  | .cut j p u w t1 t2 => certCB (certCB (acc.push s!"c {j} {p} {u} {w}") t1) t2
-  | .tii a l ng => acc.push s!"t {natLC a} {natLC l} {ng}"
-  | .g2 a l => acc.push s!"g {natLC a} {natLC l}"
-  | .dec a l k t => certCB (acc.push s!"d {natLC a} {natLC l} {k}") t
-  | .rev a l k t => certCB (acc.push s!"r {natLC a} {natLC l} {k}") t
-  | .swap t => certCB (acc.push "w") t
-  | .drop a none => acc.push s!"x {natLC a} N"
-  | .drop a (some (b1, b2)) => acc.push s!"x {natLC a} S {intLC b1} {intLC b2}"
-
-def certC (c : Cert) : String := " ".intercalate (certCB #[] c).toList
 
 partial def certSize : Cert → Nat
   | .up _ _ _ _ t | .tighten t | .swap t | .dec _ _ _ t | .rev _ _ _ t | .comb _ _ _ t => 1 + certSize t
@@ -916,7 +896,7 @@ def dropBench (args : List String) : IO Unit := do
   for i in [0:st.size] do
     let (S, Γ, B, _, ci, _) := st[i]!
     match ci with
-    | .drop a (some bp) =>
+    | .drop a (some _) =>
       if n < nmax then
         n := n + 1
         let Lc := (run 1 ci S Γ B true).getD 0
@@ -940,38 +920,6 @@ def wrapC (s : String) : String := Id.run do
     else cur := if cur.isEmpty then t else cur ++ " " ++ t
   return "\n".intercalate (lines.push cur).toList
 
-open Enc in
-/-- sub TREE k j r PREFIX lo hi n: for the first n subtrees whose size is in [lo, hi), a file PREFIX_<node>.lean
-holding the subtree (compact data) and its theorem at the literal state. -/
-def subMain (args : List String) : IO Unit := do
-  let path := args.getD 1 ""
-  let k := (args.getD 2 "0").toNat!
-  let j := (args.getD 3 "0").toNat!
-  let r := args.getD 4 "1" == "1"
-  let pre := args.getD 5 ""
-  let lo := (args.getD 6 "0").toNat!
-  let hi := (args.getD 7 "0").toNat!
-  let nmax := (args.getD 8 "1").toNat!
-  let head ← IO.FS.readFile (args.getD 9 "")
-  let tr := parseTree (← IO.FS.readFile path)
-  let (c, _) := (walk {} tr 1 0 (.std 1) (cellCons k r) (cellBox k j) true none).run {}
-  let st := enumStates 1 #[] c (.std 1) (cellCons k r) (cellBox k j) true
-  let mut n := 0
-  for i in [0:st.size] do
-    let (S, Γ, B, b, ci, _) := st[i]!
-    let sz := certSize ci
-    if n < nmax && lo ≤ sz && sz < hi then
-      match run 1 ci S Γ B b with
-      | some L =>
-        n := n + 1
-        let txt := head ++ "\nopen ShortSieveCert\n\n" ++
-          s!"noncomputable def c : Cert := cert_data% \"{wrapC (certC ci)}\"\n\n" ++
-          s!"set_option Elab.async false\nset_option profiler true\n" ++
-          s!"theorem t : run 1 c {shpS S} {consS Γ} {boxS B} {b} = some {L} := by decide +kernel\n"
-        IO.FS.writeFile s!"{pre}_{i}.lean" txt
-        IO.println s!"node {i} size {sz} L {L}"
-      | none => IO.println s!"node {i} fails"
-
 namespace Enc
 
 /-- An estimate of a node's own kernel cost (ms). -/
@@ -985,131 +933,115 @@ partial def costOf : Cert → Nat
   | c@(.split _ _ _ t1 t2) | c@(.cut _ _ _ _ t1 t2) => ownCost c + costOf t1 + costOf t2
   | c => ownCost c
 
-/-- The certificate's top: the nodes above the cut points, which become subtrees of their own. -/
-inductive Top
-  | node (c : Cert) (S : Shp) (kids : List Top)   -- `c` at the shape `S`, its subtrees replaced by the kids
-  | sub (i : Nat) (c : Cert)            -- cut point `i`
+/-! ## The skeleton read by `cert_cell` (`ShortSieveCertData`) -/
 
-instance : Inhabited Top := ⟨.sub 0 .out⟩
-
-structure CellOut where
-  subs : Array (Cert × Nat) := #[]      -- the cut points' subtrees and their losses
+/-- The skeleton's state: the tokens, the cut points' losses, and the number of bounds and breakpoints written out. -/
+structure Sk where
+  out : Array String := #[]
+  ls : Array Nat := #[]
+  given : Nat := 0
 deriving Inhabited
 
-/-- Cut the certificate: a node whose cost is at most `cap`, or whose kind has no lemma, is a cut point. -/
-partial def cutTop (cap : Nat) (c : Cert) (S : Shp) (Γ : List Con) (B : Box) (b : Bool) : StateM CellOut Top := do
-  let asSub : StateM CellOut Top := do
-    let st ← get
-    let L := (run 1 c S Γ B b).getD 0
-    set { st with subs := st.subs.push (c, L) }
-    return .sub st.subs.size c
-  if costOf c ≤ cap then return ← asSub
-  match c, S with
-  | .up j l _ v t, _ => return .node c S [← cutTop cap t S Γ (cutAt B j l v) b]
-  | .comb i j k t, _ =>
-    let C := combCon (Γ.getD i ⟨LF.zero, false⟩) (Γ.getD j ⟨LF.zero, false⟩) k
-    return .node c S [← cutTop cap t S (C :: Γ) B b]
-  | .split C _ _ t1 t2, _ =>
-    let a ← cutTop cap t1 S (C :: Γ) B b
-    return .node c S [a, ← cutTop cap t2 S (C.neg :: Γ) B b]
-  | .cut j p _ _ t1 t2, _ =>
-    let a ← cutTop cap t1 S Γ (B.modify j fun b' => (b'.1, min b'.2 p)) b
-    return .node c S [a, ← cutTop cap t2 S Γ (B.modify j fun b' => (max b'.1 p, b'.2)) b]
-  | .dec _ _ _ t, .std k =>
-    return .node c S [← cutTop cap t (.std (k + 1)) (geCon (k + 1) :: (Γ ++ [ordCon k]))
-      (B ++ [(NU0, (B.getD k (0, 0)).2)]) (!b)]
-  | .dec _ _ _ t, S =>
-    return .node c S [← cutTop cap t (.last S) (geL (S.items.getD (S.k + 1) LF.zero) B.length ::
-        (Γ ++ [ordL (S.items.getD (S.sN 1) LF.zero) B.length]))
-      (B ++ [(NU0, (S.items.getD (S.sN 1) LF.zero).maxB B 1)]) (!b)]
-  | .rev _ _ _ t, .std (k + 1) =>
-    return .node c S [← cutTop cap t (.rev k) (Γ ++ [halfCon k]) (B ++ [(NU0, (B.getD 0 (0, 0)).2)]) (!b)]
-  | .swap t, S => return .node c S [← cutTop cap t (.swap S) Γ B b]
-  | .tighten t, _ => return .node c S [← cutTop cap t S Γ (tightenList 1 Γ B) b]
-  | _, _ => asSub
+/-- Whether a node can stay in the top: the node lemmas of `ShortSieveCertSplit`. -/
+def topOK : Cert → Shp → Bool
+  | .up .., _ | .comb .., _ | .split .., _ | .cut .., _ | .dec .., _ | .swap _, _ => true
+  | .rev .., .std (_ + 1) => true
+  | _, _ => false
 
-/-- The top as compact data, with the cut points as references `@pre_i`. -/
-partial def topC (pre : String) : Top → Array String → Array String
-  | .sub i _, acc => acc.push s!"@{pre}_{i}"
-  | .node c _ kids, acc =>
-    match c, kids with
-    | .up j l i v _, [k] => topC pre k (acc.push s!"u {j} {if l then 1 else 0} {i} {v}")
-    | .comb i j k _, [t] => topC pre t (acc.push s!"m {i} {j} {k}")
-    | .split C u w _ _, [k1, k2] => topC pre k2 (topC pre k1 (acc.push s!"s {conC C} {u} {w}"))
-    | .cut j p u w _ _, [k1, k2] => topC pre k2 (topC pre k1 (acc.push s!"c {j} {p} {u} {w}"))
-    | .dec a l k _, [t] => topC pre t (acc.push s!"d {natLC a} {natLC l} {k}")
-    | .rev a l k _, [t] => topC pre t (acc.push s!"r {natLC a} {natLC l} {k}")
-    | .swap _, [t] => topC pre t (acc.push "w")
-    | .tighten _, [t] => topC pre t (acc.push "T")
-    | _, _ => acc.push "?"
-
-/-- The loss of a top node, from its cut points' losses. -/
-partial def topLoss (subs : Array (Cert × Nat)) : Top → Nat
-  | .sub i _ => (subs[i]!).2
-  | .node _ _ kids => kids.foldl (fun a k => a + topLoss subs k) 0
-
-/-- The proof that `run` gives the top's loss: the node lemmas down to the cut points, each cut point by
-`decide +kernel` (an auxiliary lemma of its own). -/
-partial def topProof (subs : Array (Cert × Nat)) : Top → String
-  | .sub _ _ => "(by decide +kernel)"
-  | .node c S kids =>
-    match c, kids with
-    | .up .., [k] => s!"(run_up_of (by decide +kernel) {topProof subs k})"
-    | .comb .., [k] => s!"(run_comb_of (by decide +kernel) {topProof subs k})"
-    | .split .., [k1, k2] =>
-      s!"(run_split_of (L₁ := {topLoss subs k1}) (L₂ := {topLoss subs k2}) (by decide +kernel) {topProof subs k1} " ++
-        s!"{topProof subs k2} rfl)"
-    | .cut .., [k1, k2] =>
-      s!"(run_cut_of (L₁ := {topLoss subs k1}) (L₂ := {topLoss subs k2}) (by decide +kernel) {topProof subs k1} " ++
-        s!"{topProof subs k2} rfl)"
-    | .dec .., [k] =>
-      match S with
-      | .std _ => s!"(run_dec_std_of (by decide +kernel) {topProof subs k})"
-      | _ => s!"(run_dec_two_of (by intro _ h; cases h) (by decide +kernel) {topProof subs k})"
-    | .swap _, [k] => s!"(run_swap_of (by decide +kernel) {topProof subs k})"
-    | .tighten _, [k] => s!"(run_tighten_of {topProof subs k})"
-    | .rev .., [k] => s!"(run_rev_std_of (by decide +kernel) {topProof subs k})"
-    | _, _ => "(unsupportedTopNode)"
+/-- The skeleton of a node with its state (as `run` passes it on). In the top (`top`), a node of cost at most `cap`,
+or without a node lemma, is a cut point (`[`). An up's bound and a drop's breakpoints are left out when they are the
+ones `cert_cell` recomputes (`coordUp`, `dropBps`). -/
+partial def skel (cap : Nat) (top : Bool) (c : Cert) (S : Shp) (Γ : List Con) (B : Box) (b : Bool) :
+    StateM Sk Unit := do
+  let push (s : String) : StateM Sk Unit := modify fun st => { st with out := st.out.push s }
+  if top && (costOf c ≤ cap || !topOK c S) then
+    push "["
+    modify fun st => { st with ls := st.ls.push ((run 1 c S Γ B b).getD 0) }
+    return ← skel cap false c S Γ B b
+  match c with
+  | .out => push "o"
+  | .outC i => push s!"C {i}"
+  | .outE j => push s!"E {j}"
+  | .tighten t =>
+    push "T"
+    skel cap top t S Γ (tightenList 1 Γ B) b
+  | .swap t =>
+    push "w"
+    skel cap top t (.swap S) Γ B b
+  | .up j l i v t =>
+    let C := Γ.getD i ⟨LF.zero, false⟩
+    let cj := C.L.c.getD j 0
+    let r := (C.L.drop j).min B 1
+    let v' := if l then r / -cj else if C.strict then -(r / cj) else -r / cj + 1
+    if v' == v then push s!"U {j} {if l then 1 else 0} {i}"
+    else
+      push s!"u {j} {if l then 1 else 0} {i} {v}"
+      modify fun st => { st with given := st.given + 1 }
+    skel cap top t S Γ (cutAt B j l v) b
+  | .comb i j k t =>
+    push s!"m {i} {j} {k}"
+    skel cap top t S (combCon (Γ.getD i ⟨LF.zero, false⟩) (Γ.getD j ⟨LF.zero, false⟩) k :: Γ) B b
+  | .split C u w t1 t2 =>
+    push s!"s {conC C} {u} {w}"
+    skel cap top t1 S (C :: Γ) B b
+    skel cap top t2 S (C.neg :: Γ) B b
+  | .cut j p u w t1 t2 =>
+    push s!"c {j} {p} {u} {w}"
+    skel cap top t1 S Γ (B.modify j fun b' => (b'.1, min b'.2 p)) b
+    skel cap top t2 S Γ (B.modify j fun b' => (max b'.1 p, b'.2)) b
+  | .tii a l ng => push s!"t {natLC a} {natLC l} {ng}"
+  | .g2 a l => push s!"g {natLC a} {natLC l}"
+  | .dec a l k t =>
+    push s!"d {natLC a} {natLC l} {k}"
+    match S with
+    | .std n =>
+      skel cap top t (.std (n + 1)) (geCon (n + 1) :: (Γ ++ [ordCon n])) (B ++ [(NU0, (B.getD n (0, 0)).2)]) (!b)
+    | S =>
+      skel cap top t (.last S) (geL (S.items.getD (S.k + 1) LF.zero) B.length ::
+          (Γ ++ [ordL (S.items.getD (S.sN 1) LF.zero) B.length]))
+        (B ++ [(NU0, (S.items.getD (S.sN 1) LF.zero).maxB B 1)]) (!b)
+  | .rev a l k t =>
+    push s!"r {natLC a} {natLC l} {k}"
+    match S with
+    | .std (n + 1) => skel cap top t (.rev n) (Γ ++ [halfCon n]) (B ++ [(NU0, (B.getD 0 (0, 0)).2)]) (!b)
+    | _ => pure ()
+  | .drop a none => push s!"x {natLC a} N"
+  | .drop a (some bps) =>
+    if bps == dropBps 1 S B then push s!"x {natLC a} K"
+    else
+      push s!"x {natLC a} S {intLC bps.1} {intLC bps.2}"
+      modify fun st => { st with given := st.given + 1 }
 
 end Enc
 
 open Enc in
-/-- cell TREE k j r OUT.lean NAME CAP HEADER: the cell's certificate as one file: the cut points' subtrees (compact
-data), the top, and the theorem by the node lemmas with each cut point by `decide +kernel`. -/
-def cellMain (args : List String) : IO Unit := do
+/-- skel TREE k j r OUT CAP: the cell's skeleton for `cert_cell`: the header `L total n L₀ … Lₙ₋₁` (the cell's loss
+and the cut points' losses), then the tokens. -/
+def skelMain (args : List String) : IO Unit := do
   let path := args.getD 1 ""
   let k := (args.getD 2 "0").toNat!
   let j := (args.getD 3 "0").toNat!
   let r := args.getD 4 "1" == "1"
   let out := args.getD 5 ""
-  let name := args.getD 6 "cell"
-  let cap := (args.getD 7 "15000").toNat!
-  let head ← IO.FS.readFile (args.getD 8 "")
+  let cap := (args.getD 6 "15000").toNat!
   let tr := parseTree (← IO.FS.readFile path)
   let (c, st0) := (walk {} tr 1 0 (.std 1) (cellCons k r) (cellBox k j) true none).run {}
   if st0.fails.size > 0 then
     IO.println s!"failures {st0.fails.size}"
     return
   let some L := run 1 c (.std 1) (cellCons k r) (cellBox k j) true | IO.println "run: none"
-  let (top, co) := (cutTop cap c (.std 1) (cellCons k r) (cellBox k j) true).run {}
-  let pre := s!"ShortSieveCert.{name}"
-  let mut txt := head ++ "\nopen ShortSieveCert\n\nnamespace ShortSieveCert\n\n"
-  for i in [0:co.subs.size] do
-    let (ci, _) := co.subs[i]!
-    txt := txt ++ s!"noncomputable def {name}_{i} : Cert := cert_data% \"{wrapC (certC ci)}\"\n\n"
-  let topData := wrapC (" ".intercalate (topC pre top #[]).toList)
-  txt := txt ++ s!"noncomputable def {name} : Cert := cert_data% \"{topData}\"\n\n"
-  txt := txt ++ s!"set_option maxHeartbeats 0 in\nset_option Elab.async false in\nset_option profiler true in\n" ++
-    s!"theorem {name}_run : run 1 {name} (.std 1) (cellCons {k} {r}) (cellBox {k} {j}) true = some {L} :=\n  " ++
-    topProof co.subs top ++ "\n\nend ShortSieveCert\n"
-  IO.FS.writeFile out txt
-  let costs := co.subs.map fun (ci, _) => costOf ci
-  IO.println s!"L {L} cert size {certSize c} cost {costOf c} cut points {co.subs.size} max cost {costs.foldl max 0}"
+  let ((), sk) := (skel cap true c (.std 1) (cellCons k r) (cellBox k j) true).run {}
+  if sk.ls.foldl (· + ·) 0 ≠ L then
+    IO.println "the cut points' losses do not add up"
+    return
+  let head := " ".intercalate ("L" :: toString L :: toString sk.ls.size :: sk.ls.toList.map toString)
+  IO.FS.writeFile out (head ++ "\n" ++ wrapC (" ".intercalate sk.out.toList) ++ "\n")
+  let costs := sk.ls.size
+  IO.println s!"L {L} cert size {certSize c} cost {costOf c} cut points {costs} given {sk.given}"
 
 open Enc in
 def main (args : List String) : IO Unit := do
-  if args.head? == some "cell" then return ← cellMain args
-  if args.head? == some "sub" then return ← subMain args
+  if args.head? == some "skel" then return ← skelMain args
   if args.head? == some "prof" then return ← profMain args
   if args.head? == some "dropbench" then return ← dropBench args
   let path := args.getD 0 ""
@@ -1127,6 +1059,4 @@ def main (args : List String) : IO Unit := do
   match run 1 c (.std 1) (cellCons k r) (cellBox k j) true with
   | some L => IO.println s!"run: some {L} = {(L.toFloat) / (2 ^ 50 : Float)}"
   | none => IO.println "run: none"
-  if out ≠ "" then
-    IO.FS.writeFile out (certS c)
-    IO.FS.writeFile (out ++ ".cd") (certC c)
+  if out ≠ "" then IO.FS.writeFile out (certS c)

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1114 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1127 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 101 | 274 |
-| `lib/pnt` | 230 | 735 |
+| `lib/pnt` | 233 | 748 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -1350,6 +1350,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `LogDerivKV.logDerivBnd_KV`: R4a: `ζ'/ζ = O((log|t|)³)` on the Korobov–Vinogradov region
 
+#### `LonelyJoins`: The lonely primes joined to the library: their half has the error exponent `Θ`, and they fill short windows
+
+- `LonelyJoins.isBigO_of_sub_half`: Telescoping
+- `LonelyJoins.lonely_weight_isBigO_iff`: The error of the lonely primes' half has the exponent `Θ`
+- `LonelyJoins.rh_iff_lonely_weight`: RH holds exactly when the lonely primes carry half of `x` to within `x^{½+ε}`
+- `LonelyJoins.lonely_in_window`: A lonely prime in every short window
+
 #### `LonelyPrimes`: The frontier of the orbit lattice: the primes above `N/2`, always some and asymptotically half
 
 - `LonelyPrimes.lonely_iff`: A prime `p ≤ N` has no multiple `kp ≤ N` with `k ≥ 2` exactly when `N/2 < p`.
@@ -1495,6 +1502,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `ShortPrimesHalfPlane.zeroFreeXi_of_halfplane`: The zero-free half-plane gives `ZeroFreeXi α` for every `α` (here `α < 1` is what `short_primes_of_density` takes), with no Korobov–Vinogradov input. ([note](../formalisations/zeta-density.md))
 
+#### `ShortSieve525`: θ = 21/40: the certificate's 204 root cells
+
+- `ShortSieve525.primes_525`: The lower bound for primes in short intervals at `θ = 21/40` from the certificate ([note](../formalisations/short-intervals.md))
+
 #### `ShortSieveBuch`: Buchstab's identity and role reversals for the terms of the certificate
 
 - `ShortSieveBuch.count_buchstab`: Buchstab's identity on a node ([note](../formalisations/short-intervals.md))
@@ -1566,6 +1577,17 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ShortSieveCert.Sound.cut_lt`: A cut of the box along the coordinate `j` at `p` ([note](../formalisations/short-intervals.md))
 - `ShortSieveCert.Sound.cut_ge`: A cut of the box along the coordinate `j` at `p` ([note](../formalisations/short-intervals.md))
 - `ShortSieveCert.Sound.OK_of_out`: An empty region has no loss ([note](../formalisations/short-intervals.md))
+
+#### `ShortSieveCertSplit`: A certificate checked in parts
+
+- `ShortSieveCert.run_up_of`: `run` on a moved end (`Cert.up`) from its condition and `run` on the child, the box with the end moved. ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.run_comb_of`: `run` on a combined constraint (`Cert.comb`) from `run` on the child, with the constraint added. ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.run_split_of`: `run` on a split by a constraint from its condition and `run` on the two children ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.run_cut_of`: `run` on a box cut from its condition and `run` on the two halves ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.run_dec_std_of`: `run` on Buchstab's step of a standard node from its Type I test and `run` on the child. ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.run_dec_two_of`: `run` on Buchstab's step on the last of two rough items from its Type I test and `run` on the child. ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.run_rev_std_of`: `run` on a role reversal of a standard node from its Type I test and `run` on the reversed child. ([note](../formalisations/short-intervals.md))
+- `ShortSieveCert.run_swap_of`: `run` on the swap of the two rough items from `run` on the swapped node. ([note](../formalisations/short-intervals.md))
 
 #### `ShortSieveCertStd`: The standard nodes of the certificate
 

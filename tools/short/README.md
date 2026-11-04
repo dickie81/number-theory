@@ -163,4 +163,11 @@ The plan, with what is done:
    Type II and Lemma 4.1 tests, Buchstab's steps, role reversals, swaps, and drops with the chain bound, which keeps
    the order of the primes), and its soundness turns certificates for the root cells into the lower bound for primes
    (`ShortSieveCert.primes_of_certs`; `formalisations/short-intervals.md`). It is stated at the milestone's
-   `θ = 21/40`. What remains is the certificate itself, generated, encoded and replayed by the kernel. The terms reach dimension 8, so the cost of the cells is the main question.
+   `θ = 21/40`. The certificate is modular: each of the 204 root cells is a module of its own
+   (`lib/pnt/ShortSieve525Ckkjj.lean`, `…Okkjj.lean`), its certificate written by `enc/cells.py` from the generator's
+   tree (`cert/`) through the encoder (`enc/`), compressed, and checked in parts so that the kernel's memory stays
+   bounded; `ShortSieve525.primes_525` assembles them with the sum `L` of their losses (`enc/README.md`). A cell can be
+   replaced by a better certificate without touching the others, and `enc/cells525.tsv` records each cell's loss and
+   source. What remains is a set of certificates with `L < 1`: the terms reach dimension 8, and the generator's boxes
+   still certify region C far above its true loss (the worst cells are dropped whole, root 93 at `0.0299` against its
+   Monte Carlo truth `0.0043`), so the worst cells are being regenerated one at a time.
