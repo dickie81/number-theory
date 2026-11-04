@@ -7,16 +7,21 @@ Status labels: **Lean** (machine-checked in `scratch/d2density/` and `lib/pnt/`,
 
 Let χ_D be the real primitive character of a fundamental discriminant D, a = 0 if D > 0 and a = 1 if D < 0, and
 ℓ_D = L′/L(1, χ_D). Let d₁, d₂ be the first two pivots of the orbit Gram matrix (see `ball-conjecture.md`; Theorem B
-in `ball-conjecture-tests.md`, branch `ball-conjecture-tests`).
+in `ball-conjecture-tests.md` §2). By §5.1 there, for real χ with q ≤ 10⁴ the pivot d₂ alone decides the whole conjecture
+(d_k ≥ d₁ for all k ≤ 300). So, in that range, the density below is also the density of real characters violating it.
 
 1. **(Lean, given Theorem B and K₁ > 0)** d₂ ≥ d₁ ⇔ −2K₁ − 2c_a ≤ ℓ_D ≤ −2c_a, with c₀ = −¼ log(27/4) and
    c₁ = ¾ log(3/4). So the upper thresholds are ½ log(27/4) = 0.954771… (even) and (3/2) log(4/3) = 0.431523… (odd).
    (`D2Criterion.criterion`, `c0_closed`, `c1_closed`; the identification of c_a with the archimedean constant of Theorem B: `CAClosed.cA_zero`, `CAClosed.cA_one`.)
 2. **(Lean)** K₁ = Σ_ρ 1/(ρ(1−ρ)) > 0 for any summable such sum over a nonempty set of zeros in the open strip (`D2Density.K1_pos`).
-3. **(Written proof; Lean assembly)** For each sign, #{D ∈ F±(x) : d₂ < d₁}/|F±(x)| → P(X > t_a), where X is
-   Lamzouri's random model −Σ_p (log p) X(p)/(p − X(p)). The averaged limit is ½(0.051123 + 0.160911) = **0.10602**
-   (numerical inversion of the characteristic function; not certified). This is unconditional.
-   The final assembly is Lean (`D2Density.d2_density_log`), from the hypotheses listed below.
+3. **(Written proof, unconditional; Lean, conditional on the half-plane input)** For each sign,
+   #{D ∈ F±(x) : d₂ < d₁}/|F±(x)| → P(X > t_a), where X is Lamzouri's random model −Σ_p (log p) X(p)/(p − X(p)).
+   The averaged limit is ½(0.051123 + 0.160911) = **0.10602** (numerical inversion of the characteristic function; not certified).
+   - The written proof below is unconditional.
+   - In Lean, `D2Hdist.d2_density_pos` and `d2_density_neg` apply `D2Density.d2_density_log` with `hdist` discharged.
+   - `hdist` comes from `D2Dist.dist_pos` and `dist_neg`. These use the zero-free half-plane Re s > 11/12 (`Eis.LFunction_ne_zero_of_re_gt`; see `formalisations/openai-half-plane.md`).
+   - That half-plane is itself a Lean theorem here, using only the standard axioms. It formalises OpenAI's 2026 preprints, so the Lean results are labelled conditional on that input.
+   - The remaining hypotheses are listed at the end.
 
 ## Written proof (per-sign distribution)
 
@@ -34,9 +39,9 @@ Hence over all real primitive characters with conductor <= x, the proportion wit
 (1/2)(P(X > t0) + P(X > t1)) = 0.10602 (numerical value, characteristic-function inversion, stable to about 1e-9).
 
 ### Inputs and their status
-I1. Theorem B (repo, docs/ball-conjecture-tests.md): K(2) = sqrt2 (K1/2 + c_a + l/2). Paper proof, unconditional.
+I1. Theorem B (repo, docs/ball-conjecture-tests.md): K(2) = sqrt2 (K1/2 + c_a + l/2). Paper proof, unconditional; Lean for good real characters (`PsiOmega.theoremB`, `lib/core/WeilChiB.lean`).
 I2. K1 > 0 for real chi: Re 1/(rho(1-rho)) > 0 for every zero with 0 < beta < 1. The zero set is closed under conjugation, so K1 is a sum of positive terms.
-I3. The criterion d2 >= d1 iff -2K1 - 2c_a <= l <= -2c_a, with c0 = -(1/4)log(27/4) and c1 = (3/4)log(3/4). Lean: lean/D2Criterion.lean, no sorry.
+I3. The criterion d2 >= d1 iff -2K1 - 2c_a <= l <= -2c_a, with c0 = -(1/4)log(27/4) and c1 = (3/4)log(3/4). Lean: `scratch/d2density/D2Criterion.lean`, no sorry.
 I4. Moment asymptotics restricted to each sign (Lemma 1 below). This is the new step.
 
 ### Lemma 1 (signed moments)
@@ -61,7 +66,7 @@ Proof. Follow Lamzouri, Section 2 (Theorem 1.6), and change only the summation s
 ### Honest status
 - The proof is unconditional. It is a routine but unchecked adaptation of Lamzouri's Section 2 and Granville–Soundararajan's Lemma 4.1. Lamzouri Sections 1–2 read from arXiv:1410.1603. Step (d) is now CHECKED against Granville–Soundararajan, arXiv:math/0206031 (GAFA 13 (2003) 992–1028), Lemma 4.1 (Section 4). Their proof says: "We shall confine our attention to d positive and ≡ 1 (mod 4): the cases d negative, or d ≡ 8, or 12 (mod 16) are handled similarly." So the bound is proved class by class, including each sign separately, and holds for F+(x) and F-(x) individually. The only implicit step is the authors' "handled similarly" for d < 0, which is a reflection of the interval [1, x] to [-x, -1] in Pólya–Vinogradov.
 - Only fixed-k moments are needed, so Lamzouri's uniformity and saddle-point machinery is not needed. Mourtada–Murty [13] also have fixed-k moments over F(x).
-- The numerical value 0.10602 is from the random model, not certified. The finite-range data (q <= 6.4e4) do NOT yet show convergence (see NOTE_d2_density.md).
+- The numerical value 0.10602 is from the random model, not certified. In the data up to 1e8, the + rates reach the model. The − rates stay about 1σ high, which is unresolved. Between about 2e4 and 1e6 both signs show a transient excess. See "Numerics" and "The 2e4–1e5 excess" below.
 
 ## Numerics
 
@@ -133,7 +138,8 @@ This is a finite-prime effect, but not the one in trunc.py. It is not "fewer pri
 ### Confidence
 High that the excess is genuine arithmetic, not an artefact. High that it is a shape effect (sd deficit and positive skew decaying at different rates).
 Moderate on the mechanism (higher moments converging late because of character-sum error terms). That is consistent with the data and with how the method of moments works, but no error term was computed.
-Files: exh.py, exh_*.json, xchk.py, st.py, res.py, res2.py, freq.py, edge.py.
+Files: exh.py (writes `exh_*.json`, which `st.py` reads; not committed), xchk.py, st.py, edge.py. The residual and
+frequency checks above were run with scripts (`res.py`, `res2.py`, `freq.py`) that are not committed.
 
 **Open:** the odd (D < 0) rates stay about 1σ above 0.1609 up to 1e8. Either convergence there is slower, or the
 model constant is marginally off. This is unresolved.

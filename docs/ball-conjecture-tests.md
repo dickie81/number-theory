@@ -28,8 +28,8 @@ Checked against direct sums over zeros (|γ| < 60) for four characters, to the t
 $G_{11}=K_1$, $G_{22}=2K_1$ and $G_{12}=\sqrt2K(2)$, so $d_2/d_1=2(1-|K(2)|^2/K_1^2)$. At $x=2$ the prime sum in Theorem A′ vanishes.
 
 **Theorem B.** $K(2)=\sqrt2(\tfrac12K_1+c_a+\tfrac12\ell)$. Hence
-$$d_2\ge d_1\iff|K_1+2c_a+\ell|\le K_1,\qquad c_0=-0.4773856262\ldots,\ c_1=-0.2157615543\ldots$$
-For real $\chi$ this says $-2K_1-2c_a\le\ell\le-2c_a$; in particular it requires $L'/L(1,\chi)\le0.95477$ (even $\chi$) and $\le0.43152$ (odd $\chi$).
+$$d_2\ge d_1\iff|K_1+2c_a+\ell|\le K_1,\qquad c_0=-\tfrac14\log\tfrac{27}{4}=-0.4773856262\ldots,\ c_1=\tfrac34\log\tfrac34=-0.2157615543\ldots$$
+(The constant $\gamma$ cancels from $c_a$, and what is left is a log of a rational; Lean: `D2Criterion.c0_closed`, `c1_closed`, `CAClosed.cA_zero`, `CAClosed.cA_one`.) For real $\chi$ this says $-2K_1-2c_a\le\ell\le-2c_a$. In particular it requires $L'/L(1,\chi)\le\tfrac12\log\tfrac{27}{4}=0.95477$ (even $\chi$) and $\le\tfrac32\log\tfrac43=0.43152$ (odd $\chi$). The density of real characters that fail is in [d2-density.md](d2-density.md).
 
 **Certified (arb).** For $\zeta$: $d_2/d_1=1.71841346690985319155\ldots$
 
@@ -68,7 +68,7 @@ Write $B_{mn}=K(m/n)/K_1$ for the cosines between the orbit vectors. Then $d_k/d
 **Theorem B′ ($k=3$).** Let $\lambda=\ell/K_1$ and $\kappa=1/K_1$. By Theorem A′, $S(2)=S(3/2)=0$ and $S(3)=\chi(2)\log2/6$, so the cosines $u=K(2)/K_1$, $v=K(3)/K_1$, $w=K(3/2)/K_1$ are affine in $\lambda$ and $\kappa$:
 $$u=\tfrac{1}{\sqrt2}(1+\lambda+2c_a\kappa),\qquad w=\tfrac{1}{\sqrt6}(2+\lambda+3e_a\kappa),\qquad v=\tfrac{1}{\sqrt3}\big(1+2\lambda+(\tfrac12\chi(2)\log2+3f_a)\kappa\big),$$
 $$\frac{d_3}{d_1}=\frac{3\,(1-|u|^2-|v|^2-|w|^2+2\,\mathrm{Re}(uw\bar v))}{1-|u|^2}.$$
-Here $e_0=-0.4170020196$, $e_1=-0.2195121487$, $f_0=-\tfrac23\log2$ and $f_1=-0.1744160479$, with $c_a$ as in Theorem B. At $\lambda=\kappa=0$ these are the cosines $\min(m,n)/\sqrt{mn}$ of the flat model, whose pivots all equal $d_1$.
+Here $e_0=-\tfrac16\log\tfrac{3125}{256}=-0.4170020196$, $e_1=\tfrac16\log\tfrac{3125}{11664}=-0.2195121487$, $f_0=-\tfrac23\log2$ and $f_1=\tfrac13\log\tfrac{16}{27}=-0.1744160479$, with $c_a$ as in Theorem B. As for $c_a$, $\gamma$ cancels and evaluating Theorem A′ at $x=3/2$ and $3$ leaves these logs of rationals. At $\lambda=\kappa=0$ these are the cosines $\min(m,n)/\sqrt{mn}$ of the flat model, whose pivots all equal $d_1$.
 More generally, $G_k$ depends only on $K_1$, $\ell$, the parity and $\chi(p)$ for primes $p<k$.
 
 **Corollary (real $\chi$).** For real $\chi$, Theorem A′ gives $\ell=\tfrac12(K_1-\log\frac q\pi-\psi(\frac{1+a}2))$. With $L_a=\log\frac q\pi+\psi(\frac{1+a}2)-4c_a$, that is $\log\frac q\pi-0.0540$ (even) or $\log\frac q\pi+0.2858$ (odd), Theorem B becomes
@@ -82,13 +82,20 @@ The upper end is $\ell\le-2c_a$. Since $2\ell=K_1-(\log\frac q\pi+\psi(\frac{1+a
   * The minimum over $k$ sits at $k=2$ for 29378 characters, at $k=3$ for 69, at $k=4$ for 19 and at $k=5$ for 2. Of these, three passing characters have their minimum at $k=4$: mod 19 label 18 ($d_4/d_1=1.626$), and the pair mod 59 (labels 18, 23) with $d_4/d_1=1.0034$, a near miss.
 * *Real primitive $\chi$, $q\le10^4$ (6086 characters; `kmin_real10000.txt`).*
   * All 637 failures occur at $k=2$, and every one is at the upper end: they are exactly the characters with $\ell>-2c_a$ (0.9548 even, 0.4315 odd). The other 5449 have $d_k\ge d_1$ for every $k\le300$.
+  * An independent computation of $\ell_D$ with PARI gives the same counts: 153 of 3043 even and 484 of 3043 odd ([d2-density.md](d2-density.md), `scripts/d2_density/lower.py`).
   * The failure rate by $q$ range ($<10^3$, $10^3$–$3\cdot10^3$, $3\cdot10^3$–$6\cdot10^3$, $6\cdot10^3$–$10^4$) is 2.3%, 4.4%, 5.5%, 5.7% for even $\chi$ and 10.2%, 15.5%, 17.0%, 16.7% for odd $\chi$.
 
 **Reading.** In the range scanned, the conjecture for a Dirichlet $L$-function is decided by its first pivots:
 - for real characters by $k=2$, that is by the size of $L'/L(1,\chi)$;
 - for every character with $q\le400$ by $k\le3$.
 
-The mod-59 near miss at $k=4$ means $k\le3$ should not be expected to decide in general. A bounded $k$ might. The real failure rate appears to settle at a positive proportion. This is what one expects if $L'/L(1,\chi_D)$ has a limiting distribution over fundamental discriminants (Mourtada–Murty; Ihara–Matsumoto's $M$-functions for the family of all characters). The limiting proportion would then be the mass above $-2c_a$.
+The mod-59 near miss at $k=4$ means $k\le3$ should not be expected to decide in general. A bounded $k$ might.
+
+The real failure rate settles at a positive proportion, because $L'/L(1,\chi_D)$ has a limiting distribution over fundamental discriminants (Mourtada–Murty; Lamzouri's random model). [d2-density.md](d2-density.md) proves the per-sign limits.
+- The proportion of $D\gtrless0$ with $d_2<d_1$ tends to $P(X>\tfrac12\log\tfrac{27}4)=0.0511$ and $P(X>\tfrac32\log\tfrac43)=0.1609$. The average is $0.106$, a model value that is not certified.
+- The proof is written out unconditionally there. The Lean version is conditional on the zero-free half-plane input.
+- Its data run to $|D|\sim10^8$. The rates above rise with $q$ and already overshoot these limits at $6\cdot10^3$–$10^4$.
+- That note traces the overshoot to a finite-$D$ transient: the spread and the skewness of $\ell_D$ converge at different speeds. The excess peaks near $10^5$ and is gone by $10^6$.
 
 ## 6. The horizon: smallest eigenvalues
 
@@ -120,6 +127,6 @@ The mod-59 near miss at $k=4$ means $k\le3$ should not be expected to decide in 
 * A lower bound for $\lambda_{\min}(G_N)$ under RH, even $\exp(-N^A)$.
 * $d_k\ge d_1$ for ζ for all $k$, even assuming RH; and a version of the conjecture that survives §4–5.
 * The limiting Euclidean eigenvector, and the effective functional that selects it.
-* Whether a bounded number of pivots decides $d_k\ge d_1$ for every Dirichlet $L$-function (§5.1), and the limiting failure rate for real characters.
+* Whether a bounded number of pivots decides $d_k\ge d_1$ for every Dirichlet $L$-function (§5.1). For real characters, whether $d_2$ alone decides it beyond $q\le10^4$; if so, [d2-density.md](d2-density.md) gives the density of failures of the whole conjecture.
 
 *Prepared with AI assistance (Grok Bot). Certified numbers rest on python-flint/arb ball arithmetic; everything marked Numerical is floating point.*
