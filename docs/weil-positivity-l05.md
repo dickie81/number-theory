@@ -143,9 +143,20 @@ identity and the prime sum hold. From this:
 **Scope:** a single window length `L = 1/2` and finite mode expansions of arbitrary size. The statement says nothing
 about other `L` or about RH.
 
-**Build notes:** the kernel checks (`CmLhChk*`, `CmMomC*`, `CmFinRe*`, `CmFinRo*`) are split into modules of about
-3 minutes each. Together they need roughly 1 hour of serial kernel time. Each one needs several GB of memory, so on a
-16 GB machine run at most 2 of them in parallel.
+**Build notes:** the kernel checks (`CmLhChk*`, `CmMomC*`, `CmFinRe*`, `CmFinRo*`, `CmFinRp*`) are split into modules
+of a few minutes each. Their private memory differs by kind (measured on 4 cores for `CmLhChk0`; `CmFinRe0`, `CmFinRo0`
+and `CmFinRp0`; `CmMomC0` and `CmMomC7`):
+
+| Modules | Private memory | Time each |
+|---|---|---|
+| `CmLhChk0`–`3` | 0.9 GiB | 4.3 min |
+| `CmFinRe0`–`3`, `CmFinRo0`–`3`, `CmFinRp0`–`3` | 3.0 GiB | 6.3 min |
+| `CmMomC0`–`7` | 8.2–8.3 GiB | 4.2–4.6 min |
+
+Each compile also maps about 6 GiB of Mathlib's files, which compiles share. Two `CmMomC*` checks at once therefore
+exhaust a 16 GB machine; a CI runner shut down that way. The `CmFinR*` modules have a `-- heavy:` line and the
+`CmMomC*` modules an `-- alone:` line, so `scripts/build.sh` (the build CI runs) compiles at most two heavy modules at
+once, and each `CmMomC*` module with nothing else.
 
 ## Lean certificate for finite-mode Weil positivity (`WeilCert`)
 
@@ -577,8 +588,8 @@ The proof works in the variable s = t/30 ∈ [0,1], where Cm wψ n m = (30/π) �
   error terms. The kernel checks R ≤ εc row by row: εc = 6·10⁻⁹ (even) and 1.3·10⁻⁶ (odd). The largest R is
   ≈ 3.08·10⁻⁹ (even) and ≈ 2.95·10⁻⁹ (odd).
 
-The kernel checks are split into many small modules, each taking about 3 minutes and a few GB of memory. The total kernel
-time is roughly an hour.
+The kernel checks are split into many small modules, each taking a few minutes and up to about 8 GiB of memory; the
+build notes above give the figures.
 
 ## General test functions at L = 1/2: coercivity (`WeilCoer`, `LegSpan`, `WeilCont`, `WeilGen`)
 

@@ -1,4 +1,5 @@
 import CmFinD
+-- heavy: a kernel check that needs about 3 GiB of private memory; scripts/build.sh runs at most two heavy modules at once
 
 /-! # Kernel checks of the entry bounds, even sector, rows 21–27 -/
 
