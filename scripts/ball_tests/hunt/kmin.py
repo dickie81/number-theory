@@ -99,6 +99,43 @@ def k3_exact(K1, ell, a, q, chi2):
     return r2, r3
 
 
+def exact_small(K0, K1, ell, a, q, chi):
+    """d_k/d_1 for k <= K0 as arb balls: Hermitian LDL in ball arithmetic of the closed-form G_{K0}.
+    chi = [chi(0), ..., chi(K0)] as acb (all 1 for zeta, q = 1). Only chi(p), p < K0 prime, and K_1, L'/L(1, chi) enter."""
+    g = arb.const_euler(); l2 = arb(2).log(); pi = arb.pi()
+    Lam = [arb(0)]*(K0+1)
+    for p in primes_upto(K0):
+        pk = p
+        while pk <= K0: Lam[pk] = arb(p).log(); pk *= p
+    A = [acb(0)]*(K0+1); B = [acb(0)]*(K0+1)
+    for n in range(1, K0+1): A[n] = A[n-1] + chi[n]*Lam[n]/n; B[n] = B[n-1] + chi[n]*Lam[n]
+    if q != 1: b = -(arb(q)/pi).log() + g + l2 - ell.conjugate()
+
+    def br(m, n):  # K(m/n)/sqrt(m/n), m > n
+        X = arb(m)/n; y = arb(n)/m; k = m//n; S = A[k] - B[k]*y
+        t0 = y + (1-y)*(1-y).log()/2 - (1+y)*(1+y).log()/2
+        if q == 1: return S - X.log() + 1 + g - (2*pi).log()*y + t0
+        Ca, ta = (1 - l2, t0) if a == 0 else (l2, (1+y)*(1+y).log()/2 + (1-y)*(1-y).log()/2)
+        return K1 + S + (1-a)*(1 - (1+X.log())*y) + b*(1-y) - Ca + ta
+    G = [[acb(0)]*K0 for _ in range(K0)]
+    for m in range(1, K0+1):
+        G[m-1][m-1] = acb(m*K1)
+        for n in range(1, m):
+            G[m-1][n-1] = m*br(m, n); G[n-1][m-1] = G[m-1][n-1].conjugate()
+    d = []
+    for k in range(K0):
+        p = G[k][k].real; d.append(p)
+        if not p > 0: break
+        for i in range(k+1, K0):
+            f = G[i][k]/p
+            for j in range(k+1, i+1):
+                G[i][j] = G[i][j] - f*G[j][k].conjugate()
+            G[i][i] = acb(G[i][i].real)
+        for i in range(k+1, K0):
+            for j in range(i+1, K0): G[i][j] = G[j][i].conjugate()
+    return [x/d[0] for x in d]
+
+
 def chi_values(c, q, N):
     e = int(dirichlet_group(q).exponent()); out = np.zeros(N+1, dtype=complex)
     for n in range(1, N+1):
@@ -129,10 +166,25 @@ def work(args):
         K1f = float(K1.mid()); lf = complex(float(ell.real.mid()), float(ell.imag.mid()))
         bf = -math.log(q/math.pi) + GAMMA + LOG2 - lf.conjugate()
         R = row(K1f, bf, a, q, chi, N, r2, r3)
+        cr = exact_small(K0, K1, ell, a, q, [c(j) for j in range(K0+1)])
+        cfirst, cunc = certified_first(cr)
+        xdiff = max(abs(float((cr[1] - r2).mid())), abs(float((cr[2] - r3).mid())))  # LDL against the k <= 3 formula
         out.append((q, n, a, K1f, float(r2.mid()), float(r3.mid()), bool(r2 < 1), bool(r2 > 1), bool(r3 < 1), bool(r3 > 1),
                     R['kmin'], R['rmin'], R['first_below'], R['n_below'], R['pd'], R['dev'],
-                    [float(R['r'][k-1]) for k in (5, 10, 50, 100) if k <= N]))
+                    [float(R['r'][k-1]) for k in (5, 10, 50, 100) if k <= N],
+                    cfirst, cunc, xdiff, [float(x.mid()) for x in cr]))
     return out
+
+
+K0 = 8  # pivots certified in arb up to this k
+
+
+def certified_first(cr):
+    """(first k with d_k/d_1 < 1 certified, whether an undecided ball came first), over k <= len(cr)."""
+    for k, x in enumerate(cr[1:], start=2):
+        if x < 1: return k, False
+        if not x > 1: return k, True
+    return None, False
 
 
 def check():
@@ -177,19 +229,22 @@ if __name__ == '__main__':
         chi = np.ones(N+1); chi[0] = 0
         R = row(float(K1.mid()), 0, 0, 1, chi, N, r2, r3, zeta=True)
         print('zeta d2/d1', r2, 'd3/d1', r3, 'min %.6f at k=%d' % (R['rmin'], R['kmin']), 'first below', R['first_below'], 'dev %.1e' % R['dev'])
+        print('arb LDL k <= %d:' % K0, [x.str(10) for x in exact_small(K0, K1, None, 0, 1, [acb(0)] + [acb(1)]*K0)])
     else:
         Q0, Q1, mode, N = int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], int(sys.argv[4])
         t = time.time()
         with Pool(os.cpu_count()) as P: R = sum(P.map(work, [(q, mode, N) for q in range(Q0, Q1+1)], chunksize=2), [])
         import json
         json.dump(R, open('kmin_%s_%d_%d_N%d.json' % (mode, Q0, Q1, N), 'w'))
-        nf2 = sum(r[6] for r in R); nf3 = sum(r[8] and not r[6] for r in R)
-        unc = sum(not (r[6] or r[7]) or not (r[8] or r[9]) for r in R)
-        late = [r for r in R if r[7] and r[9] and r[12] is not None]
-        print('chars', len(R), '| d2<d1 certified', nf2, '| d3<d1<=d2 certified', nf3, '| k<=3 uncertified', unc,
-              '| pass k<=3 but some d_k<d_1 (k<=%d)' % N, len(late), '| not PD', sum(not r[14] for r in R),
-              '| max |float-arb| at k<=3 %.1e' % max(r[15] for r in R), '| time %.0f' % (time.time()-t))
         from collections import Counter
+        late = [r for r in R if r[7] and r[9] and r[12] is not None]
+        print('chars', len(R), '| not PD', sum(not r[14] for r in R), '| time %.0f' % (time.time()-t))
+        print('first certified d_k < d_1 (k <= %d, arb):' % K0, sorted(Counter(r[17] for r in R if r[17] and not r[18]).items()),
+              '| undecided balls', sum(r[18] for r in R), '| none for k <= %d' % K0, sum(r[17] is None for r in R))
+        print('pass k <= 3 but some d_k < d_1 for k <= %d (float):' % N, len(late),
+              '| pass k <= %d (arb) but some d_k < d_1 for k <= %d (float):' % (K0, N), sum(r[17] is None and r[12] is not None for r in R))
+        print('agreement: float vs arb at k <= 3 %.1e, LDL vs closed formula at k <= 3 %.1e' % (
+            max(r[15] for r in R), max(r[19] for r in R)))
         print('argmin k:', sorted(Counter(min(r[10], 11) for r in R).items()), '(11 = k>10)')
         for r in sorted(late, key=lambda r: r[11])[:20]:
             print('LATE q=%d n=%d a=%d K1=%.4f d2/d1=%.4f d3/d1=%.4f min %.5f@%d first_below %s n_below %d'
