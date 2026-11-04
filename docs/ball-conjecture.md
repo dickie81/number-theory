@@ -581,3 +581,16 @@ every `x` in the closed span of the curve (`BallCurve.flow_continuous_closure`, 
 For an abstract realization it can fail off the closed span: on an orthogonal summand `ℂ` the definition allows `U_s`
 to act by any character of `ℝ`, including a discontinuous one built from a Hamel basis. Not proved: whether the curve
 spans `ℓ²` densely in the model, and anything about lattices spanned by points of the curve other than the integers.
+
+## Tests
+
+[ball-conjecture-tests.md](ball-conjecture-tests.md) collects:
+- the closed form of `K_H` (the derivation that `scripts/ball_certificate.py` records), and its Dirichlet analogue;
+- an exact criterion for `d_2 ≥ d_1`;
+- an independent cross-check in ball arithmetic of the bound `d_k > d_1` for ζ, at `k ≤ 500`, inside the range
+  `k ≤ 10^4` that `scripts/ball_certificate.py` proves (step 6);
+- a function-field analogue, where a null vector is forced at `k = q^{2g}`;
+- Dirichlet characters for which `d_2 < d_1` (for example χ mod 19 and χ₋₁₆₃);
+- results on the smallest eigenvalue of the orbit Gram matrix (it is positive definite under RH, with `λ_min ≪ log²N/N`).
+
+The scripts are in `scripts/ball_tests/`.

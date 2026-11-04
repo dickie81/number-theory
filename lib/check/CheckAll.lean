@@ -24,6 +24,27 @@ import ChiUniform
 import Littlewood
 import LeastNonresidue
 import SquarefreeCount
+import D2GS
+import D2Prim
+import D2Tail
+import D2Hcount
+import MomentConv
+import RandModel
+import ModelMoments
+import ModelTrunc
+import QuantMoments
+import D2Dist
+import NoAtoms
+import D2Density
+import D2Hdist
+import WeilChiK1
+import WeilChiPos
+import D2Parity
+import D2Good
+import WeilChiB
+import WeilChiZ
+import WeilChiZB
+import CAClosed
 import ExplicitSmooth
 import ExplicitConstants
 import QuadRing
@@ -335,6 +356,59 @@ import CertInstances
 #print axioms LeastNonresidue.exists_nonsquare_le_rpow
 #print axioms SquarefreeCount.sum_sqf_eq
 #print axioms SquarefreeCount.hasSum_moebius_div_sq
+#print axioms GSKron.gs_kron_pos
+#print axioms GSKron.gs_kron_neg
+#print axioms GSUncond.moment_pos_unconditional
+#print axioms GSUncond.moment_neg_unconditional
+#print axioms GSNu.nu1_eq
+#print axioms GSNu.delta_pos_closed
+#print axioms GSNu.delta_neg_closed
+#print axioms GSPrim.primitive_pos
+#print axioms GSPrim.primitive_neg
+#print axioms GSTail.tail_pos
+#print axioms GSTail.tail_neg
+#print axioms GSHcount.hcount_pos
+#print axioms GSHcount.hcount_neg
+#print axioms MomentConv.tendsto_of_moments
+#print axioms MomentConv.ext_of_moments
+#print axioms RandModel.ae_tendsto_X
+#print axioms RandModel.integrable_exp_X
+#print axioms RandModel.integrable_exp_abs_ν
+#print axioms RandModel.integrable_pow_ν
+#print axioms ModelMoments.moment_pos_model
+#print axioms ModelMoments.moment_neg_model
+#print axioms ModelTrunc.moment_A_tendsto
+#print axioms QuantMoments.moment_quant_pos
+#print axioms QuantMoments.moment_quant_neg
+#print axioms D2Dist.moments_pos
+#print axioms D2Dist.moments_neg
+#print axioms D2Dist.dist_pos
+#print axioms D2Dist.dist_neg
+#print axioms NoAtoms.ν_singleton
+#print axioms D2Density.K1_pos
+#print axioms D2Density.d2_density_log
+#print axioms D2Hdist.hdist_pos
+#print axioms D2Hdist.hdist_neg
+#print axioms D2Hdist.d2_density_pos
+#print axioms D2Hdist.d2_density_neg
+#print axioms PsiOmega.hasSum_K1
+#print axioms PsiOmega.K1C_pos
+#print axioms D2Parity.kron_pos
+#print axioms D2Parity.kron_neg
+#print axioms D2Good.d2_density_pos'
+#print axioms D2Good.d2_density_neg'
+#print axioms PsiOmega.theoremB
+#print axioms PsiOmega.rootNumber_eq_neg_one_pow
+#print axioms PsiOmega.weil_XiZ
+#print axioms PsiOmega.K1Z_eq
+#print axioms PsiOmega.K1Z_pos
+#print axioms PsiOmega.theoremBZ
+#print axioms D2Good.d2_density_pos_B
+#print axioms D2Good.d2_density_neg_B
+#print axioms CAClosed.cA_zero
+#print axioms CAClosed.cA_one
+#print axioms D2Good.d2_density_pos_closed
+#print axioms D2Good.d2_density_neg_closed
 #print axioms SquarefreeCount.abs_sub_sum_le
 #print axioms SquarefreeCount.abs_sum_sqf_sub_le
 #print axioms SquarefreeCount.squarefree_isBigO_of_zeroFree
