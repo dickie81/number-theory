@@ -90,12 +90,12 @@ theorem sL_orth (m n : ℕ) :
     rw [← this]; congr 1; funext y; rw [← rod_eval]; ring
   have hf : ∀ n, (n ! : ℝ) ≠ 0 := fun n => by positivity
   rcases lt_trichotomy m n with h | h | h
-  · rw [if_neg h.ne]
+  · rw [ite_eq_right h.ne]
     have := key m n h.le
     rw [iterate_derivative_eq_zero ((natDeg_sL m).trans_lt h)] at this
     simp only [eval_zero, zero_mul, intervalIntegral.integral_zero, mul_zero] at this
     exact_mod_cast (mul_eq_zero.mp this).resolve_left (hf n)
-  · subst h; rw [if_pos rfl]
+  · subst h; rw [ite_eq_left rfl]
     have := key m m le_rfl
     rw [iter_sL_self] at this
     simp only [eval_C] at this
@@ -116,7 +116,7 @@ theorem sL_orth (m n : ℕ) :
     apply mul_left_cancel₀ hm
     rw [this]; push_cast; field_simp
     exact hp
-  · rw [if_neg h.ne']
+  · rw [ite_eq_right h.ne']
     have := key n m h.le
     rw [iterate_derivative_eq_zero ((natDeg_sL n).trans_lt h)] at this
     simp only [eval_zero, zero_mul, intervalIntegral.integral_zero, mul_zero] at this
@@ -139,8 +139,8 @@ lemma legT_eq (n : ℕ) : legT n = cut (P n) := by
   funext u
   unfold legT cut P I0
   by_cases h : |u| ≤ 1 / 2
-  · rw [if_pos h, Set.indicator_of_mem (by rw [Set.mem_Icc]; exact abs_le.mp h), aeval_eq]
-  · rw [if_neg h, Set.indicator_of_notMem (by rw [Set.mem_Icc]; intro h'; exact h (abs_le.mpr h'))]
+  · rw [ite_eq_left h, Set.indicator_of_mem (by rw [Set.mem_Icc]; exact abs_le.mp h), aeval_eq]
+  · rw [ite_eq_right h, Set.indicator_of_notMem (by rw [Set.mem_Icc]; intro h'; exact h (abs_le.mpr h'))]
 
 lemma cut_mul (p q : ℝ → ℝ) (w : ℝ) :
     (fun t => cut p t * cut q (t - w))
@@ -286,7 +286,7 @@ theorem parseval (p q : ℝ → ℝ) (hp : Continuous p) (hq : Continuous q) (S 
     refine (show Integrable (fun ξ : ℝ => ((S (2 * π * ξ) : ℝ) : ℂ)) from hSint.ofReal).norm.mono'
       (hc1.smul hc2).aestronglyMeasurable ?_
     filter_upwards with ξ
-    simp only [Pi.mul_apply, Pi.smul_apply, smul_eq_mul, norm_mul, Complex.norm_exp_ofReal_mul_I, one_mul, le_refl]
+    simp only [Pi.mul_apply, smul_eq_mul, norm_mul, Complex.norm_exp_ofReal_mul_I, one_mul, le_refl]
   rw [← RCLike.re_to_complex, ← integral_re hI]
   have e1 : ∀ ξ : ℝ, RCLike.re (Complex.exp (↑(2 * π * (ξ * v)) * Complex.I) • (S (2 * π * ξ) : ℂ))
       = (fun t => Real.cos (t * v) * S t) (2 * π * ξ) := by
@@ -437,7 +437,7 @@ Mathlib Fourier inversion (`parseval`). -/
 theorem modeOrth {par : ℕ} (hp : par < 2) : ModeOrth par := by
   intro i j
   have hI : Complex.I ^ par * Complex.I ^ par * (-1) ^ par = 1 := by
-    interval_cases par <;> simp [Complex.I_sq]
+    interval_cases par <;> simp
   set a := 2 * i + par
   set b := 2 * j + par
   obtain ⟨C1, hC1, h1⟩ := modeDecay a
@@ -488,7 +488,7 @@ lemma fourier_fx (N : ℕ) (x : ℕ → ℝ) (ξ : ℝ) :
     funext t; unfold fx; push_cast; rfl
   rw [e, Real.fourier_real_eq_integral_exp_smul]
   simp_rw [smul_eq_mul, Finset.mul_sum]
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · rw [WeilZhuRed.Fx, Complex.ofReal_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     have h := LF_sec (par := 0) (by norm_num) i ξ
@@ -499,7 +499,7 @@ lemma fourier_fx (N : ℕ) (x : ℕ → ℝ) (ξ : ℝ) :
     have hl := (legC_int (2 * i)).const_mul (x i : ℂ)
     refine hl.norm.mono' ((Continuous.aestronglyMeasurable (by fun_prop)).mul hl.aestronglyMeasurable) ?_
     filter_upwards with v
-    simp only [Pi.mul_apply, norm_mul, Complex.norm_exp_ofReal_mul_I, one_mul, le_refl]
+    simp only [norm_mul, Complex.norm_exp_ofReal_mul_I, one_mul, le_refl]
 
 /-- **Wiener–Khinchin** for `fx`: `h(v) = (1/π)∫₀^∞ cos(tv) F(t)² dt` for `|v| ≠ 1`. -/
 theorem acorr_gen (N : ℕ) (x : ℕ → ℝ) {v : ℝ} (hv : |v| ≠ 1) : WeilForm.autocorr (fx N x) v
@@ -511,10 +511,10 @@ theorem acorr_gen (N : ℕ) (x : ℕ → ℝ) {v : ℝ} (hv : |v| ≠ 1) : WeilF
     rw [That_neg, pow_add, pow_mul]; norm_num
   have hc : Continuous (WeilZhuRed.Fx 0 N x) := by
     unfold WeilZhuRed.Fx
-    exact continuous_finset_sum _ (fun i _ => continuous_const.mul (That_cont _))
+    exact continuous_finsetSum _ (fun i _ => continuous_const.mul (That_cont _))
   have hl : |(-v)| ≠ 1 := by rw [abs_neg]; exact hv
   have hQ : Continuous (Qx N x) := by
-    unfold Qx; exact continuous_finset_sum _ (fun i _ => continuous_const.mul (P_cont _))
+    unfold Qx; exact continuous_finsetSum _ (fun i _ => continuous_const.mul (P_cont _))
   have key := parseval (Qx N x) (Qx N x) hQ hQ (fun t => WeilZhuRed.Fx 0 N x t ^ 2) (hc.pow 2)
     (fun t => by simp only [hev]) (C ^ 2) (fun t ht => by
       have h1 : 0 < 1 + t := by linarith

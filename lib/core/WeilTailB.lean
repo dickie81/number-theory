@@ -213,7 +213,7 @@ theorem Rm_symm (par : ℕ) (σ : ℝ) (w : ℝ → ℝ) (β : ℝ) (i j : ℕ) 
   unfold Rm; rw [Cm_symm w (2 * i + par)]
   by_cases h : i = j
   · subst h; rfl
-  · rw [if_neg h, if_neg (Ne.symm h)]; ring
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]; ring
 
 theorem Rm_entry (par : ℕ) {σ : ℝ} (hσ : |σ| ≤ 1) (w : ℝ → ℝ) {M : ℝ} (hM : 0 ≤ M)
     (hw : ∀ t, 0 ≤ t → t ≤ 30 → |w t| ≤ M) (β : ℝ) (i j : ℕ) :
@@ -337,7 +337,7 @@ theorem sector_margin (par : ℕ) (hpar : par ≤ 1) {σ : ℝ} (hσ : |σ| ≤ 
   · intro i hi
     have hi' := (mem_Ico.mp hi).1
     have e := hE i i
-    rw [if_pos rfl, abs_le] at e
+    rw [ite_eq_left rfl, abs_le] at e
     have hb := hbt i hi'
     have := b_nonneg (2 * i + par)
     have := βs_ge
@@ -350,8 +350,8 @@ theorem sector_margin (par : ℕ) (hpar : par ≤ 1) {σ : ℝ} (hσ : |σ| ≤ 
         ≤ ∑ j ∈ Ico 28 N, 558 * b (2 * i + par) * b (2 * j + par) := by
           refine sum_le_sum (fun j _ => ?_)
           by_cases h : i = j
-          · rw [if_pos h, abs_zero]; have := b_nonneg (2 * j + par); positivity
-          · rw [if_neg h]; have := hE i j; rw [if_neg h, sub_zero] at this; exact this
+          · rw [ite_eq_left h, abs_zero]; have := b_nonneg (2 * j + par); positivity
+          · rw [ite_eq_right h]; have := hE i j; rw [ite_eq_right h, sub_zero] at this; exact this
       _ = 558 * b (2 * i + par) * ∑ j ∈ Ico 28 N, b (2 * j + par) := by rw [mul_sum]
       _ ≤ 558 * B0 * (2 * B0) := by
           have ts := tail_sum par N hN
@@ -365,7 +365,7 @@ theorem sector_margin (par : ℕ) (hpar : par ≤ 1) {σ : ℝ} (hσ : |σ| ≤ 
           have hij : i ≠ j := by
             have := mem_range.mp hi; have := (mem_Ico.mp hj).1; omega
           have e := hE i j
-          rw [if_neg hij, sub_zero] at e
+          rw [ite_eq_right hij, sub_zero] at e
           have : R i j ^ 2 ≤ (558 * b (2 * i + par) * b (2 * j + par)) ^ 2 := by
             rw [← sq_abs]; exact pow_le_pow_left₀ (abs_nonneg _) e 2
           nlinarith

@@ -103,7 +103,7 @@ lemma xh_out {i : ℕ} (hi : 10 ≤ i) : xh i = 0 := by unfold xh; rw [yq_out hi
 lemma xv_near1 {i : ℕ} (hi : i < 10) : |xv i - (xh i : ℝ)| ≤ 4 / 10 ^ 30 := by
   obtain ⟨-, -, -, -, hy⟩ := br_spec hi
   obtain ⟨b1, b2⟩ := bracket hi
-  unfold xv xh; rw [if_pos hi]; push_cast
+  unfold xv xh; rw [ite_eq_left hi]; push_cast
   rw [div_eq_mul_one_div, ← mul_sub, abs_mul]
   have : |1 / Real.sqrt (4 * i + 1) - (lq.getD i 0 : ℝ)| ≤ 1 / 10 ^ 30 := by rw [abs_le]; constructor <;> linarith
   calc _ ≤ 4 * (1 / 10 ^ 30) := mul_le_mul hy this (abs_nonneg _) (by norm_num)
@@ -128,11 +128,11 @@ lemma xv_near (i j : ℕ) : |xv i * xv j - (xh i : ℝ) * (xh j : ℝ)| ≤ 1 / 
   have ei : |xv i - (xh i : ℝ)| ≤ 4 / 10 ^ 30 := by
     by_cases hi : i < 10
     · exact xv_near1 hi
-    · unfold xv; rw [if_neg hi, xh_out (by omega)]; norm_num
+    · unfold xv; rw [ite_eq_right hi, xh_out (by omega)]; norm_num
   have ej : |xv j - (xh j : ℝ)| ≤ 4 / 10 ^ 30 := by
     by_cases hj : j < 10
     · exact xv_near1 hj
-    · unfold xv; rw [if_neg hj, xh_out (by omega)]; norm_num
+    · unfold xv; rw [ite_eq_right hj, xh_out (by omega)]; norm_num
   rw [show xv i * xv j - (xh i : ℝ) * (xh j : ℝ) = (xv i - xh i) * xv j + (xh i : ℝ) * (xv j - xh j) by ring]
   refine (abs_add_le _ _).trans ?_
   rw [abs_mul, abs_mul]
@@ -142,7 +142,7 @@ lemma xv_near (i j : ℕ) : |xv i * xv j - (xh i : ℝ) * (xh j : ℝ)| ≤ 1 / 
 /-- the shifted reduced matrix `Rm + c·vvᵀ` -/
 noncomputable def Rg (i j : ℕ) : ℝ := Rm 0 1 wψ βs i j + (cg : ℝ) * xv i * xv j
 
-noncomputable def GMn (k i : ℕ) : ℝ := if h : k < 28 ∧ i < 28 then ((getq GMq k i : ℚ) : ℝ) else 0
+noncomputable def GMn (k i : ℕ) : ℝ := if _h : k < 28 ∧ i < 28 then ((getq GMq k i : ℚ) : ℝ) else 0
 noncomputable def GDn (k : ℕ) : ℝ := if k < 28 then ((GDq.getD k 0 : ℚ) : ℝ) else 0
 
 lemma GDn_nonneg (k : ℕ) : 0 ≤ GDn k := by
@@ -193,9 +193,9 @@ lemma Rg_symm (i j : ℕ) : Rg i j = Rg j i := by unfold Rg; rw [Rm_symm]; ring
 lemma Rg_out (i j : ℕ) (h : 28 ≤ i ∨ 28 ≤ j) : Rg i j = Rm 0 1 wψ βs i j := by
   unfold Rg
   rcases h with h | h
-  · have : xv i = 0 := by unfold xv; rw [if_neg (by omega)]
+  · have : xv i = 0 := by unfold xv; rw [ite_eq_right (by omega)]
     rw [this]; ring
-  · have : xv j = 0 := by unfold xv; rw [if_neg (by omega)]
+  · have : xv j = 0 := by unfold xv; rw [ite_eq_right (by omega)]
     rw [this]; ring
 
 theorem sector_margin_gen (par : ℕ) (hpar : par ≤ 1) {σ : ℝ} (hσ : |σ| ≤ 1)
@@ -222,7 +222,7 @@ theorem sector_margin_gen (par : ℕ) (hpar : par ≤ 1) {σ : ℝ} (hσ : |σ| 
   · intro i hi
     have hi' := (mem_Ico.mp hi).1
     have e := hE i i
-    rw [← hR i i (Or.inl hi'), if_pos rfl, abs_le] at e
+    rw [← hR i i (Or.inl hi'), ite_eq_left rfl, abs_le] at e
     have hb := hbt i hi'
     have := b_nonneg (2 * i + par)
     have := βs_ge
@@ -235,8 +235,8 @@ theorem sector_margin_gen (par : ℕ) (hpar : par ≤ 1) {σ : ℝ} (hσ : |σ| 
         ≤ ∑ j ∈ Ico 28 N, 558 * b (2 * i + par) * b (2 * j + par) := by
           refine sum_le_sum (fun j _ => ?_)
           by_cases h : i = j
-          · rw [if_pos h, abs_zero]; have := b_nonneg (2 * j + par); positivity
-          · rw [if_neg h, hR i j (Or.inl hi')]; have := hE i j; rw [if_neg h, sub_zero] at this; exact this
+          · rw [ite_eq_left h, abs_zero]; have := b_nonneg (2 * j + par); positivity
+          · rw [ite_eq_right h, hR i j (Or.inl hi')]; have := hE i j; rw [ite_eq_right h, sub_zero] at this; exact this
       _ = 558 * b (2 * i + par) * ∑ j ∈ Ico 28 N, b (2 * j + par) := by rw [mul_sum]
       _ ≤ 558 * B0 * (2 * B0) := by
           have ts := tail_sum par N hN
@@ -250,7 +250,7 @@ theorem sector_margin_gen (par : ℕ) (hpar : par ≤ 1) {σ : ℝ} (hσ : |σ| 
           have hij : i ≠ j := by
             have := mem_range.mp hi; have := (mem_Ico.mp hj).1; omega
           have e := hE i j
-          rw [if_neg hij, sub_zero, ← hR i j (Or.inr (mem_Ico.mp hj).1)] at e
+          rw [ite_eq_right hij, sub_zero, ← hR i j (Or.inr (mem_Ico.mp hj).1)] at e
           have : R i j ^ 2 ≤ (558 * b (2 * i + par) * b (2 * j + par)) ^ 2 := by
             rw [← sq_abs]; exact pow_le_pow_left₀ (abs_nonneg _) e 2
           nlinarith

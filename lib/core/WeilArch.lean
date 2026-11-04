@@ -86,7 +86,7 @@ theorem archBridge : ArchBridge := by
   set F := WeilZhuRed.Fx 0 N x with hFdef
   have hc : Continuous F := by
     rw [hFdef]; unfold WeilZhuRed.Fx
-    exact continuous_finset_sum _ (fun i _ => continuous_const.mul (That_cont _))
+    exact continuous_finsetSum _ (fun i _ => continuous_const.mul (That_cont _))
   have P := modePlancherel_of modeDecay 0 (modeOrth (by norm_num))
   have hF2 : IntegrableOn (fun t => F t ^ 2) (Ioi 0) := by
     simpa using (WeilZhuRed.expand_int 0 N x (fun _ => 1) (Ioi 0) (fun i j => by simpa using P.int1 i j)).1

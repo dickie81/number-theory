@@ -106,6 +106,7 @@ theorem primes_dyadic_ge {ε : ℝ} (hε : 0 < ε) : ∀ᶠ x : ℝ in atTop,
     exact hkey
   linarith [this, (div_le_div_of_nonneg_right hθ h2x0.le)]
 
+omit [SieveCert.GridOKC] in
 /-- For a route with `RouteOK` and a grid with `GridOK` that fit (`Fits`), and `ε > 0`:
 `S(B, z_top) ≥ φ(q)⁻¹((1 − ε)x/log x − q)` for large `q`. -/
 theorem TB_ev {ε : ℝ} (hε : 0 < ε) : ∀ᶠ q : ℕ in atTop, LargeQ q →

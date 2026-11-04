@@ -39,9 +39,9 @@ lemma span (D : ℕ) : ∀ r : ℝ[X], r.degree < D →
         have h2 : (sL D).coeff k = 0 := coeff_eq_zero_of_natDegree_lt (by rw [sL_natDegree]; exact h)
         rw [h1, h2]; ring)
     refine ⟨fun n => if n = D then a else c n, fun y => ?_⟩
-    rw [sum_range_succ]; simp only [if_true]
+    rw [sum_range_succ]; simp only [ite_true]
     have : ∑ n ∈ range D, (if n = D then a else c n) * (sL n).eval y = ∑ n ∈ range D, c n * (sL n).eval y :=
-      sum_congr rfl fun n hn => by rw [if_neg (ne_of_lt (mem_range.1 hn))]
+      sum_congr rfl fun n hn => by rw [ite_eq_right (ne_of_lt (mem_range.1 hn))]
     rw [this, ← hc]; simp
 
 lemma sum_even_odd (a : ℕ → ℝ) (M : ℕ) :
@@ -77,11 +77,11 @@ theorem poly_hx (p : ℝ[X]) : ∃ N x y, hx N x y = cutp (fun u => p.eval u) :=
     rw [z, add_zero]
     refine sum_congr rfl fun n hn => ?_
     have hn' := mem_range.1 hn
-    simp only [d, if_pos hn', legT, if_pos hu, aeval_eq]
+    simp only [d, ite_eq_left hn', legT, ite_eq_left hu, aeval_eq]
     have : 0 < Real.sqrt (2 * n + 1) := Real.sqrt_pos.2 (by positivity)
     field_simp
   · refine sum_eq_zero fun n _ => ?_
-    simp only [legT, if_neg hu, mul_zero]
+    simp only [legT, ite_eq_right hu, mul_zero]
 
 /-! ## antiderivative -/
 

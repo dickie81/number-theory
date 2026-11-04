@@ -123,7 +123,7 @@ lemma pchk_spec {pq} (h : pchk pq = true) {i : ℕ} (hi : i < 28) : |((pq.getD i
 
 /-- `certMat` with the cast data is the cast of the rational `certq`. -/
 lemma certMat_eq (Mq : List (List ℚ)) (Dq : List ℚ) (δ : ℚ) {i j : ℕ} (hi : i < 28) (hj : j < 28) :
-    certMat 28 (fun k i => if h : k < 28 ∧ i < 28 then ((getq Mq k i : ℚ) : ℝ) else 0)
+    certMat 28 (fun k i => if _h : k < 28 ∧ i < 28 then ((getq Mq k i : ℚ) : ℝ) else 0)
       (fun k => if k < 28 then ((Dq.getD k 0 : ℚ) : ℝ) else 0) (δ : ℝ) i j = ((certq Mq Dq δ i j : ℚ) : ℝ) := by
   unfold certMat certq
   rw [Rat.cast_add, cast_lsum]

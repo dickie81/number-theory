@@ -56,19 +56,19 @@ noncomputable def lp (c : ℕ → ℚ) : ℝ[X] := ∑ k ∈ range 19, C ((c k :
 
 lemma coeff_lp (c : ℕ → ℚ) (k : ℕ) : (lp c).coeff k = if k < 19 then ((c k : ℚ) : ℝ) else 0 := by
   unfold lp
-  rw [finset_sum_coeff]
+  rw [finsetSum_coeff]
   simp_rw [coeff_C_mul_X_pow]
   split_ifs with h
-  · rw [sum_eq_single k (fun b _ hb => if_neg (Ne.symm hb)) (fun hk => absurd (mem_range.2 h) hk), if_pos rfl]
-  · exact sum_eq_zero (fun b hb => if_neg (by intro e; subst e; exact h (mem_range.1 hb)))
+  · rw [sum_eq_single k (fun b _ hb => ite_eq_right (Ne.symm hb)) (fun hk => absurd (mem_range.2 h) hk), ite_eq_left rfl]
+  · exact sum_eq_zero (fun b hb => ite_eq_right (by intro e; subst e; exact h (mem_range.1 hb)))
 
 lemma derivative_lp (c : ℕ → ℚ) : derivative (lp c) = lp (lder c) := by
   ext k
   rw [coeff_derivative, coeff_lp, coeff_lp]
   unfold lder
   by_cases h1 : k + 1 < 19
-  · rw [if_pos h1, if_pos (by omega), if_pos h1]; push_cast; ring
-  · rw [if_neg h1, zero_mul]
+  · rw [ite_eq_left h1, ite_eq_left (by omega), ite_eq_left h1]; push_cast; ring
+  · rw [ite_eq_right h1, zero_mul]
     split_ifs <;> simp
 
 lemma D_lp (j : ℕ) : GsFourier.D (lp c0) j = lp (cj j) := by
@@ -80,7 +80,7 @@ lemma D_lp (j : ℕ) : GsFourier.D (lp c0) j = lp (cj j) := by
     unfold cj; rw [Function.iterate_succ_apply']
 
 lemma eval_lp (c : ℕ → ℚ) (w : ℝ) : (lp c).eval w = ∑ k ∈ range 19, ((c k : ℚ) : ℝ) * w ^ k := by
-  unfold lp; rw [eval_finset_sum]; simp
+  unfold lp; rw [eval_finsetSum]; simp
 
 lemma eval_lp_q (c : ℕ → ℚ) (r : ℚ) : (lp c).eval (r : ℝ) = ((ev c r : ℚ) : ℝ) := by
   rw [eval_lp]; unfold ev; rw [cast_lsum']; push_cast; rfl
@@ -90,11 +90,11 @@ lemma int_lp_sq (c : ℕ → ℚ) : ∫ w in (0:ℝ)..1, (lp c).eval w ^ 2 = ((s
       = fun w => ∑ k ∈ range 19, ∑ m ∈ range 19, ((c k : ℚ) : ℝ) * ((c m : ℚ) : ℝ) * w ^ (k + m) := by
     funext w; rw [eval_lp, sq, sum_mul_sum]
     refine sum_congr rfl (fun k _ => sum_congr rfl (fun m _ => ?_)); ring
-  rw [e, intervalIntegral.integral_finset_sum (fun k _ => by
+  rw [e, intervalIntegral.integral_finsetSum (fun k _ => by
     apply Continuous.intervalIntegrable; fun_prop)]
   unfold sq01; rw [cast_lsum']
   refine sum_congr rfl (fun k _ => ?_)
-  rw [intervalIntegral.integral_finset_sum (fun m _ => by apply Continuous.intervalIntegrable; fun_prop),
+  rw [intervalIntegral.integral_finsetSum (fun m _ => by apply Continuous.intervalIntegrable; fun_prop),
     cast_lsum']
   refine sum_congr rfl (fun m _ => ?_)
   rw [intervalIntegral.integral_const_mul, integral_pow]
@@ -109,7 +109,7 @@ lemma slc_zero {n k : ℕ} (h : n < k) : slc n k = 0 := by
 
 lemma sum_sL_eq : ∑ i ∈ range 10, C ((yq.getD i 0 : ℚ) : ℝ) * WeilModes.sL (2 * i) = lp c0 := by
   ext k
-  rw [finset_sum_coeff, coeff_lp]
+  rw [finsetSum_coeff, coeff_lp]
   simp_rw [coeff_C_mul]
   have hc : ∀ i, (WeilModes.sL (2 * i)).coeff k = ((slc (2 * i) k : ℚ) : ℝ) := by
     intro i
@@ -132,7 +132,7 @@ lemma fx_cutp : WeilPlanch.fx 10 xv = LegSpan.cutp (fun u => (lp c0).eval (u + 1
     rw [hp]
     refine sum_congr rfl (fun i hi => ?_)
     have hi' := mem_range.1 hi
-    unfold xv; rw [if_pos hi']
+    unfold xv; rw [ite_eq_left hi']
     unfold WeilModes.sL
     rw [eval_map, aeval_def, algebraMap_int_eq]
     have hs : Real.sqrt (2 * ((2 * i : ℕ) : ℝ) + 1) = Real.sqrt (4 * i + 1) := by push_cast; ring_nf
@@ -172,7 +172,7 @@ lemma Fx_bound {t : ℝ} (ht : 0 < t) :
 
 lemma xv_le_bb {i : ℕ} (hi : i < 10) : |xv i| ≤ ((bb i : ℚ) : ℝ) := by
   obtain ⟨-, b2⟩ := bracket hi
-  unfold xv bb; rw [if_pos hi]; push_cast
+  unfold xv bb; rw [ite_eq_left hi]; push_cast
   have hs : 0 < 1 / Real.sqrt (4 * (i:ℝ) + 1) := by
     have := Real.sqrt_pos.2 (by positivity : (0:ℝ) < 4 * i + 1); positivity
   rw [div_eq_mul_one_div, abs_mul, abs_of_pos hs]
@@ -229,11 +229,11 @@ lemma normSq_v : WeilForm.normSq (WeilPlanch.fx 10 xv) = ((nq : ℚ) : ℝ) := b
   rw [h]; simp only [Pi.zero_apply, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, sum_const_zero, add_zero]
   unfold nq; rw [cast_lsum']
   refine sum_congr rfl (fun i hi => ?_)
-  unfold xv; rw [if_pos (mem_range.1 hi), div_pow, Real.sq_sqrt (by positivity)]; push_cast; ring
+  unfold xv; rw [ite_eq_left (mem_range.1 hi), div_pow, Real.sq_sqrt (by positivity)]; push_cast; ring
 
-lemma Ik_eq (k : ℕ) (hk : 2 ≤ k) : GsTail.Ik k = ((Ikq k : ℚ) : ℝ) := by
+lemma Ik_eq (k : ℕ) (_hk : 2 ≤ k) : GsTail.Ik k = ((Ikq k : ℚ) : ℝ) := by
   unfold GsTail.Ik Ikq
-  push_cast [Nat.cast_sub (by omega : 1 ≤ k), Nat.cast_sub hk]
+  push_cast [Nat.cast_sub (by omega : 1 ≤ k)]
   ring
 
 /-- **Upper bound for the ground state**: the explicit even trial vector `v = fx 10 xv` has Rayleigh quotient

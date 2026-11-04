@@ -424,7 +424,7 @@ theorem integrable_emp (x k : ℕ) : Integrable (fun t : ℝ => t ^ k) (emp F �
 
 theorem integral_emp {x : ℕ} (h : (St F x).Nonempty) (k : ℕ) :
     ∫ t, t ^ k ∂(emp F ℓ x : Measure ℝ) = (∑ d ∈ St F x, ℓ d ^ k) / (St F x).card := by
-  simp only [coe_emp, h, if_true]
+  simp only [coe_emp, h, ite_true]
   rw [empM, integral_smul_measure,
     integral_finsetSum_measure fun d _ => integrable_dirac enorm_lt_top]
   simp [integral_dirac, div_eq_inv_mul]

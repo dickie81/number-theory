@@ -142,7 +142,7 @@ theorem moment_quant (F : ℕ → Prop) [DecidablePred F] (Cp : ℕ → Prop) (h
   set n := ∏ i, f i
   have hn1 : 1 ≤ n := Nat.one_le_iff_ne_zero.2 (prod_ne_zero_iff.2 fun i _ => (hP _ (hfP i)).ne')
   have hny : n ≤ y ^ k := by
-    calc n ≤ ∏ _i : Fin k, y := prod_le_prod' fun i _ => hPy _ (hfP i)
+    calc n ≤ ∏ _i : Fin k, y := prod_le_prod fun i _ => hPy _ (hfP i)
       _ = y ^ k := by simp
   have hn1' : (1 : ℝ) ≤ n := by exact_mod_cast hn1
   have hn3 : (n : ℝ) ^ 3 ≤ (y : ℝ) ^ (3 * k) := by

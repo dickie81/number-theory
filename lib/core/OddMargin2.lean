@@ -32,7 +32,7 @@ theorem oddHead2 : ∀ i < 28, ∀ j < 28,
         + |((Aq (-1) OddQ.bq OddQ.pq OddQ.cq i j : ℚ) : ℝ) - ((certq L05Odd2.Mq L05Odd2.Dq (42/1000000) i j : ℚ) : ℝ)| :=
           abs_sub_le _ _ _
     _ ≤ ((1/10^12:ℝ) + 10 * (1/10^12:ℝ) + (6/10^9:ℝ)) + ((1/10^8:ℝ) - ((1/10^12:ℝ) + 10 * (1/10^12:ℝ) + (6/10^9:ℝ))) :=
-          add_le_add (by simpa using h1) (by push_cast; linarith)
+          add_le_add (by simpa using h1) (by linarith)
     _ = _ := by ring
 
 theorem odd_margin2 (N : ℕ) (hN : 28 ≤ N) (y : ℕ → ℝ) :

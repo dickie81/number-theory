@@ -181,9 +181,9 @@ theorem pole_bridge (N : ℕ) (x : ℕ → ℝ) :
     refine intervalIntegral.integral_congr (fun u hu => ?_)
     rw [Set.uIcc_of_le (by norm_num)] at hu
     have hu' : |u| ≤ 1 / 2 := abs_le.mpr ⟨hu.1, hu.2⟩
-    simp only [fx, legT, if_pos hu', aeval_eq, Finset.sum_mul]
+    simp only [fx, legT, ite_eq_left hu', aeval_eq, Finset.sum_mul]
     refine Finset.sum_congr rfl (fun i _ => ?_); ring
-  rw [e, intervalIntegral.integral_finset_sum]
+  rw [e, intervalIntegral.integral_finsetSum]
   · refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [intervalIntegral.integral_const_mul, pole_mode]; rfl
   · intro i _

@@ -28,8 +28,8 @@ lemma sq_mass (par : ℕ) (hp : par < 2) (N : ℕ) (x : ℕ → ℝ) :
   rw [h, mul_sum]
   refine sum_congr rfl fun i hi => ?_
   rw [mul_sum, sum_eq_single i]
-  · rw [← mul_assoc, mul_comm (1 / π), mul_assoc, P.orth, if_pos rfl]; ring
-  · intro j _ hj; rw [← mul_assoc, mul_comm (1 / π), mul_assoc, P.orth, if_neg (Ne.symm hj)]; ring
+  · rw [← mul_assoc, mul_comm (1 / π), mul_assoc, P.orth, ite_eq_left rfl]; ring
+  · intro j _ hj; rw [← mul_assoc, mul_comm (1 / π), mul_assoc, P.orth, ite_eq_right (Ne.symm hj)]; ring
   · intro h; exact absurd hi h
 
 theorem normSq_hx (N : ℕ) (x y : ℕ → ℝ) :
@@ -62,10 +62,10 @@ theorem coer_hx' (N : ℕ) (x y : ℕ → ℝ) :
   have e : hx N x y = hx (N + 28) (fun i => if i < N then x i else 0) (fun i => if i < N then y i else 0) := by
     funext u; unfold hx fx gx
     rw [sum_range_add, sum_range_add]
-    simp only [lt_add_iff_pos_right, add_lt_iff_neg_left, not_lt_zero', if_false, zero_mul, sum_const_zero, add_zero]
+    simp only [add_lt_iff_neg_left, not_lt_zero, ite_false, zero_mul, sum_const_zero, add_zero]
     congr 1
-    · exact sum_congr rfl fun i hi => by rw [if_pos (mem_range.1 hi)]
-    · exact sum_congr rfl fun i hi => by rw [if_pos (mem_range.1 hi)]
+    · exact sum_congr rfl fun i hi => by rw [ite_eq_left (mem_range.1 hi)]
+    · exact sum_congr rfl fun i hi => by rw [ite_eq_left (mem_range.1 hi)]
   rw [e]; exact coer_hx _ (by omega) _ _
 
 end WeilCoer

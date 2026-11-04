@@ -145,7 +145,7 @@ noncomputable def legT (n : ℕ) (u : ℝ) : ℝ :=
 noncomputable def fx (N : ℕ) (x : ℕ → ℝ) (u : ℝ) : ℝ := ∑ i ∈ range N, x i * legT (2 * i) u
 
 lemma fx_supp (N : ℕ) (x : ℕ → ℝ) {u : ℝ} (hu : 1 / 2 < |u|) : fx N x u = 0 := by
-  unfold fx; refine sum_eq_zero (fun i _ => ?_); unfold legT; rw [if_neg (by linarith)]; ring
+  unfold fx; refine sum_eq_zero (fun i _ => ?_); unfold legT; rw [ite_eq_right (by linarith)]; ring
 
 lemma autocorr_supp (N : ℕ) (x : ℕ → ℝ) {u : ℝ} (hu : 1 < |u|) : WeilForm.autocorr (fx N x) u = 0 := by
   unfold WeilForm.autocorr
@@ -156,7 +156,7 @@ lemma autocorr_supp (N : ℕ) (x : ℕ → ℝ) {u : ℝ} (hu : 1 < |u|) : WeilF
     · have : 1 / 2 < |t + u| := by
         have := abs_sub_abs_le_abs_sub u (-(t)); rw [abs_neg] at this
         have e : u - -t = t + u := by ring
-        rw [e] at this; push_neg at ht; linarith
+        rw [e] at this; push Not at ht; linarith
       rw [fx_supp N x this, mul_zero]
   simp [this]
 

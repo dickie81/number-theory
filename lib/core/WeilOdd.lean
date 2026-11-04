@@ -61,7 +61,7 @@ lemma pole_sum (N : ℕ) (x y : ℕ → ℝ) (s : ℝ) :
     refine intervalIntegral.integral_congr (fun u hu => ?_)
     rw [Set.uIcc_of_le (by norm_num)] at hu
     have hu' : |u| ≤ 1 / 2 := abs_le.mpr ⟨hu.1, hu.2⟩
-    simp only [fx, gx, legT, if_pos hu', aeval_eq, Finset.sum_mul, Finset.mul_sum, add_mul]
+    simp only [fx, gx, legT, ite_eq_left hu', aeval_eq, Finset.sum_mul, Finset.mul_sum, add_mul]
     congr 1
     · refine Finset.sum_congr rfl (fun i _ => ?_); push_cast; ring
     · refine Finset.sum_congr rfl (fun i _ => ?_); push_cast; ring
@@ -113,7 +113,7 @@ lemma fourier_gx (N : ℕ) (x : ℕ → ℝ) (ξ : ℝ) :
     funext t; unfold gx; push_cast; rfl
   rw [e, Real.fourier_real_eq_integral_exp_smul]
   simp_rw [smul_eq_mul, Finset.mul_sum]
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · rw [WeilZhuRed.Fx, Complex.ofReal_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     have h := LF_sec (par := 1) (by norm_num) i ξ
@@ -126,7 +126,7 @@ lemma fourier_gx (N : ℕ) (x : ℕ → ℝ) (ξ : ℝ) :
     have hl := (legC_int (2 * i + 1)).const_mul (x i : ℂ)
     refine hl.norm.mono' ((Continuous.aestronglyMeasurable (by fun_prop)).mul hl.aestronglyMeasurable) ?_
     filter_upwards with v
-    simp only [Pi.mul_apply, norm_mul, Complex.norm_exp_ofReal_mul_I, one_mul, le_refl]
+    simp only [norm_mul, Complex.norm_exp_ofReal_mul_I, one_mul, le_refl]
 
 lemma fxC_int (N : ℕ) (x : ℕ → ℝ) : Integrable (fun t => ((fx N x t : ℝ) : ℂ)) := by
   rw [fx_eq]; exact cutC_int _ (continuous_finsetSum _ fun i _ => continuous_const.mul (P_cont _))
@@ -281,7 +281,7 @@ theorem arch_hx (N : ℕ) (x y : ℕ → ℝ) :
 
 lemma hx_supp (N : ℕ) (x y : ℕ → ℝ) {u : ℝ} (hu : 1 / 2 < |u|) : hx N x y u = 0 := by
   unfold hx; rw [fx_supp N x hu]
-  unfold gx; rw [zero_add]; refine sum_eq_zero (fun i _ => ?_); unfold legT; rw [if_neg (by linarith)]; ring
+  unfold gx; rw [zero_add]; refine sum_eq_zero (fun i _ => ?_); unfold legT; rw [ite_eq_right (by linarith)]; ring
 
 lemma autocorr_hx_supp (N : ℕ) (x y : ℕ → ℝ) {u : ℝ} (hu : 1 < |u|) : WeilForm.autocorr (hx N x y) u = 0 := by
   unfold WeilForm.autocorr
@@ -292,7 +292,7 @@ lemma autocorr_hx_supp (N : ℕ) (x y : ℕ → ℝ) {u : ℝ} (hu : 1 < |u|) : 
     · have : 1 / 2 < |t + u| := by
         have := abs_sub_abs_le_abs_sub u (-(t)); rw [abs_neg] at this
         have e : u - -t = t + u := by ring
-        rw [e] at this; push_neg at ht; linarith
+        rw [e] at this; push Not at ht; linarith
       rw [hx_supp N x y this, mul_zero]
   simp [this]
 

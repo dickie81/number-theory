@@ -36,7 +36,7 @@ theorem card_Sx (x : ℕ) : (Sx F ι x).card = (St F x).card :=
 include hb in
 theorem prop_eq {x : ℕ} (h : (St F x).Nonempty) (t : ℝ) :
     prop (Sx F ι x) (fun D => t < ℓ (back D)) = ((emp F ℓ x : Measure ℝ) (Set.Ioi t)).toReal := by
-  rw [coe_emp, ite_cond_eq_true _ _ (eq_true h), empM, Measure.smul_apply, Measure.finsetSum_apply]
+  rw [coe_emp, ite_eq_left_of_eq_true _ _ (eq_true h), empM, Measure.smul_apply, Measure.finsetSum_apply]
   simp only [Measure.dirac_apply' _ measurableSet_Ioi, smul_eq_mul]
   have hfil : ((Sx F ι x).filter fun D => t < ℓ (back D)).card = ((St F x).filter fun d => t < ℓ d).card := by
     rw [Sx, filter_image]

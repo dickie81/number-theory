@@ -49,7 +49,7 @@ lemma hev_pmul (p q : List ℚ) (x : ℝ) : hev (pmul p q) x = hev p x * hev q x
 lemma hev_paff (α β : ℚ) (p : List ℚ) (x : ℝ) : hev (paff α β p) x = hev p (α + β * x) := by
   induction p with
   | nil => simp [paff, hev]
-  | cons a p ih => simp only [paff, hev_padd, hev_pmul, hev, ih]; push_cast; ring
+  | cons a p ih => simp only [paff, hev_padd, hev_pmul, hev, ih]; ring
 
 lemma hev_sum (l : List ℚ) (x : ℝ) : hev l x = ∑ i ∈ range l.length, ((l.getD i 0 : ℚ) : ℝ) * x ^ i := by
   induction l with

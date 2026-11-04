@@ -85,12 +85,12 @@ lemma expand_int (par N : ℕ) (x : ℕ → ℝ) (h : ℝ → ℝ) (A : Set ℝ)
   have e : (fun t => h t * Fx par N x t ^ 2) = fun t => ∑ i ∈ range N, ∑ j ∈ range N, x i * x j * (h t * G par i j t) :=
     funext (Fsq par N x h)
   have hI : ∀ i ∈ range N, Integrable (fun t => ∑ j ∈ range N, x i * x j * (h t * G par i j t)) (volume.restrict A) :=
-    fun i _ => integrable_finset_sum _ (fun j _ => (hi i j).const_mul _)
+    fun i _ => integrable_finsetSum _ (fun j _ => (hi i j).const_mul _)
   refine ⟨?_, ?_⟩
-  · rw [e]; exact integrable_finset_sum _ hI
-  · rw [e, integral_finset_sum _ hI]
+  · rw [e]; exact integrable_finsetSum _ hI
+  · rw [e, integral_finsetSum _ hI]
     refine sum_congr rfl (fun i _ => ?_)
-    rw [integral_finset_sum _ (fun j _ => (hi i j).const_mul _)]
+    rw [integral_finsetSum _ (fun j _ => (hi i j).const_mul _)]
     refine sum_congr rfl (fun j _ => ?_)
     exact integral_const_mul _ _
 
@@ -101,8 +101,8 @@ lemma qf_Rm (par : ℕ) (σ : ℝ) (N : ℕ) (x : ℕ → ℝ) :
   unfold qf Rm
   have e1 : ∀ i ∈ range N, ∑ j ∈ range N, x i * (if i = j then βs else 0) * x j = βs * x i ^ 2 := by
     intro i hi
-    rw [Finset.sum_eq_single i (fun j _ hj => by rw [if_neg (Ne.symm hj)]; ring) (fun h => absurd hi h)]
-    rw [if_pos rfl]; ring
+    rw [Finset.sum_eq_single i (fun j _ hj => by rw [ite_eq_right (Ne.symm hj)]; ring) (fun h => absurd hi h)]
+    rw [ite_eq_left rfl]; ring
   have e2 : (∑ i ∈ range N, x i * pole (2 * i + par)) ^ 2
       = ∑ i ∈ range N, ∑ j ∈ range N, (x i * pole (2 * i + par)) * (x j * pole (2 * j + par)) := by
     rw [sq, sum_mul_sum]
@@ -158,8 +158,8 @@ theorem QF_ge_R (par : ℕ) (σ : ℝ) (P : ModePlancherel par) (N : ℕ) (x : �
       intro i j; rw [← P.orth i j]; simp only [one_mul]; field_simp
     simp only [this]
     rw [mul_sum]; refine sum_congr rfl (fun i hi => ?_)
-    rw [Finset.sum_eq_single i (fun j _ hj => by rw [if_neg (Ne.symm hj)]; ring) (fun h => absurd hi h)]
-    rw [if_pos rfl]; ring
+    rw [Finset.sum_eq_single i (fun j _ hj => by rw [ite_eq_right (Ne.symm hj)]; ring) (fun h => absurd hi h)]
+    rw [ite_eq_left rfl]; ring
   -- the [0,30] piece is π Σ xᵢxⱼ Cmᵢⱼ
   have hC : ∫ t in Set.Ioc 0 30, wψ t * Fx par N x t ^ 2
       = π * ∑ i ∈ range N, ∑ j ∈ range N, x i * x j * Cm wψ (2 * i + par) (2 * j + par) := by
