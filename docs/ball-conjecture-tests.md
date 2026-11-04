@@ -10,7 +10,7 @@ None of this is formalised in Lean.
 
 **Theorem A.** For $x\ge1$,
 $$K_H(x)=\sqrt x\Big(\sum_{n\le x}\Lambda(n)\big(\tfrac1n-\tfrac1x\big)-\log x+1+\gamma-\frac{\log2\pi}{x}+t(1/x)\Big),\qquad t(y)=y+\tfrac12(1-y)\log(1-y)-\tfrac12(1+y)\log(1+y).$$
-This is the formula of `scripts/ball_orbit.py`.
+This is the formula of `scripts/ball_orbit.py`; `scripts/ball_certificate.py` records the same derivation.
 *Proof.* Let $f(x)=\sum_\rho x^\rho/(\rho(1-\rho))$, which converges absolutely. Multiply the explicit formula $\psi_0(t)=t-\sum_\rho t^\rho/\rho-\log2\pi-\tfrac12\log(1-t^{-2})$ by $t^{-2}$ and integrate over $[1,x]$.
 Termwise integration is justified by the bounded convergence of the symmetric partial sums on compact sets (Davenport, ch. 17). Since $\int_1^xt^{\rho-2}dt/\rho=(1-x^{\rho-1})/(\rho(1-\rho))$, we get $f(x)/x=f(1)+\int_1^x(\psi_0(t)-t+\log2\pi+\tfrac12\log(1-t^{-2}))t^{-2}dt$. The remaining integrals are elementary, and $K_H(x)=f(x)/\sqrt x$. ∎
 
@@ -35,7 +35,7 @@ For real $\chi$ this says $-2K_1-2c_a\le\ell\le-2c_a$; in particular it requires
 
 ## 3. Certified pivots for ζ
 
-**Certified.** $d_k/d_1>1$ for all $2\le k\le500$. This uses ball arithmetic at 256 bits on the closed form of Theorem A (`hunt/cert_zeta.py`, output `cert500.txt`). The minimum is at $k=2$. Selected values: $d_{10}/d_1=6.3508269$, $d_{100}/d_1=35.672522$, $d_{500}/d_1=74.930553$.
+**Certified (cross-check).** `scripts/ball_certificate.py` already proves $d_k>d_1$ for $2\le k\le10^4$ ([ball-conjecture.md](ball-conjecture.md), step 6), with every rounding bounded. Independently, ball arithmetic at 256 bits on the closed form of Theorem A gives $d_k/d_1>1$ for all $2\le k\le500$ (`hunt/cert_zeta.py`, output `cert500.txt`). The minimum is at $k=2$. Selected values: $d_{10}/d_1=6.3508269$, $d_{100}/d_1=35.672522$, $d_{500}/d_1=74.930553$.
 Since Theorem A is unconditional, this is a statement about the matrix defined by the zero sum and does not assume RH.
 **Numerical.** A dps-40 rerun of `ball_orbit.py` agrees with its float64 pivots to relative error $9.7\times10^{-12}$ for $N\le500$.
 
@@ -49,7 +49,7 @@ The $m=0$ term alone is $2g\log q\cdot\min(m,n)$, which is the flat model. $G$ i
 **Theorem C.** $d_k=0$ at $k=q^{2g}$, and already at $k=q$ if all $\alpha_j$ are equal. So the conjecture fails for every curve once $N\ge q^{2g}$.
 *Proof.* $q^{i\gamma}=e^{i\theta_j}$ depends only on $j$. Hence $w_{nq^a}=q^{a/2}\sum_je^{ia\theta_j}P_jw_n$, where $P_j$ projects onto the zeros in class $j$. So the $2g+1$ vectors $w_{q^a}$ ($0\le a\le2g$) lie in a space of dimension $2g$. ∎
 
-**Numerical.** 155 curves: genus 1–3, $q\in\{2,3,4,5,7,9,11,13\}$, hyperelliptic models plus the maximal and minimal $L$-polynomials, $k\le150$. 105 of them have some $d_k<d_1$, often at $k=2$ (e.g. $q=13$, $g=3$, $d_2/d_1=0.920$). Minimal curves at $q=4$ have $d_3/d_1=1/6$. Restricting to indices $q\nmid n$ removes the forced zeros, but 72 of 155 curves still fail.
+**Numerical.** 148 curves: genus 1–3, $q\in\{2,3,4,5,7,9,11,13\}$, smooth hyperelliptic models plus the extremal $L$-polynomials that curves have (the maximal and minimal elliptic curves over $\mathbb F_4$ and $\mathbb F_9$, and the Hermitian quartic over $\mathbb F_9$), $k\le150$. 98 of them have some $d_k<d_1$, 43 first at $k=2$ (e.g. $q=3$, $g=2$, $L=1-T-2T^2-3T^3+9T^4$, $d_2/d_1=0.526$). The minimal elliptic curve over $\mathbb F_4$ has $d_2/d_1=2/9$ and $d_3/d_1=1/6$. Restricting to indices $q\nmid n$ removes the forced zeros, but 59 of 148 curves still fail. Exact ties $d_k=d_1$ are not counted as failures.
 
 ## 5. Dirichlet L-functions: counterexamples
 
@@ -65,16 +65,16 @@ So $d_k\ge d_1$ is **not** a consequence of GRH or of Weil positivity. The failu
 
 **Theorem D (zero-sum form).** Unconditionally, $v^TG_Nv=\sum_\rho V(\rho)V(1-\rho)/(\rho(1-\rho))$, where $V(s)=\sum_{n\le N}v_nn^s$. Under RH this is $\sum_\rho|V(\rho)|^2/|\rho|^2$.
 
-**Theorem E (RH). $G_N\succ0$ for every $N$.** If $Q(v)=0$ then $D(s)=\sum v_nn^s$ vanishes at every zero. By Jensen's formula, in discs centred where the largest-index term dominates, $D$ has $O_v(1)$ zeros per unit of height, while ζ has $\sim\frac T{2\pi}\log T$ zeros up to height $T$. ∎ Without RH the same argument shows that $G_N$ is nonsingular.
+**Theorem E (RH). $G_N\succ0$ for every $N$.** If $Q(v)=0$ then $D(s)=\sum v_nn^s$ vanishes at every zero. By Jensen's formula, in discs centred where the largest-index term dominates, $D$ has $O_v(1)$ zeros per unit of height, while ζ has $\sim\frac T{2\pi}\log T$ zeros up to height $T$. ∎ The argument needs RH: without it the form pairs $\rho$ with $1-\bar\rho$ and is indefinite, so $Q(v)=0$, or even $G_Nv=0$, does not force $V(\rho)=0$, and independence of the $(n^\rho)_\rho$ does not give nonsingularity. Unconditionally $G_N\succ0$ is known only for $N\le10^4$ (§3).
 
 **Theorem F (RH). $\lambda_{\min}(G_N)\ll\log^2N/N$.** Take $v_n=(-1)^{n-1}/n$. Then $V(\rho)=\eta(1-\rho)-\text{tail}$, and $\eta(1-\rho)=0$. The tail is $\pm\frac12N^{\rho-1}+O(|\rho|N^{-3/2})$ for $|\gamma|\le N$. For $|\gamma|>N$ we use a discrete mean-value theorem for Dirichlet polynomials over the zeros (large-sieve type, $\ll(T+N)\log T\sum|a_n|^2$ per dyadic block). That step is cited and its constants are not computed. **Numerical:** this vector's Rayleigh quotient is about $0.15\log N/N$, and $\lambda_{\min}$ is about 0.31 times it.
 
 **Certified.** $\lambda_{\min}(G_N)$ at $N=100,300,1000$ is $2.3448094\times10^{-3}$, $9.3070857\times10^{-4}$ and $3.3178750\times10^{-4}$. Each is certified to relative $10^{-6}$ (or $10^{-5}$ at $N=1000$) by Sylvester inertia in arb (`horizon/cert_inertia.py`).
 **Numerical / Conjecture.** $\lambda_{\min}\approx c\,(\log N)^{0.885}/N$ with $c\approx0.06$; equivalently $\lambda_{\min}N/\log N=0.051,0.048,0.047$ at $N=100,1000,3000$. **Conjecture:** $\lambda_{\min}\asymp\log N/N$. No lower bound of any power-type is proved.
-**Obstruction (Numerical).** With the zeros replaced by their density, $\lambda_{\min}$ stays at about 0.0505 for $N\le200$: the density model has no horizon. Meanwhile $G-S$ has operator norm about $N^2/300$. So no perturbative (Schur or Weyl) argument can give a lower bound; the near-null directions come from the exact identity $\zeta(1-\rho)=0$.
+**Obstruction (Numerical).** With the zeros replaced by their density, $\lambda_{\min}$ stays at about 0.0505 for $N\le200$: the density model has no horizon. Meanwhile $G-S$ has operator norm about $N^2/620$ (62.7 at $N=200$). So no perturbative (Schur or Weyl) argument can give a lower bound; the near-null directions come from the exact identity $\zeta(1-\rho)=0$.
 
 **Eigenvectors.**
-* *Flat-model pencil* $G v=\lambda d_1\min(m,n)v$: $\lambda_{\min}\approx0.26N^{-1.97}\log^{0.75}N$ (fitted). The eigenvector is $\approx1/n$ ($nv_n=1.00$–$1.08$) plus an edge layer at $n\approx N$. **Theorem (elementary).** In difference variables $u_k=\sum_{n\ge k}v_n$, the vector $v=1/n$ gives $u_k\approx\log(N/k)$, so dyadic block $j$ carries weight $\propto2^j(\log_2N-j)^2$, which peaks at $\log_2N-j=2/\ln2\approx2.89$. This matches the observed "traveling wave" (at $N=6000$, predicted and measured block weights agree to about 0.01). Also $Q(1/n)=NS_4(1+o(1))$ with $S_4=\sum|\rho|^{-4}=7.4198\times10^{-5}$ (Euler–Maclaurin plus $\zeta(1-\rho)=0$); numerically, Rayleigh$/N$ is $4.5130\times10^{-5}$ against $S_4/\zeta(2)=4.5107\times10^{-5}$.
+* *Flat-model pencil* $G v=\lambda d_1\min(m,n)v$: $\lambda_{\min}\approx1.29\,N^{-1.97}\log^{0.75}N$ (fitted; $e^{0.2568}=1.29$). The eigenvector is $\approx1/n$ ($nv_n=1.00$–$1.08$) plus an edge layer at $n\approx N$. **Theorem (elementary).** In difference variables $u_k=\sum_{n\ge k}v_n$, the vector $v=1/n$ gives $u_k\approx\log(N/k)$, so dyadic block $j$ carries weight $\propto2^j(\log_2N-j)^2$, which peaks at $\log_2N-j=2/\ln2\approx2.89$. This matches the observed "traveling wave" (at $N=6000$, predicted and measured block weights agree to about 0.01). Also $Q(1/n)=NS_4(1+o(1))$ with $S_4=\sum|\rho|^{-4}=7.4198\times10^{-5}$ (Euler–Maclaurin plus $\zeta(1-\rho)=0$); numerically, Rayleigh$/N$ is $4.5130\times10^{-5}$ against $S_4/\zeta(2)=4.5107\times10^{-5}$.
 * *Euclidean problem.* The bottom eigenvector freezes (97.5% of its weight on $n<16$, overlap 0.998 between $N=100$ and $6000$). $f(n)=nv_n$ is multiplicative to within 0.3% on average, with $f(p)\approx p/(p+1)$ for small $p$; for example $f(2)=0.669$ and $f(2^k)\to\approx0.60$ at $N=8000$. It drifts by about $-0.004$ per doubling of $N$, so the limit is not determined. **Theorem (correction).** The natural variational problem (minimise $\|v\|$ over formal kernel vectors $v=(1/n)*h$, i.e. $\sum v_nn^{-z}=\zeta(1+z)H(z)$, with $v_1=1$) is degenerate: the infimum is 1 and is not attained. Take $H_y=\prod_{p\le y}(1-p^{-1-z})$; the limit is $e_1$, which is not a kernel vector. So the limit is selected at order $\log N/N$ by the boundary cost, and has no closed form yet.
 * *Contrast.* The curve over $\mathbb F_{13}$ with $L=1+2T+13T^2$ has an exact null vector on $\{1,13,169\}$ from $N=169$ on (Theorem C); for ζ, by Theorem E, no finite $N$ has one.
 

@@ -7,7 +7,11 @@ K_chi(x) = sum_rho x^{rho-1/2}/(rho(1-rho)) over nontrivial zeros; for x>=1 (y=1
  K_chi(1/x) = conj K_chi(x).  Derivation: f(x)=sum x^rho/(rho(1-rho)) satisfies d/dx(f/x) = -x^-2 sum x^rho/rho; insert
  psi(x,chi) = -sum x^rho/rho - (1-a)log x - b + sum_{m>=1} x^{a-2m}/(2m-a) and integrate from 1.
 """
-import mpmath as mp, numpy as np, math
+import mpmath as mp, numpy as np, math, os, sys
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, '..', 'function_field')); sys.path.insert(0, os.path.join(HERE, '..', '..'))
+from ffcore import pivots  # noqa: E402  (the shared LDL routine)
+from ball_orbit import primes_upto  # noqa: E402  (the shared sieve)
 def kron(D, n):
     """Kronecker symbol (D/n), n>=1."""
     if math.gcd(D, n) != 1: return 0
@@ -56,11 +60,10 @@ class Kernel:
     def __init__(self, c, X, lamc=None):
         self.q = len(c); self.K1, self.b, self.a = constants(c)
         lam = [mp.mpf(0)]*(X+1)
-        for p in range(2, X+1):
-            if all(p % d for d in range(2, int(p**.5)+1)):
-                pk = p; cp = c[p % self.q] if lamc is None else lamc[p]
-                v = cp
-                while pk <= X: lam[pk] = v*mp.log(p); pk *= p; v *= cp
+        for p in primes_upto(X):
+            pk = p; cp = c[p % self.q] if lamc is None else lamc[p]
+            v = cp
+            while pk <= X: lam[pk] = v*mp.log(p); pk *= p; v *= cp
         self.A = [mp.mpc(0)]*(X+1); self.B = [mp.mpc(0)]*(X+1)
         for n in range(1, X+1): self.A[n] = self.A[n-1]+lam[n]/n; self.B[n] = self.B[n-1]+lam[n]
     def __call__(self, x):  # x = Fraction >= 1
@@ -78,16 +81,7 @@ def gram(K, idx, real=False):
         for j, n in enumerate(idx[:i+1]):
             f = Fraction(m, n)
             if f not in cache: cache[f] = K(f)
-            v = mp.sqrt(m*n)*cache[f]/mp.sqrt(f)  # sqrt(mn) K(m/n)/... see below
             v = n*cache[f]*mp.sqrt(f)  # = sqrt(mn) K(m/n)
             if real: v = mp.re(v)
             G[i, j] = v; G[j, i] = mp.conj(v)
     return G
-def pivots(G):
-    A = G.copy(); N = A.shape[0]; d = []
-    for k in range(N):
-        p = mp.re(A[k, k]); d.append(p)
-        if p <= 0: d += [mp.nan]*(N-k-1); break
-        col = A[k+1:, k]/p
-        A[k+1:, k+1:] = A[k+1:, k+1:] - np.outer(col, A[k, k+1:])
-    return d

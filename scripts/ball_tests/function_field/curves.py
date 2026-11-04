@@ -94,9 +94,56 @@ def lpoly(q,g,f,h):
     c+= [q**(g-k)*c[k] for k in range(g-1,-1,-1)]
     return c, Ns
 def rh_ok(c,q):
-    import numpy as np
-    r=np.roots(c[::-1])  # roots of P are 1/alpha, |.|=q^-1/2
-    return np.allclose(abs(r), q**-0.5, rtol=1e-6)
+    """|alpha_j| = sqrt(q) for every root, at 60 digits: a root of multiplicity m is only accurate to about
+    eps^(1/m), so double precision rejects valid L-polynomials with repeated roots, such as (1 + qT^2)^3."""
+    import mpmath as mp
+    with mp.workdps(60):
+        r = mp.polyroots([mp.mpf(x) for x in c[::-1]], maxsteps=500, extraprec=400)  # roots of P are 1/alpha
+        return all(abs(abs(z)*mp.sqrt(q) - 1) < mp.mpf(10)**-12 for z in r)
+def _neg(F, a):
+    p=F.p; r=0; m=1
+    while a: r+=((-(a%p))%p)*m; a//=p; m*=p
+    return r
+def _inv(F, a): return F.exp[(F.Q-1-F.log[a])%(F.Q-1)]
+def _trim(f):
+    while f and f[-1]==0: f=f[:-1]
+    return f
+def _deriv(F, f):
+    """f' over F_q: the coefficient k*c_k, with k acting through F_p (digitwise)."""
+    p=F.p; out=[]
+    for k in range(1,len(f)):
+        a=f[k]; r=0; m=1; km=k%p
+        while a: r+=((a%p)*km%p)*m; a//=p; m*=p
+        out.append(r)
+    return _trim(out)
+def _pmul(F, f, g):
+    if not f or not g: return []
+    r=[0]*(len(f)+len(g)-1)
+    for i,a in enumerate(f):
+        for j,b in enumerate(g): r[i+j]=F.add(r[i+j],F.mul(a,b))
+    return _trim(r)
+def _padd(F, f, g):
+    n=max(len(f),len(g)); f=f+[0]*(n-len(f)); g=g+[0]*(n-len(g))
+    return _trim([F.add(a,b) for a,b in zip(f,g)])
+def _pmod(F, f, g):
+    f=_trim(list(f)); g=_trim(list(g)); il=_inv(F,g[-1])
+    while len(f)>=len(g):
+        c=F.mul(f[-1],il); sh=len(f)-len(g)
+        for i,b in enumerate(g): f[i+sh]=F.add(f[i+sh],_neg(F,F.mul(c,b)))
+        f=_trim(f)
+    return f
+def _pgcd_deg(F, f, g):
+    f=_trim(list(f)); g=_trim(list(g))
+    while g: f,g=g,_pmod(F,f,g)
+    return len(f)-1
+def nonsingular(q, f, h):
+    """The affine model y^2 + h y = f is smooth (f monic of odd degree 2g+1, so the point at infinity is too).
+    Odd p (h = 0): f squarefree, gcd(f, f') = 1. Characteristic 2: a singular point has h(x) = 0, h'(x)y = f'(x) and
+    y^2 = f(x), so it exists exactly when gcd(h, f'^2 + f h'^2) is not constant."""
+    F=field(q); f=_trim(list(f)); h=_trim(list(h))
+    if F.p!=2: return _pgcd_deg(F, f, _deriv(F,f))==0
+    fd=_deriv(F,f); hd=_deriv(F,h)
+    return _pgcd_deg(F, h, _padd(F, _pmul(F,fd,fd), _pmul(F,f,_pmul(F,hd,hd))))==0
 def random_curve(q,g,rng):
     p,_=factor_pp(q)
     f=[rng.randrange(q) for _ in range(2*g+1)]+[1]

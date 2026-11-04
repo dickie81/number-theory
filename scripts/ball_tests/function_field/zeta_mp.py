@@ -6,10 +6,9 @@ from ffcore import pivots
 mp.mp.dps = 40
 N = int(sys.argv[1])
 lam = [mp.mpf(0)]*(N+2)
-for p in range(2, N+2):
-    if all(p % d for d in range(2, int(p**.5)+1)):
-        pk = p
-        while pk <= N+1: lam[pk] = mp.log(p); pk *= p
+for p in bo.primes_upto(N+1):
+    pk = p
+    while pk <= N+1: lam[pk] = mp.log(p); pk *= p
 A = [mp.mpf(0)]*(N+2); B = [mp.mpf(0)]*(N+2)
 for n in range(1, N+2): A[n] = A[n-1]+lam[n]/n; B[n] = B[n-1]+lam[n]
 cache = {}
