@@ -225,7 +225,8 @@ and the inventory would carry them.
   unconditionally, are coarser than the Nyquist spacing `π/log N` of such polynomials up to height `N`; no standard
   inequality (Turán's lemma needs sets of positive measure or nodes in progression) applies as it stands.
 - **Weil positivity.** [Pull request #83](https://github.com/dickie81/number-theory/pull/83), positivity on
-  Connes–Consani's subspace `V′` at every support `L ≤ log 3/2`, is in review. The within-reach item is unchanged:
+  Connes–Consani's subspace `V′` at every support `L ≤ log 3/2`, was merged on 4 November
+  ([weil-vprime-log3.md](weil-vprime-log3.md)). The within-reach item is unchanged:
   kernel-checked certificates for `WeilForm.CertE` and `CertO`, which would make `WeilForm.weilQg_ge_both`
   unconditional to `2a ≤ 1.6`; it is compute-bound (the cost figures of [weil-positivity-l05.md](weil-positivity-l05.md)).
 - **The half-plane at `7/8`.** It does not move Linnik's exponent (§3.1); what it would improve is listed in
@@ -235,8 +236,9 @@ and the inventory would carry them.
 ### 6.1 The `positivity-search` branch and its gravastar strand
 
 The branch (84 commits ahead of `main`, 3 November; `docs/positivity-search.md` there) is a search for the positivity
-of `ζ`'s Weil form without its zeros. Its proved part on the Weil form at `L = 1/2` is on `main`
-([weil-positivity-l05.md](weil-positivity-l05.md), pull request #81) and continues in #83. The rest is a sequence of
+of `ζ`'s Weil form without its zeros. Its proved part on the Weil form is on `main`: at `L = 1/2`
+([weil-positivity-l05.md](weil-positivity-l05.md), pull request #81) and on Connes–Consani's subspace `V′` at
+`L ≤ log 3/2` ([weil-vprime-log3.md](weil-vprime-log3.md), #83). The rest is a sequence of
 constructions, each tested and each ending in a verdict; the "gravastar" ones, a tower of spheres joined at shells,
 are these, with the branch's own numbers (floating point, uncertified) checked against its results files:
 
