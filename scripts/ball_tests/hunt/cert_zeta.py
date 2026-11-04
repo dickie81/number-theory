@@ -6,18 +6,19 @@ An independent cross-check of scripts/ball_certificate.py, which proves the same
 
     python3 cert_zeta.py N [PREC]     # PREC bits, default 256
 """
-import sys
+import os, sys
 from fractions import Fraction
 from flint import arb, ctx
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+from ball_orbit import primes_upto  # noqa: E402  (the shared sieve)
 
 
 def make_kover(N):
     """The function x -> K_H(x)/sqrt(x) for rationals 1 <= x <= N, at the current ctx.prec."""
     lam = [arb(0)]*(N+1)
-    for p in range(2, N+1):
-        if all(p % d for d in range(2, int(p**.5)+1)):
-            pk = p
-            while pk <= N: lam[pk] = arb(p).log(); pk *= p
+    for p in primes_upto(N):
+        pk = p
+        while pk <= N: lam[pk] = arb(p).log(); pk *= p
     A = [arb(0)]*(N+1); B = [arb(0)]*(N+1)
     for n in range(1, N+1): A[n] = A[n-1]+lam[n]/n; B[n] = B[n-1]+lam[n]
     g = arb.const_euler(); l2p = (2*arb.pi()).log()
