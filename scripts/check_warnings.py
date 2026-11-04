@@ -15,11 +15,6 @@ lib/zeta23 or lib/check.
 - Lake's note, once per module, that a file importing Mathlib is not itself a module of Lean's module system. That note
   carries no line, and clearing it means moving the library to the module system, a separate change.
 
-**Known warnings.** `KNOWN` lists warnings that are tolerated for now, by file and message. Fixing a warning edits its
-file, and CI then rebuilds every module that imports that file, directly or not. The two in `lib/core/WeilChi.lean` would
-rebuild 497 modules, all of lib/dh among them, so they stay until WeilChi changes for another reason. A known warning
-that no longer occurs is reported, so that it can be deleted from the list.
-
 The check prints each warning that counts, as a GitHub annotation when it runs in Actions, and fails if there is one.
 """
 import os
@@ -30,12 +25,6 @@ OWN = ("lib/core/", "lib/pnt/", "lib/dh/", "lib/zeta23/", "lib/check/")
 STAMP = re.compile(r"^\d{4}-\d\d-\d\dT[\d:.]+Z ")  # the timestamp that Actions puts on each line of a job's log
 # Lake prints `warning: FILE:LINE:COL: MESSAGE`; lean alone (`lake env lean FILE`) prints `FILE:LINE:COL: warning: MESSAGE`
 WARN = re.compile(r"^warning: (\S+?\.lean):(\d+):(\d+): (.*)$|^(\S+?\.lean):(\d+):(\d+): warning: (.*)$")
-# (file, first line of the message): the message names the declaration, not the line, which moves
-KNOWN = {
-    ("lib/core/WeilChi.lean", "automatically included section variable(s) unused in theorem `PsiOmega.prime_lineC`:"),
-    ("lib/core/WeilChi.lean",
-     "automatically included section variable(s) unused in theorem `PsiOmega.integrable_prime_lineC`:"),
-}
 
 
 def warnings(path):
@@ -57,18 +46,13 @@ def main():
     if len(sys.argv) != 2:
         sys.exit(__doc__)
     found = warnings(sys.argv[1])
-    new = [w for w in found if (w[0], w[3]) not in KNOWN]
-    gone = sorted(KNOWN - {(w[0], w[3]) for w in found})
     actions = os.environ.get("GITHUB_ACTIONS") == "true"
-    for src, line, col, msg in new:
+    for src, line, col, msg in found:
         print(f"::error file={src},line={line},col={col}::{msg}" if actions else f"{src}:{line}:{col}: {msg}")
-    for src, msg in gone:
-        print(f"{src}: a known warning no longer occurs; delete it from KNOWN: {msg}")
-    files = len({w[0] for w in new})
-    print(f"check_warnings: {len(new)} warnings in {files} files of the library's sources"
-          f" (and {len(found) - len(new)} known)")
-    print("WARNINGS PASS" if not new else "WARNINGS FAIL")
-    return 1 if new else 0
+    files = len({w[0] for w in found})
+    print(f"check_warnings: {len(found)} warnings in {files} files of the library's sources")
+    print("WARNINGS PASS" if not found else "WARNINGS FAIL")
+    return 1 if found else 0
 
 
 if __name__ == "__main__":
