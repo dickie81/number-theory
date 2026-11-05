@@ -1,8 +1,10 @@
 # The evaporation rate of the orbit form: witness level, approach, rate
 
-**Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`. The theorems are mapped onto the
-gravastar language in the section after the statements; the first section, written before the Lean, fixes the three
-statements and says what each costs.
+**Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`, with `BallSampling` and
+`BallDensity` in the last two sections. The theorems are mapped onto the gravastar language in the section after the
+statements; the first section, written before the Lean, fixes the three statements and says what each costs. The rate,
+open when that section was written, is now proved under RH alone: `λ_N ≥ 10⁻¹²/(N log³N)` for every `N ≥ 3`
+(`BallDensity.rate_rh`, last section).
 
 ## The three statements, and what can be proved
 
@@ -101,7 +103,9 @@ zeros it would follow from Landau's formula `Σ_{0<γ≤T} x^{iγ} = −(T/2π)�
 neither of which is in the library. The numerics are in the last section.
 
 **Statement 3C (what is missing, as a conjecture).** The inequality on `|V_x(ρ)|` at the zeros that the rate needs,
-with its numerics, is stated in the last section.
+with its numerics, is stated in the section "What is missing". A Gaussian-smoothed form of it, at height
+`T₀ ≍ N log²N`, is now proved from the explicit formula under RH and gives `λ_N ≥ 10⁻¹²/(N log³N)`
+(`BallDensity`, last section); the sharp-cutoff form stays a conjecture.
 
 ## The theorems, in the gravastar language
 
@@ -235,13 +239,86 @@ the window `[T₁, 2T₁]` the weight of `Q_N` is `1/(¼ + γ²) ≥ 1/(5T₁²)
   quasi-polynomial.
 - **`K/log log u`**: what is known under RH (J. E. Littlewood, 1924: the gaps are `O(1/log log u)`; E. C. Titchmarsh,
   *The Theory of the Riemann Zeta-Function*, ch. XIV), so this hypothesis holds under RH for some `K` and `u₀`; it is
-  not proved in this library. It gives `λ_N ≫ e^{−e^K N^K}`, the only lower bound for `λ_N` here whose sole deep
-  input is RH.
+  not proved in this library. It gives `λ_N ≫ e^{−e^K N^K}`. The next section's `λ_N ≥ 10⁻¹²/(N log³N)` also
+  has RH as its only deep input, and it is far stronger.
 
 **What this says about the rate.** The method needs a zero in *every* cell of length `≍ 1/log N` at height `T₁`,
 where the mean spacing is `2π/log T₁`: it forces `log T₁ ≳ 2π·(largest normalised gap)·log N`. So bounded normalised
 gaps give a polynomial rate, the model's growing gaps a quasi-polynomial one, and Littlewood's bound a doubly
-exponential one, against the observed `0.048·log N/N`. A polynomial rate from a hypothesis believed true needs a
-sampling theorem of Beurling–Landau type, which asks for the right *density* of zeros on windows rather than a zero in
-every cell; and the numerics of the previous section say the truth is such a density statement at `T ≍ N`, where the
-zeros exceed the Nyquist density of the polynomial only by `(1/2π)log(T/2πN)`.
+exponential one, against the observed `0.048·log N/N`. A polynomial rate needs a sampling theorem of Beurling–Landau
+type, which asks for the right *density* of zeros on windows rather than a zero in every cell. The numerics of the
+previous section say the truth is such a density statement at `T ≍ N`, where the zeros exceed the Nyquist density of
+the polynomial only by `(1/2π)log(T/2πN)`. The next section proves one, with the explicit formula supplying the
+density.
+
+## The rate from the density of the zeros (`BallDensity`)
+
+**Lean:** `BallDensity` (`lib/core/BallDensity.lean`), printed by `lib/check/CheckAll.lean`. The five results depend on
+`propext`, `Classical.choice` and `Quot.sound` only. The previous section needs a zero in every short cell. This one
+needs only the density of the zeros, which Weil's explicit formula supplies (`WeilForm.weilExplicit_zeta`, proved with
+no RH input). It proves the rate with RH as the only hypothesis.
+
+| Theorem | Statement | Conditional on |
+|---|---|---|
+| `BallDensity.mertens_le` | `Σ_{n ≤ M} Λ(n)/n ≤ log M + log 4 + 4` | nothing |
+| `BallDensity.landau_le` | for every real `b`, `2Σ_{n ≤ N}(Λ(n)/√n)Σ_{jn ≤ N} b_j b_{jn} ≤ (log N + log 4 + 4)Σ_{j ≤ N} b_j²` | nothing |
+| `BallDensity.weil_htest` | Weil's explicit formula for `h(z) = D(z)D(−z)(w(z − T₀) + w(z + T₀))`, with `D(z) = Σ_{j ≤ N} c_j e^{−iz log j}` and `w(z) = e^{−z²/(2σ²)}` | nothing |
+| `BallDensity.density_bound` | for `σ² ≥ 16N`, `T₀ ≥ 16` and `L₀ = log(T₀/4π) − 3 ≥ 0`, with `c_n = x_n√n`: `(σ√(2π)/π)(L₀ − log N − log 4 − 4)Σc_n² − errD·(Σ\|c_n\|)² ≤ 2(1 + 2T₀² + 4σ²)Q_N(x)` | RH |
+| `BallDensity.rate_rh` | `Q_N(x) ≥ Σ x_n²/(10¹²N log³N)` for every `N ≥ 3`, so `λ_N ≥ 10⁻¹²/(N log³N)` | RH |
+
+The error coefficient `errD` (`BallDensity.errD`) has four parts. With `E₁ = 2σ√(2π)e^{−σ²/16N²}` they are:
+
+- the pole term `2N²e^{1/2σ²}W(0)`;
+- the near-diagonal terms of `∫|D|²W`, `(L₀/2π)E₁N²`;
+- the archimedean tail `((L₀ + 9)/2π)e^{−T₀²/16σ²}·2√2σ√(2π)`;
+- the near misses of the prime side, `(π/3)E₁N²`.
+
+All four are Gaussian-small once `σ ≫ N√(log N)` and `T₀ ≫ σ√(log N)`.
+
+**How it is proved.** Under RH, `Q_N(x) = Σ_ρ |V_x(ρ)|²/(¼ + γ²)`. Also `V_x(ρ)` is the conjugate of `D(γ)` with
+`c_n = x_n√n` (`BallSampling.dpoly_eq_conj`). The test function `h` is entire and even. On the real line it is real,
+`h(t) = |D(t)|²W(t)` with `W = w(· − T₀) + w(· + T₀)`. On `|Im z| ≤ 1` it satisfies
+`|h(z)| ≤ (NS₁)²e^{1/2σ²}W(Re z)`, where `S₁ = Σ|c_n|`. So the explicit formula applies (`weil_htest`).
+
+- **Zero side.** Under RH `h(t_ρ) = |V_x(ρ)|²W(γ)` (`zero_term_eq`). Since `W(γ)(1 + γ²) ≤ 2(1 + 2T₀² + 4σ²)`
+  (`Wd_mul_le`), the zero side is at most `2(1 + 2T₀² + 4σ²)Q_N(x)` (`zero_side_le`).
+- **Fourier side.** `|D(t)|² = Σ_{j,j'} c_j c_{j'} cos((log j' − log j)t)` (`Kc_eq`). The Gaussian cosine transform
+  is `∫W(t)cos(vt) dt = Ŵ(v) = 2σ√(2π)e^{−σ²v²/2}cos(T₀v)` (`integral_gw_cos`, from Mathlib's
+  `integral_cexp_quadratic`). Together they give `g_h(u) = (1/2π)Σ_{j,j'} c_j c_{j'}Ŵ(log j' − log j − u)`
+  (`gh_htestR`).
+- **Exact matches and near misses.** At `u = log n` the pairs with `j' = jn` give `Ŵ(0)Σ_{jn ≤ N} c_j c_{jn}`. Every
+  other pair has `|log j' − log(jn)| ≥ 1/(2N)` (`sep_log`), and at least `log(n/N)` once `n > N`. So when
+  `σ² ≥ 16N` its Gaussian is at most `e^{−σ²/16N²}N²/n²` (`near_miss_le`, `sum_What_log_sub`). At `n = 1` this is
+  the diagonal of `∫h` (`integral_htestR_ge`).
+- **Prime side.** The exact matches give Landau's form `(Ŵ(0)/2π)·2Σ_n Λ(n)n^{−1/2}Σ_{jn ≤ N} c_j c_{jn}`. Schur's
+  test with the weights `j^{−1/2}` bounds it by `(Ŵ(0)/2π)(log N + log 4 + 4)Σc_n²` (`landau_le`). The test uses
+  `b_j b_{jn}/√n ≤ ½(b_j²/n + b_{jn}²)`, then Mertens' bound for `n ≤ N/j`, then `Σ_{n ∣ m} Λ(n) = log m`; the two
+  `log j` terms cancel. Mertens' bound itself (`mertens_le`) comes from `Σ_{m ≤ M} log m = Σ_n Λ(n)⌊M/n⌋ ≤ M log M`
+  and Chebyshev's `ψ(M) ≤ (log 4 + 4)M` from Mathlib. The near misses are summable against `Λ(n)/√n ≤ 2` and
+  `Σ 1/n² = π²/6` (`prime_le`).
+- **Archimedean side.** `−g_h(0)log π + (1/2π)∫h Re ψ(¼ + ir/2)` equals `(1/2π)∫h·(Re ψ − log π)`. Stirling
+  (`DigammaStirling.re_digamma_quarter`) gives `Re ψ(¼ + ir/2) − log π ≥ log(T₀/4π) − 3` on `|r| ≥ T₀/2`
+  (`psiRe_good`), and `≥ −9` everywhere (`psiRe_sub_log_pi_ge`). Away from `±T₀` the window is below
+  `e^{−T₀²/16σ²}` times a Gaussian of width `√2σ` (`gw_tail`, `arch_ge`). This term is the density
+  `(1/2π)log(t/2π)` of the zeros against `|D|²W`.
+- **Pole term.** `h(i/2) + h(−i/2)` is at least `−2(NS₁)²e^{1/2σ²}W(0)`, with `W(0) = 2e^{−T₀²/2σ²}` (`pole_ge`).
+
+Summing these, the density term `(Ŵ(0)/2π)L₀Σc_n²` beats Landau's `(Ŵ(0)/2π)(log N + log 4 + 4)Σc_n²` once
+`log(T₀/4π) − 3 > log N + log 4 + 4`. That is `T₀ > 16πe⁷N ≈ 5.5·10⁴N` (`density_bound`). `rate_rh` takes
+`σ = 32N log N` and `T₀ = 10⁶N log²N`. Then:
+
+1. The margin is at least `2`, from `e⁹ < 8104`.
+2. `N·errD ≤ σ/2` (`errD_le`), since every error carries a factor `N^{−64}`.
+3. `(Σ|c_n|)² ≤ NΣc_n²` and `Σc_n² ≥ Σx_n²`.
+4. `2(1 + 2T₀² + 4σ²) ≤ 10¹²N log³N·σ`.
+
+**What this says.** The density of the zeros near height `T`, `(1/2π)log(T/2π)`, must exceed the bandwidth
+`(1/2π)log N` of a polynomial of length `N` by Landau's arithmetic term, `(1/2π)(log 4 + 4 + O(1))`. That is the
+Beurling–Landau condition for these polynomials, and the explicit formula proves it sufficient. The density condition
+alone asks only `T₀ ≍ N`, as the numerics of the section "What is missing" predicted (`T ≍ 8N`). The window has to
+resolve frequencies `1/N` apart with Gaussian accuracy, which needs width `σ ≫ N√(log N)`, and its tails must miss the
+low zeros, which needs `T₀ ≫ σ√(log N)`. The weight `1/(¼ + γ²)` at height `T₀` costs `1/T₀²` against the gain `σ`,
+so this method gives at best `1/(N log^{3/2}N)`. `rate_rh` takes `σ = 32N log N` and `T₀ = 10⁶N log²N` to keep the
+arithmetic simple, and gets `1/(N log³N)`. Against the observed `0.048·log N/N`, the exponent of `N` is right and the
+power of `log N` is four too low. The sharp-cutoff conjecture `SamplingAtZeros c C 0` of that section stays open.
+What is proved is its Gaussian-smoothed form at `T ≍ N log²N`, which is enough for the rate.

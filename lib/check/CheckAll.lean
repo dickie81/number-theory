@@ -19,6 +19,7 @@ import MertensExponent
 import LagariasCriterion
 import BallRate
 import BallSampling
+import BallDensity
 import HalfPlaneJoinsPNT
 import DivisorExponent
 import ChiPNT
@@ -383,6 +384,15 @@ gap hypothesis, the polynomial, quasi-polynomial and doubly exponential rates fr
 #print axioms BallSampling.rate_of_gapsSqrt
 #print axioms BallSampling.rate_of_gapsLogLog
 #print axioms BallSampling.samplingAtZeros_of_gapsLog
+
+/- The density of the zeros samples the Dirichlet polynomials (`formalisations/ball-rate.md`): Mertens' bound
+`Σ_{n ≤ M} Λ(n)/n ≤ log M + log 4 + 4`, the Schur bound for Landau's form, Weil's explicit formula for the test
+function `|D|²·(Gaussian window at ±T₀)`, the density bound under RH, and `λ_N ≥ 10⁻¹²/(N log³N)` under RH. -/
+#print axioms BallDensity.mertens_le
+#print axioms BallDensity.landau_le
+#print axioms BallDensity.weil_htest
+#print axioms BallDensity.density_bound
+#print axioms BallDensity.rate_rh
 #print axioms MertensExponent.limsup_mexpo
 #print axioms MertensExponent.moebius_tendsto_of_Theta_lt
 #print axioms MertensExponent.moebius_not_tendsto_of_lt_Theta

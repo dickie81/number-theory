@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1334 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1339 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 153 | 438 |
+| `lib/core` | 154 | 443 |
 | `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -43,6 +43,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallCurve.flow_continuous_closure`: The flow is strongly continuous on the closed span of the curve
 - `BallCurve.flow_continuous_of_dense`: If the curve spans densely, the flow is strongly continuous on the whole space
 - `BallCurve.flow_continuous_model`: In the model `curveRealization`, the flow is strongly continuous on all of `ℓ²` ([note](../formalisations/weil-positivity.md))
+
+#### `BallDensity`: The density of the zeros samples the Dirichlet polynomials: `λ_N ≥ 10⁻¹²/(N log³N)` under RH
+
+- `BallDensity.mertens_le`: Mertens' bound ([note](../formalisations/ball-rate.md))
+- `BallDensity.landau_le`: The Landau form ([note](../formalisations/ball-rate.md))
+- `BallDensity.weil_htest`: Weil's explicit formula for `h` ([note](../formalisations/ball-rate.md))
+- `BallDensity.density_bound`: The density bound ([note](../formalisations/ball-rate.md))
+- `BallDensity.rate_rh`: The rate under RH ([note](../formalisations/ball-rate.md))
 
 #### `BallFlat`: The flat model: with Lebesgue measure for the zeros, the orbit spans the cubic lattice
 
@@ -245,7 +253,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `DigammaStirling.phiB_bounds`
 - `DigammaStirling.digamma_stirling`: Explicit digamma Stirling bound
-- `DigammaStirling.re_digamma_quarter`
+- `DigammaStirling.re_digamma_quarter` ([note](../formalisations/ball-rate.md))
 
 #### `DirichletCharHalfPlane`: Every Dirichlet character, `L(s, χ) ≠ 0` on `Re s > 11/12`
 
