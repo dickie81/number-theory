@@ -2,7 +2,7 @@
 
 **Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`, with `BallSampling`,
 `BallDensity`, `BallCutoff` and `BallSharp` in four later sections, then `BallUpper` with `BallUpperEta`, `BallGap`,
-and `BallLow` in the one before the last. The theorems are mapped onto the gravastar
+and `BallLow` in the third from last. The theorems are mapped onto the gravastar
 language in the section after the statements; the first section, written before the Lean, fixes the three statements
 and says what each costs. The rate, open when that section was written, is now proved under RH alone:
 `λ_N ≥ 1/(22e⁸N)` for every `N ≥ 1` (`BallSharp.rate_sharp`, last section). It comes from the sampling conjecture of
@@ -17,9 +17,11 @@ Landau's slack `G(c)`, `BallSharp.rate_slack` reduces the missing `log N` of the
 `Σx_n² n + G(c) = o(log N·Σx_n²)` (section "Why the sampling route stops short of `log N/N`"). Every vector has
 `Σx_n² n + G(c) ≥ (√log N/10)Σx_n²` (`BallGap.edge_law`, last section), so under RH `λ_N ≥ √log N/(220e⁸N)` for every
 `N ≥ 3` (`BallGap.rate_gap`): this route recovers `√log N` of the missing `log N`, which by the numerics of that
-section is all it can give. The last section, numerics only, compares the zeros with point sets of the same density and
-no arithmetic, which give `λ_N ≍ N^{−1/2}`, and finds the shape of the minimiser: `w(n/N)/ψ(n)`, `ψ` Dedekind's
-function, with `w(u) = Σ_{k ≤ 1/u} c(ku)` for one fixed function `c`.
+section is all it can give. The section "Packing", numerics only, compares the zeros with point sets of the same
+density and no arithmetic, which give `λ_N ≍ N^{−1/2}`, and finds the shape of the minimiser: `w(n/N)/ψ(n)`, `ψ`
+Dedekind's function, with `w(u) = Σ_{k ≤ 1/u} c(ku)` for one fixed function `c`. The last section solves the
+variational problem for `c` and derives the constant at leading order, heuristically:
+`λ_N·N/log N → (1/12)(T + κP²)/D = 0.0429`, with `κ = 0.096` from the profile and `T`, `P`, `D` Euler products.
 
 ## The three statements, and what can be proved
 
@@ -978,4 +980,116 @@ length `N` can be quiet on every zero up to height `≍ N`. A lower bound `λ_N 
 counting zeros. It has to be an inverse theorem: a vector quiet at the zeros up to height `≍ N` carries the factor
 `ζ`, through `n/ψ(n)` in the bulk and the staircase at the cut, and carrying it costs `A ≍ log N`. The continuum limit
 reduces the constant to a variational problem in one function: `0.0434` is, to within `3%`, the minimum over `c` with
-`∫c = 0` of the quotient of `x_n = Σ_{k ≤ N/n} c(kn/N)/ψ(n)`, times `N/log N`. That problem is not solved here.
+`∫c = 0` of the quotient of `x_n = Σ_{k ≤ N/n} c(kn/N)/ψ(n)`, times `N/log N`. The next section solves it.
+
+## The variational problem, solved: `λ_N ~ 0.0429·log N/N` (`scripts/packing.py --solve`; heuristic, uncertified)
+
+The constant comes out of three parts:
+
+1. **A reduction to `N = ∞`.** It is heuristic.
+2. **A profile problem.** A quadratic problem for one function on `[0, 1]`, with no `N` in it, solved numerically.
+3. **An arithmetic problem.** Euler products, optimised prime by prime.
+
+**The reduction.**
+- **The class of vectors.** Write `n·x_n = Σ_{d | n} E_d(n/N)`, each `E_d` a fixed function on `[0, 1]` (zero beyond 1).
+  Put `e(d) = E_d(0)` and `F = 1 ∗ e`, so `x_n → F(n)/n` for fixed `n`. Take a zero `ρ` at height `γ = 2πτN`.
+- **Three terms for each `d`.** The smoothed approximate functional equation splits `Σ_m E_d(dm/N)m^{ρ−1}` into:
+  - `e(d)ζ(1 − ρ)`, which vanishes;
+  - the boundary term `(N/d)^ρÊ_d(ρ)`. These add up to `N^ρĜ(ρ)` with `G = Σ_d E_d/d`. That vanishes at every zero
+    exactly when `G` is a staircase `Σ_k c(k·)` with `c` continuous: the condition of the previous section;
+  - the dual sum `−χ(1 − ρ)Σ_k k^{−ρ}Δ_d(τd/k)`, where `Δ_d(y) = e(d) − E_d(y)`.
+- **The dual sum over ratios.** Summed over `d` it is a sum over the ratios `d/k = a/b`, in lowest terms. The
+  coefficient of `(a/b)^{iγ}` is `(ab)^{−1/2}H_a(τa/b)`, with `H_a = Σ_g Δ_{ag}/g`. Its mean square over the zeros near
+  `γ` is the diagonal `Σ_{(a,b) = 1}H_a(τa/b)²/ab`, up to Landau's `O(1/log N)`.
+- **The `τ`-integral factors out.** Weighting by `1/|ρ|²` and the zero density `(log N)/2π` gives
+
+  `Q_N(x)·N/(log N·Σx_n²) → (1/12D)·Σ_{a ≥ 1} ω_a ∫_0^∞ H_a(y)² dy/y²`,
+
+  with `ω_a = Π_{p | a}(1 − p⁻²)` and `D = Σ_n F(n)²/n²`. The `1/12` is `ζ(2)/2π²`.
+
+**The minimum.**
+- **Above `y = 1`.** There `H_a = S(a) := Σ_g e(ag)/g` whatever the profiles. So for `a ≥ 2` the best choice is
+  `H_a = 0` on `[0, 1]`, a sharp cut for `d ≥ 2`, at cost `S(a)²` each.
+- **At `a = 1`.** `G = S(1)·w` with `w` a staircase, and the cost is `S(1)²·I[c]`, where
+
+  `I[c] = ∫_0^∞ (1 − W(x))² dx`, `W(x) = Σ_{1 ≤ k ≤ x} c(k/x)`, `W = 0` for `x < 1`.
+
+  This is `∫(1 − w(y))²dy/y²` in `x = 1/y`. `I` is finite only if:
+  - `c(0) = −2` and `∫c = 0`, or `W` does not tend to `1`;
+  - `c(1) = 0` and `c` is continuous, or `W` keeps a sawtooth that does not decay.
+- **The two problems separate:**
+
+  `λ_N·N/log N → Λ* = min_e (1/12)·(T(e) + (I_min − 1)·P(e)²)/D(e)`,
+
+  with `P = S(1) = Σ_d e(d)/d` and `T = Σ_a ω_a S(a)²`. `T`, `P` and `D` are Euler products in the local factors
+  `F(p^v)`. Write `κ = I_min − 1`.
+- **The optimal vector is additive:** `x_n = (F(n) − P·(1 − w(n/N)))/n`. The bulk weight `F(n)/n` has a sharp cut, and
+  the staircase correction carries no arithmetic.
+- **The separable vectors `F(n)w(n/N)/n` of the previous section** are the special case `G_a = S(a)w` for every `a`.
+  They give `K(F)·I[c]` with `K = T/12D`. The additive form beats them by moving the profile onto `a = 1` alone.
+
+**The profile problem: `I_min = 1.0959`.** `c` is a cubic spline on `[0, 1]` under the three constraints. The
+quadrature is Gauss–Legendre on each `[k, k + 1]` up to `x = 300`. Beyond that the tail is
+`(c'(1)²/720 + c'(0)²/144)/x²` from Euler–Maclaurin: `1 − W ≈ −(c'(1)B₂({x})/2 − c'(0)/12)/x`.
+
+| knots | 16 uniform | 32 | 64 | uniform plus kinks at the rationals of denominator `≤ 4`, `6`, `8`, `10` |
+|---|---|---|---|---|
+| functions | 16 | 32 | 64 | 31, 49, 80, 113 |
+| `I_min` | `1.1014` | `1.0981` | `1.0970` | `1.0973`, `1.0966`, `1.0963`, `1.0959` |
+
+- **The kinks matter.** `W` couples `c` at rational multiples, so the minimiser has corners at the rationals.
+- **The limit.** It is about `1.095`, so `κ ≈ 0.096`.
+- **The minimiser.** Its slope at `u = 1` is `c'(1) ≈ −7`: `c` climbs from `0` to about `1` within `0.3` of `u = 1`,
+  which keeps `W` near `1` on `(1, 2)`. Against the profile recovered from the minimiser of `Q_N` at `N = 8000`:
+
+  | `u` | `0.02` | `0.12` | `0.22` | `0.32` | `0.42` | `0.52` | `0.62` | `0.72` | `0.82` | `0.92` |
+  |---|---|---|---|---|---|---|---|---|---|---|
+  | `c_opt` | `−1.992` | `−1.726` | `−1.142` | `−0.389` | `0.299` | `0.885` | `1.076` | `1.068` | `0.860` | `0.462` |
+  | `N = 8000` | `−1.990` | `−1.697` | `−1.121` | `−0.377` | `0.315` | `0.863` | `1.055` | `1.058` | `0.841` | `0.448` |
+
+**The arithmetic problem.**
+- **At `κ = 0`.** It splits into one generalized eigenproblem per prime.
+  - The minimum is `K_min = 0.040021`, against `K(ψ) = 0.040162` for `F = n/ψ(n)` and `1/(2π²) = 0.050661` for `F = 1`.
+  - The optimal `F(2^v)` are `0.676, 0.629, 0.619, 0.616`, tending to `0.615`.
+  - For large `p` the optimum is `1 − 1/(p + 1) + O(p⁻⁴)`. That is why the minimiser looked like `ψ`.
+- **At `κ = 0.0959`.** The coupling through `P²` tilts every prime.
+  - `Λ* = 0.042887`.
+  - `F(p) = 0.6468, 0.7324, 0.8214, 0.8661, 0.9108` at `p = 2, 3, 5, 7, 11`, and `F(p) ≈ 1 − 1.070/(p + 1)` for large
+    `p`.
+  - With `F = n/ψ(n)` kept fixed it is `0.043166`.
+
+**Checks against finite `N`.**
+- **Fixed vectors built from `c_opt`.** No re-optimisation at each `N`. The table gives quotient·`N/log N`.
+
+  | vector | `2000` | `4000` | `8000` | `1.6·10⁴` | `3·10⁴` | fit `A + B/log N` | predicted |
+  |---|---|---|---|---|---|---|---|
+  | `w(n/N)/n` (`F = 1`) | `0.05795` | `0.05773` | `0.05762` | `0.05740` | `0.05736` | `0.05564` | `0.05552` |
+  | `F·w/n`, `F = n/ψ(n)` | `0.04897` | `0.04852` | `0.04824` | `0.04787` | `0.04776` | `0.04424` | `0.04401` |
+  | `(F − P(1 − w))/n` | `0.04825` | `0.04804` | `0.04753` | `0.04726` | `0.04703` | `0.04345` | `0.04317` |
+  | `λ_N` | `0.04756` | `0.04722` | `0.04694` | `0.04667` | `0.04647` | `0.04341` | `Λ* = 0.04289` |
+
+  - The three fixed vectors meet their predicted limits to `0.2`–`0.6%`.
+  - `λ_N` extrapolates `1.2%` above `Λ*`. Adding a term `C/log²N` to the fit gives `0.04279`.
+  - The likely cause is the slow drift of the local factors toward the tilted optimum.
+    - For `p ≥ 11` the minimiser's local factors already match it: `f(11) = 0.911`–`0.913` against `0.9108`.
+    - At `p ≤ 7` they are still near their `κ = 0` values: `f(2) = 0.668`–`0.674` against `0.6468`.
+- **Re-optimised families.** With the best `c` at each `N`, among 16 B-splines:
+  - The extrapolations are `0.04436` (separable) and `0.04347` (additive), against `K(ψ)·I_16 = 0.04423` and
+    `(T + κ_16P²)/12D = 0.04334`.
+  - The predicted separable/additive ratio is `1.020`; at finite `N` it is `1.013`–`1.017`.
+  - For `F = 1` the re-optimised quotient stays at `0.0569` from `N = 2000` to `3·10⁴`. The fixed vector shows the limit
+    is lower.
+- **`θ`.** In the separable class the predicted optimum of `1 − θ/(p + 1)` is `θ = 1.035`, very flat, and the scan at
+  `N = 4000` and `8000` has its minimum at `θ ≈ 1`. Far from the optimum the finite-`N` ratios are milder than
+  predicted: `θ = 0` costs `1.17` against `1.26`.
+
+**What this gives, and what it does not.**
+- **The constant.** It is `(1/12)·(T + κP²)/D`, three pieces:
+  - `1/12` is the zero density against the dual sum over `b`;
+  - `T/D` is the arithmetic weight, `0.480` at its optimum;
+  - `κ ≈ 0.096` is the price of silencing the boundary at every zero with a staircase.
+- **The profile problem is of Nyman–Beurling type.** For a step function `c` the staircase `w(y) = Σ_k c(ky)` is a
+  Nyman–Beurling function `−Σa_i{θ_i/y}`. Here the approximation of `1` is on `(1, ∞)` in `L²(dx)`, `c` must be
+  continuous, and the minimum is positive.
+- **What is not proved.** The reduction is heuristic: the dual-sum approximation and the diagonal mean value over the
+  zeros. It gives the limit of the quotient for vectors of the form above. A lower bound for every vector needs more.

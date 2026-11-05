@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""The zeros against point sets with their density and no arithmetic, and the shape of the minimiser of Q_N
-(formalisations/ball-rate.md, section "Packing: what the zeros allow that a fence does not"). Uncertified numerics.
+"""The zeros against point sets with their density and no arithmetic, the shape of the minimiser of Q_N, and the
+variational problem for its profile (formalisations/ball-rate.md, sections "Packing: what the zeros allow that a
+fence does not" and "The variational problem, solved"). Uncertified numerics.
 
     python3 scripts/packing.py [N ...]                              # default N = 100 200 400 800 1600; numpy, scipy
     python3 scripts/packing.py --silence --zeros-file FILE [N ...]  # default N = 800 1600
@@ -32,7 +33,23 @@ height 25755, cover N ≤ 1600), e.g. the first 2000 from mpmath and the rest fr
     python3 scripts/packing.py --stair [N ...]                      # default N = 16000 30000
 
 --stair: the best staircase vector of --ground (c in 16 B-splines) at large N, from the Gram matrix in column blocks
-without storing it: its quotient·N/log N, to set against λ_N·N/log N from scripts/lambda_large.py.
+without storing it: its quotient·N/log N, to set against λ_N·N/log N from scripts/lambda_large.py. Also the additive
+form x_n = (F(n) − P + P·w(n/N))/n, F(n) = n/ψ(n): the best vector in the span of F(n)/n, 1/n and the staircases/n.
+
+    python3 scripts/packing.py --solve [N ...]                      # N optional, e.g. 2000 4000 8000 16000 30000
+
+--solve: the variational problem of the note's section "The variational problem, solved", which needs no N.
+  - The profile problem: the minimum of I[c] = ∫_0^∞ (1 − W_c(x))² dx, W_c(x) = Σ_{1 ≤ k ≤ x} c(k/x) (0 for x < 1), over
+    cubic splines c on [0, 1] with c(0) = −2, c(1) = 0, ∫c = 0, uniform knots and kinks allowed at the rationals of
+    denominator ≤ Q. Gauss–Legendre on each [k, k + 1] up to X, and beyond X the tail ∫(c'(1)²/720 + c'(0)²/144)dx/x².
+  - The arithmetic problem: Λ = (1/12)·(T + κP²)/D over multiplicative F = 1 ∗ e with κ = I_min − 1, where
+    D = Σ F(n)²/n², S(a) = Σ_g e(ag)/g, P = S(1) and T = Σ_a Π_{p | a}(1 − p⁻²)·S(a)², all Euler products. The local
+    factors F(p^v), v ≤ 10, are optimised for p ≤ 200 by BFGS, prime by prime, and for larger p the squarefree factor
+    1 − θ/(p + 1) on a grid of θ.
+  - With N given: the Rayleigh quotients, times N/log N, of three fixed vectors built from c_opt, w(u) = Σ_{k ≤ 1/u}
+    c_opt(ku): w(n/N)/n (F = 1), F(n)w(n/N)/n and (F(n) − P(1 − w(n/N)))/n with F = n/ψ(n), from the Gram matrix in
+    column blocks; with two N or more, the fit A + B/log N, against the predicted limits K(1)·I, K(ψ)·I and
+    (T + (I − 1)P²)/12D.
 """
 import os
 
@@ -286,23 +303,189 @@ def ground_mode(Ns):
               + "; a_k/a_1 = " + ", ".join(f"{v / a[0]:.2f}" for v in a))
 
 
-def stair_big(Ns, block=1024):
-    from ball_orbit import kernel_over_sqrt, tables
+def stair_big(Ns):
+    def ritz_big(N, Y):
+        U, sv, _ = np.linalg.svd(Y / np.linalg.norm(Y, axis=0), full_matrices=False)
+        Q = U[:, sv > 1e-9 * sv[0]]
+        H = Q.T @ gram_apply(N, Q)
+        return eigh((H + H.T) / 2, eigvals_only=True)[0]
+
     for N in Ns:
         n = np.arange(1, N + 1, dtype=float)
         psi = n / local_factor(N, lambda p: p / (p + 1))
-        Y = (1 / psi)[:, None] * stair(16, n / N)
-        U, sv, _ = np.linalg.svd(Y / np.linalg.norm(Y, axis=0), full_matrices=False)
-        Q = U[:, sv > 1e-9 * sv[0]]
-        A, B = tables(N + 1)
-        GQ = np.zeros_like(Q)
-        for c0 in range(0, N, block):
-            cols = n[c0:c0 + block][None, :]
-            hi, lo = np.maximum(n[:, None], cols), np.minimum(n[:, None], cols)
-            GQ += (hi * kernel_over_sqrt(hi / lo, A, B)) @ Q[c0:c0 + block]
-        H = Q.T @ GQ
-        w = eigh((H + H.T) / 2, eigvals_only=True)[0]
-        print(f"N = {N}: best staircase quotient·N/log N = {w * N / math.log(N):.5f}", flush=True)
+        S = stair(16, n / N)
+        w = ritz_big(N, (1 / psi)[:, None] * S)
+        wa = ritz_big(N, np.hstack([(1 / psi)[:, None], (1 / n)[:, None], S / n[:, None]]))
+        print(f"N = {N}: quotient·N/log N, best staircase {w * N / math.log(N):.5f}, additive {wa * N / math.log(N):.5f}",
+              flush=True)
+
+
+def primes_upto(n):
+    s = np.ones(n + 1, bool)
+    s[:2] = False
+    for p in range(2, math.isqrt(n) + 1):
+        if s[p]:
+            s[p * p::p] = False
+    return np.nonzero(s)[0]
+
+
+def profile_problem(Q=10, M=30, X=300, G=10, kdeg=3):
+    """min I[c] over cubic splines with uniform knots (M intervals) and triple knots at the rationals of denominator ≤ Q."""
+    from fractions import Fraction
+    from numpy.polynomial.legendre import leggauss
+    fr = sorted({Fraction(a, b) for b in range(1, Q + 1) for a in range(b + 1)})
+    inner = [float(f) for f in fr if 0 < f < 1]
+    pts = np.unique(np.concatenate([[float(f) for f in fr], np.linspace(0, 1, M + 1)]))
+    t = np.sort(np.concatenate([[0.0] * kdeg, pts, [1.0] * kdeg, inner, inner]))
+    J = len(t) - kdeg - 1
+    gx, gw = leggauss(G)
+    rows, ws = [], []
+    for k in range(1, X):
+        for xi, wi in zip(k + (gx + 1) / 2, gw / 2):
+            u = np.clip(np.arange(1, k + 1) / xi, 0, 1 - 1e-15)
+            rows.append(np.asarray(BSpline.design_matrix(u, t, kdeg).sum(axis=0)).ravel())
+            ws.append(wi)
+    Wm, ws = np.array(rows), np.array(ws)
+
+    def ev(u, nu=0):
+        return np.array([BSpline(t, np.eye(J)[j], kdeg)(u, nu) for j in range(J)])
+
+    b0, b1, d0, d1 = ev(0.0), ev(1.0), ev(0.0, 1), ev(1.0, 1)
+    integ = np.array([(t[j + kdeg + 1] - t[j]) / (kdeg + 1) for j in range(J)])
+    H = (Wm * ws[:, None]).T @ Wm + (np.outer(d1, d1) / 720 + np.outer(d0, d0) / 144) / X
+    g = (Wm * ws[:, None]).sum(axis=0)
+    C = np.vstack([b0, b1, integ])
+    K = np.block([[2 * H, C.T], [C, np.zeros((3, 3))]])
+    a = np.linalg.solve(K, np.concatenate([2 * g, [-2.0, 0.0, 0.0]]))[:J]
+    return 1 + a @ H @ a - 2 * g @ a + ws.sum(), BSpline(t, a, kdeg), J
+
+
+def local_forms(p, V=10):
+    """In the local factors F_v = F(p^v), v ≤ V: the forms of T_p and D_p, and the functional s_p(0)."""
+    q, n = 1.0 / p, V + 1
+    M = np.eye(n) - np.eye(n, k=-1)
+    S = np.array([[q ** (j - i) if j >= i else 0.0 for j in range(n)] for i in range(n)])
+    SM = S @ M
+    A = SM.T @ np.diag([1.0] + [1 - q * q] * (n - 1)) @ SM
+    return A, np.diag(q ** (2 * np.arange(n))), SM[0]
+
+
+def arithmetic_problem(kappa, P=200000, V=10, free_upto=200, iters=8):
+    from scipy.optimize import minimize
+    ps = primes_upto(P)
+    small = [int(p) for p in ps if p <= free_upto]
+    forms = {p: local_forms(p, V) for p in small}
+    Fs = {p: np.array([1.0] + [p / (p + 1.0)] * V) for p in small}
+    big = ps[ps > free_upto].astype(float)
+    eb = -1.0 / (big + 1)
+
+    def totals():
+        lT = np.sum(np.log((1 + eb / big) ** 2 + (1 - big ** -2.0) * eb * eb))
+        lS = np.sum(2 * np.log(1 + eb / big))
+        lD = np.sum(np.log(1 + (1 + eb) ** 2 / (big * big - 1.0)))
+        for p in small:
+            A, B, r = forms[p]
+            F = Fs[p]
+            lT += math.log(F @ A @ F)
+            lS += 2 * math.log(abs(r @ F))
+            lD += math.log(F @ B @ F)
+        return math.exp(lT), math.exp(lS), math.exp(lD)
+
+    prev = None
+    for _ in range(iters):
+        T, S2, D = totals()
+        lam = (T + kappa * S2) / (12 * D)
+        if prev is not None and abs(lam - prev) < 1e-10:
+            break
+        prev = lam
+        for p in small:
+            A, B, r = forms[p]
+            F = Fs[p]
+            To, So, Do = T / (F @ A @ F), S2 / (r @ F) ** 2, D / (F @ B @ F)
+
+            def obj(f):
+                Gv = np.concatenate([[1.0], f])
+                return (To * (Gv @ A @ Gv) + kappa * So * (r @ Gv) ** 2) / (Do * (Gv @ B @ Gv))
+
+            Fs[p] = np.concatenate([[1.0], minimize(obj, F[1:], method="BFGS", options={"gtol": 1e-12}).x])
+            T, S2, D = totals()
+        Tb = (1 + eb / big) ** 2 + (1 - big ** -2.0) * eb * eb
+        kp = kappa * (S2 / (1 + eb / big) ** 2) / (T / Tb)
+        best, cur = eb.copy(), None
+        for th in np.linspace(0.4, 1.6, 1201):
+            e = -th / (big + 1)
+            val = ((1 + e / big) ** 2 * (1 + kp) + (1 - big ** -2.0) * e * e) / (1 + (1 + e) ** 2 / (big * big - 1.0))
+            cur = ((1 + best / big) ** 2 * (1 + kp) + (1 - big ** -2.0) * best * best) / (
+                1 + (1 + best) ** 2 / (big * big - 1.0))
+            best = np.where(val < cur, e, best)
+        eb[:] = best
+    T, S2, D = totals()
+    return (T + kappa * S2) / (12 * D), Fs, float(np.median(-eb * (big + 1))), (T, S2, D)
+
+
+def gram_apply(N, X, block=1024):
+    """G_N·X from the Gram matrix in column blocks, without storing it."""
+    from ball_orbit import kernel_over_sqrt, tables
+    A, B = tables(N + 1)
+    n = np.arange(1, N + 1, dtype=float)
+    GX = np.zeros_like(X)
+    for c0 in range(0, N, block):
+        cols = n[c0:c0 + block][None, :]
+        hi, lo = np.maximum(n[:, None], cols), np.minimum(n[:, None], cols)
+        GX += (hi * kernel_over_sqrt(hi / lo, A, B)) @ X[c0:c0 + block]
+    return GX
+
+
+def solve_mode(Ns):
+    print("The profile problem, min I[c]:")
+    best = None
+    for Q, M in [(4, 16), (6, 16), (8, 24), (10, 30)]:
+        I, c, J = profile_problem(Q, M)
+        print(f"   kinks at the rationals of denominator ≤ {Q:2d}, uniform {M} intervals ({J} functions): "
+              f"I_min = {I:.6f}", flush=True)
+        best = (I, c)
+    I, c = best
+    print("   c_opt(u), u = 0, 0.05, ..., 1: " + " ".join(f"{c(u):.3f}" for u in np.linspace(0, 1, 21)))
+    print(f"   c_opt'(0) = {c(0.0, 1):.3f}, c_opt'(1) = {c(1.0, 1):.3f}")
+    ps = primes_upto(200000).astype(float)
+    e = -1 / (ps + 1)
+    T = math.exp(np.sum(np.log((1 + e / ps) ** 2 + (1 - ps ** -2.0) * e * e)))
+    S2 = math.exp(np.sum(2 * np.log(1 + e / ps)))
+    D = math.exp(np.sum(np.log(1 + (1 + e) ** 2 / (ps * ps - 1.0))))
+    print("The arithmetic problem:")
+    print(f"   F = n/ψ(n): T = {T:.6f}, P² = {S2:.6f}, D = {D:.6f}; K = T/12D = {T / (12 * D):.6f}, "
+          f"(T + κP²)/12D = {(T + (I - 1) * S2) / (12 * D):.6f} at κ = I_min − 1 = {I - 1:.4f}")
+    print(f"   F = 1: K = 1/(2π²) = {1 / (2 * math.pi ** 2):.6f}")
+    for kappa in [0.0, I - 1]:
+        lam, Fs, th, (T, S2, D) = arithmetic_problem(kappa)
+        print(f"   optimal F at κ = {kappa:.4f}: Λ = {lam:.6f} (T = {T:.6f}, P² = {S2:.6f}, D = {D:.6f}); F(p) at p = 2, 3, 5,"
+              " 7, 11, 13: " + " ".join(f"{Fs[p][1]:.4f}" for p in [2, 3, 5, 7, 11, 13]) + "; F(2^v), v = 2, 3, 4: "
+              + " ".join(f"{v:.4f}" for v in Fs[2][2:5]) + f"; (1 − F(p))(p + 1) → {th:.3f}", flush=True)
+    if not Ns:
+        return
+    ps = primes_upto(200000).astype(float)
+    e = -1 / (ps + 1)
+    T = math.exp(np.sum(np.log((1 + e / ps) ** 2 + (1 - ps ** -2.0) * e * e)))
+    S2 = math.exp(np.sum(2 * np.log(1 + e / ps)))
+    D = math.exp(np.sum(np.log(1 + (1 + e) ** 2 / (ps * ps - 1.0))))
+    pred = [I / (2 * math.pi ** 2), T * I / (12 * D), (T + (I - 1) * S2) / (12 * D)]
+    names = ["w/n (F = 1)", "F·w/n, F = n/ψ(n)", "(F − P(1 − w))/n"]
+    print("Fixed vectors from c_opt, quotient·N/log N:")
+    rows = []
+    for N in Ns:
+        n = np.arange(1, N + 1, dtype=float)
+        w = np.array([c(np.arange(1, N // m + 1) * m / N).sum() for m in range(1, N + 1)])
+        F = local_factor(N, lambda p: p / (p + 1))
+        X = np.vstack([w / n, F * w / n, (F - math.sqrt(S2) * (1 - w)) / n]).T
+        q = np.einsum("ij,ij->j", X, gram_apply(N, X)) / np.einsum("ij,ij->j", X, X) * N / math.log(N)
+        rows.append(q)
+        print(f"   N = {N:5d}: " + "   ".join(f"{a}: {v:.5f}" for a, v in zip(names, q)), flush=True)
+    if len(Ns) >= 2:
+        L = np.log(Ns)
+        Xf = np.vstack([np.ones_like(L), 1 / L]).T
+        for j, a in enumerate(names):
+            coef, *_ = np.linalg.lstsq(Xf, np.array([r[j] for r in rows]), rcond=None)
+            print(f"   {a}: A + B/log N gives A = {coef[0]:.5f}; predicted limit {pred[j]:.5f}")
 
 
 def main():
@@ -312,6 +495,7 @@ def main():
     ap.add_argument("--zeros-file", default=None, help="ordinates of the zeros, one per line (for --silence)")
     ap.add_argument("--ground", action="store_true", help="the minimiser against w(n/N)/ψ(n)")
     ap.add_argument("--stair", action="store_true", help="the best staircase vector at large N")
+    ap.add_argument("--solve", action="store_true", help="the variational problem for c and the arithmetic factor")
     a = ap.parse_args()
     if a.silence:
         if not a.zeros_file:
@@ -321,6 +505,8 @@ def main():
         ground_mode(a.N or [2000, 4000, 8000])
     elif a.stair:
         stair_big(a.N or [16000, 30000])
+    elif a.solve:
+        solve_mode(a.N)
     else:
         models_mode(a.N or [100, 200, 400, 800, 1600])
 
