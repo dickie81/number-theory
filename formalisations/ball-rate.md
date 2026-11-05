@@ -707,8 +707,8 @@ two checks of the proof at its weights:
 | `min(A + B)/√log N` | `2.944` | `2.902` | `2.887` | `2.887` | `2.894` |
 | `min(A + B)/√(2(c₀ + γ + 1)log N)` | `1.046` | `1.031` | `1.025` | `1.025` | `1.028` |
 | `min(A + B)` over the proved `√log N/10` | `29.4` | `29.0` | `28.9` | `28.9` | `28.9` |
-| smallest `d(m)`, `2 ≤ m ≤ N` | `1.77` | `1.82` | `1.85` | `1.87` | — |
-| smallest slack of the vertex inequality | `5.62` | `5.57` | `5.54` | `5.51` | — |
+| smallest `d(m)`, `2 ≤ m ≤ N` | `1.77` | `1.82` | `1.85` | `1.87` | `1.89` |
+| smallest slack of the vertex inequality | `5.62` | `5.57` | `5.54` | `5.51` | `5.50` |
 
 The minimum is `2.89`–`2.94` times `√log N` over this range. It is within `5%` of `√(2(c₀ + γ + 1)log N)`, the
 profile's prediction below with the grounding `κ_j + 1 ≈ c₀ + γ + 1`. So `√log N` is the right order where it can be
