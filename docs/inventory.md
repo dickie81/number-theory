@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1343 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1348 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 155 | 447 |
+| `lib/core` | 156 | 452 |
 | `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -126,6 +126,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallSampling.rate_of_gapsSqrt`: Gaps `K/√(log u)` give a quasi-polynomial rate ([note](../formalisations/ball-rate.md))
 - `BallSampling.rate_of_gapsLogLog`: Gaps `K/log log u` give a rate with RH as the only deep input ([note](../formalisations/ball-rate.md))
 - `BallSampling.samplingAtZeros_of_gapsLog`: The sampling hypothesis of `BallRate` from bounded normalised gaps ([note](../formalisations/ball-rate.md))
+
+#### `BallSharp`: Sampling at the zeros in its natural form: `Σ_{|γ| ≤ T}|V_x(ρ)|² ≥ (T/11)(log(T/N) − 10)Σ x_n² n` under RH
+
+- `BallSharp.integral_Kc_conv`: The mass of `|D|²` against a smoothed weight ([note](../formalisations/ball-rate.md))
+- `BallSharp.sampling_log`: Sampling at the zeros in its natural form ([note](../formalisations/ball-rate.md))
+- `BallSharp.sampling_log_clean`: The clean form ([note](../formalisations/ball-rate.md))
+- `BallSharp.sampling_e11`: Sampling from `T ≥ e¹¹N` ([note](../formalisations/ball-rate.md))
+- `BallSharp.rate_sharp`: The rate under RH ([note](../formalisations/ball-rate.md))
 
 #### `BallSlice`: Two primes carry the Riemann hypothesis: positivity on the slice of `p` and `q`
 
