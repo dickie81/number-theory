@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1339 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1343 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 154 | 443 |
+| `lib/core` | 155 | 447 |
 | `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -43,6 +43,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallCurve.flow_continuous_closure`: The flow is strongly continuous on the closed span of the curve
 - `BallCurve.flow_continuous_of_dense`: If the curve spans densely, the flow is strongly continuous on the whole space
 - `BallCurve.flow_continuous_model`: In the model `curveRealization`, the flow is strongly continuous on all of `ℓ²` ([note](../formalisations/weil-positivity.md))
+
+#### `BallCutoff`: Sampling at the zeros up to height `T ≍ N`: `SamplingAtZeros c C 0` under RH
+
+- `BallCutoff.weil_htC`: Weil's explicit formula for `|D|²Φ` ([note](../formalisations/ball-rate.md))
+- `BallCutoff.integral_Kc_majR_le`: The mass bound ([note](../formalisations/ball-rate.md))
+- `BallCutoff.sampling_rh`: Sampling at the zeros up to height `T ≍ N` ([note](../formalisations/ball-rate.md))
+- `BallCutoff.rate_cut`: The rate under RH ([note](../formalisations/ball-rate.md))
 
 #### `BallDensity`: The density of the zeros samples the Dirichlet polynomials: `λ_N ≥ 10⁻¹²/(N log³N)` under RH
 

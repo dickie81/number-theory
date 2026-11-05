@@ -1,10 +1,11 @@
 # The evaporation rate of the orbit form: witness level, approach, rate
 
-**Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`, with `BallSampling` and
-`BallDensity` in the last two sections. The theorems are mapped onto the gravastar language in the section after the
-statements; the first section, written before the Lean, fixes the three statements and says what each costs. The rate,
-open when that section was written, is now proved under RH alone: `λ_N ≥ 10⁻¹²/(N log³N)` for every `N ≥ 3`
-(`BallDensity.rate_rh`, last section).
+**Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`, with `BallSampling`,
+`BallDensity` and `BallCutoff` in the last three sections. The theorems are mapped onto the gravastar language in the
+section after the statements; the first section, written before the Lean, fixes the three statements and says what each
+costs. The rate, open when that section was written, is now proved under RH alone: `λ_N ≥ 1/(200e²⁴N)` for every
+`N ≥ 1` (`BallCutoff.rate_cut`, last section). It comes from the sampling conjecture of the section "What is missing",
+which `BallCutoff.sampling_rh` proves under RH with `c = 1/100` and `C = e²⁴`.
 
 ## The three statements, and what can be proved
 
@@ -105,7 +106,8 @@ neither of which is in the library. The numerics are in the last section.
 **Statement 3C (what is missing, as a conjecture).** The inequality on `|V_x(ρ)|` at the zeros that the rate needs,
 with its numerics, is stated in the section "What is missing". A Gaussian-smoothed form of it, at height
 `T₀ ≍ N log²N`, is now proved from the explicit formula under RH and gives `λ_N ≥ 10⁻¹²/(N log³N)`
-(`BallDensity`, last section); the sharp-cutoff form stays a conjecture.
+(`BallDensity`). The sharp-cutoff form itself, with `c = 1/100` and `C = e²⁴`, is proved under RH too and gives
+`λ_N ≥ 1/(200e²⁴N)` (`BallCutoff`, last section).
 
 ## The theorems, in the gravastar language
 
@@ -125,7 +127,8 @@ with its numerics, is stated in the section "What is missing". A Gaussian-smooth
 `Dominant ρ₀` is `∀ ρ, |Re ρ − ½| ≤ Re ρ₀ − ½` and `offMass ρ₀ < 2|a_{ρ₀}|`; `SingleCrossing ρ₀` is `Re ρ = ½` for
 every `ρ` outside the quadruple of `ρ₀`, and implies it (`dominant_of_single`). Both are statements about the zeros,
 consistent with RH failing; nothing in the module assumes RH except `hasSum_form` and `rate_of_sampling`, and
-`SamplingAtZeros` is a named hypothesis with no proof. All ten printed theorems depend on `propext`,
+`SamplingAtZeros` is a named hypothesis, with no proof in the module (`BallCutoff.sampling_rh`, last section, proves
+it under RH at `θ = 0`). All ten printed theorems depend on `propext`,
 `Classical.choice` and `Quot.sound` only.
 
 ## How it was done
@@ -198,7 +201,8 @@ whose density `(1/2π)log(T/2π)` exceeds the Nyquist density `(1/2π)log N` of 
 (Beurling–Landau) and for the zeros would have to come from their arithmetic, Landau's formula
 `Σ_{0<γ≤T} x^{iγ} = −(T/2π)Λ(x)/√x + O(…)` with a pair-correlation input. That is the inequality on `|V_x(ρ)|` that the
 rate is missing; the numbers above say it is true on the vectors that matter, with explicit constants, and that
-nothing below height `N` or above `100N` is involved.
+nothing below height `N` or above `100N` is involved. Under RH the conjecture is now a theorem, with
+`(c, C) = (1/100, e²⁴)` (`BallCutoff.sampling_rh`, last section).
 
 ## The rate from the gaps between the zeros (`BallSampling`)
 
@@ -320,5 +324,68 @@ resolve frequencies `1/N` apart with Gaussian accuracy, which needs width `σ �
 low zeros, which needs `T₀ ≫ σ√(log N)`. The weight `1/(¼ + γ²)` at height `T₀` costs `1/T₀²` against the gain `σ`,
 so this method gives at best `1/(N log^{3/2}N)`. `rate_rh` takes `σ = 32N log N` and `T₀ = 10⁶N log²N` to keep the
 arithmetic simple, and gets `1/(N log³N)`. Against the observed `0.048·log N/N`, the exponent of `N` is right and the
-power of `log N` is four too low. The sharp-cutoff conjecture `SamplingAtZeros c C 0` of that section stays open.
-What is proved is its Gaussian-smoothed form at `T ≍ N log²N`, which is enough for the rate.
+power of `log N` is four too low. What is proved here is the Gaussian-smoothed form of the sharp-cutoff conjecture
+`SamplingAtZeros c C 0`, at `T ≍ N log²N`. The next section proves the conjecture itself with a different test
+function, and removes all but one factor `log N` from the gap.
+
+## Sampling at the zeros up to height `T ≍ N` (`BallCutoff`)
+
+**Lean:** `BallCutoff` (`lib/core/BallCutoff.lean`), printed by `lib/check/CheckAll.lean`. The four results depend on
+`propext`, `Classical.choice` and `Quot.sound` only. This section proves the conjecture of the section "What is
+missing" under RH, with explicit constants. With it comes the rate at the Nyquist exponent with no logarithm.
+
+| Theorem | Statement | Conditional on |
+|---|---|---|
+| `BallCutoff.weil_htC` | Weil's explicit formula for `h(z) = D(z)D(−z)Φ(z)`, with `D(z) = Σ_{j ≤ N} c_j e^{−iz log j}` and the minorant `Φ(r) = (r/T)²(1 − (r/T)²)sinc⁶(br/T)`, `sinc x = sin x/x`, for `0 < b ≤ T` | nothing |
+| `BallCutoff.integral_Kc_majR_le` | for `r ≥ 8`, `∫\|D(t)\|²M_r(t) dt ≤ (π²/2)Σ_{j ≤ N}(r + 8j)c_j²`, with `M_r(t) = (r/t)²sin²(πt/2r) ≥ 1` on `[−r, r]` | nothing |
+| `BallCutoff.sampling_rh` | `BallRate.SamplingAtZeros (1/100) e²⁴ 0`: for every `N ≥ 1`, every real `x` on `[1, N]` and every `T ≥ e²⁴N`, `Σ_{\|γ_ρ\| ≤ T}\|Σ_{n ≤ N} x_n n^ρ\|² ≥ (T/100)Σ_{n ≤ N} x_n² n` | RH |
+| `BallCutoff.rate_cut` | `Q_N(x) ≥ Σ x_n²/(200e²⁴N)` for every `N ≥ 1`, so `λ_N ≥ 1/(200e²⁴N)` | RH |
+
+**How it is proved.** The test function is `h(t) = |D(t)|²Φ(t)` with `c_n = x_n√n`, at `b = 6`.
+
+- **The minorant.** On `|r| ≤ T`, `0 ≤ Φ(r) ≤ min((r/T)², ¼)` (`phiR_bounds`). On `|r| ≥ T`, `Φ(r) ≤ 0` and
+  `|Φ(r)| ≤ T²/(b⁶r²)` (`phiR_tail`). So under RH the zero side `Σ_ρ |V_x(ρ)|²Φ(γ)` is at most
+  `¼Σ_{|γ| ≤ T}|V_x(ρ)|²` (`zero_term_cut`, `zero_side_cut`).
+- **Its transform.** Put `β = b/T`. Then `Φ(r)` is a combination of `(1 − cos 2βr)ĝ₁(r)²` and
+  `(3 − 4cos 2βr + cos 4βr)ĝ₀(r)²`. Here `ĝ₀(r) = 2sin(βr)/r` is the transform of the box `1_{[−β, β]}` and
+  `ĝ₁ = ĝ₀²` that of the triangle, its autocorrelation. So the cosine transform `Φ̂` is an explicit combination of the
+  autocorrelations of the box and the triangle (`integral_phiR_cos`). It is supported in `|v| ≤ 6β`
+  (`phihat_eq_zero`), and `Φ̂(0) = πT(2b² − 3)/(8b⁵)` (`phihat_zero`), from the triangle's autocorrelation `16β³/3` at
+  `0` and `4β³/3` at `2β`.
+- **Exactness.** For `T > 12bN` the support `6b/T` is below `1/(2N)`. Every pair with `j' ≠ jn` has
+  `|log j' − log(jn)| ≥ 1/(2N)` (`BallDensity.sep_log`), so only the exact matches `j' = jn` survive. The diagonal is
+  exact, `∫|D|²Φ = Φ̂(0)Σc_n²` (`integral_hRC`). The prime side is exactly Landau's form, at most
+  `(Φ̂(0)/2π)(log N + log 4 + 4)Σc_n²` (`prime_le_cut`, from `BallDensity.landau_le`). Nothing is approximated.
+- **The pole.** `Φ` vanishes to second order at `0`, and `‖Φ(i/2)‖ ≤ 1/T²` (`phiC_I_half_le`). So the pole term is at
+  least `−2NΣc_n²` (`pole_ge_N`).
+- **The archimedean side.** It is `(1/2π)∫|D|²Φ·L`, with `L(t) = Re ψ(¼ + it/2) − log π`. Compare `L` with
+  `L₁ = log(T/16π) − 3`, its floor on `|t| ≥ T/8`. The defect `Φ(L − L₁)` is at least `−W` (`phiR_mul_L_ge`), where
+  `W` has three parts:
+  - the low-height majorant `M_{T/8}/256`. On `|t| < T/8`, `Φ ≤ (t/T)²`, `L₁ − L ≤ log(T/8|t|)` (Stirling), and
+    `(t/T)²log(T/8|t|) ≤ 1/256` (`low_le`);
+  - the dyadic shells `ε_i M_{2^{i+1}T}`, with `ε_i = (i + 20)/(b⁶4^i)`, on `2^i T < |t| ≤ 2^{i+1}T` for `i < 2J`.
+    There `|Φ| ≤ 4^{−i}/b⁶` and `L − L₁ ≤ i + 20` (`shell_ge`);
+  - the far weight `(21T√T/b⁶)|t|^{−3/2}` beyond `4^J T` (`far_ge`, `integral_farW`).
+
+  `M_r` is a Fejér kernel. Its transform `(πr²/2)(π/r − |v|)⁺` is supported in `|v| < π/r`. A Schur test and the count
+  `#{j' ≤ N : |log j' − log j| < π/r} ≤ 1 + (12/5)(π/r)j` (`card_near_le`) give the mean-value bound
+  `∫|D|²M_r ≤ (π²/2)Σ_j (r + 8j)c_j²` (`integral_Kc_majR_le`). The shells sum to at most
+  `(π²/2)(84T + 336N)Σc_n²/b⁶` (`sum_epsS_le`). `J = N + 10` makes the far weight negligible against
+  `|D|² ≤ (Σ|c_n|)² ≤ NΣc_n²`.
+
+Summing these at `b = 6`, with `Φ̂(0)/2π = 69T/124416` and `log(T/N) ≥ 24`, gives
+`¼Σ_{|γ| ≤ T}|V_x(ρ)|² ≥ (69T/124416)(log(T/N) − log 64π − 7)Σc_n² − 0.0018TΣc_n² − O(NΣc_n²)`. That is at least
+`0.0045TΣc_n²` (`cutoff_bound`), and `Σc_n² = Σx_n²n`. Then `rate_of_sampling` gives `rate_cut`.
+
+**What this says.** Under RH, the zeros up to height `T` sample the Dirichlet polynomials of length `N` once
+`T ≥ e²⁴N`. This is the Marcinkiewicz–Zygmund inequality at a constant multiple of the Nyquist density, which the
+section "What is missing" observed (`c ≈ 0.1` at `C = 8`) and conjectured. The constants are far from optimal:
+`e²⁴ ≈ 2.6·10¹⁰`, against the observed `8`. The shape is right, though. `λ_N ≥ 1/(200e²⁴N)` has the Nyquist exponent
+and no logarithm, against the observed `0.048·log N/N`; one factor `log N` is missing. Two properties of the test
+function account for the gain over `BallDensity`:
+
+- Its transform has compact support, so the diagonal and the prime side are exact, not Gaussian-approximate. That
+  removes the window width `σ ≫ N√(log N)`.
+- It vanishes to second order at `0` and changes sign at `T`. So the zeros up to `T` are counted with weight at most
+  `¼`, and the pole and the low heights of the archimedean term cost `O(NΣc_n²)` and `O(TΣc_n²)`, with no `log T`.
+  The weight `1/(¼ + γ²)` then costs `1/T² ≍ 1/N²` against the gain `T ≍ N`.

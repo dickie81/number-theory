@@ -20,6 +20,7 @@ import LagariasCriterion
 import BallRate
 import BallSampling
 import BallDensity
+import BallCutoff
 import HalfPlaneJoinsPNT
 import DivisorExponent
 import ChiPNT
@@ -393,6 +394,14 @@ function `|D|²·(Gaussian window at ±T₀)`, the density bound under RH, and `
 #print axioms BallDensity.weil_htest
 #print axioms BallDensity.density_bound
 #print axioms BallDensity.rate_rh
+
+/- Sampling at the zeros up to height `T ≍ N` (`formalisations/ball-rate.md`): Weil's explicit formula for
+`|D|²·Φ(t/T)` with the minorant `Φ(y) = y²(1 − y²)sinc⁶(by)`, the Fejér-kernel mean-value bound for `|D|²`, the
+conjecture `BallRate.SamplingAtZeros (1/100) e²⁴ 0` under RH, and `λ_N ≥ 1/(200e²⁴N)` under RH. -/
+#print axioms BallCutoff.weil_htC
+#print axioms BallCutoff.integral_Kc_majR_le
+#print axioms BallCutoff.sampling_rh
+#print axioms BallCutoff.rate_cut
 #print axioms MertensExponent.limsup_mexpo
 #print axioms MertensExponent.moebius_tendsto_of_Theta_lt
 #print axioms MertensExponent.moebius_not_tendsto_of_lt_Theta
