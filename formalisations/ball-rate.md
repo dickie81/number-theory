@@ -1,13 +1,16 @@
 # The evaporation rate of the orbit form: witness level, approach, rate
 
 **Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`, with `BallSampling`,
-`BallDensity`, `BallCutoff` and `BallSharp` in the last four sections. The theorems are mapped onto the gravastar
+`BallDensity`, `BallCutoff` and `BallSharp` in four later sections, and `BallUpper` with `BallUpperEta` in the last. The theorems are mapped onto the gravastar
 language in the section after the statements; the first section, written before the Lean, fixes the three statements
 and says what each costs. The rate, open when that section was written, is now proved under RH alone:
 `λ_N ≥ 1/(22e⁸N)` for every `N ≥ 1` (`BallSharp.rate_sharp`, last section). It comes from the sampling conjecture of
 the section "What is missing", which `BallCutoff.sampling_rh` proves under RH with `c = 1/100` and `C = e²⁴`, and
 `BallSharp.sampling_e8` with `c = 1/11` and `C = e⁸`. `BallSharp.sampling_log` gives sampling its natural form: a
-frame bound `(T/11)(log(T/N) − 7)`, which grows like the number of zeros up to `T`.
+frame bound `(T/11)(log(T/N) − 7)`, which grows like the number of zeros up to `T`. The rate from above is proved too
+(`BallUpper`, `BallUpperEta`, last section): `λ_N ≤ 67(1 + log N)/N` under RH, by the alternating vector
+`x_n = (−1)^{n+1}/n`, and `λ_N ≤ C(1 + log N)/N` with some constant `C` unconditionally (`BallUpperEta.rate_upper`).
+Under RH `λ_N` is therefore between `1/(22e⁸N)` and `67(1 + log N)/N`; numerically it is `0.048·log N/N`.
 
 ## The three statements, and what can be proved
 
@@ -70,7 +73,13 @@ leaves `2E(0)N^ρ/(ρ(ρ + 1)(ρ + 2))` and a remainder, and `Σ_ρ |·|²/|ρ|�
 *Feasibility:* the remainder, summed over the zeros with the weights `|ρ|^{−2}`, needs mean-value estimates for
 `ζ(ε + it)` at shifts of the zeros, which the library does not have; the vector with a sharp cutoff (`1/ψ(n)`, or
 `1/n`) has `Q_N ≈ 7.6·10^{−5}·N`, so the smoothing is essential and the proof is the analytic part. Left as a
-conjecture with the constant checked to `N = 2000`.
+conjecture with the constant checked to `N = 2000`. **Correction.** The conjecture is false. The cutoff term contributes
+`≍ N·Σ_ρ|ρ|^{−8}` to `Q_N(x)` while `Σ x_n²` stays bounded, so `q_N = Q_N(x)/Σ x_n²` eventually grows like `N`. Past
+`N = 2000` the constant rises: `q_N·N/log N = 0.1218, 0.1441, 0.2870` at `N = 3000, 10⁴, 3·10⁴`
+(`scripts/alt_vector.py`), past `0.13` before `N = 10⁴`. The rate statement holds for another explicit vector:
+`x_n = (−1)^{n+1}/n`, whose
+polynomial at a zero is a partial sum of `η(ρ̄) = (1 − 2^{1−ρ̄})ζ(ρ̄) = 0`, has `q_N·N/log N = 0.1522`–`0.1527` from
+`N = 100` to `3·10⁴`. It gives `λ_N ≤ 67(1 + log N)/N` under RH (`BallUpperEta.rate_upper_rh`, last section).
 
 **Statement 2B (the approach, unconditional, no rate).** `lim sup λ_N ≤ 0`: for every `ε > 0` there is `N₀` with
 `λ_N ≤ ε` for all `N ≥ N₀`, by an explicit test vector (`approach`). Under RH the two-point vector `x = δ_n − √n·δ_1`
@@ -79,7 +88,8 @@ has `Q_N(x) = 2n(H₀ − K_H(n))`, `Σ x² = n + 1`, and `H₀ − K_H(n) = Σ_
 carry all but `ε/8` of the weight (simultaneous Dirichlet approximation on the ordinates, `exists_simultaneous`) makes
 this `≤ ε/2`. If RH fails, some level has a negative vector and negativity persists upward. *Feasibility:* proved,
 about three hundred lines; the vector is explicit given the first `J(ε)` ordinates and the level is not, the price of
-not using the arithmetic that 2A uses.
+not using the arithmetic that 2A uses. `BallUpperEta.rate_upper` (last section) now gives a rate, unconditionally:
+`λ_N ≤ C(1 + log N)/N` for every `N ≥ 1`.
 
 ### 3. The rate (under RH; the open one)
 
@@ -167,7 +177,7 @@ consistent with RH failing; nothing in the module assumes RH except `hasSum_form
 | Quantity | Values |
 |---|---|
 | `N·λ_N/log N` at `N = 100, 200, 400, 800, 1000, 1600, 2000` | `0.0509, 0.0489, 0.0485, 0.0481, 0.0480, 0.0478, 0.0476` |
-| `C = q_N·N/log N` for `x_n = (1 − n/N)²/ψ(n)`, and `q_N/λ_N` | `0.112`–`0.120`; `2.21`–`2.51` |
+| `C = q_N·N/log N` for `x_n = (1 − n/N)²/ψ(n)`, and `q_N/λ_N` | `0.112`–`0.120`; `2.21`–`2.51` (beyond `N = 2000` `C` grows, see statement 2A) |
 | `H₀` against `Σ_ρ 1/(¼ + γ²)` over the first 2000 (30000) zeros plus the density tail | `0.046191` against `0.045307 + 0.000758 = 0.046065` (`0.046076 + 0.000103 = 0.046179`) |
 | The moved first zero, `δ = 0.05, 0.02, 0.01`: `Λ`, `N₀`, `W(λ*)` | `30.2, 75.5, 151.0`; `10^{29.2}, 10^{68.6}, 10^{134.0}`; `−0.318, −0.341, −0.333` (the twin sum from the first 2000 zeros, tail `≤ 0.003`) |
 | First indefinite level of the moved Gram matrix (powers of two) | `512` at `δ = 0.05`, `1024` at `δ = 0.02` |
@@ -540,6 +550,94 @@ about `½`, and a prime power `q` returns straight to `1` with probability `log 
 Landau's form kept exact. The vectors with the small gap are not the ones that make `λ_N` small. For `δ₁` plus the star,
 `x_q ∝ Λ(q)/q`, the polynomial is `V_x(ρ) = x₁ + Σ_q x_q q^ρ`, and at a zero `Σ_{q ≤ N}Λ(q)q^{ρ−1} = N^ρ/ρ − log N + …`
 (the explicit formula at `1 − ρ = ρ̄`), so `|V_x(ρ)| ≈ √N/(|γ| log N)` at the low zeros and `Q_N(x) ≫ N/log²N`. The
-near-flat vector `x_n = (1 − n/N)²/ψ(n)` comes within a factor `2.5` of `λ_N` (section B of `scripts/ball_rate.py`),
-and for it `Σ x_n² n ≍ log N·Σ x_n²`, so the sampling bound already gives the order `log N/N` there. The missing factor
-lives in the low zeros, which a test function at height `T ≍ N` weights only by `1/T²`.
+near-flat vector `x_n = (1 − n/N)²/ψ(n)` comes within a factor `2.5` of `λ_N` for `N ≤ 2000` (section B of
+`scripts/ball_rate.py`), and for it `Σ x_n² n ≍ log N·Σ x_n²`, so the sampling bound already gives the order `log N/N`
+there. The missing factor lives in the low zeros, which a test function at height `T ≍ N` weights only by `1/T²`. The
+next section bounds `λ_N` from above by an explicit vector that vanishes at the low zeros.
+
+## The rate from above: `λ_N ≤ 67(1 + log N)/N` under RH, and `λ_N ≪ log N/N` unconditionally (`BallUpper`, `BallUpperEta`)
+
+**Lean:** `BallUpper` (`lib/core/BallUpper.lean`) and `BallUpperEta` (`lib/pnt/BallUpperEta.lean`, which imports PNT+'s
+`ZetaBounds`), printed by `lib/check/CheckAll.lean`. The seven printed results depend on `propext`, `Classical.choice`
+and `Quot.sound` only.
+
+| Result | Statement | Conditional on |
+|---|---|---|
+| `BallUpper.tail_le` | `\|Σ_{N < n ≤ N + M}(−1)^{n+1}n^{−s}\| ≤ 20/√N` for `Re s = ½`, `\|Im s\| ≤ 2N` and every `M` | nothing |
+| `BallUpper.upper_mean` | `Σ_{\|γ_ρ\| ≤ r}\|V_x(ρ)\|² ≤ (πr/4)((log(r/2π) + 1/5 + 22/π)Σc_n² − L(c)) + 46(Σ_j\|c_j\|√j)(Σ_j\|c_j\|/√j)` for `r ≥ 8N`, `c_n = x_n√n` | RH |
+| `BallUpper.mean_xa_le` | `Σ_{\|γ_ρ\| ≤ r}\|V_x(ρ)\|² ≤ ((πr/4)(log(r/N) + 12) + 46N)H_N` for `r ≥ 8N` at `x_n = (−1)^{n+1}/n`, `H_N = Σ_{j ≤ N}1/j` | RH |
+| `BallUpper.form_xa_le` | if `\|V_x(ρ)\|² ≤ 400/N` at the zeros with `\|γ\| ≤ 2N`, then `Q_N(x) ≤ (400K_H(1) + 45)H_N/N`, at the same vector | RH and its hypothesis |
+| `BallUpperEta.dpoly_xa_le` | `\|V_x(ρ)\| ≤ 20/√N` at the zeros with `\|γ\| ≤ 2N`, at the same vector | RH |
+| `BallUpperEta.rate_upper_rh` | `Q_N(x) ≤ 67(1 + log N)/N·Σ_{n ≤ N}x_n²` for every `N ≥ 1`, at the same vector | RH |
+| `BallUpperEta.rate_upper` | `∃ C, ∀ N ≥ 1, ∃ x, Σ_{n ≤ N}x_n² > 0 ∧ Q_N(x) ≤ C(1 + log N)/N·Σ_{n ≤ N}x_n²` | nothing |
+
+Here `L(c) = 2Σ_{n ≤ N}Λ(n)n^{−1/2}Σ_{jn ≤ N}c_j c_{jn}` is Landau's form. With `BallSharp.rate_sharp`, under RH,
+`1/(22e⁸N) ≤ λ_N ≤ 67(1 + log N)/N` for every `N ≥ 1`. The upper bound has the order of the observed
+`0.048·log N/N`; the lower bound is short of it by `log N`, and the previous section shows that the sampling route
+can recover at most `√log N` of that.
+
+**Why the alternating vector.** At a zero under RH, `V_x(ρ) = Σ_{n ≤ N}(−1)^{n+1}n^{−s}` with `s = 1 − ρ = ρ̄`: a partial
+sum of `η(s) = (1 − 2^{1−s})ζ(s)`, which vanishes there. So at the low zeros only the tail beyond `N` is left, which is
+`O(1/√N)` while `|Im s| ≤ 2N`; for `x_n = 1/n` it would be `N^{1−s}/(1 − s)`, of size `√N/|ρ|`, the pole of `ζ` that
+`η` does not have. At the high zeros the explicit formula counts, and there Landau's form, `(log N)² + O(log N)` at this
+vector, turns the diagonal's `log r` into `log(r/N)`. A dyadic shell at height `R ≥ 8N` contributes
+`≪ log(R/N)·H_N/R`, and these are summable. Numerically (`scripts/alt_vector.py`, uncertified):
+
+| `N` | `100` | `300` | `1000` | `3000` | `10⁴` | `3·10⁴` |
+|---|---|---|---|---|---|---|
+| alternating vector, `q_N·N/log N` | `0.1527` | `0.1524` | `0.1523` | `0.1523` | `0.1522` | `0.1522` |
+| near-flat vector `(1 − n/N)²/ψ(n)`, `q_N·N/log N` | `0.1125` | `0.1156` | `0.1185` | `0.1218` | `0.1441` | `0.2870` |
+| `λ_N·N/log N` | `0.0509` | `0.0490` | `0.0480` | `0.0473` | | |
+
+So the alternating vector's Rayleigh quotient is `0.1523·log N/N`, `3.0`–`3.2` times `λ_N` where that is computed, and `Q_N(x)` itself, with
+`Σ x_n² → π²/6`, is `0.2505·log N/N`. The constant `67` loses a factor of about `440` against `0.1523`. Most of the loss
+is at the low zeros (the `20/√N` of the Abel summation) and in the zone `2N < |γ| ≤ 8N`, where only the trivial weight
+`1/(4N²)` is used.
+
+**How it was done.**
+
+- **The test function** is `|D(t)|²M_r(t)`, with `BallCutoff`'s majorant `M_r(t) = (r/t)²sin²(πt/2r) ≥ 1_{[−r, r]}`
+  extended to `ℂ` as `(r²/4)ĝ_{box}(z)²` (`majC`). It satisfies the strip bound
+  `|M_r(z)| ≤ 4r²e^{π/r}/(1 + (Re z)²)` (`norm_majC_le`), and its transform is supported in `|v| ≤ π/r ≤ 1/(2N)` for
+  `r ≥ 2πN`. Then the diagonal `(π²r/2)Σc_n²` and the prime side `(πr/4)L(c)` are exact (`integral_hRM`, `prime_eq_M`),
+  and `M_r ≥ 1` on `[−r, r]` and `M_r ≥ 0` give the zero side (`zero_side_M`).
+- **The archimedean term from above.** Two steps of the digamma recurrence in Stirling's series bound
+  `Re ψ(¼ + it/2) ≤ ½log(81/16 + t²/4) + 1/50` for every `t` (`psiRe_le_all`). So the weight is at most
+  `log(r/2π) + 1/5 + log⁺(|t|/r)` for `r ≥ 8` (`psiRe_sub_le`). On `|t| > r`, `M_r(t)log(|t|/r) ≤ r²log(|t|/r)/t²`.
+  This is dominated by `(729/(1 − 1/π))(E ⋆ F_a)(t)`: `BallSharp`'s envelope, smoothed by the Fejér kernel of
+  `a = 1/(2N)` on the windows `|u| ≤ r/2`, which hold mass `1 − 8N/(πr) ≥ 1 − 1/π` (`tail_conv_le_U`). The envelope's
+  `|D|²`-mass is exact (`BallSharp.integral_Kc_conv`), and the excess costs `(11/2)rΣc_n²` (`arch_le_M`).
+- **The pole**: `|D(±i/2)| ≤ Σ_j|c_j|j^{±1/2}` and `|M_r(i/2)| ≤ 9π²/4 ≤ 23` (`pole_le_M`), which is `46NH_N` at the
+  alternating vector.
+- **Landau's form at the alternating vector from below** (`landau_xa_ge`). For `c_j = (−1)^{j+1}/√j`,
+  `c_j c_{jn} = (−1)^{j(n+1)}/(j√n)`: this is `1/(j√n)` for odd `n`, and at least `−1/(j√n)` for even `n`. The even `n`
+  with `Λ(n) ≠ 0` are the powers of `2`, so their terms total at most `H_N log 2` (`sum_even_vonMangoldt_le`).
+  `Σ_{n ∣ m}Λ(n) = log m` gives `Σ_n Λ(n)n^{−1}Σ_{jn ≤ N}1/j = Σ_{m ≤ N}(log m)/m ≥ (log N)²/2 − 1`
+  (`sum_vonMangoldt_Hf`, `sum_log_div_ge`). Hence `L(c) ≥ (log N)² − 2 − 4H_N log 2`, and with
+  `log N ≤ H_N ≤ 1 + log N` this gives `mean_xa_le`.
+- **The sum over the zeros** (`form_xa_le`). `Q_N(x) = Σ_ρ|V_x(ρ)|²/(¼ + γ²)` (`BallRate.hasSum_form`), checked on
+  every finite set of zeros. The zeros fall into three groups:
+  - those with `|γ| ≤ 2N` cost `(400/N)Σ_ρ 1/(¼ + γ²) = 400K_H(1)/N`, with `δ₁` (`hasSum_inv_quarter`);
+  - those with `2N < |γ| ≤ 8N` cost `mean_xa_le` at `r = 8N` divided by `4N²`, at most `34H_N/N`;
+  - the shell `2^k·8N < |γ| ≤ 2^{k+1}·8N` costs `mean_xa_le` at its top divided by `(2^k·8N)²`, at most
+    `(π/16 + 23/640)(k + 20)2^{−k}H_N/N` (`shell_le`), which totals at most `10H_N/N`.
+  `K_H(1) < 0.0539` (`WeilTest.hadamard_const_lt`) turns `400K_H(1) + 45` into `67`.
+- **The low zeros** (`BallUpperEta`). PNT+'s `ζ₀` (`riemannZeta0`, equal to `ζ` on `Re s > 0` by `Zeta0EqZeta`)
+  gives `Σ_{n ≤ X}n^{−s} = ζ(s) + X^{1−s}/(1 − s) + X^{−s}/2 − sI(X)` with `|I(X)| ≤ 2/√X` on `Re s = ½`
+  (`ZetaBnd_aux1b`). In `Σ_{n ≤ 2K}(−1)^{n+1}n^{−s} = Σ_{n ≤ 2K}n^{−s} − 2^{1−s}Σ_{m ≤ K}m^{−s}` the terms in
+  `X^{1−s}` cancel. So at a zero of `ζ` the partial sums are at most `(1 + 6|s|)/√K` (`eta_partial`, `norm_eta_le`)
+  and tend to `0`. The tail from `N` to `2K` is Abel-summed with `τ_n = ((n + 1)/n)^{−s}` and `d_n = 1/(1 + τ_n)`,
+  through the identity `u_n = (u_n d_n − u_{n+1}d_{n+1}) + u_{n+1}(d_{n+1} − d_n)`
+  (`BallUpper.tail_le`). Its two bounds are:
+  - for `|Im s| ≤ 2N` the phase of `τ_n` stays in `[−2, 2]`, so `Re τ_n ≥ cos 2 ≥ −½` and `|d_n| ≤ 2`;
+  - `|d_{n+1} − d_n| ≤ 8|s|/(n(n + 1))`.
+  Letting `K → ∞` gives `|V_x(ρ)| ≤ 20/√N` (`alt_le`, `dpoly_xa_le`), with `ζ(ρ̄) = 0` from `riemannZeta_conj`.
+- **Without RH** (`rate_upper`). `BallWeil.rh_iff_form` gives an integer vector with `Q_{N₀}(x) < 0`. Extended by zero
+  it has the same negative value at every `N ≥ N₀` (`form_extend`). Below `N₀`, `δ₁` works with `C = N₀K_H(1)`. So
+  `λ_N ≪ log N/N` holds for every `N`, with an ineffective constant, strengthening `BallRate.approach`
+  (`lim sup λ_N ≤ 0`).
+
+**Prior work.** Upper bounds of the shape `T log(T/N)` for the discrete mean value over the zeros are those of
+Bui–Florea–Milinovich (cited in the `BallCutoff` section), for `N ≤ cT/log²T`. Here the explicit formula gives an
+upper bound for every `T ≥ 8N`, at the price of Landau's form, which is exact. The alternating vector's vanishing at
+the zeros is the classical identity `η = (1 − 2^{1−s})ζ`.
