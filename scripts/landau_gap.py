@@ -21,6 +21,16 @@ G(c) = (log N + c₀)Σc_n² − L(c), c₀ = log 4 + 1 (section "Which vectors 
 A = Σx_n² n/Σx_n² and B = G(c)/Σx_n², it prints λ_N·N/log N; A/log N and B/log N at the minimiser of the orbit form
 Q_N; at the edge vector, the minimiser of A + B: (A + B)/√log N, x₁² and Q_N(x)·N/log N; and the first four
 eigenvalues of A + B over √log N. Q_N is the prime-side Gram matrix of scripts/ball_orbit.py.
+
+    python3 scripts/landau_gap.py --gap [N ...]        # default N = 10³ 10⁴ 10⁵ 10⁶; N = 10⁷ takes about eight minutes
+
+The edge law of BallGap (section "The Landau gap from below" of the note). It prints the minimum of A + B over x, the
+smallest eigenvalue of K = (log N + c₀ + 1)diag(n) − diag(√n)M diag(√n), by inverse iteration with Jacobi-preconditioned
+conjugate gradients (K is a positive definite M-matrix), over √log N and over √(2(c₀ + γ + 1)log N), the profile's
+prediction; the ratio to the proved √log N/10 (BallGap.edge_law); and two checks of the proof of BallGap.gap_ge at its
+weights K = 2 log N, η = √log N/2, d(m) = √(log²m + 2K) − log m − 2√log N/m: the smallest d(m) over 2 ≤ m ≤ N, which must
+be ≥ 0, and the smallest slack of the vertex inequality 5 + κ_j + Σ_{n ≤ N/j}(Λ(n)/n)r(jn) − η/j − d(j)[j ≥ 2] ≥ 0,
+r(m) = d(m)/(log m + d(m)).
 """
 import argparse
 import math
@@ -104,12 +114,72 @@ def spread(N, c0=math.log(4) + 1):
             wk[:4] / math.sqrt(L))
 
 
+def edge_min(N, c0=math.log(4) + 1, M=None):
+    """min_x (Σx_n² n + G(c))/Σx_n² with c_n = x_n√n, the smallest eigenvalue of K: see the docstring."""
+    M = landau_matrix(N) if M is None else M
+    L = math.log(N)
+    n = np.arange(1, N + 1, dtype=float)
+    s = sp.diags(np.sqrt(n))
+    dg = (L + c0 + 1) * n
+    K = (sp.diags(dg) - s @ M @ s).tocsr()
+    pre = sla.LinearOperator((N, N), matvec=lambda y: y / dg, dtype=float)
+    x = 1.0 / n
+    x /= np.linalg.norm(x)
+    lam = x @ (K @ x)
+    for _ in range(100):
+        y, info = sla.cg(K, x, rtol=1e-12, maxiter=5000, M=pre)
+        if info != 0:
+            raise RuntimeError(f"conjugate gradients did not converge ({info})")
+        x = y / np.linalg.norm(y)
+        new = x @ (K @ x)
+        if abs(new - lam) < 1e-11 * new:
+            return new
+        lam = new
+    return lam
+
+
+def vertex_check(N, c0=math.log(4) + 1):
+    """The smallest d(m) over 2 ≤ m ≤ N and the smallest slack of BallGap's vertex inequality: see the docstring."""
+    lam = mangoldt(N)
+    L = math.log(N)
+    K, sL = 2 * L, math.sqrt(L)
+    n = np.arange(N + 1, dtype=float)
+    n[0] = 1
+    psi1 = np.cumsum(lam / n)
+    u = np.log(n)
+    d = np.sqrt(u ** 2 + 2 * K) - u - 2 * sL / n
+    r = np.zeros(N + 1)
+    r[2:] = d[2:] / (u[2:] + d[2:])
+    child = np.zeros(N + 1)
+    for q in np.nonzero(lam)[0]:
+        q = int(q)
+        j = np.arange(1, N // q + 1)
+        child[j] += lam[q] / q * r[j * q]
+    j = np.arange(1, N + 1)
+    kappa = L + c0 - psi1[N // j] - np.log(j)
+    slack = 5 + kappa + child[1:] - sL / 2 / j - np.where(j >= 2, d[1:], 0.0)
+    return d[2:].min(), slack.min()
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("N", nargs="*", type=int)
     ap.add_argument("--c0", nargs="*", type=float, default=[0.0, math.log(4) + 1])
     ap.add_argument("--spread", action="store_true", help="the vectors that BallSharp.rate_slack leaves")
+    ap.add_argument("--gap", action="store_true", help="the edge law of BallGap, and checks of its proof")
     args = ap.parse_args()
+    if args.gap:
+        c0 = math.log(4) + 1
+        print(f"{'N':>9} {'min(A+B)/√logN':>15} {'/√(2(c0+γ+1)logN)':>19} {'/(√logN/10)':>12} "
+              f"{'min d(m)':>9} {'min vertex slack':>17} {'s':>5}")
+        for N in args.N or [1000, 10000, 100000, 1000000]:
+            t = time.time()
+            L = math.log(N)
+            e = edge_min(N, c0)
+            dmin, smin = vertex_check(N, c0)
+            print(f"{N:9d} {e / math.sqrt(L):15.4f} {e / math.sqrt(2 * (c0 + GAMMA + 1) * L):19.4f} "
+                  f"{e / (math.sqrt(L) / 10):12.1f} {dmin:9.3f} {smin:17.3f} {time.time() - t:5.0f}", flush=True)
+        return
     if args.spread:
         print(f"{'N':>5} {'λ_N·N/log N':>12} | minimiser {'A/log N':>8} {'B/log N':>8} | edge vector "
               f"{'(A+B)/√log N':>12} {'x₁²':>5} {'Q_N·N/log N':>11} | eigenvalues of A + B over √log N")

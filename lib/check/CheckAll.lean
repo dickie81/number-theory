@@ -23,6 +23,7 @@ import BallDensity
 import BallCutoff
 import BallSharp
 import BallUpperEta
+import BallGap
 import HalfPlaneJoinsPNT
 import DivisorExponent
 import ChiPNT
@@ -432,6 +433,14 @@ PNT+'s `ζ₀`; `λ_N ≤ 67(1 + log N)/N` under RH; and `λ_N ≪ log N/N` unco
 #print axioms BallUpperEta.dpoly_xa_le
 #print axioms BallUpperEta.rate_upper_rh
 #print axioms BallUpperEta.rate_upper
+
+/- The Landau gap from below (`formalisations/ball-rate.md`): for `N ≥ 3` and every real `c`,
+`5Σc_n² + G(c) ≥ (√log N/2)Σc_n²/n`, by a ground-state argument on the edges `(j, jn)` with the profile
+`√(u² + 4log N) − u`; so `Σx_n² n + G(c) ≥ (√log N/10)Σx_n²` with `c_n = x_n√n`, and `λ_N ≥ √log N/(220e⁸N)` under
+RH. -/
+#print axioms BallGap.gap_ge
+#print axioms BallGap.edge_law
+#print axioms BallGap.rate_gap
 
 #print axioms MertensExponent.limsup_mexpo
 #print axioms MertensExponent.moebius_tendsto_of_Theta_lt

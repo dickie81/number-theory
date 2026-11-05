@@ -1,7 +1,8 @@
 # The evaporation rate of the orbit form: witness level, approach, rate
 
 **Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`, with `BallSampling`,
-`BallDensity`, `BallCutoff` and `BallSharp` in four later sections, and `BallUpper` with `BallUpperEta` in the last. The theorems are mapped onto the gravastar
+`BallDensity`, `BallCutoff` and `BallSharp` in four later sections, `BallUpper` with `BallUpperEta` in the next-to-last,
+and `BallGap` in the last. The theorems are mapped onto the gravastar
 language in the section after the statements; the first section, written before the Lean, fixes the three statements
 and says what each costs. The rate, open when that section was written, is now proved under RH alone:
 `λ_N ≥ 1/(22e⁸N)` for every `N ≥ 1` (`BallSharp.rate_sharp`, last section). It comes from the sampling conjecture of
@@ -12,7 +13,10 @@ frame bound `(T/11)(log(T/N) − 7)`, which grows like the number of zeros up to
 `x_n = (−1)^{n+1}/n`, and `λ_N ≤ C(1 + log N)/N` with some constant `C` unconditionally (`BallUpperEta.rate_upper`).
 Under RH `λ_N` is therefore between `1/(22e⁸N)` and `67(1 + log N)/N`; numerically it is `0.048·log N/N`. Keeping
 Landau's slack `G(c)`, `BallSharp.rate_slack` reduces the missing `log N` of the lower bound to the vectors with
-`Σx_n² n + G(c) = o(log N·Σx_n²)` (section "Why the sampling route stops short of `log N/N`").
+`Σx_n² n + G(c) = o(log N·Σx_n²)` (section "Why the sampling route stops short of `log N/N`"). Every vector has
+`Σx_n² n + G(c) ≥ (√log N/10)Σx_n²` (`BallGap.edge_law`, last section), so under RH `λ_N ≥ √log N/(220e⁸N)` for every
+`N ≥ 3` (`BallGap.rate_gap`): this route recovers `√log N` of the missing `log N`, which by the numerics of that
+section is all it can give.
 
 ## The three statements, and what can be proved
 
@@ -555,7 +559,8 @@ about `½`, and a prime power `q` returns straight to `1` with probability `log 
 `Cap(1) ≈ √(2(c₀ + γ)log N)`.
 
 **What it means.** The prime side with Fourier support below `1/N` cannot give more than `λ_N ≫ √(log N)/N`, even with
-Landau's form kept exact. The vectors with the small gap are not the ones that make `λ_N` small. For `δ₁` plus the star,
+Landau's form kept exact. The last section proves that it gives that much (`BallGap.rate_gap`). The vectors with the
+small gap are not the ones that make `λ_N` small. For `δ₁` plus the star,
 `x_q ∝ Λ(q)/q`, the polynomial is `V_x(ρ) = x₁ + Σ_q x_q q^ρ`, and at a zero `Σ_{q ≤ N}Λ(q)q^{ρ−1} = N^ρ/ρ − log N + …`
 (the explicit formula at `1 − ρ = ρ̄`), so `|V_x(ρ)| ≈ √N/(|γ| log N)` at the low zeros and `Q_N(x) ≫ N/log²N`. The
 near-flat vector `x_n = (1 − n/N)²/ψ(n)` comes within a factor `2.5` of `λ_N` for `N ≤ 2000` (section B of
@@ -606,8 +611,8 @@ and `Quot.sound` only.
 
 Here `L(c) = 2Σ_{n ≤ N}Λ(n)n^{−1/2}Σ_{jn ≤ N}c_j c_{jn}` is Landau's form. With `BallSharp.rate_sharp`, under RH,
 `1/(22e⁸N) ≤ λ_N ≤ 67(1 + log N)/N` for every `N ≥ 1`. The upper bound has the order of the observed
-`0.048·log N/N`; the lower bound is short of it by `log N`, and the previous section shows that the sampling route
-can recover at most `√log N` of that.
+`0.048·log N/N`; the lower bound is short of it by `log N`. The previous section shows that the sampling route
+can recover at most `√log N` of that, and the next section recovers it (`BallGap.rate_gap`).
 
 **Why the alternating vector.** At a zero under RH, `V_x(ρ) = Σ_{n ≤ N}(−1)^{n+1}n^{−s}` with `s = 1 − ρ = ρ̄`: a partial
 sum of `η(s) = (1 − 2^{1−s})ζ(s)`, which vanishes there. So at the low zeros only the tail beyond `N` is left, which is
@@ -674,3 +679,80 @@ is at the low zeros (the `20/√N` of the Abel summation) and in the zone `2N < 
 Bui–Florea–Milinovich (cited in the `BallCutoff` section), for `N ≤ cT/log²T`. Here the explicit formula gives an
 upper bound for every `T ≥ 8N`, at the price of Landau's form, which is exact. The alternating vector's vanishing at
 the zeros is the classical identity `η = (1 − 2^{1−s})ζ`.
+
+## The Landau gap from below: `Σx_n² n + G(c) ≥ (√log N/10)Σx_n²`, and `λ_N ≫ √log N/N` under RH (`BallGap`)
+
+**Lean:** `BallGap` (`lib/core/BallGap.lean`), printed by `lib/check/CheckAll.lean`. The three printed results depend on
+`propext`, `Classical.choice` and `Quot.sound` only.
+
+| Result | Statement | Conditional on |
+|---|---|---|
+| `BallGap.gap_ge` | `5Σ_{n ≤ N}c_n² + G(c) ≥ (√log N/2)Σ_{n ≤ N}c_n²/n` for every `N ≥ 3` and every real `c` | nothing |
+| `BallGap.edge_law` | `Σ_{n ≤ N}x_n² n + G(c) ≥ (√log N/10)Σ_{n ≤ N}x_n²` for every `N ≥ 3` and every real `x`, `c_n = x_n√n` | nothing |
+| `BallGap.rate_gap` | `Q_N(x) ≥ √log N/(220e⁸N)·Σ_{n ≤ N}x_n²` for every `N ≥ 3` and every real `x` | RH |
+
+Here `G(c) = (log N + log 4 + 1)Σc_n² − L(c)` is Landau's slack (`BallSharp.landauSlack`). In the notation of
+"Which vectors the slack leaves", `edge_law` says `A + B ≥ √log N/10` at every vector: the spread and the slack
+cannot both be small. With `BallSharp.rate_slack` it gives `rate_gap`, so under RH
+`√log N/(220e⁸N) ≤ λ_N ≤ 67(1 + log N)/N` for every `N ≥ 3`. The constant is poor: `rate_gap` beats
+`BallSharp.rate_sharp`'s `1/(22e⁸N)` only for `log N > 100`. What it settles is the order. The section "Why the
+sampling route stops short of `log N/N`" found the gap to be `√log N` numerically; that order is now a lower bound.
+
+**The numbers** (`scripts/landau_gap.py --gap`, uncertified). The minimum of `A + B`, the smallest eigenvalue of
+`(log N + c₀ + 1)diag(n) − diag(√n)M diag(√n)` (`M` the matrix of `L`, `c₀ = log 4 + 1`), by inverse iteration, and
+two checks of the proof at its weights:
+
+| `N` | `10³` | `10⁴` | `10⁵` | `10⁶` | `10⁷` |
+|---|---|---|---|---|---|
+| `min(A + B)/√log N` | `2.944` | `2.902` | `2.887` | `2.887` | `2.894` |
+| `min(A + B)/√(2(c₀ + γ + 1)log N)` | `1.046` | `1.031` | `1.025` | `1.025` | `1.028` |
+| `min(A + B)` over the proved `√log N/10` | `29.4` | `29.0` | `28.9` | `28.9` | `28.9` |
+| smallest `d(m)`, `2 ≤ m ≤ N` | `1.77` | `1.82` | `1.85` | `1.87` | — |
+| smallest slack of the vertex inequality | `5.62` | `5.57` | `5.54` | `5.51` | — |
+
+The minimum is `2.89`–`2.94` times `√log N` over this range. It is within `5%` of `√(2(c₀ + γ + 1)log N)`, the
+profile's prediction below with the grounding `κ_j + 1 ≈ c₀ + γ + 1`. So `√log N` is the right order where it can be
+computed. The proof loses a factor `29` in the constant:
+- `4` at the small vertices;
+- `5` in the factor `5` of `gap_ge`;
+- `1.45` in the choice `K = 2log N`, as `D(0) = 2√log N`.
+
+Both checks of the proof hold with room.
+
+**How it was done.**
+
+- **The defect of Landau's form.** On each edge `(j, jn)`,
+  `2(Λ(n)/√n)c_j c_{jn} = (Λ(n)/n)c_j² + Λ(n)c_{jn}² − (Λ(n)/n)(c_j − √n c_{jn})²`. Summing with `Σ_{n ∣ m}Λ(n) = log m`
+  as in `BallDensity.landau_le_of`, whose Schur test drops the last term, gives
+  `G(c) = Σ_j κ_j c_j² + Σ_{n, jn ≤ N}(Λ(n)/n)(c_j − √n c_{jn})²`, where
+  `κ_j = log N + log 4 + 1 − Σ_{n ≤ N/j}Λ(n)/n − log j ≥ 0` (`mertens_le_sharp`). This is the ground-state form of the
+  section "Why the sampling route stops short", in the variables `c`.
+- **Sharing each vertex among its parents.** Give each `m ≥ 2` a weight `d(m) ≥ 0`. Split it among the edges into `m`
+  in proportion to `Λ(n)`: the edge `(m/n, m)` gets `Λ(n)d(m)/log m`, and the shares sum to `d(m)`. On each edge
+  `(Λ(n)/n)(a − √n b)² + (Λ(n)d/ℓ)b² ≥ (Λ(n)/n)(d/(ℓ + d))a²`, with `ℓ = log m` and `d = d(m)` (`edge_ineq`; the
+  difference is `Λ(n)(aℓ − √n b(ℓ + d))²/(nℓ(ℓ + d))`). Summing,
+  `G(c) ≥ Σ_j c_j²(κ_j + Σ_{n ≤ N/j}(Λ(n)/n)r(jn) − d(j)[j ≥ 2])`, with `r(m) = d(m)/(log m + d(m))` (`slack_ge`).
+  So `5Σc_n² + G(c) ≥ ηΣc_n²/n` follows from the vertex inequality
+  `5 + κ_j + Σ_{n ≤ N/j}(Λ(n)/n)r(jn) ≥ η/j + d(j)[j ≥ 2]` at every `j ≤ N`. This is the Allegretto–Piepenbrink
+  criterion, with a supersolution that depends on `log m` only. The proportional split is what makes it
+  one-dimensional: `r(jn)` sees `log(jn)`, not the factorisation of `jn`.
+- **The profile.** In the continuum, with `Σ_{n ≤ y}Λ(n)/n ≈ log y`, the vertex inequality at `j = e^u` reads
+  `d(u) ≤ k + ∫_u^{log N} d(s)/(s + d(s))ds`. `D(u) = √(u² + 2K) − u` solves it with equality for `k = D(log N)`,
+  since `D/(s + D) = 1 − s/√(s² + 2K) = −D′`, and `D(0) = √(2K)`. To compare the sum with the integral:
+  - Abel summation against Mertens from below, `Σ_{n ≤ k}Λ(n)/n ≥ log k − 1` (`mertens_ge`, from Stirling's
+    `log k! ≥ k log k − k`, Mathlib's `Real.le_sum_log_nat`), with the concavity of `−D` (`abel_ge`, `tele_ge`,
+    `prof_step`);
+  - which gives `Σ_{n ≤ N/j}(Λ(n)/n)·D/(s + D) at s = log(jn) ≥ D(log j) − D(log N) − 1 − log 2` (`child_ge`).
+  The factor `5` pays for `D(log N) ≤ 2` and the `1 + log 2`.
+- **The small vertices.** Once `j < η`, the target weight `η/j` is more than the factor `5` can pay. The weights
+  `d(m) = D(log m) − 4η/m` push the cost onto the parents. Lowering `d(m)` by `4η/m` costs each parent `j = m/n` at most
+  `(Λ(n)/n)·4η/(m log m) ≤ 4η/(jn²)` (`rr_ge`), in all at most `3η/j`, since `Σ_{n ≥ 2}1/n² ≤ 3/4`
+  (`sum_inv_sq_le`). It frees `4η/j` at `j` itself. At the root the cost is `3η`, paid by `D(0) = √(2K)`. With
+  `K = 2log N` and `η = √log N/2`, `D(0) = 4η`, and `d(m) ≥ 0` for every `m ≥ 2` once `log N ≥ 1` (`prof_ge`, from
+  `√log N(m² − 1) ≥ m log m`).
+
+**Prior work.** The method is the ground-state transform of W. Allegretto (Pacific J. Math. 55 (1974)) and
+J. Piepenbrink (J. Differential Equations 15 (1974)): a positive supersolution of a Schrödinger operator bounds its form
+from below. Its form on weighted graphs, with optimal Hardy weights, is M. Keller, Y. Pinchover and F. Pogorzelski,
+Comm. Math. Phys. 358 (2018). Here the graph is the divisibility graph of `[1, N]` with the weights of Landau's form.
+The bound on its slack, and the rate it gives, are new as far as this note knows.
