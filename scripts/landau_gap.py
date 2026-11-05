@@ -13,6 +13,14 @@ B = (log N + c₀)I − M and D = diag(1/m):
 
 as η_N/log N, η_N/√log N, Cap(1)/log N and Cap(1)/√log N, against √(2(c₀ + γ)). B⁻¹ is applied by conjugate gradients
 (B is positive definite with condition number O(log N)), so N = 10⁶ takes about two minutes.
+
+    python3 scripts/landau_gap.py --spread [N ...]     # default N = 250 500 1000 2000; dense, so N ≤ 3000
+
+The vectors that BallSharp.rate_slack leaves, Q_N(x) ≥ (Σx_n² n + G(c))/(22e⁸N) with c_n = x_n√n and Landau's slack
+G(c) = (log N + c₀)Σc_n² − L(c), c₀ = log 4 + 1 (section "Which vectors the slack leaves" of the note). With the spread
+A = Σx_n² n/Σx_n² and B = G(c)/Σx_n², it prints λ_N·N/log N; A/log N and B/log N at the minimiser of the orbit form
+Q_N; at the edge vector, the minimiser of A + B: (A + B)/√log N, x₁² and Q_N(x)·N/log N; and the first four
+eigenvalues of A + B over √log N. Q_N is the prime-side Gram matrix of scripts/ball_orbit.py.
 """
 import argparse
 import math
@@ -74,11 +82,43 @@ def gap(N, c0, M=None):
     return 1.0 / top, cap1
 
 
+def spread(N, c0=math.log(4) + 1):
+    """The minimiser of Q_N and the edge vector, the minimiser of A + B = xᵀKx/|x|² with
+    K = diag(√n)((log N + c₀ + 1)I − M)diag(√n): see the docstring."""
+    import os
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from ball_orbit import gram
+    L = math.log(N)
+    n = np.arange(1, N + 1, dtype=float)
+    M = landau_matrix(N).toarray()
+    s = np.sqrt(n)
+    K = s[:, None] * ((L + c0 + 1) * np.eye(N) - M) * s[None, :]
+    G = gram(N)
+    wq, vq = np.linalg.eigh(G)
+    wk, vk = np.linalg.eigh(K)
+    v, e = vq[:, 0], vk[:, 0]
+    A = (v ** 2 * n).sum()
+    B = (L + c0) * A - (v * s) @ (M @ (v * s))
+    return (wq[0] * N / L, A / L, B / L, wk[0] / math.sqrt(L), e[0] ** 2, (e @ G @ e) * N / L,
+            wk[:4] / math.sqrt(L))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("N", nargs="*", type=int, default=[1000, 10000, 100000, 1000000])
+    ap.add_argument("N", nargs="*", type=int)
     ap.add_argument("--c0", nargs="*", type=float, default=[0.0, math.log(4) + 1])
+    ap.add_argument("--spread", action="store_true", help="the vectors that BallSharp.rate_slack leaves")
     args = ap.parse_args()
+    if args.spread:
+        print(f"{'N':>5} {'λ_N·N/log N':>12} | minimiser {'A/log N':>8} {'B/log N':>8} | edge vector "
+              f"{'(A+B)/√log N':>12} {'x₁²':>5} {'Q_N·N/log N':>11} | eigenvalues of A + B over √log N")
+        for N in args.N or [250, 500, 1000, 2000]:
+            lam, a, b, edge, x1, qe, ev = spread(N)
+            print(f"{N:5d} {lam:12.4f} | {a:18.3f} {b:8.3f} | {edge:24.3f} {x1:5.3f} {qe:11.2f} | "
+                  + " ".join(f"{t:.2f}" for t in ev), flush=True)
+        return
+    args.N = args.N or [1000, 10000, 100000, 1000000]
     print(f"{'N':>9} {'c0':>6} {'eta/logN':>9} {'eta/sqrtL':>10} {'Cap1/logN':>10} {'Cap1/sqrtL':>11} "
           f"{'sqrt(2(c0+g))':>14} {'s':>6}")
     for N in args.N:

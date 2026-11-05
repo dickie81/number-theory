@@ -8,7 +8,9 @@ Plain statement. Under RH, for every `N ≥ 1`, every real `x` on `[1, N]` and e
 grows like `T log(T/N)`, the shape of the Landau–Gonek main term, where `BallCutoff.sampling_rh` has `T/100` from
 `T ≥ e²⁴N`. At `T ≥ e¹⁴N` it is at least `(T/22)log(T/N)Σ x_n² n` (`sampling_log_clean`). At `T = e⁸N`, the
 best point for the rate, it gives `BallRate.SamplingAtZeros (1/11) e⁸ 0` (`sampling_e8`), and so
-`λ_N ≥ 1/(22e⁸N)` (`rate_sharp`), against `BallCutoff.rate_cut`'s `1/(200e²⁴N)`.
+`λ_N ≥ 1/(22e⁸N)` (`rate_sharp`), against `BallCutoff.rate_cut`'s `1/(200e²⁴N)`. Keeping Landau's slack
+`G(c) = (log N + log 4 + 1)Σc_n² − L(c) ≥ 0` (`landauSlack`), with `c_n = x_n√n`, the frame bound is
+`(T/11)((log(T/N) − 7)Σ x_n² n + G(c))` (`sharp_bound_slack`), and `Q_N(x) ≥ (Σ x_n² n + G(c))/(22e⁸N)` (`rate_slack`).
 
 The proof is `BallCutoff`'s, with four changes.
 
@@ -1000,11 +1002,23 @@ lemma log_pi_le_s : Real.log π ≤ 1.1558 := by
     linarith
   linarith
 
-/-- **The log-growth bound** (RH): for `N ≥ 1` and `T ≥ 2000N`,
-`(T/11)(log(T/N) − 7)Σc_n² ≤ Σ_{|γ| ≤ T}|V_x(ρ)|²` with `c_n = x_n√n`. -/
-theorem sharp_bound (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) {T : ℝ} (hTN : 2000 * N ≤ T)
+/-- **Landau's slack** `G(c) = (log N + log 4 + 1)Σc_n² − L(c)`, with
+`L(c) = 2Σ_{n ≤ N}Λ(n)n^{−1/2}Σ_{jn ≤ N}c_j c_{jn}` Landau's form. -/
+def landauSlack (N : ℕ) (c : ℕ → ℝ) : ℝ :=
+  (Real.log N + (Real.log 4 + 1)) * S2 N c - 2 * ∑ n ∈ Icc 1 N, Λ n / Real.sqrt n * ex N c n
+
+lemma landauSlack_nonneg (N : ℕ) (c : ℕ → ℝ) : 0 ≤ landauSlack N c := by
+  have h : 2 * ∑ n ∈ Icc 1 N, Λ n / Real.sqrt n * ex N c n ≤ (Real.log N + (Real.log 4 + 1)) * S2 N c :=
+    landau_le_sharp N c
+  unfold landauSlack; linarith
+
+/-- **The log-growth bound, keeping Landau's slack** (RH): for `N ≥ 1` and `T ≥ 2000N`,
+`(T/11)((log(T/N) − 7)Σc_n² + G(c)) ≤ Σ_{|γ| ≤ T}|V_x(ρ)|²` with `c_n = x_n√n`. The prime side is
+`(5T/1296)L(c)` exactly (`BallCutoff.prime_eq_cut`), and `L(c) = (log N + log 4 + 1)Σc_n² − G(c)`. -/
+theorem sharp_bound_slack (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) {T : ℝ} (hTN : 2000 * N ≤ T)
     (x : ℕ → ℝ) :
-    T / 11 * (Real.log (T / N) - 7) * S2 N (fun n => x n * Real.sqrt n) ≤
+    T / 11 * ((Real.log (T / N) - 7) * S2 N (fun n => x n * Real.sqrt n) +
+      landauSlack N (fun n => x n * Real.sqrt n)) ≤
       ∑ q ∈ BallRate.zerosUpTo T, ‖BallRate.dpoly N x q‖ ^ 2 := by
   have hN1 : (1 : ℝ) ≤ N := by exact_mod_cast hN
   have hN0 : (0 : ℝ) < N := by linarith
@@ -1026,24 +1040,22 @@ theorem sharp_bound (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) {T : ℝ}
   have harch := arch_ge_sharp hN hTN c
   have hD := defect_sharp hN hTN c
   have hΦ : phihat 3 T 0 = 5 * π * T / 648 := by rw [phihat_zero hb hT0]; ring
-  have hprime : 2 * ∑' n : ℕ, Λ n / Real.sqrt n * gh (hRC N c 3 T) (Real.log n) ≤
-      phihat 3 T 0 / (2 * π) * (Real.log N + (Real.log 4 + 1)) * S2 N c := by
+  have hprime : 2 * ∑' n : ℕ, Λ n / Real.sqrt n * gh (hRC N c 3 T) (Real.log n) =
+      phihat 3 T 0 / (2 * π) * ((Real.log N + (Real.log 4 + 1)) * S2 N c - landauSlack N c) := by
     rw [prime_eq_cut hb hT0 hN h12 c]
-    have hland : 2 * ∑ n ∈ Icc 1 N, Λ n / Real.sqrt n * ex N c n ≤
-        (Real.log N + (Real.log 4 + 1)) * S2 N c := landau_le_sharp N c
-    have hw : 0 ≤ phihat 3 T 0 / (2 * π) := div_nonneg (by rw [hΦ]; positivity) (by positivity)
-    have := mul_le_mul_of_nonneg_left hland hw
-    linarith
+    unfold landauSlack
+    ring
   have hS2n := S2_nonneg N c
   have hU : 0 ≤ T * S2 N c := mul_nonneg hT0.le hS2n
   have eA : 1 / (2 * π) * (L1s T * phihat 3 T 0 * S2 N c - ∫ t, defW N c T t) =
       5 / 1296 * (L1s T * (T * S2 N c)) - 1 / (2 * π) * ∫ t, defW N c T t := by
     rw [hΦ]; field_simp; ring
-  have eP : phihat 3 T 0 / (2 * π) * (Real.log N + (Real.log 4 + 1)) * S2 N c =
-      5 / 1296 * ((Real.log N + (Real.log 4 + 1)) * (T * S2 N c)) := by
+  have eP : phihat 3 T 0 / (2 * π) * ((Real.log N + (Real.log 4 + 1)) * S2 N c - landauSlack N c) =
+      5 / 1296 * ((Real.log N + (Real.log 4 + 1)) * (T * S2 N c)) - 5 / 1296 * (T * landauSlack N c) := by
     rw [hΦ]; field_simp; ring
   rw [eA] at harch
   rw [eP] at hprime
+  have hGT : 0 ≤ T * landauSlack N c := mul_nonneg hT0.le (landauSlack_nonneg N c)
   have hLL : Real.log (T / N) - 5.6322 ≤ L1s T - Real.log N - (Real.log 4 + 1) := by
     have hl8 : Real.log 8 = 3 * Real.log 2 := by
       rw [show (8 : ℝ) = 2 ^ 3 by norm_num, Real.log_pow]; push_cast; ring
@@ -1067,7 +1079,20 @@ theorem sharp_bound (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) {T : ℝ}
     rw [h1]
     linarith
   have hℓU := mul_nonneg (sub_nonneg.2 hℓ) hU
-  linarith only [hZ, hpole, harch, hD, hprime, hmainP, hℓU, hU]
+  linarith only [hZ, hpole, harch, hD, hprime, hmainP, hℓU, hU, hGT]
+
+/-- **The log-growth bound** (RH): for `N ≥ 1` and `T ≥ 2000N`,
+`(T/11)(log(T/N) − 7)Σc_n² ≤ Σ_{|γ| ≤ T}|V_x(ρ)|²` with `c_n = x_n√n`. -/
+theorem sharp_bound (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) {T : ℝ} (hTN : 2000 * N ≤ T)
+    (x : ℕ → ℝ) :
+    T / 11 * (Real.log (T / N) - 7) * S2 N (fun n => x n * Real.sqrt n) ≤
+      ∑ q ∈ BallRate.zerosUpTo T, ‖BallRate.dpoly N x q‖ ^ 2 := by
+  have h := sharp_bound_slack hRH hN hTN x
+  have hN1 : (1 : ℝ) ≤ N := by exact_mod_cast hN
+  have hT0 : 0 < T := by linarith
+  have hG := mul_nonneg (div_nonneg hT0.le (by norm_num : (0 : ℝ) ≤ 11))
+    (landauSlack_nonneg N (fun n => x n * Real.sqrt n))
+  linarith
 
 /-- **Sampling at the zeros in its natural form** (RH): for every `N ≥ 1`, every real `x` on `[1, N]` and every
 `T ≥ 2000N`, `Σ_{|γ_ρ| ≤ T}|Σ_{n ≤ N} x_n n^ρ|² ≥ (T/11)(log(T/N) − 7)Σ x_n² n`. -/
@@ -1142,5 +1167,57 @@ theorem rate_sharp (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) (x : ℕ �
     ring
   rw [e] at h
   exact h
+
+/-- **The rate, keeping Landau's slack** (RH): `Q_N(x) ≥ (Σ_{n ≤ N}x_n² n + G(c))/(22e⁸N)` for every `N ≥ 1` and every
+real `x`, with `c_n = x_n√n`; `sharp_bound_slack` at `T = e⁸N`. As `Σx_n² n ≥ Σx_n²` and `G(c) ≥ 0` it contains
+`rate_sharp`. A vector with `Σx_n² n + G(c) ≥ ε·log N·Σx_n²` has `Q_N(x) ≥ (ε/22e⁸)(log N/N)Σx_n²`, so `λ_N ≫ log N/N`
+is a statement about the vectors with `Σx_n² n + G(c) = o(log N·Σx_n²)` only. -/
+theorem rate_slack (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) (x : ℕ → ℝ) :
+    1 / (22 * Real.exp 8 * N) *
+        (∑ n ∈ Icc 1 N, x n ^ 2 * n + landauSlack N (fun n => x n * Real.sqrt n)) ≤ BallWeil.form N x := by
+  have hN1 : (1 : ℝ) ≤ N := by exact_mod_cast hN
+  have hN0 : (0 : ℝ) < N := by linarith
+  have he : (2000 : ℝ) ≤ Real.exp 8 := by
+    have h1 : Real.exp 8 = Real.exp 1 ^ 8 := by rw [← Real.exp_nat_mul]; norm_num
+    rw [h1]
+    have h2 := Real.exp_one_gt_d9
+    calc (2000 : ℝ) ≤ 2.7 ^ 8 := by norm_num
+      _ ≤ Real.exp 1 ^ 8 := pow_le_pow_left₀ (by norm_num) (by linarith) 8
+  set T : ℝ := Real.exp 8 * N with hT
+  have h2000 : 2000 * (N : ℝ) ≤ T := mul_le_mul_of_nonneg_right he hN0.le
+  have hT1 : 1 ≤ T := by nlinarith
+  have hT0 : 0 < T := by linarith
+  have hℓ : Real.log (T / N) = 8 := by rw [hT, mul_div_assoc, div_self hN0.ne', mul_one, Real.log_exp]
+  have hS2 : ∑ n ∈ Icc 1 N, x n ^ 2 * n = S2 N (fun n => x n * Real.sqrt n) := by
+    unfold BallDensity.S2
+    refine Finset.sum_congr rfl fun n _ => ?_
+    rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg n)]
+  have h := sharp_bound_slack hRH hN h2000 x
+  rw [hℓ, ← hS2] at h
+  have hsum := BallRate.hasSum_form hRH N x
+  have hpart : ∑ q ∈ BallRate.zerosUpTo T, ‖BallRate.dpoly N x q‖ ^ 2 / (1 / 4 + (zetaZeroFamily q).im ^ 2) ≤
+      BallWeil.form N x := by
+    rw [← hsum.tsum_eq]
+    exact Summable.sum_le_tsum _ (fun q _ => by positivity) hsum.summable
+  have hterm : ∀ q ∈ BallRate.zerosUpTo T, ‖BallRate.dpoly N x q‖ ^ 2 / (2 * T ^ 2) ≤
+      ‖BallRate.dpoly N x q‖ ^ 2 / (1 / 4 + (zetaZeroFamily q).im ^ 2) := by
+    intro q hq
+    rw [BallRate.mem_zerosUpTo] at hq
+    have h1 : (zetaZeroFamily q).im ^ 2 ≤ T ^ 2 := by
+      have := sq_abs (zetaZeroFamily q).im
+      nlinarith [abs_nonneg (zetaZeroFamily q).im]
+    refine div_le_div_of_nonneg_left (by positivity) (by positivity) ?_
+    nlinarith
+  have hzeros := Finset.sum_le_sum hterm
+  rw [← Finset.sum_div] at hzeros
+  calc 1 / (22 * Real.exp 8 * N) *
+        (∑ n ∈ Icc 1 N, x n ^ 2 * n + landauSlack N (fun n => x n * Real.sqrt n))
+      = T / 11 * ((8 - 7) * ∑ n ∈ Icc 1 N, x n ^ 2 * n + landauSlack N (fun n => x n * Real.sqrt n)) /
+          (2 * T ^ 2) := by
+        rw [hT]; field_simp; ring
+    _ ≤ (∑ q ∈ BallRate.zerosUpTo T, ‖BallRate.dpoly N x q‖ ^ 2) / (2 * T ^ 2) :=
+        div_le_div_of_nonneg_right h (by positivity)
+    _ ≤ _ := hzeros
+    _ ≤ _ := hpart
 
 end BallSharp
