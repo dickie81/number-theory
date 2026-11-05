@@ -1,8 +1,8 @@
 # The evaporation rate of the orbit form: witness level, approach, rate
 
 **Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`, with `BallSampling`,
-`BallDensity`, `BallCutoff` and `BallSharp` in four later sections, `BallUpper` with `BallUpperEta` in the next-to-last,
-and `BallGap` in the last. The theorems are mapped onto the gravastar
+`BallDensity`, `BallCutoff` and `BallSharp` in four later sections, then `BallUpper` with `BallUpperEta`, `BallGap`,
+and `BallLow` in the last. The theorems are mapped onto the gravastar
 language in the section after the statements; the first section, written before the Lean, fixes the three statements
 and says what each costs. The rate, open when that section was written, is now proved under RH alone:
 `λ_N ≥ 1/(22e⁸N)` for every `N ≥ 1` (`BallSharp.rate_sharp`, last section). It comes from the sampling conjecture of
@@ -11,7 +11,8 @@ the section "What is missing", which `BallCutoff.sampling_rh` proves under RH wi
 frame bound `(T/11)(log(T/N) − 7)`, which grows like the number of zeros up to `T`. The rate from above is proved too
 (`BallUpper`, `BallUpperEta`, last section): `λ_N ≤ 67(1 + log N)/N` under RH, by the alternating vector
 `x_n = (−1)^{n+1}/n`, and `λ_N ≤ C(1 + log N)/N` with some constant `C` unconditionally (`BallUpperEta.rate_upper`).
-Under RH `λ_N` is therefore between `1/(22e⁸N)` and `67(1 + log N)/N`; numerically it is `0.048·log N/N`. Keeping
+Under RH `λ_N` is therefore between `1/(22e⁸N)` and `67(1 + log N)/N`. Numerically it is `0.048·log N/N` for
+`N ≤ 2000`, and `λ_N·N = 0.0434·log N + 0.032` to within `2·10⁻⁴` for `10³ ≤ N ≤ 3·10⁴` (last section). Keeping
 Landau's slack `G(c)`, `BallSharp.rate_slack` reduces the missing `log N` of the lower bound to the vectors with
 `Σx_n² n + G(c) = o(log N·Σx_n²)` (section "Why the sampling route stops short of `log N/N`"). Every vector has
 `Σx_n² n + G(c) ≥ (√log N/10)Σx_n²` (`BallGap.edge_law`, last section), so under RH `λ_N ≥ √log N/(220e⁸N)` for every
@@ -26,7 +27,8 @@ with multiplicity, `K_H(1) = H₀ := 2 + γ_E − log 4π ≈ 0.0462`. Write `a_
 `Re a_ρ > 0`; and `λ_N = min{Q_N(x) : Σ x_n² = 1}`, the smallest eigenvalue of the Gram matrix `G_N`. Then
 `Q_N(x) = Σ_ρ a_ρ V_x(ρ) V_x(1 − ρ)` with `V_x(s) = Σ_{n ≤ N} x_n n^s`, which under RH is `Σ_ρ |V_x(ρ)|²/(¼ + γ²)`.
 Numerically (`scripts/ball_rate.py`, with the first 30000 zeros from `scripts/zeta_zeros_rs.py`):
-`λ_N = (0.048 ± 0.002)·log N/N` for `100 ≤ N ≤ 2000`; the minimising vector is
+`λ_N = (0.048 ± 0.002)·log N/N` for `100 ≤ N ≤ 2000`, which up to `N = 3·10⁴` is the law
+`λ_N·N = 0.0434·log N + 0.032` (section "The low zeros"); the minimising vector is
 `x_n ≈ (1 − n/N)²/ψ(n)` with `ψ` Dedekind's function `n Π_{p ∣ n}(1 + 1/p)`, within a factor `2.2`–`2.5` in the
 Rayleigh quotient; and the first zero moved to `½ + δ ± iγ₁` makes `G_N` indefinite from `N = 512` for `δ = 0.05` and
 `N = 1024` for `δ = 0.02` (among powers of two).
@@ -756,3 +758,100 @@ J. Piepenbrink (J. Differential Equations 15 (1974)): a positive supersolution o
 from below. Its form on weighted graphs, with optimal Hardy weights, is M. Keller, Y. Pinchover and F. Pogorzelski,
 Comm. Math. Phys. 358 (2018). Here the graph is the divisibility graph of `[1, N]` with the weights of Landau's form.
 The bound on its slack, and the rate it gives, are new as far as this note knows.
+
+## The low zeros: what the zeros above `8N` give, and `λ_N` to `N = 3·10⁴` (`BallLow`; `scripts/lambda_large.py`)
+
+**Lean:** `BallLow` (`lib/core/BallLow.lean`), printed by `lib/check/CheckAll.lean`. The two printed results depend on
+`propext`, `Classical.choice` and `Quot.sound` only.
+
+| Result | Statement | Conditional on |
+|---|---|---|
+| `BallLow.short_le` | `Q_N(x) ≥ Σ_{n ≤ N}x_n²/(22e⁸M)` for every `x` with `x_n = 0` for `n > M`, `1 ≤ M ≤ N` | RH |
+| `BallLow.high_le` | `Σ_{ρ ∈ F}\|V_x(ρ)\|²/(¼ + γ²) ≤ (4Σc_n² + G(c)/2)/N + (Σ_j\|c_j\|√j)(Σ_j\|c_j\|/√j)/N²` for every finite set `F` of zeros of height `\|γ\| > 8N`, `c_n = x_n√n` | RH |
+
+`short_le` is `BallUpper.form_extend` with `BallSharp.rate_sharp` at `M`. `high_le` is `BallUpper.upper_mean` on the
+dyadic shells `2^k·8N < |γ| ≤ 2^{k+1}·8N`. Shell `k` costs `π/(16·2^k N)·(((k + 4)log 2 + 1/5 + 22/π − log 4 − 1)Σc² + G)`
+plus a pole term, and the sum over `k` is `(4Σc² + G/2)/N` and the pole term. In terms of the spread
+`A = Σx_n² n/Σx_n²` and the slack `B = G(c)/Σx_n²`, the zeros above `8N` contribute at most `(4A + B/2)Σx_n²/N`, plus
+`(Σ|x_j| j)(Σ|x_j|)/N²`. The pole term is small for the vectors below: they are concentrated at small `n`, or spread
+like `1/n`. `rate_slack` gets `(A + B)/(22e⁸N)` from the zeros up to `e⁸N`. So the zeros above `8N` give the order
+`(A + B)/N` and no more, and `λ_N ≫ log N/N` holds or fails on the vectors with `A + B = o(log N)`. For those, the
+missing factor has to come from the zeros below height `8N`. By `short_le`, a vector with `Q_N(x) ≤ ε(log N/N)Σx_n²`
+is not supported below `N/(22e⁸ε log N)`.
+
+**`λ_N` to `N = 3·10⁴`** (`scripts/lambda_large.py`, uncertified). The orbit form is built from the primes in column
+blocks and factored in place by Cholesky. Block inverse iteration gives the bottom of its spectrum, and `A` and `B` are
+read off at the minimiser. The floor of `A + B` is `min(A + B) ≈ 2.9√log N` (section "The Landau gap from below").
+
+| `N` | `10³` | `2·10³` | `4·10³` | `8·10³` | `1.2·10⁴` | `1.6·10⁴` | `2·10⁴` | `2.5·10⁴` | `3·10⁴` |
+|---|---|---|---|---|---|---|---|---|---|
+| `λ_N·N/log N` | `0.04803` | `0.04756` | `0.04722` | `0.04694` | `0.04678` | `0.04667` | `0.04661` | `0.04652` | `0.04647` |
+| `λ_N·N` | `0.3318` | `0.3615` | `0.3916` | `0.4219` | `0.4394` | `0.4518` | `0.4616` | `0.4711` | `0.4791` |
+| `λ₂/λ₁`, `λ₃/λ₁` | `3.83, 7.72` | `3.86, 7.82` | `3.88, 7.89` | `3.90, 7.97` | `3.91, 8.01` | `3.92, 8.04` | `3.92, 8.05` | `3.93, 8.07` | `3.93, 8.09` |
+| minimiser `A/log N`, `B/log N` | `0.467, 1.443` | `0.458, 1.418` | `0.451, 1.400` | `0.445, 1.385` | `0.443, 1.377` | `0.441, 1.372` | `0.439, 1.368` | `0.438, 1.365` | `0.437, 1.362` |
+| minimiser `(A + B)/log N` | `1.910` | `1.876` | `1.851` | `1.831` | `1.820` | `1.813` | `1.808` | `1.803` | `1.799` |
+| floor `2.9√log N/log N` | `1.10` | `1.06` | `1.01` | `0.97` | `0.95` | `0.93` | `0.92` | `0.91` | `0.90` |
+
+- **A line in `log N`.** By least squares, `λ_N·N = 0.04335·log N + 0.0322`, with largest residual `1.8·10⁻⁴` and no
+  pattern in the signs. The best `a·√log N + b` has `b = −0.34` and largest residual `2.3·10⁻³`, with systematic signs. A
+  power `c(log N)^β` gives `β = 0.919` and `4.3·10⁻⁴`. The local exponent `d log(λ_N N)/d log log N` rises from `0.90`
+  to `0.94`, as a line with a positive intercept requires. So `0.048·log N/N` was this law at `N ≤ 2000`, with the
+  intercept folded in, and the asymptotic constant is about `0.043`.
+- **The minimiser stays away from the floor.** Its `A + B` falls by `6%` against `log N`, the floor by `18%`; it sits
+  at about twice the floor, and the ratio grows. It is the `ζ`-like vector: `n·x_n` has a fixed profile in `n/N`, and
+  `A ≈ 0.44 log N`.
+- The ratios `λ₂/λ₁` and `λ₃/λ₁` rise slowly, to `3.93` and `8.09` at `N = 3·10⁴`.
+- Above `N ≈ 2·10⁴`, OpenBLAS's multithreaded Cholesky crashed on the machine that ran this, so the script runs it
+  single-threaded. A single-threaded rerun at `N = 2·10⁴` gave the same digits.
+
+**The frontier** (`--frontier`). For `μ = s·log N/N`, the minimiser of `Q_N + μ(A + B)Σx_n²` gives one point
+`(A + B, Q_N)`:
+
+| `s` | `N = 2·10³`: `Q·N/log N` (`(A+B)/log N`) | `N = 8·10³` | `N = 1.6·10⁴` |
+|---|---|---|---|
+| `0` | `0.0476` (`1.876`) | `0.0469` (`1.831`) | `0.0467` (`1.813`) |
+| `0.01` | `0.0578` (`1.477`) | `0.0592` (`1.407`) | `0.0599` (`1.380`) |
+| `0.1` | `0.1326` (`1.195`) | `0.1492` (`1.125`) | `0.1557` (`1.103`) |
+| `1` | `0.3755` (`1.088`) | `0.4910` (`1.001`) | `0.5663` (`0.969`) |
+| `10` | `0.8184` (`1.067`) | `1.1210` (`0.976`) | `1.4101` (`0.938`) |
+| `100` | `1.8167` (`1.063`) | `2.3847` (`0.971`) | `2.8829` (`0.933`) |
+| floor | `1.062` | `0.969` | `0.931` |
+
+At every `s > 0`, `Q·N/log N` grows with `N` while `A + B` follows the floor down. Near the floor, a vector pays more
+`Q`, relative to `log N/N`, as `N` grows. A rate below `log N/N` would need the opposite.
+
+**The low modes of `A + B`** (`--modes`, `N = 10⁵`):
+
+- **Where they sit.** The `k`-th eigenvector sits at `n = k` with its star of prime powers, `99%` of its mass on four
+  entries. Its eigenvalue is `λ_k(A + B) = c_k·k√log N` with `c_k = 2.89, 3.11, 3.21, 3.29, 3.33, 3.39, 3.41, 3.45`.
+- **At the low zeros.** All eight look like `αN^ρ/ρ`, the boundary term of the truncated prime sum `Σ_{q ≤ N}Λ(q)q^{ρ−1}`,
+  with nearly the same `α`: `|α|√N = 35`–`56`. The relative residual of that fit is `14`–`58%`, and it shrinks with
+  `N` (`48%` to `14%` for the first mode from `N = 10⁴` to `10⁵`).
+- **On their span.** The smallest eigenvalue of `Σ_{j ≤ J}2|V_x(ρ_j)|²/(¼ + γ_j²)` on the span of the first `d` modes
+  is `0.14`–`0.21` for `d = 1`, `1.9·10⁻³`–`1.0·10⁻²` for `d = 2`, and `2.3·10⁻³`–`5.7·10⁻³` for `d = 8` once
+  `J ≥ 10` (zero for `J < d/2`). Against `log N/N = 1.2·10⁻⁴` that is `20` to `1800` times as much.
+
+**What a proof of `λ_N ≫ log N/N` would need.** Three steps; the first is proved, the other two are numerics and
+heuristics:
+
+1. **The high zeros are capped** (`high_le`): above `8N` they give `O((A + B)/N)`.
+2. **The low zeros can be silenced cheaply.** At a zero under RH, the vector `x_n = 1/n` has
+   `V_x(ρ) = Σ_{n ≤ N}n^{ρ−1} = ζ(ρ̄) + N^ρ/ρ + O(N^{−1/2}) = N^ρ/ρ + O(N^{−1/2})`. So subtracting `α·(1/n)` from a mode
+   removes its loud term at every zero at once.
+   - **The cost.** Its `Σx_n² n + G` is `4.15·log N` at `N = 10⁵`, so the cost is `α²·4.15·log N`. For the first
+     mode `α = 1.9/log N`, and the cost is `15/log N`.
+   - **The residual.** It can then be cancelled zero by zero with oscillating tails near `n = N`, at a cost of order
+     `log N/N` in `A + B` per zero.
+   - **Consequence.** An argument that uses `o(N/log N)` zeros, any number of low zeros with the zeros above `8N`,
+     can be defeated by such vectors and stays at `√log N/N`. The frontier shows the first step. At `N = 2000` the
+     floor itself has `Q·N/log N = 3.76`. Raising `A + B` by `0.001·log N` halves that (`s = 100`), and raising it by
+     `0.026·log N` divides it by `10` (`s = 1`).
+3. **The zeros below `N`.** A proof has to show that silencing a vector at the `≍ N` zeros below height `N` costs
+   `A + B ≳ log N`. Two difficulties:
+   - **The explicit formula.** At those heights it is no longer exact: the pairs with `|log(jk/j′)| < 1/T` enter.
+   - **The large sieve.** It bounds the cost from below only through an upper mean value for Dirichlet polynomials at
+     the zeros below their length. The standard bound has a term `N log N`, which loses the whole factor: fed into
+     the split into a short head and a long tail, it gives `1/N`.
+
+   What is missing is a mean value at the zeros below height `N` that tells the `ζ`-multiples from the incoherent
+   tails, at about the strength of the pair-correlation conjecture beyond `α = 1`.
