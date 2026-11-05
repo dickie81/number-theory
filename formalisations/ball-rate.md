@@ -378,8 +378,10 @@ Summing these at `b = 6`, with `Φ̂(0)/2π = 69T/124416` and `log(T/N) ≥ 24`,
 `0.0045TΣc_n²` (`cutoff_bound`), and `Σc_n² = Σx_n²n`. Then `rate_of_sampling` gives `rate_cut`.
 
 **What this says.** Under RH, the zeros up to height `T` sample the Dirichlet polynomials of length `N` once
-`T ≥ e²⁴N`. This is the Marcinkiewicz–Zygmund inequality at a constant multiple of the Nyquist density, which the
-section "What is missing" observed (`c ≈ 0.1` at `C = 8`) and conjectured. The constants are far from optimal:
+`T ≥ e²⁴N`. This is the Marcinkiewicz–Zygmund inequality that the section "What is missing" observed (`c ≈ 0.1` at
+`C = 8`) and conjectured. The zeros near height `T` have density `(1/2π)log(T/2π)`, so at `T = CN` they exceed the
+Nyquist density `(1/2π)log N` of a polynomial of length `N` by the constant `(1/2π)log(C/2π)`, an additive excess
+whose ratio to the Nyquist density tends to `1`. The constants are far from optimal:
 `e²⁴ ≈ 2.6·10¹⁰`, against the observed `8`. The shape is right, though. `λ_N ≥ 1/(200e²⁴N)` has the Nyquist exponent
 and no logarithm, against the observed `0.048·log N/N`; one factor `log N` is missing. Two properties of the test
 function account for the gain over `BallDensity`:
