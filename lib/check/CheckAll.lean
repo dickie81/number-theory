@@ -411,12 +411,15 @@ conjecture `BallRate.SamplingAtZeros (1/100) e²⁴ 0` under RH, and `λ_N ≥ 1
 /- Sampling at the zeros in its natural form (`formalisations/ball-rate.md`): the Fejér-smoothed mass of `|D|²`,
 `∫|D|²(E ⋆ F_a) = Σc_j²·∫E` once `2aN ≤ 1`, and under RH, `Σ_{|γ_ρ| ≤ T}|V_x(ρ)|² ≥ (T/11)(log(T/N) − 7)Σ x_n² n` for
 every `T ≥ 2000N`, so `≥ (T/22)log(T/N)Σ x_n² n` for `T ≥ e¹⁴N`; the conjecture `BallRate.SamplingAtZeros (1/11) e⁸ 0`
-under RH, and `λ_N ≥ 1/(22e⁸N)` under RH. -/
+under RH, and `λ_N ≥ 1/(22e⁸N)` under RH; keeping Landau's slack `G(c) ≥ 0`, the frame bound
+`(T/11)((log(T/N) − 7)Σ x_n² n + G(c))` and `Q_N(x) ≥ (Σ x_n² n + G(c))/(22e⁸N)` under RH. -/
 #print axioms BallSharp.integral_Kc_conv
 #print axioms BallSharp.sampling_log
 #print axioms BallSharp.sampling_log_clean
 #print axioms BallSharp.sampling_e8
 #print axioms BallSharp.rate_sharp
+#print axioms BallSharp.sharp_bound_slack
+#print axioms BallSharp.rate_slack
 
 /- The rate from above (`formalisations/ball-rate.md`): the alternating tail `Σ_{N < n ≤ M}(−1)^{n+1}n^{−s}` by Abel
 summation; under RH, the mean value of `|V_x|²` on `|γ| ≤ r` from above, by Weil's explicit formula for `|D|²M_r`, and

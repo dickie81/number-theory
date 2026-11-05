@@ -10,7 +10,9 @@ the section "What is missing", which `BallCutoff.sampling_rh` proves under RH wi
 frame bound `(T/11)(log(T/N) − 7)`, which grows like the number of zeros up to `T`. The rate from above is proved too
 (`BallUpper`, `BallUpperEta`, last section): `λ_N ≤ 67(1 + log N)/N` under RH, by the alternating vector
 `x_n = (−1)^{n+1}/n`, and `λ_N ≤ C(1 + log N)/N` with some constant `C` unconditionally (`BallUpperEta.rate_upper`).
-Under RH `λ_N` is therefore between `1/(22e⁸N)` and `67(1 + log N)/N`; numerically it is `0.048·log N/N`.
+Under RH `λ_N` is therefore between `1/(22e⁸N)` and `67(1 + log N)/N`; numerically it is `0.048·log N/N`. Keeping
+Landau's slack `G(c)`, `BallSharp.rate_slack` reduces the missing `log N` of the lower bound to the vectors with
+`Σx_n² n + G(c) = o(log N·Σx_n²)` (section "Why the sampling route stops short of `log N/N`").
 
 ## The three statements, and what can be proved
 
@@ -451,7 +453,7 @@ E. Saias (Adv. Math. 149 (2000)) and to J.-F. Burnol (Adv. Math. 170 (2002)). A.
 
 ## Sampling at the zeros in its natural form (`BallSharp`)
 
-**Lean:** `BallSharp` (`lib/core/BallSharp.lean`), printed by `lib/check/CheckAll.lean`. The five results depend on
+**Lean:** `BallSharp` (`lib/core/BallSharp.lean`), printed by `lib/check/CheckAll.lean`. The seven results depend on
 `propext`, `Classical.choice` and `Quot.sound` only. `BallCutoff` gives the zeros up to height `T` the frame bound
 `T/100`, a constant times the length of the window. This section gives it the shape of the number of zeros,
 `T log(T/N)`, from `T ≥ 2000N` on. With it the rate improves from `1/(200e²⁴N)` to `1/(22e⁸N)`.
@@ -463,6 +465,8 @@ E. Saias (Adv. Math. 149 (2000)) and to J.-F. Burnol (Adv. Math. 170 (2002)). A.
 | `BallSharp.sampling_log_clean` | the same with `(T/22)log(T/N)` in place of `(T/11)(log(T/N) − 7)`, for every `T ≥ e¹⁴N` | RH |
 | `BallSharp.sampling_e8` | `BallRate.SamplingAtZeros (1/11) e⁸ 0`: the same with `T/11`, for every `T ≥ e⁸N` | RH |
 | `BallSharp.rate_sharp` | `Q_N(x) ≥ Σ x_n²/(22e⁸N)` for every `N ≥ 1`, so `λ_N ≥ 1/(22e⁸N)` | RH |
+| `BallSharp.sharp_bound_slack` | `sampling_log` with Landau's slack kept: `Σ_{\|γ_ρ\| ≤ T}\|V_x(ρ)\|² ≥ (T/11)((log(T/N) − 7)Σ x_n² n + G(c))` for `T ≥ 2000N`, with `c_n = x_n√n` and `G(c) = (log N + log 4 + 1)Σc_n² − L(c) ≥ 0` (`landauSlack`) | RH |
+| `BallSharp.rate_slack` | `Q_N(x) ≥ (Σ x_n² n + G(c))/(22e⁸N)` for every `N ≥ 1`, which contains `rate_sharp` | RH |
 
 **How it is proved.** The test function is `BallCutoff`'s `h(t) = |D(t)|²Φ(t)`, with `c_n = x_n√n`, now at `b = 3`.
 Five changes turn the constant `T/100` into `(T/11)(log(T/N) − 7)`.
@@ -490,11 +494,14 @@ Five changes turn the constant `T/100` into `(T/11)(log(T/N) − 7)`.
   apart (`log_sep`). So `|D|² ⋆ F_a` is the constant `Σc_n²` (`Kc_conv_fej`), and by Fubini the weight costs exactly
   `Σc_n²·∫E` (`integral_Kc_conv`). Here `∫E = 2K(1 + c₁)/R ≤ 0.0089T` (`integral_envT`), with no dependence on `N`.
 
-The pole costs at most `10⁻⁶TΣc_n²` (`pole_ge_sharp`). Summing these (`sharp_bound`),
+The pole costs at most `10⁻⁶TΣc_n²` (`pole_ge_sharp`). Summing these,
 `(1/25)Σ_{|γ| ≤ T}|V_x(ρ)|² ≥ (5T/1296)(log(T/N) − 5.633)Σc_n² − 0.0039TΣc_n²`. So the sum is at least
-`0.0964T(log(T/N) − 6.65)Σc_n²`, which is at least `(T/11)(log(T/N) − 7)Σc_n²` because `log(T/N) ≥ 7`. For the rate,
+`0.0964T(log(T/N) − 6.65)Σc_n²`, which is at least `(T/11)(log(T/N) − 7)Σc_n²` because `log(T/N) ≥ 7`. The prime side
+is `(5T/1296)L(c)` exactly, so Landau's slack `G(c) = (log N + log 4 + 1)Σc_n² − L(c)` enters with the coefficient
+`125T/1296 ≥ T/11` and can be kept (`sharp_bound_slack`); `G(c) ≥ 0` gives `sharp_bound`. For the rate,
 `rate_of_sampling` turns `SamplingAtZeros c C 0` into `λ_N ≥ c/(2CN)`. With `c = (log C − 7)/11` the best `C` is
-`e⁸`, where `c = 1/11`; this gives `rate_sharp`.
+`e⁸`, where `c = 1/11`; this gives `rate_sharp`. At the same `T = e⁸N`, `sharp_bound_slack` gives `rate_slack`,
+`Q_N(x) ≥ (Σx_n² n + G(c))/(22e⁸N)`.
 
 **What this says.** At `x = δ₁` the sum counts the zeros up to height `T`, about `(T/π)log(T/2πe)`. So the shape
 `T log T` is right, and the constant `1/11` is within a factor `11/π ≈ 3.5` of the count's `1/π`. For general `x`,
@@ -515,8 +522,9 @@ equality: the kernel's transform is supported below the separation of the freque
 **The reduction.** In `BallSharp`'s assembly the prime side is exactly `(Φ̂(0)/2π)L(c)`, with Landau's form
 `L(c) = 2Σ_{n ≤ N}Λ(n)n^{−1/2}Σ_{jn ≤ N} c_j c_{jn}` (`BallCutoff.prime_eq_cut`), and `landau_le_sharp` bounds it by
 `(log N + c₀)Σc_n²`, `c₀ = log 4 + 1`. Keeping the slack `G(c) = (log N + c₀)Σc_n² − L(c) ≥ 0` instead of discarding
-it, the same proof gives `Σ_{|γ| ≤ T}|V_x(ρ)|² ≥ 0.0964T((log(T/N) − 6.65)Σx_n² n + G(c))`, and `Σ_m c_m²/m = Σ x_m²`
-for `c_m = x_m√m`. So a bound `G(c) ≥ η_N Σ_m c_m²/m` would give `λ_N ≫ η_N/N`, and `η_N ≍ log N` the observed order.
+it, the same proof gives `Σ_{|γ| ≤ T}|V_x(ρ)|² ≥ (T/11)((log(T/N) − 7)Σx_n² n + G(c))` (`BallSharp.sharp_bound_slack`),
+hence `Q_N(x) ≥ (Σx_n² n + G(c))/(22e⁸N)` (`BallSharp.rate_slack`), and `Σ_m c_m²/m = Σ x_m²` for `c_m = x_m√m`. So a
+bound `G(c) ≥ η_N Σ_m c_m²/m` would give `λ_N ≫ η_N/N`, and `η_N ≍ log N` the observed order.
 
 **The ground-state form.** With `c_m = f_m/√m`, Schur's test becomes an identity:
 `G(c) = Σ_m (f_m²/m)κ(N/m) + Σ_{j,n}(Λ(n)/(nj))(f_j − f_{jn})²`, with `κ(y) = c₀ + log y − Σ_{n ≤ y}Λ(n)/n ≥ 0`
@@ -554,6 +562,31 @@ near-flat vector `x_n = (1 − n/N)²/ψ(n)` comes within a factor `2.5` of `λ_
 `scripts/ball_rate.py`), and for it `Σ x_n² n ≍ log N·Σ x_n²`, so the sampling bound already gives the order `log N/N`
 there. The missing factor lives in the low zeros, which a test function at height `T ≍ N` weights only by `1/T²`. The
 next section bounds `λ_N` from above by an explicit vector that vanishes at the low zeros.
+
+**Which vectors the slack leaves** (`scripts/landau_gap.py --spread`, prime-side Gram matrices, uncertified). With the
+spread `A = Σx_n² n/Σx_n²` and `B = G(c)/Σx_n²`, `rate_slack` reads `Q_N(x) ≥ (A + B)Σx_n²/(22e⁸N)`. A vector with
+`A + B ≥ ε log N` therefore has `Q_N(x) ≥ (ε/22e⁸)(log N/N)Σx_n²`, and `λ_N ≫ log N/N` is a statement about the vectors
+with `A + B = o(log N)` alone. The edge vector is the minimiser of `A + B`:
+
+| `N` | `λ_N·N/log N` | minimiser of `Q_N`: `A/log N` | `B/log N` | edge vector: `(A + B)/√log N` | `x₁²` | `Q_N(x)·N/log N` | eigenvalues of `A + B` over `√log N` |
+|---|---|---|---|---|---|---|---|
+| `250` | `0.0492` | `0.492` | `1.509` | `3.00` | `0.968` | `0.57` | `3.00, 6.43, 9.89, 13.48` |
+| `500` | `0.0484` | `0.476` | `1.467` | `2.96` | `0.970` | `0.84` | `2.96, 6.37, 9.85, 13.41` |
+| `1000` | `0.0480` | `0.467` | `1.443` | `2.94` | `0.971` | `1.80` | `2.94, 6.32, 9.78, 13.34` |
+| `2000` | `0.0476` | `0.458` | `1.418` | `2.93` | `0.973` | `4.69` | `2.93, 6.29, 9.73, 13.27` |
+
+- The minimiser of `Q_N` has `A ≈ 0.46 log N` and `B ≈ 1.42 log N`, both of order `log N`. For it the slack-kept bound
+  already gives the order `log N/N`.
+- The edge vector is `97%` `δ₁`, with `A + B ≈ 2.9√log N`: the capacity of the vertex `1`, plus `A ≈ 1`. Its `Q_N` is
+  of order one, `0.01`–`0.02`, so `17` to `100` times `λ_N` over this range. At the low zeros `V_x(ρ) ≈ x₁`, and they
+  charge it a fraction of `K_H(1)`.
+- The bottom of the spectrum of `A + B` is roughly evenly spaced in units of `√log N`. At these `N` only its first
+  eigenvalue lies below `2·log N`; the number below `ε log N` grows like `ε√log N/3.4`.
+
+So `λ_N ≍ log N/N` needs one more ingredient: the vectors in the bottom of this spectrum cannot be small at all the zeros
+below height `≍ N`. The alternating vector of the next section shows how a vector avoids the low zeros, by being a
+multiple of `ζ` (through `η = (1 − 2^{1−s})ζ`), and it pays `A ≍ log N` for it. At `N ≤ 2000`, `√log N` and `log N` differ
+by less than a factor `3`, so these numbers show trends, not a separation of the two scales.
 
 ## The rate from above: `λ_N ≤ 67(1 + log N)/N` under RH, and `λ_N ≪ log N/N` unconditionally (`BallUpper`, `BallUpperEta`)
 
