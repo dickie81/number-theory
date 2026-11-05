@@ -493,9 +493,53 @@ inexplicit constants and only for `N ≤ cT/log²T`. `sampling_log` holds for `N
 that error term exceeds the main term. The statement says nothing for `T ≤ e⁷N`. Below `T = 2πN` no lower bound
 of this kind can hold: the vector `x_n = 1/n` breaks it (previous section). The rate `λ_N ≥ 1/(22e⁸N)`, about
 `1.5·10⁻⁵/N`, is `8·10⁷` times `BallCutoff`'s `1/(200e²⁴N)`. The observed rate is `0.048·log N/N`, so the factor
-`log N` is still missing.
+`log N` is still missing; the next section shows that this route cannot recover more than `√log N` of it.
 
 **Prior work.** The literature check of the previous section covers this one. Its nearest result, the discrete mean
 value of Bui–Florea–Milinovich, already has the shape `T log(T/N)`, but stops at `N ≤ cT/log²T`. The identity
 `|D|² ⋆ F_a = Σc_n²` is the large-sieve principle behind the previous section's Fejér-kernel bound, used here as an
 equality: the kernel's transform is supported below the separation of the frequencies, so only the diagonal survives.
+
+## Why the sampling route stops short of `log N/N`: the Landau gap is `√log N` (`scripts/landau_gap.py`, uncertified)
+
+**The reduction.** In `BallSharp`'s assembly the prime side is exactly `(Φ̂(0)/2π)L(c)`, with Landau's form
+`L(c) = 2Σ_{n ≤ N}Λ(n)n^{−1/2}Σ_{jn ≤ N} c_j c_{jn}` (`BallCutoff.prime_eq_cut`), and `landau_le_sharp` bounds it by
+`(log N + c₀)Σc_n²`, `c₀ = log 4 + 1`. Keeping the slack `G(c) = (log N + c₀)Σc_n² − L(c) ≥ 0` instead of discarding
+it, the same proof gives `Σ_{|γ| ≤ T}|V_x(ρ)|² ≥ 0.0964T((log(T/N) − 6.65)Σx_n² n + G(c))`, and `Σ_m c_m²/m = Σ x_m²`
+for `c_m = x_m√m`. So a bound `G(c) ≥ η_N Σ_m c_m²/m` would give `λ_N ≫ η_N/N`, and `η_N ≍ log N` the observed order.
+
+**The ground-state form.** With `c_m = f_m/√m`, Schur's test becomes an identity:
+`G(c) = Σ_m (f_m²/m)κ(N/m) + Σ_{j,n}(Λ(n)/(nj))(f_j − f_{jn})²`, with `κ(y) = c₀ + log y − Σ_{n ≤ y}Λ(n)/n ≥ 0`
+(`mertens_le_sharp`). The bound wanted is a Hardy inequality on the divisibility graph: the electrical network with
+conductance `Λ(n)/(nj)` on each edge `j — jn` and grounding `κ(N/m)/m` at `m`.
+
+**The numbers.** `η_N`, the largest `η` with `(log N + c₀)I − M ⪰ η·diag(1/m)` (`M` the matrix of `L`), and the
+capacity of the vertex `1`, `Cap(1) = min{G(c) : c₁ = 1}`, by conjugate gradients:
+
+| `N` | `η_N/log N` | `Cap(1)/log N` | `Cap(1)/√log N` | `Cap(1)/√log N` at `c₀ = 0` |
+|---|---|---|---|---|
+| `10³` | `0.922` | `0.950` | `2.497` | `0.896` |
+| `10⁴` | `0.797` | `0.817` | `2.481` | `0.952` |
+| `10⁵` | `0.715` | `0.732` | `2.484` | `1.001` |
+| `10⁶` | `0.658` | `0.672` | `2.497` | `1.045` |
+| `3·10⁶` | `0.635` | `0.649` | `2.505` | `1.065` |
+
+The minimiser sits at `m = 1`, with the star of the prime powers (`η_N ≈ Cap(1)`). `Cap(1)/log N` keeps falling while
+`Cap(1)/√log N` is flat, near `√(2(c₀ + γ)) = 2.435` (and `1.074` at `c₀ = 0`). So `η_N ≍ √log N`: the gap is the
+square root of the one the rate needs, and the same holds with the true Mertens constant.
+
+**The mechanism.** The walk of the network moves from `j` to `jn` with weight `Λ(n)/n` and from `m` to `m/n` with weight
+`Λ(n)`. In the scale `log m/log N` the next position is uniform on `[0, 1]`, so the size of `m` mixes at once, but
+`Ω(m)`, the number of prime factors, makes a recurrent one-dimensional walk: it falls with probability `log m/log N`,
+about `½`, and a prime power `q` returns straight to `1` with probability `log q/log N`. Killing at rate about
+`κ/log N` gives a lifetime of `log N/κ` steps, in which a recurrent walk visits `1` about `√(log N/κ)` times. Hence
+`Cap(1) ≍ √(κ log N)`: the spectral measure of `δ₁` under `M` has an arcsine edge at `log N − γ`, which gives
+`Cap(1) ≈ √(2(c₀ + γ)log N)`.
+
+**What it means.** The prime side with Fourier support below `1/N` cannot give more than `λ_N ≫ √(log N)/N`, even with
+Landau's form kept exact. The vectors with the small gap are not the ones that make `λ_N` small. For `δ₁` plus the star,
+`x_q ∝ Λ(q)/q`, the polynomial is `V_x(ρ) = x₁ + Σ_q x_q q^ρ`, and at a zero `Σ_{q ≤ N}Λ(q)q^{ρ−1} = N^ρ/ρ − log N + …`
+(the explicit formula at `1 − ρ = ρ̄`), so `|V_x(ρ)| ≈ √N/(|γ| log N)` at the low zeros and `Q_N(x) ≫ N/log²N`. The
+near-flat vector `x_n = (1 − n/N)²/ψ(n)` comes within a factor `2.5` of `λ_N` (section B of `scripts/ball_rate.py`),
+and for it `Σ x_n² n ≍ log N·Σ x_n²`, so the sampling bound already gives the order `log N/N` there. The missing factor
+lives in the low zeros, which a test function at height `T ≍ N` weights only by `1/T²`.
