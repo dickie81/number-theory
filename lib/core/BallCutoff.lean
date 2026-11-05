@@ -773,11 +773,12 @@ lemma gh_hRC_log {b T : ℝ} (hb : 0 < b) (hT : 0 < T) {N : ℕ} (hN : 1 ≤ N) 
     gh (hRC N c b T) (Real.log n) = phihat b T 0 / (2 * π) * ex N c n := by
   rw [gh_hRC hb hT, sum_phihat_exact hb hT hN h12 c hn]; ring
 
-/-- **The prime side is Landau's form**: `2Σ_n Λ(n)n^{−1/2}g_h(log n) ≤ (Φ̂(0)/2π)(log N + log 4 + 4)Σ c_n²`. -/
-lemma prime_le_cut {b T : ℝ} (hb : 0 < b) (hT : 0 < T) {N : ℕ} (hN : 1 ≤ N) (h12 : 12 * b * N < T)
-    (c : ℕ → ℝ) (hΦ : 0 ≤ phihat b T 0) :
-    2 * ∑' n : ℕ, Λ n / Real.sqrt n * gh (hRC N c b T) (Real.log n) ≤
-      phihat b T 0 / (2 * π) * (Real.log N + (Real.log 4 + 4)) * S2 N c := by
+/-- **The prime side is Landau's form**, exactly: `2Σ_n Λ(n)n^{−1/2}g_h(log n) = (Φ̂(0)/2π)·2Σ_{n ≤ N}Λ(n)n^{−1/2}e_n`,
+with `e_n = Σ_{jn ≤ N} c_j c_{jn}`. -/
+lemma prime_eq_cut {b T : ℝ} (hb : 0 < b) (hT : 0 < T) {N : ℕ} (hN : 1 ≤ N) (h12 : 12 * b * N < T)
+    (c : ℕ → ℝ) :
+    2 * ∑' n : ℕ, Λ n / Real.sqrt n * gh (hRC N c b T) (Real.log n) =
+      phihat b T 0 / (2 * π) * (2 * ∑ n ∈ Icc 1 N, Λ n / Real.sqrt n * ex N c n) := by
   have h0 : ∀ n ∉ Icc 1 N, Λ n / Real.sqrt n * gh (hRC N c b T) (Real.log n) = 0 := by
     intro n hn
     rcases Nat.eq_zero_or_pos n with rfl | hn0
@@ -794,6 +795,14 @@ lemma prime_le_cut {b T : ℝ} (hb : 0 < b) (hT : 0 < T) {N : ℕ} (hN : 1 ≤ N
     refine Finset.sum_congr rfl fun n hn => ?_
     rw [gh_hRC_log hb hT hN h12 c (Finset.mem_Icc.1 hn).1]; ring
   rw [e]
+  ring
+
+/-- **The prime side is Landau's form**: `2Σ_n Λ(n)n^{−1/2}g_h(log n) ≤ (Φ̂(0)/2π)(log N + log 4 + 4)Σ c_n²`. -/
+lemma prime_le_cut {b T : ℝ} (hb : 0 < b) (hT : 0 < T) {N : ℕ} (hN : 1 ≤ N) (h12 : 12 * b * N < T)
+    (c : ℕ → ℝ) (hΦ : 0 ≤ phihat b T 0) :
+    2 * ∑' n : ℕ, Λ n / Real.sqrt n * gh (hRC N c b T) (Real.log n) ≤
+      phihat b T 0 / (2 * π) * (Real.log N + (Real.log 4 + 4)) * S2 N c := by
+  rw [prime_eq_cut hb hT hN h12 c]
   have hland : 2 * ∑ n ∈ Icc 1 N, Λ n / Real.sqrt n * ex N c n ≤
       (Real.log N + (Real.log 4 + 4)) * S2 N c := landau_le N c
   have hw : 0 ≤ phihat b T 0 / (2 * π) := div_nonneg hΦ (by positivity)
