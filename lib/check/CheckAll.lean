@@ -24,6 +24,7 @@ import BallCutoff
 import BallSharp
 import BallUpperEta
 import BallGap
+import BallLow
 import HalfPlaneJoinsPNT
 import DivisorExponent
 import ChiPNT
@@ -441,6 +442,12 @@ RH. -/
 #print axioms BallGap.gap_ge
 #print axioms BallGap.edge_law
 #print axioms BallGap.rate_gap
+
+/- The low zeros (`formalisations/ball-rate.md`): under RH, the zeros above `8N` contribute at most
+`(4Σc_n² + G(c)/2)/N` and a pole term to `Q_N(x)`, by `BallUpper.upper_mean` on dyadic shells; and a vector supported
+on `[1, M]` has `Q_N(x) ≥ Σx_n²/(22e⁸M)`. -/
+#print axioms BallLow.short_le
+#print axioms BallLow.high_le
 
 #print axioms MertensExponent.limsup_mexpo
 #print axioms MertensExponent.moebius_tendsto_of_Theta_lt
