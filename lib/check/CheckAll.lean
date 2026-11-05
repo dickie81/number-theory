@@ -17,6 +17,10 @@ import HalfPlaneLindelof
 import SmoothPerron
 import MertensExponent
 import LagariasCriterion
+import BallRate
+import BallSampling
+import BallDensity
+import BallCutoff
 import HalfPlaneJoinsPNT
 import DivisorExponent
 import ChiPNT
@@ -352,6 +356,52 @@ hypotheses (`formalisations/lagarias-criterion.md`); its finite part, `1 ≤ n �
 checks. -/
 #print axioms LagariasCriterion.lagarias_criterion
 #print axioms LagariasCriterion.lagarias_upto_5040
+
+/- The evaporation rate of the orbit form (`formalisations/ball-rate.md`): the collapse lemma and its rate form, the
+persistence of a negative vector, the explicit witness level of a dominant crossing and of a single crossing, the
+approach `lim sup λ_N ≤ 0`, the form under RH as a sum over the zeros and the rate under a sampling hypothesis, and
+the flat model's uniform margin. -/
+#print axioms BallRate.rh_of_frequently_balanced
+#print axioms BallRate.rh_of_excess_le_inv
+#print axioms BallRate.neg_persists
+#print axioms BallRate.witness_level
+#print axioms BallRate.witness_level_single
+#print axioms BallRate.approach
+#print axioms BallRate.hasSum_form
+#print axioms BallRate.rate_of_sampling
+#print axioms BallRate.flatForm_eq_kerFlat
+#print axioms BallRate.flat_margin
+
+/- The rate of the orbit form from the gaps between the zeros (`formalisations/ball-rate.md`): the mean value theorem
+on `[1, N]` both ways, the cell discretisation, sampling at the zeros and `λ_N ≥ (1 + log N)/(80T₁)` under RH and a
+gap hypothesis, the polynomial, quasi-polynomial and doubly exponential rates from gaps `K/log u`, `K/√(log u)` and
+`K/log log u`, and `BallRate.SamplingAtZeros` from bounded normalised gaps. -/
+#print axioms BallSampling.meanValue
+#print axioms BallSampling.cells_bound
+#print axioms BallSampling.exists_sampling
+#print axioms BallSampling.rate_of_gaps
+#print axioms BallSampling.rate_of_zeroGaps
+#print axioms BallSampling.rate_of_gapsLog
+#print axioms BallSampling.rate_of_gapsSqrt
+#print axioms BallSampling.rate_of_gapsLogLog
+#print axioms BallSampling.samplingAtZeros_of_gapsLog
+
+/- The density of the zeros samples the Dirichlet polynomials (`formalisations/ball-rate.md`): Mertens' bound
+`Σ_{n ≤ M} Λ(n)/n ≤ log M + log 4 + 4`, the Schur bound for Landau's form, Weil's explicit formula for the test
+function `|D|²·(Gaussian window at ±T₀)`, the density bound under RH, and `λ_N ≥ 10⁻¹²/(N log³N)` under RH. -/
+#print axioms BallDensity.mertens_le
+#print axioms BallDensity.landau_le
+#print axioms BallDensity.weil_htest
+#print axioms BallDensity.density_bound
+#print axioms BallDensity.rate_rh
+
+/- Sampling at the zeros up to height `T ≍ N` (`formalisations/ball-rate.md`): Weil's explicit formula for
+`|D|²·Φ(t/T)` with the minorant `Φ(y) = y²(1 − y²)sinc⁶(by)`, the Fejér-kernel mean-value bound for `|D|²`, the
+conjecture `BallRate.SamplingAtZeros (1/100) e²⁴ 0` under RH, and `λ_N ≥ 1/(200e²⁴N)` under RH. -/
+#print axioms BallCutoff.weil_htC
+#print axioms BallCutoff.integral_Kc_majR_le
+#print axioms BallCutoff.sampling_rh
+#print axioms BallCutoff.rate_cut
 #print axioms MertensExponent.limsup_mexpo
 #print axioms MertensExponent.moebius_tendsto_of_Theta_lt
 #print axioms MertensExponent.moebius_not_tendsto_of_lt_Theta

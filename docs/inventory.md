@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1315 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1343 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 151 | 419 |
+| `lib/core` | 155 | 447 |
 | `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -43,6 +43,21 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallCurve.flow_continuous_closure`: The flow is strongly continuous on the closed span of the curve
 - `BallCurve.flow_continuous_of_dense`: If the curve spans densely, the flow is strongly continuous on the whole space
 - `BallCurve.flow_continuous_model`: In the model `curveRealization`, the flow is strongly continuous on all of `ℓ²` ([note](../formalisations/weil-positivity.md))
+
+#### `BallCutoff`: Sampling at the zeros up to height `T ≍ N`: `SamplingAtZeros c C 0` under RH
+
+- `BallCutoff.weil_htC`: Weil's explicit formula for `|D|²Φ` ([note](../formalisations/ball-rate.md))
+- `BallCutoff.integral_Kc_majR_le`: The mass bound ([note](../formalisations/ball-rate.md))
+- `BallCutoff.sampling_rh`: Sampling at the zeros up to height `T ≍ N` ([note](../formalisations/ball-rate.md))
+- `BallCutoff.rate_cut`: The rate under RH ([note](../formalisations/ball-rate.md))
+
+#### `BallDensity`: The density of the zeros samples the Dirichlet polynomials: `λ_N ≥ 10⁻¹²/(N log³N)` under RH
+
+- `BallDensity.mertens_le`: Mertens' bound ([note](../formalisations/ball-rate.md))
+- `BallDensity.landau_le`: The Landau form ([note](../formalisations/ball-rate.md))
+- `BallDensity.weil_htest`: Weil's explicit formula for `h` ([note](../formalisations/ball-rate.md))
+- `BallDensity.density_bound`: The density bound ([note](../formalisations/ball-rate.md))
+- `BallDensity.rate_rh`: The rate under RH ([note](../formalisations/ball-rate.md))
 
 #### `BallFlat`: The flat model: with Lebesgue measure for the zeros, the orbit spans the cubic lattice
 
@@ -86,6 +101,31 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallPsi.gram_explicit`: The Gram matrix of the orbit, through `ψ`
 - `BallPsi.norm_sq_ge_of_dist`: A Gram–Schmidt bound gives a lattice
 - `BallPsi.orbit_lattice`: The orbit of `K_H` spans a lattice, if the Gram–Schmidt bound holds
+
+#### `BallRate`: The evaporation rate of the orbit form: witness level, approach, rate
+
+- `BallRate.rh_of_frequently_balanced`: The collapse lemma ([note](../formalisations/ball-rate.md))
+- `BallRate.rh_of_excess_le_inv`: Balance to within `1/N` collapses ([note](../formalisations/ball-rate.md))
+- `BallRate.neg_persists`: Failures persist up the tower ([note](../formalisations/ball-rate.md))
+- `BallRate.witness_level`: The witness level ([note](../formalisations/ball-rate.md))
+- `BallRate.witness_level_single`: A single crossing is seen at `N₀(β, γ)` ([note](../formalisations/ball-rate.md))
+- `BallRate.hasSum_form`: The form under RH as a sum over the zeros ([note](../formalisations/ball-rate.md))
+- `BallRate.rate_of_sampling`: The rate ([note](../formalisations/ball-rate.md))
+- `BallRate.flatForm_eq_kerFlat`: The flat form is the orbit form of the flat kernel, scaled by `H₀`. ([note](../formalisations/ball-rate.md))
+- `BallRate.flat_margin`: The flat model's margin ([note](../formalisations/ball-rate.md))
+- `BallRate.approach`: The approach, unconditionally ([note](../formalisations/ball-rate.md))
+
+#### `BallSampling`: The rate of the orbit form from a gap hypothesis on the zeros
+
+- `BallSampling.meanValue`: The mean value theorem on `[1, N]`, both ways ([note](../formalisations/ball-rate.md))
+- `BallSampling.cells_bound`: The cells ([note](../formalisations/ball-rate.md))
+- `BallSampling.exists_sampling`: Sampling from the gaps ([note](../formalisations/ball-rate.md))
+- `BallSampling.rate_of_gaps`: The rate from the gaps ([note](../formalisations/ball-rate.md))
+- `BallSampling.rate_of_zeroGaps`: The rate from a gap hypothesis at every height ([note](../formalisations/ball-rate.md))
+- `BallSampling.rate_of_gapsLog`: Bounded normalised gaps give a polynomial rate ([note](../formalisations/ball-rate.md))
+- `BallSampling.rate_of_gapsSqrt`: Gaps `K/√(log u)` give a quasi-polynomial rate ([note](../formalisations/ball-rate.md))
+- `BallSampling.rate_of_gapsLogLog`: Gaps `K/log log u` give a rate with RH as the only deep input ([note](../formalisations/ball-rate.md))
+- `BallSampling.samplingAtZeros_of_gapsLog`: The sampling hypothesis of `BallRate` from bounded normalised gaps ([note](../formalisations/ball-rate.md))
 
 #### `BallSlice`: Two primes carry the Riemann hypothesis: positivity on the slice of `p` and `q`
 
@@ -220,7 +260,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `DigammaStirling.phiB_bounds`
 - `DigammaStirling.digamma_stirling`: Explicit digamma Stirling bound
-- `DigammaStirling.re_digamma_quarter`
+- `DigammaStirling.re_digamma_quarter` ([note](../formalisations/ball-rate.md))
 
 #### `DirichletCharHalfPlane`: Every Dirichlet character, `L(s, χ) ≠ 0` on `Re s > 11/12`
 

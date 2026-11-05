@@ -19,13 +19,14 @@ lean_lib Zeta23 where
   globs := #[.submodules `Zeta23]
   leanOptions := #[⟨`relaxedAutoImplicit, false⟩]
 
-/-- lib/core: 435 modules. -/
+/-- lib/core: 439 modules. -/
 lean_lib Core where
   srcDir := "lib/core"
   globs := #[
     .one `AngularFamily, .one `AngularResidue, .one `ArchShift, .one `BallCurve,
-    .one `BallFlat, .one `BallHadamard, .one `BallKernel, .one `BallLattice,
-    .one `BallPsi, .one `BallSlice, .one `BallTower, .one `BallWeil,
+    .one `BallCutoff, .one `BallDensity, .one `BallFlat, .one `BallHadamard,
+    .one `BallKernel, .one `BallLattice, .one `BallPsi, .one `BallRate,
+    .one `BallSampling, .one `BallSlice, .one `BallTower, .one `BallWeil,
     .one `BesselK, .one `BinetProof, .one `BohrJoins, .one `BohrLandauCore,
     .one `BohrSphere, .one `BohrTorus, .one `CAClosed, .one `CertInstances,
     .one `CmAsm, .one `CmBessel, .one `CmData, .one `CmEncOdd6,
