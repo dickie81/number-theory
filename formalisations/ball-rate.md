@@ -101,7 +101,8 @@ for every `N ≥ 1` (`rate_of_sampling`): the sag is at most polynomial, `A = 1 
 `|γ| ≤ T`. The hypothesis is the Marcinkiewicz–Zygmund inequality for Dirichlet polynomials of length `N` at the zeros
 up to height `C·N^{1+θ}`; by Beurling–Landau it needs `θ > 0` for a general sampling set of this density, and for the
 zeros it would follow from Landau's formula `Σ_{0<γ≤T} x^{iγ} = −(T/2π)Λ(x)/√x + O(…)` with a pair-correlation input,
-neither of which is in the library. The numerics are in the last section.
+neither of which is in the library. (`BallCutoff`, last section, proves the case `θ = 0` with neither, from the explicit
+formula.) The numerics are in the last section.
 
 **Statement 3C (what is missing, as a conjecture).** The inequality on `|V_x(ρ)|` at the zeros that the rate needs,
 with its numerics, is stated in the section "What is missing". A Gaussian-smoothed form of it, at height
@@ -391,3 +392,40 @@ function account for the gain over `BallDensity`:
 - It vanishes to second order at `0` and changes sign at `T`. So the zeros up to `T` are counted with weight at most
   `¼`, and the pole and the low heights of the archimedean term cost `O(NΣc_n²)` and `O(TΣc_n²)`, with no `log T`.
   The weight `1/(¼ + γ²)` then costs `1/T² ≍ 1/N²` against the gain `T ≍ N`.
+
+**Prior work.** A literature check found no statement of `sampling_rh`, or of anything stronger, at `T ≍ N`. The report
+is [reports/Sampling Dirichlet polynomials at zeta zeros.md](../reports/Sampling%20Dirichlet%20polynomials%20at%20zeta%20zeros.md),
+and the notes behind it are in `research_notes/`. The searches covered arXiv and the web but not MathSciNet or zbMATH.
+The nearest results:
+
+- **Discrete mean values.** H. M. Bui, A. Florea and M. B. Milinovich (Bull. London Math. Soc. 56 (2024); Theorem 3.1
+  of arXiv:2310.03949) evaluate `Σ_{0<γ≤T}|Σ_{n≤x} a_n n^{−ρ}|²` under RH for every length. They use S. M. Gonek's
+  uniform version of Landau's formula (Contemp. Math. 143 (1993)), with error `O(x log²(xT)Σ|a_n|²/n)`. Together with
+  the bound on Landau's form, this gives a lower bound `≫ T log(T/N)Σb_n²`. But that holds only for `N ≤ cT/log²T`,
+  with inexplicit constants; at `T ≍ N` the error exceeds the diagonal by a factor `≍ log T`.
+- **Windowed comparisons.** The method of H. L. Montgomery and A. M. Odlyzko (Colloq. Math. Soc. János Bolyai 34
+  (1984)) compares the zeros with `∫|A|²` uniformly in the coefficients. J. B. Conrey, A. Ghosh and S. M. Gonek (Bull.
+  London Math. Soc. 16 (1984)) put it in that form. Each zero is smeared over a window of a few mean spacings, and the
+  lengths go up to `T/log²T`. Its bound for Landau's form is the device of `BallDensity.landau_le`.
+- **The method.** The explicit formula with band-limited minorants and majorants is the method of D. A. Goldston and
+  S. M. Gonek for `S(t)` (Bull. London Math. Soc. 39 (2007)). It comes after Montgomery–Odlyzko and J. D. Vaaler's
+  extremal functions (Bull. Amer. Math. Soc. 12 (1985)), and the formula is that of Iwaniec–Kowalski, Theorem 5.12.
+  E. Carneiro, M. B. Milinovich and K. Soundararajan (Comment. Math. Helv. 94 (2019)) use the one-term case
+  `f(z)a^{iz}` of `|D|²Φ`. The separation argument of `BallDensity.sep_log` is in C. P. Hughes and Z. Rudnick (C. R.
+  Math. Acad. Sci. Paris 335 (2002)). The Fejér-kernel bound `integral_Kc_majR_le` is in the tradition of Selberg's
+  band-limited large sieve (H. L. Montgomery, Bull. Amer. Math. Soc. 84 (1978)). The minorant `Φ` itself was not
+  found.
+
+What is new is the combination: Fourier support below the spacing of the `log(m/n)`, which makes the diagonal and
+Landau's form exact. With it comes a pointwise lower bound with explicit constants at `T ≍ N`.
+
+The range is necessary up to its constant. Titchmarsh's Theorem 4.11 gives
+`ζ(s) = Σ_{n≤x} n^{−s} − x^{1−s}/(1 − s) + O(x^{−σ})` for `|t| ≤ 2πx/C′`, `C′ > 1`. So under RH the vector `x_n = 1/n`
+breaks the inequality for `T ≤ (2π − ε)N` once `N` is large: the left side is `O(N)` against a right side `≍ N log N`.
+The best threshold therefore lies between `2πN` and `e²⁴N`.
+
+For the corollary, no earlier polynomial lower bound, `c/N` or `N^{−A}`, was found for the smallest eigenvalue of an
+RH-related positive form. The Nyman–Beurling lower bounds `lim inf d_N² log N ≥ Σ_ρ m_ρ²/|ρ|²` are ineffective in `N`
+and come from interpolation at finitely many zeros. They are due to L. Báez-Duarte, M. Balazard, B. Landreau and
+E. Saias (Adv. Math. 149 (2000)) and to J.-F. Burnol (Adv. Math. 170 (2002)). A. Connes and C. Consani (Enseign. Math.
+69 (2023)) find the smallest eigenvalues of Weil's form on growing windows super-exponentially small.
