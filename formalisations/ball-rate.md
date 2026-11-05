@@ -4,10 +4,10 @@
 `BallDensity`, `BallCutoff` and `BallSharp` in the last four sections. The theorems are mapped onto the gravastar
 language in the section after the statements; the first section, written before the Lean, fixes the three statements
 and says what each costs. The rate, open when that section was written, is now proved under RH alone:
-`λ_N ≥ 1/(22e¹¹N)` for every `N ≥ 1` (`BallSharp.rate_sharp`, last section). It comes from the sampling conjecture of
+`λ_N ≥ 1/(22e⁸N)` for every `N ≥ 1` (`BallSharp.rate_sharp`, last section). It comes from the sampling conjecture of
 the section "What is missing", which `BallCutoff.sampling_rh` proves under RH with `c = 1/100` and `C = e²⁴`, and
-`BallSharp.sampling_e11` with `c = 1/11` and `C = e¹¹`. `BallSharp.sampling_log` gives sampling its natural form: a
-frame bound `(T/11)(log(T/N) − 10)`, which grows like the number of zeros up to `T`.
+`BallSharp.sampling_e8` with `c = 1/11` and `C = e⁸`. `BallSharp.sampling_log` gives sampling its natural form: a
+frame bound `(T/11)(log(T/N) − 7)`, which grows like the number of zeros up to `T`.
 
 ## The three statements, and what can be proved
 
@@ -110,7 +110,7 @@ neither, from the explicit formula.) The numerics are in the section "The numeri
 with its numerics, is stated in the section "What is missing". A Gaussian-smoothed form of it, at height
 `T₀ ≍ N log²N`, is now proved from the explicit formula under RH and gives `λ_N ≥ 10⁻¹²/(N log³N)`
 (`BallDensity`). The sharp-cutoff form itself, with `c = 1/100` and `C = e²⁴`, is proved under RH too and gives
-`λ_N ≥ 1/(200e²⁴N)` (`BallCutoff`); with `c = 1/11` and `C = e¹¹` it gives `λ_N ≥ 1/(22e¹¹N)` (`BallSharp`, last
+`λ_N ≥ 1/(200e²⁴N)` (`BallCutoff`); with `c = 1/11` and `C = e⁸` it gives `λ_N ≥ 1/(22e⁸N)` (`BallSharp`, last
 section).
 
 ## The theorems, in the gravastar language
@@ -132,7 +132,7 @@ section).
 every `ρ` outside the quadruple of `ρ₀`, and implies it (`dominant_of_single`). Both are statements about the zeros,
 consistent with RH failing; nothing in the module assumes RH except `hasSum_form` and `rate_of_sampling`, and
 `SamplingAtZeros` is a named hypothesis, with no proof in the module (`BallCutoff.sampling_rh` and
-`BallSharp.sampling_e11`, the last two sections, prove it under RH at `θ = 0`). All ten printed theorems depend on `propext`,
+`BallSharp.sampling_e8`, the last two sections, prove it under RH at `θ = 0`). All ten printed theorems depend on `propext`,
 `Classical.choice` and `Quot.sound` only.
 
 ## How it was done
@@ -206,7 +206,7 @@ whose density `(1/2π)log(T/2π)` exceeds the Nyquist density `(1/2π)log N` of 
 `Σ_{0<γ≤T} x^{iγ} = −(T/2π)Λ(x)/√x + O(…)` with a pair-correlation input. That is the inequality on `|V_x(ρ)|` that the
 rate is missing; the numbers above say it is true on the vectors that matter, with explicit constants, and that
 nothing below height `N` or above `100N` is involved. Under RH the conjecture is now a theorem, with
-`(c, C) = (1/100, e²⁴)` (`BallCutoff.sampling_rh`) and `(1/11, e¹¹)` (`BallSharp.sampling_e11`, last section).
+`(c, C) = (1/100, e²⁴)` (`BallCutoff.sampling_rh`) and `(1/11, e⁸)` (`BallSharp.sampling_e8`, last section).
 
 ## The rate from the gaps between the zeros (`BallSampling`)
 
@@ -261,7 +261,7 @@ density.
 
 ## The rate from the density of the zeros (`BallDensity`)
 
-**Lean:** `BallDensity` (`lib/core/BallDensity.lean`), printed by `lib/check/CheckAll.lean`. The five results depend on
+**Lean:** `BallDensity` (`lib/core/BallDensity.lean`), printed by `lib/check/CheckAll.lean`. The seven results depend on
 `propext`, `Classical.choice` and `Quot.sound` only. The previous section needs a zero in every short cell. This one
 needs only the density of the zeros, which Weil's explicit formula supplies (`WeilForm.weilExplicit_zeta`, proved with
 no RH input). It proves the rate with RH as the only hypothesis.
@@ -270,6 +270,8 @@ no RH input). It proves the rate with RH as the only hypothesis.
 |---|---|---|
 | `BallDensity.mertens_le` | `Σ_{n ≤ M} Λ(n)/n ≤ log M + log 4 + 4` | nothing |
 | `BallDensity.landau_le` | for every real `b`, `2Σ_{n ≤ N}(Λ(n)/√n)Σ_{jn ≤ N} b_j b_{jn} ≤ (log N + log 4 + 4)Σ_{j ≤ N} b_j²` | nothing |
+| `BallDensity.mertens_le_sharp` | `Σ_{n ≤ M} Λ(n)/n ≤ log M + log 4 + 1` | nothing |
+| `BallDensity.landau_le_sharp` | the same as `landau_le` with `log 4 + 1` in place of `log 4 + 4` | nothing |
 | `BallDensity.weil_htest` | Weil's explicit formula for `h(z) = D(z)D(−z)(w(z − T₀) + w(z + T₀))`, with `D(z) = Σ_{j ≤ N} c_j e^{−iz log j}` and `w(z) = e^{−z²/(2σ²)}` | nothing |
 | `BallDensity.density_bound` | for `σ² ≥ 16N`, `T₀ ≥ 16` and `L₀ = log(T₀/4π) − 3 ≥ 0`, with `c_n = x_n√n`: `(σ√(2π)/π)(L₀ − log N − log 4 − 4)Σc_n² − errD·(Σ\|c_n\|)² ≤ 2(1 + 2T₀² + 4σ²)Q_N(x)` | RH |
 | `BallDensity.rate_rh` | `Q_N(x) ≥ Σ x_n²/(10¹²N log³N)` for every `N ≥ 3`, so `λ_N ≥ 10⁻¹²/(N log³N)` | RH |
@@ -302,7 +304,10 @@ All four are Gaussian-small once `σ ≫ N√(log N)` and `T₀ ≫ σ√(log N)
   test with the weights `j^{−1/2}` bounds it by `(Ŵ(0)/2π)(log N + log 4 + 4)Σc_n²` (`landau_le`). The test uses
   `b_j b_{jn}/√n ≤ ½(b_j²/n + b_{jn}²)`, then Mertens' bound for `n ≤ N/j`, then `Σ_{n ∣ m} Λ(n) = log m`; the two
   `log j` terms cancel. Mertens' bound itself (`mertens_le`) comes from `Σ_{m ≤ M} log m = Σ_n Λ(n)⌊M/n⌋ ≤ M log M`
-  and Chebyshev's `ψ(M) ≤ (log 4 + 4)M` from Mathlib. The near misses are summable against `Λ(n)/√n ≤ 2` and
+  and Chebyshev's `ψ(M) ≤ (log 4 + 4)M` from Mathlib. `mertens_le_sharp` replaces `M log M` by Stirling's
+  `M log M − M + log M + 1` (Mathlib's `Real.sum_log_le`) and Chebyshev's bound by `ψ(M) ≤ M log 4 + 2√M log M`
+  (`Chebyshev.psi_le`); with `2√M log M ≤ 4M/e` this gives `log 4 + 1` (the truth is `−γ`), which `BallSharp` uses
+  (`landau_le_sharp`). The near misses are summable against `Λ(n)/√n ≤ 2` and
   `Σ 1/n² = π²/6` (`prime_le`).
 - **Archimedean side.** `−g_h(0)log π + (1/2π)∫h Re ψ(¼ + ir/2)` equals `(1/2π)∫h·(Re ψ − log π)`. Stirling
   (`DigammaStirling.re_digamma_quarter`) gives `Re ψ(¼ + ir/2) − log π ≥ log(T₀/4π) − 3` on `|r| ≥ T₀/2`
@@ -386,7 +391,7 @@ Summing these at `b = 6`, with `Φ̂(0)/2π = 69T/124416` and `log(T/N) ≥ 24`,
 `C = 8`) and conjectured. The zeros near height `T` have density `(1/2π)log(T/2π)`, so at `T = CN` they exceed the
 Nyquist density `(1/2π)log N` of a polynomial of length `N` by the constant `(1/2π)log(C/2π)`, an additive excess
 whose ratio to the Nyquist density tends to `1`. The constants are far from optimal:
-`e²⁴ ≈ 2.6·10¹⁰`, against the observed `8`; `BallSharp` (next section) brings it down to `e¹¹ ≈ 6·10⁴`. The shape is right, though. `λ_N ≥ 1/(200e²⁴N)` has the Nyquist exponent
+`e²⁴ ≈ 2.6·10¹⁰`, against the observed `8`; `BallSharp` (next section) brings it down to `e⁸ ≈ 3·10³`. The shape is right, though. `λ_N ≥ 1/(200e²⁴N)` has the Nyquist exponent
 and no logarithm, against the observed `0.048·log N/N`; one factor `log N` is missing. Two properties of the test
 function account for the gain over `BallDensity`:
 
@@ -425,8 +430,8 @@ Landau's form exact. With it comes a pointwise lower bound with explicit constan
 The range is necessary up to its constant. Titchmarsh's Theorem 4.11 gives
 `ζ(s) = Σ_{n≤x} n^{−s} − x^{1−s}/(1 − s) + O(x^{−σ})` for `|t| ≤ 2πx/C′`, `C′ > 1`. So under RH the vector `x_n = 1/n`
 breaks the inequality for `T ≤ (2π − ε)N` once `N` is large: the left side is `O(N)` against a right side `≍ N log N`.
-The best threshold therefore lies between `2πN` and `e¹⁰N`: `BallSharp.sampling_log` (next section) gives sampling
-with some `c > 0` at every `C > e¹⁰`.
+The best threshold therefore lies between `2πN` and `e⁷N`: `BallSharp.sampling_log` (next section) gives sampling
+with some `c > 0` at every `C > e⁷`.
 
 For the corollary, no earlier polynomial lower bound, `c/N` or `N^{−A}`, was found for the smallest eigenvalue of an
 RH-related positive form. The Nyman–Beurling lower bounds `lim inf d_N² log N ≥ Σ_ρ m_ρ²/|ρ|²` are ineffective in `N`
@@ -439,18 +444,18 @@ E. Saias (Adv. Math. 149 (2000)) and to J.-F. Burnol (Adv. Math. 170 (2002)). A.
 **Lean:** `BallSharp` (`lib/core/BallSharp.lean`), printed by `lib/check/CheckAll.lean`. The five results depend on
 `propext`, `Classical.choice` and `Quot.sound` only. `BallCutoff` gives the zeros up to height `T` the frame bound
 `T/100`, a constant times the length of the window. This section gives it the shape of the number of zeros,
-`T log(T/N)`, from `T ≥ 2000N` on. With it the rate improves from `1/(200e²⁴N)` to `1/(22e¹¹N)`.
+`T log(T/N)`, from `T ≥ 2000N` on. With it the rate improves from `1/(200e²⁴N)` to `1/(22e⁸N)`.
 
 | Theorem | Statement | Conditional on |
 |---|---|---|
 | `BallSharp.integral_Kc_conv` | for `2aN ≤ 1` and integrable `E`, `∫\|D(t)\|²(E ⋆ F_a)(t) dt = Σ_{j ≤ N} c_j²·∫E`, with `D(t) = Σ_{j ≤ N} c_j j^{−it}` and the Fejér kernel `F_a(u) = sin²(au)/(πau²)` | nothing |
-| `BallSharp.sampling_log` | for every `N ≥ 1`, every real `x` on `[1, N]` and every `T ≥ 2000N`, `Σ_{\|γ_ρ\| ≤ T}\|Σ_{n ≤ N} x_n n^ρ\|² ≥ (T/11)(log(T/N) − 10)Σ_{n ≤ N} x_n² n` | RH |
-| `BallSharp.sampling_log_clean` | the same with `(T/22)log(T/N)` in place of `(T/11)(log(T/N) − 10)`, for every `T ≥ e²⁰N` | RH |
-| `BallSharp.sampling_e11` | `BallRate.SamplingAtZeros (1/11) e¹¹ 0`: the same with `T/11`, for every `T ≥ e¹¹N` | RH |
-| `BallSharp.rate_sharp` | `Q_N(x) ≥ Σ x_n²/(22e¹¹N)` for every `N ≥ 1`, so `λ_N ≥ 1/(22e¹¹N)` | RH |
+| `BallSharp.sampling_log` | for every `N ≥ 1`, every real `x` on `[1, N]` and every `T ≥ 2000N`, `Σ_{\|γ_ρ\| ≤ T}\|Σ_{n ≤ N} x_n n^ρ\|² ≥ (T/11)(log(T/N) − 7)Σ_{n ≤ N} x_n² n` | RH |
+| `BallSharp.sampling_log_clean` | the same with `(T/22)log(T/N)` in place of `(T/11)(log(T/N) − 7)`, for every `T ≥ e¹⁴N` | RH |
+| `BallSharp.sampling_e8` | `BallRate.SamplingAtZeros (1/11) e⁸ 0`: the same with `T/11`, for every `T ≥ e⁸N` | RH |
+| `BallSharp.rate_sharp` | `Q_N(x) ≥ Σ x_n²/(22e⁸N)` for every `N ≥ 1`, so `λ_N ≥ 1/(22e⁸N)` | RH |
 
 **How it is proved.** The test function is `BallCutoff`'s `h(t) = |D(t)|²Φ(t)`, with `c_n = x_n√n`, now at `b = 3`.
-Four changes turn the constant `T/100` into `(T/11)(log(T/N) − 10)`.
+Five changes turn the constant `T/100` into `(T/11)(log(T/N) − 7)`.
 
 - **A taller minorant.** At `b = 3`, `Φ(r) = (r/T)²(1 − (r/T)²)sinc⁶(3r/T)` has mass `Φ̂(0) = 5πT/648`, about seven
   times that at `b = 6`, and it stays below `1/25` on `[−T, T]` (`phiR3_le`). That comes from `sinc θ ≤ 1/(1 + θ²/6)` on
@@ -459,8 +464,10 @@ Four changes turn the constant `T/100` into `(T/11)(log(T/N) − 10)`.
 - **A sharper floor for the archimedean weight.** Stirling at `N = 2`, with two steps of the recurrence
   `ψ(s + 1) = ψ(s) + 1/s`, gives `|Re ψ(¼ + it/2) − log(|t|/2)| ≤ 21/(2t²) + 1/3000` for `|t| ≥ 8` (`psiRe_near`).
   So `L(t) = Re ψ(¼ + it/2) − log π` is at least `L₁ = log(T/8π) − ε₁` on `|t| ≥ T/4`, with
-  `ε₁ = 21/2048 + 1/3000`. With Landau's form, the main term `(Φ̂(0)/2π)(L₁ − log N − log 4 − 4)Σc_n²` is at least
-  `(5T/1296)(log(T/N) − 8.633)Σc_n²`.
+  `ε₁ = 21/2048 + 1/3000`.
+- **A sharper Mertens bound.** `Σ_{n ≤ M} Λ(n)/n ≤ log M + log 4 + 1` (`BallDensity.mertens_le_sharp`), so Landau's
+  form is at most `(log N + log 4 + 1)Σc_n²` (`BallDensity.landau_le_sharp`), and the main term
+  `(Φ̂(0)/2π)(L₁ − log N − log 4 − 1)Σc_n²` is at least `(5T/1296)(log(T/N) − 5.633)Σc_n²`.
 - **The low heights.** For `T ≥ 2000`, `(t/T)²(L₁ − L(t))⁺ ≤ (23/2000)M_{T/4}(t)` for every `t` (`low_le_s`). On
   `32 ≤ |t| < T/4` this is `y²log(1/4y) ≤ 1/(32e)` with `y = |t|/T`, and below `32` it is `O(log T/T²)`. The
   Fejér-kernel bound `BallCutoff.integral_Kc_majR_le` then gives a cost of `0.0023TΣc_n²`.
@@ -474,18 +481,18 @@ Four changes turn the constant `T/100` into `(T/11)(log(T/N) − 10)`.
   `Σc_n²·∫E` (`integral_Kc_conv`). Here `∫E = 2K(1 + c₁)/R ≤ 0.0089T` (`integral_envT`), with no dependence on `N`.
 
 The pole costs at most `10⁻⁶TΣc_n²` (`pole_ge_sharp`). Summing these (`sharp_bound`),
-`(1/25)Σ_{|γ| ≤ T}|V_x(ρ)|² ≥ (5T/1296)(log(T/N) − 8.633)Σc_n² − 0.0039TΣc_n²`. So the sum is at least
-`0.0964T(log(T/N) − 9.65)Σc_n²`, which is at least `(T/11)(log(T/N) − 10)Σc_n²` because `log(T/N) ≥ 7`. For the rate,
-`rate_of_sampling` turns `SamplingAtZeros c C 0` into `λ_N ≥ c/(2CN)`. With `c = (log C − 10)/11` the best `C` is
-`e¹¹`, where `c = 1/11`; this gives `rate_sharp`.
+`(1/25)Σ_{|γ| ≤ T}|V_x(ρ)|² ≥ (5T/1296)(log(T/N) − 5.633)Σc_n² − 0.0039TΣc_n²`. So the sum is at least
+`0.0964T(log(T/N) − 6.65)Σc_n²`, which is at least `(T/11)(log(T/N) − 7)Σc_n²` because `log(T/N) ≥ 7`. For the rate,
+`rate_of_sampling` turns `SamplingAtZeros c C 0` into `λ_N ≥ c/(2CN)`. With `c = (log C − 7)/11` the best `C` is
+`e⁸`, where `c = 1/11`; this gives `rate_sharp`.
 
 **What this says.** At `x = δ₁` the sum counts the zeros up to height `T`, about `(T/π)log(T/2πe)`. So the shape
 `T log T` is right, and the constant `1/11` is within a factor `11/π ≈ 3.5` of the count's `1/π`. For general `x`,
 the discrete mean value of Bui, Florea and Milinovich (previous section) has the same shape `T log(T/N)`, with
 inexplicit constants and only for `N ≤ cT/log²T`. `sampling_log` holds for `N` up to `T/2000`, at `T ≍ N`, where
-that error term exceeds the main term. The statement says nothing for `T ≤ e¹⁰N`. Below `T = 2πN` no lower bound
-of this kind can hold: the vector `x_n = 1/n` breaks it (previous section). The rate `λ_N ≥ 1/(22e¹¹N)`, about
-`7.6·10⁻⁷/N`, is `4·10⁶` times `BallCutoff`'s `1/(200e²⁴N)`. The observed rate is `0.048·log N/N`, so the factor
+that error term exceeds the main term. The statement says nothing for `T ≤ e⁷N`. Below `T = 2πN` no lower bound
+of this kind can hold: the vector `x_n = 1/n` breaks it (previous section). The rate `λ_N ≥ 1/(22e⁸N)`, about
+`1.5·10⁻⁵/N`, is `8·10⁷` times `BallCutoff`'s `1/(200e²⁴N)`. The observed rate is `0.048·log N/N`, so the factor
 `log N` is still missing.
 
 **Prior work.** The literature check of the previous section covers this one. Its nearest result, the discrete mean

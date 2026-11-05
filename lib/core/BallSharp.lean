@@ -1,16 +1,16 @@
 import Mathlib
 import BallCutoff
 
-/-! # Sampling at the zeros in its natural form: `Σ_{|γ| ≤ T}|V_x(ρ)|² ≥ (T/11)(log(T/N) − 10)Σ x_n² n` under RH
+/-! # Sampling at the zeros in its natural form: `Σ_{|γ| ≤ T}|V_x(ρ)|² ≥ (T/11)(log(T/N) − 7)Σ x_n² n` under RH
 
 Plain statement. Under RH, for every `N ≥ 1`, every real `x` on `[1, N]` and every `T ≥ 2000N`,
-`Σ_{|γ_ρ| ≤ T} |Σ_{n ≤ N} x_n n^ρ|² ≥ (T/11)(log(T/N) − 10)·Σ_{n ≤ N} x_n² n` (`sampling_log`). The sampling mass
+`Σ_{|γ_ρ| ≤ T} |Σ_{n ≤ N} x_n n^ρ|² ≥ (T/11)(log(T/N) − 7)·Σ_{n ≤ N} x_n² n` (`sampling_log`). The sampling mass
 grows like `T log(T/N)`, the shape of the Landau–Gonek main term, where `BallCutoff.sampling_rh` has `T/100` from
-`T ≥ e²⁴N`. At `T ≥ e²⁰N` it is at least `(T/22)log(T/N)Σ x_n² n` (`sampling_log_clean`). At `T = e¹¹N`, the
-best point for the rate, it gives `BallRate.SamplingAtZeros (1/11) e¹¹ 0` (`sampling_e11`), and so
-`λ_N ≥ 1/(22e¹¹N)` (`rate_sharp`), against `BallCutoff.rate_cut`'s `1/(200e²⁴N)`.
+`T ≥ e²⁴N`. At `T ≥ e¹⁴N` it is at least `(T/22)log(T/N)Σ x_n² n` (`sampling_log_clean`). At `T = e⁸N`, the
+best point for the rate, it gives `BallRate.SamplingAtZeros (1/11) e⁸ 0` (`sampling_e8`), and so
+`λ_N ≥ 1/(22e⁸N)` (`rate_sharp`), against `BallCutoff.rate_cut`'s `1/(200e²⁴N)`.
 
-The proof is `BallCutoff`'s, with three changes.
+The proof is `BallCutoff`'s, with four changes.
 
 - **The minorant** is `Φ(r) = (r/T)²(1 − (r/T)²)sinc⁶(3r/T)`, at `b = 3` in place of `6`. Its mass `5πT/648` is
   seven times `BallCutoff`'s, and on `[−T, T]` it stays below `1/25` (`phiR3_le`): `sinc θ ≤ 1/(1 + θ²/6)` on
@@ -21,6 +21,8 @@ The proof is `BallCutoff`'s, with three changes.
   the constant `Σc_n²` (`Kc_conv_fej`): the frequencies `log j' − log j` are at least `1/N` apart. So any weight
   dominated by `E ⋆ F` has `|D|²`-mass at most `Σc_n²·∫E` (`integral_Kc_conv`), with no loss. The tail weight is
   dominated by such a convolution once `E` majorises it on the windows `|u| ≤ T/10` (`conv_ge`, `tail_conv_le`).
+- **Mertens' bound with the constant `log 4 + 1`** (`BallDensity.mertens_le_sharp`, from Stirling's bound for
+  `log M!`), in place of `log 4 + 4`, in the bound for Landau's form (`BallDensity.landau_le_sharp`).
 -/
 
 open Real Complex Finset MeasureTheory WeilForm WeilTest DirMean BallDensity ShortWeil BallCutoff
@@ -999,10 +1001,10 @@ lemma log_pi_le_s : Real.log π ≤ 1.1558 := by
   linarith
 
 /-- **The log-growth bound** (RH): for `N ≥ 1` and `T ≥ 2000N`,
-`(T/11)(log(T/N) − 10)Σc_n² ≤ Σ_{|γ| ≤ T}|V_x(ρ)|²` with `c_n = x_n√n`. -/
+`(T/11)(log(T/N) − 7)Σc_n² ≤ Σ_{|γ| ≤ T}|V_x(ρ)|²` with `c_n = x_n√n`. -/
 theorem sharp_bound (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) {T : ℝ} (hTN : 2000 * N ≤ T)
     (x : ℕ → ℝ) :
-    T / 11 * (Real.log (T / N) - 10) * S2 N (fun n => x n * Real.sqrt n) ≤
+    T / 11 * (Real.log (T / N) - 7) * S2 N (fun n => x n * Real.sqrt n) ≤
       ∑ q ∈ BallRate.zerosUpTo T, ‖BallRate.dpoly N x q‖ ^ 2 := by
   have hN1 : (1 : ℝ) ≤ N := by exact_mod_cast hN
   have hN0 : (0 : ℝ) < N := by linarith
@@ -1024,18 +1026,25 @@ theorem sharp_bound (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) {T : ℝ}
   have harch := arch_ge_sharp hN hTN c
   have hD := defect_sharp hN hTN c
   have hΦ : phihat 3 T 0 = 5 * π * T / 648 := by rw [phihat_zero hb hT0]; ring
-  have hprime := prime_le_cut hb hT0 hN h12 c (by rw [hΦ]; positivity)
+  have hprime : 2 * ∑' n : ℕ, Λ n / Real.sqrt n * gh (hRC N c 3 T) (Real.log n) ≤
+      phihat 3 T 0 / (2 * π) * (Real.log N + (Real.log 4 + 1)) * S2 N c := by
+    rw [prime_eq_cut hb hT0 hN h12 c]
+    have hland : 2 * ∑ n ∈ Icc 1 N, Λ n / Real.sqrt n * ex N c n ≤
+        (Real.log N + (Real.log 4 + 1)) * S2 N c := landau_le_sharp N c
+    have hw : 0 ≤ phihat 3 T 0 / (2 * π) := div_nonneg (by rw [hΦ]; positivity) (by positivity)
+    have := mul_le_mul_of_nonneg_left hland hw
+    linarith
   have hS2n := S2_nonneg N c
   have hU : 0 ≤ T * S2 N c := mul_nonneg hT0.le hS2n
   have eA : 1 / (2 * π) * (L1s T * phihat 3 T 0 * S2 N c - ∫ t, defW N c T t) =
       5 / 1296 * (L1s T * (T * S2 N c)) - 1 / (2 * π) * ∫ t, defW N c T t := by
     rw [hΦ]; field_simp; ring
-  have eP : phihat 3 T 0 / (2 * π) * (Real.log N + (Real.log 4 + 4)) * S2 N c =
-      5 / 1296 * ((Real.log N + (Real.log 4 + 4)) * (T * S2 N c)) := by
+  have eP : phihat 3 T 0 / (2 * π) * (Real.log N + (Real.log 4 + 1)) * S2 N c =
+      5 / 1296 * ((Real.log N + (Real.log 4 + 1)) * (T * S2 N c)) := by
     rw [hΦ]; field_simp; ring
   rw [eA] at harch
   rw [eP] at hprime
-  have hLL : Real.log (T / N) - 8.6322 ≤ L1s T - Real.log N - (Real.log 4 + 4) := by
+  have hLL : Real.log (T / N) - 5.6322 ≤ L1s T - Real.log N - (Real.log 4 + 1) := by
     have hl8 : Real.log 8 = 3 * Real.log 2 := by
       rw [show (8 : ℝ) = 2 ^ 3 by norm_num, Real.log_pow]; push_cast; ring
     have hl4 : Real.log 4 = 2 * Real.log 2 := by
@@ -1061,10 +1070,10 @@ theorem sharp_bound (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) {T : ℝ}
   linarith only [hZ, hpole, harch, hD, hprime, hmainP, hℓU, hU]
 
 /-- **Sampling at the zeros in its natural form** (RH): for every `N ≥ 1`, every real `x` on `[1, N]` and every
-`T ≥ 2000N`, `Σ_{|γ_ρ| ≤ T}|Σ_{n ≤ N} x_n n^ρ|² ≥ (T/11)(log(T/N) − 10)Σ x_n² n`. -/
+`T ≥ 2000N`, `Σ_{|γ_ρ| ≤ T}|Σ_{n ≤ N} x_n n^ρ|² ≥ (T/11)(log(T/N) − 7)Σ x_n² n`. -/
 theorem sampling_log (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) {T : ℝ} (hTN : 2000 * N ≤ T)
     (x : ℕ → ℝ) :
-    T / 11 * (Real.log (T / N) - 10) * ∑ n ∈ Icc 1 N, x n ^ 2 * n ≤
+    T / 11 * (Real.log (T / N) - 7) * ∑ n ∈ Icc 1 N, x n ^ 2 * n ≤
       ∑ q ∈ BallRate.zerosUpTo T, ‖BallRate.dpoly N x q‖ ^ 2 := by
   have hS2 : ∑ n ∈ Icc 1 N, x n ^ 2 * n = S2 N (fun n => x n * Real.sqrt n) := by
     unfold BallDensity.S2
@@ -1073,61 +1082,61 @@ theorem sampling_log (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) {T : ℝ
   rw [hS2]
   exact sharp_bound hRH hN hTN x
 
-/-- **The clean form** (RH): for `T ≥ e²⁰N`, `Σ_{|γ_ρ| ≤ T}|V_x(ρ)|² ≥ (T/22)·log(T/N)·Σ x_n² n`. -/
+/-- **The clean form** (RH): for `T ≥ e¹⁴N`, `Σ_{|γ_ρ| ≤ T}|V_x(ρ)|² ≥ (T/22)·log(T/N)·Σ x_n² n`. -/
 theorem sampling_log_clean (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) {T : ℝ}
-    (hTN : Real.exp 20 * N ≤ T) (x : ℕ → ℝ) :
+    (hTN : Real.exp 14 * N ≤ T) (x : ℕ → ℝ) :
     T / 22 * Real.log (T / N) * ∑ n ∈ Icc 1 N, x n ^ 2 * n ≤
       ∑ q ∈ BallRate.zerosUpTo T, ‖BallRate.dpoly N x q‖ ^ 2 := by
   have hN0 : (0 : ℝ) < N := by exact_mod_cast hN
-  have he : (2000 : ℝ) ≤ Real.exp 20 := by
-    have h1 : Real.exp 20 = Real.exp 1 ^ 20 := by rw [← Real.exp_nat_mul]; norm_num
+  have he : (2000 : ℝ) ≤ Real.exp 14 := by
+    have h1 : Real.exp 14 = Real.exp 1 ^ 14 := by rw [← Real.exp_nat_mul]; norm_num
     rw [h1]
     have h2 := Real.exp_one_gt_d9
-    calc (2000 : ℝ) ≤ 2.7 ^ 20 := by norm_num
-      _ ≤ Real.exp 1 ^ 20 := pow_le_pow_left₀ (by norm_num) (by linarith) 20
+    calc (2000 : ℝ) ≤ 2.7 ^ 14 := by norm_num
+      _ ≤ Real.exp 1 ^ 14 := pow_le_pow_left₀ (by norm_num) (by linarith) 14
   have h2000 : 2000 * (N : ℝ) ≤ T := le_trans (mul_le_mul_of_nonneg_right he hN0.le) hTN
   have hT0 : 0 < T := by linarith
-  have hℓ : 20 ≤ Real.log (T / N) := by
+  have hℓ : 14 ≤ Real.log (T / N) := by
     rw [Real.le_log_iff_exp_le (by positivity), le_div_iff₀ hN0]; exact hTN
   have h := sampling_log hRH hN h2000 x
   have hS : 0 ≤ ∑ n ∈ Icc 1 N, x n ^ 2 * n := Finset.sum_nonneg fun n _ => by positivity
-  have hk : T / 22 * Real.log (T / N) ≤ T / 11 * (Real.log (T / N) - 10) := by
+  have hk : T / 22 * Real.log (T / N) ≤ T / 11 * (Real.log (T / N) - 7) := by
     nlinarith [mul_nonneg hT0.le (sub_nonneg.2 hℓ)]
   calc T / 22 * Real.log (T / N) * ∑ n ∈ Icc 1 N, x n ^ 2 * n
-      ≤ T / 11 * (Real.log (T / N) - 10) * ∑ n ∈ Icc 1 N, x n ^ 2 * n := mul_le_mul_of_nonneg_right hk hS
+      ≤ T / 11 * (Real.log (T / N) - 7) * ∑ n ∈ Icc 1 N, x n ^ 2 * n := mul_le_mul_of_nonneg_right hk hS
     _ ≤ _ := h
 
-/-- **Sampling from `T ≥ e¹¹N`** (RH): `BallRate.SamplingAtZeros (1/11) e¹¹ 0`, so for every `N ≥ 1`, every real `x`
-on `[1, N]` and every `T ≥ e¹¹N`, `Σ_{|γ_ρ| ≤ T}|Σ_{n ≤ N} x_n n^ρ|² ≥ (T/11)Σ x_n² n`. -/
-theorem sampling_e11 (hRH : RiemannHypothesis) : BallRate.SamplingAtZeros (1 / 11) (Real.exp 11) 0 := by
+/-- **Sampling from `T ≥ e⁸N`** (RH): `BallRate.SamplingAtZeros (1/11) e⁸ 0`, so for every `N ≥ 1`, every real `x`
+on `[1, N]` and every `T ≥ e⁸N`, `Σ_{|γ_ρ| ≤ T}|Σ_{n ≤ N} x_n n^ρ|² ≥ (T/11)Σ x_n² n`. -/
+theorem sampling_e8 (hRH : RiemannHypothesis) : BallRate.SamplingAtZeros (1 / 11) (Real.exp 8) 0 := by
   intro N x T hN hT
   rw [add_zero, Real.rpow_one] at hT
   have hN0 : (0 : ℝ) < N := by exact_mod_cast hN
-  have he : (2000 : ℝ) ≤ Real.exp 11 := by
-    have h1 : Real.exp 11 = Real.exp 1 ^ 11 := by rw [← Real.exp_nat_mul]; norm_num
+  have he : (2000 : ℝ) ≤ Real.exp 8 := by
+    have h1 : Real.exp 8 = Real.exp 1 ^ 8 := by rw [← Real.exp_nat_mul]; norm_num
     rw [h1]
     have h2 := Real.exp_one_gt_d9
-    calc (2000 : ℝ) ≤ 2.7 ^ 11 := by norm_num
-      _ ≤ Real.exp 1 ^ 11 := pow_le_pow_left₀ (by norm_num) (by linarith) 11
+    calc (2000 : ℝ) ≤ 2.7 ^ 8 := by norm_num
+      _ ≤ Real.exp 1 ^ 8 := pow_le_pow_left₀ (by norm_num) (by linarith) 8
   have h2000 : 2000 * (N : ℝ) ≤ T := le_trans (mul_le_mul_of_nonneg_right he hN0.le) hT
   have hT0 : 0 < T := by linarith
-  have hℓ : 11 ≤ Real.log (T / N) := by
+  have hℓ : 8 ≤ Real.log (T / N) := by
     rw [Real.le_log_iff_exp_le (by positivity), le_div_iff₀ hN0]; exact hT
   have h := sampling_log hRH hN h2000 x
   have hS : 0 ≤ ∑ n ∈ Icc 1 N, x n ^ 2 * n := Finset.sum_nonneg fun n _ => by positivity
-  have hk : 1 / 11 * T ≤ T / 11 * (Real.log (T / N) - 10) := by
+  have hk : 1 / 11 * T ≤ T / 11 * (Real.log (T / N) - 7) := by
     nlinarith [mul_nonneg hT0.le (sub_nonneg.2 hℓ)]
   calc 1 / 11 * T * ∑ n ∈ Icc 1 N, x n ^ 2 * n
-      ≤ T / 11 * (Real.log (T / N) - 10) * ∑ n ∈ Icc 1 N, x n ^ 2 * n := mul_le_mul_of_nonneg_right hk hS
+      ≤ T / 11 * (Real.log (T / N) - 7) * ∑ n ∈ Icc 1 N, x n ^ 2 * n := mul_le_mul_of_nonneg_right hk hS
     _ ≤ _ := h
 
-/-- **The rate under RH**: `λ_N ≥ 1/(22e¹¹N)` for every `N ≥ 1`. -/
+/-- **The rate under RH**: `λ_N ≥ 1/(22e⁸N)` for every `N ≥ 1`. -/
 theorem rate_sharp (hRH : RiemannHypothesis) {N : ℕ} (hN : 1 ≤ N) (x : ℕ → ℝ) :
-    1 / (22 * Real.exp 11 * N) * ∑ n ∈ Icc 1 N, x n ^ 2 ≤ BallWeil.form N x := by
-  have hC : (1 : ℝ) ≤ Real.exp 11 := Real.one_le_exp (by norm_num)
-  have h := BallRate.rate_of_sampling hRH (by norm_num : (0 : ℝ) < 1 / 11) hC le_rfl (sampling_e11 hRH) hN x
+    1 / (22 * Real.exp 8 * N) * ∑ n ∈ Icc 1 N, x n ^ 2 ≤ BallWeil.form N x := by
+  have hC : (1 : ℝ) ≤ Real.exp 8 := Real.one_le_exp (by norm_num)
+  have h := BallRate.rate_of_sampling hRH (by norm_num : (0 : ℝ) < 1 / 11) hC le_rfl (sampling_e8 hRH) hN x
   have hN0 : (0 : ℝ) < N := by exact_mod_cast hN
-  have e : 1 / 11 / (2 * Real.exp 11) * (N : ℝ) ^ (-(1 + 0 : ℝ)) = 1 / (22 * Real.exp 11 * N) := by
+  have e : 1 / 11 / (2 * Real.exp 8) * (N : ℝ) ^ (-(1 + 0 : ℝ)) = 1 / (22 * Real.exp 8 * N) := by
     rw [add_zero, Real.rpow_neg_one]
     field_simp
     ring

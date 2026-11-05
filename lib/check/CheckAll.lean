@@ -388,10 +388,13 @@ gap hypothesis, the polynomial, quasi-polynomial and doubly exponential rates fr
 #print axioms BallSampling.samplingAtZeros_of_gapsLog
 
 /- The density of the zeros samples the Dirichlet polynomials (`formalisations/ball-rate.md`): Mertens' bound
-`Σ_{n ≤ M} Λ(n)/n ≤ log M + log 4 + 4`, the Schur bound for Landau's form, Weil's explicit formula for the test
+`Σ_{n ≤ M} Λ(n)/n ≤ log M + log 4 + 4`, and `≤ log M + log 4 + 1` from Stirling, the Schur bound for Landau's form
+with each constant, Weil's explicit formula for the test
 function `|D|²·(Gaussian window at ±T₀)`, the density bound under RH, and `λ_N ≥ 10⁻¹²/(N log³N)` under RH. -/
 #print axioms BallDensity.mertens_le
 #print axioms BallDensity.landau_le
+#print axioms BallDensity.mertens_le_sharp
+#print axioms BallDensity.landau_le_sharp
 #print axioms BallDensity.weil_htest
 #print axioms BallDensity.density_bound
 #print axioms BallDensity.rate_rh
@@ -405,13 +408,13 @@ conjecture `BallRate.SamplingAtZeros (1/100) e²⁴ 0` under RH, and `λ_N ≥ 1
 #print axioms BallCutoff.rate_cut
 
 /- Sampling at the zeros in its natural form (`formalisations/ball-rate.md`): the Fejér-smoothed mass of `|D|²`,
-`∫|D|²(E ⋆ F_a) = Σc_j²·∫E` once `2aN ≤ 1`, and under RH, `Σ_{|γ_ρ| ≤ T}|V_x(ρ)|² ≥ (T/11)(log(T/N) − 10)Σ x_n² n` for
-every `T ≥ 2000N`, so `≥ (T/22)log(T/N)Σ x_n² n` for `T ≥ e²⁰N`; the conjecture `BallRate.SamplingAtZeros (1/11) e¹¹ 0`
-under RH, and `λ_N ≥ 1/(22e¹¹N)` under RH. -/
+`∫|D|²(E ⋆ F_a) = Σc_j²·∫E` once `2aN ≤ 1`, and under RH, `Σ_{|γ_ρ| ≤ T}|V_x(ρ)|² ≥ (T/11)(log(T/N) − 7)Σ x_n² n` for
+every `T ≥ 2000N`, so `≥ (T/22)log(T/N)Σ x_n² n` for `T ≥ e¹⁴N`; the conjecture `BallRate.SamplingAtZeros (1/11) e⁸ 0`
+under RH, and `λ_N ≥ 1/(22e⁸N)` under RH. -/
 #print axioms BallSharp.integral_Kc_conv
 #print axioms BallSharp.sampling_log
 #print axioms BallSharp.sampling_log_clean
-#print axioms BallSharp.sampling_e11
+#print axioms BallSharp.sampling_e8
 #print axioms BallSharp.rate_sharp
 #print axioms MertensExponent.limsup_mexpo
 #print axioms MertensExponent.moebius_tendsto_of_Theta_lt

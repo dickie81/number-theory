@@ -59,20 +59,10 @@ lemma sum_log_eq (M : ℕ) :
     · rintro ⟨⟨⟨hm1, hmM⟩, hnm⟩, -, -⟩
       exact ⟨⟨hm1, hmM⟩, hnm, by omega⟩
 
-/-- **Mertens' bound**: `Σ_{n ≤ M} Λ(n)/n ≤ log M + log 4 + 4`, from `Σ_{m ≤ M} log m ≤ M log M`,
-`⌊M/n⌋ ≥ M/n − 1` and Chebyshev's `ψ(M) ≤ (log 4 + 4)M` (Mathlib's `Chebyshev.psi_le_const_mul_self`). -/
-lemma mertens_le (M : ℕ) : ∑ n ∈ Icc 1 M, Λ n / n ≤ Real.log M + (Real.log 4 + 4) := by
-  have hc : 0 ≤ Real.log 4 + 4 := by positivity
-  rcases Nat.eq_zero_or_pos M with rfl | hM
-  · simp only [Finset.Icc_eq_empty_of_lt one_pos, Finset.sum_empty, Nat.cast_zero, Real.log_zero, zero_add]
-    exact hc
-  have hM0 : (0 : ℝ) < M := by exact_mod_cast hM
-  have h2 : ∑ m ∈ Icc 1 M, Real.log m ≤ M * Real.log M := by
-    calc ∑ m ∈ Icc 1 M, Real.log m ≤ ∑ m ∈ Icc 1 M, Real.log M :=
-          Finset.sum_le_sum fun m hm => Real.log_le_log
-            (by exact_mod_cast (show 0 < m by have := (Finset.mem_Icc.1 hm).1; omega))
-            (by exact_mod_cast (Finset.mem_Icc.1 hm).2)
-      _ = M * Real.log M := by rw [Finset.sum_const, Nat.card_Icc, nsmul_eq_mul]; push_cast; ring
+/-- `M·Σ_{n ≤ M} Λ(n)/n ≤ Σ_{m ≤ M} log m + ψ(M)`, from `Σ_{m ≤ M} log m = Σ_n Λ(n)⌊M/n⌋` and
+`⌊M/n⌋ ≥ M/n − 1`. -/
+lemma mul_mertens_le (M : ℕ) :
+    (M : ℝ) * ∑ n ∈ Icc 1 M, Λ n / n ≤ ∑ m ∈ Icc 1 M, Real.log m + Chebyshev.psi M := by
   have h3 : ∀ n ∈ Icc 1 M, Λ n * ((M : ℝ) / n - 1) ≤ Λ n * ((M / n : ℕ) : ℝ) := by
     intro n hn
     refine mul_le_mul_of_nonneg_left ?_ ArithmeticFunction.vonMangoldt_nonneg
@@ -87,15 +77,95 @@ lemma mertens_le (M : ℕ) : ∑ n ∈ Icc 1 M, Λ n / n ≤ Real.log M + (Real.
   have h4 : ∑ n ∈ Icc 1 M, Λ n = Chebyshev.psi M := by
     unfold Chebyshev.psi
     rw [Nat.floor_natCast, Icc_one_eq_Ioc]
-  have h5 := Chebyshev.psi_le_const_mul_self hM0.le
   have h6 : ∑ n ∈ Icc 1 M, Λ n * ((M : ℝ) / n - 1) = M * ∑ n ∈ Icc 1 M, Λ n / n - ∑ n ∈ Icc 1 M, Λ n := by
     rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun n _ => ?_
     ring
   have h7 := Finset.sum_le_sum h3
   rw [h6, ← sum_log_eq, h4] at h7
+  linarith
+
+/-- **Mertens' bound**: `Σ_{n ≤ M} Λ(n)/n ≤ log M + log 4 + 4`, from `Σ_{m ≤ M} log m ≤ M log M`,
+`⌊M/n⌋ ≥ M/n − 1` and Chebyshev's `ψ(M) ≤ (log 4 + 4)M` (Mathlib's `Chebyshev.psi_le_const_mul_self`). -/
+lemma mertens_le (M : ℕ) : ∑ n ∈ Icc 1 M, Λ n / n ≤ Real.log M + (Real.log 4 + 4) := by
+  have hc : 0 ≤ Real.log 4 + 4 := by positivity
+  rcases Nat.eq_zero_or_pos M with rfl | hM
+  · simp only [Finset.Icc_eq_empty_of_lt one_pos, Finset.sum_empty, Nat.cast_zero, Real.log_zero, zero_add]
+    exact hc
+  have hM0 : (0 : ℝ) < M := by exact_mod_cast hM
+  have h2 : ∑ m ∈ Icc 1 M, Real.log m ≤ M * Real.log M := by
+    calc ∑ m ∈ Icc 1 M, Real.log m ≤ ∑ m ∈ Icc 1 M, Real.log M :=
+          Finset.sum_le_sum fun m hm => Real.log_le_log
+            (by exact_mod_cast (show 0 < m by have := (Finset.mem_Icc.1 hm).1; omega))
+            (by exact_mod_cast (Finset.mem_Icc.1 hm).2)
+      _ = M * Real.log M := by rw [Finset.sum_const, Nat.card_Icc, nsmul_eq_mul]; push_cast; ring
+  have h5 := Chebyshev.psi_le_const_mul_self hM0.le
+  have h7 := mul_mertens_le M
   have h8 : (M : ℝ) * ∑ n ∈ Icc 1 M, Λ n / n ≤ M * (Real.log M + (Real.log 4 + 4)) := by nlinarith
   exact le_of_mul_le_mul_left h8 hM0
+
+/-- **Mertens' bound with the constant `log 4 + 1`**: `Σ_{n ≤ M} Λ(n)/n ≤ log M + log 4 + 1`. As `mertens_le`,
+with Stirling's `Σ_{m ≤ M} log m ≤ M log M − M + log M + 1` (Mathlib's `Real.sum_log_le`) in place of `M log M`,
+and Chebyshev's `ψ(M) ≤ M log 4 + 2√M log M` (`Chebyshev.psi_le`); `2√M log M ≤ 4M/e` since `log y ≤ y/e`. The
+constant is `log 4 − 1` plus what the small `M` cost; the truth is `−γ`. -/
+lemma mertens_le_sharp (M : ℕ) : ∑ n ∈ Icc 1 M, Λ n / n ≤ Real.log M + (Real.log 4 + 1) := by
+  have he := Real.exp_one_gt_d9
+  have hl2 := Real.log_two_lt_d9
+  have hl2' := Real.log_two_gt_d9
+  have hl4 : Real.log 4 = 2 * Real.log 2 := by
+    rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.log_pow]; push_cast; ring
+  have hlogM : 0 ≤ Real.log M := Real.log_natCast_nonneg M
+  -- `log y ≤ y/e`
+  have hle : ∀ y : ℝ, 0 < y → Real.log y ≤ y / Real.exp 1 := fun y hy => by
+    have h := Real.log_le_sub_one_of_pos (show 0 < y / Real.exp 1 by positivity)
+    rw [Real.log_div hy.ne' (Real.exp_pos 1).ne', Real.log_exp] at h
+    linarith
+  rcases Nat.lt_or_ge M 6 with hM6 | hM6
+  · -- at most five terms, each `Λ(n)/n ≤ log n/n ≤ 1/e`
+    have hterm : ∀ n ∈ Icc 1 M, Λ n / n ≤ 1 / Real.exp 1 := by
+      intro n hn
+      have hn0 : (0 : ℝ) < n := by exact_mod_cast (show 0 < n by have := (Finset.mem_Icc.1 hn).1; omega)
+      have h1 : Λ n ≤ Real.log n := ArithmeticFunction.vonMangoldt_le_log
+      have h2 := hle n hn0
+      rw [div_le_div_iff₀ hn0 (Real.exp_pos 1), one_mul]
+      have h3 : Real.log n * Real.exp 1 ≤ n := by rwa [le_div_iff₀ (Real.exp_pos 1)] at h2
+      nlinarith [Real.exp_pos 1]
+    have hsum := Finset.sum_le_sum hterm
+    rw [Finset.sum_const, Nat.card_Icc, nsmul_eq_mul] at hsum
+    have hcard : ((M + 1 - 1 : ℕ) : ℝ) ≤ 5 := by exact_mod_cast (show M + 1 - 1 ≤ 5 by omega)
+    have hinv : 1 / Real.exp 1 ≤ 0.368 := by rw [div_le_iff₀ (Real.exp_pos 1)]; linarith
+    have : ((M + 1 - 1 : ℕ) : ℝ) * (1 / Real.exp 1) ≤ 5 * 0.368 :=
+      mul_le_mul hcard hinv (by positivity) (by norm_num)
+    linarith
+  · have hM0 : (0 : ℝ) < M := by exact_mod_cast (show 0 < M by omega)
+    have hM1 : (1 : ℝ) ≤ M := by exact_mod_cast (show 1 ≤ M by omega)
+    have hM6' : (6 : ℝ) ≤ M := by exact_mod_cast hM6
+    have h7 := mul_mertens_le M
+    have hfac : ∑ m ∈ Icc 1 M, Real.log m ≤ M * Real.log M - M + Real.log M + 1 := by
+      have h := Real.sum_log_le (x := (M : ℝ)) hM1
+      rwa [Nat.floor_natCast, ← Icc_one_eq_Ioc] at h
+    have hpsi := Chebyshev.psi_le hM1
+    have hs0 : 0 < Real.sqrt M := Real.sqrt_pos.2 hM0
+    have hss : Real.sqrt M ^ 2 = M := Real.sq_sqrt hM0.le
+    have hlog1 : Real.log M ≤ 2 * (Real.sqrt M / Real.exp 1) := by
+      have h := hle (Real.sqrt M) hs0
+      rw [Real.log_sqrt hM0.le] at h
+      linarith
+    have hlog2 : Real.log M ≤ Real.log 4 + M / 4 - 1 := by
+      have h := Real.log_le_sub_one_of_pos (show (0 : ℝ) < M / 4 by positivity)
+      rw [Real.log_div hM0.ne' (by norm_num)] at h
+      linarith
+    have hA : 2 * Real.sqrt M * Real.log M ≤ 4 * M / Real.exp 1 := by
+      have h := mul_le_mul_of_nonneg_left hlog1 (by positivity : (0 : ℝ) ≤ 2 * Real.sqrt M)
+      calc 2 * Real.sqrt M * Real.log M ≤ 2 * Real.sqrt M * (2 * (Real.sqrt M / Real.exp 1)) := h
+        _ = 4 * Real.sqrt M ^ 2 / Real.exp 1 := by ring
+        _ = 4 * M / Real.exp 1 := by rw [hss]
+    have hB : 4 * (M : ℝ) / Real.exp 1 ≤ 1.4716 * M := by
+      rw [div_le_iff₀ (Real.exp_pos 1)]; nlinarith
+    have hkey : (M : ℝ) * ∑ n ∈ Icc 1 M, Λ n / n ≤ M * (Real.log M + (Real.log 4 + 1)) := by
+      have hpsi' : Chebyshev.psi M ≤ Real.log 4 * M + 1.4716 * M := by linarith
+      nlinarith
+    exact le_of_mul_le_mul_left hkey hM0
 
 /-- `Σ_{j ≤ N, jn ≤ N} f(jn) = Σ_{m ≤ N, n ∣ m} f(m)` for `n ≥ 1`. -/
 lemma sum_mul_eq_sum_dvd (N : ℕ) {n : ℕ} (hn : 1 ≤ n) (f : ℕ → ℝ) :
@@ -123,13 +193,13 @@ lemma sum_mul_eq_sum_dvd (N : ℕ) {n : ℕ} (hn : 1 ≤ n) (f : ℕ → ℝ) :
   · intro j _
     rfl
 
-/-- **The Landau form**: for every real `b`, `2Σ_{n ≤ N}(Λ(n)/√n)Σ_{jn ≤ N} b_j b_{jn} ≤ (log N + log 4 + 4)Σ_{j ≤ N} b_j²`.
-Schur's test with the weights `j^{−1/2}`: `b_j b_{jn}Λ(n)/√n ≤ ½(b_j²Λ(n)/n + b_{jn}²Λ(n))`, then Mertens' bound
-in `n ≤ N/j` and `Σ_{n ∣ m} Λ(n) = log m`. -/
-lemma landau_le (N : ℕ) (b : ℕ → ℝ) :
+/-- **The Landau form, from any Mertens bound**: if `Σ_{n ≤ M} Λ(n)/n ≤ log M + c` for every `M`, then for every
+real `b`, `2Σ_{n ≤ N}(Λ(n)/√n)Σ_{jn ≤ N} b_j b_{jn} ≤ (log N + c)Σ_{j ≤ N} b_j²`. Schur's test with the weights
+`j^{−1/2}`: `b_j b_{jn}Λ(n)/√n ≤ ½(b_j²Λ(n)/n + b_{jn}²Λ(n))`, then the Mertens bound in `n ≤ N/j` and
+`Σ_{n ∣ m} Λ(n) = log m`. -/
+lemma landau_le_of {c : ℝ} (hc : ∀ M : ℕ, ∑ n ∈ Icc 1 M, Λ n / n ≤ Real.log M + c) (N : ℕ) (b : ℕ → ℝ) :
     2 * ∑ n ∈ Icc 1 N, Λ n / Real.sqrt n * ∑ j ∈ (Icc 1 N).filter (fun j => j * n ≤ N), b j * b (j * n) ≤
-      (Real.log N + (Real.log 4 + 4)) * ∑ j ∈ Icc 1 N, b j ^ 2 := by
-  set c := Real.log 4 + 4 with hc
+      (Real.log N + c) * ∑ j ∈ Icc 1 N, b j ^ 2 := by
   have hamgm : ∀ n ∈ Icc 1 N, ∀ j, Λ n / Real.sqrt n * (b j * b (j * n)) ≤
       (b j ^ 2 * (Λ n / n) + b (j * n) ^ 2 * Λ n) / 2 := by
     intro n hn j
@@ -177,7 +247,7 @@ lemma landau_le (N : ℕ) (b : ℕ → ℝ) :
   have hM : ∀ j ∈ Icc 1 N, b j ^ 2 * ∑ n ∈ Icc 1 (N / j), Λ n / n ≤ b j ^ 2 * (Real.log N - Real.log j + c) := by
     intro j hj
     obtain ⟨hj1, hjN⟩ := Finset.mem_Icc.1 hj
-    refine mul_le_mul_of_nonneg_left ((mertens_le (N / j)).trans ?_) (sq_nonneg _)
+    refine mul_le_mul_of_nonneg_left ((hc (N / j)).trans ?_) (sq_nonneg _)
     have hj0 : (0 : ℝ) < j := by exact_mod_cast (show 0 < j by omega)
     have hNj : ((N / j : ℕ) : ℝ) ≤ (N : ℝ) / j := Nat.cast_div_le
     have hNj1 : 1 ≤ N / j := (Nat.le_div_iff_mul_le (by omega)).2 (by omega)
@@ -205,6 +275,20 @@ lemma landau_le (N : ℕ) (b : ℕ → ℝ) :
     _ = (Real.log N + c) * ∑ j ∈ Icc 1 N, b j ^ 2 := by
         rw [← Finset.sum_add_distrib, Finset.mul_sum]
         exact Finset.sum_congr rfl fun j _ => by ring
+
+/-- **The Landau form**: for every real `b`,
+`2Σ_{n ≤ N}(Λ(n)/√n)Σ_{jn ≤ N} b_j b_{jn} ≤ (log N + log 4 + 4)Σ_{j ≤ N} b_j²` (`landau_le_of` with `mertens_le`). -/
+lemma landau_le (N : ℕ) (b : ℕ → ℝ) :
+    2 * ∑ n ∈ Icc 1 N, Λ n / Real.sqrt n * ∑ j ∈ (Icc 1 N).filter (fun j => j * n ≤ N), b j * b (j * n) ≤
+      (Real.log N + (Real.log 4 + 4)) * ∑ j ∈ Icc 1 N, b j ^ 2 :=
+  landau_le_of mertens_le N b
+
+/-- **The Landau form with the constant `log 4 + 1`**: `2Σ_{n ≤ N}(Λ(n)/√n)Σ_{jn ≤ N} b_j b_{jn} ≤
+(log N + log 4 + 1)Σ_{j ≤ N} b_j²` (`landau_le_of` with `mertens_le_sharp`). -/
+lemma landau_le_sharp (N : ℕ) (b : ℕ → ℝ) :
+    2 * ∑ n ∈ Icc 1 N, Λ n / Real.sqrt n * ∑ j ∈ (Icc 1 N).filter (fun j => j * n ≤ N), b j * b (j * n) ≤
+      (Real.log N + (Real.log 4 + 1)) * ∑ j ∈ Icc 1 N, b j ^ 2 :=
+  landau_le_of mertens_le_sharp N b
 
 /-- **The near misses are separated**: for `j, j' ∈ [1, N]` and `n ≥ 1` with `jn ≠ j'`,
 `|log(jn) − log j'| ≥ 1/(2N)`. -/
