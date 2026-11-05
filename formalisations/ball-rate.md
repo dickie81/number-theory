@@ -11,7 +11,8 @@ statements and says what each costs.
 with multiplicity, `K_H(1) = H₀ := 2 + γ_E − log 4π ≈ 0.0462`. Write `a_ρ = 1/(ρ(1 − ρ))`, so `Σ_ρ a_ρ = H₀` and every
 `Re a_ρ > 0`; and `λ_N = min{Q_N(x) : Σ x_n² = 1}`, the smallest eigenvalue of the Gram matrix `G_N`. Then
 `Q_N(x) = Σ_ρ a_ρ V_x(ρ) V_x(1 − ρ)` with `V_x(s) = Σ_{n ≤ N} x_n n^s`, which under RH is `Σ_ρ |V_x(ρ)|²/(¼ + γ²)`.
-Numerically (`scripts/ball_rate.py`): `λ_N = (0.048 ± 0.002)·log N/N` for `100 ≤ N ≤ 2000`; the minimising vector is
+Numerically (`scripts/ball_rate.py`, with the first 30000 zeros from `scripts/zeta_zeros_rs.py`):
+`λ_N = (0.048 ± 0.002)·log N/N` for `100 ≤ N ≤ 2000`; the minimising vector is
 `x_n ≈ (1 − n/N)²/ψ(n)` with `ψ` Dedekind's function `n Π_{p ∣ n}(1 + 1/p)`, within a factor `2.2`–`2.5` in the
 Rayleigh quotient; and the first zero moved to `½ + δ ± iγ₁` makes `G_N` indefinite from `N = 512` for `δ = 0.05` and
 `N = 1024` for `δ = 0.02` (among powers of two).
@@ -150,34 +151,47 @@ consistent with RH failing; nothing in the module assumes RH except `hasSum_form
   `x_n = S_n − S_{n+1}` and `Σ_{k ≤ N} S_{k+1}² + S_1² = Σ_{k ≤ N} S_k² + S_{N+1}²` (`sum_shift`) give
   `Σ x_n² ≤ 4Σ S_k²` (`sum_sq_le_four_tail`).
 
-## The numerics (`scripts/ball_rate.py`, the first 2000 zeros, prime-side Gram matrices to `N = 2000`; uncertified)
+## The numerics (`scripts/ball_rate.py`, prime-side Gram matrices to `N = 2000`, the first 2000 zeros from mpmath and the first 30000 from `scripts/zeta_zeros_rs.py`; uncertified)
 
 | Quantity | Values |
 |---|---|
 | `N·λ_N/log N` at `N = 100, 200, 400, 800, 1000, 1600, 2000` | `0.0509, 0.0489, 0.0485, 0.0481, 0.0480, 0.0478, 0.0476` |
 | `C = q_N·N/log N` for `x_n = (1 − n/N)²/ψ(n)`, and `q_N/λ_N` | `0.112`–`0.120`; `2.21`–`2.51` |
-| `H₀` against `Σ_ρ 1/(¼ + γ²)` over the first 2000 zeros plus the density tail | `0.046191` against `0.045307 + 0.000758 = 0.046065` |
+| `H₀` against `Σ_ρ 1/(¼ + γ²)` over the first 2000 (30000) zeros plus the density tail | `0.046191` against `0.045307 + 0.000758 = 0.046065` (`0.046076 + 0.000103 = 0.046179`) |
 | The moved first zero, `δ = 0.05, 0.02, 0.01`: `Λ`, `N₀`, `W(λ*)` | `30.2, 75.5, 151.0`; `10^{29.2}, 10^{68.6}, 10^{134.0}`; `−0.318, −0.341, −0.333` (the twin sum from the first 2000 zeros, tail `≤ 0.003`) |
 | First indefinite level of the moved Gram matrix (powers of two) | `512` at `δ = 0.05`, `1024` at `δ = 0.02` |
-| The sampling constant `c_N` at `T = 2515` on the minimising vector of `G_N` | `0.37, 0.19, 0.034, 0.0060, 0.0042, 0.0016, 0.0010` at `N = 100, …, 2000` |
-| Share of `Q_N` on the minimiser carried by the zeros below height `2515` | `60%, 39%, 13%, 5.3%, 4.4%, 2.7%, 2.1%` |
+| The sampling constant `c(T)` on the minimising vector of `G_N`, at `T = N, 2N, 4N, 8N, 12N`, for every `N = 100, …, 2000` | `6·10^{−4}, 2.2·10^{−3}, 1.3·10^{−2}, 0.10, 0.18` (each within `±15%` across `N`; the first 30000 zeros) |
+| Share of `Q_N` on the minimiser carried by the zeros below `T = N, 2N, 4N, 8N, 12N`, for every `N` | `1.5%, 3%, 8%, 25%, 39%` (within `±1` point across `N`); below height `25755`: `93%` at `N = 100`, `42%` at `N = 2000` |
 | The density model, `N = 50, 100, 200, 400` | `λ_N = 0.05046, 0.05046, 0.05045, 0.05045`, `K_dens(1) = 0.05063` |
 | The picket fence, `N = 50, 100, 200, 400` | `λ_N = 0.0146, 0.0108, 0.0081, 0.0057` |
 
-## What is missing: the sampling inequality at the zeros
+## What is missing: the sampling inequality at the zeros, and what the zeros say about it
 
-The rate `λ_N ≥ c·N^{−A}` needs, under RH, a lower bound for `Σ_{|γ| ≤ T} |V_x(ρ)|²` in terms of `T·Σ x_n² n`
-with `T` a power of `N`. The numbers above say what it must look like. On the minimising vector of `G_N` the zeros
-below height `2515` carry `60%` of `Q_N` at `N = 100` and `2%` at `N = 2000`: the minimiser's Dirichlet polynomial is
-nearly orthogonal to every zero below a height that grows faster than `N`, which is how `λ_N` gets below
-`H₀/(4·(average weight))`. So `SamplingAtZeros c C θ` with `C ≈ 1` and `θ = 0` is false in the only range the first
-2000 zeros can test (`c_N` falls like `N^{−2}` once `T/N < 3`), and the hypothesis has to be taken with `T/N` large or
-`θ > 0`, as Beurling–Landau predicts for any sampling set of density `(1/2π)log T`. The conjecture:
+The rate `λ_N ≥ c·N^{−A}` needs, under RH, a lower bound for `Σ_{|γ| ≤ T} |V_x(ρ)|²` in terms of `T·Σ x_n² n` with
+`T` a power of `N`. With the first 30000 zeros (to height `25755`) the minimising vectors of `G_N`, the natural
+adversaries, show a scaling law: on them `c(T) = Σ_{|γ| ≤ T}|V_x(ρ)|²/(T·Σ x_n² n)` and the share of `Q_N` carried
+by the zeros below `T` depend on `T/N` alone, for every `N` from `100` to `2000`:
 
-> For some `θ > 0`, `C ≥ 1` and `c > 0`, the zeros sample at `(c, C, θ)`: for every `N ≥ 1`, every real `x` on
-> `[1, N]` and every `T ≥ C·N^{1+θ}`, `Σ_{|γ_ρ| ≤ T} |Σ_{n ≤ N} x_n n^ρ|² ≥ c·T·Σ_{n ≤ N} x_n² n`.
+| `T/N` | `1` | `2` | `4` | `8` | `12` |
+|---|---|---|---|---|---|
+| `c(T)` | `6·10^{−4}` | `2.2·10^{−3}` | `1.3·10^{−2}` | `0.10` | `0.18` |
+| share of `Q_N` below `T` | `1.5%` | `3%` | `8%` | `25%` | `39%` |
 
-Then `λ_N ≥ (c/2C)·N^{−1−θ}` (`rate_of_sampling`), and the numerics (`λ_N ≈ 0.048·log N/N`) say the truth has
-`θ = 0` with a `log N` on the right side, that is, a sampling inequality at `T ≍ N` on the vectors that matter, which
-the Gram matrices reach but the first 2000 zeros cannot see. Testing it needs zeros to height `≈ 10N` for the
-`N = 2000` minimiser, that is, the first `30000` zeros, and the test is the script's section E with `--zeros 30000`.
+(and `93%` of `Q_{100}` below `T = 258·N`). So the minimiser's Dirichlet polynomial is nearly orthogonal to the zeros
+below height `N`, where its length would let it resolve them, and spreads its weight over the zeros from `4N` to about
+`100N`, where the zeros are sparser than its bandwidth: the rate `0.048·log N/N` is decided by the zeros at heights
+`≍ 10N`–`100N`, not by the low zeros, and not by zeros beyond `N^{1+θ}` for any fixed `θ > 0` once `N` is large. The
+sampling inequality is therefore plausible at `T ≍ N`: `SamplingAtZeros c C 0` holds on the minimisers with
+`(c, C) = (0.013, 4)`, `(0.10, 8)` or `(0.18, 12)` uniformly in `N ≤ 2000`, and `rate_of_sampling` then gives
+`λ_N ≥ (c/2C)/N`, e.g. `0.006/N` at `C = 8`, against the observed `0.048·log N/N`. The conjecture:
+
+> The zeros sample at `(c, C, 0)` for some `C ≥ 1` and `c > 0`: for every `N ≥ 1`, every real `x` on `[1, N]` and
+> every `T ≥ C·N`, `Σ_{|γ_ρ| ≤ T} |Σ_{n ≤ N} x_n n^ρ|² ≥ c·T·Σ_{n ≤ N} x_n² n`; numerically `c ≈ 0.1` at `C = 8`.
+
+What a proof needs is a lower bound for a Dirichlet polynomial of length `N` sampled at the zeros of height `T ≍ 8N`,
+whose density `(1/2π)log(T/2π)` is below the polynomial's bandwidth `log N` only by the constant `log 8`: a
+Marcinkiewicz–Zygmund inequality at essentially the critical density, which for a general separated sequence fails
+(Beurling–Landau) and for the zeros would have to come from their arithmetic, Landau's formula
+`Σ_{0<γ≤T} x^{iγ} = −(T/2π)Λ(x)/√x + O(…)` with a pair-correlation input. That is the inequality on `|V_x(ρ)|` that the
+rate is missing; the numbers above say it is true on the vectors that matter, with explicit constants, and that
+nothing below height `N` or above `100N` is involved.

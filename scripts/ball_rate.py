@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 """The constants of formalisations/ball-rate.md against the actual zeros, up to N = 2000. Uncertified numerics.
 
-    python3 scripts/ball_rate.py [--zeros M] [--nmax N] [--cache FILE]
+    python3 scripts/ball_rate.py [--zeros M] [--nmax N] [--cache FILE] [--zeros-file FILE] [--sections ABCDEF]
 
 With the prime-side Gram matrix of scripts/ball_orbit.py (exact kernel from the explicit formula) and the first M zeros
-of ζ (mpmath; cached in FILE if given):
+of ζ (mpmath, cached in FILE if given; or read from --zeros-file, one ordinate per line, e.g. the first 2000 from
+mpmath and the rest from scripts/zeta_zeros_rs.py, the Riemann–Siegel finder); --sections picks the sections:
   A. λ_N, the smallest eigenvalue of G_N, against 0.048·log N/N;
   B. the explicit vector x_n = (1 − n/N)²/ψ(n), ψ Dedekind's function, its Rayleigh quotient against C·log N/N;
   C. H₀ = 2 + γ − log 4π against Σ_ρ 1/(¼ + γ²) over the first M zeros, and the tail;
   D. the witness level of a zero moved to ½ ± δ ± iγ₁: |a₀|, Λ, λ*, (p₀, q₀), N₀, the twin sum W at λ* (negative) and at
      log(p₀/q₀), and the first level at which the moved Gram matrix is indefinite;
-  E. the sampling constant c of statement 3B on the minimising vectors: Σ_{|γ| ≤ T}|V_x(ρ)|² / (T·Σ x_n² n) with T the
-     height of the M-th zero, and the zero-side form against the prime-side form;
+  E. the sampling constant c of statement 3B on the minimising vectors, c(T) = Σ_{|γ| ≤ T}|V_x(ρ)|² / (T·Σ x_n² n), at
+     T = N, 2N, 4N, 8N, 12N and at the height of the M-th zero, the share of the prime-side form carried by the zeros
+     below each T, and the zero-side form against the prime-side form;
   F. the density model (uniform margin) and the picket-fence model (the sag), the same quantities as in the note.
 """
 import argparse
@@ -30,7 +32,10 @@ GAMMA_E = 0.5772156649015329
 H0 = 2 + GAMMA_E - math.log(4 * math.pi)
 
 
-def zeros(M, cache):
+def zeros(M, cache, zeros_file=None):
+    if zeros_file:
+        g = np.loadtxt(zeros_file)
+        return g[:M] if len(g) >= M else g
     if cache and os.path.exists(cache):
         g = np.loadtxt(cache)
         if len(g) >= M:
@@ -60,28 +65,14 @@ def lam_min(G):
     return sl.eigh(G, eigvals_only=True, subset_by_index=[0, 0])[0]
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--zeros", type=int, default=2000)
-    ap.add_argument("--nmax", type=int, default=2000)
-    ap.add_argument("--cache", default=None)
-    a = ap.parse_args()
-    M, Nmax = a.zeros, a.nmax
-    Ns = [n for n in (100, 200, 400, 800, 1000, 1600, 2000) if n <= Nmax]
-    g = zeros(M, a.cache)
-    T = g[-1]
-    w = 1.0 / (0.25 + g ** 2)
-
+def section_A(Ns, grams, mins):
     print("A. λ_N = smallest eigenvalue of the prime-side Gram matrix, against 0.048·log N/N")
-    grams = {}
-    mins = {}
     for N in Ns:
-        G = bo.gram(N)
-        grams[N] = G
-        lam, v = sl.eigh(G, subset_by_index=[0, 0])
-        mins[N] = (lam[0], v[:, 0])
-        print(f"   N={N:5d}  λ_N={lam[0]:.4e}  N·λ_N/log N={N * lam[0] / math.log(N):.4f}")
+        lam = mins[N][0]
+        print(f"   N={N:5d}  λ_N={lam:.4e}  N·λ_N/log N={N * lam / math.log(N):.4f}")
 
+
+def section_B(Ns, grams, mins):
     print("B. the explicit vector x_n = (1 − n/N)²/ψ(n): Rayleigh quotient q_N, q_N·N/log N (the constant C), q_N/λ_N")
     for N in Ns:
         n = np.arange(1, N + 1)
@@ -89,12 +80,19 @@ def main():
         q = x @ grams[N] @ x / (x @ x)
         print(f"   N={N:5d}  q_N={q:.4e}  C={q * N / math.log(N):.4f}  q_N/λ_N={q / mins[N][0]:.2f}")
 
+
+def section_C(g, w):
+    M, T = len(g), g[-1]
     print("C. H₀ = 2 + γ − log 4π against the zero sum")
     s = 2 * w.sum()
     tail = math.log(T / (2 * math.pi)) / (math.pi * T)  # ∫_T^∞ (1/π) log(t/2π)/t² dt
     print(f"   H₀ = {H0:.6f}; Σ over the first {M} zeros (both signs) = {s:.6f}; density tail ≈ {tail:.6f}; "
           f"sum + tail = {s + tail:.6f}")
 
+
+def section_D(g, w, Nmax):
+    M, T = len(g), g[-1]
+    tail = math.log(T / (2 * math.pi)) / (math.pi * T)
     print("D. the witness level for the first zero moved to ½ ± δ ± iγ₁ (single crossing, M = 0)")
     g1 = g[0]
     on = w[1:]  # the other zeros stay on the line
@@ -103,7 +101,6 @@ def main():
         a0 = 1 / (rho * (1 - rho))
         Lam = math.log((4 * H0 + 4 * abs(a0)) / (2 * abs(a0))) / (2 * d)
         phi = np.angle(a0)
-        # first λ* ≥ Λ with 2γλ* + φ ≡ π (mod 2π)
         k = math.ceil((2 * g1 * Lam + phi - math.pi) / (2 * math.pi))
         lam_star = (math.pi - phi + 2 * math.pi * k) / (2 * g1)
         q0 = math.ceil(6 * g1 / math.pi)
@@ -114,13 +111,10 @@ def main():
             P = 2 * (rho - 0.5)
             quart = 4 * np.real(a0 * (np.exp(lam * P) + np.exp(-lam * P)))
             online = (on * (2 + 2 * np.cos(2 * lam * g[1:]))).sum() * 2
-            return 2 * 2 * a0.real + quart + online  # the quartet's constant part 2a_ρ, four times, is 4·2Re a₀... see note
-        # the on-line zeros' part with the Hadamard tail: Σ a_ρ(2 + 2cos) ≤ 4Σa_ρ; the truncation at M zeros is
-        # the tail above, times at most 4
+            return 2 * 2 * a0.real + quart + online
         Wst, Wpq = W(lam_star), W(math.log(p0 / q0))
         print(f"   δ={d}: |a₀|={abs(a0):.5f}  Λ={Lam:.2f}  λ*={lam_star:.2f}  q₀={q0}  p₀≈e^{math.log(p0):.1f}  "
               f"N₀≈10^{math.log10(N0):.1f}  W(λ*)={Wst:.3e}  W(log p₀/q₀)={Wpq:.3e}  (tail ≤ {4 * tail:.1e})")
-    # the first indefinite level of the moved Gram matrix, by the kernel correction of gravastar_margin.py
     A, B = bo.tables(Nmax + 2)
 
     def zero_term(u, beta, gg):
@@ -146,17 +140,29 @@ def main():
             print(f"   δ={d}: moved Gram, N={N:5d}: λ_min={l:.3e}")
         print(f"   δ={d}: first indefinite level among powers of two ≤ {Nmax}: {first}  (80/δ = {80 / d:.0f})")
 
-    print("E. the sampling constant on the minimising vectors: c_N = Σ_{|γ|≤T}|V_x(ρ)|² / (T·Σ x_n² n), T = "
-          f"{T:.1f}; and the zero-side form Σ|V|²/(¼+γ²) (first {M} zeros) against the prime-side form")
+
+def section_E(Ns, mins, g, w):
+    M, T = len(g), g[-1]
+    print("E. the sampling constant on the minimising vectors, c(T) = Σ_{|γ|≤T}|V_x(ρ)|² / (T·Σ x_n² n), and the share"
+          f" of the prime-side form carried by the zeros below T; T = N, 2N, 4N, 8N, 12N and the top T = {T:.1f} ({M} zeros)")
     for N in Ns:
         lam, x = mins[N]
         n = np.arange(1, N + 1, dtype=float)
-        V = np.exp(1j * np.outer(g, np.log(n))) @ (x * np.sqrt(n))  # V_x(½ + iγ)
-        s2 = 2 * (np.abs(V) ** 2).sum()
-        c = s2 / (T * (x * x * n).sum())
-        zero_side = 2 * ((np.abs(V) ** 2) * w).sum()
-        print(f"   N={N:5d}  c_N={c:.4e}  zero-side/prime-side form = {zero_side / lam:.4f}")
+        xs = x * np.sqrt(n)
+        V2 = np.empty(M)
+        for k in range(0, M, 4000):  # chunked: |V_x(½ + iγ)|²
+            V2[k:k + 4000] = np.abs(np.exp(1j * np.outer(g[k:k + 4000], np.log(n))) @ xs) ** 2
+        cum = np.cumsum(2 * V2)       # Σ_{|γ| ≤ T} |V|², both signs
+        cumw = np.cumsum(2 * V2 * w)  # the zero-side form below T
+        denom = (x * x * n).sum()
+        Ts = [r * N for r in (1, 2, 4, 8, 12) if r * N <= T] + [T]
+        idx = [np.searchsorted(g, t, side="right") - 1 for t in Ts]
+        cs = " ".join(f"c({t / N:.0f}N)={cum[i] / (t * denom):.2e}" for t, i in zip(Ts, idx))
+        sh = " ".join(f"{cumw[i] / lam:.3f}" for i in idx)
+        print(f"   N={N:5d}  {cs}  | share below the same T's: {sh}  | zero-side total/prime-side = {cumw[-1] / lam:.4f}")
 
+
+def section_F():
     print("F. the models: density (uniform margin) and picket fence (the sag)")
     from scipy.integrate import quad
     dens = lambda t: math.log(t / (2 * math.pi)) / (2 * math.pi) / (0.25 + t * t)
@@ -184,6 +190,40 @@ def main():
         # tail of the density beyond T_pf: Σ_{m,n} √(mn)·(1/π)∫_T^∞ log(t/2π) cos(t log(m/n))/t² dt, the diagonal part
         Gp += np.diag(n * math.log(Tpf / (2 * math.pi)) / (math.pi * Tpf))
         print(f"   picket fence N={N:4d} (first {Mpf} mean zeros + diagonal tail): λ_min={lam_min(Gp):.4e}")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--zeros", type=int, default=2000)
+    ap.add_argument("--nmax", type=int, default=2000)
+    ap.add_argument("--cache", default=None)
+    ap.add_argument("--zeros-file", default=None)
+    ap.add_argument("--sections", default="ABCDEF")
+    a = ap.parse_args()
+    sec = a.sections.upper()
+    Ns = [n for n in (100, 200, 400, 800, 1000, 1600, 2000) if n <= a.nmax]
+    g = zeros(a.zeros, a.cache, a.zeros_file)
+    w = 1.0 / (0.25 + g ** 2)
+    print(f"({len(g)} zeros, to height {g[-1]:.1f})")
+    grams, mins = {}, {}
+    if any(c in sec for c in "ABE"):
+        for N in Ns:
+            G = bo.gram(N)
+            grams[N] = G
+            lam, v = sl.eigh(G, subset_by_index=[0, 0])
+            mins[N] = (lam[0], v[:, 0])
+    if "A" in sec:
+        section_A(Ns, grams, mins)
+    if "B" in sec:
+        section_B(Ns, grams, mins)
+    if "C" in sec:
+        section_C(g, w)
+    if "D" in sec:
+        section_D(g, w, a.nmax)
+    if "E" in sec:
+        section_E(Ns, mins, g, w)
+    if "F" in sec:
+        section_F()
 
 
 if __name__ == "__main__":
