@@ -189,9 +189,59 @@ sampling inequality is therefore plausible at `T ≍ N`: `SamplingAtZeros c C 0`
 > every `T ≥ C·N`, `Σ_{|γ_ρ| ≤ T} |Σ_{n ≤ N} x_n n^ρ|² ≥ c·T·Σ_{n ≤ N} x_n² n`; numerically `c ≈ 0.1` at `C = 8`.
 
 What a proof needs is a lower bound for a Dirichlet polynomial of length `N` sampled at the zeros of height `T ≍ 8N`,
-whose density `(1/2π)log(T/2π)` is below the polynomial's bandwidth `log N` only by the constant `log 8`: a
-Marcinkiewicz–Zygmund inequality at essentially the critical density, which for a general separated sequence fails
+whose density `(1/2π)log(T/2π)` exceeds the Nyquist density `(1/2π)log N` of a polynomial of length `N` only by
+`(1/2π)log(T/2πN)`, a constant for `T ≍ N`: a Marcinkiewicz–Zygmund inequality at essentially the critical density, which for a general separated sequence fails
 (Beurling–Landau) and for the zeros would have to come from their arithmetic, Landau's formula
 `Σ_{0<γ≤T} x^{iγ} = −(T/2π)Λ(x)/√x + O(…)` with a pair-correlation input. That is the inequality on `|V_x(ρ)|` that the
 rate is missing; the numbers above say it is true on the vectors that matter, with explicit constants, and that
 nothing below height `N` or above `100N` is involved.
+
+## The rate from the gaps between the zeros (`BallSampling`)
+
+**Lean:** `BallSampling` (`lib/core/BallSampling.lean`), printed by `lib/check/CheckAll.lean`; the nine results
+depend on `propext`, `Classical.choice` and `Quot.sound` only. This is statement 3B with a zero-spacing hypothesis in
+place of `SamplingAtZeros`: the sampling inequality, and a lower bound for `λ_N`, from the gaps between the zeros.
+
+| Theorem | Statement | Conditional on |
+|---|---|---|
+| `BallSampling.meanValue` | for `D(t) = Σ_{j ≤ N} c_j j^{−it}`, `\|∫_a^b \|D\|² − (b − a)Σ\|c_j\|²\| ≤ 2N²Σ\|c_j\|²` | nothing |
+| `BallSampling.cells_bound` | for `F` with a continuous derivative and a point `γ_j` in each cell `[T₁ + jh, T₁ + (j + 1)h]`, `∫\|F\|² ≤ 2hΣ_j\|F(γ_j)\|² + 2h²∫\|F'\|²` | nothing |
+| `BallSampling.exists_sampling` | if every `[u, u + 1/(1 + log N))` with `T₁ ≤ u ≤ T₁ + L` holds the ordinate of a zero (`GapsOn N T₁ L`) and `L ≥ 12N² + 1`, the zeros of `[T₁, T₁ + L]` have `Σ\|V_x(ρ)\|² ≥ (L − 1)(1 + log N)/8·Σ x_n² n` | RH and `GapsOn N T₁ L` |
+| `BallSampling.rate_of_gaps` | `GapsOn N T₁ T₁` with `T₁ ≥ 12N² + 2` gives `λ_N ≥ (1 + log N)/(80T₁)` | RH and `GapsOn N T₁ T₁` |
+| `BallSampling.rate_of_zeroGaps` | `ZeroGaps g u₀` (from `u₀` on, every `[u, u + g(u))` holds an ordinate), `T₁ ≥ max(u₀, 14N²)` and `g ≤ 1/(1 + log N)` from `T₁` on give `λ_N ≥ (1 + log N)/(80T₁)` | RH and `ZeroGaps g u₀` |
+| `BallSampling.rate_of_gapsLog` | `g = K/log u`: `T₁ = max(u₀, (eN)^K, 14N²)`, a **polynomial** rate, `λ_N ≥ (1 + log N)/(80e^K N^K)` for `K > 2` and `N` large | RH and `ZeroGaps (K/log u) u₀` |
+| `BallSampling.samplingAtZeros_of_gapsLog` | for `K ≥ 2` the same hypothesis gives `BallRate.SamplingAtZeros (1/32) (2e^K·max(u₀, 13)) (K − 1)` | RH and `ZeroGaps (K/log u) u₀` |
+| `BallSampling.rate_of_gapsSqrt` | `g = K/√(log u)`: `T₁ = max(u₀, e^{K²(1 + log N)²}, 14N²)`, a **quasi-polynomial** rate | RH and `ZeroGaps (K/√(log u)) u₀` |
+| `BallSampling.rate_of_gapsLogLog` | `g = K/log log u`: `T₁ = max(u₀, e^{e^{K(1 + log N)}}, 14N²)`, so `λ_N ≥ (1 + log N)e^{−e^K N^K}/80` | RH and `ZeroGaps (K/log log u) u₀` |
+
+**How it is proved.** Under RH, `V_x(ρ) = Σ x_n√n·n^{iγ}` is the conjugate of `D(γ)` with `c_n = x_n√n`
+(`dpoly_eq_conj`), and `Σ|c_n|² = Σ x_n² n`. Multiplying by `e^{iκt}`, `κ = ½ log N`, centres the frequencies in
+`[−κ, κ]` and keeps the modulus (`dcen`). Cut `[T₁, T₁ + L]` into `J` cells of length `h = 1/(1 + log N)` and take a
+zero in each: on a cell, `|F(t)| ≤ |F(γ)| + ∫_cell|F'|` by the fundamental theorem of calculus, and Cauchy–Schwarz
+(`sq_integral_le`) gives `∫_cell|F|² ≤ 2h|F(γ)|² + 2h²∫_cell|F'|²`. The mean value theorem bounds
+`∫|F|² ≥ (Jh − 2N²)Σ|c|²` and `∫|F'|² ≤ (Jh + 2N²)κ²Σ|c|²`, and `2h²κ² ≤ ½`; so `Σ_{cells}|V(ρ)|² ≥ JΣ|c|²/8` once
+`Jh ≥ 12N²`. The off-diagonal terms of the mean value theorem are at most `2/|log j' − log j| ≤ 2N` each, which costs
+the error `2N²` (Montgomery and Vaughan's `O(Σ n|c_n|²)` would do better, and only changes the side conditions). On
+the window `[T₁, 2T₁]` the weight of `Q_N` is `1/(¼ + γ²) ≥ 1/(5T₁²)`, which gives `(1 + log N)/(80T₁)`.
+
+**The three gap hypotheses**, each a bound for the largest gap between consecutive zeros near height `u`:
+
+- **`K/log u`**: gaps at most `K/2π` times the mean spacing `2π/log(u/2π)`; it gives the polynomial rate
+  `λ_N ≫ N^{−K}`. It is not known to fail, but it is believed false for every fixed `K`: in the random-matrix model
+  the largest normalised gap among `n` eigenvalues grows like `√(32 log n)/2π` (G. Ben Arous and P. Bourgade, Ann.
+  Probab. 41 (2013), for the unitary ensembles), and the zeros are expected to follow the model.
+- **`K/√(log u)`**: the size of the largest gaps that the model predicts near height `u`, about `√(32 log u)/log u`;
+  expected for every `K > √32` from some height on. It gives `λ_N ≫ e^{−K²(1 + log N)²} = e^{−K²}N^{−K²(log N + 2)}`:
+  quasi-polynomial.
+- **`K/log log u`**: what is known under RH (J. E. Littlewood, 1924: the gaps are `O(1/log log u)`; E. C. Titchmarsh,
+  *The Theory of the Riemann Zeta-Function*, ch. XIV), so this hypothesis holds under RH for some `K` and `u₀`; it is
+  not proved in this library. It gives `λ_N ≫ e^{−e^K N^K}`, the only lower bound for `λ_N` here whose sole deep
+  input is RH.
+
+**What this says about the rate.** The method needs a zero in *every* cell of length `≍ 1/log N` at height `T₁`,
+where the mean spacing is `2π/log T₁`: it forces `log T₁ ≳ 2π·(largest normalised gap)·log N`. So bounded normalised
+gaps give a polynomial rate, the model's growing gaps a quasi-polynomial one, and Littlewood's bound a doubly
+exponential one, against the observed `0.048·log N/N`. A polynomial rate from a hypothesis believed true needs a
+sampling theorem of Beurling–Landau type, which asks for the right *density* of zeros on windows rather than a zero in
+every cell; and the numerics of the previous section say the truth is such a density statement at `T ≍ N`, where the
+zeros exceed the Nyquist density of the polynomial only by `(1/2π)log(T/2πN)`.

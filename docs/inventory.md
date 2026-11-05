@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1325 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1334 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 152 | 429 |
+| `lib/core` | 153 | 438 |
 | `lib/pnt` | 248 | 791 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -99,6 +99,18 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallRate.flatForm_eq_kerFlat`: The flat form is the orbit form of the flat kernel, scaled by `H₀`. ([note](../formalisations/ball-rate.md))
 - `BallRate.flat_margin`: The flat model's margin ([note](../formalisations/ball-rate.md))
 - `BallRate.approach`: The approach, unconditionally ([note](../formalisations/ball-rate.md))
+
+#### `BallSampling`: The rate of the orbit form from a gap hypothesis on the zeros
+
+- `BallSampling.meanValue`: The mean value theorem on `[1, N]`, both ways ([note](../formalisations/ball-rate.md))
+- `BallSampling.cells_bound`: The cells ([note](../formalisations/ball-rate.md))
+- `BallSampling.exists_sampling`: Sampling from the gaps ([note](../formalisations/ball-rate.md))
+- `BallSampling.rate_of_gaps`: The rate from the gaps ([note](../formalisations/ball-rate.md))
+- `BallSampling.rate_of_zeroGaps`: The rate from a gap hypothesis at every height ([note](../formalisations/ball-rate.md))
+- `BallSampling.rate_of_gapsLog`: Bounded normalised gaps give a polynomial rate ([note](../formalisations/ball-rate.md))
+- `BallSampling.rate_of_gapsSqrt`: Gaps `K/√(log u)` give a quasi-polynomial rate ([note](../formalisations/ball-rate.md))
+- `BallSampling.rate_of_gapsLogLog`: Gaps `K/log log u` give a rate with RH as the only deep input ([note](../formalisations/ball-rate.md))
+- `BallSampling.samplingAtZeros_of_gapsLog`: The sampling hypothesis of `BallRate` from bounded normalised gaps ([note](../formalisations/ball-rate.md))
 
 #### `BallSlice`: Two primes carry the Riemann hypothesis: positivity on the slice of `p` and `q`
 

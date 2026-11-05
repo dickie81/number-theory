@@ -18,6 +18,7 @@ import SmoothPerron
 import MertensExponent
 import LagariasCriterion
 import BallRate
+import BallSampling
 import HalfPlaneJoinsPNT
 import DivisorExponent
 import ChiPNT
@@ -368,6 +369,20 @@ the flat model's uniform margin. -/
 #print axioms BallRate.rate_of_sampling
 #print axioms BallRate.flatForm_eq_kerFlat
 #print axioms BallRate.flat_margin
+
+/- The rate of the orbit form from the gaps between the zeros (`formalisations/ball-rate.md`): the mean value theorem
+on `[1, N]` both ways, the cell discretisation, sampling at the zeros and `λ_N ≥ (1 + log N)/(80T₁)` under RH and a
+gap hypothesis, the polynomial, quasi-polynomial and doubly exponential rates from gaps `K/log u`, `K/√(log u)` and
+`K/log log u`, and `BallRate.SamplingAtZeros` from bounded normalised gaps. -/
+#print axioms BallSampling.meanValue
+#print axioms BallSampling.cells_bound
+#print axioms BallSampling.exists_sampling
+#print axioms BallSampling.rate_of_gaps
+#print axioms BallSampling.rate_of_zeroGaps
+#print axioms BallSampling.rate_of_gapsLog
+#print axioms BallSampling.rate_of_gapsSqrt
+#print axioms BallSampling.rate_of_gapsLogLog
+#print axioms BallSampling.samplingAtZeros_of_gapsLog
 #print axioms MertensExponent.limsup_mexpo
 #print axioms MertensExponent.moebius_tendsto_of_Theta_lt
 #print axioms MertensExponent.moebius_not_tendsto_of_lt_Theta
