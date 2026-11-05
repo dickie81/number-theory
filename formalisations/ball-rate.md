@@ -2,7 +2,7 @@
 
 **Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`, with `BallSampling`,
 `BallDensity`, `BallCutoff` and `BallSharp` in four later sections, then `BallUpper` with `BallUpperEta`, `BallGap`,
-and `BallLow` in the last. The theorems are mapped onto the gravastar
+and `BallLow` in the one before the last. The theorems are mapped onto the gravastar
 language in the section after the statements; the first section, written before the Lean, fixes the three statements
 and says what each costs. The rate, open when that section was written, is now proved under RH alone:
 `λ_N ≥ 1/(22e⁸N)` for every `N ≥ 1` (`BallSharp.rate_sharp`, last section). It comes from the sampling conjecture of
@@ -12,12 +12,14 @@ frame bound `(T/11)(log(T/N) − 7)`, which grows like the number of zeros up to
 (`BallUpper`, `BallUpperEta`, last section): `λ_N ≤ 67(1 + log N)/N` under RH, by the alternating vector
 `x_n = (−1)^{n+1}/n`, and `λ_N ≤ C(1 + log N)/N` with some constant `C` unconditionally (`BallUpperEta.rate_upper`).
 Under RH `λ_N` is therefore between `1/(22e⁸N)` and `67(1 + log N)/N`. Numerically it is `0.048·log N/N` for
-`N ≤ 2000`, and `λ_N·N = 0.0434·log N + 0.032` to within `2·10⁻⁴` for `10³ ≤ N ≤ 3·10⁴` (last section). Keeping
+`N ≤ 2000`, and `λ_N·N = 0.0434·log N + 0.032` to within `2·10⁻⁴` for `10³ ≤ N ≤ 3·10⁴` (section "The low zeros"). Keeping
 Landau's slack `G(c)`, `BallSharp.rate_slack` reduces the missing `log N` of the lower bound to the vectors with
 `Σx_n² n + G(c) = o(log N·Σx_n²)` (section "Why the sampling route stops short of `log N/N`"). Every vector has
 `Σx_n² n + G(c) ≥ (√log N/10)Σx_n²` (`BallGap.edge_law`, last section), so under RH `λ_N ≥ √log N/(220e⁸N)` for every
 `N ≥ 3` (`BallGap.rate_gap`): this route recovers `√log N` of the missing `log N`, which by the numerics of that
-section is all it can give.
+section is all it can give. The last section, numerics only, compares the zeros with point sets of the same density and
+no arithmetic, which give `λ_N ≍ N^{−1/2}`, and finds the shape of the minimiser: `w(n/N)/ψ(n)`, `ψ` Dedekind's
+function, with `w(u) = Σ_{k ≤ 1/u} c(ku)` for one fixed function `c`.
 
 ## The three statements, and what can be proved
 
@@ -855,3 +857,125 @@ heuristics:
 
    What is missing is a mean value at the zeros below height `N` that tells the `ζ`-multiples from the incoherent
    tails, at about the strength of the pair-correlation conjecture beyond `α = 1`.
+
+## Packing: what the zeros allow that a fence does not (`scripts/packing.py`, uncertified)
+
+Step 3 above asks what it costs to make a vector quiet at the zeros below height `N`. For points with the zeros'
+density and no arithmetic, a packing count answers that, and numerically the answer is `λ_N ≍ N^{−1/2}`. The zeros
+beat the count by a factor `√N/log N`, because the minimiser carries `ζ` as a factor and the zeros below `N` come
+with it.
+
+**The count.** At height `T` a Dirichlet polynomial of length `N` resolves its frequencies `log n` at spacing `2π/T`:
+each `n ≤ T/2π` on its own, and the band `[log(T/2π), log N]` at density `T/2π`. In `[T, 2T]` that is about
+`(T/2π)(1 + log(2πN/T))` degrees of freedom, against `Φ(2T) − Φ(T) = (T/2π)log(4T/2πe)` points, where
+`Φ(t) = (t/2π)log(t/2πe) + 7/8` is the smooth zero count. Room for all of them needs `T ≤ πe√N ≈ 8.5√N`. Above that
+height a point set without arithmetic cannot all be silenced, and the points left over charge `λ_N` of order `N^{−1/2}`,
+up to logarithms.
+
+**Three point sets with the zeros' density.**
+
+- The picket fence: the `k`-th point at `Φ = k − ½`.
+- Jittered pickets: the `k`-th point uniform in `Φ ∈ [k − 1, k]`.
+- A Poisson process of intensity `Φ'`.
+
+The points are explicit up to `16N` and replaced by their density beyond. Moving that cut to `64N` changes `λ_N` in the
+fifth digit at `N = 100` and `400`. The zeros' column is the prime-side Gram matrix.
+
+| `N` | `100` | `200` | `400` | `800` | `1600` | `3200` | `6400` |
+|---|---|---|---|---|---|---|---|
+| zeros: `λ_N·N/log N` | `0.0509` | `0.0489` | `0.0485` | `0.0481` | `0.0478` | `0.0474` | `0.0470` |
+| zeros: `λ_N·√N` | `0.0234` | `0.0183` | `0.0145` | `0.0114` | `0.0088` | `0.0068` | `0.0051` |
+| picket fence: `λ_N·√N` | `0.1131` | `0.1160` | `0.1173` | `0.1193` | `0.1229` | `0.1270` | `0.1315` |
+| jittered (two seeds): `λ_N·√N` | `0.159, 0.159` | `0.162, 0.162` | `0.174, 0.167` | `0.186, 0.171` | `0.186, 0.180` | `0.184, 0.187` | |
+| Poisson (two seeds): `λ_N·√N` | `0.253, 0.134` | `0.220, 0.181` | `0.244, 0.185` | `0.309, 0.222` | `0.264, 0.188` | `0.279, 0.276` | |
+
+- **The exponents.** The slope of `log λ_N` against `log N` from `100` to `3200` is `−0.857` for the zeros, where
+  `log N/N` gives `−1 + 1/log N`. It is `−0.468` for the fence, `−0.450` and `−0.452` for the jittered pickets, and
+  `−0.448` and `−0.339` for the Poisson sets.
+- **The fence against the zeros.** `λ_N·√N` for the fence drifts from `0.110` at `N = 50` to `0.132` at `6400`, and
+  the slope from `100` to `6400` is `−0.465`. The fence's `λ_N` is `4.8` times the zeros' at `N = 100` and `25.5`
+  times at `N = 6400`.
+- **The fence's minimiser is `δ₁` plus a tail.** It has `x₁` from `0.983` at `N = 100` to `0.997` at `3200`, and
+  `A/log N` falling from `0.39` to `0.29`. The tail is spread over large `n`, small in `Σx_n²`, and cancels `x₁` at the
+  low points.
+
+**How far up each minimiser stays quiet** (`--silence`). The table gives the mean of `|V_x(γ)|²/Σx_n² n` over the
+points in `[T, 2T]`, at `N = 1600` (`√N = 40`, the zeros from the first 30000).
+
+| `T` | `64` | `128` | `256` | `512` | `1024` | `2048` | `4096` | `8192` |
+|---|---|---|---|---|---|---|---|---|
+| `T/√N`, `T/N` | `1.6`, `0.04` | `3.2`, `0.08` | `6.4`, `0.16` | `12.8`, `0.32` | `25.6`, `0.64` | `51`, `1.28` | `102`, `2.56` | `205`, `5.12` |
+| zeros, at their minimiser | `0.0000` | `0.0000` | `0.0001` | `0.0003` | `0.0010` | `0.0041` | `0.0156` | `0.1203` |
+| fence, at its minimiser | `0.0003` | `0.0047` | `0.0990` | `0.1923` | `0.2988` | `0.4151` | `0.5075` | `0.9253` |
+| jittered, at its minimiser | `0.0024` | `0.0645` | `0.2069` | `0.3957` | `0.7032` | `0.8480` | `0.9670` | `0.9919` |
+| the zeros' minimiser at the fence | `0.336` | `0.414` | `0.491` | `0.570` | `0.645` | `0.704` | `0.720` | `0.960` |
+| the fence's minimiser at the zeros | `0.807` | `0.858` | `0.426` | `0.443` | `0.483` | `0.512` | `0.528` | `0.568` |
+
+- **Where each goes loud.** The fence goes loud at a few `√N`, as the count says. The zeros stay below `10⁻³` up to
+  `T ≈ 1.3N` and below `0.016` up to `5N`, which is where the `92%` of `Q_N` above `4N` comes from.
+- **Neither minimiser is quiet on the other set.** The quietness is specific to the points.
+- `N = 800` gives the same picture: the fence goes loud at `T ≈ 4√N`, the zeros at `T ≈ 5N`.
+
+**Why the zeros beat the count: the minimiser carries `ζ` twice** (`--ground`). The minimiser is
+`x_n ≈ x₁·w(n/N)/ψ(n)`, with `ψ(n) = n·Π_{p | n}(1 + 1/p)` Dedekind's function and `w` a staircase.
+
+- **Multiplicative, with local factor `p/(p + 1)`.** With `f(n) = n·x_n/x₁`, `f(mn)/(f(m)f(n))` is within `2%` of `1`
+  for coprime `m, n` at `N = 4000` and `16000`. `f(p)` is `p/(p + 1)` to `0.006` for `p ≤ 31`: `0.668, 0.748, 0.829,
+  0.870` at `p = 2, 3, 5, 7`, at `N = 16000`.
+  - **The measured factors.** Dividing `f` by its own local factors (`f` at the prime powers below `N/10`) leaves a
+    profile in `n/N` with half-interquartile scatter `0.1%` on `n ≤ N/100` and `1%` on `[N/20, N/10]`.
+  - **`n/ψ(n)`.** Dividing by `n/ψ(n)` instead leaves `2`–`3%`, mostly from the higher prime powers: `f(2^k)` tends to
+    `0.60`, not `2/3`. In the quotient below the two do equally well (`1.097` and `1.099` at `N = 4000`, smooth `w` in
+    32 B-splines).
+- **`p/(p + 1)` is the optimum.** With `F(p^k) = 1 − θ/(p + 1)` for every `k ≥ 1`, `x_n = F(n)w(n/N)/n` and the best
+  staircase `w`, the smallest Rayleigh quotient over `λ_N` at `N = 4000` is `1.205, 1.072, 1.036, 1.031, 1.030, 1.033,
+  1.041, 1.088` at `θ = 0, 0.5, 0.8, 0.9, 1, 1.1, 1.2, 1.5`. The factor `φ(n)/n` gives `1.066`, and the best
+  `1 − θ/p` gives `1.035`.
+- **The profile is a staircase of a fixed function.** The best `w` has jumps at `u = 1/2, 1/3, …`. It is
+  `w(u) = Σ_{k ≤ 1/u} c(ku)` with one function `c` on `[0, 1]`. The smallest quotient over `λ_N`:
+
+  | `N` | `2000` | `4000` | `8000` | `1.6·10⁴` | `3·10⁴` |
+  |---|---|---|---|---|---|
+  | `w` smooth, 16 cubic B-splines | `1.133` | `1.190` | `1.233` | | |
+  | staircase, `c` in 8 B-splines | `1.034` | `1.032` | `1.031` | | |
+  | staircase, `c` in 16 B-splines | `1.032` | `1.030` | `1.030` | `1.029` | `1.029` |
+
+  A smooth profile gets worse with `N`; the staircase does not. Twisting the staircase, `Σ_k a(k)c(ku)` with
+  `a(k) = k/ψ(k)`, `φ(k)/k` or `μ²(k)`, is worse by factors `10` to `340`.
+- **`c` does not depend on `N`.** It is recovered by Möbius inversion, `c(u) = Σ_k μ(k)w(ku)`, with `w(1/N) = 1`:
+
+  | `u` | `0.02` | `0.12` | `0.22` | `0.32` | `0.42` | `0.52` | `0.62` | `0.72` | `0.82` | `0.92` |
+  |---|---|---|---|---|---|---|---|---|---|---|
+  | `N = 2000` | `−1.989` | `−1.694` | `−1.119` | `−0.378` | `0.310` | `0.859` | `1.051` | `1.056` | `0.844` | `0.455` |
+  | `N = 8000` | `−1.990` | `−1.697` | `−1.121` | `−0.377` | `0.315` | `0.863` | `1.055` | `1.058` | `0.841` | `0.448` |
+
+  The two rows differ by at most `0.007`, and `N = 4000` agrees with both to `0.003`. At every `N`,
+  `∫_{0.02}^1 c = 0.040`, and `c ≈ −2` on `[0, 0.02]`. So `∫_0^1 c = 0` to three digits and `c(0) = −2`, which is
+  `w(0) = −c(0)/2 = 1` by Euler–Maclaurin.
+- **The mechanism** (heuristic). Write `𝓕(s) = Σ_n (n/ψ(n))n^{−s} = ζ(s)M(s)`, with
+  `M(s) = Π_p(1 − p^{−s}/(p + 1))` absolutely convergent on `Re s > 0`. The staircase has Mellin transform
+  `ŵ(z) = ζ(z)ĉ(z)`. Then `V_x(ρ) = (1/2πi)∫ζ(1 − ρ + z)M(1 − ρ + z)ζ(z)ĉ(z)N^z dz`, and shifting left past `Re z = 0`
+  meets three residues, each zero at every zero `ρ`:
+  - at `z = 0`, `ζ(0)c(0)·ζ(1 − ρ)M(1 − ρ) = 0`: the bulk;
+  - at `z = ρ`, `M(1)ĉ(ρ)·ζ(ρ)N^ρ = 0`: the loud boundary term `N^ρ/ρ` of step 2, now silent at every zero at once;
+  - at `z = 1`, `ĉ(1)N·𝓕(2 − ρ) = 0`, because `∫c = 0`.
+
+  What is left is the integral on `Re z < 0`, small while `γ ≪ N`. So the zeros below height `≍ N` cost one box in
+  all, not one box each.
+- **The price is the spread.** Carrying `ζ` over `[1, N]` costs `Σx_n² n ≈ C_F log N·Σx_n²/D`. Here
+  `C_F = Π_p(1 − (2p + 1)/(p(p + 1)²)) = 0.529` is the mean of `(n/ψ(n))²` and `D = Σ1/ψ(n)² = 1.320`, so
+  `A/log N → 0.401`. The diagonal of Landau's slack adds `log 4 + 1 + γ = 2.96` per unit of `Σc_n²`, and its edges
+  `0.098·C_F`, so `B/log N → 1.23`. The measured values at `3·10⁴` are `0.437` and `1.362`, both still falling.
+  `high_le` charges `A + B` at the zeros above `8N`.
+- **The ladder.** `K_H` depends on `m/n` only, so `G_{km,kn} = k·G_{mn}`. The dilation `(D_k x)_{kn} = x_n` therefore
+  has `Q_N(D_k x) = k·Q_{N/k}(x)` and `‖D_k x‖ = ‖x‖`. The dilated minimiser of `Q_{N/k}` therefore has quotient
+  `k·λ_{N/k} ≈ k²·0.0434·log N/N`: the ladder, up to the overlaps between the dilates. Fitted at `N = 2000, 4000,
+  8000`, the low eigenvalues have `λ_k·N ≈ a_k log N + b_k` with `a_k = 0.0435, 0.1794, 0.3852, 0.7173`, in the
+  ratios `1 : 4.12 : 8.85 : 16.48`.
+
+**What this changes in step 3.** The count that gives the fence its `√N` gives the zeros nothing: a polynomial of
+length `N` can be quiet on every zero up to height `≍ N`. A lower bound `λ_N ≫ log N/N` therefore cannot come from
+counting zeros. It has to be an inverse theorem: a vector quiet at the zeros up to height `≍ N` carries the factor
+`ζ`, through `n/ψ(n)` in the bulk and the staircase at the cut, and carrying it costs `A ≍ log N`. The continuum limit
+reduces the constant to a variational problem in one function: `0.0434` is, to within `3%`, the minimum over `c` with
+`∫c = 0` of the quotient of `x_n = Σ_{k ≤ N/n} c(kn/N)/ψ(n)`, times `N/log N`. That problem is not solved here.
