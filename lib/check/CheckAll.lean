@@ -22,6 +22,7 @@ import BallSampling
 import BallDensity
 import BallCutoff
 import BallSharp
+import BallUpperEta
 import HalfPlaneJoinsPNT
 import DivisorExponent
 import ChiPNT
@@ -416,6 +417,19 @@ under RH, and `λ_N ≥ 1/(22e⁸N)` under RH. -/
 #print axioms BallSharp.sampling_log_clean
 #print axioms BallSharp.sampling_e8
 #print axioms BallSharp.rate_sharp
+
+/- The rate from above (`formalisations/ball-rate.md`): the alternating tail `Σ_{N < n ≤ M}(−1)^{n+1}n^{−s}` by Abel
+summation; under RH, the mean value of `|V_x|²` on `|γ| ≤ r` from above, by Weil's explicit formula for `|D|²M_r`, and
+at the alternating vector `x_n = (−1)^{n+1}/n`; `|V_x(ρ)| ≤ 20/√N` for that vector at the zeros with `|γ| ≤ 2N`, from
+PNT+'s `ζ₀`; `λ_N ≤ 67(1 + log N)/N` under RH; and `λ_N ≪ log N/N` unconditionally. -/
+#print axioms BallUpper.tail_le
+#print axioms BallUpper.upper_mean
+#print axioms BallUpper.mean_xa_le
+#print axioms BallUpper.form_xa_le
+#print axioms BallUpperEta.dpoly_xa_le
+#print axioms BallUpperEta.rate_upper_rh
+#print axioms BallUpperEta.rate_upper
+
 #print axioms MertensExponent.limsup_mexpo
 #print axioms MertensExponent.moebius_tendsto_of_Theta_lt
 #print axioms MertensExponent.moebius_not_tendsto_of_lt_Theta
