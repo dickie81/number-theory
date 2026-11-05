@@ -21,6 +21,7 @@ import BallRate
 import BallSampling
 import BallDensity
 import BallCutoff
+import BallSharp
 import HalfPlaneJoinsPNT
 import DivisorExponent
 import ChiPNT
@@ -402,6 +403,16 @@ conjecture `BallRate.SamplingAtZeros (1/100) e²⁴ 0` under RH, and `λ_N ≥ 1
 #print axioms BallCutoff.integral_Kc_majR_le
 #print axioms BallCutoff.sampling_rh
 #print axioms BallCutoff.rate_cut
+
+/- Sampling at the zeros in its natural form (`formalisations/ball-rate.md`): the Fejér-smoothed mass of `|D|²`,
+`∫|D|²(E ⋆ F_a) = Σc_j²·∫E` once `2aN ≤ 1`, and under RH, `Σ_{|γ_ρ| ≤ T}|V_x(ρ)|² ≥ (T/11)(log(T/N) − 10)Σ x_n² n` for
+every `T ≥ 2000N`, so `≥ (T/22)log(T/N)Σ x_n² n` for `T ≥ e²⁰N`; the conjecture `BallRate.SamplingAtZeros (1/11) e¹¹ 0`
+under RH, and `λ_N ≥ 1/(22e¹¹N)` under RH. -/
+#print axioms BallSharp.integral_Kc_conv
+#print axioms BallSharp.sampling_log
+#print axioms BallSharp.sampling_log_clean
+#print axioms BallSharp.sampling_e11
+#print axioms BallSharp.rate_sharp
 #print axioms MertensExponent.limsup_mexpo
 #print axioms MertensExponent.moebius_tendsto_of_Theta_lt
 #print axioms MertensExponent.moebius_not_tendsto_of_lt_Theta
