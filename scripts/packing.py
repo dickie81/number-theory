@@ -42,6 +42,13 @@ form x_n = (F(n) − P + P·w(n/N))/n, F(n) = n/ψ(n): the best vector in the sp
 has lim inf ≥ c(D₀) = min_e m(e)/D(e), m(e) = Σ_k 2|ζ(½ + iγ_k)M_e(½ − iγ_k)|²/(¼ + γ_k²), M_e(s) = Σ_d e(d)d^{−s};
 the sum over the first K fence points is a lower bound, every term being ≥ 0.
 
+    python3 scripts/packing.py --fence-cap [N ...]                  # default N = 400 1600 6400
+
+--fence-cap: the constrained minima of the note's Theorem C, q_n = min{Q^pf(x) : x_n = 1} = 1/(G⁻¹)_nn on the picket
+fence, for n = 1, 2, 3, 4, 5, 8, 16, 32. Printed with λ_N·√N: q_n·√N; the free part n·W(2πM_n), M_n = max(n, N/n),
+W(T) = (log(T/2π) + 1)/(πT), the energy of x_n = 1 above the height where it has no alias; the cost paid below that
+height; and A_n, the amplitude of the fit m·x_m ≈ a·cos(2πm/n) + b·sin(2πm/n) over m ≥ 2√N.
+
     python3 scripts/packing.py --solve [N ...]                      # N optional, e.g. 2000 4000 8000 16000 30000
 
 --solve: the variational problem of the note's section "The variational problem, solved", which needs no N.
@@ -555,6 +562,37 @@ def solve_mode(Ns):
             print(f"   {a}: A + B/log N gives A = {coef[0]:.5f}; predicted limit {pred[j]:.5f}")
 
 
+def fence_cap_mode(Ns, ns=(1, 2, 3, 4, 5, 8, 16, 32)):
+    """The constrained minima q_n = min{Q^pf(x) : x_n = 1} = 1/(G⁻¹)_nn on the picket fence."""
+    from scipy.linalg import cho_factor, cho_solve
+    for N in Ns:
+        g, G0 = points("picket", N)
+        G = gram_points(N, g, G0)
+        lam = eigh(G, subset_by_index=[0, 0], eigvals_only=True)[0]
+        C = cho_factor(G)
+        sq, m = math.sqrt(N), np.arange(1, N + 1)
+        lg, w = np.log(m.astype(float)), 2.0 / (0.25 + g * g)
+        print(f"N = {N}: λ_N·√N = {lam * sq:.4f}")
+        print(f"   {'n':>3} {'q_n·√N':>8} {'free·√N':>8} {'below·√N':>9} {'A_n':>6}")
+        for n in ns:
+            e = np.zeros(N)
+            e[n - 1] = 1
+            y = cho_solve(C, e)
+            q = 1 / y[n - 1]
+            x = y * q
+            tf = 2 * math.pi * max(n, N / n)
+            free = n * (math.log(tf / (2 * math.pi)) + 1) / (math.pi * tf)
+            s = g[g < tf]
+            ws = w[:len(s)]
+            below = sum(float(ws[i:i + 4096] @ np.abs(np.exp(1j * np.outer(s[i:i + 4096], lg)) @ (x * np.sqrt(m))) ** 2)
+                        for i in range(0, len(s), 4096))
+            sel = m >= 2 * sq
+            X = np.stack([np.cos(2 * math.pi * m[sel] / n), np.sin(2 * math.pi * m[sel] / n)], 1)
+            ab = np.linalg.lstsq(X, (m * x)[sel], rcond=1e-9)[0]
+            amp = math.hypot(*ab) if n > 2 else abs(ab[0])
+            print(f"   {n:3d} {q * sq:8.4f} {free * sq:8.4f} {below * sq:9.4f} {amp:6.3f}", flush=True)
+
+
 def fence_class_mode(K):
     import mpmath
     mpmath.mp.dps = 15
@@ -580,6 +618,7 @@ def main():
     ap.add_argument("--stair", action="store_true", help="the best staircase vector at large N")
     ap.add_argument("--solve", action="store_true", help="the variational problem for c and the arithmetic factor")
     ap.add_argument("--fence-class", action="store_true", help="the fence margin on the arithmetic class")
+    ap.add_argument("--fence-cap", action="store_true", help="the fence's constrained minima q_n")
     a = ap.parse_args()
     if a.silence:
         if not a.zeros_file:
@@ -593,6 +632,8 @@ def main():
         solve_mode(a.N)
     elif a.fence_class:
         fence_class_mode(a.N[0] if a.N else 3000)
+    elif a.fence_cap:
+        fence_cap_mode(a.N or [400, 1600, 6400])
     else:
         models_mode(a.N or [100, 200, 400, 800, 1600])
 
