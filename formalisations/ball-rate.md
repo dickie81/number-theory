@@ -26,7 +26,8 @@ The section after it proves the matching upper bound on paper, for an explicit v
 `λ_N ≤ (0.04294 + o(1))·log N/N` under RH. The last section proves, on that class of vectors, the inverse
 theorem (quiet at the zeros means carrying `ζ`, and costs `≥ 0.0400·log N/N`) and the absence of any sag at the
 picket fence. It also proves, for every vector and with no hypothesis, `λ^pf_N ≫ N^{−2/3}log N` at the picket
-fence, a power of `N` above the zeros' `λ_N`. Its numerics measure what silence at the zeros costs over all vectors:
+fence, a power of `N` above the zeros' `λ_N`; and `λ^pf_N ≪ N^{−3/5}(log N)³`, so that `λ^pf_N ≫ N^{−1/2}` fails. Its
+numerics measure what silence at the zeros costs over all vectors:
 `≍ log N` in `A + B` at heights `≍ N`, carried by the `⌊2πN/T⌋` dilates of the zeta vector, where the fence pays
 `≍ T log N`.
 
@@ -1236,7 +1237,7 @@ the fixed vectors of the previous section the computed quotients approach their 
 
 The proof of the previous section works for the whole class of vectors the earlier sections found, and on that class
 it settles the other two open steps. Theorem C below then drops the class at the picket fence, with a margin that
-falls like a power of `N`.
+falls like a power of `N`, and Theorem D shows that the power is more than `1/2`.
 
 **The class.** `n·x_n = Σ_{d | n, d ≤ D₀} E_d(n/N)`, with `D₀` fixed, and fixed profiles `E_d` on `[0, 1]`. Each `E_d`
 is `C²`, with `E_d''` of bounded variation and `E_d(1) = E_d'(1) = E_d''(1) = 0`. Write `e(d) = E_d(0)`, `F = 1 ∗ e`,
@@ -1511,18 +1512,96 @@ window that holds the free height `2πN/n`.
 - **What follows** (heuristic). With the free cost `n²log N/N`, the best centre is `n ≍ N^{1/5}`, and
   `λ^pf_N ≍ N^{−3/5}(log N)^c`. So `N^{−1/2}` fails, and Theorem C's `−2/3` is not sharp. At the measured constants
   the crossover with the vector centred at `1` is near `N ≈ 10⁹`–`10¹⁰`.
-- **What a proof of `λ^pf_N ≪ N^{−3/5}(log N)^C` needs.** Four estimates, each an upper bound or a standard
-  inequality, none written out here:
-  - (a) stationary phase for the twisted sums at the fence points, giving the cancellation and the images;
-  - (b) Ingham's inequality for the band's Gram matrix at the points below `H`;
-  - (c) the interpolant's free energy above its components' free heights;
-  - (d) the images' mean square at the fence points.
+- **Theorem D below turns this into a proof** of `λ^pf_N ≪ N^{−3/5}(log N)³`, with the partners started a little
+  earlier so that `δ_n + p` is already silent at the top of the band's range.
+
+**Theorem D (the fence from above; no hypothesis).** There are absolute constants `C` and `N₀` with
+`λ^pf_N ≤ C·N^{−3/5}(log N)³` for every `N ≥ N₀`. So `λ^pf_N√N → 0`: the bound `λ^pf_N ≫ N^{−1/2}` fails, and with
+Theorem C, `N^{−2/3}log N ≪ λ^pf_N ≪ N^{−3/5}(log N)³`.
+
+*The vector.* Put `L = log N`, `n = ⌊N^{1/5}⌋`, `H = √(N/n)`, `X = nH/2π`, `M₁ = πN/(2e²H)` and `w(t) = 2/(¼ + t²)`.
+Fix `ψ ∈ C^∞` with `ψ = 0` on `(−∞, 0]` and `ψ = 1` on `[1, ∞)`, and a Gevrey-class `φ` with `0 ≤ φ ≤ 1`, `φ = 1` on
+`[log M₁ + 1, L − 1]`, `φ = 0` off `[log M₁, L]`, and `|φ̂(ξ)| ≤ Ce^{−c|ξ|^{1/2}}` for `|ξ| ≥ 1`, where
+`φ̂(ξ) = ∫φ(v)e^{iξv}dv`.
+- `f(u) = ψ(4u/X − 1)(1 − ψ(4u/N − 1))`: `0` below `X/4`, `1` on `[X/2, N/4]`, `0` above `N/2`.
+- `p_m = 2cos(2πm/n)f(m)/m`, the twisted partners of `n`.
+- `P = {±t_k : t_k ≤ H}`, and for `τ ∈ P` the target `a_τ = −B_{δ_n+p}(τ)`.
+- `ω_m = φ(log m)/m` and `G_{τσ} = Σ_m ω_m m^{i(τ−σ)}` for `τ, σ ∈ P`. With `β = G^{−1}a`, put
+  `y_m = ω_m m^{−1/2}Σ_{τ∈P}β_τ m^{−iτ}`. It is real, since `P = −P` and `a_{−τ} = ā_τ`, and it lives on `[M₁, N]`,
+  away from `n`.
+
+Then `x = δ_n + p + y` has `x_n = 1`, and `B_x(τ) = 0` at every `τ ∈ P`, because `B_y(τ) = (Gβ)_τ = a_τ`.
+
+*Lemma D1 (the band's Gram matrix).* `G = [φ̂(τ − σ)] + E` with `‖E‖ ≤ N^{−10}`. Its smallest eigenvalue is at least
+an absolute `c₁ > 0`, and `|(G^{−1})_{τσ}| ≤ N^{−10}` once `|τ − σ| ≥ L⁵`.
+- *No aliases.* Poisson summation gives `G_{τσ} = Σ_q ∫φ(log u)u^{−1+i(τ−σ)}e(−qu)du`. The term `q = 0` is
+  `φ̂(τ − σ)`. For `q ≠ 0` the phase has derivative `(τ − σ)/u − 2πq`, and `|τ − σ| ≤ 2H ≤ πM₁`, so it is at least
+  `π|q|` on the support. Integrating by parts gives `≪_A (M₁|q|)^{−A}`.
+- *Ingham.* Consecutive fence points below `H` are `1/Φ′ ≥ γ = 2π/L(H)` apart, and `t_k + t_l ≥ 2t₁ > 29`, so the
+  points of `P` are `γ`-separated. `φ = 1` on an interval of length `ℓ = log(N/M₁) − 2 = L(H) + log 4`. So
+  `α*[φ̂(τ − σ)]α = ∫φ|Σ_τα_τe^{iτv}|²dv` is at least the integral over that interval. Ingham's inequality (1936)
+  bounds it below by `≫ ℓ(1 − (2π/γℓ)²)Σ|α_τ|² ≥ ℓ·(log 4/L(H))·Σ|α_τ|²`, which is `≫ Σ|α_τ|²`.
+- *Localisation.* Cutting `G` to `|τ − σ| ≤ L³` changes it by at most `N^{−10}` in norm, by the decay of `φ̂`. The
+  cut matrix is banded, with bandwidth `≪ L⁴` in the index. Its condition number is `≪ L`, since the largest
+  eigenvalue is `≪ ℓ + 2π/γ`. The bound of Demko, Moss and Smith (1984) for inverses of banded matrices then gives
+  `|(G^{−1})_{τσ}| ≪ L(1 − c/√L)^{|k−l|/L⁴}`, which is at most `N^{−10}` once `|τ − σ| ≥ L⁵`.
+
+*Lemma D2 (the partners at the fence).* For every fence point `t_k ≥ 1`,
+`B_{δ_n+p}(t_k) = √n·n^{it_k}(1 − f(nt_k/2π)) − I(t_k) + O(√n/t_k + (t_kX)^{−1/2})`, where
+`I(t) = Σ_{q≥1}f(nt/(2π(nq+1)))((nq+1)/n)^{−1/2−it} + Σ_{q≥1}f(nt/(2π(nq−1)))((nq−1)/n)^{−1/2−it}`
+holds the images.
+- `2cos(2πm/n) = e(m/n) + e(m(1 − 1/n))`, so `B_p = S_{1/n} + S_{1−1/n}`, with `S_a(t) = Σ_m e(am)f(m)m^{−1/2+it}`.
+- Poisson summation writes `S_a(t) = Σ_q ∫f(u)u^{−1/2+it}e((a − q)u)du`. For `q > a` the phase
+  `t log u − 2π(q − a)u` is stationary at `u_q = t/(2π(q − a))`, with second derivative `−t/u_q²`.
+- Stationary phase gives `f(u_q)(q − a)^{−1/2−it}e^{i(t log(t/2π) − t − π/4)}(1 + O(1/t))`. The terms with no
+  stationary point in the support of `f` give `≪_A N^{−A}`, since `f^{(j)}(u) ≪ u^{−j}` and `X ≫ n`.
+- `t log(t/2π) − t − π/4 = 2θ(t) + O(1/t)`, and at the anti-Gram points `e^{2iθ(t_k)} = −1 + O(1/t_k)`.
+- For `a = 1 − 1/n` the term `q = 1` is `−f(nt/2π)√n·n^{it}`, and the terms `q ≥ 2` give the first sum of `I`;
+  `a = 1/n` gives the second. At most `≪ 1 + t/X` terms are active, which gives the error term.
+
+*Lemma D3 (the partners above `H`).* `Σ_{t_k > H} w(t_k)|B_{δ_n+p}(t_k)|² ≪ n²L/N + L²/X`.
+- *The centre.* Above `H`, `1 − f(nt/2π) ≠ 0` only where `nt/2π > N/4`. There it costs at most
+  `n·W(πN/2n) ≪ n²L/N`.
+- *The images.* They switch on at `(n − 1)H/4`, where `f(nt/(2π(n − 1)))` first leaves `0`. On a window `[T, 2T]`
+  above that, the active `λ = (nq ± 1)/n` have `q ≪ T/X`, and their logarithms are at least `1/(2nq) ≫ X/(nT)` apart.
+  - Montgomery and Vaughan's mean value theorem gives `∫_T^{2T}|I|² ≪ T·Σ_λλ^{−1} ≪ T log(T/X)`. The weights `f(·)`
+    vary on the scale of `t`, which costs a constant, and `I′` obeys the same bound with an extra `L²`.
+  - Gallagher's lemma, at the fence points of the window, which are `2π/L(2T)` apart, then gives
+    `Σ_{t_k∈[T,2T]}|I(t_k)|² ≪ TL·log(T/X)`.
+  - Weighted by `w ≍ T^{−2}` and summed over the windows from `(n − 1)H/4 ≍ X` up, this is `≪ L²/X`.
+- *The error.* The error of Lemma D2 contributes `≪ n/H³`.
+
+*Lemma D4 (the interpolant above `H`).* `Σ_{t_k > H} w(t_k)|B_y(t_k)|² ≪ L³nH³/N² + N^{−1}`.
+- *Up to `πM₁`.* Here `B_y(t) = Σ_τβ_τW̃(t − τ)`, with `W̃(Δ) = Σ_m ω_m m^{iΔ} = φ̂(Δ) + O(N^{−10})` for
+  `|Δ| ≤ 3πM₁/2`: as in Lemma D1 there is no alias, the first stationary point being at `|Δ| = 2πM₁`.
+  - For `n > 9`, `δ_n + p` is silent on `[H/2, 2H]` up to the error of Lemma D2: `f(nt/2π) = 1` there, and no image
+    is on below `(n − 1)H/4`. So `|a_τ| ≪ √n/H` for `|τ| ≥ H/2`.
+  - By the localisation of Lemma D1, `|β_τ| ≪ √nL^{O(1)}/H` for `|τ| ≥ 3H/4`.
+  - For a fence point `t ∈ (H, πM₁)`, the `τ ≤ 3H/4` then contribute `≪ ‖β‖₁e^{−c√(H/4)}`, and the others
+    `≪ √nL^{O(1)}/H·Σ_τ|φ̂(t − τ)|`, which is negligible once `t > H + L²`. So the cost is `≪ nL^{O(1)}/H⁴ ≤ N^{−1}`.
+- *Above `πM₁`.* Two band components have ratio at most `N/M₁ = 2e²H/π`, and `L(πM₁/2) > log(2e²H/π) + 1` for `N`
+  large. So on windows `T ≥ πM₁` no alias `ℓ ≠ 0` of the fence is stationary for `y`. The fence sum is then the
+  continuous integral `∫h_jΦ′|B_y|²`, up to `O(N^{−5})`, by the same Poisson summation as in Lemma F.
+  - Montgomery and Vaughan give `∫_T^{2T}|B_y|² ≤ Σ_m|b_m|²(T + O(m))`, with `b_m = √m·y_m = ω_mΣ_τβ_τm^{−iτ}`.
+  - By the dual large sieve on the band, `Σ_m|b_m|²m = Σ_m(φ²/m)|Σ_τβ_τm^{−iτ}|² ≪ L|β|²`, and
+    `Σ_m|b_m|² ≤ L|β|²/M₁`. So `∫_T^{2T}|B_y|² ≪ (T/M₁ + 1)L|β|²`.
+  - Against `w ≍ T^{−2}` and `Φ′ ≍ L`, summed from `T = πM₁`, this is `≪ L²|β|²/M₁²`. With
+    `|β|² ≤ c₁^{−2}|a|² ≪ n·#P ≪ nHL` and `M₁ ≍ N/H`, that is `≪ L³nH³/N²`.
+
+*Proof of Theorem D.* Since `x_n = 1`, `λ^pf_N ≤ Q^pf_N(x)`. At the points of `P` (all fence points up to `H`),
+`B_x = 0`. Above `H`, `|B_x|² ≤ 2|B_{δ_n+p}|² + 2|B_y|²`. So by Lemmas D3 and D4,
+`λ^pf_N ≪ n²L/N + L²/X + L³nH³/N² + N^{−1}`.
+With `n = N^{1/5}`, `H = N^{2/5}` and `X ≍ N^{3/5}`, each term is `≪ L³N^{−3/5}`. ∎
+
+- **What the proof does not settle.** The exponent itself, between Theorem C's `−2/3` and Theorem D's `−3/5`. The
+  count of the paragraph above, which the explicit construction meets to a factor, puts it at `−3/5`. A matching
+  lower bound would have to show that silencing `x_n` below `H` costs `≫ nH³/N²`, against the `n²log N/N` of Lemma F.
 
 **What the numbers allow.** Suppose the cost per window behaves like `C·n^{−α}` for large `n`. The free cost
 `n²log N/N` balances it at the centre `n ≍ N^{1/(4+2α)}`, and then `λ^pf_N ≍ N^{−1/2−α/(4+2α)}log N`.
 - **`α = 1`**, the dependence on `n` in Lemma C, gives `−2/3`. Theorem C would then be sharp up to the constant. It
   needs `x_n` silenced below `T₀` for `o(log N/(n√N))`, which the band count above puts out of reach.
-- **`α = ½`**, the balance of the two mechanisms above, gives `−3/5`.
+- **`α = ½`**, the balance of the two mechanisms above, gives `−3/5`. Theorem D proves this as an upper bound.
 - **`α ≈ 0.45`**, the slope between `n = 3` and `11` at `N = 12800`, with `C ≈ 0.14`, gives `−0.59`. A model with this
   law, the free part, the excess as modelled above, and `n = 1`'s own cost per window reproduces `q_1` and `q_5` at
   `N ≈ 10⁴` to within `5%`. In that model the vector centred at `1` loses, around `N ≈ 10¹⁰`, to one centred near
@@ -1530,11 +1609,12 @@ window that holds the free height `2πN/n`.
 - **A floor, `α = 0`,** keeps the vector centred at `1` optimal. Then `λ^pf_N√N` rises like `0.013·log N`, and the
   exponent `−1/2` holds with a logarithm to spare.
 
-So `λ^pf_N ≫ N^{−2/3}log N` is proved (Theorem C), and up to `N = 12800` the fence behaves like `N^{−1/2}`:
-`λ^pf_N√N = 0.117, 0.123, 0.132, 0.136` at `N = 400, 1600, 6400, 12800`. The two-mechanism count, which the explicit
-construction meets to within a factor, points to `−3/5`: between the two, and only visible far beyond `N = 12800`.
+So `N^{−2/3}log N ≪ λ^pf_N ≪ N^{−3/5}(log N)³` is proved (Theorems C and D), although up to `N = 12800` the fence
+behaves like `N^{−1/2}`: `λ^pf_N√N = 0.117, 0.123, 0.132, 0.136` at `N = 400, 1600, 6400, 12800`. The decay faster
+than `N^{−1/2}` shows only far beyond that, near `N ≈ 10⁹`–`10¹⁰` at the measured constants. The two-mechanism count,
+which the explicit construction meets to within a factor, puts the order at `N^{−3/5}`, the upper end.
 
-**What the three theorems settle.**
+**What the four theorems settle.**
 - **The mechanism needs arithmetic.** On the class, the zeta form sags like `log N/N`: Theorem A, and the theorem
   above. The picket fence has a margin that does not depend on `N`: Theorem B. The sag is exactly the bulk residue
   `ζ(1 − ρ)M_e(1 − ρ)`, which vanishes at the zeros of `ζ` and nowhere else. Its partner, the boundary residue
@@ -1544,6 +1624,10 @@ construction meets to within a factor, points to `−3/5`: between the two, and 
 - **For every vector the fence is louder by a power of `N`.** Theorem C gives `λ^pf_N ≫ N^{−2/3}log N`, against
   `λ_N ≤ 67(1 + log N)/N` at the zeros under RH. A point set with the zeros' density and no arithmetic cannot be as
   quiet as the zeros, for any vector.
+- **But not by `N^{1/2}`.** Theorem D gives `λ^pf_N ≪ N^{−3/5}(log N)³`, so `λ^pf_N ≫ N^{−1/2}` fails. The vector that
+  shows it is centred at `n ≍ N^{1/5}`: interpolation on a band of large components below `√(N/n)`, and above it the
+  twisted partners, which the fence's own functional equation (its points are the anti-Gram points) makes cancel
+  `x_n` exactly.
 
 **What silence costs** (`scripts/landau_gap.py --silent`, `--split`, `--quiet`; numerics, uncertified). Step 3 of the
 section "The low zeros" says a proof has to show that silencing a vector at the zeros below height `≍ N` costs
@@ -1664,11 +1748,7 @@ counted conditions are dependent through `ζ`.
   - **Nor does a split along the low eigenspace of `A + B` help.** Put the vector's part in that eigenspace against the
     first few zeros. The part outside it can buy as much loudness there, per unit of `A + B`, as the eigenspace has,
     so the cross terms are not controlled.
-- **For the fence, the exponent.** Theorem C gives `−2/3` for every vector, the minimisers at `N ≤ 12800` give `−1/2`,
-  and the constrained minima allow anything in between (the paragraph above).
-  - A proof of `−1/2` would have to charge the partners of `x_n` for more than their free energy. Above `2π√N` the
-    twisted partners pay only about `log N/(6n√N)` ("The partners are a functional equation"). So the price would
-    have to be found below `2π√N`.
-  - A proof that `−1/2` fails can use the two-mechanism vector centred at `n ≍ N^{1/5}`: interpolation on a band below
-    `H ≍ √(N/n)`, twisted partners above. It would give `λ^pf_N ≪ N^{−3/5}(log N)^C` once the four estimates (a)–(d)
-    are written out. At `N = 6400` it is within a factor `1.24`–`1.91` of the constrained minimum.
+- **For the fence, the exponent.** It lies between Theorem C's `−2/3` and Theorem D's `−3/5`; `N^{−1/2}` is out
+  (Theorem D). The two-mechanism count, which the explicit construction meets to within `1.24`–`1.91` at `N = 6400`,
+  puts it at `−3/5`. A matching lower bound would have to show that silencing `x_n` below `√(N/n)` costs
+  `≫ nH³/N²`, which is more than Lemma F charges.
