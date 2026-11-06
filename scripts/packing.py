@@ -36,6 +36,12 @@ height 25755, cover N ≤ 1600), e.g. the first 2000 from mpmath and the rest fr
 without storing it: its quotient·N/log N, to set against λ_N·N/log N from scripts/lambda_large.py. Also the additive
 form x_n = (F(n) − P + P·w(n/N))/n, F(n) = n/ψ(n): the best vector in the span of F(n)/n, 1/n and the staircases/n.
 
+    python3 scripts/packing.py --fence-class [K]                    # default K = 3000; also needs mpmath
+
+--fence-class: Theorem B of the note's last section. On the class n·x_n = Σ_{d | n, d ≤ D₀} E_d(n/N), the fence form
+has lim inf ≥ c(D₀) = min_e m(e)/D(e), m(e) = Σ_k 2|ζ(½ + iγ_k)M_e(½ − iγ_k)|²/(¼ + γ_k²), M_e(s) = Σ_d e(d)d^{−s};
+the sum over the first K fence points is a lower bound, every term being ≥ 0.
+
     python3 scripts/packing.py --solve [N ...]                      # N optional, e.g. 2000 4000 8000 16000 30000
 
 --solve: the variational problem of the note's section "The variational problem, solved", which needs no N.
@@ -46,6 +52,10 @@ form x_n = (F(n) − P + P·w(n/N))/n, F(n) = n/ψ(n): the best vector in the sp
     D = Σ F(n)²/n², S(a) = Σ_g e(ag)/g, P = S(1) and T = Σ_a Π_{p | a}(1 − p⁻²)·S(a)², all Euler products. The local
     factors F(p^v), v ≤ 10, are optimised for p ≤ 200 by BFGS, prime by prime, and for larger p the squarefree factor
     1 − θ/(p + 1) on a grid of θ.
+  - The admissible class of the upper-bound theorem (note's section "The upper bound with the sharp constant"): c a
+    quintic spline on M uniform intervals with c(0) = −2, ∫c = 0 and c(1) = c'(1) = c''(1) = 0, and e supported on
+    d ≤ D₀, where min_e (T + κP²)/(12D) is the bottom of a generalized eigenproblem, T = eᵀSᵀΩSe, P = Σ_d e(d)/d,
+    D = ζ(2)Σ_{d,d'} e(d)e(d')/lcm(d, d')².
   - With N given: the Rayleigh quotients, times N/log N, of three fixed vectors built from c_opt, w(u) = Σ_{k ≤ 1/u}
     c_opt(ku): w(n/N)/n (F = 1), F(n)w(n/N)/n and (F(n) − P(1 − w(n/N)))/n with F = n/ψ(n), from the Gram matrix in
     column blocks; with two N or more, the fit A + B/log N, against the predicted limits K(1)·I, K(ψ)·I and
@@ -360,6 +370,54 @@ def profile_problem(Q=10, M=30, X=300, G=10, kdeg=3):
     return 1 + a @ H @ a - 2 * g @ a + ws.sum(), BSpline(t, a, kdeg), J
 
 
+def smooth_profile_problem(M, X=300, G=10, kdeg=5):
+    """min I[c] over degree-kdeg splines on M uniform intervals, c(0) = −2, ∫c = 0, c(1) = c'(1) = c''(1) = 0."""
+    from numpy.polynomial.legendre import leggauss
+    t = np.concatenate([[0.0] * kdeg, np.linspace(0, 1, M + 1), [1.0] * kdeg])
+    J = len(t) - kdeg - 1
+    gx, gw = leggauss(G)
+    rows, ws = [], []
+    for k in range(1, X):
+        for xi, wi in zip(k + (gx + 1) / 2, gw / 2):
+            u = np.clip(np.arange(1, k + 1) / xi, 0, 1 - 1e-15)
+            rows.append(np.asarray(BSpline.design_matrix(u, t, kdeg).sum(axis=0)).ravel())
+            ws.append(wi)
+    Wm, ws = np.array(rows), np.array(ws)
+
+    def ev(u, nu=0):
+        return np.array([BSpline(t, np.eye(J)[j], kdeg)(u, nu) for j in range(J)])
+
+    d0, d1 = ev(0.0, 1), ev(1.0, 1)
+    integ = np.array([(t[j + kdeg + 1] - t[j]) / (kdeg + 1) for j in range(J)])
+    H = (Wm * ws[:, None]).T @ Wm + (np.outer(d1, d1) / 720 + np.outer(d0, d0) / 144) / X
+    g = (Wm * ws[:, None]).sum(axis=0)
+    C = np.vstack([ev(0.0), integ, ev(1.0), ev(1.0, 1), ev(1.0, 2)])
+    rhs = np.array([-2.0, 0.0, 0.0, 0.0, 0.0])
+    K = np.block([[2 * H, C.T], [C, np.zeros((5, 5))]])
+    a = np.linalg.solve(K, np.concatenate([2 * g, rhs]))[:J]
+    return 1 + a @ H @ a - 2 * g @ a + ws.sum(), BSpline(t, a, kdeg)
+
+
+def finite_arithmetic(D0, kappa):
+    """min over e supported on d ≤ D0 of (T + κP²)/(12D), and the minimiser e (e(1) = 1)."""
+    d = np.arange(1, D0 + 1)
+    om = np.ones(D0 + 1)
+    comp = np.zeros(D0 + 1, bool)
+    for p in range(2, D0 + 1):
+        if not comp[p]:
+            comp[2 * p::p] = True
+            om[p::p] *= 1 - 1 / p ** 2
+    S = np.zeros((D0, D0))
+    for a in range(1, D0 + 1):
+        S[a - 1, a - 1::a] = a / d[a - 1::a]
+    T = S.T @ (om[1:][:, None] * S)
+    pv = 1.0 / d
+    lcm = np.outer(d, d) // np.gcd.outer(d, d)
+    B = (math.pi ** 2 / 6) / lcm.astype(float) ** 2
+    w, V = eigh(T + kappa * np.outer(pv, pv), B, subset_by_index=[0, 0])
+    return w[0] / 12, V[:, 0] / V[0, 0]
+
+
 def local_forms(p, V=10):
     """In the local factors F_v = F(p^v), v ≤ V: the forms of T_p and D_p, and the functional s_p(0)."""
     q, n = 1.0 / p, V + 1
@@ -461,6 +519,15 @@ def solve_mode(Ns):
         print(f"   optimal F at κ = {kappa:.4f}: Λ = {lam:.6f} (T = {T:.6f}, P² = {S2:.6f}, D = {D:.6f}); F(p) at p = 2, 3, 5,"
               " 7, 11, 13: " + " ".join(f"{Fs[p][1]:.4f}" for p in [2, 3, 5, 7, 11, 13]) + "; F(2^v), v = 2, 3, 4: "
               + " ".join(f"{v:.4f}" for v in Fs[2][2:5]) + f"; (1 − F(p))(p + 1) → {th:.3f}", flush=True)
+    print("The admissible class of the theorem (smooth c, finitely supported e):")
+    Is = None
+    for M in [48, 96, 192]:
+        Is, cs = smooth_profile_problem(M)
+        print(f"   quintic c on {M} intervals, c(1) = c'(1) = c''(1) = 0: I[c] = {Is:.6f}", flush=True)
+    for D0 in [250, 500, 1000, 2000]:
+        lam_f, ef = finite_arithmetic(D0, Is - 1)
+        print(f"   e supported on d ≤ {D0}: min (T + κP²)/12D = {lam_f:.6f} at κ = {Is - 1:.6f}; e(1..6) = "
+              + " ".join(f"{v:+.4f}" for v in ef[:6]), flush=True)
     if not Ns:
         return
     ps = primes_upto(200000).astype(float)
@@ -488,6 +555,22 @@ def solve_mode(Ns):
             print(f"   {a}: A + B/log N gives A = {coef[0]:.5f}; predicted limit {pred[j]:.5f}")
 
 
+def fence_class_mode(K):
+    import mpmath
+    mpmath.mp.dps = 15
+    g = Phi_inv(np.arange(1, K + 1) - 0.5)
+    z2 = np.array([float(abs(mpmath.zeta(mpmath.mpc(0.5, t))) ** 2) for t in g])
+    wz = 2 * z2 / (0.25 + g ** 2)
+    print(f"{K} fence points, to height {g[-1]:.0f}; lower bounds for c(D0) = min_e m(e)/D(e):")
+    for D0 in [1, 2, 4, 8, 16, 32, 64]:
+        d = np.arange(1, D0 + 1)
+        E = np.exp(1j * np.outer(g, np.log(d))) * d ** -0.5
+        Mf = ((E.conj() * wz[:, None]).T @ E).real
+        lcm = np.outer(d, d) // np.gcd.outer(d, d)
+        B = (math.pi ** 2 / 6) / lcm.astype(float) ** 2
+        print(f"   D0 = {D0:3d}: c(D0) >= {eigh(Mf, B, eigvals_only=True, subset_by_index=[0, 0])[0]:.5f}", flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("N", nargs="*", type=int)
@@ -496,6 +579,7 @@ def main():
     ap.add_argument("--ground", action="store_true", help="the minimiser against w(n/N)/ψ(n)")
     ap.add_argument("--stair", action="store_true", help="the best staircase vector at large N")
     ap.add_argument("--solve", action="store_true", help="the variational problem for c and the arithmetic factor")
+    ap.add_argument("--fence-class", action="store_true", help="the fence margin on the arithmetic class")
     a = ap.parse_args()
     if a.silence:
         if not a.zeros_file:
@@ -507,6 +591,8 @@ def main():
         stair_big(a.N or [16000, 30000])
     elif a.solve:
         solve_mode(a.N)
+    elif a.fence_class:
+        fence_class_mode(a.N[0] if a.N else 3000)
     else:
         models_mode(a.N or [100, 200, 400, 800, 1600])
 

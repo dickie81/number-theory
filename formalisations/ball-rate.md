@@ -19,9 +19,13 @@ Landau's slack `G(c)`, `BallSharp.rate_slack` reduces the missing `log N` of the
 `N ≥ 3` (`BallGap.rate_gap`): this route recovers `√log N` of the missing `log N`, which by the numerics of that
 section is all it can give. The section "Packing", numerics only, compares the zeros with point sets of the same
 density and no arithmetic, which give `λ_N ≍ N^{−1/2}`, and finds the shape of the minimiser: `w(n/N)/ψ(n)`, `ψ`
-Dedekind's function, with `w(u) = Σ_{k ≤ 1/u} c(ku)` for one fixed function `c`. The last section solves the
-variational problem for `c` and derives the constant at leading order, heuristically:
+Dedekind's function, with `w(u) = Σ_{k ≤ 1/u} c(ku)` for one fixed function `c`. The section "The variational
+problem, solved" derives the constant at leading order, heuristically:
 `λ_N·N/log N → (1/12)(T + κP²)/D = 0.0429`, with `κ = 0.096` from the profile and `T`, `P`, `D` Euler products.
+The section after it proves the matching upper bound on paper, for an explicit vector:
+`λ_N ≤ (0.04294 + o(1))·log N/N` under RH. The last section proves, on that class of vectors, the inverse
+theorem (quiet at the zeros means carrying `ζ`, and costs `≥ 0.0400·log N/N`) and the absence of any sag at the
+picket fence.
 
 ## The three statements, and what can be proved
 
@@ -1093,3 +1097,201 @@ quadrature is Gauss–Legendre on each `[k, k + 1]` up to `x = 300`. Beyond that
   continuous, and the minimum is positive.
 - **What is not proved.** The reduction is heuristic: the dual-sum approximation and the diagonal mean value over the
   zeros. It gives the limit of the quotient for vectors of the form above. A lower bound for every vector needs more.
+
+## The upper bound with the sharp constant: `λ_N ≤ (0.04294 + o(1))·log N/N` under RH (a proof on paper)
+
+The previous section's reduction is heuristic for general vectors, but for one explicit vector it can be carried out
+rigorously, and that vector gives an upper bound. The constant is `0.04294`, against the `67` of `BallUpperEta`, and
+the infimum over the admissible class is `Λ* ≈ 0.0429`. The proof uses one Lean theorem, `BallLow.shell_bound`, and
+standard analytic inputs: Mellin inversion, the functional equation with Stirling's formula, the convexity bound,
+and Gonek's uniform version of Landau's formula. It is not formalised.
+
+**Theorem.** Assume RH. Let:
+- `e` be supported on `d ≤ D₀`, and `F = 1 ∗ e`, `P = Σ_d e(d)/d`, `S(a) = Σ_g e(ag)/g`;
+- `T = Σ_a Π_{p | a}(1 − p⁻²)·S(a)²` and `D = Σ_n F(n)²/n² = ζ(2)Σ_{d,d'} e(d)e(d')/lcm(d, d')²`;
+- `c ∈ C²[0, 1]`, with `c''` of bounded variation, `c(0) = −2`, `∫_0^1 c = 0`, `c(1) = c'(1) = c''(1) = 0`;
+- `I[c] = ∫_0^∞ (1 − W(x))² dx`, with `W(x) = Σ_{1 ≤ k ≤ x} c(k/x)`.
+
+Then `lim sup_{N→∞} λ_N·N/log N ≤ Λ(e, c) := (T + (I[c] − 1)·P²)/(12D)`.
+
+**The admissible optimum** (`packing.py --solve`).
+- `c` is a quintic spline on 192 intervals with `I[c] = 1.097632`.
+- The best `e` on `d ≤ 2000` is the bottom of a generalized eigenproblem.
+- Together they give `Λ = 0.042937`. Both minimisations converge to `Λ* ≈ 0.0429` as the classes grow:
+  - `I`: `1.1112`, `1.1042`, `1.0996`, `1.0976` on 24 to 192 intervals;
+  - `Λ`: `0.04308`, `0.04299`, `0.04296`, `0.04294` for `D₀ = 100` to `1000`.
+
+**The test vector.**
+- **Two profiles.** For `δ ∈ (0, ½)` take `η ∈ C^∞` with `η = 1` on `[0, 1 − δ]` and `η = 0` on `[1, ∞)`. Take
+  `w(u) = Σ_{k ≤ 1/u} c(ku)` for `u ≤ 1` and `w = 0` beyond.
+- **The vector.** `x_n = ((F(n) − P)·η(n/N) + P·w(n/N))/n`.
+- **The claim.** `Q_N(x)/Σx_n² = (Λ_δ + o(1))·log N/N`, with `Λ_δ = (T(1 + J) + P²(I[c] − 1 − J))/(12D)` and
+  `J = ∫_{1−δ}^1 (1 − η(y))² dy/y² ≤ 2δ`. Letting `δ → 0` gives the theorem.
+
+**Step 0: the sum over zeros, and the norm.**
+- **The sum over zeros.** Under RH, `Q_N(x) = Σ_ρ |V(ρ)|²/(¼ + γ²)` with `V(ρ) = Σ_n x_n n^ρ` (`BallRate.hasSum_form`).
+  For real `x`, `V(ρ̄)` is the conjugate of `V(ρ)`, so it is enough to take `γ > 0`.
+- **The norm.** `w(u) = 1 + O(u)` by Euler–Maclaurin, using `−c(0)/2 = 1` and `∫c = 0`. So `|x_n| ≪ 1/n`, and
+  `x_n → F(n)/n` for each fixed `n`. Hence `Σ x_n² → D`.
+
+**Step 1: every residue vanishes.**
+- **Mellin form.** For a profile `E` put `S_E(ρ, X) = Σ_m E(m/X)m^{ρ−1} = (1/2πi)∫_{(2)} ζ(1 − ρ + z)Ê(z)X^z dz`. Then
+  `V(ρ) = Σ_d e(d)d^{ρ−1}S_η(ρ, N/d) − P·S_η(ρ, N) + P·S_w(ρ, N)`.
+- **The transforms.**
+  - `ŵ(z) = ζ(z)ĉ(z)`.
+  - `ĉ` has a simple pole at `0` with residue `c(0)`. Three integrations by parts give
+    `|ĉ(−σ + iy)| ≪ (1 + |y|)^{−3}` for `0 < σ < 1`.
+  - `η̂` has a simple pole at `0` with residue `1`, and decays faster than every power.
+- **Move every contour to `Re z = −σ`, `½ < σ < 1`.** Three residues appear, each zero at a zero `ρ`:
+  - at `z = ρ`: `N^ρ·(η̂(ρ)(Σ_d e(d)/d − P) + P·ζ(ρ)ĉ(ρ)) = 0`;
+  - at `z = 0`: `ζ(1 − ρ)·(Σ_d e(d)d^{ρ−1} − P + P·ζ(0)c(0)) = 0`;
+  - at `z = 1`: `P·N·ĉ(1)·ζ(2 − ρ) = 0`.
+- **What is left.** `V(ρ)` is the sum of the integrals on `Re z = −σ`.
+
+**Step 2: the low zeros, `γ ≤ √N`.**
+- **The bound.** On `Re z = −σ`:
+  - `|ζ(1 − ρ + z)| ≪ (2 + |y − γ|)^σ log(2 + |y − γ|)`, by the functional equation and convexity;
+  - `|ζ(z)| ≪ (2 + |y|)^{½+σ}`;
+  - `|Σ_d e(d)d^{ρ−1−z}| ≤ Σ_d |e(d)|d^{σ−½}`.
+  So `|V(ρ)| ≪ N^{−σ}(2 + γ)^σ log(2 + γ)`.
+- **The sum.** `σ = 0.7` keeps the integral over `y` convergent. The zeros with `γ ≤ √N` then give
+  `≪ N^{−6/5}log³N`.
+
+**Step 3: the dual sum, for `√N ≤ γ ≤ N/ε`.**
+- **Expand `ζ(ρ − z)`.** On `Re z = −σ`, `ζ(1 − ρ + z) = χ(1 − ρ + z)ζ(ρ − z)`, and `ζ(ρ − z) = Σ_k k^{z−ρ}`
+  converges absolutely.
+- **Stirling.** For `|Im z| ≤ √γ`, `χ(1 − ρ + z) = χ(1 − ρ)(γ/2π)^{−z}(1 + O((1 + |z|²)/γ))`. Beyond that,
+  `|χ(1 − ρ + z)| ≪ (2 + |Im z − γ|)^σ`.
+- **Mellin inversion.** The pole at `0` is crossed, and it turns the `k`-th term into
+  `−χ(1 − ρ)k^{−ρ}φ_E(γ/(2πkX))`, where `φ_E = E(0) − E` and `E = 0` beyond `1`.
+- **The error.** It is `≪ k^{−½}(γ/kX)^σ·γ^{−2/5}` over `k`. Summed over `k` and over `d ≤ D₀`, with `X ≥ N/D₀`:
+  `V(ρ) = −χ(1 − ρ)·D(γ) + O_{ε, D₀}(N^{−1/5})`. Here `τ = γ/2πN` and
+  `D(γ) = Σ_d e(d)d^{−½+iγ}Σ_k k^{−½−iγ}φ_η(τd/k) − P·Σ_k k^{−½−iγ}(φ_η − φ_w)(τ/k)`.
+- **Absolute convergence.** `φ_η(y) = 0` for `y ≤ 1 − δ`. And `|φ_w(y)| ≪ y`, since `w(u) = 1 + O(u)`. So the sums over
+  `k` converge absolutely, uniformly for `τ ≤ 1/ε`.
+
+**Step 4: the mean square over the zeros.**
+- **Ratios.** Group `D(γ) = Σ_{(a,b)=1} A(a/b; τ)(a/b)^{iγ}`, with `A(a/b; τ) = (ab)^{−½}H_a(τa/b)`. Here
+  `H_1 = P·φ_w`, and `H_a = S(a)φ_η` for `a ≥ 2` (zero for `a > D₀`). Put `Φ(τ) = Σ_{(a,b)=1} A(a/b; τ)²`.
+- **The claim.** Over the zeros with `√N ≤ γ ≤ N/ε`,
+  `Σ|D(γ)|²/(¼ + γ²) = (log N/N)·(1/4π²)·∫_{1/2π√N}^{1/2πε} Φ(τ)τ^{−2}dτ + o(log N/N)`.
+- **Proof, in four steps.**
+  - **Truncate.** Keep `b ≤ K = N^{1/40}`. The rest is `≪_{ε,D₀} K^{−½}` pointwise.
+  - **Freeze the coefficients.** Cut the range into intervals of length `H = N^{3/4}` and freeze `τ` in `A` on each:
+    `|∂_τ A| ≪ D₀`, so the error is `≪ D₀H/N`.
+  - **Apply Gonek's uniform Landau formula** to each ratio `x = r/r' ≠ 1`, whose numerator and denominator are
+    `≤ D₀K`. It gives `Σ_{t<γ≤t+H} x^{iγ} = −(H/2π)Λ(x)x^{−½} + O((D₀K)²log²N)`, with `Λ(x) = 0` unless `x^{±1}` is
+    a prime power. (S. M. Gonek, *An explicit formula of Landau and its applications to the theory of the
+    zeta-function*, Contemp. Math. 143 (1993).)
+  - **Collect the terms.**
+    - The diagonal gives `(H/2π)log(t/2π)Φ`.
+    - The Landau terms are `O(Φ·(1 + log(1/ε))/log N)` relative to it: for fixed `r`, only `q ≤ D₀K` occur, and
+      `Σ_q Λ(q)/q·φ(τ/qk)` stays bounded.
+    - Weighted by `1/t² ≤ 1/N`, the error terms add up to `≪ D₀⁴ N^{1/10 − 5/4}log²N = o(log N/N)`.
+- **The integral.** Summing `(H/2π)log(t/2π)Φ/t²` over the intervals gives the integral, since `log(t/2π) = log N +
+  log τ`.
+
+**Step 5: the high zeros, `γ > N/ε`.**
+- **The shell bound.** `BallLow.shell_bound` on the shells `2^k·8N < |γ| ≤ 2^{k+1}·8N` with `2^k ≥ 1/8ε` gives
+  `≪ ε·log(1/ε)·(S2 + G)/N`, plus a term `≪ ε²·log N/N`. Here `S2 = Σ x_n²n` and `G` is Landau's slack at
+  `c_n = x_n√n`.
+- **Both are `≪ log N`.**
+  - `S2 ≪ Σ 1/n`.
+  - The vertex part of `G` has bounded weights `κ_j`, by Mertens.
+  - Its edges `(Λ(n)/n)(f(j) − f(jn))²/j`, with `f(m) = m·x_m`, are of three kinds:
+    - the edges of `F` occur only at primes `p ≤ D₀`;
+    - those of `η` only for `jn ∈ ((1 − δ)N, N]`;
+    - those of `w` are `≪ (jn/N)²`.
+
+    Each kind sums to `O(log N)`.
+
+**Step 6: assembly.**
+- **The `τ`-integral factors.** Substitute `y = τa/b`:
+  `∫_0^∞ Φ(τ)τ^{−2}dτ = Σ_{(a,b)=1} b^{−2}∫_0^∞ H_a(y)²y^{−2}dy = ζ(2)Σ_a Π_{p | a}(1 − p⁻²)∫H_a²/y²`.
+- **The two integrals.** `∫H_1²/y² = P²·I[c]`, because `φ_w = 1 − w` on `[0, 1]` and `1` beyond. For `a ≥ 2`,
+  `∫H_a²/y² = S(a)²(1 + J)`.
+- **The small `τ`.** Below `τ = (1 − δ)/D₀` only `a = 1` survives, and `Φ(τ) ≪ τ²`. So `∫_0^ε Φτ^{−2} ≪ ε`.
+- **Collect.** Steps 2 to 5, with `Σ x_n² → D` and `ζ(2)/2π² = 1/12`, give
+  `Q_N(x)/Σ x_n² = (Λ_δ + O(ε log(1/ε)) + o(1))·log N/N`. Let `N → ∞`, then `ε → 0`, then `δ → 0`. ∎
+
+The proof gives an asymptotic, not only an upper bound: the quotient of this vector is `(Λ + o(1))·log N/N`. For
+the fixed vectors of the previous section the computed quotients approach their predicted limits from above, as an
+`O(1/log N)` correction would.
+
+**What it says about `λ_N`.**
+- **The constant.** If the computed `λ_N` keeps falling like `0.0316/log N`, its limit is at most `0.04294`. The fit
+  `a·log N + b` over `N ≤ 3·10⁴` gives `0.0434`. A curvature term brings that to `0.0428`, within the theorem.
+- **Against `BallUpperEta`.** That theorem has `67(1 + log N)/N`. Its alternating vector meets the low zeros through
+  `η = (1 − 2^{1−s})ζ`, while the vector here meets every residue exactly.
+
+## The inverse theorem and the picket fence, on the arithmetic class (proofs on paper)
+
+The proof of the previous section works for the whole class of vectors the earlier sections found, and on that class
+it settles the other two open steps.
+
+**The class.** `n·x_n = Σ_{d | n, d ≤ D₀} E_d(n/N)`, with `D₀` fixed, and fixed profiles `E_d` on `[0, 1]`. Each `E_d`
+is `C²`, with `E_d''` of bounded variation and `E_d(1) = E_d'(1) = E_d''(1) = 0`. Write `e(d) = E_d(0)`, `F = 1 ∗ e`,
+`G = Σ_d E_d/d` and `M_e(s) = Σ_d e(d)d^{−s}`.
+
+The vectors of the theorem above belong to it. So does the minimiser of `Q_N`, to within `1.2`–`1.5%` in the Rayleigh
+quotient for `N ≤ 3·10⁴`. Since `λ₂ ≈ 4λ₁`, that means within about `1.6%` in the norm of `Q_N`.
+
+**Theorem A (the inverse theorem on the class; RH).** Let `x` be in the class, with `e ≠ 0`.
+1. **Loud.** If `Ĝ(ρ) ≠ 0` at some zero `ρ`, then `Q_N(x)/Σx_n² ≥ (|Ĝ(ρ)|²/((¼ + γ²)D) + o(1))·N`.
+2. **Quiet.** If `Ĝ` vanishes at every zero, then `Q_N(x)/Σx_n² = (Λ(E) + o(1))·log N/N`. Here
+   `Λ(E) = (1/12D)·Σ_a Π_{p | a}(1 − p⁻²)∫_0^∞ H_a(y)² dy/y²`, with `H_a = Σ_g (E_{ag}(0) − E_{ag}(·))/g`, and
+   `Λ(E) ≥ K_min = 0.040021`.
+3. **The spread.** In both cases `A = Σx_n²n/Σx_n² = (C_F/D + o(1))·log N`, where `C_F > 0` is the mean of `F²`.
+
+So a vector of the class that is quiet at the zeros, `Q_N(x) = O(log N/N)·Σx_n²`, carries `ζ`: `Ĝ` vanishes at every
+zero. Its spread is `≍ log N`, and its quotient is at least `(0.0400 + o(1))·log N/N`.
+
+*Proof.*
+1. **The single zero.** The contour shift of Step 1 above gives
+   `V(ρ) = ζ(1 − ρ)M_e(1 − ρ) + N^ρĜ(ρ) + O(N^{−σ}(2 + |γ|)^σ log)`. The first term vanishes at a zero. Then
+   `Q_N(x) ≥ |V(ρ)|²/(¼ + γ²)`, and `Σx_n² → D`.
+2. **The asymptotic.** Steps 1 to 5 above use only that every residue vanishes and that the profiles are smooth.
+   Step 6 then gives the stated asymptotic, with the coefficients `H_a` of the dual sum.
+   - **First lower bound.** On `(1, ∞)` every `E` vanishes, so `H_a = S(a)`. Hence
+     `Σ_a ω_a ∫H_a²/y² ≥ Σ_a ω_a S(a)² = T`.
+   - **Second lower bound.** `T` and `D` are tensor products, over the primes, of the local forms `T_p` and `D_p` in
+     the local factors. So the smallest value of `T/D` is the product of the local minima `μ_p`, each below
+     `1 − p⁻²`. That gives `T/(12D) ≥ (1/12)Π_p μ_p = K_min`, the value of `--solve` at `κ = 0`.
+3. **The spread.** `f(n) = Σ_{d | n}E_d(n/N) = F(n) + O(n/N)`, and `F` is periodic modulo `lcm(1, …, D₀)`. ∎
+
+**Theorem B (the picket fence on the class; no hypothesis).** Let `Φ(γ_k) = k − ½` be the fence, and
+`Q^pf_N(x) = Σ_k 2|V_x(½ + iγ_k)|²/(¼ + γ_k²)`. For `x` in the class with `e ≠ 0`:
+- `lim inf_{N→∞} Q^pf_N(x)/Σx_n² ≥ c(D₀)`, with `c(D₀) = min_e m(e)/D(e)` and
+  `m(e) = Σ_k 2|ζ(½ + iγ_k)M_e(½ − iγ_k)|²/(¼ + γ_k²)`;
+- if `Ĝ(½ + iγ_k) ≠ 0` for some `k`, then `Q^pf_N(x)/Σx_n²` grows like `N`.
+
+  | `D₀` | `1` | `2` | `4` | `8` | `16` | `32` | `64` |
+  |---|---|---|---|---|---|---|---|
+  | `c(D₀) ≥` | `0.0350` | `0.0348` | `0.0306` | `0.0261` | `0.0242` | `0.0207` | `0.0138` |
+
+  These are lower bounds from the first 3000 fence points, to height `3533`; every term of `m` is `≥ 0`.
+
+*Proof.* At a fixed fence point the same contour shift gives
+`V(½ + iγ_k) = ζ(½ − iγ_k)M_e(½ − iγ_k) + N^{½+iγ_k}Ĝ(½ + iγ_k) + O(N^{−σ})`.
+- **The residues no longer vanish.** `ζ(½ − iγ_k) ≠ 0` at a point of the fence that is not a zero.
+- **A boundary term that survives** gives `Q^pf ≫ N`.
+- **Otherwise** `V(½ + iγ_k) → ζ(½ − iγ_k)M_e(½ − iγ_k)` for every `k`, and Fatou's lemma bounds `lim inf Q^pf` below
+  by `m(e)`. Again `Σx_n² → D(e)`.
+- **The margin.** `c(D₀)` is the bottom of a positive definite pencil of size `D₀`; the table gives its lower bounds. ∎
+
+**What the two theorems settle.**
+- **The mechanism needs arithmetic.** On the class, the zeta form sags like `log N/N`: Theorem A, and the theorem
+  above. The picket fence has a margin that does not depend on `N`: Theorem B. The sag is exactly the bulk residue
+  `ζ(1 − ρ)M_e(1 − ρ)`, which vanishes at the zeros of `ζ` and nowhere else. Its partner, the boundary residue
+  `N^ρĜ(ρ)`, vanishes at every zero only when `Ĝ` carries the factor `ζ`.
+- **The inverse theorem holds on the class.** There, being quiet at the zeros means carrying `ζ`, and carrying `ζ`
+  costs spread `≍ log N` and quotient `≥ 0.0400·log N/N`.
+
+**What stays open.**
+- **For every vector, `λ_N ≫ log N/N`.** It would follow from the claim that minimisers of `Q_N` stay within
+  `o(log N/N)`, in the norm of `Q_N`, of the class with some fixed `D₀`. The class reaches within `1.6%` at
+  `N ≤ 3·10⁴`, and its profile and local factors match the minimiser's.
+- **For every vector, `λ^pf_N ≫ N^{−1/2}`.** The fence's own minimiser is not in the class: it is `δ₁` plus a tail
+  that cancels it by aliasing up to height `≈ 3√N`. A proof needs a sampling inequality at the fence points in
+  `[C√N, N]` with an explicit constant. Below the Nyquist height `2πN` the low frequencies `n ≤ 2πN/T` alias onto
+  the dense band, so the count of degrees of freedom has to be made quantitative, in the manner of Landau–Widom.
