@@ -1386,11 +1386,12 @@ Hence `‖R‖² ≤ C₁A·H` and `HΣ_{n≤K} b_n²/n² ≤ 2(1 + √(C₁A))�
 
 **What the proof loses.** Lemma C has `x_n²/n` where `x_n²` would give `N^{−1/2}`. It charges the partners of `x_n`
 only what they pay where they are free, and those partners are free `n` times higher. The free cost `n²log N/N` of
-`x_n` itself, from Lemma F, takes over at `n ≍ N^{1/6}`; that is the exponent `−2/3`. Whether the factor `1/n` is
-real decides between Theorem C's exponent `−2/3` and the exponent `−1/2` of the fence's minimiser at `N ≤ 6400`.
+`x_n` itself, from Lemma F, takes over at `n ≍ N^{1/6}`; that is the exponent `−2/3`. How fast the cost of
+cancelling `x_n` really falls with `n` decides the exponent. A fall like `1/n` gives Theorem C's `−2/3`; no fall gives
+the `−1/2` of the fence's minimiser at `N ≤ 12800`.
 
-**The constrained minima** (`--fence-cap`). Put `q_n = min{Q^pf_N(x) : x_n = 1} = 1/(G⁻¹)_{nn}`, for `G` the fence's
-Gram matrix. `q_n` splits into three parts:
+**The constrained minima** (`--fence-cap`, and `--fence-cap 12800` for the last rows). Put
+`q_n = min{Q^pf_N(x) : x_n = 1} = 1/(G⁻¹)_{nn}`, for `G` the fence's Gram matrix. `q_n` splits into three parts:
 - **free:** `n·W(2πM_n)`, the energy of `x_n = 1` where it has no alias. This is Lemma F's charge without the margin
   `16A`.
 - **below:** the cost paid below that height. Divided by `log₂(√N/n)`, the number of dyadic windows between `2π√N`
@@ -1402,10 +1403,12 @@ Gram matrix. `q_n` splits into three parts:
 | `q_n√N`, `N = 400` | `0.119` | `0.199` | `0.450` | `0.541` | `0.641` | `1.053` | `2.903` | `7.956` |
 | `q_n√N`, `N = 1600` | `0.124` | `0.195` | `0.476` | `0.526` | `0.585` | `0.830` | `2.056` | `6.497` |
 | `q_n√N`, `N = 6400` | `0.132` | `0.198` | `0.510` | `0.534` | `0.559` | `0.684` | `1.417` | `4.286` |
-| free·`√N`, `N = 6400` | `0.006` | `0.023` | `0.049` | `0.085` | `0.129` | `0.311` | `1.133` | `4.084` |
-| below·`√N`, `N = 6400` | `0.117` | `0.148` | `0.409` | `0.360` | `0.309` | `0.189` | `0.040` | `0.027` |
+| `q_n√N`, `N = 12800` | `0.137` | `0.202` | `0.531` | `0.545` | `0.558` | `0.638` | `1.182` | `3.428` |
+| free·`√N`, `N = 12800` | `0.005` | `0.018` | `0.038` | `0.065` | `0.099` | `0.240` | `0.881` | `3.206` |
+| below·`√N`, `N = 12800` | `0.125` | `0.162` | `0.449` | `0.405` | `0.357` | `0.238` | `0.077` | `0.017` |
 | per window, `N = 6400` | `0.019` | `0.028` | `0.086` | `0.083` | `0.077` | `0.057` | `0.017` | `0.020` |
-| tail amplitude `A_n`, `N = 6400` | `0.51` | `0.77` | `1.28` | `1.54` | `1.67` | `1.84` | `1.91` | `1.90` |
+| per window, `N = 12800` | `0.018` | `0.028` | `0.086` | `0.084` | `0.079` | `0.062` | `0.027` | `0.010` |
+| tail amplitude `A_n`, `N = 12800` | `0.53` | `0.78` | `1.29` | `1.55` | `1.68` | `1.85` | `1.93` | `1.92` |
 
 - **The shape.** For `m ≥ 2√N` the constrained minimiser has `m·x_m ≈ A_n cos(2πm/n)`: the partners carry the phase
   `e^{2πim/n}` of the stationary term, in its real form. Full cancellation needs `A_n = 1` for `n ≤ 2`, where that
@@ -1415,18 +1418,23 @@ Gram matrix. `q_n` splits into three parts:
 - **The excess** is about the partners' mass `(A_n²/2)log(√N/n)` times `W(2πN/n)`. At `N = 6400` that gives `0.075`,
   `0.151` and `0.207` for `n = 4, 8, 16`, against `0.089`, `0.183` and `0.243` measured. Its ratio to the free part
   falls like `log N/n`.
-- **The cost per window** is `0.019` for `n = 1` and about `0.027` for `n = 2` at all three `N`. For `3 ≤ n ≤ 16` it is
-  between `0.26/n` and `0.46/n`, falling with `n` as Lemma C says it may. For fixed `n = 4` or `8` it still rises
-  slowly with `N`.
+- **The cost per window** is `0.018`–`0.019` for `n = 1` and about `0.028` for `n = 2`, at every `N`. At `N = 12800`
+  it falls from `0.086` at `n = 3` to `0.047` at `n = 11`, about as `n^{−0.45}` between the two. That is slower than
+  the `1/n` of Lemma C. For fixed `n ≥ 8` it is still rising with `N`, so the slope in `n` has not settled.
 
-**Two scenarios.** The range `N ≤ 6400` cannot separate them, since `N^{1/6} ≤ 4.3` there.
-- **The cost per window falls like `1/n` for every `n`.** Then a vector centred at `n ≈ 1.3N^{1/6}` costs about
-  `0.2·N^{−2/3}log N`. The model `q_n√N = free + (c/n)log₂(√N/n) + excess` overtakes `q_1√N ≈ 0.0137 log N + 0.015`
-  between `N = 10⁷` and `10⁸` for every `c` in the measured range `[0.26, 0.46]`. After that the optimal `n` grows like
-  `N^{1/6}`. Then `λ^pf_N ≍ N^{−2/3}log N`, Theorem C is sharp up to the constant, `λ^pf_N ≫ N^{−1/2}` fails, and the
-  minimiser at `N ≤ 6400` is a pre-asymptotic phase.
-- **The cost per window has a floor** above `0.019` as `n` grows. Then the vector centred at `1` stays optimal, with
-  `λ^pf_N√N ≈ 0.0137 log N`, and the exponent `−1/2` holds with a logarithm to spare.
+**What the numbers allow.** Suppose the cost per window behaves like `C·n^{−α}` for large `n`. The free cost
+`n²log N/N` balances it at the centre `n ≍ N^{1/(4+2α)}`, and then `λ^pf_N ≍ N^{−1/2−α/(4+2α)}log N`.
+- **`α = 1`**, the dependence on `n` in Lemma C, gives `−2/3`. Theorem C would then be sharp up to the constant.
+- **`α ≈ 0.45`**, the slope between `n = 3` and `11` at `N = 12800`, with `C ≈ 0.14`, gives `−0.59`. A model with this
+  law, the free part, the excess as modelled above, and `n = 1`'s own cost per window reproduces `q_1` and `q_5` at
+  `N ≈ 10⁴` to within `5%`. In that model the vector centred at `1` loses, around `N ≈ 10¹⁰`, to one centred near
+  `n ≈ 80`.
+- **A floor, `α = 0`,** keeps the vector centred at `1` optimal. Then `λ^pf_N√N` rises like `0.013·log N`, and the
+  exponent `−1/2` holds with a logarithm to spare.
+
+So `λ^pf_N ≫ N^{−2/3}log N` is proved (Theorem C), and up to `N = 12800` the fence behaves like `N^{−1/2}`:
+`λ^pf_N√N = 0.117, 0.123, 0.132, 0.136` at `N = 400, 1600, 6400, 12800`. The constrained minima allow any exponent
+between the two. The range `N ≤ 12800` cannot say which end, if either, is the limit.
 
 **What the three theorems settle.**
 - **The mechanism needs arithmetic.** On the class, the zeta form sags like `log N/N`: Theorem A, and the theorem
@@ -1447,8 +1455,14 @@ Gram matrix. `q_n` splits into three parts:
     form couples every `m` to its multiples and divisors at every height.
   - So nothing plays the part of Lemma F except the slack bound `BallSharp.rate_slack`, and its gap is `√log N`
     (`BallGap`).
-- **For the fence, the exponent.** Theorem C gives `−2/3` for every vector, and the minimiser at `N ≤ 6400` gives
-  `−1/2`. Which one survives as `N → ∞` is the question of the two scenarios above.
+  - By `rate_slack` only the vectors with `A + B = o(log N)` matter. They sit near the bottom of the spectrum of
+    `A + B`: mostly `δ₁`, with a tail that is nearly harmonic on the divisibility network. Along the frontier of the
+    section "The low zeros" they get louder with `N`, not quieter.
+  - The obstruction is the tail. A vector with `A ≤ log N` has at most `(log N/M)Σx_n²` of its mass beyond `M`, but
+    up to `log N·Σx_n²` of `Σb_n²` there. At the zeros below `N` that is enough to cancel a head of length `M` that the
+    zeros up to `e⁸M` sample (`BallSharp`). Ruling the cancellation out is the inverse theorem again.
+- **For the fence, the exponent.** Theorem C gives `−2/3` for every vector, the minimisers at `N ≤ 12800` give `−1/2`,
+  and the constrained minima allow anything in between (the paragraph above).
   - A proof of `−1/2` would have to charge the partners of `x_n` for more than their free energy.
   - A proof that `−1/2` fails needs an explicit vector centred at `n ≍ N^{1/6}` that stays quiet below `2πN/n`,
     including at the points below `2π√N`.
