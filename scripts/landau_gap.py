@@ -31,6 +31,13 @@ prediction; the ratio to the proved √log N/10 (BallGap.edge_law); and two chec
 weights K = 2 log N, η = √log N/2, d(m) = √(log²m + 2K) − log m − 2√log N/m: the smallest d(m) over 2 ≤ m ≤ N, which must
 be ≥ 0, and the smallest slack of the vertex inequality 5 + κ_j + Σ_{n ≤ N/j}(Λ(n)/n)r(jn) − η/j − d(j)[j ≥ 2] ≥ 0,
 r(m) = d(m)/(log m + d(m)).
+
+    python3 scripts/landau_gap.py --silent --zeros-file FILE [N ...]   # default N = 1000 2000; dense, so N ≤ 3000
+
+What silence at the low zeros costs in A + B (the note's last section, "What stays open"): m(T), the smallest
+eigenvalue of K on the subspace of x with V_x(ρ) = 0 at every zero 0 < γ ≤ T, for T up to about πN/log N, where the
+2·#{γ ≤ T} real constraints approach N. FILE has one ordinate per line, e.g. the first 30000 zeros from
+scripts/zeta_zeros_rs.py.
 """
 import argparse
 import math
@@ -161,13 +168,48 @@ def vertex_check(N, c0=math.log(4) + 1):
     return d[2:].min(), slack.min()
 
 
+def silent_cost(N, zeros, c0=math.log(4) + 1):
+    """m(T) = min of A + B over the x with V_x(ρ) = 0 at every zero 0 < γ ≤ T: see the docstring."""
+    L = math.log(N)
+    n = np.arange(1, N + 1, dtype=float)
+    s = np.sqrt(n)
+    K = s[:, None] * ((L + c0 + 1) * np.eye(N) - landau_matrix(N).toarray()) * s[None, :]
+    out = [(0, 0, np.linalg.eigvalsh(K)[0])]
+    tmax = math.pi * N / L
+    for T in [15, 22, 33, 50, 75, 110, 170, 250, 380, 560, 840, 1260]:
+        if T >= 0.95 * tmax:
+            break
+        g = zeros[zeros <= T]
+        C = np.vstack([np.cos(np.outer(g, np.log(n))), np.sin(np.outer(g, np.log(n)))]) * s
+        _, sv, vt = np.linalg.svd(C, full_matrices=True)
+        r = int(np.sum(sv > sv[0] * 1e-10))
+        B = vt[r:].T
+        out.append((T, len(g), np.linalg.eigvalsh(B.T @ K @ B)[0]))
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("N", nargs="*", type=int)
     ap.add_argument("--c0", nargs="*", type=float, default=[0.0, math.log(4) + 1])
     ap.add_argument("--spread", action="store_true", help="the vectors that BallSharp.rate_slack leaves")
     ap.add_argument("--gap", action="store_true", help="the edge law of BallGap, and checks of its proof")
+    ap.add_argument("--silent", action="store_true", help="what silence at the low zeros costs in A + B")
+    ap.add_argument("--zeros-file", default=None, help="ordinates of the zeros, one per line (for --silent)")
     args = ap.parse_args()
+    if args.silent:
+        if not args.zeros_file:
+            ap.error("--silent needs --zeros-file")
+        zeros = np.asarray(np.loadtxt(args.zeros_file), float).ravel()
+        for N in args.N or [1000, 2000]:
+            L = math.log(N)
+            rows = silent_cost(N, zeros)
+            print(f"N = {N}: min(A + B) = {rows[0][2]:.3f} = {rows[0][2] / math.sqrt(L):.2f}·√log N; "
+                  f"m(T) at zeros up to T:")
+            for T, k, m in rows[1:]:
+                print(f"   T = {T:5d} ({k:4d} zeros): m(T) = {m:7.3f} = {m / math.sqrt(L):.2f}·√log N "
+                      f"= {m / L:.3f}·log N", flush=True)
+        return
     if args.gap:
         c0 = math.log(4) + 1
         print(f"{'N':>9} {'min(A+B)/√logN':>15} {'/√(2(c0+γ+1)logN)':>19} {'/(√logN/10)':>12} "
