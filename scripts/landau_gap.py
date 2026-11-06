@@ -32,12 +32,31 @@ weights K = 2 log N, η = √log N/2, d(m) = √(log²m + 2K) − log m − 2√
 be ≥ 0, and the smallest slack of the vertex inequality 5 + κ_j + Σ_{n ≤ N/j}(Λ(n)/n)r(jn) − η/j − d(j)[j ≥ 2] ≥ 0,
 r(m) = d(m)/(log m + d(m)).
 
-    python3 scripts/landau_gap.py --silent --zeros-file FILE [N ...]   # default N = 1000 2000; dense, so N ≤ 3000
+    python3 scripts/landau_gap.py --silent --zeros-file FILE [--fence] [--tmax T] [N ...]   # default N = 1000 2000
 
-What silence at the low zeros costs in A + B (the note's last section, "What stays open"): m(T), the smallest
-eigenvalue of K on the subspace of x with V_x(ρ) = 0 at every zero 0 < γ ≤ T, for T up to about πN/log N, where the
-2·#{γ ≤ T} real constraints approach N. FILE has one ordinate per line, e.g. the first 30000 zeros from
-scripts/zeta_zeros_rs.py.
+What silence costs in A + B (the note's last section, "What stays open"): m(T), the smallest eigenvalue of K on the
+subspace of x with V_x(ρ) = 0 at every zero 0 < γ ≤ T, for T on a grid up to --tmax (default 2N). A direction counts as
+silent below 1e-7 of the top singular value of the 2·#{γ ≤ T} conditions, since the ordinates carry nine decimals; m at
+1e-5 is printed beside it, and a row where the two part by more than 10% is flagged. Each row also gives the spread A of
+the minimiser, and the numerical rank of the conditions against the count (T/π)(1 + log(πN/T)). First comes the zeta
+vector x_n = w(n/N)/n, w = 1 on [0, ½] and 0 past 1: its A + B, and its rms |V_x(ρ)|/‖x‖ by height. --fence repeats
+everything with the picket fence, the k-th point at Φ(t) = (t/2π)log(t/2πe) + 7/8 = k − ½, in place of the zeros. FILE
+has one ordinate per line, e.g. the first 30000 zeros from scripts/zeta_zeros_rs.py. N = 1000 and 2000 with --fence
+take about a minute and a half, N = 4000 about eight minutes, N = 8000 with --tmax 2800 about half an hour.
+
+    python3 scripts/landau_gap.py --split --zeros-file FILE [N ...]      # default N = 1000 2000; N = 4000 about a minute
+
+Where the cheap silence lives (same section). At T = N/2 and N: the lowest eigenvalues of K on the silent space as in
+--silent, at the zeros and at the picket fence; the zeros' eigenvalues ⌊2πN/T⌋ + 1 to ⌊2πN/T⌋ + 4 over the fence's
+first four; and the lowest eigenvalue at the zeros on the part of the silent space that
+is K-orthogonal to the dilates of the zeta vector, Y_D = span{[d | n]B_j(n/N)/n : d ≤ D, j ≤ 12}, B_j the cubic
+B-splines on [0, 1] with uniform knots, for D = 1 and ⌊2πN/T⌋ − 2, …, ⌊2πN/T⌋ + 2.
+
+    python3 scripts/landau_gap.py --quiet --zeros-file FILE [N ...]      # default N = 1000 2000; N = 4000 under a minute
+
+Quiet in place of silent (same section): for μ = 2^(k/2), k = 6..21, the minimiser of A + B + μ(N/log N)·Q_≤N(x) over
+unit x, where Q_≤N(x) = Σ_{0 < γ ≤ N} 2|V_x(ρ)|²/(¼ + γ²) is the zeta form cut at height N. It prints the frontier, and
+A + B at fixed quietness Q_≤N·N/log N = ε for ε = 0.02, 0.01, 0.005, 0.002, interpolated linearly in log ε.
 """
 import argparse
 import math
@@ -168,24 +187,110 @@ def vertex_check(N, c0=math.log(4) + 1):
     return d[2:].min(), slack.min()
 
 
-def silent_cost(N, zeros, c0=math.log(4) + 1):
-    """m(T) = min of A + B over the x with V_x(ρ) = 0 at every zero 0 < γ ≤ T: see the docstring."""
+def fence_points(tmax):
+    """The picket fence: the k-th point at Φ(t) = (t/2π)log(t/2πe) + 7/8 = k − ½, up to height tmax."""
+    from scipy.special import lambertw
+    k = np.arange(1, int(tmax * math.log(tmax) / (2 * math.pi)) + 2, dtype=float)
+    t = 2 * math.pi * math.e * np.exp(np.real(lambertw((k - 0.5 - 7 / 8) / math.e)))
+    return t[t <= tmax]
+
+
+def smooth_step(u, a=0.5):
+    """1 on [0, a], 0 on [1, ∞), C^∞ in between."""
+    t = np.clip((u - a) / (1 - a), 0.0, 1.0)
+    f = lambda v: np.where(v > 0, np.exp(-1 / np.maximum(v, 1e-300)), 0.0)  # noqa: E731
+    return f(1 - t) / (f(1 - t) + f(t))
+
+
+def silent_cost(N, pts, tmax=None, c0=math.log(4) + 1):
+    """Yields min(A + B), then (A + B, rms of |V_x|/‖x‖ by height) for the zeta vector, then per height T
+    (T, #points, rank, m(T) at threshold 1e-7, m(T) at 1e-5, the spread A of the minimiser): see the docstring."""
     L = math.log(N)
     n = np.arange(1, N + 1, dtype=float)
-    s = np.sqrt(n)
+    s, lg = np.sqrt(n), np.log(n)
     K = s[:, None] * ((L + c0 + 1) * np.eye(N) - landau_matrix(N).toarray()) * s[None, :]
-    out = [(0, 0, np.linalg.eigvalsh(K)[0])]
-    tmax = math.pi * N / L
-    for T in [15, 22, 33, 50, 75, 110, 170, 250, 380, 560, 840, 1260]:
-        if T >= 0.95 * tmax:
-            break
-        g = zeros[zeros <= T]
-        C = np.vstack([np.cos(np.outer(g, np.log(n))), np.sin(np.outer(g, np.log(n)))]) * s
-        _, sv, vt = np.linalg.svd(C, full_matrices=True)
-        r = int(np.sum(sv > sv[0] * 1e-10))
-        B = vt[r:].T
-        out.append((T, len(g), np.linalg.eigvalsh(B.T @ K @ B)[0]))
-    return out
+    yield np.linalg.eigvalsh(K)[0]
+    x = smooth_step(n / N) / n
+    g = pts[pts <= 2 * N]
+    V = np.concatenate([np.abs((np.exp(1j * np.outer(g[i:i + 2048], lg)) * s) @ x)
+                        for i in range(0, len(g), 2048)]) / np.linalg.norm(x)
+    yield x @ K @ x / (x @ x), [(lo, hi, np.sqrt(np.mean(V[(g > lo) & (g <= hi)] ** 2)))
+                                for lo, hi in [(0, 30), (30, 100), (100, 300), (300, 2 * N)]]
+    for T in [15, 22, 33, 50, 75, 110, 170, 250, 350, 500, 700, 1000, 1400, 2000, 2800, 4000, 5600, 8000,
+              11000, 16000]:
+        if T > (tmax or 2 * N):
+            return
+        g = pts[pts <= T]
+        C = np.vstack([np.cos(np.outer(g, lg)), np.sin(np.outer(g, lg))]) * s
+        _, sv, vt = np.linalg.svd(C, full_matrices=C.shape[0] < N)
+        # The ordinates carry 9 decimals, so C is known to about 1e-9·log N of its norm: directions below 1e-7 of
+        # the top singular value count as silent.  The value at 1e-5 is the check: where the two part by more
+        # than 10%, the conditions are too nearly dependent to say exactly what silence costs.
+        out = [T, len(g)]
+        for tol in (1e-7, 1e-5):
+            r = int(np.sum(sv > sv[0] * tol))
+            w, U = np.linalg.eigh(vt[r:] @ K @ vt[r:].T)
+            if tol == 1e-7:
+                y = vt[r:].T @ U[:, 0]
+                out += [r, w[0]]
+            else:
+                out += [w[0], float(y * y @ n / (y @ y))]
+        yield tuple(out)
+
+
+def split_cost(N, zeros, T, Ds, J=12, c0=math.log(4) + 1):
+    """A + B on the silent space up to T, at the zeros and at the fence, and at the zeros off the dilates d ≤ D."""
+    from scipy.interpolate import BSpline
+    L = math.log(N)
+    n = np.arange(1, N + 1, dtype=float)
+    s, lg = np.sqrt(n), np.log(n)
+    K = s[:, None] * ((L + c0 + 1) * np.eye(N) - landau_matrix(N).toarray()) * s[None, :]
+
+    def silent(pts):
+        g = pts[pts <= T]
+        C = np.vstack([np.cos(np.outer(g, lg)), np.sin(np.outer(g, lg))]) * s
+        _, sv, vt = np.linalg.svd(C, full_matrices=C.shape[0] < N)
+        return vt[int(np.sum(sv > sv[0] * 1e-7)):].T
+
+    B, F = silent(zeros), silent(fence_points(T))
+    evz, evf = np.linalg.eigvalsh(B.T @ K @ B), np.linalg.eigvalsh(F.T @ K @ F)
+    knots = np.concatenate([[0, 0, 0], np.linspace(0, 1, J - 2), [1, 1, 1]])
+    spl = np.stack([BSpline(knots, np.eye(J)[j], 3)(n / N) for j in range(J)], 1)
+    off = []
+    for D in Ds:
+        Y = np.concatenate([((np.arange(1, N + 1) % d == 0) / n)[:, None] * spl for d in range(1, D + 1)], 1)
+        _, sm, wt = np.linalg.svd(Y.T @ K @ B, full_matrices=True)
+        Zb = B @ wt[int(np.sum(sm > sm[0] * 1e-10)):].T
+        off.append((D, np.linalg.eigvalsh(Zb.T @ K @ Zb)[0]))
+    return evz, evf, off
+
+
+def quiet_cost(N, zeros, c=1.0, c0=math.log(4) + 1):
+    """Quiet in place of silent: the frontier between A + B and Q_{≤cN}, and A + B at fixed ε (see the docstring)."""
+    from scipy.linalg import eigh
+    L = math.log(N)
+    n = np.arange(1, N + 1, dtype=float)
+    s, lg = np.sqrt(n), np.log(n)
+    K = s[:, None] * ((L + c0 + 1) * np.eye(N) - landau_matrix(N).toarray()) * s[None, :]
+    g = zeros[zeros <= c * N]
+    W = np.zeros((N, N))
+    for i in range(0, len(g), 2048):
+        gg = g[i:i + 2048]
+        w = 2 / (0.25 + gg * gg)
+        for f in (np.cos, np.sin):
+            F = f(np.outer(gg, lg)) * s
+            W += (F * w[:, None]).T @ F
+    rows = []
+    for k in range(6, 22):
+        mu = 2 ** (k / 2)
+        x = eigh(K + mu * N / L * W, subset_by_index=[0, 0])[1][:, 0]
+        rows.append((mu, x @ K @ x, x @ W @ x * N / L))
+    fixed = []
+    for eps in (0.02, 0.01, 0.005, 0.002):
+        for (_, a1, q1), (_, a2, q2) in zip(rows, rows[1:]):
+            if q2 <= eps <= q1:
+                fixed.append((eps, a1 + math.log(q1 / eps) / math.log(q1 / q2) * (a2 - a1)))
+    return rows, fixed
 
 
 def main():
@@ -194,21 +299,63 @@ def main():
     ap.add_argument("--c0", nargs="*", type=float, default=[0.0, math.log(4) + 1])
     ap.add_argument("--spread", action="store_true", help="the vectors that BallSharp.rate_slack leaves")
     ap.add_argument("--gap", action="store_true", help="the edge law of BallGap, and checks of its proof")
-    ap.add_argument("--silent", action="store_true", help="what silence at the low zeros costs in A + B")
-    ap.add_argument("--zeros-file", default=None, help="ordinates of the zeros, one per line (for --silent)")
+    ap.add_argument("--silent", action="store_true", help="what silence at the zeros up to height 2N costs in A + B")
+    ap.add_argument("--zeros-file", default=None, help="ordinates of the zeros, one per line (for --silent, --split, --quiet)")
+    ap.add_argument("--fence", action="store_true", help="with --silent: the picket fence as well")
+    ap.add_argument("--quiet", action="store_true", help="quiet in place of silent: A + B against Q at the zeros ≤ N")
+    ap.add_argument("--split", action="store_true", help="silence at the zeros off the span of the dilates of ζ")
+    ap.add_argument("--tmax", type=float, default=None, help="with --silent: the top height (default 2N)")
     args = ap.parse_args()
+    if args.split:
+        if not args.zeros_file:
+            ap.error("--split needs --zeros-file")
+        zeros = np.asarray(np.loadtxt(args.zeros_file), float).ravel()
+        for N in args.N or [1000, 2000]:
+            for T in (N // 2, N):
+                d0 = int(2 * math.pi * N / T)
+                evz, evf, off = split_cost(N, zeros, T, sorted({1} | set(range(max(1, d0 - 2), d0 + 3))))
+                print(f"N = {N}, T = {T}, 2πN/T = {2 * math.pi * N / T:.2f}: A + B on the silent space, lowest "
+                      f"eigenvalues\n   zeros (dimension {len(evz)}): " + " ".join(f"{e:.1f}" for e in evz[:d0 + 4])
+                      + f"\n   fence (dimension {len(evf)}): " + " ".join(f"{e:.1f}" for e in evf[:4])
+                      + f"\n   the zeros' eigenvalues {d0 + 1} to {d0 + 4} over the fence's first four: "
+                      + " ".join(f"{a / b:.3f}" for a, b in zip(evz[d0:d0 + 4], evf))
+                      + "\n   the lowest at the zeros K-orthogonal to the dilates d ≤ D, 12 B-splines each: "
+                      + ", ".join(f"D = {D}: {m:.1f}" for D, m in off)
+                      + f"; (T/π)log N = {T / math.pi * math.log(N):.0f}", flush=True)
+        return
+    if args.quiet:
+        if not args.zeros_file:
+            ap.error("--quiet needs --zeros-file")
+        zeros = np.asarray(np.loadtxt(args.zeros_file), float).ravel()
+        for N in args.N or [1000, 2000]:
+            L = math.log(N)
+            rows, fixed = quiet_cost(N, zeros)
+            print(f"N = {N}: the frontier (μ: A + B, Q_≤N·N/log N): "
+                  + "; ".join(f"{mu:.0f}: {ab:.3f}, {q:.5f}" for mu, ab, q in rows))
+            print("   A + B at Q_≤N·N/log N = ε: " + "; ".join(
+                f"ε = {eps}: {ab:.3f} = {ab / L:.4f}·log N = {ab / math.sqrt(L):.3f}·√log N" for eps, ab in fixed),
+                flush=True)
+        return
     if args.silent:
         if not args.zeros_file:
             ap.error("--silent needs --zeros-file")
         zeros = np.asarray(np.loadtxt(args.zeros_file), float).ravel()
         for N in args.N or [1000, 2000]:
             L = math.log(N)
-            rows = silent_cost(N, zeros)
-            print(f"N = {N}: min(A + B) = {rows[0][2]:.3f} = {rows[0][2] / math.sqrt(L):.2f}·√log N; "
-                  f"m(T) at zeros up to T:")
-            for T, k, m in rows[1:]:
-                print(f"   T = {T:5d} ({k:4d} zeros): m(T) = {m:7.3f} = {m / math.sqrt(L):.2f}·√log N "
-                      f"= {m / L:.3f}·log N", flush=True)
+            sets = [("zeros", zeros)] + ([("picket fence", fence_points(2 * N))] if args.fence else [])
+            for name, pts in sets:
+                rows = silent_cost(N, pts, args.tmax)
+                m0 = next(rows)
+                ab, win = next(rows)
+                print(f"N = {N}, {name}: min(A + B) = {m0:.3f} = {m0 / math.sqrt(L):.2f}·√log N. The zeta vector "
+                      f"x_n = w(n/N)/n has A + B = {ab / L:.2f}·log N and rms |V_x|/‖x‖ "
+                      + ", ".join(f"{v:.0e} on ({lo}, {hi}]" for lo, hi, v in win) + ". m(T) at the points up to T:")
+                for T, k, r, m, m5, A in rows:
+                    count = T / math.pi * (1 + math.log(math.pi * N / T))
+                    flag = "  <- the thresholds part by more than 10%" if abs(m - m5) > 0.1 * m else ""
+                    print(f"   T = {T:5d}: m = {m:9.3f} [{m5:9.3f} at 1e-5] = {m / math.sqrt(L):7.2f}·√log N "
+                          f"= {m / L:7.3f}·log N, spread A = {A:7.1f}; rank {r:5d} of {2 * k:5d} conditions, "
+                          f"count (T/π)(1 + log(πN/T)) = {count:6.0f}{flag}", flush=True)
         return
     if args.gap:
         c0 = math.log(4) + 1
