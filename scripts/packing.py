@@ -42,10 +42,10 @@ form x_n = (F(n) − P + P·w(n/N))/n, F(n) = n/ψ(n): the best vector in the sp
 has lim inf ≥ c(D₀) = min_e m(e)/D(e), m(e) = Σ_k 2|ζ(½ + iγ_k)M_e(½ − iγ_k)|²/(¼ + γ_k²), M_e(s) = Σ_d e(d)d^{−s};
 the sum over the first K fence points is a lower bound, every term being ≥ 0.
 
-    python3 scripts/packing.py --fence-cap [N ...]                  # default N = 400 1600 6400
+    python3 scripts/packing.py --fence-cap [N ...]                  # default N = 400 1600 6400; 12800 needs ~10 GB
 
 --fence-cap: the constrained minima of the note's Theorem C, q_n = min{Q^pf(x) : x_n = 1} = 1/(G⁻¹)_nn on the picket
-fence, for n = 1, 2, 3, 4, 5, 8, 16, 32. Printed with λ_N·√N: q_n·√N; the free part n·W(2πM_n), M_n = max(n, N/n),
+fence, for n = 1, 2, 3, 4, 5, 6, 8, 11, 16, 32. Printed with λ_N·√N: q_n·√N; the free part n·W(2πM_n), M_n = max(n, N/n),
 W(T) = (log(T/2π) + 1)/(πT), the energy of x_n = 1 above the height where it has no alias; the cost paid below that
 height; and A_n, the amplitude of the fit m·x_m ≈ a·cos(2πm/n) + b·sin(2πm/n) over m ≥ 2√N.
 
@@ -562,7 +562,7 @@ def solve_mode(Ns):
             print(f"   {a}: A + B/log N gives A = {coef[0]:.5f}; predicted limit {pred[j]:.5f}")
 
 
-def fence_cap_mode(Ns, ns=(1, 2, 3, 4, 5, 8, 16, 32)):
+def fence_cap_mode(Ns, ns=(1, 2, 3, 4, 5, 6, 8, 11, 16, 32)):
     """The constrained minima q_n = min{Q^pf(x) : x_n = 1} = 1/(G⁻¹)_nn on the picket fence."""
     from scipy.linalg import cho_factor, cho_solve
     for N in Ns:
