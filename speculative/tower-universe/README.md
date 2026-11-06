@@ -18,7 +18,8 @@ in a browser. It shows:
 
 **Summary.**
 - The mathematics behaves like quantum mechanics in several exact ways.
-- With three extra axioms, two physical tests pass: isotropy and the age of the universe.
+- Two physical tests pass: isotropy, which needs only the clock (A1), and the age of the universe, which also needs
+  the light dictionary (A4).
 - No reading reproduces the expansion history. The tower looks the same at every scale, and the data need a special
   epoch.
 
@@ -39,17 +40,20 @@ in a browser. It shows:
   - That is a state evolving with the zeros as its energies, sampled at the times `log n`.
   - RH says that these overlaps come from a genuine Hilbert space.
 
-## The axioms
+## The premise and the axioms
 
-The mathematics below needs none of these. Each physical reading uses some of them, named in its row.
+**The premise.** The universe is the tower. Every reading starts from this, so it is not counted as an axiom.
 
-| | Axiom | Introduced in |
+The mathematics needs nothing else. Each physical reading uses some of the statements below, named in its row. Two of
+them turned out to follow from the premise, wholly or in part.
+
+| | Statement | Status |
 |---|---|---|
-| A1 | **Clock.** One integer per Planck time, so now is `N ≈ t₀/t_P ≈ 8.07·10⁶⁰`. A variant, A1′, takes one prime per Planck time. | Round 1 |
-| A2 | **Embedded observer.** An observer is a vector of the tower and observes only through inner products (correlations) with other vectors. | Round 7 |
-| A3 | **3D window.** Our space is the observer's 3D window in the hyperspace, built from the tower's own current vectors. It therefore turns with the spiral: it is the outer product's top three axes. | Round 10 |
-| A4 | **Light and redshift.** Light is the zeros' modes `n^{iγ}`. Redshift is the ratio of a mode's frequency per tick at emission and at observation, `1 + z = N/n`. | Round 3 |
-| A5 | **Outcomes.** A measurement outcome is a click, a kink in an observer's correlation. Apparent randomness is the arithmetic behind the clicks, for example the parity of the number of clicks per tick. | Rounds 7–8 |
+| A1 | **Clock.** One integer per Planck time, so now is `N ≈ t₀/t_P ≈ 8.07·10⁶⁰`. A variant, A1′, takes one prime per Planck time. | Axiom (round 1) |
+| A2 | **Embedded observer.** An observer is a vector of the tower and registers only inner products (correlations) with other vectors. | **Follows from the premise.** Observers are part of the universe, so they are vectors of the tower. Nothing lies outside, so there is no external frame or ruler. The Gram matrix is also a complete description: configurations with the same inner products are rotations of each other, so nothing inside can tell them apart. |
+| A3 | **3D window.** Our space is the observer's 3D window, built from the tower's own current vectors, so it turns with the spiral. | **Only the "3" is an axiom.** The turning follows from A2: an embedded observer's axes are made of the tower's current vectors. The tower never picks 3. Its axes come in pairs, one pair per zero (shares 0.127 and 0.112, then 0.063 and 0.058), and a 3D window cuts the second zero's plane in half. Isotropy does not need the 3. |
+| A4 | **Light and redshift.** Light is the zeros' modes `n^{iγ}`. Redshift is the ratio of a mode's frequency per tick at emission and at observation, `1 + z = N/n`. | Axiom (round 3) |
+| A5 | **Outcomes.** A measurement outcome is a click, a kink in an observer's correlation. Apparent randomness is the arithmetic behind the clicks, for example the parity of the number of clicks per tick. | Axiom (rounds 7–8) |
 
 **Background assumptions,** used only when extrapolating to `N ≈ 10⁶⁰`:
 - RH, so that the tower exists there;
@@ -71,20 +75,20 @@ The mathematics below needs none of these. Each physical reading uses some of th
 | **Who is registered** | Per tick, species `p` contributes `log p/(p² − 1)` out of a total of `−ζ′(2)/ζ(2) = 0.570`. That is 40.5% for 2, 24.1% for 3, 11.8% for 5 and 7.1% for 7. All primes above 100 together give 1.7%, though they hold 96.7% of `Σ log n` at our epoch. A prime born at tick `p` first appears in a composite at `2p`, then once every `p` ticks. At any `N`, about half the primes (those in `(N/2, N]`) appear in no composite yet. | `exchanges.py` |
 | **Every place holds the tower up** | Split `K` place by place. The real place alone fails positive definiteness at `N = 3`, and the finite places alone give no lengths. Keeping only the places `p ≤ P`, the tower fails one or two integers after the first missing prime. Dropping one place `p`, it fails at `p + 1` for `p ≤ 31`, at 103 for 101, and at 1017 for 1009. | 2 |
 | **A deterministic coin** | The click parity `λ(N) = (−1)^{Ω(N)}` is locally fair up to `10⁷`: all 8 three-step patterns occur at 0.1249–0.1251. Its running sum drifts by `√N/ζ(½)` (measured −0.682, predicted −0.685). The zeros predict its wiggles, with correlation 0.961, 0.985 and 0.995 from 10, 50 and 200 zeros. RH holds exactly when the running sum is `O(N^{½+ε})`. | 8 |
-| **Isotropy in the turning frame** | In axes that turn with the spiral, the 3D cloud's shape is frozen at `1 : 0.947 : 0.617`. Every axis expands at `H·t = ½`, and the shear falls like `1/N`: `1.8·10⁻⁶` at `N = 2²¹`. | 10 |
+| **Isotropy in the turning frame** | In axes that turn with the spiral, the cloud's shape is frozen and every axis expands at `H·t = ½`, whatever the window's dimension. At `N = 2²¹` the shear is `1.3·10⁻¹⁰` in the first zero's plane (2D) and `2.8·10⁻¹⁰` in the first two planes (4D), both falling like `1/N²`. In the 3D window it is `2.3·10⁻⁷`, falling like `1/N`: cutting the second plane in half makes it the least isotropic. | 10, `windows.py` |
 | **Self-similarity forces power laws** | If the expansion looks the same from every epoch, then `H(a_e)/H(a_o) = f(a_o/a_e)` with `f(xy) = f(x)·f(y)`, so `H ∝ a^{−k}`. | 11 |
 
 ### Physics readings that pass a test
 
 | Reading | Axioms | Test | Result |
 |---|---|---|---|
-| **Isotropic expansion** | A1, A2, A3 | The CMB limit on shear, `σ/H < 4.7·10⁻¹¹` (Saadeh et al. 2016) | **Pass**: `σ/H ≈ 7·10⁻⁶²`, extrapolated to now (round 10). In fixed outside axes it fails, with `σ/H ≈ 0.8` (round 2). |
-| **The age** | A1, A2, A4 | `H₀t₀` from the distance-ladder `H₀` and the ages of the oldest stars: 0.92–1.03 | **Pass**: `H₀t₀ = 1` (round 3). Planck's 0.950 ± 0.008 assumes ΛCDM; against it, the reading is 6.3σ off. |
+| **Isotropic expansion** | A1 | The CMB limit on shear, `σ/H < 4.7·10⁻¹¹` (Saadeh et al. 2016) | **Pass**: `σ/H ≈ 7·10⁻⁶²` for the 3D window extrapolated to now, and smaller for windows of whole planes (round 10, `windows.py`). The turning axes follow from the premise, and the window's dimension does not matter. In fixed outside axes it fails, with `σ/H ≈ 0.8` (round 2). |
+| **The age** | A1, A4 | `H₀t₀` from the distance-ladder `H₀` and the ages of the oldest stars: 0.92–1.03 | **Pass**: `H₀t₀ = 1` (round 3). Planck's 0.950 ± 0.008 assumes ΛCDM; against it, the reading is 6.3σ off. |
 | **Randomness as hidden variables** | A1, A5 | 2·10⁸ ANU quantum random bits (Kavulich, Van Deren and Schlosshauer 2021) | **Consistent** (round 9). Neither the quantum bits nor the tower's coin at `N ≥ 10¹²` shows the coin's fingerprints from its origin. This is consistency, not support: at our epoch no randomness test can tell the two apart. |
 | **Quantum statistics** | The zeros as energies | The zeros' class, GUE, is the one measured in chaotic quantum systems without time-reversal symmetry (So et al. 1995) | **Agrees** (round 4). The class is universal, so it supports no model in particular. |
-| **Light as the main messenger** | A2 | — | Species 2 carries 40.5% of what an embedded observer registers. Qualitative only. |
-| **Bell tests** | A2, A5 | Loophole-free Bell tests (2015) | **Consistent only through superdeterminism.** An observer's choice of setting is fixed by the same arithmetic as the outcome. An interpretation, not a test. |
-| **Flat space** | A3 | `Ω_k ≈ 0` | A hyperplane is flat. Every model gets this. |
+| **Light as the main messenger** | None, beyond calling species 2 light | — | Species 2 carries 40.5% of what an embedded observer registers. Qualitative only. |
+| **Bell tests** | A5 | Loophole-free Bell tests (2015) | **Consistent only through superdeterminism.** An observer's choice of setting is fixed by the same arithmetic as the outcome. An interpretation, not a test. |
+| **Flat space** | None | `Ω_k ≈ 0` | Any window is a linear subspace, so it is flat. Every model gets this. |
 
 ## What does not work
 
@@ -165,6 +169,7 @@ The rounds and their scripts:
 | 9 | `round9.py`, `round9b.py` |
 | 10 | `window10.py` |
 | 11 | `dgp11.py`, `dgp11b.py` |
+| Isotropy in windows of 2, 3 and 4 dimensions | `windows.py` |
 | Discussion between rounds | `exchanges.py` |
 
 `page/offline.py` recomputes the page's tables: one Cholesky factorisation per scenario, up to `N = 32768`, taking
