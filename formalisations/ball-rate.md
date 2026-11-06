@@ -1422,6 +1422,30 @@ the `−1/2` of the fence's minimiser at `N ≤ 12800`.
   it falls from `0.086` at `n = 3` to `0.047` at `n = 11`, about as `n^{−0.45}` between the two. That is slower than
   the `1/n` of Lemma C. For fixed `n ≥ 8` it is still rising with `N`, so the slope in `n` has not settled.
 
+**Where the cost is paid** (`--fence-windows 12800`: window by window, in units of `1/√N`). Here `T₀ = 2π√N`, and `*` marks the
+window that holds the free height `2πN/n`.
+
+| `n` | `[T₀/4, T₀/2)` | `[T₀/2, T₀)` | `[T₀, 2T₀)` | `[2T₀, 4T₀)` | `[4T₀, 8T₀)` | `[8T₀, 16T₀)` | `[16T₀, 32T₀)` |
+|---|---|---|---|---|---|---|---|
+| `1` | `0.0000` | `0.0004` | `0.0264` | `0.0277` | `0.0245` | `0.0188` | `0.0133` |
+| `4` | `0.0009` | `0.0531` | `0.0622` | `0.0950` | `0.0859` | `0.0672` | `0.0538*` |
+| `8` | `0.0086` | `0.0109` | `0.0059` | `0.0608` | `0.0872` | `0.1012*` | `0.1558` |
+| `16` | `0.0034` | `0.0019` | `0.0011` | `0.0044` | `0.1640*` | `0.4299` | `0.2530` |
+| `32` | `0.0006` | `0.0004` | `0.0005` | `0.3197*` | `1.3366` | `0.7750` | `0.4440` |
+
+- **`n = 1`** is silent below `T₀`, then pays about `0.025` per window. That is a quarter of `x₁`'s uncancelled energy
+  in `[T₀, 2T₀)`, and nearly all of it by `[8T₀, 16T₀)`.
+- **`n ≥ 16`** pays at most `0.004` per window below its free height, and those entries are the same at `N = 6400` to
+  the digits shown.
+- **`n = 4` and `8`** pay `0.06`–`0.10` per window from about `(n − 1)T₀/2` up to the free height. That is where the
+  conjugate images (`q ≡ −1 mod n`) of the partners used near `T₀` land, at `n − 1` times their height. For `n = 16`
+  and `32` that height lies above the free height, so no image shows below it.
+- **So the asymptotic regime for a centre `n` needs `N ≫ n⁴`,** with the images below the free height. The costs per
+  window above, and the slope `n^{−0.45}`, are pre-asymptotic for `n ≥ 8`. Counting the images in that regime gives
+  about `H(nT₀)√N ≍ log N/n` in all, the dependence on `n` of Lemma C. That favours `α = 1` below, and with it a
+  failure of `N^{−1/2}` beyond some `N` near `10⁹`–`10¹⁰`. This is a heuristic count: neither a proof of `−1/2` nor
+  an explicit vector that beats it is known.
+
 **What the numbers allow.** Suppose the cost per window behaves like `C·n^{−α}` for large `n`. The free cost
 `n²log N/N` balances it at the centre `n ≍ N^{1/(4+2α)}`, and then `λ^pf_N ≍ N^{−1/2−α/(4+2α)}log N`.
 - **`α = 1`**, the dependence on `n` in Lemma C, gives `−2/3`. Theorem C would then be sharp up to the constant.
