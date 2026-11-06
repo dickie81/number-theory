@@ -1485,6 +1485,17 @@ between the two. The range `N ≤ 12800` cannot say which end, if either, is the
   - The obstruction is the tail. A vector with `A ≤ log N` has at most `(log N/M)Σx_n²` of its mass beyond `M`, but
     up to `log N·Σx_n²` of `Σb_n²` there. At the zeros below `N` that is enough to cancel a head of length `M` that the
     zeros up to `e⁸M` sample (`BallSharp`). Ruling the cancellation out is the inverse theorem again.
+  - **Silence at the low zeros is nearly free** (`landau_gap.py --silent`).
+    - `m(T)` is the least `A + B` of a unit vector with `V_x(ρ) = 0` at every zero up to height `T`.
+    - At `N = 1000` and `2000` it stays within `4%` of the unconstrained minimum `2.9√log N` up to `T = 110`, the
+      first 33 zeros.
+    - It reaches about `3.8√log N ≈ 1.4 log N` only near `πN/log N`, where the constraints run out.
+    - So an inverse theorem has to work with the zeros at heights of order `N/log N` to `N`. Below that, the low
+      zeros together with `A + B` carry nothing usable: a vector can be silent there at the edge's price.
+    - `N ≤ 2000` cannot tell `√log N` from `log N` at the top of that range.
+  - **Nor does a split along the low eigenspace of `A + B` help.** Put the vector's part in that eigenspace against the
+    first few zeros. The part outside it can buy as much loudness there, per unit of `A + B`, as the eigenspace has,
+    so the cross terms are not controlled.
 - **For the fence, the exponent.** Theorem C gives `−2/3` for every vector, the minimisers at `N ≤ 12800` give `−1/2`,
   and the constrained minima allow anything in between (the paragraph above).
   - A proof of `−1/2` would have to charge the partners of `x_n` for more than their free energy.
