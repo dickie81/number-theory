@@ -18,14 +18,15 @@ Landau's slack `G(c)`, `BallSharp.rate_slack` reduces the missing `log N` of the
 `Σx_n² n + G(c) ≥ (√log N/10)Σx_n²` (`BallGap.edge_law`, last section), so under RH `λ_N ≥ √log N/(220e⁸N)` for every
 `N ≥ 3` (`BallGap.rate_gap`): this route recovers `√log N` of the missing `log N`, which by the numerics of that
 section is all it can give. The section "Packing", numerics only, compares the zeros with point sets of the same
-density and no arithmetic, which give `λ_N ≍ N^{−1/2}`, and finds the shape of the minimiser: `w(n/N)/ψ(n)`, `ψ`
+density and no arithmetic, which give `λ_N` near `N^{−1/2}` for `N ≤ 6400`, and finds the shape of the minimiser: `w(n/N)/ψ(n)`, `ψ`
 Dedekind's function, with `w(u) = Σ_{k ≤ 1/u} c(ku)` for one fixed function `c`. The section "The variational
 problem, solved" derives the constant at leading order, heuristically:
 `λ_N·N/log N → (1/12)(T + κP²)/D = 0.0429`, with `κ = 0.096` from the profile and `T`, `P`, `D` Euler products.
 The section after it proves the matching upper bound on paper, for an explicit vector:
 `λ_N ≤ (0.04294 + o(1))·log N/N` under RH. The last section proves, on that class of vectors, the inverse
 theorem (quiet at the zeros means carrying `ζ`, and costs `≥ 0.0400·log N/N`) and the absence of any sag at the
-picket fence.
+picket fence. It also proves, for every vector and with no hypothesis, `λ^pf_N ≫ N^{−2/3}log N` at the picket
+fence, a power of `N` above the zeros' `λ_N`.
 
 ## The three statements, and what can be proved
 
@@ -876,7 +877,9 @@ each `n ≤ T/2π` on its own, and the band `[log(T/2π), log N]` at density `T/
 `(T/2π)(1 + log(2πN/T))` degrees of freedom, against `Φ(2T) − Φ(T) = (T/2π)log(4T/2πe)` points, where
 `Φ(t) = (t/2π)log(t/2πe) + 7/8` is the smooth zero count. Room for all of them needs `T ≤ πe√N ≈ 8.5√N`. Above that
 height a point set without arithmetic cannot all be silenced, and the points left over charge `λ_N` of order `N^{−1/2}`,
-up to logarithms.
+up to logarithms. The count bounds what can be silenced exactly, not the residual. The last section proves
+`λ^pf_N ≫ N^{−2/3}log N` for every vector at the fence, and its constrained minima leave open whether `N^{−1/2}` is the
+limit or a pre-asymptotic phase.
 
 **Three point sets with the zeros' density.**
 
@@ -1224,10 +1227,11 @@ the fixed vectors of the previous section the computed quotients approach their 
 - **Against `BallUpperEta`.** That theorem has `67(1 + log N)/N`. Its alternating vector meets the low zeros through
   `η = (1 − 2^{1−s})ζ`, while the vector here meets every residue exactly.
 
-## The inverse theorem and the picket fence, on the arithmetic class (proofs on paper)
+## The inverse theorem on the arithmetic class, and the picket fence (proofs on paper)
 
 The proof of the previous section works for the whole class of vectors the earlier sections found, and on that class
-it settles the other two open steps.
+it settles the other two open steps. Theorem C below then drops the class at the picket fence, with a margin that
+falls like a power of `N`.
 
 **The class.** `n·x_n = Σ_{d | n, d ≤ D₀} E_d(n/N)`, with `D₀` fixed, and fixed profiles `E_d` on `[0, 1]`. Each `E_d`
 is `C²`, with `E_d''` of bounded variation and `E_d(1) = E_d'(1) = E_d''(1) = 0`. Write `e(d) = E_d(0)`, `F = 1 ∗ e`,
@@ -1267,31 +1271,184 @@ zero. Its spread is `≍ log N`, and its quotient is at least `(0.0400 + o(1))·
 
   | `D₀` | `1` | `2` | `4` | `8` | `16` | `32` | `64` |
   |---|---|---|---|---|---|---|---|
-  | `c(D₀) ≥` | `0.0350` | `0.0348` | `0.0306` | `0.0261` | `0.0242` | `0.0207` | `0.0138` |
+  | `c(D₀) ≥`, first 3000 points | `0.0350` | `0.0348` | `0.0306` | `0.0261` | `0.0242` | `0.0207` | `0.0138` |
+  | `c(D₀) ≥`, first 12000 points | `0.0365` | `0.0362` | `0.0321` | `0.0278` | `0.0260` | `0.0228` | `0.0159` |
 
-  These are lower bounds from the first 3000 fence points, to height `3533`; every term of `m` is `≥ 0`.
+  The first 3000 fence points reach height `3533`, the first 12000 height `11566`. Each row is a lower bound, because
+  every term of `m` is `≥ 0`, so more points can only raise it.
 
 *Proof.* At a fixed fence point the same contour shift gives
-`V(½ + iγ_k) = ζ(½ − iγ_k)M_e(½ − iγ_k) + N^{½+iγ_k}Ĝ(½ + iγ_k) + O(N^{−σ})`.
+`V(½ + iγ_k) = ζ(½ − iγ_k)M_e(½ − iγ_k) + N^{½+iγ_k}Ĝ(½ + iγ_k) + O(N^{−σ})`, uniformly for `γ_k` in a bounded set.
 - **The residues no longer vanish.** `ζ(½ − iγ_k) ≠ 0` at a point of the fence that is not a zero.
-- **A boundary term that survives** gives `Q^pf ≫ N`.
-- **Otherwise** `V(½ + iγ_k) → ζ(½ − iγ_k)M_e(½ − iγ_k)` for every `k`, and Fatou's lemma bounds `lim inf Q^pf` below
-  by `m(e)`. Again `Σx_n² → D(e)`.
-- **The margin.** `c(D₀)` is the bottom of a positive definite pencil of size `D₀`; the table gives its lower bounds. ∎
+- **A boundary term that survives**, `Ĝ(½ + iγ_k) ≠ 0`, makes that one term of `Q^pf` grow like `N`.
+- **Otherwise, the limit.** For every fixed `k`, `|V(½ + iγ_k)|² → |ζ(½ − iγ_k)M_e(½ − iγ_k)|²` as `N → ∞`.
+  Every term of `Q^pf` is `≥ 0`, so for every `K`,
+  `Q^pf_N(x) ≥ Σ_{k ≤ K} 2|V(½ + iγ_k)|²/(¼ + γ_k²) → m_K(e) = Σ_{k ≤ K} 2|ζ(½ + iγ_k)M_e(½ − iγ_k)|²/(¼ + γ_k²)`.
+  - Hence `lim inf_N Q^pf_N(x) ≥ m_K(e)` for every `K`, and `≥ m(e)` as `K → ∞`. This is Fatou's lemma for a series
+    of nonnegative terms.
+  - Each `K` involves finitely many points, so no uniformity in `k` is needed.
+  - Again `Σx_n² → D(e)`.
+- **The margin.** `m_K` and `D` are quadratic forms in `e ∈ ℝ^{D₀}`, and `D` is positive definite.
+  - So `c_K(D₀) = min_e m_K(e)/D(e)` is the bottom of a pencil of size `D₀`. It increases with `K`, and
+    `c(D₀) ≥ c_K(D₀)`.
+  - The table gives `c_K` at `K = 3000` and `12000` (`--fence-class K`).
+  - These are floating-point eigenvalues of pencils of size at most `64`, with `ζ` from mpmath at 15 digits. The
+    margins are far above any rounding error. ∎
 
-**What the two theorems settle.**
+**Theorem C (the picket fence for every vector; no hypothesis).** There are absolute constants `c > 0` and `N₀` such
+that `Q^pf_N(x) ≥ c·N^{−2/3}log N·Σx_n²` for every real `x` on `[1, N]` and every `N ≥ N₀`. So
+`λ^pf_N ≫ N^{−2/3}log N` for every vector, not only on the class. Under RH `λ_N ≤ 67(1 + log N)/N` (`BallUpper`), so
+the fence's smallest eigenvalue exceeds the zeros' by a factor `≫ N^{1/3}`.
+
+*Setting.* Put `b_n = x_n√n`, `B(t) = Σ_{n≤N} b_n n^{it}`, `t_k = Φ⁻¹(k − ½)` and `L(t) = log(t/2π)`, so `Φ' = L/2π`.
+Fix `η ∈ C_c^∞((½, 2))` with `η ≥ 0` and `Σ_{j∈ℤ} η(t/2^j) = 1` on `t > 0`, and put
+`h_j(t) = η(t/2^j)·2/(¼ + t²)`. Then `Q^pf_N(x) = Σ_j E_j`, where
+`E_j = Σ_k h_j(t_k)|B(t_k)|² = Σ_{m,n} b_m b_n F_j(m/n) ≥ 0` and `F_j(r) = Σ_k h_j(t_k)r^{it_k}`. Write `T = 2^j`.
+- **Poisson summation on the fence.** `Φ` maps `(2π, ∞)` onto `(−1/8, ∞)`. For `f ∈ C_c^∞((2π, ∞))`, Poisson
+  summation for `f∘Φ⁻¹` at the half-integers gives `Σ_k f(t_k) = Σ_{ℓ∈ℤ}(−1)^ℓ ∫ f(t)e^{−2πiℓΦ(t)}Φ'(t)dt`. So
+  `F_j(r) = Σ_ℓ (−1)^ℓ I_ℓ(r)`, with `I_ℓ(r) = ∫ h_jΦ' e^{iψ_ℓ}`, `ψ_ℓ(t) = t log r − 2πℓΦ(t)`,
+  `ψ_ℓ' = log r − ℓL(t)` and `ψ_ℓ'' = −ℓ/t`. The term `ℓ` is the `ℓ`-th alias: it couples `m` and `n` when
+  `log(m/n) = ℓL(t)`.
+- **Size.** `H_j = F_j(1) = (c_η + o(1))·L(T)/(πT)`, with `c_η = ∫η(u)u^{−2}du`; the terms `ℓ ≠ 0` at `r = 1` are
+  non-stationary.
+- **Non-stationary terms.** If `|ψ_ℓ'| ≥ λ` on `[T/2, 2T]`, then `k` integrations by parts give
+  `|I_ℓ(r)| ≤ C_k H_j (Tλ)^{−k}(1 + |ℓ|/λ)^k`. For `ℓ = 0` this is `C_k H_j (T|log r|)^{−k}`.
+- **The stationary term.** For `ℓ = 1` the phase is stationary at `t* = 2πr`, with
+  `ψ_1(t*) − π/4 = 2πr − 7π/4 − π/4 ≡ 2πr (mod 2π)`. So, uniformly in `r`,
+  `I_1(r) = a_j(r)e^{2πir} + O(H_j T^{−3/2})`. Here `a_j(r) = h_j(2πr)Φ'(2πr)·2π√r ≥ 0`, and `a_j(r) ≤ C H_j/√T`.
+  At `r = m/n` the phase `e^{2πim/n}` depends on `m mod n`.
+
+Write `M_n = max(n, N/n)` and `W(T) = ∫_T^∞ 2Φ'(t)dt/(¼ + t²) = (L(T) + 1)/(πT) + O(T^{−3})`.
+
+**Lemma F (free sampling).** For `A ≥ A₀` and `N ≥ N₀(A)`, `Q^pf_N(x) ≥ ½Σ_n b_n²·W(16πA·M_n)`.
+
+Above height `2πM_n` the component `n` has no alias in `[1, N]`: its partners `nt/2π` and `2πn/t` both lie outside.
+The lemma says that all such components are sampled at once, and none of them can be cancelled.
+
+*Proof.* Fix `j` and let `Fr_j = {n : M_n ≤ T/(4πA)}`.
+- **No alias is stationary.** Take `n ∈ Fr_j`, any `m ≤ N`, `ℓ ≠ 0` and `t ∈ [T/2, 2T]`. Then
+  `|log(m/n) − ℓL(t)| ≥ log A`, because `N/n` and `n` are at most `T/(4πA)` while `L(t) ≥ log(T/4π)`. So the terms
+  `ℓ ≠ 0` of `F_j(m/n)` sum to `O(H_j T^{−4})`.
+- **The test sequences `u_n(t_k) = n^{it_k}`, `n ∈ Fr_j`, are almost orthogonal** in `ℓ²(h_j)`. For `n ≠ n'` in
+  `Fr_j`, `T|log(n'/n)| ≥ 4πA|n − n'|`. So the Gram matrix `(F_j(n'/n))` has norm at most `H_j(1 + ε_A)`, with
+  `ε_A = C_k(4πA)^{−k} + O(NT^{−4}) → 0`.
+- **Each inner product recovers its coefficient.** `⟨B, u_n⟩ = Σ_m b_m F_j(m/n) = b_n H_j + e_n`. Here `e_n` collects
+  the `ℓ = 0` terms of the neighbours `m ∈ [n/2, 2n]`, with `|F_j(m/n)| ≤ C_k H_j (2πA|m − n|)^{−k}`, and terms
+  `O(H_j T^{−4})`. By Young's inequality,
+  `Σ_{n∈Fr_j}|e_n|² ≤ ε'_A H_j² Σ_{m∈Fr_j*} b_m² + O(H_j² N²T^{−8}Σb²)`, with `Fr_j* = ∪_{n∈Fr_j}[n/2, 2n]` and
+  `ε'_A → 0`.
+
+Bessel's inequality for this family then gives
+`E_j ≥ (1 + ε_A)^{−1}H_j[(1 − δ)Σ_{Fr_j} b_n² − δ^{−1}ε'_A Σ_{Fr_j*} b_m²] − O(H_j N^{−2}Σb²)`.
+Now sum over `j`:
+- `n ∈ Fr_j` exactly when `2^j ≥ 4πA·M_n`; `n ∈ Fr_j*` only if `2^j ≥ 2πA·M_n`, one dyadic level lower. So
+  `Σ_{j: n∈Fr_j*} H_j ≤ 4Σ_{j: n∈Fr_j} H_j`.
+- `Σ_{j: n∈Fr_j} H_j ≥ W(16πA·M_n)`, because `Σ_{j ≥ j₀} η(t/2^j) = 1` for `t ≥ 2^{j₀}`.
+- The remainder `O(N^{−2}Σb²)` lies far below `Σb_n²W(16πAN) ≫ (log N/N)Σb²`.
+
+Take `δ = ¼` and `A` large enough that the bracket is at least `½`. ∎
+
+**Lemma C (the chain).** For `A ≥ A₀`, `K = ⌊N^{1/6}⌋` and `N ≥ N₀(A)`,
+`Q^pf_N(x) ≥ c(A)·(log N/√N)·Σ_{n ≤ K} x_n²/n`.
+
+At a height `t ∈ [2π√N, 2πN/n]` the fence can silence `x_n` only through its partners `m ≈ nt/2π`. Higher up those
+partners are free, and Lemma F charges them there. The charge falls like `1/n`, because the partners of `n` sit `n`
+times higher.
+
+*Proof.* Take the window `j` with `T = 2^j ∈ [8πA√N, 16πA√N]`, `H = H_j`, and the test sequences `u_n` for `n ≤ K`.
+- **The family is almost orthogonal.** Distinct `n, n' ≤ K` have `T|log(n'/n)| ≥ T/K ≥ N^{1/3}`. Every `ℓ ≠ 0` term
+  is non-stationary, since `|ℓ|L(t) − log K ≥ ½L(T/2)`. So the Gram norm is `H(1 + o(1))`.
+- **Only the partners alias.** `⟨B, u_n⟩ = b_n H + Σ_{m∈P_n} b_m F(m/n) + e_n`, with the partners
+  `P_n = {m : m/n ∈ [T/8π, 2T/π]}`. Every other `m` is non-stationary in every `ℓ`: on the window
+  `|log(m/n) − L(t)| ≥ log 2`. So `Σ_n|e_n|² ≤ H²N^{−2}Σb²`.
+- **The partners are free higher up.** Every partner has `A√N ≤ m ≤ 32AK√N ≤ N^{2/3 + o(1)}`. So `M_m = m`, and
+  Lemma F charges it `Ω_m = W(16πA·m)`.
+
+Let `R` be the matrix with entries `F(m/n)/(n√Ω_m)`, for `n ≤ K` and `m` a partner. By the triangle inequality,
+`H(Σ_{n≤K} b_n²/n²)^{1/2} ≤ (H(1 + o(1))E_j)^{1/2} + ‖R‖·(Σ_m b_m²Ω_m)^{1/2} + O(HN^{−1}(Σb²)^{1/2})`.
+The first term is at most `(2HQ)^{1/2}`, and by Lemma F the second is at most `‖R‖(2Q)^{1/2}`. Bound `‖R‖²` by
+Schur's test on `RR*`:
+- **The diagonal.** `n` has at most `2nT/π` partners, each with `|F(m/n)|² ≤ CH²/T` and `1/Ω_m ≤ CAnT/L(T)`. So
+  `(RR*)_{nn} ≤ C·A·H·(TH/L(T)) ≤ C'A·H`, the same for every `n`: the weight `1/n²` pays for the `n`-fold number of
+  partners and their `n`-fold height.
+- **Off the diagonal.** `(RR*)_{nn'} = (nn')^{−1}Σ_m g(m)e^{2πimθ}` plus stationary-phase errors. Here
+  `θ = 1/n − 1/n'`, `g = a(m/n)a(m/n')/Ω_m` is smooth, and `‖θ‖ ≥ 1/(nn')`. Summation by parts gives
+  `|(RR*)_{nn'}| ≤ CA·H·min(n, n')/T`, and the errors are smaller. So `Σ_{n'≠n}|(RR*)_{nn'}| ≤ CA·H·K²/T = o(H)`.
+
+Hence `‖R‖² ≤ C₁A·H` and `HΣ_{n≤K} b_n²/n² ≤ 2(1 + √(C₁A))²Q(1 + o(1))`. Finally `b_n²/n² = x_n²/n`, and
+`H ≥ c_η L(T)/(2πT) ≥ c_η log N/(70π²A√N)`. ∎
+
+*Proof of Theorem C.* Normalise `Σx_n² = 1`, and fix `A = A₀`.
+- If `Σ_{n≤K} x_n² ≥ ½`, Lemma C gives `Q ≥ c(A)(log N/√N)/(2K) ≫ N^{−2/3}log N`.
+- Otherwise `Σ_{n>K} x_n² ≥ ½`, and Lemma F applies term by term.
+  - For `K < n ≤ √N`, `b_n²W(16πAN/n) = n²x_n²(L(16πAN/n) + 1)/(16π²AN) ≥ x_n²K²log N/(32π²AN) ≫ x_n²N^{−2/3}log N`.
+  - For `n > √N`, `b_n²W(16πAn) ≥ x_n² log N/(32π²A)`. ∎
+
+**What the proof loses.** Lemma C has `x_n²/n` where `x_n²` would give `N^{−1/2}`. It charges the partners of `x_n`
+only what they pay where they are free, and those partners are free `n` times higher. The free cost `n²log N/N` of
+`x_n` itself, from Lemma F, takes over at `n ≍ N^{1/6}`; that is the exponent `−2/3`. Whether the factor `1/n` is
+real decides between Theorem C's exponent `−2/3` and the exponent `−1/2` of the fence's minimiser at `N ≤ 6400`.
+
+**The constrained minima** (`--fence-cap`). Put `q_n = min{Q^pf_N(x) : x_n = 1} = 1/(G⁻¹)_{nn}`, for `G` the fence's
+Gram matrix. `q_n` splits into three parts:
+- **free:** `n·W(2πM_n)`, the energy of `x_n = 1` where it has no alias. This is Lemma F's charge without the margin
+  `16A`.
+- **below:** the cost paid below that height. Divided by `log₂(√N/n)`, the number of dyadic windows between `2π√N`
+  and `2πN/n`, it gives a cost per window.
+- **the excess:** the rest, which is the partners' own energy above `2πN/n`.
+
+| `n` | `1` | `2` | `3` | `4` | `5` | `8` | `16` | `32` |
+|---|---|---|---|---|---|---|---|---|
+| `q_n√N`, `N = 400` | `0.119` | `0.199` | `0.450` | `0.541` | `0.641` | `1.053` | `2.903` | `7.956` |
+| `q_n√N`, `N = 1600` | `0.124` | `0.195` | `0.476` | `0.526` | `0.585` | `0.830` | `2.056` | `6.497` |
+| `q_n√N`, `N = 6400` | `0.132` | `0.198` | `0.510` | `0.534` | `0.559` | `0.684` | `1.417` | `4.286` |
+| free·`√N`, `N = 6400` | `0.006` | `0.023` | `0.049` | `0.085` | `0.129` | `0.311` | `1.133` | `4.084` |
+| below·`√N`, `N = 6400` | `0.117` | `0.148` | `0.409` | `0.360` | `0.309` | `0.189` | `0.040` | `0.027` |
+| per window, `N = 6400` | `0.019` | `0.028` | `0.086` | `0.083` | `0.077` | `0.057` | `0.017` | `0.020` |
+| tail amplitude `A_n`, `N = 6400` | `0.51` | `0.77` | `1.28` | `1.54` | `1.67` | `1.84` | `1.91` | `1.90` |
+
+- **The shape.** For `m ≥ 2√N` the constrained minimiser has `m·x_m ≈ A_n cos(2πm/n)`: the partners carry the phase
+  `e^{2πim/n}` of the stationary term, in its real form. Full cancellation needs `A_n = 1` for `n ≤ 2`, where that
+  phase is real, and `A_n = 2` for `n ≥ 3`, where the cosine splits into two conjugate twists. So `x_1` is cancelled
+  by about half, and `x_n` by `92`–`95%` for `n ≥ 8`.
+- **The free part** is Lemma F's lower bound, and the minimisers meet it.
+- **The excess** is about the partners' mass `(A_n²/2)log(√N/n)` times `W(2πN/n)`. At `N = 6400` that gives `0.075`,
+  `0.151` and `0.207` for `n = 4, 8, 16`, against `0.089`, `0.183` and `0.243` measured. Its ratio to the free part
+  falls like `log N/n`.
+- **The cost per window** is `0.019` for `n = 1` and about `0.027` for `n = 2` at all three `N`. For `3 ≤ n ≤ 16` it is
+  between `0.26/n` and `0.46/n`, falling with `n` as Lemma C says it may. For fixed `n = 4` or `8` it still rises
+  slowly with `N`.
+
+**Two scenarios.** The range `N ≤ 6400` cannot separate them, since `N^{1/6} ≤ 4.3` there.
+- **The cost per window falls like `1/n` for every `n`.** Then a vector centred at `n ≈ 1.3N^{1/6}` costs about
+  `0.2·N^{−2/3}log N`. The model `q_n√N = free + (c/n)log₂(√N/n) + excess` overtakes `q_1√N ≈ 0.0137 log N + 0.015`
+  between `N = 10⁷` and `10⁸` for every `c` in the measured range `[0.26, 0.46]`. After that the optimal `n` grows like
+  `N^{1/6}`. Then `λ^pf_N ≍ N^{−2/3}log N`, Theorem C is sharp up to the constant, `λ^pf_N ≫ N^{−1/2}` fails, and the
+  minimiser at `N ≤ 6400` is a pre-asymptotic phase.
+- **The cost per window has a floor** above `0.019` as `n` grows. Then the vector centred at `1` stays optimal, with
+  `λ^pf_N√N ≈ 0.0137 log N`, and the exponent `−1/2` holds with a logarithm to spare.
+
+**What the three theorems settle.**
 - **The mechanism needs arithmetic.** On the class, the zeta form sags like `log N/N`: Theorem A, and the theorem
   above. The picket fence has a margin that does not depend on `N`: Theorem B. The sag is exactly the bulk residue
   `ζ(1 − ρ)M_e(1 − ρ)`, which vanishes at the zeros of `ζ` and nowhere else. Its partner, the boundary residue
   `N^ρĜ(ρ)`, vanishes at every zero only when `Ĝ` carries the factor `ζ`.
 - **The inverse theorem holds on the class.** There, being quiet at the zeros means carrying `ζ`, and carrying `ζ`
   costs spread `≍ log N` and quotient `≥ 0.0400·log N/N`.
+- **For every vector the fence is louder by a power of `N`.** Theorem C gives `λ^pf_N ≫ N^{−2/3}log N`, against
+  `λ_N ≤ 67(1 + log N)/N` at the zeros under RH. A point set with the zeros' density and no arithmetic cannot be as
+  quiet as the zeros, for any vector.
 
 **What stays open.**
 - **For every vector, `λ_N ≫ log N/N`.** It would follow from the claim that minimisers of `Q_N` stay within
   `o(log N/N)`, in the norm of `Q_N`, of the class with some fixed `D₀`. The class reaches within `1.6%` at
   `N ≤ 3·10⁴`, and its profile and local factors match the minimiser's.
-- **For every vector, `λ^pf_N ≫ N^{−1/2}`.** The fence's own minimiser is not in the class: it is `δ₁` plus a tail
-  that cancels it by aliasing up to height `≈ 3√N`. A proof needs a sampling inequality at the fence points in
-  `[C√N, N]` with an explicit constant. Below the Nyquist height `2πN` the low frequencies `n ≤ 2πN/T` alias onto
-  the dense band, so the count of degrees of freedom has to be made quantitative, in the manner of Landau–Widom.
+  - Theorem C's method does not carry over. At the zeros no component is ever free below height `N`, because Landau's
+    form couples every `m` to its multiples and divisors at every height.
+  - So nothing plays the part of Lemma F except the slack bound `BallSharp.rate_slack`, and its gap is `√log N`
+    (`BallGap`).
+- **For the fence, the exponent.** Theorem C gives `−2/3` for every vector, and the minimiser at `N ≤ 6400` gives
+  `−1/2`. Which one survives as `N → ∞` is the question of the two scenarios above.
+  - A proof of `−1/2` would have to charge the partners of `x_n` for more than their free energy.
+  - A proof that `−1/2` fails needs an explicit vector centred at `n ≍ N^{1/6}` that stays quiet below `2πN/n`,
+    including at the points below `2π√N`.
