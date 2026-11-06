@@ -26,7 +26,9 @@ The section after it proves the matching upper bound on paper, for an explicit v
 `λ_N ≤ (0.04294 + o(1))·log N/N` under RH. The last section proves, on that class of vectors, the inverse
 theorem (quiet at the zeros means carrying `ζ`, and costs `≥ 0.0400·log N/N`) and the absence of any sag at the
 picket fence. It also proves, for every vector and with no hypothesis, `λ^pf_N ≫ N^{−2/3}log N` at the picket
-fence, a power of `N` above the zeros' `λ_N`.
+fence, a power of `N` above the zeros' `λ_N`. Its numerics measure what silence at the zeros costs over all vectors:
+`≍ log N` in `A + B` at heights `≍ N`, carried by the `⌊2πN/T⌋` dilates of the zeta vector, where the fence pays
+`≍ T log N`.
 
 ## The three statements, and what can be proved
 
@@ -985,7 +987,10 @@ points in `[T, 2T]`, at `N = 1600` (`√N = 40`, the zeros from the first 30000)
 **What this changes in step 3.** The count that gives the fence its `√N` gives the zeros nothing: a polynomial of
 length `N` can be quiet on every zero up to height `≍ N`. A lower bound `λ_N ≫ log N/N` therefore cannot come from
 counting zeros. It has to be an inverse theorem: a vector quiet at the zeros up to height `≍ N` carries the factor
-`ζ`, through `n/ψ(n)` in the bulk and the staircase at the cut, and carrying it costs `A ≍ log N`. The continuum limit
+`ζ`, through `n/ψ(n)` in the bulk and the staircase at the cut, and carrying it costs `A ≍ log N`. The last section
+measures this over all vectors (its paragraph "What silence costs"). Silence at the zeros up to height `cN` costs
+`A + B ≈ a_c + 1.4 log N`, and the only silent directions the zeros add to a fence's are the `⌊2πN/T⌋` dilates of the
+zeta vector. The continuum limit
 reduces the constant to a variational problem in one function: `0.0434` is, to within `3%`, the minimum over `c` with
 `∫c = 0` of the quotient of `x_n = Σ_{k ≤ N/n} c(kn/N)/ψ(n)`, times `N/log N`. The next section solves it.
 
@@ -1471,6 +1476,89 @@ between the two. The range `N ≤ 12800` cannot say which end, if either, is the
   `λ_N ≤ 67(1 + log N)/N` at the zeros under RH. A point set with the zeros' density and no arithmetic cannot be as
   quiet as the zeros, for any vector.
 
+**What silence costs** (`scripts/landau_gap.py --silent`, `--split`, `--quiet`; numerics, uncertified). Step 3 of the
+section "The low zeros" says a proof has to show that silencing a vector at the zeros below height `≍ N` costs
+`A + B ≳ log N`. Here that cost is measured over all vectors, together with where the cheap silent vectors live.
+
+- **The measurement.** `m(T)` is the least `A + B` of a unit vector with `V_x(ρ) = 0` at every zero up to height `T`.
+  A direction counts as silent below `10⁻⁷` of the top singular value of the conditions, since the ordinates carry nine
+  decimals. Up to `T = N`, moving the threshold to `10⁻⁵` changes the zeros' `m` by under `3%`.
+
+  | `T` | `110` | `350` | `1000` | `2000` | `4000` | `8000` |
+  |---|---|---|---|---|---|---|
+  | zeros, `N = 1000` | `8.07` | `9.86` | `12.19` | `14.08` | | |
+  | zeros, `N = 2000` | `8.20` | `9.37` | `11.49` | `13.04` | `15.47` | |
+  | zeros, `N = 4000` | `8.47` | `8.98` | `11.13` | `12.43` | `13.90` | `16.01` |
+  | zeros, `N = 8000` | `8.76` | `9.01` | `10.80` | `11.96` | | |
+  | picket fence, `N = 2000` | `8.64` | `12.14` | `2256` | `5956` | `14993` | |
+
+- **At the low zeros silence is nearly free.** At the first 33 zeros, `m(110)` is within `4.3%`, `1.6%`, `0.9%` and
+  `0.5%` of the unconstrained minimum `2.9√log N` at `N = 1000`, `2000`, `4000` and `8000`. At a fixed `T` it falls
+  slowly as `N` grows.
+- **At heights `≍ N` it grows like `log N`.** There is no wall below `2N`. At a fixed ratio `T/N`, `m` rises by the
+  same step each time `N` doubles:
+
+  | `T/N` | `N = 1000` | `2000` | `4000` | the two steps |
+  |---|---|---|---|---|
+  | `½` | `10.544` | `11.487` | `12.432` | `0.943`, `0.945` |
+  | `0.7` | `11.170` | `12.155` | `13.148` | `0.985`, `0.993` |
+
+  - At threshold `10⁻⁵` the steps are `0.943, 0.943` and `0.991, 0.989`.
+  - A law in `√log N` would make the second step `4%` shorter than the first.
+  - Along `T/N = 0.35`, from `N = 2000` to `8000`, the steps are `0.883` and `0.874`, or `0.895` and `0.861` at
+    `10⁻⁵`. That diagonal cannot tell the two laws apart.
+
+  So silence up to height `cN` costs about `a_c + 1.4 log N`.
+- **Quiet costs a little less, and grows the same way** (`--quiet`). `Q_≤N` is the zeta form cut at height `N`. The
+  least `A + B` of a unit vector with `Q_≤N ≤ ε·log N/N` is:
+
+  | `ε` | `N = 1000` | `2000` | `4000` | the two steps |
+  |---|---|---|---|---|
+  | `0.02` | `9.111` | `9.791` | `10.506` | `0.680`, `0.715` |
+  | `0.01` | `9.502` | `10.258` | `11.027` | `0.756`, `0.769` |
+  | `0.005` | `9.866` | `10.680` | `11.501` | `0.814`, `0.821` |
+  | `0.002` | `10.278` | `11.153` | `12.028` | `0.875`, `0.875` |
+
+  These come from exact eigensolves along the frontier, interpolated in `log ε`, with no threshold. At every `ε` the
+  second step is at least as long as the first. The minimiser of `Q_N` has `Q_≤4N·N/log N ≈ 0.004`, since `92%` of its
+  `Q_N` comes from above `4N` (section "Packing"). So it is at least as quiet below `N` as the row `ε = 0.005`.
+- **The fence pays for silence linearly.** Of the `2·#{γ ≤ T}` real conditions only about `(T/π)(1 + log(πN/T))` are
+  independent. That is the count of the section "Packing", made for the window `[−T, T]`.
+  - At the fence the numerical rank is the smaller of the two, to within `5%` near their crossing at `T ≈ πe√(2N)` and
+    `2%` away from it.
+  - Past the crossing the fence's silent vectors are pushed off `n ≲ T/π`. From `T = N` on their spread is
+    `A ≈ T/π` to within `15%`, and `m ≈ (log N + c₀ + 1)A`.
+  - The zeros' silent minimisers keep `A ≤ 3.3`.
+- **The cheap silence is the dilates of `ζ`** (`--split`). On the silent space, `A + B` has exactly `⌊2πN/T⌋` more
+  eigenvalues at the zeros than at the fence, and they are the cheap ones:
+
+  | `N`, `T` | `2πN/T` | the zeros' lowest eigenvalues | the zeros' next three over the fence's first three |
+  |---|---|---|---|
+  | `2000`, `2000` | `6.28` | `13.0, 30.6, 55.4, 81.1, 107.6, 194.9` | `0.995, 0.996, 1.000` |
+  | `4000`, `4000` | `6.28` | `13.9, 32.3, 55.4, 87.4, 117.5, 152.3` | `0.995, 0.996, 1.000` |
+  | `4000`, `2000` | `12.57` | twelve, from `12.4` to `303.5` | `0.993, 0.989, 0.993` |
+
+  - The fence's lowest eigenvalues are `5956`, `12583` and `4895`. Above the extra ones the two spectra agree
+    eigenvalue by eigenvalue: the next four to within `1%` in all three cases.
+  - **Removing the dilates.** Take the part of the silent space that is `K`-orthogonal to
+    `Y_D = span{[d | n]B_j(n/N)/n : d ≤ D, j ≤ 12}`, with `B_j` cubic B-splines. Its lowest eigenvalue jumps to the
+    fence's level by `D = ⌊2πN/T⌋` and barely moves beyond it. For `N = 4000`, `T = 2000` it is `302` at `D = 11` and
+    `6017` at `D = 12`. For `N = T = 4000` it is `348` at `D = 5` and `16208` at `D = 6`.
+  - **The rank.** Well past the crossing, the zeros' numerical rank is below the fence's by `⌊2πN/T⌋`. That
+    holds exactly in `11` of `13` cases at `N = 1000`, `1500` and `2000`, and by one more in the other two.
+  - **Why `⌊2πN/T⌋`** (heuristic). It counts the `d` with `2πN/d > T`. Since `ζ(1 − ρ) = 0`, the approximate
+    functional equation keeps the dilate `[d | n]/n` of the zeta vector silent below `2πN/d`, up to a boundary term
+    that all the dilates share.
+- **The zeta vector.** `x_n = w(n/N)/n`, with `w = 1` on `[0, ½]` and `0` past `1`, has `A + B = 2.6 log N` at
+  `N = 1000` to `8000`. Its rms `|V_x(ρ)|/‖x‖` is below `10⁻⁴` from height `100` to `2N`. At the fence it is between
+  `0.5` and `2`.
+
+So the inverse theorem through `rate_slack` comes down to a robust form of this split. A vector quiet at the zeros up to
+height `cN` should lie, up to a part that costs `≍ T log N`, in the span of the dilates `d ≤ 2π/c`. That span is the
+class with `D₀ = 2π/c`, where Theorem A applies. What is missing is the mean value of step 3, one that tells the
+`ζ`-multiples from the incoherent tails at the zeros below `N` for vectors that are only quiet. No count can supply it,
+since at the zeros the counted conditions are dependent through `ζ`.
+
 **What stays open.**
 - **For every vector, `λ_N ≫ log N/N`.** It would follow from the claim that minimisers of `Q_N` stay within
   `o(log N/N)`, in the norm of `Q_N`, of the class with some fixed `D₀`. The class reaches within `1.6%` at
@@ -1485,14 +1573,10 @@ between the two. The range `N ≤ 12800` cannot say which end, if either, is the
   - The obstruction is the tail. A vector with `A ≤ log N` has at most `(log N/M)Σx_n²` of its mass beyond `M`, but
     up to `log N·Σx_n²` of `Σb_n²` there. At the zeros below `N` that is enough to cancel a head of length `M` that the
     zeros up to `e⁸M` sample (`BallSharp`). Ruling the cancellation out is the inverse theorem again.
-  - **Silence at the low zeros is nearly free** (`landau_gap.py --silent`).
-    - `m(T)` is the least `A + B` of a unit vector with `V_x(ρ) = 0` at every zero up to height `T`.
-    - At `N = 1000` and `2000` it stays within `4%` of the unconstrained minimum `2.9√log N` up to `T = 110`, the
-      first 33 zeros.
-    - It reaches about `3.8√log N ≈ 1.4 log N` only near `πN/log N`, where the constraints run out.
-    - So an inverse theorem has to work with the zeros at heights of order `N/log N` to `N`. Below that, the low
-      zeros together with `A + B` carry nothing usable: a vector can be silent there at the edge's price.
-    - `N ≤ 2000` cannot tell `√log N` from `log N` at the top of that range.
+  - **Silence and quiet at the zeros below `N`** (the paragraph "What silence costs" above). Silence at the low zeros
+    is nearly free, so the low zeros together with `A + B` carry nothing usable. Silence or quiet up to height `≍ N`
+    costs `≍ log N`, and the cheap silent vectors are the `⌊2πN/T⌋` dilates of `ζ`. What is missing is that split,
+    proved for vectors that are only quiet.
   - **Nor does a split along the low eigenspace of `A + B` help.** Put the vector's part in that eigenspace against the
     first few zeros. The part outside it can buy as much loudness there, per unit of `A + B`, as the eigenspace has,
     so the cross terms are not controlled.
