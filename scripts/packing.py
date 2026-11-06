@@ -54,6 +54,14 @@ height; and A_n, the amplitude of the fit m·x_m ≈ a·cos(2πm/n) + b·sin(2π
 --fence-windows: the cost of each constrained minimiser x (x_n = 1) at the fence points in the windows
 [2^k·T₀, 2^(k+1)·T₀), T₀ = 2π√N, k = −2..4, times √N; * marks the window that holds the free height 2πN/n.
 
+    python3 scripts/packing.py --fence-twist [N [n ...]]            # default N = 6400, n = 3 4 6 8; three minutes
+
+--fence-twist: the twisted partners of the note's last section. The fence points are the anti-Gram points, where
+χ(½ + it) = −1, so the fence's first alias is the approximate functional equation of Σ_m e(am)m^{−s}. The vector
+δ_n + p, p_m = 2cos(2πm/n)f(m)/m with f smooth, rising on [X/2, X] and falling on [N/2, N], X = n√N, should then be
+silent from T₀ = 2π√N up to the onset (n − 1)T₀/2 of the first conjugate image. Printed: its fence cost in each
+window [2^k·T₀, 2^(k+1)·T₀), k = −3..7, times √N, against that of δ_n alone.
+
     python3 scripts/packing.py --solve [N ...]                      # N optional, e.g. 2000 4000 8000 16000 30000
 
 --solve: the variational problem of the note's section "The variational problem, solved", which needs no N.
@@ -623,6 +631,43 @@ def fence_windows_mode(N, ns=(1, 4, 8, 16, 32)):
         print(f"   n = {n:3d}: " + " ".join(row), flush=True)
 
 
+def fence_twist_mode(N, ns=(3, 4, 6, 8)):
+    """The twisted partners: window costs of δ_n + p on the fence, p_m = 2cos(2πm/n)f(m)/m, against δ_n alone."""
+    g, _ = points("picket", N)
+    g = g[g <= 16 * N]
+    m = np.arange(1, N + 1, dtype=float)
+    lg, sq = np.log(m), math.sqrt(N)
+    w, T0 = 2.0 / (0.25 + g * g), 2 * math.pi * math.sqrt(N)
+
+    def step(u):
+        u = np.clip(u, 0, 1)
+        a = np.where(u > 0, np.exp(-1 / np.maximum(u, 1e-300)), 0.0)
+        b = np.where(u < 1, np.exp(-1 / np.maximum(1 - u, 1e-300)), 0.0)
+        return a / (a + b)
+
+    ks = list(range(-3, 8))
+    edges = np.array([T0 * 2.0 ** k for k in ks + [ks[-1] + 1]])
+    print(f"N = {N}, T₀ = 2π√N = {T0:.1f}: cost·√N in [2^k·T₀, 2^(k+1)·T₀), k = {ks[0]}..{ks[-1]}, of δ_n + p "
+          f"and of δ_n alone; X = n√N; ^ marks the window with the conjugate image's onset (n − 1)T₀/2")
+    for n in ns:
+        X = n * sq
+        b = 2 * np.cos(2 * math.pi * m / n) * step((m - X / 2) / (X / 2)) * (1 - step((m - N / 2) / (N / 2)))
+        b /= np.sqrt(m)
+        b0 = np.zeros(N)
+        b0[n - 1] = math.sqrt(n)
+        rows = []
+        for bb in (b + b0, b0):
+            cost = np.zeros(len(edges) + 1)
+            for i in range(0, len(g), 4096):
+                V = np.exp(1j * np.outer(g[i:i + 4096], lg)) @ bb
+                np.add.at(cost, np.searchsorted(edges, g[i:i + 4096]), w[i:i + 4096] * np.abs(V) ** 2)
+            rows.append(cost[1:-1] * sq)
+        on = (n - 1) * T0 / 2
+        print(f"   n = {n:2d}, δ_n + p: " + " ".join(f"{c:.4f}" + ("^" if lo <= on < hi else "")
+                                                  for c, lo, hi in zip(rows[0], edges[:-1], edges[1:])))
+        print(f"   n = {n:2d}, δ_n:     " + " ".join(f"{c:.4f}" for c in rows[1]), flush=True)
+
+
 def fence_class_mode(K):
     import mpmath
     mpmath.mp.dps = 15
@@ -650,6 +695,7 @@ def main():
     ap.add_argument("--fence-class", action="store_true", help="the fence margin on the arithmetic class")
     ap.add_argument("--fence-cap", action="store_true", help="the fence's constrained minima q_n")
     ap.add_argument("--fence-windows", action="store_true", help="where the fence's constrained minimisers pay")
+    ap.add_argument("--fence-twist", action="store_true", help="the twisted partners on the fence, window by window")
     a = ap.parse_args()
     if a.silence:
         if not a.zeros_file:
@@ -667,6 +713,8 @@ def main():
         fence_cap_mode(a.N or [400, 1600, 6400])
     elif a.fence_windows:
         fence_windows_mode(a.N[0] if a.N else 6400, tuple(a.N[1:]) or (1, 4, 8, 16, 32))
+    elif a.fence_twist:
+        fence_twist_mode(a.N[0] if a.N else 6400, tuple(a.N[1:]) or (3, 4, 6, 8))
     else:
         models_mode(a.N or [100, 200, 400, 800, 1600])
 
