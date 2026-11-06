@@ -93,8 +93,8 @@ The mathematics below needs none of these. Each physical reading uses some of th
 | `λ_N` as the expansion rate or the vacuum energy | `H₀t₀ = 6.05`, 0.043, 17.5 or 0.667, against 0.950 | 1 |
 | The expansion history, in every reading | Against DESI DR2 BAO with `H₀r_d` free: the best power law is 9.3σ worse than ΛCDM, `a ∝ t` 13.3σ, `a ∝ t^{½}` gives χ² = 5436, and `a ∝ t^{2/3}` is 37σ worse | 1–3 |
 | A brane's geometry (DGP) | Fits DESI's BAO alone (2.2σ), fails BAO with the CMB by 13.4σ, and needs its crossover length set by hand | 11 |
-| Numerical coincidences | Against 38 measured constants, the model's numbers match no better than random numbers do (p = 0.21 for the best direct match) | 1 |
-| The window's share as the matter fraction | 30.23%, against Ω_m = 30.27 ± 0.36% (DESI + CMB). Not blind, and frozen: a constant matter fraction means Einstein–de Sitter expansion, excluded at 37σ | 10 |
+| Numerical coincidences | Against 38 measured constants, the model's numbers match no better than random numbers do (p = 0.21 for the best direct match). See [The coincidences](#the-coincidences) | 1 |
+| The window's share as the matter fraction | 30.23%, against Ω_m = 30.27 ± 0.36% (DESI + CMB). Not blind, and frozen: a constant matter fraction means Einstein–de Sitter expansion, excluded at 37σ. See [The coincidences](#the-coincidences) | 10 |
 | Primes as matter, composites as radiation | 138 composites per prime, against 1.6·10⁹ photons per baryon. Matter comes first and radiation after, the reverse of our history. The share of primes changes about 270 times too slowly | `exchanges.py` |
 | 2 and its multiples as photons | The lightest, commonest, bosonic species, and the main messenger. But it is not massless, it is 17% of all quanta, and from inside its share is frozen and its light comes only from the shells `1 + z = 2, 4, 8, …` | `exchanges.py` |
 
@@ -103,6 +103,42 @@ the tower's only epoch-dependent quantities move like `log N`, 130 to 270 times 
 every reading gives a power-law expansion with no special epoch, while the data need a switch from deceleration to
 acceleration about 6 Gyr ago. Fixing this needs a fixed second scale. That would be a new axiom: nothing in the tower
 supplies one.
+
+## The coincidences
+
+Several of the tower's numbers land close to measured ones. None of them counts as evidence. They are recorded here in
+full so that they are neither lost nor oversold.
+
+### The 3D window and the matter fraction
+
+- **The match.** The observer's 3D window (A3) is the outer product's top three axes. It holds 30.23% of the tower:
+  0.3024, 0.3024 and 0.3023 at `N` = 1024, 2048 and 4096. The other 69.77% lies in the hidden dimensions. Against
+  today's matter fraction:
+
+  | Measurement | Ω_m | Distance |
+  |---|---|---|
+  | DESI DR2 + CMB | 30.27 ± 0.36% | 0.1σ |
+  | DESI DR2 BAO alone | 29.75 ± 0.86% | 0.6σ |
+  | Planck 2018 | 31.53 ± 0.73% | 1.8σ |
+
+  The hidden share matches Ω_Λ in the same way. That is the same coincidence, not a second one: both sides add to 1.
+- **How blind it was.** Not at all. The share first came out of round 5, which computed it for another purpose, and
+  both numbers were known when round 10 compared them. Other shares had already been compared with Ω_m: the drawn
+  slice (26%) and the first two zeros (31.4%).
+- **Why it does not count.** The window's share is the same at every `N`; the matter fraction is not. It was about 78%
+  at z = 1. At the CMB it was 76%, with radiation at 24% and Λ at `10⁻⁹`. A matter fraction fixed at 30% means
+  Einstein–de Sitter expansion, which DESI excludes at 37σ (round 1).
+- **What would change that.** A mechanism inside the tower that made the window's share evolve like Ω_m(z). Nothing in
+  the tower does.
+
+### Other near-matches
+
+| Tower | Measured | Context |
+|---|---|---|
+| The share of each unit vector in the first two zeros' planes: 31.44% | Ω_m = 31.53 ± 0.73% (Planck 2018): 0.13σ | Found by the round 1 audit, among 44 model numbers and 38 measurements. Random numbers match this well 21% of the time. It is 2.0σ from DESI BAO alone and 3.3σ from DESI + CMB. |
+| `τ·λ_N` at `N = 4096`: 0.0541 | The reionisation optical depth, 0.0544 ± 0.0073: 0.04σ | The round 1 audit's best direct match. An imprecise measurement is an easy target. |
+| Integers with at most two prime factors at our epoch: about 4.4% | Ω_b = 4.9% | The cut is a free choice: 0.7% for primes only, about 13% for up to three factors (`exchanges.py`). |
+| Integers per prime at our epoch: `N/π(N) = 139.24` | `1/α = 137.036` | A miss. The tower's number is fixed to about `10⁻⁵`, so 1.6% is far off. It would have matched when the universe was 1.53 Gyr old. |
 
 ## Reproducing
 

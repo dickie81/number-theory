@@ -32,11 +32,11 @@ print(f"composites per prime at our epoch: N/π(N) − 1 ≈ {L - 1 - 1 / L - 1:
 print(f"the share of primes changes by {100 / L:.2f}% per e-fold of time;"
       f" Ω_m changes by {100 * 3 * 0.685 * 0.95:.0f}% (3·Ω_Λ·H·t): a factor {3 * 0.685 * 0.95 * L:.0f}")
 # Sathe–Selberg: π_k(x) ≈ (x/log x)·G((k−1)/log log x)·(log log x)^(k−1)/(k−1)!
-z = 1 / LL
-G = math.exp(np.sum(-np.log1p(-z / P) + z * np.log1p(-1 / P))) / math.gamma(z + 1)
-share2 = 1 / L + G * LL / L
+def G(z): return math.exp(np.sum(-np.log1p(-z / P) + z * np.log1p(-1 / P))) / math.gamma(z + 1)
+share2 = 1 / L + G(1 / LL) * LL / L
+share3 = share2 + G(2 / LL) * LL ** 2 / 2 / L
 print(f"integers with at most two prime factors at our epoch: ≈ {100 * share2:.1f}% (primes {100 / L:.2f}%);"
-      f" the cut is a free choice")
+      f" at most three: ≈ {100 * share3:.1f}%; the cut is a free choice")
 
 print("\n== 2 and its multiples as photons ==")
 B2 = 1.0346538                              # Σ_{n≤x} Ω(n) = x·log log x + B2·x + o(x)

@@ -36,8 +36,11 @@ Against today's matter fraction Ω_m:
 | Planck 2018 | 0.3153 ± 0.0073 | 1.8σ |
 
 **Why it doesn't count.** The share is frozen at every epoch. A frozen matter share means Einstein–de Sitter expansion,
-which round 1 excluded: DESI DR2 χ² = 1420, 37σ. In our universe the matter share was about 0.75 at z = 1 and over
-0.99 at the CMB. So this is a present-day look-alike.
+which round 1 excluded: DESI DR2 χ² = 1420, 37σ. In our universe the matter share was about 0.78 at z = 1. At the CMB
+it was 0.76, with radiation at 0.24 and Λ at 10⁻⁹. So this is a present-day look-alike.
+
+(Corrected after the round: the first version said "about 0.75 at z = 1 and over 0.99 at the CMB", which left out
+radiation.)
 
 ## Overall
 
