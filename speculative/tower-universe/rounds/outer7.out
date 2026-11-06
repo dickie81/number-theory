@@ -1,0 +1,6 @@
+     N  top-3 share     e^S      PR   smallest/largest eigenvalue
+    64        0.314   32.32   19.55   2.63e-04
+   256        0.303   58.04   22.41   5.49e-06
+  1024        0.302   73.92   22.71   1.05e-07
+  4096        0.302   80.48   22.73   1.94e-09
+ limit        0.307   71.97   22.09   (from 3000 zeros of each sign)
