@@ -1451,7 +1451,7 @@ window that holds the free height `2πN/n`.
   failure of `N^{−1/2}` beyond some `N` near `10⁹`–`10¹⁰`. This is a heuristic count: neither a proof of `−1/2` nor
   an explicit vector that beats it is known.
 
-**The partners are a functional equation** (`packing.py --fence-twist`; numerics, with one heuristic count).
+**The partners are a functional equation** (`packing.py --fence-twist`, `--fence-two`; numerics, with heuristic counts).
 - **The fence is the set of anti-Gram points.** For the Riemann–Siegel theta function Stirling gives
   `θ(t) = (t/2)log(t/2πe) − π/8 + 1/(48t) + O(t^{−3})`, so `πΦ(t) = θ(t) + π − 1/(48t) + O(t^{−3})`. Hence
   `θ(t_k) = (k − 3/2)π + 1/(48t_k) + O(t_k^{−3})` and `χ(½ + it_k) = e^{−2iθ(t_k)} = −1 + O(1/t_k)`: on the fence
@@ -1476,20 +1476,53 @@ window that holds the free height `2πN/n`.
   Below `T₀/2`, where `f(nt/2π) = 0`, `δ_n` is left as it is.
 - **The images cost about `log N/(6n√N)` in all** (heuristic count). The image `(nk′ ± 1)/n` has `|·|² = n/(nk′ ± 1)`
   and switches on near `(nk′ ± 1)T₀/2`, where the remaining weight is `W ≈ log N/(2π²(nk′ ± 1)√N)`. Each family sums
-  to `(π²/6)·log N/(2π²n√N)`. That is Lemma C's `1/n`, `α = 1`, but concentrated near the onsets rather than spread
-  evenly over the windows. The table's per-window slope `n^{−0.45}` averages it over `log₂(√N/n)` windows, at
-  `N ≤ 12800`, where for `n ≥ 6` the images already run into the free height.
-- **What a proof that `N^{−1/2}` fails still needs.** `x_n` has to be silenced below the partners' start, about `T₀`,
-  at cost `o(log N/(n√N))`, uniformly for `n ≤ N^{1/6}`. With that, the free cost `n²log N/N` and the images give
-  `λ^pf_N ≪ N^{−2/3}log N`, which with Theorem C is the order.
-  - The constrained minimisers do it at `N ≤ 12800`. Their windows from `T₀/4` to `T₀` cost `0.020`, `0.0053` and
-    `0.0010` (times `1/√N`) at `n = 8`, `16` and `32`, falling faster than `1/n`.
-  - Below the crossing `πe√(2N) ≈ 1.9T₀` (the paragraph "What silence costs" below), silence is possible by the count.
-    What is missing is its price: an interpolation theorem at the fence points there.
+  to `(π²/6)·log N/(2π²n√N)`. For partners started at `X = n√N` that is Lemma C's `1/n`, concentrated near the
+  onsets. But starting there leaves `x_n` to be silenced below `T₀` by other means, and that costs more (the next
+  bullets).
+- **Below the partners' start the large components do the silencing.** In the constrained minimiser at `N = 6400` and
+  `n = 8`, `m·x_m ≈ 1.85·cos(2πm/8)` on `m ≥ 256`, with `R²` from `0.949` to `0.996` in octaves. It ramps up over
+  `[128, 256)` and has rms below `0.06` on `m < 128`. At the lowest fence points the large components cancel the
+  centre, through the fence's higher aliases rather than the first. At `t = 14.5` those above `1024` give
+  `−1.128 + 2.612i` against the centre's `0.973 − 2.656i`; by `t ≈ 70` it is those in `[256, 1024)`.
+- **That is interpolation on a band, and it costs about `nH³/N²`.** To silence `x_n` at the fence points below `H`,
+  the frequencies `log m` must cover a band at least the local Nyquist width `L(H)`, so `m ∈ [2πN/H, N]`.
+  - For `H < T₀/√s`, the band `[2πN/(sH), N]` has no stationary aliases at those points. Its Gram matrix is that of
+    exponentials on an interval longer than `2π` over their least gap, so Ingham's inequality bounds it below.
+  - The least-norm interpolant is then quiet from `H` up to about `4π²N/(sH)`. Above that it pays its components'
+    free energy, about `s²nH³log N/(N²L(H))` up to constants.
+- **So the two mechanisms balance at `H ≍ √(N/n)`, and `α = ½`.** Twisted partners started at `X = nH/2π` cost about
+  `log N/(nH)` in images.
+  - The two costs balance at `H ≍ √(N/n)`, where each is about `(log N)^{3/4}/(√n√N)`: `α = ½` in the notation below,
+    not `α = 1`.
+  - At `N = 12800` the cost below the free height is `0.449`, `0.405` and `0.357` (times `1/√N`) at `n = 3, 4, 5`. That
+    is `K·(log N)^{3/4}/√n` with `K = 0.144`, `0.150` and `0.148`. The measured slope `α ≈ 0.45` is the same law.
+- **The explicit construction comes within a factor of the constrained minimum** (`--fence-two`). Take
+  `x = δ_n + p + y`, with `y` the least-norm interpolant on the band `[πN/H, N]`, weights `φ(log m)/m`, and
+  `H = 8√(N/n)`. At `N = 6400`:
+
+  | `n` | `3` | `4` | `6` | `8` | `12` | `16` |
+  |---|---|---|---|---|---|---|
+  | `Q^pf(x)·√N` | `0.972` | `0.863` | `0.826` | `0.904` | `1.243` | `1.761` |
+  | `q_n·√N` | `0.510` | `0.534` | `0.591` | `0.684` | `0.983` | `1.417` |
+
+  The ratio falls with `n`, from `1.91` to `1.24`. The best `κ` in `H = κ√(N/n)` is about `8` at both `N = 1600` and
+  `6400`, as `H ∝ √(N/n)` says. The interpolation's condition number stays below `40` until `H` passes `T₀/√2`, where
+  the band starts to alias.
+- **What follows** (heuristic). With the free cost `n²log N/N`, the best centre is `n ≍ N^{1/5}`, and
+  `λ^pf_N ≍ N^{−3/5}(log N)^c`. So `N^{−1/2}` fails, and Theorem C's `−2/3` is not sharp. At the measured constants
+  the crossover with the vector centred at `1` is near `N ≈ 10⁹`–`10¹⁰`.
+- **What a proof of `λ^pf_N ≪ N^{−3/5}(log N)^C` needs.** Four estimates, each an upper bound or a standard
+  inequality, none written out here:
+  - (a) stationary phase for the twisted sums at the fence points, giving the cancellation and the images;
+  - (b) Ingham's inequality for the band's Gram matrix at the points below `H`;
+  - (c) the interpolant's free energy above its components' free heights;
+  - (d) the images' mean square at the fence points.
 
 **What the numbers allow.** Suppose the cost per window behaves like `C·n^{−α}` for large `n`. The free cost
 `n²log N/N` balances it at the centre `n ≍ N^{1/(4+2α)}`, and then `λ^pf_N ≍ N^{−1/2−α/(4+2α)}log N`.
-- **`α = 1`**, the dependence on `n` in Lemma C, gives `−2/3`. Theorem C would then be sharp up to the constant.
+- **`α = 1`**, the dependence on `n` in Lemma C, gives `−2/3`. Theorem C would then be sharp up to the constant. It
+  needs `x_n` silenced below `T₀` for `o(log N/(n√N))`, which the band count above puts out of reach.
+- **`α = ½`**, the balance of the two mechanisms above, gives `−3/5`.
 - **`α ≈ 0.45`**, the slope between `n = 3` and `11` at `N = 12800`, with `C ≈ 0.14`, gives `−0.59`. A model with this
   law, the free part, the excess as modelled above, and `n = 1`'s own cost per window reproduces `q_1` and `q_5` at
   `N ≈ 10⁴` to within `5%`. In that model the vector centred at `1` loses, around `N ≈ 10¹⁰`, to one centred near
@@ -1498,8 +1531,8 @@ window that holds the free height `2πN/n`.
   exponent `−1/2` holds with a logarithm to spare.
 
 So `λ^pf_N ≫ N^{−2/3}log N` is proved (Theorem C), and up to `N = 12800` the fence behaves like `N^{−1/2}`:
-`λ^pf_N√N = 0.117, 0.123, 0.132, 0.136` at `N = 400, 1600, 6400, 12800`. The constrained minima allow any exponent
-between the two. The range `N ≤ 12800` cannot say which end, if either, is the limit.
+`λ^pf_N√N = 0.117, 0.123, 0.132, 0.136` at `N = 400, 1600, 6400, 12800`. The two-mechanism count, which the explicit
+construction meets to within a factor, points to `−3/5`: between the two, and only visible far beyond `N = 12800`.
 
 **What the three theorems settle.**
 - **The mechanism needs arithmetic.** On the class, the zeta form sags like `log N/N`: Theorem A, and the theorem
@@ -1636,6 +1669,6 @@ counted conditions are dependent through `ζ`.
   - A proof of `−1/2` would have to charge the partners of `x_n` for more than their free energy. Above `2π√N` the
     twisted partners pay only about `log N/(6n√N)` ("The partners are a functional equation"). So the price would
     have to be found below `2π√N`.
-  - A proof that `−1/2` fails needs an explicit vector centred at `n ≍ N^{1/6}` that stays quiet below `2πN/n`. Above
-    `2π√N` the twisted partners do that. What is missing is silence below `2π√N` at cost `o(log N/(n√N))`: an
-    interpolation theorem at the fence points below the crossing.
+  - A proof that `−1/2` fails can use the two-mechanism vector centred at `n ≍ N^{1/5}`: interpolation on a band below
+    `H ≍ √(N/n)`, twisted partners above. It would give `λ^pf_N ≪ N^{−3/5}(log N)^C` once the four estimates (a)–(d)
+    are written out. At `N = 6400` it is within a factor `1.24`–`1.91` of the constrained minimum.

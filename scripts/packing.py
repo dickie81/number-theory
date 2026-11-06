@@ -62,6 +62,13 @@ height; and A_n, the amplitude of the fit m·x_m ≈ a·cos(2πm/n) + b·sin(2π
 silent from T₀ = 2π√N up to the onset (n − 1)T₀/2 of the first conjugate image. Printed: its fence cost in each
 window [2^k·T₀, 2^(k+1)·T₀), k = −3..7, times √N, against that of δ_n alone.
 
+    python3 scripts/packing.py --fence-two [N [n ...]]              # default N = 6400, n = 3 4 6 8 12 16; 3 minutes
+
+--fence-two: the two-mechanism construction of the note's last section. x = δ_n + p + y, with p the twisted partners
+of --fence-twist started at X = nH/2π, and y the real vector on the band [πN/H, N], weights ω_m = φ(log m)/m, of least
+norm Σ y_m²m/ω_m that silences δ_n + p at every fence point below H. For H = κ√(N/n), κ = 6, 8, 10, 12, it prints
+Q^pf(x)·√N, with the condition number of the interpolation, against q_n·√N.
+
     python3 scripts/packing.py --solve [N ...]                      # N optional, e.g. 2000 4000 8000 16000 30000
 
 --solve: the variational problem of the note's section "The variational problem, solved", which needs no N.
@@ -668,6 +675,50 @@ def fence_twist_mode(N, ns=(3, 4, 6, 8)):
         print(f"   n = {n:2d}, δ_n:     " + " ".join(f"{c:.4f}" for c in rows[1]), flush=True)
 
 
+def fence_two_mode(N, ns=(3, 4, 6, 8, 12, 16), kappas=(6, 8, 10, 12)):
+    """The two-mechanism construction δ_n + p + y on the fence, against the constrained minimum q_n."""
+    from scipy.linalg import cho_factor, cho_solve
+    g, G0 = points("picket", N)
+    G = gram_points(N, g, G0)
+    Cf = cho_factor(G)
+    m = np.arange(1, N + 1, dtype=float)
+    lg, sq = np.log(m), math.sqrt(N)
+
+    def step(u):
+        u = np.clip(u, 0, 1)
+        a = np.where(u > 0, np.exp(-1 / np.maximum(u, 1e-300)), 0.0)
+        b = np.where(u < 1, np.exp(-1 / np.maximum(1 - u, 1e-300)), 0.0)
+        return a / (a + b)
+
+    print(f"N = {N}: q_n·√N, and Q^pf·√N of δ_n + p + y for H = κ√(N/n) (with the condition number of the "
+          f"interpolation)")
+    for n in ns:
+        e = np.zeros(N)
+        e[n - 1] = 1
+        qn = 1 / cho_solve(Cf, e)[n - 1]
+        row = []
+        for kap in kappas:
+            H = kap * math.sqrt(N / n)
+            X = n * H / (2 * math.pi)
+            x = 2 * np.cos(2 * math.pi * m / n) * step((m - X / 2) / (X / 2)) * (1 - step((m - N / 2) / (N / 2))) / m
+            x[n - 1] += 1.0
+            tk = g[g <= H]
+            Bx = np.exp(1j * np.outer(tk, lg)) @ (x * np.sqrt(m))
+            M1 = max(math.pi * N / H, n + 1)
+            u = (lg - math.log(M1)) / (math.log(N) - math.log(M1))
+            om = np.where((m >= M1) & (m != n), step(u / 0.15) * (1 - step((u - 0.85) / 0.15)) / m, 0.0)
+            idx = np.where(om > 0)[0]
+            E = np.exp(1j * np.outer(tk, lg[idx])) * np.sqrt(m[idx])
+            A = np.vstack([E.real, E.imag])
+            D = om[idx] / m[idx]
+            Gm = (A * D) @ A.T
+            lam = np.linalg.solve(Gm + 1e-12 * np.trace(Gm) / len(Gm) * np.eye(len(Gm)),
+                                  -np.concatenate([Bx.real, Bx.imag]))
+            x[idx] += D * (A.T @ lam)
+            row.append(f"κ = {kap:g}: {x @ G @ x * sq:.4f} (cond {np.linalg.cond(Gm):.0e})")
+        print(f"   n = {n:2d}: q_n√N = {qn * sq:.4f} | " + " | ".join(row), flush=True)
+
+
 def fence_class_mode(K):
     import mpmath
     mpmath.mp.dps = 15
@@ -696,6 +747,7 @@ def main():
     ap.add_argument("--fence-cap", action="store_true", help="the fence's constrained minima q_n")
     ap.add_argument("--fence-windows", action="store_true", help="where the fence's constrained minimisers pay")
     ap.add_argument("--fence-twist", action="store_true", help="the twisted partners on the fence, window by window")
+    ap.add_argument("--fence-two", action="store_true", help="the two-mechanism fence construction against q_n")
     a = ap.parse_args()
     if a.silence:
         if not a.zeros_file:
@@ -715,6 +767,8 @@ def main():
         fence_windows_mode(a.N[0] if a.N else 6400, tuple(a.N[1:]) or (1, 4, 8, 16, 32))
     elif a.fence_twist:
         fence_twist_mode(a.N[0] if a.N else 6400, tuple(a.N[1:]) or (3, 4, 6, 8))
+    elif a.fence_two:
+        fence_two_mode(a.N[0] if a.N else 6400, tuple(a.N[1:]) or (3, 4, 6, 8, 12, 16))
     else:
         models_mode(a.N or [100, 200, 400, 800, 1600])
 
