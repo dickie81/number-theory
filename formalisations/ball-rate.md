@@ -1447,9 +1447,9 @@ window that holds the free height `2πN/n`.
   and `32` that height lies above the free height, so no image shows below it.
 - **So the asymptotic regime for a centre `n` needs `N ≫ n⁴`,** with the images below the free height. The costs per
   window above, and the slope `n^{−0.45}`, are pre-asymptotic for `n ≥ 8`. Counting the images in that regime gives
-  about `H(nT₀)√N ≍ log N/n` in all, the dependence on `n` of Lemma C. That favours `α = 1` below, and with it a
-  failure of `N^{−1/2}` beyond some `N` near `10⁹`–`10¹⁰`. This is a heuristic count: neither a proof of `−1/2` nor
-  an explicit vector that beats it is known.
+  about `H(nT₀)√N ≍ log N/n` in all, the dependence on `n` of Lemma C. Counted alone, the images would favour
+  `α = 1`. With the cost of silencing below the partners' start included, the count in the next paragraph gives
+  `α = ½`. Either way `N^{−1/2}` would fail beyond some `N` near `10⁹`–`10¹⁰`, and neither is proved.
 
 **The partners are a functional equation** (`packing.py --fence-twist`, `--fence-two`; numerics, with heuristic counts).
 - **The fence is the set of anti-Gram points.** For the Riemann–Siegel theta function Stirling gives
