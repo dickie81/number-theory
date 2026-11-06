@@ -25,8 +25,9 @@ problem, solved" derives the constant at leading order, heuristically:
 The section after it proves the matching upper bound on paper, for an explicit vector:
 `λ_N ≤ (0.04294 + o(1))·log N/N` under RH. The last section proves, on that class of vectors, the inverse
 theorem (quiet at the zeros means carrying `ζ`, and costs `≥ 0.0400·log N/N`) and the absence of any sag at the
-picket fence. It also proves, for every vector and with no hypothesis, `λ^pf_N ≫ N^{−2/3}log N` at the picket
-fence, a power of `N` above the zeros' `λ_N`; and `λ^pf_N ≪ N^{−3/5}(log N)³`, so that `λ^pf_N ≫ N^{−1/2}` fails. Its
+picket fence. It also proves, for every vector and with no hypothesis,
+`N^{−3/5}log N ≪ λ^pf_N ≪ N^{−3/5}(log N)³` at the picket fence: a power of `N` above the zeros' `λ_N`, and the
+exponent exactly `−3/5`, so that `λ^pf_N ≫ N^{−1/2}` fails. Its
 numerics measure what silence at the zeros costs over all vectors:
 `≍ log N` in `A + B` at heights `≍ N`, carried by the `⌊2πN/T⌋` dilates of the zeta vector, where the fence pays
 `≍ T log N`.
@@ -881,8 +882,8 @@ each `n ≤ T/2π` on its own, and the band `[log(T/2π), log N]` at density `T/
 `Φ(t) = (t/2π)log(t/2πe) + 7/8` is the smooth zero count. Room for all of them needs `T ≤ πe√N ≈ 8.5√N`. Above that
 height a point set without arithmetic cannot all be silenced, and the points left over charge `λ_N` of order `N^{−1/2}`,
 up to logarithms. The count bounds what can be silenced exactly, not the residual. The last section proves
-`λ^pf_N ≫ N^{−2/3}log N` for every vector at the fence, and its constrained minima leave open whether `N^{−1/2}` is the
-limit or a pre-asymptotic phase.
+`N^{−3/5}log N ≪ λ^pf_N ≪ N^{−3/5}(log N)³` for every vector at the fence. So `N^{−1/2}` is a pre-asymptotic phase,
+which the fence's constrained minima still show at `N = 12800`.
 
 **Three point sets with the zeros' density.**
 
@@ -1237,7 +1238,7 @@ the fixed vectors of the previous section the computed quotients approach their 
 
 The proof of the previous section works for the whole class of vectors the earlier sections found, and on that class
 it settles the other two open steps. Theorem C below then drops the class at the picket fence, with a margin that
-falls like a power of `N`, and Theorem D shows that the power is more than `1/2`.
+falls like a power of `N`, and Theorems D and E show that the power is `3/5`.
 
 **The class.** `n·x_n = Σ_{d | n, d ≤ D₀} E_d(n/N)`, with `D₀` fixed, and fixed profiles `E_d` on `[0, 1]`. Each `E_d`
 is `C²`, with `E_d''` of bounded variation and `E_d(1) = E_d'(1) = E_d''(1) = 0`. Write `e(d) = E_d(0)`, `F = 1 ∗ e`,
@@ -1304,7 +1305,8 @@ zero. Its spread is `≍ log N`, and its quotient is at least `(0.0400 + o(1))·
 **Theorem C (the picket fence for every vector; no hypothesis).** There are absolute constants `c > 0` and `N₀` such
 that `Q^pf_N(x) ≥ c·N^{−2/3}log N·Σx_n²` for every real `x` on `[1, N]` and every `N ≥ N₀`. So
 `λ^pf_N ≫ N^{−2/3}log N` for every vector, not only on the class. Under RH `λ_N ≤ 67(1 + log N)/N` (`BallUpper`), so
-the fence's smallest eigenvalue exceeds the zeros' by a factor `≫ N^{1/3}`.
+the fence's smallest eigenvalue exceeds the zeros' by a factor `≫ N^{1/3}`. Theorem E below raises the exponent to
+`−3/5`, and the factor to `≫ N^{2/5}`.
 
 *Setting.* Put `b_n = x_n√n`, `B(t) = Σ_{n≤N} b_n n^{it}`, `t_k = Φ⁻¹(k − ½)` and `L(t) = log(t/2π)`, so `Φ' = L/2π`.
 Fix `η ∈ C_c^∞((½, 2))` with `η ≥ 0` and `Σ_{j∈ℤ} η(t/2^j) = 1` on `t > 0`, and put
@@ -1394,7 +1396,8 @@ Hence `‖R‖² ≤ C₁A·H` and `HΣ_{n≤K} b_n²/n² ≤ 2(1 + √(C₁A))�
 only what they pay where they are free, and those partners are free `n` times higher. The free cost `n²log N/N` of
 `x_n` itself, from Lemma F, takes over at `n ≍ N^{1/6}`; that is the exponent `−2/3`. How fast the cost of
 cancelling `x_n` really falls with `n` decides the exponent. A fall like `1/n` gives Theorem C's `−2/3`; no fall gives
-the `−1/2` of the fence's minimiser at `N ≤ 12800`.
+the `−1/2` of the fence's minimiser at `N ≤ 12800`. Lemma E below moves the window down to `≍ A√(N/n)`, where the
+partners are free only `√n` times higher. The fall is then `1/√n`, and the exponent `−3/5` (Theorem E).
 
 **The constrained minima** (`--fence-cap`, and `--fence-cap 12800` for the last rows). Put
 `q_n = min{Q^pf_N(x) : x_n = 1} = 1/(G⁻¹)_{nn}`, for `G` the fence's Gram matrix. `q_n` splits into three parts:
@@ -1517,7 +1520,7 @@ window that holds the free height `2πN/n`.
 
 **Theorem D (the fence from above; no hypothesis).** There are absolute constants `C` and `N₀` with
 `λ^pf_N ≤ C·N^{−3/5}(log N)³` for every `N ≥ N₀`. So `λ^pf_N√N → 0`: the bound `λ^pf_N ≫ N^{−1/2}` fails, and with
-Theorem C, `N^{−2/3}log N ≪ λ^pf_N ≪ N^{−3/5}(log N)³`.
+Theorem E below, `N^{−3/5}log N ≪ λ^pf_N ≪ N^{−3/5}(log N)³`.
 
 *The vector.* Put `L = log N`, `n = ⌊N^{1/5}⌋`, `H = √(N/n)`, `X = nH/2π`, `M₁ = πN/(2e²H)` and `w(t) = 2/(¼ + t²)`.
 Fix `ψ ∈ C^∞` with `ψ = 0` on `(−∞, 0]` and `ψ = 1` on `[1, ∞)`, and a Gevrey-class `φ` with `0 ≤ φ ≤ 1`, `φ = 1` on
@@ -1598,41 +1601,93 @@ holds the images.
 `λ^pf_N ≪ n²L/N + L²/X + L³nH³/N² + N^{−1}`.
 With `n = N^{1/5}`, `H = N^{2/5}` and `X ≍ N^{3/5}`, each term is `≪ L³N^{−3/5}`. ∎
 
-- **What the proof does not settle.** The exponent itself, between Theorem C's `−2/3` and Theorem D's `−3/5`. The
-  count of the paragraph above, which the explicit construction meets to a factor, puts it at `−3/5`. A matching
-  lower bound would have to show that silencing `x_n` below `H` costs `≫ nH³/N²`, against the `n²log N/N` of Lemma F.
+- **What the proof does not settle** is the power of `log N`. Theorem E below gives the matching lower bound, up to
+  `(log N)²`.
 
-**What the numbers allow.** Suppose the cost per window behaves like `C·n^{−α}` for large `n`. The free cost
-`n²log N/N` balances it at the centre `n ≍ N^{1/(4+2α)}`, and then `λ^pf_N ≍ N^{−1/2−α/(4+2α)}log N`.
-- **`α = 1`**, the dependence on `n` in Lemma C, gives `−2/3`. Theorem C would then be sharp up to the constant. It
-  needs `x_n` silenced below `T₀` for `o(log N/(n√N))`, which the band count above puts out of reach.
-- **`α = ½`**, the balance of the two mechanisms above, gives `−3/5`. Theorem D proves this as an upper bound.
+**Theorem E (the fence's exponent; no hypothesis).** There are absolute constants `c > 0` and `N₀` such that
+`Q^pf_N(x) ≥ c·N^{−3/5}log N·Σx_n²` for every real `x` on `[1, N]` and every `N ≥ N₀`. With Theorem D,
+`N^{−3/5}log N ≪ λ^pf_N ≪ N^{−3/5}(log N)³`: the exponent at the fence is `−3/5`.
+
+**Lemma E (the chain at the band's edge).** For `A ≥ A₀`, `ε ≤ ε₀` and `N ≥ N₀(A, ε)`,
+`Q^pf_N(x) ≥ c(A)·(log N/√N)·Σ_{n ≤ εN^{1/5}} x_n²/√n`.
+
+Lemma C works at one height, `T ≍ A√N`, for every `n`. But `x_n` has aliases beyond the first, at `m = n(t/2π)^ℓ`
+with `ℓ ≥ 2`, only below height `2π√(N/n)`, and they are how Theorem D's band silences it. At height `≍ A√(N/n)`
+only the partners `m ≈ nt/2π` can cancel `x_n`, and they are free above `2πm ≍ A√(nN)`: `√n` times higher, not `n`
+times. So the window moves with `n`.
+
+*Proof.* Put `K = εN^{1/5}`. For `0 ≤ i ≤ log₄K` take the block `I_i = [4^i, 4^{i+1})` and the window `j_i` with
+`T_i = 2^{j_i} ∈ [4πA√N/2^i, 8πA√N/2^i)`. The windows are distinct, since the left end halves from `i` to `i + 1`.
+Fix `i`, write `T = T_i` and `H = H_{j_i}`, and run the proof of Lemma C with the test sequences `u_n`, `n ∈ I_i`.
+- **No alias beyond the first.** For `n ∈ I_i` and `t ≥ T/2`, `n(t/2π)² ≥ A²N`. So for every `m ≤ N`,
+  `|log(m/n) − ℓL(t)| ≥ 2 log A` when `ℓ ≥ 2`, and `≥ log(A√N/(4K^{3/2}))`, which tends to infinity, when `ℓ ≤ −1`.
+- **The family is almost orthogonal.** For distinct `n, n' ∈ I_i`, `T|log(n'/n)| ≥ T/4^{i+1} ≥ πA√N/K^{3/2}`, which
+  tends to infinity. The terms `ℓ ≠ 0` between them are non-stationary, as in Lemma C.
+- **Only the partners alias.** As in Lemma C, with `P_n = {m : m/n ∈ [T/8π, 2T/π]}`. Every partner has
+  `(A/2)2^i√N ≤ m ≤ 64A·2^i√N`. So `√N ≤ m ≤ N` for `A ≥ 2`, `M_m = m`, and Lemma F charges it `Ω_m = W(16πA·m)`.
+- **Schur's test.** The diagonal bound `(RR*)_{nn} ≤ C₁A·H` of Lemma C depends on neither `n` nor `T`. Off the
+  diagonal, `Σ_{n'∈I_i, n'≠n}|(RR*)_{nn'}| ≤ CA·H·(4^{i+1})²/T ≤ (4C/π)H·K^{5/2}/√N = (4C/π)ε^{5/2}H`, which is at
+  most `H` once `ε ≤ ε₀`.
+
+So, as in Lemma C, `H·Σ_{n∈I_i} x_n²/n ≤ C(A)(E_{j_i} + Σ_{m∈P^{(i)}} b_m²Ω_m) + O(HN^{−1}Σx_n²)`, with
+`P^{(i)} = ∪_{n∈I_i}P_n`. Now sum over `i`:
+- The windows are distinct, so `Σ_i E_{j_i} ≤ Q^pf_N(x)`.
+- `P^{(i)}` lies in `[(A/2)2^i√N, 64A·2^i√N]`, an interval of ratio `2⁷` that doubles with `i`. So each `m` lies in at
+  most `8` of the `P^{(i)}`, and by Lemma F `Σ_iΣ_{m∈P^{(i)}} b_m²Ω_m ≤ 8Σ_m b_m²Ω_m ≤ 16Q^pf_N(x)`.
+- `H_{j_i} ≥ c_η L(T_i)/(2πT_i) ≥ c_η·log N·2^i/(40π²A√N)`, and `2^i > √n/2` on `I_i`. So
+  `H_{j_i}/n ≥ c_η log N/(80π²A√(nN))`.
+- The remainders lie far below Lemma F's `Q^pf_N(x) ≫ (log N/N)Σx_n²`. ∎
+
+*Proof of Theorem E.* Normalise `Σx_n² = 1`, and fix `A = A₀`, `ε = ε₀` and `K = εN^{1/5}`.
+- For `n ≤ K`, Lemma E charges `x_n²` at least `c log N/√(KN) = cε^{−1/2}N^{−3/5}log N`.
+- For `K < n ≤ √N`, Lemma F charges it `n²(L(16πAN/n) + 1)/(16π²AN) ≥ K²log N/(32π²AN) = ε²N^{−3/5}log N/(32π²A)`.
+- For `n > √N`, Lemma F charges it at least `log N/(32π²A)`.
+
+Adding the two lemmas gives `2Q^pf_N(x) ≥ c'·N^{−3/5}log N`. ∎
+
+- **Why Theorem C missed it.** Lemma C fixed the window at `T ≍ A√N` for every `n`: the lowest height at which no
+  `x_n` has a second alias. There the partners of `x_n` are free only `n` times higher, which gives `1/n`. The second
+  alias of `x_n` already leaves `[1, N]` at `2π√(N/n)`, and from there the partners are free `√n` times higher, which
+  gives `1/√n`: the `α = ½` of the two-mechanism count.
+- **What it leaves** is the power of `log N`: `1` here against `3` in Theorem D. Lemma E charges the partners only
+  their free cost. Closing the gap needs a lower bound that also sees the images, or an upper bound with fewer
+  logarithms.
+- **The numbers agree.** At `N = 12800` the part of `q_n` paid below the free height (the row "below" of
+  `--fence-cap`) is `0.78/√(nN)`, `0.81/√(nN)` and `0.80/√(nN)` for `n = 3`, `4` and `5`.
+
+**What the numbers allowed.** Suppose the cost per window behaves like `C·n^{−α}` for large `n`. The free cost
+`n²log N/N` balances it at the centre `n ≍ N^{1/(4+2α)}`, and then `λ^pf_N ≍ N^{−1/2−α/(4+2α)}log N`. Theorems D and
+E decide for `α = ½`.
+- **`α = 1`**, the dependence on `n` in Lemma C, gives `−2/3`. Theorem E rules it out.
+- **`α = ½`**, the balance of the two mechanisms above, gives `−3/5`. Theorems D and E prove it, up to the power of
+  `log N`.
 - **`α ≈ 0.45`**, the slope between `n = 3` and `11` at `N = 12800`, with `C ≈ 0.14`, gives `−0.59`. A model with this
   law, the free part, the excess as modelled above, and `n = 1`'s own cost per window reproduces `q_1` and `q_5` at
   `N ≈ 10⁴` to within `5%`. In that model the vector centred at `1` loses, around `N ≈ 10¹⁰`, to one centred near
-  `n ≈ 80`.
-- **A floor, `α = 0`,** keeps the vector centred at `1` optimal. Then `λ^pf_N√N` rises like `0.013·log N`, and the
-  exponent `−1/2` holds with a logarithm to spare.
+  `n ≈ 80`. Asymptotically the slope is `½`.
+- **A floor, `α = 0`,** would keep the vector centred at `1` optimal and the exponent at `−1/2`. Theorem D rules it
+  out.
 
-So `N^{−2/3}log N ≪ λ^pf_N ≪ N^{−3/5}(log N)³` is proved (Theorems C and D), although up to `N = 12800` the fence
+So `N^{−3/5}log N ≪ λ^pf_N ≪ N^{−3/5}(log N)³` is proved (Theorems D and E), although up to `N = 12800` the fence
 behaves like `N^{−1/2}`: `λ^pf_N√N = 0.117, 0.123, 0.132, 0.136` at `N = 400, 1600, 6400, 12800`. The decay faster
-than `N^{−1/2}` shows only far beyond that, near `N ≈ 10⁹`–`10¹⁰` at the measured constants. The two-mechanism count,
-which the explicit construction meets to within a factor, puts the order at `N^{−3/5}`, the upper end.
+than `N^{−1/2}` shows only far beyond that, near `N ≈ 10⁹`–`10¹⁰` at the measured constants.
 
-**What the four theorems settle.**
+**What the five theorems settle.**
 - **The mechanism needs arithmetic.** On the class, the zeta form sags like `log N/N`: Theorem A, and the theorem
   above. The picket fence has a margin that does not depend on `N`: Theorem B. The sag is exactly the bulk residue
   `ζ(1 − ρ)M_e(1 − ρ)`, which vanishes at the zeros of `ζ` and nowhere else. Its partner, the boundary residue
   `N^ρĜ(ρ)`, vanishes at every zero only when `Ĝ` carries the factor `ζ`.
 - **The inverse theorem holds on the class.** There, being quiet at the zeros means carrying `ζ`, and carrying `ζ`
   costs spread `≍ log N` and quotient `≥ 0.0400·log N/N`.
-- **For every vector the fence is louder by a power of `N`.** Theorem C gives `λ^pf_N ≫ N^{−2/3}log N`, against
-  `λ_N ≤ 67(1 + log N)/N` at the zeros under RH. A point set with the zeros' density and no arithmetic cannot be as
-  quiet as the zeros, for any vector.
-- **But not by `N^{1/2}`.** Theorem D gives `λ^pf_N ≪ N^{−3/5}(log N)³`, so `λ^pf_N ≫ N^{−1/2}` fails. The vector that
-  shows it is centred at `n ≍ N^{1/5}`: interpolation on a band of large components below `√(N/n)`, and above it the
-  twisted partners, which the fence's own functional equation (its points are the anti-Gram points) makes cancel
-  `x_n` exactly.
+- **For every vector the fence is louder by a power of `N`.** Theorem E gives `λ^pf_N ≫ N^{−3/5}log N` (Theorem C
+  had `N^{−2/3}log N`), against `λ_N ≤ 67(1 + log N)/N` at the zeros under RH. A point set with the zeros' density
+  and no arithmetic cannot be as quiet as the zeros, for any vector.
+- **But not by `N^{1/2}`, and the power is `2/5`.** Theorem D gives `λ^pf_N ≪ N^{−3/5}(log N)³`, so
+  `λ^pf_N ≫ N^{−1/2}` fails, and with Theorem E the exponent at the fence is exactly `−3/5`. The vector that shows it
+  is centred at `n ≍ N^{1/5}`: interpolation on a band of large components below `√(N/n)`, and above it the twisted
+  partners, which the fence's own functional equation (its points are the anti-Gram points) makes cancel `x_n`
+  exactly. Lemma E shows that nothing does better: just above `√(N/n)` only those partners can cancel `x_n`, and they
+  are free `√n` times higher.
 
 **What silence costs** (`scripts/landau_gap.py --silent`, `--split`, `--quiet`; numerics, uncertified). Step 3 of the
 section "The low zeros" says a proof has to show that silencing a vector at the zeros below height `≍ N` costs
@@ -1753,7 +1808,6 @@ counted conditions are dependent through `ζ`.
   - **Nor does a split along the low eigenspace of `A + B` help.** Put the vector's part in that eigenspace against the
     first few zeros. The part outside it can buy as much loudness there, per unit of `A + B`, as the eigenspace has,
     so the cross terms are not controlled.
-- **For the fence, the exponent.** It lies between Theorem C's `−2/3` and Theorem D's `−3/5`; `N^{−1/2}` is out
-  (Theorem D). The two-mechanism count, which the explicit construction meets to within `1.24`–`1.91` at `N = 6400`,
-  puts it at `−3/5`. A matching lower bound would have to show that silencing `x_n` below `√(N/n)` costs
-  `≫ nH³/N²`, which is more than Lemma F charges.
+- **For the fence, only the power of `log N`.** The exponent is `−3/5` (Theorems D and E), and
+  `N^{−3/5}log N ≪ λ^pf_N ≪ N^{−3/5}(log N)³`. The explicit construction meets the two-mechanism count to within
+  `1.24`–`1.91` at `N = 6400`.
