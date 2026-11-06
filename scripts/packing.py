@@ -75,6 +75,14 @@ Q^pf(x)·√N, with the condition number of the interpolation, against q_n·√N
 on [X/4, X/2] and falling on [N/4, N/2], X = nH/2π, H = √(N/n)), should be silent from H/2 up to the onset
 (n − 1)H/4 of the first conjugate image. Printed: max / rms of |B(t_k)|/√n over the fence points of each band.
 
+    python3 scripts/packing.py --fence-chirp [N [n [Tc]]]           # default N = 10⁶, n = 15, Tc = 60; 4 minutes
+
+--fence-chirp: the chirp of Theorem D′. It cancels δ_n at the fence points of [Tc, H₀/2], H₀ = 2π√(N/n), through the
+largest alias ℓ ≥ 2 with n(t/2π)^ℓ ≤ N/2, so its components sit near the top of [1, N]. The coefficients are
+b_m = Ĝ(log m)/m, with Ĝ the leading stationary-phase term of the Fourier transform of the target
+g(t) = −√n e(t)Σ_ℓ χ_ℓ(t)(−1)^ℓ e^{i(t log n + 2πℓΦ(t))}; the theorem uses the exact transform. Printed: the range of m,
+|B − target|/√n and its fence cost by band, and the free energy Σ b_m²W(2πm) against log N/X and n²log N/N.
+
     python3 scripts/packing.py --solve [N ...]                      # N optional, e.g. 2000 4000 8000 16000 30000
 
 --solve: the variational problem of the note's section "The variational problem, solved", which needs no N.
@@ -763,6 +771,62 @@ def fence_d_mode(N, ns=(12, 15, 16)):
         print(f"   n = {n}, H = {H:.0f}, (n − 1)H/4 = {(n - 1) * H / 4:.0f}: " + " | ".join(rows), flush=True)
 
 
+def fence_chirp_mode(N, n=15, Tc=60.0):
+    """Theorem D′'s chirp: cancel δ_n at the fence below H₀/2 through the aliases ℓ ≥ 2, near the top of [1, N]."""
+    L, H0 = math.log(N), 2 * math.pi * math.sqrt(N / n)
+    X = n * H0 / (2 * math.pi)
+
+    def step(u):
+        u = np.clip(u, 0, 1)
+        a = np.where(u > 0, np.exp(-1 / np.maximum(u, 1e-300)), 0.0)
+        b = np.where(u < 1, np.exp(-1 / np.maximum(1 - u, 1e-300)), 0.0)
+        return a / (a + b)
+
+    def env(t):  # on from Tc to 2Tc; off on [H₀/4, H₀/2], where the partners take over
+        return step((t - Tc) / Tc) * (1 - step((t - H0 / 4) / (H0 / 4)))
+
+    def chi(t, ell, w=0.25):  # piece ℓ carries s(t) = log(N/2n)/L(t) in [ℓ, ℓ + 1)
+        s = math.log(N / (2 * n)) / np.log(t / (2 * math.pi))
+        return step((s - ell + w / 2) / w) - step((s - ell - 1 + w / 2) / w)
+
+    m = np.arange(1, N + 1, dtype=float)
+    v = np.log(m)
+    G = np.zeros(N, complex)
+    for ell in range(2, 60):
+        tv = 2 * math.pi * np.exp((v - math.log(n)) / ell)  # the height whose frequency in piece ℓ is log m
+        ok = (tv > Tc) & (tv < H0 / 2)
+        if not ok.any():
+            continue
+        t = tv[ok]
+        amp = -math.sqrt(n) * env(t) * chi(t, ell) * (-1) ** ell * np.sqrt(2 * math.pi * t / ell) / (2 * math.pi)
+        G[ok] += amp * np.exp(1j * (t * math.log(n) + 2 * math.pi * ell * Phi(t) - t * v[ok] + math.pi / 4))
+    b = 2 * G.real / m  # real: the target at −t is the conjugate
+    nz = np.nonzero(np.abs(b) > 1e-14)[0]
+    print(f"N = {N}, n = {n}, Tc = {Tc:g}, H₀ = {H0:.0f}, X = {X:.0f}: the chirp uses m in [{nz[0] + 1}, {nz[-1] + 1}]",
+          flush=True)
+    tmax = 4 * H0
+    k = np.arange(1, int(tmax / (2 * math.pi) * math.log(tmax / (2 * math.pi))) + 10)
+    tk = Phi_inv(k - 0.5)
+    tk = tk[(tk >= Tc) & (tk <= tmax)]
+    B = np.zeros(len(tk), complex)
+    for i in range(0, len(tk), 256):
+        for j in range(0, len(nz), 200000):
+            sl = nz[j:j + 200000]
+            B[i:i + 256] += np.exp(1j * np.outer(tk[i:i + 256], v[sl])) @ b[sl]
+    target = -math.sqrt(n) * env(tk) * np.exp(1j * tk * math.log(n))
+    res = np.abs(B - target) / math.sqrt(n)
+    w = 2 / (0.25 + tk ** 2)
+    for lo, hi in [(2 * Tc, H0 / 8), (H0 / 8, H0 / 4), (H0 / 4, H0 / 2), (H0 / 2, H0), (H0, 2 * H0), (2 * H0, 4 * H0)]:
+        s = (tk >= lo) & (tk < hi)
+        if s.any():
+            print(f"   [{lo:.0f}, {hi:.0f}): |B − target|/√n max {res[s].max():.1e}, rms "
+                  f"{math.sqrt(np.mean(res[s] ** 2)):.1e}; its fence cost {np.sum(w[s] * np.abs(B[s] - target[s]) ** 2):.1e}",
+                  flush=True)
+    free = np.sum(b[nz] ** 2 * (v[nz] + 1) / (2 * math.pi ** 2 * m[nz]))
+    print(f"   free energy Σ b_m²W(2πm) = {free:.1e}, against log N/X = {L / X:.1e} and n²log N/N = {n * n * L / N:.1e}",
+          flush=True)
+
+
 def fence_class_mode(K):
     import mpmath
     mpmath.mp.dps = 15
@@ -793,6 +857,7 @@ def main():
     ap.add_argument("--fence-twist", action="store_true", help="the twisted partners on the fence, window by window")
     ap.add_argument("--fence-two", action="store_true", help="the two-mechanism fence construction against q_n")
     ap.add_argument("--fence-d", action="store_true", help="Lemma D2: the partners' silence on the fence, by band")
+    ap.add_argument("--fence-chirp", action="store_true", help="Theorem D′'s chirp: cancellation and free energy")
     a = ap.parse_args()
     if a.silence:
         if not a.zeros_file:
@@ -816,6 +881,9 @@ def main():
         fence_two_mode(a.N[0] if a.N else 6400, tuple(a.N[1:]) or (3, 4, 6, 8, 12, 16))
     elif a.fence_d:
         fence_d_mode(a.N[0] if a.N else 10 ** 6, tuple(a.N[1:]) or (12, 15, 16))
+    elif a.fence_chirp:
+        fence_chirp_mode(a.N[0] if a.N else 10 ** 6, a.N[1] if len(a.N) > 1 else 15,
+                         float(a.N[2]) if len(a.N) > 2 else 60.0)
     else:
         models_mode(a.N or [100, 200, 400, 800, 1600])
 
