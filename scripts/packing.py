@@ -49,6 +49,11 @@ fence, for n = 1, 2, 3, 4, 5, 6, 8, 11, 16, 32. Printed with λ_N·√N: q_n·�
 W(T) = (log(T/2π) + 1)/(πT), the energy of x_n = 1 above the height where it has no alias; the cost paid below that
 height; and A_n, the amplitude of the fit m·x_m ≈ a·cos(2πm/n) + b·sin(2πm/n) over m ≥ 2√N.
 
+    python3 scripts/packing.py --fence-windows [N [n ...]]          # default N = 6400, n = 1 4 8 16 32
+
+--fence-windows: the cost of each constrained minimiser x (x_n = 1) at the fence points in the windows
+[2^k·T₀, 2^(k+1)·T₀), T₀ = 2π√N, k = −2..4, times √N; * marks the window that holds the free height 2πN/n.
+
     python3 scripts/packing.py --solve [N ...]                      # N optional, e.g. 2000 4000 8000 16000 30000
 
 --solve: the variational problem of the note's section "The variational problem, solved", which needs no N.
@@ -593,6 +598,31 @@ def fence_cap_mode(Ns, ns=(1, 2, 3, 4, 5, 6, 8, 11, 16, 32)):
             print(f"   {n:3d} {q * sq:8.4f} {free * sq:8.4f} {below * sq:9.4f} {amp:6.3f}", flush=True)
 
 
+def fence_windows_mode(N, ns=(1, 4, 8, 16, 32)):
+    """Where the constrained minimiser (x_n = 1) pays: its fence cost in each window [2^k·T₀, 2^(k+1)·T₀), T₀ = 2π√N."""
+    from scipy.linalg import cho_factor, cho_solve
+    g, G0 = points("picket", N)
+    C = cho_factor(gram_points(N, g, G0))
+    m = np.arange(1, N + 1)
+    lg, sm, sq = np.log(m.astype(float)), np.sqrt(m.astype(float)), math.sqrt(N)
+    w, T0 = 2.0 / (0.25 + g * g), 2 * math.pi * math.sqrt(N)
+    ks = list(range(-2, 5))
+    edges = np.array([0.0] + [T0 * 2.0 ** k for k in ks + [ks[-1] + 1]] + [1e300])
+    print(f"N = {N}: cost·√N in [2^k·T₀, 2^(k+1)·T₀), k = {ks[0]}..{ks[-1]}; * marks the window with 2πN/n")
+    for n in ns:
+        e = np.zeros(N)
+        e[n - 1] = 1
+        y = cho_solve(C, e)
+        x = y / y[n - 1]
+        cost = np.zeros(len(edges) - 1)
+        for i in range(0, len(g), 4096):
+            V = np.exp(1j * np.outer(g[i:i + 4096], lg)) @ (x * sm)
+            np.add.at(cost, np.searchsorted(edges, g[i:i + 4096]) - 1, w[i:i + 4096] * np.abs(V) ** 2)
+        tf = 2 * math.pi * max(n, N / n)
+        row = [f"{cost[j + 1] * sq:.4f}" + ("*" if edges[j + 1] <= tf < edges[j + 2] else "") for j in range(len(ks))]
+        print(f"   n = {n:3d}: " + " ".join(row), flush=True)
+
+
 def fence_class_mode(K):
     import mpmath
     mpmath.mp.dps = 15
@@ -619,6 +649,7 @@ def main():
     ap.add_argument("--solve", action="store_true", help="the variational problem for c and the arithmetic factor")
     ap.add_argument("--fence-class", action="store_true", help="the fence margin on the arithmetic class")
     ap.add_argument("--fence-cap", action="store_true", help="the fence's constrained minima q_n")
+    ap.add_argument("--fence-windows", action="store_true", help="where the fence's constrained minimisers pay")
     a = ap.parse_args()
     if a.silence:
         if not a.zeros_file:
@@ -634,6 +665,8 @@ def main():
         fence_class_mode(a.N[0] if a.N else 3000)
     elif a.fence_cap:
         fence_cap_mode(a.N or [400, 1600, 6400])
+    elif a.fence_windows:
+        fence_windows_mode(a.N[0] if a.N else 6400, tuple(a.N[1:]) or (1, 4, 8, 16, 32))
     else:
         models_mode(a.N or [100, 200, 400, 800, 1600])
 
