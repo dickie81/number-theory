@@ -1451,6 +1451,42 @@ window that holds the free height `2πN/n`.
   failure of `N^{−1/2}` beyond some `N` near `10⁹`–`10¹⁰`. This is a heuristic count: neither a proof of `−1/2` nor
   an explicit vector that beats it is known.
 
+**The partners are a functional equation** (`packing.py --fence-twist`; numerics, with one heuristic count).
+- **The fence is the set of anti-Gram points.** For the Riemann–Siegel theta function Stirling gives
+  `θ(t) = (t/2)log(t/2πe) − π/8 + 1/(48t) + O(t^{−3})`, so `πΦ(t) = θ(t) + π − 1/(48t) + O(t^{−3})`. Hence
+  `θ(t_k) = (k − 3/2)π + 1/(48t_k) + O(t_k^{−3})` and `χ(½ + it_k) = e^{−2iθ(t_k)} = −1 + O(1/t_k)`: on the fence
+  `ζ(½ + it)` is purely imaginary, up to `O(1/t)`. mpmath gives the `1/(48t_k)` to four digits for `k = 1` to `10⁵`.
+- **So the first alias is the functional equation of the periodic zeta function.** The phase `e^{2πim/n}` of the
+  stationary term is the additive character of `F(a, s) = Σ_m e(am)m^{−s}`. In its approximate functional equation
+  the factor `(2π)^{−½−it}Γ(½ + it)e^{−πi/4}e^{πt/2}` is `−1 + O(1/t)` on the fence. For the partners
+  `p_m = 2cos(2πm/n)f(m)/m` that gives, at the fence points,
+  `B_p(t_k) ≈ −√n·n^{it_k}f(nt_k/2π) − Σ_{k′≥1}f(nt_k/(2π(nk′+1)))·((nk′+1)/n)^{−½−it_k}
+  − Σ_{k′≥0}f(nt_k/(2π(nk′+n−1)))·((nk′+n−1)/n)^{−½−it_k}`.
+  The first sum holds the Hurwitz images, the second the conjugate images (`q ≡ −1 mod n`) of the window table.
+- **So `δ_n + p` is silent from `2πX/n` until the first conjugate image switches on.** With `f` rising on `[X/2, X]`
+  and falling on `[N/2, N]`, and `X = n√N`, that is from `T₀` to about `(n − 1)T₀`, the conjugate image's weight
+  rising from `(n − 1)T₀/2`. At `N = 6400`, window by window (cost·`√N`, with `δ_n` alone in brackets):
+
+  | `n` | `[T₀/2, T₀)` | `[T₀, 2T₀)` | `[2T₀, 4T₀)` | `[4T₀, 8T₀)` |
+  |---|---|---|---|---|
+  | `4` | `0.446` (`0.813`) | `0.0002` (`0.476`) | `0.066` (`0.273`) | `0.093` (`0.154`) |
+  | `6` | `0.668` (`1.219`) | `0.0000` (`0.714`) | `0.0036` (`0.409`) | `0.059` (`0.231`) |
+  | `8` | `0.891` (`1.626`) | `0.0000` (`0.953`) | `0.0000` (`0.545`) | `0.038` (`0.308`) |
+
+  Below `T₀/2`, where `f(nt/2π) = 0`, `δ_n` is left as it is.
+- **The images cost about `log N/(6n√N)` in all** (heuristic count). The image `(nk′ ± 1)/n` has `|·|² = n/(nk′ ± 1)`
+  and switches on near `(nk′ ± 1)T₀/2`, where the remaining weight is `W ≈ log N/(2π²(nk′ ± 1)√N)`. Each family sums
+  to `(π²/6)·log N/(2π²n√N)`. That is Lemma C's `1/n`, `α = 1`, but concentrated near the onsets rather than spread
+  evenly over the windows. The table's per-window slope `n^{−0.45}` averages it over `log₂(√N/n)` windows, at
+  `N ≤ 12800`, where for `n ≥ 6` the images already run into the free height.
+- **What a proof that `N^{−1/2}` fails still needs.** `x_n` has to be silenced below the partners' start, about `T₀`,
+  at cost `o(log N/(n√N))`, uniformly for `n ≤ N^{1/6}`. With that, the free cost `n²log N/N` and the images give
+  `λ^pf_N ≪ N^{−2/3}log N`, which with Theorem C is the order.
+  - The constrained minimisers do it at `N ≤ 12800`. Their windows from `T₀/4` to `T₀` cost `0.020`, `0.0053` and
+    `0.0010` (times `1/√N`) at `n = 8`, `16` and `32`, falling faster than `1/n`.
+  - Below the crossing `πe√(2N) ≈ 1.9T₀` (the paragraph "What silence costs" below), silence is possible by the count.
+    What is missing is its price: an interpolation theorem at the fence points there.
+
 **What the numbers allow.** Suppose the cost per window behaves like `C·n^{−α}` for large `n`. The free cost
 `n²log N/N` balances it at the centre `n ≍ N^{1/(4+2α)}`, and then `λ^pf_N ≍ N^{−1/2−α/(4+2α)}log N`.
 - **`α = 1`**, the dependence on `n` in Lemma C, gives `−2/3`. Theorem C would then be sharp up to the constant.
@@ -1597,6 +1633,9 @@ counted conditions are dependent through `ζ`.
     so the cross terms are not controlled.
 - **For the fence, the exponent.** Theorem C gives `−2/3` for every vector, the minimisers at `N ≤ 12800` give `−1/2`,
   and the constrained minima allow anything in between (the paragraph above).
-  - A proof of `−1/2` would have to charge the partners of `x_n` for more than their free energy.
-  - A proof that `−1/2` fails needs an explicit vector centred at `n ≍ N^{1/6}` that stays quiet below `2πN/n`,
-    including at the points below `2π√N`.
+  - A proof of `−1/2` would have to charge the partners of `x_n` for more than their free energy. Above `2π√N` the
+    twisted partners pay only about `log N/(6n√N)` ("The partners are a functional equation"). So the price would
+    have to be found below `2π√N`.
+  - A proof that `−1/2` fails needs an explicit vector centred at `n ≍ N^{1/6}` that stays quiet below `2πN/n`. Above
+    `2π√N` the twisted partners do that. What is missing is silence below `2π√N` at cost `o(log N/(n√N))`: an
+    interpolation theorem at the fence points below the crossing.
