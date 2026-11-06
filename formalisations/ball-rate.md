@@ -1549,15 +1549,30 @@ section "The low zeros" says a proof has to show that silencing a vector at the 
   - **Why `⌊2πN/T⌋`** (heuristic). It counts the `d` with `2πN/d > T`. Since `ζ(1 − ρ) = 0`, the approximate
     functional equation keeps the dilate `[d | n]/n` of the zeta vector silent below `2πN/d`, up to a boundary term
     that all the dilates share.
+  - **Quiet needs the dilates too** (`--quiet`). At `μ = 2048` the frontier minimiser has `A + B = 11.2, 12.1, 13.1`
+    and `Q_≤N·N/log N ≈ 10⁻⁴` at `N = 1000, 2000, 4000`. Taken `K`-orthogonal to the dilates `d ≤ D`, it gets louder
+    and dearer with every `d` removed:
+
+    | `D` | `1` | `3` | `5` | `6` | `7` | `8` |
+    |---|---|---|---|---|---|---|
+    | `A + B`, `N = 2000` | `22.9` | `68.5` | `107.9` | `140.9` | `185.6` | `244.2` |
+    | `Q_≤N·N/log N`, `N = 1000` | `0.00022` | `0.0022` | `0.020` | `0.0893` | `0.336` | `0.459` |
+    | `Q_≤N·N/log N`, `N = 2000` | `0.00025` | `0.0020` | `0.014` | `0.0887` | `0.338` | `0.456` |
+    | `Q_≤N·N/log N`, `N = 4000` | `0.00030` | `0.0021` | `0.010` | `0.0891` | `0.346` | `0.457` |
+
+    From `D = 6 = ⌊2π⌋` on, the loudness no longer depends on `N`. By the Lagrange bound, a vector `K`-orthogonal to
+    the dilates `d ≤ 6` that is as quiet below `N` as the minimiser of `Q_N` (`Q_≤N·N/log N ≤ 0.0475`) has
+    `A + B ≥ 224` at all three `N`.
 - **The zeta vector.** `x_n = w(n/N)/n`, with `w = 1` on `[0, ½]` and `0` past `1`, has `A + B = 2.6 log N` at
   `N = 1000` to `8000`. Its rms `|V_x(ρ)|/‖x‖` is below `10⁻⁴` from height `100` to `2N`. At the fence it is between
   `0.5` and `2`.
 
 So the inverse theorem through `rate_slack` comes down to a robust form of this split. A vector quiet at the zeros up to
-height `cN` should lie, up to a part that costs `≍ T log N`, in the span of the dilates `d ≤ 2π/c`. That span is the
-class with `D₀ = 2π/c`, where Theorem A applies. What is missing is the mean value of step 3, one that tells the
-`ζ`-multiples from the incoherent tails at the zeros below `N` for vectors that are only quiet. No count can supply it,
-since at the zeros the counted conditions are dependent through `ζ`.
+height `cN` should lie, up to a part that costs `≫ log N`, in the span of the dilates `d ≤ 2π/c`. That span is the
+class with `D₀ = 2π/c`, where Theorem A applies. Numerically the robust form holds at `N ≤ 4000` ("Quiet needs the
+dilates too"). What is missing is its proof: the mean value of step 3, one that tells the `ζ`-multiples from the
+incoherent tails at the zeros below `N` for vectors that are only quiet. No count can supply it, since at the zeros the
+counted conditions are dependent through `ζ`.
 
 **What stays open.**
 - **For every vector, `λ_N ≫ log N/N`.** It would follow from the claim that minimisers of `Q_N` stay within
@@ -1575,8 +1590,8 @@ since at the zeros the counted conditions are dependent through `ζ`.
     zeros up to `e⁸M` sample (`BallSharp`). Ruling the cancellation out is the inverse theorem again.
   - **Silence and quiet at the zeros below `N`** (the paragraph "What silence costs" above). Silence at the low zeros
     is nearly free, so the low zeros together with `A + B` carry nothing usable. Silence or quiet up to height `≍ N`
-    costs `≍ log N`, and the cheap silent vectors are the `⌊2πN/T⌋` dilates of `ζ`. What is missing is that split,
-    proved for vectors that are only quiet.
+    costs `≍ log N`, and the cheap silent vectors are the `⌊2πN/T⌋` dilates of `ζ`. Numerically the split holds for
+    vectors that are only quiet, too. What is missing is a proof of it for them.
   - **Nor does a split along the low eigenspace of `A + B` help.** Put the vector's part in that eigenspace against the
     first few zeros. The part outside it can buy as much loudness there, per unit of `A + B`, as the eigenspace has,
     so the cross terms are not controlled.

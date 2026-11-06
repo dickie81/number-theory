@@ -52,11 +52,13 @@ first four; and the lowest eigenvalue at the zeros on the part of the silent spa
 is K-orthogonal to the dilates of the zeta vector, Y_D = span{[d | n]B_j(n/N)/n : d ≤ D, j ≤ 12}, B_j the cubic
 B-splines on [0, 1] with uniform knots, for D = 1 and ⌊2πN/T⌋ − 2, …, ⌊2πN/T⌋ + 2.
 
-    python3 scripts/landau_gap.py --quiet --zeros-file FILE [N ...]      # default N = 1000 2000; N = 4000 under a minute
+    python3 scripts/landau_gap.py --quiet --zeros-file FILE [N ...]      # default N = 1000 2000; N = 4000 about a minute
 
 Quiet in place of silent (same section): for μ = 2^(k/2), k = 6..21, the minimiser of A + B + μ(N/log N)·Q_≤N(x) over
 unit x, where Q_≤N(x) = Σ_{0 < γ ≤ N} 2|V_x(ρ)|²/(¼ + γ²) is the zeta form cut at height N. It prints the frontier, and
-A + B at fixed quietness Q_≤N·N/log N = ε for ε = 0.02, 0.01, 0.005, 0.002, interpolated linearly in log ε.
+A + B at fixed quietness Q_≤N·N/log N = ε for ε = 0.02, 0.01, 0.005, 0.002, interpolated linearly in log ε. Then the
+minimiser at μ = 2048, and the same off the dilates d ≤ D, K-orthogonal to Y_D as in --split, for D = 1, …, 8: its
+A + B and its Q_≤N·N/log N.
 """
 import argparse
 import math
@@ -290,7 +292,22 @@ def quiet_cost(N, zeros, c=1.0, c0=math.log(4) + 1):
         for (_, a1, q1), (_, a2, q2) in zip(rows, rows[1:]):
             if q2 <= eps <= q1:
                 fixed.append((eps, a1 + math.log(q1 / eps) / math.log(q1 / q2) * (a2 - a1)))
-    return rows, fixed
+    # The same frontier at μ = 2048 off the dilates d ≤ D (K-orthogonal to Y_D, as in --split).
+    from scipy.interpolate import BSpline
+    J = 12
+    knots = np.concatenate([[0, 0, 0], np.linspace(0, 1, J - 2), [1, 1, 1]])
+    spl = np.stack([BSpline(knots, np.eye(J)[j], 3)(n / N) for j in range(J)], 1)
+    off = []
+    for D in range(0, int(2 * math.pi / c) + 3):
+        Kp, Wp = K, W
+        if D:
+            Y = np.concatenate([((np.arange(1, N + 1) % d == 0) / n)[:, None] * spl for d in range(1, D + 1)], 1)
+            _, sm, wt = np.linalg.svd(Y.T @ K, full_matrices=True)
+            Zp = wt[int(np.sum(sm > sm[0] * 1e-10)):].T
+            Kp, Wp = Zp.T @ K @ Zp, Zp.T @ W @ Zp
+        y = eigh(Kp + 2048 * N / L * Wp, subset_by_index=[0, 0])[1][:, 0]
+        off.append((D, y @ Kp @ y, y @ Wp @ y * N / L))
+    return rows, fixed, off
 
 
 def main():
@@ -329,12 +346,13 @@ def main():
         zeros = np.asarray(np.loadtxt(args.zeros_file), float).ravel()
         for N in args.N or [1000, 2000]:
             L = math.log(N)
-            rows, fixed = quiet_cost(N, zeros)
+            rows, fixed, off = quiet_cost(N, zeros)
             print(f"N = {N}: the frontier (μ: A + B, Q_≤N·N/log N): "
                   + "; ".join(f"{mu:.0f}: {ab:.3f}, {q:.5f}" for mu, ab, q in rows))
             print("   A + B at Q_≤N·N/log N = ε: " + "; ".join(
-                f"ε = {eps}: {ab:.3f} = {ab / L:.4f}·log N = {ab / math.sqrt(L):.3f}·√log N" for eps, ab in fixed),
-                flush=True)
+                f"ε = {eps}: {ab:.3f} = {ab / L:.4f}·log N = {ab / math.sqrt(L):.3f}·√log N" for eps, ab in fixed))
+            print(f"   at μ = 2048, A + B (Q_≤N·N/log N): {off[0][1]:.2f} ({off[0][2]:.5f}); off the dilates d ≤ D: "
+                  + "; ".join(f"D = {D}: {ab:.2f} ({q:.5f})" for D, ab, q in off[1:]), flush=True)
         return
     if args.silent:
         if not args.zeros_file:
