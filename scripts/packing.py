@@ -69,6 +69,12 @@ of --fence-twist started at X = nH/2π, and y the real vector on the band [πN/H
 norm Σ y_m²m/ω_m that silences δ_n + p at every fence point below H. For H = κ√(N/n), κ = 6, 8, 10, 12, it prints
 Q^pf(x)·√N, with the condition number of the interpolation, against q_n·√N.
 
+    python3 scripts/packing.py --fence-d [N [n ...]]                # default N = 10⁶, n = 12 15 16; 3 minutes
+
+--fence-d: Lemma D2 of Theorem D (note's last section). δ_n + p, with the twisted partners started at X/4 (f rising
+on [X/4, X/2] and falling on [N/4, N/2], X = nH/2π, H = √(N/n)), should be silent from H/2 up to the onset
+(n − 1)H/4 of the first conjugate image. Printed: max / rms of |B(t_k)|/√n over the fence points of each band.
+
     python3 scripts/packing.py --solve [N ...]                      # N optional, e.g. 2000 4000 8000 16000 30000
 
 --solve: the variational problem of the note's section "The variational problem, solved", which needs no N.
@@ -719,6 +725,44 @@ def fence_two_mode(N, ns=(3, 4, 6, 8, 12, 16), kappas=(6, 8, 10, 12)):
         print(f"   n = {n:2d}: q_n√N = {qn * sq:.4f} | " + " | ".join(row), flush=True)
 
 
+def fence_d_mode(N, ns=(12, 15, 16)):
+    """Lemma D2: |B(t_k)|/√n of δ_n + p on the fence, band by band, with the partners started at X/4."""
+    m = np.arange(1, N + 1, dtype=float)
+    lg = np.log(m)
+
+    def step(u):
+        u = np.clip(u, 0, 1)
+        a = np.where(u > 0, np.exp(-1 / np.maximum(u, 1e-300)), 0.0)
+        b = np.where(u < 1, np.exp(-1 / np.maximum(1 - u, 1e-300)), 0.0)
+        return a / (a + b)
+
+    print(f"N = {N}: max / rms of |B(t_k)|/√n for δ_n + p over the fence points of each band; H = √(N/n), "
+          f"X = nH/2π; the first conjugate image switches on at (n − 1)H/4")
+    for n in ns:
+        H = math.sqrt(N / n)
+        X = n * H / (2 * math.pi)
+        b = 2 * np.cos(2 * math.pi * m / n) * step((m - X / 4) / (X / 4)) * (1 - step((m - N / 4) / (N / 4)))
+        b /= np.sqrt(m)
+        b[n - 1] += math.sqrt(n)
+        edges = sorted({H / 4, H / 2, H, 2 * H, (n - 1) * H / 8, (n - 1) * H / 4, (n - 1) * H / 2, (n - 1) * H})
+        k = np.arange(1, int(edges[-1] / (2 * math.pi) * math.log(max(edges[-1], 50) / (2 * math.pi))) + 10)
+        t = Phi_inv(k - 0.5)
+        t = t[t <= edges[-1]]
+        nz = np.nonzero(b)[0]
+        B = np.zeros(len(t), complex)
+        for i in range(0, len(t), 256):
+            for j in range(0, len(nz), 200000):
+                sl = nz[j:j + 200000]
+                B[i:i + 256] += np.exp(1j * np.outer(t[i:i + 256], lg[sl])) @ b[sl]
+        B = np.abs(B) / math.sqrt(n)
+        rows = []
+        for lo, hi in zip(edges[:-1], edges[1:]):
+            sel = (t >= lo) & (t < hi)
+            if sel.any():
+                rows.append(f"[{lo:.0f}, {hi:.0f}): {B[sel].max():.1e} / {math.sqrt(np.mean(B[sel] ** 2)):.1e}")
+        print(f"   n = {n}, H = {H:.0f}, (n − 1)H/4 = {(n - 1) * H / 4:.0f}: " + " | ".join(rows), flush=True)
+
+
 def fence_class_mode(K):
     import mpmath
     mpmath.mp.dps = 15
@@ -748,6 +792,7 @@ def main():
     ap.add_argument("--fence-windows", action="store_true", help="where the fence's constrained minimisers pay")
     ap.add_argument("--fence-twist", action="store_true", help="the twisted partners on the fence, window by window")
     ap.add_argument("--fence-two", action="store_true", help="the two-mechanism fence construction against q_n")
+    ap.add_argument("--fence-d", action="store_true", help="Lemma D2: the partners' silence on the fence, by band")
     a = ap.parse_args()
     if a.silence:
         if not a.zeros_file:
@@ -769,6 +814,8 @@ def main():
         fence_twist_mode(a.N[0] if a.N else 6400, tuple(a.N[1:]) or (3, 4, 6, 8))
     elif a.fence_two:
         fence_two_mode(a.N[0] if a.N else 6400, tuple(a.N[1:]) or (3, 4, 6, 8, 12, 16))
+    elif a.fence_d:
+        fence_d_mode(a.N[0] if a.N else 10 ** 6, tuple(a.N[1:]) or (12, 15, 16))
     else:
         models_mode(a.N or [100, 200, 400, 800, 1600])
 

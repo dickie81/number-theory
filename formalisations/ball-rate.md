@@ -1553,11 +1553,16 @@ holds the images.
 - `2cos(2πm/n) = e(m/n) + e(m(1 − 1/n))`, so `B_p = S_{1/n} + S_{1−1/n}`, with `S_a(t) = Σ_m e(am)f(m)m^{−1/2+it}`.
 - Poisson summation writes `S_a(t) = Σ_q ∫f(u)u^{−1/2+it}e((a − q)u)du`. For `q > a` the phase
   `t log u − 2π(q − a)u` is stationary at `u_q = t/(2π(q − a))`, with second derivative `−t/u_q²`.
-- Stationary phase gives `f(u_q)(q − a)^{−1/2−it}e^{i(t log(t/2π) − t − π/4)}(1 + O(1/t))`. The terms with no
-  stationary point in the support of `f` give `≪_A N^{−A}`, since `f^{(j)}(u) ≪ u^{−j}` and `X ≫ n`.
+- If `q ≤ a`, or `u_q` is more than a factor `2` from the support of `f`, each integration by parts gains `≪ 1/H`:
+  `f^{(j)}(u) ≪ u^{−j}`, and `|q − a|·u ≥ X/(4n) ≍ H` or `t ≥ H/2` on the support. These terms give `≪_A N^{−A}`.
+- For the other terms `t ≥ H/8`, and stationary phase with a smooth weight (Blomer, Khan and Young 2013,
+  Proposition 8.2) gives `f(u_q)(q − a)^{−1/2−it}e^{i(t log(t/2π) − t − π/4)} + O(t^{−1}(q − a)^{−1/2})`.
 - `t log(t/2π) − t − π/4 = 2θ(t) + O(1/t)`, and at the anti-Gram points `e^{2iθ(t_k)} = −1 + O(1/t_k)`.
 - For `a = 1 − 1/n` the term `q = 1` is `−f(nt/2π)√n·n^{it}`, and the terms `q ≥ 2` give the first sum of `I`;
   `a = 1/n` gives the second. At most `≪ 1 + t/X` terms are active, which gives the error term.
+- *Check* (`packing.py --fence-d`, `N = 10⁶`). For `n = 12`, `15` and `16`, `|B_{δ_n+p}(t_k)|/√n` is at most
+  `1.7·10⁻⁴` at the fence points from `H` up to `(n − 1)H/4`, and at most `2.9·10⁻²` between `H/2` and `H`. Past
+  `(n − 1)H/4`, where the images are on, its maximum on each band is `0.48`–`0.95`.
 
 *Lemma D3 (the partners above `H`).* `Σ_{t_k > H} w(t_k)|B_{δ_n+p}(t_k)|² ≪ n²L/N + L²/X`.
 - *The centre.* Above `H`, `1 − f(nt/2π) ≠ 0` only where `nt/2π > N/4`. There it costs at most
@@ -1569,7 +1574,7 @@ holds the images.
   - Gallagher's lemma, at the fence points of the window, which are `2π/L(2T)` apart, then gives
     `Σ_{t_k∈[T,2T]}|I(t_k)|² ≪ TL·log(T/X)`.
   - Weighted by `w ≍ T^{−2}` and summed over the windows from `(n − 1)H/4 ≍ X` up, this is `≪ L²/X`.
-- *The error.* The error of Lemma D2 contributes `≪ n/H³`.
+- *The error.* The error of Lemma D2 contributes `≪ nL/H³`, which is `≪ n²L/N`.
 
 *Lemma D4 (the interpolant above `H`).* `Σ_{t_k > H} w(t_k)|B_y(t_k)|² ≪ L³nH³/N² + N^{−1}`.
 - *Up to `πM₁`.* Here `B_y(t) = Σ_τβ_τW̃(t − τ)`, with `W̃(Δ) = Σ_m ω_m m^{iΔ} = φ̂(Δ) + O(N^{−10})` for
