@@ -1,0 +1,8 @@
+== Q10: the click-parity coin λ(N) = (−1)^Ω(N), N ≤ 10^7 ==
+  click parity: mean of sum/√N = -0.682 (1/ζ(½) = -0.685); range -1.32 to -0.05; lag-1..3 correlations -2.0e-04, +1.2e-04, -3.2e-04 (noise ~3e-04); 3-step patterns 0.1249–0.1251 (fair 0.1250)
+  random coin : mean of sum/√N = -0.500 (1/ζ(½) = -0.685); range -2.70 to +1.90; lag-1..3 correlations -1.2e-04, -6.1e-05, -2.4e-04 (noise ~3e-04); 3-step patterns 0.1249–0.1251 (fair 0.1250)
+
+== Q11: the hidden zeros predict the coin's wiggles ==
+  K =  10 zeros: correlation(actual wiggles, prediction) = 0.961; rms actual 0.268, rms left over 0.074
+  K =  50 zeros: correlation(actual wiggles, prediction) = 0.985; rms actual 0.268, rms left over 0.046
+  K = 200 zeros: correlation(actual wiggles, prediction) = 0.995; rms actual 0.268, rms left over 0.028
