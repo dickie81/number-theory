@@ -302,9 +302,11 @@ appears to.
 
 The proof also uses 175 constants of 5 of PrimeNumberTheoremAnd's modules, which were not read this way: none of them
 is in what the statement says (under "What the statement is" above), so they matter only through proofs. The library
-names 17 of them. They are the rectangle, vertical and horizontal integrals (`RectangleIntegral`, `VerticalIntegral`,
-`HIntegral`, `UpperUIntegral`, `LowerUIntegral`, and primed forms), `HolomorphicOn` with two lemmas on it, the residue
-theorem `ResidueTheoremOnRectangleWithSimplePole'`, and `riemannZeta0` with `Zeta0EqZeta` and `ZetaBnd_aux1`. The
+names 17 of them: the rectangle, vertical and horizontal integrals (`RectangleIntegral`, `VerticalIntegral`,
+`HIntegral`, `UpperUIntegral`, `LowerUIntegral`, and primed forms) with two lemmas on rectangles
+(`DiffVertRect_eq_UpperLowerUs`, `rectangle_mem_nhds_iff`); `HolomorphicOn` and `HolomorphicOn.vanishesOnRectangle`;
+the residue theorem `ResidueTheoremOnRectangleWithSimplePole'`; and `riemannZeta0` with `Zeta0EqZeta` and
+`ZetaBnd_aux1`. The
 users are the contour shifts (`SmoothPerron.verticalIntegral_shift`, `LinnikGamma.verticalIntegral_sub_eq`, and
 the approximate functional equation of `LinnikAFE` and `LinnikFourth`) and `LinnikCGLRefl0.norm_zeta_le_strip`.
 
