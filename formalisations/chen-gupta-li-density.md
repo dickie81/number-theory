@@ -25,7 +25,7 @@ improves upon Huxley’s earlier exponent of 12/5". Their method is Guth and May
 
 The proof formalised here is theirs. Nothing in this library claims the estimate, or its proof, as its own.
 
-**Scope.** The library formalises their Proposition 3.1 (`LinnikCGLHB101.prop31`) with the results it rests on
+**Scope.** The library formalises their Proposition 3.1 at one point per character (`LinnikCGLHB101.prop31`) with the results it rests on
 (Propositions 4.6, 6.1, 8.1 and 11.1 and Theorem 10.1, see below), and derives from it the steps
 `LinnikCGLSteps.charDensity_s0` … `charDensity_s29` of the Linnik paper and the estimate `CGLDensity` below. It does not
 formalise their Theorem 1.2 beyond the range `[5/7, 16/21]` (nor `[5/7, 131/168]` as a single statement), their Theorem 1.1,
@@ -66,8 +66,9 @@ The formalisation is in `lib/pnt`, in the modules whose names begin with `Linnik
   number of characters with a zero, which is at most that sum. So the source implies the Lean statement, and not the
   other way round. Counting characters lets every large-values set carry one point per character, which is the form
   the density count uses. The lemmas behind it hold for several points per character, as long as the points of each
-  character are separated: their Propositions 4.6 and 6.1 for points at least `1` apart, and Lemmas 10.5, 10.6, 10.9
-  and 10.10, Proposition 10.2 and Theorem 10.1 for points more than `2` apart (`LinnikCGLL105.Spaced`). One point per
+  character are separated: their Propositions 4.6 and 6.1 and Theorem 10.1 (`CGLT101`) for points at least `1` apart,
+  and Lemmas 10.5, 10.6, 10.9 and 10.10 and Proposition 10.2 for points more than `2` apart (`LinnikCGLL105.Spaced`);
+  Lemma 10.7 (`LinnikCGLL107.lemma107`) needs no separation. One point per
   character is a case of both, and at `q = 1` the general form gives Guth and Maynard's large values estimate
   (`ZetaGMLV.gm_large_values`).
 - **The range.** The source's Theorem 1.2 holds for `1/2 < σ < 1`. Their §12 says that "Theorem 1.2 follows from
@@ -88,7 +89,7 @@ The formalisation is in `lib/pnt`, in the modules whose names begin with `Linnik
 
 ## Corrections to the source
 
-The formalisation found six places where the paper's text needs a small repair. None of them affects the paper's
+The formalisation found seven places where the paper's text needs a small repair. None of them affects the paper's
 results.
 
 - **Proposition 7.1.** The Cauchy–Schwarz step in the proof of Proposition 7.2 bounds an integral over `v₂` by
@@ -99,6 +100,9 @@ results.
   explicit constants, is `LinnikCGLP71.prop71`.
 - **The proof of Proposition 7.2 (p. 26).** After the substitution `u′ = v₂/v₁`, a display omits the factor
   `√v₁ ≤ √2` that comes from `dv₂ = v₁du′`. The next line is stated with `≪_ϵ`, which absorbs it (`LinnikCGLRt`).
+- **The proof of Lemma 8.2 (p. 28).** The affine change of variables in `ĝ_a` prints the factor `m₂/m₁`, which has
+  the wrong sign when `m₁ < 0`; it should be `m₂/|m₁|`. Only `|ĝ_a|²` is used afterwards, so nothing changes. The
+  library has `m₂/|m₁|` (`LinnikCGLNsum.Fb`, `LinnikCGLG.fourier_comp_affine`).
 - **The proof of Lemma 9.2 (p. 39).** After the change of variables `v = e^τ`, the majorized integral in the display
   carries the Jacobian `e^τ`, and the identity that follows drops it. If it is kept, `e^τ` grows like `e^{(qT)^ϵ}` on
   the support of the majorant. The library bounds `e^τ ≤ 2` on the original range `|τ| ≤ log 2` before majorizing,
@@ -170,14 +174,42 @@ than it appears to, or rest on more than it should.
   could make an intermediate statement, an interface above say, mean less than it reads. All 109 library modules whose
   declarations the proof uses elaborate with `-DautoImplicit=false -DrelaxedAutoImplicit=false`, so no declaration in
   them binds a name that way. 108 pass under a bare `lean`. `LinnikLindelof` passes under Lake's setup file, which is
-  how Lake compiles it. A bare `lean` times out at its line 338 at the default heartbeats, with the flags or without.
+  how Lake compiles it; a bare `lean` times out in its `lindelof`, with the flags or without, for the reason under
+  "Heartbeat margins" below. The same test on the other 318 library modules built here (427 of the library's 1125)
+  finds three declarations that rely on the default, all in the import cone and none used by the proof. All three are
+  benign: the auto-bound name is a parameter that the statement means to quantify over (`s` in
+  `KubotaCompleted.mem_S_of_term_ne_zero`, `δ` in `Mollify.archIntegrand_Av_le`, `a` in `ParitySplit.arch_part`).
+  Declaring those three would let the library turn `autoImplicit` off, so that no later statement could bind a
+  misspelt name; the 698 modules not built here would be checked by the same full rebuild.
+- **Heartbeat margins.** Lean stops elaborating a declaration after `maxHeartbeats`, 200,000 by default, which the
+  library keeps except where a declaration raises it. Re-elaborating the 109 modules under Lake's setup with the
+  default lowered to 150,000, 175,000 and 190,000 finds 15 declarations that need more than 150,000:
+  - more than 190,000, within 5% of the limit: `LinnikCGLEps.lemma1010_eps`, which the proof uses, and
+    `LinnikTwelve.class1_twelve` and `LinnikLindelof.lindelof`, which it does not;
+  - between 175,000 and 190,000: `InghamDensity.densityXi_of_zetaCrit`, `LinnikChar.norm_Sx_le` and
+    `LinnikIngham.class2_count_ingham`, none of them used;
+  - between 150,000 and 175,000: `LinnikCGL112.S3_le_blocks`, `LinnikCGLHBIter.caseA`, `LinnikCGLS3.cgls3` and
+    `LinnikMoment.refined_moment`, which the proof uses, and `DensityAsym.window_count`,
+    `DensityAsym.density_of_detect`, `LinnikDensity.block_count_chars`, `LinnikHuxley.charDensity_huxley` and
+    `LinnikTwelve.charDensity_twelve_fifths`, which it does not.
+
+  How little it takes to cross the limit: `lindelof` needs between 195,000 and 200,000 heartbeats when its module is
+  named `LinnikLindelof`, as Lake names it, and between 200,000 and 210,000 when it is named
+  `lib.pnt.LinnikLindelof`, as a bare `lean lib/pnt/LinnikLindelof.lean` run from the repository's root names it. So
+  the bare run times out, at line 338. Lake's setup file with the names `SomeOtherName`, `Foo.Bar` or `_stdin` passes,
+  and with `a.b.LinnikLindelof` fails: the elaborator's work varies a little with the module's name. None of this
+  touches validity, since the kernel checks the terms, but a Lean or Mathlib update could break the build at these
+  declarations. A local `set_option maxHeartbeats 400000 in`, which 39 declarations of the library already carry,
+  would remove the risk. Adding it to the three within 5% rebuilds 408 of the library's 1129 modules, so it is
+  cheapest at the next toolchain bump, which rebuilds them all anyway.
 - **The step.**
   - The mollifier has length `X ≈ Q^{1/2000}`, with `Y = Q^{201/400}` and `Q = q(T + 6)`
     (`LinnikCGLStep.count_cgl_at`). It is short, like their `(qT)^ε`.
   - The integral class uses the library's fourth moment at one point per character (`LinnikFourth.fourth_moment`,
     proved by the approximate functional equation).
   - The trivial character is added by hand. The factor `(log qT)^{10}` of `charDensity_cglGen` only absorbs that `1`.
-- **The half-plane is imported but not used.** `DirichletCharHalfPlane` is in the import cone, through
+- **The half-plane is imported but not used.** `DirichletCharHalfPlane` is in the import cone by several routes, all
+  through `ChiPNT`, the only module of the cone that imports it: for example `LinnikDetect → ChiUniform → ChiPNT`, or
   `LinnikCGLMellin → SieveWeight → SieveLemma1 → LinnikChar → ChiUniform → ChiPNT`. `lib/check/CheckAll.lean` walks,
   in Lean, the constants that `cglDensity`'s type and value mention, transitively. A proof term names every lemma a
   tactic used, so the walk is exact. It finds 83,231 constants: from 109 of the library's modules, from 5 of
@@ -227,6 +259,186 @@ than it appears to, or rest on more than it should.
     vanish on `Re s ≥ 1` except perhaps at `χ = 1`, `s = 1` (`LFunction_ne_zero_of_one_le_re`). So it is the
     `L`-function, and the count is of the characters with a zero in `σ ≤ Re s < 1`, `|Im s| ≤ T`, with at most the
     trivial character besides.
+
+### Module by module
+
+The proof uses declarations of 109 of the library's modules: 1594 named declarations in all. Nine reviewers, each
+given a slice of these modules and the list of the declarations used from each, read every module in full. For each
+used declaration they checked three things:
+
+- that the statement says what its docstring and its source (the paper's v2 PDF, or the classical result it cites)
+  say;
+- that no definition it rests on hides a junk value: a division by `0`, `Real.log 0`, natural-number subtraction, a
+  `tsum` or integral of something not summable or integrable, a `Classical.choose` definition;
+- that no hypothesis is unsatisfiable or vacuous where the chain applies it.
+
+Every finding below was checked against the sources again. None is a crack: no used statement says less than it
+appears to.
+
+| Module | What the chain takes from it | Source |
+|---|---|---|
+| `BinetProof` | the Laplace form of `ψ`, for the bounds on `Γ` | Binet's first formula, derivative form |
+| `DigammaGauss` | Gauss's integral for `ψ(z) − ψ(w)` | classical |
+| `LinnikGammaRatio` | bounds on `Γ` ratios and Euler factors; the reflected functional equation | Mathlib's functional equation |
+| `LinnikFE` | root numbers: `ε(χ⁻¹) = conj ε(χ)`, `\|ε(χ)\| = 1` for primitive `χ` | classical |
+| `LinnikChar` | Perron's formula with weight `e^{−n/x}`; `\|L(s,χ)\| ≤ 3(q + 1)(\|t\| + 2)` on `½ ≤ σ ≤ 3` | classical |
+| `ChiUniform` | the constant `ζ(3/2)`; a termwise comparison of `L`-series | — |
+| `LFunctionGrowth` | `\|L(s,χ)\| ≤ (N + 1)\|s\|/Re s` for `χ ≠ 1`, by partial summation | classical |
+| `HalfPlaneLindelof` | `d log\|f\| = Re(f′/f)`; `\|ζ(s)\| ≤ ζ(3/2)` on `Re s ≥ 3/2` | elementary |
+| `LinnikLindelof` | `\|L(s,χ)\| ≤ ζ(3/2)` on `Re s ≥ 3/2` | absolute convergence |
+| `LinnikSubconvex` | `∏_{p\|q}(1 + p^{−1/2}) ≤ 2^{⌈e^{1/ε}⌉}q^ε` | elementary |
+| `Subconvexity` | bounds on `Γ` on vertical lines | Stirling-type |
+| `LinnikHalf` | partial-summation split of `L`; `\|L(½ + it,χ)\| ≤ 11(q(\|t\| + 2))^{1/2}` | convexity bound |
+| `LinnikReflect` | the reflection factor `Φ`; dual sum and tail of `L(1 − s,χ)` | functional equation |
+| `LinnikDual` | dual terms as conjugated Dirichlet polynomials | — |
+| `LinnikAFE` | approximate functional equation for `L²`; a `Γ`-ratio bound | smoothed AFE |
+| `LinnikFourth` | `fourth_moment`, at one point per character | classical hybrid fourth moment |
+| `LinnikMoment` | the singular-value third-moment inequality of Proposition 4.6 | Lemma 4.2 |
+| `DirMean` | Dirichlet polynomials, Gallagher's lemma, an off-line Taylor bound | Montgomery, Gallagher |
+| `DivSq` | `Σ_{j≤M} d(j)² ≤ M(1 + log M)³` | classical |
+| `SquarefreeCount` | `sum_rpow_neg_le` only | integral comparison |
+| `MollId` | the Möbius divisor sum; `cpow` splitting for the mollifier | elementary |
+| `LinnikPoints` | large values at separated points | Gallagher, hybrid mean value |
+| `LinnikPower` | the divisor bound; powers of polynomials | classical |
+| `LinnikHybrid` | hybrid mean value and large values over characters | Gallagher's hybrid large sieve |
+| `LinnikCGLTail` | explicit tails `\|n\| > N₀`, `\|ξ\| > X` of Lemma 8.2 | pp. 29, 32 |
+| `LinnikCGLTrunc` | truncation of `S₃`'s Poisson expansion to `0 < \|m\| ≤ M` | §7, (7.1) |
+| `LinnikCGLSym` | support of `J`; cyclic symmetry | Proposition 7.1 |
+| `InghamDensity` | detector parameters `X`, `Y`, `N`; the weight; block masses | Ingham's method |
+| `InghamDetect` | coefficients; bounds on `Γ` in strips; Mellin inversion of `e^{−x}` | Montgomery-type detector |
+| `Landau` | two helpers for `\|ζ(s)\| ≤ ζ(3/2)` | — |
+| `LandauLaplace` | the identity theorem on a convex open set | Mathlib's identity theorem |
+| `SmoothPerron` | moving a vertical contour; `cpow` algebra | smoothed Perron |
+| `LinnikDetect` | `dichotomy`: each zero gives a large value or the integral class | Montgomery's detection |
+| `LinnikIngham` | the integral-class integrand on `Re s = ½` | Ingham-style bound |
+| `LinnikHuxley` | `class2_count_small`, the integral-class count; block bookkeeping | the library's own route |
+| `LinnikHuxStep` | bookkeeping at large `Q` (`choose_m_gen`, `absorb_K_gen`, `eventually_gen`) | — |
+| `LinnikTwelve` | `CEQ` only, in a conjunct the step discards | — |
+| `LinnikTwelveBins` | `F^m` normalised at `σ_b` | Huxley's large values (set-up) |
+| `LinnikTwelveSizes` | `2^{ω(q)} ≤ d(q)`; a limit of log powers | elementary |
+| `LinnikWeighted` | the product trick, `pv_eq_dp`, `LSX` | weighted Halász–Montgomery |
+| `LinnikDensity` | dyadic blocks of `P_χ`; `#R ≤ q` | — |
+| `LinnikCGL` | the statement `CGLDensity` | abstract; Theorem 1.2 on `[5/7, 16/21]` |
+| `LinnikCGLDensity` | `parCGLe`, `parCGLe_good`, `e → 0`, `cglDensity` | the exponent `7/3` |
+| `LinnikCGLStep` | detection, blocks, powers, bins, the two classes, the count | §12 |
+| `LinnikCGLLV` | `CGLProp31`; the three-part split; reduction to conductors | Proposition 3.1, §3 |
+| `LinnikCGLMat` | the Gram-matrix moment step, `prop46`, `prop31_of_third` | Lemmas 4.1–4.2, Proposition 4.6, §11.2 |
+| `LinnikCGLS23` | `X = 3μ₀‖E‖_F² + S₃`; `CGLS2`, `CGLS3` | (5.2), Propositions 6.1 and 11.1 |
+| `LinnikCGLS3` | `cgls3`, from Propositions 8.1 and 10.2 through (11.2) | Proposition 11.1 |
+| `LinnikCGLCount` | a lattice count with a gcd weight | Lemma 8.2 (p. 32) |
+| `LinnikCGLConst` | constants; `Σ(h, q) ≤ q·d(q)`; `n ≤ φ(n)d(n)` | Lemma 8.2 |
+| `LinnikCGLBlock` | bounds on `S₃,₃`, `S₃,₄` and block sums | §11.1 |
+| `LinnikCGLCov` | the change of variables `ξ → τ`; a Tonelli bound | Lemma 8.2, (8.7) |
+| `LinnikCGLDiag` | `\|μ − μ₀\|`; dropping "not all equal" | §7 |
+| `LinnikCGLTrace` | the library's `S3` is the paper's `S₃` | (5.2), §7 |
+| `LinnikCGLMom` | Lemma 9.1, at one point per character | Lemma 9.1 |
+| `LinnikCGLMom4` | Lemma 9.2 with the energy and an explicit error | Lemma 9.2, repaired |
+| `LinnikCGLS2` | `cgls2`, the bound on `‖E‖_F²` | Proposition 6.1 |
+| `LinnikCGLJ` | `J(f⃗)` and `CGLP81`; `S₃,₃` and `S₃,₄` reduced to `J` | §8, Proposition 8.1 |
+| `LinnikCGLJtil` | Cauchy–Schwarz of `Σ_II` back to `J(f̃)` | Lemma 8.2 (pp. 33–34) |
+| `LinnikCGLDecay` | `CGLP81`'s decay premise for `f_b`, at its maximum | §11 (p. 49) |
+| `LinnikCGLP81` | the downward induction; `cglp81` | Proposition 8.1 |
+| `LinnikCGLFourier` | `(2π\|ξ\|)^K\|ĥ_τ(ξ)\| ≤ C_K(1 + \|τ\|)^K` | Lemma 4.3(1) |
+| `LinnikCGLMellin` | `H = 𝓜(w²)` and its decay; Perron for Gram entries | (6.2) |
+| `LinnikCGLPoisson` | scaled Poisson summation; Gram entries by residues | (6.1), Lemmas 4.4 and 4.5 |
+| `LinnikCGLPois8` | Poisson for `ĝ_a`, then the shift `d → d + am₁ + bm₂` | Lemma 8.2 (p. 28) |
+| `LinnikCGLFtil` | `f̃ = Tψ̃₀(T·) ⋆ f`; a majorant of `Σ_II`'s integral | Lemma 8.2 (pp. 33–34) |
+| `LinnikCGLFtilP` | support, decay, `L¹` and `L²` bounds of `f̃` | the induction step (p. 27) |
+| `LinnikCGLFb` | `f_b = ψR̃(·, −b)²` with `ψ = 1` on `[−3, 3]` | §11 (pp. 48–49) |
+| `LinnikCGLPhi` | Fourier decay of the pieces of `f_b` | §11 (p. 49) |
+| `LinnikCGLG` | the majorant `g_a`, Plancherel, `ĝ_a` by an affine change of variables | Lemma 8.2 (p. 28) |
+| `LinnikCGLL82` | Lemma 8.2 with explicit constants | Lemma 8.2 |
+| `LinnikCGLP71` | a pointwise bound on `Ψ`; the constants `CJ` | Proposition 7.1 |
+| `LinnikCGLP72` | `S₃` bounded by dyadic sums of `Ĩ` and explicit errors | Proposition 7.2 |
+| `LinnikCGLT101` | `CGLT101`, `dyad`, Lemma 10.6 | Theorem 10.1, Lemma 10.6 |
+| `LinnikCGLHB101` | `cglt101`, from the bound on `σ(N)` | Theorem 10.1, by Kerr and Jutila |
+| `LinnikCGLHBIter` | Kerr's iteration, its cases A and B | Kerr's Theorem 16, with characters |
+| `LinnikCGLHBLen` | lengthening by characters modulo an auxiliary prime | Kerr's Lemma 20, Corollary 21 |
+| `LinnikCGLHBPos` | double sums, positivity, the dyadic split | Jutila's Lemma 2, Kerr's Lemma 22 |
+| `LinnikCGLHBRefl` | reflection of Gram entries | Kerr's Corollary 28, Jutila's Lemma 1 |
+| `LinnikCGLL105` | the energy bounded by `N^{−2σ}` times a third moment; `Spaced` | Lemma 10.5 |
+| `LinnikCGLL107` | the fourth moment of `R₂`, grouped by conductor and class size | Lemma 10.7 |
+| `LinnikCGLL109` | the small-gcd third moment | Lemma 10.9 |
+| `LinnikCGLL1010` | the large-gcd third moment | Lemma 10.10 |
+| `LinnikCGLCase` | the case analysis; Remark 10.3 | Lemma 10.10, Remark 10.3 |
+| `LinnikCGLEps` | the bookkeeping in `ε`; `prop102` | Proposition 10.2 |
+| `LinnikCGL112` | Proposition 7.2's blocks summed into (11.2) | (11.2) |
+| `LinnikCGLCS` | the two Cauchy–Schwarz steps of §11 | the proof of Proposition 11.1 |
+| `LinnikCGLRt` | `R̃`; Proposition 7.2's inner integral | (7.4), (7.5) |
+| `LinnikCGLRFact` | `I′_m` as an integral with Ramanujan sums | (7.3) |
+| `LinnikCGLProd` | three `ĥ`'s as an integral of the kernel `J` | the proof of Proposition 7.1 |
+| `LinnikCGLRam` | `\|C_q(n)\| ≤ d(q)(n, q)`; decay and support of `J` | inputs to Proposition 7.1 |
+| `LinnikCGLForm` | Lemma 8.2 at fixed parameters | Lemma 8.2 |
+| `LinnikCGLAsum` | the sum over `a`, by Ramanujan sums | §8.2.2 |
+| `LinnikCGLNsum` | `ĝ_a` by Poisson; the terms `n ≠ 0` | (8.2)–(8.3) |
+| `LinnikCGLN0` | the term `n = 0` | §8.2.5 |
+| `LinnikCGLSig2` | `Σ_II`; `Σ₂` by Poisson | Lemma 8.2 (p. 33) |
+| `LinnikCGLLoc` | local averages of exponential sums | Lemmas 10.4 and 10.8 |
+| `LinnikCGLSep` | separation of fractions; cubes at separated points | the proof of Lemma 10.9 |
+| `LinnikCGLFrob` | the off-diagonal Gram mass `‖E‖_F²` | Proposition 6.1, from Lemma 6.2 |
+| `LinnikCGLPair` | one reflected Gram entry | Lemma 6.2 |
+| `LinnikCGLReflect` | reflection of Gram entries with `χ_i ≠ χ_k` | Lemma 6.2 |
+| `LinnikCGLRefl0` | reflection of principal entries through the pole | Jutila-style |
+| `DensityCore` | dyadic blocks `(2^kX, 2^{k+1}X]` | — |
+| `DensityAsym` | `log U ≥ ½` for `U ≥ 2` | elementary |
+| `SieveLemma1` | Perron's formula with a smooth weight (`perron_weight`) | Mellin inversion |
+| `SieveSmooth` | `(2π\|ξ\|)^K\|f̂(ξ)\| ≤ ‖f^{(K)}‖₁` | classical |
+| `SieveWeight` | support and derivative bounds of `w²(e^{−v})` | — |
+| `KaiserZeroWeight` | `Re ψ(z) ≤ log\|z\| + 4` on `Re z ≥ ¼` | the Laplace form of `ψ` |
+| `RealDirichlet` | `\|γ_χ\| ≤ 8` on `½ ≤ Re z ≤ 3` | bounds on `Γ` |
+
+**What the reading confirms**, beyond the bullets above:
+
+- **The counting set.** `charDensity_cglGen` (`LinnikCGLStep.lean:1008`) states `CGLDensity`'s filter exactly, and
+  bounds it by the count of nontrivial characters plus `1`. `count_cgl_at` picks one zero for each `χ ≠ 1`, with
+  `σ ≤ Re s < 1`.
+- **Detection.** `LinnikDetect.dichotomy` turns every zero with `½ < β < 1`, at any height, into one of two values at
+  least `¼`: the mollified polynomial at the zero itself, or the integral class. The step's cover `Z ⊆ Z1 ∪ Z2`
+  (`LinnikCGLStep.lean:803–815`) applies it to each counted character. It is the library's explicit form of
+  Montgomery's detection, not a transcription of the paper's §12.
+- **The integral class.** `LinnikHuxley.class2_count_small` bounds it by `LinnikFourth.fourth_moment`, which holds
+  for every modulus, imprimitive characters included, with one free ordinate per character and a constant that
+  depends on `ε` only. Bounding the mollifier by `X` costs `X⁴ ≤ Q^{1/500}`, the `1/500` of `ParC.Good`.
+- **Uniformity in `ε`.** In §10 every constant is chosen before `∀ q`. The factors `d(q)(⌊log₂|R|²⌋ + 1)`,
+  `1 + log max(1, N)` and `|{n ∼ N}|` stay in the statements until `lemma1010_eps` absorbs them into `(2qTN)^ε`.
+- **The interfaces, more precisely.**
+  - `cglt101` proves `CGLT101` with `Q₀ = 0`, without using primitivity.
+  - `cgls2` uses neither primitivity nor the range of `σ`.
+  - `CGLP81`'s premise is discharged at the maximum of `f` (`LinnikCGLDecay.exists_max`), with constants that depend
+    on `j` only.
+- **Junk values.** Each definition with a junk value is used only where its value is genuine, or where the junk value
+  cannot help:
+  - `Gχ` is built with `dslope` and evaluated only at zeros.
+  - `Ivχ`, `Jint` and the other Bochner integrals are proved integrable.
+  - `dualT` is a `tsum`, used only on `Re s < 0`, where it converges.
+  - `Phi` uses Mathlib's `Γ(−n) = 0`, which is the true value of `1/Γ`.
+  - `Z2` drops `m = 0` through `0^{−2} = 0`.
+  - `blk` takes natural-number subtraction and `Nat.log` only with `X ≥ 1`.
+  - `p31B` would divide by `0` only at `V = 0`, which is never reached.
+  - `LinnikCGLRefl0` handles entries with `χ_i = χ_k` and `i ≠ k`, which the chain's injectivity rules out.
+- **Inside the 109 modules, the half-plane is used only off the chain.** Two declarations restate it:
+  `LinnikChar`'s `zeroFree_ball_global` and `LinnikLindelof.LFunction_ne_zero`. Neither of them, nor any of the 137
+  declarations that depend on it statically, is in the closure.
+
+**Documentation that misstates its declaration.** None of these changes what a used statement says. All but the first
+concern declarations that the proof does not use. They are left as they are here, since changing a docstring rebuilds
+everything downstream of its module: 259 modules for `LinnikCGLStep`.
+
+- `LinnikCGLStep.lean:24`: "the step takes `δ = 1/4`"; `count_cgl_at` takes `δ = 1/5` (line 826).
+- `InghamDetect.lean:750`: `tail_le`'s docstring has `|ρ − 1| ≤ 3U`, its hypothesis `‖ρ − 1‖ ≤ 2U + 1`.
+- `LinnikGammaRatio.lean:58`: `KQ_le`'s docstring has `2 log(15e⁴)`, its statement `6 log(15e⁴)`. The docstring's
+  bound fails at `a = b = 3`.
+- `KaiserZeroWeight.lean:49`: `im_logDeriv_Xi_le`'s docstring has `3 + kLam`, its statement `5 + kLam`.
+- `MollId.lean:9`: the header states `norm_moll_le` for `β ≥ σ ≥ 0`. The theorem needs `σ ≤ 1`, as its own
+  docstring says.
+- `RealDirichlet.lean:11`: the header cites `abs_sum_cR_le` with `≤ N`. The lemma is `abs_summ_cR_le`, with
+  `≤ N + 1`.
+- `ChiUniform.lean:6`: the header speaks of quadratic characters; `psiChi_le_uniform` holds for every `χ ≠ 1`.
+- `SieveLemma1.lean:6–11` and `SieveWeight.lean:6–10`: `norm_Sw_le` and `norm_Sp_le` are presented as needing a
+  zero-free rectangle. Their proofs also use the zero-free half-plane.
+
+The statement's own docstring (`LinnikCGL.lean`) said that `CGLDensity` follows from their Theorem 1.2. That needs the
+theorem's `o(1)` to be uniform in `σ`, and the docstring now says so.
 
 ## Heath-Brown's Theorem 10.1, with characters
 

@@ -1142,7 +1142,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `InghamDensity`: Ingham's zero-density exponent `2 + 4c` from `|ζ(1/2 + it)| ≪ |t|^c`
 
-- `InghamDensity.densityXi_of_zetaCrit`: Ingham's exponent from a pointwise bound on the critical line
+- `InghamDensity.densityXi_of_zetaCrit`: Ingham's exponent from a pointwise bound on the critical line ([note](../formalisations/chen-gupta-li-density.md))
 - `InghamDensity.inghamFromC`: `CrossCriteria.InghamFromC c` for every `c ≥ 0`
 - `InghamDensity.densityXi_17_6`: Zero density at the exponent
 - `InghamDensity.densityXi_Theta`: Zero density at `Θ`
@@ -1216,7 +1216,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `LinnikCGL112`: Their (11.2), the blocks of their Proposition 7.2 summed
 
-- `LinnikCGL112.S3_le_blocks`: The blocks summed
+- `LinnikCGL112.S3_le_blocks`: The blocks summed ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikCGL112.S3_le_112`: Their (11.2), in explicit form
 
 #### `LinnikCGLAsum`: The sum over `a` in their Lemma 8.2, by the Ramanujan sum
@@ -1271,7 +1271,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikCGLEps`: Their Lemmas 10.9 and 10.10 with their `⪅`, and their Proposition 10.2
 
 - `LinnikCGLEps.lemma109_eps`: Their Lemma 10.9 with their `⪅`
-- `LinnikCGLEps.lemma1010_eps`: Their Lemma 10.10 with their `⪅`
+- `LinnikCGLEps.lemma1010_eps`: Their Lemma 10.10 with their `⪅` ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikCGLEps.prop102`: Their Proposition 10.2
 
 #### `LinnikCGLFb`: Their `f_b = ψR̃(·, −b)²` for §11, with a `ψ` that is `1` on the centres (the `S₃` side)
@@ -1364,7 +1364,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikCGLL107`: Their Lemma 10.7, the fourth moment of `R` (the `S₃` side)
 
 - `LinnikCGLL107.group_le`: Their Theorem 10.1 on one group of keys
-- `LinnikCGLL107.lemma107`: Their Lemma 10.7, from `CGLT101`
+- `LinnikCGLL107.lemma107`: Their Lemma 10.7, from `CGLT101` ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLL109`: Their Lemma 10.9, the small-gcd terms
 
@@ -1511,7 +1511,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `LinnikCGLS3`: Their Proposition 11.1, `CGLS3` from `CGLP81` and `CGLT101`
 
-- `LinnikCGLS3.cgls3`: Their Proposition 11.1 at one point per character
+- `LinnikCGLS3.cgls3`: Their Proposition 11.1 at one point per character ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikCGLS3.prop31_pt`: Their Proposition 3.1 at one point per character, from their Proposition 8.1 and Heath-Brown's Theorem 10.1 ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLSep`: Separated points, and the fractions of their Lemma 10.9
@@ -1654,10 +1654,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikHuxley`: The power trick on `23/29 ≤ σ ≤ 11/12`, and Linnik's exponent `87/35 + η`
 
 - `LinnikHuxley.power_count`: Large values of a power, one point per character
-- `LinnikHuxley.class2_count_small`: The integral class with a short mollifier
+- `LinnikHuxley.class2_count_small`: The integral class with a short mollifier ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikHuxley.class1_huxley`: The polynomial class with powers
 - `LinnikHuxley.count_huxley`: The range `23/29 ≤ σ ≤ 11/12`
-- `LinnikHuxley.charDensity_huxley`: A density estimate over the characters mod `q` with exponent `87/35`
+- `LinnikHuxley.charDensity_huxley`: A density estimate over the characters mod `q` with exponent `87/35` ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikHuxley.linnik_eighty_seven_thirty_fifths`: Linnik's theorem with exponent `87/35 + η`, with no hypothesis
 
 #### `LinnikHybrid`: The hybrid mean value over the characters mod `q`
@@ -1670,7 +1670,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `LinnikIngham`: Ingham's density estimate over the characters mod `q`, and Linnik's exponent `36/13 + η`
 
-- `LinnikIngham.class2_count_ingham`: The integral class, Ingham's way ([note](../formalisations/ingham-density.md))
+- `LinnikIngham.class2_count_ingham`: The integral class, Ingham's way ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikIngham.count_nontrivial_ingham`: The two classes at one modulus, Ingham's way
 - `LinnikIngham.charDensity_ingham`: Ingham's density estimate over the characters mod `q`
 - `LinnikIngham.linnik_thirtysix_thirteenths`: Linnik's theorem with exponent `36/13 + η`, with no hypothesis *paper*
@@ -1689,13 +1689,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LinnikLindelof.norm_LFunction_le_zeta32`: `‖L(s, χ)‖ ≤ ζ(3/2)` on `Re s ≥ 3/2`.
 - `LinnikLindelof.inv_norm_LFunction_le_zeta32`: `‖L(s, χ)‖⁻¹ ≤ ζ(3/2)` on `Re s ≥ 3/2`, from `1/L(s, χ) = Σ χ(n)μ(n)n^{−s}`.
 - `LinnikLindelof.logDeriv_le_interp`: The interpolated bound on `L′/L`
-- `LinnikLindelof.lindelof`: A Lindelöf bound for `L(s, χ)`, uniformly in the modulus *paper* ([note](../formalisations/halasz-montgomery.md))
+- `LinnikLindelof.lindelof`: A Lindelöf bound for `L(s, χ)`, uniformly in the modulus *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikMoment`: Third-moment bounds for the largest singular value
 
 - `LinnikMoment.moment_three`: The simple bound at `r = 3`
 - `LinnikMoment.moment_three_chars`: The simple bound at `r = 3` over the characters mod `q`
-- `LinnikMoment.refined_moment`: Chen–Gupta–Li's Lemma 4.2
+- `LinnikMoment.refined_moment`: Chen–Gupta–Li's Lemma 4.2 ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikMoment.refined_moment_cube`: Lemma 4.2 cubed
 - `LinnikMoment.refined_moment_chars`: Chen–Gupta–Li's Lemma 4.2 over the characters mod `q`
 
@@ -1738,9 +1738,9 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `LinnikTwelve`: The power trick on `3/4 ≤ σ ≤ 11/12` with the estimate, and Linnik's exponent `12/5 + η`
 
-- `LinnikTwelve.class1_twelve`: The polynomial class with Huxley's estimate
+- `LinnikTwelve.class1_twelve`: The polynomial class with Huxley's estimate ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikTwelve.count_twelve_fifths`: The range `3/4 ≤ σ ≤ 11/12`
-- `LinnikTwelve.charDensity_twelve_fifths`: A density estimate over the characters mod `q` with exponent `12/5`
+- `LinnikTwelve.charDensity_twelve_fifths`: A density estimate over the characters mod `q` with exponent `12/5` ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikTwelve.linnik_twelve_fifths`: Linnik's theorem with exponent `12/5 + η`, with no hypothesis *paper*
 
 #### `LinnikTwelveBins`: One block and one bin by the large-values estimate, and Ingham's method at `c = 1/10`
