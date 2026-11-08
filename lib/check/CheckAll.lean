@@ -60,6 +60,9 @@ import QuadRing
 import QuadSplit
 import QuadKronecker
 import QuadClassNumber
+import PNTMertens
+import LittlewoodSharp
+import ClassNumberSharp
 import Subconvexity
 import SubconvexityCrit
 import InghamDetect
@@ -623,6 +626,17 @@ on `[1, M]` has `Q_N(x) ≥ Σx_n²/(22e⁸M)`. -/
 #print axioms QuadClassNumber.exists_inert_le_13
 #print axioms QuadClassNumber.exists_split_le_13
 #print axioms QuadClassNumber.eulerKronecker
+#print axioms PNTMertens.sum_mangoldt_div_log_eq
+#print axioms PNTMertens.E₂Λ.abs_le
+#print axioms LittlewoodSharp.norm_LFunction_one_bounds_of
+#print axioms LittlewoodSharp.norm_LFunction_one_bounds_sharp
+#print axioms ClassNumberSharp.classNumber_ge_sharp
+#print axioms ClassNumberSharp.classNumber_le_sharp
+#print axioms ClassNumberSharp.regulator_mul_classNumber_ge_sharp
+#print axioms ClassNumberSharp.regulator_mul_classNumber_le_sharp
+#print axioms ClassNumberSharp.classNumber_ge_85
+#print axioms ClassNumberSharp.regulator_mul_classNumber_ge_55
+#print axioms ClassNumberSharp.abs_discr_lt_of_classNumber_eq_one
 #print axioms Subconvexity.zeta_strip_of_zeroFree
 #print axioms Subconvexity.zeta_strip_eleven_twelfths
 #print axioms Subconvexity.zetaCritBound_of_zeroFree
