@@ -163,6 +163,49 @@ Conclusions:
 - The next idea has to use the relative orientation of `X_{−x}`, `X_{(1−x)/x}` and `X_{−1/(1−x)}` inside each trace,
   that is, the phases `χ(y_i(x))` in the character-side triple sum.
 
+## 7. Which coefficients make the bias, and the fourth moment (Numerical, Written proof)
+
+- **The bias comes from multiplicatively structured coefficients** (`arith.py`, `arith2.py`). Take the top `q^{2/3}`
+  characters of `D_b` for several `b`. Generic coefficients give unbiased sets: random signs or phases, and quadratic or
+  additive phases, all have small-rational bias at the random level and `ρ = 0.9–1.05`. Structured ones do not:
+
+| `b` | `ρ` at `q = 10007 / 30011 / 100003` | small-rational bias at `q = 100003` |
+|---|---|---|
+| Möbius | `1.13 / 1.31 / 1.27` | `0.20` |
+| Liouville | `1.82 / 2.87 / 3.58` | `0.42` |
+| primes | `2.13 / 1.53 / 1.20` | `0.12` |
+| zero detector `Σ_{d \| n, d ≤ √N} μ(d)` | `1.42 / 1.89 / 2.37` | `0.31` |
+| quadratic phase, random signs | `≈ 1.0` | `0.05` |
+
+  The zero detector's bias grows faster than the allowance of §5. So the conditional route of §5 probably fails for
+  exactly the polynomials the density argument uses.
+
+- **The fourth-moment cap** (`cap4.py`). For any `b` and `W`, `Σ_W |D_b|² ≤ (|W| Σ_χ |D_b|⁴)^{1/2}`. The adversarial
+  extremisers of §3 sit at `78–84%` of this cap, and their normalised multiplicative energy mod `q`,
+  `ρ_E = Σ_{χ≠χ₀}|D_b|⁴/(q‖b‖⁴)`, is `16.7 / 28.6 / 38.7` at `q = 10⁵ / 10⁶ / 3·10⁶`. The best `|bₙ| = 1` vector has
+  `ρ_E ≈ 2.1`, the random level, and also sits near its cap `(2q|W|)^{1/2}`.
+- **Dilated short intervals are harmless** (Written proof). Suppose `b`, or its Fourier transform mod `q`, is supported
+  on a dilate `c·[−A, A]` with `A ≤ (q/2)^{1/2}`. Then `m₁m₂ ≡ m₃m₄ (mod q)` forces `m₁m₂ = m₃m₄`, so
+  `Σ_χ |D_b|⁴ ≤ 2q·max_{k ≤ A²} d(k)·‖b‖⁴`. Hence `Σ_W |D_b|² ≤ (2q|W| max d)^{1/2} ‖b‖² = q^{5/6+o(1)} ‖b‖²` at
+  `|W| = q^{2/3}`, a factor `q^{1/6−o(1)}` below their bound. The extremisers of §3 are essentially of this kind: at
+  `q = 100003` their support is `|m| < 270`, against `(q/2)^{1/2} ≈ 224`. They look sharp at `q ≤ 3·10⁶` because the
+  divisor bound is still `100–240` there, and `ρ_E` grows with it.
+- **What a genuine large-values set needs.** At the critical point `|W|V² = qN`, so by Cauchy–Schwarz
+  `Σ_{χ∈W} |D_b|⁴ ≥ q^{4/3}N²`. That is, the fourth moment of a `1`-bounded `b` on `W` must be `q^{1/3}` times its
+  random value. So `b` can be neither localised (previous point) nor random-like (`ρ_E ≈ 2`). It must carry
+  multiplicative energy mod `q`, spread over many characters, beyond what an interval or a random sequence has.
+  Sieve-type coefficients such as the zero detector are the natural candidates.
+- **The classical fourth-moment bound.** `Σ_χ |D_b|⁴ ≤ N⁴ + O(qN² log²N)` (Ayyad, Cochrane and Zheng count the
+  congruence for intervals) gives `|W| ≲ N^{4−4σ} + qN^{2−4σ}`. Its second term is `q^{1/3}` at the critical point,
+  and only the first, `q^{8/9}`, is bad. That term comes from multiplicative energy that `b` concentrates on special
+  characters. Removing it for the large-values sets is the whole problem in this form.
+- **The scaling in `|W|`** (`sparse_ls.py`). At `q = 10⁵` and `10⁶` the power method gives
+  `s₁² ≈ (0.4–0.5)·q^{2/3}|W|^{1/2}` for `q^{1/2} ≤ |W| ≤ q^{3/4}`, the shape of their bound read as a bound for
+  `s₁²`. A bound `s₁² ≲ q^ε(N + (q|W|)^{1/2})` for every `W` would give `|W| ≲ q^ε(N^{2−2σ} + qN^{2−4σ})` from their
+  Lemma 4.1 alone. Through the power trick of their §12 that already implies the density hypothesis at `T = 1` for
+  prime `q`, so in that generality it is out of reach. The case needed for `7/3` is the critical point alone, with any
+  power saving.
+
 ## Scripts
 
 All take primes as arguments (the next prime above each) and print their tables.
@@ -181,3 +224,6 @@ All take primes as arguments (the next prime above each) and print their tables.
 | `bohr.py` | §6: `A`, the proxies cut into Bohr cells; `B`, synthetic Bohr sets. `(iv)` by one FFT per element. |
 | `hybrid.py` | §6: the bound with the dilations split by the operator norm of `X_c`. |
 | `where.py` | §6: `S₃`, `Σ\|T(x)\|`, the von Neumann bound and `B₃` side by side. |
+| `arith.py`, `arith2.py` | §7: the bias of the top sets of arithmetic coefficients, and its growth in `q`. |
+| `cap4.py` | §7: the extremisers against their fourth-moment cap, and `ρ_E`. |
+| `sparse_ls.py` | §7: the largest `s₁²` against `\|W\|` at fixed `q`. |
