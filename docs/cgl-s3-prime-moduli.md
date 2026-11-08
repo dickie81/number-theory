@@ -15,6 +15,9 @@ Their Remark 12.3 names the critical case: `σ = 5/7`, a detector polynomial of 
 term "corresponds to square root cancellation in the R functions but no cancellation in the sums over m. To improve this
 term, we would need to find some joint cancellation in R and the m sums, which seems quite difficult."
 
+Section 8 shows that at `T = 1` their detector is a sum over an interval. That opens a second route, on the other side of
+the same critical point, and it shows that the numerics at the `q` we can reach are not yet asymptotic.
+
 Throughout, `q` is prime, `T = 1`, `M = q/N = q^{2/9}`, and `R(y) = Σ_{χ∈W} χ(y)`.
 
 ## 1. What a saving is worth (Numerical)
@@ -177,8 +180,10 @@ Conclusions:
 | zero detector `Σ_{d \| n, d ≤ √N} μ(d)` | `1.42 / 1.89 / 2.37` | `0.31` |
 | quadratic phase, random signs | `≈ 1.0` | `0.05` |
 
-  The zero detector's bias grows faster than the allowance of §5. So the conditional route of §5 probably fails for
-  exactly the polynomials the density argument uses.
+  The zero detector's bias grows faster than the allowance of §5, so the conditional route of §5 probably fails for
+  these polynomials at the `q` we can reach. Two caveats from §8: Chen, Gupta and Li's own mollifier is shorter
+  (`(qT)^ε`, which makes their detector a block sum at `T = 1`), and at these `q` the sizes involved are not yet
+  asymptotic.
 
 - **The fourth-moment cap** (`cap4.py`). For any `b` and `W`, `Σ_W |D_b|² ≤ (|W| Σ_χ |D_b|⁴)^{1/2}`. The adversarial
   extremisers of §3 sit at `78–84%` of this cap, and their normalised multiplicative energy mod `q`,
@@ -206,6 +211,91 @@ Conclusions:
   prime `q`, so in that generality it is out of reach. The case needed for `7/3` is the critical point alone, with any
   power saving.
 
+## 8. At `T = 1` the detector is a sum over an interval (Written proof, Numerical)
+
+The zero detector of §7 used a mollifier of length `√N`. Chen, Gupta and Li's is shorter: in their §12 the mollifier
+`M_X` has `X = (qT)^ε`. At `T = 1` that makes their class-I detector a block sum, and the critical case becomes a
+statement about `S_I(χ) = Σ_{n∈I} χ(n)` for intervals `I` of length about `q^{7/18}`.
+
+- **The reduction** (Written proof). Their class-I zeros satisfy their (12.5):
+  `|Σ_{N<n≤2N} cₙ χ(n) n^{−ρ} e^{−n/Y}| ≫ 1/log q` for a dyadic `N ∈ [X, Y log²Y]`, with `cₙ = Σ_{d|n, d≤X} μ(d)` and
+  `Y = (qT)^{1/2}`. Writing `n = dm`, the sum is `Σ_{d≤X} μ(d)χ(d)d^{−ρ} Σ_{N/d<m≤2N/d} χ(m) m^{−ρ} e^{−dm/Y}`, so for
+  some `d ≤ X` the inner sum is `≫ 1/(X log q)`. On `(x, 2x]`, `x = N/d`, the weight `m^{−β−it} e^{−dm/Y}` has size
+  and variation `O(x^{−β})` when `|t| ≤ 1`. Partial summation then gives an interval `I ⊂ (x, 2x]` with
+  `|S_I(χ)| ≥ x^σ q^{−2ε}`. With their class-II bound `q^{2(1−σ)+ε}`,
+
+  `Σ_{χ mod q} N(σ, 1, χ) ≤ q^{O(ε)} (q^{2(1−σ)} + max_x #{χ ≠ χ₀ : max_{I⊂(x,2x]} |S_I(χ)| ≥ x^σ q^{−ε}})`,
+
+  over `x ≤ q^{1/2+ε}`. The maximum over `I` is handled by cutting `I` into dyadic pieces. For the bounds below this
+  costs powers of `log q`, and under (H) a constant factor in `η`. So at `T = 1` only block sums matter. The arbitrary coefficients of their Theorem 1.1 never arise.
+- **Where `7/3` comes from** (Written proof). Take `σ = 5/7`, `x = q^θ` and the threshold `V = x^{5/7}`.
+  - Fourth moment: `4x² < q` makes `ab ≡ cd (mod q)` an equation on `I⁴`. So `Σ_χ |S_I|⁴ = (q−1)E₄(I)`, with
+    `E₄(I) = #{ab = cd in I} ≍ x² log x`, and the count is `≲ q x^{2−4σ} log x = q^{1−6θ/7+o(1)}`.
+  - Sixth moment: for `x³ > q` the mean value theorem gives `Σ_χ |S_I|⁶ ≤ (q + 8x³)E₆(I) = x^{6+o(1)}`. The count is
+    then `≲ x^{6(1−σ)+o(1)} = q^{12θ/7+o(1)}`.
+  - The two meet at `θ = 7/18`, at `q^{2/3}`: Ingham's `3/(2−σ)` at `σ = 5/7`. They are the two ends of their §12
+    split with `a = 7/9`: `N^k = q^{7/9}` (`k = 2`, their Theorem 1.1, whose `S₃` term gives the same `q^{2/3}`) and
+    `N^k = q^{7/6}` (`k = 3`, their mean value case).
+
+  The `x⁶` at the sixth-moment end is the principal character's `|S_I(χ₀)|⁶ = |I|⁶`. The mean value theorem cannot
+  see that it belongs to `χ₀` alone.
+- **A second route** (Written proof, given the hypothesis). By orthogonality,
+  `Σ_{χ≠χ₀} |S_I|⁶ = (q−1)J₆(I) − |I|⁶`, where `J₆(I) = #{a₁a₂a₃ ≡ b₁b₂b₃ (mod q) : aᵢ, bᵢ ∈ I}`. Suppose that for
+  some `η, c > 0`, uniformly in prime `q`, in `x ∈ [q^{7/18−c}, q^{7/18+c}]` and in intervals `I ⊂ (x, 2x]`,
+
+  `J₆(I) = |I|⁶/(q−1) + O(x⁶ q^{−1−η})`. (H)
+
+  That is, triple products from a short interval equidistribute mod `q` in mean square, with a power saving. Then the
+  sixth-moment end improves to `q^{12θ/7−η}`, and the ends meet at `θ = 7(1+η)/18`. Near `σ = 5/7` the `T = 1` exponent
+  is at most `3/(2−σ) − η(2σ−1)/((2−σ)(1−σ))`, which is `7/3 − 7η/6` at `σ = 5/7`. Against their `4/(1+σ)` above `5/7`,
+  the uniform exponent at `T = 1` for prime `q` is at most `7/3 − η/2 + O(η²)`.
+
+  This route works on the other side of the critical point from §§2–7. Those sections try to improve the
+  fourth-moment end (length `q^{7/9}`, `S₃`, arbitrary coefficients). (H) improves the sixth-moment end (length
+  `q^{7/6}`, interval coefficients).
+- **(H) restates the problem in arithmetic form.** If `q^{2/3}` characters have `|S_I| ≥ x^{5/7}`, they alone give
+  `Σ_{χ≠χ₀} |S_I|⁶ ≥ x⁶`. So (H) for some `η` is equivalent, at the level of exponents, to a power saving in the count
+  near the critical threshold. It is not a reduction to something known. What it gives is a concrete counting problem,
+  open to arithmetic methods that do not exist for arbitrary coefficients: shifted convolutions of three-fold divisor
+  functions with box conditions, Kloosterman sums, geometry of numbers.
+
+  Literature status: I found no asymptotic of the form (H) for `|I| ≈ q^{7/18}`. The nearest results are Ayyad, Cochrane
+  and Zheng's for four variables, Garaev's on products from two short intervals, and the sixth moment of `L(1/2, χ)` on
+  average over moduli (Conrey, Iwaniec and Soundararajan; Chandee, Li, Matomäki and Radziwiłł). Through Perron's
+  formula, (H) would follow from `Σ_χ ∫_{|t|≤q^ε} |L(1/2+it, χ)|⁶ dt ≪ q^{7/6−η}` for the single modulus `q`. The Weyl
+  bound (Petrow and Young) times the fourth moment gives only `q^{4/3+ε}`. Averaging over moduli is easy (the large
+  sieve over `q ≤ Q` makes `x³ < Q²` diagonal), but it gives almost all `q`, not every prime.
+- **The critical case is real at every `q` we can reach** (Numerical, `blocks.py`). For `x = q^{7/18}` the table gives
+  the count `#{χ ≠ χ₀ : |S_I(χ)| ≥ x^{5/7}}`, its share of the fourth-moment bound `(q−1)E₄(I)/x^{20/7}`, and
+  `M₆ = Σ_{χ≠χ₀} |S_I|⁶`.
+
+| `q` | `x` | `[1, x]`: count `/ q^{2/3}` | share of bound | `M₆/x⁶` | `(x, 2x]`: count `/ q^{2/3}` | share of bound | `M₆/x⁶` |
+|---|---|---|---|---|---|---|---|
+| `100003` | `88` | `1.04` | `0.21` | `8.2` | `0.32` | `0.12` | `1.64` |
+| `1000003` | `215` | `1.20` | `0.20` | `9.7` | `0.27` | `0.095` | `1.58` |
+| `10000019` | `528` | `1.32` | `0.19` | `10.9` | `0.22` | `0.070` | `1.45` |
+| `30000001` | `809` | `1.39` | `0.18` | `11.1` | `0.20` | `0.063` | `1.41` |
+
+  - The sum over `[1, x]` realises their critical case: `(1.0–1.4)·q^{2/3}` characters cross `x^{5/7}`, a fifth of the
+    rigorous bound. Its nonprincipal sixth moment is `8–11` times `x⁶`. It is also `91–95%` of `q·E₆`, where
+    `E₆ = #{abc = def in [1, x]}`, so the integer diagonal accounts for it. `E₆/x³ = 61, 103, 171, 208`, about
+    `0.1(log x)⁴`, the exponent `(k−1)²` of Conrey and Gamburd's count of `a₁⋯a_k = b₁⋯b_k`. The diagonal `q·E₆` falls
+    below `x⁶` only when `q^{1/6}` beats `0.1(log x)⁴`, near `q ≈ 10^{27}`.
+  - The dyadic block, which is the detector, is milder. Its count falls from `0.32` to `0.20` of `q^{2/3}` over a factor
+    `300` in `q` (local exponent `0.59`), and from `12%` to `6%` of the bound. Its `M₆/x⁶` falls from `1.64` to `1.41`,
+    still above `1`. The difference is the small integers. Pretentious characters (`χ(p) ≈ 1` for small `p`) collect
+    the smooth numbers up to `x`, and `(x, 2x]` has far fewer of those than `[1, x]`.
+  - The genuine critical sets are not near their `S₃` extremal configuration (`blocks_s3.py`). For the dyadic block,
+    `S₃(W_crit)` is `5.5%` of `q²|W|^{3/2}` at `q = 10⁵` and `6.6%` at `10⁶`, which is `7` and `16` times a random `W`
+    of the same size. `λ_max(G)/N` is `2.9` and `3.9`, against their `q/N = 12.9` and `21.6`.
+- **What this does to the numerics of §§3–7.** At the `q` we can reach, log powers are as large as the savings at
+  stake: `q^{1/6}` against `(log x)⁴` here, and a saving `q^δ` with `δ ≤ 1/26` is at most `1.9` at `q = 3·10⁷`.
+  Finite-`q` evidence cannot separate "these methods give `7/3`" from "`7/3 − δ` holds for large `q`". The falling count
+  for the dyadic block is weak evidence for the second at `T = 1`. Heuristically, pretentiousness cannot carry the
+  critical sets for large `q`. Reaching `x^{5/7}` from smooth numbers needs `χ(p) ≈ 1` for every `p ≤ (log x)^{7/2}`,
+  since `Ψ(x, (log x)^A) = x^{1−1/A+o(1)}`, and such characters should die out. What remains is the proof technology for
+  the other characters, where only moments are available.
+
 ## Scripts
 
 All take primes as arguments (the next prime above each) and print their tables.
@@ -227,3 +317,5 @@ All take primes as arguments (the next prime above each) and print their tables.
 | `arith.py`, `arith2.py` | §7: the bias of the top sets of arithmetic coefficients, and its growth in `q`. |
 | `cap4.py` | §7: the extremisers against their fourth-moment cap, and `ρ_E`. |
 | `sparse_ls.py` | §7: the largest `s₁²` against `\|W\|` at fixed `q`. |
+| `blocks.py` | §8: the counts, fourth-moment shares and sixth moments of the block sums at `x = q^{7/18}`. About a minute to `q = 3·10⁷`. |
+| `blocks_s3.py` | §8: `S₃` and `λ_max(G)/N` on the genuine critical set, against random sets. |
