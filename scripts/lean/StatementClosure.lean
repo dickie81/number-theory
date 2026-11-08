@@ -17,6 +17,10 @@ equation and congruence lemmas (`.eq_n`, `.congr_simp`, `.hcongr_n`) where they 
 can declare one; import accepts the copies of a theorem with the same name, type and universe parameters, and
 attributes the constant to the first module in import order. So the number of modules the closure spans depends on
 the import order, and the constants do not: it prints the modules counted only through such a copy.
+
+Last, it counts the recursors of the proof's inductive types. An export (`scripts/kernel_check.sh`) carries every
+recursor of each inductive type, not only those a proof uses, so a checker that counts recursors counts more than the
+closure.
 -/
 
 open Lean
@@ -114,4 +118,19 @@ def main (args : List String) : IO Unit := do
   for (m, c, others) in viaDup.qsort (·.1.toString < ·.1.toString) do
     out.putStrLn s!"  {m}, through {c}; also declared by {others.filter alone.contains}, counted anyway, and by \
       {others.filter (!alone.contains ·)}, not"
+  -- 4. What the external checkers of `scripts/kernel_check.sh` count: an export carries every recursor of each
+  -- inductive type, including the auxiliary ones of nested inductives, not only those a proof uses.
+  let mut inds := 0
+  let mut recsIn := 0
+  let mut aux : Array Name := #[]
+  for c in full do
+    if let some (.inductInfo _) := env.find? c then
+      inds := inds + 1
+      if full.contains (mkRecName c) then recsIn := recsIn + 1
+      let mut i := 1
+      while env.contains (c.str s!"rec_{i}") do
+        aux := aux.push (c.str s!"rec_{i}")
+        i := i + 1
+  out.putStrLn s!"\nThe proof's {inds} inductive types have {inds} recursors, {recsIn} of them in the closure, and \
+    the auxiliary recursors {aux}: with all of them, {full.size - recsIn + inds + aux.size} constants."
   out.flush

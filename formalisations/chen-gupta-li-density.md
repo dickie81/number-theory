@@ -159,6 +159,11 @@ than it appears to, or rest on more than it should.
     come back identical, in 177 s. They are 64,971 theorems, 15,272 definitions, 1282 inductive types,
     1394 constructors, 255 recursors, 50 opaques, 4 quotient constants and 3 axioms, exactly `propext`,
     `Classical.choice` and `Quot.sound`. None is unsafe or partial.
+  - The three counts are of the same constants. con-leche and con-ron count the theorems, definitions, inductive
+    types, opaques and axioms (81,578), and generate constructors, recursors and the quotient themselves. The export
+    carries every recursor of each inductive type, so nanoda's 84,260 is the 83,231 with the 1027 recursors that no
+    proof uses and the two auxiliary recursors of the nested `Lean.Syntax` (`rec_1`, `rec_2`;
+    `scripts/lean/StatementClosure.lean` counts them).
   - lean4lean, also shipped, reads only `.olean` files, and not this toolchain's ("incompatible header"). It was not
     run.
 
