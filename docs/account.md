@@ -242,7 +242,8 @@ In order of what is in reach.
    kernel of the point counts is positive-definite exactly when the inverse zeros lie on `|α| = √q`
    (`WeilFF.countKernel_posDef_iff`). Its test shows that an Euler product and a functional equation do not give the
    positivity: `𝔾_m × (𝔸² ∖ 0)` over `𝔽_3` has both, in the shape of an elliptic curve over `𝔽_27`, and its kernel is
-   not positive-definite (`PurityTest.not_posDef`). For `ζ` the statement the conjecture must deliver is proved: RH
+   not positive-definite (`PurityTest.not_posDef`). Over `ℚ` the same holds for `ζ(s)ζ(s − 1)`, the zeta function
+   of `ℙ¹` over `ℤ` (`PurityRational.not_posDef`). For `ζ` the statement the conjecture must deliver is proved: RH
    holds exactly when `K(r) = Σ_ρ e^{(ρ − ½)²/2} r^{ρ − ½}` is positive-definite on the positive rationals
    (`BallKernel.rh_iff_posDef`), the explicit formula computes `K` from the primes (`BallKernel.kerK_explicit`), and
    the kernel of `dh` is not positive-definite (`PsiOmega.not_posDef_dh`). The structure the conjecture asks for is
@@ -261,8 +262,9 @@ In order of what is in reach.
    cubic lattice, and every Gram–Schmidt pivot equals the first (`BallFlat.flat_pivot`). In Weil's terms, take classes
    `D_n` with intersection numbers `D_m·D_n = m + n − √(mn)·K_H(m/n)`, computed from the primes. Then RH is the
    Castelnuovo–Severi inequality for their integer combinations (`BallWeil.rh_iff_castelnuovo_severi`), and also the
-   upper half of the Hasse–Weil bound for those numbers (`BallWeil.rh_iff_weil_bound`). The orbit-lattice conjecture
-   implies it (`BallWeil.rh_of_pivots`). Two primes already carry it: for distinct primes `p` and `q`, RH holds exactly
+   upper half of the Hasse–Weil bound for those numbers (`BallWeil.rh_iff_weil_bound`), and the Hodge index theorem
+   from counting, through Minkowski's theorem (`HodgeCounting.rh_iff_counting`). The orbit-lattice conjecture implies
+   it (`BallWeil.rh_of_pivots`). Two primes already carry it: for distinct primes `p` and `q`, RH holds exactly
    when `K_H(p^a q^b) ≥ −K_H(1)` for all integers `a` and `b` (`BallSlice.rh_iff_bound_pair`), so in particular for
    `2^a 3^b` (`BallSlice.rh_iff_two_three`). At every stage `N` the primes above `N/2`, which have no other multiple
    up to `N`, are never absent and are asymptotically half of all the primes (`LonelyPrimes.lonely_ratio_pos`,

@@ -93,7 +93,9 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
 - **Purity over `ℚ`.** Over `ℚ` itself an Euler product with a functional equation of `ζ`'s kind can have its zeros
   off the line. `ζ(s)ζ(s − 1)`, the zeta function of `ℙ¹` over `ℤ`, has the Euler product
   `∏_p (1 − p^{−s})^{−1}(1 − p^{1−s})^{−1}`, and its completion `ζ̂(s)ζ̂(s − 1)` is invariant under `s ↦ 2 − s`. Its
-  zeros are the `ρ` and the `ρ + 1`, off its line `Re s = 1` whatever the truth of RH.
+  zeros are the `ρ` and the `ρ + 1`, off its line `Re s = 1` whatever the truth of RH. In Lean: the Euler product
+  (`PurityRational.euler_product`), the functional equation (`PurityRational.functional_equation`) and a zero off the
+  line (`PurityRational.exists_zero_re_ne_one`).
   - **Its orbit form.** Build it as for `ζ`: `K(r) = Σ_{ρ′} r^{ρ′ − 1}/(ρ′(2 − ρ′))` over its zeros `ρ′`, with the Gram
     matrix `mn·K(m/n)`, the analogue of `√(mn)·K_H(m/n)` for the line `Re s = 1`. `scripts/ball_orbit.py --purity`
     computes it from the primes, by the method of `K_H`'s closed form, and `--purity-zeros` checks it against the zeros.
@@ -103,7 +105,9 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
   - **It is indefinite.** From `N = 9`; at `N = 60` its smallest eigenvalue is −9.7 against a largest of 1.0·10³,
     where `ζ`'s matrix has 3.5·10⁻³ and 11. So the similitude, the places and the integrality do not carry the
     positivity. Under RH the zeros of `ℙ¹` have the two real parts `1/2` and `3/2`, as the inverse zeros of `Y` have
-    two absolute values. This is the number-field form of `PurityTest`.
+    two absolute values. This is the number-field form of `PurityTest`, and in Lean it needs no hypothesis: `K` is
+    not positive-definite on the positive rationals (`PurityRational.not_posDef`), by the Landau argument of
+    `BallHadamard.rh_of_posDefH` applied to the zeros of `ℙ¹`.
   - **The integral quaternions.** Their zeta function `(1 − 4^{1−s})ζ(s)ζ(s − 1)`, the case `w = 4` of the next item,
     changes only the factor at `2` and adds the zeros `1 + πik/log 2`, on the line. Its form is indefinite from
     `N = 17`.
@@ -619,8 +623,13 @@ On an arithmetic surface the counterpart exists, and it is a count.
   ([research-opportunities.md](research-opportunities.md), §6.1). Read this way, the missing degree is a growth rate of
   lattice points in balls, a real number, as the intersection numbers here are, rather than an integer dimension. A
   class `D` with `D² > 0` would need lattices `Λ(nD)` whose points in a ball number `exp((n²/2)·D² + o(n²))`, and a
-  reason why a nonzero one forces `D·(e₁ + e₂) > 0`. The integral quaternions show what the lattices must see: they
-  have balls, an Euler product and a functional equation, and no positivity ("What it must survive").
+  reason why a nonzero one forces `D·(e₁ + e₂) > 0`. `HodgeCounting` states this route for the divisors of `BallWeil`:
+  lattices `Λ(D)` with unit balls `B(D)`, such that a nonzero point of `Λ(D)` in `B(D)` forces `D·(e₁ + e₂) > 0` and,
+  when `D² > 0`, the ball of `nD` or of `−nD` exceeds Minkowski's bound for some `n ≥ 1`. Minkowski's theorem then
+  gives the Hodge index theorem (`HodgeCounting.hodge_index`), and RH holds exactly when such lattices exist
+  (`HodgeCounting.rh_iff_counting`). The lattices that RH gives back are degenerate, so the content is in building
+  them from `D`. The integral quaternions show what the lattices must see: they have balls, an Euler product and a
+  functional equation, and no positivity ("What it must survive").
 
 **Its integral structure.** Write each logarithm of an integer in the explicit formula through the logarithms of the
 primes. For `m ≥ n` this gives `G(m, n) = (1 + γ)(m + n) − (γ + log 2π)·n + Σ_p log p·Q_p(m, n)`, where

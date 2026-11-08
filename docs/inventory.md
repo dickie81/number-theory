@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1375 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1382 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 159 | 465 |
+| `lib/core` | 161 | 472 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -414,6 +414,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `HasseEisenstein.exists_eisenstein_trace`: The Frobenius of `y² = x³ + D` is an Eisenstein integer of norm `q`
 - `HasseEisenstein.abs_trace_le`: Hasse's bound for `y² = x³ + D`
 
+#### `HodgeCounting`: The Hodge index theorem from counting: Minkowski's theorem as the bridge to `BallWeil`
+
+- `HodgeCounting.hodge_index`: The Hodge index theorem from counting
+- `HodgeCounting.rh_iff_counting`: RH is the Hodge index theorem from counting
+
 #### `HurwitzCross`: The chain with zeros on `ℝ ∪ iℝ`
 
 - `WeilForm.rh_of_prime_side_cross`: The chain with zeros on the cross ([note](../formalisations/weil-positivity.md))
@@ -594,6 +599,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `PsiOmega`: Zeros of `ζ` from one-sided bounds on summatory functions
 
 - `PsiOmega.psi_omega_half`: `ψ(x) − x = Ω±(x^θ)` for every `0 < θ < ½`, unconditionally
+
+#### `PurityRational`: Purity over `ℚ`: the zeta function of `ℙ¹` over `ℤ`
+
+- `PurityRational.functional_equation`: The functional equation of `ℙ¹`
+- `PurityRational.euler_product`: The Euler product of `ℙ¹`
+- `PurityRational.xiP1_zP1`: Each `ρ` and each `ρ + 1` is a zero of `ζ̂(s)ζ̂(s − 1)`
+- `PurityRational.exists_zero_re_ne_one`: `ζ̂(s)ζ̂(s − 1)` has zeros off its line `Re s = 1`
+- `PurityRational.not_posDef`: The kernel of `ℙ¹` is not positive-definite on the positive rationals
 
 #### `PurityTest`: The purity test: an Euler product and a functional equation, without positivity
 

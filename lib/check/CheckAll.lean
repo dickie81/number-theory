@@ -258,6 +258,8 @@ import BallHadamard
 import BallPsi
 import BallFlat
 import BallWeil
+import PurityRational
+import HodgeCounting
 import BallSlice
 import LonelyPrimes
 import LonelyJoins
@@ -1353,6 +1355,11 @@ twin-form rates at `11/12`. -/
 #print axioms PurityTest.not_posDef
 #print axioms PurityTest.posDef_elliptic
 #print axioms PurityTest.card_ne_countY
+#print axioms PurityRational.functional_equation
+#print axioms PurityRational.euler_product
+#print axioms PurityRational.xiP1_zP1
+#print axioms PurityRational.exists_zero_re_ne_one
+#print axioms PurityRational.not_posDef
 #print axioms BallKernel.rh_iff_posDef
 #print axioms BallKernel.kerK_explicit
 #print axioms BallKernel.kerK_inv
@@ -1408,6 +1415,8 @@ twin-form rates at `11/12`. -/
 #print axioms BallWeil.weil_bound
 #print axioms BallWeil.rh_iff_weil_bound
 #print axioms BallWeil.rh_of_pivots
+#print axioms HodgeCounting.hodge_index
+#print axioms HodgeCounting.rh_iff_counting
 #print axioms BallSlice.irrational_log_div
 #print axioms BallSlice.dense_log_pair
 #print axioms BallSlice.re_eq_zero_of_dense_set
