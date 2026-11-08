@@ -136,7 +136,8 @@ than it appears to, or rest on more than it should.
   put on blank lines (below). Each compiles to the same `.olean` as before, byte for byte, so the checks below, made on
   the build of `bb094dc`, hold at the head. CI agrees: building `5b346ff`, it recompiled the six files changed there
   and replayed every module that imports them, which Lake does only when the recompiled `.olean` is unchanged.
-- **No route around the kernel.** The lakefile sets only the `autoImplicit` options. Nothing in `lib/`, the vendored
+- **No route around the kernel.** The lakefile sets only `autoImplicit` and `relaxedAutoImplicit`, both off, for the
+  whole package. Nothing in `lib/`, the vendored
   libraries included, uses `skipKernelTC`, `addDeclWithoutChecking`, `unsafe`, `implemented_by`, `native_decide` or
   `ofReduceBool`. The `LinnikCGL` modules declare one `NeZero` instance and one tactic macro (`cgl_good`).
 - **Other kernels.** `#print axioms` reads the environment that elaboration built, so it cannot see a declaration that
@@ -177,20 +178,20 @@ than it appears to, or rest on more than it should.
     indicator of `S ⊆ [6N/5, 9N/5]`, where `w = 1`, and their `⪅` is made explicit.
   - `CGLT101` is their Theorem 10.1, term for term.
   - `CGLS3` carries their `(qT)²|W|^{3/2}`.
-- **No implicit argument by accident.** The library's own `lean_lib`s keep Lean's default `autoImplicit`. The vendored
-  PNT+ turns it off, with `relaxedAutoImplicit`; the vendored Zeta23, which the proof does not use, turns off only
-  `relaxedAutoImplicit`. A misspelt name in a declaration's header therefore becomes an implicit argument, without a
-  warning. That cannot touch `CGLDensity`, whose header has no binders, nor the proof's soundness, but it could make
-  an intermediate statement, an interface above say, mean less than it reads. All 109 library modules whose
-  declarations the proof uses elaborate with `-DautoImplicit=false -DrelaxedAutoImplicit=false`, under Lake's setup
-  file and under a bare `lean`, so no declaration in them binds a name that way. (A bare `lean` used to time out in
-  `LinnikLindelof`'s `lindelof`, with the flags or without, for the reason under "Heartbeat margins" below. It now
-  passes, in 29 s with the flags.) The same test on the other 318 library modules built here (427 of the
-  library's 1125) finds three declarations that rely on the default, all in the import cone and none used by the proof.
-  All three are benign: the auto-bound name is a parameter that the statement means to quantify over (`s` in
-  `KubotaCompleted.mem_S_of_term_ne_zero`, `δ` in `Mollify.archIntegrand_Av_le`, `a` in `ParitySplit.arch_part`).
-  Declaring those three would let the library turn `autoImplicit` off, so that no later statement could bind a misspelt
-  name; the 698 modules not built here would be checked by the same full rebuild.
+- **No implicit argument by accident.** Under Lean's default `autoImplicit`, a misspelt name in a declaration's header
+  becomes an implicit argument, without a warning. That cannot touch `CGLDensity`, whose header has no binders, nor
+  the proof's soundness, but it could make an intermediate statement, an interface above say, mean less than it
+  reads. All 109 library modules whose declarations the proof uses elaborate with `-DautoImplicit=false
+  -DrelaxedAutoImplicit=false`, under Lake's setup file and under a bare `lean`, so no declaration in them binds a
+  name that way. (A bare `lean` used to time out in `LinnikLindelof`'s `lindelof`, with the flags or without, for the
+  reason under "Heartbeat margins" below. It now passes, in 29 s with the flags.) The same test on the other 318
+  library modules built here (427 of the library's 1125) found three declarations that relied on the default, all in
+  the import cone and none used by the proof. All three were benign: the auto-bound name was a parameter that the
+  statement means to quantify over (`s` in `KubotaCompleted.mem_S_of_term_ne_zero`, `δ` in
+  `Mollify.archIntegrand_Av_le`, `a` in `ParitySplit.arch_part`). Each is now declared where Lean put it, so the three
+  statements are unchanged. The package now turns both options off for every library, the vendored ones included
+  (`scripts/gen_lakefile.py`), so a name that a declaration does not bind is an error. The full rebuild that the
+  change forces checks the 698 modules not built here.
 - **Heartbeat margins.** Lean stops elaborating a declaration after `maxHeartbeats`, 200,000 by default, which the
   library keeps except where a declaration raises it. Re-elaborating the 109 modules under Lake's setup with the
   default lowered to 150,000, 175,000 and 190,000 finds 15 declarations that need more than 150,000:
