@@ -1600,7 +1600,8 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 step: the proof term is what the kernel checks). It fails if the walk misses `LinnikCGLHB101.prop31` or
 `LinnikFourth.fourth_moment`, which the proof does use, or if it reaches the zero-free half-plane
 `Eis.LFunction_ne_zero_of_re_gt` or any other declaration of its module `DirichletCharHalfPlane`, which is in the
-theorem's import cone (formalisations/chen-gupta-li-density.md, "An audit of the chain"). -/
+theorem's import cone (formalisations/chen-gupta-li-density.md, "An audit of the chain"). It lists the modules
+whose declarations the proof uses. -/
 
 open Lean Elab Command in
 #eval show CommandElabM Unit from do
@@ -1626,8 +1627,10 @@ open Lean Elab Command in
     throwError "LinnikCGLDensity.cglDensity uses the zero-free half-plane (module DirichletCharHalfPlane)"
   let ext := [`Mathlib, `Init, `Lean, `Std, `Batteries, `Aesop, `Qq, `ProofWidgets, `Plausible, `LeanSearchClient,
     `ImportGraph, `PrimeNumberTheoremAnd]
-  let lib := mods.toList.filter fun m => !ext.contains m.getRoot
+  let lib := (mods.toList.filter fun m => !ext.contains m.getRoot).map toString |>.toArray.qsort
+    (fun a b => decide (a < b))
   let pnt := (mods.toList.filter fun m => m.getRoot == `PrimeNumberTheoremAnd).map toString |>.toArray.qsort
     (fun a b => decide (a < b))
-  logInfo m!"LinnikCGLDensity.cglDensity uses {seen.size} constants from {mods.size} modules: {lib.length} of the \
-    library's, none of them DirichletCharHalfPlane, and {pnt.size} of PrimeNumberTheoremAnd's: {pnt.toList}"
+  logInfo m!"LinnikCGLDensity.cglDensity uses {seen.size} constants from {mods.size} modules: {pnt.size} of \
+    PrimeNumberTheoremAnd's, {pnt.toList}, and {lib.size} of the library's, none of them DirichletCharHalfPlane, \
+    {lib.toList}"
