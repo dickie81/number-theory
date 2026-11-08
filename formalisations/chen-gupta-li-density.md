@@ -127,12 +127,15 @@ results.
 An independent pass over the chain from `cglDensity` down, looking for anything that could make the theorem say less
 than it appears to, or rest on more than it should.
 
-- **Axioms.** At the branch head `bb094dc`, whose Lean sources are those of `58a367a`, CI's Lean build reports
-  `[propext, Classical.choice, Quot.sound]` for `cglDensity`, `charDensity_e`, `parCGLe_good` and `prop31`, as it does
-  on `main` at `b48f5a3`. Its gate `scripts/check_axioms.py` finds every report within those three: 146 of 146 in
-  `Check.lean`, 1206 of 1206 in `CheckAll.lean`, 34 of 34 in `CheckZeta23.lean` and 71 of 71 in `CheckDH.lean`. A
-  local build of `LinnikCGLDensity` from `bb094dc` (`scripts/build.sh`, Mathlib from its cache) reports the same
-  axioms for `cglDensity`.
+- **Axioms.** At the branch head `5b346ff`, CI's Lean build reports `[propext, Classical.choice, Quot.sound]` for
+  `cglDensity`, `charDensity_e`, `parCGLe_good` and `prop31`, as it does on `main` at `b48f5a3`. Its gate
+  `scripts/check_axioms.py`, which elaborates each check file afresh, finds every report within those three: 146 of
+  146 in `Check.lean`, 1206 of 1206 in `CheckAll.lean`, 34 of 34 in `CheckZeta23.lean` and 71 of 71 in `CheckDH.lean`.
+  A local build of `LinnikCGLDensity` from `bb094dc` (`scripts/build.sh`, Mathlib from its cache) reports the same
+  axioms for `cglDensity`. Since `bb094dc`, seven Lean files have changed, in plain comments and in `set_option` lines
+  put on blank lines (below). Each compiles to the same `.olean` as before, byte for byte, so the checks below, made on
+  the build of `bb094dc`, hold at the head. CI agrees: building `5b346ff`, it recompiled the six files changed there
+  and replayed every module that imports them, which Lake does only when the recompiled `.olean` is unchanged.
 - **No route around the kernel.** The lakefile sets only the `autoImplicit` options. Nothing in `lib/`, the vendored
   libraries included, uses `skipKernelTC`, `addDeclWithoutChecking`, `unsafe`, `implemented_by`, `native_decide` or
   `ofReduceBool`. The `LinnikCGL` modules declare one `NeZero` instance and one tactic macro (`cgl_good`).
@@ -169,14 +172,15 @@ than it appears to, or rest on more than it should.
     indicator of `S ⊆ [6N/5, 9N/5]`, where `w = 1`, and their `⪅` is made explicit.
   - `CGLT101` is their Theorem 10.1, term for term.
   - `CGLS3` carries their `(qT)²|W|^{3/2}`.
-- **No implicit argument by accident.** The library's own `lean_lib`s keep Lean's default `autoImplicit`; only the
-  vendored PNT+ and Zeta23 set it. A misspelt name in a declaration's header therefore becomes an implicit argument,
-  without a warning. That cannot touch `CGLDensity`, whose header has no binders, nor the proof's soundness, but it
-  could make an intermediate statement, an interface above say, mean less than it reads. All 109 library modules whose
-  declarations the proof uses elaborate with `-DautoImplicit=false -DrelaxedAutoImplicit=false`, so no declaration in
-  them binds a name that way. 108 pass under a bare `lean`. `LinnikLindelof` passes under Lake's setup file, which is
-  how Lake compiles it; a bare `lean` timed out in its `lindelof`, with the flags or without, for the reason under
-  "Heartbeat margins" below, and now passes. The same test on the other 318 library modules built here (427 of the
+- **No implicit argument by accident.** The library's own `lean_lib`s keep Lean's default `autoImplicit`. The vendored
+  PNT+ turns it off, with `relaxedAutoImplicit`; the vendored Zeta23, which the proof does not use, turns off only
+  `relaxedAutoImplicit`. A misspelt name in a declaration's header therefore becomes an implicit argument, without a
+  warning. That cannot touch `CGLDensity`, whose header has no binders, nor the proof's soundness, but it could make
+  an intermediate statement, an interface above say, mean less than it reads. All 109 library modules whose
+  declarations the proof uses elaborate with `-DautoImplicit=false -DrelaxedAutoImplicit=false`, under Lake's setup
+  file and under a bare `lean`, so no declaration in them binds a name that way. (A bare `lean` used to time out in
+  `LinnikLindelof`'s `lindelof`, with the flags or without, for the reason under "Heartbeat margins" below. It now
+  passes, in 29 s with the flags.) The same test on the other 318 library modules built here (427 of the
   library's 1125) finds three declarations that rely on the default, all in the import cone and none used by the proof.
   All three are benign: the auto-bound name is a parameter that the statement means to quantify over (`s` in
   `KubotaCompleted.mem_S_of_term_ne_zero`, `δ` in `Mollify.archIntegrand_Av_le`, `a` in `ParitySplit.arch_part`).
@@ -221,7 +225,14 @@ than it appears to, or rest on more than it should.
   other declaration of `DirichletCharHalfPlane` is among them, and CI fails if one comes in. `scripts/census.py`, run
   locally in the environment of `LinnikCGLDensity` alone, counts the same 83,231 constants and the same 109 modules of
   the library. It attributes them to 2614 modules: 2341 of Mathlib, 146 of Lean's `Init`, 12 of Batteries and one of
-  Aesop. `scripts/decl_reach.py`, a static over-approximation from the sources, had already found the half-plane
+  Aesop. The two module counts differ in attribution, not in constants. 54 of the constants are equation and
+  congruence lemmas (`.eq_n`, `.congr_simp`, `.hcongr_n`) that Lean generates on demand, so that several modules
+  declare them. Import accepts such copies because they are theorems with the same name, type and universe
+  parameters, and attributes each to the first module in import order. In the environment of `LinnikCGLDensity`, five
+  modules are counted only because such a lemma is attributed to them, and four of those lemmas are also declared in
+  a module counted anyway; `CheckAll` imports more modules, in another order, and counts one fewer
+  (`scripts/lean/StatementClosure.lean` lists them).
+  `scripts/decl_reach.py`, a static over-approximation from the sources, had already found the half-plane
   unreachable (2096 of 8988 declarations reachable, with every identifier linked to every declaration that shares its
   last name component).
 - **The proofs, against the paper.** Each main proof was read through its cited lemmas and its module's header, and
@@ -262,6 +273,12 @@ than it appears to, or rest on more than it should.
     vanish on `Re s ≥ 1` except perhaps at `χ = 1`, `s = 1` (`LFunction_ne_zero_of_one_le_re`). So it is the
     `L`-function, and the count is of the characters with a zero in `σ ≤ Re s < 1`, `|Im s| ≤ T`, with at most the
     trivial character besides.
+  - It depends on the library only through `CGLDensity` (`scripts/lean/StatementClosure.lean`). Followed through
+    types and the bodies of definitions, but not through proofs, `cglDensity`'s type reaches 5275 constants: 5267 of
+    Mathlib, Lean, Batteries and Aesop, `CGLDensity` itself, and seven facts its body abstracts, `Nat.AtLeastTwo` for
+    the numerals 5, 7, 16, 21, 2 and 3 and `IsDomain ℂ`. No other declaration of the library, and none of
+    PrimeNumberTheoremAnd's, can change what the theorem says. They enter only through proofs, which the kernels
+    check.
 
 ### Module by module
 
@@ -277,6 +294,14 @@ used declaration they checked three things:
 
 Every finding below was checked against the sources again. None is a crack: no used statement says less than it
 appears to.
+
+The proof also uses 175 constants of 5 of PrimeNumberTheoremAnd's modules, which were not read this way: none of them
+is in what the statement says (under "What the statement is" above), so they matter only through proofs. The library
+names 17 of them. They are the rectangle, vertical and horizontal integrals (`RectangleIntegral`, `VerticalIntegral`,
+`HIntegral`, `UpperUIntegral`, `LowerUIntegral`, and primed forms), `HolomorphicOn` with two lemmas on it, the residue
+theorem `ResidueTheoremOnRectangleWithSimplePole'`, and `riemannZeta0` with `Zeta0EqZeta` and `ZetaBnd_aux1`. The
+users are the contour shifts (`SmoothPerron.verticalIntegral_shift`, `LinnikGamma.verticalIntegral_sub_eq`, and
+the approximate functional equation of `LinnikAFE` and `LinnikFourth`) and `LinnikCGLRefl0.norm_zeta_le_strip`.
 
 | Module | What the chain takes from it | Source |
 |---|---|---|

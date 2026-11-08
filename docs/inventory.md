@@ -1207,7 +1207,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikAFE`: The approximate functional equation for `L(s, χ)²`
 
 - `LinnikGamma.norm_gammaFactor_ratio_le`: The ratio of two values of the Archimedean factor
-- `LinnikGamma.verticalIntegral_sub_eq`: Moving the line of integration across a simple pole at `0`
+- `LinnikGamma.verticalIntegral_sub_eq`: Moving the line of integration across a simple pole at `0` ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikGamma.afe`: The approximate functional equation for `L(s, χ)²` ([note](../formalisations/hybrid-fourth-moment.md))
 
 #### `LinnikBuckets`: The off-diagonal pairs in dyadic buckets of the analytic conductor
@@ -2438,7 +2438,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SmoothPerron`: A smoothed Perron formula for a general Dirichlet series
 
 - `SmoothPerron.verticalIntegral_eq_smoothedSum`: The smoothed Perron formula
-- `SmoothPerron.verticalIntegral_shift`: Moving the line of integration
+- `SmoothPerron.verticalIntegral_shift`: Moving the line of integration ([note](../formalisations/chen-gupta-li-density.md))
 - `SmoothPerron.mellin_le_geom_of`: The Mellin transform of `Smooth1` on a line, from two Mellin bounds
 - `SmoothPerron.mellin_le_geom`: The Mellin transform of `Smooth1` on a line
 - `SmoothPerron.norm_smoothedSum_sub_le`: Unsmoothing
