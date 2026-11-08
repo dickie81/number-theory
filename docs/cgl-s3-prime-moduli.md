@@ -118,8 +118,50 @@ What is known about it:
 | `100003` | `1.00` | `3.35` | `4.7` | `1.26` |
 
 A bounded bias would satisfy the condition for every `δ < 1/18` once `q^{1/9−2δ}` outgrows it, but nothing here
-proves it stays bounded. The obstruction is now specific: large-values sets clustered on characters that agree on small
-rationals, the prime-modulus analogue of the clustering in `t` that Guth and Maynard remove by subdividing `[0, T]`.
+proves it stays bounded. The obstruction to this bound is specific: large-values sets clustered on characters that
+agree on small rationals, the prime-modulus analogue of the clustering in `t` that Guth and Maynard remove by
+subdividing `[0, T]`. Section 6 tests that analogy.
+
+## 6. The Bohr-set test (Numerical)
+
+Can the bias be removed by subdividing `W` along the small rationals it is biased on, as a stand-in for the `q₁ | q`
+subdivision that prime moduli lack?
+
+- **Subdividing concentrates the bias** (`bohr.py A`). Cells cut by the phases of `χ(x)` at the two most biased
+  small rationals have bias `3.8–9.7` at `q = 10007` and `3.1–13.0` at `q = 30011`, against `3.8` and `3.2` for `W`.
+  Quadruples inside single cells carry `54%` and `29%` of `(iv)` but only `35%` and `19%` of the energy.
+- **Structured sets are a blind spot, not an obstruction** (`bohr.py B`). Bohr sets
+  `{χ : |arg χ(p)| ≤ η for the first k primes}` of size `q^{2/3}` have bias `9–32`, growing with `q`, and energy
+  above the random level. Yet their `S₃` is below that of random sets: `0.000–0.045` of the bound, against
+  `0.056–0.067`.
+- **Splitting the dilations instead gains nothing at these sizes** (`hybrid.py`). Splitting by the operator norm of
+  `X_c` puts `10–50%` of the dilations among the structured ones for the Bohr and adversarial sets.
+- **Where the cancellation lives** (`where.py`). With `T(x) = tr(X_{−x} X_{(1−x)/x} X_{−1/(1−x)})`, all over
+  their bound, at `q = 10007 / 30011`:
+
+| `W` | `S₃` | `Σ_x \|T(x)\|` | von Neumann `Σ_x Σ_i s_i s_i s_i` | Schatten `B₃` |
+|---|---|---|---|---|
+| random | `0.066 / 0.056` | `0.092 / 0.075` | `0.87 / 0.81` | `0.91 / 0.84` |
+| from `\|bₙ\| = 1` | `0.148 / 0.093` | `0.176 / 0.110` | `1.12 / 0.97` | `1.24 / 1.06` |
+| adversarial | `0.63 / 0.51` | `0.71 / 0.54` | `1.90 / 1.65` | `3.09 / 2.88` |
+| Bohr, `k = 3` | `0.011 / 0.000` | `0.073 / 0.045` | `2.90 / 3.65` | `5.06 / 7.23` |
+| Bohr, `k = 6` | `0.045 / 0.024` | `0.083 / 0.054` | `1.47 / 1.67` | `2.19 / 2.53` |
+
+Across `x` the Jacobi-sum phases cancel little: `Σ_x |T(x)|` is within `1.1–1.4` of `S₃`, except for Bohr sets.
+Inside each trace the three matrices' singular vectors are misaligned. The von Neumann bound is the best any
+argument using only singular values can give term by term, and it overshoots `|T(x)|`:
+
+- about `10×` for random `W`, growing like `M^{1/2}` (`9.5` at `M = 7.75`, `10.8` at `M = 9.89`), which is the gap
+  between the Schatten bound and the truth;
+- `20–80×` for Bohr sets.
+
+Conclusions:
+
+- Subdividing along the bias is the wrong move for this bound.
+- Structured sets are a blind spot of norm-based bounds (theirs, the Schatten bound, the hybrid), not an
+  obstruction to the truth.
+- The next idea has to use the relative orientation of `X_{−x}`, `X_{(1−x)/x}` and `X_{−1/(1−x)}` inside each trace,
+  that is, the phases `χ(y_i(x))` in the character-side triple sum.
 
 ## Scripts
 
@@ -136,3 +178,6 @@ All take primes as arguments (the next prime above each) and print their tables.
 | `schatten.py` | The exact form of §2 and the bounds of §4 against `tr(E³)`. |
 | `q4split.py` | The split of `Q₄` into its degenerate part and `(iv)`, and the bias ratios. |
 | `popular.py`, `uniform.py`, `whichx.py` | Popular differences, the sufficient conditions of §5, and the biased small rationals. |
+| `bohr.py` | §6: `A`, the proxies cut into Bohr cells; `B`, synthetic Bohr sets. `(iv)` by one FFT per element. |
+| `hybrid.py` | §6: the bound with the dilations split by the operator norm of `X_c`. |
+| `where.py` | §6: `S₃`, `Σ\|T(x)\|`, the von Neumann bound and `B₃` side by side. |
