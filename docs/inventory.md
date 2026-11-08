@@ -1595,7 +1595,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `LinnikDetect.LSeries_aXχ`: `Σ χ(n)a_n n^{−s} = M_X(s, χ)L(s, χ)` on `Re s > 1`.
 - `LinnikDetect.detect_identityχ`: The identity at a zero
-- `LinnikDetect.dichotomy`: The dichotomy at a zero ([note](../formalisations/ingham-density.md))
+- `LinnikDetect.dichotomy`: The dichotomy at a zero ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikDual`: The dual sums as polynomials at the points of the first character, and the kernel of a pair
 
