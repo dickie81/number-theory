@@ -344,6 +344,43 @@ shifted convolution of the ternary divisor function with all three factors in `I
 
   All three reduce to the same obstacle.
 
+## 10. The multilinear Kloosterman sum (Written proof, Numerical, Conjecture)
+
+- **The reduction** (Written proof, sketch). Write `A = a₂a₃` and `B = b₂b₃`, pair products in `(x², 4x²]` with weights
+  `r₂`. Then `a₁a₂a₃ − b₁b₂b₃ = h` reads `A a₁ − B b₁ = h`. For coprime `A, B` this fixes `a₁ ≡ h Ā (mod B)`, and
+  since `B > 2x` at most one `a₁ ∈ I` qualifies. With smooth weights on `a₁` and `b₁`, Poisson summation mod `B` in `a₁`
+  leaves frequencies `0 < |ℓ| ≤ x^{1+ε}` with coefficients of size `1/x`. Summing over the shifts `h = kq` turns the
+  error into
+
+  `F ≈ Σ_{m ≤ x^{1+ε}K} ν_m Σ_{A,B ∼ x², (A,B)=1} r₂(A) r₂(B) Φ(m, A, B) e(q m Ā/B)`,
+  `ν_m = Σ_{ℓk=m} c_ℓ w_k`, `‖ν‖₂ ≍ (K/x)^{1/2}`,
+
+  where `Φ` is smooth. This is Bettin and Chandee's trilinear form `Σ ν_a α_m β_n e(ϑ a m̄/n)`, with `ϑ = q`, `a = m`
+  of size `xK`, and `α = β = r₂` of size `N ≍ x²`. The terms with `(A, B) > 1` and the separation of variables in `Φ`
+  are standard and cost `q^ε`.
+- **The size of the problem.** The trivial bound for the form is `Kx⁴`, while (H) needs `Kx³q^{−η}`. That is a saving
+  of `x q^η = N^{1/2} q^η`, at every `θ`.
+- **What Bettin and Chandee give.** Their Theorem 1 bounds the form by
+  `‖α‖‖β‖‖ν‖ (1 + |ϑ|A/(MN))^{1/2} ((AMN)^{7/20+ε}(M+N)^{1/4} + (AMN)^{3/8+ε}(AN+AM)^{1/8})`.
+  Here `|ϑ|A/(MN) = q·xK/(16x⁴) ≈ 7/16`: the modulus `q` of the shifts exactly balances the ranges, so the penalty
+  factor is `O(1)`. Their saving, `min(A^{3/20}N^{1/20}, N^{1/8}) = N^{1/8} = x^{1/4}`, is `q^{0.097}` at `θ = 7/18`,
+  against the `q^{0.389+η}` needed. In this arrangement no `θ < 1/2` comes within reach, and not even the classical
+  `θ = 1/2`. The loss is the factor `x` that the Poisson step gives away (the event `a₁ ∈ I` has probability `1/x`),
+  which bounds for arbitrary `α, β` do not recover.
+- **What would suffice** (Conjecture). Suppose that at `|ϑ|A ≍ MN` the form satisfies the large-sieve-type bound
+  `≪ q^ε ‖α‖‖β‖‖ν‖ (A + M + N)^{1/2}`, as a random kernel would. Then `F ≪ q^ε x^{5/2}K^{1/2} = Kx³ q^{−(4θ−1)/2+ε}`,
+  so (H) holds for every `θ > 1/3`, with `η = 5/18` at `θ = 7/18`. Less suffices: the full large sieve in `a` (a
+  saving of `A^{1/2}`) together with a saving of `N^{1/7}` from the `(A, B)` structure. Bettin and Chandee get
+  `A^{3/20}` and `N^{1/20}`.
+- **Numerics** (`shifts.py --z 47 --e 3`). Matching each shift's signature over `p ≤ 47` (exponents up to `3`) shrinks
+  `F` from `−0.08` to `−0.028`, `−0.025` and `−0.025` of `|I|⁶/q` at `q = 10⁵`, `3·10⁵` and `10⁶`. So most of §9's `F`
+  was the arithmetic of the shifts. What remains is `0.3–0.45` times `x^{5/2}K^{1/2}`, the size the conjecture
+  predicts. It still drifts up with `q`, probably from singular series of larger primes.
+- **Using the coefficients' structure.** The trilinear bounds treat `α` and `β` as arbitrary, but here
+  `r₂ = 1_I * 1_I` is a convolution of two intervals. Using that structure leads back to Kloosterman fractions with
+  factorable moduli `b₂b₃` and inverted variables of length `√(modulus)`. Each piece sits at the Weil barrier, so the
+  saving has to come from Kuznetsov-type averaging over the moduli.
+
 ## Scripts
 
 All take primes as arguments (the next prime above each) and print their tables.
@@ -367,4 +404,4 @@ All take primes as arguments (the next prime above each) and print their tables.
 | `sparse_ls.py` | §7: the largest `s₁²` against `\|W\|` at fixed `q`. |
 | `blocks.py` | §8: the counts, fourth-moment shares and sixth moments of the block sums at `x = q^{7/18}`. About a minute to `q = 3·10⁷`. |
 | `blocks_s3.py` | §8: `S₃` and `λ_max(G)/N` on the genuine critical set, against random sets. |
-| `shifts.py` | §9: the split of the count into the diagonal, the singular series and the shifted-convolution error. About ten minutes. |
+| `shifts.py` | §§9–10: the split of the count into the diagonal, the singular series and the shifted-convolution error; `--z`, `--e` set the signature. About ten minutes. |
