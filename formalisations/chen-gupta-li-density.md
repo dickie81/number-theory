@@ -148,6 +148,33 @@ than it appears to, or rest on more than it should.
   `Eis.LFunction_ne_zero_of_re_gt` unreachable from `cglDensity`, even with every identifier linked to every
   declaration that shares its last name component (2096 of 8988 declarations reachable). The half-plane's module and
   the six modules that cite it declare no attribute-driven lemmas and no instances, so no tactic can use it unnamed.
+- **The proofs, against the paper.** Each main proof was read through its cited lemmas and its module's header, and
+  its statement against the paper's. The kernel checks the lines.
+  - Proposition 3.1 (`prop31_of_third`): for `N ≤ qT`, Proposition 4.6 (`prop46`, Guth and Maynard's moment step for
+    the points, `(|R|N^{2σ})³ ≤ (216N)³X`) with the bound on `X` (`CGLThird`, from `cgls2` and `cgls3` by
+    `third_of_s23`); for `N ≥ max(qT, 10)` the mean value theorem; for `qT < N < 10` at most `q < 10` characters.
+  - Proposition 6.1 (`cgls2`): their `S₂ ⪅ qT|W|N^{3−2σ}`, stated for `‖E‖_F² = S₂/(3μ₀)`.
+  - Proposition 8.1 (`cglp81`): their downward induction on `ε` (`P81_base`, `P81_step`, `P81_all`). Its decay
+    hypothesis bounds `Σ_b|f̂_b(ξ)|` by `D_j(T/|ξ|)^jφ(q)f_{b₀}(u₀)` at a point of the user's choice, where the
+    paper has `sup_{b,u} f_b(u)`. That hypothesis is the stronger, so the paper's proposition implies the library's;
+    the library's uses supply it.
+  - Theorem 10.1 (`cglt101`) and Lemma 10.7 (`lemma107`): the paper's three terms, with the factor
+    `d(q)(⌊log₂|R|²⌋ + 1)` of the grouping by conductor made explicit.
+  - Lemma 10.9 (`lemma109`): the explicit form of `(DqT + N²)|W|^{1/2}E(W)^{1/2}`, split by the gcd `d` and the residue
+    `n₁n₂⁻¹`, with `sum_cube_le` in place of Lemma 10.8 (above).
+  - Lemma 10.10 (`lemma1010`): the Cauchy–Schwarz of Lemma 10.6's second moment against Lemma 10.7's fourth, before
+    the paper's case analysis, which `LinnikCGLCase` and `LinnikCGLEps` carry out.
+  - Proposition 10.2 (`prop102`): `lemma105`, then `lemma109_eps` and `lemma1010_eps` at `D = ⌊N²/(qT)⌋`, then
+    `E ≤ A + B√E ⇒ E ≤ 2A + B²`. It does not need the paper's `N ≤ qT`: the factor `(qTN)^ε` absorbs larger `N`.
+  - Proposition 11.1 (`cgls3`): the paper's four terms, from `prop102` and the bounds of §11.
+  - The step (`count_cgl_at`): one zero per character with `σ ≤ Re s < 1` (Mathlib's
+    `LFunction_ne_zero_of_one_le_re` excludes `Re s ≥ 1`); Montgomery's detection (`LinnikDetect.dichotomy`, Perron's
+    formula with `e^{−n/Y}` and the contour moved to `Re s = ½` with `L`'s growth bound); the polynomial class by
+    dyadic blocks, powers and `cgl_shift`; the integral class by the fourth moment. It uses Proposition 3.1 on the
+    whole range `[Q^a, Q^λ]` of the powers' lengths, in place of the paper's §12 split with the mean value
+    theorem. `ParC.Good` asks exactly the three terms of Proposition 3.1 at both ends of the range. At `σ = 5/7` and
+    `e = 0` three of its conditions are equalities: `N^{2−2σ}` and `(qT)^{1/2}N^{3−4σ}` at `N = Q^{7/6}`, and
+    `(qT)^{4/3}N^{2−4σ}` at `N = Q^{7/9}`.
 - **What the statement is.** It bounds the number of characters with a zero, not the number of zeros (above). It is
   not vacuous: the count is at most `φ(q) ≤ q`, while `(7/3)(1 − σ) ≤ 2/3 < 1` on the range. At `T = 2` and large
   `q` the bound is a genuine density estimate, below Huxley's `12/5`.
