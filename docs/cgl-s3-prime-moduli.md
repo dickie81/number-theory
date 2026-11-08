@@ -296,6 +296,54 @@ statement about `S_I(χ) = Σ_{n∈I} χ(n)` for intervals `I` of length about `
   since `Ψ(x, (log x)^A) = x^{1−1/A+o(1)}`, and such characters should die out. What remains is the proof technology for
   the other characters, where only moments are available.
 
+## 9. The counting problem, directly (Written proof, Numerical)
+
+Take `I = (x, 2x]`, `x = q^{7/18}` and `J₆(I)` as in (H). Every congruent pair has `a₁a₂a₃ − b₁b₂b₃ = kq` with
+`|k| ≤ K = ⌊7x³/q⌋ ≈ 7q^{1/6}`. So `J₆ = Σ_{|k|≤K} N(kq)`, where `N(h) = #{a₁a₂a₃ − b₁b₂b₃ = h : aᵢ, bᵢ ∈ I}` is the
+shifted convolution of the ternary divisor function with all three factors in `I`.
+
+- **The split** (Numerical, `shifts.py`). Let `Ñ(h)` be a local fit of `N` on `|h' − h| < q/2`, using only the `h'`
+  whose small-prime factorisation pattern matches `h` (`p^{min(v_p, 2)}` for `p ≤ 13`). Then
+  `J₆ − |I|⁶/(q−1) = D + S + F`:
+  - `D = N(0) − Ñ(0)` is the integer diagonal minus its band;
+  - `F = Σ_{k≠0}(N(kq) − Ñ(kq))` is the error of the shifted convolution at the shifts `kq`;
+  - `S` is the rest, chiefly the singular series of `N` averaged over `k ≤ K`.
+
+  Each column is a multiple of `|I|⁶/q`:
+
+| `q` | `x` | `K` | `J₆ − \|I\|⁶/q` | `D` | `S` | `F` |
+|---|---|---|---|---|---|---|
+| `100003` | `88` | `47` | `+1.644` | `+1.998` | `−0.273` | `−0.081` |
+| `300007` | `135` | `57` | `+1.570` | `+1.884` | `−0.234` | `−0.079` |
+| `1000003` | `215` | `69` | `+1.575` | `+1.865` | `−0.213` | `−0.076` |
+
+  Matching the small-prime pattern matters. Without it, `F` is `−0.32`, `−0.28` and `−0.26`: most of the shift-to-shift
+  scatter of `N(kq)` is the singular series, that is, the arithmetic of `k`.
+- **What each piece needs.**
+  - `D ≍ x³(log x)^c`, a power `q^{1/6}` below `|I|⁶/q`. It is large here only through the log powers.
+  - `S` is a main term: the singular series averaged over `K ≍ q^{1/6}` shifts, expected to be `O(|I|⁶q^{−1}K^{−1+ε})`.
+  - `F` is the problem. (H) asks for a power-saving asymptotic for `N(h)` on average over the `K` shifts `h = kq`.
+- **Where the literature stands.** For `d₃` the shifted convolution is open at a single shift. The known averages
+  (Baier, Browning, Marasingha and Zhao; Matomäki, Radziwiłł and Tao) run over all shifts `h ≤ H`, and the first uses
+  the sixth moment of `ζ`. Its analogue here is the sixth moment for one modulus, the input that is missing. With
+  `X = x³` our shifts are `X^{1/7}` points spaced `X^{6/7}` apart, which no average over an interval of shifts reaches.
+- **Why it looks within reach and is not.** Fix `a₃, b₃` and open the rest along the lattice lines of
+  `{(u, v) : a₃u ≡ b₃v (mod q)}`. `N` becomes a multilinear sum of Kloosterman fractions `e(h(α ē/d + β d̄/e))` over
+  `d, e ∈ I`, with `α, β ≈ x²`. The saving needed is `x·q^η` over the trivial bound, well short of square-root
+  cancellation (`≈ q^{0.86}`). But for each fixed line the coefficients are of size `x³`, beyond Duke, Friedlander and
+  Iwaniec's bilinear bound, so the saving must come from the average over `a₃`, `b₃` and the lines.
+- **What known results give** (Written proof, given the Weyl bound). For smooth weights,
+  `Σ_{χ≠χ₀} |S_I|⁶ ≤ max_χ |S_I|² · (q−1)E₄(I) ≪ x q^{1/3+ε} · q x² log x`. This uses Petrow and Young's
+  `L(1/2+it, χ) ≪ q^{1/6+ε}` through Perron's formula, and the exact fourth moment. So (H) holds for
+  `x ≥ q^{4/9+ε}`, against the `q^{7/18}` needed. The equivalent targets in the language of `L`-functions, for the
+  single modulus `q`, are:
+  - a sixth moment `Σ_χ ∫_{|t|≤q^ε} |L(1/2+it, χ)|⁶ dt ≪ q^{7/6−η}` (the Weyl bound times the fourth moment gives
+    `q^{4/3+ε}`);
+  - a twisted second moment with the twist `S_I(χ)²` of length `q^{7/9}` (the classical range is about `q^{1/2}`);
+  - a twisted fourth moment with the twist `S_I(χ)` of length `q^{7/18}`.
+
+  All three reduce to the same obstacle.
+
 ## Scripts
 
 All take primes as arguments (the next prime above each) and print their tables.
@@ -319,3 +367,4 @@ All take primes as arguments (the next prime above each) and print their tables.
 | `sparse_ls.py` | §7: the largest `s₁²` against `\|W\|` at fixed `q`. |
 | `blocks.py` | §8: the counts, fourth-moment shares and sixth moments of the block sums at `x = q^{7/18}`. About a minute to `q = 3·10⁷`. |
 | `blocks_s3.py` | §8: `S₃` and `λ_max(G)/N` on the genuine critical set, against random sets. |
+| `shifts.py` | §9: the split of the count into the diagonal, the singular series and the shifted-convolution error. About ten minutes. |
