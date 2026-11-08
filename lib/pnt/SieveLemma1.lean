@@ -18,7 +18,7 @@ the bound at height `y`, for von Mangoldt's weights.
   (`SmoothPerron.verticalIntegral_eq_smoothedSum` with `w` in place of `Smooth1`).
 * `norm_pw_le`: the integrand `−L′/L(s, χ)𝓜w(s)X^s` (`pw`) is at most `KL(θ, θ′)A B X^σ(1 + |t − y|)^{−(K+2)}`
   where `L(·, χ)` has no zero in the disc of radius `3/2 − θ` about `3/2 + it`.
-* `integral_pw_shift`: the line `Re s = 2` moves to `Re s = 11/12 + δ` (`SmoothPerron.verticalIntegral_shift`).
+* `integral_pw_shift`: `Re s = 2` moves to `11/12 + δ` (`verticalIntegral_shift`), across the zero-free `Re s > 11/12`.
 * `norm_Sw_le`: for `|t − y| ≤ H` the line moves across the rectangle `[θ + δ, 11/12 + δ] × [y − H, y + H]`.
 -/
 import LinnikChar

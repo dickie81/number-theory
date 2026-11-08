@@ -176,7 +176,7 @@ theorem rpow_le_mul_add {κ δ : ℝ} (hκ0 : 0 ≤ κ) (hκ : κ < 1) (hδ : 0 
         calc y ^ κ ≤ y ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le h1.le hκ.le
           _ = y := Real.rpow_one y
       nlinarith
-
+set_option maxHeartbeats 400000 in
 /-- **A Lindelöf bound for `L(s, χ)`, uniformly in the modulus.** For `σ₀ > 11/12` and `ε > 0` there is `C` such
 that for every modulus `q ≥ 1`, every Dirichlet character `χ ≠ 1` mod `q`, every `σ ≥ σ₀` and every real `t`,
 `|L(σ + it, χ)| ≤ C((q + 2)(|t| + 4))^ε` and `1/|L(σ + it, χ)| ≤ C((q + 2)(|t| + 4))^ε`: the mean value inequality
