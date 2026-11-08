@@ -90,6 +90,40 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
   generalised primes give Euler products whose zeros leave the line, though without a functional equation
   (H. G. Diamond, H. L. Montgomery and U. M. A. Vorhauer, Math. Ann. 334 (2006)). So a candidate object for `ζ` has to
   use more than its Euler product and its functional equation, as the twist uses the curve itself.
+- **Purity over `ℚ`.** Over `ℚ` itself an Euler product with a functional equation of `ζ`'s kind can have its zeros
+  off the line. `ζ(s)ζ(s − 1)`, the zeta function of `ℙ¹` over `ℤ`, has the Euler product
+  `∏_p (1 − p^{−s})^{−1}(1 − p^{1−s})^{−1}`, and its completion `ζ̂(s)ζ̂(s − 1)` is invariant under `s ↦ 2 − s`. Its
+  zeros are the `ρ` and the `ρ + 1`, off its line `Re s = 1` whatever the truth of RH.
+  - **Its orbit form.** Build it as for `ζ`: `K(r) = Σ_{ρ′} r^{ρ′ − 1}/(ρ′(2 − ρ′))` over its zeros `ρ′`, with the Gram
+    matrix `mn·K(m/n)`, the analogue of `√(mn)·K_H(m/n)` for the line `Re s = 1`. `scripts/ball_orbit.py --purity`
+    computes it from the primes, by the method of `K_H`'s closed form, and `--purity-zeros` checks it against the zeros.
+  - **It has the structure of `ζ`'s.** The similitude `G(km, kn) = k²·G(m, n)`; a sum over the places, whose local
+    part at `p` is `Σ_{p^j ≤ m/n} log p·(m²/(2p^{2j}) − n²/2 + (m² − p^{2j}n²)/(2p^j)) ≥ 0` for `m ≥ n`; and the
+    integral structure over the logarithms of the primes, with Glaisher's constant `A` added at the real place.
+  - **It is indefinite.** From `N = 9`; at `N = 60` its smallest eigenvalue is −9.7 against a largest of 1.0·10³,
+    where `ζ`'s matrix has 3.5·10⁻³ and 11. So the similitude, the places and the integrality do not carry the
+    positivity. Under RH the zeros of `ℙ¹` have the two real parts `1/2` and `3/2`, as the inverse zeros of `Y` have
+    two absolute values. This is the number-field form of `PurityTest`.
+  - **The integral quaternions.** Their zeta function `(1 − 4^{1−s})ζ(s)ζ(s − 1)`, the case `w = 4` of the next item,
+    changes only the factor at `2` and adds the zeros `1 + πik/log 2`, on the line. Its form is indefinite from
+    `N = 17`.
+- **The balls of Arakelov geometry.** G. van der Geer and R. Schoof's Riemann–Roch for number fields, with Arakelov
+  divisors, gives `ℚ` a zeta function of two variables. J. C. Lagarias and E. Rains write it as
+  `Z(w, s) = ½∫₀^∞ θ(t)^w t^{s/2} dt/t`, with `θ(t) = Σ_{n ∈ ℤ} e^{−πn²t}`, so that `Z(1, s) = ζ̂(s)` (Ann. Inst.
+  Fourier 53 (2003)).
+  - **Lattice points in balls.** For an integer `w`, `θ^w` is the theta function of `ℤ^w`, a Gaussian-weighted count of
+    the points that `BallTower` counts, and `Z(w, s)` is the completed Epstein zeta function of the cubic lattice. Its
+    Dirichlet series has an Euler product only for `w = 0, 1, 2, 4, 8`: the zeta functions of `ℤ`, the Gaussian
+    integers, the integral quaternions and the integral octaves (their Lemma 3.5).
+  - **Where RH holds.** The line is `Re s = w/2`. RH there is expected at `w = 1` and `2`. It fails at `w = 4` and `8`
+    whatever the truth of RH: with `z = s/2` the Dirichlet series are `(1 − 4^{1−z})ζ(z)ζ(z − 1)` and
+    `(1 − 2^{1−z} + 2^{4−2z})ζ(z)ζ(z − 3)`, and their zeros at `z = ρ` lie off the lines `Re z = 1` and `2`. Between
+    `w = 1` and `2`, without an Euler product, Lagarias and Rains follow two zeros of `ζ` that meet on the line and
+    leave it as `w` grows (their Lemma 8.1). For `w < 0` the function is positive on its line, which they call an
+    anti-Riemann hypothesis (their Theorem 1.2).
+  - **What it asks of a construction.** In the family of discretised balls that Arakelov geometry itself produces, RH
+    is expected only at `w = 1` and `2`, whose Euler products are pure, and fails where the Euler product is mixed. A
+    construction from lattice points in balls has to see that purity, or it would work at `w = 4` too.
 - **The real line.** The kernel of step 5 depends on `a/b` through the real line, where the positive rationals are
   dense, and it is smooth at `1`: `‖K(r) + K(1/r) − 2K(1)‖ ≤ M(log r)²` (`BallLattice.kerK_smooth`). So in every
   realization of `K` by similitudes, which exists exactly under RH (`BallLattice.rh_iff_realization`), the vectors
@@ -157,6 +191,18 @@ Báez-Duarte, the last entry.
   in characteristic 2, which Manin's argument excludes.
 - E. Ruiz Duarte and J. Top, "A proof of the Hasse–Weil inequality for genus 2 à la Manin" (arXiv:1904.08662): Manin's
   argument carried to curves of genus 2, the first case past rank two.
+- G. van der Geer and R. Schoof, Selecta Math. 6 (2000), and J. C. Lagarias and E. Rains, "On a two-variable zeta
+  function for number fields", Ann. Inst. Fourier 53 (2003): Riemann–Roch for number fields with Arakelov divisors, and
+  the zeta function of two variables it gives. Its slices at integer `w` are the Epstein zeta functions of the cubic
+  lattices ("What it must survive").
+- G. Faltings (1984) and P. Hriljac (1985), the Hodge index theorem on arithmetic surfaces; H. Gillet and C. Soulé, and
+  A. Abbes and T. Bouche (1995), the arithmetic Hilbert–Samuel theorem; A. Moriwaki (arXiv:math/0612269), a Hodge index
+  theorem from the arithmetic volume. In Faltings's and Moriwaki's proofs the positivity comes from counting lattice
+  points in balls ("The limit and the lattice").
+- B. Gross and D. Zagier, Invent. Math. 84 (1986), and Z. Yun and W. Zhang, Ann. of Math. 186 (2017). They write central
+  derivatives of `L`-functions as heights, or as self-intersection numbers on moduli of shtukas, so positivity of an
+  intersection form gives inequalities that GRH predicts, such as `L′(E/K, 1) ≥ 0`. In each case a moduli space
+  supplies the surface; for `ζ` none is known.
 - B. Nyman (thesis, Uppsala, 1950), A. Beurling, "A closure problem related to the Riemann zeta-function", Proc. Nat.
   Acad. Sci. 41 (1955), and L. Báez-Duarte, "A strengthening of the Nyman–Beurling criterion for the Riemann
   hypothesis", Rend. Lincei Mat. Appl. 14 (2003).
@@ -478,6 +524,9 @@ The orbit-lattice conjecture implies RH (`BallWeil.rh_of_pivots`), as a statemen
 Weil's terms it is about the primitive parts `D'_n = D_n − n·e₁ − e₂`, which have `D'_n·e₁ = D'_n·e₂ = 0` and
 `−D'_m·D'_n = √(mn)·K_H(m/n)`. The Hodge index theorem asks that `−D²` be a positive semidefinite form on their span.
 The conjecture asks that in the norm `√(−D²)` each `D'_k` keep distance `√K_H(1)` from the span of the earlier ones.
+In the Arakelov geometry of Euclidean lattices, as hermitian vector bundles over `Spec ℤ` (U. Stuhler, D. Grayson, and
+J.-B. Bost's slopes), the flag `F_k = ℤw_1 + ⋯ + ℤw_k` has quotients `F_k/F_{k−1}` of degree `−½ log d_k`. So the
+conjecture says that no quotient of the flag has a larger slope than `F_1`.
 
 How this sits with the existing programmes:
 
@@ -555,6 +604,23 @@ real `D` is RH (`BallPsi.rh_iff_posDef_psi`). The conjecture asks more: `Tr(DD*)
 `D = x^k + Σ_{n < k} c_n x^n`. What is missing is the counterpart of the degree: a reading of `Tr(DD*)` as the size of
 something attached to `D`, a count or a dimension. The nearest thing is Connes and Consani's Riemann–Roch for `Spec ℤ`,
 whose dimensions are integers.
+
+On an arithmetic surface the counterpart exists, and it is a count.
+- **Hilbert–Samuel.** For an ample hermitian line bundle `L̄` on an arithmetic surface, the arithmetic Hilbert–Samuel
+  theorem (H. Gillet and C. Soulé; A. Abbes and T. Bouche, Ann. Inst. Fourier 45 (1995)) gives
+  `log #{sections of nL̄ of norm ≤ 1} = (n²/2)·L̄² + o(n²)`. The self-intersection is the growth rate of the number of
+  lattice points in a ball.
+- **The Hodge index theorem.** Minkowski's theorem turns a large volume into a nonzero small section. In Faltings's
+  treatment this is how the arithmetic Riemann–Roch theorem gives the Hodge index theorem on arithmetic surfaces
+  (G. Faltings, Ann. of Math. 119 (1984); P. Hriljac, Amer. J. Math. 107 (1985), proves it through the Néron–Tate
+  height). A. Moriwaki derives a generalised Hodge index theorem from the arithmetic volume, which is defined by
+  counting small sections ("Continuity of volumes on arithmetic varieties", arXiv:math/0612269).
+- **What it asks here.** This is the Riemann–Roch dichotomy that `HodgeAxioms` finds Weil's form lacking
+  ([research-opportunities.md](research-opportunities.md), §6.1). Read this way, the missing degree is a growth rate of
+  lattice points in balls, a real number, as the intersection numbers here are, rather than an integer dimension. A
+  class `D` with `D² > 0` would need lattices `Λ(nD)` whose points in a ball number `exp((n²/2)·D² + o(n²))`, and a
+  reason why a nonzero one forces `D·(e₁ + e₂) > 0`. The integral quaternions show what the lattices must see: they
+  have balls, an Euler product and a functional equation, and no positivity ("What it must survive").
 
 **Its integral structure.** Write each logarithm of an integer in the explicit formula through the logarithms of the
 primes. For `m ≥ n` this gives `G(m, n) = (1 + γ)(m + n) − (γ + log 2π)·n + Σ_p log p·Q_p(m, n)`, where
