@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1364 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1375 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 159 | 465 |
-| `lib/pnt` | 249 | 794 |
+| `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -1006,6 +1006,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `ClassNumberBound.abs_discr_le`: Gauss's class number problem, with an explicit bound
 
+#### `ClassNumberSharp`: Class numbers of quadratic fields with explicit constants, and class number one below `2.5·10⁷`
+
+- `ClassNumberSharp.classNumber_ge_sharp`: The class number of an imaginary quadratic field, from below, with explicit constants
+- `ClassNumberSharp.classNumber_le_sharp`: The class number of an imaginary quadratic field, from above, with explicit constants
+- `ClassNumberSharp.regulator_mul_classNumber_ge_sharp`: The class number and regulator of a real quadratic field, from below, with explicit constants
+- `ClassNumberSharp.regulator_mul_classNumber_le_sharp`: The class number and regulator of a real quadratic field, from above, with explicit constants
+- `ClassNumberSharp.classNumber_ge_85`: `h_K ≥ √|D_K|/(85(52 + log log(|D_K| + 2)))`
+- `ClassNumberSharp.regulator_mul_classNumber_ge_55`: `R_K h_K ≥ √D_K/(55(52 + log log(D_K + 2)))`
+- `ClassNumberSharp.abs_discr_lt_of_classNumber_eq_one`: Class number one below `2.5·10⁷`
+
 #### `CyclotomicFrobenius`: Small Frobenius elements generate the cyclotomic Galois groups
 
 - `CyclotomicFrobenius.closure_frob_eq_top`: The Frobenius elements of the small primes generate the cyclotomic Galois group
@@ -1769,6 +1779,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Littlewood.norm_LFunction_one_ge`: `L(1, χ) ≫ 1/log log q`
 - `Littlewood.norm_logDeriv_one_le`: `L′/L(1, χ) ≪ log log q`
 
+#### `LittlewoodSharp`: Littlewood's bounds for `L(1, χ)` with explicit constants, for every Dirichlet character
+
+- `LittlewoodSharp.norm_LFunction_one_bounds_of`: `e^{−bd} ≤ |L(1, χ)| ≤ e^{bd}`
+- `LittlewoodSharp.norm_LFunction_one_bounds_sharp`: Littlewood's bounds with explicit constants, for every Dirichlet character
+
 #### `LogDerivDisc`: The log-derivative of a function with no zero in a half-plane, by the disc step
 
 - `LogDerivDisc.disc_point_ball`: The disc step
@@ -1852,6 +1867,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `PNTKV`: The prime number theorem with the Korobov–Vinogradov error term
 
 - `PNTKV.PNT_KV`: The prime number theorem with the Korobov–Vinogradov error term
+
+#### `PNTMertens`: Mertens' second theorem with Euler's constant
+
+- `PNTMertens.E₂Λ.abs_le`: The error in Mertens' second theorem
+- `PNTMertens.sum_mangoldt_div_log_eq`: Mertens' second theorem with Euler's constant
 
 #### `PNTProgressions`: The prime number theorem modulo the divisors of `24`
 
