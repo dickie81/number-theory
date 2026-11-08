@@ -89,7 +89,7 @@ theorem supp_oddPart {a : ℝ} {g : ℝ → ℝ} (hs : ∀ u, a < |u| → g u = 
   simp only [oddPart, hs u hu, hs (-u) (by rwa [abs_neg])]; ring
 
 /-- A nonnegative summand of an integrable nonnegative sum is integrable. -/
-theorem arch_part {g p q : ℝ → ℝ} (hg : SProbe a g) (hp : MemLp p 2 volume) (hq : MemLp q 2 volume)
+theorem arch_part {a : ℝ} {g p q : ℝ → ℝ} (hg : SProbe a g) (hp : MemLp p 2 volume) (hq : MemLp q 2 volume)
     (hsum : ∀ u, archIntegrand g u = archIntegrand p u + archIntegrand q u) :
     IntegrableOn (archIntegrand p) (Ioi 0) := by
   refine hg.arch.mono' (measurable_archIntegrand hp).aestronglyMeasurable

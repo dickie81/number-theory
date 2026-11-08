@@ -16,4 +16,5 @@ saying that it was modified. The other files are upstream's, unchanged.
 `python3 scripts/check_vendor.py` checks the port. It fetches the commit, applies the patch, and compares the result
 with these files byte for byte.
 
-`lakefile.lean` builds these files with `relaxedAutoImplicit` off.
+`lakefile.lean` builds these files with `autoImplicit` and `relaxedAutoImplicit` off, as it does every library of
+the package. Upstream turns off only `relaxedAutoImplicit`.

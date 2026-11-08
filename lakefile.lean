@@ -4,6 +4,8 @@ open Lake DSL
 
 package «number-theory» where
   -- The papers and their Lean library.
+  -- A name that a declaration does not bind is an error, not an implicit argument.
+  leanOptions := #[⟨`autoImplicit, false⟩, ⟨`relaxedAutoImplicit, false⟩]
 
 require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "0f64d30a9a4593b3ae50375b960a5cf7f0845606"
 
@@ -11,13 +13,11 @@ require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "0
 lean_lib PNTPlus where
   srcDir := "lib/vendor/pnt-plus"
   globs := #[.submodules `PrimeNumberTheoremAnd]
-  leanOptions := #[⟨`autoImplicit, false⟩, ⟨`relaxedAutoImplicit, false⟩]
 
 /-- anthropics/formal-math zeta23 at fbdc36b, ported by lib/vendor/zeta23/zeta23_port.patch. -/
 lean_lib Zeta23 where
   srcDir := "lib/vendor/zeta23"
   globs := #[.submodules `Zeta23]
-  leanOptions := #[⟨`relaxedAutoImplicit, false⟩]
 
 /-- lib/core: 443 modules. -/
 lean_lib Core where
