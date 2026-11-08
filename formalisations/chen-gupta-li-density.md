@@ -117,6 +117,41 @@ results.
   Proposition 8.1 needs, but the displays that follow print the denominator as `m₂u`. The library's bound on `S₃,₃`
   uses `(m₁ + m₃u)/m₂` (`LinnikCGLJ.S33_le_S34`).
 
+## An audit of the chain (8 November 2026)
+
+An independent pass over the chain from `cglDensity` down, looking for anything that could make the theorem say less
+than it appears to, or rest on more than it should.
+
+- **Axioms.** On `main` at `b48f5a3`, CI's Lean build reports `[propext, Classical.choice, Quot.sound]` for
+  `cglDensity`, `charDensity_e`, `parCGLe_good` and `prop31`. Its gate `scripts/check_axioms.py` finds all 1206
+  reports of `lib/check/CheckAll.lean` within those three.
+- **No route around the kernel.** The lakefile sets only the `autoImplicit` options. Nothing in `lib/`, the vendored
+  libraries included, uses `skipKernelTC`, `addDeclWithoutChecking`, `unsafe`, `implemented_by`, `native_decide` or
+  `ofReduceBool`. The `LinnikCGL` modules declare one `NeZero` instance and one tactic macro (`cgl_good`).
+- **Every interface is discharged.** `CGLT101`, `CGLP81`, `CGLS2`, `CGLS3` and `CGLProp31` are proved by `cglt101`,
+  `cglp81`, `cgls2`, `cgls3` and `prop31`, with no hypotheses. `CGLThird` is built inside `LinnikCGLS3.prop31_pt` as
+  `third_of_s23 cgls2 (cgls3 cglp81 cglt101)`. `charDensity_cglGen` takes only `CGLProp31` and `ParC.Good`, and
+  `parCGLe_good` proves `Good`.
+- **The interfaces match the paper.**
+  - `CGLProp31` is their Proposition 3.1 (p. 13) at one point per character: their smooth `w` is replaced by the
+    indicator of `S ⊆ [6N/5, 9N/5]`, where `w = 1`, and their `⪅` is made explicit.
+  - `CGLT101` is their Theorem 10.1, term for term.
+  - `CGLS3` carries their `(qT)²|W|^{3/2}`.
+- **The step.**
+  - The mollifier has length `X ≈ Q^{1/2000}`, with `Y = Q^{201/400}` and `Q = q(T + 6)`
+    (`LinnikCGLStep.count_cgl_at`). It is short, like their `(qT)^ε`.
+  - The integral class uses the library's fourth moment at one point per character (`LinnikFourth.fourth_moment`,
+    proved by the approximate functional equation).
+  - The trivial character is added by hand. The factor `(log qT)^{10}` of `charDensity_cglGen` only absorbs that `1`.
+- **The half-plane is imported but not used.** `DirichletCharHalfPlane` is in the import cone, through
+  `LinnikCGLMellin → SieveWeight → SieveLemma1 → LinnikChar → ChiUniform → ChiPNT`. But `scripts/decl_reach.py` finds
+  `Eis.LFunction_ne_zero_of_re_gt` unreachable from `cglDensity`, even with every identifier linked to every
+  declaration that shares its last name component (2096 of 8988 declarations reachable). The half-plane's module and
+  the six modules that cite it declare no attribute-driven lemmas and no instances, so no tactic can use it unnamed.
+- **What the statement is.** It bounds the number of characters with a zero, not the number of zeros (above). It is
+  not vacuous: the count is at most `φ(q) ≤ q`, while `(7/3)(1 − σ) ≤ 2/3 < 1` on the range. At `T = 2` and large
+  `q` the bound is a genuine density estimate, below Huxley's `12/5`.
+
 ## Heath-Brown's Theorem 10.1, with characters
 
 The paper states its Theorem 10.1 for primitive characters and credits it to Heath-Brown: "Theorem 10.1

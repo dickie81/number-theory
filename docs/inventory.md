@@ -1512,7 +1512,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikCGLS3`: Their Proposition 11.1, `CGLS3` from `CGLP81` and `CGLT101`
 
 - `LinnikCGLS3.cgls3`: Their Proposition 11.1 at one point per character
-- `LinnikCGLS3.prop31_pt`: Their Proposition 3.1 at one point per character, from their Proposition 8.1 and Heath-Brown's Theorem 10.1
+- `LinnikCGLS3.prop31_pt`: Their Proposition 3.1 at one point per character, from their Proposition 8.1 and Heath-Brown's Theorem 10.1 ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLSep`: Separated points, and the fractions of their Lemma 10.9
 
