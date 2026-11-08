@@ -381,6 +381,32 @@ shifted convolution of the ternary divisor function with all three factors in `I
   factorable moduli `b₂b₃` and inverted variables of length `√(modulus)`. Each piece sits at the Weil barrier, so the
   saving has to come from Kuznetsov-type averaging over the moduli.
 
+## 11. Kuznetsov over the moduli (Written proof, heuristic accounting)
+
+The moduli that vary in §10 are the integer products `B = b₂b₃`. Kuznetsov's formula and the spectral large sieve
+average over them; the fixed prime `q` cannot be averaged over.
+
+- **The Deshouillers–Iwaniec bound** (`kuznetsov.py`). Their Theorem 12, in Drappeau's form (his Theorem 2.1, with the
+  correction `D²NR` of Bombieri, Friedlander and Iwaniec), bounds
+  `Σ b_{n,r,s} g(c, d, n, r, s) e(n \overline{rd}/(sc))` with smooth `c, d` by `𝒦‖b‖₂`, where
+  `𝒦² = CS(RS+N)(C+RD) + C²DS((RS+N)R)^{1/2} + D²NR`.
+  The phase `e(ℓkq Ā/B)` forces the matching `sc = b₂b₃` (`c = b₃`) and `rd = a₂a₃` (`d = a₃`), with the numerator
+  carrying `ℓkq`. The numerators are then multiples of `q`: only `xK` of them, spread over a range `N ≍ x⁴`.
+  Theorem 12 sees the range, not the support. The result is worse than the trivial bound `Kx⁴` by `q^{1/2−θ}` at
+  `x = q^θ`, and equal to it at `θ = 1/2`. Moving `q` into the inverted variable (`r = qa₂`) is worse still.
+- **Bettin and Chandee's form is the better use of the same machinery.** They keep `ϑ = q` as a real scale on a dense
+  variable, and their penalty `(1 + |ϑ|A/(MN))^{1/2}` is `O(1)` here (§10). That gives the saving `x^{1/4}`.
+- **Heuristic accounting.** Averaging over the numerator variable `m = ℓk` can save at most its square root,
+  `(xK)^{1/2}`. A version of Theorem 12 with the numerator's support in place of its range would give exactly that, a
+  bound of exponent `5θ − 1/2` against the `6θ − 1` needed. That is enough only for `θ > 1/2`, the classical range.
+  Below it, the remaining factor `x/(xK)^{1/2} ≍ q^{(1−2θ)/2}` (`q^{1/9}` at `θ = 7/18`) has to come from cancellation
+  among the Kloosterman sums themselves as the modulus `b₂b₃ ∼ x²` varies. The arguments have `√(mn)/c ≍ x^{1/2}`,
+  the transition range of the Bessel transforms. This is Linnik–Selberg-type cancellation, beyond what Kuznetsov's
+  formula with the Kim–Sarnak exponent `7/64` delivers.
+- **Where spectral methods do reach a single modulus.** Conrey and Iwaniec, and Petrow and Young, get the Weyl bound
+  for one modulus from moments over families of level `q`. That is a different family from the moduli here, and so far
+  it gives only the `q^{4/3}` sixth moment of §9.
+
 ## Scripts
 
 All take primes as arguments (the next prime above each) and print their tables.
@@ -405,3 +431,4 @@ All take primes as arguments (the next prime above each) and print their tables.
 | `blocks.py` | §8: the counts, fourth-moment shares and sixth moments of the block sums at `x = q^{7/18}`. About a minute to `q = 3·10⁷`. |
 | `blocks_s3.py` | §8: `S₃` and `λ_max(G)/N` on the genuine critical set, against random sets. |
 | `shifts.py` | §§9–10: the split of the count into the diagonal, the singular series and the shifted-convolution error; `--z`, `--e` set the signature. About ten minutes. |
+| `kuznetsov.py` | §11: the exponents that Deshouillers and Iwaniec's Theorem 12 gives for the sum of §10, for both placements of `q`. |
