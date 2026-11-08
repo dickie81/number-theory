@@ -122,12 +122,39 @@ results.
 An independent pass over the chain from `cglDensity` down, looking for anything that could make the theorem say less
 than it appears to, or rest on more than it should.
 
-- **Axioms.** On `main` at `b48f5a3`, CI's Lean build reports `[propext, Classical.choice, Quot.sound]` for
-  `cglDensity`, `charDensity_e`, `parCGLe_good` and `prop31`. Its gate `scripts/check_axioms.py` finds all 1206
-  reports of `lib/check/CheckAll.lean` within those three.
+- **Axioms.** At the branch head `bb094dc`, whose Lean sources are those of `58a367a`, CI's Lean build reports
+  `[propext, Classical.choice, Quot.sound]` for `cglDensity`, `charDensity_e`, `parCGLe_good` and `prop31`, as it does
+  on `main` at `b48f5a3`. Its gate `scripts/check_axioms.py` finds every report within those three: 146 of 146 in
+  `Check.lean`, 1206 of 1206 in `CheckAll.lean`, 34 of 34 in `CheckZeta23.lean` and 71 of 71 in `CheckDH.lean`. A
+  local build of `LinnikCGLDensity` from `bb094dc` (`scripts/build.sh`, Mathlib from its cache) reports the same
+  axioms for `cglDensity`.
 - **No route around the kernel.** The lakefile sets only the `autoImplicit` options. Nothing in `lib/`, the vendored
   libraries included, uses `skipKernelTC`, `addDeclWithoutChecking`, `unsafe`, `implemented_by`, `native_decide` or
   `ofReduceBool`. The `LinnikCGL` modules declare one `NeZero` instance and one tactic macro (`cgl_good`).
+- **Other kernels.** `#print axioms` reads the environment that elaboration built, so it cannot see a declaration that
+  a metaprogram added without the kernel. A module that adds `bogus : False := True.intro` with `debug.skipKernelTC`
+  on, and proves `uses_bogus : False` from it, gets "'uses_bogus' does not depend on any axioms".
+  `scripts/kernel_check.sh` re-checks a theorem with every constant it depends on, outside the build, by the checkers
+  the pinned toolchain ships. It first makes each of them reject that module. For `cglDensity`, built locally from
+  `bb094dc`:
+  - `leanexport` (lean4export 3.1.0) writes the theorem with what it depends on: 14,591,566 records, 785 MB.
+  - Lean's kernel reading that export (`leanchecker --from-export`) accepts it, in 214 s.
+  - nanoda 0.4.17, an independent kernel in Rust, accepts it: "Checked 84260 declarations with no typechecker
+    errors", in 154 s. Only `propext`, `Classical.choice` and `Quot.sound` are permitted, and any other axiom is a hard
+    error.
+  - con-leche and con-ron each report "accepted 81578 declarations", in 77 s and 100 s. They run in `--verified` mode,
+    the mode of con-leche's theorem `ConLeche.no_proof_of_False`: an environment it accepts holds no constant of type
+    `False`. Both note that they modelled one inductive block, `Lean.Syntax`, in-process. It comes in through
+    structure fields with a default tactic (`AddMonoid.mk` mentions `AddMonoid.nsmul_succ._autoParam`).
+  - `scripts/lean/ReplayClosure.lean` replays the same constants from the `.olean` files into an empty kernel
+    environment, with `Lean.Kernel.Environment.replay`, as `leanchecker --fresh` does for a module. All 83,231 of them
+    come back identical, in 177 s. They are 64,971 theorems, 15,272 definitions, 1282 inductive types,
+    1394 constructors, 255 recursors, 50 opaques, 4 quotient constants and 3 axioms, exactly `propext`,
+    `Classical.choice` and `Quot.sound`. None is unsafe or partial.
+  - lean4lean, also shipped, reads only `.olean` files, and not this toolchain's ("incompatible header"). It was not
+    run.
+
+  So the theorem does not rest on the elaborator, on the Mathlib cache or on Lean's kernel alone.
 - **Every interface is discharged.** `CGLT101`, `CGLP81`, `CGLS2`, `CGLS3` and `CGLProp31` are proved by `cglt101`,
   `cglp81`, `cgls2`, `cgls3` and `prop31`, with no hypotheses. `CGLThird` is built inside `LinnikCGLS3.prop31_pt` as
   `third_of_s23 cgls2 (cgls3 cglp81 cglt101)`. `charDensity_cglGen` takes only `CGLProp31` and `ParC.Good`, and
@@ -137,6 +164,13 @@ than it appears to, or rest on more than it should.
     indicator of `S ⊆ [6N/5, 9N/5]`, where `w = 1`, and their `⪅` is made explicit.
   - `CGLT101` is their Theorem 10.1, term for term.
   - `CGLS3` carries their `(qT)²|W|^{3/2}`.
+- **No implicit argument by accident.** The library's own `lean_lib`s keep Lean's default `autoImplicit`; only the
+  vendored PNT+ and Zeta23 set it. A misspelt name in a declaration's header therefore becomes an implicit argument,
+  without a warning. That cannot touch `CGLDensity`, whose header has no binders, nor the proof's soundness, but it
+  could make an intermediate statement, an interface above say, mean less than it reads. All 109 library modules whose
+  declarations the proof uses elaborate with `-DautoImplicit=false -DrelaxedAutoImplicit=false`, so no declaration in
+  them binds a name that way. 108 pass under a bare `lean`. `LinnikLindelof` passes under Lake's setup file, which is
+  how Lake compiles it. A bare `lean` times out at its line 338 at the default heartbeats, with the flags or without.
 - **The step.**
   - The mollifier has length `X ≈ Q^{1/2000}`, with `Y = Q^{201/400}` and `Q = q(T + 6)`
     (`LinnikCGLStep.count_cgl_at`). It is short, like their `(qT)^ε`.
@@ -144,10 +178,17 @@ than it appears to, or rest on more than it should.
     proved by the approximate functional equation).
   - The trivial character is added by hand. The factor `(log qT)^{10}` of `charDensity_cglGen` only absorbs that `1`.
 - **The half-plane is imported but not used.** `DirichletCharHalfPlane` is in the import cone, through
-  `LinnikCGLMellin → SieveWeight → SieveLemma1 → LinnikChar → ChiUniform → ChiPNT`. But `scripts/decl_reach.py` finds
-  `Eis.LFunction_ne_zero_of_re_gt` unreachable from `cglDensity`, even with every identifier linked to every
-  declaration that shares its last name component (2096 of 8988 declarations reachable). The half-plane's module and
-  the six modules that cite it declare no attribute-driven lemmas and no instances, so no tactic can use it unnamed.
+  `LinnikCGLMellin → SieveWeight → SieveLemma1 → LinnikChar → ChiUniform → ChiPNT`. `lib/check/CheckAll.lean` walks,
+  in Lean, the constants that `cglDensity`'s type and value mention, transitively. A proof term names every lemma a
+  tactic used, so the walk is exact. It finds 83,231 constants: from 109 of the library's modules, from 5 of
+  PrimeNumberTheoremAnd's (`Auxiliary`, `EulerMaclaurin`, `Rectangle`, `ResidueCalcOnRectangles`, `ZetaBounds`), and
+  from Mathlib, Batteries, Aesop and Lean, 2613 modules in all. Neither `Eis.LFunction_ne_zero_of_re_gt` nor any
+  other declaration of `DirichletCharHalfPlane` is among them, and CI fails if one comes in. `scripts/census.py`, run
+  locally in the environment of `LinnikCGLDensity` alone, counts the same 83,231 constants and the same 109 modules of
+  the library. It attributes them to 2614 modules: 2341 of Mathlib, 146 of Lean's `Init`, 12 of Batteries and one of
+  Aesop. `scripts/decl_reach.py`, a static over-approximation from the sources, had already found the half-plane
+  unreachable (2096 of 8988 declarations reachable, with every identifier linked to every declaration that shares its
+  last name component).
 - **The proofs, against the paper.** Each main proof was read through its cited lemmas and its module's header, and
   its statement against the paper's. The kernel checks the lines.
   - Proposition 3.1 (`prop31_of_third`): for `N ≤ qT`, Proposition 4.6 (`prop46`, Guth and Maynard's moment step for
@@ -178,6 +219,14 @@ than it appears to, or rest on more than it should.
 - **What the statement is.** It bounds the number of characters with a zero, not the number of zeros (above). It is
   not vacuous: the count is at most `φ(q) ≤ q`, while `(7/3)(1 − σ) ≤ 2/3 < 1` on the range. At `T = 2` and large
   `q` the bound is a genuine density estimate, below Huxley's `12/5`.
+  - Printed from the built `.olean` with `pp.numericTypes`, its numerals are real: `(5 / 7 : ℝ) ≤ σ`,
+    `σ ≤ (16 / 21 : ℝ)`, `(2 : ℝ) ≤ T` and the exponent `(7 / 3 : ℝ) * ((1 : ℝ) - σ) + ε`. No natural-number
+    division truncates a bound.
+  - `LFunction χ` unfolds to Mathlib's `ZMod.LFunction χ`. Mathlib proves it equals the `L`-series on `Re s > 1`
+    (`DirichletCharacter.LFunction_eq_LSeries`), is entire for `χ ≠ 1` (`differentiable_LFunction`), and does not
+    vanish on `Re s ≥ 1` except perhaps at `χ = 1`, `s = 1` (`LFunction_ne_zero_of_one_le_re`). So it is the
+    `L`-function, and the count is of the characters with a zero in `σ ≤ Re s < 1`, `|Im s| ≤ T`, with at most the
+    trivial character besides.
 
 ## Heath-Brown's Theorem 10.1, with characters
 
