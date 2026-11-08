@@ -1,10 +1,10 @@
 /-
-# Bounds for the real Dirichlet L-functions, uniform in the modulus
+# Bounds for Dirichlet L-functions, uniform in the modulus
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statement. For every `η > 0` there is `C` with `|ψ(x, χ)| ≤ C log(N + 2)·x^{11/12+η}` for every quadratic
-Dirichlet character `χ ≠ 1` mod `N` and every `x > 1` (`psiChi_le_uniform`). No hypothesis.
+Plain statement. For every `η > 0` there is `C` with `|ψ(x, χ)| ≤ C log(N + 2)·x^{11/12+η}` for every Dirichlet
+character `χ ≠ 1` mod `N` and every `x > 1` (`psiChi_le_uniform`). No hypothesis.
 
 * `psiChi_le_uniform`: `ChiPNT.sum_le_uniform` at `F = L(·, χ)`, with `c = 18(N + 1)/11` from
   `PsiOmega.norm_LFunction_le`, `A = ζ(3/2)` (`zeta32`) and `C₀ = −ζ′/ζ(3/2)` (`logDerivZeta32`), and the

@@ -484,7 +484,7 @@ lemma factor_le {q T N δ ε : ℝ} (hq : 1 ≤ q) (hT : 1 ≤ T) (hN : 1 / 2 �
         rw [show (4 : ℝ) * δ = δ + δ + δ + δ by ring, Real.rpow_add (by linarith), Real.rpow_add (by linarith),
           Real.rpow_add (by linarith)]
     _ ≤ (2 * q * T * N) ^ ε := Real.rpow_le_rpow_of_exponent_le hB hδε
-
+set_option maxHeartbeats 400000 in
 /-- **Their Lemma 10.10 with their `⪅`**: from `CGLT101`, for every `ε > 0` there is `C ≥ 0` such that, for `q ≥ 1`,
 spaced points (`Spaced`) with primitive characters, `T ≥ 1`, `|t_i| ≤ T`, `(qT)^{2/3}/2 ≤ N`, `D = ⌊N²/(qT)⌋` and either
 `|R| ≥ (qT)^{2/3}` or `(qT)^{1/2}|R|^{5/8} ≤ E^{1/8}N`, `Σ_{n₁,n₂∼N, (n₁,n₂)>D}|R₂(n₁, n₂)|³ ≤

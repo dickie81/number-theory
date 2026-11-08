@@ -21,7 +21,7 @@ This is the step (`LinnikHuxStep`) with Chen–Gupta–Li's estimate in place of
 * `class1_cgl`: the polynomial class, as `LinnikHuxStep.class1_gen` with `block_bin_cgl` in place of
   `block_bin_hux`. The bins have width `e/200` and number `⌊60/e⌋ + 1`, since `1 − σ ≤ 3/10`. The thresholds are
   `N^σ/Z` with `Z ≤ Q^{1/105} ≤ N^{1/70}`, so `N^{7/10} ≤ N^σ/Z ≤ N^{4/5}` for `5/7 ≤ σ ≤ 4/5`.
-* `class2_bound_cgl`: the integral class at `δ = 1/5`, which needs `σ ≥ 7/10`; the step takes `δ = 1/4`.
+* `class2_bound_cgl`: the integral class at `δ = 1/5`, which needs `σ ≥ 7/10`.
 * `count_cgl_at`, `eventually_cgl`, `count_cgl`: the range `[lo, hi]` at one large `Q`, then for every `q` and
   `T ≥ 2`, with `cgl_shift` at `ε = e/400`, the divisor bound `τ₀ = C(ε_d)Q^{2ε_d}`, `ε_d = e/(1600M)`, and
   `K_T = ⌈log 8Q³⌉ + 1` terms of the Taylor series.

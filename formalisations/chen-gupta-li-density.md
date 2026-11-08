@@ -25,12 +25,13 @@ improves upon Huxley’s earlier exponent of 12/5". Their method is Guth and May
 
 The proof formalised here is theirs. Nothing in this library claims the estimate, or its proof, as its own.
 
-**Scope.** The library formalises their Proposition 3.1 at one point per character (`LinnikCGLHB101.prop31`) with the results it rests on
-(Propositions 4.6, 6.1, 8.1 and 11.1 and Theorem 10.1, see below), and derives from it the steps
+**Scope.** The library formalises their Proposition 3.1 at one point per character (`LinnikCGLHB101.prop31`) with the
+results it rests on (Propositions 4.6, 6.1, 8.1 and 11.1 and Theorem 10.1, see below), and derives from it the steps
 `LinnikCGLSteps.charDensity_s0` … `charDensity_s29` of the Linnik paper and the estimate `CGLDensity` below. It does not
-formalise their Theorem 1.2 beyond the range `[5/7, 16/21]` (nor `[5/7, 131/168]` as a single statement), their Theorem 1.1,
-or the other parts of their paper. Some of what it does formalise was read only in outline (list below). The Lean statements are the library's own, and the kernel checks
-their proofs, not that they faithfully capture the preprint's theorems.
+formalise their Theorem 1.2 beyond the range `[5/7, 16/21]` (nor `[5/7, 131/168]` as a single statement), their Theorem
+1.1, or the other parts of their paper. Some of what it does formalise was read only in outline (list below). The Lean
+statements are the library's own, and the kernel checks their proofs, not that they faithfully capture the preprint's
+theorems.
 
 ## What the formalisation here is
 
@@ -174,13 +175,13 @@ than it appears to, or rest on more than it should.
   could make an intermediate statement, an interface above say, mean less than it reads. All 109 library modules whose
   declarations the proof uses elaborate with `-DautoImplicit=false -DrelaxedAutoImplicit=false`, so no declaration in
   them binds a name that way. 108 pass under a bare `lean`. `LinnikLindelof` passes under Lake's setup file, which is
-  how Lake compiles it; a bare `lean` times out in its `lindelof`, with the flags or without, for the reason under
-  "Heartbeat margins" below. The same test on the other 318 library modules built here (427 of the library's 1125)
-  finds three declarations that rely on the default, all in the import cone and none used by the proof. All three are
-  benign: the auto-bound name is a parameter that the statement means to quantify over (`s` in
+  how Lake compiles it; a bare `lean` timed out in its `lindelof`, with the flags or without, for the reason under
+  "Heartbeat margins" below, and now passes. The same test on the other 318 library modules built here (427 of the
+  library's 1125) finds three declarations that rely on the default, all in the import cone and none used by the proof.
+  All three are benign: the auto-bound name is a parameter that the statement means to quantify over (`s` in
   `KubotaCompleted.mem_S_of_term_ne_zero`, `δ` in `Mollify.archIntegrand_Av_le`, `a` in `ParitySplit.arch_part`).
-  Declaring those three would let the library turn `autoImplicit` off, so that no later statement could bind a
-  misspelt name; the 698 modules not built here would be checked by the same full rebuild.
+  Declaring those three would let the library turn `autoImplicit` off, so that no later statement could bind a misspelt
+  name; the 698 modules not built here would be checked by the same full rebuild.
 - **Heartbeat margins.** Lean stops elaborating a declaration after `maxHeartbeats`, 200,000 by default, which the
   library keeps except where a declaration raises it. Re-elaborating the 109 modules under Lake's setup with the
   default lowered to 150,000, 175,000 and 190,000 finds 15 declarations that need more than 150,000:
@@ -199,9 +200,11 @@ than it appears to, or rest on more than it should.
   the bare run times out, at line 338. Lake's setup file with the names `SomeOtherName`, `Foo.Bar` or `_stdin` passes,
   and with `a.b.LinnikLindelof` fails: the elaborator's work varies a little with the module's name. None of this
   touches validity, since the kernel checks the terms, but a Lean or Mathlib update could break the build at these
-  declarations. A local `set_option maxHeartbeats 400000 in`, which 39 declarations of the library already carry,
-  would remove the risk. Adding it to the three within 5% rebuilds 408 of the library's 1129 modules, so it is
-  cheapest at the next toolchain bump, which rebuilds them all anyway.
+  declarations. The three within 5% now carry `set_option maxHeartbeats 400000 in`, as 39 declarations of the
+  library already do. Each sits on the blank line before its declaration, so no line moves. Each module's `.olean`
+  is then byte for byte what it was (checked by compiling both versions), and Lake rebuilds nothing downstream: in a
+  local rebuild, `LinnikSubconvex`, `LinnikHuxStep` and `LinnikCGLS3`, which import them, were replayed, not rebuilt.
+  A bare `lean lib/pnt/LinnikLindelof.lean` now passes.
 - **The step.**
   - The mollifier has length `X ≈ Q^{1/2000}`, with `Y = Q^{201/400}` and `Q = q(T + 6)`
     (`LinnikCGLStep.count_cgl_at`). It is short, like their `(qT)^ε`.
@@ -420,22 +423,28 @@ appears to.
   `LinnikChar`'s `zeroFree_ball_global` and `LinnikLindelof.LFunction_ne_zero`. Neither of them, nor any of the 137
   declarations that depend on it statically, is in the closure.
 
-**Documentation that misstates its declaration.** None of these changes what a used statement says. All but the first
-concern declarations that the proof does not use. They are left as they are here, since changing a docstring rebuilds
-everything downstream of its module: 259 modules for `LinnikCGLStep`.
+**Documentation that misstated its declaration.** None of these changes what a used statement says, and all but the
+first concern declarations that the proof does not use. Three were in a module's plain `/- … -/` header, which Lean
+does not keep. They are corrected here, line for line, and those modules' `.olean` files are unchanged:
 
-- `LinnikCGLStep.lean:24`: "the step takes `δ = 1/4`"; `count_cgl_at` takes `δ = 1/5` (line 826).
+- `LinnikCGLStep.lean:24` said "the step takes `δ = 1/4`"; `count_cgl_at` takes `δ = 1/5` (line 826).
+- `ChiUniform.lean`'s title and statement spoke of real, quadratic characters; `psiChi_le_uniform` holds for every
+  `χ ≠ 1`.
+- `SieveLemma1.lean`'s header presented `norm_Sw_le` as needing a zero-free rectangle. Its proof also uses the
+  zero-free half-plane, which the header now says (`SieveWeight.norm_Sp_le` applies it).
+
+The others are docstrings, which the `.olean` keeps. Correcting one rebuilds everything downstream of its module:
+between 384 and 674 modules, including 144 certificate parts. They are left for a batch with the next toolchain
+bump:
+
 - `InghamDetect.lean:750`: `tail_le`'s docstring has `|ρ − 1| ≤ 3U`, its hypothesis `‖ρ − 1‖ ≤ 2U + 1`.
 - `LinnikGammaRatio.lean:58`: `KQ_le`'s docstring has `2 log(15e⁴)`, its statement `6 log(15e⁴)`. The docstring's
   bound fails at `a = b = 3`.
 - `KaiserZeroWeight.lean:49`: `im_logDeriv_Xi_le`'s docstring has `3 + kLam`, its statement `5 + kLam`.
-- `MollId.lean:9`: the header states `norm_moll_le` for `β ≥ σ ≥ 0`. The theorem needs `σ ≤ 1`, as its own
-  docstring says.
-- `RealDirichlet.lean:11`: the header cites `abs_sum_cR_le` with `≤ N`. The lemma is `abs_summ_cR_le`, with
-  `≤ N + 1`.
-- `ChiUniform.lean:6`: the header speaks of quadratic characters; `psiChi_le_uniform` holds for every `χ ≠ 1`.
-- `SieveLemma1.lean:6–11` and `SieveWeight.lean:6–10`: `norm_Sw_le` and `norm_Sp_le` are presented as needing a
-  zero-free rectangle. Their proofs also use the zero-free half-plane.
+- `MollId.lean:9`, in the module's docstring: `norm_moll_le` is stated for `β ≥ σ ≥ 0`. The theorem needs `σ ≤ 1`,
+  as its own docstring says.
+- `RealDirichlet.lean:11`, in the module's docstring: it cites `abs_sum_cR_le` with `≤ N` and `norm_LFunction_le`.
+  The lemmas are `abs_summ_cR_le`, with `≤ N + 1`, and `LFunctionGrowth.norm_LFunction_leC`.
 
 The statement's own docstring (`LinnikCGL.lean`) said that `CGLDensity` follows from their Theorem 1.2. That needs the
 theorem's `o(1)` to be uniform in `σ`, and the docstring now says so.

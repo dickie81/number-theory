@@ -995,7 +995,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ChiPNT.psiChi_isBigO_of_zeroFree`: `ψ(x, χ)` in a zero-free half-plane
 - `ChiPNT.psiChi_isBigO_eleven_twelfths`: `ψ(x, χ) = O(x^{11/12+η})`
 
-#### `ChiUniform`: Bounds for the real Dirichlet L-functions, uniform in the modulus
+#### `ChiUniform`: Bounds for Dirichlet L-functions, uniform in the modulus
 
 - `ChiUniform.LFunction_ctr_inv_le`: `‖L(3/2 + it, χ)‖⁻¹ ≤ ζ(3/2)`, from `1/L(s, χ) = Σ χ(n)μ(n)n^{−s}` (a step of `psiChi_le_uniform_of`).
 - `ChiUniform.logDeriv_LFunction_right`: `‖L′/L(s, χ)‖ ≤ −ζ′/ζ(3/2)` on `Re s ≥ 3/2` (a step of `psiChi_le_uniform_of`).
@@ -2427,7 +2427,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveWeight.exists_mellin_bound`: The Mellin transform of `ψ_P`, uniformly in `P ≥ 4`
 - `SieveWeight.norm_Sw_wy_le`: Lemma 1 for the weights `ψ_P`, in `Λ` form, uniformly in `P ≥ 4`
-- `SieveWeight.norm_Sp_le`: Lemma 1 for primes *paper*
+- `SieveWeight.norm_Sp_le`: Lemma 1 for primes *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `SmallPrimes`: The small primes generate the units mod `q`
 
