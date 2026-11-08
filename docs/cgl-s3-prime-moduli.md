@@ -6,7 +6,8 @@ Prepared with AI assistance; needs expert review. The scripts are in `scripts/cg
 ## The question
 
 B. Chen, V. Gupta and Y. C. Li (arXiv:2507.08296v2) prove `Σ_{χ mod q} N(σ, T, χ) ≤ (qT)^{(7/3)(1−σ)+o(1)}` for every
-`q`. The library formalises it on `[5/7, 16/21]` (`LinnikCGLDensity.cglDensity`, see
+`q`. The library proves a weaker form on `[5/7, 16/21]`, a bound for the number of characters with a zero rather
+than for the number of zeros (`LinnikCGLDensity.cglDensity`, see
 [`formalisations/chen-gupta-li-density.md`](../formalisations/chen-gupta-li-density.md)). For `q` with a factor of a
 suitable size their method gives Guth and Maynard's `30/13`; the exponent `7/3` comes from prime `q` at `T = 1`.
 
@@ -216,6 +217,8 @@ Conclusions:
 The zero detector of §7 used a mollifier of length `√N`. Chen, Gupta and Li's is shorter: in their §12 the mollifier
 `M_X` has `X = (qT)^ε`. At `T = 1` that makes their class-I detector a block sum, and the critical case becomes a
 statement about `S_I(χ) = Σ_{n∈I} χ(n)` for intervals `I` of length about `q^{7/18}`.
+The library's formal step does the same: `LinnikCGLStep` takes `X ≈ Q^{1/2000}`, `Q = q(T + 6)`, and
+`Y = Q^{201/400}`.
 
 - **The reduction** (Written proof). Their class-I zeros satisfy their (12.5):
   `|Σ_{N<n≤2N} cₙ χ(n) n^{−ρ} e^{−n/Y}| ≫ 1/log q` for a dyadic `N ∈ [X, Y log²Y]`, with `cₙ = Σ_{d|n, d≤X} μ(d)` and
