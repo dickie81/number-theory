@@ -747,7 +747,7 @@ theorem summable_cn (X : ℕ) {Y : ℝ} (hY : 0 < Y) {ρ : ℂ} (hρ : 0 ≤ ρ.
 
 /-! ### The tail -/
 
-/-- **The tail beyond `M ≥ 22 Y log Y`** is at most `1/16`, for `Y ≥ 8`, `2 ≤ U ≤ Y` and `|ρ − 1| ≤ 3U`. -/
+/-- **The tail beyond `M ≥ 22 Y log Y`** is at most `1/16` if `Y ≥ 8`, `2 ≤ U ≤ Y`, `Re ρ ≥ 0`, `‖ρ − 1‖ ≤ 2U + 1`. -/
 theorem tail_le (X : ℕ) {Y U : ℝ} (hY : 8 ≤ Y) (hU : 2 ≤ U) (hUY : U ≤ Y) {ρ : ℂ} (hρ : 0 ≤ ρ.re)
     (hρ1 : ‖ρ - 1‖ ≤ 2 * U + 1) {M : ℕ} (hM : 22 * Y * Real.log Y ≤ M) :
     ‖∑' n : ℕ, if M < n then cn X Y ρ n else 0‖ ≤ 1 / 16 := by

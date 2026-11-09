@@ -475,18 +475,27 @@ does not keep. They are corrected here, line for line, and those modules' `.olea
 - `SieveLemma1.lean`'s header presented `norm_Sw_le` as needing a zero-free rectangle. Its proof also uses the
   zero-free half-plane, which the header now says (`SieveWeight.norm_Sp_le` applies it).
 
-The others are docstrings, which the `.olean` keeps. Correcting one rebuilds everything downstream of its module:
-between 384 and 674 modules, including 144 certificate parts. They are left for a batch with the next toolchain
-bump:
+The others are docstrings, which the `.olean` keeps, so that correcting one rebuilds everything downstream of its
+module. They are corrected too, line for line, now that the switch of options has rebuilt the library anyway:
 
-- `InghamDetect.lean:750`: `tail_le`'s docstring has `|ρ − 1| ≤ 3U`, its hypothesis `‖ρ − 1‖ ≤ 2U + 1`.
-- `LinnikGammaRatio.lean:58`: `KQ_le`'s docstring has `2 log(15e⁴)`, its statement `6 log(15e⁴)`. The docstring's
+- `InghamDetect.lean:750`: `tail_le`'s docstring had `|ρ − 1| ≤ 3U`, its hypothesis `‖ρ − 1‖ ≤ 2U + 1`, and left
+  out its hypothesis `Re ρ ≥ 0`.
+- `LinnikGammaRatio.lean:58`: `KQ_le`'s docstring had `2 log(15e⁴)`, its statement `6 log(15e⁴)`. The docstring's
   bound fails at `a = b = 3`.
-- `KaiserZeroWeight.lean:49`: `im_logDeriv_Xi_le`'s docstring has `3 + kLam`, its statement `5 + kLam`.
-- `MollId.lean:9`, in the module's docstring: `norm_moll_le` is stated for `β ≥ σ ≥ 0`. The theorem needs `σ ≤ 1`,
-  as its own docstring says.
-- `RealDirichlet.lean:11`, in the module's docstring: it cites `abs_sum_cR_le` with `≤ N` and `norm_LFunction_le`.
-  The lemmas are `abs_summ_cR_le`, with `≤ N + 1`, and `LFunctionGrowth.norm_LFunction_leC`.
+- `KaiserZeroWeight.lean:49`: `im_logDeriv_Xi_le`'s docstring had `3 + kLam`, its statement `5 + kLam`.
+- `MollId.lean:9`, in the module's docstring: `norm_moll_le` was stated for `β ≥ σ ≥ 0`. The theorem assumes
+  `σ ≤ β` and `σ ≤ 1`, and not `σ ≥ 0`.
+- `RealDirichlet.lean:11`, in the module's docstring: it cited `abs_sum_cR_le` with `≤ N` and `norm_LFunction_le`.
+  The lemmas are `abs_summ_cR_le`, with `≤ N + 1` for the sum over `1 ≤ k ≤ x`, and `norm_LFunction_leC`.
+
+A mechanical sweep then checked every name these modules' comments cite. It took the 1882 distinct
+identifier-like tokens between backquotes in the comments of the 109 modules and resolved each against the
+declarations of `LinnikCGLDensity`'s environment, 501,832 of them. Of the tokens that resolve to nothing, all are
+notation (`f_b`, `B_J`, `χ_i`), file names, or names of modules outside that environment (`LinnikStep`, `lib/dh`, and
+`LinnikCGLLegacy.lean`, cited as removed), with four exceptions. Each is a stale name, now corrected: the header of
+`ChiUniform.lean` cited `PsiOmega.norm_LFunction_le` for `norm_LFunction_leC`; that of `InghamDensity.lean`,
+`ZeroLocal.card_local_le` for `ShortWeil.card_local_le`; that of `Landau.lean`, `delta_choice` for `delta_choiceW`; and
+the docstring of `Landau.delta_choiceW`, `zero_gap` for `zero_gapW`.
 
 The statement's own docstring (`LinnikCGL.lean`) said that `CGLDensity` follows from their Theorem 1.2. That needs the
 theorem's `o(1)` to be uniform in `σ`, and the docstring now says so.

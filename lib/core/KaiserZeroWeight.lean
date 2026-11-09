@@ -46,7 +46,7 @@ theorem norm_LSeries_vonMangoldt_le (x : ℝ) :
   simp only [LSeries.norm_term_eq]
   congr 3; simp
 
-/-- **`Im(Ξ′/Ξ)(x − i) ≤ 3 + kLam + ½ log(|x| + 2)`.** -/
+/-- **`Im(Ξ′/Ξ)(x − i) ≤ 5 + kLam + ½ log(|x| + 2)`.** -/
 theorem im_logDeriv_Xi_le (x : ℝ) :
     (logDeriv Xi ((x : ℂ) - I)).im ≤ 5 + kLam + Real.log (|x| + 2) / 2 := by
   have hs : (1 / 2 + I * ((x : ℂ) - I)) = 3 / 2 + I * x := by ring_nf; rw [I_sq]; ring

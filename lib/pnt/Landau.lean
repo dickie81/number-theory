@@ -18,7 +18,7 @@ but no growth bound of this form is known for `a < 2/3`.
 Route (Landau): the 3-4-1 inequality (`three_four_one`); Borel–Carathéodory at radius
 `ρ = ¼(log|t|)^{−a}` via PNT+'s `FinalBound` (`local_bound`, `local_bound_point`);
 `1/|ζ(s)| ≤ ζ(Re s)` (`inv_norm_zeta_le`); an explicit choice of the shift `δ(t)`
-(`delta_choice`).
+(`delta_choiceW`).
 -/
 import PrimeNumberTheoremAnd.StrongPNT
 
@@ -578,7 +578,7 @@ lemma radW_anti {w : ℝ → ℝ} {Cw : ℝ} (hw : WidthOK w Cw) {T U : ℝ} (hT
 noncomputable def dltW (w : ℝ → ℝ) (N t : ℝ) : ℝ := radW w (2 * t) / (N * (1 + Real.log (Lg (2 * t))))
 
 set_option maxHeartbeats 1600000 in
-/-- **L3d.** There is `N ≥ 4` for which `δ = dltW w N t` meets all hypotheses of `zero_gap`,
+/-- **L3d.** There is `N ≥ 4` for which `δ = dltW w N t` meets all hypotheses of `zero_gapW`,
 for every `|t| ≥ 4`. -/
 theorem delta_choiceW {w : ℝ → ℝ} {Cw K : ℝ} (hw : WidthOK w Cw) (hK : 0 < K) (C0 : ℝ) (hC0 : 1 ≤ C0) :
     ∃ N : ℝ, 4 ≤ N ∧ ∀ t : ℝ, 4 ≤ |t| →
