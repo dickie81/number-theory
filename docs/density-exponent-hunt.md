@@ -1449,3 +1449,377 @@ Remaining open directions (not claimed live without a new idea):
 
 **No improvement of `A` claimed. No Lean. Docs/scripts only.**
 
+
+---
+
+## Batch 7 — outside the zero-detection + large-values architecture
+
+CGL’s LV/detector cube is saturated at `σ=5/7` (Batches 3–6). This batch asks for
+openings that **avoid** that architecture: different inputs to Linnik, different objects
+than `#{χ : N(σ,T,χ)≥1}`, or exotic tools. Weird is allowed; fabrication is not.
+
+**Seed.** `98127453` (`scripts/density_hunt/seed_batch7.txt`), distinct from Batch 1
+(`20261109`) and Batch 3 (`60783343`). Canonical id list shuffled by
+`random.Random(98127453)`.
+
+**Excluded / not re-done.** Anything already in this file or `cgl-s3` notes: Kuznetsov on
+`b₂b₃` as tried, Deuring–Heilbronn as exceptional-zero repulsion (#16 Batch 2), Bombieri
+*large sieve* (#08), `iwasawa_log` as *log-free density* (#02 — different from p-adic
+Iwasawa below), GM/`mvt_beyond`/`decoupling`/`poly_partition`, moment detectors, etc.
+
+**Linnik ledger (for “does Linnik need full `A`?”).** Formalised route:
+`Linnik22000E.linnik_22000e` at `L=11/5` on a Type II window, using uniform density of
+peak `A=7/3` (CGL at `σ=5/7`). Sieve floor `≳ 1+A/2` (`docs/research-opportunities.md` §3):
+`A=7/3 ⇒ L≥13/6≈2.166`, with `2.199` the computed regeneration floor. Improving `L` below
+`≈2.2` in *this* architecture needs `A<7/3`. Architecture changes that skip density
+altogether are a different game (existence of some `L` vs beating `11/5`).
+
+---
+
+### 01. `de_branges` — Dead
+
+**Idea.** de Branges’s Hilbert spaces of entire functions as a substitute structure for
+`L(s,χ)` (Riemann–Hilbert / canonical systems), hoping for RH-quality zero control.
+
+**Literature / obstruction.** de Branges’s claimed proof of RH is not accepted; no theorem
+gives a zero-density exponent for Dirichlet `L`-functions from that formalism that beats
+CGL. No path to a bound on `∑_χ N(σ,T,χ)`.
+
+**Verdict: Dead.**
+
+### 02. `hecke_cyclotomic` — Dead (worse exponents)
+
+**Idea.** Pass to Hecke `L`-functions of the cyclotomic field `K=ℚ(ζ_q)`, apply
+Weiss / Thorner–Zaman field-uniform log-free density, deduce character density as a
+corollary.
+
+**Bookkeeping.** `Dedekind ζ_K = ∏_{χ mod q} L(s,χ)` (up to archimedean factors). Zero
+density for `ζ_K` *implies* a bound on `∑_χ N(σ,T,χ)`, but Weiss-type bounds are of shape
+`(D_K Q)^{c(1−σ)}` with `D_K ≍ q^{φ(q)}` and `[K:ℚ]=φ(q)≍q`. The resulting exponent in `q`
+is **far worse** than `7/3` (exponential in `q` from the discriminant). Thorner–Zaman
+(arXiv:1510.08086, 1604.01750) make Weiss explicit for Chebotarev / least prime ideal —
+valuable for number fields, not for beating Dirichlet `A=7/3`.
+
+**Verdict: Dead** for `A<7/3` (wrong size of discriminant).
+
+### 03. `iwasa_padic` — Dead for complex zeros in `T≍1`
+
+**Idea.** p-adic `L`-functions / Iwasawa main conjecture control the µ/λ-invariants and
+p-adic zeros of Kubota–Leopoldt `L_p(s,χ)`.
+
+**Obstruction.** p-adic zeros are not the complex zeros counted by `N(σ,T,χ)` at
+`T=1`, `σ=5/7`. Iwasawa theory does not bound the number of complex zeros off the
+critical line in the CGL box. (Distinct from Batch 1’s `iwasawa_log` = log-free density.)
+
+**Verdict: Dead.**
+
+### 04. `jensen_weird_contour` — Dead
+
+**Idea.** Jensen / argument-principle zero counting on non-rectangular contours (tilted
+parallelograms, circles centred near `σ=5/7`) to gain from convexity or Phragmén–Lindelöf.
+
+**Obstruction.** Contour moves change the integral of `|L'/L|`; without a better bound on
+`L` or `L'/L` on the new contour (subconvexity in `q` at `σ=5/7` is not strong enough to
+beat density methods), one recovers at best classical convexity-density hybrids already
+inferior to CGL near `5/7`.
+
+**Verdict: Dead.**
+
+### 05. `slice_rank_W` — Dead
+
+**Idea.** Croot–Lev–Pach / Ellenberg–Gijswijt slice-rank on the indicator of the
+large-value set `W⊂(ℤ/(q−1)ℤ)` to force `|W|≪q^{2/3−ε}`.
+
+**Obstruction.** Slice-rank caps sizes of *cap sets* / three-term AP-free sets in
+`(𝔽_p)^n`. The set `W` of characters where a Dirichlet polynomial is large has no
+reason to be AP-free; Batch 3’s energy numerics show nontrivial additive energy, i.e. the
+opposite. No algebraic equation defines `W`.
+
+**Verdict: Dead.**
+
+### 06. `rankin_selberg_zeros` — Dead
+
+**Idea.** Encode zeros of `L(s,χ)` as poles/residues of Rankin–Selberg
+`L(s,χ₁×χ₂)` or Eisenstein series data, then use GL(2) spectral theory.
+
+**Obstruction.** Rankin–Selberg for two Dirichlet characters is again a Dirichlet
+`L`-function (or a shift). No new density. Eisenstein Fourier coefficients involve
+`L(s,χ)` but spectral large-sieve / Kuznetsov returns to averaging over moduli or levels —
+excluded flavour when used as in `cgl-s3` §11; as a zero-detector replacement it does not
+produce a better pointwise-in-`q` count.
+
+**Verdict: Dead.**
+
+### 07. `bombieri_asymp_sieve` — Partial (architecture) / Dead for `L<11/5`
+
+**Idea.** Bombieri’s asymptotic sieve with Selberg weights to detect primes in one class
+`a mod q`, avoiding uniform zero density at `σ=5/7`.
+
+**Literature.** Friedlander–Iwaniec’s sieve Linnik (dispense with log-free density and
+repulsion; published exponent enormous, `L=75 744 000` in their account) and
+Matomäki–Merikoski–Teräväinen’s prime-detecting sieve (`P(a,q)≪q^{350}`). These show
+**some** `L<∞` without CGL-type density, but nowhere near `11/5`.
+
+**Bookkeeping.** The formalised density→sieve floor `L≳1+A/2` is architecture-specific.
+A pure-sieve proof can in principle beat `11/5` without touching `A`, but known sieve
+Linnik exponents do not. Hybrid “use density where cheap + sieve where density binds” is
+exactly the current paper’s shape; the binding still sits at `5/7`.
+
+**Verdict: Partial** as a reminder that Linnik need not *logically* go through `A=7/3`.
+**Dead** as a route to improve the formalised `11/5` with present sieve technology.
+**Next step if revived:** track any new sieve Linnik with `L<3`; until then, park.
+
+### 08. `furstenberg_W` — Dead
+
+**Idea.** Furstenberg correspondence / ergodic structural theorems for the large-value set
+`W` as a subset of the circle or of `ℤ/(q−1)`.
+
+**Obstruction.** Correspondence principles yield multiple recurrence, not cardinality
+bounds of the strength `|W|≪q^{2/3−ε}`. No ergodic input is known to beat combinatorial
+energy bounds already probed in Batches 2–3.
+
+**Verdict: Dead.**
+
+### 09. `selberg_class_axioms` — Dead
+
+**Idea.** Deduce density for all degree-1 Selberg-class elements from axioms (Euler
+product, functional equation, Ramanujan) without LV.
+
+**Obstruction.** Density theorems in the Selberg class still use zero-detection /
+convexity / LV analogues; axioms alone do not improve Dirichlet exponents beyond what
+CGL uses (Dirichlet `L` are the model degree-1 objects).
+
+**Verdict: Dead.**
+
+### 10. `chebotarev_linnik` — Dead for Dirichlet Linnik
+
+**Idea.** Bound the least prime in an arithmetic progression via Chebotarev in a suitable
+extension, using Thorner–Zaman explicit least-prime-ideal bounds.
+
+**Bookkeeping.** For the progression `a mod q`, the cyclotomic extension again has
+discriminant `≍ q^{φ(q)}`, giving superpolynomial-in-`q` bounds inferior to Linnik’s
+polynomial `q^L`. Chebotarev is the right tool for general Galois conjugacy classes, not
+for beating `q^{11/5}`.
+
+**Verdict: Dead** for this problem.
+
+### 11. `entropy_compression` — Dead
+
+**Idea.** Entropy / information-compression bounds on the number of characters admitting a
+zero in the CGL box (Lovász Local Lemma / entropy compression style).
+
+**Obstruction.** Zeros of different `χ` are not a family of bad events with small
+dependency degree in any known probabilistic model that is also rigorous for
+`L`-functions. Random-matrix heuristics predict `|W|≍(qT)^{o(1)}N^{2−2σ}` (Montgomery),
+which is stronger than `7/3` but not a proof.
+
+**Verdict: Dead.**
+
+### 12. `sieve_skip_density` — Partial (same as #07) / Dead for `11/5`
+
+**Idea.** Maynard-style weights or modern prime-detecting sieves so that Linnik needs
+density only for a **sparse** set of `(σ,T)`, or not at all.
+
+**Assessment.** Same literature as #07 (FI, MMT). Maynard’s multidimensional weights
+shine for bounded gaps / `m`-tuples, not for least prime in one progression with small
+`L`. The density hypothesis (Montgomery) would give almost GRH-quality short intervals /
+progressions, but that is again an unproved LV-type statement.
+
+**Does the current sieve route need full uniform density at `5/7`?** In
+`Linnik22000E`’s architecture: **yes** — the Type II window and peak `A` are pinned by the
+worst `σ` on the density curve, which is `5/7` at `A=7/3`. Sparse-`T` density would help
+only if the certificate could avoid that corner; the computed regeneration
+(`tools/linnik/density_payoff.py` / research-opportunities §3) shows the corner is load-bearing.
+
+**Verdict: Partial** (architecture escape exists in principle). **Dead** for improving
+`11/5` today. **Next step:** watch sieve-Linnik exponents; no action inside LV.
+
+### 13. `kuznetsov_theta_lift` — Dead as redo; note
+
+**Idea.** Kuznetsov via theta lifts / Shimura correspondence (half-integral weight) as a
+*new* spectral average, not the `cgl-s3` §11 `B=b₂b₃` try.
+
+**Obstruction.** Still spectral averaging over a family (levels, nebentypus). Linnik /
+uniform `A` need every prime `q`. Same obstruction as Batch 3 `kloosterman_avg_q` and the
+exclusion of Deshouillers–Iwaniec/Kuznetsov as tried for the S₃ sum. A half-integral lift
+does not remove the need to average.
+
+**Verdict: Dead** for uniform `A` (averaged moduli).
+
+### 14. `galois_orbit_W` — Dead for exponent (constant factor only)
+
+**Idea.** `{χ : L(·,χ)` has a zero in the box`}` is closed under complex conjugation and
+under `Gal(ℚ(ζ_{q−1})/ℚ)` acting by `χ ↦ χ^σ`. Orbit multiplicity ⇒ `|W|` divisible by
+large orbit sizes ⇒ saving.
+
+**Bookkeeping.** Conjugation gives factor `2`. Galois orbits on characters mod prime `q`
+have size `|⟨(ℤ/(q−1)ℤ)ˣ⟩·j|`, often `≍φ(q−1)/O(1)` for primitive label `j`, but **many
+characters lie in small orbits** (those with small field of values). Even if every bad
+`χ` dragged `|Gal|` conjugates, the density bound is on a sum of non-negative terms
+`N(σ,T,χ)`: orbit-closure multiplies both the count and the trivial bound by the same
+factor, giving **no power of `q` saving**. At best a constant in the `≪`.
+
+**Verdict: Dead** for `A<7/3`.
+
+### 15. `deuring_reverse_all` — Dead (excluded flavour)
+
+**Idea.** Deuring–Heilbronn repulsion among *all* characters, not only against one
+exceptional zero.
+
+**Obstruction.** Already assessed as Batch 2 `#16 zero_repulsion` (Dead): repulsion is a
+spacing/exceptional-zero tool, not a bound on `|W|`. Classical DH needs an exceptional
+zero to repel others; without it, one recovers ordinary zero-free regions already used in
+Linnik. Not re-opened.
+
+**Verdict: Dead.**
+
+### 16. `ff_transference` — Dead
+
+**Idea.** Over `𝔽_q[t]`, RH is known for curves ⇒ essentially optimal density. Transfer
+the exponent to `ℤ`.
+
+**Obstruction.** No known transference principle takes function-field zero-density
+exponents to characteristic zero. Weil’s proof inspired RH but does not prove it over
+`ℤ`. Function-field Linnik analogues are a different theorem.
+
+**Verdict: Dead.**
+
+### 17. `ils_one_level` — Dead for off-line counts
+
+**Idea.** Iwaniec–Luo–Sarnak one-level density (with extended support under GRH / for
+low-lying zeros) as a rigorous upper bound on zeros with `σ>5/7`.
+
+**Obstruction.** One-level density is a *statistical* statement about zeros on or near
+the critical line (averaged over families), typically conditional or for low height. It
+does not yield
+`∑_χ N(σ,T,χ)≪(qT)^{c(1−σ)}` for fixed `σ=5/7`, `T=1`, every `q`. Extending support
+improves vertical distribution under hypotheses, not the horizontal density exponent.
+
+**Verdict: Dead.**
+
+### 18. `beurling_detector` — Partial (constants) / Dead for `A`
+
+**Idea.** Beurling–Selberg extremal majorants / Carneiro–Chandee–Milinovich-style Fourier
+optimisation to sharpen the zero detector or the explicit formula weights.
+
+**Literature.** Fourier-optimisation detectors have sharpened constants for zeta zero
+counts and prime gaps in some ranges; they do not change the LV exponent `A` that comes
+from large values of Dirichlet polynomials.
+
+**Bookkeeping.** Better detectors can improve implied constants in
+`∑ N(σ,T,χ)≪ …` or the range of an explicit formula, not the power `(7/3)(1−σ)` at the
+CGL critical point (which is LV-limited).
+
+**Verdict: Partial** for constants / effective `K` in Linnik. **Dead** for `A<7/3`.
+**Next step:** only if the project switches to optimising `K` rather than `L`.
+
+### 19. `stickelberger_gauss` — Dead
+
+**Idea.** Stickelberger’s theorem / Gauss-sum factorisations constrain the arithmetic of
+`L(1,χ)` or Bernoulli distributions enough to limit zeros near `σ=5/7`.
+
+**Obstruction.** Stickelberger governs annihilators of class groups (via `L(0,χ)` /
+Bernoulli), not the horizontal distribution of zeros at height `T=1` in `Re s∈[5/7,1]`.
+Gauss sums appear in functional equations already fully used in CGL/GM.
+
+**Verdict: Dead.**
+
+### 20. `sdp_detector` — Partial / long-shot (constants) ; Numeric null
+
+**Idea.** Search numerically (LP/SDP) over detector weights on small `q` for a mean-value
+inequality better than Gallagher/MVT, then check scaling in `q`.
+
+**Numerical (cheap probe).** Nonnegative weights on `n≤7`, projected subgradient
+minimising `max_{χ≠1}|∑ w_n χ(n)|/‖w‖₁` vs flat:
+
+| q | flat | opt | opt/flat |
+|---|---|---|---|
+| 101 | 0.845 | 0.998 | 1.18 |
+| 503 | 0.899 | 0.996 | 1.11 |
+| 1009 | 1.000 | 1.000 | 1.00 |
+| 3001 | 0.973 | 1.000 | 1.03 |
+
+Optimisation did **not** beat flat (often worse). Consistent with short-support uncertainty:
+no free MVT-beating inequality visible at this scale.
+
+**Verdict: Partial** only as a methodology for constant-hunting. **Dead** so far for
+exponents; the probe is a null result. **Next step:** if revived, a real SDP over longer
+smooth detectors with an explicit `q`-scaling target — still unlikely to beat `α=2/3`.
+
+### 21. `hadamard_mellin_q` — Dead
+
+**Idea.** Hadamard three-lines / Mellin convexity in the `q`-aspect to interpolate density
+bounds between easy regions (`σ→1` and `σ=1/2`).
+
+**Obstruction.** Convexity of `log` of a counting function is not free: `N(σ)` need not
+satisfy the hypotheses of Hadamard three-lines. Classical density already uses convexity
+of `L`-functions (Phragmén–Lindelöf) as input to Ingham; that is how one gets exponents
+like `3/(2−σ)`, already worse than CGL near `5/7`.
+
+**Verdict: Dead.**
+
+### 22. `weighted_chi_a` — Partial (the right meta-question) / Dead as LV dodge
+
+**Idea.** Linnik is about **one** class `a mod q`. The explicit formula / character
+orthogonality weights zeros by `χ̄(a)`. Seek cancellation among `∑_χ χ̄(a) ∑_{ρ_χ} x^ρ/ρ`
+rather than a bound on `∑_χ N(σ,T,χ)`.
+
+**Bookkeeping.** The triangle inequality `|∑_χ χ̄(a) ∑_ρ …| ≤ ∑_χ ∑_ρ |…|` recovers the
+density route. Beating it requires **signed** cancellation. That is the classical
+Fogels / Pintz / soft density territory, or pretentious/Halász methods (Batch 2 `#10`,
+Dead for uniform power saving). No known cancellation among zeros of *different*
+characters at `σ=5/7` gives a power of `q` better than density.
+
+**Does Linnik need the full uniform density?** In the formalised sieve-certificate route:
+the peak `A` enters as a worst-case input, so **yes**. In a hypothetical signed-explicit-formula
+proof: one might need less than uniform `|W|` control — that is exactly the open
+classical approach that density methods replaced because cancellation was unavailable.
+
+**Verdict: Partial** as the correct “outside architecture” question. **Dead** without a
+new cancellation theorem. **Next step:** only with a concrete signed estimate; not a
+soft lead.
+
+---
+
+## Batch 7 summary
+
+| # | id | verdict | note |
+|---|---|---|---|
+| 01 | `de_branges` | Dead | no accepted density theorem |
+| 02 | `hecke_cyclotomic` | Dead | `D_K≍q^{φ(q)}` kills exponents |
+| 03 | `iwasa_padic` | Dead | p-adic ≠ complex zeros in CGL box |
+| 04 | `jensen_weird_contour` | Dead | no better `|L'/L|` on new contours |
+| 05 | `slice_rank_W` | Dead | `W` not cap-set-like |
+| 06 | `rankin_selberg_zeros` | Dead | reduces to Dirichlet `L` / averages |
+| 07 | `bombieri_asymp_sieve` | **Partial** / Dead for `11/5` | FI/MMT exist, `L` huge |
+| 08 | `furstenberg_W` | Dead | no cardinality saving |
+| 09 | `selberg_class_axioms` | Dead | axioms don’t beat CGL |
+| 10 | `chebotarev_linnik` | Dead | cyclotomic discriminant too large |
+| 11 | `entropy_compression` | Dead | no rigorous dependency graph |
+| 12 | `sieve_skip_density` | **Partial** / Dead for `11/5` | same as #07; corner is load-bearing in current cert |
+| 13 | `kuznetsov_theta_lift` | Dead | still averages moduli |
+| 14 | `galois_orbit_W` | Dead | constant factor only |
+| 15 | `deuring_reverse_all` | Dead | Batch 2 #16 redo |
+| 16 | `ff_transference` | Dead | no ℤ-transfer |
+| 17 | `ils_one_level` | Dead | statistics on the line ≠ `N(σ)` |
+| 18 | `beurling_detector` | **Partial** (constants) | Dead for `A` |
+| 19 | `stickelberger_gauss` | Dead | wrong arithmetic (class groups) |
+| 20 | `sdp_detector` | **Partial** / null numeric | short-weight LP does not beat flat |
+| 21 | `hadamard_mellin_q` | Dead | classical convexity already used |
+| 22 | `weighted_chi_a` | **Partial** (meta) | needs signed cancellation; none known |
+
+### Live / worth a next step (honest)
+
+None of the 22 yields a concrete inequality toward `A<(7/3)(1−σ)` or `L<11/5`. The only
+**Partial** items with a clear next step are architectural, not analytic wins:
+
+1. **`sieve_skip_density` / `bombieri_asymp_sieve` (#07,#12):** Linnik *can* avoid CGL
+   density (FI, MMT), but known `L` are useless for beating `11/5`. **Next step:** monitor
+   sieve-Linnik exponents; no repo action until `L<3` appears in the literature.
+2. **`weighted_chi_a` (#22):** Right question (“one class ⇒ signed weights”). **Next step:**
+   only with a proposed signed estimate — none found.
+3. **`beurling_detector` / `sdp_detector` (#18,#20):** Constant/`K` optimisation, null so far
+   for exponents. **Next step:** only if priorities shift from `L`/`A` to effective constants.
+
+**No improvement of `A` or `L` claimed. No Lean. Docs/scripts only.**
+

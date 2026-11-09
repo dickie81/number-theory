@@ -1,0 +1,24 @@
+98127453
+# Random(98127453).shuffle of canonical id list (batch7)
+01 de_branges
+02 hecke_cyclotomic
+03 iwasa_padic
+04 jensen_weird_contour
+05 slice_rank_W
+06 rankin_selberg_zeros
+07 bombieri_asymp_sieve
+08 furstenberg_W
+09 selberg_class_axioms
+10 chebotarev_linnik
+11 entropy_compression
+12 sieve_skip_density
+13 kuznetsov_theta_lift
+14 galois_orbit_W
+15 deuring_reverse_all
+16 ff_transference
+17 ils_one_level
+18 beurling_detector
+19 stickelberger_gauss
+20 sdp_detector
+21 hadamard_mellin_q
+22 weighted_chi_a
