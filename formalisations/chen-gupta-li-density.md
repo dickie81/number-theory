@@ -144,12 +144,16 @@ than it appears to, or rest on more than it should.
   after the documentation fixes, with the same verdicts. The documentation fixes of `5dac8f3` change no
   constant either: `scripts/lean/ClosureFingerprint.lean` prints the same line for each of `cglDensity`'s 83,231
   constants (its kind, universe parameters and the hashes of its type and value) before them and after, and again
-  once `b0dac28` has added `LinnikCGLContinuation` (under "What the statement is"). A cold build at the head confirms
+  once `b0dac28` has added `LinnikCGLContinuation` (under "What the statement is"). Cold builds at the head confirm
   all this. From an empty build directory, with Mathlib from its cache, `lake build LinnikCGLContinuation` at
   `9702dd6` rebuilt the statement's whole dependency cone: its 399 library modules and the 15 of PNT+ it imports.
   Every `.olean` and `.ilean` file it wrote is byte-identical to the build the kernel checks verified, 501 of each.
-  That count includes 87 modules outside the cone, written by a build of every library from the same empty directory,
-  which was stopped because its certificate modules take hours; CI's cold build of `f89aa26` stands for those.
+  Then every library was built at `8793dca` from an empty build directory, as CI builds it: `scripts/build.sh` on
+  every target of `scripts/lean_targets.py --all`, 10,230 jobs. CI's gates pass on that build: the axiom gates
+  (146/1209/34/71), dead code (1378 printed theorems) and the warnings check. All 1267 `.olean` and 1267 `.ilean`
+  files it wrote are byte-identical to the verified build's. A plain `lake build` from the same empty directory had
+  first compiled several `CmMomC*` kernel checks at once, about 8 GiB each, and two were killed for lack of memory.
+  `scripts/build.sh`, which compiles each of them alone, continued from the 661 modules already written.
 - **No route around the kernel.** The lakefile sets only `autoImplicit` and `relaxedAutoImplicit`, both off, for the
   whole package. Nothing in `lib/`, the vendored
   libraries included, uses `skipKernelTC`, `addDeclWithoutChecking`, `unsafe`, `implemented_by`, `native_decide` or
