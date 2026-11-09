@@ -24,6 +24,12 @@ Castelnuovo–Severi inequality `D² ≤ 2(D·e₁)(D·e₂)` (`BallWeil.rh_iff_
 degenerate: its unit balls are the whole line or empty, chosen by the sign of the degree, so the equivalence says only
 that the two axioms ask for nothing beyond RH. What would count is a model built from `D`, with `Λ(nD)` and `B(nD)`
 determined by `nD` as the sections of `nL̄` are by `L̄` on an arithmetic surface, and their growth governed by `D²`.
+
+Where such lattices could come from. The orbit-lattice conjecture of `docs/ball-conjecture.md` asks for one: if in a
+realization of `K_H` every `w_{k+1}` keeps distance `‖w_1‖` from the span of the earlier vectors, the orbit generates a
+lattice with `w_1` shortest (`BallPsi.orbit_lattice`), and RH follows (`BallWeil.rh_of_pivots`). For the Gaussian
+kernel no realization spans one (`BallLattice.not_discrete`). Over a finite field the lattice is there: the Frobenius
+points of Manin's twist have a positive semidefinite Gram matrix (`ManinHasse.gram_nonneg`).
 -/
 import Mathlib
 import BallWeil

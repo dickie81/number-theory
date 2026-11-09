@@ -67,6 +67,14 @@ Proc. Nat. Acad. Sci. 45 (1959), for the contraction property.
   (`PsiOmega.rh_of_liouville_bound`, `CrossCriteria.rh_of_liouville_theta`); RH says that the normalised Bohr vector of
   every nontrivial zero lies on the unit sphere (`BohrSphere.riemannHypothesis_iff_mem_sphere`,
   `BohrSphere.riemannHypothesis_iff_tendsto`), a reformulation that constrains nothing.
+- **Their `ℙ¹` columns**: `ζ(s)ζ(s − 1)`, the zeta function of `ℙ¹` over `ℤ`, has an Euler product and a functional
+  equation of `ζ`'s kind, and zeros off its line, with no hypothesis (`PurityRational.euler_product`,
+  `PurityRational.functional_equation`, `PurityRational.exists_zero_re_ne_one`). The kernel criteria fail for it
+  unconditionally: the Hadamard kernel's (`PurityRational.not_posDef`, the column of `BallHadamard.rh_iff_posDefH`)
+  and the Gaussian kernel's (`PurityRational.not_posDef_gauss`, the column of `BallKernel.rh_iff_posDef`), by one
+  argument for every even weight without zeros on `Re p > 0` (`PurityRational.not_posDef_kerG`). Where the `dh` column
+  tests a criterion against a functional equation without an Euler product, the `ℙ¹` column tests it against an Euler
+  product and a functional equation without purity.
 
 ## Unconditional results on Weil's form of `ζ`
 

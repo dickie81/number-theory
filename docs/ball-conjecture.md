@@ -124,7 +124,10 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
     integers, the integral quaternions and the integral octaves (their Lemma 3.5).
   - **Where RH holds.** The line is `Re s = w/2`. RH there is expected at `w = 1` and `2`. It fails at `w = 4` and `8`
     whatever the truth of RH: with `z = s/2` the Dirichlet series are `(1 − 4^{1−z})ζ(z)ζ(z − 1)` and
-    `(1 − 2^{1−z} + 2^{4−2z})ζ(z)ζ(z − 3)`, and their zeros at `z = ρ` lie off the lines `Re z = 1` and `2`. Between
+    `(1 − 2^{1−z} + 2^{4−2z})ζ(z)ζ(z − 3)`, and their zeros at `z = ρ` lie off the lines `Re z = 1` and `2`. In Lean
+    for `w = 4`: `Z(4, 2z) = c(z)·ζ̂(z)ζ̂(z − 1)` off `z = 0, 1, 2` with `c` entire, by continuation from `Re s > 4`
+    (`TwoVariableZetaPurity.Z_four_eq`), so `Z(4, 2ρ) = 0` and `Z(4, ·)` has zeros off its line
+    (`TwoVariableZetaPurity.exists_zero_re_ne_two`). Between
     `w = 1` and `2`, without an Euler product, Lagarias and Rains follow two zeros of `ζ` that meet on the line and
     leave it as `w` grows (their Lemma 8.1). For `w < 0` the function is positive on its line, which they call an
     anti-Riemann hypothesis (their Theorem 1.2).

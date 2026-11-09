@@ -12,8 +12,11 @@ with no hypothesis. This is the number-field form of `PurityTest`: an Euler prod
 * The weights are summable (`summable_wP1`): in the critical strip `|2 − ρ| ≥ |1 − ρ|` and `|ρ + 1| ≥ |ρ|`, so each
   weight is at most Hadamard's `|1/(ρ(1 − ρ))|` (`BallHadamard.summable_hw`).
 * In the pole variable `P = ρ' − 1`, with `|Re P| < 1`, and the weight `G(p) = 1/(1 − p²)`, the `2 × 2` minor on
-  `{1, r}` is the twin sum of `TwinLandau` at `λ = log r` (`twin_eq_kerP1`). If `K` were positive-definite,
+  `{1, r}` is the twin sum of `TwinLandau` at `λ = log r`. If `K` were positive-definite,
   `BallKernel.re_eq_zero_of_dense` would put every `ρ'` on `Re s = 1`, and the nontrivial zeros of `ζ` are not there.
+  The argument needs only an even weight with no zero on `Re p > 0`, summable over the zeros (`not_posDef_kerG`), so it
+  also gives the `ℙ¹` column of the Gaussian criterion `BallKernel.rh_iff_posDef`: the kernel
+  `Σ_{ρ'} e^{(ρ' − 1)²/2} r^{ρ' − 1}` is not positive-definite either (`not_posDef_gauss`).
 -/
 import Mathlib
 import BallHadamard
@@ -181,73 +184,133 @@ lemma summable_wP1 : Summable fun q : ZIdx ⊕ ZIdx => ‖gP1 (poleP1 q)‖ := b
     simp only [Function.comp_apply, gP1_poleP1, zP1, Sum.elim_inr]
     exact (norm_w_le q).2
 
-theorem twinPoles_P1 : TwinLandau.TwinPoles poleP1 fun q => gP1 (poleP1 q) :=
-  ⟨summable_wP1, abs_re_poleP1, im_poleP1_ne, finite_poleP1⟩
+/-! ## The kernels -/
 
-/-! ## The kernel -/
+/-- **The kernel of `ℙ¹` with weight `G`**, `K_G(r) = Σ_q G(P_q)e^{(log r)P_q}` over the poles `P = ρ' − 1`. -/
+def kerG (G : ℂ → ℂ) (r : ℝ) : ℂ := ∑' q : ZIdx ⊕ ZIdx, G (poleP1 q) * cexp ((Real.log r : ℝ) * poleP1 q)
+
+/-- **No weight makes the kernel of `ℙ¹` positive-definite**: if `G` is even, has no zero on `Re p > 0` and is
+summable over the poles, `K_G` is not positive-definite on the positive rationals. Its `2 × 2` minors are the twin
+sums of `TwinLandau` at `λ = log r`; positivity would put every zero of `ζ̂(s)ζ̂(s − 1)` on `Re s = 1`
+(`BallKernel.re_eq_zero_of_dense`), and the nontrivial zeros of `ζ` have `Re ρ < 1`. -/
+theorem not_posDef_kerG {G : ℂ → ℂ} (hs : Summable fun q : ZIdx ⊕ ZIdx => ‖G (poleP1 q)‖)
+    (he : ∀ p, G (-p) = G p) (hn : ∀ p, 0 < p.re → G p ≠ 0) : ¬ PosDefQ (kerG G) := by
+  have D : TwinLandau.TwinPoles poleP1 fun q => G (poleP1 q) :=
+    ⟨hs, abs_re_poleP1, im_poleP1_ne, finite_poleP1⟩
+  have hsum (l : ℝ) : Summable fun q : ZIdx ⊕ ZIdx => G (poleP1 q) * cexp (l * poleP1 q) :=
+    TwinLandau.summable_cw_mul D (B := Real.exp |l|) fun q => by
+      rw [Complex.norm_exp]
+      refine Real.exp_le_exp.2 ?_
+      have h := abs_re_poleP1 q
+      have e : ((l : ℂ) * poleP1 q).re = l * (poleP1 q).re := by simp
+      rw [e]
+      calc l * (poleP1 q).re ≤ |l * (poleP1 q).re| := le_abs_self _
+        _ = |l| * |(poleP1 q).re| := abs_mul _ _
+        _ ≤ |l| * 1 := mul_le_mul_of_nonneg_left h.le (abs_nonneg _)
+        _ = |l| := mul_one _
+  have htwin (r : ℝ) : TwinLandau.Wsum poleP1 (fun q => G (poleP1 q)) (Real.log r) =
+      2 * kerG G 1 + kerG G r + kerG G r⁻¹ := by
+    unfold TwinLandau.Wsum TwinLandau.wq kerG
+    have h0 := hsum 0
+    have h1 := hsum (Real.log r)
+    have h2 := hsum (-Real.log r)
+    simp only [Complex.ofReal_zero, zero_mul, Complex.exp_zero, mul_one] at h0
+    have e : ∀ q : ZIdx ⊕ ZIdx, G (poleP1 q) * (2 + cexp ((Real.log r : ℝ) * poleP1 q) +
+        cexp (-((Real.log r : ℝ) * poleP1 q))) = 2 * G (poleP1 q) +
+        G (poleP1 q) * cexp ((Real.log r : ℝ) * poleP1 q) +
+        G (poleP1 q) * cexp ((-Real.log r : ℝ) * poleP1 q) := fun q => by
+      push_cast; ring_nf
+    rw [tsum_congr e, ((h0.mul_left 2).add h1).tsum_add h2, (h0.mul_left 2).tsum_add h1, tsum_mul_left,
+      Real.log_one, Real.log_inv]
+    simp only [Complex.ofReal_zero, zero_mul, Complex.exp_zero, mul_one]
+  intro hK
+  have hW : ∀ r : ℚ, 0 < r →
+      0 ≤ TwinLandau.Wsum poleP1 (fun q => G (poleP1 q)) (1 * Real.log r) := by
+    intro r hr
+    rw [one_mul, htwin]
+    exact minor_nonneg hK hr
+  have := ZerosInfinite.infinite_ZIdx
+  obtain ⟨q⟩ := (inferInstance : Nonempty ZIdx)
+  have h := re_eq_zero_of_dense D (G := G) (fun _ => rfl) he hn one_ne_zero hW (Sum.inl q)
+  have hlt := (nontrivial_zZF q).re_lt_one
+  rw [re_poleP1] at h
+  simp only [zP1, Sum.elim_inl] at h
+  linarith
 
 /-- **The kernel of `ℙ¹`**, `K(r) = Σ_{ρ'} r^{ρ' − 1}/(ρ'(2 − ρ'))` over the zeros `ρ' = ρ` and `ρ' = ρ + 1` of
 `ζ̂(s)ζ̂(s − 1)`, with `r^{ρ' − 1}` written `e^{(ρ' − 1)log r}`: `BallHadamard.kerH` for the line `Re s = 1`. -/
 def kerP1 (r : ℝ) : ℂ :=
   ∑' q : ZIdx ⊕ ZIdx, cexp ((zP1 q - 1) * Real.log r) / (zP1 q * (2 - zP1 q))
 
-/-- The kernel in the pole variable: `K(r) = Σ_q G(P_q)e^{(log r)P_q}`. -/
-lemma kerP1_eq (r : ℝ) :
-    kerP1 r = ∑' q : ZIdx ⊕ ZIdx, gP1 (poleP1 q) * cexp ((Real.log r : ℝ) * poleP1 q) := by
-  unfold kerP1
+/-- The kernel in the pole variable: `K = K_G` for `G(p) = 1/(1 − p²)`. -/
+lemma kerP1_eq : kerP1 = kerG gP1 := by
+  funext r
+  unfold kerP1 kerG
   refine tsum_congr fun q => ?_
   rw [gP1_poleP1, one_div_mul_eq_div, mul_comm (Real.log r : ℂ)]
   rfl
 
-lemma summable_kerP1 (l : ℝ) : Summable fun q : ZIdx ⊕ ZIdx => gP1 (poleP1 q) * cexp (l * poleP1 q) :=
-  TwinLandau.summable_cw_mul twinPoles_P1 (B := Real.exp |l|) fun q => by
-    rw [Complex.norm_exp]
-    refine Real.exp_le_exp.2 ?_
-    have h := abs_re_poleP1 q
-    have e : ((l : ℂ) * poleP1 q).re = l * (poleP1 q).re := by simp
-    rw [e]
-    calc l * (poleP1 q).re ≤ |l * (poleP1 q).re| := le_abs_self _
-      _ = |l| * |(poleP1 q).re| := abs_mul _ _
-      _ ≤ |l| * 1 := mul_le_mul_of_nonneg_left h.le (abs_nonneg _)
-      _ = |l| := mul_one _
-
-/-- **The `2 × 2` minors are the twin sum**: `2K(1) + K(r) + K(1/r) = Σ_q G(P_q)(2 + e^{λP_q} + e^{−λP_q})` at
-`λ = log r`. -/
-theorem twin_eq_kerP1 (r : ℝ) :
-    TwinLandau.Wsum poleP1 (fun q => gP1 (poleP1 q)) (Real.log r) = 2 * kerP1 1 + kerP1 r + kerP1 r⁻¹ := by
-  unfold TwinLandau.Wsum TwinLandau.wq
-  have h0 := summable_kerP1 0
-  have h1 := summable_kerP1 (Real.log r)
-  have h2 := summable_kerP1 (-Real.log r)
-  simp only [Complex.ofReal_zero, zero_mul, Complex.exp_zero, mul_one] at h0
-  have e : ∀ q : ZIdx ⊕ ZIdx, gP1 (poleP1 q) * (2 + cexp ((Real.log r : ℝ) * poleP1 q) +
-      cexp (-((Real.log r : ℝ) * poleP1 q))) = 2 * gP1 (poleP1 q) +
-      gP1 (poleP1 q) * cexp ((Real.log r : ℝ) * poleP1 q) +
-      gP1 (poleP1 q) * cexp ((-Real.log r : ℝ) * poleP1 q) := fun q => by
-    push_cast; ring_nf
-  rw [tsum_congr e, ((h0.mul_left 2).add h1).tsum_add h2, (h0.mul_left 2).tsum_add h1, tsum_mul_left,
-    kerP1_eq, kerP1_eq, kerP1_eq, Real.log_one, Real.log_inv]
-  simp only [Complex.ofReal_zero, zero_mul, Complex.exp_zero, mul_one]
-
-/-- **The kernel of `ℙ¹` is not positive-definite on the positive rationals.** If it were, its `2 × 2` minors would
-be nonnegative twin sums, and the Landau argument of `BallKernel.re_eq_zero_of_dense` would put every zero `ρ'` of
-`ζ̂(s)ζ̂(s − 1)` on the line `Re s = 1`; but `ζ` has a nontrivial zero (`ZerosInfinite.infinite_ZIdx`), and it has
-`Re ρ < 1`. No hypothesis: the Euler product and the functional equation of `ℙ¹` do not give the positivity. -/
+/-- **The kernel of `ℙ¹` is not positive-definite on the positive rationals**, with no hypothesis: the Euler product
+and the functional equation of `ℙ¹` do not give the positivity. -/
 theorem not_posDef : ¬ PosDefQ kerP1 := by
-  intro hK
-  have hW : ∀ r : ℚ, 0 < r →
-      0 ≤ TwinLandau.Wsum poleP1 (fun q => gP1 (poleP1 q)) (1 * Real.log r) := by
-    intro r hr
-    rw [one_mul, twin_eq_kerP1]
-    exact minor_nonneg hK hr
-  have := ZerosInfinite.infinite_ZIdx
-  obtain ⟨q⟩ := (inferInstance : Nonempty ZIdx)
-  have h := re_eq_zero_of_dense twinPoles_P1 (G := gP1) (fun _ => rfl) gP1_neg (fun p _ => gP1_ne p)
-    one_ne_zero hW (Sum.inl q)
-  have hlt := (nontrivial_zZF q).re_lt_one
-  rw [re_poleP1] at h
-  simp only [zP1, Sum.elim_inl] at h
-  linarith
+  rw [kerP1_eq]
+  exact not_posDef_kerG summable_wP1 gP1_neg fun p _ => gP1_ne p
+
+/-! ## The Gaussian kernel of `ℙ¹` -/
+
+/-- The Gaussian weight in the pole variable, `e^{P²/2}`: at `P = ρ' − 1` it is `e^{(ρ' − 1)²/2}`, the weight of
+`BallKernel.kerK` moved to the line `Re s = 1`. -/
+def gwP1 (p : ℂ) : ℂ := cexp (p ^ 2 / 2)
+
+/-- `|e^{(ρ' − 1)²/2}| ≤ e^{3/8}|e^{(ρ − ½)²/2}|` for both kinds of zero `ρ'` of `ℙ¹`, since `0 < Re ρ < 1`. -/
+lemma norm_gwP1_le (q : ZIdx) :
+    ‖gwP1 (zetaZeroFamily q - 1)‖ ≤ Real.exp (3 / 8) * ‖gw (poleP q)‖ ∧
+      ‖gwP1 (zetaZeroFamily q)‖ ≤ Real.exp (3 / 8) * ‖gw (poleP q)‖ := by
+  have h0 := (nontrivial_zZF q).re_pos
+  have h1 := (nontrivial_zZF q).re_lt_one
+  unfold gwP1 gw poleP
+  simp only [Complex.norm_exp, ← Real.exp_add]
+  have e1 : ((zetaZeroFamily q - 1) ^ 2 / 2).re =
+      ((zetaZeroFamily q).re - 1) ^ 2 / 2 - (zetaZeroFamily q).im ^ 2 / 2 := by
+    simp only [sq, Complex.div_ofNat_re, Complex.mul_re, Complex.sub_re, Complex.sub_im, Complex.one_re,
+      Complex.one_im]
+    ring
+  have e2 : ((zetaZeroFamily q) ^ 2 / 2).re = (zetaZeroFamily q).re ^ 2 / 2 - (zetaZeroFamily q).im ^ 2 / 2 := by
+    simp only [sq, Complex.div_ofNat_re, Complex.mul_re]
+    ring
+  have e3 : ((2 * (zetaZeroFamily q - 1 / 2)) ^ 2 / 8).re =
+      ((zetaZeroFamily q).re - 1 / 2) ^ 2 / 2 - (zetaZeroFamily q).im ^ 2 / 2 := by
+    rw [show (2 * (zetaZeroFamily q - 1 / 2)) ^ 2 / 8 = (zetaZeroFamily q - ((1 / 2 : ℝ) : ℂ)) ^ 2 / 2 by
+      push_cast; ring]
+    simp only [sq, Complex.div_ofNat_re, Complex.mul_re, Complex.sub_re, Complex.sub_im, Complex.ofReal_re,
+      Complex.ofReal_im]
+    ring
+  rw [e1, e2, e3]
+  constructor <;> exact Real.exp_le_exp.2 (by nlinarith)
+
+lemma summable_gwP1 : Summable fun q : ZIdx ⊕ ZIdx => ‖gwP1 (poleP1 q)‖ := by
+  refine Summable.sum _ ?_ ?_
+  · refine (summable_gw.mul_left (Real.exp (3 / 8))).of_nonneg_of_le (fun _ => norm_nonneg _) fun q => ?_
+    simpa [poleP1, zP1] using (norm_gwP1_le q).1
+  · refine (summable_gw.mul_left (Real.exp (3 / 8))).of_nonneg_of_le (fun _ => norm_nonneg _) fun q => ?_
+    simpa [poleP1, zP1] using (norm_gwP1_le q).2
+
+/-- **The Gaussian kernel of `ℙ¹`**, `K(r) = Σ_{ρ'} e^{(ρ' − 1)²/2} r^{ρ' − 1}` over the zeros `ρ' = ρ` and
+`ρ' = ρ + 1` of `ζ̂(s)ζ̂(s − 1)`: `BallKernel.kerK` for the line `Re s = 1`. -/
+def kerP1G (r : ℝ) : ℂ :=
+  ∑' q : ZIdx ⊕ ZIdx, cexp ((zP1 q - 1) ^ 2 / 2) * cexp ((zP1 q - 1) * Real.log r)
+
+/-- **The Gaussian kernel of `ℙ¹` is not positive-definite on the positive rationals**, with no hypothesis: the
+`ℙ¹` column of `BallKernel.rh_iff_posDef`. -/
+theorem not_posDef_gauss : ¬ PosDefQ kerP1G := by
+  have e : kerP1G = kerG gwP1 := by
+    funext r
+    unfold kerP1G kerG gwP1
+    refine tsum_congr fun q => ?_
+    rw [mul_comm (Real.log r : ℂ)]
+    rfl
+  rw [e]
+  exact not_posDef_kerG summable_gwP1 (fun p => by unfold gwP1; rw [neg_sq]) fun p _ => Complex.exp_ne_zero _
 
 end PurityRational
 
@@ -256,3 +319,5 @@ end PurityRational
 #print axioms PurityRational.xiP1_zP1
 #print axioms PurityRational.exists_zero_re_ne_one
 #print axioms PurityRational.not_posDef
+#print axioms PurityRational.not_posDef_kerG
+#print axioms PurityRational.not_posDef_gauss

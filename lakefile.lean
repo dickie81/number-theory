@@ -19,7 +19,7 @@ lean_lib Zeta23 where
   globs := #[.submodules `Zeta23]
   leanOptions := #[⟨`relaxedAutoImplicit, false⟩]
 
-/-- lib/core: 447 modules. -/
+/-- lib/core: 448 modules. -/
 lean_lib Core where
   srcDir := "lib/core"
   globs := #[
@@ -113,28 +113,28 @@ lean_lib Core where
     .one `SimpleCover, .one `SimpleStructure, .one `SmallPositivity, .one `SmallPositivity2,
     .one `Split, .one `StrictPositivity, .one `StripConv, .one `StripShift,
     .one `StructureD, .one `SwapRealize, .one `T1bt, .one `T1ca,
-    .one `TheoremC, .one `TwinLandau, .one `TwoVariableZeta, .one `Unconditional,
-    .one `Uniqueness, .one `UniquenessQ, .one `UpperHalfSpace, .one `V3Asm,
-    .one `V3Bessel, .one `V3CertD, .one `V3Enc, .one `V3FinA,
-    .one `V3FinD, .one `V3FinP, .one `V3FinRe0, .one `V3FinRe1,
-    .one `V3FinRo0, .one `V3FinRo1, .one `V3Gen, .one `V3Log,
-    .one `V3Main, .one `V3Pole, .one `V3Scale, .one `V3Zhu,
-    .one `VinoBad, .one `VinoConst, .one `VinoConst2, .one `VinoFam,
-    .one `VinoHolder, .one `VinoIter, .one `VinoKV, .one `VinoPadic,
-    .one `VinoRec, .one `VinoRec2, .one `VinoSplit, .one `VinoStep,
-    .one `Vinogradov, .one `WeilArch, .one `WeilAssemble, .one `WeilCert,
-    .one `WeilChi, .one `WeilChiB, .one `WeilChiBridge, .one `WeilChiCriterion,
-    .one `WeilChiDensity, .one `WeilChiK1, .one `WeilChiPos, .one `WeilChiZ,
-    .one `WeilChiZB, .one `WeilCoer, .one `WeilConst, .one `WeilCont,
-    .one `WeilConverse, .one `WeilCount, .one `WeilCriterion, .one `WeilDedekind,
-    .one `WeilDischarge, .one `WeilFF, .one `WeilFourier, .one `WeilGen,
-    .one `WeilHead, .one `WeilIndexConverse, .one `WeilIndexInfinite, .one `WeilIndexZeta,
-    .one `WeilLandau, .one `WeilModes, .one `WeilOdd, .one `WeilOddPos,
-    .one `WeilPlanch, .one `WeilRH, .one `WeilRate, .one `WeilTail,
-    .one `WeilTailB, .one `WeilTwinGeneral, .one `WeilZeta, .one `WeilZhuRed,
-    .one `WindowForm, .one `XiBounds, .one `XiLogDeriv, .one `ZeroLocal,
-    .one `ZeroSwap, .one `ZerosDense, .one `ZerosInfinite, .one `Zeta,
-    .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaInputs]
+    .one `TheoremC, .one `TwinLandau, .one `TwoVariableZeta, .one `TwoVariableZetaPurity,
+    .one `Unconditional, .one `Uniqueness, .one `UniquenessQ, .one `UpperHalfSpace,
+    .one `V3Asm, .one `V3Bessel, .one `V3CertD, .one `V3Enc,
+    .one `V3FinA, .one `V3FinD, .one `V3FinP, .one `V3FinRe0,
+    .one `V3FinRe1, .one `V3FinRo0, .one `V3FinRo1, .one `V3Gen,
+    .one `V3Log, .one `V3Main, .one `V3Pole, .one `V3Scale,
+    .one `V3Zhu, .one `VinoBad, .one `VinoConst, .one `VinoConst2,
+    .one `VinoFam, .one `VinoHolder, .one `VinoIter, .one `VinoKV,
+    .one `VinoPadic, .one `VinoRec, .one `VinoRec2, .one `VinoSplit,
+    .one `VinoStep, .one `Vinogradov, .one `WeilArch, .one `WeilAssemble,
+    .one `WeilCert, .one `WeilChi, .one `WeilChiB, .one `WeilChiBridge,
+    .one `WeilChiCriterion, .one `WeilChiDensity, .one `WeilChiK1, .one `WeilChiPos,
+    .one `WeilChiZ, .one `WeilChiZB, .one `WeilCoer, .one `WeilConst,
+    .one `WeilCont, .one `WeilConverse, .one `WeilCount, .one `WeilCriterion,
+    .one `WeilDedekind, .one `WeilDischarge, .one `WeilFF, .one `WeilFourier,
+    .one `WeilGen, .one `WeilHead, .one `WeilIndexConverse, .one `WeilIndexInfinite,
+    .one `WeilIndexZeta, .one `WeilLandau, .one `WeilModes, .one `WeilOdd,
+    .one `WeilOddPos, .one `WeilPlanch, .one `WeilRH, .one `WeilRate,
+    .one `WeilTail, .one `WeilTailB, .one `WeilTwinGeneral, .one `WeilZeta,
+    .one `WeilZhuRed, .one `WindowForm, .one `XiBounds, .one `XiLogDeriv,
+    .one `ZeroLocal, .one `ZeroSwap, .one `ZerosDense, .one `ZerosInfinite,
+    .one `Zeta, .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaInputs]
 
 /-- lib/pnt: 620 modules. -/
 lean_lib PNT where

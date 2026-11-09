@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1392 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1397 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 163 | 482 |
+| `lib/core` | 164 | 487 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -80,7 +80,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `BallHadamard.kerH_one`: `K_H(1)` is Hadamard's constant
 - `BallHadamard.kerH_inv`: The kernel is even
-- `BallHadamard.rh_iff_posDefH`: The Riemann hypothesis is positive-definiteness of `K_H` on the positive rationals
+- `BallHadamard.rh_iff_posDefH`: The Riemann hypothesis is positive-definiteness of `K_H` on the positive rationals ([note](../formalisations/weil-positivity.md))
 - `BallHadamard.rh_iff_realizationH`: The Riemann hypothesis is the existence of a realization of `K_H`
 - `BallHadamard.not_smooth`: `K_H` is not smooth at `1`
 - `BallHadamard.unbounded_gaps`: The gaps are unbounded
@@ -88,7 +88,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `BallKernel`: The kernel of the ball conjecture: the Riemann hypothesis as positive-definiteness on `ℚ₊^×`
 
 - `BallKernel.re_eq_zero_of_dense`: Twin positivity on the positive rationals puts every pole on the imaginary axis
-- `BallKernel.rh_iff_posDef`: The Riemann hypothesis is positive-definiteness on the positive rationals
+- `BallKernel.rh_iff_posDef`: The Riemann hypothesis is positive-definiteness on the positive rationals ([note](../formalisations/weil-positivity.md))
 - `BallKernel.kerK_inv`: The kernel is even
 - `BallKernel.kerK_explicit`: The explicit formula computes the kernel from the primes
 
@@ -610,11 +610,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `PurityRational`: Purity over `ℚ`: the zeta function of `ℙ¹` over `ℤ`
 
-- `PurityRational.functional_equation`: The functional equation of `ℙ¹`
-- `PurityRational.euler_product`: The Euler product of `ℙ¹`
+- `PurityRational.functional_equation`: The functional equation of `ℙ¹` ([note](../formalisations/weil-positivity.md))
+- `PurityRational.euler_product`: The Euler product of `ℙ¹` ([note](../formalisations/weil-positivity.md))
 - `PurityRational.xiP1_zP1`: Each `ρ` and each `ρ + 1` is a zero of `ζ̂(s)ζ̂(s − 1)`
-- `PurityRational.exists_zero_re_ne_one`: `ζ̂(s)ζ̂(s − 1)` has zeros off its line `Re s = 1`
-- `PurityRational.not_posDef`: The kernel of `ℙ¹` is not positive-definite on the positive rationals
+- `PurityRational.exists_zero_re_ne_one`: `ζ̂(s)ζ̂(s − 1)` has zeros off its line `Re s = 1` ([note](../formalisations/weil-positivity.md))
+- `PurityRational.not_posDef_kerG`: No weight makes the kernel of `ℙ¹` positive-definite ([note](../formalisations/weil-positivity.md))
+- `PurityRational.not_posDef`: The kernel of `ℙ¹` is not positive-definite on the positive rationals ([note](../formalisations/weil-positivity.md))
+- `PurityRational.not_posDef_gauss`: The Gaussian kernel of `ℙ¹` is not positive-definite on the positive rationals ([note](../formalisations/weil-positivity.md))
 
 #### `PurityTest`: The purity test: an Euler product and a functional equation, without positivity
 
@@ -677,6 +679,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `TwoVariableZeta.hasMellin`: On `Re s > w`, `2Z(w, s)` is the Mellin transform
 - `TwoVariableZeta.Z_one`: At `w = 1`, `Z` is the completed Riemann zeta function
 - `TwoVariableZeta.Z_four`: At `w = 4`, `Z` is the zeta function of `ℙ¹` over `ℤ` with its Euler factor at `2` changed
+
+#### `TwoVariableZetaPurity`: The two-variable zeta function at `w = 4` is the zeta function of `ℙ¹`, and it has zeros off its line
+
+- `TwoVariableZetaPurity.Z_four_eq`: `Z(4, 2z) = c(z)·ζ̂(z)ζ̂(z − 1)` off `z = 0, 1, 2`
+- `TwoVariableZetaPurity.Z_four_zP1`: Every zero of `ℙ¹` doubled is a zero of `Z(4, ·)`
+- `TwoVariableZetaPurity.exists_zero_re_ne_two`: The Riemann hypothesis fails for `Z(4, ·)`, whatever the truth of RH
 
 #### `Unconditional`: Saturation without RH: verified zeros, a zero-counting bound, and monotonicity
 
