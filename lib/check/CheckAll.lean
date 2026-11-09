@@ -25,6 +25,7 @@ import BallSharp
 import BallSilent
 import BallUpperEta
 import BallGap
+import BallPivot
 import BallLow
 import HalfPlaneJoinsPNT
 import DivisorExponent
@@ -481,6 +482,17 @@ RH. -/
 #print axioms BallGap.gap_ge
 #print axioms BallGap.edge_law
 #print axioms BallGap.rate_gap
+
+/- The pivots of the orbit form (`formalisations/ball-rate.md`): for `N ≥ 1` and every real `c`,
+`Σc_n² + G(c) ≥ (log N/2 + log 4 + 2)c_N²`, since the vertex `N` of Landau's form has the parents `N/q`, `q` a prime
+power dividing `N`, and `Σ_q Λ(q) = log N`; so under RH `Q_N(x) ≥ (log N/2 + log 4 + 2)/(22e⁸)·x_N²`, the pivots
+tend to infinity, and the pivot inequality `d_k ≥ d_1` of the orbit-lattice conjecture holds for `log k ≥ 7100`.
+With `BallWeil.rh_of_pivots`: the conjecture is RH together with the pivot inequalities for `log k < 7100`. -/
+#print axioms BallPivot.slack_top
+#print axioms BallPivot.pivot_ge
+#print axioms BallPivot.orbitLattice_of_log_ge
+#print axioms BallPivot.pivot_tendsto
+#print axioms BallPivot.orbitLattice_iff
 
 /- The low zeros (`formalisations/ball-rate.md`): under RH, the zeros above `8N` contribute at most
 `(4Σc_n² + G(c)/2)/N` and a pole term to `Q_N(x)`, by `BallUpper.upper_mean` on dyadic shells; and a vector supported

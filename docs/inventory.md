@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1581 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1586 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 189 | 665 |
+| `lib/core` | 190 | 670 |
 | `lib/pnt` | 253 | 808 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 10 | 37 |
@@ -115,6 +115,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallLow.short_le`: Short vectors ([note](../formalisations/ball-rate.md))
 - `BallLow.high_le`: The zeros above `8N` ([note](../formalisations/ball-rate.md))
 
+#### `BallPivot`: Under RH the pivots of the orbit form grow like `log N`: the orbit-lattice inequality for all large `N`
+
+- `BallPivot.slack_top`: The top vertex ([note](../formalisations/ball-rate.md))
+- `BallPivot.pivot_ge`: The pivots grow like `log N` ([note](../formalisations/ball-rate.md))
+- `BallPivot.orbitLattice_of_log_ge`: The orbit-lattice inequality for large `k` ([note](../formalisations/ball-rate.md))
+- `BallPivot.pivot_tendsto`: Under RH the pivots tend to infinity ([note](../formalisations/ball-rate.md))
+- `BallPivot.orbitLattice_iff`: The orbit-lattice conjecture is RH together with finitely many pivot inequalities ([note](../formalisations/ball-rate.md))
+
 #### `BallPsi`: The Hadamard kernel from the primes: `K_H` through Chebyshev's `ψ`
 
 - `BallPsi.kerH_explicit`: The explicit formula for `K_H`, through Chebyshev's `ψ`
@@ -198,7 +206,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallWeil.rh_iff_hodge_index`: The Riemann hypothesis is the Hodge index theorem for the divisors `D_n`
 - `BallWeil.weil_bound`: The Weil bound
 - `BallWeil.rh_iff_weil_bound`: The upper Weil bound gives the Riemann hypothesis
-- `BallWeil.rh_of_pivots`: The orbit-lattice conjecture implies the Riemann hypothesis
+- `BallWeil.rh_of_pivots`: The orbit-lattice conjecture implies the Riemann hypothesis ([note](../formalisations/ball-rate.md))
 
 #### `BohrJoins`: The geometric picture joined to the library
 
