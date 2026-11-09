@@ -203,9 +203,10 @@ Within reach, with no hypothesis, from results the library has:
   has the energy `∫ v²|∇F|² dz dv/v³` and its invariance (`Eis.lintegral_energy_actP`), not the Laplacian.
 - **A zero of `dh` with `Re s > 1`**: the half-plane's `dh` column is filled, by a zero with `Re s > 11/12` at height
   `24415` (`PsiOmega.Locate.Z5.dh_zero_re_gt`). Davenport and Heilbronn's zeros in the half-plane of absolute
-  convergence are rarer: the first is to be expected near height `10¹²` or beyond
-  ([research-opportunities.md](research-opportunities.md), §8.5), where the approximant of the certificate has too
-  many terms and an approximate functional equation with an explicit error would be needed.
+  convergence are rarer. Fifteen are located numerically, the lowest found at height `2.53·10¹²`
+  ([research-opportunities.md](research-opportunities.md), §8.5), where the certificate's approximant has too many
+  terms. A theorem would be either an approximate functional equation for `dh` with an explicit error, or the
+  existence proof by Bohr's argument at low height, which needs Kronecker's theorem and one more located zero.
 
 ## The frontier
 
