@@ -65,6 +65,7 @@ import QuadClassNumber
 import PNTMertens
 import LittlewoodSharp
 import ClassNumberSharp
+import ClassNumberOne
 import Subconvexity
 import SubconvexityCrit
 import InghamDetect
@@ -685,6 +686,18 @@ on `[1, M]` has `Q_N(x) ≥ Σx_n²/(22e⁸M)`. -/
 #print axioms ClassNumberSharp.classNumber_ge_85
 #print axioms ClassNumberSharp.regulator_mul_classNumber_ge_55
 #print axioms ClassNumberSharp.abs_discr_lt_of_classNumber_eq_one
+
+/- Gauss's class number one problem (`formalisations/class-number-one.md`): an imaginary quadratic field has class
+number one if and only if its discriminant is `−3, −4, −7, −8, −11, −19, −43, −67` or `−163`. Only if: the bound
+`|D_K| < 2.5·10⁷` above, the norm form of `𝓞 K` (a principal ideal of prime norm `p` forces `|D_K| ≤ 4p`), and the
+search `heegner_or_good`, which the kernel checks in the 32 computations of `ClassNumberOneCertP0`, …, `P3`. If:
+Minkowski's bound, with every prime up to it inert. -/
+#print axioms QuadPrincipal.abs_discr_le_of_norm
+#print axioms QuadPrincipal.classNumber_eq_one_of_inert
+#print axioms ClassNumberOne.heegner_or_good
+#print axioms ClassNumberOne.discr_of_classNumber_eq_one
+#print axioms ClassNumberOne.classNumber_eq_one_of_discr
+#print axioms ClassNumberOne.classNumber_eq_one_iff
 #print axioms Subconvexity.zeta_strip_of_zeroFree
 #print axioms Subconvexity.zeta_strip_eleven_twelfths
 #print axioms Subconvexity.zetaCritBound_of_zeroFree
