@@ -14,9 +14,9 @@ denotes the number of zeros $ρ=β+it$ of $L(s,χ)$ in the rectangle $σ\leq β\
 by `CGLDensity` has such a zero, except possibly the trivial character, for the value its `LFunction` takes at the
 pole `s = 1`: `LFunction χ s ≠ 0` on `Re s ≥ 1` when `χ ≠ 1` or `s ≠ 1`
 (`DirichletCharacter.LFunction_ne_zero_of_one_le_re`). So their bound as the abstract states it, with one constant
-`C = C(ε)` for every `q` and `T`, gives `CGLDensity` with `C + 1`. (Their Theorem 1.2 states the bound
-with `(qT)^{o(1)}`, as `qT → ∞`; below the threshold the count is at most `q < qT`, so `CGLDensity` follows from the
-theorem too, with a constant depending on `ε`.)
+`C = C(ε)` for every `q`, `T` and `σ`, gives `CGLDensity` with `C + 1`. (Their Theorem 1.2 states the bound
+with `(qT)^{o(1)}`, as `qT → ∞`. If that `o(1)` is uniform in `σ`, `CGLDensity` follows from the theorem too, with a
+constant depending on `ε`: below the threshold the count is at most `q < qT`.)
 
 The file imports only Mathlib.
 -/

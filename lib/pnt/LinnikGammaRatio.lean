@@ -55,7 +55,7 @@ theorem norm_Gamma_le_ratio {a b : ℝ} (ha : 1 / 4 ≤ a) (hb : 1 / 4 ≤ b) (v
   unfold KQ
   linarith
 
-/-- `KQ(a, b) ≤ 2 log(15e⁴)` for `a, b ∈ [1/4, 3]`. -/
+/-- `KQ(a, b) ≤ 6 log(15e⁴)` for `a, b ∈ [1/4, 3]`. -/
 lemma KQ_le {a b : ℝ} (ha : 1 / 4 ≤ a) (ha3 : a ≤ 3) (hb : 1 / 4 ≤ b) (hb3 : b ≤ 3) :
     KQ a b ≤ 6 * Real.log (15 * Real.exp 4) := by
   have he : (1 : ℝ) ≤ Real.exp 4 := Real.one_le_exp (by norm_num)

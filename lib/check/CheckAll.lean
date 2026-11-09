@@ -210,6 +210,7 @@ import LinnikCGLHBRefl
 import LinnikCGLHBIter
 import LinnikCGLHB101
 import LinnikCGLDensity
+import LinnikCGLContinuation
 import SieveMain2
 import LinnikCGLSteps
 import SieveCurve7D
@@ -967,6 +968,9 @@ on `[1, M]` has `Q_N(x) ≥ Σx_n²/(22e⁸M)`. -/
 #print axioms LinnikCGLHB101.cgls3
 #print axioms LinnikCGLHB101.prop31
 #print axioms LinnikCGLDensity.cglDensity
+#print axioms LinnikCGLContinuation.eqOn_LFunction
+#print axioms LinnikCGLContinuation.exists_continuation
+#print axioms LinnikCGLContinuation.cglDensity_of_continuation
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_s29
 #print axioms LinnikCGLSteps.charDensity_inT
@@ -1726,3 +1730,45 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms V3Gen.coer_vprime
 #print axioms V3Gen.pos_vprime
 #print axioms WeilOdd.L05_mixed
+
+/-! ### What `cglDensity` uses
+
+`#print axioms` does not say which theorems a proof uses. This walks the constants that the type and the value of
+`LinnikCGLDensity.cglDensity` mention, transitively, as `scripts/lean/DeadCode.lean` walks them (without its `.ilean`
+step: the proof term is what the kernel checks). It fails if the walk misses `LinnikCGLHB101.prop31` or
+`LinnikFourth.fourth_moment`, which the proof does use, or if it reaches the zero-free half-plane
+`Eis.LFunction_ne_zero_of_re_gt` or any other declaration of its module `DirichletCharHalfPlane`, which is in the
+theorem's import cone (formalisations/chen-gupta-li-density.md, "An audit of the chain"). It lists the modules
+whose declarations the proof uses. -/
+
+open Lean Elab Command in
+#eval show CommandElabM Unit from do
+  let env ← getEnv
+  let modNames := env.header.moduleNames
+  let mut seen : Std.HashSet Name := {}
+  let mut stack : Array Name := #[``LinnikCGLDensity.cglDensity]
+  while !stack.isEmpty do
+    let c := stack.back!
+    stack := stack.pop
+    if seen.contains c then continue
+    seen := seen.insert c
+    let some ci := env.find? c | continue
+    stack := stack ++ ci.type.getUsedConstants
+    if let some v := ci.value? (allowOpaque := true) then stack := stack ++ v.getUsedConstants
+    if let .inductInfo v := ci then stack := stack ++ v.ctors.toArray
+  let mut mods : Std.HashSet Name := {}
+  for c in seen do
+    if let some i := env.getModuleIdxFor? c then mods := mods.insert modNames[i.toNat]!
+  for c in [``LinnikCGLHB101.prop31, ``LinnikFourth.fourth_moment] do
+    unless seen.contains c do throwError "the walk from cglDensity misses {c}, which its proof uses"
+  if seen.contains ``Eis.LFunction_ne_zero_of_re_gt || mods.contains `DirichletCharHalfPlane then
+    throwError "LinnikCGLDensity.cglDensity uses the zero-free half-plane (module DirichletCharHalfPlane)"
+  let ext := [`Mathlib, `Init, `Lean, `Std, `Batteries, `Aesop, `Qq, `ProofWidgets, `Plausible, `LeanSearchClient,
+    `ImportGraph, `PrimeNumberTheoremAnd]
+  let lib := (mods.toList.filter fun m => !ext.contains m.getRoot).map toString |>.toArray.qsort
+    (fun a b => decide (a < b))
+  let pnt := (mods.toList.filter fun m => m.getRoot == `PrimeNumberTheoremAnd).map toString |>.toArray.qsort
+    (fun a b => decide (a < b))
+  logInfo m!"LinnikCGLDensity.cglDensity uses {seen.size} constants from {mods.size} modules: {pnt.size} of \
+    PrimeNumberTheoremAnd's, {pnt.toList}, and {lib.size} of the library's, none of them DirichletCharHalfPlane, \
+    {lib.toList}"

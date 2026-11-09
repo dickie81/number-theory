@@ -245,7 +245,7 @@ theorem theta_term {τ : 𝓞 K → ℂ} {C : ℂ}
     (2 * Real.pi * I * conj (σO δ3) / 9) * (conj (σO n) * conj (σO b) ^ 3) * 2 ^ (2 * s - 1)) * hpow
 
 omit [NeZero md] in
-theorem mem_S_of_term_ne_zero {𝔫 𝔟 : Ideal (𝓞 K)} {c : ℂ}
+theorem mem_S_of_term_ne_zero {s : ℂ} {𝔫 𝔟 : Ideal (𝓞 K)} {c : ℂ}
     (h : c * (gCoef ξ k f 𝔫 * dCoef ξ k f 𝔟 * (((absNorm 𝔫 : ℝ)) : ℂ) ^ (-(s : ℂ)) *
       (((absNorm 𝔟 : ℝ)) : ℂ) ^ (-(3 * s) + 1 / 2)) ≠ 0) :
     Squarefree 𝔫 ∧ (absNorm 𝔫).Coprime 6 ∧ (absNorm 𝔟).Coprime 6 := by

@@ -52,7 +52,7 @@ def B2 (ε : ℝ) : ℝ := 2 ^ 50 * (40 * (24 * InghamDensity.KG * CG) ^ 2) * (4
 lemma B1_nonneg (ε : ℝ) : 0 ≤ B1 ε := by unfold B1; positivity
 
 lemma B2_nonneg (ε : ℝ) : 0 ≤ B2 ε := by unfold B2; positivity
-
+set_option maxHeartbeats 400000 in
 /-- **The polynomial class with Huxley's estimate.** Characters with one point `β_χ + iγ_χ` each, `σ ≤ β_χ < 1`,
 `|γ_χ| ≤ T`, and `|P_χ(β_χ + iγ_χ)| ≥ ¼` number at most `(⌊50/ε⌋ + 1)K(B₁ + B₂)Q^{(12/5+53ε)(1−σ)}`,
 `K = ⌊log₂ N⌋ + 1`, for `3/4 ≤ σ ≤ 11/12`: some dyadic block is at least `1/(4K)` (`Pvχ_eq_blocks`); bins of width

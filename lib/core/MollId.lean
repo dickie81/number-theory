@@ -6,7 +6,7 @@ import DensityCore
 * `moll_identity`: `M_X(s)·Σ_{n≤N} n^{−s} = 1 + Σ_{X<j≤XN} a_j j^{−s}` for `X ≤ N`, where
   `M_X(s) = Σ_{m≤X} μ(m)m^{−s}` (`a_1 = 1`; `a_j = Σ_{m|j} μ(m) = 0` for `1 < j ≤ X`);
 * `DPval_eq_cpow`: `D(β + iγ) = Σ_{X<j≤XN} a_j j^{−(β+iγ)}`;
-* `norm_moll_le`: `|M_X(β + iγ)| ≤ X^{1−σ}(1 + log X)` for `β ≥ σ ≥ 0`.
+* `norm_moll_le`: `|M_X(β + iγ)| ≤ X^{1−σ}(1 + log X)` for `σ ≤ β` and `σ ≤ 1`.
 -/
 
 open Real Finset Complex

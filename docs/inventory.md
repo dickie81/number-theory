@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1489 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1492 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 179 | 579 |
-| `lib/pnt` | 252 | 805 |
+| `lib/pnt` | 253 | 808 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -1169,7 +1169,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ChiPNT.psiChi_isBigO_of_zeroFree`: `ψ(x, χ)` in a zero-free half-plane
 - `ChiPNT.psiChi_isBigO_eleven_twelfths`: `ψ(x, χ) = O(x^{11/12+η})`
 
-#### `ChiUniform`: Bounds for the real Dirichlet L-functions, uniform in the modulus
+#### `ChiUniform`: Bounds for Dirichlet L-functions, uniform in the modulus
 
 - `ChiUniform.LFunction_ctr_inv_le`: `‖L(3/2 + it, χ)‖⁻¹ ≤ ζ(3/2)`, from `1/L(s, χ) = Σ χ(n)μ(n)n^{−s}` (a step of `psiChi_le_uniform_of`).
 - `ChiUniform.logDeriv_LFunction_right`: `‖L′/L(s, χ)‖ ≤ −ζ′/ζ(3/2)` on `Re s ≥ 3/2` (a step of `psiChi_le_uniform_of`).
@@ -1316,7 +1316,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `InghamDensity`: Ingham's zero-density exponent `2 + 4c` from `|ζ(1/2 + it)| ≪ |t|^c`
 
-- `InghamDensity.densityXi_of_zetaCrit`: Ingham's exponent from a pointwise bound on the critical line
+- `InghamDensity.densityXi_of_zetaCrit`: Ingham's exponent from a pointwise bound on the critical line ([note](../formalisations/chen-gupta-li-density.md))
 - `InghamDensity.inghamFromC`: `CrossCriteria.InghamFromC c` for every `c ≥ 0`
 - `InghamDensity.densityXi_17_6`: Zero density at the exponent
 - `InghamDensity.densityXi_Theta`: Zero density at `Θ`
@@ -1381,7 +1381,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikAFE`: The approximate functional equation for `L(s, χ)²`
 
 - `LinnikGamma.norm_gammaFactor_ratio_le`: The ratio of two values of the Archimedean factor
-- `LinnikGamma.verticalIntegral_sub_eq`: Moving the line of integration across a simple pole at `0`
+- `LinnikGamma.verticalIntegral_sub_eq`: Moving the line of integration across a simple pole at `0` ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikGamma.afe`: The approximate functional equation for `L(s, χ)²` ([note](../formalisations/hybrid-fourth-moment.md))
 
 #### `LinnikBuckets`: The off-diagonal pairs in dyadic buckets of the analytic conductor
@@ -1390,7 +1390,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `LinnikCGL112`: Their (11.2), the blocks of their Proposition 7.2 summed
 
-- `LinnikCGL112.S3_le_blocks`: The blocks summed
+- `LinnikCGL112.S3_le_blocks`: The blocks summed ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikCGL112.S3_le_112`: Their (11.2), in explicit form
 
 #### `LinnikCGLAsum`: The sum over `a` in their Lemma 8.2, by the Ramanujan sum
@@ -1417,6 +1417,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `LinnikCGLConst.sum_gw_le`: For `q ≥ 1`, `Σ_{h mod q}(h, q) ≤ q·d(q)`, for `gw`.
 - `LinnikCGLConst.KX_le`: For `q ≥ 1`, `L > 0`, `0 ≤ M₁ ≤ L`, `X ≥ 0` and `0 < δ ≤ 1`, `K_X ≤ 40πC_δB₄d(q)⁴L²q(1 + qX)^δ(1 + 2q)^δ`.
+
+#### `LinnikCGLContinuation`: Chen–Gupta–Li's density estimate for any continuation of the `L`-series
+
+- `LinnikCGLContinuation.eqOn_LFunction`: `LFunction χ` is the continuation of the `L`-series ([note](../formalisations/chen-gupta-li-density.md))
+- `LinnikCGLContinuation.exists_continuation`: A continuation exists ([note](../formalisations/chen-gupta-li-density.md))
+- `LinnikCGLContinuation.cglDensity_of_continuation`: Chen–Gupta–Li's density estimate on `[5/7, 16/21]`, for any continuation of the `L`-series ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLCount`: The count of the pairs `(m₁′, n′)` in their Lemma 8.2
 
@@ -1445,7 +1451,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikCGLEps`: Their Lemmas 10.9 and 10.10 with their `⪅`, and their Proposition 10.2
 
 - `LinnikCGLEps.lemma109_eps`: Their Lemma 10.9 with their `⪅`
-- `LinnikCGLEps.lemma1010_eps`: Their Lemma 10.10 with their `⪅`
+- `LinnikCGLEps.lemma1010_eps`: Their Lemma 10.10 with their `⪅` ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikCGLEps.prop102`: Their Proposition 10.2
 
 #### `LinnikCGLFb`: Their `f_b = ψR̃(·, −b)²` for §11, with a `ψ` that is `1` on the centres (the `S₃` side)
@@ -1538,7 +1544,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikCGLL107`: Their Lemma 10.7, the fourth moment of `R` (the `S₃` side)
 
 - `LinnikCGLL107.group_le`: Their Theorem 10.1 on one group of keys
-- `LinnikCGLL107.lemma107`: Their Lemma 10.7, from `CGLT101`
+- `LinnikCGLL107.lemma107`: Their Lemma 10.7, from `CGLT101` ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLL109`: Their Lemma 10.9, the small-gcd terms
 
@@ -1685,8 +1691,8 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `LinnikCGLS3`: Their Proposition 11.1, `CGLS3` from `CGLP81` and `CGLT101`
 
-- `LinnikCGLS3.cgls3`: Their Proposition 11.1 at one point per character
-- `LinnikCGLS3.prop31_pt`: Their Proposition 3.1 at one point per character, from their Proposition 8.1 and Heath-Brown's Theorem 10.1
+- `LinnikCGLS3.cgls3`: Their Proposition 11.1 at one point per character ([note](../formalisations/chen-gupta-li-density.md))
+- `LinnikCGLS3.prop31_pt`: Their Proposition 3.1 at one point per character, from their Proposition 8.1 and Heath-Brown's Theorem 10.1 ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLSep`: Separated points, and the fractions of their Lemma 10.9
 
@@ -1769,7 +1775,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `LinnikDetect.LSeries_aXχ`: `Σ χ(n)a_n n^{−s} = M_X(s, χ)L(s, χ)` on `Re s > 1`.
 - `LinnikDetect.detect_identityχ`: The identity at a zero
-- `LinnikDetect.dichotomy`: The dichotomy at a zero ([note](../formalisations/ingham-density.md))
+- `LinnikDetect.dichotomy`: The dichotomy at a zero ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikDual`: The dual sums as polynomials at the points of the first character, and the kernel of a pair
 
@@ -1828,10 +1834,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikHuxley`: The power trick on `23/29 ≤ σ ≤ 11/12`, and Linnik's exponent `87/35 + η`
 
 - `LinnikHuxley.power_count`: Large values of a power, one point per character
-- `LinnikHuxley.class2_count_small`: The integral class with a short mollifier
+- `LinnikHuxley.class2_count_small`: The integral class with a short mollifier ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikHuxley.class1_huxley`: The polynomial class with powers
 - `LinnikHuxley.count_huxley`: The range `23/29 ≤ σ ≤ 11/12`
-- `LinnikHuxley.charDensity_huxley`: A density estimate over the characters mod `q` with exponent `87/35`
+- `LinnikHuxley.charDensity_huxley`: A density estimate over the characters mod `q` with exponent `87/35` ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikHuxley.linnik_eighty_seven_thirty_fifths`: Linnik's theorem with exponent `87/35 + η`, with no hypothesis
 
 #### `LinnikHybrid`: The hybrid mean value over the characters mod `q`
@@ -1844,7 +1850,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `LinnikIngham`: Ingham's density estimate over the characters mod `q`, and Linnik's exponent `36/13 + η`
 
-- `LinnikIngham.class2_count_ingham`: The integral class, Ingham's way ([note](../formalisations/ingham-density.md))
+- `LinnikIngham.class2_count_ingham`: The integral class, Ingham's way ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikIngham.count_nontrivial_ingham`: The two classes at one modulus, Ingham's way
 - `LinnikIngham.charDensity_ingham`: Ingham's density estimate over the characters mod `q`
 - `LinnikIngham.linnik_thirtysix_thirteenths`: Linnik's theorem with exponent `36/13 + η`, with no hypothesis *paper*
@@ -1863,13 +1869,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LinnikLindelof.norm_LFunction_le_zeta32`: `‖L(s, χ)‖ ≤ ζ(3/2)` on `Re s ≥ 3/2`.
 - `LinnikLindelof.inv_norm_LFunction_le_zeta32`: `‖L(s, χ)‖⁻¹ ≤ ζ(3/2)` on `Re s ≥ 3/2`, from `1/L(s, χ) = Σ χ(n)μ(n)n^{−s}`.
 - `LinnikLindelof.logDeriv_le_interp`: The interpolated bound on `L′/L`
-- `LinnikLindelof.lindelof`: A Lindelöf bound for `L(s, χ)`, uniformly in the modulus *paper* ([note](../formalisations/halasz-montgomery.md))
+- `LinnikLindelof.lindelof`: A Lindelöf bound for `L(s, χ)`, uniformly in the modulus *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikMoment`: Third-moment bounds for the largest singular value
 
 - `LinnikMoment.moment_three`: The simple bound at `r = 3`
 - `LinnikMoment.moment_three_chars`: The simple bound at `r = 3` over the characters mod `q`
-- `LinnikMoment.refined_moment`: Chen–Gupta–Li's Lemma 4.2
+- `LinnikMoment.refined_moment`: Chen–Gupta–Li's Lemma 4.2 ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikMoment.refined_moment_cube`: Lemma 4.2 cubed
 - `LinnikMoment.refined_moment_chars`: Chen–Gupta–Li's Lemma 4.2 over the characters mod `q`
 
@@ -1912,9 +1918,9 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `LinnikTwelve`: The power trick on `3/4 ≤ σ ≤ 11/12` with the estimate, and Linnik's exponent `12/5 + η`
 
-- `LinnikTwelve.class1_twelve`: The polynomial class with Huxley's estimate
+- `LinnikTwelve.class1_twelve`: The polynomial class with Huxley's estimate ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikTwelve.count_twelve_fifths`: The range `3/4 ≤ σ ≤ 11/12`
-- `LinnikTwelve.charDensity_twelve_fifths`: A density estimate over the characters mod `q` with exponent `12/5`
+- `LinnikTwelve.charDensity_twelve_fifths`: A density estimate over the characters mod `q` with exponent `12/5` ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikTwelve.linnik_twelve_fifths`: Linnik's theorem with exponent `12/5 + η`, with no hypothesis *paper*
 
 #### `LinnikTwelveBins`: One block and one bin by the large-values estimate, and Ingham's method at `c = 1/10`
@@ -2601,7 +2607,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveWeight.exists_mellin_bound`: The Mellin transform of `ψ_P`, uniformly in `P ≥ 4`
 - `SieveWeight.norm_Sw_wy_le`: Lemma 1 for the weights `ψ_P`, in `Λ` form, uniformly in `P ≥ 4`
-- `SieveWeight.norm_Sp_le`: Lemma 1 for primes *paper*
+- `SieveWeight.norm_Sp_le`: Lemma 1 for primes *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `SmallPrimes`: The small primes generate the units mod `q`
 
@@ -2612,7 +2618,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SmoothPerron`: A smoothed Perron formula for a general Dirichlet series
 
 - `SmoothPerron.verticalIntegral_eq_smoothedSum`: The smoothed Perron formula
-- `SmoothPerron.verticalIntegral_shift`: Moving the line of integration
+- `SmoothPerron.verticalIntegral_shift`: Moving the line of integration ([note](../formalisations/chen-gupta-li-density.md))
 - `SmoothPerron.mellin_le_geom_of`: The Mellin transform of `Smooth1` on a line, from two Mellin bounds
 - `SmoothPerron.mellin_le_geom`: The Mellin transform of `Smooth1` on a line
 - `SmoothPerron.norm_smoothedSum_sub_le`: Unsmoothing

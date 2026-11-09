@@ -30,7 +30,10 @@ picket fence. It also proves, for every vector and with no hypothesis,
 fails. Its
 numerics measure what silence at the zeros costs over all vectors:
 `≍ log N` in `A + B` at heights `≍ N`, carried by the `⌊2πN/T⌋` dilates of the zeta vector, where the fence pays
-`≍ T log N`.
+`≍ T log N`. The last section, numerics with a heuristic mechanism, finds which zeros hear the vectors near the
+floor of `A + B` (those between `√N` and `N`), identifies those vectors as Selberg's sieve (a mollified `ζ`, quiet up
+to heights proportional to `N`, at the price `A ≈ log N/log z`), and says what probes of the explicit formula below
+height `N` can see of them under RH alone.
 
 ## The three statements, and what can be proved
 
@@ -1878,3 +1881,161 @@ counted conditions are dependent through `ζ`.
     first few zeros. The part outside it can buy as much loudness there, per unit of `A + B`, as the eigenspace has,
     so the cross terms are not controlled.
 - **For the fence, only the constant.** `λ^pf_N ≍ N^{−3/5}log N` (Theorems D′ and E).
+- **What the cheap vectors are** (next section). The vectors near the floor of `A + B` are Selberg's sieve: mollified
+  multiples of `ζ`, quiet up to heights proportional to `N`, at the sieve's price `A ≈ log N/log z`. Probes of the
+  explicit formula below height `N` see that structure under RH alone; they do not see the price of the sieve's tail,
+  which correlates with the primes in short intervals.
+
+## Which zeros hear the cheap vectors (`scripts/lambda_heard.py`; numerics, uncertified, and a heuristic mechanism)
+
+By `rate_slack` every vector with `A + B ≳ log N` has `Q_N(x) ≫ (log N/N)Σx_n²`, and `BallGap.rate_gap` stops at
+`√log N/N` because of the vectors near the floor of `A + B`. This section asks which zeros hear those cheap vectors,
+what the vectors are, and what the explicit formula can see of them. `Q_N` is the exact Gram matrix, built from the
+primes; the zeros (the first 2000 from mpmath, the rest of the first 30000 from `scripts/zeta_zeros_rs.py`) only split
+it by height.
+
+**The flattened weight** (`lambda_heard.py`). Give every zero below a height `T₀` the weight `1/(¼ + T₀²)` in place
+of `1/(¼ + γ²)`. A test function whose Fourier transform is supported in `[−δ, δ]` cannot resolve heights below about
+`1/δ`, so the bottom `λ(T₀)` of the flattened form is roughly what the explicit formula can certify with such a test
+function. `BallCutoff` and `BallSharp` work at `T₀ ≍ N`.
+
+| `N` | `λ_N·N/log N` | `λ(T₀)·N/log N` at `T₀/N = 4, 2, 1, ½, ¼` | `λ(4N)·N` | the edge vector at `T₀ = 4N`: `Q·N/log N` | over `λ(4N)` |
+|---|---|---|---|---|---|
+| `1000` | `0.0480` | `0.0409, 0.0440, 0.0458, 0.0470, 0.0477` | `0.2825` | `0.0674` | `1.65` |
+| `2000` | `0.0476` | `0.0399, 0.0432, 0.0451, 0.0463, 0.0471` | `0.3032` | `0.0659` | `1.65` |
+| `4000` | `0.0472` | `0.0391, 0.0425, 0.0445, 0.0458, 0.0467` | `0.3239` | `0.0646` | `1.66` |
+
+- The zeros below `N/4` carry at most `2%` of `λ_N`, and those below `4N` `15–17%`.
+- At `T₀ = 4N` the bottom belongs to vectors with `A ≈ 0.37·log N`. The edge vector, the bottom of `A + B`, sits a
+  constant `1.65` times above it. It is what caps such a test function at `√log N/N` (its flattened quotient is
+  `O((A + B)/N)`, with `A + B ≈ 2.9√log N`), but the cap cannot show here: the floor `2.9√log N` stays above
+  `0.5·log N` until `N ≈ 4·10¹⁴`. The vectors with `A + B = o(log N)`, which decide between `log N/N` and
+  `√log N/N`, do not exist at any `N` that can be computed with.
+
+**Where the frontier vectors get their `Q_N`** (`--bands`). For the minimisers of `Q_N + s(log N/N)(A + B)Σx_n²`
+(the frontier of the section "The low zeros"), the percentage of `Q_N` from each band of heights, at `N = 4000`:
+
+| `s` | `Q·N/log N` | `(A + B)/log N` | `x₁²` | `≤ 50` | `(50, √N]` | `(√N, N/log N]` | `(N/log N, N/4]` | `(N/4, N]` | `(N, 4N]` | `> 4N` |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `0` | `0.0472` | `1.851` | `0.760` | `0.0` | `0.0` | `0.1` | `0.2` | `1.4` | `6.8` | `91.5` |
+| `0.01` | `0.0585` | `1.438` | `0.866` | `0.0` | `0.0` | `0.7` | `2.0` | `8.6` | `20.6` | `68.1` |
+| `0.1` | `0.1407` | `1.156` | `0.934` | `0.0` | `0.0` | `6.9` | `13.0` | `28.4` | `23.6` | `28.1` |
+| `1` | `0.4301` | `1.041` | `0.963` | `0.0` | `0.1` | `29.4` | `21.9` | `26.5` | `12.5` | `9.6` |
+| `10` | `0.9850` | `1.017` | `0.972` | `1.4` | `2.0` | `54.5` | `15.9` | `15.5` | `6.4` | `4.3` |
+
+- The minimiser of `Q_N` (`s = 0`) is heard above `N`. The cheap vectors, `96–97%` `δ₁`, are heard below it: at
+  `s = 1` and `10`, `78–86%` of their `Q_N` comes from `(√N, N]`, and almost none from `(50, √N]`.
+- At `N = 1000` and `2000`, where `√N < 50` and the band `(50, √N]` is empty, the rows agree to a few points, except
+  that the share of `[0, 50]` falls with `N`: `20.9%`, `8.6%` and `1.4%` at `s = 10`. Silence at the lowest zeros is
+  nearly free, as the paragraph "What silence costs" found.
+
+**Where they turn loud** (`--turnon`). The mean of `|V_x(ρ)|²`, with `Σx_n² = 1`, over the zeros in
+`(√N·2^{j−1}, √N·2^j]`, at `s = 10`:
+
+| `N` | `j = −1` | `0` | `1` | `2` | `3` | `4` | `5` |
+|---|---|---|---|---|---|---|---|
+| `1000` | `0.007` | `0.044` | `0.120` | `0.187` | `0.219` | `0.235` | `0.263` |
+| `2000` | `0.003` | `0.020` | `0.066` | `0.131` | `0.187` | `0.219` | `0.248` |
+| `4000` | `0.001` | `0.009` | `0.045` | `0.119` | `0.168` | `0.206` | `0.230` |
+
+Interpolating between the bands, the mean reaches `0.04` near heights `21`, `47` and `85`, and `0.12` near `45`,
+`115` and `180`. So the height at which these vectors turn loud doubles with `N`, as it does at `s = 1`: it grows
+like `N`, not like `√N`. The star of prime powers alone, which silences `δ₁` only up to about `√N`, does not explain
+them.
+
+**What they are: Selberg's sieve** (`--dilates`, `--sieve`; the mechanism is heuristic). Put `f_m = m·x_m` and
+`α = μ ∗ f`, so that `f = 1 ∗ α` and `F(s) = Σ_{m ≤ N}f_m m^{−s} = Σ_d α_d d^{−s}ζ_{N/d}(s)`, with
+`ζ_X(s) = Σ_{j ≤ X}j^{−s}`; under RH `V_x(ρ) = F(ρ̄)`. The percentage of `Σ_d α_d²/d` in each dyadic block of `d`, at
+`N = 4000`:
+
+| `s` | `A/log N` | `d = 1` | `2–3` | `4–7` | `8–15` | `16–31` | `32–63` | `64–127` | `128–255` | `256–511` | `≥ 512` |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `0` | `0.451` | `89` | `7` | `1` | `0` | `0` | `0` | `0` | `0` | `0` | `2` |
+| `1` | `0.183` | `44` | `20` | `9` | `6` | `5` | `4` | `3` | `2` | `2` | `5` |
+| `10` | `0.168` | `38` | `19` | `9` | `6` | `5` | `5` | `4` | `3` | `3` | `7` |
+
+- **The minimiser of `Q_N` is the zeta vector.** Its `α` is `δ₁` to `89%`, so `F` is close to a smoothed `ζ_N`,
+  quiet at the zeros up to heights `≍ N`. That is Theorem A's class, and why it is heard only above `N`.
+- **The cheap vectors are a sieve.** Their `α` spreads over `d`, its dyadic shares falling slowly, as for Selberg's
+  weights `λ_d = μ(d)log(z/d)/log z` on `d ≤ z`. For those, `f = 1 ∗ λ` has `f₁ = 1`, `f_q = log q/log z` at the
+  prime powers `q ≤ z` (the star the edge vectors carry, `x_q ∝ Λ(q)/q`), and `f_m = 1` on the integers with no
+  prime factor up to `z`. So `F = ζ·M_z` up to the cutoff, with `M_z = Σ_{d ≤ z}λ_d d^{−s}` a mollifier, and `x` is
+  mostly `δ₁`.
+- **Why they are quiet.** At a zero, `ζ_X(ρ) = X^{1−ρ}/(1 − ρ) + O(X^{−1/2})` while `X > |γ|/π`. The terms
+  `X^{1−ρ}/(1 − ρ)` add up to `(Σ_d λ_d/d)N^{1−ρ}/(1 − ρ)`, a boundary term that subtracting a multiple of the zeta
+  vector removes. With a smooth cutoff what is left stays small until `|γ|` reaches about `πN/d` for the `d` that
+  carry the weights, where the approximate functional equation turns `ζ_{N/d}(ρ)` into a dual sum. So weights on
+  `d ≤ z` are quiet up to heights of order `N/z`, later when they taper, and at a fixed `z` the turn-on grows like
+  `N`.
+- **The price is Selberg's.** For weights with `λ₁ = 1` on `d ≤ z`, Selberg's `Λ²` bound gives
+  `Σ_{m ≤ X}(Σ_{d | m}λ_d)² ≫ X/log z`, and the weights above attain its order; so `A = Σ_m f_m²/m ≈ log N/log z`.
+- **The sieve vectors directly** (`--sieve`, `N = 4000`). Take `f = (1 ∗ λ − Σ_d λ_d/d)·(1 − m/N)²`, which has no
+  boundary term:
+
+  | `z` | `x₁²` | `A/log N` | `1/log z` | `Q·N/log N` | mean `|V_x(ρ)|²` reaches `0.05` near height | `2πN/z` |
+  |---|---|---|---|---|---|---|
+  | `10` | `0.902` | `0.353` | `0.434` | `0.320` | `1100` | `2513` |
+  | `30` | `0.957` | `0.267` | `0.294` | `0.378` | `700` | `838` |
+  | `100` | `0.979` | `0.215` | `0.217` | `0.548` | `350` | `251` |
+  | `300` | `0.987` | `0.186` | `0.175` | `0.877` | `150` | `84` |
+
+  - `A/log N` follows `1/log z`.
+  - The turn-on falls as `z` grows, though more slowly than `1/z`, because Selberg's weights taper towards `d = z`.
+  - At `z = 300` the sieve vector, `(A/log N, Q·N/log N) = (0.186, 0.877)`, is next to the frontier's
+    `(0.168, 0.985)` at `s = 10`, and at `z = 100` next to `(0.183, 0.430)` at `s = 1`.
+- **As a law** (heuristic): quiet up to height `T` costs `A ≈ log N/log(cN/T)`. That is `≍ log N` for `T ≍ N`, and
+  `O(1)` for `T = N^θ` with `θ < 1`. With `rate_slack` it is the inverse theorem the rate needs: a vector with
+  `A + B = o(log N)` is a sieve of length `z → ∞`, heard from heights of order `N/z^{0.6}` on (the table's turn-on),
+  where `Q_N` collects much more than `log N/N`.
+
+**What the explicit formula can see of this** (on paper; the identity is checked numerically below). Take
+`h(t) = φ(t/T)/T`, with `φ` even and `φ̂` supported in `[−1, 1]`, and a probe `D(s) = Σ_{n ≤ L}d_n n^{−s}` with
+`L ≤ T/2`. Weil's explicit formula, term by term in
+`Σ_γ h(γ)F(½ + iγ)\overline{D(½ + iγ)} = Σ_{m,n}f_m d_n(mn)^{−1/2}Σ_γ h(γ)(n/m)^{iγ}`, gives exactly
+
+  `Σ_γ h(γ)F(½ + iγ)\overline{D(½ + iγ)} = (1/2π)∫h(t)Ω(t)dt·⟨f, d⟩ − (∫h/2π)·⟨W_T f, d⟩ + R(f, d)`,
+
+with `Ω(t) = Re ψ(¼ + it/2) − log π`, `⟨f, d⟩ = Σ_{n ≤ L}f_n d_n/n`, and
+`(W_T f)(n) = Σ_{k | n}Λ(k)f_{n/k} + Σ_{k < T/n}(Λ(k)/k)f_{kn}`. The diagonal and the first `W_T` term are exact
+because the windows `|log(kn/m)| ≤ 1/T` hold one integer while `kn < T`. `R` collects the rest: the poles,
+`h(i/2)F(0)D(1) + h(−i/2)F(1)D(0)`; the archimedean kernel off the diagonal, of size `O(1/(T|log(m/n)|))`; and the
+prime powers with `kn ≥ T`, which see `f` only through its averages over windows of relative width `1/T`.
+
+- **Checked numerically** (`--probes`, `N = 1000`, the probe `D = 1`, `φ(u) = (1/8π)(sin(u/4)/(u/4))⁴`). The sum over
+  the zeros and the explicit formula agree to `3·10⁻⁶` for every vector below, at `T = N/16` and `N/4`. The residual
+  is the archimedean integral cut at `|t| ≤ 160T` (`4.5·10⁻⁵` when cut at `40T`, as its `t⁻³` tail predicts). At
+  `T = N/16`:
+
+  | `x` | the zero sum | main term | `R` | poles | archimedean off the diagonal | prime powers `k ≥ T` |
+  |---|---|---|---|---|---|---|
+  | `δ₁` | `0.1529` | `0.1516` | `0.0013` | `0.0013` | `0.0000` | `0.0000` |
+  | zeta vector `(1 − m/N)²/m` | `0.0032` | `−0.0251` | `0.0282` | `0.1696` | `−0.0026` | `−0.1387` |
+  | minimiser of `Q_N` | `0.0010` | `−0.0074` | `0.0084` | `0.3561` | `−0.0026` | `−0.3452` |
+  | sieve, `z = 30` | `0.0269` | `0.0709` | `−0.0441` | `0.0011` | `0.0001` | `−0.0452` |
+  | sieve, `z = 100` | `0.0445` | `0.0944` | `−0.0499` | `0.0012` | `0.0000` | `−0.0511` |
+  | frontier, `s = 10` | `0.0659` | `0.0913` | `−0.0255` | `0.1206` | `−0.0008` | `−0.1453` |
+
+  - The archimedean kernel off the diagonal is negligible throughout.
+  - The quiet vectors with `A ≍ log N`, the zeta vector and the minimiser, are nearly harmonic: their main term is
+    small. Their `R` is a near-cancellation between the poles and the prime powers above `T`, the prime number
+    theorem.
+  - The cheap vectors are not harmonic: their main term is half of `δ₁`'s. The prime powers above `T`, that is the
+    correlation of their tails with the primes, cancel about half of it (`T = N/16` is above their quiet range at
+    this `N`). That is where they pay, as the last bullet below says.
+- **Quietness controls the left side, under RH alone.** By Cauchy–Schwarz against `Q_N`, it is at most
+  `(Q_N(x)·Σ_γ h(γ)²(¼ + γ²)|D(½ + iγ)|²)^{1/2} ≪ (Q_N(x)·T log T·Σ_n d_n²/n)^{1/2}`, the last by the mean value at
+  the zeros for polynomials shorter than the height. For `Q_N(x) ≤ ε(log N/N)Σx_n²` and a probe `d = f` on a block
+  `B` carrying `A_B = Σ_{n ∈ B}f_n²/n` of the spread, that is `(εT/(N·A_B))^{1/2}` relative to the main term
+  `log T·A_B`. So below height `N` a quiet vector satisfies `⟨(log T − W_T)f, d⟩ ≈ −R(f, d)` (constants aside)
+  against every short probe.
+- **Without `R` it would be harmonic.** Since `W_T 1 = log T − γ + o(1)`, the identities say that `f` is nearly
+  harmonic below `T/2` for the Laplacian of the divisibility network with the weights of Landau's form. Propagated
+  down the levels from `f₁`, harmonicity would give `f ≈ f₁` on `[1, T/2]` and `A ≳ f₁²·log T`: the inverse theorem.
+- **`R` is where the sieve pays.** Its prime part correlates the tail of `f` with the primes in windows of relative
+  width `1/T`, and the sieve's tail sits on the integers with no prime factor up to `z`, every prime above `z` among
+  them. For that part, Cauchy–Schwarz with the variance of primes in short intervals that pair correlation predicts,
+  `∫_X^{2X}(ψ(x + x/T) − ψ(x) − x/T)²dx ≍ (X²/T)log T`, gives only `(A·N log T/T)^{1/2}`. At `T = N/log N` that is
+  `√A·log N`, the size of the main term, and RH alone gives a weaker bound. So the probes reduce `λ_N ≫ log N/N`
+  to a lower bound for the price of correlating a tail with the primes in short intervals: Selberg's `log N/log z`
+  if the tail has to be a sieve. Showing that it has to is the inverse theorem again; neither RH nor pair
+  correlation supplies it.

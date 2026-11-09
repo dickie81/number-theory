@@ -8,9 +8,9 @@ import LFunctionGrowth
 `χ₄` argument, for every primitive real (quadratic) Dirichlet character `χ ≠ 1` of any
 modulus `N` and either parity.
 
-**Partial sums.** `|Σ_{k < n} χ(k)| ≤ N` (`abs_sum_cR_le`), since the sum over a period vanishes.
+**Partial sums.** `|Σ_{1 ≤ k ≤ x} χ(k)| ≤ N + 1` (`abs_summ_cR_le`), since the sum over a period vanishes.
 Partial summation then gives `L(s, χ) = s∫_1^∞ S(x)x^{−s−1}dx` on `Re s > 0` (`LFunction_eq_Iχ`), so
-* `‖L(s, χ)‖ ≤ (N + 1)‖s‖/Re s` (`norm_LFunction_le`);
+* `‖L(s, χ)‖ ≤ (N + 1)‖s‖/Re s` (`norm_LFunction_leC`);
 * `|L(σ, χ) − 1| ≤ (N + 2)/(σ − 1)` for `σ > 1` (`abs_LFunction_sub_one_le`);
 * if every partial sum is `≥ 0`, `L(σ, χ) ≥ 1 − 2^{−σ} > 0` on `(0, ∞)` (`LFunction_real_ge`): no
   real zero, in particular no Siegel zero.

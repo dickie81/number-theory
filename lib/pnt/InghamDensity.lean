@@ -15,7 +15,7 @@ Plain statement. If `|ζ(1/2 + it)| ≤ C|t|^c` for `|t| ≥ 2` (`CrossCriteria.
 The count in a window `U ≤ |γ| ≤ 2U` (`window_count_c`), with `X = ⌊U⌋`, `Y = U^{1+2c}` and
 `N = ⌊22 Y log Y/X⌋ + 1`: by part 1's `trichotomy` every zero with `β ≥ σ` falls in one of three classes, and each
 class is counted over the two parity classes of the unit windows of `|γ|` (`card_le_of_classes`, with
-`ZeroLocal.card_local_le` for the multiplicity of a window).
+`ShortWeil.card_local_le` for the multiplicity of a window).
 * `|P₁|, |P₂| ≥ 1/4` (`class_count_b`): `DensityCore`'s chain with coefficients `|b_j| ≤ d(j)` (dyadic blocks,
   `DirMean.large_values_off'`, `DivSq.sum_card_divisors_sq_le`), at most
   `16K³·32e(1 + log 2XN)⁶(U X^{1−2σ} + (XN)^{2−2σ})` per parity class, `K = ⌊log₂ N⌋ + 1`.
