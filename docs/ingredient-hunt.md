@@ -526,3 +526,9 @@ ADV is not detector-like — but Thm 1.3 does not require detector-like coeffici
 | Residual | `T=1` hypothesis (H) on `J_6` at `\|I|≈q^{7/18}` — already in `cgl-s3` §8; unchanged Partial / open |
 
 **No improvement of `A` or `L`. Loophole retracted for the main density theorem.**
+
+---
+
+## Follow-up: hypothesis (H) openings
+
+See `docs/hypothesis-h-hunt.md` (seed 20261109, 18 openings). **No proved η.**
