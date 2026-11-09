@@ -127,15 +127,19 @@ results.
 An independent pass over the chain from `cglDensity` down, looking for anything that could make the theorem say less
 than it appears to, or rest on more than it should.
 
-- **Axioms.** At the branch head `5b346ff`, CI's Lean build reports `[propext, Classical.choice, Quot.sound]` for
-  `cglDensity`, `charDensity_e`, `parCGLe_good` and `prop31`, as it does on `main` at `b48f5a3`. Its gate
-  `scripts/check_axioms.py`, which elaborates each check file afresh, finds every report within those three: 146 of
-  146 in `Check.lean`, 1206 of 1206 in `CheckAll.lean`, 34 of 34 in `CheckZeta23.lean` and 71 of 71 in `CheckDH.lean`.
-  A local build of `LinnikCGLDensity` from `bb094dc` (`scripts/build.sh`, Mathlib from its cache) reports the same
-  axioms for `cglDensity`. Since `bb094dc`, seven Lean files have changed, in plain comments and in `set_option` lines
-  put on blank lines (below). Each compiles to the same `.olean` as before, byte for byte, so the checks below, made on
-  the build of `bb094dc`, hold at the head. CI agrees: building `5b346ff`, it recompiled the six files changed there
-  and replayed every module that imports them, which Lake does only when the recompiled `.olean` is unchanged.
+- **Axioms.** At the branch head `f89aa26`, CI's Lean build, a cold build of every library with `autoImplicit` and
+  `relaxedAutoImplicit` off (below), reports `[propext, Classical.choice, Quot.sound]` for `cglDensity`,
+  `charDensity_e`, `parCGLe_good` and `prop31`, as it does on `main` at `b48f5a3`. Its gate `scripts/check_axioms.py`,
+  which elaborates each check file afresh, finds every report within those three: 146 of 146 in `Check.lean`, 1206 of
+  1206 in `CheckAll.lean`, 34 of 34 in `CheckZeta23.lean` and 71 of 71 in `CheckDH.lean`. A local build of
+  `LinnikCGLDensity` from `bb094dc` (`scripts/build.sh`, Mathlib from its cache) reports the same axioms for
+  `cglDensity`. Since `bb094dc`, seven Lean files have changed in plain comments and in `set_option` lines put on blank
+  lines, three have gained an explicit binder, and the lakefile has turned the two options off (below). None of this
+  changes a compiled module. The six files of `5b346ff` compile to the same `.olean` as before, byte for byte, and CI,
+  building them, replayed every module that imports them, which Lake does only when the recompiled `.olean` is
+  unchanged. Rebuilt with the options off, the 427 library modules built here, the proof's 109 among them, compile to
+  the same `.olean` as before, byte for byte; PNT+, whose options did not change, was not rebuilt. So the checks below,
+  made on the builds of `bb094dc` and `5fc056f`, hold at the head.
 - **No route around the kernel.** The lakefile sets only `autoImplicit` and `relaxedAutoImplicit`, both off, for the
   whole package. Nothing in `lib/`, the vendored
   libraries included, uses `skipKernelTC`, `addDeclWithoutChecking`, `unsafe`, `implemented_by`, `native_decide` or
@@ -145,12 +149,13 @@ than it appears to, or rest on more than it should.
   on, and proves `uses_bogus : False` from it, gets "'uses_bogus' does not depend on any axioms".
   `scripts/kernel_check.sh` re-checks a theorem with every constant it depends on, outside the build, by the checkers
   the pinned toolchain ships. It first makes each of them reject that module. For `cglDensity`, built locally from
-  `bb094dc`:
+  `bb094dc` (and again from `5fc056f`, with the same export and the same verdicts, in 13 min 45 s in all):
   - `leanexport` (lean4export 3.1.0) writes the theorem with what it depends on: 14,591,566 records, 785 MB.
   - Lean's kernel reading that export (`leanchecker --from-export`) accepts it, in 214 s.
   - nanoda 0.4.17, an independent kernel in Rust, accepts it: "Checked 84260 declarations with no typechecker
     errors", in 154 s. Only `propext`, `Classical.choice` and `Quot.sound` are permitted, and any other axiom is a hard
-    error.
+    error. Its one "pretty printer error" is "Unable to print axioms": after the check it fails to print the list of
+    axioms, which the configuration has already restricted.
   - con-leche and con-ron each report "accepted 81578 declarations", in 77 s and 100 s. They run in `--verified` mode,
     the mode of con-leche's theorem `ConLeche.no_proof_of_False`: an environment it accepts holds no constant of type
     `False`. Both note that they modelled one inductive block, `Lean.Syntax`, in-process. It comes in through
@@ -190,8 +195,12 @@ than it appears to, or rest on more than it should.
   statement means to quantify over (`s` in `KubotaCompleted.mem_S_of_term_ne_zero`, `δ` in
   `Mollify.archIntegrand_Av_le`, `a` in `ParitySplit.arch_part`). Each is now declared where Lean put it, so the three
   statements are unchanged. The package now turns both options off for every library, the vendored ones included
-  (`scripts/gen_lakefile.py`), so a name that a declaration does not bind is an error. The full rebuild that the
-  change forces checks the 698 modules not built here.
+  (`scripts/gen_lakefile.py`), so a name that a declaration does not bind is an error. The change rebuilds every
+  module. CI's cold build of every library with both options off passes at `f89aa26` (10,229 jobs, the axiom gates,
+  dead code and warnings included), so no other declaration relied on the default: not in the 698 modules not built
+  here, nor in the vendored Zeta23, whose upstream turns off only `relaxedAutoImplicit`. Rebuilt here with the options
+  off, the 427 library modules built here, the three with a new binder included, compile to the same `.olean` as
+  before, byte for byte.
 - **Heartbeat margins.** Lean stops elaborating a declaration after `maxHeartbeats`, 200,000 by default, which the
   library keeps except where a declaration raises it. Re-elaborating the 109 modules under Lake's setup with the
   default lowered to 150,000, 175,000 and 190,000 finds 15 declarations that need more than 150,000:
