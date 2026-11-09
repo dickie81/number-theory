@@ -9,6 +9,7 @@ import ChiFirstFailure
 import DHBohrSphere
 import DHColumnRest
 import DHBallKernel
+import DHLocate5
 
 /- The function: `dh ≢ 0`, its functional equation, the conjugation symmetry of its zeros, the coefficients of
 `−dh′/dh`, the sum over its zeros and the Euler–Maclaurin bound. -/
@@ -21,13 +22,16 @@ import DHBallKernel
 #print axioms PsiOmega.dh_div_a1_real_ge
 
 /- Its zeros off the critical line: a negative value of the Weil form certifies one, the certificate's zero, which is
-not real and may be taken right of the line, four zeros located in boxes, and GRH and RH for `dh` refuted. -/
+not real and may be taken right of the line, four zeros located in boxes, a fifth at height `24415` with real part
+above `11/12`, and GRH and RH for `dh` refuted. -/
 #print axioms PsiOmega.exists_offline_dh_of_neg
 #print axioms PsiOmega.dh_offline_zero
 #print axioms PsiOmega.dh_offline_nonreal_zero
 #print axioms PsiOmega.dh_offline_zero_right
 #print axioms PsiOmega.dh_offcross_zero
 #print axioms PsiOmega.Locate.dh_zeros_located_four_box
+#print axioms PsiOmega.Locate.Z5.dh_zero_located_five
+#print axioms PsiOmega.Locate.Z5.dh_zero_re_gt
 #print axioms PsiOmega.not_GRH_dh
 #print axioms PsiOmega.dhRH_iff_cross
 #print axioms PsiOmega.dh_zero_pair_off_sphere
