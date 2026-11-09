@@ -296,17 +296,35 @@ than it appears to, or rest on more than it should.
   - That needs none of `ZMod.LFunction`'s construction, which goes through Hurwitz zeta functions, Mellin transforms
     of theta kernels and `Γ`. `LFunction χ` is differentiable at every `s ≠ 1` (`differentiableAt_LFunction`), so it
     is analytic on the connected open set `ℂ ∖ {1}`, and it agrees there with the `L`-series on `Re s > 1`. By the
-    identity theorem it is the analytic continuation of `Σ χ(n)n^{−s}`, however it is built. The statement's
-    number-theoretic definitions, 70 of its 5275 constants, are these: `MulChar`, `ZMod` and `DirichletCharacter`
-    (`MulChar (ZMod q) ℂ`) with its `Fintype`, `LFunction` with the functions it is built from, and the real and
-    complex powers, logarithms and `π`. The others are Mathlib's and Lean's foundations: algebra, order, the real and
-    complex numbers, finite sets, measure and topology.
+    identity theorem it is the analytic continuation of `Σ χ(n)n^{−s}`, however it is built
+    (`LinnikCGLContinuation.eqOn_LFunction`). The statement's number-theoretic definitions, 70 of its 5275 constants,
+    are these: `MulChar`, `ZMod` and `DirichletCharacter` (`MulChar (ZMod q) ℂ`) with its `Fintype`, `LFunction` with
+    the functions it is built from, and the real and complex powers, logarithms and `π`. The others are Mathlib's and
+    Lean's foundations: algebra, order, the real and complex numbers, finite sets, measure and topology.
   - It depends on the library only through `CGLDensity` (`scripts/lean/StatementClosure.lean`). Followed through
     types and the bodies of definitions, but not through proofs, `cglDensity`'s type reaches 5275 constants: 5267 of
     Mathlib, Lean, Batteries and Aesop, `CGLDensity` itself, and seven facts its body abstracts, `Nat.AtLeastTwo` for
     the numerals 5, 7, 16, 21, 2 and 3 and `IsDomain ℂ`. No other declaration of the library, and none of
     PrimeNumberTheoremAnd's, can change what the theorem says. They enter only through proofs, which the kernels
     check.
+  - `LinnikCGLContinuation.cglDensity_of_continuation` states the estimate without `LFunction`. Take any functions
+    `F χ`, differentiable on `ℂ ∖ {1}`, that agree with the `L`-series `LSeries (χ ·)` on `Re s > 1`. It bounds the
+    number of characters whose `F χ` has a zero `s ≠ 1` in the paper's rectangle `σ ≤ Re s ≤ 1`, `|Im s| ≤ T` by the
+    same `C(qT)^{(7/3)(1−σ)+ε}`. Such functions exist (`LinnikCGLContinuation.exists_continuation`), so it is not
+    vacuous. On `ℂ ∖ {1}` they are `LFunction χ`, so the characters it counts are among those `cglDensity` counts,
+    and the bound follows with the same `C`. Followed the same way, its type reaches 3240 constants, none of the
+    library's and none of measure theory. Ten are from `Mathlib.NumberTheory`:
+    - `MulChar` with its constructor, `toMonoidHom` and `FunLike` instance;
+    - `DirichletCharacter` with its `Fintype` instance, `Fintype.ofFinite`;
+    - `LSeries` with `LSeries.term`, so that `LSeries f s = Σ' n, if n = 0 then 0 else f n / n ^ s`;
+    - two proofs these carry: that the coercion to functions is injective, and that there are finitely many
+      characters.
+
+    The others are Lean's and Mathlib's foundations: algebra, order, the integers mod `q`, the real and complex
+    numbers, finite sets, topology and the derivative (`DifferentiableOn`). So what the theorem says can be read off
+    those ten. The Hurwitz zeta functions, Mellin transforms and `Γ` behind `LFunction` enter only through proofs,
+    which the kernels check. Its proof adds four constants to `cglDensity`'s 83,231: itself, `eqOn_LFunction` and
+    two lemmas that `simp` generates. Mathlib's identity theorem was already among them.
 
 ### Module by module
 

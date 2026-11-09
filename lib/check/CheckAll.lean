@@ -210,6 +210,7 @@ import LinnikCGLHBRefl
 import LinnikCGLHBIter
 import LinnikCGLHB101
 import LinnikCGLDensity
+import LinnikCGLContinuation
 import SieveMain2
 import LinnikCGLSteps
 import SieveCurve7D
@@ -947,6 +948,9 @@ on `[1, M]` has `Q_N(x) ≥ Σx_n²/(22e⁸M)`. -/
 #print axioms LinnikCGLHB101.cgls3
 #print axioms LinnikCGLHB101.prop31
 #print axioms LinnikCGLDensity.cglDensity
+#print axioms LinnikCGLContinuation.eqOn_LFunction
+#print axioms LinnikCGLContinuation.exists_continuation
+#print axioms LinnikCGLContinuation.cglDensity_of_continuation
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_s29
 #print axioms LinnikCGLSteps.charDensity_inT
