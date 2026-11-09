@@ -11,3 +11,4 @@ Companion to `docs/hypothesis-h-hunt.md` (short character sums at `x=q^{7/18}`).
 Reuses the discrete-log FFT pattern of `scripts/cgl_s3/blocks.py`.
 | `j6_anatomy_bookkeeping.py` | LoD 6/7 vs FI/HB/FKM; Kl3/Deligne vs geometric |
 | `j6_k_decompose.py` | Per-k N(kq) decomposition of J6; localize excess |
+| `trilinear_S.py` | Exact S(r)=sum e(r n1 n2 n3/q); max/RMS vs geo/need |

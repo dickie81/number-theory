@@ -409,3 +409,143 @@ No η>0 proved. No call to price/`density_payoff` for a new `A` or `L`.
 | `k`-decomposition obstacle | Finite-`q`: diagonal; asymptotic: still `F` / LoD |
 | Pretentious dyadic rigorization | **Partial** heuristic; theorems miss the range |
 | (H) itself | **Open** |
+| Trilinear `S(r)` / BGK / PS for `q^{1/9}` | **Dead** (see next section): average circular; explicit bounds miss; BGK non-explicit |
+
+
+---
+
+## Attack on the `q^{1/9}` gap in `S(r)` (2026-11-09)
+
+Target: beat the incomplete-geometric bound `|S(r)| ≪ x³/q + x²` by an extra `q^{1/9}`
+(pointwise or on an exceptional-set of `r`) so that LoD for `r₃^I` reaches level `6/7`.
+Does **not** repeat LoD literature survey, Bettin–Chandee, Kuznetsov, or `D+S+F`.
+
+Script: `scripts/hypothesis_h/trilinear_S.py`.
+
+### (a) Explicit `S(r)` and circularity of averaging
+
+**Definition.** For `I = (x, 2x]`, `x = q^{7/18}`, and `r ∈ F_q`,
+
+```
+S(r) = Σ_{n₁,n₂,n₃ ∈ I} e(r n₁ n₂ n₃ / q).
+```
+
+(`r = 0` gives `|I|³`. The LoD error uses `r ≠ 0`.) Equivalently, writing `m = n₁n₂` and
+`r₂(m) = #{(n₁,n₂)∈I² : n₁n₂ = m}`,
+
+```
+S(r) = Σ_m r₂(m) · Σ_{n₃∈I} e(r m n₃ / q),
+```
+
+so the inner sum is an incomplete geometric sum of length `|I|` — whence the bound
+`|S(r)| ≪_ε x³/q + x²`.
+
+**Average over `r` is circular.** By orthogonality,
+
+```
+Σ_{r mod q} |S(r)|² = q · J₆(I).
+```
+
+Hence
+
+```
+Σ_a E_a² = q^{−1} Σ_{r≠0} |S(r)|² = J₆(I) − |I|⁶/q
+```
+
+(up to the `q` vs `q−1` normalisation). **Bounding the average of `|S|²` is literally (H).**
+Any argument that only controls `Σ_r |S(r)|²` cannot prove (H); it restates it. The needed
+extra saving must be **pointwise** in `r` (or for all `r` outside a sparse exceptional set
+whose contribution can be estimated separately without re-encoding `J₆`).
+
+**Propagation.** If `|S(r)| ≪ q^{7/9 − δ}` for every `r ≠ 0`, then
+`Σ_a E_a² ≪ q^{14/9 − 2δ}`. Comparing to need `q^{4/3 − η}`:
+
+```
+η ≤ 2δ − 2/9.
+```
+
+So `η > 0` requires **`δ > 1/9`**. Geometric has `δ = 0` in this normalisation.
+
+### (b) Multilinear exponential-sum bounds — explicit check
+
+Sizes: `|I| = x = q^{7/18}`, `|I|³ = q^{7/6}`, trivial `|S| ≤ q^{7/6}`, geometric `q^{7/9}`,
+need `q^{2/3}`.
+
+| Bound | Formula (equal sizes) | Exponent at `θ=7/18` | vs geo `q^{7/9}` | Range |
+|---|---|---|---|---|
+| Trivial | `x³` | `7/6 ≈ 1.167` | worse | — |
+| Incomplete geometric | `x³/q + x²` | `7/9 ≈ 0.778` | = geo | always |
+| Bilinear after 1 var (PS (1.6)) | `p^{1/2} x^{1/2}x^{1/2}x` | `1/2+2θ ≈ 1.278` | worse | — |
+| Bourgain–Garaev 2009 | `(x³)^{13/16} q^{5/18}` | `≈ 1.226` | worse | — |
+| Petridis–Shparlinski 2016 (Thm 1.1, arXiv:1604.08469) | `q^{1/4} x^{19/8}` | `169/144 ≈ 1.174` | worse | nontrivial for `x ≥ q^{2/5}`; we have `7/18 < 2/5` — **out of range** |
+| Bourgain multilinear (BGK / Bourgain GAFA 2009) | `q^{−η(δ)} x³` under `|A_i|>q^δ` and `∏\|A_i\| > q^{1+δ}` | some `7/6 − η` | ? | see below |
+
+**BGK applicability (verified against Bourgain’s condition).**
+- With `δ = 7/18`: need `|I|³ > q^{1+7/18} = q^{25/18}`, but `|I|³ = q^{21/18}` — **fails**.
+- With `δ < 1/6`: `|I| = q^{7/18} > q^{1/6}` and `|I|³ = q^{7/6} > q^{1+δ}` — **applies**, giving
+  `|S(r)| < q^{−η} |I|³` for some `η = η(δ) > 0` and all `r ≠ 0`.
+
+**Does BGK reach `δ_save > 1/9` over geometric?** To beat geometric need saving
+`η ≥ 7/18` over trivial (so `7/6 − η ≤ 7/9`). To reach the (H) threshold need `η ≥ 1/2`
+over trivial. Bourgain’s papers prove **existence** of some `η(δ) > 0`; the dependence is of
+tower / iterated-exponential type in `1/δ` (not an explicit `η ≥ 1/9`). **No explicit η ≥ 1/9
+is claimed or verified here.** Qualitative BGK therefore does **not** give a usable `δ > 1/9`
+beyond geometric for pricing `A`.
+
+**Kerr–Shparlinski / Macourt–Shkredov–Shparlinski.** These treat bilinear forms with
+Kloosterman sums, or trilinear sums over subgroups / general sets; they do not supply a
+verified explicit bound that beats `x²` for three **intervals** of length `q^{7/18}`.
+(Kerr–Shparlinski arXiv:2204.05038 is about Kloosterman bilinear forms — different object.)
+
+**Verdict on (b): no proved power `δ > 1/9`.** Explicit trilinear bounds are weaker than
+geometric at our size; BGK gives a non-explicit ε over trivial, not over geometric.
+
+### (c) Additive structure of intervals / sum-product
+
+Intervals have `|I−I| ≪ |I|` (additively structured) and `|I·I| ≍ |I|²` (multiplicatively
+expanding). Sum-product exponential-sum technology (Bourgain, Garaev, Shkredov) is designed
+for sets that are **additively unstructured**; for intervals the **geometric bound already
+exploits additive structure** (one-variable completion). Further cancellation must come from
+the sum `Σ_{n₁,n₂} min(x, ‖r n₁ n₂/q‖^{−1})` beyond the standard min-bound — i.e. from
+correlation of the lattice `{n₁n₂}` with the Farey dissection of `r/q`. No theorem checked
+here upgrades that min-sum by a power `q^{1/9}` uniformly in `r ≠ 0`.
+
+Hegyvári-type bounds for sets with small difference sets exist (cited in PS §1) but, as PS
+notes, do not improve with a third interval factor in a way that beats geometric at
+`|I|=q^{7/18}` (not re-derived; no explicit competing exponent recorded).
+
+**Verdict on (c): no proved upgrade.** Additive structure of `I` is already spent in the
+geometric bound.
+
+### (d) Numerics (`trilinear_S.py`)
+
+Exact `S(r)` via `r₂`-expansion + closed geometric sum in the third variable; Parseval
+identity spot-checked (`Σ|S|²/q = J₆`).
+
+| `q` | `max\|S\|/geo` | `RMS/geo` | `RMS/need` | `max ~ q^α` | `RMS ~ q^β` |
+|---|---|---|---|---|---|
+| 503 | 1.72 | 0.65 | 1.23 | 0.86 | 0.70 |
+| 10007 | 3.35 | 0.46 | 1.27 | 0.91 | 0.69 |
+| 30011 | 4.80 | 0.41 | 1.28 | 0.93 | 0.69 |
+| 100003 | 6.19 | 0.36 | 1.28 | 0.94 | 0.69 |
+
+- **Pointwise max is worse than `L²` by a growing factor** (consistent with log-factors in the
+  min-sum); exponent climbing toward ~1, not toward `2/3`.
+- **RMS sits at `~q^{0.69}`**, about `1.28 · need`, flat in `q` at these sizes — matching
+  that `Σ|S|²` encodes the diagonal-dominated `J₆` excess (circularity).
+- No numerical evidence of a pointwise power below geometric.
+
+### (e) Does anything prove (H)?
+
+**No.** No line-by-line proof; no `η > 0`; no call to `price.py` / `density_payoff` for a new
+`A` or `L`.
+
+| Claim | Status |
+|---|---|
+| Average `|S|²` saving ⇒ (H) | **Circular** (identity) |
+| PS / BG / bilinear beat geo at `θ=7/18` | **No** (worse or out of range) |
+| BGK with `δ<1/6` gives explicit `δ_save>1/9` over geo | **Not verified / not claimed** |
+| Interval sum-product upgrades geo by `q^{1/9}` | **No proof found** |
+| Numerics support pointwise `q^{2/3}` | **No** (max worse; RMS stuck by Parseval) |
+
+**(H) remains open. The `q^{1/9}` wall stands.**

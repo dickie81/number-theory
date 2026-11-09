@@ -2201,7 +2201,7 @@ Residual open route after ADV-loophole retraction: `cgl-s3` §8 hypothesis (H) o
 `J₆(I)` at `|I|≈q^{7/18}`. Exclusion list + 18 shuffled openings (seed `20261109`):
 no proved η>0; moment family optimal at exactly `2/3`; Burgess misses V; Paley does
 not obstruct; dyadic numerics mild (α≈0.63±0.03 for q≤10^5) but finite-q.
-Details: `docs/hypothesis-h-hunt.md`; scripts in `scripts/hypothesis_h/`. Deep dive (J6 k-decomposition, LoD 6/7 vs Kl3/Deligne, pretentious range): same doc, section “Deep dive: anatomy of J6”. Verdict: LoD angle Dead (need 6/7, geometric reaches ≤2/3); finite-q excess is k=0 diagonal; (H) still open.
+Details: `docs/hypothesis-h-hunt.md`; scripts in `scripts/hypothesis_h/`. Deep dive (J6 k-decomposition, LoD 6/7 vs Kl3/Deligne, pretentious range): same doc, section “Deep dive: anatomy of J6”. Trilinear S(r) attack: average of |S|^2 is circular with (H); Petridis–Shparlinski/BG worse than geometric at θ=7/18; BGK applies with δ<1/6 but no explicit η≥1/9 over geometric. Verdict: LoD angle Dead (need 6/7, geometric reaches ≤2/3); finite-q excess is k=0 diagonal; (H) still open.
 
 ### ADV-realisability loophole (2026-11-09 sceptical follow-up)
 
