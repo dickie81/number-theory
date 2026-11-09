@@ -270,6 +270,9 @@ import TwoVariableZetaTwo
 import FourSquareTeeth
 import FourSquareResidue
 import SiegelFour
+import JacobiEightSquares
+import TwoVariableZetaEight
+import EightSquareResidue
 import BallSlice
 import LonelyPrimes
 import LonelyJoins
@@ -1416,6 +1419,16 @@ twin-form rates at `11/12`. -/
 #print axioms SiegelFour.delta_odd
 #print axioms SiegelFour.delta_two
 #print axioms SiegelFour.siegel
+#print axioms JacobiEightSquares.r8_zero
+#print axioms JacobiEightSquares.r8_eq
+#print axioms TwoVariableZetaEight.LSeries_f8
+#print axioms TwoVariableZetaEight.Z_eight
+#print axioms TwoVariableZetaEight.Z_eight_eq
+#print axioms TwoVariableZetaEight.exists_zero_re_ne_four
+#print axioms EightSquareResidue.latticeCount_eight_sqrt
+#print axioms EightSquareResidue.tendsto_sum_r8
+#print axioms EightSquareResidue.residue_f8
+#print axioms EightSquareResidue.riemannZeta_four_of_lattice
 #print axioms BallKernel.rh_iff_posDef
 #print axioms BallKernel.kerK_explicit
 #print axioms BallKernel.kerK_inv

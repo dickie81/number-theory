@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1430 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1440 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 171 | 520 |
+| `lib/core` | 174 | 530 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -296,6 +296,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `Eis.LFunction_ne_zero_of_re_gt`: The half-plane `Re s > 11/12` for every Dirichlet character *paper* ([note](../formalisations/openai-half-plane.md))
 
+#### `EightSquareResidue`: `ζ(4) = π⁴/90` from the points of `ℤ⁸` in a ball
+
+- `EightSquareResidue.latticeCount_eight_sqrt`: Lattice count = shell sum
+- `EightSquareResidue.tendsto_sum_r8`: The points of `ℤ⁸` in a ball
+- `EightSquareResidue.residue_f8`: The residue at `s = 4`
+- `EightSquareResidue.riemannZeta_four_of_lattice`: `ζ(4) = π⁴/90` from counting the points of `ℤ⁸` in balls
+
 #### `EisensteinCubicRecip`: S1, part 3b: cubic reciprocity on `ℤ[ω]`
 
 - `Eis.cub_recip`: Cubic reciprocity *paper*
@@ -442,6 +449,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilForm.rh_of_prime_side`: §11 item 1 ⇒ RH, with prime-side hypotheses only ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_simple_ground_states`: The chain with the zero-swap lemma plugged in ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_simple_ground_states'`: The chain, with `ζ ≠ 0` on `(0, 1)` discharged ([note](../formalisations/weil-positivity.md))
+
+#### `JacobiEightSquares`: Jacobi's eight-square theorem
+
+- `JacobiEightSquares.r8_zero`: `r₈(0) = 1`
+- `JacobiEightSquares.r8_eq`: Jacobi's eight-square theorem
 
 #### `JacobiFourSquares`: Jacobi's four-square theorem
 
@@ -725,6 +737,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `TwoVariableZeta.hasMellin`: On `Re s > w`, `2Z(w, s)` is the Mellin transform
 - `TwoVariableZeta.Z_one`: At `w = 1`, `Z` is the completed Riemann zeta function
 - `TwoVariableZeta.Z_four`: At `w = 4`, `Z` is the zeta function of `ℙ¹` over `ℤ` with its Euler factor at `2` changed
+
+#### `TwoVariableZetaEight`: The two-variable zeta function at `w = 8`: Jacobi's eight squares, and zeros off the line
+
+- `TwoVariableZetaEight.LSeries_f8`: `Σ f₈(n) n^{−z} = (1 − 2^{1−z} + 2^{4−2z}) ζ(z) ζ(z − 3)`
+- `TwoVariableZetaEight.Z_eight`: At `w = 8`, `Z` is a product of two zeta functions with the Euler factor at `2` changed
+- `TwoVariableZetaEight.Z_eight_eq`: `Z(8, 2z) = c₈(z)·ζ̂(z)ζ̂(z − 3)` off `z = 0, 1, 3, 4`
+- `TwoVariableZetaEight.exists_zero_re_ne_four`: The Riemann hypothesis fails for `Z(8, ·)`, whatever the truth of RH
 
 #### `TwoVariableZetaPurity`: The two-variable zeta function at `w = 4` is the zeta function of `ℙ¹`, and it has zeros off its line
 

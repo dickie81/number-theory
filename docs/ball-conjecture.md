@@ -126,7 +126,8 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
     integers, the integral quaternions and the integral octaves (their Lemma 3.5). At `w = 4` the count closes up in
     Lean: the points of `ℤ⁴` in the ball of radius `√N` number `∼ (π²/2)N²` (`FourSquareResidue.tendsto_sum_r4`), which
     with Jacobi's theorem gives the residue of `(1 − 4^{1−s})ζ(s)ζ(s − 1)` at `s = 2` and so `ζ(2) = π²/6`
-    (`FourSquareResidue.riemannZeta_two_of_lattice`).
+    (`FourSquareResidue.riemannZeta_two_of_lattice`); at `w = 8` the same count gives `ζ(4) = π⁴/90`
+    (`EightSquareResidue.riemannZeta_four_of_lattice`).
   - **Where RH holds.** The line is `Re s = w/2`. RH there is expected at `w = 1` and `2`. It fails at `w = 4` and `8`
     whatever the truth of RH: with `z = s/2` the Dirichlet series are `(1 − 4^{1−z})ζ(z)ζ(z − 1)` and
     `(1 − 2^{1−z} + 2^{4−2z})ζ(z)ζ(z − 3)`, and their zeros at `z = ρ` lie off the lines `Re z = 1` and `2`. In Lean
@@ -134,7 +135,9 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
     (`TwoVariableZetaPurity.Z_four_eq`), so `Z(4, 2ρ) = 0` and `Z(4, ·)` has zeros off its line
     (`TwoVariableZetaPurity.exists_zero_re_ne_two`). At `w = 2`, `Z(2, 2z)` is the completed Dedekind zeta function
     of `ℚ(i)` (`TwoVariableZetaTwo.Z_two_eq`), and RH on its line is RH with GRH for `χ₋₄`
-    (`TwoVariableZetaTwo.rh_two_iff`). Between
+    (`TwoVariableZetaTwo.rh_two_iff`). At `w = 8`, by Jacobi's eight-square theorem (`JacobiEightSquares.r8_eq`),
+    `Z(8, 2z) = c₈(z)ζ̂(z)ζ̂(z − 3)` with `c₈` entire (`TwoVariableZetaEight.Z_eight_eq`), and `Z(8, ·)` has zeros off
+    its line `Re s = 4` (`TwoVariableZetaEight.exists_zero_re_ne_four`). Between
     `w = 1` and `2`, without an Euler product, Lagarias and Rains follow two zeros of `ζ` that meet on the line and
     leave it as `w` grows (their Lemma 8.1). For `w < 0` the function is positive on its line, which they call an
     anti-Riemann hypothesis (their Theorem 1.2).
