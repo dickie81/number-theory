@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1529 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1555 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 183 | 616 |
+| `lib/core` | 186 | 642 |
 | `lib/pnt` | 253 | 808 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -281,6 +281,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `CubeBall.exists_unit_seq_tendsto_inner`: In infinite dimension every point of the closed unit ball is a weak limit of points of the unit sphere
 - `CubeBall.tendsto_inner_ellUnit`: The norm is not weakly continuous
 - `CubeBall.isEmpty_homeomorph_ball_hilbertCube`: So, with the norm topology, the infinite ball is not homeomorphic to the Hilbert cube
+
+#### `CubicBinomial`: Jacobi's cubic binomial congruence `C(2k, k) ≡ −L (mod p)`
+
+- `CubicBinomial.sum_pow_mul_one_sub_pow`: The binomial sum
+- `CubicBinomial.mk_choose_eq`: The congruence at a primary prime
+- `CubicBinomial.choose_modEq_trace`: The congruence for a primary element of prime norm
+- `CubicBinomial.choose_modEq`: Jacobi's cubic binomial congruence
+- `CubicBinomial.exists_rep`: The representation exists
 
 #### `Curvature`: Dodging D, and the curvature sum rule
 
@@ -765,6 +773,18 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `QuadIdeals.trichotomy`: Every prime splits, is inert or ramifies
 
+#### `RamanujanCongruences`: Ramanujan's partition congruences, from Jacobi's cube and Euler's pentagonal theorem
+
+- `RamanujanCongruences.P_mul_E`: Euler
+- `RamanujanCongruences.coeff_P_pow_eq_zero`: The reduction
+- `RamanujanCongruences.ramanujan_five`: Ramanujan's congruence modulo `5`
+- `RamanujanCongruences.ramanujan_seven`: Ramanujan's congruence modulo `7`
+- `RamanujanCongruences.coloured_two_five`: Two-coloured partitions modulo `5`
+- `RamanujanCongruences.coloured_four_five`: Four-coloured partitions modulo `5`
+- `RamanujanCongruences.coloured_four_seven`: Four-coloured partitions modulo `7`
+- `RamanujanCongruences.coloured_six_seven`: Six-coloured partitions modulo `7`
+- `RamanujanCongruences.coloured_three_nine`: Three-coloured partitions modulo `9`
+
 #### `Roadmap`: §11 roadmap, item 1: the objects stated, and the reduction to RH proved
 
 - `WeilForm.rh_of_realRooted_limit`: Item 6's step, proved ([note](../formalisations/weil-positivity.md))
@@ -789,6 +809,21 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.first_degeneracy_036`: Simplicity route, with its start discharged ([note](../formalisations/weil-positivity.md))
 - `WeilForm.not_simple_iff_secular`: The exact secular characterisation ([note](../formalisations/weil-positivity.md))
+
+#### `SquaresCongruences`: Congruences for sums of squares and the binary forms of class number one
+
+- `SquaresCongruences.odd_sigma_iff`: `σ(m)` is odd exactly when the odd number `m` is a square
+- `SquaresCongruences.three_dvd_sigma`: `σ(n) ≡ 0 (mod 3)` for `n ≡ 2 (mod 3)`
+- `SquaresCongruences.nine_dvd_sigma_three`: `σ₃(n) ≡ 0 (mod 9)` for `n ≡ 2 (mod 3)`
+- `SquaresCongruences.seven_dvd_sigma_three`: `σ₃(n) ≡ 0 (mod 7)` for `n ≡ 3, 5, 6 (mod 7)`
+- `SquaresCongruences.sigma4_two_pow_mul`: `σ*(2^a m) = σ(m)` or `3σ(m)`
+- `SquaresCongruences.hex_modEq`: The hexagonal lattice modulo `3`
+- `SquaresCongruences.seven_modEq`: `x² + xy + 2y²` modulo `7`
+- `SquaresCongruences.two_modEq`: `x² + y²` modulo `4`
+- `SquaresCongruences.r8_modEq`: `r₈(n) ≡ 2r₄(n) (mod 64)`
+- `SquaresCongruences.r4_mod_sixteen`: `r₄(2^a m) ≡ 8 (mod 16)` exactly when the odd number `m` is a square
+- `SquaresCongruences.r4_three_mul_add_two`: `r₄(3k + 2) ≡ 0 (mod 24)`
+- `SquaresCongruences.r8_mod_seven`: `r₈(n) ≡ 0 (mod 112)` for `n ≡ 3, 5, 6 (mod 7)`
 
 #### `StripConv`: (a) on the critical strip, and an `L²` route to it
 
