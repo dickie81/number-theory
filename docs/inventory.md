@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1451 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1462 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 176 | 541 |
+| `lib/core` | 177 | 552 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -334,6 +334,20 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `Eis.fBound_gcd`: Heath-Brown's Lemma 2
 - `Eis.fBound_sep`: Heath-Brown's Lemma 10
+
+#### `EpsteinHexagonal`: The Epstein zeta function of the hexagonal lattice is the Dedekind zeta function of `ℚ(√−3)`
+
+- `EpsteinHexagonal.rQ_eq`: The points of the hexagonal lattice on each circle
+- `EpsteinHexagonal.lseries_rQ`: The Dirichlet series of `r_Q`
+- `EpsteinHexagonal.hasSum_thetaQ`: `θ_Q(t) = Σ_{v ∈ ℤ²} e^{−2πtQ(v)/√3}`.
+- `EpsteinHexagonal.thetaQ_inv`: `θ_Q(1/t) = tθ_Q(t)`
+- `EpsteinHexagonal.LambdaQ_one_sub`: The functional equation
+- `EpsteinHexagonal.differentiableAt_LambdaQ`: `Λ_Q` is holomorphic away from its poles `s = 0` and `s = 1`.
+- `EpsteinHexagonal.LambdaQ_eq_of_one_lt_re`: On `Re s > 1`, `Λ_Q(s) = 6(2π/√3)^{−s}Γ(s)ζ(s)L(s, χ₋₃)`
+- `EpsteinHexagonal.LambdaQ_eq`: `Λ_Q(s) = 3·√3^s ζ̂(s)Λ(s, χ₋₃)` off `s = 0, 1`
+- `EpsteinHexagonal.LambdaQ_eq_zero_iff`: In the strip `0 < Re s < 1`, `Λ_Q(s) = 0` exactly when `ζ(s) = 0` or `L(s, χ₋₃) = 0`
+- `EpsteinHexagonal.rh_hex_iff`: The Riemann hypothesis for the hexagonal lattice is RH for `ζ` and GRH for `χ₋₃` ([note](../formalisations/weil-positivity.md))
+- `EpsteinHexagonal.rh_hex_iff_twins`: …and so it is Weil's twin criterion for `ζ_{ℚ(√−3)}` ([note](../formalisations/weil-positivity.md))
 
 #### `EulerGammaBinet`: Euler's constant to seven digits, from Binet's formula
 

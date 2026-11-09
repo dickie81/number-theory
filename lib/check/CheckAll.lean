@@ -268,6 +268,7 @@ import JacobiFourSquares
 import TwoVariableZeta
 import TwoVariableZetaPurity
 import TwoVariableZetaTwo
+import EpsteinHexagonal
 import FourSquareTeeth
 import FourSquareResidue
 import SiegelFour
@@ -1412,6 +1413,17 @@ twin-form rates at `11/12`. -/
 #print axioms TwoVariableZetaTwo.Z_two_eq_zero_iff
 #print axioms TwoVariableZetaTwo.rh_two_iff
 #print axioms TwoVariableZetaTwo.rh_two_iff_QK_twins
+#print axioms EpsteinHexagonal.rQ_eq
+#print axioms EpsteinHexagonal.lseries_rQ
+#print axioms EpsteinHexagonal.hasSum_thetaQ
+#print axioms EpsteinHexagonal.thetaQ_inv
+#print axioms EpsteinHexagonal.LambdaQ_one_sub
+#print axioms EpsteinHexagonal.differentiableAt_LambdaQ
+#print axioms EpsteinHexagonal.LambdaQ_eq_of_one_lt_re
+#print axioms EpsteinHexagonal.LambdaQ_eq
+#print axioms EpsteinHexagonal.LambdaQ_eq_zero_iff
+#print axioms EpsteinHexagonal.rh_hex_iff
+#print axioms EpsteinHexagonal.rh_hex_iff_twins
 #print axioms FourSquareTeeth.r4_two_pow_mul
 #print axioms FourSquareTeeth.r4_pow_mul
 #print axioms FourSquareTeeth.lseries_r4

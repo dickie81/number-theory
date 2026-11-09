@@ -138,7 +138,8 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
     (`TwoVariableZetaPurity.Z_four_eq`), so `Z(4, 2ρ) = 0` and `Z(4, ·)` has zeros off its line
     (`TwoVariableZetaPurity.exists_zero_re_ne_two`). At `w = 2`, `Z(2, 2z)` is the completed Dedekind zeta function
     of `ℚ(i)` (`TwoVariableZetaTwo.Z_two_eq`), and RH on its line is RH with GRH for `χ₋₄`
-    (`TwoVariableZetaTwo.rh_two_iff`). At `w = 8`, by Jacobi's eight-square theorem (`JacobiEightSquares.r8_eq`),
+    (`TwoVariableZetaTwo.rh_two_iff`); the hexagonal lattice does the same for `ℚ(√−3)` and `χ₋₃`
+    (`EpsteinHexagonal.rh_hex_iff`). At `w = 8`, by Jacobi's eight-square theorem (`JacobiEightSquares.r8_eq`),
     `Z(8, 2z) = c₈(z)ζ̂(z)ζ̂(z − 3)` with `c₈` entire (`TwoVariableZetaEight.Z_eight_eq`), and `Z(8, ·)` has zeros off
     its line `Re s = 4` (`TwoVariableZetaEight.exists_zero_re_ne_four`). Between
     `w = 1` and `2`, without an Euler product, Lagarias and Rains follow two zeros of `ζ` that meet on the line and
