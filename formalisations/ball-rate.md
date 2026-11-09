@@ -537,6 +537,18 @@ of this kind can hold: the vector `x_n = 1/n` breaks it (previous section). The 
 `1.5·10⁻⁵/N`, is `8·10⁷` times `BallCutoff`'s `1/(200e²⁴N)`. The observed rate is `0.048·log N/N`, so the factor
 `log N` is still missing; the next section shows that this route cannot recover more than `√log N` of it.
 
+**No polynomial is silent there** (`BallSilent`, `lib/core/BallSilent.lean`, printed by `CheckAll`; RH). Since
+`log 2000 > 7`, `sampling_log` makes every polynomial that vanishes at the zeros up to height `T ≥ 2000N` vanish
+identically.
+- `BallSilent.eq_zero_of_silent`: real `x`, in the form `Σ_{n ≤ N} x_n n^ρ`.
+- `BallSilent.dirichlet_eq_zero`: complex `b`, in the form `Σ_{n ≤ N} b_n n^{−s}`. Under RH `1 − ρ = ρ̄`, so
+  `Σ (b_n/n)n^ρ` vanishes at those zeros, and since they are closed under conjugation its real and imaginary
+  parts vanish separately.
+
+The constant is not the truth. Smoothed partial sums of `ζ` are nearly silent up to height about `2πN` (section
+"What silence costs"), and `N` coefficients can be made to vanish at any `N − 1` points, as many as there are
+zeros up to a height `≍ N/log N`.
+
 **Prior work.** The literature check of the previous section covers this one. Its nearest result, the discrete mean
 value of Bui–Florea–Milinovich, already has the shape `T log(T/N)`, but stops at `N ≤ cT/log²T`. The identity
 `|D|² ⋆ F_a = Σc_n²` is the large-sieve principle behind the previous section's Fejér-kernel bound, used here as an
