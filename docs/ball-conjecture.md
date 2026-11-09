@@ -99,6 +99,8 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
   - **Its orbit form.** Build it as for `ζ`: `K(r) = Σ_{ρ′} r^{ρ′ − 1}/(ρ′(2 − ρ′))` over its zeros `ρ′`, with the Gram
     matrix `mn·K(m/n)`, the analogue of `√(mn)·K_H(m/n)` for the line `Re s = 1`. `scripts/ball_orbit.py --purity`
     computes it from the primes, by the method of `K_H`'s closed form, and `--purity-zeros` checks it against the zeros.
+    In Lean the explicit formula computes it from the primes as `BallPsi.kerH_explicit` computes `K_H`
+    (`PurityPsi.kerP1_explicit`), and that kernel from the primes is not positive-definite (`PurityPsi.not_posDef_psi`).
   - **It has the structure of `ζ`'s.** The similitude `G(km, kn) = k²·G(m, n)`; a sum over the places, whose local
     part at `p` is `Σ_{p^j ≤ m/n} log p·(m²/(2p^{2j}) − n²/2 + (m² − p^{2j}n²)/(2p^j)) ≥ 0` for `m ≥ n`; and the
     integral structure over the logarithms of the primes, with Glaisher's constant `A` added at the real place.

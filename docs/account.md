@@ -245,9 +245,9 @@ In order of what is in reach.
    positivity: `𝔾_m × (𝔸² ∖ 0)` over `𝔽_3` has both, in the shape of an elliptic curve over `𝔽_27`, and its kernel is
    not positive-definite (`PurityTest.not_posDef`). Over `ℚ` the same holds for `ζ(s)ζ(s − 1)`, the zeta function
    of `ℙ¹` over `ℤ`, with Hadamard's weights and with the Gaussian ones (`PurityRational.not_posDef`,
-   `PurityRational.not_posDef_gauss`), and Lagarias and Rains's `Z(4, ·)`, which is that zeta function up to an entire
-   factor, has zeros off its line (`TwoVariableZetaPurity.exists_zero_re_ne_two`). For `ζ` the statement the conjecture
-   must deliver is proved: RH
+   `PurityRational.not_posDef_gauss`), also for its kernel computed from the primes (`PurityPsi.not_posDef_psi`), and
+   Lagarias and Rains's `Z(4, ·)`, which is that zeta function up to an entire factor, has zeros off its line
+   (`TwoVariableZetaPurity.exists_zero_re_ne_two`). For `ζ` the statement the conjecture must deliver is proved: RH
    holds exactly when `K(r) = Σ_ρ e^{(ρ − ½)²/2} r^{ρ − ½}` is positive-definite on the positive rationals
    (`BallKernel.rh_iff_posDef`), the explicit formula computes `K` from the primes (`BallKernel.kerK_explicit`), and
    the kernel of `dh` is not positive-definite (`PsiOmega.not_posDef_dh`). The structure the conjecture asks for is

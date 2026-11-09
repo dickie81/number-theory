@@ -72,7 +72,9 @@ Proc. Nat. Acad. Sci. 45 (1959), for the contraction property.
   `PurityRational.functional_equation`, `PurityRational.exists_zero_re_ne_one`). The kernel criteria fail for it
   unconditionally: the Hadamard kernel's (`PurityRational.not_posDef`, the column of `BallHadamard.rh_iff_posDefH`)
   and the Gaussian kernel's (`PurityRational.not_posDef_gauss`, the column of `BallKernel.rh_iff_posDef`), by one
-  argument for every even weight without zeros on `Re p > 0` (`PurityRational.not_posDef_kerG`). Where the `dh` column
+  argument for every even weight without zeros on `Re p > 0` (`PurityRational.not_posDef_kerG`), and so does the
+  kernel computed from the primes (`PurityPsi.kerP1_explicit`, `PurityPsi.not_posDef_psi`, the column of
+  `BallPsi.rh_iff_posDef_psi`). Where the `dh` column
   tests a criterion against a functional equation without an Euler product, the `ℙ¹` column tests it against an Euler
   product and a functional equation without purity.
 

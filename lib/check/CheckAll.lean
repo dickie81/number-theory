@@ -259,6 +259,7 @@ import BallPsi
 import BallFlat
 import BallWeil
 import PurityRational
+import PurityPsi
 import HodgeCounting
 import JacobiFourSquares
 import TwoVariableZeta
@@ -1367,6 +1368,9 @@ twin-form rates at `11/12`. -/
 #print axioms PurityRational.not_posDef
 #print axioms PurityRational.not_posDef_kerG
 #print axioms PurityRational.not_posDef_gauss
+#print axioms PurityPsi.kerP1_inv
+#print axioms PurityPsi.kerP1_explicit
+#print axioms PurityPsi.not_posDef_psi
 #print axioms JacobiFourSquares.jtp
 #print axioms JacobiFourSquares.jacobi_cube
 #print axioms JacobiFourSquares.theta_pow_four

@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1406 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1409 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 166 | 496 |
+| `lib/core` | 167 | 499 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -110,7 +110,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `BallPsi`: The Hadamard kernel from the primes: `K_H` through Chebyshev's `ψ`
 
 - `BallPsi.kerH_explicit`: The explicit formula for `K_H`, through Chebyshev's `ψ`
-- `BallPsi.rh_iff_posDef_psi`: The Riemann hypothesis from the primes
+- `BallPsi.rh_iff_posDef_psi`: The Riemann hypothesis from the primes ([note](../formalisations/weil-positivity.md))
 - `BallPsi.gram_explicit`: The Gram matrix of the orbit, through `ψ`
 - `BallPsi.norm_sq_ge_of_dist`: A Gram–Schmidt bound gives a lattice
 - `BallPsi.orbit_lattice`: The orbit of `K_H` spans a lattice, if the Gram–Schmidt bound holds
@@ -622,6 +622,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `PsiOmega`: Zeros of `ζ` from one-sided bounds on summatory functions
 
 - `PsiOmega.psi_omega_half`: `ψ(x) − x = Ω±(x^θ)` for every `0 < θ < ½`, unconditionally
+
+#### `PurityPsi`: The kernel of `ℙ¹` from the primes: a prime-side kernel that is not positive-definite
+
+- `PurityPsi.kerP1_inv`: `K(1/r) = K(r)`
+- `PurityPsi.kerP1_explicit`: The explicit formula for the kernel of `ℙ¹`, through the primes ([note](../formalisations/weil-positivity.md))
+- `PurityPsi.not_posDef_psi`: A kernel from the primes that is not positive-definite ([note](../formalisations/weil-positivity.md))
 
 #### `PurityRational`: Purity over `ℚ`: the zeta function of `ℙ¹` over `ℤ`
 
