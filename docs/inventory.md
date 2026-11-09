@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1445 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1451 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 175 | 535 |
+| `lib/core` | 176 | 541 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -644,6 +644,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `PsiOmega`: Zeros of `ζ` from one-sided bounds on summatory functions
 
 - `PsiOmega.psi_omega_half`: `ψ(x) − x = Ω±(x^θ)` for every `0 < θ < ½`, unconditionally
+
+#### `PurityLadder`: The ladder of `ζ(s)ζ(s − k)`: RH as the least rate of an impure twin form
+
+- `PurityLadder.Qk_one`: The first rung is `ℙ¹`
+- `PurityLadder.explicit_formula_k`: The explicit formula for the twins of `ζ(s)ζ(s − k)`
+- `PurityLadder.rate_iff_k`: The rate of `ζ(s)ζ(s − k)`'s twin defect
+- `PurityLadder.rate_iff_zeta_k`: The rate of `ζ(s)ζ(s − k)` is that of `ζ` plus `k`
+- `PurityLadder.not_subexp_k`: For `k ≥ 1` the defect of `ζ(s)ζ(s − k)` is never subexponential
+- `PurityLadder.rh_iff_rate_k`: The ladder ([note](../formalisations/weil-positivity.md))
 
 #### `PurityPsi`: The kernel of `ℙ¹` from the primes: a prime-side kernel that is not positive-definite
 

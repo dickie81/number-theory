@@ -262,6 +262,7 @@ import PurityRational
 import PurityPsi
 import PurityQuaternion
 import PurityTwins
+import PurityLadder
 import HodgeCounting
 import JacobiFourSquares
 import TwoVariableZeta
@@ -1387,6 +1388,12 @@ twin-form rates at `11/12`. -/
 #print axioms PurityTwins.rate_iff_zeta
 #print axioms PurityTwins.not_subexp
 #print axioms PurityTwins.rh_iff_rate_one
+#print axioms PurityLadder.Qk_one
+#print axioms PurityLadder.explicit_formula_k
+#print axioms PurityLadder.rate_iff_k
+#print axioms PurityLadder.rate_iff_zeta_k
+#print axioms PurityLadder.not_subexp_k
+#print axioms PurityLadder.rh_iff_rate_k
 #print axioms JacobiFourSquares.jtp
 #print axioms JacobiFourSquares.jacobi_cube
 #print axioms JacobiFourSquares.theta_pow_four

@@ -78,9 +78,10 @@ Proc. Nat. Acad. Sci. 45 (1959), for the contraction property.
   and that of the integral quaternions, whose extra zeros lie on the line (`PurityQuaternion.not_posDef_quaternion`).
   Weil's twin form of `ℙ¹`, built from the primes, has rate `ζ`'s plus one (`PurityTwins.rate_iff_zeta`): its defect is
   never subexponential (`PurityTwins.not_subexp`, the column of `WeilForm.rh_iff_twins_subexp`), and RH holds exactly
-  when it is `O(e^l)` (`PurityTwins.rh_iff_rate_one`). Where the `dh` column tests a criterion against a functional
-  equation without an Euler product, the `ℙ¹` column tests it against an Euler product and a functional equation without
-  purity.
+  when it is `O(e^l)` (`PurityTwins.rh_iff_rate_one`); for every `ζ(s)ζ(s − k)` the rate is `ζ`'s plus `k`, and RH holds
+  exactly when it is `O(e^{kl})` (`PurityLadder.rh_iff_rate_k`). Where the `dh` column tests a criterion against a
+  functional equation without an Euler product, the `ℙ¹` column tests it against an Euler product and a functional
+  equation without purity.
 
 ## Unconditional results on Weil's form of `ζ`
 
