@@ -1817,8 +1817,10 @@ None of the 22 yields a concrete inequality toward `A<(7/3)(1−σ)` or `L<11/5`
    density (FI, MMT), but known `L` are useless for beating `11/5`. **Next step:** monitor
    sieve-Linnik exponents; no repo action until `L<3` appears in the literature.
 2. **`weighted_chi_a` (#22):** Right question (“one class ⇒ signed weights”). Deep dive
-   below: no every-`a` power saving; random-phase heuristic `L≈1.58` (sieve floor) is the
-   honest conditional deliverable. **Next step:** only with a new cancellation theorem.
+   + barrier: triangle is achievable under all zero-constraints (linear-in-`k` zeros);
+   every-`a` saving is circular with Linnik unless new arithmetic input. Random-phase
+   heuristic `L≈1.58` remains the conditional deliverable. **Next step:** only with
+   arithmetic input beyond zeros (not pursued — sieve route already does that).
 3. **`beurling_detector` / `sdp_detector` (#18,#20):** Constant/`K` optimisation, null so far
    for exponents. **Next step:** only if priorities shift from `L`/`A` to effective constants.
 
@@ -1962,8 +1964,9 @@ If `f̂` is supported on `W` with `|W| = M = q^{A(1−σ)}`, then `|supp f| ≥ 
 does **not** upper-bound `|Z(a)|` pointwise. Constructed spike (`tao_uncertainty.py`):
 `hat = 1_W` gives `max|Z| / triangle = 1` exactly. Amplifier windows over multiplicative
 shifts have `max/mean = O(1)` for random `W`. **Dead** for a pointwise power saving.
-(Prime `q` makes Tao’s strong form available — an asset relative to composite moduli —
-but the inequality points the wrong way for Linnik’s every-`a` need.)
+(Caveat, corrected in the barrier follow-up: `Z` is Fourier on `(ℤ/q)* ≅ ℤ/(q−1)`,
+and for prime `q>3` the order `q−1` is composite, so Tao’s strong form does **not**
+apply on the character group. On additive `𝔽_q` it applies but points the wrong way.)
 
 #### (b) Higher moments / Hölder — Dead
 
@@ -2042,4 +2045,146 @@ line” model gives stronger apparent cancellation simply from larger `M`.
 deliverable is the **conditional-on-random-phases** exponent (≈ `1.58` sieve floor /
 ≈ `1.17` pure-explicit crude). Prime-modulus Tao uncertainty was checked and does not
 help pointwise. Live status of `#22` unchanged: right question, no estimate.
+
+
+---
+
+## Signed estimate: barrier, function-field model, circularity
+
+Follow-up to the deep dive. Question: is **any** every-`a` saving
+`|Z(a)| ≤ q^{-θ} |Z|_△` with `θ > 0` (even tiny) forced by known zero-constraints,
+or can an adversary achieve the triangle bound?
+
+Scripts: `barrier_linear_zeros.py`, `large_sieve_k.py`, `function_field_model.py`,
+`circularity_check.py`.
+
+### Barrier construction — **Yes, triangle is achievable under zero-information constraints**
+
+**Construction.** Prime `q`, identify `χ_k(a) = e(k·ind(a)/(q−1))`, `k ∈ ℤ/(q−1)`.
+Pick a density-sized set `W ⊂ {1,…,q−2}` with `|W| ≤ q^{A(1−σ)}`, closed under
+`k ↦ −k` (conjugation). Place one zero of each `χ_k`, `k∈W`, at
+
+```
+ρ_k = σ + i γ_k ,   γ_k = 2π k·ind(a₀) / ((q−1) log x)
+```
+
+with `σ = 5/7`. Then `χ̄_k(a₀) x^{iγ_k} = 1` for all `k∈W`, so
+
+```
+Z(a₀) = ∑_{k∈W} x^σ = |W| x^σ = |Z|_△ .
+```
+
+**Constraints respected.**
+
+| Constraint | Status |
+|---|---|
+| Conjugation `χ ↔ χ̄` (`k ↔ −k`, `γ ↔ −γ`) | enforced by symmetric `W` and odd `γ(k)` |
+| Functional equation `ρ ↔ 1−ρ̄` | reflected zeros at `1−σ` recorded; relative size `x^{1−2σ} → 0` (`≈ q^{L(1−2σ)}`); not used in the aligned sum |
+| Density `|W| ≤ (qT)^{A(1−σ)}` | saturated at `T≍1` |
+| Zero-counting `N(T,χ) ≍ (T/2π)log(qT)` | one zero per `χ` in the box — far below |
+| Half-plane `11/12` | `5/7 < 11/12`, box allowed |
+| Orthogonality / FFT definition of `Z` | exact |
+
+**Not imposed** (this is the point): that the resulting `ψ(x,χ) = −∑_ρ x^ρ/ρ + …`
+equals an actual `∑ Λ(n)χ(n)`. That is arithmetic input from primes.
+
+**Numeric** (`barrier_linear_zeros.py`, `L=2.2`, `a₀` with `ind=1`):
+
+| `q` | `M` | `Z(a₀)/△` | `max/△` | random-phase `max/△` |
+|---|---|---|---|---|
+| 31 | 9 | **1.000** | 1.000 | 0.60 |
+| 127 | 25 | **1.000** | 1.000 | 0.42 |
+| 503 | 63 | **1.000** | 1.000 | 0.36 |
+| 2003 | 158 | **1.000** | 1.000 | 0.21 |
+
+At `q=503`: `|Z(a₀)|/x ≈ 1.22 > 1`, so the explicit-formula proxy for `ψ` is
+**negative** — the barrier kills positivity exactly when triangle is sharp.
+
+**Barrier statement (precise).**
+
+> From zero-location constraints alone (conjugation, FE bookkeeping, CGL density,
+> zero-counting upper bounds, half-plane), there is no obstruction to
+> `|Z(a₀)| = |Z|_△` for some `a₀`. Therefore no every-`a` saving
+> `|Z(a)| ≤ q^{-θ}|Z|_△` with `θ>0` is provable from zero-information alone.
+> Any such saving requires arithmetic input (prime structure / Euler product).
+
+Label: **Written** (model construction) / **Numerical** (ratios) /
+**Dead** as a zero-only route to `θ>0`.
+
+### Multiplicative structure and large sieve over `k`
+
+Alignment needs `γ_k` linear in the character index `k` — compatible with
+`χ(a)` being a homomorphism of the dual group. The coefficient sequence
+`c_k = 1_W(k)·e^{iαk}` is a modulated indicator; its Fourier transform (in `a`)
+is a Dirichlet-kernel spike of height `|W|`.
+
+- **Large sieve / Plancherel:** control `∑_a |Z(a)|²`, hence the average, not the max.
+- **Tao on `(ℤ/q)* ≅ ℤ/(q−1)`:** for prime `q>3`, `q−1` is even, hence **composite**.
+  Tao’s strong form `|supp|+|supp hat|≥p+1` **never applies** on the character group
+  of a prime modulus. (Earlier Tao checks were on additive `𝔽_q`, a different group.)
+- **Donoho–Stark** `|supp|·|supp hat|≥q−1` applies and is saturated by subgroups; it
+  does not bound `‖Z‖_∞/‖c‖_1`.
+- Numeric (`large_sieve_k.py`): adversary has `‖Z‖_∞/△ = 1`, while
+  `frac{|Z|>½ max} → 0` (sharp spike) and `supp Z` is still almost full (sidelobes).
+
+**No obstruction from the homomorphism structure.** Label: **Dead**.
+
+### Function-field controlled model
+
+Over `𝔽_q[t]`, modulus irreducible of degree `d`, character group cyclic of order
+`N = q^d−1`. Weil RH puts zeros on the critical circle. Scripts keep the
+homomorphism `χ(a) = e(k·ind(a)/N)`.
+
+| Experiment | Result | Label |
+|---|---|---|
+| **E1** RH-random angles (proxy) | `max/△` falls (`0.35→0.09` as `N=16→256`) — generic cancellation | **Numerical** / Heuristic |
+| **E2** Adversarial off-line + linear angles | `Z(a₀)/△ = 1.000` for all tested `N` — homomorphism does not prevent alignment | **Numerical** (barrier transfers) |
+| **E3** `EXACT_FF_PRIMES` tiny enumeration | e.g. `(q,d,n)=(2,2,7)`: mean `13.3` irreds/class, `rel_spread≈0.10`; `(3,2,5)`: `rel_spread≈0.22` — modest variation under actual RH primes | **Numerical** (exact, tiny) |
+
+Under genuine RH (E1/E3) one sees cancellation; under adversarial off-line displacement
+with linear phases (E2) the triangle is again achieved. The homomorphism structure
+alone never saves every `a`.
+
+### Circularity verdict — **Yes, circular**
+
+```
+φ(q) ψ_f(x;q,a) = f̂(1)·x − Z(a) + O(error).
+```
+
+An every-`a` bound `|Z(a)| ≤ q^{-θ}|Z|_△` at `x = q^L` is equivalent to a uniform
+PNT in APs at that scale — i.e. a Linnik-type theorem. Proving signed saving in
+order to deduce Linnik is **circular**, unless the proof uses information not
+equivalent to `{ψ(·;q,a)}` for this fixed `q`.
+
+**What breaks circularity (honest list):**
+
+| Input | Why it is not circular | Limitation for every-`(q,a)` |
+|---|---|---|
+| Bombieri–Vinogradov | averages over many moduli | almost-all `q`, not every |
+| Barban–Davenport–Halberstam | averages over `a` | almost-all `a`, not every |
+| Short intervals / Type I–II (sieve certificate) | bilinear forms, not signed `Z` | the repo’s existing route |
+| Deuring–Heilbronn | exceptional-zero arithmetic | one character, not `σ=5/7` box |
+| RMT / pair correlation off the line | would be new analytic input | heuristic only for off-line zeros |
+
+Zero-density + triangle remains the non-circular classical route: it uses **counts**,
+not signs. The barrier shows those counts are compatible with worst-case signs.
+
+Script: `circularity_check.py`. At `σ=5/7`, `A=7/3`, `L=11/5`:
+`|Z|_△/x ≍ q^{4/105} = q^{0.038…}` — triangle fails positivity by `q^{0.038}`; a
+saving of that order restores the threshold.
+
+### Updated verdict
+
+| Claim | Label |
+|---|---|
+| Barrier: triangle achievable under zero-constraints | **Written + Numerical** |
+| Every-`a` `θ>0` from zero-info alone | **Dead** (barrier) |
+| Homomorphism / Tao-on-`(Z/q)*` obstruction | **Dead** (group mismatch + spike) |
+| FF model: generic RH cancels; adversary aligns | **Numerical** |
+| Circularity of every-`a` signed saving with Linnik | **Written** (equivalence) |
+| Genuinely new route to `L<11/5` via signed `Z` | **None found** |
+
+**No improvement of `A` or `L` claimed.** The valuable negative result is the barrier
+statement: every-`a` signed saving is not a theorem about zeros; it is a theorem
+about primes (or needs new arithmetic input).
 
