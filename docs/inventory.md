@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1592 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1595 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 190 | 670 |
+| `lib/core` | 190 | 673 |
 | `lib/pnt` | 255 | 814 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 10 | 37 |
@@ -108,7 +108,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallLattice.rh_iff_realization`: The Riemann hypothesis is the existence of a realization of `K`
 - `BallLattice.tendsto_norm_sub_of_smooth`: A kernel smooth at `1` has an orbit that spans no lattice
 - `BallLattice.kerK_smooth`: `K` is smooth at `1`
-- `BallLattice.not_discrete`: In every realization of `K`, the orbit spans no lattice
+- `BallLattice.not_discrete`: In every realization of `K`, the orbit spans no lattice ([note](../formalisations/ball-rate.md))
 
 #### `BallLow`: The low zeros: what the zeros above height `8N` can give, and the short vectors
 
@@ -122,6 +122,9 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallPivot.orbitLattice_of_log_ge`: The orbit-lattice inequality for large `k` ([note](../formalisations/ball-rate.md))
 - `BallPivot.pivot_tendsto`: Under RH the pivots tend to infinity ([note](../formalisations/ball-rate.md))
 - `BallPivot.orbitLattice_iff`: The orbit-lattice conjecture is RH together with finitely many pivot inequalities ([note](../formalisations/ball-rate.md))
+- `BallPivot.top_index_le`: The top coefficient of an integer vector ([note](../formalisations/ball-rate.md))
+- `BallPivot.lattice_ge`: Under RH the orbit spans a lattice ([note](../formalisations/ball-rate.md))
+- `BallPivot.rh_iff_lattice`: RH holds if and only if the orbit spans a lattice ([note](../formalisations/ball-rate.md))
 
 #### `BallPsi`: The Hadamard kernel from the primes: `K_H` through Chebyshev's `ψ`
 
@@ -200,7 +203,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallWeil.inter_one`: `D_1² = 2 − K_H(1)`
 - `BallWeil.inter_mul`: Multiplication by `k` acts like a Frobenius of degree `k`
 - `BallWeil.two_deg_sub_selfInt`: The fibres cancel
-- `BallWeil.form_eq_norm_sq`: The form is a squared norm in every realization of `K_H`
+- `BallWeil.form_eq_norm_sq`: The form is a squared norm in every realization of `K_H` ([note](../formalisations/ball-rate.md))
 - `BallWeil.rh_iff_form`: RH is the positivity of the form on integer vectors ([note](../formalisations/ball-rate.md))
 - `BallWeil.rh_iff_castelnuovo_severi`: The Riemann hypothesis is the Castelnuovo–Severi inequality for the divisors `D_n`
 - `BallWeil.rh_iff_hodge_index`: The Riemann hypothesis is the Hodge index theorem for the divisors `D_n`

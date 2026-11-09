@@ -19,7 +19,9 @@ For `ζ` itself the statement is now RH up to finitely many cases. Under RH the 
 `d_k ≥ (log k/2 + log 4 + 2)/(22e⁸)` (`BallPivot.pivot_ge`), so they tend to infinity and `d_k ≥ d_1` holds for every `k`
 with `log k ≥ 7100` (`BallPivot.orbitLattice_of_log_ge`). The conjecture is therefore equivalent to RH together with the
 pivot inequalities for `log k < 7100` (`BallPivot.orbitLattice_iff`); what stands between that and an equivalence with
-RH outright is a constant ("What a proof under RH would need").
+RH outright is a constant ("What a proof under RH would need"). And with a smaller constant the lattice is there: RH holds if and
+only if the form of the orbit, computed from the primes, is at least `(log 4 + 2)/(22e⁸)` at every nonzero integer
+vector (`BallPivot.rh_iff_lattice`), so under RH the orbit of `w_1` spans a discrete lattice in every realization.
 
 ## The conjecture
 
@@ -326,8 +328,9 @@ Báez-Duarte, the last entry.
    and Gaussians. So for `ζ` "arithmetic" cannot mean integral in the same way, and a lattice needs a kernel that sees
    the primes separately, or one that is not smooth at `1`. The kernel `K_H` with Hadamard's weights `1/(ρ(1 − ρ))`
    is the second kind (`BallHadamard`): RH is its positive-definiteness, and the obstruction does not apply to it. Its
-   realizations are not shown to span a lattice. But their gaps `‖w_{n+1} − w_n‖` are unbounded, where for `K` they
-   tend to `0` (`BallHadamard.unbounded_gaps`). Each zero with `1 < |γ| ≤ n` adds at least `(2/5)n/(n + 1)²` to
+   realizations do span a lattice: under RH every nonzero integer combination of the `w_n` has squared norm at least
+   `(log 4 + 2)/(22e⁸)`, and RH is equivalent to that (`BallPivot.lattice_ge`, `BallPivot.rh_iff_lattice`). Their gaps
+   `‖w_{n+1} − w_n‖` are unbounded, where for `K` they tend to `0` (`BallHadamard.unbounded_gaps`). Each zero with `1 < |γ| ≤ n` adds at least `(2/5)n/(n + 1)²` to
    `‖w_{n+1} − w_n‖²`, and the zeros up to height `T` are not `O(T)` (`ZerosDense.not_linear`). The Riemann–von
    Mangoldt count, which the library does not prove, would give `‖w_{n+1} − w_n‖² ≈ log n`.
 

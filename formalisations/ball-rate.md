@@ -795,8 +795,8 @@ The bound on its slack, and the rate it gives, are new as far as this note knows
 
 ## The pivots: `d_N ≥ c·log N` under RH, and the orbit-lattice inequality for every large `N` (`BallPivot`)
 
-**Lean:** `BallPivot` (`lib/core/BallPivot.lean`), printed by `lib/check/CheckAll.lean`. The five printed results depend
-on `propext`, `Classical.choice` and `Quot.sound` only.
+**Lean:** `BallPivot` (`lib/core/BallPivot.lean`), printed by `lib/check/CheckAll.lean`. The eight printed results
+depend on `propext`, `Classical.choice` and `Quot.sound` only.
 
 | Result | Statement | Conditional on |
 |---|---|---|
@@ -805,6 +805,9 @@ on `propext`, `Classical.choice` and `Quot.sound` only.
 | `BallPivot.orbitLattice_of_log_ge` | `Q_k(δ_k − Σ_{n < k}c_n δ_n) ≥ Q_1(δ_1)` for all real `c`, once `log k ≥ 7100` | RH |
 | `BallPivot.pivot_tendsto` | for every `B` there is `K` with `Q_k(x) ≥ B` whenever `k ≥ K` and `x_k = 1` | RH |
 | `BallPivot.orbitLattice_iff` | the pivot inequality for every `k ≥ 1` and all `c` ⟺ RH and the pivot inequality for the `k` with `log k < 7100` | nothing |
+| `BallPivot.top_index_le` | an integer vector `a` with `a_k ≠ 0` and `a_n = 0` for `k < n ≤ N` has `Q_N(a) ≥ (log k/2 + log 4 + 2)/(22e⁸)` | RH |
+| `BallPivot.lattice_ge` | every nonzero integer vector has `Q_N(a) ≥ (log 4 + 2)/(22e⁸)` | RH |
+| `BallPivot.rh_iff_lattice` | RH ⟺ `Q_N(a) ≥ (log 4 + 2)/(22e⁸)` for every `N` and every nonzero integer vector `a` | nothing |
 
 **What it says.** The `N`-th Gram–Schmidt pivot of the orbit is `d_N = min{Q_N(x) : x_N = 1}`: in a realization, the
 squared distance of `w_N` from the span of `w_1, …, w_{N−1}`. The orbit-lattice conjecture of
@@ -818,6 +821,18 @@ together with the pivot inequalities below `e^{7100}` (`orbitLattice_iff`): unde
 
 This is the pivot, not the eigenvalue. `λ_N ≍ log N/N` is small because the minimising vector spreads over `[1, N]`
 with `x_N → 0`; a vector with `x_N = 1` cannot follow it.
+
+**The orbit is a lattice exactly under RH.** For an integer vector the last nonzero coefficient has square at least
+`1`, so `pivot_ge` at that index gives `Q_N(a) ≥ (log k/2 + log 4 + 2)/(22e⁸)` (`top_index_le`), and at least
+`(log 4 + 2)/(22e⁸) ≈ 5.2·10⁻⁵` whatever `k` is (`lattice_ge`). In a realization `Q_N(a) = ‖Σ_n a_n w_n‖²`
+(`BallWeil.form_eq_norm_sq`). So under RH the integer combinations of `w_1, w_2, …` form a discrete subgroup, and a
+ball of radius `√B` holds only combinations of the `w_k` with `log k/2 + log 4 + 2 ≤ 22e⁸B`, finitely many points.
+Conversely the bound at the integer vectors gives `Q_N(a) ≥ 0` there, which is RH (`BallWeil.rh_iff_form`). So RH holds
+if and only if the orbit of the Hadamard kernel spans a lattice with this margin (`rh_iff_lattice`): the form computed
+from the primes is bounded below by a positive constant on `ℤ^N ∖ 0`, uniformly in `N`. The smallest eigenvalue tends
+to `0` like `log N/N`, so the margin is a statement about integer vectors, as the conjecture of
+[ball-conjecture.md](../docs/ball-conjecture.md) expected; its constant `d_1 = K_H(1) ≈ 0.0462` is what is not proved.
+For the Gaussian kernel there is no margin at all: its orbit is not discrete (`BallLattice.not_discrete`).
 
 **How it was done.**
 

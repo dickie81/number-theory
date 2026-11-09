@@ -16,6 +16,11 @@ realization, the squared distance of `w_N` from the span of `w_1, …, w_{N−1}
 * `orbitLattice_of_log_ge` (RH): the pivot inequality `d_k ≥ d_1` holds for every `k` with `log k ≥ 7100`.
 * `orbitLattice_iff`: the orbit-lattice conjecture holds if and only if RH holds and the pivot inequality holds for the
   `k` with `log k < 7100`. So under RH the conjecture is a statement about finitely many pivots.
+* `lattice_ge` (RH), `rh_iff_lattice`: under RH every nonzero integer vector `a` has `Q_N(a) ≥ (log 4 + 2)/(22e⁸)`, and
+  RH holds if and only if that is so for every `N`: in a realization the integer combinations of `w_1, w_2, …` form a
+  discrete subgroup, a lattice, exactly under RH. `top_index_le` (RH): an integer vector whose last nonzero coefficient
+  is at `k` has `Q_N(a) ≥ (log k/2 + log 4 + 2)/(22e⁸)`, so a ball of the lattice meets only finitely many of the `w_k`
+  directions, and holds finitely many lattice points.
 
 The proofs.
 
@@ -329,5 +334,84 @@ theorem orbitLattice_iff :
     rcases lt_or_ge (Real.log k) 7100 with hlt | hge
     · exact hfin k c hk hlt
     · exact orbitLattice_of_log_ge hRH hge c
+
+/-! ## The orbit is a lattice exactly under RH -/
+
+/-- The form does not see the coordinates above `k` that vanish. -/
+lemma form_of_zero_above {k N : ℕ} (hkN : k ≤ N) {x : ℕ → ℝ} (h : ∀ n, k < n → n ≤ N → x n = 0) :
+    BallWeil.form N x = BallWeil.form k x := by
+  induction N, hkN using Nat.le_induction with
+  | base => rfl
+  | succ N hkN ih =>
+    rw [BallWeil.form_succ_of_zero (h (N + 1) (by omega) le_rfl)]
+    exact ih fun n hkn hnN => h n hkn (by omega)
+
+/-- **The top coefficient of an integer vector** (RH): if `a_k ≠ 0` and `a_n = 0` for `k < n ≤ N`, then
+`Q_N(a) ≥ (log k/2 + log 4 + 2)/(22e⁸)`. So an integer vector with `Q_N(a) ≤ B` has no nonzero coefficient at any
+`k` with `log k/2 + log 4 + 2 > 22e⁸B`. -/
+theorem top_index_le (hRH : RiemannHypothesis) {k N : ℕ} (hk : 1 ≤ k) (hkN : k ≤ N) (a : ℕ → ℤ) (hak : a k ≠ 0)
+    (hzero : ∀ n, k < n → n ≤ N → a n = 0) :
+    (Real.log k / 2 + (Real.log 4 + 2)) / (22 * Real.exp 8) ≤ BallWeil.form N (fun n => (a n : ℝ)) := by
+  rw [form_of_zero_above hkN fun n hkn hnN => by rw [hzero n hkn hnN, Int.cast_zero]]
+  have h := pivot_ge hRH hk (fun n => (a n : ℝ))
+  have hsq : (1 : ℝ) ≤ ((a k : ℤ) : ℝ) ^ 2 := by
+    have h1 : (1 : ℤ) ≤ a k ^ 2 := by
+      have := pow_pos (abs_pos.2 hak) 2
+      rw [sq_abs] at this
+      omega
+    exact_mod_cast h1
+  have hc : 0 ≤ (Real.log k / 2 + (Real.log 4 + 2)) / (22 * Real.exp 8) := by
+    have hlog : 0 ≤ Real.log k := Real.log_natCast_nonneg k
+    have hl4 : 0 ≤ Real.log 4 := Real.log_nonneg (by norm_num)
+    positivity
+  calc (Real.log k / 2 + (Real.log 4 + 2)) / (22 * Real.exp 8)
+      = (Real.log k / 2 + (Real.log 4 + 2)) / (22 * Real.exp 8) * 1 := (mul_one _).symm
+    _ ≤ (Real.log k / 2 + (Real.log 4 + 2)) / (22 * Real.exp 8) * ((a k : ℤ) : ℝ) ^ 2 :=
+        mul_le_mul_of_nonneg_left hsq hc
+    _ ≤ BallWeil.form k (fun n => (a n : ℝ)) := h
+
+/-- **Under RH the orbit spans a lattice**: every nonzero integer vector has
+`Q_N(a) ≥ (log 4 + 2)/(22e⁸)`. In a realization, `Q_N(a) = ‖Σ_n a_n w_n‖²` (`BallWeil.form_eq_norm_sq`): the integer
+combinations of `w_1, w_2, …` keep a fixed distance from `0`. -/
+theorem lattice_ge (hRH : RiemannHypothesis) {N : ℕ} (a : ℕ → ℤ) (h : ∃ n ∈ Icc 1 N, a n ≠ 0) :
+    (Real.log 4 + 2) / (22 * Real.exp 8) ≤ BallWeil.form N (fun n => (a n : ℝ)) := by
+  classical
+  obtain ⟨n₀, hn₀, han₀⟩ := h
+  set S := (Icc 1 N).filter (fun n => a n ≠ 0) with hS
+  have hSne : S.Nonempty := ⟨n₀, Finset.mem_filter.2 ⟨hn₀, han₀⟩⟩
+  have hkS : S.max' hSne ∈ S := Finset.max'_mem S hSne
+  set k := S.max' hSne with hk
+  have hk1 : 1 ≤ k := (Finset.mem_Icc.1 (Finset.mem_filter.1 hkS).1).1
+  have hkN : k ≤ N := (Finset.mem_Icc.1 (Finset.mem_filter.1 hkS).1).2
+  have hak : a k ≠ 0 := (Finset.mem_filter.1 hkS).2
+  have hzero : ∀ n, k < n → n ≤ N → a n = 0 := by
+    intro n hkn hnN
+    by_contra hne
+    have hmem : n ∈ S := Finset.mem_filter.2 ⟨Finset.mem_Icc.2 ⟨by omega, hnN⟩, hne⟩
+    have := Finset.le_max' S n hmem
+    omega
+  refine le_trans ?_ (top_index_le hRH hk1 hkN a hak hzero)
+  have hlog : 0 ≤ Real.log k := Real.log_natCast_nonneg k
+  have he0 := Real.exp_pos 8
+  rw [div_le_div_iff_of_pos_right (by positivity)]
+  linarith
+
+/-- **RH holds if and only if the orbit spans a lattice**: the form `Q_N`, built from the primes, is at least
+`(log 4 + 2)/(22e⁸)` at every nonzero integer vector, for every `N`. Nonnegativity at the integer vectors is already
+RH (`BallWeil.rh_iff_form`); under RH the pivots supply the margin. -/
+theorem rh_iff_lattice :
+    RiemannHypothesis ↔ ∀ (N : ℕ) (a : ℕ → ℤ), (∃ n ∈ Icc 1 N, a n ≠ 0) →
+      (Real.log 4 + 2) / (22 * Real.exp 8) ≤ BallWeil.form N (fun n => (a n : ℝ)) := by
+  refine ⟨fun hRH N a h => lattice_ge hRH a h, fun h => BallWeil.rh_iff_form.2 fun N x => ?_⟩
+  by_cases hx : ∃ n ∈ Icc 1 N, x n ≠ 0
+  · have hl4 : 0 ≤ Real.log 4 := Real.log_nonneg (by norm_num)
+    have hpos : 0 ≤ (Real.log 4 + 2) / (22 * Real.exp 8) := by positivity
+    exact hpos.trans (h N x hx)
+  · push Not at hx
+    have h0 : BallWeil.form N (fun n => (x n : ℝ)) = 0 := by
+      unfold BallWeil.form
+      refine Finset.sum_eq_zero fun m hm => Finset.sum_eq_zero fun n _ => ?_
+      simp only [hx m hm, Int.cast_zero, zero_mul]
+    rw [h0]
 
 end BallPivot
