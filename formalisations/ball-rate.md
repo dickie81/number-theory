@@ -1,39 +1,40 @@
 # The evaporation rate of the orbit form: witness level, approach, rate
 
 **Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`, with `BallSampling`,
-`BallDensity`, `BallCutoff` and `BallSharp` in four later sections, then `BallUpper` with `BallUpperEta`, `BallGap`,
-and `BallLow` in the third from last. The theorems are mapped onto the gravastar
-language in the section after the statements; the first section, written before the Lean, fixes the three statements
-and says what each costs. The rate, open when that section was written, is now proved under RH alone:
-`λ_N ≥ 1/(22e⁸N)` for every `N ≥ 1` (`BallSharp.rate_sharp`, last section). It comes from the sampling conjecture of
+`BallDensity`, `BallCutoff` and `BallSharp` in four later sections, then `BallUpper` with `BallUpperEta`, `BallGap`, and
+`BallLow` in the section "The low zeros". The theorems are mapped onto the gravastar language in the section after the
+statements; the first section, written before the Lean, fixes the three statements and says what each costs. The rate,
+open when that section was written, is now proved under RH alone: `λ_N ≥ 1/(22e⁸N)` for every `N ≥ 1`
+(`BallSharp.rate_sharp`, section "Sampling at the zeros in its natural form"). It comes from the sampling conjecture of
 the section "What is missing", which `BallCutoff.sampling_rh` proves under RH with `c = 1/100` and `C = e²⁴`, and
-`BallSharp.sampling_e8` with `c = 1/11` and `C = e⁸`. `BallSharp.sampling_log` gives sampling its natural form: a
-frame bound `(T/11)(log(T/N) − 7)`, which grows like the number of zeros up to `T`. The rate from above is proved too
-(`BallUpper`, `BallUpperEta`, last section): `λ_N ≤ 67(1 + log N)/N` under RH, by the alternating vector
-`x_n = (−1)^{n+1}/n`, and `λ_N ≤ C(1 + log N)/N` with some constant `C` unconditionally (`BallUpperEta.rate_upper`).
-Under RH `λ_N` is therefore between `1/(22e⁸N)` and `67(1 + log N)/N`. Numerically it is `0.048·log N/N` for
-`N ≤ 2000`, and `λ_N·N = 0.0434·log N + 0.032` to within `2·10⁻⁴` for `10³ ≤ N ≤ 3·10⁴` (section "The low zeros"). Keeping
-Landau's slack `G(c)`, `BallSharp.rate_slack` reduces the missing `log N` of the lower bound to the vectors with
-`Σx_n² n + G(c) = o(log N·Σx_n²)` (section "Why the sampling route stops short of `log N/N`"). Every vector has
-`Σx_n² n + G(c) ≥ (√log N/10)Σx_n²` (`BallGap.edge_law`, last section), so under RH `λ_N ≥ √log N/(220e⁸N)` for every
-`N ≥ 3` (`BallGap.rate_gap`): this route recovers `√log N` of the missing `log N`, which by the numerics of that
-section is all it can give. The section "Packing", numerics only, compares the zeros with point sets of the same
-density and no arithmetic, which give `λ_N` near `N^{−1/2}` for `N ≤ 6400`, and finds the shape of the minimiser: `w(n/N)/ψ(n)`, `ψ`
-Dedekind's function, with `w(u) = Σ_{k ≤ 1/u} c(ku)` for one fixed function `c`. The section "The variational
-problem, solved" derives the constant at leading order, heuristically:
-`λ_N·N/log N → (1/12)(T + κP²)/D = 0.0429`, with `κ = 0.096` from the profile and `T`, `P`, `D` Euler products.
-The section after it proves the matching upper bound on paper, for an explicit vector:
-`λ_N ≤ (0.04294 + o(1))·log N/N` under RH. The last section proves, on that class of vectors, the inverse
-theorem (quiet at the zeros means carrying `ζ`, and costs `≥ 0.0400·log N/N`) and the absence of any sag at the
-picket fence. It also proves, for every vector and with no hypothesis,
-`λ^pf_N ≍ N^{−3/5}log N` at the picket fence: a power of `N` above the zeros' `λ_N`, so that `λ^pf_N ≫ N^{−1/2}`
-fails. Its
-numerics measure what silence at the zeros costs over all vectors:
-`≍ log N` in `A + B` at heights `≍ N`, carried by the `⌊2πN/T⌋` dilates of the zeta vector, where the fence pays
-`≍ T log N`. The last section, numerics with a heuristic mechanism, finds which zeros hear the vectors near the
-floor of `A + B` (those between `√N` and `N`), identifies those vectors as Selberg's sieve (a mollified `ζ`, quiet up
-to heights proportional to `N`, at the price `A ≈ log N/log z`), and says what probes of the explicit formula below
-height `N` can see of them under RH alone.
+`BallSharp.sampling_e8` with `c = 1/11` and `C = e⁸`. `BallSharp.sampling_log` gives sampling its natural form: a frame
+bound `(T/11)(log(T/N) − 7)`, which grows like the number of zeros up to `T`. The rate from above is proved too
+(`BallUpper`, `BallUpperEta`, section "The rate from above"): `λ_N ≤ 67(1 + log N)/N` under RH, by the alternating
+vector `x_n = (−1)^{n+1}/n`, and `λ_N ≤ C(1 + log N)/N` with some constant `C` unconditionally
+(`BallUpperEta.rate_upper`). Under RH `λ_N` is therefore between `1/(22e⁸N)` and `67(1 + log N)/N`. Numerically it is
+`0.048·log N/N` for `N ≤ 2000`, and `λ_N·N = 0.0434·log N + 0.032` to within `2·10⁻⁴` for `10³ ≤ N ≤ 3·10⁴` (section
+"The low zeros"). Keeping Landau's slack `G(c)`, `BallSharp.rate_slack` reduces the missing `log N` of the lower bound
+to the vectors with `Σx_n² n + G(c) = o(log N·Σx_n²)` (section "Why the sampling route stops short of `log N/N`"). Every
+vector has `Σx_n² n + G(c) ≥ (√log N/10)Σx_n²` (`BallGap.edge_law`, section "The Landau gap from below"), so under RH
+`λ_N ≥ √log N/(220e⁸N)` for every `N ≥ 3` (`BallGap.rate_gap`): this route recovers `√log N` of the missing `log N`,
+which by the numerics of that section is all it can give. The section "Packing", numerics only, compares the zeros with
+point sets of the same density and no arithmetic, which give `λ_N` near `N^{−1/2}` for `N ≤ 6400`, and finds the shape
+of the minimiser: `w(n/N)/ψ(n)`, `ψ` Dedekind's function, with `w(u) = Σ_{k ≤ 1/u} c(ku)` for one fixed function `c`.
+The section "The variational problem, solved" derives the constant at leading order, heuristically:
+`λ_N·N/log N → (1/12)(T + κP²)/D = 0.0429`, with `κ = 0.096` from the profile and `T`, `P`, `D` Euler products. The
+section after it proves the matching upper bound on paper, for an explicit vector: `λ_N ≤ (0.04294 + o(1))·log N/N`
+under RH. The section after that proves, on that class of vectors, the inverse theorem (quiet at the zeros means
+carrying `ζ`, and costs `≥ 0.0400·log N/N`) and the absence of any sag at the picket fence. It also proves, for every
+vector and with no hypothesis, `λ^pf_N ≍ N^{−3/5}log N` at the picket fence: a power of `N` above the zeros' `λ_N`, so
+that `λ^pf_N ≫ N^{−1/2}` fails. Its numerics measure what silence at the zeros costs over all vectors: `≍ log N` in
+`A + B` at heights `≍ N`, carried by the `⌊2πN/T⌋` dilates of the zeta vector, where the fence pays `≍ T log N`. The
+section after it, numerics with a heuristic mechanism, finds which zeros hear the vectors near the floor of `A + B`
+(those between `√N` and `N`), identifies those vectors as Selberg's sieve (a mollified `ζ`, quiet up to heights
+proportional to `N`, at the price `A ≈ log N/log z`), and says what probes of the explicit formula below height `N` can
+see of them under RH alone. The last section makes the inverse theorem uniform in the Möbius support (Theorem A′, on
+paper, under RH). For every vector with smooth profiles and support `D₀ ≤ N^θ`, `θ < 1/3`, it gives
+`Q_N(x) ≥ (0.0400 − o(1))·log(N/D₀)/N·Σx_n²`. That covers the sieve vectors at every level up to `N^{1/3}`. The
+asymptotic behind it agrees with the Gram matrix to `10⁻⁴` up to support `N^{1/2}`.
 
 ## The three statements, and what can be proved
 
@@ -103,7 +104,8 @@ conjecture with the constant checked to `N = 2000`. **Correction.** The conjectu
 (`scripts/alt_vector.py`), past `0.13` before `N = 10⁴`. The rate statement holds for another explicit vector:
 `x_n = (−1)^{n+1}/n`, whose
 polynomial at a zero is a partial sum of `η(ρ̄) = (1 − 2^{1−ρ̄})ζ(ρ̄) = 0`, has `q_N·N/log N = 0.1522`–`0.1527` from
-`N = 100` to `3·10⁴`. It gives `λ_N ≤ 67(1 + log N)/N` under RH (`BallUpperEta.rate_upper_rh`, last section).
+`N = 100` to `3·10⁴`. It gives `λ_N ≤ 67(1 + log N)/N` under RH (`BallUpperEta.rate_upper_rh`, section "The rate from
+above").
 
 **Statement 2B (the approach, unconditional, no rate).** `lim sup λ_N ≤ 0`: for every `ε > 0` there is `N₀` with
 `λ_N ≤ ε` for all `N ≥ N₀`, by an explicit test vector (`approach`). Under RH the two-point vector `x = δ_n − √n·δ_1`
@@ -112,8 +114,8 @@ has `Q_N(x) = 2n(H₀ − K_H(n))`, `Σ x² = n + 1`, and `H₀ − K_H(n) = Σ_
 carry all but `ε/8` of the weight (simultaneous Dirichlet approximation on the ordinates, `exists_simultaneous`) makes
 this `≤ ε/2`. If RH fails, some level has a negative vector and negativity persists upward. *Feasibility:* proved,
 about three hundred lines; the vector is explicit given the first `J(ε)` ordinates and the level is not, the price of
-not using the arithmetic that 2A uses. `BallUpperEta.rate_upper` (last section) now gives a rate, unconditionally:
-`λ_N ≤ C(1 + log N)/N` for every `N ≥ 1`.
+not using the arithmetic that 2A uses. `BallUpperEta.rate_upper` (section "The rate from above") now gives a rate,
+unconditionally: `λ_N ≤ C(1 + log N)/N` for every `N ≥ 1`.
 
 ### 3. The rate (under RH; the open one)
 
@@ -240,7 +242,8 @@ whose density `(1/2π)log(T/2π)` exceeds the Nyquist density `(1/2π)log N` of 
 `Σ_{0<γ≤T} x^{iγ} = −(T/2π)Λ(x)/√x + O(…)` with a pair-correlation input. That is the inequality on `|V_x(ρ)|` that the
 rate is missing; the numbers above say it is true on the vectors that matter, with explicit constants, and that
 nothing below height `N` or above `100N` is involved. Under RH the conjecture is now a theorem, with
-`(c, C) = (1/100, e²⁴)` (`BallCutoff.sampling_rh`) and `(1/11, e⁸)` (`BallSharp.sampling_e8`, last section).
+`(c, C) = (1/100, e²⁴)` (`BallCutoff.sampling_rh`) and `(1/11, e⁸)` (`BallSharp.sampling_e8`, section "Sampling at the
+zeros in its natural form").
 
 ## The rate from the gaps between the zeros (`BallSampling`)
 
@@ -577,8 +580,8 @@ about `½`, and a prime power `q` returns straight to `1` with probability `log 
 `Cap(1) ≈ √(2(c₀ + γ)log N)`.
 
 **What it means.** The prime side with Fourier support below `1/N` cannot give more than `λ_N ≫ √(log N)/N`, even with
-Landau's form kept exact. The last section proves that it gives that much (`BallGap.rate_gap`). The vectors with the
-small gap are not the ones that make `λ_N` small. For `δ₁` plus the star,
+Landau's form kept exact. The section "The Landau gap from below" proves that it gives that much (`BallGap.rate_gap`).
+The vectors with the small gap are not the ones that make `λ_N` small. For `δ₁` plus the star,
 `x_q ∝ Λ(q)/q`, the polynomial is `V_x(ρ) = x₁ + Σ_q x_q q^ρ`, and at a zero `Σ_{q ≤ N}Λ(q)q^{ρ−1} = N^ρ/ρ − log N + …`
 (the explicit formula at `1 − ρ = ρ̄`), so `|V_x(ρ)| ≈ √N/(|γ| log N)` at the low zeros and `Q_N(x) ≫ N/log²N`. The
 near-flat vector `x_n = (1 − n/N)²/ψ(n)` comes within a factor `2.5` of `λ_N` for `N ≤ 2000` (section B of
@@ -884,9 +887,9 @@ each `n ≤ T/2π` on its own, and the band `[log(T/2π), log N]` at density `T/
 `(T/2π)(1 + log(2πN/T))` degrees of freedom, against `Φ(2T) − Φ(T) = (T/2π)log(4T/2πe)` points, where
 `Φ(t) = (t/2π)log(t/2πe) + 7/8` is the smooth zero count. Room for all of them needs `T ≤ πe√N ≈ 8.5√N`. Above that
 height a point set without arithmetic cannot all be silenced, and the points left over charge `λ_N` of order `N^{−1/2}`,
-up to logarithms. The count bounds what can be silenced exactly, not the residual. The last section proves
-`λ^pf_N ≍ N^{−3/5}log N` for every vector at the fence. So `N^{−1/2}` is a pre-asymptotic phase,
-which the fence's constrained minima still show at `N = 12800`.
+up to logarithms. The count bounds what can be silenced exactly, not the residual. The section "The inverse theorem on
+the arithmetic class, and the picket fence" proves `λ^pf_N ≍ N^{−3/5}log N` for every vector at the fence. So `N^{−1/2}`
+is a pre-asymptotic phase, which the fence's constrained minima still show at `N = 12800`.
 
 **Three point sets with the zeros' density.**
 
@@ -992,10 +995,10 @@ points in `[T, 2T]`, at `N = 1600` (`√N = 40`, the zeros from the first 30000)
 **What this changes in step 3.** The count that gives the fence its `√N` gives the zeros nothing: a polynomial of
 length `N` can be quiet on every zero up to height `≍ N`. A lower bound `λ_N ≫ log N/N` therefore cannot come from
 counting zeros. It has to be an inverse theorem: a vector quiet at the zeros up to height `≍ N` carries the factor
-`ζ`, through `n/ψ(n)` in the bulk and the staircase at the cut, and carrying it costs `A ≍ log N`. The last section
-measures this over all vectors (its paragraph "What silence costs"). Silence at the zeros up to height `cN` costs
-`A + B ≈ a_c + 1.4 log N`, and the only silent directions the zeros add to a fence's are the `⌊2πN/T⌋` dilates of the
-zeta vector. The continuum limit
+`ζ`, through `n/ψ(n)` in the bulk and the staircase at the cut, and carrying it costs `A ≍ log N`. The section on the
+inverse theorem on the arithmetic class measures this over all vectors (its paragraph "What silence costs"). Silence at
+the zeros up to height `cN` costs `A + B ≈ a_c + 1.4 log N`, and the only silent directions the zeros add to a fence's
+are the `⌊2πN/T⌋` dilates of the zeta vector. The continuum limit
 reduces the constant to a variational problem in one function: `0.0434` is, to within `3%`, the minimum over `c` with
 `∫c = 0` of the quotient of `x_n = Σ_{k ≤ N/n} c(kn/N)/ψ(n)`, times `N/log N`. The next section solves it.
 
@@ -1862,7 +1865,8 @@ counted conditions are dependent through `ζ`.
 **What stays open.**
 - **For every vector, `λ_N ≫ log N/N`.** It would follow from the claim that minimisers of `Q_N` stay within
   `o(log N/N)`, in the norm of `Q_N`, of the class with some fixed `D₀`. The class reaches within `1.6%` at
-  `N ≤ 3·10⁴`, and its profile and local factors match the minimiser's.
+  `N ≤ 3·10⁴`, and its profile and local factors match the minimiser's. By Theorem A′ (last section) a class with
+  support `D₀ ≤ N^θ`, `θ < 1/3`, and any fixed finite set of smooth profiles will do as well.
   - Theorem C's method does not carry over. At the zeros no component is ever free below height `N`, because Landau's
     form couples every `m` to its multiples and divisors at every height.
   - So nothing plays the part of Lemma F except the slack bound `BallSharp.rate_slack`, and its gap is `√log N`
@@ -1884,7 +1888,8 @@ counted conditions are dependent through `ζ`.
 - **What the cheap vectors are** (next section). The vectors near the floor of `A + B` are Selberg's sieve: mollified
   multiples of `ζ`, quiet up to heights proportional to `N`, at the sieve's price `A ≈ log N/log z`. Probes of the
   explicit formula below height `N` see that structure under RH alone; they do not see the price of the sieve's tail,
-  which correlates with the primes in short intervals.
+  which correlates with the primes in short intervals. With smooth profiles and level `z ≤ N^{1/3}`, Theorem A′ (last
+  section) proves the lower bound for them.
 
 ## Which zeros hear the cheap vectors (`scripts/lambda_heard.py`; numerics, uncertified, and a heuristic mechanism)
 
@@ -2039,3 +2044,185 @@ prime powers with `kn ≥ T`, which see `f` only through its averages over windo
   to a lower bound for the price of correlating a tail with the primes in short intervals: Selberg's `log N/log z`
   if the tail has to be a sieve. Showing that it has to is the inverse theorem again; neither RH nor pair
   correlation supplies it.
+
+## The inverse theorem up to Möbius support `N^{1/3}` (a proof on paper; numerics in `scripts/lambda_class.py`)
+
+Theorem A proves the inverse theorem for the smooth dilates of `ζ` with a fixed Möbius support `D₀`. The cheap
+vectors of the previous section are Selberg's sieve at a level `z` that grows with `N`, `z = e^{O(√log N)}` near the
+floor of `A + B`, so Theorem A does not reach them. This section proves the lower bound uniformly in the support up to
+`N^{1/3}`, for any fixed finite set of smooth profiles. It then checks the asymptotic behind it against the Gram matrix
+of `Q_N`, far beyond `N^{1/3}`.
+
+**The class.** Fix a finite set `Ψ` of linearly independent functions `ψ ∈ C^∞[0, ∞)` that vanish on `[1, ∞)`.
+`V_N(D₀; Ψ)` is the space of vectors with `n·x_n = Σ_{d | n, d ≤ D₀}E_d(n/N)`, each `E_d = Σ_ψ e_ψ(d)ψ` in the span
+of `Ψ`.
+- As in Theorem A: `e(d) = E_d(0)`, `F = 1 ∗ e`, `D = Σ_n F(n)²/n²`, `S(a) = Σ_g e(ag)/g`,
+  `ω_a = Π_{p | a}(1 − p⁻²)` and `T = Σ_a ω_a S(a)²`.
+- `φ_E(y) = E(0) − E(y)`, which is `E(0)` on `[1, ∞)`. `H_a = Σ_g φ_{E_{ag}}/g` and
+  `A_a = ∫_0^∞ H_a(y)² dy/y²`. Since `H_a = S(a)` on `[1, ∞)`, `A_a ≥ S(a)²`.
+- `S_ψ(a) = Σ_g e_ψ(ag)/g` and `‖S(a)‖² = Σ_ψ S_ψ(a)²`. Then `H_a = Σ_ψ S_ψ(a)φ_ψ`.
+  - `A_a ≍_Ψ ‖S(a)‖²`, because the `φ_ψ` are linearly independent.
+  - `|H_a(y)| ≤ C_Ψ‖S(a)‖min(1, y)`, because each `φ_ψ(y)` is `O(y)`.
+- With a single profile `η`, positive on `[0, 1)`, `x_n = η(n/N)F(n)/n`. At `D₀ = N` that is every vector with
+  `x_N = 0` (Möbius inversion of `n·x_n/η(n/N)`). So these classes filter the whole space by the length of the Möbius
+  support.
+
+**Theorem A′ (RH).** Fix `Ψ` and `θ < 1/3`. As `N → ∞`, uniformly in `1 ≤ D₀ ≤ N^θ` and in nonzero
+`x ∈ V_N(D₀; Ψ)`:
+1. `Q_N(x) ≥ (1 − o(1))·(1/12N)·Σ_a ω_a A_a log(N/a)`;
+2. `Q_N(x) ≥ (K_min − o(1))·(log(N/D₀)/N)·Σx_n²`, with `K_min = 0.040021` from Theorem A.
+
+So on the class with support `N^θ`, `Q_N(x) ≥ ((1 − θ)K_min − o(1))·(log N/N)·Σx_n²`. It covers:
+- the quiet case of Theorem A at every fixed `D₀` (with smooth profiles), with the same constant;
+- the test vectors of the sharp upper bound (with a smooth `c`), now with `e` supported up to `N^θ`;
+- Selberg's sieve vectors, with smooth profiles, at every level `z ≤ N^θ`. Among them are those that model the floor
+  of `A + B`, where `BallGap.rate_gap` stops.
+
+*Proof.*
+1. **The dual sum at a zero.** For `ψ ∈ Ψ` put `S_ψ(ρ, X) = Σ_m ψ(m/X)m^{ρ−1}`, so that
+   `V_x(ρ) = Σ_{d ≤ D₀, ψ}e_ψ(d)d^{ρ−1}S_ψ(ρ, N/d)`. Steps 1 and 3 of the sharp upper bound (Mellin inversion, the
+   contour moved to `Re z = −σ` with `½ < σ < 1`, the functional equation and Stirling's formula) give
+   `S_ψ(ρ, X) = ψ̂(ρ)X^ρ − χ(1 − ρ)Σ_k k^{−ρ}φ_ψ(γ/2πkX) + O_ψ(γ^{−1}(γ/X)^σ)`.
+   - The residue at `z = 0` is `ψ(0)ζ(1 − ρ) = 0`.
+   - `ψ̂` decays faster than any power on `Re z = −σ`, so Stirling's error costs `γ^{−1}` with no loss.
+   - The series converges absolutely, since `φ_ψ(y) = O(y)`.
+
+   Summing, with `d = ag`, `k = bg`, `(a, b) = 1` and `τ = γ/2πN`:
+   `V_x(ρ) = N^ρĜ(ρ) − χ(1 − ρ)D(γ) + ℰ(ρ)`, with `D(γ) = Σ_{(a,b)=1}(ab)^{−1/2}H_a(τa/b)(a/b)^{iγ}`,
+   `Ĝ = Σ_d Ê_d/d` and `|ℰ(ρ)| ≪_Ψ γ^{−1}(γ/N)^σΣ_{d,ψ}|e_ψ(d)|d^{σ−1/2}`.
+2. **The zeros kept.** Every term of `Q_N` is `≥ 0`, so `Q_N(x) ≥ 2Σ_{γ ∈ I}|V_x(ρ)|²/(¼ + γ²)` with
+   `I = [N/(D₀ log²N), N log²N]`. On `I`:
+   - **The boundary term** is negligible: `ψ̂(ρ) ≪_A γ^{−A}`, so `|N^ρĜ(ρ)|² ≪_A N^{−A}‖S(1)‖²`.
+   - **The error `ℰ`** contributes `≪ D₀⁵N^{−3+o(1)}Σ_a‖S(a)‖²`, which is `o(1/N)·Σ_a‖S(a)‖²` for `θ < 2/5`. This
+     uses `Σ_d e_ψ(d)²/d² ≪ log D₀·Σ_a S_ψ(a)²`, by Möbius inversion: `e_ψ(d) = Σ_g μ(g)S_ψ(dg)/g`.
+   - **The main term outside `I`** is a small fraction of the whole, by `|H_a(y)| ≤ C_Ψ‖S(a)‖min(1, y)`:
+     `O(1/log²N)` below `I`, and `O(log log N/log²N)` above it.
+3. **The tail of the dual sum.** Cut `D(γ)` at `b ≤ K = D₀²N^{0.01}`. On `I` every `b > K` has `τa/b < 1`, so the
+   tail is `≪ τK^{−1/2}D₀(Σ_a‖S(a)‖²)^{1/2}`. It changes the sum by a factor `1 + O(N^{−0.005})`.
+4. **The mean value.** Expand `|D_K(γ)|²` over pairs of ratios `r = a/b`, `r′ = a′/b′`. Sum each pair against
+   `g_{r,r′}(t) = ϖ(t)c_r(t)c_{r′}(t)/(¼ + t²)`, where `c_{a/b}(t) = (ab)^{−1/2}H_a(ta/2πNb)` and `ϖ` is a smooth
+   cut-off to `I`. Use partial summation: against `N(t)` when `r = r′`, and against Gonek's uniform Landau formula
+   (Step 4 of the sharp upper bound) when `r ≠ r′`.
+   - **The error terms.** For `x = r/r′ = P/Q` in lowest terms, Gonek's three error terms are each
+     `≪ (PQ)^{1/2}log²N` on `I`. This uses `⟨x⟩ ≥ 1/Q`, `1/log x ≤ P` for `x > 1`, and `PQ ≤ aba′b′`.
+   - **The weights.** The sup and the variation of `g_{r,r′}` are
+     `≪ (aba′b′)^{−1/2}(aa′/bb′)‖S(a)‖‖S(a′)‖N^{−2}log N`.
+   - **The total.** Each pair costs `≪ (aa′/bb′)‖S(a)‖‖S(a′)‖N^{−2}log³N`. By Cauchy–Schwarz over `a`, all pairs
+     together cost `≪ D₀³N^{−2}log⁵N·Σ_a‖S(a)‖²`. Against the main term `≍ (log N/N)Σ_a‖S(a)‖²`, that is `o(1)`
+     exactly when `D₀³ = o(N/log⁴N)`: this is where `θ < 1/3` enters.
+
+   What remains are the diagonal and Landau's terms, `(Diag − Land)/(2π²N)` after the substitution `y = τa/b`:
+   - `Diag = Σ_{(a,b)=1}b^{−2}∫_0^∞ H_a(y)²(log(N/a) + log b + log y)dy/y²`;
+   - `Land = 2Σ_{(a,b)=1}Σ_{q = p^j}b^{−2}p^{min(i,j)−j}log p·∫_0^∞ H_a(y)H_{a′}(qy)dy/y²`, with `i = v_p(b)` and
+     `a′ = a·p^{(j−i)⁺}`, since `rq` in lowest terms is `a′/(b/p^{min(i,j)})`.
+5. **Landau's terms are `O(√log D₀)`.** Split the integral at `1/q` and `1`: then
+   `|∫H_a(y)H_{a′}(qy)dy/y²| ≪_Ψ (1 + log q)‖S(a)‖‖S(a′)‖`.
+   - **Steps into the denominator** (`j ≤ i`, so `a′ = a`). They give `Σ_{p^j | b}log p·(1 + j log p) ≤ log b + log²b`,
+     which converges against `b^{−2}`: `O(Σ_a‖S(a)‖²)` in all.
+   - **Steps into the numerator** (`j > i`, `a′ = ap^m` with `m = j − i`). The sum over the `b` with `v_p(b) = i`,
+     and then over `i`, leaves `≪ log p·p^{−m}(1 + m log p)‖S(a)‖‖S(ap^m)‖`. Apply Cauchy–Schwarz twice:
+     - over the prime powers `q = p^m`, with `Σ_q log²p·p^{−2m}(1 + m log p)² < ∞`;
+     - then over `a`, with `#{q : q | a′} ≤ log a′/log 2`.
+
+     That gives `≪ √(log D₀)·Σ_a‖S(a)‖²`.
+   - Taking absolute values term by term would give `log²D₀` per row, Mertens times the `log q`: as large as the main
+     term at a fixed `θ`. The square root comes from Cauchy–Schwarz over `q`.
+6. **Assembly.** In `Diag`, `log b ≥ 0` and `∫_0^1 H_a²|log y|dy/y² ≤ C_Ψ²‖S(a)‖²`. With
+   `Σ_{(b,a)=1}b^{−2} = ζ(2)ω_a`, `ζ(2)/2π² = 1/12` and `log(N/a) ≥ (1 − θ)log N`, this gives claim 1. For claim 2:
+   - Theorem A's local factors give `Σ_a ω_a A_a ≥ T ≥ 12K_min·D`.
+   - `|Σx_n² − D| ≪ D₀^{1+o(1)}N^{−1}log³N·Σ_a‖S(a)‖²`, because `|ψ(n/N) − ψ(0)| ≪ n/N`.
+
+   So `12K_min·Σx_n² ≤ (1 + o(1))Σ_a ω_a A_a`, and claim 2 follows from claim 1. ∎
+
+**The asymptotic behind it.** Over all the zeros, the same computation predicts `Q_N(x) = (Diag − Land)/(2π²N)` up
+to lower order. For a fixed `D₀` its leading term is Theorem A's.
+- **For one flat profile** `η` (`1` on `[0, 1 − δ]`), `H_a = S(a)φ_η` and every integral is explicit:
+  - `Diag = ζ(2)Σ_a ω_a S(a)²[(1 + J)(log(N/a) + ℓ(a)) + K₁]`;
+  - `Land = 2ζ(2)I*Σ_a ω_a[S(a)²ℓ(a) + S(a)Σ_{p^m}log p·p^{−m}S(ap^m)]`.
+
+  Here `J = ∫φ_η²dy/y²` over `[1 − δ, 1]`, `K₁ = ∫φ_η² log y dy/y²` and `I* = ∫φ_η dy/y²`. The term
+  `ℓ(a) = −ζ′(2)/ζ(2) − Σ_{p | a}log p/(p² − 1)` is `Σ_{(b,a)=1}b^{−2}log b` divided by `ζ(2)ω_a`. Every Landau
+  integral equals `I*`, because `φ_η(qy) = 1` wherever `φ_η(y) ≠ 0`.
+- **The test class.** `lambda_class.py` uses `x = ((F − P)η + P·w)(n/N)/n`, with `P = Σ_d e(d)/d` and
+  `w(u) = Σ_{k ≤ 1/u}c(ku)`: the shape of the sharp upper bound's test vector.
+  - Its rows `a ≥ 2` are flat. Its row `a = 1` is `H_1 = P·φ_w`, which is not, and needs `I[c]`,
+    `∫φ_w² log y dy/y²`, `∫φ_w(y)φ_w(qy)dy/y²` and `∫φ_w(y)φ_η(qy)dy/y²`, with the sums over `b` done prime by
+    prime.
+  - The script takes `c(u) = (1 − u)³(−2 + a₁u + a₂u² + a₃u³)`, with `a₂` and `a₃` minimising `I[c]` in that
+    family: `I[c] = 1.2327`, against the optimum `1.0976`. It takes `δ = 0.15`.
+  - This `w` is only `C²`; Theorem A′ asks for smooth profiles for convenience.
+
+**Checked against the Gram matrix** (`lambda_class.py`). Each entry is `Q·N/(Σx_n² log N)`, followed by its ratio to
+the prediction:
+
+| `e` | `θ` at `16000` | `N = 2000` | ratio | `N = 8000` | ratio | `N = 16000` | ratio | `Land/Diag` at `16000` |
+|---|---|---|---|---|---|---|---|---|
+| `δ₁` | `0` | `0.0643` | `1.0000` | `0.0639` | `1.0000` | `0.0638` | `1.0000` | `+0.103` |
+| `δ₁ − 2δ₂` | `0.07` | `0.1597` | `1.0000` | `0.1600` | `1.0000` | `0.1601` | `1.0000` | `+0.067` |
+| Selberg, `z = 10` | `0.24` | `0.0669` | `1.0000` | `0.0663` | `1.0000` | `0.0661` | `1.0000` | `+0.010` |
+| Selberg, `z = 40` | `0.38` | `0.0989` | `0.9999` | `0.0993` | `1.0000` | `0.0995` | `1.0000` | `−0.027` |
+| Selberg, `z = 160` | `0.52` | `0.1712` | `1.0006` | `0.1775` | `1.0025` | `0.1796` | `1.0013` | `−0.043` |
+| Selberg, `z = 640` | `0.67` | | | `0.3407` | `0.9663` | `0.3686` | `1.0130` | `−0.052` |
+| random, `D₀ = 32` | `0.36` | `0.0891` | `1.0001` | `0.0896` | `1.0000` | `0.0898` | `1.0000` | `+0.115` |
+| random, `D₀ = 128` | `0.50` | `0.2376` | `0.9991` | `0.2408` | `1.0001` | `0.2418` | `0.9998` | `+0.063` |
+| random, `D₀ = 512` | `0.64` | | | `0.2199` | `1.0000` | `0.2222` | `1.0005` | `+0.073` |
+| random, `D₀ = 2048` | `0.79` | | | | | `0.3361` | `0.9999` | `+0.126` |
+
+- **Up to `θ ≈ ½`.** The prediction is right to `10⁻⁴`. That includes Landau's terms, up to `18%` of the diagonal,
+  and every term of order `1/N`.
+- **Coherent weights see the off-diagonal terms first.** Selberg's weights have coherent `S(a) ≈ μ(a)(a/φ(a))/log z`.
+  They show `0.1–0.3%` at `θ ≈ 0.52–0.56`, and `1–3%` near `0.7`.
+- **Random coefficients** still agree to `10⁻⁴` at `θ = 0.79`.
+- **Other profiles.** The flat class alone, and the profile `c(u) = (1 − u)³(10u − 2)` (`--simple-c`, `I[c] = 2.56`),
+  agree to the same accuracy.
+
+**The class's minimum** (`--restricted`). Each entry is the smallest `Q_N/Σx_n²` over the class with support `D₀`,
+times `N/log N`, followed by its ratio to the smallest value of the predicted form. The last two columns compare it,
+at `N = 8000`, with `λ_N` and with the bound of Theorem A′. The rows `D₀ = 1024` and `2000` were run separately, with
+the script's functions.
+
+| `D₀` | `θ` at `8000` | `N = 2000` | ratio | `N = 8000` | ratio | over `λ_N` | `K_min·log(N/D₀)/log N` |
+|---|---|---|---|---|---|---|---|
+| `1` | `0` | `0.06425` | `1.0000` | `0.06395` | `1.0000` | `1.362` | `0.0400` |
+| `4` | `0.15` | `0.05590` | `1.0000` | `0.05528` | `1.0000` | `1.178` | `0.0338` |
+| `16` | `0.31` | `0.05341` | `1.0000` | `0.05266` | `1.0000` | `1.122` | `0.0277` |
+| `64` | `0.46` | `0.05294` | `1.0000` | `0.05214` | `1.0000` | `1.111` | `0.0215` |
+| `256` | `0.62` | `0.05282` | `0.9994` | `0.05203` | `0.9998` | `1.108` | `0.0153` |
+| `512` | `0.69` | | | `0.05201` | `0.9996` | `1.108` | `0.0122` |
+| `1024` | `0.77` | | | `0.05199` | `0.9992` | `1.108` | `0.0099` |
+| `2000` | `0.85` | | | `0.05195` | `0.9986` | `1.107` | `0.0077` |
+
+- **The formula holds even for the minimum.** The minimum over the class is the hardest test of the formula, since
+  it chooses the coefficients. It stays within `4·10⁻⁴` of the formula up to `θ ≈ 0.7`, and within `0.14%` at
+  `θ = 0.85`.
+- **The excess over `λ_N` is the profiles.** The minimum levels off at `1.11·λ_N` from `D₀ ≈ 64` on, and the Möbius
+  support does not lower it. The causes are `I[c] = 1.23` against `1.10`, the step `δ = 0.15`, and two profiles in
+  place of the minimiser's many. Theorem A's class, with its profiles chosen freely, comes within `1.6%`.
+- **The bound.** `K_min·log(N/D₀)/N` lies below the minimum for two reasons: `K_min` is the infimum over all `e`, and
+  the zeros at heights near `N/D₀` are sparser.
+
+**What it settles, and what it leaves.**
+- **The edge of `BallGap`.** By the previous section's numerics, the vectors that cap `rate_gap` at `√log N/N` are
+  sieves at the level `z = e^{O(√log N)} = N^{o(1)}`. The sieve vectors with smooth profiles lie in
+  `V_N(N^{o(1)}; Ψ)`, where Theorem A′ gives `Q_N ≥ (K_min − o(1))(log N/N)Σx_n²` without `rate_slack`.
+- **The main terms reach `D₀ ≍ N`.** The bound `K_min·log(N/D₀)/N` loses only `log D₀`. The dual terms with a large
+  `a` switch on at heights near `N/a`, where the zeros are sparser.
+  - **Why the proof stops at `N^{1/3}`.** It is Gonek's error terms, for the pairs of ratios that come near a prime
+    power.
+  - **Up to `N^{1/2}`.** A count of those near-resonances, with bounds on average for the primes in short intervals,
+    should reach the square-root barrier `N^{1/2}`. There the dual sums become as long as the height.
+  - **Beyond `N^{1/2}`.** The off-diagonal pairs are no longer negligible in general, as Selberg's coherent weights
+    show at the `1–3%` level near `θ = 0.7`. That resembles the twisted second moment of `ζ` with a mollifier
+    longer than `T^{1/2}`, where Balasubramanian, Conrey and Heath-Brown reach `1/2`, and Conrey reaches `4/7` with
+    Kloosterman sums.
+- **What `λ_N ≫ log N/N` still needs.**
+  - **The relaxed reduction.** The reduction under "What stays open" asked that the minimisers of `Q_N` stay within
+    `o(log N/N)`, in the norm of `Q_N`, of the class with a fixed `D₀`. Theorem A′ relaxes this to `V_N(N^θ; Ψ)`, for
+    any `θ < 1/3` and any fixed finite `Ψ`.
+  - **The form it takes.** Let `x = y + r` with `y` in the class, `Σr_n² = o(Σx_n²)` and
+    `Q_N(r) = o(log N/N)·Σx_n²`. Then `Q_N(x) ≥ ((1 − θ)K_min − o(1))(log N/N)Σx_n²`.
+  - **The missing step** is the structure statement: every vector quiet at the zeros below `N` splits that way. The
+    numerics of "What silence costs" put the support it needs at the `⌊2πN/T⌋` dilates, and the sieve vectors at
+    `N^{o(1)}`, both far inside `N^{1/3}`.
+  - **Its two halves.** That statement, with an error small in the norm of `Q_N`, is the inverse theorem proper.
+    Theorem A′ is its analytic half.
