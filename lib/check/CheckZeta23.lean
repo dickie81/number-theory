@@ -8,6 +8,7 @@ import ShellSixth
 import ZeroWindow
 import HybridCertificate
 import CriticalLine
+import ZeroOrder
 
 /- The zeros on the critical line: Hardy's theorem, Selberg's positive proportion, the same for the simple zeros, and
 Alpöge and Furman's Theorems A, B and C as zeta23 proves them, with no hypothesis. -/
@@ -44,6 +45,11 @@ bound of `ShellDensity.NX_zero_ge`, at least `T log T / 8π` zero pairs up to he
 #print axioms ShellSixth.tendsto_outside_div_sixth
 #print axioms BohrLandau.tendsto_NX_div_pos
 #print axioms BohrLandau.tendsto_outside_div_pos
+
+/- The order of a zero of `ζ` is `O(log |γ|)`: at most `⌊Kloc (|Im ρ| + ½)⌋`, from the local count; and no
+nontrivial zero is real. -/
+#print axioms ZeroOrder.im_ne_zero
+#print axioms ZeroOrder.analyticOrderAt_le
 
 /- The same-space hybrid certificate on zeta23's zero side, for any zero-block data. -/
 #print axioms HybridCert.cert_general

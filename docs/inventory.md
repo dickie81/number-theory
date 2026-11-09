@@ -4,17 +4,17 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1378 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1382 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 159 | 465 |
+| `lib/core` | 160 | 467 |
 | `lib/pnt` | 253 | 808 |
 | `lib/dh` | 21 | 71 |
-| `lib/zeta23` | 8 | 34 |
+| `lib/zeta23` | 9 | 36 |
 
 ## The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`
 
@@ -149,6 +149,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallSharp.sampling_e8`: Sampling from `T ≥ e⁸N` ([note](../formalisations/ball-rate.md))
 - `BallSharp.rate_sharp`: The rate under RH ([note](../formalisations/ball-rate.md))
 - `BallSharp.rate_slack`: The rate, keeping Landau's slack ([note](../formalisations/ball-rate.md))
+
+#### `BallSilent`: No Dirichlet polynomial of length `N` vanishes at every zero up to height `2000N` (RH)
+
+- `BallSilent.eq_zero_of_silent`: No real polynomial of length `N` is silent at the zeros up to height `2000N` ([note](../formalisations/ball-rate.md))
+- `BallSilent.dirichlet_eq_zero`: No Dirichlet polynomial of length `N` vanishes at every zero up to height `2000N` ([note](../formalisations/ball-rate.md))
 
 #### `BallSlice`: Two primes carry the Riemann hypothesis: positivity on the slice of `p` and `q`
 
@@ -2722,6 +2727,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SlogZeta.Slog_eventually`: `S(T) = O(log T)`, eventually
 - `SlogZeta.Slog_zeta`: `S(t) = O(log t)` on `t ≥ 14`
 - `SlogZeta.wall_law_zeta_S`: 1ca(i)–(iii) for ζ, with von Mangoldt's bound proved
+
+#### `ZeroOrder`: The order of a zero of `ζ` is `O(log |γ|)`, with explicit constants
+
+- `ZeroOrder.im_ne_zero`: No nontrivial zero of `ζ` is real
+- `ZeroOrder.analyticOrderAt_le`: The order of a zero of `ζ` is `O(log |γ|)`
 
 #### `ZeroWindow`: Bounded gaps between the ordinates of the zeros of `ζ`
 
