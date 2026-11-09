@@ -14,6 +14,11 @@ class `e₁ + e₂`, and proves that it is exactly the Riemann hypothesis.
 * **Ample positivity** (`CountingModel.Ample`): an effective `D` has `D·(e₁ + e₂) > 0`.
 * **Riemann–Roch growth** (`CountingModel.RiemannRoch`): if `D² > 0`, then for some `n ≥ 1` the volume of the body of
   `nD` or of `−nD` exceeds `2^d` covolumes, Minkowski's bound.
+* **Hilbert–Samuel growth** (`CountingModel.HilbertSamuel`): if `D² > 0`, the multiples of `D` or of `−D` have unit
+  balls of volume at least `e^{cn²}` covolumes, with rank `O(n)`. Since `2^{rank}` is then `e^{O(n)}`, it implies
+  Riemann–Roch growth (`CountingModel.riemannRoch_of_hilbertSamuel`), and RH holds exactly when a model with ample
+  positivity and Hilbert–Samuel growth exists (`rh_iff_hilbertSamuel`): the axiom in the shape of the arithmetic
+  Hilbert–Samuel theorem.
 Minkowski's convex body theorem (`MeasureTheory.exists_ne_zero_mem_lattice_of_measure_mul_two_pow_lt_measure`)
 makes `±nD` effective (`eff_of_minkowski`), and ample positivity then gives `D·e₁ = D·e₂ = 0 ⇒ D² ≤ 0`
 (`hodge_index`), which is RH (`BallWeil.rh_iff_hodge_index`, `rh_of_counting`). Conversely, under RH the
@@ -73,6 +78,10 @@ lemma deg_smul (k : ℤ) (D : Div) : (D.smul k).deg = k * D.deg := by
   rw [h1, h2]
   ring
 
+lemma smul_smul (j k : ℤ) (D : Div) : (D.smul j).smul k = D.smul (k * j) := by
+  unfold smul
+  congr 1 <;> first | (funext n; ring) | ring
+
 end Div
 
 /-! ## Counting models -/
@@ -117,6 +126,56 @@ theorem eff_of_minkowski {D : Div} (h : M.Minkowski D) : M.Eff D := by
     (by rw [finrank_euclideanSpace_fin]; exact h)
   exact ⟨x, x.2, fun h0 => hx0 (Subtype.ext h0), hxB⟩
 
+/-- **Hilbert–Samuel growth along the multiples of `D`**: for some `c > 0` and `C`, for every large `n` the lattice of
+`nD` has rank at most `Cn` and its unit ball has volume at least `e^{cn²}` covolumes. -/
+def Grows (D : Div) : Prop :=
+  ∃ c > 0, ∃ C : ℝ, ∀ᶠ n : ℕ in Filter.atTop, (M.d (D.smul n) : ℝ) ≤ C * n ∧
+    ENNReal.ofReal (Real.exp (c * n ^ 2)) * volume (ZSpan.fundamentalDomain (M.b (D.smul n))) ≤
+      volume (M.B (D.smul n))
+
+/-- **Hilbert–Samuel growth**: if `D² > 0`, the multiples of `D` or those of `−D` grow. -/
+def HilbertSamuel : Prop := ∀ D : Div, 0 < D.sq → M.Grows D ∨ M.Grows (D.smul (-1))
+
+/-- **Growth beats Minkowski's bound**: `2^{Cn}` is `e^{O(n)}`, below `e^{cn²}`, so a growing `D` has a multiple past
+Minkowski's bound. -/
+theorem minkowski_of_grows {D : Div} (h : M.Grows D) : ∃ n : ℕ, 0 < n ∧ M.Minkowski (D.smul n) := by
+  obtain ⟨c, hc, C, hev⟩ := h
+  obtain ⟨n, ⟨hd, hvol⟩, hn⟩ := (hev.and (Filter.eventually_gt_atTop ⌈|C| * Real.log 2 / c⌉₊)).exists
+  have hn0 : 0 < n := lt_of_le_of_lt (Nat.zero_le _) hn
+  refine ⟨n, hn0, ?_⟩
+  have hlog : 0 < Real.log 2 := Real.log_pos one_lt_two
+  have hnpos : (0 : ℝ) < n := by exact_mod_cast hn0
+  have hn' : |C| * Real.log 2 / c < n := lt_of_le_of_lt (Nat.le_ceil _) (by exact_mod_cast hn)
+  have key : (2 : ℝ) ^ M.d (D.smul n) < Real.exp (c * n ^ 2) := by
+    rw [← Real.exp_log (by positivity : (0 : ℝ) < 2 ^ M.d (D.smul n)), Real.log_pow]
+    refine Real.exp_lt_exp.2 ?_
+    have h1 : (M.d (D.smul n) : ℝ) * Real.log 2 ≤ |C| * n * Real.log 2 :=
+      mul_le_mul_of_nonneg_right (hd.trans (mul_le_mul_of_nonneg_right (le_abs_self C) hnpos.le)) hlog.le
+    have h2 : |C| * Real.log 2 < c * n := by
+      have := (div_lt_iff₀ hc).1 hn'
+      linarith
+    nlinarith
+  have hF0 : volume (ZSpan.fundamentalDomain (M.b (D.smul n))) ≠ 0 := ZSpan.measure_fundamentalDomain_ne_zero _
+  have hFt : volume (ZSpan.fundamentalDomain (M.b (D.smul n))) ≠ ⊤ :=
+    (ZSpan.fundamentalDomain_isBounded _).measure_lt_top.ne
+  unfold Minkowski
+  calc volume (ZSpan.fundamentalDomain (M.b (D.smul n))) * 2 ^ M.d (D.smul n)
+      = ENNReal.ofReal ((2 : ℝ) ^ M.d (D.smul n)) * volume (ZSpan.fundamentalDomain (M.b (D.smul n))) := by
+        rw [ENNReal.ofReal_pow (by norm_num), ENNReal.ofReal_ofNat, mul_comm]
+    _ < ENNReal.ofReal (Real.exp (c * n ^ 2)) * volume (ZSpan.fundamentalDomain (M.b (D.smul n))) :=
+        ENNReal.mul_lt_mul_left hF0 hFt ((ENNReal.ofReal_lt_ofReal_iff (Real.exp_pos _)).2 key)
+    _ ≤ volume (M.B (D.smul n)) := hvol
+
+/-- **Hilbert–Samuel growth gives Riemann–Roch growth.** -/
+theorem riemannRoch_of_hilbertSamuel (h : M.HilbertSamuel) : M.RiemannRoch := by
+  intro D hD
+  rcases h D hD with hg | hg
+  · obtain ⟨n, hn, hm⟩ := M.minkowski_of_grows hg
+    exact ⟨n, hn, Or.inl hm⟩
+  · obtain ⟨n, hn, hm⟩ := M.minkowski_of_grows hg
+    rw [Div.smul_smul, mul_neg_one] at hm
+    exact ⟨n, hn, Or.inr hm⟩
+
 end CountingModel
 
 /-! ## The Hodge index theorem and RH -/
@@ -141,46 +200,57 @@ hypothesis, through `BallWeil.rh_iff_hodge_index`. -/
 theorem rh_of_counting (M : CountingModel) (hA : M.Ample) (hRR : M.RiemannRoch) : RiemannHypothesis :=
   rh_iff_hodge_index.2 fun a b N c h1 h2 => hodge_index M hA hRR (D := ⟨a, b, N, c⟩) h1 h2
 
-/-- **Under RH there is such a model**: one-dimensional lattices, with the whole line as unit ball when
-`D·(e₁ + e₂) > 0` and the empty set otherwise. By Castelnuovo–Severi, `D² > 0` puts `D·e₁` and `D·e₂` on the same side
-of `0`, so `D` or `−D` has positive degree. -/
+/-- Under RH, `D² > 0` puts `D·e₁` and `D·e₂` on the same side of `0` (Castelnuovo–Severi,
+`BallWeil.rh_iff_castelnuovo_severi`), so `D·(e₁ + e₂) ≠ 0`. -/
+lemma deg_pos_or_neg_of_rh (hRH : RiemannHypothesis) {D : Div} (hD : 0 < D.sq) : 0 < D.deg ∨ D.deg < 0 := by
+  have hcs := rh_iff_castelnuovo_severi.1 hRH D.a D.b D.N D.c
+  have hprod : 0 < deg₁ D.b D.N (fun n => D.c n) * deg₂ D.a D.N (fun n => D.c n) := by
+    unfold Div.sq at hD
+    linarith
+  rcases pos_and_pos_or_neg_and_neg_of_mul_pos hprod with ⟨h1, h2⟩ | ⟨h1, h2⟩
+  · exact Or.inl (by unfold Div.deg; linarith)
+  · exact Or.inr (by unfold Div.deg; linarith)
+
+/-- The degenerate model: one-dimensional lattices, with the whole line as unit ball when `D·(e₁ + e₂) > 0` and the
+empty set otherwise. -/
+def trivialModel : CountingModel where
+  d _ := 1
+  b _ := (EuclideanSpace.basisFun (Fin 1) ℝ).toBasis
+  B D := if 0 < D.deg then Set.univ else ∅
+  symm D x hx := by
+    by_cases h : 0 < D.deg
+    · simp [h]
+    · simp only [h, ite_false] at hx
+      exact hx.elim
+  convex D := by
+    by_cases h : 0 < D.deg
+    · simpa [h] using convex_univ
+    · simpa [h] using convex_empty
+
+lemma trivialModel_ample : trivialModel.Ample := fun D hE => by
+  obtain ⟨x, -, -, hx⟩ := hE
+  by_contra h
+  simp only [trivialModel, h, ite_false] at hx
+  exact hx.elim
+
+lemma volume_trivialModel_B {D : Div} (hD : 0 < D.deg) : volume (trivialModel.B D) = ⊤ := by
+  have h : trivialModel.B D = Set.univ := by simp [trivialModel, hD]
+  rw [h]
+  exact measure_univ_of_isAddLeftInvariant (volume : Measure (EuclideanSpace ℝ (Fin 1)))
+
+lemma trivialModel_minkowski {D : Div} (hD : 0 < D.deg) : trivialModel.Minkowski D := by
+  have hF : volume (ZSpan.fundamentalDomain (trivialModel.b D)) < ⊤ :=
+    (ZSpan.fundamentalDomain_isBounded (trivialModel.b D)).measure_lt_top
+  rw [CountingModel.Minkowski, volume_trivialModel_B hD]
+  exact ENNReal.mul_lt_top hF (by simp)
+
+/-- **Under RH there is such a model**: the degenerate one. By Castelnuovo–Severi, `D² > 0` puts `D·e₁` and `D·e₂` on
+the same side of `0`, so `D` or `−D` has positive degree. -/
 theorem counting_of_rh (hRH : RiemannHypothesis) : ∃ M : CountingModel, M.Ample ∧ M.RiemannRoch := by
-  classical
-  let M : CountingModel :=
-    { d := fun _ => 1
-      b := fun _ => (EuclideanSpace.basisFun (Fin 1) ℝ).toBasis
-      B := fun D => if 0 < D.deg then Set.univ else ∅
-      symm := fun D x hx => by
-        by_cases h : 0 < D.deg
-        · simp [h]
-        · simp [h] at hx
-      convex := fun D => by
-        by_cases h : 0 < D.deg
-        · simpa [h] using convex_univ
-        · simpa [h] using convex_empty }
-  refine ⟨M, fun D hE => ?_, fun D hD => ⟨1, one_pos, ?_⟩⟩
-  · obtain ⟨x, -, -, hx⟩ := hE
-    by_contra h
-    simp [M, h] at hx
-  · have hcs := rh_iff_castelnuovo_severi.1 hRH D.a D.b D.N D.c
-    have hprod : 0 < deg₁ D.b D.N (fun n => D.c n) * deg₂ D.a D.N (fun n => D.c n) := by
-      have : 0 < D.sq := hD
-      unfold Div.sq at this
-      linarith
-    have hmink : ∀ D' : Div, 0 < D'.deg → M.Minkowski D' := fun D' hD' => by
-      have hF : volume (ZSpan.fundamentalDomain (M.b D')) < ⊤ :=
-        (ZSpan.fundamentalDomain_isBounded (M.b D')).measure_lt_top
-      simp only [CountingModel.Minkowski, M, hD', ite_true, measure_univ_of_isAddLeftInvariant]
-      exact ENNReal.mul_lt_top hF (by simp)
-    rcases pos_and_pos_or_neg_and_neg_of_mul_pos hprod with ⟨h1, h2⟩ | ⟨h1, h2⟩
-    · refine Or.inl (hmink _ ?_)
-      rw [Div.deg_smul, Div.deg]
-      push_cast
-      linarith
-    · refine Or.inr (hmink _ ?_)
-      rw [Div.deg_smul, Div.deg]
-      push_cast
-      linarith
+  refine ⟨trivialModel, trivialModel_ample, fun D hD => ⟨1, one_pos, ?_⟩⟩
+  rcases deg_pos_or_neg_of_rh hRH hD with h | h
+  · exact Or.inl (trivialModel_minkowski (by rw [Div.deg_smul]; push_cast; linarith))
+  · exact Or.inr (trivialModel_minkowski (by rw [Div.deg_smul]; push_cast; linarith))
 
 /-- **RH is the Hodge index theorem from counting**: `RiemannHypothesis` holds if and only if there is a counting
 model, lattices of sections with unit balls for the divisors built from the primes, with ample positivity and
@@ -188,7 +258,30 @@ Riemann–Roch growth. -/
 theorem rh_iff_counting : RiemannHypothesis ↔ ∃ M : CountingModel, M.Ample ∧ M.RiemannRoch :=
   ⟨counting_of_rh, fun ⟨M, hA, hRR⟩ => rh_of_counting M hA hRR⟩
 
+/-- Under RH the degenerate model grows: the multiples of the side of positive degree have the whole line as ball. -/
+lemma trivialModel_hilbertSamuel (hRH : RiemannHypothesis) : trivialModel.HilbertSamuel := by
+  have grows : ∀ D : Div, 0 < D.deg → trivialModel.Grows D := fun D hD => by
+    refine ⟨1, one_pos, 1, ?_⟩
+    filter_upwards [Filter.eventually_gt_atTop 0] with n hn
+    have hn' : (1 : ℝ) ≤ n := by exact_mod_cast hn
+    refine ⟨by simpa [trivialModel] using hn', ?_⟩
+    rw [volume_trivialModel_B (by rw [Div.deg_smul]; push_cast; nlinarith)]
+    exact le_top
+  intro D hD
+  rcases deg_pos_or_neg_of_rh hRH hD with h | h
+  · exact Or.inl (grows D h)
+  · exact Or.inr (grows _ (by rw [Div.deg_smul]; push_cast; linarith))
+
+/-- **RH is the Hodge index theorem from Hilbert–Samuel growth**: `RiemannHypothesis` holds if and only if there is a
+counting model with ample positivity in which, for every `D` with `D² > 0`, the multiples of `D` or of `−D` have unit
+balls of volume at least `e^{cn²}` covolumes with rank `O(n)`: the shape of the arithmetic Hilbert–Samuel theorem. -/
+theorem rh_iff_hilbertSamuel : RiemannHypothesis ↔ ∃ M : CountingModel, M.Ample ∧ M.HilbertSamuel :=
+  ⟨fun h => ⟨trivialModel, trivialModel_ample, trivialModel_hilbertSamuel h⟩,
+    fun ⟨M, hA, hHS⟩ => rh_of_counting M hA (M.riemannRoch_of_hilbertSamuel hHS)⟩
+
 end HodgeCounting
 
 #print axioms HodgeCounting.hodge_index
 #print axioms HodgeCounting.rh_iff_counting
+#print axioms HodgeCounting.CountingModel.riemannRoch_of_hilbertSamuel
+#print axioms HodgeCounting.rh_iff_hilbertSamuel

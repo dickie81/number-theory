@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1409 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1424 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 167 | 499 |
+| `lib/core` | 170 | 514 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -431,8 +431,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `HodgeCounting`: The Hodge index theorem from counting: Minkowski's theorem as the bridge to `BallWeil`
 
+- `HodgeCounting.CountingModel.riemannRoch_of_hilbertSamuel`: Hilbert–Samuel growth gives Riemann–Roch growth
 - `HodgeCounting.hodge_index`: The Hodge index theorem from counting
 - `HodgeCounting.rh_iff_counting`: RH is the Hodge index theorem from counting
+- `HodgeCounting.rh_iff_hilbertSamuel`: RH is the Hodge index theorem from Hilbert–Samuel growth
 
 #### `HurwitzCross`: The chain with zeros on `ℝ ∪ iℝ`
 
@@ -629,6 +631,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PurityPsi.kerP1_explicit`: The explicit formula for the kernel of `ℙ¹`, through the primes ([note](../formalisations/weil-positivity.md))
 - `PurityPsi.not_posDef_psi`: A kernel from the primes that is not positive-definite ([note](../formalisations/weil-positivity.md))
 
+#### `PurityQuaternion`: The integral quaternions: zeros on the line do not rescue positivity
+
+- `PurityQuaternion.not_posDef_of_re_ne`: One pole off the axis forbids positivity
+- `PurityQuaternion.xiQ_poleQ`: `ξ_Q` vanishes at every `1 + P`
+- `PurityQuaternion.not_posDef_quaternion`: The kernel of the integral quaternions is not positive-definite ([note](../formalisations/weil-positivity.md))
+
 #### `PurityRational`: Purity over `ℚ`: the zeta function of `ℙ¹` over `ℤ`
 
 - `PurityRational.functional_equation`: The functional equation of `ℙ¹` ([note](../formalisations/weil-positivity.md))
@@ -648,6 +656,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PurityTest.not_posDef`: The kernel of `Y`'s counts is not positive-definite
 - `PurityTest.posDef_elliptic`: Every elliptic curve's kernel is positive-definite
 - `PurityTest.card_ne_countY`: No elliptic curve over `𝔽_27` has `Y`'s counts
+
+#### `PurityTwins`: The `ℙ¹` column of Weil's twin criterion: its defect is never subexponential
+
+- `PurityTwins.explicit_formula`: The explicit formula for the twins of `ℙ¹`
+- `PurityTwins.rate_iff`: The rate of `ℙ¹`'s twin defect
+- `PurityTwins.rate_iff_zeta`: The rate of `ℙ¹` is that of `ζ` plus one ([note](../formalisations/weil-positivity.md))
+- `PurityTwins.not_subexp`: The defect of `ℙ¹` is never subexponential ([note](../formalisations/weil-positivity.md))
+- `PurityTwins.rh_iff_rate_one`: RH is the least rate for `ℙ¹` ([note](../formalisations/weil-positivity.md))
 
 #### `QuadIdeals`: The ideals of a quadratic field of each norm, and its Dedekind zeta function
 
@@ -706,6 +722,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `TwoVariableZetaPurity.Z_four_eq`: `Z(4, 2z) = c(z)·ζ̂(z)ζ̂(z − 1)` off `z = 0, 1, 2`
 - `TwoVariableZetaPurity.Z_four_zP1`: Every zero of `ℙ¹` doubled is a zero of `Z(4, ·)`
 - `TwoVariableZetaPurity.exists_zero_re_ne_two`: The Riemann hypothesis fails for `Z(4, ·)`, whatever the truth of RH
+
+#### `TwoVariableZetaTwo`: The two-variable zeta function at `w = 2` is the completed Dedekind zeta function of `ℚ(i)`
+
+- `TwoVariableZetaTwo.Z_two`: At `w = 2`, `Z` is the completed Dedekind zeta function of `ℚ(i)`
+- `TwoVariableZetaTwo.Z_two_eq`: `Z(2, 2z) = 2^z ζ̂(z)Λ(z, χ₋₄)` off `z = 0, 1`
+- `TwoVariableZetaTwo.Z_two_eq_zero_iff`: In the strip `0 < Re s < 2`, `Z(2, s) = 0` exactly when `ζ(s/2) = 0` or `L(s/2, χ₋₄) = 0`
+- `TwoVariableZetaTwo.rh_two_iff`: The Riemann hypothesis for `Z(2, ·)` on its line `Re s = 1` is RH for `ζ` and GRH for `χ₋₄` ([note](../formalisations/weil-positivity.md))
+- `TwoVariableZetaTwo.rh_two_iff_QK_twins`: …and so it is Weil's twin criterion for `ζ_{ℚ(i)}` ([note](../formalisations/weil-positivity.md))
 
 #### `Unconditional`: Saturation without RH: verified zeros, a zero-counting bound, and monotonicity
 

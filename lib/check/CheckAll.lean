@@ -260,10 +260,13 @@ import BallFlat
 import BallWeil
 import PurityRational
 import PurityPsi
+import PurityQuaternion
+import PurityTwins
 import HodgeCounting
 import JacobiFourSquares
 import TwoVariableZeta
 import TwoVariableZetaPurity
+import TwoVariableZetaTwo
 import FourSquareTeeth
 import FourSquareResidue
 import BallSlice
@@ -1371,6 +1374,14 @@ twin-form rates at `11/12`. -/
 #print axioms PurityPsi.kerP1_inv
 #print axioms PurityPsi.kerP1_explicit
 #print axioms PurityPsi.not_posDef_psi
+#print axioms PurityQuaternion.not_posDef_of_re_ne
+#print axioms PurityQuaternion.xiQ_poleQ
+#print axioms PurityQuaternion.not_posDef_quaternion
+#print axioms PurityTwins.explicit_formula
+#print axioms PurityTwins.rate_iff
+#print axioms PurityTwins.rate_iff_zeta
+#print axioms PurityTwins.not_subexp
+#print axioms PurityTwins.rh_iff_rate_one
 #print axioms JacobiFourSquares.jtp
 #print axioms JacobiFourSquares.jacobi_cube
 #print axioms JacobiFourSquares.theta_pow_four
@@ -1384,6 +1395,11 @@ twin-form rates at `11/12`. -/
 #print axioms TwoVariableZetaPurity.Z_four_eq
 #print axioms TwoVariableZetaPurity.Z_four_zP1
 #print axioms TwoVariableZetaPurity.exists_zero_re_ne_two
+#print axioms TwoVariableZetaTwo.Z_two
+#print axioms TwoVariableZetaTwo.Z_two_eq
+#print axioms TwoVariableZetaTwo.Z_two_eq_zero_iff
+#print axioms TwoVariableZetaTwo.rh_two_iff
+#print axioms TwoVariableZetaTwo.rh_two_iff_QK_twins
 #print axioms FourSquareTeeth.r4_two_pow_mul
 #print axioms FourSquareTeeth.r4_pow_mul
 #print axioms FourSquareTeeth.lseries_r4
@@ -1450,6 +1466,8 @@ twin-form rates at `11/12`. -/
 #print axioms BallWeil.rh_of_pivots
 #print axioms HodgeCounting.hodge_index
 #print axioms HodgeCounting.rh_iff_counting
+#print axioms HodgeCounting.CountingModel.riemannRoch_of_hilbertSamuel
+#print axioms HodgeCounting.rh_iff_hilbertSamuel
 #print axioms BallSlice.irrational_log_div
 #print axioms BallSlice.dense_log_pair
 #print axioms BallSlice.re_eq_zero_of_dense_set

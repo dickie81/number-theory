@@ -247,7 +247,9 @@ In order of what is in reach.
    of `ℙ¹` over `ℤ`, with Hadamard's weights and with the Gaussian ones (`PurityRational.not_posDef`,
    `PurityRational.not_posDef_gauss`), also for its kernel computed from the primes (`PurityPsi.not_posDef_psi`), and
    Lagarias and Rains's `Z(4, ·)`, which is that zeta function up to an entire factor, has zeros off its line
-   (`TwoVariableZetaPurity.exists_zero_re_ne_two`). For `ζ` the statement the conjecture must deliver is proved: RH
+   (`TwoVariableZetaPurity.exists_zero_re_ne_two`), while at `w = 2` RH on its line is RH with GRH for `χ₋₄`
+   (`TwoVariableZetaTwo.rh_two_iff`); Weil's twin form of `ℙ¹` has `ζ`'s rate plus one (`PurityTwins.rate_iff_zeta`).
+   For `ζ` the statement the conjecture must deliver is proved: RH
    holds exactly when `K(r) = Σ_ρ e^{(ρ − ½)²/2} r^{ρ − ½}` is positive-definite on the positive rationals
    (`BallKernel.rh_iff_posDef`), the explicit formula computes `K` from the primes (`BallKernel.kerK_explicit`), and
    the kernel of `dh` is not positive-definite (`PsiOmega.not_posDef_dh`). The structure the conjecture asks for is

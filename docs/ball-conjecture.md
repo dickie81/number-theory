@@ -111,7 +111,7 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
     not positive-definite on the positive rationals (`PurityRational.not_posDef`), by the Landau argument of
     `BallHadamard.rh_of_posDefH` applied to the zeros of `ℙ¹`.
   - **The integral quaternions.** Their zeta function `(1 − 4^{1−s})ζ(s)ζ(s − 1)`, the case `w = 4` of the next item
-    (`TwoVariableZeta.Z_four`),
+    (`TwoVariableZeta.Z_four`; its kernel is not positive-definite, `PurityQuaternion.not_posDef_quaternion`),
     changes only the factor at `2` and adds the zeros `1 + πik/log 2`, on the line. Its form is indefinite from
     `N = 17`.
 - **The balls of Arakelov geometry.** G. van der Geer and R. Schoof's Riemann–Roch for number fields, with Arakelov
@@ -132,7 +132,9 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
     `(1 − 2^{1−z} + 2^{4−2z})ζ(z)ζ(z − 3)`, and their zeros at `z = ρ` lie off the lines `Re z = 1` and `2`. In Lean
     for `w = 4`: `Z(4, 2z) = c(z)·ζ̂(z)ζ̂(z − 1)` off `z = 0, 1, 2` with `c` entire, by continuation from `Re s > 4`
     (`TwoVariableZetaPurity.Z_four_eq`), so `Z(4, 2ρ) = 0` and `Z(4, ·)` has zeros off its line
-    (`TwoVariableZetaPurity.exists_zero_re_ne_two`). Between
+    (`TwoVariableZetaPurity.exists_zero_re_ne_two`). At `w = 2`, `Z(2, 2z)` is the completed Dedekind zeta function
+    of `ℚ(i)` (`TwoVariableZetaTwo.Z_two_eq`), and RH on its line is RH with GRH for `χ₋₄`
+    (`TwoVariableZetaTwo.rh_two_iff`). Between
     `w = 1` and `2`, without an Euler product, Lagarias and Rains follow two zeros of `ζ` that meet on the line and
     leave it as `w` grows (their Lemma 8.1). For `w < 0` the function is positive on its line, which they call an
     anti-Riemann hypothesis (their Theorem 1.2).
@@ -636,11 +638,12 @@ On an arithmetic surface the counterpart exists, and it is a count.
   class `D` with `D² > 0` would need lattices `Λ(nD)` whose points in a ball number `exp((n²/2)·D² + o(n²))`, and a
   reason why a nonzero one forces `D·(e₁ + e₂) > 0`. `HodgeCounting` states this route for the divisors of `BallWeil`:
   lattices `Λ(D)` with unit balls `B(D)`, such that a nonzero point of `Λ(D)` in `B(D)` forces `D·(e₁ + e₂) > 0` and,
-  when `D² > 0`, the ball of `nD` or of `−nD` exceeds Minkowski's bound for some `n ≥ 1`. Minkowski's theorem then
-  gives the Hodge index theorem (`HodgeCounting.hodge_index`), and RH holds exactly when such lattices exist
-  (`HodgeCounting.rh_iff_counting`). The lattices that RH gives back are degenerate, so the content is in building
-  them from `D`. The integral quaternions show what the lattices must see: they have balls, an Euler product and a
-  functional equation, and no positivity ("What it must survive").
+  when `D² > 0`, the ball of `nD` or of `−nD` exceeds Minkowski's bound for some `n ≥ 1`. Minkowski's theorem then gives
+  the Hodge index theorem (`HodgeCounting.hodge_index`), and RH holds exactly when such lattices exist
+  (`HodgeCounting.rh_iff_counting`), or lattices whose balls grow like `e^{cn²}` covolumes with rank `O(n)`, the shape
+  of the arithmetic Hilbert–Samuel theorem (`HodgeCounting.rh_iff_hilbertSamuel`). The lattices that RH gives back are
+  degenerate, so the content is in building them from `D`. The integral quaternions show what the lattices must see:
+  they have balls, an Euler product and a functional equation, and no positivity ("What it must survive").
 
 **Its integral structure.** Write each logarithm of an integer in the explicit formula through the logarithms of the
 primes. For `m ≥ n` this gives `G(m, n) = (1 + γ)(m + n) − (γ + log 2π)·n + Σ_p log p·Q_p(m, n)`, where

@@ -58,7 +58,8 @@ Proc. Nat. Acad. Sci. 45 (1959), for the contraction property.
   `Dedekind4.rh_grh_iff_QK_subexp`, `WeilTwinGeneral.rh_grh_iff_twins_Q4`) and for `ℚ(√−3)`, `ℚ(√−7)` and `ℚ(√−2)`
   (`WeilTwinGeneral.rh_grh_iff_twins_Q3`, `WeilTwinGeneral.rh_grh_iff_twins_Q7`, `WeilTwinGeneral.rh_grh_iff_twins_Q8`);
   the twin forms of `L(s, χ₋₄)` and of `ζ_{ℚ(i)}` are at least `−o(e^λ)` with no hypothesis
-  (`Dedekind4.QC_chi4_littleO`, `Dedekind4.QK_littleO`).
+  (`Dedekind4.QC_chi4_littleO`, `Dedekind4.QK_littleO`). The criterion for `ℚ(i)` is RH for Lagarias and Rains's
+  `Z(2, ·)` on its line (`TwoVariableZetaTwo.rh_two_iff`, `TwoVariableZetaTwo.rh_two_iff_QK_twins`).
 - **The angular family**, the Dirichlet series of the angular averages over the Gaussian integers of each norm, whose
   radial member is `ζ·L(χ₋₄)` (`AngularFamily.member_zero_eq`): the radial member's grand RH gives RH and GRH for `χ₋₄`
   (`AngularFamily.rh_of_member_zero`, `Dedekind4.rh_grh_of_member_zero`, `Dedekind4.QK_nonneg_of_member_zero`).
@@ -70,13 +71,16 @@ Proc. Nat. Acad. Sci. 45 (1959), for the contraction property.
 - **Their `ℙ¹` columns**: `ζ(s)ζ(s − 1)`, the zeta function of `ℙ¹` over `ℤ`, has an Euler product and a functional
   equation of `ζ`'s kind, and zeros off its line, with no hypothesis (`PurityRational.euler_product`,
   `PurityRational.functional_equation`, `PurityRational.exists_zero_re_ne_one`). The kernel criteria fail for it
-  unconditionally: the Hadamard kernel's (`PurityRational.not_posDef`, the column of `BallHadamard.rh_iff_posDefH`)
-  and the Gaussian kernel's (`PurityRational.not_posDef_gauss`, the column of `BallKernel.rh_iff_posDef`), by one
-  argument for every even weight without zeros on `Re p > 0` (`PurityRational.not_posDef_kerG`), and so does the
-  kernel computed from the primes (`PurityPsi.kerP1_explicit`, `PurityPsi.not_posDef_psi`, the column of
-  `BallPsi.rh_iff_posDef_psi`). Where the `dh` column
-  tests a criterion against a functional equation without an Euler product, the `ℙ¹` column tests it against an Euler
-  product and a functional equation without purity.
+  unconditionally: the Hadamard kernel's (`PurityRational.not_posDef`, the column of `BallHadamard.rh_iff_posDefH`) and
+  the Gaussian kernel's (`PurityRational.not_posDef_gauss`, the column of `BallKernel.rh_iff_posDef`), by one argument
+  for every even weight without zeros on `Re p > 0` (`PurityRational.not_posDef_kerG`), and so does the kernel computed
+  from the primes (`PurityPsi.kerP1_explicit`, `PurityPsi.not_posDef_psi`, the column of `BallPsi.rh_iff_posDef_psi`),
+  and that of the integral quaternions, whose extra zeros lie on the line (`PurityQuaternion.not_posDef_quaternion`).
+  Weil's twin form of `ℙ¹`, built from the primes, has rate `ζ`'s plus one (`PurityTwins.rate_iff_zeta`): its defect is
+  never subexponential (`PurityTwins.not_subexp`, the column of `WeilForm.rh_iff_twins_subexp`), and RH holds exactly
+  when it is `O(e^l)` (`PurityTwins.rh_iff_rate_one`). Where the `dh` column tests a criterion against a functional
+  equation without an Euler product, the `ℙ¹` column tests it against an Euler product and a functional equation without
+  purity.
 
 ## Unconditional results on Weil's form of `ζ`
 
