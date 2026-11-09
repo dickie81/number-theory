@@ -279,6 +279,8 @@ import XiReflectionBand
 import SquaresCongruences
 import RamanujanCongruences
 import CubicBinomial
+import RamanujanFamilies
+import FermatCubicCount
 import FourSquareTeeth
 import FourSquareResidue
 import SiegelFour
@@ -1527,6 +1529,27 @@ twin-form rates at `11/12`. -/
 #print axioms CubicBinomial.choose_modEq_trace
 #print axioms CubicBinomial.choose_modEq
 #print axioms CubicBinomial.exists_rep
+#print axioms RamanujanFamilies.not_isSquare_neg_three
+#print axioms RamanujanFamilies.family_one
+#print axioms RamanujanFamilies.family_three
+#print axioms RamanujanFamilies.family_four
+#print axioms RamanujanFamilies.family_six
+#print axioms RamanujanFamilies.ramanujan_five_of_family
+#print axioms RamanujanFamilies.ramanujan_seven_of_family
+#print axioms RamanujanFamilies.coloured_seven_eleven
+#print axioms RamanujanFamilies.coloured_eight_eleven
+#print axioms RamanujanFamilies.coloured_five_eleven
+#print axioms FermatCubicCount.card_cube_roots
+#print axioms FermatCubicCount.card_eq_jacobiSum
+#print axioms FermatCubicCount.card_eq_trace
+#print axioms FermatCubicCount.card_eq
+#print axioms FermatCubicCount.card_modEq
+#print axioms FermatCubicCount.card_eq_of_mod_three_ne_one
+#print axioms FermatCubicCount.card_infinity_eq
+#print axioms FermatCubicCount.card_infinity_eq_of_mod_three_ne_one
+#print axioms FermatCubicCount.card_proj_eq
+#print axioms FermatCubicCount.card_proj_eq_of_mod_three_ne_one
+#print axioms FermatCubicCount.abs_sub_le
 #print axioms FourSquareTeeth.r4_two_pow_mul
 #print axioms FourSquareTeeth.r4_pow_mul
 #print axioms FourSquareTeeth.lseries_r4

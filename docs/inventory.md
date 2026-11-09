@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1555 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1576 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 186 | 642 |
+| `lib/core` | 188 | 663 |
 | `lib/pnt` | 253 | 808 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -418,6 +418,20 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.weilQ_symbol`: The symbol form ([note](../formalisations/weil-positivity.md))
 
+#### `FermatCubicCount`: Gauss's count of `x³ + y³ = 1` modulo `p`
+
+- `FermatCubicCount.card_cube_roots`: Cube roots counted by a cubic character
+- `FermatCubicCount.card_eq_jacobiSum`: The Jacobi-sum count
+- `FermatCubicCount.card_eq_trace`: Gauss's count at a primary element
+- `FermatCubicCount.card_eq`: Gauss's count of `x³ + y³ = 1` (mod p)
+- `FermatCubicCount.card_modEq`: The count modulo `p`, by Jacobi's binomial coefficient
+- `FermatCubicCount.card_eq_of_mod_three_ne_one`: `p` solutions when `p ≢ 1 (mod 3)`
+- `FermatCubicCount.card_infinity_eq`: Three points at infinity
+- `FermatCubicCount.card_infinity_eq_of_mod_three_ne_one`: One point at infinity
+- `FermatCubicCount.card_proj_eq`: The projective Fermat cubic
+- `FermatCubicCount.card_proj_eq_of_mod_three_ne_one`: The projective Fermat cubic
+- `FermatCubicCount.abs_sub_le`: The Hasse–Weil bound for the Fermat cubic
+
 #### `FirstFailure`: The first positivity failure
 
 - `WeilForm.first_failure`: The first positivity failure ([note](../formalisations/weil-positivity.md))
@@ -784,6 +798,19 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `RamanujanCongruences.coloured_four_seven`: Four-coloured partitions modulo `7`
 - `RamanujanCongruences.coloured_six_seven`: Six-coloured partitions modulo `7`
 - `RamanujanCongruences.coloured_three_nine`: Three-coloured partitions modulo `9`
+
+#### `RamanujanFamilies`: Ramanujan's congruences in four infinite families
+
+- `RamanujanFamilies.not_isSquare_neg_three`: `−3` is not a square modulo a prime `ℓ ≡ 2 (mod 3)`, `ℓ ≥ 5`
+- `RamanujanFamilies.family_one`: From `E`
+- `RamanujanFamilies.family_three`: From `E³`
+- `RamanujanFamilies.family_four`: From `E⁴ = E·E³`
+- `RamanujanFamilies.family_six`: From `E⁶ = (E³)²`
+- `RamanujanFamilies.ramanujan_five_of_family`: Ramanujan's congruence modulo `5`
+- `RamanujanFamilies.ramanujan_seven_of_family`: Ramanujan's congruence modulo `7`
+- `RamanujanFamilies.coloured_seven_eleven`: Seven-coloured partitions modulo `11`
+- `RamanujanFamilies.coloured_eight_eleven`: Eight-coloured partitions modulo `11`
+- `RamanujanFamilies.coloured_five_eleven`: Five-coloured partitions modulo `11`
 
 #### `Roadmap`: §11 roadmap, item 1: the objects stated, and the reduction to RH proved
 
