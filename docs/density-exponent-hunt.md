@@ -990,3 +990,274 @@ or polynomial partitioning — valuable toward Remark 12.3, but by itself freeze
 
 **No improvement of \(A\) claimed. No Lean. Docs/scripts only.**
 
+
+---
+
+## Batch 5 — Attack: try to prove (`J(f)` saving + MVT-beyond)
+
+Mandate: move from mapping to line-by-line attempts. Scripts:
+`scripts/density_hunt/j_prop81_probe.py`, `scripts/density_hunt/mvt_beyond_attack.py`.
+**No genuine inequality proved.** Strongest outputs are negative (tightness / stall maps)
+and Numerical fits.
+
+---
+
+### Attack 1 — power saving on CGL Prop. 8.1’s `J(f)` at prime `q`
+
+#### Explicit `J(f)` (arXiv:2507.08296, Prop. 8.1)
+
+For a family \(\vec f=\{f_b\}_{1\le b\le q,\ (b,q)=1}\) of non-negative smooth functions
+supported on \(|u|\ll 1\), with Fourier decay
+\(\sum_b|\hat f_b(\xi)|\lessapprox_j(T/|\xi|)^j\,\phi(q)\,\|f\|_\infty\), and \(0<M\le(qT)^{\varpi}\),
+
+\[
+J(\vec f)=\sup_{0<M_i<M}\int_{\mathbb{R}}\sum_{\substack{1\le a\le q\\(a,q)=1}}
+\Biggl(\sum_{\substack{1\le b\le q\\(b,q)=1}}\sum_{\substack{|m_1|\sim M_1\\ m_2\sim M_2\\ |m_3|\ll M_3}}
+f_b\Bigl(\frac{m_1u+m_3}{m_2}\Bigr)\,(am_1+bm_2+m_3,q)\Biggr)^2\,du.
+\]
+
+CGL proves
+
+\[
+J(\vec f)\lessapprox \phi(q)\,M^6\Bigl(\int\sum_b f_b\Bigr)^2+\phi(q)^2 M^4\int\sum_b f_b^2.
+\]
+
+**Prime `q` simplification.** \((L,q)\in\{1,q\}\), so the weight is
+\(1+(q-1)\mathbf{1}_{L\equiv 0\pmod q}\). For a single channel \(b\) and \(M<q\)
+(so \(m_1\not\equiv 0\)), writing \(A=\sum_m f(\mathrm{affine})\) and
+\(H_a=\sum_{m:\,am_1+bm_2+m_3\equiv 0}f(\mathrm{affine})\),
+
+\[
+\sum_{a=1}^{q-1}S_a(u)^2=3(q-1)A(u)^2+(q-1)^2\sum_a H_a(u)^2,
+\]
+
+with \(\sum_a H_a=A\). The second summand is the GCD-hit contribution and dominates
+numerically (below).
+
+#### Tight sub-cases in CGL’s proof (from their / GM §9 discussion)
+
+1. **Random / L¹-saturating:** \(f\) a smooth bump of measure \(\asymp 1\) → first term
+   \(\phi(q)M^6\|f\|_1^2\) is sharp up to \((qT)^{o(1)}\).
+2. **Rational / L²-saturating:** \(f\) a \(1/T\)-neighbourhood of \(\{r/s:r,s\sim B\}\) →
+   second term \(\phi(q)^2 M^4\|f\|_2^2\) is sharp (approximate closure under
+   \(u\mapsto(m_1u+m_3)/m_2\)).
+
+Any power saving \(\phi(q)^{-\theta}\) must beat **both** model extremisers, or show that
+in the CGL application range the rational extremiser cannot arise from a large-value set \(W\).
+
+---
+
+#### Route (i) — ℓ² decoupling / finite-field restriction
+**Attempt.** View the affine extension \(u\mapsto(m_1u+m_3)/m_2\) as a curved
+restriction problem. Mockenhaupt–Tao (Duke Math. J. 2004, arXiv:math/0204234):
+restriction for the parabola in \(\mathbb{F}_p^2\), \(R^*(2\to 4)\) bounded. Bourgain–Demeter
+ℓ² decoupling is Euclidean (Annals 2015) and has \(p\)-adic analogues, not a direct
+\(\mathbb{F}_p\) theorem for Möbius orbits.
+
+**Line-by-line stall.**
+1. Prop. 8.1’s integrand is a **triple product** \(R(v_1)R((m_1v_1+m_3)/(m_2v_1))R((m_1v_1+m_3)/m_2)\)
+   averaged over \(\vec m\), not the Fourier extension of a single hypersurface measure.
+2. The GCD weight \((am_1+bm_2+m_3,q)\) is an arithmetic multiplicity absent from MT/BD.
+3. Reducing to a parabola restriction would require freezing two of three Möbius parameters
+   and absorbing the third into a phase — the resulting phase is linear fractional, not
+   quadratic; MT does not apply as stated.
+4. Even a sharp \(\mathbb{F}_p\) decoupling for \(\mathrm{PGL}_2\) orbits is not in the literature
+   in a form that yields \(\phi(q)^{-\theta}\) on both CGL terms.
+
+**Verdict: Dead as an off-the-shelf import. Partial as a research programme** (would need a
+new decoupling theorem for GCD-twisted Möbius averages).
+
+#### Route (ii) — Stepanov / Weil / Deligne complete sums
+**Attempt.** Complete the \(m\)-sums in \(H_a\) against an additive character, apply Weil
+bound \(|\sum_x e_q(f(x))|\ll \deg\sqrt{q}\) for non-trivial square-free \(f\).
+
+**Line-by-line stall.**
+1. \(f_b\) in Prop. 8.1 is an **arbitrary** smooth function with Fourier decay (coming from
+   \(|R|^2\) smoothed), not an algebraic function of bounded degree.
+2. Inserting a smooth \(f\) via Melin/Fourier expands into many frequencies; Weil gives
+   \(\sqrt{q}\) per frequency, but the number of significant frequencies is \(\asymp T\)
+   (the decay scale), and \(T\) can be as large as the CGL application allows — the
+   \(\sqrt{q}\cdot T\) reconstruction rebuilds at best the trivial bound.
+3. The rational extremiser is **combinatorial** (many affine relations over \(\mathbb{Q}\)),
+   not oscillatory; complete-sum cancellation is the wrong tool against it.
+4. Stepanov’s method likewise needs polynomial equations of controlled degree.
+
+**Verdict: Dead** for a uniform saving against both extremisers.
+
+#### Route (iii) — point-line incidences over \(\mathbb{F}_p\) (Stevens–de Zeeuw, Rudnev)
+**Attempt.** Cast \(\bigl(u,\,(m_1u+m_3)/m_2\bigr)\) as incidences between a point set
+(support of \(f\)) and a line set indexed by \(\vec m\). Stevens–de Zeeuw: for
+\(P=A\times B\) and lines \(L\),
+\(I(P,L)\ll |A|^{3/4}|B|^{1/2}|L|^{3/4}+|P|+|L|\) (under small-set constraints).
+Rudnev: point-plane incidences in \(\mathbb{F}^3\).
+
+**Line-by-line stall.**
+1. GCD multiplicity again: geometric incidence counts each line once; Prop. 8.1 weights
+   some triples by \(q\). Reducing GCD-hits to a congruence hyperplane replaces one
+   incidence problem by a thinner one, but the weight \(q\) puts a factor back.
+2. Small-set hypothesis \(|P|^{13}|L|^{-2}<p^{15}\) (Stevens–de Zeeuw general form): with
+   \(|L|\sim M^3\sim q^{2/3}\) (critical \(M\sim q^{2/9}\)) this constrains \(|P|\) above
+   which the bound fails — the rational extremiser’s effective \(|P|\) after \(1/T\)-smoothing
+   sits near the boundary.
+3. Optimistically inserting ST-type saving into \(\int\sum_a H_a^2\) improves the second
+   CGL term by a fractional power of \(M\), hence a \(\delta\) in \(S_3\) of size
+   \(O(1/\log q)\) or a small fixed \(\delta\) at best — **not enough alone** to break
+   \(A=7/3\) past the MVT floor at \(30/13\) without `mvt_beyond` (Batch 4 bookkeeping).
+4. No written inequality obtained; the incidence dictionary is plausible but lossy.
+
+**Verdict: Partial / stalled** — best-looking geometric route, no theorem.
+
+#### Route (iv) — Bourgain–Katz–Tao sum-product in \(\mathbb{F}_p\)
+**Attempt.** If \(U=\mathrm{supp}(f)\) has small multiplicative energy, affine images
+\((m_1U+m_3)/m_2\) expand and overlaps in \(J\) drop.
+
+**Line-by-line stall.**
+1. The **rational extremiser** is essentially closed under the affine maps in question —
+   \(U\cdot U\approx U\) in the strong sense of many representations \(r/s\). Sum-product
+   non-triviality **fails exactly on the configuration that saturates the second CGL term**.
+2. On the random extremiser, sum-product is not the bottleneck (the first term already
+   matches \(M^6\|f\|_1^2\) by Cauchy-Schwarz, no energy input).
+3. Therefore BKT cannot yield a saving that covers both tight cases.
+
+**Verdict: Dead** against the rational extremiser; irrelevant to the random one.
+
+---
+
+#### Numerics for `J(f)` — `j_prop81_probe.py` (**Numerical**)
+
+Discrete single-channel model with the exact prime-`q` GCD expansion above; grid \(G=128\) on
+\([1/2,2]\); \(M=\min(8,\lceil q^{2/9}\rceil)\); kinds = random / rational / flat.
+CGL comparison: \(T_1=q M^6\mathrm{mass}^2\), \(T_2=q^2 M^4\mathrm{mass}_2\).
+
+| q | kind | J/(T1+T2) | JH/JA |
+|---|---|---|---|
+| 103 | flat | 0.229 | 4.0 |
+| 223 | flat | 0.220 | 8.6 |
+| 509 | flat | 0.206 | 10.4 |
+| 1013 | flat | 0.212 | 13.8 |
+| 2011 | flat | 0.209 | 27.3 |
+| 3011 | flat | 0.215 | 29.3 |
+| 103–3011 | random | 0.09–0.17 | 8–45 |
+| 103–3011 | rational | 0.11–0.17 | 8–47 |
+
+Fit \(\log J\sim a+b\log q\), \(\log(T_1+T_2)\sim c+d\log q\):
+
+| kind | slope_J | slope_bound | apparent saving \(d-b\) |
+|---|---|---|---|
+| flat | 2.812±0.097 | 2.833±0.095 | **0.021±0.136** |
+| random | 2.719±0.039 | 2.836±0.090 | 0.117±0.098 |
+| rational | 2.707±0.080 | 2.851±0.093 | 0.144±0.123 |
+
+**Reading (honest).**
+- Flat ratio is **stable ≈0.21** across \(q\in[10^2,3\cdot 10^3]\); fitted saving consistent with **0**.
+- Random/rational show a mild positive saving inside ~1–1.5σ — **not** significant evidence of
+  \(\phi(q)^{-\theta}\); could be \(M(q)\)-clamping / single-channel / grid artefacts.
+- JH ≫ JA: the GCD-hit term dominates, so any real attack must save on \(\sum_a H_a^2\).
+- **Caveats:** single \(b\)-channel (multi-\(b\) is the full Prop. 8.1); small \(M\); continuous
+  \(u\)-grid proxy; CGL’s \(\lessapprox\) hides \((qT)^{\varepsilon}\) and absolute constants.
+  This does **not** prove sharpness, but it **fails to support** a power saving large enough
+  to matter for \(A\).
+
+**Attack 1 strongest result:** no inequality; numerics + stall map. Flat extremiser looks
+order-sharp for the \(\phi(q)^2 M^4\) scale. **Label: Numerical + Dead/Partial by route.**
+
+---
+
+### Attack 2 — MVT-beyond at \((y,V)=(7/9,N^{5/7})\)
+
+Target inequality (**Heuristic**, from Batch 4):
+
+\[
+|W|\ll N^2V^{-2}+(qT)^{1-\eta}NV^{-2}\qquad(\eta>0),\quad T\ \text{small},\ q\ \text{prime}.
+\]
+
+#### (H1) Amplify the O(1) coexistence slack into a power
+**Idea.** Batch 4: ADV configs have \(|W|/W_{\mathrm{MVT}}\approx 0.18\text{–}0.22\). Dirichlet-power
+amplification on the discrete-log group (`mvt_beyond_attack.py`).
+
+**Numerical.** At \(q=10007\): ratio \(0.226\,(k=1)\to 0.086\,(k=2)\to 0.019\,(k=3)\), but
+\(\alpha_{\mathrm{mvt,emp}}\) **increases** \(0.83\to 0.93\to 1.10\) (c₂ grows under convolution).
+Slack shrinks as a constant, not as \(q^{-\varepsilon}\).
+
+**Stall.** No renormalisation of \(V\) turns this into a uniform \(\eta>0\) in the density
+exponent: the large-value threshold and the coefficient \(\ell^2\) mass co-vary. Iterating
+does not produce a power of \(q\).
+
+**Verdict: Dead** as a path from O(1) slack → \(\eta>0\).
+
+#### (H3) Direct η-test on ADV and flat at top-R threshold
+Measure \(|W|/[(q^{1-\eta}+N)c_2/V_R^2]\) with \(V_R=\) the \(R\)-th largest \(|D|\) so \(|W|\sim R=q^{2/3}\).
+
+| q | config | η=0 | η=0.1 | η=0.2 | η=0.3 | η=0.5 |
+|---|---|---|---|---|---|---|
+| 1009 | ADV | 0.18 ✓ | 0.31 ✓ | 0.47 ✓ | 0.65 ✓ | 0.89 ✓ |
+| 10007 | ADV | 0.22 ✓ | 0.47 ✓ | 0.86 ✓ | **1.29 ✗** | **1.79 ✗** |
+| 30011 | ADV | 0.22 ✓ | 0.53 ✓ | **1.06 ✗** | **1.65 ✗** | **2.27 ✗** |
+| 1009–30011 | flat | ≤0.17 ✓ | ≤0.29 ✓ | ≤0.44 ✓ | ≤0.60 ✓ | ≤0.83 ✓ |
+
+**Reading.** ADV’s room for \(\eta\) **shrinks with \(q\)**: the largest η that holds is
+\(>0.5\) at \(q=1009\), \(\approx 0.2\) at \(q=10007\), \(<0.2\) at \(q=30011\). Extrapolation:
+any fixed \(\eta>0\) eventually fails on ADV-type configs. Flat retains slack, but density
+estimates need the **worst** case.
+
+**Verdict: Dead** for a uniform positive \(\eta\) (Numerical evidence against).
+
+#### (H2) Multiplicative-subgroup subdivision of \((\mathbb{Z}/q\mathbb{Z})^\times\)
+**Idea.** Replace GM’s factor-subdivision of \(q\) by cosets of a subgroup
+\(H\le(\mathbb{Z}/q\mathbb{Z})^\times\cong\mathbb{Z}/(q-1)\), apply a local LV bound on each coset.
+
+**Numerical / structural stall.**
+1. For prime \(q\) with \(q-1=2p'\) (safeprime-ish, e.g. \(q=10007\)), subgroups are trivial —
+   no intermediate \(|H|\sim q^{\alpha}\).
+2. When subgroups exist (\(q=1009\), \(q-1=1008\)), pieces of ADV top-\(R\) have small S₃/CGL
+   (\(\sim 10^{-3}\)) and \(\alpha_{\mathrm{piece}}\sim 0.2\text{–}0.35\), but the number of cosets is
+   \(q^{1-\alpha}\). Union bound rebuilds
+   \(|W|\ll q^{1-\alpha}\cdot q^{\alpha_{\mathrm{piece}}}\), which beats \(q^{2/3}\) only if
+   \(1-\alpha+\alpha_{\mathrm{piece}}<2/3\), i.e. \(\alpha>1/3+\alpha_{\mathrm{piece}}\gtrsim 0.5\text{–}0.7\) —
+   then each piece is so large that the local bound does not improve on MVT.
+3. Characters in a coset of \(H\) are not a spectral window for the GCD-twisted forms; the
+   CGL matrix \(M_W\) does not block-diagonalise over cosets.
+
+**Verdict: Dead** for prime \(q\) (structural, with Numerical confirmation).
+
+#### (H2b) Additive \(t\)-twist shifts as fake subdivision
+**Idea.** Use \(\chi(n)n^{it}\) shifts to mimic \(T\)-subdivision inside one character.
+
+**Stall.** At the Linnik/CGL critical point one takes \(T=1\) (one point per character;
+Remark 12.3). There is no \(t\)-room to subdivide. For \(T>1\) this is ordinary GM
+\(T\)-subdivision, already available and already used by CGL when \(T\) is large; it does
+not help the **\(q\)-aspect** prime-modulus bottleneck.
+
+**Verdict: Dead** at the binding \((T=1)\) point.
+
+---
+
+### Batch 5 summary
+
+| Attack | Route | Verdict | Strongest output |
+|---|---|---|---|
+| 1 | (i) decoupling / MT | Dead as import / Partial as programme | Stall: triple Möbius + GCD ≠ parabola restriction |
+| 1 | (ii) Weil / Deligne | **Dead** | Stall: \(f\) not algebraic; rational extremiser combinatorial |
+| 1 | (iii) incidences SdZ/Rudnev | **Partial / stalled** | Plausible dictionary; GCD weight + small-set limits; no theorem |
+| 1 | (iv) BKT sum-product | **Dead** | Fails on the rational extremiser |
+| 1 | Numerics `J/(T1+T2)` | **Numerical** | Flat ratio ≈0.21 stable; saving 0.02±0.14 (null) |
+| 2 | (H1) amplify slack | **Dead** | Constant shrinks, not \(q^{-\varepsilon}\) |
+| 2 | (H3) η-test | **Dead** (uniform η) | ADV breaks any fixed η as \(q\) grows |
+| 2 | (H2) subgroup subdiv | **Dead** | Safeprime \(q-1\); covering kills gain |
+| 2 | (H2b) t-twist subdiv | **Dead** | No room at \(T=1\) |
+
+### Inequality worth pursuing after the attack
+
+**None proved.** The only route not killed outright is Attack 1(iii) (incidences on the
+GCD-hit sum \(\sum_a H_a^2\)), and even an optimistic saving there is bookkept to land at
+the MVT floor \(30/13\) without a separate `mvt_beyond` theorem — which Attack 2’s numerics
+now make look **harder**, not easier (ADV saturates reduced MVT bounds as \(q\to\infty\)).
+
+Revised priority:
+1. Still need a new idea for `mvt_beyond` (Attack 2 closed the obvious amplification /
+   subdivision loopholes).
+2. Attack 1(iii) remains a long-shot for Remark 12.3’s \(S_3\), subordinate to (1) for
+   \(A<30/13\).
+
+**No improvement of `A` claimed. No Lean. Docs/scripts only.**
+
