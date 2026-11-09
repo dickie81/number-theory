@@ -293,6 +293,14 @@ than it appears to, or rest on more than it should.
     vanish on `Re s ≥ 1` except perhaps at `χ = 1`, `s = 1` (`LFunction_ne_zero_of_one_le_re`). So it is the
     `L`-function, and the count is of the characters with a zero in `σ ≤ Re s < 1`, `|Im s| ≤ T`, with at most the
     trivial character besides.
+  - That needs none of `ZMod.LFunction`'s construction, which goes through Hurwitz zeta functions, Mellin transforms
+    of theta kernels and `Γ`. `LFunction χ` is differentiable at every `s ≠ 1` (`differentiableAt_LFunction`), so it
+    is analytic on the connected open set `ℂ ∖ {1}`, and it agrees there with the `L`-series on `Re s > 1`. By the
+    identity theorem it is the analytic continuation of `Σ χ(n)n^{−s}`, however it is built. The statement's
+    number-theoretic definitions, 70 of its 5275 constants, are these: `MulChar`, `ZMod` and `DirichletCharacter`
+    (`MulChar (ZMod q) ℂ`) with its `Fintype`, `LFunction` with the functions it is built from, and the real and
+    complex powers, logarithms and `π`. The others are Mathlib's and Lean's foundations: algebra, order, the real and
+    complex numbers, finite sets, measure and topology.
   - It depends on the library only through `CGLDensity` (`scripts/lean/StatementClosure.lean`). Followed through
     types and the bodies of definitions, but not through proofs, `cglDensity`'s type reaches 5275 constants: 5267 of
     Mathlib, Lean, Batteries and Aesop, `CGLDensity` itself, and seven facts its body abstracts, `Nat.AtLeastTwo` for
