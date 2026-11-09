@@ -11,7 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
 <style>
-/* Layout: one reading column, like a plate in a journal: the strip, the two counts, Linnik's exponent, the theorems. */
+/* Layout: one reading column, like a plate in a journal: the strip, the count and its shares, the two density counts,
+   Linnik's exponent, the theorems. */
 :root {
   --bg: #f3f5f7;
   --surface: #fbfcfd;
@@ -162,8 +163,9 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     <div class="eyebrow"><a href="./">number-theory</a> · the Lean library at {{commit}}</div>
     <h1>The Strip and the Count</h1>
     <p class="lede">What the library's Lean theorems say about the zeros of <span class="math">ζ(s)</span> and of Dirichlet
-      <span class="math">L</span>-functions: where in the critical strip a zero can be, how many can lie to the right of a
-      line <span class="math">Re s = σ</span>, and what that gives for Linnik's exponent. Every constraint drawn in color is
+      <span class="math">L</span>-functions: where in the critical strip a zero can be, how many zeros there are and how
+      many are simple, how many can lie to the right of a line <span class="math">Re s = σ</span>, and what that gives for
+      Linnik's exponent. Every constraint drawn in color is
       a theorem of the library, named beside it, and its numbers are read from the theorem's statement; the gray curves
       are published or conjectured bounds, drawn for comparison.</p>
   </header>
@@ -207,6 +209,62 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
         <a href="https://github.com/dickie81/number-theory/blob/main/lib/vendor/zeta23/README.md">zeta23</a>, a library
         vendored from anthropics/formal-math: its Riemann–von Mangoldt formula, and the argument principle, Backlund's
         bound and Stirling's formula behind it, and for the line its proof of Alpöge and Furman's theorem.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="count-h">
+    <h2 id="count-h">How many zeros, and how simple</h2>
+    <p>Write <span class="math">N(T, 2T)</span> for the number of nontrivial zeros with <span class="math">T &lt; Im ρ ≤ 2T</span>,
+      each counted as often as its order. The Riemann–von Mangoldt formula gives it to within <span class="math">O(log T)</span>.
+      An explicit bound for the zeros in every window of height 1 bounds the order of every zero, and Alpöge and Furman's
+      theorems say what share of the zeros are distinct, simple and on the line.</p>
+    <div class="plate">
+      <div class="facts">
+        <div class="fact"><div class="claim">The count is known to within <span class="math">O(log&nbsp;T)</span></div>
+          <p class="note"><span class="math">N(T, 2T) = (T/2π)(log(T/2π) + 2 log 2 − 1) + O(log T)</span>, the Riemann–von
+            Mangoldt formula in zeta23's form. Its main term is the increment of <span class="math">(T/2π) log(T/2πe)</span>,
+            the classical count of the zeros up to height <span class="math">T</span>, so near height <span class="math">T</span>
+            there are about <span class="math">(1/2π) log T</span> zeros to each unit of height.</p>
+          <div class="leans"><code>ZeroCount.<wbr>riemann_von_mangoldt</code></div></div>
+        <div class="fact"><div class="claim">At most {{klocSlope}} log(<span class="math">t</span> + {{klocShift}}) + {{klocConst}}… zeros
+            in each window <span class="math">(t, t + 1]</span></div>
+          <p class="note">For every <span class="math">t</span> ≥ 0, counted with multiplicity. The bound is
+            {{klocA}}({{klocC}} + <span class="math">κ</span>) + {{klocSlope}} log(<span class="math">t</span> + {{klocShift}}),
+            with <span class="math">κ</span> = Σ <span class="math">Λ(n)n</span><sup class="math">−3/2</sup> = {{kappa}}…: explicit,
+            where the formula's <span class="math">O(log T)</span> is not.</p>
+          <div class="leans"><code>CountCompare.<wbr>local_count_le</code></div></div>
+        <div class="fact"><div class="claim">Every zero has order <span class="math">O(log&nbsp;|γ|)</span></div>
+          <p class="note">A zero of order <span class="math">m</span> counts <span class="math">m</span> times in the window that
+            holds it, so the zero <span class="math">ρ = β + iγ</span> has order at most {{klocSlope}}
+            log(|<span class="math">γ</span>| + {{klocShift}}) + {{klocConst}}…; conjecturally every zero is simple. No
+            nontrivial zero is real: <span class="math">γ</span> ≠ 0.</p>
+          <div class="leans"><code>ZeroOrder.<wbr>analyticOrderAt_le</code><code>ZeroOrder.<wbr>im_ne_zero</code></div></div>
+      </div>
+    </div>
+    <div class="plate">
+      <div class="legend">
+        <span><i class="kd lean"></i><span>proved in Lean: at least this share, less any <i>ε</i> &gt; 0, for large <i>T</i></span></span>
+        <span><i class="kd ref"></i><span>Conrey (1989): more than {{conrey}} simple and on the line</span></span>
+        <span><i class="kv dash"></i><span>conjectured: all</span></span>
+      </div>
+      <div class="ladder" id="shares" role="list" aria-label="The shares of the zeros with T &lt; Im ρ ≤ 2T, counted with multiplicity: at least {{halfSimple}} simple and on the line, {{onLine}} distinct and on the line, and {{distinct}} distinct"></div>
+      <div class="facts">
+        <div class="fact"><div class="claim">At least {{halfSimple}} of the zeros are simple and on the line</div>
+          <p class="note">For every <span class="math">ε</span> &gt; 0 and large <span class="math">T</span>, at least
+            ({{halfSimple}} − <span class="math">ε</span>)<span class="math">N(T, 2T)</span> simple zeros with
+            <span class="math">T &lt; Im ρ ≤ 2T</span> lie on the line, so at least <span class="math">T log T</span>/{{simpleSel}}<span class="math">π</span>
+            of them, and infinitely many in all.</p>
+          <div class="leans"><code>CriticalLine.<wbr>half_simple</code><code>CriticalLine.<wbr>ncard_simple_zeros_ge</code><code>CriticalLine.<wbr>infinite_simple_zeros</code></div></div>
+        <div class="fact"><div class="claim">At least {{distinct}} of the zeros are distinct</div>
+          <p class="note">For every <span class="math">ε</span> &gt; 0 and large <span class="math">T</span>, the distinct zeros with
+            <span class="math">T &lt; Im ρ ≤ 2T</span> number at least ({{distinct}} − <span class="math">ε</span>)<span class="math">N(T, 2T)</span>,
+            so multiple zeros, if there are any, add at most ({{multiple}} + <span class="math">ε</span>)<span class="math">N(T, 2T)</span>
+            to the count.</p>
+          <div class="leans"><code>CriticalLine.<wbr>three_quarters_distinct</code></div></div>
+      </div>
+      <p class="note">The shares are of <span class="math">N(T, 2T)</span>, the zeros counted with multiplicity: Alpöge and
+        Furman's Theorems A, B and C (2026), which zeta23 proves with no hypothesis. Levinson (1974) had more than a third of
+        the zeros on the line.</p>
     </div>
   </section>
 
@@ -336,7 +394,11 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       <code>SieveCurveGlue.WindowOKHM</code>, with its margins; at {{L}} they give the window [{{exactLo}}…, {{exactHi}}…],
       which the script computes again in exact arithmetic and checks contains the Lean's, [{{u1}}, {{u2}}]. The exponents
       marked computed are the paper's and its supplement's computations ({{secComparison}}, {{supComputations}}), read from
-      their sources; they are not theorems of the library.</p>
+      their sources; they are not theorems of the library. Nor is the value of <span class="math">κ</span>, {{kappa}}…: the
+      Lean defines <span class="math">κ</span> as the sum Σ <span class="math">Λ(n)n</span><sup class="math">−3/2</sup>, and
+      the script computes it, to <span class="math">n</span> = 10<sup>5</sup> with the tail
+      ∫ <span class="math">t</span><sup class="math">−3/2</sup> <span class="math">dt</span> that the prime number theorem
+      gives.</p>
   </footer>
 </main>
 
@@ -691,6 +753,40 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     }));
   }
 
+  // ---- the shares of the zeros: simple, distinct, on the line --------------------------------------------------
+  function drawShares() {
+    var box = document.getElementById("shares"); box.textContent = "";
+    var pct = function (x) { return x * 100; };
+    var cell = function (cls, row) { var d = document.createElement("div"); d.className = cls; row.appendChild(d); return d; };
+    var track = function (row) {
+      var t = cell("track", row), v = document.createElement("i");
+      v.className = "vline dash"; v.style.left = "100%"; t.appendChild(v);
+      return t;
+    };
+    var head = document.createElement("div"); head.className = "lrow lhead"; head.setAttribute("aria-hidden", "true");
+    cell("lab", head);
+    var ax = track(head);
+    [[0, "0"], [0.25, "¼"], [0.5, "½"], [0.75, "¾"], [1, "1"]].forEach(function (k) {
+      var tk = document.createElement("span"); tk.className = "tick"; tk.style.left = pct(k[0]) + "%";
+      tk.textContent = k[1]; ax.appendChild(tk);
+    });
+    cell("val", head);
+    box.appendChild(head);
+    DATA.shares.forEach(function (r) {
+      var row = document.createElement("div"); row.className = "lrow litem"; row.setAttribute("role", "listitem");
+      var lab = cell("lab", row), tr = track(row), val = cell("val", row);
+      var name = document.createElement("span"); name.className = "name"; name.textContent = r.what; lab.appendChild(name);
+      var src = document.createElement("code"); src.className = "cite"; src.innerHTML = r.lean.replace(/\./g, ".<wbr>");
+      lab.appendChild(src);
+      var stem = document.createElement("i"); stem.className = "stem"; stem.style.width = pct(r.x) + "%"; tr.appendChild(stem);
+      var ref = document.createElement("i"); ref.className = "dot ref"; ref.style.left = pct(DATA.conrey.x) + "%";
+      tr.appendChild(ref);
+      var dot = document.createElement("i"); dot.className = "dot lean"; dot.style.left = pct(r.x) + "%"; tr.appendChild(dot);
+      val.textContent = "at least " + r.t;
+      box.appendChild(row);
+    });
+  }
+
   // ---- Linnik's exponent: the ladder -----------------------------------------------------------------------------
   var LMIN = DATA.grh.x, LMAX = 2.9;
   function lpct(L) { return (Math.min(L, LMAX) - LMIN) / (LMAX - LMIN) * 100; }
@@ -944,10 +1040,10 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     document.getElementById("presets").appendChild(bt);
   });
 
-  drawStrip();
+  drawStrip(); drawShares();
   setView(view);
   drawLadder(); drawLA(); setL(WD.L);
-  var redrawAll = function () { drawStrip(); drawZeta(); drawChar(); drawLadder(); drawLA(); drawWin(); };
+  var redrawAll = function () { drawStrip(); drawShares(); drawZeta(); drawChar(); drawLadder(); drawLA(); drawWin(); };
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(redrawAll);
   var pending = null;
   window.addEventListener("resize", function () {

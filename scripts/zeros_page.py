@@ -11,6 +11,8 @@ gives for Linnik's exponent. Each of its numbers that a theorem of the library s
 statement:
 - the half-plane, the band of `ζ`'s zeros, the bounds for `Θ`, the Korobov–Vinogradov region and the range of
   `S(t) = O(log t)`;
+- the shares of the zeros that are distinct, simple and on the line, and the constants of the local count
+  (`ShortWeil.Kloc`), with `κ = Σ Λ(n)n^{−3/2}` (`Kaiser.kLam`) computed here;
 - the density exponents of `ζ`;
 - the curve `g*` of the Linnik paper (`SieveCurve7D.g7d`), with the theorem that counts each of its pieces, read
   from the proof of `counts_7d` and checked against the piece's range and exponent;
@@ -28,6 +30,7 @@ compiled. A change to the Lean or to the paper that the page does not follow mak
 """
 import html
 import json
+import math
 import os
 import re
 import subprocess
@@ -135,6 +138,11 @@ def t(x):
     return "½" if x == F(1, 2) else f"{x.numerator}" if x.denominator == 1 else f"{x.numerator}/{x.denominator}"
 
 
+def tp(x):
+    """A rational as the page writes it as a factor: `(13/4)`, `½`, `2`."""
+    return f"({t(x)})" if "/" in t(x) else t(x)
+
+
 def dec(x, digits):
     """A number in decimals, without trailing zeros."""
     s = f"{float(x):.{digits}f}"
@@ -144,6 +152,25 @@ def dec(x, digits):
 def cut(x, digits):
     """A number cut, not rounded, to `digits` decimals, as the paper gives an exact value followed by `…`."""
     return f"{int(x * 10 ** digits) / 10 ** digits:.{digits}f}"
+
+
+def kappa(X=10 ** 5):
+    """`κ = Σ_n Λ(n)n^{−3/2} = −ζ′(3/2)/ζ(3/2)`, the constant `Kaiser.kLam` of the local count: the sum to `X`, and for
+    the rest `∫_X^∞ t^{−3/2} dt = 2/√X`, as `ψ(t) ~ t`. At `X = 10⁵` this is `1.5052371…`, against
+    `κ = 1.5052353…`."""
+    prime = bytearray([1]) * (X + 1)
+    prime[0:2] = b"\0\0"
+    for i in range(2, math.isqrt(X) + 1):
+        if prime[i]:
+            prime[i * i::i] = bytes(len(range(i * i, X + 1, i)))
+    total = 0.0
+    for p in range(2, X + 1):
+        if prime[p]:
+            pk = p
+            while pk <= X:
+                total += math.log(p) * pk ** -1.5
+                pk *= p
+    return total + 2 / math.sqrt(X)
 
 
 def linnik(name):
@@ -224,6 +251,10 @@ def commit():
 
 # ---- the page's data ---------------------------------------------------------------------------------------------
 
+# The share of the zeros that J. B. Conrey proved simple and on the line (J. Reine Angew. Math. 399 (1989): "more than
+# two fifths"), drawn for comparison with the library's shares.
+CONREY = F(2, 5)
+
 # The density estimates for ζ the page draws, with the method each comes from.
 ZETA = [("ZetaGMDensity.densityXi_thirty_thirteenths", "Guth–Maynard"),
         ("ZetaHuxley.densityXi_twelve_fifths", "Huxley"),
@@ -287,6 +318,40 @@ def extract():
     two = q(grab(r"^theorem two_thirds : ∀ ε > 0, ∃ T₀ : ℝ, ∀ T ≥ T₀, \((.+?) - ε\) \* \(Ncount T \(2 \* T\) : ℝ\) "
                  r"≤ N0star T \(2 \* T\)$", statement(res("CriticalLine.two_thirds")),
                  "the share of the zeros on the critical line").group(1))
+
+    # How many zeros, and how simple.
+    need(statement(res("ZeroCount.riemann_von_mangoldt")) == "theorem riemann_von_mangoldt : ∃ C T₀ : ℝ, ∀ T ≥ T₀, "
+         "|(Ncount T (2 * T) : ℝ) - T / (2 * π) * (Real.log (T / (2 * π)) + 2 * Real.log 2 - 1)| ≤ C * Real.log T",
+         "ZeroCount.riemann_von_mangoldt no longer states the Riemann–von Mangoldt formula as the page gives it")
+    need(statement(res("CountCompare.local_count_le")) == "theorem local_count_le {t : ℝ} (ht : 0 ≤ t) : "
+         "(Zeta23.Ncount t (t + 1) : ℝ) ≤ Kloc (t + 1 / 2)",
+         "CountCompare.local_count_le no longer bounds the zeros with t < Im ρ ≤ t + 1 by Kloc (t + 1/2)")
+    need(statement(res("ZeroOrder.analyticOrderAt_le")) == "theorem analyticOrderAt_le {ρ : ℂ} (hρ : riemannZeta ρ = 0) "
+         "(h0 : 0 < ρ.re) (h1 : ρ.re < 1) : analyticOrderAt riemannZeta ρ ≤ ⌊Kloc (|ρ.im| + 1 / 2)⌋₊",
+         "ZeroOrder.analyticOrderAt_le no longer bounds the order of every nontrivial zero by Kloc (|Im ρ| + 1/2)")
+    need(statement(res("ZeroOrder.im_ne_zero")) == "theorem im_ne_zero {ρ : ℂ} (hρ : Zeta23.IsNontrivialZero ρ) : "
+         "ρ.im ≠ 0", "ZeroOrder.im_ne_zero no longer says that no nontrivial zero is real")
+    kl = [int(g) for g in grab(r"^def Kloc \(x : ℝ\) : ℝ := (\d+) / (\d+) \* \((\d+) \+ kLam \+ Real\.log \(x \+ (\d+)\) / "
+                               r"(\d+)\)$", definition("ShortWeil.Kloc"), "the constants of the local count").groups()]
+    need(definition("Kaiser.kLam") == "def kLam : ℝ := ∑' n, ‖LSeries.term (fun n => (ArithmeticFunction.vonMangoldt n "
+         ": ℂ)) (3 / 2 : ℂ) n‖", "Kaiser.kLam is no longer Σ Λ(n)n^{−3/2}")
+    # Kloc (x + ½) = a(c + κ) + (a/e)log(x + ½ + d), with a = kl[0]/kl[1], c, d, e = kl[2:]
+    kap = kappa()
+    kloc = {"a": F(kl[0], kl[1]), "c": kl[2], "slope": F(kl[0], kl[1] * kl[4]), "shift": F(1, 2) + kl[3],
+            "const": kl[0] / kl[1] * (kl[2] + kap), "kappa": kap}
+    simple = grab(r"^theorem ncard_simple_zeros_ge : ∀ᶠ T : ℝ in atTop, T \* Real\.log T / \((\d+) \* π\) ≤ \(\(\{ρ : ℂ "
+                  r"\| riemannZeta ρ = 0 ∧ ρ\.re = 1 / 2 ∧ analyticOrderAt riemannZeta ρ = 1\} ∩ \{ρ \| T < ρ\.im ∧ "
+                  r"ρ\.im ≤ 2 \* T\}\)\.ncard : ℝ\)$", statement(res("CriticalLine.ncard_simple_zeros_ge")),
+                  "the simple zeros on the line with T < Im ρ ≤ 2T").group(1)
+    need(statement(res("CriticalLine.infinite_simple_zeros")) == "theorem infinite_simple_zeros : {ρ : ℂ | "
+         "riemannZeta ρ = 0 ∧ ρ.re = 1 / 2 ∧ analyticOrderAt riemannZeta ρ = 1}.Infinite",
+         "CriticalLine.infinite_simple_zeros no longer says that infinitely many simple zeros lie on the critical line")
+
+    def share(name, count):
+        return q(grab(r"^theorem " + name.split(".")[-1] + r" : ∀ ε > 0, ∃ T₀ : ℝ, ∀ T ≥ T₀, \((.+?) - ε\) \* "
+                      r"\(Ncount T \(2 \* T\) : ℝ\) ≤ " + count + r" T \(2 \* T\)$", statement(res(name)),
+                      f"the share of the zeros in {name}").group(1))
+    half, dist = share("CriticalLine.half_simple", "N0simple"), share("CriticalLine.three_quarters_distinct", "Ndist")
 
     # How many zeros of ζ lie right of σ.
     zeta = []
@@ -482,10 +547,18 @@ def extract():
                    "u2t": dec(u2, 5), "margin": float(margin), "varpi": float(varpi), "d": float(kd), "e": float(ke),
                    "k0": float(k0), "k1": float(k1)},
         "cert": {"corners": cut(corners, 7), "bound": cut(bound, 5), "lean": cert},
+        "shares": [{"x": float(x), "t": t(x), "what": what, "lean": n} for x, what, n in (
+            (half, "simple and on the line", "CriticalLine.half_simple"),
+            (two, "distinct and on the line", "CriticalLine.two_thirds"),
+            (dist, "distinct", "CriticalLine.three_quarters_distinct"))],
+        "conrey": {"x": float(CONREY), "t": t(CONREY)},
     }
     texts = {
         "hp": t(hp), "hpWidth": t(1 - hp), "bandLo": t(band[0]), "bandHi": t(band[1]),
         "thetaLo": t(th_lo), "thetaHi": t(th_hi), "selberg": sel, "onLine": t(two),
+        "klocA": tp(kloc["a"]), "klocC": str(kloc["c"]), "klocSlope": tp(kloc["slope"]), "klocShift": t(kloc["shift"]),
+        "klocConst": cut(kloc["const"], 2), "kappa": cut(kloc["kappa"], 4), "simpleSel": simple,
+        "halfSimple": t(half), "distinct": t(dist), "multiple": t(1 - dist), "conrey": t(CONREY),
         "kvA": f"{kv.group(1)}/{kv.group(2)}", "kvB": f"{kv.group(3)}/{kv.group(4)}",
         "nzeta": {1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}.get(len(zeta), str(len(zeta))),
         "npieces": str(len(pieces)), "gmax": dec(gmax, 4), "gmaxLo": t(pieces[peak][0]), "gmaxHi": t(pieces[peak][1]),
@@ -496,16 +569,18 @@ def extract():
         "commit": f'<a href="{REPO}/tree/{sha}">{sha[:7]}</a>' if sha else "the working tree",
         "date": html.escape(day or ""),
         **{k: html.escape(v) for k, v in r.items()},
-        "theorems": theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain),
+        "theorems": theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain, kloc, simple, half, dist),
     }
     for k in ("hp", "hpWidth", "bandLo", "bandHi", "thetaLo", "thetaHi", "selberg", "onLine", "kvA", "kvB", "nzeta",
+              "klocA", "klocC", "klocSlope", "klocShift", "klocConst", "kappa", "simpleSel", "halfSimple", "distinct",
+              "multiple", "conrey",
               "npieces", "gmax",
               "gmaxLo", "gmaxHi", "cgl", "floor", "grh", "L", "Ldec", "u1", "u2", "exactLo", "exactHi", "nresults"):
         texts[k] = html.escape(texts[k])
     return data, texts, named, results
 
 
-def theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain):
+def theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain, kloc, simple, half, dist):
     """The rows of the page's table of theorems, as HTML."""
     m = lambda s: f'<span class="math">{s}</span>'  # noqa: E731
     rows = [
@@ -528,6 +603,21 @@ def theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain):
         (f"For every {m('ε')} &gt; 0 and large {m('T')}, at least ({t(two)} − {m('ε')}){m('N(T, 2T)')} distinct zeros "
          f"with {m('T &lt; Im ρ ≤ 2T')} lie on the critical line, {m('N(T, 2T)')} counting all of them with "
          f"multiplicity", ["CriticalLine.two_thirds"]),
+        (f"{m('N(T, 2T)')} = ({m('T')}/2{m('π')})(log({m('T')}/2{m('π')}) + 2 log 2 − 1) + {m('O(log T)')}, the "
+         f"Riemann–von Mangoldt formula", ["ZeroCount.riemann_von_mangoldt"]),
+        (f"For every {m('t')} ≥ 0, at most {tp(kloc['a'])}({kloc['c']} + {m('κ')}) + {tp(kloc['slope'])} "
+         f"log({m('t')} + {t(kloc['shift'])}) zeros, counted with multiplicity, have {m('t &lt; Im ρ ≤ t + 1')}, where "
+         f"{m('κ')} = Σ {m('Λ(n)n')}<sup class=\"math\">−3/2</sup>", ["CountCompare.local_count_le"]),
+        (f"Every nontrivial zero {m('ρ')} of {m('ζ')} has order at most {tp(kloc['a'])}({kloc['c']} + {m('κ')}) + "
+         f"{tp(kloc['slope'])} log(|{m('Im ρ')}| + {t(kloc['shift'])}), and {m('Im ρ')} ≠ 0",
+         ["ZeroOrder.analyticOrderAt_le", "ZeroOrder.im_ne_zero"]),
+        (f"For every {m('ε')} &gt; 0 and large {m('T')}, at least ({t(half)} − {m('ε')}){m('N(T, 2T)')} simple zeros "
+         f"with {m('T &lt; Im ρ ≤ 2T')} lie on the critical line", ["CriticalLine.half_simple"]),
+        (f"For large {m('T')}, at least {m('T log T')}/{simple}{m('π')} simple zeros on the critical line have "
+         f"{m('T &lt; Im ρ ≤ 2T')}, and infinitely many are simple in all",
+         ["CriticalLine.ncard_simple_zeros_ge", "CriticalLine.infinite_simple_zeros"]),
+        (f"For every {m('ε')} &gt; 0 and large {m('T')}, at least ({t(dist)} − {m('ε')}){m('N(T, 2T)')} distinct zeros "
+         f"have {m('T &lt; Im ρ ≤ 2T')}", ["CriticalLine.three_quarters_distinct"]),
     ]
     for z in zeta:
         a = f"({z['f']} + ε)" if z["shape"] == "eps" else f"{z['f']}(1+δ)"

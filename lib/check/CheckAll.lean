@@ -22,6 +22,7 @@ import BallSampling
 import BallDensity
 import BallCutoff
 import BallSharp
+import BallSilent
 import BallUpperEta
 import BallGap
 import BallLow
@@ -450,6 +451,11 @@ under RH, and `λ_N ≥ 1/(22e⁸N)` under RH; keeping Landau's slack `G(c) ≥ 
 #print axioms BallSharp.rate_sharp
 #print axioms BallSharp.sharp_bound_slack
 #print axioms BallSharp.rate_slack
+
+/- Under RH no polynomial of length `N` vanishes at every zero up to height `2000N`: real `x` in the form
+`Σ x_n n^ρ`, and complex `b` in the form `Σ b_n n^{−s}`. -/
+#print axioms BallSilent.eq_zero_of_silent
+#print axioms BallSilent.dirichlet_eq_zero
 
 /- The rate from above (`formalisations/ball-rate.md`): the alternating tail `Σ_{N < n ≤ M}(−1)^{n+1}n^{−s}` by Abel
 summation; under RH, the mean value of `|V_x|²` on `|γ| ≤ r` from above, by Weil's explicit formula for `|D|²M_r`, and
