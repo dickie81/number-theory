@@ -269,6 +269,8 @@ import TwoVariableZeta
 import TwoVariableZetaPurity
 import TwoVariableZetaTwo
 import EpsteinHexagonal
+import EpsteinTwo
+import EpsteinSeven
 import FourSquareTeeth
 import FourSquareResidue
 import SiegelFour
@@ -1424,6 +1426,33 @@ twin-form rates at `11/12`. -/
 #print axioms EpsteinHexagonal.LambdaQ_eq_zero_iff
 #print axioms EpsteinHexagonal.rh_hex_iff
 #print axioms EpsteinHexagonal.rh_hex_iff_twins
+#print axioms EpsteinTwo.ι_surjective
+#print axioms EpsteinTwo.rA_eq
+#print axioms EpsteinTwo.rQ_eq
+#print axioms EpsteinTwo.lseries_rQ
+#print axioms EpsteinTwo.hasSum_thetaQ
+#print axioms EpsteinTwo.thetaQ_inv
+#print axioms EpsteinTwo.LambdaQ_one_sub
+#print axioms EpsteinTwo.differentiableAt_LambdaQ
+#print axioms EpsteinTwo.LambdaQ_eq_of_one_lt_re
+#print axioms EpsteinTwo.LambdaQ_eq
+#print axioms EpsteinTwo.LambdaQ_eq_zero_iff
+#print axioms EpsteinTwo.rh_iff
+#print axioms EpsteinTwo.rh_iff_twins
+#print axioms EpsteinSeven.ι_surjective
+#print axioms EpsteinSeven.isSquare_neg_seven_iff
+#print axioms EpsteinSeven.rA_eq
+#print axioms EpsteinSeven.rQ_eq
+#print axioms EpsteinSeven.lseries_rQ
+#print axioms EpsteinSeven.hasSum_thetaQ
+#print axioms EpsteinSeven.thetaQ_inv
+#print axioms EpsteinSeven.LambdaQ_one_sub
+#print axioms EpsteinSeven.differentiableAt_LambdaQ
+#print axioms EpsteinSeven.LambdaQ_eq_of_one_lt_re
+#print axioms EpsteinSeven.LambdaQ_eq
+#print axioms EpsteinSeven.LambdaQ_eq_zero_iff
+#print axioms EpsteinSeven.rh_iff
+#print axioms EpsteinSeven.rh_iff_twins
 #print axioms FourSquareTeeth.r4_two_pow_mul
 #print axioms FourSquareTeeth.r4_pow_mul
 #print axioms FourSquareTeeth.lseries_r4

@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1462 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1489 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 177 | 552 |
+| `lib/core` | 179 | 579 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -348,6 +348,39 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `EpsteinHexagonal.LambdaQ_eq_zero_iff`: In the strip `0 < Re s < 1`, `Λ_Q(s) = 0` exactly when `ζ(s) = 0` or `L(s, χ₋₃) = 0`
 - `EpsteinHexagonal.rh_hex_iff`: The Riemann hypothesis for the hexagonal lattice is RH for `ζ` and GRH for `χ₋₃` ([note](../formalisations/weil-positivity.md))
 - `EpsteinHexagonal.rh_hex_iff_twins`: …and so it is Weil's twin criterion for `ζ_{ℚ(√−3)}` ([note](../formalisations/weil-positivity.md))
+
+#### `EpsteinSeven`: The Epstein zeta function of `x² + xy + 2y²` is the Dedekind zeta function of `ℚ(√−7)`
+
+- `EpsteinSeven.ι_surjective`: The ring of integers of `ℚ(√−7)` is `ℤ[ω]`
+- `EpsteinSeven.isSquare_neg_seven_iff`: Quadratic reciprocity for `−7`
+- `EpsteinSeven.rA_eq`: The ideal count of `ℚ(√−7)`
+- `EpsteinSeven.rQ_eq`: The points of `x² + xy + 2y²` on each ellipse
+- `EpsteinSeven.lseries_rQ`: The Dirichlet series of `r_Q`
+- `EpsteinSeven.hasSum_thetaQ`: `θ_Q(t) = Σ_{v ∈ ℤ²} e^{−2πtQ(v)/√7}`.
+- `EpsteinSeven.thetaQ_inv`: `θ_Q(1/t) = tθ_Q(t)`
+- `EpsteinSeven.LambdaQ_one_sub`: The functional equation
+- `EpsteinSeven.differentiableAt_LambdaQ`: `Λ_Q` is holomorphic away from its poles `s = 0` and `s = 1`.
+- `EpsteinSeven.LambdaQ_eq_of_one_lt_re`: On `Re s > 1`, `Λ_Q(s) = 2(2π/√7)^{−s}Γ(s)ζ(s)L(s, χ₋₇)`
+- `EpsteinSeven.LambdaQ_eq`: `Λ_Q(s) = √7^s ζ̂(s)Λ(s, χ₋₇)` off `s = 0, 1`
+- `EpsteinSeven.LambdaQ_eq_zero_iff`: In the strip `0 < Re s < 1`, `Λ_Q(s) = 0` exactly when `ζ(s) = 0` or `L(s, χ₋₇) = 0`
+- `EpsteinSeven.rh_iff`: The Riemann hypothesis for `x² + xy + 2y²` is RH for `ζ` and GRH for `χ₋₇` ([note](../formalisations/weil-positivity.md))
+- `EpsteinSeven.rh_iff_twins`: …and so it is Weil's twin criterion for `ζ_{ℚ(√−7)}` ([note](../formalisations/weil-positivity.md))
+
+#### `EpsteinTwo`: The Epstein zeta function of `x² + 2y²` is the Dedekind zeta function of `ℚ(√−2)`
+
+- `EpsteinTwo.ι_surjective`: The ring of integers of `ℚ(√−2)` is `ℤ[√−2]`
+- `EpsteinTwo.rA_eq`: The ideal count of `ℚ(√−2)`
+- `EpsteinTwo.rQ_eq`: The points of `x² + 2y²` on each ellipse
+- `EpsteinTwo.lseries_rQ`: The Dirichlet series of `r_Q`
+- `EpsteinTwo.hasSum_thetaQ`: `θ_Q(t) = Σ_{v ∈ ℤ²} e^{−πtQ(v)/√2}`.
+- `EpsteinTwo.thetaQ_inv`: `θ_Q(1/t) = tθ_Q(t)`
+- `EpsteinTwo.LambdaQ_one_sub`: The functional equation
+- `EpsteinTwo.differentiableAt_LambdaQ`: `Λ_Q` is holomorphic away from its poles `s = 0` and `s = 1`.
+- `EpsteinTwo.LambdaQ_eq_of_one_lt_re`: On `Re s > 1`, `Λ_Q(s) = 2(π/√2)^{−s}Γ(s)ζ(s)L(s, χ₋₈)`
+- `EpsteinTwo.LambdaQ_eq`: `Λ_Q(s) = √8^s ζ̂(s)Λ(s, χ₋₈)` off `s = 0, 1`
+- `EpsteinTwo.LambdaQ_eq_zero_iff`: In the strip `0 < Re s < 1`, `Λ_Q(s) = 0` exactly when `ζ(s) = 0` or `L(s, χ₋₈) = 0`
+- `EpsteinTwo.rh_iff`: The Riemann hypothesis for `x² + 2y²` is RH for `ζ` and GRH for `χ₋₈` ([note](../formalisations/weil-positivity.md))
+- `EpsteinTwo.rh_iff_twins`: …and so it is Weil's twin criterion for `ζ_{ℚ(√−2)}` ([note](../formalisations/weil-positivity.md))
 
 #### `EulerGammaBinet`: Euler's constant to seven digits, from Binet's formula
 

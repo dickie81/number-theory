@@ -61,7 +61,9 @@ Proc. Nat. Acad. Sci. 45 (1959), for the contraction property.
   (`Dedekind4.QC_chi4_littleO`, `Dedekind4.QK_littleO`). The criterion for `ℚ(i)` is RH for Lagarias and Rains's `Z(2,
   ·)` on its line (`TwoVariableZetaTwo.rh_two_iff`, `TwoVariableZetaTwo.rh_two_iff_QK_twins`); the criterion for
   `ℚ(√−3)` is RH for the Epstein zeta function of the hexagonal lattice (`EpsteinHexagonal.rh_hex_iff`,
-  `EpsteinHexagonal.rh_hex_iff_twins`).
+  `EpsteinHexagonal.rh_hex_iff_twins`), and those for `ℚ(√−2)` and `ℚ(√−7)` are RH for the Epstein zeta functions of
+  `x² + 2y²` and `x² + xy + 2y²` (`EpsteinTwo.rh_iff`, `EpsteinTwo.rh_iff_twins`, `EpsteinSeven.rh_iff`,
+  `EpsteinSeven.rh_iff_twins`).
 - **The angular family**, the Dirichlet series of the angular averages over the Gaussian integers of each norm, whose
   radial member is `ζ·L(χ₋₄)` (`AngularFamily.member_zero_eq`): the radial member's grand RH gives RH and GRH for `χ₋₄`
   (`AngularFamily.rh_of_member_zero`, `Dedekind4.rh_grh_of_member_zero`, `Dedekind4.QK_nonneg_of_member_zero`).
