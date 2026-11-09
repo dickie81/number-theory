@@ -259,6 +259,30 @@ import BallHadamard
 import BallPsi
 import BallFlat
 import BallWeil
+import PurityRational
+import PurityPsi
+import PurityQuaternion
+import PurityTwins
+import PurityLadder
+import HodgeCounting
+import JacobiFourSquares
+import TwoVariableZeta
+import TwoVariableZetaPurity
+import TwoVariableZetaTwo
+import EpsteinHexagonal
+import EpsteinTwo
+import EpsteinSeven
+import EpsteinFlat
+import XiReflection
+import WengRankTwo
+import XiReflectionBand
+import FourSquareTeeth
+import FourSquareResidue
+import SiegelFour
+import JacobiEightSquares
+import TwoVariableZetaEight
+import ArakelovRiemannRoch
+import EightSquareResidue
 import BallSlice
 import LonelyPrimes
 import LonelyJoins
@@ -1357,6 +1381,153 @@ twin-form rates at `11/12`. -/
 #print axioms PurityTest.not_posDef
 #print axioms PurityTest.posDef_elliptic
 #print axioms PurityTest.card_ne_countY
+#print axioms PurityRational.functional_equation
+#print axioms PurityRational.euler_product
+#print axioms PurityRational.xiP1_zP1
+#print axioms PurityRational.exists_zero_re_ne_one
+#print axioms PurityRational.not_posDef
+#print axioms PurityRational.not_posDef_kerG
+#print axioms PurityRational.not_posDef_gauss
+#print axioms PurityPsi.kerP1_inv
+#print axioms PurityPsi.kerP1_explicit
+#print axioms PurityPsi.not_posDef_psi
+#print axioms PurityQuaternion.not_posDef_of_re_ne
+#print axioms PurityQuaternion.xiQ_poleQ
+#print axioms PurityQuaternion.not_posDef_quaternion
+#print axioms PurityTwins.explicit_formula
+#print axioms PurityTwins.rate_iff
+#print axioms PurityTwins.rate_iff_zeta
+#print axioms PurityTwins.not_subexp
+#print axioms PurityTwins.rh_iff_rate_one
+#print axioms PurityLadder.Qk_one
+#print axioms PurityLadder.explicit_formula_k
+#print axioms PurityLadder.rate_iff_k
+#print axioms PurityLadder.rate_iff_zeta_k
+#print axioms PurityLadder.not_subexp_k
+#print axioms PurityLadder.rh_iff_rate_k
+#print axioms JacobiFourSquares.jtp
+#print axioms JacobiFourSquares.jacobi_cube
+#print axioms JacobiFourSquares.theta_pow_four
+#print axioms JacobiFourSquares.r4_zero
+#print axioms JacobiFourSquares.r4_eq
+#print axioms TwoVariableZeta.functional_equation
+#print axioms TwoVariableZeta.differentiableAt
+#print axioms TwoVariableZeta.hasMellin
+#print axioms TwoVariableZeta.Z_one
+#print axioms TwoVariableZeta.Z_four
+#print axioms TwoVariableZetaPurity.Z_four_eq
+#print axioms TwoVariableZetaPurity.Z_four_zP1
+#print axioms TwoVariableZetaPurity.exists_zero_re_ne_two
+#print axioms TwoVariableZetaTwo.Z_two
+#print axioms TwoVariableZetaTwo.Z_two_eq
+#print axioms TwoVariableZetaTwo.Z_two_eq_zero_iff
+#print axioms TwoVariableZetaTwo.rh_two_iff
+#print axioms TwoVariableZetaTwo.rh_two_iff_QK_twins
+#print axioms EpsteinHexagonal.rQ_eq
+#print axioms EpsteinHexagonal.lseries_rQ
+#print axioms EpsteinHexagonal.hasSum_thetaQ
+#print axioms EpsteinHexagonal.thetaQ_inv
+#print axioms EpsteinHexagonal.LambdaQ_one_sub
+#print axioms EpsteinHexagonal.differentiableAt_LambdaQ
+#print axioms EpsteinHexagonal.LambdaQ_eq_of_one_lt_re
+#print axioms EpsteinHexagonal.LambdaQ_eq
+#print axioms EpsteinHexagonal.LambdaQ_eq_zero_iff
+#print axioms EpsteinHexagonal.rh_hex_iff
+#print axioms EpsteinHexagonal.rh_hex_iff_twins
+#print axioms EpsteinTwo.ι_surjective
+#print axioms EpsteinTwo.rA_eq
+#print axioms EpsteinTwo.rQ_eq
+#print axioms EpsteinTwo.lseries_rQ
+#print axioms EpsteinTwo.hasSum_thetaQ
+#print axioms EpsteinTwo.thetaQ_inv
+#print axioms EpsteinTwo.LambdaQ_one_sub
+#print axioms EpsteinTwo.differentiableAt_LambdaQ
+#print axioms EpsteinTwo.LambdaQ_eq_of_one_lt_re
+#print axioms EpsteinTwo.LambdaQ_eq
+#print axioms EpsteinTwo.LambdaQ_eq_zero_iff
+#print axioms EpsteinTwo.rh_iff
+#print axioms EpsteinTwo.rh_iff_twins
+#print axioms EpsteinSeven.ι_surjective
+#print axioms EpsteinSeven.isSquare_neg_seven_iff
+#print axioms EpsteinSeven.rA_eq
+#print axioms EpsteinSeven.rQ_eq
+#print axioms EpsteinSeven.lseries_rQ
+#print axioms EpsteinSeven.hasSum_thetaQ
+#print axioms EpsteinSeven.thetaQ_inv
+#print axioms EpsteinSeven.LambdaQ_one_sub
+#print axioms EpsteinSeven.differentiableAt_LambdaQ
+#print axioms EpsteinSeven.LambdaQ_eq_of_one_lt_re
+#print axioms EpsteinSeven.LambdaQ_eq
+#print axioms EpsteinSeven.LambdaQ_eq_zero_iff
+#print axioms EpsteinSeven.rh_iff
+#print axioms EpsteinSeven.rh_iff_twins
+#print axioms EpsteinFlat.hasSum_theta
+#print axioms EpsteinFlat.theta_inv
+#print axioms EpsteinFlat.Lambda_one_sub
+#print axioms EpsteinFlat.differentiableAt_Lambda
+#print axioms EpsteinFlat.hasMellin_theta
+#print axioms EpsteinFlat.hasSum_Lambda
+#print axioms EpsteinFlat.Lambda_one
+#print axioms EpsteinFlat.Lambda_sqrt_two
+#print axioms EpsteinFlat.rh_one_iff
+#print axioms EpsteinFlat.rh_sqrt_two_iff
+#print axioms EpsteinFlat.Lambda_ofReal
+#print axioms EpsteinFlat.tendsto_Lambda_re
+#print axioms EpsteinFlat.le_Lambda_half
+#print axioms EpsteinFlat.exists_zero_off_line
+#print axioms EpsteinFlat.not_rh
+#print axioms EpsteinFlat.exists_zero_fiftyEight
+#print axioms EpsteinFlat.not_rh_fiftyEight
+#print axioms XiReflection.xi_conj
+#print axioms XiReflection.Xi_conj
+#print axioms XiReflection.reflect_lt
+#print axioms XiReflection.reflect_one
+#print axioms XiReflection.reflect_xi
+#print axioms XiReflection.reflect_xi_one
+#print axioms XiReflection.abs_im_le_of_reflect
+#print axioms XiReflection.rh_iff_reflect
+#print axioms XiReflection.rh_iff_reflect_xi
+#print axioms XiReflection.rh_iff_monotone
+#print axioms XiReflection.rh_iff_logDeriv_pos
+#print axioms WengRankTwo.weng_eq
+#print axioms WengRankTwo.weng_one_sub
+#print axioms WengRankTwo.wengNum_one_sub
+#print axioms WengRankTwo.norm_xi_lt
+#print axioms WengRankTwo.rh_wengNum
+#print axioms WengRankTwo.rh_weng
+#print axioms WengRankTwo.differenced_real
+#print axioms XiReflectionBand.reflect_band
+#print axioms XiReflectionBand.reflect_xi_band
+#print axioms FourSquareTeeth.r4_two_pow_mul
+#print axioms FourSquareTeeth.r4_pow_mul
+#print axioms FourSquareTeeth.lseries_r4
+#print axioms FourSquareTeeth.lseries_alt
+#print axioms FourSquareTeeth.differentiableOn_rhs
+#print axioms FourSquareResidue.latticeCount_four_sqrt
+#print axioms FourSquareResidue.tendsto_sum_r4
+#print axioms FourSquareResidue.residue_sigma4
+#print axioms FourSquareResidue.riemannZeta_two_of_lattice
+#print axioms SiegelFour.localCount_eq_card
+#print axioms SiegelFour.localCount_succ
+#print axioms SiegelFour.tendsto_delta
+#print axioms SiegelFour.delta_odd
+#print axioms SiegelFour.delta_two
+#print axioms SiegelFour.siegel
+#print axioms JacobiEightSquares.r8_zero
+#print axioms JacobiEightSquares.r8_eq
+#print axioms TwoVariableZetaEight.LSeries_f8
+#print axioms TwoVariableZetaEight.Z_eight
+#print axioms TwoVariableZetaEight.Z_eight_eq
+#print axioms TwoVariableZetaEight.exists_zero_re_ne_four
+#print axioms ArakelovRiemannRoch.riemann_roch
+#print axioms ArakelovRiemannRoch.le_h0
+#print axioms ArakelovRiemannRoch.tendsto_h0_atBot
+#print axioms ArakelovRiemannRoch.tendsto_h0_sub_atTop
+#print axioms ArakelovRiemannRoch.Z_eq_integral
+#print axioms EightSquareResidue.latticeCount_eight_sqrt
+#print axioms EightSquareResidue.tendsto_sum_r8
+#print axioms EightSquareResidue.residue_f8
+#print axioms EightSquareResidue.riemannZeta_four_of_lattice
 #print axioms BallKernel.rh_iff_posDef
 #print axioms BallKernel.kerK_explicit
 #print axioms BallKernel.kerK_inv
@@ -1412,6 +1583,10 @@ twin-form rates at `11/12`. -/
 #print axioms BallWeil.weil_bound
 #print axioms BallWeil.rh_iff_weil_bound
 #print axioms BallWeil.rh_of_pivots
+#print axioms HodgeCounting.hodge_index
+#print axioms HodgeCounting.rh_iff_counting
+#print axioms HodgeCounting.CountingModel.riemannRoch_of_hilbertSamuel
+#print axioms HodgeCounting.rh_iff_hilbertSamuel
 #print axioms BallSlice.irrational_log_div
 #print axioms BallSlice.dense_log_pair
 #print axioms BallSlice.re_eq_zero_of_dense_set

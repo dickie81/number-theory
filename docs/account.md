@@ -23,7 +23,8 @@ sections of MSC 2020's Number theory (11):
 | 11A, 11R, 11T Elementary, global fields, finite fields | Over `ℤ[ω]`: quadratic, cubic and sextic reciprocity, Gauss and Jacobi sums, the ideals of each norm. Quadratic fields: the splitting law, `ζ_K = ζ·L(s, χ_K)`, class numbers. The least quadratic non-residue |
 | 11Y Computational number theory | Certificates that the kernel checks: the sieve's loss (1136 parts), four zeros of the Davenport–Heilbronn function, explicit constants |
 | 11G Arithmetic algebraic geometry | Hasse's bound for every elliptic curve over a finite field of odd characteristic, by Manin's proof, and the Riemann hypothesis for it in every degree from the lattice of Manin's twist; for `y² = x³ + D`, the Frobenius as an Eisenstein integer of norm `q` |
-| 11B, 11C, 11D, 11E, 11H, 11J, 11K, 11P, 11S, 11U, 11Z | Nothing beyond Mathlib: no Diophantine equations, quadratic forms, elliptic curves over global fields, modular forms in general, Diophantine approximation, additive problems or local fields |
+| 11E Forms | Jacobi's four-square theorem `r₄(n) = 8Σ_{d ∣ n, 4 ∤ d} d` (`JacobiFourSquares.r4_eq`), by Hirschhorn's proof from the triple product identity (`JacobiFourSquares.jtp`), and what it gives: `r₄` prime by prime (`FourSquareTeeth.r4_pow_mul`), the alternating lattice sum of `ℤ⁴` (`FourSquareTeeth.lseries_alt`), `ζ(2) = π²/6` from the points of `ℤ⁴` in balls (`FourSquareResidue.riemannZeta_two_of_lattice`), Siegel's formula `r₄(n) = π²n∏_p δ_p(n)` (`SiegelFour.siegel`), Jacobi's eight-square theorem (`JacobiEightSquares.r8_eq`) with `ζ(4) = π⁴/90` from the points of `ℤ⁸` in balls (`EightSquareResidue.riemannZeta_four_of_lattice`), the two-variable zeta function of Lagarias and Rains at `w = 4` (`TwoVariableZeta.Z_four`), and the lattices `x² + xy + y²` (hexagonal), `x² + 2y²` and `x² + xy + 2y²`, whose Epstein zeta functions are those of `ℚ(√−3)`, `ℚ(√−2)` and `ℚ(√−7)` and whose RH is `RH ∧ GRH(χ_d)` for `d = −3, −8, −7` (`EpsteinHexagonal.rh_hex_iff`, `EpsteinTwo.rh_iff`, `EpsteinSeven.rh_iff`); the flat rectangular lattices, whose Epstein zeta functions have a real zero in `(½, 1)` once `y > e²`, `x² + 58y²` among them (`EpsteinFlat.not_rh`, `EpsteinFlat.not_rh_fiftyEight`); and Weng's rank-2 zeta function of `ℚ`, which satisfies RH with no hypothesis (`WengRankTwo.rh_weng`) |
+| 11B, 11C, 11D, 11H, 11J, 11K, 11P, 11S, 11U, 11Z | Nothing beyond Mathlib: no Diophantine equations, elliptic curves over global fields, modular forms in general, Diophantine approximation, additive problems beyond four squares or local fields |
 
 Two of the twenty sections in depth, seven in part, eleven not at all. Mathlib supplies the floor: `ζ` and Dirichlet
 `L`-functions with their functional equations and their non-vanishing on `Re s = 1`, Dirichlet's theorem, and number
@@ -178,7 +179,7 @@ whose axioms are Lean's three; H is as above.
 | Physics, crystals: `Σ_{n≥1} (−1)^n r₂(n) n^{−s} = −4(1 − 2^{1−s}) ζ(s) L(s, χ₋₄)`, holomorphic off `s = 1`. At `s = 1/2` it is `−M`, where `M ≈ 1.6155` is the Madelung constant of the square lattice: an ion of a two-dimensional ionic crystal has electrostatic energy `−Me²/a` | `Madelung.lseries_coeff`, `Madelung.differentiableOn_rhs` | no |
 | Physics, the primon gas: `Σ μ(n) n^{−β}` is the partition function of B. Julia's primon gas with the sign `(−1)^F` of D. Spector's fermion number. It converges for `β > Θ` and diverges for `β < Θ`, with `1/2 ≤ Θ ≤ 11/12`: past the bosonic gas's Hagedorn point `β = 1` | `MertensExponent.moebiusAbscissa_eq_Theta`, `PsiExponent.half_le_Theta`, `PsiExponent.Theta_le` | yes |
 | Geometry of numbers: the points of `ℤⁿ` in a ball of radius `R` number `V_n Rⁿ(1 + o(1))`, `V_n = π^{n/2}/Γ(n/2 + 1)`, most in dimension 5; in the plane they give `L(1, χ₋₄) = π/4`, Leibniz's series | `BallTower.count_div_pow_tendsto_ballVol`, `BallTower.counted_volume_max_five`, `AngularResidue.LFunction_chi4_one` | no |
-| Quadratic forms: over a finite field of odd size `q`, `x² + y² = a` has `q − χ₋₄(q)` solutions and `x² + y² + z² + w² = a` has `q³ − q`, for `a ≠ 0`: the local factors of Jacobi's and Siegel's formulas | `LocalTeeth.card_two_sq`, `LocalTeeth.card_four_sq` | no |
+| Quadratic forms: over a finite field of odd size `q`, `x² + y² = a` has `q − χ₋₄(q)` solutions and `x² + y² + z² + w² = a` has `q³ − q`, for `a ≠ 0`: the local factors of Jacobi's and Siegel's formulas; and Siegel's formula for four squares, `r₄(n) = π²n∏_p δ_p(n)` with the local density at every prime | `LocalTeeth.card_two_sq`, `LocalTeeth.card_four_sq`, `SiegelFour.siegel` | no |
 | Elliptic curves: Hasse's bound `\|q + 1 − #E(𝔽_q)\| ≤ 2√q` for every elliptic curve over a finite field of odd characteristic, by Yu. I. Manin's proof without isogenies. On a twist over `𝔽_q(t)` the degree of a point is a quadratic form, and the Frobenius points `P_k` have a positive semidefinite Gram matrix: the normalised traces `c_d = (q^d + 1 − #E(𝔽_{q^d}))/(2q^{d/2})` form a positive-definite function on `ℤ`, the Riemann hypothesis for `E` in every degree, which gives for instance `(q + 1 − #E(𝔽_q))² − 2q ≤ q² + 1 − #E(𝔽_{q²})`. For `y² = x³ + D` in characteristic neither 2 nor 3: when `q ≡ 1 (mod 3)` the Frobenius is an Eisenstein integer `u + vω` of norm `q`, a point of the lattice `ℤ[ω]` on the circle of radius `√q`, and `#E(𝔽_q) = q + 1 − (2u − v)`; when `q ≡ 2 (mod 3)`, `#E(𝔽_q) = q + 1` | `ManinHasse.abs_trace_le`, `ManinHasse.toeplitz_nonneg`, `ManinHasse.trace_two_ge`, `HasseEisenstein.abs_trace_le`, `HasseEisenstein.exists_eisenstein_trace`, `HasseEisenstein.card_points_of_mod_three_eq_two` | no |
 | Ergodic theory: the logarithms of the primes are linearly independent over `ℤ`, and a vertical line equidistributes on Bohr's torus (Kronecker and Weyl) | `BohrTorus.eq_zero_of_sum_log`, `BohrTorus.tendsto_mean_character` | no |
 | Analysis: Landau's theorem, a Dirichlet series with nonnegative coefficients is singular at the real point of its abscissa; Mathlib does not have it | `LandauLaplace.LSeries_landau` | no |
@@ -242,7 +243,14 @@ In order of what is in reach.
    kernel of the point counts is positive-definite exactly when the inverse zeros lie on `|α| = √q`
    (`WeilFF.countKernel_posDef_iff`). Its test shows that an Euler product and a functional equation do not give the
    positivity: `𝔾_m × (𝔸² ∖ 0)` over `𝔽_3` has both, in the shape of an elliptic curve over `𝔽_27`, and its kernel is
-   not positive-definite (`PurityTest.not_posDef`). For `ζ` the statement the conjecture must deliver is proved: RH
+   not positive-definite (`PurityTest.not_posDef`). Over `ℚ` the same holds for `ζ(s)ζ(s − 1)`, the zeta function
+   of `ℙ¹` over `ℤ`, with Hadamard's weights and with the Gaussian ones (`PurityRational.not_posDef`,
+   `PurityRational.not_posDef_gauss`), also for its kernel computed from the primes (`PurityPsi.not_posDef_psi`), and
+   Lagarias and Rains's `Z(4, ·)`, which is that zeta function up to an entire factor, has zeros off its line
+   (`TwoVariableZetaPurity.exists_zero_re_ne_two`), while at `w = 2` RH on its line is RH with GRH for `χ₋₄`
+   (`TwoVariableZetaTwo.rh_two_iff`); Weil's twin form of `ℙ¹` has `ζ`'s rate plus one (`PurityTwins.rate_iff_zeta`),
+   that of `ζ(s)ζ(s − k)` `ζ`'s rate plus `k`, so RH is the least rate of each (`PurityLadder.rh_iff_rate_k`). For `ζ`
+   the statement the conjecture must deliver is proved: RH
    holds exactly when `K(r) = Σ_ρ e^{(ρ − ½)²/2} r^{ρ − ½}` is positive-definite on the positive rationals
    (`BallKernel.rh_iff_posDef`), the explicit formula computes `K` from the primes (`BallKernel.kerK_explicit`), and
    the kernel of `dh` is not positive-definite (`PsiOmega.not_posDef_dh`). The structure the conjecture asks for is
@@ -261,8 +269,9 @@ In order of what is in reach.
    cubic lattice, and every Gram–Schmidt pivot equals the first (`BallFlat.flat_pivot`). In Weil's terms, take classes
    `D_n` with intersection numbers `D_m·D_n = m + n − √(mn)·K_H(m/n)`, computed from the primes. Then RH is the
    Castelnuovo–Severi inequality for their integer combinations (`BallWeil.rh_iff_castelnuovo_severi`), and also the
-   upper half of the Hasse–Weil bound for those numbers (`BallWeil.rh_iff_weil_bound`). The orbit-lattice conjecture
-   implies it (`BallWeil.rh_of_pivots`). Two primes already carry it: for distinct primes `p` and `q`, RH holds exactly
+   upper half of the Hasse–Weil bound for those numbers (`BallWeil.rh_iff_weil_bound`), and the Hodge index theorem
+   from counting, through Minkowski's theorem (`HodgeCounting.rh_iff_counting`). The orbit-lattice conjecture implies
+   it (`BallWeil.rh_of_pivots`). Two primes already carry it: for distinct primes `p` and `q`, RH holds exactly
    when `K_H(p^a q^b) ≥ −K_H(1)` for all integers `a` and `b` (`BallSlice.rh_iff_bound_pair`), so in particular for
    `2^a 3^b` (`BallSlice.rh_iff_two_three`). At every stage `N` the primes above `N/2`, which have no other multiple
    up to `N`, are never absent and are asymptotically half of all the primes (`LonelyPrimes.lonely_ratio_pos`,

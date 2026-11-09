@@ -58,7 +58,12 @@ Proc. Nat. Acad. Sci. 45 (1959), for the contraction property.
   `Dedekind4.rh_grh_iff_QK_subexp`, `WeilTwinGeneral.rh_grh_iff_twins_Q4`) and for `ℚ(√−3)`, `ℚ(√−7)` and `ℚ(√−2)`
   (`WeilTwinGeneral.rh_grh_iff_twins_Q3`, `WeilTwinGeneral.rh_grh_iff_twins_Q7`, `WeilTwinGeneral.rh_grh_iff_twins_Q8`);
   the twin forms of `L(s, χ₋₄)` and of `ζ_{ℚ(i)}` are at least `−o(e^λ)` with no hypothesis
-  (`Dedekind4.QC_chi4_littleO`, `Dedekind4.QK_littleO`).
+  (`Dedekind4.QC_chi4_littleO`, `Dedekind4.QK_littleO`). The criterion for `ℚ(i)` is RH for Lagarias and Rains's `Z(2,
+  ·)` on its line (`TwoVariableZetaTwo.rh_two_iff`, `TwoVariableZetaTwo.rh_two_iff_QK_twins`); the criterion for
+  `ℚ(√−3)` is RH for the Epstein zeta function of the hexagonal lattice (`EpsteinHexagonal.rh_hex_iff`,
+  `EpsteinHexagonal.rh_hex_iff_twins`), and those for `ℚ(√−2)` and `ℚ(√−7)` are RH for the Epstein zeta functions of
+  `x² + 2y²` and `x² + xy + 2y²` (`EpsteinTwo.rh_iff`, `EpsteinTwo.rh_iff_twins`, `EpsteinSeven.rh_iff`,
+  `EpsteinSeven.rh_iff_twins`).
 - **The angular family**, the Dirichlet series of the angular averages over the Gaussian integers of each norm, whose
   radial member is `ζ·L(χ₋₄)` (`AngularFamily.member_zero_eq`): the radial member's grand RH gives RH and GRH for `χ₋₄`
   (`AngularFamily.rh_of_member_zero`, `Dedekind4.rh_grh_of_member_zero`, `Dedekind4.QK_nonneg_of_member_zero`).
@@ -67,6 +72,34 @@ Proc. Nat. Acad. Sci. 45 (1959), for the contraction property.
   (`PsiOmega.rh_of_liouville_bound`, `CrossCriteria.rh_of_liouville_theta`); RH says that the normalised Bohr vector of
   every nontrivial zero lies on the unit sphere (`BohrSphere.riemannHypothesis_iff_mem_sphere`,
   `BohrSphere.riemannHypothesis_iff_tendsto`), a reformulation that constrains nothing.
+- **Reflection across vertical lines**: RH holds if and only if `|ξ(2c − s̄)| < |ξ(s)|` for `Re s > c`, across every
+  line `Re s = c > ½` (`XiReflection.rh_iff_reflect`, `XiReflection.rh_iff_reflect_xi`), if and only if `|ξ(σ + iT)|` is
+  strictly increasing in `σ ≥ ½` (`XiReflection.rh_iff_monotone`; J. Sondow and C. Dumitrescu), if and only if
+  `Re ξ′/ξ > 0` on `Re s > ½` away from the zeros (`XiReflection.rh_iff_logDeriv_pos`; J. C. Lagarias, 1999). Across
+  `Re s = 1` the inequality holds with no hypothesis (`XiReflection.reflect_xi_one`), and across every
+  `Re s = c > 11/12` by the library's band (`XiReflectionBand.reflect_xi_band`); across one line it confines the zeros
+  to the strip it bounds (`XiReflection.abs_im_le_of_reflect`).
+- **Calibrations from lattices**: Weng's zeta function of the rank-2 semistable lattices over `ℚ` satisfies RH with no
+  hypothesis (`WengRankTwo.rh_weng`; J. C. Lagarias and M. Suzuki, 2006), because it needs the reflection inequality
+  only across `Re s = 1` (`WengRankTwo.norm_xi_lt`): it carries no information about the zeros of `ζ`. And the Epstein
+  zeta function of the rectangular lattice `ℤ ⊕ yℤ`, built as those of `ℤ²` and `x² + 2y²` are, where RH for it is
+  `RH ∧ GRH(χ)` (`EpsteinFlat.rh_one_iff`, `EpsteinFlat.rh_sqrt_two_iff`), has a real zero in `(½, 1)` once `y > e²`
+  (`EpsteinFlat.not_rh`), `x² + 58y²` of class number `2` among them (`EpsteinFlat.not_rh_fiftyEight`): a self-dual
+  theta function and the functional equation do not give RH without the Euler product.
+- **Their `ℙ¹` columns**: `ζ(s)ζ(s − 1)`, the zeta function of `ℙ¹` over `ℤ`, has an Euler product and a functional
+  equation of `ζ`'s kind, and zeros off its line, with no hypothesis (`PurityRational.euler_product`,
+  `PurityRational.functional_equation`, `PurityRational.exists_zero_re_ne_one`). The kernel criteria fail for it
+  unconditionally: the Hadamard kernel's (`PurityRational.not_posDef`, the column of `BallHadamard.rh_iff_posDefH`) and
+  the Gaussian kernel's (`PurityRational.not_posDef_gauss`, the column of `BallKernel.rh_iff_posDef`), by one argument
+  for every even weight without zeros on `Re p > 0` (`PurityRational.not_posDef_kerG`), and so does the kernel computed
+  from the primes (`PurityPsi.kerP1_explicit`, `PurityPsi.not_posDef_psi`, the column of `BallPsi.rh_iff_posDef_psi`),
+  and that of the integral quaternions, whose extra zeros lie on the line (`PurityQuaternion.not_posDef_quaternion`).
+  Weil's twin form of `ℙ¹`, built from the primes, has rate `ζ`'s plus one (`PurityTwins.rate_iff_zeta`): its defect is
+  never subexponential (`PurityTwins.not_subexp`, the column of `WeilForm.rh_iff_twins_subexp`), and RH holds exactly
+  when it is `O(e^l)` (`PurityTwins.rh_iff_rate_one`); for every `ζ(s)ζ(s − k)` the rate is `ζ`'s plus `k`, and RH holds
+  exactly when it is `O(e^{kl})` (`PurityLadder.rh_iff_rate_k`). Where the `dh` column tests a criterion against a
+  functional equation without an Euler product, the `ℙ¹` column tests it against an Euler product and a functional
+  equation without purity.
 
 ## Unconditional results on Weil's form of `ζ`
 

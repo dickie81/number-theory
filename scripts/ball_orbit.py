@@ -24,10 +24,12 @@ u_k = dist(w_k, span(w_{k−1}))² = log(k/2π) + 1 − γ + o(1), which bounds 
     python3 scripts/ball_orbit.py --slices [X]  # the lattice of the numbers built from a fixed set of primes
     python3 scripts/ball_orbit.py --lattice [N] # the Gram matrix as a form over the logarithms of the primes
     python3 scripts/ball_orbit.py --frontier [N] # the lonely primes, above N/2, and what the Gram matrix needs of them
+    python3 scripts/ball_orbit.py --purity [N]  # the same form for ζ(s)ζ(s − 1) and the quaternions, off their line
+    python3 scripts/ball_orbit.py --purity-zeros [M] # their kernels from the first M zeros, against the primes; mpmath
 
 The first three options are the computations of "What a proof under RH would need" in docs/ball-conjecture.md,
---places, --forward and --slices those of "Building the lattice forwards", --weil that of "Weil's form", and --lattice
-and --frontier those of "The limit and the lattice".
+--places, --forward and --slices those of "Building the lattice forwards", --weil that of "Weil's form", --lattice
+and --frontier those of "The limit and the lattice", and --purity and --purity-zeros that of "What it must survive".
 """
 
 import math
@@ -535,6 +537,103 @@ def frontier(N):
         M *= 10
 
 
+LOG_GLAISHER = 0.24875447703378426  # log A, Glaisher's constant: ζ′(−1) = 1/12 − log A
+ZETA2_LOGDERIV = EULER_GAMMA + math.log(2 * math.pi) - 12 * LOG_GLAISHER  # ζ′(2)/ζ(2)
+
+
+def centre_one_kernels(x, N):
+    """For an array of x with 1 ≤ x ≤ N, the kernels K(x) = Σ_ρ′ x^{ρ′ − 1}/(ρ′(2 − ρ′)) over the zeros ρ′ of
+    ζ̂(s)ζ̂(s − 1), which are the ρ and the ρ + 1, and of (2/π)(s − 1)(2^s − 2^{2−s})ζ̂(s)ζ̂(s − 1), the completed
+    zeta function of the integral quaternions, which adds the zeros 1 + πik/log 2, k ≠ 0. Both are invariant under
+    s ↦ 2 − s, so their line is Re s = 1, and the weights 1/(ρ′(2 − ρ′)) are those of Hadamard's identity for it.
+
+    Over the zeros ρ of ζ, with h_{a,b}(x) = Σ_ρ x^ρ/((a − ρ)(ρ − b)), the first is h_{2,0}(x)/x + h_{1,−1}(x). As
+    for K_H, solve (a − D)(D − b)h = D(Σ_ρ x^ρ/ρ), D = x·d/dx, term by term through the explicit formula: the primes
+    give Σ_{n ≤ x} Λ(n)((x/n)^a − (x/n)^b)/(a − b), the pole x/((a − 1)(1 − b)), or −x·log x/(1 − b) when a = 1, the
+    trivial zeros Σ_k x^{−2k}/((a + 2k)(2k + b)), and A·x^a + B·x^b is fixed by h = o(x) and by
+    h(1) = (R(a) − R(b))/(a − b), R(s) = Σ_ρ 1/(s − ρ) = ζ′/ζ(s) + 1/(s − 1) + ½ψ(s/2 + 1) − ½log π. This gives
+        h_{2,0}(x) = (x²/2)(Σ_{n ≤ x} Λ(n)/n² + ζ′(2)/ζ(2)) − ψ(x)/2 + x − ½log 2π + Σ_k x^{−2k}/(4k(k + 1)),
+        h_{1,−1}(x) = (x/2)Σ_{n ≤ x} Λ(n)/n − (1/2x)Σ_{n ≤ x} Λ(n)·n − ½x·log x + (γ/2 + ¼)x + (½ − 6 log A)/x
+                      + Σ_k x^{−2k}/((2k − 1)(2k + 1)),
+    with A Glaisher's constant. The same method at (a, b) = (1, 0) gives kernel_over_sqrt exactly, and
+    --purity-zeros checks these two against the zeros. The quaternions add the sum over the zeros 1 + πik/log 2,
+    Σ_{k ≠ 0} x^{iπk/log 2}/(1 + (πk/log 2)²) = (4 log 2/3)·cosh((1 − u)log 2) − 1, with u = log₂ x mod 2."""
+    h20, h11 = shifted_kernels(x, N)
+    k_p1 = h20 / x + h11
+    u = np.mod(np.log2(x), 2.0)
+    return k_p1, k_p1 + (4 * math.log(2) / 3) * np.cosh((1 - u) * math.log(2)) - 1
+
+
+def shifted_kernels(x, N):
+    """h_{2,0}(x) and h_{1,−1}(x) of centre_one_kernels, for an array of x with 1 ≤ x ≤ N, from the primes up to N.
+    The trivial zeros in closed form: Σ_k y^k/(4k(k + 1)) = ¼(1 + ((1 − y)/y)·log(1 − y)) with y = x^{−2}, and
+    Σ_k t^{2k}/((2k − 1)(2k + 1)) = ½(1 − ((1 − t²)/t)·artanh t) with t = 1/x, with the values ¼ and ½ at x = 1."""
+    lam = np.zeros(N + 1)
+    for p in primes_upto(N):
+        q = p
+        while q <= N:
+            lam[q] = math.log(p)
+            q *= p
+    n = np.arange(N + 1, dtype=float)
+    n[0] = 1.0
+    s1, s2, sm1, psi = np.cumsum(lam / n), np.cumsum(lam / n ** 2), np.cumsum(lam * n), np.cumsum(lam)
+    k = np.floor(x + 1e-12).astype(np.int64)
+    y, t = np.minimum(x ** -2.0, 1 - 1e-16), np.minimum(1.0 / x, 1 - 1e-16)
+    tr20 = np.where(x > 1, 0.25 * (1 + (1 - y) / y * np.log1p(-y)), 0.25)
+    tr11 = np.where(x > 1, 0.5 * (1 - (1 - t * t) / t * np.arctanh(t)), 0.5)
+    h20 = 0.5 * x ** 2 * (s2[k] + ZETA2_LOGDERIV) - 0.5 * psi[k] + x - 0.5 * math.log(2 * math.pi) + tr20
+    h11 = (0.5 * x * s1[k] - 0.5 * sm1[k] / x - 0.5 * x * np.log(x) + (EULER_GAMMA / 2 + 0.25) * x
+           + (0.5 - 6 * LOG_GLAISHER) / x + tr11)
+    return h20, h11
+
+
+def purity(N):
+    """The orbit form (mn)·K(m/n), the analogue of √(mn)·K_H(m/n) for the line Re s = 1, for ζ(s)ζ(s − 1), the zeta
+    function of ℙ¹ over ℤ, and for the integral quaternions' (1 − 4^{1−s})ζ(s)ζ(s − 1), Lagarias and Rains's w = 4.
+    Both have an Euler product and the functional equation s ↦ 2 − s, and their zeros ρ, ρ + 1 are off the line.
+    The similitude, G(km, kn) = k²·G(m, n), holds by construction, and for ℙ¹ the part of a prime p is
+    Σ_{p^j ≤ m/n} log p·(m²/(2p^{2j}) − n²/2 + (m² − p^{2j}n²)/(2p^j)) ≥ 0, so the form has the sum over the places,
+    nonnegative local parts and the integral structure of ζ's, with log A at the real place."""
+    m = np.arange(1, N + 1, dtype=float)
+    M, Nn = np.meshgrid(m, m, indexing="ij")
+    hi, lo = np.maximum(M, Nn), np.minimum(M, Nn)
+    k_p1, k_q = centre_one_kernels(hi / lo, N)
+    print(f"N = {N}: the orbit form (mn)·K(m/n) of zeta functions whose line is Re s = 1")
+    for name, K in [("ζ(s)ζ(s − 1), the zeta function of ℙ¹ over ℤ", k_p1),
+                    ("(1 − 4^{1−s})ζ(s)ζ(s − 1), the integral quaternions (w = 4)", k_q)]:
+        G = M * Nn * K
+        first = next((n for n in range(2, N + 1) if np.linalg.eigvalsh(G[:n, :n])[0] < 0), None)
+        big = next((r for r in range(2, N + 1) if abs(K[r - 1, 0]) > K[0, 0]), None)
+        print(f"  {name}: K(1) = {K[0, 0]:.6f}")
+        if first:
+            e = np.linalg.eigvalsh(G[:first, :first])
+            print(f"    indefinite from N = {first}: there λ_min = {e[0]:.3e}, λ_max = {e[-1]:.3e}")
+        e = np.linalg.eigvalsh(G)
+        print(f"    at N = {N}: λ_min = {e[0]:.3e}, λ_max = {e[-1]:.3e}")
+        print(f"    first integer r with |K(r)| > K(1), a negative 2 × 2 minor on {{1, r}}: {big}")
+    e = np.linalg.eigvalsh(gram(N))
+    print(f"  ζ, √(mn)·K_H(m/n): λ_min = {e[0]:.3e}, λ_max = {e[-1]:.3e}")
+
+
+def purity_zeros(M):
+    """h_{2,0} and h_{1,−1} of centre_one_kernels from the first M zeros of ζ, against the primes. At x = 1 the sum is
+    completed by the density of the zeros; elsewhere the tail oscillates and is of order x^{1/2}·log T/T, larger at the
+    prime powers, where the explicit formula jumps."""
+    import mpmath
+    mpmath.mp.dps = 20
+    g = np.array([float(mpmath.zetazero(k).imag) for k in range(1, M + 1)])
+    print(f"{M} zeros, up to height {g[-1]:.1f}")
+    rho = 0.5 + 1j * g
+    xs = np.array([1.0, 1.3, 2.0, 3.5, 6.0])
+    h20, h11 = shifted_kernels(xs, 7)
+    tail = (math.log(g[-1] / (2 * math.pi)) + 1) / (math.pi * g[-1])
+    for x, a, b in zip(xs, h20, h11):
+        z20 = 2 * np.sum((x ** rho / ((2 - rho) * rho)).real) + (tail if x == 1 else 0.0)
+        z11 = 2 * np.sum((x ** rho / ((1 - rho) * (rho + 1))).real) + (tail if x == 1 else 0.0)
+        print(f"  x = {x:3.1f}: h_2,0 {a: .6f} from the primes, {z20: .6f} from the zeros;"
+              f"   h_1,−1 {b: .6f}, {z11: .6f}")
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1].startswith("--"):
         arg = int(sys.argv[2]) if len(sys.argv) > 2 else None
@@ -542,7 +641,8 @@ def main():
          "--zeros": lambda: zeros(arg or 2000), "--places": lambda: places(arg or 60),
          "--weil": lambda: weil(arg or 1000), "--forward": lambda: forward(arg or 1000),
          "--slices": lambda: slices(arg or 10 ** 6), "--lattice": lambda: lattice(arg or 120),
-         "--frontier": lambda: frontier(arg or 10 ** 6)}[sys.argv[1]]()
+         "--frontier": lambda: frontier(arg or 10 ** 6), "--purity": lambda: purity(arg or 60),
+         "--purity-zeros": lambda: purity_zeros(arg or 400)}[sys.argv[1]]()
         return
     N = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
     G = gram(N)
