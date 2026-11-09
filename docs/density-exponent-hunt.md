@@ -763,3 +763,230 @@ evaluated pointwise as upper bounds.
    same `W` samples.
 2. Continue pushing docs/scripts only to PR #98.
 
+
+---
+
+## Batch 4 — deep dive: `mvt_beyond` + conjectural inequalities for `decoupling_char` / `poly_partition_q`
+
+Focus (no new breadth). Scripts: `scripts/density_hunt/mvt_s3_coexist.py`. Seed unchanged from batch 3.
+
+### (A) `mvt_beyond` — precise CGL use of MVT at the critical point
+
+**Citation (CGL arXiv:2507.08296).** The classical hybrid mean-value / large-sieve input is their **(1.2)**:
+
+\[
+|W|\le(qT)^{o(1)}\bigl(N^{2}V^{-2}+qTN\,V^{-2}\bigr).
+\]
+
+(This is the \(qT\)-analogue of Montgomery’s mean value theorem; cf. also `LinnikHybrid.mean_value_chars` /
+`large_values_chars` in this repo, Gallagher’s hybrid large sieve.) Their Remark 12.3 / §12 case split
+(detector \(N\sim q^{1/2}\), powers of length \(N^{k}\in[q^{a},q^{3a/2}]\)) uses (1.2) on the
+medium-large character regime. At the binding parameters
+
+\[
+\sigma=\tfrac57,\qquad y=\tfrac79\qquad\bigl(N=q^{y},\ V=N^{\sigma},\ T=1\bigr)
+\]
+
+the two summands of (1.2) become, in \(q\)-exponents,
+
+\[
+y(2-2\sigma)=\tfrac79\cdot\tfrac47=\tfrac49,\qquad
+1+y(1-2\sigma)=1+\tfrac79\cdot\bigl(-\tfrac37\bigr)=\tfrac23.
+\]
+
+So **MVT binds at \(\alpha=2/3\) via the \(qTN/V^{2}\) term**. Independently, Theorem 1.1’s \(S_3\) term
+(with \(c=4/3\)) gives \(c+y(2-4\sigma)=2/3\), and the GM term \(1+y(12/5-4\sigma)=29/45\approx0.644\) has
+slack. Exact tie: \(\min(\mathrm{MVT},\mathrm{Thm\,1.1})=2/3\), hence \(A=(2/3)/(1-5/7)=7/3\).
+(Bookkeeping: `scripts/cgl_s3/price.py`, `scripts/density_hunt/delta_targets.py`.)
+
+**Minimal LV hypothesis that would constitute `mvt_beyond`.** A theorem of the shape
+
+\[
+|W|\le(qT)^{o(1)}\bigl(N^{2}V^{-2}+(qT)^{1-\eta}N\,V^{-2}\bigr)
+\]
+
+(with \(\eta>0\) absolute, in the window \(N=(qT)^{y}\), \(V=N^{\sigma}\) near \((y,\sigma)=(7/9,5/7)\),
+\(T\) small) would replace \(1+y(1-2\sigma)\) by \(1-\eta+y(1-2\sigma)\). At the critical point that is
+\(\alpha\le 2/3-\eta\), hence \(A\le 7/3-(7/2)\eta\) from this \(y\) alone. Combined with any positive
+\(S_3\) saving \(\delta\), the `delta_targets.py` floor \(\approx 30/13\) can finally be undercut.
+
+---
+
+#### Survey: known ways to beat MVT for Dirichlet polynomials over characters mod \(q\), \(T\) small
+
+| Method | What it does | Status at our \((\sigma,y)\) / for characters |
+|---|---|---|
+| Classical MVT / hybrid large sieve | (1.2): \(\|W\|\ll N^{2}/V^{2}+qTN/V^{2}\) | **Baseline**; binds at \(\alpha=2/3\) |
+| Halász–Montgomery–Huxley LV | (1.3): \(+\,qTN^{4}V^{-6}\) | Beats MVT only for **large** \(\sigma\) (essentially \(\sigma>3/4\)); at \(\sigma=5/7\) Huxley is *worse* than MVT |
+| Montgomery’s large-value conjecture (modified) | With \(\|b_{n}\|_{\infty}\le1\): \(\|W\|\lessapprox N^{2-2\sigma}\) (density hypothesis) | **Open**, “far beyond current techniques” (Guth survey arXiv:2503.07410, Conj. 3.3). Original *unrestricted* form **false** (Bourgain, geometric-series / \(\ell^{2}\)-normalised counterexample, early 90s; cf. IHES M/90/31) |
+| Bourgain restricted-support / wave-packet LV | Gains for special coefficient support; also Kakeya implications of Montgomery | Different \((N,V)\) regimes; already partially spent in block detectors (`bourgain_restrict`, Batch 3 #01 Dead) |
+| Guth–Maynard (arXiv:2405.20552), **\(q=1\)** | Cubic singular-value + Poisson *without* stationary phase + affine equidistribution + Heath-Brown energy → first improvement of MVT for \(N^{7/10}<V<N^{8/10}\), \(N\le T^{5/6}\) | Engine behind CGL; **excluded from re-derivation** (exclusion list). Gives \(30/13\) for \(\zeta\) |
+| CGL (arXiv:2507.08296) | Character adaptation of GM | Uniform \(A=7/3\); \(30/13\) only when \(q\) is \(T\)-smooth / has good factors |
+
+**Guth–Maynard \(q=1\) mechanism vs what fails in the \(q\)-aspect (pinpoint, no re-derivation).**
+
+GM’s post-cubic-trace pipeline (sketch §2 of arXiv:2405.20552) produces, before subdivision,
+
+\[
+|W|\lessapprox T^{1/2}+T^{4/3}N^{-1}.
+\]
+
+When \(T\ge N^{6/5}\) the second term dominates; **\(T\)-subdivision** (cut \([0,T]\) into \(T/T_{0}\) pieces
+balancing the two terms) upgrades this to \(|W|\lessapprox T^{1/2}+TN^{-3/5}\), which is what feeds
+\(30/13\).
+
+CGL’s analogous bound is (their (2.4))
+
+\[
+|W|\lessapprox(qT)^{1/2}+(qT)^{4/3}N^{-1}.
+\]
+
+**The step that fails for characters / prime \(q\):** the \(T\)-subdivision upgrade has **no full
+\(q\)-analogue**. CGL §2 (after (2.5)): *“Subdivision in the \(q\)-aspect involves splitting \(q\) into
+its factors. For general moduli \(q\), this is not available.”* Prime moduli are the worst case. (A
+second, related obstruction is that character twists insert **GCD weights** \((am_{1}+bm_{2}+m_{3},q)\)
+into the affine sums; CGL Prop. 8.1 controls those but does not restore subdivision.) So the mechanism
+that turns GM’s intermediate bound into \(30/13\) is exactly the piece missing uniformly in \(q\).
+
+---
+
+#### Numerics: can MVT-extremisers coexist with \(S_3\)-extremisers?
+
+Script: `scripts/density_hunt/mvt_s3_coexist.py` (q=1009, 10007; N=q^{7/9}, R=q^{2/3}, T=1).
+
+| sample | q=1009 | q=10007 |
+|---|---|---|
+| ADV (tpm) `@R`: sharp_mvt = \(\sum_W\|D\|^2/((q+N)\|c\|_2^2)\) | 0.675 | 0.626 |
+| ADV `@R`: \|W\|/Wbound_mvt | 0.180 | 0.220 |
+| ADV `@R`: S3/CGL | 0.549 | 0.628 |
+| ADV `@R`: Vmin / N^{5/7} | 0.032 | 0.014 |
+| ADV at **critical** \(V=N^{5/7}\): \|W_crit\| | **0** | **0** |
+| short-interval coeffs `@R`: S3/CGL | 0.08–0.24 | 0.06–0.11 |
+| flat / rand: V-crit \|W\| | 1 | 1 |
+
+**Label: Numerical.**
+
+- \(S_3\)-near-extremal (tpm) \(W\) of size \(q^{2/3}\) uses \(\sim 0.6\) of the MVT \(\ell^{2}\) budget on those
+  characters, and sits a **constant** factor \(\sim 5\) below the MVT cardinality bound
+  (\(|W|/W_{\mathrm{bound}}\approx 0.2\) at both primes — **not** a power of \(q\)).
+- At the actual critical height \(V=N^{5/7}\), ADV configs produce **no** large values
+  (\(|W_{\mathrm{crit}}|=0\)); top-\(R\) values are \(\ll N^{5/7}\). Short-interval / flat coeffs likewise
+  fail to saturate MVT at critical \(V\) (at most the principal character).
+- So the two extremal regimes **do not appear to coexist** at these finite \(q\): structured
+  \(S_3\)-extremisers are not critical-\(V\) large-value sets, and MVT-friendly short supports give
+  small \(S_3\).
+
+**Hybrid quantification (honest).** An \(O(1)\) factor in \(|W|/W_{\mathrm{bound}}\) is **not** an
+exponent saving: \(\log C/\log q\to 0\). A hybrid bound beating \(\alpha=2/3\) would require a
+*structural* theorem that every near-\(S_3\)-extremal \(W\) obeys
+\(|W|\ll q^{2/3-\varepsilon}\) at \(V=N^{5/7}\), or that every critical-\(V\) large-value set has
+\(S_3\ll q^{2-\delta}|W|^{3/2}\). The numerics are consistent with such a split but **do not prove**
+one and **do not quantify** an asymptotic \(\varepsilon>0\). Verdict: hybrid remains **Heuristic /
+unproven**; no claimed improvement of \(A\).
+
+---
+
+### (B) Concrete conjectural inequalities
+
+#### `decoupling_char` — Conjecture (Partial / long-shot)
+
+**Target object.** CGL Proposition 8.1 / sketch (2.2): for a family \(\{f_b\}_{b\bmod q}\) of
+non-negative smooth functions supported on \(u\asymp 1\) with Fourier decay
+\(\sum_b|\hat f_b(\xi)|\lessapprox_j (T/|\xi|)^j\,\phi(q)\,\|f\|_\infty\), and \(0<M\le(qT)^{\varpi}\),
+
+\[
+J(\vec f)=\sup_{M_i\le M}\int\sum_a\Bigl(\sum_{b,|m_i|\sim M_i}f_b\Bigl(\tfrac{m_1u+m_3}{m_2}\Bigr)\,(am_1+bm_2+m_3,q)\Bigr)^2\,du.
+\]
+
+CGL proves \(J(\vec f)\lessapprox \phi(q)M^6\bigl(\int\sum f_b\bigr)^2+\phi(q)^2 M^4\int\sum f_b^2\).
+
+**Conjectural improvement (decoupling form).** For some absolute \(\theta>0\),
+
+\[
+J(\vec f)\lessapprox \phi(q)^{1-\theta}M^6\Bigl(\int\sum_b f_b\Bigr)^2+\phi(q)^{2-\theta}M^4\int\sum_b f_b^2,
+\]
+
+in the range of parameters feeding CGL’s \(S_3\) at \(N\ge(qT)^{2/3}\) (equivalently: a
+Bourgain–Demeter-type \(\ell^{2}\) decoupling for the GCD-twisted affine extension operator at the
+scale of Prop. 8.1). Weaker variants (saving only on the \(M^6\) term, or only for \(f_b\) constant in
+\(b\)) would still help.
+
+**Exponent consequence at \(\sigma=5/7\).** A factor \(q^{-\delta}\) in \(S_3\) (i.e.
+\(S_3\lessapprox q^{2-\delta}|W|^{3/2}\)) replaces \(c=4/3\) by \(c=4/3-2\delta/3\). Then
+`delta_targets.py` / `price.py`: peak \(A\) drops as \(7/3-2\delta/3\), **floored at \(30/13\)** once
+\(\delta\gtrsim 1/26\) (when MVT/GM glue takes over). So even a full decoupling win against Prop. 8.1
+**does not by itself** break the \(\approx 2.308\) floor — that still needs `mvt_beyond`.
+
+**vs known counterexamples.** Does **not** contradict Bourgain’s disproof of unrestricted Montgomery
+(different normalisation: \(\ell^{2}\) vs \(\ell^{\infty}\), and a different matrix). The two model
+extremisers for Prop. 8.1 (random \(f\) saturating the \(M^6\|f\|_1^2\) term; rationals \(r/s\)
+saturating the \(M^4\|f\|_2^2\) term — CGL/GM §9) show both terms are needed in general; a
+\(\phi(q)^{-\theta}\) saving on *both* is a genuine strengthening, not ruled out by those examples,
+but also **not implied** by any published decoupling theorem for Dirichlet characters.
+
+**Label: Partial / long-shot.** Worth pursuing only as a tool against Remark 12.3’s \(S_3\), and only
+jointly with `mvt_beyond` if the goal is \(A<30/13\).
+
+---
+
+#### `poly_partition_q` — Conjecture (Partial / long-shot)
+
+**Target.** Same \(J(\vec f)\) / same \(S_3\) pipeline, attacked by **polynomial partitioning** (Guth) /
+polynomial method on the incidence set
+
+\[
+\bigl\{\bigl(u,\tfrac{m_1u+m_3}{m_2}\bigr): |m_i|\sim M_i\bigr\}
+\]
+
+with GCD multiplicity \((am_1+bm_2+m_3,q)\), aiming to improve the high-energy / structured term of
+Prop. 8.1 (or the energy-weighted bound feeding Prop. 10.1 / 11.1).
+
+**Conjectural inequality (incidence form).** For \(0<\theta\le 1\) and \(f\) as above,
+
+\[
+\int\sum_a\Bigl(\sum_{b,m}f_b\Bigl(\tfrac{m_1u+m_3}{m_2}\Bigr)\,(am_1+bm_2+m_3,q)\Bigr)^2\,du
+\ \ll\ \phi(q)\,M^{6-\theta}\Bigl(\int\sum f\Bigr)^2+\phi(q)^2 M^{4-\theta/2}\int\sum f^2,
+\]
+
+or any saving that, once inserted into CGL (2.3)–(2.4), yields \(S_3\lessapprox q^{2-\delta}|W|^{3/2}\)
+with \(\delta>0\).
+
+**Exponent consequence at \(5/7\).** Identical bookkeeping to decoupling: \(\delta\) in \(S_3\) →
+\(A\mapsto 7/3-2\delta/3\), floored at \(30/13\) by MVT. No path to \(A<30/13\) without also beating
+MVT.
+
+**vs known counterexamples.** The rational example saturating \(M^4\|f\|_2^2\) in Prop. 8.1 is a
+**structured** incidence configuration; partitioning methods are designed precisely for such
+structure, so there is no immediate contradiction — but also no theorem. GM already *is* a
+Fourier/incidence advance; a further partitioning step must save on the **GCD-twisted** form, which
+is the new arithmetic difficulty CGL introduced. Not implied by the \(q=1\) theory.
+
+**Label: Partial / long-shot.** Same strategic role as `decoupling_char`: speculative \(S_3\) tool,
+not a soft win, and subordinate to `mvt_beyond` for breaking \(30/13\).
+
+---
+
+### Batch 4 summary
+
+| id | verdict | concrete output |
+|---|---|---|
+| `mvt_beyond` | **Partial (key)** | Exact MVT use: CGL (1.2) at \((\sigma,y)=(5/7,7/9)\) binds via \(1+y(1-2\sigma)=2/3\). Minimal inequality stated. Montgomery modified conjecture open; Bourgain killed unrestricted form. GM \(q=1\) subdivision is the step that fails for prime \(q\). Numerics: S₃- and MVT-extremisers do not coexist at critical \(V\), but slack is \(O(1)\) → **no quantified hybrid exponent**. |
+| `decoupling_char` | Partial / long-shot | Conjectural \(\phi(q)^{-\theta}\) saving on Prop. 8.1’s \(J(\vec f)\); ⇒ \(S_3\) \(\delta\)-saving ⇒ \(A\le 7/3-2\delta/3\) floored at \(30/13\). No counterexample collision; not implied by BD. |
+| `poly_partition_q` | Partial / long-shot | Conjectural incidence saving on the same GCD-twisted affine sums; same \(5/7\) bookkeeping as decoupling. |
+
+### Inequality worth pursuing
+
+**Primary:** the `mvt_beyond` LV hypothesis at \((y,V)=(7/9,N^{5/7})\) —
+
+\[
+|W|\ll(qT)^{o(1)}\bigl(N^{2}V^{-2}+(qT)^{1-\eta}NV^{-2}\bigr)\quad(\eta>0),
+\]
+
+for 1-bounded Dirichlet polynomials over characters, \(T\) small / \(T=1\). This is mandatory for
+\(A<30/13\) under the CGL architecture, and historically the hard face of the cube.
+
+**Secondary (only with the above):** any \(\delta>0\) saving in CGL Prop. 8.1 / \(S_3\) via decoupling
+or polynomial partitioning — valuable toward Remark 12.3, but by itself freezes at \(\approx 2.308\).
+
+**No improvement of \(A\) claimed. No Lean. Docs/scripts only.**
+
