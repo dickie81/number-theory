@@ -7,3 +7,5 @@ batch1_done=1-8
 batch2_done=9-16
 energy_probe=1009,10007,30011
 cgl_reopt=done
+batch3_seed=60783343
+batch3_done=16

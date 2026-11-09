@@ -481,9 +481,285 @@ repulsion does not bound the number of distinct characters with a zero at `β �
 **Still alive after 16 openings:** `#06 combinatorial_energy` (weak, now quantified), and `#15` only as restatement
 of the S₃ problem. **No improvement of `A` claimed.**
 
+
+---
+
+## The S₃–MVT tie (structural fact for Batch 3)
+
+At `(σ, y, c) = (5/7, 7/9, 4/3)` both the S₃ term `c + y(2−4σ)` and the MVT term `1 + y(1−2σ)` equal
+`2/3`. So:
+
+- an S₃-only saving (`c ↓`) at **fixed** `y = 7/9` immediately makes **MVT** the binding term at `α = 2/3`;
+- uniform `A` can still fall slightly because the optimiser may move `(a, y)` (`delta_targets.py`);
+- but under the present four LV terms the peak **freezes at ≈ 2.308 (`30/13`)** once `δ ≳ 1/26` — further S₃
+  savings alone never reach `A = 2.30`.
+
+Therefore Batch 3 prefers openings that **change the tie** (move/break MVT, change effective `y`, split `W`,
+mix detectors, interpolate in `σ`), not only Remark 12.3.
+
+### `δ` needed for target `A` (Numerical; re-optimised `a,y`)
+
+Script: `scripts/density_hunt/delta_targets.py`. `c = 4/3 − 2δ/3`.
+
+| target peak `A` | `δ` needed | `c` | sieve floor `1+A/2` | notes |
+|---|---|---|---|---|
+| `2.330` | `≈ 0.0057` | `≈ 1.3295` | `≈ 2.1650` | tiny S₃ saving |
+| `2.325` | `≈ 0.0128` | `≈ 1.3248` | `≈ 2.1625` | |
+| `2.320` | `≈ 0.0198` | `≈ 1.3201` | `≈ 2.1600` | |
+| `2.310` | `≈ 0.0355` | `≈ 1.3097` | `≈ 2.1550` | near `1/26` |
+| `30/13 ≈ 2.3077` | `δ ≳ 1/26` | `≲ 1.3077` | `≈ 2.1540` | **floor under these LV terms** |
+| `2.300` | **unreachable** | — | — | peak freezes ≈ `2.308` |
+
+At fixed `y = 7/9`, `σ = 5/7`: for any `δ > 0`, `min(S₃, MVT) = MVT = 2/3`. Re-optimisation of `y` is what
+buys the rows above; the MVT wall is why `2.30` is impossible without a new LV term.
+
+### `W` energy split — quantitative model (Numerical / Heuristic)
+
+From the energy probe (`q = 30011`): adv `E₊/(R⁴/M) ≈ 6.68`, random `≈ 1.06`, AP `≈ 20.7`.
+A crude two-point mixture gives structured fraction `f ≈ (6.68−1.06)/(20.7−1.06) ≈ 0.29`.
+
+Optimistic bookkeeping (ignore harmful cross terms in `tr(E³)`): `R ≤ R_s + R_u` with
+`R_s ≪ q^β` (structure) and `R_u ≪ q^{α_u}` (random-like). Need `max(β, α_u) < 2/3`.
+
+Even if the structured core is **removed entirely** (`β = −∞`), `R_u ≈ (1−f)R ≈ 0.71 q^{2/3}`, so
+`α_u = 2/3 + log(0.71)/log q → 2/3` as `q → ∞`. At `q = 10^{12}`, `α_u ≈ 0.654` still — only a
+log-factor, **not** a power saving on uniform `A`.
+
+**Verdict on pure split:** cannot asymptotically beat `A = 7/3` without a power saving on the unstructured
+majority. Cross terms likely make this worse. Opens a door only if unstructured `W` admits `α_u ≤ 2/3 − ε`
+(new LV), which is circular.
+
+---
+
+## Batch 3 randomised openings
+
+Seed `60783343` (`scripts/density_hunt/seed_batch3.txt`), distinct from Batch 1’s `20261109`. Sixteen openings
+(tie-structure + fresh unlikely), shuffled; assessed in that order below.
+
+### 01. `bourgain_restrict` — Dead
+
+**Idea.** Bourgain-type large values for Dirichlet polynomials with **restricted support** (e.g. smooth, friable,
+or short interval support) to beat MVT in the binding range.
+
+**Bookkeeping.** Need `α < 2/3` on the MVT side, or a usable `y` where `min(MVT, Thm1.1) < 2/3` while still
+detecting `σ = 5/7` zeros. CGL’s detectors at criticality are already smooth block sums (`cgl-s3` §8). Restricted
+support is already spent; Bourgain’s classical restricted-support gains target different (`N`, `V`) regimes and do
+not undercut `1 + y(1−2σ) = 2/3` at `y = 7/9`.
+
+**Obstruction.** Same as excluded smooth/block-sum path: restriction is present; the MVT term at this
+`(y, σ)` is the large sieve / mean value for those coefficients, not an unrestricted monomial probe.
+
+### 02. `decoupling_char` — Partial / long-shot
+
+**Idea.** Bourgain–Demeter decoupling for exponential sums / extension estimates, applied to character
+polynomials `Σ a_n χ(n) n^{it}` or to the affine/GCD forms behind CGL Prop. 8.1.
+
+**Bookkeeping.** Decoupling has improved restriction and moment estimates for toral exponential sums. If it
+upgraded the GM-type term `1 + y(12/5−4σ)` or the half term enough to also force a new inequality for S₃/energy,
+one could break the tie. At criticality GM is `0.644 < 2/3`, so improving GM alone by `< 0.022` does nothing
+(`cgl_reopt`). Decoupling must hit **MVT or S₃**, not only GM.
+
+**Obstruction / lead.** No off-the-shelf decoupling theorem for Dirichlet characters mod `q` in the literature
+search sense of CGL; translating BD to the GCD-twist affine sums is open research. **Partial** as a possible
+tool against Prop. 8.1/11.1, not a ready gain. Not counted as promising without a concrete inequality.
+
+### 03. `selberg_zd` — Dead for the tie
+
+**Idea.** Selberg-style zero detection (AFE + mollifier) to replace CGL’s detector family.
+
+**Bookkeeping.** Changes the map “zero → detector length `y`”. If every `σ = 5/7` zero admits a detector with
+`y` in a region where present LV terms give `α ≤ 2/3 − ε`, uniform `A` drops. Mapping `A_cgl(σ)` over `y`
+(`cgl_reopt`) shows the **maximum** over admissible blocks is `7/3`; Selberg detectors still produce some `y`,
+and the worst `y` dominates.
+
+**Obstruction.** Detector redesign without new LV cannot undercut `max_y min(MVT, Thm1.1)`.
+
+### 04. `afe_reflect_y` — Dead (with a caveat)
+
+**Idea.** Approximate functional equation / reflection sends a long poly to a dual of length `∼ qT/N`, changing
+`y ↦ 1−y` (roughly), hoping the dual side has better LV.
+
+**Bookkeeping.** At `y = 7/9`, dual `∼ 2/9 < 2/3`, where Thm 1.1’s floor `y_floor = 2/3` forces pure MVT:
+`max(y(2−2σ), 1+y(1−2σ))` at `y = 2/9`, `σ = 5/7` is `max(0.127, 0.905) = 0.905 ≫ 2/3` — **worse**.
+Reflection at criticality lands in a bad MVT region.
+
+**Obstruction.** Dual length is on the wrong side of `2/3` for `y = 7/9`. Caveat: hybrid long+short AFE
+(two pieces) is `two_detector_mix` / `short_dirichlet` below.
+
+### 05. `power_amplify_k` — Dead as redo; Partial if new `k`-moment
+
+**Idea.** Amplify with `|D|^{2k}` for `k ≠` CGL’s path (their energy / `S₃ ∼ tr(E³)` is a 3-fold form).
+
+**Bookkeeping.** Higher `k` usually needs stronger input (harder moments). Lower `k` returns toward MVT.
+CGL’s S₃ is already the critical multilinear form at the GM/`N^{3/4}` threshold.
+
+**Obstruction.** Changing `k` without a new moment estimate either worsens constants or retreats to MVT
+(still `2/3`). **Partial** only if a genuine new `k = 2` large-value inequality in the character aspect beats
+`α = 2/3` for some usable `y` — that would be a new LV theorem, not a free tweak.
+
+### 06. `huxley_subdiv_q` — Dead for beating `7/3`
+
+**Idea.** Huxley exponent-pair / subdivision methods in the `q`-aspect.
+
+**Bookkeeping.** Huxley’s density exponent `3/(3σ−1)` equals `7/3` at `σ = 5/7` only at the old glue with
+Ingham; for `σ > 3/4` Huxley is better than Ingham but CGL already improves the `[5/7, 16/21]` range.
+Exponent pairs help classical LV for `V` larger than `N^{3/4}`; the tie is at medium `V = N^{5/7}`.
+
+**Obstruction.** Wrong `V`-regime for the binding MVT/S₃ tie; cannot undercut CGL’s critical point.
+
+### 07. `poly_partition_q` — Partial / long-shot
+
+**Idea.** Guth-style polynomial partitioning / polynomial method in the `q`-aspect large-value geometry
+(points `(χ, n)` or frequencies in `Z/(q−1)`).
+
+**Bookkeeping.** Same target as decoupling: improve affine/GCD or large-value counts feeding `c` or MVT.
+GM itself is already a Fourier-analytic / incidence advance; CGL adapted it. A further partitioning step would
+need to save on the specific GCD-twist sums of Prop. 8.1.
+
+**Obstruction.** No written inequality. **Partial** as research direction synonymous with improving CGL’s hard
+sums — not a new soft opening.
+
+### 08. `kloosterman_avg_q` — Dead for Linnik
+
+**Idea.** Average Kloosterman sums over small moduli **including the modulus `q`**, to gain cancellation.
+
+**Bookkeeping.** Spectral averaging (Deshouillers–Iwaniec, Kuznetsov) needs a family of moduli. If the family
+includes a range of `q`, bounds are for **almost all** `q` or averages over `q`. Linnik /
+`Linnik22000E.linnik_22000e` needs a bound for **every** `q`. Averaging in `q` yields a different theorem
+(Bombieri–Vinogradov flavour), not a smaller uniform `A(q)` for each `q`.
+
+**Obstruction.** Structural: average over `q` does not imply uniform in `q`. (Averaging the *other* moduli
+`b₂b₃` with `q` fixed was already tried in `cgl-s3` §11 and failed for prime `q`.)
+
+### 09. `two_detector_mix` — Dead under present LV
+
+**Idea.** Partition zeros into two classes, detected at lengths `y₁` and `y₂`, so the uniform count is
+`≪ (qT)^{α₁} + (qT)^{α₂}` with each `α_i = min(MVT, Thm1.1)(y_i) < 2/3`, avoiding the single worst `y`.
+
+**Bookkeeping.** For this to help, **every** zero at `σ = 5/7` must admit a detector at some `y` with
+`α(y) < 2/3`. But the zero-detection construction produces a specific length scale from the zero’s height and
+conductor; one cannot freely assign `y`. If one could choose `y` freely, one would pick a minimiser of `α(y)` —
+and `cgl_reopt` shows that after optimising blocks, the **worst necessary** `y` still forces peak `A = 7/3`.
+
+**Obstruction.** No freedom to park all zeros at friendly `y` without a new detection identity. Sum of two
+bad classes is still bad if each class can be large.
+
+### 10. `W_energy_split` — Dead asymptotically (quantified)
+
+**Idea.** Split `W = W_s ∪ W_u` using additive energy; bind `W_s` by completion/AP methods, `W_u` by
+random-like S₃.
+
+**Bookkeeping.** See the quantitative model above: even with `f ≈ 0.29` structured and `W_s` deleted,
+`α_u → 2/3`. Ignoring cross terms is optimistic; including them typically adds positive contributions to `S₃`.
+
+**Obstruction.** Unstructured majority preserves `α = 2/3` as a power. **Dead** for asymptotic uniform `A`.
+(Finite-`q` log factors irrelevant to Linnik’s exponent.)
+
+### 11. `short_dirichlet` — Dead
+
+**Idea.** AFE residual + half-plane contour truncation → short Dirichlet polynomials; apply LV at small `y`.
+
+**Bookkeeping.** Half-plane `η₀ = 1/12` truncates horizontal integrals but does not shorten the critical
+detector below the length needed to see zeros at `β = 5/7` (Linnik paper: value of `η₀` irrelevant to `A`).
+Short duals land in the bad MVT region (`afe_reflect_y`).
+
+**Obstruction.** Same as #04 + excluded half-plane length heuristics.
+
+### 12. `halasz_amplify` — Dead
+
+**Idea.** Halász large values with amplified coefficient sets (pretentious amplifier, pretentious majorant).
+
+**Bookkeeping.** Halász is strongest near `|D| ≈ ‖a‖₁`; critical `V = N^{5/7}` is medium-large. Amplifiers
+change coefficients but CGL already allows general `|a_n| ≤ 1` smooth weights. Does not break MVT at
+`y = 7/9`.
+
+**Obstruction.** Wrong `V`-regime; overlaps excluded pretentious / HB_LV openings.
+
+### 13. `hybrid_mvt_s3` — Dead without new inputs (tie restatement)
+
+**Idea.** Apply a stronger-than-MVT bound on unstructured `W`, and an S₃ saving only on structured `W`.
+
+**Bookkeeping.** This is exactly `W_energy_split` + `mvt_beyond`. Needs **both** a power saving on unstructured
+large values **and** structure bounds — either alone fails the ledger (`α_u → 2/3`, and S₃-only freezes at
+`30/13` even with reopt). Combining two missing inputs is not progress.
+
+**Obstruction.** Product of two open problems; no reduction to one.
+
+### 14. `moment_half_det` — Dead for uniform `A` (known barrier)
+
+**Idea.** Use Conrey–Iwaniec / Petrow–Young moments of `L(1/2, χ)` as zero detectors.
+
+**Bookkeeping.** Already analysed in `cgl-s3` §9: Weyl / sixth-moment inputs give sixth-moment counting
+`≪ q^{4/3}` type bounds, insufficient to replace the critical S₃/MVT tie for density at `σ = 5/7`.
+Improving the sixth-moment end moved a dual route’s `θ`, not the fourth-moment/S₃ end that produces `7/3`.
+
+**Obstruction.** Documented in exclusion/`cgl-s3` §9; moment detectors hit a different face of the same cube.
+
+### 15. `mvt_beyond` — Partial (the correct face of the tie)
+
+**Idea.** Prove a large-value inequality that beats MVT in the region where MVT currently binds — in particular
+near `y ≈ 7/9`, `V = N^{5/7}`, or along the locus where `1 + y(1−2σ)` dominates after S₃ drops.
+
+**Bookkeeping.** If MVT is improved to `α_MVT ≤ 2/3 − ε` at the critical point, then even without S₃ saving one
+gets `A ≤ 7/3 − (7/2)ε` from that `y`. If S₃ is also improved, the `30/13` floor from `delta_targets.py` can
+finally be undercut — that floor exists precisely because when S₃ drops, **MVT/GM glue** stops the fall.
+
+**Obstruction today.** No such inequality; this *is* the content of a better character large-value theorem in the
+medium-`V` range. CGL/GM targeted the `N^{3/4}` neighbourhood (S₃/GM side). The MVT side of the tie is the
+classical mean value / large sieve, long studied. **Partial**: correctly identified as necessary to break the
+`2.308` floor, not a soft win.
+
+### 16. `sigma_interp` — Dead
+
+**Idea.** Replace pointwise density exponents by a convex envelope / interpolated bound in `σ`, hoping the
+envelope’s max is `< 7/3`.
+
+**Bookkeeping.** Zero-density exponents `A(σ)` enter as `|W| ≪ (qT)^{A(σ)(1−σ)}`. The uniform Linnik input uses
+`sup_σ A(σ)` on `[1/2, 11/12]` (essentially `7/3` at `5/7`). A convex envelope of an already-peaked curve
+cannot reduce the peak: `max envelope = max function` for convex envelopes of functions that are already
+evaluated pointwise as upper bounds.
+
+**Obstruction.** Envelope of upper bounds is ≥ each bound; the peak stays `≥ 7/3`.
+
+---
+
+## Batch 3 summary
+
+| # | id | verdict | note |
+|---|---|---|---|
+| 01 | `bourgain_restrict` | Dead | restricted support already in block detectors |
+| 02 | `decoupling_char` | Partial | long-shot tool for hard CGL sums; no inequality yet |
+| 03 | `selberg_zd` | Dead | cannot dodge worst `y` on the LV curve |
+| 04 | `afe_reflect_y` | Dead | dual `y∼2/9` makes MVT worse (`α∼0.91`) |
+| 05 | `power_amplify_k` | Dead / Partial | needs new moment LV |
+| 06 | `huxley_subdiv_q` | Dead | wrong `V`-regime |
+| 07 | `poly_partition_q` | Partial | long-shot ≡ improve Prop. 8.1 sums |
+| 08 | `kloosterman_avg_q` | Dead | averages `q` ⇒ not every-`q` Linnik |
+| 09 | `two_detector_mix` | Dead | no free assignment of friendly `y` |
+| 10 | `W_energy_split` | Dead | unstructured ≈71% keeps `α→2/3` |
+| 11 | `short_dirichlet` | Dead | half-plane / short dual don’t help `A` |
+| 12 | `halasz_amplify` | Dead | wrong `V`-regime |
+| 13 | `hybrid_mvt_s3` | Dead | needs two missing inputs |
+| 14 | `moment_half_det` | Dead | known `cgl-s3` §9 barrier |
+| 15 | `mvt_beyond` | **Partial (key)** | necessary to break the `≈2.308` floor after S₃ drops |
+| 16 | `sigma_interp` | Dead | envelope cannot cut the peak |
+
+### Promising / structural leads (honest)
+
+1. **`mvt_beyond`**: After any S₃ saving, MVT (or GM/Ingham glue) caps uniform `A` at `≈ 2.308`. Beating MVT in
+   the medium-large character regime is mandatory for `A < 30/13` under this architecture — and is historically
+   hard. No concrete inequality claimed here.
+2. **`decoupling_char` / `poly_partition_q`**: Only as speculative tools against CGL’s GCD-twist sums; not soft.
+3. **S₃ `δ` table**: Even optimal S₃-only path yields sieve floor `≈ 2.154`, vs current formalised Linnik `2.2`
+   and window-only `≈ 2.198`. Worth at most `∼0.01` on the sieve floor if `δ ∼ 1/26` were proved — and still
+   needs no MVT advance to claim that much, but **does** need a real S₃ inequality (Remark 12.3).
+
+**No improvement of `A` claimed. No Lean.**
+
 ## Next steps
 
-1. Continue openings 17–24 in seed order (`moment_half` … `halfplane_shorten`).
-2. Optional: correlate `S₃` and `E₊` on the same `W` (adversarial vs max-energy sets) to see whether energy
-   increment can touch Remark 12.3.
-3. Keep pushing to PR #98; no force-push; docs/scripts only.
+1. Optional Batch 4: try to write a *minimal* inequality that would constitute `mvt_beyond` (state the exact
+   LV hypothesis at `(y, V) = (7/9, N^{5/7})` needed for target `A`), and/or correlate `S₃` with `E₊` on the
+   same `W` samples.
+2. Continue pushing docs/scripts only to PR #98.
+
