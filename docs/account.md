@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1592 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1595 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -274,7 +274,8 @@ In order of what is in reach.
    from counting, through Minkowski's theorem (`HodgeCounting.rh_iff_counting`). The orbit-lattice conjecture implies
    it (`BallWeil.rh_of_pivots`), and under RH its pivot inequality holds for every `k` with `log k ≥ 7100`: the pivots
    are at least `(log k/2 + log 4 + 2)/(22e⁸)` (`BallPivot.pivot_ge`), so the conjecture is RH together with finitely
-   many pivot inequalities (`BallPivot.orbitLattice_iff`). Two primes already carry RH: for distinct primes `p` and
+   many pivot inequalities (`BallPivot.orbitLattice_iff`), and RH is equivalent to the orbit spanning a lattice: the
+   form is at least `(log 4 + 2)/(22e⁸)` at every nonzero integer vector (`BallPivot.rh_iff_lattice`). Two primes already carry RH: for distinct primes `p` and
    `q`, RH holds exactly when `K_H(p^a q^b) ≥ −K_H(1)` for all integers `a` and `b`
    (`BallSlice.rh_iff_bound_pair`), so in particular for `2^a 3^b` (`BallSlice.rh_iff_two_three`). At every stage `N` the primes above `N/2`, which have no other multiple
    up to `N`, are never absent and are asymptotically half of all the primes (`LonelyPrimes.lonely_ratio_pos`,
