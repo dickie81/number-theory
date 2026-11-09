@@ -277,6 +277,11 @@ import EpsteinFlat
 import XiReflection
 import WengRankTwo
 import XiReflectionBand
+import SquaresCongruences
+import RamanujanCongruences
+import CubicBinomial
+import RamanujanFamilies
+import FermatCubicCount
 import FourSquareTeeth
 import FourSquareResidue
 import SiegelFour
@@ -1504,6 +1509,53 @@ twin-form rates at `11/12`. -/
 #print axioms WengRankTwo.differenced_real
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
+#print axioms SquaresCongruences.hex_modEq
+#print axioms SquaresCongruences.seven_modEq
+#print axioms SquaresCongruences.two_modEq
+#print axioms SquaresCongruences.r8_modEq
+#print axioms SquaresCongruences.r4_mod_sixteen
+#print axioms SquaresCongruences.odd_sigma_iff
+#print axioms SquaresCongruences.sigma4_two_pow_mul
+#print axioms SquaresCongruences.three_dvd_sigma
+#print axioms SquaresCongruences.nine_dvd_sigma_three
+#print axioms SquaresCongruences.seven_dvd_sigma_three
+#print axioms SquaresCongruences.r4_three_mul_add_two
+#print axioms SquaresCongruences.r8_mod_seven
+#print axioms RamanujanCongruences.P_mul_E
+#print axioms RamanujanCongruences.coeff_P_pow_eq_zero
+#print axioms RamanujanCongruences.ramanujan_five
+#print axioms RamanujanCongruences.ramanujan_seven
+#print axioms RamanujanCongruences.coloured_two_five
+#print axioms RamanujanCongruences.coloured_four_five
+#print axioms RamanujanCongruences.coloured_four_seven
+#print axioms RamanujanCongruences.coloured_six_seven
+#print axioms RamanujanCongruences.coloured_three_nine
+#print axioms CubicBinomial.sum_pow_mul_one_sub_pow
+#print axioms CubicBinomial.mk_choose_eq
+#print axioms CubicBinomial.choose_modEq_trace
+#print axioms CubicBinomial.choose_modEq
+#print axioms CubicBinomial.exists_rep
+#print axioms RamanujanFamilies.not_isSquare_neg_three
+#print axioms RamanujanFamilies.family_one
+#print axioms RamanujanFamilies.family_three
+#print axioms RamanujanFamilies.family_four
+#print axioms RamanujanFamilies.family_six
+#print axioms RamanujanFamilies.ramanujan_five_of_family
+#print axioms RamanujanFamilies.ramanujan_seven_of_family
+#print axioms RamanujanFamilies.coloured_seven_eleven
+#print axioms RamanujanFamilies.coloured_eight_eleven
+#print axioms RamanujanFamilies.coloured_five_eleven
+#print axioms FermatCubicCount.card_cube_roots
+#print axioms FermatCubicCount.card_eq_jacobiSum
+#print axioms FermatCubicCount.card_eq_trace
+#print axioms FermatCubicCount.card_eq
+#print axioms FermatCubicCount.card_modEq
+#print axioms FermatCubicCount.card_eq_of_mod_three_ne_one
+#print axioms FermatCubicCount.card_infinity_eq
+#print axioms FermatCubicCount.card_infinity_eq_of_mod_three_ne_one
+#print axioms FermatCubicCount.card_proj_eq
+#print axioms FermatCubicCount.card_proj_eq_of_mod_three_ne_one
+#print axioms FermatCubicCount.abs_sub_le
 #print axioms FourSquareTeeth.r4_two_pow_mul
 #print axioms FourSquareTeeth.r4_pow_mul
 #print axioms FourSquareTeeth.lseries_r4
