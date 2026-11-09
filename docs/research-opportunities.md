@@ -15,11 +15,11 @@ assistance (Claude); the literature positions in particular need expert review.
 | Exponential sums with `μ` and `Λ`, uniformly in `α`, with a power saving: `Σ_{n≤x} μ(n)e(nα) ≪ x^{35/36+ε}` | No unconditional power saving can exist without a zero-free half-plane for `ζ` (`α = 0` is Mertens' function); under GRH, Baker and Harman have `3/4` | Vaughan's identity and the bilinear exponential-sum bounds in Lean; the uniform major-arc inputs exist | [§1](#1-exponential-sums-over-primes-and-with-the-möbius-function) |
 | The Euler–Kronecker constants of the cyclotomic fields: `−C(log q)² ≤ Σ_{χ≠χ₀} L′/L(1, χ) ≤ (12 + o(1)) log q` | Unconditionally only `O(φ(q) log q)` is known for one `q`; the shape matches Ihara's GRH bound `(2 + o(1)) log q` | A sharp-cutoff uniform prime number theorem in progressions (short); Brun–Titchmarsh for the sharper lower bound (moderate) | [§2](#2-the-eulerkronecker-constants-of-the-cyclotomic-fields) |
 | The sieve programmes: Linnik at `2.199` by regeneration, a lever table for what would go lower; short intervals at `21/40`; the hybrid of the two | The hybrid, primes in `(x, x + x^θ]` in every class mod `q ≤ x^η` for `θ > 4/7`, needs density estimates that count zeros, not characters | Large | [§3](#3-the-sieve-programmes) |
-| A zero of the Davenport–Heilbronn function with `Re s > 1` (Numerical) | Known to exist since 1936; none below height 12000, by the scan here; the library's `dh` column would show that the half-plane's proof must use the Euler product | Finding one, then a certificate at that height: fifty times or more the existing boxes, or an approximate functional equation for `dh` | [§4](#4-the-davenportheilbronn-function-a-zero-with-re-s--1-numerical) |
+| A zero of the Davenport–Heilbronn function with `Re s > 1` (Numerical) | Known to exist since 1936; none below height 12000, by the scan here; the library's `dh` column would show that the half-plane's proof must use the Euler product. Since done for `Re s > 11/12`, in Lean ([§8.5](#85-the-davenportheilbronn-zero-right-of-1112-found-and-certified-right-of-1-not-by-a-scan)) | Finding one, then a certificate at that height: fifty times or more the existing boxes, or an approximate functional equation for `dh` | [§4](#4-the-davenportheilbronn-function-a-zero-with-re-s--1-numerical) |
 | The smaller harvest: the prime number theorem in progressions uniformly in `q` with a sharp cutoff, Liouville, `μ` in progressions, Mertens with a power saving, `k`-free numbers | Exercises given the half-plane, each a statement the literature has only under RH or GRH | A module or two each | [§5](#5-the-smaller-harvest) |
 | Not recommended now: the orbit-lattice conjecture, Weil positivity, the half-plane at `7/8` | | | [§6](#6-directions-looked-at-and-not-recommended-now) |
 | The missing tools, by what each unlocks | | | [§7](#7-the-missing-tools-by-what-they-unlock) |
-| A second scan, 9 November: what it proved, what the literature now has, and what is left of the orbit-lattice conjecture | Under RH the pivots of the orbit form grow like `log N` (`BallPivot`); the conjecture is RH up to a constant | The sampling inequality with its natural constants | [§8](#8-a-second-scan-9-november-2026) |
+| A second scan, 9 November: what it proved, what the literature now has, and what is left of the orbit-lattice conjecture | Under RH the pivots of the orbit form grow like `log N` (`BallPivot`); the conjecture is RH up to a constant. `dh` has a zero with `Re s > 11/12`, at height `24415`, certified (`DHLocate5`) | The sampling inequality with its natural constants | [§8](#8-a-second-scan-9-november-2026) |
 
 The genuinely new mathematics of the library is where the author already is: the sieve certificates (§3). The inputs'
 harvest is mostly taken (`account.md`, "The results"); what is left of it needs one of two tools, Vaughan's identity
@@ -168,7 +168,9 @@ uniformity in `q` here would come from the half-plane. Medium value, large cost.
 
 ## 4. The Davenport–Heilbronn function: a zero with `Re s > 1` (Numerical)
 
-*Status, 9 November: the scan proposed at the end of this section cannot succeed (§8.5).*
+*Status, 9 November: the `dh` column is filled by a zero with `Re s > 11/12` at height `24415`, certified in Lean
+(`PsiOmega.Locate.Z5.dh_zero_re_gt`); for `Re s > 1` the scan proposed at the end of this section cannot succeed
+(§8.5).*
 
 `dh` is a combination of two Dirichlet `L`-functions mod 5 with the functional equation of `ζ` and no Euler product.
 Davenport and Heilbronn (1936) proved that it has more than `cT` zeros with `Re s > 1` and `0 < Im s ≤ T`; the
@@ -329,8 +331,9 @@ are these, with the branch's own numbers (floating point, uncertified) checked a
 ## 8. A second scan (9 November 2026)
 
 A second reading, asking the same question five days later. It checked the literature again, since the half-plane's
-consequences are being drawn elsewhere week by week, and it found one result that is the library's own. Prepared with
-AI assistance (Claude); the labels are those of the head of this page.
+consequences are being drawn elsewhere week by week; it found one result that is the library's own, and a zero of the
+Davenport–Heilbronn function inside the half-plane, which it certified. Prepared with AI assistance (Claude); the
+labels are those of the head of this page.
 
 ### 8.1 What it added to the library
 
@@ -338,6 +341,7 @@ AI assistance (Claude); the labels are those of the head of this page.
 |---|---|---|
 | Under RH the Gram–Schmidt pivots of the orbit form satisfy `d_N ≥ (log N/2 + log 4 + 2)/(22e⁸)`; the orbit-lattice conjecture is RH together with the pivot inequalities for `log k < 7100`; RH holds if and only if the form is at least `(log 4 + 2)/(22e⁸)` at every nonzero integer vector | `BallPivot.pivot_ge`, `BallPivot.orbitLattice_iff`, `BallPivot.rh_iff_lattice` | Yes: the conjecture and the form are this library's, and [ball-conjecture.md](ball-conjecture.md) had concluded that RH does not give the pivots |
 | An imaginary quadratic field has class number one if and only if its discriminant is one of the nine | `ClassNumberOne.classNumber_eq_one_iff` | No: Baker, Heegner and Stark's theorem, and not the first kernel-checked proof without Heegner's method ([class-number-one.md](../formalisations/class-number-one.md)). It closes the "finite computation" that `ClassNumberSharp` left |
+| The Davenport–Heilbronn function has a zero with `Re s > 11/12`, within `18/10000` of `0.918601 + 24415.47865i` | `PsiOmega.Locate.Z5.dh_zero_re_gt`, `PsiOmega.Locate.Z5.dh_zero_located_five` | The zero: found here, and no located zero of `dh` with real part above `0.81` is known to this scan from the literature (searched; Spira's and Balanzario and Sánchez-Ortiz's lists were not read in full). The statement closes the library's issue #35. The method is the library's certificate, with the `24 000` terms evaluated by the kernel in ball arithmetic (§8.5) |
 
 The whole import cone of `ClassNumberSharp`, the half-plane's proof included (244 modules), was rebuilt from a clean
 checkout on this scan's machine in about an hour on four cores, and `Eis.LFunction_ne_zero_of_re_gt` printed
@@ -434,36 +438,67 @@ zero of multiplicity `m` the far field of `1 − ζA` at distance `u` is of size
 `(1 − log k/log N)^j`, so the linear profile `j = 1` fails at a double zero and `j ≥ m` is needed; under RH alone
 multiplicities are not bounded.
 
-### 8.5 The Davenport–Heilbronn zero with `Re s > 1`: not by a blind scan (Numerical)
+### 8.5 The Davenport–Heilbronn zero: right of `11/12` found and certified; right of `1` not by a scan
 
-§4 proposed to continue the scan until a zero appears. It will not appear at a height that a blind scan reaches.
+§4 proposed to continue the scan in `Re s > 1` until a zero appears. It will not appear at a height that a blind scan
+reaches; but the half-plane's `dh` column needs only `Re s > 11/12`, and there zeros are within reach.
 
-For `Re s > 1`, `dh(s) = 0` exactly when `L(s, χ)/L(s, χ̄) = −(1 + iκ)/(1 − iκ)`, a number of modulus `1` and argument
-`π + 2 arctan κ`, that is `−2.588`. The quotient is `∏_p (1 − χ̄(p)p^{−s})/(1 − χ(p)p^{−s})`, to which only the primes
-`p ≡ ±2 (mod 5)` contribute, each a factor of argument at most `2 arctan p^{−σ}` in absolute value, attained when
-`p^{−it} = ±1` with the sign of its class. So, by Kronecker's theorem and Rouché's, as in Davenport and Heilbronn's
-proof, there are zeros with real part arbitrarily near `σ > 1` exactly when
-`Σ_{p ≡ ±2 (5)} 2 arctan p^{−σ} ≥ 2.588`:
+**How rare the zeros are (Heuristic, Numerical).** For `Re s > 1`, `dh(s) = 0` exactly when
+`L(s, χ)/L(s, χ̄) = −(1 + iκ)/(1 − iκ)`, a number of modulus `1` and argument `π + 2 arctan κ`, that is `−2.588`. The
+quotient is `∏_p (1 − χ̄(p)p^{−s})/(1 − χ(p)p^{−s})`, to which only the primes `p ≡ ±2 (mod 5)` contribute, each a
+factor of argument at most `2 arctan p^{−σ}` in absolute value, attained when `p^{−it} = ±1` with the sign of its
+class. So, by Kronecker's theorem and Rouché's, as in Davenport and Heilbronn's proof, there are zeros with real part
+arbitrarily near `σ > 1` exactly when `Σ_{p ≡ ±2 (5)} 2 arctan p^{−σ} ≥ 2.588`:
 
 - the real parts of the zeros in `Re s > 1` are dense in `(1, σ*)` and none exceeds `σ*`, with `σ* ≈ 1.1204` (primes
-  to `2·10⁷` and the tail);
+  to `2·10⁷` and the tail; the value `1.120362` is in the literature);
 - at `σ = 1.005` the `22` primes `2, 3, 7, …, 167` of these classes, aligned exactly, are the fewest whose arguments
   reach `2.588`; at `σ = 1.05` it takes `68`.
 
-How rare the alignment is: with independent uniform phases for the primes (Bohr's model), the probability that the
-arguments sum to `−2.588` or less is `e^{−I(σ)}` to leading order, with the large-deviation rate `I(1) = 27.0`,
-`I(1.005) = 29.5`, `I(1.01) = 32.4`, `I(1.02) = 39.9`, `I(1.05) = 94` (the primes to `2·10⁶`). So the zeros have a
-density of the order of `e^{−27} ≈ 2·10⁻¹²` per unit height or less, within about `0.01` of the line `Re s = 1`, and
-the first is to be expected at a height of the order of `10¹²` to `10¹⁴`, against the `12000` scanned: Davenport and
-Heilbronn's `cT` has `c` of the order of `10⁻¹³`. (Counting exact alignments of `22` primes instead would give
-`10⁻²⁶`; the cheapest alignments are partial ones of many primes.)
+With independent uniform phases for the primes (Bohr's model, which describes the values on a line `Re s = σ > 1/2`),
+the probability that the arguments sum to `−2.588` or less is `e^{−I(σ)}` to leading order, with the large-deviation
+rate
 
-A zero can be looked for directly: lattice reduction on `t log p/2π` finds heights at which the first primes are
-aligned, and at a height of `10¹³` the approximate functional equation evaluates `dh` with a few million terms. A
-certificate in Lean is another matter: the library's Euler–Maclaurin approximant needs about `t` terms. So the `dh`
-column of the half-plane should be the existence theorem itself, Davenport and Heilbronn's argument from Kronecker's
-theorem (which the library has, `BohrTorus.tendsto_mean_character`) and Rouché's, a formalisation, not a located
-zero; a located zero would be a numerical result beside it.
+| `σ` | `0.80` | `0.85` | `0.90` | `11/12` | `0.95` | `0.97` | `0.99` | `1` | `1.005` | `1.01` | `1.02` | `1.05` |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `I(σ)` | `4.5` | `6.0` | `8.6` | `9.9` | `13.6` | `17.3` | `22.9` | `27.0` | `29.5` | `32.4` | `39.9` | `94` |
+
+(the primes to `2·10⁶`). The four located zeros below height `177` fit: one zero with `Re s > 0.8` per `200` of
+height against `e^{4.5} = 89`. So zeros with `Re s > 11/12` should come about once in `e^{9.9} ≈ 2·10⁴` of height,
+times a constant; and zeros with `Re s > 1` have a density of the order of `e^{−27} ≈ 2·10⁻¹²` or less, so the first
+is to be expected at a height of the order of `10¹²` to `10¹⁴`, against the `12000` scanned. (Counting exact
+alignments of `22` primes would give `10⁻²⁶`; the cheapest alignments are partial ones of many primes.)
+
+**The zeros right of `11/12` (Numerical).** `scripts/dh_right_scan.py` follows the argument of `f` along
+`Re s = 11/12` by the approximate functional equation, `√(5t/2π)` terms a side where Euler–Maclaurin has `4t`, and
+polishes each candidate by Newton's method on the exact function. To height `200000`:
+
+| Zero | `Re s − 11/12` |
+|---|---|
+| `0.9186013197 + 24415.4786514i` | `+0.0019` |
+| `0.9370576028 + 49688.3425744i` | `+0.0204` |
+| `0.9183338056 + 74189.6447730i` | `+0.0017` |
+| `0.9358236176 + 107847.3977486i` | `+0.0192` |
+| `0.9248337058 + 196872.1113270i` | `+0.0082` |
+
+Five zeros, where the count above predicts a few. The scan also flags six zeros within `0.01` to the left of the
+line (near heights `43488`, `44838`, `46715`, `100469`, `116414` and `199846`); below height `20000` it finds none
+to the right, and the nearest that it flags is `0.8978 + 2442.53i`.
+
+**The first of them is certified (Lean).** `PsiOmega.Locate.Z5.dh_zero_re_gt`: `dh` has a zero with real part above
+`11/12` ([davenport-heilbronn.md](../formalisations/davenport-heilbronn.md)). §4 expected the certificate at such a
+height to cost fifty times the existing boxes or to need an approximate functional equation with a proved error. It
+needs neither: the library's certificate takes any centre, and its Dirichlet polynomial, `24 000` terms at this
+height, is a computation that the kernel can run. `DHBall` is the evaluator, integer arithmetic on balls, with the
+proof that it encloses `n^{−c}` and the sums; the kernel runs it in about ten minutes of one core. The same files
+would certify the zero at height `49688`, whose margin right of `11/12` is ten times as large, with `M = 12000`.
+
+**Right of `1`.** A zero there can be looked for directly: lattice reduction on `t log p/2π` finds heights at which
+the first primes are aligned, and at a height of `10¹³` the approximate functional equation evaluates `dh` with a
+few million terms. A certificate in Lean is another matter: the Euler–Maclaurin approximant needs about `t` terms.
+So the statement for `Re s > 1` should be the existence theorem itself, Davenport and Heilbronn's argument from
+Kronecker's theorem (which the library has, `BohrTorus.tendsto_mean_character`) and Rouché's, a formalisation, not a
+located zero.
 
 ### 8.6 Directions tried in this scan and set aside
 

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1595 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1597 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -13,7 +13,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 |---|---|---|
 | `lib/core` | 190 | 673 |
 | `lib/pnt` | 255 | 814 |
-| `lib/dh` | 21 | 71 |
+| `lib/dh` | 22 | 73 |
 | `lib/zeta23` | 10 | 37 |
 
 ## The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`
@@ -2943,6 +2943,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PsiOmega.grh_iff_lamC_nonneg_chi8`: GRH for `χ₋₈` iff `λ_{χ₋₈} ≥ 0` at every support ([note](../formalisations/davenport-heilbronn.md))
 - `PsiOmega.grh_iff_lamC_nonneg_chi7`: GRH for `χ₋₇` iff `λ_{χ₋₇} ≥ 0` at every support ([note](../formalisations/davenport-heilbronn.md))
 - `DHNegIndex.negIndex_ge_five`: The Weil index of `Q_dh` on probes of either parity is at least `5` ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHLocate5`: A zero of the Davenport–Heilbronn function with real part above `11/12`
+
+- `PsiOmega.Locate.Z5.dh_zero_located_five`: The fifth located zero
+- `PsiOmega.Locate.Z5.dh_zero_re_gt`: `dh` has a zero with real part above `11/12` ([note](../formalisations/davenport-heilbronn.md))
 
 #### `DHLocateFour`: Four located off-line zeros of `dh`, and the Weil index of `Q_dh` is at least `4`
 

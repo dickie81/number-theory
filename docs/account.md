@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1595 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1597 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -21,7 +21,7 @@ sections of MSC 2020's Number theory (11):
 | 11L Exponential and character sums | What the routes need: mean and large values of Dirichlet polynomials, the Halász–Montgomery inequality, the quadratic large sieve over `ℤ[ω]`, Vinogradov's mean value theorem in a weak form |
 | 11F Automorphic forms | One object: Kubota's cubic theta function on hyperbolic 3-space, with Patterson's coefficients |
 | 11A, 11R, 11T Elementary, global fields, finite fields | Over `ℤ[ω]`: quadratic, cubic and sextic reciprocity, Gauss and Jacobi sums, Jacobi's congruence `C(2k, k) ≡ −L (mod p)` for `p = 3k + 1 = (L² + 27M²)/4`, `L ≡ 1 (mod 3)` (`CubicBinomial.choose_modEq`), the ideals of each norm. Quadratic fields: the splitting law, `ζ_K = ζ·L(s, χ_K)`, class numbers. The least quadratic non-residue |
-| 11Y Computational number theory | Certificates that the kernel checks: the sieve's loss (1136 parts), four zeros of the Davenport–Heilbronn function, explicit constants, the search of the class number one problem (`3 200 000` cases) |
+| 11Y Computational number theory | Certificates that the kernel checks: the sieve's loss (1136 parts), five zeros of the Davenport–Heilbronn function (the fifth, at height `24415`, from `24 000` terms that the kernel evaluates in ball arithmetic), explicit constants, the search of the class number one problem (`3 200 000` cases) |
 | 11G Arithmetic algebraic geometry | Hasse's bound for every elliptic curve over a finite field of odd characteristic, by Manin's proof, and the Riemann hypothesis for it in every degree from the lattice of Manin's twist; for `y² = x³ + D`, the Frobenius as an Eisenstein integer of norm `q`; Gauss's count `p − 2 + L` of `x³ + y³ = 1` modulo `p` and the `p + 1 + L` points of the Fermat cubic, within `2√p` of `p + 1` (`FermatCubicCount.card_eq`, `FermatCubicCount.abs_sub_le`) |
 | 11E Forms | Jacobi's four-square theorem `r₄(n) = 8Σ_{d ∣ n, 4 ∤ d} d` (`JacobiFourSquares.r4_eq`), by Hirschhorn's proof from the triple product identity (`JacobiFourSquares.jtp`), and what it gives: `r₄` prime by prime (`FourSquareTeeth.r4_pow_mul`), the alternating lattice sum of `ℤ⁴` (`FourSquareTeeth.lseries_alt`), `ζ(2) = π²/6` from the points of `ℤ⁴` in balls (`FourSquareResidue.riemannZeta_two_of_lattice`), Siegel's formula `r₄(n) = π²n∏_p δ_p(n)` (`SiegelFour.siegel`), Jacobi's eight-square theorem (`JacobiEightSquares.r8_eq`) with `ζ(4) = π⁴/90` from the points of `ℤ⁸` in balls (`EightSquareResidue.riemannZeta_four_of_lattice`), the two-variable zeta function of Lagarias and Rains at `w = 4` (`TwoVariableZeta.Z_four`), and the lattices `x² + xy + y²` (hexagonal), `x² + 2y²` and `x² + xy + 2y²`, whose Epstein zeta functions are those of `ℚ(√−3)`, `ℚ(√−2)` and `ℚ(√−7)` and whose RH is `RH ∧ GRH(χ_d)` for `d = −3, −8, −7` (`EpsteinHexagonal.rh_hex_iff`, `EpsteinTwo.rh_iff`, `EpsteinSeven.rh_iff`); the flat rectangular lattices, whose Epstein zeta functions have a real zero in `(½, 1)` once `y > e²`, `x² + 58y²` among them (`EpsteinFlat.not_rh`, `EpsteinFlat.not_rh_fiftyEight`); and Weng's rank-2 zeta function of `ℚ`, which satisfies RH with no hypothesis (`WengRankTwo.rh_weng`); and congruences: the theta series of `x² + xy + y²`, `x² + xy + 2y²` and `x² + y²` agree with Eisenstein series modulo `3`, `7` and `4` (`SquaresCongruences.hex_modEq`, `SquaresCongruences.seven_modEq`, `SquaresCongruences.two_modEq`), and `r₈(n) ≡ 2r₄(n) (mod 64)` (`SquaresCongruences.r8_modEq`) |
 | 11P Additive number theory; partitions | Ramanujan's congruences `p(5n + 4) ≡ 0 (mod 5)` and `p(7n + 5) ≡ 0 (mod 7)`, and their analogues for coloured partitions, `p₋₃(3n + 2) ≡ 0 (mod 9)` among them, from Jacobi's cube identity and Mathlib's pentagonal number theorem (`RamanujanCongruences.ramanujan_five`, `RamanujanCongruences.ramanujan_seven`, `RamanujanCongruences.coloured_three_nine`), and they are the first members of four infinite families, uniform in the prime `ℓ`, from `η`, `η³`, `η⁴` and `η⁶` (`RamanujanFamilies.family_one`, `RamanujanFamilies.family_three`, `RamanujanFamilies.family_four`, `RamanujanFamilies.family_six`). No additive problems beyond the sums of four and eight squares of 11E |
@@ -122,7 +122,7 @@ result's note finds it unused; blank where neither has been checked.
 | GRH for `L(s, χ)` by the same test; RH with GRH for `ℚ(i)` by twin forms (and for `ℚ(√−2)`, `ℚ(√−3)`, `ℚ(√−7)`); about forty further criteria ([note](../formalisations/weil-positivity.md)) | `PsiOmega.grh_iff_QC_subexp_all`, `WeilTwinGeneral.rh_grh_iff_twins_Q4` | no |
 | RH if and only if `M(x) = O(x^{1/2+η})` for every `η > 0` (Littlewood), if and only if `Θ = 1/2` | `MertensExponent.rh_iff_mertens`, `MertensExponent.rh_iff_Theta_eq_half` | |
 | With no hypothesis: the ground energies are at most `Ke^{−Ba}` for every `B`; `Q(g) ≥ ‖g‖²/20` at every support `a ≤ 1/12`; one probe with `Q < 0` exhibits a zero off the line | `WeilForm.lam_decay_uncond`, `WeilForm.weilQg_ge_twentieth_all`, `WeilForm.exists_offline_of_neg_C2` | no |
-| The Davenport–Heilbronn function `dh` has `ζ`'s functional equation and zeros off the line, four of them located; the hypotheses of the library's criteria, restated for `dh`, fail, so a proof of one for `ζ` must use what `dh` lacks, such as the Euler product ([note](../formalisations/davenport-heilbronn.md)) | `PsiOmega.dh_offline_zero`, `PsiOmega.Locate.dh_zeros_located_four_box`, `PsiOmega.not_D_dh` | no |
+| The Davenport–Heilbronn function `dh` has `ζ`'s functional equation and zeros off the line, five of them located, one with real part above `11/12`, inside the zero-free half-plane of the Dirichlet `L`-functions; the hypotheses of the library's criteria, restated for `dh`, fail, so a proof of one for `ζ`, and the half-plane's proof, must use what `dh` lacks, such as the Euler product ([note](../formalisations/davenport-heilbronn.md)) | `PsiOmega.dh_offline_zero`, `PsiOmega.Locate.dh_zeros_located_four_box`, `PsiOmega.Locate.Z5.dh_zero_re_gt`, `PsiOmega.not_D_dh` | no |
 
 ### The tools
 
@@ -201,8 +201,11 @@ Within reach, with no hypothesis, from results the library has:
 - **Hyperbolic 3-space**: Kubota's `θ` (`Eis.kubotaTheta`) as an eigenfunction of the Laplacian at `s(2 − s) = 8/9`,
   below the continuous spectrum `[1, ∞)`: a bound state of a free particle on the cubic metaplectic cover. The library
   has the energy `∫ v²|∇F|² dz dv/v³` and its invariance (`Eis.lintegral_energy_actP`), not the Laplacian.
-- **The half-plane's `dh` column**: `dh` vanishes somewhere in `Re s > 1` (Davenport and Heilbronn), so a located zero
-  there would show in Lean that the half-plane needs the Euler product.
+- **A zero of `dh` with `Re s > 1`**: the half-plane's `dh` column is filled, by a zero with `Re s > 11/12` at height
+  `24415` (`PsiOmega.Locate.Z5.dh_zero_re_gt`). Davenport and Heilbronn's zeros in the half-plane of absolute
+  convergence are rarer: the first is to be expected near height `10¹²` or beyond
+  ([research-opportunities.md](research-opportunities.md), §8.5), where the approximant of the certificate has too
+  many terms and an approximate functional equation with an explicit error would be needed.
 
 ## The frontier
 

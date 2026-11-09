@@ -16,13 +16,22 @@ theorem PsiOmega.Locate.dh_zeros_located_four_box :
       16647731 / 100000 < ρ.im ∧ ρ.im < 16648131 / 100000) ∧
     (∃ ρ : ℂ, dh ρ = 0 ∧ 107639 / 150000 < ρ.re ∧ ρ.re < 109639 / 150000 ∧
       26504369 / 150000 < ρ.im ∧ ρ.im < 26506369 / 150000)
+
+theorem PsiOmega.Locate.Z5.dh_zero_located_five :
+    ∃ ρ : ℂ, dh ρ = 0 ∧ 916801 / 1000000 < ρ.re ∧ ρ.re < 920401 / 1000000 ∧
+      2441547685 / 100000 < ρ.im ∧ ρ.im < 2441548045 / 100000
+
+theorem PsiOmega.Locate.Z5.dh_zero_re_gt : ∃ ρ : ℂ, dh ρ = 0 ∧ 11 / 12 < ρ.re
 ```
 
 `chi5` is the Dirichlet character mod 5 with `χ(2) = i`, and `dhL χ = (1 + ε_{χ⁻¹})L(s, χ) + (1 + ε_χ)L(s, χ⁻¹)`, with
 `ε_χ` the root number of `χ` (`lib/dh/DavenportHeilbronn.lean`). In words: `dh` is not identically zero
 (`PsiOmega.dh_ne_zero`), its completion satisfies `Λ(1 − s) = Λ(s)` (`PsiOmega.dh_functional_equation`), as `ζ`'s does,
 and yet it has a zero off the critical line, and four in the boxes above, with real parts near `0.808`, `0.651`, `0.574`
-and `0.724` and ordinates near `85.70`, `114.16`, `166.48` and `176.70`.
+and `0.724` and ordinates near `85.70`, `114.16`, `166.48` and `176.70`. A fifth, near `0.9186 + 24415.4787i`, has
+real part above `11/12`: the half-plane `Re s > 11/12`, where no Dirichlet `L`-function has a zero
+([openai-half-plane.md](openai-half-plane.md)), holds a zero of `dh`. So that theorem cannot follow from what `dh`
+shares with the `L`-functions, the functional equation among them; it has to use what `dh` lacks.
 
 ## Source
 
@@ -61,9 +70,34 @@ cross form, which also allows real zeros, are equivalent (`PsiOmega.dhRH_iff_cro
 **Four zeros located** (`DHLocateSkeleton.lean`, `DHLocate*.lean`, `DHLocateFour.lean`): for each box, the minimum
 modulus principle against the Euler–Maclaurin approximant `dhEM 20 12`, linearised at the box's centre with a bound for
 its second derivative, gives a zero within `1/100`, `1/200`, `1/500` and `1/150` of the four centres, with the numerical
-inputs proved in rationals. The first gives a zero pair `ρ`, `1 − ρ` whose Bohr vectors lie strictly inside and outside
+inputs proved in rationals, a lemma for each term. The first gives a zero pair `ρ`, `1 − ρ` whose Bohr vectors lie strictly inside and outside
 the unit sphere in every dimension (`PsiOmega.dh_zero_pair_off_sphere`, `DHBohrSphere.lean`): a frame in which the
 critical line is the sphere cannot place the zeros on it by an argument that `dh` also satisfies.
+
+**A fifth zero, right of `11/12`** (`DHBallDefs.lean`, `DHBall.lean`, `DHLocate5States.lean`, `DHLocate5Cert0.lean`,
+…, `DHLocate5Cert5.lean`, `DHLocate5.lean`): the same certificate (`PsiOmega.Locate.dh_zero_near_of_fEMG`, which is
+stated for any centre) at `c = 918601/1000000 + (2441547865/100000)i`, with radius `18/10000` and the approximant
+`dhEM 6000 12`. At height `24415` the approximant's Dirichlet polynomial runs over `n < 30000`, `24000` terms, too
+many to bound one lemma at a time, so the kernel computes them:
+
+- `DHBall.run` is integer arithmetic on balls (a centre and a radius over `2^80`): `log (n + 1) − log n` from the
+  series of `−log(1 − 1/(n + 1))`; `t·log n` reduced modulo `2π` with Mathlib's twenty decimals of `π`; `n^{-c}` as
+  the Taylor polynomial of `exp` of degree `13` at the exponent over `16`, squared four times; and the running sums of
+  `n^{-c}` and `log n · n^{-c}` by residue class mod 5, with an upper bound for `Σ log² n · |n^{-c}|`.
+- `DHBall.inv_run` proves that the balls hold the sums (`Complex.exp_bound`, `Real.abs_log_sub_add_sum_range_le`).
+- `DHBall.run_0`, …, `DHBall.run_5` are the computation, a thousand blocks of five integers each, fifty blocks to a
+  kernel check (`decide +kernel`); `scripts/gen_dh_locate5.py` writes the intermediate states, and the kernel
+  recomputes every one. Each of the six files took about `105` seconds of one core here, and `1.6` GB.
+- `DHLocate5.lean` reads off the three numbers at the centre: `‖fEM(c)‖ ≤ 42/100000` (the Dirichlet polynomial is
+  below `11/100000` there and the tail below `31/100000`), `‖fEM′(c)‖ ≥ 196/100`, and `‖fEM″‖ ≤ 4642/10` on the
+  ball; the Euler–Maclaurin error is below `1/100000`. The margin `2(p₀ + e₀) < a₀r − m₂r²` is `0.00086 < 0.00202`.
+
+The zero was found by `scripts/dh_right_scan.py`: the argument of `f` along `Re s = 11/12`, by the approximate
+functional equation, then Newton's method on the exact function. It gives `0.9186013197 + 24415.4786514i`, the first
+of five zeros with `Re s > 11/12` below height `200000` (the others near `49688.34`, `74189.64`, `107847.40` and
+`196872.11`, with real parts `0.9371`, `0.9183`, `0.9358` and `0.9248`); those four are numerical, not certified.
+No zero with `Re s > 1` is located: by the count of [research-opportunities.md](../docs/research-opportunities.md)
+(§8.5) the first is to be expected near height `10¹²` or beyond.
 
 **On the critical line** (`DHChannels.lean`): `L(s, χ₅)L(1 − s, χ₅) = ε²L(s, χ₅⁻¹)L(1 − s, χ₅⁻¹)`
 (`PsiOmega.chi5_channel_fe`), the phase lock (`PsiOmega.chi5_phase_lock`), the reality of the channel ratio on the line

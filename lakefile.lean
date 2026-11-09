@@ -305,24 +305,26 @@ lean_lib PNT where
     .one `ZetaGMLV, .one `ZetaGMProp, .one `ZetaGMS3, .one `ZetaGMTrace,
     .one `ZetaGMWin, .one `ZetaHuxley, .one `ZetaIngham, .one `ZetaKernel]
 
-/-- lib/dh: 54 modules. -/
+/-- lib/dh: 64 modules. -/
 lean_lib DH where
   srcDir := "lib/dh"
   globs := #[
-    .one `ChiFirstFailure, .one `ChiGround, .one `DHArch, .one `DHBallKernel,
-    .one `DHBohrSphere, .one `DHBridge, .one `DHCertificate, .one `DHChannels,
-    .one `DHCoeffs, .one `DHColumn, .one `DHColumnRest, .one `DHConstants,
-    .one `DHExplicit, .one `DHForm, .one `DHGround, .one `DHHadamard,
-    .one `DHHurwitzEM, .one `DHInert, .one `DHJoins, .one `DHLocate2Base,
-    .one `DHLocate2Exp, .one `DHLocate2Num, .one `DHLocate2Trig, .one `DHLocate3Base,
-    .one `DHLocate3Exp, .one `DHLocate3Num, .one `DHLocate3Trig, .one `DHLocate3Trig2,
-    .one `DHLocate4Base, .one `DHLocate4Exp, .one `DHLocate4Num, .one `DHLocate4Trig,
-    .one `DHLocate4Trig2, .one `DHLocateExp, .one `DHLocateFour, .one `DHLocateGen,
-    .one `DHLocateNum, .one `DHLocateSkeleton, .one `DHLocateTrig, .one `DHLogBounds,
-    .one `DHLogBoundsExt, .one `DHNegIndex, .one `DHNumerics, .one `DHOddPacket,
-    .one `DHOddTerms, .one `DHOffCross, .one `DHPacket, .one `DHPrime,
-    .one `DHRealAxis, .one `DHTerms, .one `DHTrigBounds, .one `DHTwin,
-    .one `DHZeros, .one `DavenportHeilbronn]
+    .one `ChiFirstFailure, .one `ChiGround, .one `DHArch, .one `DHBall,
+    .one `DHBallDefs, .one `DHBallKernel, .one `DHBohrSphere, .one `DHBridge,
+    .one `DHCertificate, .one `DHChannels, .one `DHCoeffs, .one `DHColumn,
+    .one `DHColumnRest, .one `DHConstants, .one `DHExplicit, .one `DHForm,
+    .one `DHGround, .one `DHHadamard, .one `DHHurwitzEM, .one `DHInert,
+    .one `DHJoins, .one `DHLocate2Base, .one `DHLocate2Exp, .one `DHLocate2Num,
+    .one `DHLocate2Trig, .one `DHLocate3Base, .one `DHLocate3Exp, .one `DHLocate3Num,
+    .one `DHLocate3Trig, .one `DHLocate3Trig2, .one `DHLocate4Base, .one `DHLocate4Exp,
+    .one `DHLocate4Num, .one `DHLocate4Trig, .one `DHLocate4Trig2, .one `DHLocate5,
+    .one `DHLocate5Cert0, .one `DHLocate5Cert1, .one `DHLocate5Cert2, .one `DHLocate5Cert3,
+    .one `DHLocate5Cert4, .one `DHLocate5Cert5, .one `DHLocate5States, .one `DHLocateExp,
+    .one `DHLocateFour, .one `DHLocateGen, .one `DHLocateNum, .one `DHLocateSkeleton,
+    .one `DHLocateTrig, .one `DHLogBounds, .one `DHLogBoundsExt, .one `DHNegIndex,
+    .one `DHNumerics, .one `DHOddPacket, .one `DHOddTerms, .one `DHOffCross,
+    .one `DHPacket, .one `DHPrime, .one `DHRealAxis, .one `DHTerms,
+    .one `DHTrigBounds, .one `DHTwin, .one `DHZeros, .one `DavenportHeilbronn]
 
 /-- lib/zeta23: 10 modules. -/
 lean_lib Zeta23Layer where
