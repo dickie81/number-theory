@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1375 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1378 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 159 | 465 |
-| `lib/pnt` | 252 | 805 |
+| `lib/pnt` | 253 | 808 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
 
@@ -1243,6 +1243,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `LinnikCGLConst.sum_gw_le`: For `q ≥ 1`, `Σ_{h mod q}(h, q) ≤ q·d(q)`, for `gw`.
 - `LinnikCGLConst.KX_le`: For `q ≥ 1`, `L > 0`, `0 ≤ M₁ ≤ L`, `X ≥ 0` and `0 < δ ≤ 1`, `K_X ≤ 40πC_δB₄d(q)⁴L²q(1 + qX)^δ(1 + 2q)^δ`.
+
+#### `LinnikCGLContinuation`: Chen–Gupta–Li's density estimate for any continuation of the `L`-series
+
+- `LinnikCGLContinuation.eqOn_LFunction`: `LFunction χ` is the continuation of the `L`-series ([note](../formalisations/chen-gupta-li-density.md))
+- `LinnikCGLContinuation.exists_continuation`: A continuation exists ([note](../formalisations/chen-gupta-li-density.md))
+- `LinnikCGLContinuation.cglDensity_of_continuation`: Chen–Gupta–Li's density estimate on `[5/7, 16/21]`, for any continuation of the `L`-series ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLCount`: The count of the pairs `(m₁′, n′)` in their Lemma 8.2
 
