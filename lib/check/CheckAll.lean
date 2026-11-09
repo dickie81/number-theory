@@ -269,6 +269,7 @@ import TwoVariableZetaPurity
 import TwoVariableZetaTwo
 import FourSquareTeeth
 import FourSquareResidue
+import SiegelFour
 import BallSlice
 import LonelyPrimes
 import LonelyJoins
@@ -1409,6 +1410,12 @@ twin-form rates at `11/12`. -/
 #print axioms FourSquareResidue.tendsto_sum_r4
 #print axioms FourSquareResidue.residue_sigma4
 #print axioms FourSquareResidue.riemannZeta_two_of_lattice
+#print axioms SiegelFour.localCount_eq_card
+#print axioms SiegelFour.localCount_succ
+#print axioms SiegelFour.tendsto_delta
+#print axioms SiegelFour.delta_odd
+#print axioms SiegelFour.delta_two
+#print axioms SiegelFour.siegel
 #print axioms BallKernel.rh_iff_posDef
 #print axioms BallKernel.kerK_explicit
 #print axioms BallKernel.kerK_inv

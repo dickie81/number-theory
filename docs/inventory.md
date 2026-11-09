@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1424 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1430 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 170 | 514 |
+| `lib/core` | 171 | 520 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -679,6 +679,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ShellSchur.nonneg_of_coupling`: Coupling bound ⇒ nonnegativity
 - `ShellSchur.margin_of_coupling`: Coupling bound with margin
 - `ShellSchur.chain_nonneg`: Finite chain of shells
+
+#### `SiegelFour`: Siegel's formula for four squares: the points on the sphere are the volume times the local densities
+
+- `SiegelFour.localCount_eq_card`: The local count in `(ℤ/q)⁴`
+- `SiegelFour.localCount_succ`: The counts stabilise (Hensel)
+- `SiegelFour.tendsto_delta`: `δ_p(n)` is the limit
+- `SiegelFour.delta_odd`: The density at an odd prime
+- `SiegelFour.delta_two`: The density at `2`
+- `SiegelFour.siegel`: Siegel's formula for four squares
 
 #### `SimpleCont`: Continuation for simplicity
 

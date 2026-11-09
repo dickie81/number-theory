@@ -12,8 +12,8 @@ Count the "teeth" of the lattice ball seen at `p`: the number of solutions of
 
 These are the local factors `δ_p`: the 2D factor `1 − χ₄(p)/p` and the 4D factor
 `1 − 1/p²` are exactly the prime-`p` Euler factors of `L(1, χ₄)⁻¹` and `ζ(2)⁻¹`. The global
-statement "the teeth on shell `n` = smooth sphere × ∏_p δ_p(n)" (Siegel) is NOT proved here; it
-remains the numerical check (exact for `d ≤ 8`).
+statement "the teeth on shell `n` = smooth sphere × ∏_p δ_p(n)" (Siegel) is not proved here; in
+dimension 4 it is `SiegelFour.siegel`, and for the other `d ≤ 8` it remains the numerical check.
 
 Proof route: count solutions by fibres (`card_add_eq`), count square roots with the quadratic
 character (`quadraticChar_card_sqrts`), and evaluate the resulting character sum as a Jacobi sum
