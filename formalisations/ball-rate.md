@@ -1988,8 +1988,9 @@ them.
   `A + B = o(log N)` is a sieve of length `z → ∞`, heard from heights of order `N/z^{0.6}` on (the table's turn-on),
   where `Q_N` collects much more than `log N/N`.
 
-**What the explicit formula can see of this** (on paper). Take `h(t) = φ(t/T)/T`, with `φ` even and `φ̂` supported in
-`[−1, 1]`, and a probe `D(s) = Σ_{n ≤ L}d_n n^{−s}` with `L ≤ T/2`. Weil's explicit formula, term by term in
+**What the explicit formula can see of this** (on paper; the identity is checked numerically below). Take
+`h(t) = φ(t/T)/T`, with `φ` even and `φ̂` supported in `[−1, 1]`, and a probe `D(s) = Σ_{n ≤ L}d_n n^{−s}` with
+`L ≤ T/2`. Weil's explicit formula, term by term in
 `Σ_γ h(γ)F(½ + iγ)\overline{D(½ + iγ)} = Σ_{m,n}f_m d_n(mn)^{−1/2}Σ_γ h(γ)(n/m)^{iγ}`, gives exactly
 
   `Σ_γ h(γ)F(½ + iγ)\overline{D(½ + iγ)} = (1/2π)∫h(t)Ω(t)dt·⟨f, d⟩ − (∫h/2π)·⟨W_T f, d⟩ + R(f, d)`,
@@ -2000,6 +2001,27 @@ because the windows `|log(kn/m)| ≤ 1/T` hold one integer while `kn < T`. `R` c
 `h(i/2)F(0)D(1) + h(−i/2)F(1)D(0)`; the archimedean kernel off the diagonal, of size `O(1/(T|log(m/n)|))`; and the
 prime powers with `kn ≥ T`, which see `f` only through its averages over windows of relative width `1/T`.
 
+- **Checked numerically** (`--probes`, `N = 1000`, the probe `D = 1`, `φ(u) = (1/8π)(sin(u/4)/(u/4))⁴`). The sum over
+  the zeros and the explicit formula agree to `3·10⁻⁶` for every vector below, at `T = N/16` and `N/4`. The residual
+  is the archimedean integral cut at `|t| ≤ 160T` (`4.5·10⁻⁵` when cut at `40T`, as its `t⁻³` tail predicts). At
+  `T = N/16`:
+
+  | `x` | the zero sum | main term | `R` | poles | archimedean off the diagonal | prime powers `k ≥ T` |
+  |---|---|---|---|---|---|---|
+  | `δ₁` | `0.1529` | `0.1516` | `0.0013` | `0.0013` | `0.0000` | `0.0000` |
+  | zeta vector `(1 − m/N)²/m` | `0.0032` | `−0.0251` | `0.0282` | `0.1696` | `−0.0026` | `−0.1387` |
+  | minimiser of `Q_N` | `0.0010` | `−0.0074` | `0.0084` | `0.3561` | `−0.0026` | `−0.3452` |
+  | sieve, `z = 30` | `0.0269` | `0.0709` | `−0.0441` | `0.0011` | `0.0001` | `−0.0452` |
+  | sieve, `z = 100` | `0.0445` | `0.0944` | `−0.0499` | `0.0012` | `0.0000` | `−0.0511` |
+  | frontier, `s = 10` | `0.0659` | `0.0913` | `−0.0255` | `0.1206` | `−0.0008` | `−0.1453` |
+
+  - The archimedean kernel off the diagonal is negligible throughout.
+  - The quiet vectors with `A ≍ log N`, the zeta vector and the minimiser, are nearly harmonic: their main term is
+    small. Their `R` is a near-cancellation between the poles and the prime powers above `T`, the prime number
+    theorem.
+  - The cheap vectors are not harmonic: their main term is half of `δ₁`'s. The prime powers above `T`, that is the
+    correlation of their tails with the primes, cancel about half of it (`T = N/16` is above their quiet range at
+    this `N`). That is where they pay, as the last bullet below says.
 - **Quietness controls the left side, under RH alone.** By Cauchy–Schwarz against `Q_N`, it is at most
   `(Q_N(x)·Σ_γ h(γ)²(¼ + γ²)|D(½ + iγ)|²)^{1/2} ≪ (Q_N(x)·T log T·Σ_n d_n²/n)^{1/2}`, the last by the mean value at
   the zeros for polynomials shorter than the height. For `Q_N(x) ≤ ε(log N/N)Σx_n²` and a probe `d = f` on a block

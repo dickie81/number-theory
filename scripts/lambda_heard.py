@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""Which zeros hear the cheap vectors, and how those vectors are quiet (formalisations/ball-rate.md, section "Which zeros
-hear the cheap vectors"). Uncertified numerics.
+"""Which zeros hear the cheap vectors, and how those vectors are quiet (formalisations/ball-rate.md, section
+"Which zeros hear the cheap vectors"). Uncertified numerics.
 
-    python3 scripts/lambda_heard.py --zeros-file FILE [--zeros-file FILE2] [--bands | --turnon | --dilates] [N ...]
+    python3 scripts/lambda_heard.py --zeros-file FILE [--zeros-file FILE2] [MODE] [N ...]
 
-FILE has one ordinate per line, e.g. the first 30000 zeros from scripts/zeta_zeros_rs.py. With two files, the first one's
-ordinates replace the first ones of the second (e.g. the first 2000 from mpmath, which are more accurate at low height).
-Default N = 1000 2000 4000; N = 4000 takes a few minutes per mode. The Gram matrix of Q_N is the exact one, built from the
-primes (scripts/lambda_large.py); the zeros are used only to split it by height.
+MODE is none (the flattened weight) or one of --bands, --turnon, --dilates, --sieve, --probes (below).
+
+FILE has one ordinate per line, e.g. the first 30000 zeros from scripts/zeta_zeros_rs.py. With two files, the first
+one's ordinates replace the first ones of the second (e.g. the first 2000 from mpmath, which are more accurate at low
+height). Default N = 1000 2000 4000; N = 4000 takes a few minutes per mode. The Gram matrix of Q_N is the exact one,
+built from the primes (scripts/lambda_large.py); the zeros are used only to split it by height.
 
 Default mode, the flattened weight. Replace the weight 1/(¼ + γ²) of the zeros below a height T₀ by its value at T₀. A
 test function of the explicit formula whose Fourier transform is supported in [−δ, δ] cannot resolve heights below about
@@ -15,9 +17,10 @@ test function of the explicit formula whose Fourier transform is supported in [�
 λ_N·N/log N, λ(T₀)·N/log N for T₀/N = 4, 2, 1, ½, ¼, and at T₀ = 4N the flattened quotient of the edge vector (the
 bottom of A + B, the vector that caps the band-limited route at √log N/N) and its ratio to λ(4N).
 
-    --bands: for μ = s·log N/N, s = 0, 0.01, 0.1, 1, 10, the minimiser of Q_N + μ(A + B)Σx² (lambda_large.py --frontier):
-Q·N/log N, (A + B)/log N, A/log N, x₁², and the percentage of its Q_N from the zeros in the height bands [0, 50],
-(50, √N], (√N, N/log N], (N/log N, N/4], (N/4, N], (N, 4N] and above 4N (the last as Q_N minus the others).
+    --bands: for μ = s·log N/N, s = 0, 0.01, 0.1, 1, 10, the minimiser of Q_N + μ(A + B)Σx² (lambda_large.py
+--frontier): Q·N/log N, (A + B)/log N, A/log N, x₁², and the percentage of its Q_N from the zeros in the height
+bands [0, 50], (50, √N], (√N, N/log N], (N/log N, N/4], (N/4, N], (N, 4N] and above 4N (the last as Q_N minus the
+others).
 
     --turnon: for s = 10 and 1, the mean of |V_x(ρ)|² (unit x) over the zeros in the bands (√N·2^{j−1}, √N·2^j],
 j = −3, …, 5: where the near-floor vectors turn loud.
@@ -30,6 +33,15 @@ d ≤ N/8.
 weights λ_d = μ(d)log(z/d)/log z on d ≤ z and c = Σ λ_d/d, which removes the boundary term N^{1−ρ}/(1 − ρ), for
 z = 10, 30, 100, 300: x₁², A/log N against 1/log z, Q_N·N/log N, and the mean of |V_x(ρ)|² over the zeros in the
 height bands (10, 50], (50, 100], (100, 200], …, (6400, 12800].
+
+    --probes: the probe identity of that section, checked. h(t) = φ(t/T)/T with φ(u) = (1/8π)(sin(u/4)/(u/4))⁴, whose
+Fourier transform is supported in [−1, 1], and the probe D(s) = 1 (d = δ₁). For unit vectors x (f_m = m·x_m) — δ₁, the
+zeta vector (1 − m/N)²/m, the sieve vectors of --sieve at z = 30 and 100, the frontier vectors at s = 10 and 0 — and
+T = N/16, N/4 (default N = 1000): the sum over the zeros Σ_γ h(γ)F(½ + iγ) (the first 32000, both signs of γ),
+Weil's explicit formula for it (poles, the archimedean integral over |t| ≤ 160T, the prime powers), their
+difference, and the split of the explicit formula into the main term
+(1/2π)∫hΩ·f₁ − (ĥ(0)/2π)Σ_{k < T}(Λ(k)/k)f_k and R = the poles + the archimedean integral off the diagonal + the prime
+powers k ≥ T. N = 1000 takes a few minutes.
 """
 import os
 
@@ -229,6 +241,95 @@ def sieve_mode(Ns, zeros):
                   + " ".join(row), flush=True)
 
 
+def probe_phi(u):
+    """φ(u) = (1/8π)(sin(u/4)/(u/4))⁴, entire; its Fourier transform B(4η)/16 is supported in |η| ≤ 1."""
+    v = np.asarray(u, dtype=complex) / 4
+    small = np.abs(v) < 1e-6
+    s = np.where(small, 1 - v * v / 6, np.sin(v) / np.where(small, 1, v))
+    return s ** 4 / (8 * math.pi)
+
+
+def probe_phihat(eta):
+    """φ̂(η) = ∫φ(u)e^{−iuη}du = B(4η)/16, B = 1_[−1,1]^{*4} (a cubic B-spline); φ̂(0) = 1/3."""
+    x = 4 * np.asarray(eta, dtype=float)
+    return sum((-1) ** j * math.comb(4, j) * np.maximum(x + 4 - 2 * j, 0.0) ** 3 for j in range(5)) / 96
+
+
+def probe_grid(f, X, dt=0.05):
+    """t ≥ 0 on a grid of step dt up to X, and Re F(½ + it) there (even in t for real f)."""
+    N = len(f)
+    m = np.arange(1, N + 1, dtype=float)
+    lm, c = np.log(m), f * m ** -0.5
+    t = np.arange(0.0, X + dt / 2, dt)
+    ReF = np.empty(len(t))
+    for c0 in range(0, len(t), 20000):
+        ReF[c0:c0 + 20000] = np.real(c @ np.exp(-1j * np.outer(lm, t[c0:c0 + 20000])))
+    return t, ReF
+
+
+def probe_check(f, T, zeros, lam, grid):
+    """For d = δ₁: the zero sum, and the explicit formula's poles, archimedean (whole and diagonal) and prime parts.
+    The archimedean integrals run over |t| ≤ 160T by the trapezoid rule on the grid (the integrands are even)."""
+    from scipy.special import psi
+    N = len(f)
+    m = np.arange(1, N + 1, dtype=float)
+    lm, c = np.log(m), f * m ** -0.5
+
+    def h(t):
+        return np.real(probe_phi(np.asarray(t) / T)) / T
+
+    lhs = 0.0
+    for c0 in range(0, len(zeros), 2048):
+        gg = zeros[c0:c0 + 2048]
+        lhs += float(np.sum(2 * h(gg) * np.real(c @ np.exp(-1j * np.outer(lm, gg)))))
+    poles = float(np.real(probe_phi(0.5j / T))) / T * (f.sum() + (f / m).sum())
+    t, ReF = grid
+    keep = t <= 160 * T
+    t, ReF = t[keep], ReF[keep]
+    dt = t[1] - t[0]
+    wt = np.full(len(t), 2.0 * dt)
+    wt[0] = dt                                          # ∫_{−X}^{X} = 2∫_0^X, trapezoid at the end t = 0
+    hw = h(t) * (np.real(psi(0.25 + 0.5j * t)) - math.log(math.pi)) * wt / (2 * math.pi)
+    arch, diag = float(np.sum(hw * ReF)), float(np.sum(hw))
+    primes = 0.0                                        # for n = 1 only ĥ(log(k/m)) survives; ĥ(log(km)) = 0
+    for k in np.nonzero(lam[:int(N * math.exp(1 / T)) + 2])[0]:
+        k = int(k)
+        primes -= lam[k] * k ** -0.5 * float(np.sum(c * probe_phihat(T * np.log(k / m)))) / (2 * math.pi)
+    short = sum(lam[k] / k * f[k - 1] for k in range(2, min(N, math.ceil(T) - 1) + 1) if lam[k] > 0 and k < T)
+    main = diag * f[0] - (1 / 3) / (2 * math.pi) * short
+    return lhs, poles + arch + primes, main, poles, arch - diag * f[0], primes + (1 / 3) / (2 * math.pi) * short
+
+
+def probes_mode(Ns, zeros):
+    from landau_gap import mangoldt
+    for N in Ns:
+        L = math.log(N)
+        m = np.arange(1, N + 1, dtype=float)
+        mu = mobius(N)
+        lam = mangoldt(N + 10)
+        G, K = gram(N), spread_slack(N).toarray()
+        vecs = [("δ₁", np.eye(N)[0]), ("zeta vector", (1 - m / N) ** 2 / m)]
+        for z in [30, 100]:
+            d = np.arange(1, z + 1, dtype=float)
+            lw = mu[1:z + 1] * np.log(z / d) / math.log(z)
+            f = np.zeros(N)
+            for k in range(1, z + 1):
+                if lw[k - 1] != 0:
+                    f[k - 1::k] += lw[k - 1]
+            vecs.append((f"sieve, z = {z}", (f - float(np.sum(lw / d))) * (1 - m / N) ** 2 / m))
+        for s in [10.0, 0.0]:
+            vecs.append((f"frontier, s = {s:g}", frontier(G, K, N, s)))
+        print(f"N = {N}: the probe identity at d = δ₁ (zero sum, explicit formula, main term, and R = poles + "
+              f"archimedean off the diagonal + prime powers k ≥ T)", flush=True)
+        for name, x in vecs:
+            x = x / np.linalg.norm(x)
+            grid = probe_grid(m * x, 160 * N / 4)
+            for T in [N / 16, N / 4]:
+                lhs, rhs, main, poles, aoff, prest = probe_check(m * x, T, zeros, lam, grid)
+                print(f"  {name:18s} T = {T:6.1f}: zeros {lhs:+.6f}  formula {rhs:+.6f}  (diff {lhs - rhs:+.1e})  "
+                      f"main {main:+.4f}  R {rhs - main:+.4f} = {poles:+.4f} {aoff:+.4f} {prest:+.4f}", flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("N", nargs="*", type=int)
@@ -237,6 +338,7 @@ def main():
     ap.add_argument("--turnon", action="store_true", help="where the near-floor vectors turn loud")
     ap.add_argument("--dilates", action="store_true", help="α = μ ∗ f for the frontier vectors")
     ap.add_argument("--sieve", action="store_true", help="Selberg's sieve vectors at the zeros")
+    ap.add_argument("--probes", action="store_true", help="the probe identity, zeros against the explicit formula")
     args = ap.parse_args()
     Ns = args.N or [1000, 2000, 4000]
     if args.dilates:
@@ -245,7 +347,9 @@ def main():
     if not args.zeros_file:
         sys.exit("this mode needs --zeros-file")
     zeros = load_zeros(args.zeros_file)
-    if args.sieve:
+    if args.probes:
+        probes_mode(args.N or [1000], zeros)
+    elif args.sieve:
         sieve_mode(args.N or [4000], zeros)
     elif args.bands:
         bands_mode(Ns, zeros)
