@@ -96,8 +96,9 @@ The zero was found by `scripts/dh_right_scan.py`: the argument of `f` along `Re 
 functional equation, then Newton's method on the exact function. It gives `0.9186013197 + 24415.4786514i`, the first
 of five zeros with `Re s > 11/12` below height `200000` (the others near `49688.34`, `74189.64`, `107847.40` and
 `196872.11`, with real parts `0.9371`, `0.9183`, `0.9358` and `0.9248`); those four are numerical, not certified.
-No zero with `Re s > 1` is located: by the count of [research-opportunities.md](../docs/research-opportunities.md)
-(§8.5) the first is to be expected near height `10¹²` or beyond.
+Zeros with `Re s > 1`, in the half-plane of absolute convergence, are located numerically and not certified:
+`scripts/dh_abs_zero.py` finds fifteen by lattice reduction, the lowest `1.0085585829 + 2528618752780.585033i`
+([research-opportunities.md](../docs/research-opportunities.md), §8.5, with what a certificate would need).
 
 **On the critical line** (`DHChannels.lean`): `L(s, χ₅)L(1 − s, χ₅) = ε²L(s, χ₅⁻¹)L(1 − s, χ₅⁻¹)`
 (`PsiOmega.chi5_channel_fe`), the phase lock (`PsiOmega.chi5_phase_lock`), the reality of the channel ratio on the line
