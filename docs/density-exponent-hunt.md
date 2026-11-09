@@ -1776,8 +1776,8 @@ proof: one might need less than uniform `|W|` control — that is exactly the op
 classical approach that density methods replaced because cancellation was unavailable.
 
 **Verdict: Partial** as the correct “outside architecture” question. **Dead** without a
-new cancellation theorem. **Next step:** only with a concrete signed estimate; not a
-soft lead.
+new cancellation theorem. **Deep dive:** see **Signed estimate deep dive** below
+(`scripts/density_hunt/signed/`).
 
 ---
 
@@ -1806,7 +1806,7 @@ soft lead.
 | 19 | `stickelberger_gauss` | Dead | wrong arithmetic (class groups) |
 | 20 | `sdp_detector` | **Partial** / null numeric | short-weight LP does not beat flat |
 | 21 | `hadamard_mellin_q` | Dead | classical convexity already used |
-| 22 | `weighted_chi_a` | **Partial** (meta) | needs signed cancellation; none known |
+| 22 | `weighted_chi_a` | **Partial** (meta) / deep dive **Dead** for power saving | see Signed estimate section |
 
 ### Live / worth a next step (honest)
 
@@ -1816,10 +1816,230 @@ None of the 22 yields a concrete inequality toward `A<(7/3)(1−σ)` or `L<11/5`
 1. **`sieve_skip_density` / `bombieri_asymp_sieve` (#07,#12):** Linnik *can* avoid CGL
    density (FI, MMT), but known `L` are useless for beating `11/5`. **Next step:** monitor
    sieve-Linnik exponents; no repo action until `L<3` appears in the literature.
-2. **`weighted_chi_a` (#22):** Right question (“one class ⇒ signed weights”). **Next step:**
-   only with a proposed signed estimate — none found.
+2. **`weighted_chi_a` (#22):** Right question (“one class ⇒ signed weights”). Deep dive
+   below: no every-`a` power saving; random-phase heuristic `L≈1.58` (sieve floor) is the
+   honest conditional deliverable. **Next step:** only with a new cancellation theorem.
 3. **`beurling_detector` / `sdp_detector` (#18,#20):** Constant/`K` optimisation, null so far
    for exponents. **Next step:** only if priorities shift from `L`/`A` to effective constants.
 
 **No improvement of `A` or `L` claimed. No Lean. Docs/scripts only.**
+
+
+---
+
+## Signed estimate deep dive (`weighted_chi_a`)
+
+Goal: decide whether cancellation in `χ̄(a)` across characters can replace (part of)
+the zero-density input in the Linnik deduction at `σ ≈ 5/7`, for **prime** `q`.
+Scripts: `scripts/density_hunt/signed/`. Labels: Written / Heuristic / Numerical / Dead.
+
+### 1. Exact target
+
+Smoothed explicit formula (Heath-Brown / classical; cf. also Friedlander–Iwaniec
+arXiv:2303.06122 §1 for the GRH-cancellation remark):
+
+```
+ψ_f(x; q, a) = f̂(1)·x/φ(q) − (1/φ(q)) ∑_{χ ≠ χ₀} χ̄(a) ∑_ρ f̂(ρ) x^ρ
+               + archimedean / principal-character error.
+```
+
+Define the **signed quantity** (box = zeros with `β ≥ σ₀`, `|γ| ≤ T`, `T` of Linnik
+height ≪ `x^ε`):
+
+```
+Z(a) := ∑_χ χ̄(a) ∑_{ρ_χ ∈ box} f̂(ρ) x^ρ .
+```
+
+(The repo’s sieve certificate does **not** feed on `Z(a)` directly; density enters as a
+curve `A(σ)`. The signed question is either (i) a replacement architecture, or (ii) a
+way to weaken the peak `A` by a signed large-values input. Both are recorded.)
+
+**Triangle vs density.** With `N(σ,T) ≪ (qT)^{A(1−σ)}` and `|f̂(ρ) x^ρ| ≍ x^σ` at the
+critical scale,
+
+```
+|Z(a)| ≤ |Z|_△  ≍  (qT)^{A(1−σ)} x^σ .
+```
+
+**Sieve-certificate route** (formalised; `docs/research-opportunities.md` §3.1):
+Type II needs `L > 1 + A/2`. Today `A = 7/3`, floor `13/6 ≈ 2.1667`, deep certificate
+reaches ≈ `2.199` (`2.198` fails). Slack ≈ `0.032`.
+
+| Target | Needed `A'` (same slack) | `ΔA = 7/3 − A'` | Viable? |
+|---|---|---|---|
+| `L < 11/5 = 2.2` | already at/above today’s pass | — | formal `11/5` is the Lean target; computational pass is `2.199` |
+| `L < 2.198` | `A' ≲ 2.331` | `≳ 0.002` | tiny improvement of peak `A` |
+| `L < 2.167` | `A' ≲ 2.269` | `≳ 0.064` | needs a real density win |
+| near floor `13/6` | `A' → 7/3` with slack → 0 | certificate engineering, not `Z` |
+
+So in the **sieve** architecture, signed cancellation helps Linnik only if it improves
+the density *curve* (or its use). A pointwise bound on one `Z(a)` does not plug into
+`tools/linnik/density_payoff.py` by itself.
+
+**Pure explicit-formula route** (Fogels-type, crude): need `|Z| ≪ x` (up to `φ(q)`
+factors cancelling the main term). Triangle forces `L ≥ A = 7/3`. A power saving
+`|Z| ≤ q^{−θ} |Z|_△` yields the requirement
+
+```
+θ > (A − L)(1 − σ) .
+```
+
+At `σ = 5/7`:
+
+| Target | Needed `θ` (vs triangle) |
+|---|---|
+| `L < 11/5` | `θ > 0.0381` |
+| `L < 2.198` | `θ > 0.0387` |
+| `L < 2.167` | `θ > 0.0475` |
+
+Script: `signed/bookkeeping.py`.
+
+### 2. Reformulation and random-phase heuristic
+
+Orthogonality: `Z(a)` is the contribution of zeros to the single progression `a mod q`.
+Equivalently: among characters whose Dirichlet polynomial / explicit-formula weight is
+large, how many have phase `χ(a) x^{iγ}` **aligned**?
+
+**Equidistribution / anti-concentration.** There is no theorem that the ordinates
+`γ_{χ,j}` of distinct `χ mod q` are independent at `σ = 5/7`, nor a GUE-across-family
+result that would force square-root cancellation in `Z(a)`. One-level densities
+(Iwaniec–Luo–Sarnak and successors) control zeros *on the critical line* for families,
+not off-line zeros in a density box. **Heuristic** (standard, not a theorem): treat
+`{χ̄(a) x^{iγ}}` as iid uniform on the circle.
+
+Then `|Z| ~ √N · x^σ` with `N = (qT)^{A(1−σ)}` (**square-root cancellation**).
+
+**Conditional-on-random-phases Linnik exponent** (`bookkeeping.random_phase_heuristic_L`):
+
+| Quantity | Value |
+|---|---|
+| Effective density exponent | `A_eff = A/2 = 7/6 ≈ 1.167` |
+| Pure-explicit crude `L` | `A/2 ≈ 1.167` |
+| Sieve floor if peak becomes `A/2` | `1 + A/4 ≈ 1.583` |
+| Optimistic sieve `L` (same slack) | ≈ `1.616` |
+
+**Numerical (synthetic random phases, `heuristic_random_phases.py`, seed 42+q):**
+
+| `q` | `N ≈ q^{A(1−σ)}` | `max\|Z\|/N` | empirical `α` (`max ~ N^α`) |
+|---|---|---|---|
+| 31 | 9 | 0.72 | 0.85 |
+| 127 | 25 | 0.47 | 0.77 |
+| 503 | 63 | 0.30 | 0.71 |
+| 1009 | 100 | 0.28 | 0.72 |
+
+`α` trends down toward `1/2` slowly (small-`N` / `√(N log q)` effects). Triangle is
+`α = 1`. **Heuristic deliverable:** under random phases, Linnik exponents drop below `2`
+(sieve floor `≈ 1.58`). **No theorem.**
+
+### 3. Rigorous attempts
+
+#### (a) Second moment over `a` — Written (identity) / Dead for every-`a`
+
+```
+∑_{a=1..q, (a,q)=1} |Z(a)|² = φ(q) ∑_χ |∑_{ρ_χ} f̂(ρ) x^ρ|² .
+```
+
+Gives the average-`a` bound `|Z|_{rms} ≍ (∑_χ |c_χ|²)^{1/2}` — square-root in the
+`ℓ²` sense. Linnik needs **every** `a`.
+
+**Amplification (DFI-style).** Weight `∑_{b ∈ 𝒜} |Z(ab)|²` over a short multiplicative
+set `𝒜`. Expansion produces `∑_χ |c_χ|² |∑_{b∈𝒜} χ(b)|²`. A useful amplifier needs
+`|∑_𝒜 χ|` large on the “bad” set `W = {χ : c_χ ≠ 0}` and small off `W`. Here `W` is
+defined by existence of a zero in a box — not by a multiplicative relation — so there
+is no known amplifier that preferentially detects `W`. **Dead** as a route from average
+to every `a`.
+
+**Tao uncertainty (prime `q`).** Tao, *An uncertainty principle for cyclic groups of
+prime order* (Math. Res. Lett. 12 (2005); arXiv:math/0308286): for nonzero
+`f : ℤ/pℤ → ℂ`,
+
+```
+|supp f| + |supp f̂| ≥ p + 1 .
+```
+
+If `f̂` is supported on `W` with `|W| = M = q^{A(1−σ)}`, then `|supp f| ≥ q+1−M`: `Z` is
+**non-sparse** on the `a`-side. That prevents concentration on few residue classes; it
+does **not** upper-bound `|Z(a)|` pointwise. Constructed spike (`tao_uncertainty.py`):
+`hat = 1_W` gives `max|Z| / triangle = 1` exactly. Amplifier windows over multiplicative
+shifts have `max/mean = O(1)` for random `W`. **Dead** for a pointwise power saving.
+(Prime `q` makes Tao’s strong form available — an asset relative to composite moduli —
+but the inequality points the wrong way for Linnik’s every-`a` need.)
+
+#### (b) Higher moments / Hölder — Dead
+
+`∑_a |Z|^{2k} = φ(q) · (# of 2k-tuples in `W` with character product `1`)`.
+Without additive/multiplicative structure on `W`, Hölder recovers at best random-like
+bounds, not a power below triangle uniformly in `a`. Numeric
+(`second_moment_positivity.py`): `max/triangle` decreases slowly; no fitted power saving
+compatible with `θ > 0.038` at these sizes.
+
+#### (c) One-sided positivity / Fejér — Dead for exponents
+
+Linnik needs `ψ_f > 0`, i.e. a lower bound, so only `Re Z(a)` from above. Nonnegative
+kernels (Fejér, Selberg majorants) can smooth in the `a`-aspect or the `t`-aspect; they
+do not create cross-character cancellation. Numeric: Fejér-smoothed `max Re Z / triangle`
+is smaller by a **constant**, not a power of `q`.
+
+**No rigorous gain**, even in a toy regime (average-`a` is classical Plancherel; every-`a`
+power saving not obtained).
+
+### 4. Numerics
+
+**Real low-lying zeros** (`real_zeros_Z.py`): truncated Dirichlet series on the critical
+line for prime `q ∈ {5,7,11,13}`, `|t| ≤ 12`. Label: `NUMERICAL_GRH_LOW_LYING`.
+Off-line zeros were **not** located (consistent with GRH at this height). Empirical
+`max|Z|/triangle ∈ [0.25, 0.64]`, `α ∈ [0.72, 0.75]` — mild cancellation among low-lying
+terms, **not** a density-regime test.
+
+| `q` | #zeros found | `max\|Z\|/△` | `α` |
+|---|---|---|---|
+| 5 | 8 | 0.64 | 0.75 |
+| 7 | 15 | 0.46 | 0.74 |
+| 11 | 33 | 0.33 | 0.75 |
+| 13 | 42 | 0.25 | 0.72 |
+
+**Synthetic off-line** (`synthetic_Z.py`, labelled `SYNTHETIC`): place `M = q^{A(1−σ)}`
+zeros at `σ = 5/7` with random phases, `x = q^{2.2}`. Same picture as the random-phase
+heuristic (`max/△` falling, `α → ~1/2` slowly). A parallel “GRH-all characters on the
+line” model gives stronger apparent cancellation simply from larger `M`.
+
+**Empirical cancellation exponent:** ≈ `0.7` at accessible sizes; compatible with
+`√(N log)` and **not** with a proven `θ > 0.03` power below triangle for every `a`.
+
+### 5. Literature check
+
+- **Heath-Brown**, *Zero-free regions for Dirichlet L-functions and the least prime in
+  an AP* (PLMS 1992): explicit formula with `χ̄(a)` weights; improvements via zero-free
+  regions and density, not cross-character cancellation at fixed `a`.
+- **Xylouris** (Acta Arith. 2011): sharpens Heath-Brown; same architecture (`L = 5.18`).
+- **Bombieri**, *Le grand crible* (Astérisque): log-free density / large sieve; counts,
+  does not cancel `χ̄(a)` across `χ`.
+- **Friedlander–Iwaniec**, *Sifting for small primes from an AP* (arXiv:2303.06122) and
+  sister paper: Linnik **without** log-free density, via sieves; the signed weight
+  `λ = 1 ∗ χ` is used for the **exceptional real character**, not for cancellation among
+  many `χ` at `σ = 5/7`. Resulting `L` is huge (`≈ 7.5 × 10⁷` in that write-up). They
+  explicitly note that GRH + square-root cancellation in `∑_ρ` would give `L < 2`.
+- **Graham**, Heath-Brown’s earlier `L = 20` etc.: density + zero-free, not signed
+  multi-character cancellation.
+- No reference found that proves a power saving `|Z(a)| ≤ q^{−θ} |Z|_△` uniformly in `a`
+  at `σ = 5/7` for prime `q`.
+
+### Verdict
+
+| Claim | Label |
+|---|---|
+| Plancherel second-moment identity | **Written** (classical) |
+| Average-`a` square-root bound | **Written** |
+| Every-`a` power saving via Tao uncertainty | **Dead** (wrong direction) |
+| Every-`a` via DFI amplifier on zero-set `W` | **Dead** (no amplifier for `W`) |
+| Higher moments / Hölder every-`a` | **Dead** |
+| Fejér / one-sided positivity ⇒ power saving | **Dead** |
+| Random-phase heuristic `L ≈ 1.58` (sieve) / `≈ 1.17` (pure) | **Heuristic** |
+| Synthetic / low-lying numerics | **Numerical** (no density-regime theorem) |
+| Replace CGL density by signed estimate for `L < 11/5` | **Dead** without a new theorem |
+
+**Flag:** no rigorous gain toward `L < 11/5` or `A < 7/3`. The honest positive
+deliverable is the **conditional-on-random-phases** exponent (≈ `1.58` sieve floor /
+≈ `1.17` pure-explicit crude). Prime-modulus Tao uncertainty was checked and does not
+help pointwise. Live status of `#22` unchanged: right question, no estimate.
 
