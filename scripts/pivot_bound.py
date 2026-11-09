@@ -15,8 +15,9 @@ For each k in a short list the script prints
         Q_N(x) ≥ (π/(4ρN))·((log N + s)Σc_n² − L(c)),  c_n = x_n√n,  L Landau's form:
         d_k ≥ (π/(4ρ))·(s + Σ_{q ∣ k}Λ(q)·g/(g + Λ(q)/q)),  g = s + 0.34 the grounding at the parents k/q,
 
-then the least d_k/d_1, and a test of BallPivot.slack_top on random and adversarial vectors: the least value of
-(Σc_n² + G(c))/((log N/2 + log 4 + 2)c_N²), which the theorem says is at least 1.
+then the least d_k/d_1, the largest k ≤ 10⁶ at which the bound with ρ and s is below d_1, and a test of
+BallPivot.slack_top on random and adversarial vectors: the least value of (Σc_n² + G(c))/((log N/2 + log 4 + 2)c_N²),
+which the theorem says is at least 1.
 
     python3 scripts/pivot_bound.py [N] [rho] [s]    # default N = 3000, rho = 120, s = 0.5; needs numpy
 """
@@ -68,6 +69,21 @@ def natural_bound(k, rho, s):
     return math.pi / (4 * rho) * total
 
 
+def natural_bounds(M, rho, s):
+    """natural_bound(k, rho, s) for every k ≤ M, by a sieve; the entries 0 and 1 are those of k = 1."""
+    g = s + 0.34
+    total = np.zeros(M + 1)
+    sieve = np.ones(M + 1, dtype=bool)
+    for p in range(2, M + 1):
+        if sieve[p]:
+            sieve[2 * p :: p] = False
+            q = p
+            while q <= M:
+                total[q::q] += math.log(p) * g / (g + math.log(p) / q)
+                q *= p
+    return math.pi / (4 * rho) * (s + total)
+
+
 def landau_slack(N, c, lam):
     """Σc_n² and G(c) = (log N + log 4 + 1)Σc_n² − 2Σ_n Λ(n)n^{−1/2}Σ_{jn ≤ N}c_j c_{jn}, for c[1..N]."""
     s2 = float(np.sum(c[1:] ** 2))
@@ -87,7 +103,7 @@ def main():
     d = bo.pivots(bo.gram(N))
     print(f"d_1 = {d[0]:.6f}   (K_H(1) = 2 + γ − log 4π = {2 + bo.EULER_GAMMA - math.log(4 * math.pi):.6f})")
     print(f"{'k':>6} {'d_k':>9} {'d_k/log k':>10} {'u_k':>8} {'d_k/u_k':>8} {'pivot_ge':>10} {'rho,s':>9}")
-    for k in [2, 3, 5, 10, 30, 60, 100, 210, 300, 1000, 2310, 2520, 3000, 10000, N]:
+    for k in sorted({2, 3, 5, 10, 30, 60, 100, 210, 300, 1000, 2310, 2520, 3000, 10000, N}):
         if k > N:
             continue
         u = math.log(k / (2 * math.pi)) + 1 - bo.EULER_GAMMA
@@ -97,8 +113,13 @@ def main():
               f"{natural_bound(k, rho, s):9.5f}")
     r = d[1:] / d[0]
     print(f"least d_k/d_1 over 2 ≤ k ≤ {N}: {r.min():.4f} at k = {2 + int(r.argmin())}")
-    first = next((k for k in range(2, N + 1) if all(natural_bound(j, rho, s) >= d[0] for j in range(k, N + 1))), None)
-    print(f"the bound with ρ = {rho:g}, s = {s:g} stays above d_1 from k = {first} to {N}")
+    M = 10**6
+    b = natural_bounds(M, rho, s)
+    below = np.nonzero(b[2:] < d[0])[0] + 2
+    last = int(below[-1]) if len(below) else 1
+    k_min = last + 1 + int(np.argmin(b[last + 1 :]))
+    print(f"the bound with ρ = {rho:g}, s = {s:g} is below d_1 at {len(below)} values of k ≤ {M}, the largest {last}; "
+          f"beyond it the least is {b[k_min]:.5f}, at k = {k_min}")
 
     rng = np.random.default_rng(1)
     worst = math.inf
