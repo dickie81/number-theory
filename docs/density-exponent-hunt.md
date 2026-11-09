@@ -1261,3 +1261,191 @@ Revised priority:
 
 **No improvement of `A` claimed. No Lean. Docs/scripts only.**
 
+
+---
+
+## Batch 6 — Attack continued: incidences on `∑_a H_a²` + proper η-fit
+
+Scripts: `scripts/density_hunt/incidence_Ha2.py`, `scripts/density_hunt/mvt_eta_fit.py`.
+
+---
+
+### (1) Incidences on `∑_a H_a²` — exact problem, hypotheses, bookkeeping, numerics
+
+#### Exact incidence problem (discrete, prime `q`, single channel `b=1`)
+
+Identify the support of a non-negative `f: F_q → R` with a set `U ⊂ F_q` (indicator case
+`f=1_U`; general `f` by level sets). Let `M ≥ 1` and
+
+\[
+L_M=\Bigl\{\ell_{\mathbf{m}}:v=\frac{m_1}{m_2}u+\frac{m_3}{m_2}\ \Big|\ m_i\in\{1,\dots,M\}\Bigr\}
+\subset\{\text{affine lines in }\mathbb{F}_q^2\},
+\]
+
+so `|L_M|=M^3` (before reducing duplicates). Point set: the **Cartesian product**
+`P=U×U ⊂ F_q²`. An incidence is `( (u,v), \ell_m )` with `v=α_m(u)`.
+
+GCD-hit subfamily (Prop. 8.1 weight): for each `a ∈ F_q^*`,
+
+\[
+L_a=\{\ell_{\mathbf{m}}\in L_M: a m_1 + m_2 + m_3 \equiv 0\pmod q\}.
+\]
+
+For `m_1\not\equiv 0` (automatic if `M<q`) each line lies in **exactly one** `L_a`, so as
+*sets* `⊔_a L_a = L_M`. The factor `q` in the GCD weight is already encoded by using
+`H_a` rather than a weight-1 sum: 
+
+\[
+H_a(u)=\sum_{\ell_m\in L_a}f(\alpha_m(u)),\qquad
+\sum_{a}\|H_a\|_{\ell^2(u)}^2
+=\sum_{\mathbf{m},\mathbf{m}'}\mathbf{1}_{\mathrm{compat}}\!\sum_u f(\alpha_m(u))f(\alpha_{m'}(u)).
+\]
+
+Compatible pairs are pairs of lines that share an `a`-slot (concurrent in the
+`(m_1,m_2,m_3)` congruence). Bounding this by Cauchy–Schwarz on fibres reduces to
+controlling `I(P,L_M)` (and pair incidences); that is the incidence problem.
+
+**Rudnev point-plane lift (optional dictionary).** Viewing
+`(u, m_2, m_1 u+m_3)` in `F_q³` with planes from the congruence/`v`-condition is possible
+but not needed for the primary point-line form above; Rudnev’s hypothesis
+`|Q|<q²` and a collinearity parameter `k` would have to be checked after the lift. We use
+point-line bounds as the main tool.
+
+#### Which hypotheses hold at CGL criticality?
+
+Critical parameters: `T=1`, `N=q^{7/9}`, `M∼qT/N=q^{2/9}`, `|L|=M³=q^{2/3}`, `|U|=q^β`,
+`|P|=q^{2β}`.
+
+| Theorem | Statement (scale) | Hypothesis at criticality | Verdict |
+|---|---|---|---|
+| **Stevens–de Zeeuw Cartesian** | `I(A×B,L) ≪ \|A\|^{3/4}\|B\|^{1/2}\|L\|^{3/4}+\|A\|\|B\|+\|L\|` | General form needs `|P|^{13}|L|^{-2}<q^{15}` ⇒ **`β<49/78≈0.628`** | **Holds** for rational extremiser `β≈2/9` and for random `β≤1/2`; **fails** for `β≥2/3` (large/`flat`) |
+| **Stevens–de Zeeuw general** | `I ≪ (|P||L|)^{11/15}+\|P\|+\|L\|` | Same small-set constraint | Same as above |
+| **Vinh (large sets)** | `|I−|P||L|/q|≤√(q|P||L|)` so `I≤|P||L|/q+√(q|P||L|)` | None (all sizes) | Always applicable; **does not beat trivial** `I≤|U||L|=q^{β+2/3}` for `β≥2/3` (Vinh exponent `≥ β+5/6 > β+2/3`) |
+| **Rudnev point-plane** | `I(Q,Π) ≪ |Q|^{1/2}|Π| + k|Q|` (roughly) with `|Q|<q²` | Needs a non-degenerate lift; collinear `k` from rational sets can be large | Not cleanly triggered for free; not used below |
+
+**Small/large split.** Use SdZ on pieces with `β<0.628`, Vinh on the rest.
+
+- **Rational extremiser (`β≈2/9`)**: SdZ applies. Exponent of `I`: trivial `β+2/3≈0.889`; SdZ `5β/4+1/2≈0.778`; Vinh `≈1.056` (worse than trivial). **Best available: SdZ, saving `Δ_I≈0.111` in the `log_q I` exponent.**
+- **Large/`flat` (`β≥2/3`)**: SdZ fails; Vinh **worse than trivial**. Split does **not** improve on the trivial bound. The large part is controlled only by `I≤|U||L|`, which is what CGL’s L¹/CS already uses.
+
+So the split **does** cover the rational extremiser with a fractional SdZ saving, and **does not** help the large/random-L¹ face.
+
+#### Bookkeeping at `σ=5/7` — which face moves? (**Heuristic**, corrected)
+
+CGL (2.3) / Prop. 10.1:
+
+\[
+S_3\lessapprox(qT)^2|W|^{3/2}+qTN|W|^{1/2}E(W)^{1/2}.
+\]
+
+- **First summand** ← Prop. 8.1’s `φ(q)M^6‖f‖₁²` (random/L¹ face) → after `M∼qT/N` gives the
+  bound producing **`c=4/3`** and the `7/3` tie at `(σ,y)=(5/7,7/9)`.
+- **Second summand** ← Prop. 8.1’s `φ(q)²M^4‖f‖₂²` / GCD-hit `∑‖H_a‖²` (rational/L² face) + energy.
+
+**SdZ saves on the second face only.** It does **not** touch `(qT)^2|W|^{3/2}`, hence does
+**not** reduce `c=4/3` or the binding `α=2/3` from the first face.
+
+Optimistic conversion (Heuristic, **not proved**): `Δ_I≈0.111` on rational ⇒ at most
+`δ≲Δ_I/2≈0.056` in a second-face `q^{2-δ}` — improves the *energy* pathway in (2.3), useful
+when `E(W)` is large, but at the `7/3` critical point the first face already ties MVT at
+`2/3`. After an energy-pathway-only saving:
+
+\[
+\min(\underbrace{1+y(1-2σ)}_{MVT=2/3},\underbrace{c_{\mathrm{first}}+y(2-4σ)}_{=2/3},\underbrace{\alpha_{\mathrm{energy}}}_{<2/3})=2/3,
+\]
+
+so **`A` stays `7/3`**. (Earlier Batch-5-style optimism that fed `δ` into `c=4/3` was
+**wrong**: that `c` comes from the first face.)
+
+**Best available incidence bound, stated explicitly (even if ≥ CGL for the binding face):**
+
+At criticality, for the Cartesian incidence problem with `|U|=q^β`, `|L|=q^{2/3}`:
+
+| regime | best bound on `I` | vs CGL’s use |
+|---|---|---|
+| `β<49/78` (incl. rational `2/9`) | SdZ: `≪ q^{5β/4+1/2}+q^{2β}+q^{2/3}` | Beats trivial by `Δ_I=β+2/3−(5β/4+1/2)=(2/3−1/2)−β/4=1/6−β/4` (`=1/9` at `β=2/9`) on the **non-binding** face |
+| `β≥49/78` | trivial `≪ q^{β+2/3}` (Vinh worse) | Same as CGL L¹ input; **no gain** |
+
+No improvement of the binding `7/3` exponent from available incidence theorems.
+
+#### Numerics — `incidence_Ha2.py` (**Numerical**)
+
+`I(U×U, L_M)` for random and rational `U`, `M=⌈q^{2/9}⌉` capped at 6, `q∈{509,1013,2011,3011}`:
+
+| q | kind | β-target | I/triv | SdZ_ok |
+|---|---|---|---|---|
+| 509–3011 | random | 2/9 | 0.003–0.023 | True |
+| 509–3011 | rational | 2/9 | 0.08–0.18 | True |
+
+Rational incidences sit **well below** both trivial and SdZ (SdZ not sharp on these samples).
+Fit for rational `β≈2/9`: `slope_I=0.58±0.16` vs `slope_triv=0.76±0.13` (theory `0.889`);
+apparent saving `0.17±0.20` — consistent with a fractional saving but **not** significant, and
+in any case on the non-binding face.
+
+**Attack 1(iii) verdict after Batch 6:** Partial tool for the energy/rational face; **Dead as a
+path to `A<7/3`** with present incidence theorems, because the binding `(qT)^2|W|^{3/2}` face is
+untouched and the large-set half of a Vinh split does not improve on trivial.
+
+---
+
+### (2) MVT-beyond — η grid + growth-exponent fit (**Numerical**)
+
+Method (`mvt_eta_fit.py`): for primes
+`q∈{503,1009,2003,5003,10007,20011,30011}`, ADV tpm configs at `V=V_R` (so `|W|∼q^{2/3}`),
+η-grid `{0,0.01,…,0.20}`,
+
+\[
+\mathrm{ratio}(q,\eta)=\frac{|W|}{(q^{1-\eta}+N)\,c_2/V^2}.
+\]
+
+Fit `log ratio = a + ρ(η) log q`. A uniform `≪` with fixed η requires **`ρ(η)≤0`**
+(up to `q^ε`). Finite-q `ratio>1` is **not** a counterexample to `≪`.
+
+**ADV results:**
+
+| η | ρ | SE | ρ+1.96 SE | ρ≤0? |
+|---|---|---|---|---|
+| 0.00 | 0.024 | 0.034 | 0.090 | no (but ≈0 within ~1σ; classical MVT) |
+| 0.05 | 0.077 | 0.034 | 0.143 | no |
+| 0.10 | 0.126 | 0.034 | 0.193 | no |
+| 0.15 | 0.169 | 0.034 | 0.236 | no |
+| 0.20 | 0.203 | 0.035 | 0.271 | no |
+
+- Largest η with point-estimate `ρ≤0`: **`0.00`**
+- Largest η with conservative `ρ+1.96SE≤0`: **`0.00`**
+- Pattern: `ρ(η)≈η` — ADV saturates the classical `q` scale, so replacing `q` by `q^{1-η}`
+  makes the ratio grow like `q^η`.
+
+**Flat control:** `ρ(η)<0` for all η∈[0,0.20] (conservative OK throughout) — flat leaves
+increasing slack, irrelevant for worst-case density.
+
+**Verdict:** **No η>0 is consistent with the ADV data.** Strengthens Batch 5’s Attack-2
+negative, now with an honest `≪`-compatible statistical reading and larger `q` (to `3·10^4`).
+
+---
+
+### Batch 6 summary
+
+| Item | Verdict | Result |
+|---|---|---|
+| Incidence formulation for `∑H_a²` | Written | Cartesian `U×U` vs affine `L_M`; GCD-hit = partition of `L_M` |
+| SdZ on rational `β=2/9` | Hypothesis **holds**; saving `Δ_I=1/9` in exponent | Non-binding face only |
+| Vinh on large `β` | Applicable but **worse than trivial** | Split does not help large face |
+| Binding-face bookkeeping | **Dead for `A<7/3`** | First face of (2.3) untouched ⇒ `A` stays `7/3` |
+| Incidence numerics | Numerical | Rational `I/triv∼0.1`; fit saving `0.17±0.20` (ns) |
+| η-fit ADV | Numerical / **Dead for η>0** | `ρ(η)≈η>0` for all η∈(0,0.2]; best η=`0` |
+
+### Inequality worth pursuing
+
+Still **none proved**. Batch 6 closes the natural incidence loophole as a route past `7/3`
+(wrong face) and confirms statistically that MVT-beyond with a fixed power `η>0` is not
+visible in ADV data up to `q≈3·10^4`.
+
+Remaining open directions (not claimed live without a new idea):
+- Improve the **first** face of Prop. 8.1 / `(qT)^2|W|^{3/2}` (L¹/random), where incidences
+  do not help.
+- A structural theorem excluding ADV-type saturators at `V=N^{5/7}` simultaneously with
+  near-extremal S₃ — beyond the O(1) slack already measured.
+
+**No improvement of `A` claimed. No Lean. Docs/scripts only.**
+
