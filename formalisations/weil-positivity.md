@@ -72,6 +72,20 @@ Proc. Nat. Acad. Sci. 45 (1959), for the contraction property.
   (`PsiOmega.rh_of_liouville_bound`, `CrossCriteria.rh_of_liouville_theta`); RH says that the normalised Bohr vector of
   every nontrivial zero lies on the unit sphere (`BohrSphere.riemannHypothesis_iff_mem_sphere`,
   `BohrSphere.riemannHypothesis_iff_tendsto`), a reformulation that constrains nothing.
+- **Reflection across vertical lines**: RH holds if and only if `|ξ(2c − s̄)| < |ξ(s)|` for `Re s > c`, across every
+  line `Re s = c > ½` (`XiReflection.rh_iff_reflect`, `XiReflection.rh_iff_reflect_xi`), if and only if `|ξ(σ + iT)|` is
+  strictly increasing in `σ ≥ ½` (`XiReflection.rh_iff_monotone`; J. Sondow and C. Dumitrescu), if and only if
+  `Re ξ′/ξ > 0` on `Re s > ½` away from the zeros (`XiReflection.rh_iff_logDeriv_pos`; J. C. Lagarias, 1999). Across
+  `Re s = 1` the inequality holds with no hypothesis (`XiReflection.reflect_xi_one`), and across every
+  `Re s = c > 11/12` by the library's band (`XiReflectionBand.reflect_xi_band`); across one line it confines the zeros
+  to the strip it bounds (`XiReflection.abs_im_le_of_reflect`).
+- **Calibrations from lattices**: Weng's zeta function of the rank-2 semistable lattices over `ℚ` satisfies RH with no
+  hypothesis (`WengRankTwo.rh_weng`; J. C. Lagarias and M. Suzuki, 2006), because it needs the reflection inequality
+  only across `Re s = 1` (`WengRankTwo.norm_xi_lt`): it carries no information about the zeros of `ζ`. And the Epstein
+  zeta function of the rectangular lattice `ℤ ⊕ yℤ`, built as those of `ℤ²` and `x² + 2y²` are, where RH for it is
+  `RH ∧ GRH(χ)` (`EpsteinFlat.rh_one_iff`, `EpsteinFlat.rh_sqrt_two_iff`), has a real zero in `(½, 1)` once `y > e²`
+  (`EpsteinFlat.not_rh`), `x² + 58y²` of class number `2` among them (`EpsteinFlat.not_rh_fiftyEight`): a self-dual
+  theta function and the functional equation do not give RH without the Euler product.
 - **Their `ℙ¹` columns**: `ζ(s)ζ(s − 1)`, the zeta function of `ℙ¹` over `ℤ`, has an Euler product and a functional
   equation of `ζ`'s kind, and zeros off its line, with no hypothesis (`PurityRational.euler_product`,
   `PurityRational.functional_equation`, `PurityRational.exists_zero_re_ne_one`). The kernel criteria fail for it

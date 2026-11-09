@@ -149,6 +149,20 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
   - **What it asks of a construction.** In the family of discretised balls that Arakelov geometry itself produces, RH
     is expected only at `w = 1` and `2`, whose Euler products are pure, and fails where the Euler product is mixed. A
     construction from lattice points in balls has to see that purity, or it would work at `w = 4` too.
+    The rectangular lattices `ℤ ⊕ yℤ` make the same point in rank 2: at `y = 1` and `y = √2` RH for their Epstein zeta
+    functions is `RH ∧ GRH` (`EpsteinFlat.rh_one_iff`, `EpsteinFlat.rh_sqrt_two_iff`), and once `y > e²` they have real
+    zeros in `(½, 1)` with no hypothesis (`EpsteinFlat.not_rh`), `x² + 58y²` of class number `2` among them
+    (`EpsteinFlat.not_rh_fiftyEight`): the same self-dual theta function and functional equation, without an Euler
+    product. The threshold is near `4πe^{−γ} ≈ 7.06`, where the constant term of the Eisenstein series acquires its two
+    real zeros (J. C. Lagarias and M. Suzuki).
+  - **Rank 2.** Weng's zeta function of the rank-2 semistable lattices over `ℚ`, `ξ̂(2s)/(s − 1) − ξ̂(2s − 1)/s`, his
+    integral of `(e^{h⁰} − 1)e^{−s·deg}` over their moduli (not formalised), satisfies RH with no hypothesis
+    (`WengRankTwo.rh_weng`; Lagarias and Suzuki, J. Number Theory 118 (2006)). The proof compares `|ξ(2s)|` with
+    `|ξ(2s − 1)|`, the reflection of `ξ` across `Re w = 1`, left of which every zero of `ξ` lies
+    (`XiReflection.reflect_xi_one`). RH for `ζ` is the same reflection inequality across every line `Re s = c > ½`
+    (`XiReflection.rh_iff_reflect_xi`), equivalently `Re ξ′/ξ > 0` on `Re s > ½` (`XiReflection.rh_iff_logDeriv_pos`);
+    the library's band gives it for `c > 11/12` (`XiReflectionBand.reflect_xi_band`). So counting rank-2 lattices gives
+    a zeta function with RH, whose zeros say nothing about those of `ζ`.
 - **The real line.** The kernel of step 5 depends on `a/b` through the real line, where the positive rationals are
   dense, and it is smooth at `1`: `‖K(r) + K(1/r) − 2K(1)‖ ≤ M(log r)²` (`BallLattice.kerK_smooth`). So in every
   realization of `K` by similitudes, which exists exactly under RH (`BallLattice.rh_iff_realization`), the vectors

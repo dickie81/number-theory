@@ -272,6 +272,10 @@ import TwoVariableZetaTwo
 import EpsteinHexagonal
 import EpsteinTwo
 import EpsteinSeven
+import EpsteinFlat
+import XiReflection
+import WengRankTwo
+import XiReflectionBand
 import FourSquareTeeth
 import FourSquareResidue
 import SiegelFour
@@ -1457,6 +1461,43 @@ twin-form rates at `11/12`. -/
 #print axioms EpsteinSeven.LambdaQ_eq_zero_iff
 #print axioms EpsteinSeven.rh_iff
 #print axioms EpsteinSeven.rh_iff_twins
+#print axioms EpsteinFlat.hasSum_theta
+#print axioms EpsteinFlat.theta_inv
+#print axioms EpsteinFlat.Lambda_one_sub
+#print axioms EpsteinFlat.differentiableAt_Lambda
+#print axioms EpsteinFlat.hasMellin_theta
+#print axioms EpsteinFlat.hasSum_Lambda
+#print axioms EpsteinFlat.Lambda_one
+#print axioms EpsteinFlat.Lambda_sqrt_two
+#print axioms EpsteinFlat.rh_one_iff
+#print axioms EpsteinFlat.rh_sqrt_two_iff
+#print axioms EpsteinFlat.Lambda_ofReal
+#print axioms EpsteinFlat.tendsto_Lambda_re
+#print axioms EpsteinFlat.le_Lambda_half
+#print axioms EpsteinFlat.exists_zero_off_line
+#print axioms EpsteinFlat.not_rh
+#print axioms EpsteinFlat.exists_zero_fiftyEight
+#print axioms EpsteinFlat.not_rh_fiftyEight
+#print axioms XiReflection.xi_conj
+#print axioms XiReflection.Xi_conj
+#print axioms XiReflection.reflect_lt
+#print axioms XiReflection.reflect_one
+#print axioms XiReflection.reflect_xi
+#print axioms XiReflection.reflect_xi_one
+#print axioms XiReflection.abs_im_le_of_reflect
+#print axioms XiReflection.rh_iff_reflect
+#print axioms XiReflection.rh_iff_reflect_xi
+#print axioms XiReflection.rh_iff_monotone
+#print axioms XiReflection.rh_iff_logDeriv_pos
+#print axioms WengRankTwo.weng_eq
+#print axioms WengRankTwo.weng_one_sub
+#print axioms WengRankTwo.wengNum_one_sub
+#print axioms WengRankTwo.norm_xi_lt
+#print axioms WengRankTwo.rh_wengNum
+#print axioms WengRankTwo.rh_weng
+#print axioms WengRankTwo.differenced_real
+#print axioms XiReflectionBand.reflect_band
+#print axioms XiReflectionBand.reflect_xi_band
 #print axioms FourSquareTeeth.r4_two_pow_mul
 #print axioms FourSquareTeeth.r4_pow_mul
 #print axioms FourSquareTeeth.lseries_r4

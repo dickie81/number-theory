@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1492 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1529 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 179 | 579 |
+| `lib/core` | 183 | 616 |
 | `lib/pnt` | 253 | 808 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -334,6 +334,26 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `Eis.fBound_gcd`: Heath-Brown's Lemma 2
 - `Eis.fBound_sep`: Heath-Brown's Lemma 10
+
+#### `EpsteinFlat`: Flat lattices: the Epstein zeta function of `ℤ ⊕ yℤ` has a zero off its critical line once `y > e²`
+
+- `EpsteinFlat.hasSum_theta`: `θ_y(t) = Σ_{(m, n) ∈ ℤ²} e^{−πt(m² + y²n²)/y}`
+- `EpsteinFlat.theta_inv`: `θ_y(1/t) = tθ_y(t)`
+- `EpsteinFlat.Lambda_one_sub`: The functional equation
+- `EpsteinFlat.differentiableAt_Lambda`: `Λ_y` is holomorphic away from its poles `s = 0` and `s = 1`.
+- `EpsteinFlat.hasMellin_theta`: On `Re s > 1`, `Λ_y(s)` is the Mellin transform
+- `EpsteinFlat.hasSum_Lambda`: On `Re s > 1`, `Λ_y(s) = π^{−s}Γ(s)Σ_{(m, n) ≠ 0}(Q_y(m, n)/y)^{−s}`
+- `EpsteinFlat.Lambda_one`: At `y = 1`, `Λ_1(s) = 2Z(2, 2s)`
+- `EpsteinFlat.Lambda_sqrt_two`: At `y = √2`, `Λ_{√2}` is the completed Epstein zeta function of `x² + 2y²`
+- `EpsteinFlat.rh_one_iff`: At `y = 1`, RH for `Λ_1` is RH for `ζ` and GRH for `χ₋₄` ([note](../formalisations/weil-positivity.md))
+- `EpsteinFlat.rh_sqrt_two_iff`: At `y = √2`, RH for `Λ_{√2}` is RH for `ζ` and GRH for `χ₋₈` ([note](../formalisations/weil-positivity.md))
+- `EpsteinFlat.Lambda_ofReal`: `Λ_y` on the real axis
+- `EpsteinFlat.tendsto_Lambda_re`: `Λ_y(σ) → −∞` as `σ → 1⁻`
+- `EpsteinFlat.le_Lambda_half`: `Λ_y(½) ≥ 2√y(log y − 2)`
+- `EpsteinFlat.exists_zero_off_line`: A zero off the critical line
+- `EpsteinFlat.not_rh`: RH fails for the Epstein zeta function of `ℤ ⊕ yℤ` when `y > e²` ([note](../formalisations/weil-positivity.md))
+- `EpsteinFlat.exists_zero_fiftyEight`: `x² + 58y²`
+- `EpsteinFlat.not_rh_fiftyEight`: RH fails for `x² + 58y²` ([note](../formalisations/weil-positivity.md))
 
 #### `EpsteinHexagonal`: The Epstein zeta function of the hexagonal lattice is the Dedekind zeta function of `ℚ(√−3)`
 
@@ -1107,6 +1127,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilZhuRed.QF_even_pos`
 - `WeilZhuRed.QF_odd_pos`
 
+#### `WengRankTwo`: Weng's rank-2 zeta function of `ℚ` satisfies the Riemann hypothesis
+
+- `WengRankTwo.weng_eq`: The entire form
+- `WengRankTwo.weng_one_sub`: The functional equation
+- `WengRankTwo.wengNum_one_sub`: The numerator changes sign
+- `WengRankTwo.norm_xi_lt`: The domination ([note](../formalisations/weil-positivity.md))
+- `WengRankTwo.rh_wengNum`: The Riemann hypothesis for the numerator
+- `WengRankTwo.rh_weng`: The Riemann hypothesis for Weng's rank-2 zeta function of `ℚ` ([note](../formalisations/weil-positivity.md))
+- `WengRankTwo.differenced_real`: The differenced `Ξ`
+
 #### `WindowForm`: The prime-side window form: its algebra, its certification logic, and the counterexample mechanism
 
 - `WindowForm.ghat_cos`: The window basis transform
@@ -1123,6 +1153,25 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `XiBounds`: The order of `Ξ`, from Riemann's theta kernel
 
 - `WeilForm.rh_of_D_and_realRooted_final`: Roadmap item 1, final form ([note](../formalisations/weil-positivity.md))
+
+#### `XiReflection`: Reflection across vertical lines: RH as a family of inequalities for `|ξ|`, and Lagarias's positivity
+
+- `XiReflection.xi_conj`: `ξ(s̄) = conj ξ(s)`
+- `XiReflection.Xi_conj`: `Ξ(t̄) = conj Ξ(t)`
+- `XiReflection.reflect_lt`: Reflection across `Re s = ½ + κ`
+- `XiReflection.reflect_one`: Across `Re s = 1`, with no hypothesis
+- `XiReflection.reflect_xi`: Reflection across `Re s = c`
+- `XiReflection.reflect_xi_one`: Across `Re s = 1`, with no hypothesis ([note](../formalisations/weil-positivity.md))
+- `XiReflection.abs_im_le_of_reflect`: The reflection inequality across `Re s = ½ + κ` confines the zeros to `|Re ρ − ½| ≤ κ` ([note](../formalisations/weil-positivity.md))
+- `XiReflection.rh_iff_reflect`: RH is the reflection inequality across every line `Re s = ½ + κ`, `κ > 0` ([note](../formalisations/weil-positivity.md))
+- `XiReflection.rh_iff_reflect_xi`: RH is the reflection inequality across every line `Re s = c > ½` ([note](../formalisations/weil-positivity.md))
+- `XiReflection.rh_iff_monotone`: Monotonicity ([note](../formalisations/weil-positivity.md))
+- `XiReflection.rh_iff_logDeriv_pos`: Positivity ([note](../formalisations/weil-positivity.md))
+
+#### `XiReflectionBand`: The library's zero-free band, as reflection inequalities for `|ξ|`
+
+- `XiReflectionBand.reflect_band`: The band as reflection, in `Ξ`
+- `XiReflectionBand.reflect_xi_band`: The band as reflection, in `ξ` ([note](../formalisations/weil-positivity.md))
 
 #### `ZerosDense`: The zeros of `ζ` are denser than any linear rate
 
