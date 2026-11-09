@@ -127,9 +127,10 @@ results.
 An independent pass over the chain from `cglDensity` down, looking for anything that could make the theorem say less
 than it appears to, or rest on more than it should.
 
-- **Axioms.** At the branch head `f89aa26`, CI's Lean build, a cold build of every library with `autoImplicit` and
-  `relaxedAutoImplicit` off (below), reports `[propext, Classical.choice, Quot.sound]` for `cglDensity`,
-  `charDensity_e`, `parCGLe_good` and `prop31`, as it does on `main` at `b48f5a3`. Its gate `scripts/check_axioms.py`,
+- **Axioms.** CI's Lean build on `f89aa26`, a cold build of every library with `autoImplicit` and
+  `relaxedAutoImplicit` off (below), and on `5dac8f3`, after the documentation fixes (below), reports
+  `[propext, Classical.choice, Quot.sound]` for `cglDensity`, `charDensity_e`, `parCGLe_good` and `prop31`, as it
+  does on `main` at `b48f5a3`. Its gate `scripts/check_axioms.py`,
   which elaborates each check file afresh, finds every report within those three: 146 of 146 in `Check.lean`, 1206 of
   1206 in `CheckAll.lean`, 34 of 34 in `CheckZeta23.lean` and 71 of 71 in `CheckDH.lean`. A local build of
   `LinnikCGLDensity` from `bb094dc` (`scripts/build.sh`, Mathlib from its cache) reports the same axioms for
@@ -139,7 +140,9 @@ than it appears to, or rest on more than it should.
   building them, replayed every module that imports them, which Lake does only when the recompiled `.olean` is
   unchanged. Rebuilt with the options off, the 427 library modules built here, the proof's 109 among them, compile to
   the same `.olean` as before, byte for byte; PNT+, whose options did not change, was not rebuilt. So the checks below,
-  made on the builds of `bb094dc` and `5fc056f`, hold at the head.
+  made on the builds of `bb094dc` and `5fc056f`, hold at the head. The documentation fixes of `5dac8f3` change no
+  constant either: `scripts/lean/ClosureFingerprint.lean` prints the same line for each of `cglDensity`'s 83,231
+  constants (its kind, universe parameters and the hashes of its type and value) before them and after.
 - **No route around the kernel.** The lakefile sets only `autoImplicit` and `relaxedAutoImplicit`, both off, for the
   whole package. Nothing in `lib/`, the vendored
   libraries included, uses `skipKernelTC`, `addDeclWithoutChecking`, `unsafe`, `implemented_by`, `native_decide` or
@@ -200,7 +203,9 @@ than it appears to, or rest on more than it should.
   dead code and warnings included), so no other declaration relied on the default: not in the 698 modules not built
   here, nor in the vendored Zeta23, whose upstream turns off only `relaxedAutoImplicit`. Rebuilt here with the options
   off, the 427 library modules built here, the three with a new binder included, compile to the same `.olean` as
-  before, byte for byte.
+  before, byte for byte. A local build of every library with both options off then passes as well (10,229 jobs: the
+  1125 modules of `lib/`, the 698 not built here before included, the vendored PNT+ and Zeta23, the check files and
+  `deadcode`), and so do its four axiom gates and the dead-code check.
 - **Heartbeat margins.** Lean stops elaborating a declaration after `maxHeartbeats`, 200,000 by default, which the
   library keeps except where a declaration raises it. Re-elaborating the 109 modules under Lake's setup with the
   default lowered to 150,000, 175,000 and 190,000 finds 15 declarations that need more than 150,000:
@@ -496,6 +501,9 @@ notation (`f_b`, `B_J`, `χ_i`), file names, or names of modules outside that en
 `ChiUniform.lean` cited `PsiOmega.norm_LFunction_le` for `norm_LFunction_leC`; that of `InghamDensity.lean`,
 `ZeroLocal.card_local_le` for `ShortWeil.card_local_le`; that of `Landau.lean`, `delta_choice` for `delta_choiceW`; and
 the docstring of `Landau.delta_choiceW`, `zero_gap` for `zero_gapW`.
+
+None of these corrections changes a constant: `cglDensity`'s fingerprint (`scripts/lean/ClosureFingerprint.lean`) is
+the same before and after them, line for line. CI rebuilt the 756 modules they reach and passes (`5dac8f3`).
 
 The statement's own docstring (`LinnikCGL.lean`) said that `CGLDensity` follows from their Theorem 1.2. That needs the
 theorem's `o(1)` to be uniform in `σ`, and the docstring now says so.
