@@ -11,3 +11,4 @@ Attack the two ingredients behind `A=7/3` / `L=11/5`, same method as
 | `ii_bookkeeping.py` | Every-`(q,a)` ledger for Ingredient II inputs at `x~q^{2.2}` |
 
 Doc: `docs/ingredient-hunt.md`.
+| `loophole_verify.py` | Sceptical check: CGL coeff class, PV at N=q^{7/9}, T=1 length q^{7/18} |

@@ -2194,3 +2194,7 @@ about primes (or needs new arithmetic input).
 
 Ingredient-level attack (restricted LV loophole, arithmetic every-`(q,a)` survey):
 `docs/ingredient-hunt.md`, `scripts/ingredient_hunt/`.
+
+### ADV-realisability loophole (2026-11-09 sceptical follow-up)
+
+Claimed loophole that ADV is unrealisable for CGL detectors — **retracted** for Thm 1.3→1.4: CGL Prop 3.1 / Lemma 4.1 apply LV to **arbitrary** `|a_n|≤1`, so ADV is a valid saturator. Pure-interval LV at `(N,V)=(q^{7/9},N^{5/7})` is a toy (`|W|=0` by Pólya–Vinogradov asymptotically; empiric `W_init=0` for `q≤3·10^4`). Residual open: `cgl-s3` §8 hypothesis (H) at `|I|≈q^{7/18}`. Details: `docs/ingredient-hunt.md` § ADV-realisability loophole — sceptical verification; `scripts/ingredient_hunt/loophole_verify.py`.

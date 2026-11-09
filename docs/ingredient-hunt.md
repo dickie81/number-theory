@@ -207,12 +207,12 @@ ADV is essentially **orthogonal to μ/Liouville** and only moderately aligned wi
 | 02 | `sidon_W` | Dead | ADV not Sidon; no force |
 | 03 | `decoupling_LV` | Dead | Prop. 8.1 redo / floors at 30/13 |
 | 04 | `szemeredi_W` | Dead | density too low |
-| 05 | `short_mollifier_block` | **Partial** | interval LV slack vs ADV |
+| 05 | `short_mollifier_block` | Partial → **Dead for Thm 1.3** | T=1 route only; see sceptical § |
 | 06 | `entropy_increment` | Dead | no inequality |
 | 07 | `amplify_chi_powers` | Dead | Batch 5 null |
 | 08 | `montgomery_mult` | Partial (conjectural) | open; evades ADV |
-| 09 | `restr_coeff_LV` | **Partial / Promising** | **loophole** |
-| 10 | `ADV_realisability` | **Partial** | ADV ⟂ μ; not detector-like |
+| 09 | `restr_coeff_LV` | **Dead for Thm 1.3** (retracted) | arbitrary `|a_n|≤1` in CGL LV |
+| 10 | `ADV_realisability` | Partial numeric / **Dead transfer** | ADV valid for Thm 1.3 |
 | 11 | `holder_moment_cascade` | Dead / ⊂09 | intervals only |
 | 12 | `random_multiplicative` | Dead | model |
 | 13 | `sparse_spectrum_FFT` | Dead | signed redo |
@@ -222,7 +222,7 @@ ADV is essentially **orthogonal to μ/Liouville** and only moderately aligned wi
 | 17 | `HB12_q_aspect` | Dead | classical LV ceiling |
 | 18 | `GM_energy_gauss` | Dead | CGL already uses this shape |
 
-**Strongest I finding:** unrestricted ADV is **not** a realisable MVT saturator for CGL detectors. The restricted-coefficient LV problem for interval/short-mollifier `b` is the live loophole. It must still defeat *structured* near-extremisers (not TPM-ADV) and produce a theorem with `η>0`.
+**Strongest I finding (superseded by sceptical follow-up):** ADV is unlike μ/interval numerically, but CGL Thm 1.3 applies to **arbitrary** `|a_n|≤1`, so ADV remains a valid saturator for the main density theorem. See **ADV-realisability loophole — sceptical verification** below: loophole **retracted** for Thm 1.3→1.4; residual open problem is only `cgl-s3` §8 hypothesis (H).
 
 ---
 
@@ -394,16 +394,135 @@ ADV is essentially **orthogonal to μ/Liouville** and only moderately aligned wi
 
 ## Live leads (honest)
 
-1. **`restr_coeff_LV` / `short_mollifier_block` / `ADV_realisability` (Ingredient I):** 
-   Formulate and prove
-   `|W| ≪ N²/V² + q^{1−η}N/V²` for interval (or short-mollifier) coefficients
-   at `(N,V)=(q^{7/9},N^{5/7})`. Numeric slack vs ADV is large (`sharp_mvt` 0.22 vs 0.63
-   at `q=10⁴`; `|W_crit|` 1 vs 36). **This is the only Promising-leaning Partial.**
-   Next step: write the exact inequality for `b=1_I`, check it against the worst
-   *interval* large-value configurations (not TPM-ADV), attempt a proof via interval
-   fourth/sixth moments or short-character-sum estimates.
+1. **`restr_coeff_LV` / ADV-loophole (Ingredient I):** **Retracted** as a path into CGL
+   Thm 1.3→1.4 (LV is for arbitrary `|a_n|≤1`). Residual: `cgl-s3` §8 hypothesis (H) on
+   sixth-moment equidistribution of short intervals at `|I|≈q^{7/18}` — open, not advanced here.
 
 2. **Ingredient II:** no live analytic lead toward `L<11/5`. Monitor FI/MMT only if
    their `L` drops below `~3` in the literature.
 
 **No improvement of `A` or `L` claimed. No Lean. Docs/scripts only.**
+
+
+---
+
+## ADV-realisability loophole — sceptical verification
+
+**Date:** 2026-11-09 (follow-up). **Script:** `scripts/ingredient_hunt/loophole_verify.py`.
+**Sources:** CGL arXiv:2507.08296 (Thm 1.3, Prop 3.1, Lemmas 4.1–4.2, §12 as read in
+`docs/cgl-s3-prime-moduli.md` §8); Guth–Maynard (arbitrary `|a_n|≤1`).
+
+### 1. What coefficients does CGL’s LV apply to?
+
+**Theorem 1.3 / Proposition 3.1 (verbatim structure).** The large-values estimate is for
+
+```
+D_N(t,χ) = ∑_{N<n≤2N} a_n χ(n) n^{it},     |a_n| ≤ 1,
+S_N(t,χ) = ∑_n w(n/N) b_n χ(n) n^{it},     |b_n| ≤ 1,
+```
+
+with `w` a fixed smooth bump on `[1,2]`. The matrix in §4 is
+
+```
+M_{(t,χ),n} = w(n/N) χ(n) n^{it}
+```
+
+— **coefficient-free**. Lemma 4.1 absorbs `|b_n|≤1` into `|W| ≲ N^{1−2σ} s_1(M)^2`. So the
+proved LV bound is for **arbitrary 1-bounded coefficients**, exactly as in Guth–Maynard.
+
+**Zero-density (§12) pipeline.**
+1. Short mollifier `M_X` with `X = (qT)^ε` produces coefficients `c_n = ∑_{d|n, d≤X} μ(d)`.
+2. Class-I detection gives a large value of a weighted Dirichlet polynomial in those `c_n`.
+3. After dyadic decomposition / partial summation (and, in the general-`T` argument, the
+   application of Thm 1.3 as a black box), the LV theorem is invoked in the **arbitrary
+   `|a_n|≤1`** form.
+4. Hölder / power-raising (as in the `S_2` estimate, §6: rewriting `|D|^{2k}` as a longer
+   Dirichlet polynomial with divisor-bounded coefficients `|b_m| ≲_k M^ε`) **destroys**
+   pure interval structure: the resulting coefficients are divisor-bounded, then treated
+   as general 1-bounded sequences.
+
+**Structure that survives into Thm 1.3:** only `|a_n|≤1` (or divisor-bounded, absorbed in
+`(qT)^ε`). Multiplicativity / interval support / mollifier shape is **not** an input to
+Thm 1.3.
+
+**At `T = 1` only** (`cgl-s3` §8, reading CGL §12): short mollifier + `|t|≤1` reduces
+class-I to **interval character sums** `S_I(χ)` of length `x ≤ q^{1/2+ε}`, with the
+fourth/sixth-moment meeting at `x = q^{7/18}`. There “the arbitrary coefficients of
+Theorem 1.1 never arise.” That is a **different route** from Thm 1.3→1.4.
+
+### 2. Verdict on the loophole
+
+| Claim from ingredient hunt | After sceptical check |
+|---|---|
+| ADV is not μ/interval-like (`corr≈0.04–0.26`) | **Still true** numerically |
+| Therefore restricted-coeff MVT-beyond plugs into CGL density | **False** for the main Thm 1.3→1.4 route: that LV is for arbitrary `|a_n|≤1`, and ADV is exactly a legitimate saturator of that theorem’s hypothesis |
+| Interval LV at `(N,V)=(q^{7/9},N^{5/7})` has slack vs ADV | **Toy**: that pair is the Thm 1.3 critical length, but for **pure intervals** Pólya–Vinogradov gives `|S_I| ≪ √q log q`, while `N^{5/7}=q^{5/9}`; asymptotically `5/9>1/2`, so `|W|=0` for large `q`. Empirically `W_init=0` already at `q≤3·10^4` (`max|S| < V`). This does **not** feed Thm 1.4 |
+| Completing `N=q^{7/9}` → dual length `q^{2/9}` beats MVT’s `2/3` | **Does not apply**: PV already kills the object; dual-moment bookkeeping cannot beat PV |
+
+**Realisability for the main theorem: loophole closed.**
+ADV (TPM, `|b_n|` free then projected to `|b|≤1`) is a valid test case for Thm 1.3.
+Batches 5–6 η-kills on ADV stand.
+
+**Residual Partial (narrow):** the `T=1` interval-only alternate route of `cgl-s3` §8 —
+hypothesis (H) on `J_6(I)` at `|I|≈q^{7/18}` — was already identified there; it is **not**
+the ADV-realisability loophole, and it does not follow from completing at `N=q^{7/9}`.
+
+### 3. Numerics (`loophole_verify.py`)
+
+**(A) Intervals at Thm 1.3 length `N=q^{7/9}`, `V=N^{5/7}`:**
+
+| `q` | `N` | `V` | `max\|S_{[1,N]}\||` | `W_init` |
+|---|---|---|---|---|
+| 503 | 126 | 31.6 | 25.4 | **0** |
+| 1009 | 217 | 46.7 | 35.4 | **0** |
+| 10007 | 1292 | 167 | 131 | **0** |
+| 30011 | 3036 | 307 | 216 | **0** |
+
+**(B) True `T=1` length `x=q^{7/18}`, `V=x^{5/7}`** (matches `cgl-s3` §8):
+
+| `q` | `x` | `W_{[1,x]}` | `W_{(x,2x]}` | `q^{2/3}` |
+|---|---|---|---|---|
+| 10007 | 36 | 428 | 164 | 464 |
+| 30011 | 55 | 940 | 318 | 966 |
+| 100003 | 88 | 2246 | 698 | 2154 |
+
+Initial segment saturates `~q^{2/3}`; dyadic block is milder — as previously recorded.
+
+**(C) ADV vs structure at `q=10007`:** `corr(ADV, interval)=0.21`,
+`corr(ADV, short det)=0.26`, `corr(ADV, d₂)=0.09`, `corr(ADV, rand mult)=0.02`.
+ADV is not detector-like — but Thm 1.3 does not require detector-like coefficients.
+
+### 4. Restricted LV bound? Exponent?
+
+**No new bound beating `2/3` that transfers into Thm 1.4.**
+
+- Pure intervals at `(q^{7/9}, N^{5/7})`: trivial `|W|=0` by PV (asymptotic) / numerics — **toy**.
+- `T=1` intervals at `q^{7/18}`: fourth and sixth moments both give `|W|≪ q^{2/3}`; completing
+  the sum (dual length `q^{11/18} > √q`) does not improve the exponent with known complete-sum
+  technology (Weil / PV). Beating `2/3` here is exactly conjecture (H) of `cgl-s3` §8 —
+  open, not proved here.
+- Structured coefficients inside Thm 1.3: would require a **new** LV theorem for a subclass
+  closed under the detector→Hölder pipeline. Mollifier coefficients `μ*1_{[1,X]}` with tiny `X`
+  become near-interval after writing `n=dm`; Hölder then produces divisor-bounded sequences.
+  No such restricted theorem is proved in this follow-up.
+
+### 5. Transfer checklist (line-by-line honesty)
+
+1. Does Thm 1.3 assume only `|a_n|≤1`? **Yes** (Prop 3.1, Lemma 4.1).
+2. Does zero-density invoke Thm 1.3 as a black box on general coefficients? **Yes** for the
+   `4/(1+σ)` half (Thm 1.4).
+3. Does `|W_crit|=0` for intervals at `N=q^{7/9}` improve `A`? **No** — wrong object.
+4. Does ADV fail to match `μ`/interval imply Thm 1.3 has slack on detectors? **No** — Thm 1.3’s
+   proof never uses coefficient structure; S₃/Prop 8.1 bounds are coefficient-free (they bound
+   `s_1(M)` for the character matrix).
+5. Is there a written restricted LV inequality here that beats MVT’s `2/3` and transfers?
+   **No.**
+
+### Updated live-lead status
+
+| Previous claim | Updated |
+|---|---|
+| `restr_coeff_LV` / ADV-loophole **Partial / Promising** | **Dead** as a plug-in to Thm 1.3→1.4 / `mvt_beyond` |
+| Residual | `T=1` hypothesis (H) on `J_6` at `\|I|≈q^{7/18}` — already in `cgl-s3` §8; unchanged Partial / open |
+
+**No improvement of `A` or `L`. Loophole retracted for the main density theorem.**
