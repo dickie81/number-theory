@@ -485,8 +485,9 @@ polishes each candidate by Newton's method on the exact function. To height `200
 | `0.9248337058 + 196872.1113270i` | `+0.0082` |
 
 Five zeros, where the count above predicts a few. The scan also flags six zeros within `0.01` to the left of the
-line (near heights `43488`, `44838`, `46715`, `100469`, `116414` and `199846`); below height `20000` it finds none
-to the right, and the nearest that it flags is `0.8978 + 2442.53i`.
+line (near heights `43488`, `44838`, `46715`, `100469`, `116414` and `199846`). Below height `24500` the scan was
+repeated with the exact function (`--exact`): the argument of `f` along the line winds once, at the first zero of
+the table, so that zero is the first with `Re s > 11/12`.
 
 **The first of them is certified (Lean).** `PsiOmega.Locate.Z5.dh_zero_re_gt`: `dh` has a zero with real part above
 `11/12` ([davenport-heilbronn.md](../formalisations/davenport-heilbronn.md)). §4 expected the certificate at such a
