@@ -2188,3 +2188,9 @@ saving of that order restores the threshold.
 statement: every-`a` signed saving is not a theorem about zeros; it is a theorem
 about primes (or needs new arithmetic input).
 
+---
+
+## See also
+
+Ingredient-level attack (restricted LV loophole, arithmetic every-`(q,a)` survey):
+`docs/ingredient-hunt.md`, `scripts/ingredient_hunt/`.

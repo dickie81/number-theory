@@ -1,0 +1,43 @@
+seed=20261207
+
+=== Ingredient I (shuffled) ===
+01 pretentious_LV: Pretentious distance / Halasz for large values of structured D(chi)
+02 sidon_W: Sidon-set / thin-basis structure forcing |W| small
+03 decoupling_LV: l^2 decoupling for the character exponential sum at critical (y,V)
+04 szemeredi_W: Szemeredi-type regularity / arithmetic-progression structure on W
+05 short_mollifier_block: CGL short-mollifier block-sum LV (interval S_I) — dedicated attack
+06 entropy_increment: Entropy-increment argument on W subset of characters
+07 amplify_chi_powers: Amplification by Dirichlet powers chi^k for prime q
+08 montgomery_mult: Montgomery modified conjecture specialised to multiplicative coefficients
+09 restr_coeff_LV: Restricted-coefficient LV: detector a_n = 1_{d|n,d<=X} mu(d) or block-interval; beat MVT for these b only
+10 ADV_realisability: Is tpm-ADV realisable as mollified Lambda/mu / interval detector? Loophole check
+11 holder_moment_cascade: Higher-moment cascade (6th/8th) for character polynomials with structured b
+12 random_multiplicative: LV for random multiplicative functions as model for mu*1_{[1,X]}
+13 sparse_spectrum_FFT: Fourier on dual group with sparse-spectrum constraints on W
+14 type_I_II_detector: Exploit Type I/II bilinear shape of detector coefficients in LV
+15 bourgain_special: Bourgain LV for polynomials of special form (geometric / multiplicative structure)
+16 incidence_LV: Incidence geometry on (chi, n) large-value graph
+17 HB12_q_aspect: Heath-Brown 12th-power moment / Huxley in q-aspect with detector structure
+18 GM_energy_gauss: GM additive energy of large-value characters via Gauss sums (prime q)
+
+=== Ingredient II (shuffled) ===
+01 linear_k_barrier_break: Arithmetic input that specifically defeats the linear-in-k zero barrier
+02 short_interval_AP: Primes in short intervals inside one progression a mod q
+03 DH_cluster_repulsion: If many chi have zeros near 5/7, do they repel? DH for clusters
+04 chebotarev_cyclotomic: Chebotarev for Q(zeta_q) with explicit discriminant dependence
+05 maynard_GPY_AP: Maynard/GPY-type weights for a single arithmetic progression
+06 automorphic_theta: Automorphic theta lifts / half-integral weight for AP primes
+07 bombieri_asymp_one_AP: Bombieri asymptotic sieve with Type II for one AP
+08 vinogradov_exp_AP: Vinogradov-type exponential sums for primes in AP twisted by additive characters
+09 bettin_chandee_AP: Bettin–Chandee trilinear for primes in AP (note: partly excluded for S3)
+10 rankin_selberg_AP: Rankin–Selberg / Eisenstein input for primes in one AP
+11 HB_identity_Weil: Heath-Brown identity + Weil bounds for complete sums mod prime q
+12 parity_breaking_AP: Parity-breaking devices specialised to one residue class
+13 algebraic_traces: Algebraic geometry / trace functions mod prime q for Lambda
+14 BV_to_pointwise: Bombieri–Vinogradov + amplifier to a single (q,a)
+15 zhang_dispersion_fixed: Zhang/Polymath dispersion for a FIXED residue (smooth vs prime q)
+16 DH_nonstandard: Deuring–Heilbronn in non-standard forms (clusters near 5/7)
+17 BDH_to_pointwise: Barban–Davenport–Halberstam upgrade to every-a via amplification
+18 exceptional_helps: Exceptional-character-helps paradigm for every a (FI L=2-eps conditional)
+19 DFI_kloosterman: Duke–Friedlander–Iwaniec bilinear forms / Kloosterman fractions for one AP
+20 FI_sieve_Linnik: Friedlander–Iwaniec sieve Linnik without density — every-(q,a) at what L?
