@@ -140,9 +140,11 @@ than it appears to, or rest on more than it should.
   building them, replayed every module that imports them, which Lake does only when the recompiled `.olean` is
   unchanged. Rebuilt with the options off, the 427 library modules built here, the proof's 109 among them, compile to
   the same `.olean` as before, byte for byte; PNT+, whose options did not change, was not rebuilt. So the checks below,
-  made on the builds of `bb094dc` and `5fc056f`, hold at the head. The documentation fixes of `5dac8f3` change no
+  made on the builds of `bb094dc` and `5fc056f`, hold at the head, and they were made again on the build of `d536c50`,
+  after the documentation fixes, with the same verdicts. The documentation fixes of `5dac8f3` change no
   constant either: `scripts/lean/ClosureFingerprint.lean` prints the same line for each of `cglDensity`'s 83,231
-  constants (its kind, universe parameters and the hashes of its type and value) before them and after.
+  constants (its kind, universe parameters and the hashes of its type and value) before them and after, and again
+  once `b0dac28` has added `LinnikCGLContinuation` (under "What the statement is").
 - **No route around the kernel.** The lakefile sets only `autoImplicit` and `relaxedAutoImplicit`, both off, for the
   whole package. Nothing in `lib/`, the vendored
   libraries included, uses `skipKernelTC`, `addDeclWithoutChecking`, `unsafe`, `implemented_by`, `native_decide` or
@@ -152,7 +154,8 @@ than it appears to, or rest on more than it should.
   on, and proves `uses_bogus : False` from it, gets "'uses_bogus' does not depend on any axioms".
   `scripts/kernel_check.sh` re-checks a theorem with every constant it depends on, outside the build, by the checkers
   the pinned toolchain ships. It first makes each of them reject that module. For `cglDensity`, built locally from
-  `bb094dc` (and again from `5fc056f`, with the same export and the same verdicts, in 13 min 45 s in all):
+  `bb094dc` (and again from `5fc056f` and from `d536c50`, with the same export and the same verdicts, in 13 min 45 s
+  and 14 min 33 s in all):
   - `leanexport` (lean4export 3.1.0) writes the theorem with what it depends on: 14,591,566 records, 785 MB.
   - Lean's kernel reading that export (`leanchecker --from-export`) accepts it, in 214 s.
   - nanoda 0.4.17, an independent kernel in Rust, accepts it: "Checked 84260 declarations with no typechecker
