@@ -859,17 +859,20 @@ constant `ρ = 120` (below):
 | `BallPivot.pivot_ge` | `5.7·10⁻⁵` | `6.9·10⁻⁵` | `8.7·10⁻⁵` | `1.0·10⁻⁴` | `1.1·10⁻⁴` |
 | the same with `ρ = 120` | `0.0065` | `0.0141` | `0.0276` | `0.0421` | `0.0471` |
 
-The least `d_k/d_1` over `2 ≤ k ≤ 3000` is `1.718`, at `k = 2`. On random and adversarial vectors `(Σc² + G(c))` is at
-least `2.8` times the bound of `slack_top`.
+The least `d_k/d_1` over `2 ≤ k ≤ 3000` is `1.718`, at `k = 2`. On the script's random and adversarial vectors
+`Σc² + G(c)` is at least `1.6` times the bound of `slack_top`.
 
 **What closing the gap needs.** Only the constant. Suppose the sampling inequality in the form
-`Q_N(x) ≥ (π/(4ρN))·((log N + s)Σc_n² − L(c))` for some `ρ` and `s > 0`: the Fejér weight `sin²(πγ/2r)/γ²` with
-`r = ρN` has the diagonal density `log(r/2π) + 1 − γ − log 2 − log(π/2) = log(ρN/12.93)` exactly, so `ρ` is `12.93·e^s`
-times the factor that the archimedean cross terms, the region `|t| ≤ 2π` where the density is negative, and the pole
-cost. Then the argument above gives `d_N ≥ (π/(4ρ))·(s + Σ_{q ∣ N}Λ(q)g/(g + Λ(q)/q))`, where `g` is the grounding at
-the parents (`g ≥ s + 0.34` with Mertens' sum in the sharp form `Σ_{n ≤ y}Λ(n)/n ≤ log y`, where the library has
-`log y + log 4 + 1`). At `ρ = 120`, `s = 1/2` this passes `K_H(1)` near `k = 3000` (the table), inside the certificate's
-range, and the conjecture would then be equivalent to RH outright. `BallSharp.sharp_bound_slack` has `ρ ≈ 22e⁸/π`:
+`Q_N(x) ≥ (π/(4ρN))·((log N + s)Σc_n² − L(c))` for some `ρ` and `s > 0`. Against the Fejér weight `sin²(πγ/2r)/γ²`
+with `r = ρN` the mean of the density `log(|t|/2π)` of the zeros is
+`log(r/2π) + 1 − γ − log 2 − log(π/2) = log(ρN/12.93)` (`12.93 = 2π²e^{γ−1}`), so `ρ` is `12.93·e^s` times the factor
+that the archimedean cross terms, the region `|t| ≤ 2π` where the true density is negative, and the pole cost. Then
+the argument above gives `d_N ≥ (π/(4ρ))·(s + Σ_{q ∣ N}Λ(q)g/(g + Λ(q)/q))`, where `g` is the grounding at the parents
+(`g ≥ s + 0.34` with Mertens' sum in the sharp form `Σ_{n ≤ y}Λ(n)/n ≤ log y`, where the library has
+`log y + log 4 + 1`). At `ρ = 120`, `s = 1/2` this is below `K_H(1)` at `1685` values of `k ≤ 10⁶`, the largest
+`5460` (at `ρ = 100`: `507` values, the largest `1155`; the sum is `log k − O((log log k)²)`), all inside the
+certificate's range `k ≤ 10⁴`, and the conjecture would then be equivalent to RH outright.
+`BallSharp.sharp_bound_slack` has `ρ ≈ 22e⁸/π`:
 its `T ≥ 2000N`, its `1/11` and its `−7` were chosen for the proof, not for the constant. So what is missing is the
 sampling inequality with its natural constants, an explicit computation with the test functions the library has, and
 the sharp Mertens bound. Neither is new mathematics.

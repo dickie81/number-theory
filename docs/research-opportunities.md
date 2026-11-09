@@ -19,6 +19,7 @@ assistance (Claude); the literature positions in particular need expert review.
 | The smaller harvest: the prime number theorem in progressions uniformly in `q` with a sharp cutoff, Liouville, `μ` in progressions, Mertens with a power saving, `k`-free numbers | Exercises given the half-plane, each a statement the literature has only under RH or GRH | A module or two each | [§5](#5-the-smaller-harvest) |
 | Not recommended now: the orbit-lattice conjecture, Weil positivity, the half-plane at `7/8` | | | [§6](#6-directions-looked-at-and-not-recommended-now) |
 | The missing tools, by what each unlocks | | | [§7](#7-the-missing-tools-by-what-they-unlock) |
+| A second scan, 9 November: what it proved, what the literature now has, and what is left of the orbit-lattice conjecture | Under RH the pivots of the orbit form grow like `log N` (`BallPivot`); the conjecture is RH up to a constant | The sampling inequality with its natural constants | [§8](#8-a-second-scan-9-november-2026) |
 
 The genuinely new mathematics of the library is where the author already is: the sieve certificates (§3). The inputs'
 harvest is mostly taken (`account.md`, "The results"); what is left of it needs one of two tools, Vaughan's identity
@@ -73,6 +74,8 @@ error term, `r₃(n) = S(n)n²/2 + O(n^{2−δ})`, since the same major arcs giv
 Vaughan's (the singular series is extra work); and quantitative Möbius disjointness for rotations of the circle.
 
 ## 2. The Euler–Kronecker constants of the cyclotomic fields
+
+*Status, 9 November: stated elsewhere since this was written (§8.2).*
 
 **Theorem B (modulo the half-plane).** For `q ≥ 3`, with `χ₀` the trivial character mod `q`,
 
@@ -165,6 +168,8 @@ uniformity in `q` here would come from the half-plane. Medium value, large cost.
 
 ## 4. The Davenport–Heilbronn function: a zero with `Re s > 1` (Numerical)
 
+*Status, 9 November: the scan proposed at the end of this section cannot succeed (§8.5).*
+
 `dh` is a combination of two Dirichlet `L`-functions mod 5 with the functional equation of `ζ` and no Euler product.
 Davenport and Heilbronn (1936) proved that it has more than `cT` zeros with `Re s > 1` and `0 < Im s ≤ T`; the
 library locates four zeros in `1/2 < Re s < 1` and none in `Re s > 1`. One located there would show in Lean that the
@@ -228,7 +233,8 @@ and the inventory would carry them.
 
 ## 6. Directions looked at and not recommended now
 
-- **The orbit-lattice conjecture.** The conclusion of 4 November stands: the pivot inequality fails where RH holds. Of
+- **The orbit-lattice conjecture.** For `ζ` this is superseded by §8.3: under RH the pivot inequality holds for every
+  large `k` (`BallPivot`). The conclusion of 4 November stands for the analogues: the pivot inequality fails where RH holds. Of
   the open problems in [ball-conjecture-tests.md](ball-conjecture-tests.md), a lower bound for `λ_min(G_N)` under RH,
   even `exp(−N^A)`, asks that the Dirichlet polynomial `V(s) = Σ_{n ≤ N} v_n n^s` be not small at all the low zeros at
   once. That is a sampling problem at the zeros, whose gaps, `≍ 1/log T` on average and `O(1)` in the worst case
@@ -319,3 +325,154 @@ are these, with the branch's own numbers (floating point, uncertified) checked a
 5. **`ζ_K = ∏_χ L(s, χ)` for abelian `K`, through Kronecker–Weber:** effective Chebotarev for every abelian extension
    of `ℚ` (the library has the cyclotomic case, `CyclotomicFrobenius`), effective class numbers of cyclotomic fields,
    and §2 stated for the field itself.
+
+## 8. A second scan (9 November 2026)
+
+A second reading, asking the same question five days later. It checked the literature again, since the half-plane's
+consequences are being drawn elsewhere week by week, and it found one result that is the library's own. Prepared with
+AI assistance (Claude); the labels are those of the head of this page.
+
+### 8.1 What it added to the library
+
+| Result | Lean | New? |
+|---|---|---|
+| Under RH the Gram–Schmidt pivots of the orbit form satisfy `d_N ≥ (log N/2 + log 4 + 2)/(22e⁸)`; the orbit-lattice conjecture is RH together with the pivot inequalities for `log k < 7100`; RH holds if and only if the form is at least `(log 4 + 2)/(22e⁸)` at every nonzero integer vector | `BallPivot.pivot_ge`, `BallPivot.orbitLattice_iff`, `BallPivot.rh_iff_lattice` | Yes: the conjecture and the form are this library's, and [ball-conjecture.md](ball-conjecture.md) had concluded that RH does not give the pivots |
+| An imaginary quadratic field has class number one if and only if its discriminant is one of the nine | `ClassNumberOne.classNumber_eq_one_iff` | No: Baker, Heegner and Stark's theorem, and not the first kernel-checked proof without Heegner's method ([class-number-one.md](../formalisations/class-number-one.md)). It closes the "finite computation" that `ClassNumberSharp` left |
+
+The whole import cone of `ClassNumberSharp`, the half-plane's proof included (244 modules), was rebuilt from a clean
+checkout on this scan's machine in about an hour on four cores, and `Eis.LFunction_ne_zero_of_re_gt` printed
+`propext`, `Classical.choice` and `Quot.sound`.
+
+### 8.2 What the literature now has
+
+Found by search on 9 November 2026; READMEs and abstracts read, no proof or Lean checked.
+
+- **§2 above (the Euler–Kronecker constants) is no longer unclaimed.** D. Bhattacharjee, P. Mandal and U. Bhattacharya
+  (`github.com/creelie/Breakthrough-problems-3`, v4 of 2 November 2026) state `γ_m ≤ 12 log m + 36 log log m + C` and
+  `γ_q ≥ −C log q · log log q` for primes `q`, from the half-plane at `11/12`.
+- **Pólya–Vinogradov with `log log q`.** The same work states `M(χ) ≤ C√q log log q` for every primitive `χ` and
+  `|L′/L(1, χ)| ≤ C log log q`, with a Lean check on OpenAI's `7/8`; a pull request of the same repository adds
+  `|Σ_{n ≤ x} χ(n)| ≤ Ψ(x, ⌈log q⌉⁴⁰) + Cx/log q`, cancellation as soon as `log x/log log q → ∞`. This scan had derived
+  the first from the library's inputs before finding it: Pólya's expansion; Montgomery and Vaughan's bound for
+  exponential sums with multiplicative coefficients on the minor arcs; and on the major arcs `Σ_{h ≤ t} χψ(h)/h` equal
+  to its part over the `(log q)^A`-smooth `h` up to `O((log q)^{−c})`, uniformly in `t` and in `ψ` of modulus at most
+  `(log q)³`, from `ψ(x, χ) ≪ x^{11/12+η} log q` (`ChiUniform.psiChi_le_uniform`). It is not claimed here.
+- **Class number one without Heegner's method** was the subject of a challenge of T. Tao (20 October 2026);
+  `github.com/DrMurphyIsIn/tenth-discriminant` reports kernel-checked proofs from OpenAI's `7/8`.
+
+So of this page's harvest, §1 (exponential sums with `μ` and `Λ` uniformly in `α`), §3 and §5 remain; what is drawn
+from the half-plane alone should be expected to appear elsewhere. The library's own ground is §3, the certificates, and
+the orbit form.
+
+### 8.3 The orbit-lattice conjecture: what is left is a constant
+
+**Theorem (Lean, under RH).** `d_N ≥ (log N/2 + log 4 + 2)/(22e⁸)` for every `N ≥ 1`.
+
+The proof is in [ball-rate.md](../formalisations/ball-rate.md), "The pivots": the sampling theorem at `T ≍ N`
+(`BallSharp.rate_slack`) bounds `Q_N(x)` below by `(Σc_n² + G(c))/(22e⁸N)`, and the top vertex `N` of the divisibility
+graph of Landau's form has no children, so `Σc_n² + G(c) ≥ (log N/2 + log 4 + 2)c_N²` (`BallPivot.slack_top`).
+
+Three things follow, in order of cost.
+
+1. **The equivalence with RH outright (a computation, not new mathematics).** The pivot inequality `d_k ≥ d_1` is
+   proved for `k ≤ 10⁴` (`scripts/ball_certificate.py`) and, under RH, for `log k ≥ 7100`. The gap is the constant
+   `22e⁸`. Against the Fejér weight `sin²(πγ/2r)/γ²`, `r = ρN`, the mean of the zeros' density `log(|t|/2π)` is
+   `log(ρN/12.93)`, and the same argument gives `d_k ≥ (π/(4ρ))(s + Σ_{q ∣ k}Λ(q)g/(g + Λ(q)/q))`, `g = s + 0.34`,
+   from a sampling inequality with margin `s` over Landau's form. At `ρ = 120`, `s = 1/2` this is above `d_1` for
+   every `k` from `5461` to `10⁶`; at `ρ = 100` from `1156` (`scripts/pivot_bound.py`, Numerical; the sum is
+   `log k − O((log log k)²)`). It needs the archimedean cross terms, the region `|t| ≤ 2π` and the pole bounded with
+   their natural constants, and Mertens' sum in the form `Σ_{n ≤ y}Λ(n)/n ≤ log y`.
+2. **Block pivots (Theorem modulo `BallSharp.rate_slack`).** For `N ≥ 9` and `K ≤ N/(4 log N)`,
+   `Σc_n² + G(c) ≥ (log N/4)·Σ_{N−K < m ≤ N}c_m²`, so under RH
+   `Q_N(x) ≥ (log N/(100e⁸))·Σ_{N−K < n ≤ N}x_n²`: the top window is uniformly independent of everything below it.
+   *Proof.* No two `m` of the window are parent and child. A parent `j` has at most `⌈K/j⌉` children `m = jn` in it.
+   Charge `2c_m Λ(n)n^{−1/2}c_j ≤ c_j²/⌈K/j⌉ + c_m²Λ(n)²⌈K/j⌉/n`; the first terms total at most `Σ_j c_j²`, and
+   `Λ(n)²⌈Kn/m⌉/n ≤ Λ(n)²(K/m + 1/n)` sums over `n ∣ m` to at most `(K/m)(log m)² + (log m)/2 ≤ (3/4)log N + 1/8`,
+   which the diagonal `(log N + log 4 + 1)c_m²` covers with `(log N/4)c_m²` to spare. ∎ Not in Lean. For the whole top
+   half `(N/2, N]` the charge at a parent is `Σ_{y/2 < n ≤ y}Λ(n)/n`, which tends to `log 2` and is largest at `y = 13`,
+   `0.902` (for `y ≤ 2·10⁶`, Numerical): below `1`, so the same argument would give `c·log N` on the top half, given
+   Mertens' sum on dyadic intervals with an explicit constant below `1`.
+3. **The constant `d_1`.** The lattice exists under RH (`BallPivot.lattice_ge`); the conjecture's margin `K_H(1)` at
+   the pivots below `e^{7100}` is item 1. No structure is needed for either: both are what RH says about the form.
+
+### 8.4 Nyman–Beurling as the discrepancy of a sieve weight
+
+A link between the library's `K_H(1) = 2 + γ − log 4π` and Báez-Duarte's distance `d_N`
+([ball-conjecture.md](ball-conjecture.md), "Related work"), written out because the note there leaves it open. It may
+be folklore; no source was found that states it this way.
+
+**Identity.** Let `λ` be supported on `[1, N]`, `θ = 1 ∗ λ` and `c = Σ_k λ_k/k`. With `ρ_k(x) = {1/(kx)}` and
+`χ = 1_{(0,1]}`,
+
+```
+‖χ + Σ_k λ_k ρ_k‖²_{L²(0,∞)} = c² + ∫_1^∞ (Σ_{n ≤ y} θ_n − 1 − c·y)² dy/y².
+```
+
+*Proof.* At `x = 1/y`, `Σ_k λ_k{y/k} = c·y − Σ_k λ_k⌊y/k⌋ = c·y − Σ_{n ≤ y}θ_n`, and `{y/k} = y/k` for `y < 1`. ∎
+
+So `d_N²` is the least `L²(dy/y²)` discrepancy of a sieve weight of level `N`: of the sums of `θ_n` over `n ≤ y`
+against `1 + c·y`, that is, when `λ_1 = 1`, of the sums over `2 ≤ n ≤ y` against their mean `c·y`. Burnol's bound
+`d_N² ≥ (Σ_ρ m_ρ²/|ρ|² + o(1))/log N` says that no sieve weight of level `N` is equidistributed better than that.
+
+**The primes attain it on `[1, N]`.** For `λ_k = μ(k)(1 − log k/log N)`, the weights of Bettin, Conrey and Farmer,
+`θ_n = Λ(n)/log N` for `2 ≤ n ≤ N`, and beyond `N` it is Goldston and Yıldırım's truncated von Mangoldt function
+`Λ_N(n) = Σ_{k ∣ n, k ≤ N}μ(k) log(N/k)` over `log N`. On `[1, N]` the integrand is `(ψ(y) − c·y·log N)²/log²N`, and
+Cramér's mean square `∫_1^X (ψ(y) − y)² dy/y² ∼ (Σ_ρ m_ρ²/|ρ|²) log X` (RH) is Burnol's constant over `log N`, with
+`K_H(1)` for simple zeros: the constant the two problems share is Cramér's.
+
+**Where the hypothesis on `ζ′(ρ)` enters.** Twice, and only through Möbius sums: `c·log N − 1 = −∫_N^∞ m(t) dt/t`
+with `m(t) = Σ_{k ≤ t}μ(k)/k`, which enters as `N(c log N − 1)²/log² N`; and the range `y > N`, where the discrepancy of
+`Λ_N` has the mean `−½Σ_{k ≤ N}μ(k) log(N/k)` and Möbius sums with the phases `e(hy/k)`. Under RH alone these are
+`√N·exp((log N)^{1/2+ε})`, not `√N`. Heuristically the zeros themselves cost nothing beyond `N`: a zero `ρ` stops
+being heard in `ψ_N(y)` near `y ≈ N|γ|`, since `Σ_{m ≤ y/N} m^{−ρ} → ζ(ρ) = 0`, and the zeros above `y/N` contribute
+`O(1)` in all.
+
+**What would be new** (not attempted): `d_N² ≪ 1/log N` under RH alone. Two observations towards it, both
+heuristic. A sieve weight with `Σ_k λ_k = 0`, obtained by adding `ε·ρ_K` with `K ≈ N` and
+`ε = −Σ_k λ_k`, removes the mean beyond `N` at a cost `ε²/N`. And the profile matters at clusters of zeros: for a
+zero of multiplicity `m` the far field of `1 − ζA` at distance `u` is of size `(u log N)^{m−1−j}` for the profile
+`(1 − log k/log N)^j`, so the linear profile `j = 1` fails at a double zero and `j ≥ m` is needed; under RH alone
+multiplicities are not bounded.
+
+### 8.5 The Davenport–Heilbronn zero with `Re s > 1`: not by a blind scan (Numerical)
+
+§4 proposed to continue the scan until a zero appears. It will not appear at a height that a blind scan reaches.
+
+For `Re s > 1`, `dh(s) = 0` exactly when `L(s, χ)/L(s, χ̄) = −(1 + iκ)/(1 − iκ)`, a number of modulus `1` and argument
+`π + 2 arctan κ`, that is `−2.588`. The quotient is `∏_p (1 − χ̄(p)p^{−s})/(1 − χ(p)p^{−s})`, to which only the primes
+`p ≡ ±2 (mod 5)` contribute, each a factor of argument at most `2 arctan p^{−σ}` in absolute value, attained when
+`p^{−it} = ±1` with the sign of its class. So, by Kronecker's theorem and Rouché's, as in Davenport and Heilbronn's
+proof, there are zeros with real part arbitrarily near `σ > 1` exactly when
+`Σ_{p ≡ ±2 (5)} 2 arctan p^{−σ} ≥ 2.588`:
+
+- the real parts of the zeros in `Re s > 1` are dense in `(1, σ*)` and none exceeds `σ*`, with `σ* ≈ 1.1204` (primes
+  to `2·10⁷` and the tail);
+- at `σ = 1.005` the `22` primes `2, 3, 7, …, 167` of these classes, aligned exactly, are the fewest whose arguments
+  reach `2.588`; at `σ = 1.05` it takes `68`.
+
+How rare the alignment is: with independent uniform phases for the primes (Bohr's model), the probability that the
+arguments sum to `−2.588` or less is `e^{−I(σ)}` to leading order, with the large-deviation rate `I(1) = 27.0`,
+`I(1.005) = 29.5`, `I(1.01) = 32.4`, `I(1.02) = 39.9`, `I(1.05) = 94` (the primes to `2·10⁶`). So the zeros have a
+density of the order of `e^{−27} ≈ 2·10⁻¹²` per unit height or less, within about `0.01` of the line `Re s = 1`, and
+the first is to be expected at a height of the order of `10¹²` to `10¹⁴`, against the `12000` scanned: Davenport and
+Heilbronn's `cT` has `c` of the order of `10⁻¹³`. (Counting exact alignments of `22` primes instead would give
+`10⁻²⁶`; the cheapest alignments are partial ones of many primes.)
+
+A zero can be looked for directly: lattice reduction on `t log p/2π` finds heights at which the first primes are
+aligned, and at a height of `10¹³` the approximate functional equation evaluates `dh` with a few million terms. A
+certificate in Lean is another matter: the library's Euler–Maclaurin approximant needs about `t` terms. So the `dh`
+column of the half-plane should be the existence theorem itself, Davenport and Heilbronn's argument from Kronecker's
+theorem (which the library has, `BohrTorus.tendsto_mean_character`) and Rouché's, a formalisation, not a located
+zero; a located zero would be a numerical result beside it.
+
+### 8.6 Directions tried in this scan and set aside
+
+- **`λ_N ≫ log N/N` for every vector.** The top-vertex argument does not reach it: the minimising vector has `x_N → 0`.
+  What is missing is unchanged: an inverse theorem at the zeros below height `N` for the vectors near `δ_1`.
+- **Linnik's exponent, the half-plane at `7/8`, Weil positivity past `log 2`:** as in §3 and §6; nothing found that
+  changes them. A density estimate near the half-plane's edge gains nothing: by the usual accounting the
+  Halász–Montgomery inequality with the Lindelöf bound on `Re s = 11/12` detects zeros only for `σ > 23/24`, where
+  there are none.
+- **Goldbach's exceptional set from the half-plane.** Hardy and Littlewood's argument gives `E(x) ≪ x^{2Θ−1/2+ε}`
+  (`x^{1/2+ε}` under GRH, nothing for `Θ ≥ 3/4`); the half-plane removes the exceptional zeros of Montgomery and
+  Vaughan's and Pintz's treatments, and what exponent that gives is not worked out here.
