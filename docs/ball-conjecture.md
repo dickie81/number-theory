@@ -115,11 +115,14 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
     changes only the factor at `2` and adds the zeros `1 + πik/log 2`, on the line. Its form is indefinite from
     `N = 17`.
 - **The balls of Arakelov geometry.** G. van der Geer and R. Schoof's Riemann–Roch for number fields, with Arakelov
-  divisors, gives `ℚ` a zeta function of two variables. J. C. Lagarias and E. Rains write it as
+  divisors, gives `ℚ` a zeta function of two variables. For `ℚ`, `h⁰(D) = log Σ_{n ∈ ℤ} e^{−πe^{−2 deg D}n²}` is the
+  logarithm of a Gaussian-weighted count of lattice points, and their Riemann–Roch `h⁰(D) − h⁰(−D) = deg D` is the
+  functional equation of `θ` (`ArakelovRiemannRoch.riemann_roch`). J. C. Lagarias and E. Rains write it as
   `Z(w, s) = ½∫₀^∞ θ(t)^w t^{s/2} dt/t`, with `θ(t) = Σ_{n ∈ ℤ} e^{−πn²t}`, so that `Z(1, s) = ζ̂(s)` (Ann. Inst.
   Fourier 53 (2003)). In Lean, for real `w > 0`: `Z(w, w − s) = Z(w, s)` (`TwoVariableZeta.functional_equation`),
   `Z(1, s) = ζ̂(s)` (`TwoVariableZeta.Z_one`) and, by Jacobi's four-square theorem (`JacobiFourSquares.r4_eq`),
-  `Z(4, s) = 4Γ_ℝ(s)(1 − 4^{1−s/2})ζ(s/2)ζ(s/2 − 1)` on `Re s > 4` (`TwoVariableZeta.Z_four`).
+  `Z(4, s) = 4Γ_ℝ(s)(1 − 4^{1−s/2})ζ(s/2)ζ(s/2 − 1)` on `Re s > 4` (`TwoVariableZeta.Z_four`). It is their integral
+  `∫ (e^{w·h⁰(D)} − 1)e^{−s·deg D} d(deg D)` over the Arakelov divisors of `ℚ` (`ArakelovRiemannRoch.Z_eq_integral`).
   - **Lattice points in balls.** For an integer `w`, `θ^w` is the theta function of `ℤ^w`, a Gaussian-weighted count of
     the points that `BallTower` counts, and `Z(w, s)` is the completed Epstein zeta function of the cubic lattice. Its
     Dirichlet series has an Euler product only for `w = 0, 1, 2, 4, 8`: the zeta functions of `ℤ`, the Gaussian

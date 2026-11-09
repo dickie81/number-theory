@@ -272,6 +272,7 @@ import FourSquareResidue
 import SiegelFour
 import JacobiEightSquares
 import TwoVariableZetaEight
+import ArakelovRiemannRoch
 import EightSquareResidue
 import BallSlice
 import LonelyPrimes
@@ -1425,6 +1426,11 @@ twin-form rates at `11/12`. -/
 #print axioms TwoVariableZetaEight.Z_eight
 #print axioms TwoVariableZetaEight.Z_eight_eq
 #print axioms TwoVariableZetaEight.exists_zero_re_ne_four
+#print axioms ArakelovRiemannRoch.riemann_roch
+#print axioms ArakelovRiemannRoch.le_h0
+#print axioms ArakelovRiemannRoch.tendsto_h0_atBot
+#print axioms ArakelovRiemannRoch.tendsto_h0_sub_atTop
+#print axioms ArakelovRiemannRoch.Z_eq_integral
 #print axioms EightSquareResidue.latticeCount_eight_sqrt
 #print axioms EightSquareResidue.tendsto_sum_r8
 #print axioms EightSquareResidue.residue_f8

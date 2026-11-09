@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1440 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1445 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 174 | 530 |
+| `lib/core` | 175 | 535 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -29,6 +29,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `AngularResidue.residue_angular`: The residue of the radial member
 - `AngularResidue.LFunction_chi4_one`: `L(1, χ₋₄) = π/4`
+
+#### `ArakelovRiemannRoch`: Riemann–Roch for the Arakelov divisors of `ℚ`, and Lagarias–Rains's `Z(w, s)` as an integral over them
+
+- `ArakelovRiemannRoch.riemann_roch`: Riemann–Roch for the Arakelov divisors of `ℚ`
+- `ArakelovRiemannRoch.le_h0`: Riemann's inequality
+- `ArakelovRiemannRoch.tendsto_h0_atBot`: Vanishing in negative degree
+- `ArakelovRiemannRoch.tendsto_h0_sub_atTop`: `h⁰` is the degree in large degree
+- `ArakelovRiemannRoch.Z_eq_integral`: Lagarias and Rains's `Z(w, s)` is van der Geer and Schoof's integral over the Arakelov divisors of `ℚ`
 
 #### `BallCurve`: The orbit curve: a realization of `K` along the positive reals
 
