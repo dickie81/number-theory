@@ -144,7 +144,12 @@ than it appears to, or rest on more than it should.
   after the documentation fixes, with the same verdicts. The documentation fixes of `5dac8f3` change no
   constant either: `scripts/lean/ClosureFingerprint.lean` prints the same line for each of `cglDensity`'s 83,231
   constants (its kind, universe parameters and the hashes of its type and value) before them and after, and again
-  once `b0dac28` has added `LinnikCGLContinuation` (under "What the statement is").
+  once `b0dac28` has added `LinnikCGLContinuation` (under "What the statement is"). A cold build at the head confirms
+  all this. From an empty build directory, with Mathlib from its cache, `lake build LinnikCGLContinuation` at
+  `9702dd6` rebuilt the statement's whole dependency cone: its 399 library modules and the 15 of PNT+ it imports.
+  Every `.olean` and `.ilean` file it wrote is byte-identical to the build the kernel checks verified, 501 of each.
+  That count includes 87 modules outside the cone, written by a build of every library from the same empty directory,
+  which was stopped because its certificate modules take hours; CI's cold build of `f89aa26` stands for those.
 - **No route around the kernel.** The lakefile sets only `autoImplicit` and `relaxedAutoImplicit`, both off, for the
   whole package. Nothing in `lib/`, the vendored
   libraries included, uses `skipKernelTC`, `addDeclWithoutChecking`, `unsafe`, `implemented_by`, `native_decide` or
