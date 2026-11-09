@@ -1,8 +1,8 @@
 # The evaporation rate of the orbit form: witness level, approach, rate
 
 **Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`, with `BallSampling`,
-`BallDensity`, `BallCutoff` and `BallSharp` in four later sections, then `BallUpper` with `BallUpperEta`, `BallGap`, and
-`BallLow` in the section "The low zeros". The theorems are mapped onto the gravastar language in the section after the
+`BallDensity`, `BallCutoff` and `BallSharp` in four later sections, then `BallUpper` with `BallUpperEta`, `BallGap`,
+`BallPivot` in the section "The pivots", and `BallLow` in the section "The low zeros". The theorems are mapped onto the gravastar language in the section after the
 statements; the first section, written before the Lean, fixes the three statements and says what each costs. The rate,
 open when that section was written, is now proved under RH alone: `λ_N ≥ 1/(22e⁸N)` for every `N ≥ 1`
 (`BallSharp.rate_sharp`, section "Sampling at the zeros in its natural form"). It comes from the sampling conjecture of
@@ -17,7 +17,10 @@ vector `x_n = (−1)^{n+1}/n`, and `λ_N ≤ C(1 + log N)/N` with some constant 
 to the vectors with `Σx_n² n + G(c) = o(log N·Σx_n²)` (section "Why the sampling route stops short of `log N/N`"). Every
 vector has `Σx_n² n + G(c) ≥ (√log N/10)Σx_n²` (`BallGap.edge_law`, section "The Landau gap from below"), so under RH
 `λ_N ≥ √log N/(220e⁸N)` for every `N ≥ 3` (`BallGap.rate_gap`): this route recovers `√log N` of the missing `log N`,
-which by the numerics of that section is all it can give. The section "Packing", numerics only, compares the zeros with
+which by the numerics of that section is all it can give. The section "The pivots" turns the same graph
+argument to the Gram–Schmidt pivots: under RH `d_N ≥ (log N/2 + log 4 + 2)/(22e⁸)`, so the pivot inequality of the
+orbit-lattice conjecture holds for every `N` with `log N ≥ 7100`, and the conjecture is RH together with finitely many
+pivot inequalities (`BallPivot.orbitLattice_iff`). The section "Packing", numerics only, compares the zeros with
 point sets of the same density and no arithmetic, which give `λ_N` near `N^{−1/2}` for `N ≤ 6400`, and finds the shape
 of the minimiser: `w(n/N)/ψ(n)`, `ψ` Dedekind's function, with `w(u) = Σ_{k ≤ 1/u} c(ku)` for one fixed function `c`.
 The section "The variational problem, solved" derives the constant at leading order, heuristically:
@@ -789,6 +792,76 @@ J. Piepenbrink (J. Differential Equations 15 (1974)): a positive supersolution o
 from below. Its form on weighted graphs, with optimal Hardy weights, is M. Keller, Y. Pinchover and F. Pogorzelski,
 Comm. Math. Phys. 358 (2018). Here the graph is the divisibility graph of `[1, N]` with the weights of Landau's form.
 The bound on its slack, and the rate it gives, are new as far as this note knows.
+
+## The pivots: `d_N ≥ c·log N` under RH, and the orbit-lattice inequality for every large `N` (`BallPivot`)
+
+**Lean:** `BallPivot` (`lib/core/BallPivot.lean`), printed by `lib/check/CheckAll.lean`. The five printed results depend
+on `propext`, `Classical.choice` and `Quot.sound` only.
+
+| Result | Statement | Conditional on |
+|---|---|---|
+| `BallPivot.slack_top` | `Σ_{n ≤ N}c_n² + G(c) ≥ (log N/2 + log 4 + 2)·c_N²` for every `N ≥ 1` and every real `c` | nothing |
+| `BallPivot.pivot_ge` | `Q_N(x) ≥ (log N/2 + log 4 + 2)/(22e⁸)·x_N²` for every `N ≥ 1` and every real `x` | RH |
+| `BallPivot.orbitLattice_of_log_ge` | `Q_k(δ_k − Σ_{n < k}c_n δ_n) ≥ Q_1(δ_1)` for all real `c`, once `log k ≥ 7100` | RH |
+| `BallPivot.pivot_tendsto` | for every `B` there is `K` with `Q_k(x) ≥ B` whenever `k ≥ K` and `x_k = 1` | RH |
+| `BallPivot.orbitLattice_iff` | the pivot inequality for every `k ≥ 1` and all `c` ⟺ RH and the pivot inequality for the `k` with `log k < 7100` | nothing |
+
+**What it says.** The `N`-th Gram–Schmidt pivot of the orbit is `d_N = min{Q_N(x) : x_N = 1}`: in a realization, the
+squared distance of `w_N` from the span of `w_1, …, w_{N−1}`. The orbit-lattice conjecture of
+[ball-conjecture.md](../docs/ball-conjecture.md) is `d_N ≥ d_1 = K_H(1)` for every `N`, and it implies RH
+(`BallWeil.rh_of_pivots`). That page asked whether RH implies it, and concluded from the mean-value theorems then known
+that RH does not give it. With the sampling theorem at `T ≍ N` (`BallSharp.rate_slack`) it does, for every large `N`:
+under RH `d_N ≥ (log N/2 + log 4 + 2)/(22e⁸)`, so the pivots tend to infinity at the rate `log N` of the upper bound
+`d_N ≤ ‖w_N − w_{N−1}‖² = log(N/2π) + 1 − γ + o(1)`, and `d_N ≥ d_1` once `log N ≥ 7100`. So the conjecture is RH
+together with the pivot inequalities below `e^{7100}` (`orbitLattice_iff`): under RH it can fail only at finitely many
+`N`. The certificate of `scripts/ball_certificate.py` covers `N ≤ 10⁴`; the range between is the constant `22e⁸`.
+
+This is the pivot, not the eigenvalue. `λ_N ≍ log N/N` is small because the minimising vector spreads over `[1, N]`
+with `x_N → 0`; a vector with `x_N = 1` cannot follow it.
+
+**How it was done.**
+
+- **The top vertex has no children.** In Landau's form `L(c) = 2Σ_n Λ(n)n^{−1/2}Σ_{jn ≤ N}c_j c_{jn}` the coefficient
+  `c_N` meets only the pairs `(N/n, N)` with `n ∣ N`, `n ≥ 2`: the pair `j = N`, `n = 1` has `Λ(1) = 0`. With `c′` the
+  vector `c` with `c_N` set to `0`, `G(c) = G(c′) + (log N + log 4 + 1)c_N² − 2c_N Σ_{n ∣ N}Λ(n)n^{−1/2}c_{N/n}`
+  (`ex_cut`, `landau_cut`), and `G(c′) ≥ 0` (`BallSharp.landauSlack_nonneg`).
+- **Each parent pays once.** `2c_N·Λ(n)n^{−1/2}c_{N/n} ≤ c_{N/n}² + c_N²Λ(n)²/n`. The parents `N/n` are distinct and
+  below `N`, so the first terms total at most `Σ_n c′_n²` (`sum_parents_le`), which the spread `Σc_n²` supplies. For
+  the second, `Λ(n)/n ≤ log n/n ≤ 1/2` and `Σ_{n ∣ N}Λ(n) = log N` (`sum_vonMangoldt_sq_le`). So of the diagonal
+  `(log N + log 4 + 1)c_N²` at most `c_N² log N/2` is cancelled: a vector cannot cancel the edge `(N/q, N)` without
+  placing `√q·c_N` at the parent `N/q`, where the spread charges it. This is `slack_top`.
+- **The pivot.** `BallSharp.rate_slack` is `Q_N(x) ≥ (Σx_n² n + G(c))/(22e⁸N)` with `c_n = x_n√n`, and `c_N² = N x_N²`
+  cancels the `N`. The threshold `7100` is `K_H(1) < 0.0539` (`WeilTest.hadamard_const_lt`) and `e⁸ < 2981`.
+
+**The numbers** (`scripts/pivot_bound.py`, prime-side Gram matrices, uncertified). The pivots, their upper bound
+`u_k = log(k/2π) + 1 − γ`, the proved lower bound, and what the same argument gives with a sampling inequality of
+constant `ρ = 120` (below):
+
+| `k` | `2` | `10` | `100` | `1000` | `3000` |
+|---|---|---|---|---|---|
+| `d_k` | `0.0794` | `0.2934` | `1.648` | `4.128` | `5.526` |
+| `d_k/u_k` | | `0.33` | `0.52` | `0.75` | `0.84` |
+| `BallPivot.pivot_ge` | `5.7·10⁻⁵` | `6.9·10⁻⁵` | `8.7·10⁻⁵` | `1.0·10⁻⁴` | `1.1·10⁻⁴` |
+| the same with `ρ = 120` | `0.0065` | `0.0141` | `0.0276` | `0.0421` | `0.0471` |
+
+The least `d_k/d_1` over `2 ≤ k ≤ 3000` is `1.718`, at `k = 2`. On random and adversarial vectors `(Σc² + G(c))` is at
+least `2.8` times the bound of `slack_top`.
+
+**What closing the gap needs.** Only the constant. Suppose the sampling inequality in the form
+`Q_N(x) ≥ (π/(4ρN))·((log N + s)Σc_n² − L(c))` for some `ρ` and `s > 0`: the Fejér weight `sin²(πγ/2r)/γ²` with
+`r = ρN` has the diagonal density `log(r/2π) + 1 − γ − log 2 − log(π/2) = log(ρN/12.93)` exactly, so `ρ` is `12.93·e^s`
+times the factor that the archimedean cross terms, the region `|t| ≤ 2π` where the density is negative, and the pole
+cost. Then the argument above gives `d_N ≥ (π/(4ρ))·(s + Σ_{q ∣ N}Λ(q)g/(g + Λ(q)/q))`, where `g` is the grounding at
+the parents (`g ≥ s + 0.34` with Mertens' sum in the sharp form `Σ_{n ≤ y}Λ(n)/n ≤ log y`, where the library has
+`log y + log 4 + 1`). At `ρ = 120`, `s = 1/2` this passes `K_H(1)` near `k = 3000` (the table), inside the certificate's
+range, and the conjecture would then be equivalent to RH outright. `BallSharp.sharp_bound_slack` has `ρ ≈ 22e⁸/π`:
+its `T ≥ 2000N`, its `1/11` and its `−7` were chosen for the proof, not for the constant. So what is missing is the
+sampling inequality with its natural constants, an explicit computation with the test functions the library has, and
+the sharp Mertens bound. Neither is new mathematics.
+
+**Prior work.** The pivot inequality is the conjecture of this library's author; no source is known for it or for the
+bound. The mechanism of `slack_top` is that of `BallGap.gap_ge`, the ground-state transform on the divisibility graph,
+read at the top vertex instead of the root.
 
 ## The low zeros: what the zeros above `8N` give, and `λ_N` to `N = 3·10⁴` (`BallLow`; `scripts/lambda_large.py`)
 

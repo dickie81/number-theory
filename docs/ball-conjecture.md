@@ -15,6 +15,12 @@ The tests so far tell against that lattice statement as a route to RH. It fails 
 is proved, and for a positive proportion of Dirichlet `L`-functions, where GRH is expected. So as stated it is specific
 to `ζ` ("What it must survive", the last item).
 
+For `ζ` itself the statement is now RH up to finitely many cases. Under RH the Gram–Schmidt pivots of the orbit satisfy
+`d_k ≥ (log k/2 + log 4 + 2)/(22e⁸)` (`BallPivot.pivot_ge`), so they tend to infinity and `d_k ≥ d_1` holds for every `k`
+with `log k ≥ 7100` (`BallPivot.orbitLattice_of_log_ge`). The conjecture is therefore equivalent to RH together with the
+pivot inequalities for `log k < 7100` (`BallPivot.orbitLattice_iff`); what stands between that and an equivalence with
+RH outright is a constant ("What a proof under RH would need").
+
 ## The conjecture
 
 Weil proved the Riemann hypothesis for a curve `C` over a finite field from positivity on the surface `C × C`. On its
@@ -204,6 +210,10 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
     `k ≤ 10⁴`, with a wide margin at `k = 2` (`d_2/d_1 = 1.718`). The data point to a reason particular to `ζ`:
     conductor `1`, `K_H(1) = 0.046`, and no zero below `14.13`. So it reads as a property of `ζ`'s numbers rather than of
     its structure, and as stated it is not a promising route to RH.
+    - Under RH it holds for every large `k`: `d_k ≥ (log k/2 + log 4 + 2)/(22e⁸)`, which passes `d_1` once
+      `log k ≥ 7100` (`BallPivot.pivot_ge`, `BallPivot.orbitLattice_of_log_ge`). The analogues fail differently:
+      for a curve the zeros repeat vertically, which forces a null vector at `k = q^{2g}`; for the characters the
+      failures found are at the first two or three pivots, where the conductor and the low zeros decide.
   - **What a surviving version would need.** It would have to correct for the flat model, or depend on the conductor
     and the low zeros. It would then no longer be a uniform statement about a lattice.
 
@@ -365,7 +375,8 @@ Báez-Duarte, the last entry.
    > **The orbit lattice.** The Gram–Schmidt pivots `d_k` of the matrices `(√(mn)·K_H(m/n))_{m,n ≤ N}`, which
    > `BallPsi.gram_explicit` writes through `ψ`, satisfy `d_k ≥ d_1` for every `k`.
 
-   It holds for `k ≤ 10^4`, by the certificate above.
+   It holds for `k ≤ 10^4`, by the certificate above, and under RH for every `k` with `log k ≥ 7100`
+   (`BallPivot.orbitLattice_of_log_ge`).
 
    It is a statement about the primes. Under RH it says that in every realization of `K_H`, `w_{k+1}` keeps distance
    `‖w_1‖` from the span of `w_1, …, w_k`. The orbit then spans a lattice with `w_1` as a shortest vector
@@ -381,8 +392,9 @@ Báez-Duarte, the last entry.
 ## What a proof under RH would need
 
 The orbit-lattice conjecture of step 6 implies RH, so the question is whether RH implies it. It would then be another
-form of RH, and would not by itself prove RH. Four computations locate the difficulty; `scripts/ball_orbit.py`
-reproduces them.
+form of RH, and would not by itself prove RH. For every large `k` it does (`BallPivot`, the last paragraph of this
+section); the four computations below, which `scripts/ball_orbit.py` reproduces, were made before that and locate
+where the pivot is decided.
 
 - **The flat model is the equality case** (`BallFlat`). Replace the zeros by Lebesgue measure, with the same weights
   `1/(¼ + γ²)`. The kernel becomes `e^{−|log x|/2} = min(√x, 1/√x)` (`BallFlat.kerFlat_eq_integral`), and the orbit's
@@ -416,9 +428,28 @@ zeros sample `D` above the critical rate by a fixed factor. A Dirichlet polynomi
 and the zeros near height `T` have density `(1/2π)log(T/2π)`, so this needs `T ≥ k^{1+ε}`. There the weights
 `1/(¼ + γ²)` leave mass of order `log k/k^{1+ε}`, and `k` times that tends to `0`, short of `d_1`. The pivot is decided
 at heights comparable to `k`, near the critical rate, where the correlation terms are as large as the main term. So RH,
-through the known theorems, does not give the conjecture. A proof would need sharper information about the zeros near
-height `k`, in the direction of their pair correlation, or the integral structure behind the lattice that the
-conjecture is about. Neither is in hand.
+through the mean-value theorems of the literature, does not give the conjecture.
+
+**Under RH the pivots grow like `log k`.** The library's own sampling theorem does give it, for every large `k`. Under
+RH alone, Weil's explicit formula with a test function whose transform is supported below `1/(2k)` makes the diagonal
+and the prime side exact at heights `T ≍ k`, and gives `Q_k(x) ≥ (Σx_n² n + G(c))/(22e⁸k)` with `c_n = x_n√n` and `G`
+the slack of Landau's form (`BallSharp.rate_slack`). The correlation terms are that form, and at the top vertex it is
+weak: in the divisibility graph `k` has no children, and its parents are the `k/q`, `q` a prime power dividing `k`,
+with `Σ_q Λ(q) = log k`. A vector with `x_k = 1` can cancel the edge `(k/q, k)` only by placing `√q·c_k` at `k/q`, where
+the spread `Σc_n²` charges it, so at most half of the diagonal `(log k)c_k²` is lost: `Σc_n² + G(c) ≥
+(log k/2 + log 4 + 2)c_k²` (`BallPivot.slack_top`), and `c_k² = k`. Hence
+
+> `d_k ≥ (log k/2 + log 4 + 2)/(22e⁸)` under RH (`BallPivot.pivot_ge`),
+
+against `d_k ≤ u_k = log(k/2π) + 1 − γ + o(1)`: under RH the pivots are of exact order `log k`, they tend to infinity
+(`BallPivot.pivot_tendsto`), and `d_k ≥ d_1` for every `k` with `log k ≥ 7100`
+(`BallPivot.orbitLattice_of_log_ge`). So the conjecture is equivalent to RH together with the pivot inequalities for
+`log k < 7100` (`BallPivot.orbitLattice_iff`), finitely many statements about the primes, of which the certificate
+proves those for `k ≤ 10⁴`. The gap between `10⁴` and `e^{7100}` is the constant `22e⁸` of the sampling theorem, which
+was not chosen for size: with the natural constants of the same test functions the bound passes `d_1` near `k = 3000`
+([ball-rate.md](../formalisations/ball-rate.md), "The pivots"), and the conjecture would then be RH itself. Neither
+direction makes it a route to RH: it is what RH says about the pivots, as `λ_N ≍ log N/N` is what RH says about the
+smallest eigenvalue.
 
 ## Building the lattice forwards
 
