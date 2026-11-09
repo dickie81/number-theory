@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1382 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1392 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 161 | 472 |
+| `lib/core` | 163 | 482 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -426,6 +426,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilForm.rh_of_simple_ground_states`: The chain with the zero-swap lemma plugged in ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_simple_ground_states'`: The chain, with `ζ ≠ 0` on `(0, 1)` discharged ([note](../formalisations/weil-positivity.md))
 
+#### `JacobiFourSquares`: Jacobi's four-square theorem
+
+- `JacobiFourSquares.jtp`: Jacobi's triple product identity
+- `JacobiFourSquares.jacobi_cube`: Jacobi's identity
+- `JacobiFourSquares.theta_pow_four`: Jacobi's four-square identity
+- `JacobiFourSquares.r4_zero`: `r₄(0) = 1`
+- `JacobiFourSquares.r4_eq`: Jacobi's four-square theorem
+
 #### `KaiserBulk`: The bulk of the Kaiser probe and the doubled rate
 
 - `Kaiser.lam_kaiser`: Rung 0, doubled rate ([note](../formalisations/weil-positivity.md))
@@ -661,6 +669,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `TwinLandau`: The Landau argument for twin forms, for any zero family
 
 - `TwinLandau.Q_ge_of_rates`: The converse bound with a rate per pole
+
+#### `TwoVariableZeta`: The two-variable zeta function of Lagarias and Rains
+
+- `TwoVariableZeta.functional_equation`: The functional equation
+- `TwoVariableZeta.differentiableAt`: `Z(w, ·)` is holomorphic away from its poles `s = 0` and `s = w`.
+- `TwoVariableZeta.hasMellin`: On `Re s > w`, `2Z(w, s)` is the Mellin transform
+- `TwoVariableZeta.Z_one`: At `w = 1`, `Z` is the completed Riemann zeta function
+- `TwoVariableZeta.Z_four`: At `w = 4`, `Z` is the zeta function of `ℙ¹` over `ℤ` with its Euler factor at `2` changed
 
 #### `Unconditional`: Saturation without RH: verified zeros, a zero-counting bound, and monotonicity
 

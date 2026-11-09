@@ -260,6 +260,8 @@ import BallFlat
 import BallWeil
 import PurityRational
 import HodgeCounting
+import JacobiFourSquares
+import TwoVariableZeta
 import BallSlice
 import LonelyPrimes
 import LonelyJoins
@@ -1360,6 +1362,16 @@ twin-form rates at `11/12`. -/
 #print axioms PurityRational.xiP1_zP1
 #print axioms PurityRational.exists_zero_re_ne_one
 #print axioms PurityRational.not_posDef
+#print axioms JacobiFourSquares.jtp
+#print axioms JacobiFourSquares.jacobi_cube
+#print axioms JacobiFourSquares.theta_pow_four
+#print axioms JacobiFourSquares.r4_zero
+#print axioms JacobiFourSquares.r4_eq
+#print axioms TwoVariableZeta.functional_equation
+#print axioms TwoVariableZeta.differentiableAt
+#print axioms TwoVariableZeta.hasMellin
+#print axioms TwoVariableZeta.Z_one
+#print axioms TwoVariableZeta.Z_four
 #print axioms BallKernel.rh_iff_posDef
 #print axioms BallKernel.kerK_explicit
 #print axioms BallKernel.kerK_inv
