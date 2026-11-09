@@ -4,3 +4,6 @@ original=['GM_q_aspect', 'hybrid_energy', 'HB_LV_variants', 'jutila_mollifier', 
 order=[8, 20, 14, 18, 2, 16, 6, 21, 10, 12, 3, 22, 7, 17, 0, 23, 11, 13, 4, 19, 9, 15, 1, 5]
 shuffled=['smooth_mean_value', 'iwasawa_log', 'turan_power', 'delta_method', 'HB_LV_variants', 'combinatorial_energy', 'real_complex_split', 'bombieri_large_sieve', 'sum_product', 'pretentious', 'jutila_mollifier', 'matomaki_radziwill', 'composite_q_DI', 'ingham_refinement', 'GM_q_aspect', 'zero_repulsion', 'moment_half', 'selberg_zd', 'huxley_subdiv_q', 'spectral_large_sieve_var', 'decoupling', 'poly_method', 'hybrid_energy', 'halfplane_shorten']
 batch1_done=1-8
+batch2_done=9-16
+energy_probe=1009,10007,30011
+cgl_reopt=done

@@ -248,7 +248,7 @@ inequality reduces to forms already underlying Huxley/Montgomery.
 | 03 | `turan_power` | Dead | controls clusters per `χ`, not `|W|` |
 | 04 | `delta_method` | Dead | redo of cgl-s3 Poisson/Kloosterman barrier |
 | 05 | `HB_LV_variants` | Dead | classical LV cannot beat GM/CGL critical regime |
-| 06 | `combinatorial_energy` | Partial | not excluded; near-extremisers look unstructured |
+| 06 | `combinatorial_energy` | Partial | see Batch 2 energy probe: 3–7× random E₊, ≪ AP |
 | 07 | `real_complex_split` | Dead | too few real `χ` to affect the sum |
 | 08 | `bombieri_large_sieve` | Dead | helps almost-all `q`, not every `q` |
 
@@ -259,9 +259,231 @@ beyond CGL, not a redo), `hybrid_energy`, `jutila_mollifier`, `pretentious`, `de
 
 **No Lean claims. No improvement of `A` claimed.**
 
+
+---
+
+## Additive energy of near-extremal `W` (Numerical; opening #06)
+
+Script: `scripts/density_hunt/energy_adversarial.py`. `W ⊂ Z/(q−1)Z` via discrete logs; adversarial = truncated
+power method of `scripts/cgl_s3/probe.py` at `R = round(q^{2/3})`, `N ≈ q^{7/9}`. Additive energy
+`E₊(W) = Σ_s r_W(s)²` with `r_W = 1_W ∗ 1_W`. Random baseline in `Z/M` is `E₊ ∼ R⁴/M`.
+
+| `q` | `R` | adv `E₊/(R⁴/M)` | random `E₊/(R⁴/M)` | AP `E₊/(R⁴/M)` | adv/random |
+|---|---|---|---|---|---|
+| `1009` | `101` | `3.58` | `≈ 1.16` | `≈ 9.0` | `≈ 3.1` |
+| `10007` | `464` | `5.94` | `≈ 1.08` | `≈ 14.4` | `≈ 5.5` |
+| `30011` | `966` | `6.68` | `≈ 1.06` | `≈ 20.7` | `≈ 6.3` |
+
+(Raw `E₊/R³`: adv `0.359`, `0.275`, `0.215`; random `0.116`, `0.050`, `0.034`; AP `0.903`/`0.667`/`0.667`.
+Computed 2026-11-09, seed `0` in the script; tpm ≤ 41 iters.)
+
+**Reading.** Adversarial `W` carries **3–7×** the additive energy of a random set of the same size, and the ratio
+grows slowly with `q`. It remains **well below** arithmetic progressions / intervals (`∼ 9–21×` random). So there is
+genuine additive structure, but not AP-level structure. Opening #06 stays **Partial**: an energy-increment proof
+would have to exploit a moderate-energy regime, not only Bohr/AP extremisers. Combined with `cgl-s3` §3 (adversarial
+`S₃` near the CGL bound), the near-extremisers for `S₃` are **not** the same as max-energy sets; high `S₃` and high
+`E₊` may diverge.
+
+---
+
+## CGL parameter re-optimisation (Numerical; opening #15 / `GM_q_aspect`)
+
+Script: `scripts/density_hunt/cgl_reopt.py`, same LV terms as `scripts/cgl_s3/price.py`.
+
+**Critical point arithmetic at `σ = 5/7`, `y = 7/9`, `c = 4/3`:**
+
+| term | value |
+|---|---|
+| `y(2−2σ)` (diag) | `0.444444` |
+| `½ + y(3−4σ)` | `0.611111` |
+| **`c + y(2−4σ)` (S₃)** | **`0.666667`** |
+| `1 + y(12/5−4σ)` (GM) | `0.644444` |
+| MVT `1 + y(1−2σ)` | `0.666667` |
+| target `(7/3)(1−σ)` | `0.666667` |
+
+So at the classical critical point the **S₃ term and MVT tie** at `2/3`; GM and half are strictly smaller. Any
+improvement of uniform `A` must beat this tie.
+
+**Baseline peak** of `min(Ingham, A_CGL, Huxley)`: `≈ 2.3334` at `σ ≈ 0.7148`, binding CGL with **`S₃`**, `a* ≈ 0.777`.
+
+**Retuning free numerical parameters (same four LV terms):**
+
+| change | peak `A` | note |
+|---|---|---|
+| dyadic ratio `3/2 → 1.2` | `≈ 2.160` | **not free**: ratio `3/2` is CGL’s covering of detector lengths in §12; shrinking leaves lengths untreated unless a new covering is proved |
+| ratio `1.3`, `1.4` | `≈ 2.210`, `≈ 2.267` | same objection |
+| ratio `≥ 1.5` | `≥ 7/3` | baseline or worse |
+| `y_floor ∈ [0.5, 0.75]` | `≈ 2.333` unchanged | no gain |
+| widen/narrow `a`-range | `≈ 2.333`–`2.334` | no gain |
+| drop `c` below `4/3` | peak falls to Ingham–GM glue `≈ 2.308` (`30/13`) once `c ≲ 1.30` | **requires an analytic `S₃` saving**; matches `cgl-s3` §1 |
+
+**Binding term along `σ`:** near `0.70`–`0.71` the optimiser reports `MVT`; from `≈ 0.715` the binding CGL term is
+`S₃` (alternating with MVT depending on grid). Consistent with Remark 12.3.
+
+**Verdict for free re-optimisation: Dead.** The only numerical move that lowers the peak below `7/3` without
+changing LV terms is an illegitimate shrink of the dyadic ratio, or a smaller `c` (analytic work on `S₃`).
+
+---
+
+## Batch 2: openings 09–16
+
+### What must be beaten at `σ = 5/7` (common ledger)
+
+Write `|W| ≪ (qT)^α` for the large-value set at detector length `N = (qT)^y`. Density needs
+`α ≤ A(1−σ)`. At `σ = 5/7`, `1−σ = 2/7`, target `A = 7/3` means `α ≤ 2/3`. CGL achieves `α = 2/3` via
+`min(MVT, Thm1.1) = 2/3` with the S₃ contribution `c + y(2−4σ) = 2/3` at `y = 7/9`, `c = 4/3`. Equivalently,
+`S₃ ≪ (qT)² |W|^{3/2}` at `T = 1` forces `|W| ≪ q^{4/3} N^{2−4σ} = q^{2/3}` at criticality
+(`cgl-s3` §1, `price.py`). **To get `A < 7/3` one needs either `α < 2/3` at this point, or a shift of the
+Ingham/CGL meeting point by lowering the CGL curve on a neighbourhood of `5/7`.**
+
+### 09. `sum_product` — Dead
+
+**Idea.** Sum–product estimates (`max(|W+W|, |W·W|) ≫ |W|^{1+δ}`) on the large-value set in `F_q` or on
+`Z/(q−1)Z` to force expansion and then bound character sums on expanding sets.
+
+**Bookkeeping.** Need `α ≤ 2/3 − ε`. Sum–product gives expansion of `W`, not a bound on `S₃ = tr(E³)` or on
+`Σ_{χ∈W} |D(χ)|⁴`. Even with `|W+W| ≫ |W|^{1+δ}`, the CGL energy/S₃ estimates do not automatically improve:
+their Prop. 10.2 / 11.1 already handle general `W`. Expansion helps when one *completes sums* over `W+W`; that
+requires a different expansion of `S₃` than CGL’s.
+
+**Specific obstruction.** The additive-energy probe shows adversarial `W` is only moderately expanding
+(`E₊/(R⁴/M) ≈ 6–7`, so `|W+W|` is smaller than random but not tiny). Sum–product in `F_q` is for subsets of
+fields; `W` lives in the dual of `F_q^*` (circle group). Translating SP to a saving on `c = 4/3` needs a new
+identity. No such identity is in hand; without it SP does not move `α`.
+
+**Verdict: Dead** until coupled to an `S₃` identity. (Not the same as excluded Bohr tests; still blocked.)
+
+### 10. `pretentious` — Dead for uniform `A`
+
+**Idea.** Granville–Soundararajan pretentiousness: a character with a large Dirichlet polynomial is pretentious
+to a characters of small conductor / `n^{it}`, so large-value characters are scarce.
+
+**Bookkeeping.** Pretentious large-value theorems typically give `|W| ≪ (qT)^{ε}` or weak powers for
+*extremal* `|D(χ)| ≈ N`, not for the critical threshold `V = N^{5/7} = N^σ`. At `V = N^σ` with `σ = 5/7`,
+one is far below the Halász extremal regime. CGL’s count `|W| ≪ (qT)^{2/3}` is already a polynomial bound for
+medium-large values; pretentious methods shine near the maximum.
+
+**Specific obstruction.** Halász–type / pretentious bounds degrade as `V/N` drops. At `V = N^{5/7}` they do not
+beat `α = 2/3`. (cf. classical Halász–Montgomery already excluded as #05.)
+
+**Verdict: Dead.**
+
+### 11. `jutila_mollifier` — Dead for beating `7/3`
+
+**Idea.** Replace CGL’s soft detector / mollifier lengths by Jutila-style zero-detection with different
+mollifier support, hoping the large-value input is applied at a friendlier `(y, V)`.
+
+**Bookkeeping.** Jutila’s classical density exponent was `≈ 2.46 > 7/3`. CGL already optimises detector length
+`y` against their Thm 1.1 (the `min_a max_{[a,3a/2]}` in `price.py`). Changing mollifier length moves you along
+the same LV curve; it cannot undercut the curve’s maximum without a better LV theorem.
+
+**Specific obstruction.** At `σ = 5/7` the binding point is `y = 7/9` where S₃ ties MVT. Any mollifier that
+pushes `y` away from `7/9` either hits a worse CGL term or leaves the Ingham range. Recomputing `A_cgl` over
+`y` is exactly `cgl_reopt.py`; free length changes do not drop the peak below `7/3`.
+
+**Verdict: Dead.**
+
+### 12. `matomaki_radziwill` — Dead
+
+**Idea.** Use Matomäki–Radziwiłł short-interval multiplicative cancellation for `χ(n)` / coefficients along
+short intervals of integers, to improve mean values of detectors.
+
+**Bookkeeping.** MR gives cancellation for multiplicative functions on short intervals in the *integer*
+aspect, averaged over starting points. CGL’s critical objects are *characters* with a fixed smooth detector of
+length `N ≍ q^{7/9}`. Swapping in MR would target `Σ_{n∼N} a_n χ(n)` for many `χ` — the same mean value
+already bounded by large sieve / MVT at strength giving `α = 2/3` on the MVT side of the tie.
+
+**Specific obstruction.** MR does not improve the character-aspect large sieve at the critical `V = N^{5/7}`.
+It also does not touch `S₃`’s Kloosterman/R-structure (Remark 12.3). Wrong aspect for the binding term.
+
+**Verdict: Dead.**
+
+### 13. `composite_q_DI` — Dead for uniform `A` (every `q`)
+
+**Idea.** For composite `q`, Deshouillers–Iwaniec / factorable moduli already appear in CGL’s method and give
+Guth–Maynard’s `30/13` when `q` has a suitable factor; push this harder and glue to prime `q`.
+
+**Bookkeeping.** Uniform `A` is the max over all `q`. CGL explicitly: the `7/3` comes from **prime** `q` at
+`T = 1` (`cgl-s3` intro). Improving composite `q` only cannot lower the uniform exponent. Linnik needs every
+`q`.
+
+**Specific obstruction.** Excluded cousin of `cgl-s3` §11 for the prime case; for composite `q` the exponent
+is already ≤ `30/13 < 7/3`. No uniform gain.
+
+**Verdict: Dead.**
+
+### 14. `ingham_refinement` — Dead without CGL improvement
+
+**Idea.** Improve Ingham’s `3/(2−σ)` below `σ = 5/7` so that even with CGL unchanged the meeting point drops,
+lowering uniform `A`.
+
+**Bookkeeping.** Uniform `A = max( max_{σ≤5/7} Ingham(σ), max_{σ≥5/7} CGL(σ) )`. Ingham is decreasing in `σ`;
+its value at `5/7` is already `7/3`. Improving Ingham for `σ < 5/7` does not change the value at the meeting
+point if CGL still hits `7/3` at `5/7`. To move the meeting point left/down one must lower the CGL curve
+(see `cgl_reopt` `c`-sweep: only then the peak slides to `≈ 0.70` with height `30/13`).
+
+**Specific obstruction.** At `σ = 5/7`, Ingham = CGL = `7/3` exactly. Refining Ingham elsewhere leaves this
+tie intact.
+
+**Verdict: Dead.**
+
+### 15. `GM_q_aspect` — Dead as free reopt; Partial as research direction
+
+**Idea.** Re-read CGL’s adaptation of Guth–Maynard for lossy case splits, unused savings, or parameter slack;
+re-optimise numerically; seek a sharper q-aspect LV theorem than CGL Thm 1.1.
+
+**What we checked (Numerical + reading).**
+- Term ledger at criticality: S₃ ties MVT; GM term `0.644 < 0.667` has **slack** of `0.022` in the `|W|`
+  exponent — improving GM alone by less than that does **nothing** at `σ = 5/7`.
+- Free parameters `y_floor`, `a`-range: no gain (`cgl_reopt.py`).
+- Dyadic ratio `< 3/2`: numerically drops peak below `7/3`, but **not justified** by CGL’s covering (see above).
+- Reducing `c` (S₃ constant) is the only analytic path that moves the peak; then Ingham/GM glue at `30/13`.
+
+**Specific obstruction for a free win.** The binding term is S₃/`c`, not the GM large-value term. “More GM” is
+the wrong corner of the max in Thm 1.1 at the critical point. A new GM-style inequality that *also* improves
+the affine/GCD sums feeding Prop. 8.1 / 11.1 could help, but that is exactly CGL’s hard step (Remark 12.3),
+already hunted in `cgl-s3`.
+
+**Verdict: Dead** as a free re-optimisation. **Partial** only as a synonym for “improve S₃ / Prop. 11.1”, which
+is the existing open problem—not a new opening.
+
+### 16. `zero_repulsion` — Dead for the density sum
+
+**Idea.** Deuring–Heilbronn repulsion / zero repulsion between nearby zeros or characters to limit how many
+`χ` can have a zero near `σ = 5/7` simultaneously.
+
+**Bookkeeping.** Repulsion gives spacing for zeros of a *fixed* L-function, or landau–Siegel type repulsion for
+an exceptional real zero. The half-plane `Re s > 11/12` already removes exceptional zeros. For the density
+*sum* `Σ_χ N(σ,T,χ)`, repulsion does not give a power saving on `|W|` at medium heights: characters are
+orthogonal, and many can vanish near the same height without sharing an exceptional zero.
+
+**Specific obstruction.** No exceptional-zero term remains in the Linnik chain (half-plane). Classical
+repulsion does not bound the number of distinct characters with a zero at `β ≈ 5/7`.
+
+**Verdict: Dead.**
+
+---
+
+## Batch 2 summary
+
+| # | id | verdict | obstruction / lead |
+|---|---|---|---|
+| 06 | `combinatorial_energy` | **Partial** (updated) | adv `E₊` is 3–7× random but ≪ AP; structure exists, not AP-shaped |
+| 09 | `sum_product` | Dead | no bridge from expansion to `S₃` / `α < 2/3` |
+| 10 | `pretentious` | Dead | wrong regime (`V ≈ N`, not `N^{5/7}`) |
+| 11 | `jutila_mollifier` | Dead | length retune cannot undercut LV curve max |
+| 12 | `matomaki_radziwill` | Dead | integer short-interval aspect, not binding character LV |
+| 13 | `composite_q_DI` | Dead | uniform `A` fixed by prime `q` |
+| 14 | `ingham_refinement` | Dead | meeting point tied at `5/7` by CGL, not Ingham |
+| 15 | `GM_q_aspect` | Dead (free reopt) / Partial (≡ improve S₃) | GM term has slack; S₃ binds; ratio shrink not free |
+| 16 | `zero_repulsion` | Dead | no exceptional-zero lever left; doesn’t bound `|W|` |
+
+**Still alive after 16 openings:** `#06 combinatorial_energy` (weak, now quantified), and `#15` only as restatement
+of the S₃ problem. **No improvement of `A` claimed.**
+
 ## Next steps
 
-1. Continue openings 09–16 in seed order with the same template.
-2. Add `scripts/density_hunt/energy_adversarial.py` wrapping `scripts/cgl_s3/` data to measure additive energy
-   of near-extremal `W` (supports or kills `combinatorial_energy`).
-3. Keep this note updated on branch `density-exponent-hunt`; no force-push.
+1. Continue openings 17–24 in seed order (`moment_half` … `halfplane_shorten`).
+2. Optional: correlate `S₃` and `E₊` on the same `W` (adversarial vs max-energy sets) to see whether energy
+   increment can touch Remark 12.3.
+3. Keep pushing to PR #98; no force-push; docs/scripts only.
