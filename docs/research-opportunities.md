@@ -531,8 +531,9 @@ These are computations in floating point, not certificates. Two things would mak
 - **The existence theorem, `∃ s, dh s = 0 ∧ 1 < Re s`, at low height.** Bohr's argument in the form: choose phases
   `ψ(p)` for the primes below `750` (aligned as above) and `ψ(p) = 1` beyond; the Dirichlet series
   `g(s) = Σ a_n ψ(n) n^{−s}` is `L(s, χ)` and `L(s, χ̄)` with finitely many Euler factors changed, so it can be
-  evaluated near a real point `σ₀ ≈ 1.05` with the library's approximant at height `0`, and a zero of `g` there
-  certified as the located zeros are; Kronecker's theorem (the library has `BohrTorus.tendsto_mean_character`) gives
+  evaluated near a real point `σ₀ ≈ 1.05` with the library's Euler–Maclaurin approximants of the Hurwitz zeta
+  functions (`HurwitzEM`) at height `0`, and a zero of `g` there certified as the located zeros are; Kronecker's
+  theorem (the library has `BohrTorus.tendsto_mean_character`) gives
   `τ` with `p^{−iτ}` within `ε` of `ψ(p)` for every prime below `N`, so that `|f(s + iτ) − g(s)|` is at most
   `ε·log₂N·Σ_{n ≤ N} n^{−σ} + 2Σ_{n > N} n^{−σ}`, small on the disc; Rouché's theorem ends it. No prime number
   theory is needed, and no large height. This is a formalisation of a few modules, not attempted here.
