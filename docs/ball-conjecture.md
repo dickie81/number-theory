@@ -121,7 +121,10 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
   - **Lattice points in balls.** For an integer `w`, `θ^w` is the theta function of `ℤ^w`, a Gaussian-weighted count of
     the points that `BallTower` counts, and `Z(w, s)` is the completed Epstein zeta function of the cubic lattice. Its
     Dirichlet series has an Euler product only for `w = 0, 1, 2, 4, 8`: the zeta functions of `ℤ`, the Gaussian
-    integers, the integral quaternions and the integral octaves (their Lemma 3.5).
+    integers, the integral quaternions and the integral octaves (their Lemma 3.5). At `w = 4` the count closes up in
+    Lean: the points of `ℤ⁴` in the ball of radius `√N` number `∼ (π²/2)N²` (`FourSquareResidue.tendsto_sum_r4`), which
+    with Jacobi's theorem gives the residue of `(1 − 4^{1−s})ζ(s)ζ(s − 1)` at `s = 2` and so `ζ(2) = π²/6`
+    (`FourSquareResidue.riemannZeta_two_of_lattice`).
   - **Where RH holds.** The line is `Re s = w/2`. RH there is expected at `w = 1` and `2`. It fails at `w = 4` and `8`
     whatever the truth of RH: with `z = s/2` the Dirichlet series are `(1 − 4^{1−z})ζ(z)ζ(z − 1)` and
     `(1 − 2^{1−z} + 2^{4−2z})ζ(z)ζ(z − 3)`, and their zeros at `z = ρ` lie off the lines `Re z = 1` and `2`. In Lean

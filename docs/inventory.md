@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1397 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1406 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 164 | 487 |
+| `lib/core` | 166 | 496 |
 | `lib/pnt` | 252 | 805 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 8 | 34 |
@@ -331,6 +331,21 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `FirstFailure`: The first positivity failure
 
 - `WeilForm.first_failure`: The first positivity failure ([note](../formalisations/weil-positivity.md))
+
+#### `FourSquareResidue`: `ζ(2) = π²/6` from the points of `ℤ⁴` in a ball
+
+- `FourSquareResidue.latticeCount_four_sqrt`: Lattice count = shell sum
+- `FourSquareResidue.tendsto_sum_r4`: The points of `ℤ⁴` in a ball
+- `FourSquareResidue.residue_sigma4`: The residue at `s = 2`
+- `FourSquareResidue.riemannZeta_two_of_lattice`: `ζ(2) = π²/6` from counting the points of `ℤ⁴` in balls
+
+#### `FourSquareTeeth`: The global step in 4D, and the alternating lattice sum of `ℤ⁴`
+
+- `FourSquareTeeth.r4_two_pow_mul`: The count at `2`
+- `FourSquareTeeth.r4_pow_mul`: The count at an odd prime
+- `FourSquareTeeth.lseries_r4`: `Σ r₄(n)n^{−s} = 8(1 − 4^{1−s})ζ(s)ζ(s − 1)`
+- `FourSquareTeeth.lseries_alt`: The alternating lattice sum of `ℤ⁴`
+- `FourSquareTeeth.differentiableOn_rhs`: The continuation
 
 #### `FourierGap`: A certified lower bound on `Q₀` orthogonally to `w`, for every `0 < a ≤ 0.35`
 

@@ -263,6 +263,8 @@ import HodgeCounting
 import JacobiFourSquares
 import TwoVariableZeta
 import TwoVariableZetaPurity
+import FourSquareTeeth
+import FourSquareResidue
 import BallSlice
 import LonelyPrimes
 import LonelyJoins
@@ -1378,6 +1380,15 @@ twin-form rates at `11/12`. -/
 #print axioms TwoVariableZetaPurity.Z_four_eq
 #print axioms TwoVariableZetaPurity.Z_four_zP1
 #print axioms TwoVariableZetaPurity.exists_zero_re_ne_two
+#print axioms FourSquareTeeth.r4_two_pow_mul
+#print axioms FourSquareTeeth.r4_pow_mul
+#print axioms FourSquareTeeth.lseries_r4
+#print axioms FourSquareTeeth.lseries_alt
+#print axioms FourSquareTeeth.differentiableOn_rhs
+#print axioms FourSquareResidue.latticeCount_four_sqrt
+#print axioms FourSquareResidue.tendsto_sum_r4
+#print axioms FourSquareResidue.residue_sigma4
+#print axioms FourSquareResidue.riemannZeta_two_of_lattice
 #print axioms BallKernel.rh_iff_posDef
 #print axioms BallKernel.kerK_explicit
 #print axioms BallKernel.kerK_inv
