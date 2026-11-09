@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1383 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1534 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 160 | 467 |
+| `lib/core` | 184 | 618 |
 | `lib/pnt` | 253 | 808 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 10 | 37 |
@@ -29,6 +29,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `AngularResidue.residue_angular`: The residue of the radial member
 - `AngularResidue.LFunction_chi4_one`: `L(1, χ₋₄) = π/4`
+
+#### `ArakelovRiemannRoch`: Riemann–Roch for the Arakelov divisors of `ℚ`, and Lagarias–Rains's `Z(w, s)` as an integral over them
+
+- `ArakelovRiemannRoch.riemann_roch`: Riemann–Roch for the Arakelov divisors of `ℚ`
+- `ArakelovRiemannRoch.le_h0`: Riemann's inequality
+- `ArakelovRiemannRoch.tendsto_h0_atBot`: Vanishing in negative degree
+- `ArakelovRiemannRoch.tendsto_h0_sub_atTop`: `h⁰` is the degree in large degree
+- `ArakelovRiemannRoch.Z_eq_integral`: Lagarias and Rains's `Z(w, s)` is van der Geer and Schoof's integral over the Arakelov divisors of `ℚ`
 
 #### `BallCurve`: The orbit curve: a realization of `K` along the positive reals
 
@@ -80,7 +88,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `BallHadamard.kerH_one`: `K_H(1)` is Hadamard's constant
 - `BallHadamard.kerH_inv`: The kernel is even
-- `BallHadamard.rh_iff_posDefH`: The Riemann hypothesis is positive-definiteness of `K_H` on the positive rationals
+- `BallHadamard.rh_iff_posDefH`: The Riemann hypothesis is positive-definiteness of `K_H` on the positive rationals ([note](../formalisations/weil-positivity.md))
 - `BallHadamard.rh_iff_realizationH`: The Riemann hypothesis is the existence of a realization of `K_H`
 - `BallHadamard.not_smooth`: `K_H` is not smooth at `1`
 - `BallHadamard.unbounded_gaps`: The gaps are unbounded
@@ -88,7 +96,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `BallKernel`: The kernel of the ball conjecture: the Riemann hypothesis as positive-definiteness on `ℚ₊^×`
 
 - `BallKernel.re_eq_zero_of_dense`: Twin positivity on the positive rationals puts every pole on the imaginary axis
-- `BallKernel.rh_iff_posDef`: The Riemann hypothesis is positive-definiteness on the positive rationals
+- `BallKernel.rh_iff_posDef`: The Riemann hypothesis is positive-definiteness on the positive rationals ([note](../formalisations/weil-positivity.md))
 - `BallKernel.kerK_inv`: The kernel is even
 - `BallKernel.kerK_explicit`: The explicit formula computes the kernel from the primes
 
@@ -110,7 +118,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `BallPsi`: The Hadamard kernel from the primes: `K_H` through Chebyshev's `ψ`
 
 - `BallPsi.kerH_explicit`: The explicit formula for `K_H`, through Chebyshev's `ψ`
-- `BallPsi.rh_iff_posDef_psi`: The Riemann hypothesis from the primes
+- `BallPsi.rh_iff_posDef_psi`: The Riemann hypothesis from the primes ([note](../formalisations/weil-positivity.md))
 - `BallPsi.gram_explicit`: The Gram matrix of the orbit, through `ψ`
 - `BallPsi.norm_sq_ge_of_dist`: A Gram–Schmidt bound gives a lattice
 - `BallPsi.orbit_lattice`: The orbit of `K_H` spans a lattice, if the Gram–Schmidt bound holds
@@ -301,6 +309,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `Eis.LFunction_ne_zero_of_re_gt`: The half-plane `Re s > 11/12` for every Dirichlet character *paper* ([note](../formalisations/openai-half-plane.md))
 
+#### `EightSquareResidue`: `ζ(4) = π⁴/90` from the points of `ℤ⁸` in a ball
+
+- `EightSquareResidue.latticeCount_eight_sqrt`: Lattice count = shell sum
+- `EightSquareResidue.tendsto_sum_r8`: The points of `ℤ⁸` in a ball
+- `EightSquareResidue.residue_f8`: The residue at `s = 4`
+- `EightSquareResidue.riemannZeta_four_of_lattice`: `ζ(4) = π⁴/90` from counting the points of `ℤ⁸` in balls
+
 #### `EisensteinCubicRecip`: S1, part 3b: cubic reciprocity on `ℤ[ω]`
 
 - `Eis.cub_recip`: Cubic reciprocity *paper*
@@ -325,6 +340,73 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Eis.fBound_gcd`: Heath-Brown's Lemma 2
 - `Eis.fBound_sep`: Heath-Brown's Lemma 10
 
+#### `EpsteinFlat`: Flat lattices: the Epstein zeta function of `ℤ ⊕ yℤ` has a zero off its critical line once `y > e²`
+
+- `EpsteinFlat.hasSum_theta`: `θ_y(t) = Σ_{(m, n) ∈ ℤ²} e^{−πt(m² + y²n²)/y}`
+- `EpsteinFlat.theta_inv`: `θ_y(1/t) = tθ_y(t)`
+- `EpsteinFlat.Lambda_one_sub`: The functional equation
+- `EpsteinFlat.differentiableAt_Lambda`: `Λ_y` is holomorphic away from its poles `s = 0` and `s = 1`.
+- `EpsteinFlat.hasMellin_theta`: On `Re s > 1`, `Λ_y(s)` is the Mellin transform
+- `EpsteinFlat.hasSum_Lambda`: On `Re s > 1`, `Λ_y(s) = π^{−s}Γ(s)Σ_{(m, n) ≠ 0}(Q_y(m, n)/y)^{−s}`
+- `EpsteinFlat.Lambda_one`: At `y = 1`, `Λ_1(s) = 2Z(2, 2s)`
+- `EpsteinFlat.Lambda_sqrt_two`: At `y = √2`, `Λ_{√2}` is the completed Epstein zeta function of `x² + 2y²`
+- `EpsteinFlat.rh_one_iff`: At `y = 1`, RH for `Λ_1` is RH for `ζ` and GRH for `χ₋₄` ([note](../formalisations/weil-positivity.md))
+- `EpsteinFlat.rh_sqrt_two_iff`: At `y = √2`, RH for `Λ_{√2}` is RH for `ζ` and GRH for `χ₋₈` ([note](../formalisations/weil-positivity.md))
+- `EpsteinFlat.Lambda_ofReal`: `Λ_y` on the real axis
+- `EpsteinFlat.tendsto_Lambda_re`: `Λ_y(σ) → −∞` as `σ → 1⁻`
+- `EpsteinFlat.le_Lambda_half`: `Λ_y(½) ≥ 2√y(log y − 2)`
+- `EpsteinFlat.exists_zero_off_line`: A zero off the critical line
+- `EpsteinFlat.not_rh`: RH fails for the Epstein zeta function of `ℤ ⊕ yℤ` when `y > e²` ([note](../formalisations/weil-positivity.md))
+- `EpsteinFlat.exists_zero_fiftyEight`: `x² + 58y²`
+- `EpsteinFlat.not_rh_fiftyEight`: RH fails for `x² + 58y²` ([note](../formalisations/weil-positivity.md))
+
+#### `EpsteinHexagonal`: The Epstein zeta function of the hexagonal lattice is the Dedekind zeta function of `ℚ(√−3)`
+
+- `EpsteinHexagonal.rQ_eq`: The points of the hexagonal lattice on each circle
+- `EpsteinHexagonal.lseries_rQ`: The Dirichlet series of `r_Q`
+- `EpsteinHexagonal.hasSum_thetaQ`: `θ_Q(t) = Σ_{v ∈ ℤ²} e^{−2πtQ(v)/√3}`.
+- `EpsteinHexagonal.thetaQ_inv`: `θ_Q(1/t) = tθ_Q(t)`
+- `EpsteinHexagonal.LambdaQ_one_sub`: The functional equation
+- `EpsteinHexagonal.differentiableAt_LambdaQ`: `Λ_Q` is holomorphic away from its poles `s = 0` and `s = 1`.
+- `EpsteinHexagonal.LambdaQ_eq_of_one_lt_re`: On `Re s > 1`, `Λ_Q(s) = 6(2π/√3)^{−s}Γ(s)ζ(s)L(s, χ₋₃)`
+- `EpsteinHexagonal.LambdaQ_eq`: `Λ_Q(s) = 3·√3^s ζ̂(s)Λ(s, χ₋₃)` off `s = 0, 1`
+- `EpsteinHexagonal.LambdaQ_eq_zero_iff`: In the strip `0 < Re s < 1`, `Λ_Q(s) = 0` exactly when `ζ(s) = 0` or `L(s, χ₋₃) = 0`
+- `EpsteinHexagonal.rh_hex_iff`: The Riemann hypothesis for the hexagonal lattice is RH for `ζ` and GRH for `χ₋₃` ([note](../formalisations/weil-positivity.md))
+- `EpsteinHexagonal.rh_hex_iff_twins`: …and so it is Weil's twin criterion for `ζ_{ℚ(√−3)}` ([note](../formalisations/weil-positivity.md))
+
+#### `EpsteinSeven`: The Epstein zeta function of `x² + xy + 2y²` is the Dedekind zeta function of `ℚ(√−7)`
+
+- `EpsteinSeven.ι_surjective`: The ring of integers of `ℚ(√−7)` is `ℤ[ω]`
+- `EpsteinSeven.isSquare_neg_seven_iff`: Quadratic reciprocity for `−7`
+- `EpsteinSeven.rA_eq`: The ideal count of `ℚ(√−7)`
+- `EpsteinSeven.rQ_eq`: The points of `x² + xy + 2y²` on each ellipse
+- `EpsteinSeven.lseries_rQ`: The Dirichlet series of `r_Q`
+- `EpsteinSeven.hasSum_thetaQ`: `θ_Q(t) = Σ_{v ∈ ℤ²} e^{−2πtQ(v)/√7}`.
+- `EpsteinSeven.thetaQ_inv`: `θ_Q(1/t) = tθ_Q(t)`
+- `EpsteinSeven.LambdaQ_one_sub`: The functional equation
+- `EpsteinSeven.differentiableAt_LambdaQ`: `Λ_Q` is holomorphic away from its poles `s = 0` and `s = 1`.
+- `EpsteinSeven.LambdaQ_eq_of_one_lt_re`: On `Re s > 1`, `Λ_Q(s) = 2(2π/√7)^{−s}Γ(s)ζ(s)L(s, χ₋₇)`
+- `EpsteinSeven.LambdaQ_eq`: `Λ_Q(s) = √7^s ζ̂(s)Λ(s, χ₋₇)` off `s = 0, 1`
+- `EpsteinSeven.LambdaQ_eq_zero_iff`: In the strip `0 < Re s < 1`, `Λ_Q(s) = 0` exactly when `ζ(s) = 0` or `L(s, χ₋₇) = 0`
+- `EpsteinSeven.rh_iff`: The Riemann hypothesis for `x² + xy + 2y²` is RH for `ζ` and GRH for `χ₋₇` ([note](../formalisations/weil-positivity.md))
+- `EpsteinSeven.rh_iff_twins`: …and so it is Weil's twin criterion for `ζ_{ℚ(√−7)}` ([note](../formalisations/weil-positivity.md))
+
+#### `EpsteinTwo`: The Epstein zeta function of `x² + 2y²` is the Dedekind zeta function of `ℚ(√−2)`
+
+- `EpsteinTwo.ι_surjective`: The ring of integers of `ℚ(√−2)` is `ℤ[√−2]`
+- `EpsteinTwo.rA_eq`: The ideal count of `ℚ(√−2)`
+- `EpsteinTwo.rQ_eq`: The points of `x² + 2y²` on each ellipse
+- `EpsteinTwo.lseries_rQ`: The Dirichlet series of `r_Q`
+- `EpsteinTwo.hasSum_thetaQ`: `θ_Q(t) = Σ_{v ∈ ℤ²} e^{−πtQ(v)/√2}`.
+- `EpsteinTwo.thetaQ_inv`: `θ_Q(1/t) = tθ_Q(t)`
+- `EpsteinTwo.LambdaQ_one_sub`: The functional equation
+- `EpsteinTwo.differentiableAt_LambdaQ`: `Λ_Q` is holomorphic away from its poles `s = 0` and `s = 1`.
+- `EpsteinTwo.LambdaQ_eq_of_one_lt_re`: On `Re s > 1`, `Λ_Q(s) = 2(π/√2)^{−s}Γ(s)ζ(s)L(s, χ₋₈)`
+- `EpsteinTwo.LambdaQ_eq`: `Λ_Q(s) = √8^s ζ̂(s)Λ(s, χ₋₈)` off `s = 0, 1`
+- `EpsteinTwo.LambdaQ_eq_zero_iff`: In the strip `0 < Re s < 1`, `Λ_Q(s) = 0` exactly when `ζ(s) = 0` or `L(s, χ₋₈) = 0`
+- `EpsteinTwo.rh_iff`: The Riemann hypothesis for `x² + 2y²` is RH for `ζ` and GRH for `χ₋₈` ([note](../formalisations/weil-positivity.md))
+- `EpsteinTwo.rh_iff_twins`: …and so it is Weil's twin criterion for `ζ_{ℚ(√−2)}` ([note](../formalisations/weil-positivity.md))
+
 #### `EulerGammaBinet`: Euler's constant to seven digits, from Binet's formula
 
 - `Electron.eulerMascheroni_bounds`: Euler's constant to seven digits
@@ -336,6 +418,21 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `FirstFailure`: The first positivity failure
 
 - `WeilForm.first_failure`: The first positivity failure ([note](../formalisations/weil-positivity.md))
+
+#### `FourSquareResidue`: `ζ(2) = π²/6` from the points of `ℤ⁴` in a ball
+
+- `FourSquareResidue.latticeCount_four_sqrt`: Lattice count = shell sum
+- `FourSquareResidue.tendsto_sum_r4`: The points of `ℤ⁴` in a ball
+- `FourSquareResidue.residue_sigma4`: The residue at `s = 2`
+- `FourSquareResidue.riemannZeta_two_of_lattice`: `ζ(2) = π²/6` from counting the points of `ℤ⁴` in balls
+
+#### `FourSquareTeeth`: The global step in 4D, and the alternating lattice sum of `ℤ⁴`
+
+- `FourSquareTeeth.r4_two_pow_mul`: The count at `2`
+- `FourSquareTeeth.r4_pow_mul`: The count at an odd prime
+- `FourSquareTeeth.lseries_r4`: `Σ r₄(n)n^{−s} = 8(1 − 4^{1−s})ζ(s)ζ(s − 1)`
+- `FourSquareTeeth.lseries_alt`: The alternating lattice sum of `ℤ⁴`
+- `FourSquareTeeth.differentiableOn_rhs`: The continuation
 
 #### `FourierGap`: A certified lower bound on `Q₀` orthogonally to `w`, for every `0 < a ≤ 0.35`
 
@@ -419,12 +516,32 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `HasseEisenstein.exists_eisenstein_trace`: The Frobenius of `y² = x³ + D` is an Eisenstein integer of norm `q`
 - `HasseEisenstein.abs_trace_le`: Hasse's bound for `y² = x³ + D`
 
+#### `HodgeCounting`: The Hodge index theorem from counting: Minkowski's theorem as the bridge to `BallWeil`
+
+- `HodgeCounting.CountingModel.riemannRoch_of_hilbertSamuel`: Hilbert–Samuel growth gives Riemann–Roch growth
+- `HodgeCounting.hodge_index`: The Hodge index theorem from counting
+- `HodgeCounting.rh_iff_counting`: RH is the Hodge index theorem from counting
+- `HodgeCounting.rh_iff_hilbertSamuel`: RH is the Hodge index theorem from Hilbert–Samuel growth
+
 #### `HurwitzCross`: The chain with zeros on `ℝ ∪ iℝ`
 
 - `WeilForm.rh_of_prime_side_cross`: The chain with zeros on the cross ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_prime_side`: §11 item 1 ⇒ RH, with prime-side hypotheses only ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_simple_ground_states`: The chain with the zero-swap lemma plugged in ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_simple_ground_states'`: The chain, with `ζ ≠ 0` on `(0, 1)` discharged ([note](../formalisations/weil-positivity.md))
+
+#### `JacobiEightSquares`: Jacobi's eight-square theorem
+
+- `JacobiEightSquares.r8_zero`: `r₈(0) = 1`
+- `JacobiEightSquares.r8_eq`: Jacobi's eight-square theorem
+
+#### `JacobiFourSquares`: Jacobi's four-square theorem
+
+- `JacobiFourSquares.jtp`: Jacobi's triple product identity
+- `JacobiFourSquares.jacobi_cube`: Jacobi's identity
+- `JacobiFourSquares.theta_pow_four`: Jacobi's four-square identity
+- `JacobiFourSquares.r4_zero`: `r₄(0) = 1`
+- `JacobiFourSquares.r4_eq`: Jacobi's four-square theorem
 
 #### `KaiserBulk`: The bulk of the Kaiser probe and the doubled rate
 
@@ -600,6 +717,37 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `PsiOmega.psi_omega_half`: `ψ(x) − x = Ω±(x^θ)` for every `0 < θ < ½`, unconditionally
 
+#### `PurityLadder`: The ladder of `ζ(s)ζ(s − k)`: RH as the least rate of an impure twin form
+
+- `PurityLadder.Qk_one`: The first rung is `ℙ¹`
+- `PurityLadder.explicit_formula_k`: The explicit formula for the twins of `ζ(s)ζ(s − k)`
+- `PurityLadder.rate_iff_k`: The rate of `ζ(s)ζ(s − k)`'s twin defect
+- `PurityLadder.rate_iff_zeta_k`: The rate of `ζ(s)ζ(s − k)` is that of `ζ` plus `k`
+- `PurityLadder.not_subexp_k`: For `k ≥ 1` the defect of `ζ(s)ζ(s − k)` is never subexponential
+- `PurityLadder.rh_iff_rate_k`: The ladder ([note](../formalisations/weil-positivity.md))
+
+#### `PurityPsi`: The kernel of `ℙ¹` from the primes: a prime-side kernel that is not positive-definite
+
+- `PurityPsi.kerP1_inv`: `K(1/r) = K(r)`
+- `PurityPsi.kerP1_explicit`: The explicit formula for the kernel of `ℙ¹`, through the primes ([note](../formalisations/weil-positivity.md))
+- `PurityPsi.not_posDef_psi`: A kernel from the primes that is not positive-definite ([note](../formalisations/weil-positivity.md))
+
+#### `PurityQuaternion`: The integral quaternions: zeros on the line do not rescue positivity
+
+- `PurityQuaternion.not_posDef_of_re_ne`: One pole off the axis forbids positivity
+- `PurityQuaternion.xiQ_poleQ`: `ξ_Q` vanishes at every `1 + P`
+- `PurityQuaternion.not_posDef_quaternion`: The kernel of the integral quaternions is not positive-definite ([note](../formalisations/weil-positivity.md))
+
+#### `PurityRational`: Purity over `ℚ`: the zeta function of `ℙ¹` over `ℤ`
+
+- `PurityRational.functional_equation`: The functional equation of `ℙ¹` ([note](../formalisations/weil-positivity.md))
+- `PurityRational.euler_product`: The Euler product of `ℙ¹` ([note](../formalisations/weil-positivity.md))
+- `PurityRational.xiP1_zP1`: Each `ρ` and each `ρ + 1` is a zero of `ζ̂(s)ζ̂(s − 1)`
+- `PurityRational.exists_zero_re_ne_one`: `ζ̂(s)ζ̂(s − 1)` has zeros off its line `Re s = 1` ([note](../formalisations/weil-positivity.md))
+- `PurityRational.not_posDef_kerG`: No weight makes the kernel of `ℙ¹` positive-definite ([note](../formalisations/weil-positivity.md))
+- `PurityRational.not_posDef`: The kernel of `ℙ¹` is not positive-definite on the positive rationals ([note](../formalisations/weil-positivity.md))
+- `PurityRational.not_posDef_gauss`: The Gaussian kernel of `ℙ¹` is not positive-definite on the positive rationals ([note](../formalisations/weil-positivity.md))
+
 #### `PurityTest`: The purity test: an Euler product and a functional equation, without positivity
 
 - `PurityTest.dvd_necklace`: The necklace congruence
@@ -609,6 +757,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PurityTest.not_posDef`: The kernel of `Y`'s counts is not positive-definite
 - `PurityTest.posDef_elliptic`: Every elliptic curve's kernel is positive-definite
 - `PurityTest.card_ne_countY`: No elliptic curve over `𝔽_27` has `Y`'s counts
+
+#### `PurityTwins`: The `ℙ¹` column of Weil's twin criterion: its defect is never subexponential
+
+- `PurityTwins.explicit_formula`: The explicit formula for the twins of `ℙ¹`
+- `PurityTwins.rate_iff`: The rate of `ℙ¹`'s twin defect
+- `PurityTwins.rate_iff_zeta`: The rate of `ℙ¹` is that of `ζ` plus one ([note](../formalisations/weil-positivity.md))
+- `PurityTwins.not_subexp`: The defect of `ℙ¹` is never subexponential ([note](../formalisations/weil-positivity.md))
+- `PurityTwins.rh_iff_rate_one`: RH is the least rate for `ℙ¹` ([note](../formalisations/weil-positivity.md))
 
 #### `QuadIdeals`: The ideals of a quadratic field of each norm, and its Dedekind zeta function
 
@@ -624,6 +780,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ShellSchur.nonneg_of_coupling`: Coupling bound ⇒ nonnegativity
 - `ShellSchur.margin_of_coupling`: Coupling bound with margin
 - `ShellSchur.chain_nonneg`: Finite chain of shells
+
+#### `SiegelFour`: Siegel's formula for four squares: the points on the sphere are the volume times the local densities
+
+- `SiegelFour.localCount_eq_card`: The local count in `(ℤ/q)⁴`
+- `SiegelFour.localCount_succ`: The counts stabilise (Hensel)
+- `SiegelFour.tendsto_delta`: `δ_p(n)` is the limit
+- `SiegelFour.delta_odd`: The density at an odd prime
+- `SiegelFour.delta_two`: The density at `2`
+- `SiegelFour.siegel`: Siegel's formula for four squares
 
 #### `SimpleCont`: Continuation for simplicity
 
@@ -653,6 +818,35 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `TwinLandau`: The Landau argument for twin forms, for any zero family
 
 - `TwinLandau.Q_ge_of_rates`: The converse bound with a rate per pole
+
+#### `TwoVariableZeta`: The two-variable zeta function of Lagarias and Rains
+
+- `TwoVariableZeta.functional_equation`: The functional equation
+- `TwoVariableZeta.differentiableAt`: `Z(w, ·)` is holomorphic away from its poles `s = 0` and `s = w`.
+- `TwoVariableZeta.hasMellin`: On `Re s > w`, `2Z(w, s)` is the Mellin transform
+- `TwoVariableZeta.Z_one`: At `w = 1`, `Z` is the completed Riemann zeta function
+- `TwoVariableZeta.Z_four`: At `w = 4`, `Z` is the zeta function of `ℙ¹` over `ℤ` with its Euler factor at `2` changed
+
+#### `TwoVariableZetaEight`: The two-variable zeta function at `w = 8`: Jacobi's eight squares, and zeros off the line
+
+- `TwoVariableZetaEight.LSeries_f8`: `Σ f₈(n) n^{−z} = (1 − 2^{1−z} + 2^{4−2z}) ζ(z) ζ(z − 3)`
+- `TwoVariableZetaEight.Z_eight`: At `w = 8`, `Z` is a product of two zeta functions with the Euler factor at `2` changed
+- `TwoVariableZetaEight.Z_eight_eq`: `Z(8, 2z) = c₈(z)·ζ̂(z)ζ̂(z − 3)` off `z = 0, 1, 3, 4`
+- `TwoVariableZetaEight.exists_zero_re_ne_four`: The Riemann hypothesis fails for `Z(8, ·)`, whatever the truth of RH
+
+#### `TwoVariableZetaPurity`: The two-variable zeta function at `w = 4` is the zeta function of `ℙ¹`, and it has zeros off its line
+
+- `TwoVariableZetaPurity.Z_four_eq`: `Z(4, 2z) = c(z)·ζ̂(z)ζ̂(z − 1)` off `z = 0, 1, 2`
+- `TwoVariableZetaPurity.Z_four_zP1`: Every zero of `ℙ¹` doubled is a zero of `Z(4, ·)`
+- `TwoVariableZetaPurity.exists_zero_re_ne_two`: The Riemann hypothesis fails for `Z(4, ·)`, whatever the truth of RH
+
+#### `TwoVariableZetaTwo`: The two-variable zeta function at `w = 2` is the completed Dedekind zeta function of `ℚ(i)`
+
+- `TwoVariableZetaTwo.Z_two`: At `w = 2`, `Z` is the completed Dedekind zeta function of `ℚ(i)`
+- `TwoVariableZetaTwo.Z_two_eq`: `Z(2, 2z) = 2^z ζ̂(z)Λ(z, χ₋₄)` off `z = 0, 1`
+- `TwoVariableZetaTwo.Z_two_eq_zero_iff`: In the strip `0 < Re s < 2`, `Z(2, s) = 0` exactly when `ζ(s/2) = 0` or `L(s/2, χ₋₄) = 0`
+- `TwoVariableZetaTwo.rh_two_iff`: The Riemann hypothesis for `Z(2, ·)` on its line `Re s = 1` is RH for `ζ` and GRH for `χ₋₄` ([note](../formalisations/weil-positivity.md))
+- `TwoVariableZetaTwo.rh_two_iff_QK_twins`: …and so it is Weil's twin criterion for `ζ_{ℚ(i)}` ([note](../formalisations/weil-positivity.md))
 
 #### `Unconditional`: Saturation without RH: verified zeros, a zero-counting bound, and monotonicity
 
@@ -938,6 +1132,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilZhuRed.QF_even_pos`
 - `WeilZhuRed.QF_odd_pos`
 
+#### `WengRankTwo`: Weng's rank-2 zeta function of `ℚ` satisfies the Riemann hypothesis
+
+- `WengRankTwo.weng_eq`: The entire form
+- `WengRankTwo.weng_one_sub`: The functional equation
+- `WengRankTwo.wengNum_one_sub`: The numerator changes sign
+- `WengRankTwo.norm_xi_lt`: The domination ([note](../formalisations/weil-positivity.md))
+- `WengRankTwo.rh_wengNum`: The Riemann hypothesis for the numerator
+- `WengRankTwo.rh_weng`: The Riemann hypothesis for Weng's rank-2 zeta function of `ℚ` ([note](../formalisations/weil-positivity.md))
+- `WengRankTwo.differenced_real`: The differenced `Ξ`
+
 #### `WindowForm`: The prime-side window form: its algebra, its certification logic, and the counterexample mechanism
 
 - `WindowForm.ghat_cos`: The window basis transform
@@ -954,6 +1158,25 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `XiBounds`: The order of `Ξ`, from Riemann's theta kernel
 
 - `WeilForm.rh_of_D_and_realRooted_final`: Roadmap item 1, final form ([note](../formalisations/weil-positivity.md))
+
+#### `XiReflection`: Reflection across vertical lines: RH as a family of inequalities for `|ξ|`, and Lagarias's positivity
+
+- `XiReflection.xi_conj`: `ξ(s̄) = conj ξ(s)`
+- `XiReflection.Xi_conj`: `Ξ(t̄) = conj Ξ(t)`
+- `XiReflection.reflect_lt`: Reflection across `Re s = ½ + κ`
+- `XiReflection.reflect_one`: Across `Re s = 1`, with no hypothesis
+- `XiReflection.reflect_xi`: Reflection across `Re s = c`
+- `XiReflection.reflect_xi_one`: Across `Re s = 1`, with no hypothesis ([note](../formalisations/weil-positivity.md))
+- `XiReflection.abs_im_le_of_reflect`: The reflection inequality across `Re s = ½ + κ` confines the zeros to `|Re ρ − ½| ≤ κ` ([note](../formalisations/weil-positivity.md))
+- `XiReflection.rh_iff_reflect`: RH is the reflection inequality across every line `Re s = ½ + κ`, `κ > 0` ([note](../formalisations/weil-positivity.md))
+- `XiReflection.rh_iff_reflect_xi`: RH is the reflection inequality across every line `Re s = c > ½` ([note](../formalisations/weil-positivity.md))
+- `XiReflection.rh_iff_monotone`: Monotonicity ([note](../formalisations/weil-positivity.md))
+- `XiReflection.rh_iff_logDeriv_pos`: Positivity ([note](../formalisations/weil-positivity.md))
+
+#### `XiReflectionBand`: The library's zero-free band, as reflection inequalities for `|ξ|`
+
+- `XiReflectionBand.reflect_band`: The band as reflection, in `Ξ`
+- `XiReflectionBand.reflect_xi_band`: The band as reflection, in `ξ` ([note](../formalisations/weil-positivity.md))
 
 #### `ZerosDense`: The zeros of `ζ` are denser than any linear rate
 
