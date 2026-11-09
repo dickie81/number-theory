@@ -178,6 +178,11 @@ than it appears to, or rest on more than it should.
     `scripts/lean/StatementClosure.lean` counts them).
   - lean4lean, also shipped, reads only `.olean` files, and not this toolchain's ("incompatible header"). It was not
     run.
+  - `LinnikCGLContinuation.cglDensity_of_continuation` (under "What the statement is"), built locally at `b0dac28`,
+    passes the same checks, in 13 min 15 s. Each checker rejects the control. The export has 14,592,217 records.
+    Lean's kernel accepts it, nanoda checks 84,264 declarations, con-leche and con-ron each accept 81,582, and the
+    replay gives back all 83,235 constants. Each count is `cglDensity`'s plus the four constants its proof adds, all
+    four theorems.
 
   So the theorem does not rest on the elaborator, on the Mathlib cache or on Lean's kernel alone.
 - **Every interface is discharged.** `CGLT101`, `CGLP81`, `CGLS2`, `CGLS3` and `CGLProp31` are proved by `cglt101`,
