@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1586 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1592 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 190 | 670 |
-| `lib/pnt` | 253 | 808 |
+| `lib/pnt` | 255 | 814 |
 | `lib/dh` | 21 | 71 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1304,6 +1304,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `ClassNumberBound.abs_discr_le`: Gauss's class number problem, with an explicit bound
 
+#### `ClassNumberOne`: Gauss's class number one problem: the nine imaginary quadratic fields (Baker, Heegner, Stark)
+
+- `ClassNumberOne.heegner_or_good`: The finite search ([note](../formalisations/class-number-one.md))
+- `ClassNumberOne.discr_of_classNumber_eq_one`: Only the nine ([note](../formalisations/class-number-one.md))
+- `ClassNumberOne.classNumber_eq_one_of_discr`: The nine fields have class number one ([note](../formalisations/class-number-one.md))
+- `ClassNumberOne.classNumber_eq_one_iff`: Gauss's class number one problem ([note](../formalisations/class-number-one.md))
+
 #### `ClassNumberSharp`: Class numbers of quadratic fields with explicit constants, and class number one below `2.5·10⁷`
 
 - `ClassNumberSharp.classNumber_ge_sharp`: The class number of an imaginary quadratic field, from below, with explicit constants
@@ -1312,7 +1319,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ClassNumberSharp.regulator_mul_classNumber_le_sharp`: The class number and regulator of a real quadratic field, from above, with explicit constants
 - `ClassNumberSharp.classNumber_ge_85`: `h_K ≥ √|D_K|/(85(52 + log log(|D_K| + 2)))`
 - `ClassNumberSharp.regulator_mul_classNumber_ge_55`: `R_K h_K ≥ √D_K/(55(52 + log log(D_K + 2)))`
-- `ClassNumberSharp.abs_discr_lt_of_classNumber_eq_one`: Class number one below `2.5·10⁷`
+- `ClassNumberSharp.abs_discr_lt_of_classNumber_eq_one`: Class number one below `2.5·10⁷` ([note](../formalisations/class-number-one.md))
 
 #### `CyclotomicFrobenius`: Small Frobenius elements generate the cyclotomic Galois groups
 
@@ -2086,7 +2093,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LittlewoodSharp`: Littlewood's bounds for `L(1, χ)` with explicit constants, for every Dirichlet character
 
 - `LittlewoodSharp.norm_LFunction_one_bounds_of`: `e^{−bd} ≤ |L(1, χ)| ≤ e^{bd}`
-- `LittlewoodSharp.norm_LFunction_one_bounds_sharp`: Littlewood's bounds with explicit constants, for every Dirichlet character
+- `LittlewoodSharp.norm_LFunction_one_bounds_sharp`: Littlewood's bounds with explicit constants, for every Dirichlet character ([note](../formalisations/class-number-one.md))
 
 #### `LogDerivDisc`: The log-derivative of a function with no zero in a half-plane, by the disc step
 
@@ -2221,7 +2228,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `QuadKronecker.type_one`: The splitting law, `d ≡ 1 (mod 4)`
 - `QuadKronecker.type_two_three`: The splitting law, `d ≡ 2, 3 (mod 4)`
 - `QuadKronecker.exists_kronecker`: The Kronecker character of a quadratic field
-- `QuadKronecker.classNumber_formula`: The class number formula for every imaginary quadratic field, with its Kronecker character
+- `QuadKronecker.classNumber_formula`: The class number formula for every imaginary quadratic field, with its Kronecker character ([note](../formalisations/class-number-one.md))
+
+#### `QuadPrincipal`: Principal ideals of prime norm in an imaginary quadratic field
+
+- `QuadPrincipal.abs_discr_le_of_norm`: An element of `𝓞 K` of prime norm `p` (up to sign) forces `|D_K| ≤ 4p` ([note](../formalisations/class-number-one.md))
+- `QuadPrincipal.classNumber_eq_one_of_inert`: Class number one from inert primes ([note](../formalisations/class-number-one.md))
 
 #### `QuadRing`: The ring of integers of a quadratic field
 
@@ -2238,7 +2250,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `QuadRing.adjoin_θ₂`: `𝓞 K = ℤ[s]`
 - `QuadRing.discr_θ₂`: The discriminant is `4d`
 - `QuadRing.minpoly_θ₂`: The minimal polynomial of `s` over `ℤ` is `X² − d`
-- `QuadRing.exists_sqrt`: Every quadratic field contains a square root `s` of a squarefree integer `d ≠ 1`
+- `QuadRing.exists_sqrt`: Every quadratic field contains a square root `s` of a squarefree integer `d ≠ 1` ([note](../formalisations/class-number-one.md))
 
 #### `QuadSplit`: The splitting law in a quadratic field
 
