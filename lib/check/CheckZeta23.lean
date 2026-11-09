@@ -9,6 +9,7 @@ import ZeroWindow
 import HybridCertificate
 import CriticalLine
 import ZeroOrder
+import ZeroCount
 
 /- The zeros on the critical line: Hardy's theorem, Selberg's positive proportion, the same for the simple zeros, and
 Alpöge and Furman's Theorems A, B and C as zeta23 proves them, with no hypothesis. -/
@@ -50,6 +51,9 @@ bound of `ShellDensity.NX_zero_ge`, at least `T log T / 8π` zero pairs up to he
 nontrivial zero is real. -/
 #print axioms ZeroOrder.im_ne_zero
 #print axioms ZeroOrder.analyticOrderAt_le
+
+/- The Riemann–von Mangoldt formula with `Zeta23.Ncount`: `N(T, 2T) = (T/2π)(log(T/2π) + 2 log 2 − 1) + O(log T)`. -/
+#print axioms ZeroCount.riemann_von_mangoldt
 
 /- The same-space hybrid certificate on zeta23's zero side, for any zero-block data. -/
 #print axioms HybridCert.cert_general

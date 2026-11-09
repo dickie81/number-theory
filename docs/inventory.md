@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1382 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1383 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -14,7 +14,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | `lib/core` | 160 | 467 |
 | `lib/pnt` | 253 | 808 |
 | `lib/dh` | 21 | 71 |
-| `lib/zeta23` | 9 | 36 |
+| `lib/zeta23` | 10 | 37 |
 
 ## The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`
 
@@ -2727,6 +2727,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SlogZeta.Slog_eventually`: `S(T) = O(log T)`, eventually
 - `SlogZeta.Slog_zeta`: `S(t) = O(log t)` on `t ≥ 14`
 - `SlogZeta.wall_law_zeta_S`: 1ca(i)–(iii) for ζ, with von Mangoldt's bound proved
+
+#### `ZeroCount`: The Riemann–von Mangoldt formula, in Mathlib's terms
+
+- `ZeroCount.riemann_von_mangoldt`: The Riemann–von Mangoldt formula
 
 #### `ZeroOrder`: The order of a zero of `ζ` is `O(log |γ|)`, with explicit constants
 
