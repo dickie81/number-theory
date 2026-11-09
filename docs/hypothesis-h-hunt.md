@@ -253,3 +253,159 @@ No call to `price.py` / `density_payoff.py` for a new `A` or `L`: there is no pr
 | Next genuine targets (unchanged) | Prove power saving in `J₆` / single-modulus 6th moment of `L` / twisted moments (E4, E10, E12) |
 
 **No improvement of `A` or Linnik `L`.**
+
+
+---
+
+## Deep dive: anatomy of `J₆`, LoD/`Kl₃`, pretentious dyadic gap (2026-11-09)
+
+Continues past the exclusion list and the 18 openings. Does **not** repeat Bettin–Chandee,
+Kuznetsov, or the §9 `D+S+F` shifted-`d₃` average over sparse `kq` as a claimed solution.
+New framing: level of distribution for the **restricted** ternary divisor `r₃^I`, plus
+exact `k`-decomposition numerics, plus the range of pretentious theorems for the dyadic gap.
+
+Scripts: `j6_anatomy_bookkeeping.py`, `j6_k_decompose.py`.
+
+### A. Anatomy of `J₆(I)`
+
+Let `I ⊂ (x,2x]` (or `[1,x]`), `x = q^{7/18}`, `X = x³ = q^{7/6}`, and
+`r₃(n) = #{(a,b,c) ∈ I³ : abc = n}`. Then
+
+```
+J₆(I) = Σ_{|k|≤K} N(kq),     N(h) = Σ_m r₃(m) r₃(m+h),
+K = ⌊(max I³ − min I³)/q⌋ ≍ q^{1/6}.
+```
+
+| Piece | What | Size vs main `|I|⁶/q = q^{4/3}` |
+|---|---|---|
+| `k = 0` | Integer equality `abc = def` (diagonal `E₆`) | `N(0) ≍ x³ (log x)^{c}` with `c = (3−1)² = 4` (Conrey–Gamburd); ratio to main `≍ q^{−1/6}(log)^{c}` — **power below** main asymptotically |
+| `0 < \|k\| ≤ K` | `abc − def = kq` (small multiples) | Carry the singular series + error; their average manufactures the main term |
+| Main term | Equidistribution: `|I|³` products among `q` classes ⇒ `J₆ ∼ \|I|⁶/q` | Equivalent: `J₆ = \|I|⁶/(q−1) + error` is (H) |
+
+**(H) needs** error `O(x⁶ q^{−1−η}) = O(q^{4/3−η})`. Asymptotically the diagonal alone is
+`O(q^{7/6}(log)^{c}) = O(q^{4/3−1/6}(log)^{c})`, so it is **not** the asymptotic obstacle —
+the obstacle is the average of `N(kq) − (singular series)` over the `K ≍ q^{1/6}` nonzero shifts
+(the `F` of `cgl-s3` §9). At reachable `q` the opposite is visible (next subsection).
+
+### B. Level-of-distribution angle (genuinely different framing)
+
+**Need.** Equidistribution of `{abc : a,b,c ∈ I}` among residue classes mod `q`, with
+`X = q^{7/6}` products. That is LoD for `r₃^I` at level
+
+```
+θ_LoD = log q / log X = 6/7 ≈ 0.857.
+```
+
+**What was excluded in §9.** Sparse shifted-convolution averages of unrestricted / box-`d₃`
+over shifts `h = kq` spaced `q` apart (no dense interval of `h`); then Bettin–Chandee /
+Kuznetsov after Poisson. Those do not claim an LoD theorem for `r₃^I`.
+
+**What the LoD literature gives for unrestricted `d₃`.**
+
+| Source | Level (prime moduli where noted) |
+|---|---|
+| Friedlander–Iwaniec | `1/2 + 1/230` |
+| Heath-Brown | `1/2 + 1/82` |
+| Fouvry–Kowalski–Michel | `1/2 + 1/46` (primes); `1/2 + 1/34` avg residue |
+
+All `≪ 6/7` (shortfall `≳ 0.33`). These use Deligne on auxiliary Friedlander–Iwaniec /
+hyper-Kloosterman correlation sums to break the large-sieve `1/2` barrier — they do **not**
+reach level `2/3`, let alone `6/7`.
+
+**Short-interval structure + incomplete geometric sums.**
+`S(r) = Σ_{n₁,n₂,n₃ ∈ I} e(r n₁n₂n₃/q)`. Summing `n₃` first:
+
+```
+|S(r)| ≪_ε x³/q + x² = q^{1/6} + q^{7/9}   (dominant q^{7/9}).
+```
+
+Parseval: `Σ_a E_a² = q^{−1} Σ_{r≠0} |S(r)|² ≪ q^{14/9}`, against need `q^{4/3}` — short by
+`q^{2/9}`. Level reachable with `|S| ≪ Y²` alone: `Q ≤ Y² = X^{2/3}`, i.e. **level `≤ 2/3 < 6/7`**.
+Gap: `6/7 − 2/3 = 4/21`. To hit level `6/7` one needs RMS `|S| ≪ q^{2/3}`, i.e. an extra
+saving `q^{1/9}` beyond the geometric bound.
+
+**Deligne / `Kl₃` after three Poisson summations.** Dual length `M = q/x = q^{11/18}`.
+Normalized `|Kl₃(a;q)| ≤ 2` (Deligne). Crude insertion over all `M³` dual frequencies gives
+`|S| ≪ q`, **worse** than the geometric `q^{7/9}`. Random-model dual cancellation would give
+`|S| ≪ x^{3/2}/q^{1/2} = q^{1/12}` and prove (H) amply — **unproved**. Published FI/HB/FKM
+savings that use Deligne stop near level `1/2+`. Short dyadic factors are already fully used
+in the geometric bound; they do not upgrade LoD from `2/3` to `6/7`.
+
+**Averaging over the `q^{1/6}` shifts `k`.** This average **is** `J₆` itself (equidistribution
+variance). It is not the dense-interval average supplied by Matomäki–Radziwiłł–Tao /
+Baier–Browning–Marasingha–Zhao. Spacing `q = X^{6/7}` is too large for those theorems
+(already in §9). LoD framing does not remove the sparsity.
+
+**Verdict on the LoD/`Kl₃` angle: Dead** as a proof of (H). Precise obstruction: need level
+`6/7`; short-interval technology reaches `≤ 2/3`; Deligne does not close `4/21` without
+unproved dual square-root cancellation.
+
+### C. Numerics: which `k` carries the excess?
+
+`j6_k_decompose.py` (FFT autocorrelation of `r₃` on `I = (x,2x]`):
+
+| `q` | `(J₆−main)/main` | `N(0)/main` | diagonal share of excess | small-`|k|` mean `2N/main` |
+|---|---|---|---|---|
+| 503 | +1.72 | 2.35 | ~79% | 0.048 |
+| 10007 | +1.60 | 2.03 | ~64% | 0.041 |
+| 30011 | +1.65 | 2.02 | ~62% | 0.039 |
+| 100003 | +1.64 | 2.00 | ~61% | (same pattern) |
+
+- **At all reachable `q`, the `k=0` diagonal dominates the visible excess** (`N(0) ≈ 2 · main`).
+  Asymptotically `N(0)/main ≍ q^{−1/6}(log x)^4 → 0` only near `q ≈ 10^{27}` (`cgl-s3` §8).
+- Nonzero-`k` mass concentrates on **small** `|k|` (first third of `1..K`); large `|k|` are
+  negligible. After signature-matching (`shifts.py`, §9) most of that mass is singular series,
+  leaving `F ≈ −0.08 · main` — small, slowly drifting.
+- For `[1,x]`: `N(0)/main ≈ 4–7.6` (much larger diagonal from smooth / highly composite
+  products); matches the larger character-count ratios.
+
+**Obstacle localization.**
+- *Numerically (finite `q`):* `k=0` diagonal log-powers — not a disproof of (H).
+- *Asymptotically (for a proof of (H)):* still the nonzero-`k` error `F` / LoD failure at level
+  `6/7` (same wall as §9–11 and subsection B).
+
+### D. Dyadic vs `[1,x]` gap and pretentious theorems
+
+**Empirical gap** (`short_sum_counts.py` / `cgl-s3` §8): count `/ q^{2/3}` is `~1.0–1.4` on
+`[1,x]` vs `~0.2–0.3` on `(x,2x]`; fitted α `≈ 0.73` vs `≈ 0.63`.
+
+**Rigorous explanation of the mechanism (not yet a power saving).**
+Characters pretentious to `χ₀` on small primes (`χ(p) ≈ 1` for `p ≤ y`) satisfy
+`S_I(χ) ≈ Σ_{n∈I, y-smooth} 1`. The smooth mass in `[1,x]` includes all of `Ψ(x,y)`, while
+`(x,2x]` only sees the thin top slice; small `n` with `χ(n) = 1` exactly feed `[1,x]` and not
+the dyadic block. This is the `cgl-s3` §8 pretentious heuristic, confirmed by the diagonal
+gap in subsection C (`N(0)/main` several times larger on `[1,x]`).
+
+**Can pretentious theorems make the dyadic case rigorous?**
+
+| Tool | Range | Applies at `x=q^{7/18}`? |
+|---|---|---|
+| Granville–Soundararajan pretentious structure | Large `M(χ) = max_{N≤q} |Σ_{n≤N} χ(n)|` near `√q` scale | **No** — long sums, not length `q^{7/18}` |
+| Bober–Goldmakher–Granville–Koukoulopoulos | Distribution of `M(χ)/√q` | **No** — same long-sum maximum |
+| Short-sum Gaussian (e.g. arXiv:1106.6072) | `Σ_{x<n≤x+H} χ(n)` as `x` varies, needs `log H = o(log q)` | **No** — `H = q^{7/18}` has `log H ≍ log q` |
+| Halász-type mean values for pretentious distance | Typically averages of `|Σ_{n≤x} f(n)|` for multiplicative `f` | Gives structure, not a proved `#{χ : |S_{(x,2x]}| ≥ x^{5/7}} ≪ q^{2/3−η}` |
+
+**Verdict.** The dyadic restriction **does** kill the main pretentious contribution
+heuristically (and numerically), but **no published pretentious / Halász theorem applies at
+length `q^{7/18}`** to turn that into a power saving. Making it rigorous remains open and is
+essentially a form of (H) for dyadic intervals (the detector's case).
+
+### E. Rigorous partials from this dive?
+
+| Claim | Status |
+|---|---|
+| Diagonal `N(0)` is `o(main)` by a power `q^{−1/6}` (up to logs) | **Yes** (standard `E₆ ≍ x³(log)^4`) — not new; does not give (H) |
+| LoD for `r₃^I` at level `6/7` via geometric + Deligne | **No** — reaches at most level `2/3` |
+| Dyadic pretentious saving with η>0 | **No** — out of range of GS/BGGK/short-Gaussian |
+| Full (H) | **Still open** |
+
+No η>0 proved. No call to price/`density_payoff` for a new `A` or `L`.
+
+### Updated live status
+
+| Angle | Status after deep dive |
+|---|---|
+| LoD / `Kl₃` / short-factor `d₃` in APs | **Dead** (need `6/7`, have `≤2/3` or `~1/2+`) |
+| `k`-decomposition obstacle | Finite-`q`: diagonal; asymptotic: still `F` / LoD |
+| Pretentious dyadic rigorization | **Partial** heuristic; theorems miss the range |
+| (H) itself | **Open** |
