@@ -140,9 +140,9 @@ Zeros with `Re s > 1`, in the half-plane of absolute convergence, are located nu
   `2(p₀ + e₀) < a₀r − m₂r²` is `1.74·10⁻⁵ < 2.399·10⁻⁵`.
 
 The zero is the one of largest real part below height `10000` in Bombieri and Ghosh's computations (their §9),
-`2.37474435 + 1649.8708285i`; refined here to `2.3747443578 + 1649.8708285004i` before it was certified. It cost a
-sixth of one of the fifth zero's six files. For `dh` itself the zeros right of `1` start near height `2.5·10¹²` and are
-not certified.
+`2.37474435 + 1649.8708285i`; refined here to `2.3747443578 + 1649.8708285004i` before it was certified. The
+kernel's part is one file, where the fifth zero has six. For `dh` itself the zeros right of `1` start near height
+`2.5·10¹²` and are not certified.
 
 **On the critical line** (`DHChannels.lean`): `L(s, χ₅)L(1 − s, χ₅) = ε²L(s, χ₅⁻¹)L(1 − s, χ₅⁻¹)`
 (`PsiOmega.chi5_channel_fe`), the phase lock (`PsiOmega.chi5_phase_lock`), the reality of the channel ratio on the line

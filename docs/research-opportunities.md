@@ -566,9 +566,9 @@ Bombieri and Ghosh's §9 gives the one of largest real part below height `10⁴`
 `PsiOmega.Locate.Sec.dh2_zero_re_gt_one` proves it: `dh2` has a zero within `1/10000` of
 `2.3747444 + 1649.8708285i` ([davenport-heilbronn.md](../formalisations/davenport-heilbronn.md)). Where the series
 converges absolutely the approximant is the Dirichlet polynomial itself, `5000` terms here, with a bound for the
-tail; the kernel's part is a sixth of one of the six files of the zero at `24415`. It is a kernel-checked zero in the
-half-plane of absolute convergence, of a function with the functional equation of an `L`-function. It is not the
-classical function's, whose zeros there are the numerical ones above.
+tail; the kernel's part is one file, where the zero at `24415` has six. It is a kernel-checked zero in the half-plane
+of absolute convergence, of a function with the functional equation of an `L`-function. It is not the classical
+function's, whose zeros there are the numerical ones above.
 
 ### 8.6 Directions tried in this scan and set aside
 
