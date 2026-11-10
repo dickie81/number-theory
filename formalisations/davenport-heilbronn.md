@@ -51,7 +51,11 @@ where its Dirichlet series converges absolutely and no Dirichlet `L`-function ha
 H. Davenport and H. Heilbronn, *On the zeros of certain Dirichlet series*, J. London Math. Soc. 11 (1936), 181–185 and
 307–312; the function as E. C. Titchmarsh gives it, *The Theory of the Riemann Zeta-Function*, 2nd ed., revised by D. R.
 Heath-Brown (1986), §10.25. R. Spira computed zeros of the function on and off the line, *Some zeros of the Titchmarsh
-counterexample*, Math. Comp. 63 (1994), 747–748.
+counterexample*, Math. Comp. 63 (1994), 747–748. E. Bombieri and A. Ghosh, *Around the Davenport–Heilbronn function*,
+Russian Math. Surveys 66:2 (2011), 221–270, treat the family with coefficients `1, ξ, −ξ, −1, 0` modulo `5`, of which
+this function is the member `ξ = τ₊ = κ`; they compute the supremum `1.120362` of the real parts of its zeros and
+report no zero of it with `Re s > 1` (§§5, 6 and 9 read; [research-opportunities.md](../docs/research-opportunities.md),
+§8.5).
 
 ## How the Lean statement differs
 
