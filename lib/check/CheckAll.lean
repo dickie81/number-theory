@@ -119,6 +119,7 @@ import SieveFamily
 import SieveTypeIB
 import SieveSpline
 import SieveTypeIBWide
+import SieveTypeIBPairWide
 import SieveBrun
 import SieveCount
 import SieveRanges
@@ -829,6 +830,8 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTypeIB.card_fiber_cong_le
 #print axioms SieveTypeIB.typeIB_bound_wide
 #print axioms SieveSpline.typeIB_spline_wide
+#print axioms SieveTypeIBPairWide.typeIB_sharp0_wide
+#print axioms SieveTypeIBPairWide.pair_le_wide
 #print axioms SieveBrun.bonferroni
 #print axioms SieveBrun.fundamental
 #print axioms SieveBrun.gap_le

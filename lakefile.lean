@@ -143,7 +143,7 @@ lean_lib Core where
     .one `ZeroSwap, .one `ZerosDense, .one `ZerosInfinite, .one `Zeta,
     .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaInputs]
 
-/-- lib/pnt: 638 modules. -/
+/-- lib/pnt: 639 modules. -/
 lean_lib PNT where
   srcDir := "lib/pnt"
   globs := #[
@@ -298,15 +298,15 @@ lean_lib PNT where
     .one `SieveStops1, .one `SieveStops2, .one `SieveTree, .one `SieveTreeStop,
     .one `SieveTwoBins, .one `SieveTwoPieces, .one `SieveTwoTypeII, .one `SieveTwoZone,
     .one `SieveTwoZone7D, .one `SieveTypeIB, .one `SieveTypeIBAsym, .one `SieveTypeIBBrun,
-    .one `SieveTypeIBEv, .one `SieveTypeIBFam, .one `SieveTypeIBLeaf, .one `SieveTypeIBSum,
-    .one `SieveTypeIBWide, .one `SieveTypeII, .one `SieveTypeIIGen, .one `SieveTypeIIHM,
-    .one `SieveTypeIIR, .one `SieveTypeIIU, .one `SieveTypeIIU22000D, .one `SieveUnwGen,
-    .one `SieveUnwTwo, .one `SieveWeight, .one `SmallPrimes, .one `SmoothPerron,
-    .one `SquarefreeCount, .one `Subconvexity, .one `SubconvexityCrit, .one `TwinKV,
-    .one `ZetaAFE, .one `ZetaFourth, .one `ZetaGMBlock, .one `ZetaGMDensity,
-    .one `ZetaGMHux, .one `ZetaGMIngham, .one `ZetaGMLV, .one `ZetaGMProp,
-    .one `ZetaGMS3, .one `ZetaGMTrace, .one `ZetaGMWin, .one `ZetaHuxley,
-    .one `ZetaIngham, .one `ZetaKernel]
+    .one `SieveTypeIBEv, .one `SieveTypeIBFam, .one `SieveTypeIBLeaf, .one `SieveTypeIBPairWide,
+    .one `SieveTypeIBSum, .one `SieveTypeIBWide, .one `SieveTypeII, .one `SieveTypeIIGen,
+    .one `SieveTypeIIHM, .one `SieveTypeIIR, .one `SieveTypeIIU, .one `SieveTypeIIU22000D,
+    .one `SieveUnwGen, .one `SieveUnwTwo, .one `SieveWeight, .one `SmallPrimes,
+    .one `SmoothPerron, .one `SquarefreeCount, .one `Subconvexity, .one `SubconvexityCrit,
+    .one `TwinKV, .one `ZetaAFE, .one `ZetaFourth, .one `ZetaGMBlock,
+    .one `ZetaGMDensity, .one `ZetaGMHux, .one `ZetaGMIngham, .one `ZetaGMLV,
+    .one `ZetaGMProp, .one `ZetaGMS3, .one `ZetaGMTrace, .one `ZetaGMWin,
+    .one `ZetaHuxley, .one `ZetaIngham, .one `ZetaKernel]
 
 /-- lib/dh: 68 modules. -/
 lean_lib DH where

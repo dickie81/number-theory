@@ -228,12 +228,20 @@ covers. The region does not close at `13/6`.
     `m_i` in an interval, is `SieveUnwTwo.typeII_unw_two`, for a rectangle of exponents inside the region;
   - the bilinear Type I estimate without `2HD < q`: on the diagonal the congruence `t d₂′ ≡ t′ d₂` has at most
     `F(⌊2HD/q⌋ + 1)` solutions for each `(t, d₂′)`, and the first term gains that factor
-    (`SieveTypeIB.typeIB_bound_wide`; with a spline weight, `SieveSpline.typeIB_spline_wide`).
+    (`SieveTypeIB.typeIB_bound_wide`; with a spline weight, `SieveSpline.typeIB_spline_wide`). It is carried to the
+    leaves as far as a block pair (`lib/pnt/SieveTypeIBPairWide.lean`): over families with smooth and with sharp
+    comparisons (`typeIB_smooth_wide`, `typeIB_sharp0_wide`), and on a block pair `(β₁, β₂)` with any cut `H` of
+    the frequencies, `2H < q` (`pair_le_wide`), where the bound is
+    `√(P₁P₂(P₁/q + 1)F(2HP₂/q + 1)(n/q + 1)n) + (B − A)(q/(2ℓ(H + 1)))^r P₁P₂ + P₁P₂d(q)/φ(q)`. The paper's
+    `pair_le` is the cut `H = ⌊(q − 1)/(2⌊P₂⌋)⌋`, whose second term is small only for `P₂ ≤ ℓ`, that is
+    `d₁d₂² ≤ x`; a cut `H ≈ qY/ℓ` makes it `Y^{−r}` for any `P₂`, with `2YP₂/ℓ + 1` under the root.
 - **What is not written.** The form in two variables of the paper's Lemma 4.6 (chains of primes), where a
-  comparison between the two variables has no prime as a pivot and the region enters by rectangles; the leaves of Lemma 4.3 with the wider Type I estimate; Harman's
-  comparison with the estimate's stops, whose zone depends on the rest; role reversal, with the removal of the
-  conditions that tie the reversed variable to the others; and a certificate for a tree with reversed terms, which
-  the paper's format does not have. Until these are written the theorem stays at `11/5`.
+  comparison between the two variables has no prime as a pivot and the region enters by rectangles; for the leaves
+  of Lemma 4.3 with the wider Type I estimate, the choice of the cut on a region, the sum over the block pairs and
+  the asymptotic form; Harman's comparison with the estimate's stops, whose zone depends on the rest; role
+  reversal, with the removal of the conditions that tie the reversed variable to the others; and a certificate for
+  a tree with reversed terms, which the paper's format does not have. Until these are written the theorem stays at
+  `11/5`.
 
 ### 3.2 Short intervals
 
