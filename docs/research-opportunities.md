@@ -224,12 +224,13 @@ covers. The region does not close at `13/6`.
     the family's sum over `𝒜 − ℬ/φ(q)` is at most `A₀B₀q^{L−δ}/φ(q)`. It comes from the lemma's argument with the
     polynomial part abstract (`SieveFamilyGen.sharp_gen`): the argument uses the variable only through its value,
     its coefficient, its parts of the forms and the Type II estimate at each frequency, and for a pair the twisted
-    sum is a product of two polynomials;
+    sum is a product of two polynomials. Lemma 4.5, with the primes over all the primes up to `2q^L` and each
+    `m_i` in an interval, is `SieveUnwTwo.typeII_unw_two`, for a rectangle of exponents inside the region;
   - the bilinear Type I estimate without `2HD < q`: on the diagonal the congruence `t d₂′ ≡ t′ d₂` has at most
     `F(⌊2HD/q⌋ + 1)` solutions for each `(t, d₂′)`, and the first term gains that factor
     (`SieveTypeIB.typeIB_bound_wide`; with a spline weight, `SieveSpline.typeIB_spline_wide`).
-- **What is not written.** The form in two variables of the paper's Lemmas 4.5 and 4.6 (primes over sharp ranges,
-  and chains of primes), where a comparison between the two variables has no prime as a pivot; the leaves of Lemma 4.3 with the wider Type I estimate; Harman's
+- **What is not written.** The form in two variables of the paper's Lemma 4.6 (chains of primes), where a
+  comparison between the two variables has no prime as a pivot and the region enters by rectangles; the leaves of Lemma 4.3 with the wider Type I estimate; Harman's
   comparison with the estimate's stops, whose zone depends on the rest; role reversal, with the removal of the
   conditions that tie the reversed variable to the others; and a certificate for a tree with reversed terms, which
   the paper's format does not have. Until these are written the theorem stays at `11/5`.

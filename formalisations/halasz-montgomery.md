@@ -103,14 +103,24 @@ them, each with a prime as a pivot. For two polynomial variables:
   `φ_j(m₁) + ψ_j(m₂) + Σ_i e_{ji} log x_i`, bounded by `Λ₀ log q` on the family and each with a pivot prime, the
   family's sum over `𝒜 − ℬ/φ(q)` at `n = m₁m₂∏x_i` is at most `A₀B₀q^{L−δ}/φ(q)`, for some `δ > 0` and large `q`.
 
+- `SieveUnwTwo.typeII_unw_two`, **Lemma 4.5 in two variables** (`lib/pnt/SieveUnwTwo.lean`): the same without the
+  dyadic weights. For `0 < L ≤ 5/2`, `m_i ∈ S_i ⊆ (P_i, P_i′]` with `P_i ≥ 1`, `P_i′ ≤ 2q^L` and `R` on the rectangle
+  `[log_q P₁, log_q P₁′] × [log_q P₂, log_q P₂′]`, the primes over all the primes up to `⌊2q^L⌋`, and comparisons
+  as above that force each prime to be at least `2q^{e₁}` and `m₁m₂∏x_i ≤ 2q^L`: the family's sum over
+  `𝒜 − ℬ/φ(q)` is at most `A₀B₀q^{L−δ}/φ(q)`. It is `SieveUnwGen.unw_gen` (`SieveTypeIIU.typeII_unw`'s argument
+  with the polynomial part abstract and cut into blocks by a map) for the pairs of dyadic blocks, at most
+  `(3 + 4 log q)²` of them.
+
 A comparison between `m₁` and `m₂` with no prime in it is not covered: it has no pivot, and its cut-off does not
-separate into a twist of each variable.
+separate into a twist of each variable. And the region enters through rectangles: the estimate holds on a
+rectangle of exponents inside it, so a set of pairs cut by a slanted side of the region is a union of rectangles
+and a remainder that these lemmas do not evaluate.
 
 No theorem of the library uses these yet: `lib/check/CheckAll.lean` prints their axioms, which are `propext`,
 `Classical.choice` and `Quot.sound`. They are the estimate in two variables of
 [`docs/research-opportunities.md`](../docs/research-opportunities.md) (§3.1). What that section's computations use
-and these do not give: families whose primes run over sharp ranges (the paper's Lemma 4.5) and chains of primes
-(Lemma 4.6) in two variables, and Harman's comparison with them.
+and these do not give: chains of primes (the paper's Lemma 4.6) in two variables, and Harman's comparison with
+them.
 
 ## Source
 

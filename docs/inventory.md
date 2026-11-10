@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1628 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1630 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 263 | 836 |
+| `lib/pnt` | 265 | 838 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2790,12 +2790,20 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveTypeIIU`: Type II families with sharp prime ranges
 
-- `SieveTypeIIU.typeII_unw`: Type II for families with sharp prime ranges *paper*
+- `SieveTypeIIU.typeII_unw`: Type II for families with sharp prime ranges *paper* ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTypeIIU22000D`: Proposition 3′ at `L = 11 / 5` on the window `[43457/100000, 46959/100000]·L`, for the curve `g7d`
 
 - `SieveTypeIIU22000D.window_22000d`: The window's exponents *paper*
 - `SieveTypeIIU22000D.typeII_22000d`: Proposition 3′ at `L = 11 / 5` on `[43457/100000, 46959/100000]·L`, for the curve `g7d` *paper*
+
+#### `SieveUnwGen`: Type II families with sharp prime ranges, with an abstract polynomial part
+
+- `SieveUnwGen.unw_gen`: Families with sharp prime ranges, with an abstract polynomial part ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveUnwTwo`: Type II families in two variables with sharp prime ranges
+
+- `SieveUnwTwo.typeII_unw_two`: Type II for families in two variables with sharp prime ranges (Lemma 4.5 in two variables) ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveWeight`: Lemma 1 of the sieve route for primes, with weights uniform in the scale
 
