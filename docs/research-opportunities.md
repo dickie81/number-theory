@@ -240,16 +240,20 @@ covers. The region does not close at `13/6`.
     `d₁d₂² ≤ x`; a cut `H ≈ qY/ℓ` makes it `Y^{−r}` for any `P₂`, with `2YP₂/ℓ + 1` under the root. With that cut,
     `H = ⌈qY/ℓ⌉`, the block pairs of a family of leaves are summed as in the paper's proof
     (`lib/pnt/SieveTypeIBSumWide.lean`): on the region `d₁ ≤ X₁`, `d₁d₂² ≤ X₂`, `d₁d₂ ≥ X₃` a block pair's bound is
-    at most `√(ρ²(1 + η)N₂(ρX₁/q + 1)F(2Y·rρ³X₂/(ηN₁) + 2ρ√X₂/q + 1)((1 + η)ρ²N₂/(X₃q) + 1)) +
+    at most `√(ρ²(1 + η)N₂(ρX₁/q + 1)F(4Y·rρ³X₂/(ηN₁) + 1)((1 + η)ρ²N₂/(X₃q) + 1)) +
     ρ²(1 + η)N₂(2Y)^{−r} + ρ²√(X₁X₂)d(q)/φ(q)` (`bdPW_le`), and `leaves_family_wide` is
-    `SieveTypeIBSum.leaves_family` with that bound, for `X₂` of any size.
+    `SieveTypeIBSum.leaves_family` with that bound, for `X₂` of any size. The asymptotic form is the paper's
+    Lemma 4.3 on the wider region (`SieveTypeIBAsymWide.leaves_ib_wide`): for `a ≤ L − 2`, a margin `κ > 0`,
+    `0 ≤ δ' ≤ min(κ/4, 1/8)` and `max(c, 0) ≤ a − δ' − κ`, the leaves with `d₁f_max ≤ q^{L−1−a}`,
+    `d₁f_maxd₂² ≤ q^{L+c}` and `d₁d₂ ≥ q^{L−1−δ'}` are evaluated with an error `q^{L−δ}/φ(q)`. The paper's lemma
+    is `c < 0`. In exponents of `x`, up to the margins, the region is `2a₁ + 2a₂ < 2 − τ` for `a₁ ≥ τ` and
+    `a₁ + 2a₂ < 2 − 2τ` for `a₁ ≤ τ`, the rule of `two_factor.py --bil` and of `harman_sieve.py`.
 - **What is not written.** The form in two variables of the paper's Lemma 4.6 (chains of primes), where a
-  comparison between the two variables has no prime as a pivot and the region enters by rectangles; for the leaves
-  of Lemma 4.3 with the wider Type I estimate, the asymptotic form (the family's bound as a power of `q` on the
-  wider region); Harman's comparison with the estimate's stops, whose zone depends on the rest; role
-  reversal, with the removal of the conditions that tie the reversed variable to the others; and a certificate for
-  a tree with reversed terms, which the paper's format does not have. Until these are written the theorem stays at
-  `11/5`.
+  comparison between the two variables has no prime as a pivot and the region enters by rectangles; Harman's
+  comparison with the estimate's stops, whose zone depends on the rest, and with the leaves of the wider region;
+  role reversal, with the removal of the conditions that tie the reversed variable to the others; and a
+  certificate for a tree with reversed terms, which the paper's format does not have. Until these are written the
+  theorem stays at `11/5`.
 
 ### 3.2 Short intervals
 

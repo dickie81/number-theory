@@ -68,7 +68,8 @@ size of n).  The region is convex, so the rectangle lies in it when its corners 
 `--bil`: the paper's Lemma 4.2 asks 2HD < q, so that t d2' = t' d2 (mod q) is an equation.  Without it, for given
 (t, d2') there are at most F(2HD/q + 1) pairs (t', d2), and the first term of the lemma has the factor (1 + d2/n)
 more, n the cofactor's length.  In exponents of x, with tau = 1/L, a leaf then passes when a1 < 1 - tau and either
-a1 + 2 a2 < 1 (the paper's rule) or max(a1, tau) + a1 + 2 a2 < 2 - tau.  The proof of Lemma 4.3 is not redone here.
+a1 + 2 a2 < 1 (the paper's rule) or max(a1, tau) + a1 + 2 a2 < 2 - tau.  Lemma 4.3 on that region is in Lean
+(SieveTypeIBAsymWide.leaves_ib_wide, for a cofactor of length at most about q); Harman's comparison with it is not.
 
 Numbers (10 November 2026; n = 272 at 11/5, the paper's window; below it the window is chosen afresh):
 

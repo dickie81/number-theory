@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1634 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1636 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 267 | 842 |
+| `lib/pnt` | 268 | 844 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2766,6 +2766,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveTypeIBAsym`: The leaves by the bilinear estimate: the asymptotic form
 
 - `SieveTypeIBAsym.leaves_ib`: The leaves by the bilinear estimate, asymptotically *paper*
+
+#### `SieveTypeIBAsymWide`: The leaves by the bilinear estimate without `2HDm < q`: the asymptotic form
+
+- `SieveTypeIBAsymWide.bdUW_le_pow`: The uniform bound with the cut `⌈qY/ℓ⌉`, as powers of `q`
+- `SieveTypeIBAsymWide.leaves_ib_wide`: The leaves by the bilinear estimate on the wider region, asymptotically
 
 #### `SieveTypeIBPairWide`: The leaves by the bilinear estimate without `2HDm < q`: families and a block pair
 

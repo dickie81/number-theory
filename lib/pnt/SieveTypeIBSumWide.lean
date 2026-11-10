@@ -10,16 +10,17 @@ whose cut of the frequencies is the largest with `2HD_m < q`; its region asks `d
 
 * `cutH q Y t = ⌈qY/ℓ⌉`, the cut for the spline `t` of step `ℓ`.
 * `bdUW`, `bdPW_le`: **a block pair in the region.** Let a block pair hold `d₁`, `d₂` with `d₁ ≤ X₁`, `d₁d₂² ≤ X₂` and
-  `X₃ ≤ d₁d₂`, and let the spline be as in `SieveTypeIBSum.bdP_le`. If `2(qY·rρ²√(X₁X₂)/(ηN₁) + 1) < q` and
-  `qY·rρ³X₂/(ηN₁) + ρ√X₂ ≤ N_F`, then `2H < q`, `H⌊P₂⌋ ≤ N_F` and `bdPW ≤ bdUW`,
-  `bdUW = √(ρ²(1 + η)N₂(ρX₁/q + 1)F(2Y·rρ³X₂/(ηN₁) + 2ρ√X₂/q + 1)((1 + η)ρ²N₂/(X₃q) + 1)) +
+  `X₃ ≤ d₁d₂`, and let the spline be as in `SieveTypeIBSum.bdP_le`, with step `ℓ ≤ ηN₁/(rDρ²) + 1`. If
+  `2(qY·rρ²√(X₁X₂)/(ηN₁) + 1) < q`, `ηN₁/(rX₃) + 1 ≤ qY` (so that `ℓ ≤ qY`) and `2qY·rρ³X₂/(ηN₁) ≤ N_F`, then
+  `2H < q`, `H⌊P₂⌋ ≤ N_F` and `bdPW ≤ bdUW`,
+  `bdUW = √(ρ²(1 + η)N₂(ρX₁/q + 1)F(4Y·rρ³X₂/(ηN₁) + 1)((1 + η)ρ²N₂/(X₃q) + 1)) +
   ρ²(1 + η)N₂(1/(2Y))^r + ρ²√(X₁X₂)d(q)/φ(q)`.
-  The tail is `(2Y)^{−r}` whatever `X₂`; the price is the factor `2Y·rρ³X₂/(ηN₁) + 2ρ√X₂/q + 1` under the root,
-  which is bounded when `X₂` is below `N₁/Y` and grows like `X₂/N₁` beyond.
+  The tail is `(2Y)^{−r}` whatever `X₂`; the price is the factor `4Y·rρ³X₂/(ηN₁) + 1` under the root, which is
+  bounded when `X₂` is below `N₁/Y` and grows like `X₂/N₁` beyond.
 * `witness_le_wide`, `pair_le_W_wide`, `blocks_le_wide`: a leaf's block pair, a block pair by a witness, and the
   block pairs of one sieve, as in `SieveTypeIBSum`.
 * `leaves_family_wide`: **a family of leaves.** As `SieveTypeIBSum.leaves_family`, with `d(n) ≤ F` for
-  `0 < n ≤ N_F`, the two conditions on `Y` above, and `bdUW` in place of `bdU`.
+  `0 < n ≤ N_F`, the three conditions on `Y` above, and `bdUW` in place of `bdU`.
 
 The asymptotic form (`SieveTypeIBAsym.leaves_ib`) is not redone here.
 
@@ -40,9 +41,16 @@ noncomputable def cutH (q : ℕ) (Y : ℝ) (t : ℕ × ℕ × ℕ × ℕ) : ℕ 
 /-- The uniform bound of a block pair with the cut `cutH`, in the region `d₁ ≤ X₁`, `d₁d₂² ≤ X₂`, `d₁d₂ ≥ X₃`. -/
 noncomputable def bdUW (q : ℕ) (ρ η : ℝ) (N₁ N₂ r F : ℕ) (X₁ X₂ X₃ Y : ℝ) : ℝ :=
   √(ρ ^ 2 * (1 + η) * N₂ * (ρ * X₁ / q + 1) *
-      (F * (2 * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + 2 * ρ * √X₂ / q + 1)) *
+      (F * (4 * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + 1)) *
       ((1 + η) * ρ ^ 2 * N₂ / (X₃ * q) + 1)) +
     ρ ^ 2 * (1 + η) * N₂ * (1 / (2 * Y)) ^ r + ρ ^ 2 * √(X₁ * X₂) * ((q.divisors.card : ℝ) / q.totient)
+
+/-- The step of the splines at the scale `D`: `stp ≤ ηN₁/(rDρ²) + 1`. -/
+theorem stp_le (η ρ D : ℝ) (N₁ r : ℕ) (h : 0 ≤ η * N₁ / (r * D * ρ ^ 2)) :
+    (stp η ρ D N₁ r : ℝ) ≤ η * N₁ / (r * D * ρ ^ 2) + 1 := by
+  unfold stp
+  push_cast
+  linarith [Nat.floor_le h]
 
 /-- A spline `t` on the block pair `(β₁, β₂)` is good for the cut with the bound `U`: `2H < q`, `H⌊ρ^{β₂+1}⌋ ≤ N_F` and
 `bdPW ≤ U` at `H = cutH q Y t`. -/
@@ -58,18 +66,21 @@ theorem bdUW_nonneg (q : ℕ) {ρ η : ℝ} (hη : 0 < η) (N₁ N₂ r F : ℕ)
 set_option maxHeartbeats 1000000 in
 /-- **A block pair in the region, with the cut `⌈qY/ℓ⌉`.** Let the block pair `(β₁, β₂)` hold `d₁`, `d₂` with
 `d₁ ≤ X₁`, `d₁d₂² ≤ X₂` and `X₃ ≤ d₁d₂`, and let the spline `t` have length and mass at most
-`N₂/D + ηN₁/(Dρ²)` (`D = ρ^{β₁+β₂}`), step `ℓ ≥ ηN₁/(rDρ²)` and power `r`. Let `Y > 0` with
-`2(qY·rρ²√(X₁X₂)/(ηN₁) + 1) < q` (`hcut`) and `qY·rρ³X₂/(ηN₁) + ρ√X₂ ≤ N_F` (`hNF`). Then the cut `H = ⌈qY/ℓ⌉` has
-`2H < q` and `H⌊ρ^{β₂+1}⌋ ≤ N_F`, and `bdPW ≤ bdUW`. -/
+`N₂/D + ηN₁/(Dρ²)` (`D = ρ^{β₁+β₂}`), step `ℓ` between `ηN₁/(rDρ²)` and `ηN₁/(rDρ²) + 1`, and power `r`. Let
+`Y > 0` with `2(qY·rρ²√(X₁X₂)/(ηN₁) + 1) < q` (`hcut`), `ηN₁/(rX₃) + 1 ≤ qY` (`hstep`) and
+`2qY·rρ³X₂/(ηN₁) ≤ N_F` (`hNF`). Then the cut `H = ⌈qY/ℓ⌉` has `2H < q` and `H⌊ρ^{β₂+1}⌋ ≤ N_F`, and
+`bdPW ≤ bdUW`. -/
 theorem bdPW_le (q : ℕ) [NeZero q] {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 < η) {N₁ N₂ : ℕ} (hN₁ : 1 ≤ N₁) (hN : N₁ ≤ N₂)
     {r : ℕ} (hr : 1 ≤ r) (F : ℕ) {X₁ X₂ X₃ Y : ℝ} (hX₃ : 0 < X₃) (hY : 0 < Y) {NF : ℕ}
     (hcut : 2 * ((q : ℝ) * Y * (r * ρ ^ 2 * √(X₁ * X₂)) / (η * N₁) + 1) < q)
-    (hNF : (q : ℝ) * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + ρ * √X₂ ≤ NF)
+    (hstep : η * N₁ / (r * X₃) + 1 ≤ (q : ℝ) * Y)
+    (hNF : 2 * ((q : ℝ) * Y * (r * ρ ^ 3 * X₂ / (η * N₁))) ≤ NF)
     {d₁ d₂ : ℕ} (hd₁ : 1 ≤ d₁) (hd₂ : 1 ≤ d₂)
     (h1 : (d₁ : ℝ) ≤ X₁) (h2 : (d₁ : ℝ) * d₂ ^ 2 ≤ X₂) (h3 : X₃ ≤ (d₁ : ℝ) * d₂) (t : ℕ × ℕ × ℕ × ℕ)
     (hlen : lenv t ≤ N₂ / ρ ^ (blk ρ d₁ + blk ρ d₂) + η * N₁ / (ρ ^ (blk ρ d₁ + blk ρ d₂) * ρ ^ 2))
     (hmass : massv t ≤ N₂ / ρ ^ (blk ρ d₁ + blk ρ d₂) + η * N₁ / (ρ ^ (blk ρ d₁ + blk ρ d₂) * ρ ^ 2))
-    (hℓ : η * N₁ / (r * ρ ^ (blk ρ d₁ + blk ρ d₂) * ρ ^ 2) ≤ t.2.2.1) (hrt : t.2.2.2 = r) :
+    (hℓ : η * N₁ / (r * ρ ^ (blk ρ d₁ + blk ρ d₂) * ρ ^ 2) ≤ t.2.2.1)
+    (hℓu : (t.2.2.1 : ℝ) ≤ η * N₁ / (r * ρ ^ (blk ρ d₁ + blk ρ d₂) * ρ ^ 2) + 1) (hrt : t.2.2.2 = r) :
     2 * cutH q Y t < q ∧ cutH q Y t * ⌊ρ ^ (blk ρ d₂ + 1)⌋₊ ≤ NF ∧
       bdPW q ρ (blk ρ d₁) (blk ρ d₂) t F (cutH q Y t) ≤ bdUW q ρ η N₁ N₂ r F X₁ X₂ X₃ Y := by
   have hρ0 : 0 < ρ := by linarith
@@ -117,6 +128,14 @@ theorem bdPW_le (q : ℕ) [NeZero q] {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 < η)
   have hℓ0 : 0 < η * N₁ / (r * D * ρ ^ 2) := by positivity
   have hℓ' : η * N₁ / (r * D * ρ ^ 2) ≤ t.2.2.1 := hℓ
   have hℓpos : (0 : ℝ) < t.2.2.1 := lt_of_lt_of_le hℓ0 hℓ'
+  have hℓu' : (t.2.2.1 : ℝ) ≤ η * N₁ / (r * D * ρ ^ 2) + 1 := hℓu
+  have hℓqY : (t.2.2.1 : ℝ) ≤ (q : ℝ) * Y := by
+    refine hℓu'.trans (le_trans ?_ hstep)
+    have hX₃D : X₃ ≤ D * ρ ^ 2 := by rw [div_le_iff₀ (by positivity)] at hXD; linarith
+    have : η * N₁ / (r * D * ρ ^ 2) ≤ η * N₁ / (r * X₃) := by
+      refine div_le_div_of_nonneg_left (by positivity) (by positivity) ?_
+      nlinarith
+    linarith
   set H := cutH q Y t with hHdef
   have hHle : (H : ℝ) ≤ (q : ℝ) * Y / t.2.2.1 + 1 := by
     rw [hHdef, cutH]
@@ -134,12 +153,6 @@ theorem bdPW_le (q : ℕ) [NeZero q] {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 < η)
     refine Real.le_sqrt_of_sq_le ?_
     calc ((d₁ : ℝ) * d₂) ^ 2 = d₁ * (d₁ * d₂ ^ 2) := by ring
       _ ≤ X₁ * X₂ := mul_le_mul h1 h2 (by positivity) hX₁
-  have hd₂X : (d₂ : ℝ) ≤ √X₂ := by
-    refine Real.le_sqrt_of_sq_le (le_trans ?_ h2)
-    nlinarith [sq_nonneg (d₂ : ℝ)]
-  have hP₂le : ρ ^ (β₂ + 1) ≤ ρ * √X₂ := by
-    rw [pow_succ, mul_comm]
-    exact mul_le_mul_of_nonneg_left (hs₂.trans hd₂X) hρ0.le
   -- `P₂/ℓ ≤ rρ³X₂/(ηN₁)`
   have hP₂ : ρ ^ (β₂ + 1) / t.2.2.1 ≤ r * ρ ^ 3 * X₂ / (η * N₁) := by
     calc ρ ^ (β₂ + 1) / t.2.2.1 ≤ ρ ^ (β₂ + 1) / (η * N₁ / (r * D * ρ ^ 2)) :=
@@ -152,6 +165,12 @@ theorem bdPW_le (q : ℕ) [NeZero q] {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 < η)
           calc ρ ^ β₂ * D ≤ d₂ * (d₁ * d₂) := mul_le_mul hs₂ hDd hD0.le (by positivity)
             _ = d₁ * d₂ ^ 2 := by ring
             _ ≤ X₂ := h2
+  -- `P₂ ≤ qY·(P₂/ℓ)`, since `ℓ ≤ qY`
+  have hP₂ℓ : ρ ^ (β₂ + 1) ≤ (q : ℝ) * Y * (ρ ^ (β₂ + 1) / t.2.2.1) := by
+    have h : ρ ^ (β₂ + 1) = ρ ^ (β₂ + 1) / t.2.2.1 * t.2.2.1 := by field_simp
+    have h0 : 0 ≤ ρ ^ (β₂ + 1) / (t.2.2.1 : ℝ) := by positivity
+    have h1' := mul_le_mul_of_nonneg_left hℓqY h0
+    linarith
   have hqYℓ : (q : ℝ) * Y / t.2.2.1 ≤ (q : ℝ) * Y * (r * ρ ^ 2 * √(X₁ * X₂)) / (η * N₁) := by
     have h1' : (1 : ℝ) / t.2.2.1 ≤ r * ρ ^ 2 * √(X₁ * X₂) / (η * N₁) := by
       refine hinvℓ.trans ?_
@@ -172,28 +191,28 @@ theorem bdPW_le (q : ℕ) [NeZero q] {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 < η)
       calc (H : ℝ) * (⌊ρ ^ (β₂ + 1)⌋₊ : ℝ) ≤ ((q : ℝ) * Y / t.2.2.1 + 1) * ρ ^ (β₂ + 1) :=
             mul_le_mul hHle hfl (Nat.cast_nonneg _) (by positivity)
         _ = (q : ℝ) * Y * (ρ ^ (β₂ + 1) / t.2.2.1) + ρ ^ (β₂ + 1) := by ring
-        _ ≤ (q : ℝ) * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + ρ * √X₂ :=
-            add_le_add (mul_le_mul_of_nonneg_left hP₂ (by positivity)) hP₂le
+        _ ≤ 2 * ((q : ℝ) * Y * (ρ ^ (β₂ + 1) / t.2.2.1)) := by linarith
+        _ ≤ 2 * ((q : ℝ) * Y * (r * ρ ^ 3 * X₂ / (η * N₁))) :=
+            mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hP₂ (by positivity)) (by norm_num)
         _ ≤ NF := hNF
     exact_mod_cast h
   -- the factor of the diagonal
-  have hΦ : 2 * H * ρ ^ (β₂ + 1) / q + 1 ≤
-      2 * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + 2 * ρ * √X₂ / q + 1 := by
+  have hΦ : 2 * H * ρ ^ (β₂ + 1) / q + 1 ≤ 4 * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + 1 := by
     have e : 2 * (H : ℝ) * ρ ^ (β₂ + 1) / q ≤ 2 * ((q : ℝ) * Y / t.2.2.1 + 1) * ρ ^ (β₂ + 1) / q := by gcongr
     have e' : 2 * ((q : ℝ) * Y / t.2.2.1 + 1) * ρ ^ (β₂ + 1) / q =
         2 * Y * (ρ ^ (β₂ + 1) / t.2.2.1) + 2 * ρ ^ (β₂ + 1) / q := by
       field_simp
     have e1 : 2 * Y * (ρ ^ (β₂ + 1) / t.2.2.1) ≤ 2 * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) :=
       mul_le_mul_of_nonneg_left hP₂ (by positivity)
-    have e2 : 2 * ρ ^ (β₂ + 1) / q ≤ 2 * ρ * √X₂ / q := by
-      refine div_le_div_of_nonneg_right ?_ hq.le
+    have e2 : 2 * ρ ^ (β₂ + 1) / q ≤ 2 * Y * (ρ ^ (β₂ + 1) / t.2.2.1) := by
+      rw [div_le_iff₀ hq]
       linarith
     linarith
   -- the first term
   have hA : √(ρ ^ (β₁ + 1) * ρ ^ (β₂ + 1) * (ρ ^ (β₁ + 1) / q + 1) * (F * (2 * H * ρ ^ (β₂ + 1) / q + 1)) *
         (lenv t / q + 1) * lenv t) ≤
       √(ρ ^ 2 * (1 + η) * N₂ * (ρ * X₁ / q + 1) *
-        (F * (2 * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + 2 * ρ * √X₂ / q + 1)) *
+        (F * (4 * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + 1)) *
         ((1 + η) * ρ ^ 2 * N₂ / (X₃ * q) + 1)) := by
     apply Real.sqrt_le_sqrt
     have e1 : ρ ^ (β₁ + 1) * ρ ^ (β₂ + 1) * lenv t ≤ ρ ^ 2 * (1 + η) * N₂ := by
@@ -215,7 +234,7 @@ theorem bdPW_le (q : ℕ) [NeZero q] {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 < η)
       linarith
     have hF0 : (0 : ℝ) ≤ F := Nat.cast_nonneg _
     have e4 : (F : ℝ) * (2 * H * ρ ^ (β₂ + 1) / q + 1) ≤
-        F * (2 * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + 2 * ρ * √X₂ / q + 1) :=
+        F * (4 * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + 1) :=
       mul_le_mul_of_nonneg_left hΦ hF0
     have hf0 : (0 : ℝ) ≤ F * (2 * H * ρ ^ (β₂ + 1) / q + 1) := by positivity
     have hb0 : (0 : ℝ) ≤ ρ ^ (β₁ + 1) * ρ ^ (β₂ + 1) * lenv t := by positivity
@@ -226,7 +245,7 @@ theorem bdPW_le (q : ℕ) [NeZero q] {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 < η)
         = (ρ ^ (β₁ + 1) * ρ ^ (β₂ + 1) * lenv t) * (ρ ^ (β₁ + 1) / q + 1) *
             (F * (2 * H * ρ ^ (β₂ + 1) / q + 1)) * (lenv t / q + 1) := by ring
       _ ≤ (ρ ^ 2 * (1 + η) * N₂) * (ρ * X₁ / q + 1) *
-            (F * (2 * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + 2 * ρ * √X₂ / q + 1)) *
+            (F * (4 * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + 1)) *
             ((1 + η) * ρ ^ 2 * N₂ / (X₃ * q) + 1) :=
           mul_le_mul (mul_le_mul (mul_le_mul e1 e2 hc0 (by positivity)) e4 hf0 (by positivity)) e3 hd0
             (by positivity)
@@ -263,12 +282,13 @@ theorem bdPW_le (q : ℕ) [NeZero q] {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 < η)
 /-! ### A leaf's block pair -/
 
 /-- **A leaf's block pair, with the cut `⌈qY/ℓ⌉`.** At a leaf with `p₁fmax ≤ X₁`, `p₁fmax·p₂² ≤ X₂` and `X₃ ≤ p₁p₂`,
-and a weight `f ≤ fmax`, under the two conditions on `Y` of `bdPW_le`: the block pair of `(p₁f, p₂)` has
+and a weight `f ≤ fmax`, under the three conditions on `Y` of `bdPW_le`: the block pair of `(p₁f, p₂)` has
 `blk(p₁f) ≤ blk⌊X₁⌋`, `blk(p₂) ≤ blk⌊√X₂⌋`, and both splines are good for the cut with the bound `bdUW` (`CutOK`). -/
 theorem witness_le_wide (q : ℕ) [NeZero q] {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 < η) {N₁ N₂ : ℕ} (hN₁ : 1 ≤ N₁) (hN : N₁ ≤ N₂)
     {r : ℕ} (hr : 1 ≤ r) (F : ℕ) {X₁ X₂ X₃ Y : ℝ} (hX₃ : 0 < X₃) (hY : 0 < Y) {NF : ℕ}
     (hcut : 2 * ((q : ℝ) * Y * (r * ρ ^ 2 * √(X₁ * X₂)) / (η * N₁) + 1) < q)
-    (hNF : (q : ℝ) * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + ρ * √X₂ ≤ NF)
+    (hstep : η * N₁ / (r * X₃) + 1 ≤ (q : ℝ) * Y)
+    (hNF : 2 * ((q : ℝ) * Y * (r * ρ ^ 3 * X₂ / (η * N₁))) ≤ NF)
     {p₁ f p₂ : ℕ} (hp₁ : 1 ≤ p₁) (hf : 1 ≤ f)
     (hp₂ : 1 ≤ p₂) {fmax : ℝ} (hfm : (f : ℝ) ≤ fmax) (h1 : (p₁ : ℝ) * fmax ≤ X₁)
     (h2 : (p₁ : ℝ) * fmax * (p₂ : ℝ) ^ 2 ≤ X₂) (h3 : X₃ ≤ (p₁ : ℝ) * p₂) :
@@ -301,12 +321,12 @@ theorem witness_le_wide (q : ℕ) [NeZero q] {ρ η : ℝ} (hρ : 1 < ρ) (hη :
     nlinarith
   · have hD0 : 0 < ρ ^ (blk ρ (p₁ * f) + blk ρ p₂) := by positivity
     have hl := len_TPs_le hη.le hρ.le hD0 N₁ N₂ hr
-    exact bdPW_le q hρ hη hN₁ hN hr F hX₃ hY hcut hNF hd₁ hp₂ hd1 hd2 hd3 _ hl ((massv_le_lenv _).trans hl)
-      (le_stp η ρ _ N₁ r) rfl
+    exact bdPW_le q hρ hη hN₁ hN hr F hX₃ hY hcut hstep hNF hd₁ hp₂ hd1 hd2 hd3 _ hl
+      ((massv_le_lenv _).trans hl) (le_stp η ρ _ N₁ r) (stp_le η ρ _ N₁ r (by positivity)) rfl
   · have hD0 : 0 < ρ ^ (blk ρ (p₁ * f) + blk ρ p₂) := by positivity
     have hl := len_TMs_le hη.le hρ.le hD0 N₁ N₂ hr
-    exact bdPW_le q hρ hη hN₁ hN hr F hX₃ hY hcut hNF hd₁ hp₂ hd1 hd2 hd3 _ hl ((massv_le_lenv _).trans hl)
-      (le_stp η ρ _ N₁ r) rfl
+    exact bdPW_le q hρ hη hN₁ hN hr F hX₃ hY hcut hstep hNF hd₁ hp₂ hd1 hd2 hd3 _ hl
+      ((massv_le_lenv _).trans hl) (le_stp η ρ _ N₁ r) (stp_le η ρ _ N₁ r (by positivity)) rfl
 
 /-! ### The sum over the block pairs -/
 
@@ -550,7 +570,8 @@ open Classical in
 leaves `(y₁, y₂)` carry the comparisons `c = ∏_j I_j`, the sieve weights `S₁` above and `S₂` below sandwich `R`, with
 divisors `f ≤ f_max`, and the fibres are bounded (`M_f`, `M₂`); `ρ > 1`, `0 < η ≤ 1`, `r ≥ 1`, and every leaf
 (`c ≠ 0`) has `π₁f_max ≤ X₁`, `π₁f_maxπ₂² ≤ X₂` and `X₃ ≤ π₁π₂`. Let `Y > 0` with
-`2(qY·rρ²√(X₁X₂)/(ηN₁) + 1) < q` and `qY·rρ³X₂/(ηN₁) + ρ√X₂ ≤ N_F`, and let `d(n) ≤ F` for `0 < n ≤ N_F`. Then
+`2(qY·rρ²√(X₁X₂)/(ηN₁) + 1) < q`, `ηN₁/(rX₃) + 1 ≤ qY` and `2qY·rρ³X₂/(ηN₁) ≤ N_F`, and let `d(n) ≤ F` for
+`0 < n ≤ N_F`. Then
 `|Σ_{y₁,y₂} c Σ_m rng(d, m)R(m)dw(dm)|`, `d = π₁π₂`, is at most the leaves' main errors (as in `leaves_family`) plus
 `4(K₁ + 1)(K₂ + 1)(∏_j ‖𝓕G_j‖₁ + Σ_j ‖𝓕M_j‖₁)M_fM₂·bdUW` (`K₁ = blk⌊X₁⌋`, `K₂ = blk⌊√X₂⌋`) plus the near-boundary
 masses of both sieves. -/
@@ -578,7 +599,8 @@ theorem leaves_family_wide (a : ZMod q) (ha : IsUnit a) {N₁ N₂ : ℕ} (hN : 
     {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 < η) (hη1 : η ≤ 1) {r : ℕ} (hr : 1 ≤ r)
     {X₁ X₂ X₃ Y : ℝ} (hX₃ : 0 < X₃) (hY : 0 < Y)
     (hcut : 2 * ((q : ℝ) * Y * (r * ρ ^ 2 * √(X₁ * X₂)) / (η * N₁) + 1) < q)
-    (hNF : (q : ℝ) * Y * (r * ρ ^ 3 * X₂ / (η * N₁)) + ρ * √X₂ ≤ NF)
+    (hstep : η * N₁ / (r * X₃) + 1 ≤ (q : ℝ) * Y)
+    (hNF : 2 * ((q : ℝ) * Y * (r * ρ ^ 3 * X₂ / (η * N₁))) ≤ NF)
     (hreg : ∀ y₁ ∈ Y₁, ∀ y₂ ∈ Y₂, (∏ j, I j y₁ y₂) ≠ 0 →
       (π₁ y₁ : ℝ) * fmax ≤ X₁ ∧ (π₁ y₁ : ℝ) * fmax * (π₂ y₂ : ℝ) ^ 2 ≤ X₂ ∧ X₃ ≤ (π₁ y₁ : ℝ) * π₂ y₂) :
     |∑ y₁ ∈ Y₁, ∑ y₂ ∈ Y₂, (∏ j, I j y₁ y₂) * ∑ m ∈ range (N₂ + 1),
@@ -652,8 +674,8 @@ theorem leaves_family_wide (a : ZMod q) (ha : IsUnit a) {N₁ N₂ : ℕ} (hN : 
     (fun x hx y₂ hy₂ hne => by
       obtain ⟨hy, hσ⟩ := Finset.mem_product.1 hx
       obtain ⟨h1, h2, h3⟩ := hreg x.1 hy y₂ hy₂ hne
-      exact witness_le_wide q hρ hη hN₁ hN hr F hX₃ hY hcut hNF (hπ₁ _ hy) (hf₁ _ hσ) (hπ₂ _ hy₂) (hfm₁ _ hσ) h1 h2
-        h3)
+      exact witness_le_wide q hρ hη hN₁ hN hr F hX₃ hY hcut hstep hNF (hπ₁ _ hy) (hf₁ _ hσ) (hπ₂ _ hy₂) (hfm₁ _ hσ)
+        h1 h2 h3)
     (fun x hx y₂ hy₂ => by
       obtain ⟨hy, hσ⟩ := Finset.mem_product.1 hx
       exact massd_le hρ hη.le hN hr (hd1 (hπ₁ _ hy) (hf₁ _ hσ)) (hπ₂ _ hy₂))
@@ -666,7 +688,8 @@ theorem leaves_family_wide (a : ZMod q) (ha : IsUnit a) {N₁ N₂ : ℕ} (hN : 
       obtain ⟨hy, hσ⟩ := Finset.mem_product.1 hx
       obtain ⟨h1, h2, h3⟩ := hreg x.1 hy y₂ hy₂ hne
       obtain ⟨k1, k2, k3, k4⟩ :=
-        witness_le_wide q hρ hη hN₁ hN hr F hX₃ hY hcut hNF (hπ₁ _ hy) (hf₂ _ hσ) (hπ₂ _ hy₂) (hfm₂ _ hσ) h1 h2 h3
+        witness_le_wide q hρ hη hN₁ hN hr F hX₃ hY hcut hstep hNF (hπ₁ _ hy) (hf₂ _ hσ) (hπ₂ _ hy₂) (hfm₂ _ hσ) h1 h2
+          h3
       exact ⟨k1, k2, k4, k3⟩)
     (fun x hx y₂ hy₂ => by
       obtain ⟨hy, hσ⟩ := Finset.mem_product.1 hx
