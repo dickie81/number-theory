@@ -82,10 +82,35 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   such regions over the threshold; this one loses under 2% of `s` at `ρ = 0.3` (`gen_zone.py --exact`);
 - `SieveTwoZone7D.typeII_two_7d`: `typeII_two_gen` for `g7d` on `Zone7d L`, with no hypothesis.
 
+The sieve meets the estimate through families of sums (the paper's Lemma 4.4, `SieveFamily.typeII_sharp`): a
+polynomial variable with coefficients, primes with smooth weights at fixed scales, and sharp comparisons between
+them, each with a prime as a pivot. For two polynomial variables:
+
+- `SieveFamilyGen` (`lib/pnt/SieveFamilyGen.lean`) is `SieveFamily`'s argument with the polynomial part abstract. It
+  uses the variable `m` only through its value, its coefficient, its parts `φ_j(m)` of the comparisons' forms, the
+  sum of `|a_m|`, and one bound, the Type II estimate at each frequency of the separated sum; there these are data
+  (`m` in a finite set of any type) and a hypothesis. `SieveFamilyGen.family_bound_gen`,
+  `SieveFamilyGen.sharp_explicit_gen` and `SieveFamilyGen.sharp_gen` are `family_bound`, `typeII_sharp_explicit` and
+  `typeII_sharp` in that form; the lemmas on the cut-off and the pivots are `SieveFamily`'s, unchanged;
+- `SieveFamilyTwo.box_two` (`lib/pnt/SieveFamilyTwo.lean`) is the hypothesis for pairs `(m₁, m₂)`: a phase
+  `κ + Σ_j ξ_j(φ_j(m₁) + ψ_j(m₂))` is a twist of `a` times a twist of `b`, and `χ(m₁m₂) = χ(m₁)χ(m₂)`, so the sum
+  over the pairs is a product of two polynomials, which Proposition 3′ in two variables bounds
+  (`SieveFamilyTwo.TypeIITwoAt L R`: for the paper's curve on `Zone7d L`, `SieveFamilyTwo.typeIITwoAt_7d`; for two
+  variables of length at least `q`, `SieveFamilyTwo.typeIITwoAt_long`);
+- `SieveFamilyTwo.typeII_sharp_two`, **Lemma 4.4 in two variables**: given `TypeIITwoAt L R`, for `m_i ∈ S_i ⊆
+  (P_i, 2P_i]` with `(log_q P₁, log_q P₂)` in `R` and `|a_m| ≤ A₀`, `|b_m| ≤ B₀`, at most `K₀` primes at scales
+  `Q_i ≥ q^{e₁}` with `∏ Q_i ≤ 2^{K₀}q^L/(P₁P₂)`, and at most `J₀` sharp comparisons with forms
+  `φ_j(m₁) + ψ_j(m₂) + Σ_i e_{ji} log x_i`, bounded by `Λ₀ log q` on the family and each with a pivot prime, the
+  family's sum over `𝒜 − ℬ/φ(q)` at `n = m₁m₂∏x_i` is at most `A₀B₀q^{L−δ}/φ(q)`, for some `δ > 0` and large `q`.
+
+A comparison between `m₁` and `m₂` with no prime in it is not covered: it has no pivot, and its cut-off does not
+separate into a twist of each variable.
+
 No theorem of the library uses these yet: `lib/check/CheckAll.lean` prints their axioms, which are `propext`,
 `Classical.choice` and `Quot.sound`. They are the estimate in two variables of
 [`docs/research-opportunities.md`](../docs/research-opportunities.md) (§3.1). What that section's computations use
-and these do not give: the families of sums in two variables to which the proposition applies.
+and these do not give: families whose primes run over sharp ranges (the paper's Lemma 4.5) and chains of primes
+(Lemma 4.6) in two variables, and Harman's comparison with them.
 
 ## Source
 

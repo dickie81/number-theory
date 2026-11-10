@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1621 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1628 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 261 | 829 |
+| `lib/pnt` | 263 | 836 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2571,7 +2571,20 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveFamily.family_bound`: The bound for a smooth family
 - `SieveFamily.Dsum_sharp_le`: A sharp family, explicitly
 - `SieveFamily.typeII_sharp_explicit`: A sharp family, with the Type II estimate
-- `SieveFamily.typeII_sharp`: The Type II estimate for a sharp family (Lemmas 4′ and 4″), asymptotic form *paper*
+- `SieveFamily.typeII_sharp`: The Type II estimate for a sharp family (Lemmas 4′ and 4″), asymptotic form *paper* ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveFamilyGen`: Type II families with an abstract polynomial part
+
+- `SieveFamilyGen.family_bound_gen`: The bound for a smooth family with an abstract polynomial part ([note](../formalisations/halasz-montgomery.md))
+- `SieveFamilyGen.sharp_explicit_gen`: A sharp family with an abstract polynomial part, explicitly ([note](../formalisations/halasz-montgomery.md))
+- `SieveFamilyGen.sharp_gen`: A sharp family with an abstract polynomial part, asymptotic form ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveFamilyTwo`: Type II families in two variables
+
+- `SieveFamilyTwo.typeIITwoAt_7d`: Proposition 3′ in two variables for the paper's curve on `Zone7d L` ([note](../formalisations/halasz-montgomery.md))
+- `SieveFamilyTwo.typeIITwoAt_long`: Proposition 3′ for two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
+- `SieveFamilyTwo.box_two`: The estimate at one frequency of the separated sum, for the pairs ([note](../formalisations/halasz-montgomery.md))
+- `SieveFamilyTwo.typeII_sharp_two`: The Type II estimate for a sharp family in two variables (Lemma 4.4 in two variables) ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveGrid22000E`: The grid of the certificate to depth 8 at `L = 11/5` with `n = 272`
 

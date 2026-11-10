@@ -155,6 +155,8 @@ import SieveTwoPieces
 import SieveTwoTypeII
 import SieveTwoZone
 import SieveTwoZone7D
+import SieveFamilyGen
+import SieveFamilyTwo
 import SieveHMWindow
 import SieveTypeIIHM
 import LinnikCGLLV
@@ -886,6 +888,13 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTypeIIHM.zonePiece_HH
 #print axioms SieveTwoZone7D.zone_7d
 #print axioms SieveTwoZone7D.typeII_two_7d
+#print axioms SieveFamilyGen.family_bound_gen
+#print axioms SieveFamilyGen.sharp_explicit_gen
+#print axioms SieveFamilyGen.sharp_gen
+#print axioms SieveFamilyTwo.typeIITwoAt_7d
+#print axioms SieveFamilyTwo.typeIITwoAt_long
+#print axioms SieveFamilyTwo.box_two
+#print axioms SieveFamilyTwo.typeII_sharp_two
 #print axioms SieveCurveGlue.affine_corner_bound
 #print axioms SieveCurveGlue.windowPieceHM_affine_split
 #print axioms SieveCurveGlue.windowPieceHM_const_split

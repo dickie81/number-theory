@@ -218,11 +218,18 @@ covers. The region does not close at `13/6`.
     the rest. The computations' zone is the union of such regions over the point where the Halász–Montgomery
     inequality takes over from orthogonality; this one is the region for that point at `s = 0`, and holds all of the
     zone but under 2% of `s` at its far end;
+  - the paper's Lemma 4.4 for families with two polynomial variables (`SieveFamilyTwo.typeII_sharp_two`): `m₁` and
+    `m₂` in dyadic blocks with the exponents of their lengths in the region, primes with smooth weights at fixed
+    scales, and sharp comparisons with forms `φ_j(m₁) + ψ_j(m₂) + Σ_i e_{ji} log x_i`, each with a prime as a pivot;
+    the family's sum over `𝒜 − ℬ/φ(q)` is at most `A₀B₀q^{L−δ}/φ(q)`. It comes from the lemma's argument with the
+    polynomial part abstract (`SieveFamilyGen.sharp_gen`): the argument uses the variable only through its value,
+    its coefficient, its parts of the forms and the Type II estimate at each frequency, and for a pair the twisted
+    sum is a product of two polynomials;
   - the bilinear Type I estimate without `2HD < q`: on the diagonal the congruence `t d₂′ ≡ t′ d₂` has at most
     `F(⌊2HD/q⌋ + 1)` solutions for each `(t, d₂′)`, and the first term gains that factor
     (`SieveTypeIB.typeIB_bound_wide`; with a spline weight, `SieveSpline.typeIB_spline_wide`).
-- **What is not written.** The form in two variables of the paper's Lemmas 4.4 to 4.6, where a comparison between
-  the two variables has no prime as a pivot; the leaves of Lemma 4.3 with the wider Type I estimate; Harman's
+- **What is not written.** The form in two variables of the paper's Lemmas 4.5 and 4.6 (primes over sharp ranges,
+  and chains of primes), where a comparison between the two variables has no prime as a pivot; the leaves of Lemma 4.3 with the wider Type I estimate; Harman's
   comparison with the estimate's stops, whose zone depends on the rest; role reversal, with the removal of the
   conditions that tie the reversed variable to the others; and a certificate for a tree with reversed terms, which
   the paper's format does not have. Until these are written the theorem stays at `11/5`.
