@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
-"""The certificate files of the fifth located zero of the Davenport–Heilbronn function, `lib/dh/DHLocate5Cert*.lean`.
+"""The certificate files of the zeros that the kernel locates in ball arithmetic, `lib/dh/*States.lean` and `*Cert*.lean`.
 
-    python3 scripts/gen_dh_locate5.py            # write the files
-    python3 scripts/gen_dh_locate5.py --check    # compare them with the ones in lib/dh
+    python3 scripts/gen_dh_ball_cert.py            # write the files
+    python3 scripts/gen_dh_ball_cert.py --check    # compare them with the ones in lib/dh
 
-The zero is near `c = 918601/1000000 + (2441547865/100000) i`. `lib/dh/DHBallDefs.lean` defines a fixed-point
-evaluator (`DHBall.run`) for the sums over `n < 30000` of `n^{-c}` and `log n · n^{-c}`, by residue class mod 5, and
-`lib/dh/DHBall.lean` proves that it encloses them. This script repeats the evaluator's integer arithmetic exactly and
-writes the states after each fifty blocks:
+`lib/dh/DHBallDefs.lean` defines a fixed-point evaluator (`DHBall.run`) for the sums over `n ≤ 5M` of `n^{-c}` and
+`log n · n^{-c}`, by residue class mod 5, at a centre `c`, and `lib/dh/DHBall.lean` proves that it encloses them. This
+script repeats the evaluator's integer arithmetic exactly, for each certificate of `CERTS`, and writes the states
+after each fifty blocks:
 
-    DHLocate5States.lean       the six states `st1, …, st6`, after each thousand blocks
-    DHLocate5Cert{0..5}.lean   `run (1000 i) 1000 st_i = st_{i+1}`, in twenty kernel computations of fifty blocks each
-                               (`decide +kernel`), through intermediate states
+    <prefix>States.lean      the centre, and the states `st1, st2, …` after each thousand blocks
+    <prefix>Cert{i}.lean     `run c (1000 i) 1000 st_i = st_{i+1}`, in twenty kernel computations of fifty blocks each
+                             (`decide +kernel`), through intermediate states
+
+The certificates:
+
+    DHLocate5   the Davenport–Heilbronn function's zero near `918601/1000000 + (2441547865/100000) i`, `6000` blocks
 
 The kernel recomputes every state, so nothing here is trusted: a wrong state makes its file fail to compile.
 """
@@ -21,10 +25,13 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 S = 2 ** 80
 TWO_PI = (7595904947272677161581685, 12091)
-RE_N, RE_D = 918601, 1000000
-IM_N, IM_D = 2441547865, 100000
 EXP_REM = 14857800560707
-BLOCKS, CHUNK, SUB = 6000, 1000, 50
+CHUNK, SUB = 1000, 50
+
+CERTS = [
+    dict(prefix="DHLocate5", ns="DHBall", ctr="ctr5", re=(918601, 1000000), im=(2441547865, 100000), sq=4,
+         blocks=6000, what="The fifth located zero of the Davenport–Heilbronn function", short="The fifth located zero"),
+]
 
 
 def b_add(a, b):
@@ -88,22 +95,23 @@ def sq_loop(j, z):
     return z
 
 
-def red_arg(L):
-    y = b_mul_rat(L, IM_N, IM_D)
+def red_arg(c, L):
+    y = b_mul_rat(L, *c["im"])
     k = (2 * y[0] + TWO_PI[0]) // (2 * TWO_PI[0])
     th = (y[0] - k * TWO_PI[0], y[1] + abs(k) * TWO_PI[1])
-    return (b_div_nat(b_neg(b_mul_rat(L, RE_N, RE_D)), 16), b_div_nat(b_neg(th), 16))
+    d = 2 ** c["sq"]
+    return (b_div_nat(b_neg(b_mul_rat(L, *c["re"])), d), b_div_nat(b_neg(th), d))
 
 
-def exp_ball(v):
+def exp_ball(j, v):
     if (abs(v[0][0]) + v[0][1]) ** 2 + (abs(v[1][0]) + v[1][1]) ** 2 <= S ** 2:
         p = exp_loop(v, 0, 14, ONE, ZERO)
-        return sq_loop(4, ((p[0][0], p[0][1] + EXP_REM), (p[1][0], p[1][1] + EXP_REM)))
+        return sq_loop(j, ((p[0][0], p[0][1] + EXP_REM), (p[1][0], p[1][1] + EXP_REM)))
     return ((0, S), (0, S))
 
 
-def term(L):
-    return exp_ball(red_arg(L))
+def term(c, L):
+    return exp_ball(c["sq"], red_arg(c, L))
 
 
 def log_terms(n):
@@ -122,15 +130,15 @@ def up(L, T):
     return (abs(L[0]) + L[1]) ** 2 * (abs(T[0][0]) + T[0][1] + abs(T[1][0]) + T[1][1]) // (S * S) + 1
 
 
-def step(m, st):
+def step(c, m, st):
     L1, A, B, A1, B1, d2a, d2b = st
-    T1 = term(L1)
+    T1 = term(c, L1)
     L2 = b_add(L1, log_step(5 * m + 1))
-    T2 = term(L2)
+    T2 = term(c, L2)
     L3 = b_add(L2, log_step(5 * m + 2))
-    T3 = term(L3)
+    T3 = term(c, L3)
     L4 = b_add(L3, log_step(5 * m + 3))
-    T4 = term(L4)
+    T4 = term(c, L4)
     L5 = b_add(L4, log_step(5 * m + 4))
     return (b_add(L5, log_step(5 * m + 5)),
             c_sub(c_add(A, T1), T4),
@@ -144,11 +152,11 @@ def step(m, st):
 INIT = ((0, 0), ZERO, ZERO, ZERO, ZERO, 0, 0)
 
 
-def states():
+def states(c):
     """The states after each `SUB` blocks."""
     out, st = [], INIT
-    for m in range(BLOCKS):
-        st = step(m, st)
+    for m in range(c["blocks"]):
+        st = step(c, m, st)
         if (m + 1) % SUB == 0:
             out.append(st)
     return out
@@ -168,64 +176,69 @@ def lean_st(st):
             f"    {d2a},\n    {d2b}⟩")
 
 
-def files():
-    sts = states()
+def files(c):
+    sts = states(c)
     per = CHUNK // SUB                      # steps in a file
-    nfiles = BLOCKS // CHUNK
+    nfiles = c["blocks"] // CHUNK
+    pre, ns, ctr = c["prefix"], c["ns"], c["ctr"]
+    certs = f"`{pre}Cert0`" if nfiles == 1 else f"`{pre}Cert0`, …, `{pre}Cert{nfiles - 1}`"
     out = {}
     body = ["import DHBallDefs", "",
             "/-!",
-            "# The fifth located zero of the Davenport–Heilbronn function: the states of the evaluator",
+            f"# {c['what']}: the states of the evaluator",
             "",
-            f"`st{{i}}` is the state of `DHBall.run` after the blocks `0, …, {CHUNK}·i − 1`. Written by",
-            "`scripts/gen_dh_locate5.py`; `DHLocate5Cert0`, …, `DHLocate5Cert5` have the kernel recompute each from the one",
+            f"`{ctr}` is the centre, and `st{{i}}` the state of `DHBall.run {ctr}` after the blocks `0, …, {CHUNK}·i − 1`. Written by",
+            f"`scripts/gen_dh_ball_cert.py`; {certs} {'has' if nfiles == 1 else 'have'} the kernel recompute each state from the one",
             "before.",
-            "-/", "", "namespace DHBall", ""]
+            "-/", "", f"namespace {ns}", "",
+            f"/-- The centre `{c['re'][0]}/{c['re'][1]} + ({c['im'][0]}/{c['im'][1]}) i`, with `{c['sq']}` squarings. -/",
+            f"def {ctr} : Ctr := ⟨{c['re'][0]}, {c['re'][1]}, {c['im'][0]}, {c['im'][1]}, {c['sq']}⟩", ""]
     for i in range(1, nfiles + 1):
         body += [f"/-- The state after the blocks `0, …, {CHUNK * i - 1}`. -/", f"def st{i} : St :=",
                  lean_st(sts[per * i - 1]), ""]
-    body += ["end DHBall", ""]
-    out["DHLocate5States.lean"] = "\n".join(body)
+    body += [f"end {ns}", ""]
+    out[f"{pre}States.lean"] = "\n".join(body)
     for i in range(nfiles):
         first = "init" if i == 0 else f"st{i}"
-        lines = ["import DHLocate5States", "",
+        lines = [f"import {pre}States", "",
                  "/-!",
-                 f"# The fifth located zero: the blocks `{CHUNK * i}, …, {CHUNK * (i + 1) - 1}`",
+                 f"# {c['short']}: the blocks `{CHUNK * i}, …, {CHUNK * (i + 1) - 1}`",
                  "",
                  f"`run_{i}`: these blocks take `{first}` to `st{i + 1}`. The kernel computes them {SUB} at a time (`decide +kernel`),",
                  f"through the intermediate states `mid_{i}_k`, so that no single computation needs much memory. Written by",
-                 "`scripts/gen_dh_locate5.py`.",
-                 "-/", "", "namespace DHBall", ""]
+                 "`scripts/gen_dh_ball_cert.py`.",
+                 "-/", "", f"namespace {ns}", ""]
         names = [first] + [f"mid_{i}_{k}" for k in range(1, per)] + [f"st{i + 1}"]
         for k in range(1, per):
             lines += [f"/-- The state after the blocks `0, …, {CHUNK * i + SUB * k - 1}`. -/", f"def mid_{i}_{k} : St :=",
                       lean_st(sts[per * i + k - 1]), ""]
         for k in range(per):
             a = CHUNK * i + SUB * k
-            lines += [f"theorem step_{i}_{k} : run {a} {SUB} {names[k]} = {names[k + 1]} := by decide +kernel", ""]
+            lines += [f"theorem step_{i}_{k} : run {ctr} {a} {SUB} {names[k]} = {names[k + 1]} := by decide +kernel", ""]
         lines += [f"/-- The blocks `{CHUNK * i}, …, {CHUNK * (i + 1) - 1}` take `{first}` to `st{i + 1}`. -/",
-                  f"theorem run_{i} : run {CHUNK * i} {CHUNK} {first} = st{i + 1} := by",
+                  f"theorem run_{i} : run {ctr} {CHUNK * i} {CHUNK} {first} = st{i + 1} := by",
                   f"  have h := step_{i}_0"]
         lines += [f"  have h := run_trans h step_{i}_{k}" for k in range(1, per)]
-        lines += ["  exact h", "", "end DHBall", ""]
-        out[f"DHLocate5Cert{i}.lean"] = "\n".join(lines)
+        lines += ["  exact h", "", f"end {ns}", ""]
+        out[f"{pre}Cert{i}.lean"] = "\n".join(lines)
     return out
 
 
 def main():
     check = "--check" in sys.argv
     bad = 0
-    for name, text in files().items():
-        path = os.path.join(ROOT, "lib", "dh", name)
-        if check:
-            if not os.path.exists(path) or open(path, encoding="utf-8").read() != text:
-                print(f"{name}: differs from the generator's")
-                bad += 1
-        else:
-            open(path, "w", encoding="utf-8").write(text)
-            print(f"wrote lib/dh/{name}")
+    for c in CERTS:
+        for name, text in files(c).items():
+            path = os.path.join(ROOT, "lib", "dh", name)
+            if check:
+                if not os.path.exists(path) or open(path, encoding="utf-8").read() != text:
+                    print(f"{name}: differs from the generator's")
+                    bad += 1
+            else:
+                open(path, "w", encoding="utf-8").write(text)
+                print(f"wrote lib/dh/{name}")
     if check:
-        print("the certificate files of the fifth zero are the generator's" if not bad else "DH LOCATE 5 CERT FAIL")
+        print("the certificate files are the generator's" if not bad else "DH BALL CERT FAIL")
     return 1 if bad else 0
 
 
