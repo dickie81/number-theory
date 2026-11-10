@@ -34,49 +34,51 @@ noncomputable section
 
 namespace PsiOmega.Locate.Z5
 
-open DHBall (SA SB SA1 SB1 D2A D2B T)
+open DHBall (SA SB SA1 SB1 D2A D2B T ctr5)
 
 /-- The centre `c = 918601/1000000 + (2441547865/100000) i`. -/
-def cZ : ℂ := DHBall.c
+def cZ : ℂ := DHBall.c ctr5
 
 theorem cZ_re : cZ.re = 918601 / 1000000 := by
-  show ((DHBall.reN : ℕ) : ℝ) / (DHBall.reD : ℕ) = _
-  norm_num [DHBall.reN, DHBall.reD]
+  show ((ctr5.reN : ℕ) : ℝ) / (ctr5.reD : ℕ) = _
+  norm_num [ctr5]
 
 theorem cZ_im : cZ.im = 2441547865 / 100000 := by
-  show ((DHBall.imN : ℕ) : ℝ) / (DHBall.imD : ℕ) = _
-  norm_num [DHBall.imN, DHBall.imD]
+  show ((ctr5.imN : ℕ) : ℝ) / (ctr5.imD : ℕ) = _
+  norm_num [ctr5]
 
 /-! ## 1. The kernel's sums -/
 
 /-- The kernel's final state encloses the sums over `n < 30000`. -/
-theorem inv6000 : DHBall.Inv 6000 DHBall.st6 := by
-  have h1 : DHBall.Inv 1000 DHBall.st1 := by
-    have h := DHBall.inv_run 1000 0 DHBall.init DHBall.inv_init
+theorem inv6000 : DHBall.Inv ctr5 6000 DHBall.st6 := by
+  have hr : 0 < ctr5.reD := by decide
+  have hi : 0 < ctr5.imD := by decide
+  have h1 : DHBall.Inv ctr5 1000 DHBall.st1 := by
+    have h := DHBall.inv_run hr hi 1000 0 DHBall.init (DHBall.inv_init ctr5)
     rw [DHBall.run_0] at h
     exact h
-  have h2 : DHBall.Inv 2000 DHBall.st2 := by
-    have h := DHBall.inv_run 1000 1000 DHBall.st1 h1
+  have h2 : DHBall.Inv ctr5 2000 DHBall.st2 := by
+    have h := DHBall.inv_run hr hi 1000 1000 DHBall.st1 h1
     rw [DHBall.run_1] at h
     exact h
-  have h3 : DHBall.Inv 3000 DHBall.st3 := by
-    have h := DHBall.inv_run 1000 2000 DHBall.st2 h2
+  have h3 : DHBall.Inv ctr5 3000 DHBall.st3 := by
+    have h := DHBall.inv_run hr hi 1000 2000 DHBall.st2 h2
     rw [DHBall.run_2] at h
     exact h
-  have h4 : DHBall.Inv 4000 DHBall.st4 := by
-    have h := DHBall.inv_run 1000 3000 DHBall.st3 h3
+  have h4 : DHBall.Inv ctr5 4000 DHBall.st4 := by
+    have h := DHBall.inv_run hr hi 1000 3000 DHBall.st3 h3
     rw [DHBall.run_3] at h
     exact h
-  have h5 : DHBall.Inv 5000 DHBall.st5 := by
-    have h := DHBall.inv_run 1000 4000 DHBall.st4 h4
+  have h5 : DHBall.Inv ctr5 5000 DHBall.st5 := by
+    have h := DHBall.inv_run hr hi 1000 4000 DHBall.st4 h4
     rw [DHBall.run_4] at h
     exact h
-  have h := DHBall.inv_run 1000 5000 DHBall.st5 h5
+  have h := DHBall.inv_run hr hi 1000 5000 DHBall.st5 h5
   rw [DHBall.run_5] at h
   exact h
 
 /-- `DEM M c` in terms of the sums. -/
-theorem DEM_eq (M : ℕ) : DEM M cZ = SA M + (kappa : ℂ) * SB M := by
+theorem DEM_eq (M : ℕ) : DEM M cZ = SA ctr5 M + (kappa : ℂ) * SB ctr5 M := by
   unfold DEM SA SB
   rw [Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
@@ -84,7 +86,7 @@ theorem DEM_eq (M : ℕ) : DEM M cZ = SA M + (kappa : ℂ) * SB M := by
   ring
 
 /-- `DEM′ M c` in terms of the sums. -/
-theorem DEMk_one_eq (M : ℕ) : DEMk 1 M cZ = SA1 M + (kappa : ℂ) * SB1 M := by
+theorem DEMk_one_eq (M : ℕ) : DEMk 1 M cZ = SA1 ctr5 M + (kappa : ℂ) * SB1 ctr5 M := by
   unfold DEMk SA1 SB1
   rw [Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
@@ -103,10 +105,10 @@ theorem pow_500_ge : (30000 : ℝ) ≤ (1021 / 1000 : ℝ) ^ 500 := by
 
 /-- `n^{-σ}` at `σ = 9168/10000`, against `|n^{-c}| = n^{-918601/1000000}`, for `n ≤ 30000`. -/
 theorem ex_le_norm_T {n : ℕ} (hn : 1 ≤ n) (hn' : n ≤ 30000) :
-    ex (9168 / 10000) n ≤ 1021 / 1000 * ‖T n‖ := by
+    ex (9168 / 10000) n ≤ 1021 / 1000 * ‖T ctr5 n‖ := by
   have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
   have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
-  have hT : ‖T n‖ = (n : ℝ) ^ (-(918601 / 1000000 : ℝ)) := by
+  have hT : ‖T ctr5 n‖ = (n : ℝ) ^ (-(918601 / 1000000 : ℝ)) := by
     rw [T, Complex.norm_natCast_cpow_of_pos (by omega), Complex.neg_re]
     congr 2
   have e : (-(9168 / 10000 : ℝ)) = -(918601 / 1000000 : ℝ) + 1801 / 1000000 := by norm_num
@@ -121,17 +123,17 @@ theorem ex_le_norm_T {n : ℕ} (hn : 1 ≤ n) (hn' : n ≤ 30000) :
     _ = 1021 / 1000 := Real.pow_rpow_inv_natCast (by norm_num) (by norm_num)
 
 /-- The termwise bound for `DEM″`, in terms of the sums. -/
-theorem D2sum_le : D2sum (9168 / 10000) 6000 ≤ 1021 / 1000 * (D2A 6000 + kappa * D2B 6000) := by
+theorem D2sum_le : D2sum (9168 / 10000) 6000 ≤ 1021 / 1000 * (D2A ctr5 6000 + kappa * D2B ctr5 6000) := by
   have hk := kappa_pos
   have key : ∀ m ∈ Finset.range 6000,
       Real.log ((5 * m + 1 : ℕ) : ℝ) ^ 2 * ex (9168 / 10000) (5 * m + 1)
         + kappa * (Real.log ((5 * m + 2 : ℕ) : ℝ) ^ 2 * ex (9168 / 10000) (5 * m + 2))
         + kappa * (Real.log ((5 * m + 3 : ℕ) : ℝ) ^ 2 * ex (9168 / 10000) (5 * m + 3))
         + Real.log ((5 * m + 4 : ℕ) : ℝ) ^ 2 * ex (9168 / 10000) (5 * m + 4) ≤
-      1021 / 1000 * ((Real.log ((5 * m + 1 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 1)‖ +
-          Real.log ((5 * m + 4 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 4)‖) +
-        kappa * (Real.log ((5 * m + 2 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 2)‖ +
-          Real.log ((5 * m + 3 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 3)‖)) := by
+      1021 / 1000 * ((Real.log ((5 * m + 1 : ℕ) : ℝ) ^ 2 * ‖T ctr5 (5 * m + 1)‖ +
+          Real.log ((5 * m + 4 : ℕ) : ℝ) ^ 2 * ‖T ctr5 (5 * m + 4)‖) +
+        kappa * (Real.log ((5 * m + 2 : ℕ) : ℝ) ^ 2 * ‖T ctr5 (5 * m + 2)‖ +
+          Real.log ((5 * m + 3 : ℕ) : ℝ) ^ 2 * ‖T ctr5 (5 * m + 3)‖)) := by
     intro m hm
     have hm' : m < 6000 := Finset.mem_range.1 hm
     have h1 := mul_le_mul_of_nonneg_left (ex_le_norm_T (n := 5 * m + 1) (by omega) (by omega))
@@ -146,12 +148,12 @@ theorem D2sum_le : D2sum (9168 / 10000) 6000 ≤ 1021 / 1000 * (D2A 6000 + kappa
     have h3' := mul_le_mul_of_nonneg_left h3 hk.le
     linarith
   calc D2sum (9168 / 10000) 6000 ≤ ∑ m ∈ Finset.range 6000,
-        1021 / 1000 * ((Real.log ((5 * m + 1 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 1)‖ +
-            Real.log ((5 * m + 4 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 4)‖) +
-          kappa * (Real.log ((5 * m + 2 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 2)‖ +
-            Real.log ((5 * m + 3 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 3)‖)) :=
+        1021 / 1000 * ((Real.log ((5 * m + 1 : ℕ) : ℝ) ^ 2 * ‖T ctr5 (5 * m + 1)‖ +
+            Real.log ((5 * m + 4 : ℕ) : ℝ) ^ 2 * ‖T ctr5 (5 * m + 4)‖) +
+          kappa * (Real.log ((5 * m + 2 : ℕ) : ℝ) ^ 2 * ‖T ctr5 (5 * m + 2)‖ +
+            Real.log ((5 * m + 3 : ℕ) : ℝ) ^ 2 * ‖T ctr5 (5 * m + 3)‖)) :=
         Finset.sum_le_sum key
-    _ = 1021 / 1000 * (D2A 6000 + kappa * D2B 6000) := by
+    _ = 1021 / 1000 * (D2A ctr5 6000 + kappa * D2B ctr5 6000) := by
         unfold D2A D2B
         rw [← Finset.mul_sum, Finset.sum_add_distrib, ← Finset.mul_sum]
 
@@ -289,9 +291,9 @@ theorem norm_fEM_cZ : ‖fEM 6000 12 cZ‖ ≤ 42 / 100000 := by
   norm_num at a1 a2 a3 a4 b1 b2 b3 b4
   obtain ⟨k1, k2⟩ := kappaBG
   have hk0 := kappa_pos.le
-  have hre : (DEM 6000 cZ).re = (SA 6000).re + kappa * (SB 6000).re := by
+  have hre : (DEM 6000 cZ).re = (SA ctr5 6000).re + kappa * (SB ctr5 6000).re := by
     rw [DEM_eq, Complex.add_re, Complex.re_ofReal_mul]
-  have him : (DEM 6000 cZ).im = (SA 6000).im + kappa * (SB 6000).im := by
+  have him : (DEM 6000 cZ).im = (SA ctr5 6000).im + kappa * (SB ctr5 6000).im := by
     rw [DEM_eq, Complex.add_im, Complex.im_ofReal_mul]
   have hD : ‖DEM 6000 cZ‖ ≤ 11 / 100000 := by
     refine (Complex.norm_le_abs_re_add_abs_im _).trans ?_
@@ -300,9 +302,9 @@ theorem norm_fEM_cZ : ‖fEM 6000 12 cZ‖ ≤ 42 / 100000 := by
     have u2 := mul_le_mul_of_nonneg_left b2 hk0
     have u3 := mul_le_mul_of_nonneg_left b3 hk0
     have u4 := mul_le_mul_of_nonneg_left b4 hk0
-    have hr : |(SA 6000).re + kappa * (SB 6000).re| ≤ 92 / 1000000 := by
+    have hr : |(SA ctr5 6000).re + kappa * (SB ctr5 6000).re| ≤ 92 / 1000000 := by
       rw [abs_le]; constructor <;> linarith
-    have hi : |(SA 6000).im + kappa * (SB 6000).im| ≤ 13 / 1000000 := by
+    have hi : |(SA ctr5 6000).im + kappa * (SB ctr5 6000).im| ≤ 13 / 1000000 := by
       rw [abs_le]; constructor <;> linarith
     linarith
   rw [fEM]
@@ -318,7 +320,7 @@ theorem norm_fEMd_cZ : (196 / 100 : ℝ) ≤ ‖DEMk 1 6000 cZ + GEMd 6000 12 cZ
   norm_num at a1 b1
   obtain ⟨k1, k2⟩ := kappaBG
   have hk0 := kappa_pos.le
-  have hre : (DEMk 1 6000 cZ).re = (SA1 6000).re + kappa * (SB1 6000).re := by
+  have hre : (DEMk 1 6000 cZ).re = (SA1 ctr5 6000).re + kappa * (SB1 ctr5 6000).re := by
     rw [DEMk_one_eq, Complex.add_re, Complex.re_ofReal_mul]
   have u1 := mul_le_mul_of_nonneg_left b1 hk0
   have hD : (1989 / 1000 : ℝ) ≤ ‖DEMk 1 6000 cZ‖ := by
@@ -339,7 +341,7 @@ theorem D2sum_le_num : D2sum (9168 / 10000) 6000 ≤ 464 := by
   norm_num at hA hB
   obtain ⟨k1, k2⟩ := kappaBG
   have hk0 := kappa_pos.le
-  have hB0 : 0 ≤ D2B 6000 := by
+  have hB0 : 0 ≤ D2B ctr5 6000 := by
     unfold D2B
     exact Finset.sum_nonneg fun m _ => by positivity
   have h := D2sum_le

@@ -5,7 +5,7 @@ import DHLocate5States
 
 `run_0`: these blocks take `init` to `st1`. The kernel computes them 50 at a time (`decide +kernel`),
 through the intermediate states `mid_0_k`, so that no single computation needs much memory. Written by
-`scripts/gen_dh_locate5.py`.
+`scripts/gen_dh_ball_cert.py`.
 -/
 
 namespace DHBall
@@ -200,48 +200,48 @@ def mid_0_19 : St :=
     210482044975016510962120553,
     210862226587198891443675523⟩
 
-theorem step_0_0 : run 0 50 init = mid_0_1 := by decide +kernel
+theorem step_0_0 : run ctr5 0 50 init = mid_0_1 := by decide +kernel
 
-theorem step_0_1 : run 50 50 mid_0_1 = mid_0_2 := by decide +kernel
+theorem step_0_1 : run ctr5 50 50 mid_0_1 = mid_0_2 := by decide +kernel
 
-theorem step_0_2 : run 100 50 mid_0_2 = mid_0_3 := by decide +kernel
+theorem step_0_2 : run ctr5 100 50 mid_0_2 = mid_0_3 := by decide +kernel
 
-theorem step_0_3 : run 150 50 mid_0_3 = mid_0_4 := by decide +kernel
+theorem step_0_3 : run ctr5 150 50 mid_0_3 = mid_0_4 := by decide +kernel
 
-theorem step_0_4 : run 200 50 mid_0_4 = mid_0_5 := by decide +kernel
+theorem step_0_4 : run ctr5 200 50 mid_0_4 = mid_0_5 := by decide +kernel
 
-theorem step_0_5 : run 250 50 mid_0_5 = mid_0_6 := by decide +kernel
+theorem step_0_5 : run ctr5 250 50 mid_0_5 = mid_0_6 := by decide +kernel
 
-theorem step_0_6 : run 300 50 mid_0_6 = mid_0_7 := by decide +kernel
+theorem step_0_6 : run ctr5 300 50 mid_0_6 = mid_0_7 := by decide +kernel
 
-theorem step_0_7 : run 350 50 mid_0_7 = mid_0_8 := by decide +kernel
+theorem step_0_7 : run ctr5 350 50 mid_0_7 = mid_0_8 := by decide +kernel
 
-theorem step_0_8 : run 400 50 mid_0_8 = mid_0_9 := by decide +kernel
+theorem step_0_8 : run ctr5 400 50 mid_0_8 = mid_0_9 := by decide +kernel
 
-theorem step_0_9 : run 450 50 mid_0_9 = mid_0_10 := by decide +kernel
+theorem step_0_9 : run ctr5 450 50 mid_0_9 = mid_0_10 := by decide +kernel
 
-theorem step_0_10 : run 500 50 mid_0_10 = mid_0_11 := by decide +kernel
+theorem step_0_10 : run ctr5 500 50 mid_0_10 = mid_0_11 := by decide +kernel
 
-theorem step_0_11 : run 550 50 mid_0_11 = mid_0_12 := by decide +kernel
+theorem step_0_11 : run ctr5 550 50 mid_0_11 = mid_0_12 := by decide +kernel
 
-theorem step_0_12 : run 600 50 mid_0_12 = mid_0_13 := by decide +kernel
+theorem step_0_12 : run ctr5 600 50 mid_0_12 = mid_0_13 := by decide +kernel
 
-theorem step_0_13 : run 650 50 mid_0_13 = mid_0_14 := by decide +kernel
+theorem step_0_13 : run ctr5 650 50 mid_0_13 = mid_0_14 := by decide +kernel
 
-theorem step_0_14 : run 700 50 mid_0_14 = mid_0_15 := by decide +kernel
+theorem step_0_14 : run ctr5 700 50 mid_0_14 = mid_0_15 := by decide +kernel
 
-theorem step_0_15 : run 750 50 mid_0_15 = mid_0_16 := by decide +kernel
+theorem step_0_15 : run ctr5 750 50 mid_0_15 = mid_0_16 := by decide +kernel
 
-theorem step_0_16 : run 800 50 mid_0_16 = mid_0_17 := by decide +kernel
+theorem step_0_16 : run ctr5 800 50 mid_0_16 = mid_0_17 := by decide +kernel
 
-theorem step_0_17 : run 850 50 mid_0_17 = mid_0_18 := by decide +kernel
+theorem step_0_17 : run ctr5 850 50 mid_0_17 = mid_0_18 := by decide +kernel
 
-theorem step_0_18 : run 900 50 mid_0_18 = mid_0_19 := by decide +kernel
+theorem step_0_18 : run ctr5 900 50 mid_0_18 = mid_0_19 := by decide +kernel
 
-theorem step_0_19 : run 950 50 mid_0_19 = st1 := by decide +kernel
+theorem step_0_19 : run ctr5 950 50 mid_0_19 = st1 := by decide +kernel
 
 /-- The blocks `0, …, 999` take `init` to `st1`. -/
-theorem run_0 : run 0 1000 init = st1 := by
+theorem run_0 : run ctr5 0 1000 init = st1 := by
   have h := step_0_0
   have h := run_trans h step_0_1
   have h := run_trans h step_0_2

@@ -3,12 +3,15 @@ import DHBallDefs
 /-!
 # The fifth located zero of the Davenport–Heilbronn function: the states of the evaluator
 
-`st{i}` is the state of `DHBall.run` after the blocks `0, …, 1000·i − 1`. Written by
-`scripts/gen_dh_locate5.py`; `DHLocate5Cert0`, …, `DHLocate5Cert5` have the kernel recompute each from the one
+`ctr5` is the centre, and `st{i}` the state of `DHBall.run ctr5` after the blocks `0, …, 1000·i − 1`. Written by
+`scripts/gen_dh_ball_cert.py`; `DHLocate5Cert0`, …, `DHLocate5Cert5` have the kernel recompute each state from the one
 before.
 -/
 
 namespace DHBall
+
+/-- The centre `918601/1000000 + (2441547865/100000) i`, with `4` squarings. -/
+def ctr5 : Ctr := ⟨918601, 1000000, 2441547865, 100000, 4⟩
 
 /-- The state after the blocks `0, …, 999`. -/
 def st1 : St :=

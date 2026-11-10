@@ -4,14 +4,15 @@ import Mathlib.Data.Nat.Notation
 # A fixed-point evaluator for Dirichlet polynomials at a complex point: the definitions
 
 Integer arithmetic that the kernel can run (`decide +kernel`), for the zero of the Davenport–Heilbronn function at
-height `24415` (`DHLocate5`). A real number is held as a ball: a centre `c / S` and a radius `e / S`, with `S = 2^80`.
+height `24415` (`DHLocate5`) and the zero of the second Davenport–Heilbronn function at height `1650`
+(`DHSecondZero`). A real number is held as a ball: a centre `c / S` and a radius `e / S`, with `S = 2^80`.
 `DHBall` proves that each operation encloses what it should; this file has the definitions and the lemma that runs
 compose (`run_trans`), so that the certificate files import nothing else.
 
 * `B`, `CB`: real and complex balls, with `add`, `sub`, `mul`, `divNat`, `mulRat`.
 * `expLoop`, `sqLoop`: the Taylor polynomial of `exp` of degree `13`, and repeated squaring.
-* `redArg`, `expBall`, `term`: a ball for `n^{-c}` from a ball `L` for `log n`, where `c = reN/reD + i·imN/imD` is the
-  centre.
+* `Ctr`: the centre `c = reN/reD + i·imN/imD` of an evaluation, with the number `sq` of squarings.
+* `redArg`, `expBall`, `term`: a ball for `n^{-c}` from a ball `L` for `log n`.
 * `logStep n`: a ball for `log (n + 1) − log n`, from the series of `−log (1 − 1/(n + 1))`.
 * `step`, `run`: the sums over the blocks `5m + 1, …, 5m + 4`, with the logarithm carried from block to block.
 * `forceNat`, …, `St.force`: identities that make the kernel evaluate the state after each block.
@@ -93,25 +94,28 @@ def sqLoop : ℕ → CB → CB
 /-- A ball for `2π`, from Mathlib's twenty decimals of `π`. -/
 def twoPi : B := ⟨7595904947272677161581685, 12091⟩
 
-/-- The centre is `c = reN/reD + i·imN/imD`: the numerator of its real part. -/
-def reN : ℕ := 918601
+/-- The centre `c = reN/reD + i·imN/imD` of an evaluation, and the number `sq` of squarings: `n^{-c}` is computed as
+`exp(−c·log n / 2^sq)` to the power `2^sq`, and the exponent has to lie in the unit disc for the ball to be a good
+one, so `sq` is chosen with `Re c·log n ≤ 0.9·2^sq` for the `n` that occur. -/
+structure Ctr where
+  /-- The numerator of the real part. -/
+  reN : ℕ
+  /-- The denominator of the real part. -/
+  reD : ℕ
+  /-- The numerator of the imaginary part. -/
+  imN : ℕ
+  /-- The denominator of the imaginary part. -/
+  imD : ℕ
+  /-- The number of squarings. -/
+  sq : ℕ
 
-/-- The denominator of the centre's real part. -/
-def reD : ℕ := 1000000
-
-/-- The numerator of the centre's imaginary part. -/
-def imN : ℕ := 2441547865
-
-/-- The denominator of the centre's imaginary part. -/
-def imD : ℕ := 100000
-
-/-- The exponent `−c·log n`, reduced and divided by `16`, from a ball `L` for `log n`: the real part is
-`−σ·log n / 16`, and the imaginary part `−(t·log n − 2πk) / 16` with `k` the integer nearest to `t·log n / 2π`. -/
-def redArg (L : B) : CB :=
-  let y := L.mulRat imN imD
+/-- The exponent `−c·log n`, reduced and divided by `2^sq`, from a ball `L` for `log n`: the real part is
+`−σ·log n / 2^sq`, and the imaginary part `−(t·log n − 2πk) / 2^sq` with `k` the integer nearest to `t·log n / 2π`. -/
+def redArg (p : Ctr) (L : B) : CB :=
+  let y := L.mulRat p.imN p.imD
   let k : Int := (2 * y.c + twoPi.c) / (2 * twoPi.c)
-  ⟨((L.mulRat reN reD).neg).divNat 16,
-    (B.neg ⟨y.c - k * twoPi.c, y.e + k.natAbs * twoPi.e⟩).divNat 16⟩
+  ⟨((L.mulRat p.reN p.reD).neg).divNat (2 ^ p.sq),
+    (B.neg ⟨y.c - k * twoPi.c, y.e + k.natAbs * twoPi.e⟩).divNat (2 ^ p.sq)⟩
 
 /-- The remainder of the Taylor polynomial of `exp` of degree `13` on the unit disc, times `S`, rounded up:
 `15/(14·14!)·S ≤ 14857800560707`, about `1.2·10⁻¹¹`. -/
@@ -120,15 +124,15 @@ def expRem : ℕ := 14857800560707
 /-- The ball `p` with `expRem` added to each radius. -/
 def widen (p : CB) : CB := ⟨⟨p.re.c, p.re.e + expRem⟩, ⟨p.im.c, p.im.e + expRem⟩⟩
 
-/-- A ball for `exp(v)^16`: the Taylor polynomial of degree `13` at `v`, squared four times. If `v` is not in the
-unit disc, the ball is the unit square (which holds `exp(v)^16` whenever that has modulus at most `1`). -/
-def expBall (v : CB) : CB :=
+/-- A ball for `exp(v)^(2^j)`: the Taylor polynomial of degree `13` at `v`, squared `j` times. If `v` is not in the
+unit disc, the ball is the unit square (which holds `exp(v)^(2^j)` whenever that has modulus at most `1`). -/
+def expBall (j : ℕ) (v : CB) : CB :=
   if (v.re.c.natAbs + v.re.e) ^ 2 + (v.im.c.natAbs + v.im.e) ^ 2 ≤ S ^ 2 then
-    sqLoop 4 (widen (expLoop v 0 14 one zero))
+    sqLoop j (widen (expLoop v 0 14 one zero))
   else ⟨⟨0, S⟩, ⟨0, S⟩⟩
 
 /-- A ball for `n^{-c}`, from a ball `L` for `log n`. -/
-def term (L : B) : CB := expBall (redArg L)
+def term (p : Ctr) (L : B) : CB := expBall p.sq (redArg p L)
 
 /-- `logSum n1 fuel i p acc` adds `⌊⌊S / n1^{j+1}⌋ / (j + 1)⌋`, `i ≤ j < i + fuel`, to `acc`, where `p = n1^i`. -/
 def logSum (n1 : ℕ) : ℕ → ℕ → ℕ → ℕ → ℕ
@@ -166,16 +170,16 @@ structure St where
   d2b : ℕ
 deriving DecidableEq
 
-/-- The block `5m + 1, …, 5m + 5`. -/
-def step (m : ℕ) (st : St) : St :=
+/-- The block `5m + 1, …, 5m + 5`, at the centre `p`. -/
+def step (p : Ctr) (m : ℕ) (st : St) : St :=
   let L1 := st.L
-  let T1 := term L1
+  let T1 := term p L1
   let L2 := L1.add (logStep (5 * m + 1))
-  let T2 := term L2
+  let T2 := term p L2
   let L3 := L2.add (logStep (5 * m + 2))
-  let T3 := term L3
+  let T3 := term p L3
   let L4 := L3.add (logStep (5 * m + 3))
-  let T4 := term L4
+  let T4 := term p L4
   let L5 := L4.add (logStep (5 * m + 4))
   { L := L5.add (logStep (5 * m + 5))
     A := (st.A.add T1).sub T4
@@ -212,10 +216,11 @@ def St.force {α : Type} (st : St) (f : St → α) : α :=
     st.B1.force fun B1 => forceNat st.d2a fun d2a => forceNat st.d2b fun d2b =>
       f ⟨L, A, B', A1, B1, d2a, d2b⟩
 
-/-- `run m n st` applies the blocks `m, …, m + n − 1` to `st`, evaluating the state after each block. -/
-def run : ℕ → ℕ → St → St
+/-- `run p m n st` applies the blocks `m, …, m + n − 1` to `st`, at the centre `p`, evaluating the state after each
+block. -/
+def run (p : Ctr) : ℕ → ℕ → St → St
   | _, 0, st => st
-  | m, n + 1, st => (step m st).force fun st' => run (m + 1) n st'
+  | m, n + 1, st => (step p m st).force fun st' => run p (m + 1) n st'
 
 /-- The state before the first block. -/
 def init : St := ⟨⟨0, 0⟩, zero, zero, zero, zero, 0, 0⟩
@@ -235,20 +240,21 @@ theorem CB.force_eq {α : Type} (z : CB) (f : CB → α) : z.force f = f z := by
 theorem St.force_eq {α : Type} (st : St) (f : St → α) : st.force f = f st := by
   simp only [St.force, B.force_eq, CB.force_eq, forceNat_eq]
 
-theorem run_succ (m n : ℕ) (st : St) : run m (n + 1) st = run (m + 1) n (step m st) := by
+theorem run_succ (p : Ctr) (m n : ℕ) (st : St) : run p m (n + 1) st = run p (m + 1) n (step p m st) := by
   rw [run, St.force_eq]
 
 /-- Blocks run one after the other. -/
-theorem run_add : ∀ (n1 m n2 : ℕ) (st : St), run m (n1 + n2) st = run (m + n1) n2 (run m n1 st)
+theorem run_add (p : Ctr) : ∀ (n1 m n2 : ℕ) (st : St),
+    run p m (n1 + n2) st = run p (m + n1) n2 (run p m n1 st)
   | 0, m, n2, st => by rw [Nat.zero_add, Nat.add_zero, run]
   | n1 + 1, m, n2, st => by
     have e1 : n1 + 1 + n2 = n1 + n2 + 1 := by omega
     have e2 : m + (n1 + 1) = m + 1 + n1 := by omega
-    rw [e1, run_succ, run_succ, run_add n1, e2]
+    rw [e1, run_succ, run_succ, run_add p n1, e2]
 
 /-- Two runs, one after the other, are one run. -/
-theorem run_trans {m n1 n2 : ℕ} {st st1 st2 : St} (h1 : run m n1 st = st1)
-    (h2 : run (m + n1) n2 st1 = st2) : run m (n1 + n2) st = st2 := by
+theorem run_trans {p : Ctr} {m n1 n2 : ℕ} {st st1 st2 : St} (h1 : run p m n1 st = st1)
+    (h2 : run p (m + n1) n2 st1 = st2) : run p m (n1 + n2) st = st2 := by
   rw [run_add, h1, h2]
 
 end DHBall
