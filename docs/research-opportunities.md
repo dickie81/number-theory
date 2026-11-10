@@ -248,12 +248,32 @@ covers. The region does not close at `13/6`.
     `d₁f_maxd₂² ≤ q^{L+c}` and `d₁d₂ ≥ q^{L−1−δ'}` are evaluated with an error `q^{L−δ}/φ(q)`. The paper's lemma
     is `c < 0`. In exponents of `x`, up to the margins, the region is `2a₁ + 2a₂ < 2 − τ` for `a₁ ≥ τ` and
     `a₁ + 2a₂ < 2 − 2τ` for `a₁ ≤ τ`, the rule of `two_factor.py --bil` and of `harman_sieve.py`.
-- **What is not written.** The form in two variables of the paper's Lemma 4.6 (chains of primes), where a
-  comparison between the two variables has no prime as a pivot and the region enters by rectangles; Harman's
-  comparison with the estimate's stops, whose zone depends on the rest, and with the leaves of the wider region;
-  role reversal, with the removal of the conditions that tie the reversed variable to the others; and a
-  certificate for a tree with reversed terms, which the paper's format does not have. Until these are written the
-  theorem stays at `11/5`.
+  - the paper's Lemma 4.6 in two variables (`SieveTwoChain.chain_two`): a family of tuples of primes with
+    comparisons of any kind, two disjoint sets of its primes as the two variables, at least one prime left as the
+    rest, and the rectangle of the two products' exponents inside the region, has `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`. A
+    comparison with a prime of the rest has it as a pivot. One with none is a condition between the two variables:
+    a bilinear bound `C|f|₂|g|₂` survives a condition `u(i) ≤ v(j)` at the cost of a factor `N + 1`, for `v` with
+    fewer than `2^N` values (`SieveTwoCross.BilBd.cmp_list`: ranks, then binary digits, with the Cauchy–Schwarz
+    inequality across the two halves), so `J₀` of them cost a power of `log q`. Every term `Σ_r S(A_r, z)` of a
+    sieve, in the main tree or in a reversed one, is a sum of such families over the number of prime factors of
+    its cofactor, whatever conditions tie its variables.
+- **What is not written.** Harman's comparison with these families as its stops, whose zone depends on the rest,
+  and with the leaves of the wider region (the library's `SieveP6ib.prop6ib_core` takes its chains and its leaves
+  as hypotheses, for two windows of one variable); role reversal; and a certificate for a tree with reversed
+  terms, which the paper's format does not have. Until these are written the theorem stays at `11/5`.
+  Role reversal, in exact terms: for a term `Σ S(A_{p₁⋯p_k}, p_k)` on a box of cells and one of its primes `p_j`
+  in `[X, X′)`, the numbers `n = (r/p_j)·m·p_j` with `N₂/X′ < (r/p_j)m ≤ N₁/X` have `p_j = n/((r/p_j)m)` in its cell
+  whatever `n` in `(N₁, N₂]`, so on them the term is `Σ S(A_{r′}, ⌈X′^{1/2}⌉)` over `r′ = (r/p_j)m` with that
+  condition and no other on the cofactor, a term of the usual kind; the rest has `p_j` within a factor `N₂/N₁` of
+  an end of its cell, a share `O(1/log x)` of the box. In the computation (`harman_sieve.py --rev`, whose
+  docstring has the commands), what carries the reversal is the terms that need an upper bound (`1.03` at `2.19`
+  if only the others are reversed, against `0.44`; cells of side `0.007`, one level), the bilinear Type I
+  estimate inside the reversed trees (`1.08` with the linear one alone), and cofactors that are not prime (`0.64`
+  if only prime cofactors are reversed); floors below every prime of a reversed term cost nothing (`0.45`). The
+  size of a certificate: without reversal the cells pass at `2.19` only (`0.86` with the window, `276000` nodes
+  at side `0.005`); with it, `0.79` at `2.19` with `119000` nodes (side `0.01`, terms of at most three primes,
+  one level), `0.73` at `2.17` with `10^6` nodes (side `0.007`, one level), `0.48` at `2.17` with `1.4·10^7`
+  (side `0.005`, two levels), and `0.92` at `2.12` with the cells of side `0.002` of the table above.
 
 ### 3.2 Short intervals
 

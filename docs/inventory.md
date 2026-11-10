@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1636 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1643 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 268 | 844 |
+| `lib/pnt` | 271 | 851 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2738,10 +2738,26 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.sum_bin_two`: One bin in two variables ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.sum_typeII_two_bins`: The Type II estimate in two variables, by bins ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveTwoChain`: Chains of primes with two Type II variables
+
+- `SieveTwoChain.chain_two`: Families of tuples of primes with two Type II variables (Lemma 4.6 in two variables) ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveTwoCross`: Conditions between the two variables of a bilinear estimate
+
+- `SieveTwoCross.kern_eq`: The product of the indicators is the indicator of the conjunction.
+- `SieveTwoCross.BilBd.cmp_list`: A list of `k` conditions between `i` and `j` costs a factor `(N + 1)^k` ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveTwoPieces`: The zone's exponents by pieces of the curve, from the ends of each piece
 
 - `SieveTypeIIHM.zonePiece_OO`: Both variables by orthogonality
 - `SieveTypeIIHM.zonePiece_HH`: Both variables by the Halász–Montgomery inequality
+
+#### `SieveTwoTuples`: Tuples of primes as the two variables of the Type II estimate
+
+- `SieveTwoTuples.sum_padded_mul`: A sum over `padded (T ∪ T′) Y`, for `T` and `T′` disjoint, is a double sum
+- `SieveTwoTuples.sum_padded_fin`: A sum over `padded R Y` is a sum over the `n`-tuples of primes up to `Y`
+- `SieveTwoTuples.card_fiber_le`: At most `(K + 1)^K` tuples of `padded T Y` have a given product
+- `SieveTwoTuples.box_cross`: The estimate for two polynomials on tuples, with conditions between them
 
 #### `SieveTwoTypeII`: Proposition 3′ in two variables, for a curve on a zone
 

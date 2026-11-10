@@ -162,6 +162,9 @@ import SieveFamilyGen
 import SieveFamilyTwo
 import SieveUnwGen
 import SieveUnwTwo
+import SieveTwoCross
+import SieveTwoTuples
+import SieveTwoChain
 import SieveHMWindow
 import SieveTypeIIHM
 import LinnikCGLLV
@@ -908,6 +911,13 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveFamilyTwo.typeII_sharp_two
 #print axioms SieveUnwGen.unw_gen
 #print axioms SieveUnwTwo.typeII_unw_two
+#print axioms SieveTwoCross.BilBd.cmp_list
+#print axioms SieveTwoCross.kern_eq
+#print axioms SieveTwoTuples.sum_padded_mul
+#print axioms SieveTwoTuples.sum_padded_fin
+#print axioms SieveTwoTuples.card_fiber_le
+#print axioms SieveTwoTuples.box_cross
+#print axioms SieveTwoChain.chain_two
 #print axioms SieveCurveGlue.affine_corner_bound
 #print axioms SieveCurveGlue.windowPieceHM_affine_split
 #print axioms SieveCurveGlue.windowPieceHM_const_split

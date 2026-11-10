@@ -72,6 +72,7 @@ typedef struct {
     double wmin;
     int split, splitdepth;
     int pointwise;
+    int rev_odd, rev_even, rev_prime, rev_linear, rev_floor, rev_offdiag;
 } Ctx;
 
 typedef struct {
@@ -157,8 +158,9 @@ static int evaluable(const Ctx *c, int k, const double *Slo, const double *Shi) 
     return 0;
 }
 
-static double capacity(const Ctx *c, int k, const double *Shi) {
+static double capacity(const Ctx *c, int k, const double *Shi, int linear) {
     int full = (1 << k) - 1;
+    if (linear) return c->theta - c->eps1 - Shi[full];   /* the linear Type I estimate alone: r P < x^theta */
     double th = c->theta - c->eps1, one = 1 - c->eps1, W = 2 - c->tau - c->eps1, best = -1;
     for (int S1 = 0; S1 <= full; S1++) {
         double a1 = Shi[S1], a2 = Shi[full ^ S1];
@@ -309,8 +311,11 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
     st->nodes[std ? k : MAXK + 1]++;
     if (muhi < llo) return 0;                    /* u < 1 on the whole box: the term is empty */
     if (evaluable(c, k, Slo, Shi)) return 0;
-    double T = capacity(c, k, Shi);
+    double T = capacity(c, k, Shi, !std && c->rev_linear);
     double fs = exact_floor(c, k, Slo, Shi, lhi, T);
+    if (c->rev_floor && !std && fs >= 0)         /* a floor below every atom of a reversed term */
+        for (int j = 0; j < k; j++)
+            if (fs > Slo[1 << j]) fs = Slo[1 << j];
     if (fs >= lhi) return 0;
     if (fs > llo) fs = llo;                      /* a floor is below the sifting level at every point */
     double ulo = mulo / lhi, uhi = muhi / llo;
@@ -320,13 +325,18 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
         double r = reversal(c, k, Slo, Shi, npm);
         if (r < BIG && r * cdrop < best) best = r * cdrop;
     }
-    if (fl > 0 && k >= 2 && k <= c->flipdepth) {
+    if (fl > 0 && k >= 2 && k <= c->flipdepth && !(c->rev_even && odd) && !(c->rev_odd && !odd) &&
+        !(c->rev_prime && uhi >= 2)) {
         double S2lo[1 << MAXK], S2hi[1 << MAXK];
         for (int j = 0; j < k; j++) {
             int bj = 1 << j;
             if (Slo[bj] < c->flipmin) continue;
             if (npm >> j & 1) continue;          /* only a prime can be opened */
             if (j == k - 1 && uhi >= 2) continue;
+            if (c->rev_offdiag && std) {         /* the cell of p_j apart from its neighbours' */
+                if (j + 1 < k && Slo[bj] < Shi[1 << (j + 1)]) continue;
+                if (j > 0 && Shi[bj] > Slo[1 << (j - 1)]) continue;
+            }
             /* the atoms other than j keep their order; the last atom is the cofactor */
             int map[MAXK], n = 0;
             for (int i = 0; i < k; i++)

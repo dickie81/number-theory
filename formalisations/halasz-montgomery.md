@@ -111,16 +111,36 @@ them, each with a prime as a pivot. For two polynomial variables:
   with the polynomial part abstract and cut into blocks by a map) for the pairs of dyadic blocks, at most
   `(3 + 4 log q)²` of them.
 
-A comparison between `m₁` and `m₂` with no prime in it is not covered: it has no pivot, and its cut-off does not
-separate into a twist of each variable. And the region enters through rectangles: the estimate holds on a
-rectangle of exponents inside it, so a set of pairs cut by a slanted side of the region is a union of rectangles
-and a remainder that these lemmas do not evaluate.
+- `SieveTwoCross.BilBd.cmp_list`, **conditions between the two variables** (`lib/pnt/SieveTwoCross.lean`): a
+  comparison between `m₁` and `m₂` with no prime in it has no pivot, and its cut-off does not separate into a twist
+  of each variable. It costs a logarithm instead. If `Σ_χ |Σ_i f_iF_i(χ)||Σ_j g_jG_j(χ)|W(χ) ≤ C|f|₂|g|₂` for all
+  coefficients `f` and `g`, then with a condition `u(i) ≤ v(j)` (or `<`) inside the double sum the bound is
+  `(N + 1)C|f|₂|g|₂`, for `v` with fewer than `2^N` values, and `(N + 1)^k C|f|₂|g|₂` with `k` conditions. The proof
+  replaces `u` and `v` by their ranks among the values of `v` and splits on a binary digit: with `d = 2^{N−1}`,
+  `1[u ≤ v] = 1[u < d ≤ v] + (1[u, v < d] + 1[u, v ≥ d])·1[u mod d ≤ v mod d]`; the first term is a product, and
+  the two others have disjoint supports in `i` and in `j`, so the Cauchy–Schwarz inequality keeps the constant of
+  the induction.
+- `SieveTwoChain.chain_two`, **Lemma 4.6 in two variables** (`lib/pnt/SieveTwoChain.lean`): given `TypeIITwoAt L R`
+  and `0 < L ≤ 5/2`, let `z` run over the `K`-tuples of primes up to `⌊2q^L⌋` that satisfy at most `J₀` comparisons
+  `0 ≤ c + Σ_i e_i log z_i` (or `0 <`) with `e_i ∈ {−1, 0, 1}` and `c ≤ Λ₁ log q`, of any kind, and let `S₁` and
+  `S₂` be disjoint sets of indices that leave an index out. If every such tuple has its entries at least `q^{e₀}`,
+  `P₁ < ∏_{S₁} z ≤ P₁′`, `P₂ < ∏_{S₂} z ≤ P₂′` and `∏z ≤ 2q^L`, and `R` holds on the rectangle
+  `[log_q P₁, log_q P₁′] × [log_q P₂, log_q P₂′]`, then
+  `|Σ_z (1[∏z ≡ a] − 1[(∏z, q) = 1]/φ(q))| ≤ q^{L−δ}/φ(q)`, for some `δ > 0` and large `q`. The two variables are
+  the tuples on `S₁` and on `S₂` (`lib/pnt/SieveTwoTuples.lean`): a tuple of primes is recovered from its product up
+  to `(K + 1)^K` choices, so a polynomial of tuples is one of integers whose mean square is at most `(K + 1)^K`
+  times as large. A comparison with a prime outside `S₁ ∪ S₂` has it as a pivot and goes into
+  `SieveUnwGen.unw_gen`; the others are conditions between the two variables, and cost a power of `log q`. A term
+  `Σ_r S(A_r, z)` of a sieve is a sum of such families, one for each number of prime factors of the cofactor.
+
+The region enters through rectangles: the estimate holds on a rectangle of exponents inside it, so a set of
+tuples cut by a slanted side of the region is a union of rectangles and a remainder that these lemmas do not
+evaluate.
 
 No theorem of the library uses these yet: `lib/check/CheckAll.lean` prints their axioms, which are `propext`,
 `Classical.choice` and `Quot.sound`. They are the estimate in two variables of
 [`docs/research-opportunities.md`](../docs/research-opportunities.md) (§3.1). What that section's computations use
-and these do not give: chains of primes (the paper's Lemma 4.6) in two variables, and Harman's comparison with
-them.
+and these do not give: Harman's comparison with these families as its stops, role reversal, and a certificate.
 
 ## Source
 

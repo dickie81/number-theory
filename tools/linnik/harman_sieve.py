@@ -59,6 +59,14 @@ At 2.13 with --h 0.004 the cells give 0.998; with --nest 1, 1.079; with --flips 
 --flips 0, 1.426; with --plain, 1.174; with --sieve --upper, 0.991. `paper` at 11/5 gives 0.862 with --h 0.002
 and 0.800 with --h 0.001, where the paper's certificate has 0.932 on its grid, and `parity` gives 3.0.
 
+What the reversal needs (`--rev`; at 2.19 with --no-window --nest 1 --h 0.007, where the cells give 0.441): with
+`even`, 1.029, and with `odd`, 0.496, so it is the terms that need an upper bound; with `linear`, 1.083, so it
+is the bilinear Type I estimate inside the reversed trees; with `prime`, 0.636; with `floor`, 0.453; with
+`offdiag`, 0.446. How large a tree passes: with --flips 0 the cells are below 1 at 2.19 only (0.864 with the
+window and --h 0.005, 276000 nodes); with --no-window --flips 3 --nest 1 --h 0.01 they give 0.787 at 2.19 with
+119000 nodes; with --no-window --nest 1 --h 0.007, 0.729 at 2.17 with 10^6 nodes; with --no-window --h 0.005,
+0.480 at 2.17 with 1.4 10^7 nodes.
+
 What is assumed, beyond the paper: the estimate in two variables on the tabulated zone (two_factor.py states it;
 in Lean are its bound by bins, SieveTypeIIHM.sum_typeII_two_bins and bin_bound_two, and the zone's part with both
 variables of length at least q, twoBound_of_long); the bilinear Type I estimate without 2HD < q at the leaves (in
@@ -104,7 +112,9 @@ class Ctx(C.Structure):
                 ('use_ub', C.c_int), ('use_lb', C.c_int), ('use_rev', C.c_int),
                 ('fmin', C.c_double), ('smax', C.c_double),
                 ('flip', C.c_int), ('flipdepth', C.c_int), ('flipmax', C.c_int), ('flipmin', C.c_double),
-                ('wmin', C.c_double), ('split', C.c_int), ('splitdepth', C.c_int), ('pointwise', C.c_int)]
+                ('wmin', C.c_double), ('split', C.c_int), ('splitdepth', C.c_int), ('pointwise', C.c_int),
+                ('rev_odd', C.c_int), ('rev_even', C.c_int), ('rev_prime', C.c_int), ('rev_linear', C.c_int),
+                ('rev_floor', C.c_int), ('rev_offdiag', C.c_int)]
 
 
 class Stats(C.Structure):
@@ -220,7 +230,7 @@ def window(L):
 class Sieve:
     def __init__(self, L, h=0.004, depth=8, flips=6, nest=2, flipmax=8, flipmin=0.15, wide=True, usewin=True,
                  sieve=False, upper=False, type2=True, eps1=0.002, eps0=0.002, fmin=0.01, smax=7.0, shrink=0.0,
-                 tables=None):
+                 tables=None, rev=()):
         L = Fr(L)
         self.L, Lf = L, float(L)
         r, Alo, Ahi = tables if tables is not None else zones(L)
@@ -273,6 +283,8 @@ class Sieve:
         ctx.fmin, ctx.smax = fmin, smax
         ctx.flip, ctx.flipdepth, ctx.flipmax, ctx.flipmin = (nest if flips > 0 else 0), flips, flipmax, flipmin
         ctx.wmin, ctx.split, ctx.splitdepth = 0.0005, 0, 0
+        for name in ('odd', 'even', 'prime', 'linear', 'floor', 'offdiag'):
+            setattr(ctx, 'rev_' + name, int(name in rev))
         self.ctx = ctx
         # the floor of the top node: the largest f at which S(A, x^f) is evaluated
         T = ctx.theta - eps1
@@ -306,6 +318,11 @@ def main():
     ap.add_argument('--no-window', action='store_true')
     ap.add_argument('--shrink', type=float, default=0.0, help='narrow every zone by this much')
     ap.add_argument('--nu', type=float, default=None, help='floor of the top node (default: the largest)')
+    ap.add_argument('--rev', default='', help='restrictions on the reversal, comma-separated: odd or even (only '
+                    'the terms that need an upper bound, or a lower bound), prime (only where the cofactor is '
+                    'prime on the whole box), linear (the linear Type I estimate alone in reversed trees), floor '
+                    '(floors below every atom of a reversed term), offdiag (the cell of the reversed prime apart '
+                    "from its neighbours')")
     a = ap.parse_args()
     h = a.h if a.h is not None else (0.004 if a.command == 'points' else 0.002)
     for Ls in a.L:
@@ -319,7 +336,8 @@ def main():
         else:
             s = Sieve(Ls, h=h, depth=a.depth, flips=a.flips, nest=a.nest, flipmax=a.flipmax, wide=not a.plain,
                       usewin=not a.no_window, sieve=a.sieve or a.command == 'parity',
-                      upper=a.upper or a.command == 'parity', shrink=a.shrink, type2=a.command != 'parity')
+                      upper=a.upper or a.command == 'parity', shrink=a.shrink, type2=a.command != 'parity',
+                      rev=tuple(x for x in a.rev.split(',') if x))
             nu = a.nu if a.nu is not None else (s.nu0 if s.nu0 is not None else 0.05)
         v, bad, nodes = s.loss(pointwise=a.command == 'points', nu=nu)
         print(f'{a.command} L = {Ls} ({float(s.L):.4f}), h = {h}: loss {v:.4f}'
