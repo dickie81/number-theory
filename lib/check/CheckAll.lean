@@ -26,6 +26,7 @@ import BallSilent
 import BallUpperEta
 import BallGap
 import BallPivot
+import BallLoud
 import BallLow
 import HalfPlaneJoinsPNT
 import DivisorExponent
@@ -499,6 +500,18 @@ exactly under RH. -/
 #print axioms BallPivot.top_index_le
 #print axioms BallPivot.lattice_ge
 #print axioms BallPivot.rh_iff_lattice
+
+/- The inverse theorem on the arithmetic class, first half (`formalisations/ball-rate.md`): for the vectors
+`n·x_n = Σ_{d ∣ n, d ≤ D₀} E_d(n/N)` with bounded Lipschitz profiles that vanish beyond `1`, and `G = Σ_d E_d/d`,
+`V_x(ρ) = N^ρ·Ĝ(ρ) + O(1)` at a zero, by a Riemann sum with an integrable singularity. So under RH a zero with
+`Ĝ(ρ) ≠ 0` makes `Q_N(x) ≥ c·N`, and a vector of the class with `Q_N(x) = O((log N/N)·Σx_n²)` has `Ĝ(ρ) = 0` at
+every zero. -/
+#print axioms BallLoud.sum_profile_sub_le
+#print axioms BallLoud.norm_dpoly_classVec_ge
+#print axioms BallLoud.loud
+#print axioms BallLoud.loud_sum
+#print axioms BallLoud.carries_zeta
+#print axioms BallLoud.quiet_carries_zeta
 
 /- The low zeros (`formalisations/ball-rate.md`): under RH, the zeros above `8N` contribute at most
 `(4Σc_n² + G(c)/2)/N` and a pole term to `Q_N(x)`, by `BallUpper.upper_mean` on dyadic shells; and a vector supported

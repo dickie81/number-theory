@@ -2,7 +2,8 @@
 
 **Lean:** `BallRate` (`lib/core/BallRate.lean`), printed by `lib/check/CheckAll.lean`, with `BallSampling`,
 `BallDensity`, `BallCutoff` and `BallSharp` in four later sections, then `BallUpper` with `BallUpperEta`, `BallGap`,
-`BallPivot` in the section "The pivots", and `BallLow` in the section "The low zeros". The theorems are mapped onto the gravastar language in the section after the
+`BallPivot` in the section "The pivots", `BallLow` in the section "The low zeros", and `BallLoud` in the section
+"The inverse theorem on the arithmetic class". The theorems are mapped onto the gravastar language in the section after the
 statements; the first section, written before the Lean, fixes the three statements and says what each costs. The rate,
 open when that section was written, is now proved under RH alone: `λ_N ≥ 1/(22e⁸N)` for every `N ≥ 1`
 (`BallSharp.rate_sharp`, section "Sampling at the zeros in its natural form"). It comes from the sampling conjecture of
@@ -1378,6 +1379,61 @@ zero. Its spread is `≍ log N`, and its quotient is at least `(0.0400 + o(1))·
      the local factors. So the smallest value of `T/D` is the product of the local minima `μ_p`, each below
      `1 − p⁻²`. That gives `T/(12D) ≥ (1/12)Π_p μ_p = K_min`, the value of `--solve` at `κ = 0`.
 3. **The spread.** `f(n) = Σ_{d | n}E_d(n/N) = F(n) + O(n/N)`, and `F` is periodic modulo `lcm(1, …, D₀)`. ∎
+
+**Part 1 in Lean** (`BallLoud`, `lib/core/BallLoud.lean`, printed by `lib/check/CheckAll.lean`). Part 1, and the
+sentence after the theorem, are Lean theorems. Parts 2 and 3 are not.
+
+```lean
+theorem BallLoud.loud (hRH : RiemannHypothesis) {D₀ : ℕ} {E : ℕ → ℝ → ℝ} {B K : ℝ}
+    (hE : ∀ d ∈ Icc 1 D₀, Profile (E d) B K) (q : ZIdx)
+    (hG : mellin01 (bdry D₀ E) (zetaZeroFamily q) ≠ 0) :
+    ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N →
+      ‖mellin01 (bdry D₀ E) (zetaZeroFamily q)‖ ^ 2 / (4 * (1 / 4 + (zetaZeroFamily q).im ^ 2)) * N ≤
+        form N (classVec D₀ E N)
+
+theorem BallLoud.loud_sum (hRH : RiemannHypothesis) {D₀ : ℕ} {E : ℕ → ℝ → ℝ} {B K : ℝ}
+    (hE : ∀ d ∈ Icc 1 D₀, Profile (E d) B K) (S : Finset ZIdx) {θ : ℝ} (hθ : θ < 1) :
+    ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N →
+      θ * (∑ q ∈ S, ‖mellin01 (bdry D₀ E) (zetaZeroFamily q)‖ ^ 2 /
+          (1 / 4 + (zetaZeroFamily q).im ^ 2)) * N ≤ form N (classVec D₀ E N)
+
+theorem BallLoud.quiet_carries_zeta (hRH : RiemannHypothesis) {D₀ : ℕ} {E : ℕ → ℝ → ℝ} {B K : ℝ}
+    (hE : ∀ d ∈ Icc 1 D₀, Profile (E d) B K) {C : ℝ}
+    (hquiet : ∀ N : ℕ, 1 ≤ N → form N (classVec D₀ E N) ≤
+      C * ((1 + Real.log N) / N) * ∑ n ∈ Icc 1 N, classVec D₀ E N n ^ 2) (q : ZIdx) :
+    mellin01 (bdry D₀ E) (zetaZeroFamily q) = 0
+```
+
+Here `classVec D₀ E N n = (Σ_{d ≤ D₀, d ∣ n} E_d(n/N))/n` is the vector, `bdry D₀ E = Σ_{d ≤ D₀} E_d/d` is `G`,
+`mellin01 G s = ∫_0^1 G(u)u^{s−1}du` is `Ĝ(s)`, and `form N` is `Q_N`.
+
+- **The class is larger than the theorem's.** `Profile φ B K` asks only that `|φ| ≤ B`, that `φ` be `K`-Lipschitz, and
+  that `φ = 0` on `[1, ∞)`: no second derivative. The smoothness of the theorem's class is for part 2.
+- **The error is `O(1)`, where the proof above has `O(N^{−σ})`.** The Lean does not shift a contour. For a profile
+  `φ` and `Re s = ½`, `Σ_{m ≤ X} φ(m/X)m^{s−1}` is a Riemann sum of `X^s∫_0^1 φ(u)u^{s−1}du`, whose integrand is
+  singular at `0` but integrable, and the two differ by at most `2B + K + 3B|s − 1|`
+  (`BallLoud.sum_profile_sub_le`): the piece `[0, 1]` is at most `2B`, and each `[m, m + 1]` contributes at most
+  `K/X + B|s − 1|m^{−3/2}`, by the mean value inequality for `t^{s−1}`. So
+  `|V_x(ρ)| ≥ √N·|Ĝ(ρ)| − D₀(2B + K + 3B|ρ − 1|)` (`BallLoud.norm_dpoly_classVec_ge`). The bounded term holds the
+  `ζ(1 − ρ)M_e(1 − ρ)` of the proof above, which the Lean does not show to vanish. For part 1 it does not have to.
+- **The zeros enter once**, through `BallRate.hasSum_form`: under RH `Q_N(x)` is the sum of
+  `|V_x(ρ)|²/(¼ + γ²)` over the zeros, so it is at least one term.
+- **The constant.** `BallLoud.loud_sum` has part 1's constant, summed over the zeros: for each `θ < 1` and each
+  finite set `S` of zeros, `Q_N(x) ≥ θ·N·Σ_{ρ ∈ S}|Ĝ(ρ)|²/(¼ + γ²)` for every large `N`. The set `S` is of indices
+  in `ZIdx`, so a zero and its conjugate both count. `BallLoud.loud` is one zero with `θ = ¼`, which is all that
+  `carries_zeta` uses. Part 1 states its bound for the quotient, with `|Ĝ(ρ)|²/((¼ + γ²)D) + o(1)`. The Lean does
+  not divide by `Σx_n²`: it has that this is at most `2(D₀B)²` (`BallLoud.sum_sq_classVec_le`), and not that it
+  tends to `D`.
+- **Quiet.** `BallLoud.carries_zeta` has the hypothesis `Q_N(x) ≤ C(1 + log N)`, weaker than quiet, and
+  `BallLoud.quiet_carries_zeta` the one above. Either gives `Ĝ(ρ) = 0` at every zero, counted with multiplicity
+  in `ZIdx`. The Lean does not go on to say that `G` is then a staircase.
+
+What part 2 needs is not in the library or in Mathlib: the approximate functional equation for the smoothed sums
+at a zero, with Stirling's formula for `χ` uniformly in the height, and a mean value of the dual sum over the
+zeros in windows shorter than `N` (Gonek's uniform form of Landau's formula, or the explicit formula with
+band-limited windows for frequencies `log(a/b)`). The same holds for the upper bound with the sharp constant of
+the previous section, and Theorems C to E below need stationary phase with smooth weights and Ingham's
+inequality.
 
 **Theorem B (the picket fence on the class; no hypothesis).** Let `Φ(γ_k) = k − ½` be the fence, and
 `Q^pf_N(x) = Σ_k 2|V_x(½ + iγ_k)|²/(¼ + γ_k²)`. For `x` in the class with `e ≠ 0`:

@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1600 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1606 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -281,7 +281,7 @@ In order of what is in reach.
    it (`BallWeil.rh_of_pivots`), and under RH its pivot inequality holds for every `k` with `log k ≥ 7100`: the pivots
    are at least `(log k/2 + log 4 + 2)/(22e⁸)` (`BallPivot.pivot_ge`), so the conjecture is RH together with finitely
    many pivot inequalities (`BallPivot.orbitLattice_iff`), and RH is equivalent to the orbit spanning a lattice: the
-   form is at least `(log 4 + 2)/(22e⁸)` at every nonzero integer vector (`BallPivot.rh_iff_lattice`). Two primes already carry RH: for distinct primes `p` and
+   form is at least `(log 4 + 2)/(22e⁸)` at every nonzero integer vector (`BallPivot.rh_iff_lattice`). On the class of vectors `n·x_n = Σ_{d ∣ n, d ≤ D₀} E_d(n/N)`, to which the minimisers are seen to belong, a vector whose boundary function `G = Σ_d E_d/d` has `Ĝ(ρ) ≠ 0` at some zero has `Q_N(x) ≥ c·N` under RH, with `c` any number below the sum of `|Ĝ(ρ)|²/(¼ + γ²)` over finitely many zeros, so the vectors with `Q_N(x) = O((log N/N)·Σx_n²)` have `Ĝ(ρ) = 0` at every zero (`BallLoud.loud_sum`, `BallLoud.quiet_carries_zeta`). Two primes already carry RH: for distinct primes `p` and
    `q`, RH holds exactly when `K_H(p^a q^b) ≥ −K_H(1)` for all integers `a` and `b`
    (`BallSlice.rh_iff_bound_pair`), so in particular for `2^a 3^b` (`BallSlice.rh_iff_two_three`). At every stage `N` the primes above `N/2`, which have no other multiple
    up to `N`, are never absent and are asymptotically half of all the primes (`LonelyPrimes.lonely_ratio_pos`,
