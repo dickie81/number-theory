@@ -133,6 +133,21 @@ them, each with a prime as a pivot. For two polynomial variables:
   `SieveUnwGen.unw_gen`; the others are conditions between the two variables, and cost a power of `log q`. A term
   `Σ_r S(A_r, z)` of a sieve is a sum of such families, one for each number of prime factors of the cofactor.
 
+- `SieveTwoComp.prop6_two`, **Harman's comparison with stops in two variables** (`lib/pnt/SieveTwoComp.lean`): the
+  paper's Proposition 4.8 (`SieveP6ib.prop6ib`) with this estimate in place of the window, and with its Lemma 4.3 on
+  the wider region. For a family of strictly decreasing chains `rt` in boxes `q^{lo_i} ≤ rt_i ≤ q^{hi_i}`, all at
+  least `z₀ = ⌈q^{a₀}⌉`, a set `S₀` of indices whose product `c` enters a window `(u, v)` with `u + a₀ < v`,
+  `u − Σ_{S₀} lo ≤ t` and `Σ_{S₀} hi < v`, a disjoint set `Sr ≠ ∅` whose product, the rest, has its exponent in
+  `[ρ₁, ρ₂]`, the region on `[u, v] × [L − v − ρ₂ − ε, L − u − ρ₁ + ε]`, and a split `(S₁, eIn₁)` of the leaves
+  with `D₁ < L − 1` and `max(D₁, 1) + D₁ + 2D₂ < 2L − 1`:
+  `|Σ_{rt}(S(A_r, z₀) − S(B_r, z₀)/φ(q))| ≤ ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` for every `η > 0` and large `q`. The
+  tree over the primes below `z₀` stops when `c∏P` passes `⌈q^u⌉`; a stop's first variable is `c∏P·p`, in the
+  window because the steps are below `z₀`, its rest is the chain's, and its second variable is all the rest of `n`
+  (`SieveTwoTerm.chain2_bound`, from `chain_two` on the chain and the primes of its cofactor). The tree and its
+  leaves are the paper's (`SieveTwoP6.prop6_two_core` is `SieveP6ib.prop6ib_core` with the rest carried along the
+  extensions of a chain), and the leaves' sizes are those of `SieveTypeIBAsymWide.leaves_ib_wide`
+  (`SieveP6LeavesWide.leavesOK_wide`).
+
 The region enters through rectangles: the estimate holds on a rectangle of exponents inside it, so a set of
 tuples cut by a slanted side of the region is a union of rectangles and a remainder that these lemmas do not
 evaluate.
@@ -140,7 +155,7 @@ evaluate.
 No theorem of the library uses these yet: `lib/check/CheckAll.lean` prints their axioms, which are `propext`,
 `Classical.choice` and `Quot.sound`. They are the estimate in two variables of
 [`docs/research-opportunities.md`](../docs/research-opportunities.md) (§3.1). What that section's computations use
-and these do not give: Harman's comparison with these families as its stops, role reversal, and a certificate.
+and these do not give: role reversal, and a certificate.
 
 ## Source
 

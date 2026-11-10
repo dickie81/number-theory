@@ -143,7 +143,7 @@ lean_lib Core where
     .one `ZeroSwap, .one `ZerosDense, .one `ZerosInfinite, .one `Zeta,
     .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaInputs]
 
-/-- lib/pnt: 644 modules. -/
+/-- lib/pnt: 648 modules. -/
 lean_lib PNT where
   srcDir := "lib/pnt"
   globs := #[
@@ -291,12 +291,13 @@ lean_lib PNT where
     .one `SieveHMBin, .one `SieveHMBins, .one `SieveHMWindow, .one `SieveLeaf,
     .one `SieveLeaves, .one `SieveLemma1, .one `SieveMain, .one `SieveMain2,
     .one `SieveMain8, .one `SieveOmegaB, .one `SieveP6Chain, .one `SieveP6Leaves,
-    .one `SieveP6Split, .one `SieveP6Tree, .one `SieveP6TreeLeaves, .one `SieveP6ib,
-    .one `SieveProp6, .one `SieveQ, .one `SieveQ8, .one `SieveRanges,
-    .one `SieveRough, .one `SieveRoughTuple, .one `SieveRoute, .one `SieveRule,
-    .one `SieveRuleDefs, .one `SieveSep, .one `SieveSmooth, .one `SieveSpline,
-    .one `SieveStops1, .one `SieveStops2, .one `SieveTree, .one `SieveTreeStop,
-    .one `SieveTwoBins, .one `SieveTwoChain, .one `SieveTwoCross, .one `SieveTwoPieces,
+    .one `SieveP6LeavesWide, .one `SieveP6Split, .one `SieveP6Tree, .one `SieveP6TreeLeaves,
+    .one `SieveP6ib, .one `SieveProp6, .one `SieveQ, .one `SieveQ8,
+    .one `SieveRanges, .one `SieveRough, .one `SieveRoughTuple, .one `SieveRoute,
+    .one `SieveRule, .one `SieveRuleDefs, .one `SieveSep, .one `SieveSmooth,
+    .one `SieveSpline, .one `SieveStops1, .one `SieveStops2, .one `SieveTree,
+    .one `SieveTreeStop, .one `SieveTwoBins, .one `SieveTwoChain, .one `SieveTwoComp,
+    .one `SieveTwoCross, .one `SieveTwoP6, .one `SieveTwoPieces, .one `SieveTwoTerm,
     .one `SieveTwoTuples, .one `SieveTwoTypeII, .one `SieveTwoZone, .one `SieveTwoZone7D,
     .one `SieveTypeIB, .one `SieveTypeIBAsym, .one `SieveTypeIBAsymWide, .one `SieveTypeIBBrun,
     .one `SieveTypeIBEv, .one `SieveTypeIBFam, .one `SieveTypeIBLeaf, .one `SieveTypeIBPairWide,

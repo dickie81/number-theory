@@ -165,6 +165,10 @@ import SieveUnwTwo
 import SieveTwoCross
 import SieveTwoTuples
 import SieveTwoChain
+import SieveTwoP6
+import SieveTwoTerm
+import SieveP6LeavesWide
+import SieveTwoComp
 import SieveHMWindow
 import SieveTypeIIHM
 import LinnikCGLLV
@@ -918,6 +922,13 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTwoTuples.card_fiber_le
 #print axioms SieveTwoTuples.box_cross
 #print axioms SieveTwoChain.chain_two
+#print axioms SieveTwoP6.prop6_two_core
+#print axioms SieveTwoTerm.sum_full_eq
+#print axioms SieveTwoTerm.chain2_bound
+#print axioms SieveTwoTerm.chainOK2_of_zone
+#print axioms SieveP6LeavesWide.leaves_chain_wide
+#print axioms SieveP6LeavesWide.leavesOK_wide
+#print axioms SieveTwoComp.prop6_two
 #print axioms SieveCurveGlue.affine_corner_bound
 #print axioms SieveCurveGlue.windowPieceHM_affine_split
 #print axioms SieveCurveGlue.windowPieceHM_const_split

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1643 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1650 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 271 | 851 |
+| `lib/pnt` | 275 | 858 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2650,6 +2650,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveP6Leaves.leaves_chain`: The large leaves of a family, with Brun's weights *paper*
 
+#### `SieveP6LeavesWide`: The large leaves of a family on the wider region
+
+- `SieveP6LeavesWide.leaves_chain_wide`: The large leaves of a family, with Brun's weights, on the wider region
+- `SieveP6LeavesWide.leavesOK_wide`: `LeavesOK` on the wider region ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveP6Tree`: Proposition 6 with the bilinear estimate: Buchstab's tree on a family
 
 - `SieveP6Tree.tree_chains`: Buchstab's tree on a family, as chains *paper*
@@ -2660,7 +2665,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveP6ib`: Proposition 6 with the bilinear estimate
 
-- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate *paper* ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveProp6`: Proposition 6, Harman's fundamental theorem in the form used
 
@@ -2742,15 +2747,29 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTwoChain.chain_two`: Families of tuples of primes with two Type II variables (Lemma 4.6 in two variables) ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveTwoComp`: Harman's comparison with stops in two variables and the leaves of the wider region
+
+- `SieveTwoComp.prop6_two`: Harman's comparison with stops in two variables and the leaves of the wider region ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveTwoCross`: Conditions between the two variables of a bilinear estimate
 
 - `SieveTwoCross.kern_eq`: The product of the indicators is the indicator of the conjunction.
 - `SieveTwoCross.BilBd.cmp_list`: A list of `k` conditions between `i` and `j` costs a factor `(N + 1)^k` ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveTwoP6`: Harman's comparison with stops in two variables, at one modulus
+
+- `SieveTwoP6.prop6_two_core`: Harman's comparison with stops in two variables, at one `q` ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveTwoPieces`: The zone's exponents by pieces of the curve, from the ends of each piece
 
 - `SieveTypeIIHM.zonePiece_OO`: Both variables by orthogonality
 - `SieveTypeIIHM.zonePiece_HH`: Both variables by the Halász–Montgomery inequality
+
+#### `SieveTwoTerm`: Chains with two marked products, by the Type II estimate in two variables
+
+- `SieveTwoTerm.sum_full_eq`: The chains with their cofactor's tuples are the full tuples
+- `SieveTwoTerm.chain2_bound`: Chains with two marked products ([note](../formalisations/halasz-montgomery.md))
+- `SieveTwoTerm.chainOK2_of_zone`: `ChainOK2` for every length up to `K₀ + 1`
 
 #### `SieveTwoTuples`: Tuples of primes as the two variables of the Type II estimate
 
@@ -2786,7 +2805,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveTypeIBAsymWide`: The leaves by the bilinear estimate without `2HDm < q`: the asymptotic form
 
 - `SieveTypeIBAsymWide.bdUW_le_pow`: The uniform bound with the cut `⌈qY/ℓ⌉`, as powers of `q`
-- `SieveTypeIBAsymWide.leaves_ib_wide`: The leaves by the bilinear estimate on the wider region, asymptotically
+- `SieveTypeIBAsymWide.leaves_ib_wide`: The leaves by the bilinear estimate on the wider region, asymptotically ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTypeIBPairWide`: The leaves by the bilinear estimate without `2HDm < q`: families and a block pair
 
