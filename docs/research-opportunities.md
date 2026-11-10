@@ -557,6 +557,19 @@ These are computations in floating point, not certificates. Two things would mak
   `ε·log₂N·Σ_{n ≤ N} n^{−σ} + 2Σ_{n > N} n^{−σ}`, small on the disc; Rouché's theorem ends it. No prime number
   theory is needed, and no large height. This is a formalisation of a few modules, not attempted here.
 
+**The second function: a zero right of `1`, certified (Lean; 10 November).** The combination with the other sign,
+`dh2 = (1 − ε')L(s, χ₅) + (1 − ε)L(s, χ₅⁻¹)`, has the functional equation with the sign `−`, and coefficients
+`1, τ₋, −τ₋, −1` up to a constant, `τ₋ = −1/κ`: the second Davenport–Heilbronn function of E. Bombieri and A. Ghosh
+(Russian Math. Surveys 66:2 (2011)). For it the primes have to supply an argument of `2 arctan κ = 0.554`, where
+`dh` needs `2.588`, and the prime `2` alone has `2 arctan(1/2) = 0.927`. So zeros right of `1` are common, and
+Bombieri and Ghosh's §9 gives the one of largest real part below height `10⁴`, `2.37474435 + 1649.8708285i`.
+`PsiOmega.Locate.Sec.dh2_zero_re_gt_one` proves it: `dh2` has a zero within `1/10000` of
+`2.3747444 + 1649.8708285i` ([davenport-heilbronn.md](../formalisations/davenport-heilbronn.md)). Where the series
+converges absolutely the approximant is the Dirichlet polynomial itself, `5000` terms here, with a bound for the
+tail; the kernel's part is a sixth of one of the six files of the zero at `24415`. It is a kernel-checked zero in the
+half-plane of absolute convergence, of a function with the functional equation of an `L`-function. It is not the
+classical function's, whose zeros there are the numerical ones above.
+
 ### 8.6 Directions tried in this scan and set aside
 
 - **`λ_N ≫ log N/N` for every vector.** The top-vertex argument does not reach it: the minimising vector has `x_N → 0`.

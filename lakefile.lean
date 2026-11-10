@@ -305,7 +305,7 @@ lean_lib PNT where
     .one `ZetaGMLV, .one `ZetaGMProp, .one `ZetaGMS3, .one `ZetaGMTrace,
     .one `ZetaGMWin, .one `ZetaHuxley, .one `ZetaIngham, .one `ZetaKernel]
 
-/-- lib/dh: 64 modules. -/
+/-- lib/dh: 68 modules. -/
 lean_lib DH where
   srcDir := "lib/dh"
   globs := #[
@@ -323,7 +323,8 @@ lean_lib DH where
     .one `DHLocateFour, .one `DHLocateGen, .one `DHLocateNum, .one `DHLocateSkeleton,
     .one `DHLocateTrig, .one `DHLogBounds, .one `DHLogBoundsExt, .one `DHNegIndex,
     .one `DHNumerics, .one `DHOddPacket, .one `DHOddTerms, .one `DHOffCross,
-    .one `DHPacket, .one `DHPrime, .one `DHRealAxis, .one `DHTerms,
+    .one `DHPacket, .one `DHPrime, .one `DHRealAxis, .one `DHSecond,
+    .one `DHSecondCert0, .one `DHSecondStates, .one `DHSecondZero, .one `DHTerms,
     .one `DHTrigBounds, .one `DHTwin, .one `DHZeros, .one `DavenportHeilbronn]
 
 /-- lib/zeta23: 10 modules. -/
