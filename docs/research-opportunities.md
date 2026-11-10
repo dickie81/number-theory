@@ -134,6 +134,7 @@ the exponent each input would reach is:
 |---|---|---|---|
 | Chen, Gupta and Li's `4/(1 + σ)` at `σ = 5/7`, the library today | `7/3 = 2.3333` | `13/6 = 2.1667` | `2.198`–`2.2` (computed: `2.199` passes, `2.198` fails) |
 | The same, with the Type II estimate in two variables as one more way to evaluate a box (below; no Lean theorem) | `7/3` | `13/6` | `2.193` (computed: `2.193` passes, `2.192` fails) |
+| The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no Lean theorem, no certificate) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
 | A hybrid large-values estimate of Guth–Maynard strength at `σ = 5/7`, `15/(3 + 5σ)` (the `gm` variant of `tools/linnik/density_payoff.py`) | `105/46 = 2.2826` | `2.1413` | about `2.17`–`2.18` |
 | Guth and Maynard's `30/13` as a cap everywhere | `2.3077` | `2.1538` | about `2.18`–`2.19` |
 | The classical `12/5` at `σ = 3/4` (no Chen–Gupta–Li) | `2.4` | `2.2` | `2.239` (computed, §S6) |
@@ -169,10 +170,42 @@ covers. The region does not close at `13/6`.
   `0.112` at `θ = 0.528`), so that the region at `θ = 0.530` contains his at `0.528`. That suggests that his sieve
   reaches every modulus near `q < x^{0.47}`, an exponent of about `2.13`, given the half-plane. It is an estimate
   from one lemma's region: the sieve was not run, and his Type I lemmas were not modelled.
+- **In a decomposition that does not lean on the window** (`tools/linnik/harman_sieve.py`, whose docstring states
+  it). Each term has its own floor, the largest at which Harman's comparison evaluates it: its tree over the small
+  primes is stopped by the estimate (the part that enters the zone is a set of the term's primes times the small
+  primes, the rest a set of the term's primes or the first small prime), and its leaves are in the reach of Type I,
+  taken with the bilinear estimate without the condition `2HD < q`. A box is evaluated by the window or by the
+  estimate at every depth. And a term may be treated through any of its primes: the numbers `p₁⋯p_k m` are also
+  `r′k` with `k = p_j` and `r′ = (r/p_j)m`, and Buchstab's identity then runs over the prime factors of `k` (role
+  reversal, as in Harman's sieve for short intervals; here for terms of at most six primes, and once more inside a
+  reversed tree). The loss, in units of the main term, with every test and every cost taken conservatively on boxes
+  of cells of side `0.002` (first row), and with each cell replaced by its midpoint, the limit of fine cells
+  (second row):
+
+  | `L` | `11/5` | `2.18` | `2.16` | `2.15` | `2.14` | `2.13` | `2.12` | `2.11` | `2.10` |
+  |---|---|---|---|---|---|---|---|---|---|
+  | on cells | `0.032` | `0.161` | `0.397` | `0.507` | `0.631` | `0.761` | `0.920` | `1.094` | `1.270` |
+  | at midpoints | `0.013` | `0.090` | `0.285` | `0.364` | `0.459` | `0.569` | `0.690` | `0.849` | `1.011` |
+
+  So the computation passes at `2.12`, where the paper's decomposition stops at `2.193` (there this one loses
+  `0.10`), and the limit of fine cells is near `2.10`, which is Baker, Harman and Pintz's `0.525` in the dictionary
+  of the previous item, and agrees with its estimate of `2.13`. What carries it, at `2.13` on cells of side `0.004`,
+  where the loss is `0.998`: role reversal (`1.079` without the second level, `1.252` for terms of at most four
+  primes, `1.426` with none; with none the midpoints pass `1` at `2.16`) and the wider bilinear estimate (`1.174`
+  with Lemma 4.2 as it stands). The linear sieve's bounds, for terms that the comparison does not evaluate, lower
+  it to `0.991` and are left out. Three checks of the program: in the paper's set-up at `11/5` (the window alone,
+  Lemma 4.2, the window's width as the floor, no reversal) it gives `0.862` on cells of side `0.002` and `0.800` on
+  cells of side `0.001`, where the certificate has `0.932` on its grid, and `0.728` at midpoints; with the linear
+  sieve's bounds and no Type II information it gives `3.0`, so it does not detect primes, as parity requires; and
+  the tabulated zone holds at `160000` points off its lattice. It is floating point, and not a certificate.
 - **What is not written.** The estimate (the paper's proof with one more Cauchy–Schwarz and the dual form of its
   Halász–Montgomery inequality); the form in two variables of the paper's Lemmas 4.4 to 4.6, where a comparison
-  between the two variables has no prime as a pivot; and a decomposition that does not lean on the window, which is
-  what an exponent near `2.13` would need.
+  between the two variables has no prime as a pivot; the bilinear Type I estimate without `2HD < q` (in the proof
+  of Lemma 4.2 the congruence `t d₂′ ≡ t′ d₂` then has at most `(2HD/q + 1)F` solutions, and the first term gains
+  the factor `(d₂/n + 1)^{1/2}`, `n` the cofactor's length); Harman's comparison with the estimate's stops, whose
+  zone depends on the rest; role reversal, with the removal of the conditions that tie the reversed variable to the
+  others; and a certificate for a tree with reversed terms, which the paper's format does not have. Until these
+  are written the theorem stays at `11/5`.
 
 ### 3.2 Short intervals
 
@@ -278,7 +311,9 @@ and the inventory would carry them.
   unconditional to `2a ≤ 1.6`; it is compute-bound (the cost figures of [weil-positivity-l05.md](weil-positivity-l05.md)).
 - **The half-plane at `7/8`.** It does not move Linnik's exponent (§3.1); what it would improve is listed in
   `account.md`, and §1 and §2 above would gain `23/24` and the constant `8` in place of `12`.
-- **Linnik below `2.198` by the present method:** not possible (§3.1).
+- **Linnik below `2.198`:** not by the paper's decomposition with the window as its Type II estimate. With the estimate in two
+  variables it reaches `2.193`, and in a decomposition without the window the computation of §3.1 passes at `2.12`;
+  neither has a Lean theorem.
 
 ### 6.1 The `positivity-search` branch and its gravastar strand
 
