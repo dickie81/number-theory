@@ -276,6 +276,10 @@ covers. The region does not close at `13/6`.
     evaluations are a parameter. For tests that are sound, a tree that passes on the box of one prime with cost
     below `1` gives the theorem with the route's exponent (`SieveAd.linnik_tree`; `SieveAd.sound` is the bound of
     a tree, by induction). The paper's certificate is a fixed decomposition to depth 8; this one takes any tree.
+    The window's tests are proved sound (`SieveAd.winTests_sound`, from the paper's lemmas on boxes: a box surely
+    evaluable, and a box that the bilinear rule passes at the window's width as the floor), so at `11/5` a tree
+    that passes them gives the paper's theorem (`SieveAd22000.linnik_tree_22000`). The tests of the estimate in
+    two variables, which a tree below `11/5` needs, are not written.
 - **What is not written.** Role reversal; and a certificate for a tree with floors chosen term by term and
   reversed terms, which the paper's format does not have. Until these are written the theorem stays at `11/5`.
   Role reversal, in exact terms: for a term `Σ S(A_{p₁⋯p_k}, p_k)` on a box of cells and one of its primes `p_j`

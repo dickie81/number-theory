@@ -143,7 +143,7 @@ lean_lib Core where
     .one `ZeroSwap, .one `ZerosDense, .one `ZerosInfinite, .one `Zeta,
     .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaInputs]
 
-/-- lib/pnt: 650 modules. -/
+/-- lib/pnt: 654 modules. -/
 lean_lib PNT where
   srcDir := "lib/pnt"
   globs := #[
@@ -253,7 +253,8 @@ lean_lib PNT where
     .one `ShortSieveNode, .one `ShortSieveRel, .one `ShortSieveRoot, .one `ShortSieveTerm,
     .one `ShortSieveThin, .one `ShortSieveThree, .one `ShortSieveTop, .one `ShortSieveTree,
     .one `ShortSieveTwist, .one `ShortSieveTypeI, .one `ShortSieveTypeII, .one `ShortSieveWit,
-    .one `SieveAdDefs, .one `SieveAdTree, .one `SieveBox, .one `SieveBrun,
+    .one `SieveAd22000, .one `SieveAdDefs, .one `SieveAdSpec, .one `SieveAdTree,
+    .one `SieveAdWin, .one `SieveAdWinDefs, .one `SieveBox, .one `SieveBrun,
     .one `SieveBuch, .one `SieveBuch8, .one `SieveCert, .one `SieveCert22000E,
     .one `SieveCert22000EP1, .one `SieveCert22000EP10, .one `SieveCert22000EP100, .one `SieveCert22000EP101,
     .one `SieveCert22000EP102, .one `SieveCert22000EP103, .one `SieveCert22000EP104, .one `SieveCert22000EP105,

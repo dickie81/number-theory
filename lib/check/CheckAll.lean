@@ -171,6 +171,10 @@ import SieveP6LeavesWide
 import SieveTwoComp
 import SieveAdDefs
 import SieveAdTree
+import SieveAdSpec
+import SieveAdWinDefs
+import SieveAdWin
+import SieveAd22000
 import SieveHMWindow
 import SieveTypeIIHM
 import LinnikCGLLV
@@ -936,6 +940,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTwoComp.prop6_two_at
 #print axioms SieveAd.linnik_tree
 #print axioms SieveAd.linnik_tree_at
+#print axioms SieveAd22000.linnik_tree_22000
 #print axioms SieveCurveGlue.affine_corner_bound
 #print axioms SieveCurveGlue.windowPieceHM_affine_split
 #print axioms SieveCurveGlue.windowPieceHM_const_split
