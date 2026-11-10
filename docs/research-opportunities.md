@@ -161,7 +161,10 @@ covers. The region does not close at `13/6`.
   cells from `0.2149𝒦` to `0.0916𝒦`, the dropped ones from `0.7173𝒦` to `0.6706𝒦`), and the last exponent that
   passes from `2.199` to `2.193` (`0.97454𝒦` there, `1.03180𝒦` at `2.192`). It goes no further here: the
   decomposition's floor is the window's width, which tends to `0` at `13/6`, and the cells it must drop are those
-  that the Type I rule does not reach. Two variants change little: the estimate's stops in the rule (`0.7609𝒦` at
+  that the Type I rule does not reach. With the region that Lean proves in place of the sampled one, tested in
+  exact integers on the rectangle of the two parts' exponents as the Lean lemmas ask (`--lean`), the totals are
+  `0.77375𝒦` at `11/5`, `0.94408𝒦` at `2.194` and `0.98606𝒦` at `2.193`: the proved region keeps the exponent.
+  Two variants change little: the estimate's stops in the rule (`0.7609𝒦` at
   `11/5`), and the bilinear Type I rule without the condition that `d₂` be shorter than the cofactor (`0.7335𝒦` at
   `11/5`, `1.0057𝒦` at `2.192`).
 - **In Harman's decomposition**, which uses no window (`tools/linnik/type2_model.py`). A model of the large-value
@@ -234,11 +237,16 @@ covers. The region does not close at `13/6`.
     the frequencies, `2H < q` (`pair_le_wide`), where the bound is
     `√(P₁P₂(P₁/q + 1)F(2HP₂/q + 1)(n/q + 1)n) + (B − A)(q/(2ℓ(H + 1)))^r P₁P₂ + P₁P₂d(q)/φ(q)`. The paper's
     `pair_le` is the cut `H = ⌊(q − 1)/(2⌊P₂⌋)⌋`, whose second term is small only for `P₂ ≤ ℓ`, that is
-    `d₁d₂² ≤ x`; a cut `H ≈ qY/ℓ` makes it `Y^{−r}` for any `P₂`, with `2YP₂/ℓ + 1` under the root.
+    `d₁d₂² ≤ x`; a cut `H ≈ qY/ℓ` makes it `Y^{−r}` for any `P₂`, with `2YP₂/ℓ + 1` under the root. With that cut,
+    `H = ⌈qY/ℓ⌉`, the block pairs of a family of leaves are summed as in the paper's proof
+    (`lib/pnt/SieveTypeIBSumWide.lean`): on the region `d₁ ≤ X₁`, `d₁d₂² ≤ X₂`, `d₁d₂ ≥ X₃` a block pair's bound is
+    at most `√(ρ²(1 + η)N₂(ρX₁/q + 1)F(2Y·rρ³X₂/(ηN₁) + 2ρ√X₂/q + 1)((1 + η)ρ²N₂/(X₃q) + 1)) +
+    ρ²(1 + η)N₂(2Y)^{−r} + ρ²√(X₁X₂)d(q)/φ(q)` (`bdPW_le`), and `leaves_family_wide` is
+    `SieveTypeIBSum.leaves_family` with that bound, for `X₂` of any size.
 - **What is not written.** The form in two variables of the paper's Lemma 4.6 (chains of primes), where a
   comparison between the two variables has no prime as a pivot and the region enters by rectangles; for the leaves
-  of Lemma 4.3 with the wider Type I estimate, the choice of the cut on a region, the sum over the block pairs and
-  the asymptotic form; Harman's comparison with the estimate's stops, whose zone depends on the rest; role
+  of Lemma 4.3 with the wider Type I estimate, the asymptotic form (the family's bound as a power of `q` on the
+  wider region); Harman's comparison with the estimate's stops, whose zone depends on the rest; role
   reversal, with the removal of the conditions that tie the reversed variable to the others; and a certificate for
   a tree with reversed terms, which the paper's format does not have. Until these are written the theorem stays at
   `11/5`.

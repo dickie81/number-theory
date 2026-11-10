@@ -9,12 +9,15 @@
            --depth D    the estimate evaluates boxes of depth at most D (2, 3 or 4; the default is 4)
            --stops      the rule's stops may also be stops of the estimate
            --bil        the bilinear Type I rule without the condition that d2 be shorter than the cofactor
+           --lean       the region proved in Lean (SieveTwoZone7D.Zone7d), in exact arithmetic, on the rectangle of
+                        the two parts' exponents (not with --stops)
 
-A computation, not a certificate: the region is sampled in floating point, and the lemmas that would bring the
-estimate to the sieve's sums are not written (below).  The estimate's bound by bins is in Lean
-(SieveTypeIIHM.sum_typeII_two_bins, and SieveTypeIIHM.bin_bound_two for a bin as a power of q, in lib/pnt/
-SieveTwoBins.lean and SieveTwoZone.lean), and so is the bilinear Type I estimate of `--bil`
-(SieveTypeIB.typeIB_bound_wide).  Nothing in the paper depends on it.
+A computation, not a certificate: without `--lean` the region is sampled in floating point, and the lemmas that
+would bring the estimate to the sieve's sums are not all written (below).  The estimate is in Lean: Proposition 3'
+for two polynomials on a region (SieveTypeIIHM.typeII_two_gen), for the paper's curve on the region of `--lean`
+(SieveTwoZone7D.typeII_two_7d), and the paper's Lemmas 4.4 and 4.5 with it (SieveFamilyTwo.typeII_sharp_two,
+SieveUnwTwo.typeII_unw_two); so is the bilinear Type I estimate of `--bil` (SieveTypeIB.typeIB_bound_wide, and
+SieveTypeIBSumWide.leaves_family_wide for a family of leaves).  Nothing in the paper depends on it.
 
 The estimate.  The paper's Type II estimate (its Theorem 3.1) bounds, over the non-trivial characters mod q, the sum
 of |W(chi)| times a product of prime sums, for one Dirichlet polynomial W with arbitrary coefficients whose length
@@ -42,17 +45,25 @@ cofactor, whose prime factors are at least pk, may be in the rest or in a part. 
 of step half a cell that encloses the box and asks every lattice point of it to be in the region, sampled at 60
 values of beta on each piece of the curve.
 
-What is not written.  The estimate itself is the paper's proof with one more Cauchy-Schwarz (in Lean, as above; its
-exponent inequality is proved there for two variables of length at least q only).  The step from it to the
-sums of the sieve is the analogue of the paper's Lemmas 4.4 to 4.6, with two variables: a comparison between the two
-variables has no prime of the rest as a pivot, and must be separated by smoothing and Fourier inversion in both, the
-boundary layer being bounded by the same estimate for a smooth majorant and by a count in B.  That lemma is assumed.
+What is not written.  The estimate itself is the paper's proof with one more Cauchy-Schwarz (in Lean, as above).
+The step from it to the sums of the sieve is the analogue of the paper's Lemmas 4.4 to 4.6, with two variables.
+Lemmas 4.4 and 4.5 are in Lean for comparisons that have a prime of the rest as a pivot; a comparison between the
+two variables has none, and Lemma 4.6 (chains of primes) in two variables, where such comparisons arise, is not
+written.  It is assumed here, with Harman's comparison for the new stops.
 
 `--stops`: in the rule's bilinear test (R2), the exponent T of the small primes that a leaf may hold is the least
 t(S) over the sets S of the box's primes, the distance of S from the window or its reflection.  With the estimate, a
 part A of the box's primes may also be completed by the small primes until its exponent enters the interval on which
 the estimate holds with a rest R of the box's primes; the interval must be at least as long as the floor's exponent
 and A must not start past it.  It changes little.
+
+`--lean`: the region is the one of `SieveTwoZone7D.zone_7d`, for which Proposition 3' in two variables is proved with
+no hypothesis: with m_i = L a_i, s_i = 1 - m_i and rho = L (1 - a1 - a2), it asks rho >= 1/2000, m_i >= 2/3, and
+s1, s2 and s1 + s2 at most lambda rho - 1/12500 (lambda = 27637/62500, read from `gen_zone.py`).  The test is exact,
+in integers, and on a rectangle, as `SieveUnwTwo.typeII_unw_two` asks: the two parts' exponents range over
+[lo(A), hi(A)] x [lo(B), hi(B)] for two parts of primes, and over [lo(A), hi(A)] x [1 - hi(A) - hi(R), 1 - lo(A) - lo(R)]
+when the cofactor is in the second part, which is larger than the set of pairs that occur (the two are tied by the
+size of n).  The region is convex, so the rectangle lies in it when its corners do.
 
 `--bil`: the paper's Lemma 4.2 asks 2HD < q, so that t d2' = t' d2 (mod q) is an equation.  Without it, for given
 (t, d2') there are at most F(2HD/q + 1) pairs (t', d2), and the first term of the lemma has the factor (1 + d2/n)
@@ -70,6 +81,9 @@ Numbers (10 November 2026; n = 272 at 11/5, the paper's window; below it the win
     2.193                          0.97454
     2.192                          1.03180                       1.00565
     2.191                                                        1.06792
+
+With `--lean`, the region proved in Lean on rectangles: 0.77375 at 2.200, 0.87407 at 2.196, 0.94408 at 2.194 and
+0.98606 at 2.193, so the last exponent that passes is the same.
 
 At 11/5 the estimate takes the cost of the decomposed cells from 0.2149 K to 0.0916 K and that of the dropped cells
 from 0.7173 K to 0.6706 K.  So in this decomposition the estimate moves the last exponent that passes from 2.199 to
@@ -89,6 +103,7 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+import gen_zone  # noqa: E402
 import mirror8 as m8  # noqa: E402
 import route_limits as rl  # noqa: E402
 
@@ -144,6 +159,32 @@ def build(L, curve='g7d'):
              PC=np.pad(np.cumsum(np.cumsum(badc, axis=0), axis=1), ((1, 0), (1, 0))).astype(np.int64))
 
 
+def build_lean(L):
+    """The constants of the region `Zone7d L` of `SieveTwoZone7D`, scaled to integers, for exponents in units of
+    1/DEN: with rho = DEN - a1 - a2, the region is `i0 <= i1 rho`, `m0 <= m1 a_i`, `c1 - lq a_i <= ll rho` and
+    `c2 - lq (a1 + a2) <= ll rho`."""
+    L = Fr(L)
+    pieces = rl.parse('g7d')
+    _, bd = gen_zone.threshold(pieces)
+    lam = 2 * (1 - bd - gen_zone.W)
+    ln, ld, an, ad = L.numerator, L.denominator, lam.numerator, lam.denominator
+    mu = gen_zone.MU
+    assert mu == Fr(1, 12500) and gen_zone.RHO0 == Fr(1, 2000) and gen_zone.MMIN == Fr(2, 3)
+    X.update(lean=True, L=float(L), Z=dict(i0=DEN * ld, i1=2000 * ln, m0=2 * DEN * ld, m1=3 * ln,
+                                           c1=12501 * DEN * ld * ad, c2=25001 * DEN * ld * ad,
+                                           lq=ln * ad * 12500, ll=an * ln * 12500))
+
+
+def zrect(l1, h1, l2, h2):
+    """Whether the rectangle [l1, h1] x [l2, h2] of the two parts' exponents lies in `Zone7d L`: each of the region's
+    six inequalities at the corner where it is tightest."""
+    Z = X['Z']
+    lq, ll = Z['lq'], Z['ll']
+    return (Z['i0'] <= Z['i1'] * (DEN - h1 - h2) and Z['m0'] <= Z['m1'] * l1 and Z['m0'] <= Z['m1'] * l2
+            and Z['c1'] - lq * l1 <= ll * (DEN - l1 - h2) and Z['c1'] - lq * l2 <= ll * (DEN - h1 - l2)
+            and Z['c2'] - lq * (l1 + l2) <= ll * (DEN - l1 - l2))
+
+
 def rect(P, l1, h1, l2, h2):
     """Whether the lattice rectangle that encloses [l1, h1] x [l2, h2] has no failing point."""
     d, T = X['d'], X['T']
@@ -182,6 +223,10 @@ def sums(xs):
 def eval2(xs):
     """Whether the estimate evaluates the box `xs`, a list of cells `(lo, hi)` in units of 1/DEN."""
     lo, hi = sums(xs)
+    if X.get('lean'):
+        un, od = pairs(len(xs))
+        return (any(zrect(lo[A], hi[A], lo[B], hi[B]) for A, B in un)
+                or any(zrect(lo[A], hi[A], DEN - hi[A] - hi[R], DEN - lo[A] - lo[R]) for A, R in od))
     P2, PC = X['P2'], X['PC']
     a0, a1, c0, c1, r1 = X['a0'], X['a1'], X['c0'], X['c1'], X['r1']
     un, od = pairs(len(xs))
@@ -285,14 +330,18 @@ def row(i, j, k, w):
     return r
 
 
-def run(W1, W2, N, L, depth=4, base=False, stops=False, bil=False):
+def run(W1, W2, N, L, depth=4, base=False, stops=False, bil=False, lean=False):
     """The total over K, the candidate cells, the decomposed ones, and the costs of the decomposed and of the dropped."""
     m8.setup(W1, W2, N, L)
     m8.G['key'] = (W1, W2, N, L)
     m8.cand, m8.ne3, m8.row, m8.tstar = CAND0, NE30, ROW0, TSTAR0
     m8.condIB, m8.dcp = (condIB2, dcp2) if bil else (COND0, DCP0)
+    X.pop('lean', None)
     if not base:
-        build(Fr(L))
+        if lean:
+            build_lean(L)
+        else:
+            build(Fr(L))
         m8.cand = cand if depth >= 2 else CAND0
         m8.ne3 = ne3 if depth >= 3 else NE30
         m8.row = row if depth >= 4 else ROW0
@@ -305,8 +354,9 @@ def run(W1, W2, N, L, depth=4, base=False, stops=False, bil=False):
             sum(v[0] for v in cells if v[1]) / m8.K, sum(v[0] for v in cells if not v[1]) / m8.K)
 
 
-def describe(base, depth, stops, bil):
+def describe(base, depth, stops, bil, lean=False):
     s = 'the paper\'s certificate' if base else f'with the estimate to depth {depth}'
+    s += ' on the region proved in Lean' if lean and not base else ''
     return s + (', its stops in the rule' if stops and not base else '') + (', the wider bilinear rule' if bil else '')
 
 
@@ -362,21 +412,23 @@ def cmd_region(L):
 
 def main():
     a = sys.argv[1:]
-    opt = {x: x in a for x in ('--base', '--stops', '--bil')}
+    opt = {x: x in a for x in ('--base', '--stops', '--bil', '--lean')}
     a = [x for x in a if x not in opt]
     depth = 4
     if '--depth' in a:
         i = a.index('--depth')
         depth = int(a[i + 1])
         del a[i:i + 2]
-    base, stops, bil = opt['--base'], opt['--stops'], opt['--bil']
+    base, stops, bil, lean = opt['--base'], opt['--stops'], opt['--bil'], opt['--lean']
+    if lean and stops:
+        sys.exit('two_factor: --lean has no table of the region for --stops')
     if a and a[0] == 'region':
         cmd_region(a[1])
     elif a and a[0] == 'total':
         W1, W2, N, L = int(a[1]), int(a[2]), int(a[3]), a[4]
         t0 = time.time()
-        t, nc, nd, cd, cx = run(W1, W2, N, L, depth, base, stops, bil)
-        print(f'grid [{W1}, {W2}]/1e5 n={N} L={L}, {describe(base, depth, stops, bil)}: totalD/K {t:.7f}; '
+        t, nc, nd, cd, cx = run(W1, W2, N, L, depth, base, stops, bil, lean)
+        print(f'grid [{W1}, {W2}]/1e5 n={N} L={L}, {describe(base, depth, stops, bil, lean)}: totalD/K {t:.7f}; '
               f'candidate cells {nc}, decomposed {nd} (cost {cd:.4f}), dropped {nc - nd} (cost {cx:.4f}); '
               f'{time.time() - t0:.0f} s')
     elif a and a[0] == 'scan':
@@ -393,8 +445,8 @@ def main():
             line = f'L = {s} ({float(L):.5f}): window {w}, n = {N}'
             if base:
                 line += f'; the paper\'s certificate {run(w[0], w[1], N, Ls, base=True, bil=bil)[0]:.5f}'
-            t = run(w[0], w[1], N, Ls, depth, False, stops, bil)
-            print(line + f'; {describe(False, depth, stops, bil)} {t[0]:.5f} ({t[1]} candidate cells, {t[2]} '
+            t = run(w[0], w[1], N, Ls, depth, False, stops, bil, lean)
+            print(line + f'; {describe(False, depth, stops, bil, lean)} {t[0]:.5f} ({t[1]} candidate cells, {t[2]} '
                   f'decomposed)', flush=True)
     else:
         sys.exit(__doc__)
