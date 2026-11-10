@@ -10,6 +10,7 @@ import DHBohrSphere
 import DHColumnRest
 import DHBallKernel
 import DHLocate5
+import DHSecondZero
 
 /- The function: `dh ≢ 0`, its functional equation, the conjugation symmetry of its zeros, the coefficients of
 `−dh′/dh`, the sum over its zeros and the Euler–Maclaurin bound. -/
@@ -35,6 +36,12 @@ above `11/12`, and GRH and RH for `dh` refuted. -/
 #print axioms PsiOmega.not_GRH_dh
 #print axioms PsiOmega.dhRH_iff_cross
 #print axioms PsiOmega.dh_zero_pair_off_sphere
+
+/- The second Davenport–Heilbronn function, the combination with the other sign: its functional equation, and a zero
+at height `1650` with real part above `2`, in the half-plane where its Dirichlet series converges absolutely. -/
+#print axioms PsiOmega.dh2_functional_equation
+#print axioms PsiOmega.Locate.Sec.dh2_zero_located
+#print axioms PsiOmega.Locate.Sec.dh2_zero_re_gt_one
 
 /- On the critical line: the channels of `χ₅`, and the zero condition as one real equation. -/
 #print axioms PsiOmega.chi5_channel_fe

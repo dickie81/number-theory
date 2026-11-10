@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1603 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1606 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -122,7 +122,7 @@ result's note finds it unused; blank where neither has been checked.
 | GRH for `L(s, χ)` by the same test; RH with GRH for `ℚ(i)` by twin forms (and for `ℚ(√−2)`, `ℚ(√−3)`, `ℚ(√−7)`); about forty further criteria ([note](../formalisations/weil-positivity.md)) | `PsiOmega.grh_iff_QC_subexp_all`, `WeilTwinGeneral.rh_grh_iff_twins_Q4` | no |
 | RH if and only if `M(x) = O(x^{1/2+η})` for every `η > 0` (Littlewood), if and only if `Θ = 1/2` | `MertensExponent.rh_iff_mertens`, `MertensExponent.rh_iff_Theta_eq_half` | |
 | With no hypothesis: the ground energies are at most `Ke^{−Ba}` for every `B`; `Q(g) ≥ ‖g‖²/20` at every support `a ≤ 1/12`; one probe with `Q < 0` exhibits a zero off the line | `WeilForm.lam_decay_uncond`, `WeilForm.weilQg_ge_twentieth_all`, `WeilForm.exists_offline_of_neg_C2` | no |
-| The Davenport–Heilbronn function `dh` has `ζ`'s functional equation and zeros off the line, five of them located, one with real part above `11/12`, inside the zero-free half-plane of the Dirichlet `L`-functions; the hypotheses of the library's criteria, restated for `dh`, fail, so a proof of one for `ζ`, and the half-plane's proof, must use what `dh` lacks, such as the Euler product ([note](../formalisations/davenport-heilbronn.md)) | `PsiOmega.dh_offline_zero`, `PsiOmega.Locate.dh_zeros_located_four_box`, `PsiOmega.Locate.Z5.dh_zero_re_gt`, `PsiOmega.not_D_dh` | no |
+| The Davenport–Heilbronn function `dh` has `ζ`'s functional equation and zeros off the line, five of them located, one with real part above `11/12`, inside the zero-free half-plane of the Dirichlet `L`-functions; the hypotheses of the library's criteria, restated for `dh`, fail, so a proof of one for `ζ`, and the half-plane's proof, must use what `dh` lacks, such as the Euler product. The second Davenport–Heilbronn function, the combination with the other sign, has a zero with real part above `2`, where its Dirichlet series converges absolutely ([note](../formalisations/davenport-heilbronn.md)) | `PsiOmega.dh_offline_zero`, `PsiOmega.Locate.dh_zeros_located_four_box`, `PsiOmega.Locate.Z5.dh_zero_re_gt`, `PsiOmega.not_D_dh`, `PsiOmega.Locate.Sec.dh2_zero_re_gt_one` | no |
 
 ### The tools
 
@@ -207,6 +207,8 @@ Within reach, with no hypothesis, from results the library has:
   ([research-opportunities.md](research-opportunities.md), §8.5), where the certificate's approximant has too many
   terms. A theorem would be either an approximate functional equation for `dh` with an explicit error, or the
   existence proof by Bohr's argument at low height, which needs Kronecker's theorem and one more located zero.
+  The second Davenport–Heilbronn function has such zeros at low height, and one is certified, at height `1650` with
+  real part above `2` (`PsiOmega.Locate.Sec.dh2_zero_re_gt_one`).
 
 ## The frontier
 

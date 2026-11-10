@@ -9,9 +9,9 @@ import DHBallDefs
 * `B.has b x`: the ball `b` holds the real `x`; `CB.has b z`: the complex ball `b` holds `z`.
 * `has_add`, `has_sub`, `has_neg`, `has_mul`, `has_divNat`, `has_mulRat`, and the same for complex balls;
   `bounds_of_has`: what a ball says in real numbers.
-* `has_term`: `term L` holds `n^{-c}` if `L` holds `log n`.
+* `has_term`: `term p L` holds `n^{-c}` if `L` holds `log n`, `c` the centre `p`.
 * `has_logStep`: `logStep n` holds `log (n + 1) − log n`.
-* `Inv m st`: the state `st` holds the sums over the blocks before `m`; `inv_run`: `run` keeps it.
+* `Inv p m st`: the state `st` holds the sums over the blocks before `m`; `inv_run`: `run` keeps it.
 -/
 
 open Real Finset
@@ -307,9 +307,9 @@ theorem has_sqLoop : ∀ (j : ℕ) {b : CB} {z : ℂ}, b.has z → (sqLoop j b).
     rw [sqLoop, e]
     exact h2
 
-/-- `expBall v` holds `exp(z)^16` if `v` holds `z` and `exp(z)^16` has modulus at most `1`. -/
-theorem has_expBall {v : CB} {z : ℂ} (hv : v.has z) (h1 : ‖Complex.exp z ^ 16‖ ≤ 1) :
-    (expBall v).has (Complex.exp z ^ 16) := by
+/-- `expBall j v` holds `exp(z)^(2^j)` if `v` holds `z` and `exp(z)^(2^j)` has modulus at most `1`. -/
+theorem has_expBall (j : ℕ) {v : CB} {z : ℂ} (hv : v.has z) (h1 : ‖Complex.exp z ^ 2 ^ j‖ ≤ 1) :
+    (expBall j v).has (Complex.exp z ^ 2 ^ j) := by
   have hS := S_pos
   unfold expBall
   split_ifs with hc
@@ -330,25 +330,23 @@ theorem has_expBall {v : CB} {z : ℂ} (hv : v.has z) (h1 : ‖Complex.exp z ^ 1
         rw [e]; linarith
       have h6 : ‖z‖ ^ 2 ≤ 1 := le_of_mul_le_mul_right h5 (by positivity)
       exact (sq_le_one_iff₀ (norm_nonneg z)).1 h6
-    have h := has_sqLoop 4 (has_widen_exp hv hz)
-    norm_num at h
-    exact h
+    exact has_sqLoop j (has_widen_exp hv hz)
   · refine ⟨?_, ?_⟩
     · unfold B.has
       push_cast
       rw [sub_zero, abs_mul, abs_of_pos hS]
-      have := (Complex.abs_re_le_norm (Complex.exp z ^ 16)).trans h1
+      have := (Complex.abs_re_le_norm (Complex.exp z ^ 2 ^ j)).trans h1
       nlinarith
     · unfold B.has
       push_cast
       rw [sub_zero, abs_mul, abs_of_pos hS]
-      have := (Complex.abs_im_le_norm (Complex.exp z ^ 16)).trans h1
+      have := (Complex.abs_im_le_norm (Complex.exp z ^ 2 ^ j)).trans h1
       nlinarith
 
 /-! ## The term `n^{-c}` -/
 
 /-- The centre `c = reN/reD + i·imN/imD`. -/
-noncomputable def c : ℂ := ⟨(reN : ℝ) / reD, (imN : ℝ) / imD⟩
+noncomputable def c (p : Ctr) : ℂ := ⟨(p.reN : ℝ) / p.reD, (p.imN : ℝ) / p.imD⟩
 
 theorem has_twoPi : twoPi.has (2 * π) := by
   have h1 := Real.pi_gt_d20
@@ -360,17 +358,17 @@ theorem has_twoPi : twoPi.has (2 * π) := by
   constructor <;> norm_num at h1 h2 ⊢ <;> linarith
 
 /-- The argument `t·log n`, less `k` turns. -/
-theorem has_theta {L : B} {n : ℕ} (hL : L.has (Real.log n)) (k : ℤ) :
-    (⟨(L.mulRat imN imD).c - k * twoPi.c, (L.mulRat imN imD).e + k.natAbs * twoPi.e⟩ : B).has
-      (Real.log n * ((imN : ℝ) / imD) - k * (2 * π)) := by
-  have hy := has_mulRat hL imN (q := imD) (by norm_num [imD])
+theorem has_theta {p : Ctr} (hD : 0 < p.imD) {L : B} {n : ℕ} (hL : L.has (Real.log n)) (k : ℤ) :
+    (⟨(L.mulRat p.imN p.imD).c - k * twoPi.c, (L.mulRat p.imN p.imD).e + k.natAbs * twoPi.e⟩ : B).has
+      (Real.log n * ((p.imN : ℝ) / p.imD) - k * (2 * π)) := by
+  have hy := has_mulRat hL p.imN (q := p.imD) hD
   have hp := has_twoPi
   unfold B.has at hy hp ⊢
   push_cast
   rw [natAbs_cast]
-  have e : (Real.log n * ((imN : ℝ) / imD) - k * (2 * π)) * (S : ℝ) -
-      (((L.mulRat imN imD).c : ℝ) - k * twoPi.c) =
-      (Real.log n * ((imN : ℝ) / imD) * S - (L.mulRat imN imD).c) - k * (2 * π * S - twoPi.c) := by
+  have e : (Real.log n * ((p.imN : ℝ) / p.imD) - k * (2 * π)) * (S : ℝ) -
+      (((L.mulRat p.imN p.imD).c : ℝ) - k * twoPi.c) =
+      (Real.log n * ((p.imN : ℝ) / p.imD) * S - (L.mulRat p.imN p.imD).c) - k * (2 * π * S - twoPi.c) := by
     ring
   rw [e]
   refine (abs_sub _ _).trans ?_
@@ -378,49 +376,53 @@ theorem has_theta {L : B} {n : ℕ} (hL : L.has (Real.log n)) (k : ℤ) :
   have := mul_le_mul_of_nonneg_left hp (abs_nonneg (k : ℝ))
   linarith
 
-/-- `exp` of the reduced exponent, to the power `16`, is `n^{-c}`. -/
-theorem exp_red_pow {n : ℕ} (hn : 1 ≤ n) (k : ℤ) :
-    Complex.exp (⟨-(Real.log n * ((reN : ℝ) / reD)) / ((16 : ℕ) : ℝ),
-      -(Real.log n * ((imN : ℝ) / imD) - k * (2 * π)) / ((16 : ℕ) : ℝ)⟩ : ℂ) ^ 16 = (n : ℂ) ^ (-c) := by
+/-- `exp` of the reduced exponent, to the power `2^sq`, is `n^{-c}`. -/
+theorem exp_red_pow (p : Ctr) {n : ℕ} (hn : 1 ≤ n) (k : ℤ) :
+    Complex.exp (⟨-(Real.log n * ((p.reN : ℝ) / p.reD)) / ((2 ^ p.sq : ℕ) : ℝ),
+      -(Real.log n * ((p.imN : ℝ) / p.imD) - k * (2 * π)) / ((2 ^ p.sq : ℕ) : ℝ)⟩ : ℂ) ^ 2 ^ p.sq =
+      (n : ℂ) ^ (-c p) := by
   have hn0 : (n : ℂ) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
+  have hd : ((2 ^ p.sq : ℕ) : ℝ) ≠ 0 := by positivity
   rw [← Complex.exp_nat_mul, Complex.cpow_def_of_ne_zero hn0, ← Complex.natCast_log]
-  have e : ((16 : ℕ) : ℂ) * (⟨-(Real.log n * ((reN : ℝ) / reD)) / ((16 : ℕ) : ℝ),
-        -(Real.log n * ((imN : ℝ) / imD) - k * (2 * π)) / ((16 : ℕ) : ℝ)⟩ : ℂ) =
-      (Real.log n : ℂ) * (-c) + (k : ℂ) * (2 * (π : ℂ) * Complex.I) := by
+  have e : ((2 ^ p.sq : ℕ) : ℂ) * (⟨-(Real.log n * ((p.reN : ℝ) / p.reD)) / ((2 ^ p.sq : ℕ) : ℝ),
+        -(Real.log n * ((p.imN : ℝ) / p.imD) - k * (2 * π)) / ((2 ^ p.sq : ℕ) : ℝ)⟩ : ℂ) =
+      (Real.log n : ℂ) * (-c p) + (k : ℂ) * (2 * (π : ℂ) * Complex.I) := by
     apply Complex.ext
     · simp only [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.neg_re, Complex.neg_im,
         Complex.ofReal_re, Complex.ofReal_im, Complex.natCast_re, Complex.natCast_im,
         Complex.intCast_re, Complex.intCast_im, Complex.I_re, Complex.I_im, Complex.re_ofNat,
         Complex.im_ofNat, c]
-      push_cast
+      rw [zero_mul, sub_zero, mul_div_cancel₀ _ hd]
       ring
     · simp only [Complex.mul_re, Complex.mul_im, Complex.add_im, Complex.neg_re, Complex.neg_im,
         Complex.ofReal_re, Complex.ofReal_im, Complex.natCast_re, Complex.natCast_im,
         Complex.intCast_re, Complex.intCast_im, Complex.I_re, Complex.I_im, Complex.re_ofNat,
         Complex.im_ofNat, c]
-      push_cast
+      rw [zero_mul, add_zero, mul_div_cancel₀ _ hd]
       ring
   rw [e, Complex.exp_add, Complex.exp_int_mul_two_pi_mul_I, mul_one]
 
-/-- `redArg L` holds a `z` with `exp(z)^16 = n^{-c}`, if `L` holds `log n`. -/
-theorem has_redArg {L : B} {n : ℕ} (hn : 1 ≤ n) (hL : L.has (Real.log n)) :
-    ∃ z : ℂ, (redArg L).has z ∧ Complex.exp z ^ 16 = (n : ℂ) ^ (-c) := by
-  have hx := has_mulRat hL reN (q := reD) (by norm_num [reD])
-  refine ⟨_, ⟨?_, ?_⟩, exp_red_pow hn ((2 * (L.mulRat imN imD).c + twoPi.c) / (2 * twoPi.c))⟩
-  · exact has_divNat (has_neg hx) (by norm_num)
-  · exact has_divNat (has_neg (has_theta hL _)) (by norm_num)
+/-- `redArg p L` holds a `z` with `exp(z)^(2^sq) = n^{-c}`, if `L` holds `log n`. -/
+theorem has_redArg {p : Ctr} (h1 : 0 < p.reD) (h2 : 0 < p.imD) {L : B} {n : ℕ} (hn : 1 ≤ n)
+    (hL : L.has (Real.log n)) :
+    ∃ z : ℂ, (redArg p L).has z ∧ Complex.exp z ^ 2 ^ p.sq = (n : ℂ) ^ (-c p) := by
+  have hx := has_mulRat hL p.reN (q := p.reD) h1
+  have hpos : 0 < 2 ^ p.sq := Nat.pos_of_ne_zero (by positivity)
+  refine ⟨_, ⟨?_, ?_⟩, exp_red_pow p hn ((2 * (L.mulRat p.imN p.imD).c + twoPi.c) / (2 * twoPi.c))⟩
+  · exact has_divNat (has_neg hx) hpos
+  · exact has_divNat (has_neg (has_theta h2 hL _)) hpos
 
-theorem norm_natCast_cpow_neg_c_le {n : ℕ} (hn : 1 ≤ n) : ‖(n : ℂ) ^ (-c)‖ ≤ 1 := by
+theorem norm_natCast_cpow_neg_c_le (p : Ctr) {n : ℕ} (hn : 1 ≤ n) : ‖(n : ℂ) ^ (-c p)‖ ≤ 1 := by
   rw [Complex.norm_natCast_cpow_of_pos (by omega)]
   apply Real.rpow_le_one_of_one_le_of_nonpos (by exact_mod_cast hn)
   simp only [Complex.neg_re, c, Left.neg_nonpos_iff]
   positivity
 
-/-- `term L` holds `n^{-c}`, if `L` holds `log n`. -/
-theorem has_term {L : B} {n : ℕ} (hn : 1 ≤ n) (hL : L.has (Real.log n)) :
-    (term L).has ((n : ℂ) ^ (-c)) := by
-  obtain ⟨z, hz, he⟩ := has_redArg hn hL
-  have h := has_expBall hz (by rw [he]; exact norm_natCast_cpow_neg_c_le hn)
+/-- `term p L` holds `n^{-c}`, if `L` holds `log n`. -/
+theorem has_term {p : Ctr} (h1 : 0 < p.reD) (h2 : 0 < p.imD) {L : B} {n : ℕ} (hn : 1 ≤ n)
+    (hL : L.has (Real.log n)) : (term p L).has ((n : ℂ) ^ (-c p)) := by
+  obtain ⟨z, hz, he⟩ := has_redArg h1 h2 hn hL
+  have h := has_expBall p.sq hz (by rw [he]; exact norm_natCast_cpow_neg_c_le p hn)
   rw [he] at h
   exact h
 
@@ -535,33 +537,33 @@ theorem has_log_succ {L : B} {n : ℕ} (hn : 1 ≤ n) (hL : L.has (Real.log (n :
 /-! ## The sums -/
 
 /-- `n^{-c}`. -/
-noncomputable def T (n : ℕ) : ℂ := (n : ℂ) ^ (-c)
+noncomputable def T (p : Ctr) (n : ℕ) : ℂ := (n : ℂ) ^ (-c p)
 
 /-- `Σ_{k<m} ((5k+1)^{-c} − (5k+4)^{-c})`. -/
-noncomputable def SA (m : ℕ) : ℂ := ∑ k ∈ range m, (T (5 * k + 1) - T (5 * k + 4))
+noncomputable def SA (p : Ctr) (m : ℕ) : ℂ := ∑ k ∈ range m, (T p (5 * k + 1) - T p (5 * k + 4))
 
 /-- `Σ_{k<m} ((5k+2)^{-c} − (5k+3)^{-c})`. -/
-noncomputable def SB (m : ℕ) : ℂ := ∑ k ∈ range m, (T (5 * k + 2) - T (5 * k + 3))
+noncomputable def SB (p : Ctr) (m : ℕ) : ℂ := ∑ k ∈ range m, (T p (5 * k + 2) - T p (5 * k + 3))
 
 /-- `Σ_{k<m} (log(5k+4)·(5k+4)^{-c} − log(5k+1)·(5k+1)^{-c})`. -/
-noncomputable def SA1 (m : ℕ) : ℂ :=
-  ∑ k ∈ range m, ((Real.log ((5 * k + 4 : ℕ) : ℝ) : ℂ) * T (5 * k + 4) -
-    (Real.log ((5 * k + 1 : ℕ) : ℝ) : ℂ) * T (5 * k + 1))
+noncomputable def SA1 (p : Ctr) (m : ℕ) : ℂ :=
+  ∑ k ∈ range m, ((Real.log ((5 * k + 4 : ℕ) : ℝ) : ℂ) * T p (5 * k + 4) -
+    (Real.log ((5 * k + 1 : ℕ) : ℝ) : ℂ) * T p (5 * k + 1))
 
 /-- `Σ_{k<m} (log(5k+3)·(5k+3)^{-c} − log(5k+2)·(5k+2)^{-c})`. -/
-noncomputable def SB1 (m : ℕ) : ℂ :=
-  ∑ k ∈ range m, ((Real.log ((5 * k + 3 : ℕ) : ℝ) : ℂ) * T (5 * k + 3) -
-    (Real.log ((5 * k + 2 : ℕ) : ℝ) : ℂ) * T (5 * k + 2))
+noncomputable def SB1 (p : Ctr) (m : ℕ) : ℂ :=
+  ∑ k ∈ range m, ((Real.log ((5 * k + 3 : ℕ) : ℝ) : ℂ) * T p (5 * k + 3) -
+    (Real.log ((5 * k + 2 : ℕ) : ℝ) : ℂ) * T p (5 * k + 2))
 
 /-- `Σ_{k<m} (log²(5k+1)·|(5k+1)^{-c}| + log²(5k+4)·|(5k+4)^{-c}|)`. -/
-noncomputable def D2A (m : ℕ) : ℝ :=
-  ∑ k ∈ range m, (Real.log ((5 * k + 1 : ℕ) : ℝ) ^ 2 * ‖T (5 * k + 1)‖ +
-    Real.log ((5 * k + 4 : ℕ) : ℝ) ^ 2 * ‖T (5 * k + 4)‖)
+noncomputable def D2A (p : Ctr) (m : ℕ) : ℝ :=
+  ∑ k ∈ range m, (Real.log ((5 * k + 1 : ℕ) : ℝ) ^ 2 * ‖T p (5 * k + 1)‖ +
+    Real.log ((5 * k + 4 : ℕ) : ℝ) ^ 2 * ‖T p (5 * k + 4)‖)
 
 /-- `Σ_{k<m} (log²(5k+2)·|(5k+2)^{-c}| + log²(5k+3)·|(5k+3)^{-c}|)`. -/
-noncomputable def D2B (m : ℕ) : ℝ :=
-  ∑ k ∈ range m, (Real.log ((5 * k + 2 : ℕ) : ℝ) ^ 2 * ‖T (5 * k + 2)‖ +
-    Real.log ((5 * k + 3 : ℕ) : ℝ) ^ 2 * ‖T (5 * k + 3)‖)
+noncomputable def D2B (p : Ctr) (m : ℕ) : ℝ :=
+  ∑ k ∈ range m, (Real.log ((5 * k + 2 : ℕ) : ℝ) ^ 2 * ‖T p (5 * k + 2)‖ +
+    Real.log ((5 * k + 3 : ℕ) : ℝ) ^ 2 * ‖T p (5 * k + 3)‖)
 
 /-- `up L T'` bounds `x²·|z|·S`, if `L` holds `x` and `T'` holds `z`. -/
 theorem up_le {L : B} {T' : CB} {x : ℝ} {z : ℂ} (hL : L.has x) (hT : T'.has z) :
@@ -597,23 +599,23 @@ theorem up_le {L : B} {T' : CB} {x : ℝ} {z : ℂ} (hL : L.has x) (hT : T'.has 
   linarith
 
 /-- The state `st` holds the sums over the blocks before `m`. -/
-structure Inv (m : ℕ) (st : St) : Prop where
+structure Inv (p : Ctr) (m : ℕ) (st : St) : Prop where
   /-- The logarithm of the next integer. -/
   L : st.L.has (Real.log ((5 * m + 1 : ℕ) : ℝ))
   /-- The sum over the classes `1` and `4`. -/
-  A : st.A.has (SA m)
+  A : st.A.has (SA p m)
   /-- The sum over the classes `2` and `3`. -/
-  B : st.B'.has (SB m)
+  B : st.B'.has (SB p m)
   /-- The derivative's sum over the classes `1` and `4`. -/
-  A1 : st.A1.has (SA1 m)
+  A1 : st.A1.has (SA1 p m)
   /-- The derivative's sum over the classes `2` and `3`. -/
-  B1 : st.B1.has (SB1 m)
+  B1 : st.B1.has (SB1 p m)
   /-- The bound for the second derivative, classes `1` and `4`. -/
-  d2a : D2A m * (S : ℝ) ≤ (st.d2a : ℝ)
+  d2a : D2A p m * (S : ℝ) ≤ (st.d2a : ℝ)
   /-- The bound for the second derivative, classes `2` and `3`. -/
-  d2b : D2B m * (S : ℝ) ≤ (st.d2b : ℝ)
+  d2b : D2B p m * (S : ℝ) ≤ (st.d2b : ℝ)
 
-theorem inv_init : Inv 0 init := by
+theorem inv_init (p : Ctr) : Inv p 0 init := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp [init, B.has]
   · simpa [init, SA] using chas_zero
@@ -623,76 +625,81 @@ theorem inv_init : Inv 0 init := by
   · simp [init, D2A]
   · simp [init, D2B]
 
-theorem inv_step {m : ℕ} {st : St} (h : Inv m st) : Inv (m + 1) (step m st) := by
+theorem inv_step {p : Ctr} (h1 : 0 < p.reD) (h2 : 0 < p.imD) {m : ℕ} {st : St} (h : Inv p m st) :
+    Inv p (m + 1) (step p m st) := by
   have hL1 := h.L
-  have hT1 : (term st.L).has (T (5 * m + 1)) := has_term (by omega) hL1
+  have hT1 : (term p st.L).has (T p (5 * m + 1)) := has_term h1 h2 (by omega) hL1
   have hL2 := has_log_succ (n := 5 * m + 1) (by omega) hL1
-  have hT2 : (term (st.L.add (logStep (5 * m + 1)))).has (T (5 * m + 2)) := has_term (by omega) hL2
+  have hT2 : (term p (st.L.add (logStep (5 * m + 1)))).has (T p (5 * m + 2)) :=
+    has_term h1 h2 (by omega) hL2
   have hL3 := has_log_succ (n := 5 * m + 2) (by omega) hL2
-  have hT3 : (term ((st.L.add (logStep (5 * m + 1))).add (logStep (5 * m + 2)))).has (T (5 * m + 3)) :=
-    has_term (by omega) hL3
+  have hT3 : (term p ((st.L.add (logStep (5 * m + 1))).add (logStep (5 * m + 2)))).has (T p (5 * m + 3)) :=
+    has_term h1 h2 (by omega) hL3
   have hL4 := has_log_succ (n := 5 * m + 3) (by omega) hL3
-  have hT4 : (term (((st.L.add (logStep (5 * m + 1))).add (logStep (5 * m + 2))).add
-      (logStep (5 * m + 3)))).has (T (5 * m + 4)) := has_term (by omega) hL4
+  have hT4 : (term p (((st.L.add (logStep (5 * m + 1))).add (logStep (5 * m + 2))).add
+      (logStep (5 * m + 3)))).has (T p (5 * m + 4)) := has_term h1 h2 (by omega) hL4
   have hL5 := has_log_succ (n := 5 * m + 4) (by omega) hL4
   have hL6 := has_log_succ (n := 5 * m + 5) (by omega) hL5
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact hL6
   · have := chas_sub (chas_add h.A hT1) hT4
     rw [SA, sum_range_succ, ← SA]
-    have e : SA m + (T (5 * m + 1) - T (5 * m + 4)) = SA m + T (5 * m + 1) - T (5 * m + 4) := by ring
+    have e : SA p m + (T p (5 * m + 1) - T p (5 * m + 4)) = SA p m + T p (5 * m + 1) - T p (5 * m + 4) := by
+      ring
     rw [e]
     exact this
   · have := chas_sub (chas_add h.B hT2) hT3
     rw [SB, sum_range_succ, ← SB]
-    have e : SB m + (T (5 * m + 2) - T (5 * m + 3)) = SB m + T (5 * m + 2) - T (5 * m + 3) := by ring
+    have e : SB p m + (T p (5 * m + 2) - T p (5 * m + 3)) = SB p m + T p (5 * m + 2) - T p (5 * m + 3) := by
+      ring
     rw [e]
     exact this
   · have := chas_add (chas_sub h.A1 (chas_smul hL1 hT1)) (chas_smul hL4 hT4)
     rw [SA1, sum_range_succ, ← SA1]
-    have e : SA1 m + ((Real.log ((5 * m + 4 : ℕ) : ℝ) : ℂ) * T (5 * m + 4) -
-        (Real.log ((5 * m + 1 : ℕ) : ℝ) : ℂ) * T (5 * m + 1)) =
-        SA1 m - (Real.log ((5 * m + 1 : ℕ) : ℝ) : ℂ) * T (5 * m + 1) +
-          (Real.log ((5 * m + 4 : ℕ) : ℝ) : ℂ) * T (5 * m + 4) := by ring
+    have e : SA1 p m + ((Real.log ((5 * m + 4 : ℕ) : ℝ) : ℂ) * T p (5 * m + 4) -
+        (Real.log ((5 * m + 1 : ℕ) : ℝ) : ℂ) * T p (5 * m + 1)) =
+        SA1 p m - (Real.log ((5 * m + 1 : ℕ) : ℝ) : ℂ) * T p (5 * m + 1) +
+          (Real.log ((5 * m + 4 : ℕ) : ℝ) : ℂ) * T p (5 * m + 4) := by ring
     rw [e]
     exact this
   · have := chas_add (chas_sub h.B1 (chas_smul hL2 hT2)) (chas_smul hL3 hT3)
     rw [SB1, sum_range_succ, ← SB1]
-    have e : SB1 m + ((Real.log ((5 * m + 3 : ℕ) : ℝ) : ℂ) * T (5 * m + 3) -
-        (Real.log ((5 * m + 2 : ℕ) : ℝ) : ℂ) * T (5 * m + 2)) =
-        SB1 m - (Real.log ((5 * m + 2 : ℕ) : ℝ) : ℂ) * T (5 * m + 2) +
-          (Real.log ((5 * m + 3 : ℕ) : ℝ) : ℂ) * T (5 * m + 3) := by ring
+    have e : SB1 p m + ((Real.log ((5 * m + 3 : ℕ) : ℝ) : ℂ) * T p (5 * m + 3) -
+        (Real.log ((5 * m + 2 : ℕ) : ℝ) : ℂ) * T p (5 * m + 2)) =
+        SB1 p m - (Real.log ((5 * m + 2 : ℕ) : ℝ) : ℂ) * T p (5 * m + 2) +
+          (Real.log ((5 * m + 3 : ℕ) : ℝ) : ℂ) * T p (5 * m + 3) := by ring
     rw [e]
     exact this
-  · have u1 : Real.log ((5 * m + 1 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 1)‖ * (S : ℝ) ≤ _ := up_le hL1 hT1
-    have u4 : Real.log ((5 * m + 4 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 4)‖ * (S : ℝ) ≤ _ := up_le hL4 hT4
+  · have u1 : Real.log ((5 * m + 1 : ℕ) : ℝ) ^ 2 * ‖T p (5 * m + 1)‖ * (S : ℝ) ≤ _ := up_le hL1 hT1
+    have u4 : Real.log ((5 * m + 4 : ℕ) : ℝ) ^ 2 * ‖T p (5 * m + 4)‖ * (S : ℝ) ≤ _ := up_le hL4 hT4
     have h0 := h.d2a
-    have key : D2A (m + 1) * (S : ℝ) ≤ (st.d2a : ℝ) + (up st.L (term st.L) : ℕ) +
+    have key : D2A p (m + 1) * (S : ℝ) ≤ (st.d2a : ℝ) + (up st.L (term p st.L) : ℕ) +
         (up (((st.L.add (logStep (5 * m + 1))).add (logStep (5 * m + 2))).add (logStep (5 * m + 3)))
-          (term (((st.L.add (logStep (5 * m + 1))).add (logStep (5 * m + 2))).add
+          (term p (((st.L.add (logStep (5 * m + 1))).add (logStep (5 * m + 2))).add
             (logStep (5 * m + 3)))) : ℕ) := by
       rw [D2A, sum_range_succ, ← D2A]
       linarith
     refine key.trans (le_of_eq ?_)
     simp only [step, Nat.cast_add]
-  · have u2 : Real.log ((5 * m + 2 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 2)‖ * (S : ℝ) ≤ _ := up_le hL2 hT2
-    have u3 : Real.log ((5 * m + 3 : ℕ) : ℝ) ^ 2 * ‖T (5 * m + 3)‖ * (S : ℝ) ≤ _ := up_le hL3 hT3
+  · have u2 : Real.log ((5 * m + 2 : ℕ) : ℝ) ^ 2 * ‖T p (5 * m + 2)‖ * (S : ℝ) ≤ _ := up_le hL2 hT2
+    have u3 : Real.log ((5 * m + 3 : ℕ) : ℝ) ^ 2 * ‖T p (5 * m + 3)‖ * (S : ℝ) ≤ _ := up_le hL3 hT3
     have h0 := h.d2b
-    have key : D2B (m + 1) * (S : ℝ) ≤ (st.d2b : ℝ) +
-        (up (st.L.add (logStep (5 * m + 1))) (term (st.L.add (logStep (5 * m + 1)))) : ℕ) +
+    have key : D2B p (m + 1) * (S : ℝ) ≤ (st.d2b : ℝ) +
+        (up (st.L.add (logStep (5 * m + 1))) (term p (st.L.add (logStep (5 * m + 1)))) : ℕ) +
         (up ((st.L.add (logStep (5 * m + 1))).add (logStep (5 * m + 2)))
-          (term ((st.L.add (logStep (5 * m + 1))).add (logStep (5 * m + 2)))) : ℕ) := by
+          (term p ((st.L.add (logStep (5 * m + 1))).add (logStep (5 * m + 2)))) : ℕ) := by
       rw [D2B, sum_range_succ, ← D2B]
       linarith
     refine key.trans (le_of_eq ?_)
     simp only [step, Nat.cast_add]
 
-theorem inv_run : ∀ (n m : ℕ) (st : St), Inv m st → Inv (m + n) (run m n st)
+theorem inv_run {p : Ctr} (h1 : 0 < p.reD) (h2 : 0 < p.imD) :
+    ∀ (n m : ℕ) (st : St), Inv p m st → Inv p (m + n) (run p m n st)
   | 0, m, st, h => by simpa [run] using h
   | n + 1, m, st, h => by
-    have h2 := inv_run n (m + 1) (step m st) (inv_step h)
+    have h3 := inv_run h1 h2 n (m + 1) (step p m st) (inv_step h1 h2 h)
     have e : m + (n + 1) = m + 1 + n := by ring
     rw [run_succ, e]
-    exact h2
+    exact h3
 
 end DHBall
