@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1597 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1600 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -13,7 +13,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 |---|---|---|
 | `lib/core` | 190 | 673 |
 | `lib/pnt` | 255 | 814 |
-| `lib/dh` | 22 | 73 |
+| `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
 ## The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`
@@ -2968,6 +2968,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `PsiOmega.dh_div_a1_real_ge`: `dh(σ)/a(1) ≥ 1 − 2^{−σ}` ([note](../formalisations/davenport-heilbronn.md))
 - `PsiOmega.dh_offcross_zero`: An off-line zero of `dh` off the real axis ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHSecond`: The second Davenport–Heilbronn function
+
+- `PsiOmega.dh2_functional_equation`: Its functional equation ([note](../formalisations/davenport-heilbronn.md))
+
+#### `DHSecondZero`: A zero of the second Davenport–Heilbronn function in the half-plane of absolute convergence
+
+- `PsiOmega.Locate.Sec.dh2_zero_located`: The zero in a box.
+- `PsiOmega.Locate.Sec.dh2_zero_re_gt_one`: It has a zero in the half-plane of absolute convergence of its Dirichlet series ([note](../formalisations/davenport-heilbronn.md))
 
 #### `DHTwin`: The dh column of the substitution matrix, part 2: the twin form
 

@@ -16,6 +16,7 @@ after each fifty blocks:
 The certificates:
 
     DHLocate5   the Davenport–Heilbronn function's zero near `918601/1000000 + (2441547865/100000) i`, `6000` blocks
+    DHSecond    the second function's zero near `23747444/10000000 + (16498708285/10000000) i`, `1000` blocks
 
 The kernel recomputes every state, so nothing here is trusted: a wrong state makes its file fail to compile.
 """
@@ -31,6 +32,9 @@ CHUNK, SUB = 1000, 50
 CERTS = [
     dict(prefix="DHLocate5", ns="DHBall", ctr="ctr5", re=(918601, 1000000), im=(2441547865, 100000), sq=4,
          blocks=6000, what="The fifth located zero of the Davenport–Heilbronn function", short="The fifth located zero"),
+    dict(prefix="DHSecond", ns="DHBall.Sec", ctr="ctr", re=(23747444, 10000000), im=(16498708285, 10000000), sq=5,
+         blocks=1000, what="The zero of the second Davenport–Heilbronn function at height `1650`",
+         short="The second function's zero"),
 ]
 
 
