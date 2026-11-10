@@ -133,8 +133,8 @@ the exponent each input would reach is:
 | Input (its largest exponent `A`) | `A` | `1 + A/2` | Exponent reached |
 |---|---|---|---|
 | Chen, Gupta and Li's `4/(1 + σ)` at `σ = 5/7`, the library today | `7/3 = 2.3333` | `13/6 = 2.1667` | `2.198`–`2.2` (computed: `2.199` passes, `2.198` fails) |
-| The same, with the Type II estimate in two variables as one more way to evaluate a box (below; no Lean theorem) | `7/3` | `13/6` | `2.193` (computed: `2.193` passes, `2.192` fails) |
-| The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no Lean theorem, no certificate) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
+| The same, with the Type II estimate in two variables as one more way to evaluate a box (below; the estimate by bins is in Lean, the sieve with it is not) | `7/3` | `13/6` | `2.193` (computed: `2.193` passes, `2.192` fails) |
+| The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no certificate; of what it assumes, two bounds are in Lean) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
 | A hybrid large-values estimate of Guth–Maynard strength at `σ = 5/7`, `15/(3 + 5σ)` (the `gm` variant of `tools/linnik/density_payoff.py`) | `105/46 = 2.2826` | `2.1413` | about `2.17`–`2.18` |
 | Guth and Maynard's `30/13` as a cap everywhere | `2.3077` | `2.1538` | about `2.18`–`2.19` |
 | The classical `12/5` at `σ = 3/4` (no Chen–Gupta–Li) | `2.4` | `2.2` | `2.239` (computed, §S6) |
@@ -147,7 +147,8 @@ of Dirichlet polynomials over the characters near `σ = 5/7`, where Chen, Gupta 
 "quite difficult" (their Remark 12.3). The next exponent that is reachable is `2.199`, by regeneration with
 `tools/linnik/` and a kernel check of the new certificate: a computation of hours, not a theorem yet.
 
-**A Type II estimate in two variables (10 November; computed, with no Lean theorem).** The window needs
+**A Type II estimate in two variables (10 November; its bound by bins is in Lean, its use in the sieve is computed).**
+The window needs
 `L > 1 + A/2` because it bounds one polynomial against the number of characters in a bin. With two polynomials,
 Cauchy–Schwarz between them needs no count of the bin: each gets orthogonality or the Halász–Montgomery inequality
 in its mean-square form, with the paper's kernel bound, and the prime sums keep the paper's bound. In exponents of
@@ -198,14 +199,25 @@ covers. The region does not close at `13/6`.
   cells of side `0.001`, where the certificate has `0.932` on its grid, and `0.728` at midpoints; with the linear
   sieve's bounds and no Type II information it gives `3.0`, so it does not detect primes, as parity requires; and
   the tabulated zone holds at `160000` points off its lattice. It is floating point, and not a certificate.
-- **What is not written.** The estimate (the paper's proof with one more Cauchy–Schwarz and the dual form of its
-  Halász–Montgomery inequality); the form in two variables of the paper's Lemmas 4.4 to 4.6, where a comparison
-  between the two variables has no prime as a pivot; the bilinear Type I estimate without `2HD < q` (in the proof
-  of Lemma 4.2 the congruence `t d₂′ ≡ t′ d₂` then has at most `(2HD/q + 1)F` solutions, and the first term gains
-  the factor `(d₂/n + 1)^{1/2}`, `n` the cofactor's length); Harman's comparison with the estimate's stops, whose
-  zone depends on the rest; role reversal, with the removal of the conditions that tie the reversed variable to the
-  others; and a certificate for a tree with reversed terms, which the paper's format does not have. Until these
-  are written the theorem stays at `11/5`.
+- **What is in Lean** (10 November; [`halasz-montgomery.md`](../formalisations/halasz-montgomery.md)). The two
+  estimates, at the level of the paper's own:
+  - the Halász–Montgomery inequality in mean square over a bin, `Σ_{χ∈R}|W(χ)|² ≤ e·Σ|a|²·(2P + |R|B)`
+    (`SieveTypeIIHM.sum_bin_hm_sq`), and with it the estimate for two polynomials by bins
+    (`SieveTypeIIHM.sum_typeII_two_bins`), as `SieveTypeIIHM.sum_typeII_bins_hm` is for one;
+  - a bin's contribution as a power of `q`, under the exponent inequality of the estimate
+    (`SieveTypeIIHM.bin_bound_two`), and that inequality for two variables of length at least `q` and a third factor
+    of length at least `q^{1/2000}`, whatever the density curve (`SieveTypeIIHM.twoBound_of_long`). In exponents of
+    `x` these are two variables in `[1/L, 1 − 1/L]` and a rest: the part of the region that needs no density
+    estimate, `[0.4695, 0.5305]` at `2.13`;
+  - the bilinear Type I estimate without `2HD < q`: on the diagonal the congruence `t d₂′ ≡ t′ d₂` has at most
+    `F(⌊2HD/q⌋ + 1)` solutions for each `(t, d₂′)`, and the first term gains that factor
+    (`SieveTypeIB.typeIB_bound_wide`; with a spline weight, `SieveSpline.typeIB_spline_wide`).
+- **What is not written.** The exponent inequality for the paper's curve on the rest of the region (the
+  computations sample it); the form in two variables of the paper's Lemmas 4.4 to 4.6, where a comparison between
+  the two variables has no prime as a pivot; the leaves of Lemma 4.3 with the wider Type I estimate; Harman's
+  comparison with the estimate's stops, whose zone depends on the rest; role reversal, with the removal of the
+  conditions that tie the reversed variable to the others; and a certificate for a tree with reversed terms, which
+  the paper's format does not have. Until these are written the theorem stays at `11/5`.
 
 ### 3.2 Short intervals
 
@@ -312,8 +324,8 @@ and the inventory would carry them.
 - **The half-plane at `7/8`.** It does not move Linnik's exponent (§3.1); what it would improve is listed in
   `account.md`, and §1 and §2 above would gain `23/24` and the constant `8` in place of `12`.
 - **Linnik below `2.198`:** not by the paper's decomposition with the window as its Type II estimate. With the estimate in two
-  variables it reaches `2.193`, and in a decomposition without the window the computation of §3.1 passes at `2.12`;
-  neither has a Lean theorem.
+  variables it reaches `2.193`, and in a decomposition without the window the computation of §3.1 passes at `2.12`.
+  The two estimates behind them are in Lean at the level of their bounds; the sieves are not.
 
 ### 6.1 The `positivity-search` branch and its gravastar strand
 

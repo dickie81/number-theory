@@ -30,6 +30,42 @@ These theorems are in the proof of `Linnik22000E.linnik_22000e`, whose axioms ar
 `Quot.sound` (`lib/check/Check.lean`), so they depend on those only. `hm_duality` does not use the zero-free
 half-plane.
 
+## With weights, in mean square, and for two polynomials
+
+`SieveTypeIIHM.hm_duality_wt` (`lib/pnt/SieveTwoBins.lean`) is the same inequality with a weight `η_χ ∈ ℂ` on each
+character, under the same hypotheses:
+
+`|Σ_{χ∈R} η_χ F(χ, β_χ + iγ_χ)|² ≤ e·Σ_n |a_n|²n^{−2σ}·(Λ·Σ_χ |η_χ|² + B·(Σ_χ |η_χ|)²)`.
+
+`hm_duality` is the case in which `η_χ` is the phase of the conjugate of `F`, of modulus at most `1`. With `η_χ` the
+conjugate of `F` itself, at `σ = 0`, `β_χ = 0`, `γ_χ = h₀` and `Λ = 2P` for `S ⊆ (P, 2P]`, the left side is the square
+of `D = Σ_χ |W(χ)|²`, `W(χ) = dp S (aχ) h₀`, and the right side is at most `e·Σ|a|²·(2P + |R|B)·D`. So
+
+`Σ_{χ∈R} |W(χ)|² ≤ e·Σ_{j∈S} |a_j|²·(2P + |R|·B)` (`SieveTypeIIHM.sum_bin_hm_sq`),
+
+the mean-square form: against orthogonality's `(P + q)Σ|a|²`, the number of characters of the set multiplies the
+kernel bound only. It does not follow from `hm_duality` on the subsets of `R` without a factor `log |R|`.
+
+For two polynomials `W₁` and `W₂`, Cauchy–Schwarz over a bin needs no count of the bin:
+
+- `SieveTypeIIHM.sum_bin_two`: `Σ_{χ∈R} |W₁(χ)||W₂(χ)|` is at most the product of the square roots of the two mean
+  squares, each the smaller of orthogonality's bound and the one above (`sqTerm`);
+- `SieveTypeIIHM.sum_typeII_two_bins`: the sum over `χ ≠ 1` of `|W₁(χ)||W₂(χ)||B(χ)|`, by bins, as
+  `SieveTypeIIHM.sum_typeII_bins_hm` does for one polynomial;
+- `SieveTypeIIHM.bin_bound_two` (`lib/pnt/SieveTwoZone.lean`): a bin's contribution as a power of `q`. For
+  `P_i = q^{m_i}` it is at most a constant times `(1 + log qT)^{10} q^{L − 1/25000 + η}(Σ|a|²/P₁)^{1/2}(Σ|b|²/P₂)^{1/2}`
+  when there are exponents `M_i` for the two mean squares (`M_i ≥ max(m_i, 1)`, or `M_i ≥ max(m_i, g + b(m_i))` with
+  `b` the exponent of the kernel bound) with `(L − m₁ − m₂)(β + w) + (m₁ + M₁)/2 + (m₂ + M₂)/2 ≤ L − 1/25000`
+  (`twoBound`). The window's exponents have a term `g/2` that these do not;
+- `SieveTypeIIHM.twoBound_of_long`: that inequality holds, for every value of the curve, when `m₁, m₂ ≥ 1` and
+  `m₁ + m₂ + 1/2000 ≤ L`: two variables of length at least `q` and a third factor of length at least `q^{1/2000}`.
+
+No theorem of the library uses these yet: `lib/check/CheckAll.lean` prints their axioms, which are `propext`,
+`Classical.choice` and `Quot.sound`. They are the estimate in two variables of
+[`docs/research-opportunities.md`](../docs/research-opportunities.md) (§3.1). What that section's computations use
+and these do not give: the inequality `twoBound` for the paper's curve on a region of `(m₁, m₂)` (it is sampled there,
+not proved), and the families of sums in two variables to which the bins apply.
+
 ## Source
 
 The inequality is named after G. Halász and H. L. Montgomery, who used it for large values of Dirichlet polynomials

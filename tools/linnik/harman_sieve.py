@@ -6,9 +6,9 @@
     python3 tools/linnik/harman_sieve.py parity 2130/1000 ...
     python3 tools/linnik/harman_sieve.py paper  11/5 ...
 
-A computation in floating point, with no Lean theorem behind it and no certificate: it says what a sieve built from
-the estimates below would give, and every one of those estimates is assumed here in the form stated. It needs a C
-compiler (`cc`, with OpenMP); the library is built in the system's temporary directory.
+A computation in floating point, with no certificate: it says what a sieve built from the estimates below would
+give, and those estimates are assumed here in the form stated (two of them are in Lean at the level of their bounds:
+see the end). It needs a C compiler (`cc`, with OpenMP); the library is built in the system's temporary directory.
 
 The setting is the paper's: x = q^L, the comparison of A = {n <= x : n = a mod q} with B / phi(q), exponents in
 base x, tau = 1/L, theta = 1 - tau, and the same two inputs (the zero-free half-plane and the density curve `g7d`
@@ -59,11 +59,13 @@ At 2.13 with --h 0.004 the cells give 0.998; with --nest 1, 1.079; with --flips 
 --flips 0, 1.426; with --plain, 1.174; with --sieve --upper, 0.991. `paper` at 11/5 gives 0.862 with --h 0.002
 and 0.800 with --h 0.001, where the paper's certificate has 0.932 on its grid, and `parity` gives 3.0.
 
-What is assumed, beyond the paper: the estimate in two variables (two_factor.py states it); the bilinear Type I
-estimate without 2HD < q; Harman's comparison with these stops and these leaves; the removal of the conditions
-that tie the variables of a reversed term together; and, with `--sieve` and `--upper`, the linear sieve's bounds
-F and f with the bilinear remainder and well-factorable weights. None of this is written in the paper's form, and
-the paper's Theorem 1.1 stays at 11/5.
+What is assumed, beyond the paper: the estimate in two variables on the tabulated zone (two_factor.py states it;
+in Lean are its bound by bins, SieveTypeIIHM.sum_typeII_two_bins and bin_bound_two, and the zone's part with both
+variables of length at least q, twoBound_of_long); the bilinear Type I estimate without 2HD < q at the leaves (in
+Lean: SieveTypeIB.typeIB_bound_wide, not yet the leaves); Harman's comparison with these stops and these leaves;
+the removal of the conditions that tie the variables of a reversed term together; and, with `--sieve` and
+`--upper`, the linear sieve's bounds F and f with the bilinear remainder and well-factorable weights. The paper's
+Theorem 1.1 stays at 11/5.
 """
 import argparse
 import ctypes as C

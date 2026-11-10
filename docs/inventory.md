@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1606 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1615 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 255 | 814 |
+| `lib/pnt` | 258 | 823 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2585,7 +2585,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveHMBins`: Proposition 3′ pointwise, by bins, with the Halász–Montgomery bound per bin
 
-- `SieveTypeIIHM.sum_typeII_bins_hm`: Proposition 3′ pointwise, by bins, with the better bound per bin *paper*
+- `SieveTypeIIHM.sum_typeII_bins_hm`: Proposition 3′ pointwise, by bins, with the better bound per bin *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.offK_bound`: A uniform kernel bound at `z = 0` *paper*
 
 #### `SieveHMWindow`: The window condition with the Halász–Montgomery branch
@@ -2718,6 +2718,18 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTreeStop.tree_pt_stop`: Buchstab's tree with a stopping rule, at one `n` *paper*
 
+#### `SieveTwoBins`: The Type II estimate in two variables, by bins of characters
+
+- `SieveTypeIIHM.hm_duality_wt`: The Halász–Montgomery duality inequality over the characters mod `q`, with weights ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.sum_bin_hm_sq`: Halász–Montgomery in mean square, for one bin at one height ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.sum_bin_two`: One bin in two variables ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.sum_typeII_two_bins`: The Type II estimate in two variables, by bins ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveTwoZone`: One bin in two variables, as powers of `q`
+
+- `SieveTypeIIHM.bin_bound_two`: One bin in two variables, as a power of `q` ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.twoBound_of_long`: Two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveTypeIB`: A bilinear Type I estimate by Parseval's identity
 
 - `SieveTypeIB.sum_bilinear`: The bilinear sum in Fourier form
@@ -2726,6 +2738,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveTypeIBAsym`: The leaves by the bilinear estimate: the asymptotic form
 
 - `SieveTypeIBAsym.leaves_ib`: The leaves by the bilinear estimate, asymptotically *paper*
+
+#### `SieveTypeIBWide`: The bilinear Type I estimate without the condition `2HDm < q`
+
+- `SieveTypeIB.card_fiber_cong_le`: The pairs on the congruence
+- `SieveTypeIB.typeIB_bound_wide`: The bilinear Type I estimate without the condition `2HDm < q`
+- `SieveSpline.typeIB_spline_wide`: The bilinear Type I estimate without `2HDm < q`, with a spline weight
 
 #### `SieveTypeII`: Parts of the Type II estimate of the sieve route (Proposition 3′, pointwise in the heights)
 

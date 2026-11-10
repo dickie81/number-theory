@@ -10,9 +10,11 @@
            --stops      the rule's stops may also be stops of the estimate
            --bil        the bilinear Type I rule without the condition that d2 be shorter than the cofactor
 
-A computation, not a certificate: no Lean theorem states the estimate, the region is sampled in floating point, and
-the lemmas that would bring the estimate to the sieve's sums are not written (below).  Nothing in the library or in
-the paper depends on it.
+A computation, not a certificate: the region is sampled in floating point, and the lemmas that would bring the
+estimate to the sieve's sums are not written (below).  The estimate's bound by bins is in Lean
+(SieveTypeIIHM.sum_typeII_two_bins, and SieveTypeIIHM.bin_bound_two for a bin as a power of q, in lib/pnt/
+SieveTwoBins.lean and SieveTwoZone.lean), and so is the bilinear Type I estimate of `--bil`
+(SieveTypeIB.typeIB_bound_wide).  Nothing in the paper depends on it.
 
 The estimate.  The paper's Type II estimate (its Theorem 3.1) bounds, over the non-trivial characters mod q, the sum
 of |W(chi)| times a product of prime sums, for one Dirichlet polynomial W with arbitrary coefficients whose length
@@ -40,7 +42,8 @@ cofactor, whose prime factors are at least pk, may be in the rest or in a part. 
 of step half a cell that encloses the box and asks every lattice point of it to be in the region, sampled at 60
 values of beta on each piece of the curve.
 
-What is not written.  The estimate itself is the paper's proof with one more Cauchy-Schwarz.  The step from it to the
+What is not written.  The estimate itself is the paper's proof with one more Cauchy-Schwarz (in Lean, as above; its
+exponent inequality is proved there for two variables of length at least q only).  The step from it to the
 sums of the sieve is the analogue of the paper's Lemmas 4.4 to 4.6, with two variables: a comparison between the two
 variables has no prime of the rest as a pivot, and must be separated by smoothing and Fourier inversion in both, the
 boundary layer being bounded by the same estimate for a smooth majorant and by a count in B.  That lemma is assumed.

@@ -118,6 +118,7 @@ import SieveSep
 import SieveFamily
 import SieveTypeIB
 import SieveSpline
+import SieveTypeIBWide
 import SieveBrun
 import SieveCount
 import SieveRanges
@@ -149,6 +150,8 @@ import LinnikHuxStepY
 import LinnikStairs7
 import SieveHMBin
 import SieveHMBins
+import SieveTwoBins
+import SieveTwoZone
 import SieveHMWindow
 import SieveTypeIIHM
 import LinnikCGLLV
@@ -816,6 +819,9 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveSpline.norm_what_spl_tail
 #print axioms SieveSpline.norm_Ew_spl_le
 #print axioms SieveSpline.typeIB_spline
+#print axioms SieveTypeIB.card_fiber_cong_le
+#print axioms SieveTypeIB.typeIB_bound_wide
+#print axioms SieveSpline.typeIB_spline_wide
 #print axioms SieveBrun.bonferroni
 #print axioms SieveBrun.fundamental
 #print axioms SieveBrun.gap_le
@@ -865,6 +871,12 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTypeIIHM.sum_bin_hm
 #print axioms SieveTypeIIHM.sum_typeII_bins_hm
 #print axioms SieveTypeIIHM.offK_bound
+#print axioms SieveTypeIIHM.hm_duality_wt
+#print axioms SieveTypeIIHM.sum_bin_hm_sq
+#print axioms SieveTypeIIHM.sum_bin_two
+#print axioms SieveTypeIIHM.sum_typeII_two_bins
+#print axioms SieveTypeIIHM.bin_bound_two
+#print axioms SieveTypeIIHM.twoBound_of_long
 #print axioms SieveCurveGlue.affine_corner_bound
 #print axioms SieveCurveGlue.windowPieceHM_affine_split
 #print axioms SieveCurveGlue.windowPieceHM_const_split
