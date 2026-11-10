@@ -590,9 +590,40 @@ theorem chainOK2_of_zone [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoA
       exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hq1)
         (by linarith [min_le_right δ₁ δ₂])) (by positivity)
 
+/-! ### For an exponent, with no route -/
+
+/-- The route of an exponent `L`, with a window that the lemmas in two variables do not use. -/
+@[reducible] noncomputable def routeOf (L : ℝ) : Route := ⟨L, 1 / 3, 1 / 2⟩
+
+omit [Route] in
+theorem routeOK_of {L : ℝ} (h1 : 2 < L) (h2 : L ≤ 5 / 2) : @RouteOK (routeOf L) :=
+  @RouteOK.mk (routeOf L) h1 (show (0 : ℝ) < 1 / 3 by norm_num) (show (1 / 3 : ℝ) < 1 / 2 by norm_num)
+    (show (1 / 2 : ℝ) < 1 by norm_num) h2
+
+omit [Route] in
+/-- **Chains with two marked products and the cofactor in the rest, for an exponent `2 < L ≤ 5/2`**:
+`chain2R_bound` with no route. -/
+theorem chain2R_at {L : ℝ} (hL2 : 2 < L) (hL : L ≤ 5 / 2) {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg) {e₀ : ℝ}
+    (he₀ : 0 < e₀) (k' J₀ : ℕ) {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∀ (S₁ S₂ : Finset (Fin (k' + 1))) (Ω : List (GCmp (k' + 1))) (A₁ B₁ A₂ B₂ : ℕ), Disjoint S₁ S₂ →
+      Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) → 1 ≤ A₁ → 1 ≤ A₂ → B₁ * B₂ ≤ ⌊(q : ℝ) ^ L⌋₊ →
+      (∀ u v : ℝ, Real.logb q A₁ ≤ u → u ≤ Real.logb q B₁ → Real.logb q A₂ ≤ v → v ≤ Real.logb q B₂ → Rg u v) →
+      (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ C ∈ Ω, C.holds 0 rt) →
+        StrictAnti rt ∧ (∀ i, (q : ℝ) ^ e₀ ≤ rt i) ∧ A₁ < ∏ i ∈ S₁, rt i ∧ ∏ i ∈ S₁, rt i ≤ B₁ ∧
+          A₂ < ∏ i ∈ S₂, rt i ∧ ∏ i ∈ S₂, rt i ≤ B₂) →
+      ‖∑ rt ∈ RTg (k' + 1) ⌊2 * (q : ℝ) ^ L⌋₊ Ω,
+          ∑ n ∈ Finset.Ioc ⌊(q : ℝ) ^ L⌋₊ ⌊2 * (q : ℝ) ^ L⌋₊,
+            dw q a n * (if (∏ i, rt i) ∣ n ∧ rough (rt (Fin.last k')) n then 1 else 0)‖ ≤
+        (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
+  let _ : Route := routeOf L
+  have _ : RouteOK := routeOK_of hL2 hL
+  exact chain2R_bound hII he₀ k' J₀ hΛ₁
+
 end SieveTwoTerm
 
 #print axioms SieveTwoTerm.sum_full_eq
 #print axioms SieveTwoTerm.chain2_bound
 #print axioms SieveTwoTerm.chain2R_bound
+#print axioms SieveTwoTerm.chain2R_at
 #print axioms SieveTwoTerm.chainOK2_of_zone

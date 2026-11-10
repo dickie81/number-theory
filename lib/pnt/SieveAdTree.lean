@@ -992,6 +992,16 @@ theorem linnik_tree [RouteOK] {τ : Tests} (hτ : τ.Sound) (T : Tree) (f₀ : �
       ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K' * (q : ℝ) ^ L :=
   SieveMain2.route_of_large L_pos.le (linnik_large_tree hτ T f₀ cfg₀ hf₀ hroot hok hcost)
 
+omit [Route] in
+/-- **Linnik's theorem from a tree, for any route**: `linnik_tree` with the route as a variable. -/
+theorem linnik_tree_at (R : Route) (hR : @RouteOK R) {τ : Tests} (hτ : @Tests.Sound R τ) (T : Tree) (f₀ : ℕ)
+    (cfg₀ : Cfg) (hf₀ : f₀ ≤ DEN / 2 + 1) (hroot : τ.okJ [] f₀ cfg₀ = true)
+    (hok : ok τ T [(f₀, DEN / 2 + 1)] false = true) (hcost : cost T [(f₀, DEN / 2 + 1)] < K) :
+    ∃ K' : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
+      ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K' * (q : ℝ) ^ (@Route.L R) :=
+  @linnik_tree R hR τ hτ T f₀ cfg₀ hf₀ hroot hok hcost
+
 end SieveAd
 
 #print axioms SieveAd.linnik_tree
+#print axioms SieveAd.linnik_tree_at

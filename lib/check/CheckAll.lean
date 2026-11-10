@@ -928,11 +928,14 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTwoTerm.sum_full_eq
 #print axioms SieveTwoTerm.chain2_bound
 #print axioms SieveTwoTerm.chain2R_bound
+#print axioms SieveTwoTerm.chain2R_at
 #print axioms SieveTwoTerm.chainOK2_of_zone
 #print axioms SieveP6LeavesWide.leaves_chain_wide
 #print axioms SieveP6LeavesWide.leavesOK_wide
 #print axioms SieveTwoComp.prop6_two
+#print axioms SieveTwoComp.prop6_two_at
 #print axioms SieveAd.linnik_tree
+#print axioms SieveAd.linnik_tree_at
 #print axioms SieveCurveGlue.affine_corner_bound
 #print axioms SieveCurveGlue.windowPieceHM_affine_split
 #print axioms SieveCurveGlue.windowPieceHM_const_split

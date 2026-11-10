@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1652 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1655 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 276 | 860 |
+| `lib/pnt` | 276 | 863 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2448,6 +2448,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdTree`: A tree of Buchstab steps on boxes of cells: what a tree that passes the check gives
 
 - `SieveAd.linnik_tree`: Linnik's theorem with exponent `L`, from a tree
+- `SieveAd.linnik_tree_at`: Linnik's theorem from a tree, for any route
 
 #### `SieveBox`: The share of a box of prime intervals
 
@@ -2754,6 +2755,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveTwoComp`: Harman's comparison with stops in two variables and the leaves of the wider region
 
 - `SieveTwoComp.prop6_two`: Harman's comparison with stops in two variables and the leaves of the wider region ([note](../formalisations/halasz-montgomery.md))
+- `SieveTwoComp.prop6_two_at`: Harman's comparison with stops in two variables, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoCross`: Conditions between the two variables of a bilinear estimate
 
@@ -2775,6 +2777,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTwoTerm.chain2_bound`: Chains with two marked products ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoTerm.chain2R_bound`: Chains with two marked products and the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoTerm.chainOK2_of_zone`: `ChainOK2` for every length up to `K₀ + 1`
+- `SieveTwoTerm.chain2R_at`: Chains with two marked products and the cofactor in the rest, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoTuples`: Tuples of primes as the two variables of the Type II estimate
 

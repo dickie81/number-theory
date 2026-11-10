@@ -136,7 +136,8 @@ them, each with a prime as a pivot. For two polynomial variables:
   and not on the whole rectangle of their ranges. A term `Σ_r S(A_r, z)` of a sieve is a sum of such families, one
   for each number of prime factors of the cofactor: with the cofactor in the second variable
   (`SieveTwoTerm.chain2_bound`, the band being `n` over the rest) or in the rest (`SieveTwoTerm.chain2R_bound`,
-  the two variables being sets of the chain's primes).
+  the two variables being sets of the chain's primes; `SieveTwoTerm.chain2R_at` is the statement for an exponent
+  `2 < L ≤ 5/2`, with no route).
 
 - `SieveTwoComp.prop6_two`, **Harman's comparison with stops in two variables** (`lib/pnt/SieveTwoComp.lean`): the
   paper's Proposition 4.8 (`SieveP6ib.prop6ib`) with this estimate in place of the window, and with its Lemma 4.3 on
@@ -152,7 +153,8 @@ them, each with a prime as a pivot. For two polynomial variables:
   (`SieveTwoTerm.chain2_bound`, from `chain_two` on the chain and the primes of its cofactor). The tree and its
   leaves are the paper's (`SieveTwoP6.prop6_two_core` is `SieveP6ib.prop6ib_core` with the rest carried along the
   extensions of a chain), and the leaves' sizes are those of `SieveTypeIBAsymWide.leaves_ib_wide`
-  (`SieveP6LeavesWide.leavesOK_wide`).
+  (`SieveP6LeavesWide.leavesOK_wide`). `SieveTwoComp.prop6_two_at` is the statement for an exponent `2 < L ≤ 5/2`,
+  with no route: these lemmas use a route only for its exponent.
 
 The region enters through a rectangle cut by a band of the sum of the two exponents: the estimate holds for a
 family whose two variables have their exponents in such a set inside the region. A set of tuples cut by another

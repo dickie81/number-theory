@@ -445,6 +445,33 @@ theorem prop6_two [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
   have h2 := mul_nonneg (show (0 : ℝ) ≤ (smax : ℝ) + 2 by linarith) he₁
   linarith
 
+omit [Route] in
+/-- **Harman's comparison with stops in two variables, for an exponent `2 < L ≤ 5/2`**: `prop6_two` with no
+route. -/
+theorem prop6_two_at {L : ℝ} (hL2 : 2 < L) (hL : L ≤ 5 / 2) {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg) (j J₀ : ℕ)
+    {Λ₁ a₀ : ℝ} (hΛ₁ : 0 ≤ Λ₁) (ha₀ : 0 < a₀) (lo hi : Fin j → ℝ) (S₀ Sr S₁ : Finset (Fin j))
+    (hdisj : Disjoint S₀ Sr) (hSr : Sr.Nonempty) (eIn₁ : Bool) {t u v ρ₁ ρ₂ ε : ℝ} (hu : 0 < u) (huv : u + a₀ < v)
+    (hρ₁0 : 0 ≤ ρ₁) (hρ : ρ₁ ≤ ρ₂) (hvρ : v + ρ₂ < L) (hρlo : ρ₁ ≤ ∑ i ∈ Sr, lo i) (hρhi : ∑ i ∈ Sr, hi i ≤ ρ₂)
+    (hε : 0 < ε)
+    (hzone : ∀ m₁ m₂ : ℝ, u ≤ m₁ → m₁ ≤ v → L - ρ₂ - ε ≤ m₁ + m₂ → m₁ + m₂ ≤ L - ρ₁ + ε → Rg m₁ m₂)
+    (hlo : u - ∑ i ∈ S₀, lo i ≤ t) (hhi : ∑ i ∈ S₀, hi i < v)
+    (hD₁ : ∑ i ∈ S₁, hi i + (if eIn₁ then t else 0) < L - 1)
+    (hD₂ : max (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) 1 + (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) +
+      2 * (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) < 2 * L - 1)
+    {η : ℝ} (hη : 0 < η) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∀ Ω : List (GCmp j), Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) →
+      (∀ rt : Fin j → ℕ, (∀ i, (rt i).Prime) → (∀ C ∈ Ω, C.holds 0 rt) →
+        StrictAnti rt ∧ (∀ i, ⌈(q : ℝ) ^ a₀⌉₊ ≤ rt i) ∧ ∀ i, (q : ℝ) ^ lo i ≤ rt i ∧ (rt i : ℝ) ≤ (q : ℝ) ^ hi i) →
+      ‖∑ rt ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ Ω, ∑ n ∈ Finset.Ioc ⌊(q : ℝ) ^ L⌋₊ ⌊2 * (q : ℝ) ^ L⌋₊,
+          dw q a n * (if (∏ i, rt i) ∣ n ∧ rough ⌈(q : ℝ) ^ a₀⌉₊ n then 1 else 0)‖ ≤
+        η * (q : ℝ) ^ L / (q.totient * Real.log q) + (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
+  let _ : Route := SieveTwoTerm.routeOf L
+  have _ : RouteOK := SieveTwoTerm.routeOK_of hL2 hL
+  exact prop6_two hII j J₀ hΛ₁ ha₀ lo hi S₀ Sr S₁ hdisj hSr eIn₁ hu huv hρ₁0 hρ hvρ hρlo hρhi hε hzone hlo hhi
+    hD₁ hD₂ hη
+
 end SieveTwoComp
 
 #print axioms SieveTwoComp.prop6_two
+#print axioms SieveTwoComp.prop6_two_at
