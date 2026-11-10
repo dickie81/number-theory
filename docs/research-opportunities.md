@@ -343,7 +343,7 @@ this page.
 | Under RH the Gram–Schmidt pivots of the orbit form satisfy `d_N ≥ (log N/2 + log 4 + 2)/(22e⁸)`; the orbit-lattice conjecture is RH together with the pivot inequalities for `log k < 7100`; RH holds if and only if the form is at least `(log 4 + 2)/(22e⁸)` at every nonzero integer vector | `BallPivot.pivot_ge`, `BallPivot.orbitLattice_iff`, `BallPivot.rh_iff_lattice` | Yes: the conjecture and the form are this library's, and [ball-conjecture.md](ball-conjecture.md) had concluded that RH does not give the pivots |
 | An imaginary quadratic field has class number one if and only if its discriminant is one of the nine | `ClassNumberOne.classNumber_eq_one_iff` | No: Baker, Heegner and Stark's theorem, and not the first kernel-checked proof without Heegner's method ([class-number-one.md](../formalisations/class-number-one.md)). It closes the "finite computation" that `ClassNumberSharp` left |
 | The Davenport–Heilbronn function has a zero with `Re s > 11/12`, within `18/10000` of `0.918601 + 24415.47865i` | `PsiOmega.Locate.Z5.dh_zero_re_gt`, `PsiOmega.Locate.Z5.dh_zero_located_five` | The zero: found here, and no located zero of `dh` with real part above `0.81` is known to this scan from the literature (searched; Spira's and Balanzario and Sánchez-Ortiz's lists were not read in full). The statement closes the library's issue #35. The method is the library's certificate, with the `24 000` terms evaluated by the kernel in ball arithmetic (§8.5) |
-| (Numerical) The Davenport–Heilbronn function has zeros with `Re s > 1`: fifteen located, the lowest found `1.0085585829 + 2528618752780.585033i` | None: `scripts/dh_abs_zero.py` | The zeros: this scan found no located zero of `dh` with `Re s > 1` in the literature (three searches; Bombieri and Ghosh's paper was not read). Their existence is Davenport and Heilbronn's theorem (§8.5) |
+| (Numerical) The Davenport–Heilbronn function has zeros with `Re s > 1`: fifteen located, the lowest found `1.0085585829 + 2528618752780.585033i` | None: `scripts/dh_abs_zero.py` | The zeros: no located zero of `dh` with `Re s > 1` is known to this scan from the literature. E. Bombieri and A. Ghosh's survey (2011), read after the scan, has the supremum `1.120362` of the real parts, calls such a zero "a rare event" for a neighbouring function, and exhibits zeros right of `1` only for the second Davenport–Heilbronn function (§8.5). Their existence is Davenport and Heilbronn's theorem |
 
 The whole import cone of `ClassNumberSharp`, the half-plane's proof included (244 modules), was rebuilt from a clean
 checkout on this scan's machine in about an hour on four cores, and `Eis.LFunction_ne_zero_of_re_gt` printed
@@ -454,7 +454,7 @@ class. So, by Kronecker's theorem and Rouché's, as in Davenport and Heilbronn's
 arbitrarily near `σ > 1` exactly when `Σ_{p ≡ ±2 (5)} 2 arctan p^{−σ} ≥ 2.588`:
 
 - the real parts of the zeros in `Re s > 1` are dense in `(1, σ*)` and none exceeds `σ*`, with `σ* ≈ 1.1204` (primes
-  to `2·10⁷` and the tail; the value `1.120362` is in the literature);
+  to `2·10⁷` and the tail; Bombieri and Ghosh give `σ(τ₊, 1) = 1.120362`, below);
 - at `σ = 1.005` the `22` primes `2, 3, 7, …, 167` of these classes, aligned exactly, are the fewest whose arguments
   reach `2.588`; at `σ = 1.05` it takes `68`.
 
@@ -471,6 +471,25 @@ height against `e^{4.5} = 89`. So zeros with `Re s > 11/12` should come about on
 times a constant; and zeros with `Re s > 1` have a density of the order of `e^{−27} ≈ 2·10⁻¹²` or less, so the first
 is to be expected at a height of the order of `10¹²` to `10¹⁴`, against the `12000` scanned. (Counting exact
 alignments of `22` primes would give `10⁻²⁶`; the cheapest alignments are partial ones of many primes.)
+
+**What Bombieri and Ghosh have.** E. Bombieri and A. Ghosh, *Around the Davenport–Heilbronn function*, Russian Math.
+Surveys 66:2 (2011), 221–270. Its §§5, 6 and 9 were read on 10 November 2026, after the searches below were made; the
+rest was not read. They treat the family `f(s, ξ) = Σ a_n n^{−s}` with `a_n = 1, ξ, −ξ, −1, 0` for
+`n ≡ 1, 2, 3, 4, 0 (mod 5)`. Two real values of `ξ` give a functional equation: `τ₊ = −φ + √(1 + φ²) = 0.2841…`, `φ`
+the golden ratio, which is the `κ` above and gives `dh`'s function; and `τ₋ = −φ − √(1 + φ²) = −1/τ₊`, "the second
+Davenport–Heilbronn function", whose equation has the sign `−`. On the zeros right of `1` they have:
+
+- the supremum of the real parts, by the criterion above: `σ(τ₊, 1) = 1.120362` and `σ(τ₋, 1) = 2.382286` (their §6);
+- for `ξ = 0`, where the supremum is `1.0670`, a search of `1/2 ≤ σ < 1.2`, `0 ≤ t < 10⁴` by the secant method:
+  `5358` zeros and none right of `1`. Their explanation is that such a zero needs the phases of at least `400` primes
+  aligned, "so this should be a rare event". A search at `ξ = 0.1 + i` to height `3000` found none either;
+- for `τ₋`, where the prime `2` alone exceeds the sum of arguments that is needed (`arctan(1/2) = 0.4636` against
+  `0.2768`), `2479` zeros with `Re ρ ≥ 1/2` below height `10⁴`, with a concentration near `σ(τ₋, 1)`; the one of
+  largest real part is `2.37474435 + 1649.8708285i`.
+
+They report no search at `τ₊` and no zero of that function right of `1`. So the rate `I(σ)` above makes their "rare
+event" quantitative for `dh`, and the fifteen zeros below are, as far as this page knows, the first located for the
+classical function. What has cited the survey since 2011 was not looked at.
 
 **The zeros right of `11/12` (Numerical).** `scripts/dh_right_scan.py` follows the argument of `f` along
 `Re s = 11/12` by the approximate functional equation, `√(5t/2π)` terms a side where Euler–Maclaurin has `4t`, and
