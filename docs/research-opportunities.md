@@ -268,6 +268,14 @@ covers. The region does not close at `13/6`.
     `D₁ = Σ_{S₁} hi + t·[eIn₁]`, `D₂ = Σ_{S₁ᶜ} hi + t·[¬eIn₁]` (`t ≥ u − Σ_{S₀} lo` the tree's growth) with
     `D₁ < L − 1` and `max(D₁, 1) + D₁ + 2D₂ < 2L − 1`. This is the rule `exact floor` of `harman_sieve.py` for a
     rest among the term's primes, in exponents of `q`.
+  - a certificate's format for a decomposition chosen term by term (`lib/pnt/SieveAdDefs.lean`,
+    `lib/pnt/SieveAdTree.lean`): a tree on boxes of the exponents of a term's primes, whose nodes cut a cell,
+    or apply Buchstab's identity with a floor of their own, and whose leaves are a box with no term, a box
+    dropped at the bound of `SieveRough.shareBox` (for a term of the sign `+`) and a box evaluated by a test.
+    The check and the cost are functions on natural numbers, which the kernel evaluates, and the tests of the
+    evaluations are a parameter. For tests that are sound, a tree that passes on the box of one prime with cost
+    below `1` gives the theorem with the route's exponent (`SieveAd.linnik_tree`; `SieveAd.sound` is the bound of
+    a tree, by induction). The paper's certificate is a fixed decomposition to depth 8; this one takes any tree.
 - **What is not written.** Role reversal; and a certificate for a tree with floors chosen term by term and
   reversed terms, which the paper's format does not have. Until these are written the theorem stays at `11/5`.
   Role reversal, in exact terms: for a term `Σ S(A_{p₁⋯p_k}, p_k)` on a box of cells and one of its primes `p_j`
