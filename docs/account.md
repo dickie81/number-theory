@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1615 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1621 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -134,7 +134,7 @@ The estimates that the results above are built from, each stated for reuse:
 | Large values: Halász–Montgomery (also with weights, and in mean square over a set of characters), Huxley's estimate, Guth and Maynard's, and Chen, Gupta and Li's with characters | `LinnikPower.hm_duality`, `SieveTypeIIHM.hm_duality_wt`, `SieveTypeIIHM.sum_bin_hm_sq`, `LinnikReflect.huxley_large_values`, `ZetaGMLV.gm_large_values`, `LinnikCGLHB101.prop31` |
 | The hybrid fourth moment of `L(1/2 + it, χ)`; the fourth moment of `ζ` at well-spaced points; the approximate functional equation of `L(s, χ)²` | `LinnikFourth.fourth_moment`, `ZetaFourth.zeta_fourth_moment`, `LinnikGamma.afe` |
 | Zero detection by a mollified Dirichlet polynomial; log-derivatives in zero-free discs; Perron's formula with a smooth weight, and contour shifts | `LinnikDetect.dichotomy`, `LogDerivDisc.logDeriv_le_Kld`, `Linnik.perron_exp`, `SmoothPerron.verticalIntegral_shift` |
-| Sieves: Brun's fundamental lemma, Buchstab's identity on tuples of primes, Harman's comparison with and without the bilinear Type I estimate, that estimate by Parseval's identity (also without its condition `2HD < q`), a Type II bound for two polynomials by bins of characters, rough numbers by Buchstab's `ω` | `SieveBrun.fundamental`, `SieveDecomp.buchstab_fam`, `SieveProp6.prop6`, `SieveP6ib.prop6ib`, `SieveTypeIB.typeIB_bound`, `SieveTypeIB.typeIB_bound_wide`, `SieveTypeIIHM.sum_typeII_two_bins`, `SieveRough.psi_le` |
+| Sieves: Brun's fundamental lemma, Buchstab's identity on tuples of primes, Harman's comparison with and without the bilinear Type I estimate, that estimate by Parseval's identity (also without its condition `2HD < q`), Proposition 3′ for two polynomials (for a curve on a region, and for the curve `g7d`), rough numbers by Buchstab's `ω` | `SieveBrun.fundamental`, `SieveDecomp.buchstab_fam`, `SieveProp6.prop6`, `SieveP6ib.prop6ib`, `SieveTypeIB.typeIB_bound`, `SieveTypeIB.typeIB_bound_wide`, `SieveTypeIIHM.typeII_two_gen`, `SieveTwoZone7D.typeII_two_7d`, `SieveRough.psi_le` |
 | Over `ℤ[ω]` and `ℍ³`: the quadratic large sieve, and Kubota's theta function with Patterson's coefficients | `Eis.quadLargeSieve`, `Eis.kubotaTheta` |
 | Vinogradov's mean value theorem, weak form; Weil's explicit formula as a form | `VinoRec.vmvt_weak`, `WeilForm.weilQ_symbol` |
 

@@ -60,11 +60,32 @@ For two polynomials `W₁` and `W₂`, Cauchy–Schwarz over a bin needs no coun
 - `SieveTypeIIHM.twoBound_of_long`: that inequality holds, for every value of the curve, when `m₁, m₂ ≥ 1` and
   `m₁ + m₂ + 1/2000 ≤ L`: two variables of length at least `q` and a third factor of length at least `q^{1/2000}`.
 
+Summed over the bins these give the paper's Proposition 3′ for two polynomials:
+
+- `SieveTypeIIHM.typeII_two_gen` (`lib/pnt/SieveTwoTypeII.lean`): for a curve `g ≤ 1` with `g(1/2) = 1` and the
+  counts `CurveCounts g`, and a region `R` of pairs `(m₁, m₂)` on which `twoBound` holds for `β ∈ [1/2, 11/12]` and
+  `w ≤ 4·10⁻⁶` (`ZoneOK g L d e R`), there is `q₀` such that for `q ≥ q₀`, `S_i ⊆ (P_i, 2P_i]` with
+  `(log_q P₁, log_q P₂)` in `R`, and at most `K₀` prime sums at scales `Q_j ≥ q^{e₁}` with
+  `∏ Q_j ≤ 2^{K₀}q^L/(P₁P₂)`:
+  `Σ_{χ≠1} |W₁(χ)||W₂(χ)||∏_j Sp(χ, Q_j, h_j)| ≤ q^{L − 1/50000}(Σ|a|²/P₁)^{1/2}(Σ|b|²/P₂)^{1/2}`.
+  It is `SieveTypeIIHM.typeII_gen_hm` with two polynomials in place of one and a region in place of the window;
+- `SieveTypeIIHM.typeII_two_long`: the same bound for `P₁ ≥ q`, `P₂ ≥ q` and `P₁P₂ ≤ q^{L − 1/2000}`, for every
+  `L`, at the curve `g = 1`: no density estimate enters, only the half-plane through the prime sums;
+- `SieveTwoZone7D.zone_7d` (`lib/pnt/SieveTwoZone7D.lean`, written by `tools/linnik/gen_zone.py`): `twoBound` for
+  the paper's curve `g7d`, for every `L`, on the region `Zone7d L`. With `s_i = 1 − m_i` and `ρ = L − m₁ − m₂`
+  it is `ρ ≥ 1/2000`, `m_i ≥ 2/3`, and `s₁ + 1/12500`, `s₂ + 1/12500`, `s₁ + s₂ + 1/12500` at most `λρ`,
+  `λ = 27637/62500 = 0.442192`: a variable may be shorter than `q` by `λ` times the exponent of the rest. Both mean
+  squares are bounded by orthogonality for `β ≤ 7789/10000` and by the Halász–Montgomery inequality from there on,
+  where the curve is at most `1/2 − 2/1000`; `λ = 2(1 − 7789/10000 − 4·10⁻⁶)`. The proof glues the curve's 67 pieces
+  (`SieveTwoPieces`: on a piece the exponent is affine in `β` for each choice of the two maxima, so its two ends
+  suffice, and at an end `linarith` proves the inequality from the region's six). The exact zone is the union of
+  such regions over the threshold; this one loses under 2% of `s` at `ρ = 0.3` (`gen_zone.py --exact`);
+- `SieveTwoZone7D.typeII_two_7d`: `typeII_two_gen` for `g7d` on `Zone7d L`, with no hypothesis.
+
 No theorem of the library uses these yet: `lib/check/CheckAll.lean` prints their axioms, which are `propext`,
 `Classical.choice` and `Quot.sound`. They are the estimate in two variables of
 [`docs/research-opportunities.md`](../docs/research-opportunities.md) (§3.1). What that section's computations use
-and these do not give: the inequality `twoBound` for the paper's curve on a region of `(m₁, m₂)` (it is sampled there,
-not proved), and the families of sums in two variables to which the bins apply.
+and these do not give: the families of sums in two variables to which the proposition applies.
 
 ## Source
 

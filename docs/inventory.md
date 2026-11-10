@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1615 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1621 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 258 | 823 |
+| `lib/pnt` | 261 | 829 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2725,10 +2725,25 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.sum_bin_two`: One bin in two variables ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.sum_typeII_two_bins`: The Type II estimate in two variables, by bins ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveTwoPieces`: The zone's exponents by pieces of the curve, from the ends of each piece
+
+- `SieveTypeIIHM.zonePiece_OO`: Both variables by orthogonality
+- `SieveTypeIIHM.zonePiece_HH`: Both variables by the Halász–Montgomery inequality
+
+#### `SieveTwoTypeII`: Proposition 3′ in two variables, for a curve on a zone
+
+- `SieveTypeIIHM.typeII_two_gen`: Proposition 3′ in two variables, for a curve on a region of a zone, pointwise in the heights ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.typeII_two_long`: The Type II estimate for two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveTwoZone`: One bin in two variables, as powers of `q`
 
 - `SieveTypeIIHM.bin_bound_two`: One bin in two variables, as a power of `q` ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.twoBound_of_long`: Two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveTwoZone7D`: The zone of the Type II estimate in two variables for the curve `g7d`
+
+- `SieveTwoZone7D.zone_7d`: The zone's exponents for the curve `g7d` on the region `Zone7d L` ([note](../formalisations/halasz-montgomery.md))
+- `SieveTwoZone7D.typeII_two_7d`: Proposition 3′ in two variables for the curve `g7d` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTypeIB`: A bilinear Type I estimate by Parseval's identity
 
@@ -2758,7 +2773,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.bin_bound_pt`: One bin by orthogonality, at one point
 - `SieveTypeIIHM.bin_bound_gen_hm`: One bin, with the better bound *paper*
-- `SieveTypeIIHM.typeII_gen_hm`: Proposition 3′ for a curve and a window with the Halász–Montgomery branch, pointwise in the heights *paper*
+- `SieveTypeIIHM.typeII_gen_hm`: Proposition 3′ for a curve and a window with the Halász–Montgomery branch, pointwise in the heights *paper* ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTypeIIU`: Type II families with sharp prime ranges
 

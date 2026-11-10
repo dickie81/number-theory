@@ -151,7 +151,10 @@ import LinnikStairs7
 import SieveHMBin
 import SieveHMBins
 import SieveTwoBins
+import SieveTwoPieces
+import SieveTwoTypeII
 import SieveTwoZone
+import SieveTwoZone7D
 import SieveHMWindow
 import SieveTypeIIHM
 import LinnikCGLLV
@@ -877,6 +880,12 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTypeIIHM.sum_typeII_two_bins
 #print axioms SieveTypeIIHM.bin_bound_two
 #print axioms SieveTypeIIHM.twoBound_of_long
+#print axioms SieveTypeIIHM.typeII_two_gen
+#print axioms SieveTypeIIHM.typeII_two_long
+#print axioms SieveTypeIIHM.zonePiece_OO
+#print axioms SieveTypeIIHM.zonePiece_HH
+#print axioms SieveTwoZone7D.zone_7d
+#print axioms SieveTwoZone7D.typeII_two_7d
 #print axioms SieveCurveGlue.affine_corner_bound
 #print axioms SieveCurveGlue.windowPieceHM_affine_split
 #print axioms SieveCurveGlue.windowPieceHM_const_split

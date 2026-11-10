@@ -209,11 +209,19 @@ covers. The region does not close at `13/6`.
     of length at least `q^{1/2000}`, whatever the density curve (`SieveTypeIIHM.twoBound_of_long`). In exponents of
     `x` these are two variables in `[1/L, 1 − 1/L]` and a rest: the part of the region that needs no density
     estimate, `[0.4695, 0.5305]` at `2.13`;
+  - the estimate itself, the paper's Proposition 3′ for two polynomials, for a curve and a region of the two
+    lengths' exponents on which the inequality holds (`SieveTypeIIHM.typeII_two_gen`); with no density estimate for
+    two variables of length at least `q` (`SieveTypeIIHM.typeII_two_long`); and for the paper's curve on an explicit
+    region, for every `L` (`SieveTwoZone7D.zone_7d`, `SieveTwoZone7D.typeII_two_7d`). With `s_i = 1 − m_i` for
+    lengths `q^{m_i}` and `q^ρ` the length of the rest, the region is `ρ ≥ 1/2000`, `m_i ≥ 2/3` and `s₁`, `s₂`,
+    `s₁ + s₂` at most `0.442192ρ − 1/12500`: a variable may be shorter than `q` by `0.442` times the exponent of
+    the rest. The computations' zone is the union of such regions over the point where the Halász–Montgomery
+    inequality takes over from orthogonality; this one is the region for that point at `s = 0`, and holds all of the
+    zone but under 2% of `s` at its far end;
   - the bilinear Type I estimate without `2HD < q`: on the diagonal the congruence `t d₂′ ≡ t′ d₂` has at most
     `F(⌊2HD/q⌋ + 1)` solutions for each `(t, d₂′)`, and the first term gains that factor
     (`SieveTypeIB.typeIB_bound_wide`; with a spline weight, `SieveSpline.typeIB_spline_wide`).
-- **What is not written.** The exponent inequality for the paper's curve on the rest of the region (the
-  computations sample it); the form in two variables of the paper's Lemmas 4.4 to 4.6, where a comparison between
+- **What is not written.** The form in two variables of the paper's Lemmas 4.4 to 4.6, where a comparison between
   the two variables has no prime as a pivot; the leaves of Lemma 4.3 with the wider Type I estimate; Harman's
   comparison with the estimate's stops, whose zone depends on the rest; role reversal, with the removal of the
   conditions that tie the reversed variable to the others; and a certificate for a tree with reversed terms, which
