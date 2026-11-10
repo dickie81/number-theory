@@ -133,6 +133,7 @@ the exponent each input would reach is:
 | Input (its largest exponent `A`) | `A` | `1 + A/2` | Exponent reached |
 |---|---|---|---|
 | Chen, Gupta and Li's `4/(1 + σ)` at `σ = 5/7`, the library today | `7/3 = 2.3333` | `13/6 = 2.1667` | `2.198`–`2.2` (computed: `2.199` passes, `2.198` fails) |
+| The same, with the Type II estimate in two variables as one more way to evaluate a box (below; no Lean theorem) | `7/3` | `13/6` | `2.193` (computed: `2.193` passes, `2.192` fails) |
 | A hybrid large-values estimate of Guth–Maynard strength at `σ = 5/7`, `15/(3 + 5σ)` (the `gm` variant of `tools/linnik/density_payoff.py`) | `105/46 = 2.2826` | `2.1413` | about `2.17`–`2.18` |
 | Guth and Maynard's `30/13` as a cap everywhere | `2.3077` | `2.1538` | about `2.18`–`2.19` |
 | The classical `12/5` at `σ = 3/4` (no Chen–Gupta–Li) | `2.4` | `2.2` | `2.239` (computed, §S6) |
@@ -140,10 +141,38 @@ the exponent each input would reach is:
 
 Nothing known and unformalised lowers the peak: Heath-Brown's exponent `2` on `[15/19, 1]` and the Weyl bound
 (`LinnikWeyl.PYWeyl`) act above `5/6` only, and the half-plane at `7/8` does not reach the corners at `5/7` (§S6). So
-every exponent below about `2.17` needs new mathematics on the large values of Dirichlet polynomials over the
-characters near `σ = 5/7`, where Chen, Gupta and Li call the needed cancellation "quite difficult" (their Remark 12.3).
-The next exponent that is reachable is `2.199`, by regeneration with `tools/linnik/` and a kernel check of the new
-certificate: a computation of hours, not a theorem yet.
+with the window as the Type II estimate, every exponent below about `2.17` needs new mathematics on the large values
+of Dirichlet polynomials over the characters near `σ = 5/7`, where Chen, Gupta and Li call the needed cancellation
+"quite difficult" (their Remark 12.3). The next exponent that is reachable is `2.199`, by regeneration with
+`tools/linnik/` and a kernel check of the new certificate: a computation of hours, not a theorem yet.
+
+**A Type II estimate in two variables (10 November; computed, with no Lean theorem).** The window needs
+`L > 1 + A/2` because it bounds one polynomial against the number of characters in a bin. With two polynomials,
+Cauchy–Schwarz between them needs no count of the bin: each gets orthogonality or the Halász–Montgomery inequality
+in its mean-square form, with the paper's kernel bound, and the prime sums keep the paper's bound. In exponents of
+`x`, at `11/5` the estimate holds for two variables within about `0.08` of each other and a rest, a product of
+primes, of at most `0.164`: for example two primes near `x^{0.42}` and a third near `x^{0.16}`, which no window
+covers. The region does not close at `13/6`.
+
+- **In the paper's decomposition** (`tools/linnik/two_factor.py`). As one more way to evaluate a box of depth at
+  most four, the estimate takes the certificate's total at `11/5` from `0.93214𝒦` to `0.76216𝒦` (the decomposed
+  cells from `0.2149𝒦` to `0.0916𝒦`, the dropped ones from `0.7173𝒦` to `0.6706𝒦`), and the last exponent that
+  passes from `2.199` to `2.193` (`0.97454𝒦` there, `1.03180𝒦` at `2.192`). It goes no further here: the
+  decomposition's floor is the window's width, which tends to `0` at `13/6`, and the cells it must drop are those
+  that the Type I rule does not reach. Two variants change little: the estimate's stops in the rule (`0.7609𝒦` at
+  `11/5`), and the bilinear Type I rule without the condition that `d₂` be shorter than the cofactor (`0.7335𝒦` at
+  `11/5`, `1.0057𝒦` at `2.192`).
+- **In Harman's decomposition**, which uses no window (`tools/linnik/type2_model.py`). A model of the large-value
+  tools gives the region of his Type II lemma (Baker–Harman–Pintz, Lemma 9) with his tools, and shows that his proof
+  cuts the modulus in one place, Huxley's theorem on powers of the prime-factored factor. Without it the region's
+  condition `|α₁ − α₂| < 2θ − 1` is unchanged and its other side shrinks by at most a tenth (`ρ < 0.100` for his
+  `0.112` at `θ = 0.528`), so that the region at `θ = 0.530` contains his at `0.528`. That suggests that his sieve
+  reaches every modulus near `q < x^{0.47}`, an exponent of about `2.13`, given the half-plane. It is an estimate
+  from one lemma's region: the sieve was not run, and his Type I lemmas were not modelled.
+- **What is not written.** The estimate (the paper's proof with one more Cauchy–Schwarz and the dual form of its
+  Halász–Montgomery inequality); the form in two variables of the paper's Lemmas 4.4 to 4.6, where a comparison
+  between the two variables has no prime as a pivot; and a decomposition that does not lean on the window, which is
+  what an exponent near `2.13` would need.
 
 ### 3.2 Short intervals
 
