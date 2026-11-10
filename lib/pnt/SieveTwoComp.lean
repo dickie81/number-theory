@@ -16,7 +16,7 @@ exponents with:
 
 * the window `(u, v)` of the first variable: `0 < u`, `u + a₀ < v`, `u − Σ_{S₀} lo ≤ t` and `Σ_{S₀} hi < v`;
 * the rest: `0 ≤ ρ₁ ≤ Σ_{Sr} lo`, `Σ_{Sr} hi ≤ ρ₂` and `v + ρ₂ < L`;
-* the zone: `Rg m₁ m₂` for `u ≤ m₁ ≤ v` and `L − v − ρ₂ − ε ≤ m₂ ≤ L − u − ρ₁ + ε`, for some `ε > 0`;
+* the zone: `Rg m₁ m₂` for `u ≤ m₁ ≤ v` and `L − ρ₂ − ε ≤ m₁ + m₂ ≤ L − ρ₁ + ε`, for some `ε > 0`;
 * the leaves: `D₁ < L − 1` and `max(D₁, 1) + D₁ + 2D₂ < 2L − 1`, where `D₁ = Σ_{S₁} hi + t·[eIn₁]` and
   `D₂ = Σ_{S₁ᶜ} hi + t·[¬eIn₁]`.
 
@@ -27,7 +27,8 @@ forcing `rt` strictly decreasing, every `rt_i ≥ z₀` and `q^{lo_i} ≤ rt_i �
 
 The stops of the tree are the chains `(rt, P, p)` with `c∏P < ⌈q^u⌉ + 1 ≤ c∏P·p`, so their first variable
 `c∏P·p` lies in `(⌈q^u⌉, ⌊q^v⌋]`, their rest is `∏_{Sr} rt ∈ [q^{ρ₁}, q^{ρ₂}]`, and their second variable is
-everything else: between `q^{L−v−ρ₂}` and `2q^{L−u−ρ₁}`, up to the integer parts. The leaves have `∏P < 4q^t`, and
+everything else, so the product of the two variables is `n` over the rest: between `q^{L−ρ₂}` and `2q^{L−ρ₁}`, up
+to the integer parts. The leaves have `∏P < 4q^t`, and
 split as `d₁d₂` with `d₁ ≤ 4q^{D₁}` and `d₂ ≤ 4q^{D₂}`; the condition on `D₁` and `D₂` is the wider region's, in
 exponents of `q`: `2D₁ + 2D₂ < 2L − 1` for `D₁ ≥ 1`, and `D₁ + 2D₂ < 2L − 2` for `D₁ ≤ 1`.
 
@@ -55,7 +56,7 @@ Proposition 3′ in two variables at `L` on `Rg` (`hII`). Fix `j`, `J₀`, `Λ�
 `z₀ = ⌈q^{a₀}⌉`, boxes `[q^{lo_i}, q^{hi_i}]`, disjoint sets `S₀` and `Sr ≠ ∅` of indices, a leaf split `(S₁, eIn₁)`, a
 growth `t` and `η > 0`, with: `0 < u`, `u + a₀ < v`, `u − Σ_{S₀} lo ≤ t`, `Σ_{S₀} hi < v`;
 `0 ≤ ρ₁ ≤ Σ_{Sr} lo`, `Σ_{Sr} hi ≤ ρ₂`, `v + ρ₂ < L`; `Rg m₁ m₂` for `u ≤ m₁ ≤ v` and
-`L − v − ρ₂ − ε ≤ m₂ ≤ L − u − ρ₁ + ε`, with `ε > 0`; `D₁ < L − 1` and `max(D₁, 1) + D₁ + 2D₂ < 2L − 1`, where
+`L − ρ₂ − ε ≤ m₁ + m₂ ≤ L − ρ₁ + ε`, with `ε > 0`; `D₁ < L − 1` and `max(D₁, 1) + D₁ + 2D₂ < 2L − 1`, where
 `D₁ = Σ_{S₁} hi + t·[eIn₁]` and `D₂ = Σ_{S₁ᶜ} hi + t·[¬eIn₁]`. There are `δ > 0` and `q₀` such that for `q ≥ q₀` and a
 unit `a` mod `q`: let `rt` run over the `j`-tuples of primes up to `⌊2q^L⌋` that satisfy at most `J₀` comparisons `Ω`
 (taken at `m = 0`, with `m`-parts `c(0)` at most `Λ₁ log q`) forcing `rt` strictly decreasing, every `rt_i ≥ z₀` and
@@ -65,7 +66,7 @@ theorem prop6_two [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
     (ha₀ : 0 < a₀) (lo hi : Fin j → ℝ) (S₀ Sr S₁ : Finset (Fin j)) (hdisj : Disjoint S₀ Sr) (hSr : Sr.Nonempty)
     (eIn₁ : Bool) {t u v ρ₁ ρ₂ ε : ℝ} (hu : 0 < u) (huv : u + a₀ < v) (hρ₁0 : 0 ≤ ρ₁) (hρ : ρ₁ ≤ ρ₂)
     (hvρ : v + ρ₂ < L) (hρlo : ρ₁ ≤ ∑ i ∈ Sr, lo i) (hρhi : ∑ i ∈ Sr, hi i ≤ ρ₂) (hε : 0 < ε)
-    (hzone : ∀ m₁ m₂ : ℝ, u ≤ m₁ → m₁ ≤ v → L - v - ρ₂ - ε ≤ m₂ → m₂ ≤ L - u - ρ₁ + ε → Rg m₁ m₂)
+    (hzone : ∀ m₁ m₂ : ℝ, u ≤ m₁ → m₁ ≤ v → L - ρ₂ - ε ≤ m₁ + m₂ → m₁ + m₂ ≤ L - ρ₁ + ε → Rg m₁ m₂)
     (hlo : u - ∑ i ∈ S₀, lo i ≤ t) (hhi : ∑ i ∈ S₀, hi i < v)
     (hD₁ : ∑ i ∈ S₁, hi i + (if eIn₁ then t else 0) < L - 1)
     (hD₂ : max (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) 1 + (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) +
@@ -161,7 +162,7 @@ theorem prop6_two [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
       ∑ p ∈ SieveRough.primesIn (x ^ εw) (x ^ a₀), 1 / (p : ℝ) ≤ Real.log a₀ - Real.log εw + 1 ∧
       ∑ p ∈ SieveRough.primesIn (x ^ a₀) (x ^ (L + 1 : ℝ)), 1 / (p : ℝ) ≤ Real.log (L + 1) - Real.log a₀ + 1 ∧
       Mrem ≤ x ^ c ∧ 4 * (smax : ℝ) + 5 ≤ x ^ δ₀ ∧ 6 ≤ x ^ (v - u - a₀) ∧ 2 ≤ x ^ (v - ∑ i ∈ S₀, hi i) ∧
-      2 ≤ x ^ ε ∧ 4 * 2 ^ (2 * k + 4) ≤ x ^ (L - 1 - AW - D₁ - c) ∧
+      8 ≤ x ^ ε ∧ 2 ≤ x ^ (L - ρ₂) ∧ 4 * 2 ^ (2 * k + 4) ≤ x ^ (L - 1 - AW - D₁ - c) ∧
       64 * 2 ^ (2 * k + 4) ≤ x ^ (L - -(AW - 20 * c) - D₁ - 2 * D₂ - c) :=
     (Filter.eventually_ge_atTop 3).and (((tendsto_rpow_atTop hεw0).eventually_ge_atTop _).and
       ((SieveRough.evLe_sum_inv hεw0 hεwa.le 1 one_pos).and ((SieveRough.evLe_sum_inv ha₀ ha₀L1 1 one_pos).and
@@ -170,13 +171,15 @@ theorem prop6_two [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
       (((tendsto_rpow_atTop (by linarith)).eventually_ge_atTop _).and
       (((tendsto_rpow_atTop (by linarith)).eventually_ge_atTop _).and
       (((tendsto_rpow_atTop hε).eventually_ge_atTop _).and
+      (((tendsto_rpow_atTop (by linarith)).eventually_ge_atTop _).and
       (((tendsto_rpow_atTop (by rw [hAWdef]; linarith)).eventually_ge_atTop _).and
-      ((tendsto_rpow_atTop (by rw [hσdef] at hcσ; rw [hAWdef]; linarith)).eventually_ge_atTop _))))))))))
+      ((tendsto_rpow_atTop (by rw [hσdef] at hcσ; rw [hAWdef]; linarith)).eventually_ge_atTop _)))))))))))
   obtain ⟨q₄, hq₄⟩ := Filter.eventually_atTop.1 (tendsto_natCast_atTop_atTop.eventually hev)
   refine ⟨δ₀, hδ₀0, max q₁ (max q₃ q₄), ?_⟩
   intro q _ hq a ha Ω hΩlen hΩc hΩ
-  obtain ⟨hx3, hxw, hM1, hM2, hMrem', hδ2, h6, h2hi, h2ε, hsz₁, hsz₂⟩ :=
+  obtain ⟨hx3, hxw, hM1, hM2, hMrem', hδ2, h6, h2hi, h8ε, h2ρ, hsz₁, hsz₂⟩ :=
     hq₄ q (le_trans (le_max_right _ _) (le_trans (le_max_right _ _) hq))
+  have h2ε : 2 ≤ (q : ℝ) ^ ε := by linarith
   have hq0 : (0 : ℝ) < q := by linarith
   have hq1 : (1 : ℝ) ≤ q := by linarith
   have hq1' : (1 : ℝ) < q := by linarith
@@ -269,62 +272,51 @@ theorem prop6_two [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
           mul_le_mul hP₂le hBrle (Nat.cast_nonneg _) (by positivity)
       _ = (q : ℝ) ^ (v + ρ₂) := (Real.rpow_add hq0 _ _).symm
       _ ≤ (q : ℝ) ^ L := Real.rpow_le_rpow_of_exponent_le hq1 hvρ.le
-  have hqε : (q : ℝ) ^ (L - v - ρ₂ - ε) * (q : ℝ) ^ ε = (q : ℝ) ^ (L - v - ρ₂) := by
-    rw [← Real.rpow_add hq0]; congr 1; ring
-  -- the zone on the stops' rectangle
+  -- the zone where a stop's first variable is in its window and the rest has its size
   have hR : ∀ u' v' : ℝ, Real.logb q (⌈(q : ℝ) ^ u⌉₊ : ℝ) ≤ u' → u' ≤ Real.logb q (⌊(q : ℝ) ^ v⌋₊ : ℝ) →
-      Real.logb q ((⌊(q : ℝ) ^ L⌋₊ / (⌊(q : ℝ) ^ v⌋₊ * ⌊(q : ℝ) ^ ρ₂⌋₊) : ℕ) : ℝ) ≤ v' →
-      v' ≤ Real.logb q ((⌊2 * (q : ℝ) ^ L⌋₊ / ((⌈(q : ℝ) ^ u⌉₊ + 1) * (⌈(q : ℝ) ^ ρ₁⌉₊ - 1 + 1)) : ℕ) : ℝ) →
-      Rg u' v' := by
-    intro u' v' h1 h2 h3 h4
+      ((⌊(q : ℝ) ^ L⌋₊ / ⌊(q : ℝ) ^ ρ₂⌋₊ : ℕ) : ℝ) ≤ 4 * (q : ℝ) ^ (u' + v') →
+      (q : ℝ) ^ (u' + v') ≤ ((⌊2 * (q : ℝ) ^ L⌋₊ / (⌈(q : ℝ) ^ ρ₁⌉₊ - 1 + 1) : ℕ) : ℝ) → Rg u' v' := by
+    intro u' v' h1 h2 h5 h6
     have hlogb : ∀ y : ℝ, Real.logb q ((q : ℝ) ^ y) = y := fun y => Real.logb_rpow hq0 hq1'.ne'
     refine hzone u' v' ?_ ?_ ?_ ?_
     · exact le_trans ((hlogb u).symm.le.trans (Real.logb_le_logb_of_le hq1' (by positivity) hP₁ge)) h1
     · exact h2.trans ((Real.logb_le_logb_of_le hq1' (by exact_mod_cast hP₂1) hP₂le).trans (hlogb v).le)
-    · refine le_trans ?_ h3
-      -- `⌈q^{L−v−ρ₂−ε}⌉ ≤ N₁/(P₂·Br)`
-      have hm0 : (0 : ℝ) < (q : ℝ) ^ (L - v - ρ₂ - ε) := by positivity
-      have hmle : ⌈(q : ℝ) ^ (L - v - ρ₂ - ε)⌉₊ ≤ ⌊(q : ℝ) ^ L⌋₊ / (⌊(q : ℝ) ^ v⌋₊ * ⌊(q : ℝ) ^ ρ₂⌋₊) := by
-        refine (Nat.le_div_iff_mul_le (Nat.mul_pos hP₂1 hBr1)).2 (Nat.le_floor ?_)
+    · -- `4q^{L−ρ₂−ε} ≤ ⌊N₁/Br⌋`
+      refine (Real.rpow_le_rpow_left_iff hq1').1 ?_
+      have hm0 : (0 : ℝ) < (q : ℝ) ^ (L - ρ₂ - ε) := by positivity
+      have hprod : (q : ℝ) ^ (L - ρ₂ - ε) * (q : ℝ) ^ ε * (q : ℝ) ^ ρ₂ = (q : ℝ) ^ L := by
+        rw [← Real.rpow_add hq0, ← Real.rpow_add hq0]; congr 1; ring
+      have h8' : 8 * ((q : ℝ) ^ (L - ρ₂ - ε) * (q : ℝ) ^ ρ₂) ≤ (q : ℝ) ^ L := by
+        have h := mul_le_mul_of_nonneg_left h8ε (mul_nonneg hm0.le (Real.rpow_nonneg hq0.le ρ₂))
+        calc 8 * ((q : ℝ) ^ (L - ρ₂ - ε) * (q : ℝ) ^ ρ₂) = (q : ℝ) ^ (L - ρ₂ - ε) * (q : ℝ) ^ ρ₂ * 8 := by ring
+          _ ≤ (q : ℝ) ^ (L - ρ₂ - ε) * (q : ℝ) ^ ρ₂ * (q : ℝ) ^ ε := h
+          _ = (q : ℝ) ^ L := by rw [← hprod]; ring
+      have h2' : 2 * (q : ℝ) ^ ρ₂ ≤ (q : ℝ) ^ L := by
+        have e : (q : ℝ) ^ L = (q : ℝ) ^ (L - ρ₂) * (q : ℝ) ^ ρ₂ := by
+          rw [← Real.rpow_add hq0]; congr 1; ring
+        rw [e]
+        exact mul_le_mul_of_nonneg_right h2ρ (by positivity)
+      have hmle : ⌈4 * (q : ℝ) ^ (L - ρ₂ - ε)⌉₊ ≤ ⌊(q : ℝ) ^ L⌋₊ / ⌊(q : ℝ) ^ ρ₂⌋₊ := by
+        refine (Nat.le_div_iff_mul_le hBr1).2 (Nat.le_floor ?_)
         push_cast
-        have hc1 : (⌈(q : ℝ) ^ (L - v - ρ₂ - ε)⌉₊ : ℝ) < (q : ℝ) ^ (L - v - ρ₂ - ε) + 1 :=
-          Nat.ceil_lt_add_one hm0.le
-        have hbig : (1 : ℝ) ≤ (q : ℝ) ^ (L - v - ρ₂) := Real.one_le_rpow hq1 (by linarith)
-        have hceil : (⌈(q : ℝ) ^ (L - v - ρ₂ - ε)⌉₊ : ℝ) ≤ (q : ℝ) ^ (L - v - ρ₂) := by
-          have h5 : (q : ℝ) ^ (L - v - ρ₂ - ε) * 2 ≤ (q : ℝ) ^ (L - v - ρ₂) := by
-            rw [← hqε]
-            exact mul_le_mul_of_nonneg_left h2ε hm0.le
-          rcases le_or_gt ((q : ℝ) ^ (L - v - ρ₂ - ε)) 1 with h6 | h6
-          · have h7 : ⌈(q : ℝ) ^ (L - v - ρ₂ - ε)⌉₊ ≤ 1 := Nat.ceil_le.2 (by exact_mod_cast h6)
-            have h8 : (⌈(q : ℝ) ^ (L - v - ρ₂ - ε)⌉₊ : ℝ) ≤ 1 := by exact_mod_cast h7
-            linarith
-          · linarith
-        calc (⌈(q : ℝ) ^ (L - v - ρ₂ - ε)⌉₊ : ℝ) * ((⌊(q : ℝ) ^ v⌋₊ : ℝ) * (⌊(q : ℝ) ^ ρ₂⌋₊ : ℝ))
-            ≤ (q : ℝ) ^ (L - v - ρ₂) * ((q : ℝ) ^ v * (q : ℝ) ^ ρ₂) :=
-              mul_le_mul hceil (mul_le_mul hP₂le hBrle (Nat.cast_nonneg _) (by positivity))
-                (by positivity) (by positivity)
-          _ = (q : ℝ) ^ L := by
-              rw [← Real.rpow_add hq0, ← Real.rpow_add hq0]; congr 1; ring
-      exact (hlogb (L - v - ρ₂ - ε)).symm.le.trans
-        (Real.logb_le_logb_of_le hq1' hm0 ((Nat.le_ceil _).trans (by exact_mod_cast hmle)))
-    · refine h4.trans ?_
-      rw [Nat.sub_add_cancel hAr1]
-      rcases Nat.eq_zero_or_pos (⌊2 * (q : ℝ) ^ L⌋₊ / ((⌈(q : ℝ) ^ u⌉₊ + 1) * ⌈(q : ℝ) ^ ρ₁⌉₊)) with h0 | h0
-      · rw [h0, Nat.cast_zero, Real.logb_zero]
+        have hc1 : (⌈4 * (q : ℝ) ^ (L - ρ₂ - ε)⌉₊ : ℝ) < 4 * (q : ℝ) ^ (L - ρ₂ - ε) + 1 :=
+          Nat.ceil_lt_add_one (by positivity)
+        have h3 : (⌈4 * (q : ℝ) ^ (L - ρ₂ - ε)⌉₊ : ℝ) * (⌊(q : ℝ) ^ ρ₂⌋₊ : ℝ) ≤
+            (4 * (q : ℝ) ^ (L - ρ₂ - ε) + 1) * (q : ℝ) ^ ρ₂ :=
+          mul_le_mul hc1.le hBrle (Nat.cast_nonneg _) (by positivity)
         linarith
-      · refine (Real.logb_le_logb_of_le hq1' (by exact_mod_cast h0) ?_).trans (hlogb (L - u - ρ₁ + ε)).le
-        have hden : (q : ℝ) ^ u * (q : ℝ) ^ ρ₁ ≤ ((⌈(q : ℝ) ^ u⌉₊ : ℝ) + 1) * (⌈(q : ℝ) ^ ρ₁⌉₊ : ℝ) :=
-          mul_le_mul (by linarith) hArge (by positivity) (by positivity)
-        have hden0 : (0 : ℝ) < (q : ℝ) ^ u * (q : ℝ) ^ ρ₁ := by positivity
-        calc ((⌊2 * (q : ℝ) ^ L⌋₊ / ((⌈(q : ℝ) ^ u⌉₊ + 1) * ⌈(q : ℝ) ^ ρ₁⌉₊) : ℕ) : ℝ)
-            ≤ (⌊2 * (q : ℝ) ^ L⌋₊ : ℝ) / (((⌈(q : ℝ) ^ u⌉₊ + 1) * ⌈(q : ℝ) ^ ρ₁⌉₊ : ℕ) : ℝ) := Nat.cast_div_le
-          _ ≤ (2 * (q : ℝ) ^ L) / ((q : ℝ) ^ u * (q : ℝ) ^ ρ₁) := by
-              push_cast
-              exact div_le_div₀ (by positivity) hN₂r hden0 hden
-          _ = 2 * (q : ℝ) ^ (L - u - ρ₁) := by
-              rw [← Real.rpow_add hq0, mul_div_assoc, ← Real.rpow_sub hq0]; congr 2; ring
-          _ ≤ (q : ℝ) ^ ε * (q : ℝ) ^ (L - u - ρ₁) := mul_le_mul_of_nonneg_right h2ε (by positivity)
-          _ = (q : ℝ) ^ (L - u - ρ₁ + ε) := by rw [← Real.rpow_add hq0]; congr 1; ring
+      have h9 : 4 * (q : ℝ) ^ (L - ρ₂ - ε) ≤ ((⌊(q : ℝ) ^ L⌋₊ / ⌊(q : ℝ) ^ ρ₂⌋₊ : ℕ) : ℝ) :=
+        (Nat.le_ceil _).trans (by exact_mod_cast hmle)
+      linarith
+    · -- `⌊N₂/⌈q^{ρ₁}⌉⌋ ≤ q^{L−ρ₁+ε}`
+      refine (Real.rpow_le_rpow_left_iff hq1').1 (h6.trans ?_)
+      rw [Nat.sub_add_cancel hAr1]
+      calc ((⌊2 * (q : ℝ) ^ L⌋₊ / ⌈(q : ℝ) ^ ρ₁⌉₊ : ℕ) : ℝ)
+          ≤ (⌊2 * (q : ℝ) ^ L⌋₊ : ℝ) / (⌈(q : ℝ) ^ ρ₁⌉₊ : ℝ) := Nat.cast_div_le
+        _ ≤ (2 * (q : ℝ) ^ L) / (q : ℝ) ^ ρ₁ := div_le_div₀ (by positivity) hN₂r (by positivity) hArge
+        _ = 2 * (q : ℝ) ^ (L - ρ₁) := by rw [mul_div_assoc, ← Real.rpow_sub hq0]
+        _ ≤ (q : ℝ) ^ ε * (q : ℝ) ^ (L - ρ₁) := mul_le_mul_of_nonneg_right h2ε (by positivity)
+        _ = (q : ℝ) ^ (L - ρ₁ + ε) := by rw [← Real.rpow_add hq0]; congr 1; ring
   -- the chains and the leaves at `q`
   have hokC := hq₁ q (le_trans (le_max_left _ _) hq) a ha ⌈(q : ℝ) ^ u⌉₊ ⌊(q : ℝ) ^ v⌋₊ (⌈(q : ℝ) ^ ρ₁⌉₊ - 1)
     ⌊(q : ℝ) ^ ρ₂⌋₊ hP₁1 hP₂1 hBr1 hBBr hR

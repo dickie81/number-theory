@@ -250,24 +250,26 @@ covers. The region does not close at `13/6`.
     `a₁ + 2a₂ < 2 − 2τ` for `a₁ ≤ τ`, the rule of `two_factor.py --bil` and of `harman_sieve.py`.
   - the paper's Lemma 4.6 in two variables (`SieveTwoChain.chain_two`): a family of tuples of primes with
     comparisons of any kind, two disjoint sets of its primes as the two variables, at least one prime left as the
-    rest, and the rectangle of the two products' exponents inside the region, has `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`. A
+    rest, and the two products' exponents inside the region (asked on their rectangle cut by the band of their
+    sum, since the product of the two variables is `n` over the rest), has `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`. A
     comparison with a prime of the rest has it as a pivot. One with none is a condition between the two variables:
     a bilinear bound `C|f|₂|g|₂` survives a condition `u(i) ≤ v(j)` at the cost of a factor `N + 1`, for `v` with
     fewer than `2^N` values (`SieveTwoCross.BilBd.cmp_list`: ranks, then binary digits, with the Cauchy–Schwarz
     inequality across the two halves), so `J₀` of them cost a power of `log q`. Every term `Σ_r S(A_r, z)` of a
     sieve, in the main tree or in a reversed one, is a sum of such families over the number of prime factors of
-    its cofactor, whatever conditions tie its variables.
+    its cofactor, whatever conditions tie its variables: with the cofactor in the second variable
+    (`SieveTwoTerm.chain2_bound`) or in the rest (`SieveTwoTerm.chain2R_bound`).
   - Harman's comparison with these stops and with the leaves of the wider region (`SieveTwoComp.prop6_two`):
     for a family of chains in boxes, all at least `z₀ = q^{a₀}`, `Σ_r (S(A_r, z₀) − S(B_r, z₀)/φ(q))` is
     `o(q^L/(φ(q) log q))` when the product `c` of a set `S₀` of the chain's primes enters a window `(u, v)` wider
     than `a₀`, with the box of `c` below `v`, the product of a disjoint set `Sr ≠ ∅`, the rest, in `[q^{ρ₁}, q^{ρ₂}]`,
-    the region on the rectangle of `[u, v]` and the exponents left over, and the leaves' sizes
+    the region at the exponents `(m₁, m₂)` with `u ≤ m₁ ≤ v` and `L − ρ₂ ≤ m₁ + m₂ ≤ L − ρ₁` (up to a margin), and
+    the leaves' sizes
     `D₁ = Σ_{S₁} hi + t·[eIn₁]`, `D₂ = Σ_{S₁ᶜ} hi + t·[¬eIn₁]` (`t ≥ u − Σ_{S₀} lo` the tree's growth) with
     `D₁ < L − 1` and `max(D₁, 1) + D₁ + 2D₂ < 2L − 1`. This is the rule `exact floor` of `harman_sieve.py` for a
     rest among the term's primes, in exponents of `q`.
-- **What is not written.** The direct evaluation of a box with its cofactor in the rest; role reversal; and a
-  certificate for a tree with floors chosen term by term and reversed terms, which the paper's format does not
-  have. Until these are written the theorem stays at `11/5`.
+- **What is not written.** Role reversal; and a certificate for a tree with floors chosen term by term and
+  reversed terms, which the paper's format does not have. Until these are written the theorem stays at `11/5`.
   Role reversal, in exact terms: for a term `Σ S(A_{p₁⋯p_k}, p_k)` on a box of cells and one of its primes `p_j`
   in `[X, X′)`, the numbers `n = (r/p_j)·m·p_j` with `N₂/X′ < (r/p_j)m ≤ N₁/X` have `p_j = n/((r/p_j)m)` in its cell
   whatever `n` in `(N₁, N₂]`, so on them the term is `Σ S(A_{r′}, ⌈X′^{1/2}⌉)` over `r′ = (r/p_j)m` with that

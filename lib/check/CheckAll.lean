@@ -925,6 +925,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTwoP6.prop6_two_core
 #print axioms SieveTwoTerm.sum_full_eq
 #print axioms SieveTwoTerm.chain2_bound
+#print axioms SieveTwoTerm.chain2R_bound
 #print axioms SieveTwoTerm.chainOK2_of_zone
 #print axioms SieveP6LeavesWide.leaves_chain_wide
 #print axioms SieveP6LeavesWide.leavesOK_wide

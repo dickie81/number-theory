@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1650 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1651 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 275 | 858 |
+| `lib/pnt` | 275 | 859 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2769,6 +2769,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTwoTerm.sum_full_eq`: The chains with their cofactor's tuples are the full tuples
 - `SieveTwoTerm.chain2_bound`: Chains with two marked products ([note](../formalisations/halasz-montgomery.md))
+- `SieveTwoTerm.chain2R_bound`: Chains with two marked products and the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoTerm.chainOK2_of_zone`: `ChainOK2` for every length up to `K₀ + 1`
 
 #### `SieveTwoTuples`: Tuples of primes as the two variables of the Type II estimate

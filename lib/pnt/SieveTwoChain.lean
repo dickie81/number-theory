@@ -16,8 +16,11 @@ Plain statements. A `GCmp` is a comparison `0 ≤ c + Σ_i e_i log z_i` (or `0 <
   that for `q ≥ q₀` and a unit `a` mod `q`: let `S₁` and `S₂` be disjoint sets of indices that leave at least one
   index out, and let `z` run over the `K`-tuples of primes up to `⌊2q^L⌋` that satisfy at most `J₀` comparisons `Ω`
   with constants at most `Λ₁ log q`. Suppose that every such tuple has its entries at least `q^{e₀}`,
-  `P₁ < ∏_{S₁} z ≤ P₁′`, `P₂ < ∏_{S₂} z ≤ P₂′` and `∏ z ≤ 2q^L`, and that `Rg` holds on the rectangle
-  `[log_q P₁, log_q P₁′] × [log_q P₂, log_q P₂′]`. Then `|Σ_z (1[∏z ≡ a] − 1[(∏z, q) = 1]/φ(q))| ≤ q^{L−δ}/φ(q)`.
+  `P₁ < ∏_{S₁} z ≤ P₁′`, `P₂ < ∏_{S₂} z ≤ P₂′`, `Mlo < ∏_{S₁} z·∏_{S₂} z ≤ Mhi` and `∏ z ≤ 2q^L`, and that `Rg u v`
+  holds for `u ∈ [log_q P₁, log_q P₁′]` and `v ∈ [log_q P₂, log_q P₂′]` with `Mlo ≤ 4q^{u+v}` and `q^{u+v} ≤ Mhi`: on
+  the rectangle of the two products' exponents, cut by the band of their sum that the rest leaves. Then
+  `|Σ_z (1[∏z ≡ a] − 1[(∏z, q) = 1]/φ(q))| ≤ q^{L−δ}/φ(q)`. `chain_two_core` is the same with the band given by
+  the comparisons with no prime of the rest; `chain_two` adds the band to the comparisons.
 
 The comparisons are of any kind. One that involves a prime of the rest has it as a pivot, and goes into
 `SieveUnwGen.unw_gen` with the pairs of tuples `(z|S₁, z|S₂)` as the polynomial part. One that involves no prime of
@@ -31,12 +34,13 @@ The proof of `chain_two`: `z = i·j·pad σ x` with `i`, `j` and `x` the parts o
 (`block_sum`); on a block the sum over the pairs with the conditions is `box_cross`'s, with the rectangle giving
 `Rg` at the block's base.
 
-The file imports `SieveTwoTuples.lean` and `SieveChain.lean`.
+The file imports `SieveTwoTuples.lean` and `SieveP6Chain.lean`.
 -/
 import SieveTwoTuples
-import SieveChain
+import SieveP6Chain
 
 open Real Finset Filter SieveFamily SieveTypeIIU SieveUnwGen SieveFamilyTwo SieveTwoCross SieveTwoTuples SieveChain
+  SieveP6Chain
 
 namespace SieveTwoChain
 
@@ -198,22 +202,19 @@ theorem block_sum {M : Type*} [AddCommMonoid M] {S₁ S₂ : Finset (Fin K)} (hd
 
 open Classical in
 set_option maxHeartbeats 3200000 in
-/-- **Families of tuples of primes with two Type II variables (Lemma 4.6 in two variables).** Assume Proposition 3′
-in two variables at `L` on `Rg` (`hII`) and `0 < L ≤ 5/2`. Fix `e₀ > 0`, `K`, `J₀` and `Λ₁ ≥ 0`. There are `δ > 0` and
-`q₀` such that for `q ≥ q₀` and a unit `a` mod `q`: let `S₁` and `S₂` be disjoint sets of indices that leave at least
-one index out, and let `z` run over the `K`-tuples of primes up to `⌊2q^L⌋` that satisfy at most `J₀` comparisons `Ω`
-with constants at most `Λ₁ log q`. Suppose that every tuple of primes satisfying `Ω` has its entries at least
-`q^{e₀}`, `P₁ < ∏_{S₁} z ≤ P₁′`, `P₂ < ∏_{S₂} z ≤ P₂′` and `∏ z ≤ 2q^L`, with `P_i ≥ 1`, and that `Rg` holds on the
-rectangle `[log_q P₁, log_q P₁′] × [log_q P₂, log_q P₂′]`. Then the sum over `z` of
-`1[∏z ≡ a] − 1[(∏z, q) = 1]/φ(q)` is at most `q^{L−δ}/φ(q)` in absolute value. -/
-theorem chain_two {L : ℝ} {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg) (hL0 : 0 < L) (hL : L ≤ 5 / 2) {e₀ : ℝ}
-    (he₀ : 0 < e₀) (K J₀ : ℕ) {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) :
+/-- **Families of tuples of primes with two Type II variables, the product of the two in a band.** `chain_two` with
+the band given by the comparisons themselves (`hband`): the comparisons with no prime of the rest force
+`Mlo < ∏_{S₁} z·∏_{S₂} z ≤ Mhi` on the tuples with entries at least `1`. -/
+theorem chain_two_core {L : ℝ} {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg) (hL0 : 0 < L) (hL : L ≤ 5 / 2)
+    {e₀ : ℝ} (he₀ : 0 < e₀) (K J₀ : ℕ) {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
       ∀ (S₁ S₂ : Finset (Fin K)), Disjoint S₁ S₂ → (S₁ ∪ S₂)ᶜ.Nonempty →
       ∀ (Ω : List (GCmp K)), Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) →
-      ∀ (P₁ P₁' P₂ P₂' : ℕ), 1 ≤ P₁ → 1 ≤ P₂ →
+      ∀ (P₁ P₁' P₂ P₂' Mlo Mhi : ℕ), 1 ≤ P₁ → 1 ≤ P₂ →
       (∀ u v : ℝ, Real.logb q P₁ ≤ u → u ≤ Real.logb q P₁' → Real.logb q P₂ ≤ v → v ≤ Real.logb q P₂' →
-        Rg u v) →
+        (Mlo : ℝ) ≤ 4 * (q : ℝ) ^ (u + v) → (q : ℝ) ^ (u + v) ≤ Mhi → Rg u v) →
+      (∀ z₀ : Fin K → ℕ, (∀ t, 1 ≤ z₀ t) → (∀ C ∈ Ω, (∀ t ∈ (S₁ ∪ S₂)ᶜ, C.e t = 0) → C.holds 0 z₀) →
+        Mlo < (∏ t ∈ S₁, z₀ t) * ∏ t ∈ S₂, z₀ t ∧ (∏ t ∈ S₁, z₀ t) * ∏ t ∈ S₂, z₀ t ≤ Mhi) →
       (∀ z : Fin K → ℕ, (∀ t, (z t).Prime) → (∀ C ∈ Ω, C.holds 0 z) →
         (∀ t, (q : ℝ) ^ e₀ ≤ z t) ∧ P₁ < ∏ t ∈ S₁, z t ∧ ∏ t ∈ S₁, z t ≤ P₁' ∧
           P₂ < ∏ t ∈ S₂, z t ∧ ∏ t ∈ S₂, z t ≤ P₂' ∧ ((∏ t, z t : ℕ) : ℝ) ≤ 2 * (q : ℝ) ^ L) →
@@ -233,7 +234,7 @@ theorem chain_two {L : ℝ} {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
   obtain ⟨q₃, hq₃⟩ := Filter.eventually_atTop.1
     (tendsto_natCast_atTop_atTop.eventually (hev1.and (hev2.and hev3)))
   refine ⟨δ / 2, half_pos hδ, max (max q₁ q₂) (max q₃ 2), ?_⟩
-  intro q _ hq a ha S₁ S₂ hdisj hne Ω hΩlen hΩc P₁ P₁' P₂ P₂' hP₁ hP₂ hR hreg
+  intro q _ hq a ha S₁ S₂ hdisj hne Ω hΩlen hΩc P₁ P₁' P₂ P₂' Mlo Mhi hP₁ hP₂ hR hband hreg
   have hq1 : q₁ ≤ q := le_trans (le_trans (le_max_left _ _) (le_max_left _ _)) hq
   have hq2 : q₂ ≤ q := le_trans (le_trans (le_max_right _ _) (le_max_left _ _)) hq
   obtain ⟨hqe, hqlog, hqD⟩ := hq₃ q (le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) hq)
@@ -280,6 +281,7 @@ theorem chain_two {L : ℝ} {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
   -- the rest
   obtain ⟨Rs, hRs⟩ : ∃ Rs : Finset (Fin K), Rs = (S₁ ∪ S₂)ᶜ := ⟨_, rfl⟩
   have hRs_ne : Rs.Nonempty := hRs ▸ hne
+  rw [← hRs] at hband
   obtain ⟨n, hn⟩ : ∃ n, Rs.card = n + 1 := ⟨Rs.card - 1, by have := Finset.card_pos.2 hRs_ne; omega⟩
   obtain ⟨σ⟩ : Nonempty (Fin (n + 1) ≃ {t // t ∈ Rs}) :=
     ⟨(Fintype.equivFinOfCardEq (by rw [Fintype.card_coe, hn])).symm⟩
@@ -525,6 +527,19 @@ theorem chain_two {L : ℝ} {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
       rw [hc1]
       have hbound0 : (0 : ℝ) ≤ A₀ * (q : ℝ) ^ (L - 1 / 50000) :=
         mul_nonneg hA₀nn (Real.rpow_nonneg hq0.le _)
+      -- the conditions between the two variables, on a block
+      have hkern : ∀ i ∈ blockSet S₁ ⌊2 * (q : ℝ) ^ L⌋₊ P₁ P₁' b₁, ∀ j ∈ blockSet S₂ ⌊2 * (q : ℝ) ^ L⌋₊ P₂ P₂' b₂,
+          kern (lf.map crossOf) i j = if ∀ C ∈ lf, C.holds 0 (i * j) then 1 else 0 := by
+        intro i hi j hj
+        have hi1 : ∀ t, 1 ≤ i t := padded_pos (Finset.mem_filter.1 hi).1
+        have hj1 : ∀ t, 1 ≤ j t := padded_pos (Finset.mem_filter.1 hj).1
+        have hiff : (∀ c ∈ lf.map crossOf, c.holds i j) ↔ ∀ C ∈ lf, C.holds 0 (i * j) := by
+          rw [List.forall_mem_map]
+          exact forall₂_congr fun C _ => crossOf_holds C hi1 hj1
+        rw [kern_eq]
+        by_cases h : ∀ C ∈ lf, C.holds 0 (i * j)
+        · rw [ite_eq_left h, ite_eq_left (hiff.2 h)]
+        · rw [ite_eq_right h, ite_eq_right (fun h' => h (hiff.1 h'))]
       -- the block's sum as a sum over the pairs
       have hsum : ∀ χ : DirichletCharacter ℂ q,
           ∑ z ∈ Xs.filter (fun z => (Nat.log 2 ((∏ t ∈ S₁, z t - 1) / P₁),
@@ -543,12 +558,9 @@ theorem chain_two {L : ℝ} {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
         refine Finset.sum_congr rfl fun i hi => Finset.sum_congr rfl fun j hj => ?_
         have hi1 : ∀ t, 1 ≤ i t := padded_pos (Finset.mem_filter.1 hi).1
         have hj1 : ∀ t, 1 ≤ j t := padded_pos (Finset.mem_filter.1 hj).1
-        have hiff : (∀ c ∈ lf.map crossOf, c.holds i j) ↔ ∀ C ∈ lf, C.holds 0 (i * j) := by
-          rw [List.forall_mem_map]
-          exact forall₂_congr fun C _ => crossOf_holds C hi1 hj1
-        rw [kern_eq]
+        rw [hkern i hi j hj]
         by_cases h : ∀ C ∈ lf, C.holds 0 (i * j)
-        · rw [ite_eq_left h, ite_eq_left (hiff.2 h), mul_one, one_mul]
+        · rw [ite_eq_left h, ite_eq_left h, mul_one, one_mul]
           have hsplit : (κ' + ∑ j' : Fin lp.length, ξ j' * ((lp.get j').c 0 + lin (lp.get j') (i * j)) : ℝ) =
               (κ' + ∑ j' : Fin lp.length, ξ j' * ((lp.get j').c 0 + lin (lp.get j') i)) +
                 ∑ j' : Fin lp.length, ξ j' * lin (lp.get j') j := by
@@ -562,16 +574,24 @@ theorem chain_two {L : ℝ} {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
             rw [← Nat.cast_mul, ← Finset.prod_mul_distrib]
             rfl
           rw [hpr, map_mul]
-        · rw [ite_eq_right h, ite_eq_right (fun h' => h (hiff.1 h')), mul_zero, zero_mul]
+        · rw [ite_eq_right h, ite_eq_right h, mul_zero, zero_mul]
       simp only [hsum]
-      rcases (blockSet S₁ ⌊2 * (q : ℝ) ^ L⌋₊ P₁ P₁' b₁).eq_empty_or_nonempty with h₁ | ⟨i₀, hi₀⟩
-      · rw [h₁]
-        simp only [Finset.sum_empty, norm_zero, zero_mul, Finset.sum_const_zero]
+      by_cases hex : ∃ i ∈ blockSet S₁ ⌊2 * (q : ℝ) ^ L⌋₊ P₁ P₁' b₁,
+          ∃ j ∈ blockSet S₂ ⌊2 * (q : ℝ) ^ L⌋₊ P₂ P₂' b₂, ∀ C ∈ lf, C.holds 0 (i * j)
+      swap
+      · -- no pair of the block satisfies the conditions
+        have hz : ∀ χ : DirichletCharacter ℂ q,
+            ∑ i ∈ blockSet S₁ ⌊2 * (q : ℝ) ^ L⌋₊ P₁ P₁' b₁, ∑ j ∈ blockSet S₂ ⌊2 * (q : ℝ) ^ L⌋₊ P₂ P₂' b₂,
+              Complex.exp (2 * π * Complex.I *
+                ((κ' + ∑ j' : Fin lp.length, ξ j' * ((lp.get j').c 0 + lin (lp.get j') i) : ℝ) : ℂ)) *
+              Complex.exp (2 * π * Complex.I * ((∑ j' : Fin lp.length, ξ j' * lin (lp.get j') j : ℝ) : ℂ)) *
+              kern (lf.map crossOf) i j *
+              (χ ((∏ t, i t : ℕ) : ZMod q) * χ ((∏ t, j t : ℕ) : ZMod q)) = 0 := fun χ =>
+          Finset.sum_eq_zero fun i hi => Finset.sum_eq_zero fun j hj => by
+            rw [hkern i hi j hj, ite_eq_right (fun h => hex ⟨i, hi, j, hj, h⟩), mul_zero, zero_mul]
+        simp only [hz, norm_zero, zero_mul, Finset.sum_const_zero]
         exact hbound0
-      rcases (blockSet S₂ ⌊2 * (q : ℝ) ^ L⌋₊ P₂ P₂' b₂).eq_empty_or_nonempty with h₂ | ⟨j₀, hj₀⟩
-      · rw [h₂]
-        simp only [Finset.sum_empty, norm_zero, zero_mul, Finset.sum_const_zero]
-        exact hbound0
+      obtain ⟨i₀, hi₀, j₀, hj₀, hlf₀⟩ := hex
       -- the base of the block is in the rectangle
       have hbase : ∀ {T : Finset (Fin K)} {P P' b : ℕ} {i : Fin K → ℕ}, 1 ≤ P →
           i ∈ blockSet T ⌊2 * (q : ℝ) ^ L⌋₊ P P' b →
@@ -588,7 +608,25 @@ theorem chain_two {L : ℝ} {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
         exact ⟨Real.logb_le_logb_of_le hq1' hP0 h1, Real.logb_le_logb_of_le hq1' hPb0 h2⟩
       obtain ⟨hu₁, hu₂⟩ := hbase hP₁ hi₀
       obtain ⟨hv₁, hv₂⟩ := hbase hP₂ hj₀
-      have hRb := hR _ _ hu₁ hu₂ hv₁ hv₂
+      -- the base of the block is in the band
+      have hi₀p := (Finset.mem_filter.1 hi₀).1
+      have hj₀p := (Finset.mem_filter.1 hj₀).1
+      obtain ⟨hbl, hbh⟩ := hband (i₀ * j₀) (fun t => Nat.mul_pos (padded_pos hi₀p t) (padded_pos hj₀p t))
+        (fun C hC hCf => hlf₀ C ((hmem_lf C).2 ⟨hC, hCf⟩))
+      rw [prod_on_left hdisj hi₀p hj₀p, prod_on_right hdisj hi₀p hj₀p] at hbl hbh
+      have hval₁ := Finset.mem_Ioc.1 (blockSet_val hP₁ hi₀)
+      have hval₂ := Finset.mem_Ioc.1 (blockSet_val hP₂ hj₀)
+      have hpow : (q : ℝ) ^ (Real.logb q ((P₁ * 2 ^ b₁ : ℕ) : ℝ) + Real.logb q ((P₂ * 2 ^ b₂ : ℕ) : ℝ)) =
+          ((P₁ * 2 ^ b₁ : ℕ) : ℝ) * ((P₂ * 2 ^ b₂ : ℕ) : ℝ) := by
+        rw [Real.rpow_add hq0, Real.rpow_logb hq0 hq1'.ne' (by exact_mod_cast hpos P₁ b₁ hP₁),
+          Real.rpow_logb hq0 hq1'.ne' (by exact_mod_cast hpos P₂ b₂ hP₂)]
+      have hlo4 : Mlo ≤ 4 * ((P₁ * 2 ^ b₁) * (P₂ * 2 ^ b₂)) :=
+        calc Mlo ≤ (∏ t, i₀ t) * ∏ t, j₀ t := hbl.le
+          _ ≤ (2 * (P₁ * 2 ^ b₁)) * (2 * (P₂ * 2 ^ b₂)) := Nat.mul_le_mul hval₁.2 hval₂.2
+          _ = 4 * ((P₁ * 2 ^ b₁) * (P₂ * 2 ^ b₂)) := by ring
+      have hhi4 : (P₁ * 2 ^ b₁) * (P₂ * 2 ^ b₂) ≤ Mhi :=
+        (Nat.mul_le_mul hval₁.1.le hval₂.1.le).trans hbh
+      have hRb := hR _ _ hu₁ hu₂ hv₁ hv₂ (by rw [hpow]; exact_mod_cast hlo4) (by rw [hpow]; exact_mod_cast hhi4)
       have hb := box_cross (q := q) (hpos P₁ b₁ hP₁) (hpos P₂ b₂ hP₂)
         (W := fun χ => ‖∏ j ∈ Finset.range (n + 1), SieveWeight.Sp χ SieveDyadic.bump (Q j) (hh j)‖)
         (fun χ => norm_nonneg _) (B := (q : ℝ) ^ (L - 1 / 50000)) (Real.rpow_nonneg hq0.le _)
@@ -673,6 +711,119 @@ theorem chain_two {L : ℝ} {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
         rw [← Real.rpow_add hq0]
         congr 2
         ring
+
+open Classical in
+/-- **Families of tuples of primes with two Type II variables (Lemma 4.6 in two variables).** Assume Proposition 3′
+in two variables at `L` on `Rg` (`hII`) and `0 < L ≤ 5/2`. Fix `e₀ > 0`, `K`, `J₀` and `Λ₁ ≥ 0`. There are `δ > 0` and
+`q₀` such that for `q ≥ q₀` and a unit `a` mod `q`: let `S₁` and `S₂` be disjoint sets of indices that leave at least
+one index out, and let `z` run over the `K`-tuples of primes up to `⌊2q^L⌋` that satisfy at most `J₀` comparisons `Ω`
+with constants at most `Λ₁ log q`. Suppose that every tuple of primes satisfying `Ω` has its entries at least
+`q^{e₀}`, `P₁ < ∏_{S₁} z ≤ P₁′`, `P₂ < ∏_{S₂} z ≤ P₂′`, `Mlo < ∏_{S₁} z·∏_{S₂} z ≤ Mhi` and `∏ z ≤ 2q^L`, with
+`P_i ≥ 1`, `Mlo ≥ 1` and `Mhi ≤ 2q^L`, and that `Rg u v` holds for the exponents `u ∈ [log_q P₁, log_q P₁′]` and
+`v ∈ [log_q P₂, log_q P₂′]` with `Mlo ≤ 4q^{u+v}` and `q^{u+v} ≤ Mhi`. Then the sum over `z` of
+`1[∏z ≡ a] − 1[(∏z, q) = 1]/φ(q)` is at most `q^{L−δ}/φ(q)` in absolute value.
+
+The band `(Mlo, Mhi]` of the product of the two variables is the range of `n` over the rest: a rest in
+`[q^{ρ₁}, q^{ρ₂}]` puts the product between `q^{L−ρ₂}` and `2q^{L−ρ₁}`, so the region is asked for on the part of the
+rectangle where the rest has its true size. -/
+theorem chain_two {L : ℝ} {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg) (hL0 : 0 < L) (hL : L ≤ 5 / 2) {e₀ : ℝ}
+    (he₀ : 0 < e₀) (K J₀ : ℕ) {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∀ (S₁ S₂ : Finset (Fin K)), Disjoint S₁ S₂ → (S₁ ∪ S₂)ᶜ.Nonempty →
+      ∀ (Ω : List (GCmp K)), Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) →
+      ∀ (P₁ P₁' P₂ P₂' Mlo Mhi : ℕ), 1 ≤ P₁ → 1 ≤ P₂ → 1 ≤ Mlo → (Mhi : ℝ) ≤ 2 * (q : ℝ) ^ L →
+      (∀ u v : ℝ, Real.logb q P₁ ≤ u → u ≤ Real.logb q P₁' → Real.logb q P₂ ≤ v → v ≤ Real.logb q P₂' →
+        (Mlo : ℝ) ≤ 4 * (q : ℝ) ^ (u + v) → (q : ℝ) ^ (u + v) ≤ Mhi → Rg u v) →
+      (∀ z : Fin K → ℕ, (∀ t, (z t).Prime) → (∀ C ∈ Ω, C.holds 0 z) →
+        (∀ t, (q : ℝ) ^ e₀ ≤ z t) ∧ P₁ < ∏ t ∈ S₁, z t ∧ ∏ t ∈ S₁, z t ≤ P₁' ∧
+          P₂ < ∏ t ∈ S₂, z t ∧ ∏ t ∈ S₂, z t ≤ P₂' ∧
+          Mlo < (∏ t ∈ S₁, z t) * ∏ t ∈ S₂, z t ∧ (∏ t ∈ S₁, z t) * ∏ t ∈ S₂, z t ≤ Mhi ∧
+          ((∏ t, z t : ℕ) : ℝ) ≤ 2 * (q : ℝ) ^ L) →
+      ‖∑ z ∈ RTg K ⌊2 * (q : ℝ) ^ L⌋₊ Ω, dw q a (∏ t, z t)‖ ≤ (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
+  have hΛ' : 0 ≤ Λ₁ + L + 1 := by linarith
+  obtain ⟨δ, hδ, q₀, H⟩ := chain_two_core hII hL0 hL he₀ K (J₀ + 2) hΛ'
+  refine ⟨δ, hδ, max q₀ 2, ?_⟩
+  intro q _ hq a ha S₁ S₂ hdisj hne Ω hΩlen hΩc P₁ P₁' P₂ P₂' Mlo Mhi hP₁ hP₂ hMlo hMhi hR hreg
+  have hqR : (2 : ℝ) ≤ q := by exact_mod_cast le_trans (le_max_right _ _) hq
+  have hq0 : (0 : ℝ) < q := by linarith
+  have hlogq : 0 ≤ Real.log q := Real.log_nonneg (by linarith)
+  have hprimes : ∀ z ∈ RTg K ⌊2 * (q : ℝ) ^ L⌋₊ Ω, (∀ t, (z t).Prime) ∧ ∀ C ∈ Ω, C.holds 0 z := by
+    intro z hz
+    rw [RTg, Finset.mem_filter, Fintype.mem_piFinset] at hz
+    exact ⟨fun t => (mem_primesLe.1 (hz.1 t)).2, hz.2⟩
+  rcases Nat.eq_zero_or_pos Mhi with h0 | hMhi0
+  · -- no tuple: the product of the two variables is at least `1`
+    rw [Finset.sum_eq_zero, norm_zero]
+    · positivity
+    intro z hz
+    exfalso
+    obtain ⟨hzp, hzΩ⟩ := hprimes z hz
+    obtain ⟨-, -, -, -, -, hlo, hhi, -⟩ := hreg z hzp hzΩ
+    omega
+  have hMlo0 : (0 : ℝ) < Mlo := by exact_mod_cast hMlo
+  have hMhi0' : (0 : ℝ) < Mhi := by exact_mod_cast hMhi0
+  -- the band as two comparisons
+  have hunion : ∀ z : Fin K → ℕ, ∏ t ∈ S₁ ∪ S₂, (z t : ℝ) = (((∏ t ∈ S₁, z t) * ∏ t ∈ S₂, z t : ℕ) : ℝ) := by
+    intro z
+    rw [Finset.prod_union hdisj]
+    push_cast
+    rfl
+  have hbandC : ∀ z : Fin K → ℕ, (∀ t, 1 ≤ z t) →
+      ((gDown (S₁ ∪ S₂) (Mlo : ℝ) true).holds 0 z ∧ (gUp (S₁ ∪ S₂) (Mhi : ℝ) false).holds 0 z ↔
+        Mlo < (∏ t ∈ S₁, z t) * ∏ t ∈ S₂, z t ∧ (∏ t ∈ S₁, z t) * ∏ t ∈ S₂, z t ≤ Mhi) := by
+    intro z hz1
+    rw [gDown_holds _ hMlo0 true 0 hz1, gUp_holds _ hMhi0' false 0 hz1, hunion z]
+    simp only [ite_true, Bool.false_eq_true, ite_false, Nat.cast_lt, Nat.cast_le]
+  have hfam : RTg K ⌊2 * (q : ℝ) ^ L⌋₊ (Ω ++ [gDown (S₁ ∪ S₂) (Mlo : ℝ) true, gUp (S₁ ∪ S₂) (Mhi : ℝ) false]) =
+      RTg K ⌊2 * (q : ℝ) ^ L⌋₊ Ω := by
+    ext z
+    simp only [RTg, Finset.mem_filter, List.forall_mem_append, List.forall_mem_cons, List.mem_nil_iff,
+      false_implies, implies_true, and_true]
+    constructor
+    · exact fun h => ⟨h.1, h.2.1⟩
+    · intro h
+      have hzp : ∀ t, (z t).Prime := fun t => (mem_primesLe.1 (Fintype.mem_piFinset.1 h.1 t)).2
+      obtain ⟨-, -, -, -, -, hlo, hhi, -⟩ := hreg z hzp h.2
+      exact ⟨h.1, h.2, (hbandC z (fun t => (hzp t).one_lt.le)).2 ⟨hlo, hhi⟩⟩
+  rw [← hfam]
+  refine H q (le_trans (le_max_left _ _) hq) a ha S₁ S₂ hdisj hne _ ?_ ?_ P₁ P₁' P₂ P₂' Mlo Mhi hP₁ hP₂ hR ?_ ?_
+  · rw [List.length_append]
+    simp only [List.length_cons, List.length_nil]
+    omega
+  · -- the constants
+    intro C hC
+    have hΛl : 0 ≤ Λ₁ * Real.log q := mul_nonneg hΛ₁ hlogq
+    have hLl : 0 ≤ (L + 1) * Real.log q := mul_nonneg (by linarith) hlogq
+    have hsplit : (Λ₁ + L + 1) * Real.log q = Λ₁ * Real.log q + (L + 1) * Real.log q := by ring
+    rw [hsplit]
+    rcases List.mem_append.1 hC with h | h
+    · linarith [hΩc C h]
+    · simp only [List.mem_cons, List.mem_nil_iff, or_false] at h
+      rcases h with rfl | rfl
+      · show -Real.log (Mlo : ℝ) ≤ _
+        have : 0 ≤ Real.log (Mlo : ℝ) := Real.log_nonneg (by exact_mod_cast hMlo)
+        linarith
+      · show Real.log (Mhi : ℝ) ≤ _
+        have h1 : (Mhi : ℝ) ≤ (q : ℝ) ^ (L + 1) := by
+          rw [Real.rpow_add hq0, Real.rpow_one]
+          have : (0 : ℝ) < (q : ℝ) ^ L := by positivity
+          nlinarith
+        have h2 := Real.log_le_log hMhi0' h1
+        rw [Real.log_rpow hq0] at h2
+        linarith
+  · -- the band, from the comparisons with no prime of the rest
+    intro z₀ hz1 hfree
+    refine (hbandC z₀ hz1).1 ⟨hfree _ (by simp) ?_, hfree _ (by simp) ?_⟩
+    · intro t ht
+      show (if t ∈ S₁ ∪ S₂ then (1 : ℝ) else 0) = 0
+      rw [ite_eq_right (Finset.mem_compl.1 ht)]
+    · intro t ht
+      show -(if t ∈ S₁ ∪ S₂ then (1 : ℝ) else 0) = 0
+      rw [ite_eq_right (Finset.mem_compl.1 ht), neg_zero]
+  · intro z hz hzΩ
+    have hzΩ' : ∀ C ∈ Ω, C.holds 0 z := fun C hC => hzΩ C (List.mem_append_left _ hC)
+    obtain ⟨h1, h2, h3, h4, h5, -, -, h8⟩ := hreg z hz hzΩ'
+    exact ⟨h1, h2, h3, h4, h5, h8⟩
 
 end SieveTwoChain
 

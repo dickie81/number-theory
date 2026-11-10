@@ -15,13 +15,16 @@ Plain statements. `L` is a route's (`SieveRoute.Route`, with `RouteOK`), `N₁ =
   `e₀ > 0`, `k′`, `J₀` and `Λ₁ ≥ 0`. There are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a` mod `q`: let `rt`
   run over the `(k′ + 1)`-tuples of primes up to `N₂` that satisfy at most `J₀` comparisons, each strictly
   decreasing with entries at least `q^{e₀}`, `A < ∏_S rt ≤ B` and `Ar < ∏_{Sr} rt ≤ Br`, for `S` and `Sr ≠ ∅`
-  disjoint, with `A, B, Br ≥ 1` and `B·Br ≤ N₁`. If `Rg` holds on the rectangle
-  `[log_q A, log_q B] × [log_q ⌊N₁/(B·Br)⌋, log_q ⌊N₂/((A + 1)(Ar + 1))⌋]`, then the multiples `n ∈ (N₁, N₂]` of
-  `∏rt` with no prime factor below `rt`'s last entry, summed over `rt`, have `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`.
+  disjoint, with `A, B, Br ≥ 1` and `B·Br ≤ N₁`. If `Rg u v` holds for `u ∈ [log_q A, log_q B]` and
+  `⌊N₁/Br⌋ ≤ 4q^{u+v}`, `q^{u+v} ≤ ⌊N₂/(Ar + 1)⌋`, then the multiples `n ∈ (N₁, N₂]` of `∏rt` with no prime factor
+  below `rt`'s last entry, summed over `rt`, have `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`.
 * `chainOK2_of_zone`: `ChainOK2` for every length up to `K₀ + 1`.
+* `chain2R_bound`: the same with the second variable a product of the chain's primes too, `A₂ < ∏_{S₂} rt ≤ B₂`, and
+  the cofactor in the rest: `B₁·B₂ ≤ N₁` and `Rg` on `[log_q A₁, log_q B₁] × [log_q A₂, log_q B₂]`.
 
 The first variable is `m₁ = ∏_S rt`, the rest is `∏_{Sr} rt`, and the second variable is all the rest of `n`: the
-chain's other primes and the cofactor. So `m₂ = n/(m₁·∏_{Sr} rt)` lies in `(N₁/(B·Br), N₂/((A + 1)(Ar + 1))]`.
+chain's other primes and the cofactor. So `m₁m₂ = n/∏_{Sr} rt` lies in `(N₁/Br, N₂/(Ar + 1)]`, the band of
+`chain_two`, and the region is asked for where the first variable is in its window and the rest has its size.
 
 The proof of `chain2_bound`: the cofactor of `n` is the product of a non-increasing tuple `y` of at most
 `K_max = ⌈(L + 1)/e₀⌉` primes (`SieveChain.sum_mult_eq`, `sum_rough_tuples`); for each length, `sum_full_eq` and
@@ -149,8 +152,8 @@ set_option maxHeartbeats 1600000 in
 `q`: let `rt` run over the `(k′ + 1)`-tuples of primes up to `N₂ = ⌊2q^L⌋` that satisfy at most `J₀` comparisons `Ω`
 (with `m`-parts at most `Λ₁ log q` at `m = 0`), each such tuple strictly decreasing, with entries at least `q^{e₀}`,
 `A < ∏_{i∈S} rt_i ≤ B` and `Ar < ∏_{i∈Sr} rt_i ≤ Br`, where `S` and `Sr ≠ ∅` are disjoint, `A, B, Br ≥ 1`,
-`B·Br ≤ N₁ = ⌊q^L⌋` and `Rg` holds on the rectangle
-`[log_q A, log_q B] × [log_q ⌊N₁/(B·Br)⌋, log_q ⌊N₂/((A + 1)(Ar + 1))⌋]`. Then the multiples `n ∈ (N₁, N₂]` of
+`B·Br ≤ N₁ = ⌊q^L⌋` and `Rg u v` holds for `u ∈ [log_q A, log_q B]` with `⌊N₁/Br⌋ ≤ 4q^{u+v}` and
+`q^{u+v} ≤ ⌊N₂/(Ar + 1)⌋`. Then the multiples `n ∈ (N₁, N₂]` of
 `∏rt` with no prime factor below `rt`'s last entry, summed over `rt`, have `|A − B/φ(q)|` at most `q^{L−δ}/φ(q)`. -/
 theorem chain2_bound [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg) {e₀ : ℝ} (he₀ : 0 < e₀) (k' J₀ : ℕ)
     {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) :
@@ -159,8 +162,8 @@ theorem chain2_bound [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L 
       Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) → 1 ≤ A → 1 ≤ B → 1 ≤ Br →
       B * Br ≤ ⌊(q : ℝ) ^ L⌋₊ →
       (∀ u v : ℝ, Real.logb q A ≤ u → u ≤ Real.logb q B →
-        Real.logb q ((⌊(q : ℝ) ^ L⌋₊ / (B * Br) : ℕ) : ℝ) ≤ v →
-        v ≤ Real.logb q ((⌊2 * (q : ℝ) ^ L⌋₊ / ((A + 1) * (Ar + 1)) : ℕ) : ℝ) → Rg u v) →
+        ((⌊(q : ℝ) ^ L⌋₊ / Br : ℕ) : ℝ) ≤ 4 * (q : ℝ) ^ (u + v) →
+        (q : ℝ) ^ (u + v) ≤ ((⌊2 * (q : ℝ) ^ L⌋₊ / (Ar + 1) : ℕ) : ℝ) → Rg u v) →
       (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ C ∈ Ω, C.holds 0 rt) →
         StrictAnti rt ∧ (∀ i, (q : ℝ) ^ e₀ ≤ rt i) ∧ A < ∏ i ∈ S, rt i ∧ ∏ i ∈ S, rt i ≤ B ∧
           Ar < ∏ i ∈ Sr, rt i ∧ ∏ i ∈ Sr, rt i ≤ Br) →
@@ -270,8 +273,11 @@ theorem chain2_bound [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L 
     have hprodAll : ∀ z : Fin (k' + 1 + t) → ℕ,
         ∏ i, z i = (∏ i ∈ S₁, z i) * (∏ i ∈ Sr', z i) * ∏ i ∈ (S₁ ∪ Sr')ᶜ, z i := fun z => by
       rw [← Finset.prod_union hd', Finset.prod_mul_prod_compl]
+    have hBrN : Br ≤ N₁ := le_trans (Nat.le_mul_of_pos_left Br hB1) hBBr
     refine (hq₀f t q hq' a ha S₁ (S₁ ∪ Sr')ᶜ hd12 hrest (fullTL k' t Ω N₁ N₂) ?_ ?_ A B (N₁ / (B * Br))
-      (N₂ / ((A + 1) * (Ar + 1))) hA (Nat.div_pos hBBr hBBr0) hR ?_).trans ?_
+      (N₂ / ((A + 1) * (Ar + 1))) (N₁ / Br) (N₂ / (Ar + 1)) hA (Nat.div_pos hBBr hBBr0) (Nat.div_pos hBrN hBr1)
+      ((Nat.cast_le.2 (Nat.div_le_self _ _)).trans hN₂le) (fun u v h1 h2 _ _ h5 h6 => hR u v h1 h2 h5 h6)
+      ?_).trans ?_
     · refine (length_fullTL_le k' t Ω N₁ N₂).trans ?_
       have : t * t ≤ Kmax * Kmax := Nat.mul_le_mul htK htK
       omega
@@ -315,7 +321,7 @@ theorem chain2_bound [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L 
       have hm₁ : ∏ i ∈ S₁, z i = ∏ i ∈ S, z (Fin.castAdd t i) := by rw [hS₁, Finset.prod_map]; rfl
       have hρ : ∏ i ∈ Sr', z i = ∏ i ∈ Sr, z (Fin.castAdd t i) := by rw [hSr', Finset.prod_map]; rfl
       have hall := hprodAll z
-      refine ⟨fun i => ?_, by rw [hm₁]; exact hSlo, by rw [hm₁]; exact hShi, ?_, ?_, ?_⟩
+      refine ⟨fun i => ?_, by rw [hm₁]; exact hSlo, by rw [hm₁]; exact hShi, ?_, ?_, ?_, ?_, ?_⟩
       · refine Fin.addCases (fun i => ?_) (fun b => ?_) i
         · exact hge i
         · exact (hge (Fin.last k')).trans (by exact_mod_cast hlast b)
@@ -332,7 +338,215 @@ theorem chain2_bound [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L 
               Nat.mul_le_mul_left _ (Nat.mul_le_mul (by rw [hm₁]; exact hSlo) (by rw [hρ]; exact hrlo))
           _ = ∏ i, z i := by rw [hall]; ring
           _ ≤ N₂ := hhi'
+      · -- `N₁/Br < m₁m₂`
+        refine Nat.div_lt_of_lt_mul ?_
+        calc N₁ < ∏ i, z i := hlo'
+          _ = (∏ i ∈ S₁, z i) * (∏ i ∈ Sr', z i) * ∏ i ∈ (S₁ ∪ Sr')ᶜ, z i := hall
+          _ ≤ (∏ i ∈ S₁, z i) * Br * ∏ i ∈ (S₁ ∪ Sr')ᶜ, z i :=
+              Nat.mul_le_mul_right _ (Nat.mul_le_mul_left _ (by rw [hρ]; exact hrhi))
+          _ = Br * ((∏ i ∈ S₁, z i) * ∏ i ∈ (S₁ ∪ Sr')ᶜ, z i) := by ring
+      · -- `m₁m₂ ≤ N₂/(Ar + 1)`
+        refine (Nat.le_div_iff_mul_le (by omega)).2 ?_
+        calc (∏ i ∈ S₁, z i) * (∏ i ∈ (S₁ ∪ Sr')ᶜ, z i) * (Ar + 1)
+            ≤ (∏ i ∈ S₁, z i) * (∏ i ∈ (S₁ ∪ Sr')ᶜ, z i) * ∏ i ∈ Sr', z i :=
+              Nat.mul_le_mul_left _ (by rw [hρ]; exact hrlo)
+          _ = ∏ i, z i := by rw [hall]; ring
+          _ ≤ N₂ := hhi'
       · exact le_trans (by exact_mod_cast hhi') hN₂le
+    · exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le hq1' (by linarith [hδ₀le t htK]))
+        (by positivity)
+  refine (norm_sum_le _ _).trans ?_
+  refine (Finset.sum_le_card_nsmul _ _ _ hbound).trans ?_
+  rw [Finset.card_range, nsmul_eq_mul]
+  calc ((Kmax + 1 : ℕ) : ℝ) * ((q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₀))
+      ≤ (q : ℝ) ^ (δ₀ / 2) * ((q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₀)) :=
+        mul_le_mul_of_nonneg_right (by push_cast; exact hqK) (by positivity)
+    _ = (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₀ / 2) := by
+        rw [mul_left_comm, ← Real.rpow_add hq0]
+        congr 2
+        ring
+
+set_option maxHeartbeats 1600000 in
+/-- **Chains with two marked products and the cofactor in the rest.** As `chain2_bound`, with the second variable
+a product of the chain's primes too: let `rt` run over the `(k′ + 1)`-tuples of primes up to `N₂` that satisfy at most
+`J₀` comparisons, each strictly decreasing with entries at least `q^{e₀}`, `A₁ < ∏_{i∈S₁} rt_i ≤ B₁` and
+`A₂ < ∏_{i∈S₂} rt_i ≤ B₂`, where `S₁` and `S₂` are disjoint, `A₁, A₂ ≥ 1`, `B₁·B₂ ≤ N₁` and `Rg` holds on the rectangle
+`[log_q A₁, log_q B₁] × [log_q A₂, log_q B₂]`. Then the multiples `n ∈ (N₁, N₂]` of `∏rt` with no prime factor below
+`rt`'s last entry, summed over `rt`, have `|A − B/φ(q)|` at most `q^{L−δ}/φ(q)`. The rest is the chain's other primes
+and the cofactor; there is one, since `∏_{S₁} rt·∏_{S₂} rt ≤ N₁ < n`. -/
+theorem chain2R_bound [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg) {e₀ : ℝ} (he₀ : 0 < e₀) (k' J₀ : ℕ)
+    {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∀ (S₁ S₂ : Finset (Fin (k' + 1))) (Ω : List (GCmp (k' + 1))) (A₁ B₁ A₂ B₂ : ℕ), Disjoint S₁ S₂ →
+      Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) → 1 ≤ A₁ → 1 ≤ A₂ → B₁ * B₂ ≤ ⌊(q : ℝ) ^ L⌋₊ →
+      (∀ u v : ℝ, Real.logb q A₁ ≤ u → u ≤ Real.logb q B₁ → Real.logb q A₂ ≤ v → v ≤ Real.logb q B₂ → Rg u v) →
+      (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ C ∈ Ω, C.holds 0 rt) →
+        StrictAnti rt ∧ (∀ i, (q : ℝ) ^ e₀ ≤ rt i) ∧ A₁ < ∏ i ∈ S₁, rt i ∧ ∏ i ∈ S₁, rt i ≤ B₁ ∧
+          A₂ < ∏ i ∈ S₂, rt i ∧ ∏ i ∈ S₂, rt i ≤ B₂) →
+      ‖∑ rt ∈ RTg (k' + 1) ⌊2 * (q : ℝ) ^ L⌋₊ Ω,
+          ∑ n ∈ Finset.Ioc ⌊(q : ℝ) ^ L⌋₊ ⌊2 * (q : ℝ) ^ L⌋₊,
+            dw q a n * (if (∏ i, rt i) ∣ n ∧ rough (rt (Fin.last k')) n then 1 else 0)‖ ≤
+        (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
+  set Kmax : ℕ := ⌈(L + 1) / e₀⌉₊ with hKmax
+  have hΛ' : 0 ≤ Λ₁ + L + 1 := by linarith [L_pos]
+  have H := fun t : ℕ => chain_two hII L_pos L_le he₀ (k' + 1 + t) (J₀ + Kmax * Kmax + Kmax + 2) hΛ'
+  choose δf hδf q₀f hq₀f using H
+  have hne : (Finset.range (Kmax + 1)).Nonempty := ⟨0, by simp⟩
+  obtain ⟨δ₀, hδ₀def⟩ : ∃ δ₀ : ℝ, δ₀ = (Finset.range (Kmax + 1)).inf' hne δf := ⟨_, rfl⟩
+  have hδ₀ : 0 < δ₀ := by rw [hδ₀def]; exact (Finset.lt_inf'_iff hne).2 fun t _ => hδf t
+  have hδ₀le : ∀ t ≤ Kmax, δ₀ ≤ δf t := fun t ht => by
+    rw [hδ₀def]
+    exact Finset.inf'_le δf (Finset.mem_range.2 (by omega))
+  have hev := (tendsto_rpow_atTop (half_pos hδ₀)).eventually_ge_atTop ((Kmax : ℝ) + 1)
+  obtain ⟨q₂, hq₂⟩ := Filter.eventually_atTop.1 (tendsto_natCast_atTop_atTop.eventually hev)
+  refine ⟨δ₀ / 2, half_pos hδ₀, max (max ((Finset.range (Kmax + 1)).sup q₀f) q₂) 3, ?_⟩
+  intro q _ hq a ha S₁ S₂ Ω A₁ B₁ A₂ B₂ hdisj hΩlen hΩc hA₁ hA₂ hBB hR hreg
+  have hqK := hq₂ q (le_trans (le_trans (le_max_right _ _) (le_max_left _ _)) hq)
+  have hq3 : 3 ≤ q := le_trans (le_max_right _ _) hq
+  have hqR : (3 : ℝ) ≤ q := by exact_mod_cast hq3
+  have hq0 : (0 : ℝ) < q := by linarith
+  have hq1' : (1 : ℝ) ≤ q := by linarith
+  have hlogq : 0 < Real.log q := Real.log_pos (by linarith)
+  set N₁ := ⌊(q : ℝ) ^ L⌋₊ with hN₁
+  set N₂ := ⌊2 * (q : ℝ) ^ L⌋₊ with hN₂
+  have hX1 : (1 : ℝ) ≤ (q : ℝ) ^ L := Real.one_le_rpow hq1' L_pos.le
+  have hN₁1 : 1 ≤ N₁ := Nat.le_floor (by exact_mod_cast hX1)
+  have hN₁N₂ : N₁ ≤ N₂ := Nat.floor_le_floor (by linarith)
+  have hN₂1 : 1 ≤ N₂ := le_trans hN₁1 hN₁N₂
+  have hN₂le : (N₂ : ℝ) ≤ 2 * (q : ℝ) ^ L := Nat.floor_le (by positivity)
+  -- the tuples' length
+  have hpK : ∀ p : ℕ, (q : ℝ) ^ e₀ ≤ p → N₂ < p ^ (Kmax + 1) := by
+    intro p hp
+    have hK : (L + 1 : ℝ) ≤ e₀ * (Kmax + 1) := by
+      have := Nat.le_ceil ((L + 1) / e₀)
+      rw [← hKmax, div_le_iff₀ he₀] at this
+      nlinarith
+    have hpow : (q : ℝ) ^ (L + 1 : ℝ) ≤ (p : ℝ) ^ (Kmax + 1) := by
+      calc (q : ℝ) ^ (L + 1 : ℝ) ≤ (q : ℝ) ^ (e₀ * (Kmax + 1)) :=
+            Real.rpow_le_rpow_of_exponent_le (by linarith) hK
+        _ = ((q : ℝ) ^ e₀) ^ (Kmax + 1) := by rw [Real.rpow_mul hq0.le, ← Real.rpow_natCast]; push_cast; ring_nf
+        _ ≤ (p : ℝ) ^ (Kmax + 1) := pow_le_pow_left₀ (by positivity) hp _
+    have hlt : (N₂ : ℝ) < (q : ℝ) ^ (L + 1 : ℝ) := by
+      calc (N₂ : ℝ) ≤ 2 * (q : ℝ) ^ L := hN₂le
+        _ < 3 * (q : ℝ) ^ L := by linarith
+        _ ≤ (q : ℝ) * (q : ℝ) ^ L := by nlinarith
+        _ = (q : ℝ) ^ (L + 1 : ℝ) := by rw [Real.rpow_add hq0, Real.rpow_one]; ring
+    exact_mod_cast lt_of_lt_of_le hlt hpow
+  -- each chain: its multiples as cofactor tuples
+  have hRT : ∀ rt ∈ RTg (k' + 1) N₂ Ω, (∀ i, (rt i).Prime) ∧ (∀ C ∈ Ω, C.holds 0 rt) := by
+    intro rt hrt
+    rw [RTg, Finset.mem_filter, Fintype.mem_piFinset] at hrt
+    exact ⟨fun i => (SieveTypeIIU.mem_primesLe.1 (hrt.1 i)).2, hrt.2⟩
+  have hterm : ∀ rt ∈ RTg (k' + 1) N₂ Ω,
+      ∑ n ∈ Finset.Ioc N₁ N₂, dw q a n * (if (∏ i, rt i) ∣ n ∧ rough (rt (Fin.last k')) n then 1 else 0) =
+        ∑ t ∈ Finset.range (Kmax + 1), ∑ y ∈ SieveRoughTuple.tuples (rt (Fin.last k')) N₂ t,
+          (if N₁ < (∏ i, rt i) * ∏ a, y a ∧ (∏ i, rt i) * ∏ a, y a ≤ N₂
+            then dw q a ((∏ i, rt i) * ∏ a, y a) else 0) := by
+    intro rt hrt
+    obtain ⟨hrtp, hrtΩ⟩ := hRT rt hrt
+    obtain ⟨hsa, hge, -⟩ := hreg rt hrtp hrtΩ
+    have hW0 : 0 < ∏ i, rt i := Finset.prod_pos fun i _ => (hrtp i).pos
+    have hWr : rough (rt (Fin.last k')) (∏ i, rt i) := by
+      intro ℓ hℓp hℓ hd
+      obtain ⟨i, -, hi⟩ := (Prime.dvd_finsetProd_iff hℓ.prime _).1 hd
+      rw [(Nat.prime_dvd_prime_iff_eq hℓ (hrtp i)).1 hi] at hℓp
+      have := hsa.antitone (Fin.le_last i)
+      omega
+    rw [sum_mult_eq (dw q a) hW0 hWr]
+    exact sum_rough_tuples (hrtp _).two_le hN₂1
+      (fun k => if N₁ < (∏ i, rt i) * k ∧ (∏ i, rt i) * k ≤ N₂ then dw q a ((∏ i, rt i) * k) else 0) Kmax
+      (hpK _ (hge _))
+  rw [Finset.sum_congr rfl hterm, Finset.sum_comm]
+  have hlogN₂ : Real.log (N₂ : ℝ) ≤ (L + 1) * Real.log q := by
+    have h1 : (N₂ : ℝ) ≤ (q : ℝ) ^ (L + 1) := by
+      rw [Real.rpow_add hq0, Real.rpow_one]
+      nlinarith
+    have h2 := Real.log_le_log (by exact_mod_cast hN₂1) h1
+    rwa [Real.log_rpow hq0] at h2
+  -- each size `t`
+  have hbound : ∀ t ∈ Finset.range (Kmax + 1),
+      ‖∑ rt ∈ RTg (k' + 1) N₂ Ω, ∑ y ∈ SieveRoughTuple.tuples (rt (Fin.last k')) N₂ t,
+          (if N₁ < (∏ i, rt i) * ∏ a, y a ∧ (∏ i, rt i) * ∏ a, y a ≤ N₂
+            then dw q a ((∏ i, rt i) * ∏ a, y a) else 0)‖ ≤
+        (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₀) := by
+    intro t ht
+    have htK : t ≤ Kmax := Nat.lt_succ_iff.1 (Finset.mem_range.1 ht)
+    rw [sum_full_eq Ω t hN₁1 hN₁N₂ le_rfl (dw q a)]
+    have hq' : q₀f t ≤ q := le_trans (Finset.le_sup (f := q₀f) (Finset.mem_range.2 (by omega)))
+      (le_trans (le_max_left _ _) (le_trans (le_max_left _ _) hq))
+    obtain ⟨T₁, hT₁⟩ : ∃ T : Finset (Fin (k' + 1 + t)), T = S₁.map (Fin.castAddEmb t) := ⟨_, rfl⟩
+    obtain ⟨T₂, hT₂⟩ : ∃ T : Finset (Fin (k' + 1 + t)), T = S₂.map (Fin.castAddEmb t) := ⟨_, rfl⟩
+    have hd' : Disjoint T₁ T₂ := by rw [hT₁, hT₂]; exact (Finset.disjoint_map _).2 hdisj
+    have hm₁ : ∀ z : Fin (k' + 1 + t) → ℕ, ∏ i ∈ T₁, z i = ∏ i ∈ S₁, z (Fin.castAdd t i) := fun z => by
+      rw [hT₁, Finset.prod_map]; rfl
+    have hm₂ : ∀ z : Fin (k' + 1 + t) → ℕ, ∏ i ∈ T₂, z i = ∏ i ∈ S₂, z (Fin.castAdd t i) := fun z => by
+      rw [hT₂, Finset.prod_map]; rfl
+    -- what the comparisons give on a full tuple
+    have hfull : ∀ z : Fin (k' + 1 + t) → ℕ, (∀ i, (z i).Prime) → (∀ C ∈ fullTL k' t Ω N₁ N₂, C.holds 0 z) →
+        (∀ i, (q : ℝ) ^ e₀ ≤ z i) ∧ A₁ < ∏ i ∈ T₁, z i ∧ ∏ i ∈ T₁, z i ≤ B₁ ∧ A₂ < ∏ i ∈ T₂, z i ∧
+          ∏ i ∈ T₂, z i ≤ B₂ ∧ N₁ < ∏ i, z i ∧ ∏ i, z i ≤ N₂ := by
+      intro z hz hzΩ
+      have hrt1 : ∀ i, 1 ≤ z (Fin.castAdd t i) := fun i => (hz _).one_lt.le
+      have hy1 : ∀ b, 1 ≤ z (Fin.natAdd (k' + 1) b) := fun b => (hz _).one_lt.le
+      rw [← Fin.append_castAdd_natAdd (f := z)] at hzΩ
+      obtain ⟨hΩ', -, hlast, hlo, hhi⟩ := (fullTL_holds0 Ω (by exact_mod_cast hN₁1) (by exact_mod_cast hN₂1) _ _
+        hrt1 hy1).1 hzΩ
+      obtain ⟨-, hge, h1lo, h1hi, h2lo, h2hi⟩ := hreg _ (fun i => hz _) hΩ'
+      have hprod : ∏ i, z i = (∏ i, z (Fin.castAdd t i)) * ∏ b, z (Fin.natAdd (k' + 1) b) := Fin.prod_univ_add z
+      refine ⟨fun i => ?_, by rw [hm₁]; exact h1lo, by rw [hm₁]; exact h1hi, by rw [hm₂]; exact h2lo,
+        by rw [hm₂]; exact h2hi, by rw [hprod]; exact_mod_cast hlo, by rw [hprod]; exact_mod_cast hhi⟩
+      refine Fin.addCases (fun i => ?_) (fun b => ?_) i
+      · exact hge i
+      · exact (hge (Fin.last k')).trans (by exact_mod_cast hlast b)
+    rcases (T₁ ∪ T₂)ᶜ.eq_empty_or_nonempty with hemp | hrest
+    · -- no rest: the product is at most `B₁B₂ ≤ N₁`
+      rw [Finset.sum_eq_zero, norm_zero]
+      · positivity
+      intro z hz
+      exfalso
+      rw [RTg, Finset.mem_filter, Fintype.mem_piFinset] at hz
+      obtain ⟨-, -, h1hi, -, h2hi, hlo, -⟩ := hfull z (fun i => (SieveTypeIIU.mem_primesLe.1 (hz.1 i)).2) hz.2
+      have hall : ∏ i, z i = (∏ i ∈ T₁, z i) * ∏ i ∈ T₂, z i := by
+        rw [← Finset.prod_union hd', ← Finset.prod_mul_prod_compl (T₁ ∪ T₂) z, hemp, Finset.prod_empty, mul_one]
+      have := Nat.mul_le_mul h1hi h2hi
+      rw [hall] at hlo
+      omega
+    refine (hq₀f t q hq' a ha T₁ T₂ hd' hrest (fullTL k' t Ω N₁ N₂) ?_ ?_ A₁ B₁ A₂ B₂ 1 (B₁ * B₂) hA₁ hA₂ le_rfl
+      ((Nat.cast_le.2 (hBB.trans hN₁N₂)).trans hN₂le) (fun u v h1 h2 h3 h4 _ _ => hR u v h1 h2 h3 h4) ?_).trans ?_
+    · refine (length_fullTL_le k' t Ω N₁ N₂).trans ?_
+      have : t * t ≤ Kmax * Kmax := Nat.mul_le_mul htK htK
+      omega
+    · -- the constants
+      intro C hC
+      have hΛl : 0 ≤ Λ₁ * Real.log q := mul_nonneg hΛ₁ hlogq.le
+      have hLl : 0 ≤ (L + 1) * Real.log q := mul_nonneg (by linarith [L_pos]) hlogq.le
+      have hsplit : (Λ₁ + L + 1) * Real.log q = Λ₁ * Real.log q + (L + 1) * Real.log q := by ring
+      rw [hsplit]
+      unfold fullTL at hC
+      simp only [List.mem_append, List.mem_map, List.mem_cons, List.mem_nil_iff, or_false] at hC
+      rcases hC with ((⟨C', hC', rfl⟩ | hC) | hC) | rfl | rfl
+      · have := hΩc C' hC'
+        show C'.c 0 ≤ _
+        linarith
+      · obtain ⟨a', b', -, rfl⟩ := mem_yPairs.1 hC
+        show (0 : ℝ) ≤ _
+        linarith
+      · unfold yLast at hC
+        obtain ⟨a', -, rfl⟩ := List.mem_map.1 hC
+        show (0 : ℝ) ≤ _
+        linarith
+      · show Real.log ((0 : ℕ) : ℝ) - Real.log (N₁ : ℝ) ≤ _
+        have : 0 ≤ Real.log (N₁ : ℝ) := Real.log_nonneg (by exact_mod_cast hN₁1)
+        simp only [Nat.cast_zero, Real.log_zero]
+        linarith
+      · show Real.log (N₂ : ℝ) - Real.log ((0 : ℕ) : ℝ) ≤ _
+        simp only [Nat.cast_zero, Real.log_zero]
+        linarith
+    · intro z hz hzΩ
+      obtain ⟨hge, h1lo, h1hi, h2lo, h2hi, -, hhi⟩ := hfull z hz hzΩ
+      refine ⟨hge, h1lo, h1hi, h2lo, h2hi, ?_, Nat.mul_le_mul h1hi h2hi, le_trans (by exact_mod_cast hhi) hN₂le⟩
+      calc 1 < 2 * 2 := by norm_num
+        _ ≤ (∏ i ∈ T₁, z i) * ∏ i ∈ T₂, z i := Nat.mul_le_mul (by omega) (by omega)
     · exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le hq1' (by linarith [hδ₀le t htK]))
         (by positivity)
   refine (norm_sum_le _ _).trans ?_
@@ -352,8 +566,8 @@ theorem chainOK2_of_zone [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoA
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
       ∀ A B Ar Br : ℕ, 1 ≤ A → 1 ≤ B → 1 ≤ Br → B * Br ≤ ⌊(q : ℝ) ^ L⌋₊ →
         (∀ u v : ℝ, Real.logb q A ≤ u → u ≤ Real.logb q B →
-          Real.logb q ((⌊(q : ℝ) ^ L⌋₊ / (B * Br) : ℕ) : ℝ) ≤ v →
-          v ≤ Real.logb q ((⌊2 * (q : ℝ) ^ L⌋₊ / ((A + 1) * (Ar + 1)) : ℕ) : ℝ) → Rg u v) →
+          ((⌊(q : ℝ) ^ L⌋₊ / Br : ℕ) : ℝ) ≤ 4 * (q : ℝ) ^ (u + v) →
+          (q : ℝ) ^ (u + v) ≤ ((⌊2 * (q : ℝ) ^ L⌋₊ / (Ar + 1) : ℕ) : ℝ) → Rg u v) →
         ChainOK2 q a e₀ Λ₁ δ J₀ K₀ A B Ar Br := by
   induction K₀ with
   | zero =>
@@ -380,4 +594,5 @@ end SieveTwoTerm
 
 #print axioms SieveTwoTerm.sum_full_eq
 #print axioms SieveTwoTerm.chain2_bound
+#print axioms SieveTwoTerm.chain2R_bound
 #print axioms SieveTwoTerm.chainOK2_of_zone

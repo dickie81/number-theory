@@ -124,21 +124,27 @@ them, each with a prime as a pivot. For two polynomial variables:
   and `0 < L ≤ 5/2`, let `z` run over the `K`-tuples of primes up to `⌊2q^L⌋` that satisfy at most `J₀` comparisons
   `0 ≤ c + Σ_i e_i log z_i` (or `0 <`) with `e_i ∈ {−1, 0, 1}` and `c ≤ Λ₁ log q`, of any kind, and let `S₁` and
   `S₂` be disjoint sets of indices that leave an index out. If every such tuple has its entries at least `q^{e₀}`,
-  `P₁ < ∏_{S₁} z ≤ P₁′`, `P₂ < ∏_{S₂} z ≤ P₂′` and `∏z ≤ 2q^L`, and `R` holds on the rectangle
-  `[log_q P₁, log_q P₁′] × [log_q P₂, log_q P₂′]`, then
+  `P₁ < ∏_{S₁} z ≤ P₁′`, `P₂ < ∏_{S₂} z ≤ P₂′`, `M < ∏_{S₁} z·∏_{S₂} z ≤ M′` and `∏z ≤ 2q^L`, and `R` holds at
+  the points `(u, v)` of the rectangle `[log_q P₁, log_q P₁′] × [log_q P₂, log_q P₂′]` with `M ≤ 4q^{u+v}` and
+  `q^{u+v} ≤ M′`, then
   `|Σ_z (1[∏z ≡ a] − 1[(∏z, q) = 1]/φ(q))| ≤ q^{L−δ}/φ(q)`, for some `δ > 0` and large `q`. The two variables are
   the tuples on `S₁` and on `S₂` (`lib/pnt/SieveTwoTuples.lean`): a tuple of primes is recovered from its product up
   to `(K + 1)^K` choices, so a polynomial of tuples is one of integers whose mean square is at most `(K + 1)^K`
   times as large. A comparison with a prime outside `S₁ ∪ S₂` has it as a pivot and goes into
-  `SieveUnwGen.unw_gen`; the others are conditions between the two variables, and cost a power of `log q`. A term
-  `Σ_r S(A_r, z)` of a sieve is a sum of such families, one for each number of prime factors of the cofactor.
+  `SieveUnwGen.unw_gen`; the others are conditions between the two variables, and cost a power of `log q`. The
+  band `M < ∏_{S₁} z·∏_{S₂} z ≤ M′` is two of them, so the region is asked where the two variables can be together
+  and not on the whole rectangle of their ranges. A term `Σ_r S(A_r, z)` of a sieve is a sum of such families, one
+  for each number of prime factors of the cofactor: with the cofactor in the second variable
+  (`SieveTwoTerm.chain2_bound`, the band being `n` over the rest) or in the rest (`SieveTwoTerm.chain2R_bound`,
+  the two variables being sets of the chain's primes).
 
 - `SieveTwoComp.prop6_two`, **Harman's comparison with stops in two variables** (`lib/pnt/SieveTwoComp.lean`): the
   paper's Proposition 4.8 (`SieveP6ib.prop6ib`) with this estimate in place of the window, and with its Lemma 4.3 on
   the wider region. For a family of strictly decreasing chains `rt` in boxes `q^{lo_i} ≤ rt_i ≤ q^{hi_i}`, all at
   least `z₀ = ⌈q^{a₀}⌉`, a set `S₀` of indices whose product `c` enters a window `(u, v)` with `u + a₀ < v`,
   `u − Σ_{S₀} lo ≤ t` and `Σ_{S₀} hi < v`, a disjoint set `Sr ≠ ∅` whose product, the rest, has its exponent in
-  `[ρ₁, ρ₂]`, the region on `[u, v] × [L − v − ρ₂ − ε, L − u − ρ₁ + ε]`, and a split `(S₁, eIn₁)` of the leaves
+  `[ρ₁, ρ₂]`, the region at the `(m₁, m₂)` with `u ≤ m₁ ≤ v` and `L − ρ₂ − ε ≤ m₁ + m₂ ≤ L − ρ₁ + ε`, and a split
+  `(S₁, eIn₁)` of the leaves
   with `D₁ < L − 1` and `max(D₁, 1) + D₁ + 2D₂ < 2L − 1`:
   `|Σ_{rt}(S(A_r, z₀) − S(B_r, z₀)/φ(q))| ≤ ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` for every `η > 0` and large `q`. The
   tree over the primes below `z₀` stops when `c∏P` passes `⌈q^u⌉`; a stop's first variable is `c∏P·p`, in the
@@ -148,9 +154,9 @@ them, each with a prime as a pivot. For two polynomial variables:
   extensions of a chain), and the leaves' sizes are those of `SieveTypeIBAsymWide.leaves_ib_wide`
   (`SieveP6LeavesWide.leavesOK_wide`).
 
-The region enters through rectangles: the estimate holds on a rectangle of exponents inside it, so a set of
-tuples cut by a slanted side of the region is a union of rectangles and a remainder that these lemmas do not
-evaluate.
+The region enters through a rectangle cut by a band of the sum of the two exponents: the estimate holds for a
+family whose two variables have their exponents in such a set inside the region. A set of tuples cut by another
+slanted side of the region is a union of such sets and a remainder that these lemmas do not evaluate.
 
 No theorem of the library uses these yet: `lib/check/CheckAll.lean` prints their axioms, which are `propext`,
 `Classical.choice` and `Quot.sound`. They are the estimate in two variables of
