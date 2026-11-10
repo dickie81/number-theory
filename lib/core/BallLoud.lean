@@ -516,6 +516,78 @@ theorem loud (hRH : RiemannHypothesis) {D₀ : ℕ} {E : ℕ → ℝ → ℝ} {B
         div_le_div_of_nonneg_right (h5 ▸ h4) hden.le
     _ ≤ form N (classVec D₀ E N) := hterm
 
+/-- At one zero and for `0 ≤ θ < 1` (RH): `θ·N·|Ĝ(ρ)|² ≤ |V_x(ρ)|²` for every large `N`. -/
+lemma sq_norm_dpoly_classVec_ge (hRH : RiemannHypothesis) {D₀ : ℕ} {E : ℕ → ℝ → ℝ} {B K : ℝ}
+    (hE : ∀ d ∈ Icc 1 D₀, Profile (E d) B K) (q : ZIdx) {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ : θ < 1) :
+    ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N →
+      θ * ‖mellin01 (bdry D₀ E) (zetaZeroFamily q)‖ ^ 2 * N ≤ ‖dpoly N (classVec D₀ E N) q‖ ^ 2 := by
+  set g := ‖mellin01 (bdry D₀ E) (zetaZeroFamily q)‖ with hg
+  have hg0 : 0 ≤ g := norm_nonneg _
+  set C := (D₀ : ℝ) * (2 * B + K + 3 * B * ‖zetaZeroFamily q - 1‖) with hC
+  set r := Real.sqrt θ with hr
+  have hr0 : 0 ≤ r := Real.sqrt_nonneg _
+  have hr1 : r < 1 := by
+    rw [hr, Real.sqrt_lt' one_pos]
+    simpa using hθ
+  have hrr : r ^ 2 = θ := Real.sq_sqrt hθ0
+  rcases eq_or_lt_of_le hg0 with hgz | hgpos
+  · refine ⟨0, fun N _ => ?_⟩
+    rw [← hgz]
+    simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero, zero_mul]
+    positivity
+  · have hpos : 0 < (1 - r) * g := mul_pos (by linarith) hgpos
+    refine ⟨max 1 ⌈(C / ((1 - r) * g)) ^ 2⌉₊, fun N hN => ?_⟩
+    have hN1 : 1 ≤ N := le_trans (le_max_left _ _) hN
+    have hN2 : (C / ((1 - r) * g)) ^ 2 ≤ N := by
+      have h1 : ⌈(C / ((1 - r) * g)) ^ 2⌉₊ ≤ N := le_trans (le_max_right _ _) hN
+      exact (Nat.le_ceil _).trans (by exact_mod_cast h1)
+    have hsq : C / ((1 - r) * g) ≤ Real.sqrt N := by
+      calc C / ((1 - r) * g) ≤ |C / ((1 - r) * g)| := le_abs_self _
+        _ = Real.sqrt ((C / ((1 - r) * g)) ^ 2) := (Real.sqrt_sq_eq_abs _).symm
+        _ ≤ Real.sqrt N := Real.sqrt_le_sqrt hN2
+    have hV := norm_dpoly_classVec_ge hRH hE q hN1
+    have h3 : r * (Real.sqrt N * g) ≤ ‖dpoly N (classVec D₀ E N) q‖ := by
+      rw [div_le_iff₀ hpos] at hsq
+      linarith
+    have h4 : (r * (Real.sqrt N * g)) ^ 2 ≤ ‖dpoly N (classVec D₀ E N) q‖ ^ 2 :=
+      pow_le_pow_left₀ (by positivity) h3 2
+    have h5 : (r * (Real.sqrt N * g)) ^ 2 = θ * g ^ 2 * N := by
+      rw [mul_pow, mul_pow, hrr, Real.sq_sqrt (Nat.cast_nonneg N)]
+      ring
+    rw [← h5]
+    exact h4
+
+/-- **A vector of the class is loud at every zero where `Ĝ ≠ 0`** (RH): for a finite set `S` of zeros and each
+`θ < 1`, `Q_N(x) ≥ θ·N·Σ_{ρ ∈ S} |Ĝ(ρ)|²/(¼ + γ²)` for every large `N`. -/
+theorem loud_sum (hRH : RiemannHypothesis) {D₀ : ℕ} {E : ℕ → ℝ → ℝ} {B K : ℝ}
+    (hE : ∀ d ∈ Icc 1 D₀, Profile (E d) B K) (S : Finset ZIdx) {θ : ℝ} (hθ : θ < 1) :
+    ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N →
+      θ * (∑ q ∈ S, ‖mellin01 (bdry D₀ E) (zetaZeroFamily q)‖ ^ 2 /
+          (1 / 4 + (zetaZeroFamily q).im ^ 2)) * N ≤ form N (classVec D₀ E N) := by
+  have hnn : ∀ N : ℕ, 0 ≤ form N (classVec D₀ E N) := fun N =>
+    (hasSum_form hRH N (classVec D₀ E N)).nonneg fun j => by positivity
+  have hA0 : 0 ≤ ∑ q ∈ S, ‖mellin01 (bdry D₀ E) (zetaZeroFamily q)‖ ^ 2 /
+      (1 / 4 + (zetaZeroFamily q).im ^ 2) := Finset.sum_nonneg fun q _ => by positivity
+  rcases lt_or_ge θ 0 with hneg | hθ0
+  · exact ⟨0, fun N _ => (mul_nonpos_of_nonpos_of_nonneg
+      (mul_nonpos_of_nonpos_of_nonneg hneg.le hA0) (Nat.cast_nonneg N)).trans (hnn N)⟩
+  have hev : ∀ᶠ N : ℕ in Filter.atTop, ∀ q ∈ S,
+      θ * ‖mellin01 (bdry D₀ E) (zetaZeroFamily q)‖ ^ 2 * N ≤ ‖dpoly N (classVec D₀ E N) q‖ ^ 2 := by
+    refine (Filter.eventually_all_finset S).2 fun q _ => ?_
+    obtain ⟨N₀, h⟩ := sq_norm_dpoly_classVec_ge hRH hE q hθ0 hθ
+    exact Filter.eventually_atTop.2 ⟨N₀, h⟩
+  obtain ⟨N₀, hN₀⟩ := Filter.eventually_atTop.1 hev
+  refine ⟨N₀, fun N hN => ?_⟩
+  refine le_trans ?_ (sum_le_hasSum S (fun j _ => by positivity) (hasSum_form hRH N (classVec D₀ E N)))
+  rw [Finset.mul_sum, Finset.sum_mul]
+  refine Finset.sum_le_sum fun q hq => ?_
+  have hden : (0 : ℝ) < 1 / 4 + (zetaZeroFamily q).im ^ 2 := by positivity
+  calc θ * (‖mellin01 (bdry D₀ E) (zetaZeroFamily q)‖ ^ 2 / (1 / 4 + (zetaZeroFamily q).im ^ 2)) * N
+      = θ * ‖mellin01 (bdry D₀ E) (zetaZeroFamily q)‖ ^ 2 * N / (1 / 4 + (zetaZeroFamily q).im ^ 2) := by
+        ring
+    _ ≤ ‖dpoly N (classVec D₀ E N) q‖ ^ 2 / (1 / 4 + (zetaZeroFamily q).im ^ 2) :=
+        div_le_div_of_nonneg_right (hN₀ N hN q hq) hden.le
+
 /-- `1 + log N ≤ 2√N` for `N ≥ 1`. -/
 lemma one_add_log_le {N : ℕ} (hN : 1 ≤ N) : 1 + Real.log N ≤ 2 * Real.sqrt N := by
   have hN0 : (0 : ℝ) < N := by exact_mod_cast hN
@@ -632,5 +704,6 @@ end BallLoud
 
 #print axioms BallLoud.sum_profile_sub_le
 #print axioms BallLoud.loud
+#print axioms BallLoud.loud_sum
 #print axioms BallLoud.carries_zeta
 #print axioms BallLoud.quiet_carries_zeta

@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1602 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1603 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 191 | 678 |
+| `lib/core` | 191 | 679 |
 | `lib/pnt` | 255 | 814 |
 | `lib/dh` | 22 | 73 |
 | `lib/zeta23` | 10 | 37 |
@@ -115,6 +115,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallLoud.sum_profile_sub_le`: A Riemann sum with an integrable singularity ([note](../formalisations/ball-rate.md))
 - `BallLoud.norm_dpoly_classVec_ge`: A class vector at a zero ([note](../formalisations/ball-rate.md))
 - `BallLoud.loud`: A vector of the class that does not carry `ζ` is loud ([note](../formalisations/ball-rate.md))
+- `BallLoud.loud_sum`: A vector of the class is loud at every zero where `Ĝ ≠ 0` ([note](../formalisations/ball-rate.md))
 - `BallLoud.carries_zeta`: A quiet vector of the class carries `ζ` ([note](../formalisations/ball-rate.md))
 - `BallLoud.quiet_carries_zeta`: The quiet vectors of the class carry `ζ` ([note](../formalisations/ball-rate.md))
 

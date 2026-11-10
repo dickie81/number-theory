@@ -1391,6 +1391,12 @@ theorem BallLoud.loud (hRH : RiemannHypothesis) {D₀ : ℕ} {E : ℕ → ℝ �
       ‖mellin01 (bdry D₀ E) (zetaZeroFamily q)‖ ^ 2 / (4 * (1 / 4 + (zetaZeroFamily q).im ^ 2)) * N ≤
         form N (classVec D₀ E N)
 
+theorem BallLoud.loud_sum (hRH : RiemannHypothesis) {D₀ : ℕ} {E : ℕ → ℝ → ℝ} {B K : ℝ}
+    (hE : ∀ d ∈ Icc 1 D₀, Profile (E d) B K) (S : Finset ZIdx) {θ : ℝ} (hθ : θ < 1) :
+    ∃ N₀ : ℕ, ∀ N : ℕ, N₀ ≤ N →
+      θ * (∑ q ∈ S, ‖mellin01 (bdry D₀ E) (zetaZeroFamily q)‖ ^ 2 /
+          (1 / 4 + (zetaZeroFamily q).im ^ 2)) * N ≤ form N (classVec D₀ E N)
+
 theorem BallLoud.quiet_carries_zeta (hRH : RiemannHypothesis) {D₀ : ℕ} {E : ℕ → ℝ → ℝ} {B K : ℝ}
     (hE : ∀ d ∈ Icc 1 D₀, Profile (E d) B K) {C : ℝ}
     (hquiet : ∀ N : ℕ, 1 ≤ N → form N (classVec D₀ E N) ≤
@@ -1412,9 +1418,12 @@ Here `classVec D₀ E N n = (Σ_{d ≤ D₀, d ∣ n} E_d(n/N))/n` is the vector
   `ζ(1 − ρ)M_e(1 − ρ)` of the proof above, which the Lean does not show to vanish. For part 1 it does not have to.
 - **The zeros enter once**, through `BallRate.hasSum_form`: under RH `Q_N(x)` is the sum of
   `|V_x(ρ)|²/(¼ + γ²)` over the zeros, so it is at least one term.
-- **The constant** is `|Ĝ(ρ)|²/(4(¼ + γ²))` for every large `N`, where part 1 has `|Ĝ(ρ)|²/((¼ + γ²)D) + o(1)`
-  for the quotient. The `4` is the room for the bounded term, and the Lean does not divide by `Σx_n²`, which is at
-  most `2(D₀B)²` (`BallLoud.sum_sq_classVec_le`).
+- **The constant.** `BallLoud.loud_sum` has part 1's constant, summed over the zeros: for each `θ < 1` and each
+  finite set `S` of zeros, `Q_N(x) ≥ θ·N·Σ_{ρ ∈ S}|Ĝ(ρ)|²/(¼ + γ²)` for every large `N`. The set `S` is of indices
+  in `ZIdx`, so a zero and its conjugate both count. `BallLoud.loud` is one zero with `θ = ¼`, which is all that
+  `carries_zeta` uses. Part 1 states its bound for the quotient, with `|Ĝ(ρ)|²/((¼ + γ²)D) + o(1)`. The Lean does
+  not divide by `Σx_n²`: it has that this is at most `2(D₀B)²` (`BallLoud.sum_sq_classVec_le`), and not that it
+  tends to `D`.
 - **Quiet.** `BallLoud.carries_zeta` has the hypothesis `Q_N(x) ≤ C(1 + log N)`, weaker than quiet, and
   `BallLoud.quiet_carries_zeta` the one above. Either gives `Ĝ(ρ) = 0` at every zero, counted with multiplicity
   in `ZIdx`. The Lean does not go on to say that `G` is then a staircase.

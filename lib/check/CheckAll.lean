@@ -509,6 +509,7 @@ every zero. -/
 #print axioms BallLoud.sum_profile_sub_le
 #print axioms BallLoud.norm_dpoly_classVec_ge
 #print axioms BallLoud.loud
+#print axioms BallLoud.loud_sum
 #print axioms BallLoud.carries_zeta
 #print axioms BallLoud.quiet_carries_zeta
 
