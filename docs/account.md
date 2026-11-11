@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1606 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1683 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -96,6 +96,8 @@ result's note finds it unused; blank where neither has been checked.
 | `ψ(x) = x + O(x·exp(−c(log x)^{3/5}(log log x)^{−1/5}))`, the strongest form known from refereed results | `PNTKV.PNT_KV` | no |
 | `ψ(x; q, a) = x/φ(q) + O(x^{11/12+η})` for every `q` and every `a` prime to `q`, at fixed `q` | `PNTProgressions.psiAP_isBigO` | yes |
 | Linnik: every class `a` mod `q` with `(a, q) = 1` holds a prime `p ≤ Kq^{11/5}` | `Linnik22000E.linnik_22000e` | yes |
+| The same with `p ≤ Kq^{219/100}`, by a tree of Buchstab steps with a Type II estimate in two variables (in no paper) | `Linnik21900.linnik_21900` | yes |
+| The same with `p ≤ Kq^{218/100}`, with role reversal for a term of three primes added to that tree (in no paper) | `Linnik21800.linnik_21800` | yes |
 | Linnik by density estimates and the classical deduction, with the exponents `12`, `4`, `17/6`, `36/13`, `87/35`, `12/5` and `2.3334`, each `+ η` | `Linnik.linnik_twelve`, `LinnikDensity.linnik_four`, `LinnikSubconvex.linnik_seventeen_sixths`, `LinnikIngham.linnik_thirtysix_thirteenths`, `LinnikHuxley.linnik_eighty_seven_thirty_fifths`, `LinnikTwelve.linnik_twelve_fifths`, `LinnikG7.linnik_g7d` | yes |
 | A prime in `(y, y + y^θ]` for every large `y`, `θ > 17/30`; and for all `y ∈ [X, 2X]` outside a set of measure `X^{1−δ}`, `θ > 2/15` | `ZetaGMDensity.short_primes_seventeen_thirtieths`, `ZetaGMDensity.almost_all_short_primes_two_fifteenths` | yes |
 | In terms of `Θ`: `limsup log\|ψ(x) − x\|/log x = Θ`, the same for `M(x)`, `Σ μ(n)n^{−s}` converges exactly on `Re s > Θ`, and a prime in `(y, y + y^θ]` for `θ > 2Θ/(1 + 2Θ)` | `PsiExponent.limsup_expo`, `MertensExponent.limsup_mexpo`, `MertensExponent.moebiusAbscissa_eq_Theta`, `InghamDensity.short_primes_Theta` | |
@@ -131,10 +133,10 @@ The estimates that the results above are built from, each stated for reuse:
 | Tool | Lean |
 |---|---|
 | Mean values of Dirichlet polynomials over the characters mod `q`, and their values at one point per character | `LinnikHybrid.mean_value_chars`, `LinnikHybrid.large_values_chars` |
-| Large values: Halász–Montgomery, Huxley's estimate, Guth and Maynard's, and Chen, Gupta and Li's with characters | `LinnikPower.hm_duality`, `LinnikReflect.huxley_large_values`, `ZetaGMLV.gm_large_values`, `LinnikCGLHB101.prop31` |
+| Large values: Halász–Montgomery (also with weights, and in mean square over a set of characters), Huxley's estimate, Guth and Maynard's, and Chen, Gupta and Li's with characters | `LinnikPower.hm_duality`, `SieveTypeIIHM.hm_duality_wt`, `SieveTypeIIHM.sum_bin_hm_sq`, `LinnikReflect.huxley_large_values`, `ZetaGMLV.gm_large_values`, `LinnikCGLHB101.prop31` |
 | The hybrid fourth moment of `L(1/2 + it, χ)`; the fourth moment of `ζ` at well-spaced points; the approximate functional equation of `L(s, χ)²` | `LinnikFourth.fourth_moment`, `ZetaFourth.zeta_fourth_moment`, `LinnikGamma.afe` |
 | Zero detection by a mollified Dirichlet polynomial; log-derivatives in zero-free discs; Perron's formula with a smooth weight, and contour shifts | `LinnikDetect.dichotomy`, `LogDerivDisc.logDeriv_le_Kld`, `Linnik.perron_exp`, `SmoothPerron.verticalIntegral_shift` |
-| Sieves: Brun's fundamental lemma, Buchstab's identity on tuples of primes, Harman's comparison with and without the bilinear Type I estimate, that estimate by Parseval's identity, rough numbers by Buchstab's `ω` | `SieveBrun.fundamental`, `SieveDecomp.buchstab_fam`, `SieveProp6.prop6`, `SieveP6ib.prop6ib`, `SieveTypeIB.typeIB_bound`, `SieveRough.psi_le` |
+| Sieves: Brun's fundamental lemma, Buchstab's identity on tuples of primes, Harman's comparison with and without the bilinear Type I estimate and with stops in two variables, that estimate by Parseval's identity (also without its condition `2HD < q`), Proposition 3′ for two polynomials (for a curve on a region, and for the curve `g7d`) and Lemmas 4.4, 4.5 and 4.6 for families in two variables, rough numbers by Buchstab's `ω` | `SieveBrun.fundamental`, `SieveDecomp.buchstab_fam`, `SieveProp6.prop6`, `SieveP6ib.prop6ib`, `SieveTypeIB.typeIB_bound`, `SieveTypeIB.typeIB_bound_wide`, `SieveTypeIBPairWide.pair_le_wide`, `SieveTypeIBAsymWide.leaves_ib_wide`, `SieveTypeIIHM.typeII_two_gen`, `SieveTwoZone7D.typeII_two_7d`, `SieveFamilyTwo.typeII_sharp_two`, `SieveUnwTwo.typeII_unw_two`, `SieveTwoChain.chain_two`, `SieveTwoComp.prop6_two`, `SieveRough.psi_le` |
 | Over `ℤ[ω]` and `ℍ³`: the quadratic large sieve, and Kubota's theta function with Patterson's coefficients | `Eis.quadLargeSieve`, `Eis.kubotaTheta` |
 | Vinogradov's mean value theorem, weak form; Weil's explicit formula as a form | `VinoRec.vmvt_weak`, `WeilForm.weilQ_symbol` |
 
@@ -220,11 +222,16 @@ In order of what is in reach.
    and not a proof, keeps Li's constant positive down to `θ ≈ 0.5182` once Guth and Maynard's estimate
    (`ZetaGMLV.gm_large_values`) joins Huxley's. A Lean proof below `0.52` would go below Li, resting on the half-plane
    as Linnik's exponent does: the sieve's main terms take the prime number theorem in short ranges from it.
-2. **Linnik's exponent.** The theorem is `11/5`. With the window chosen afresh, the same method's certificate passes
-   at `2.199` (total `0.96729K` on 276 cells a side) and fails at `2.198` (supplement §S6, computed, not a theorem): a
-   regeneration with `tools/linnik/`, not new mathematics. Below that, the sieve has no window under `1 + A/2 = 13/6`
-   for the curve's peak `A = 7/3`, and `0.7151K` of the certificate's `0.9321K` is cells that no depth of
-   decomposition reaches. Two things move it: a lower density exponent for the characters near `σ = 5/7`, where Chen,
+2. **Linnik's exponent.** The theorem is `218/100` (`Linnik21800.linnik_21800`); the paper's is `11/5`. With the
+   window chosen afresh, the paper's certificate passes at `2.199` (total `0.96729K` on 276 cells a side) and fails
+   at `2.198` (supplement §S6, computed, not a theorem). The theorem at `219/100` adds a Type II estimate in two
+   variables and a decomposition chosen term by term, a tree of Buchstab steps that the kernel searches for, and
+   the theorem at `218/100` adds role reversal for a term of three primes; with role reversal for every term and
+   at two levels, and with the trees' stops among the small primes, the same inputs pass at `2.12` in a computation
+   in floating point, which is not in Lean ([`research-opportunities.md`](research-opportunities.md), §3.1). The
+   sieve has no window under `1 + A/2 = 13/6` for the curve's peak `A = 7/3`, and `0.7151K` of the paper's
+   certificate's `0.9321K` is cells that no depth of
+   decomposition reaches. Two things move it further: a lower density exponent for the characters near `σ = 5/7`, where Chen,
    Gupta and Li call the dominant term "quite difficult" to improve (their Remark 12.3), or Type I information on
    longer products than the bilinear estimate's `d₁d₂² < x`. The half-plane at `7/8` would not.
    `tools/linnik/density_payoff.py` prices a hypothetical curve.

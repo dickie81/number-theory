@@ -133,6 +133,10 @@ the exponent each input would reach is:
 | Input (its largest exponent `A`) | `A` | `1 + A/2` | Exponent reached |
 |---|---|---|---|
 | Chen, Gupta and Li's `4/(1 + σ)` at `σ = 5/7`, the library today | `7/3 = 2.3333` | `13/6 = 2.1667` | `2.198`–`2.2` (computed: `2.199` passes, `2.198` fails) |
+| The same, with the Type II estimate in two variables as one more way to evaluate a box (below; the estimate by bins is in Lean, the sieve with it is not) | `7/3` | `13/6` | `2.193` (computed: `2.193` passes, `2.192` fails) |
+| The same inputs in a tree of Buchstab steps chosen term by term, with the window's tests and those of the estimate in two variables, and no role reversal (below; **in Lean**, the kernel searching for the tree) | `7/3` | `13/6` | **`2.19`, a theorem** (`Linnik21900.linnik_21900`) |
+| The same tree with role reversal for a term of three primes that needs an upper bound, at one level (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.18`, a theorem** (`Linnik21800.linnik_21800`) |
+| The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no certificate; of what it assumes, the two estimates are in Lean as far as Harman's comparison with a rest among the term's primes) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
 | A hybrid large-values estimate of Guth–Maynard strength at `σ = 5/7`, `15/(3 + 5σ)` (the `gm` variant of `tools/linnik/density_payoff.py`) | `105/46 = 2.2826` | `2.1413` | about `2.17`–`2.18` |
 | Guth and Maynard's `30/13` as a cap everywhere | `2.3077` | `2.1538` | about `2.18`–`2.19` |
 | The classical `12/5` at `σ = 3/4` (no Chen–Gupta–Li) | `2.4` | `2.2` | `2.239` (computed, §S6) |
@@ -140,10 +144,257 @@ the exponent each input would reach is:
 
 Nothing known and unformalised lowers the peak: Heath-Brown's exponent `2` on `[15/19, 1]` and the Weyl bound
 (`LinnikWeyl.PYWeyl`) act above `5/6` only, and the half-plane at `7/8` does not reach the corners at `5/7` (§S6). So
-every exponent below about `2.17` needs new mathematics on the large values of Dirichlet polynomials over the
-characters near `σ = 5/7`, where Chen, Gupta and Li call the needed cancellation "quite difficult" (their Remark 12.3).
-The next exponent that is reachable is `2.199`, by regeneration with `tools/linnik/` and a kernel check of the new
-certificate: a computation of hours, not a theorem yet.
+with the window as the Type II estimate, every exponent below about `2.17` needs new mathematics on the large values
+of Dirichlet polynomials over the characters near `σ = 5/7`, where Chen, Gupta and Li call the needed cancellation
+"quite difficult" (their Remark 12.3). The next exponent that is reachable is `2.199`, by regeneration with
+`tools/linnik/` and a kernel check of the new certificate: a computation of hours, not a theorem yet.
+
+**A Type II estimate in two variables (10 November; its bound by bins is in Lean, its use in the sieve is computed).**
+The window needs
+`L > 1 + A/2` because it bounds one polynomial against the number of characters in a bin. With two polynomials,
+Cauchy–Schwarz between them needs no count of the bin: each gets orthogonality or the Halász–Montgomery inequality
+in its mean-square form, with the paper's kernel bound, and the prime sums keep the paper's bound. In exponents of
+`x`, at `11/5` the estimate holds for two variables within about `0.08` of each other and a rest, a product of
+primes, of at most `0.164`: for example two primes near `x^{0.42}` and a third near `x^{0.16}`, which no window
+covers. The region does not close at `13/6`.
+
+- **In the paper's decomposition** (`tools/linnik/two_factor.py`). As one more way to evaluate a box of depth at
+  most four, the estimate takes the certificate's total at `11/5` from `0.93214𝒦` to `0.76216𝒦` (the decomposed
+  cells from `0.2149𝒦` to `0.0916𝒦`, the dropped ones from `0.7173𝒦` to `0.6706𝒦`), and the last exponent that
+  passes from `2.199` to `2.193` (`0.97454𝒦` there, `1.03180𝒦` at `2.192`). It goes no further here: the
+  decomposition's floor is the window's width, which tends to `0` at `13/6`, and the cells it must drop are those
+  that the Type I rule does not reach. With the region that Lean proves in place of the sampled one, tested in
+  exact integers on the rectangle of the two parts' exponents as the Lean lemmas ask (`--lean`), the totals are
+  `0.77375𝒦` at `11/5`, `0.94408𝒦` at `2.194` and `0.98606𝒦` at `2.193`: the proved region keeps the exponent.
+  Two variants change little: the estimate's stops in the rule (`0.7609𝒦` at
+  `11/5`), and the bilinear Type I rule without the condition that `d₂` be shorter than the cofactor (`0.7335𝒦` at
+  `11/5`, `1.0057𝒦` at `2.192`).
+- **In Harman's decomposition**, which uses no window (`tools/linnik/type2_model.py`). A model of the large-value
+  tools gives the region of his Type II lemma (Baker–Harman–Pintz, Lemma 9) with his tools, and shows that his proof
+  cuts the modulus in one place, Huxley's theorem on powers of the prime-factored factor. Without it the region's
+  condition `|α₁ − α₂| < 2θ − 1` is unchanged and its other side shrinks by at most a tenth (`ρ < 0.100` for his
+  `0.112` at `θ = 0.528`), so that the region at `θ = 0.530` contains his at `0.528`. That suggests that his sieve
+  reaches every modulus near `q < x^{0.47}`, an exponent of about `2.13`, given the half-plane. It is an estimate
+  from one lemma's region: the sieve was not run, and his Type I lemmas were not modelled.
+- **In a decomposition that does not lean on the window** (`tools/linnik/harman_sieve.py`, whose docstring states
+  it). Each term has its own floor, the largest at which Harman's comparison evaluates it: its tree over the small
+  primes is stopped by the estimate (the part that enters the zone is a set of the term's primes times the small
+  primes, the rest a set of the term's primes or the first small prime), and its leaves are in the reach of Type I,
+  taken with the bilinear estimate without the condition `2HD < q`. A box is evaluated by the window or by the
+  estimate at every depth. And a term may be treated through any of its primes: the numbers `p₁⋯p_k m` are also
+  `r′k` with `k = p_j` and `r′ = (r/p_j)m`, and Buchstab's identity then runs over the prime factors of `k` (role
+  reversal, as in Harman's sieve for short intervals; here for terms of at most six primes, and once more inside a
+  reversed tree). The loss, in units of the main term, with every test and every cost taken conservatively on boxes
+  of cells of side `0.002` (first row), and with each cell replaced by its midpoint, the limit of fine cells
+  (second row):
+
+  | `L` | `11/5` | `2.18` | `2.16` | `2.15` | `2.14` | `2.13` | `2.12` | `2.11` | `2.10` |
+  |---|---|---|---|---|---|---|---|---|---|
+  | on cells | `0.033` | `0.163` | `0.400` | `0.511` | `0.634` | `0.765` | `0.924` | `1.097` | `1.273` |
+  | at midpoints | `0.013` | `0.090` | `0.285` | `0.364` | `0.459` | `0.569` | `0.690` | `0.849` | `1.011` |
+
+  So the computation passes at `2.12`, where the paper's decomposition stops at `2.193` (there this one loses
+  `0.10`), and the limit of fine cells is near `2.10`, which is Baker, Harman and Pintz's `0.525` in the dictionary
+  of the previous item, and agrees with its estimate of `2.13`. What carries it, at `2.13` on cells of side `0.004`,
+  where the loss is `1.006`: role reversal (`1.090` without the second level, `1.269` for terms of at most four
+  primes, `1.426` with none; with none the midpoints pass `1` at `2.16`) and the wider bilinear estimate (`1.174`
+  with Lemma 4.2 as it stands). The linear sieve's bounds, for terms that the comparison does not evaluate, lower
+  it to `0.999` and are left out. The cells pay for the boundary terms: a term `S(𝒜_r, z)` also counts `n = r`
+  itself, Buchstab's identity on a box that is not regular at every point has such terms among its children, and
+  a dropped box with such points costs their number too. Before they were paid for, the first row had `0.920` at
+  `2.12` and `0.761` at `2.13`. Three checks of the program: in the paper's set-up at `11/5` (the window alone,
+  Lemma 4.2, the window's width as the floor, no reversal) it gives `0.862` on cells of side `0.002` and `0.800` on
+  cells of side `0.001`, where the certificate has `0.932` on its grid, and `0.728` at midpoints; with the linear
+  sieve's bounds and no Type II information it gives `3.0`, so it does not detect primes, as parity requires; and
+  the tabulated zone holds at `160000` points off its lattice. It is floating point, and not a certificate.
+- **What is in Lean** (10 November; [`halasz-montgomery.md`](../formalisations/halasz-montgomery.md)). The two
+  estimates, at the level of the paper's own:
+  - the Halász–Montgomery inequality in mean square over a bin, `Σ_{χ∈R}|W(χ)|² ≤ e·Σ|a|²·(2P + |R|B)`
+    (`SieveTypeIIHM.sum_bin_hm_sq`), and with it the estimate for two polynomials by bins
+    (`SieveTypeIIHM.sum_typeII_two_bins`), as `SieveTypeIIHM.sum_typeII_bins_hm` is for one;
+  - a bin's contribution as a power of `q`, under the exponent inequality of the estimate
+    (`SieveTypeIIHM.bin_bound_two`), and that inequality for two variables of length at least `q` and a third factor
+    of length at least `q^{1/2000}`, whatever the density curve (`SieveTypeIIHM.twoBound_of_long`). In exponents of
+    `x` these are two variables in `[1/L, 1 − 1/L]` and a rest: the part of the region that needs no density
+    estimate, `[0.4695, 0.5305]` at `2.13`;
+  - the estimate itself, the paper's Proposition 3′ for two polynomials, for a curve and a region of the two
+    lengths' exponents on which the inequality holds (`SieveTypeIIHM.typeII_two_gen`); with no density estimate for
+    two variables of length at least `q` (`SieveTypeIIHM.typeII_two_long`); and for the paper's curve on an explicit
+    region, for every `L` (`SieveTwoZone7D.zone_7d`, `SieveTwoZone7D.typeII_two_7d`). With `s_i = 1 − m_i` for
+    lengths `q^{m_i}` and `q^ρ` the length of the rest, the region is `ρ ≥ 1/2000`, `m_i ≥ 2/3` and `s₁`, `s₂`,
+    `s₁ + s₂` at most `0.442192ρ − 1/12500`: a variable may be shorter than `q` by `0.442` times the exponent of
+    the rest. The computations' zone is the union of such regions over the point where the Halász–Montgomery
+    inequality takes over from orthogonality; this one is the region for that point at `s = 0`, and holds all of the
+    zone but under 2% of `s` at its far end;
+  - the paper's Lemma 4.4 for families with two polynomial variables (`SieveFamilyTwo.typeII_sharp_two`): `m₁` and
+    `m₂` in dyadic blocks with the exponents of their lengths in the region, primes with smooth weights at fixed
+    scales, and sharp comparisons with forms `φ_j(m₁) + ψ_j(m₂) + Σ_i e_{ji} log x_i`, each with a prime as a pivot;
+    the family's sum over `𝒜 − ℬ/φ(q)` is at most `A₀B₀q^{L−δ}/φ(q)`. It comes from the lemma's argument with the
+    polynomial part abstract (`SieveFamilyGen.sharp_gen`): the argument uses the variable only through its value,
+    its coefficient, its parts of the forms and the Type II estimate at each frequency, and for a pair the twisted
+    sum is a product of two polynomials. Lemma 4.5, with the primes over all the primes up to `2q^L` and each
+    `m_i` in an interval, is `SieveUnwTwo.typeII_unw_two`, for a rectangle of exponents inside the region;
+  - the bilinear Type I estimate without `2HD < q`: on the diagonal the congruence `t d₂′ ≡ t′ d₂` has at most
+    `F(⌊2HD/q⌋ + 1)` solutions for each `(t, d₂′)`, and the first term gains that factor
+    (`SieveTypeIB.typeIB_bound_wide`; with a spline weight, `SieveSpline.typeIB_spline_wide`). It is carried to the
+    leaves as far as a block pair (`lib/pnt/SieveTypeIBPairWide.lean`): over families with smooth and with sharp
+    comparisons (`typeIB_smooth_wide`, `typeIB_sharp0_wide`), and on a block pair `(β₁, β₂)` with any cut `H` of
+    the frequencies, `2H < q` (`pair_le_wide`), where the bound is
+    `√(P₁P₂(P₁/q + 1)F(2HP₂/q + 1)(n/q + 1)n) + (B − A)(q/(2ℓ(H + 1)))^r P₁P₂ + P₁P₂d(q)/φ(q)`. The paper's
+    `pair_le` is the cut `H = ⌊(q − 1)/(2⌊P₂⌋)⌋`, whose second term is small only for `P₂ ≤ ℓ`, that is
+    `d₁d₂² ≤ x`; a cut `H ≈ qY/ℓ` makes it `Y^{−r}` for any `P₂`, with `2YP₂/ℓ + 1` under the root. With that cut,
+    `H = ⌈qY/ℓ⌉`, the block pairs of a family of leaves are summed as in the paper's proof
+    (`lib/pnt/SieveTypeIBSumWide.lean`): on the region `d₁ ≤ X₁`, `d₁d₂² ≤ X₂`, `d₁d₂ ≥ X₃` a block pair's bound is
+    at most `√(ρ²(1 + η)N₂(ρX₁/q + 1)F(4Y·rρ³X₂/(ηN₁) + 1)((1 + η)ρ²N₂/(X₃q) + 1)) +
+    ρ²(1 + η)N₂(2Y)^{−r} + ρ²√(X₁X₂)d(q)/φ(q)` (`bdPW_le`), and `leaves_family_wide` is
+    `SieveTypeIBSum.leaves_family` with that bound, for `X₂` of any size. The asymptotic form is the paper's
+    Lemma 4.3 on the wider region (`SieveTypeIBAsymWide.leaves_ib_wide`): for `a ≤ L − 2`, a margin `κ > 0`,
+    `0 ≤ δ' ≤ min(κ/4, 1/8)` and `max(c, 0) ≤ a − δ' − κ`, the leaves with `d₁f_max ≤ q^{L−1−a}`,
+    `d₁f_maxd₂² ≤ q^{L+c}` and `d₁d₂ ≥ q^{L−1−δ'}` are evaluated with an error `q^{L−δ}/φ(q)`. The paper's lemma
+    is `c < 0`. In exponents of `x`, up to the margins, the region is `2a₁ + 2a₂ < 2 − τ` for `a₁ ≥ τ` and
+    `a₁ + 2a₂ < 2 − 2τ` for `a₁ ≤ τ`, the rule of `two_factor.py --bil` and of `harman_sieve.py`.
+  - the paper's Lemma 4.6 in two variables (`SieveTwoChain.chain_two`): a family of tuples of primes with
+    comparisons of any kind, two disjoint sets of its primes as the two variables, at least one prime left as the
+    rest, and the two products' exponents inside the region (asked on their rectangle cut by the band of their
+    sum, since the product of the two variables is `n` over the rest), has `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`. A
+    comparison with a prime of the rest has it as a pivot. One with none is a condition between the two variables:
+    a bilinear bound `C|f|₂|g|₂` survives a condition `u(i) ≤ v(j)` at the cost of a factor `N + 1`, for `v` with
+    fewer than `2^N` values (`SieveTwoCross.BilBd.cmp_list`: ranks, then binary digits, with the Cauchy–Schwarz
+    inequality across the two halves), so `J₀` of them cost a power of `log q`. Every term `Σ_r S(A_r, z)` of a
+    sieve, in the main tree or in a reversed one, is a sum of such families over the number of prime factors of
+    its cofactor, whatever conditions tie its variables: with the cofactor in the second variable
+    (`SieveTwoTerm.chain2_bound`) or in the rest (`SieveTwoTerm.chain2R_bound`).
+  - Harman's comparison with these stops and with the leaves of the wider region (`SieveTwoComp.prop6_two`):
+    for a family of chains in boxes, all at least `z₀ = q^{a₀}`, `Σ_r (S(A_r, z₀) − S(B_r, z₀)/φ(q))` is
+    `o(q^L/(φ(q) log q))` when the product `c` of a set `S₀` of the chain's primes enters a window `(u, v)` wider
+    than `a₀`, with the box of `c` below `v`, the product of a disjoint set `Sr ≠ ∅`, the rest, in `[q^{ρ₁}, q^{ρ₂}]`,
+    the region at the exponents `(m₁, m₂)` with `u ≤ m₁ ≤ v` and `L − ρ₂ ≤ m₁ + m₂ ≤ L − ρ₁` (up to a margin), and
+    the leaves' sizes
+    `D₁ = Σ_{S₁} hi + t·[eIn₁]`, `D₂ = Σ_{S₁ᶜ} hi + t·[¬eIn₁]` (`t ≥ u − Σ_{S₀} lo` the tree's growth) with
+    `D₁ < L − 1` and `max(D₁, 1) + D₁ + 2D₂ < 2L − 1`. This is the rule `exact floor` of `harman_sieve.py` for a
+    rest among the term's primes, in exponents of `q`.
+  - a certificate's format for a decomposition chosen term by term (`lib/pnt/SieveAdDefs.lean`,
+    `lib/pnt/SieveAdTree.lean`): a tree on boxes of the exponents of a term's primes, whose nodes cut a cell,
+    or apply Buchstab's identity with a floor of their own, and whose leaves are a box with no term, a box
+    dropped at the bound of `SieveRough.shareBox` (for a term of the sign `+`), a box dropped for its products
+    `n = p₁⋯p_k` alone at a bound for their number (`SieveAd.dropB_bound`: the last prime is a prime of a dyadic
+    interval), and a box evaluated by a test.
+    The check and the cost are functions on natural numbers, which the kernel evaluates, and the tests of the
+    evaluations are a parameter. For tests that are sound, a tree that passes on the box of one prime with cost
+    below `1` gives the theorem with the route's exponent (`SieveAd.linnik_tree`; `SieveAd.sound` is the bound of
+    a tree, by induction). The paper's certificate is a fixed decomposition to depth 8; this one takes any tree.
+    Two kinds of tests are proved sound. The window's (`SieveAd.winTests_sound`, from the paper's lemmas on
+    boxes): a box surely evaluable, and a box that the bilinear rule passes at the window's width as the floor.
+    And the estimate's (`SieveAd.twoTests_sound`), in exact integers on the region `Zone7d`: a box evaluated
+    outright, its first variable and its rest two sets of its primes and its second variable the other primes
+    and the cofactor (`SieveAd.evI_two`, from `chain2_bound`); and the comparison at a floor, for a set of
+    primes that enters the window which the region leaves to the first variable, a rest among the primes, and a
+    split of the leaves (`SieveAd.evJ_two`, from `prop6_two_at`). At `11/5` a tree that passes the two kinds
+    gives the paper's theorem (`SieveAd22000.linnik_tree_22000`, with `SieveAd.mixTests`).
+  - **Linnik's theorem with exponent `219/100`** (11 November; `Linnik21900.linnik_21900`): for every `q ≥ 1` and
+    every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{219/100}`, with no hypothesis. The
+    route is `L = 219/100` on the window `[0.44260, 0.46717]` (`SieveTypeIIU21900D.typeII_21900d`, by
+    `gen_cgl_curve.py`), and the decomposition is a tree with the two kinds of tests, of cost `0.98189K`
+    (`Linnik21900.tree21900`). The tree is not written out. `SieveAd.solveF` (`lib/pnt/SieveAdSearchDefs.lean`)
+    is a search for a tree on a box that returns a cost and no tree: a box is evaluated by a proposed
+    configuration, dropped, decomposed by Buchstab's identity at a proposed floor with the new prime's range cut
+    into cells, or cut in two, and a limit stops a subtree whose cost reaches it. A cost that it returns below
+    its limit is the cost of a tree that passes the check (`SieveAd.solveF_sound`): the search uses a node only
+    after the check for that node has passed, so what proposes the nodes (the rest: one prime; the first
+    variable: the set of the others with the largest lower sum below the window's top; cells of side `0.006`;
+    terms of at most six primes) needs no proof. The kernel runs the search on `301834` boxes, in parts, each a
+    range of consecutive cells of one prime (`lib/pnt/SieveTree21900P1.lean` and the files after it;
+    `SieveAd.has_of_kids`), in about three quarters of an hour of its time. `tools/linnik/tree_cert.py` is the
+    same search in Python: it cuts it into the parts and writes the files, and CI regenerates them
+    (`check_certificate.py`).
+  - **Linnik's theorem with exponent `218/100`** (11 November; `Linnik21800.linnik_21800`): for every `q ≥ 1` and
+    every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{218/100}`, with no hypothesis. The
+    route is `L = 218/100` on the window `[0.45073, 0.46472]` (`SieveTypeIIU21800D.typeII_21800d`), where the
+    search for a tree costs `1.16K`. The search there has one more node, role reversal
+    (`lib/pnt/SieveAdRevDefs.lean`; `SieveAd.bd_rev`), for a term of three primes `p₁ > p₂ > p₃` in cells, of the
+    sign `−`, a term that needs an upper bound. Its numbers are `n = p₁p₂p₃m` with `m` rough at `p₃` and below
+    `p₃³`, so `m` is a prime `Q` or a product `q₂Q`. The primes of `r' = n/p₁` in order (the atoms) are in one of
+    five kinds of boxes: `p₂` above or below `Q`, and with `q₂` three places for `p₂`. `x/r'` is in the range of
+    `p₁`, which is a condition on the atoms' product, and `n/r' = p₁` is rough at `z`, the least value of `p₃`.
+    So the term in `𝒜` is at most the sum over those `r'` of the `n ≡ a` with `r' ∣ n` and `n/r'` rough at `z`,
+    up to the `n` with a square factor at least `z` (`SieveAd.rev_cover`); and the term in the comparison set is
+    at least the sum, over the `r'` of a range shorter by a factor `x^{1/DEN}` at each end, of the `n` with `n/r'`
+    prime: they are terms of the box, each once, by unique factorisation (`SieveAd.rev_inject`). Each sum over
+    `r'` is a term of the usual kind under a condition on its tuples, and has a tree of its own. The tree's boxes
+    carry the atoms' cells and then the chain of the primes of `n/r'` that Buchstab's identity brings out; its
+    steps keep the condition (`SieveAd.dIP_cut`, `SieveAd.dIP_buch`); the tests hold under two more conditions on
+    the tuples (`SieveAd.mixTests_soundX`); and a chain's box is dropped at a bound by `Ψ`
+    (`SieveAd.rootJ_sound`, `SieveAd.famCost_sound`). A reversal costs its trees' costs and what the numbers rough
+    at `z` exceed the primes by in the comparison set, each times a bound of `Σ 1/r'` over its box. The search
+    takes it where it is below the cost of Buchstab's identity, at `3664` of the `8185` boxes where it applies. A
+    search with its nodes' tests as parameters is sound for any statement that the nodes prove
+    (`SieveAd.solveG_sound`), and the reversed trees and the search itself are two uses of that
+    (`SieveAd.solveK_sound`, `SieveAd.solveR_sound`). The bound's cost is `0.91812K`, from a search on `1063672`
+    boxes with cells of side at most `0.006` and at most a tenth of the exponent. The kernel runs it in `587` parts
+    (`lib/pnt/SieveTree21800P1.lean` and the files after it; `SieveAd.pr_of_kids`), in about an hour and forty
+    minutes of its time, and `tools/linnik/rev_cert.py` is the same search in Python.
+- **What is not written.** The comparison with its rest among the small primes; role reversal for terms of more
+  than three primes, through a prime other than the largest, or at a second level; a search for an exponent below
+  `2.18`. Until these are written the theorem stays at `2.18`.
+  - *Why `2.19`.* Without reversal, and without the stops whose rest is the first small prime, the cells pass at
+    `2.19` with the window, and not at `2.18` (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
+    `0.945`; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`; `1.066` at `2.18` with every stop). The tree
+    needs boxes evaluated by the window (`1.10` without) and by the estimate with the cofactor in the second
+    variable (`1.20` without), and none with the cofactor in the rest: these are the tests that are proved sound.
+    One of the tree's boxes is the corner where the first two primes are both near `x^{1/2}`: its only terms are
+    the products `n = p₁p₂` in `(x, 2x]`, dropped at a bound for their number (`SieveAd.dropB_bound`), which is
+    the width of the first prime's top cell up to a constant. The window alone does not go below `11/5` with a
+    tree of that size (`harman_sieve.py paper`: `1.22` at `11/5` and `1.75` at `2.195` on cells of side `0.005`).
+    The search costs `0.98189K` on cells of side `0.006` with terms of at most six primes, `0.93489K` at `0.005`
+    with nearly twice the boxes, and `1.00099K` at `0.0065` (`tree_cert.py --try`).
+  - *Why `2.18`.* With the reversal of a term of three primes the search passes at `2.18` (`0.91849K`; `0.90043K`
+    with the reversed trees' chains of up to three primes in cells of side `0.006`). It is sensitive to the
+    cells: `1.01637K` at `2.18` with cells of side `0.007`, and `2.10K` with terms of at most five primes. At
+    `2.175` (window `[0.45481, 0.46349]`) it costs `1.05257K` with the same cells and `0.98482K` with cells of
+    side `0.005`, on `2.6·10^6` boxes, two and a half times the search at `2.18`: a theorem there is a matter of
+    the kernel's time, and is not written. At `2.17` (window `[0.45892, 0.46226]`) the search does not pass:
+    `1.26965K` with the same cells, `1.18333K` at side `0.005`, and `1.03938K` at side `0.004` with terms of at
+    most seven primes, on `10^7` boxes (`rev_cert.py --try`). The window closes at `13/6`: the curve has none at
+    `2.165`. So below `2.175` the search needs more of the reversal (in the computation, `0.981` at `2.17` with
+    terms of at most six primes reversed), and below `13/6` the stops whose rest is among the small primes.
+  - *The rest among the small primes.* Below `13/6` there is no window, and the term at the root, `S(𝒜, x^f)`,
+    has no prime to be the rest: its tree is stopped with the first small prime as the rest. The region takes a
+    rest of exponent at least `1/2000`, so the paths whose small primes are all below that are not stopped. They
+    are left to Brun's sieve at a fixed level, whose gap is tiny and is not `o(1)`; the computation takes it as
+    zero. In Lean the comparison has its rest among the term's primes and an error `o(1)`
+    (`SieveTwoComp.prop6_two`); one with the rest among the small primes, and that gap as a cost, is not written.
+  - *Role reversal*, in exact terms: for a term `Σ S(A_{p₁⋯p_k}, p_k)` on a box of cells and one of its primes
+    `p_j` in `[X, X′)`, the numbers `n = (r/p_j)·m·p_j` with `N₂/X′ < (r/p_j)m ≤ N₁/X` have `p_j = n/((r/p_j)m)`
+    in its cell whatever `n` in `(N₁, N₂]`, so on them the term is `Σ S(A_{r′}, ⌈X′^{1/2}⌉)` over `r′ = (r/p_j)m`
+    with that condition and no other on the cofactor, a term of the usual kind; the rest has `p_j` within a factor
+    `N₂/N₁` of an end of its cell, a share `O(1/log x)` of the box. In the computation (`harman_sieve.py --rev`,
+    whose docstring has the commands), what carries the reversal is the terms that need an upper bound (`1.06` at
+    `2.19` if only the others are reversed, against `0.46`; cells of side `0.007`, one level), the bilinear
+    Type I estimate inside the reversed trees (`1.09` with the linear one alone), and cofactors that are not
+    prime (`0.66` if only prime cofactors are reversed); floors below every prime of a reversed term cost little
+    (`0.47`). With the window, without the stops whose rest is the first small prime, and with one level of
+    reversal for terms of at most three primes, the cells pass at `2.18` (`0.863`, `463000` nodes at side
+    `0.007`) and not at `2.17` (`1.042`; `0.981` with terms of at most six primes reversed, off the diagonal,
+    `693000` nodes); with prime cofactors only and off the diagonal they fail at `2.18` (`1.067`). The theorem
+    at `2.18` has the reversal for one shape of term: three primes, of the sign `−`, reversed through the
+    largest, with the cofactor below the cube of the smallest, so that the cofactor's prime factors are at most
+    two and are written out as atoms; and at one level. It is an inequality, not the identity above: the `n` with
+    `n/r'` rough at the least value of `p₃` bound the term, the comparison set pays for the rough numbers that are
+    not primes, and the `r'` within a factor `x^{1/DEN}` of an end of the range are counted at a bound with
+    nothing subtracted. What the computation at `2.12` has and Lean does not: the reversal of a term of more
+    primes, whose cofactor is a number sifted at the term's last prime with more prime factors, as a variable of
+    the new term; the reversal through a prime other than the largest; a second level, the terms of a reversed
+    tree reversed again; and the stops of the reversed trees with a rest among the small primes.
+  - *The size of a tree.* Without reversal the cells pass at `2.19` only (`0.87` with the window, `276000` nodes
+    at side `0.005`); with it, `0.81` at `2.19` with `113000` nodes (side `0.01`, terms of at most three primes,
+    one level), `0.75` at `2.17` with `10^6` nodes (side `0.007`, one level), `0.49` at `2.17` with `1.4·10^7`
+    (side `0.005`, two levels), and `0.92` at `2.12` with the cells of side `0.002` of the table above, a tree of
+    `4.7·10^9` nodes. The kernel searches about a hundred boxes a second (the tree at `2.19`, and the search at
+    `2.18`, whose `10^6` boxes are near what a build can check), so it does not check that many one by one: a
+    certificate at `2.12` needs a coarser tree, with cells chosen where they matter, or a check that shares work
+    between boxes. Half of the search's time at `2.18` was in boxes that it drops after looking for a cheaper
+    tree; the files drop `216` such cells outright (`SieveAd.pr_drop`), which a search told what to take would do
+    everywhere.
 
 ### 3.2 Short intervals
 
@@ -249,7 +500,9 @@ and the inventory would carry them.
   unconditional to `2a ≤ 1.6`; it is compute-bound (the cost figures of [weil-positivity-l05.md](weil-positivity-l05.md)).
 - **The half-plane at `7/8`.** It does not move Linnik's exponent (§3.1); what it would improve is listed in
   `account.md`, and §1 and §2 above would gain `23/24` and the constant `8` in place of `12`.
-- **Linnik below `2.198` by the present method:** not possible (§3.1).
+- **Linnik below `2.198`:** not by the paper's decomposition with the window as its Type II estimate. With the estimate in two
+  variables it reaches `2.193`, and in a decomposition without the window the computation of §3.1 passes at `2.12`.
+  The two estimates behind them are in Lean at the level of their bounds; the sieves are not.
 
 ### 6.1 The `positivity-search` branch and its gravastar strand
 
