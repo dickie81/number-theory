@@ -293,9 +293,16 @@ covers. The region does not close at `13/6`.
     cells still pass at `2.19`, with the window (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
     `0.945`, with `307000` nodes; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`). The tree needs boxes
     evaluated by the window (`1.10` without) and by the estimate with the cofactor in the second variable (`1.20`
-    without), and none with the cofactor in the rest: these are the tests that are proved sound. So a theorem
-    at `2.19` needs the route's window at that exponent (`gen_cgl_curve.py` writes it at `11/5`), a generator in
-    exact arithmetic, and its tree, for the kernel to check. The window alone does not go below `11/5` with a tree of that size
+    without), and none with the cofactor in the rest: these are the tests that are proved sound. In exact
+    integers, with those tests read from their Lean definitions, a search finds a tree at `219/100` whose cost is
+    `0.925K`, with `849000` nodes on cells of side `0.005` (`tools/linnik/tree_cert.py`; `0.889K` on cells of
+    side `0.004`, and `0.841K` at `2195/1000`), and a mirror of `SieveAd.ok` passes it but for one node. That
+    node is the corner where the first two primes are both near `x^{1/2}`: its only terms are the products
+    `n = p₁p₂` in `(x, 2x]`, which the drop bound in Lean does not cover (it has the products of a dropped box
+    below `x`); their number is at most the width of the first prime's top cell, up to a constant. So a theorem
+    at `2.19` needs that bound and its node, the route's window at that exponent (`gen_cgl_curve.py` writes it
+    at `11/5`), and the tree in a form that the kernel checks: `849000` nodes are too many to write out, so the
+    search itself has to run in the kernel. The window alone does not go below `11/5` with a tree of that size
     (`harman_sieve.py paper`: `1.22` at `11/5` and `1.75` at `2.195` on cells of side `0.005`).
   - *The rest among the small primes.* Below `13/6` there is no window, and the term at the root, `S(𝒜, x^f)`,
     has no prime to be the rest: its tree is stopped with the first small prime as the rest. The region takes a
