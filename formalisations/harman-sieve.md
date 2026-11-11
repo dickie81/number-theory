@@ -46,6 +46,13 @@ Its main tools:
   gives and that has no value (`SieveRanges.rng_sum_le`), since its levels grow as the error shrinks. No result uses
   the explicit bound yet: it is for Brun's sieve at a fixed level, where the gap `SieveProp6.zeta` is a number
   (`docs/research-opportunities.md`, §3.1, on a sieve without the window).
+- `SieveGap.family_leaves_le` (`lib/pnt/SieveGap.lean`), Brun's sieve at a fixed level on a family of chains: for
+  strictly decreasing chains `x` of primes at least `w = ⌈q^{εw}⌉`, cut out by comparisons, whose chains with
+  `∏x > q^{L−1−δ'}` split into two blocks within the bilinear Type I estimate's reach,
+  `|Σ_x (S(A_x, w) − S(B_x, w)/φ(q))|` is at most
+  `(2ζ(k)(N₂ − N₁)/(φ(q) log w) + 2·rem·q^{L−1−δ'})·Σ_x 1/∏x + q^{L−δ}/φ(q)`. It is the leaves' bound of the
+  comparison (`SieveP6TreeLeaves.tree_leaves_le`) with no tree above the level, which is then fixed. No result uses
+  it yet: it is the cost of a term at the least level of a sieve without the window.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer
