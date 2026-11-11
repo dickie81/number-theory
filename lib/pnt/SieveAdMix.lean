@@ -8,6 +8,8 @@ rule's exponent the route's, and the route's Type II estimate `hII`):
 
 * `mixTests_sound`: the tests `SieveAd.mixTests` are sound (`SieveAd.Tests.Sound`), by `SieveAd.winTests_sound`
   for the configurations of kind `0` and `SieveAd.twoTests_sound` for the others.
+* `mixTests_soundX`: they are sound under two more atoms, on the boxes of at most twelve primes
+  (`SieveAd.Tests.SoundX`).
 
 The file imports `SieveAdWin.lean`, `SieveAdTwo.lean` and `SieveAdMixDefs.lean`.
 -/
@@ -36,5 +38,22 @@ theorem mixTests_sound (hII : TypeIIAt) : (mixTests).Sound := by
       exact twoTests_sound.soundJ bl f cfg k h hok
     · rw [hk] at hok
       exact (winTests_sound hII).soundJ bl f cfg k h hok
+
+/-- **The window's tests and the estimate's, together, are sound under two more atoms**, on the boxes of at most
+twelve primes. -/
+theorem mixTests_soundX (hII : TypeIIAt) : (mixTests).SoundX := by
+  refine ⟨fun bl cfg k' h hk hok => ?_, fun bl f cfg k h hk hok => ?_⟩
+  · simp only [mixTests] at hok
+    cases hk0 : Nat.beq cfg.kind 0
+    · rw [hk0] at hok
+      exact twoTests_soundX.soundI bl cfg k' h hk hok
+    · rw [hk0] at hok
+      exact (winTests_soundX hII).soundI bl cfg k' h hk hok
+  · simp only [mixTests] at hok
+    cases hk0 : Nat.beq cfg.kind 0
+    · rw [hk0] at hok
+      exact twoTests_soundX.soundJ bl f cfg k h hk hok
+    · rw [hk0] at hok
+      exact (winTests_soundX hII).soundJ bl f cfg k h hk hok
 
 end SieveAd

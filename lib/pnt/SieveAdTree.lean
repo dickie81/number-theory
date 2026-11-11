@@ -429,6 +429,58 @@ theorem pow_mono {q : ℕ} (hx : 1 ≤ xq q) {a b : ℕ} (hab : a ≤ b) :
 
 /-! ### A cut of a cell -/
 
+/-- The box with the cell `i` cut from above at `c ≤ hi_i`: the tuples of the box with `p_i < x^{c/DEN}`. -/
+theorem famB_cut_lo {q : ℕ} (hx : 1 ≤ xq q) {k' : ℕ} (bx : Fin (k' + 1) → Cell) (i : Fin (k' + 1)) {c : ℕ}
+    (h2 : c ≤ (bx i).2) :
+    famB q (Function.update bx i ((bx i).1, c)) =
+      (famB q bx).filter fun rt => (rt i : ℝ) < xq q ^ ((c : ℝ) / DEN) := by
+  ext rt
+  simp only [mem_famB, Finset.mem_filter]
+  constructor
+  · rintro ⟨hp, hsa, hc⟩
+    have hi := hc i
+    simp only [Function.update_self] at hi
+    refine ⟨⟨hp, hsa, fun j => ?_⟩, hi.2⟩
+    by_cases hj : j = i
+    · subst hj
+      exact ⟨hi.1, hi.2.trans_le (pow_mono hx h2)⟩
+    · have := hc j
+      rwa [Function.update_of_ne hj] at this
+  · rintro ⟨⟨hp, hsa, hc⟩, hlt⟩
+    refine ⟨hp, hsa, fun j => ?_⟩
+    by_cases hj : j = i
+    · subst hj
+      simp only [Function.update_self]
+      exact ⟨(hc j).1, hlt⟩
+    · rw [Function.update_of_ne hj]
+      exact hc j
+
+/-- The box with the cell `i` cut from below at `c ≥ lo_i`: the tuples of the box with `p_i ≥ x^{c/DEN}`. -/
+theorem famB_cut_hi {q : ℕ} (hx : 1 ≤ xq q) {k' : ℕ} (bx : Fin (k' + 1) → Cell) (i : Fin (k' + 1)) {c : ℕ}
+    (h1 : (bx i).1 ≤ c) :
+    famB q (Function.update bx i (c, (bx i).2)) =
+      (famB q bx).filter fun rt => ¬ (rt i : ℝ) < xq q ^ ((c : ℝ) / DEN) := by
+  ext rt
+  simp only [mem_famB, Finset.mem_filter, not_lt]
+  constructor
+  · rintro ⟨hp, hsa, hc⟩
+    have hi := hc i
+    simp only [Function.update_self] at hi
+    refine ⟨⟨hp, hsa, fun j => ?_⟩, hi.1⟩
+    by_cases hj : j = i
+    · subst hj
+      exact ⟨(pow_mono hx h1).trans hi.1, hi.2⟩
+    · have := hc j
+      rwa [Function.update_of_ne hj] at this
+  · rintro ⟨⟨hp, hsa, hc⟩, hge⟩
+    refine ⟨hp, hsa, fun j => ?_⟩
+    by_cases hj : j = i
+    · subst hj
+      simp only [Function.update_self]
+      exact ⟨hge, (hc j).2⟩
+    · rw [Function.update_of_ne hj]
+      exact hc j
+
 /-- **A cut.** For `lo_i ≤ c ≤ hi_i`, the term of a box is the sum of the terms of the boxes with the cell `i` cut
 at `c`. -/
 theorem famI_cut (g : ℕ → ℝ) {q : ℕ} (hx : 1 ≤ xq q) {k' : ℕ} (bx : Fin (k' + 1) → Cell) (i : Fin (k' + 1)) {c : ℕ}
@@ -436,54 +488,84 @@ theorem famI_cut (g : ℕ → ℝ) {q : ℕ} (hx : 1 ≤ xq q) {k' : ℕ} (bx : 
     famI g (N1 q) (N2 q) (famB q bx) =
       famI g (N1 q) (N2 q) (famB q (Function.update bx i ((bx i).1, c))) +
         famI g (N1 q) (N2 q) (famB q (Function.update bx i (c, (bx i).2))) := by
-  have hA : famB q (Function.update bx i ((bx i).1, c)) =
-      (famB q bx).filter fun rt => (rt i : ℝ) < xq q ^ ((c : ℝ) / DEN) := by
-    ext rt
-    simp only [mem_famB, Finset.mem_filter]
-    constructor
-    · rintro ⟨hp, hsa, hc⟩
-      have hi := hc i
-      simp only [Function.update_self] at hi
-      refine ⟨⟨hp, hsa, fun j => ?_⟩, hi.2⟩
-      by_cases hj : j = i
-      · subst hj
-        exact ⟨hi.1, hi.2.trans_le (pow_mono hx h2)⟩
-      · have := hc j
-        rwa [Function.update_of_ne hj] at this
-    · rintro ⟨⟨hp, hsa, hc⟩, hlt⟩
-      refine ⟨hp, hsa, fun j => ?_⟩
-      by_cases hj : j = i
-      · subst hj
-        simp only [Function.update_self]
-        exact ⟨(hc j).1, hlt⟩
-      · rw [Function.update_of_ne hj]
-        exact hc j
-  have hB : famB q (Function.update bx i (c, (bx i).2)) =
-      (famB q bx).filter fun rt => ¬ (rt i : ℝ) < xq q ^ ((c : ℝ) / DEN) := by
-    ext rt
-    simp only [mem_famB, Finset.mem_filter, not_lt]
-    constructor
-    · rintro ⟨hp, hsa, hc⟩
-      have hi := hc i
-      simp only [Function.update_self] at hi
-      refine ⟨⟨hp, hsa, fun j => ?_⟩, hi.1⟩
-      by_cases hj : j = i
-      · subst hj
-        exact ⟨(pow_mono hx h1).trans hi.1, hi.2⟩
-      · have := hc j
-        rwa [Function.update_of_ne hj] at this
-    · rintro ⟨⟨hp, hsa, hc⟩, hge⟩
-      refine ⟨hp, hsa, fun j => ?_⟩
-      by_cases hj : j = i
-      · subst hj
-        simp only [Function.update_self]
-        exact ⟨hge, (hc j).2⟩
-      · rw [Function.update_of_ne hj]
-        exact hc j
   unfold famI
-  rw [hA, hB, Finset.sum_filter_add_sum_filter_not]
+  rw [famB_cut_lo hx bx i h2, famB_cut_hi hx bx i h1, Finset.sum_filter_add_sum_filter_not]
 
 /-! ### Buchstab's identity on a box -/
+
+/-- Buchstab's identity for a tuple of a box and a number `n ≠ 0`, with a floor `z` at most the last prime. -/
+theorem buch_pt_box {q : ℕ} {k' : ℕ} {bx : Fin (k' + 1) → Cell} {rt : Fin (k' + 1) → ℕ} (hrt : rt ∈ famB q bx)
+    {z : ℕ} (hzl : z ≤ rt (Fin.last k')) (g : ℕ → ℝ) {n : ℕ} (hn0 : n ≠ 0) :
+    g n * (if (∏ i, rt i) ∣ n ∧ SieveTree.rough (rt (Fin.last k')) n then 1 else 0) =
+      g n * (if (∏ i, rt i) ∣ n ∧ SieveTree.rough z n then 1 else 0) -
+        ∑ p ∈ SieveTree.primesIco z (rt (Fin.last k')),
+          g n * (if (∏ i, (Fin.snoc rt p : Fin (k' + 2) → ℕ) i) ∣ n ∧
+            SieveTree.rough ((Fin.snoc rt p : Fin (k' + 2) → ℕ) (Fin.last _)) n then 1 else 0) := by
+  obtain ⟨hp, hsa, hc⟩ := mem_famB.1 hrt
+  have hW : ∀ p : ℕ, p.Prime → p ∣ ∏ i, rt i → rt (Fin.last k') ≤ p := by
+    intro p hpp hd
+    obtain ⟨i, -, hi⟩ := (Prime.dvd_finsetProd_iff hpp.prime _).1 hd
+    rw [(Nat.prime_dvd_prime_iff_eq hpp (hp i).2).1 hi]
+    exact hsa.antitone (Fin.le_last i)
+  rw [buchstab_pt hn0 hzl hW, mul_sub, Finset.mul_sum]
+  simp only [prod_snoc, Fin.snoc_last]
+
+/-- The tuples of a box with one more prime `p ∈ [⌈x^{f/DEN}⌉, p_last)` are the tuples of the box with one more cell
+`(f, hi_last)`. -/
+theorem famB_snoc_sum (q : ℕ) {k' : ℕ} (bx : Fin (k' + 1) → Cell) (f : ℕ) (G : (Fin (k' + 2) → ℕ) → ℝ) :
+    ∑ rt ∈ famB q bx, ∑ p ∈ SieveTree.primesIco ⌈xq q ^ ((f : ℝ) / DEN)⌉₊ (rt (Fin.last k')), G (Fin.snoc rt p) =
+      ∑ y ∈ famB q (Fin.snoc (α := fun _ => Cell) bx (f, (bx (Fin.last k')).2)), G y := by
+  rw [Finset.sum_sigma']
+  refine Finset.sum_nbij' (fun x => Fin.snoc x.1 x.2) (fun y => ⟨Fin.init y, y (Fin.last _)⟩) ?_ ?_ ?_ ?_ ?_
+  · rintro ⟨rt, p⟩ h
+    rw [Finset.mem_sigma] at h
+    obtain ⟨hrt, hp⟩ := h
+    dsimp only at hrt hp
+    rw [SieveTree.mem_primesIco] at hp
+    obtain ⟨hpr, hsa, hc⟩ := mem_famB.1 hrt
+    show (Fin.snoc rt p : Fin (k' + 2) → ℕ) ∈ _
+    rw [mem_famB]
+    refine ⟨fun i => ?_, SieveP6Chain.strictAnti_snoc hsa
+      (fun u => lt_of_lt_of_le hp.2.1 (hsa.antitone (Fin.le_last u))), fun i => ?_⟩
+    · induction i using Fin.lastCases with
+      | last =>
+        simp only [Fin.snoc_last]
+        exact ⟨hp.2.1.le.trans (hpr _).1, hp.2.2⟩
+      | cast i =>
+        simp only [Fin.snoc_castSucc]
+        exact hpr i
+    · induction i using Fin.lastCases with
+      | last =>
+        simp only [Fin.snoc_last]
+        refine ⟨Nat.ceil_le.1 hp.1, lt_trans ?_ (hc (Fin.last k')).2⟩
+        exact_mod_cast hp.2.1
+      | cast i =>
+        simp only [Fin.snoc_castSucc]
+        exact hc i
+  · intro y hy
+    obtain ⟨hpr, hsa, hc⟩ := mem_famB.1 hy
+    rw [Finset.mem_sigma, SieveTree.mem_primesIco]
+    refine ⟨mem_famB.2 ⟨fun i => hpr i.castSucc, fun a b hab => hsa (Fin.castSucc_lt_castSucc_iff.2 hab),
+      fun i => ?_⟩, ?_, ?_, (hpr _).2⟩
+    · have := hc i.castSucc
+      simp only [Fin.snoc_castSucc] at this
+      exact this
+    · have := (hc (Fin.last _)).1
+      simp only [Fin.snoc_last] at this
+      exact Nat.ceil_le.2 this
+    · exact hsa (Fin.castSucc_lt_last _)
+  · rintro ⟨rt, p⟩ _
+    simp only [Fin.init_snoc, Fin.snoc_last]
+  · intro y _
+    simp only [Fin.snoc_init_self]
+  · intro _ _
+    rfl
+
+/-- A prime of a box is at least the ceiling of `x^{f/DEN}` for `f` at most its cell's lower end. -/
+theorem ceil_le_last {q : ℕ} (hx : 1 ≤ xq q) {k' : ℕ} {bx : Fin (k' + 1) → Cell} {rt : Fin (k' + 1) → ℕ}
+    (hrt : rt ∈ famB q bx) {f : ℕ} (hf : f ≤ (bx (Fin.last k')).1) :
+    ⌈xq q ^ ((f : ℝ) / DEN)⌉₊ ≤ rt (Fin.last k') :=
+  Nat.ceil_le.2 ((pow_mono hx hf).trans ((mem_famB.1 hrt).2.2 _).1)
 
 /-- **Buchstab's identity on a box**, with the floor `z = ⌈x^{f/DEN}⌉` for `f ≤ lo_last`: the term of the box is
 `Σ S(A_r, z)` minus the term of the box with the cell `(f, hi_last)` for one more prime. -/
@@ -492,78 +574,20 @@ theorem famI_buch (g : ℕ → ℝ) {q : ℕ} (hx : 1 ≤ xq q) {k' : ℕ} (bx :
     famI g (N1 q) (N2 q) (famB q bx) =
       famJ g (N1 q) (N2 q) ⌈xq q ^ ((f : ℝ) / DEN)⌉₊ (famB q bx) -
         famI g (N1 q) (N2 q) (famB q (Fin.snoc (α := fun _ => Cell) bx (f, (bx (Fin.last k')).2))) := by
-  set z := ⌈xq q ^ ((f : ℝ) / DEN)⌉₊ with hz
   have hpt : ∀ rt ∈ famB q bx, ∀ n ∈ Ioc (N1 q) (N2 q),
       g n * (if (∏ i, rt i) ∣ n ∧ SieveTree.rough (rt (Fin.last k')) n then 1 else 0) =
-        g n * (if (∏ i, rt i) ∣ n ∧ SieveTree.rough z n then 1 else 0) -
-          ∑ p ∈ SieveTree.primesIco z (rt (Fin.last k')),
+        g n * (if (∏ i, rt i) ∣ n ∧ SieveTree.rough ⌈xq q ^ ((f : ℝ) / DEN)⌉₊ n then 1 else 0) -
+          ∑ p ∈ SieveTree.primesIco ⌈xq q ^ ((f : ℝ) / DEN)⌉₊ (rt (Fin.last k')),
             g n * (if (∏ i, (Fin.snoc rt p : Fin (k' + 2) → ℕ) i) ∣ n ∧
               SieveTree.rough ((Fin.snoc rt p : Fin (k' + 2) → ℕ) (Fin.last _)) n then 1 else 0) := by
     intro rt hrt n hn
-    obtain ⟨hp, hsa, hc⟩ := mem_famB.1 hrt
-    have hzl : z ≤ rt (Fin.last k') := Nat.ceil_le.2 ((pow_mono hx hf).trans (hc _).1)
-    have hW : ∀ p : ℕ, p.Prime → p ∣ ∏ i, rt i → rt (Fin.last k') ≤ p := by
-      intro p hpp hd
-      obtain ⟨i, -, hi⟩ := (Prime.dvd_finsetProd_iff hpp.prime _).1 hd
-      rw [(Nat.prime_dvd_prime_iff_eq hpp (hp i).2).1 hi]
-      exact hsa.antitone (Fin.le_last i)
     have hn0 : n ≠ 0 := by have := (Finset.mem_Ioc.1 hn).1; omega
-    rw [buchstab_pt hn0 hzl hW, mul_sub, Finset.mul_sum]
-    simp only [prod_snoc, Fin.snoc_last]
-  have hbij : ∀ G : (Fin (k' + 2) → ℕ) → ℝ,
-      ∑ rt ∈ famB q bx, ∑ p ∈ SieveTree.primesIco z (rt (Fin.last k')), G (Fin.snoc rt p) =
-        ∑ y ∈ famB q (Fin.snoc (α := fun _ => Cell) bx (f, (bx (Fin.last k')).2)), G y := by
-    intro G
-    rw [Finset.sum_sigma']
-    refine Finset.sum_nbij' (fun x => Fin.snoc x.1 x.2) (fun y => ⟨Fin.init y, y (Fin.last _)⟩) ?_ ?_ ?_ ?_ ?_
-    · rintro ⟨rt, p⟩ h
-      rw [Finset.mem_sigma] at h
-      obtain ⟨hrt, hp⟩ := h
-      dsimp only at hrt hp
-      rw [SieveTree.mem_primesIco] at hp
-      obtain ⟨hpr, hsa, hc⟩ := mem_famB.1 hrt
-      show (Fin.snoc rt p : Fin (k' + 2) → ℕ) ∈ _
-      rw [mem_famB]
-      refine ⟨fun i => ?_, SieveP6Chain.strictAnti_snoc hsa
-        (fun u => lt_of_lt_of_le hp.2.1 (hsa.antitone (Fin.le_last u))), fun i => ?_⟩
-      · induction i using Fin.lastCases with
-        | last =>
-          simp only [Fin.snoc_last]
-          exact ⟨hp.2.1.le.trans (hpr _).1, hp.2.2⟩
-        | cast i =>
-          simp only [Fin.snoc_castSucc]
-          exact hpr i
-      · induction i using Fin.lastCases with
-        | last =>
-          simp only [Fin.snoc_last]
-          refine ⟨Nat.ceil_le.1 hp.1, lt_trans ?_ (hc (Fin.last k')).2⟩
-          exact_mod_cast hp.2.1
-        | cast i =>
-          simp only [Fin.snoc_castSucc]
-          exact hc i
-    · intro y hy
-      obtain ⟨hpr, hsa, hc⟩ := mem_famB.1 hy
-      rw [Finset.mem_sigma, SieveTree.mem_primesIco]
-      refine ⟨mem_famB.2 ⟨fun i => hpr i.castSucc, fun a b hab => hsa (Fin.castSucc_lt_castSucc_iff.2 hab),
-        fun i => ?_⟩, ?_, ?_, (hpr _).2⟩
-      · have := hc i.castSucc
-        simp only [Fin.snoc_castSucc] at this
-        exact this
-      · have := (hc (Fin.last _)).1
-        simp only [Fin.snoc_last] at this
-        exact Nat.ceil_le.2 this
-      · exact hsa (Fin.castSucc_lt_last _)
-    · rintro ⟨rt, p⟩ _
-      simp only [Fin.init_snoc, Fin.snoc_last]
-    · intro y _
-      simp only [Fin.snoc_init_self]
-    · intro _ _
-      rfl
+    exact buch_pt_box hrt (ceil_le_last hx hrt hf) g hn0
   unfold famI famJ
   rw [Finset.sum_congr rfl fun rt hrt => Finset.sum_congr rfl (hpt rt hrt)]
   simp only [Finset.sum_sub_distrib]
   congr 1
-  rw [← hbij]
+  rw [← famB_snoc_sum q bx f]
   refine Finset.sum_congr rfl fun rt _ => ?_
   exact Finset.sum_comm
 
@@ -1216,26 +1240,22 @@ theorem Ttop_gB_ge [RouteOK] {ε : ℝ} (hε : 0 < ε) : ∀ᶠ q : ℕ in atTop
 
 /-! ### The theorem -/
 
-/-- **Linnik's theorem at `x = q^L`, for large `q`, from a tree.** For a route with `RouteOK` and sound tests: if
-the terms at the floor `x^{f₀/DEN}` of the box with no prime pass the test, the tree is valid on the box of one prime
-with the cell `(f₀, DEN/2 + 1)`, for a term of the sign `−`, and its cost is below `K`, then there is `q₀` such that
-for `q ≥ 1` with `q ≥ q₀` and `a` a unit mod `q` there is a prime `p ≡ a (mod q)` with `q^L < p ≤ 2q^L`. -/
-theorem linnik_large_tree [RouteOK] {τ : Tests} (hτ : τ.Sound) (T : Tree) (f₀ : ℕ) (cfg₀ : Cfg)
-    (hf₀ : f₀ ≤ DEN / 2 + 1) (hroot : τ.okJ [] f₀ cfg₀ = true) (hok : ok τ T [(f₀, DEN / 2 + 1)] false = true)
-    (hcost : cost T [(f₀, DEN / 2 + 1)] < K) :
+/-- **Linnik's theorem at `x = q^L`, for large `q`, from a bound of the first term.** For a route with `RouteOK`:
+if the terms at the floor `x^{f₀/DEN}` of the box with no prime are evaluated, and the term of the box of one prime
+with the cell `(f₀, DEN/2 + 1)` is at most `(C + o(1))x/(φ(q) log x)` in `𝒜` minus the comparison set, with `C < 1`,
+then there is `q₀` such that for `q ≥ 1` with `q ≥ q₀` and `a` a unit mod `q` there is a prime `p ≡ a (mod q)` with
+`q^L < p ≤ 2q^L`. -/
+theorem linnik_large_bd [RouteOK] (f₀ : ℕ) (hf₀ : f₀ ≤ DEN / 2 + 1) (hJ0 : EvJ f₀ (boxFn [] 0 rfl)) {C : ℝ}
+    (hC1 : C < 1) (hBd : Bd false C (boxFn [(f₀, DEN / 2 + 1)] 1 rfl)) :
     ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
       ∃ p : ℕ, p.Prime ∧ (p : ZMod q) = a ∧ (q : ℝ) ^ L < p ∧ (p : ℝ) ≤ 2 * (q : ℝ) ^ L := by
   have hK := K_pos'
   have hL0 : 0 < L := L_pos
   have hD := DEN_pos'
-  set C : ℝ := (cost T [(f₀, DEN / 2 + 1)] : ℝ) / K with hC
-  have hC1 : C < 1 := by
-    rw [hC, div_lt_one hK]
-    exact_mod_cast hcost
   set ε : ℝ := (1 - C) / 8 with hε
   have hε0 : 0 < ε := by rw [hε]; linarith
-  have hJ := hτ.soundJ [] f₀ cfg₀ 0 rfl hroot ε hε0
-  have hI := sound hτ T [(f₀, DEN / 2 + 1)] false 0 rfl hok ε hε0
+  have hJ := hJ0 ε hε0
+  have hI := hBd ε hε0
   have hlog := SieveMain.ev_log_le (c := ε / L) (r := L - 1) (by positivity) (by linarith [two_lt_L])
   obtain ⟨q₀, hq₀⟩ := Filter.eventually_atTop.1 (hJ.and (hI.and ((Ttop_gB_ge hε0).and (big_ev.and hlog))))
   refine ⟨q₀, fun q _ hq a ha => ?_⟩
@@ -1319,6 +1339,27 @@ theorem linnik_large_tree [RouteOK] {τ : Tests} (hτ : τ.Sound) (T : Tree) (f�
   · have : (m : ℝ) ≤ N2 q := by exact_mod_cast hm.2
     exact this.trans (Nat.floor_le (by positivity))
 
+/-- **Linnik's theorem at `x = q^L`, for large `q`, from a tree.** For a route with `RouteOK` and sound tests: if
+the terms at the floor `x^{f₀/DEN}` of the box with no prime pass the test, the tree is valid on the box of one prime
+with the cell `(f₀, DEN/2 + 1)`, for a term of the sign `−`, and its cost is below `K`, then there is `q₀` such that
+for `q ≥ 1` with `q ≥ q₀` and `a` a unit mod `q` there is a prime `p ≡ a (mod q)` with `q^L < p ≤ 2q^L`. -/
+theorem linnik_large_tree [RouteOK] {τ : Tests} (hτ : τ.Sound) (T : Tree) (f₀ : ℕ) (cfg₀ : Cfg)
+    (hf₀ : f₀ ≤ DEN / 2 + 1) (hroot : τ.okJ [] f₀ cfg₀ = true) (hok : ok τ T [(f₀, DEN / 2 + 1)] false = true)
+    (hcost : cost T [(f₀, DEN / 2 + 1)] < K) :
+    ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∃ p : ℕ, p.Prime ∧ (p : ZMod q) = a ∧ (q : ℝ) ^ L < p ∧ (p : ℝ) ≤ 2 * (q : ℝ) ^ L := by
+  refine linnik_large_bd f₀ hf₀ (hτ.soundJ [] f₀ cfg₀ 0 rfl hroot) (C := (cost T [(f₀, DEN / 2 + 1)] : ℝ) / K) ?_
+    (sound hτ T [(f₀, DEN / 2 + 1)] false 0 rfl hok)
+  rw [div_lt_one K_pos']
+  exact_mod_cast hcost
+
+/-- **Linnik's theorem with exponent `L`, from a bound of the first term**: `linnik_large_bd` for every modulus. -/
+theorem linnik_bd [RouteOK] (f₀ : ℕ) (hf₀ : f₀ ≤ DEN / 2 + 1) (hJ0 : EvJ f₀ (boxFn [] 0 rfl)) {C : ℝ}
+    (hC1 : C < 1) (hBd : Bd false C (boxFn [(f₀, DEN / 2 + 1)] 1 rfl)) :
+    ∃ K' : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
+      ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K' * (q : ℝ) ^ L :=
+  SieveMain2.route_of_large L_pos.le (linnik_large_bd f₀ hf₀ hJ0 hC1 hBd)
+
 /-- **Linnik's theorem with exponent `L`, from a tree.** For a route with `RouteOK` and sound tests: if the terms
 at the floor `x^{f₀/DEN}` of the box with no prime pass the test, the tree is valid on the box of one prime with the
 cell `(f₀, DEN/2 + 1)`, for a term of the sign `−`, and its cost is below `K`, then there is `K'` such that for every
@@ -1342,4 +1383,5 @@ theorem linnik_tree_at (R : Route) (hR : @RouteOK R) {τ : Tests} (hτ : @Tests.
 end SieveAd
 
 #print axioms SieveAd.linnik_tree
+#print axioms SieveAd.linnik_bd
 #print axioms SieveAd.linnik_tree_at

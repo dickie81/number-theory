@@ -49,16 +49,20 @@ theorem floor_le {q : ℕ} (hx : 1 ≤ xq q) {k : ℕ} {bx : Fin k → Cell} {rt
   rw [z₀_eq]
   exact Nat.ceil_le.2 ((pow_mono hx (hV i)).trans (hc i).1)
 
-/-- **A box surely evaluable.** The term of a box of at most 13 primes, with cells in `[V, DEN]`, that is surely
-evaluable is evaluated. -/
-theorem evI_win (hII : TypeIIAt) {k' : ℕ} (bx : Fin (k' + 1) → Cell) (hk : k' + 1 ≤ 13)
-    (hb : ∀ i, V ≤ (bx i).1 ∧ (bx i).1 ≤ DEN ∧ (bx i).2 ≤ DEN) (hsE : surelyEval (List.ofFn bx) = true) :
-    EvI bx := by
+/-- **A box surely evaluable, under more atoms.** The term of a box with cells in `[V, DEN]` that is surely
+evaluable is evaluated under `m` more atoms, uniformly in the atoms, when the box's atoms and those are at most
+`40`. -/
+theorem evI_winE (hII : TypeIIAt) {k' : ℕ} (bx : Fin (k' + 1) → Cell)
+    (hb : ∀ i, V ≤ (bx i).1 ∧ (bx i).1 ≤ DEN ∧ (bx i).2 ≤ DEN) (hsE : surelyEval (List.ofFn bx) = true) {m : ℕ}
+    (hm : 3 * (k' + 1) + m ≤ 40) :
+    ∀ η : ℝ, 0 < η → ∀ᶠ q : ℕ in atTop, ∀ a : ZMod q, IsUnit a → ∀ E : List (Atom (k' + 1)), E.length ≤ m →
+      ThrOK q E → |dIP q a bx (fun rt => ∀ A ∈ E, A.sem rt)| ≤ (q.totient : ℝ)⁻¹ * (η * Xq q) := by
   intro η hη
   obtain ⟨d1, hd1, q1, h1⟩ := TL_spec a0 hII a0_pos k'
   obtain ⟨d2, hd2, q2, h2⟩ := TR_spec a0 hII a0_pos k'
   have hd : 0 < min d1 d2 := lt_min hd1 hd2
   filter_upwards [largeQ_ev, le_Xq hd hη, eventually_ge_atTop q1, eventually_ge_atTop q2] with q hL hX hq1 hq2 a ha
+    E hEl hEt
   have hq3 := hL.q3
   have : NeZero q := ⟨by omega⟩
   have hq1' : (1 : ℝ) ≤ q := by exact_mod_cast (show 1 ≤ q by omega)
@@ -74,24 +78,37 @@ theorem evI_win (hII : TypeIIAt) {k' : ℕ} (bx : Fin (k' + 1) → Cell) (hk : k
   have hTR : TRat q a k' ((q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - min d1 d2)) :=
     fun spec U W₀ W₁ hlen hthr hreg hW₁ hP₁ hP₂ =>
       (h2 q hq2 a ha spec U W₀ W₁ hlen hthr hreg hW₁ hP₁ hP₂).trans (mul_le_mul_of_nonneg_left hm2 hφ)
-  have hmain := box_leaf_gen hL hTL hTR (spec := specB q bx) (by have := specB_length q bx; omega)
-    (thrOK_specB (by omega) L_pos.le bx fun i => ⟨(hb i).2.1, (hb i).2.2⟩) bx
+  have hmain := box_leaf_gen hL hTL hTR (spec := specB q bx ++ E)
+    (by rw [List.length_append]; have := specB_length q bx; omega)
+    (thrOK_append (thrOK_specB (by omega) L_pos.le bx fun i => ⟨(hb i).2.1, (hb i).2.2⟩) hEt) bx
     (fun rt _ hs => by
-      obtain ⟨hsa, hc⟩ := (sem_specB q bx rt).1 hs
+      obtain ⟨hsa, hc⟩ := (sem_specB q bx rt).1 fun A hA => hs A (List.mem_append_left _ hA)
       exact ⟨hsa, fun i => floor_le hx1 (fun i => (hb i).1) hc i, hc⟩) hsE
-  unfold dI
-  rw [famB_eq_famSet]
+  rw [dIP_eq_famSet]
   exact hmain.trans (mul_le_mul_of_nonneg_left hX hφ)
 
-/-- **A box that the bilinear rule passes.** The terms at the floor `x^{V/DEN}` of a box of at most 13 primes, with
-cells in `[V, DEN]`, that `ibOK` passes are evaluated. -/
-theorem evJ_win [SieveCert.IBPar] [IBFits] (hII : TypeIIAt) {k : ℕ} (bx : Fin k → Cell) (hk : k ≤ 13)
-    (hb : ∀ i, V ≤ (bx i).1 ∧ (bx i).1 ≤ DEN ∧ (bx i).2 ≤ DEN) (hib : ibOK (List.ofFn bx) = true) :
-    EvJ V bx := by
+/-- **A box surely evaluable.** The term of a box of at most 13 primes, with cells in `[V, DEN]`, that is surely
+evaluable is evaluated. -/
+theorem evI_win (hII : TypeIIAt) {k' : ℕ} (bx : Fin (k' + 1) → Cell) (hk : k' + 1 ≤ 13)
+    (hb : ∀ i, V ≤ (bx i).1 ∧ (bx i).1 ≤ DEN ∧ (bx i).2 ≤ DEN) (hsE : surelyEval (List.ofFn bx) = true) :
+    EvI bx := by
+  intro η hη
+  filter_upwards [evI_winE hII bx hb hsE (m := 0) (by omega) η hη] with q hq a ha
+  have h := hq a ha [] le_rfl (thrOK_nil q)
+  rwa [dIP_nil] at h
+
+/-- **A box that the bilinear rule passes, under more atoms.** The terms at the floor `x^{V/DEN}` of a box with
+cells in `[V, DEN]` that `ibOK` passes are evaluated under `m` more atoms, uniformly in the atoms, when the box's
+atoms and those are at most `40`. -/
+theorem evJ_winE [SieveCert.IBPar] [IBFits] (hII : TypeIIAt) {k : ℕ} (bx : Fin k → Cell)
+    (hb : ∀ i, V ≤ (bx i).1 ∧ (bx i).1 ≤ DEN ∧ (bx i).2 ≤ DEN) (hib : ibOK (List.ofFn bx) = true) {m : ℕ}
+    (hm : 3 * k + m ≤ 40) :
+    ∀ η : ℝ, 0 < η → ∀ᶠ q : ℕ in atTop, ∀ a : ZMod q, IsUnit a → ∀ E : List (Atom k), E.length ≤ m →
+      ThrOK q E → |dJP q a V bx (fun rt => ∀ A ∈ E, A.sem rt)| ≤ (q.totient : ℝ)⁻¹ * (η * Xq q) := by
   intro η hη
   have hL0 : 0 < L := L_pos
   obtain ⟨δ, hδ, q₀, h⟩ := P6IB_box hII bx hib (η := η / (2 * L)) (by positivity)
-  filter_upwards [largeQ_ev, le_Xq hδ (half_pos hη), eventually_ge_atTop q₀] with q hL hX hq a ha
+  filter_upwards [largeQ_ev, le_Xq hδ (half_pos hη), eventually_ge_atTop q₀] with q hL hX hq a ha E hEl hEt
   have hq3 := hL.q3
   have : NeZero q := ⟨by omega⟩
   have hq0 : (0 : ℝ) < q := by exact_mod_cast (show 0 < q by omega)
@@ -99,13 +116,12 @@ theorem evJ_win [SieveCert.IBPar] [IBFits] (hII : TypeIIAt) {k : ℕ} (bx : Fin 
   have hx1 : 1 ≤ xq q := Real.one_le_rpow hq1' hL0.le
   have hφ0 : (0 : ℝ) < q.totient := by exact_mod_cast Nat.totient_pos.2 (show 0 < q by omega)
   have hφ : (0 : ℝ) ≤ (q.totient : ℝ)⁻¹ := by positivity
-  have hmain := h q hq a ha (specB q bx) (by have := specB_length q bx; omega)
-    (thrOK_specB (by omega) hL0.le bx fun i => ⟨(hb i).2.1, (hb i).2.2⟩)
+  have hmain := h q hq a ha (specB q bx ++ E) (by rw [List.length_append]; have := specB_length q bx; omega)
+    (thrOK_append (thrOK_specB (by omega) hL0.le bx fun i => ⟨(hb i).2.1, (hb i).2.2⟩) hEt)
     (fun rt _ hs => by
-      obtain ⟨hsa, hc⟩ := (sem_specB q bx rt).1 hs
+      obtain ⟨hsa, hc⟩ := (sem_specB q bx rt).1 fun A hA => hs A (List.mem_append_left _ hA)
       exact ⟨hsa, fun i => floor_le hx1 (fun i => (hb i).1) hc i, hc⟩)
-  unfold dJ
-  rw [famB_eq_famSet, ← z₀_eq]
+  rw [dJP_eq_famSet, ← z₀_eq]
   refine hmain.trans ?_
   have hlogq : 0 < Real.log q := Real.log_pos (by exact_mod_cast (show 1 < q by omega))
   have hlogx : Real.log ((q : ℝ) ^ L) = L * Real.log q := Real.log_rpow hq0 _
@@ -121,6 +137,16 @@ theorem evJ_win [SieveCert.IBPar] [IBFits] (hII : TypeIIAt) {k : ℕ} (bx : Fin 
       (q.totient : ℝ)⁻¹ * (η / 2 * Xq q) + (q.totient : ℝ)⁻¹ * (η / 2 * Xq q) := by ring
   linarith
 
+/-- **A box that the bilinear rule passes.** The terms at the floor `x^{V/DEN}` of a box of at most 13 primes, with
+cells in `[V, DEN]`, that `ibOK` passes are evaluated. -/
+theorem evJ_win [SieveCert.IBPar] [IBFits] (hII : TypeIIAt) {k : ℕ} (bx : Fin k → Cell) (hk : k ≤ 13)
+    (hb : ∀ i, V ≤ (bx i).1 ∧ (bx i).1 ≤ DEN ∧ (bx i).2 ≤ DEN) (hib : ibOK (List.ofFn bx) = true) :
+    EvJ V bx := by
+  intro η hη
+  filter_upwards [evJ_winE hII bx hb hib (m := 0) (by omega) η hη] with q hq a ha
+  have h := hq a ha [] le_rfl (thrOK_nil q)
+  rwa [dJP_nil] at h
+
 /-- **The window's tests are sound.** -/
 theorem winTests_sound [SieveCert.IBPar] [IBFits] (hII : TypeIIAt) : (winTests).Sound := by
   refine ⟨fun bl cfg k' h hok => ?_, fun bl f cfg k h hok => ?_⟩
@@ -134,5 +160,19 @@ theorem winTests_sound [SieveCert.IBPar] [IBFits] (hII : TypeIIAt) : (winTests).
     subst hfV
     have hc := (cellsIn_iff V bl).1 hcells
     exact evJ_win hII _ (by omega) (fun i => hc _ (boxFn_mem bl _ h i)) (by rw [ofFn_boxFn]; exact hib)
+
+/-- **The window's tests are sound under two more atoms**, on the boxes of at most twelve primes. -/
+theorem winTests_soundX [SieveCert.IBPar] [IBFits] (hII : TypeIIAt) : (winTests).SoundX := by
+  refine ⟨fun bl cfg k' h hk hok => ?_, fun bl f cfg k h hk hok => ?_⟩
+  · simp only [winTests, okIW, Bool.and_eq_true, Nat.ble_eq] at hok
+    obtain ⟨⟨hlen, hcells⟩, hsE⟩ := hok
+    have hc := (cellsIn_iff V bl).1 hcells
+    exact evI_winE hII _ (fun i => hc _ (boxFn_mem bl _ h i)) (by rw [ofFn_boxFn]; exact hsE) (m := 2) (by omega)
+  · simp only [winTests, okJW, Bool.and_eq_true, Nat.ble_eq] at hok
+    obtain ⟨⟨⟨hf, hlen⟩, hcells⟩, hib⟩ := hok
+    have hfV : f = V := Nat.eq_of_beq_eq_true hf
+    subst hfV
+    have hc := (cellsIn_iff V bl).1 hcells
+    exact evJ_winE hII _ (fun i => hc _ (boxFn_mem bl _ h i)) (by rw [ofFn_boxFn]; exact hib) (m := 2) (by omega)
 
 end SieveAd

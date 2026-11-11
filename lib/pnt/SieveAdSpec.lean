@@ -10,14 +10,17 @@ the comparisons of atoms (`SieveChain.RTg`). The family of a box (`SieveAd.famB`
   and `p_i < x^{hi_i/DEN}`, and for each two consecutive primes `p_{i+1} < p_i`. They are at most `3k`.
 * `sem_specB`: a tuple satisfies them exactly when it is strictly decreasing with its primes in their cells;
   `famB_eq_famSet`: so the family of the box is `famSet k N₂ (specB q bx)`.
+* `famB_filter_eq_famSet`, `dIP_eq_famSet`, `dJP_eq_famSet`: the tuples of the box that satisfy more atoms `E`
+  are `famSet k N₂ (specB q bx ++ E)`;
+  `dIP_nil`, `dJP_nil`: with no more atom, the terms are the box's.
 * `thrOK_specB`: for `x ≥ 1` and cells with ends at most `DEN`, the atoms' thresholds lie in `[1, q^{L+1}]`
-  (`SieveLeaves.ThrOK`).
+  (`SieveLeaves.ThrOK`); `thrOK_append`, `thrOK_nil`.
 * `ofFn_boxFn`: the cells of a list, by the prime's index, are the list reversed.
 * `le_Xq`: for `δ > 0` and `η > 0`, `q^{L−δ} ≤ η·x/log x` for large `q`.
 
-The file imports `SieveAdTree.lean`.
+The file imports `SieveAdFilt.lean`.
 -/
-import SieveAdTree
+import SieveAdFilt
 
 open Real Finset Filter SieveDecomp SieveLeaves SieveQ SieveRoute
 
@@ -80,6 +83,45 @@ theorem sem_specB (q : ℕ) {k : ℕ} (bx : Fin k → Cell) (rt : Fin k → ℕ)
 theorem famB_eq_famSet (q : ℕ) {k : ℕ} (bx : Fin k → Cell) : famB q bx = famSet k (N2 q) (specB q bx) := by
   ext rt
   rw [mem_famB, mem_famSet, sem_specB]
+
+/-- The tuples of a box that satisfy more atoms are the family of the box's atoms and those. -/
+theorem famB_filter_eq_famSet (q : ℕ) {k : ℕ} (bx : Fin k → Cell) (E : List (Atom k))
+    [DecidablePred fun rt : Fin k → ℕ => ∀ A ∈ E, A.sem rt] :
+    (famB q bx).filter (fun rt => ∀ A ∈ E, A.sem rt) = famSet k (N2 q) (specB q bx ++ E) := by
+  ext rt
+  rw [Finset.mem_filter, mem_famB, mem_famSet, List.forall_mem_append, sem_specB]
+  tauto
+
+/-- The term of a box under more atoms is that of the family of the box's atoms and those. -/
+theorem dIP_eq_famSet (q : ℕ) (a : ZMod q) {k' : ℕ} (bx : Fin (k' + 1) → Cell) (E : List (Atom (k' + 1))) :
+    dIP q a bx (fun rt => ∀ A ∈ E, A.sem rt) =
+      famI (gA q a) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) (specB q bx ++ E)) -
+        famI (gB q) (N1 q) (N2 q) (famSet (k' + 1) (N2 q) (specB q bx ++ E)) := by
+  unfold dIP
+  rw [famB_filter_eq_famSet]
+
+/-- The terms at a floor of a box under more atoms are those of the family of the box's atoms and those. -/
+theorem dJP_eq_famSet (q : ℕ) (a : ZMod q) (f : ℕ) {k : ℕ} (bx : Fin k → Cell) (E : List (Atom k)) :
+    dJP q a f bx (fun rt => ∀ A ∈ E, A.sem rt) =
+      famJ (gA q a) (N1 q) (N2 q) ⌈xq q ^ ((f : ℝ) / DEN)⌉₊ (famSet k (N2 q) (specB q bx ++ E)) -
+        famJ (gB q) (N1 q) (N2 q) ⌈xq q ^ ((f : ℝ) / DEN)⌉₊ (famSet k (N2 q) (specB q bx ++ E)) := by
+  unfold dJP
+  rw [famB_filter_eq_famSet]
+
+/-- With no more atom, the term under the atoms is the box's. -/
+theorem dIP_nil (q : ℕ) (a : ZMod q) {k' : ℕ} (bx : Fin (k' + 1) → Cell) :
+    dIP q a bx (fun rt => ∀ A ∈ ([] : List (Atom (k' + 1))), A.sem rt) = dI q a bx :=
+  (dIP_congr fun rt _ => by simp).trans (dIP_true q a bx)
+
+/-- With no more atom, the terms at a floor under the atoms are the box's. -/
+theorem dJP_nil (q : ℕ) (a : ZMod q) (f : ℕ) {k : ℕ} (bx : Fin k → Cell) :
+    dJP q a f bx (fun rt => ∀ A ∈ ([] : List (Atom k)), A.sem rt) = dJ q a f bx :=
+  (dJP_congr fun rt _ => by simp).trans (dJP_true q a f bx)
+
+theorem thrOK_append {q : ℕ} {k : ℕ} {s E : List (Atom k)} (h1 : ThrOK q s) (h2 : ThrOK q E) : ThrOK q (s ++ E) :=
+  fun A hA => (List.mem_append.1 hA).elim (h1 A) (h2 A)
+
+theorem thrOK_nil (q : ℕ) {k : ℕ} : ThrOK q ([] : List (Atom k)) := fun A hA => by simp at hA
 
 /-- For `x ≥ 1` and cells with ends at most `DEN`, the thresholds of the box's atoms lie in `[1, q^{L+1}]`. -/
 theorem thrOK_specB {q : ℕ} (hq : 1 ≤ q) (hL : 0 ≤ L) {k : ℕ} (bx : Fin k → Cell)

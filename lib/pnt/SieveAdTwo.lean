@@ -20,6 +20,8 @@ the exponent `κn` of `q`.
   `s0` and the rest `sr`, the term of the box is evaluated (`SieveAd.EvI`), the second variable being the other
   primes and the cofactor.
 * `twoTests_sound`: so the tests of the estimate in two variables are sound (`SieveAd.Tests.Sound`).
+* `evJ_twoE`, `evI_twoE`, `twoTests_soundX`: the same under more atoms, uniformly in the atoms, while the box's
+  atoms and those are at most `40` (`SieveAd.Tests.SoundX`).
 
 The file imports `SieveAdSpec.lean`, `SieveAdTwoDefs.lean` and `SieveTwoComp.lean`.
 -/
@@ -240,11 +242,14 @@ theorem chain2_exp {Rg : ℝ → ℝ → Prop} (hII : SieveFamilyTwo.TypeIITwoAt
   · have := Nat.ceil_le.2 h3
     omega
 
-/-- **The comparison in two variables on a box.** If `chkJ2` passes the box at the floor `f`, for the sets `s0`,
-`sr`, `s1`, the flag `e`, the window `[u, v]` and the growth `t`, then the terms of the box at the floor `x^{f/DEN}`
-are evaluated. -/
-theorem evJ_two (bl : List Cell) (k : ℕ) (h : bl.length = k) (f s0 sr s1 : ℕ) (e : Bool) (u v t : ℕ)
-    (hok : chkJ2 bl f s0 sr s1 e u v t = true) : EvJ f (boxFn bl k h) := by
+/-- **The comparison in two variables on a box, under more atoms.** If `chkJ2` passes the box at the floor `f`,
+for the sets `s0`, `sr`, `s1`, the flag `e`, the window `[u, v]` and the growth `t`, then the terms of the box at the
+floor `x^{f/DEN}` are evaluated under `m` more atoms, uniformly in the atoms, when the box's atoms and those are at
+most `40`. -/
+theorem evJ_twoE (bl : List Cell) (k : ℕ) (h : bl.length = k) (f s0 sr s1 : ℕ) (e : Bool) (u v t : ℕ)
+    (hok : chkJ2 bl f s0 sr s1 e u v t = true) {m : ℕ} (hm : 3 * min k 13 + m ≤ 40) :
+    ∀ η : ℝ, 0 < η → ∀ᶠ q : ℕ in atTop, ∀ a : ZMod q, IsUnit a → ∀ E : List (Atom k), E.length ≤ m →
+      ThrOK q E → |dJP q a f (boxFn bl k h) (fun rt => ∀ A ∈ E, A.sem rt)| ≤ (q.totient : ℝ)⁻¹ * (η * Xq q) := by
   simp only [chkJ2, Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq] at hok
   obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hf0, hlen⟩, hcells⟩, hland⟩, z1⟩, z2⟩, z3⟩, z4⟩, z5⟩, z6⟩, p1⟩, p2⟩, p3⟩, p4⟩, p5⟩, p6⟩ := hok
   have hland' : s0 &&& sr = 0 := Nat.eq_of_beq_eq_true hland
@@ -408,6 +413,7 @@ theorem evJ_two (bl : List Cell) (k : ℕ) (h : bl.length = k) (f s0 sr s1 : ℕ
     (fun i => κ * ((bx i).1 : ℝ)) (fun i => κ * ((bx i).2 : ℝ)) (mset k s0) (mset k sr) (mset k s1) hdisj hSr e
     hu huv hρ₁0 hρ hvρ hρlo hρhi hκ hzone hlo hhi hD₁ hD₂ (η := η / (2 * L)) (by positivity)
   filter_upwards [eventually_ge_atTop q₀, eventually_ge_atTop 2, le_Xq hδ (half_pos hη)] with q hq hq2 hX a ha
+    E hEl hEt
   have : NeZero q := ⟨by omega⟩
   have hq1 : 1 ≤ q := by omega
   have hq0 : (0 : ℝ) < q := by exact_mod_cast (show 0 < q by omega)
@@ -415,12 +421,13 @@ theorem evJ_two (bl : List Cell) (k : ℕ) (h : bl.length = k) (f s0 sr s1 : ℕ
   have hx1 : 1 ≤ xq q := Real.one_le_rpow hq1' hL0.le
   have hφ0 : (0 : ℝ) < q.totient := by exact_mod_cast Nat.totient_pos.2 (show 0 < q by omega)
   have hφ : (0 : ℝ) ≤ (q.totient : ℝ)⁻¹ := by positivity
-  have hthr : ThrOK q (specB q bx) :=
-    thrOK_specB hq1 hL0.le bx fun i => ⟨(hbxc i).2.1.trans (hbxc i).2.2, (hbxc i).2.2⟩
-  have hmain := hq₀ q hq a ha ((specB q bx).map Atom.toG)
-    (by rw [List.length_map]; have := specB_length q bx; omega) (c_le_of_thrOK hq1 hthr)
+  have hthr : ThrOK q (specB q bx ++ E) :=
+    thrOK_append (thrOK_specB hq1 hL0.le bx fun i => ⟨(hbxc i).2.1.trans (hbxc i).2.2, (hbxc i).2.2⟩) hEt
+  have hmain := hq₀ q hq a ha ((specB q bx ++ E).map Atom.toG)
+    (by rw [List.length_map, List.length_append]; have := specB_length q bx; omega) (c_le_of_thrOK hq1 hthr)
     (fun rt hp hΩ => by
-      obtain ⟨hsa, hcc⟩ := (sem_specB q bx rt).1 ((holds_iff_sem hthr hp).1 hΩ)
+      obtain ⟨hsa, hcc⟩ := (sem_specB q bx rt).1
+        fun A hA => (holds_iff_sem hthr hp).1 hΩ A (List.mem_append_left _ hA)
       refine ⟨hsa, fun i => ?_, fun i => ⟨?_, ?_⟩⟩
       · rw [hκdef, qpow_eq]
         exact Nat.ceil_le.2 ((pow_mono hx1 (hbxc i).1).trans (hcc i).1)
@@ -431,8 +438,7 @@ theorem evJ_two (bl : List Cell) (k : ℕ) (h : bl.length = k) (f s0 sr s1 : ℕ
         rw [hκdef, qpow_eq]
         exact (hcc i).2.le)
   rw [RTg_eq_of_thrOK hthr, sum_dw_famJ, Complex.norm_real, Real.norm_eq_abs] at hmain
-  unfold dJ
-  rw [famB_eq_famSet, ← qpow_eq q f, ← hκdef]
+  rw [dJP_eq_famSet, ← qpow_eq q f, ← hκdef]
   refine hmain.trans ?_
   have hlogq : 0 < Real.log q := Real.log_pos (by exact_mod_cast (show 1 < q by omega))
   have hlogx : Real.log ((q : ℝ) ^ L) = L * Real.log q := Real.log_rpow hq0 _
@@ -447,6 +453,16 @@ theorem evJ_two (bl : List Cell) (k : ℕ) (h : bl.length = k) (f s0 sr s1 : ℕ
       (q.totient : ℝ)⁻¹ * (η / 2 * Xq q) + (q.totient : ℝ)⁻¹ * (η / 2 * Xq q) := by ring
   linarith
 
+/-- **The comparison in two variables on a box.** If `chkJ2` passes the box at the floor `f`, for the sets `s0`,
+`sr`, `s1`, the flag `e`, the window `[u, v]` and the growth `t`, then the terms of the box at the floor `x^{f/DEN}`
+are evaluated. -/
+theorem evJ_two (bl : List Cell) (k : ℕ) (h : bl.length = k) (f s0 sr s1 : ℕ) (e : Bool) (u v t : ℕ)
+    (hok : chkJ2 bl f s0 sr s1 e u v t = true) : EvJ f (boxFn bl k h) := by
+  intro η hη
+  filter_upwards [evJ_twoE bl k h f s0 sr s1 e u v t hok (m := 0) (by omega) η hη] with q hq a ha
+  have h' := hq a ha [] le_rfl (thrOK_nil q)
+  rwa [dJP_nil] at h'
+
 omit [Route] [RouteOK] [SieveCert.IBPar] [IBFits] in
 /-- The product of the primes of a set, for primes with `q^{κ·lo_i} ≤ p_i ≤ q^{κ·hi_i}`. -/
 theorem prod_set_bounds {q : ℕ} (hq0 : (0 : ℝ) < q) (κ : ℝ) {k : ℕ} (bx : Fin k → Cell) {rt : Fin k → ℕ}
@@ -460,10 +476,14 @@ theorem prod_set_bounds {q : ℕ} (hq0 : (0 : ℝ) < q) (κ : ℝ) {k : ℕ} (bx
   · rw [Nat.cast_sum, Finset.mul_sum, Real.rpow_sum_of_pos hq0, Nat.cast_prod]
     exact Finset.prod_le_prod₀ (fun i _ => Nat.cast_nonneg _) fun i _ => (hcc i).2
 
-/-- **A box evaluated by the estimate in two variables.** If `chkI2` passes the box, for the first variable `s0`
-and the rest `sr`, the term of the box is evaluated. -/
-theorem evI_two (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (s0 sr : ℕ) (hok : chkI2 bl s0 sr = true) :
-    EvI (boxFn bl (k' + 1) h) := by
+/-- **A box evaluated by the estimate in two variables, under more atoms.** If `chkI2` passes the box, for the
+first variable `s0` and the rest `sr`, the term of the box is evaluated under `m` more atoms, uniformly in the atoms,
+when the box's atoms and those are at most `40`. -/
+theorem evI_twoE (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (s0 sr : ℕ) (hok : chkI2 bl s0 sr = true)
+    {m : ℕ} (hm : 3 * min (k' + 1) 13 + m ≤ 40) :
+    ∀ η : ℝ, 0 < η → ∀ᶠ q : ℕ in atTop, ∀ a : ZMod q, IsUnit a → ∀ E : List (Atom (k' + 1)), E.length ≤ m →
+      ThrOK q E →
+        |dIP q a (boxFn bl (k' + 1) h) (fun rt => ∀ A ∈ E, A.sem rt)| ≤ (q.totient : ℝ)⁻¹ * (η * Xq q) := by
   simp only [chkI2, Bool.and_eq_true, Nat.ble_eq] at hok
   obtain ⟨⟨⟨⟨⟨⟨⟨⟨hlen, hcells⟩, hland⟩, z1⟩, z2⟩, z3⟩, z4⟩, z5⟩, z6⟩ := hok
   have hland' : s0 &&& sr = 0 := Nat.eq_of_beq_eq_true hland
@@ -556,19 +576,20 @@ theorem evI_two (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (s0 sr : �
     (by positivity) k' 40 (Λ₁ := L + 1) (by linarith) (u := κ * (u : ℝ)) (v := κ * (v : ℝ)) (ρ₁ := κ * (ρ₁ : ℝ))
     (ρ₂ := κ * (ρ₂ : ℝ)) (ε := κ) (by linarith) (mul_le_mul_of_nonneg_left (cast huv0) hκ.le) (by positivity)
     (mul_le_mul_of_nonneg_left (cast hρ12) hκ.le) (by linarith) hκ hzone
-  filter_upwards [eventually_ge_atTop q₀, eventually_ge_atTop 2, le_Xq hδ hη] with q hq hq2 hX a ha
+  filter_upwards [eventually_ge_atTop q₀, eventually_ge_atTop 2, le_Xq hδ hη] with q hq hq2 hX a ha E hEl hEt
   have : NeZero q := ⟨by omega⟩
   have hq1 : 1 ≤ q := by omega
   have hq0 : (0 : ℝ) < q := by exact_mod_cast (show 0 < q by omega)
   have hq1' : (1 : ℝ) ≤ q := by exact_mod_cast hq1
   have hx1 : 1 ≤ xq q := Real.one_le_rpow hq1' hL0.le
   have hφ : (0 : ℝ) ≤ (q.totient : ℝ)⁻¹ := by positivity
-  have hthr : ThrOK q (specB q bx) :=
-    thrOK_specB hq1 hL0.le bx fun i => ⟨(hbxc i).2.1.trans (hbxc i).2.2, (hbxc i).2.2⟩
-  have hmain := hq₀ q hq a ha (mset (k' + 1) s0) (mset (k' + 1) sr) ((specB q bx).map Atom.toG) hdisj hSr
-    (by rw [List.length_map]; have := specB_length q bx; omega) (c_le_of_thrOK hq1 hthr)
+  have hthr : ThrOK q (specB q bx ++ E) :=
+    thrOK_append (thrOK_specB hq1 hL0.le bx fun i => ⟨(hbxc i).2.1.trans (hbxc i).2.2, (hbxc i).2.2⟩) hEt
+  have hmain := hq₀ q hq a ha (mset (k' + 1) s0) (mset (k' + 1) sr) ((specB q bx ++ E).map Atom.toG) hdisj hSr
+    (by rw [List.length_map, List.length_append]; have := specB_length q bx; omega) (c_le_of_thrOK hq1 hthr)
     (fun rt hp hΩ => by
-      obtain ⟨hsa, hcc⟩ := (sem_specB q bx rt).1 ((holds_iff_sem hthr hp).1 hΩ)
+      obtain ⟨hsa, hcc⟩ := (sem_specB q bx rt).1
+        fun A hA => (holds_iff_sem hthr hp).1 hΩ A (List.mem_append_left _ hA)
       have hcc' : ∀ i, (q : ℝ) ^ (κ * ((bx i).1 : ℝ)) ≤ rt i ∧ (rt i : ℝ) ≤ (q : ℝ) ^ (κ * ((bx i).2 : ℝ)) :=
         fun i => by
           rw [hκdef, qpow_eq, qpow_eq]
@@ -581,9 +602,17 @@ theorem evI_two (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (s0 sr : �
       rw [hκdef, qpow_eq]
       exact (pow_mono hx1 (hbxc i).1).trans (hcc i).1)
   rw [RTg_eq_of_thrOK hthr, sum_dw_famI, Complex.norm_real, Real.norm_eq_abs] at hmain
-  unfold dI
-  rw [famB_eq_famSet]
+  rw [dIP_eq_famSet]
   exact hmain.trans (mul_le_mul_of_nonneg_left hX hφ)
+
+/-- **A box evaluated by the estimate in two variables.** If `chkI2` passes the box, for the first variable `s0`
+and the rest `sr`, the term of the box is evaluated. -/
+theorem evI_two (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (s0 sr : ℕ) (hok : chkI2 bl s0 sr = true) :
+    EvI (boxFn bl (k' + 1) h) := by
+  intro η hη
+  filter_upwards [evI_twoE bl k' h s0 sr hok (m := 0) (by omega) η hη] with q hq a ha
+  have h' := hq a ha [] le_rfl (thrOK_nil q)
+  rwa [dIP_nil] at h'
 
 /-- **The test of a box by the estimate in two variables is sound.** -/
 theorem evI_okI2 (bl : List Cell) (cfg : Cfg) (k' : ℕ) (h : bl.length = k' + 1) (hok : okI2 bl cfg = true) :
@@ -600,6 +629,13 @@ theorem evJ_okJ2 (bl : List Cell) (f : ℕ) (cfg : Cfg) (k : ℕ) (h : bl.length
 theorem twoTests_sound : (twoTests).Sound :=
   ⟨fun bl cfg k' h hok => evI_okI2 bl cfg k' h hok, fun bl f cfg k h hok => evJ_okJ2 bl f cfg k h hok⟩
 
+/-- **The tests of the estimate in two variables are sound under two more atoms**, on the boxes of at most twelve
+primes. -/
+theorem twoTests_soundX : (twoTests).SoundX :=
+  ⟨fun bl cfg k' h hk hok => evI_twoE bl k' h cfg.s0 cfg.sr hok (m := 2) (by omega),
+    fun bl f cfg k h hk hok => evJ_twoE bl k h f cfg.s0 cfg.sr cfg.s1 cfg.e _ _ _ hok (m := 2) (by omega)⟩
+
 end SieveAd
 
 #print axioms SieveAd.twoTests_sound
+#print axioms SieveAd.twoTests_soundX
