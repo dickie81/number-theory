@@ -5,7 +5,8 @@
 The route is L = a/b with the window [W1, W2]/10^5 (the grid's U1 = ceil(W1 DEN/10^5), U2 = floor(W2 DEN/10^5), as
 in mirror8.py), and the tests are the Lean definitions read line by line:
 
-  * `vanishOK`, `dropOK`, `dropCost` (SieveAdDefs.lean), with `omKw` of SieveCertDefs.lean;
+  * `vanishOK`, `dropOK`, `dropCost`, `dropBOK`, `dropBCost` (SieveAdDefs.lean), with `omKw` of
+    SieveCertDefs.lean;
   * `okIW`, `okJW` (SieveAdWinDefs.lean): a box surely evaluable, and a box that the bilinear rule `ibOK` passes
     at the floor V = U2 - U1;
   * `okI2`, `okJ2` (SieveAdTwoDefs.lean): the estimate in two variables on Zone7d, for a box and for the
@@ -14,23 +15,23 @@ in mirror8.py), and the tests are the Lean definitions read line by line:
 A box is a list of cells (lo, hi), the newest prime first, in units of 1/DEN of exponents of x. The search is the
 decomposition of harman_sieve.py without role reversal: a term is evaluated if a test passes; otherwise Buchstab's
 identity at the largest floor at which the comparison is evaluated, the new prime's range cut into cells of side
-h (coarser from the fifth prime on); a term of the sign + may be dropped instead, at `dropCost`. A term of the
-sign - whose box passes nothing is cut in two, down to a least width.
+h (coarser from the fifth prime on); a term of the sign + may be dropped instead, at `dropCost`, or at
+`dropBCost` if its box has no term but the products n = r themselves. A term of the sign - whose box passes
+nothing is cut in two, down to a least width.
 
 It prints the tree's cost over K (the loss: below 1, the tree gives the theorem by `SieveAd.linnik_tree`) and its
 size, and checks the tree with a mirror of `SieveAd.ok`. It writes nothing: the Lean files of a tree are not
 generated yet.
 
-One box needs a node that SieveAdDefs.lean does not have (`--boundary`): the corner where the first two primes
-are both near x^{1/2}, whose only terms are the products n = p1 p2 in (x, 2x]. Its count is small (the width of
-the first prime's top cell, which the search makes thin), but it is not one of the dropped boxes of
-`SieveRough.shareBox`, which have their products below x. Without `--boundary` the search finds no tree.
+One box is dropped at `dropBCost`: the corner where the first two primes are both near x^{1/2}, whose only terms
+are the products n = p1 p2 in (x, 2x]. Its cost is the width of the first prime's top cell, up to a constant, so
+the search makes that cell thin.
 
 Values (11 November 2026; the window is the one harman_sieve.py prints for the exponent):
 
-    219/100,   window [44260, 46717], --h 0.005 --boundary:  cost/K 0.925, 849000 nodes, 25 s
-    219/100,   window [44260, 46717], --h 0.004 --boundary:  cost/K 0.889, 2.0 10^6 nodes
-    2195/1000, window [43859, 46838], --h 0.005 --boundary:  cost/K 0.841, 725000 nodes
+    219/100,   window [44260, 46717], --h 0.005:  cost/K 0.925, 849000 nodes, 25 s
+    219/100,   window [44260, 46717], --h 0.004:  cost/K 0.889, 2.0 10^6 nodes
+    2195/1000, window [43859, 46838], --h 0.005:  cost/K 0.841, 725000 nodes
 """
 import argparse
 import os
@@ -172,13 +173,34 @@ def dropCost(bl):
                 * (exF(c[0], c[1] - c[0]) * tr), SC ** (len(b) + 1))
 
 
+def dropBOK(bl):
+    """`dropBOK`: two primes at least and no term with a cofactor (the product of the primes times the last
+    exceeds 2x), and the primes but the last have their product below x."""
+    return (len(bl) >= 2 and all(0 < c[0] < c[1] for c in bl) and DEN + 1 <= loSum(bl) + bl[0][0]
+            and hiSum(bl[1:]) < DEN)
+
+
+def dropBCost(bl):
+    """`dropBCost`: a bound, in units of 1/K, for the products n = r of the box in (x, 2x]: the last prime is then
+    a prime of (x/r', 2x/r'], r' the product of the others, at most x/(r' log(x/r')) of them, and log(x/r') is at
+    least (1 - the others' upper sum) log x."""
+    b = bl[1:]
+    tr = 1
+    for d in b:
+        tr *= trF(d[0], d[1] - d[0])
+    return cdiv(K * DEN * tr, (DEN - hiSum(b)) * SC ** len(b))
+
+
 def ok(T, tree, bl, par):
-    """`SieveAd.ok`, on a tree as nested tuples: ('V',), ('D',), ('E', cfg), ('S', t, c, l, r), ('B', f, cfg, ch)."""
+    """`SieveAd.ok`, on a tree as nested tuples: ('V',), ('D',), ('DB',), ('E', cfg), ('S', t, c, l, r),
+    ('B', f, cfg, ch)."""
     tag = tree[0]
     if tag == 'V':
         return vanishOK(bl)
     if tag == 'D':
         return par and dropOK(bl)
+    if tag == 'DB':
+        return par and dropBOK(bl)
     if tag == 'E':
         return len(bl) > 0 and T.okI(bl, tree[1])
     if tag == 'S':
@@ -196,6 +218,8 @@ def cost(tree, bl):
     tag = tree[0]
     if tag == 'D':
         return dropCost(bl)
+    if tag == 'DB':
+        return dropBCost(bl)
     if tag == 'S':
         _, t, c, l, r = tree
         return (cost(l, bl[:t] + [(bl[t][0], c)] + bl[t + 1:]) + cost(r, bl[:t] + [(c, bl[t][1])] + bl[t + 1:]))
@@ -214,27 +238,9 @@ def sums(j, bl):
     return S
 
 
-def dropBOK(bl):
-    """The box has two primes at least and no term with a cofactor (the product of its primes times the last
-    exceeds 2x), and the primes but the last have their product below x."""
-    return (len(bl) >= 2 and all(0 < c[0] < c[1] for c in bl) and DEN + 1 <= loSum(bl) + bl[0][0]
-            and hiSum(bl[1:]) < DEN)
-
-
-def dropBCost(bl):
-    """A bound, in units of 1/K, for the products n = r of the box in (x, 2x]: the last prime is then a prime of
-    (x/r', 2x/r'], r' the product of the others, at most x/(r' log(x/r')) of them, and log(x/r') is at least
-    (1 - the others' upper sum) log x.  (A node that SieveAdDefs.lean does not have yet.)"""
-    b = bl[1:]
-    tr = 1
-    for d in b:
-        tr *= trF(d[0], d[1] - d[0])
-    return cdiv(K * DEN * tr, (DEN - hiSum(b)) * SC ** len(b))
-
-
 class Search:
-    def __init__(self, T, h, depth, wmin, boundary):
-        self.T, self.depth, self.boundary = T, depth, boundary
+    def __init__(self, T, h, depth, wmin):
+        self.T, self.depth = T, depth
         hI = int(round(h * DEN))
         self.step = {d: hI * (1 if d <= 4 else 1 + (d - 3) // 2) for d in range(1, 16)}
         self.wmin = int(round(wmin * DEN))
@@ -338,7 +344,7 @@ class Search:
         best, tree = INF, None
         if par and dropOK(bl):
             best, tree = dropCost(bl), ('D',)
-        elif par and self.boundary and dropBOK(bl):
+        elif par and dropBOK(bl):
             best, tree = dropBCost(bl), ('DB',)
         if k < self.depth:
             f, cfgJ = self.floor(bl, Slo, Shi, full, rests)
@@ -402,12 +408,10 @@ def main():
     ap.add_argument('--h', type=float, default=0.005, help='side of the cells of the first four primes')
     ap.add_argument('--depth', type=int, default=8, help='primes in a term')
     ap.add_argument('--wmin', type=float, default=0.0005, help='least width of a cell cut for want of a test')
-    ap.add_argument('--boundary', action='store_true', help='allow a box with no term but its products n = r to '
-                    'be dropped at a bound for their number (a node that SieveAdDefs.lean does not have yet)')
     a = ap.parse_args()
     Ln, Ld = map(int, a.L.split('/'))
     T = Tests(a.W1, a.W2, Ln, Ld)
-    S = Search(T, a.h, a.depth, a.wmin, a.boundary)
+    S = Search(T, a.h, a.depth, a.wmin)
     t0 = time.time()
     cfg0 = (0, 0, 0, 0, False)
     assert T.okJ([], T.V, cfg0), 'the root is not evaluated at the floor V'
@@ -429,13 +433,11 @@ def main():
     tree = trees[-1]
     for i in range(len(trees) - 2, -1, -1):
         tree = ('S', 0, cuts[i + 1], trees[i], tree)
-    if not S.nodes.get('DB'):
-        assert ok(T, tree, root, False) and cost(tree, root) == total
+    assert ok(T, tree, root, False) and cost(tree, root) == total
     size = sum(S.nodes.values()) + len(trees) - 1
-    how = ('with a boundary node, which SieveAd.ok does not have' if S.nodes.get('DB')
-           else 'checked by the mirror of SieveAd.ok')
     print(f'L = {a.L}, window [{a.W1}, {a.W2}]/10^5, h = {a.h}: cost/K = {total / K:.5f}; {size} nodes '
-          f'({", ".join(f"{k} {v}" for k, v in sorted(S.nodes.items()))}); {how}; {time.time() - t0:.0f} s')
+          f'({", ".join(f"{k} {v}" for k, v in sorted(S.nodes.items()))}); checked by the mirror of SieveAd.ok; '
+          f'{time.time() - t0:.0f} s')
     return 0
 
 

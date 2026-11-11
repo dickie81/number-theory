@@ -15,6 +15,12 @@ primes up to `N₂` whose `i`-th prime has its exponent in the cell `bx i`, that
 * `drop_bound`, `dropCost_ge`: for a box whose cells have `0 < lo ≤ hi` and whose upper ends sum to at most `DEN`,
   the term in the comparison set is at most `(B + δ)x/(φ(q) log x)` for large `q`, with `B` the bound of
   `SieveRough.shareBox`; the certificate's `dropCost/K` is such a `B`.
+* `shareBd`, `dropB_bound`, `dropBCost_ge`: for a box of two primes at least whose lower ends, with the last one
+  twice, sum to at least `DEN + 1`, the only terms are the products `n = p₁⋯p_k` themselves, since a cofactor's
+  primes are at least the last prime. The last prime is then a prime of `(x/r', 2x/r']`, `r'` the product of the
+  others; so for upper ends of the others that sum to `s < DEN`, the term in the comparison set is at most
+  `(B + δ)x/(φ(q) log x)` for large `q`, with `B = DEN/(DEN − s)·Π trB`; the certificate's `dropBCost/K` is such
+  a `B`.
 * `Tests.Sound`: the tests are sound when a box that passes `okI` has its term evaluated (`EvI`: its versions in
   `𝒜` and in the comparison set differ by `o(x/(φ(q) log x))`), and one that passes `okJ` at a floor has its terms
   at that floor evaluated (`EvJ`).
@@ -86,6 +92,94 @@ theorem getC_eq (bl : List Cell) (k : ℕ) (h : bl.length = k) (t : ℕ) (ht : t
   congr 1
   simp only
   omega
+
+/-! ### The products of a box in a dyadic range -/
+
+/-- Over the tuples of primes in the intervals `[x^{a_t/DEN}, x^{(a_t+w_t)/DEN})`, the number of primes in
+`(x/r', 2x/r']`, `r'` the tuple's product. -/
+noncomputable def SBd (x : ℝ) {m : ℕ} (a w : Fin m → ℕ) : ℝ :=
+  ∑ rt ∈ Fintype.piFinset (fun t => boxP x (a t) (w t)),
+    (((Finset.Ioc ⌊x / (∏ t, rt t : ℕ)⌋₊ ⌊2 * (x / (∏ t, rt t : ℕ))⌋₊).filter Nat.Prime).card : ℝ)
+
+/-- **The products of a box in `(x, 2x]`.** For `m` intervals with positive lower ends whose upper ends sum to
+`s < DEN`, and `B ≥ DEN/(DEN − s)·∏_t trB(a_t, w_t)`: for every `δ > 0`, eventually
+`SBd x a w ≤ (B + δ)·x/log x`. The primes of `(y, 2y]` number at most `(1 + ε)y/log y`, and `y = x/r'` is at
+least `x^{(DEN−s)/DEN}`. -/
+theorem shareBd {m : ℕ} (a w : Fin m → ℕ) (ha : ∀ t, 0 < a t) (hfit : ∑ t, (a t + w t) < DEN) {B : ℝ}
+    (hB : (DEN : ℝ) / ((DEN - ∑ t, (a t + w t) : ℕ) : ℝ) * ∏ t, trB (a t) (w t) ≤ B) {δ : ℝ} (hδ : 0 < δ) :
+    ∀ᶠ x : ℝ in atTop, SBd x a w ≤ (B + δ) * (x / Real.log x) := by
+  have hD := DEN_pos'
+  set s : ℕ := ∑ t, (a t + w t) with hs
+  have hsD : (s : ℝ) < DEN := by exact_mod_cast hfit
+  have hcast : ((DEN - s : ℕ) : ℝ) = (DEN : ℝ) - s := Nat.cast_sub hfit.le
+  have hd0 : (0 : ℝ) < (DEN : ℝ) - s := by linarith
+  obtain ⟨W, hW⟩ : ∃ W : ℝ, W = (DEN : ℝ) / ((DEN : ℝ) - s) := ⟨_, rfl⟩
+  have hW0 : 0 < W := by rw [hW]; positivity
+  obtain ⟨β, hβ⟩ : ∃ β : ℝ, β = ((DEN : ℝ) - s) / DEN := ⟨_, rfl⟩
+  have hβ0 : 0 < β := by rw [hβ]; positivity
+  have hWβ : W * β = 1 := by rw [hW, hβ]; field_simp
+  have hPt : ∀ t, (0 : ℝ) ≤ trB (a t) (w t) := fun t => SieveCert.trB_nonneg _ _
+  have hR := SieveRough.EvLe.prod (fun t x => ∑ p ∈ boxP x (a t) (w t), 1 / (p : ℝ)) (fun t => trB (a t) (w t)) hPt
+    (fun t => Filter.Eventually.of_forall fun x => SieveRough.sum_inv_nonneg _) (fun t => evLe_box_tr (ha t))
+  rw [hcast, ← hW] at hB
+  refine SieveRough.evLe_finish hW0.le (Finset.prod_nonneg fun t _ => hPt t) hB hR (fun ε hε => ?_) hδ
+  obtain ⟨y₀, hy₀⟩ := SieveRough.card_primes_dyadic (ε := ε / W) (by positivity)
+  filter_upwards [eventually_gt_atTop 1, (tendsto_rpow_atTop hβ0).eventually_ge_atTop (max y₀ 1)] with x hx1 hxβ
+  have hx0 : 0 < x := by linarith
+  have hlx : 0 < Real.log x := Real.log_pos hx1
+  have hterm : ∀ rt ∈ Fintype.piFinset (fun t => boxP x (a t) (w t)),
+      (((Finset.Ioc ⌊x / (∏ t, rt t : ℕ)⌋₊ ⌊2 * (x / (∏ t, rt t : ℕ))⌋₊).filter Nat.Prime).card : ℝ) ≤
+        (W + ε) * (x / Real.log x) * ∏ t, (1 / (rt t : ℝ)) := by
+    intro rt hrt
+    rw [Fintype.mem_piFinset] at hrt
+    have hmem := fun t => mem_primesIn.1 (hrt t)
+    have hpos : ∀ t, (0 : ℝ) < rt t := fun t => by exact_mod_cast (hmem t).1.pos
+    have hr0 : (0 : ℝ) < ∏ t, (rt t : ℝ) := Finset.prod_pos fun t _ => hpos t
+    have hrle : ∏ t, (rt t : ℝ) ≤ x ^ ((s : ℝ) / DEN) := by
+      rw [hs, Nat.cast_sum, Finset.sum_div, Real.rpow_sum_of_pos hx0]
+      refine Finset.prod_le_prod₀ (fun t _ => (hpos t).le) fun t _ => ?_
+      have := (hmem t).2.2.le
+      rwa [← Nat.cast_add] at this
+    have hrcast : ((∏ t, rt t : ℕ) : ℝ) = ∏ t, (rt t : ℝ) := by push_cast; rfl
+    rw [hrcast]
+    set r : ℝ := ∏ t, (rt t : ℝ) with hr
+    -- `y = x/r ≥ x^β`
+    have hy : x ^ β ≤ x / r := by
+      rw [le_div_iff₀ hr0]
+      calc x ^ β * r ≤ x ^ β * x ^ ((s : ℝ) / DEN) := mul_le_mul_of_nonneg_left hrle (Real.rpow_nonneg hx0.le _)
+        _ = x := by
+          rw [← Real.rpow_add hx0, hβ]
+          have : ((DEN : ℝ) - s) / DEN + (s : ℝ) / DEN = 1 := by
+            rw [← add_div, sub_add_cancel, div_self hD.ne']
+          rw [this, Real.rpow_one]
+    have hy0 : y₀ ≤ x / r := le_trans (le_trans (le_max_left _ _) hxβ) hy
+    have hy1 : 1 ≤ x / r := le_trans (le_trans (le_max_right _ _) hxβ) hy
+    have hcard := hy₀ (x / r) hy0
+    have hlog : β * Real.log x ≤ Real.log (2 * (x / r)) := by
+      rw [← Real.log_rpow hx0]
+      exact Real.log_le_log (Real.rpow_pos_of_pos hx0 _) (by linarith)
+    have hlog0 : 0 < Real.log (2 * (x / r)) := lt_of_lt_of_le (mul_pos hβ0 hlx) hlog
+    refine hcard.trans ?_
+    rw [div_le_iff₀ hlog0]
+    have e1 : (W + ε) * (x / Real.log x) * ∏ t, (1 / (rt t : ℝ)) = (1 + ε / W) * (x / r) * (W / Real.log x) := by
+      rw [Finset.prod_div_distrib, Finset.prod_const_one, ← hr]
+      have h1 : (1 + ε / W) * W = W + ε := by field_simp
+      rw [← h1]
+      ring
+    rw [e1]
+    have hnn : 0 ≤ (1 + ε / W) * (x / r) := by positivity
+    have h2 : 1 ≤ W / Real.log x * Real.log (2 * (x / r)) := by
+      have : W / Real.log x * (β * Real.log x) = 1 := by
+        rw [div_mul_eq_mul_div, ← mul_assoc, hWβ, one_mul, div_self hlx.ne']
+      calc (1 : ℝ) = W / Real.log x * (β * Real.log x) := this.symm
+        _ ≤ W / Real.log x * Real.log (2 * (x / r)) := mul_le_mul_of_nonneg_left hlog (by positivity)
+    calc (1 + ε / W) * (x / r) = (1 + ε / W) * (x / r) * 1 := by ring
+      _ ≤ (1 + ε / W) * (x / r) * (W / Real.log x * Real.log (2 * (x / r))) := mul_le_mul_of_nonneg_left h2 hnn
+      _ = (1 + ε / W) * (x / r) * (W / Real.log x) * Real.log (2 * (x / r)) := by ring
+  calc SBd x a w ≤ ∑ rt ∈ Fintype.piFinset (fun t => boxP x (a t) (w t)),
+        (W + ε) * (x / Real.log x) * ∏ t, (1 / (rt t : ℝ)) := Finset.sum_le_sum hterm
+    _ = (W + ε) * (x / Real.log x) * ∏ t, ∑ p ∈ boxP x (a t) (w t), 1 / (p : ℝ) := by
+        rw [← Finset.mul_sum, Finset.prod_univ_sum]
 
 /-! ### Sums and products over a box, by its list -/
 
@@ -256,6 +350,62 @@ theorem dropCost_ge (bl : List Cell) (m : ℕ) (h : bl.length = m + 1) (hok : ce
     field_simp
   rw [div_mul_eq_mul_div, div_le_div_iff_of_pos_right hK]
   exact (mul_le_mul_of_nonneg_left h1 (Nat.cast_nonneg _)).trans h2
+
+/-- **The certificate's cost of a box dropped for its products** is at least the bound of `shareBd`. -/
+theorem dropBCost_ge (bl : List Cell) (m : ℕ) (h : bl.length = m + 2) (hok : cellsOK bl = true)
+    (hfit : ∑ t : Fin (m + 1), (boxFn bl (m + 2) h t.castSucc).2 < DEN) :
+    (DEN : ℝ) / ((DEN - ∑ t : Fin (m + 1), (boxFn bl (m + 2) h t.castSucc).2 : ℕ) : ℝ) *
+      ∏ t : Fin (m + 1), trB (boxFn bl (m + 2) h t.castSucc).1
+        ((boxFn bl (m + 2) h t.castSucc).2 - (boxFn bl (m + 2) h t.castSucc).1) ≤
+      (dropBCost bl : ℝ) / K := by
+  obtain ⟨c, b, rfl⟩ : ∃ c b, bl = c :: b := by
+    cases bl with
+    | nil => simp at h
+    | cons c b => exact ⟨c, b, rfl⟩
+  have hm : b.length = m + 1 := by simpa using h
+  have hcells := (cellsOK_iff _).1 hok
+  have hb : ∀ d ∈ b, 0 < d.1 ∧ d.1 < d.2 := fun d hd => hcells d (List.mem_cons_of_mem _ hd)
+  have hbox : boxFn (c :: b) (m + 2) h = Fin.snoc (α := fun _ => Cell) (boxFn b (m + 1) hm) c :=
+    boxFn_cons c b (m + 1) hm
+  have e1 : ∑ t : Fin (m + 1), (boxFn (c :: b) (m + 2) h t.castSucc).2 = hiSum b := by
+    rw [hbox]
+    simp only [Fin.snoc_castSucc]
+    rw [sum_boxFn (fun d => d.2), hiSum_eq]
+  have e4 : ∏ t : Fin (m + 1), trB (boxFn (c :: b) (m + 2) h t.castSucc).1
+      ((boxFn (c :: b) (m + 2) h t.castSucc).2 - (boxFn (c :: b) (m + 2) h t.castSucc).1) =
+      (b.map fun d => trB d.1 (d.2 - d.1)).prod := by
+    rw [hbox]
+    simp only [Fin.snoc_castSucc]
+    rw [prod_boxFn (fun d => trB d.1 (d.2 - d.1))]
+  rw [e1] at hfit
+  rw [e1, e4]
+  obtain ⟨hP, hP0⟩ := prod_trB_le b fun d hd => (hb d hd).1
+  have hS := SC_pos
+  have hK := K_pos'
+  have hD := DEN_pos'
+  have hcast : ((DEN - hiSum b : ℕ) : ℝ) = (DEN : ℝ) - hiSum b := Nat.cast_sub hfit.le
+  have hd0 : (0 : ℝ) < (DEN : ℝ) - hiSum b := by
+    have : (hiSum b : ℝ) < DEN := by exact_mod_cast hfit
+    linarith
+  rw [hcast]
+  have h1 : (DEN : ℝ) / ((DEN : ℝ) - hiSum b) * (b.map fun d => trB d.1 (d.2 - d.1)).prod ≤
+      (DEN : ℝ) / ((DEN : ℝ) - hiSum b) * ((trProd b : ℝ) / (SC : ℝ) ^ b.length) :=
+    mul_le_mul_of_nonneg_left hP (by positivity)
+  have h2 : (K : ℝ) * ((DEN : ℝ) / ((DEN : ℝ) - hiSum b) * ((trProd b : ℝ) / (SC : ℝ) ^ b.length)) ≤
+      (dropBCost (c :: b) : ℝ) := by
+    have hpos : 0 < (DEN - hiSum b) * SC ^ b.length :=
+      Nat.mul_pos (by omega) (pow_pos (by unfold SC; norm_num) _)
+    have h3 := SieveCert.div_le_cdiv (K * DEN * trProd b) ((DEN - hiSum b) * SC ^ b.length) hpos
+    refine le_trans (le_of_eq ?_) h3
+    push_cast
+    rw [hcast]
+    field_simp
+  rw [le_div_iff₀ hK]
+  calc (DEN : ℝ) / ((DEN : ℝ) - hiSum b) * (b.map fun d => trB d.1 (d.2 - d.1)).prod * K
+      ≤ (DEN : ℝ) / ((DEN : ℝ) - hiSum b) * ((trProd b : ℝ) / (SC : ℝ) ^ b.length) * K :=
+        mul_le_mul_of_nonneg_right h1 hK.le
+    _ = (K : ℝ) * ((DEN : ℝ) / ((DEN : ℝ) - hiSum b) * ((trProd b : ℝ) / (SC : ℝ) ^ b.length)) := by ring
+    _ ≤ _ := h2
 
 variable [Route]
 
@@ -550,6 +700,161 @@ theorem drop_bound [RouteOK] {m : ℕ} (bx : Fin (m + 1) → Cell) (hlo : ∀ i,
   rw [this]
   exact (hc t).2
 
+/-- **A box dropped for its products.** For a box of two primes at least whose cells have `0 < lo ≤ hi`, whose
+lower ends, with the last one twice, sum to at least `DEN + 1`, and whose upper ends but the last sum to `s < DEN`,
+and `B ≥ DEN/(DEN − s)·∏ trB` over the primes but the last: for every `δ > 0` and large `q`, the term of the box in
+the comparison set is at most `(B + δ)x/(φ(q) log x)`. A tuple of the box has no `n` with a cofactor, so it counts
+`n = ∏rt` alone, when that is in `(x, 2x]`: the last prime is then a prime of `(x/r', 2x/r']`. -/
+theorem dropB_bound [RouteOK] {m : ℕ} (bx : Fin (m + 2) → Cell) (hlo : ∀ i, 0 < (bx i).1)
+    (hle : ∀ i, (bx i).1 ≤ (bx i).2) (hreg : DEN + 1 ≤ ∑ i, (bx i).1 + (bx (Fin.last (m + 1))).1)
+    (hfit : ∑ t : Fin (m + 1), (bx t.castSucc).2 < DEN) {B : ℝ}
+    (hB : (DEN : ℝ) / ((DEN - ∑ t : Fin (m + 1), (bx t.castSucc).2 : ℕ) : ℝ) *
+      ∏ t : Fin (m + 1), trB (bx t.castSucc).1 ((bx t.castSucc).2 - (bx t.castSucc).1) ≤ B)
+    {δ : ℝ} (hδ : 0 < δ) :
+    ∀ᶠ q : ℕ in atTop, famI (gB q) (N1 q) (N2 q) (famB q bx) ≤
+      (q.totient : ℝ)⁻¹ * ((B + δ) * (xq q / Real.log (xq q))) := by
+  have hD := DEN_pos'
+  have haw : ∀ t : Fin (m + 1), (bx t.castSucc).1 + ((bx t.castSucc).2 - (bx t.castSucc).1) = (bx t.castSucc).2 :=
+    fun t => Nat.add_sub_cancel' (hle _)
+  have hsum : ∑ t : Fin (m + 1), ((bx t.castSucc).1 + ((bx t.castSucc).2 - (bx t.castSucc).1)) =
+      ∑ t : Fin (m + 1), (bx t.castSucc).2 := Finset.sum_congr rfl fun t _ => haw t
+  have hfit' : ∑ t : Fin (m + 1), ((bx t.castSucc).1 + ((bx t.castSucc).2 - (bx t.castSucc).1)) < DEN := by
+    rw [hsum]
+    exact hfit
+  have hB' : (DEN : ℝ) /
+      ((DEN - ∑ t : Fin (m + 1), ((bx t.castSucc).1 + ((bx t.castSucc).2 - (bx t.castSucc).1)) : ℕ) : ℝ) *
+        ∏ t : Fin (m + 1), trB (bx t.castSucc).1 ((bx t.castSucc).2 - (bx t.castSucc).1) ≤ B := by
+    rw [hsum]
+    exact hB
+  have hsh := shareBd (B := B) (fun t : Fin (m + 1) => (bx t.castSucc).1)
+    (fun t : Fin (m + 1) => (bx t.castSucc).2 - (bx t.castSucc).1) (fun t => hlo _) hfit' hB' hδ
+  filter_upwards [SieveDrop.tendsto_xq.eventually hsh, big_ev] with q hq hbig
+  obtain ⟨hq2, hx3, -, -, hy3⟩ := big_facts hbig
+  have hx0 : 0 < xq q := by linarith
+  have hx1 : 1 ≤ xq q := by linarith
+  have h1 := SieveDrop.famI_gB_le q (famB q bx) (fun rt hrt i => ((mem_famB.1 hrt).1 i).2) (by omega)
+  refine h1.trans (mul_le_mul_of_nonneg_left (le_trans ?_ hq) (by positivity))
+  -- a tuple counts at most its own product
+  have hA : ∀ rt ∈ famB q bx, (Psi (xq q / (∏ i, rt i : ℕ)) (rt (Fin.last (m + 1))) : ℝ) ≤
+      if xq q < ((∏ i, rt i : ℕ) : ℝ) ∧ ((∏ i, rt i : ℕ) : ℝ) ≤ 2 * xq q then 1 else 0 := by
+    intro rt hrt
+    obtain ⟨hp, -, hc⟩ := mem_famB.1 hrt
+    obtain ⟨hlo', -⟩ := prod_bounds hx0 hc
+    have hrc : ((∏ i, rt i : ℕ) : ℝ) = ∏ i, (rt i : ℝ) := by push_cast; rfl
+    have hr0 : (0 : ℝ) < ((∏ i, rt i : ℕ) : ℝ) := by
+      exact_mod_cast Finset.prod_pos fun i _ => (hp i).2.pos
+    have hbig2 : 2 * xq q < ((∏ i, rt i : ℕ) : ℝ) * rt (Fin.last (m + 1)) := by
+      have h2' : (DEN : ℝ) + 1 ≤ ((∑ i, (bx i).1 : ℕ) : ℝ) + ((bx (Fin.last (m + 1))).1 : ℝ) := by
+        exact_mod_cast hreg
+      have e : xq q ^ (((DEN : ℝ) + 1) / DEN) = xq q * xq q ^ (1 / (DEN : ℝ)) := by
+        rw [← Real.rpow_one_add' hx0.le (by positivity)]
+        congr 1
+        field_simp
+      calc 2 * xq q < xq q * xq q ^ (1 / (DEN : ℝ)) := by nlinarith
+        _ = xq q ^ (((DEN : ℝ) + 1) / DEN) := e.symm
+        _ ≤ xq q ^ ((((∑ i, (bx i).1 : ℕ) : ℝ) + ((bx (Fin.last (m + 1))).1 : ℝ)) / DEN) :=
+            Real.rpow_le_rpow_of_exponent_le hx1 (div_le_div_of_nonneg_right h2' hD.le)
+        _ = xq q ^ (((∑ i, (bx i).1 : ℕ) : ℝ) / DEN) * xq q ^ (((bx (Fin.last (m + 1))).1 : ℝ) / DEN) := by
+            rw [add_div, Real.rpow_add hx0]
+        _ ≤ ((∏ i, rt i : ℕ) : ℝ) * rt (Fin.last (m + 1)) := by
+            rw [hrc]
+            exact mul_le_mul hlo' (hc _).1 (Real.rpow_nonneg hx0.le _)
+              (Finset.prod_nonneg fun i _ => Nat.cast_nonneg _)
+    have hy0 : 0 < xq q / ((∏ i, rt i : ℕ) : ℝ) := div_pos hx0 hr0
+    have h2y : 2 * (xq q / ((∏ i, rt i : ℕ) : ℝ)) < rt (Fin.last (m + 1)) := by
+      rw [← mul_div_assoc, div_lt_iff₀ hr0]
+      linarith
+    by_cases hy1 : 1 ≤ xq q / ((∏ i, rt i : ℕ) : ℝ)
+    · rw [Psi_eq_zero hy1 h2y]
+      split_ifs <;> norm_num
+    · rw [not_le, div_lt_one hr0] at hy1
+      by_cases h2 : ((∏ i, rt i : ℕ) : ℝ) ≤ 2 * xq q
+      · have hcond : xq q < ((∏ i, rt i : ℕ) : ℝ) ∧ ((∏ i, rt i : ℕ) : ℝ) ≤ 2 * xq q := ⟨hy1, h2⟩
+        simp only [hcond, and_self, ↓reduceIte]
+        have hle1 : Psi (xq q / ((∏ i, rt i : ℕ) : ℝ)) (rt (Fin.last (m + 1))) ≤ 1 := by
+          unfold Psi roughSet
+          refine (Finset.card_filter_le _ _).trans ?_
+          rw [Nat.card_Ioc]
+          have hf : ⌊2 * (xq q / ((∏ i, rt i : ℕ) : ℝ))⌋₊ < 2 := by
+            rw [Nat.floor_lt (by positivity), ← mul_div_assoc, div_lt_iff₀ hr0]
+            push_cast
+            linarith
+          omega
+        exact_mod_cast hle1
+      · have hcond : ¬ (xq q < ((∏ i, rt i : ℕ) : ℝ) ∧ ((∏ i, rt i : ℕ) : ℝ) ≤ 2 * xq q) := fun hh => h2 hh.2
+        simp only [hcond, ↓reduceIte]
+        have h0 : Psi (xq q / ((∏ i, rt i : ℕ) : ℝ)) (rt (Fin.last (m + 1))) = 0 := by
+          unfold Psi roughSet
+          have hf : ⌊2 * (xq q / ((∏ i, rt i : ℕ) : ℝ))⌋₊ = 0 := by
+            rw [Nat.floor_eq_zero, ← mul_div_assoc, div_lt_one hr0]
+            linarith
+          rw [hf]
+          simp
+        rw [h0]
+        norm_num
+  -- the tuples whose product is in `(x, 2x]`, by their primes but the last
+  obtain ⟨P', hP'⟩ : ∃ P' : Finset (Fin (m + 1) → ℕ), P' = Fintype.piFinset fun t : Fin (m + 1) =>
+      boxP (xq q) (bx t.castSucc).1 ((bx t.castSucc).2 - (bx t.castSucc).1) := ⟨_, rfl⟩
+  obtain ⟨Q', hQ'⟩ : ∃ Q' : (Fin (m + 1) → ℕ) → Finset ℕ, Q' = fun rt' =>
+      (Finset.Ioc ⌊xq q / ((∏ t, rt' t : ℕ) : ℝ)⌋₊ ⌊2 * (xq q / ((∏ t, rt' t : ℕ) : ℝ))⌋₊).filter Nat.Prime :=
+    ⟨_, rfl⟩
+  have hcard : ((famB q bx).filter fun rt =>
+      xq q < ((∏ i, rt i : ℕ) : ℝ) ∧ ((∏ i, rt i : ℕ) : ℝ) ≤ 2 * xq q).card ≤ (P'.sigma Q').card := by
+    refine Finset.card_le_card_of_injOn
+      (fun rt => (⟨Fin.init rt, rt (Fin.last (m + 1))⟩ : Sigma fun _ : Fin (m + 1) → ℕ => ℕ)) ?_ ?_
+    · intro rt hrt
+      rw [Finset.mem_coe, Finset.mem_filter] at hrt
+      obtain ⟨hmem, hlt, hle2⟩ := hrt
+      obtain ⟨hp, -, hc⟩ := mem_famB.1 hmem
+      have hprod : ((∏ i, rt i : ℕ) : ℝ) =
+          ((∏ t : Fin (m + 1), rt t.castSucc : ℕ) : ℝ) * rt (Fin.last (m + 1)) := by
+        rw [Fin.prod_univ_castSucc]
+        push_cast
+        rfl
+      have hinit : ((∏ t, Fin.init rt t : ℕ) : ℝ) = ((∏ t : Fin (m + 1), rt t.castSucc : ℕ) : ℝ) := rfl
+      have hr0 : (0 : ℝ) < ((∏ t : Fin (m + 1), rt t.castSucc : ℕ) : ℝ) := by
+        exact_mod_cast Finset.prod_pos fun (t : Fin (m + 1)) _ => (hp t.castSucc).2.pos
+      rw [hprod] at hlt hle2
+      rw [Finset.mem_coe, Finset.mem_sigma]
+      refine ⟨?_, ?_⟩
+      · show Fin.init rt ∈ P'
+        rw [hP', Fintype.mem_piFinset]
+        intro t
+        rw [boxP, mem_primesIn]
+        refine ⟨(hp t.castSucc).2, (hc t.castSucc).1, ?_⟩
+        have : (((bx t.castSucc).1 : ℝ) + ((bx t.castSucc).2 - (bx t.castSucc).1 : ℕ)) =
+            ((bx t.castSucc).2 : ℝ) := by
+          rw [← Nat.cast_add, haw t]
+        rw [this]
+        exact (hc t.castSucc).2
+      · show rt (Fin.last (m + 1)) ∈ Q' (Fin.init rt)
+        rw [hQ']
+        simp only [Finset.mem_filter, Finset.mem_Ioc]
+        rw [hinit]
+        refine ⟨⟨?_, ?_⟩, (hp _).2⟩
+        · rw [Nat.floor_lt (by positivity), div_lt_iff₀ hr0]
+          linarith [mul_comm (rt (Fin.last (m + 1)) : ℝ) ((∏ t : Fin (m + 1), rt t.castSucc : ℕ) : ℝ)]
+        · refine Nat.le_floor ?_
+          rw [← mul_div_assoc, le_div_iff₀ hr0]
+          linarith [mul_comm (rt (Fin.last (m + 1)) : ℝ) ((∏ t : Fin (m + 1), rt t.castSucc : ℕ) : ℝ)]
+    · intro rt₁ _ rt₂ _ heq
+      simp only [Sigma.mk.injEq, heq_eq_eq] at heq
+      rw [← Fin.snoc_init_self rt₁, ← Fin.snoc_init_self rt₂, heq.1, heq.2]
+  calc ∑ rt ∈ famB q bx, (Psi (xq q / (∏ i, rt i : ℕ)) (rt (Fin.last (m + 1))) : ℝ)
+      ≤ ∑ rt ∈ famB q bx,
+          (if xq q < ((∏ i, rt i : ℕ) : ℝ) ∧ ((∏ i, rt i : ℕ) : ℝ) ≤ 2 * xq q then (1 : ℝ) else 0) :=
+        Finset.sum_le_sum hA
+    _ = (((famB q bx).filter fun rt =>
+          xq q < ((∏ i, rt i : ℕ) : ℝ) ∧ ((∏ i, rt i : ℕ) : ℝ) ≤ 2 * xq q).card : ℝ) := by
+        rw [Finset.sum_boole]
+    _ ≤ ((P'.sigma Q').card : ℝ) := by exact_mod_cast hcard
+    _ = SBd (xq q) (fun t : Fin (m + 1) => (bx t.castSucc).1)
+          (fun t : Fin (m + 1) => (bx t.castSucc).2 - (bx t.castSucc).1) := by
+        rw [Finset.card_sigma, hP', hQ']
+        unfold SBd
+        push_cast
+        rfl
+
 /-! ### What the tests and a tree give -/
 
 /-- `x/log x`. -/
@@ -663,6 +968,39 @@ theorem sound [RouteOK] {τ : Tests} (hτ : τ.Sound) (T : Tree) :
       (fun i => (hc _ (boxFn_mem _ _ h i)).2.le) hfit' (dropCost_ge (c :: b) k' h hcells) hη
     filter_upwards [hdb] with q hq a _
     have hA : 0 ≤ famI (gA q a) (N1 q) (N2 q) (famB q (boxFn (c :: b) (k' + 1) h)) :=
+      famI_nonneg (gA_nonneg q a) _ _ _
+    subst hpar
+    simp only [sg, ite_true, one_mul, cost]
+    unfold dI Xq
+    linarith
+  | dropB =>
+    intro bl par k' h hok η hη
+    simp only [ok, Bool.and_eq_true] at hok
+    obtain ⟨hpar, hdrop⟩ := hok
+    obtain ⟨c, b, rfl⟩ : ∃ c b, bl = c :: b := by
+      cases bl with
+      | nil => simp at h
+      | cons c b => exact ⟨c, b, rfl⟩
+    simp only [dropBOK, Bool.and_eq_true, Nat.blt_eq, Nat.ble_eq] at hdrop
+    obtain ⟨⟨⟨hb0, hcells⟩, hreg⟩, hfit⟩ := hdrop
+    obtain ⟨m, rfl⟩ : ∃ m, k' = m + 1 := ⟨k' - 1, by simp at h; omega⟩
+    have hc := (cellsOK_iff _).1 hcells
+    have hm : b.length = m + 1 := by simpa using h
+    have hbox : boxFn (c :: b) (m + 1 + 1) h = Fin.snoc (α := fun _ => Cell) (boxFn b (m + 1) hm) c :=
+      boxFn_cons c b (m + 1) hm
+    have e1 : ∑ i, (boxFn (c :: b) (m + 1 + 1) h i).1 = c.1 + loSum b := by
+      rw [sum_boxFn (fun d => d.1), loSum_eq]
+      simp
+    have e3 : (boxFn (c :: b) (m + 1 + 1) h (Fin.last (m + 1))).1 = c.1 := by rw [hbox, Fin.snoc_last]
+    have e2 : ∑ t : Fin (m + 1), (boxFn (c :: b) (m + 1 + 1) h t.castSucc).2 = hiSum b := by
+      rw [hbox]
+      simp only [Fin.snoc_castSucc]
+      rw [sum_boxFn (fun d => d.2), hiSum_eq]
+    have hdb := dropB_bound (boxFn (c :: b) (m + 1 + 1) h) (fun i => (hc _ (boxFn_mem _ _ h i)).1)
+      (fun i => (hc _ (boxFn_mem _ _ h i)).2.le) (by rw [e1, e3]; omega) (by rw [e2]; exact hfit)
+      (dropBCost_ge (c :: b) m h hcells (by rw [e2]; exact hfit)) hη
+    filter_upwards [hdb] with q hq a _
+    have hA : 0 ≤ famI (gA q a) (N1 q) (N2 q) (famB q (boxFn (c :: b) (m + 1 + 1) h)) :=
       famI_nonneg (gA_nonneg q a) _ _ _
     subst hpar
     simp only [sg, ite_true, one_mul, cost]

@@ -274,7 +274,9 @@ covers. The region does not close at `13/6`.
   - a certificate's format for a decomposition chosen term by term (`lib/pnt/SieveAdDefs.lean`,
     `lib/pnt/SieveAdTree.lean`): a tree on boxes of the exponents of a term's primes, whose nodes cut a cell,
     or apply Buchstab's identity with a floor of their own, and whose leaves are a box with no term, a box
-    dropped at the bound of `SieveRough.shareBox` (for a term of the sign `+`) and a box evaluated by a test.
+    dropped at the bound of `SieveRough.shareBox` (for a term of the sign `+`), a box dropped for its products
+    `n = p₁⋯p_k` alone at a bound for their number (`SieveAd.dropB_bound`: the last prime is a prime of a dyadic
+    interval), and a box evaluated by a test.
     The check and the cost are functions on natural numbers, which the kernel evaluates, and the tests of the
     evaluations are a parameter. For tests that are sound, a tree that passes on the box of one prime with cost
     below `1` gives the theorem with the route's exponent (`SieveAd.linnik_tree`; `SieveAd.sound` is the bound of
@@ -296,12 +298,11 @@ covers. The region does not close at `13/6`.
     without), and none with the cofactor in the rest: these are the tests that are proved sound. In exact
     integers, with those tests read from their Lean definitions, a search finds a tree at `219/100` whose cost is
     `0.925K`, with `849000` nodes on cells of side `0.005` (`tools/linnik/tree_cert.py`; `0.889K` on cells of
-    side `0.004`, and `0.841K` at `2195/1000`), and a mirror of `SieveAd.ok` passes it but for one node. That
-    node is the corner where the first two primes are both near `x^{1/2}`: its only terms are the products
-    `n = p₁p₂` in `(x, 2x]`, which the drop bound in Lean does not cover (it has the products of a dropped box
-    below `x`); their number is at most the width of the first prime's top cell, up to a constant. So a theorem
-    at `2.19` needs that bound and its node, the route's window at that exponent (`gen_cgl_curve.py` writes it
-    at `11/5`), and the tree in a form that the kernel checks: `849000` nodes are too many to write out, so the
+    side `0.004`, and `0.841K` at `2195/1000`), and a mirror of `SieveAd.ok` passes it. One of its nodes is
+    the corner where the first two primes are both near `x^{1/2}`: its only terms are the products `n = p₁p₂` in
+    `(x, 2x]`, dropped at a bound for their number, which is the width of the first prime's top cell up to a
+    constant. So a theorem at `2.19` needs the route's window at that exponent (`gen_cgl_curve.py` writes it at
+    `11/5`), and the tree in a form that the kernel checks: `849000` nodes are too many to write out, so the
     search itself has to run in the kernel. The window alone does not go below `11/5` with a tree of that size
     (`harman_sieve.py paper`: `1.22` at `11/5` and `1.75` at `2.195` on cells of side `0.005`).
   - *The rest among the small primes.* Below `13/6` there is no window, and the term at the root, `S(𝒜, x^f)`,

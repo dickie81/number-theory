@@ -9,6 +9,9 @@ prime's exponent `log p/log x`, in units of `1/DEN`. A **tree** (`Tree`) says wh
   last prime it is above `2x`);
 * `drop`: the term is dropped, for one that enters the sieve with the sign `+`, at the cost of its count in the
   comparison set (`dropOK`, `dropCost`: the bound of `SieveRough.shareBox`, in units of `1/K`);
+* `dropB`: the same for a box of two primes at least whose only terms are the products `n = p₁⋯p_k` themselves
+  (`dropBOK`: the product times the last prime is above `2x`, and the product of the primes but the last is below
+  `x`), at a bound for their number (`dropBCost`): the last prime is then a prime of `(x/r', 2x/r']`;
 * `evalI cfg`: the term is evaluated by a test `okI` on the box;
 * `split t c l r`: the box is cut at the exponent `c` of the prime at position `t`, into the boxes of `l` (below
   `c`) and of `r`;
@@ -53,6 +56,7 @@ structure Tests where
 inductive Tree where
   | vanish : Tree
   | drop : Tree
+  | dropB : Tree
   | evalI : Cfg → Tree
   | split : ℕ → ℕ → Tree → Tree → Tree
   | buch : ℕ → Cfg → Tree → Tree
@@ -96,6 +100,13 @@ def dropOK : List Cell → Bool
   | [] => false
   | c :: b => cellsOK (c :: b) && Nat.ble (c.2 + hiSum b) DEN
 
+/-- The box has two primes at least and no term with a cofactor: its cells have `0 < lo < hi`, the product of its
+primes times the last is at least `x^{(DEN+1)/DEN}`, and the product of the primes but the last is below `x`. -/
+def dropBOK : List Cell → Bool
+  | [] => false
+  | c :: b =>
+    Nat.blt 0 b.length && cellsOK (c :: b) && Nat.ble (DEN + 1) (c.1 + loSum b + c.1) && Nat.blt (hiSum b) DEN
+
 /-- A cut of the cell at position `t`, strictly inside it. -/
 def splitOK (b : List Cell) (t c : ℕ) : Bool :=
   Nat.blt t b.length && Nat.blt (getC b t).1 c && Nat.blt c (getC b t).2
@@ -124,6 +135,12 @@ def dropCost : List Cell → ℕ
     cdiv (omKw (loSum b) c.1 (c.2 + hiSum b - (c.1 + loSum b)) (c.2 - c.1) * (exF c.1 (c.2 - c.1) * trProd b))
       (SC ^ (b.length + 1))
 
+/-- The cost of a box dropped for its products alone, in units of `1/K`: the factors of the primes but the last,
+over the least exponent `1 − Σ hi/DEN` of `x/r'`, rounded up. -/
+def dropBCost : List Cell → ℕ
+  | [] => 0
+  | _ :: b => cdiv (K * DEN * trProd b) ((DEN - hiSum b) * SC ^ b.length)
+
 /-! ### The check and the cost of a tree -/
 
 /-- The tree is valid on the box; `par` says that the term enters the sieve with the sign `+`, so that it may be
@@ -131,6 +148,7 @@ dropped. -/
 def ok (τ : Tests) : Tree → List Cell → Bool → Bool
   | .vanish, b, _ => vanishOK b
   | .drop, b, par => par && dropOK b
+  | .dropB, b, par => par && dropBOK b
   | .evalI cfg, b, _ => Nat.blt 0 b.length && τ.okI b cfg
   | .split t c l r, b, par => splitOK b t c && ok τ l (setHi b t c) par && ok τ r (setLo b t c) par
   | .buch f cfg ch, b, par =>
@@ -142,6 +160,7 @@ def ok (τ : Tests) : Tree → List Cell → Bool → Bool
 def cost : Tree → List Cell → ℕ
   | .vanish, _ => 0
   | .drop, b => dropCost b
+  | .dropB, b => dropBCost b
   | .evalI _, _ => 0
   | .split t c l r, b => cost l (setHi b t c) + cost r (setLo b t c)
   | .buch f _ ch, b =>
