@@ -15,7 +15,8 @@ reversal as one more bound. Here:
   `SieveAd.bd_split` and `SieveAd.bd_buch`.
 * `solveR_sound`: **the search is sound.** A cost that the search returns below the limit it was given bounds the
   term.
-* `pr_split`, `pr_buch`, `pr_mono`: the steps that join the parts of a search.
+* `pr_split`, `pr_buch`, `pr_drop`, `pr_mono`: the steps that join the parts of a search: a cut of a cell,
+  Buchstab's identity at a floor that passes, a box dropped at the cost that `SieveAd.dropC` gives, a larger cost.
 * `pr_of_kids`: a part of a search, as the kernel checks it: if the costs of the cells of the new prime between `a`
   and `top`, searched with the limit `K`, sum to at most `c < K`, the box of the whole range has `PR` at `c`.
 * `linnik_pr`: **the theorem from a search with role reversal.** For a route and sound tests: if the terms at the
@@ -95,6 +96,11 @@ theorem pr_buch [RouteOK] {τ : Tests} (hτ : τ.Sound) {x : Cell} {b : List Cel
   rw [hlast]
   exact hch
 
+/-- A box that is dropped, at the cost that `dropC` gives. -/
+theorem pr_drop [RouteOK] {τ : Tests} (hτ : τ.Sound) {bl : List Cell} {par : Bool} {dc : ℕ}
+    (h : dropC bl par = some dc) : PR bl par dc :=
+  pr_of_has hτ (dropC_spec h)
+
 omit [Route] in
 /-- A box that may be reversed has three primes. -/
 theorem revOK_length {bl : List Cell} (h : revOK bl = true) : bl.length = 3 := by
@@ -113,7 +119,7 @@ theorem rulesR [RouteOK] {τ : Tests} (hτ : τ.Sound) (hτX : τ.SoundX) (SK : 
       intro k' h
       simp at h
     | cons x b => exact pr_of_has hτ (has_eval hI)
-  drp := fun _ hd => pr_of_has hτ (dropC_spec hd)
+  drp := fun _ hd => pr_drop hτ hd
   alt := by
     intro bl par l _ h
     simp only [opsR] at h ⊢

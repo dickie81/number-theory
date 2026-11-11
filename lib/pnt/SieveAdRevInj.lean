@@ -4,18 +4,18 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Plain statements. For a box `[c3, c2, c1]` of three primes that passes `SieveAd.revOK`, the other half of the
-reversal (`SieveAdRevLemma.lean` has the first): the numbers `n = K·r'` with `K` prime and `r'` the product of a
+reversal (`SieveAdRevLemma.lean` has the first): the numbers `n = p·r'` with `p` prime and `r'` the product of a
 tuple of an atoms' box, `r'` between `x^{(DEN−h₁+1)/DEN}` and `x^{(DEN−l₁)/DEN}`, are counted by the term of the box,
 each once.
 
 * `rev_mem`: for an atoms' box with the cell `c2` at a position `j` before the last and `c3` at the last, a tuple
-  `u` of it with `r' = ∏u` in that range and `n = K·r' ∈ (N₁, N₂]`, `K` prime: `(K, u_j, u_last)` is a tuple of
+  `u` of it with `r' = ∏u` in that range and `n = p·r' ∈ (N₁, N₂]`, `p` prime: `(p, u_j, u_last)` is a tuple of
   the box that counts `n`.
 * `readOff`, `GoodL`, `readOff_inj`: a tuple of primes as its list, with the position `j`; the triple read off a
   list; two strictly decreasing lists of primes that give the same triple for the same `n` are equal, with the same
   position, by unique factorisation.
 * `rev_inject_pt`, `rev_inject`: so for every `n`, the tuples of the five atoms' boxes that count `n` number at
-  most the tuples of the box that count it; and with weights `g ≥ 0`, the sum of the numbers `K·r'` over the five
+  most the tuples of the box that count it; and with weights `g ≥ 0`, the sum of the numbers `p·r'` over the five
   boxes is at most the term of the box.
 
 The file imports `SieveAdRevLemma.lean`.
@@ -76,7 +76,7 @@ theorem readOff_inj {n : ℕ} {e e' : ℕ × List ℕ} (he : GoodL n e) (he' : G
 
 variable [Route]
 
-/-! ### The numbers `K·r'` are terms of the box -/
+/-! ### The numbers `p·r'` are terms of the box -/
 
 /-- **A prime times a tuple of an atoms' box is counted by the box.** For a box `[c3, c2, c1]` that passes `revOK`,
 at a large modulus; an atoms' box `bx` with the cell `c2` at a position `j` before the last and `c3` at the last;
@@ -114,7 +114,7 @@ theorem rev_mem [RouteOK] {q : ℕ} (hq : Big q) {c1 c2 c3 : Cell} (hrev : revOK
   have hr0 : (0 : ℝ) < r := lt_trans (Xe_pos hx0 _) hsl.1
   have hK0 : (0 : ℝ) < Kp := by exact_mod_cast hK.pos
   have hn0 : 0 < n := by have := (Finset.mem_Ioc.1 hn).1; omega
-  -- `K` lies in the cell `c1`
+  -- the prime lies in the cell `c1`
   have hKlo : Xe q c1.1 < Kp := by
     have e : Xe q c1.1 * Xe q (e2 c1 - 1) = xq q := by
       rw [← Xe_add hx0, ← Xe_DEN q]
@@ -303,10 +303,10 @@ theorem rev_inject_pt [RouteOK] {q : ℕ} (hq : Big q) {c1 c2 c3 : Cell} (hrev :
       Finset.card_union_of_disjoint d2]
   omega
 
-/-- **The numbers `K·r'` of the atoms' boxes are at most the term of the box.** For a box `[c3, c2, c1]` that
-passes `revOK`, at a large modulus, weights `g ≥ 0` and any cells `I1`, `D`, `I2`: the sum over the five atoms'
-boxes of the weights of the `n = K·r'`, `K` prime and `r'` between `x^{(DEN−h₁+1)/DEN}` and `x^{(DEN−l₁)/DEN}`, is
-at most the term of the box. -/
+/-- **The primes over the atoms' boxes are terms of the box.** For a box `[c3, c2, c1]` that passes `revOK`, at a
+large modulus, weights `g ≥ 0` and any cells `I1`, `D`, `I2`: the sum over the five atoms' boxes of the weights of
+the `n = p·r'`, `p` prime and `r'` between `x^{(DEN−h₁+1)/DEN}` and `x^{(DEN−l₁)/DEN}`, is at most the term of the
+box. -/
 theorem rev_inject [RouteOK] {q : ℕ} (hq : Big q) {c1 c2 c3 : Cell} (hrev : revOK [c3, c2, c1] = true) (g : ℕ → ℝ)
     (hg : ∀ n, 0 ≤ g n) (I1 D I2 : Cell) :
     famPr g (N1 q) (N2 q) (famK q (e1 c1 + 1) (e2 c1 - 1) 3 (boxFn [c3, c2, I1] 3 rfl)) +

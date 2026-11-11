@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1668 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1683 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -97,6 +97,7 @@ result's note finds it unused; blank where neither has been checked.
 | `ψ(x; q, a) = x/φ(q) + O(x^{11/12+η})` for every `q` and every `a` prime to `q`, at fixed `q` | `PNTProgressions.psiAP_isBigO` | yes |
 | Linnik: every class `a` mod `q` with `(a, q) = 1` holds a prime `p ≤ Kq^{11/5}` | `Linnik22000E.linnik_22000e` | yes |
 | The same with `p ≤ Kq^{219/100}`, by a tree of Buchstab steps with a Type II estimate in two variables (in no paper) | `Linnik21900.linnik_21900` | yes |
+| The same with `p ≤ Kq^{218/100}`, with role reversal for a term of three primes added to that tree (in no paper) | `Linnik21800.linnik_21800` | yes |
 | Linnik by density estimates and the classical deduction, with the exponents `12`, `4`, `17/6`, `36/13`, `87/35`, `12/5` and `2.3334`, each `+ η` | `Linnik.linnik_twelve`, `LinnikDensity.linnik_four`, `LinnikSubconvex.linnik_seventeen_sixths`, `LinnikIngham.linnik_thirtysix_thirteenths`, `LinnikHuxley.linnik_eighty_seven_thirty_fifths`, `LinnikTwelve.linnik_twelve_fifths`, `LinnikG7.linnik_g7d` | yes |
 | A prime in `(y, y + y^θ]` for every large `y`, `θ > 17/30`; and for all `y ∈ [X, 2X]` outside a set of measure `X^{1−δ}`, `θ > 2/15` | `ZetaGMDensity.short_primes_seventeen_thirtieths`, `ZetaGMDensity.almost_all_short_primes_two_fifteenths` | yes |
 | In terms of `Θ`: `limsup log\|ψ(x) − x\|/log x = Θ`, the same for `M(x)`, `Σ μ(n)n^{−s}` converges exactly on `Re s > Θ`, and a prime in `(y, y + y^θ]` for `θ > 2Θ/(1 + 2Θ)` | `PsiExponent.limsup_expo`, `MertensExponent.limsup_mexpo`, `MertensExponent.moebiusAbscissa_eq_Theta`, `InghamDensity.short_primes_Theta` | |
@@ -221,11 +222,12 @@ In order of what is in reach.
    and not a proof, keeps Li's constant positive down to `θ ≈ 0.5182` once Guth and Maynard's estimate
    (`ZetaGMLV.gm_large_values`) joins Huxley's. A Lean proof below `0.52` would go below Li, resting on the half-plane
    as Linnik's exponent does: the sieve's main terms take the prime number theorem in short ranges from it.
-2. **Linnik's exponent.** The theorem is `219/100` (`Linnik21900.linnik_21900`); the paper's is `11/5`. With the
+2. **Linnik's exponent.** The theorem is `218/100` (`Linnik21800.linnik_21800`); the paper's is `11/5`. With the
    window chosen afresh, the paper's certificate passes at `2.199` (total `0.96729K` on 276 cells a side) and fails
    at `2.198` (supplement §S6, computed, not a theorem). The theorem at `219/100` adds a Type II estimate in two
-   variables and a decomposition chosen term by term, a tree of Buchstab steps that the kernel searches for; with
-   role reversal, and with the trees' stops among the small primes, the same inputs pass at `2.12` in a computation
+   variables and a decomposition chosen term by term, a tree of Buchstab steps that the kernel searches for, and
+   the theorem at `218/100` adds role reversal for a term of three primes; with role reversal for every term and
+   at two levels, and with the trees' stops among the small primes, the same inputs pass at `2.12` in a computation
    in floating point, which is not in Lean ([`research-opportunities.md`](research-opportunities.md), §3.1). The
    sieve has no window under `1 + A/2 = 13/6` for the curve's peak `A = 7/3`, and `0.7151K` of the paper's
    certificate's `0.9321K` is cells that no depth of

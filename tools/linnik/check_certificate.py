@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Regenerate the Linnik certificates' files and compare them with lib/pnt byte for byte.
 
-Two certificates are checked (with no argument, or one named by its tag):
+Three certificates are checked (with no argument, or one named by its tag):
 
 * `22000E`: `SieveDeep.totalD_lt_22000E` (L = 11/5, the window [43457/100000, 46959/100000], n = 272, the curve `g7d`,
   the decomposition to depth 8 under the bilinear Type I rule), the paper's;
 * `21900`: `Linnik21900.tree21900` (L = 219/100, the window [44260/100000, 46717/100000], a tree of Buchstab steps
-  that the kernel searches for in parts).
+  that the kernel searches for in parts);
+* `21800`: `Linnik21800.tree21800` (L = 218/100, the window [45073/100000, 46472/100000], a search with role
+  reversal that the kernel runs in parts).
 
 Earlier certificates, at weaker exponents (the last, `22240R` at 278/125), are no longer in the tree; see the git
 history.
@@ -23,6 +25,8 @@ fails the check.
 
 The second is `tree_cert.py --check`, which runs the search in Python, cuts it into parts and compares
 SieveGrid21900.lean, every SieveTree21900P<k>.lean and Linnik21900.lean with the files in lib/pnt (half a minute).
+The third is `rev_cert.py --check`, the same for the search with role reversal and SieveGrid21800.lean, every
+SieveTree21800P<k>.lean and Linnik21800.lean (two minutes).
 """
 import filecmp
 import os
@@ -42,7 +46,7 @@ CERTS = {
 
 
 # tag: the generator of a tree's files and its arguments
-TREES = {'21900': ['tree_cert.py', '--check']}
+TREES = {'21900': ['tree_cert.py', '--check'], '21800': ['rev_cert.py', '--check']}
 
 
 def check_tree(tag):

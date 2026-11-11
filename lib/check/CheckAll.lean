@@ -181,6 +181,16 @@ import SieveAdMix
 import SieveAd22000
 import SieveAdSearchDefs
 import SieveAdSearch
+import SieveAdFilt
+import SieveAdRevDefs
+import SieveAdSearchG
+import SieveAdRevCount
+import SieveAdRev
+import SieveAdRevFam
+import SieveAdRevLemma
+import SieveAdRevInj
+import SieveAdRevSum
+import SieveAdRevSearch
 import SieveHMWindow
 import SieveTypeIIHM
 import LinnikCGLLV
@@ -265,6 +275,9 @@ import Linnik22000E
 import SieveTypeIIU21900D
 import SieveGrid21900
 import Linnik21900
+import SieveTypeIIU21800D
+import SieveGrid21800
+import Linnik21800
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
@@ -957,6 +970,16 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.solveF_sound
 #print axioms SieveAd.has_of_kids
 #print axioms SieveAd.linnik_has
+#print axioms SieveAd.linnik_bd
+#print axioms SieveAd.solveG_sound
+#print axioms SieveAd.rootJ_sound
+#print axioms SieveAd.famCost_sound
+#print axioms SieveAd.rev_cover
+#print axioms SieveAd.rev_inject
+#print axioms SieveAd.bd_rev
+#print axioms SieveAd.solveR_sound
+#print axioms SieveAd.pr_of_kids
+#print axioms SieveAd.linnik_pr
 #print axioms SieveCurveGlue.affine_corner_bound
 #print axioms SieveCurveGlue.windowPieceHM_affine_split
 #print axioms SieveCurveGlue.windowPieceHM_const_split
@@ -1149,6 +1172,11 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveCert.gridOK21900
 #print axioms Linnik21900.tree21900
 #print axioms Linnik21900.linnik_21900
+#print axioms SieveTypeIIU21800D.window_21800d
+#print axioms SieveTypeIIU21800D.typeII_21800d
+#print axioms SieveCert.gridOK21800
+#print axioms Linnik21800.tree21800
+#print axioms Linnik21800.linnik_21800
 #print axioms SieveCurve7D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d

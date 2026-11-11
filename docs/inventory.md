@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1668 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1683 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 282 | 876 |
+| `lib/pnt` | 292 | 891 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1513,6 +1513,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow`: The least prime primitive root mod a prime power
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_safe`: Safe primes
 
+#### `Linnik21800`: Linnik's theorem with exponent `218 / 100`, by a search with role reversal
+
+- `Linnik21800.tree21800`: The first term at `218 / 100`
+- `Linnik21800.linnik_21800`: Linnik's theorem with exponent `218 / 100`, by a search with role reversal ([note](../formalisations/halasz-montgomery.md))
+
 #### `Linnik21900`: Linnik's theorem with exponent `219 / 100`, by a tree of Buchstab steps
 
 - `Linnik21900.tree21900`: The tree at `219 / 100`
@@ -2454,6 +2459,32 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd22000.linnik_tree_22000`: Linnik's theorem with exponent `11/5`, from a tree that passes the tests
 
+#### `SieveAdRev`: The tree of a reversed term bounds it
+
+- `SieveAd.rootJ_sound`: The cost of the terms of an atoms' box at its level
+
+#### `SieveAdRevFam`: The cost of an atoms' box of a reversed term
+
+- `SieveAd.famCost_sound`: The cost of an atoms' box bounds it
+
+#### `SieveAdRevInj`: Role reversal: the primes of the atoms' boxes are terms of the box
+
+- `SieveAd.rev_inject`: The primes over the atoms' boxes are terms of the box
+
+#### `SieveAdRevLemma`: Role reversal: the term of three primes and the terms of its atoms' boxes
+
+- `SieveAd.rev_cover`: The term of the box is at most the terms of its atoms' boxes
+
+#### `SieveAdRevSearch`: The search with role reversal is sound
+
+- `SieveAd.solveR_sound`: The search with role reversal is sound
+- `SieveAd.pr_of_kids`: A part of a search with role reversal
+- `SieveAd.linnik_pr`: Linnik's theorem from a search with role reversal
+
+#### `SieveAdRevSum`: Role reversal: the cost of a reversal bounds the term
+
+- `SieveAd.bd_rev`: The cost of a reversal bounds the term
+
 #### `SieveAdSearch`: The search for a tree is sound
 
 - `SieveAd.solveF_sound`: The search is sound
@@ -2467,8 +2498,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.findSub1_eq`
 - `SieveAd.tstarF_eq`
 
+#### `SieveAdSearchG`: The search with its nodes' tests as parameters is sound, for any statement that the nodes prove
+
+- `SieveAd.solveG_sound`: The search is sound
+
 #### `SieveAdTree`: A tree of Buchstab steps on boxes of cells: what a tree that passes the check gives
 
+- `SieveAd.linnik_bd`: Linnik's theorem with exponent `L`, from a bound of the first term
 - `SieveAd.linnik_tree`: Linnik's theorem with exponent `L`, from a tree
 - `SieveAd.linnik_tree_at`: Linnik's theorem from a tree, for any route
 
@@ -2612,6 +2648,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveFamilyTwo.typeIITwoAt_long`: Proposition 3′ for two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
 - `SieveFamilyTwo.box_two`: The estimate at one frequency of the separated sum, for the pairs ([note](../formalisations/halasz-montgomery.md))
 - `SieveFamilyTwo.typeII_sharp_two`: The Type II estimate for a sharp family in two variables (Lemma 4.4 in two variables) ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveGrid21800`: The grid, the strategies and the nodes of the search with role reversal at `L = 218/100`
+
+- `SieveCert.gridOK21800`
 
 #### `SieveGrid21900`: The grid and the strategy of the tree at `L = 219/100`
 
@@ -2875,6 +2915,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveTypeIIU`: Type II families with sharp prime ranges
 
 - `SieveTypeIIU.typeII_unw`: Type II for families with sharp prime ranges *paper* ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveTypeIIU21800D`: Proposition 3′ at `L = 218 / 100` on the window `[45073/100000, 46472/100000]·L`, for the curve `g7d`
+
+- `SieveTypeIIU21800D.window_21800d`: The window's exponents
+- `SieveTypeIIU21800D.typeII_21800d`: Proposition 3′ at `L = 218 / 100` on `[45073/100000, 46472/100000]·L`, for the curve `g7d`
 
 #### `SieveTypeIIU21900D`: Proposition 3′ at `L = 219 / 100` on the window `[44260/100000, 46717/100000]·L`, for the curve `g7d`
 

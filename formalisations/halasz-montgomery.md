@@ -160,14 +160,18 @@ The region enters through a rectangle cut by a band of the sum of the two expone
 family whose two variables have their exponents in such a set inside the region. A set of tuples cut by another
 slanted side of the region is a union of such sets and a remainder that these lemmas do not evaluate.
 
-One theorem of the library uses them: Linnik's theorem with exponent `219/100`
-(`Linnik21900.linnik_21900`, in no paper), whose decomposition is a tree of Buchstab steps with the window's tests
+Two theorems of the library use them, both in no paper. Linnik's theorem with exponent `219/100`
+(`Linnik21900.linnik_21900`) has for its decomposition a tree of Buchstab steps with the window's tests
 and two tests by this estimate, a box evaluated outright (`SieveAd.evI_two`, from `chain2_bound`) and the
 comparison at a floor (`SieveAd.evJ_two`, from `prop6_two_at`); the term with its cofactor in the rest
-(`chain2R_bound`) is not used there. `lib/check/CheckAll.lean` prints their axioms, which are `propext`,
+(`chain2R_bound`) is not used there. Linnik's theorem with exponent `218/100` (`Linnik21800.linnik_21800`) adds
+role reversal for a term of three primes to that tree, and uses the two tests under two more conditions on the
+tuples (`SieveAd.evI_twoE`, `SieveAd.evJ_twoE`), for the trees of the reversed terms.
+`lib/check/CheckAll.lean` prints their axioms, which are `propext`,
 `Classical.choice` and `Quot.sound`. They are the estimate in two variables of
 [`docs/research-opportunities.md`](../docs/research-opportunities.md) (§3.1). What that section's computations
-below `2.19` use and these do not give: role reversal, and the comparison with its rest among the small primes.
+below `2.18` use and these do not give: role reversal for terms of more primes and at more than one level, and the
+comparison with its rest among the small primes.
 
 ## Source
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """gen_cgl_curve.py [--check]: the Lean files of the curve `g7d`, of its window and its theorem at `L = 11/5`, and of
-its window at `L = 219/100`.
+its windows at `L = 219/100` and `L = 218/100`.
 
 `g7d` is `g7c` (`route_limits.G7C`) with Chen-Gupta-Li's Proposition 3.1 used at every point of
 `[5/7, 131/168]`, instead of the flat `7/3 + 1/2000` and Huxley's steps there, and with Ingham's last step
@@ -30,13 +30,15 @@ Writes `lib/pnt/LinnikCGLSteps.lean` (the Chen-Gupta-Li steps, and Ingham's last
 `lib/pnt/SieveTypeIIU22000D.lean` (the window there and Proposition 3′) and `lib/pnt/Linnik22000E.lean` (the theorem,
 by the decomposition to depth 8, whose certificate `gen_cert8.py` writes), and, at `L = 219/100`,
 `lib/pnt/SieveTypeIIU21900D.lean` (the window there and Proposition 3′; the theorem at `219/100` is by a tree of
-Buchstab steps, whose files `tree_cert.py` writes). The theorem at `278/125`, with the refined
+Buchstab steps, whose files `tree_cert.py` writes), and, at `L = 218/100`, `lib/pnt/SieveTypeIIU21800D.lean` (the
+window there and Proposition 3′; the theorem at `218/100` is by a search with role reversal, whose files
+`rev_cert.py` writes). The theorem at `278/125`, with the refined
 certificate, and the window and Proposition 3′ there are in the git history. The window `[W1, W2]/100000` is the one
 `route_limits.py run` computes for `g7d` at `L` (the sampled scan, then the exact corners).
 With `--check`, nothing is written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a
 difference). With `--table`, the steps' parameters are printed.
 
-Needs Python 3 only. About twenty seconds (the windows' scans).
+Needs Python 3 only. About half a minute (the windows' scans).
 """
 import math
 import os
@@ -60,6 +62,10 @@ TAG3, LNUM3, LDEN3, N3 = '22000', 11, 5, 272
 L4 = Fr(219, 100)
 TAG4, LNUM4, LDEN4 = '21900', 219, 100
 W1_4, W2_4 = 44260, 46717
+# the route at `L = 218/100`: the window there (`window_file`); `rev_cert.py` takes it as `[W1_5, W2_5]/100000`
+L5 = Fr(218, 100)
+TAG5, LNUM5, LDEN5 = '21800', 218, 100
+W1_5, W2_5 = 45073, 46472
 STEP = Fr(1, 1680)
 # the steps of `[5/7, 131/168]`: `NARROW` of width `STEP` from `5/7`, then steps of width `WIDE`
 NARROW, WIDE = 14, Fr(1, 280)
@@ -690,13 +696,16 @@ def generate():
     W1, W2, moves = window_for(pcs, L3)
     W1b, W2b, _ = window_for(pcs, L4)
     assert (W1b, W2b) == (W1_4, W2_4), (W1b, W2b)
+    W1c, W2c, _ = window_for(pcs, L5)
+    assert (W1c, W2c) == (W1_5, W2_5), (W1c, W2c)
     cfile, allp = curve_file(keep, new, hx, params)
     assert [(lo, hi, A) for lo, hi, A, _, _ in allp] == pcs
     files = {'LinnikCGLSteps.lean': sfile,
              f'{CURVE}.lean': cfile,
              f'SieveTypeIIU{TAG3}D.lean': window_file(allp, W1, W2),
              f'Linnik{TAG3}E.lean': final_file_deep(W1, W2),
-             f'SieveTypeIIU{TAG4}D.lean': window_file(allp, W1b, W2b, tag=TAG4, LN=f'{LNUM4} / {LDEN4}')}
+             f'SieveTypeIIU{TAG4}D.lean': window_file(allp, W1b, W2b, tag=TAG4, LN=f'{LNUM4} / {LDEN4}'),
+             f'SieveTypeIIU{TAG5}D.lean': window_file(allp, W1c, W2c, tag=TAG5, LN=f'{LNUM5} / {LDEN5}')}
     return files, (W1, W2, moves, params, new)
 
 
@@ -707,8 +716,8 @@ def main():
             p = params[(lo, hi)]
             print(k, lit(lo), lit(hi), 'a', dec(p['a'], 5), 'lam', dec(p['lam'], 5), 'Ai', dec(p['Ai'], 5), 'A', dec(A, 5),
                   '4/(1+lo)', dec(Fr(4) / (1 + lo), 5))
-    print(f'window [{W1}, {W2}]/100000 at L = {L3} (corner moves {moves}) and [{W1_4}, {W2_4}]/100000 at L = {L4}; '
-          f'{len(new)} steps, every ParC.Good field checked')
+    print(f'window [{W1}, {W2}]/100000 at L = {L3} (corner moves {moves}), [{W1_4}, {W2_4}]/100000 at L = {L4} and '
+          f'[{W1_5}, {W2_5}]/100000 at L = {LNUM5}/{LDEN5}; {len(new)} steps, every ParC.Good field checked')
     if '--check' in sys.argv:
         bad = [n for n, t in files.items()
                if not os.path.exists(os.path.join(PNT, n)) or open(os.path.join(PNT, n), encoding='utf-8').read() != t]

@@ -135,6 +135,7 @@ the exponent each input would reach is:
 | Chen, Gupta and Li's `4/(1 + σ)` at `σ = 5/7`, the library today | `7/3 = 2.3333` | `13/6 = 2.1667` | `2.198`–`2.2` (computed: `2.199` passes, `2.198` fails) |
 | The same, with the Type II estimate in two variables as one more way to evaluate a box (below; the estimate by bins is in Lean, the sieve with it is not) | `7/3` | `13/6` | `2.193` (computed: `2.193` passes, `2.192` fails) |
 | The same inputs in a tree of Buchstab steps chosen term by term, with the window's tests and those of the estimate in two variables, and no role reversal (below; **in Lean**, the kernel searching for the tree) | `7/3` | `13/6` | **`2.19`, a theorem** (`Linnik21900.linnik_21900`) |
+| The same tree with role reversal for a term of three primes that needs an upper bound, at one level (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.18`, a theorem** (`Linnik21800.linnik_21800`) |
 | The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no certificate; of what it assumes, the two estimates are in Lean as far as Harman's comparison with a rest among the term's primes) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
 | A hybrid large-values estimate of Guth–Maynard strength at `σ = 5/7`, `15/(3 + 5σ)` (the `gm` variant of `tools/linnik/density_payoff.py`) | `105/46 = 2.2826` | `2.1413` | about `2.17`–`2.18` |
 | Guth and Maynard's `30/13` as a cap everywhere | `2.3077` | `2.1538` | about `2.18`–`2.19` |
@@ -306,8 +307,35 @@ covers. The region does not close at `13/6`.
     `SieveAd.has_of_kids`), in about three quarters of an hour of its time. `tools/linnik/tree_cert.py` is the
     same search in Python: it cuts it into the parts and writes the files, and CI regenerates them
     (`check_certificate.py`).
-- **What is not written.** The comparison with its rest among the small primes; role reversal; a tree for an
-  exponent below `2.19`. Until these are written the theorem stays at `2.19`.
+  - **Linnik's theorem with exponent `218/100`** (11 November; `Linnik21800.linnik_21800`): for every `q ≥ 1` and
+    every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{218/100}`, with no hypothesis. The
+    route is `L = 218/100` on the window `[0.45073, 0.46472]` (`SieveTypeIIU21800D.typeII_21800d`), where the
+    search for a tree costs `1.16K`. The search there has one more node, role reversal
+    (`lib/pnt/SieveAdRevDefs.lean`; `SieveAd.bd_rev`), for a term of three primes `p₁ > p₂ > p₃` in cells, of the
+    sign `−`, a term that needs an upper bound. Its numbers are `n = p₁p₂p₃m` with `m` rough at `p₃` and below
+    `p₃³`, so `m` is a prime `Q` or a product `q₂Q`. The primes of `r' = n/p₁` in order (the atoms) are in one of
+    five kinds of boxes: `p₂` above or below `Q`, and with `q₂` three places for `p₂`. `x/r'` is in the range of
+    `p₁`, which is a condition on the atoms' product, and `n/r' = p₁` is rough at `z`, the least value of `p₃`.
+    So the term in `𝒜` is at most the sum over those `r'` of the `n ≡ a` with `r' ∣ n` and `n/r'` rough at `z`,
+    up to the `n` with a square factor at least `z` (`SieveAd.rev_cover`); and the term in the comparison set is
+    at least the sum, over the `r'` of a range shorter by a factor `x^{1/DEN}` at each end, of the `n` with `n/r'`
+    prime: they are terms of the box, each once, by unique factorisation (`SieveAd.rev_inject`). Each sum over
+    `r'` is a term of the usual kind under a condition on its tuples, and has a tree of its own. The tree's boxes
+    carry the atoms' cells and then the chain of the primes of `n/r'` that Buchstab's identity brings out; its
+    steps keep the condition (`SieveAd.dIP_cut`, `SieveAd.dIP_buch`); the tests hold under two more conditions on
+    the tuples (`SieveAd.mixTests_soundX`); and a chain's box is dropped at a bound by `Ψ`
+    (`SieveAd.rootJ_sound`, `SieveAd.famCost_sound`). A reversal costs its trees' costs and what the numbers rough
+    at `z` exceed the primes by in the comparison set, each times a bound of `Σ 1/r'` over its box. The search
+    takes it where it is below the cost of Buchstab's identity, at `3664` of the `8185` boxes where it applies. A
+    search with its nodes' tests as parameters is sound for any statement that the nodes prove
+    (`SieveAd.solveG_sound`), and the reversed trees and the search itself are two uses of that
+    (`SieveAd.solveK_sound`, `SieveAd.solveR_sound`). The bound's cost is `0.91812K`, from a search on `1063672`
+    boxes with cells of side at most `0.006` and at most a tenth of the exponent. The kernel runs it in `587` parts
+    (`lib/pnt/SieveTree21800P1.lean` and the files after it; `SieveAd.pr_of_kids`), in about an hour and forty
+    minutes of its time, and `tools/linnik/rev_cert.py` is the same search in Python.
+- **What is not written.** The comparison with its rest among the small primes; role reversal for terms of more
+  than three primes, through a prime other than the largest, or at a second level; a search for an exponent below
+  `2.18`. Until these are written the theorem stays at `2.18`.
   - *Why `2.19`.* Without reversal, and without the stops whose rest is the first small prime, the cells pass at
     `2.19` with the window, and not at `2.18` (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
     `0.945`; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`; `1.066` at `2.18` with every stop). The tree
@@ -319,6 +347,13 @@ covers. The region does not close at `13/6`.
     tree of that size (`harman_sieve.py paper`: `1.22` at `11/5` and `1.75` at `2.195` on cells of side `0.005`).
     The search costs `0.98189K` on cells of side `0.006` with terms of at most six primes, `0.93489K` at `0.005`
     with nearly twice the boxes, and `1.00099K` at `0.0065` (`tree_cert.py --try`).
+  - *Why `2.18`.* With the reversal of a term of three primes the search passes at `2.18` (`0.91849K`; `0.90043K`
+    with the reversed trees' chains of up to three primes in cells of side `0.006`) and not at `2.175` (window
+    `[0.45481, 0.46349]`: `1.05257K`) or `2.17` (window `[0.45892, 0.46226]`: `1.26965K`; `rev_cert.py --try`).
+    It is sensitive to the cells: `1.01637K` at `2.18` with cells of side `0.007`, and `2.10K` with terms of at
+    most five primes. The window closes at `13/6`: the curve has none at `2.165`. So below `2.18` the search needs
+    more of the reversal (in the computation, `0.981` at `2.17` with terms of at most six primes reversed), and
+    below `13/6` the stops whose rest is among the small primes.
   - *The rest among the small primes.* Below `13/6` there is no window, and the term at the root, `S(𝒜, x^f)`,
     has no prime to be the rest: its tree is stopped with the first small prime as the rest. The region takes a
     rest of exponent at least `1/2000`, so the paths whose small primes are all below that are not stopped. They
@@ -337,20 +372,26 @@ covers. The region does not close at `13/6`.
     (`0.47`). With the window, without the stops whose rest is the first small prime, and with one level of
     reversal for terms of at most three primes, the cells pass at `2.18` (`0.863`, `463000` nodes at side
     `0.007`) and not at `2.17` (`1.042`; `0.981` with terms of at most six primes reversed, off the diagonal,
-    `693000` nodes); with prime cofactors only and off the diagonal they fail at `2.18` (`1.067`). So the next
-    exponent in Lean, near `2.18`, needs the reversed term in full: the old cofactor, a number sifted at the
-    term's last prime, as a variable of the new term, with its prime factors expanded for the estimates; the
-    share of the box where `p_j` is within a factor `N₂/N₁` of an end of its cell, by the comparison at a small
-    floor; Buchstab's identity over the prime factors of `p_j`'s place, for a family that is not a decreasing
-    chain; the count in the comparison set of a dropped term of the new shape, with two sifted cofactors; and
-    the tree, its tests and its search for such terms.
+    `693000` nodes); with prime cofactors only and off the diagonal they fail at `2.18` (`1.067`). The theorem
+    at `2.18` has the reversal for one shape of term: three primes, of the sign `−`, reversed through the
+    largest, with the cofactor below the cube of the smallest, so that the cofactor's prime factors are at most
+    two and are written out as atoms; and at one level. It is an inequality, not the identity above: the `n` with
+    `n/r'` rough at the least value of `p₃` bound the term, the comparison set pays for the rough numbers that are
+    not primes, and the `r'` within a factor `x^{1/DEN}` of an end of the range are counted at a bound with
+    nothing subtracted. What the computation at `2.12` has and Lean does not: the reversal of a term of more
+    primes, whose cofactor is a number sifted at the term's last prime with more prime factors, as a variable of
+    the new term; the reversal through a prime other than the largest; a second level, the terms of a reversed
+    tree reversed again; and the stops of the reversed trees with a rest among the small primes.
   - *The size of a tree.* Without reversal the cells pass at `2.19` only (`0.87` with the window, `276000` nodes
     at side `0.005`); with it, `0.81` at `2.19` with `113000` nodes (side `0.01`, terms of at most three primes,
     one level), `0.75` at `2.17` with `10^6` nodes (side `0.007`, one level), `0.49` at `2.17` with `1.4·10^7`
     (side `0.005`, two levels), and `0.92` at `2.12` with the cells of side `0.002` of the table above, a tree of
-    `4.7·10^9` nodes. The kernel searches about a hundred boxes a second (the tree at `2.19`), so it does not
-    check that many one by one: a certificate at `2.12` needs a coarser tree, with cells chosen where they matter,
-    or a check that shares work between boxes.
+    `4.7·10^9` nodes. The kernel searches about a hundred boxes a second (the tree at `2.19`, and the search at
+    `2.18`, whose `10^6` boxes are near what a build can check), so it does not check that many one by one: a
+    certificate at `2.12` needs a coarser tree, with cells chosen where they matter, or a check that shares work
+    between boxes. Half of the search's time at `2.18` was in boxes that it drops after looking for a cheaper
+    tree; the files drop `216` such cells outright (`SieveAd.pr_drop`), which a search told what to take would do
+    everywhere.
 
 ### 3.2 Short intervals
 
