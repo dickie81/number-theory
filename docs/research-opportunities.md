@@ -363,6 +363,26 @@ covers. The region does not close at `13/6`.
     are left to Brun's sieve at a fixed level, whose gap is tiny and is not `o(1)`; the computation takes it as
     zero. In Lean the comparison has its rest among the term's primes and an error `o(1)`
     (`SieveTwoComp.prop6_two`); one with the rest among the small primes, and that gap as a cost, is not written.
+  - *Without the window, in exact terms* (11 November; a search in exact integers with the tests that are
+    proved, `SieveAd.twoTests`, and no window). The rest of the estimate in two variables is a product of primes
+    of exponent between `1/2000` and about `(L − 2)/0.558` in base `q`, at most `x^{0.133}` at `2.16`. A term whose
+    primes are all larger has none among them, and its rest is then the first of the small primes below its floor.
+    Bringing that prime out by Buchstab's identity at the least floor `q^{1/2000}` leaves the terms at that floor
+    to Brun's sieve at a fixed level, and the library has that bound with its constants
+    (`SieveProp6.leaf_bound`, `SieveP6TreeLeaves.large_leaves_le`): the gap is `2ζ(k)L/ε_w` times `Σ 1/r`,
+    below `10^{−12}` at `ε_w = 1/2000` and the levels `k + 2j`, `k = 36`, once the sums `Σ 1/p` over the ranges
+    `[A, A²)` have an explicit bound (`4` is elementary; the library's constant comes from the prime number
+    theorem and is not explicit). So the gap is a cost of no size, and the window is not needed for the floor.
+    What the search then costs: `1.52K` at `2.16` with no reversal (cells of side `0.006`; the model has `1.36`
+    at `0.007`), and with the reversal of `Linnik21800`'s shape, its trees stopped the same way, `1.44K` at
+    `2.16`, `1.30K` at `2.17` and `1.08K` at `2.18`, where the window's tests bring it to `0.92K`. Two things
+    are needed besides the floor. A drop that counts the strictly decreasing tuples of a cell once, not `j!`
+    times: the cells of a small prime repeat down a chain, and without it the search costs `2.5K`. And the
+    reversal of the model, which the exact search does not have yet: of a term of two or three primes, of
+    either sign, through any of its primes, with a cofactor of any number of prime factors
+    (`harman_sieve.py cells 2160/1000 --no-window --flips 3 --nest 1 --h 0.005`: `0.881` with `2.5·10^6` nodes,
+    `0.782` at `--h 0.004`, `1.083` at `--h 0.007`; `1.059` with `--rev odd,prime`; `1.361` with `--flips 0`;
+    at `2.165` with `--h 0.007`, `0.984` with `5.7·10^5` nodes).
   - *Role reversal*, in exact terms: for a term `Σ S(A_{p₁⋯p_k}, p_k)` on a box of cells and one of its primes
     `p_j` in `[X, X′)`, the numbers `n = (r/p_j)·m·p_j` with `N₂/X′ < (r/p_j)m ≤ N₁/X` have `p_j = n/((r/p_j)m)`
     in its cell whatever `n` in `(N₁, N₂]`, so on them the term is `Σ S(A_{r′}, ⌈X′^{1/2}⌉)` over `r′ = (r/p_j)m`
