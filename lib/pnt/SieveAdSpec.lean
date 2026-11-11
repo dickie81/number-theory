@@ -8,9 +8,8 @@ the comparisons of atoms (`SieveChain.RTg`). The family of a box (`SieveAd.famB`
 
 * `specB q bx`: the atoms of the box `bx` at the modulus `q`: for each prime its two cell ends, `x^{lo_i/DEN} ≤ p_i`
   and `p_i < x^{hi_i/DEN}`, and for each two consecutive primes `p_{i+1} < p_i`. They are at most `3k`.
-* `sem_specB`: a tuple satisfies them exactly when it is strictly decreasing with its primes in their cells;
-  `famB_eq_famSet`: so the family of the box is `famSet k N₂ (specB q bx)`.
-* `famB_filter_eq_famSet`, `dIP_eq_famSet`, `dJP_eq_famSet`: the tuples of the box that satisfy more atoms `E`
+* `sem_specB`: a tuple satisfies them exactly when it is strictly decreasing with its primes in their cells.
+* `famB_filter_eq_famSet`, `dIP_eq_famSet`, `dJP_eq_famSet`: so the tuples of the box that satisfy more atoms `E`
   are `famSet k N₂ (specB q bx ++ E)`;
   `dIP_nil`, `dJP_nil`: with no more atom, the terms are the box's.
 * `thrOK_specB`: for `x ≥ 1` and cells with ends at most `DEN`, the atoms' thresholds lie in `[1, q^{L+1}]`
@@ -78,11 +77,6 @@ theorem sem_specB (q : ℕ) {k : ℕ} (bx : Fin k → Cell) (rt : Fin k → ℕ)
       exact ⟨h3, fun i => ⟨h1 i, h2 i⟩⟩
     · rintro ⟨h3, h12⟩
       exact ⟨fun i => (h12 i).1, fun i => (h12 i).2, h3⟩
-
-/-- The family of a box is the family of its atoms. -/
-theorem famB_eq_famSet (q : ℕ) {k : ℕ} (bx : Fin k → Cell) : famB q bx = famSet k (N2 q) (specB q bx) := by
-  ext rt
-  rw [mem_famB, mem_famSet, sem_specB]
 
 /-- The tuples of a box that satisfy more atoms are the family of the box's atoms and those. -/
 theorem famB_filter_eq_famSet (q : ℕ) {k : ℕ} (bx : Fin k → Cell) (E : List (Atom k))
