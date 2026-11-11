@@ -160,10 +160,14 @@ The region enters through a rectangle cut by a band of the sum of the two expone
 family whose two variables have their exponents in such a set inside the region. A set of tuples cut by another
 slanted side of the region is a union of such sets and a remainder that these lemmas do not evaluate.
 
-No theorem of the library uses these yet: `lib/check/CheckAll.lean` prints their axioms, which are `propext`,
+One theorem of the library uses them: Linnik's theorem with exponent `219/100`
+(`Linnik21900.linnik_21900`, in no paper), whose decomposition is a tree of Buchstab steps with the window's tests
+and two tests by this estimate, a box evaluated outright (`SieveAd.evI_two`, from `chain2_bound`) and the
+comparison at a floor (`SieveAd.evJ_two`, from `prop6_two_at`); the term with its cofactor in the rest
+(`chain2R_bound`) is not used there. `lib/check/CheckAll.lean` prints their axioms, which are `propext`,
 `Classical.choice` and `Quot.sound`. They are the estimate in two variables of
-[`docs/research-opportunities.md`](../docs/research-opportunities.md) (§3.1). What that section's computations use
-and these do not give: role reversal, and a certificate.
+[`docs/research-opportunities.md`](../docs/research-opportunities.md) (§3.1). What that section's computations
+below `2.19` use and these do not give: role reversal, and the comparison with its rest among the small primes.
 
 ## Source
 

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1656 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1668 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 277 | 864 |
+| `lib/pnt` | 282 | 876 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1513,6 +1513,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow`: The least prime primitive root mod a prime power
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_safe`: Safe primes
 
+#### `Linnik21900`: Linnik's theorem with exponent `219 / 100`, by a tree of Buchstab steps
+
+- `Linnik21900.tree21900`: The tree at `219 / 100`
+- `Linnik21900.linnik_21900`: Linnik's theorem with exponent `219 / 100`, by a tree of Buchstab steps ([note](../formalisations/halasz-montgomery.md))
+
 #### `Linnik22000E`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 and its certificate at `n = 272`
 
 - `Linnik22000E.routeOK22000D`: `route22000D` is a route *paper*
@@ -2449,6 +2454,19 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd22000.linnik_tree_22000`: Linnik's theorem with exponent `11/5`, from a tree that passes the tests
 
+#### `SieveAdSearch`: The search for a tree is sound
+
+- `SieveAd.solveF_sound`: The search is sound
+- `SieveAd.has_of_kids`: A part of a search
+- `SieveAd.linnik_has`: Linnik's theorem from the tree of a search
+
+#### `SieveAdSearchDefs`: A search for a tree of Buchstab steps, without Mathlib
+
+- `SieveAd.findSub2_eq`
+- `SieveAd.bestSub_eq`
+- `SieveAd.findSub1_eq`
+- `SieveAd.tstarF_eq`
+
 #### `SieveAdTree`: A tree of Buchstab steps on boxes of cells: what a tree that passes the check gives
 
 - `SieveAd.linnik_tree`: Linnik's theorem with exponent `L`, from a tree
@@ -2594,6 +2612,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveFamilyTwo.typeIITwoAt_long`: Proposition 3′ for two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
 - `SieveFamilyTwo.box_two`: The estimate at one frequency of the separated sum, for the pairs ([note](../formalisations/halasz-montgomery.md))
 - `SieveFamilyTwo.typeII_sharp_two`: The Type II estimate for a sharp family in two variables (Lemma 4.4 in two variables) ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveGrid21900`: The grid and the strategy of the tree at `L = 219/100`
+
+- `SieveCert.gridOK21900`
 
 #### `SieveGrid22000E`: The grid of the certificate to depth 8 at `L = 11/5` with `n = 272`
 
@@ -2853,6 +2875,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveTypeIIU`: Type II families with sharp prime ranges
 
 - `SieveTypeIIU.typeII_unw`: Type II for families with sharp prime ranges *paper* ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveTypeIIU21900D`: Proposition 3′ at `L = 219 / 100` on the window `[44260/100000, 46717/100000]·L`, for the curve `g7d`
+
+- `SieveTypeIIU21900D.window_21900d`: The window's exponents
+- `SieveTypeIIU21900D.typeII_21900d`: Proposition 3′ at `L = 219 / 100` on `[44260/100000, 46717/100000]·L`, for the curve `g7d`
 
 #### `SieveTypeIIU22000D`: Proposition 3′ at `L = 11 / 5` on the window `[43457/100000, 46959/100000]·L`, for the curve `g7d`
 

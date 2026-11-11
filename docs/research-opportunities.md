@@ -134,6 +134,7 @@ the exponent each input would reach is:
 |---|---|---|---|
 | Chen, Gupta and Li's `4/(1 + σ)` at `σ = 5/7`, the library today | `7/3 = 2.3333` | `13/6 = 2.1667` | `2.198`–`2.2` (computed: `2.199` passes, `2.198` fails) |
 | The same, with the Type II estimate in two variables as one more way to evaluate a box (below; the estimate by bins is in Lean, the sieve with it is not) | `7/3` | `13/6` | `2.193` (computed: `2.193` passes, `2.192` fails) |
+| The same inputs in a tree of Buchstab steps chosen term by term, with the window's tests and those of the estimate in two variables, and no role reversal (below; **in Lean**, the kernel searching for the tree) | `7/3` | `13/6` | **`2.19`, a theorem** (`Linnik21900.linnik_21900`) |
 | The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no certificate; of what it assumes, the two estimates are in Lean as far as Harman's comparison with a rest among the term's primes) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
 | A hybrid large-values estimate of Guth–Maynard strength at `σ = 5/7`, `15/(3 + 5σ)` (the `gm` variant of `tools/linnik/density_payoff.py`) | `105/46 = 2.2826` | `2.1413` | about `2.17`–`2.18` |
 | Guth and Maynard's `30/13` as a cap everywhere | `2.3077` | `2.1538` | about `2.18`–`2.19` |
@@ -289,22 +290,35 @@ covers. The region does not close at `13/6`.
     primes that enters the window which the region leaves to the first variable, a rest among the primes, and a
     split of the leaves (`SieveAd.evJ_two`, from `prop6_two_at`). At `11/5` a tree that passes the two kinds
     gives the paper's theorem (`SieveAd22000.linnik_tree_22000`, with `SieveAd.mixTests`).
-- **What is not written.** A route below `11/5` with its window, and a tree that passes there; the comparison
-  with its rest among the small primes; role reversal. Until these are written the theorem stays at `11/5`.
-  - *A first tree below `11/5`.* Without reversal, and without the stops whose rest is the first small prime, the
-    cells still pass at `2.19`, with the window (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
-    `0.945`, with `307000` nodes; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`). The tree needs boxes
-    evaluated by the window (`1.10` without) and by the estimate with the cofactor in the second variable (`1.20`
-    without), and none with the cofactor in the rest: these are the tests that are proved sound. In exact
-    integers, with those tests read from their Lean definitions, a search finds a tree at `219/100` whose cost is
-    `0.925K`, with `849000` nodes on cells of side `0.005` (`tools/linnik/tree_cert.py`; `0.889K` on cells of
-    side `0.004`, and `0.841K` at `2195/1000`), and a mirror of `SieveAd.ok` passes it. One of its nodes is
-    the corner where the first two primes are both near `x^{1/2}`: its only terms are the products `n = p₁p₂` in
-    `(x, 2x]`, dropped at a bound for their number, which is the width of the first prime's top cell up to a
-    constant. So a theorem at `2.19` needs the route's window at that exponent (`gen_cgl_curve.py` writes it at
-    `11/5`), and the tree in a form that the kernel checks: `849000` nodes are too many to write out, so the
-    search itself has to run in the kernel. The window alone does not go below `11/5` with a tree of that size
-    (`harman_sieve.py paper`: `1.22` at `11/5` and `1.75` at `2.195` on cells of side `0.005`).
+  - **Linnik's theorem with exponent `219/100`** (11 November; `Linnik21900.linnik_21900`): for every `q ≥ 1` and
+    every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{219/100}`, with no hypothesis. The
+    route is `L = 219/100` on the window `[0.44260, 0.46717]` (`SieveTypeIIU21900D.typeII_21900d`, by
+    `gen_cgl_curve.py`), and the decomposition is a tree with the two kinds of tests, of cost `0.98189K`
+    (`Linnik21900.tree21900`). The tree is not written out. `SieveAd.solveF` (`lib/pnt/SieveAdSearchDefs.lean`)
+    is a search for a tree on a box that returns a cost and no tree: a box is evaluated by a proposed
+    configuration, dropped, decomposed by Buchstab's identity at a proposed floor with the new prime's range cut
+    into cells, or cut in two, and a limit stops a subtree whose cost reaches it. A cost that it returns below
+    its limit is the cost of a tree that passes the check (`SieveAd.solveF_sound`): the search uses a node only
+    after the check for that node has passed, so what proposes the nodes (the rest: one prime; the first
+    variable: the set of the others with the largest lower sum below the window's top; cells of side `0.006`;
+    terms of at most six primes) needs no proof. The kernel runs the search on `301834` boxes, in parts, each a
+    range of consecutive cells of one prime (`lib/pnt/SieveTree21900P1.lean` and the files after it;
+    `SieveAd.has_of_kids`), in about three quarters of an hour of its time. `tools/linnik/tree_cert.py` is the
+    same search in Python: it cuts it into the parts and writes the files, and CI regenerates them
+    (`check_certificate.py`).
+- **What is not written.** The comparison with its rest among the small primes; role reversal; a tree for an
+  exponent below `2.19`. Until these are written the theorem stays at `2.19`.
+  - *Why `2.19`.* Without reversal, and without the stops whose rest is the first small prime, the cells pass at
+    `2.19` with the window, and not at `2.18` (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
+    `0.945`; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`; `1.066` at `2.18` with every stop). The tree
+    needs boxes evaluated by the window (`1.10` without) and by the estimate with the cofactor in the second
+    variable (`1.20` without), and none with the cofactor in the rest: these are the tests that are proved sound.
+    One of the tree's boxes is the corner where the first two primes are both near `x^{1/2}`: its only terms are
+    the products `n = p₁p₂` in `(x, 2x]`, dropped at a bound for their number (`SieveAd.dropB_bound`), which is
+    the width of the first prime's top cell up to a constant. The window alone does not go below `11/5` with a
+    tree of that size (`harman_sieve.py paper`: `1.22` at `11/5` and `1.75` at `2.195` on cells of side `0.005`).
+    The search costs `0.98189K` on cells of side `0.006` with terms of at most six primes, `0.93489K` at `0.005`
+    with nearly twice the boxes, and `1.00099K` at `0.0065` (`tree_cert.py --try`).
   - *The rest among the small primes.* Below `13/6` there is no window, and the term at the root, `S(𝒜, x^f)`,
     has no prime to be the rest: its tree is stopped with the first small prime as the rest. The region takes a
     rest of exponent at least `1/2000`, so the paths whose small primes are all below that are not stopped. They
@@ -325,8 +339,9 @@ covers. The region does not close at `13/6`.
     at side `0.005`); with it, `0.81` at `2.19` with `113000` nodes (side `0.01`, terms of at most three primes,
     one level), `0.75` at `2.17` with `10^6` nodes (side `0.007`, one level), `0.49` at `2.17` with `1.4·10^7`
     (side `0.005`, two levels), and `0.92` at `2.12` with the cells of side `0.002` of the table above, a tree of
-    `4.7·10^9` nodes. No kernel checks that many nodes one by one: a certificate at `2.12` needs a coarser tree,
-    with cells chosen where they matter, or a check that shares work between boxes.
+    `4.7·10^9` nodes. The kernel searches about a hundred boxes a second (the tree at `2.19`), so it does not
+    check that many one by one: a certificate at `2.12` needs a coarser tree, with cells chosen where they matter,
+    or a check that shares work between boxes.
 
 ### 3.2 Short intervals
 
