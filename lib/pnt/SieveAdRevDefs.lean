@@ -180,28 +180,28 @@ def cellQ (τ : Tests) (SK : Cell → ℕ → Strat) (fuel : ℕ) (c1 c2 c3 : Ce
         (fun l1 =>
           addL (famCost τ SK fuel c1 [c3, d, c2, iq2] 3 l1) (fun l2 => famCost τ SK fuel c1 [c3, c2, d, iq2] 3 l2)
             l1) lim)
-      (maxN (μlo - d.2) d.1, μhi - d.1)
+      (maxN (μlo - d.2) d.1, μhi - d.1 + 1)
   | _ => lim
 
 /-- **The cost of a reversal** of the box `[c3, c2, c1]` through its first prime, in units of `1/K`: the two
 atoms' boxes with a prime cofactor, and the three with a cofactor of two primes for each cell of the smaller, its
-range cut at `cs`. A value at least `lim` says nothing. -/
-def revCost (τ : Tests) (SK : Cell → ℕ → Strat) (fuel : ℕ) (cutsQ : ℕ → ℕ → List ℕ) : List Cell → ℕ → ℕ
+range cut at the cuts that `cq` proposes. A value at least `lim` says nothing. -/
+def revCost (τ : Tests) (SK : Cell → ℕ → Strat) (fuel : ℕ) (cq : ℕ → ℕ → List ℕ) : List Cell → ℕ → ℕ
   | [c3, c2, c1], lim =>
     (fun μlo μhi =>
       (fun iq1 top =>
         addL (famCost τ SK fuel c1 [c3, c2, iq1] 2 lim)
           (fun l1 =>
             addL (famCost τ SK fuel c1 [c3, iq1, c2] 1 l1)
-              (fun l2 => kids (cellQ τ SK fuel c1 c2 c3 μlo μhi) top [] false (cutsQ c3.1 top) c3.1 l2) l1) lim)
+              (fun l2 => kids (cellQ τ SK fuel c1 c2 c3 μlo μhi) top [] false (cq c3.1 top) c3.1 l2) l1) lim)
         (maxN μlo c3.1, μhi) ((μhi + 1) / 2))
       (DEN - (c1.2 + c2.2 + c3.2)) (DEN + 1 - (c1.1 + c2.1 + c3.1))
   | _, lim => lim
 
 /-- **The search with role reversal**: `SieveAdDefs.lean`'s nodes, and for a box of the sign `−` that may be
 reversed, the reversal's cost as one more bound. -/
-def opsR (τ : Tests) (SK : Cell → ℕ → Strat) (fuel : ℕ) (cutsQ : ℕ → ℕ → List ℕ) : Ops :=
-  ⟨fun _ => true, vanishOK, dropC, fun bl par l => cond (!par && revOK bl) (revCost τ SK fuel cutsQ bl l) l⟩
+def opsR (τ : Tests) (SK : Cell → ℕ → Strat) (fuel : ℕ) (cq : ℕ → ℕ → List ℕ) : Ops :=
+  ⟨fun _ => true, vanishOK, dropC, fun bl par l => cond (!par && revOK bl) (revCost τ SK fuel cq bl l) l⟩
 
 /-! ### A strategy with cells that shrink with the exponent -/
 
