@@ -1647,22 +1647,22 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikCGLHBIter`: Kerr's iteration with characters
 
 - `LinnikCGLHBIter.caseB`: Case B
-- `LinnikCGLHBIter.sig_bound`: Kerr's iteration with characters
+- `LinnikCGLHBIter.sig_bound`: Kerr's iteration with characters ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLHBLen`: The lengthening of Heath-Brown's double sums
 
 - `LinnikCGLHBLen.cqU_mul_sig_le`: The lengthening
-- `LinnikCGLHBLen.sig_le_lengthen`: The lengthening with its constant
+- `LinnikCGLHBLen.sig_le_lengthen`: The lengthening with its constant ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLHBPos`: Positivity, and the double sums of Heath-Brown's bound
 
-- `LinnikCGLHBPos.dsum_le`: Positivity
-- `LinnikCGLHBPos.shat_sq_le`: Squaring
+- `LinnikCGLHBPos.dsum_le`: Positivity ([note](../formalisations/chen-gupta-li-density.md))
+- `LinnikCGLHBPos.shat_sq_le`: Squaring ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLHBRefl`: The reflection of Heath-Brown's double sums
 
 - `LinnikCGLHBRefl.sum_gram_sq_le`: The Gram matrices summed
-- `LinnikCGLHBRefl.sig_le_refl`: The reflection of the double sum
+- `LinnikCGLHBRefl.sig_le_refl`: The reflection of the double sum ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLJ`: Their `J(f⃗)`, their Proposition 8.1 as a displayed hypothesis, and `S₃,₃`, `S₃,₄` in its form (the `S₃` side)
 

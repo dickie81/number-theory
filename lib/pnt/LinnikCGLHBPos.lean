@@ -4,7 +4,9 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 `CGLT101` is the displayed hypothesis, their Theorem 10.1 (Heath-Brown's bound for double sums with
-characters). Its source, their [6], has not been read. The route here follows Kerr's proof for `q = 1`
+characters). Its source, their [6] (J. London Math. Soc. (2) 20 (1979), 8–18), was read after this file was
+written; its proof has the same steps (`formalisations/chen-gupta-li-density.md`). The route here follows Kerr's
+proof for `q = 1`
 (arXiv:1909.12075, §§5–6: his Lemmas 18–20 and 22–27, Corollaries 21 and 28, and Theorem 16), with two inputs that
 carry characters, both from Jutila (Acta Arith. 32 (1977), 55–62, read from its scanned pages), and both quoted by
 Heath-Brown in Canad. J. Math. 31 (1979), 231–240:
