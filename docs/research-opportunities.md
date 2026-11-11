@@ -356,10 +356,66 @@ covers. The region does not close at `13/6`.
     `0.005` and at most a tenth of the exponent, which takes `8720` of the `18611` reversals that it tries. The
     kernel runs it in `2353` parts (`lib/pnt/SieveTree21650P1.lean` and the files after it), in about four hours of its
     time, and `tools/linnik/fill_cert.py` is the same search in Python.
-- **What is not written.** Role reversal for terms of more than three primes, through a prime other than the
-  largest, or at a second level; a search for an exponent below `2.165`. The same search passes at `2.16` with
-  cells of side `0.004` (`0.946K`, in the first form of its strategy), on `7.2·10^6` boxes, twice the build of
-  the theorem; below that it needs the wider reversal.
+- **What is not written.** Role reversal in general (below); a search for an exponent below `2.165`. The same
+  search passes at `2.16` with cells of side `0.004` (`0.946K`, in the first form of its strategy), on `7.2·10^6`
+  boxes, twice the build of the theorem; below that it needs the wider reversal.
+  - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
+    `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
+    `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three
+    primes that needs an upper bound, through its largest prime, a cofactor of at most two primes, as an
+    inequality sifted below the atoms) `0.998`; with every shape (`--flips 6 --nest 2`) `0.688`. **A term of the
+    main tree needs to be opened through its largest prime only**: `--flips 5 --nest 2 --rev first` gives
+    `0.697`. From there, each restriction alone costs: a cofactor of at most two primes (`m2`) `0.846`, of at
+    most three (`m3`) `0.758`; only the terms that need an upper bound (`odd`) `0.797`; one level (`--nest 1`)
+    `0.832`, and with `odd` too `0.867`, and with the inequality in place of the identity (`low`) `0.925`; terms
+    of at most three primes (`--flips 3 --rev odd`) `0.972`. Inside a reversed tree, what is opened is a prime of
+    `r'` of a term that needs an upper bound: only those (`natom`, `nodd`) give `0.738` and `0.698`; only the
+    chain's first prime (`nchain`) `0.823`, no better than one level; only chains of one prime (`nc1`) `0.773`.
+    So the gain is in four things together: terms of up to five primes, the cofactor kept as one number however
+    many primes it has, the reversal as an identity (the chain of `n/r'` sifted from `x^{a₁/2}` down, its primes
+    above some of `r'`'s), for either sign, and a second level through the primes of `r'`.
+  - *How much of the loss is the cells.* `harman_sieve.py points` (each cell at its midpoint, the limit of fine
+    cells) gives for the shapes in Lean `0.662` at `2.15`, `0.962` at `2.13` and `1.104` at `2.12`, and for
+    `--flips 5 --nest 2 --rev first` `0.365`, `0.573` and `0.694`. The exact search of the theorem at `2.165`
+    (`fill_cert.py`'s, cells of side `0.005`) costs `0.951`; with its tests taken at the midpoints of its cells,
+    which is no certificate, `0.621` (`0.720` with the tests of the terms alone at the midpoints, `0.856` with
+    those of the floors alone), `0.827` at `2.15` and `1.001` at `2.14`. So the rules that are proved stop near
+    `2.145` whatever the cells, and a third of the theorem's cost is the cells', most of it at the boxes that a
+    Type II configuration evaluates in part. One cheap remedy was tried in the exact search and is not enough: a
+    box of the sign `+` dropped only outside the slab of the first variable's product that the zone takes, at the
+    share that a prime confined to the remainder gives, costs `0.920` at `0.005`, `1.012` at `0.006` and `1.109`
+    at `0.008` (`0.951`, `1.052`, `1.164` without).
+  - *The model against the exact search.* With the stops in the form of `prop6_fill` (`--fill`) and no reversal,
+    the model has `1.230` at `2.165` on cells of side `0.005` and the exact search `1.221`. With the shapes in
+    Lean the model has `0.851` and the exact search `0.951`: the reversal as it is written gets `0.27` of the
+    `0.38` that those shapes allow, because its boxes of atoms have independent cells where the sums of the
+    atoms' exponents are tied (the cofactor's is `1` minus the others'), the cells of the cofactor's smaller
+    prime are coarse, and the two ends of the range of `r'` are paid for. The first small prime as a rest in
+    the model's own form, with a zone for each rest, is worth nothing more (`0.843` against `0.851`), nor is a
+    rest of several primes; the leaves without the condition `2HD < q` are worth `0.13`.
+  - *What it would give in Lean's forms* (`--fill --shrink 0.0015 --rev first,floor,offdiag`, and
+    `natom,nodd` for two levels). At `2.16` on cells of side `0.005`: one level `0.804` (`4.4·10^6` nodes), two
+    levels `0.735` (`8.2·10^6`); the shapes in Lean `0.958`. At `2.15` on cells of side `0.004`: `0.870`
+    (`1.5·10^7`) and `0.789` (`3.1·10^7`). In the limit of fine cells: `0.47` and `0.40` at `2.15`, `0.78` and
+    `0.64` at `2.13`, and `0.75` with two levels at `2.12`. So the general reversal with certificates of this
+    kind is a theorem near `2.15`; **`2.12` needs it and, besides, a certificate that loses a small part of
+    what cells of side `0.004` lose** (`0.39` at `2.15`), and has `0.25` to spare in the limit.
+  - *A design for it* (not written). A reversed term is a sum over a frozen part: the numbers `r' = p₂⋯p_k·m`,
+    `m` rough at `p_k`, with `x/r'` in the cell of `p₁`, and over a chain `c₁ > ⋯ > c_t` of primes of `n/r'`, of
+    the `n` with `r'c₁⋯c_t | n` and `n/r'` rough at `c_t`. The tree's steps (a cut, Buchstab's identity on
+    `n/r'`, a drop at Buchstab's bound for `n/(r'c₁⋯c_t)`) see `r'` only through `x/r'`, as the tree of
+    `SieveAdRev.lean` does, so they hold for any frozen part, with costs in units of `Σ 1/r'`. The term at the
+    top level `x^{h₁/2}` is the term of the box, exactly, but for the `r'` within `x^{1/DEN}` of the two ends, so
+    it serves either sign; and `Σ 1/r'` is at most `h₁/DEN` times the box's own drop bound, since each `r'`
+    carries the primes of `(x/r', 2x/r']` (`SieveAd.primes_level`): the model's cost `v·a₁·(drop)`. A term of
+    the reversed tree is evaluated by the estimate in two variables on the full tuples, the primes of `m` and of
+    the cofactor written out, where `SieveTwoChain.chain_two` asks for no order between them; its terms at a
+    floor below every prime of `r'` are evaluated by the tests that are proved, on the sorted boxes that the
+    tuples `(p₂, …, p_k, primes of m, c₁, …, c_t)` fall into when the primes of `m` have cells of side `1/DEN`
+    and the tuple is sorted (the `n` with a square factor apart): the tests pass on those boxes when they pass on
+    the ranges of the sums, which are exact because every atom's exponent is affine in the cells. A second level
+    opens a prime of `r'` in a term with a chain: the frozen part is then the rest of `r'` times `c₁⋯c_t` times
+    the cofactor rough at `c_t`, under two conditions.
   - *Why `2.19`.* Without reversal, and without the stops whose rest is the first small prime, the cells pass at
     `2.19` with the window, and not at `2.18` (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
     `0.945`; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`; `1.066` at `2.18` with every stop). The tree

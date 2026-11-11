@@ -80,6 +80,7 @@ typedef struct {
     int split, splitdepth;
     int pointwise;
     int rev_odd, rev_even, rev_prime, rev_linear, rev_floor, rev_offdiag;
+    int rev_first, rev_m2, rev_m3, rev_low, rev_natom, rev_nchain, rev_nodd, rev_nc1;
     int ev_win, ev_second, ev_rest;
 } Ctx;
 
@@ -288,23 +289,23 @@ static double reversal(const Ctx *c, int k, const double *Slo, const double *Shi
 }
 
 static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, double lhi, int odd, int npm,
-                   int std, int fl, Stats *st);
+                   int std, int fl, int na, Stats *st);
 
 /* The cost of the child whose new prime has its exponent in [qlo, qhi], split in two where that helps. */
 static double child(const Ctx *c, int k, double *Slo, double *Shi, double qlo, double qhi, int odd, int npm, int std,
-                    int fl, int split, Stats *st) {
+                    int fl, int na, int split, Stats *st) {
     int bit = 1 << k;
     if (c->pointwise) qlo = qhi = (qlo + qhi) / 2;
     for (int m = 0; m < bit; m++) {
         Slo[m | bit] = Slo[m] + qlo;
         Shi[m | bit] = Shi[m] + qhi;
     }
-    double v = node(c, k + 1, Slo, Shi, qlo, qhi, odd, npm, std, fl, st);
+    double v = node(c, k + 1, Slo, Shi, qlo, qhi, odd, npm, std, fl, na, st);
     if (v > 0 && split > 0 && qhi - qlo > c->wmin) {
         double mid = (qlo + qhi) / 2;
-        double v1 = child(c, k, Slo, Shi, mid, qhi, odd, npm, std, fl, split - 1, st);
+        double v1 = child(c, k, Slo, Shi, mid, qhi, odd, npm, std, fl, na, split - 1, st);
         if (v1 < BIG) {
-            double v2 = child(c, k, Slo, Shi, qlo, mid, odd, npm, std, fl, split - 1, st);
+            double v2 = child(c, k, Slo, Shi, qlo, mid, odd, npm, std, fl, na, split - 1, st);
             if (v2 < BIG) {
                 double vv = (v1 * log(qhi / mid) + v2 * log(mid / qlo)) / log(qhi / qlo);
                 if (vv < v) v = vv;
@@ -315,7 +316,7 @@ static double child(const Ctx *c, int k, double *Slo, double *Shi, double qlo, d
 }
 
 static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, double lhi, int odd, int npm,
-                   int std, int fl, Stats *st) {
+                   int std, int fl, int na, Stats *st) {
     int full = (1 << k) - 1;
     double mulo = 1 - Shi[full], muhi = 1 - Slo[full];
     st->nodes[std ? k : MAXK + 1]++;
@@ -361,6 +362,18 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
             if (Slo[bj] < c->flipmin) continue;
             if (npm >> j & 1) continue;          /* only a prime can be opened */
             if (j == k - 1 && uhi >= 2) continue;
+            if (c->rev_m2 && uhi >= 3) continue;         /* a cofactor of at most two primes */
+            if (c->rev_m3 && uhi >= 4) continue;         /* a cofactor of at most three primes */
+            if (std) {
+                if (c->rev_first && j != 0) continue;    /* only through the largest prime */
+            } else {
+                /* in a reversed tree the atoms are those of r' (the first na, the last of them the old
+                 * cofactor) and then the chain */
+                if (c->rev_natom && j >= na - 1) continue;   /* only a prime of r' */
+                if (c->rev_nchain && j != na) continue;      /* only the first prime of the chain */
+                if (c->rev_nc1 && k != na + 1) continue;     /* only terms with a chain of one prime */
+                if (c->rev_nodd && !odd) continue;           /* only terms that need an upper bound */
+            }
             if (c->rev_offdiag && std) {         /* the cell of p_j apart from its neighbours' */
                 if (j + 1 < k && Slo[bj] < Shi[1 << (j + 1)]) continue;
                 if (j > 0 && Shi[bj] > Slo[1 << (j - 1)]) continue;
@@ -383,7 +396,23 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
             for (int i = 0; i < n; i++)
                 if (npm >> map[i] & 1) npm2 |= 1 << i;
             if (uhi >= 2) npm2 |= mb;
-            double v = node(c, n + 1, S2lo, S2hi, Slo[bj] / 2, Shi[bj] / 2, odd, npm2, 0, fl - 1, st);
+            double v;
+            if (c->rev_low && odd) {
+                /* as an inequality: n / r' sifted at the level y below every atom of r', and what the numbers
+                 * rough at x^y exceed the primes by paid for */
+                double y = Slo[bj] / 2;
+                for (int i = 0; i < k; i++)
+                    if (i != j && Slo[1 << i] < y) y = Slo[1 << i];
+                if (mulo < y) y = mulo > 0.01 ? mulo : 0.01;
+                v = node(c, n + 1, S2lo, S2hi, y, y, odd, npm2, 0, fl - 1, n + 1, st);
+                if (v < BIG) {
+                    double pen = omega_max(c, Slo[bj] / y, Shi[bj] / y) / y - 1 / Shi[bj];
+                    v += pen > 0 ? pen : 0;
+                }
+            } else if (c->rev_low)
+                continue;                                /* a lower bound needs the identity */
+            else
+                v = node(c, n + 1, S2lo, S2hi, Slo[bj] / 2, Shi[bj] / 2, odd, npm2, 0, fl - 1, n + 1, st);
             if (v < BIG && v * Shi[bj] * cdrop < best) best = v * Shi[bj] * cdrop;
         }
     }
@@ -409,7 +438,7 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
     int sp = k + 1 <= c->splitdepth ? c->split : 0;
     for (int j = 0; j < n; j++) {
         double qhi = top - j * w, qlo = j == n - 1 ? flow : top - (j + 1) * w;
-        double ch = child(c, k, Slo, Shi, qlo, qhi, !odd, npm, std, fl, sp, st);
+        double ch = child(c, k, Slo, Shi, qlo, qhi, !odd, npm, std, fl, na, sp, st);
         if (ch >= BIG) {
             cum = INF;
             break;
@@ -439,7 +468,7 @@ double hs_loss(const Ctx *c, double nu, int n1, double *prof, Stats *out) {
 #pragma omp for schedule(dynamic, 1) reduction(+ : tot)
         for (int i = 0; i < n1; i++) {
             double hi = 0.5 - i * w, lo = i == n1 - 1 ? nu : 0.5 - (i + 1) * w;
-            double v = child(c, 0, Slo, Shi, lo, hi, 1, 0, 1, c->flip, 1 <= c->splitdepth ? c->split : 0, &st);
+            double v = child(c, 0, Slo, Shi, lo, hi, 1, 0, 1, c->flip, 0, 1 <= c->splitdepth ? c->split : 0, &st);
             prof[i] = v;
             tot += v * log(hi / lo);
         }
