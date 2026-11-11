@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1708 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1716 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 305 | 916 |
+| `lib/pnt` | 310 | 924 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2464,6 +2464,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd22000.linnik_tree_22000`: Linnik's theorem with exponent `11/5`, from a tree that passes the tests
 
+#### `SieveAdFamCore`: The two comparisons at a floor for a family of tuples of distinct primes, on bounds for its products
+
+- `SieveAd.evJ_fam_fill_at`: The comparison with the rest among the tree's primes, for a family of tuples of distinct primes, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.evJ_fam_two_at`: The comparison with the rest among the tuple's primes, for a family of tuples of distinct primes, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFamSet`: The terms at a floor of a family of tuples of distinct primes, in any order
+
+- `SieveAd.evJ_famSet_at`: The terms at a floor of a family of tuples of distinct primes are evaluated when its boxes are, for any route ([note](../formalisations/harman-sieve.md))
+
 #### `SieveAdFill`: The tests with no window are sound
 
 - `SieveAd.fillTests_sound`: The tests with no window are sound ([note](../formalisations/harman-sieve.md))
@@ -2490,6 +2499,20 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd.famIR_eq`: The term on the multiples of `R`, as a sum over `n` ([note](../formalisations/harman-sieve.md))
 - `SieveAd.famJR_eq`: The terms at a level on the multiples of `R`, as a sum over `n` ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFrozJ`: The terms at a floor over the frozen part, as a family of tuples of distinct primes
+
+- `SieveAd.evJF_frozP_at`: The terms at a floor over the frozen part with a cofactor of `t` primes are evaluated when the family's are, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFrozP`: The frozen part of a reversal as tuples of primes
+
+- `SieveAd.evIF_frozS_at`: The term over the frozen part by the primes of the cofactor, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.evJF_frozS_at`: The terms at a floor over the frozen part by the primes of the cofactor, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFrozRole`: The two comparisons at a floor over the frozen part, on the cells and the slab
+
+- `SieveAd.evJF_froz_fill_at`: The comparison with the rest among the tree's primes, over the frozen part, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.evJF_froz_two_at`: The comparison with the rest among the tuple's primes, over the frozen part, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFrozTree`: The nodes of the tree of a reversed term over a frozen part
 
@@ -2603,7 +2626,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveChain`: Type II for chains of primes
 
-- `SieveChain.sum_rough_tuples`: For `z ≥ 2`, `Y ≥ 1` and `Y < z^{K+1}`, the `z`-rough `k ∈ [1, Y]` are the products of the non-increasing tuples of at most `K` primes at least `z`, the… *paper*
+- `SieveChain.sum_rough_tuples`: For `z ≥ 2`, `Y ≥ 1` and `Y < z^{K+1}`, the `z`-rough `k ∈ [1, Y]` are the products of the non-increasing tuples of at most `K` primes at least `z`, the… *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveChain.typeII_gcmp'`: `typeII_gcmp` (with `RouteOK` and `hII`) for any number `K ≥ 1` of primes.
 - `SieveChain.chainTU_bound`: Chains times a rough cofactor in the window *paper*
 - `SieveChain.chainTL_bound`: Chains with a product of some of their primes in the window *paper*

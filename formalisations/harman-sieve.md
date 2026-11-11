@@ -131,7 +131,7 @@ Its main tools:
   numbers strictly decreases in exactly one order of its entries (`SieveAd.existsUnique_sort`, from Mathlib's
   `Tuple.sort`), so a sum over the tuples of distinct primes in the cells `bx` (`SieveAd.famU`) under a condition
   is the sum, over the permutations `σ`, of the sums over the boxes `bx ∘ σ` under the condition carried by `σ`.
-  Nothing uses it yet: it is for the terms at a floor of a reversed term.
+  `SieveAd.evJ_famSet_at` uses it.
 - `SieveAd.evJ_fill_core_at`, `SieveAd.evJ_two_core_at` (`lib/pnt/SieveAdFillCore.lean`; the checks are
   `lib/pnt/SieveAdCoreDefs.lean`'s, without Mathlib), **the two comparisons at a floor, on the sums of a box.**
   `SieveAd.evJ_fillE` and `SieveAd.evJ_twoE` evaluate the terms at a floor of a box that passes a test which reads
@@ -139,9 +139,61 @@ Its main tools:
   list. Here the box is a function, the sets are sets of its indices, and the checks (`SieveAd.coreJ3`,
   `SieveAd.coreJ2`) are on numbers that bound the sums: `c0lo ≤ Σ_{S₀} lo`, `c0hi ≥ Σ_{S₀} hi`, `h1s ≥ Σ_{S₁} hi`,
   `h2s ≥ Σ_{S₁ᶜ} hi`, and for a rest among the box's primes `ρ₁ ≤ Σ_{Sr} lo`, `ρ₂ ≥ Σ_{Sr} hi`. The box may have
-  any number of primes, the comparisons of its family being at most `J₀`. Nothing uses them yet: they are for the
-  boxes that the tuples of a reversed term fall into once the primes of its cofactor are written out and the
-  tuple is sorted, which are not boxes of the search's lists.
+  any number of primes, the comparisons of its family being at most `J₀`. They are for the boxes that the tuples
+  of a reversed term fall into once the primes of its cofactor are written out and the tuple is sorted, which are
+  not boxes of the search's lists (`SieveAd.evJ_fam_fill_at`, `SieveAd.evJ_fam_two_at`).
+- `SieveAd.evJ_famSet_at` (`lib/pnt/SieveAdFamSet.lean`), **the terms at a floor of a family of tuples of
+  distinct primes, in any order.** A family cut out by atoms (`SieveDecomp.famSet`), with no order between its
+  primes and no cell for some of them, is still a union of boxes: each of its tuples of distinct primes lies in
+  the box of the cells of side `1/DEN` that hold its primes (`SieveAd.ucell`, `SieveAd.ubox`), in the one order in
+  which it decreases, and the atoms pass to that order (`SieveDecomp.Atom.perm`, a case of the atom carried along
+  an embedding of the indices, `SieveDecomp.Atom.emb`). So the terms at a floor of the injective tuples of the
+  family are the sum over those boxes and the orders of the boxes' terms under the atoms
+  (`SieveAd.famJ_famSet_inj`), and they are evaluated as soon as every box that holds a tuple is, by a finite
+  union.
+- `SieveAd.evJ_fam_fill_at`, `SieveAd.evJ_fam_two_at` (`lib/pnt/SieveAdFamCore.lean`), **the two comparisons at a
+  floor for a family of tuples of distinct primes, on bounds for its products.** If at a large modulus every
+  injective tuple of a family of at most `m` atoms on `K` indices has its entries in `[x^{f/DEN}, x)`, its
+  product over a set `S₀` of indices in `[x^{lo₀/DEN}, x^{hi₀/DEN}]`, and its products over `S₁` and over the
+  other indices at most `x^{hi₁/DEN}` and `x^{hi₂/DEN}` (for the second comparison also its product over a set
+  `Sr`, disjoint from `S₀`, in `[x^{ρlo/DEN}, x^{ρhi/DEN}]` with `ρlo > 0`), and the exponents pass `coreJ3`
+  (`coreJ2`) with `Kb ≥ K` cells of room, as `lo₀ − Kb`, `hi₀ + Kb`, `hi₁ + Kb`, `hi₂ + Kb`, then the terms at
+  the floor of the injective tuples of the family are evaluated. The room is what the cells of side `1/DEN` lose:
+  a product in `[x^{lo/DEN}, x^{hi/DEN}]` over a set puts the sum of the lower ends of its primes' cells in
+  `[lo − K, hi]` and of the upper ends in `[lo, hi + K]` (`SieveAd.sumsOK_ucell`), and the bounds pass to the
+  sorted box with the sets carried by the order (`SieveAd.sumsOK_perm`).
+- `SieveAd.evIF_frozS_at`, `SieveAd.evJF_frozS_at` (`lib/pnt/SieveAdFrozP.lean`), **the frozen part of a
+  reversal as tuples of primes.** The frozen part `SieveAd.frozS` is the pairs of a tuple `a` of the box `βx` and
+  a cofactor `m`, rough at the last prime of `a`, with `∏a·m` in a slab. For `e₂ ≤ DEN` and
+  `(T + 1)·lo_s ≥ DEN + 1`, a sum over it of a function of `∏a·m` is the sum over `t ≤ T` of the sums over
+  `SieveAd.frozP … t`, the tuples of `s + 1 + t` primes whose first `s + 1` are a tuple of `βx`, whose last `t`
+  do not increase and are at least the last of the first, and whose product is in the slab
+  (`SieveAd.sum_frozS_eq`, from `SieveChain.sum_rough_tuples`). So the terms of a chain's box over the frozen
+  part, and its terms at a floor, are evaluated when those over each `frozP … t` are.
+- `SieveAd.evJF_frozP_at` (`lib/pnt/SieveAdFrozJ.lean`), **the terms at a floor over the frozen part, as a
+  family of tuples of distinct primes.** For a floor `f` at most the lower ends of the last cell of `βx` and of
+  the chain's cells, the frozen number `R` is rough at the floor, so `n/R` is rough there exactly when `n` is
+  (`SieveAd.rough_div_iff`), and the terms at the floor over `frozP … t` are a sum over tuples `w = (a, y, c)` of
+  primes of the `n` that `∏w` divides and that are rough at the floor (`SieveAd.dJF_frozP_eq`). The tuples of
+  distinct primes are the injective tuples of a family of atoms (`SieveAd.frozE`, `SieveAd.frozW_inj_eq`): `a`
+  and `c` in their cells and decreasing, `y` decreasing and above the last prime of `a`, the product of `a` and
+  `y` in the slab. The others have a repeated prime, whose square divides `n`: they number at most
+  `(DEN + 1)^K` for each `n` (`SieveAd.card_tuples_dvd_le`), and the `n` that the square of a prime above the
+  floor divides weigh little in `𝒜` (`SieveAd.sq_small`) and in the comparison set (`SieveAd.sq_small_B`). So the
+  terms are evaluated when the family's are.
+- `SieveAd.evJF_froz_fill_at`, `SieveAd.evJF_froz_two_at` (`lib/pnt/SieveAdFrozRole.lean`), **the two comparisons
+  at a floor over the frozen part, on the cells and the slab.** A set of the indices of a tuple `(a, y, c)` made of
+  a set `A` of `a`, all of `y` or none, and a set `C` of `c` (`SieveAd.roleSet`) has its product in
+  `[x^{loRole/DEN}, x^{hiRole/DEN}]` (`SieveAd.role_bounds`): without the cofactor the sums of the lower and upper
+  ends over `A` and `C`; with it `e₁ − Σ_{a ∉ A} hi + Σ_C lo` and `e₂ − Σ_{a ∉ A} lo + Σ_C hi`, the cofactor's
+  primes together being the slab over the rest of `a`. So, for cells with `f ≤ lo` and ends at most `DEN`,
+  `0 < f ≤ DEN`, `e₁, e₂ ≤ DEN` and `(T + 1)·lo_s ≥ DEN + 1`: if the exponents of the role sets (the set that
+  enters the window, the first side of the leaves and the other side; for the second comparison also the rest's
+  set, disjoint from the first, with a positive lower bound) pass `coreJ3` (`coreJ2`) at the floor with
+  `Kb ≥ s + 1 + T + k` cells of room, the terms at the floor `x^{f/DEN}` of the chain's box over the frozen part
+  are evaluated (`SieveAd.EvJF` for `SieveAd.frozS`). This is the second of the two evaluations that the tree
+  over the frozen part asks for (`SieveAd.SoundF`), on finite sets of indices; the tests of the search, on the
+  bits of its lists, and the first evaluation (the term of a chain's box) are not written.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

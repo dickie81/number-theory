@@ -427,9 +427,17 @@ covers. The region does not close at `13/6`.
     the terms at the level `⌈x^{t/DEN}⌉`, `l₁ ≥ t ≥ h₁/2`, over two frozen parts that differ in the `R` within
     `x^{1/DEN}` of the ends), the weight of the frozen part by the share of the box
     (`SieveAd.froz_weight_le_at`), and the bound for either sign from a tree's cost (`SieveAd.bd_flip_neg_at`,
-    `bd_flip_pos_at`). Not written: the tests that are sound for this frozen part (the two evaluations of the
-    design), the search's definitions with the reversal of terms of two to five primes of either sign, the
-    second level, and a certificate.
+    `bd_flip_pos_at`). And the terms at a floor over this frozen part, evaluated by the two comparisons
+    (`lib/pnt/SieveAdSort.lean`, `SieveAdFillCore.lean`, `SieveAdFamSet.lean`, `SieveAdFamCore.lean`,
+    `SieveAdFrozP.lean`, `SieveAdFrozJ.lean`, `SieveAdFrozRole.lean`): the cofactor written out as its primes,
+    the tuples of distinct primes as a family of atoms in no order, the family as a union of sorted boxes of
+    cells of side `1/DEN`, the comparisons on the sums of a box, and the bounds for the products over sets made
+    of some primes of `r'`, the cofactor or not, and some primes of the chain, from the cells and the slab
+    (`SieveAd.evJF_froz_fill_at`, `SieveAd.evJF_froz_two_at`); the tuples with a repeated prime are bounded by
+    the `n` with a square factor. Not written: the other evaluation (the term of a chain's box over the frozen
+    part, by `SieveTwoChain.chain_two` on the full tuples), the tests on the bits of the search's lists with
+    their soundness (`SieveAd.SoundF`), the search's definitions with the reversal of terms of two to five
+    primes of either sign, the second level, and a certificate.
   - *Why `2.19`.* Without reversal, and without the stops whose rest is the first small prime, the cells pass at
     `2.19` with the window, and not at `2.18` (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
     `0.945`; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`; `1.066` at `2.18` with every stop). The tree
