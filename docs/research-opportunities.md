@@ -391,6 +391,25 @@ covers. The region does not close at `13/6`.
     (`harman_sieve.py cells 2160/1000 --no-window --flips 3 --nest 1 --h 0.005`: `0.881` with `2.5·10^6` nodes,
     `0.782` at `--h 0.004`, `1.083` at `--h 0.007`; `1.059` with `--rev odd,prime`; `1.361` with `--flips 0`;
     at `2.165` with `--h 0.007`, `0.984` with `5.7·10^5` nodes).
+  - *The rest from the comparison's own small primes* (11 November; the same search with one more floor test).
+    The floor at `q^{1/2000}` is not needed either. In the comparison of the terms at a floor `x^f` the tree of
+    Buchstab steps runs over the primes below the floor, down to a level that tends to `0`, and its rule for
+    stopping can use those primes twice: the first of them, the largest, join the first variable until its
+    product enters the window, as now; the next ones are the rest, until their product reaches `q^{1/2000}`. A
+    stop then has its rest between `q^{1/2000}` and `q^{1/2000}x^f`, and the window is the one that the zone
+    allows for all such rests, `[1 − 0.442/2000, L − 1 − 0.558(1/2000 + Lf)]` in exponents of `q`, which must be
+    wider than the floor: `f < 0.0475` at `2.16`. The leaves grow by the floor and by `q^{1/2000}` more, and
+    their level still tends to `0`: there is no gap, no cost, and no room lost in the Type I estimates. With
+    this test for the boxes that have no rest among their primes (and for the root, at `x^{0.0475}` at `2.16`),
+    no window, and the reversal of `Linnik21800`'s shape, the search costs `0.850K` at `2.18` (cells of side
+    `0.006`, `1.4·10^6` boxes; the theorem's search, with the window, has `0.918K`), `0.957K` at `2.17`,
+    `1.055K` at `2.165` and `1.110K` at `2.16`; with cells of side `0.005`, `0.961K` at `2.165` (`3.4·10^6`
+    boxes) and `1.018K` at `2.16`; with side `0.004`, `0.889K` at `2.165` and `0.946K` at `2.16` (`7.2·10^6`
+    boxes). Without the reversal it costs `1.176K` at `2.18` and `1.227K` at `2.165`. So an exponent below
+    `13/6` needs neither the window, nor the gap of a fixed level, nor a wider reversal: it needs this
+    comparison, which is not proved yet (`SieveTwoComp.prop6_two` takes its rest among the family's primes),
+    and a build of several million boxes. Of the route by a fixed level, `SieveGap.gap_at` is proved and
+    nothing uses it.
   - *Role reversal*, in exact terms: for a term `Σ S(A_{p₁⋯p_k}, p_k)` on a box of cells and one of its primes
     `p_j` in `[X, X′)`, the numbers `n = (r/p_j)·m·p_j` with `N₂/X′ < (r/p_j)m ≤ N₁/X` have `p_j = n/((r/p_j)m)`
     in its cell whatever `n` in `(N₁, N₂]`, so on them the term is `Σ S(A_{r′}, ⌈X′^{1/2}⌉)` over `r′ = (r/p_j)m`
