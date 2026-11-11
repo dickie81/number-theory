@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1685 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1686 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 293 | 893 |
+| `lib/pnt` | 294 | 894 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2649,6 +2649,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveFamilyTwo.box_two`: The estimate at one frequency of the separated sum, for the pairs ([note](../formalisations/halasz-montgomery.md))
 - `SieveFamilyTwo.typeII_sharp_two`: The Type II estimate for a sharp family in two variables (Lemma 4.4 in two variables) ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveGap`: Brun's sieve at a fixed level on a family of chains
+
+- `SieveGap.family_leaves_le`: A family of chains at a fixed level ([note](../formalisations/harman-sieve.md))
+
 #### `SieveGrid21800`: The grid, the strategies and the nodes of the search with role reversal at `L = 218/100`
 
 - `SieveCert.gridOK21800`
@@ -2732,7 +2736,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveP6TreeLeaves`: Proposition 6 with the bilinear estimate: the leaves of the tree
 
-- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper*
+- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper* ([note](../formalisations/harman-sieve.md))
 
 #### `SieveP6ib`: Proposition 6 with the bilinear estimate
 

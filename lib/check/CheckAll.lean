@@ -126,6 +126,7 @@ import SieveBrun
 import SieveCount
 import SieveRanges
 import SieveRangeSum
+import SieveGap
 import SieveLeaf
 import SieveTree
 import SieveDyadic
@@ -882,6 +883,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveRanges.rng_sum_le
 #print axioms SieveRanges.sum_log_div_le
 #print axioms SieveRanges.rng_sum_le_three
+#print axioms SieveGap.family_leaves_le
 #print axioms SieveLeaf.leaf_A
 #print axioms SieveLeaf.leaf_B
 #print axioms SieveLeaf.leaf_gap
