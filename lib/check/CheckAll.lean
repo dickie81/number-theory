@@ -130,6 +130,9 @@ import SieveGap
 import SieveFillTree
 import SieveFill
 import SieveFillComp
+import SieveAdFillDefs
+import SieveAdFill
+import SieveAdFillSearchDefs
 import SieveLeaf
 import SieveTree
 import SieveDyadic
@@ -283,6 +286,8 @@ import Linnik21900
 import SieveTypeIIU21800D
 import SieveGrid21800
 import Linnik21800
+import SieveFill21650
+import Linnik21650
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
@@ -892,6 +897,8 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveFill.prop6_fill_core
 #print axioms SieveFillComp.prop6_fill
 #print axioms SieveFillComp.prop6_fill_at
+#print axioms SieveAd.fillTests_sound
+#print axioms SieveAd.fillTests_soundX
 #print axioms SieveLeaf.leaf_A
 #print axioms SieveLeaf.leaf_B
 #print axioms SieveLeaf.leaf_gap
@@ -1190,6 +1197,8 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveCert.gridOK21800
 #print axioms Linnik21800.tree21800
 #print axioms Linnik21800.linnik_21800
+#print axioms Linnik21650.tree21650
+#print axioms Linnik21650.linnik_21650
 #print axioms SieveCurve7D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d

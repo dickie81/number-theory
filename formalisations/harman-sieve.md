@@ -79,8 +79,17 @@ Its main tools:
   sieve still falls with the error, so there is no gap: the conclusion is `prop6_two`'s,
   `|Σ_r (S(A_r, z₀) − S(B_r, z₀)/φ(q))| ≤ ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` for every `η > 0` and large `q`. The
   leaves pass through two trees, so the level `k` is chosen with `(2k + 4)³ζ(k)` small
-  (`SieveFillComp.exists_k3`). No theorem uses it yet: it is the floor test of a sieve with no Type II window
-  (`docs/research-opportunities.md`, §3.1).
+  (`SieveFillComp.exists_k3`).
+- `SieveAd.fillTests_sound`, `SieveAd.fillTests_soundX` (`lib/pnt/SieveAdFill.lean`; the tests are
+  `lib/pnt/SieveAdFillDefs.lean`'s, without Mathlib), **the tests of a decomposition with no Type II window**, for
+  the trees of Buchstab steps on boxes of cells (`SieveAd.sound`). A box is evaluated by the estimate in two
+  variables (`okI2`); its terms at a floor by the comparison with the rest among the box's primes (`okJ2`) or,
+  for a box that has none of that size, among the tree's (`okJ3`, by `SieveFillComp.prop6_fill_at`): the rest is
+  then of exponent between `r₁`, the least that the region takes, and `r₁ + f` for the floor `x^{f/DEN}`, the
+  window is the one the region allows for all such rests, and the leaves grow by `t + r₁ + f`. The second
+  statement is the same under two more atoms, for the trees of a reversed term. They are the tests of the
+  theorem at `2165/1000`, `Linnik21650.linnik_21650` (`formalisations/README.md`; `docs/research-opportunities.md`,
+  §3.1).
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer
