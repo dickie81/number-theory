@@ -87,7 +87,11 @@ for a rest among the term's primes: SieveTwoComp.prop6_two); the same with the f
 where the small primes below the least rest that the zone takes (eps0) are left to Type I at no cost, which is
 Brun's sieve at a fixed level, whose gap is tiny but not o(1); role reversal, with the conditions that tie the
 variables of a reversed term together removed; and, with `--sieve` and `--upper`, the linear sieve's bounds F
-and f with the bilinear remainder and well-factorable weights. The paper's Theorem 1.1 stays at 11/5.
+and f with the bilinear remainder and well-factorable weights. The paper's Theorem 1.1 stays at 11/5. In Lean, this decomposition with the window,
+without role reversal and without the stops whose rest is the first small prime gives the exponent 219/100
+(Linnik21900.linnik_21900; tree_cert.py is its search in exact integers). With one level of reversal for terms
+of at most three primes (--flips 3 --nest 1 --no-first --h 0.007) the cells give 0.863 at 2.18 with 463000
+nodes and 1.042 at 2.17; with --rev prime,offdiag they give 1.067 at 2.18.
 """
 import argparse
 import ctypes as C

@@ -334,7 +334,16 @@ covers. The region does not close at `13/6`.
     `2.19` if only the others are reversed, against `0.46`; cells of side `0.007`, one level), the bilinear
     Type I estimate inside the reversed trees (`1.09` with the linear one alone), and cofactors that are not
     prime (`0.66` if only prime cofactors are reversed); floors below every prime of a reversed term cost little
-    (`0.47`).
+    (`0.47`). With the window, without the stops whose rest is the first small prime, and with one level of
+    reversal for terms of at most three primes, the cells pass at `2.18` (`0.863`, `463000` nodes at side
+    `0.007`) and not at `2.17` (`1.042`; `0.981` with terms of at most six primes reversed, off the diagonal,
+    `693000` nodes); with prime cofactors only and off the diagonal they fail at `2.18` (`1.067`). So the next
+    exponent in Lean, near `2.18`, needs the reversed term in full: the old cofactor, a number sifted at the
+    term's last prime, as a variable of the new term, with its prime factors expanded for the estimates; the
+    share of the box where `p_j` is within a factor `N₂/N₁` of an end of its cell, by the comparison at a small
+    floor; Buchstab's identity over the prime factors of `p_j`'s place, for a family that is not a decreasing
+    chain; the count in the comparison set of a dropped term of the new shape, with two sifted cofactors; and
+    the tree, its tests and its search for such terms.
   - *The size of a tree.* Without reversal the cells pass at `2.19` only (`0.87` with the window, `276000` nodes
     at side `0.005`); with it, `0.81` at `2.19` with `113000` nodes (side `0.01`, terms of at most three primes,
     one level), `0.75` at `2.17` with `10^6` nodes (side `0.007`, one level), `0.49` at `2.17` with `1.4·10^7`
