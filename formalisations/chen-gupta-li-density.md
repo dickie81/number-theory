@@ -444,11 +444,11 @@ the approximate functional equation of `LinnikAFE` and `LinnikFourth`) and `Linn
 | `LinnikCGLP71` | a pointwise bound on `Ψ`; the constants `CJ` | Proposition 7.1 |
 | `LinnikCGLP72` | `S₃` bounded by dyadic sums of `Ĩ` and explicit errors | Proposition 7.2 |
 | `LinnikCGLT101` | `CGLT101`, `dyad`, Lemma 10.6 | Theorem 10.1, Lemma 10.6 |
-| `LinnikCGLHB101` | `cglt101`, from the bound on `σ(N)` | Theorem 10.1, by Kerr and Jutila |
-| `LinnikCGLHBIter` | Kerr's iteration, its cases A and B | Kerr's Theorem 16, with characters |
-| `LinnikCGLHBLen` | lengthening by characters modulo an auxiliary prime | Kerr's Lemma 20, Corollary 21 |
-| `LinnikCGLHBPos` | double sums, positivity, the dyadic split | Jutila's Lemma 2, Kerr's Lemma 22 |
-| `LinnikCGLHBRefl` | reflection of Gram entries | Kerr's Corollary 28, Jutila's Lemma 1 |
+| `LinnikCGLHB101` | `cglt101`, from the bound on `σ(N)` | Theorem 10.1, by Kerr and Jutila; Heath-Brown's Theorem 1 |
+| `LinnikCGLHBIter` | Kerr's iteration, its cases A and B | Kerr's Theorem 16, with characters; Heath-Brown's §§4–5 |
+| `LinnikCGLHBLen` | lengthening by characters modulo an auxiliary prime | Kerr's Lemma 20, Corollary 21; Heath-Brown's Lemma 2 |
+| `LinnikCGLHBPos` | double sums, positivity, the dyadic split | Jutila's Lemma 2, Kerr's Lemma 22; Heath-Brown's Lemmas 1 and 4 |
+| `LinnikCGLHBRefl` | reflection of Gram entries | Kerr's Corollary 28, Jutila's Lemma 1; Heath-Brown's Lemma 3 |
 | `LinnikCGLL105` | the energy bounded by `N^{−2σ}` times a third moment; `Spaced` | Lemma 10.5 |
 | `LinnikCGLL107` | the fourth moment of `R₂`, grouped by conductor and class size | Lemma 10.7 |
 | `LinnikCGLL109` | the small-gcd third moment | Lemma 10.9 |
@@ -554,9 +554,9 @@ theorem's `o(1)` to be uniform in `σ`, and the docstring now says so.
 ## Heath-Brown's Theorem 10.1, with characters
 
 The paper states its Theorem 10.1 for primitive characters and credits it to Heath-Brown: "Theorem 10.1
-(Heath-Brown, [6]). Let T be a set of pairs (t, χ), where χ is a primitive character modulo q …". Their [6] is "A
-large values estimate for Dirichlet polynomials", J. London Math. Soc. 20 (1979), 8–18. That paper could not be
-obtained and was not read. The formalisation (`LinnikCGLHB101.cglt101`) follows two sources:
+(Heath-Brown, [6]). Let T be a set of pairs (t, χ), where χ is a primitive character modulo q …". Their [6] is D. R.
+Heath-Brown, "A large values estimate for Dirichlet polynomials", J. London Math. Soc. (2) 20 (1979), 8–18. The
+formalisation (`LinnikCGLHB101.cglt101`) was written before that paper was read, and follows two other sources:
 
 - B. Kerr's proof of the case `q = 1` (arXiv:1909.12075, Theorem 16 and §§5–6): positivity, lengthening, squaring
   and a reflection;
@@ -566,9 +566,39 @@ obtained and was not read. The formalisation (`LinnikCGLHB101.cglt101`) follows 
 The statement proved (`LinnikCGLT101.CGLT101`) is the paper's Theorem 10.1 for primitive characters, with its implicit
 constants explicit and a factor `(qTM)^ε`, which their statement implies.
 
-The result is adapted rather than transcribed: its cited source was not read, and the proof combines two other
-sources. It is documented here, as part of the formalisation of the paper that states and uses it, and no paper in
-this repository claims it.
+Heath-Brown's paper was read in November 2026, in full (pp. 8–18). It confirms the statement and the route.
+
+- **The statement.** His Theorem 1 (p. 9) takes pairs `(t_r, χ_r)`, `r ≤ R`, with `χ_r` primitive of modulus `q_r`,
+  `q₀ ∣ q_r`, `q_r ≤ Q`, `|t_r| ≤ T`, and `|t_r − t_s| ≥ 1` when `χ_r = χ_s` and `r ≠ s`. With `D = Q²T/q₀` it bounds
+  `Σ_{r,s≤R}|Σ_{n≤N}a_nn^{−1/2−i(t_r−t_s)}χ_rχ̄_s(n)|²` by `D^{ε(D)}(RN + R² + R^{5/4}D^{1/2})max_{n≤N}|a_n|²`, with
+  `ε(D) = c₀/log log D`, for large `D`. At one modulus, `q₀ = q_r = Q = q`, so `D = qT`. Applied at length `2N` to the
+  points `(−t_r, χ_r)`, with `a_n = c_nn^{1/2}` on `N < n ≤ 2N` and `a_n = 0` below, so that
+  `max|a_n|² ≤ 2N max|c_n|²`, it gives the paper's Theorem 10.1 with the factor `D^{ε(D)}`, which is at most
+  `C(ε)(qT)^ε`. His theorem is more general: the characters may have different moduli, and the term `R^{5/4}D^{1/2}`
+  may be dropped when `N ≥ D^{2/3}` or `R ≥ D^{2/3}`.
+- **The proof.** It has the steps of Kerr's, with characters:
+  - positivity, his Lemma 1, which is Jutila's Lemma 2 (`LinnikCGLHBPos.dsum_le`);
+  - an increasing property, his Lemma 2: averaging over the `2^{[M/2]}` vectors of signs `±1` on the integers of
+    `(M, 3M/2]`, it bounds `S(N, K)` by `B(3KMN/2)S(MN, 3K/2) log M`, with the primes of `(M, 3M/2]` bounding `Σm⁻¹`
+    over the `m` prime to `q_rq_s` from below. Kerr and the library average over the characters modulo an auxiliary prime
+    instead, on the integers of `(U, 3U/2]` prime to `q` (`LinnikCGLHBLen.sig_le_lengthen`). Both are
+    orthogonality, with the divisor bound and positivity for the new coefficients;
+  - a reflection property, his Lemma 3, through Jutila's weight `e^{−(n/2N)^h} − e^{−(n/N)^h}`, `h = (log D)²`, and
+    "a slightly more precise form of Jutila [3; Lemma 1]" (p. 13). It needs the points with the same character `h²`
+    apart, so he splits them into `1 + [h²]` classes, and its dual length is `Dh⁴/N`. The library's reflection
+    (`LinnikCGLHBRefl.sig_le_refl`) uses the weight of their §3, smooth, `1` on `[6/5, 9/5]` and `0` outside `(1, 2)`
+    (`LinnikCGLMat.wCGL`). The decay `|H(1 + iτ)|² ≪ (1 + |τ|)^{−2}` (`LinnikCGLHBRefl.H_one_bound`) and the
+    `1`-separation bound the terms with `χ_r = χ_s` (`LinnikCGLHBRefl.sum_res_le`), so no split is needed;
+  - an iterative estimate, his Lemma 4, the squaring (`LinnikCGLHBPos.shat_sq_le`, Kerr's Lemma 22);
+  - the combination: his (8)–(10) and Lemma 5 for `N ≤ D^{5/2}`, then his §5, for `N ≤ 2D²` by dyadic pieces and his
+    Lemma 2, and for `N ≥ 2D²` by a contour shift with a bound for `L(s, χ)` on `Re s = 1/4`. The library runs Kerr's
+    two cases through the supremum of `σ(N)/B(N)` (`LinnikCGLHBIter.sig_bound`), reflecting at the dual length
+    `⌈Q^{1+δ}/N⌉` with `Q = q(1 + 2T)`. For `N ≥ Q^{1+δ}` that length is `1`, so the long sums need no separate step.
+
+So the library proves the one-modulus case of Heath-Brown's theorem, on dyadic ranges, with `(qTM)^ε` in place of
+`D^{c₀/log log D}`, by his method in Kerr's arrangement. The result is adapted rather than transcribed: the formalisation follows Kerr and
+Jutila, not Heath-Brown's text. It is documented here, as part of the formalisation of the paper that states and uses
+it, and no paper in this repository claims it.
 
 ## Where the Linnik paper uses it
 
