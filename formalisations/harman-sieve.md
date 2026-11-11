@@ -132,6 +132,16 @@ Its main tools:
   `Tuple.sort`), so a sum over the tuples of distinct primes in the cells `bx` (`SieveAd.famU`) under a condition
   is the sum, over the permutations `σ`, of the sums over the boxes `bx ∘ σ` under the condition carried by `σ`.
   Nothing uses it yet: it is for the terms at a floor of a reversed term.
+- `SieveAd.evJ_fill_core_at`, `SieveAd.evJ_two_core_at` (`lib/pnt/SieveAdFillCore.lean`; the checks are
+  `lib/pnt/SieveAdCoreDefs.lean`'s, without Mathlib), **the two comparisons at a floor, on the sums of a box.**
+  `SieveAd.evJ_fillE` and `SieveAd.evJ_twoE` evaluate the terms at a floor of a box that passes a test which reads
+  the box through sums over sets of its primes, the sets given by the bits of their positions in the search's
+  list. Here the box is a function, the sets are sets of its indices, and the checks (`SieveAd.coreJ3`,
+  `SieveAd.coreJ2`) are on numbers that bound the sums: `c0lo ≤ Σ_{S₀} lo`, `c0hi ≥ Σ_{S₀} hi`, `h1s ≥ Σ_{S₁} hi`,
+  `h2s ≥ Σ_{S₁ᶜ} hi`, and for a rest among the box's primes `ρ₁ ≤ Σ_{Sr} lo`, `ρ₂ ≥ Σ_{Sr} hi`. The box may have
+  any number of primes, the comparisons of its family being at most `J₀`. Nothing uses them yet: they are for the
+  boxes that the tuples of a reversed term fall into once the primes of its cofactor are written out and the
+  tuple is sorted, which are not boxes of the search's lists.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

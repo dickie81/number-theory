@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1706 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1708 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 304 | 914 |
+| `lib/pnt` | 305 | 916 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2468,6 +2468,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd.fillTests_sound`: The tests with no window are sound ([note](../formalisations/harman-sieve.md))
 - `SieveAd.fillTests_soundX`: The tests with no window are sound under two more atoms ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFillCore`: The comparison with the rest among the tree's primes, on the sums of a box
+
+- `SieveAd.evJ_fill_core_at`: The comparison with the rest among the tree's primes, on the sums of a box, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.evJ_two_core_at`: The comparison in two variables on the sums of a box, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFlip`: Role reversal through the largest prime, as an identity: the two inclusions
 
