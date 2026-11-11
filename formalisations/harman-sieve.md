@@ -125,6 +125,13 @@ Its main tools:
   `Bd false (C(w₀ + w₁ + w₂) + bd(w₁ + w₂))` (`bd_flip_neg_at`) or `Bd true (C·w₀ + bd(w₁ + w₂))`
   (`bd_flip_pos_at`). Nothing uses them yet: the tests that are sound for this frozen part, and the search, are
   not written (`docs/research-opportunities.md`, §3.1).
+- `SieveAd.sum_famU_eq_at` (`lib/pnt/SieveAdSort.lean`), **tuples of distinct primes in cells, sorted.** The
+  tuples of a reversed term are not in order: the primes of `r'` and those of the chain each decrease, with
+  nothing between the two, where the comparisons are proved for strictly decreasing tuples. A tuple of distinct
+  numbers strictly decreases in exactly one order of its entries (`SieveAd.existsUnique_sort`, from Mathlib's
+  `Tuple.sort`), so a sum over the tuples of distinct primes in the cells `bx` (`SieveAd.famU`) under a condition
+  is the sum, over the permutations `σ`, of the sums over the boxes `bx ∘ σ` under the condition carried by `σ`.
+  Nothing uses it yet: it is for the terms at a floor of a reversed term.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

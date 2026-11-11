@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1705 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1706 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 303 | 913 |
+| `lib/pnt` | 304 | 914 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2533,6 +2533,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdSearchG`: The search with its nodes' tests as parameters is sound, for any statement that the nodes prove
 
 - `SieveAd.solveG_sound`: The search is sound
+
+#### `SieveAdSort`: Tuples of distinct primes in cells, sorted
+
+- `SieveAd.sum_famU_eq_at`: A sum over tuples of distinct primes in cells, by the orders of their entries, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdTree`: A tree of Buchstab steps on boxes of cells: what a tree that passes the check gives
 
