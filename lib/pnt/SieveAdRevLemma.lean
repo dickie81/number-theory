@@ -199,6 +199,30 @@ theorem famB3_facts {q : ℕ} {k0 k1 k2 : Cell} {rt : Fin 3 → ℕ} (h : rt ∈
   obtain ⟨hp, hsa, hc⟩ := h
   exact ⟨hp, hsa (by decide), hsa (by decide), hc 0, hc 1, hc 2⟩
 
+/-- A strictly decreasing triple of primes in three cells is a tuple of the box. -/
+theorem mem_famB3 {q : ℕ} {k0 k1 k2 : Cell} {a0 a1 a2 : ℕ} (hp0 : a0 ≤ N2 q ∧ a0.Prime)
+    (hp1 : a1 ≤ N2 q ∧ a1.Prime) (hp2 : a2 ≤ N2 q ∧ a2.Prime) (h01 : a1 < a0) (h12 : a2 < a1)
+    (hc0 : Xe q k0.1 ≤ a0 ∧ (a0 : ℝ) < Xe q k0.2) (hc1 : Xe q k1.1 ≤ a1 ∧ (a1 : ℝ) < Xe q k1.2)
+    (hc2 : Xe q k2.1 ≤ a2 ∧ (a2 : ℝ) < Xe q k2.2) :
+    (![a0, a1, a2] : Fin 3 → ℕ) ∈ famB q (boxFn [k2, k1, k0] 3 rfl) := by
+  rw [boxFn3, mem_famB]
+  refine ⟨?_, ?_, ?_⟩
+  · intro i
+    fin_cases i
+    · exact hp0
+    · exact hp1
+    · exact hp2
+  · rw [Fin.strictAnti_iff_succ_lt]
+    intro i
+    fin_cases i
+    · exact h01
+    · exact h12
+  · intro i
+    fin_cases i
+    · exact hc0
+    · exact hc1
+    · exact hc2
+
 /-- A strictly decreasing triple of primes in three cells, with its product in the range, is a tuple of the box
 under the condition. -/
 theorem mem_famK3 {q e₁ e₂ : ℕ} {k0 k1 k2 : Cell} {a0 a1 a2 : ℕ} (hp0 : a0 ≤ N2 q ∧ a0.Prime)
@@ -528,4 +552,115 @@ theorem rev_cover_pt [RouteOK] {q : ℕ} (hq : Big q) {c1 c2 c3 : Cell} (hrev : 
             Matrix.head_cons, Matrix.tail_cons]
           rw [Nat.div_eq_of_eq_mul_left (by positivity) (show n = p₁ * (Q * q₂ * p₂ * p₃) by rw [hm, hmq]; ring)]
 
+theorem Xe_pow {q : ℕ} (hx0 : 0 < xq q) (k : ℕ) : Xe q 1 ^ k = Xe q k := by
+  induction k with
+  | zero => rw [pow_zero, Xe_zero]
+  | succ k ih => rw [pow_succ, ih, ← Xe_add hx0]
+
+/-- **The term of the box is at most the terms of its atoms' boxes.** For a box `[c3, c2, c1]` that passes `revOK`,
+at a large modulus, and weights `g ≥ 0`: the term of the box is at most the sum of the terms at the level
+`z = ⌈x^{l₃/DEN}⌉` of the five atoms' boxes under the condition, plus `(DEN + 1)³` times the weight of the `n` that
+the square of a prime at least `z` divides. -/
+theorem rev_cover [RouteOK] {q : ℕ} (hq : Big q) {c1 c2 c3 : Cell} (hrev : revOK [c3, c2, c1] = true) (g : ℕ → ℝ)
+    (hg : ∀ n, 0 ≤ g n) :
+    famI g (N1 q) (N2 q) (famB q (boxFn [c3, c2, c1] 3 rfl)) ≤
+      famJ g (N1 q) (N2 q) ⌈Xe q c3.1⌉₊ (famK q (e1 c1) (e2 c1) 3 (boxFn [c3, c2, iq1 c1 c2 c3] 3 rfl)) +
+      famJ g (N1 q) (N2 q) ⌈Xe q c3.1⌉₊ (famK q (e1 c1) (e2 c1) 3 (boxFn [c3, iq1 c1 c2 c3, c2] 3 rfl)) +
+      famJ g (N1 q) (N2 q) ⌈Xe q c3.1⌉₊ (famK q (e1 c1) (e2 c1) 4
+        (boxFn [c3, (c3.1, topQ c1 c2 c3), iq2 c1 c2 c3 (c3.1, topQ c1 c2 c3), c2] 4 rfl)) +
+      famJ g (N1 q) (N2 q) ⌈Xe q c3.1⌉₊ (famK q (e1 c1) (e2 c1) 4
+        (boxFn [c3, (c3.1, topQ c1 c2 c3), c2, iq2 c1 c2 c3 (c3.1, topQ c1 c2 c3)] 4 rfl)) +
+      famJ g (N1 q) (N2 q) ⌈Xe q c3.1⌉₊ (famK q (e1 c1) (e2 c1) 4
+        (boxFn [c3, c2, (c3.1, topQ c1 c2 c3), iq2 c1 c2 c3 (c3.1, topQ c1 c2 c3)] 4 rfl)) +
+      ((DEN + 1 : ℕ) : ℝ) ^ 3 * ∑ n ∈ (Ioc (N1 q) (N2 q)).filter
+        (fun n => ∃ s : ℕ, s.Prime ∧ ⌈Xe q c3.1⌉₊ ≤ s ∧ s ^ 2 ∣ n), g n := by
+  obtain ⟨hx3, hX1, hn'⟩ := big_n hq
+  have hx0 : 0 < xq q := by linarith
+  have hx1 : 1 ≤ xq q := by linarith
+  have hcl : ∀ c ∈ [c3, c2, c1], 0 < c.1 ∧ c.1 < c.2 := by
+    simp only [revOK, Bool.and_eq_true, Nat.ble_eq] at hrev
+    exact (cellsOK_iff _).1 hrev.1.1.1.1
+  rw [famI_eq_sum_card, famJ_eq_sum_card, famJ_eq_sum_card, famJ_eq_sum_card, famJ_eq_sum_card, famJ_eq_sum_card,
+    Finset.sum_filter, Finset.mul_sum, ← Finset.sum_add_distrib, ← Finset.sum_add_distrib,
+    ← Finset.sum_add_distrib, ← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
+  refine Finset.sum_le_sum fun n hn => ?_
+  have hgn := hg n
+  have hn0 : 0 < n := by have := (Finset.mem_Ioc.1 hn).1; omega
+  obtain ⟨z, hz⟩ : ∃ z, z = ⌈Xe q c3.1⌉₊ := ⟨_, rfl⟩
+  rw [← hz]
+  obtain ⟨C, hC⟩ : ∃ C, C = (famB q (boxFn [c3, c2, c1] 3 rfl)).filter
+      (fun rt => (∏ i, rt i) ∣ n ∧ SieveTree.rough (rt (Fin.last 2)) n) := ⟨_, rfl⟩
+  rw [← hC]
+  by_cases hbad : ∃ s : ℕ, s.Prime ∧ z ≤ s ∧ s ^ 2 ∣ n
+  · -- a number with a square factor: few tuples
+    simp only [hbad, ↓reduceIte]
+    have hcard : C.card ≤ (DEN + 1) ^ 3 := by
+      refine card_tuples_dvd_le C (P := Xe q 1) hn0 (by linarith) ?_ ?_
+      · rw [Xe_pow hx0]
+        exact (hn' n hn).2
+      · intro rt hrt i
+        rw [hC, Finset.mem_filter] at hrt
+        obtain ⟨hp, -, hc⟩ := mem_famB.1 hrt.1
+        refine ⟨(hp i).2, ?_, (Finset.dvd_prod_of_mem _ (Finset.mem_univ i)).trans hrt.2.1⟩
+        have h1 : 1 ≤ (boxFn [c3, c2, c1] 3 rfl i).1 := (hcl _ (boxFn_mem [c3, c2, c1] 3 rfl i)).1
+        exact (Xe_mono hx1 h1).trans (hc i).1
+    have h1 : g n * (C.card : ℝ) ≤ ((DEN + 1 : ℕ) : ℝ) ^ 3 * g n := by
+      have : (C.card : ℝ) ≤ ((DEN + 1 : ℕ) : ℝ) ^ 3 := by exact_mod_cast hcard
+      rw [mul_comm]
+      exact mul_le_mul_of_nonneg_right this hgn
+    have h2 : ∀ c : ℕ, 0 ≤ g n * (c : ℝ) := fun c => mul_nonneg hgn (Nat.cast_nonneg c)
+    linarith [h2 ((famK q (e1 c1) (e2 c1) 3 (boxFn [c3, c2, iq1 c1 c2 c3] 3 rfl)).filter
+        fun rt => (∏ i, rt i) ∣ n ∧ SieveTree.rough z n).card,
+      h2 ((famK q (e1 c1) (e2 c1) 3 (boxFn [c3, iq1 c1 c2 c3, c2] 3 rfl)).filter
+        fun rt => (∏ i, rt i) ∣ n ∧ SieveTree.rough z n).card,
+      h2 ((famK q (e1 c1) (e2 c1) 4 (boxFn [c3, (c3.1, topQ c1 c2 c3), iq2 c1 c2 c3 (c3.1, topQ c1 c2 c3), c2] 4
+        rfl)).filter fun rt => (∏ i, rt i) ∣ n ∧ SieveTree.rough z n).card,
+      h2 ((famK q (e1 c1) (e2 c1) 4 (boxFn [c3, (c3.1, topQ c1 c2 c3), c2, iq2 c1 c2 c3 (c3.1, topQ c1 c2 c3)] 4
+        rfl)).filter fun rt => (∏ i, rt i) ∣ n ∧ SieveTree.rough z n).card,
+      h2 ((famK q (e1 c1) (e2 c1) 4 (boxFn [c3, c2, (c3.1, topQ c1 c2 c3), iq2 c1 c2 c3 (c3.1, topQ c1 c2 c3)] 4
+        rfl)).filter fun rt => (∏ i, rt i) ∣ n ∧ SieveTree.rough z n).card]
+  · -- no square factor: every tuple is reached
+    simp only [hbad, ↓reduceIte, mul_zero, add_zero]
+    rw [← mul_add, ← mul_add, ← mul_add, ← mul_add]
+    refine mul_le_mul_of_nonneg_left ?_ hgn
+    have hgood : ∀ s : ℕ, s.Prime → ⌈Xe q c3.1⌉₊ ≤ s → ¬ s ^ 2 ∣ n := fun s hs hzs hd =>
+      hbad ⟨s, hs, by rw [hz]; exact hzs, hd⟩
+    obtain ⟨D1, hD1⟩ : ∃ D1, D1 = ((famK q (e1 c1) (e2 c1) 3 (boxFn [c3, c2, iq1 c1 c2 c3] 3 rfl)).filter
+        fun rt => (∏ i, rt i) ∣ n ∧ SieveTree.rough z n) := ⟨_, rfl⟩
+    obtain ⟨D2, hD2⟩ : ∃ D2, D2 = ((famK q (e1 c1) (e2 c1) 3 (boxFn [c3, iq1 c1 c2 c3, c2] 3 rfl)).filter
+        fun rt => (∏ i, rt i) ∣ n ∧ SieveTree.rough z n) := ⟨_, rfl⟩
+    obtain ⟨D3, hD3⟩ : ∃ D3, D3 = ((famK q (e1 c1) (e2 c1) 4 (boxFn [c3, (c3.1, topQ c1 c2 c3),
+        iq2 c1 c2 c3 (c3.1, topQ c1 c2 c3), c2] 4 rfl)).filter
+          fun rt => (∏ i, rt i) ∣ n ∧ SieveTree.rough z n) := ⟨_, rfl⟩
+    obtain ⟨D4, hD4⟩ : ∃ D4, D4 = ((famK q (e1 c1) (e2 c1) 4 (boxFn [c3, (c3.1, topQ c1 c2 c3), c2,
+        iq2 c1 c2 c3 (c3.1, topQ c1 c2 c3)] 4 rfl)).filter
+          fun rt => (∏ i, rt i) ∣ n ∧ SieveTree.rough z n) := ⟨_, rfl⟩
+    obtain ⟨D5, hD5⟩ : ∃ D5, D5 = ((famK q (e1 c1) (e2 c1) 4 (boxFn [c3, c2, (c3.1, topQ c1 c2 c3),
+        iq2 c1 c2 c3 (c3.1, topQ c1 c2 c3)] 4 rfl)).filter
+          fun rt => (∏ i, rt i) ∣ n ∧ SieveTree.rough z n) := ⟨_, rfl⟩
+    rw [← hD1, ← hD2, ← hD3, ← hD4, ← hD5]
+    have hsub : C ⊆ D1.image (fun u => ![n / ∏ i, u i, u 1, u 2]) ∪ D2.image (fun u => ![n / ∏ i, u i, u 0, u 2]) ∪
+        D3.image (fun u => ![n / ∏ i, u i, u 0, u 3]) ∪ D4.image (fun u => ![n / ∏ i, u i, u 1, u 3]) ∪
+          D5.image (fun u => ![n / ∏ i, u i, u 2, u 3]) := by
+      intro rt hrt
+      rw [hC, Finset.mem_filter] at hrt
+      obtain ⟨hrz, hcases⟩ := rev_cover_pt hq hrev hn hgood hrt.1 hrt.2.1 hrt.2.2
+      rw [← hz] at hrz
+      simp only [Finset.mem_union, Finset.mem_image]
+      rcases hcases with ⟨u, hu, hd, he⟩ | ⟨u, hu, hd, he⟩ | ⟨u, hu, hd, he⟩ | ⟨u, hu, hd, he⟩ | ⟨u, hu, hd, he⟩
+      · exact Or.inl (Or.inl (Or.inl (Or.inl ⟨u, by rw [hD1]; exact Finset.mem_filter.2 ⟨hu, hd, hrz⟩, he⟩)))
+      · exact Or.inl (Or.inl (Or.inl (Or.inr ⟨u, by rw [hD2]; exact Finset.mem_filter.2 ⟨hu, hd, hrz⟩, he⟩)))
+      · exact Or.inl (Or.inl (Or.inr ⟨u, by rw [hD3]; exact Finset.mem_filter.2 ⟨hu, hd, hrz⟩, he⟩))
+      · exact Or.inl (Or.inr ⟨u, by rw [hD4]; exact Finset.mem_filter.2 ⟨hu, hd, hrz⟩, he⟩)
+      · exact Or.inr ⟨u, by rw [hD5]; exact Finset.mem_filter.2 ⟨hu, hd, hrz⟩, he⟩
+    have hcard : C.card ≤ D1.card + D2.card + D3.card + D4.card + D5.card := by
+      refine (Finset.card_le_card hsub).trans ?_
+      refine (Finset.card_union_le _ _).trans (add_le_add ?_ Finset.card_image_le)
+      refine (Finset.card_union_le _ _).trans (add_le_add ?_ Finset.card_image_le)
+      refine (Finset.card_union_le _ _).trans (add_le_add ?_ Finset.card_image_le)
+      exact (Finset.card_union_le _ _).trans (add_le_add Finset.card_image_le Finset.card_image_le)
+    exact_mod_cast hcard
+
 end SieveAd
+
+#print axioms SieveAd.rev_cover
