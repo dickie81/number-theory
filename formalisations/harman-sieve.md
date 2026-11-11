@@ -51,8 +51,16 @@ Its main tools:
   `∏x > q^{L−1−δ'}` split into two blocks within the bilinear Type I estimate's reach,
   `|Σ_x (S(A_x, w) − S(B_x, w)/φ(q))|` is at most
   `(2ζ(k)(N₂ − N₁)/(φ(q) log w) + 2·rem·q^{L−1−δ'})·Σ_x 1/∏x + q^{L−δ}/φ(q)`. It is the leaves' bound of the
-  comparison (`SieveP6TreeLeaves.tree_leaves_le`) with no tree above the level, which is then fixed. No result uses
-  it yet: it is the cost of a term at the least level of a sieve without the window.
+  comparison (`SieveP6TreeLeaves.tree_leaves_le`) with no tree above the level, which is then fixed.
+- `SieveGap.gap_at`, the same at large `q` with every constant explicit. Take a level `εw`, an even `k ≥ 4`, a
+  `δ'` with `(2k + 7)εw < δ' ≤ 1/16`, an `s ≥ 0` with `5δ' + s ≤ L − 2`, and bounds `hi_i` for the exponents of a
+  family's primes that split into two blocks with `D₁ + (2k + 4)εw + 5δ' + s < L − 1` and
+  `D₁ + 2D₂ + (2k + 4)εw < L + s`. Then for large `q` the family's terms at the level `w = ⌈q^{εw}⌉` satisfy
+  `|Σ_x (S(A_x, w) − S(B_x, w)/φ(q))| ≤ 2ζ(k)·(N₂ − N₁)/(φ(q) log w)·Σ_x 1/∏x + q^{L−δ}/φ(q)` with
+  `ζ(k) = SieveProp6.zeta 3 k`, a number. The block conditions are the bilinear Type I estimate's
+  (`SieveP6LeavesWide.leavesOK_wide`) with the level's `(2k + 4)εw` added; the remainder of the sieve,
+  `12·(2q^{εw})^{2k+7}` per chain, is why `δ'` exceeds `(2k + 7)εw`. No result uses it yet: it is the cost of a
+  term at the least level of a sieve without the window.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer
