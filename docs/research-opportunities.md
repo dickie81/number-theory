@@ -400,7 +400,7 @@ covers. The region does not close at `13/6`.
     `0.64` at `2.13`, and `0.75` with two levels at `2.12`. So the general reversal with certificates of this
     kind is a theorem near `2.15`; **`2.12` needs it and, besides, a certificate that loses a small part of
     what cells of side `0.004` lose** (`0.39` at `2.15`), and has `0.25` to spare in the limit.
-  - *A design for it* (not written). A reversed term is a sum over a frozen part: the numbers `r' = p₂⋯p_k·m`,
+  - *A design for it* (its first two parts are written, below). A reversed term is a sum over a frozen part: the numbers `r' = p₂⋯p_k·m`,
     `m` rough at `p_k`, with `x/r'` in the cell of `p₁`, and over a chain `c₁ > ⋯ > c_t` of primes of `n/r'`, of
     the `n` with `r'c₁⋯c_t | n` and `n/r'` rough at `c_t`. The tree's steps (a cut, Buchstab's identity on
     `n/r'`, a drop at Buchstab's bound for `n/(r'c₁⋯c_t)`) see `r'` only through `x/r'`, as the tree of
@@ -416,6 +416,20 @@ covers. The region does not close at `13/6`.
     the ranges of the sums, which are exact because every atom's exponent is affine in the cells. A second level
     opens a prime of `r'` in a term with a chain: the frozen part is then the rest of `r'` times `c₁⋯c_t` times
     the cofactor rough at `c_t`, under two conditions.
+  - *What is written of it* (11 November). The tree over any frozen part in the range of `r'`
+    (`lib/pnt/SieveAdFroz.lean`, `SieveAdFrozTree.lean`): the terms on the multiples of `R`, the cut and
+    Buchstab's identity on the chain, the box with no term and the dropped box, and the soundness of the search
+    of `SieveAdRevDefs.lean` over it, given tests that are sound for the frozen part
+    (`SieveAd.frozSolve_sound_at`, with the interface `SieveAd.SoundF`); and the top of the tree
+    (`SieveAd.dJF_level_at`). And the reversal of a box through its largest prime as an identity
+    (`lib/pnt/SieveAdFlip.lean`, `SieveAdFlipSum.lean`): the frozen part with the cofactor as one number
+    (`SieveAd.frozS`), the two inclusions (`SieveAd.flip_cover`, `flip_inject`: the term of the box lies between
+    the terms at the level `⌈x^{t/DEN}⌉`, `l₁ ≥ t ≥ h₁/2`, over two frozen parts that differ in the `R` within
+    `x^{1/DEN}` of the ends), the weight of the frozen part by the share of the box
+    (`SieveAd.froz_weight_le_at`), and the bound for either sign from a tree's cost (`SieveAd.bd_flip_neg_at`,
+    `bd_flip_pos_at`). Not written: the tests that are sound for this frozen part (the two evaluations of the
+    design), the search's definitions with the reversal of terms of two to five primes of either sign, the
+    second level, and a certificate.
   - *Why `2.19`.* Without reversal, and without the stops whose rest is the first small prime, the cells pass at
     `2.19` with the window, and not at `2.18` (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
     `0.945`; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`; `1.066` at `2.18` with every stop). The tree

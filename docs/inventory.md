@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1699 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1705 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 301 | 907 |
+| `lib/pnt` | 303 | 913 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2468,6 +2468,18 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd.fillTests_sound`: The tests with no window are sound ([note](../formalisations/harman-sieve.md))
 - `SieveAd.fillTests_soundX`: The tests with no window are sound under two more atoms ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFlip`: Role reversal through the largest prime, as an identity: the two inclusions
+
+- `SieveAd.inSlab_frozS_at`: The frozen part lies in the range of `r'`, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.inSlab_frozS_inner_at`: The narrower frozen part lies in the range of `r'`, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFlipSum`: Role reversal through the largest prime, as an identity: the weights and the bound
+
+- `SieveAd.bd_flip_neg_at`: The reversal bounds a term that needs an upper bound, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.bd_flip_pos_at`: The reversal bounds a term that needs a lower bound, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.froz_weight_le_at`: The weight of the narrower frozen part, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.shareLe_of_box_at`: The share of a box that may be dropped, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFroz`: A tree of Buchstab steps over a frozen part
 

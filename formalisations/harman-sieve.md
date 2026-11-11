@@ -105,6 +105,26 @@ Its main tools:
   with no prime are the terms at a floor minus the term of the chain of one prime between the two. Nothing uses
   them yet: they are the first part of role reversal as an identity, for either sign and with the cofactor kept
   as one number (`docs/research-opportunities.md`, §3.1).
+- `SieveAd.bd_flip_neg_at`, `SieveAd.bd_flip_pos_at`, `SieveAd.froz_weight_le_at`, `SieveAd.shareLe_of_box_at`,
+  `SieveAd.inSlab_frozS_at`, `SieveAd.inSlab_frozS_inner_at` (`lib/pnt/SieveAdFlip.lean`,
+  `lib/pnt/SieveAdFlipSum.lean`), **role reversal through the largest prime, as an identity.** A box of primes
+  `p₁ > a₁ > ⋯ > a_{s+1}`, the cell of `p₁` being `(l₁, h₁)`, counts the `n = p₁·a₁⋯a_{s+1}·m` with `m` free of
+  primes below `a_{s+1}`. The frozen part is the set of the pairs `(a, m)` with `R = a₁⋯a_{s+1}·m` in a range,
+  `m` kept as one number whatever its prime factors (`SieveAd.frozS`), and `n/R` is sifted at a level
+  `Z = ⌈x^{t/DEN}⌉` with `l₁ ≥ t ≥ h₁/2`, where a number of the size of `p₁` with no prime factor below `Z` is
+  prime. So the term of the box is at most the terms at the level over the frozen part with `R` in
+  `(x^{(DEN−h₁)/DEN}, x^{(DEN−l₁+1)/DEN}]` (`SieveAd.flip_cover`) and at least those over the part with `R` in
+  `(x^{(DEN−h₁+1)/DEN}, x^{(DEN−l₁)/DEN}]` (`SieveAd.flip_inject`), for any weights `g ≥ 0`: the reversal serves a
+  term that needs a lower bound as well as one that needs an upper bound, at the price of the `R` within
+  `x^{1/DEN}` of the two ends. The weight `Σ 1/R` of the narrower part is at most `h₁/DEN` times the share of the
+  box, the bound of its own dropped term (`froz_weight_le_at`, `shareLe_of_box_at`): each `R` carries the primes
+  of `(x/R, 2x/R]`, at least `(1 − ε)(DEN/h₁)(x/R)/log x` of them, and the `n = RP` are numbers of the box. With
+  weights `w₀`, `w₁`, `w₂` of the narrower part and of the two ends, `bd` the bound for the rough numbers of
+  `(x/R, 2x/R]` at the level, and a tree of cost `C` over the frozen part (the terms at a floor evaluated, the
+  chain of one prime between the floor and the level bounded), the term of the box has
+  `Bd false (C(w₀ + w₁ + w₂) + bd(w₁ + w₂))` (`bd_flip_neg_at`) or `Bd true (C·w₀ + bd(w₁ + w₂))`
+  (`bd_flip_pos_at`). Nothing uses them yet: the tests that are sound for this frozen part, and the search, are
+  not written (`docs/research-opportunities.md`, §3.1).
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer
