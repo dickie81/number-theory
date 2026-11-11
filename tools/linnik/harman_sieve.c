@@ -29,6 +29,13 @@
  *                    S(A_{r'}, x^{a_j / 2}), whose tree runs over the prime factors of k.
  * The value of a node is an upper bound for its cost density on the box, relative to prod d a_i / a_i over the
  * independent cells.  With `pointwise`, each cell is replaced by its midpoint: the limit of fine cells, a model.
+ *
+ * Boundary terms.  S(A_r, x^lam) also counts n = r itself (m = 1) when r is in A.  A box some of whose points may
+ * have mu = 0 is not empty; if it is dropped, the products n = r are paid for as well (in the main tree, where the
+ * cells are independent: for the atoms but the last, the last is a prime in an interval (x/r', 2x/r'], at most
+ * 1 / (mu' log x) of x / r'); in a reversed tree such a box is not dropped, and a term with such points is not
+ * reversed.  Buchstab's identity on a box that is not regular at every point (mu < lam somewhere) has children whose
+ * new prime is the whole cofactor, so the children's cells then run up to mu, not mu / 2.
  */
 #include <math.h>
 #include <stdlib.h>
@@ -73,6 +80,7 @@ typedef struct {
     int split, splitdepth;
     int pointwise;
     int rev_odd, rev_even, rev_prime, rev_linear, rev_floor, rev_offdiag;
+    int ev_win, ev_second, ev_rest;
 } Ctx;
 
 typedef struct {
@@ -145,13 +153,15 @@ static int evaluable(const Ctx *c, int k, const double *Slo, const double *Shi) 
     double zl, zh;
     for (int A = 1; A <= full; A++) {
         double lo = Slo[A], hi = Shi[A];
-        if (c->haswin && ((lo > c->u1 && hi < c->u2) || (lo > 1 - c->u2 && hi < 1 - c->u1))) return 1;
+        if (c->ev_win && c->haswin && ((lo > c->u1 && hi < c->u2) || (lo > 1 - c->u2 && hi < 1 - c->u1)))
+            return 1;
         if (hi < c->amin || lo > c->amax) continue;
         int comp = full ^ A;
         for (int R = comp;; R = (R - 1) & comp) {
-            if (R && zone(c, Slo[R], Shi[R], &zl, &zh) && lo >= zl && hi <= zh) return 1;
+            if (c->ev_second && R && zone(c, Slo[R], Shi[R], &zl, &zh) && lo >= zl && hi <= zh) return 1;
             /* the cofactor in the rest: rho = 1 - S[all but R] */
-            if (zone(c, 1 - Shi[full ^ R], 1 - Slo[full ^ R], &zl, &zh) && lo >= zl && hi <= zh) return 1;
+            if (c->ev_rest && zone(c, 1 - Shi[full ^ R], 1 - Slo[full ^ R], &zl, &zh) && lo >= zl && hi <= zh)
+                return 1;
             if (!R) break;
         }
     }
@@ -309,7 +319,8 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
     int full = (1 << k) - 1;
     double mulo = 1 - Shi[full], muhi = 1 - Slo[full];
     st->nodes[std ? k : MAXK + 1]++;
-    if (muhi < llo) return 0;                    /* u < 1 on the whole box: the term is empty */
+    int hasd = mulo <= 0;                        /* some point may have r in A: the term counts n = r there */
+    if (muhi < llo && !hasd) return 0;           /* u < 1 on the whole box, and r < x: the term is empty */
     if (evaluable(c, k, Slo, Shi)) return 0;
     double T = capacity(c, k, Shi, !std && c->rev_linear);
     double fs = exact_floor(c, k, Slo, Shi, lhi, T);
@@ -320,12 +331,29 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
     if (fs > llo) fs = llo;                      /* a floor is below the sifting level at every point */
     double ulo = mulo / lhi, uhi = muhi / llo;
     double cdrop = omega_max(c, ulo, uhi) / llo;
-    double best = odd ? INF : cdrop;
+    double call = cdrop;                         /* with the products n = r of the box */
+    if (hasd) {
+        if (!std || k < 2 || !(lhi > llo)) call = INF;
+        else {
+            /* the last atom is then a prime in (x/r', 2x/r'], so its exponent is 1 minus the others': of the
+             * other cells, a share at most (lhi - llo) / (lo_i log(hi_i / lo_i)) for each i */
+            double frac = 1;
+            for (int i = 0; i < k - 1; i++) {
+                double lo_i = Slo[1 << i], hi_i = Shi[1 << i];
+                if (hi_i > lo_i) {
+                    double f1 = (lhi - llo) / (lo_i * log(hi_i / lo_i));
+                    if (f1 < frac) frac = f1;
+                }
+            }
+            call = cdrop + frac / (llo * log(lhi / llo));
+        }
+    }
+    double best = odd ? INF : call;
     if (odd && c->use_rev) {
         double r = reversal(c, k, Slo, Shi, npm);
-        if (r < BIG && r * cdrop < best) best = r * cdrop;
+        if (r < BIG && r * call < best) best = r * call;
     }
-    if (fl > 0 && k >= 2 && k <= c->flipdepth && !(c->rev_even && odd) && !(c->rev_odd && !odd) &&
+    if (fl > 0 && k >= 2 && k <= c->flipdepth && !hasd && !(c->rev_even && odd) && !(c->rev_odd && !odd) &&
         !(c->rev_prime && uhi >= 2)) {
         double S2lo[1 << MAXK], S2hi[1 << MAXK];
         for (int j = 0; j < k; j++) {
@@ -362,6 +390,7 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
     if (k >= (std ? c->maxdepth : c->flipmax)) return best;
     int inexact = (odd ? c->use_ub : c->use_lb) && T > 0;
     double top = lhi < muhi / 2 ? lhi : muhi / 2;
+    if (mulo < lhi) top = lhi < muhi ? lhi : muhi;   /* not regular everywhere: the new prime may be the cofactor */
     double flow = fs;
     if (flow < 0) {
         if (!inexact) return best;

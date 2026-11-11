@@ -35,6 +35,11 @@ Here:
     primes (`--flips`: for terms of at most this many primes), and so may the terms of that tree (`--nest`).
   * A term that needs a lower bound may be dropped at the cost of its B-version; one that needs an upper bound
     may not.
+  * Boundary terms. S(A_r, z) also counts n = r itself, when r is in A. Buchstab's identity on a box that is not
+    regular at every point (the cofactor's exponent below the sifting level somewhere) has such terms among its
+    children, where the new prime is the whole cofactor, so its children's cells run up to the cofactor's
+    exponent; a box with such points is not empty, its drop pays for them too (in the main tree, where the cells
+    are independent), and in a reversed tree it is not dropped and its term is not reversed.
   * Sieve bounds (`--sieve`, `--upper`; off by default, they change the values by less than 0.01). Where the rule
     fails at f, S(A_r, x^f) is bounded by the linear sieve of level x^T, T the reach of Type I beyond r: its main
     term is e^{-gamma} F(T/f) (upper bounds) or e^{-gamma} f(T/f) (lower bounds) where S(B_r, x^f) has Buchstab's
@@ -52,28 +57,37 @@ Values of the loss (10 November 2026; reversal for terms of at most 6 primes, ne
 --h 0.002, four to seven minutes each on four cores; `points` with --h 0.004):
 
     L        11/5    2.18    2.16    2.15    2.14    2.13    2.12    2.11    2.10
-    cells    0.032   0.161   0.397   0.507   0.631   0.761   0.920   1.094   1.270
+    cells    0.033   0.163   0.400   0.511   0.634   0.765   0.924   1.097   1.273
     points   0.013   0.090   0.285   0.364   0.459   0.569   0.690   0.849   1.011
 
-At 2.13 with --h 0.004 the cells give 0.998; with --nest 1, 1.079; with --flips 4 --nest 1, 1.252; with
---flips 0, 1.426; with --plain, 1.174; with --sieve --upper, 0.991. `paper` at 11/5 gives 0.862 with --h 0.002
-and 0.800 with --h 0.001, where the paper's certificate has 0.932 on its grid, and `parity` gives 3.0.
+(Before the boundary terms were paid for, the cells gave 0.920 at 2.12 and 0.761 at 2.13.) At 2.13 with
+--h 0.004 the cells give 1.006; with --nest 1, 1.090; with --flips 4 --nest 1, 1.269; with --flips 0, 1.426;
+with --plain, 1.174; with --sieve --upper, 0.999. `paper` at 11/5 gives 0.862 with --h 0.002 and 0.800 with
+--h 0.001, where the paper's certificate has 0.932 on its grid, and `parity` gives 3.0.
 
-What the reversal needs (`--rev`; at 2.19 with --no-window --nest 1 --h 0.007, where the cells give 0.441): with
-`even`, 1.029, and with `odd`, 0.496, so it is the terms that need an upper bound; with `linear`, 1.083, so it
-is the bilinear Type I estimate inside the reversed trees; with `prime`, 0.636; with `floor`, 0.453; with
-`offdiag`, 0.446. How large a tree passes: with --flips 0 the cells are below 1 at 2.19 only (0.864 with the
-window and --h 0.005, 276000 nodes); with --no-window --flips 3 --nest 1 --h 0.01 they give 0.787 at 2.19 with
-119000 nodes; with --no-window --nest 1 --h 0.007, 0.729 at 2.17 with 10^6 nodes; with --no-window --h 0.005,
-0.480 at 2.17 with 1.4 10^7 nodes.
+What the reversal needs (`--rev`; at 2.19 with --no-window --nest 1 --h 0.007, where the cells give 0.463): with
+`even`, 1.059, and with `odd`, 0.512, so it is the terms that need an upper bound; with `linear`, 1.091, so it
+is the bilinear Type I estimate inside the reversed trees; with `prime`, 0.659; with `floor`, 0.474; with
+`offdiag`, 0.468. How large a tree passes: with --flips 0 the cells are below 1 at 2.19 only (0.866 with the
+window and --h 0.005, 276000 nodes; 1.066 at 2.18); with --no-window --flips 3 --nest 1 --h 0.01 they give
+0.809 at 2.19 with 113000 nodes; with --no-window --nest 1 --h 0.007, 0.749 at 2.17 with 10^6 nodes; with
+--no-window --h 0.005, 0.489 at 2.17 with 1.4 10^7 nodes; and the table's tree at 2.12 has 4.7 10^9 nodes.
+
+What a tree without reversal needs (`--no-first`, `--direct`; at 2.19 with --flips 0 --h 0.005). Without the
+stops whose rest is the first small prime, the top node's floor is the window's width and the cells give 0.945,
+with 307000 nodes (0.967 with --plain; 0.865 at 2.195). Of the ways to evaluate a box outright, the window is
+needed (1.102 with --direct second,rest) and so is the estimate with the cofactor in the second variable (1.202
+with --direct window,rest); the cofactor in the rest is not (0.945 with --direct window,second).
 
 What is assumed, beyond the paper: the estimate in two variables on the tabulated zone (two_factor.py states it;
-in Lean are its bound by bins, SieveTypeIIHM.sum_typeII_two_bins and bin_bound_two, and the zone's part with both
-variables of length at least q, twoBound_of_long); the bilinear Type I estimate without 2HD < q at the leaves (in
-Lean: SieveTypeIB.typeIB_bound_wide, not yet the leaves); Harman's comparison with these stops and these leaves;
-the removal of the conditions that tie the variables of a reversed term together; and, with `--sieve` and
-`--upper`, the linear sieve's bounds F and f with the bilinear remainder and well-factorable weights. The paper's
-Theorem 1.1 stays at 11/5.
+in Lean it is proved on the region SieveTwoZone7D.Zone7d, which holds all of the zone but under 2% of its width,
+as far as chains of primes: SieveTwoChain.chain_two); the bilinear Type I estimate without 2HD < q at the leaves
+(in Lean: SieveTypeIBAsymWide.leaves_ib_wide); Harman's comparison with these stops and these leaves (in Lean
+for a rest among the term's primes: SieveTwoComp.prop6_two); the same with the first small prime as the rest,
+where the small primes below the least rest that the zone takes (eps0) are left to Type I at no cost, which is
+Brun's sieve at a fixed level, whose gap is tiny but not o(1); role reversal, with the conditions that tie the
+variables of a reversed term together removed; and, with `--sieve` and `--upper`, the linear sieve's bounds F
+and f with the bilinear remainder and well-factorable weights. The paper's Theorem 1.1 stays at 11/5.
 """
 import argparse
 import ctypes as C
@@ -114,7 +128,8 @@ class Ctx(C.Structure):
                 ('flip', C.c_int), ('flipdepth', C.c_int), ('flipmax', C.c_int), ('flipmin', C.c_double),
                 ('wmin', C.c_double), ('split', C.c_int), ('splitdepth', C.c_int), ('pointwise', C.c_int),
                 ('rev_odd', C.c_int), ('rev_even', C.c_int), ('rev_prime', C.c_int), ('rev_linear', C.c_int),
-                ('rev_floor', C.c_int), ('rev_offdiag', C.c_int)]
+                ('rev_floor', C.c_int), ('rev_offdiag', C.c_int),
+                ('ev_win', C.c_int), ('ev_second', C.c_int), ('ev_rest', C.c_int)]
 
 
 class Stats(C.Structure):
@@ -230,7 +245,7 @@ def window(L):
 class Sieve:
     def __init__(self, L, h=0.004, depth=8, flips=6, nest=2, flipmax=8, flipmin=0.15, wide=True, usewin=True,
                  sieve=False, upper=False, type2=True, eps1=0.002, eps0=0.002, fmin=0.01, smax=7.0, shrink=0.0,
-                 tables=None, rev=()):
+                 tables=None, rev=(), first=True, direct=('window', 'second', 'rest')):
         L = Fr(L)
         self.L, Lf = L, float(L)
         r, Alo, Ahi = tables if tables is not None else zones(L)
@@ -253,6 +268,8 @@ class Sieve:
                 break
             hi, t = min(hi, Ahi[c]), max(t, Alo[c] + r[c])
             self.f0ok[c], self.f0hi[c], self.f0t[c] = 1, hi, t
+        if not first:
+            self.f0ok[:] = 0
         self.om = buchstab()
         self.Fm1, self.omf = linear_sieve()
         ctx = Ctx()
@@ -285,6 +302,7 @@ class Sieve:
         ctx.wmin, ctx.split, ctx.splitdepth = 0.0005, 0, 0
         for name in ('odd', 'even', 'prime', 'linear', 'floor', 'offdiag'):
             setattr(ctx, 'rev_' + name, int(name in rev))
+        ctx.ev_win, ctx.ev_second, ctx.ev_rest = (int(name in direct) for name in ('window', 'second', 'rest'))
         self.ctx = ctx
         # the floor of the top node: the largest f at which S(A, x^f) is evaluated
         T = ctx.theta - eps1
@@ -323,6 +341,11 @@ def main():
                     'prime on the whole box), linear (the linear Type I estimate alone in reversed trees), floor '
                     '(floors below every atom of a reversed term), offdiag (the cell of the reversed prime apart '
                     "from its neighbours')")
+    ap.add_argument('--no-first', action='store_true', help='no stop whose rest is the first small prime (the top '
+                    "node's floor is then the window's width, or --nu)")
+    ap.add_argument('--direct', default='window,second,rest', help='how a box may be evaluated outright, '
+                    'comma-separated: window, second (the estimate, the cofactor in the second variable), rest '
+                    '(the estimate, the cofactor in the rest)')
     a = ap.parse_args()
     h = a.h if a.h is not None else (0.004 if a.command == 'points' else 0.002)
     for Ls in a.L:
@@ -337,8 +360,20 @@ def main():
             s = Sieve(Ls, h=h, depth=a.depth, flips=a.flips, nest=a.nest, flipmax=a.flipmax, wide=not a.plain,
                       usewin=not a.no_window, sieve=a.sieve or a.command == 'parity',
                       upper=a.upper or a.command == 'parity', shrink=a.shrink, type2=a.command != 'parity',
-                      rev=tuple(x for x in a.rev.split(',') if x))
-            nu = a.nu if a.nu is not None else (s.nu0 if s.nu0 is not None else 0.05)
+                      rev=tuple(x for x in a.rev.split(',') if x), first=not a.no_first,
+                      direct=tuple(x for x in a.direct.split(',') if x))
+            if a.nu is not None:
+                nu = a.nu
+            elif s.nu0 is not None:
+                nu = s.nu0
+            elif s.win is not None:
+                nu = s.win[1] - s.win[0] - 1e-9
+            elif a.no_first:
+                print(f'{a.command} L = {Ls}: no window and no stop with a small prime as the rest, so no floor '
+                      'for the top node')
+                continue
+            else:
+                nu = 0.05
         v, bad, nodes = s.loss(pointwise=a.command == 'points', nu=nu)
         print(f'{a.command} L = {Ls} ({float(s.L):.4f}), h = {h}: loss {v:.4f}'
               + (f' ({bad} cells of depth 1 with no bound)' if bad else '')

@@ -134,7 +134,7 @@ the exponent each input would reach is:
 |---|---|---|---|
 | Chen, Gupta and Li's `4/(1 + σ)` at `σ = 5/7`, the library today | `7/3 = 2.3333` | `13/6 = 2.1667` | `2.198`–`2.2` (computed: `2.199` passes, `2.198` fails) |
 | The same, with the Type II estimate in two variables as one more way to evaluate a box (below; the estimate by bins is in Lean, the sieve with it is not) | `7/3` | `13/6` | `2.193` (computed: `2.193` passes, `2.192` fails) |
-| The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no certificate; of what it assumes, two bounds are in Lean) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
+| The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no certificate; of what it assumes, the two estimates are in Lean as far as Harman's comparison with a rest among the term's primes) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
 | A hybrid large-values estimate of Guth–Maynard strength at `σ = 5/7`, `15/(3 + 5σ)` (the `gm` variant of `tools/linnik/density_payoff.py`) | `105/46 = 2.2826` | `2.1413` | about `2.17`–`2.18` |
 | Guth and Maynard's `30/13` as a cap everywhere | `2.3077` | `2.1538` | about `2.18`–`2.19` |
 | The classical `12/5` at `σ = 3/4` (no Chen–Gupta–Li) | `2.4` | `2.2` | `2.239` (computed, §S6) |
@@ -188,16 +188,19 @@ covers. The region does not close at `13/6`.
 
   | `L` | `11/5` | `2.18` | `2.16` | `2.15` | `2.14` | `2.13` | `2.12` | `2.11` | `2.10` |
   |---|---|---|---|---|---|---|---|---|---|
-  | on cells | `0.032` | `0.161` | `0.397` | `0.507` | `0.631` | `0.761` | `0.920` | `1.094` | `1.270` |
+  | on cells | `0.033` | `0.163` | `0.400` | `0.511` | `0.634` | `0.765` | `0.924` | `1.097` | `1.273` |
   | at midpoints | `0.013` | `0.090` | `0.285` | `0.364` | `0.459` | `0.569` | `0.690` | `0.849` | `1.011` |
 
   So the computation passes at `2.12`, where the paper's decomposition stops at `2.193` (there this one loses
   `0.10`), and the limit of fine cells is near `2.10`, which is Baker, Harman and Pintz's `0.525` in the dictionary
   of the previous item, and agrees with its estimate of `2.13`. What carries it, at `2.13` on cells of side `0.004`,
-  where the loss is `0.998`: role reversal (`1.079` without the second level, `1.252` for terms of at most four
+  where the loss is `1.006`: role reversal (`1.090` without the second level, `1.269` for terms of at most four
   primes, `1.426` with none; with none the midpoints pass `1` at `2.16`) and the wider bilinear estimate (`1.174`
   with Lemma 4.2 as it stands). The linear sieve's bounds, for terms that the comparison does not evaluate, lower
-  it to `0.991` and are left out. Three checks of the program: in the paper's set-up at `11/5` (the window alone,
+  it to `0.999` and are left out. The cells pay for the boundary terms: a term `S(𝒜_r, z)` also counts `n = r`
+  itself, Buchstab's identity on a box that is not regular at every point has such terms among its children, and
+  a dropped box with such points costs their number too. Before they were paid for, the first row had `0.920` at
+  `2.12` and `0.761` at `2.13`. Three checks of the program: in the paper's set-up at `11/5` (the window alone,
   Lemma 4.2, the window's width as the floor, no reversal) it gives `0.862` on cells of side `0.002` and `0.800` on
   cells of side `0.001`, where the certificate has `0.932` on its grid, and `0.728` at midpoints; with the linear
   sieve's bounds and no Type II information it gives `3.0`, so it does not detect primes, as parity requires; and
@@ -280,21 +283,40 @@ covers. The region does not close at `13/6`.
     evaluable, and a box that the bilinear rule passes at the window's width as the floor), so at `11/5` a tree
     that passes them gives the paper's theorem (`SieveAd22000.linnik_tree_22000`). The tests of the estimate in
     two variables, which a tree below `11/5` needs, are not written.
-- **What is not written.** Role reversal; and a certificate for a tree with floors chosen term by term and
-  reversed terms, which the paper's format does not have. Until these are written the theorem stays at `11/5`.
-  Role reversal, in exact terms: for a term `Σ S(A_{p₁⋯p_k}, p_k)` on a box of cells and one of its primes `p_j`
-  in `[X, X′)`, the numbers `n = (r/p_j)·m·p_j` with `N₂/X′ < (r/p_j)m ≤ N₁/X` have `p_j = n/((r/p_j)m)` in its cell
-  whatever `n` in `(N₁, N₂]`, so on them the term is `Σ S(A_{r′}, ⌈X′^{1/2}⌉)` over `r′ = (r/p_j)m` with that
-  condition and no other on the cofactor, a term of the usual kind; the rest has `p_j` within a factor `N₂/N₁` of
-  an end of its cell, a share `O(1/log x)` of the box. In the computation (`harman_sieve.py --rev`, whose
-  docstring has the commands), what carries the reversal is the terms that need an upper bound (`1.03` at `2.19`
-  if only the others are reversed, against `0.44`; cells of side `0.007`, one level), the bilinear Type I
-  estimate inside the reversed trees (`1.08` with the linear one alone), and cofactors that are not prime (`0.64`
-  if only prime cofactors are reversed); floors below every prime of a reversed term cost nothing (`0.45`). The
-  size of a certificate: without reversal the cells pass at `2.19` only (`0.86` with the window, `276000` nodes
-  at side `0.005`); with it, `0.79` at `2.19` with `119000` nodes (side `0.01`, terms of at most three primes,
-  one level), `0.73` at `2.17` with `10^6` nodes (side `0.007`, one level), `0.48` at `2.17` with `1.4·10^7`
-  (side `0.005`, two levels), and `0.92` at `2.12` with the cells of side `0.002` of the table above.
+- **What is not written.** The tests of the estimate in two variables for the tree, and a tree that passes; the
+  comparison with its rest among the small primes; role reversal. Until these are written the theorem stays at
+  `11/5`.
+  - *A first tree below `11/5`.* Without reversal, and without the stops whose rest is the first small prime, the
+    cells still pass at `2.19`, with the window (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
+    `0.945`, with `307000` nodes; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`). The tree needs boxes
+    evaluated by the window (`1.10` without) and by the estimate with the cofactor in the second variable (`1.20`
+    without), and none with the cofactor in the rest. So a theorem at `2.19` needs the tests of the estimate for
+    the tree (the comparison, from `SieveTwoComp.prop6_two_at`, and a box, from `SieveTwoTerm.chain2_bound`), the
+    route's window at that exponent (`gen_cgl_curve.py` writes it at `11/5`), a generator in exact arithmetic, and
+    its tree, for the kernel to check. The window alone does not go below `11/5` with a tree of that size
+    (`harman_sieve.py paper`: `1.22` at `11/5` and `1.75` at `2.195` on cells of side `0.005`).
+  - *The rest among the small primes.* Below `13/6` there is no window, and the term at the root, `S(𝒜, x^f)`,
+    has no prime to be the rest: its tree is stopped with the first small prime as the rest. The region takes a
+    rest of exponent at least `1/2000`, so the paths whose small primes are all below that are not stopped. They
+    are left to Brun's sieve at a fixed level, whose gap is tiny and is not `o(1)`; the computation takes it as
+    zero. In Lean the comparison has its rest among the term's primes and an error `o(1)`
+    (`SieveTwoComp.prop6_two`); one with the rest among the small primes, and that gap as a cost, is not written.
+  - *Role reversal*, in exact terms: for a term `Σ S(A_{p₁⋯p_k}, p_k)` on a box of cells and one of its primes
+    `p_j` in `[X, X′)`, the numbers `n = (r/p_j)·m·p_j` with `N₂/X′ < (r/p_j)m ≤ N₁/X` have `p_j = n/((r/p_j)m)`
+    in its cell whatever `n` in `(N₁, N₂]`, so on them the term is `Σ S(A_{r′}, ⌈X′^{1/2}⌉)` over `r′ = (r/p_j)m`
+    with that condition and no other on the cofactor, a term of the usual kind; the rest has `p_j` within a factor
+    `N₂/N₁` of an end of its cell, a share `O(1/log x)` of the box. In the computation (`harman_sieve.py --rev`,
+    whose docstring has the commands), what carries the reversal is the terms that need an upper bound (`1.06` at
+    `2.19` if only the others are reversed, against `0.46`; cells of side `0.007`, one level), the bilinear
+    Type I estimate inside the reversed trees (`1.09` with the linear one alone), and cofactors that are not
+    prime (`0.66` if only prime cofactors are reversed); floors below every prime of a reversed term cost little
+    (`0.47`).
+  - *The size of a tree.* Without reversal the cells pass at `2.19` only (`0.87` with the window, `276000` nodes
+    at side `0.005`); with it, `0.81` at `2.19` with `113000` nodes (side `0.01`, terms of at most three primes,
+    one level), `0.75` at `2.17` with `10^6` nodes (side `0.007`, one level), `0.49` at `2.17` with `1.4·10^7`
+    (side `0.005`, two levels), and `0.92` at `2.12` with the cells of side `0.002` of the table above, a tree of
+    `4.7·10^9` nodes. No kernel checks that many nodes one by one: a certificate at `2.12` needs a coarser tree,
+    with cells chosen where they matter, or a check that shares work between boxes.
 
 ### 3.2 Short intervals
 
