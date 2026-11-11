@@ -2445,9 +2445,9 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `ShortSieveTypeI.abs_count_sub_le_typeI`: The asymptotic formula for a Type I term from Li's Lemmas 3.1 and 3.2 ([note](../formalisations/short-intervals.md))
 
-#### `SieveAd22000`: Linnik's theorem with exponent `11/5` from a tree that passes the window's tests
+#### `SieveAd22000`: Linnik's theorem with exponent `11/5` from a tree that passes the tests
 
-- `SieveAd22000.linnik_tree_22000`: Linnik's theorem with exponent `11/5`, from a tree that passes the window's tests
+- `SieveAd22000.linnik_tree_22000`: Linnik's theorem with exponent `11/5`, from a tree that passes the tests
 
 #### `SieveAdTree`: A tree of Buchstab steps on boxes of cells: what a tree that passes the check gives
 

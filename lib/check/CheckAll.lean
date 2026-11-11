@@ -174,6 +174,10 @@ import SieveAdTree
 import SieveAdSpec
 import SieveAdWinDefs
 import SieveAdWin
+import SieveAdTwoDefs
+import SieveAdTwo
+import SieveAdMixDefs
+import SieveAdMix
 import SieveAd22000
 import SieveHMWindow
 import SieveTypeIIHM

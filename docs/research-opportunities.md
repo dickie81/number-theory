@@ -279,21 +279,23 @@ covers. The region does not close at `13/6`.
     evaluations are a parameter. For tests that are sound, a tree that passes on the box of one prime with cost
     below `1` gives the theorem with the route's exponent (`SieveAd.linnik_tree`; `SieveAd.sound` is the bound of
     a tree, by induction). The paper's certificate is a fixed decomposition to depth 8; this one takes any tree.
-    The window's tests are proved sound (`SieveAd.winTests_sound`, from the paper's lemmas on boxes: a box surely
-    evaluable, and a box that the bilinear rule passes at the window's width as the floor), so at `11/5` a tree
-    that passes them gives the paper's theorem (`SieveAd22000.linnik_tree_22000`). The tests of the estimate in
-    two variables, which a tree below `11/5` needs, are not written.
-- **What is not written.** The tests of the estimate in two variables for the tree, and a tree that passes; the
-  comparison with its rest among the small primes; role reversal. Until these are written the theorem stays at
-  `11/5`.
+    Two kinds of tests are proved sound. The window's (`SieveAd.winTests_sound`, from the paper's lemmas on
+    boxes): a box surely evaluable, and a box that the bilinear rule passes at the window's width as the floor.
+    And the estimate's (`SieveAd.twoTests_sound`), in exact integers on the region `Zone7d`: a box evaluated
+    outright, its first variable and its rest two sets of its primes and its second variable the other primes
+    and the cofactor (`SieveAd.evI_two`, from `chain2_bound`); and the comparison at a floor, for a set of
+    primes that enters the window which the region leaves to the first variable, a rest among the primes, and a
+    split of the leaves (`SieveAd.evJ_two`, from `prop6_two_at`). At `11/5` a tree that passes the two kinds
+    gives the paper's theorem (`SieveAd22000.linnik_tree_22000`, with `SieveAd.mixTests`).
+- **What is not written.** A route below `11/5` with its window, and a tree that passes there; the comparison
+  with its rest among the small primes; role reversal. Until these are written the theorem stays at `11/5`.
   - *A first tree below `11/5`.* Without reversal, and without the stops whose rest is the first small prime, the
     cells still pass at `2.19`, with the window (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
     `0.945`, with `307000` nodes; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`). The tree needs boxes
     evaluated by the window (`1.10` without) and by the estimate with the cofactor in the second variable (`1.20`
-    without), and none with the cofactor in the rest. So a theorem at `2.19` needs the tests of the estimate for
-    the tree (the comparison, from `SieveTwoComp.prop6_two_at`, and a box, from `SieveTwoTerm.chain2_bound`), the
-    route's window at that exponent (`gen_cgl_curve.py` writes it at `11/5`), a generator in exact arithmetic, and
-    its tree, for the kernel to check. The window alone does not go below `11/5` with a tree of that size
+    without), and none with the cofactor in the rest: these are the tests that are proved sound. So a theorem
+    at `2.19` needs the route's window at that exponent (`gen_cgl_curve.py` writes it at `11/5`), a generator in
+    exact arithmetic, and its tree, for the kernel to check. The window alone does not go below `11/5` with a tree of that size
     (`harman_sieve.py paper`: `1.22` at `11/5` and `1.75` at `2.195` on cells of side `0.005`).
   - *The rest among the small primes.* Below `13/6` there is no window, and the term at the root, `S(𝒜, x^f)`,
     has no prime to be the rest: its tree is stopped with the first small prime as the rest. The region takes a

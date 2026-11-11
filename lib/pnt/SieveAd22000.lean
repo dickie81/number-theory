@@ -1,5 +1,5 @@
 /-
-# Linnik's theorem with exponent `11/5` from a tree that passes the window's tests
+# Linnik's theorem with exponent `11/5` from a tree that passes the tests
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -9,17 +9,19 @@ does not import the certificate to depth 8.
 
 * `route`, `routeOK`, `typeII`, `fits`, `ibFits`: the route at `11/5`, its Type II estimate
   (`SieveTypeIIU22000D.typeII_22000d`), and the grid's fit.
-* `linnik_tree_22000`: **the theorem from a tree.** If the terms at a floor of the box with no prime pass the window's
-  test (`SieveAd.winTests` on `grid22000E`), a tree passes `SieveAd.ok` with those tests on the box of one prime with
-  the cell `(f₀, DEN/2 + 1)`, for a term of the sign `−`, and its cost is below `K`, then there is `K'` such that for
-  every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K'·q^{11/5}`.
+* `linnik_tree_22000`: **the theorem from a tree.** If the terms at a floor of the box with no prime pass the test
+  (`SieveAd.mixTests` on `grid22000E`: the window's tests, and those of the estimate in two variables), a tree
+  passes `SieveAd.ok` with those tests on the box of one prime with the cell `(f₀, DEN/2 + 1)`, for a term of the
+  sign `−`, and its cost is below `K`, then there is `K'` such that for every `q ≥ 1` and every `a` prime to `q`
+  there is a prime `p ≡ a (mod q)` with `p ≤ K'·q^{11/5}`.
 
-This is `SieveAd.linnik_tree` with `SieveAd.winTests_sound`: the paper's theorem for any decomposition that a tree
-describes, in place of the decomposition to depth 8. No tree is given here.
+This is `SieveAd.linnik_tree` with `SieveAd.mixTests_sound`: the paper's theorem for any decomposition that a tree
+describes, in place of the decomposition to depth 8, and with the estimate in two variables beside the window. No
+tree is given here.
 
-The file imports `SieveAdWin.lean`, `SieveGrid22000E.lean` and `SieveTypeIIU22000D.lean`.
+The file imports `SieveAdMix.lean`, `SieveGrid22000E.lean` and `SieveTypeIIU22000D.lean`.
 -/
-import SieveAdWin
+import SieveAdMix
 import SieveGrid22000E
 import SieveTypeIIU22000D
 
@@ -61,19 +63,19 @@ theorem fits : @Fits route grid22000E := by
 theorem ibFits : @IBFits route ibPar22000E :=
   @IBFits.mk route ibPar22000E (show ((11 : ℕ) : ℝ) / ((5 : ℕ) : ℝ) = 11 / 5 by norm_num)
 
-/-- **Linnik's theorem with exponent `11/5`, from a tree that passes the window's tests.** If the terms at the floor
-`x^{f₀/DEN}` of the box with no prime pass the window's test on `grid22000E`, the tree passes the check with the
-window's tests on the box of one prime with the cell `(f₀, DEN/2 + 1)`, for a term of the sign `−`, and its cost is
-below `K`, then there is `K'` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime
-`p ≡ a (mod q)` with `p ≤ K'·q^{11/5}`. -/
+/-- **Linnik's theorem with exponent `11/5`, from a tree that passes the tests.** If the terms at the floor
+`x^{f₀/DEN}` of the box with no prime pass the test on `grid22000E` (the window's, or the estimate's in two
+variables), the tree passes the check with these tests on the box of one prime with the cell `(f₀, DEN/2 + 1)`,
+for a term of the sign `−`, and its cost is below `K`, then there is `K'` such that for every `q ≥ 1` and every `a`
+prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K'·q^{11/5}`. -/
 theorem linnik_tree_22000 (T : Tree) (f₀ : ℕ) (cfg₀ : Cfg) (hf₀ : f₀ ≤ DEN / 2 + 1)
-    (hroot : (@winTests grid22000E ibPar22000E).okJ [] f₀ cfg₀ = true)
-    (hok : ok (@winTests grid22000E ibPar22000E) T [(f₀, DEN / 2 + 1)] false = true)
+    (hroot : (@mixTests grid22000E ibPar22000E).okJ [] f₀ cfg₀ = true)
+    (hok : ok (@mixTests grid22000E ibPar22000E) T [(f₀, DEN / 2 + 1)] false = true)
     (hcost : cost T [(f₀, DEN / 2 + 1)] < K) :
     ∃ K' : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
       ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K' * (q : ℝ) ^ (11 / 5 : ℝ) :=
-  @linnik_tree route routeOK (@winTests grid22000E ibPar22000E)
-    (@winTests_sound route routeOK grid22000E gridOK22000E fits ibPar22000E ibFits typeII) T f₀ cfg₀ hf₀ hroot hok
+  @linnik_tree route routeOK (@mixTests grid22000E ibPar22000E)
+    (@mixTests_sound route routeOK grid22000E gridOK22000E fits ibPar22000E ibFits typeII) T f₀ cfg₀ hf₀ hroot hok
     hcost
 
 end SieveAd22000
