@@ -372,7 +372,15 @@ covers. The region does not close at `13/6`.
     (`SieveProp6.leaf_bound`, `SieveP6TreeLeaves.large_leaves_le`): the gap is `2ζ(k)L/ε_w` times `Σ 1/r`,
     below `10^{−12}` at `ε_w = 1/2000` and the levels `k + 2j`, `k = 36`, once the sums `Σ 1/p` over the ranges
     `[A, A²)` have an explicit bound (`4` is elementary; the library's constant comes from the prime number
-    theorem and is not explicit). So the gap is a cost of no size, and the window is not needed for the floor.
+    theorem and is not explicit; `3` is now proved, `SieveRanges.rng_sum_le_three`). So the gap is a cost of no
+    size, and the window is not needed for the floor. What the fixed level does cost is room in the Type I
+    estimates. The sieve's divisors reach `q^c`, `c = (2k + 4)ε_w`, and the leaves that the bilinear estimate
+    takes need `c < δ' ≤ κ/4` in `SieveP6LeavesWide.leaves_chain_wide`, so a box's two blocks must fit with
+    about `6c` to spare: `D₁ + 6c < L − 1`, `2(D₁ + D₂) + 7c < 2L − 1`, `D₁ + 2D₂ + 6c < 2L − 2`. With sums at
+    most `3` the level is `k = 20` (`c = 0.022`), with `2` it is `16`, with `1` it is `12`. The search below
+    costs `1.44K` at `2.16` with no margin, `1.50K` with `k = 12`, `1.61K` with `k = 18`, `1.69K` with
+    `k = 24`, and `2.36K` if only the trivial Type I range is used at the floor: the bilinear estimate is
+    needed there, and a sharper value of the sums, or leaves with less to spare, is worth `0.1K` to `0.2K`.
     What the search then costs: `1.52K` at `2.16` with no reversal (cells of side `0.006`; the model has `1.36`
     at `0.007`), and with the reversal of `Linnik21800`'s shape, its trees stopped the same way, `1.44K` at
     `2.16`, `1.30K` at `2.17` and `1.08K` at `2.18`, where the window's tests bring it to `0.92K`. Two things
