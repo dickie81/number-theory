@@ -348,12 +348,15 @@ covers. The region does not close at `13/6`.
     The search costs `0.98189K` on cells of side `0.006` with terms of at most six primes, `0.93489K` at `0.005`
     with nearly twice the boxes, and `1.00099K` at `0.0065` (`tree_cert.py --try`).
   - *Why `2.18`.* With the reversal of a term of three primes the search passes at `2.18` (`0.91849K`; `0.90043K`
-    with the reversed trees' chains of up to three primes in cells of side `0.006`) and not at `2.175` (window
-    `[0.45481, 0.46349]`: `1.05257K`) or `2.17` (window `[0.45892, 0.46226]`: `1.26965K`; `rev_cert.py --try`).
-    It is sensitive to the cells: `1.01637K` at `2.18` with cells of side `0.007`, and `2.10K` with terms of at
-    most five primes. The window closes at `13/6`: the curve has none at `2.165`. So below `2.18` the search needs
-    more of the reversal (in the computation, `0.981` at `2.17` with terms of at most six primes reversed), and
-    below `13/6` the stops whose rest is among the small primes.
+    with the reversed trees' chains of up to three primes in cells of side `0.006`). It is sensitive to the
+    cells: `1.01637K` at `2.18` with cells of side `0.007`, and `2.10K` with terms of at most five primes. At
+    `2.175` (window `[0.45481, 0.46349]`) it costs `1.05257K` with the same cells and `0.98482K` with cells of
+    side `0.005`, on `2.6·10^6` boxes, two and a half times the search at `2.18`: a theorem there is a matter of
+    the kernel's time, and is not written. At `2.17` (window `[0.45892, 0.46226]`) the search does not pass:
+    `1.26965K` with the same cells, `1.18333K` at side `0.005`, and `1.03938K` at side `0.004` with terms of at
+    most seven primes, on `10^7` boxes (`rev_cert.py --try`). The window closes at `13/6`: the curve has none at
+    `2.165`. So below `2.175` the search needs more of the reversal (in the computation, `0.981` at `2.17` with
+    terms of at most six primes reversed), and below `13/6` the stops whose rest is among the small primes.
   - *The rest among the small primes.* Below `13/6` there is no window, and the term at the root, `S(𝒜, x^f)`,
     has no prime to be the rest: its tree is stopped with the first small prime as the rest. The region takes a
     rest of exponent at least `1/2000`, so the paths whose small primes are all below that are not stopped. They
