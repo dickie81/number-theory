@@ -39,6 +39,13 @@ Its main tools:
   is `X∏_j∏_{p∈s_j} g(p)` within `R`, then the sifted count is `X∏_j∏_{p∈T_j}(1 − g(p))` within an explicit error.
   The error has two parts: `X` times a sum of truncated products, and `R` times a count of the terms kept.
   `SieveBrun.gap_le` bounds the first.
+- `SieveRanges.rng_sum_le_three` (`lib/pnt/SieveRangeSum.lean`), the sums that the gap is made of, with a value:
+  `Σ_{A ≤ p < A²} 1/p ≤ 3` for every `A ≥ 1`. It is Mertens' first theorem in its elementary form,
+  `Σ_{p ≤ n} (log p)/p ≤ log n + log 4` (`SieveRanges.sum_log_div_le`, from Legendre's formula for `n!` and
+  Chebyshev's `θ(n) ≤ n log 4`). The comparison takes these sums bounded by a constant that the prime number theorem
+  gives and that has no value (`SieveRanges.rng_sum_le`), since its levels grow as the error shrinks. No result uses
+  the explicit bound yet: it is for Brun's sieve at a fixed level, where the gap `SieveProp6.zeta` is a number
+  (`docs/research-opportunities.md`, §3.1, on a sieve without the window).
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1683 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1685 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 292 | 891 |
+| `lib/pnt` | 293 | 893 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2753,9 +2753,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveQ8.leaves_ev8`: The leaves of the decomposition to depth 8, for large `q` *paper*
 
+#### `SieveRangeSum`: The prime sums of the ranges are at most 3
+
+- `SieveRanges.sum_log_div_le`: Mertens' first theorem, the upper bound, in its elementary form ([note](../formalisations/harman-sieve.md))
+- `SieveRanges.rng_sum_le_three`: The prime sums of the ranges are at most `3` ([note](../formalisations/harman-sieve.md))
+
 #### `SieveRanges`: The ranges of Brun's sieve
 
-- `SieveRanges.rng_sum_le`: The prime sums of the ranges `rng A`, `A ≥ 1`, are uniformly bounded
+- `SieveRanges.rng_sum_le`: The prime sums of the ranges `rng A`, `A ≥ 1`, are uniformly bounded ([note](../formalisations/harman-sieve.md))
 
 #### `SieveRough`: Rough numbers from above, and the shares of the certificate's cells
 
