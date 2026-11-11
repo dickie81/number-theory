@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1695 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1699 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 299 | 903 |
+| `lib/pnt` | 301 | 907 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2468,6 +2468,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd.fillTests_sound`: The tests with no window are sound ([note](../formalisations/harman-sieve.md))
 - `SieveAd.fillTests_soundX`: The tests with no window are sound under two more atoms ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFroz`: A tree of Buchstab steps over a frozen part
+
+- `SieveAd.famIR_eq`: The term on the multiples of `R`, as a sum over `n` ([note](../formalisations/harman-sieve.md))
+- `SieveAd.famJR_eq`: The terms at a level on the multiples of `R`, as a sum over `n` ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFrozTree`: The nodes of the tree of a reversed term over a frozen part
+
+- `SieveAd.frozSolve_sound_at`: The search over a frozen part is sound, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.dJF_level_at`: The top of a reversed tree, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdRev`: The tree of a reversed term bounds it
 

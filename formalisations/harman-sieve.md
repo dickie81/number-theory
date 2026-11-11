@@ -90,6 +90,21 @@ Its main tools:
   statement is the same under two more atoms, for the trees of a reversed term. They are the tests of the
   theorem at `2165/1000`, `Linnik21650.linnik_21650` (`formalisations/README.md`; `docs/research-opportunities.md`,
   §3.1).
+- `SieveAd.frozSolve_sound_at`, `SieveAd.dJF_level_at`, `SieveAd.famIR_eq`, `SieveAd.famJR_eq`
+  (`lib/pnt/SieveAdFroz.lean`, `lib/pnt/SieveAdFrozTree.lean`), **the tree of a reversed term over a frozen
+  part.** A reversed term is a sum over numbers `R` (the product `r'` of the term's other primes and its cofactor)
+  of the `n = R·N` whose quotient `N` is sifted, and Buchstab's identity brings out a chain `c₁ > ⋯ > c_t` of
+  primes of `N`: the term of the chain's box is the sum, over `R` and the chain, of the `n` with `R·c₁⋯c_t | n`
+  and `n/R` free of primes below `c_t` (`famIR_eq`; `famJR_eq` for the terms at a level). The tree of
+  `SieveAd.solveK_sound` has the case where the chain lies below every prime of `R`, which is one family of
+  tuples. Here `R` runs over any finite family, the frozen part, in the range of `r'` for the cell of the prime
+  that is reversed, and the chain's primes may lie above primes of `R`: the cut of a cell, Buchstab's identity on
+  the chain, the test of a box with no term and the cost of a dropped box (in units of `Σ 1/R`) use `R` only
+  through `x/R`, and the same search is sound, given tests that are sound for the frozen part
+  (`SieveAd.SoundF`). `dJF_level_at` is the top of such a tree: the terms at a level `x^{t/DEN}` of the chain
+  with no prime are the terms at a floor minus the term of the chain of one prime between the two. Nothing uses
+  them yet: they are the first part of role reversal as an identity, for either sign and with the cofactor kept
+  as one number (`docs/research-opportunities.md`, §3.1).
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

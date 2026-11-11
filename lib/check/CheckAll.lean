@@ -199,6 +199,8 @@ import SieveAdRevLemma
 import SieveAdRevInj
 import SieveAdRevSum
 import SieveAdRevSearch
+import SieveAdFroz
+import SieveAdFrozTree
 import SieveHMWindow
 import SieveTypeIIHM
 import LinnikCGLLV
@@ -998,6 +1000,10 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.rev_inject
 #print axioms SieveAd.bd_rev
 #print axioms SieveAd.solveR_sound
+#print axioms SieveAd.famIR_eq
+#print axioms SieveAd.famJR_eq
+#print axioms SieveAd.frozSolve_sound_at
+#print axioms SieveAd.dJF_level_at
 #print axioms SieveAd.pr_of_kids
 #print axioms SieveAd.linnik_pr
 #print axioms SieveCurveGlue.affine_corner_bound
