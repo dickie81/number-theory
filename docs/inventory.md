@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1687 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1691 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 294 | 895 |
+| `lib/pnt` | 297 | 899 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2649,6 +2649,19 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveFamilyTwo.box_two`: The estimate at one frequency of the separated sum, for the pairs ([note](../formalisations/halasz-montgomery.md))
 - `SieveFamilyTwo.typeII_sharp_two`: The Type II estimate for a sharp family in two variables (Lemma 4.4 in two variables) ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveFill`: The comparison in two variables with the rest among the tree's primes, at one modulus
+
+- `SieveFill.prop6_fill_core`: The comparison in two variables with the rest among the tree's primes, at one `q` ([note](../formalisations/harman-sieve.md))
+
+#### `SieveFillComp`: The comparison in two variables with the rest among the tree's primes
+
+- `SieveFillComp.prop6_fill`: The comparison in two variables with the rest among the tree's primes ([note](../formalisations/harman-sieve.md))
+- `SieveFillComp.prop6_fill_at`: The comparison in two variables with the rest among the tree's primes, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/harman-sieve.md))
+
+#### `SieveFillTree`: Buchstab's tree below a chain's last entry
+
+- `SieveFillTree.tree_last`: Buchstab's tree below the last entry, as chains ([note](../formalisations/harman-sieve.md))
+
 #### `SieveGap`: Brun's sieve at a fixed level on a family of chains
 
 - `SieveGap.family_leaves_le`: A family of chains at a fixed level ([note](../formalisations/harman-sieve.md))
@@ -2733,7 +2746,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveP6Tree`: Proposition 6 with the bilinear estimate: Buchstab's tree on a family
 
-- `SieveP6Tree.tree_chains`: Buchstab's tree on a family, as chains *paper*
+- `SieveP6Tree.tree_chains`: Buchstab's tree on a family, as chains *paper* ([note](../formalisations/harman-sieve.md))
 
 #### `SieveP6TreeLeaves`: Proposition 6 with the bilinear estimate: the leaves of the tree
 

@@ -59,8 +59,28 @@ Its main tools:
   `|Σ_x (S(A_x, w) − S(B_x, w)/φ(q))| ≤ 2ζ(k)·(N₂ − N₁)/(φ(q) log w)·Σ_x 1/∏x + q^{L−δ}/φ(q)` with
   `ζ(k) = SieveProp6.zeta 3 k`, a number. The block conditions are the bilinear Type I estimate's
   (`SieveP6LeavesWide.leavesOK_wide`) with the level's `(2k + 4)εw` added; the remainder of the sieve,
-  `12·(2q^{εw})^{2k+7}` per chain, is why `δ'` exceeds `(2k + 7)εw`. No result uses it yet: it is the cost of a
-  term at the least level of a sieve without the window.
+  `12·(2q^{εw})^{2k+7}` per chain, is why `δ'` exceeds `(2k + 7)εw`. No result uses it: the comparison below does
+  without a fixed level.
+- `SieveFillTree.tree_last` (`lib/pnt/SieveFillTree.lean`), Buchstab's tree below a chain's last entry: for a
+  family of strictly decreasing chains `rt` and the rule that a branch `P` stops when `∏P ≥ E`, the terms
+  `S(A_{rt}, rt_last)` are the leaves, the chains `(rt, P)` with `P` below `rt`'s last entry and `∏P < E`, sifted
+  at a level `w`, plus the stops, sifted at their last entry, with signs. `SieveP6Tree.tree_chains` is the same
+  for a family sifted at one level below all its entries.
+- `SieveFill.prop6_fill_core` (`lib/pnt/SieveFill.lean`) and `SieveFillComp.prop6_fill`, `SieveFillComp.prop6_fill_at`
+  (`lib/pnt/SieveFillComp.lean`), **the comparison in two variables with the rest among the tree's primes.**
+  `SieveTwoComp.prop6_two` evaluates `Σ_r S(A_r, z₀)` over a family in boxes when the rest of the estimate in two
+  variables is a product of the family's own primes, and a family with no prime of the rest's size has none. Here
+  the primes of the tree below `z₀ = q^{a₀}` are used twice: the first of them, the largest, join the first
+  variable until its product enters the window `(q^u, q^v]`, as before; a stop of that tree is then sifted
+  further, by the tree below its last prime, and the primes of that second tree are the rest, until their product
+  reaches `q^τ`. The rest then lies in `[q^τ, q^{τ+a₀})`, and the hypotheses are those of `prop6_two` with that
+  range for the rest (`τ + a₀ < ρ₂`, `v + ρ₂ < L`, and the zone for `u ≤ m₁ ≤ v` and
+  `L − ρ₂ − ε ≤ m₁ + m₂ ≤ L − τ + ε`) and with the leaves' growth `t + ρ₂` in place of `t`. The level of the
+  sieve still falls with the error, so there is no gap: the conclusion is `prop6_two`'s,
+  `|Σ_r (S(A_r, z₀) − S(B_r, z₀)/φ(q))| ≤ ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` for every `η > 0` and large `q`. The
+  leaves pass through two trees, so the level `k` is chosen with `(2k + 4)³ζ(k)` small
+  (`SieveFillComp.exists_k3`). No theorem uses it yet: it is the floor test of a sieve with no Type II window
+  (`docs/research-opportunities.md`, §3.1).
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

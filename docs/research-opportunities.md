@@ -407,9 +407,12 @@ covers. The region does not close at `13/6`.
     boxes) and `1.018K` at `2.16`; with side `0.004`, `0.889K` at `2.165` and `0.946K` at `2.16` (`7.2·10^6`
     boxes). Without the reversal it costs `1.176K` at `2.18` and `1.227K` at `2.165`. So an exponent below
     `13/6` needs neither the window, nor the gap of a fixed level, nor a wider reversal: it needs this
-    comparison, which is not proved yet (`SieveTwoComp.prop6_two` takes its rest among the family's primes),
-    and a build of several million boxes. Of the route by a fixed level, `SieveGap.gap_at` is proved and
-    nothing uses it.
+    comparison and a build of several million boxes. The comparison is proved
+    (`SieveFillComp.prop6_fill`, `prop6_fill_at`; `SieveTwoComp.prop6_two` takes its rest among the family's
+    primes): the tree to the window is `prop6_two`'s, and each of its stops is sifted by a second tree, below
+    its last prime, whose primes are the rest. What is not written: the test of a box by it, in the search's
+    terms and under the atoms of a reversed term, and the files of a route with no window. Of the route by a
+    fixed level, `SieveGap.gap_at` is proved and nothing uses it.
   - *Role reversal*, in exact terms: for a term `Σ S(A_{p₁⋯p_k}, p_k)` on a box of cells and one of its primes
     `p_j` in `[X, X′)`, the numbers `n = (r/p_j)·m·p_j` with `N₂/X′ < (r/p_j)m ≤ N₁/X` have `p_j = n/((r/p_j)m)`
     in its cell whatever `n` in `(N₁, N₂]`, so on them the term is `Σ S(A_{r′}, ⌈X′^{1/2}⌉)` over `r′ = (r/p_j)m`
