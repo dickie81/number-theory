@@ -385,8 +385,8 @@ covers. The region does not close at `13/6`.
 - **What is not written.** Role reversal at a second level and for terms of the sign `+` (below); a certificate
   below `2.15`. The plan of the theorem's search passes at `2.145` with cells of side `0.0035` (`0.975K`, on
   `6.0·10^7` boxes; `6.6·10^6` steps and `4.6` MB of hints, about eleven hours of the kernel), twice the build of
-  the theorem at `2.15` for `0.005` of exponent; so the next exponents want the second level, or tests that do
-  not narrow with the cells, more than they want finer cells.
+  the theorem at `2.15` for `0.005` of exponent. What the second level and tests that do not narrow with the
+  cells would give in exact terms is measured in the last two items below.
   - *Where the cells' loss is, with this rule* (12 November; the theorem's search at `2.15`, on twenty of the
     `115` cells of the first prime, with some tests taken at the midpoints of the cells, which is no
     certificate). With every test at the midpoints the cost falls by `24.6%`; with those of one kind alone,
@@ -404,9 +404,41 @@ covers. The region does not close at `13/6`.
     reads the sums' ranges from them, on `SieveAd.bdP_split`, `SieveAd.bdP_buch` (a box under a condition) and
     `SieveAd.full2_core_at` (the estimate for a family cut out by any number of comparisons), which are
     proved. Each `0.005` of exponent costs `5%` to `9%` (`0.829`, `0.981`, `1.034` at `2.165`, `2.155`, `2.15`
-    on cells of side `0.005`), and the second level is worth `9%` in the model's terms (`0.870` to `0.789`).
-    So `2.14` wants the second level or two fifths of the cells' loss, `2.13` both with more than half of the
-    cells' loss, and `2.12` both with all of it: with these rules it is at the edge.
+    on cells of side `0.005`).
+  - *What the next rules are worth in exact terms* (12 November, after the theorem; `tools/linnik/hint_probe.py`,
+    at the theorem's parameters on twenty of the `115` cells of the first prime, where the plan costs `0.15403K`;
+    none of this is in Lean unless said). **Where the cost is**: dropped boxes of two primes `41.8%`, of four
+    `22.2%`, of six `1.1%`; reversed boxes of three primes `33.8%`, all of it the dropped boxes of their chains'
+    first prime, and of five primes `1.1%`. A reversed box of three primes costs about `1.05` times its own
+    share. **The cells**, further: of the `12.1%` of the term tests over the frozen parts, the chain's cells
+    are `4.0%`, the frozen primes' `5.2%` and the slab `1.2%` when each alone is taken at its midpoint; so the
+    loss is spread over every kind of cell and of test. The cuts at the ends of an evaluated part
+    (`4.5%`) are `1.2·10^6` cuts in all, two steps of the kernel each: no better, for the kernel's time, than
+    finer cells. **The second level**: a chain's box of the sign `−`, in the tree of a reversed box of three
+    primes, reversed again through `p₂`, the largest prime of the frozen number (the frozen numbers are then
+    `R₂·N`, `N = n/R` in the cell of `p₁`, with `x/(R₂N)` in the cell of `p₂`; two slabs and two cofactors),
+    saves `2.3%` for `2.6` times the search: its root, the terms at a floor over the new frozen part, fails
+    two times in three (it needs `p₂` above about `x^{0.24}`, as the first level's needs `p₁`), and no
+    configuration passes where the search's proposals fail (150 failing roots tried in full). A box reversed
+    through a prime other than its largest: nothing. **The model on these shapes** (`harman_sieve.py`, Lean's
+    forms, `2.15`, cells of side `0.004`): with only the terms that need an upper bound reversed, as in Lean,
+    one level `0.898` (the exact search: `0.948`) and two levels `0.848`; with terms of either sign, `0.870`
+    and `0.789`. Its second level is at the chains' boxes, through the largest prime of `r'` alone, with primes
+    above `x^{0.24}`. So the `9%` that the model gave the second level was for boxes of the sign `+` reversed,
+    their chains' first boxes, which need upper bounds, reversed again; for the shapes of the theorem it gives
+    `5.6%`, and the exact search `2.3%`. **Boxes of the sign `+` reversed**, one level
+    (`SieveAd.bd_flip_pos_at` is proved; the search's rule is not written): `2.3%`, on twice the search.
+    **A planner that counts the kernel's time**: choosing each step by its cost plus `λK` for each second that
+    it takes the kernel (a box of the sign `+` decomposed further only if that pays, a box of the sign `−`
+    reversed or decomposed by the same count), with no change in Lean: `λ = 10⁻⁶` gives the cost `+0.13%` in
+    `15%` less time, `3·10⁻⁶` `+0.6%` in `24%` less, `10⁻⁵` `+4.3%` in half the time, `3·10⁻⁵` `+11.6%` in
+    a third. Coarser cells give `+9%` for about half the time, so at equal time the planner is worth about
+    `5%`.
+    So, by these numbers (an estimate: no plan was made at `2.14`): `2.14` asks for the planner, the sign `+`
+    and cells of side about `0.003` together, on a certificate two to three times the theorem's; nothing
+    measured here gives `2.13`, and `2.12` is beyond these rules, not at their edge. The model's `2.12` leans
+    on the second level for boxes of the sign `+`, which the exact search has not confirmed: with it the
+    search is slow, and was not finished on twenty cells in two hours.
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three
@@ -498,7 +530,8 @@ covers. The region does not close at `13/6`.
     (`tools/linnik/flip_cert.py`), checked against the kernel on one part at `2165/1000`
     (`Linnik21650.flip_box_21650`: a box of two primes that the theorem's search drops at `0.000734·K` costs
     `0.000501·K`). Not written: the reversal of a box of the sign `+` in the
-    search (worth `0.004` at `2.165` with cells of side `0.01`), and the second level. The kernel takes about
+    search (worth `0.004` at `2.165` with cells of side `0.01`, and `2.3%` at `2.15` with the theorem's cells),
+    and the second level (above). The kernel takes about
     `13` ms a box over a frozen part, where it takes `4` ms a box of the main tree (the sets of the tests are
     searched among more cells), and most of the boxes of the search with the rule are over frozen parts: a
     certificate at cells of side `0.005` is some twenty hours of the kernel, against the theorem's four. So the
