@@ -445,9 +445,15 @@ covers. The region does not close at `13/6`.
     search with the reversal of a box of the sign `−` of up to eleven primes through its largest prime
     (`lib/pnt/SieveAdFlipDefs.lean`, without Mathlib; `lib/pnt/SieveAdFlipSearch.lean`): the cost of a reversal
     from the tree's cost and the shares of three boxes bounds the term (`SieveAd.bd_flipCost`), so the search is
-    sound for any strategies (`SieveAd.pr_of_kidsF_at`). Not written: the strategies of the trees over the
-    frozen parts and a certificate with them, the reversal of a box of the sign `+` in the search (worth `0.004`
-    at `2.165` with cells of side `0.01`), and the second level.
+    sound for any strategies (`SieveAd.pr_of_kidsF_at`). And strategies for it
+    (`lib/pnt/SieveAdFlipStratDefs.lean`), with the search in Python definition by definition
+    (`tools/linnik/flip_cert.py`), checked against the kernel on one part at `2165/1000`
+    (`Linnik21650.flip_box_21650`: a box of two primes that the theorem's search drops at `0.000734·K` costs
+    `0.000501·K`). Not written: a certificate of the sieve with it, the reversal of a box of the sign `+` in the
+    search (worth `0.004` at `2.165` with cells of side `0.01`), and the second level. The kernel takes about
+    `13` ms a box over a frozen part, where it takes `4` ms a box of the main tree (the sets of the tests are
+    searched among more cells), and most of the boxes of the search with the rule are over frozen parts: a
+    certificate at cells of side `0.005` is some twenty hours of the kernel, against the theorem's four.
   - *The exact search with it* (12 November; `tools/linnik/flip_proto.py`, the search of `fill_cert.py` with
     this rule in exact integers; not yet a Lean search). The cost of a reversed box of the sign `−` is
     `(c(h₁D₀ + E) + bdK·E)/(DEN·K)`, with `c` the cost of the tree over the frozen part, `D₀` the share of the

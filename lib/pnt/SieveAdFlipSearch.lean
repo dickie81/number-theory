@@ -170,21 +170,23 @@ theorem bd_flipCost (SK : Cell → List Cell → Strat) (fuel maxlen : ℕ) {bl 
     exact hsep
   have hc0 : 0 < c0.1 ∧ c0.1 < c0.2 := hc c0 (by rw [← hbl]; simp)
   -- the cost unfolded
-  obtain ⟨c, hcdef⟩ : ∃ c, c = flipTree SK fuel ctx (c0 :: b) CAPK := ⟨_, rfl⟩
   obtain ⟨E, hEdef⟩ : ∃ E : ℕ, E = (ctx.2 + 1) * dropCost ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) +
       (ctx.1 + 1) * dropCost ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) := ⟨_, rfl⟩
-  have hunf : flipCost SK fuel bl lim = cond (Nat.ble CAPK c) lim
+  obtain ⟨cl, hcldef⟩ : ∃ cl : ℕ, cl = minN CAPK (Nat.succ (Nat.div
+      (Nat.sub (Nat.mul (Nat.sub lim 1) (DEN * K)) (bdK ctx t * E)) (ctx.2 * dropCost bl + E))) := ⟨_, rfl⟩
+  obtain ⟨c, hcdef⟩ : ∃ c, c = flipTree SK fuel ctx (c0 :: b) cl := ⟨_, rfl⟩
+  have hunf : flipCost SK fuel bl lim = cond (Nat.ble cl c) lim
       (cdiv (c * (ctx.2 * dropCost bl + E) + bdK ctx t * E) (DEN * K)) := by
     unfold flipCost
     rw [← hctxdef, ← hβdef]
     beta_reduce
-    rw [← hcdef, ← htdef, ← hEdef]
-  cases hcap : Nat.ble CAPK c
+    rw [← htdef, ← hEdef, ← hcldef, ← hcdef]
+  cases hcap : Nat.ble cl c
   swap
   · rw [hunf, hcap] at h
     exact absurd h (lt_irrefl _)
   rw [hcap, Bool.cond_false] at hunf
-  have hccap : c < CAPK := by
+  have hccap : c < cl := by
     by_contra hge
     rw [Nat.ble_eq_true_of_le (not_lt.1 hge)] at hcap
     exact Bool.noConfusion hcap
@@ -194,19 +196,19 @@ theorem bd_flipCost (SK : Cell → List Cell → Strat) (fuel maxlen : ℕ) {bl 
   obtain ⟨St, hSt⟩ : ∃ St : Strat, St = SK ctx (c0 :: b) := ⟨_, rfl⟩
   have hcunf : c = match firstJ τ (c0 :: b) (minN c0.1 t) (St.propJ (c0 :: b)) with
       | some f => kids (solveG (opsK ctx (Nat.succ b.length)) τ St fuel) t (c0 :: b) true (St.cuts (c0 :: b) f) f
-          CAPK
-      | none => CAPK := by
+          cl
+      | none => cl := by
     rw [hcdef, hτdef, hSt, htdef]
     rfl
   cases hfj : firstJ τ (c0 :: b) (minN c0.1 t) (St.propJ (c0 :: b)) with
   | none =>
     rw [hfj] at hcunf
-    have : c = CAPK := hcunf
+    have : c = cl := hcunf
     omega
   | some f =>
     rw [hfj] at hcunf
     have hck : c = kids (solveG (opsK ctx (c0 :: b).length) τ St fuel) t (c0 :: b) true (St.cuts (c0 :: b) f) f
-        CAPK := hcunf
+        cl := hcunf
     obtain ⟨hf0, hfle, cfg, hokJ⟩ := firstJ_some hfj
     have hft : f ≤ t := hfle.trans (minN_le c0.1 t).2
     have hctx' : 0 < ctx.1 ∧ ctx.1 ≤ ctx.2 ∧ ctx.2 ≤ DEN := ⟨hl0, hlh.le, hhD⟩
@@ -222,7 +224,7 @@ theorem bd_flipCost (SK : Cell → List Cell → Strat) (fuel maxlen : ℕ) {bl 
       exact frozTests_sound (c0 :: b) hβl he he₂ hT (le_refl _)
     have hS := inSlab_frozS ctx βx
     have hrec := frozSolve_sound hctx' hS hτs St fuel
-    have hk := kidsP_sound (frozRules hctx' hS hτs).split hrec t (c0 :: b) true (St.cuts (c0 :: b) f) f CAPK
+    have hk := kidsP_sound (frozRules hctx' hS hτs).split hrec t (c0 :: b) true (St.cuts (c0 :: b) f) f cl
       (by rw [← hck]; exact hccap)
     rw [← hck] at hk
     have hJ : EvJF (fun q => frozS q (e1 ctx) (e2 ctx) βx) frozR f (boxFn [] 0 rfl) :=

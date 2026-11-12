@@ -239,12 +239,28 @@ Its main tools:
   chain's prime from `f` to `t` with those tests, by a strategy given for the box), `D₀` is the box's
   `dropCost`, `E = (h₁ + 1)D₁ + (l₁ + 1)D₂` with `D₁`, `D₂` the `dropCost` of the box with the largest prime's
   cell replaced by `(h₁ − 1, h₁ + 1)` and by `(l₁ − 1, l₁ + 1)`, and `bdK` is Buchstab's bound at the level `t`.
+  The tree is searched with the limit past which the bound is not below the box's other bound, so a reversal
+  that loses stops early.
   A cost below the limit bounds the term of the box (`SieveAd.bd_flipCost`): it is `SieveAd.bd_flip_neg_at`
   with the tree's bound (`SieveAd.frozSolve_sound_at`, `SieveAd.frozTests_sound_at`), the terms at the root's
   floor from the test that passed, and the weights of the frozen part and of its two ends from the shares of
   the three boxes (`SieveAd.froz_weight_le_at`). So the search with these nodes is sound for any strategies
   (`SieveAd.solveF2_sound`), and a part of it as the kernel checks it gives the bound for its range, in the form
-  of `SieveAd.pr_of_kids`. No certificate uses it yet.
+  of `SieveAd.pr_of_kids`.
+- `Linnik21650.flip_box_21650` (`lib/pnt/SieveFlipBox21650.lean`; the part is `lib/pnt/SieveFlipPart21650.lean`'s
+  and the strategies `lib/pnt/SieveAdFlipStratDefs.lean`'s, both without Mathlib), **a bound by the search with
+  the reversal through the largest prime**, at `L = 2165/1000`: for `p₁` between `x^{0.4237}` and `x^{0.4287}`
+  and `p₂` between `x^{0.2687}` and `x^{0.2737}`, the term of the box `(p₁, p₂)`, of the sign `+`, is at least
+  its count in the comparison set less `(c/K + o(1))x/(φ(q) log x)` with `c = 0.000501·K`, where the search of
+  the theorem at `2165/1000` drops the box, at `0.000734·K`. The strategies: `SieveAd.stratFF` for a tree over a
+  frozen part proposes the sets of the tests on the box with the cofactor as one more cell (`SieveAd.vboxF`),
+  widened by the tests' room for the floors (`SieveAd.propIF`, `SieveAd.propJFF`), and cuts the chain's first
+  prime from the level down; `SieveAd.stratGFF` is the theorem's strategy with one more cut of a new prime's
+  range, one unit below the largest prime's cell, so that the box below the cut passes `flipOK`. The kernel
+  runs the search on the box (`SieveAd.flipPart21650`, by `decide +kernel`, nineteen seconds): it takes seven
+  reversals through the largest prime, of boxes of three primes, of the nineteen it tries. This is one part,
+  not a certificate of the sieve: it checks the rule, its strategies and `tools/linnik/flip_cert.py`, the
+  search in Python, against the kernel.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

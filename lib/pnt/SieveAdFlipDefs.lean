@@ -14,7 +14,8 @@ level `x^{t/DEN}`, `t = ⌈h₁/2⌉`, over it.
   chain's first prime in cells searched by `solveG` with the nodes `opsK`.
 * `flipOK`: a box that may be reversed. `flipCost`: the cost of the box, in units of `1/K`: with the tree's cost
   `c`, the share `D₀ = dropCost bl` of the box and the shares `E` of the two ends,
-  `⌈(c·(h₁·D₀ + E) + bdK·E)/(DEN·K)⌉`.
+  `⌈(c·(h₁·D₀ + E) + bdK·E)/(DEN·K)⌉`; the tree is searched with the limit past which this is not below the
+  limit given.
 * `opsF`: the nodes of the search with this bound and the reversal of `opsR`, whichever is less.
 
 The file imports `SieveAdFrozDefs.lean`.
@@ -66,15 +67,21 @@ def flipTree (SK : Cell → List Cell → Strat) (fuel : ℕ) (ctx : Cell) (β :
 /-- **The cost of the reversal of a box of the sign `−` through its largest prime**, in units of `1/K`: with the
 cost `c` of the tree over the frozen part, the share `D₀` of the box and the shares
 `E = (h₁ + 1)·D₁ + (l₁ + 1)·D₂` of the boxes whose largest prime is within one unit of the ends of its cell,
-`⌈(c·(h₁·D₀ + E) + bdK·E)/(DEN·K)⌉`. A value at least `lim` says nothing. -/
+`⌈(c·(h₁·D₀ + E) + bdK·E)/(DEN·K)⌉`. The tree is searched with the limit past which this is not below `lim`, and
+at most `CAPK`. A value at least `lim` says nothing. -/
 def flipCost (SK : Cell → List Cell → Strat) (fuel : ℕ) (bl : List Cell) (lim : ℕ) : ℕ :=
   (fun ctx β =>
-    (fun c =>
-      cond (Nat.ble CAPK c) lim
-        ((fun E => cdiv (c * (ctx.2 * dropCost bl + E) + bdK ctx (flipT ctx) * E) (DEN * K))
-          ((ctx.2 + 1) * dropCost (β ++ [(ctx.2 - 1, ctx.2 + 1)]) +
-            (ctx.1 + 1) * dropCost (β ++ [(ctx.1 - 1, ctx.1 + 1)]))))
-      (flipTree SK fuel ctx β CAPK))
+    (fun E =>
+      (fun cl =>
+        (fun c =>
+          cond (Nat.ble cl c) lim (cdiv (c * (ctx.2 * dropCost bl + E) + bdK ctx (flipT ctx) * E) (DEN * K)))
+          (flipTree SK fuel ctx β cl))
+        (minN CAPK
+          (Nat.succ
+            (Nat.div (Nat.sub (Nat.mul (Nat.sub lim 1) (DEN * K)) (bdK ctx (flipT ctx) * E))
+              (ctx.2 * dropCost bl + E)))))
+      ((ctx.2 + 1) * dropCost (β ++ [(ctx.2 - 1, ctx.2 + 1)]) +
+        (ctx.1 + 1) * dropCost (β ++ [(ctx.1 - 1, ctx.1 + 1)])))
     (lastC bl) (initC bl)
 
 /-- **The search with the reversal through the largest prime**: the nodes of `opsR`, and for a box of the sign `−`
