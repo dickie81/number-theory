@@ -15,10 +15,13 @@ ran (34356403 boxes, 28257594 of them over frozen parts), in 3400745 steps, 1616
 largest prime (the reversal of three primes of the theorem at `218/100` is among the search's nodes, and the plan
 does not use it); each step is checked, and a cost that the search returns below its limit bounds the term whatever
 the hints are (`SieveAd.pr_of_kidsH`). The search is in 1510 parts, 39 files (`SieveHint21500P1.lean` …
-`SieveHint21500P39.lean`).
+`SieveHint21500P39.lean`). The kernel evaluates the tests in one pass over a box (`SieveAd.fillTestsF`,
+`SieveAd.frozTestsF`), and they are equal to the tests that are proved sound (`SieveAdFast.lean`).
 
 * `route21500`, `routeOK21500`, `ibFits21500`: the route and its exponent.
 * `sound21500`, `soundX21500`: the tests are sound, and sound under two more atoms.
+* `solve21500_eq`: the search of the part files, with its tests in one pass, is the search with the tests
+  `fillTests` and `frozTests`.
 * `part21500`: a part of the search bounds its term.
 * `node21500_0` … `node21500_234`: the 235 cells whose search is cut into parts by the cells of the next prime:
   the cell's own Buchstab step (`SieveAd.pr_buch`), and the pieces below it.
@@ -27,10 +30,11 @@ the hints are (`SieveAd.pr_of_kidsH`). The search is in 1510 parts, 39 files (`S
 * `linnik_21500`: `SieveAd.linnik_pr` at them, with the root at the floor `49170839016/DEN`, by the comparison with the rest
   among the tree's primes.
 
-The file imports `SieveAdHint.lean`, `SieveAdFill.lean` and the part files.
+The file imports `SieveAdHint.lean`, `SieveAdFill.lean`, `SieveAdFast.lean` and the part files.
 -/
 import SieveAdHint
 import SieveAdFill
+import SieveAdFast
 import SieveHint21500P1
 import SieveHint21500P2
 import SieveHint21500P3
@@ -98,11 +102,19 @@ theorem sound21500 : (fillTests).Sound := fillTests_sound
 /-- The tests at `2150 / 1000` are sound under two more atoms. -/
 theorem soundX21500 : (fillTests).SoundX := fillTests_soundX
 
+/-- **The search of the part files is the search with the tests that are proved sound**: its tests in one pass
+are equal to `fillTests` and `frozTests`. -/
+theorem solve21500_eq : solve21500 = solveH (opsR fillTests stratK21500 200 (cutsQ 21990232556)) fillTests strat21500
+    guideG (altFH stratF21500 guideF 200 6) 200 := by
+  unfold solve21500 ops21500
+  rw [fillTestsF_eq, altFHT_fast]
+
 /-- **A part of the search bounds its term**: `SieveAd.pr_of_kidsH` at the route. -/
 theorem part21500 {top : ℕ} {bl : List Cell} {par : Bool} {cs : List ℕ} {a c h : ℕ}
-    (hk : (kidsH solve21500 top bl par cs a K h).1 ≤ c) (hc : c < K) : PR ((a, top) :: bl) par c :=
-  pr_of_kidsH sound21500 soundX21500 stratK21500 200 (cutsQ 21990232556) stratF21500 guideF 200 6 strat21500
-    guideG 200 hk hc
+    (hk : (kidsH solve21500 top bl par cs a K h).1 ≤ c) (hc : c < K) : PR ((a, top) :: bl) par c := by
+  rw [solve21500_eq] at hk
+  exact pr_of_kidsH sound21500 soundX21500 stratK21500 200 (cutsQ 21990232556) stratF21500 guideF 200 6
+    strat21500 guideG 200 hk hc
 
 /-- The cell `(110743490170, 115141536681)` of the first prime: Buchstab's identity at the floor `61371304554`, and
 the pieces of the next prime's range. -/

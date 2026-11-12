@@ -222,6 +222,8 @@ import SieveAdFlipStratDefs
 import SieveAdHintDefs
 import SieveAdHint
 import SieveAdHintStratDefs
+import SieveAdFastDefs
+import SieveAdFast
 import SieveHMWindow
 import SieveTypeIIHM
 import LinnikCGLLV

@@ -545,6 +545,32 @@ covers. The region does not close at `13/6`.
     certificate of the theorem at `2150/1000` is not that search but its plan, which the kernel follows by
     hints (`lib/pnt/SieveAdHintDefs.lean`, `SieveAdHint.lean`, `SieveAdHintStratDefs.lean`;
     `SieveAd.solveH_sound`, `SieveAd.bd_flipCostH`, `SieveAd.pr_of_kidsH_at`), above.
+  - *The kernel's time* (12 November, after the theorem; timed in the kernel on boxes of the theorem's plan,
+    300 of each kind). The plan has `5.5·10^5` evaluated boxes, `6.1·10^5` Buchstab steps, `2.4·10^5` dropped
+    boxes and `1.6·10^5` reversals in the main tree, and `8.3·10^5`, `3.5·10^5` and `6.1·10^5` over the frozen
+    parts. A step costs the kernel, in milliseconds: an evaluated box `3.7` in the main tree (the proposals
+    `1.6`, the test `2.2`) and `7.2` over a frozen part (`3.4` and `3.4`); a Buchstab step `7.6` (the guide
+    `1.7`, the test `2.5`, the cuts and their loop `3.4`) and `13.3` over a frozen part (`6.4`, `5.0`, `2.0`);
+    the root of a reversal `20.5` (the guide `4.2`, the test `4.4`, the cuts `5.5`, the shares of the box and of
+    its two ends `4.2`); a dropped box `0.9` to `1.1`. Over the plan: the tests `37%` of the time, the
+    proposals and the guides `36%`, the cuts `17%`, the dropped boxes and the reversal's arithmetic `9%`. The
+    kernel is slow at what these definitions do most: a definition by structural recursion costs about three
+    times its recursor, each `cond`, `&&` and operation through a type class is several reductions, and a list
+    is walked once for each sum that is read from it.
+    **The tests in one pass** (`lib/pnt/SieveAdFastDefs.lean`, without Mathlib). The sums that a test reads,
+    of the cells' ends over each set of its configuration, are accumulated in one pass by the lists' recursor,
+    with the bits of the masks as factors and no branch; the cells' check `f ≤ lo ≤ hi ≤ DEN` is the sum of
+    `(lo − f) + (hi − lo) + (DEN − hi)` compared with `n(DEN − f)`; over a frozen part a second pass reads the
+    frozen primes. `SieveAd.fillTestsF` and `SieveAd.frozTestsF` are equal to the tests that are proved sound
+    (`SieveAd.fillTestsF_eq`, `SieveAd.frozTestsF_eq`, `lib/pnt/SieveAdFast.lean`), so the theorem's search
+    is defined with them and used through the equality (`Linnik21500.solve21500_eq`), and its 39 files of
+    hints are unchanged. A test then costs `0.14` ms in place of `2.3` in the main tree, `0.4` in place of
+    `2.6` at a floor, `1.5` in place of `4.4` at a reversal's root, and `0.5` and `1.1` in place of `3.0` and
+    `4.4` over a frozen part; one of the 39 files, alone on a core, takes `339` s in place of `469` s.
+    **What is not written**: the rest of that time. The proposals and the guides are a search for a
+    configuration that the plan already knows: a search that reads the configuration from the hints
+    (`SieveAd.Rules.evl` and `buch` take any) would not compute them, at about ten more bits a step; the cuts
+    and the dropped boxes are arithmetic that the same style makes several times cheaper.
   - *The exact search with it* (12 November; `tools/linnik/flip_proto.py`, the search of `fill_cert.py` with
     this rule in exact integers; not yet a Lean search). The cost of a reversed box of the sign `−` is
     `(c(h₁D₀ + E) + bdK·E)/(DEN·K)`, with `c` the cost of the tree over the frozen part, `D₀` the share of the

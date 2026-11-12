@@ -638,17 +638,22 @@ The bilinear Type I rule's exponent `{LN}` (`ibPar{T}`), and:
   than `{par_.depthR}` primes, in cells of side at most `{par_.hR}/DEN` (`{par_.hRf}`);
 * `stratF{T}`, the strategy of the trees over the frozen parts: `SieveAd.stratFF` with chains of fewer than
   `{par_.depthF}` primes, in cells of side at most `{par_.hF}/DEN` (`{par_.hFf}`);
-* `ops{T}`, the nodes of the search: `SieveAd.opsR` with the tests `SieveAd.fillTests` and the reversal of three
+* `ops{T}`, the nodes of the search: `SieveAd.opsR` with the tests `SieveAd.fillTestsF` and the reversal of three
   primes, its trees searched with the fuel `{fc.FUEL}` and the smaller prime of a cofactor of two primes in cells of
   side at most `{par_.hQ}/DEN` (`{par_.hQf}`);
 * `solve{T}`, the search led by hints: `SieveAd.solveH` with these, the guides `SieveAd.guideG` and
   `SieveAd.guideF`, and as its hinted bound the reversal through the largest prime of boxes of at most
-  `{par_.maxlen}` primes (`SieveAd.altFH`).
+  `{par_.maxlen}` primes, with the tests `SieveAd.frozTestsF` over the frozen parts (`SieveAd.altFHT`).
 
-The file imports `SieveAdHintStratDefs.lean`; so neither it nor the part files (`SieveHint{T}P1.lean` …) load more
-of `Mathlib` than `Mathlib.Data.Nat.Notation`.
+The tests are the ones that the kernel evaluates in one pass over a box (`SieveAdFastDefs.lean`); they are equal
+to `SieveAd.fillTests` and `SieveAd.frozTests` (`SieveAdFast.lean`), and `Linnik{T}.lean` uses the search through
+that equality.
+
+The file imports `SieveAdHintStratDefs.lean` and `SieveAdFastDefs.lean`; so neither it nor the part files
+(`SieveHint{T}P1.lean` …) load more of `Mathlib` than `Mathlib.Data.Nat.Notation`.
 -/
 import SieveAdHintStratDefs
+import SieveAdFastDefs
 
 namespace SieveCert
 
@@ -671,12 +676,12 @@ def stratK{T} : Cell → ℕ → Strat := @stratKF ibPar{T} {par_.kappa} {par_.h
 def stratF{T} : Cell → List Cell → Strat := @stratFF ibPar{T} {par_.kappa} {par_.hF} {par_.depthF} {fc.WMIN}
 
 /-- **The nodes of the search at `{LN}`**: those of a tree, and the reversal of three primes. -/
-def ops{T} : Ops := opsR (@fillTests ibPar{T}) stratK{T} {fc.FUEL} (cutsQ {par_.hQ})
+noncomputable def ops{T} : Ops := opsR (@fillTestsF ibPar{T}) stratK{T} {fc.FUEL} (cutsQ {par_.hQ})
 
 /-- **The search led by hints at `{LN}`**, with the reversal through the largest prime as its hinted bound. -/
-def solve{T} : List Cell → Bool → ℕ → ℕ → ℕ × ℕ :=
-  solveH ops{T} (@fillTests ibPar{T}) strat{T} (@guideG ibPar{T})
-    (@altFH ibPar{T} stratF{T} (@guideF ibPar{T}) {fc.FUEL} {par_.maxlen}) {fc.FUEL}
+noncomputable def solve{T} : List Cell → Bool → ℕ → ℕ → ℕ × ℕ :=
+  solveH ops{T} (@fillTestsF ibPar{T}) strat{T} (@guideG ibPar{T})
+    (altFHT (@frozTestsF ibPar{T}) stratF{T} (@guideF ibPar{T}) {fc.FUEL} {par_.maxlen}) {fc.FUEL}
 
 end SieveAd
 """
@@ -782,7 +787,9 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
         f'them over frozen parts), in {nsteps} steps, {nflip} of them reversals through the largest prime{revtxt}; '
         f'each step is checked, and a cost that the search returns below its limit bounds the term whatever the '
         f'hints are (`SieveAd.pr_of_kidsH`). The search is in {len(parts)} parts, {nfiles} files '
-        f'(`SieveHint{T}P1.lean` … `SieveHint{T}P{nfiles}.lean`).', width=116)
+        f'(`SieveHint{T}P1.lean` … `SieveHint{T}P{nfiles}.lean`). The kernel evaluates the tests in one pass over '
+        f'a box (`SieveAd.fillTestsF`, `SieveAd.frozTestsF`), and they are equal to the tests that are proved sound '
+        f'(`SieveAdFast.lean`).', width=116)
     return f"""/-
 # Linnik's theorem with exponent `{LN}`, by a search led by hints
 
@@ -793,6 +800,8 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). G
 
 * `route{T}`, `routeOK{T}`, `ibFits{T}`: the route and its exponent.
 * `sound{T}`, `soundX{T}`: the tests are sound, and sound under two more atoms.
+* `solve{T}_eq`: the search of the part files, with its tests in one pass, is the search with the tests
+  `fillTests` and `frozTests`.
 * `part{T}`: a part of the search bounds its term.
 * `node{T}_0` … `node{T}_{len(nodes) - 1}`: the {len(nodes)} cells whose search is cut into parts by the cells of the next prime:
   the cell's own Buchstab step (`SieveAd.pr_buch`), and the pieces below it.
@@ -801,10 +810,11 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). G
 * `linnik_{T}`: `SieveAd.linnik_pr` at them, with the root at the floor `{f0}/DEN`, by the comparison with the rest
   among the tree's primes.
 
-The file imports `SieveAdHint.lean`, `SieveAdFill.lean` and the part files.
+The file imports `SieveAdHint.lean`, `SieveAdFill.lean`, `SieveAdFast.lean` and the part files.
 -/
 import SieveAdHint
 import SieveAdFill
+import SieveAdFast
 {imports}
 
 namespace Linnik{T}
@@ -834,11 +844,19 @@ theorem sound{T} : (fillTests).Sound := fillTests_sound
 /-- The tests at `{LN}` are sound under two more atoms. -/
 theorem soundX{T} : (fillTests).SoundX := fillTests_soundX
 
+/-- **The search of the part files is the search with the tests that are proved sound**: its tests in one pass
+are equal to `fillTests` and `frozTests`. -/
+theorem solve{T}_eq : solve{T} = solveH (opsR fillTests stratK{T} {fc.FUEL} (cutsQ {par_.hQ})) fillTests strat{T}
+    guideG (altFH stratF{T} guideF {fc.FUEL} {par_.maxlen}) {fc.FUEL} := by
+  unfold solve{T} ops{T}
+  rw [fillTestsF_eq, altFHT_fast]
+
 /-- **A part of the search bounds its term**: `SieveAd.pr_of_kidsH` at the route. -/
 theorem part{T} {{top : ℕ}} {{bl : List Cell}} {{par : Bool}} {{cs : List ℕ}} {{a c h : ℕ}}
-    (hk : (kidsH solve{T} top bl par cs a K h).1 ≤ c) (hc : c < K) : PR ((a, top) :: bl) par c :=
-  pr_of_kidsH sound{T} soundX{T} stratK{T} {fc.FUEL} (cutsQ {par_.hQ}) stratF{T} guideF {fc.FUEL} {par_.maxlen} strat{T}
-    guideG {fc.FUEL} hk hc
+    (hk : (kidsH solve{T} top bl par cs a K h).1 ≤ c) (hc : c < K) : PR ((a, top) :: bl) par c := by
+  rw [solve{T}_eq] at hk
+  exact pr_of_kidsH sound{T} soundX{T} stratK{T} {fc.FUEL} (cutsQ {par_.hQ}) stratF{T} guideF {fc.FUEL} {par_.maxlen}
+    strat{T} guideG {fc.FUEL} hk hc
 
 {chr(10).join(n + chr(10) for n in nodes)}
 /-- **The first term at `{LN}`**: the term of the box of the first prime, with the cell `({f0}, DEN/2 + 1)`, of the

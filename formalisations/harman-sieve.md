@@ -293,6 +293,12 @@ Its main tools:
   `tools/linnik/hint_cert.py` kept of its search: `3.4·10^6` steps, of which `1.6·10^5` reversals, in `1510`
   parts, where the search visited `3.4·10^7` boxes, `2.8·10^7` of them over frozen parts; the plan does not use
   the reversal of three primes of the theorem at `218/100`, which the kernel would search without hints.
+  The kernel evaluates the tests in one pass over a box: `SieveAd.fillTestsF` and `SieveAd.frozTestsF`
+  (`lib/pnt/SieveAdFastDefs.lean`, without Mathlib) accumulate the sums of the cells' ends over the sets of a
+  configuration by the lists' recursor, with the bits of the masks as factors, and are equal to the tests that
+  are proved sound (`SieveAd.fillTestsF_eq`, `SieveAd.frozTestsF_eq`, `lib/pnt/SieveAdFast.lean`;
+  `SieveAd.altFHT_fast` for the hinted bound with them); the search of the part files is defined with them, and
+  the theorem uses it through that equality (`Linnik21500.solve21500_eq`).
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

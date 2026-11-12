@@ -12,17 +12,22 @@ The bilinear Type I rule's exponent `2150/1000` (`ibPar21500`), and:
   than `3` primes, in cells of side at most `13194139533/DEN` (`0.012`);
 * `stratF21500`, the strategy of the trees over the frozen parts: `SieveAd.stratFF` with chains of fewer than
   `3` primes, in cells of side at most `6597069767/DEN` (`0.006`);
-* `ops21500`, the nodes of the search: `SieveAd.opsR` with the tests `SieveAd.fillTests` and the reversal of three
+* `ops21500`, the nodes of the search: `SieveAd.opsR` with the tests `SieveAd.fillTestsF` and the reversal of three
   primes, its trees searched with the fuel `200` and the smaller prime of a cofactor of two primes in cells of
   side at most `21990232556/DEN` (`0.02`);
 * `solve21500`, the search led by hints: `SieveAd.solveH` with these, the guides `SieveAd.guideG` and
   `SieveAd.guideF`, and as its hinted bound the reversal through the largest prime of boxes of at most
-  `6` primes (`SieveAd.altFH`).
+  `6` primes, with the tests `SieveAd.frozTestsF` over the frozen parts (`SieveAd.altFHT`).
 
-The file imports `SieveAdHintStratDefs.lean`; so neither it nor the part files (`SieveHint21500P1.lean` …) load more
-of `Mathlib` than `Mathlib.Data.Nat.Notation`.
+The tests are the ones that the kernel evaluates in one pass over a box (`SieveAdFastDefs.lean`); they are equal
+to `SieveAd.fillTests` and `SieveAd.frozTests` (`SieveAdFast.lean`), and `Linnik21500.lean` uses the search through
+that equality.
+
+The file imports `SieveAdHintStratDefs.lean` and `SieveAdFastDefs.lean`; so neither it nor the part files
+(`SieveHint21500P1.lean` …) load more of `Mathlib` than `Mathlib.Data.Nat.Notation`.
 -/
 import SieveAdHintStratDefs
+import SieveAdFastDefs
 
 namespace SieveCert
 
@@ -45,11 +50,11 @@ def stratK21500 : Cell → ℕ → Strat := @stratKF ibPar21500 10 13194139533 3
 def stratF21500 : Cell → List Cell → Strat := @stratFF ibPar21500 10 6597069767 3 549755814
 
 /-- **The nodes of the search at `2150/1000`**: those of a tree, and the reversal of three primes. -/
-def ops21500 : Ops := opsR (@fillTests ibPar21500) stratK21500 200 (cutsQ 21990232556)
+noncomputable def ops21500 : Ops := opsR (@fillTestsF ibPar21500) stratK21500 200 (cutsQ 21990232556)
 
 /-- **The search led by hints at `2150/1000`**, with the reversal through the largest prime as its hinted bound. -/
-def solve21500 : List Cell → Bool → ℕ → ℕ → ℕ × ℕ :=
-  solveH ops21500 (@fillTests ibPar21500) strat21500 (@guideG ibPar21500)
-    (@altFH ibPar21500 stratF21500 (@guideF ibPar21500) 200 6) 200
+noncomputable def solve21500 : List Cell → Bool → ℕ → ℕ → ℕ × ℕ :=
+  solveH ops21500 (@fillTestsF ibPar21500) strat21500 (@guideG ibPar21500)
+    (altFHT (@frozTestsF ibPar21500) stratF21500 (@guideF ibPar21500) 200 6) 200
 
 end SieveAd
