@@ -19,7 +19,7 @@ inequality is linear in `(m₁, m₂)`: for a region cut out by linear inequalit
 
 * `ZonePiece g L d e R lo hi`: the zone's exponents for `lo ≤ β ≤ hi`; `zoneOK_of_piece` (a piece on
   `[1/2, 11/12]` is the zone), `zonePiece_glue` (two pieces across `mid`, for the curve that is `g` below `mid` and
-  `g′` from `mid` on), `zonePiece_join` (two ranges of `β` for one curve), `zonePiece_mono` (a smaller range).
+  `g′` from `mid` on).
 * `zonePiece_of_ends`: a piece from its two ends, for candidates `κ_i(β, m) = u_i + v_iβ + t_im` such that
   `max(m, κ_i(β, m))` is an exponent for the mean square.
 * `zonePiece_OO` (both variables by orthogonality, for every curve) and `zonePiece_HH` (both by the
@@ -51,19 +51,6 @@ theorem zonePiece_glue {g g' : ℝ → ℝ} {L d e lo mid hi : ℝ} {R : ℝ →
   by_cases hb : β < mid
   · simp only [hb, ite_true]; exact h₁ β m₁ m₂ w hβ hb.le hR hw hw1
   · simp only [hb, ite_false]; exact h₂ β m₁ m₂ w (not_lt.1 hb) hβ1 hR hw hw1
-
-/-- Two ranges of `β` for one curve (`h₁` on `[lo, mid]`, `h₂` on `[mid, hi]`). -/
-theorem zonePiece_join {g : ℝ → ℝ} {L d e lo mid hi : ℝ} {R : ℝ → ℝ → Prop}
-    (h₁ : ZonePiece g L d e R lo mid) (h₂ : ZonePiece g L d e R mid hi) : ZonePiece g L d e R lo hi := by
-  intro β m₁ m₂ w hβ hβ1 hR hw hw1
-  rcases le_total β mid with hb | hb
-  · exact h₁ β m₁ m₂ w hβ hb hR hw hw1
-  · exact h₂ β m₁ m₂ w hb hβ1 hR hw hw1
-
-/-- A piece on a smaller range of `β`. -/
-theorem zonePiece_mono {g : ℝ → ℝ} {L d e lo hi lo' hi' : ℝ} {R : ℝ → ℝ → Prop}
-    (h : ZonePiece g L d e R lo hi) (hlo : lo ≤ lo') (hhi : hi' ≤ hi) : ZonePiece g L d e R lo' hi' :=
-  fun β m₁ m₂ w hβ hβ1 => h β m₁ m₂ w (hlo.trans hβ) (hβ1.trans hhi)
 
 /-- A function affine in `x` on `[u, v]` is at most the larger of its values at the ends. -/
 lemma affine_le_of_ends {α γ u v x c : ℝ} (hu : u ≤ x) (hv : x ≤ v) (h0 : α + γ * u ≤ c) (h1 : α + γ * v ≤ c) :
@@ -160,6 +147,5 @@ macro "zends" : tactic =>
 end SieveTypeIIHM
 
 #print axioms SieveTypeIIHM.zonePiece_glue
-#print axioms SieveTypeIIHM.zonePiece_join
 #print axioms SieveTypeIIHM.zonePiece_OO
 #print axioms SieveTypeIIHM.zonePiece_HH
