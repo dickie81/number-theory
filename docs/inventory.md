@@ -2469,6 +2469,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd22000.linnik_tree_22000`: Linnik's theorem with exponent `11/5`, from a tree that passes the tests
 
+#### `SieveAdDir`: The search led by hints is sound
+
+- `SieveAd.pr_of_partD_at`: A part of the main search, for any route ([note](../formalisations/harman-sieve.md))
+
 #### `SieveAdFamCore`: The two comparisons at a floor for a family of tuples of distinct primes, on bounds for its products
 
 - `SieveAd.evJ_fam_fill_at`: The comparison with the rest among the tree's primes, for a family of tuples of distinct primes, for any route ([note](../formalisations/harman-sieve.md))
@@ -2539,10 +2543,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdFull`: The estimate in two variables on tuples of primes with a given product, in no order
 
 - `SieveAd.full2_core_at`: Tuples of primes with product in `(N₁, N₂]`, on exponents that pass the checks, for any route ([note](../formalisations/harman-sieve.md))
-
-#### `SieveAdHint`: The search led by hints is sound
-
-- `SieveAd.pr_of_kidsH_at`: A part of the main search led by hints, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdRev`: The tree of a reversed term bounds it
 
