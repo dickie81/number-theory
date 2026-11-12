@@ -215,7 +215,20 @@ Its main tools:
   exponents (`SieveAd.loRole`, `SieveAd.hiRole`) of two disjoint role sets, the first variable's and the rest's,
   the rest's with a positive lower bound, pass `coreI2`, the term of the chain's box over the frozen part is
   evaluated (`SieveAd.EvIF` for `SieveAd.frozS`). This is the first of the two evaluations of `SieveAd.SoundF`.
-  The tests of the search, on the bits of its lists, are not written.
+- `SieveAd.frozTests_sound_at` (`lib/pnt/SieveAdFrozTests.lean`; the tests are `lib/pnt/SieveAdFrozDefs.lean`'s,
+  without Mathlib), **the tests of the tree over the frozen part are sound.** The tree over the frozen part reads
+  a box `ch ++ β`, the chain's cells and then those of `r'`. A configuration gives its sets by the bits of
+  numbers: the low bits for the cells of `ch`, the next for those of `β`, and the bit after them for the
+  cofactor. `SieveAd.frozTests e₁ e₂ Kb β` tests the term of the chain's box by `coreI2` on the exponents of the
+  first variable's set and the rest's (`okIF`), and its terms at a floor by `coreJ3` (`okJF3`, the rest among the
+  tree's primes) or `coreJ2` (`okJF2`, among the tuple's), on the exponents with `Kb` cells of room
+  (`SieveAd.loR`, `SieveAd.hiR`, `SieveAd.hiRc`: sums of the ends of the cells over the bits, and for a set with
+  the cofactor the slab less the cells of `β` outside it). For `e₁ ≤ e₂ ≤ DEN`, `(T + 1)·lo_s ≥ DEN + 1` and
+  `Kb ≥ 12 + T`, a test that passes a box of at most twelve cells evaluates the term of the chain over
+  `SieveAd.frozS`, or its terms at the floor: `SieveAd.SoundF`, the hypothesis of `SieveAd.frozSolve_sound_at`.
+  So the search of `SieveAdRevDefs.lean` with these tests bounds the term of a chain of one prime over the frozen
+  part, which is what `SieveAd.bd_flip_neg_at` and `SieveAd.bd_flip_pos_at` ask for. The main search does not
+  call it yet.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

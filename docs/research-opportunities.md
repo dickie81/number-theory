@@ -439,9 +439,12 @@ covers. The region does not close at `13/6`.
     cofactor written out too, the tuples (primes of `r'`, of its cofactor, of the chain, of the chain's cofactor)
     as a family of comparisons with product in `(N₁, N₂]`, and `SieveTwoChain.chain_two` on it with the first
     variable and the rest given by their parts. So both evaluations that the tree over the frozen part asks for
-    are proved, on finite sets of indices and numbers that pass `coreJ3`, `coreJ2`, `coreI2`. Not written: the
-    tests on the bits of the search's lists with their soundness (`SieveAd.SoundF`), the search's definitions
-    with the reversal of terms of two to five primes of either sign, the second level, and a certificate.
+    are proved, on finite sets of indices and numbers that pass `coreJ3`, `coreJ2`, `coreI2`; and the tests on
+    the bits of the search's lists (`lib/pnt/SieveAdFrozDefs.lean`, without Mathlib) are sound for the frozen
+    part (`SieveAd.frozTests_sound_at`, the hypothesis `SieveAd.SoundF` of the tree's search). Not written: the
+    main search's definitions with the reversal of terms of two to five primes of either sign (the cost of a
+    reversal from the tree's cost and the weights, by `bd_flip_neg_at` and `bd_flip_pos_at`), the second level,
+    and a certificate.
   - *Why `2.19`.* Without reversal, and without the stops whose rest is the first small prime, the cells pass at
     `2.19` with the window, and not at `2.18` (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
     `0.945`; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`; `1.066` at `2.18` with every stop). The tree
