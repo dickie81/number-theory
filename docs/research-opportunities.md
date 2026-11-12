@@ -473,7 +473,9 @@ covers. The region does not close at `13/6`.
     So one level of this rule on boxes of at most four primes is worth `0.05` in exact terms: a theorem at
     `2.16` on three times the theorem's boxes. Boxes of five primes add as much again: with cells of side `0.01`
     at `2.165` the search costs `1.438` with no reversal, `1.286` with this rule on at most four primes and
-    `1.213` on at most five (`9·10^3` reversals of the sign `−` taken, against `1.3·10^3`), on twice the boxes.
+    `1.213` on at most five (`9·10^3` reversals of the sign `−` taken, against `1.3·10^3`), on twice the boxes;
+    with cells of side `0.005`, `0.829` on at most five primes (`7.8·10^4` reversals of boxes of five primes
+    taken of `2.6·10^5` tried), on `2.7·10^7` boxes, `2.4·10^7` of them in the trees over the frozen parts.
     The model's `0.69` at `2.15` is two levels and terms of five primes, and `2.12` is that and a certificate
     that loses much less than the cells do.
   - *Why `2.19`.* Without reversal, and without the stops whose rest is the first small prime, the cells pass at

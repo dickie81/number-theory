@@ -28,7 +28,8 @@ Values (12 November 2026; `H 6 10 3 0.012 0.02`, boxes of at most four primes): 
 search costs 0.897 K on 1.1·10^7 boxes (0.911 without the reversal of rev_cert.py; that reversal alone, the
 theorem's search, 0.951; none, 1.221), and at 2160/1000, 0.967 K on 1.2·10^7 boxes (1.018 without this rule).
 With H = 0.01 at 2165/1000: 1.438 with no reversal, 1.306 with rev_cert.py's, 1.286 with this one, 1.276 with
-both; and with `--maxlen 5 --norev`, 1.213 on 5.6·10^6 boxes (thirteen minutes). The model (`harman_sieve.py cells 2165/1000 --no-window --fill --shrink 0.0015 --h 0.005 --flips 4 --nest 1
+both; and with `--maxlen 5 --norev`, 1.213 on 5.6·10^6 boxes (thirteen minutes). With H = 0.005 and `--maxlen 5`
+at 2165/1000: 0.829 K on 2.7·10^7 boxes, 2.4·10^7 of them over frozen parts (an hour). The model (`harman_sieve.py cells 2165/1000 --no-window --fill --shrink 0.0015 --h 0.005 --flips 4 --nest 1
 --rev first,floor,offdiag`) has 0.781 where this search has 0.897, as it has 0.851 for the shapes of rev_cert.py
 where the search has 0.951.
 
