@@ -17,23 +17,29 @@ concurrency:
 
 jobs:
   # What the change touches. On a pull request paths-filter lists the pull request's files through the GitHub API; on
-  # a push to main it compares the push with the commit before it. The checkout holds only papers/.
+  # a push to main it compares the push with the commit before it. The checkout holds only papers/ and tools/linnik/.
   # - lean: whether the Lean build runs. On a pull request it runs only if the pull request changes a file the build
   #   reads; on pushes to main and on manual runs it always runs.
   # - papers: the papers to compile, by name, separated by spaces: each papers/<name>/ in which the change edits a
   #   file other than Markdown (a README needs no compile), so that a change to no paper compiles none. A change to
   #   this workflow, the site's builder, or the page on the zeros or its script compiles every paper, since the site
   #   needs every paper's PDF; so does a manual run.
+  # - certificate: whether the certificates are regenerated (the job `certificate`): only if the change edits a file
+  #   that the check reads, as `tools/linnik/check_certificate.py --inputs` lists them, or this workflow; and on a
+  #   manual run.
   changes:
     name: What changed
     runs-on: ubuntu-latest
     outputs:
       lean: ${{ github.event_name != 'pull_request' || steps.lean.outputs.lean == 'true' }}
       papers: ${{ steps.papers.outputs.list }}
+      certificate: ${{ github.event_name == 'workflow_dispatch' || steps.certificate.outputs.certificate == 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: papers
+          sparse-checkout: |
+            papers
+            tools/linnik
       - id: lean
         if: github.event_name == 'pull_request'
         uses: dorny/paths-filter@v3
@@ -82,6 +88,25 @@ jobs:
           done
           echo "list=${list# }" >> "$GITHUB_OUTPUT"
           echo "The papers to compile:${list:- none}"
+      # If the script fails, or lists no inputs, the job fails: a broken check must not be skipped.
+      - id: inputs
+        name: The files that the certificates' check reads
+        if: github.event_name != 'workflow_dispatch'
+        run: |
+          inputs=$(python3 tools/linnik/check_certificate.py --inputs)
+          echo "$inputs" | grep -qx 'tools/linnik/check_certificate.py'
+          {
+            echo 'filter<<EOF'
+            echo 'certificate:'
+            echo "  - '.github/workflows/ci.yml'"
+            echo "$inputs" | sed "s/.*/  - '&'/"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+      - id: certificate
+        if: github.event_name != 'workflow_dispatch'
+        uses: dorny/paths-filter@v3
+        with:
+          filters: ${{ steps.inputs.outputs.filter }}
 
   checks:
     name: Checks
@@ -103,7 +128,20 @@ jobs:
         run: python3 scripts/zeros_page.py --check
       - name: The vendored libraries are upstream's with the port patches
         run: python3 scripts/check_vendor.py
-      - name: The certificate regenerates
+
+  # The certificates' Lean files in lib/pnt are the ones tools/linnik generates (about ten minutes), checked only when
+  # the change touches a file that the check reads (the job `changes`).
+  certificate:
+    name: The certificate regenerates
+    needs: changes
+    if: needs.changes.outputs.certificate == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: The certificates' files are the ones the scripts generate
         run: python3 tools/linnik/check_certificate.py
 
   # The papers that the change touches (the job `changes`): each papers/<name>/main.tex, then its supplement
@@ -298,7 +336,7 @@ jobs:
   ci-passed:
     name: CI passed
     if: always()
-    needs: [changes, checks, papers, pdf-preview, build-1, build-2, build-3]
+    needs: [changes, checks, certificate, papers, pdf-preview, build-1, build-2, build-3]
     runs-on: ubuntu-latest
     steps:
       - name: Every job passed or was skipped

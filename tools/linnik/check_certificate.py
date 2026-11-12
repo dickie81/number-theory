@@ -29,6 +29,11 @@ The third is `rev_cert.py --check`, the same for the search with role reversal a
 SieveTree21800P<k>.lean and Linnik21800.lean (two minutes).
 The fourth is `fill_cert.py --check`, the same for the search with no window and SieveFill21650.lean, every
 SieveTree21650P<k>.lean and Linnik21650.lean (five minutes).
+
+`--inputs` prints, one glob pattern a line from the repository's root, the files that the check reads: this script,
+the generators it runs and the scripts of this directory that they import, and the files of lib/pnt whose names hold
+a certificate's tag, which include every file it compares. Only a change to one of them can change its outcome, so CI
+runs the check only then (the job `changes` of .github/workflows/ci.yml).
 """
 import filecmp
 import os
@@ -93,7 +98,31 @@ def check(tag):
         return ok
 
 
+def local_imports(script):
+    """The scripts of this directory that a script imports."""
+    text = open(os.path.join(HERE, script), encoding='utf-8').read()
+    return {m + '.py' for m in re.findall(r'^\s*(?:from|import)\s+(\w+)', text, re.M)
+            if os.path.exists(os.path.join(HERE, m + '.py'))}
+
+
+def inputs():
+    """The files that the check reads, as glob patterns from the repository's root (see the module's docstring)."""
+    todo = [os.path.basename(__file__)] + [s[0] for mirror, gen in CERTS.values() for s in (mirror, gen)] \
+        + [gen[0] for gen in TREES.values()]
+    seen = set()
+    while todo:
+        script = todo.pop()
+        if script not in seen:
+            seen.add(script)
+            todo += local_imports(script)
+    here = os.path.relpath(HERE, os.path.join(HERE, '..', '..')).replace(os.sep, '/')
+    return [f'{here}/{s}' for s in sorted(seen)] + [f'lib/pnt/*{tag}*.lean' for tag in [*CERTS, *TREES]]
+
+
 def main():
+    if sys.argv[1:] == ['--inputs']:
+        print('\n'.join(inputs()))
+        return 0
     tags = [a for a in sys.argv[1:]] or list(CERTS) + list(TREES)
     for t in tags:
         if t not in CERTS and t not in TREES:
