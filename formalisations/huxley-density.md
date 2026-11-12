@@ -90,6 +90,12 @@ step: his Theorem 1 and his Lemma 2 are not formalised as stated.
 
 ## Where the Linnik paper uses it
 
-The density curve `g7d` of the Linnik paper's Type II estimate (`SieveCurve7D.counts_7d`) takes the fifteen steps
+The density curve `ghx` of the Linnik paper's Type II estimate in two variables (`SieveCurveHx.counts_hx`) is the
+trivial count below `7789/10000` and this estimate from there on: a step `SieveCurveHx.charDensity_hxT` on
+`[7789/10000, 131/168]`, with the exponent `7014/3125 = 2.24448` (Huxley's `3/(3σ − 1)` is `2.244333…` at the left
+end; parameters `M = 1497`, `a = 18703/25000`, `λ = 224439/200000`, `A_i = 224447/100000`, found and checked against
+`LinnikHuxStep.Par.Good` in exact rationals by `tools/linnik/gen_zone.py`), the fifteen steps
 `LinnikStairs7.charDensity_hx7_5` to `charDensity_hx7_19` on `[131/168, 5/6]`, and `LinnikStep.charDensity_step` from
-`5/6` on.
+`5/6` on. It is the only density estimate of the paper's theorem: below `7789/10000` the estimate in two variables
+bounds both variables by orthogonality, whatever the curve. The window route's curve `g7d` (`SieveCurve7D.counts_7d`,
+the library's theorems at `11/5`, `219/100` and `218/100`) takes the same fifteen steps and the last.

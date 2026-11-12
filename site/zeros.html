@@ -293,16 +293,20 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
   </section>
 
   <section aria-labelledby="char-h">
-    <h2 id="char-h">Characters mod q: the Linnik route's density curve</h2>
-    <p>The Linnik paper counts the characters mod <span class="math">q</span> whose <span class="math">L</span>-function has a zero
-      with <span class="math">β ≥ σ</span>, <span class="math">|γ| ≤ T</span>: at most <span class="math">C(qT)</span><sup class="math">g*(σ)</sup>
+    <h2 id="char-h">Characters mod q: the density curves</h2>
+    <p>The window route counts the characters mod <span class="math">q</span> whose <span class="math">L</span>-function has a
+      zero with <span class="math">β ≥ σ</span>, <span class="math">|γ| ≤ T</span>: at most <span class="math">C(qT)</span><sup class="math">g*(σ)</sup>
       <span class="math">(1 + log qT)</span><sup>10</sup>. Its curve <span class="math">g*</span>, <code>SieveCurve7D.g7d</code>,
       is glued from {{npieces}} pieces, each counted by a theorem that <code>SieveCurve7D.counts_7d</code> glues in. The
       exponent peaks at {{gmax}} on <span class="num">[{{gmaxLo}}, {{gmaxHi}}]</span>, just above {{cgl}}, the density
-      exponent of Chen, Gupta and Li.</p>
+      exponent of Chen, Gupta and Li. The Linnik paper's Type II estimate in two variables needs the count only from
+      <span class="math">σ</span> = {{hxLo}} on: its curve <span class="math">g<sub>H</sub></span>, <code>SieveCurveHx.ghx</code>,
+      is the trivial count below {{hxLo}}, a step of Huxley's estimate with the exponent {{hxA}} up to 131/168, and
+      <span class="math">g*</span> from there on, which is Huxley's too: {{nhx}} pieces, counted by
+      <code>SieveCurveHx.counts_hx</code>.</p>
     <div class="plate">
       <div class="legend" id="char-legend"></div>
-      <div class="chart" id="char" tabindex="0" role="img" aria-label="The Linnik route's density curve g star as a function of σ, with the source of each range below the axis. Use the left and right arrow keys to move the readout."></div>
+      <div class="chart" id="char" tabindex="0" role="img" aria-label="The window route's density curve g star as a function of σ, with the source of each range below the axis. Use the left and right arrow keys to move the readout."></div>
       <details>
         <summary>Table of the {{npieces}} pieces</summary>
         <div class="scroll"><table id="char-table"></table></div>
@@ -317,17 +321,18 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       above decide <span class="math">L</span>. A zero with real part <span class="math">β</span> costs about
       <span class="math">x</span><sup class="math">β−1</sup> of the primes up to <span class="math">x</span>, so the half-plane
       leaves no zero that costs much, and the density curve says how many zeros there are. The library proves
-      <span class="math">L</span> = {{Lbest}} = {{Lbestdec}} (<code>{{bestLean}}</code>), by a sieve that no paper describes
-      yet; the Linnik paper proves <span class="math">L</span> = {{L}} (<code>Linnik22000E.linnik_22000e</code>). Both rest on
-      the curve <span class="math">g*</span>, and so on two inputs that have not been refereed: the half-plane and Chen, Gupta
-      and Li's Proposition 3.1.</p>
+      <span class="math">L</span> = {{Lbest}} = {{Lbestdec}} (<code>{{bestLean}}</code>), the theorem of the Linnik paper,
+      from the half-plane and Huxley's density estimate: the half-plane is its only input that has not been refereed. An
+      earlier route, with a Type II estimate in one variable on a window, gives <span class="math">L</span> = {{L}}
+      (<code>Linnik22000E.linnik_22000e</code>); it rests on the curve <span class="math">g*</span>, and so on two inputs
+      that have not been refereed: the half-plane and Chen, Gupta and Li's Proposition 3.1.</p>
     <div class="plate">
       <div class="legend">
         <span><i class="kd lean"></i><span>proved in Lean</span></span>
-        <span><i class="kd other"></i><span>stated or computed, not formalised</span></span>
+        <span><i class="kd other"></i><span>stated, not formalised</span></span>
         <span><i class="kd ref"></i><span>refereed, without the half-plane</span></span>
         <span><i class="kv"></i><span>{{grh}}: every <i>L</i> &gt; {{grh}} under GRH (in Lean)</span></span>
-        <span><i class="kv dash"></i><span>{{floor}}: the paper's window closes below it, at <i>A</i> = {{cgl}}</span></span>
+        <span><i class="kv dash"></i><span>{{floor}} = 1 + <i>A</i>/2 at <i>A</i> = {{cgl}}: a window in one variable closes below it</span></span>
       </div>
       <div class="ladder" id="ladder" role="list" aria-label="Linnik exponents, from the half-plane alone down to {{Lbest}}"></div>
     </div>
@@ -335,14 +340,15 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     <h3 id="la-h">From the density exponent to <span class="math">L</span></h3>
     <p>The density deduction turns a density exponent <span class="math">A</span> into every <span class="math">L &gt; A</span>
       (<code>Linnik.linnik_of_charDensity</code>): the diagonal. Harman's sieve goes below it, since Cauchy–Schwarz over the
-      characters halves the density exponent. With the Linnik paper's Type II estimate, in one variable, it stops at
-      <span class="math">L = 1 + A/2</span>, where that estimate's window closes; the two lines meet at the density
-      hypothesis, <span class="math">A</span> = {{grh}}. The Type II estimate in two variables
-      (<code>SieveTwoZone7D.typeII_two_7d</code>) holds on a region for every <span class="math">L</span>, and with it the
-      library goes below that line, to {{Lbest}}.</p>
+      characters halves the density exponent. With a Type II estimate in one variable, on a window of lengths, it stops at
+      <span class="math">L = 1 + A/2</span>, where the window closes; the two lines meet at the density hypothesis,
+      <span class="math">A</span> = {{grh}}. The Type II estimate in two variables of the Linnik paper
+      (<code>SieveTwoZone7D.typeII_two_hx</code>) holds on a region for every <span class="math">L</span>, and counts the
+      characters only from <span class="math">σ</span> = {{hxLo}} on, by Huxley's estimate; with it the sieve goes below
+      that line, to {{Lbest}}, from the density exponent {{hux}} of Huxley's estimate.</p>
     <div class="plate">
       <div class="legend" id="la-legend"></div>
-      <div class="chart" id="la" tabindex="0" role="img" aria-label="The Linnik exponent L against the largest density exponent A of the curve: the density deduction gives L = A, the sieve gives less: with the paper's window down to L = 1 + A/2, and with the Type II estimate in two variables below that line. Use the left and right arrow keys to step through the points."></div>
+      <div class="chart" id="la" tabindex="0" role="img" aria-label="The Linnik exponent L against the largest density exponent A of the curve: the density deduction gives L = A, the sieve gives less: with a window in one variable down to L = 1 + A/2, and with the Type II estimate in two variables below that line. Use the left and right arrow keys to step through the points."></div>
       <details>
         <summary>Table</summary>
         <div class="scroll"><table id="la-table"></table></div>
@@ -350,11 +356,12 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     </div>
 
     <h3 id="win-h">Where the window closes</h3>
-    <p>The Linnik paper's sieve needs a Type II estimate for Dirichlet polynomials of length <span class="math">P = x</span><sup class="math">u</sup>,
+    <p>The sieve of the theorem at {{L}} needs a Type II estimate for Dirichlet polynomials of length
+      <span class="math">P = x</span><sup class="math">u</sup>,
       with <span class="math">x = q</span><sup class="math">L</sup>, for every <span class="math">u</span> in a window
       [<span class="math">u</span><sub>1</sub>, <span class="math">u</span><sub>2</sub>] around <span class="math">P = q</span>. At each
-      <span class="math">β</span>, the characters that <span class="math">g*(β)</span> counts allow only part of that range (the
-      paper's {{defWindow}}, <code>SieveCurveGlue.WindowOKHM</code> in the Lean), and the two curves are its ends. The window
+      <span class="math">β</span>, the characters that <span class="math">g*(β)</span> counts allow only part of that range
+      (<code>SieveCurveGlue.WindowOKHM</code>), and the two curves are its ends. The window
       has to fit at every <span class="math">β</span> at once, so it is pinched where <span class="math">g*</span> peaks, on
       [{{gmaxLo}}, {{gmaxHi}}]. Move <span class="math">L</span> to open and close it. Below
       <span class="math">1 + A/2</span> there is no window, and the library's exponents there use the estimate in two variables
@@ -367,7 +374,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     </div>
     <div class="plate">
       <div class="legend" id="win-legend"></div>
-      <div class="chart" id="win" tabindex="0" role="img" aria-label="The ends of the paper's window at each β, for the chosen L, with the widest window that fits at every β. Use the left and right arrow keys to move the readout."></div>
+      <div class="chart" id="win" tabindex="0" role="img" aria-label="The ends of the window of the theorem at 11/5 at each β, for the chosen L, with the widest window that fits at every β. Use the left and right arrow keys to move the readout."></div>
       <p class="note" id="win-note" aria-live="polite"></p>
     </div>
   </section>
@@ -392,17 +399,15 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
 
   <footer>
     <p>Written by <code>scripts/zeros_page.py</code> from the Lean sources at {{commit}} ({{date}}). Each number above that a
-      theorem states is read from that theorem's statement; each piece of <span class="math">g*</span> is checked against the
-      range and exponent of the theorem that counts it; and the script fails, and with it CI, if the Lean changes in a way
+      theorem states is read from that theorem's statement; each piece of <span class="math">g*</span> and of
+      <span class="math">g<sub>H</sub></span> is checked against the range and exponent of the theorem that counts it; and the script fails, and with it CI, if the Lean changes in a way
       the page does not follow. <code>Check.lean</code>, <code>CheckAll.lean</code>, <code>CheckZeta23.lean</code> and
       <code>CheckDH.lean</code> print {{nresults}} theorems in all,
       listed in <a href="https://github.com/dickie81/number-theory/blob/main/docs/inventory.md">docs/inventory.md</a>.</p>
     <p>The window's ends are computed in the page from <span class="math">g*</span> and the condition of
       <code>SieveCurveGlue.WindowOKHM</code>, with its margins; at {{L}} they give the window [{{exactLo}}…, {{exactHi}}…],
-      which the script computes again in exact arithmetic and checks contains the paper's window in the Lean,
-      [{{u1}}, {{u2}}]. The exponents
-      marked computed are the paper's and its supplement's computations ({{secComparison}}, {{supComputations}}), read from
-      their sources; they are not theorems of the library. Nor is the value of <span class="math">κ</span>, {{kappa}}…: the
+      which the script computes again in exact arithmetic and checks contains the window of the theorem at {{L}} in the
+      Lean, [{{u1}}, {{u2}}]. The value of <span class="math">κ</span>, {{kappa}}…, is not a theorem of the library: the
       Lean defines <span class="math">κ</span> as the sum Σ <span class="math">Λ(n)n</span><sup class="math">−3/2</sup>, and
       the script computes it, to <span class="math">n</span> = 10<sup>5</sup> with the tail
       ∫ <span class="math">t</span><sup class="math">−3/2</sup> <span class="math">dt</span> that the prime number theorem
@@ -721,7 +726,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
   function drawChar() {
     var count = view === "count", A7 = DATA.cgl.x, top = G7D[DATA.peak];
     var series = [
-      { name: "g* (the Linnik route's curve)", color: "--s1", z: 1, knots: KNOTS, f: function (sg) { return gstar(sg, count); } },
+      { name: "g* (the window route's curve)", color: "--s1", z: 1, knots: KNOTS, f: function (sg) { return gstar(sg, count); } },
       { name: DATA.cgl.t + ", Chen–Gupta–Li (published)", color: "--ref", f: function (sg) { return count ? Math.min(1, A7 * (1 - sg)) : A7; } },
       { name: "density hypothesis, A = 2", color: "--ref-2", width: 1, noDot: true, f: function (sg) { return count ? Math.min(1, 2 * (1 - sg)) : 2; } }
     ];
@@ -750,7 +755,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
         });
       }
     });
-    legend("char-legend", [{ color: "--s1", text: "g*, the Linnik route's density curve" },
+    legend("char-legend", [{ color: "--s1", text: "g*, the window route's density curve" },
       { color: "--ref", text: DATA.cgl.t + ", Chen, Gupta and Li's density exponent (published)" },
       { color: "--ref-2", text: "density hypothesis and the trivial count", thin: true }]);
     table("char-table", ["σ from", "to", "Exponent A", "Source", "Lean"], G7D.map(function (p, i) {
@@ -867,7 +872,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     txt(W - m.r, H - m.b + 36, narrow ? "A, the curve's peak" : "A, the largest density exponent of the curve", null, "end", svg);
     txt(m.l - 8, m.t - 8, "L", null, "end", svg);
     var g = el("g", { "clip-path": "url(#la-clip)" }, svg);
-    // the room of the paper's sieve, between the floor of its window and the deduction
+    // the room of a sieve with a window in one variable, between the window's floor and the deduction
     el("path", { d: "M" + X(2) + " " + Y(2) + " L" + X(v1) + " " + Y(v1) + " L" + X(v1) + " " + Y(1 + v1 / 2) + " Z",
       fill: css("--line-band") }, g);
     el("line", { x1: X(v0), y1: Y(v0), x2: X(v1), y2: Y(v1), stroke: css("--ref"), "stroke-width": 2 }, g);
@@ -894,8 +899,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       if (!narrow || p.A === MAIN.A) lab(p, -9, -7, "end", p.text.replace(" + η", ""));
     });
     lab(MAIN, 10, 4, "start", MAIN.text);
-    role("paper").forEach(function (p) { lab(p, 9, 4, "start", p.text); });
-    if (!narrow) role("classic").forEach(function (p) { lab(p, 9, 4, "start", p.text); });
+    role("window").forEach(function (p) { lab(p, 9, 4, "start", p.text); });
     var tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; box.appendChild(tip);
     var ring = el("circle", { r: 9, fill: "none", stroke: css("--ink"), "stroke-width": 1.5, visibility: "hidden" }, svg);
     function show(i) {
@@ -971,7 +975,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     return b;
   })();
   var WIN_L = WD.L, C = DATA.cert, GMAX = DATA.gmax, BEST = DATA.best;
-  // what the library proves below the paper's exponent, with the Type II estimate in two variables
+  // what the library proves below the window's exponent, with the Type II estimate in two variables
   function beyond(L) {
     return L >= BEST.x - 5e-5 ? " The library proves every exponent from " + BEST.t + " up, with the Type II estimate " +
       "in two variables (<code>" + BEST.lean + "</code>)." : "";
@@ -1017,7 +1021,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       { color: "--s2", text: "the least u₁ that the zeros at β allow" },
       { color: "--s1", text: "the greatest u₂" },
       { color: "--line-band", text: "the widest window at this L", band: true },
-      { color: "--ink-2", text: "the paper's window, [" + WD.u1t + ", " + WD.u2t + "]", dash: true, thin: true },
+      { color: "--ink-2", text: "the window at " + WD.Lt + ", [" + WD.u1t + ", " + WD.u2t + "]", dash: true, thin: true },
       { color: "--ref-2", text: "P = q", thin: true }]);
     var h, Ls = L.toFixed(4), corners = parseFloat(C.corners);
     if (!open) {
@@ -1031,13 +1035,13 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
         (w.ilo === DATA.peak ? ", where g* peaks" : "") : "its lower end is set on " + stepName(w.ilo) + ", its upper end on " +
         stepName(w.ihi)) + ". ";
       if (L > GMAX.x) h += "Above " + GMAX.t + " the density deduction gives this exponent with no sieve (<code>" + GMAX.lean + "</code>).";
-      else if (L >= WD.L + 5e-5) h += "The paper's " + WD.Lt + " gives every exponent above it; this window contains the paper's.";
-      else if (L > WD.L - 5e-5) h += "The paper's window fits inside it, so the paper's certificate applies: it bounds the " +
-        "sieve's losses by " + C.bound + "… of the main term, less than all of it, and the kernel checks it (<code>" +
-        C.lean + "</code>). Down to <i>L</i> = " + C.corners + "… the paper's window still fits.";
-      else if (L >= corners) h += "The paper's window still fits inside it, down to <i>L</i> = " + C.corners + "…, but the " +
-        "paper's certificate is for " + WD.Lt + " only." + beyond(L);
-      else h += "The paper's window no longer fits, but a narrower one does." + beyond(L);
+      else if (L >= WD.L + 5e-5) h += "The theorem at " + WD.Lt + " gives every exponent above it; this window contains its window.";
+      else if (L > WD.L - 5e-5) h += "The window of the theorem at " + WD.Lt + " fits inside it, so its certificate applies: it " +
+        "bounds the sieve's losses by " + C.bound + "… of the main term, less than all of it, and the kernel checks it (<code>" +
+        C.lean + "</code>). Down to <i>L</i> = " + C.corners + "… that window still fits.";
+      else if (L >= corners) h += "The window of the theorem at " + WD.Lt + " still fits inside it, down to <i>L</i> = " +
+        C.corners + "…, but its certificate is for " + WD.Lt + " only." + beyond(L);
+      else h += "The window of the theorem at " + WD.Lt + " no longer fits, but a narrower one does." + beyond(L);
     }
     document.getElementById("win-note").innerHTML = h;
   }

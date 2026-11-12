@@ -12,7 +12,7 @@ the exponent `κn` of `q`.
 * `evJ_two`, `evJ_okJ2`: **the comparison in two variables on a box.** If `chkJ2` passes the box at the floor
   `f`, for the sets `s0`, `sr`, `s1`, the flag `e`, the window `[u, v]` and the growth `t`, the terms of the box at
   the floor `x^{f/DEN}` are evaluated (`SieveAd.EvJ`): `SieveTwoComp.prop6_two_at` for the region
-  `SieveTwoZone7D.Zone7d L` (`SieveFamilyTwo.typeIITwoAt_7d`), on the box's atoms, with the rests of exponent in
+  `SieveTwoZone7D.Zone7d L` (`SieveFamilyTwo.typeIITwoAt_hx`), on the box's atoms, with the rests of exponent in
   `[κ(ρ₁ − 1), κ(ρ₂ + 1)]`.
 * `chain2_exp`: `SieveTwoTerm.chain2_bound` for a first variable and a rest in ranges of exponents: the region is
   asked for a first variable of exponent in `[u − ε, v]` and a rest in `[ρ₁ − ε, ρ₂ + ε]`.
@@ -408,7 +408,7 @@ theorem evJ_twoE (bl : List Cell) (k : ℕ) (h : bl.length = k) (f s0 sr s1 : �
     · rw [max_eq_left hle]
       linarith
   intro η hη
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveTwoComp.prop6_two_at two_lt_L L_le (SieveFamilyTwo.typeIITwoAt_7d L) k 40
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveTwoComp.prop6_two_at two_lt_L L_le (SieveFamilyTwo.typeIITwoAt_hx L) k 40
     (Λ₁ := L + 1) (a₀ := κ * (f : ℝ)) (by linarith) (mul_pos hκ (by exact_mod_cast hf0))
     (fun i => κ * ((bx i).1 : ℝ)) (fun i => κ * ((bx i).2 : ℝ)) (mset k s0) (mset k sr) (mset k s1) hdisj hSr e
     hu huv hρ₁0 hρ hvρ hρlo hρhi hκ hzone hlo hhi hD₁ hD₂ (η := η / (2 * L)) (by positivity)
@@ -572,7 +572,7 @@ theorem evI_twoE (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (s0 sr : �
     intro m₁ m₂ h1 h2 h3 h4
     refine ⟨by linarith, by linarith, by linarith, by linarith, by linarith, by linarith⟩
   intro η hη
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := chain2_exp (SieveFamilyTwo.typeIITwoAt_7d L) (e₀ := κ * ((1 : ℕ) : ℝ))
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := chain2_exp (SieveFamilyTwo.typeIITwoAt_hx L) (e₀ := κ * ((1 : ℕ) : ℝ))
     (by positivity) k' 40 (Λ₁ := L + 1) (by linarith) (u := κ * (u : ℝ)) (v := κ * (v : ℝ)) (ρ₁ := κ * (ρ₁ : ℝ))
     (ρ₂ := κ * (ρ₂ : ℝ)) (ε := κ) (by linarith) (mul_le_mul_of_nonneg_left (cast huv0) hκ.le) (by positivity)
     (mul_le_mul_of_nonneg_left (cast hρ12) hκ.le) (by linarith) hκ hzone
