@@ -126,6 +126,15 @@ Mathlib's `LSeries`); and, for the `log log q` lower bound, Brun–Titchmarsh, w
 
 ### 3.1 Linnik's exponent: the lever table
 
+**12 November: the paper at `43/20`, from the half-plane and Huxley's estimate.** The Linnik paper now proves
+`43/20` (`Linnik21500.linnik_21500`). Its Type II estimate in two variables counts characters only from `7789/10000`
+on, where Huxley's exponent is below Chen, Gupta and Li's, so its curve is now `ghx` (`SieveCurveHx`: the trivial
+count below `7789/10000`, Huxley's steps above; `tools/linnik/gen_zone.py`), and the import cones of the two theorems
+with no window, at `2165/1000` and `2150/1000`, have no module of Chen, Gupta and Li's paper; those at `11/5`,
+`219/100` and `218/100` keep their window, and with it the curve `g7d`. In the table below the column `A` of those two
+rows is the window route's, which they do not use. "The paper" in the entries before this date means its version at
+`11/5`.
+
 Section 2.2 of the paper: with a density curve whose largest exponent is `A`, the Type II window exists exactly when
 `L > 1 + A/2`, and the certificate needs between `0.03` and `0.04` above the threshold (paper §8, supplement §S6). So
 the exponent each input would reach is:
@@ -221,8 +230,10 @@ covers. The region does not close at `13/6`.
     estimate, `[0.4695, 0.5305]` at `2.13`;
   - the estimate itself, the paper's Proposition 3′ for two polynomials, for a curve and a region of the two
     lengths' exponents on which the inequality holds (`SieveTypeIIHM.typeII_two_gen`); with no density estimate for
-    two variables of length at least `q` (`SieveTypeIIHM.typeII_two_long`); and for the paper's curve on an explicit
-    region, for every `L` (`SieveTwoZone7D.zone_7d`, `SieveTwoZone7D.typeII_two_7d`). With `s_i = 1 − m_i` for
+    two variables of length at least `q` (`SieveTypeIIHM.typeII_two_long`); and for the curve of Huxley's estimate (the trivial
+    count below `7789/10000`, Huxley's steps above) on an explicit region, for every `L` (`SieveTwoZone7D.zone_hx`,
+    `SieveTwoZone7D.typeII_two_hx`; first proved for the curve `g7d`, with Chen, Gupta and Li's steps, which the
+    region never needed: below `7789/10000` it bounds both variables by orthogonality, whatever the curve). With `s_i = 1 − m_i` for
     lengths `q^{m_i}` and `q^ρ` the length of the rest, the region is `ρ ≥ 1/2000`, `m_i ≥ 2/3` and `s₁`, `s₂`,
     `s₁ + s₂` at most `0.442192ρ − 1/12500`: a variable may be shorter than `q` by `0.442` times the exponent of
     the rest. The computations' zone is the union of such regions over the point where the Halász–Montgomery

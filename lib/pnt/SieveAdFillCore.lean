@@ -199,7 +199,7 @@ theorem evJ_fill_core {k : ℕ} (bx : Fin k → Cell) (f : ℕ) (S₀ S₁ : Fin
     · rw [max_eq_left hle] at hmax
       linarith
   intro η hη
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveFillComp.prop6_fill_at two_lt_L L_le (SieveFamilyTwo.typeIITwoAt_7d L) k J₀
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveFillComp.prop6_fill_at two_lt_L L_le (SieveFamilyTwo.typeIITwoAt_hx L) k J₀
     (Λ₁ := L + 1) (a₀ := κ * (f : ℝ)) (by linarith) (mul_pos hκ (by exact_mod_cast hf0))
     (fun i => κ * ((bx i).1 : ℝ)) (fun i => κ * ((bx i).2 : ℝ)) S₀ S₁ e
     hu huv hτ hτρ hvρ hκ hzone ht hlo hhi hD₁ hD₂ (η := η / (2 * L)) (by positivity)
@@ -406,7 +406,7 @@ theorem evJ_two_core {k : ℕ} (bx : Fin k → Cell) (f : ℕ) (S₀ Sr S₁ : F
     · rw [max_eq_left hle] at hmax
       linarith
   intro η hη
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveTwoComp.prop6_two_at two_lt_L L_le (SieveFamilyTwo.typeIITwoAt_7d L) k J₀
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveTwoComp.prop6_two_at two_lt_L L_le (SieveFamilyTwo.typeIITwoAt_hx L) k J₀
     (Λ₁ := L + 1) (a₀ := κ * (f : ℝ)) (by linarith) (mul_pos hκ (by exact_mod_cast hf0))
     (fun i => κ * ((bx i).1 : ℝ)) (fun i => κ * ((bx i).2 : ℝ)) S₀ Sr S₁ hdisj hSr e
     hu huv hρ₁0 hρ hvρ hρlo hρhi hκ hzone hlo hhi hD₁ hD₂ (η := η / (2 * L)) (by positivity)

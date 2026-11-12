@@ -302,7 +302,7 @@ theorem full2_core (u v ρ₁ ρ₂ : ℕ) (hok : coreI2 u v ρ₁ ρ₂ = true)
       m₁ + m₂ ≤ L - κ * (ρ₁ : ℝ) + κ → SieveTwoZone7D.Zone7d L m₁ m₂ := by
     intro m₁ m₂ h1 h2 h3 h4
     refine ⟨by linarith, by linarith, by linarith, by linarith, by linarith, by linarith⟩
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := full2_exp (SieveFamilyTwo.typeIITwoAt_7d L) (e₀ := κ * ((1 : ℕ) : ℝ))
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := full2_exp (SieveFamilyTwo.typeIITwoAt_hx L) (e₀ := κ * ((1 : ℕ) : ℝ))
     (by positivity) K J₀ (Λ₁ := L + 1) (by linarith) (u := κ * (u : ℝ)) (v := κ * (v : ℝ)) (ρ₁ := κ * (ρ₁ : ℝ))
     (ρ₂ := κ * (ρ₂ : ℝ)) (ε := κ) (by linarith) (mul_le_mul_of_nonneg_left (cast huv0) hκ.le) (by positivity)
     (mul_le_mul_of_nonneg_left (cast hρ12) hκ.le) (by linarith) hκ hzone

@@ -190,7 +190,7 @@ theorem evJ_fillE (bl : List Cell) (k : ℕ) (h : bl.length = k) (f s0 s1 : ℕ)
     · rw [max_eq_left hle]
       linarith
   intro η hη
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveFillComp.prop6_fill_at two_lt_L L_le (SieveFamilyTwo.typeIITwoAt_7d L) k 40
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveFillComp.prop6_fill_at two_lt_L L_le (SieveFamilyTwo.typeIITwoAt_hx L) k 40
     (Λ₁ := L + 1) (a₀ := κ * (f : ℝ)) (by linarith) (mul_pos hκ (by exact_mod_cast hf0))
     (fun i => κ * ((bx i).1 : ℝ)) (fun i => κ * ((bx i).2 : ℝ)) (mset k s0) (mset k s1) e
     hu huv hτ hτρ hvρ hκ hzone ht hlo hhi hD₁ hD₂ (η := η / (2 * L)) (by positivity)

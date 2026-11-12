@@ -102,9 +102,9 @@ Its main tools:
   the chain, the test of a box with no term and the cost of a dropped box (in units of `Σ 1/R`) use `R` only
   through `x/R`, and the same search is sound, given tests that are sound for the frozen part
   (`SieveAd.SoundF`). `dJF_level_at` is the top of such a tree: the terms at a level `x^{t/DEN}` of the chain
-  with no prime are the terms at a floor minus the term of the chain of one prime between the two. Nothing uses
-  them yet: they are the first part of role reversal as an identity, for either sign and with the cofactor kept
-  as one number (`docs/research-opportunities.md`, §3.1).
+  with no prime are the terms at a floor minus the term of the chain of one prime between the two. They are the
+  first part of role reversal as an identity, for either sign and with the cofactor kept as one number, which the
+  theorem at `2150/1000` uses (`SieveAd.pr_of_kidsF_at`, below; `docs/research-opportunities.md`, §3.1).
 - `SieveAd.bd_flip_neg_at`, `SieveAd.bd_flip_pos_at`, `SieveAd.froz_weight_le_at`, `SieveAd.shareLe_of_box_at`,
   `SieveAd.inSlab_frozS_at`, `SieveAd.inSlab_frozS_inner_at` (`lib/pnt/SieveAdFlip.lean`,
   `lib/pnt/SieveAdFlipSum.lean`), **role reversal through the largest prime, as an identity.** A box of primes
@@ -123,8 +123,8 @@ Its main tools:
   `(x/R, 2x/R]` at the level, and a tree of cost `C` over the frozen part (the terms at a floor evaluated, the
   chain of one prime between the floor and the level bounded), the term of the box has
   `Bd false (C(w₀ + w₁ + w₂) + bd(w₁ + w₂))` (`bd_flip_neg_at`) or `Bd true (C·w₀ + bd(w₁ + w₂))`
-  (`bd_flip_pos_at`). Nothing uses them yet: the tests that are sound for this frozen part, and the search, are
-  not written (`docs/research-opportunities.md`, §3.1).
+  (`bd_flip_pos_at`). The tests that are sound for this frozen part and the search with this reversal are below;
+  the theorem at `2150/1000` uses the reversal for the sign `−` only (`docs/research-opportunities.md`, §3.1).
 - `SieveAd.sum_famU_eq_at` (`lib/pnt/SieveAdSort.lean`), **tuples of distinct primes in cells, sorted.** The
   tuples of a reversed term are not in order: the primes of `r'` and those of the chain each decrease, with
   nothing between the two, where the comparisons are proved for strictly decreasing tuples. A tuple of distinct
@@ -232,7 +232,7 @@ Its main tools:
   without Mathlib), **the search with the reversal of a box through its largest prime is sound.**
   `SieveAd.opsF` is the nodes of `SieveAd.opsR` with one more bound for a box of the sign `−` that passes
   `SieveAd.flipOK`: two to `maxlen ≤ 11` cells with `0 < lo < hi` and upper ends of sum at most `DEN − 2`, the
-  largest prime's cell `(l₁, h₁)` above the others with `l₁ ≥ 3`, and the level `t = ⌈h₁/2⌉` with `t ≤ l₁` and
+  largest prime's cell `(l₁, h₁)` above the others (`h₂ + 1 ≤ l₁`) with `l₁ ≥ 3`, and the level `t = ⌈h₁/2⌉` with `t ≤ l₁` and
   `h₁ + t + 1 ≤ DEN`. The bound is `SieveAd.flipCost`, `⌈(c(h₁D₀ + E) + bdK·E)/(DEN·K)⌉`: `c` is the cost of the
   tree over the frozen part (`SieveAd.flipTree`: the first floor `f ≤ min(lo_s, t)` at which
   `SieveAd.frozTests` evaluates the terms of the frozen part, then the search of `SieveAdRevDefs.lean` on the
@@ -377,8 +377,14 @@ theorem in the form `|θ(t) − t| ≤ εt/log t` for all large `t` (`SieveRough
 
 ## Where the Linnik paper uses it
 
-In the leaves of its decomposition: `SieveLeaves.P6_spec` applies `prop6` to each family of at most `40` comparisons,
-and `SieveLeaves.P6IB_spec` applies the form of Proposition 6 with the bilinear Type I estimate (`SieveP6ib.prop6ib`,
-the paper's Proposition 4.8) to the families of the boxes that the rule's bilinear test (R2) takes whole, with the
+The paper's theorem at `43/20` (`Linnik21500.linnik_21500`) uses Harman's comparison in two variables through the
+tests of its trees: `SieveTwoComp.prop6_two_at` (the rest among the box's primes) for the test `okJ2`
+(`SieveAd.evJ_two`), `SieveFillComp.prop6_fill_at` (the rest among the primes of the comparison's own tree) for
+`okJ3` (`SieveAd.evJ_fill`), and the chains of `SieveTwoTerm.chain2_bound` for `okI2` (`SieveAd.evI_two`); the leaves
+of both comparisons are evaluated on the wider region of the bilinear Type I estimate (`SieveP6LeavesWide.leavesOK_wide`).
+Its earlier version, at `11/5` (`Linnik22000E.linnik_22000e`, still in the library), used it in the leaves of its
+decomposition: `SieveLeaves.P6_spec` applies `prop6` to each family of at most `40` comparisons,
+and `SieveLeaves.P6IB_spec` applies the form of Proposition 6 with the bilinear Type I estimate (`SieveP6ib.prop6ib`)
+to the families of the boxes that the rule's bilinear test (R2) takes whole, with the
 witnesses of the test (`SieveCert.ibOK_sound`) turned into its hypotheses by `SieveQ.P6IB_boxes`. The rough-number bound also gives the shares of the certificate's cells (`SieveRough.share2_of_cand`), with which
 `SieveDrop` bounds the terms the decomposition drops.

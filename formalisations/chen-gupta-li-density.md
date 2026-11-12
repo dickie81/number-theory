@@ -602,8 +602,12 @@ it, and no paper in this repository claims it.
 
 ## Where the Linnik paper uses it
 
-The density curve of the Linnik paper's Type II estimate is `g7d` (`SieveCurve7D.counts_7d`), which takes their
-Proposition 3.1 directly, on 30 steps of `[5/7, 131/168]` (next section), and not `CGLDensity`. An earlier curve, `g7c`
+The Linnik paper's theorem, at `43/20` (`Linnik21500.linnik_21500`), does not use this estimate: its Type II estimate
+in two variables counts characters only from `7789/10000` on, where Huxley's exponent is below theirs, by the curve
+`ghx` (`SieveCurveHx.counts_hx`); no module of this formalisation is in its import cone. The paper's earlier version,
+at `11/5`, used it, and the library keeps that theorem (`Linnik22000E.linnik_22000e`) and those at `219/100` and
+`218/100`, whose Type II estimate in one variable, on a window, takes the curve `g7d` (`SieveCurve7D.counts_7d`). That
+curve takes their Proposition 3.1 directly, on 30 steps of `[5/7, 131/168]` (next section), and not `CGLDensity`. An earlier curve, `g7c`
 (`SieveTypeIIU226C.counts_7c`, now in the git history), used `CGLDensity`; it was built from these pieces:
 
 - the trivial count below `4/7`;
@@ -616,7 +620,7 @@ Proposition 3.1 directly, on 30 steps of `[5/7, 131/168]` (next section), and no
 The theorem of the proof built on `g7c`, at an earlier exponent (`899/400`), was superseded too. `cglDensity` stays
 and is printed by `lib/check/CheckAll.lean`.
 
-## Proposition 3.1 on `[5/7, 131/168]`: the Linnik paper's steps
+## Proposition 3.1 on `[5/7, 131/168]`: the window route's steps
 
 `LinnikCGLSteps` uses the same step (`LinnikCGLStep.charDensity_cglGen`, from Proposition 3.1,
 `LinnikCGLHB101.prop31`) at other parameters, 30 steps of `[5/7, 131/168]`: fourteen of width `1/1680` from `5/7`, then
