@@ -135,13 +135,14 @@ with no window, at `2165/1000` and `2150/1000`, have no module of Chen, Gupta an
 rows is the window route's, which they do not use. "The paper" in the entries before this date means its version at
 `11/5`.
 
-Section 2.2 of the paper: with a density curve whose largest exponent is `A`, the Type II window exists exactly when
-`L > 1 + A/2`, and the certificate needs between `0.03` and `0.04` above the threshold (paper §8, supplement §S6). So
+Section 2.2 of the paper's version at `11/5`: with a density curve whose largest exponent is `A`, the Type II window
+exists exactly when `L > 1 + A/2`, and the certificate needs between `0.03` and `0.04` above the threshold (that
+version's §8 and §S6). So
 the exponent each input would reach is:
 
 | Input (its largest exponent `A`) | `A` | `1 + A/2` | Exponent reached |
 |---|---|---|---|
-| Chen, Gupta and Li's `4/(1 + σ)` at `σ = 5/7`, the library today | `7/3 = 2.3333` | `13/6 = 2.1667` | `2.198`–`2.2` (computed: `2.199` passes, `2.198` fails) |
+| Chen, Gupta and Li's `4/(1 + σ)` at `σ = 5/7`, the window route's curve | `7/3 = 2.3333` | `13/6 = 2.1667` | `2.198`–`2.2` (computed: `2.199` passes, `2.198` fails) |
 | The same, with the Type II estimate in two variables as one more way to evaluate a box (below; the estimate by bins is in Lean, the sieve with it is not) | `7/3` | `13/6` | `2.193` (computed: `2.193` passes, `2.192` fails) |
 | The same inputs in a tree of Buchstab steps chosen term by term, with the window's tests and those of the estimate in two variables, and no role reversal (below; **in Lean**, the kernel searching for the tree) | `7/3` | `13/6` | **`2.19`, a theorem** (`Linnik21900.linnik_21900`) |
 | The same tree with role reversal for a term of three primes that needs an upper bound, at one level (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.18`, a theorem** (`Linnik21800.linnik_21800`) |
@@ -157,7 +158,7 @@ Nothing known and unformalised lowers the peak: Heath-Brown's exponent `2` on `[
 (`LinnikWeyl.PYWeyl`) act above `5/6` only, and the half-plane at `7/8` does not reach the corners at `5/7` (§S6). So
 with the window as the Type II estimate, every exponent below about `2.17` needs new mathematics on the large values
 of Dirichlet polynomials over the characters near `σ = 5/7`, where Chen, Gupta and Li call the needed cancellation
-"quite difficult" (their Remark 12.3). The next exponent that is reachable is `2.199`, by regeneration with
+"quite difficult" (their Remark 12.3). The next exponent that the window route reaches is `2.199`, by regeneration with
 `tools/linnik/` and a kernel check of the new certificate: a computation of hours, not a theorem yet.
 
 **A Type II estimate in two variables (10 November; its bound by bins is in Lean, its use in the sieve is computed).**

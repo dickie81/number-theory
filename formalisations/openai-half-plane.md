@@ -89,8 +89,11 @@ Louvel's quadratic large sieve. The classical tools, among them cubic and sextic
 
 ## Where the Linnik paper uses it
 
-The Type II estimate of the sieve route (`SieveRoute.TypeIIAt`) holds over all non-principal characters mod `q`. It
-needs every character's prime sums to be small, not only most of them. Its proof sorts the characters into bins by the
-real parts of their zeros. At the top bin, `SieveTypeII.bin_rect` uses the half-plane: no zero of `L(·, χ)` lies in
-`Re s > 11/12`. The library's exponent, which is the paper's (`11/5`, `Linnik22000E`), therefore depends on this result. The paper states the dependence, and
-compares what its method gives with what the half-plane and the density estimate give without it.
+The paper's Type II estimate in two variables (`SieveTypeIIHM.typeII_two_gen`) holds over all non-principal
+characters mod `q`. It needs every character's prime sums to be small, not only most of them. Its proof sorts the
+characters into bins by the real parts of their zeros. At the top bin, `SieveTypeII.bin_rect` uses the half-plane: no
+zero of `L(·, χ)` lies in `Re s > 11/12`. The half-plane also gives the bound of the kernels in the
+Halász–Montgomery inequality (`LinnikLindelof.lindelof`) and the prime number theorem of the sieve's main terms. The
+paper's exponent, `43/20` (`Linnik21500.linnik_21500`), therefore depends on this result, as do the library's earlier
+theorems at `11/5` and below. The paper states the dependence, and compares what its method gives with what the
+half-plane and the density estimate give without it.

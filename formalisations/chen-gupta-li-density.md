@@ -646,10 +646,10 @@ plateau and Huxley's steps `hx7_0` … `hx7_4`, and with Ingham's last step
 steps are narrow because both ends of the window are set where a step's exponent most exceeds the curve it bounds, on
 the first step `[5/7, 1201/1680]`, at its right end; its exponent `2.3334` is the curve's largest, `7/3` at `5/7`, where
 Ingham's and Chen–Gupta–Li's exponents meet. The corners' slack grows along the steps, and from `5/7 + 14/1680` on
-steps of `1/280` leave the window as it is (steps of `1/140` would too at `11/5`, but moved its lower end at `278/125`). `Linnik22000E.linnik_22000e`, the paper's theorem, is Linnik's theorem with exponent `11/5` on `g7d` (the earlier theorem at `278/125`, `Linnik22240R.linnik_22240r`, is in the git history);
+steps of `1/280` leave the window as it is (steps of `1/140` would too at `11/5`, but moved its lower end at `278/125`). `Linnik22000E.linnik_22000e`, the theorem of the Linnik paper's earlier version, is Linnik's theorem with exponent `11/5` on `g7d` (the earlier theorem at `278/125`, `Linnik22240R.linnik_22240r`, is in the git history);
 the classical deduction from the same curve gives `2.3334 + ε` (`LinnikG7.linnik_g7d`, with
 `SieveCurve7D.g7d_le_lin`: `g7d σ ≤ 2.3334(1 − σ)`).
 What lets the certificate close at `11/5` is the bilinear Type I estimate, which lets the decomposition go on past the
 Type I level for the boxes that pass its test, together with the decomposition's levels seven and eight: on the same
 grid the total would be `2.43K` without the bilinear test and `1.56K` with the decomposition stopped at depth six,
-against `0.93K` (the Linnik paper, Section 5).
+against `0.93K` (Section 5 of the Linnik paper's version at `11/5`, in the git history).

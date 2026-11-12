@@ -17,7 +17,8 @@ would bring the estimate to the sieve's sums are not all written (below).  The e
 for two polynomials on a region (SieveTypeIIHM.typeII_two_gen), for the curve of Huxley's estimate on the region of `--lean`
 (SieveTwoZone7D.typeII_two_hx), and the paper's Lemmas 4.4 and 4.5 with it (SieveFamilyTwo.typeII_sharp_two,
 SieveUnwTwo.typeII_unw_two); so is the bilinear Type I estimate of `--bil` (SieveTypeIB.typeIB_bound_wide, and
-SieveTypeIBSumWide.leaves_family_wide for a family of leaves).  Nothing in the paper depends on it.
+SieveTypeIBSumWide.leaves_family_wide for a family of leaves).  Nothing in the paper depends on it. Here "the paper" is the Linnik paper's version at 11/5, in the git history at commit 49dc981; the paper now
+proves 43/20 by another route (hint_cert.py).
 
 The estimate.  The paper's Type II estimate (its Theorem 3.1) bounds, over the non-trivial characters mod q, the sum
 of |W(chi)| times a product of prime sums, for one Dirichlet polynomial W with arbitrary coefficients whose length

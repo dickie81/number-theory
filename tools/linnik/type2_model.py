@@ -2,7 +2,8 @@
 """type2_model.py [window | harman | every]: which Type II sums over the characters mod q the large-value tools
 bound, with and without the one tool that cuts the modulus.
 
-A model, in floating point: nothing in the library or in the paper depends on it.
+A model, in floating point: nothing in the library or in the paper depends on it. Here "the paper" is the Linnik paper's version at 11/5, in the git history at commit 49dc981; the paper now
+proves 43/20 by another route (hint_cert.py).
 
 The model.  Exponents are in base x, and q = x^tau.  A sum over the non-trivial characters of prod_i |F_i(chi)|, with
 F_i of length x^{a_i} and sum a_i = 1, is split by the sizes |F_i(chi)| ~ x^{a_i s_i}.  At most x^c characters have a

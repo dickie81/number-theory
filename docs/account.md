@@ -225,25 +225,22 @@ In order of what is in reach.
    and not a proof, keeps Li's constant positive down to `θ ≈ 0.5182` once Guth and Maynard's estimate
    (`ZetaGMLV.gm_large_values`) joins Huxley's. A Lean proof below `0.52` would go below Li, resting on the half-plane
    as Linnik's exponent does: the sieve's main terms take the prime number theorem in short ranges from it.
-2. **Linnik's exponent.** The theorem is `2150/1000` (`Linnik21500.linnik_21500`); the paper's is `11/5`. With the
-   window chosen afresh, the paper's certificate passes at `2.199` (total `0.96729K` on 276 cells a side) and fails
-   at `2.198` (supplement §S6, computed, not a theorem). The theorem at `219/100` adds a Type II estimate in two
-   variables and a decomposition chosen term by term, a tree of Buchstab steps that the kernel searches for, and
-   the theorem at `218/100` adds role reversal for a term of three primes. The theorem at `2165/1000` has no
-   Type II window, which closes at `1 + A/2 = 13/6` for the curve's peak `A = 7/3`: its only estimate is the one in
-   two variables, and a term with no prime of the size of that estimate's rest takes the rest from the primes of
-   its comparison's own tree (`SieveFillComp.prop6_fill`). The theorem at `2150/1000` adds the reversal of a term
+2. **Linnik's exponent.** The theorem is `43/20 = 2150/1000` (`Linnik21500.linnik_21500`), the Linnik paper's,
+   from the half-plane and Huxley's density estimate. Its sieve has a Type II estimate in two variables on an explicit
+   region, which counts characters only from `7789/10000` on; Harman's comparisons, with the rest among a term's own
+   primes or among the primes of its comparison's own tree (`SieveFillComp.prop6_fill`); and the reversal of a term
    of three or five primes through its largest prime, as an identity with the cofactor kept as one number
-   (`SieveAd.bd_flip_core`), and its certificate is the plan of a search, which the kernel follows by hints and
-   checks step by step (`SieveAd.solveD_sound`), where the earlier ones are searches that the kernel runs. With
-   role reversal for every term and at two levels the
-   same inputs pass at `2.12` in a computation in floating point, which is not in Lean
-   ([`research-opportunities.md`](research-opportunities.md), §3.1). `0.7151K` of the paper's
-   certificate's `0.9321K` is cells that no depth of
-   decomposition reaches. Two things move it further: a lower density exponent for the characters near `σ = 5/7`, where Chen,
-   Gupta and Li call the dominant term "quite difficult" to improve (their Remark 12.3), or Type I information on
-   longer products than the bilinear estimate's `d₁d₂² < x`. The half-plane at `7/8` would not.
-   `tools/linnik/density_payoff.py` prices a hypothetical curve.
+   (`SieveAd.bd_flip_core`). Its certificate is the plan of a search, which the kernel follows by hints and checks
+   step by step (`SieveAd.solveD_sound`). The library's earlier theorems were steps on the way: at `11/5`, `219/100`
+   and `218/100` with a Type II estimate in one variable on a window, which closes at `1 + A/2 = 13/6` for the peak
+   `A = 7/3` of Chen, Gupta and Li's curve, and at `2165/1000` with the estimate in two variables alone. Below
+   `43/20`, by the exact search's measurements ([`research-opportunities.md`](research-opportunities.md), §3.1),
+   about a quarter of the cost is the cells' width, each `0.005` of exponent costs `5%` to `9%`, and the rules that
+   the certificate lacks (a second level of reversal, the reversal of terms of the sign `+`, a plan that weighs the
+   kernel's time) are worth a few per cent each: `2.14` needs several of them with finer cells, and `2.12` is beyond
+   them. Going further needs Type I information on longer products than the bilinear estimate's `d₁d₂² < x`, or a
+   Type II estimate on a wider region, which a better density estimate above `7789/10000` would give only a little
+   of.
 3. **The half-plane at `7/8`.** OpenAI's main preprint states `Re s > 7/8`, and their own Lean proves it for every
    `χ`; the library proves `11/12`, by the companion route. A proof of `7/8` here would feed the deductions above at
    once: `ψ`, `M`, `ψ(x, χ)` and `Σ d_k` at `x^{7/8+η}`, the squarefree count at `x^{8/17+η}`, and `Θ ≤ 7/8`. The
@@ -324,8 +321,9 @@ In order of what is in reach.
 - Sources formalised in part: Chen, Gupta and Li (Proposition 3.1, not Theorems 1.1 and 1.2), Guth and Maynard
   (Theorem 1.1 at `7/10 ≤ σ ≤ 4/5` only), Kubota and Patterson (the display the half-plane's route uses), OpenAI
   (`11/12` for Dirichlet `L`-functions; not `7/8`, nor their Hecke `L`-functions over `ℚ(√−3)`).
-- Computations that are not theorems: the exponents `2.199` and `2.239` of the Linnik supplement, and the
-  short-interval Monte Carlo of pull request #48.
+- Computations that are not theorems: the region's exactness and the Pólya–Vinogradov check of the Linnik
+  supplement (§S6), the measurements of the sieve below `43/20`, and the short-interval Monte Carlo of pull request
+  #48.
 - Each note lists the sources that were not read; one entry of the Linnik paper's bibliography, Buchstab (1937), is
   unverified.
 

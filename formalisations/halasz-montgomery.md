@@ -26,9 +26,10 @@ Two forms of it are used.
 - `SieveTypeIIHM.sum_bin_hm` (`lib/pnt/SieveHMBin.lean`) is the case `σ = 0`, `β_χ = 0` and `γ_χ = h₀`, one height
   for the whole bin, at `Λ = 2P` for `S ⊆ (P, 2P]`.
 
-These theorems are in the proof of `Linnik22000E.linnik_22000e`, whose axioms are `propext`, `Classical.choice` and
-`Quot.sound` (`lib/check/Check.lean`), so they depend on those only. `hm_duality` does not use the zero-free
-half-plane.
+`hm_duality_W` is in the proof of `Linnik21500.linnik_21500`, the Linnik paper's theorem, through Huxley's estimate,
+and `hm_duality` and `sum_bin_hm` in that of `Linnik22000E.linnik_22000e`, the library's theorem at `11/5`. The
+axioms of both theorems are `propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`), so these depend
+on those only. `hm_duality` does not use the zero-free half-plane.
 
 ## With weights, in mean square, and for two polynomials
 
@@ -90,7 +91,7 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `[5/7, 131/168]`), whose zone is in the git history; its name stays, as the certificate's tests are written for it;
 - `SieveTwoZone7D.typeII_two_hx`: `typeII_two_gen` for `ghx` on `Zone7d L`, with no hypothesis.
 
-The sieve meets the estimate through families of sums (the paper's Lemma 4.4, `SieveFamily.typeII_sharp`): a
+The sieve meets the estimate through families of sums (in one variable `SieveFamily.typeII_sharp`): a
 polynomial variable with coefficients, primes with smooth weights at fixed scales, and sharp comparisons between
 them, each with a prime as a pivot. For two polynomial variables:
 
@@ -219,10 +220,15 @@ the others at most `B`.
 
 ## Where the Linnik paper uses it
 
-- Through Huxley's estimate, on the steps of the density curve from `131/168` on ([huxley-density.md](huxley-density.md)).
-- Directly, on the top piece `[5/6, 11/12]` of the Type II estimate. There `SieveHMBins` and `SieveTypeIIHM` bound
-  each bin of characters at one height by `SieveTypeIIHM.sum_bin_hm`, with the kernel bound above. The window of the
-  library's exponent, which is the paper's, `[43457/100000, 46959/100000]·L` at `L = 11/5`, is the window of this
-  branch (`SieveTypeIIU22000D`). (The earlier windows, `[41556/100000, 47531/100000]·L` at `L = 278/125`,
+- Through Huxley's estimate, on the steps of the density curve from `7789/10000` on
+  ([huxley-density.md](huxley-density.md)).
+- Directly, in mean square, in the Type II estimate in two variables: each bin of characters from `7789/10000` on
+  bounds the mean square of a polynomial by `SieveTypeIIHM.sum_bin_hm_sq`, from the weighted form
+  `SieveTypeIIHM.hm_duality_wt` at the weights `conj W(χ)`, with the kernel bound above.
+
+The library's theorem at `11/5` used it directly on the top piece `[5/6, 11/12]` of its Type II estimate in one
+variable: there `SieveHMBins` and `SieveTypeIIHM` bound each bin of characters at one height by
+`SieveTypeIIHM.sum_bin_hm`, with the kernel bound above, and the window of that theorem,
+`[43457/100000, 46959/100000]·L` at `L = 11/5`, is the window of this branch (`SieveTypeIIU22000D`). (The earlier windows, `[41556/100000, 47531/100000]·L` at `L = 278/125`,
   `[41479/100000, 47555/100000]·L` at `L = 89/40` and `[41335/100000, 48069/100000]·L` at `L = 899/400`, are in the git
   history.)

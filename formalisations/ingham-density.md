@@ -16,8 +16,9 @@ end `σ₂ ≤ 11/12` of the range. In words: for such `c` and for `0 < ε ≤ 1
 every `q ≥ 1`, `1/2 + δ₀ ≤ σ ≤ σ₂` and `T ≥ 2`, at most `C(qT)^{(2+4c+4ε)(1−σ)}(log qT)^{10}` characters mod `q` have
 an `L`-function with a zero in `Re s ≥ σ`, `|Im s| ≤ T`. `LFunction` is Mathlib's `DirichletCharacter.LFunction`.
 
-The theorem is in the proof of `Linnik22000E.linnik_22000e`, whose axioms are `propext`, `Classical.choice` and
-`Quot.sound` (`lib/check/Check.lean`), so it depends on those only. It does not use the zero-free half-plane:
+The theorem is in the proof of `Linnik22000E.linnik_22000e`, the library's theorem at `11/5`, whose axioms are
+`propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`), so it depends on those only. The Linnik
+paper's theorem, at `43/20`, does not use it. It does not use the zero-free half-plane:
 `Eis.LFunction_ne_zero_of_re_gt` is not among the declarations its proof depends on.
 
 ## Source
@@ -77,8 +78,11 @@ The library's proof was written from the standard argument, not transcribed from
 - **The range.** The theorem holds for `1/2 + δ₀ ≤ σ ≤ σ₂ ≤ 11/12`, and the Linnik proof uses it on `[4/7, 5/7]` only.
   Ingham's estimate holds on `1/2 ≤ σ ≤ 1`.
 
-## Where the Linnik paper uses it
+## Where the library uses it
 
-The density curve `g7d` of the Linnik paper's Type II estimate (`SieveCurve7D.counts_7d`) takes the nineteen steps
+The Linnik paper's theorem at `43/20` does not: its curve is the trivial count below `7789/10000`, where its Type II
+estimate in two variables needs no density estimate ([huxley-density.md](huxley-density.md)). The density curve
+`g7d` of the library's theorems at `11/5`, `219/100` and `218/100`, whose Type II estimate in one variable is on a
+window (`SieveCurve7D.counts_7d`), takes the nineteen steps
 `LinnikStairs7.charDensity_in7_0` to `charDensity_in7_18` on `[4/7, 99/140]`, and on `[99/140, 5/7]` the last step at
 `ε = 1/400000`, `LinnikCGLSteps.charDensity_inT`.
