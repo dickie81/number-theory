@@ -242,7 +242,7 @@ $1/2 \le \sigma \le 1$ and $T \ge 2$ let
 \]
 where $\mathcal R(\sigma, T) = \{s : \operatorname{Re} s \ge \sigma,\ |\operatorname{Im} s| \le T\}$: the number of
 characters mod $q$ whose $L$-function has a zero in the rectangle. It counts characters, not zeros, so a bound
-for the number of zeros bounds it. The proof is a sieve on the integers of $(x, 2x]$, $x = q^L$, with $L = 11/5$ in
+for the number of zeros bounds it. The proof is a sieve on the integers of $(x, 2x]$, $x = q^L$, with $L = 43/20$ in
 the end, and $q$ is taken large.
 
 The paper states two inputs, written \emph{Input} and not \emph{hypothesis} because the library proves them
@@ -279,8 +279,7 @@ k = 24\text{--}29: & 2.27493 & 2.27035 & 2.26575 & 2.26117 & 2.25661 & 2.25207
 The exponent $4/(1 + \sigma)$ is that of the first term of Chen, Gupta and Li's Theorem~1.2 \cite{cgl} at $q_1 = q$,
 the largest of its four terms on $[7/10, 4/5]$. It decreases in $\sigma$, so their theorem gives the bound of
 Input~\ref{inp:density} on each step for every exponent above $4/(1 + \sigma_k)$, the $A_k$ among them; it counts
-zeros, which gives the count of characters stated here. Proposition~\ref{prop:window} holds also with every $A_k$
-raised to $4/(1 + \sigma_k) + 10^{-4}$. The library derives each step
+zeros, which gives the count of characters stated here. The library derives each step
 from their Proposition~3.1, the large-values estimate, in the form for one point per character that their proof uses
 (distinct primitive characters, each with one height, and sums over $[6N/5, 9N/5]$ with $N \ge (qT)^{2/3}/2$ and
 $7/10 \le \sigma \le 4/5$); it does not prove their Theorem~1.2 as they state it (\S S5).
@@ -300,9 +299,9 @@ $q \ge 1$, every $1/2 \le \sigma \le 1$ and every $T \ge 2$,
 
 The curve of this paper takes the trivial count below $4/7$, Ingham's
 $3/(2 - \sigma)$ up to $5/7$, Chen, Gupta and Li's $4/(1 + \sigma)$ up to $131/168$, Huxley's $3/(3\sigma - 1)$ up to
-$5/6$, and a constant exponent above, where Input~\ref{inp:half-plane} removes the zeros beyond $11/12$. The window
-condition of Section~\ref{sec:type2} is checked piece by piece, on pieces of the form $A(1 - \sigma)$, so the exponents
-are frozen on short steps and rounded up. The curve $g^*$ is the following.
+$5/6$, and a constant exponent above, where Input~\ref{inp:half-plane} removes the zeros beyond $11/12$. The condition
+of the Type~II estimate (Section~\ref{sec:type2}) is checked piece by piece, on pieces of the form $A(1 - \sigma)$, so the
+exponents are frozen on short steps and rounded up. The curve $g^*$ is the following.
 \begin{itemize}
 \item $g^*(\sigma) = 1$ for $\sigma < 4/7$.
 \item On $[4/7, 5/7)$, divided into twenty steps $[\sigma_-, \sigma_+)$ of length $1/140$,

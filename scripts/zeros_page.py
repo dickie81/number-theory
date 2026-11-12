@@ -16,19 +16,19 @@ statement:
 - the density exponents of `ζ`;
 - the curve `g*` of the Linnik paper (`SieveCurve7D.g7d`), with the theorem that counts each of its pieces, read
   from the proof of `counts_7d` and checked against the piece's range and exponent;
-- the Linnik exponents: the density deduction's, the paper's, and those of the sieve beyond the paper, whose modules
-  must import the Type II estimate in two variables for `g*` (`SieveTwoZone7D.typeII_two_7d`) and must go down from
-  the paper's to one below the paper's floor `1 + A/2`;
-- the paper's window condition (`SieveCurveGlue.WindowOKHM`), with its constants, and the window and the exponent of
-  `window_22000d`;
-- the bound of the certificate (`SieveDeep.totalD_lt_22000E`).
+- the Linnik exponents: the density deduction's; the sieve's with a Type II estimate in one variable on a window
+  (`Linnik22000E.linnik_22000e`, 11/5); and those of the sieve with the Type II estimate in two variables for `g*`
+  (`SieveTwoZone7D.typeII_two_7d`), whose modules must import it and which must go down from 11/5 to one below
+  `1 + A/2` at Chen, Gupta and Li's `A`, the last of them the Linnik paper's theorem;
+- the window condition of a Type II estimate in one variable (`SieveCurveGlue.WindowOKHM`), with its constants, and
+  the window and the exponent of `window_22000d`;
+- the bound of that theorem's certificate (`SieveDeep.totalD_lt_22000E`).
 Every theorem the page presents as a result must be printed by one of the check files `lib/check/Check.lean`,
 `CheckAll.lean`, `CheckZeta23.lean` and `CheckDH.lean`, whose axioms CI checks. The window's exact ends, computed
 here from the Lean's curve and condition, must contain the Lean's window.
-The numbers that are not theorems of the library (the literature's exponents and the paper's computations) are read
-from the paper's sources, and the numbers of the paper's sections and statements from its `.aux` files when it is
-compiled. A change to the Lean or to the paper that the page does not follow makes this script fail; CI runs it with
-`--check`, and `scripts/build_site.py` runs it to write the page.
+The numbers that are not theorems of the library (the literature's exponents) are read from the paper's sources. A
+change to the Lean or to the paper that the page does not follow makes this script fail; CI runs it with `--check`,
+and `scripts/build_site.py` runs it to write the page.
 """
 import html
 import json
@@ -225,23 +225,6 @@ def says(pattern, text, what):
     return grab(pattern, text, f"the paper's {what} (it no longer says it in this form)")
 
 
-def refs():
-    """The numbers of the paper's statements and sections that the page cites: from the compiled paper's `.aux`
-    files, or, when it is not compiled, their numbers when this script was written."""
-    cites = {"defWindow": ("main", "def:window", "Definition {}", "3.3"),
-             "secComparison": ("main", "sec:comparison", "§{}", "8"),
-             "supComputations": ("supplement", "sup:computations", "§{}", "S6")}
-    out = {}
-    for key, (doc, label, shape, last) in cites.items():
-        need(f"\\label{{{label}}}" in open(os.path.join(PAPER, doc + ".tex"), encoding="utf-8").read(),
-             f"the paper has no label {label}")
-        aux = os.path.join(PAPER, doc + ".aux")
-        m = re.search(r"\\newlabel\{" + re.escape(label) + r"\}\{\{([^}]*)\}", open(aux, encoding="utf-8").read()) \
-            if os.path.exists(aux) else None
-        out[key] = shape.format(m.group(1) if m else last)
-    return out
-
-
 def commit():
     try:
         sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True)
@@ -276,14 +259,15 @@ DEDUCTION = [
     ("LinnikG7.linnik_g7d", "with the curve <i>g*</i>"),
 ]
 
-# The Linnik exponents of the sieve beyond the paper's, from the highest, with what each adds. All of them rest on g*
+# The Linnik exponents of the sieve beyond 11/5, from the highest, with what each adds. All of them rest on g*
 # and on the Type II estimate in two variables for it, TWO; the last is the library's exponent.
 SIEVE = [
     ("Linnik21900.linnik_21900",
-     "with the paper's window too, in a tree of Buchstab steps that the kernel searches for"),
+     "with the window too, in a tree of Buchstab steps that the kernel searches for"),
     ("Linnik21800.linnik_21800", "and role reversal for a term of three primes"),
     ("Linnik21650.linnik_21650", "with the estimate in two variables alone: no window"),
-    ("Linnik21500.linnik_21500", "and a term of three or five primes reversed through its largest prime"),
+    ("Linnik21500.linnik_21500",
+     "and a term of three or five primes reversed through its largest prime: the Linnik paper"),
 ]
 TWO = "SieveTwoZone7D.typeII_two_7d"
 
@@ -507,26 +491,19 @@ def extract():
     bound = F(int(m.group(2)), 2 ** k)
     need(bound < 1, f"the bound of SieveDeep.{top} is not less than K")
 
-    # The paper: its numbers, which the page cites.
-    main, supp, bib, r = tex("main.tex"), tex("supplement.tex"), tex("references.tex"), refs()
-    sup = "supplement " + r["supComputations"]
+    # The paper: the literature's numbers, which the page cites.
+    main, bib = tex("main.tex"), tex("references.tex")
     hb = float(says(r"Heath-Brown \\cite\{heath-brown92\} reached \$L = ([\d.]+)\$", main, "Heath-Brown").group(1))
     xy = float(says(r"and then \$L = ([\d.]+)\$ \\cite\{xylouris11\}", main, "Xylouris").group(1))
     hb_src = says(r"\\bibitem\{heath-brown92\} .*?\\emph\{[^}]*\}, (.+?) \((\d{4})\),", bib, "reference for Heath-Brown")
     xy_src = says(r"\\bibitem\{xylouris11\} .*?\\emph\{[^}]*\}, (.+?), Bonn, (\d{4})\.", bib, "reference for Xylouris")
     m = says(r"prove \$A = (\d+)/(\d+)\$, uniformly in \$q\$ and \$T\$", main, "exponent of Chen, Gupta and Li")
     cgl = F(int(m.group(1)), int(m.group(2)))
-    m = says(r"which is \$(\d+)/(\d+)\$ for \$A = (\d+)/(\d+)\$", main, "threshold 1 + A/2")
-    floor = F(int(m.group(1)), int(m.group(2)))
-    need(F(int(m.group(3)), int(m.group(4))) == cgl and floor == 1 + cgl / 2, "the paper's threshold is not 1 + A/2")
-    need(Lbest < floor, f"{best} is not below the paper's floor {t(floor)}, as the page says")
     says(r"Chen--Gupta--Li's estimate \\cite\{cgl\} & density deduction \(not formalised\) &", main, "row for 7/3")
-    m = says(r"in steps & sieve, computed \(not formalised\) & \$(\d+)/(\d+) = ([\d.]+)\$", main, "row for the "
-             "classical sieve")
-    classic = F(int(m.group(1)), int(m.group(2)))
-    excess = F(says(r"and the excess \$(\d+/\d+)\$ of the library's steps", supp, "classical steps").group(1))
-    cpeak = F(says(r"The window is then set at \$3/4\$, where both exponents are \$(\d+/\d+)\$", supp,
-                   "classical peak").group(1)) + excess
+    # The floor of a window for a Type II estimate in one variable, 1 + A/2 at Chen, Gupta and Li's A: computed here,
+    # as the window condition gives it (the window of the 11/5 theorem does not fit at 1 + A/2 for g*'s A, above).
+    floor = 1 + cgl / 2
+    need(Lbest < floor, f"{best} is not below 1 + A/2 = {t(floor)}, as the page says")
 
     ladder = [{"group": "Refereed results, without the half-plane"},
               {"label": "Heath-Brown (" + hb_src.group(2) + ")", "L": hb, "text": dec(hb, 2), "kind": "ref",
@@ -541,11 +518,10 @@ def extract():
                  "dec": dec(cgl, 3), "kind": "other", "src": "not formalised as they state it"})
     ladder += sorted(rows, key=lambda r: -r["L"])
     ladder += [{"group": "Harman's sieve: below the density exponent"},
-               {"label": "with Ingham's and Huxley's estimates in steps", "L": float(classic), "text": lt(classic),
-                "dec": None, "kind": "other", "src": f"computed, not formalised ({sup})"},
-               {"label": "with the curve <i>g*</i> and a bilinear Type I estimate: the Linnik paper", "L": float(Lmain),
-                "text": lt(Lmain), "dec": dec(Lmain, 3), "kind": "lean", "src": "Linnik22000E.linnik_22000e"},
-               {"group": "The sieve with a Type II estimate in two variables, in no paper yet"}]
+               {"label": "with a Type II estimate in one variable, on a window, and a bilinear Type I estimate",
+                "L": float(Lmain), "text": lt(Lmain), "dec": dec(Lmain, 3), "kind": "lean",
+                "src": "Linnik22000E.linnik_22000e"},
+               {"group": "The sieve with a Type II estimate in two variables"}]
     ladder += [{"label": label, "L": float(x), "text": lt(x), "dec": dec(x, 3) if "/" in lt(x) else None,
                 "kind": "lean", "src": n, "main": n == best} for x, n, label in sieve]
 
@@ -557,14 +533,11 @@ def extract():
             la.append({"A": float(x), "L": float(x), "kind": "lean", "role": "ded",
                        "text": (t(x) if x.denominator < 1000 else dec(x, 4)) + " + η",
                        "label": "the deduction, " + re.sub(r"<[^>]+>", "", label), "src": n})
-    la.append({"A": float(cpeak), "L": float(classic), "kind": "other", "role": "classic", "text": lt(classic),
-               "label": f"the sieve, with Ingham's and Huxley's estimates in steps (peak {t(cpeak - excess)} + "
-                        f"{t(excess)})", "src": f"computed, not formalised ({sup})"})
-    la.append({"A": float(gmax), "L": float(Lmain), "kind": "lean", "role": "paper", "text": lt(Lmain),
-               "label": "the Linnik paper's sieve, with the curve g*, its window and a bilinear Type I estimate",
-               "src": "Linnik22000E.linnik_22000e"})
+    la.append({"A": float(gmax), "L": float(Lmain), "kind": "lean", "role": "window", "text": lt(Lmain),
+               "label": "the sieve with the curve g*, a Type II estimate in one variable on a window and a bilinear "
+                        "Type I estimate", "src": "Linnik22000E.linnik_22000e"})
     la.append({"A": float(gmax), "L": float(Lbest), "kind": "lean", "role": "main", "text": lt(Lbest),
-               "label": "the sieve with the Type II estimate in two variables for g*, below the paper's window",
+               "label": "the Linnik paper: the sieve with the Type II estimate in two variables for g*, below 1 + A/2",
                "src": best})
 
     sha, day = commit()
@@ -606,7 +579,6 @@ def extract():
         "nresults": str(len(shown)),
         "commit": f'<a href="{REPO}/tree/{sha}">{sha[:7]}</a>' if sha else "the working tree",
         "date": html.escape(day or ""),
-        **{k: html.escape(v) for k, v in r.items()},
         "theorems": theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain, Lbest, best, kloc, simple,
                                  half, dist),
     }
@@ -669,9 +641,11 @@ def theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain, Lbes
     rows.append((f"At most {m('C(qT)')}<sup class=\"math\">g*(σ)</sup>{m('(1 + log qT)')}<sup>10</sup> characters mod "
                  f"{m('q')} have a zero with {m('β ≥ σ')}, {m('|γ| ≤ T')}", ["SieveCurve7D.counts_7d"]))
     rows.append((f"Every reduced residue class mod {m('q')} contains a prime {m('p ≤ Kq')}"
-                 f"<sup class=\"math\">{t(Lmain)}</sup>: the Linnik paper's exponent", ["Linnik22000E.linnik_22000e"]))
+                 f"<sup class=\"math\">{t(Lmain)}</sup>, by a Type II estimate in one variable on a window",
+                 ["Linnik22000E.linnik_22000e"]))
     rows.append((f"Every reduced residue class mod {m('q')} contains a prime {m('p ≤ Kq')}"
-                 f"<sup class=\"math\">{lt(Lbest)}</sup>, by a Type II estimate in two variables for {m('g*')}",
+                 f"<sup class=\"math\">{lt(Lbest)}</sup>, by a Type II estimate in two variables for {m('g*')}: the "
+                 f"Linnik paper's theorem",
                  [best, TWO]))
     return "\n".join(f"          <tr><td>{a}</td>\n            <td>{', '.join(f'<code>{n}</code>' for n in ns)}</td></tr>"
                      for a, ns in rows)
@@ -708,8 +682,8 @@ def main(argv):
     if "--check" in argv:
         print(f"zeros_page: the page agrees with the Lean and the paper: {len(results)} theorems named as results, all "
               f"printed by Check, CheckAll, CheckZeta23 or CheckDH; g*'s {len(data['g7d'])} pieces each counted by the "
-              f"theorem counts_7d glues in; Linnik's exponent {data['best']['t']} ({data['best']['lean']}), below the "
-              f"paper's floor {data['floor']['t']}; the exact window [{texts['exactLo']}…, {texts['exactHi']}…] "
+              f"theorem counts_7d glues in; Linnik's exponent {data['best']['t']} ({data['best']['lean']}), below "
+              f"1 + A/2 = {data['floor']['t']}; the exact window [{texts['exactLo']}…, {texts['exactHi']}…] "
               f"contains the Lean's, which fits down to L = {data['cert']['corners']}…")
         return 0
     out = argv[0] if argv else OUT
