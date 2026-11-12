@@ -65,7 +65,7 @@ $\Lambda(n) f_Q(n/Q) = \log Q \cdot (\Lambda(n)/\log n) f_0(n/Q)$. Since $\Lambd
 Each term of $R$ is at most $C = \max |f_0|$ in absolute value, and a proper prime power $p^k \le 2Q$ has
 $p \le \sqrt{2Q}$ and $k \le \log_2(2Q)$, so $|R| \le C(\sqrt{2Q} + 1)(\log_2(2Q) + 1)$. It remains to prove
 \begin{equation}\label{eq:Sw-bound}
-  \Bigl|\sum_n \chi(n) \Lambda(n) w_y(n/Q)\Bigr| \le M_\delta(\theta) \, \lambda_{q, y} \, B \bigl(Q^{\theta + \delta} + Q^{\sigma_*} \tau\bigr).
+  \Bigl|\sum_n \chi(n) \Lambda(n) w_y(n/Q)\Bigr| \le M_\delta(\theta) \, \ell_{q, y} \, B \bigl(Q^{\theta + \delta} + Q^{\sigma_*} \tau\bigr).
 \end{equation}
 
 \emph{The Mellin transform.} Write $\mathcal M f(s) = \int_0^\infty u^{s - 1} f(u) \, du$. The substitution
@@ -130,9 +130,9 @@ The disc $D_t$ lies in $\operatorname{Re} s > \theta_0$ and, since $\rho \le 1$,
 \item[(ii)] with $\theta_0 = \theta$ and every $t$ with $|t - y| \le H$, by the hypothesis of the lemma.
 \end{enumerate}
 Since $|t| + 4 \le (|y| + 4)(1 + |t - y|)$ and $\log(1 + u) \le u$, we have
-$\log(q + 2) + \log(|t| + 4) \le \lambda_{q, y}(1 + |t - y|)$. With \eqref{eq:mellin-decay} this gives, in either case,
+$\log(q + 2) + \log(|t| + 4) \le \ell_{q, y}(1 + |t - y|)$. With \eqref{eq:mellin-decay} this gives, in either case,
 \begin{equation}\label{eq:F-bound}
-  |F(\sigma + it)| \le C_{\log}(\theta_0, \theta') \, \lambda_{q, y} \, B \, Q^\sigma (1 + |t - y|)^{-J - 2} \qquad (\theta'
+  |F(\sigma + it)| \le C_{\log}(\theta_0, \theta') \, \ell_{q, y} \, B \, Q^\sigma (1 + |t - y|)^{-J - 2} \qquad (\theta'
   \le \sigma \le 2).
 \end{equation}
 
@@ -148,19 +148,19 @@ heights on the line $\theta + \delta$ plus the integrals over the two horizontal
 \begin{itemize}
 \item On the line $\sigma_*$ with $|t - y| \ge H$: by \eqref{eq:F-bound} in case (i) and
   $(1 + u)^{-J - 2} \le (1 + H)^{-J} (1 + u^2)^{-1}$ for $u \ge H$,
-  $|F| \le C_1 \lambda_{q, y} B Q^{\sigma_*} \tau/(1 + (t - y)^2)$. Each of the two tails contributes at most
-  $\pi C_1 \lambda_{q, y} B Q^{\sigma_*} \tau$.
+  $|F| \le C_1 \ell_{q, y} B Q^{\sigma_*} \tau/(1 + (t - y)^2)$. Each of the two tails contributes at most
+  $\pi C_1 \ell_{q, y} B Q^{\sigma_*} \tau$.
 \item On the line $\theta + \delta$ with $|t - y| \le H$: by \eqref{eq:F-bound} in case (ii),
-  $|F| \le C_2 \lambda_{q, y} B Q^{\theta + \delta}/(1 + (t - y)^2)$, so this part contributes at most
-  $\pi C_2 \lambda_{q, y} B Q^{\theta + \delta}$.
+  $|F| \le C_2 \ell_{q, y} B Q^{\theta + \delta}/(1 + (t - y)^2)$, so this part contributes at most
+  $\pi C_2 \ell_{q, y} B Q^{\theta + \delta}$.
 \item On each horizontal side, of length $11/12 - \theta \le 1$: by \eqref{eq:F-bound} in case (ii), with
-  $Q^\sigma \le Q^{\sigma_*}$, $|F| \le C_2 \lambda_{q, y} B Q^{\sigma_*} (1 + H)^{-J - 2} \le C_2 \lambda_{q, y} B Q^{\sigma_*} \tau$.
+  $Q^\sigma \le Q^{\sigma_*}$, $|F| \le C_2 \ell_{q, y} B Q^{\sigma_*} (1 + H)^{-J - 2} \le C_2 \ell_{q, y} B Q^{\sigma_*} \tau$.
 \end{itemize}
 Adding the pieces and dividing by $2\pi$, the sum in \eqref{eq:Sw-bound} is at most
 \begin{multline*}
-  C_1 \lambda_{q, y} B Q^{\sigma_*} \tau + \tfrac12 C_2 \lambda_{q, y} B Q^{\theta + \delta} + \tfrac1\pi C_2 \lambda_{q, y} B
+  C_1 \ell_{q, y} B Q^{\sigma_*} \tau + \tfrac12 C_2 \ell_{q, y} B Q^{\theta + \delta} + \tfrac1\pi C_2 \ell_{q, y} B
   Q^{\sigma_*} \tau \\
-  \le (C_1 + C_2) \, \lambda_{q, y} \, B \bigl(Q^{\theta + \delta} + Q^{\sigma_*} \tau\bigr),
+  \le (C_1 + C_2) \, \ell_{q, y} \, B \bigl(Q^{\theta + \delta} + Q^{\sigma_*} \tau\bigr),
 \end{multline*}
 which is \eqref{eq:Sw-bound} with $M_\delta(\theta) = C_{\log}(\theta, \theta + \delta) + C_{\log}(11/12, 11/12 +
 \delta)$.
@@ -676,21 +676,21 @@ satisfy its conditions, since $\xi \le L - 2$, $\xi - \delta' - \kappa = c = L -
 = \kappa/4 \le 1/8$.
 
 At $q$, put $w = \lceil q^{\varepsilon_w} \rceil$ and $z_0 = \lceil q^{a_0} \rceil$, so that $w \le z_0$, and $P_1 =
-\lceil q^u \rceil$, $P_2 = \lfloor q^v \rfloor$, $A_r = \lceil q^{\rho_1} \rceil - 1$ and $B_r = \lfloor q^{\rho_2}
+\lceil q^u \rceil$, $P_2 = \lfloor q^v \rfloor$, $R_- = \lceil q^{\rho_1} \rceil - 1$ and $R_+ = \lfloor q^{\rho_2}
 \rfloor$. For large $q$:
 \begin{enumerate}
 \item[(i)] $(P_1 + 1) z_0 \le P_2$, since $(q^u + 2)(q^{a_0} + 1) \le 6q^{u + a_0} \le q^v$ by (a);
 \item[(ii)] $q^{\sum_{\mathcal S_0} h_i} < P_2$, since $2q^{\sum_{\mathcal S_0} h_i} \le q^v$ by (a);
-\item[(iii)] $P_2 B_r \le N_1$, since $P_2 B_r \le q^{v + \rho_2} \le q^L$ by (b);
-\item[(iv)] $\lfloor N_1/B_r \rfloor \ge 4q^{L - \rho_2 - \varepsilon}$ and $\lfloor N_2/(A_r + 1) \rfloor \le 2q^{L -
+\item[(iii)] $P_2 R_+ \le N_1$, since $P_2 R_+ \le q^{v + \rho_2} \le q^L$ by (b);
+\item[(iv)] $\lfloor N_1/R_+ \rfloor \ge 4q^{L - \rho_2 - \varepsilon}$ and $\lfloor N_2/(R_- + 1) \rfloor \le 2q^{L -
   \rho_1} \le q^{L - \rho_1 + \varepsilon}$, since $q^\varepsilon \ge 8$ and $q^{L - \rho_2} \ge 4$;
 \item[(v)] $P_1 + 1 \le 4q^L \le q^{L + 2} \le w^{s_{\max}}$.
 \end{enumerate}
-By (iv), the region's hypothesis of Lemma~\ref{M-lem:term-two} with $A = P_1$, $B = P_2$ and these $A_r$, $B_r$ follows
-from (c): an $m_1 \in [\log_q P_1, \log_q P_2]$ lies in $[u, v]$, and an $m_2$ with $\lfloor N_1/B_r \rfloor \le 4q^{m_1
-+ m_2}$ and $q^{m_1 + m_2} \le \lfloor N_2/(A_r + 1) \rfloor$ has $m_1 + m_2 \in [L - \rho_2 - \varepsilon, L - \rho_1 +
+By (iv), the region's hypothesis of Lemma~\ref{M-lem:term-two} with $A = P_1$, $B = P_2$ and these $R_-$, $R_+$ follows
+from (c): an $m_1 \in [\log_q P_1, \log_q P_2]$ lies in $[u, v]$, and an $m_2$ with $\lfloor N_1/R_+ \rfloor \le 4q^{m_1
++ m_2}$ and $q^{m_1 + m_2} \le \lfloor N_2/(R_- + 1) \rfloor$ has $m_1 + m_2 \in [L - \rho_2 - \varepsilon, L - \rho_1 +
 \varepsilon]$. By (b) and the boxes, every tuple of the family has $q^{\rho_1} \le \prod_{\mathcal S_r} r_i \le
-q^{\rho_2}$, that is $A_r < \prod_{\mathcal S_r} r_i \le B_r$; and by (iii), $B B_r \le N_1$.
+q^{\rho_2}$, that is $R_- < \prod_{\mathcal S_r} r_i \le R_+$; and by (iii), $B R_+ \le N_1$.
 
 \emph{Two patterns.} With $r_{\mathcal S_0} = \prod_{i \in \mathcal S_0} r_i$, split the tuples by $r_{\mathcal S_0} \le
 P_1$ or $r_{\mathcal S_0} > P_1$: each part is a family of the same kind, with one more comparison, $\log P_1 -
@@ -700,7 +700,7 @@ P_1$ or $r_{\mathcal S_0} > P_1$: each part is a family of the same kind, with o
 Buchstab's identity, $S(\mathcal A_r, z_0) = S(\mathcal A_r, r_j) + \sum_{z_0 \le p < r_j} S(\mathcal A_{rp}, p)$, and
 the same for $\mathcal B$. The first sum, over the tuples, and the second, over the $(j + 1)$-tuples $(r_1, \dots, r_j,
 p)$ cut out by the comparisons and $z_0 \le p < r_j$, are of the kind of Lemma~\ref{M-lem:term-two}, sifted at the
-chain's last prime, with $\mathcal S = \mathcal S_0$, the rest $\mathcal S_r$, $A = P_1$, $B = P_2$ and $A_r$, $B_r$:
+chain's last prime, with $\mathcal S = \mathcal S_0$, the rest $\mathcal S_r$, $A = P_1$, $B = P_2$ and $R_-$, $R_+$:
 the chains are strictly decreasing, with entries at least $z_0 \ge q^{\varepsilon_w}$, and the region holds. So this
 pattern contributes at most $2q^{L - \delta_1}/\varphi(q)$.
 % Lean: SieveTwoP6.root_bound2', SieveDecomp.buchstab_pt
@@ -721,8 +721,8 @@ $(r_1, \dots, r_j, y_1, \dots, y_s, p)$ of primes that satisfy the family's comp
 at most $J_0 + s_{\max} + 5$ comparisons with constant terms at most $\Lambda_1' \log q$, sifted at their last prime
 $p$; for $s = 0$ the condition $y_1 < z_0$ reads $p < z_0$. They are strictly decreasing, since $y_1 < z_0 \le r_j$,
 their entries are at least $w \ge q^{\varepsilon_w}$, and with $\mathcal S = \mathcal S_0 \cup \{\text{the places of }
-y_1, \dots, y_s, p\}$ and the rest $\mathcal S_r$ they have $A < \prod_{\mathcal S} \le B$ and $A_r < \prod_{\mathcal
-S_r} \le B_r$. So Lemma~\ref{M-lem:term-two} bounds each size by $q^{L - \delta_1}/\varphi(q)$, and the stops total at
+y_1, \dots, y_s, p\}$ and the rest $\mathcal S_r$ they have $A < \prod_{\mathcal S} \le B$ and $R_- < \prod_{\mathcal
+S_r} \le R_+$. So Lemma~\ref{M-lem:term-two} bounds each size by $q^{L - \delta_1}/\varphi(q)$, and the stops total at
 most $s_{\max} q^{L - \delta_1}/\varphi(q)$.
 % Lean: SieveTwoP6.stops_bound2
 
@@ -780,18 +780,18 @@ The notation is that of the previous proof, with these changes. The $D_1$ and $D
 the square; then $\varepsilon_w = c'/(2k + 4)$ and $s_{\max}$ are as before, $\Lambda_0 = \Lambda_1' + (j + 2s_{\max})(L
 + 1)$, and $\delta_1$ and $\delta_3$ are taken for the chains of the lengths up to $j + 2s_{\max} + 2$ and the tuple
 lengths up to $j + 2s_{\max}$, with $J_0 + 2s_{\max} + 10$ comparisons. At $q$, $P_1$ and $P_2$ are as before, $E' =
-\lceil q^\tau \rceil$ is the threshold of the rest, $A_r = E' - 1$ and $B_r = \lfloor q^{\rho_2} \rfloor$. For large
+\lceil q^\tau \rceil$ is the threshold of the rest, $R_- = E' - 1$ and $R_+ = \lfloor q^{\rho_2} \rfloor$. For large
 $q$, besides (i), (ii), (iii) and (v), with the same proofs:
 \begin{enumerate}
-\item[(vi)] $2 \le E'$ and $E' z_0 \le 4q^{\tau + a_0} \le B_r$, since $q^\tau > 1$ and $6q^{\tau + a_0} \le q^{\rho_2}$
+\item[(vi)] $2 \le E'$ and $E' z_0 \le 4q^{\tau + a_0} \le R_+$, since $q^\tau > 1$ and $6q^{\tau + a_0} \le q^{\rho_2}$
   by (b);
-\item[(vii)] $\lfloor N_1/B_r \rfloor \ge 4q^{L - \rho_2 - \varepsilon}$ and $\lfloor N_2/E' \rfloor \le q^{L - \tau +
+\item[(vii)] $\lfloor N_1/R_+ \rfloor \ge 4q^{L - \rho_2 - \varepsilon}$ and $\lfloor N_2/E' \rfloor \le q^{L - \tau +
   \varepsilon}$;
 \item[(viii)] $E' \le w^{s_{\max}}$, and $4q^t \cdot z_0 \cdot E' \le 16 q^{t + a_0 + \tau} \le 4q^{t + \rho_2}$ by (b).
 \end{enumerate}
-By (vii) and (c), the region's hypothesis of Lemma~\ref{M-lem:term-two} holds with $A = P_1$, $B = P_2$ and these $A_r$,
-$B_r$, as before; and by (vi), a set of primes of a chain whose product lies in $[E', E' z_0)$ is a rest, with $A_r <
-\prod \le B_r$.
+By (vii) and (c), the region's hypothesis of Lemma~\ref{M-lem:term-two} holds with $A = P_1$, $B = P_2$ and these $R_-$,
+$R_+$, as before; and by (vi), a set of primes of a chain whose product lies in $[E', E' z_0)$ is a rest, with $R_- <
+\prod \le R_+$.
 
 \emph{$r_{\mathcal S_0} > P_1$.} Then $r_{\mathcal S_0} \in (P_1, P_2]$ by (ii). Apply \eqref{eq:tree} with $d_0 = r$,
 $z = z_0$, $\gamma = 1$ and $E = E'$: Buchstab's tree from $z_0$ down to $w$, stopped as soon as the product of the
@@ -955,9 +955,9 @@ reduced to a primitive one. So $L(s, \chi)$ is the $L$-function of the primitive
 Euler factors at the primes dividing $q$, whose zeros lie on $\operatorname{Re} s = 0$ and do not affect the counts for
 $\sigma \ge 1/2$. Huxley's estimate is proved in the library in its own form, for the characters mod $q$
 (\file{formalisations/huxley-density.md}): each step is an instance of \lean{LinnikHuxStep.charDensity\_gen} at
-parameters $(M, a, \lambda, A_i, A)$ that satisfy the conditions \lean{LinnikHuxStep.Par.Good}, linear inequalities at
+parameters $(M, a, \lambda_{\mathrm H}, A_i, A)$ that satisfy the conditions \lean{LinnikHuxStep.Par.Good}, linear inequalities at
 the step's two ends with an internal $\varepsilon = 10^{-5}$. The step of $g_{\mathrm H}$ on $[7789/10000, 131/168]$,
-\lean{SieveCurveHx.charDensity\_hxT}, has $M = 1497$, $a = 18703/25000$, $\lambda = 224439/200000$, $A_i =
+\lean{SieveCurveHx.charDensity\_hxT}, has $M = 1497$, $a = 18703/25000$, $\lambda_{\mathrm H} = 224439/200000$, $A_i =
 224447/100000$ and $A = 7014/3125$, the parameters of least $A$ on a grid, found and checked in exact rationals by
 \file{tools/linnik/gen\_zone.py}; the fifteen steps from $131/168$ on are \lean{LinnikStairs7.charDensity\_hx7\_5},
 \dots, \lean{LinnikStairs7.charDensity\_hx7\_19}, and the exponent $101/50$ from $5/6$ on is
@@ -970,9 +970,9 @@ differences between the Lean statement and the published one.
 The statements of Sections~\ref{M-sec:type1} to~\ref{M-sec:certificate} carry, in Lean, the instances
 \lean{SieveRoute.Route} and \lean{SieveRoute.RouteOK}, which hold $L$ and $2 < L \le 5/2$ (with two more fields, which
 the proof at $43/20$ does not use), and \lean{SieveCert.IBPar} and \lean{SieveCert.IBFits}, which hold $L$ as a fraction
-of integers for the tests of Section~\ref{M-sec:decomp}. A statement of the paper that holds under the input either
-takes what the input supplies as a hypothesis (\lean{SieveTypeIIHM.typeII\_two\_gen}, Proposition~\ref{M-prop:type2-gen},
-takes the counts of a density curve) or uses the library's proof of the input. The exception in
+of integers for the tests of Section~\ref{M-sec:decomp}. A statement of the paper that holds under the input uses the library's proof of the input;
+one about a density curve, such as Proposition~\ref{M-prop:type2-gen} (\lean{SieveTypeIIHM.typeII\_two\_gen}), takes
+the curve's counts as a hypothesis as well. The exception in
 Input~\ref{M-inp:half-plane} is the pole of $L(s, \chi_0)$ at $s = 1$, where Mathlib's function, like every function in
 Lean, still has a value; the Lean statement leaves that point aside. The curve $g_{\mathrm H}$ is
 \lean{SieveCurveHx.ghx}, and its exponents are written as fractions.
@@ -989,7 +989,9 @@ proved, whose steps it never used below the threshold. Proposition~\ref{M-prop:r
 (\lean{SieveTypeIIHM.\allowbreak zonePiece\_HH}), each piece by its two ends
 (\lean{SieveTypeIIHM.\allowbreak zonePiece\_of\_ends}) and each of
 the $8$ cases at the ends by \lean{linarith} from the region's six inequalities, for every real $L$. The file is written
-by \file{tools/linnik/gen\_zone.py}, which also checks the $136$ cases at the vertices of the region in exact rationals.
+by \file{tools/linnik/gen\_zone.py}, which also checks in exact rationals the $136$ cases of the Hal\'asz--Montgomery
+inequality and the $8$ of orthogonality at $1/2$ and $7789/10000$, at the vertices of the region cut to $\rho \le 10$
+and $s_i \ge -10$, among which are its five vertices.
 
 In Sections~\ref{M-sec:type1} to~\ref{M-sec:certificate}, \file{formalisations/harman-sieve.md} gives the sources of
 Harman's comparisons and of Lemma~\ref{M-lem:rough} and the differences between the Lean statements and the classical
@@ -1120,11 +1122,13 @@ largest $s_1$ for which the zone condition of Definition~\ref{M-def:zone} holds 
 points of every piece, and compares it with the region's $\lambda\rho - \mu$: at $\rho = 0.01$, $0.05$, $0.1$, $0.2$ and
 $0.3$ the two agree to six decimals. With the Pólya--Vinogradov bound $|k_Y(\psi)| \ll q^{1/2 + \varepsilon}$ in place of
 the kernel bound, the Hal\'asz--Montgomery case reads $\Delta_i = \max(0, g(\beta) - (1/2 - \varepsilon) + s_i)$, and
-the $136$ cases of the proof of Proposition~\ref{M-prop:region} hold at the vertices of the region for $\varepsilon =
-1/1000$, $2/1000$, $3/1000$ and $37/10000$, and fail for $4/1000$, where the curve's value $0.49625$ at the threshold
-exceeds $1/2 - \varepsilon$. The threshold of the region is set where Huxley's exponent, frozen on the step from
-$7789/10000$, brings the curve below $T_* = 249/500$; for Huxley's exponent itself that point is $\beta = 3.498/4.494 =
-0.77837\ldots$.
+the $136$ cases of the proof of Proposition~\ref{M-prop:region} hold at the vertices of the region exactly for
+$\varepsilon \le 1/2 - g_{\mathrm H}(\beta^\dagger) = 0.0037454\ldots$ (\texttt{gen\_zone.py --pv}): beyond, the curve's
+value at the threshold exceeds $1/2 - \varepsilon$. The threshold $7789/10000$ is the one for which the certificate's
+tests are written, with $\lambda = 2(1 - \beta^\dagger - \varpi)$. Huxley's exponent itself brings the curve below
+$T_* = 249/500$ from $\beta = 3.498/4.494 = 0.77837\ldots$ on, and a first step from $7784/10000$, with $A = 2.247$ and
+$A(1 - \beta) = 0.497935 < 249/500$, would allow $\lambda = 0.443192$, a region about $0.2\%$ wider; a step from
+$7783/10000$ has the value $0.49827$ there, too large. The paper does not use this.
 
 \subsection*{The search and its plan}
 
@@ -1143,7 +1147,7 @@ number of parts are the Lean's.
 The plan of the same search passes at $L = 2.145$ with cells of side $0.0035$: its cost is $0.975\mathcal K$, on
 $6.0 \cdot 10^7$ boxes, with $6.6 \cdot 10^6$ steps, which would be about ten MB of hints and two and a half hours of
 the kernel's time; that plan is not in the library. With each test of the search taken at the midpoint of its cell in place of the whole cell,
-which is no certificate, the cost at $43/20$ falls by $24.6\%$; with those of one kind alone, by $12.1\%$ (the estimate
+which is no certificate, the cost at $43/20$ on twenty of the first prime's cells falls by $24.6\%$; with those of one kind alone, by $12.1\%$ (the estimate
 in two variables over the frozen parts of the reversals), $5.8\%$ (the same in the main tree), $5.8\%$ (the comparisons at
 a floor in the main tree) and $4.1\%$ (those over the frozen parts). So about a quarter of the cost is the cells'. Each $0.005$ of the exponent costs between $5\%$ and
 $9\%$: on cells of side $0.005$ the cost is $0.829\mathcal K$, $0.981\mathcal K$ and $1.034\mathcal K$ at $2.165$, $2.155$
@@ -1154,34 +1158,10 @@ the largest frozen prime, saves $2.3\%$ for $2.6$ times the search; the reversal
 library proves (\lean{SieveAd.bd\_flip\_pos}) but the search does not use, $2.3\%$ for twice the search; and a plan that
 weighs each step's cost against its time in the kernel, about $5\%$ at equal time. By these numbers, which are
 estimates (no plan was made at $2.14$), $2.14$ needs the last two and cells of side about $0.003$ together, on a
-certificate two to three times this one; nothing measured gives $2.13$, and $2.12$ is beyond these rules.
-
-A model of the sieve, \file{tools/linnik/harman\_sieve.py}, takes each term with its own floor, the comparisons of
-Section~\ref{M-sec:type1} at every depth, and the reversal of a term of up to six primes through any of its primes, once
-more inside a reversed tree, all in floating point. Its loss, in units of the main term, with every test and cost taken
-conservatively on cells of side $0.002$, and with each cell replaced by its midpoint (the limit of fine cells), is:
-\begin{center}
-\small
-\begin{tabular}{@{}lccccccc@{}}
-\toprule
-$L$ & $2.16$ & $2.15$ & $2.14$ & $2.13$ & $2.12$ & $2.11$ & $2.10$ \\
-\midrule
-on cells & $0.400$ & $0.511$ & $0.634$ & $0.765$ & $0.924$ & $1.097$ & $1.273$ \\
-at midpoints & $0.285$ & $0.364$ & $0.459$ & $0.569$ & $0.690$ & $0.849$ & $1.011$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-So the model passes at $2.12$, and its limit of fine cells is near $2.10$, which corresponds to Baker, Harman and
-Pintz's exponent $0.525$ for primes in short intervals \cite{bhp} in the dictionary of a modulus $q = x^{1/L}$ with an
-interval of length $x^{1 - 1/L}$. What carries it, at $2.13$ on cells of side $0.004$, where the loss is $1.006$, is the
-reversal ($1.090$ without its second level, $1.269$ for terms of at most four primes, $1.426$ with none) and the
-bilinear Type~I estimate on the wider region ($1.174$ without it). It is floating point, and not a certificate; and
-it reverses terms of either sign. On the certificate's shapes, terms of the sign $-$ reversed alone, it gives $0.898$
-at $2.15$ on cells of side $0.004$ with one level, where the exact search gives $0.948$, and $0.848$ with two; so the
-second level is worth $5.6\%$ there, where the exact search finds $2.3\%$, and the model's gain at $2.12$ rests on
-reversing again the boxes of the sign $+$. In the exact search that saves nothing: on nine cells of the first prime
-from $x^{0.16}$ to $x^{0.47}$, no box of two primes that the plan drops (they are $42\%$ of its cost) costs less
-reversed than dropped, with one level or two.
+certificate two to three times this one; nothing measured gives $2.13$, and $2.12$ is beyond these rules. In
+particular a further reversal of the boxes of two primes that the plan drops, which are $42\%$ of its cost, does not
+pay: on nine cells of the first prime from $x^{0.16}$ to $x^{0.47}$, none of them costs less reversed than dropped,
+with one level of reversal or two.
 
 
 % The paper's references (references.tex), numbered as in the paper, then the three cited only here: AIProofWatch's

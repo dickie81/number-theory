@@ -33,6 +33,7 @@ then the classical deduction it compares with. -/
 #print axioms SieveTypeIIHM.ZoneOK
 #print axioms SieveTypeIIHM.twoBound
 #print axioms SieveTypeIIHM.SqExp
+#print axioms SieveTypeIIHM.sum_bin_two
 #print axioms SieveTypeIIHM.bin_bound_two
 #print axioms SieveTypeIIHM.typeII_two_gen
 #print axioms SieveTwoZone7D.zone_hx
@@ -134,7 +135,7 @@ then the classical deduction it compares with. -/
 #print axioms LinnikStairs7.charDensity_hx7_5
 #print axioms LinnikStairs7.charDensity_hx7_19
 #print axioms LinnikStep.charDensity_step
-#print axioms LinnikPower.hm_duality
+#print axioms LinnikReflect.hm_duality_W
 #print axioms LinnikHybrid.mean_value_chars
 #print axioms LinnikHybrid.large_values_chars
 #print axioms LinnikFourth.fourth_moment

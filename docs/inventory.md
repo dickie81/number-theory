@@ -6,7 +6,7 @@ rewrites it, and CI checks that it is current (`--check`).
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
 `lib/check/Check.lean` print the axioms of 1775 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 236, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 237, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
@@ -2058,7 +2058,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `LinnikPower.card_divisors_le`: The divisor bound
 - `LinnikPower.pv_pow`: The power of a Dirichlet polynomial ([note](../formalisations/huxley-density.md))
-- `LinnikPower.hm_duality`: The Halász–Montgomery duality inequality over the characters mod `q` *paper* ([note](../formalisations/halasz-montgomery.md))
+- `LinnikPower.hm_duality`: The Halász–Montgomery duality inequality over the characters mod `q` ([note](../formalisations/halasz-montgomery.md))
 
 #### `LinnikStairs7`: The staircase of the Weyl-conditional route (Ingham steps on `[4/7, 5/7]`, Huxley's on `[16/21, 11/12]`)
 
@@ -2101,7 +2101,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `LinnikWeighted`: The Halász–Montgomery inequality with a smooth weight, its kernel through the primitive
 
-- `LinnikReflect.hm_duality_W`: The Halász–Montgomery inequality with the weight `W(n) = e^{−n/U} − e^{−2n/U}` ([note](../formalisations/halasz-montgomery.md))
+- `LinnikReflect.hm_duality_W`: The Halász–Montgomery inequality with the weight `W(n) = e^{−n/U} − e^{−2n/U}` *paper* ([note](../formalisations/halasz-montgomery.md))
 - `LinnikReflect.norm_hTerm_le_reflect`: The reflected kernel bound for one pair ([note](../formalisations/halasz-montgomery.md))
 - `LinnikReflect.huxley_core`: The product trick against the large values
 
@@ -2985,7 +2985,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.hm_duality_wt`: The Halász–Montgomery duality inequality over the characters mod `q`, with weights *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.sum_bin_hm_sq`: Halász–Montgomery in mean square, for one bin at one height *paper* ([note](../formalisations/halasz-montgomery.md))
-- `SieveTypeIIHM.sum_bin_two`: One bin in two variables ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.sum_bin_two`: One bin in two variables *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.sum_typeII_two_bins`: The Type II estimate in two variables, by bins *paper* ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoChain`: Chains of primes with two Type II variables

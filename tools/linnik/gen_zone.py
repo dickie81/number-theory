@@ -6,6 +6,7 @@
     python3 tools/linnik/gen_zone.py --check    fail if a file on disk differs from what would be written
     python3 tools/linnik/gen_zone.py --exact    the exact zone against the region, on a grid
     python3 tools/linnik/gen_zone.py --table    the curve's pieces and the parameters of the step at the threshold
+    python3 tools/linnik/gen_zone.py --pv [EPS ...]   the cases with the Pólya–Vinogradov bound for the kernels
 
 The estimate in two variables (`SieveTwoTypeII.typeII_two_gen`) holds for two polynomials of lengths `q^{m₁}` and
 `q^{m₂}` when, for every `β ∈ [1/2, 11/12]` and `w ∈ [0, 4·10⁻⁶]`, there are exponents `M_i` of the two mean squares
@@ -49,6 +50,11 @@ orthogonality, so the exact zone of `ghx` for one short variable is the region u
 The Lean proof of the zone glues the curve's pieces: `zone7d_orth` on `[1/2, β†]` (orthogonality, for every curve),
 and `zonePiece_HH` on each piece from `β†` on, the cases at the two ends of a piece by `linarith` from the six
 inequalities (`zends`).
+
+`--pv` checks the same cases with the Pólya–Vinogradov bound `|k_Y(ψ)| ≪ q^{1/2 + ε}` for the kernels in place of the
+bound from the half-plane (`SieveTypeIIHM.offK_bound`): the Halász–Montgomery case is then
+`max(0, g(β) − (1/2 − ε) + s)`. It prints, for each `ε` given (default `1/1000, 2/1000, 3/1000, 37/10000, 4/1000`),
+whether the cases hold at the vertices, and the largest `ε` for which they do, by bisection. Not formalised.
 """
 import itertools
 import math
@@ -197,10 +203,11 @@ def vertices(cons):
     return out
 
 
-def cases(A, beta):
+def cases(A, beta, t=T, h1=H1):
     """The four inequalities of a piece at `β`, `w = 4·10⁻⁶`, as linear forms `(a₁, a₂, a₃, c)` to be `≤ c`:
     `Σ (c_i − m_i)/2 + 1/25000 − ρ(1 − β − W) ≤ 0`, `c_i − m_i ∈ {0, κ_i − m_i}`; `A = None` for orthogonality
-    (`κ − m = s`), else `κ − m = A(1 − β) − T + H1·s`."""
+    (`κ − m = s`), else `κ − m = A(1 − β) − t + h1·s` (`t = T`, `h1 = H1` for the kernel bound of the half-plane,
+    `t = 1/2 − ε`, `h1 = 1` for Pólya–Vinogradov's)."""
     out = []
     for c1 in (0, 1):
         for c2 in (0, 1):
@@ -208,7 +215,7 @@ def cases(A, beta):
             for which, on in ((1, c1), (2, c2)):
                 if not on:
                     continue
-                coef, k0 = (Fr(1), Fr(0)) if A is None else (H1, A * (1 - beta) - T)
+                coef, k0 = (Fr(1), Fr(0)) if A is None else (h1, A * (1 - beta) - t)
                 if which == 1:
                     a1 += coef / 2
                 else:
@@ -236,6 +243,28 @@ def check(ps, lam):
             assert m <= 0, (A, beta, float(m))
             worst = m if worst is None else max(worst, m)
     return len(todo), worst
+
+
+def worst_case(ps, lam, t=T, h1=H1):
+    """The largest excess of a case of `check` at the vertices of the region cut to `ρ ≤ 10`, `s_i ≥ −10`: the cases
+    hold when it is at most `0`."""
+    vs = vertices(region(lam) + [(0, 0, 1, 10), (-1, 0, 0, 10), (0, -1, 0, 10)])
+    todo = [(None, Fr(1, 2)), (None, BD)] + [(A, b) for lo, hi, A, _ in ps[1:] for b in (lo, hi)]
+    return max(a1 * v[0] + a2 * v[1] + a3 * v[2] - c
+               for A, beta in todo for a1, a2, a3, c in cases(A, beta, t, h1) for v in vs)
+
+
+def pv(ps, lam, epss):
+    """The cases with the Pólya–Vinogradov bound for the kernels, at each `ε` of `epss`, and the largest `ε`."""
+    ok = lambda e: worst_case(ps, lam, Fr(1, 2) - e, Fr(1)) <= 0
+    for e in epss:
+        print(f'  ε = {lit(e):>9s} = {float(e):.5f}: the cases ' + ('hold' if ok(e) else 'fail'))
+    a, b = Fr(0), Fr(1, 100)
+    assert ok(a) and not ok(b)
+    for _ in range(40):
+        mid = (a + b) / 2
+        a, b = (mid, b) if ok(mid) else (a, mid)
+    print(f'  they hold exactly for ε up to {float(a):.7f}')
 
 
 def exact(ps, lam):
@@ -496,6 +525,10 @@ def main():
     files, (ps, hxT, n, worst) = generate()
     if '--exact' in sys.argv:
         exact(ps, LAM)
+        return
+    if '--pv' in sys.argv:
+        args = [Fr(x.replace(' ', '')) for x in sys.argv[sys.argv.index('--pv') + 1:]]
+        pv(ps, LAM, args or [Fr(1, 1000), Fr(2, 1000), Fr(3, 1000), Fr(37, 10000), Fr(4, 1000)])
         return
     if '--table' in sys.argv:
         for lo, hi, A, nm in ps:
