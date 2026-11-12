@@ -31,8 +31,14 @@ They need Python 3 only.
 To check that the committed certificate is the one these scripts generate:
 
 ```sh
-python3 tools/linnik/check_certificate.py           # `22000E`, `21900` and `21800`, about four minutes
+python3 tools/linnik/check_certificate.py           # `22000E`, `21900`, `21800` and `21650`, about ten minutes
+python3 tools/linnik/check_certificate.py --inputs  # the files it reads
 ```
+
+`--inputs` lists, as glob patterns, the scripts that the check runs and those they import, and the files of
+`lib/pnt` whose names hold a certificate's tag, among them every file it compares. A change to no other file can
+change its outcome, so CI runs it only when a change touches one of them or the workflow (the job `changes` of
+`.github/workflows/ci.yml`), and on a manual run.
 
 It prints the totals, the cross-checks, the number of parts and the comparison, and ends with
 `CERTIFICATE <tag> PASS` when all its files are identical:
