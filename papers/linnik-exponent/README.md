@@ -46,7 +46,7 @@ Heath-Brown and Xylouris, whose proofs use refereed results only, while this one
 formalisation. The claims table (Appendix A) names the Lean theorem behind each claim, and `lib/check/Check.lean`
 prints their axioms (`lib/check/CheckAll.lean`, with `python3 scripts/check_axioms.py --all`, prints the axioms of
 further declarations of the library). The certificate is checked by the kernel in 1552 parts, in the 17 files
-`lib/pnt/SieveHint21500P1.lean` to `SieveHint21500P17.lean`, which `tools/linnik/hint_cert.py` writes; about 76
+`lib/pnt/SieveHint21500P1.lean` to `SieveHint21500P17.lean`, which `tools/linnik/hint_cert.py` writes; about 63
 minutes of the kernel's time.
 
 To build: `latexmk -pdf main.tex`, then `latexmk -pdf supplement.tex` (pdfLaTeX, as CI does; the supplement reads the

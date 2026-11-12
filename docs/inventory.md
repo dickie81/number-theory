@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1777 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1779 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 238, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 240, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 323 | 985 |
+| `lib/pnt` | 323 | 987 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2481,6 +2481,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdDir`: The search led by hints is sound
 
 - `SieveAd.solveD_sound`: The search led by hints is sound *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.rules_frozC`: The nodes of a tree over a frozen part, with the tests that read the frozen primes once for the tree *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveAd.bd_flipCostD`: The cost of a reversal through the largest prime, its tree searched by hints, bounds the term *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveAd.altFD_sound`: The hinted bound of the main search proves `PR` *paper*
 - `SieveAd.pr_of_partD`: A part of the main search *paper*
@@ -2498,7 +2499,8 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdFast`: The tests in one pass are the tests
 
 - `SieveAd.fillTestsF_eq`: The tests with no window in one pass are `fillTests` *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveAd.frozTestsF_eq`: The tests of the tree over a frozen part in two passes are `frozTests` *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.frozTestsC_okI`: The tests that read the frozen primes once for each tree imply `frozTests` *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.frozTestsC_okJ`: The same for the terms at a floor. *paper* ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFill`: The tests with no window are sound
 

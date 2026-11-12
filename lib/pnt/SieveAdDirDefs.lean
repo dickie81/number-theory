@@ -34,12 +34,15 @@ A set is as many bits as the box has cells (one more over a frozen part, for the
 * `tailP`, `drpMP`: the cost of a dropped box of the main tree in one pass. `chainP`, `drpKP`, `opsKP`: the same
   for the chain of a box of a tree over a frozen part.
 * `gridP`, `cutK`, `kidsCS`, `kidsC`: the cells of the new prime, their cuts read from the hints as numbers of
-  steps of the grid. `sumsP`, `kidsM`, `kidsF`: those of the main tree and of a tree over a frozen part, with the
-  grid and the other cuts of `cutsOfGF` and of `stratFF`.
+  steps of the grid. `sumsP`, `kidsM`: those of the main tree, with the grid and the other cuts of `cutsOfGF`.
+  `headP`, `kidsF`: those of a tree over a frozen part, with the grid and the other cuts of `stratFF`, from a
+  pass over the chain's cells, the cells of the box before the frozen primes'.
 * `partDS`, `partD`: the cells of the new prime cut at given cuts, for a part of the search.
 * `stepD`, `solveD`: the search. `noAltH`: no bound that reads hints.
-* `pickP`, `cfgIM`, `cfgJM`: the configurations of the main tree, read from the hints. `cfgIF`, `cfgJF`: those of
-  a tree over a frozen part.
+* `pickP`, `cfgIM`, `cfgJM`: the configurations of the main tree, read from the hints. `cfgIF`, `pickC`, `cfgJF`:
+  those of a tree over a frozen part. A box of such a tree is a chain's cells followed by the frozen primes of
+  the tree: `cfgJF` reads the chain in a pass, and what it takes from the frozen primes does not depend on the
+  box, so the kernel computes it once for a tree (`canonN`), as for the tests `frozTestsC`.
 * `lastP`, `initP`, `flipOKP`, `flipTreeD`, `flipCostB`, `flipCostD`, `altFD`: the reversal of a box through its
   largest prime, its tree searched this way.
 
@@ -256,14 +259,24 @@ noncomputable def kidsM (κ hI : ℕ) (rec : List Cell → Bool → ℕ → ℕ 
     kidsC rec top bl par κ (stepOf hI (Nat.succ n)) (minN top (Nat.add (Nat.div (Nat.sub DEN ls) 2) 2))
       (Nat.sub ll 1) (Nat.sub (Nat.sub DEN 1) hs) 4096 f f lim h
 
-/-- **The cells of the new prime in a tree over a frozen part** whose frozen primes have the sums `lsβ`, `hsβ`
-and the number `nb`, from the floor `f` to `top`: the grid and the two other cuts are `stratFF`'s. -/
-noncomputable def kidsF (κ hR : ℕ) (ctx : Cell) (lsβ hsβ nb : ℕ) (rec : List Cell → Bool → ℕ → ℕ → ℕ × ℕ)
-    (top : ℕ) (bl : List Cell) (par : Bool) (f lim h : ℕ) : ℕ × ℕ :=
-  sumsP bl 0 0 0 0 fun ls hs n _ =>
-    kidsC rec top bl par κ (cond (Nat.blt (Nat.sub n nb) 2) hR (Nat.mul 2 hR))
-      (minN top (Nat.add (Nat.div (Nat.sub (Nat.succ ctx.2) (Nat.sub ls lsβ)) 2) 2)) 0
-      (Nat.sub (Nat.sub ctx.1 1) (Nat.sub hs hsβ)) 4096 f f lim h
+/-- One pass over the first `j` cells of a box: the sums of their lower and of their upper ends. -/
+noncomputable def headP {α : Type} : List Cell → ℕ → ℕ → ℕ → (ℕ → ℕ → α) → α :=
+  List.rec (motive := fun _ => ℕ → ℕ → ℕ → (ℕ → ℕ → α) → α) (fun _ ls hs k => k ls hs)
+    (fun x _ ih j ls hs k =>
+      Bool.rec (motive := fun _ => α) (ih (Nat.sub j 1) (Nat.add ls x.1) (Nat.add hs x.2) k) (k ls hs)
+        (Nat.beq j 0))
+
+/-- **The cells of the new prime in a tree over a frozen part** of `nb` frozen primes, from the floor `f` to
+`top`: the grid and the two other cuts are `stratFF`'s, from the sums of the chain's cells, the cells of the box
+before the frozen primes'. -/
+noncomputable def kidsF (κ hR : ℕ) (ctx : Cell) (nb : ℕ) (rec : List Cell → Bool → ℕ → ℕ → ℕ × ℕ) (top : ℕ)
+    (bl : List Cell) (par : Bool) (f lim h : ℕ) : ℕ × ℕ :=
+  (fun nch =>
+    headP bl nch 0 0 fun lsc hsc =>
+      kidsC rec top bl par κ (cond (Nat.blt nch 2) hR (Nat.mul 2 hR))
+        (minN top (Nat.add (Nat.div (Nat.sub (Nat.succ ctx.2) lsc) 2) 2)) 0 (Nat.sub (Nat.sub ctx.1 1) hsc) 4096 f f
+        lim h)
+    (Nat.sub (lenR bl) nb)
 
 /-- A cell of the new prime from `a` to the cut `c`, which must lie strictly between `a` and `top`, and what
 follows, `ih`, from `c` with the limit and the hints that the cell leaves. -/
@@ -400,13 +413,29 @@ noncomputable def cfgJM (bl : List Cell) (h : ℕ) : (ℕ × Cfg) × ℕ :=
 bit, the cofactor's. -/
 noncomputable def cfgIF (bl : List Cell) (h : ℕ) : Cfg × ℕ := cfgIP (Nat.pow 2 (Nat.succ (lenR bl))) h
 
+/-- `pickP` over the first `j` cells of a box. -/
+noncomputable def pickC {α : Type} : List Cell → ℕ → ℕ → ℕ → ℕ → ℕ → (ℕ → ℕ → ℕ → ℕ → α) → α :=
+  List.rec (motive := fun _ => ℕ → ℕ → ℕ → ℕ → ℕ → (ℕ → ℕ → ℕ → ℕ → α) → α) (fun _ m lm lo hi k => k m lm lo hi)
+    (fun x _ ih j m lm lo hi k =>
+      Bool.rec (motive := fun _ => α)
+        (ih (Nat.sub j 1) (Nat.div m 2) (Nat.sub lm (Nat.sub lm x.1)) (Nat.add lo (Nat.mul (Nat.land m 1) x.1))
+          (Nat.add hi (Nat.mul (Nat.land m 1) x.2)) k)
+        (k m lm lo hi) (Nat.beq j 0))
+
 /-- **The floor and the configuration of a Buchstab step in a tree over a frozen part**, from the hints: the
-rest's cell is one of the box or the cofactor's, of ends `cl`, `ch`, each widened by `Kb`. -/
-noncomputable def cfgJF (Kb cl ch : ℕ) (bl : List Cell) (h : ℕ) : (ℕ × Cfg) × ℕ :=
-  pickP bl (Nat.pow 2 (Nat.div (Nat.land h 15) 2)) DEN 0 0 1 fun m lm lo hi pw =>
-    cfgJP (Nat.land h 15) (maxN 1 (Nat.sub lm Kb))
-      (maxN 1 (Nat.sub (Nat.add lo (Nat.mul (Nat.land m 1) cl)) Kb))
-      (Nat.add (Nat.add hi (Nat.mul (Nat.land m 1) ch)) Kb) (Nat.mul pw 2) (Nat.div h 16)
+rest's cell is one of the chain's, read in a pass over the chain, or one of the `nb` frozen primes `β`, or the
+cofactor's, of ends `cl`, `ch`; each is widened by `Kb`. `lomβ` is the least lower end of the frozen primes. What
+is read from the frozen primes does not depend on the box. -/
+noncomputable def cfgJF (Kb cl ch : ℕ) (β : List Cell) (nb lomβ : ℕ) (bl : List Cell) (h : ℕ) : (ℕ × Cfg) × ℕ :=
+  (fun n =>
+    pickC bl (Nat.sub n nb) (Nat.pow 2 (Nat.div (Nat.land h 15) 2)) DEN 0 0 fun m lm lo hi =>
+      canonN m fun mc =>
+        (fun p cofb =>
+          cfgJP (Nat.land h 15) (maxN 1 (Nat.sub (Nat.sub lm (Nat.sub lm lomβ)) Kb))
+            (maxN 1 (Nat.sub (Nat.add (Nat.add lo p.1) (Nat.mul cofb cl)) Kb))
+            (Nat.add (Nat.add (Nat.add hi p.2) (Nat.mul cofb ch)) Kb) (Nat.pow 2 (Nat.succ n)) (Nat.div h 16))
+          (msumP β mc 0 0) (Nat.land (Nat.div mc (Nat.pow 2 nb)) 1))
+    (lenR bl)
 
 end
 
@@ -441,17 +470,21 @@ def flipOKP (maxlen : ℕ) (ctx c : Cell) (hs ok n lh : ℕ) : Bool :=
 variable [SieveCert.IBPar]
 
 /-- **The tree over the frozen part of a reversal**, searched by hints: the terms of the frozen part at the floor
-and with the configuration read from the hints, and the cells of the chain's first prime by the hints after them. The frozen
-primes `c :: b` have the sums `lsβ`, `hsβ` and the number `nb`. -/
+and with the configuration read from the hints, and the cells of the chain's first prime by the hints after them.
+The frozen primes `c :: b` have the sums `lsβ`, `hsβ` and the number `nb`; what the tests and the search read from
+them is computed once for the tree (`frozTestsC`, `cfgJF`). -/
 noncomputable def flipTreeD (κ hR fuel : ℕ) (ctx c : Cell) (b : List Cell) (lsβ hsβ nb lim h : ℕ) : ℕ × ℕ :=
   (fun τ t Kb cl ch =>
     (fun p =>
       cond (Nat.blt 0 p.1.1 && Nat.ble p.1.1 (minN c.1 t) && τ.okJ (c :: b) p.1.1 p.1.2)
-        (kidsF κ hR ctx lsβ hsβ nb (solveD (opsKP ctx nb) τ cfgIF (cfgJF Kb cl ch) (kidsF κ hR ctx lsβ hsβ nb) noAltH fuel)
+        (kidsF κ hR ctx nb
+          (solveD (opsKP ctx nb) τ cfgIF (cfgJF Kb cl ch (c :: b) nb (lomP (c :: b) DEN)) (kidsF κ hR ctx nb) noAltH
+            fuel)
           t (c :: b) true p.1.1 lim p.2)
         (lim, p.2))
-      (cfgJF Kb cl ch (c :: b) h))
-    (frozTestsF (Nat.sub DEN ctx.2) (Nat.add (Nat.sub DEN ctx.1) 1) (Nat.add 12 (Nat.div DEN c.1)) (c :: b))
+      (cfgJF Kb cl ch (c :: b) nb (lomP (c :: b) DEN) (c :: b) h))
+    (frozTestsC (Nat.sub DEN ctx.2) (Nat.add (Nat.sub DEN ctx.1) 1) (Nat.add 12 (Nat.div DEN c.1)) (c :: b) lsβ hsβ
+      nb (lomP (c :: b) DEN))
     (flipT ctx) (Nat.add 12 (Nat.div DEN c.1)) (maxN 1 (Nat.sub (Nat.sub DEN ctx.2) hsβ))
     (Nat.sub (Nat.succ (Nat.sub DEN ctx.1)) lsβ)
 

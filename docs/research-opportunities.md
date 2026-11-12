@@ -391,11 +391,11 @@ covers. The region does not close at `13/6`.
     of side at most `0.006` over the frozen parts: the search visits `3.4·10^7` boxes, `2.8·10^7` of them
     over frozen parts, in nine minutes on four cores, and costs `0.94847K`; its plan has `3.4·10^6` steps,
     `1.6·10^5` of them reversals, and `5.2` MB of hints, in `1552` parts (`lib/pnt/SieveHint21500P1.lean` and
-    the sixteen files after it), which the kernel checks in 76 minutes of its time (17 files, of 187 to
-    303 seconds each, three at a time on four cores).
+    the sixteen files after it), which the kernel checks in 63 minutes of its time (17 files, of 143 to
+    271 seconds each, three at a time on four cores).
 - **What is not written.** Role reversal at a second level and for terms of the sign `+` (below); a certificate
   below `2.15`. The plan of the theorem's search passes at `2.145` with cells of side `0.0035` (`0.975K`, on
-  `6.0·10^7` boxes; `6.6·10^6` steps, which is about ten MB of hints and two and a half hours of the kernel
+  `6.0·10^7` boxes; `6.6·10^6` steps, which is about ten MB of hints and two hours of the kernel
   as the search led by hints is now), twice the build of the theorem at `2.15` for `0.005` of exponent. What the second level and tests that do not narrow with the
   cells would give in exact terms is measured in the last two items below.
   - *Where the cells' loss is, with this rule* (12 November; the theorem's search at `2.15`, on twenty of the
@@ -581,9 +581,9 @@ covers. The region does not close at `13/6`.
     **The tests in one pass** (`lib/pnt/SieveAdFastDefs.lean`). The sums that a test reads, of the cells' ends
     over each set of its configuration, are accumulated in one pass by the lists' recursor, with the bits of
     the masks as factors and no branch; the cells' check `f ≤ lo ≤ hi ≤ DEN` is the sum of
-    `(lo − f) + (hi − lo) + (DEN − hi)` compared with `n(DEN − f)`; over a frozen part a second pass reads the
-    frozen primes. They are equal to the tests that are proved sound (`SieveAd.fillTestsF_eq`,
-    `SieveAd.frozTestsF_eq`). A test costs `0.14` ms in place of `2.3` in the main tree, `0.4` in place of
+    `(lo − f) + (hi − lo) + (DEN − hi)` compared with `n(DEN − f)`; over a frozen part a second pass read the
+    frozen primes (it is gone: below). The tests of the main tree are equal to the tests that are proved
+    sound (`SieveAd.fillTestsF_eq`). A test costs `0.14` ms in place of `2.3` in the main tree, `0.4` in place of
     `2.6` at a floor, `1.5` in place of `4.4` at a reversal's root, and `0.5` and `1.1` in place of `3.0` and
     `4.4` over a frozen part. With them alone and the first certificate's hints unchanged, one of its 39 files
     took `339` s in place of `469` s.
@@ -593,16 +593,47 @@ covers. The region does not close at `13/6`.
     **The dropped boxes in one pass**, with Buchstab's function in the arithmetic of `ℕ` written out
     (`SieveAd.drpMP_eq`, `SieveAd.opsKP_eq`, `SieveAd.omKwP_eq`), and the reversal's shares from one pass over
     the frozen primes.
-    A step now costs: an evaluated box `0.3` ms in the main tree and `0.8` over a frozen part; a Buchstab step
-    `1.2` and `2.1`; a reversal's root `3`; a dropped box `0.25` and `0.35`. The hints are `5.2` MB where they
-    were `2.5`: ten bits or so for an evaluation, fifteen for a Buchstab step, three for a cut. The kernel
-    checks the theorem's certificate in 76 minutes of its time (17 files), where it took seven hours: the
-    same plan, the same cost `0.94847K`.
-    **What is left**: by the step times, nearly half of the kernel's time is now the tests, and three quarters
-    of that the tests over the frozen parts (two passes, fourteen sums each). The pass over the frozen primes is the same for every box of a tree whose
-    sets agree on them, and the kernel would compute it once if the sets were passed in a form in which equal
-    sets are equal terms; that is not written. The kernel's per-step time varies by a third from run to run on
-    the machine used, so a gain below a tenth is not measurable there on single files.
+    A step then cost: an evaluated box `0.3` ms in the main tree; a Buchstab step `1.2`; a reversal's root
+    `3`; a dropped box `0.25`. Over a frozen part the same profile gave `0.8`, `2.1` and `0.35`, which were
+    not the search's costs: it computed the sums and the number of the frozen primes at each box by the
+    definitions that the proofs use, where the search has them once for a tree, and `0.35` was the cost of the
+    dropped box's bound without its step. Timed a tree at a time (below), the boxes over a frozen part cost
+    `0.67` (evaluated), `1.46` (a Buchstab step) and `0.45` (dropped). The hints are `5.2` MB where they were
+    `2.5`: ten bits or so for an evaluation, fifteen for a Buchstab step, three for a cut. The kernel checked
+    the theorem's certificate in 76 minutes of its time (17 files), where it took seven hours: the same plan,
+    the same cost `0.94847K`.
+    **The frozen primes once for a tree** (`SieveAd.frozTestsC`). A box of a tree over a frozen part is the
+    cells of a chain, one or two, followed by the tree's frozen primes, two or four, the same at every box of
+    the tree; the tests read them at every box, in their second pass. Now a test reads the chain alone in its
+    pass, and takes from the frozen primes the sums of their ends over a set of bits and their least lower
+    end, which are values of the tree (`SieveAd.roleB`, `SieveAd.lomP`). The kernel keeps what it has computed
+    for a term, and so computes such a value once if it meets it as the same term: a set comes out of the
+    hints as a number computed at the box, and `SieveAd.canonN` hands it on as a numeral, the same term for
+    the same set. The floor of a Buchstab step and the cuts of a new prime read the chain alone too
+    (`SieveAd.cfgJF`, `SieveAd.kidsF`). The tests are no longer the proved ones as functions, for they do not
+    check the cells after the chain's; they imply them on the boxes of the tree (`SieveAd.frozTestsC_okI`,
+    `SieveAd.frozTestsC_okJ`), and a statement of the tree concerns no other box (`SieveAd.rules_frozC`). The
+    hints and the part files are the same. On the boxes of 150 trees of the plan, the boxes of a tree
+    evaluated together with the tree's frozen primes as one term, as in the search (777 evaluated boxes, 300
+    Buchstab steps), an evaluated box costs `0.50` ms where it cost `0.67`, and a Buchstab step `1.07` where
+    it cost `1.46` (its test `0.58` where `0.98`). Side by side on one machine, on every twentieth part of the
+    plan, the kernel takes `11%` to `12%` less time than it did (`181`, `185` and `193` s where the two passes
+    took `203`, `209` and `220`), in agreement with those two costs, which give a tenth over the plan's steps.
+    The 17 files took 63 minutes in the run after the change, three at a time; that run and the one of 76
+    minutes were hours apart on a machine whose speed drifts, so their difference says less than the measure
+    side by side. What limits the gain: the trees are small (in thirty parts of the plan, 3822 trees of 6.7
+    tests on average), half of the sets of an evaluation and three fifths of the sets of a Buchstab step had
+    been met before in their tree, and the first computation of the sums for a set (`0.14` ms) costs about
+    what the second pass did.
+    **Measured and not written**: a box packed into one number, each end a field of 64 bits, with the sum
+    over a set by one `AND` with a mask and one remainder. On 300 boxes of the plan, one at a time, the test
+    of an evaluation takes `0.13` ms that way where the pass takes `0.11` in the main tree, and `0.34` where
+    the two passes took `0.59` over a frozen part, which reading the frozen primes once gains by other means.
+    **What is left**: no one part of a step stands out. A Buchstab step of the main tree (`1.2` ms) is its
+    test (`0.4`), the reading of its hints with the branches of the step (`0.4`) and the loop over the cells
+    of the new prime (`0.4`). The kernel's per-step time varies by a third from run to run on the machine
+    used, so a gain is measured side by side, the old search against the new on the same parts at the same
+    time: the three runs above gave `11.2%`, `11.4%` and `12.3%`.
   - *The exact search with it* (12 November; `tools/linnik/flip_proto.py`, the search of `fill_cert.py` with
     this rule in exact integers; not yet a Lean search). The cost of a reversed box of the sign `−` is
     `(c(h₁D₀ + E) + bdK·E)/(DEN·K)`, with `c` the cost of the tree over the frozen part, `D₀` the share of the

@@ -13,8 +13,11 @@ kernel computes at a box is written for it. Here:
 * `kidsC_sound`, `stepD_sound`, `solveD_sound`: **the search is sound**: for nodes that prove a statement and a
   hinted bound that does, a cost that it returns below its limit has the statement, whatever the hints are. Each
   step is one of the rules among which a search chooses (`SieveAd.Rules`), and is checked before it is used.
+* `rules_frozC`: the nodes of a tree over a frozen part prove its statements with the tests `frozTestsC`, which
+  read the frozen primes once for the tree: a statement of the tree concerns the boxes that end with the frozen
+  primes, and on those `frozTestsC` implies `frozTests`.
 * `bd_flipCostD`, `altFD_sound`: the reversal of a box through its largest prime, its tree searched by hints,
-  bounds the term (`bd_flip_core` with the tree's bound from `solveD_sound`).
+  bounds the term (`bd_flip_core` with the tree's bound from `solveD_sound` and `rules_frozC`).
 * `pr_of_partD`, `pr_of_partD_at`: a part of the main search, as the kernel checks it, bounds the term of its
   range.
 
@@ -373,17 +376,29 @@ theorem kidsM_sound {P : List Cell → Bool → ℕ → Prop}
   rw [e] at hh ⊢
   exact kidsC_sound hsplit hrec top bl par _ _ _ _ _ 4096 f f lim h hh
 
+/-- The pass `headP` gives its continuation two numbers. -/
+theorem headP_eq {α : Type} : ∀ (l : List Cell) (j ls hs : ℕ) (k : ℕ → ℕ → α),
+    ∃ ls' hs', headP l j ls hs k = k ls' hs'
+  | [], _, ls, hs, _ => ⟨ls, hs, rfl⟩
+  | x :: b, j, ls, hs, k => by
+    show ∃ ls' hs', Bool.rec (motive := fun _ => α) (headP b (Nat.sub j 1) (Nat.add ls x.1) (Nat.add hs x.2) k)
+      (k ls hs) (Nat.beq j 0) = k ls' hs'
+    cases Nat.beq j 0 with
+    | true => exact ⟨ls, hs, rfl⟩
+    | false => exact headP_eq b (Nat.sub j 1) (Nat.add ls x.1) (Nat.add hs x.2) k
+
 /-- The cells of the new prime in a tree over a frozen part are sound. -/
 theorem kidsF_sound {P : List Cell → Bool → ℕ → Prop}
     (hsplit : ∀ {a m top : ℕ} {bl : List Cell} {par : Bool} {c1 c2 : ℕ}, a < m → m < top →
       P ((a, m) :: bl) par c1 → P ((m, top) :: bl) par c2 → P ((a, top) :: bl) par (c1 + c2))
-    (κ hR : ℕ) (ctx : Cell) (lsβ hsβ nb : ℕ) : KidsP P (kidsF κ hR ctx lsβ hsβ nb) := by
+    (κ hR : ℕ) (ctx : Cell) (nb : ℕ) : KidsP P (kidsF κ hR ctx nb) := by
   intro rec hrec top bl par f lim h hh
   unfold kidsF at hh ⊢
-  obtain ⟨ls, hs, n, ll, e⟩ := sumsP_eq bl 0 0 0 0 fun ls hs n _ =>
-    kidsC rec top bl par κ (cond (Nat.blt (Nat.sub n nb) 2) hR (Nat.mul 2 hR))
-      (minN top (Nat.add (Nat.div (Nat.sub (Nat.succ ctx.2) (Nat.sub ls lsβ)) 2) 2)) 0
-      (Nat.sub (Nat.sub ctx.1 1) (Nat.sub hs hsβ)) 4096 f f lim h
+  simp only [] at hh ⊢
+  obtain ⟨ls, hs, e⟩ := headP_eq bl (Nat.sub (lenR bl) nb) 0 0 fun lsc hsc =>
+    kidsC rec top bl par κ (cond (Nat.blt (Nat.sub (lenR bl) nb) 2) hR (Nat.mul 2 hR))
+      (minN top (Nat.add (Nat.div (Nat.sub (Nat.succ ctx.2) lsc) 2) 2)) 0 (Nat.sub (Nat.sub ctx.1 1) hsc) 4096 f f
+      lim h
   rw [e] at hh ⊢
   exact kidsC_sound hsplit hrec top bl par _ _ _ _ _ 4096 f f lim h hh
 
@@ -655,7 +670,42 @@ theorem flipOK_of_P {maxlen : ℕ} {bl : List Cell} {c0 : Cell} {b : List Cell} 
   · rw [hlast]
     exact h5'
 
+/-- Cells with `0 < lo < hi` whose upper ends sum to at most `DEN` pass the check of the tests from `1`: for the
+cells of a box but the last. -/
+theorem cellsFrom_one_init {d : Cell} : ∀ l : List Cell, cellsOK (l ++ [d]) = true → hiSum (l ++ [d]) ≤ DEN →
+    cellsFrom 1 l = true
+  | [], _, _ => rfl
+  | x :: l, h, hs => by
+    have h' : (Nat.blt 0 x.1 && Nat.blt x.1 x.2 && cellsOK (l ++ [d])) = true := h
+    have hs' : x.2 + hiSum (l ++ [d]) ≤ DEN := hs
+    simp only [Bool.and_eq_true, Nat.blt_eq] at h'
+    show (Nat.ble 1 x.1 && Nat.ble x.1 x.2 && Nat.ble x.2 DEN && cellsFrom 1 l) = true
+    simp only [Bool.and_eq_true, Nat.ble_eq]
+    exact ⟨⟨⟨h'.1.1, h'.1.2.le⟩, by omega⟩, cellsFrom_one_init l h'.2 (by omega)⟩
+
 variable [Route] [RouteOK] [SieveCert.IBPar] [IBFits]
+
+omit [RouteOK] [IBFits] in
+/-- **The nodes of a tree over a frozen part, with the tests that read the frozen primes once for the tree**:
+they are the nodes of the tree with the tests `frozTests`, since a statement of the tree only concerns the boxes
+that end with the frozen primes, and on those the tests `frozTestsC` imply `frozTests`. -/
+theorem rules_frozC {ι : Type} {S : ℕ → Finset ι} {R : ι → ℕ} {O : Ops} {e₁ e₂ Kb : ℕ} {β : List Cell}
+    (hβ : cellsFrom 1 β = true) (h : Rules O (frozTests e₁ e₂ Kb β) (PF S R β)) :
+    Rules O (frozTestsC e₁ e₂ Kb β (loSum β) (hiSum β) β.length (lomP β DEN)) (PF S R β) where
+  van := h.van
+  evl := by
+    intro bl par cfg hg hI ch hch
+    subst hch
+    exact h.evl hg (frozTestsC_okI e₁ e₂ Kb β ch cfg hβ hI) ch rfl
+  drp := h.drp
+  alt := h.alt
+  split := h.split
+  buch := by
+    intro x b par f cfg c hg hf hfx hJ hc ch hch
+    have hJ' : (frozTests e₁ e₂ Kb β).okJ (x :: b) f cfg = true := by
+      rw [hch] at hJ ⊢
+      exact frozTestsC_okJ e₁ e₂ Kb β ch f cfg hβ hJ
+    exact h.buch hg hf hfx hJ' hc ch hch
 
 /-- **The cost of a reversal through the largest prime, its tree searched by hints, bounds the term.** A cost
 that `flipCostD` returns below its limit gives `Bd false (cost/K)` for the box, whatever the hints. -/
@@ -701,15 +751,29 @@ theorem bd_flipCostD (κ hR fuel maxlen : ℕ) {bl : List Cell} {lim h : ℕ}
       by_contra hge
       rw [Nat.ble_eq_true_of_le (not_lt.1 hge)] at hcap
       exact Bool.noConfusion hcap
+    -- the cells of the frozen primes
+    have hcf : cellsFrom 1 (c0 :: b) = true := by
+      have hok2 := hok
+      simp only [flipOK, Bool.and_eq_true, Nat.ble_eq] at hok2
+      obtain ⟨⟨⟨⟨⟨⟨⟨⟨_, _⟩, _⟩, hcells⟩, hfit⟩, _⟩, _⟩, _⟩, _⟩ := hok2
+      have h1 : cellsOK ((c0 :: b) ++ [lastC bl]) = true := by
+        rw [hbl]
+        exact hcells
+      have h2 : hiSum ((c0 :: b) ++ [lastC bl]) ≤ DEN := by
+        rw [hbl]
+        omega
+      exact cellsFrom_one_init (c0 :: b) h1 h2
     -- the tree over the frozen part
     unfold flipTreeD at hrdef
     simp only [] at hrdef
     generalize hpdef : cfgJF (Nat.add 12 (Nat.div DEN c0.1))
       (maxN 1 (Nat.sub (Nat.sub DEN (lastC bl).2) (Nat.add c0.2 (hiSum b))))
-      (Nat.sub (Nat.succ (Nat.sub DEN (lastC bl).1)) (Nat.add c0.1 (loSum b))) (c0 :: b) h = p at hrdef
+      (Nat.sub (Nat.succ (Nat.sub DEN (lastC bl).1)) (Nat.add c0.1 (loSum b))) (c0 :: b) (Nat.succ b.length)
+      (lomP (c0 :: b) DEN) (c0 :: b) h = p at hrdef
     by_cases hc : (Nat.blt 0 p.1.1 && Nat.ble p.1.1 (minN c0.1 (flipT (lastC bl))) &&
-        (frozTestsF (Nat.sub DEN (lastC bl).2) (Nat.add (Nat.sub DEN (lastC bl).1) 1)
-          (Nat.add 12 (Nat.div DEN c0.1)) (c0 :: b)).okJ (c0 :: b) p.1.1 p.1.2) = true
+        (frozTestsC (Nat.sub DEN (lastC bl).2) (Nat.add (Nat.sub DEN (lastC bl).1) 1)
+          (Nat.add 12 (Nat.div DEN c0.1)) (c0 :: b) (Nat.add c0.1 (loSum b)) (Nat.add c0.2 (hiSum b))
+          (Nat.succ b.length) (lomP (c0 :: b) DEN)).okJ (c0 :: b) p.1.1 p.1.2) = true
     swap
     · rw [Bool.not_eq_true] at hc
       rw [hc, Bool.cond_false] at hrdef
@@ -718,20 +782,19 @@ theorem bd_flipCostD (κ hR fuel maxlen : ℕ) {bl : List Cell} {lim h : ℕ}
     rw [hc, Bool.cond_true] at hrdef
     simp only [Bool.and_eq_true, Nat.blt_eq, Nat.ble_eq] at hc
     have hokJ : (frozTests (DEN - (lastC bl).2) (DEN - (lastC bl).1 + 1) (12 + DEN / c0.1) (c0 :: b)).okJ (c0 :: b)
-        p.1.1 p.1.2 = true := by
-      rw [← frozTestsF_eq]
-      exact hc.2
+        p.1.1 p.1.2 = true :=
+      frozTestsC_okJ (DEN - (lastC bl).2) (DEN - (lastC bl).1 + 1) (12 + DEN / c0.1) (c0 :: b) [] p.1.1 p.1.2 hcf
+        hc.2
     refine bd_flip_core hok k' hl hβ.symm hc.1.2 hokJ fun s hβl hR' => ?_
     have hR'' : Rules (opsKP (lastC bl) (Nat.succ b.length))
-        (frozTestsF (Nat.sub DEN (lastC bl).2) (Nat.add (Nat.sub DEN (lastC bl).1) 1)
-          (Nat.add 12 (Nat.div DEN c0.1)) (c0 :: b))
+        (frozTestsC (Nat.sub DEN (lastC bl).2) (Nat.add (Nat.sub DEN (lastC bl).1) 1)
+          (Nat.add 12 (Nat.div DEN c0.1)) (c0 :: b) (Nat.add c0.1 (loSum b)) (Nat.add c0.2 (hiSum b))
+          (Nat.succ b.length) (lomP (c0 :: b) DEN))
         (PF (fun q => frozS q (e1 (lastC bl)) (e2 (lastC bl)) (boxFn (c0 :: b) (s + 1) hβl)) frozR (c0 :: b)) := by
-      rw [opsKP_eq, frozTestsF_eq]
-      exact hR'
-    have hk := kidsF_sound hR''.split κ hR (lastC bl) (Nat.add c0.1 (loSum b)) (Nat.add c0.2 (hiSum b))
-      (Nat.succ b.length) _
-      (solveD_sound hR'' cfgIF _ (kidsF_sound hR''.split κ hR (lastC bl) (Nat.add c0.1 (loSum b))
-        (Nat.add c0.2 (hiSum b)) (Nat.succ b.length)) (altH := noAltH)
+      rw [opsKP_eq]
+      exact rules_frozC hcf hR'
+    have hk := kidsF_sound hR''.split κ hR (lastC bl) (Nat.succ b.length) _
+      (solveD_sound hR'' cfgIF _ (kidsF_sound hR''.split κ hR (lastC bl) (Nat.succ b.length)) (altH := noAltH)
         (fun _ _ _ _ _ hh => absurd hh (lt_irrefl _)) fuel)
       (flipT (lastC bl)) (c0 :: b) true p.1.1 CAPK p.2 (by rw [← hrdef]; exact hccap)
     rw [← hrdef] at hk

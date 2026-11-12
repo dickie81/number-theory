@@ -1910,7 +1910,7 @@ limit, which says nothing. So the hints are not trusted: a wrong hint can make t
 \subsection{The certificate at \texorpdfstring{$43/20$}{43/20}}
 
 \begin{proposition}\label{prop:certificate}
-% Lean: Linnik21500.tree21500 (the bound of the first term), Linnik21500.linnik_21500 (the root's test, by evaluation), Linnik21500.part21500, Linnik21500.sound21500, Linnik21500.soundF21500, SieveAd.fillTests_sound, SieveAd.fillTestsF_eq, SieveAd.frozTestsF_eq
+% Lean: Linnik21500.tree21500 (the bound of the first term), Linnik21500.linnik_21500 (the root's test, by evaluation), Linnik21500.part21500, Linnik21500.sound21500, Linnik21500.soundF21500, SieveAd.fillTests_sound, SieveAd.fillTestsF_eq, SieveAd.frozTestsC_okI, SieveAd.frozTestsC_okJ, SieveAd.rules_frozC
 Let $L = 43/20$ and $f_* = 49170839016$. The box of no prime passes (J3) at $f_*$ with $\mathcal S_0 = \mathcal S_1 =
 \emptyset$ and $\iota = 1$, and the term of the box $((f_*, D/2 + 1))$ with the sign $-$ is bounded at $c/\mathcal K$,
 by the search of this section, with
@@ -1957,8 +1957,8 @@ less than $0.02\mathcal K$ in all.
 The kernel's search takes $3400745$ steps: $3400489$ in the parts and the $256$ steps of Buchstab's identity outside
 them; $161674$ of them are reversals through the largest prime. The hints take $5220964$ bytes. The search outside the
 kernel that made the plan visits $34356403$ boxes, $28257594$ of them over frozen parts, in about nine minutes on four
-cores. The kernel checks the $17$ files in about $76$ minutes, each in three to five minutes; \S S5 and \S S6 have the
-statistics in more detail.
+cores. The kernel checks the $17$ files in about $63$ minutes, each in two and a half to four and a half minutes;
+\S S5 and \S S6 have the statistics in more detail.
 
 \section{Proof of Theorem~\ref{thm:main}}\label{sec:proof}
 
@@ -2003,13 +2003,12 @@ only. The axioms of a theorem cover its whole dependency cone, so a \lean{sorry}
 (\texttt{scripts/check\_hygiene.py}). The certificate of Proposition~\ref{prop:certificate} is checked by kernel
 evaluation, \lean{decide +kernel}, and not by compiled code, on definitions that are arithmetic on Lean's core natural
 numbers, lists and booleans: the search that the certificate's hints lead is evaluated in $1552$ parts, in $17$ files
-of three to five minutes each, about $76$ minutes of the kernel's time, and the $256$ Buchstab steps that join the
-parts are proved one by one. The proof's import cone contains no module of the library's formalisation of Chen, Gupta
-and Li's paper, and no declaration of Ingham's estimate is reachable from it, by a static over-approximation of the
-constants that each proof uses (\texttt{scripts/decl\_reach.py}); Ingham's zero detector is used, in the proof of
-Huxley's estimate. The toolchain is Lean \texttt{v4.35.0-rc3}
-with Mathlib at commit \texttt{0f64d30a}, and the repository's continuous integration builds the library and checks
-the axioms on every change to it.
+of two and a half to four and a half minutes each, about $63$ minutes of the kernel's time, and the $256$ Buchstab steps
+that join the parts are proved one by one. The proof's import cone contains no module of the library's formalisation of
+Chen, Gupta and Li's paper, and no declaration of Ingham's estimate is reachable from it, by a static over-approximation
+of the constants that each proof uses (\texttt{scripts/decl\_reach.py}); Ingham's zero detector is used, in the proof of
+Huxley's estimate. The toolchain is Lean \texttt{v4.35.0-rc3} with Mathlib at commit \texttt{0f64d30a}, and the
+repository's continuous integration builds the library and checks the axioms on every change to it.
 
 Among the statements that are not Lean theorems are: the historical statements of Sections~\ref{sec:intro}
 and~\ref{sec:comparison}, among them the remarks on R.~Li's and on Banks and Shparlinski's results; the heuristic
@@ -2146,8 +2145,8 @@ Dirichlet's theorem is Mathlib's.
 \file{SieveAdFlip.lean} & \lean{SieveAd.flip\_cover}, \lean{SieveAd.flip\_inject} \\
 \file{SieveAdFlipSum.lean} & \lean{SieveAd.froz\_weight\_le}, \lean{SieveAd.bd\_flip\_neg} \\
 \file{SieveAdFlipSearch.lean} & \lean{SieveAd.bd\_flip\_core} \\
-\file{SieveAdFast.lean} & \lean{SieveAd.fillTestsF\_eq}, \lean{SieveAd.frozTestsF\_eq} \\
-\file{SieveAdDir.lean} & \lean{SieveAd.bd\_flipCostD}, \lean{SieveAd.altFD\_sound}, \lean{SieveAd.solveD\_sound}, \lean{SieveAd.pr\_of\_partD} \\
+\file{SieveAdFast.lean} & \lean{SieveAd.fillTestsF\_eq}, \lean{SieveAd.frozTestsC\_okI}, \lean{SieveAd.frozTestsC\_okJ} \\
+\file{SieveAdDir.lean} & \lean{SieveAd.rules\_frozC}, \lean{SieveAd.bd\_flipCostD}, \lean{SieveAd.altFD\_sound}, \lean{SieveAd.solveD\_sound}, \lean{SieveAd.pr\_of\_partD} \\
 \file{SieveAdSearchG.lean} & \lean{SieveAd.solveG\_sound} \\
 \file{SieveAdRevSearch.lean} & \lean{SieveAd.linnik\_pr} \\
 \file{LinnikWeighted.lean} & \lean{LinnikReflect.hm\_duality\_W} \\
@@ -2281,8 +2280,10 @@ Proposition~\ref{prop:certificate}, the certificate & \lean{Linnik21500.tree2150
  & \lean{Linnik21500.part21500}, \\
  & \lean{Linnik21500.sound21500}, \\
  & \lean{Linnik21500.soundF21500} \\
-\quad the tests in one pass, equal to the tests & \lean{SieveAd.fillTestsF\_eq}, \\
- & \lean{SieveAd.frozTestsF\_eq} \\
+\quad the tests in one pass, equal to the tests & \lean{SieveAd.fillTestsF\_eq} \\
+\quad the tests over a frozen part in one pass over the chain, which imply the tests on the boxes of its tree & \lean{SieveAd.frozTestsC\_okI}, \\
+ & \lean{SieveAd.frozTestsC\_okJ}, \\
+ & \lean{SieveAd.rules\_frozC} \\
 \quad the root's test, by evaluation & \lean{Linnik21500.linnik\_21500} \\
 \quad Dirichlet's theorem, for the small moduli (Mathlib) & \lean{Nat.forall\_exists\_prime\_gt\_and\_modEq} \\
 \quad the prime number theorem, from Input~\ref{inp:half-plane} & \lean{HalfPlanePNT.psi\_isBigO\_eleven\_twelfths} \\

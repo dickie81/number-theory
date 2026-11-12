@@ -7,7 +7,8 @@ arithmetic of the type classes. The kernel spends two to five milliseconds on on
 traversals. Here the same tests are computed in one pass over the box by the recursor of lists, with no branch
 inside the pass: a sum over a set is `Σ (bit of the set)·(end of the cell)`, and the check `f ≤ lo ≤ hi ≤ DEN` of
 the cells is a sum of deviations compared with its least value. The kernel takes a tenth of a millisecond.
-`SieveAdFast.lean` proves that they are the same functions.
+`SieveAdFast.lean` proves that the tests with no window are the same functions, and that the tests of a tree over
+a frozen part imply the proved ones on the boxes of the tree.
 
 * `bpass f bl j m0 mr m1 … k`: one pass. For the sets of bits `m0`, `mr`, `m1`: the sums of the lower and upper
   ends over them among the first `j` cells, the sums of all the lower and upper ends of the first `j` cells, the
@@ -16,8 +17,13 @@ the cells is a sum of deviations compared with its least value. The kernel takes
 * `uOfP`, `vOfP`, `coreI2P`, `coreJ2P`, `coreJ3P`: `uOf`, `vOf` and the checks on numbers, with the arithmetic of
   `ℕ` written out.
 * `okI2F`, `okJ2F`, `okJ3F`, `fillTestsF`: the tests with no window.
-* `lenR`: the length of a list, by the recursor. `okIFF`, `okJF3F`, `okJF2F`, `frozTestsF`: the tests of the tree
-  over a frozen part, in a pass over the box and one over the frozen primes.
+* `lenR`: the length of a list, by the recursor.
+* `okIFC`, `okJF3C`, `okJF2C`, `frozTestsC`: the tests of the tree over a frozen part. A box of such a tree is a
+  chain of cells followed by the tree's frozen primes, which are the same at every box. The tests read the chain
+  in a pass (`cpass`), and take from the frozen primes the sums of their ends over a set of bits (`msumP`,
+  `roleB`) and their least lower end (`lomP`), which are values of the tree: the kernel keeps what it has computed
+  for a term, and `canonN` gives it the same term for the same set of bits, so that it computes each of those sums
+  once for a tree and not at every box.
 
 The file imports `SieveAdFrozDefs.lean`.
 -/
@@ -158,63 +164,107 @@ noncomputable def okJ3F (bl : List Cell) (f : ℕ) (cfg : Cfg) : Bool :=
 noncomputable def fillTestsF : Tests :=
   ⟨okI2F, fun bl f cfg => cond (Nat.beq cfg.kind 2) (okJ3F bl f cfg) (okJ2F bl f cfg)⟩
 
-/-! ### The tests of the tree over a frozen part -/
-
-/-- The sums of the roles of a set of bits `m` over the chain, the frozen primes and the cofactor, passed to `k`:
-`loR`, `hiR` and `hiRc`, from the chain's sums `a`, `b` (lower, upper) and `bT` (all the upper ends), the frozen
-primes' sums `c`, `d` (lower, upper) and `cT`, `dT` (all of them), and whether the set has the cofactor. -/
-def roleP (e₁ e₂ : ℕ) (cof : Bool) (a b bT c d cT dT : ℕ) (k : ℕ → ℕ → ℕ → Bool) : Bool :=
-  k (Nat.add (cond cof (Nat.sub e₁ (Nat.sub dT d)) c) a) (Nat.add (cond cof (Nat.sub e₂ (Nat.sub cT c)) d) b)
-    (Nat.add (cond cof (Nat.sub dT d) (Nat.sub e₂ c)) (Nat.sub bT b))
+/-! ### The tests of the tree over a frozen part, the frozen primes read once for each tree -/
 
 /-- Whether the set of bits `m` has the cofactor: the bit after the `nch` cells of the chain and the `nb` frozen
 primes. -/
 def cofP (m nch nb : ℕ) : Bool := Nat.beq (Nat.land (Nat.div (Nat.div m (Nat.pow 2 nch)) (Nat.pow 2 nb)) 1) 1
 
-/-- **`okIF` in a pass over the box and one over the frozen primes.** -/
-noncomputable def okIFF (e₁ e₂ : ℕ) (β bl : List Cell) (cfg : Cfg) : Bool :=
-  (fun nb nch =>
-    bpass 1 bl nch cfg.s0 cfg.sr 0 0 0 0 0 0 0 0 0 0 0 fun a0 b0 ar br _ _ _ bT e n =>
-      bpass 0 β nb (Nat.div cfg.s0 (Nat.pow 2 nch)) (Nat.div cfg.sr (Nat.pow 2 nch)) 0 0 0 0 0 0 0 0 0 0 0
-        fun c0 d0 cr dr _ _ cT dT _ _ =>
-          roleP e₁ e₂ (cofP cfg.s0 nch nb) a0 b0 bT c0 d0 cT dT fun lo0 hi0 _ =>
-            roleP e₁ e₂ (cofP cfg.sr nch nb) ar br bT cr dr cT dT fun lor hir _ =>
-              cellsP 1 e n && Nat.beq (Nat.land cfg.s0 cfg.sr) 0 && Nat.blt 0 lor && coreI2P lo0 hi0 lor hir)
-    (lenR β) (Nat.sub (lenR bl) (lenR β))
+/-- **The pass over the chain of a box**, its first `j` cells: `k` is given, added to the values they start
+from, the sums of the lower and of the upper ends over the sets of bits `m0`, `mr`, `m1`, the sum of the upper
+ends, the sum of `(lo − f) + (hi − lo) + (DEN − hi)` and the number of cells, over those cells alone. -/
+noncomputable def cpass (f : ℕ) : List Cell → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ →
+    (ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → Bool) → Bool :=
+  List.rec (motive := fun _ => ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ →
+      (ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → Bool) → Bool)
+    (fun _ _ _ _ a0 b0 ar br a1 b1 bT e n k => k a0 b0 ar br a1 b1 bT e n)
+    (fun x _ ih j m0 mr m1 a0 b0 ar br a1 b1 bT e n k =>
+      Bool.rec (motive := fun _ => Bool)
+        (ih (Nat.sub j 1) (Nat.div m0 2) (Nat.div mr 2) (Nat.div m1 2)
+          (Nat.add a0 (Nat.mul (Nat.land m0 1) x.1)) (Nat.add b0 (Nat.mul (Nat.land m0 1) x.2))
+          (Nat.add ar (Nat.mul (Nat.land mr 1) x.1)) (Nat.add br (Nat.mul (Nat.land mr 1) x.2))
+          (Nat.add a1 (Nat.mul (Nat.land m1 1) x.1)) (Nat.add b1 (Nat.mul (Nat.land m1 1) x.2))
+          (Nat.add bT x.2)
+          (Nat.add e (Nat.add (Nat.add (Nat.sub x.1 f) (Nat.sub x.2 x.1)) (Nat.sub DEN x.2))) (Nat.succ n) k)
+        (k a0 b0 ar br a1 b1 bT e n) (Nat.beq j 0))
 
-/-- **`okJF3` in a pass over the box and one over the frozen primes.** -/
-noncomputable def okJF3F (e₁ e₂ Kb : ℕ) (β bl : List Cell) (f : ℕ) (cfg : Cfg) : Bool :=
-  (fun nb nch =>
-    bpass f bl nch cfg.s0 0 cfg.s1 0 0 0 0 0 0 0 0 0 0 fun a0 b0 _ _ _ b1 _ bT e n =>
-      bpass 0 β nb (Nat.div cfg.s0 (Nat.pow 2 nch)) 0 (Nat.div cfg.s1 (Nat.pow 2 nch)) 0 0 0 0 0 0 0 0 0 0
-        fun c0 d0 _ _ c1 d1 cT dT _ _ =>
-          roleP e₁ e₂ (cofP cfg.s0 nch nb) a0 b0 bT c0 d0 cT dT fun lo0 hi0 _ =>
-            roleP e₁ e₂ (cofP cfg.s1 nch nb) 0 b1 bT c1 d1 cT dT fun _ hi1 hc1 =>
-              Nat.blt 0 f && cellsP f e n &&
-                coreJ3P f cfg.e (uOfP fillLo) (vOfP (Nat.add (Nat.add fillLo f) 1))
-                  (Nat.sub (uOfP fillLo) (Nat.sub lo0 Kb)) fillLo (Nat.add (Nat.add fillLo f) 1) (Nat.sub lo0 Kb)
-                  (Nat.add hi0 Kb) (Nat.add hi1 Kb) (Nat.add hc1 Kb))
-    (lenR β) (Nat.sub (lenR bl) (lenR β))
+/-- `k` at the number `m`, written as a term that is the same for equal numbers: the kernel, which keeps what it
+has computed for a term, then computes once what `k` does with it. -/
+noncomputable def canonN {α : Type} (m : ℕ) (k : ℕ → α) : α :=
+  Nat.rec (motive := fun _ => α) (k 0) (fun p _ => k (Nat.succ p)) m
 
-/-- **`okJF2` in a pass over the box and one over the frozen primes.** -/
-noncomputable def okJF2F (e₁ e₂ Kb : ℕ) (β bl : List Cell) (f : ℕ) (cfg : Cfg) : Bool :=
-  (fun nb nch =>
-    bpass f bl nch cfg.s0 cfg.sr cfg.s1 0 0 0 0 0 0 0 0 0 0 fun a0 b0 ar br _ b1 _ bT e n =>
-      bpass 0 β nb (Nat.div cfg.s0 (Nat.pow 2 nch)) (Nat.div cfg.sr (Nat.pow 2 nch))
-        (Nat.div cfg.s1 (Nat.pow 2 nch)) 0 0 0 0 0 0 0 0 0 0
-        fun c0 d0 cr dr c1 d1 cT dT _ _ =>
-          roleP e₁ e₂ (cofP cfg.s0 nch nb) a0 b0 bT c0 d0 cT dT fun lo0 hi0 _ =>
-            roleP e₁ e₂ (cofP cfg.sr nch nb) ar br bT cr dr cT dT fun lor hir _ =>
-              roleP e₁ e₂ (cofP cfg.s1 nch nb) 0 b1 bT c1 d1 cT dT fun _ hi1 hc1 =>
-                Nat.blt 0 f && cellsP f e n && Nat.beq (Nat.land cfg.s0 cfg.sr) 0 && Nat.blt 0 lor &&
-                  coreJ2P f cfg.e (uOfP (Nat.sub lor Kb)) (vOfP (Nat.add hir Kb))
-                    (Nat.sub (uOfP (Nat.sub lor Kb)) (Nat.sub lo0 Kb)) (Nat.sub lor Kb) (Nat.add hir Kb)
-                    (Nat.sub lo0 Kb) (Nat.add hi0 Kb) (Nat.add hi1 Kb) (Nat.add hc1 Kb))
-    (lenR β) (Nat.sub (lenR bl) (lenR β))
+/-- The sums of the lower and of the upper ends of the cells of the set of bits `m`, added to `a` and `b`. -/
+noncomputable def msumP : List Cell → ℕ → ℕ → ℕ → ℕ × ℕ :=
+  List.rec (motive := fun _ => ℕ → ℕ → ℕ → ℕ × ℕ) (fun _ a b => (a, b))
+    (fun x _ ih m a b =>
+      ih (Nat.div m 2) (Nat.add a (Nat.mul (Nat.land m 1) x.1)) (Nat.add b (Nat.mul (Nat.land m 1) x.2)))
 
-/-- **The tests of the tree over the frozen part, in two passes.** -/
-noncomputable def frozTestsF (e₁ e₂ Kb : ℕ) (β : List Cell) : Tests :=
-  ⟨okIFF e₁ e₂ β,
-    fun bl f cfg => cond (Nat.beq cfg.kind 2) (okJF3F e₁ e₂ Kb β bl f cfg) (okJF2F e₁ e₂ Kb β bl f cfg)⟩
+/-- The least of `a` and of the cells' lower ends. -/
+noncomputable def lomP : List Cell → ℕ → ℕ :=
+  List.rec (motive := fun _ => ℕ → ℕ) (fun a => a) (fun x _ ih a => ih (Nat.sub a (Nat.sub a x.1)))
+
+/-- **The frozen primes' part of `loR`, `hiR` and `hiRc`** for a set of bits `m` over the frozen primes `β` and
+the cofactor: `lsβ`, `hsβ` are the sums of the ends of `β` and `nb` its number of cells. A value of the tree: it
+does not depend on the box. -/
+noncomputable def roleB (e₁ e₂ : ℕ) (β : List Cell) (lsβ hsβ nb m : ℕ) : ℕ × ℕ × ℕ :=
+  (fun p cof =>
+    (cond cof (Nat.sub e₁ (Nat.sub hsβ p.2)) p.1, cond cof (Nat.sub e₂ (Nat.sub lsβ p.1)) p.2,
+      cond cof (Nat.sub hsβ p.2) (Nat.sub e₂ p.1)))
+    (msumP β m 0 0) (cofP m 0 nb)
+
+/-- **`okIF` with the frozen primes read once for each tree**: a pass over the chain's cells, and `roleB` at the
+sets' bits over the frozen primes. The frozen primes' cells are not checked here. -/
+noncomputable def okIFC (e₁ e₂ : ℕ) (β : List Cell) (lsβ hsβ nb : ℕ) (bl : List Cell) (cfg : Cfg) : Bool :=
+  (fun nch =>
+    cpass 1 bl nch cfg.s0 cfg.sr 0 0 0 0 0 0 0 0 0 0 fun a0 b0 ar br _ _ _ e n =>
+      canonN (Nat.div cfg.s0 (Nat.pow 2 nch)) fun m0 =>
+        canonN (Nat.div cfg.sr (Nat.pow 2 nch)) fun mr =>
+          (fun R0 Rr =>
+            cellsP 1 e n && Nat.beq (Nat.land cfg.s0 cfg.sr) 0 && Nat.blt 0 (Nat.add Rr.1 ar) &&
+              coreI2P (Nat.add R0.1 a0) (Nat.add R0.2.1 b0) (Nat.add Rr.1 ar) (Nat.add Rr.2.1 br))
+            (roleB e₁ e₂ β lsβ hsβ nb m0) (roleB e₁ e₂ β lsβ hsβ nb mr))
+    (Nat.sub (lenR bl) nb)
+
+/-- **`okJF3` with the frozen primes read once for each tree**; `lomβ` is at most their lower ends. -/
+noncomputable def okJF3C (e₁ e₂ Kb : ℕ) (β : List Cell) (lsβ hsβ nb lomβ : ℕ) (bl : List Cell) (f : ℕ)
+    (cfg : Cfg) : Bool :=
+  (fun nch =>
+    cpass f bl nch cfg.s0 0 cfg.s1 0 0 0 0 0 0 0 0 0 fun a0 b0 _ _ _ b1 bT e n =>
+      canonN (Nat.div cfg.s0 (Nat.pow 2 nch)) fun m0 =>
+        canonN (Nat.div cfg.s1 (Nat.pow 2 nch)) fun m1 =>
+          (fun R0 R1 =>
+            Nat.blt 0 f && cellsP f e n && Nat.ble f lomβ &&
+              coreJ3P f cfg.e (uOfP fillLo) (vOfP (Nat.add (Nat.add fillLo f) 1))
+                (Nat.sub (uOfP fillLo) (Nat.sub (Nat.add R0.1 a0) Kb)) fillLo (Nat.add (Nat.add fillLo f) 1)
+                (Nat.sub (Nat.add R0.1 a0) Kb) (Nat.add (Nat.add R0.2.1 b0) Kb) (Nat.add (Nat.add R1.2.1 b1) Kb)
+                (Nat.add (Nat.add R1.2.2 (Nat.sub bT b1)) Kb))
+            (roleB e₁ e₂ β lsβ hsβ nb m0) (roleB e₁ e₂ β lsβ hsβ nb m1))
+    (Nat.sub (lenR bl) nb)
+
+/-- **`okJF2` with the frozen primes read once for each tree**; `lomβ` is at most their lower ends. -/
+noncomputable def okJF2C (e₁ e₂ Kb : ℕ) (β : List Cell) (lsβ hsβ nb lomβ : ℕ) (bl : List Cell) (f : ℕ)
+    (cfg : Cfg) : Bool :=
+  (fun nch =>
+    cpass f bl nch cfg.s0 cfg.sr cfg.s1 0 0 0 0 0 0 0 0 0 fun a0 b0 ar br _ b1 bT e n =>
+      canonN (Nat.div cfg.s0 (Nat.pow 2 nch)) fun m0 =>
+        canonN (Nat.div cfg.sr (Nat.pow 2 nch)) fun mr =>
+          canonN (Nat.div cfg.s1 (Nat.pow 2 nch)) fun m1 =>
+            (fun R0 Rr R1 =>
+              Nat.blt 0 f && cellsP f e n && Nat.ble f lomβ && Nat.beq (Nat.land cfg.s0 cfg.sr) 0 &&
+                Nat.blt 0 (Nat.add Rr.1 ar) &&
+                coreJ2P f cfg.e (uOfP (Nat.sub (Nat.add Rr.1 ar) Kb)) (vOfP (Nat.add (Nat.add Rr.2.1 br) Kb))
+                  (Nat.sub (uOfP (Nat.sub (Nat.add Rr.1 ar) Kb)) (Nat.sub (Nat.add R0.1 a0) Kb))
+                  (Nat.sub (Nat.add Rr.1 ar) Kb) (Nat.add (Nat.add Rr.2.1 br) Kb) (Nat.sub (Nat.add R0.1 a0) Kb)
+                  (Nat.add (Nat.add R0.2.1 b0) Kb) (Nat.add (Nat.add R1.2.1 b1) Kb)
+                  (Nat.add (Nat.add R1.2.2 (Nat.sub bT b1)) Kb))
+              (roleB e₁ e₂ β lsβ hsβ nb m0) (roleB e₁ e₂ β lsβ hsβ nb mr) (roleB e₁ e₂ β lsβ hsβ nb m1))
+    (Nat.sub (lenR bl) nb)
+
+/-- **The tests of the tree over the frozen part, the frozen primes read once for each tree.** -/
+noncomputable def frozTestsC (e₁ e₂ Kb : ℕ) (β : List Cell) (lsβ hsβ nb lomβ : ℕ) : Tests :=
+  ⟨okIFC e₁ e₂ β lsβ hsβ nb,
+    fun bl f cfg =>
+      cond (Nat.beq cfg.kind 2) (okJF3C e₁ e₂ Kb β lsβ hsβ nb lomβ bl f cfg)
+        (okJF2C e₁ e₂ Kb β lsβ hsβ nb lomβ bl f cfg)⟩
 
 end SieveAd

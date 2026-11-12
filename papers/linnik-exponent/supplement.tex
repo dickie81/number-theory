@@ -1082,14 +1082,18 @@ by compiled code. The search led by hints is evaluated on $1552$ parts, the theo
 \lean{SieveAd.tree21500\_1551} in the $17$ files \file{lib/pnt/SieveHint21500P1.lean} to
 \file{lib/pnt/SieveHint21500P17.lean}, each of which bounds the search's value on a range of cells; the $256$ steps of
 Buchstab's identity that join the parts, and the root's test, are proved one by one in \file{lib/pnt/Linnik21500.lean},
-each by \lean{decide +kernel}. The kernel checks each file in $187$ to $303$ seconds, about $76$ minutes in all; it
-takes about $0.3$ ms on an evaluated box ($0.8$ ms over a frozen part), $1.2$ ms on a step of Buchstab's identity
-($2.1$ ms), $0.25$ ms on a dropped box ($0.35$ ms) and $3$ ms on a reversal's root. The search reads every
+each by \lean{decide +kernel}. The kernel checks each file in $143$ to $271$ seconds, about $63$ minutes in all; it
+takes about $0.3$ ms on an evaluated box ($0.5$ ms over a frozen part), $1.2$ ms on a step of Buchstab's identity
+($1.1$ ms), $0.25$ ms on a dropped box ($0.45$ ms) and $3$ ms on a reversal's root. The search reads every
 configuration from the hints (\file{lib/pnt/SieveAdDirDefs.lean}), and its tests are written for the kernel: one pass
 over a box by the recursor of lists, with the arithmetic of the natural numbers written out and the bits of the sets as
-factors (\lean{SieveAd.fillTestsF}, \lean{SieveAd.frozTestsF}). They are proved equal to the tests of
-Lemmas~\ref{M-lem:tests} and~\ref{M-lem:frozen-tests} (\lean{SieveAd.fillTestsF\_eq}, \lean{SieveAd.frozTestsF\_eq}),
-so they are sound. The hints are $1552$ natural numbers, $5220964$ bytes in all, written in hexadecimal.
+factors (\lean{SieveAd.fillTestsF}). Over a frozen part the pass reads the cells of the chain alone: the frozen primes
+are the same at every box of a tree, and the sums of their cells' ends over a set of them are values of the tree, which
+the kernel computes once for the tree and the set (\lean{SieveAd.frozTestsC}). The tests of the main tree are proved
+equal to the tests of Lemma~\ref{M-lem:tests} (\lean{SieveAd.fillTestsF\_eq}). Those over a frozen part imply the tests
+of Lemma~\ref{M-lem:frozen-tests} on the boxes of a tree over it (\lean{SieveAd.frozTestsC\_okI},
+\lean{SieveAd.frozTestsC\_okJ}), and a statement of the tree concerns no other box (\lean{SieveAd.rules\_frozC}). So
+they are sound. The hints are $1552$ natural numbers, $5220964$ bytes in all, written in hexadecimal.
 The definitions the kernel evaluates are arithmetic on Lean's core natural numbers, lists and booleans; their files
 import from Mathlib only the notation $\mathbb N$. Lean's kernel reduces the operations of the natural numbers on
 literals (addition, multiplication, division, comparison and the like) by the GMP library's arithmetic rather than by
@@ -1148,7 +1152,7 @@ number of parts are the Lean's.
 \subsection*{Below $43/20$}
 
 The plan of the same search passes at $L = 2.145$ with cells of side $0.0035$: its cost is $0.975\mathcal K$, on
-$6.0 \cdot 10^7$ boxes, with $6.6 \cdot 10^6$ steps, which would be about ten MB of hints and two and a half hours of
+$6.0 \cdot 10^7$ boxes, with $6.6 \cdot 10^6$ steps, which would be about ten MB of hints and two hours of
 the kernel's time; that plan is not in the library. With each test of the search taken at the midpoint of its cell in place of the whole cell,
 which is no certificate, the cost at $43/20$ on twenty of the first prime's cells falls by $24.6\%$; with those of one kind alone, by $12.1\%$ (the estimate
 in two variables over the frozen parts of the reversals), $5.8\%$ (the same in the main tree), $5.8\%$ (the comparisons at

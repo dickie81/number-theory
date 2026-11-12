@@ -129,7 +129,9 @@ then the classical deduction it compares with. -/
 #print axioms Linnik21500.sound21500
 #print axioms Linnik21500.soundF21500
 #print axioms SieveAd.fillTestsF_eq
-#print axioms SieveAd.frozTestsF_eq
+#print axioms SieveAd.frozTestsC_okI
+#print axioms SieveAd.frozTestsC_okJ
+#print axioms SieveAd.rules_frozC
 #print axioms HalfPlanePNT.psi_isBigO_eleven_twelfths
 #print axioms Eis.LFunction_ne_zero_of_re_gt
 #print axioms LinnikHuxStep.charDensity_gen
