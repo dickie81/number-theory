@@ -394,16 +394,19 @@ covers. The region does not close at `13/6`.
     `5.8%` (the comparisons at a floor in the main tree) and `4.1%` (those over the frozen parts). So a
     quarter of the theorem's cost is the cells', half of it in the terms over the frozen parts, where the set
     of the first variable has cells of the main tree (of side `0.004`) and of the chain (`0.006`) in a window
-    `0.07` wide. Two remedies were tried in the exact search, both sound with the rules that are proved
-    (`SieveAd.Rules.split` cuts a cell anywhere, and `evl` takes any configuration): the newest cell cut at the
-    ends of the part that one configuration evaluates, the rest searched further, saves `1.5%` in the main
-    tree and `4.5%` in both trees; and conditions on the sums of exponents carried by the boxes of the main
-    tree alone (the part of a box whose first variable is in the window evaluated, the rest searched further
-    under the condition) save `13%` on cells of side `0.02` at `2.165`. Each `0.005` of exponent costs `5%` to
-    `9%` (`0.829`, `0.981`, `1.034` at `2.165`, `2.155`, `2.15` on cells of side `0.005`), and the second
-    level is worth `9%` in the model's terms (`0.870` to `0.789`). So `2.14` wants the second level or two
-    fifths of the cells' loss, `2.13` both with more than half of the cells' loss, and `2.12` both with all of
-    it: with these rules it is at the edge.
+    `0.07` wide. Two remedies were tried in the exact search. The newest cell cut at the ends of the part that
+    one configuration evaluates, the rest searched further, saves `1.5%` in the main tree and `4.5%` in both
+    trees; it is sound with the rules that are proved (`SieveAd.Rules.split` cuts a cell anywhere, and `evl`
+    takes any configuration), and wants only a step of the search led by hints that reads the cut. Conditions
+    on the sums of exponents carried by the boxes of the main tree alone (the part of a box whose first
+    variable is in the window evaluated, the rest searched further under the condition) save `13%` on cells of
+    side `0.02` at `2.165`; that is not written: it wants a search on boxes under conditions and a test that
+    reads the sums' ranges from them, on `SieveAd.bdP_split`, `SieveAd.bdP_buch` (a box under a condition) and
+    `SieveAd.full2_core_at` (the estimate for a family cut out by any number of comparisons), which are
+    proved. Each `0.005` of exponent costs `5%` to `9%` (`0.829`, `0.981`, `1.034` at `2.165`, `2.155`, `2.15`
+    on cells of side `0.005`), and the second level is worth `9%` in the model's terms (`0.870` to `0.789`).
+    So `2.14` wants the second level or two fifths of the cells' loss, `2.13` both with more than half of the
+    cells' loss, and `2.12` both with all of it: with these rules it is at the edge.
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three
