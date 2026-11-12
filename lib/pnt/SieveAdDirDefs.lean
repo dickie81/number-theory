@@ -44,7 +44,7 @@ A set is as many bits as the box has cells (one more over a frozen part, for the
   the tree: `cfgJF` reads the chain in a pass, and what it takes from the frozen primes does not depend on the
   box, so the kernel computes it once for a tree (`canonN`), as for the tests `frozTestsC`.
 * `lastP`, `initP`, `flipOKP`, `flipTreeD`, `flipCostB`, `flipCostD`, `altFD`: the reversal of a box through its
-  largest prime, its tree searched this way.
+  largest prime, its tree searched this way, for a box of either sign.
 
 `SieveAdDir.lean` proves what a cost returned below its limit gives. The file imports `SieveAdFastDefs.lean` and
 `SieveAdFlipStratDefs.lean`.
@@ -472,52 +472,59 @@ variable [SieveCert.IBPar]
 /-- **The tree over the frozen part of a reversal**, searched by hints: the terms of the frozen part at the floor
 and with the configuration read from the hints, and the cells of the chain's first prime by the hints after them.
 The frozen primes `c :: b` have the sums `lsβ`, `hsβ` and the number `nb`; what the tests and the search read from
-them is computed once for the tree (`frozTestsC`, `cfgJF`). -/
-noncomputable def flipTreeD (κ hR fuel : ℕ) (ctx c : Cell) (b : List Cell) (lsβ hsβ nb lim h : ℕ) : ℕ × ℕ :=
-  (fun τ t Kb cl ch =>
-    (fun p =>
-      cond (Nat.blt 0 p.1.1 && Nat.ble p.1.1 (minN c.1 t) && τ.okJ (c :: b) p.1.1 p.1.2)
-        (kidsF κ hR ctx nb
-          (solveD (opsKP ctx nb) τ cfgIF (cfgJF Kb cl ch (c :: b) nb (lomP (c :: b) DEN)) (kidsF κ hR ctx nb) noAltH
-            fuel)
-          t (c :: b) true p.1.1 lim p.2)
-        (lim, p.2))
-      (cfgJF Kb cl ch (c :: b) nb (lomP (c :: b) DEN) (c :: b) h))
-    (frozTestsC (Nat.sub DEN ctx.2) (Nat.add (Nat.sub DEN ctx.1) 1) (Nat.add 12 (Nat.div DEN c.1)) (c :: b) lsβ hsβ
-      nb (lomP (c :: b) DEN))
-    (flipT ctx) (Nat.add 12 (Nat.div DEN c.1)) (maxN 1 (Nat.sub (Nat.sub DEN ctx.2) hsβ))
-    (Nat.sub (Nat.succ (Nat.sub DEN ctx.1)) lsβ)
+them is computed once for the tree (`frozTestsC`, `cfgJF`). For a box of the sign `−` (`pos = false`) the frozen
+numbers are those of the slab of `ctx` and the chain's cells have the sign `+`; for a box of the sign `+` they are
+those of the slab one unit narrower at each end, and the chain's cells have the sign `−`. -/
+noncomputable def flipTreeD (κ hR fuel : ℕ) (pos : Bool) (ctx c : Cell) (b : List Cell)
+    (lsβ hsβ nb lim h : ℕ) : ℕ × ℕ :=
+  (fun e₁ e₂ t Kb =>
+    (fun τ cl ch =>
+      (fun p =>
+        cond (Nat.blt 0 p.1.1 && Nat.ble p.1.1 (minN c.1 t) && τ.okJ (c :: b) p.1.1 p.1.2)
+          (kidsF κ hR ctx nb
+            (solveD (opsKP ctx nb) τ cfgIF (cfgJF Kb cl ch (c :: b) nb (lomP (c :: b) DEN)) (kidsF κ hR ctx nb)
+              noAltH fuel)
+            t (c :: b) (!pos) p.1.1 lim p.2)
+          (lim, p.2))
+        (cfgJF Kb cl ch (c :: b) nb (lomP (c :: b) DEN) (c :: b) h))
+      (frozTestsC e₁ e₂ Kb (c :: b) lsβ hsβ nb (lomP (c :: b) DEN)) (maxN 1 (Nat.sub e₁ hsβ)) (Nat.sub e₂ lsβ))
+    (cond pos (Nat.add (Nat.sub DEN ctx.2) 1) (Nat.sub DEN ctx.2))
+    (cond pos (Nat.sub DEN ctx.1) (Nat.add (Nat.sub DEN ctx.1) 1)) (flipT ctx) (Nat.add 12 (Nat.div DEN c.1))
 
 /-- **The cost of the reversal of a box through its largest prime**, from the sums of the frozen primes after the
 first, `c`: the test `flipOKP`, and the formula of `flipCost` on the cost of the tree, which is searched by hints
-with the limit `CAPK`. -/
-noncomputable def flipCostB (κ hR fuel maxlen : ℕ) (ctx c : Cell) (b : List Cell)
+with the limit `CAPK`. For a box of the sign `+` the tree's cost weighs on the share of the box alone, and not on
+the shares of the slab's two ends. -/
+noncomputable def flipCostB (κ hR fuel maxlen : ℕ) (pos : Bool) (ctx c : Cell) (b : List Cell)
     (ls hs tp ok n lh lim h : ℕ) : ℕ × ℕ :=
   cond (flipOKP maxlen ctx c hs ok n lh)
     ((fun E r =>
       (cond (Nat.ble CAPK r.1) lim
         (cdivP
-          (Nat.add (Nat.mul r.1 (Nat.add (Nat.mul ctx.2 (dropL c ctx ls hs tp n)) E))
+          (Nat.add
+            (Nat.mul r.1
+              (cond pos (Nat.mul ctx.2 (dropL c ctx ls hs tp n))
+                (Nat.add (Nat.mul ctx.2 (dropL c ctx ls hs tp n)) E)))
             (Nat.mul (bdKP ctx (flipT ctx)) E))
           (Nat.mul DEN K)), r.2))
       (Nat.add (Nat.mul (Nat.add ctx.2 1) (dropL c (Nat.sub ctx.2 1, Nat.add ctx.2 1) ls hs tp n))
         (Nat.mul (Nat.add ctx.1 1) (dropL c (Nat.sub ctx.1 1, Nat.add ctx.1 1) ls hs tp n)))
-      (flipTreeD κ hR fuel ctx c b (Nat.add c.1 ls) (Nat.add c.2 hs) (Nat.succ n) CAPK h))
+      (flipTreeD κ hR fuel pos ctx c b (Nat.add c.1 ls) (Nat.add c.2 hs) (Nat.succ n) CAPK h))
     (lim, h)
 
-/-- **The cost of the reversal of a box of the sign `−` through its largest prime, the tree over the frozen part
-searched by hints**: the box's last cell and the others by the recursor, and the sums of the others in one
-pass. -/
-noncomputable def flipCostD (κ hR fuel maxlen : ℕ) (bl : List Cell) (lim h : ℕ) : ℕ × ℕ :=
+/-- **The cost of the reversal of a box through its largest prime, the tree over the frozen part searched by
+hints**, for a box of the sign `−` (`pos = false`) or `+`: the box's last cell and the others by the recursor, and
+the sums of the others in one pass. -/
+noncomputable def flipCostD (κ hR fuel maxlen : ℕ) (pos : Bool) (bl : List Cell) (lim h : ℕ) : ℕ × ℕ :=
   (fun ctx =>
     List.casesOn (motive := fun _ => ℕ × ℕ) (initP bl) (lim, h) fun c b =>
       tailP b 0 0 1 (cellI c) 0 c.2 fun ls hs tp ok n lh =>
-        flipCostB κ hR fuel maxlen ctx c b ls hs tp ok n lh lim h)
+        flipCostB κ hR fuel maxlen pos ctx c b ls hs tp ok n lh lim h)
     (lastP bl (0, 0))
 
-/-- **The bound that reads hints**: for a box of the sign `−` that may be reversed through its largest prime,
-that reversal's cost. -/
+/-- **The bound that reads hints**: for a box that may be reversed through its largest prime, that reversal's
+cost, with the box's sign. -/
 noncomputable def altFD (κ hR fuel maxlen : ℕ) (bl : List Cell) (par : Bool) (l h : ℕ) : ℕ × ℕ :=
-  cond par (l, h) (flipCostD κ hR fuel maxlen bl l h)
+  flipCostD κ hR fuel maxlen par bl l h
 
 end SieveAd

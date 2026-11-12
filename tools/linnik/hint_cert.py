@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""hint_cert.py [--check] [--out DIR] [--procs N] | --try TAG a/b H HF MAXLEN [--rows I J] [--out DIR]: the
-search with the reversal through the largest prime as a plan, the hints that lead the kernel through the plan, and
-the Lean files of the theorem at L = 2150/1000.
+"""hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] | --try TAG a/b H HF MAXLEN [--lam N]
+[--pos] [--blk N] [--rows I J] [--out DIR]: the search with the reversal through the largest prime as a plan,
+the hints that lead the kernel through the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`,
+the theorem at L = 2150/1000, if none is given).
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
 it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
@@ -30,7 +31,13 @@ a bound whatever the hints are (`lib/pnt/SieveAdDir.lean`).
 
   * `Planner`: `flip_cert.FlipSearch`'s search, returning with each cost the plan kept, as a tree
     (`pSolve`, `pBuch`, `pKids`, `pSplit`, `pFlip`); `tryJ2`, `guideJ`, `guide`: the proposal of the strategy that
-    four bits name; `dser`, `dserF`, `dserKids` write a plan as fields and `pack` as a number;
+    four bits name; `dser`, `dserF`, `dserKids` write a plan as fields and `pack` as a number. With `Par.pos` a
+    box of the sign `+` may be reversed through its largest prime too (`SieveAd.bd_flip_core_pos`: the frozen
+    numbers of the narrower slab, the chain's first cells of the sign `−`). With `Par.lam > 0` the planner
+    counts the kernel's time: it chooses by the cost plus `lam` millionths of `K` for each second that `SEC`
+    predicts (dropped or decomposed; reversed or decomposed; dropped cells next to each other as one cell),
+    and with `Par.blk > 1` a new prime's cells are up to `blk` steps of the grid, each kept whole or halved
+    by the same count (`pBlock`). The kernel reads the same hints in every case;
   * `dSolve`, `dStep`, `dKidsC`, `dPart`, `dFlipTree`, `dFlipCost`, `dAltF`, with `cfgIP`, `cfgJP`, `pickP`,
     `pickC`, `cfgIM`, `cfgJM`, `cfgIF`, `cfgJF`, `parM`, `parF`: `solveD`, `stepD`, `kidsC`, `partD`, `flipTreeD`,
     `flipCostD`, `altFD` and what they read from the hints, definition by definition; every part is run through
@@ -41,13 +48,15 @@ a bound whatever the hints are (`lib/pnt/SieveAdDir.lean`).
     the plan cut into parts of at most `cap` predicted seconds of the kernel: consecutive cells of one prime, a
     heavy cell cut by its own Buchstab step.
 
-It writes `lib/pnt/SieveHint21500.lean` (the exponent and the search), `SieveHint21500P<k>.lean` (the parts, each
-by `decide +kernel`) and `Linnik21500.lean` (the route, the bound from the parts, and the theorem). With
+It writes `lib/pnt/SieveHint<TAG>.lean` (the exponent and the search), `SieveHint<TAG>P<k>.lean` (the parts, each
+by `decide +kernel`) and `Linnik<TAG>.lean` (the route, the bound from the parts, and the theorem). With
 `--check`, nothing is written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a
-difference); it is not part of `check_certificate.py`, for it searches for ten minutes on four cores. With
-`--try`, the search is planned with other parameters (cells of side H, chains' cells of side HF over the frozen
-parts, boxes of at most MAXLEN primes reversed) and its cost and the plan's size are printed; with `--out`, its
-files are written to DIR.
+difference); it is not part of `check_certificate.py`, for it searches for ten minutes on four cores at
+`21500`. With `--cache DIR` the plan of each cell of the first prime is kept in DIR, so that a long plan can be
+stopped and taken up again. With `--try`, the search is planned with other parameters (cells of side H, chains'
+cells of side HF over the frozen parts, boxes of at most MAXLEN primes reversed; `--pos`, `--lam N`, `--blk N`
+as `Par.pos`, `Par.lam`, `Par.blk`) and its cost and the plan's size are printed; with `--out`, its files are
+written to DIR. PyPy runs it one and a half times as fast as CPython, with the same output.
 
 Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
 primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over frozen parts; nine minutes on four
@@ -74,9 +83,15 @@ from rev_cert import bdK, CAPK  # noqa: E402
 from flip_cert import flipT, flipOK, vboxF  # noqa: E402
 
 
-# the theorem's exponent and parameters: cells of side at most H, chains' cells over the frozen parts at most HF,
-# boxes of at most MAXLEN primes reversed through their largest prime, and no three-prime reversal in the plan
-TAG, LNUM, LDEN, H, HF, MAXLEN = '21500', 2150, 1000, 0.004, 0.006, 6
+# the certificates, by tag: the exponent and the parameters of each (`Par`): cells of side at most `h`, chains'
+# cells over the frozen parts at most `hF`, boxes of at most `maxlen` primes reversed through their largest prime,
+# and no three-prime reversal in the plan
+CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
+         # boxes of the sign `+` reversed too, and each step chosen by its cost plus ten millionths of `K` for
+         # each second of the kernel
+         '21400': dict(lnum=2140, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=10, sec=2)}
+TAG = '21500'
+LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
 # dropped cells next to each other are one cell while its bound is at most DMERGE of the sum of theirs
 DMERGE = (1002, 1000)
 
@@ -94,12 +109,23 @@ class Planner(fl.FlipSearch):
     """The search of `flip_cert.FlipSearch` as a plan: each method returns a cost and, when the cost is below the
     limit it was given, the plan below the box: `('V',)` no term, `('E',)` evaluated, `('D',)` dropped,
     `('B', sel, cells, bits)` Buchstab's identity at the floor that `guide` gives for `sel`,
-    `('F', sel, cells, bits)` the reversal through the largest prime, `('S', half, half)` cut in two. `bits`
-    has, for each cut that the strategy proposes inside the range, whether the range is cut there: consecutive
-    evaluated cells that one test covers are one cell. The search has no three-prime reversal."""
+    `('F', sel, cells, bits)` the reversal through the largest prime of a box of the sign `−`, `('P', …)` that
+    of a box of the sign `+`, `('S', half, half)` cut in two. `bits` has, for each cut that the strategy proposes
+    inside the range, whether the range is cut there: consecutive evaluated cells that one test covers are one
+    cell. The search has no three-prime reversal. With `lamK > 0` a step is chosen by its cost plus `lamK` for
+    each second that `SEC` predicts of the kernel on its plan: a box that may be dropped is decomposed only if
+    that saves more than its time is worth, and a box of the sign `−` is reversed or decomposed by the same
+    count. With `pos`, a box of the sign `+` of the main tree may be reversed too."""
 
     merge = True
     dmerge = DMERGE
+    # the price of a second of the kernel, in units of the cost, and whether boxes of the sign `+` are reversed
+    lamK = 0
+    pos = False
+    # with a price on the kernel's time, a new prime's cells are up to `blk` steps of the grid (a power of two)
+    # in the main tree, and up to `blkF` over a frozen part
+    blk = 1
+    blkF = 1
 
     # the proposal of the strategy that four bits name: its floor is the one that `SieveAd.cfgJP` computes
     def tryJ2(self, bl, lomin, ls, hs, c, bit):
@@ -165,21 +191,64 @@ class Planner(fl.FlipSearch):
             return min([DEN] + [c[0] for c in bl])
         return min([DEN] + [c[0] for c in fl.widen(self.frz[2], bl)])
 
+    def pBlock(self, rec, bl, par, ends, i, j, lim):
+        """The range from `ends[i]` to `ends[j]` of the new prime as one cell, or as its two halves (cut at a
+        proposed cut, each half again one cell or its halves), whichever is less by the cost and the kernel's
+        time together. The cost and the cells `(lo, hi, plan, cost)`."""
+        fz, lam = self.frz is not None, self.lamK
+        c0, n0 = rec([(ends[i], ends[j])] + bl, par, lim)
+        ok0 = n0 is not None and c0 < lim
+        one = [(ends[i], ends[j], n0, c0)]
+        if j - i == 1:
+            return c0, (one if ok0 else None)
+        t0, l2 = 0.0, lim
+        if ok0:
+            # one cell that costs nothing is kept (its halves cost the kernel less once in a hundred); one that
+            # is dropped can be bettered only by more than the time of one more step is worth
+            if c0 == 0 or (n0[0] == 'D' and c0 <= lam * SEC[('E', fz)]):
+                return c0, one
+            t0 = secs(n0, fz)
+            l2 = min(lim, c0 + int(lam * t0))
+        m = (i + j) // 2
+        cl, left = self.pBlock(rec, bl, par, ends, i, m, l2)
+        if left is not None:
+            cr, right = self.pBlock(rec, bl, par, ends, m, j, l2 - cl)
+            if right is not None:
+                cf, tf = cl + cr, sum(secs(x[2], fz) for x in left + right)
+                if not ok0 or cf + lam * tf < c0 + lam * t0:
+                    return cf, left + right
+        return (c0, one) if ok0 else (max(lim, c0), None)
+
     def pKids(self, rec, top, bl, par, cs, a, lim, drp=None):
         cells, tot, s = [], 0, a
-        for c in cs:
-            if s < c < top:
-                c1, n1 = rec([(s, c)] + bl, par, lim - tot)
+        if self.lamK and (self.blk if self.frz is None else self.blkF) > 1:
+            # the proposed cuts are a fine grid: cells of up to `blk` of its steps, halved where that pays
+            blk = self.blk if self.frz is None else self.blkF
+            ends = [a]
+            for c in cs:
+                if ends[-1] < c < top:
+                    ends.append(c)
+            ends.append(top)
+            for i in range(0, len(ends) - 1, blk):
+                c1, got = self.pBlock(rec, bl, par, ends, i, min(i + blk, len(ends) - 1), lim - tot)
                 tot += c1
-                if lim <= tot:
-                    return tot, None
-                cells.append((s, c, n1, c1))
-                s = c
-        c1, n1 = rec([(s, top)] + bl, par, lim - tot)
-        tot += c1
-        if lim <= tot:
-            return tot, None
-        cells.append((s, top, n1, c1))
+                if got is None or lim <= tot:
+                    return max(tot, lim), None
+                cells.extend(got)
+        else:
+            for c in cs:
+                if s < c < top:
+                    c1, n1 = rec([(s, c)] + bl, par, lim - tot)
+                    tot += c1
+                    if lim <= tot:
+                        return tot, None
+                    cells.append((s, c, n1, c1))
+                    s = c
+            c1, n1 = rec([(s, top)] + bl, par, lim - tot)
+            tot += c1
+            if lim <= tot:
+                return tot, None
+            cells.append((s, top, n1, c1))
         # consecutive evaluated cells that one test covers are one cell; so are consecutive dropped cells whose
         # one bound is within `dmerge` of the sum of theirs
         kids, keep, i = [], set(), 0
@@ -194,7 +263,9 @@ class Planner(fl.FlipSearch):
                 tsum = cells[i][3]
                 while j + 1 < len(cells) and cells[j + 1][2][0] == 'D':
                     u = drp([(cells[i][0], cells[j + 1][1])] + bl, par)
-                    if u is None or self.dmerge[1] * u > self.dmerge[0] * (tsum + cells[j + 1][3]):
+                    if u is None or (self.dmerge[1] * u > self.dmerge[0] * (tsum + cells[j + 1][3])
+                                     and u - (tsum + cells[j + 1][3])
+                                     > self.lamK * SEC[('D', self.frz is not None)]):
                         break
                     j += 1
                     tsum += cells[j][3]
@@ -241,35 +312,44 @@ class Planner(fl.FlipSearch):
             return c1 + c2, ('S', n1, n2)
         return lim + BIG, None
 
-    def pFlip(self, bl, lim):
-        """`flipCost` with the plan of its tree."""
+    def frzOf(self, ctx, beta, pos):
+        """What the tests of the tree over the frozen part of `beta` and the slab of `ctx` read: the ends of the
+        slab, one unit narrower at each end for the reversal of a box of the sign `+`, and the room `Kb`."""
+        return (tsub(DEN, ctx[1]) + pos, tsub(DEN, ctx[0]) + 1 - pos, 12 + DEN // beta[0][0], beta)
+
+    def pFlip(self, bl, lim, pos=False):
+        """`flipCostD` with the plan of its tree: the box reversed through its largest prime. For a box of the sign
+        `+` (`pos`) the tree's cost weighs on the share of the box alone, the frozen numbers are those of the
+        narrower slab, and the chain's first cells have the sign `−`."""
         ctx, beta = bl[-1], bl[:-1]
         self.W['flips'] += 1
         E = ((ctx[1] + 1) * dropCost(beta + [(tsub(ctx[1], 1), ctx[1] + 1)])
              + (ctx[0] + 1) * dropCost(beta + [(tsub(ctx[0], 1), ctx[0] + 1)]))
-        A, B = ctx[1] * dropCost(bl) + E, bdK(ctx, flipT(ctx)) * E
+        A, B = ctx[1] * dropCost(bl) + (0 if pos else E), bdK(ctx, flipT(ctx)) * E
+        if A == 0:
+            return lim, None
         cl = min(CAPK, tsub(tsub(lim, 1) * (DEN * K), B) // A + 1)
         c, t = beta[0], flipT(ctx)
-        self.frz, self.fctx = (tsub(DEN, ctx[1]), tsub(DEN, ctx[0]) + 1, 12 + DEN // c[0], beta), ctx
+        self.frz, self.fctx = self.frzOf(ctx, beta, pos), ctx
         w0 = (self.W['calls'], self.W['dfs'])
         try:
             S = self.stratF(ctx, beta)
             fj = self.floorOf(beta, min(c[0], t))
             if fj is None:
-                self.stat['fliproot'] += 1
+                self.stat['posroot' if pos else 'fliproot'] += 1
                 return lim, None
             sel, f = fj
             O = self.opsK(ctx, len(beta))
-            cc, ns = self.pKids(lambda b, p, l: self.pSolve(O, S, self.fuel, b, p, l), t, beta, True,
+            cc, ns = self.pKids(lambda b, p, l: self.pSolve(O, S, self.fuel, b, p, l), t, beta, not pos,
                                 S.cuts(beta, f), f, cl, O.drp)
         finally:
             self.frz = None
             self.W['fcalls'] += self.W['calls'] - w0[0]
             self.W['fdfs'] += self.W['dfs'] - w0[1]
         if cl <= cc:
-            self.stat['flipcap'] += 1
+            self.stat['poscap' if pos else 'flipcap'] += 1
             return lim, None
-        return cdiv(cc * A + B, DEN * K), ('F', sel) + ns
+        return cdiv(cc * A + B, DEN * K), ('P' if pos else 'F', sel) + ns
 
     def pSolve(self, O, S, n, bl, par, lim):
         self.minfuel = min(self.minfuel, n)
@@ -280,23 +360,43 @@ class Planner(fl.FlipSearch):
             return 0, ('V',)
         if self.anyI(bl):
             return 0, ('E',)
-        x = bl[0]
+        x, fz, lam = bl[0], self.frz is not None, self.lamK
         dc = O.drp(bl, par)
         if dc is not None:
+            # a box that may be dropped: dropped, or decomposed if that costs less by more than the kernel's
+            # time on the decomposition is worth
             bc, nb = self.pBuch(O, S, n - 1, x, bl, par, dc if dc <= lim else lim)
             if dc <= bc:
-                return dc, ('D',)
-            return bc, nb
+                r, how = dc, ('D',)
+            elif lam and nb is not None and dc < lim and dc - bc < lam * (secs(nb, fz) - SEC[('D', fz)]):
+                r, how = dc, ('D',)
+            else:
+                r, how = bc, nb
+            if self.pos and O is self.OR and par and 0 < r and how is not None and flipOK(self.maxlen, bl):
+                # a box of the sign `+` of the main tree, reversed through its largest prime
+                self.stat['postry'] += 1
+                c, nf = self.pFlip(bl, r if r <= lim else lim, True)
+                if nf is not None and c < r and (not lam or c + lam * secs(nf) < r + lam * secs(how, fz)):
+                    self.stat['poswin'] += 1
+                    return c, nf
+            return r, how
         bc, nb = self.pBuch(O, S, n - 1, x, bl, par, lim)
         l2 = bc if bc <= lim else lim
         if O is self.OR and not par:
             r, how = l2, None
             if self.flip and flipOK(self.maxlen, bl):
                 self.stat['fliptry'] += 1
-                c, nf = self.pFlip(bl, r)
-                if c < r:
-                    self.stat['flipwin'] += 1
-                    r, how = c, nf
+                if lam and nb is not None:
+                    # reversed or decomposed, by the cost and the kernel's time together
+                    c, nf = self.pFlip(bl, lim)
+                    if nf is not None and c + lam * secs(nf) < bc + lam * secs(nb):
+                        self.stat['flipwin'] += 1
+                        return c, nf
+                else:
+                    c, nf = self.pFlip(bl, r)
+                    if c < r:
+                        self.stat['flipwin'] += 1
+                        r, how = c, nf
             if r < l2:
                 return r, how
         if bc < BIG:
@@ -476,11 +576,12 @@ class Planner(fl.FlipSearch):
                           lambda b, p, l, hh: self.dSolve(O, dI, dJ, kd, altH, n - 1, b, p, l, hh), bl, par, lim, h)
 
     # the reversal through the largest prime (flipTreeD, flipCostD, altFD)
-    def frozen(self, ctx, beta):
-        """The tree over the frozen part of `β` and the slab of `ctx`: its decoders, its cells and its search."""
+    def frozen(self, ctx, beta, pos):
+        """The tree over the frozen part of `β` and the slab of `ctx`, for the reversal of a box of the sign `+`
+        (`pos`) or `−`: its decoders, its cells and its search."""
         lsb, hsb, nb, lomb = loSum(beta), hiSum(beta), len(beta), min([DEN] + [c[0] for c in beta])
-        Kb = 12 + DEN // beta[0][0]
-        cl, ch = max(1, tsub(tsub(DEN, ctx[1]), hsb)), tsub(tsub(DEN, ctx[0]) + 1, lsb)
+        e1, e2, Kb, _ = self.frzOf(ctx, beta, pos)
+        cl, ch = max(1, tsub(e1, hsb)), tsub(e2, lsb)
         O = self.opsK(ctx, nb)
 
         def dJ(b, hh):
@@ -493,31 +594,31 @@ class Planner(fl.FlipSearch):
             return self.dSolve(O, self.cfgIF, dJ, kd, lambda b2, p2, l2, h2: (l2, h2), self.fuel, b, p, l, hh)
         return Kb, O, dJ, kd, rec
 
-    def dFlipTree(self, ctx, beta, lim, h):
+    def dFlipTree(self, ctx, beta, pos, lim, h):
         c, t = beta[0], flipT(ctx)
-        Kb, O, dJ, kd, rec = self.frozen(ctx, beta)
-        self.frz, self.fctx = (tsub(DEN, ctx[1]), tsub(DEN, ctx[0]) + 1, Kb, beta), ctx
+        Kb, O, dJ, kd, rec = self.frozen(ctx, beta, pos)
+        self.frz, self.fctx = self.frzOf(ctx, beta, pos), ctx
         try:
             (f, cfg), h2 = dJ(beta, h)
             if not (1 <= f <= min(c[0], t) and self.okJm(beta, f, cfg)):
                 return lim, h2
-            return kd(rec, t, beta, True, f, lim, h2)
+            return kd(rec, t, beta, not pos, f, lim, h2)
         finally:
             self.frz = None
 
-    def dFlipCost(self, bl, lim, h):
+    def dFlipCost(self, bl, pos, lim, h):
         if not flipOK(self.maxlen, bl):
             return lim, h
         ctx, beta = bl[-1], bl[:-1]
         E = ((ctx[1] + 1) * dropCost(beta + [(tsub(ctx[1], 1), ctx[1] + 1)])
              + (ctx[0] + 1) * dropCost(beta + [(tsub(ctx[0], 1), ctx[0] + 1)]))
-        r = self.dFlipTree(ctx, beta, CAPK, h)
+        r = self.dFlipTree(ctx, beta, pos, CAPK, h)
         if CAPK <= r[0]:
             return lim, r[1]
-        return cdiv(r[0] * (ctx[1] * dropCost(bl) + E) + bdK(ctx, flipT(ctx)) * E, DEN * K), r[1]
+        return cdiv(r[0] * (ctx[1] * dropCost(bl) + (0 if pos else E)) + bdK(ctx, flipT(ctx)) * E, DEN * K), r[1]
 
     def dAltF(self, bl, par, l, h):
-        return (l, h) if par else self.dFlipCost(bl, l, h)
+        return self.dFlipCost(bl, par, l, h)
 
     def dCheck(self, bl, par, lim, h):
         """`solveD opsMP fillTestsF cfgIM cfgJM (kidsM κ hI) (altFD κ hF fuel maxlen) fuel bl par lim h`."""
@@ -624,17 +725,18 @@ class Planner(fl.FlipSearch):
             top = bl[0][1]
             cells = self.kidCells(self.SG.cuts(bl, f), f, top, node[3])
             self.dserKids(self.parM(bl, top), f, cells, node[2], bl, not par, top, out, self.dser)
-        elif kind == 'F':
+        elif kind in ('F', 'P'):
+            assert par == (kind == 'P')
             ctx, beta = bl[-1], bl[:-1]
-            c, t = beta[0], flipT(ctx)
-            self.frz, self.fctx = (tsub(DEN, ctx[1]), tsub(DEN, ctx[0]) + 1, 12 + DEN // c[0], beta), ctx
+            t = flipT(ctx)
+            self.frz, self.fctx = self.frzOf(ctx, beta, par), ctx
             try:
                 f, cfg = self.guide(beta, node[1])
                 out.append((7, 4))
                 out.extend(self.cfgFields(beta, node[1], cfg, len(beta) + 1))
                 cells = self.kidCells(self.stratF(ctx, beta).cuts(beta, f), f, t, node[3])
                 self.dserKids(self.parF(ctx, len(beta), beta, t), f, cells, node[2],
-                              beta, True, t, out, lambda k, b, p, o: self.dserF(ctx, beta, k, b, p, o))
+                              beta, not par, t, out, lambda k, b, p, o: self.dserF(ctx, beta, k, b, p, o))
             finally:
                 self.frz = None
         else:
@@ -650,9 +752,9 @@ class Planner(fl.FlipSearch):
 
 def count(node, cnt, frozen=False):
     cnt[(node[0], frozen)] += 1
-    if node[0] in ('B', 'F'):
+    if node[0] in ('B', 'F', 'P'):
         for k in node[2]:
-            count(k, cnt, frozen or node[0] == 'F')
+            count(k, cnt, frozen or node[0] != 'B')
     elif node[0] == 'S':
         count(node[1], cnt, frozen)
         count(node[2], cnt, frozen)
@@ -664,9 +766,15 @@ class Par:
     """The exponent and the parameters of a certificate."""
 
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
-                 depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False):
+                 depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
+                 blk=1, blkF=None):
+        """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
+        `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1` or `SEC2`); `blk`: with
+        `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
+        `blkF` (`blk` if not given) steps of the grid of side `hF` over a frozen part."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
+        self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
         self.h, self.hI, self.depth, self.kappa = h, round(h * DEN), depth, kappa
         self.depthR, self.hR, self.hQ = depthR, round(hR * DEN), round(hQ * DEN)
         self.hF, self.depthF, self.maxlen = round(hF * DEN), depthF, maxlen
@@ -674,24 +782,36 @@ class Par:
         self.cap, self.pmax, self.fcap, self.levels = cap, pmax, fcap, levels
 
     def planner(self):
-        return Planner(fc.TestsF(self.lnum, self.lden), self.hI, self.depth, fc.WMIN, self.kappa, self.hR,
-                       self.depthR, self.hQ, fc.FUEL, self.hF, self.depthF, self.maxlen, rev=self.rev)
+        """The planner of this certificate; the table of the kernel's seconds becomes this certificate's."""
+        global SEC
+        SEC = {1: SEC1, 2: SEC2}[self.sec]
+        P = Planner(fc.TestsF(self.lnum, self.lden), self.hI, self.depth, fc.WMIN, self.kappa, self.hR,
+                    self.depthR, self.hQ, fc.FUEL, self.hF, self.depthF, self.maxlen, rev=self.rev)
+        P.lamK, P.pos, P.blk, P.blkF = self.lam * K // 10 ** 6, self.pos, self.blk, self.blkF
+        P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
+        return P
 
 
 # the kernel's seconds a step, by kind and whether over a frozen part (12 November 2026: timed in the kernel on
 # 300 boxes of each kind of the plan at 2150/1000, least of three runs, times 1.3, which is what twenty-four whole
-# parts take over the sum of their steps)
-SEC = {('E', False): 4.0e-4, ('E', True): 1.05e-3, ('V', False): 1.3e-4, ('V', True): 1.3e-4, ('B', False): 1.6e-3,
-       ('B', True): 2.7e-3, ('D', False): 3.0e-4, ('D', True): 4.7e-4, ('F', False): 3.9e-3, ('S', False): 2.6e-4,
-       ('S', True): 2.6e-4}
+# parts take over the sum of their steps). `SEC1` is the table that cut the certificate at 2150/1000 into its
+# parts. `SEC2` has the steps over a frozen part as they are since the tests read the frozen primes once for a
+# tree, timed a tree at a time (0.50 ms an evaluated box, 1.07 ms a Buchstab step, 0.45 ms a dropped box, times
+# 1.3), and the reversal of a box of the sign `+`, which the kernel does as that of a box of the sign `−`.
+SEC1 = {('E', False): 4.0e-4, ('E', True): 1.05e-3, ('V', False): 1.3e-4, ('V', True): 1.3e-4,
+        ('B', False): 1.6e-3, ('B', True): 2.7e-3, ('D', False): 3.0e-4, ('D', True): 4.7e-4, ('F', False): 3.9e-3,
+        ('S', False): 2.6e-4, ('S', True): 2.6e-4}
+SEC2 = dict(SEC1)
+SEC2.update({('E', True): 6.5e-4, ('B', True): 1.4e-3, ('D', True): 5.9e-4, ('P', False): 3.9e-3})
+SEC = SEC1
 
 
 def secs(node, frozen=False):
     """The kernel's predicted seconds on the plan `node`."""
     k = node[0]
     t = SEC[(k, frozen)]
-    if k in ('B', 'F'):
-        fz = frozen or k == 'F'
+    if k in ('B', 'F', 'P'):
+        fz = frozen or k != 'B'
         for x in node[2]:
             t += secs(x, fz)
     elif k == 'S':
@@ -771,13 +891,31 @@ def row_job(args):
     return ('heavy', a, b, piece, parts, info)
 
 
+def row_cached(args):
+    """`row_job`, its result kept in the directory `cache` (a file for each cell of the first prime) if one is
+    given: a long plan can then be stopped and taken up again."""
+    par_, a, b, cache = args
+    if cache is None:
+        return row_job((par_, a, b))
+    import pickle
+    path = os.path.join(cache, f'{a}_{b}.pkl')
+    if os.path.exists(path):
+        with open(path, 'rb') as fh:
+            return pickle.load(fh)
+    r = row_job((par_, a, b))
+    with open(path + '.tmp', 'wb') as fh:
+        pickle.dump(r, fh, protocol=4)
+    os.replace(path + '.tmp', path)
+    return r
+
+
 def shift(piece, off):
     if piece[0] == 'part':
         return ('part', piece[1] + off)
     return piece[:5] + ([shift(x, off) for x in piece[5]], piece[6])
 
 
-def plan_all(par_, procs=4, rows=None):
+def plan_all(par_, procs=4, rows=None, cache=None):
     """The parts and the assembly of the bound of the first term: (f0, cfg0, parts, root, total, stats)."""
     import multiprocessing
     P = par_.planner()
@@ -785,14 +923,21 @@ def plan_all(par_, procs=4, rows=None):
     f0, cfg0 = fc.root_of(P)
     cuts = fc.rowCuts(P, f0)
     assert cuts[0] == f0 and cuts[-1] == DEN // 2 + 1 and P.T.okJ([], f0, cfg0)
-    jobs = [(par_, a, b) for a, b in zip(cuts, cuts[1:])]
+    if cache is not None:
+        os.makedirs(cache, exist_ok=True)
+    jobs = [(par_, a, b, cache) for a, b in zip(cuts, cuts[1:])]
     if rows is not None:
         jobs = jobs[rows[0]:rows[1]]
     if procs > 1:
         with multiprocessing.Pool(procs) as pool:
-            res = pool.map(row_job, jobs, chunksize=1)
+            # the cells that take longest first, each alone in its task
+            order = sorted(range(len(jobs)), key=lambda i: -jobs[i][1])
+            got = pool.map(row_cached, [jobs[i] for i in order], chunksize=1)
+            res = [None] * len(jobs)
+            for i, r in zip(order, got):
+                res[i] = r
     else:
-        res = [row_job(j) for j in jobs]
+        res = [row_cached(j) for j in jobs]
     parts, root, group, gs = [], [], [], 0.0
     tot, st = Counter(), Counter()
     stats = dict(boxes=0, fboxes=0, cost=0)
@@ -966,18 +1111,25 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
     items = [term(p) for p in root]
     st = stats['steps']
     nsteps = sum(st.values())
-    nflip = st.get(('F', False), 0)
+    nflip, npos = st.get(('F', False), 0), st.get(('P', False), 0)
+    if par_.pos:
+        shapes = ('term through its largest prime, of the sign `−` (of three or five primes) or `+` (of two, four '
+                  'or six), the cofactor kept as one number (`SieveAdFlipDefs.lean`, `SieveAdFlipPos.lean`)')
+        flips = f'{nflip + npos} of them reversals through the largest prime ({npos} of boxes of the sign `+`)'
+    else:
+        shapes = ('term of the sign `−` of three or five primes through its largest prime, the cofactor kept as one '
+                  'number (`SieveAdFlipDefs.lean`)')
+        flips = f'{nflip} of them reversals through the largest prime'
     imports = '\n'.join(f'import SieveHint{T}P{i}' for i in range(1, nfiles + 1))
     plain = textwrap.fill(
         f'Plain statement (`linnik_{T}`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there '
         f'is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`, with no hypothesis. The route is at `L = {LN}` '
         f'(`route{T}`), with the estimate in two variables alone, and the tests are `SieveAd.fillTests`, as for the '
         f'theorem at `2165/1000`. The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
-        f'term of the sign `−` of three or five primes through its largest prime, the cofactor kept as one number '
-        f'(`SieveAdFlipDefs.lean`): its tree runs over the frozen numbers, with the tests `SieveAd.frozTests`. The '
+        f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.frozTests`. The '
         f'kernel does not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the '
         f'plan of the search that `tools/linnik/hint_cert.py` ran ({stats["boxes"]} boxes, {stats["fboxes"]} of '
-        f'them over frozen parts), in {nsteps} steps, {nflip} of them reversals through the largest prime: what is '
+        f'them over frozen parts), in {nsteps} steps, {flips}: what is '
         f'done at each box, with which configuration, and where the range of each new prime is cut. Each step is '
         f'checked, and a cost that the search returns below its limit bounds the term whatever the hints are '
         f'(`SieveAd.pr_of_partD`). The search is in {len(parts)} parts, {nfiles} files (`SieveHint{T}P1.lean` … '
@@ -1066,8 +1218,8 @@ end Linnik{T}
 """
 
 
-def generate(par_, procs=4, rows=None):
-    f0, cfg0, parts, root, total, stats = plan_all(par_, procs, rows)
+def generate(par_, procs=4, rows=None, cache=None):
+    f0, cfg0, parts, root, total, stats = plan_all(par_, procs, rows, cache)
     files = {f'SieveHint{par_.tag}.lean': defs_file(par_)}
     pf = part_files(par_, parts)
     files.update(pf)
@@ -1081,19 +1233,24 @@ def main():
     import time
     procs = int(a[a.index('--procs') + 1]) if '--procs' in a else 4
     out = a[a.index('--out') + 1] if '--out' in a else None
+    tag = a.pop(0) if a and a[0] in CERTS else TAG
     if a and a[0] == '--try':
         ln, ld = map(int, a[2].split('/'))
-        par_ = Par(a[1], ln, ld, h=float(a[3]), hF=float(a[4]), maxlen=int(a[5]))
+        par_ = Par(a[1], ln, ld, h=float(a[3]), hF=float(a[4]), maxlen=int(a[5]),
+                   lam=int(a[a.index('--lam') + 1]) if '--lam' in a else 0, pos='--pos' in a,
+                   blk=int(a[a.index('--blk') + 1]) if '--blk' in a else 1,
+                   sec=2 if '--lam' in a or '--pos' in a else 1)
         rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
-    elif not a or a[0] in ('--check', '--out', '--procs'):
-        par_, rows = Par(TAG, LNUM, LDEN, h=H, hF=HF, maxlen=MAXLEN), None
+    elif not a or a[0] in ('--check', '--out', '--procs', '--cache'):
+        par_, rows = Par(tag, **CERTS[tag]), None
         if out is None and '--check' not in a:
             out = tc.PNT
     else:
         print(__doc__)
         return 2
     t0 = time.time()
-    files, (parts, root, total, stats) = generate(par_, procs, rows)
+    cache = a[a.index('--cache') + 1] if '--cache' in a else None
+    files, (parts, root, total, stats) = generate(par_, procs, rows, cache)
     times = [p[7] for p in parts]
     bits = sum(p[6].bit_length() for p in parts)
     print(f'L = {par_.lnum}/{par_.lden}: cost/K = {total / K:.5f}; {stats["boxes"]} boxes searched '

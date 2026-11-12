@@ -219,6 +219,7 @@ import SieveAdFrozDefs
 import SieveAdFrozTests
 import SieveAdFlipDefs
 import SieveAdFlipSearch
+import SieveAdFlipPos
 import SieveAdFlipStratDefs
 import SieveAdFastDefs
 import SieveAdFast
@@ -1039,6 +1040,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.froz_weight_le_at
 #print axioms SieveAd.bd_flip_neg_at
 #print axioms SieveAd.bd_flip_pos_at
+#print axioms SieveAd.bd_flip_coreB
 #print axioms SieveAd.sum_famU_eq_at
 #print axioms SieveAd.evJ_fill_core_at
 #print axioms SieveAd.evJ_two_core_at

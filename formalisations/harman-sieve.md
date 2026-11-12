@@ -124,7 +124,8 @@ Its main tools:
   chain of one prime between the floor and the level bounded), the term of the box has
   `Bd false (C(w₀ + w₁ + w₂) + bd(w₁ + w₂))` (`bd_flip_neg_at`) or `Bd true (C·w₀ + bd(w₁ + w₂))`
   (`bd_flip_pos_at`). The tests that are sound for this frozen part and the search with this reversal are below;
-  the theorem at `2150/1000` uses the reversal for the sign `−` only (`docs/research-opportunities.md`, §3.1).
+  the theorem at `2150/1000` uses the reversal for the sign `−` only, and the search led by hints has it for
+  either sign (`SieveAd.bd_flip_coreB`; `docs/research-opportunities.md`, §3.1).
 - `SieveAd.sum_famU_eq_at` (`lib/pnt/SieveAdSort.lean`), **tuples of distinct primes in cells, sorted.** The
   tuples of a reversed term are not in order: the primes of `r'` and those of the chain each decrease, with
   nothing between the two, where the comparisons are proved for strictly decreasing tuples. A tuple of distinct
@@ -280,18 +281,24 @@ Its main tools:
   (`SieveAd.altFD`, `SieveAd.flipCostD`: the tree over the frozen part is searched by hints;
   `SieveAd.bd_flipCostD`, from `SieveAd.bd_flip_core`, the reversal's bound from the bound of any tree, which
   `SieveAd.bd_flipCost` shares), so the main search led by hints is sound (`SieveAd.solveMD_sound`), and a part
-  of it as the kernel checks it gives the bound for its range. What the kernel computes at a box is written for
-  it. The tests are in one pass over the box: `SieveAd.fillTestsF` (`lib/pnt/SieveAdFastDefs.lean`, without
-  Mathlib) accumulates the sums of the cells' ends over the sets of a configuration by the lists' recursor, with
-  the bits of the masks as factors, and is equal to the tests that are proved sound (`SieveAd.fillTestsF_eq`,
-  `lib/pnt/SieveAdFast.lean`). Over a frozen part a box is a chain's cells followed by the tree's frozen primes,
-  the same at every box of the tree: `SieveAd.frozTestsC` reads the chain in a pass and takes the sums of the
-  frozen primes' ends over a set as a value of the tree, written so that the kernel, which keeps what it has
-  computed for a term, computes it once for a tree and a set (`SieveAd.canonN`, `SieveAd.roleB`). It implies
-  the tests that are proved sound on the boxes of the tree (`SieveAd.frozTestsC_okI`, `SieveAd.frozTestsC_okJ`),
-  and a statement of the tree concerns no other box (`SieveAd.rules_frozC`). The cost of a dropped box is in one
-  pass too, with Buchstab's function in the arithmetic of `ℕ` written out, and is `dropC`'s and `dropK`'s
-  (`SieveAd.omKwP_eq`, `SieveAd.drpMP_eq`, `SieveAd.opsKP_eq`).
+  of it as the kernel checks it gives the bound for its range. The hinted bound is for a box of either sign
+  (`SieveAd.bd_flip_coreB`, `lib/pnt/SieveAdFlipPos.lean`). For a box of the sign `+` the reversal bounds the
+  term from below (`SieveAd.bd_flip_core_pos`, from `SieveAd.bd_flip_pos`): the frozen numbers are those of the
+  slab one unit narrower at each end, whose tests are `SieveAd.frozTests` at those ends, the cells of the
+  chain's first prime are searched with the sign `−`, so that none of them is dropped before a step of
+  Buchstab's identity, and the cost is `⌈(c·h₁·D₀ + bdK·E)/(DEN·K)⌉`, the tree's cost `c` weighing on the share
+  `D₀` of the box alone. What the kernel computes at a box is written for it. The tests are in one pass over
+  the box: `SieveAd.fillTestsF` (`lib/pnt/SieveAdFastDefs.lean`, without Mathlib) accumulates the sums of the
+  cells' ends over the sets of a configuration by the lists' recursor, with the bits of the masks as factors,
+  and is equal to the tests that are proved sound (`SieveAd.fillTestsF_eq`, `lib/pnt/SieveAdFast.lean`). Over a
+  frozen part a box is a chain's cells followed by the tree's frozen primes, the same at every box of the tree:
+  `SieveAd.frozTestsC` reads the chain in a pass and takes the sums of the frozen primes' ends over a set as a
+  value of the tree, written so that the kernel, which keeps what it has computed for a term, computes it once
+  for a tree and a set (`SieveAd.canonN`, `SieveAd.roleB`). It implies the tests that are proved sound on the
+  boxes of the tree (`SieveAd.frozTestsC_okI`, `SieveAd.frozTestsC_okJ`), and a statement of the tree concerns
+  no other box (`SieveAd.rules_frozC`). The cost of a dropped box is in one pass too, with Buchstab's function
+  in the arithmetic of `ℕ` written out, and is `dropC`'s and `dropK`'s (`SieveAd.omKwP_eq`, `SieveAd.drpMP_eq`,
+  `SieveAd.opsKP_eq`).
 - `Linnik21500.linnik_21500` (`lib/pnt/Linnik21500.lean`; the parts are `lib/pnt/SieveHint21500P1.lean` and the
   files after it, without Mathlib), **Linnik's theorem with exponent `2150/1000`**: for every `q ≥ 1` and every
   `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2150/1000}`, with no hypothesis. The route

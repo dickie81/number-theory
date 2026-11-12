@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1779 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1780 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 240, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 323 | 987 |
+| `lib/pnt` | 324 | 988 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2524,6 +2524,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.flip_inject`: The terms at the level over the narrower frozen part are at most the term of the box *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveAd.inSlab_frozS_at`: The frozen part lies in the range of `r'`, for any route ([note](../formalisations/harman-sieve.md))
 - `SieveAd.inSlab_frozS_inner_at`: The narrower frozen part lies in the range of `r'`, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFlipPos`: The reversal of a box of the sign `+` through its largest prime, from the bound of a tree
+
+- `SieveAd.bd_flip_coreB`: The reversal through the largest prime, from the bound of a tree, for a box of either sign ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFlipSearch`: The search with the reversal of a box through its largest prime is sound
 
