@@ -15,7 +15,7 @@ does not import the certificate to depth 8.
   sign `−`, and its cost is below `K`, then there is `K'` such that for every `q ≥ 1` and every `a` prime to `q`
   there is a prime `p ≡ a (mod q)` with `p ≤ K'·q^{11/5}`.
 
-This is `SieveAd.linnik_tree` with `SieveAd.mixTests_sound`: the paper's theorem for any decomposition that a tree
+This is `SieveAd.linnik_tree` with `SieveAd.mixTests_sound`: the theorem at `11/5` (`Linnik22000E.linnik_22000e`) for any decomposition that a tree
 describes, in place of the decomposition to depth 8, and with the estimate in two variables beside the window. No
 tree is given here.
 

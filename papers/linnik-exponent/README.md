@@ -20,13 +20,9 @@ sources only; Banks and Shparlinski's entry and their exponent `2.1115` are take
 [`formalisations/`](../../formalisations/README.md): its input, OpenAI's zero-free half-plane, and the classical
 results its proof uses, among them Huxley's density estimate, the Halász–Montgomery inequality and Harman's sieve.
 
-The paper and its supplement describe the library at the commit that contains them. Their earlier versions proved
-the exponent `11/5`, by a Type II estimate in one variable on a window, with Chen, Gupta and Li's density estimate as a
-second input, and a decomposition to depth eight; that theorem, `Linnik22000E.linnik_22000e`, is still in the library,
-and the paper that proved it is in the git history at commit
-[`49dc981`](https://github.com/dickie81/number-theory/tree/49dc9812703c80448f96349e06a4c793a9339f6b). Before that they proved `278/125`
-(`Linnik22240R.linnik_22240r`, at commit
-[`8ba053b`](https://github.com/dickie81/number-theory/tree/8ba053b75eb56a65dcfd1cf986ecb3d58c6945bb)).
+The paper and its supplement describe the library at the commit that contains them. Their earlier versions, at
+weaker exponents, are in the git history: the last, at `11/5` (`Linnik22000E.linnik_22000e`, still in the library),
+at commit [`49dc981`](https://github.com/dickie81/number-theory/tree/49dc9812703c80448f96349e06a4c793a9339f6b).
 
 The theorem is `Linnik21500.linnik_21500` in `lib/pnt/Linnik21500.lean`, with the exponent written `2150/1000`. It
 has no hypotheses in Lean. Its proof uses one unrefereed result, which the library re-proves itself: the zero-free

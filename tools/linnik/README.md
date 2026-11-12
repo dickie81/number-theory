@@ -1,7 +1,11 @@
 # The Linnik paper's certificate tools
 
-These scripts compute the sieve route's certificate outside Lean and generate the Lean files that the kernel checks.
-They need Python 3 only.
+These scripts compute the Linnik sieve's certificates outside Lean and generate the Lean files that the kernel
+checks. They need Python 3 only. The paper's theorem at `43/20` (`Linnik21500.linnik_21500`) is `hint_cert.py`'s, on
+the searches of `tree_cert.py`, `rev_cert.py`, `fill_cert.py` and `flip_cert.py`, with the curve and region of
+`gen_zone.py`. The scripts from `route_limits.py` to `type2_model.py` in the table are those of the window route, of
+the library's theorems at `11/5`, `219/100` and `218/100`; in their rows "the paper" is the paper's version at `11/5`,
+in the git history at commit `49dc981`.
 
 | File | What it does |
 |---|---|
@@ -27,7 +31,7 @@ They need Python 3 only.
 | `flip_cert.py` | The search with the reversal of a box through its largest prime, as the kernel searches it: `fill_cert.py`'s search with the nodes `SieveAd.opsF` of `lib/pnt/SieveAdFlipDefs.lean` (a box of the sign `−` of at most `MAXLEN` primes reversed through its largest prime: the tree over the frozen part with the tests `SieveAd.frozTests`, searched with the limit past which the reversal does not win) and the strategies of `lib/pnt/SieveAdFlipStratDefs.lean`, in Python, definition by definition, in exact integers. `--try` runs the search with given parameters and prints its cost; `--box` prints one part at `2165/1000` with the theorem's parameters, as `lib/pnt/SieveFlipPart21650.lean` has it (`Linnik21650.flip_box_21650`). It writes no certificate. Checked against the kernel on four values of `flipCost`, a row of the first prime and that part. Python 3 only. |
 | `hint_cert.py` | The search with the reversal through the largest prime as a plan, the hints that lead the kernel through the plan, and the Lean files of the theorem at `L = 2150/1000` (`Linnik21500.linnik_21500`). It runs `flip_cert.py`'s search once and writes the plan it keeps as a number for each part: what is done at a box (evaluated, dropped, Buchstab's identity, a reversal through the largest prime, a cell cut in two, no term), with which configuration (the rest's cell and the sets of the estimate or of the comparison; the floor of a Buchstab step is the one that four bits name), and the cuts of a new prime's range, a code each (a number of steps of the grid, or one of three cuts off it). The kernel follows the hints (`SieveAd.solveD`, `lib/pnt/SieveAdDirDefs.lean`) and checks each step; the script has that search too, definition by definition, and runs every part through it before writing it. It writes `SieveHint21500.lean`, `SieveHint21500P1.lean` … `P17.lean` and `Linnik21500.lean`; `--check` regenerates them and compares (ten minutes on four cores, so it is not in `check_certificate.py`); `--try` plans the search with other parameters. The search costs `0.94847K` on `3.4·10^7` boxes with cells of side at most `0.004`; the plan has `3.4·10^6` steps and 5.2 MB of hints (10.4 MB as written, in hexadecimal). Python 3 only. |
 | `hint_probe.py` | Measurements on the plan of `hint_cert.py`, not a certificate: where the plan's cost is (dropped boxes by their number of primes, reversed boxes and the dropped boxes of their chains), what the cells cost (the tests taken at the midpoints of the cells, by kind of test and of cell), and what variants of the search would give in exact terms: cuts at the ends of the part that a configuration evaluates, boxes of the sign `+` reversed, a second level of the reversal (a prototype, with the roles' sums read from two slabs and two cofactors), a reversal through another prime than the largest, and a planner that chooses each step by its cost plus a price for the kernel's time. `docs/research-opportunities.md` §3.1 has the numbers of 12 November 2026. Python 3 only. |
-| `check_certificate.py` | Regenerates the certificates' Lean files and compares them with `lib/pnt` byte for byte: for the paper's (`22000E`), `mirror8.py` and `gen_cert8.py` in a temporary directory; for the tree at `219/100` (`21900`), `tree_cert.py --check`; for the search with role reversal at `218/100` (`21800`), `rev_cert.py --check`; for the search with no window at `2165/1000` (`21650`), `fill_cert.py --check`. |
+| `check_certificate.py` | Regenerates the certificates' Lean files and compares them with `lib/pnt` byte for byte: for the theorem at `11/5` (`22000E`), `mirror8.py` and `gen_cert8.py` in a temporary directory; for the tree at `219/100` (`21900`), `tree_cert.py --check`; for the search with role reversal at `218/100` (`21800`), `rev_cert.py --check`; for the search with no window at `2165/1000` (`21650`), `fill_cert.py --check`. |
 
 To check that the committed certificate is the one these scripts generate:
 
@@ -50,8 +54,8 @@ It prints the totals, the cross-checks, the number of parts and the comparison, 
 
 `gen_cgl_curve.py --check` regenerates the six files of the curve, its windows and the theorem (about a minute, for the windows' scans).
 
-The kernel's check of the certificate is the build itself: each part file proves its parts by `decide +kernel`, and
-`SieveCert22000E.lean` assembles them into `SieveDeep.totalD_lt_22000E`. The kernel's check of the 114 part files took
+The kernel's check of a certificate is the build itself: at `11/5` each part file proves its parts by
+`decide +kernel`, and `SieveCert22000E.lean` assembles them into `SieveDeep.totalD_lt_22000E`. The kernel's check of the 114 part files took
 6.2 hours of one core in all (`gen_cert8.py` predicts 8.2), 1.6 hours on four cores, with at most 2.8 GiB for any one
 file.
 

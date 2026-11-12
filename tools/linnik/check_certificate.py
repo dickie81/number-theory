@@ -4,7 +4,7 @@
 Three certificates are checked (with no argument, or one named by its tag):
 
 * `22000E`: `SieveDeep.totalD_lt_22000E` (L = 11/5, the window [43457/100000, 46959/100000], n = 272, the curve `g7d`,
-  the decomposition to depth 8 under the bilinear Type I rule), the paper's;
+  the decomposition to depth 8 under the bilinear Type I rule), the theorem of the Linnik paper's version at 11/5;
 * `21900`: `Linnik21900.tree21900` (L = 219/100, the window [44260/100000, 46717/100000], a tree of Buchstab steps
   that the kernel searches for in parts);
 * `21800`: `Linnik21800.tree21800` (L = 218/100, the window [45073/100000, 46472/100000], a search with role

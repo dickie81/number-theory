@@ -12,8 +12,8 @@ theorem fourth_moment {ε : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) :
 In words: for every `ε` in `(0, 1]` there is `C` such that, for every modulus `q ≥ 1`, every set `R` of non-principal
 characters mod `q` and every choice of one point `|t_χ| ≤ T` for each `χ ∈ R`,
 `Σ_{χ∈R} |L(1/2 + it_χ, χ)|⁴ ≤ C(q(T + 2))^{1+ε}`. `LFunction` is Mathlib's `DirichletCharacter.LFunction`. The theorem
-is in the proof of `Linnik22000E.linnik_22000e`, whose axioms are `propext`, `Classical.choice` and `Quot.sound`
-(`lib/check/Check.lean`), so it depends on those only.
+is in the proof of `Linnik21500.linnik_21500`, the Linnik paper's theorem, whose axioms are `propext`,
+`Classical.choice` and `Quot.sound` (`lib/check/Check.lean`), so it depends on those only.
 
 ## Source
 
@@ -58,6 +58,6 @@ hybrid large values estimate. Nothing in this library claims the estimate as its
 
 ## Where the Linnik paper uses it
 
-Through the density estimates of [ingham-density.md](ingham-density.md) and [huxley-density.md](huxley-density.md).
-Both bound their integral class, the characters for which the detector's integral along `Re s = 1/2` is large, with
-this estimate.
+Through Huxley's density estimate ([huxley-density.md](huxley-density.md)), which bounds its integral class, the
+characters for which the detector's integral along `Re s = 1/2` is large, with this estimate; Ingham's
+([ingham-density.md](ingham-density.md)), which the library's theorems at `11/5` and earlier use, does the same.

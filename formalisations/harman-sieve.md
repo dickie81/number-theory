@@ -317,8 +317,8 @@ The note also covers the bound for rough numbers that the certificate's cells us
   `[1, 3]` (`1/u` on `[1, 2)`, `(1 + log(u − 1))/u` on `[2, 3]`), and `0.565073` above `3`, the least constant, to six
   decimals, for which the induction of the proof closes with `0.5671433 ≥ max ω` on `[2, 3]` (`SieveOmegaB`).
 
-These theorems are in the proof of `Linnik22000E.linnik_22000e`, whose axioms are `propext`, `Classical.choice` and
-`Quot.sound` (`lib/check/Check.lean`), so they depend on those only.
+These theorems are printed by `lib/check/Check.lean` or `lib/check/CheckAll.lean`, and their axioms are `propext`,
+`Classical.choice` and `Quot.sound` only.
 
 ## Source
 

@@ -25,9 +25,9 @@ Here `dp S c t = Σ_{j∈S} c_j j^{−it}` (`DirMean.dp`). In words, let `D_χ(t
   `Σ_{χ∈R} |D_χ(x_χ)|² ≤ (q(hi − lo) + 8P(1 + log P))(2 + log²(2P))Σ|c_j|²`.
 
 `LinnikHybrid.large_values_chars_off` is the second with the weights `j^{−β_χ}`, `σ ≤ β_χ ≤ σ + 1/2`, at the cost of a
-factor `e`, and with `Σ|c_j|²j^{−2σ}` on the right. These theorems are in the proof of `Linnik22000E.linnik_22000e`,
-whose axioms are `propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`), so they depend on those
-only.
+factor `e`, and with `Σ|c_j|²j^{−2σ}` on the right. These theorems are in the proof of `Linnik21500.linnik_21500`,
+the Linnik paper's theorem, whose axioms are `propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`),
+so they depend on those only.
 
 ## Source
 
@@ -70,8 +70,9 @@ None of these papers was read for the formalisation. The library's proofs were w
 
 ## Where the Linnik paper uses it
 
-Through the density estimates of [ingham-density.md](ingham-density.md) and [huxley-density.md](huxley-density.md).
-Both count the characters whose mollified Dirichlet polynomial is large at a zero, their polynomial class, with
-`large_values_chars_off`. The Type II estimate itself uses only the orthogonality of the characters at one height,
+Through Huxley's density estimate ([huxley-density.md](huxley-density.md)), which counts the characters whose
+mollified Dirichlet polynomial is large at a zero, their polynomial class, with `large_values_chars_off`; Ingham's
+([ingham-density.md](ingham-density.md)), which the library's theorems at `11/5` and earlier use, does the same. Of
+this note the Type II estimate itself uses only the orthogonality of the characters at one height,
 `Σ_χ |Σ_{j∈S} c_jχ(j)j^{−it}|² ≤ (P + q)Σ|c_j|²` for `S ⊆ (P, 2P]` (`SieveTypeII.sum_chars_dp_sq_le`, from
 `LinnikHybrid.sum_chars_norm_sq_le`), which is elementary.
