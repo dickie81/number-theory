@@ -51,11 +51,10 @@ files are written to DIR.
 
 Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
 primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over frozen parts; nine minutes on four
-cores), and its plan has 3.4·10^6 steps. The kernel takes 0.3 ms on an evaluated box (0.8 ms over a frozen part),
-1.2 ms on a Buchstab step (2.1 ms), 0.25 ms on a dropped box (0.35 ms) and 3 ms on a reversal's root; with the
-configurations searched by the kernel and the box read sum by sum, as in the first certificate of this theorem,
-it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20 ms. Those times are from before the tests over a frozen part read
-the frozen primes once for a tree, which takes 11% off the whole: 63 minutes of the kernel for the 17 files.
+cores), and its plan has 3.4·10^6 steps. The kernel takes 0.3 ms on an evaluated box (0.5 ms over a frozen part),
+1.2 ms on a Buchstab step (1.1 ms), 0.25 ms on a dropped box (0.45 ms) and 3 ms on a reversal's root, and 63
+minutes on the 17 files; with the configurations searched by the kernel and the box read sum by sum, as in the
+first certificate of this theorem, it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20 ms.
 
 Needs Python 3 only.
 """

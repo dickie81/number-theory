@@ -14,8 +14,8 @@
 
 A computation, not a certificate: without `--lean` the region is sampled in floating point, and the lemmas that
 would bring the estimate to the sieve's sums are not all written (below).  The estimate is in Lean: Proposition 3'
-for two polynomials on a region (SieveTypeIIHM.typeII_two_gen), for the paper's curve on the region of `--lean`
-(SieveTwoZone7D.typeII_two_7d), and the paper's Lemmas 4.4 and 4.5 with it (SieveFamilyTwo.typeII_sharp_two,
+for two polynomials on a region (SieveTypeIIHM.typeII_two_gen), for the curve of Huxley's estimate on the region of `--lean`
+(SieveTwoZone7D.typeII_two_hx), and the paper's Lemmas 4.4 and 4.5 with it (SieveFamilyTwo.typeII_sharp_two,
 SieveUnwTwo.typeII_unw_two); so is the bilinear Type I estimate of `--bil` (SieveTypeIB.typeIB_bound_wide, and
 SieveTypeIBSumWide.leaves_family_wide for a family of leaves).  Nothing in the paper depends on it.
 
@@ -57,7 +57,7 @@ part A of the box's primes may also be completed by the small primes until its e
 the estimate holds with a rest R of the box's primes; the interval must be at least as long as the floor's exponent
 and A must not start past it.  It changes little.
 
-`--lean`: the region is the one of `SieveTwoZone7D.zone_7d`, for which Proposition 3' in two variables is proved with
+`--lean`: the region is the one of `SieveTwoZone7D.zone_hx`, for which Proposition 3' in two variables is proved with
 no hypothesis: with m_i = L a_i, s_i = 1 - m_i and rho = L (1 - a1 - a2), it asks rho >= 1/2000, m_i >= 2/3, and
 s1, s2 and s1 + s2 at most lambda rho - 1/12500 (lambda = 27637/62500, read from `gen_zone.py`).  The test is exact,
 in integers, and on a rectangle, as `SieveUnwTwo.typeII_unw_two` asks: the two parts' exponents range over

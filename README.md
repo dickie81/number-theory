@@ -7,7 +7,7 @@ from `main` on every push.
 
 | Paper | Read it |
 |---|---|
-| *Linnik's constant below the zero-density exponent: 11/5 from a zero-free half-plane and the Chen–Gupta–Li density estimate*. Every reduced residue class mod `q` contains a prime `p ≤ Kq^{11/5}` (`Linnik22000E.linnik_22000e`), by Harman's sieve with a Type II estimate over the zeros' real parts, a bilinear Type I estimate and a Buchstab decomposition to depth eight. | [Paper (PDF)](https://dickie81.github.io/number-theory/linnik-exponent.pdf) · [Supplement (PDF)](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf) · [Source](papers/linnik-exponent/README.md) |
+| *Linnik's constant below the zero-density exponent: 43/20 from a zero-free half-plane*. Every reduced residue class mod `q` contains a prime `p ≤ Kq^{43/20}` (`Linnik21500.linnik_21500`), by Harman's sieve with a Type II estimate in two variables over the zeros' real parts, from the half-plane and Huxley's density estimate, and a decomposition by trees of Buchstab steps whose certificate the kernel follows by hints. | [Paper (PDF)](https://dickie81.github.io/number-theory/linnik-exponent.pdf) · [Supplement (PDF)](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf) · [Source](papers/linnik-exponent/README.md) |
 
 ## What is here
 

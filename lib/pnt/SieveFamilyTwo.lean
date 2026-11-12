@@ -15,8 +15,9 @@ the sum of its weights times `1[n ≡ a] − 1[(n, q) = 1]/φ(q)` at `n = m₁m�
 
 * `TypeIITwoAt L R`: Proposition 3′ in two variables at `L` on the region `R`, pointwise in the heights: the
   conclusion of `typeII_two_gen`. `typeIITwoAt_of_zone` gives it for a curve with its counts and the zone's exponents
-  on `R`; `typeIITwoAt_7d` for the paper's curve on `Zone7d L`, with no hypothesis; `typeIITwoAt_long` for two
-  variables of length at least `q` with `P₁P₂ ≤ q^{L − 1/2000}`, with no density estimate.
+  on `R`; `typeIITwoAt_hx` for the curve `ghx` (the trivial count, then Huxley's density estimate) on `Zone7d L`,
+  with no hypothesis; `typeIITwoAt_long` for two variables of length at least `q` with `P₁P₂ ≤ q^{L − 1/2000}`, with
+  no density estimate.
 * `box_two`: the estimate at one frequency of the separated sum, for the pairs: the hypothesis of
   `SieveFamilyGen.sharp_gen`. A phase `κ + Σ_j ξ_j(φ_j(m₁) + ψ_j(m₂))` is a twist of `a` times a twist of `b`, and the
   character of `m₁m₂` is the product of the characters, so the sum over the pairs is a product of two polynomials.
@@ -63,10 +64,11 @@ theorem typeIITwoAt_of_zone {g : ℝ → ℝ} {L : ℝ} {R : ℝ → ℝ → Pro
     TypeIITwoAt L R :=
   fun hf0 hsupp K₀ _ _ he₁ hη hη1 => SieveTypeIIHM.typeII_two_gen hg1 hg0 hcnt hzone hf0 hsupp K₀ he₁ hη hη1
 
-/-- **Proposition 3′ in two variables for the paper's curve on `Zone7d L`**, with no hypothesis. -/
-theorem typeIITwoAt_7d (L : ℝ) : TypeIITwoAt L (SieveTwoZone7D.Zone7d L) :=
-  typeIITwoAt_of_zone SieveCurve7D.g7d_le_one SieveCurve7D.g7d_half SieveCurve7D.counts_7d
-    (SieveTwoZone7D.zone_7d L)
+/-- **Proposition 3′ in two variables for the curve `ghx` on `Zone7d L`**, with no hypothesis: the trivial count
+below `7789/10000` and Huxley's density estimate from there on. -/
+theorem typeIITwoAt_hx (L : ℝ) : TypeIITwoAt L (SieveTwoZone7D.Zone7d L) :=
+  typeIITwoAt_of_zone SieveCurveHx.ghx_le_one SieveCurveHx.ghx_half SieveCurveHx.counts_hx
+    (SieveTwoZone7D.zone_hx L)
 
 /-- **Proposition 3′ for two variables of length at least `q`** with `m₁ + m₂ + 1/2000 ≤ L`, with no density
 estimate: the curve `g = 1`. -/
@@ -233,6 +235,6 @@ theorem typeII_sharp_two {L : ℝ} {R : ℝ → ℝ → Prop} (hII : TypeIITwoAt
 
 end SieveFamilyTwo
 
-#print axioms SieveFamilyTwo.typeIITwoAt_7d
+#print axioms SieveFamilyTwo.typeIITwoAt_hx
 #print axioms SieveFamilyTwo.typeIITwoAt_long
 #print axioms SieveFamilyTwo.typeII_sharp_two

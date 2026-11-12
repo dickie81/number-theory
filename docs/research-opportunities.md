@@ -126,6 +126,15 @@ Mathlib's `LSeries`); and, for the `log log q` lower bound, Brun–Titchmarsh, w
 
 ### 3.1 Linnik's exponent: the lever table
 
+**12 November: the paper at `43/20`, from the half-plane and Huxley's estimate.** The Linnik paper now proves
+`43/20` (`Linnik21500.linnik_21500`). Its Type II estimate in two variables counts characters only from `7789/10000`
+on, where Huxley's exponent is below Chen, Gupta and Li's, so its curve is now `ghx` (`SieveCurveHx`: the trivial
+count below `7789/10000`, Huxley's steps above; `tools/linnik/gen_zone.py`), and the import cones of the two theorems
+with no window, at `2165/1000` and `2150/1000`, have no module of Chen, Gupta and Li's paper; those at `11/5`,
+`219/100` and `218/100` keep their window, and with it the curve `g7d`. In the table below the column `A` of those two
+rows is the window route's, which they do not use. "The paper" in the entries before this date means its version at
+`11/5`.
+
 Section 2.2 of the paper: with a density curve whose largest exponent is `A`, the Type II window exists exactly when
 `L > 1 + A/2`, and the certificate needs between `0.03` and `0.04` above the threshold (paper §8, supplement §S6). So
 the exponent each input would reach is:
@@ -221,8 +230,10 @@ covers. The region does not close at `13/6`.
     estimate, `[0.4695, 0.5305]` at `2.13`;
   - the estimate itself, the paper's Proposition 3′ for two polynomials, for a curve and a region of the two
     lengths' exponents on which the inequality holds (`SieveTypeIIHM.typeII_two_gen`); with no density estimate for
-    two variables of length at least `q` (`SieveTypeIIHM.typeII_two_long`); and for the paper's curve on an explicit
-    region, for every `L` (`SieveTwoZone7D.zone_7d`, `SieveTwoZone7D.typeII_two_7d`). With `s_i = 1 − m_i` for
+    two variables of length at least `q` (`SieveTypeIIHM.typeII_two_long`); and for the curve of Huxley's estimate (the trivial
+    count below `7789/10000`, Huxley's steps above) on an explicit region, for every `L` (`SieveTwoZone7D.zone_hx`,
+    `SieveTwoZone7D.typeII_two_hx`; first proved for the curve `g7d`, with Chen, Gupta and Li's steps, which the
+    region never needed: below `7789/10000` it bounds both variables by orthogonality, whatever the curve). With `s_i = 1 − m_i` for
     lengths `q^{m_i}` and `q^ρ` the length of the rest, the region is `ρ ≥ 1/2000`, `m_i ≥ 2/3` and `s₁`, `s₂`,
     `s₁ + s₂` at most `0.442192ρ − 1/12500`: a variable may be shorter than `q` by `0.442` times the exponent of
     the rest. The computations' zone is the union of such regions over the point where the Halász–Montgomery
@@ -384,7 +395,7 @@ covers. The region does not close at `13/6`.
     271 seconds each, three at a time on four cores).
 - **What is not written.** Role reversal at a second level and for terms of the sign `+` (below); a certificate
   below `2.15`. The plan of the theorem's search passes at `2.145` with cells of side `0.0035` (`0.975K`, on
-  `6.0·10^7` boxes; `6.6·10^6` steps, which is about ten MB of hints and two hours and a quarter of the kernel
+  `6.0·10^7` boxes; `6.6·10^6` steps, which is about ten MB of hints and two hours of the kernel
   as the search led by hints is now), twice the build of the theorem at `2.15` for `0.005` of exponent. What the second level and tests that do not narrow with the
   cells would give in exact terms is measured in the last two items below.
   - *Where the cells' loss is, with this rule* (12 November; the theorem's search at `2.15`, on twenty of the
@@ -582,11 +593,15 @@ covers. The region does not close at `13/6`.
     **The dropped boxes in one pass**, with Buchstab's function in the arithmetic of `ℕ` written out
     (`SieveAd.drpMP_eq`, `SieveAd.opsKP_eq`, `SieveAd.omKwP_eq`), and the reversal's shares from one pass over
     the frozen primes.
-    A step then cost: an evaluated box `0.3` ms in the main tree and `0.8` over a frozen part; a Buchstab step
-    `1.2` and `2.1`; a reversal's root `3`; a dropped box `0.25` and `0.35`. The hints are `5.2` MB where they
-    were `2.5`: ten bits or so for an evaluation, fifteen for a Buchstab step, three for a cut. The kernel
-    checked the theorem's certificate in 76 minutes of its time (17 files), where it took seven hours: the
-    same plan, the same cost `0.94847K`.
+    A step then cost: an evaluated box `0.3` ms in the main tree; a Buchstab step `1.2`; a reversal's root
+    `3`; a dropped box `0.25`. Over a frozen part the same profile gave `0.8`, `2.1` and `0.35`, which were
+    not the search's costs: it computed the sums and the number of the frozen primes at each box by the
+    definitions that the proofs use, where the search has them once for a tree, and `0.35` was the cost of the
+    dropped box's bound without its step. Timed a tree at a time (below), the boxes over a frozen part cost
+    `0.67` (evaluated), `1.46` (a Buchstab step) and `0.45` (dropped). The hints are `5.2` MB where they were
+    `2.5`: ten bits or so for an evaluation, fifteen for a Buchstab step, three for a cut. The kernel checked
+    the theorem's certificate in 76 minutes of its time (17 files), where it took seven hours: the same plan,
+    the same cost `0.94847K`.
     **The frozen primes once for a tree** (`SieveAd.frozTestsC`). A box of a tree over a frozen part is the
     cells of a chain, one or two, followed by the tree's frozen primes, two or four, the same at every box of
     the tree; the tests read them at every box, in their second pass. Now a test reads the chain alone in its
@@ -598,18 +613,22 @@ covers. The region does not close at `13/6`.
     (`SieveAd.cfgJF`, `SieveAd.kidsF`). The tests are no longer the proved ones as functions, for they do not
     check the cells after the chain's; they imply them on the boxes of the tree (`SieveAd.frozTestsC_okI`,
     `SieveAd.frozTestsC_okJ`), and a statement of the tree concerns no other box (`SieveAd.rules_frozC`). The
-    hints and the part files are the same. Side by side on one machine, on every twentieth part of the plan,
-    the kernel takes `11%` to `12%` less time than it did (`181`, `185` and `193` s where the two passes took
-    `203`, `209` and `220`). The 17 files took 63 minutes in the run after the change, three at a time; that
-    run and the one of 76 minutes were hours apart on a machine whose speed drifts, so their difference says
-    less than the measure side by side. What limits the gain: the trees are small (in thirty parts of the
-    plan, 3822 trees of 6.7 tests on average), half of the sets of an evaluation and three fifths of the
-    sets of a Buchstab step had been met before in their tree, and the first computation of the sums for a
-    set (`0.14` ms) costs about what the second pass did.
+    hints and the part files are the same. On the boxes of 150 trees of the plan, the boxes of a tree
+    evaluated together with the tree's frozen primes as one term, as in the search (777 evaluated boxes, 300
+    Buchstab steps), an evaluated box costs `0.50` ms where it cost `0.67`, and a Buchstab step `1.07` where
+    it cost `1.46` (its test `0.58` where `0.98`). Side by side on one machine, on every twentieth part of the
+    plan, the kernel takes `11%` to `12%` less time than it did (`181`, `185` and `193` s where the two passes
+    took `203`, `209` and `220`), in agreement with those two costs, which give a tenth over the plan's steps.
+    The 17 files took 63 minutes in the run after the change, three at a time; that run and the one of 76
+    minutes were hours apart on a machine whose speed drifts, so their difference says less than the measure
+    side by side. What limits the gain: the trees are small (in thirty parts of the plan, 3822 trees of 6.7
+    tests on average), half of the sets of an evaluation and three fifths of the sets of a Buchstab step had
+    been met before in their tree, and the first computation of the sums for a set (`0.14` ms) costs about
+    what the second pass did.
     **Measured and not written**: a box packed into one number, each end a field of 64 bits, with the sum
-    over a set by one `AND` with a mask and one remainder. On 300 boxes of the plan the test of an evaluation
-    takes `0.13` ms that way where the pass takes `0.11` in the main tree, and `0.34` where the two passes
-    took `0.59` over a frozen part, which reading the frozen primes once gains by other means.
+    over a set by one `AND` with a mask and one remainder. On 300 boxes of the plan, one at a time, the test
+    of an evaluation takes `0.13` ms that way where the pass takes `0.11` in the main tree, and `0.34` where
+    the two passes took `0.59` over a frozen part, which reading the frozen primes once gains by other means.
     **What is left**: no one part of a step stands out. A Buchstab step of the main tree (`1.2` ms) is its
     test (`0.4`), the reading of its hints with the branches of the step (`0.4`) and the loop over the cells
     of the new prime (`0.4`). The kernel's per-step time varies by a third from run to run on the machine
