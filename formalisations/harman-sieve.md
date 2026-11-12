@@ -88,8 +88,8 @@ Its main tools:
   then of exponent between `r₁`, the least that the region takes, and `r₁ + f` for the floor `x^{f/DEN}`, the
   window is the one the region allows for all such rests, and the leaves grow by `t + r₁ + f`. The second
   statement is the same under two more atoms, for the trees of a reversed term. They are the tests of the
-  theorem at `2165/1000`, `Linnik21650.linnik_21650` (`formalisations/README.md`; `docs/research-opportunities.md`,
-  §3.1).
+  theorems at `2165/1000` and `2150/1000`, `Linnik21650.linnik_21650` and `Linnik21500.linnik_21500`
+  (`formalisations/README.md`; `docs/research-opportunities.md`, §3.1).
 - `SieveAd.frozSolve_sound_at`, `SieveAd.dJF_level_at`, `SieveAd.famIR_eq`, `SieveAd.famJR_eq`
   (`lib/pnt/SieveAdFroz.lean`, `lib/pnt/SieveAdFrozTree.lean`), **the tree of a reversed term over a frozen
   part.** A reversed term is a sum over numbers `R` (the product `r'` of the term's other primes and its cofactor)
@@ -241,10 +241,10 @@ Its main tools:
   cell replaced by `(h₁ − 1, h₁ + 1)` and by `(l₁ − 1, l₁ + 1)`, and `bdK` is Buchstab's bound at the level `t`.
   The tree is searched with the limit past which the bound is not below the box's other bound, so a reversal
   that loses stops early.
-  A cost below the limit bounds the term of the box (`SieveAd.bd_flipCost`): it is `SieveAd.bd_flip_neg_at`
-  with the tree's bound (`SieveAd.frozSolve_sound_at`, `SieveAd.frozTests_sound_at`), the terms at the root's
-  floor from the test that passed, and the weights of the frozen part and of its two ends from the shares of
-  the three boxes (`SieveAd.froz_weight_le_at`). So the search with these nodes is sound for any strategies
+  A cost below the limit bounds the term of the box (`SieveAd.bd_flipCost`, by `SieveAd.bd_flip_core`): it is
+  `SieveAd.bd_flip_neg_at` with the tree's bound (the frozen part's rules `SieveAd.frozRules` and
+  `SieveAd.frozTests_sound_at`), the terms at the root's floor from the test that passed, and the weights of
+  the frozen part and of its two ends from the shares of the three boxes (`SieveAd.froz_weight_le_at`). So the search with these nodes is sound for any strategies
   (`SieveAd.solveF2_sound`), and a part of it as the kernel checks it gives the bound for its range, in the form
   of `SieveAd.pr_of_kids`.
 - `Linnik21650.flip_box_21650` (`lib/pnt/SieveFlipBox21650.lean`; the part is `lib/pnt/SieveFlipPart21650.lean`'s
@@ -261,6 +261,38 @@ Its main tools:
   reversals through the largest prime, of boxes of three primes, of the nineteen it tries. This is one part,
   not a certificate of the sieve: it checks the rule, its strategies and `tools/linnik/flip_cert.py`, the
   search in Python, against the kernel.
+- `SieveAd.pr_of_kidsH_at` (`lib/pnt/SieveAdHint.lean`; the search is `lib/pnt/SieveAdHintDefs.lean`'s and the
+  guides `lib/pnt/SieveAdHintStratDefs.lean`'s, both without Mathlib), **the search led by hints is sound.** The
+  search of `SieveAdRevDefs.lean` tries at each box what its strategy proposes and keeps the cheapest; the
+  kernel, running it, spends most of its time on what is not kept, and on searching every proposal of a floor
+  where one is used. `SieveAd.solveH` is told what to do at each box by a number, the hints, read from its low
+  end in the order of the search: a run of ones closed by a zero for the action (the box is evaluated or has no
+  term; Buchstab's identity at the floor and with the configuration that a guide computes for four more bits;
+  the box dropped; the bound `Ops.alt`; a bound that reads hints itself; the cell cut in two), and at each
+  proposed cut of a new prime's range one bit, whether the range is cut there, so that consecutive cells that
+  one test evaluates are one cell. Each step is one of the rules among which the search chooses
+  (`SieveAd.Rules`), and is checked before it is used: a step whose test fails returns the limit, which says
+  nothing. So for nodes that prove a statement and a hinted bound that does, a cost that `solveH` returns below
+  its limit has the statement, whatever the hints and the guide (`SieveAd.solveH_sound`, from
+  `SieveAd.kidsH_sound` and `SieveAd.stepH_sound`). The reversal of a box through its largest prime is such a
+  hinted bound (`SieveAd.altFH`, `SieveAd.flipCostH`: the tree over the frozen part is searched by hints;
+  `SieveAd.bd_flipCostH`, from `SieveAd.bd_flip_core`, the reversal's bound from the bound of any tree, which
+  `SieveAd.bd_flipCost` shares), so the main search led by hints is sound (`SieveAd.solveFH_sound`), and a part
+  of it as the kernel checks it gives the bound for its range. The guides (`SieveAd.guideG`, and
+  `SieveAd.guideF` over a frozen part) compute one proposal of the strategy, the one that the four bits name:
+  the comparison with the rest at one cell (`SieveAd.tryJ2`), or with the rest among the tree's primes at one
+  of eight floors.
+- `Linnik21500.linnik_21500` (`lib/pnt/Linnik21500.lean`; the parts are `lib/pnt/SieveHint21500P1.lean` and the
+  files after it, without Mathlib), **Linnik's theorem with exponent `2150/1000`**: for every `q ≥ 1` and every
+  `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2150/1000}`, with no hypothesis. The route
+  and the tests are those of the theorem at `2165/1000`; the search is led by hints (`SieveAd.solve21500`:
+  `SieveAd.solveH` with the guides `SieveAd.guideG` and `SieveAd.guideF`), with the reversal through the
+  largest prime of boxes of the sign `−` of at most six primes, that is of three and of five, as its hinted
+  bound, on cells of side at most `0.004` and chains' cells of side at most `0.006` over the frozen parts. The
+  bound of the first term costs `0.94847·K` (`Linnik21500.tree21500`). The hints are the plan that
+  `tools/linnik/hint_cert.py` kept of its search: `3.4·10^6` steps, of which `1.6·10^5` reversals, in `1510`
+  parts, where the search visited `3.4·10^7` boxes, `2.8·10^7` of them over frozen parts; the plan does not use
+  the reversal of three primes of the theorem at `218/100`, which the kernel would search without hints.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

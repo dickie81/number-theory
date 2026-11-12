@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1721 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1724 printed theorems, and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -99,6 +99,7 @@ result's note finds it unused; blank where neither has been checked.
 | The same with `p ≤ Kq^{219/100}`, by a tree of Buchstab steps with a Type II estimate in two variables (in no paper) | `Linnik21900.linnik_21900` | yes |
 | The same with `p ≤ Kq^{218/100}`, with role reversal for a term of three primes added to that tree (in no paper) | `Linnik21800.linnik_21800` | yes |
 | The same with `p ≤ Kq^{2165/1000}`, below `13/6`, where the Type II estimate in one variable has no window: the same search with the estimate in two variables alone, the rest of a term with no prime of the rest's size being a product of the primes of its comparison's own tree (in no paper) | `Linnik21650.linnik_21650` | yes |
+| The same with `p ≤ Kq^{2150/1000}`: that search with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, the kernel following the plan of the search by hints (in no paper) | `Linnik21500.linnik_21500` | yes |
 | Linnik by density estimates and the classical deduction, with the exponents `12`, `4`, `17/6`, `36/13`, `87/35`, `12/5` and `2.3334`, each `+ η` | `Linnik.linnik_twelve`, `LinnikDensity.linnik_four`, `LinnikSubconvex.linnik_seventeen_sixths`, `LinnikIngham.linnik_thirtysix_thirteenths`, `LinnikHuxley.linnik_eighty_seven_thirty_fifths`, `LinnikTwelve.linnik_twelve_fifths`, `LinnikG7.linnik_g7d` | yes |
 | A prime in `(y, y + y^θ]` for every large `y`, `θ > 17/30`; and for all `y ∈ [X, 2X]` outside a set of measure `X^{1−δ}`, `θ > 2/15` | `ZetaGMDensity.short_primes_seventeen_thirtieths`, `ZetaGMDensity.almost_all_short_primes_two_fifteenths` | yes |
 | In terms of `Θ`: `limsup log\|ψ(x) − x\|/log x = Θ`, the same for `M(x)`, `Σ μ(n)n^{−s}` converges exactly on `Re s > Θ`, and a prime in `(y, y + y^θ]` for `θ > 2Θ/(1 + 2Θ)` | `PsiExponent.limsup_expo`, `MertensExponent.limsup_mexpo`, `MertensExponent.moebiusAbscissa_eq_Theta`, `InghamDensity.short_primes_Theta` | |
@@ -223,14 +224,18 @@ In order of what is in reach.
    and not a proof, keeps Li's constant positive down to `θ ≈ 0.5182` once Guth and Maynard's estimate
    (`ZetaGMLV.gm_large_values`) joins Huxley's. A Lean proof below `0.52` would go below Li, resting on the half-plane
    as Linnik's exponent does: the sieve's main terms take the prime number theorem in short ranges from it.
-2. **Linnik's exponent.** The theorem is `2165/1000` (`Linnik21650.linnik_21650`); the paper's is `11/5`. With the
+2. **Linnik's exponent.** The theorem is `2150/1000` (`Linnik21500.linnik_21500`); the paper's is `11/5`. With the
    window chosen afresh, the paper's certificate passes at `2.199` (total `0.96729K` on 276 cells a side) and fails
    at `2.198` (supplement §S6, computed, not a theorem). The theorem at `219/100` adds a Type II estimate in two
    variables and a decomposition chosen term by term, a tree of Buchstab steps that the kernel searches for, and
    the theorem at `218/100` adds role reversal for a term of three primes. The theorem at `2165/1000` has no
    Type II window, which closes at `1 + A/2 = 13/6` for the curve's peak `A = 7/3`: its only estimate is the one in
    two variables, and a term with no prime of the size of that estimate's rest takes the rest from the primes of
-   its comparison's own tree (`SieveFillComp.prop6_fill`). With role reversal for every term and at two levels the
+   its comparison's own tree (`SieveFillComp.prop6_fill`). The theorem at `2150/1000` adds the reversal of a term
+   of three or five primes through its largest prime, as an identity with the cofactor kept as one number
+   (`SieveAd.bd_flip_core`), and its certificate is the plan of a search, which the kernel follows by hints and
+   checks step by step (`SieveAd.solveH_sound`), where the earlier ones are searches that the kernel runs. With
+   role reversal for every term and at two levels the
    same inputs pass at `2.12` in a computation in floating point, which is not in Lean
    ([`research-opportunities.md`](research-opportunities.md), §3.1). `0.7151K` of the paper's
    certificate's `0.9321K` is cells that no depth of

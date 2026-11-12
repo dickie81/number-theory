@@ -219,6 +219,9 @@ import SieveAdFrozTests
 import SieveAdFlipDefs
 import SieveAdFlipSearch
 import SieveAdFlipStratDefs
+import SieveAdHintDefs
+import SieveAdHint
+import SieveAdHintStratDefs
 import SieveHMWindow
 import SieveTypeIIHM
 import LinnikCGLLV
@@ -310,6 +313,8 @@ import SieveFill21650
 import Linnik21650
 import SieveFlipPart21650
 import SieveFlipBox21650
+import SieveHint21500
+import Linnik21500
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
@@ -1045,6 +1050,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.evIF_froz_two_at
 #print axioms SieveAd.frozTests_sound_at
 #print axioms SieveAd.pr_of_kidsF_at
+#print axioms SieveAd.pr_of_kidsH_at
 #print axioms SieveAd.pr_of_kids
 #print axioms SieveAd.linnik_pr
 #print axioms SieveCurveGlue.affine_corner_bound
@@ -1247,6 +1253,8 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms Linnik21650.tree21650
 #print axioms Linnik21650.linnik_21650
 #print axioms Linnik21650.flip_box_21650
+#print axioms Linnik21500.tree21500
+#print axioms Linnik21500.linnik_21500
 #print axioms SieveCurve7D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d

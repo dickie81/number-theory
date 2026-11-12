@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1721 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1724 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 315 | 929 |
+| `lib/pnt` | 317 | 932 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1513,6 +1513,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow`: The least prime primitive root mod a prime power
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_safe`: Safe primes
 
+#### `Linnik21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints
+
+- `Linnik21500.tree21500`: The first term at `2150 / 1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints ([note](../formalisations/harman-sieve.md))
+
 #### `Linnik21650`: Linnik's theorem with exponent `2165 / 1000`, by a search with no Type II window
 
 - `Linnik21650.tree21650`: The first term at `2165 / 1000`
@@ -2534,6 +2539,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdFull`: The estimate in two variables on tuples of primes with a given product, in no order
 
 - `SieveAd.full2_core_at`: Tuples of primes with product in `(N₁, N₂]`, on exponents that pass the checks, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdHint`: The search led by hints is sound
+
+- `SieveAd.pr_of_kidsH_at`: A part of the main search led by hints, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdRev`: The tree of a reversed term bounds it
 

@@ -137,6 +137,7 @@ the exponent each input would reach is:
 | The same inputs in a tree of Buchstab steps chosen term by term, with the window's tests and those of the estimate in two variables, and no role reversal (below; **in Lean**, the kernel searching for the tree) | `7/3` | `13/6` | **`2.19`, a theorem** (`Linnik21900.linnik_21900`) |
 | The same tree with role reversal for a term of three primes that needs an upper bound, at one level (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.18`, a theorem** (`Linnik21800.linnik_21800`) |
 | The same search with no Type II window: the estimate in two variables alone, and for a term with no prime of the size of its rest, the rest among the primes of the comparison's own tree (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.165`, a theorem** (`Linnik21650.linnik_21650`) |
+| The same search with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, at one level (below; **in Lean**, the kernel following the plan of the search by hints) | `7/3` | `13/6` | **`2.15`, a theorem** (`Linnik21500.linnik_21500`) |
 | The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no certificate; of what it assumes, the two estimates are in Lean as far as Harman's comparison with a rest among the term's primes) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
 | A hybrid large-values estimate of Guth–Maynard strength at `σ = 5/7`, `15/(3 + 5σ)` (the `gm` variant of `tools/linnik/density_payoff.py`) | `105/46 = 2.2826` | `2.1413` | about `2.17`–`2.18` |
 | Guth and Maynard's `30/13` as a cap everywhere | `2.3077` | `2.1538` | about `2.18`–`2.19` |
@@ -356,9 +357,53 @@ covers. The region does not close at `13/6`.
     `0.005` and at most a tenth of the exponent, which takes `8720` of the `18611` reversals that it tries. The
     kernel runs it in `2353` parts (`lib/pnt/SieveTree21650P1.lean` and the files after it), in about four hours of its
     time, and `tools/linnik/fill_cert.py` is the same search in Python.
-- **What is not written.** Role reversal in general (below); a search for an exponent below `2.165`. The same
-  search passes at `2.16` with cells of side `0.004` (`0.946K`, in the first form of its strategy), on `7.2·10^6`
-  boxes, twice the build of the theorem; below that it needs the wider reversal.
+  - **Linnik's theorem with exponent `2150/1000`** (12 November; `Linnik21500.linnik_21500`): for every `q ≥ 1`
+    and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2150/1000}`, with no hypothesis.
+    Two things are new. The first is a rule: a term of the sign `−` of three or five primes is reversed through
+    its largest prime (below, *What is written of it*): summed over the frozen numbers `R = p₂⋯p_k·m`, it is
+    the terms of `n/R` at a level between the square root of the greatest value of `p₁` and its least, and
+    those have a tree of Buchstab steps of their own, searched with the tests `SieveAd.frozTests`. The second
+    is the certificate. The kernel, running a search, takes `4` ms a box in the main tree and `13` ms over a
+    frozen part, and most of what it searches is not kept: with this rule on terms of three primes alone the
+    search at `2.165` is twenty-three hours of the kernel, and with terms of five primes it is out of reach.
+    So the search is run once outside the kernel (`tools/linnik/hint_cert.py`), and the plan it keeps is
+    written as a number for each part, the hints, read from the low end in the order of the search: a few bits
+    for what is done at a box, and one bit at each proposed cut of a new prime's range. `SieveAd.solveH`
+    follows them and checks each step, and its cost is a bound whatever the hints are
+    (`SieveAd.solveH_sound`): a step is one of the rules among which the search chooses, and a step whose test
+    fails returns its limit. A Buchstab step takes its floor and its configuration from a guide that computes
+    one proposal of the strategy, the one that four bits of the hints name, where the search computes them
+    all (nineteen of the kernel's milliseconds over a frozen part, against two for the test). Consecutive
+    cells that one test evaluates are one cell (five in six of the evaluated cells go this way), and
+    consecutive dropped cells are one cell while its bound is within `0.2%` of the sum of theirs. At
+    `2150/1000`, with cells of side at most `0.004`, chains' cells of side at most `0.006` over the frozen
+    parts and no reversal of three primes in the plan: the search visits `3.4·10^7` boxes, `2.8·10^7` of them
+    over frozen parts, in nine minutes on four cores, and costs `0.94847K`; its plan has `3.4·10^6` steps,
+    `1.6·10^5` of them reversals, and `2.5` MB of hints, in `1510` parts
+    (`lib/pnt/SieveHint21500P1.lean` and the files after it), which the kernel checks in seven hours of its
+    time (39 files, of eight to fifteen minutes each).
+- **What is not written.** Role reversal at a second level and for terms of the sign `+` (below); a certificate
+  below `2.15`. The plan of the theorem's search passes at `2.145` with cells of side `0.0035` (`0.975K`, on
+  `6.0·10^7` boxes; `6.6·10^6` steps and `4.6` MB of hints, about eleven hours of the kernel), twice the build of
+  the theorem at `2.15` for `0.005` of exponent; so the next exponents want the second level, or tests that do
+  not narrow with the cells, more than they want finer cells.
+  - *Where the cells' loss is, with this rule* (12 November; the theorem's search at `2.15`, on twenty of the
+    `115` cells of the first prime, with some tests taken at the midpoints of the cells, which is no
+    certificate). With every test at the midpoints the cost falls by `24.6%`; with those of one kind alone,
+    by `12.1%` (the estimate in two variables over the frozen parts), `5.8%` (the same in the main tree),
+    `5.8%` (the comparisons at a floor in the main tree) and `4.1%` (those over the frozen parts). So a
+    quarter of the theorem's cost is the cells', half of it in the terms over the frozen parts, where the set
+    of the first variable has cells of the main tree (of side `0.004`) and of the chain (`0.006`) in a window
+    `0.07` wide. Two remedies were tried in the exact search, both sound with the rules that are proved
+    (`SieveAd.Rules.split` cuts a cell anywhere, and `evl` takes any configuration): the newest cell cut at the
+    ends of the part that one configuration evaluates, the rest searched further, saves `1.5%` in the main
+    tree and `4.5%` in both trees; and conditions on the sums of exponents carried by the boxes of the main
+    tree alone (the part of a box whose first variable is in the window evaluated, the rest searched further
+    under the condition) save `13%` on cells of side `0.02` at `2.165`. Each `0.005` of exponent costs `5%` to
+    `9%` (`0.829`, `0.981`, `1.034` at `2.165`, `2.155`, `2.15` on cells of side `0.005`), and the second
+    level is worth `9%` in the model's terms (`0.870` to `0.789`). So `2.14` wants the second level or two
+    fifths of the cells' loss, `2.13` both with more than half of the cells' loss, and `2.12` both with all of
+    it: with these rules it is at the edge.
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three
@@ -449,11 +494,14 @@ covers. The region does not close at `13/6`.
     (`lib/pnt/SieveAdFlipStratDefs.lean`), with the search in Python definition by definition
     (`tools/linnik/flip_cert.py`), checked against the kernel on one part at `2165/1000`
     (`Linnik21650.flip_box_21650`: a box of two primes that the theorem's search drops at `0.000734·K` costs
-    `0.000501·K`). Not written: a certificate of the sieve with it, the reversal of a box of the sign `+` in the
+    `0.000501·K`). Not written: the reversal of a box of the sign `+` in the
     search (worth `0.004` at `2.165` with cells of side `0.01`), and the second level. The kernel takes about
     `13` ms a box over a frozen part, where it takes `4` ms a box of the main tree (the sets of the tests are
     searched among more cells), and most of the boxes of the search with the rule are over frozen parts: a
-    certificate at cells of side `0.005` is some twenty hours of the kernel, against the theorem's four.
+    certificate at cells of side `0.005` is some twenty hours of the kernel, against the theorem's four. So the
+    certificate of the theorem at `2150/1000` is not that search but its plan, which the kernel follows by
+    hints (`lib/pnt/SieveAdHintDefs.lean`, `SieveAdHint.lean`, `SieveAdHintStratDefs.lean`;
+    `SieveAd.solveH_sound`, `SieveAd.bd_flipCostH`, `SieveAd.pr_of_kidsH_at`), above.
   - *The exact search with it* (12 November; `tools/linnik/flip_proto.py`, the search of `fill_cert.py` with
     this rule in exact integers; not yet a Lean search). The cost of a reversed box of the sign `−` is
     `(c(h₁D₀ + E) + bdK·E)/(DEN·K)`, with `c` the cost of the tree over the frozen part, `D₀` the share of the
@@ -476,6 +524,15 @@ covers. The region does not close at `13/6`.
     `1.213` on at most five (`9·10^3` reversals of the sign `−` taken, against `1.3·10^3`), on twice the boxes;
     with cells of side `0.005`, `0.829` on at most five primes (`7.8·10^4` reversals of boxes of five primes
     taken of `2.6·10^5` tried), on `2.7·10^7` boxes, `2.4·10^7` of them in the trees over the frozen parts.
+    At `2.155` the same costs `0.981`, and at `2.15`, `1.034`. In the Lean definitions (terms of the sign `−`
+    alone, the tree searched with the limit past which the reversal does not win; `tools/linnik/flip_cert.py`),
+    with terms of three primes reversed and cells of side `0.005`: `0.908` at `2.165` and `0.977` at `2.16`.
+    Over the frozen parts, chains' cells of side `0.006` in place of `0.012` gain `0.02`, and chains of one more
+    prime nothing; in the main tree, boxes of one more prime decomposed gain `0.007`, and cells at most a
+    fourteenth of the exponent in place of a tenth `0.016` for twice the steps. Without the reversal of three
+    primes, with terms of three and five primes reversed through the largest prime and chains' cells `0.006`
+    (`tools/linnik/hint_cert.py --try`): `0.966` at `2.155` with cells of side `0.005`, `0.948` at `2.15` with
+    `0.004` (the theorem), `0.975` at `2.145` with `0.0035`.
     The model's `0.69` at `2.15` is two levels and terms of five primes, and `2.12` is that and a certificate
     that loses much less than the cells do.
   - *Why `2.19`.* Without reversal, and without the stops whose rest is the first small prime, the cells pass at

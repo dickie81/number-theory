@@ -11,10 +11,13 @@ cost bounds the term, so the search is sound.
   rest, and as a function of the prime's index it is that cell before the rest's.
 * `shareLe_list`: the share of a box of cells with `0 < lo < hi` and upper ends of sum at most `DEN` is at most
   `dropCost/K`. `bd_of_eps`: a bound at `C + εW` for every `ε > 0` is a bound at `C`.
-* `bd_flipCost`: **the cost of a reversal bounds the term**: for a box that passes `flipOK`, a cost that
-  `flipCost` returns below its limit gives `Bd false (cost/K)`. It is `bd_flip_neg` with the tree's bound from
-  `frozSolve_sound` and `frozTests_sound`, the terms at the root's floor from the test that passed, and the
-  weights of the frozen part and of its two ends from the shares of three boxes (`froz_weight_le`).
+* `bd_flip_core`: **the reversal from the bound of a tree**: for a box that passes `flipOK`, a floor at which
+  `frozTests` evaluates the terms of the frozen part and a cost `c` of the cells of the chain's first prime, for
+  any search whose nodes prove `PF`, give `Bd false` at `⌈(c·(h₁·D₀ + E) + bdK·E)/(DEN·K)⌉/K`. It is
+  `bd_flip_neg` with `frozTests_sound` and the weights of the frozen part and of its two ends from the shares of
+  three boxes (`froz_weight_le`).
+* `bd_flipCost`: **the cost of a reversal bounds the term**: a cost that `flipCost` returns below its limit gives
+  `Bd false (cost/K)`: `bd_flip_core` with the tree's bound from `solveG_sound`.
 * `rulesF`, `solveF2_sound`, `pr_of_kidsF`: the nodes `opsF` bound the term, the search with them is sound, and a
   part of it as the kernel checks it; `pr_of_kidsF_at` with the route and its exponent as variables.
 
@@ -122,12 +125,31 @@ variable [RouteOK] [SieveCert.IBPar] [IBFits]
 
 /-! ### The cost of a reversal bounds the term -/
 
-/-- **The cost of a reversal through the largest prime bounds the term.** For a box that passes `flipOK`: a cost
-that `flipCost` returns below its limit gives `Bd false (cost/K)` for the box, that is, its term in `𝒜` minus the
-comparison set is at most `(cost/K + o(1))x/(φ(q) log x)`. -/
-theorem bd_flipCost (SK : Cell → List Cell → Strat) (fuel maxlen : ℕ) {bl : List Cell}
-    (hok : flipOK maxlen bl = true) {lim : ℕ} (h : flipCost SK fuel bl lim < lim) (k' : ℕ)
-    (hl : bl.length = k' + 1) : Bd false ((flipCost SK fuel bl lim : ℝ) / K) (boxFn bl (k' + 1) hl) := by
+/-- **The reversal through the largest prime, from the bound of a tree.** For a box `bl` that passes `flipOK`,
+with `c₀ :: b` its cells but the largest prime's: if the tests `frozTests` evaluate the terms of the frozen part at
+a floor `f ≤ min(lo_s, t)`, and the cells of the chain's first prime from `f` to the level `t` cost `c` over the
+frozen part (for any search whose nodes prove `PF`), then the term of the box is at most
+`(⌈(c·(h₁·D₀ + E) + bdK·E)/(DEN·K)⌉/K + o(1))x/(φ(q) log x)` in `𝒜` minus the comparison set. -/
+theorem bd_flip_core {maxlen : ℕ} {bl : List Cell} (hok : flipOK maxlen bl = true) (k' : ℕ)
+    (hl : bl.length = k' + 1) {c0 : Cell} {b : List Cell} (hβdef : c0 :: b = initC bl) {f c : ℕ} {cfg : Cfg}
+    (hfle : f ≤ minN c0.1 (flipT (lastC bl)))
+    (hokJ : (frozTests (DEN - (lastC bl).2) (DEN - (lastC bl).1 + 1) (12 + DEN / c0.1) (c0 :: b)).okJ (c0 :: b) f
+      cfg = true)
+    (htree : ∀ (s : ℕ) (hβl : (c0 :: b).length = s + 1),
+      Rules (opsK (lastC bl) (c0 :: b).length)
+          (frozTests (DEN - (lastC bl).2) (DEN - (lastC bl).1 + 1) (12 + DEN / c0.1) (c0 :: b))
+          (PF (fun q => frozS q (e1 (lastC bl)) (e2 (lastC bl)) (boxFn (c0 :: b) (s + 1) hβl)) frozR (c0 :: b)) →
+        PF (fun q => frozS q (e1 (lastC bl)) (e2 (lastC bl)) (boxFn (c0 :: b) (s + 1) hβl)) frozR (c0 :: b)
+          ((f, flipT (lastC bl)) :: c0 :: b) true c) :
+    Bd false
+      (((cdiv (c * ((lastC bl).2 * dropCost bl +
+          (((lastC bl).2 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).2 - 1, (lastC bl).2 + 1)]) +
+            ((lastC bl).1 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).1 - 1, (lastC bl).1 + 1)]))) +
+        bdK (lastC bl) (flipT (lastC bl)) *
+          (((lastC bl).2 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).2 - 1, (lastC bl).2 + 1)]) +
+            ((lastC bl).1 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).1 - 1, (lastC bl).1 + 1)]))) (DEN * K) : ℕ) :
+          ℝ) / K)
+      (boxFn bl (k' + 1) hl) := by
   simp only [flipOK, Bool.and_eq_true, Nat.ble_eq] at hok
   obtain ⟨⟨⟨⟨⟨⟨⟨⟨h2, hmax⟩, hmax11⟩, hcells⟩, hfit⟩, hsep⟩, hl3⟩, htl⟩, htD⟩ := hok
   have hD := DEN_pos'
@@ -136,24 +158,18 @@ theorem bd_flipCost (SK : Cell → List Cell → Strat) (fuel maxlen : ℕ) {bl 
     intro h0
     rw [h0] at h2
     simp at h2
-  obtain ⟨ctx, hctxdef⟩ : ∃ ctx, ctx = lastC bl := ⟨_, rfl⟩
-  obtain ⟨β, hβdef⟩ : ∃ β, β = initC bl := ⟨_, rfl⟩
-  have hbl : β ++ [ctx] = bl := by
-    rw [hβdef, hctxdef]
+  have hbl : (c0 :: b) ++ [lastC bl] = bl := by
+    rw [hβdef]
     exact initC_append_lastC hne
-  rw [← hctxdef] at hl3 htl htD hsep
   rw [← hβdef] at hsep
+  generalize hctxdef : lastC bl = ctx at hl3 htl htD hsep hfle hokJ htree hbl ⊢
   obtain ⟨s, rfl⟩ : ∃ s, k' = s + 1 := ⟨k' - 1, by omega⟩
-  have hβl : β.length = s + 1 := by
+  have hβl : (c0 :: b).length = s + 1 := by
     have := congrArg List.length hbl
-    simp only [List.length_append, List.length_cons, List.length_nil] at this
+    simp only [List.length_append, List.length_cons, List.length_nil] at this ⊢
     omega
-  obtain ⟨c0, b, rfl⟩ : ∃ c0 b, β = c0 :: b := by
-    cases β with
-    | nil => simp at hβl
-    | cons c0 b => exact ⟨c0, b, rfl⟩
-  obtain ⟨t, htdef⟩ : ∃ t, t = flipT ctx := ⟨_, rfl⟩
-  rw [← htdef] at htl htD
+  generalize htdef : flipT ctx = t at htl htD hfle htree ⊢
+  have htdef' : t = flipT ctx := htdef.symm
   -- the cells
   have hc := (cellsOK_iff bl).1 hcells
   have hctxm : ctx ∈ bl := by rw [← hbl]; simp
@@ -162,25 +178,204 @@ theorem bd_flipCost (SK : Cell → List Cell → Strat) (fuel maxlen : ℕ) {bl 
     rw [← hbl, hiSum_eq, List.map_append, List.sum_append, ← hiSum_eq] at hfit
     simpa using hfit
   have hhD : ctx.2 ≤ DEN := by omega
-  have ht2 : ctx.2 ≤ 2 * t := by rw [htdef]; unfold flipT; omega
+  have ht2 : ctx.2 ≤ 2 * t := by rw [htdef']; unfold flipT; omega
   have ht0 : 0 < t := by omega
   obtain ⟨βx, hβx⟩ : ∃ βx : Fin (s + 1) → Cell, βx = boxFn (c0 :: b) (s + 1) hβl := ⟨_, rfl⟩
   have hβ0 : (βx 0).2 + 1 ≤ ctx.1 := by
     rw [hβx, boxFn_zero_lastC]
     exact hsep
   have hc0 : 0 < c0.1 ∧ c0.1 < c0.2 := hc c0 (by rw [← hbl]; simp)
-  -- the cost unfolded
-  obtain ⟨E, hEdef⟩ : ∃ E : ℕ, E = (ctx.2 + 1) * dropCost ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) +
-      (ctx.1 + 1) * dropCost ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) := ⟨_, rfl⟩
+  generalize hEdef : (ctx.2 + 1) * dropCost ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) +
+      (ctx.1 + 1) * dropCost ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) = E
+  have hEdef' : E = (ctx.2 + 1) * dropCost ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) +
+      (ctx.1 + 1) * dropCost ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) := hEdef.symm
+  generalize hτdef : frozTests (DEN - ctx.2) (DEN - ctx.1 + 1) (12 + DEN / c0.1) (c0 :: b) = τ at hokJ htree
+  have hτdef' : τ = frozTests (DEN - ctx.2) (DEN - ctx.1 + 1) (12 + DEN / c0.1) (c0 :: b) := hτdef.symm
+  have hft : f ≤ t := hfle.trans (minN_le c0.1 t).2
+  have hctx' : 0 < ctx.1 ∧ ctx.1 ≤ ctx.2 ∧ ctx.2 ≤ DEN := ⟨hl0, hlh.le, hhD⟩
+  have he : DEN - ctx.2 ≤ DEN - ctx.1 + 1 := by omega
+  have he₂ : DEN - ctx.1 + 1 ≤ DEN := by omega
+  have hT : DEN + 1 ≤ (DEN / c0.1 + 1) * (boxFn (c0 :: b) (s + 1) hβl (Fin.last s)).1 := by
+    rw [boxFn_last_head]
+    have := Nat.lt_mul_div_succ DEN hc0.1
+    rw [Nat.mul_comm] at this
+    omega
+  have hτs : SoundF τ (fun q => frozS q (e1 ctx) (e2 ctx) βx) frozR (c0 :: b) := by
+    rw [hτdef', hβx]
+    exact frozTests_sound (c0 :: b) hβl he he₂ hT (le_refl _)
+  have hS := inSlab_frozS ctx βx
+  have hk := htree s hβl (by rw [hβx] at hS hτs; exact frozRules hctx' hS hτs)
+  rw [← hβx] at hk
+  have hJ : EvJF (fun q => frozS q (e1 ctx) (e2 ctx) βx) frozR f (boxFn [] 0 rfl) :=
+    hτs.soundJ [] f cfg 0 rfl (by simp only [List.length_nil, hβl]; omega) hokJ
+  -- the weights
+  have hbl1 : ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]).length = s + 1 + 1 := by
+    simp only [List.length_append, hβl, List.length_cons, List.length_nil]
+  have hbl2 : ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]).length = s + 1 + 1 := by
+    simp only [List.length_append, hβl, List.length_cons, List.length_nil]
+  have hcβ : ∀ c' ∈ c0 :: b, 0 < c'.1 ∧ c'.1 < c'.2 := fun c' hc' => hc c' (by rw [← hbl]; exact List.mem_append_left _ hc')
+  have hcells1 : cellsOK ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) = true := by
+    rw [cellsOK_iff]
+    intro c' hc'
+    rcases List.mem_append.1 hc' with h' | h'
+    · exact hcβ c' h'
+    · simp only [List.mem_singleton] at h'
+      subst h'
+      exact ⟨by show 0 < ctx.2 - 1; omega, by show ctx.2 - 1 < ctx.2 + 1; omega⟩
+  have hcells2 : cellsOK ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) = true := by
+    rw [cellsOK_iff]
+    intro c' hc'
+    rcases List.mem_append.1 hc' with h' | h'
+    · exact hcβ c' h'
+    · simp only [List.mem_singleton] at h'
+      subst h'
+      exact ⟨by show 0 < ctx.1 - 1; omega, by show ctx.1 - 1 < ctx.1 + 1; omega⟩
+  have hfit1 : hiSum ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) ≤ DEN := by
+    rw [hiSum_eq, List.map_append, List.sum_append, ← hiSum_eq]
+    simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+    omega
+  have hfit2 : hiSum ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) ≤ DEN := by
+    rw [hiSum_eq, List.map_append, List.sum_append, ← hiSum_eq]
+    simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
+    omega
+  have hbx0 : boxFn bl (s + 1 + 1) hl = Fin.cons (α := fun _ => Cell) ctx βx := by
+    subst hbl
+    rw [hβx]
+    exact boxFn_append_singleton (c0 :: b) ctx s hβl hl
+  have hS0 : ShareLe (Fin.cons (α := fun _ => Cell) ctx βx) ((dropCost bl : ℝ) / K) := by
+    rw [← hbx0]
+    exact shareLe_list bl (s + 1) hl hcells (by omega)
+  have hS1 : ShareLe (Fin.cons (α := fun _ => Cell) (ctx.2 - 1, ctx.2 + 1) βx)
+      ((dropCost ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) : ℝ) / K) := by
+    rw [hβx, ← boxFn_append_singleton (c0 :: b) (ctx.2 - 1, ctx.2 + 1) s hβl hbl1]
+    exact shareLe_list _ (s + 1) hbl1 hcells1 hfit1
+  have hS2 : ShareLe (Fin.cons (α := fun _ => Cell) (ctx.1 - 1, ctx.1 + 1) βx)
+      ((dropCost ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) : ℝ) / K) := by
+    rw [hβx, ← boxFn_append_singleton (c0 :: b) (ctx.1 - 1, ctx.1 + 1) s hβl hbl2]
+    exact shareLe_list _ (s + 1) hbl2 hcells2 hfit2
+  obtain ⟨D0, hD0⟩ : ∃ D0 : ℝ, D0 = (dropCost bl : ℝ) / K := ⟨_, rfl⟩
+  obtain ⟨D1, hD1⟩ : ∃ D1 : ℝ, D1 = (dropCost ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) : ℝ) / K := ⟨_, rfl⟩
+  obtain ⟨D2, hD2⟩ : ∃ D2 : ℝ, D2 = (dropCost ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) : ℝ) / K := ⟨_, rfl⟩
+  rw [← hD0] at hS0
+  rw [← hD1] at hS1
+  rw [← hD2] at hS2
+  have hD00 : 0 ≤ D0 := by rw [hD0]; positivity
+  have hD10 : 0 ≤ D1 := by rw [hD1]; positivity
+  have hD20 : 0 ≤ D2 := by rw [hD2]; positivity
+  have hw₀ : ∀ δ : ℝ, 0 < δ → ∀ᶠ q : ℕ in atTop,
+      WF (frozS q (e1 ctx + 1) (e2 ctx - 1) βx) frozR ≤ (ctx.2 : ℝ) / DEN * D0 + δ := fun δ hδ =>
+    froz_weight_le hctx' (by omega) βx (by omega) hD00 hS0 hδ
+  have hw₁ : ∀ δ : ℝ, 0 < δ → ∀ᶠ q : ℕ in atTop,
+      WF (frozS q (e1 ctx) (e1 ctx + 1) βx) frozR ≤ ((ctx.2 + 1 : ℕ) : ℝ) / DEN * D1 + δ := by
+    intro δ hδ
+    have h1 := froz_weight_le (ctx := (ctx.2 - 1, ctx.2 + 1))
+      ⟨by show 0 < ctx.2 - 1; omega, by show ctx.2 - 1 ≤ ctx.2 + 1; omega, by show ctx.2 + 1 ≤ DEN; omega⟩
+      (by show ctx.2 + 1 ≤ 2 * (ctx.2 - 1); omega) βx (by show (βx 0).2 ≤ ctx.2 - 1; omega) hD10 hS1 hδ
+    have ea : e1 (ctx.2 - 1, ctx.2 + 1) + 1 = e1 ctx := by
+      show DEN - (ctx.2 + 1) + 1 = DEN - ctx.2
+      omega
+    have eb : e2 (ctx.2 - 1, ctx.2 + 1) - 1 = e1 ctx + 1 := by
+      show DEN - (ctx.2 - 1) + 1 - 1 = DEN - ctx.2 + 1
+      omega
+    rw [ea, eb] at h1
+    exact h1
+  have hw₂ : ∀ δ : ℝ, 0 < δ → ∀ᶠ q : ℕ in atTop,
+      WF (frozS q (e2 ctx - 1) (e2 ctx) βx) frozR ≤ ((ctx.1 + 1 : ℕ) : ℝ) / DEN * D2 + δ := by
+    intro δ hδ
+    have h1 := froz_weight_le (ctx := (ctx.1 - 1, ctx.1 + 1))
+      ⟨by show 0 < ctx.1 - 1; omega, by show ctx.1 - 1 ≤ ctx.1 + 1; omega, by show ctx.1 + 1 ≤ DEN; omega⟩
+      (by show ctx.1 + 1 ≤ 2 * (ctx.1 - 1); omega) βx (by show (βx 0).2 ≤ ctx.1 - 1; omega) hD20 hS2 hδ
+    have ea : e1 (ctx.1 - 1, ctx.1 + 1) + 1 = e2 ctx - 1 := by
+      show DEN - (ctx.1 + 1) + 1 = DEN - ctx.1 + 1 - 1
+      omega
+    have eb : e2 (ctx.1 - 1, ctx.1 + 1) - 1 = e2 ctx := by
+      show DEN - (ctx.1 - 1) + 1 - 1 = DEN - ctx.1 + 1
+      omega
+    rw [ea, eb] at h1
+    exact h1
+  obtain ⟨w₀, hw₀def⟩ : ∃ w : ℝ, w = (ctx.2 : ℝ) / DEN * D0 := ⟨_, rfl⟩
+  obtain ⟨w₁, hw₁def⟩ : ∃ w : ℝ, w = ((ctx.2 + 1 : ℕ) : ℝ) / DEN * D1 := ⟨_, rfl⟩
+  obtain ⟨w₂, hw₂def⟩ : ∃ w : ℝ, w = ((ctx.1 + 1 : ℕ) : ℝ) / DEN * D2 := ⟨_, rfl⟩
+  rw [← hw₀def] at hw₀
+  rw [← hw₁def] at hw₁
+  rw [← hw₂def] at hw₂
+  have hw₀0 : 0 ≤ w₀ := by rw [hw₀def]; positivity
+  have hw₁0 : 0 ≤ w₁ := by rw [hw₁def]; positivity
+  have hw₂0 : 0 ≤ w₂ := by rw [hw₂def]; positivity
+  obtain ⟨bd, hbddef⟩ : ∃ bd : ℝ, bd = (bdK ctx t : ℝ) / K := ⟨_, rfl⟩
+  have hbd : (SieveCert.omKw (DEN - ctx.2 - t - 1) t (ctx.2 - ctx.1 + 2) 1 : ℝ) / K * ((DEN : ℝ) / t) ≤ bd := by
+    rw [hbddef]
+    have h1 := SieveCert.div_le_cdiv (SieveCert.omKw (DEN - ctx.2 - t - 1) t (ctx.2 - ctx.1 + 2) 1 * DEN) t ht0
+    have ht' : (0 : ℝ) < t := by exact_mod_cast ht0
+    have e : (SieveCert.omKw (DEN - ctx.2 - t - 1) t (ctx.2 - ctx.1 + 2) 1 : ℝ) / K * ((DEN : ℝ) / t) =
+        ((SieveCert.omKw (DEN - ctx.2 - t - 1) t (ctx.2 - ctx.1 + 2) 1 * DEN : ℕ) : ℝ) / t / K := by
+      push_cast
+      field_simp
+    rw [e]
+    exact div_le_div_of_nonneg_right h1 hK.le
+  -- the bound for every ε
+  have hflip : ∀ ε : ℝ, 0 < ε → Bd false (((c : ℝ) / K + ε) * (w₀ + w₁ + w₂) + bd * (w₁ + w₂))
+      (Fin.cons (α := fun _ => Cell) ctx βx) := by
+    intro ε hε
+    exact bd_flip_neg ⟨hl0, hlh, hhD⟩ hft ht0 htl ht2 htD βx (by omega) (by positivity) hJ
+      (hk [(f, t)] rfl 0 rfl ε hε) hbd hw₁0 hw₂0 hw₀ hw₁ hw₂
+  rw [hbx0]
+  refine bd_of_eps (W := w₀ + w₁ + w₂) (by positivity) fun ε hε => bd_mono (hflip ε hε) ?_
+  -- the arithmetic
+  have harith : (c : ℝ) / K * (w₀ + w₁ + w₂) + bd * (w₁ + w₂) ≤
+      ((cdiv (c * (ctx.2 * dropCost bl + E) + bdK ctx t * E) (DEN * K) : ℕ) : ℝ) / K := by
+    have h1 := SieveCert.div_le_cdiv (c * (ctx.2 * dropCost bl + E) + bdK ctx t * E) (DEN * K)
+      (Nat.mul_pos SieveCert.DEN_pos (by exact_mod_cast hK))
+    have e : (c : ℝ) / K * (w₀ + w₁ + w₂) + bd * (w₁ + w₂) =
+        ((c * (ctx.2 * dropCost bl + E) + bdK ctx t * E : ℕ) : ℝ) / ((DEN * K : ℕ) : ℝ) / K := by
+      rw [hw₀def, hw₁def, hw₂def, hD0, hD1, hD2, hbddef, hEdef']
+      push_cast
+      field_simp
+      ring
+    rw [e]
+    exact div_le_div_of_nonneg_right h1 hK.le
+  linarith
+
+/-- **The cost of a reversal through the largest prime bounds the term.** For a box that passes `flipOK`: a cost
+that `flipCost` returns below its limit gives `Bd false (cost/K)` for the box, that is, its term in `𝒜` minus the
+comparison set is at most `(cost/K + o(1))x/(φ(q) log x)`. -/
+theorem bd_flipCost (SK : Cell → List Cell → Strat) (fuel maxlen : ℕ) {bl : List Cell}
+    (hok : flipOK maxlen bl = true) {lim : ℕ} (h : flipCost SK fuel bl lim < lim) (k' : ℕ)
+    (hl : bl.length = k' + 1) : Bd false ((flipCost SK fuel bl lim : ℝ) / K) (boxFn bl (k' + 1) hl) := by
+  have h2 : 2 ≤ bl.length := by
+    simp only [flipOK, Bool.and_eq_true, Nat.ble_eq] at hok
+    exact hok.1.1.1.1.1.1.1.1
+  obtain ⟨c0, b, hβdef⟩ : ∃ c0 b, c0 :: b = initC bl := by
+    cases hb : initC bl with
+    | nil =>
+      have hne : bl ≠ [] := by
+        intro h0
+        rw [h0] at h2
+        simp at h2
+      have := congrArg List.length (initC_append_lastC hne)
+      rw [hb] at this
+      simp at this
+      omega
+    | cons c0 b => exact ⟨c0, b, rfl⟩
   obtain ⟨cl, hcldef⟩ : ∃ cl : ℕ, cl = minN CAPK (Nat.succ (Nat.div
-      (Nat.sub (Nat.mul (Nat.sub lim 1) (DEN * K)) (bdK ctx t * E)) (ctx.2 * dropCost bl + E))) := ⟨_, rfl⟩
-  obtain ⟨c, hcdef⟩ : ∃ c, c = flipTree SK fuel ctx (c0 :: b) cl := ⟨_, rfl⟩
+      (Nat.sub (Nat.mul (Nat.sub lim 1) (DEN * K)) (bdK (lastC bl) (flipT (lastC bl)) *
+        (((lastC bl).2 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).2 - 1, (lastC bl).2 + 1)]) +
+          ((lastC bl).1 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).1 - 1, (lastC bl).1 + 1)]))))
+      ((lastC bl).2 * dropCost bl +
+        (((lastC bl).2 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).2 - 1, (lastC bl).2 + 1)]) +
+          ((lastC bl).1 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).1 - 1, (lastC bl).1 + 1)]))))) := ⟨_, rfl⟩
+  obtain ⟨c, hcdef⟩ : ∃ c, c = flipTree SK fuel (lastC bl) (c0 :: b) cl := ⟨_, rfl⟩
   have hunf : flipCost SK fuel bl lim = cond (Nat.ble cl c) lim
-      (cdiv (c * (ctx.2 * dropCost bl + E) + bdK ctx t * E) (DEN * K)) := by
+      (cdiv (c * ((lastC bl).2 * dropCost bl +
+          (((lastC bl).2 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).2 - 1, (lastC bl).2 + 1)]) +
+            ((lastC bl).1 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).1 - 1, (lastC bl).1 + 1)]))) +
+        bdK (lastC bl) (flipT (lastC bl)) *
+          (((lastC bl).2 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).2 - 1, (lastC bl).2 + 1)]) +
+            ((lastC bl).1 + 1) * dropCost ((c0 :: b) ++ [((lastC bl).1 - 1, (lastC bl).1 + 1)]))) (DEN * K)) := by
     unfold flipCost
-    rw [← hctxdef, ← hβdef]
+    rw [← hβdef]
     beta_reduce
-    rw [← htdef, ← hEdef, ← hcldef, ← hcdef]
+    rw [← hcldef, ← hcdef]
   cases hcap : Nat.ble cl c
   swap
   · rw [hunf, hcap] at h
@@ -190,172 +385,33 @@ theorem bd_flipCost (SK : Cell → List Cell → Strat) (fuel maxlen : ℕ) {bl 
     by_contra hge
     rw [Nat.ble_eq_true_of_le (not_lt.1 hge)] at hcap
     exact Bool.noConfusion hcap
-  -- the tree
-  obtain ⟨τ, hτdef⟩ : ∃ τ : Tests,
-      τ = frozTests (DEN - ctx.2) (DEN - ctx.1 + 1) (12 + DEN / c0.1) (c0 :: b) := ⟨_, rfl⟩
-  obtain ⟨St, hSt⟩ : ∃ St : Strat, St = SK ctx (c0 :: b) := ⟨_, rfl⟩
-  have hcunf : c = match firstJ τ (c0 :: b) (minN c0.1 t) (St.propJ (c0 :: b)) with
-      | some f => kids (solveG (opsK ctx (Nat.succ b.length)) τ St fuel) t (c0 :: b) true (St.cuts (c0 :: b) f) f
-          cl
+  obtain ⟨St, hSt⟩ : ∃ St : Strat, St = SK (lastC bl) (c0 :: b) := ⟨_, rfl⟩
+  have hcunf : c = match firstJ (frozTests (DEN - (lastC bl).2) (DEN - (lastC bl).1 + 1) (12 + DEN / c0.1) (c0 :: b))
+      (c0 :: b) (minN c0.1 (flipT (lastC bl))) (St.propJ (c0 :: b)) with
+      | some f => kids (solveG (opsK (lastC bl) (Nat.succ b.length))
+          (frozTests (DEN - (lastC bl).2) (DEN - (lastC bl).1 + 1) (12 + DEN / c0.1) (c0 :: b)) St fuel)
+          (flipT (lastC bl)) (c0 :: b) true (St.cuts (c0 :: b) f) f cl
       | none => cl := by
-    rw [hcdef, hτdef, hSt, htdef]
+    rw [hcdef, hSt]
     rfl
-  cases hfj : firstJ τ (c0 :: b) (minN c0.1 t) (St.propJ (c0 :: b)) with
+  cases hfj : firstJ (frozTests (DEN - (lastC bl).2) (DEN - (lastC bl).1 + 1) (12 + DEN / c0.1) (c0 :: b))
+      (c0 :: b) (minN c0.1 (flipT (lastC bl))) (St.propJ (c0 :: b)) with
   | none =>
     rw [hfj] at hcunf
     have : c = cl := hcunf
     omega
   | some f =>
     rw [hfj] at hcunf
-    have hck : c = kids (solveG (opsK ctx (c0 :: b).length) τ St fuel) t (c0 :: b) true (St.cuts (c0 :: b) f) f
-        cl := hcunf
-    obtain ⟨hf0, hfle, cfg, hokJ⟩ := firstJ_some hfj
-    have hft : f ≤ t := hfle.trans (minN_le c0.1 t).2
-    have hctx' : 0 < ctx.1 ∧ ctx.1 ≤ ctx.2 ∧ ctx.2 ≤ DEN := ⟨hl0, hlh.le, hhD⟩
-    have he : DEN - ctx.2 ≤ DEN - ctx.1 + 1 := by omega
-    have he₂ : DEN - ctx.1 + 1 ≤ DEN := by omega
-    have hT : DEN + 1 ≤ (DEN / c0.1 + 1) * (boxFn (c0 :: b) (s + 1) hβl (Fin.last s)).1 := by
-      rw [boxFn_last_head]
-      have := Nat.lt_mul_div_succ DEN hc0.1
-      rw [Nat.mul_comm] at this
-      omega
-    have hτs : SoundF τ (fun q => frozS q (e1 ctx) (e2 ctx) βx) frozR (c0 :: b) := by
-      rw [hτdef, hβx]
-      exact frozTests_sound (c0 :: b) hβl he he₂ hT (le_refl _)
-    have hS := inSlab_frozS ctx βx
-    have hrec := frozSolve_sound hctx' hS hτs St fuel
-    have hk := kidsP_sound (frozRules hctx' hS hτs).split hrec t (c0 :: b) true (St.cuts (c0 :: b) f) f cl
-      (by rw [← hck]; exact hccap)
+    have hck : c = kids (solveG (opsK (lastC bl) (c0 :: b).length)
+        (frozTests (DEN - (lastC bl).2) (DEN - (lastC bl).1 + 1) (12 + DEN / c0.1) (c0 :: b)) St fuel)
+        (flipT (lastC bl)) (c0 :: b) true (St.cuts (c0 :: b) f) f cl := hcunf
+    obtain ⟨-, hfle, cfg, hokJ⟩ := firstJ_some hfj
+    rw [hunf]
+    refine bd_flip_core hok k' hl hβdef hfle hokJ fun s hβl hR => ?_
+    have hk := kidsP_sound hR.split (solveG_sound hR St fuel) (flipT (lastC bl)) (c0 :: b) true
+      (St.cuts (c0 :: b) f) f cl (by rw [← hck]; exact hccap)
     rw [← hck] at hk
-    have hJ : EvJF (fun q => frozS q (e1 ctx) (e2 ctx) βx) frozR f (boxFn [] 0 rfl) :=
-      hτs.soundJ [] f cfg 0 rfl (by simp only [List.length_nil, hβl]; omega) hokJ
-    -- the weights
-    have hbl1 : ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]).length = s + 1 + 1 := by
-      simp only [List.length_append, hβl, List.length_cons, List.length_nil]
-    have hbl2 : ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]).length = s + 1 + 1 := by
-      simp only [List.length_append, hβl, List.length_cons, List.length_nil]
-    have hcβ : ∀ c' ∈ c0 :: b, 0 < c'.1 ∧ c'.1 < c'.2 := fun c' hc' => hc c' (by rw [← hbl]; exact List.mem_append_left _ hc')
-    have hcells1 : cellsOK ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) = true := by
-      rw [cellsOK_iff]
-      intro c' hc'
-      rcases List.mem_append.1 hc' with h' | h'
-      · exact hcβ c' h'
-      · simp only [List.mem_singleton] at h'
-        subst h'
-        exact ⟨by show 0 < ctx.2 - 1; omega, by show ctx.2 - 1 < ctx.2 + 1; omega⟩
-    have hcells2 : cellsOK ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) = true := by
-      rw [cellsOK_iff]
-      intro c' hc'
-      rcases List.mem_append.1 hc' with h' | h'
-      · exact hcβ c' h'
-      · simp only [List.mem_singleton] at h'
-        subst h'
-        exact ⟨by show 0 < ctx.1 - 1; omega, by show ctx.1 - 1 < ctx.1 + 1; omega⟩
-    have hfit1 : hiSum ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) ≤ DEN := by
-      rw [hiSum_eq, List.map_append, List.sum_append, ← hiSum_eq]
-      simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
-      omega
-    have hfit2 : hiSum ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) ≤ DEN := by
-      rw [hiSum_eq, List.map_append, List.sum_append, ← hiSum_eq]
-      simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
-      omega
-    have hbx0 : boxFn bl (s + 1 + 1) hl = Fin.cons (α := fun _ => Cell) ctx βx := by
-      subst hbl
-      rw [hβx]
-      exact boxFn_append_singleton (c0 :: b) ctx s hβl hl
-    have hS0 : ShareLe (Fin.cons (α := fun _ => Cell) ctx βx) ((dropCost bl : ℝ) / K) := by
-      rw [← hbx0]
-      exact shareLe_list bl (s + 1) hl hcells (by omega)
-    have hS1 : ShareLe (Fin.cons (α := fun _ => Cell) (ctx.2 - 1, ctx.2 + 1) βx)
-        ((dropCost ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) : ℝ) / K) := by
-      rw [hβx, ← boxFn_append_singleton (c0 :: b) (ctx.2 - 1, ctx.2 + 1) s hβl hbl1]
-      exact shareLe_list _ (s + 1) hbl1 hcells1 hfit1
-    have hS2 : ShareLe (Fin.cons (α := fun _ => Cell) (ctx.1 - 1, ctx.1 + 1) βx)
-        ((dropCost ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) : ℝ) / K) := by
-      rw [hβx, ← boxFn_append_singleton (c0 :: b) (ctx.1 - 1, ctx.1 + 1) s hβl hbl2]
-      exact shareLe_list _ (s + 1) hbl2 hcells2 hfit2
-    obtain ⟨D0, hD0⟩ : ∃ D0 : ℝ, D0 = (dropCost bl : ℝ) / K := ⟨_, rfl⟩
-    obtain ⟨D1, hD1⟩ : ∃ D1 : ℝ, D1 = (dropCost ((c0 :: b) ++ [(ctx.2 - 1, ctx.2 + 1)]) : ℝ) / K := ⟨_, rfl⟩
-    obtain ⟨D2, hD2⟩ : ∃ D2 : ℝ, D2 = (dropCost ((c0 :: b) ++ [(ctx.1 - 1, ctx.1 + 1)]) : ℝ) / K := ⟨_, rfl⟩
-    rw [← hD0] at hS0
-    rw [← hD1] at hS1
-    rw [← hD2] at hS2
-    have hD00 : 0 ≤ D0 := by rw [hD0]; positivity
-    have hD10 : 0 ≤ D1 := by rw [hD1]; positivity
-    have hD20 : 0 ≤ D2 := by rw [hD2]; positivity
-    have hw₀ : ∀ δ : ℝ, 0 < δ → ∀ᶠ q : ℕ in atTop,
-        WF (frozS q (e1 ctx + 1) (e2 ctx - 1) βx) frozR ≤ (ctx.2 : ℝ) / DEN * D0 + δ := fun δ hδ =>
-      froz_weight_le hctx' (by omega) βx (by omega) hD00 hS0 hδ
-    have hw₁ : ∀ δ : ℝ, 0 < δ → ∀ᶠ q : ℕ in atTop,
-        WF (frozS q (e1 ctx) (e1 ctx + 1) βx) frozR ≤ ((ctx.2 + 1 : ℕ) : ℝ) / DEN * D1 + δ := by
-      intro δ hδ
-      have h1 := froz_weight_le (ctx := (ctx.2 - 1, ctx.2 + 1))
-        ⟨by show 0 < ctx.2 - 1; omega, by show ctx.2 - 1 ≤ ctx.2 + 1; omega, by show ctx.2 + 1 ≤ DEN; omega⟩
-        (by show ctx.2 + 1 ≤ 2 * (ctx.2 - 1); omega) βx (by show (βx 0).2 ≤ ctx.2 - 1; omega) hD10 hS1 hδ
-      have ea : e1 (ctx.2 - 1, ctx.2 + 1) + 1 = e1 ctx := by
-        show DEN - (ctx.2 + 1) + 1 = DEN - ctx.2
-        omega
-      have eb : e2 (ctx.2 - 1, ctx.2 + 1) - 1 = e1 ctx + 1 := by
-        show DEN - (ctx.2 - 1) + 1 - 1 = DEN - ctx.2 + 1
-        omega
-      rw [ea, eb] at h1
-      exact h1
-    have hw₂ : ∀ δ : ℝ, 0 < δ → ∀ᶠ q : ℕ in atTop,
-        WF (frozS q (e2 ctx - 1) (e2 ctx) βx) frozR ≤ ((ctx.1 + 1 : ℕ) : ℝ) / DEN * D2 + δ := by
-      intro δ hδ
-      have h1 := froz_weight_le (ctx := (ctx.1 - 1, ctx.1 + 1))
-        ⟨by show 0 < ctx.1 - 1; omega, by show ctx.1 - 1 ≤ ctx.1 + 1; omega, by show ctx.1 + 1 ≤ DEN; omega⟩
-        (by show ctx.1 + 1 ≤ 2 * (ctx.1 - 1); omega) βx (by show (βx 0).2 ≤ ctx.1 - 1; omega) hD20 hS2 hδ
-      have ea : e1 (ctx.1 - 1, ctx.1 + 1) + 1 = e2 ctx - 1 := by
-        show DEN - (ctx.1 + 1) + 1 = DEN - ctx.1 + 1 - 1
-        omega
-      have eb : e2 (ctx.1 - 1, ctx.1 + 1) - 1 = e2 ctx := by
-        show DEN - (ctx.1 - 1) + 1 - 1 = DEN - ctx.1 + 1
-        omega
-      rw [ea, eb] at h1
-      exact h1
-    obtain ⟨w₀, hw₀def⟩ : ∃ w : ℝ, w = (ctx.2 : ℝ) / DEN * D0 := ⟨_, rfl⟩
-    obtain ⟨w₁, hw₁def⟩ : ∃ w : ℝ, w = ((ctx.2 + 1 : ℕ) : ℝ) / DEN * D1 := ⟨_, rfl⟩
-    obtain ⟨w₂, hw₂def⟩ : ∃ w : ℝ, w = ((ctx.1 + 1 : ℕ) : ℝ) / DEN * D2 := ⟨_, rfl⟩
-    rw [← hw₀def] at hw₀
-    rw [← hw₁def] at hw₁
-    rw [← hw₂def] at hw₂
-    have hw₀0 : 0 ≤ w₀ := by rw [hw₀def]; positivity
-    have hw₁0 : 0 ≤ w₁ := by rw [hw₁def]; positivity
-    have hw₂0 : 0 ≤ w₂ := by rw [hw₂def]; positivity
-    obtain ⟨bd, hbddef⟩ : ∃ bd : ℝ, bd = (bdK ctx t : ℝ) / K := ⟨_, rfl⟩
-    have hbd : (SieveCert.omKw (DEN - ctx.2 - t - 1) t (ctx.2 - ctx.1 + 2) 1 : ℝ) / K * ((DEN : ℝ) / t) ≤ bd := by
-      rw [hbddef]
-      have h1 := SieveCert.div_le_cdiv (SieveCert.omKw (DEN - ctx.2 - t - 1) t (ctx.2 - ctx.1 + 2) 1 * DEN) t ht0
-      have ht' : (0 : ℝ) < t := by exact_mod_cast ht0
-      have e : (SieveCert.omKw (DEN - ctx.2 - t - 1) t (ctx.2 - ctx.1 + 2) 1 : ℝ) / K * ((DEN : ℝ) / t) =
-          ((SieveCert.omKw (DEN - ctx.2 - t - 1) t (ctx.2 - ctx.1 + 2) 1 * DEN : ℕ) : ℝ) / t / K := by
-        push_cast
-        field_simp
-      rw [e]
-      exact div_le_div_of_nonneg_right h1 hK.le
-    -- the bound for every ε
-    have hflip : ∀ ε : ℝ, 0 < ε → Bd false (((c : ℝ) / K + ε) * (w₀ + w₁ + w₂) + bd * (w₁ + w₂))
-        (Fin.cons (α := fun _ => Cell) ctx βx) := by
-      intro ε hε
-      exact bd_flip_neg ⟨hl0, hlh, hhD⟩ hft ht0 htl ht2 htD βx (by omega) (by positivity) hJ
-        (hk [(f, t)] rfl 0 rfl ε hε) hbd hw₁0 hw₂0 hw₀ hw₁ hw₂
-    rw [hbx0]
-    refine bd_of_eps (W := w₀ + w₁ + w₂) (by positivity) fun ε hε => bd_mono (hflip ε hε) ?_
-    -- the arithmetic
-    have harith : (c : ℝ) / K * (w₀ + w₁ + w₂) + bd * (w₁ + w₂) ≤ (flipCost SK fuel bl lim : ℝ) / K := by
-      rw [hunf]
-      have h1 := SieveCert.div_le_cdiv (c * (ctx.2 * dropCost bl + E) + bdK ctx t * E) (DEN * K)
-        (Nat.mul_pos SieveCert.DEN_pos (by exact_mod_cast hK))
-      have e : (c : ℝ) / K * (w₀ + w₁ + w₂) + bd * (w₁ + w₂) =
-          ((c * (ctx.2 * dropCost bl + E) + bdK ctx t * E : ℕ) : ℝ) / ((DEN * K : ℕ) : ℝ) / K := by
-        rw [hw₀def, hw₁def, hw₂def, hD0, hD1, hD2, hbddef, hEdef]
-        push_cast
-        field_simp
-        ring
-      rw [e]
-      exact div_le_div_of_nonneg_right h1 hK.le
-    linarith
+    exact hk
 
 /-! ### The search -/
 

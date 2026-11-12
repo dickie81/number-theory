@@ -38,6 +38,11 @@ Checked against the kernel (12 November 2026): four values of `flipCost` and a r
 13 ms a box over a frozen part and 4 ms a box elsewhere (`fill_cert.pred` is right for both), and its memory
 grows with a part's time (13 GB for a part of two minutes). `--try 0.02 6 10 3 0.012 0.02 0.012 3 4`: 1.71328 K on
 468212 boxes, 218818 of them over frozen parts (356628 with `--loose`), in twenty seconds.
+`--try 0.005 6 10 3 0.012 0.02 0.012 3 4`: 0.90810 K at 2165/1000 on 6.9·10^6 boxes, 3.0·10^6 of them over frozen
+parts, and 0.97731 K at 2160/1000 on 7.4·10^6: each about twenty-three hours of the kernel as this search. With
+boxes of five primes too (`… 0.012 3 6`, H = 0.01, 2165/1000): 1.206 K; chains' cells of side 0.006 make it
+1.187 K, and chains of one more prime change nothing. `hint_cert.py` is this search as a plan that the kernel
+follows.
 
 Needs Python 3 only.
 """
