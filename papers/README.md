@@ -17,7 +17,7 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README,
 
 | Paper | Its theorem | Lean | State |
 |---|---|---|---|
-| [Linnik's exponent](linnik-exponent/README.md) ([PDF](https://dickie81.github.io/number-theory/linnik-exponent.pdf), [supplement](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf)) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{11/5}` | `Linnik22000E.linnik_22000e` | A full draft: every section is written; the bibliography is checked except Buchstab (1937), which is unverified |
+| [Linnik's exponent](linnik-exponent/README.md) ([PDF](https://dickie81.github.io/number-theory/linnik-exponent.pdf), [supplement](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf)) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{43/20}` | `Linnik21500.linnik_21500` | A draft, rewritten for `43/20` from the `11/5` version; the bibliography is checked except Buchstab (1937), which is unverified |
 
 ## Building
 

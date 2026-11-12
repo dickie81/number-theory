@@ -71,16 +71,24 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   It is `SieveTypeIIHM.typeII_gen_hm` with two polynomials in place of one and a region in place of the window;
 - `SieveTypeIIHM.typeII_two_long`: the same bound for `P₁ ≥ q`, `P₂ ≥ q` and `P₁P₂ ≤ q^{L − 1/2000}`, for every
   `L`, at the curve `g = 1`: no density estimate enters, only the half-plane through the prime sums;
-- `SieveTwoZone7D.zone_7d` (`lib/pnt/SieveTwoZone7D.lean`, written by `tools/linnik/gen_zone.py`): `twoBound` for
-  the paper's curve `g7d`, for every `L`, on the region `Zone7d L`. With `s_i = 1 − m_i` and `ρ = L − m₁ − m₂`
+- `SieveCurveHx.counts_hx` (`lib/pnt/SieveCurveHx.lean`, written by `tools/linnik/gen_zone.py`): the counts of the
+  curve `ghx`, the trivial count `1` below `7789/10000` and Huxley's density estimate from there on (a step
+  `SieveCurveHx.charDensity_hxT` on `[7789/10000, 131/168]` with the exponent `(7014/3125)(1 − σ)`, Huxley's
+  `3/(3σ − 1)` being `2.24433` at `7789/10000`; then `LinnikStairs7`'s steps and `(101/50)(1 − σ)` from `5/6`), with
+  no hypothesis and neither Ingham's estimate nor Chen, Gupta and Li's;
+- `SieveTwoZone7D.zone_hx` (`lib/pnt/SieveTwoZone7D.lean`, written by `tools/linnik/gen_zone.py`): `twoBound` for
+  the curve `ghx`, for every `L`, on the region `Zone7d L`. With `s_i = 1 − m_i` and `ρ = L − m₁ − m₂`
   it is `ρ ≥ 1/2000`, `m_i ≥ 2/3`, and `s₁ + 1/12500`, `s₂ + 1/12500`, `s₁ + s₂ + 1/12500` at most `λρ`,
   `λ = 27637/62500 = 0.442192`: a variable may be shorter than `q` by `λ` times the exponent of the rest. Both mean
   squares are bounded by orthogonality for `β ≤ 7789/10000` and by the Halász–Montgomery inequality from there on,
-  where the curve is at most `1/2 − 2/1000`; `λ = 2(1 − 7789/10000 − 4·10⁻⁶)`. The proof glues the curve's 67 pieces
+  where the curve is at most `1/2 − 2/1000`; `λ = 2(1 − 7789/10000 − 4·10⁻⁶)`. So the estimate needs a density
+  estimate only from `7789/10000` on, where Huxley's is below `1/2 − 2/1000`. The proof glues the curve's 18 pieces
   (`SieveTwoPieces`: on a piece the exponent is affine in `β` for each choice of the two maxima, so its two ends
-  suffice, and at an end `linarith` proves the inequality from the region's six). The exact zone is the union of
-  such regions over the threshold; this one loses under 2% of `s` at `ρ = 0.3` (`gen_zone.py --exact`);
-- `SieveTwoZone7D.typeII_two_7d`: `typeII_two_gen` for `g7d` on `Zone7d L`, with no hypothesis.
+  suffice, and at an end `linarith` proves the inequality from the region's six). Below `7789/10000` the curve `1`
+  leaves only orthogonality, so for one short variable the region is the exact zone of `ghx` (`gen_zone.py
+  --exact`). The region was first proved for the curve `g7d` of `SieveCurve7D` (Chen, Gupta and Li's steps on
+  `[5/7, 131/168]`), whose zone is in the git history; its name stays, as the certificate's tests are written for it;
+- `SieveTwoZone7D.typeII_two_hx`: `typeII_two_gen` for `ghx` on `Zone7d L`, with no hypothesis.
 
 The sieve meets the estimate through families of sums (the paper's Lemma 4.4, `SieveFamily.typeII_sharp`): a
 polynomial variable with coefficients, primes with smooth weights at fixed scales, and sharp comparisons between
@@ -95,7 +103,7 @@ them, each with a prime as a pivot. For two polynomial variables:
 - `SieveFamilyTwo.box_two` (`lib/pnt/SieveFamilyTwo.lean`) is the hypothesis for pairs `(m₁, m₂)`: a phase
   `κ + Σ_j ξ_j(φ_j(m₁) + ψ_j(m₂))` is a twist of `a` times a twist of `b`, and `χ(m₁m₂) = χ(m₁)χ(m₂)`, so the sum
   over the pairs is a product of two polynomials, which Proposition 3′ in two variables bounds
-  (`SieveFamilyTwo.TypeIITwoAt L R`: for the paper's curve on `Zone7d L`, `SieveFamilyTwo.typeIITwoAt_7d`; for two
+  (`SieveFamilyTwo.TypeIITwoAt L R`: for the curve `ghx` on `Zone7d L`, `SieveFamilyTwo.typeIITwoAt_hx`; for two
   variables of length at least `q`, `SieveFamilyTwo.typeIITwoAt_long`);
 - `SieveFamilyTwo.typeII_sharp_two`, **Lemma 4.4 in two variables**: given `TypeIITwoAt L R`, for `m_i ∈ S_i ⊆
   (P_i, 2P_i]` with `(log_q P₁, log_q P₂)` in `R` and `|a_m| ≤ A₀`, `|b_m| ≤ B₀`, at most `K₀` primes at scales

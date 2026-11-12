@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1724 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1726 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 317 | 932 |
+| `lib/pnt` | 318 | 934 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1516,7 +1516,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `Linnik21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints
 
 - `Linnik21500.tree21500`: The first term at `2150 / 1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `Linnik21650`: Linnik's theorem with exponent `2165 / 1000`, by a search with no Type II window
 
@@ -2672,6 +2672,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveCurve7D.g7d_le_lin`: `g7d σ ≤ (11667 / 5000)(1 − σ)` for `σ ≤ 1` *paper* ([note](../formalisations/chen-gupta-li-density.md))
 - `SieveCurve7D.counts_7d`: The counts of the curve *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
+#### `SieveCurveHx`: The curve `ghx` of the Type II estimate in two variables, and its counts
+
+- `SieveCurveHx.charDensity_hxT`: Huxley's step at the threshold ([note](../formalisations/huxley-density.md))
+- `SieveCurveHx.counts_hx`: The counts of the curve ([note](../formalisations/huxley-density.md))
+
 #### `SieveDecomp`: Families of prime tuples, and Buchstab's identity on them
 
 - `SieveDecomp.buchstab_fam`: Buchstab's identity on a family *paper* ([note](../formalisations/harman-sieve.md))
@@ -2733,7 +2738,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveFamilyTwo`: Type II families in two variables
 
-- `SieveFamilyTwo.typeIITwoAt_7d`: Proposition 3′ in two variables for the paper's curve on `Zone7d L` ([note](../formalisations/halasz-montgomery.md))
+- `SieveFamilyTwo.typeIITwoAt_hx`: Proposition 3′ in two variables for the curve `ghx` on `Zone7d L` ([note](../formalisations/halasz-montgomery.md))
 - `SieveFamilyTwo.typeIITwoAt_long`: Proposition 3′ for two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
 - `SieveFamilyTwo.box_two`: The estimate at one frequency of the separated sum, for the pairs ([note](../formalisations/halasz-montgomery.md))
 - `SieveFamilyTwo.typeII_sharp_two`: The Type II estimate for a sharp family in two variables (Lemma 4.4 in two variables) ([note](../formalisations/halasz-montgomery.md))
@@ -2978,10 +2983,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.bin_bound_two`: One bin in two variables, as a power of `q` ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.twoBound_of_long`: Two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
 
-#### `SieveTwoZone7D`: The zone of the Type II estimate in two variables for the curve `g7d`
+#### `SieveTwoZone7D`: The zone of the Type II estimate in two variables, for the curve `ghx`
 
-- `SieveTwoZone7D.zone_7d`: The zone's exponents for the curve `g7d` on the region `Zone7d L` ([note](../formalisations/halasz-montgomery.md))
-- `SieveTwoZone7D.typeII_two_7d`: Proposition 3′ in two variables for the curve `g7d` ([note](../formalisations/halasz-montgomery.md))
+- `SieveTwoZone7D.zone_hx`: The zone's exponents for the curve `ghx` on the region `Zone7d L` ([note](../formalisations/halasz-montgomery.md))
+- `SieveTwoZone7D.typeII_two_hx`: Proposition 3′ in two variables for the curve `ghx` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTypeIB`: A bilinear Type I estimate by Parseval's identity
 
