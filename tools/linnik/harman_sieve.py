@@ -73,6 +73,18 @@ window and --h 0.005, 276000 nodes; 1.066 at 2.18); with --no-window --flips 3 -
 0.809 at 2.19 with 113000 nodes; with --no-window --nest 1 --h 0.007, 0.749 at 2.17 with 10^6 nodes; with
 --no-window --h 0.005, 0.489 at 2.17 with 1.4 10^7 nodes; and the table's tree at 2.12 has 4.7 10^9 nodes.
 
+Which reversals (more of `--rev`; 11 November 2026, at 2.15 with --no-window --h 0.004, where the cells give
+1.280 with --flips 0 and 0.688 with --flips 6 --nest 2). A term of the main tree needs to be opened through its
+largest prime only: --flips 5 --nest 2 --rev first gives 0.697. From there, each alone: `m2` (a cofactor of at
+most two primes) 0.846, `m3` 0.758; `odd` 0.797; --nest 1, 0.832, with `odd` 0.867, with `odd,low` (the reversal
+as an inequality, sifted below every atom) 0.925; and inside a reversed tree `natom` (only a prime of r') 0.738,
+`nodd` 0.698, `nchain` (only the chain's first prime) 0.823, `nc1` (only chains of one prime) 0.773. The shapes
+that are in Lean (--flips 3 --nest 1 --rev odd,first,m2,low) give 0.998. `points` gives for those 0.662 at 2.15,
+0.962 at 2.13 and 1.104 at 2.12, and for --flips 5 --nest 2 --rev first 0.365, 0.573 and 0.694. With `--fill`
+(the stops whose rest is a small prime as SieveFillComp.prop6_fill has them) and --flips 0 the cells give 1.230
+at 2.165 with --h 0.005, where the exact search of fill_cert.py without reversal has 1.221; with the shapes in
+Lean, 0.851, where that search has 0.951.
+
 What a tree without reversal needs (`--no-first`, `--direct`; at 2.19 with --flips 0 --h 0.005). Without the
 stops whose rest is the first small prime, the top node's floor is the window's width and the cells give 0.945,
 with 307000 nodes (0.967 with --plain; 0.865 at 2.195). Of the ways to evaluate a box outright, the window is
@@ -135,6 +147,8 @@ class Ctx(C.Structure):
                 ('wmin', C.c_double), ('split', C.c_int), ('splitdepth', C.c_int), ('pointwise', C.c_int),
                 ('rev_odd', C.c_int), ('rev_even', C.c_int), ('rev_prime', C.c_int), ('rev_linear', C.c_int),
                 ('rev_floor', C.c_int), ('rev_offdiag', C.c_int),
+                ('rev_first', C.c_int), ('rev_m2', C.c_int), ('rev_m3', C.c_int), ('rev_low', C.c_int),
+                ('rev_natom', C.c_int), ('rev_nchain', C.c_int), ('rev_nodd', C.c_int), ('rev_nc1', C.c_int),
                 ('ev_win', C.c_int), ('ev_second', C.c_int), ('ev_rest', C.c_int)]
 
 
@@ -251,7 +265,7 @@ def window(L):
 class Sieve:
     def __init__(self, L, h=0.004, depth=8, flips=6, nest=2, flipmax=8, flipmin=0.15, wide=True, usewin=True,
                  sieve=False, upper=False, type2=True, eps1=0.002, eps0=0.002, fmin=0.01, smax=7.0, shrink=0.0,
-                 tables=None, rev=(), first=True, direct=('window', 'second', 'rest')):
+                 tables=None, rev=(), first=True, direct=('window', 'second', 'rest'), fill=False):
         L = Fr(L)
         self.L, Lf = L, float(L)
         r, Alo, Ahi = tables if tables is not None else zones(L)
@@ -270,9 +284,16 @@ class Sieve:
         self.f0t = np.full(NR + 1, -1e300)
         hi, t = np.inf, -np.inf
         for c in range(int(round(eps0 / DL)), NR + 1):
-            if not (ok[c] and Ahi[c] - Alo[c] >= r[c]):
-                break
-            hi, t = min(hi, Ahi[c]), max(t, Alo[c] + r[c])
+            if fill:
+                # the rest among the tree's primes, as SieveFillComp.prop6_fill has it: the zone on the whole
+                # rectangle of the rests up to r[c], and a first variable that grows by steps of r[c]
+                if not (ok[c] and ok[1] and Ahi[c] - Alo[1] > r[c]):
+                    break
+                hi, t = min(hi, Ahi[c]), max(t, Alo[1] + r[c])
+            else:
+                if not (ok[c] and Ahi[c] - Alo[c] >= r[c]):
+                    break
+                hi, t = min(hi, Ahi[c]), max(t, Alo[c] + r[c])
             self.f0ok[c], self.f0hi[c], self.f0t[c] = 1, hi, t
         if not first:
             self.f0ok[:] = 0
@@ -306,7 +327,8 @@ class Sieve:
         ctx.fmin, ctx.smax = fmin, smax
         ctx.flip, ctx.flipdepth, ctx.flipmax, ctx.flipmin = (nest if flips > 0 else 0), flips, flipmax, flipmin
         ctx.wmin, ctx.split, ctx.splitdepth = 0.0005, 0, 0
-        for name in ('odd', 'even', 'prime', 'linear', 'floor', 'offdiag'):
+        for name in ('odd', 'even', 'prime', 'linear', 'floor', 'offdiag', 'first', 'm2', 'm3', 'low', 'natom',
+                     'nchain', 'nodd', 'nc1'):
             setattr(ctx, 'rev_' + name, int(name in rev))
         ctx.ev_win, ctx.ev_second, ctx.ev_rest = (int(name in direct) for name in ('window', 'second', 'rest'))
         self.ctx = ctx
@@ -340,13 +362,20 @@ def main():
     ap.add_argument('--sieve', action='store_true', help='with the linear sieve bounds')
     ap.add_argument('--upper', action='store_true', help='with the upper-bound sieve on a prime')
     ap.add_argument('--no-window', action='store_true')
+    ap.add_argument('--fill', action='store_true', help="the stops whose rest is a small prime in the form of "
+                    'SieveFillComp.prop6_fill (the rest among the primes of the tree below the stop)')
+    ap.add_argument('--flipmin', type=float, default=0.15, help='the least exponent of a prime that is opened')
     ap.add_argument('--shrink', type=float, default=0.0, help='narrow every zone by this much')
     ap.add_argument('--nu', type=float, default=None, help='floor of the top node (default: the largest)')
     ap.add_argument('--rev', default='', help='restrictions on the reversal, comma-separated: odd or even (only '
                     'the terms that need an upper bound, or a lower bound), prime (only where the cofactor is '
                     'prime on the whole box), linear (the linear Type I estimate alone in reversed trees), floor '
                     '(floors below every atom of a reversed term), offdiag (the cell of the reversed prime apart '
-                    "from its neighbours')")
+                    "from its neighbours'), first (a term of the main tree only through its largest prime), m2 or m3 "
+                    '(only where the cofactor has at most two, or three, primes), low (as an inequality, sifted '
+                    'below every atom, for the terms that need an upper bound only), and in a reversed tree: natom '
+                    "(only a prime of r'), nchain (only the first prime of the chain), nodd (only the terms that "
+                    'need an upper bound), nc1 (only the terms with a chain of one prime)')
     ap.add_argument('--no-first', action='store_true', help='no stop whose rest is the first small prime (the top '
                     "node's floor is then the window's width, or --nu)")
     ap.add_argument('--direct', default='window,second,rest', help='how a box may be evaluated outright, '
@@ -363,7 +392,8 @@ def main():
                 continue
             nu = s.win[1] - s.win[0] - 1e-9
         else:
-            s = Sieve(Ls, h=h, depth=a.depth, flips=a.flips, nest=a.nest, flipmax=a.flipmax, wide=not a.plain,
+            s = Sieve(Ls, h=h, depth=a.depth, flips=a.flips, nest=a.nest, flipmax=a.flipmax, flipmin=a.flipmin,
+                      fill=a.fill, wide=not a.plain,
                       usewin=not a.no_window, sieve=a.sieve or a.command == 'parity',
                       upper=a.upper or a.command == 'parity', shrink=a.shrink, type2=a.command != 'parity',
                       rev=tuple(x for x in a.rev.split(',') if x), first=not a.no_first,

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1683 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1724 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 292 | 891 |
+| `lib/pnt` | 317 | 932 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1513,6 +1513,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow`: The least prime primitive root mod a prime power
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_safe`: Safe primes
 
+#### `Linnik21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints
+
+- `Linnik21500.tree21500`: The first term at `2150 / 1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints ([note](../formalisations/harman-sieve.md))
+
+#### `Linnik21650`: Linnik's theorem with exponent `2165 / 1000`, by a search with no Type II window
+
+- `Linnik21650.tree21650`: The first term at `2165 / 1000`
+- `Linnik21650.linnik_21650`: Linnik's theorem with exponent `2165 / 1000`, by a search with no Type II window ([note](../formalisations/harman-sieve.md))
+
 #### `Linnik21800`: Linnik's theorem with exponent `218 / 100`, by a search with role reversal
 
 - `Linnik21800.tree21800`: The first term at `218 / 100`
@@ -2459,6 +2469,81 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd22000.linnik_tree_22000`: Linnik's theorem with exponent `11/5`, from a tree that passes the tests
 
+#### `SieveAdFamCore`: The two comparisons at a floor for a family of tuples of distinct primes, on bounds for its products
+
+- `SieveAd.evJ_fam_fill_at`: The comparison with the rest among the tree's primes, for a family of tuples of distinct primes, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.evJ_fam_two_at`: The comparison with the rest among the tuple's primes, for a family of tuples of distinct primes, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFamSet`: The terms at a floor of a family of tuples of distinct primes, in any order
+
+- `SieveAd.evJ_famSet_at`: The terms at a floor of a family of tuples of distinct primes are evaluated when its boxes are, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFill`: The tests with no window are sound
+
+- `SieveAd.fillTests_sound`: The tests with no window are sound ([note](../formalisations/harman-sieve.md))
+- `SieveAd.fillTests_soundX`: The tests with no window are sound under two more atoms ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFillCore`: The comparison with the rest among the tree's primes, on the sums of a box
+
+- `SieveAd.evJ_fill_core_at`: The comparison with the rest among the tree's primes, on the sums of a box, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.evJ_two_core_at`: The comparison in two variables on the sums of a box, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFlip`: Role reversal through the largest prime, as an identity: the two inclusions
+
+- `SieveAd.inSlab_frozS_at`: The frozen part lies in the range of `r'`, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.inSlab_frozS_inner_at`: The narrower frozen part lies in the range of `r'`, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFlipSearch`: The search with the reversal of a box through its largest prime is sound
+
+- `SieveAd.pr_of_kidsF_at`: A part of a search with the reversal through the largest prime, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFlipSum`: Role reversal through the largest prime, as an identity: the weights and the bound
+
+- `SieveAd.bd_flip_neg_at`: The reversal bounds a term that needs an upper bound, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.bd_flip_pos_at`: The reversal bounds a term that needs a lower bound, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.froz_weight_le_at`: The weight of the narrower frozen part, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.shareLe_of_box_at`: The share of a box that may be dropped, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFroz`: A tree of Buchstab steps over a frozen part
+
+- `SieveAd.famIR_eq`: The term on the multiples of `R`, as a sum over `n` ([note](../formalisations/harman-sieve.md))
+- `SieveAd.famJR_eq`: The terms at a level on the multiples of `R`, as a sum over `n` ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFrozI`: The term of a chain's box over the frozen part, by the estimate in two variables
+
+- `SieveAd.evIF_froz_two_at`: The term of a chain's box over the frozen part, by the estimate in two variables, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFrozJ`: The terms at a floor over the frozen part, as a family of tuples of distinct primes
+
+- `SieveAd.evJF_frozP_at`: The terms at a floor over the frozen part with a cofactor of `t` primes are evaluated when the family's are, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFrozP`: The frozen part of a reversal as tuples of primes
+
+- `SieveAd.evIF_frozS_at`: The term over the frozen part by the primes of the cofactor, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.evJF_frozS_at`: The terms at a floor over the frozen part by the primes of the cofactor, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFrozRole`: The two comparisons at a floor over the frozen part, on the cells and the slab
+
+- `SieveAd.evJF_froz_fill_at`: The comparison with the rest among the tree's primes, over the frozen part, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.evJF_froz_two_at`: The comparison with the rest among the tuple's primes, over the frozen part, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFrozTests`: The tests of the tree over the frozen part of a reversal are sound
+
+- `SieveAd.frozTests_sound_at`: The tests of the tree over the frozen part are sound, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFrozTree`: The nodes of the tree of a reversed term over a frozen part
+
+- `SieveAd.frozSolve_sound_at`: The search over a frozen part is sound, for any route ([note](../formalisations/harman-sieve.md))
+- `SieveAd.dJF_level_at`: The top of a reversed tree, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFull`: The estimate in two variables on tuples of primes with a given product, in no order
+
+- `SieveAd.full2_core_at`: Tuples of primes with product in `(N₁, N₂]`, on exponents that pass the checks, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdHint`: The search led by hints is sound
+
+- `SieveAd.pr_of_kidsH_at`: A part of the main search led by hints, for any route ([note](../formalisations/harman-sieve.md))
+
 #### `SieveAdRev`: The tree of a reversed term bounds it
 
 - `SieveAd.rootJ_sound`: The cost of the terms of an atoms' box at its level
@@ -2478,7 +2563,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdRevSearch`: The search with role reversal is sound
 
 - `SieveAd.solveR_sound`: The search with role reversal is sound
-- `SieveAd.pr_of_kids`: A part of a search with role reversal
+- `SieveAd.pr_of_kids`: A part of a search with role reversal ([note](../formalisations/harman-sieve.md))
 - `SieveAd.linnik_pr`: Linnik's theorem from a search with role reversal
 
 #### `SieveAdRevSum`: Role reversal: the cost of a reversal bounds the term
@@ -2501,6 +2586,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdSearchG`: The search with its nodes' tests as parameters is sound, for any statement that the nodes prove
 
 - `SieveAd.solveG_sound`: The search is sound
+
+#### `SieveAdSort`: Tuples of distinct primes in cells, sorted
+
+- `SieveAd.sum_famU_eq_at`: A sum over tuples of distinct primes in cells, by the orders of their entries, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdTree`: A tree of Buchstab steps on boxes of cells: what a tree that passes the check gives
 
@@ -2562,7 +2651,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveChain`: Type II for chains of primes
 
-- `SieveChain.sum_rough_tuples`: For `z ≥ 2`, `Y ≥ 1` and `Y < z^{K+1}`, the `z`-rough `k ∈ [1, Y]` are the products of the non-increasing tuples of at most `K` primes at least `z`, the… *paper*
+- `SieveChain.sum_rough_tuples`: For `z ≥ 2`, `Y ≥ 1` and `Y < z^{K+1}`, the `z`-rough `k ∈ [1, Y]` are the products of the non-increasing tuples of at most `K` primes at least `z`, the… *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveChain.typeII_gcmp'`: `typeII_gcmp` (with `RouteOK` and `hII`) for any number `K ≥ 1` of primes.
 - `SieveChain.chainTU_bound`: Chains times a rough cofactor in the window *paper*
 - `SieveChain.chainTL_bound`: Chains with a product of some of their primes in the window *paper*
@@ -2649,6 +2738,28 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveFamilyTwo.box_two`: The estimate at one frequency of the separated sum, for the pairs ([note](../formalisations/halasz-montgomery.md))
 - `SieveFamilyTwo.typeII_sharp_two`: The Type II estimate for a sharp family in two variables (Lemma 4.4 in two variables) ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveFill`: The comparison in two variables with the rest among the tree's primes, at one modulus
+
+- `SieveFill.prop6_fill_core`: The comparison in two variables with the rest among the tree's primes, at one `q` ([note](../formalisations/harman-sieve.md))
+
+#### `SieveFillComp`: The comparison in two variables with the rest among the tree's primes
+
+- `SieveFillComp.prop6_fill`: The comparison in two variables with the rest among the tree's primes ([note](../formalisations/harman-sieve.md))
+- `SieveFillComp.prop6_fill_at`: The comparison in two variables with the rest among the tree's primes, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/harman-sieve.md))
+
+#### `SieveFillTree`: Buchstab's tree below a chain's last entry
+
+- `SieveFillTree.tree_last`: Buchstab's tree below the last entry, as chains ([note](../formalisations/harman-sieve.md))
+
+#### `SieveFlipBox21650`: A bound by the search with the reversal through the largest prime, at `L = 2165/1000`
+
+- `Linnik21650.flip_box_21650`: A bound by the search with the reversal through the largest prime ([note](../formalisations/harman-sieve.md))
+
+#### `SieveGap`: Brun's sieve at a fixed level on a family of chains
+
+- `SieveGap.family_leaves_le`: A family of chains at a fixed level ([note](../formalisations/harman-sieve.md))
+- `SieveGap.gap_at`: Brun's sieve at a fixed level, for a family in boxes, at large `q` ([note](../formalisations/harman-sieve.md))
+
 #### `SieveGrid21800`: The grid, the strategies and the nodes of the search with role reversal at `L = 218/100`
 
 - `SieveCert.gridOK21800`
@@ -2728,11 +2839,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveP6Tree`: Proposition 6 with the bilinear estimate: Buchstab's tree on a family
 
-- `SieveP6Tree.tree_chains`: Buchstab's tree on a family, as chains *paper*
+- `SieveP6Tree.tree_chains`: Buchstab's tree on a family, as chains *paper* ([note](../formalisations/harman-sieve.md))
 
 #### `SieveP6TreeLeaves`: Proposition 6 with the bilinear estimate: the leaves of the tree
 
-- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper*
+- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper* ([note](../formalisations/harman-sieve.md))
 
 #### `SieveP6ib`: Proposition 6 with the bilinear estimate
 
@@ -2753,9 +2864,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveQ8.leaves_ev8`: The leaves of the decomposition to depth 8, for large `q` *paper*
 
+#### `SieveRangeSum`: The prime sums of the ranges are at most 3
+
+- `SieveRanges.sum_log_div_le`: Mertens' first theorem, the upper bound, in its elementary form ([note](../formalisations/harman-sieve.md))
+- `SieveRanges.rng_sum_le_three`: The prime sums of the ranges are at most `3` ([note](../formalisations/harman-sieve.md))
+
 #### `SieveRanges`: The ranges of Brun's sieve
 
-- `SieveRanges.rng_sum_le`: The prime sums of the ranges `rng A`, `A ≥ 1`, are uniformly bounded
+- `SieveRanges.rng_sum_le`: The prime sums of the ranges `rng A`, `A ≥ 1`, are uniformly bounded ([note](../formalisations/harman-sieve.md))
 
 #### `SieveRough`: Rough numbers from above, and the shares of the certificate's cells
 
