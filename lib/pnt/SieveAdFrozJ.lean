@@ -17,8 +17,9 @@ floor divides weigh little.
   `Σ_n (1[n ≡ a] − 1[(n, q) = 1]/φ(q))·1[∏w ∣ n, n rough at the floor]`.
 * `posA`, `posY`, `posC`: the positions of the three parts, which are distinct (`posA_ne_posY`, `posA_ne_posC`,
   `posY_ne_posC`); `frozE q e₁ e₂ βx t bx`: the atoms of the tuples of
-  `frozW` with `y` strictly decreasing and above the last prime of `a` (`sem_frozE`, `frozE_length`,
-  `thrOK_frozE`). `frozW_inj_eq`: the injective tuples of `frozW` are those of the family of `frozE`.
+  `frozW` (`frozA`: the cells, the two orders and the slab; `frozW_iff`) with `y` strictly decreasing and above
+  the last prime of `a` (`sem_frozA`, `sem_frozE`, `frozE_length`, `thrOK_frozE`). `frozW_inj_eq`: the injective
+  tuples of `frozW` are those of the family of `frozE`.
 * `sq_small_B`: the `n` of `(N₁, N₂]` that the square of a prime at least `⌈x^{y/DEN}⌉` divides weigh little in
   the comparison set. `frozW_noninj_le`: the tuples of `frozW` with a repeated prime contribute at most
   `(DEN + 1)^K` times the weight of those `n` in the two sets.
@@ -205,26 +206,29 @@ theorem dJF_frozP_eq {q : ℕ} (hx1 : 1 ≤ xq q) (a : ZMod q) {f e₁ e₂ s : 
 
 /-! ### The tuples of distinct primes as a family of atoms -/
 
-/-- The atoms of the tuples `(a, y, c)` of a term over the frozen part with a cofactor of `t` distinct primes: `a`
-in the box `βx` and `c` in the chain's box, `y` strictly decreasing and above the last prime of `a`, and the
-product of `a` and `y` in `(x^{e₁/DEN}, x^{e₂/DEN}]`. -/
-noncomputable def frozE (q e₁ e₂ : ℕ) {s : ℕ} (βx : Fin (s + 1) → Cell) (t : ℕ) {k : ℕ} (bx : Fin k → Cell) :
+omit [Route] in
+/-- The product over the positions of the frozen number is the product of the first part. -/
+theorem prod_posAY (s t k : ℕ) (w : Fin (s + 1 + t + k) → ℕ) :
+    ∏ i ∈ posAY s t k, (w i : ℝ) = ((prodR fun i => w (Fin.castAdd k i) : ℕ) : ℝ) := by
+  unfold posAY prodR
+  rw [Finset.prod_map, Nat.cast_prod]
+  exact Finset.prod_congr rfl fun i _ => rfl
+
+/-- The atoms of the tuples `(a, y, c)` of `frozW`: `a` in the box `βx` and `c` in the chain's box, each
+decreasing, and the product of `a` and `y` in `(x^{e₁/DEN}, x^{e₂/DEN}]`. -/
+noncomputable def frozA (q e₁ e₂ : ℕ) {s : ℕ} (βx : Fin (s + 1) → Cell) (t : ℕ) {k : ℕ} (bx : Fin k → Cell) :
     List (Atom (s + 1 + t + k)) :=
   (specB q βx).map (Atom.emb (posA s t k)) ++ ((specB q bx).map (Atom.emb (posC s t k)) ++
-    (((Finset.univ.filter fun p : Fin t × Fin t => p.1 < p.2).toList.map fun p =>
-        Atom.ltVar (posY s t k p.1) (posY s t k p.2)) ++
-      ((List.ofFn fun j : Fin t => Atom.ltVar (posY s t k j) (posA s t k (Fin.last s))) ++
-        [Atom.prodGt (posAY s t k) (Xe q e₁), Atom.prodLe (posAY s t k) (Xe q e₂)])))
+    [Atom.prodGt (posAY s t k) (Xe q e₁), Atom.prodLe (posAY s t k) (Xe q e₂)])
 
-/-- What the atoms say of a tuple. -/
-theorem sem_frozE (q e₁ e₂ : ℕ) {s : ℕ} (βx : Fin (s + 1) → Cell) (t : ℕ) {k : ℕ} (bx : Fin k → Cell)
+/-- What the atoms of `frozA` say of a tuple. -/
+theorem sem_frozA (q e₁ e₂ : ℕ) {s : ℕ} (βx : Fin (s + 1) → Cell) (t : ℕ) {k : ℕ} (bx : Fin k → Cell)
     (w : Fin (s + 1 + t + k) → ℕ) :
-    (∀ A ∈ frozE q e₁ e₂ βx t bx, A.sem w) ↔
+    (∀ A ∈ frozA q e₁ e₂ βx t bx, A.sem w) ↔
       (StrictAnti (w ∘ posA s t k) ∧
         ∀ i, Xe q (βx i).1 ≤ w (posA s t k i) ∧ (w (posA s t k i) : ℝ) < Xe q (βx i).2) ∧
       (StrictAnti (w ∘ posC s t k) ∧
         ∀ j, Xe q (bx j).1 ≤ w (posC s t k j) ∧ (w (posC s t k j) : ℝ) < Xe q (bx j).2) ∧
-      StrictAnti (w ∘ posY s t k) ∧ (∀ j, w (posA s t k (Fin.last s)) < w (posY s t k j)) ∧
       Xe q e₁ < ∏ i ∈ posAY s t k, (w i : ℝ) ∧ ∏ i ∈ posAY s t k, (w i : ℝ) ≤ Xe q e₂ := by
   have hA : (∀ A ∈ (specB q βx).map (Atom.emb (posA s t k)), A.sem w) ↔ StrictAnti (w ∘ posA s t k) ∧
       ∀ i, Xe q (βx i).1 ≤ w (posA s t k i) ∧ (w (posA s t k i) : ℝ) < Xe q (βx i).2 := by
@@ -236,6 +240,94 @@ theorem sem_frozE (q e₁ e₂ : ℕ) {s : ℕ} (βx : Fin (s + 1) → Cell) (t 
     rw [List.forall_mem_map]
     simp only [Atom.emb_sem]
     exact sem_specB q bx (w ∘ posC s t k)
+  have hS : (∀ A ∈ [Atom.prodGt (posAY s t k) (Xe q e₁), Atom.prodLe (posAY s t k) (Xe q e₂)], A.sem w) ↔
+      Xe q e₁ < ∏ i ∈ posAY s t k, (w i : ℝ) ∧ ∏ i ∈ posAY s t k, (w i : ℝ) ≤ Xe q e₂ := by
+    constructor
+    · intro h
+      exact ⟨h (Atom.prodGt (posAY s t k) (Xe q e₁)) (by simp), h (Atom.prodLe (posAY s t k) (Xe q e₂)) (by simp)⟩
+    · rintro ⟨h1, h2⟩ A hA
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hA
+      rcases hA with rfl | rfl
+      · exact h1
+      · exact h2
+  unfold frozA
+  rw [List.forall_mem_append, List.forall_mem_append]
+  exact and_congr hA (and_congr hC hS)
+
+/-- The atoms of `frozA` number at most `3(s + 1) + 3k + 2`. -/
+theorem frozA_length (q e₁ e₂ : ℕ) {s : ℕ} (βx : Fin (s + 1) → Cell) (t : ℕ) {k : ℕ} (bx : Fin k → Cell) :
+    (frozA q e₁ e₂ βx t bx).length ≤ 3 * (s + 1) + 3 * k + 2 := by
+  unfold frozA
+  simp only [List.length_append, List.length_map, List.length_cons, List.length_nil]
+  have h1 := specB_length q βx
+  have h2 := specB_length q bx
+  omega
+
+/-- For `q ≥ 1`, cells with ends at most `DEN` and `e₁, e₂ ≤ DEN`, the thresholds of `frozA` lie in
+`[1, q^{L+1}]`. -/
+theorem thrOK_frozA [RouteOK] {q : ℕ} (hq : 1 ≤ q) {e₁ e₂ s : ℕ} {βx : Fin (s + 1) → Cell}
+    (hβ : ∀ i, (βx i).1 ≤ DEN ∧ (βx i).2 ≤ DEN) (t : ℕ) {k : ℕ} {bx : Fin k → Cell}
+    (hb : ∀ j, (bx j).1 ≤ DEN ∧ (bx j).2 ≤ DEN) (he₁ : e₁ ≤ DEN) (he₂ : e₂ ≤ DEN) :
+    ThrOK q (frozA q e₁ e₂ βx t bx) := by
+  have hL0 : 0 < L := L_pos
+  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast hq
+  have hx1 : 1 ≤ xq q := Real.one_le_rpow hq1 hL0.le
+  have hXe : ∀ e : ℕ, e ≤ DEN → 1 ≤ Xe q e ∧ Xe q e ≤ (q : ℝ) ^ (L + 1 : ℝ) := by
+    intro e he
+    refine ⟨?_, ?_⟩
+    · have := Xe_mono hx1 (Nat.zero_le e)
+      rwa [Xe_zero] at this
+    · have h1 : Xe q e ≤ xq q := (Xe_mono hx1 he).trans (Xe_DEN q).le
+      have h2 : xq q ≤ (q : ℝ) ^ (L + 1 : ℝ) := Real.rpow_le_rpow_of_exponent_le hq1 (by linarith)
+      linarith
+  unfold frozA
+  refine thrOK_append ?_ (thrOK_append ?_ ?_)
+  · intro A hA
+    obtain ⟨A', hA', rfl⟩ := List.mem_map.1 hA
+    rw [Atom.emb_thr]
+    exact thrOK_specB hq hL0.le βx hβ A' hA'
+  · intro A hA
+    obtain ⟨A', hA', rfl⟩ := List.mem_map.1 hA
+    rw [Atom.emb_thr]
+    exact thrOK_specB hq hL0.le bx hb A' hA'
+  · intro A hA
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hA
+    rcases hA with rfl | rfl
+    · exact hXe e₁ he₁
+    · exact hXe e₂ he₂
+
+/-- **The tuples of `frozW`**: the tuples of primes up to `N₂` that satisfy the atoms of `frozA`, with `y`
+non-increasing and at least the last prime of `a`. -/
+theorem frozW_iff {q e₁ e₂ s : ℕ} {βx : Fin (s + 1) → Cell} {t k : ℕ} {bx : Fin k → Cell}
+    {w : Fin (s + 1 + t + k) → ℕ} :
+    w ∈ frozW q e₁ e₂ βx t bx ↔ (∀ i, w i ≤ N2 q ∧ (w i).Prime) ∧ (∀ A ∈ frozA q e₁ e₂ βx t bx, A.sem w) ∧
+      Antitone (w ∘ posY s t k) ∧ ∀ j, w (posA s t k (Fin.last s)) ≤ w (posY s t k j) := by
+  rw [mem_frozW, sem_frozA, prod_posAY]
+  constructor
+  · rintro ⟨hp, hu, hc⟩
+    obtain ⟨-, ha, hanti, hz, hslab⟩ := mem_frozP.1 hu
+    obtain ⟨-, hsa, hca⟩ := mem_famB.1 ha
+    obtain ⟨-, hsc, hcc⟩ := mem_famB.1 hc
+    exact ⟨hp, ⟨⟨hsa, hca⟩, ⟨hsc, hcc⟩, hslab⟩, hanti, hz⟩
+  · rintro ⟨hp, ⟨⟨hsa, hca⟩, ⟨hsc, hcc⟩, hslab⟩, hanti, hz⟩
+    exact ⟨hp, mem_frozP.2 ⟨fun i => hp _, mem_famB.2 ⟨fun i => hp _, hsa, hca⟩, hanti, hz, hslab⟩,
+      mem_famB.2 ⟨fun j => hp _, hsc, hcc⟩⟩
+
+/-- The atoms of the tuples `(a, y, c)` of a term over the frozen part with a cofactor of `t` distinct primes: those
+of `frozA`, and `y` strictly decreasing and above the last prime of `a`. -/
+noncomputable def frozE (q e₁ e₂ : ℕ) {s : ℕ} (βx : Fin (s + 1) → Cell) (t : ℕ) {k : ℕ} (bx : Fin k → Cell) :
+    List (Atom (s + 1 + t + k)) :=
+  frozA q e₁ e₂ βx t bx ++
+    (((Finset.univ.filter fun p : Fin t × Fin t => p.1 < p.2).toList.map fun p =>
+        Atom.ltVar (posY s t k p.1) (posY s t k p.2)) ++
+      List.ofFn fun j : Fin t => Atom.ltVar (posY s t k j) (posA s t k (Fin.last s)))
+
+/-- What the atoms say of a tuple. -/
+theorem sem_frozE (q e₁ e₂ : ℕ) {s : ℕ} (βx : Fin (s + 1) → Cell) (t : ℕ) {k : ℕ} (bx : Fin k → Cell)
+    (w : Fin (s + 1 + t + k) → ℕ) :
+    (∀ A ∈ frozE q e₁ e₂ βx t bx, A.sem w) ↔
+      (∀ A ∈ frozA q e₁ e₂ βx t bx, A.sem w) ∧ StrictAnti (w ∘ posY s t k) ∧
+        ∀ j, w (posA s t k (Fin.last s)) < w (posY s t k j) := by
   have hY : (∀ A ∈ ((Finset.univ.filter fun p : Fin t × Fin t => p.1 < p.2).toList.map fun p =>
       Atom.ltVar (posY s t k p.1) (posY s t k p.2)), A.sem w) ↔ StrictAnti (w ∘ posY s t k) := by
     rw [List.forall_mem_map]
@@ -248,28 +340,16 @@ theorem sem_frozE (q e₁ e₂ : ℕ) {s : ℕ} (βx : Fin (s + 1) → Cell) (t 
   have hL : (∀ A ∈ (List.ofFn fun j : Fin t => Atom.ltVar (posY s t k j) (posA s t k (Fin.last s))),
       A.sem w) ↔ ∀ j, w (posA s t k (Fin.last s)) < w (posY s t k j) := by
     simp only [List.forall_mem_ofFn_iff, Atom.sem_ltVar]
-  have hS : (∀ A ∈ [Atom.prodGt (posAY s t k) (Xe q e₁), Atom.prodLe (posAY s t k) (Xe q e₂)], A.sem w) ↔
-      Xe q e₁ < ∏ i ∈ posAY s t k, (w i : ℝ) ∧ ∏ i ∈ posAY s t k, (w i : ℝ) ≤ Xe q e₂ := by
-    constructor
-    · intro h
-      exact ⟨h (Atom.prodGt (posAY s t k) (Xe q e₁)) (by simp), h (Atom.prodLe (posAY s t k) (Xe q e₂)) (by simp)⟩
-    · rintro ⟨h1, h2⟩ A hA
-      simp only [List.mem_cons, List.not_mem_nil, or_false] at hA
-      rcases hA with rfl | rfl
-      · exact h1
-      · exact h2
   unfold frozE
-  rw [List.forall_mem_append, List.forall_mem_append, List.forall_mem_append, List.forall_mem_append]
-  exact and_congr hA (and_congr hC (and_congr hY (and_congr hL hS)))
+  rw [List.forall_mem_append, List.forall_mem_append]
+  exact and_congr Iff.rfl (and_congr hY hL)
 
 /-- The atoms number at most `3(s + 1) + 3k + t² + t + 2`. -/
 theorem frozE_length (q e₁ e₂ : ℕ) {s : ℕ} (βx : Fin (s + 1) → Cell) (t : ℕ) {k : ℕ} (bx : Fin k → Cell) :
     (frozE q e₁ e₂ βx t bx).length ≤ 3 * (s + 1) + 3 * k + t * t + t + 2 := by
   unfold frozE
-  simp only [List.length_append, List.length_map, List.length_ofFn, Finset.length_toList, List.length_cons,
-    List.length_nil]
-  have h1 := specB_length q βx
-  have h2 := specB_length q bx
+  simp only [List.length_append, List.length_map, List.length_ofFn, Finset.length_toList]
+  have h1 := frozA_length q e₁ e₂ βx t bx
   have h3 : (Finset.univ.filter fun p : Fin t × Fin t => p.1 < p.2).card ≤ t * t := by
     refine (Finset.card_filter_le _ _).trans ?_
     rw [Finset.card_univ, Fintype.card_prod, Fintype.card_fin]
@@ -282,70 +362,36 @@ theorem thrOK_frozE [RouteOK] {q : ℕ} (hq : 1 ≤ q) {e₁ e₂ s : ℕ} {βx 
     ThrOK q (frozE q e₁ e₂ βx t bx) := by
   have hL0 : 0 < L := L_pos
   have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast hq
-  have hx1 : 1 ≤ xq q := Real.one_le_rpow hq1 hL0.le
-  have hx0 : 0 < xq q := by linarith
   have hone : (1 : ℝ) ≤ 1 ∧ (1 : ℝ) ≤ (q : ℝ) ^ (L + 1 : ℝ) := ⟨le_refl 1, Real.one_le_rpow hq1 (by linarith)⟩
-  have hXe : ∀ e : ℕ, e ≤ DEN → 1 ≤ Xe q e ∧ Xe q e ≤ (q : ℝ) ^ (L + 1 : ℝ) := by
-    intro e he
-    refine ⟨?_, ?_⟩
-    · have := Xe_mono hx1 (Nat.zero_le e)
-      rwa [Xe_zero] at this
-    · have h1 : Xe q e ≤ xq q := (Xe_mono hx1 he).trans (Xe_DEN q).le
-      have h2 : xq q ≤ (q : ℝ) ^ (L + 1 : ℝ) := Real.rpow_le_rpow_of_exponent_le hq1 (by linarith)
-      linarith
   unfold frozE
-  refine thrOK_append ?_ (thrOK_append ?_ (thrOK_append ?_ (thrOK_append ?_ ?_)))
-  · intro A hA
-    obtain ⟨A', hA', rfl⟩ := List.mem_map.1 hA
-    rw [Atom.emb_thr]
-    exact thrOK_specB hq hL0.le βx hβ A' hA'
-  · intro A hA
-    obtain ⟨A', hA', rfl⟩ := List.mem_map.1 hA
-    rw [Atom.emb_thr]
-    exact thrOK_specB hq hL0.le bx hb A' hA'
+  refine thrOK_append (thrOK_frozA hq hβ t hb he₁ he₂) (thrOK_append ?_ ?_)
   · intro A hA
     obtain ⟨p, -, rfl⟩ := List.mem_map.1 hA
     exact hone
   · intro A hA
     obtain ⟨j, rfl⟩ := List.mem_ofFn.1 hA
     exact hone
-  · intro A hA
-    simp only [List.mem_cons, List.not_mem_nil, or_false] at hA
-    rcases hA with rfl | rfl
-    · exact hXe e₁ he₁
-    · exact hXe e₂ he₂
 
 /-- **The injective tuples of `frozW` are those of the family of `frozE`.** -/
 theorem frozW_inj_eq (q e₁ e₂ : ℕ) {s : ℕ} (βx : Fin (s + 1) → Cell) (t : ℕ) {k : ℕ} (bx : Fin k → Cell) :
     (frozW q e₁ e₂ βx t bx).filter Function.Injective =
       (famSet (s + 1 + t + k) (N2 q) (frozE q e₁ e₂ βx t bx)).filter Function.Injective := by
   ext w
-  rw [Finset.mem_filter, Finset.mem_filter, mem_frozW, mem_famSet, sem_frozE]
-  have hprod : ∏ i ∈ posAY s t k, (w i : ℝ) = ((prodR fun i => w (Fin.castAdd k i) : ℕ) : ℝ) := by
-    unfold posAY prodR
-    rw [Finset.prod_map, Nat.cast_prod]
-    exact Finset.prod_congr rfl fun i _ => rfl
-  rw [hprod]
+  rw [Finset.mem_filter, Finset.mem_filter, frozW_iff, mem_famSet, sem_frozE]
   constructor
-  · rintro ⟨⟨hp, hu, hc⟩, hinj⟩
-    obtain ⟨-, ha, hanti, hz, hslab⟩ := mem_frozP.1 hu
-    obtain ⟨-, hsa, hca⟩ := mem_famB.1 ha
-    obtain ⟨-, hsc, hcc⟩ := mem_famB.1 hc
-    refine ⟨⟨hp, ⟨hsa, hca⟩, ⟨hsc, hcc⟩, ?_, ?_, hslab⟩, hinj⟩
+  · rintro ⟨⟨hp, hA, hanti, hz⟩, hinj⟩
+    refine ⟨⟨hp, hA, ?_, ?_⟩, hinj⟩
     · intro i j hij
       have hle : w (posY s t k j) ≤ w (posY s t k i) := hanti hij.le
       have hne : w (posY s t k j) ≠ w (posY s t k i) := fun h =>
         hij.ne' ((posY s t k).injective (hinj h))
       exact lt_of_le_of_ne hle hne
     · intro j
-      have hle : w (posA s t k (Fin.last s)) ≤ w (posY s t k j) := hz j
       have hne : w (posA s t k (Fin.last s)) ≠ w (posY s t k j) := fun h =>
         posA_ne_posY s t k (Fin.last s) j (hinj h)
-      exact lt_of_le_of_ne hle hne
-  · rintro ⟨⟨hp, ⟨hsa, hca⟩, ⟨hsc, hcc⟩, hsy, hay, hslab⟩, hinj⟩
-    refine ⟨⟨hp, ?_, mem_famB.2 ⟨fun j => hp _, hsc, hcc⟩⟩, hinj⟩
-    rw [mem_frozP]
-    exact ⟨fun i => hp _, mem_famB.2 ⟨fun i => hp _, hsa, hca⟩, hsy.antitone, fun j => (hay j).le, hslab⟩
+      exact lt_of_le_of_ne (hz j) hne
+  · rintro ⟨⟨hp, hA, hsy, hay⟩, hinj⟩
+    exact ⟨⟨hp, hA, hsy.antitone, fun j => (hay j).le⟩, hinj⟩
 
 /-! ### The tuples with a repeated prime -/
 

@@ -188,16 +188,16 @@ def hiRole {s k : ℕ} (βx : Fin (s + 1) → Cell) (bx : Fin k → Cell) (e₂ 
 variable [Route]
 
 /-- **The product of a tuple of the family over a role set.** For `x > 1` and a tuple of numbers at least `1`
-that satisfies the atoms of `frozE`: its product over `roleSet s t k A my C` lies in
+that satisfies the atoms of `frozA`: its product over `roleSet s t k A my C` lies in
 `[x^{loRole/DEN}, x^{hiRole/DEN}]`. -/
 theorem role_bounds {q : ℕ} (hx1 : 1 < xq q) {e₁ e₂ s : ℕ} {βx : Fin (s + 1) → Cell} {t k : ℕ}
     {bx : Fin k → Cell} {w : Fin (s + 1 + t + k) → ℕ} (hw1 : ∀ i, 1 ≤ w i)
-    (hsem : ∀ A ∈ frozE q e₁ e₂ βx t bx, A.sem w) (A : Finset (Fin (s + 1))) (my : Bool)
+    (hsem : ∀ A ∈ frozA q e₁ e₂ βx t bx, A.sem w) (A : Finset (Fin (s + 1))) (my : Bool)
     (C : Finset (Fin k)) :
     Xe q (loRole βx bx e₁ A my C) ≤ ∏ i ∈ roleSet s t k A my C, (w i : ℝ) ∧
       ∏ i ∈ roleSet s t k A my C, (w i : ℝ) ≤ Xe q (hiRole βx bx e₂ A my C) := by
   have hx0 : 0 < xq q := by linarith
-  obtain ⟨⟨-, hca⟩, ⟨-, hcc⟩, -, -, hs1, hs2⟩ := (sem_frozE q e₁ e₂ βx t bx w).1 hsem
+  obtain ⟨⟨-, hca⟩, ⟨-, hcc⟩, hs1, hs2⟩ := (sem_frozA q e₁ e₂ βx t bx w).1 hsem
   have hPA : ∀ A' : Finset (Fin (s + 1)), Xe q (∑ i ∈ A', (βx i).1) ≤ ∏ i ∈ A', (w (posA s t k i) : ℝ) ∧
       ∏ i ∈ A', (w (posA s t k i) : ℝ) ≤ Xe q (∑ i ∈ A', (βx i).2) := by
     intro A'
@@ -352,7 +352,7 @@ theorem evJF_froz_fill {f : ℕ} (hf : 0 < f) (hfD : f ≤ DEN) {e₁ e₂ s : �
     have hge := frozW_ge hx1 (hβ (Fin.last s)).1 (fun j => (hb j).1) hwW
     have hlt := frozW_lt hx1 (fun i => (hβ i).2.2) he₂ (fun j => (hb j).2.2) hwW
     have hw1 : ∀ i, 1 ≤ w i := fun i => ((mem_famSet.1 hw).1 i).2.one_lt.le
-    have hsem := (mem_famSet.1 hw).2
+    have hsem := ((sem_frozE q e₁ e₂ βx t bx w).1 (mem_famSet.1 hw).2).1
     obtain ⟨h01, h02⟩ := role_bounds hx1' hw1 hsem A₀ my₀ C₀
     obtain ⟨-, h1⟩ := role_bounds hx1' hw1 hsem A₁ my₁ C₁
     obtain ⟨-, h2⟩ := role_bounds hx1' hw1 hsem A₁ᶜ (!my₁) C₁ᶜ
@@ -392,7 +392,7 @@ theorem evJF_froz_two {f : ℕ} (hf : 0 < f) (hfD : f ≤ DEN) {e₁ e₂ s : �
     have hge := frozW_ge hx1 (hβ (Fin.last s)).1 (fun j => (hb j).1) hwW
     have hlt := frozW_lt hx1 (fun i => (hβ i).2.2) he₂ (fun j => (hb j).2.2) hwW
     have hw1 : ∀ i, 1 ≤ w i := fun i => ((mem_famSet.1 hw).1 i).2.one_lt.le
-    have hsem := (mem_famSet.1 hw).2
+    have hsem := ((sem_frozE q e₁ e₂ βx t bx w).1 (mem_famSet.1 hw).2).1
     obtain ⟨hr1, hr2⟩ := role_bounds hx1' hw1 hsem Ar myr Cr
     obtain ⟨h01, h02⟩ := role_bounds hx1' hw1 hsem A₀ my₀ C₀
     obtain ⟨-, h1⟩ := role_bounds hx1' hw1 hsem A₁ my₁ C₁

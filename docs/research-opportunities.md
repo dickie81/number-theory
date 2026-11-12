@@ -434,10 +434,14 @@ covers. The region does not close at `13/6`.
     cells of side `1/DEN`, the comparisons on the sums of a box, and the bounds for the products over sets made
     of some primes of `r'`, the cofactor or not, and some primes of the chain, from the cells and the slab
     (`SieveAd.evJF_froz_fill_at`, `SieveAd.evJF_froz_two_at`); the tuples with a repeated prime are bounded by
-    the `n` with a square factor. Not written: the other evaluation (the term of a chain's box over the frozen
-    part, by `SieveTwoChain.chain_two` on the full tuples), the tests on the bits of the search's lists with
-    their soundness (`SieveAd.SoundF`), the search's definitions with the reversal of terms of two to five
-    primes of either sign, the second level, and a certificate.
+    the `n` with a square factor. And the term of a chain's box over this frozen part, evaluated by the estimate
+    in two variables (`lib/pnt/SieveAdFull.lean`, `SieveAdFrozI.lean`; `SieveAd.evIF_froz_two_at`): the chain's
+    cofactor written out too, the tuples (primes of `r'`, of its cofactor, of the chain, of the chain's cofactor)
+    as a family of comparisons with product in `(N₁, N₂]`, and `SieveTwoChain.chain_two` on it with the first
+    variable and the rest given by their parts. So both evaluations that the tree over the frozen part asks for
+    are proved, on finite sets of indices and numbers that pass `coreJ3`, `coreJ2`, `coreI2`. Not written: the
+    tests on the bits of the search's lists with their soundness (`SieveAd.SoundF`), the search's definitions
+    with the reversal of terms of two to five primes of either sign, the second level, and a certificate.
   - *Why `2.19`.* Without reversal, and without the stops whose rest is the first small prime, the cells pass at
     `2.19` with the window, and not at `2.18` (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
     `0.945`; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`; `1.066` at `2.18` with every stop). The tree

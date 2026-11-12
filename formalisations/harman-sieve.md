@@ -192,8 +192,30 @@ Its main tools:
   set, disjoint from the first, with a positive lower bound) pass `coreJ3` (`coreJ2`) at the floor with
   `Kb ≥ s + 1 + T + k` cells of room, the terms at the floor `x^{f/DEN}` of the chain's box over the frozen part
   are evaluated (`SieveAd.EvJF` for `SieveAd.frozS`). This is the second of the two evaluations that the tree
-  over the frozen part asks for (`SieveAd.SoundF`), on finite sets of indices; the tests of the search, on the
-  bits of its lists, and the first evaluation (the term of a chain's box) are not written.
+  over the frozen part asks for (`SieveAd.SoundF`), on finite sets of indices.
+- `SieveAd.full2_core_at` (`lib/pnt/SieveAdFull.lean`; the checks are `lib/pnt/SieveAdFullDefs.lean`'s, without
+  Mathlib), **the estimate in two variables on tuples of primes with a given product, in no order.**
+  `SieveTwoTerm.chain2_bound` bounds the term of a family of strictly decreasing chains by writing each
+  multiple's cofactor out as its primes and applying `SieveTwoChain.chain_two` to the full tuples; `chain_two`
+  asks for no order, so the bound holds for any family of `K`-tuples of primes cut out by comparisons whose
+  product lies in `(N₁, N₂]`, with a first variable `∏_S z` and a rest `∏_{Sr} z` in ranges, `S` and `Sr ≠ ∅`
+  disjoint (`SieveAd.full2_bound`, `SieveAd.full2_exp`). For the region `Zone7d`, entries at least `x^{1/DEN}`
+  and exponents `u ≤ v`, `ρ₁ ≤ ρ₂` in units of `1/DEN` that pass the six inequalities of `SieveAd.coreI2` (those
+  of `chkI2`, on numbers): the sum over the family of `1[∏z ≡ a] − 1[(∏z, q) = 1]/φ(q)` is at most
+  `q^{L−δ}/φ(q)` in absolute value.
+- `SieveAd.evIF_froz_two_at` (`lib/pnt/SieveAdFrozI.lean`), **the term of a chain's box over the frozen part,
+  by the estimate in two variables.** The term is a sum over a frozen number `R`, a chain `c` of primes of `n/R`
+  and the `n` with `R·∏c ∣ n` and `n/R` rough at the last prime of the chain. The multiples are `R·∏c·k` with `k`
+  rough at that prime (`SieveAd.sum_mult_froz`), and `k` is written out as its primes: so the term over
+  `frozP … t` is a sum over the tuples (primes of `r'`, of its cofactor, of the chain, of the chain's cofactor)
+  with product in `(N₁, N₂]` (`SieveAd.dIF_frozP_eq`), which are the family of the comparisons
+  `SieveChain.fullTL` of those of `frozW` (`SieveAd.frozΩ`, `SieveAd.frozW_eq_RTg`: the atoms `SieveAd.frozA`
+  and the non-strict order of the cofactor's primes): the chain is last, so the chain's cofactor lies above the
+  tuple's last entry, as `fullTL` has it. For cells with `1 ≤ lo ≤ hi ≤ DEN` and `e₁ ≤ e₂ ≤ DEN`: if the
+  exponents (`SieveAd.loRole`, `SieveAd.hiRole`) of two disjoint role sets, the first variable's and the rest's,
+  the rest's with a positive lower bound, pass `coreI2`, the term of the chain's box over the frozen part is
+  evaluated (`SieveAd.EvIF` for `SieveAd.frozS`). This is the first of the two evaluations of `SieveAd.SoundF`.
+  The tests of the search, on the bits of its lists, are not written.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

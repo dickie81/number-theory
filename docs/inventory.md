@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1716 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1718 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 310 | 924 |
+| `lib/pnt` | 312 | 926 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2500,6 +2500,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.famIR_eq`: The term on the multiples of `R`, as a sum over `n` ([note](../formalisations/harman-sieve.md))
 - `SieveAd.famJR_eq`: The terms at a level on the multiples of `R`, as a sum over `n` ([note](../formalisations/harman-sieve.md))
 
+#### `SieveAdFrozI`: The term of a chain's box over the frozen part, by the estimate in two variables
+
+- `SieveAd.evIF_froz_two_at`: The term of a chain's box over the frozen part, by the estimate in two variables, for any route ([note](../formalisations/harman-sieve.md))
+
 #### `SieveAdFrozJ`: The terms at a floor over the frozen part, as a family of tuples of distinct primes
 
 - `SieveAd.evJF_frozP_at`: The terms at a floor over the frozen part with a cofactor of `t` primes are evaluated when the family's are, for any route ([note](../formalisations/harman-sieve.md))
@@ -2518,6 +2522,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd.frozSolve_sound_at`: The search over a frozen part is sound, for any route ([note](../formalisations/harman-sieve.md))
 - `SieveAd.dJF_level_at`: The top of a reversed tree, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFull`: The estimate in two variables on tuples of primes with a given product, in no order
+
+- `SieveAd.full2_core_at`: Tuples of primes with product in `(N₁, N₂]`, on exponents that pass the checks, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdRev`: The tree of a reversed term bounds it
 
