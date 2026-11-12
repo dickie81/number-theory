@@ -197,7 +197,7 @@ frequency of a separation of variables. Theorem~\ref{M-thm:type2} enters only th
 
 Fix a smooth function $f_0 \ge 0$ supported in $[1/2, 2]$, and let $F_0 = \max f_0$ and $\eta = 10^{-5}$, the largest
 height exponent that Theorem~\ref{M-thm:type2} allows. Let $X$ be a finite set, and for $m \in X$ let $\nu(m) \ge 1$ be
-an integer, $c_m$ a complex coefficient and $\lambda_1(m), \dots, \lambda_J(m)$ reals. Let $p_1, \dots, p_K$ be primes
+an integer, $c_m$ a complex coefficient and $u_1(m), \dots, u_J(m)$ reals. Let $p_1, \dots, p_K$ be primes
 at the scales $Q_1, \dots, Q_K > 0$, and let $C_1, \dots, C_J$ be comparisons: conditions on $(m, p)$ that hold when
 $\ell_j(m, p) > 0$ and fail when $\ell_j(m, p) < 0$, where $\ell_j(m, p) = u_j(m) + \sum_i e_{ji} \log p_i$, each
 with a pivot $\mathrm{piv}(j)$, an index with $e_{j, \mathrm{piv}(j)} = \pm 1$. Let $\mathcal T$ be the set of the $t =
@@ -257,9 +257,9 @@ S_{Q_i}(\chi, h_i) \, d\xi$, where $W_\xi(\chi) = \sum_m c_m e^{2\pi i \sum_j \x
 every $j$, then $|h_i| \le q^{\eta}$, and \eqref{eq:H}, with $c' = c$ and $\kappa = 0$, bounds it by $B_1$. Otherwise
 some $|\xi_j| > T_0$, and the trivial bound $\varphi(q) \mathfrak B$ holds. Integrating gives \eqref{eq:smooth-family}.
 The same holds for a single function $g$ at one of the forms shifted by a real constant, $\ell_j + \theta$, with the
-coefficients $|c_m|$ in place of $c_m$: the shift puts the phase $e^{2\pi i \xi \theta}$ on $m$, and \eqref{eq:H} with
-$c' = |c|$ and $\kappa = \xi \theta$ bounds the integrand. This is why the hypothesis asks for $|c|$ and a phase
-$\kappa$.
+coefficients $|c_m|$ in place of $c_m$: the shift multiplies the integrand by the constant phase $e^{2\pi i \xi
+\theta}$, and \eqref{eq:H} with $c' = |c|$ bounds it. This is why the hypothesis asks for $|c|$. The phase $\kappa$ of
+\eqref{eq:H}, which the absolute value removes, is kept to match the formalisation's hypothesis.
 
 \emph{The cut-off.} Let $g$ be smooth, with $g = 0$ on $(-\infty, 0]$, $g = 1$ on $[1, \infty)$ and $0 \le g \le 1$, and
 let $\gamma_k = \int |g^{(k)}|$. For $0 < \theta \le 2\Lambda$ put $G_{\theta, \Lambda}(u) = g(u/\theta) - g((u -
@@ -608,7 +608,7 @@ with $n$ the length and $B - A$ the mass of the spline, plus the counted parts n
 % SieveSpline.typeIB_spline_wide
 
 \emph{The cut.} On a block pair that holds a leaf, $D' \le d_1 f d_2 < D'\rho^2$ and $(d_1 f d_2)^2 \le d_1 f \cdot d_1
-f d_2^2 \le X_1 X_2 \le q^{2L - 1}$, since $c \le a$. So $\theta N_1/(rD'\rho^2) \le \theta N_1/(rX_3) \le q^{1 +
+f d_2^2 \le X_1 X_2 \le q^{2L - 1}$, since $c \le \xi$. So $\theta N_1/(rD'\rho^2) \le \theta N_1/(rX_3) \le q^{1 +
 \delta' - s}$, and the step has $\ell \le q^{1 + \delta' - s} + 1 \le qY$ for large $q$, since $\delta' \le y$: this is
 where $\delta' \le \min(\kappa/4, 1/8)$ enters. Hence $qY/\ell \ge 1$ and $H \le 2qY/\ell$, and since $\rho^{\beta_2} D'
 \le d_2 \cdot d_1 f d_2 \le X_2$ and $\ell \ge \theta N_1/(rD'\rho^2)$,
@@ -1006,10 +1006,13 @@ Definition~\ref{M-def:tests} are \lean{SieveAd.okI2}, \lean{SieveAd.okJ2} and \l
 numbers with $L$ written as $2150/1000$; the region's six inequalities enter them as multiples of $1/62500$, with
 $\lambda = 27637/62500$ and $1/12500 = 5/62500$, so with the constants $62505$, $62500 + 27637 = 90137$,
 $62500 - 27637 = 34863$ and $2 \cdot 62500 + 5 = 125005$. Lemma~\ref{M-lem:tests}(a) and~(b) are
-\lean{SieveAd.fillTests\_sound}; (c) is formalised in the two forms the proof uses, with at most two further
-comparisons, for boxes of at most twelve primes (\lean{SieveAd.fillTests\_soundX}), and, for the tests at a floor over a
-frozen part, with any number of them (\lean{SieveAd.evJ\_fill\_core}, \lean{SieveAd.evJ\_two\_core}); the test
-(I$_{\mathcal M}$) goes through Lemma~\ref{M-lem:chains-two} directly (\lean{SieveAd.full2\_core}). The trees of
+\lean{SieveAd.fillTests\_sound}. In (c) the further comparisons are those of the formalisation's families
+(\lean{SieveDecomp.Atom}): a prime with a threshold, two primes, or the product of some of the primes with a threshold.
+The proof of Theorem~\ref{M-thm:main} uses (c) in one form, for the tests at a floor over a frozen part, with any
+number of primes and of comparisons (\lean{SieveAd.evJ\_fill\_core}, \lean{SieveAd.evJ\_two\_core}); (a) with at most
+$40 - 3k$ comparisons is \lean{SieveAd.evI\_twoE}; and the tests with at most two comparisons for boxes of at most
+twelve primes (\lean{SieveAd.fillTests\_soundX}) serve the role reversal of three primes, which the certificate does not
+use. The test (I$_{\mathcal M}$) goes through Lemma~\ref{M-lem:chains-two} directly (\lean{SieveAd.full2\_core}). The trees of
 Definition~\ref{M-def:tree} without the node (R) are \lean{SieveAd.Tree}, checked by \lean{SieveAd.ok}, and
 Proposition~\ref{M-prop:tree-bound} for them is \lean{SieveAd.sound}. The reversal is not a node of
 \lean{SieveAd.Tree} but a rule of the searches (\lean{SieveAd.altFD} in the search led by hints), with the bound of

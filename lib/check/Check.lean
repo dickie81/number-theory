@@ -85,9 +85,9 @@ then the classical deduction it compares with. -/
 #print axioms SieveAd.okJ2
 #print axioms SieveAd.okJ3
 #print axioms SieveAd.fillTests_sound
-#print axioms SieveAd.fillTests_soundX
 #print axioms SieveAd.evJ_fill_core
 #print axioms SieveAd.evJ_two_core
+#print axioms SieveAd.evI_twoE
 #print axioms SieveRough.psi_le
 #print axioms SieveRough.Psi_le_buchstab
 #print axioms SieveRough.super_M
@@ -112,8 +112,9 @@ then the classical deduction it compares with. -/
 #print axioms SieveAd.flip_inject
 #print axioms SieveAd.froz_weight_le
 #print axioms SieveAd.frozTests_sound
-#print axioms SieveAd.frozSolve_sound
+#print axioms SieveAd.frozRules
 #print axioms SieveAd.bd_flip_neg
+#print axioms SieveAd.bd_flip_core
 #print axioms SieveAd.bd_flipCostD
 #print axioms SieveAd.sound
 #print axioms SieveAd.altFD_sound

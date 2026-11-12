@@ -1274,12 +1274,14 @@ The one-unit margins absorb the integer parts of the ranges. For rational $L$ ea
 denominators, is an inequality between integers, and the formalisation checks it so.
 
 \begin{lemma}\label{lem:tests}
-% Lean: SieveAd.evI_okI2, SieveAd.evI_two, SieveAd.chain2_exp, SieveAd.evJ_okJ2, SieveAd.evJ_two, SieveAd.evJ_fill, SieveAd.fillTests_sound; (c): SieveAd.evI_twoE, SieveAd.evJ_twoE, SieveAd.evJ_fillE, SieveAd.fillTests_soundX, SieveAd.evJ_fill_core, SieveAd.evJ_two_core
+% Lean: SieveAd.evI_okI2, SieveAd.evI_two, SieveAd.chain2_exp, SieveAd.evJ_okJ2, SieveAd.evJ_two, SieveAd.evJ_fill, SieveAd.fillTests_sound; (c), with the comparisons SieveDecomp.Atom: SieveAd.evJ_fill_core, SieveAd.evJ_two_core, SieveAd.evI_twoE, SieveAd.evJ_twoE, SieveAd.evJ_fillE
 \begin{enumerate}
 \item[(a)] The term of a box of $k \ge 1$ primes that passes (I) is evaluated.
 \item[(b)] The terms at the floor $f$ of a box that passes (J2) or (J3) at $f$ are evaluated.
-\item[(c)] For every $J$, (a) and (b) hold uniformly when the family is cut by at most $J$ further comparisons with
-  constant terms at most $(L + 1)\log q$: $q_0$ does not depend on the comparisons.
+\item[(c)] For every $J$, (b) holds uniformly when the family is cut by at most $J$ further comparisons, each of a
+  prime with a threshold, of two primes, or of the product of some of the primes with a threshold, the thresholds in
+  $[1, q^{L + 1}]$: $q_0$ does not depend on the comparisons. This holds also for boxes of more than $13$ primes that
+  satisfy the conditions of (J2) or (J3). So does (a), for at most $40 - 3k$ such comparisons.
 \end{enumerate}
 \end{lemma}
 
@@ -1289,13 +1291,13 @@ comparisons, $2k$ for the cells and $k - 1$ for the order, each with a pivot and
 Take $J_0 = 40$, or $J_0 = 3k + J$ for (c), and $\Lambda_1 = L + 1$.
 
 (a) Apply Lemma~\ref{lem:term-two} with $e_0 = L/D$, since every prime is at least $x^{1/D}$, the sets $\mathcal S$ and
-$\mathcal S_r$, and $A = \lceil x^{l(\mathcal S)/D} \rceil - 1$, $B = \lfloor x^{h(\mathcal S)/D} \rfloor$, $A_r =
-\lceil x^{l(\mathcal S_r)/D} \rceil - 1$ and $B_r = \lfloor x^{h(\mathcal S_r)/D} \rfloor$, so that $A < \prod_{\mathcal
-S} p_i \le B$ and $A_r < \prod_{\mathcal S_r} p_i \le B_r$ on the family. The inequality $\rho \ge 1/2000$ at $L(l(\mathcal
+$\mathcal S_r$, and $A = \lceil x^{l(\mathcal S)/D} \rceil - 1$, $B = \lfloor x^{h(\mathcal S)/D} \rfloor$, $R_- =
+\lceil x^{l(\mathcal S_r)/D} \rceil - 1$ and $R_+ = \lfloor x^{h(\mathcal S_r)/D} \rfloor$, so that $A < \prod_{\mathcal
+S} p_i \le B$ and $R_- < \prod_{\mathcal S_r} p_i \le R_+$ on the family. The inequality $\rho \ge 1/2000$ at $L(l(\mathcal
 S_r) - 1)/D$ makes $\mathcal S_r$ nonempty, and $m_1 + \rho \le L - 2/3$ at the corner $(Lh(\mathcal S)/D, L(h(\mathcal
-S_r) + 1)/D)$ gives $h(\mathcal S) + h(\mathcal S_r) + 1 < D$, so $BB_r \le x^{1 - 1/D} \le N_1$ for large $q$. For large
-$q$, $\log_q A \ge L(l(\mathcal S) - 1)/D$, and an $m_2$ with $\lfloor N_1/B_r \rfloor \le 4q^{m_1 + m_2}$ and $q^{m_1 +
-m_2} \le \lfloor N_2/(A_r + 1) \rfloor$ has $L - m_1 - m_2$ in $[L(l(\mathcal S_r) - 1)/D, L(h(\mathcal S_r) + 1)/D]$,
+S_r) + 1)/D)$ gives $h(\mathcal S) + h(\mathcal S_r) + 1 < D$, so $BR_+ \le x^{1 - 1/D} \le N_1$ for large $q$. For large
+$q$, $\log_q A \ge L(l(\mathcal S) - 1)/D$, and an $m_2$ with $\lfloor N_1/R_+ \rfloor \le 4q^{m_1 + m_2}$ and $q^{m_1 +
+m_2} \le \lfloor N_2/(R_- + 1) \rfloor$ has $L - m_1 - m_2$ in $[L(l(\mathcal S_r) - 1)/D, L(h(\mathcal S_r) + 1)/D]$,
 since the factors $4$ and $2$ are below $x^{1/D}$. So the region's hypothesis of the lemma is (I), and its bound
 $q^{L - \delta}/\varphi(q)$ is $o(X)$.
 
@@ -1316,7 +1318,8 @@ Lr_2/D$: $\tau + a_0 < \rho_2$ since $r_1 + f < r_2$, (c) asks the region for th
 0$ the proposition's sum is $\Delta(\emptyset; f)$.
 
 (c) Lemma~\ref{lem:term-two} and the propositions hold for every family of comparisons with the stated bounds, with $\delta$
-and $q_0$ that depend only on $J_0$, $\Lambda_1$ and the exponents.
+and $q_0$ that depend only on $J_0$, $\Lambda_1$ and the exponents, and the propositions for chains of any length; the
+family of (a) with $m$ further comparisons has $3k + m \le 40 = J_0$ of them.
 \end{proof}
 
 \subsection{Dropped terms}
@@ -1594,7 +1597,8 @@ Proposition~\ref{prop:harman-two} or~\ref{prop:harman-fill} applies to it as in 
 with $\rho_1 = \max(\underline e(\mathcal S_r) - \gamma, 0)$ and $\rho_2 = \overline e(\mathcal S_r) + \gamma$, which it allows
 since it asks only $\rho_1 \le \sum_{\mathcal S_r} l_i$ and $\sum_{\mathcal S_r} h_i \le \rho_2$, and with $\max(\underline
 e(\mathcal S_0) - \gamma, 0)$ and the upper bounds in the growth and in (d), whose conditions only weaken as the box's sums
-move inside these bounds; by Lemma~\ref{lem:tests}(c) it does so uniformly in the family's comparisons. Summing over the
+move inside these bounds; by Lemma~\ref{lem:tests}(c), which allows boxes of any number of primes, it does so
+uniformly in the family's comparisons. Summing over the
 finitely many boxes gives $o(X)$.
 \end{proof}
 
@@ -1619,10 +1623,10 @@ The cost of a tree over the frozen part stands for its multiple of $\operatornam
 \begin{lemma}\label{lem:frozen-tree}
 % Lean: SieveAd.frozRules, SieveAd.frozSolve_sound, SieveAd.bdF_vanish, SieveAd.bdF_drop, SieveAd.bdF_eval, SieveAd.bdF_split, SieveAd.bdF_buch, SieveAd.dIF_cut, SieveAd.dIF_buch
 Let $\mathcal M$ be as in Definition~\ref{def:frozen-tree}, with $0 < l_1 \le h_1 \le D$. If a tree over the frozen
-part on $\mathfrak c$ with the sign $\varepsilon$ passes, with cost $c$, then for every $\eta > 0$, for large $q$ and every
+part on $\mathfrak c$ with the sign $\varepsilon$ passes, with cost $c_F$, then for every $\eta > 0$, for large $q$ and every
 $a$ prime to $q$,
 \[
-  \varepsilon\, \Delta_{\mathcal M}(\mathfrak c) \ge -\bigl((c/\mathcal K + \eta) \operatorname{wt}(\mathcal M) + \eta\bigr) X.
+  \varepsilon\, \Delta_{\mathcal M}(\mathfrak c) \ge -\bigl((c_F/\mathcal K + \eta) \operatorname{wt}(\mathcal M) + \eta\bigr) X.
 \]
 \end{lemma}
 
@@ -1645,9 +1649,9 @@ A box $\mathfrak b$ of $k$ primes \emph{may be reversed} if $2 \le k \le 11$, $0
 b) + 2 \le D$, $h_2 + 1 \le l_1$, $l_1 \ge 3$, $\nu \le l_1$ and $h_1 + \nu + 1 \le D$, where $\nu = \lceil h_1/2 \rceil$.
 A \emph{reversal} of such a box is a floor $f$ with $0 < f \le \min(l_k, \nu)$ at which the chain of no prime passes
 (J2$_{\mathcal M}$) or (J3$_{\mathcal M}$) over the wide part $\mathcal M_{\mathrm w}$, and a tree over the frozen part on
-the chain $((f, \nu))$ with the sign $+$. If that tree's cost is $c$, the reversal's cost is
+the chain $((f, \nu))$ with the sign $+$. If that tree's cost is $c_F$, the reversal's cost is
 \begin{equation}\label{eq:cR}
-  c_R = \Bigl\lceil \frac{c\,(h_1 c_D(\mathfrak b) + E) + c_e E}{D\mathcal K} \Bigr\rceil, \qquad
+  c_R = \Bigl\lceil \frac{c_F\,(h_1 c_D(\mathfrak b) + E) + c_e E}{D\mathcal K} \Bigr\rceil, \qquad
   E = (h_1 + 1)\, c_D(\mathfrak b^{\mathrm{lo}}) + (l_1 + 1)\, c_D(\mathfrak b^{\mathrm{hi}}),
 \end{equation}
 where $\mathfrak b^{\mathrm{lo}} = \mathfrak b[1 \mapsto (h_1 - 1, h_1 + 1)]$, $\mathfrak b^{\mathrm{hi}} = \mathfrak
@@ -1662,7 +1666,7 @@ $\mathfrak b$ with the sign $-$ is bounded at $c_R/\mathcal K$.
 \end{proposition}
 
 \begin{proof}
-Let $C = c/\mathcal K$, $C_e = c_e/\mathcal K$, $w_0 = (h_1/D)\, c_D(\mathfrak b)/\mathcal K$, $w_1 = ((h_1 + 1)/D)\,
+Let $C = c_F/\mathcal K$, $C_e = c_e/\mathcal K$, $w_0 = (h_1/D)\, c_D(\mathfrak b)/\mathcal K$, $w_1 = ((h_1 + 1)/D)\,
 c_D(\mathfrak b^{\mathrm{lo}})/\mathcal K$ and $w_2 = ((l_1 + 1)/D)\, c_D(\mathfrak b^{\mathrm{hi}})/\mathcal K$, so that
 $c_R/\mathcal K \ge C(w_0 + w_1 + w_2) + C_e(w_1 + w_2)$. Write $\mathcal M_{\mathrm e}$ for the union of the two ends. By
 Lemma~\ref{lem:sandwich}, applied to $\mathcal A$ for the upper inequality and to $\mathcal B$ for the lower,
@@ -1707,7 +1711,7 @@ which $c_R$ would reach that of the alternative.
 \subsection{What a tree gives}
 
 \begin{proposition}\label{prop:tree-bound}
-% Lean: SieveAd.sound, SieveAd.bd_split, SieveAd.bd_buch, SieveAd.bd_mono, SieveAd.rulesR, SieveAd.rulesMP, SieveAd.solveD_sound, SieveAd.altFD_sound, SieveAd.bd_flipCostD, SieveAd.pr_split, SieveAd.pr_buch
+% Lean: SieveAd.sound, SieveAd.bd_split, SieveAd.bd_buch, SieveAd.bd_mono, SieveAd.rulesMP, SieveAd.solveD_sound, SieveAd.altFD_sound, SieveAd.bd_flipCostD, SieveAd.pr_split, SieveAd.pr_buch
 Let $\mathfrak b$ be a box of $k \ge 1$ primes. If a tree on $\mathfrak b$ with the sign $\varepsilon$ passes, with cost
 $c$, then the term of $\mathfrak b$ with the sign $\varepsilon$ is bounded at $c/\mathcal K$.
 \end{proposition}
@@ -1763,8 +1767,8 @@ $p \equiv a \pmod q$ by Dirichlet's theorem, and $K$ is taken large enough to co
 \end{proof}
 
 The theorem holds for every such $L$ with the tests as defined. For rational $L$ the tests are inequalities between
-integers, which is how the formalisation states them and how its kernel evaluates them: at $L = 43/20$ it proves the
-theorem with $f_*$ and the tree of Proposition~\ref{prop:certificate}.
+integers, which is how the formalisation states them and how its kernel evaluates them: it proves the theorem for
+rational $L$, and at $L = 43/20$ with $f_*$ and the bound of Proposition~\ref{prop:certificate}.
 
 \section{The certificate}\label{sec:certificate}
 
@@ -1772,7 +1776,7 @@ Theorem~\ref{thm:tree} reduces Theorem~\ref{thm:main} to a finite computation: a
 prime passes (J3), and a bound below $1$ for the term of the box of the first prime with the sign $-$, which a tree of
 cost below $\mathcal K$ gives. At $L =
 43/20$ the tree has some $3.4 \cdot 10^6$ nodes, those of the trees over the frozen parts of its reversals included,
-and the formalisation never writes it down. Lean's kernel runs a search that builds it, led by a plan computed
+and the formalisation never writes it down. Lean's kernel runs a search that follows a plan computed
 beforehand; what is checked is that the search, on the first prime's box, returns a cost below $\mathcal K$. This
 section describes the search, why its result is a proof whatever the plan, and the numbers at $43/20$.
 
@@ -1795,7 +1799,8 @@ following that applies.
 A reversal is searched in the same way: its floor is the first proposed floor at which the chain of no prime passes a
 test over the frozen part, and the tree over the frozen part on $((f, \nu))$ is searched with the nodes of
 Definition~\ref{def:frozen-tree}, and with the limit past which the reversal's cost (\ref{eq:cR}) would not be below
-that of the decomposition.
+that of the decomposition (the search that the kernel follows searches it with the fixed limit $64\mathcal K$, which
+no tree of the plan reaches).
 
 What the search tries is proposed by a \emph{strategy}, which needs no proof: every proposal is tested before it is
 used. At $43/20$ the strategy proposes the following.
@@ -1837,8 +1842,7 @@ strategy.
 \begin{lemma}\label{lem:search}
 % Lean: SieveAd.solveF_sound, SieveAd.has_of_kids, SieveAd.solveG_sound, SieveAd.kidsP_sound, SieveAd.solveD_sound, SieveAd.stepD_sound, SieveAd.kidsC_sound, SieveAd.partD_sound, SieveAd.solveMD_sound, SieveAd.altFD_sound, SieveAd.pr_of_partD
 Whatever the strategy, or the hints that lead the search (below), if the search returns on a box, a sign and a limit a value
-$c$ below the limit, then the term of the box with that sign is bounded at $c/\mathcal K$: the nodes that the search
-took form a tree on the box with that sign that passes, of cost at most $c$.
+$c$ below the limit, then the term of the box with that sign is bounded at $c/\mathcal K$.
 \end{lemma}
 
 \begin{proof}
@@ -1849,6 +1853,9 @@ by cuts (S), since any point strictly inside a range is a cut; a reversal whose 
 tree over the frozen part has, by the same induction, the cost from which (\ref{eq:cR}) is computed; or a box cut in
 two. A branch whose condition fails returns its limit, which says nothing.
 \end{proof}
+
+The same induction shows that the nodes that the search took form a tree on the box with that sign that passes, of
+cost at most $c$; the formalisation proves the bound alone (\S S5).
 
 So the certificate is a set of propositions about integers, that the search's values on the parts of the first prime's
 range, with the sign $-$ and the limit $\mathcal K$, add up to at most $c$; the kernel proves them by evaluation, part by
@@ -1885,8 +1892,9 @@ A configuration of (I) is the rest's cell, $0$ for the first or $1$ and three bi
 S$, a bit for each cell of the box. At a floor, four bits name the comparison and with it the floor: with $2j$, (J2)
 with the rest the prime at position $j$, counted from the smallest from $0$, at the floor $\min(l_{\min}, v - u - 1)$ of
 its window $[u, v]$; with $2i + 1$, (J3) at the floor after $i$ of its eight steps. Then come $\mathcal S_0$, a bit for
-each cell, and either $0$, for the set $\mathcal S_1$ of all the cells but the last and the side $\iota = 1$, or $1$, the
-set $\mathcal S_1$ and a bit for the side. Over a frozen part every set has one more bit, the cofactor's, and the rest
+each cell, and either $0$, for the side $\iota = 1$ and the set $\mathcal S_1$ of all the cells but the last one,
+which is the largest prime's, $p_1$ (over a frozen part, the cofactor's), or $1$, the set $\mathcal S_1$ and a bit for
+the side. Over a frozen part every set has one more bit, the cofactor's, and the rest
 of (J2) may be the cofactor. Each cut of a new prime's range is a code: one to seven steps of the strategy's grid after
 the last point used, seven steps with no cut, one of the strategy's three cuts off the grid, or no further cut. The
 plan joins consecutive cells that one test evaluates, and consecutive dropped cells while the joined cell's cost stays
@@ -1942,7 +1950,7 @@ all & $0.9485$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-Four fifths of the cost is in the cells of the first prime above $x^{0.3}$, and the most expensive cells of side
+More than four fifths of the cost is in the cells of the first prime above $x^{0.3}$, and the most expensive cells of side
 $0.004$ cost about $0.02\mathcal K$ each, near $p_1 = x^{0.41}$ and $x^{0.49}$; below $x^{0.2}$ the first prime costs
 less than $0.02\mathcal K$ in all.
 
@@ -2129,13 +2137,15 @@ Dirichlet's theorem is Mathlib's.
 \file{SieveAdTree.lean} & \lean{SieveAd.famI\_cut}, \lean{SieveAd.famI\_buch}, \lean{SieveAd.famI\_vanish\_box}, \lean{SieveAd.Ttop\_eq}, \lean{SieveAd.Ttop\_gB\_ge}, \lean{SieveAd.dropCost\_ge}, \lean{SieveAd.dropBCost\_ge}, \lean{SieveAd.drop\_bound}, \lean{SieveAd.dropB\_bound}, \lean{SieveAd.shareBd}, \lean{SieveAd.sound}, \lean{SieveAd.linnik\_bd} \\
 \file{SieveAdTwoDefs.lean} & \lean{SieveAd.okI2}, \lean{SieveAd.okJ2} \\
 \file{SieveAdFillDefs.lean} & \lean{SieveAd.okJ3} \\
-\file{SieveAdFill.lean} & \lean{SieveAd.fillTests\_sound}, \lean{SieveAd.fillTests\_soundX} \\
+\file{SieveAdFill.lean} & \lean{SieveAd.fillTests\_sound} \\
 \file{SieveAdFillCore.lean} & \lean{SieveAd.evJ\_fill\_core}, \lean{SieveAd.evJ\_two\_core} \\
+\file{SieveAdTwo.lean} & \lean{SieveAd.evI\_twoE} \\
 \file{SieveAdFroz.lean} & \lean{SieveAd.famIR\_eq}, \lean{SieveAd.famJR\_eq} \\
-\file{SieveAdFrozTree.lean} & \lean{SieveAd.dJF\_level}, \lean{SieveAd.frozSolve\_sound} \\
+\file{SieveAdFrozTree.lean} & \lean{SieveAd.dJF\_level}, \lean{SieveAd.frozRules} \\
 \file{SieveAdFrozTests.lean} & \lean{SieveAd.frozTests\_sound} \\
 \file{SieveAdFlip.lean} & \lean{SieveAd.flip\_cover}, \lean{SieveAd.flip\_inject} \\
 \file{SieveAdFlipSum.lean} & \lean{SieveAd.froz\_weight\_le}, \lean{SieveAd.bd\_flip\_neg} \\
+\file{SieveAdFlipSearch.lean} & \lean{SieveAd.bd\_flip\_core} \\
 \file{SieveAdFast.lean} & \lean{SieveAd.fillTestsF\_eq}, \lean{SieveAd.frozTestsF\_eq} \\
 \file{SieveAdDir.lean} & \lean{SieveAd.bd\_flipCostD}, \lean{SieveAd.altFD\_sound}, \lean{SieveAd.solveD\_sound}, \lean{SieveAd.pr\_of\_partD} \\
 \file{SieveAdSearchG.lean} & \lean{SieveAd.solveG\_sound} \\
@@ -2228,9 +2238,9 @@ Definition~\ref{def:tests}, the tests & \lean{SieveAd.okI2}, \\
  & \lean{SieveAd.okJ2}, \\
  & \lean{SieveAd.okJ3} \\
 Lemma~\ref{lem:tests}, what the tests give, (a) and (b) & \lean{SieveAd.fillTests\_sound} \\
-\quad (c), with further comparisons & \lean{SieveAd.fillTests\_soundX}, \\
- & \lean{SieveAd.evJ\_fill\_core}, \\
- & \lean{SieveAd.evJ\_two\_core} \\
+\quad (c), with further comparisons & \lean{SieveAd.evJ\_fill\_core}, \\
+ & \lean{SieveAd.evJ\_two\_core}, \\
+ & \lean{SieveAd.evI\_twoE} \\
 Lemma~\ref{lem:rough}, rough numbers from above & \lean{SieveRough.psi\_le} \\
 \quad Buchstab's inequality for rough numbers & \lean{SieveRough.Psi\_le\_buchstab} \\
 \quad its delay inequality & \lean{SieveRough.super\_M} \\
@@ -2255,12 +2265,13 @@ Lemma~\ref{lem:sandwich}, the narrow and the wide part & \lean{SieveAd.flip\_cov
  & \lean{SieveAd.flip\_inject} \\
 Lemma~\ref{lem:frozen-weight}, the weight of a frozen part & \lean{SieveAd.froz\_weight\_le} \\
 Lemma~\ref{lem:frozen-tests}, the tests over a frozen part & \lean{SieveAd.frozTests\_sound} \\
-Lemma~\ref{lem:frozen-tree}, the trees over a frozen part & \lean{SieveAd.frozSolve\_sound} \\
+Lemma~\ref{lem:frozen-tree}, the trees over a frozen part & \lean{SieveAd.frozRules} \\
 Proposition~\ref{prop:reversal}, the reversal through the largest prime & \lean{SieveAd.bd\_flip\_neg}, \\
+ & \lean{SieveAd.bd\_flip\_core}, \\
  & \lean{SieveAd.bd\_flipCostD} \\
 Proposition~\ref{prop:tree-bound}, what a tree gives & \lean{SieveAd.sound} (the nodes but (R)), \\
  & \lean{SieveAd.altFD\_sound} (R) \\
-Theorem~\ref{thm:tree}, Linnik's theorem from the root's bound & \lean{SieveAd.linnik\_pr}, \\
+Theorem~\ref{thm:tree}, Linnik's theorem from the root's bound (for rational $L$) & \lean{SieveAd.linnik\_pr}, \\
  & \lean{SieveAd.linnik\_bd} \\
 \quad the main term, the primes of $(x, 2x]$ & \lean{SieveAd.Ttop\_gB\_ge} \\
 Lemma~\ref{lem:search}, the searches are sound & \lean{SieveAd.solveG\_sound}, \\

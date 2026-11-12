@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1775 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1777 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 237, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 238, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 322 | 983 |
+| `lib/pnt` | 323 | 985 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2503,7 +2503,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdFill`: The tests with no window are sound
 
 - `SieveAd.fillTests_sound`: The tests with no window are sound *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveAd.fillTests_soundX`: The tests with no window are sound under two more atoms *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.fillTests_soundX`: The tests with no window are sound under two more atoms ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFillCore`: The comparison with the rest among the tree's primes, on the sums of a box
 
@@ -2525,6 +2525,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdFlipSearch`: The search with the reversal of a box through its largest prime is sound
 
+- `SieveAd.bd_flip_core`: The reversal through the largest prime, from the bound of a tree *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveAd.pr_of_kidsF_at`: A part of a search with the reversal through the largest prime, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFlipSum`: Role reversal through the largest prime, as an identity: the weights and the bound
@@ -2566,7 +2567,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdFrozTree`: The nodes of the tree of a reversed term over a frozen part
 
-- `SieveAd.frozSolve_sound`: The search of the tree of a reversed term is sound over a frozen part *paper*
+- `SieveAd.frozRules`: The nodes of the tree of a reversed term prove `PF` *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveAd.dJF_level`: The top of a reversed tree *paper*
 - `SieveAd.frozSolve_sound_at`: The search over a frozen part is sound, for any route ([note](../formalisations/harman-sieve.md))
 - `SieveAd.dJF_level_at`: The top of a reversed tree, for any route ([note](../formalisations/harman-sieve.md))
@@ -2638,6 +2639,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.linnik_bd`: Linnik's theorem with exponent `L`, from a bound of the first term *paper*
 - `SieveAd.linnik_tree`: Linnik's theorem with exponent `L`, from a tree
 - `SieveAd.linnik_tree_at`: Linnik's theorem from a tree, for any route
+
+#### `SieveAdTwo`: The test of the comparison in two variables for a tree of Buchstab steps is sound
+
+- `SieveAd.evI_twoE`: A box evaluated by the estimate in two variables, under more atoms *paper* ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdTwoDefs`: The tests of the estimate in two variables for a tree of Buchstab steps, without Mathlib
 
