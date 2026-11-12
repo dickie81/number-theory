@@ -39,6 +39,12 @@ side at most `HF` over the frozen parts and boxes of at most `MAXLEN` primes rev
     box of the sign `−` is reversed or decomposed by the same count. The plan is one that the kernel follows as
     it is; the line gives the predicted seconds and the steps. Alone in its mode (with the planner's merging).
 
+    python3 tools/linnik/hint_probe.py LNUM/LDEN H HF MAXLEN boxes ROW[,ROW…] N
+
+takes the plan of the cells of the first prime of those indices and, for a sample of at most `N` of its dropped
+boxes of two primes and of four, gives what the sample costs dropped and what it costs when each box is reversed
+through its largest prime where that is cheaper (`pos`), with one level and with two (`pos,l2,one`).
+
 Each line gives the cost on the cells planned, in units of `K`, the boxes searched and the counts of the
 variants. On twenty of the 115 cells of the first prime (`STEP = 6`) at the theorem's parameters, 12 November
 2026: `base` 0.15403; `mI` 0.14513, `mJ` 0.14506, `fI` 0.13538, `fJ` 0.14775, all four 0.11621; `fIc` 0.14785,
@@ -46,7 +52,12 @@ variants. On twenty of the 115 cells of the first prime (`STEP = 6`) at the theo
 `pos` 0.15043; `lam0` 0.15405 in 3686 predicted seconds, `lam1` 0.15425 in 3142, `lam3` 0.15494 in 2794,
 `lam10` 0.16060 in 1879, `lam30` 0.17193 in 1198, `lam100` 0.20144 in 673; `break`: dropped boxes of two primes
 41.8%, of four 22.2%, of six 1.1%, reversed boxes of three primes 33.8% (33.7% the dropped boxes of the chain's
-first prime), of five 1.1%.
+first prime), of five 1.1%. `boxes 30,40,50,60,70,80,90,100,105 150`: none of the 80 dropped boxes of two
+primes of those cells costs less reversed, with one level or with two (17 of them at the cell 70, 30 at the cell
+90: half and three quarters of those cells' cost); of the dropped boxes of four primes, the reversal saves
+nothing at the cells 30, 40, 50 and 105, and at the cells 60, 70, 80, 90, 100 it leaves 1.000, 0.942, 0.974,
+0.824, 0.268 of their cost with one level and 0.977, 0.840, 0.942, 0.824, 0.268 with two (at the cell 100 they
+are 2% of the cell's cost).
 
 Needs Python 3 only.
 """
@@ -493,6 +504,69 @@ def wMain(P, node, bl, par, out):
                for (s, e), kid in zip(cellsOf(P.SG.cuts(bl, f), f, bl[0][1], node[3]), node[2]))
 
 
+def dropped(P, node, bl, par, out):
+    """The dropped boxes of the main tree of a plan."""
+    k = node[0]
+    if k == 'D':
+        out.append(list(bl))
+    elif k == 'S':
+        x = bl[0]
+        mid = (x[0] + x[1]) // 2
+        dropped(P, node[1], [(x[0], mid)] + bl[1:], par, out)
+        dropped(P, node[2], [(mid, x[1])] + bl[1:], par, out)
+    elif k == 'B':
+        f, _ = P.guide(bl, node[1])
+        for (s, e), kid in zip(cellsOf(P.SG.cuts(bl, f), f, bl[0][1], node[3]), node[2]):
+            dropped(P, kid, [(s, e)] + bl, not par, out)
+
+
+def probe(ln, ld, h, hF, maxlen, flags):
+    par_ = hc.Par('probe', ln, ld, h=h, hF=hF, maxlen=maxlen, rev=False)
+    P = Probe(fc.TestsF(ln, ld), par_.hI, par_.depth, fc.WMIN, par_.kappa, par_.hR, par_.depthR, par_.hQ, fc.FUEL,
+              par_.hF, par_.depthF, par_.maxlen, rev=False)
+    P.stat.update(flip2try=0, flip2win=0, flip2root=0, postry=0, poswin=0, anytry=0, anywin=0)
+    P.W['calls2'] = 0
+    P.fl_ = flags
+    return P
+
+
+def boxes(ln, ld, h, hF, maxlen, idx, n):
+    """The dropped boxes of two and of four primes of the plan of some cells of the first prime, reversed."""
+    global PL
+    import random
+    random.seed(7)
+    P0 = probe(ln, ld, h, hF, maxlen, ())
+    cuts = fc.rowCuts(P0, fc.root_of(P0)[0])
+    rows = list(zip(cuts, cuts[1:]))
+    for i in idx:
+        a, b = rows[i]
+        PL = P0
+        c, node = P0.plan([(a, b)], False, 4 * K)
+        out = []
+        dropped(P0, node, [(a, b)], False, out)
+        print(f'cell {i} of the first prime, [{a / DEN:.4f}, {b / DEN:.4f}): cost {c / K:.6f}', flush=True)
+        for k in (2, 4):
+            dk = [bl for bl in out if len(bl) == k]
+            tot = sum(P0.OR.drp(bl, True) for bl in dk)
+            d = g1 = g2 = 0
+            for bl in random.sample(dk, min(n, len(dk))):
+                dc = P0.OR.drp(bl, True)
+                d += dc
+                for flags in (('pos',), ('pos', 'l2', 'one')):
+                    c1, n1 = dc, None
+                    if flipOK(maxlen, bl):
+                        PL = probe(ln, ld, h, hF, maxlen, flags)
+                        c1, n1 = PL.pFlipAt(bl, len(bl) - 1, dc, True)
+                    if len(flags) == 1:
+                        g1 += c1 if n1 is not None else dc
+                    else:
+                        g2 += c1 if n1 is not None else dc
+            if dk:
+                print(f'    {len(dk)} dropped boxes of {k} primes, {tot / K:.6f}; a sample of {min(n, len(dk))}: reversed '
+                      f'where that is cheaper, one level {g1 / d:.3f} of their cost, two levels {g2 / d:.3f}', flush=True)
+    return 0
+
+
 def job(args):
     global PL
     (ln, ld, h, hF, maxlen, flags), a, b = args
@@ -531,6 +605,9 @@ def main():
         print(__doc__)
         return 2
     ln, ld = map(int, a[0].split('/'))
+    sys.setrecursionlimit(100000)
+    if a[4] == 'boxes':
+        return boxes(ln, ld, float(a[1]), float(a[2]), int(a[3]), [int(x) for x in a[5].split(',')], int(a[6]))
     h, hF, maxlen, step, procs = float(a[1]), float(a[2]), int(a[3]), int(a[4]), int(a[5])
     P = hc.Par('probe', ln, ld, h=h, hF=hF, maxlen=maxlen, rev=False).planner()
     cuts = fc.rowCuts(P, fc.root_of(P)[0])

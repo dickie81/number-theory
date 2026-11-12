@@ -437,8 +437,15 @@ covers. The region does not close at `13/6`.
     So, by these numbers (an estimate: no plan was made at `2.14`): `2.14` asks for the planner, the sign `+`
     and cells of side about `0.003` together, on a certificate two to three times the theorem's; nothing
     measured here gives `2.13`, and `2.12` is beyond these rules, not at their edge. The model's `2.12` leans
-    on the second level for boxes of the sign `+`, which the exact search has not confirmed: with it the
-    search is slow, and was not finished on twenty cells in two hours.
+    on the second level for boxes of the sign `+`, and in the exact search that does not hold
+    (`hint_probe.py … boxes`, on nine cells of the first prime from `x^{0.16}` to `x^{0.47}`): of the boxes of
+    two primes that the plan drops, `42%` of its cost, none of the `80` of those cells costs less reversed
+    than dropped, with one level or with two; they are the boxes with both primes and the cofactor near
+    `x^{1/3}`, or `p₁` near `x^{0.4}` and `p₂` between `x^{0.19}` and `x^{0.29}`. Of the dropped boxes of four
+    primes (`150` a cell), the reversal saves nothing for `p₁` below `x^{0.28}` or at `x^{0.47}`; in between,
+    `3%` to `18%` of their cost with one level and `2%` to `18%` with two, and three quarters at `x^{0.45}`,
+    where they are few: a hundredth or two of the plan's cost. (The whole search with the second level on
+    boxes of the sign `+` was not finished on twenty cells in two and a half hours, and was stopped.)
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three
