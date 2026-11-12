@@ -445,6 +445,28 @@ covers. The region does not close at `13/6`.
     main search's definitions with the reversal of terms of two to five primes of either sign (the cost of a
     reversal from the tree's cost and the weights, by `bd_flip_neg_at` and `bd_flip_pos_at`), the second level,
     and a certificate.
+  - *The exact search with it* (12 November; `tools/linnik/flip_proto.py`, the search of `fill_cert.py` with
+    this rule in exact integers; not yet a Lean search). The cost of a reversed box of the sign `−` is
+    `(c(h₁D₀ + E) + bdK·E)/(DEN·K)`, with `c` the cost of the tree over the frozen part, `D₀` the share of the
+    box (`dropCost`), `E` the shares of the two ends and `bdK` Buchstab's bound at the level `⌈h₁/2⌉`; for the
+    sign `+`, `(c·h₁D₀ + bdK·E)/(DEN·K)`. With cells of side `0.005` and boxes of at most four primes reversed:
+    at `2.165`, `0.897` (with the three-prime reversal that is in the theorem's search too; `0.911` without it;
+    the theorem's search, `0.951`; no reversal, `1.221`), on `1.1·10^7` boxes where the theorem's search has
+    `3.6·10^6`; at `2.16`, `0.967`, where the theorem's search has `1.018`. The model has `0.781` for this rule
+    at `2.165` (one level, terms of at most four primes, Lean's forms), as it has `0.851` for the theorem's
+    shapes: the exact search stays `0.10` to `0.12` above the model in both, and takes three quarters of the gain
+    that the model sees. What the rule cannot do is the same in both: a box is reversed only if the terms at a
+    floor over its frozen part are evaluated, and the frozen number `R ≈ x/p₁` is part of those terms' tuple, so
+    the comparison's leaves leave room only when `p₁` is large (the root fails below about `x^{0.25}`); and a
+    term of the sign `+` needs every chain prime from the floor to `x^{h₁/2}` evaluated or decomposed, since the
+    tree's first level cannot be dropped, which fails where the chain's prime is too large to be a rest and the
+    leaves have no room (`0.19·10^4` such reversals win of `1.6·10^4` tried, against `0.5·10^4` of the sign `−`).
+    So one level of this rule on boxes of at most four primes is worth `0.05` in exact terms: a theorem at
+    `2.16` on three times the theorem's boxes. Boxes of five primes add as much again: with cells of side `0.01`
+    at `2.165` the search costs `1.438` with no reversal, `1.286` with this rule on at most four primes and
+    `1.213` on at most five (`9·10^3` reversals of the sign `−` taken, against `1.3·10^3`), on twice the boxes.
+    The model's `0.69` at `2.15` is two levels and terms of five primes, and `2.12` is that and a certificate
+    that loses much less than the cells do.
   - *Why `2.19`.* Without reversal, and without the stops whose rest is the first small prime, the cells pass at
     `2.19` with the window, and not at `2.18` (`harman_sieve.py cells 2190/1000 --flips 0 --no-first --h 0.005`:
     `0.945`; `0.967` with Lemma 4.2's leaves; `0.865` at `2.195`; `1.066` at `2.18` with every stop). The tree
