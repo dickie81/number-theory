@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1719 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1720 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 146, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 313 | 927 |
+| `lib/pnt` | 314 | 928 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2488,6 +2488,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.inSlab_frozS_at`: The frozen part lies in the range of `r'`, for any route ([note](../formalisations/harman-sieve.md))
 - `SieveAd.inSlab_frozS_inner_at`: The narrower frozen part lies in the range of `r'`, for any route ([note](../formalisations/harman-sieve.md))
 
+#### `SieveAdFlipSearch`: The search with the reversal of a box through its largest prime is sound
+
+- `SieveAd.pr_of_kidsF_at`: A part of a search with the reversal through the largest prime, for any route ([note](../formalisations/harman-sieve.md))
+
 #### `SieveAdFlipSum`: Role reversal through the largest prime, as an identity: the weights and the bound
 
 - `SieveAd.bd_flip_neg_at`: The reversal bounds a term that needs an upper bound, for any route ([note](../formalisations/harman-sieve.md))
@@ -2550,7 +2554,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdRevSearch`: The search with role reversal is sound
 
 - `SieveAd.solveR_sound`: The search with role reversal is sound
-- `SieveAd.pr_of_kids`: A part of a search with role reversal
+- `SieveAd.pr_of_kids`: A part of a search with role reversal ([note](../formalisations/harman-sieve.md))
 - `SieveAd.linnik_pr`: Linnik's theorem from a search with role reversal
 
 #### `SieveAdRevSum`: Role reversal: the cost of a reversal bounds the term

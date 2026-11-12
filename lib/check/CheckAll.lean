@@ -216,6 +216,8 @@ import SieveAdFull
 import SieveAdFrozI
 import SieveAdFrozDefs
 import SieveAdFrozTests
+import SieveAdFlipDefs
+import SieveAdFlipSearch
 import SieveHMWindow
 import SieveTypeIIHM
 import LinnikCGLLV
@@ -1039,6 +1041,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.full2_core_at
 #print axioms SieveAd.evIF_froz_two_at
 #print axioms SieveAd.frozTests_sound_at
+#print axioms SieveAd.pr_of_kidsF_at
 #print axioms SieveAd.pr_of_kids
 #print axioms SieveAd.linnik_pr
 #print axioms SieveCurveGlue.affine_corner_bound

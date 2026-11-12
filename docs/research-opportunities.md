@@ -441,10 +441,13 @@ covers. The region does not close at `13/6`.
     variable and the rest given by their parts. So both evaluations that the tree over the frozen part asks for
     are proved, on finite sets of indices and numbers that pass `coreJ3`, `coreJ2`, `coreI2`; and the tests on
     the bits of the search's lists (`lib/pnt/SieveAdFrozDefs.lean`, without Mathlib) are sound for the frozen
-    part (`SieveAd.frozTests_sound_at`, the hypothesis `SieveAd.SoundF` of the tree's search). Not written: the
-    main search's definitions with the reversal of terms of two to five primes of either sign (the cost of a
-    reversal from the tree's cost and the weights, by `bd_flip_neg_at` and `bd_flip_pos_at`), the second level,
-    and a certificate.
+    part (`SieveAd.frozTests_sound_at`, the hypothesis `SieveAd.SoundF` of the tree's search). And the main
+    search with the reversal of a box of the sign `−` of up to eleven primes through its largest prime
+    (`lib/pnt/SieveAdFlipDefs.lean`, without Mathlib; `lib/pnt/SieveAdFlipSearch.lean`): the cost of a reversal
+    from the tree's cost and the shares of three boxes bounds the term (`SieveAd.bd_flipCost`), so the search is
+    sound for any strategies (`SieveAd.pr_of_kidsF_at`). Not written: the strategies of the trees over the
+    frozen parts and a certificate with them, the reversal of a box of the sign `+` in the search (worth `0.004`
+    at `2.165` with cells of side `0.01`), and the second level.
   - *The exact search with it* (12 November; `tools/linnik/flip_proto.py`, the search of `fill_cert.py` with
     this rule in exact integers; not yet a Lean search). The cost of a reversed box of the sign `−` is
     `(c(h₁D₀ + E) + bdK·E)/(DEN·K)`, with `c` the cost of the tree over the frozen part, `D₀` the share of the

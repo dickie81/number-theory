@@ -227,8 +227,24 @@ Its main tools:
   `Kb ≥ 12 + T`, a test that passes a box of at most twelve cells evaluates the term of the chain over
   `SieveAd.frozS`, or its terms at the floor: `SieveAd.SoundF`, the hypothesis of `SieveAd.frozSolve_sound_at`.
   So the search of `SieveAdRevDefs.lean` with these tests bounds the term of a chain of one prime over the frozen
-  part, which is what `SieveAd.bd_flip_neg_at` and `SieveAd.bd_flip_pos_at` ask for. The main search does not
-  call it yet.
+  part, which is what `SieveAd.bd_flip_neg_at` and `SieveAd.bd_flip_pos_at` ask for.
+- `SieveAd.pr_of_kidsF_at` (`lib/pnt/SieveAdFlipSearch.lean`; the definitions are `lib/pnt/SieveAdFlipDefs.lean`'s,
+  without Mathlib), **the search with the reversal of a box through its largest prime is sound.**
+  `SieveAd.opsF` is the nodes of `SieveAd.opsR` with one more bound for a box of the sign `−` that passes
+  `SieveAd.flipOK`: two to `maxlen ≤ 11` cells with `0 < lo < hi` and upper ends of sum at most `DEN − 2`, the
+  largest prime's cell `(l₁, h₁)` above the others with `l₁ ≥ 3`, and the level `t = ⌈h₁/2⌉` with `t ≤ l₁` and
+  `h₁ + t + 1 ≤ DEN`. The bound is `SieveAd.flipCost`, `⌈(c(h₁D₀ + E) + bdK·E)/(DEN·K)⌉`: `c` is the cost of the
+  tree over the frozen part (`SieveAd.flipTree`: the first floor `f ≤ min(lo_s, t)` at which
+  `SieveAd.frozTests` evaluates the terms of the frozen part, then the search of `SieveAdRevDefs.lean` on the
+  chain's prime from `f` to `t` with those tests, by a strategy given for the box), `D₀` is the box's
+  `dropCost`, `E = (h₁ + 1)D₁ + (l₁ + 1)D₂` with `D₁`, `D₂` the `dropCost` of the box with the largest prime's
+  cell replaced by `(h₁ − 1, h₁ + 1)` and by `(l₁ − 1, l₁ + 1)`, and `bdK` is Buchstab's bound at the level `t`.
+  A cost below the limit bounds the term of the box (`SieveAd.bd_flipCost`): it is `SieveAd.bd_flip_neg_at`
+  with the tree's bound (`SieveAd.frozSolve_sound_at`, `SieveAd.frozTests_sound_at`), the terms at the root's
+  floor from the test that passed, and the weights of the frozen part and of its two ends from the shares of
+  the three boxes (`SieveAd.froz_weight_le_at`). So the search with these nodes is sound for any strategies
+  (`SieveAd.solveF2_sound`), and a part of it as the kernel checks it gives the bound for its range, in the form
+  of `SieveAd.pr_of_kids`. No certificate uses it yet.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer
