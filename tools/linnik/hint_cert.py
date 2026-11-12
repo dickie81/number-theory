@@ -1,52 +1,58 @@
 #!/usr/bin/env python3
-"""hint_cert.py [--check] [--out DIR] [--procs N] | --try TAG a/b H HF MAXLEN [--norev] [--rows I J] [--out DIR] |
---box L1 H1 L2 H2 [MAXLEN] [--norev]: the search with the reversal through the largest prime as a plan, the hints
-that lead the kernel through the plan, and the Lean files of the theorem at L = 2150/1000.
+"""hint_cert.py [--check] [--out DIR] [--procs N] | --try TAG a/b H HF MAXLEN [--rows I J] [--out DIR]: the
+search with the reversal through the largest prime as a plan, the hints that lead the kernel through the plan, and
+the Lean files of the theorem at L = 2150/1000.
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
-it, spends most of its time on what is not kept, and on searching every proposal of a floor where one is used.
-Here the search is run once, in Python, and the plan it keeps is written as hints: a number read from its low end
-in the order of the search (`lib/pnt/SieveAdHintDefs.lean`). An action is a run of ones closed by a zero:
+it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
+cells, and on traversals of the box. Here the search is run once, in Python, and the plan it keeps is written as
+hints: a number read from its low end in the order of the search (`lib/pnt/SieveAdDirDefs.lean`). At a box:
 
-    0        no term, or a proposed configuration evaluates the box
-    10       Buchstab's identity at the floor that the guide gives for the four bits that follow, then the cells
+    0        a configuration evaluates the box: `0` for the rest at the first cell, or `1` and three bits for
+             its cell; then the set of the first variable, a bit for each cell of the box
+    10       Buchstab's identity: four bits `sel` name the rest and with it the floor (`sel` even: the rest at
+             the cell `sel/2`, the floor the least of the lower ends and of the window's width; `sel` odd: the
+             rest among the tree's primes, the floor after `sel/2` steps `f -> 3f/4` from the largest); the set
+             `s0`; `0` for the set `s1` of all the cells but the last and the side `true`, or `1`, the set `s1`
+             and the side; then the cells of the new prime
     110      dropped
-    1110     the three-prime reversal of rev_cert.py (searched by the kernel without hints; not used in a plan
-             made with --norev)
-    11110    the reversal through the largest prime: four bits for the floor of the frozen part's terms, then
-             the cells of the chain's first prime
-    111110   the last cell cut in two
+    1110     the reversal through the largest prime: the fields of a Buchstab step for the terms of the frozen
+             part, then the cells of the chain's first prime
+    11110    the last cell cut in two
+    111110   no term
 
-and among the cells of a new prime, at each proposed cut that lies inside the range, one bit says whether the
-range is cut there: consecutive evaluated cells that one test covers are one cell. The guide
-(`lib/pnt/SieveAdHintStratDefs.lean`) computes the one proposal of the strategy that the four bits name. The
-kernel follows the hints (`SieveAd.solveH`) and checks each step; the cost it returns is a bound whatever the
-hints are (`lib/pnt/SieveAdHint.lean`).
+and the cells of a new prime are given by their cuts, a code each: `0`, no more cut; `1` and two bits `j < 3`,
+a cut `j + 1` steps of the grid after the last grid point used; `1`, `11` and three bits `t`: `t < 4`, a cut
+`t + 4` steps after; `t = 4`, seven steps and no cut; `t = 5, 6, 7`, a cut at one of the three cuts that are not
+on the grid. Consecutive evaluated cells that one test covers are one cell. Over a frozen part a set has one more
+bit, the cofactor's. The kernel follows the hints (`SieveAd.solveD`) and checks each step; the cost it returns is
+a bound whatever the hints are (`lib/pnt/SieveAdDir.lean`).
 
   * `Planner`: `flip_cert.FlipSearch`'s search, returning with each cost the plan kept, as a tree
-    (`pSolve`, `pBuch`, `pKids`, `pSplit`, `pFlip`); `tryJ2`, `guideJ`, `guide`: the guides; `ser` writes a plan
-    as fields and `pack` as a number;
-  * `cSolve`, `cStep`, `cKids`, `cFlipTree`, `cFlipCost`, `cAltF`: `solveH`, `stepH`, `kidsH`, `flipTreeH`,
-    `flipCostH`, `altFH`, definition by definition; every part is run through them before it is written;
+    (`pSolve`, `pBuch`, `pKids`, `pSplit`, `pFlip`); `tryJ2`, `guideJ`, `guide`: the proposal of the strategy that
+    four bits name; `dser`, `dserF`, `dserKids` write a plan as fields and `pack` as a number;
+  * `dSolve`, `dStep`, `dKidsC`, `dPart`, `dFlipTree`, `dFlipCost`, `dAltF`, with `cfgIP`, `cfgJP`, `pickP`,
+    `cfgIM`, `cfgJM`, `cfgIF`, `cfgJF`, `parM`, `parF`: `solveD`, `stepD`, `kidsC`, `partD`, `flipTreeD`,
+    `flipCostD`, `altFD` and what they read from the hints, definition by definition; every part is run through
+    them before it is written;
   * `plan_all`, `cut`, `add_part`: the cells of the first prime planned one by one (in `--procs` processes), and
     the plan cut into parts of at most `cap` predicted seconds of the kernel: consecutive cells of one prime, a
     heavy cell cut by its own Buchstab step.
 
-It writes `lib/pnt/SieveHint21500.lean` (the exponent, the strategies and the search), `SieveHint21500P<k>.lean`
-(the parts, each by `decide +kernel`) and `Linnik21500.lean` (the route, the bound from the parts, and the
-theorem). With `--check`, nothing is written: the files are regenerated in memory and compared with `lib/pnt`
-(exit 1 on a difference); it is not part of `check_certificate.py`, for it searches for ten minutes on four
-cores. With `--try`, the search is planned with other parameters (cells of side H, chains' cells of side HF over
-the frozen parts, boxes of at most MAXLEN primes reversed) and its cost and the plan's size are printed; with
-`--out`, its files are written to DIR. `--box` plans one box of two primes at 2165/1000 with the parameters of
-the theorem there and prints its statement.
+It writes `lib/pnt/SieveHint21500.lean` (the exponent and the search), `SieveHint21500P<k>.lean` (the parts, each
+by `decide +kernel`) and `Linnik21500.lean` (the route, the bound from the parts, and the theorem). With
+`--check`, nothing is written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a
+difference); it is not part of `check_certificate.py`, for it searches for ten minutes on four cores. With
+`--try`, the search is planned with other parameters (cells of side H, chains' cells of side HF over the frozen
+parts, boxes of at most MAXLEN primes reversed) and its cost and the plan's size are printed; with `--out`, its
+files are written to DIR.
 
-Values (12 November 2026), all without the three-prime reversal: at 2150/1000 with cells of side 0.004 and
-chains' cells 0.006, boxes of three and five primes reversed, the search costs 0.94835 K on 3.4·10^7 boxes
-(2.8·10^7 over frozen parts; nine minutes on four cores), and its plan has 3.7·10^6 steps and 2.6 MB of hints.
-At 2155/1000 with cells of side 0.005: 0.96558 K on 1.6·10^7 boxes. The kernel takes 3.6 ms on an evaluated
-box, 8.4 ms on a Buchstab step (11.5 ms over a frozen part), 1.7 ms on a dropped box and 42 ms on a reversal's
-root, where it takes 4 ms and 13 ms on every box of the search that tries.
+Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
+primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over frozen parts; nine minutes on four
+cores), and its plan has 3.4·10^6 steps. The kernel takes 0.3 ms on an evaluated box (0.8 ms over a frozen part),
+1.2 ms on a Buchstab step (2.1 ms), 0.25 ms on a dropped box (0.35 ms) and 3 ms on a reversal's root; with the
+configurations searched by the kernel and the box read sum by sum, as in the first certificate of this theorem,
+it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20 ms.
 
 Needs Python 3 only.
 """
@@ -62,7 +68,7 @@ import rev_cert as rc  # noqa: E402
 import fill_cert as fc  # noqa: E402
 import flip_cert as fl  # noqa: E402
 from tree_cert import DEN, K, BIG, cdiv, tsub, loSum, hiSum, dropCost  # noqa: E402
-from rev_cert import bdK, revOK, CAPK  # noqa: E402
+from rev_cert import bdK, CAPK  # noqa: E402
 from flip_cert import flipT, flipOK, vboxF  # noqa: E402
 
 
@@ -82,52 +88,18 @@ def pack(fields):
     return n
 
 
-def ser_kids(kids, flags, out):
-    """The fields of the cells of a new prime: at each proposed cut that lies inside, a bit (the range is cut
-    there or not), and after a cut the cell before it; last, the cell up to the top."""
-    it = iter(kids)
-    for b in flags:
-        out.append((b, 1))
-        if b:
-            ser(next(it), out)
-    ser(next(it), out)
-
-
-def ser(node, out):
-    """The fields of the plan `node`: a run of ones closed by a zero for the action, low bit first."""
-    kind = node[0]
-    if kind in ('V', 'E'):
-        out.append((0, 1))
-    elif kind == 'B':
-        out.extend(((1, 2), (node[1], 4)))
-        ser_kids(node[2], node[3], out)
-    elif kind == 'D':
-        out.append((3, 3))
-    elif kind == 'R':
-        out.append((7, 4))
-    elif kind == 'F':
-        out.extend(((15, 5), (node[1], 4)))
-        ser_kids(node[2], node[3], out)
-    elif kind == 'S':
-        out.append((31, 6))
-        ser(node[1], out)
-        ser(node[2], out)
-    else:
-        raise ValueError(kind)
-
-
 class Planner(fl.FlipSearch):
     """The search of `flip_cert.FlipSearch` as a plan: each method returns a cost and, when the cost is below the
     limit it was given, the plan below the box: `('V',)` no term, `('E',)` evaluated, `('D',)` dropped,
-    `('B', sel, cells, bits)` Buchstab's identity at the floor that the guide gives for `sel`, `('R',)` the
-    three-prime reversal, `('F', sel, cells, bits)` the reversal through the largest prime, `('S', half, half)`
-    cut in two. `bits` has, for each proposed cut that the kernel meets inside the range, whether the range is cut
-    there: consecutive evaluated cells that one test covers are one cell."""
+    `('B', sel, cells, bits)` Buchstab's identity at the floor that `guide` gives for `sel`,
+    `('F', sel, cells, bits)` the reversal through the largest prime, `('S', half, half)` cut in two. `bits`
+    has, for each cut that the strategy proposes inside the range, whether the range is cut there: consecutive
+    evaluated cells that one test covers are one cell. The search has no three-prime reversal."""
 
     merge = True
     dmerge = DMERGE
 
-    # the guides (SieveAdHintStratDefs.lean)
+    # the proposal of the strategy that four bits name: its floor is the one that `SieveAd.cfgJP` computes
     def tryJ2(self, bl, lomin, ls, hs, c, bit):
         if not self.restOK(c):
             return None
@@ -152,7 +124,8 @@ class Planner(fl.FlipSearch):
         return self.tryJ3(bl, ls, hs, f)
 
     def guide(self, bl, sel):
-        """`guideG bl sel`, or inside a tree over a frozen part `guideF ctx β bl sel`."""
+        """The proposal that `sel` names, on the box or, inside a tree over a frozen part, on the box with the
+        cofactor as one more cell, widened by the room of the tests."""
         if self.frz is None:
             return self.guideJ(bl, min([DEN] + [c[0] for c in bl]), sel)
         Kb, beta = self.frz[2], self.frz[3]
@@ -316,12 +289,6 @@ class Planner(fl.FlipSearch):
         l2 = bc if bc <= lim else lim
         if O is self.OR and not par:
             r, how = l2, None
-            if self.rev and revOK(bl):
-                self.stat['revtry'] += 1
-                c = self.revCost(bl, l2)
-                if c < r:
-                    self.stat['revwin'] += 1
-                    r, how = c, ('R',)
             if self.flip and flipOK(self.maxlen, bl):
                 self.stat['fliptry'] += 1
                 c, nf = self.pFlip(bl, r)
@@ -338,39 +305,142 @@ class Planner(fl.FlipSearch):
         """The cost of the box and its plan (`None` if the cost is not below `lim`)."""
         return self.pSolve(self.OR, self.SG, self.fuel, bl, par, lim)
 
-    # the kernel's search led by hints (SieveAdHintDefs.lean)
-    def cKids(self, rec, top, bl, par, cs, a, lim, h):
-        for i, c in enumerate(cs):
-            if a < c < top:
-                if h % 2 == 1:
-                    r = rec([(a, c)] + bl, par, lim, h // 2)
-                    if lim <= r[0]:
-                        return r
-                    r2 = self.cKids(rec, top, bl, par, cs[i + 1:], c, tsub(lim, r[0]), r[1])
-                    return r[0] + r2[0], r2[1]
-                h //= 2
-        return rec([(a, top)] + bl, par, lim, h)
+    # the kernel's search led by hints (SieveAdDirDefs.lean): what it reads from the hints
+    def cfgIP(self, pw, h):
+        if h & 1 == 0:
+            return (1, (h >> 1) % pw, 1, 0, False), (h >> 1) // pw
+        return (1, (h >> 4) % pw, 2 ** ((h >> 1) & 7), 0, False), (h >> 4) // pw
 
-    def cStep(self, O, S, altH, rec, bl, par, lim, h):
+    def floorP(self, i, f):
+        for _ in range(i):
+            f = 3 * f // 4
+        return f
+
+    def cfgJP(self, sel, lm, lo, hi, pw, h):
+        s0, h2 = h % pw, h // pw
+        if h2 & 1 == 0:
+            s1, e, h4 = tsub(pw // 2, 1), True, h2 // 2
+        else:
+            s1, e, h4 = (h2 // 2) % pw, (h2 // 2) // pw & 1 == 1, (h2 // 2) // pw // 2
+        if sel & 1 == 0:
+            return (min(lm, tsub(self.vOfF(hi), self.uOfF(lo) + 1)), (1, s0, 2 ** (sel // 2), s1, e)), h4
+        return (self.floorP(sel // 2, min(lm, self.fmax3)), (2, s0, 0, s1, e)), h4
+
+    def pickP(self, bl, m):
+        lm, lo, hi, pw = DEN, 0, 0, 1
+        for x in bl:
+            lm = min(lm, x[0])
+            lo += (m & 1) * x[0]
+            hi += (m & 1) * x[1]
+            m >>= 1
+            pw *= 2
+        return m, lm, lo, hi, pw
+
+    def cfgIM(self, bl, h):
+        return self.cfgIP(2 ** len(bl), h)
+
+    def cfgJM(self, bl, h):
+        sel = h & 15
+        _, lm, lo, hi, pw = self.pickP(bl, 2 ** (sel // 2))
+        return self.cfgJP(sel, lm, lo, hi, pw, h >> 4)
+
+    def cfgIF(self, bl, h):
+        return self.cfgIP(2 ** (len(bl) + 1), h)
+
+    def cfgJF(self, Kb, cl, ch, bl, h):
+        sel = h & 15
+        m, lm, lo, hi, pw = self.pickP(bl, 2 ** (sel // 2))
+        return self.cfgJP(sel, max(1, tsub(lm, Kb)), max(1, tsub(lo + (m & 1) * cl, Kb)), hi + (m & 1) * ch + Kb,
+                          2 * pw, h >> 4)
+
+    # the cells of the new prime, their cuts read from the hints (gridP, cutK, kidsC, kidsM, kidsF)
+    def stpP(self, st, c):
+        m = min(st, c // self.kappa)
+        return m + tsub(1, m)
+
+    def gridP(self, st, k, c):
+        for _ in range(k):
+            c = c + self.stpP(st, c)
+        return c
+
+    def parM(self, bl, top):
+        """The grid's step and the three other cuts of the main tree: `st`, `reg`, `e`, `last`."""
+        return (self.stepOf(len(bl) + 1), min(top, tsub(DEN, loSum(bl)) // 2 + 2), tsub(bl[-1][0], 1),
+                tsub(tsub(DEN, 1), hiSum(bl)))
+
+    def parF(self, ctx, lsb, hsb, nb, bl, top):
+        """Those of a tree over a frozen part."""
+        return (self.hF if tsub(len(bl), nb) < 2 else 2 * self.hF,
+                min(top, tsub(ctx[1] + 1, tsub(loSum(bl), lsb)) // 2 + 2), 0,
+                tsub(tsub(ctx[0], 1), tsub(hiSum(bl), hsb)))
+
+    def dKidsC(self, rec, top, bl, par, prm, f, lim, h):
+        st, reg, e, last = prm
+        c, a, tot = f, f, 0
+        for _ in range(4096):
+            if h & 1 == 0:
+                r = rec([(a, top)] + bl, par, lim, h >> 1)
+                return tot + r[0], r[1]
+            j, h1 = (h >> 1) & 3, h >> 3
+            if j != 3:
+                p, hh = self.gridP(st, j + 1, c), h1
+                nc = p
+            else:
+                t, h2 = h1 & 7, h1 >> 3
+                if t <= 3:
+                    p, hh = self.gridP(st, t + 4, c), h2
+                    nc = p
+                elif t == 4:
+                    c, h = self.gridP(st, 7, c), h2
+                    continue
+                else:
+                    p, hh, nc = (reg if t == 5 else e if t == 6 else last), h2, c
+            if not a < p < top:
+                return tot + lim, hh
+            r = rec([(a, p)] + bl, par, lim, hh)
+            if lim <= r[0]:
+                return tot + r[0], r[1]
+            tot, lim, h, a, c = tot + r[0], lim - r[0], r[1], p, nc
+        return tot + lim, h
+
+    def kdM(self, rec, top, bl, par, f, lim, h):
+        return self.dKidsC(rec, top, bl, par, self.parM(bl, top), f, lim, h)
+
+    def dPart(self, rec, top, bl, par, cs, a, lim, h):
+        tot = 0
+        for c in cs:
+            if not a < c < top:
+                return tot + lim, h
+            r = rec([(a, c)] + bl, par, lim, h)
+            if lim <= r[0]:
+                return tot + r[0], r[1]
+            tot, lim, h, a = tot + r[0], lim - r[0], r[1], c
+        r = rec([(a, top)] + bl, par, lim, h)
+        return tot + r[0], r[1]
+
+    # the search (stepD, solveD)
+    def okIm(self, bl, cfg):
+        return self.T.okI(bl, cfg) if self.frz is None else self.okIF(bl, cfg)
+
+    def dStep(self, O, dI, dJ, kd, altH, rec, bl, par, lim, h):
         if not bl or not O.grd(bl):
             return lim, h
         x = bl[0]
-        if h % 2 == 0:
-            return (0, h // 2) if O.van(bl) or self.anyI(bl) else (lim, h // 2)
-        if h % 4 == 1:
-            p = self.guide(bl, h // 4 % 16)
-            if p is None or not (0 < p[0] <= x[0] and self.okJm(bl, p[0], p[1])):
-                return lim, h // 64
-            return self.cKids(rec, x[1], bl, not par, S.cuts(bl, p[0]), p[0], lim, h // 64)
-        if h % 8 == 3:
+        if h & 1 == 0:
+            cfg, h2 = dI(bl, h >> 1)
+            return (0 if self.okIm(bl, cfg) else lim), h2
+        if h & 3 == 1:
+            (f, cfg), h2 = dJ(bl, h >> 2)
+            if not (1 <= f <= x[0] and self.okJm(bl, f, cfg)):
+                return lim, h2
+            return kd(rec, x[1], bl, not par, f, lim, h2)
+        if h & 7 == 3:
             dc = O.drp(bl, par)
-            return (lim, h // 8) if dc is None else (dc, h // 8)
-        if h % 16 == 7:
-            return O.alt(bl, par, lim), h // 16
-        if h % 32 == 15:
-            return altH(bl, par, lim, h // 32)
-        if h % 64 == 31:
-            mid, h2 = (x[0] + x[1]) // 2, h // 64
+            return (lim if dc is None else dc), h >> 3
+        if h & 15 == 7:
+            return altH(bl, par, lim, h >> 4)
+        if h & 31 == 15:
+            mid, h2 = (x[0] + x[1]) // 2, h >> 5
             if x[0] < mid < x[1]:
                 r = rec([(x[0], mid)] + bl[1:], par, lim, h2)
                 if lim <= r[0]:
@@ -378,55 +448,187 @@ class Planner(fl.FlipSearch):
                 r2 = rec([(mid, x[1])] + bl[1:], par, tsub(lim, r[0]), r[1])
                 return r[0] + r2[0], r2[1]
             return lim, h2
-        return lim, h // 64
+        if h & 63 == 31:
+            return (0 if O.van(bl) else lim), h >> 6
+        return O.alt(bl, par, lim), h >> 6
 
-    def cSolve(self, O, S, altH, n, bl, par, lim, h):
+    def dSolve(self, O, dI, dJ, kd, altH, n, bl, par, lim, h):
         if n == 0:
             return lim, h
-        return self.cStep(O, S, altH, lambda b, p, l, hh: self.cSolve(O, S, altH, n - 1, b, p, l, hh), bl, par,
-                          lim, h)
+        return self.dStep(O, dI, dJ, kd, altH,
+                          lambda b, p, l, hh: self.dSolve(O, dI, dJ, kd, altH, n - 1, b, p, l, hh), bl, par, lim, h)
 
-    def cFlipTree(self, ctx, beta, lim, h):
-        if not beta:
-            return lim, h
+    # the reversal through the largest prime (flipTreeD, flipCostD, altFD)
+    def frozen(self, ctx, beta):
+        """The tree over the frozen part of `β` and the slab of `ctx`: its decoders, its cells and its search."""
+        lsb, hsb, nb = loSum(beta), hiSum(beta), len(beta)
+        Kb = 12 + DEN // beta[0][0]
+        cl, ch = max(1, tsub(tsub(DEN, ctx[1]), hsb)), tsub(tsub(DEN, ctx[0]) + 1, lsb)
+        O = self.opsK(ctx, nb)
+
+        def dJ(b, hh):
+            return self.cfgJF(Kb, cl, ch, b, hh)
+
+        def kd(rec, top, b, p, ff, l, hh):
+            return self.dKidsC(rec, top, b, p, self.parF(ctx, lsb, hsb, nb, b, top), ff, l, hh)
+
+        def rec(b, p, l, hh):
+            return self.dSolve(O, self.cfgIF, dJ, kd, lambda b2, p2, l2, h2: (l2, h2), self.fuel, b, p, l, hh)
+        return Kb, O, dJ, kd, rec
+
+    def dFlipTree(self, ctx, beta, lim, h):
         c, t = beta[0], flipT(ctx)
-        self.frz, self.fctx = (tsub(DEN, ctx[1]), tsub(DEN, ctx[0]) + 1, 12 + DEN // c[0], beta), ctx
+        Kb, O, dJ, kd, rec = self.frozen(ctx, beta)
+        self.frz, self.fctx = (tsub(DEN, ctx[1]), tsub(DEN, ctx[0]) + 1, Kb, beta), ctx
         try:
-            S = self.stratF(ctx, beta)
-            p = self.guide(beta, h % 16)
-            if p is None or not (0 < p[0] <= min(c[0], t) and self.okJm(beta, p[0], p[1])):
-                return lim, h // 16
-            O = self.opsK(ctx, len(beta))
-            return self.cKids(lambda b, pp, l, hh: self.cSolve(O, S, lambda b2, p2, l2, h2: (l2, h2), self.fuel,
-                                                               b, pp, l, hh),
-                              t, beta, True, S.cuts(beta, p[0]), p[0], lim, h // 16)
+            (f, cfg), h2 = dJ(beta, h)
+            if not (1 <= f <= min(c[0], t) and self.okJm(beta, f, cfg)):
+                return lim, h2
+            return kd(rec, t, beta, True, f, lim, h2)
         finally:
             self.frz = None
 
-    def cFlipCost(self, bl, lim, h):
+    def dFlipCost(self, bl, lim, h):
+        if not flipOK(self.maxlen, bl):
+            return lim, h
         ctx, beta = bl[-1], bl[:-1]
         E = ((ctx[1] + 1) * dropCost(beta + [(tsub(ctx[1], 1), ctx[1] + 1)])
              + (ctx[0] + 1) * dropCost(beta + [(tsub(ctx[0], 1), ctx[0] + 1)]))
-        r = self.cFlipTree(ctx, beta, CAPK, h)
+        r = self.dFlipTree(ctx, beta, CAPK, h)
         if CAPK <= r[0]:
             return lim, r[1]
         return cdiv(r[0] * (ctx[1] * dropCost(bl) + E) + bdK(ctx, flipT(ctx)) * E, DEN * K), r[1]
 
-    def cAltF(self, bl, par, l, h):
-        if not par and flipOK(self.maxlen, bl):
-            return self.cFlipCost(bl, l, h)
-        return l, h
+    def dAltF(self, bl, par, l, h):
+        return (l, h) if par else self.dFlipCost(bl, l, h)
 
-    def altR0(self, bl, par, l):
-        """`(opsR …).alt bl par l`, without counts."""
-        if not par and revOK(bl):
-            return self.revCost(bl, l)
-        return l
+    def dCheck(self, bl, par, lim, h):
+        """`solveD opsMP fillTestsF cfgIM cfgJM (kidsM κ hI) (altFD κ hF fuel maxlen) fuel bl par lim h`."""
+        O = rc.Ops(lambda b: True, tc.vanishOK, tc.dropC, lambda b, p, l: l)
+        return self.dSolve(O, self.cfgIM, self.cfgJM, self.kdM, self.dAltF, self.fuel, bl, par, lim, h)
 
-    def check(self, bl, par, lim, h):
-        """`solveH (opsR …) fillTests stratGFF guideG (altFH stratFF guideF …) fuel bl par lim h`."""
-        O = rc.Ops(lambda b: True, tc.vanishOK, tc.dropC, self.altR0)
-        return self.cSolve(O, self.SG, self.cAltF, self.fuel, bl, par, lim, h)
+    # the hints of a plan
+    def kidCells(self, cuts, f, top, bits):
+        """The cells of the new prime that the plan's bits cut out of the proposed cuts `cuts`."""
+        ends, it = [f], iter(bits)
+        for c in cuts:
+            if ends[-1] < c < top and next(it):
+                ends.append(c)
+        ends.append(top)
+        return list(zip(ends, ends[1:]))
+
+    def dserKids(self, prm, f, cells, kids, bl, par, top, out, sub):
+        """The fields of the cells `cells` of the new prime with the plans `kids`: a code for each cut."""
+        st, reg, e, last = prm
+        c, a = f, f
+        for i, cell in enumerate(cells[:-1]):
+            p = cell[1]
+            k, g = 0, c
+            while g < p:
+                g, k = g + self.stpP(st, g), k + 1
+            if g == p and k >= 1:
+                while k > 7:
+                    out.extend(((1, 1), (3, 2), (4, 3)))
+                    k -= 7
+                if k <= 3:
+                    out.extend(((1, 1), (k - 1, 2)))
+                else:
+                    out.extend(((1, 1), (3, 2), (k - 4, 3)))
+                c = p
+            else:
+                assert p in (reg, e, last), ('a cut off the grid', p, prm, f)
+                out.extend(((1, 1), (3, 2), (5 if p == reg else 6 if p == e else 7, 3)))
+            sub(kids[i], [(a, p)] + bl, par, out)
+            a = p
+        out.append((0, 1))
+        sub(kids[-1], [(a, top)] + bl, par, out)
+
+    def cfgFields(self, bl, sel, cfg, w):
+        if cfg[3] == 2 ** (w - 1) - 1 and cfg[4]:
+            return [(sel, 4), (cfg[1], w), (0, 1)]
+        return [(sel, 4), (cfg[1], w), (1, 1), (cfg[3], w), (int(cfg[4]), 1)]
+
+    def evalFields(self, cfg, w):
+        j = cfg[2].bit_length() - 1
+        return [(0, 1)] + ([(0, 1)] if j == 0 else [(1, 1), (j, 3)]) + [(cfg[1], w)]
+
+    def dserF(self, ctx, beta, node, bl, par, out):
+        """A node of a tree over a frozen part."""
+        kind = node[0]
+        w = len(bl) + 1
+        if kind == 'V':
+            out.append((31, 6))
+        elif kind == 'E':
+            blv = fl.vboxF(ctx, beta, bl)
+            cf = self.propI2(blv, loSum(blv))
+            assert cf and self.okIF(bl, cf[0])
+            out.extend(self.evalFields(cf[0], w))
+        elif kind == 'D':
+            out.append((3, 3))
+        elif kind == 'S':
+            x = bl[0]
+            mid = (x[0] + x[1]) // 2
+            out.append((15, 5))
+            self.dserF(ctx, beta, node[1], [(x[0], mid)] + bl[1:], par, out)
+            self.dserF(ctx, beta, node[2], [(mid, x[1])] + bl[1:], par, out)
+        elif kind == 'B':
+            f, cfg = self.guide(bl, node[1])
+            out.append((1, 2))
+            out.extend(self.cfgFields(bl, node[1], cfg, w))
+            top = bl[0][1]
+            cells = self.kidCells(self.stratF(ctx, beta).cuts(bl, f), f, top, node[3])
+            self.dserKids(self.parF(ctx, loSum(beta), hiSum(beta), len(beta), bl, top), f, cells, node[2], bl,
+                          not par, top, out, lambda k, b, p, o: self.dserF(ctx, beta, k, b, p, o))
+        else:
+            raise ValueError(kind)
+
+    def dser(self, node, bl, par, out):
+        """A node of the main tree."""
+        kind = node[0]
+        w = len(bl)
+        if kind == 'V':
+            out.append((31, 6))
+        elif kind == 'E':
+            cf = self.propI2(bl, loSum(bl))
+            assert cf and self.T.okI(bl, cf[0])
+            out.extend(self.evalFields(cf[0], w))
+        elif kind == 'D':
+            out.append((3, 3))
+        elif kind == 'S':
+            x = bl[0]
+            mid = (x[0] + x[1]) // 2
+            out.append((15, 5))
+            self.dser(node[1], [(x[0], mid)] + bl[1:], par, out)
+            self.dser(node[2], [(mid, x[1])] + bl[1:], par, out)
+        elif kind == 'B':
+            f, cfg = self.guide(bl, node[1])
+            out.append((1, 2))
+            out.extend(self.cfgFields(bl, node[1], cfg, w))
+            top = bl[0][1]
+            cells = self.kidCells(self.SG.cuts(bl, f), f, top, node[3])
+            self.dserKids(self.parM(bl, top), f, cells, node[2], bl, not par, top, out, self.dser)
+        elif kind == 'F':
+            ctx, beta = bl[-1], bl[:-1]
+            c, t = beta[0], flipT(ctx)
+            self.frz, self.fctx = (tsub(DEN, ctx[1]), tsub(DEN, ctx[0]) + 1, 12 + DEN // c[0], beta), ctx
+            try:
+                f, cfg = self.guide(beta, node[1])
+                out.append((7, 4))
+                out.extend(self.cfgFields(beta, node[1], cfg, len(beta) + 1))
+                cells = self.kidCells(self.stratF(ctx, beta).cuts(beta, f), f, t, node[3])
+                self.dserKids(self.parF(ctx, loSum(beta), hiSum(beta), len(beta), beta, t), f, cells, node[2],
+                              beta, True, t, out, lambda k, b, p, o: self.dserF(ctx, beta, k, b, p, o))
+            finally:
+                self.frz = None
+        else:
+            raise ValueError(kind)
+
+    def dHints(self, group, bl, par):
+        """The hints of the consecutive cells `group` = [(lo, hi, plan)] of the new prime under the box `bl`."""
+        out = []
+        for lo, hi, k in group:
+            self.dser(k, [(lo, hi)] + bl, par, out)
+        return pack(out)
 
 
 def count(node, cnt, frozen=False):
@@ -445,7 +647,8 @@ class Par:
     """The exponent and the parameters of a certificate."""
 
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
-                 depthF=3, maxlen=6, cap=20.0, pmax=40, fcap=600.0, levels=5, rev=True):
+                 depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False):
+        assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.h, self.hI, self.depth, self.kappa = h, round(h * DEN), depth, kappa
         self.depthR, self.hR, self.hQ = depthR, round(hR * DEN), round(hQ * DEN)
@@ -458,12 +661,12 @@ class Par:
                        self.depthR, self.hQ, fc.FUEL, self.hF, self.depthF, self.maxlen, rev=self.rev)
 
 
-# the kernel's seconds a step, by kind and whether over a frozen part (12 November 2026: twenty-four parts at
-# 2150/1000, of 2800 to 4600 steps, in 12 to 32 s each, three at a time on four cores; fitted with a mean error of
-# 1.6 s; the three-prime reversal, which the kernel searches without hints, about 2 s)
-SEC = {('E', False): 3.6e-3, ('E', True): 3.8e-3, ('V', False): 1e-4, ('V', True): 1e-4, ('B', False): 8.4e-3,
-       ('B', True): 1.15e-2, ('D', False): 1.7e-3, ('D', True): 1.05e-3, ('F', False): 4.2e-2, ('R', False): 2.0,
-       ('S', False): 7e-4, ('S', True): 7e-4}
+# the kernel's seconds a step, by kind and whether over a frozen part (12 November 2026: timed in the kernel on
+# 300 boxes of each kind of the plan at 2150/1000, least of three runs, times 1.3, which is what twenty-four whole
+# parts take over the sum of their steps)
+SEC = {('E', False): 4.0e-4, ('E', True): 1.05e-3, ('V', False): 1.3e-4, ('V', True): 1.3e-4, ('B', False): 1.6e-3,
+       ('B', True): 2.7e-3, ('D', False): 3.0e-4, ('D', True): 4.7e-4, ('F', False): 3.9e-3, ('S', False): 2.6e-4,
+       ('S', True): 2.6e-4}
 
 
 def secs(node, frozen=False):
@@ -493,15 +696,12 @@ def kid_cells(P, bl, sel, bits):
 
 def add_part(P, bl, par, group, parts):
     """A part: the consecutive cells `group` = [(lo, hi, plan)] of the new prime under the box `bl`."""
-    fields, cnt = [], Counter()
-    for i, (_, _, k) in enumerate(group):
-        if i + 1 < len(group):
-            fields.append((1, 1))
-        ser(k, fields)
+    cnt = Counter()
+    for _, _, k in group:
         count(k, cnt)
-    h = pack(fields)
+    h = P.dHints(group, bl, par)
     a, top, cs = group[0][0], group[-1][1], [g[0] for g in group[1:]]
-    c, rest = P.cKids(P.check, top, bl, par, cs, a, K, h)
+    c, rest = P.dPart(P.dCheck, top, bl, par, cs, a, K, h)
     assert rest == 0 and c < K, (c, rest)
     parts.append((top, bl, par, cs, a, c, h, sum(secs(g[2]) for g in group), sum(cnt.values()), dict(cnt)))
     return len(parts) - 1
@@ -617,7 +817,7 @@ def plan_all(par_, procs=4, rows=None):
 def part_stmt(par_, k, p):
     top, bl, par, cs, a, c, h = p[:7]
     T = par_.tag
-    return rc.wrap(f'theorem tree{T}_{k} : (kidsH solve{T} {tc.nat(top)} {rc.box(bl)} {rc.bool_(par)} '
+    return rc.wrap(f'theorem tree{T}_{k} : (partD solve{T} {tc.nat(top)} {rc.box(bl)} {rc.bool_(par)} '
                    f'[{", ".join(map(str, cs))}] {a} K\xa00x{h:x}).1 ≤ {c} :=\xa0by\xa0decide\xa0+kernel').replace(
                        '\xa0', ' ')
 
@@ -625,30 +825,27 @@ def part_stmt(par_, k, p):
 def defs_file(par_):
     T, LN = par_.tag, f'{par_.lnum}/{par_.lden}'
     return f"""/-
-# The exponent, the strategies and the search led by hints at `L = {LN}`
+# The exponent and the search led by hints at `L = {LN}`
 
 Generated by `tools/linnik/hint_cert.py`; do not edit by hand.
 
-The bilinear Type I rule's exponent `{LN}` (`ibPar{T}`), and:
+The bilinear Type I rule's exponent `{LN}` (`ibPar{T}`), and `solve{T}`, the search led by hints
+(`SieveAd.solveD`):
 
-* `strat{T}`, the strategy of the search: `SieveAd.stratGFF` with cells of side at most `{par_.hI}/DEN`
-  (`{par_.h}`) and at most the exponent over `{par_.kappa}`, boxes of fewer than `{par_.depth}` primes decomposed, and
-  cells wider than `{fc.WMIN}/DEN` (`0.0005`) cut for want of a test;
-* `stratK{T}`, the strategy of the trees of the reversal of three primes: `SieveAd.stratKF` with chains of fewer
-  than `{par_.depthR}` primes, in cells of side at most `{par_.hR}/DEN` (`{par_.hRf}`);
-* `stratF{T}`, the strategy of the trees over the frozen parts: `SieveAd.stratFF` with chains of fewer than
-  `{par_.depthF}` primes, in cells of side at most `{par_.hF}/DEN` (`{par_.hFf}`);
-* `ops{T}`, the nodes of the search: `SieveAd.opsR` with the tests `SieveAd.fillTests` and the reversal of three
-  primes, its trees searched with the fuel `{fc.FUEL}` and the smaller prime of a cofactor of two primes in cells of
-  side at most `{par_.hQ}/DEN` (`{par_.hQf}`);
-* `solve{T}`, the search led by hints: `SieveAd.solveH` with these, the guides `SieveAd.guideG` and
-  `SieveAd.guideF`, and as its hinted bound the reversal through the largest prime of boxes of at most
-  `{par_.maxlen}` primes (`SieveAd.altFH`).
+* the nodes of the main tree with a dropped box's cost in one pass (`SieveAd.opsMP`), and the tests in one pass
+  (`SieveAd.fillTestsF`);
+* the configurations read from the hints (`SieveAd.cfgIM`, `SieveAd.cfgJM`), and the cells of a new prime
+  (`SieveAd.kidsM`) on the grid of side at most `{par_.hI}/DEN` (`{par_.h}`) and at most the exponent over
+  `{par_.kappa}`;
+* as its hinted bound, the reversal through the largest prime of boxes of at most `{par_.maxlen}` primes
+  (`SieveAd.altFD`), with the tests `SieveAd.frozTestsF` and the chains over the frozen parts on the grid of side
+  at most `{par_.hF}/DEN` (`{par_.hFf}`);
+* the depth of recursion `{fc.FUEL}`.
 
-The file imports `SieveAdHintStratDefs.lean`; so neither it nor the part files (`SieveHint{T}P1.lean` …) load more
-of `Mathlib` than `Mathlib.Data.Nat.Notation`.
+The file imports `SieveAdDirDefs.lean`; so neither it nor the part files (`SieveHint{T}P1.lean` …) load more of
+`Mathlib` than `Mathlib.Data.Nat.Notation`.
 -/
-import SieveAdHintStratDefs
+import SieveAdDirDefs
 
 namespace SieveCert
 
@@ -661,22 +858,10 @@ namespace SieveAd
 
 open SieveCert
 
-/-- **The strategy of the search at `{LN}`.** -/
-def strat{T} : Strat := @stratGFF ibPar{T} {par_.kappa} {par_.hI} {par_.depth} {fc.WMIN}
-
-/-- **The strategy of the trees of the reversal of three primes at `{LN}`.** -/
-def stratK{T} : Cell → ℕ → Strat := @stratKF ibPar{T} {par_.kappa} {par_.hR} {par_.depthR} {fc.WMIN}
-
-/-- **The strategy of the trees over the frozen parts at `{LN}`.** -/
-def stratF{T} : Cell → List Cell → Strat := @stratFF ibPar{T} {par_.kappa} {par_.hF} {par_.depthF} {fc.WMIN}
-
-/-- **The nodes of the search at `{LN}`**: those of a tree, and the reversal of three primes. -/
-def ops{T} : Ops := opsR (@fillTests ibPar{T}) stratK{T} {fc.FUEL} (cutsQ {par_.hQ})
-
 /-- **The search led by hints at `{LN}`**, with the reversal through the largest prime as its hinted bound. -/
-def solve{T} : List Cell → Bool → ℕ → ℕ → ℕ × ℕ :=
-  solveH ops{T} (@fillTests ibPar{T}) strat{T} (@guideG ibPar{T})
-    (@altFH ibPar{T} stratF{T} (@guideF ibPar{T}) {fc.FUEL} {par_.maxlen}) {fc.FUEL}
+noncomputable def solve{T} : List Cell → Bool → ℕ → ℕ → ℕ × ℕ :=
+  solveD opsMP (@fillTestsF ibPar{T}) cfgIM (@cfgJM ibPar{T}) (kidsM {par_.kappa} {par_.hI})
+    (@altFD ibPar{T} {par_.kappa} {par_.hF} {fc.FUEL} {par_.maxlen}) {fc.FUEL}
 
 end SieveAd
 """
@@ -765,10 +950,6 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
     st = stats['steps']
     nsteps = sum(st.values())
     nflip = st.get(('F', False), 0)
-    nrev = st.get(('R', False), 0)
-    revtxt = (f' and {nrev} reversals of three primes (`SieveAdRevDefs.lean`)' if nrev else
-              ' (the reversal of three primes of the theorem at `218/100` is among the search\'s nodes, and the '
-              'plan does not use it)')
     imports = '\n'.join(f'import SieveHint{T}P{i}' for i in range(1, nfiles + 1))
     plain = textwrap.fill(
         f'Plain statement (`linnik_{T}`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there '
@@ -777,12 +958,15 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
         f'theorem at `2165/1000`. The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
         f'term of the sign `−` of three or five primes through its largest prime, the cofactor kept as one number '
         f'(`SieveAdFlipDefs.lean`): its tree runs over the frozen numbers, with the tests `SieveAd.frozTests`. The '
-        f'kernel does not search for the tree: it follows hints (`SieveAd.solveH`, `SieveAdHintDefs.lean`), the '
+        f'kernel does not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the '
         f'plan of the search that `tools/linnik/hint_cert.py` ran ({stats["boxes"]} boxes, {stats["fboxes"]} of '
-        f'them over frozen parts), in {nsteps} steps, {nflip} of them reversals through the largest prime{revtxt}; '
-        f'each step is checked, and a cost that the search returns below its limit bounds the term whatever the '
-        f'hints are (`SieveAd.pr_of_kidsH`). The search is in {len(parts)} parts, {nfiles} files '
-        f'(`SieveHint{T}P1.lean` … `SieveHint{T}P{nfiles}.lean`).', width=116)
+        f'them over frozen parts), in {nsteps} steps, {nflip} of them reversals through the largest prime: what is '
+        f'done at each box, with which configuration, and where the range of each new prime is cut. Each step is '
+        f'checked, and a cost that the search returns below its limit bounds the term whatever the hints are '
+        f'(`SieveAd.pr_of_partD`). The search is in {len(parts)} parts, {nfiles} files (`SieveHint{T}P1.lean` … '
+        f'`SieveHint{T}P{nfiles}.lean`). The kernel evaluates the tests in one pass over a box '
+        f'(`SieveAd.fillTestsF`, `SieveAd.frozTestsF`), and they are equal to the tests that are proved sound '
+        f'(`SieveAdFast.lean`).', width=116)
     return f"""/-
 # Linnik's theorem with exponent `{LN}`, by a search led by hints
 
@@ -792,7 +976,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). G
 {plain}
 
 * `route{T}`, `routeOK{T}`, `ibFits{T}`: the route and its exponent.
-* `sound{T}`, `soundX{T}`: the tests are sound, and sound under two more atoms.
+* `sound{T}`, `soundF{T}`: the tests are sound, and so are the tests in one pass.
 * `part{T}`: a part of the search bounds its term.
 * `node{T}_0` … `node{T}_{len(nodes) - 1}`: the {len(nodes)} cells whose search is cut into parts by the cells of the next prime:
   the cell's own Buchstab step (`SieveAd.pr_buch`), and the pieces below it.
@@ -801,9 +985,9 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). G
 * `linnik_{T}`: `SieveAd.linnik_pr` at them, with the root at the floor `{f0}/DEN`, by the comparison with the rest
   among the tree's primes.
 
-The file imports `SieveAdHint.lean`, `SieveAdFill.lean` and the part files.
+The file imports `SieveAdDir.lean`, `SieveAdFill.lean` and the part files.
 -/
-import SieveAdHint
+import SieveAdDir
 import SieveAdFill
 {imports}
 
@@ -831,14 +1015,15 @@ attribute [local instance] route{T} routeOK{T} ibPar{T} ibFits{T}
 /-- The tests at `{LN}` are sound. -/
 theorem sound{T} : (fillTests).Sound := fillTests_sound
 
-/-- The tests at `{LN}` are sound under two more atoms. -/
-theorem soundX{T} : (fillTests).SoundX := fillTests_soundX
+/-- The tests in one pass at `{LN}` are sound: they are the tests. -/
+theorem soundF{T} : (fillTestsF).Sound := by
+  rw [fillTestsF_eq]
+  exact fillTests_sound
 
-/-- **A part of the search bounds its term**: `SieveAd.pr_of_kidsH` at the route. -/
+/-- **A part of the search bounds its term**: `SieveAd.pr_of_partD` at the route. -/
 theorem part{T} {{top : ℕ}} {{bl : List Cell}} {{par : Bool}} {{cs : List ℕ}} {{a c h : ℕ}}
-    (hk : (kidsH solve{T} top bl par cs a K h).1 ≤ c) (hc : c < K) : PR ((a, top) :: bl) par c :=
-  pr_of_kidsH sound{T} soundX{T} stratK{T} {fc.FUEL} (cutsQ {par_.hQ}) stratF{T} guideF {fc.FUEL} {par_.maxlen} strat{T}
-    guideG {fc.FUEL} hk hc
+    (hk : (partD solve{T} top bl par cs a K h).1 ≤ c) (hc : c < K) : PR ((a, top) :: bl) par c :=
+  pr_of_partD soundF{T} cfgIM cfgJM {par_.kappa} {par_.hI} {par_.hF} {fc.FUEL} {par_.maxlen} {fc.FUEL} hk hc
 
 {chr(10).join(n + chr(10) for n in nodes)}
 /-- **The first term at `{LN}`**: the term of the box of the first prime, with the cell `({f0}, DEN/2 + 1)`, of the
@@ -874,34 +1059,15 @@ def generate(par_, procs=4, rows=None):
 def main():
     a = sys.argv[1:]
     sys.setrecursionlimit(100000)
-    if a and a[0] == '--box':
-        v = [int(x) for x in a[1:5]]
-        maxlen = int(a[5]) if len(a) > 5 and a[5].isdigit() else 4
-        P = Planner(fc.TestsF(fc.LNUM, fc.LDEN), fc.HI, fc.DEPTH, fc.WMIN, fc.KAPPA, fc.HR, fc.DEPTHR, fc.HQ,
-                    fc.FUEL, round(0.012 * DEN), 3, maxlen, rev='--norev' not in a)
-        bl = [(v[2], v[3]), (v[0], v[1])]
-        (c, node), w = P.work(lambda: P.plan(bl, True, K))
-        out = []
-        ser(node, out)
-        h = pack(out)
-        r = P.check(bl, True, K, h)
-        assert r == (c, 0), (r, c)
-        cnt = Counter()
-        count(node, cnt)
-        print(f'theorem hintPart : (solveH ops fillTests strat guide altH {fc.FUEL} {rc.box(bl)} true K 0x{h:x}).1 = '
-              f'{c} := by decide +kernel')
-        print(f'cost/K = {c / K:.6f}; {sum(cnt.values())} steps {dict(cnt)}; {h.bit_length()} bits of hints; '
-              f'the search: {w["calls"]} boxes ({w["fcalls"]} over frozen parts); {P.stat}')
-        return 0
     import time
     procs = int(a[a.index('--procs') + 1]) if '--procs' in a else 4
     out = a[a.index('--out') + 1] if '--out' in a else None
     if a and a[0] == '--try':
         ln, ld = map(int, a[2].split('/'))
-        par_ = Par(a[1], ln, ld, h=float(a[3]), hF=float(a[4]), maxlen=int(a[5]), rev='--norev' not in a)
+        par_ = Par(a[1], ln, ld, h=float(a[3]), hF=float(a[4]), maxlen=int(a[5]))
         rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
     elif not a or a[0] in ('--check', '--out', '--procs'):
-        par_, rows = Par(TAG, LNUM, LDEN, h=H, hF=HF, maxlen=MAXLEN, rev=False), None
+        par_, rows = Par(TAG, LNUM, LDEN, h=H, hF=HF, maxlen=MAXLEN), None
         if out is None and '--check' not in a:
             out = tc.PNT
     else:

@@ -235,7 +235,7 @@ In order of what is in reach.
    its comparison's own tree (`SieveFillComp.prop6_fill`). The theorem at `2150/1000` adds the reversal of a term
    of three or five primes through its largest prime, as an identity with the cofactor kept as one number
    (`SieveAd.bd_flip_core`), and its certificate is the plan of a search, which the kernel follows by hints and
-   checks step by step (`SieveAd.solveH_sound`), where the earlier ones are searches that the kernel runs. With
+   checks step by step (`SieveAd.solveD_sound`), where the earlier ones are searches that the kernel runs. With
    role reversal for every term and at two levels the
    same inputs pass at `2.12` in a computation in floating point, which is not in Lean
    ([`research-opportunities.md`](research-opportunities.md), §3.1). `0.7151K` of the paper's

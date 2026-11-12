@@ -173,11 +173,11 @@ The paper's contributions are four.
   leaves are evaluated by a bilinear Type~I estimate, proved by Parseval's identity with no bound for Kloosterman sums,
   which reaches moduli beyond $x/q$. Conditions between the two variables, which have no prime to pivot on, cost a
   power of $\log q$.
-\item \emph{A decomposition by trees of Buchstab steps, with two reversals} (Section~\ref{sec:decomp}). The terms are
+\item \emph{A decomposition by trees of Buchstab steps, with a reversal} (Section~\ref{sec:decomp}). The terms are
   sums over boxes of primes in cells of exponents. A tree of Buchstab steps decomposes a box, evaluates its terms by
   the tests that the comparisons of Section~\ref{sec:type1} pass, and drops the rest at a cost bounded by counts of
-  rough numbers. A term that no test passes may be reversed: its roles exchanged among three primes, or the term
-  rewritten through its largest prime as a sum over the multiples of the other primes.
+  rough numbers. A term that needs an upper bound and that no test passes may be reversed: rewritten through its
+  largest prime as a sum over the multiples of the other primes.
 \item \emph{A certificate} (Section~\ref{sec:certificate}). The trees are found by a search, and the certificate is the
   plan of that search, which Lean's kernel follows step by step; its cost, $1093510193343867034 \cdot 2^{-60}
   = 0.94846\ldots$, bounds the fraction of the primes that the sieve loses, and it is below $1$.
@@ -703,7 +703,7 @@ at the leaves of Buchstab's tree as long as the number of counts, about $x/q$ ti
 errors small against the size $x/q$ of the main terms; so these counts serve moduli up to about $x/q$. Beyond $x/q$
 the sieve uses Type~I information in a bilinear form, for moduli that are products $d_1 d_2$ of two parts.
 
-\subsection{Type~I beyond $x/q$}
+\subsection{Type~I beyond \texorpdfstring{$x/q$}{x/q}}
 
 Write $e_q(t) = e^{2\pi i t/q}$. For a weight $w$ on a finite set $S$ of integers, let
 \begin{gather*}
@@ -1172,7 +1172,7 @@ identity, and the identities are exact for the ordered tuples, while the bounds 
 tuples of the cells' primes, in any order.
 
 \begin{definition}\label{def:tree}
-% Lean: SieveAd.Tree, SieveAd.ok, SieveAd.cost, SieveAd.vanishOK, SieveAd.dropOK, SieveAd.dropBOK, SieveAd.splitOK; node (R): SieveAd.flipOK, SieveAd.flipCostH, SieveAd.altFH
+% Lean: SieveAd.Tree, SieveAd.ok, SieveAd.cost, SieveAd.vanishOK, SieveAd.dropOK, SieveAd.dropBOK, SieveAd.splitOK; node (R): SieveAd.flipOK, SieveAd.flipCost, SieveAd.flipCostD, SieveAd.altFD
 Let $\mathfrak b$ be a box of $k \ge 1$ primes and $\varepsilon$ a sign. A \emph{tree} on $\mathfrak b$ with the sign
 $\varepsilon$ is one of the following nodes, with the trees below it. It \emph{passes} if the node's condition holds and
 the trees below it pass. Its \emph{cost} is an integer, which stands for its multiple of $1/\mathcal K$.
@@ -1436,8 +1436,7 @@ kinds of tuples, and sifting $n/r'$ at $z_{l_3}$, bounds the term with the sign 
 kinds of boxes, under the condition that $x/r'$ lies in the cell of $p_1$, which trees with the tests of
 Lemma~\ref{lem:tests}(c) bound; the loss is the numbers $n/r'$ free of primes below $z_{l_3}$ that are not prime, which
 Lemma~\ref{lem:rough} and the prime number theorem bound, and the $n$ with a square factor. The formalisation proves
-this bound and has it among the nodes of its search (Section~\ref{sec:certificate}); the certificate of
-Proposition~\ref{prop:certificate} does not use it, and the paper does not need it. The reversal below keeps the
+this bound; the certificate of Proposition~\ref{prop:certificate} does not use it, and the paper does not need it. The reversal below keeps the
 cofactor as one number, whatever its prime factors, and loses nothing to it.
 % Lean: SieveAd.bd_rev, SieveAd.rev_cover, SieveAd.rev_inject, SieveAd.famCost_sound, SieveAd.rulesR
 
@@ -1631,7 +1630,7 @@ cell.
 \end{proof}
 
 \begin{definition}\label{def:reversal}
-% Lean: SieveAd.flipOK, SieveAd.flipT, SieveAd.lastC, SieveAd.initC, SieveAd.flipTree, SieveAd.flipTreeH, SieveAd.flipCost, SieveAd.flipCostH, SieveAd.bdK
+% Lean: SieveAd.flipOK, SieveAd.flipT, SieveAd.lastC, SieveAd.initC, SieveAd.flipTree, SieveAd.flipTreeD, SieveAd.flipCost, SieveAd.flipCostD, SieveAd.bdK
 A box $\mathfrak b$ of $k$ primes \emph{may be reversed} if $2 \le k \le 11$, $0 < l_i < h_i$ for every $i$, $h(\mathfrak
 b) + 2 \le D$, $h_2 + 1 \le l_1$, $l_1 \ge 3$, $\nu \le l_1$ and $h_1 + \nu + 1 \le D$, where $\nu = \lceil h_1/2 \rceil$.
 A \emph{reversal} of such a box is a floor $f$ with $0 < f \le \min(l_k, \nu)$ at which the chain of no prime passes
@@ -1647,7 +1646,7 @@ cost of the ends.
 \end{definition}
 
 \begin{proposition}\label{prop:reversal}
-% Lean: SieveAd.bd_flip_neg, SieveAd.bd_flip_core, SieveAd.bd_flipCost, SieveAd.bd_flipCostH, SieveAd.froz_ends_le, SieveAd.froz_top_le, SieveAd.dJF_level, SieveAd.psi_level; the sign +: SieveAd.bd_flip_pos
+% Lean: SieveAd.bd_flip_neg, SieveAd.bd_flip_core, SieveAd.bd_flipCost, SieveAd.bd_flipCostD, SieveAd.froz_ends_le, SieveAd.froz_top_le, SieveAd.dJF_level, SieveAd.psi_level; the sign +: SieveAd.bd_flip_pos
 Let $\mathfrak b$ be a box that may be reversed, with a reversal of cost $c_R$ whose tree passes. Then the term of
 $\mathfrak b$ with the sign $-$ is bounded at $c_R/\mathcal K$.
 \end{proposition}
@@ -1698,7 +1697,7 @@ which $c_R$ would reach that of the alternative.
 \subsection{What a tree gives}
 
 \begin{proposition}\label{prop:tree-bound}
-% Lean: SieveAd.sound, SieveAd.bd_split, SieveAd.bd_buch, SieveAd.bd_mono, SieveAd.rulesR, SieveAd.solveFH_sound, SieveAd.altFH_sound, SieveAd.bd_flipCostH, SieveAd.pr_split, SieveAd.pr_buch
+% Lean: SieveAd.sound, SieveAd.bd_split, SieveAd.bd_buch, SieveAd.bd_mono, SieveAd.rulesR, SieveAd.rulesMP, SieveAd.solveD_sound, SieveAd.altFD_sound, SieveAd.bd_flipCostD, SieveAd.pr_split, SieveAd.pr_buch
 Let $\mathfrak b$ be a box of $k \ge 1$ primes. If a tree on $\mathfrak b$ with the sign $\varepsilon$ passes, with cost
 $c$, then the term of $\mathfrak b$ with the sign $\varepsilon$ is bounded at $c/\mathcal K$.
 \end{proposition}
@@ -1790,7 +1789,7 @@ that of the decomposition.
 
 What the search tries is proposed by a \emph{strategy}, which needs no proof: every proposal is tested before it is
 used. At $43/20$ the strategy proposes the following.
-% Lean: SieveAd.strat21500 (SieveAd.stratGFF, SieveAd.stratGF, SieveAd.propI2, SieveAd.propJF, SieveAd.propJ2, SieveAd.propJ3, SieveAd.fmax3, SieveAd.leavesOf, SieveAd.bestSub, SieveAd.cutsOfGF, SieveAd.cutsOfG, SieveAd.geoCuts, SieveAd.stepOf), SieveAd.stratF21500 (SieveAd.stratFF, SieveAd.cutsK, SieveAd.vboxF, SieveAd.widen, SieveAd.propIF, SieveAd.propJFF), SieveAd.stratK21500, SieveAd.ops21500 (SieveAd.opsR), SieveAd.solveG, SieveAd.nodeG, SieveAd.kids
+% Lean (the strategy, as the searches without hints use it; at 43/20 the plan carries its choices, made by tools/linnik/hint_cert.py): SieveAd.stratGFF, SieveAd.stratGF, SieveAd.propI2, SieveAd.propJF, SieveAd.propJ2, SieveAd.propJ3, SieveAd.fmax3, SieveAd.leavesOf, SieveAd.bestSub, SieveAd.cutsOfGF, SieveAd.cutsOfG, SieveAd.geoCuts, SieveAd.stepOf, SieveAd.stratFF, SieveAd.cutsK, SieveAd.vboxF, SieveAd.widen, SieveAd.propIF, SieveAd.propJFF, SieveAd.opsR, SieveAd.solveG, SieveAd.nodeG, SieveAd.kids
 \begin{itemize}
 \item For (I): as the rest, the first prime of the box, from the smallest, whose cell the region admits for a rest and
   for which a set of the other primes has sums that the region admits for the first variable with it; and that set.
@@ -1815,8 +1814,7 @@ used. At $43/20$ the strategy proposes the following.
   by the room $\gamma$ for the tests at a floor.
 \end{itemize}
 The cells are the strategy's: any cells pass Definition~\ref{def:tree}, and the side $0.004$ and the depth $6$ affect
-only the cost. The formalisation's search also has the role reversal of three primes among its nodes
-(\S\ref{sec:reversal}); the plan does not use it.
+only the cost.
 
 \subsection{Checking a search}
 
@@ -1827,8 +1825,8 @@ compiled code. The search is such a function: its tests are the conditions of De
 strategy.
 
 \begin{lemma}\label{lem:search}
-% Lean: SieveAd.solveF_sound, SieveAd.has_of_kids, SieveAd.solveG_sound, SieveAd.kidsP_sound, SieveAd.solveH_sound, SieveAd.kidsH_sound, SieveAd.stepH_sound, SieveAd.solveFH_sound, SieveAd.altFH_sound, SieveAd.pr_of_kidsH
-Whatever the strategy, the guide and the hints (below), if the search returns on a box, a sign and a limit a value
+% Lean: SieveAd.solveF_sound, SieveAd.has_of_kids, SieveAd.solveG_sound, SieveAd.kidsP_sound, SieveAd.solveD_sound, SieveAd.stepD_sound, SieveAd.kidsC_sound, SieveAd.partD_sound, SieveAd.solveMD_sound, SieveAd.altFD_sound, SieveAd.pr_of_partD
+Whatever the strategy, or the hints that lead the search (below), if the search returns on a box, a sign and a limit a value
 $c$ below the limit, then the term of the box with that sign is bounded at $c/\mathcal K$: the nodes that the search
 took form a tree on the box with that sign that passes, of cost at most $c$.
 \end{lemma}
@@ -1850,44 +1848,51 @@ bound, rule by rule, and never writes the tree down.
 \subsection{Hints}
 
 A search that tries what its strategy proposes spends most of its time on what it does not keep: trees under boxes
-that are then dropped or reversed, and the test of every proposed floor where one is used. So the search is run once
-outside the kernel, in exact integer arithmetic and definition by definition, and the plan it keeps is written as
-\emph{hints}: for each part of the check, a natural number, read from its low end in the order in which the search
-visits the boxes. At a box the hints give a run of ones closed by a zero.
-% Lean: SieveAd.solveH, SieveAd.stepH, SieveAd.kidsH, SieveAd.altFH, SieveAd.flipTreeH, SieveAd.flipCostH, SieveAd.guideG, SieveAd.guideF, SieveAd.guideJ, SieveAd.tryJ2, SieveAd.floorJ3, SieveAd.solve21500
+that are then dropped or reversed, the test of every proposed floor where one is used, and the search for a
+configuration among the sets of a box's cells. So the search is run once outside the kernel, in exact integer
+arithmetic and definition by definition, and the plan it keeps is written as \emph{hints}: for each part of the check,
+a natural number, read from its low end in the order in which the search visits the boxes. At a box the hints give a
+run of ones closed by a zero, which names the node, and then what the node needs.
+% Lean: SieveAd.solveD, SieveAd.stepD, SieveAd.cfgIP, SieveAd.cfgJP, SieveAd.cfgIM, SieveAd.cfgJM, SieveAd.cfgIF, SieveAd.cfgJF, SieveAd.floorP, SieveAd.kidsCS, SieveAd.kidsC, SieveAd.kidsM, SieveAd.kidsF, SieveAd.partD, SieveAd.altFD, SieveAd.flipCostD, SieveAd.flipTreeD, SieveAd.solve21500
 \begin{center}
 \small
-\begin{tabular}{@{}lp{0.62\textwidth}@{}}
+\begin{tabular}{@{}lp{0.68\textwidth}@{}}
 \toprule
 Hints & What the search does at the box \\
 \midrule
-\texttt{0} & nothing more: the box is empty, or a proposed configuration evaluates it \\
-\texttt{10}, then $4$ bits & Buchstab's identity at the floor and configuration that the guide names \\
+\texttt{0} & evaluates the box by (I), with the configuration that follows \\
+\texttt{10} & Buchstab's identity, at the floor and with the configuration that follow, then the cuts of the new
+  prime's range \\
 \texttt{110} & drops the box \\
-\texttt{1110} & the role reversal of three primes, searched without hints \\
-\texttt{11110}, then $4$ bits & reverses the box at the floor that the guide names, its tree led by the hints \\
-\texttt{111110} & cuts the newest cell in two at its middle \\
+\texttt{1110} & reverses the box: the floor and the configuration of the test over the frozen part, then the cuts of
+  the range of the chain's first prime \\
+\texttt{11110} & cuts the newest cell in two at its middle \\
+\texttt{111110} & finds the box empty, (V) \\
 \bottomrule
 \end{tabular}
 \end{center}
-The four bits after \texttt{10} or \texttt{11110} name one proposal of the strategy: with $2j$, the comparison (J2) with
-the rest the prime at position $j$, counted from the smallest from $0$; with $2i + 1$, the comparison (J3) at the floor
-after $i$ of its eight steps. A \emph{guide}
-computes the proposal they name, so the kernel tests one floor where the search tests all. Among the cells of a new
-prime's range, each proposed cut that lies strictly inside the range takes one bit: $1$ cuts the range there, and $0$
-joins the cells on its two sides. The plan joins consecutive cells that one test evaluates, and consecutive dropped
-cells while the joined cell's cost stays within $0.2\%$ of the sum of theirs; so the cells of the certificate are unions
-of the strategy's, and may be wider than $0.004$.
+A configuration of (I) is the rest's cell, $0$ for the first or $1$ and three bits for its index, and the set $\mathcal
+S$, a bit for each cell of the box. At a floor, four bits name the comparison and with it the floor: with $2j$, (J2)
+with the rest the prime at position $j$, counted from the smallest from $0$, at the floor $\min(l_{\min}, v - u - 1)$ of
+its window $[u, v]$; with $2i + 1$, (J3) at the floor after $i$ of its eight steps. Then come $\mathcal S_0$, a bit for
+each cell, and either $0$, for the set $\mathcal S_1$ of all the cells but the last and the side $\iota = 1$, or $1$, the
+set $\mathcal S_1$ and a bit for the side. Over a frozen part every set has one more bit, the cofactor's, and the rest
+of (J2) may be the cofactor. Each cut of a new prime's range is a code: one to seven steps of the strategy's grid after
+the last point used, seven steps with no cut, one of the strategy's three cuts off the grid, or no further cut. The
+plan joins consecutive cells that one test evaluates, and consecutive dropped cells while the joined cell's cost stays
+within $0.2\%$ of the sum of theirs; so the cells of the certificate are unions of the strategy's, and may be wider than
+$0.004$. The kernel searches for nothing: it reads each configuration, computes each floor from its four bits and
+the box and each cut from its code, and evaluates the tests and the costs.
 
 Lemma~\ref{lem:search} holds whatever the hints: each branch of the search led by hints is one of the nodes among which
-the search chooses, applied only after its condition has passed, and a cut at any point is a node (S). A hint that
-names a node whose condition fails, or a floor that the guide does not give, makes the value the limit, which says
-nothing. So the hints are not trusted: a wrong hint can make the check fail, not make it wrong.
+the search chooses, with whatever configuration, floor and cut the hints give, applied only after its condition has
+passed, and a cut at any point is a node (S). A hint that names a node whose condition fails makes the value the
+limit, which says nothing. So the hints are not trusted: a wrong hint can make the check fail, not make it wrong.
 
 \subsection{The certificate at \texorpdfstring{$43/20$}{43/20}}
 
 \begin{proposition}\label{prop:certificate}
-% Lean: Linnik21500.tree21500 (the bound of the first term), Linnik21500.linnik_21500 (the root's test, by evaluation), Linnik21500.part21500, Linnik21500.sound21500, Linnik21500.soundX21500, SieveAd.fillTests_sound
+% Lean: Linnik21500.tree21500 (the bound of the first term), Linnik21500.linnik_21500 (the root's test, by evaluation), Linnik21500.part21500, Linnik21500.sound21500, Linnik21500.soundF21500, SieveAd.fillTests_sound, SieveAd.fillTestsF_eq, SieveAd.frozTestsF_eq
 Let $L = 43/20$ and $f_0 = 49170839016$. The box of no prime passes (J3) at $f_0$ with $\mathcal S_0 = \mathcal S_1 =
 \emptyset$ and $\iota = 1$, and the term of the box $((f_0, D/2 + 1))$ with the sign $-$ is bounded at $c/\mathcal K$,
 by the search of this section, with
@@ -1907,9 +1912,9 @@ down by $(1 - \lambda)\rho$, and the rest of (J3) grows with the floor.
 The check is in parts. The first prime's range $[f_0, D/2 + 1)$ is cut into $104$ pieces: three parts, ranges of its
 cells searched with the limit $\mathcal K$ and led by hints, cover $[f_0, 0.1007)$, and $101$ cells, $99$ of side
 $4398046511/D$ from $110743490170/D = 0.10072\ldots$ and two up to $D/2 + 1$, have their own step of Buchstab's identity
-taken outside the parts and the next prime's range cut again into parts and further cells. In all $235$ cells are cut
-so, $101$ of the first prime and $134$ of the second; $212$ of their steps of Buchstab's identity use (J3), $23$ use
-(J2), and $201$ are at the floor $f_0$. There are $1510$ parts, in $39$ files. Lemma~\ref{lem:box-identities}(a) and~(b)
+taken outside the parts and the next prime's range cut again into parts and further cells. In all $256$ cells are cut
+so, $101$ of the first prime and $155$ of the second; $227$ of their steps of Buchstab's identity use (J3), $29$ use
+(J2), and $217$ are at the floor $f_0$. There are $1552$ parts, in $17$ files. Lemma~\ref{lem:box-identities}(a) and~(b)
 join the pieces, and their costs add up to $c$ exactly. The pieces' costs show where the cost goes:
 \begin{center}
 \small
@@ -1931,11 +1936,11 @@ Four fifths of the cost is in the cells of the first prime above $x^{0.3}$, and 
 $0.004$ cost about $0.02\mathcal K$ each, near $p_1 = x^{0.41}$ and $x^{0.49}$; below $x^{0.2}$ the first prime costs
 less than $0.02\mathcal K$ in all.
 
-The kernel's search takes $3400745$ steps: $3400510$ in the parts and the $235$ steps of Buchstab's identity outside
-them; $161674$ of them are reversals through the largest prime, and none is a role reversal of three primes. The hints
-take $2466122$ bytes. The search outside the kernel that made the plan visits $34356403$ boxes, $28257594$ of them over
-frozen parts, in about nine minutes on four cores. The kernel checks the $39$ files in about seven hours, each in eight
-to fifteen minutes (the files' own estimates add up to $6.2$ hours); \S S6 has the statistics in more detail.
+The kernel's search takes $3400745$ steps: $3400489$ in the parts and the $256$ steps of Buchstab's identity outside
+them; $161674$ of them are reversals through the largest prime. The hints take $5220964$ bytes. The search outside the
+kernel that made the plan visits $34356403$ boxes, $28257594$ of them over frozen parts, in about nine minutes on four
+cores. The kernel checks the $17$ files in about $76$ minutes, each in three to five minutes; \S S5 and \S S6 have the
+statistics in more detail.
 
 \section{Proof of Theorem~\ref{thm:main}}\label{sec:proof}
 
@@ -1979,8 +1984,8 @@ only. The axioms of a theorem cover its whole dependency cone, so a \lean{sorry}
 \lean{sorryAx}; the library's own sources contain no \lean{sorry}, no declared axiom and no \lean{native\_decide}
 (\texttt{scripts/check\_hygiene.py}). The certificate of Proposition~\ref{prop:certificate} is checked by kernel
 evaluation, \lean{decide +kernel}, and not by compiled code, on definitions that are arithmetic on Lean's core natural
-numbers, lists and booleans: the search that the certificate's hints lead is evaluated in $1510$ parts, in $39$ files
-of eight to fifteen minutes each, about seven hours of the kernel's time, and the $235$ Buchstab steps that join the
+numbers, lists and booleans: the search that the certificate's hints lead is evaluated in $1552$ parts, in $17$ files
+of three to five minutes each, about $76$ minutes of the kernel's time, and the $256$ Buchstab steps that join the
 parts are proved one by one. The proof's import cone contains no module of the library's formalisation of Chen, Gupta
 and Li's paper, and no declaration of Ingham's estimate is reachable from it. The toolchain is Lean \texttt{v4.35.0-rc3}
 with Mathlib at commit \texttt{0f64d30a}, and the repository's continuous integration builds the library and checks
@@ -2068,12 +2073,14 @@ the zeros only in sums of two variables near $q$ times a product of primes, wher
 every $L$ and uses the density estimate only above $0.7789$, and it recovers the primes from those sums at the cost that
 the certificate bounds. In exponents of $x$ the region shrinks as $L$ grows smaller, and more of the sieve's terms
 fall outside it: the cost is $0.94847$ at $43/20$, and the plan of the same search passes at $2.145$ with cells of side
-$0.0035$ (cost $0.975$, about twice the build). About a quarter of the cost at $43/20$ is the cells' width, and each
-$0.005$ of exponent costs between $5\%$ and $9\%$ of it, so with these rules even the limit of fine cells stops between
-$2.13$ and $2.14$; below that the sieve needs a second level of reversal as well (\S S6). A model of the same sieve with
-reversals of terms of up to six primes, at two levels, passes at $2.12$ on cells of side $0.002$ and approaches $2.10$
-in the limit of fine cells, which corresponds to Baker, Harman and Pintz's exponent $0.525$ for primes in short
-intervals \cite{bhp}. These are floating-point computations, not certificates (\S S6). Going much further needs Type~I
+$0.0035$ (cost $0.975$, about twice the build). About a quarter of the cost at $43/20$ is the cells' width, each
+$0.005$ of exponent costs between $5\%$ and $9\%$ of it, and the rules that the certificate lacks are worth a few per
+cent each in the exact search: by these estimates $2.14$ needs several of them and cells of side about $0.003$
+together, and $2.12$ is beyond them (\S S6). A model of the same sieve in floating point, with reversals of terms of up
+to six primes and of either sign, at two levels, passes at $2.12$ on cells of side $0.002$ and approaches $2.10$ in the
+limit of fine cells, which corresponds to Baker, Harman and Pintz's exponent $0.525$ for primes in short intervals
+\cite{bhp}; but at $2.12$ it rests on reversing terms of the sign $+$ twice, which in the exact search saves nothing
+(\S S6). Going much further needs Type~I
 information on longer products, or a Type~II estimate on a wider region, which a better density estimate above
 $0.7789$ would give only a little of (Section~\ref{sec:region}).
 
@@ -2122,7 +2129,8 @@ Dirichlet's theorem is Mathlib's.
 \file{SieveAdFrozTests.lean} & \lean{SieveAd.frozTests\_sound} \\
 \file{SieveAdFlip.lean} & \lean{SieveAd.flip\_cover}, \lean{SieveAd.flip\_inject} \\
 \file{SieveAdFlipSum.lean} & \lean{SieveAd.froz\_weight\_le}, \lean{SieveAd.bd\_flip\_neg} \\
-\file{SieveAdHint.lean} & \lean{SieveAd.bd\_flipCostH}, \lean{SieveAd.altFH\_sound}, \lean{SieveAd.solveH\_sound}, \lean{SieveAd.pr\_of\_kidsH} \\
+\file{SieveAdFast.lean} & \lean{SieveAd.fillTestsF\_eq}, \lean{SieveAd.frozTestsF\_eq} \\
+\file{SieveAdDir.lean} & \lean{SieveAd.bd\_flipCostD}, \lean{SieveAd.altFD\_sound}, \lean{SieveAd.solveD\_sound}, \lean{SieveAd.pr\_of\_partD} \\
 \file{SieveAdSearchG.lean} & \lean{SieveAd.solveG\_sound} \\
 \file{SieveAdRevSearch.lean} & \lean{SieveAd.linnik\_pr} \\
 \file{HalfPlaneFinal.lean} & \lean{HalfPlanePNT.psi\_isBigO\_eleven\_twelfths} \\
@@ -2240,18 +2248,21 @@ Lemma~\ref{lem:frozen-weight}, the weight of a frozen part & \lean{SieveAd.froz\
 Lemma~\ref{lem:frozen-tests}, the tests over a frozen part & \lean{SieveAd.frozTests\_sound} \\
 Lemma~\ref{lem:frozen-tree}, the trees over a frozen part & \lean{SieveAd.frozSolve\_sound} \\
 Proposition~\ref{prop:reversal}, the reversal through the largest prime & \lean{SieveAd.bd\_flip\_neg}, \\
- & \lean{SieveAd.bd\_flipCostH} \\
+ & \lean{SieveAd.bd\_flipCostD} \\
 Proposition~\ref{prop:tree-bound}, what a tree gives & \lean{SieveAd.sound} (the nodes but (R)), \\
- & \lean{SieveAd.altFH\_sound} (R) \\
+ & \lean{SieveAd.altFD\_sound} (R) \\
 Theorem~\ref{thm:tree}, Linnik's theorem from the root's bound & \lean{SieveAd.linnik\_pr}, \\
  & \lean{SieveAd.linnik\_bd} \\
 \quad the main term, the primes of $(x, 2x]$ & \lean{SieveAd.Ttop\_gB\_ge} \\
 Lemma~\ref{lem:search}, the searches are sound & \lean{SieveAd.solveG\_sound}, \\
- & \lean{SieveAd.solveH\_sound}, \\
- & \lean{SieveAd.pr\_of\_kidsH} \\
+ & \lean{SieveAd.solveD\_sound}, \\
+ & \lean{SieveAd.pr\_of\_partD} \\
 Proposition~\ref{prop:certificate}, the certificate & \lean{Linnik21500.tree21500}, \\
  & \lean{Linnik21500.part21500}, \\
- & \lean{Linnik21500.sound21500} \\
+ & \lean{Linnik21500.sound21500}, \\
+ & \lean{Linnik21500.soundF21500} \\
+\quad the tests in one pass, equal to the tests & \lean{SieveAd.fillTestsF\_eq}, \\
+ & \lean{SieveAd.frozTestsF\_eq} \\
 \quad the root's test, by evaluation & \lean{Linnik21500.linnik\_21500} \\
 \quad Dirichlet's theorem, for the small moduli (Mathlib) & \lean{Nat.forall\_exists\_prime\_gt\_and\_modEq} \\
 \quad the prime number theorem, from Input~\ref{inp:half-plane} & \lean{HalfPlanePNT.psi\_isBigO\_eleven\_twelfths} \\

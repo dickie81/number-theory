@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1772 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1775 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 233, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 236, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 191 | 679 |
-| `lib/pnt` | 321 | 980 |
+| `lib/pnt` | 322 | 983 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1516,6 +1516,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `Linnik21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints
 
 - `Linnik21500.sound21500`: The tests at `2150 / 1000` are sound. *paper*
+- `Linnik21500.soundF21500`: The tests in one pass at `2150 / 1000` are sound *paper*
 - `Linnik21500.part21500`: A part of the search bounds its term *paper*
 - `Linnik21500.tree21500`: The first term at `2150 / 1000` *paper* ([note](../formalisations/harman-sieve.md))
 - `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints *paper* ([note](../formalisations/chen-gupta-li-density.md))
@@ -2477,6 +2478,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.ok`: The tree is valid on the box; `par` says that the term enters the sieve with the sign `+`, so that it may be dropped. *paper*
 - `SieveAd.cost`: The cost of the tree on the box, in units of `1/K` *paper*
 
+#### `SieveAdDir`: The search led by hints is sound
+
+- `SieveAd.solveD_sound`: The search led by hints is sound *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.bd_flipCostD`: The cost of a reversal through the largest prime, its tree searched by hints, bounds the term *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.altFD_sound`: The hinted bound of the main search proves `PR` *paper*
+- `SieveAd.pr_of_partD`: A part of the main search *paper*
+- `SieveAd.pr_of_partD_at`: A part of the main search, for any route ([note](../formalisations/harman-sieve.md))
+
 #### `SieveAdFamCore`: The two comparisons at a floor for a family of tuples of distinct primes, on bounds for its products
 
 - `SieveAd.evJ_fam_fill_at`: The comparison with the rest among the tree's primes, for a family of tuples of distinct primes, for any route ([note](../formalisations/harman-sieve.md))
@@ -2485,6 +2494,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdFamSet`: The terms at a floor of a family of tuples of distinct primes, in any order
 
 - `SieveAd.evJ_famSet_at`: The terms at a floor of a family of tuples of distinct primes are evaluated when its boxes are, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdFast`: The tests in one pass are the tests
+
+- `SieveAd.fillTestsF_eq`: The tests with no window in one pass are `fillTests` *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.frozTestsF_eq`: The tests of the tree over a frozen part in two passes are `frozTests` *paper* ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFill`: The tests with no window are sound
 
@@ -2560,14 +2574,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdFull`: The estimate in two variables on tuples of primes with a given product, in no order
 
 - `SieveAd.full2_core_at`: Tuples of primes with product in `(N₁, N₂]`, on exponents that pass the checks, for any route ([note](../formalisations/harman-sieve.md))
-
-#### `SieveAdHint`: The search led by hints is sound
-
-- `SieveAd.solveH_sound`: The search led by hints is sound *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveAd.bd_flipCostH`: The cost of a reversal through the largest prime, its tree searched by hints, bounds the term *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveAd.altFH_sound`: The hinted bound of the main search proves `PR` *paper*
-- `SieveAd.pr_of_kidsH`: A part of the main search led by hints *paper*
-- `SieveAd.pr_of_kidsH_at`: A part of the main search led by hints, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdRev`: The tree of a reversed term bounds it
 

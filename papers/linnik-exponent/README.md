@@ -45,8 +45,9 @@ paper's sieve brings them down to `43/20 = 2.15`. It is not on the same footing 
 Heath-Brown and Xylouris, whose proofs use refereed results only, while this one uses the half-plane through its
 formalisation. The claims table (Appendix A) names the Lean theorem behind each claim, and `lib/check/Check.lean`
 prints their axioms (`lib/check/CheckAll.lean`, with `python3 scripts/check_axioms.py --all`, prints the axioms of
-further declarations of the library). The certificate is checked by the kernel in 1510 parts, in the 39 files
-`lib/pnt/SieveHint21500P1.lean` to `SieveHint21500P39.lean`, which `tools/linnik/hint_cert.py` writes.
+further declarations of the library). The certificate is checked by the kernel in 1552 parts, in the 17 files
+`lib/pnt/SieveHint21500P1.lean` to `SieveHint21500P17.lean`, which `tools/linnik/hint_cert.py` writes; about 76
+minutes of the kernel's time.
 
 To build: `latexmk -pdf main.tex`, then `latexmk -pdf supplement.tex` (pdfLaTeX, as CI does; the supplement reads the
 paper's numbering from `main.aux` through `xr-hyper`). The preamble also lets XeTeX (for example

@@ -1010,9 +1010,9 @@ frozen part, with any number of them (\lean{SieveAd.evJ\_fill\_core}, \lean{Siev
 (I$_{\mathcal M}$) goes through Lemma~\ref{M-lem:chains-two} directly (\lean{SieveAd.full2\_core}). The trees of
 Definition~\ref{M-def:tree} without the node (R) are \lean{SieveAd.Tree}, checked by \lean{SieveAd.ok}, and
 Proposition~\ref{M-prop:tree-bound} for them is \lean{SieveAd.sound}. The reversal is not a node of
-\lean{SieveAd.Tree} but a rule of the searches (\lean{SieveAd.altFH}), with the bound of
-Proposition~\ref{M-prop:reversal} (\lean{SieveAd.bd\_flipCostH}). What the searches prove, Lemma~\ref{M-lem:search}
-(\lean{SieveAd.solveG\_sound} for any rules, \lean{SieveAd.solveH\_sound} for the search led by hints), is the bound
+\lean{SieveAd.Tree} but a rule of the searches (\lean{SieveAd.altFD} in the search led by hints), with the bound of
+Proposition~\ref{M-prop:reversal} (\lean{SieveAd.bd\_flipCostD}). What the searches prove, Lemma~\ref{M-lem:search}
+(\lean{SieveAd.solveG\_sound} for any rules, \lean{SieveAd.solveD\_sound} for the search led by hints), is the bound
 \lean{SieveAd.PR}, that the term of a box with a sign is bounded at a cost, and not the tree; Theorem~\ref{M-thm:tree} is
 \lean{SieveAd.linnik\_pr}, from that bound.
 The prime number theorem of Theorem~\ref{M-thm:tree} is derived from the case of $\zeta$ of Input~\ref{M-inp:half-plane},
@@ -1062,26 +1062,29 @@ kernel checks that proof; \file{formalisations/huxley-density.md} compares its s
 The library's own sources, the directories \texttt{lib/core}, \texttt{lib/pnt}, \texttt{lib/dh},
 \texttt{lib/zeta23} and \texttt{lib/check}, contain no \lean{sorry}, no declared axiom and no \lean{native\_decide},
 which \texttt{scripts/check\_hygiene.py} checks. The library vendors 19 files of PrimeNumberTheoremAnd \cite{pnt-plus}
-and, in \texttt{lib/vendor/zeta23}, 59 files of the \texttt{zeta23} folder of Anthropic's \texttt{formal-math}
+and, in \texttt{lib/vendor/zeta23}, 117 files of the \texttt{zeta23} folder of Anthropic's \texttt{formal-math}
 \cite{formal-math}, each ported to the
 library's toolchain by a patch that the repository records. That scan does not cover them; but the import cone of
 Theorem~\ref{M-thm:main} contains 15 of the PrimeNumberTheoremAnd files and none of the \texttt{zeta23} ones, and not
 \texttt{Wiener.lean}, the vendored file that contains \lean{sorry}. In any case the axiom check of the theorems in the
 table of Appendix~\ref{M-app:claims} covers the whole dependency cone of each, and a \lean{sorry} in it would appear there
-as \lean{sorryAx}. The import cone of Theorem~\ref{M-thm:main} has $503$ files of the library, $282$ in
-\texttt{lib/core} and $221$ in \texttt{lib/pnt}; it contains no module of the library's formalisation of Chen, Gupta and
+as \lean{sorryAx}. The import cone of Theorem~\ref{M-thm:main} has $482$ files of the library, $282$ in
+\texttt{lib/core} and $200$ in \texttt{lib/pnt}; it contains no module of the library's formalisation of Chen, Gupta and
 Li's paper.
 
 The certificate of Proposition~\ref{M-prop:certificate} is checked by kernel evaluation, \lean{decide +kernel}, and not
-by compiled code. The search led by hints is evaluated on $1510$ parts, the theorems \lean{SieveAd.tree21500\_0} to
-\lean{SieveAd.tree21500\_1509} in the $39$ files \file{lib/pnt/SieveHint21500P1.lean} to
-\file{lib/pnt/SieveHint21500P39.lean}, each of which bounds the search's value on a range of cells; the $235$ steps of
+by compiled code. The search led by hints is evaluated on $1552$ parts, the theorems \lean{SieveAd.tree21500\_0} to
+\lean{SieveAd.tree21500\_1551} in the $17$ files \file{lib/pnt/SieveHint21500P1.lean} to
+\file{lib/pnt/SieveHint21500P17.lean}, each of which bounds the search's value on a range of cells; the $256$ steps of
 Buchstab's identity that join the parts, and the root's test, are proved one by one in \file{lib/pnt/Linnik21500.lean},
-each by \lean{decide +kernel}. The files' own estimates of the kernel's time are between $421$ and $598$ seconds each,
-$22157$ seconds in all, about $6.2$ hours; the kernel takes about $3.6$ ms on an evaluated box, $8.4$ ms on a step of
-Buchstab's identity ($11.5$ ms over a frozen part), $1.7$ ms on a dropped box and $42$ ms on a reversal's root
-(\file{tools/linnik/hint\_cert.py} fits these on the parts). The hints are $1510$ natural numbers, $2466122$ bytes in
-all, written in hexadecimal.
+each by \lean{decide +kernel}. The kernel checks each file in $187$ to $303$ seconds, about $76$ minutes in all; it
+takes about $0.3$ ms on an evaluated box ($0.8$ ms over a frozen part), $1.2$ ms on a step of Buchstab's identity
+($2.1$ ms), $0.25$ ms on a dropped box ($0.35$ ms) and $3$ ms on a reversal's root. The search reads every
+configuration from the hints (\file{lib/pnt/SieveAdDirDefs.lean}), and its tests are written for the kernel: one pass
+over a box by the recursor of lists, with the arithmetic of the natural numbers written out and the bits of the sets as
+factors (\lean{SieveAd.fillTestsF}, \lean{SieveAd.frozTestsF}). They are proved equal to the tests of
+Lemmas~\ref{M-lem:tests} and~\ref{M-lem:frozen-tests} (\lean{SieveAd.fillTestsF\_eq}, \lean{SieveAd.frozTestsF\_eq}),
+so they are sound. The hints are $1552$ natural numbers, $5220964$ bytes in all, written in hexadecimal.
 The definitions the kernel evaluates are arithmetic on Lean's core natural numbers, lists and booleans; their files
 import from Mathlib only the notation $\mathbb N$. Lean's kernel reduces the operations of the natural numbers on
 literals (addition, multiplication, division, comparison and the like) by the GMP library's arithmetic rather than by
@@ -1129,8 +1132,7 @@ The plan of Proposition~\ref{M-prop:certificate} is made by \file{tools/linnik/h
 Section~\ref{M-sec:certificate} in Python, definition by definition and in exact integers, with the strategy of that
 section, and keeps the nodes that it takes. At $43/20$ it visits $34356403$ boxes, $28257594$ of them over the frozen
 parts of reversals, in about nine minutes on four cores; its plan has $3400745$ steps, the nodes of the trees over the
-frozen parts included, of which $161674$ are reversals through the largest prime and none is a role reversal of three
-primes. Before it writes a part, the script runs the part through its own copy of the search led by hints, which the
+frozen parts included, of which $161674$ are reversals through the largest prime. Before it writes a part, the script runs the part through its own copy of the search led by hints, which the
 kernel then evaluates. The plan joins consecutive cells that one test evaluates, and consecutive dropped cells while the
 joined cell's cost stays within $0.2\%$ of the sum of theirs, so the certificate's cells are unions of the strategy's.
 These numbers are the script's, written into the header of \file{lib/pnt/Linnik21500.lean}; the cost $c$ and the
@@ -1139,15 +1141,20 @@ number of parts are the Lean's.
 \subsection*{Below $43/20$}
 
 The plan of the same search passes at $L = 2.145$ with cells of side $0.0035$: its cost is $0.975\mathcal K$, on
-$6.0 \cdot 10^7$ boxes, with $6.6 \cdot 10^6$ steps and $4.6$ MB of hints, about eleven hours of the kernel's time; that
-plan is not in the library. With each test of the search taken at the midpoint of its cell in place of the whole cell,
+$6.0 \cdot 10^7$ boxes, with $6.6 \cdot 10^6$ steps, which would be about ten MB of hints and two and a half hours of
+the kernel's time; that plan is not in the library. With each test of the search taken at the midpoint of its cell in place of the whole cell,
 which is no certificate, the cost at $43/20$ falls by $24.6\%$; with those of one kind alone, by $12.1\%$ (the estimate
 in two variables over the frozen parts of the reversals), $5.8\%$ (the same in the main tree), $5.8\%$ (the comparisons at
 a floor in the main tree) and $4.1\%$ (those over the frozen parts). So about a quarter of the cost is the cells'. Each $0.005$ of the exponent costs between $5\%$ and
 $9\%$: on cells of side $0.005$ the cost is $0.829\mathcal K$, $0.981\mathcal K$ and $1.034\mathcal K$ at $2.165$, $2.155$
-and $2.15$. A second level of reversal, through the primes of a reversed term, is worth about $9\%$ in the model below.
-So $2.14$ wants a second level or two fifths of the cells' loss back, $2.13$ both, with more than half of it, and $2.12$
-both, with all of it.
+and $2.15$. The rules that the certificate lacks are worth a few per cent each, measured in exact integers at $43/20$
+on twenty of the first prime's cells, where the plan costs $0.15403\mathcal K$ (\file{tools/linnik/hint\_probe.py}): a
+second level of reversal, a box of the sign $-$ in the tree over a reversed box's frozen part reversed again through
+the largest frozen prime, saves $2.3\%$ for $2.6$ times the search; the reversal of boxes of the sign $+$, which the
+library proves (\lean{SieveAd.bd\_flip\_pos}) but the search does not use, $2.3\%$ for twice the search; and a plan that
+weighs each step's cost against its time in the kernel, about $5\%$ at equal time. By these numbers, which are
+estimates (no plan was made at $2.14$), $2.14$ needs the last two and cells of side about $0.003$ together, on a
+certificate two to three times this one; nothing measured gives $2.13$, and $2.12$ is beyond these rules.
 
 A model of the sieve, \file{tools/linnik/harman\_sieve.py}, takes each term with its own floor, the comparisons of
 Section~\ref{M-sec:type1} at every depth, and the reversal of a term of up to six primes through any of its primes, once
@@ -1168,7 +1175,13 @@ So the model passes at $2.12$, and its limit of fine cells is near $2.10$, which
 Pintz's exponent $0.525$ for primes in short intervals \cite{bhp} in the dictionary of a modulus $q = x^{1/L}$ with an
 interval of length $x^{1 - 1/L}$. What carries it, at $2.13$ on cells of side $0.004$, where the loss is $1.006$, is the
 reversal ($1.090$ without its second level, $1.269$ for terms of at most four primes, $1.426$ with none) and the
-bilinear Type~I estimate on the wider region ($1.174$ without it). It is floating point, and not a certificate.
+bilinear Type~I estimate on the wider region ($1.174$ without it). It is floating point, and not a certificate; and
+it reverses terms of either sign. On the certificate's shapes, terms of the sign $-$ reversed alone, it gives $0.898$
+at $2.15$ on cells of side $0.004$ with one level, where the exact search gives $0.948$, and $0.848$ with two; so the
+second level is worth $5.6\%$ there, where the exact search finds $2.3\%$, and the model's gain at $2.12$ rests on
+reversing again the boxes of the sign $+$. In the exact search that saves nothing: on nine cells of the first prime
+from $x^{0.16}$ to $x^{0.47}$, no box of two primes that the plan drops (they are $42\%$ of its cost) costs less
+reversed than dropped, with one level or two.
 
 
 % The paper's references (references.tex), numbered as in the paper, then the three cited only here: AIProofWatch's
