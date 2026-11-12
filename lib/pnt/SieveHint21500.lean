@@ -12,7 +12,7 @@ The bilinear Type I rule's exponent `2150/1000` (`ibPar21500`), and `solve21500`
   (`SieveAd.kidsM`) on the grid of side at most `4398046511/DEN` (`0.004`) and at most the exponent over
   `10`;
 * as its hinted bound, the reversal through the largest prime of boxes of at most `6` primes
-  (`SieveAd.altFD`), with the tests `SieveAd.frozTestsF` and the chains over the frozen parts on the grid of side
+  (`SieveAd.altFD`), with the tests `SieveAd.frozTestsC` and the chains over the frozen parts on the grid of side
   at most `6597069767/DEN` (`0.006`);
 * the depth of recursion `200`.
 

@@ -2,14 +2,18 @@
 # The tests in one pass are the tests
 
 Plain statements. `SieveAdFastDefs.lean` computes the tests of the trees in one pass over the box by the recursor
-of lists. Here they are proved equal to the tests that the estimates are proved for, as functions:
+of lists. Here they are compared with the tests that the estimates are proved for:
 
 * `bpass_eq`: what a pass gives its continuation: the sums of `mSum`, `loSum`, `hiSum` over the first cells, the
   sum `devSum` of the cells' deviations and the length.
 * `cellsP_eq`: the cells' check from the deviations is `cellsFrom`.
 * `uOfP_eq`, `vOfP_eq`, `coreI2P_eq`, `coreJ2_eq`, `coreJ3_eq`: the checks on numbers.
-* `fillTestsF_eq`: **the tests with no window in one pass are `fillTests`.**
-* `frozTestsF_eq`: **the tests of the tree over a frozen part in two passes are `frozTests`.**
+* `fillTestsF_eq`: **the tests with no window in one pass are `fillTests`**, as functions.
+* `frozTestsC_okI`, `frozTestsC_okJ`: **the tests of the tree over a frozen part that read the frozen primes once
+  for the tree imply `frozTests`**, on a box that is a chain followed by the frozen primes, when the frozen
+  primes' cells pass the check `cellsFrom 1`. Those are the boxes that a statement of the tree concerns. The tests
+  are not equal as functions: `frozTestsC` checks the cells of the chain only, and not the cells that follow them
+  in the box.
 
 The file imports `SieveAdFastDefs.lean` only.
 -/
@@ -141,17 +145,6 @@ theorem cond_ble (a b : ℕ) {α : Type} (x y : α) : cond (Nat.ble a b) x y = i
       cases h
     simp [hnle]
 
-theorem and_and_left (a b c : Bool) : (a && b && (a && c)) = (a && b && c) := by
-  cases a <;> cases b <;> rfl
-
-theorem and_and_left4 (a b c d x : Bool) : (a && b && c && d && (a && x)) = (a && b && c && d && x) := by
-  cases a <;> cases b <;> cases c <;> cases d <;> rfl
-
-theorem chainOf_length (β bl : List Cell) : (chainOf β.length bl).length = bl.length - β.length := by
-  unfold chainOf
-  rw [List.length_take]
-  omega
-
 theorem cofP_eq (m nch nb : ℕ) : cofP m nch nb = Nat.testBit (m / 2 ^ nch) nb := by
   show Nat.beq ((m / 2 ^ nch / 2 ^ nb) &&& 1) 1 = _
   rw [Nat.testBit_eq_decide_div_mod_eq, Nat.and_one_is_mod]
@@ -230,49 +223,152 @@ theorem fillTestsF_eq : (fillTestsF : Tests) = fillTests := by
   · funext bl f cfg
     rw [okJ3F_eq, okJ2F_eq]
 
-/-! ### The tests of the tree over a frozen part -/
+/-! ### The tests of the tree over a frozen part, the frozen primes read once for each tree -/
 
-theorem okIFF_eq (e₁ e₂ : ℕ) (β bl : List Cell) (cfg : Cfg) : okIFF e₁ e₂ β bl cfg = okIF e₁ e₂ β bl cfg := by
-  unfold okIFF
-  simp only [lenR_eq]
-  rw [bpass_eq]
-  simp only [Nat.zero_add]
-  rw [bpass_eq]
-  simp only [Nat.zero_add, List.take_length, roleP, cofP_eq, cellsP_eq, coreI2P_eq]
-  simp only [okIF, loR, hiR, chainOf_length]
-  rfl
+omit [SieveCert.IBPar] in
+theorem canonN_eq {α : Type} (m : ℕ) (k : ℕ → α) : canonN m k = k m := by
+  cases m <;> rfl
 
-theorem okJF3F_eq (e₁ e₂ Kb : ℕ) (β bl : List Cell) (f : ℕ) (cfg : Cfg) :
-    okJF3F e₁ e₂ Kb β bl f cfg = okJF3 e₁ e₂ Kb β bl f cfg := by
-  unfold okJF3F
-  simp only [lenR_eq]
-  rw [bpass_eq]
-  simp only [Nat.zero_add]
-  rw [bpass_eq]
-  simp only [Nat.zero_add, List.take_length, roleP, cofP_eq, cellsP_eq, uOfP_eq, vOfP_eq]
-  simp only [okJF3, coreJ3_eq, loR, hiR, hiRc, chainOf_length]
-  rw [and_and_left]
-  rfl
+omit [SieveCert.IBPar] in
+theorem msumP_eq : ∀ (l : List Cell) (m a b : ℕ),
+    msumP l m a b = (a + mSum (fun c => c.1) l m, b + mSum (fun c => c.2) l m)
+  | [], _, _, _ => rfl
+  | x :: l, m, a, b => by
+    show msumP l (m / 2) (a + (m &&& 1) * x.1) (b + (m &&& 1) * x.2) = _
+    rw [msumP_eq l]
+    simp only [mSum, land_one_mul, Nat.add_assoc]
 
-theorem okJF2F_eq (e₁ e₂ Kb : ℕ) (β bl : List Cell) (f : ℕ) (cfg : Cfg) :
-    okJF2F e₁ e₂ Kb β bl f cfg = okJF2 e₁ e₂ Kb β bl f cfg := by
-  unfold okJF2F
-  simp only [lenR_eq]
-  rw [bpass_eq]
-  simp only [Nat.zero_add]
-  rw [bpass_eq]
-  simp only [Nat.zero_add, List.take_length, roleP, cofP_eq, cellsP_eq, uOfP_eq, vOfP_eq]
-  simp only [okJF2, coreJ2_eq, loR, hiR, hiRc, chainOf_length]
-  rw [and_and_left4]
-  rfl
+omit [SieveCert.IBPar] in
+/-- **What the pass over the chain gives its continuation**: the sums over the first `j` cells. -/
+theorem cpass_eq (f : ℕ) : ∀ (l : List Cell) (j m0 mr m1 a0 b0 ar br a1 b1 bT e n : ℕ)
+    (k : ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → Bool),
+    cpass f l j m0 mr m1 a0 b0 ar br a1 b1 bT e n k =
+      k (a0 + mSum (fun c => c.1) (l.take j) m0) (b0 + mSum (fun c => c.2) (l.take j) m0)
+        (ar + mSum (fun c => c.1) (l.take j) mr) (br + mSum (fun c => c.2) (l.take j) mr)
+        (a1 + mSum (fun c => c.1) (l.take j) m1) (b1 + mSum (fun c => c.2) (l.take j) m1)
+        (bT + hiSum (l.take j)) (e + devSum f (l.take j)) (n + (l.take j).length) := by
+  intro l
+  induction l with
+  | nil =>
+    intro j m0 mr m1 a0 b0 ar br a1 b1 bT e n k
+    show k a0 b0 ar br a1 b1 bT e n = _
+    simp [mSum, hiSum, devSum]
+  | cons x l ih =>
+    intro j m0 mr m1 a0 b0 ar br a1 b1 bT e n k
+    cases j with
+    | zero =>
+      show k a0 b0 ar br a1 b1 bT e n = _
+      simp [mSum, hiSum, devSum]
+    | succ j =>
+      show cpass f l (j + 1 - 1) (m0 / 2) (mr / 2) (m1 / 2) (a0 + (m0 &&& 1) * x.1) (b0 + (m0 &&& 1) * x.2)
+        (ar + (mr &&& 1) * x.1) (br + (mr &&& 1) * x.2) (a1 + (m1 &&& 1) * x.1) (b1 + (m1 &&& 1) * x.2) (bT + x.2)
+        (e + ((x.1 - f) + (x.2 - x.1) + (DEN - x.2))) (n + 1) k = _
+      rw [ih]
+      simp only [Nat.add_sub_cancel, List.take_succ_cons, mSum, hiSum, devSum, List.length_cons, land_one_mul]
+      congr 1 <;> omega
 
-/-- **The tests of the tree over a frozen part in two passes are `frozTests`.** -/
-theorem frozTestsF_eq (e₁ e₂ Kb : ℕ) (β : List Cell) : frozTestsF e₁ e₂ Kb β = frozTests e₁ e₂ Kb β := by
-  unfold frozTestsF frozTests
-  congr 1
-  · funext bl cfg
-    exact okIFF_eq e₁ e₂ β bl cfg
-  · funext bl f cfg
-    rw [okJF3F_eq, okJF2F_eq]
+omit [SieveCert.IBPar] in
+theorem cellsFrom_append (f : ℕ) : ∀ l₁ l₂ : List Cell, cellsFrom f (l₁ ++ l₂) = (cellsFrom f l₁ && cellsFrom f l₂)
+  | [], l₂ => by simp [cellsFrom]
+  | c :: b, l₂ => by
+    show (Nat.ble f c.1 && Nat.ble c.1 c.2 && Nat.ble c.2 DEN && cellsFrom f (b ++ l₂)) =
+      (Nat.ble f c.1 && Nat.ble c.1 c.2 && Nat.ble c.2 DEN && cellsFrom f b && cellsFrom f l₂)
+    rw [cellsFrom_append f b l₂]
+    simp only [Bool.and_assoc]
+
+omit [SieveCert.IBPar] in
+/-- A floor at most `lomP` of the cells is at most their lower ends: the cells' check at one floor gives it at
+that one. -/
+theorem cellsFrom_of_lomP {f g : ℕ} : ∀ (l : List Cell) (a : ℕ), cellsFrom g l = true → f ≤ lomP l a →
+    cellsFrom f l = true ∧ lomP l a ≤ a
+  | [], a, _, _ => ⟨rfl, Nat.le_refl a⟩
+  | x :: l, a, h, hf => by
+    have hf' : f ≤ lomP l (a - (a - x.1)) := hf
+    simp only [cellsFrom, Bool.and_eq_true, Nat.ble_eq] at h
+    obtain ⟨hc, hle⟩ := cellsFrom_of_lomP l (a - (a - x.1)) h.2 hf'
+    refine ⟨?_, ?_⟩
+    · simp only [cellsFrom, Bool.and_eq_true, Nat.ble_eq]
+      refine ⟨⟨⟨?_, h.1.1.2⟩, h.1.2⟩, hc⟩
+      omega
+    · show lomP l (a - (a - x.1)) ≤ a
+      omega
+
+omit [SieveCert.IBPar] in
+theorem chainOf_app (ch β : List Cell) : chainOf β.length (ch ++ β) = ch := by
+  unfold chainOf
+  rw [List.length_append, Nat.add_sub_cancel]
+  exact List.take_left' rfl
+
+omit [SieveCert.IBPar] in
+theorem lenR_app_sub (ch β : List Cell) : Nat.sub (lenR (ch ++ β)) β.length = ch.length := by
+  rw [lenR_eq, List.length_append]
+  show ch.length + β.length - β.length = ch.length
+  omega
+
+/-- **`okIFC` implies `okIF`** on a box that is a chain followed by the frozen primes, whose cells pass the
+check. -/
+theorem okIFC_imp (e₁ e₂ : ℕ) (β ch : List Cell) (cfg : Cfg) (hβ : cellsFrom 1 β = true)
+    (h : okIFC e₁ e₂ β (loSum β) (hiSum β) β.length (ch ++ β) cfg = true) : okIF e₁ e₂ β (ch ++ β) cfg = true := by
+  unfold okIFC at h
+  simp only [lenR_app_sub] at h
+  rw [cpass_eq] at h
+  simp only [canonN_eq, roleB, msumP_eq, cofP_eq, Nat.zero_add, List.take_left' rfl, cellsP_eq, coreI2P_eq,
+    Nat.pow_zero, Nat.div_one] at h
+  simp only [okIF, loR, hiR, chainOf_app, cellsFrom_append, hβ, Bool.and_true]
+  exact h
+
+/-- **`okJF3C` implies `okJF3`** on a box that is a chain followed by the frozen primes, whose cells pass the
+check, for `lomβ` their least lower end. -/
+theorem okJF3C_imp (e₁ e₂ Kb : ℕ) (β ch : List Cell) (f : ℕ) (cfg : Cfg) (hβ : cellsFrom 1 β = true)
+    (h : okJF3C e₁ e₂ Kb β (loSum β) (hiSum β) β.length (lomP β DEN) (ch ++ β) f cfg = true) :
+    okJF3 e₁ e₂ Kb β (ch ++ β) f cfg = true := by
+  unfold okJF3C at h
+  simp only [lenR_app_sub] at h
+  rw [cpass_eq] at h
+  simp only [canonN_eq, roleB, msumP_eq, cofP_eq, Nat.zero_add, List.take_left' rfl, cellsP_eq, uOfP_eq, vOfP_eq,
+    Nat.pow_zero, Nat.div_one] at h
+  simp only [okJF3, coreJ3_eq, loR, hiR, hiRc, chainOf_app, cellsFrom_append]
+  simp only [Bool.and_eq_true] at h ⊢
+  obtain ⟨⟨⟨hA, hC⟩, hL⟩, hcore⟩ := h
+  rw [Nat.ble_eq] at hL
+  exact ⟨⟨hA, hC, (cellsFrom_of_lomP β DEN hβ hL).1⟩, hA, hcore⟩
+
+/-- **`okJF2C` implies `okJF2`** on a box that is a chain followed by the frozen primes, whose cells pass the
+check, for `lomβ` their least lower end. -/
+theorem okJF2C_imp (e₁ e₂ Kb : ℕ) (β ch : List Cell) (f : ℕ) (cfg : Cfg) (hβ : cellsFrom 1 β = true)
+    (h : okJF2C e₁ e₂ Kb β (loSum β) (hiSum β) β.length (lomP β DEN) (ch ++ β) f cfg = true) :
+    okJF2 e₁ e₂ Kb β (ch ++ β) f cfg = true := by
+  unfold okJF2C at h
+  simp only [lenR_app_sub] at h
+  rw [cpass_eq] at h
+  simp only [canonN_eq, roleB, msumP_eq, cofP_eq, Nat.zero_add, List.take_left' rfl, cellsP_eq, uOfP_eq, vOfP_eq,
+    Nat.pow_zero, Nat.div_one] at h
+  simp only [okJF2, coreJ2_eq, loR, hiR, hiRc, chainOf_app, cellsFrom_append]
+  simp only [Bool.and_eq_true] at h ⊢
+  obtain ⟨⟨⟨⟨⟨hA, hC⟩, hL⟩, hS⟩, hR⟩, hcore⟩ := h
+  rw [Nat.ble_eq] at hL
+  exact ⟨⟨⟨⟨hA, hC, (cellsFrom_of_lomP β DEN hβ hL).1⟩, hS⟩, hR⟩, hA, hcore⟩
+
+/-- **The tests that read the frozen primes once for each tree imply `frozTests`**, on a box that is a chain
+followed by the frozen primes, whose cells pass the check: for the term of the box. -/
+theorem frozTestsC_okI (e₁ e₂ Kb : ℕ) (β ch : List Cell) (cfg : Cfg) (hβ : cellsFrom 1 β = true)
+    (h : (frozTestsC e₁ e₂ Kb β (loSum β) (hiSum β) β.length (lomP β DEN)).okI (ch ++ β) cfg = true) :
+    (frozTests e₁ e₂ Kb β).okI (ch ++ β) cfg = true :=
+  okIFC_imp e₁ e₂ β ch cfg hβ h
+
+/-- The same for the terms at a floor. -/
+theorem frozTestsC_okJ (e₁ e₂ Kb : ℕ) (β ch : List Cell) (f : ℕ) (cfg : Cfg) (hβ : cellsFrom 1 β = true)
+    (h : (frozTestsC e₁ e₂ Kb β (loSum β) (hiSum β) β.length (lomP β DEN)).okJ (ch ++ β) f cfg = true) :
+    (frozTests e₁ e₂ Kb β).okJ (ch ++ β) f cfg = true := by
+  have h' : cond (Nat.beq cfg.kind 2) (okJF3C e₁ e₂ Kb β (loSum β) (hiSum β) β.length (lomP β DEN) (ch ++ β) f cfg)
+      (okJF2C e₁ e₂ Kb β (loSum β) (hiSum β) β.length (lomP β DEN) (ch ++ β) f cfg) = true := h
+  show cond (Nat.beq cfg.kind 2) (okJF3 e₁ e₂ Kb β (ch ++ β) f cfg) (okJF2 e₁ e₂ Kb β (ch ++ β) f cfg) = true
+  cases hk : Nat.beq cfg.kind 2 with
+  | true =>
+    rw [hk] at h'
+    exact okJF3C_imp e₁ e₂ Kb β ch f cfg hβ h'
+  | false =>
+    rw [hk] at h'
+    exact okJF2C_imp e₁ e₂ Kb β ch f cfg hβ h'
 
 end SieveAd

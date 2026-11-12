@@ -15,8 +15,10 @@ follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the plan of the search 
 prime: what is done at each box, with which configuration, and where the range of each new prime is cut. Each step
 is checked, and a cost that the search returns below its limit bounds the term whatever the hints are
 (`SieveAd.pr_of_partD`). The search is in 1552 parts, 17 files (`SieveHint21500P1.lean` … `SieveHint21500P17.lean`).
-The kernel evaluates the tests in one pass over a box (`SieveAd.fillTestsF`, `SieveAd.frozTestsF`), and they are
-equal to the tests that are proved sound (`SieveAdFast.lean`).
+The kernel evaluates the tests in one pass over a box (`SieveAd.fillTestsF`), equal to the tests that are proved
+sound; over a frozen part, in one pass over the chain's cells, with what the tests read from the frozen primes
+computed once for a tree (`SieveAd.frozTestsC`), and those imply the tests that are proved sound on the boxes of the
+tree (`SieveAdFast.lean`).
 
 * `route21500`, `routeOK21500`, `ibFits21500`: the route and its exponent.
 * `sound21500`, `soundF21500`: the tests are sound, and so are the tests in one pass.

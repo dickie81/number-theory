@@ -32,9 +32,11 @@ a bound whatever the hints are (`lib/pnt/SieveAdDir.lean`).
     (`pSolve`, `pBuch`, `pKids`, `pSplit`, `pFlip`); `tryJ2`, `guideJ`, `guide`: the proposal of the strategy that
     four bits name; `dser`, `dserF`, `dserKids` write a plan as fields and `pack` as a number;
   * `dSolve`, `dStep`, `dKidsC`, `dPart`, `dFlipTree`, `dFlipCost`, `dAltF`, with `cfgIP`, `cfgJP`, `pickP`,
-    `cfgIM`, `cfgJM`, `cfgIF`, `cfgJF`, `parM`, `parF`: `solveD`, `stepD`, `kidsC`, `partD`, `flipTreeD`,
+    `pickC`, `cfgIM`, `cfgJM`, `cfgIF`, `cfgJF`, `parM`, `parF`: `solveD`, `stepD`, `kidsC`, `partD`, `flipTreeD`,
     `flipCostD`, `altFD` and what they read from the hints, definition by definition; every part is run through
-    them before it is written;
+    them before it is written. The tests are `flip_cert.py`'s, the ones that are proved sound: over a frozen part
+    the kernel evaluates `SieveAd.frozTestsC`, which reads the frozen primes once for a tree and has the same
+    value on the boxes of the tree;
   * `plan_all`, `cut`, `add_part`: the cells of the first prime planned one by one (in `--procs` processes), and
     the plan cut into parts of at most `cap` predicted seconds of the kernel: consecutive cells of one prime, a
     heavy cell cut by its own Buchstab step.
@@ -52,7 +54,8 @@ primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over f
 cores), and its plan has 3.4·10^6 steps. The kernel takes 0.3 ms on an evaluated box (0.8 ms over a frozen part),
 1.2 ms on a Buchstab step (2.1 ms), 0.25 ms on a dropped box (0.35 ms) and 3 ms on a reversal's root; with the
 configurations searched by the kernel and the box read sum by sum, as in the first certificate of this theorem,
-it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20 ms.
+it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20 ms. Those times are from before the tests over a frozen part read
+the frozen primes once for a tree, which takes 11% off the whole: 63 minutes of the kernel for the 17 files.
 
 Needs Python 3 only.
 """
@@ -347,11 +350,25 @@ class Planner(fl.FlipSearch):
     def cfgIF(self, bl, h):
         return self.cfgIP(2 ** (len(bl) + 1), h)
 
-    def cfgJF(self, Kb, cl, ch, bl, h):
-        sel = h & 15
-        m, lm, lo, hi, pw = self.pickP(bl, 2 ** (sel // 2))
-        return self.cfgJP(sel, max(1, tsub(lm, Kb)), max(1, tsub(lo + (m & 1) * cl, Kb)), hi + (m & 1) * ch + Kb,
-                          2 * pw, h >> 4)
+    def pickC(self, bl, j, m):
+        """`pickP` over the first `j` cells."""
+        lm, lo, hi = DEN, 0, 0
+        for x in bl[:j]:
+            lm = min(lm, x[0])
+            lo += (m & 1) * x[0]
+            hi += (m & 1) * x[1]
+            m >>= 1
+        return m, lm, lo, hi
+
+    def cfgJF(self, Kb, cl, ch, beta, nb, lomb, bl, h):
+        """The rest's cell among the chain's cells, read in a pass over the chain, the `nb` frozen primes `beta`,
+        whose least lower end is `lomb`, and the cofactor."""
+        sel, n = h & 15, len(bl)
+        m, lm, lo, hi = self.pickC(bl, tsub(n, nb), 2 ** (sel // 2))
+        cofb = (m >> nb) & 1
+        return self.cfgJP(sel, max(1, tsub(min(lm, lomb), Kb)),
+                          max(1, tsub(lo + tc.mSum(0, beta, m) + cofb * cl, Kb)),
+                          hi + tc.mSum(1, beta, m) + cofb * ch + Kb, 2 ** (n + 1), h >> 4)
 
     # the cells of the new prime, their cuts read from the hints (gridP, cutK, kidsC, kidsM, kidsF)
     def stpP(self, st, c):
@@ -368,11 +385,12 @@ class Planner(fl.FlipSearch):
         return (self.stepOf(len(bl) + 1), min(top, tsub(DEN, loSum(bl)) // 2 + 2), tsub(bl[-1][0], 1),
                 tsub(tsub(DEN, 1), hiSum(bl)))
 
-    def parF(self, ctx, lsb, hsb, nb, bl, top):
-        """Those of a tree over a frozen part."""
-        return (self.hF if tsub(len(bl), nb) < 2 else 2 * self.hF,
-                min(top, tsub(ctx[1] + 1, tsub(loSum(bl), lsb)) // 2 + 2), 0,
-                tsub(tsub(ctx[0], 1), tsub(hiSum(bl), hsb)))
+    def parF(self, ctx, nb, bl, top):
+        """Those of a tree over a frozen part of `nb` frozen primes, from the sums of the chain's cells."""
+        nch = tsub(len(bl), nb)
+        return (self.hF if nch < 2 else 2 * self.hF,
+                min(top, tsub(ctx[1] + 1, loSum(bl[:nch])) // 2 + 2), 0,
+                tsub(tsub(ctx[0], 1), hiSum(bl[:nch])))
 
     def dKidsC(self, rec, top, bl, par, prm, f, lim, h):
         st, reg, e, last = prm
@@ -461,16 +479,16 @@ class Planner(fl.FlipSearch):
     # the reversal through the largest prime (flipTreeD, flipCostD, altFD)
     def frozen(self, ctx, beta):
         """The tree over the frozen part of `β` and the slab of `ctx`: its decoders, its cells and its search."""
-        lsb, hsb, nb = loSum(beta), hiSum(beta), len(beta)
+        lsb, hsb, nb, lomb = loSum(beta), hiSum(beta), len(beta), min([DEN] + [c[0] for c in beta])
         Kb = 12 + DEN // beta[0][0]
         cl, ch = max(1, tsub(tsub(DEN, ctx[1]), hsb)), tsub(tsub(DEN, ctx[0]) + 1, lsb)
         O = self.opsK(ctx, nb)
 
         def dJ(b, hh):
-            return self.cfgJF(Kb, cl, ch, b, hh)
+            return self.cfgJF(Kb, cl, ch, beta, nb, lomb, b, hh)
 
         def kd(rec, top, b, p, ff, l, hh):
-            return self.dKidsC(rec, top, b, p, self.parF(ctx, lsb, hsb, nb, b, top), ff, l, hh)
+            return self.dKidsC(rec, top, b, p, self.parF(ctx, nb, b, top), ff, l, hh)
 
         def rec(b, p, l, hh):
             return self.dSolve(O, self.cfgIF, dJ, kd, lambda b2, p2, l2, h2: (l2, h2), self.fuel, b, p, l, hh)
@@ -577,7 +595,7 @@ class Planner(fl.FlipSearch):
             out.extend(self.cfgFields(bl, node[1], cfg, w))
             top = bl[0][1]
             cells = self.kidCells(self.stratF(ctx, beta).cuts(bl, f), f, top, node[3])
-            self.dserKids(self.parF(ctx, loSum(beta), hiSum(beta), len(beta), bl, top), f, cells, node[2], bl,
+            self.dserKids(self.parF(ctx, len(beta), bl, top), f, cells, node[2], bl,
                           not par, top, out, lambda k, b, p, o: self.dserF(ctx, beta, k, b, p, o))
         else:
             raise ValueError(kind)
@@ -616,7 +634,7 @@ class Planner(fl.FlipSearch):
                 out.append((7, 4))
                 out.extend(self.cfgFields(beta, node[1], cfg, len(beta) + 1))
                 cells = self.kidCells(self.stratF(ctx, beta).cuts(beta, f), f, t, node[3])
-                self.dserKids(self.parF(ctx, loSum(beta), hiSum(beta), len(beta), beta, t), f, cells, node[2],
+                self.dserKids(self.parF(ctx, len(beta), beta, t), f, cells, node[2],
                               beta, True, t, out, lambda k, b, p, o: self.dserF(ctx, beta, k, b, p, o))
             finally:
                 self.frz = None
@@ -838,7 +856,7 @@ The bilinear Type I rule's exponent `{LN}` (`ibPar{T}`), and `solve{T}`, the sea
   (`SieveAd.kidsM`) on the grid of side at most `{par_.hI}/DEN` (`{par_.h}`) and at most the exponent over
   `{par_.kappa}`;
 * as its hinted bound, the reversal through the largest prime of boxes of at most `{par_.maxlen}` primes
-  (`SieveAd.altFD`), with the tests `SieveAd.frozTestsF` and the chains over the frozen parts on the grid of side
+  (`SieveAd.altFD`), with the tests `SieveAd.frozTestsC` and the chains over the frozen parts on the grid of side
   at most `{par_.hF}/DEN` (`{par_.hFf}`);
 * the depth of recursion `{fc.FUEL}`.
 
@@ -965,7 +983,9 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
         f'checked, and a cost that the search returns below its limit bounds the term whatever the hints are '
         f'(`SieveAd.pr_of_partD`). The search is in {len(parts)} parts, {nfiles} files (`SieveHint{T}P1.lean` … '
         f'`SieveHint{T}P{nfiles}.lean`). The kernel evaluates the tests in one pass over a box '
-        f'(`SieveAd.fillTestsF`, `SieveAd.frozTestsF`), and they are equal to the tests that are proved sound '
+        f'(`SieveAd.fillTestsF`), equal to the tests that are proved sound; over a frozen part, in one pass over '
+        f'the chain\'s cells, with what the tests read from the frozen primes computed once for a tree '
+        f'(`SieveAd.frozTestsC`), and those imply the tests that are proved sound on the boxes of the tree '
         f'(`SieveAdFast.lean`).', width=116)
     return f"""/-
 # Linnik's theorem with exponent `{LN}`, by a search led by hints

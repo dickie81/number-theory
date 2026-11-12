@@ -281,12 +281,17 @@ Its main tools:
   `SieveAd.bd_flipCostD`, from `SieveAd.bd_flip_core`, the reversal's bound from the bound of any tree, which
   `SieveAd.bd_flipCost` shares), so the main search led by hints is sound (`SieveAd.solveMD_sound`), and a part
   of it as the kernel checks it gives the bound for its range. What the kernel computes at a box is written for
-  it. The tests are in one pass over the box: `SieveAd.fillTestsF` and `SieveAd.frozTestsF`
-  (`lib/pnt/SieveAdFastDefs.lean`, without Mathlib) accumulate the sums of the cells' ends over the sets of a
-  configuration by the lists' recursor, with the bits of the masks as factors, and are equal to the tests that
-  are proved sound (`SieveAd.fillTestsF_eq`, `SieveAd.frozTestsF_eq`, `lib/pnt/SieveAdFast.lean`). The cost of
-  a dropped box is in one pass too, with Buchstab's function in the arithmetic of `ℕ` written out, and is
-  `dropC`'s and `dropK`'s (`SieveAd.omKwP_eq`, `SieveAd.drpMP_eq`, `SieveAd.opsKP_eq`).
+  it. The tests are in one pass over the box: `SieveAd.fillTestsF` (`lib/pnt/SieveAdFastDefs.lean`, without
+  Mathlib) accumulates the sums of the cells' ends over the sets of a configuration by the lists' recursor, with
+  the bits of the masks as factors, and is equal to the tests that are proved sound (`SieveAd.fillTestsF_eq`,
+  `lib/pnt/SieveAdFast.lean`). Over a frozen part a box is a chain's cells followed by the tree's frozen primes,
+  the same at every box of the tree: `SieveAd.frozTestsC` reads the chain in a pass and takes the sums of the
+  frozen primes' ends over a set as a value of the tree, written so that the kernel, which keeps what it has
+  computed for a term, computes it once for a tree and a set (`SieveAd.canonN`, `SieveAd.roleB`). It implies
+  the tests that are proved sound on the boxes of the tree (`SieveAd.frozTestsC_okI`, `SieveAd.frozTestsC_okJ`),
+  and a statement of the tree concerns no other box (`SieveAd.rules_frozC`). The cost of a dropped box is in one
+  pass too, with Buchstab's function in the arithmetic of `ℕ` written out, and is `dropC`'s and `dropK`'s
+  (`SieveAd.omKwP_eq`, `SieveAd.drpMP_eq`, `SieveAd.opsKP_eq`).
 - `Linnik21500.linnik_21500` (`lib/pnt/Linnik21500.lean`; the parts are `lib/pnt/SieveHint21500P1.lean` and the
   files after it, without Mathlib), **Linnik's theorem with exponent `2150/1000`**: for every `q ≥ 1` and every
   `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2150/1000}`, with no hypothesis. The route
