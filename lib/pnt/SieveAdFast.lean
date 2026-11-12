@@ -275,21 +275,4 @@ theorem frozTestsF_eq (e₁ e₂ Kb : ℕ) (β : List Cell) : frozTestsF e₁ e�
   · funext bl f cfg
     rw [okJF3F_eq, okJF2F_eq]
 
-/-- `flipTreeHT` with the tests `frozTests` is `flipTreeH`. -/
-theorem flipTreeHT_froz (SK : Cell → List Cell → Strat) (GK : Cell → List Cell → List Cell → ℕ → Option (ℕ × Cfg))
-    (fuel : ℕ) : flipTreeHT frozTests SK GK fuel = flipTreeH SK GK fuel := by
-  funext ctx β lim h
-  cases β <;> rfl
-
-/-- **The hinted bound with the fast tests over the frozen part is `altFH`.** -/
-theorem altFHT_fast (SK : Cell → List Cell → Strat) (GK : Cell → List Cell → List Cell → ℕ → Option (ℕ × Cfg))
-    (fuel maxlen : ℕ) : altFHT frozTestsF SK GK fuel maxlen = altFH SK GK fuel maxlen := by
-  have hT : (frozTestsF : ℕ → ℕ → ℕ → List Cell → Tests) = frozTests := by
-    funext e₁ e₂ Kb β
-    exact frozTestsF_eq e₁ e₂ Kb β
-  funext bl par l h
-  rw [hT]
-  unfold altFHT altFH flipCostHT flipCostH
-  rw [flipTreeHT_froz]
-
 end SieveAd

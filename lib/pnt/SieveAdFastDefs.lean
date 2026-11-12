@@ -21,7 +21,7 @@ the cells is a sum of deviations compared with its least value. The kernel takes
 
 The file imports `SieveAdFrozDefs.lean`.
 -/
-import SieveAdHintDefs
+import SieveAdFrozDefs
 
 namespace SieveAd
 
@@ -216,48 +216,5 @@ noncomputable def okJF2F (e₁ e₂ Kb : ℕ) (β bl : List Cell) (f : ℕ) (cfg
 noncomputable def frozTestsF (e₁ e₂ Kb : ℕ) (β : List Cell) : Tests :=
   ⟨okIFF e₁ e₂ β,
     fun bl f cfg => cond (Nat.beq cfg.kind 2) (okJF3F e₁ e₂ Kb β bl f cfg) (okJF2F e₁ e₂ Kb β bl f cfg)⟩
-
-end SieveAd
-
-namespace SieveAd
-
-open SieveCert (DEN K cdiv)
-
-/-- `flipTreeH` with the tests of the tree over the frozen part as a parameter: `TF e₁ e₂ Kb β`. -/
-def flipTreeHT (TF : ℕ → ℕ → ℕ → List Cell → Tests) (SK : Cell → List Cell → Strat)
-    (GK : Cell → List Cell → List Cell → ℕ → Option (ℕ × Cfg)) (fuel : ℕ) (ctx : Cell) (β : List Cell)
-    (lim h : ℕ) : ℕ × ℕ :=
-  match β with
-  | [] => (lim, h)
-  | c :: b =>
-    (fun τ S t =>
-      match GK ctx (c :: b) (c :: b) (Nat.mod h 16) with
-      | some p =>
-        cond (Nat.blt 0 p.1 && Nat.ble p.1 (minN c.1 t) && τ.okJ (c :: b) p.1 p.2)
-          (kidsH (solveH (opsK ctx (Nat.succ b.length)) τ S (GK ctx (c :: b)) noAltH fuel) t (c :: b) true
-            (S.cuts (c :: b) p.1) p.1 lim (Nat.div h 16))
-          (lim, Nat.div h 16)
-      | none => (lim, Nat.div h 16))
-      (TF (DEN - ctx.2) (DEN - ctx.1 + 1) (12 + DEN / c.1) (c :: b)) (SK ctx (c :: b)) (flipT ctx)
-
-/-- `flipCostH` with the tests of the tree over the frozen part as a parameter. -/
-def flipCostHT (TF : ℕ → ℕ → ℕ → List Cell → Tests) (SK : Cell → List Cell → Strat)
-    (GK : Cell → List Cell → List Cell → ℕ → Option (ℕ × Cfg)) (fuel : ℕ) (bl : List Cell) (lim h : ℕ) : ℕ × ℕ :=
-  (fun ctx β =>
-    (fun E =>
-      (fun r =>
-        (cond (Nat.ble CAPK r.1) lim
-          (cdiv (r.1 * (ctx.2 * dropCost bl + E) + bdK ctx (flipT ctx) * E) (DEN * K)), r.2))
-        (flipTreeHT TF SK GK fuel ctx β CAPK h))
-      ((ctx.2 + 1) * dropCost (β ++ [(ctx.2 - 1, ctx.2 + 1)]) +
-        (ctx.1 + 1) * dropCost (β ++ [(ctx.1 - 1, ctx.1 + 1)])))
-    (lastC bl) (initC bl)
-
-/-- **`altFH` with the tests of the tree over the frozen part as a parameter**: with `frozTests` it is `altFH`,
-and so it is with `frozTestsF` (`SieveAdFast.lean`). -/
-def altFHT (TF : ℕ → ℕ → ℕ → List Cell → Tests) (SK : Cell → List Cell → Strat)
-    (GK : Cell → List Cell → List Cell → ℕ → Option (ℕ × Cfg)) (fuel maxlen : ℕ) (bl : List Cell) (par : Bool)
-    (l h : ℕ) : ℕ × ℕ :=
-  cond (!par && flipOK maxlen bl) (flipCostHT TF SK GK fuel bl l h) (l, h)
 
 end SieveAd
