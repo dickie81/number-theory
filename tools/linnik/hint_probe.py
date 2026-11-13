@@ -21,8 +21,8 @@ side at most `HF` over the frozen parts and boxes of at most `MAXLEN` primes rev
     rest is searched, in the main tree or over the frozen parts. Sound with the rules that are proved
     (`SieveAd.Rules.split` at any cut); the search led by hints has no step that reads such a cut.
   * `pos`: a box of the sign `+` may be reversed through its largest prime too, the chain's first boxes then
-    needing upper bounds (`SieveAd.bd_flip_pos_at`, with the wider frozen part's tests; the search's rule is not
-    written).
+    needing upper bounds and the frozen numbers being those of the narrower slab (`SieveAd.bd_flip_core_pos`;
+    since 12 November the rule is in the search led by hints, and `hint_cert.py --try … --pos` plans with it).
   * `l2`: a second level. Inside the tree over the frozen part of a box reversed through `p₁`, a chain's box of
     the sign `−` is reversed again through `p₂`, the largest prime of the frozen number `R = p₂R₂`: the frozen
     numbers of the second level are `R' = R₂N`, `N = n/R` the chain's primes and their cofactor, with `N` in the
@@ -38,6 +38,8 @@ side at most `HF` over the frozen parts and boxes of at most `MAXLEN` primes rev
     kernel: a box of the sign `+` is decomposed further only if that saves more than its time is worth, and a
     box of the sign `−` is reversed or decomposed by the same count. The plan is one that the kernel follows as
     it is; the line gives the predicted seconds and the steps. Alone in its mode (with the planner's merging).
+    Since 12 November `hint_cert.Planner` has this choice itself (`--try … --lam N`), and cells of several steps
+    of the grid with it (`--blk`).
 
     python3 tools/linnik/hint_probe.py LNUM/LDEN H HF MAXLEN boxes ROW[,ROW…] N
 
@@ -338,7 +340,7 @@ class Probe(hc.Planner):
             return lim, None
         cl = min(CAPK, tsub(tsub(lim, 1) * (DEN * K), B) // A + 1)
         c = beta[0]
-        self.frz, self.fctx = (tsub(DEN, ctx[1]), tsub(DEN, ctx[0]) + 1, 12 + DEN // c[0], beta), ctx
+        self.frz, self.fctx = (tsub(DEN, ctx[1]) + pos, tsub(DEN, ctx[0]) + 1 - pos, 12 + DEN // c[0], beta), ctx
         try:
             S = self.stratF(ctx, beta)
             fj = self.floorOf(beta, min(c[0], t))

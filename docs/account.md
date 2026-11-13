@@ -101,6 +101,7 @@ result's note finds it unused; blank where neither has been checked.
 | The same with `p ≤ Kq^{218/100}`, with role reversal for a term of three primes added to that tree (in no paper) | `Linnik21800.linnik_21800` | yes |
 | The same with `p ≤ Kq^{2165/1000}`, below `13/6`, where the Type II estimate in one variable has no window: the same search with the estimate in two variables alone, the rest of a term with no prime of the rest's size being a product of the primes of its comparison's own tree (in no paper) | `Linnik21650.linnik_21650` | yes |
 | The same with `p ≤ Kq^{2150/1000}`: that search with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, the kernel following the plan of the search by hints; from the half-plane and Huxley's estimate, with no input of Chen, Gupta and Li's (the Linnik paper's theorem) | `Linnik21500.linnik_21500` | yes |
+| The same with `p ≤ Kq^{2140/1000}`: that search with a term of the sign `+` reversed through its largest prime too, on a plan made by a planner that counts the kernel's time (in no paper) | `Linnik21400.linnik_21400` | yes |
 | Linnik by density estimates and the classical deduction, with the exponents `12`, `4`, `17/6`, `36/13`, `87/35`, `12/5` and `2.3334`, each `+ η` | `Linnik.linnik_twelve`, `LinnikDensity.linnik_four`, `LinnikSubconvex.linnik_seventeen_sixths`, `LinnikIngham.linnik_thirtysix_thirteenths`, `LinnikHuxley.linnik_eighty_seven_thirty_fifths`, `LinnikTwelve.linnik_twelve_fifths`, `LinnikG7.linnik_g7d` | yes |
 | A prime in `(y, y + y^θ]` for every large `y`, `θ > 17/30`; and for all `y ∈ [X, 2X]` outside a set of measure `X^{1−δ}`, `θ > 2/15` | `ZetaGMDensity.short_primes_seventeen_thirtieths`, `ZetaGMDensity.almost_all_short_primes_two_fifteenths` | yes |
 | In terms of `Θ`: `limsup log\|ψ(x) − x\|/log x = Θ`, the same for `M(x)`, `Σ μ(n)n^{−s}` converges exactly on `Re s > Θ`, and a prime in `(y, y + y^θ]` for `θ > 2Θ/(1 + 2Θ)` | `PsiExponent.limsup_expo`, `MertensExponent.limsup_mexpo`, `MertensExponent.moebiusAbscissa_eq_Theta`, `InghamDensity.short_primes_Theta` | |
@@ -236,11 +237,12 @@ In order of what is in reach.
    `A = 7/3` of Chen, Gupta and Li's curve, and at `2165/1000` with the estimate in two variables alone. Below
    `43/20`, by the exact search's measurements ([`research-opportunities.md`](research-opportunities.md), §3.1),
    about a quarter of the cost is the cells' width, each `0.005` of exponent costs `5%` to `9%`, and the rules that
-   the certificate lacks (a second level of reversal, the reversal of terms of the sign `+`, a plan that weighs the
-   kernel's time) are worth a few per cent each: `2.14` needs several of them with finer cells, and `2.12` is beyond
-   them. Going further needs Type I information on longer products than the bilinear estimate's `d₁d₂² < x`, or a
-   Type II estimate on a wider region, which a better density estimate above `7789/10000` would give only a little
-   of.
+   the paper's certificate lacks are worth a few per cent each. Two of them are written since, the reversal of
+   terms of the sign `+` and a plan that weighs the kernel's time, and with cells of side `0.003` they give a
+   theorem at `2140/1000` (`Linnik21400.linnik_21400`, in no paper), on a plan three times the size; the third, a
+   second level of reversal, is not written, and `2.12` is beyond all three. Going further needs Type I
+   information on longer products than the bilinear estimate's `d₁d₂² < x`, or a Type II estimate on a wider
+   region, which a better density estimate above `7789/10000` would give only a little of.
 3. **The half-plane at `7/8`.** OpenAI's main preprint states `Re s > 7/8`, and their own Lean proves it for every
    `χ`; the library proves `11/12`, by the companion route. A proof of `7/8` here would feed the deductions above at
    once: `ψ`, `M`, `ψ(x, χ)` and `Σ d_k` at `x^{7/8+η}`, the squarefree count at `x^{8/17+η}`, and `Θ ≤ 7/8`. The
