@@ -1,0 +1,5 @@
+seed=60783343
+n=16
+original=['mvt_beyond', 'huxley_subdiv_q', 'afe_reflect_y', 'two_detector_mix', 'power_amplify_k', 'sigma_interp', 'W_energy_split', 'decoupling_char', 'poly_partition_q', 'moment_half_det', 'selberg_zd', 'halasz_amplify', 'bourgain_restrict', 'kloosterman_avg_q', 'hybrid_mvt_s3', 'short_dirichlet']
+order=[12, 7, 10, 2, 4, 1, 8, 13, 3, 6, 15, 11, 14, 9, 0, 5]
+shuffled=['bourgain_restrict', 'decoupling_char', 'selberg_zd', 'afe_reflect_y', 'power_amplify_k', 'huxley_subdiv_q', 'poly_partition_q', 'kloosterman_avg_q', 'two_detector_mix', 'W_energy_split', 'short_dirichlet', 'halasz_amplify', 'hybrid_mvt_s3', 'moment_half_det', 'mvt_beyond', 'sigma_interp']
