@@ -87,7 +87,11 @@ A draft, of 13 November 2026. What remains:
   - Mazhouda (2013), whose review states that GRH for `L(s, χ)`, `q > 1`, is equivalent to Li's coefficients
     increasing;
   - Bombieri (2003), whose §8 meets Brownian motion, as the flat model of Proposition 2.5 does;
-  - the chapters of Broughan's Volume 2 on Weil's explicit formula, discrete measures and Hermitian forms.
+  - the chapters of Broughan's Volume 2 on Weil's explicit formula, discrete measures and Hermitian forms;
+  - the sources of the method that Section 7 and Lemma 4.1 cite: Landau (1912) and Gonek (1993) for Landau's formula,
+    Montgomery–Odlyzko (1984) and Conrey–Ghosh–Gonek (1984) on gaps between zeros, and Iwaniec–Kowalski's Theorem 5.12.
+    They are cited from Goldston–Gonek (2007), whose Lemma 1 was checked against Lemma 4.1 term by term, from Bui,
+    Milinovich and Ng (arXiv:0910.2052) and from Goldston's survey (arXiv:math/0412313).
 
   [`secondary_sources_2026.md`](../../research_notes/Orbit%20lattice%20criterion%20prior%20art/secondary_sources_2026.md)
   records what those accounts say. It also covers the 2026 preprints, among them Andrews, Connes and La Gatta's
@@ -113,6 +117,9 @@ Done since the first draft:
     reflects that density's logarithmic growth;
   - Section 6 reads (B) on the lattice the orbit spans. (A) fails for every curve, and (B) for 43 of the 148 sampled. The
     two forms part for complex characters.
+- The method's sources are cited: Guinand and Goldston–Gonek's Lemma 1 for the explicit formula in the form of Lemma
+  4.1, Landau and Gonek for Landau's form, and in Section 7 Montgomery, Montgomery–Odlyzko, Conrey–Ghosh–Gonek, Vaaler
+  and Carneiro–Milinovich–Soundararajan.
 - Results whose proofs are only in the library are out. Each rests on the sampling theorem at the zeros and the
   bounds for `λ_N`, which would roughly double the paper:
   - the pivot growth `d_N ≫ log N` under RH (`BallPivot.pivot_ge`);

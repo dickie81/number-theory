@@ -179,7 +179,9 @@ curve lacks. Theorem~\ref{thm:main} is a form of RH, not a route to it.
 The proof of Theorem~\ref{thm:margin} (Section~\ref{sec:proof}) applies Weil's explicit formula to $h(t) = |D(t)|^2
 \varphi(t/N)/N^2$, with $D(t) = \sum_{n \le N} x_n \sqrt n\, n^{-it}$ and a fixed test function $\varphi$ whose Fourier
 transform is supported in $[-\tfrac45, \tfrac45]$. Distinct frequencies $\log(jn)$ and $\log j'$ are at least $4/(5N)$
-apart, so the prime side is exactly Landau's quadratic form. A minorant of the archimedean term, band-limited to $[-1,
+apart, so the prime side is exactly Landau's quadratic form $2\sum_n \Lambda(n) n^{-1/2} \sum_{jn \le N} c_j c_{jn}$,
+$c_n = x_n \sqrt n$: the off-diagonal term that Landau's formula \cite{landau12}, in Gonek's uniform version
+\cite{gonek93}, gives the mean value of $|D|^2$ over the zeros. A minorant of the archimedean term, band-limited to $[-1,
 1]$, keeps only the diagonal, and an interval certificate checks it against the digamma function. The last step is
 arithmetic: under the diagonal $\log N + d$, Landau's form leaves the top vertex $N$ of the divisibility graph
 $\tfrac{13}{10}$ of its weight, by Schur's test with an explicit bound for Mertens' sums
@@ -459,8 +461,11 @@ and real on $\mathbb R$. Then, with $t_\rho = (\rho - \frac12)/i$,
 \end{multline*}
 \end{lemma}
 
-This is the explicit formula of Guinand and Weil \cite{weil52}; the Lean proof derives it from the Hadamard product of
-$\xi$.
+This is the explicit formula of Guinand \cite{guinand48} and Weil \cite{weil52}. Goldston and Gonek state it in this
+normalisation, for $h$ analytic on $|\operatorname{Im} t| \le \frac12 + \epsilon$ with $|h(t)| \ll (1 + |t|)^{-1 -
+\delta}$, which the hypotheses here imply \cite[Lemma~1]{goldston-gonek07}. They take it from
+\cite[Theorem~5.12]{iwaniec-kowalski}, where the transform of $h$ is smooth with compact support; the step functions of Proposition~\ref{prop:window} and the
+test function below need the wider hypotheses. The Lean proof derives the lemma from the Hadamard product of $\xi$.
 
 \subsection{The test function}
 
@@ -1016,6 +1021,17 @@ The kernel $\KH$ is Matsumoto and Suzuki's $H_1$ \cite{matsumoto-suzuki}, and th
 Proposition~\ref{prop:positivity}; see also Suzuki's study of the screw function \cite{suzuki23}. Nicolas's bound
 $|W(x)| \le \beta$ \cite{nicolas} is its $2 \times 2$ layer. The constant $d_1$ and the equivalence of RH with $\sum_\rho
 1/|\rho|^2 = d_1$ are Burnol's \cite{burnol98} and Gun, Murty and Rath's \cite{gun-murty-rath}.
+
+\emph{The method.} Weil's explicit formula with band-limited test functions has been a standard tool since Montgomery's
+work on pair correlation \cite{montgomery73}. Goldston and Gonek \cite{goldston-gonek07} use it with the band-limited
+majorants and minorants of Beurling and Selberg \cite{vaaler85}, and Carneiro, Milinovich and Soundararajan
+\cite{cms19} choose its test functions by Fourier optimisation. Mean values of $|A(\gamma)|^2$ over the zeros, for
+Dirichlet polynomials $A$, bound the gaps between zeros in the work of Montgomery and Odlyzko
+\cite{montgomery-odlyzko} and of Conrey, Ghosh and Gonek \cite{cgg84}. Their prime terms are Landau's form weighted by
+the transform of a short window, and the coefficients are chosen to optimise it. In Theorem~\ref{thm:margin} the
+transform of the test function is supported in $[-\frac45, \frac45]$, so the weight is the constant $\hat\varphi(0)$
+and the identity is exact at every $N$; and the form is bounded for all coefficients at once, by Schur's test at the
+top vertex of the divisibility graph.
 
 \emph{Weil's form on finite-dimensional spaces.} Yoshida \cite{yoshida92} proves non-degeneracy of Weil's form on
 windows and, by Gram--Schmidt on high Fourier modes, explicit lower bounds for squared norms; Bombieri \cite{bombieri00,
