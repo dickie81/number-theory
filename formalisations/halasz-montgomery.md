@@ -117,6 +117,12 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `th − ε` to `D₂ + ε`); the third part by `SieveLeafTwo.leavesE_of_zone` on the boxes `(⌊q^{pA}⌋, ⌊4q^{D₁}⌋]` and
   `(⌊q^{th}⌋, ⌊4q^{D₂}⌋]` (`SieveTwoCompE.leaf_window`). Nothing uses it yet: it is for the sieve's test of a box whose
   leaves straddle the paper's region;
+- `SieveLeafZoneX.leafZoneX_of_XL`, `SieveLeafZoneX.leafZoneXL_rect` and `SieveLeafZoneX.leafXN_sound`
+  (`lib/pnt/SieveLeafZoneX.lean`, written by `tools/linnik/gen_leafzone.py`): `LeafZoneX` contains the intersection
+  `LeafZoneXL` of 19 half-planes (the region's inequalities but `m₂ ≤ 1/2`, and its cuts again at `m₂ = 1/2`, since
+  every case has `m₂` on its larger side); `LeafZoneXL` holds on a rectangle of `(m₁, ρ)` when it holds at its four
+  corners; and at a point of exponents in units of `1/D` it is a test of natural numbers (`leafXN`). Nothing uses them
+  yet: they are for the sieve's test of a box of leaves cut in three;
 - `SieveCurveHx.counts_hx` (`lib/pnt/SieveCurveHx.lean`, written by `tools/linnik/gen_zone.py`): the counts of the
   curve `ghx`, the trivial count `1` below `7789/10000` and Huxley's density estimate from there on (a step
   `SieveCurveHx.charDensity_hxT` on `[7789/10000, 131/168]` with the exponent `(7014/3125)(1 − σ)`, Huxley's
