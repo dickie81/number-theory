@@ -1022,7 +1022,10 @@ Three things follow, in order of cost.
    from a sampling inequality with margin `s` over Landau's form. At `ρ = 120`, `s = 1/2` this is above `d_1` for
    every `k` from `5461` to `10⁶`; at `ρ = 100` from `1156` (`scripts/pivot_bound.py`, Numerical; the sum is
    `log k − O((log log k)²)`). It needs the archimedean cross terms, the region `|t| ≤ 2π` and the pole bounded with
-   their natural constants, and Mertens' sum in the form `Σ_{n ≤ y}Λ(n)/n ≤ log y`.
+   their natural constants, and Mertens' sum in the form `Σ_{n ≤ y}Λ(n)/n ≤ log y`. A design with a test
+   function that vanishes below height `≈ 6N` clears `d_1` at every `k ≥ 2` (`d_k ≥ 1.449·d_1`, Numerical,
+   `scripts/pivot_push.py`). [ball-conjecture.md](ball-conjecture.md), "The pivot inequality for every `k`", gives
+   it with what its Lean proof needs.
 2. **Block pivots (Theorem modulo `BallSharp.rate_slack`).** For `N ≥ 9` and `K ≤ N/(4 log N)`,
    `Σc_n² + G(c) ≥ (log N/4)·Σ_{N−K < m ≤ N}c_m²`, so under RH
    `Q_N(x) ≥ (log N/(100e⁸))·Σ_{N−K < n ≤ N}x_n²`: the top window is uniformly independent of everything below it.

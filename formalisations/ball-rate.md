@@ -876,7 +876,10 @@ certificate's range `k ≤ 10⁴`, and the conjecture would then be equivalent t
 `BallSharp.sharp_bound_slack` has `ρ ≈ 22e⁸/π`:
 its `T ≥ 2000N`, its `1/11` and its `−7` were chosen for the proof, not for the constant. So what is missing is the
 sampling inequality with its natural constants, an explicit computation with the test functions the library has, and
-the sharp Mertens bound. Neither is new mathematics.
+the sharp Mertens bound. Neither is new mathematics. [ball-conjecture.md](../docs/ball-conjecture.md), "The pivot
+inequality for every `k`", gives such a design, numerical and not yet in Lean. Its test function vanishes below height
+`≈ 6N` in place of the Fejér weight, and in this normalisation it has `ρ = π/(4P) = 19.3` and `s = 1.09`. It gives
+`d_k ≥ 1.449·d_1` for every `k ≥ 2` (`scripts/pivot_push.py`).
 
 **Prior work.** The pivot inequality is the conjecture of this library's author; no source is known for it or for the
 bound. The mechanism of `slack_top` is that of `BallGap.gap_ge`, the ground-state transform on the divisibility graph,

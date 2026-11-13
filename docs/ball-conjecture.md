@@ -379,7 +379,8 @@ Báez-Duarte, the last entry.
    > `BallPsi.gram_explicit` writes through `ψ`, satisfy `d_k ≥ d_1` for every `k`.
 
    It holds for `k ≤ 10^4`, by the certificate above, and under RH for every `k` with `log k ≥ 7100`
-   (`BallPivot.orbitLattice_of_log_ge`).
+   (`BallPivot.orbitLattice_of_log_ge`). Under RH it holds for every `k` by a numerical design not yet in Lean (the
+   last section, "The pivot inequality for every `k`").
 
    It is a statement about the primes. Under RH it says that in every realization of `K_H`, `w_{k+1}` keeps distance
    `‖w_1‖` from the span of `w_1, …, w_k`. The orbit then spans a lattice with `w_1` as a shortest vector
@@ -395,9 +396,9 @@ Báez-Duarte, the last entry.
 ## What a proof under RH would need
 
 The orbit-lattice conjecture of step 6 implies RH, so the question is whether RH implies it. It would then be another
-form of RH, and would not by itself prove RH. For every large `k` it does (`BallPivot`, the last paragraph of this
-section); the four computations below, which `scripts/ball_orbit.py` reproduces, were made before that and locate
-where the pivot is decided.
+form of RH, and would not by itself prove RH. For every large `k` it does (`BallPivot`), and for every `k ≥ 2` by a
+numerical design not yet in Lean (both at the end of this section). The four computations below, which
+`scripts/ball_orbit.py` reproduces, were made before either, and locate where the pivot is decided.
 
 - **The flat model is the equality case** (`BallFlat`). Replace the zeros by Lebesgue measure, with the same weights
   `1/(¼ + γ²)`. The kernel becomes `e^{−|log x|/2} = min(√x, 1/√x)` (`BallFlat.kerFlat_eq_integral`), and the orbit's
@@ -453,6 +454,77 @@ was not chosen for size: with the natural constants of the same test functions t
 ([ball-rate.md](../formalisations/ball-rate.md), "The pivots"), and the conjecture would then be RH itself. Neither
 direction makes it a route to RH: it is what RH says about the pivots, as `λ_N ≍ log N/N` is what RH says about the
 smallest eigenvalue.
+
+**The pivot inequality for every `k`: a design (numerical, not yet in Lean).** With other test functions the same
+argument clears `d_1` at every `k ≥ 2`, and leaves no finite range (`scripts/pivot_push.py`). The bound of `BallSharp`
+is Weil's explicit formula for `h = |D|²Φ`, `D(t) = Σ_{n ≤ N}c_n n^{−it}`, `c_n = x_n√n`. Suppose that
+`Φ ≤ 1/(¼ + t²)` with its Fourier transform supported in `|v| < log(1 + 1/N)`, and that `m ≤ Φ·L`, with
+`L(t) = Re ψ(¼ + it/2) − log π`, has its transform supported in `|v| < log(N/(N − 1))`. Then the prime side is exactly
+Landau's form and `∫|D|²m = (∫m)·Σc_n²`, so under RH
+
+> `Q_N(x) ≥ (1/2π)((∫m)·Σc_n² − (∫Φ)·L(c)) + 2D(i/2)D(−i/2)Φ(i/2)`.
+
+`BallSharp` takes a Fejér weight cut off at `T ≥ 2000N`, and loses `22e⁸`. Take instead `Φ(t) = φ(t/N)/N²` and
+`m(t) = Φ(t)(log N + λ(t/N)) − r(t/N)/N²`, with `φ`, `λ` and `r` independent of `N`. Then for every `N ≥ 2` at once
+
+> `Q_N(x) ≥ (P/N)·((log N + d)·Σc_n² − L(c))`, with `P = ∫φ/2π` and `d = (∫φλ − ∫r)/∫φ`,
+
+provided `φ(s)(λ(s) − g(s)) ≤ r(s)` for `s > 0`. Here `g(s) = log(s/2π) − E(s)` and
+`E(s) = sup_{t ≥ 2s}(log(t/2π) − L(t))⁺`, so that `g(s) ≤ L(Ns) − log N` for every `N ≥ 2`. The choices:
+
+- `φ(s) = (1 − η)(1 − K₄(s/6))/s²`, with `K₄(x) = sinc⁴x·(1 + 2x²/3)`. Here `0 ≤ K₄ ≤ 1` and
+  `1 − K₄(x) = (11/45)x⁴ + O(x⁶)`, so `φ` vanishes at `0` and equals `1/s²` beyond `s ≈ 6`. It keeps the weight of
+  the zeros above height `6N` and drops those below, where the density `log(t/2π)` of the zeros is small or negative.
+  That is what the Fejér weight loses: most of its mass sits low. The transform of `φ` is supported in `|v| ≤ 2/3`,
+  below `2 log(3/2) = 0.81`, the bound at `N = 2`. The factor `η = 7.4·10⁻⁴` gives `φ(s)(s² + ¼) ≤ 1`, and
+  `P = 0.04071`.
+- `λ(s) = λ₀ + Σ_k c_k(1 − sinc²(s/A_k))`, with `c_k ≥ 0` and `A_k = 6.45·1.2^k`. This staircase has transform
+  support `0.31`, so `φλ` has support `0.977 < 1 < N·log(N/(N − 1))`. Linear programming puts it below `g` from
+  `s = 12` on, with the elementary majorant `x²/3 − 2x⁴/45 + x⁶/315` of `1 − sinc²x` in the constraint.
+- `r` is four Fejér bumps `sinc²((s ∓ c)/2)`, at `c = 4, 4.5, 7, 7.5`, with nonnegative coefficients and transform
+  support `1`. It lies above `φ(λ − g)` below `s = 12`, and costs `0.093` of `d`.
+
+So `d = 1.087`. The pole term is at most `6·10⁻⁴·(P/N)·Σc_n²` (Cauchy–Schwarz, and `Φ(i/2) = φ(i/2N)/N²` is of size
+`N^{−4}`), and lowers `d` by that much. The top vertex then works as in `BallPivot.slack_top`, more sharply. The
+coefficient `c_N` meets only its parents `N/q`. The rest of the form is dominated by its diagonal in the weights
+`n^{−1/2}` (Schur's test): the row of `j` sums to `M(⌊(N − 1)/j⌋) + log j`, with `M(y) = Σ_{n ≤ y}Λ(n)/n ≤ log y`.
+That leaves room `d + log q − M(q − 1)` at the parent `N/q`, so with `x_N = 1`
+
+> `d_N ≥ P·Λ(N)`, with `Λ(N) = log N + d − Σ_{q ∣ N}(Λ(q)²/q)/(d + log q − M(q − 1))`.
+
+Since `Λ(q)/(q(d + log q − M(q − 1))) ≤ 0.199`, attained at `q = 3`, `Λ(N) ≥ 0.80·log N + d`. Hence
+
+> **Under RH, `d_k ≥ 1.449·d_1` for every `k ≥ 2`** (numerically). The least value over `2 ≤ k ≤ 10⁶` is at `k = 2`;
+> the bound is `1.73·d_1` at `k = 3` and `P·(0.80·log k + d)` beyond.
+
+Against `BallPivot.pivot_ge`, the constant is `0.0407` in place of `1/(22e⁸) = 1.5·10⁻⁵`, and the diagonal is
+`log N + 1.09` in place of `log N/2 + 3.39`. The truth is `d_2 = 1.718·d_1`, so at `k = 2` the bound is `84%` of it.
+With the exact minimum of the form in place of Schur's test, the bound is below the true pivot at every `k ≤ 400`, by
+a growing factor. The checks behind these numbers:
+- the pointwise condition holds on a fine grid, with `L(Ns) − log N` at seven values of `N` and with `g`;
+- the explicit formula as used, pole and Landau's form included, agrees with the sum over the first 1500 zeros to
+  `10⁻⁶`, for random `c` with `N ≤ 6` (`--zeros`). The zeros above the last are counted by their density and
+  Landau's drift.
+
+Once formalised, this bound and `BallWeil.rh_of_pivots` make the conjecture equivalent to RH outright, with no finite
+range left for a certificate. Beyond what `BallCutoff` and `BallSharp` have, the Lean proof needs:
+
+1. **The test function.** `φ` with its transform (a piecewise polynomial on `[−2/3, 2/3]`, from that of `K₄`), its
+   support, `0 ≤ φ ≤ 1/(¼ + t²)`, its value at `i/2N`, and the strip bounds the explicit formula asks for.
+   `BallCutoff` proves the explicit formula, the exact prime side and the diagonal for its own test functions; the new
+   `Φ` and `m` go through the same steps.
+2. **The archimedean minorant.** `λ ≤ g` on `[12, ∞)` needs `L(t) ≥ log(t/2π) − E` for `t ≥ 24`. Stirling gives this
+   (`BallPsi`'s bounds cover `|t| ≥ 8`), together with the elementary majorant of `1 − sinc²`. `r ≥ φ(λ − g)` on
+   `[0, 12]` needs `L` at all small heights, and an interval computation on a compact interval. `L` can come, for
+   instance, from the monotonicity of `Re ψ(¼ + iτ)` in `τ` and its values at finitely many points.
+3. **Mertens.** Schur's test needs `M(y) ≤ log y + c` with `c < d` for every `y`, and room at the small parents. That
+   means the exact `M(q − 1)` for small `q` (finitely many logarithms) and a Chebyshev bound beyond. The library has
+   `M(y) ≤ log y + log 4 + 1` (`BallDensity`), which is too weak.
+
+The margin pays for cruder choices. The binding case is `k = 2`, where `d_2 ≥ d_1` needs only
+`P·(log 2 + d − (log 2)²/(2(log 2 + d))) ≥ d_1`. That holds down to `d = 0.62` at `P = 0.0407`, or down to
+`P = 0.0281` at `d = 1.09`. A staircase of eight steps (`A_k = 6.45·4^k`) still gives `d = 0.99`, which is
+`1.36·d_1` at `k = 2`. The cruder majorant `min(1, x²/3)` with seven steps gives `d = 0.88`, which is `1.26·d_1`.
 
 ## Building the lattice forwards
 
