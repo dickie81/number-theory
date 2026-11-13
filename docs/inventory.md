@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1801 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1803 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 240, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 196 | 696 |
-| `lib/pnt` | 327 | 992 |
+| `lib/pnt` | 328 | 994 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2901,6 +2901,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveLeaf.leaf_gap`: The relative error of a leaf *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveLeaf.prod_primesBelow_le`: Mertens' product bound, in its elementary form *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveLeaf.prod_T_le`: The main term of a leaf *paper* ([note](../formalisations/harman-sieve.md))
+
+#### `SieveLeafTwo`: The leaves by the Type II estimate in two variables
+
+- `SieveLeafTwo.leaf2_bound`: Leaves with two marked products ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafTwo.typeIITwoAt_leaf`: Proposition 3′ in two variables on the leaves' region ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveLeafZone`: The zone of the leaves with the fourth moment, for the curve `g7d`
 

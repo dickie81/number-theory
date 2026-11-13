@@ -78,9 +78,9 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   divisor bound for the pairs, `card_fiber_le_pow`), and Cauchy–Schwarz over a bin of `|R|` characters gives
   `Σ_{χ∈R}|W(χ)|² ≤ |R|^{1/2}((3P² + q)F)^{1/2}Σ|a|²` (`sum_bin_four_le`): the exponent `M ≥ g/2 + max(m, 1/2) + 2e`
   (`SqExp4`, `lib/pnt/SieveTwoZone4.lean`). It is the case `r = 2` of the moments of Burgess's method; for a variable
-  shorter than `√q` it beats orthogonality in every bin with fewer than `q` characters. Nothing uses it yet: it is
-  for the leaves of Buchstab's tree with a cofactor shorter than `√q`, taken as the second variable with the
-  primes of `d₂` as the rest (`docs/research-opportunities.md`, §3.1);
+  shorter than `√q` it beats orthogonality in every bin with fewer than `q` characters. It is for the leaves of
+  Buchstab's tree with a cofactor shorter than `√q`, taken as the second variable with the primes of `d₂` as the
+  rest (`docs/research-opportunities.md`, §3.1): `SieveLeafTwo.typeIITwoAt_leaf` below;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
@@ -90,6 +90,15 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   (`SieveTwoPieces4`); each of the 536 cases at the ends of the 67 pieces is `linarith` from the region's 13
   inequalities. At `L = 2.135` it holds the leaves with `d₂` from `x^{0.28}` to `x^{0.32}` and the cofactor down to
   `q^{0.47}`;
+- `SieveLeafTwo.typeIITwoAt_leaf` and `SieveLeafTwo.leaf2_bound` (`lib/pnt/SieveLeafTwo.lean`): Proposition 3′ in
+  two variables on `LeafZone L` (`typeII_two_gen4` with `zone_leaf`), and a leaf's term by the estimate in two
+  variables: for tuples `x` of primes at least `w ≥ q^{e₀}` under comparisons, with `∏_S x` in `(A, B]` and
+  `∏_{Sr} x` in `(Ar, Br]` (`S`, `Sr ≠ ∅` disjoint, `B·Br ≤ q^L`) and the region on the window of `∏_S x` with the
+  rest of its size, the `w`-rough multiples `n ∈ (q^L, 2q^L]` of `∏x`, summed over `x`, have `|𝒜 − ℬ/φ(q)|` at most
+  `q^{L−δ}/φ(q)`. The second variable is the cofactor `n/∏x`, a product of a non-increasing tuple of primes at least
+  `w`, for each length a family of `SieveTwoChain.chain_two` (the proof of `SieveTwoTerm.chain2_bound` with the
+  cofactor rough at `w` in place of the chain's last prime). Nothing uses them yet: the sieve's tests check the
+  leaves by the paper's rule;
 - `SieveCurveHx.counts_hx` (`lib/pnt/SieveCurveHx.lean`, written by `tools/linnik/gen_zone.py`): the counts of the
   curve `ghx`, the trivial count `1` below `7789/10000` and Huxley's density estimate from there on (a step
   `SieveCurveHx.charDensity_hxT` on `[7789/10000, 131/168]` with the exponent `(7014/3125)(1 − σ)`, Huxley's
