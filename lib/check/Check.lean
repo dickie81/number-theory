@@ -7,6 +7,7 @@ import PivotSharp
 import BallFlat
 import BallGap
 import BallUpperEta
+import OrbitWindow
 
 /- Linnik's theorem with exponent `L = 43/20` (`2150/1000`), with no hypothesis: the Linnik paper's theorem
 (`papers/linnik-exponent/main.tex`). Harman's sieve with the Type II estimate in two variables, whose density curve is
@@ -305,3 +306,7 @@ the pivots, the steps of the proof of the margin, and the bounds for the smalles
 #print axioms BallGap.rate_gap
 #print axioms BallUpperEta.rate_upper_rh
 #print axioms BallUpperEta.rate_upper
+#print axioms OrbitWindow.form_eq_weilQg
+#print axioms OrbitWindow.weilQg_hasSum
+#print axioms OrbitWindow.weilQg_step_int_ge
+#print axioms OrbitWindow.weilQg_step_ge

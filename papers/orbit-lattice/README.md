@@ -27,6 +27,12 @@ The orbit's Gram matrix `√(mn)·K_H(m/n)` in their statements is computed from
 `BallPsi.kerH_explicit`). Their content is the margin `PivotSharp.pivot_ge_rh`: under RH every pivot after the first is
 at least `(999/1000)(2/45)(13/10) = 0.05772`, against `K_H(1) = 0.04619`.
 
+Proposition 2.3 places the orbit in the windows of Connes and his collaborators. On `Σ x_n = 0`, the orbit form is Weil's
+form on the step functions `u^{1/2}Σ_n x_n 1_{(0, n]}(u)` of the window `[λ⁻¹, λ]`, `λ = √N`
+(`OrbitWindow.form_eq_weilQg`, no RH input). Two corollaries then read the margin and the bound for `λ_N` in that window:
+- Corollary 3.3: Weil's form is `≥ 0.0577` at every nonzero integer-valued step function.
+- Corollary 8.2: it is `≥ √log N‖g‖²/(220e⁸N³)` on all of them.
+
 Appendix A names the Lean theorem behind each numbered result. `lib/check/Check.lean` prints their axioms, which are
 `propext`, `Classical.choice` and `Quot.sound` only. Two computations are checked by kernel evaluation (`decide
 +kernel`):

@@ -23,7 +23,8 @@ prime `2` enters the prime sum of Weil's form (`log 2 < 1 < log 3`).
   At the single support `a = 1/2`, every numerical input here is checked in the kernel (`decide +kernel` over `ℚ`).
   So the statement is unconditional, and it covers probes of both parities. The other supports of that row stay
   conditional.
-- **Scope.** This is one window length. It says nothing about other `L` or about RH.
+- **Scope.** This is one window length. A probe supported in a smaller window is supported in this one, so the
+  certificate covers every `L ≤ 1/2`, Yoshida's `2L = log 2` included. It says nothing about larger `L` or about RH.
 - **Sources.** Two steps follow a 2026 preprint attributed to Zhu (arXiv 2608.24827): the reduction `QF ≥ R`
   (`WeilZhuRed`) and the archimedean identity, "Zhu's Lemma 2.5" (`WeilArch`).
   - We could not locate that preprint (November 2026), so the attribution is unverified.
@@ -43,6 +44,12 @@ Conventions: f is supported in [−L, L] in log scale, so f∗f̃ has support [�
 - **Yoshida (1992), Adv. Stud. Pure Math. 21, 281–325:** positivity for small support, verified at 2L = log 2, i.e. L ≤ 0.347. At L ≤ 0.347 no prime enters at all, so the result is archimedean only.
 - **Bombieri (2000), Rend. Lincei Mat. Appl. 11, 183–233:** the minimum is attained, Yoshida is reproved, and the number of negative eigenvalues equals half the number of off-line zeros. He calls the functional "as intractable as RH itself".
 - **Connes (1999), Selecta Math. 5, 29–106:** trace formula. **Connes–Consani (2021), Selecta Math. 27, arXiv 2006.13771:** archimedean positivity via the Sonin trace, at the same support log 2 / 2. **Connes–Consani (2023), Enseign. Math. 69, arXiv 2106.01715:** the very small eigenvalues of the Weil form come from prolate functions. **Connes–Consani–Moscovici (2024), Ann. Funct. Anal., arXiv 2310.18423.** **Connes–van Suijlekom (2025), CMP, arXiv 2511.23257:** a simple, even, isolated ground state implies its transform has only real zeros. **Connes–Consani–Moscovici, "Zeta spectral triples", arXiv 2511.22755:** convergence as λ → ∞ would give RH. The open steps are a simple even ground state at every scale, and convergence.
+- **Andrews, Connes and La Gatta (2026), arXiv 2611.13129** ("The uncertainty operator, the Weil ground state and the
+  zeros of zeta"): the ground state of `QW_λ` computed to `λ² = 300`, whose transform gives the first thousand zeros of
+  `ζ` to more than five hundred digits. The minuscule eigenvalues follow the prolate rungs `δ_n(λ) ~ c_n λ^{2n+1}e^{−4πλ²}`
+  (Fuchs) through the map `E(f)(u) = u^{1/2}Σ_n f(nu)`. Under a hypothesis they prove positivity with a margin away
+  from a finite-dimensional space, which reduces Weil positivity to the sign of a Schur complement on a finite block.
+  See the section "Against Andrews, Connes and La Gatta" below.
 - **Li (1997), JNT 65, 325–333; Bombieri–Lagarias (1999), JNT 77, 274–287:** Li coefficients, which are again Weil positivity. **de Branges:** Conrey–Li (arXiv math/9812166) showed his positivity condition fails for ζ. **Suzuki:** screw functions, JLMS 2023 and arXiv 2606.09096. **Groskin, arXiv 2607.02828:** an "inconclusive band" for truncated forms. **Burnol:** not checked.
 - **Zhu, arXiv 2608.24827 (2026 preprint, not refereed):** uses exactly our convention. **Unverified:** a search in
   November 2026 did not find this preprint, so everything attributed to it below is as reported by the original
@@ -108,6 +115,44 @@ Script: `scripts/positivity/hp2.py`; plot `hp2.png`. Lean: `lib/core/ParityGroun
 
   This is the ζ-cycle phenomenon of Connes–Consani, reproduced here from the geometric side alone, with no zero data entering the matrix.
 - **Verdict:** this is a strong numerical confirmation of the Connes route's first missing step (simple, even ground state) for L ≤ 1.2. It is not a proof at any scale: there is no interval certification, and the second step (convergence of the zeros as L → ∞, which would give RH) is untouched.
+
+## Against Andrews, Connes and La Gatta (2026)
+
+R. Andrews, A. Connes and A. La Gatta (arXiv 2611.13129, 9 November 2026) study the same object. Their `QW_λ` on
+`L²([λ⁻¹, λ], d*u)` is the form of this note on `[−L, L]` with `λ = e^L`, so `λ² = e^{2L}`. Their conventions are ours:
+the pole term is included and the norm is that of `L²(d*u) = L²(dt)`.
+
+- **The ground-state energies agree.** Their Table 1 gives `−log ε_λ(1)` at `λ² = 5, 9, 22, …, 150`. The fit
+  `−log ε = 4πλ² − 9.90·log λ − 15.63` to their values at `λ² = 5` and `9` reproduces their rows at `λ² = 22` to `36`
+  to within `0.2`. At our windows it gives the following.
+
+  | `L` | `λ²` | Their fit | Ours (Galerkin upper bound) | Ratio |
+  |---|---|---|---|---|
+  | 0.8 | 4.95 | 1.58e-17 | 2.02e-17 (64 modes) | 1.28 |
+  | 1.0 | 7.39 | 5.80e-30 | 7.39e-30 (105 modes) | 1.27 |
+  | 1.2 | 11.02 | 6.17e-49 | 9.90e-49 | 1.61 |
+
+  Ours lie 1.3–1.6 times above theirs, and fall with the number of modes, as Galerkin values should. Their Table 1 is
+  thus a locatable source for the values this note attributes to the preprint of Zhu, which we could not find.
+- **They explain the ladder.** The rungs are prolate eigenvalues: the even eigenvalues follow `δ_{4j}(λ)` and are
+  separated by factors `≍ λ⁸`, and the odd sector sits `≍ λ⁴` above the even one. Our ratios fit roughly, with
+  prefactors still drifting:
+  - odd/even ÷ `λ⁴` is 29, 40, 51, 52;
+  - even `λ₂/λ₁` ÷ `λ⁸` is 366, 781, 1409, 1219;
+
+  each at `L = 0.5, 0.8, 1.0, 1.2`.
+- **The open handle moves.** Their Section 8, under hypotheses on the semilocal cutoff projections, proves `QW_λ ≥
+  ½ log σ‖f‖²` on the complement of an explicit finite-dimensional space (Theorem 8.14). It thereby reduces positivity
+  to the sign of a Schur complement on a block of dimension `O(log λ)` at the edge of the ladder (Proposition 8.18). That
+  block, not the whole window, is now where a certificate would bite.
+- **Monotonicity.** `ε_λ` does not increase with `λ` (their Proposition 8.17). So a certificate at one window covers
+  every smaller one: the Lean result at `L = 1/2` covers `L ≤ 1/2`.
+- **The orbit sits in their window.** On `Σ_n x_n = 0`, the orbit form of
+  [ball-conjecture.md](ball-conjecture.md) is this form, at `λ = √N`, on the step functions
+  `u^{1/2}Σ_n x_n 1_{(0, n]}(u)` (`OrbitWindow.form_eq_weilQg`). Under RH it is at least `0.0577` at every nonzero
+  integer-valued step function (`OrbitWindow.weilQg_step_int_ge`). Its Rayleigh quotient on the step functions is at
+  least `√log N/(220e⁸N³)` (`OrbitWindow.weilQg_step_ge`), against the window's `e^{−4πN}`
+  ([formalisations/ball-rate.md](../formalisations/ball-rate.md)).
 
 ## Prime-phase alignment and Zhu's barrier (float64 adequate; λ via mpmath)
 

@@ -211,6 +211,47 @@ introduction, this layer is a discrete form of Matsumoto and Suzuki's theorem \c
 $H_1$, and the kernel $\KH(e^{t - u}) - \KH(e^t) - \KH(e^{-u}) + \KH(1)$ of their screw function is the Gram matrix of
 the differences $w_n/\sqrt n - w_1$.
 
+Weil's form itself acts on functions. For real $g \in L^2(\mathbb R)$ vanishing outside a bounded interval, with
+transform $\hat g(z) = \int g(t) e^{izt}\,dt$ and autocorrelation $f(u) = \int g(t) g(t + u)\,dt$, let
+\begin{multline*}
+\mathrm{QW}(g) = 2\hat g(\tfrac i2)\hat g(-\tfrac i2) + \big(\operatorname{Re}\psi_\Gamma(\tfrac14) - \log\pi\big)
+\|g\|^2 \\
++ \int_0^\infty \big(f(0) - f(u)\big)\frac{e^{u/2}}{\sinh u}\,du - 2\sum_{n \ge 2} \frac{\Lambda(n)}{\sqrt n}\, f(\log
+n),
+\end{multline*}
+Weil's quadratic form in the variable $t = \log u$. No zero of $\zeta$ enters it, and for $g$ vanishing outside $[-a,
+a]$ only the prime powers up to $e^{2a}$ do. Whenever the explicit formula (Lemma~\ref{lem:explicit}) applies to
+$h(z) = \hat g(z)\hat g(-z)$, $\mathrm{QW}(g) = \sum_\rho \hat g(t_\rho)\hat g(-t_\rho)$, which is $\sum_\rho |\hat
+g(\gamma_\rho)|^2$ under RH. On the hyperplane $\sum_n x_n = 0$ the orbit form is this form on step functions:
+
+\begin{proposition}\label{prop:window}
+Let $N \ge 2$, let $x$ be real with $\sum_{n \le N} x_n = 0$, and let $g_x(t) = e^{t/2} \sum_{n \le N} x_n 1_{(0, \log
+n]}(t)$. Then $Q_N(x) = \mathrm{QW}(g_x)$.
+\end{proposition}
+
+\begin{proof}
+The transform is $\hat g_x(z) = \sum_n x_n \int_0^{\log n} e^{(1/2 + iz)u}\,du$, at most a constant over $1 +
+|\operatorname{Re} z|$ on $|\operatorname{Im} z| \le 1$. So $h(z) = \hat g_x(z)\hat g_x(-z)$ satisfies the hypotheses
+of Lemma~\ref{lem:explicit}, and the right side of the explicit formula is $\mathrm{QW}(g_x)$:
+\begin{itemize}
+\item $h(\pm\frac i2) = \hat g_x(\frac i2)\hat g_x(-\frac i2)$;
+\item $g_h = f$, by Fourier inversion;
+\item Gauss's integral for $\psi_\Gamma$ and Tonelli turn the archimedean term into $\operatorname{Re}
+\psi_\Gamma(\frac14)\|g_x\|^2 + \int_0^\infty (f(0) - f(u))e^{u/2}/\sinh u\,du$.
+\end{itemize}
+At $t_\rho$, $\frac12 + it_\rho = \rho$, so on the hyperplane $\hat g_x(t_\rho) = \sum_n x_n (n^\rho - 1)/\rho = \sum_n
+x_n n^\rho/\rho$, and likewise $\hat g_x(-t_\rho) = \sum_n x_n n^{1 - \rho}/(1 - \rho)$. Hence $\hat g_x(t_\rho)\hat
+g_x(-t_\rho) = \sum_{m, n} x_m x_n \sqrt{mn}\,(m/n)^{\rho - 1/2}/(\rho(1 - \rho))$, and the sum over the zeros is
+$\sum_{m, n} x_m x_n \sqrt{mn}\,\KH(m/n) = Q_N(x)$.
+\end{proof}
+
+In $u = e^t$, $g_x$ is $u^{1/2}\sum_n x_n 1_{(0, n]}(u)$, supported in $[1, N]$. Weil's form depends on $g$ only through
+its autocorrelation, so the dilation $u \mapsto u/\sqrt N$ changes nothing; it places $g_x$ in the window
+$[\lambda^{-1}, \lambda]$ with $\lambda = \sqrt N$, the windows of Connes and his collaborators \cite{connes-consani21,
+acl26}, and both forms use the prime powers up to $N$. So on the hyperplane $G_N$ is Weil's form on the window,
+compressed to the $N - 1$ step functions with jumps at the integers, and the integer vectors of the hyperplane are the
+integer-valued step functions. The first orbit vector, $u^{1/2}1_{(0, 1]}$, lies in no window.
+
 \begin{definition}\label{def:forms}
 For $k \ge 1$ let $d_k = \inf_c Q_k(\delta_k - \sum_{n < k} c_n \delta_n)$, the infimum over real $c_1, \dots, c_{k -
 1}$; $d_1 = \KH(1)$. The \emph{pivot form} (A) is the statement $d_k \ge d_1$ for every $k \ge 1$. The
@@ -255,6 +296,22 @@ nonzero integer vector has $Q_N(a) \ge c_0 = 1.2496\ldots d_1$. In every realisa
 w_N$ has minimum $\|w_1\|^2 = d_1$, attained at $\pm w_1$ only, and every other lattice vector is longer than $w_1$ by
 a factor at least $\sqrt{1.249} = 1.117\ldots$.
 \end{corollary}
+
+Through Proposition~\ref{prop:window}, the lattice gap is a statement about Weil's form on a window:
+
+\begin{corollary}\label{cor:window}
+Assume RH. Let $N \ge 2$, and let $y$ be an integer-valued function on $(1, N]$, constant on each interval $(k - 1,
+k]$, not identically $0$. Then $\mathrm{QW}(u^{1/2} y) \ge c_0 = 0.0577$, the form taken in $t = \log u$.
+\end{corollary}
+
+\begin{proof}
+Write $y = \sum_n a_n 1_{(1, n]}$ with $a \in \mathbb Z^N$, $a_1 = -\sum_{n \ge 2} a_n$, so that $\sum_n a_n = 0$,
+$u^{1/2}y = g_a$, and $a_n \ne 0$ for some $n \ge 2$. By Proposition~\ref{prop:window} and Theorem~\ref{thm:margin},
+$\mathrm{QW}(g_a) = Q_N(a) \ge c_0$.
+\end{proof}
+
+On the whole window $[\lambda^{-1}, \lambda]$, $\lambda = \sqrt N$, the least eigenvalue of $\mathrm{QW}$ is of order
+$e^{-4\pi\lambda^2} = e^{-4\pi N}$ \cite{acl26}. The integer-valued step functions keep the fixed margin $c_0$.
 
 \begin{proposition}\label{prop:growth}
 Assume RH. For every $N \ge 1$ and every real $x$, $Q_N(x) \ge (\tfrac12 \log N + \log 4 + 2)\, x_N^2 / (22 e^8)$. So
@@ -813,9 +870,12 @@ functional removes its minuscule spectrum. Under a hypothesis they prove that th
 positive constant on the orthogonal complement of an explicit finite-dimensional space, which reduces its positivity to
 the sign of a Schur complement on a finite block \cite[\S8]{acl26}. That margin holds away from a finite-dimensional
 space of test functions on a window, and it serves a proof of positivity. The margin here bounds every Schur complement
-along one basis, the orbit, and it is equivalent to RH. None of these works bounds pivots below by a first pivot or
-considers integer lattices. The orbit vectors here are not compactly supported, and in Yoshida's setting only the
-hyperplane $\sum_n x_n = 0$ of their span fits a window.
+along one basis, the orbit, and it is equivalent to RH. The two settings meet exactly: on the hyperplane $\sum_n x_n
+= 0$, the orbit form is their form on the window with $\lambda = \sqrt N$, compressed to step functions
+(Proposition~\ref{prop:window}), where the margin becomes a lower bound $c_0$ at the integer-valued step functions
+(Corollary~\ref{cor:window}). None of these works bounds pivots below by a first pivot or considers integer lattices.
+The first orbit vector lies in no window, and in Yoshida's setting too only the hyperplane $\sum_n x_n = 0$ of the
+orbit's span fits a window.
 
 \emph{Distances and extremal problems.} In the Nyman--Beurling criterion, in Báez-Duarte's form \cite{baez-duarte03},
 the squared distance from $1_{(0,1]}$ to the span of the first $N$ dilates tends to $0$; Burnol \cite{burnol02} bounds
@@ -848,6 +908,20 @@ Without hypothesis, there is $C$ with $\lambda_N \le C(1 + \log N)/N$ for every 
 The upper bounds take $x_n = (-1)^{n + 1}/n$, for which $\sum_n x_n n^\rho$ is a tail of the alternating zeta function
 at $1 - \rho$, small at the zeros; the lower bound comes from a sampling theorem for Dirichlet polynomials at the zeros
 up to height of order $N$ (\file{formalisations/ball-rate.md}).
+
+\begin{corollary}\label{cor:window-rayleigh}
+Assume RH. For $N \ge 3$ and every real $x$ with $\sum_{n \le N} x_n = 0$, $\mathrm{QW}(g_x) \ge \sqrt{\log N}\,
+\|g_x\|^2/(220 e^8 N^3)$, in the norm of $L^2(\mathbb R)$, that is of $L^2(d^*u)$.
+\end{corollary}
+
+\begin{proof}
+The atoms $e^{t/2} 1_{(0, \log n]}$ have $\|\cdot\|^2 = n - 1$, so by Cauchy--Schwarz over the $N$ atoms $\|g_x\|^2 \le
+N \sum_n x_n^2 (n - 1) \le N^2 \sum_n x_n^2$. Proposition~\ref{prop:window} and Theorem~\ref{thm:lambda} conclude.
+\end{proof}
+
+So on the step functions of the orbit, Weil's form decays at most polynomially in the window's size. On the whole
+window its least eigenvalue is about $e^{-4\pi N}$ \cite{acl26}: the step functions stay far from the nearly null,
+prolate directions, and this is why $\lambda_N$ decays only like a power of $N$.
 
 \begin{conjecture}
 $\lambda_N \sim c \log N/N$ with $c = 0.0429\ldots$
@@ -893,8 +967,10 @@ Theorem~\ref{thm:main}, \ref{thm:main2}: RH $\iff$ (B) & \lean{PivotSharp.rh\_if
 Theorem~\ref{thm:margin}: $Q_N(x) \ge c_0 x_N^2$ & \lean{PivotSharp.pivot\_ge\_rh} \\
 \quad the integer vectors & \lean{PivotSharp.lattice\_gap} \\
 Corollary~\ref{cor:lattice} & \lean{PivotSharp.shortest\_unique}, \lean{PivotSharp.lattice\_gap} \\
+Corollary~\ref{cor:window} & \lean{OrbitWindow.weilQg\_step\_int\_ge} \\
 Proposition~\ref{prop:kernel} & \lean{BallHadamard.kerH\_one}, \lean{BallHadamard.kerH\_inv}, \lean{BallPsi.kerH\_explicit} \\
 Proposition~\ref{prop:positivity} & \lean{BallWeil.rh\_iff\_form}, \lean{BallHadamard.rh\_iff\_realizationH}, \lean{BallWeil.form\_eq\_norm\_sq} \\
+Proposition~\ref{prop:window} & \lean{OrbitWindow.form\_eq\_weilQg}, \lean{OrbitWindow.weilQg\_hasSum} \\
 Proposition~\ref{prop:flat} & \lean{BallFlat.gram\_flat}, \lean{BallFlat.flat\_pivot} \\
 Proposition~\ref{prop:growth} & \lean{BallPivot.pivot\_ge} \\
 Lemma~\ref{lem:explicit} & \lean{WeilForm.weilExplicit\_zeta} \\
@@ -907,6 +983,7 @@ Proposition~\ref{prop:form} & \lean{PivotSharp.form\_ge} \\
 Lemma~\ref{lem:mertens} & \lean{PivotTop.mertens\_le\_uniform}, \lean{PivotTop.mertens\_le\_small} \\
 Proposition~\ref{prop:top} & \lean{PivotTop.top\_bound} \\
 Theorem~\ref{thm:lambda} & \lean{BallGap.rate\_gap}, \lean{BallUpperEta.rate\_upper\_rh}, \lean{BallUpperEta.rate\_upper} \\
+Corollary~\ref{cor:window-rayleigh} & \lean{OrbitWindow.weilQg\_step\_ge} \\
 \bottomrule
 \end{longtable}
 }
