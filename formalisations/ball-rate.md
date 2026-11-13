@@ -900,6 +900,7 @@ read at the top vertex instead of the root.
 | `PivotSharp.rh_iff_shortest` | RH ⟺ `Q_N(a) ≥ Q_1(δ_1) = K_H(1)` at every nonzero integer vector `a`, for every `N`: `w_1` is a shortest vector of the orbit lattice | nothing |
 | `PivotSharp.shortest_of_rh`, `PivotSharp.shortest_unique` | every nonzero integer vector has `Q_N(a) ≥ K_H(1)`, and only `±δ_1` have `Q_N(a) ≤ K_H(1)` | RH |
 | `PivotSharp.lattice_gap` | an integer vector with a nonzero coefficient at some `2 ≤ k ≤ N` has `Q_N(a) ≥ (999/1000)(2/45)(13/10) ≥ 0.0577` | RH |
+| `PivotSharp.lattice_second` | every nonzero integer vector other than `±δ_1` has `Q_N(a) ≥ (999/1000)(2/45)(13/10)`: `mδ_1` with `\|m\| ≥ 2` has `Q_N = m²K_H(1) > 4/50` (`PivotSharp.gram_one_gt`: `K_H(1) > 1/50`) | RH |
 | `PivotSharp.form_ge` | `Q_N(x) ≥ (φ̂(0)/2πN)((log N + 7/8)Σc_n² − L(c)) − Σc_n²/(6000N)` for `N ≥ 2`, `c_n = x_n√n` | RH and `PivotSharp.MuLe`, which `PivotCert.mu_le` proves |
 | `PivotCert.mu_le` | `μ(s) ≤ φ(s)(Re ψ(¼ + iNs/2) − log π − log N)` for every `N ≥ 2` and every real `s` | nothing |
 | `PivotMinorFT.integral_mu_cos_eq_zero`, `PivotMinorFT.integral_mu_ge` | `∫μ(s)cos(sv) ds = 0` for `\|v\| ≥ 1`, and `∫μ ≥ (7/8)φ̂(0)` | nothing |
@@ -917,7 +918,7 @@ not a route to it.
 gives `Q_N(a) ≥ 0.0577` as soon as `k ≥ 2` (`lattice_gap`), while a vector supported at `1` has `Q_N(a) = a_1²·K_H(1)`.
 So under RH the integer combinations of the orbit form a lattice whose minimum is `K_H(1) = ‖w_1‖²`, attained at `±w_1`
 only (`shortest_of_rh`, `shortest_unique`), and every other lattice vector is longer by a factor at least
-`√1.249 = 1.118`. Conversely a positive minimum at the integer vectors gives RH, as in `BallPivot.rh_iff_lattice`. This
+`√1.249 = 1.118` (`lattice_second`). Conversely a positive minimum at the integer vectors gives RH, as in `BallPivot.rh_iff_lattice`. This
 is the lattice statement of step 6 of [ball-conjecture.md](../docs/ball-conjecture.md) with its sharp constant: RH holds
 if and only if `w_1` is a shortest vector of the orbit lattice (`rh_iff_shortest`).
 

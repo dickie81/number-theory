@@ -5,7 +5,7 @@ push once the paper is on `main`.
 
 `main.tex` is the paper. Its eight sections are:
 1. the introduction;
-2. the kernel `K_H`, the orbit and the two forms;
+2. the kernel `K_H`, the orbit and the forms (A), (B) and (B′);
 3. the main results;
 4. the proof of the margin;
 5. the formalisation;
@@ -25,7 +25,8 @@ The main theorem, Theorem 1.1, is the margin `PivotSharp.pivot_ge_rh` in `lib/co
 Corollary 1.2 states its consequences as equivalences, `PivotSharp.rh_iff_orbitLattice` and `PivotSharp.rh_iff_shortest`.
 Neither has a hypothesis:
 - RH holds if and only if every Gram–Schmidt pivot of the orbit is at least the first;
-- RH holds if and only if `w_1` is a shortest nonzero vector of the lattice the orbit spans.
+- RH holds if and only if the form is at least `K_H(1)` at every nonzero integer vector, which under RH makes `w_1` a
+  shortest nonzero vector of the lattice the orbit spans.
 
 The orbit's Gram matrix `√(mn)·K_H(m/n)` in their statements is computed from the primes (`BallWeil.gram`, through
 `BallPsi.kerH_explicit`). The threshold `K_H(1)` is a choice. Given positivity, a uniform lower bound `ε` for the pivots
@@ -57,8 +58,10 @@ These parts of the paper are not formalised. They are proved in the text or comp
   - those of the remark "How the hyperplane sits" at the end of §2, which come from
     [`scripts/window_hyperplane.py`](../../scripts/window_hyperplane.py);
   - the numerics of Section 8;
-  - the comparison, in the introduction, of the pivots for four densities of zeros, which shows that the gap below
-    the first zeros, not the growth of their density, makes the margin at `k = 2` (`scripts/ball_orbit.py --densities`);
+- the numerical values quoted in the introduction, among them the comparison of the pivots for six densities of zeros,
+  which shows that the scarcity of zeros below height about `2π`, not the growth of their density, makes the pivots
+  exceed the first at `k = 2` (`scripts/ball_orbit.py --densities`);
+- the equivalence of the lattice form (B′) with RH, which the text derives from Proposition 2.2 and Corollary 1.2;
 - Section 6 on the analogues. Its density remark follows Lamzouri, whose approximation step uses Heath-Brown's
   zero-density estimate, and gets the positive proportion of the abstract from his published theorems. The repository
   also proves the two limits for each sign of `D` in Lean, `D2Good.d2_density_pos_closed` and `d2_density_neg_closed`;
@@ -76,8 +79,9 @@ The analogues are computed by [`scripts/ball_tests/`](../../scripts/ball_tests/R
 The paper claims only its own steps, the margin and the equivalences it gives. Several layers come from the
 literature, and the paper credits them:
 - The positivity layer, RH ⟺ every `G_N ⪰ 0`, is in substance Matsumoto and Suzuki's screw-function theorem.
-- Its `2 × 2` case is Nicolas's.
-- The constant `K_H(1)` is Burnol's, and Gun, Murty and Rath's.
+- Its `2 × 2` case is noted by Nicolas under RH. Its lower half alone, `K_H(r) ≥ −K_H(1)` at the rationals, is already
+  equivalent to RH (Proposition 2.2, `BallWeil.rh_iff_weil_bound`).
+- The value of `K_H(1)` is classical; RH ⟺ `Σ_ρ 1/|ρ|² = K_H(1)` is Burnol's remark, also proved by Gun, Murty and Rath.
 - Weil's explicit formula, which the library proves.
 
 ## State
@@ -90,7 +94,8 @@ A draft, of 13 November 2026. What remains:
   - Bombieri (2003), whose §8 meets Brownian motion, as the flat model of Proposition 2.5 does;
   - the chapters of Broughan's Volume 2 on Weil's explicit formula, discrete measures and Hermitian forms;
   - the sources of the method that Section 7 and Lemma 4.1 cite: Landau (1912) and Gonek (1993) for Landau's formula,
-    Montgomery–Odlyzko (1984) and Conrey–Ghosh–Gonek (1984) on gaps between zeros, and Iwaniec–Kowalski's Theorem 5.12.
+    Fujii (1989), Montgomery–Odlyzko (1984) and Conrey–Ghosh–Gonek (1984) on gaps between zeros, and Iwaniec–Kowalski's
+    Theorem 5.12.
     They are cited from Goldston–Gonek (2007), whose Lemma 1 was checked against Lemma 4.1 term by term, from Bui,
     Milinovich and Ng (arXiv:0910.2052) and from Goldston's survey (arXiv:math/0412313).
 
@@ -115,8 +120,8 @@ Done since the first draft:
   - the title drops "the Riemann hypothesis as a lattice minimum";
   - the abstract and the introduction lead with the margin, now Theorem 1.1, with the equivalences as Corollary 1.2;
   - the flat model is described as a constant density;
-  - Section 6 tests the lattice form (B′). (A) fails for every curve, and (B′) for 43 of the 148 sampled. The two forms
-    part for complex characters.
+  - Section 6 tests the lattice form (B′). (A) fails for every curve, and (B′) for 43 of the 148 sampled, on the
+    indices tested. The two forms part for complex characters.
 - The method's sources are cited: Guinand and Goldston–Gonek's Lemma 1 for the explicit formula in the form of Lemma
   4.1, Landau and Gonek for Landau's form, and in Section 7 Montgomery, Montgomery–Odlyzko, Conrey–Ghosh–Gonek, Vaaler
   and Carneiro–Milinovich–Soundararajan.
@@ -133,6 +138,27 @@ Done since the first draft:
     Dimitrov–Oliveira, Connes–Consani, Gun–Murty–Rath, the value of `d₁`), and the classical formulas are cited to the
     DLMF;
   - "What is new", the uncertified 1.449 remark and repeated statements are cut.
+- After a third hostile review:
+  - the bibliography no longer prints an uncited, unrefereed preprint on a zero-free half-plane;
+  - Section 7 credits Conrey, Ghosh and Gonek's bound on the weighted Landau form for every choice of coefficients (as
+    Bui, Milinovich and Ng report), and says what is new: an identity exact at every `N`, and Schur's test at the top
+    vertex leaving `(13/10)c_N²` to spare;
+  - Corollary 3.2 covers `a = mδ₁`, `|m| ≥ 2`, in the text and in Lean (`PivotSharp.lattice_second`, with
+    `PivotSharp.gram_one_gt`: `K_H(1) > 1/50`);
+  - Proposition 2.2 also states that `K_H(r) ≥ −K_H(1)` at the rationals is equivalent to RH, which its proof already
+    showed (`BallWeil.rh_iff_weil_bound`);
+  - the claims table lists the Lean theorems behind the equality in Proposition 2.5, the convergence in Proposition 2.1,
+    and the hypothesis of `PivotSharp.form_ge`; Section 5 lists the remaining statements that are not Lean theorems;
+  - the density comparison describes its controls correctly. Two are added: a gap up to the first zero, and a density
+    with no gap that is small near height 0. What sets the pivots at `k = 2` is the scarcity of zeros below height
+    about `2π`;
+  - credit is corrected for Andrews–Connes–La Gatta (the eigenvalue bound is Kastoris's and Connes–Kastoris's, and
+    their reduction leaves an estimate open), Yoshida (the spaces of his results, and his Lemma 3 as the earlier margin
+    of that shape), Connes–Consani (support in `(1/2, 2)`, after Yoshida), Fujii, Báez-Duarte–Balazard–Landreau–Saias
+    (distinct zeros), Dimitrov–Oliveira, Nicolas, Matsumoto–Suzuki, Kreĭn–Langer, Mazhouda, the DLMF names and
+    Szegő's theorem; Groskin's pivot certification of truncated Weil forms is cited;
+  - the window factor of Section 8 grows like `√log N`, the fitted constant depends on the law fitted, the per-sign
+    density limits are marked as a sketch, and the notation and wording are tidied.
 - Results whose proofs are only in the library are out. Each rests on the sampling theorem at the zeros and the
   bounds for `λ_N`, which would roughly double the paper:
   - the pivot growth `d_N ≫ log N` under RH (`BallPivot.pivot_ge`);

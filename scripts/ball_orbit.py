@@ -111,8 +111,9 @@ def smooth(N):
 
 
 def densities(N):
-    """Pivots d_k/d_1 for four densities of zeros: which of the gap at low height and the logarithmic growth makes them
-    exceed 1. The density is per unit height, one sign, and K(x) = 2∫ρ(t)cos(t log x)/(t² + 1/4) dt."""
+    """Pivots d_k/d_1 for six densities of zeros: what makes them exceed 1, the scarcity of zeros at low height or the
+    logarithmic growth of their density. The density is per unit height, one sign, and
+    K(x) = 2∫ρ(t)cos(t log x)/(t² + 1/4) dt."""
     from fractions import Fraction
     from scipy.integrate import quad
     two_pi = 2 * math.pi
@@ -122,6 +123,10 @@ def densities(N):
          [(0.0, two_pi * math.e, lambda t: 1 / two_pi), (two_pi * math.e, np.inf, lambda t: math.log(t / two_pi) / two_pi)]),
         ("constant 1/2π, none below 2π (gap, no growth)", [(two_pi, np.inf, lambda t: 1 / two_pi)]),
         ("log(t/2π)/2π, none below 2π (the zeros' density)", [(two_pi, np.inf, lambda t: math.log(t / two_pi) / two_pi)]),
+        ("log(t/2π)/2π, none below 14.13 (gap up to the first zero)",
+         [(14.134725, np.inf, lambda t: math.log(t / two_pi) / two_pi)]),
+        ("log(1 + t/2π)/2π at every height (small near 0, no gap)",
+         [(0.0, np.inf, lambda t: math.log1p(t / two_pi) / two_pi)]),
     ]
 
     def kernel(pieces):

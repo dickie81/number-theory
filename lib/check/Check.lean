@@ -278,14 +278,19 @@ proof of the margin. -/
 #print axioms PivotSharp.pivot_ge_rh
 #print axioms PivotSharp.lattice_gap
 #print axioms PivotSharp.shortest_unique
+#print axioms PivotSharp.lattice_second
 #print axioms BallHadamard.kerH_one
+#print axioms BallHadamard.summable_hw
 #print axioms BallHadamard.kerH_inv
 #print axioms BallPsi.kerH_explicit
 #print axioms BallWeil.rh_iff_form
+#print axioms BallWeil.rh_iff_weil_bound
 #print axioms BallHadamard.rh_iff_realizationH
 #print axioms BallWeil.form_eq_norm_sq
 #print axioms BallFlat.gram_flat
+#print axioms BallFlat.kerFlat_eq_integral
 #print axioms BallFlat.flat_pivot
+#print axioms BallFlat.inner_increments
 #print axioms WeilForm.weilExplicit_zeta
 #print axioms PivotPhi.integral_phi_cos
 #print axioms PivotPhi.phi_nonneg
@@ -299,6 +304,7 @@ proof of the margin. -/
 #print axioms PivotCert.mu_le
 #print axioms PivotSharp.pole_ge
 #print axioms PivotSharp.form_ge
+#print axioms PivotSharp.muLe
 #print axioms PivotTop.mertens_le_uniform
 #print axioms PivotTop.mertens_le_small
 #print axioms PivotTop.top_bound
