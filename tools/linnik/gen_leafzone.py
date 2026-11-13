@@ -44,6 +44,7 @@ import route_limits as rl  # noqa: E402
 PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 OUT = os.path.join(PNT, 'SieveLeafZone.lean')
 OUTX = os.path.join(PNT, 'SieveLeafZoneX.lean')
+OUTXD = os.path.join(PNT, 'SieveLeafZoneXDefs.lean')
 D = E = Fr(1, 1000)
 W = Fr(4, 10 ** 6)
 T = Fr(1, 2) - 2 * E
@@ -318,6 +319,35 @@ def xl_nat(f, at_half):
     return [(int(al * Q), 'Ln * P'), (int(be * Q), 'Ln * R'), (int(g0 * Q), 'Ld * D'), (int(g1 * Q), 'Ln * D')], Q
 
 
+def lean_file_xdefs():
+    cj = xl_conjuncts()
+    checks = []
+    for f, h in cj:
+        terms, Q = xl_nat(f, h)
+        pos, neg = nat_terms(terms)
+        checks.append(f'Nat.ble ({pos}) ({neg})')
+    checks = ' &&\n    '.join(checks)
+    return f"""/-
+# The test of the leaves' region above `√q` at a point, in natural numbers, without Mathlib
+
+Written by `tools/linnik/gen_leafzone.py`; do not edit.
+
+`leafXN Ln Ld D P R`: the {len(cj)} inequalities of `SieveLeafZoneX.LeafZoneXL` at `m₁ = κP`, `ρ = κR`, `L = κD` with
+`Ln = Ld·D·κ` (exponents of `x` in units of `1/D`, `L = Ln/Ld`), each times `Ld·D` and its denominator. Its soundness
+is `SieveLeafZoneX.leafXN_sound`.
+-/
+
+namespace SieveLeafZoneX
+
+/-- **The test of `LeafZoneXL` at a point in natural numbers**: `m₁ = κP`, `ρ = κR`, `L = κD`, each inequality times
+`Ld·D` and its denominator, with `Ln = Ld·D·κ`. -/
+def leafXN (Ln Ld D P R : Nat) : Bool :=
+  {checks}
+
+end SieveLeafZoneX
+"""
+
+
 def lean_file_x():
     cj = xl_conjuncts()
     n = len(cj)
@@ -382,11 +412,6 @@ theorem leafZoneXL_rect {{L u₁ u₂ r₁ r₂ u r : ℝ}} (hu₁ : u₁ ≤ u)
   refine ⟨{qn}⟩
 {rect}
 
-/-- **The test of `LeafZoneXL` at a point in natural numbers**: `m₁ = κP`, `ρ = κR`, `L = κD`, each inequality times
-`Ld·D` and its denominator, with `Ln = Ld·D·κ`. -/
-def leafXN (Ln Ld D P R : ℕ) : Bool :=
-  {checks}
-
 set_option maxHeartbeats 4000000 in
 /-- **The test is sound**: for `Ld, D > 0` and `Ln = Ld·D·κ`, `leafXN` gives `LeafZoneXL` at `m₁ = κP`, `ρ = κR`,
 `L = κD`. -/
@@ -417,9 +442,10 @@ half-planes holds on a rectangle of `(m₁, ρ)`, `ρ = L − m₁ − m₂`, wh
 `leafZoneXL_rect`); and at a point `m₁ = κP`, `ρ = κR`, `L = κD` with `Ln = Ld·D·κ` (exponents of `x` in units of
 `1/D`, `L = Ln/Ld`), each of its inequalities is one of natural numbers (`leafXN`, `leafXN_sound`).
 
-The file imports `SieveLeafTwo.lean`.
+The file imports `SieveLeafTwo.lean` and `SieveLeafZoneXDefs.lean` (`leafXN`, without Mathlib).
 -/
 import SieveLeafTwo
+import SieveLeafZoneXDefs
 
 namespace SieveLeafZoneX
 
@@ -433,7 +459,7 @@ def main():
         for f in forms:
             print('  ', lean_ineq(f))
         return 0
-    files = [(OUT, lean_file()), (OUTX, lean_file_x())]
+    files = [(OUT, lean_file()), (OUTXD, lean_file_xdefs()), (OUTX, lean_file_x())]
     if '--check' in sys.argv[1:]:
         bad = 0
         for path, text in files:
