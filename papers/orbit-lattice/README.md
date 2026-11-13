@@ -22,7 +22,7 @@ The main theorem, Theorem 1.1, is the margin `PivotSharp.pivot_ge_rh` in `lib/co
 `Q_N(x) ≥ c₀·x_N²` for every `N ≥ 2` and every real `x`, with `c₀ = (999/1000)(2/45)(13/10) = 0.05772`, against
 `K_H(1) = 0.04619`. So every pivot after the first is at least `c₀`.
 
-Theorem 1.2 states its consequences as equivalences, `PivotSharp.rh_iff_orbitLattice` and `PivotSharp.rh_iff_shortest`.
+Corollary 1.2 states its consequences as equivalences, `PivotSharp.rh_iff_orbitLattice` and `PivotSharp.rh_iff_shortest`.
 Neither has a hypothesis:
 - RH holds if and only if every Gram–Schmidt pivot of the orbit is at least the first;
 - RH holds if and only if `w_1` is a shortest nonzero vector of the lattice the orbit spans.
@@ -44,8 +44,9 @@ Appendix A names the Lean theorem behind each numbered result. `lib/check/Check.
 - `lcm(1, …, n) ≤ 3ⁿ` for `n ≤ 2000`, behind the Mertens bound (`PivotTop`).
 
 [`formalisations/ball-rate.md`](../../formalisations/ball-rate.md) documents the Lean proofs, section by section.
-[`scripts/pivot_constants.py`](../../scripts/pivot_constants.py) replays every number of Section 4 in exact rational
-arithmetic, including the 1181 cells of the certificate, for readers without Lean.
+[`scripts/pivot_constants.py`](../../scripts/pivot_constants.py) replays the numbers of Section 4 for readers without
+Lean: in exact rational arithmetic, including the 1181 cells of the certificate, except the top vertex's rooms and prime
+terms, which it computes in floating point.
 
 ## What is not a Lean theorem
 
@@ -56,14 +57,14 @@ These parts of the paper are not formalised. They are proved in the text or comp
   - those of the remark "How the hyperplane sits" at the end of §2, which come from
     [`scripts/window_hyperplane.py`](../../scripts/window_hyperplane.py);
   - the numerics of Section 8;
-  - the comparison, in the introduction, of the pivots with those of the zeros' density (`scripts/ball_orbit.py
-    --smooth`);
-- Section 6 on the analogues, except the two limits of the density of real characters with `d₂ < d₁`, one for each sign
-  of `D`. They are `D2Good.d2_density_pos_closed` and `d2_density_neg_closed`, whose Lean proofs use the library's
-  formalisation of the zero-free half-plane of an unrefereed preprint; the paper cites them as conditional on it. The
-  paper's own argument is Lamzouri's, whose approximation step uses Heath-Brown's zero-density estimate instead, and it
-  gives the positive proportion of the abstract from Lamzouri's published theorem alone;
-- the conjecture `λ_N ~ c·log N/N`, with `c ≈ 0.043` numerically, and the questions of Section 8;
+  - the comparison, in the introduction, of the pivots for four densities of zeros, which shows that the gap below
+    the first zeros, not the growth of their density, makes the margin at `k = 2` (`scripts/ball_orbit.py --densities`);
+- Section 6 on the analogues. Its density remark follows Lamzouri, whose approximation step uses Heath-Brown's
+  zero-density estimate, and gets the positive proportion of the abstract from his published theorems. The repository
+  also proves the two limits for each sign of `D` in Lean, `D2Good.d2_density_pos_closed` and `d2_density_neg_closed`;
+  their proofs use the library's formalisation of the zero-free half-plane `Re s > 11/12` of an unrefereed preprint, an
+  extraordinary claim, and the paper does not rely on them;
+- the conjecture `λ_N ~ c·log N/N`, where a fit suggests `c ≈ 0.043`, and the questions of Section 8;
 - the historical and comparative statements.
 
 The paper is self-contained apart from its citations of other papers and preprints. It points to the repository only
@@ -112,14 +113,26 @@ Done since the first draft:
 
   Then its framing points:
   - the title drops "the Riemann hypothesis as a lattice minimum";
-  - the abstract and the introduction lead with the margin, now Theorem 1.1, with the equivalences as Theorem 1.2;
-  - the flat model is described as a constant density. The zeros' true density gives larger pivots, so the margin
-    reflects that density's logarithmic growth;
-  - Section 6 reads (B) on the lattice the orbit spans. (A) fails for every curve, and (B) for 43 of the 148 sampled. The
-    two forms part for complex characters.
+  - the abstract and the introduction lead with the margin, now Theorem 1.1, with the equivalences as Corollary 1.2;
+  - the flat model is described as a constant density;
+  - Section 6 tests the lattice form (B′). (A) fails for every curve, and (B′) for 43 of the 148 sampled. The two forms
+    part for complex characters.
 - The method's sources are cited: Guinand and Goldston–Gonek's Lemma 1 for the explicit formula in the form of Lemma
   4.1, Landau and Gonek for Landau's form, and in Section 7 Montgomery, Montgomery–Odlyzko, Conrey–Ghosh–Gonek, Vaaler
   and Carneiro–Milinovich–Soundararajan.
+- After a second hostile review:
+  - Lemma 4.1, the explicit formula, has the standard contour proof: no cited source proves it for test functions whose
+    transform is not smooth, as none of the paper's is;
+  - the margin is attributed to the gap below the first zeros, not to the growth of their density, which the first
+    round had wrongly concluded from a comparison that changed both at once;
+  - Andrews, Connes and La Gatta's eigenvalue rate is stated as their upper bound;
+  - the per-sign density limits are no longer claimed as Lean theorems;
+  - the equivalences are Corollary 1.2, and the lattice form (B′) is defined;
+  - the second minimum is settled for every `N ≤ 10⁴` by the certificate;
+  - credit and wording are corrected (the Nyman–Beurling distance, Báez-Duarte–Balazard–Landreau–Saias, Fujii,
+    Dimitrov–Oliveira, Connes–Consani, Gun–Murty–Rath, the value of `d₁`), and the classical formulas are cited to the
+    DLMF;
+  - "What is new", the uncertified 1.449 remark and repeated statements are cut.
 - Results whose proofs are only in the library are out. Each rests on the sampling theorem at the zeros and the
   bounds for `λ_N`, which would roughly double the paper:
   - the pivot growth `d_N ≫ log N` under RH (`BallPivot.pivot_ge`);

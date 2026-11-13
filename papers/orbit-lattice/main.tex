@@ -1,4 +1,4 @@
-% The orbit-lattice paper: a margin in Weil's criterion, and the Riemann hypothesis as a lattice minimum. The claims
+% The orbit-lattice paper: a margin in Weil's criterion. The claims
 % table of Appendix A names the Lean theorem behind each numbered result, and lib/check/Check.lean prints their axioms.
 % Remarks, conjectures and the numerical statements are not Lean theorems, and Section 5 lists them. The paper claims
 % only its own steps: the results it uses from the literature are documented in formalisations/ and cited.
@@ -50,25 +50,21 @@
 
 \begin{abstract}
 Let $\KH(r) = \sum_\rho r^{\rho - 1/2}/(\rho(1 - \rho))$, summed over the nontrivial zeros of $\zeta$, and $G_N =
-(\sqrt{mn}\,\KH(m/n))_{m, n \le N}$, whose entries can be computed from the primes. By Weil's criterion, in a discrete
-form of a theorem of Matsumoto and Suzuki, the Riemann hypothesis holds exactly when every $G_N$ is positive
-semidefinite, and $G_N$ is then the Gram matrix of $w_n = (n^\rho/|\rho|)_\rho$: $x^T G_N x = \sum_\rho |\sum_n x_n
-n^\rho|^2/|\rho|^2$ is Weil's form at a Dirichlet polynomial. We prove that under the hypothesis $x^T G_N x \ge
-0.0577\,x_N^2$ for every $N \ge 2$ and every real $x$: Weil's form at a Dirichlet polynomial is bounded below by its top
-coefficient, uniformly in the length. Since $0.0577$ exceeds $G_{11} = 2 + \gamma - \log 4\pi = 0.0462$, every
-Gram--Schmidt pivot of $w_1, w_2, \dots$ is at least the first, and $\pm w_1$ are the only shortest nonzero vectors of
-every lattice $\mathbb Z w_1 + \dots + \mathbb Z w_N$. Stated for $G_N$, each of these properties is equivalent to the
-Riemann hypothesis. The proof picks a band-limited test function that makes the prime side of the explicit formula
-exactly Landau's quadratic form, then bounds that form by Schur's test and the archimedean term by an interval
-certificate. It is formalised in Lean~4 with Mathlib, on Lean's standard axioms alone. The margin reflects the
-logarithmic growth of the density of the zeros: with a constant density every pivot equals the first. The pivot property
-fails for every curve over a finite field, where the Riemann hypothesis is a theorem, and both properties fail for a
-positive proportion of real Dirichlet characters.
+(\sqrt{mn}\,\KH(m/n))_{m, n \le N}$, whose entries can be computed from the primes. The Riemann hypothesis holds exactly
+when every $G_N$ is positive semidefinite, a discrete form of a theorem of Matsumoto and Suzuki, and $G_N$ is then the
+Gram matrix of $w_n = (n^\rho/|\rho|)_\rho$: $x^T G_N x = \sum_\rho |P(\rho)|^2/|\rho|^2$ for the Dirichlet polynomial
+$P(s) = \sum_n x_n n^s$. We prove that under the hypothesis $x^T G_N x \ge 0.0577\,x_N^2$ for every $N \ge 2$ and every
+real $x$: this sum over the zeros is at least $0.0577$ times the square of the top coefficient of $P$, uniformly in its
+length. Since $0.0577$ exceeds $G(1, 1) = 2 + \gamma - \log 4\pi = 0.0462$, every Gram--Schmidt pivot of $w_1, w_2,
+\dots$ is at least the first, and $\pm w_1$ are the only shortest nonzero vectors of every lattice $\mathbb Z w_1 + \dots
++ \mathbb Z w_N$. Stated for $G_N$, each of these properties is equivalent to the Riemann hypothesis. The proof picks a
+band-limited test function that makes the prime side of the explicit formula exactly Landau's quadratic form, then
+bounds that form by Schur's test and the archimedean term by an interval certificate. It is formalised in Lean~4 with
+Mathlib, on Lean's standard axioms alone. Numerically, the margin comes from the absence of zeros at low height: with a
+constant density of zeros down to height zero every pivot equals the first. The pivot property fails for every curve
+over a finite field, where the Riemann hypothesis is a theorem, and both properties fail for a positive proportion of
+real Dirichlet characters.
 \end{abstract}
-
-% TODO (draft): before submission, read in full what is known here only through reviews, abstracts and citing papers: Bombieri (2003), including its Section 8, on Brownian motion, against
-% Proposition 2.5; Mazhouda (2013); the chapters of Broughan's Volume 2 on Weil's explicit formula, discrete measures
-% and Hermitian forms.
 
 \section{Introduction}\label{sec:intro}
 
@@ -91,11 +87,15 @@ vectors $w_n = (n^\rho/|\rho|)_\rho$ in $\ell^2$ of the zeros, and $Q_N(x) = \su
 |\rho|^2$. Conversely, RH holds if and only if every $Q_N$ is nonnegative at the integer vectors
 (Proposition~\ref{prop:positivity}). That positivity layer is known in substance: $\KH$ is the function $H_1$ of
 Matsumoto and Suzuki, who prove that RH holds exactly when $H_1(e^t) - H_1(1)$ is a screw function on $\mathbb R$
-\cite[Theorem~1.3]{matsumoto-suzuki}, and the $2 \times 2$ minors of $G_N$ are Nicolas's bound $|W(x)| \le \beta$, with
-$W = \KH$ under RH and $\beta = d_1$ \cite{nicolas}.
+\cite[Theorem~1.3]{matsumoto-suzuki}, in Kre\u{\i}n and Langer's sense: a continuous $g$ with $g(-t) = \overline{g(t)}$
+whose kernel $g(t - u) - g(t) - g(-u) + g(0)$ is nonnegative definite. The $2 \times 2$ minors of $G_N$ are Nicolas's
+bound \cite{nicolas}, which under RH reads $|\KH(x)| \le d_1$.
 
-We ask for more than positivity: a margin. The main result bounds Weil's form at a Dirichlet polynomial below by
-its top coefficient, uniformly in the length.
+We ask for more than positivity: a margin. Let $\delta_n$ be the $n$-th unit vector, and let $d_k$ be the $k$-th
+Gram--Schmidt pivot of the orbit, the infimum of $Q_k(\delta_k - \sum_{n < k} c_n \delta_n)$ over real $c$: under RH,
+the squared distance of $w_k$ from the span of $w_1, \dots, w_{k - 1}$. The main result bounds $Q_N(x) = \sum_\rho
+|P(\rho)|^2/|\rho|^2$, for the Dirichlet polynomial $P(s) = \sum_{n \le N} x_n n^s$, below by a constant times the
+square of its top coefficient, uniformly in $N$.
 
 \begin{theorem}\label{thm:margin}
 Assume RH. For every $N \ge 2$ and every real $x$,
@@ -106,73 +106,57 @@ Hence $d_k \ge c_0 > 1.249\,d_1$ for every $k \ge 2$; every integer vector with 
 has $Q_N(a) \ge c_0$; and $\pm\delta_1$ are the only nonzero integer vectors with $Q_N(a) \le d_1$.
 \end{theorem}
 
-Here $d_k$ is the $k$-th Gram--Schmidt pivot of the orbit, the least value of $Q_k(\delta_k - \sum_{n < k} c_n
-\delta_n)$ over real $c$: under RH, the squared distance of $w_k$ from the span of $w_1, \dots, w_{k - 1}$. As $c_0
-> d_1$, the margin clears the first pivot and the first vector. Consider
+As $c_0 > d_1$, the margin clears the first pivot and the first vector. Consider
 \begin{itemize}
 \item[(A)] $d_k \ge d_1$ for every $k \ge 1$ (the pivot form);
 \item[(B)] $Q_N(a) \ge d_1$ for every $N$ and every nonzero $a \in \mathbb Z^N$ (the shortest-vector form): under RH,
 $w_1$ is a shortest nonzero vector of the lattice spanned by $w_1, \dots, w_N$.
 \end{itemize}
 
-\begin{theorem}\label{thm:main}
+\begin{corollary}\label{thm:main}
 The following are equivalent: \textup{(i)} the Riemann hypothesis; \textup{(ii)} \textup{(A)}; \textup{(iii)}
 \textup{(B)}.
-\end{theorem}
+\end{corollary}
 
 The implications from (A) and from (B) to RH are formal: each makes every $Q_N$ nonnegative at the integer vectors,
-which is RH by Proposition~\ref{prop:positivity}. So is the threshold: given positivity, $d_k \ge \varepsilon$ for every
-$k$ is equivalent to RH for each $\varepsilon \in (0, d_1]$, and $\varepsilon = d_1$ is the value at which the statement
-becomes a lattice minimum. The content of Theorem~\ref{thm:main} is Theorem~\ref{thm:margin}, a margin that holds
-uniformly.
+which is RH by Proposition~\ref{prop:positivity}. The converse is Theorem~\ref{thm:margin}. The threshold $d_1$ is a
+choice: given Theorem~\ref{thm:margin}, $d_k \ge \varepsilon$ for every $k$ is equivalent to RH for each $\varepsilon \in
+(0, d_1]$, and $\varepsilon = d_1$ is the value at which the statement becomes a lattice minimum.
 
 The true values are larger. Numerically $d_2/d_1 = 1.7184\ldots$, certified in ball arithmetic, and the second minimum of
-the lattice, the least $Q_N(a)/d_1$ over integer $a \ne 0, \pm\delta_1$, is $1.9387\ldots$ for $N \le 30$, at $a =
-\delta_1 + \delta_2$ (Section~\ref{sec:numerics}). The pivots grow, numerically, to $d_{500} = 74.9\,d_1$, and under
-RH they are at most $\log(k/2\pi) + 1 - \gamma + o(1)$ (Section~\ref{sec:results}). So Theorem~\ref{thm:margin} is
-far from sharp beyond the first few $k$; its point is that it is uniform.
+the lattice, the least $Q_N(a)/d_1$ over integer $a \ne 0, \pm\delta_1$, is $1.9387\ldots$ for every $N \le 10^4$, at $a
+= \delta_1 + \delta_2$ (Section~\ref{sec:numerics}). The pivots grow, numerically, to $d_{500} = 74.9\,d_1$, and they are
+at most $\log(k/2\pi) + 1 - \gamma + o(1)$ (Section~\ref{sec:results}). So Theorem~\ref{thm:margin} is far from sharp
+beyond the first few $k$; its point is that it is uniform.
 
 In the flat model, where the zeros are replaced by a constant density, normalised so that $\KH(1) = d_1$, the Gram
-matrix is $d_1 \min(m, n)$ and every pivot equals $d_1$ (Proposition~\ref{prop:flat}). The margin comes from the
-logarithmic growth of the true density. With the zeros replaced by that density, $(1/2\pi)\log(|t|/2\pi)$ on $|t| \ge
-2\pi$, the pivots are larger still: $d_k/d_1 = 2.00$, $3.00$ and $24.8$ at $k = 2$, $3$ and $30$, against $1.72$, $2.37$
-and $14.6$ for $\zeta$, and the ratio of the two stays between $0.59$ and $0.86$ for $k \le 30$
-(\texttt{scripts/ball\_orbit.py}). So, as far as this goes, the discrete zeros pull the pivots down from the density's
-values, and Theorem~\ref{thm:margin} says that under RH they never pull them down to $d_1$. The proof splits the same
-way: the archimedean term, which carries the density, supplies the diagonal $\log N + \frac78$, and the prime side,
-Landau's form, takes part of it back.
+matrix is $d_1 \min(m, n)$ and every pivot equals $d_1$ (Proposition~\ref{prop:flat}). Numerically, the margin comes
+from the absence of zeros at low height. With a constant density that vanishes below height $2\pi$, $d_k/d_1 = 1.96$,
+$2.78$ and $12.9$ at $k = 2$, $3$ and $30$; with the zeros' own density, $(1/2\pi)\log(t/2\pi)$ above height $2\pi$, they
+are $2.00$, $3.00$ and $24.8$; and with a density that grows in the same way but reaches down to height $0$, only
+$1.04$, $1.07$ and $1.97$ (\texttt{scripts/ball\_orbit.py -{}-densities}). At $k = 2$, where the margin is decided, the
+gap below the first zeros does nearly all the work, and the growth of the density matters only for larger $k$. The zeros
+themselves give $1.72$, $2.37$ and $14.6$: their discreteness pulls the pivots down from the density's values, and
+Theorem~\ref{thm:margin} says that under RH it never pulls them down to $d_1$.
 
-\subsection*{What is new}
-
-As far as our literature search reaches, no source bounds Weil's form at Dirichlet polynomials below by the top
-coefficient uniformly in the length, that is, the Gram--Schmidt pivots of the orbit below by a constant; neither (A)
-nor (B) has been stated; and none states RH through a lattice minimum. The nearest results are Lagarias's Gram matrix
-of Weil's scalar product on Li's functions
-\cite[Theorem~3.1]{lagarias07}, the same pairing on another orbit of $1/s$, whose pivots collapse to $0$ under RH
-(Section~\ref{sec:li}); Yoshida's non-degeneracy theorem for Weil's form on windows \cite{yoshida92}, which runs
-Gram--Schmidt on high
-Fourier modes and bounds the form below on explicit subspaces, and Bombieri's minimisation over test functions on
-windows \cite{bombieri00, bombieri03}; Andrews, Connes and La Gatta's
-recent reduction of Weil positivity on a window to the sign of a Schur complement, with a margin away from a
-finite-dimensional space, under a hypothesis \cite{acl26}; Mazhouda's monotonicity of Li's coefficients for Dirichlet
-$L$-functions \cite{mazhouda13}, a margin on the diagonal of Li's basis; and Hallouin and Perret's Gram matrix of the
-Frobenius orbit of a curve \cite{hallouin-perret}, where the margin fails. Section~\ref{sec:related}
-places the paper in that literature. We claim the margin, Theorem~\ref{thm:margin}, and the equivalences it gives; the
-positivity layer, the kernel and the constant $d_1$ are not ours.
+As far as our literature search reaches, no source bounds $\sum_\rho |P(\rho)|^2/|\rho|^2$ below by the top
+coefficient of $P$ uniformly in its length, states (A) or (B), or states RH through a lattice minimum;
+Section~\ref{sec:related} places the paper in the literature. We claim Theorem~\ref{thm:margin} and the corollary it
+gives; the positivity layer, the kernel and the constant $d_1$ are not ours.
 
 \subsection*{The analogues}
 
 The same construction can be made for a curve over a finite field, where RH is a theorem, and for a Dirichlet
 $L$-function, where GRH is expected (Section~\ref{sec:analogues}). For a curve the zeros repeat vertically, so their
-density is constant, as in the flat model, and the Frobenius forces an integral relation among the orbit vectors, with
-the coefficients of its minimal polynomial: a pivot vanishes, and (A) fails for every curve. The relation is the zero
-vector of the lattice the orbit spans, so it does not touch (B); but (B) fails for $43$ of the $148$ curves we
-sampled, already at $N = 2$. On the orbit of the Frobenius graphs, whose integer span is the lattice $\mathbb
-Z[z]/(m)$, (B) holds, by integrality, whenever $m$ is irreducible. For real characters the two forms coincide at $k =
-2$, where a positive proportion of them fail; for complex characters they part, through $\operatorname{Im} L'/L(1,
-\chi)$. For $\zeta$ no integral structure is known, and (B) rests on the analytic margin alone. So the margin is a
-property of $\zeta$: of its conductor $1$, of $d_1 = 0.046$, and of the growth of the density of its zeros, which a
-curve lacks. Theorem~\ref{thm:main} is a form of RH, not a route to it.
+density is constant, and the Frobenius forces an integral relation among the orbit vectors, with the coefficients of its
+minimal polynomial: a pivot vanishes, and (A) fails for every curve. The relation is the zero vector of the lattice the
+orbit spans, so it does not touch the lattice form (B$'$) of Definition~\ref{def:forms}; but (B$'$) fails for $43$ of the
+$148$ curves we sampled, already at $N = 2$. On the orbit of the Frobenius graphs, whose integer span is the lattice
+$\mathbb Z[z]/(m)$, (B$'$) holds, by integrality, whenever $m$ is irreducible. For real characters the two forms coincide
+at $k = 2$, where a positive proportion of them fail; for complex characters they part, through $\operatorname{Im}
+L'/L(1, \chi)$. For $\zeta$ no integral structure is known, and (B) rests on the analytic margin alone. So the margin is
+a property of $\zeta$, of $d_1 = 0.046$ and of the absence of zeros below height $14.13$, not of the construction, and
+Corollary~\ref{thm:main} is a form of RH, not a route to it.
 
 \subsection*{The proof and its formalisation}
 
@@ -180,8 +164,9 @@ The proof of Theorem~\ref{thm:margin} (Section~\ref{sec:proof}) applies Weil's e
 \varphi(t/N)/N^2$, with $D(t) = \sum_{n \le N} x_n \sqrt n\, n^{-it}$ and a fixed test function $\varphi$ whose Fourier
 transform is supported in $[-\tfrac45, \tfrac45]$. Distinct frequencies $\log(jn)$ and $\log j'$ are at least $4/(5N)$
 apart, so the prime side is exactly Landau's quadratic form $2\sum_n \Lambda(n) n^{-1/2} \sum_{jn \le N} c_j c_{jn}$,
-$c_n = x_n \sqrt n$: the off-diagonal term that Landau's formula \cite{landau12}, in Gonek's uniform version
-\cite{gonek93}, gives the mean value of $|D|^2$ over the zeros. A minorant of the archimedean term, band-limited to $[-1,
+$c_n = x_n \sqrt n$: the off-diagonal term that Landau's formula \cite{landau12}, in the uniform versions of Fujii
+\cite{fujii89} and Gonek \cite{gonek93}, gives the mean value of $|D|^2$ over the zeros. A minorant of the archimedean
+term, band-limited to $[-1,
 1]$, keeps only the diagonal, and an interval certificate checks it against the digamma function. The last step is
 arithmetic: under the diagonal $\log N + d$, Landau's form leaves the top vertex $N$ of the divisibility graph
 $\tfrac{13}{10}$ of its weight, by Schur's test with an explicit bound for Mertens' sums
@@ -192,8 +177,9 @@ statements are not Lean theorems.
 
 \subsection*{Organisation}
 
-Section~\ref{sec:setup} sets up the kernel, the orbit and the two forms. Section~\ref{sec:results} states the main
-results and proves the easy implications, and Section~\ref{sec:proof} proves the margin. Section~\ref{sec:lean}
+Section~\ref{sec:setup} sets up the kernel, the orbit and the forms. Section~\ref{sec:results} derives
+Corollary~\ref{thm:main} and its lattice and window forms from Theorem~\ref{thm:margin} and bounds the pivots above, and
+Section~\ref{sec:proof} proves Theorem~\ref{thm:margin}. Section~\ref{sec:lean}
 describes the formalisation and Section~\ref{sec:analogues} the analogues. Section~\ref{sec:related} discusses the
 literature, and Section~\ref{sec:lambda} the smallest eigenvalue of $G_N$ and some questions.
 
@@ -206,7 +192,8 @@ and for $x \ge 1$, with $u = \log x$,
 \KH(x) = \cosh(\tfrac u2)(2 + \gamma - \log 4\pi) + \sinh(\tfrac u2)(\log \pi - 2u) + A(u) \\
 + \sqrt x \sum_{n \le x} \frac{\Lambda(n)}{n} - \frac{\psi(x)}{\sqrt x},
 \end{multline*}
-where $\psi(x) = \sum_{n \le x} \Lambda(n)$ and $A(u) = \frac{1}{2\pi} \int_{\mathbb R} H_u(r) \operatorname{Re}
+where $\Lambda$ is von Mangoldt's function, $\psi(x) = \sum_{n \le x} \Lambda(n)$, and $A(u) = \frac{1}{2\pi}
+\int_{\mathbb R} H_u(r) \operatorname{Re}
 \psi_\Gamma(\tfrac14 + \tfrac{ir}2)\,dr$, with $H_u(t) = (\cos(tu) - \cosh(u/2))/(t^2 + \frac14)$ and $\psi_\Gamma$ the
 digamma function.
 \end{proposition}
@@ -237,8 +224,8 @@ sum is $2\sum_{n \le x} \Lambda(n) n^{-1/2} \sinh(\frac12 \log\frac xn) = \sqrt 
 Adding these terms gives the formula.
 \end{proof}
 
-The equivalence of RH with $\sum_\rho 1/|\rho|^2 = 2 + \gamma - \log 4\pi$ is Burnol's remark \cite{burnol98}, restated
-by Gun, Murty and Rath \cite{gun-murty-rath}.
+The equivalence of RH with $\sum_\rho 1/|\rho|^2 = 2 + \gamma - \log 4\pi$ is Burnol's remark \cite{burnol98}, also
+proved by Gun, Murty and Rath \cite{gun-murty-rath}.
 
 \begin{proposition}\label{prop:positivity}
 The Riemann hypothesis holds if and only if $Q_N(a) \ge 0$ for every $N$ and every $a \in \mathbb Z^N$. Under RH there
@@ -272,9 +259,8 @@ $\operatorname{Re} \rho \le \frac12$ for every zero. By the symmetry $\rho \maps
 $\frac12$.
 \end{proof}
 
-As said in the introduction, this layer is a discrete form of Matsumoto and Suzuki's theorem \cite{matsumoto-suzuki}:
-$\KH$ is their
-$H_1$, and the kernel $\KH(e^{t - u}) - \KH(e^t) - \KH(e^{-u}) + \KH(1)$ of their screw function is the Gram matrix of
+In Matsumoto and Suzuki's terms \cite{matsumoto-suzuki}, $\KH$ is $H_1$, and the kernel $\KH(e^{t - u}) - \KH(e^t) -
+\KH(e^{-u}) + \KH(1)$ of their screw function is the Gram matrix of
 the differences $w_n/\sqrt n - w_1$.
 
 Weil's form itself acts on functions. For real $g \in L^2(\mathbb R)$ vanishing outside a bounded interval, with
@@ -302,7 +288,7 @@ of Lemma~\ref{lem:explicit}, and the right side of the explicit formula is $\mat
 \begin{itemize}
 \item $h(\pm\frac i2) = \hat g_x(\frac i2)\hat g_x(-\frac i2)$;
 \item $g_h = f$, by Fourier inversion;
-\item Gauss's integral for $\psi_\Gamma$ and Tonelli turn the archimedean term into $\operatorname{Re}
+\item Gauss's integral for $\psi_\Gamma$ \cite[(5.9.12)]{dlmf} and Tonelli turn the archimedean term into $\operatorname{Re}
 \psi_\Gamma(\frac14)\|g_x\|^2 + \int_0^\infty (f(0) - f(u))e^{u/2}/\sinh u\,du$.
 \end{itemize}
 At $t_\rho$, $\frac12 + it_\rho = \rho$, so on the hyperplane $\hat g_x(t_\rho) = \sum_n x_n (n^\rho - 1)/\rho = \sum_n
@@ -324,11 +310,16 @@ whose transform at $t_\rho$ is $n^\rho/\rho$, and the first of these, $u^{1/2}1_
 For $k \ge 1$ let $d_k = \inf_c Q_k(\delta_k - \sum_{n < k} c_n \delta_n)$, the infimum over real $c_1, \dots, c_{k -
 1}$; $d_1 = \KH(1)$. The \emph{pivot form} (A) is the statement $d_k \ge d_1$ for every $k \ge 1$. The
 \emph{shortest-vector form} (B) is the statement $Q_N(a) \ge d_1$ for every $N \ge 1$ and every $a \in \mathbb Z^N
-\setminus \{0\}$.
+\setminus \{0\}$. The \emph{lattice form} (B$'$) is the statement $Q_N(a) \ge d_1$ for every $N \ge 1$ and every $a \in
+\mathbb Z^N$ with $Q_N(a) \ne 0$.
 \end{definition}
 
-(B) asks less than (A). If $a_k$ is the last nonzero coordinate of an integer vector $a$, then $a_k^2 \ge 1$ and $Q(a)
-\ge a_k^2 d_k \ge d_k$, by homogeneity. The flat model is the equality case of both:
+(B) asks less than (A): under (A), if $a_k$ is the last nonzero coordinate of an integer vector $a$, then $a_k^2 \ge 1$
+and $Q(a) \ge a_k^2 d_k \ge d_k \ge d_1$, by homogeneity. And (B) implies (B$'$), which in turn makes every $Q_N$
+nonnegative at the integer vectors; so by Proposition~\ref{prop:positivity} and Corollary~\ref{thm:main}, (B$'$) too is
+equivalent to RH. Under RH the two agree, since $G_N$ is then positive definite by Theorem~\ref{thm:margin}. They
+differ when the orbit vectors are dependent, as for the curves of Section~\ref{sec:analogues}. The flat model is the
+equality case of (A) and (B):
 
 \begin{proposition}\label{prop:flat}
 Let $\KH_0(x) = e^{-|\log x|/2} = \frac{1}{2\pi} \int_{\mathbb R} \cos(r \log x)/(r^2 + \frac14)\,dr$. Then
@@ -337,7 +328,9 @@ pivot equal to $c$.
 \end{proposition}
 
 So replacing the zeros by Lebesgue measure with the weight $1/(\frac14 + t^2)$ gives the covariance of Brownian motion
-at integer times, whose increments are orthogonal of equal norm. In that model (A) and (B) hold with equality, and the
+at integer times, whose increments are orthogonal of equal norm. Burnol reads Weil's positivity in the same light: the
+covariance of a generalized stochastic process invariant under translation has the form of Weil's functional
+\cite{burnol98}. In that model (A) and (B) hold with equality, and the
 increments $\delta_n - \delta_{n - 1}$ are all shortest vectors. The orthogonal increments are Lubinsky's orthogonal
 Dirichlet polynomials for the arctangent density \cite{lubinsky14}, in Dimitrov and Oliveira's form
 \cite[\S2.3]{dimitrov-oliveira}.
@@ -357,7 +350,7 @@ Numerically, in units of $d_1$, it is
 0.423, \quad 0.0567, \quad 0.00358, \quad 0.000257 \qquad \text{at } N = 2, 10, 100, 1000,
 \]
 so the angle between $w_1$ and the hyperplane falls from $40.6^\circ$ to $0.92^\circ$, where the flat model keeps
-$90^\circ$. The pivots of Theorem~\ref{thm:main} take $w_1$ first; taken after the hyperplane, $w_1$ would have only
+$90^\circ$. The pivots of Corollary~\ref{thm:main} take $w_1$ first; taken after the hyperplane, $w_1$ would have only
 this squared distance as its pivot. Inside the hyperplane, the shortest integer vector for $N \le 30$ is $\delta_2 -
 \delta_1$, with $Q_N = 4.06\,d_1$, against the bound $c_0 = 1.25\,d_1$ of Corollary~\ref{cor:window}. The unit steps
 $\delta_k - \delta_{k - 1}$, all shortest in the flat model, grow roughly like $\log k$: $Q_N = 22.1\,d_1$ at $k = 10$
@@ -366,9 +359,9 @@ and $118.9\,d_1$ at $k = 1000$ (\texttt{scripts/window\_hyperplane.py}).
 
 \section{The main results}\label{sec:results}
 
-\begin{theorem}[Theorem~\ref{thm:main}]\label{thm:main2}
+\begin{corollary}[Corollary~\ref{thm:main}]\label{thm:main2}
 RH holds if and only if \textup{(A)} holds, and if and only if \textup{(B)} holds.
-\end{theorem}
+\end{corollary}
 
 \begin{proof}
 If (A) holds and $x \in \mathbb R^N$ is nonzero, let $x_k$ be its last nonzero coordinate. Then $Q_N(x) = Q_k(x) =
@@ -382,11 +375,15 @@ nonzero, and $Q_N(a) \ge c_0 > d_1$ by Theorem~\ref{thm:margin}. So (B) holds.
 \end{proof}
 
 \begin{corollary}\label{cor:lattice}
-Assume RH. For every $N \ge 1$, the nonzero integer vectors $a$ with $Q_N(a) \le d_1$ are $\pm\delta_1$, and every other
-nonzero integer vector has $Q_N(a) \ge c_0 = 1.2495\ldots d_1$. In every realisation, the lattice spanned by $w_1, \dots,
-w_N$ has minimum $\|w_1\|^2 = d_1$, attained at $\pm w_1$ only, and every other lattice vector is longer than $w_1$ by
-a factor at least $\sqrt{1.249} = 1.117\ldots$.
+Assume RH. For every $N \ge 1$, in every realisation, the lattice spanned by $w_1, \dots, w_N$ has minimum $\|w_1\|^2 =
+d_1$, attained at $\pm w_1$ only, and every other nonzero lattice vector has squared length at least $c_0 = 1.2495\ldots
+d_1$: it is longer than $w_1$ by a factor at least $\sqrt{1.249} = 1.117\ldots$.
 \end{corollary}
+
+\begin{proof}
+The map $a \mapsto \sum_n a_n w_n$ carries $\mathbb Z^N$ onto the lattice with $\|\sum_n a_n w_n\|^2 = Q_N(a)$, and
+Theorem~\ref{thm:margin} gives the bounds.
+\end{proof}
 
 Through Proposition~\ref{prop:window}, the lattice gap is a statement about Weil's form on a window:
 
@@ -401,10 +398,12 @@ $u^{1/2}y = g_a$, and $a_n \ne 0$ for some $n \ge 2$. By Proposition~\ref{prop:w
 $\mathrm{QW}(g_a) = Q_N(a) \ge c_0$.
 \end{proof}
 
-On the whole window $[\lambda^{-1}, \lambda]$, $\lambda = \sqrt N$, the least eigenvalue of $\mathrm{QW}$ decays like
-$e^{-4\pi\lambda^2} = e^{-4\pi N}$, up to a power of $\lambda$ \cite{acl26}. The integer-valued step functions keep the
-fixed margin $c_0$. That bounds the form itself, not its ratio to $\|g\|^2$: large integer vectors near the bottom of
-the spectrum have Rayleigh quotients of order $\sqrt{\log N}/N^2$ (Section~\ref{sec:lambda}).
+On the whole window $[\lambda^{-1}, \lambda]$, $\lambda = \sqrt N$, the least eigenvalue of $\mathrm{QW}$ is at most of
+order $\lambda^9 (\log\lambda)^3 e^{-4\pi\lambda^2}$ \cite[Theorem~3.1]{acl26}, and numerically of that order
+\cite[Section~4]{acl26}; a matching lower bound would imply positivity on the window. The integer-valued step functions
+keep the fixed margin $c_0$. That bounds the form itself, not its ratio to $\|g\|^2$: large integer vectors near the
+bottom of the spectrum have Rayleigh quotients near the least one over all step functions, about $2.6/N^2$ at $N = 1000$
+(Section~\ref{sec:lambda}).
 
 \begin{remark}[The pivots are at most logarithmic]
 Let $N \ge 3$ and $x = N/(N - 1)$. Then $d_N \le u_N = N(d_1^2 - \KH(x)^2)/d_1$, the least value of $Q_N(\delta_N -
@@ -414,7 +413,8 @@ Moreover
 u_N = \log\frac{N}{2\pi} + 1 - \gamma + O\Big(\frac{\log^2 N}{N}\Big).
 \]
 For the asymptotic let $u = \log x \le \log\frac32$. No prime power is at most $x$, so Proposition~\ref{prop:kernel} gives
-$\KH(x) = \cosh(\frac u2) d_1 + \sinh(\frac u2)(\log\pi - 2u) + A(u)$. By Stirling's formula $\operatorname{Re}
+$\KH(x) = \cosh(\frac u2) d_1 + \sinh(\frac u2)(\log\pi - 2u) + A(u)$. By Stirling's formula \cite[(5.11.2)]{dlmf},
+$\operatorname{Re}
 \psi_\Gamma(\frac14 + \frac{ir}2) = \frac12 \log(r^2 + \frac14) - \log 2 + O(1/(1 + r^2))$. Split $H_u(r) = (\cos(ru) -
 1)/(r^2 + \frac14) + (1 - \cosh(\frac u2))/(r^2 + \frac14)$ and use $|\cos(ru) - 1| \le r^2u^2/2$. Every term of $A(u)$
 is then $O(u^2)$ except two:
@@ -428,21 +428,24 @@ $\int_0^\infty (1 - \cos v)v^{s - 2}\,dv = -\Gamma(s - 1)\cos(\frac\pi2(s - 1))$
 \frac{1}{2\pi u} + 1 - \gamma) + O(u^2)$. With $u_N = 2N(d_1 - \KH(x)) - N(d_1 - \KH(x))^2/d_1$ and $u = 1/N +
 O(1/N^2)$, this gives the asymptotic.
 
-Numerically $u_N = 2.66$, $5.33$ and $7.76$ at $N = 10^2$, $10^3$ and $10^4$. The pivots themselves grow:
-$d_{10}/d_1 = 6.35$, $d_{100}/d_1 = 35.67$ and $d_{500}/d_1 = 74.93$ (Section~\ref{sec:numerics}). So $\log N$ bounds
-their order, and under RH Theorem~\ref{thm:margin} bounds them below by $c_0$ at every $N$.
+Numerically $u_N = 2.66$, $5.33$ and $7.76$ at $N = 10^2$, $10^3$ and $10^4$, and the pivots themselves grow
+(Section~\ref{sec:numerics}). So $\log N$ bounds their order, and under RH Theorem~\ref{thm:margin} bounds them below
+by $c_0$ at every $N$.
 \end{remark}
 
 \subsection{Numerical values}\label{sec:numerics}
 
 \begin{remark}
-These are computations, not Lean theorems. In ball arithmetic $d_2/d_1 = 1.71841346690985\ldots$
-(\texttt{scripts/ball\_tests/hunt/k2.py}), and $d_k > d_1$ for $2 \le k \le 10^4$ is certified with every rounding
-bounded, without RH (\texttt{scripts/ball\_certificate.py}). An independent computation in ball arithmetic up to $k =
-500$ puts the minimum of $d_k/d_1$ at $k = 2$, with $d_{10}/d_1 = 6.35$, $d_{100}/d_1 = 35.67$ and $d_{500}/d_1 = 74.93$
-(\texttt{scripts/ball\_tests/hunt/cert\_zeta.py}). A Fincke--Pohst enumeration
-of the integer vectors with $Q_N(a) \le 3d_1$ finds, for $N = 12$ and $N = 30$, that the second minimum of the lattice
-is $Q_N(\delta_1 + \delta_2)/d_1 = 1.93870544505279\ldots$, the value certified in ball arithmetic
+These are computations, not Lean theorems. In ball arithmetic \cite{arb} $d_2/d_1 = 1.71841346690985\ldots$
+(\texttt{scripts/ball\_tests/hunt/k2.py}), and $d_k > d_1$ for $2 \le k \le 10^4$, indeed $d_k \ge 2.371\,d_1$ for $3 \le k
+\le 10^4$, is certified with every rounding bounded, without RH (\texttt{scripts/ball\_certificate.py}). An independent
+computation in ball arithmetic up to $k = 500$ puts the minimum of $d_k/d_1$ at $k = 2$, with $d_{10}/d_1 = 6.35$,
+$d_{100}/d_1 = 35.67$ and $d_{500}/d_1 = 74.93$ (\texttt{scripts/ball\_tests/hunt/cert\_zeta.py}). So for $2 \le N \le
+10^4$ the second minimum of the lattice is $Q_N(\delta_1 + \delta_2)/d_1 = 1.93870544505279\ldots$, certified in ball
+arithmetic. Indeed an integer vector whose last nonzero coordinate is at $k \ge 3$ has $Q_N(a) \ge d_k \ge 2.371\,d_1$;
+and on the first two coordinates $Q(a\delta_1 + b\delta_2) = d_1((a + b\omega)^2 + b^2(2 - \omega^2))$ with $\omega =
+G(1, 2)/d_1 = -0.5306\ldots$, least at $\pm\delta_1$ and next at $\pm(\delta_1 + \delta_2)$. A Fincke--Pohst enumeration
+\cite{fincke-pohst} of the integer vectors with $Q_N(a) \le 3d_1$ agrees at $N = 12$ and $N = 30$
 (\texttt{scripts/ball\_tests/shortest/shortest.py}).
 \end{remark}
 
@@ -462,10 +465,42 @@ and real on $\mathbb R$. Then, with $t_\rho = (\rho - \frac12)/i$,
 \end{lemma}
 
 This is the explicit formula of Guinand \cite{guinand48} and Weil \cite{weil52}. Goldston and Gonek state it in this
-normalisation, for $h$ analytic on $|\operatorname{Im} t| \le \frac12 + \epsilon$ with $|h(t)| \ll (1 + |t|)^{-1 -
-\delta}$, which the hypotheses here imply \cite[Lemma~1]{goldston-gonek07}. They take it from
-\cite[Theorem~5.12]{iwaniec-kowalski}, where the transform of $h$ is smooth with compact support; the step functions of Proposition~\ref{prop:window} and the
-test function below need the wider hypotheses. The Lean proof derives the lemma from the Hadamard product of $\xi$.
+normalisation for $h$ analytic on $|\operatorname{Im} t| \le \frac12 + \epsilon$ with $|h(t)| \ll (1 + |t|)^{-1 -
+\delta}$ \cite[Lemma~1]{goldston-gonek07}, taking it from \cite[Theorem~5.12]{iwaniec-kowalski}, where the transform of
+$h$ is smooth with compact support. None of the test functions here has a smooth transform, so we give the standard
+proof. The Lean proof derives the lemma in the same way from the Hadamard product of $\xi$.
+
+\begin{proof}
+Let $H(s) = h(-i(s - \frac12))$, so that $H(\rho) = h(t_\rho)$. It is holomorphic on $-\frac12 \le \operatorname{Re} s
+\le \frac32$, where $|H(s)| \le C/(1 + (\operatorname{Im} s)^2)$, and $H(1 - s) = H(s)$ as $h$ is even. The function
+$\xi(s) = \frac12 s(s - 1)\pi^{-s/2}\Gamma(\frac s2)\zeta(s)$ is entire, with zeros exactly at the $\rho$, and
+\[
+\frac{\xi'}{\xi}(s) = \frac1s + \frac{1}{s - 1} - \frac12\log\pi + \frac12\psi_\Gamma(\tfrac s2) + \frac{\zeta'}{\zeta}(s).
+\]
+There are heights $T_k \to \infty$ with $\xi'/\xi(\sigma \pm iT_k) \ll \log^2 T_k$ for $-\frac12 \le \sigma \le
+\frac32$ \cite[Chapter~17]{davenport}. Integrate $H\xi'/\xi$ around the rectangle with corners $-\frac12 \pm iT_k$
+and $\frac32 \pm iT_k$. The horizontal sides contribute $O(T_k^{-2}\log^2 T_k)$, and the substitution $s \mapsto 1 - s$,
+with $\xi(1 - s) = \xi(s)$ and $H(1 - s) = H(s)$, turns the left side into the right one. As $\sum_\rho |H(\rho)| \le C
+\sum_\rho 1/(1 + \gamma_\rho^2) < \infty$, letting $k \to \infty$ gives
+\[
+\sum_\rho h(t_\rho) = \frac{1}{\pi i} \int_{(3/2)} H(s)\, \frac{\xi'}{\xi}(s)\,ds.
+\]
+Move each term of $\xi'/\xi$ to the line $\operatorname{Re} s = \frac12$, where $s = \frac12 + ir$ and $H(s) = h(r)$;
+the horizontal segments vanish in the limit each time.
+\begin{itemize}
+\item The term $1/(s - 1)$ crosses its pole at $s = 1$, with residue $H(1) = h(-\frac i2)$. On the line $\frac1s +
+\frac{1}{s - 1} = -2ir/(r^2 + \frac14)$ is odd in $r$, so the first two terms give $2h(-\frac i2) = h(\frac i2) +
+h(-\frac i2)$.
+\item The constant gives $-\frac{\log\pi}{2\pi} \int_{\mathbb R} h = -g_h(0)\log\pi$.
+\item The digamma term gives $\frac{1}{2\pi} \int_{\mathbb R} h(r)\psi_\Gamma(\frac14 + \frac{ir}2)\,dr$, whose
+imaginary part is odd in $r$.
+\item On $\operatorname{Re} s = \frac32$, $\zeta'/\zeta(s) = -\sum_n \Lambda(n) n^{-s}$ converges absolutely. Moving each
+term separately, $\frac{1}{\pi i} \int_{(1/2)} H(s) n^{-s}\,ds = \frac1\pi \int_{\mathbb R} h(r) n^{-1/2 - ir}\,dr =
+2n^{-1/2} g_h(\log n)$. The resulting series converges absolutely, since each term equals its value on
+$\operatorname{Re} s = \frac32$.
+\end{itemize}
+The four terms add up to the formula.
+\end{proof}
 
 \subsection{The test function}
 
@@ -585,12 +620,12 @@ Let $W(t) = \operatorname{Re} \psi_\Gamma(\frac14 + \frac{it}2) - \log \pi$ be t
 \frac{23}{100} + \frac{693}{1000} \sum_{k < 30} (1 - \sinc^2(s/(10 \cdot 2^k)))$, a staircase whose steps of height
 $0.693 < \log 2$ at the scales $10 \cdot 2^k$ follow $\log s$, and let
 \[
-r(s) = \sum_{j = 1}^{9} b_j \Big(\sinc^2\big(\tfrac{s - \gamma_j}{2}\big) + \sinc^2\big(\tfrac{s + \gamma_j}{2}\big)\Big),
+r(s) = \sum_{j = 1}^{9} b_j \Big(\sinc^2\big(\tfrac{s - \tau_j}{2}\big) + \sinc^2\big(\tfrac{s + \tau_j}{2}\big)\Big),
 \]
-with the centres $\gamma_j$ and weights $b_j$
+with the centres $\tau_j$ and weights $b_j$
 \[
 \begin{array}{c|ccccccccc}
-\gamma_j & \frac32 & 2 & 3 & \frac72 & 4 & \frac92 & 7 & \frac{15}{2} & \frac{17}{2} \\[2pt] \hline
+\tau_j & \frac32 & 2 & 3 & \frac72 & 4 & \frac92 & 7 & \frac{15}{2} & \frac{17}{2} \\[2pt] \hline
 10^6 b_j & 193 & 46 & 1021 & 593 & 568 & 617 & 1433 & 78 & 12
 \end{array}
 \]
@@ -609,15 +644,15 @@ $\log(s/2\pi)$. Let $\mu = \varphi\lambda - r$.
 \hat\varphi(v - w/A)\big)\,dw .
 \]
 For $A \ge 10$ and $|v| \ge 1$ both arguments have modulus at least $1 - \frac15 = \frac45$, where $\hat\varphi$
-vanishes; so the transform of $\varphi\lambda$ vanishes for $|v| \ge 1$. A bump has the transform $\int
-\sinc^2(\frac{s - \gamma}{2}) \cos(sv)\,ds = 2\pi(1 - |v|)^+ \cos(\gamma v)$, by Fejér's kernel and a translation, and
+vanishes; so the transform of $\varphi\lambda$ vanishes for $|v| \ge 1$. A single kernel has the transform $\int
+\sinc^2(\frac{s - \tau}{2}) \cos(sv)\,ds = 2\pi(1 - |v|)^+ \cos(\tau v)$, by Fejér's kernel and a translation, and
 it vanishes for $|v| \ge 1$ too. At $v = 0$ and $A \ge 5$ the arguments $w/A$ lie in $[-\frac25, \frac25]$, where
 $\hat\varphi$ is the polynomial of Lemma~\ref{lem:phi}(i), and integrating it,
 \[
 \int_{\mathbb R} \varphi(s)\big(1 - \sinc^2(s/A)\big)\,ds = \hat\varphi(0)\,\kappa(A), \qquad \kappa(A) = \frac{15}{2A} -
 \frac{175}{8A^2} + \frac{375}{16A^3} .
 \]
-Each bump has integral $4\pi$, so
+Each bump, a symmetric pair of kernels, has integral $4\pi$, so
 \[
 \int_{\mathbb R} \mu = \hat\varphi(0)\Big(\frac{23}{100} + \frac{693}{1000} \sum_{k < 30} \kappa(10 \cdot 2^k)\Big) - 4\pi
 \sum_j b_j = 0.88048\ldots\,\hat\varphi(0),
@@ -629,9 +664,10 @@ as $\sum_{k < 30} \kappa(10 \cdot 2^k) = 1.23511\ldots$ and $4\pi \sum_j b_j/\ha
 Lemma~\ref{lem:phi}(ii), the claim is $-r(0) \le 0$. So let $s > 0$.
 
 \emph{The weight, uniformly in $N$.} For $\operatorname{Re} w > 0$, $|\psi_\Gamma(w) - \log w + \frac{1}{2w} +
-\frac{1}{12w^2}| \le \frac{1}{120(\operatorname{Re} w)^4}$. Indeed, by Binet's formula $\psi_\Gamma(w) = \log w -
+\frac{1}{12w^2}| \le \frac{1}{120(\operatorname{Re} w)^4}$. Indeed, by Binet's formula \cite[(5.9.13)]{dlmf},
+$\psi_\Gamma(w) = \log w -
 \frac{1}{2w} - \int_0^\infty \vartheta(v) e^{-wv}\,dv$, where $\vartheta(v) = \frac{1}{e^v - 1} - \frac1v + \frac12 =
-\sum_{k \ge 1} \frac{2v}{v^2 + 4\pi^2k^2}$, so that
+\sum_{k \ge 1} \frac{2v}{v^2 + 4\pi^2k^2}$ by the partial fractions of $\coth$ \cite[(4.36.3)]{dlmf}, so that
 \[
 0 \le \frac{v}{12} - \vartheta(v) = \sum_{k \ge 1} \frac{2v^3}{4\pi^2k^2(v^2 + 4\pi^2k^2)} \le \frac{v^3}{720};
 \]
@@ -664,11 +700,11 @@ y) \le j - 1 + u(2y) + T(y)$ for $j \ge 1$. Both $u$ and $T$ increase on $[0, \i
 \item[(b)] $\sinc x \ge \ell(x) = 1 - \frac{x^2}6 + \frac{x^4}{120} - \frac{x^6}{5040}$, and $\ell$ decreases in $x^2$. On a
 cell $s \in [s_a, s_b]$ with $\ell_b = \ell(s_b/5) > 0$, $\sinc^2(s/5) \ge \ell_b^2$ and $\sin^2(s/5) \ge (s_a/5)^2
 \ell_b^2$, so $\varphi(s) \le \frac{999}{1000}(1 - \ell_b^2(1 + s_a^2 \ell_b^2/75))/s_a^2$. Also $1 - \mathcal K(x) \le
-x^2 \rho(x^2)$ for $x^2 \le 6$, where $\rho(a) = \frac{7a}{36} - \frac{a^2}{18} + \frac{a^3}{162} - \frac{a^4}{3888}$
-increases on $[0, 3]$ and is largest at $3$; so $\varphi(s) \le \frac{999}{1000}\rho(\min(s_b^2/25, 3))/25$ if $s_b^2
+x^2 \theta(x^2)$ for $x^2 \le 6$, where $\theta(a) = \frac{7a}{36} - \frac{a^2}{18} + \frac{a^3}{162} - \frac{a^4}{3888}$
+increases on $[0, 3]$ and is largest at $3$; so $\varphi(s) \le \frac{999}{1000}\theta(\min(s_b^2/25, 3))/25$ if $s_b^2
 \le 150$. Let $\varphi_{\mathrm{up}}(s_a, s_b)$ be the smaller bound. Likewise $\sinc^2 z \ge \ell(D/2)^2$ for $|z| \le
-D/2$ when $\ell(D/2) > 0$; with $|s - \gamma_j| \le \max(\gamma_j - s_a, s_b - \gamma_j)$ and $0 \le s + \gamma_j \le
-s_b + \gamma_j$ this bounds $r$ on the cell from below by $r_{\mathrm{lo}}(s_a, s_b)$.
+D/2$ when $\ell(D/2) > 0$; with $|s - \tau_j| \le \max(\tau_j - s_a, s_b - \tau_j)$ and $0 \le s + \tau_j \le
+s_b + \tau_j$ this bounds $r$ on the cell from below by $r_{\mathrm{lo}}(s_a, s_b)$.
 \item[(c)] $\log y \ge 2v + \frac23 v^3$, $v = \frac{y - 1}{y + 1}$, for $y \ge 1$, applied after removing the powers of $2$,
 with $0.6931471803 < \log 2 < 0.6931471808$ and $\log \pi < 1.1558$. As $g$ increases, this bounds $g$ on $[s_a, \infty)$
 from below by $g_{\mathrm{lo}}(s_a)$.
@@ -783,19 +819,19 @@ L(c) = L(c') + 2c_N \sum_{q \mid N} \frac{\Lambda(q)}{\sqrt q}\, c_{N/q}.
 K]$ satisfies $L_K(b) \le \sum_{j \le K} b_j^2 (M(\lfloor K/j \rfloor) + \log j)$. As $c'$ lives on $[1, N - 1]$, with $K
 = N - 1$,
 \[
-(\log N + d) \sum_{j < N} c_j^2 - L(c') \ge \sum_{j < N} \rho_j c_j^2,
+(\log N + d) \sum_{j < N} c_j^2 - L(c') \ge \sum_{j < N} \sigma_j c_j^2,
 \]
-where $\rho_j = \log N + d - M(\lfloor (N - 1)/j \rfloor) - \log j$; and $\rho_j \ge d - \frac{81}{100} > 0$, as
+where $\sigma_j = \log N + d - M(\lfloor (N - 1)/j \rfloor) - \log j$; and $\sigma_j \ge d - \frac{81}{100} > 0$, as
 $M(\lfloor (N - 1)/j \rfloor) \le \log\frac Nj + \frac{81}{100}$ by
 Lemma~\ref{lem:mertens}.
 
 \emph{The parents of the top vertex.} At $j = N/q$, $\lfloor (N - 1)/j \rfloor = q - 1$ and $\log j = \log N - \log q$,
-so $\rho_{N/q} = \operatorname{room}_d(q) = d + \log q - M(q - 1)$. Completing the square,
+so $\sigma_{N/q} = \operatorname{room}_d(q) = d + \log q - M(q - 1)$. Completing the square,
 \[
 \operatorname{room}_d(q)\, c_{N/q}^2 - 2c_N \frac{\Lambda(q)}{\sqrt q}\, c_{N/q} \ge -c_N^2 \frac{\Lambda(q)^2}{q
 \operatorname{room}_d(q)}.
 \]
-The parents $N/q$ are distinct, and the other rows have $\rho_j c_j^2 \ge 0$. So, by $\sum_{q \mid N} \Lambda(q) = \log
+The parents $N/q$ are distinct, and the other rows have $\sigma_j c_j^2 \ge 0$. So, by $\sum_{q \mid N} \Lambda(q) = \log
 N$,
 \begin{align*}
 (\log N + d) \sum_{n \le N} c_n^2 - L(c) &\ge c_N^2 \Big(\log N + d - \sum_{q \mid N} \frac{\Lambda(q)^2}{q
@@ -828,20 +864,17 @@ and Proposition~\ref{prop:top} gives $Q_N(x) \ge \frac{\hat\varphi(0)}{2\pi N} \
 whose last nonzero coordinate is $a_k$, $k \ge 2$, then $Q_N(a) = Q_k(a) \ge c_0 a_k^2 \ge c_0$. Finally $d_1 < 0.0539
 < c_0$, and $c_0/d_1 = 1.2495\ldots$ by \eqref{eq:d1}. \qed
 
-\begin{remark}
-Under RH, a numerical design with a test function whose transform is supported in $[-\frac23, \frac23]$, steps that
-follow $\log s$ more closely and a bound for the top vertex by $\Lambda(N)$ at each $N$ suggests $d_k \ge 1.449\,d_1$
-for every $k \ge 2$ (\texttt{scripts/pivot\_push.py}, in floating point with linear programming, uncertified). It is not
-a theorem of this paper. The binding case of both is $k = 2$, where the true value is $1.718\,d_1$.
-\end{remark}
-
 \section{The formalisation}\label{sec:lean}
 
 Appendix~\ref{app:claims} names the Lean theorems behind each numbered result, in \file{lib/} of the repository
 \cite{repo}. The Lean statements of
-Theorem~\ref{thm:main} are
+Theorem~\ref{thm:margin} and Corollary~\ref{thm:main} are
 {\footnotesize
 \begin{verbatim}
+theorem pivot_ge_rh (hRH : RiemannHypothesis) {N : ℕ} (hN : 2 ≤ N)
+    (x : ℕ → ℝ) :
+    999 / 1000 * (2 / 45) * (13 / 10) * x N ^ 2 ≤ BallWeil.form N x
+
 theorem rh_iff_orbitLattice :
     RiemannHypothesis ↔ ∀ (k : ℕ) (c : ℕ → ℝ), 1 ≤ k →
       BallWeil.gram 1 1 ≤
@@ -870,27 +903,25 @@ The statements that are not Lean theorems are:
 \begin{itemize}
 \item the remarks, which are proved in the text or computed. Among them are the upper bound for the pivots in
 Section~\ref{sec:results}, the numerical values of Section~\ref{sec:numerics}, the whole of
-Section~\ref{sec:analogues} except where a Lean theorem is named, and the numerics of Section~\ref{sec:lambda};
+Section~\ref{sec:analogues}, and the numerics of Section~\ref{sec:lambda};
 \item the historical and comparative statements of Sections~\ref{sec:intro} and~\ref{sec:related};
 \item the conjecture and questions of Section~\ref{sec:lambda}.
 \end{itemize}
 
 \section{The analogues}\label{sec:analogues}
 
-This section collects tests of (A) and (B) on the natural analogues of the construction. Where the orbit vectors
-are dependent, (B) on coefficient vectors would fail at every integral relation among them, so here we read (B) on the
-lattice the orbit spans: $Q(a) \ge d_1$ for the integer vectors $a$ with $Q(a) \ne 0$. For $\zeta$ under RH the two
-readings agree, as $G_N$ is positive definite. Its statements are remarks:
-they are proved here or computed, not formalised, except the two limits of the density remark in
-Section~\ref{sec:chars}, which are Lean theorems conditional on an unrefereed preprint. The code for the computations
-is in \texttt{scripts/ball\_tests/} of the repository
-\cite{repo}.
+This section collects tests of (A), (B) and the lattice form (B$'$) on the natural analogues of the construction. Where
+the orbit vectors are dependent, (B) would fail at every integral relation among them, so for curves we test (B$'$). The
+statements of this section are remarks, proved here or computed, and none is claimed as a Lean theorem. The code for
+the computations is in \texttt{scripts/ball\_tests/} of the repository \cite{repo}, and the limits of the density remark
+are computed by \texttt{scripts/d2\_density/}.
 
 \subsection{The first step}
 
 \begin{remark}[The two forms at $k = 2$]
-Every orbit Gram matrix of this kind has $G_{nn} = nG_{11}$, so $G_{22} = 2d_1$. Integer vectors see only $\mathrm{Re}\,G$,
-since $Q(a) = a^T(\mathrm{Re}\,G)a$. With $\omega = \mathrm{Re}\,G_{12}/d_1$,
+Every orbit Gram matrix of this kind has $G(n, n) = nG(1, 1)$, so $G(2, 2) = 2d_1$. Integer vectors see only
+$\mathrm{Re}\,G$,
+since $Q(a) = a^T(\mathrm{Re}\,G)a$. With $\omega = \mathrm{Re}\,G(1, 2)/d_1$,
 \[
 Q(a\delta_1 + b\delta_2) = d_1\big((a + b\omega)^2 + b^2(2 - \omega^2)\big),
 \]
@@ -903,9 +934,9 @@ $\mathrm{Re}\,G$, and for a real Gram matrix the two forms coincide on $w_1, w_2
 
 Let $C/\mathbb F_q$ have genus $g$ and $L$-polynomial $\prod_j (1 - \alpha_j T)$, $\alpha_j = \sqrt q\,e^{i\theta_j}$. Its
 zeros are $\frac12 + i(\theta_j + 2\pi k)/\log q$, $k \in \mathbb Z$, and the same formula \eqref{eq:K} defines $\KH$
-and $G$. Poisson summation gives $\KH(r) = \log q \sum_{m \in \mathbb Z} s_m q^{-m/2} e^{-|\log r - m \log q|/2}$, with
-$s_m = \sum_j \alpha_j^m$ and $s_{-m} = q^{-m} s_m$, so every entry of $G$ is a rational multiple of $\log q$; the term
-$m = 0$ alone is $2g \log q \min(m, n)$, the flat model. The computations below use a sample of $148$ curves of genus $1$
+and $G$. Poisson summation gives $\KH(r) = \log q \sum_{k \in \mathbb Z} s_k q^{-k/2} e^{-|\log r - k \log q|/2}$, with
+$s_k = \sum_j \alpha_j^k$ and $s_{-k} = q^{-k} s_k$, so every entry of $G$ is a rational multiple of $\log q$; the term
+$k = 0$ alone gives $2g \log q \min(m, n)$, the flat model. The computations below use a sample of $148$ curves of genus $1$
 to $3$ over $\mathbb F_q$, $q \in \{2, 3, 4, 5, 7, 9, 11, 13\}$: smooth hyperelliptic models, and the curves with
 extremal $L$-polynomials, namely the maximal and minimal elliptic curves over $\mathbb F_4$ and $\mathbb F_9$ and the
 Hermitian quartic over $\mathbb F_9$.
@@ -915,18 +946,19 @@ Let $m(z) = \sum_{k \le d} m_k z^{d - k}$ be the minimal polynomial of Frobenius
 z^{2g} L(1/z) = \prod_j (z - \alpha_j)$: it is monic with integer coefficients, of degree $d \le 2g$. Then $\sum_k m_k
 w_{q^{d - k}} = 0$. Indeed $q^{i\gamma_\rho} = e^{i\theta_j}$ depends only on the class $j$ of the zero, so $w_{q^a} =
 \sum_j \alpha_j^a P_j w_1$, where $P_j$ projects onto the zeros of class $j$, and $\sum_k m_k w_{q^{d - k}} = \sum_j
-m(\alpha_j) P_j w_1 = 0$. So $d_k = 0$ at $k = q^d$, and (A) fails for every curve. The integer vector with entry $m_k$
-at $n = q^{d - k}$
-has $Q = 0$: it is the relation itself, the zero vector of the lattice, which (B) in our reading does not see. For the
+m(\alpha_j) P_j w_1 = 0$. So the pivot at index $q^d$ vanishes, and (A) fails for every curve. So does (B), at the
+integer vector with entry $m_k$
+at $n = q^{d - k}$, which has $Q = 0$; but that vector is the relation itself, the zero vector of the lattice, which
+(B$'$) does not see. For the
 $148$ curves of the sample this was checked in exact
 rational arithmetic; $q^d$ runs from $4$ to $13^6$.
 \end{remark}
 
 \begin{remark}[Below the null vector]
-On $n \le \min(20, q^d - 1)$, (A) fails for $59$ of the $148$ curves, $43$ of them at $k = 2$, and (B) fails for exactly
+On $n \le \min(20, q^d - 1)$, (A) fails for $59$ of the $148$ curves, $43$ of them at $k = 2$, and (B$'$) fails for exactly
 those $43$, all at $N = 2$; on the first $20$ indices not divisible by $q$, where no null vector is forced, (A) fails
 for $53$
-and (B) for $39$, again only at the first two indices. Failures were certified in exact rational arithmetic, passes by
+and (B$'$) for $39$, again only at the first two indices. Failures were certified in exact rational arithmetic, passes by
 a Fincke--Pohst search.
 \end{remark}
 
@@ -934,8 +966,9 @@ a Fincke--Pohst search.
 
 The geometric analogue is the orbit of the graphs $\Gamma^k$ of the powers of
 Frobenius on $C \times C$. Hallouin and Perret compute its Gram matrix, projected to the part orthogonal to the
-fibres: $2gq^k$ on the diagonal and $q^{\min(i, k)} s_{|i - k|}$ off it, and read Weil's bound as a $2 \times 2$ Gram
-determinant and Ihara's as a $3 \times 3$ one \cite[Lemma~3]{hallouin-perret}. In the variable $z$, the orbit is $1, z,
+fibres: $2gq^k$ on the diagonal and $q^{\min(i, k)} s_{|i - k|}$ off it \cite[Lemma~3]{hallouin-perret}, and read
+Weil's bound as a $2 \times 2$ Gram determinant and Ihara's as a $3 \times 3$ one \cite{hallouin-perret}. In the
+variable $z$, the orbit is $1, z,
 z^2, \dots$ with the form $T(P) = \sum_j |P(\alpha_j)|^2$.
 
 \begin{remark}[The forms part]
@@ -943,9 +976,9 @@ z^2, \dots$ with the form $T(P) = \sum_j |P(\alpha_j)|^2$.
 $d_2 \ge d_1$ means $|q + 1 - \#C(\mathbb F_q)| \le 2g\sqrt{q - 1}$, which maximal curves violate. But the integer span
 of the orbit is the lattice $\mathbb Z[z]/(m)$, since the dependencies are integral, and $T$ is an integral form with
 $T(1) = 2g$. If $m$ is irreducible, then $L^* = m^e$, and $\prod_j P(\alpha_j) = \operatorname{Res}(m, P)^e$ is a nonzero
-integer for $P \notin (m)$, so by the arithmetic--geometric mean inequality $T(P) \ge 2g$: (B) holds. Equality at some
+integer for $P \notin (m)$, so by the arithmetic--geometric mean inequality $T(P) \ge 2g$: (B$'$) holds. Equality at some
 $P \ne \pm 1$ forces $P(\alpha)$ to be a root of unity other than $\pm 1$, as at $\alpha = 1 + i$ over $\mathbb F_2$,
-where $P = z - 1$. In the sample, $m$ is irreducible for $132$ curves, and an exact search finds no failure of (B) for
+where $P = z - 1$. In the sample, $m$ is irreducible for $132$ curves, and an exact search finds no failure of (B$'$) for
 the other $16$.
 \end{remark}
 
@@ -953,7 +986,8 @@ the other $16$.
 
 For a primitive character $\chi$ mod $q$ of parity $a$, the same formula over the zeros of $L(s, \chi)$ defines
 $\KH_\chi$ and $G$, and the explicit formula gives a closed form \cite[Chapter~19]{davenport}. With $K_1 = \KH_\chi(1)$
-and $\ell = L'/L(1, \chi)$, $G_{12} = K_1 + 2\tau_a + \ell$, where $\tau_0 = -\frac14 \log\frac{27}{4}$ and $\tau_1 = \frac34
+and $\ell = L'/L(1, \chi)$, $G(1, 2) = K_1 + 2\tau_a + \ell$, where $\tau_0 = -\frac14 \log\frac{27}{4}$ and $\tau_1 =
+\frac34
 \log \frac34$.
 
 \begin{remark}[The criterion at $k = 2$]
@@ -966,9 +1000,9 @@ accounts for.
 \begin{remark}[Density]
 Let $X = -\sum_p (\log p)\,\epsilon_p/(p - \epsilon_p)$ be Lamzouri's random model for $L'/L(1, \chi_D)$
 \cite{lamzouri}, with independent $\epsilon_p$ equal to $1$ and to $-1$ with probability $p/(2(p + 1))$ each and to $0$
-with probability $1/(p + 1)$. For real $\chi_D$, $\ell$ is real. Put $\lambda_a = \log\frac q\pi + \psi_\Gamma(\frac{1 +
-a}2)$, so that $K_1 = \lambda_a + 2\ell$ and $\lambda_a = \log|D| + O(1)$. By the criterion at $k = 2$, $d_2 < d_1$
-exactly when $\ell > -2\tau_a$ or $\ell < -\frac25(\lambda_a + \tau_a)$, where $-2\tau_0 = \frac12\log\frac{27}4 =
+with probability $1/(p + 1)$. For real $\chi_D$, $\ell$ is real. Put $\nu_a = \log\frac q\pi + \psi_\Gamma(\frac{1 +
+a}2)$, so that $K_1 = \nu_a + 2\ell$ and $\nu_a = \log|D| + O(1)$. By the criterion at $k = 2$, $d_2 < d_1$
+exactly when $\ell > -2\tau_a$ or $\ell < -\frac25(\nu_a + \tau_a)$, where $-2\tau_0 = \frac12\log\frac{27}4 =
 0.954\ldots$ and $-2\tau_1 = \frac32\log\frac43 = 0.431\ldots$. So $d_2 < d_1$ whenever $\ell > \frac12\log\frac{27}4$,
 for either parity, and then $\chi_D$ fails both forms.
 
@@ -978,19 +1012,15 @@ transforms, outside $O(x^\varepsilon)$ discriminants \cite[Theorem~1.5]{lamzouri
 that of $X$. His proof approximates the powers of $\ell$ by Dirichlet polynomials, for all but $O(x^{3/4})$
 discriminants, by Heath-Brown's zero-density estimate for real characters, and then averages $\chi_D(n)$: for $n = m^2$
 by counting the $D$ prime to $m$, and for the other $n$ by the P\'olya--Vinogradov inequality
-\cite[Section~2]{lamzouri}. The distribution of $X$ has no atoms: by L\'evy's theorem, a convergent series of
+\cite[Section~2]{lamzouri}. The distribution of $X$ has no atoms: by L\'evy's theorem \cite{levy31}, a convergent series of
 independent discrete random variables has an atom only if the product over its terms of their largest atoms is
 positive, and the term at $p$ has largest atom $p/(2(p + 1)) < \frac12$. So the proportion of fundamental discriminants
 $|D| \le x$ with $d_2 < d_1$ is at least $P(X > \frac12\log\frac{27}4) + o(1) = 0.0511\ldots + o(1)$.
 
-Within one sign of $D$ the argument gives the exact limits. The approximation is made $D$ by $D$, and both averages hold
-over the $D$ of one sign, with the same proportions. So the proportion of $D > 1$ with $d_2 < d_1$ tends to $P(X >
+Within one sign of $D$ the same argument gives the exact limits: the approximation is made $D$ by $D$, and both averages
+hold over the $D$ of one sign, with the same proportions. So the proportion of $D > 1$ with $d_2 < d_1$ tends to $P(X >
 \frac12\log\frac{27}{4}) = 0.0511\ldots$, and that of $D < 0$ to $P(X > \frac32\log\frac43) = 0.1609\ldots$, as the
-proportion with $\ell < -\frac25\log|D| + O(1)$ tends to $0$. These two limits are Lean theorems,
-\lean{D2Good.d2\_density\_pos\_closed} for $D > 1$ and \lean{D2Good.d2\_density\_neg\_closed} for $D < 0$, whose proofs
-follow this argument. For the approximation they use, in place of the zero-density estimate, the zero-free half-plane
-$\operatorname{Re} s > \frac{11}{12}$ for Dirichlet $L$-functions of an unrefereed preprint \cite{openai-qrh}, which the
-library formalises, so we cite them as conditional on that preprint.
+proportion with $\ell < -\frac25\log|D| + O(1)$ tends to $0$.
 \end{remark}
 
 \begin{remark}[The scans]
@@ -1003,12 +1033,15 @@ $637$ with $d_2 < d_1$. Failures were certified in ball arithmetic.
 \subsection{Li's basis}\label{sec:li}
 
 \begin{remark}
-Lagarias's Theorem~3.1 \cite{lagarias07} gives the Gram matrix of Weil's scalar product on Li's functions $G_n(s) = 1 -
-(1 - 1/s)^n$: $\langle G_n, G_m\rangle_W = \lambda_n + \lambda_{-m} - \lambda_{n - m}$, with Li's coefficients
-$\lambda_n$ \cite{li97}. With $F_n(s) = n^s/s$, the same pairing gives $G(m, n)$, and $G_1 = F_1 = 1/s$: the two are
+Lagarias's Theorem~3.1 \cite{lagarias07} gives the Gram matrix of Weil's scalar product on Li's functions $\mathcal
+G_n(s) = 1 -
+(1 - 1/s)^n$: $\langle \mathcal G_n, \mathcal G_m\rangle_W = \lambda_n + \lambda_{-m} - \lambda_{n - m}$, with Li's
+coefficients
+$\lambda_n$ \cite{li97}. With $F_n(s) = n^s/s$, the same pairing gives $G(m, n)$, and $\mathcal G_1 = F_1 = 1/s$: the two are
 Gram matrices of one scalar product on two orbits of one vector. Under RH, $z_\rho = 1 - 1/\rho$ lies on the unit
 circle and the pivots of Lagarias's matrix are the squared norms of the monic orthogonal polynomials for $\sum_\rho
-\delta_{z_\rho}/|\rho|^2$. They cannot increase, and they tend to $0$ by Szeg\H{o}'s theorem: numerically $0.0462$,
+\delta_{z_\rho}/|\rho|^2$. They cannot increase, and they tend to $0$ by Szeg\H{o}'s theorem \cite{simon05}:
+numerically $0.0462$,
 $7.42 \cdot 10^{-5}$, \dots, $5.89 \cdot 10^{-23}$ at $k = 8$ (\texttt{scripts/ball\_tests/prior\_art/li\_orbit.py}). In
 the flat model both orbits have constant pivots; with the zeros of $\zeta$ the dilation orbit's pivots rise and the
 shift orbit's fall.
@@ -1019,8 +1052,9 @@ shift orbit's fall.
 \emph{The positivity layer.} Weil's criterion \cite{weil52} in Bombieri's form \cite{bombieri00} is the starting point.
 The kernel $\KH$ is Matsumoto and Suzuki's $H_1$ \cite{matsumoto-suzuki}, and their Theorem~1.3 is a continuous form of
 Proposition~\ref{prop:positivity}; see also Suzuki's study of the screw function \cite{suzuki23}. Nicolas's bound
-$|W(x)| \le \beta$ \cite{nicolas} is its $2 \times 2$ layer. The constant $d_1$ and the equivalence of RH with $\sum_\rho
-1/|\rho|^2 = d_1$ are Burnol's \cite{burnol98} and Gun, Murty and Rath's \cite{gun-murty-rath}.
+\cite{nicolas} is its $2 \times 2$ layer. The value of $d_1$ is classical \cite[Chapter~12]{davenport}; the equivalence of
+RH with $\sum_\rho 1/|\rho|^2 = d_1$ is Burnol's remark \cite{burnol98}, also proved by Gun, Murty and Rath
+\cite{gun-murty-rath}.
 
 \emph{The method.} Weil's explicit formula with band-limited test functions has been a standard tool since Montgomery's
 work on pair correlation \cite{montgomery73}. Goldston and Gonek \cite{goldston-gonek07} use it with the band-limited
@@ -1035,9 +1069,10 @@ top vertex of the divisibility graph.
 
 \emph{Weil's form on finite-dimensional spaces.} Yoshida \cite{yoshida92} proves non-degeneracy of Weil's form on
 windows and, by Gram--Schmidt on high Fourier modes, explicit lower bounds for squared norms; Bombieri \cite{bombieri00,
-bombieri03} studies its minimisation over test functions on windows. Connes and Consani \cite{connes-consani21,
-connes-consani23} study it on $[\lambda^{-1}, \lambda]$, where its small eigenvalues are extremely small, and Suzuki
-\cite{suzuki26} places these results in the frame of the screw function. Closest in method, Andrews, Connes and La Gatta
+bombieri03} studies its minimisation over test functions on windows. Connes and Consani explain the positivity of its archimedean part through a semi-local trace formula
+\cite{connes-consani21}, and find its small eigenvalues on $[\lambda^{-1}, \lambda]$ extremely small
+\cite{connes-consani23}; Suzuki
+\cite{suzuki26} places these results in the frame of the screw function. Closest in aim, Andrews, Connes and La Gatta
 \cite{acl26} find numerically that conditioning Weil's form on $[\lambda^{-1}, \lambda]$ by prolate vectors and the pole
 functional removes its minuscule spectrum. Under a hypothesis they prove that the form is bounded below by an explicit
 positive constant on the orthogonal complement of an explicit finite-dimensional space, which reduces its positivity to
@@ -1047,20 +1082,23 @@ along one basis, the orbit, and it is equivalent to RH. The two settings meet ex
 = 0$, the orbit form is their form on the window with $\lambda = \sqrt N$, compressed to step functions
 (Proposition~\ref{prop:window}), where the margin becomes a lower bound $c_0$ at the integer-valued step functions
 (Corollary~\ref{cor:window}). None of these works bounds pivots below by a first pivot or considers integer lattices.
-The first orbit vector lies in no window, and in Yoshida's setting too only the hyperplane $\sum_n x_n = 0$ of the
-orbit's span fits a window.
+In Yoshida's setting too, only the hyperplane $\sum_n x_n = 0$ of the orbit's span fits a
+window.
 
 \emph{Distances and extremal problems.} In the Nyman--Beurling criterion, in Báez-Duarte's form \cite{baez-duarte03},
-the squared distance from $1_{(0,1]}$ to the span of the first $N$ dilates tends to $0$; Burnol \cite{burnol02} bounds
-it below by about $d_1/\log N$, and Bettin, Conrey and Farmer \cite{bcf} show, conditionally, that this is its size.
+the squared distance from $1_{(0,1]}$ to the span of the first $N$ dilates tends to $0$ if and only if RH holds.
+B\'aez-Duarte, Balazard, Landreau and Saias \cite{bbls00} bound it below by about $d_1/\log N$, Burnol \cite{burnol02}
+counts multiple zeros with their multiplicities squared, and Bettin, Conrey and Farmer \cite{bcf} show, conditionally,
+that this is its size.
 Here the squared distances of the $w_k$ from the span of the earlier ones are bounded below by $d_1$ instead. The
-flat model's orthogonal polynomials are Lubinsky's \cite{lubinsky14}, and Dimitrov and Oliveira solve the dual extremal
-problem, with the same constant \cite{dimitrov-oliveira}.
+flat model's orthogonal polynomials are Lubinsky's \cite{lubinsky14}, and Dimitrov and Oliveira solve a dual extremal
+problem, whose constants are the partial sums $\sum_{j \le m} 1/|\rho_j|^2$ of $d_1$ \cite{dimitrov-oliveira}.
 
 \emph{Analogues.} Hallouin and Perret's Gram matrix of the Frobenius orbit \cite{hallouin-perret} is the function-field
 analogue of Section~\ref{sec:analogues}. Conrey and Li \cite{conrey-li} show that de Branges's positivity conditions,
-stronger than RH, fail for $\zeta$; the margin here runs the other way, being equivalent to RH for $\zeta$ and false for
-its analogues.
+stronger than RH, fail for $\zeta$; the margin here runs the other way: it is equivalent to RH for $\zeta$, while its
+pivot form fails for
+every curve over a finite field, and both forms fail for a positive proportion of real characters.
 
 \emph{Li's criterion.} Li's coefficients \cite{li97} are values of Weil's form in another basis (Section~\ref{sec:li}).
 According to its review in zbMATH (Zbl 1326.11047), Mazhouda \cite{mazhouda13} proves that GRH for $L(s, \chi)$, $\chi$
@@ -1081,28 +1119,30 @@ double precision.
 \item Cholesky factorisation and block inverse iteration give $\lambda_N N$ at $N = 10^3$, $2 \cdot 10^3$, $4 \cdot
 10^3$, $8 \cdot 10^3$, $1.2 \cdot 10^4$, $1.6 \cdot 10^4$, $2 \cdot 10^4$, $2.5 \cdot 10^4$ and $3 \cdot 10^4$
 (\texttt{scripts/lambda\_large.py}). The least-squares line through these nine values, $\lambda_N N = 0.04335 \log N +
-0.0322$, fits them to within $2 \cdot 10^{-4}$.
+0.0322$, fits them to within $2 \cdot 10^{-4}$. Over the same range $\lambda_N N/\log N$ falls
+from $0.0480$ to $0.0465$, so a limit near $0.043$ is an extrapolation, not a computed value.
 \item The alternating vector $x_n = (-1)^{n + 1}/n$ shows the mechanism. Its polynomial $\sum_{n \le N} x_n n^\rho$ is a
 partial sum of the alternating series for $\eta(1 - \rho) = (1 - 2^\rho)\zeta(1 - \rho)$, which vanishes at every zero.
 So the polynomial is minus a tail of that series, small at the zeros of moderate height. Its Rayleigh quotient is $0.152
 \log N/N$ for $10^2 \le N \le 3 \cdot 10^4$ (\texttt{scripts/alt\_vector.py}).
 \item On the hyperplane $\sum_n x_n = 0$, the least value of $\mathrm{QW}(g_x)/\|g_x\|^2 = Q_N(x)/\sum_{k \ge 2} y_k^2$,
-in the notation of the remark at the end of Section~\ref{sec:setup}, lies between $0.90$ and $1.10$ times $\sqrt{\log
-N}/N^2$ at $N = 2, 3, 5, 10, 30, 100, 300, 1000$ (\texttt{scripts/window\_hyperplane.py}). On the whole window the least
-eigenvalue decays like $e^{-4\pi N}$, up to a power of $N$ \cite{acl26}. So the step functions of the orbit stay far
-from the nearly null,
-prolate directions, which is why $\lambda_N$ decays only like a power of $N$.
+in the notation of the remark at the end of Section~\ref{sec:setup}, times $N^2$ is $1.39$, $1.67$, $1.98$, $2.26$ and
+$2.56$ at $N = 10$, $30$, $100$, $300$ and $1000$ (\texttt{scripts/window\_hyperplane.py}): of order $1/N^2$, up to a
+factor that grows slowly, roughly like $\log N$. On the whole window the least eigenvalue is far smaller
+(Section~\ref{sec:results}). So the step functions of the orbit stay far from the nearly null, prolate directions of the
+window.
 \end{itemize}
 \end{remark}
 
 \begin{conjecture}
-$\lambda_N \sim c \log N/N$ for a constant $c > 0$; numerically $c \approx 0.043$.
+$\lambda_N \sim c \log N/N$ for a constant $c > 0$; the fit above suggests $c \approx 0.043$.
 \end{conjecture}
 
 \begin{remark}[Questions]
-(1) Is the second minimum of the lattice attained at $\pm(\delta_1 + \delta_2)$ for every $N$? Under RH it would follow
-from $d_k \ge 1.939\,d_1$ for $k \ge 3$. (2) Is there an integral structure for $\zeta$ that explains (B), as integrality
-explains it for the Frobenius orbit? (3) For Dirichlet $L$-functions, does a bounded number of pivots decide (A)?
+(1) Is the second minimum of the lattice attained at $\pm(\delta_1 + \delta_2)$ for every $N$, beyond the $N \le 10^4$
+of Section~\ref{sec:numerics}? Under RH it would follow from $d_k \ge 1.939\,d_1$ for every $k \ge 3$. (2) Is there an
+integral structure for $\zeta$ that explains (B), as integrality explains (B$'$) for the Frobenius orbit? (3) For
+Dirichlet $L$-functions, does a bounded number of pivots decide (A)?
 \end{remark}
 
 \section*{Acknowledgements}
@@ -1127,10 +1167,10 @@ Claim & Lean \\
 \endhead
 Theorem~\ref{thm:margin}: $Q_N(x) \ge c_0 x_N^2$ & \lean{PivotSharp.pivot\_ge\_rh} \\
 \quad the integer vectors & \lean{PivotSharp.lattice\_gap} \\
-Theorem~\ref{thm:main}, \ref{thm:main2}: RH $\iff$ (A) & \lean{PivotSharp.rh\_iff\_orbitLattice} \\
+Corollary~\ref{thm:main}, \ref{thm:main2}: RH $\iff$ (A) & \lean{PivotSharp.rh\_iff\_orbitLattice} \\
 \quad (A) $\Rightarrow$ RH & \lean{BallWeil.rh\_of\_pivots} \\
 \quad RH $\Rightarrow$ (A) & \lean{PivotSharp.orbitLattice\_of\_rh} \\
-Theorem~\ref{thm:main}, \ref{thm:main2}: RH $\iff$ (B) & \lean{PivotSharp.rh\_iff\_shortest} \\
+Corollary~\ref{thm:main}, \ref{thm:main2}: RH $\iff$ (B) & \lean{PivotSharp.rh\_iff\_shortest} \\
 \quad RH $\Rightarrow$ (B) & \lean{PivotSharp.shortest\_of\_rh} \\
 Corollary~\ref{cor:lattice} & \lean{PivotSharp.shortest\_unique}, \lean{PivotSharp.lattice\_gap} \\
 Corollary~\ref{cor:window} & \lean{OrbitWindow.weilQg\_step\_int\_ge} \\

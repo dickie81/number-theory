@@ -264,12 +264,12 @@ in the library; the theorems of that version's claims table that the table above
 #print axioms LinnikG7.charDensity_g7d
 #print axioms SieveCurve7D.g7d_le_lin
 
-/- The orbit-lattice paper (`papers/orbit-lattice/main.tex`): RH holds if and only if every Gram–Schmidt pivot of the
-orbit with Gram matrix `√(mn)·K_H(m/n)`, computed from the primes, is at least the first, and if and only if `w_1` is a
-shortest vector of the lattice the orbit spans; under RH every pivot after the first is at least `0.0577`
-(`formalisations/ball-rate.md`, "The pivot inequality for every `k`"). The theorems of the paper's claims table
-(Appendix A), in its order: the main theorems, the kernel and the positivity layer, the flat model and the growth of
-the pivots, the steps of the proof of the margin, and the bounds for the smallest eigenvalue. -/
+/- The orbit-lattice paper (`papers/orbit-lattice/main.tex`): under RH every pivot of the orbit with Gram matrix
+`√(mn)·K_H(m/n)`, computed from the primes, is at least `0.0577` after the first (`formalisations/ball-rate.md`, "The
+pivot inequality for every `k`"); hence RH holds if and only if every pivot is at least the first, and if and only if
+`w_1` is a shortest vector of the lattice the orbit spans. The theorems of the paper's claims table (Appendix A): the
+equivalences and the margin, the kernel and the positivity layer, the flat model, the window, and the steps of the
+proof of the margin. -/
 #print axioms PivotSharp.rh_iff_orbitLattice
 #print axioms BallWeil.rh_of_pivots
 #print axioms PivotSharp.orbitLattice_of_rh
