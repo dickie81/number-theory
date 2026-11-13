@@ -81,6 +81,13 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   shorter than `√q` it beats orthogonality in every bin with fewer than `q` characters. It is for the leaves of
   Buchstab's tree with a cofactor shorter than `√q`, taken as the second variable with the primes of `d₂` as the
   rest (`docs/research-opportunities.md`, §3.1): `SieveLeafTwo.typeIITwoAt_leaf` below;
+- `SieveTypeIIHM.sum_chars_dp_pow_le` and `SieveTypeIIHM.card_large_le` (`lib/pnt/SieveResMoment.lean`): the
+  `2k`-th moment, `Σ_χ |W(χ)|^{2k} ≤ (B^k − A^k + q)·F·(Σ|a|²)^k` for `S ⊆ (A, B]` and `k ≥ 1` (`W(χ)^k` is the
+  polynomial of the products of `k` elements of `S`; `F` bounds the tuples with a given product `n`, at most
+  `d(n)^k`, `card_tuples_le`), and Markov's count of the large values: `V^{2k}` times the number of characters with
+  `|W(χ)| ≥ V` is at most the moment. For a prime sum of length `q^s` and `ks ≥ 1`, the characters at which it
+  exceeds `q^{st}` number about `q^{2ks(1−t)}`, the density hypothesis's count at the lengths `q^{1/k}`: the counts
+  of the resonant window (`docs/research-opportunities.md`, §3.1), which nothing uses yet;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
