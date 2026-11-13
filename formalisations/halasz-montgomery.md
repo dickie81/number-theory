@@ -81,6 +81,15 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   shorter than `√q` it beats orthogonality in every bin with fewer than `q` characters. Nothing uses it yet: it is
   for the leaves of Buchstab's tree with a cofactor shorter than `√q`, taken as the second variable with the
   primes of `d₂` as the rest (`docs/research-opportunities.md`, §3.1);
+- `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
+  the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
+  for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
+  `q^{m₂}` with `2/5 ≤ m₂ ≤ 1/2`, and the rest `ρ = L − m₁ − m₂` in `[3/10, 1]`, cut by the seven cases of the proof
+  that bind. Below `4/7` both variables are by orthogonality; above, the cofactor is by the fourth moment and `d₁`
+  by orthogonality while the curve is at least `1/2 − 2/1000`, by the Halász–Montgomery inequality after
+  (`SieveTwoPieces4`); each of the 536 cases at the ends of the 67 pieces is `linarith` from the region's 13
+  inequalities. At `L = 2.135` it holds the leaves with `d₂` from `x^{0.28}` to `x^{0.32}` and the cofactor down to
+  `q^{0.47}`;
 - `SieveCurveHx.counts_hx` (`lib/pnt/SieveCurveHx.lean`, written by `tools/linnik/gen_zone.py`): the counts of the
   curve `ghx`, the trivial count `1` below `7789/10000` and Huxley's density estimate from there on (a step
   `SieveCurveHx.charDensity_hxT` on `[7789/10000, 131/168]` with the exponent `(7014/3125)(1 − σ)`, Huxley's
