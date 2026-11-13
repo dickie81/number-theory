@@ -19,9 +19,10 @@ For `ζ` itself the statement is equivalent to RH (`PivotSharp.rh_iff_orbitLatti
 pivot of the orbit after the first is at least `0.0577`, against `d_1 = 0.0462` (`PivotSharp.pivot_ge_rh`), so
 `d_k ≥ d_1` for every `k` (`PivotSharp.orbitLattice_of_rh`), and the pivots grow like `log k` (`BallPivot.pivot_ge`);
 the converse is `BallWeil.rh_of_pivots`. So the conjecture is another form of RH, not a route to it ("What a proof under
-RH would need"). And with a smaller constant the lattice is there: RH holds if and only if the form of the orbit,
-computed from the primes, is at least `(log 4 + 2)/(22e⁸)` at every nonzero integer vector (`BallPivot.rh_iff_lattice`),
-so under RH the orbit of `w_1` spans a discrete lattice in every realization.
+RH would need"). And the lattice is there, with `w_1` as a shortest vector: RH holds if and only if the form of the
+orbit, computed from the primes, is at least `K_H(1) = Q(δ_1)` at every nonzero integer vector, for every `N`
+(`PivotSharp.rh_iff_shortest`), and under RH `±w_1` are its only shortest vectors (`PivotSharp.shortest_unique`). So
+under RH the orbit of `w_1` spans a discrete lattice in every realization, with `w_1` as a shortest vector.
 
 ## The conjecture
 
@@ -384,7 +385,9 @@ Báez-Duarte, the last entry.
 
    It is a statement about the primes. Under RH it says that in every realization of `K_H`, `w_{k+1}` keeps distance
    `‖w_1‖` from the span of `w_1, …, w_k`. The orbit then spans a lattice with `w_1` as a shortest vector
-   (`BallPsi.orbit_lattice`). Unconditionally it implies RH (`BallWeil.rh_of_pivots`). Positive pivots make every such
+   (`BallPsi.orbit_lattice`). Unconditionally it implies RH (`BallWeil.rh_of_pivots`), and so does the lattice
+   statement: RH holds if and only if `w_1` is a shortest vector of the orbit lattice, and under RH `±w_1` are the only
+   shortest vectors (`PivotSharp.rh_iff_shortest`, `PivotSharp.shortest_unique`). Positive pivots make every such
    matrix positive definite, and its `2 × 2` minors at the squares `(p/q)²` are enough for the Landau argument of
    step 5. It asks for more
    than RH, a margin: where RH needs `d_k ≥ 0`, it asks for `d_k ≥ d_1`. It fails for the Gaussian kernel `K`, whose
