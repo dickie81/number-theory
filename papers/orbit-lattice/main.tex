@@ -41,7 +41,7 @@
 \newcommand{\RH}{\mathrm{RH}}
 \emergencystretch=3em
 
-\title{A margin in Weil's criterion:\\ the Riemann hypothesis as a lattice minimum}
+\title{A margin in Weil's criterion}
 \author{Ritchie Comley}
 \date{Draft, 13 November 2026}
 
@@ -51,19 +51,19 @@
 \begin{abstract}
 Let $\KH(r) = \sum_\rho r^{\rho - 1/2}/(\rho(1 - \rho))$, summed over the nontrivial zeros of $\zeta$, and $G_N =
 (\sqrt{mn}\,\KH(m/n))_{m, n \le N}$, whose entries can be computed from the primes. By Weil's criterion, in a discrete
-form of
-a theorem of Matsumoto and Suzuki, the Riemann hypothesis holds exactly when every $G_N$ is positive semidefinite, and
-$G_N$ is then the Gram matrix of $w_n = (n^\rho/|\rho|)_\rho$. We strengthen positivity to a margin. The Riemann
-hypothesis holds if and only if, for every $N$, the infimum of $x^T G_N x$ over real $x$ with $x_N = 1$ is at least
-$G_{11}$, and if and only if $a^T G_N a \ge G_{11}$ at every nonzero $a \in \mathbb Z^N$; under it these say that every
-Gram--Schmidt pivot of $w_1, w_2, \dots$ is at least the first, and that $w_1$ is a shortest nonzero vector of every
-lattice $\mathbb Z w_1 + \dots + \mathbb Z w_N$. Every later pivot is then at least $0.0577$, against $\|w_1\|^2 = 2 +
-\gamma - \log 4\pi = 0.0462$, and $\pm w_1$ are the only shortest vectors. The proof picks a band-limited test function
-that makes the prime side of the explicit formula
+form of a theorem of Matsumoto and Suzuki, the Riemann hypothesis holds exactly when every $G_N$ is positive
+semidefinite, and $G_N$ is then the Gram matrix of $w_n = (n^\rho/|\rho|)_\rho$: $x^T G_N x = \sum_\rho |\sum_n x_n
+n^\rho|^2/|\rho|^2$ is Weil's form at a Dirichlet polynomial. We prove that under the hypothesis $x^T G_N x \ge
+0.0577\,x_N^2$ for every $N \ge 2$ and every real $x$: Weil's form at a Dirichlet polynomial is bounded below by its top
+coefficient, uniformly in the length. Since $0.0577$ exceeds $G_{11} = 2 + \gamma - \log 4\pi = 0.0462$, every
+Gram--Schmidt pivot of $w_1, w_2, \dots$ is at least the first, and $\pm w_1$ are the only shortest nonzero vectors of
+every lattice $\mathbb Z w_1 + \dots + \mathbb Z w_N$. Stated for $G_N$, each of these properties is equivalent to the
+Riemann hypothesis. The proof picks a band-limited test function that makes the prime side of the explicit formula
 exactly Landau's quadratic form, then bounds that form by Schur's test and the archimedean term by an interval
-certificate. It is formalised in Lean~4 with Mathlib, on Lean's standard axioms alone. The margin is not structural:
-both statements fail for every curve over a finite field, where the Riemann hypothesis is a theorem, and for a positive
-proportion of real Dirichlet characters.
+certificate. It is formalised in Lean~4 with Mathlib, on Lean's standard axioms alone. The margin reflects the
+logarithmic growth of the density of the zeros: with a constant density every pivot equals the first. The pivot property
+fails for every curve over a finite field, where the Riemann hypothesis is a theorem, and both properties fail for a
+positive proportion of real Dirichlet characters.
 \end{abstract}
 
 % TODO (draft): before submission, read in full what is known here only through reviews, abstracts and citing papers: Bombieri (2003), including its Section 8, on Brownian motion, against
@@ -94,9 +94,21 @@ Matsumoto and Suzuki, who prove that RH holds exactly when $H_1(e^t) - H_1(1)$ i
 \cite[Theorem~1.3]{matsumoto-suzuki}, and the $2 \times 2$ minors of $G_N$ are Nicolas's bound $|W(x)| \le \beta$, with
 $W = \KH$ under RH and $\beta = d_1$ \cite{nicolas}.
 
-We ask for more than positivity. Let $d_k$ be the $k$-th Gram--Schmidt pivot of the orbit, the least value of
-$Q_k(\delta_k - \sum_{n < k} c_n \delta_n)$ over real $c$: under RH, the squared distance of $w_k$ from the span of
-$w_1, \dots, w_{k - 1}$. Consider
+We ask for more than positivity: a margin. The main result bounds Weil's form at a Dirichlet polynomial below by
+its top coefficient, uniformly in the length.
+
+\begin{theorem}\label{thm:margin}
+Assume RH. For every $N \ge 2$ and every real $x$,
+\[
+Q_N(x) \ge c_0\, x_N^2, \qquad c_0 = \frac{999}{1000} \cdot \frac{2}{45} \cdot \frac{13}{10} = 0.05772.
+\]
+Hence $d_k \ge c_0 > 1.249\,d_1$ for every $k \ge 2$; every integer vector with a nonzero coordinate at some $n \ge 2$
+has $Q_N(a) \ge c_0$; and $\pm\delta_1$ are the only nonzero integer vectors with $Q_N(a) \le d_1$.
+\end{theorem}
+
+Here $d_k$ is the $k$-th Gram--Schmidt pivot of the orbit, the least value of $Q_k(\delta_k - \sum_{n < k} c_n
+\delta_n)$ over real $c$: under RH, the squared distance of $w_k$ from the span of $w_1, \dots, w_{k - 1}$. As $c_0
+> d_1$, the margin clears the first pivot and the first vector. Consider
 \begin{itemize}
 \item[(A)] $d_k \ge d_1$ for every $k \ge 1$ (the pivot form);
 \item[(B)] $Q_N(a) \ge d_1$ for every $N$ and every nonzero $a \in \mathbb Z^N$ (the shortest-vector form): under RH,
@@ -108,34 +120,39 @@ The following are equivalent: \textup{(i)} the Riemann hypothesis; \textup{(ii)}
 \textup{(B)}.
 \end{theorem}
 
-The implications from (A) and from (B) to RH are formal: each makes every $Q_N$ nonnegative at the integer vectors. The
-content of Theorem~\ref{thm:main} is the converse, a margin that holds uniformly:
-
-\begin{theorem}\label{thm:margin}
-Assume RH. For every $N \ge 2$ and every real $x$,
-\[
-Q_N(x) \ge c_0\, x_N^2, \qquad c_0 = \frac{999}{1000} \cdot \frac{2}{45} \cdot \frac{13}{10} = 0.05772.
-\]
-Hence $d_k \ge c_0 > 1.249\,d_1$ for every $k \ge 2$; every integer vector with a nonzero coordinate at some $n \ge 2$
-has $Q_N(a) \ge c_0$; and $\pm\delta_1$ are the only nonzero integer vectors with $Q_N(a) \le d_1$.
-\end{theorem}
+The implications from (A) and from (B) to RH are formal: each makes every $Q_N$ nonnegative at the integer vectors,
+which is RH by Proposition~\ref{prop:positivity}. So is the threshold: given positivity, $d_k \ge \varepsilon$ for every
+$k$ is equivalent to RH for each $\varepsilon \in (0, d_1]$, and $\varepsilon = d_1$ is the value at which the statement
+becomes a lattice minimum. The content of Theorem~\ref{thm:main} is Theorem~\ref{thm:margin}, a margin that holds
+uniformly.
 
 The true values are larger. Numerically $d_2/d_1 = 1.7184\ldots$, certified in ball arithmetic, and the second minimum of
 the lattice, the least $Q_N(a)/d_1$ over integer $a \ne 0, \pm\delta_1$, is $1.9387\ldots$ for $N \le 30$, at $a =
-\delta_1 + \delta_2$ (Section~\ref{sec:numerics}). The pivots grow, numerically, and under RH they are at most $\log(k/2\pi)
-+ 1 - \gamma + o(1)$ (Section~\ref{sec:results}). In the flat model, where the zeros are replaced by their density, the
-Gram matrix is
-$d_1 \min(m, n)$ and every pivot equals $d_1$ (Proposition~\ref{prop:flat}); the zeros of $\zeta$ push every pivot
-after the first above $d_1$, and keep the lattice's shortest vector unique.
+\delta_1 + \delta_2$ (Section~\ref{sec:numerics}). The pivots grow, numerically, to $d_{500} = 74.9\,d_1$, and under
+RH they are at most $\log(k/2\pi) + 1 - \gamma + o(1)$ (Section~\ref{sec:results}). So Theorem~\ref{thm:margin} is
+far from sharp beyond the first few $k$; its point is that it is uniform.
+
+In the flat model, where the zeros are replaced by a constant density, normalised so that $\KH(1) = d_1$, the Gram
+matrix is $d_1 \min(m, n)$ and every pivot equals $d_1$ (Proposition~\ref{prop:flat}). The margin comes from the
+logarithmic growth of the true density. With the zeros replaced by that density, $(1/2\pi)\log(|t|/2\pi)$ on $|t| \ge
+2\pi$, the pivots are larger still: $d_k/d_1 = 2.00$, $3.00$ and $24.8$ at $k = 2$, $3$ and $30$, against $1.72$, $2.37$
+and $14.6$ for $\zeta$, and the ratio of the two stays between $0.59$ and $0.86$ for $k \le 30$
+(\texttt{scripts/ball\_orbit.py}). So, as far as this goes, the discrete zeros pull the pivots down from the density's
+values, and Theorem~\ref{thm:margin} says that under RH they never pull them down to $d_1$. The proof splits the same
+way: the archimedean term, which carries the density, supplies the diagonal $\log N + \frac78$, and the prime side,
+Landau's form, takes part of it back.
 
 \subsection*{What is new}
 
-As far as our literature search reaches, neither (A) nor (B) has been stated, no source bounds the
-Gram--Schmidt pivots of an explicit-formula Gram matrix below by the first pivot, and none states RH through a lattice
-minimum. The nearest results are Lagarias's Gram matrix of Weil's scalar product on Li's functions
+As far as our literature search reaches, no source bounds Weil's form at Dirichlet polynomials below by the top
+coefficient uniformly in the length, that is, the Gram--Schmidt pivots of the orbit below by a constant; neither (A)
+nor (B) has been stated; and none states RH through a lattice minimum. The nearest results are Lagarias's Gram matrix
+of Weil's scalar product on Li's functions
 \cite[Theorem~3.1]{lagarias07}, the same pairing on another orbit of $1/s$, whose pivots collapse to $0$ under RH
-(Section~\ref{sec:li}); Yoshida's and Bombieri's non-degeneracy and minimisation results for Weil's form on windows
-\cite{yoshida92, bombieri00, bombieri03}, which bound squared norms rather than pivots; Andrews, Connes and La Gatta's
+(Section~\ref{sec:li}); Yoshida's non-degeneracy theorem for Weil's form on windows \cite{yoshida92}, which runs
+Gram--Schmidt on high
+Fourier modes and bounds the form below on explicit subspaces, and Bombieri's minimisation over test functions on
+windows \cite{bombieri00, bombieri03}; Andrews, Connes and La Gatta's
 recent reduction of Weil positivity on a window to the sign of a Schur complement, with a margin away from a
 finite-dimensional space, under a hypothesis \cite{acl26}; Mazhouda's monotonicity of Li's coefficients for Dirichlet
 $L$-functions \cite{mazhouda13}, a margin on the diagonal of Li's basis; and Hallouin and Perret's Gram matrix of the
@@ -146,15 +163,16 @@ positivity layer, the kernel and the constant $d_1$ are not ours.
 \subsection*{The analogues}
 
 The same construction can be made for a curve over a finite field, where RH is a theorem, and for a Dirichlet
-$L$-function, where GRH is expected. Both forms fail there (Section~\ref{sec:analogues}). For a curve the zeros repeat
-vertically, and the Frobenius forces a null vector whose entries are the coefficients of its minimal polynomial: an
-integer vector with $Q = 0$. For characters the first step decides: every orbit Gram matrix has $G_{22} = 2G_{11}$, so on
-$w_1, w_2$ the two forms coincide, and a positive proportion of real characters fail at $k = 2$. The forms part only on
-the geometric orbit of the Frobenius graphs, whose integer span is the lattice $\mathbb Z[z]/(m)$: there (A) fails for
-every curve and (B) holds, by integrality, whenever $m$ is irreducible. For $\zeta$ no integral structure is known, and
-(B) rests on the analytic margin alone. So the margin is a property of the constants of $\zeta$, its conductor $1$,
-$d_1 = 0.046$ and the absence of zeros below height $14.13$, and Theorem~\ref{thm:main} is a form of RH, not a route to
-it.
+$L$-function, where GRH is expected (Section~\ref{sec:analogues}). For a curve the zeros repeat vertically, so their
+density is constant, as in the flat model, and the Frobenius forces an integral relation among the orbit vectors, with
+the coefficients of its minimal polynomial: a pivot vanishes, and (A) fails for every curve. The relation is the zero
+vector of the lattice the orbit spans, so it does not touch (B); but (B) fails for $43$ of the $148$ curves we
+sampled, already at $N = 2$. On the orbit of the Frobenius graphs, whose integer span is the lattice $\mathbb
+Z[z]/(m)$, (B) holds, by integrality, whenever $m$ is irreducible. For real characters the two forms coincide at $k =
+2$, where a positive proportion of them fail; for complex characters they part, through $\operatorname{Im} L'/L(1,
+\chi)$. For $\zeta$ no integral structure is known, and (B) rests on the analytic margin alone. So the margin is a
+property of $\zeta$: of its conductor $1$, of $d_1 = 0.046$, and of the growth of the density of its zeros, which a
+curve lacks. Theorem~\ref{thm:main} is a form of RH, not a route to it.
 
 \subsection*{The proof and its formalisation}
 
@@ -854,7 +872,10 @@ Section~\ref{sec:analogues} except where a Lean theorem is named, and the numeri
 
 \section{The analogues}\label{sec:analogues}
 
-This section collects tests of (A) and (B) on the natural analogues of the construction. Its statements are remarks:
+This section collects tests of (A) and (B) on the natural analogues of the construction. Where the orbit vectors
+are dependent, (B) on coefficient vectors would fail at every integral relation among them, so here we read (B) on the
+lattice the orbit spans: $Q(a) \ge d_1$ for the integer vectors $a$ with $Q(a) \ne 0$. For $\zeta$ under RH the two
+readings agree, as $G_N$ is positive definite. Its statements are remarks:
 they are proved here or computed, not formalised, except the two limits of the density remark in
 Section~\ref{sec:chars}, which are Lean theorems conditional on an unrefereed preprint. The code for the computations
 is in \texttt{scripts/ball\_tests/} of the repository
@@ -889,8 +910,10 @@ Let $m(z) = \sum_{k \le d} m_k z^{d - k}$ be the minimal polynomial of Frobenius
 z^{2g} L(1/z) = \prod_j (z - \alpha_j)$: it is monic with integer coefficients, of degree $d \le 2g$. Then $\sum_k m_k
 w_{q^{d - k}} = 0$. Indeed $q^{i\gamma_\rho} = e^{i\theta_j}$ depends only on the class $j$ of the zero, so $w_{q^a} =
 \sum_j \alpha_j^a P_j w_1$, where $P_j$ projects onto the zeros of class $j$, and $\sum_k m_k w_{q^{d - k}} = \sum_j
-m(\alpha_j) P_j w_1 = 0$. So $d_k = 0$ at $k = q^d$, and the integer vector with entry $m_k$ at $n = q^{d - k}$ has $Q
-= 0$: both forms fail for every curve, at $N = q^d$. For the $148$ curves of the sample this was checked in exact
+m(\alpha_j) P_j w_1 = 0$. So $d_k = 0$ at $k = q^d$, and (A) fails for every curve. The integer vector with entry $m_k$
+at $n = q^{d - k}$
+has $Q = 0$: it is the relation itself, the zero vector of the lattice, which (B) in our reading does not see. For the
+$148$ curves of the sample this was checked in exact
 rational arithmetic; $q^d$ runs from $4$ to $13^6$.
 \end{remark}
 
@@ -982,8 +1005,8 @@ Gram matrices of one scalar product on two orbits of one vector. Under RH, $z_\r
 circle and the pivots of Lagarias's matrix are the squared norms of the monic orthogonal polynomials for $\sum_\rho
 \delta_{z_\rho}/|\rho|^2$. They cannot increase, and they tend to $0$ by Szeg\H{o}'s theorem: numerically $0.0462$,
 $7.42 \cdot 10^{-5}$, \dots, $5.89 \cdot 10^{-23}$ at $k = 8$ (\texttt{scripts/ball\_tests/prior\_art/li\_orbit.py}). In
-the flat model both orbits have constant pivots; the zeros push the dilation orbit's pivots up and the shift orbit's
-down.
+the flat model both orbits have constant pivots; with the zeros of $\zeta$ the dilation orbit's pivots rise and the
+shift orbit's fall.
 \end{remark}
 
 \section{Related work}\label{sec:related}
@@ -1086,13 +1109,13 @@ its namespace, which is also the name of its file, except that \lean{WeilForm.we
 Claim & Lean \\
 \midrule
 \endhead
+Theorem~\ref{thm:margin}: $Q_N(x) \ge c_0 x_N^2$ & \lean{PivotSharp.pivot\_ge\_rh} \\
+\quad the integer vectors & \lean{PivotSharp.lattice\_gap} \\
 Theorem~\ref{thm:main}, \ref{thm:main2}: RH $\iff$ (A) & \lean{PivotSharp.rh\_iff\_orbitLattice} \\
 \quad (A) $\Rightarrow$ RH & \lean{BallWeil.rh\_of\_pivots} \\
 \quad RH $\Rightarrow$ (A) & \lean{PivotSharp.orbitLattice\_of\_rh} \\
 Theorem~\ref{thm:main}, \ref{thm:main2}: RH $\iff$ (B) & \lean{PivotSharp.rh\_iff\_shortest} \\
 \quad RH $\Rightarrow$ (B) & \lean{PivotSharp.shortest\_of\_rh} \\
-Theorem~\ref{thm:margin}: $Q_N(x) \ge c_0 x_N^2$ & \lean{PivotSharp.pivot\_ge\_rh} \\
-\quad the integer vectors & \lean{PivotSharp.lattice\_gap} \\
 Corollary~\ref{cor:lattice} & \lean{PivotSharp.shortest\_unique}, \lean{PivotSharp.lattice\_gap} \\
 Corollary~\ref{cor:window} & \lean{OrbitWindow.weilQg\_step\_int\_ge} \\
 Proposition~\ref{prop:kernel} & \lean{BallHadamard.kerH\_one}, \lean{BallHadamard.kerH\_inv},

@@ -1,4 +1,4 @@
-# A margin in Weil's criterion: the Riemann hypothesis as a lattice minimum
+# A margin in Weil's criterion
 
 Read it: [the paper (PDF)](https://dickie81.github.io/number-theory/orbit-lattice.pdf), rebuilt from `main` on every
 push once the paper is on `main`.
@@ -18,14 +18,19 @@ Appendix A is the claims table. `references.tex` is the bibliography, which foll
 
 ## The theorems
 
-The main theorems are `PivotSharp.rh_iff_orbitLattice` and `PivotSharp.rh_iff_shortest` in `lib/core/PivotSharp.lean`.
+The main theorem, Theorem 1.1, is the margin `PivotSharp.pivot_ge_rh` in `lib/core/PivotSharp.lean`. Under RH,
+`Q_N(x) ≥ c₀·x_N²` for every `N ≥ 2` and every real `x`, with `c₀ = (999/1000)(2/45)(13/10) = 0.05772`, against
+`K_H(1) = 0.04619`. So every pivot after the first is at least `c₀`.
+
+Theorem 1.2 states its consequences as equivalences, `PivotSharp.rh_iff_orbitLattice` and `PivotSharp.rh_iff_shortest`.
 Neither has a hypothesis:
 - RH holds if and only if every Gram–Schmidt pivot of the orbit is at least the first;
 - RH holds if and only if `w_1` is a shortest nonzero vector of the lattice the orbit spans.
 
 The orbit's Gram matrix `√(mn)·K_H(m/n)` in their statements is computed from the primes (`BallWeil.gram`, through
-`BallPsi.kerH_explicit`). Their content is the margin `PivotSharp.pivot_ge_rh`: under RH every pivot after the first is
-at least `(999/1000)(2/45)(13/10) = 0.05772`, against `K_H(1) = 0.04619`.
+`BallPsi.kerH_explicit`). The threshold `K_H(1)` is a choice. Given positivity, a uniform lower bound `ε` for the pivots
+is equivalent to RH for every `ε ∈ (0, K_H(1)]`, and `K_H(1)` is the value at which the statement becomes a lattice
+minimum.
 
 Proposition 2.3 places the orbit in the windows of Connes and his collaborators. On `Σ x_n = 0`, the orbit form is Weil's
 form on the step functions `u^{1/2}Σ_n x_n 1_{(0, n]}(u)` of the window `[λ⁻¹, λ]`, `λ = √N`
@@ -51,6 +56,8 @@ These parts of the paper are not formalised. They are proved in the text or comp
   - those of the remark "How the hyperplane sits" at the end of §2, which come from
     [`scripts/window_hyperplane.py`](../../scripts/window_hyperplane.py);
   - the numerics of Section 8;
+  - the comparison, in the introduction, of the pivots with those of the zeros' density (`scripts/ball_orbit.py
+    --smooth`);
 - Section 6 on the analogues, except the two limits of the density of real characters with `d₂ < d₁`, one for each sign
   of `D`. They are `D2Good.d2_density_pos_closed` and `d2_density_neg_closed`, whose Lean proofs use the library's
   formalisation of the zero-free half-plane of an unrefereed preprint; the paper cites them as conditional on it. The
@@ -99,7 +106,13 @@ Done since the first draft:
   - statements equivalent to RH say "under RH";
   - the hygiene sentence excepts the vendored libraries.
 
-  The review's framing points, for the abstract, the introduction and Section 6, are drafted separately.
+  Then its framing points:
+  - the title drops "the Riemann hypothesis as a lattice minimum";
+  - the abstract and the introduction lead with the margin, now Theorem 1.1, with the equivalences as Theorem 1.2;
+  - the flat model is described as a constant density. The zeros' true density gives larger pivots, so the margin
+    reflects that density's logarithmic growth;
+  - Section 6 reads (B) on the lattice the orbit spans. (A) fails for every curve, and (B) for 43 of the 148 sampled. The
+    two forms part for complex characters.
 - Results whose proofs are only in the library are out. Each rests on the sampling theorem at the zeros and the
   bounds for `λ_N`, which would roughly double the paper:
   - the pivot growth `d_N ≫ log N` under RH (`BallPivot.pivot_ge`);
