@@ -59,9 +59,9 @@ difference); it is not part of `check_certificate.py`, for it searches for ten m
 `21500`. With `--cache DIR` the plan of each cell of the first prime is kept in DIR, so that a long plan can be
 stopped and taken up again. With `--try`, the search is planned with other parameters (cells of side H, chains'
 cells of side HF over the frozen parts, boxes of at most MAXLEN primes reversed; `--pos`, `--lam N`, `--blk N`,
-`--skip N` as `Par.pos`, `Par.lam`, `Par.blk`, `Par.skip`) and its cost and the plan's size are printed; with
-`--out`, its files are written to DIR. PyPy runs it one and a half times as fast as CPython, with the same
-output.
+`--skip N`, `--energy` as `Par.pos`, `Par.lam`, `Par.blk`, `Par.skip`, `Par.energy`) and its cost and the plan's
+size are printed; with `--out`, its files are written to DIR. PyPy runs it one and a half times as fast as
+CPython, with the same output.
 
 Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
 primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over frozen parts; nine minutes on four
@@ -75,6 +75,11 @@ on 2.7·10^8 boxes with no price on the kernel's time (1.87·10^7 steps), and 0.
 Of the boxes of that search, 2% to 9% are under the plan that is kept (four cells of the first prime from
 x^0.28 to x^0.50); with `skip = 3`, on every sixth cell of the first prime, the search is 0.55 of its boxes and
 the plan costs 0.17% more, on 1% fewer steps (13 November 2026).
+At 2135/1000 with the leaves of the comparisons cut in three (`energy`) and the cells of 2140/1000, the search
+costs 0.98988 K on 3.7·10^8 boxes with no price on the kernel's time (2.4·10^7 steps, 98 part files, a predicted
+6.5 hours of the kernel; three hours on four cores with PyPy): the certificate `21350`. With `lam = 10` its first
+prime's cells from x^0.43 to x^0.50 cost 2.1% more, and the planner, which then tries each reversal at the full
+limit, takes fifteen to twenty-five minutes on a cell near x^0.40 (13 November 2026).
 
 Needs Python 3 only.
 """
@@ -1268,7 +1273,12 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
         f'Plain statement (`linnik_{T}`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there '
         f'is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`, with no hypothesis. The route is at `L = {LN}` '
         f'(`route{T}`), with the estimate in two variables alone, and the tests are `SieveAd.fillTests`, as for the '
-        f'theorem at `2165/1000`. The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
+        f'theorem at `2165/1000`. ' + (
+            'Where the paper\'s conditions on the leaves of a comparison fail, the plan cuts the box of leaves in '
+            'three: the paper\'s lemma on two parts and, on the third, the leaves whose cofactor is shorter than '
+            '`√q` by the estimate in two variables with the fourth moment (the tests\' `SieveAd.leavesE`; '
+            '`SieveTwoCompE.prop6_two3_at`, `SieveFillCompE.prop6_fill3_at`). ' if par_.energy else '') +
+        f'The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
         f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.frozTests`. The '
         f'kernel does not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the '
         f'plan of the search that `tools/linnik/hint_cert.py` ran ({stats["boxes"]} boxes, {stats["fboxes"]} of '

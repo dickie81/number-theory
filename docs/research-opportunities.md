@@ -539,8 +539,8 @@ covers. The region does not close at `13/6`.
     of that is the search for a configuration among the sets of the box's cells and a quarter the floor of a
     Buchstab step, and subset searches by index in place of slices gain `5%`. The cells of the first prime are
     planned apart, so the search goes as fast as there are cores.
-  - *Leaves below `√q`, by the fourth moment* (13 November; the first part in Lean, `SieveTwoFourth`,
-    `SieveTwoZone4`, `SieveTwoTypeII4`). The leaves' rule of the bilinear Type I estimate needs the cofactor longer
+  - *Leaves below `√q`, by the fourth moment* (13 November; in Lean, with a certificate at `2135/1000`,
+    `Linnik21350.linnik_21350`). The leaves' rule of the bilinear Type I estimate needs the cofactor longer
     than `√q` once `d₁ ≥ q` and `d₂` is longer than the cofactor (`a₁ + a₂ < 1 − τ/2`), and that is the only one of
     its three conditions that binds on its own: relaxed by `q^{1/50}` it takes `7.3%` off the cost of the search at
     `2.15` on twenty of the `115` cells of the first prime (`0.14279K` for `0.15403K`), by `q^{1/10}` `18.7%`, and
@@ -564,9 +564,17 @@ covers. The region does not close at `13/6`.
     the theorem's parameters at `2.15` the whole search passes at `2.145` (`0.97488K`, where the paper's rule costs
     `1.01893K`); with those of the certificate at `2.14` (cells `0.003`, the sign `+`, no price on time), on every
     sixth of the `155` cells of the first prime at `2.135` it costs `0.16331K` for the paper's `0.17179K`, so the
-    whole plan about `0.974K` for `1.024K`: `2.135` passes with these leaves and not without them. What remains in
-    Lean: the zone's condition on that region for `g7d`, the leaves through the Type II estimate (Brun's moduli in
-    `d₁`), the test of the search and its soundness, and the certificate.
+    whole plan about `0.974K` for `1.024K`: `2.135` passes with these leaves and not without them. In Lean: the
+    fourth moment (`SieveTwoFourth`), the estimate with it (`SieveTwoTypeII4`), the zone for `g7d` on a region of
+    536 cases (`SieveLeafZone`), the leaves' term through it (`SieveLeafTwo.leaf2_bound`), and a test that a kernel
+    can check, which is weaker than the region closed downwards: a box of leaves that straddles the paper's region
+    is cut where `d₁` and then `d₂` leave it, the paper's lemma takes the first two parts and the zone, at the
+    corners of a rectangle of exponents, the third (`SieveAd.leavesE`; `SieveTwoCompE.prop6_two3_at`,
+    `SieveFillCompE.prop6_fill3_at`). With that test the sample costs `0.16638K` (`−3.15%`), and the whole plan,
+    with no price on the kernel's time, `0.98988K` on `2.4·10^7` steps: the theorem at `2135/1000`. The price of the
+    theorem at `2.14` (ten millionths of `K` for each second of the kernel) costs `2.1%` on the first prime's cells
+    from `x^{0.43}` to `x^{1/2}`, which `2.135` cannot afford. Not in Lean: the cofactor's character sum as a rest in
+    the high bins (`ShortCharSums`), worth `−8.0%` in place of `−4.9%` with the idealised test.
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three

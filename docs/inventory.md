@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1820 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1822 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 332 | 1001 |
+| `lib/pnt` | 333 | 1003 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1560,6 +1560,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_prime`: The least prime primitive root mod a prime
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow`: The least prime primitive root mod a prime power
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_safe`: Safe primes
+
+#### `Linnik21350`: Linnik's theorem with exponent `2135 / 1000`, by a search led by hints
+
+- `Linnik21350.tree21350`: The first term at `2135 / 1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21350.linnik_21350`: Linnik's theorem with exponent `2135 / 1000`, by a search led by hints ([note](../formalisations/harman-sieve.md))
 
 #### `Linnik21400`: Linnik's theorem with exponent `2140 / 1000`, by a search led by hints
 

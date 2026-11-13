@@ -322,6 +322,18 @@ Its main tools:
   `3.8·10^5` reversals (`2.3·10^4` of boxes of the sign `+`), in `3705` parts, where the search visited
   `3.5·10^8` boxes, `3.2·10^8` of them over frozen parts. With no price on the kernel's time the same search
   costs `0.96408·K` on `1.87·10^7` steps (`docs/research-opportunities.md`, §3.1).
+- `Linnik21350.linnik_21350` (`lib/pnt/Linnik21350.lean`; the parts are `lib/pnt/SieveHint21350P1.lean` and the
+  files after it, without Mathlib), **Linnik's theorem with exponent `2135/1000`**: for every `q ≥ 1` and every
+  `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2135/1000}`, with no hypothesis. The route,
+  the tests and the search led by hints are those of the theorem at `2140/1000` (`SieveAd.solve21350`), on the same
+  cells; where the paper's conditions on the leaves of a comparison fail, the plan cuts the box of leaves in three
+  (`SieveAd.leavesE`), the leaves whose cofactor is shorter than `√q` by the Type II estimate in two variables with
+  the fourth moment (`SieveTwoCompE.prop6_two3_at`, `SieveFillCompE.prop6_fill3_at`, in
+  `formalisations/halasz-montgomery.md`). The bound of the first term costs `0.98988·K` (`Linnik21350.tree21350`).
+  The hints are the plan that `tools/linnik/hint_cert.py` kept of its search, with no price on the kernel's time (the
+  price of the theorem at `2140/1000` costs `2.1%` on the cells of the first prime from `x^{0.43}` to `x^{1/2}`):
+  `2.4·10^7` steps, of which `1.27·10^6` reversals (`3.5·10^5` of boxes of the sign `+`), in `9110` parts, where the
+  search visited `3.7·10^8` boxes, `3.4·10^8` of them over frozen parts.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer
