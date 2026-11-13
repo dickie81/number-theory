@@ -91,6 +91,19 @@ with 307000 nodes (0.967 with --plain; 0.865 at 2.195). Of the ways to evaluate 
 needed (1.102 with --direct second,rest) and so is the estimate with the cofactor in the second variable (1.202
 with --direct window,rest); the cofactor in the rest is not (0.945 with --direct window,second).
 
+What-if switches (13 November 2026; hypotheses, to see which input the loss depends on): `--curve` takes the
+density curve `ghx` (the count 1 below 7789/10000, Huxley's steps above: the curve of the estimate in Lean), `gm`
+(Guth and Maynard's 15/(3 + 5 sigma) on [7/10, 8/10], as if it held for the characters, and Ingham's exponent where
+`g7d` has the count 1), `cap:A` (the exponent at most A), `shift:d`, or `dh` (the density hypothesis); `--theta0` the
+zero-free half-plane (the bins above it are gone and the kernel of the Halasz-Montgomery inequality is
+q^(theta0 - 1/2 + (1 - theta0) m) for a length q^m); `--kernel`, `--kshift` that kernel's exponent times a factor,
+or less a number; `--ext` the bilinear Type I estimates x^ext further. With a what-if the window is the one of
+its own curve (a sampled scan, no corners). `points` passes 1 at (L in steps of 0.02, interpolated): 2.101 as it
+is; 2.102 with `ghx`; 2.100 with the half-plane at 7/8 or 5/6, 2.091 at 3/4, 2.073 at 0.70, 2.056 at 0.65, 2.039
+at 0.60; 2.098 with `gm`; 2.101, 2.099, 2.081, 2.062, 2.041 with `cap:2.25`, `2.20`, `2.15`, `2.10`, `2.05`; 2.021
+with `dh` (2.090 with --no-window); 2.093, 2.087 with --kshift 0.05, 0.10, 2.063 with --kernel 0.5, 2.028 with
+--kernel 0; 2.095, 2.086, 2.075 with --ext 0.02, 0.05, 0.10; 2.109 with --nest 1 --rev first.
+
 What is assumed, beyond the paper: the estimate in two variables on the tabulated zone (two_factor.py states it;
 in Lean it is proved on the region SieveTwoZone7D.Zone7d, which holds all of the zone but under 2% of its width,
 as far as chains of primes: SieveTwoChain.chain_two); the bilinear Type I estimate without 2HD < q at the leaves
@@ -150,7 +163,7 @@ class Ctx(C.Structure):
                 ('rev_floor', C.c_int), ('rev_offdiag', C.c_int),
                 ('rev_first', C.c_int), ('rev_m2', C.c_int), ('rev_m3', C.c_int), ('rev_low', C.c_int),
                 ('rev_natom', C.c_int), ('rev_nchain', C.c_int), ('rev_nodd', C.c_int), ('rev_nc1', C.c_int),
-                ('ev_win', C.c_int), ('ev_second', C.c_int), ('ev_rest', C.c_int)]
+                ('ev_win', C.c_int), ('ev_second', C.c_int), ('ev_rest', C.c_int), ('ext', C.c_double)]
 
 
 class Stats(C.Structure):
@@ -178,11 +191,56 @@ def lib():
     return _LIB
 
 
-def zones(L, curve='g7d', margin=None, samples=60):
+def pieces_of(curve, theta0=None):
+    """The pieces `(lo, hi, A)` of a density curve on `[1/2, theta0]`, in floats (`A = None`: the count 1). `curve`:
+    `g7d` or `ghx` (route_limits.py), and the what-ifs `dh` (the density hypothesis, A = 2), `gm` (`g7d` with
+    Guth and Maynard's 15/(3 + 5 sigma) on [7/10, 8/10], as if it held for the characters), `cap:A` (`g7d` with
+    its exponent at most A) and `shift:d` (`g7d` with its exponent lowered by d, not below 2). `theta0`: the
+    zero-free half-plane Re s > theta0 (11/12 if not given)."""
+    top = 11 / 12 if theta0 is None else float(theta0)
+    name, _, par = curve.partition(':')
+    base = [(float(lo), float(hi), None if A is None else float(A))
+            for lo, hi, A in rl.parse('ghx' if name == 'ghx' else 'g7d')]
+    if name in ('g7d', 'ghx'):
+        out = base
+    elif name == 'dh':
+        out = [(0.5, top, 2.0)]
+    elif name in ('gm', 'cap', 'shift'):
+        cuts = sorted({top} | {x for lo, hi, _ in base for x in (lo, hi)} | {0.5 + 0.0025 * i for i in range(167)})
+        cuts = [x for x in cuts if x <= top]
+        out = []
+        for lo, hi in zip(cuts, cuts[1:]):
+            A = next(A for l2, h2, A in base if l2 <= lo < h2)
+            if name == 'gm':
+                # Ingham's 3/(2 - sigma) where the curve has the count 1, and Guth and Maynard's on [7/10, 8/10]
+                A = min(A if A is not None else 3 / (2 - hi), 15 / (3 + 5 * lo) if 0.7 <= lo < 0.8 else 9.0)
+            elif name == 'cap':
+                A = min(A if A is not None else 9.0, float(par))
+            elif name == 'shift' and A is not None:
+                A = max(2.0, A - float(par))
+            # a count above 1 is the count 1
+            out.append((lo, hi, None if A is None or A * (1 - lo) >= 1 else A))
+    else:
+        raise ValueError(curve)
+    return [(lo, min(hi, top), A) for lo, hi, A in out if lo < top]
+
+
+def kernel_b(m, theta0=None, kernel=1.0, kshift=0.0):
+    """The exponent of the Halasz-Montgomery kernel for a polynomial of length q^m, m <= 1: the paper's
+    5/12 + m/12 (from the half-plane at 11/12: theta0 - 1/2 + (1 - theta0) m), times `kernel`, less `kshift`,
+    with the paper's margins."""
+    if theta0 is None and kernel == 1.0 and kshift == 0.0:
+        return 5 / 12 + m / 12 + (1 - m) / 1000 + 2 / 1000
+    t0 = 11 / 12 if theta0 is None else float(theta0)
+    return np.maximum(0.0, kernel * (t0 - 0.5 + (1 - t0) * m) - kshift) + (1 - m) / 1000 + 2 / 1000
+
+
+def zones(L, curve='g7d', margin=None, samples=60, theta0=None, kernel=1.0, kshift=0.0):
     """For each rest rho = c DL: the interval [Alo, Ahi] of the exponents a1 of the first part for which the
-    estimate in two variables holds, the second part being 1 - a1 - rho (the longest run on the lattice)."""
+    estimate in two variables holds, the second part being 1 - a1 - rho (the longest run on the lattice). The
+    what-ifs: another curve or half-plane (`pieces_of`), another kernel (`kernel_b`)."""
     bs, gs = [], []
-    for lo, hi, A in rl.parse(curve):
+    for lo, hi, A in (rl.parse(curve) if curve in ('g7d', 'ghx') and theta0 is None else pieces_of(curve, theta0)):
         b = np.linspace(float(lo), float(hi), samples)
         bs.append(b)
         gs.append(np.ones_like(b) if A is None else float(A) * (1 - b))
@@ -192,10 +250,10 @@ def zones(L, curve='g7d', margin=None, samples=60):
     a = A0 + DL * np.arange(int(round((A1 - A0) / DL)) + 1)
     r = DL * np.arange(int(round(R1 / DL)) + 1)
     ms = a * Lf
-    Bs = 5 / 12 + ms / 12 + (1 - ms) / 1000 + 2 / 1000
+    Bs = kernel_b(ms, theta0, kernel, kshift)
     a2 = 1.0 - a[:, None] - r[None, :]
     m2 = a2 * Lf
-    B2 = 5 / 12 + m2 / 12 + (1 - m2) / 1000 + 2 / 1000
+    B2 = kernel_b(m2, theta0, kernel, kshift)
     fail = (a2 <= 0) | (r[None, :] <= 0)
     for bb, gg in zip(b, g):
         M = np.where(ms > 1, ms, np.minimum(1.0, np.maximum(ms, gg + Bs)))
@@ -211,6 +269,43 @@ def zones(L, curve='g7d', margin=None, samples=60):
             run = max(np.split(idx, np.nonzero(np.diff(idx) > 1)[0] + 1), key=len)
             Alo[c], Ahi[c] = a[run[0]], a[run[-1]]
     return r, Alo, Ahi
+
+
+def window_whatif(L, curve, theta0=None, kernel=1.0, kshift=0.0):
+    """The window of a what-if (`route_limits.window`'s sampled scan with the pieces and the kernel of the
+    what-if; no corners are tested): the ends, in exponents of x, of the longest run of lengths q^m at which the
+    estimate in one variable holds, or None."""
+    bs, gs = [], []
+    for lo, hi, A in pieces_of(curve, theta0):
+        b = np.linspace(lo, hi, 402)
+        bs.append(b)
+        gs.append(np.ones_like(b) if A is None else A * (1 - b))
+    b, g = np.concatenate(bs), np.concatenate(gs)
+    Lf, marg = float(L), float(rl.MARGIN)
+    ms = np.arange(0.30 * Lf, 0.52 * Lf, 1 / 20000)
+    ok = np.ones(len(ms), dtype=bool)
+    for k, m in enumerate(ms):
+        for w in (0.0, 4e-6):
+            base = (Lf - m) * (b + w) + g / 2
+            E = base + ((1 + m) / 2 if m <= 1 else m)
+            if m <= 1:
+                E = np.minimum(E, base + m / 2 + np.maximum(m, g + kernel_b(m, theta0, kernel, kshift)) / 2)
+            if (E > Lf - marg).any():
+                ok[k] = False
+                break
+    runs, start = [], None
+    for i, o in enumerate(list(ok) + [False]):
+        if o and start is None:
+            start = i
+        if not o and start is not None:
+            runs.append((start, i - 1))
+            start = None
+    if not runs:
+        return None
+    x, z = max(runs, key=lambda q: q[1] - q[0])
+    if ms[z] <= ms[x] or ms[z] <= 1:
+        return None
+    return round(float(ms[x]) / Lf, 5), round(float(ms[z]) / Lf, 5)
 
 
 def buchstab(umax=14.0):
@@ -266,10 +361,12 @@ def window(L):
 class Sieve:
     def __init__(self, L, h=0.004, depth=8, flips=6, nest=2, flipmax=8, flipmin=0.15, wide=True, usewin=True,
                  sieve=False, upper=False, type2=True, eps1=0.002, eps0=0.002, fmin=0.01, smax=7.0, shrink=0.0,
-                 tables=None, rev=(), first=True, direct=('window', 'second', 'rest'), fill=False):
+                 tables=None, rev=(), first=True, direct=('window', 'second', 'rest'), fill=False,
+                 curve='g7d', theta0=None, kernel=1.0, kshift=0.0, ext=0.0):
         L = Fr(L)
         self.L, Lf = L, float(L)
-        r, Alo, Ahi = tables if tables is not None else zones(L)
+        whatif = curve != 'g7d' or theta0 is not None or kernel != 1.0 or kshift != 0.0
+        r, Alo, Ahi = tables if tables is not None else zones(L, curve, theta0=theta0, kernel=kernel, kshift=kshift)
         Alo, Ahi = Alo + shrink / 2, Ahi - shrink / 2          # a narrower zone, to see what the width is worth
         ok = np.isfinite(Alo) & (Alo <= Ahi) if type2 else np.zeros(len(r), dtype=bool)
         idx = np.nonzero(ok)[0]
@@ -310,7 +407,8 @@ class Sieve:
         ctx.f0hi, ctx.f0t = self.f0hi.ctypes.data_as(dp), self.f0t.ctypes.data_as(dp)
         ctx.f0ok = self.f0ok.ctypes.data_as(ip)
         ctx.f0lo = int(np.argmax(self.f0ok)) if self.f0ok.any() else NR + 1
-        self.win = window(L) if (usewin and type2) else None
+        self.win = ((window_whatif(L, curve, theta0, kernel, kshift) if whatif else window(L))
+                    if (usewin and type2) else None)
         ctx.haswin = int(self.win is not None)
         if self.win:
             ctx.u1, ctx.u2 = self.win
@@ -332,6 +430,7 @@ class Sieve:
                      'nchain', 'nodd', 'nc1'):
             setattr(ctx, 'rev_' + name, int(name in rev))
         ctx.ev_win, ctx.ev_second, ctx.ev_rest = (int(name in direct) for name in ('window', 'second', 'rest'))
+        ctx.ext = ext
         self.ctx = ctx
         # the floor of the top node: the largest f at which S(A, x^f) is evaluated
         T = ctx.theta - eps1
@@ -382,6 +481,13 @@ def main():
     ap.add_argument('--direct', default='window,second,rest', help='how a box may be evaluated outright, '
                     'comma-separated: window, second (the estimate, the cofactor in the second variable), rest '
                     '(the estimate, the cofactor in the rest)')
+    ap.add_argument('--curve', default='g7d', help='what-if: the density curve (g7d, ghx, dh, gm, cap:A, shift:d)')
+    ap.add_argument('--theta0', type=float, default=None, help='what-if: the zero-free half-plane Re s > theta0')
+    ap.add_argument('--kernel', type=float, default=1.0, help="what-if: the Halasz-Montgomery kernel's exponent "
+                    'times this (0: the mean square over a set of characters at most the length plus the set)')
+    ap.add_argument('--kshift', type=float, default=0.0, help="what-if: the kernel's exponent less this")
+    ap.add_argument('--ext', type=float, default=0.0, help='what-if: the bilinear Type I estimates reach x^ext '
+                    'further (d1 d2^2 < x^(1 + ext))')
     a = ap.parse_args()
     h = a.h if a.h is not None else (0.004 if a.command == 'points' else 0.002)
     for Ls in a.L:
@@ -398,7 +504,8 @@ def main():
                       usewin=not a.no_window, sieve=a.sieve or a.command == 'parity',
                       upper=a.upper or a.command == 'parity', shrink=a.shrink, type2=a.command != 'parity',
                       rev=tuple(x for x in a.rev.split(',') if x), first=not a.no_first,
-                      direct=tuple(x for x in a.direct.split(',') if x))
+                      direct=tuple(x for x in a.direct.split(',') if x),
+                      curve=a.curve, theta0=a.theta0, kernel=a.kernel, kshift=a.kshift, ext=a.ext)
             if a.nu is not None:
                 nu = a.nu
             elif s.nu0 is not None:

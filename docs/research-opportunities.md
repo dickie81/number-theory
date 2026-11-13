@@ -539,6 +539,67 @@ covers. The region does not close at `13/6`.
     of that is the search for a configuration among the sets of the box's cells and a quarter the floor of a
     Buchstab step, and subset searches by index in place of slices gain `5%`. The cells of the first prime are
     planned apart, so the search goes as fast as there are cores.
+  - *What would lower the floor: the model with other inputs* (13 November; `harman_sieve.py points` with its
+    what-if switches: every reversal shape, each cell of side `0.004` at its midpoint, the limit of fine
+    cells. A model: the inputs below are hypotheses, and none of this is in Lean). The loss of the
+    decomposition with no window passes `1` at `2.101`. With one input changed it passes `1` at:
+
+    | The input that is changed | the loss passes `1` at |
+    |---|---|
+    | The zero-free half-plane at `7/8` or `5/6` in place of `11/12` (`--theta0`) | `2.100` |
+    | The half-plane at `3/4`, `0.70`, `0.65`, `0.60` | `2.091`, `2.073`, `2.056`, `2.039` |
+    | Guth and Maynard's exponent `15/(3 + 5σ)` on `[7/10, 8/10]`, as if it held for the characters (`--curve gm`) | `2.098` |
+    | The density exponent at most `2.25`, `2.20`, `2.15`, `2.10`, `2.05` everywhere (`--curve cap:A`) | `2.101`, `2.099`, `2.081`, `2.062`, `2.041` |
+    | The density hypothesis (`--curve dh`); the same with no window | `2.021`; `2.090` |
+    | The kernel of the Halász–Montgomery inequality `q^{0.05}` or `q^{0.10}` smaller (`--kshift`); its exponent halved (`--kernel 0.5`) | `2.093`, `2.087`; `2.063` |
+    | No kernel: the mean square of a polynomial over a set of characters at most its length plus the set (`--kernel 0`) | `2.028` |
+    | The bilinear Type I estimates `x^{0.02}`, `x^{0.05}`, `x^{0.10}` further (`--ext`) | `2.095`, `2.086`, `2.075` |
+    | One level of reversal, through the largest prime, as in Lean (`--nest 1 --rev first`) | `2.109` |
+
+    *The estimate in two variables has its own floor, which the density curve hardly moves.* For two parts of
+    at most `q` and a rest of primes `x^ρ`, the bin that binds is the lowest `β*` at which the count of
+    characters falls below `q^{1−b}`, `b` the kernel's exponent, `1/2` for a part of length `q`, where it is
+    the Pólya–Vinogradov bound: below `β*` the Halász–Montgomery inequality gives no more than the large
+    sieve, and above it the bound falls. So the zone is the parts in `[x^{1/L−ρ}, x^{1−1/L}]` with `ρ ≤ (1/2 −
+    1/L)/(β* − 1/2)`: its width is `1 − 2/L` and it closes at `L = 2`. `β*` is `0.7789` with Huxley's exponent
+    and `3/4` under the density hypothesis, so the whole of the density hypothesis moves the floor of this
+    estimate from `2.101` to `2.090`. Only a kernel below Pólya–Vinogradov's would move it far, that is large
+    values of Dirichlet polynomials over the characters beyond Halász and Montgomery's, for polynomials of
+    length near `q`: with none (the analogue for the characters of Montgomery's conjecture on large values)
+    the floor is `2.028`.
+    *Below `2.10` the window is what would act, and it asks for the peak of the density curve.* The window is
+    there exactly above `1 + A/2`, `A` the greatest value of `min(A(σ), 1/(1 − σ))`, and where it is open it
+    does far more than the zone: with the exponent at most `2.15` the loss at `2.10` is `0.26`, and the floor
+    follows `1 + A/2` at a distance of `0.006` to `0.02`. The peak is `7/3`, at `σ = 5/7`, where Ingham's
+    exponent `3/(2 − σ)`, from the fourth moment, meets Chen, Gupta and Li's `4/(1 + σ)`, from large values; a
+    window at `2.10` asks for `2.2`, which Ingham's exponent has up to `σ = 0.636` and Huxley's from `0.788`:
+    so for an exponent of at most `2.2` on `[0.64, 0.79]`, where it is between `2.2` and `7/3`. A moment of
+    order `2k` of the `L`-functions over the characters, at the strength of Lindelöf's hypothesis, would give
+    `2(k + 1)/(k + 2 − 2σ)` on the left (Ingham's argument with Hölder's inequality at the exponent `2k/(k +
+    1)`; a count made here): the sixth moment moves the peak to `2.286` at `σ = 3/4` and the eighth to `2.25`,
+    so the window would open at `2.143` and `2.125`; with Guth and Maynard's exponent on the right as well,
+    the eighth moment gives `2.222`, a window from `2.111`. So the two sides are needed together.
+    *What spectral methods would have to give.* Watt's theorem, the fourth moment of `ζ` twisted by a
+    polynomial of length `T^{1/4}`, from sums of Kloosterman sums, is an input of Baker, Harman and Pintz's
+    `0.525`; for the characters mod `q` the same is Blomer, Humphries, Khan and Milinovich's (Compositio Math.
+    156 (2020); read here in its abstract only). In the sieve it would be a Type I estimate for two free
+    variables and a smooth one: by Hölder's inequality, for `d₁ < x/q` and `d₂ ≤ q^{1/4}` (a count made here;
+    Baker, Harman and Pintz's lemma is finer and was not compared). The bilinear estimate that is in Lean
+    holds all of that region, since there `d₁d₂² < x q^{−1/2}`: for one modulus and `x > q²`, Poisson's
+    formula and the large sieve already lose nothing. In a density estimate, a fourth moment twisted by a
+    polynomial of length `q^θ` gives the exponent `(1 − θ(2σ − 1))/(1 − σ)` for `θ ≥ 1/(3 − 2σ)` (the zeros
+    that the polynomial detects by the mean value, the others by the twisted moment; a count made here, in no
+    source), which is below Ingham's at `σ = 0.7` only for `θ > 0.77`: the density hypothesis at `θ = 1`,
+    nothing at `1/4`. Weil's bound for Kloosterman sums was looked at for the bilinear estimate and gains no
+    range there (a count made here): where the estimate fails, the smooth variable and `d₂` together are
+    shorter than `q`. And the half-plane at `7/8` changes nothing, the bin that binds being below it.
+    *So*, by the model: the rules and the inputs that are in Lean or in reach of it (more shapes of reversal,
+    finer cells, a wider bilinear estimate) end near `2.10`, a point or two above in exact terms (the exact
+    search's limit of fine cells with the rules in Lean is `2.122`, where the model has `2.109`). Below that
+    the route needs one of two things that are not known: the density exponent of the characters at most about
+    `2.2` on `[0.64, 0.79]`, or large values over the characters beyond Halász and Montgomery's for
+    polynomials of length near `q`; both are the questions of Guth and Maynard's work, in the `q`-aspect. The
+    first hard floor is `2`: the zone and the window both close there.
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three

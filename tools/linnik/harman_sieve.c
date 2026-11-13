@@ -82,6 +82,7 @@ typedef struct {
     int rev_odd, rev_even, rev_prime, rev_linear, rev_floor, rev_offdiag;
     int rev_first, rev_m2, rev_m3, rev_low, rev_natom, rev_nchain, rev_nodd, rev_nc1;
     int ev_win, ev_second, ev_rest;
+    double ext;                  /* a what-if: the bilinear Type I estimates reach x^ext further */
 } Ctx;
 
 typedef struct {
@@ -172,7 +173,7 @@ static int evaluable(const Ctx *c, int k, const double *Slo, const double *Shi) 
 static double capacity(const Ctx *c, int k, const double *Shi, int linear) {
     int full = (1 << k) - 1;
     if (linear) return c->theta - c->eps1 - Shi[full];   /* the linear Type I estimate alone: r P < x^theta */
-    double th = c->theta - c->eps1, one = 1 - c->eps1, W = 2 - c->tau - c->eps1, best = -1;
+    double th = c->theta - c->eps1, one = 1 - c->eps1 + c->ext, W = 2 - c->tau - c->eps1 + c->ext, best = -1;
     for (int S1 = 0; S1 <= full; S1++) {
         double a1 = Shi[S1], a2 = Shi[full ^ S1];
         if (a1 >= th) continue;
@@ -248,7 +249,7 @@ static double exact_floor(const Ctx *c, int k, const double *Slo, const double *
 /* An upper-bound sieve on the prime p_j: the largest factor 2 a_j / kappa - 1 over the box. */
 static double reversal(const Ctx *c, int k, const double *Slo, const double *Shi, int npm) {
     int full = (1 << k) - 1;
-    double th = c->theta - c->eps1, one = 1 - c->eps1, W = 2 - c->tau - c->eps1, best = INF;
+    double th = c->theta - c->eps1, one = 1 - c->eps1 + c->ext, W = 2 - c->tau - c->eps1 + c->ext, best = INF;
     for (int j = 0; j < k; j++) {
         if (npm >> j & 1) continue;
         int bj = 1 << j, O = full ^ bj;
