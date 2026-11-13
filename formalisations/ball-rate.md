@@ -1006,8 +1006,9 @@ step functions.
 Two results of this note then read as statements about Weil's form on a window. Under RH,
 `PivotSharp.lattice_gap` says that the form is at least `0.0577` at every nonzero integer-valued step function, and
 `BallGap.rate_gap` with `‖g_x‖² ≤ N²Σx_n²` (`normSq_stepProbe_le`) says that its Rayleigh quotient on the step
-functions is at least `√log N/(220e⁸N³)`. On the whole window the least eigenvalue is of order `e^{−4πλ²} = e^{−4πN}`
-(Andrews, Connes and La Gatta, numerically to `λ² = 300`, with an upper bound of Connes and Kastoris): the step
+functions is at least `√log N/(220e⁸N³)`. On the whole window the least eigenvalue decays like `e^{−4πλ²} =
+e^{−4πN}`, up to a power of `λ` (Andrews, Connes and La Gatta, numerically to `λ² = 300`, with an upper bound of Connes
+and Kastoris): the step
 functions of the orbit stay polynomially far from the form's nearly null, prolate directions.
 
 **The proof.**

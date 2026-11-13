@@ -51,9 +51,11 @@ These parts of the paper are not formalised. They are proved in the text or comp
   - those of the remark "How the hyperplane sits" at the end of §2, which come from
     [`scripts/window_hyperplane.py`](../../scripts/window_hyperplane.py);
   - the numerics of Section 8;
-- Section 6 on the analogues, except the density of real characters with `d₂ < d₁`. That density is
-  `D2Good.d2_density_pos_closed` and `d2_density_neg_closed`, and its Lean proof uses the library's formalisation of the
-  zero-free half-plane of an unrefereed preprint. The paper's own proof sketch follows Lamzouri's method of moments;
+- Section 6 on the analogues, except the two limits of the density of real characters with `d₂ < d₁`, one for each sign
+  of `D`. They are `D2Good.d2_density_pos_closed` and `d2_density_neg_closed`, whose Lean proofs use the library's
+  formalisation of the zero-free half-plane of an unrefereed preprint; the paper cites them as conditional on it. The
+  paper's own argument is Lamzouri's, whose approximation step uses Heath-Brown's zero-density estimate instead, and it
+  gives the positive proportion of the abstract from Lamzouri's published theorem alone;
 - the conjecture `λ_N ~ c·log N/N`, with `c ≈ 0.043` numerically, and the questions of Section 8;
 - the historical and comparative statements.
 
@@ -89,6 +91,15 @@ Done since the first draft:
 - The bibliography was checked against Crossref, zbMATH Open and arXiv; `references.tex` records the corrections.
 - The paper is self-contained. Proposition 2.1, the pivot upper bound of §3 and the density remark of §6 now carry their
   proofs.
+- After a hostile review:
+  - Proposition 2.2 has its proof, by Landau's theorem;
+  - the proof of Theorem 3.1 no longer uses a false inequality;
+  - the abstract states the equivalences for `G_N`, whose Gram realisation by the `w_n` needs RH;
+  - Binet's remainder and Lemma 4.7 are proved from citations, with the Lean routes stated;
+  - statements equivalent to RH say "under RH";
+  - the hygiene sentence excepts the vendored libraries.
+
+  The review's framing points, for the abstract, the introduction and Section 6, are drafted separately.
 - Results whose proofs are only in the library are out. Each rests on the sampling theorem at the zeros and the
   bounds for `λ_N`, which would roughly double the paper:
   - the pivot growth `d_N ≫ log N` under RH (`BallPivot.pivot_ge`);
