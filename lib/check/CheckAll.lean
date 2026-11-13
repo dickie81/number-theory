@@ -27,6 +27,7 @@ import BallUpperEta
 import BallGap
 import BallPivot
 import PivotSharp
+import OrbitWindow
 import BallLoud
 import BallLow
 import HalfPlaneJoinsPNT
@@ -623,6 +624,14 @@ if and only if `w_1` is a shortest vector of the orbit lattice, and under RH `±
 #print axioms PivotSharp.shortest_of_rh
 #print axioms PivotSharp.shortest_unique
 #print axioms PivotSharp.rh_iff_shortest
+
+/- The orbit form is Weil's form on a window (`formalisations/ball-rate.md`): on `Σ_n x_n = 0`, `Q_N(x)` is Weil's form
+of the step function `u^{1/2}Σ_n x_n 1_{(0, n]}(u)` on `[1, N]`, by the explicit formula for `ĝ(z)ĝ(−z)` at any parity. Under
+RH the form is `≥ 0.0577` at every nonzero integer-valued step function, and `≥ (√log N/(220e⁸N³))‖g‖²` on all of them. -/
+#print axioms OrbitWindow.weilQg_hasSum
+#print axioms OrbitWindow.form_eq_weilQg
+#print axioms OrbitWindow.weilQg_step_int_ge
+#print axioms OrbitWindow.weilQg_step_ge
 
 /- The inverse theorem on the arithmetic class, first half (`formalisations/ball-rate.md`): for the vectors
 `n·x_n = Σ_{d ∣ n, d ≤ D₀} E_d(n/N)` with bounded Lipschitz profiles that vanish beyond `1`, and `G = Σ_d E_d/d`,

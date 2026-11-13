@@ -1,0 +1,81 @@
+zeta, n <= 12: (B) pass; second minimum s_2 = 1.938705 at {1: -1, 2: -1} (arb: [1.9387054450527943871370953 +/- 5.12e-26])
+zeta, n <= 30: (B) pass; second minimum s_2 = 1.938705 at {1: -1, 2: -1} (arb: [1.9387054450527943871370953 +/- 5.12e-26])
+curves-all: 148 curves, windows of 3..20 indices; positive definite: 148
+  (A) fails in the window: 59 (at the second index: 43)
+  (B) fails in the window (exact): 43, on the first two indices: 43, only beyond them: 0; (B) fails only where (A) does: True; curves with exact ties Q = d_1: 18; truncated: 0
+  k = 2 identity, (B) fails at N = 2 iff d_2 < d_1: True
+  passing curves: least second minimum s_2 = 1.000000; (A) fails but (B) holds: 16
+curves-cop: 148 curves, windows of 20..20 indices; positive definite: 148
+  (A) fails in the window: 53 (at the second index: 39)
+  (B) fails in the window (exact): 39, on the first two indices: 39, only beyond them: 0; (B) fails only where (A) does: True; curves with exact ties Q = d_1: 15; truncated: 1
+  passing curves: least second minimum s_2 = 1.000000; (A) fails but (B) holds: 14
+relation: Q = 0 exactly for 148 of 148 curves, so (B) fails at N = q^deg(m); N ranges over 4..4826809, median 256; N <= 20: 28
+frobenius: 148 curves; m irreducible: 132; (B) fails: 0; curves with ties T(P) = 2g at P other than +-1: 4; (A) fails below z^deg(m): 1; least second minimum T(P)/2g: 1.000000
+all primitive characters, q <= 400: 29468 characters (242 real, 29226 complex); positive definite on n <= 12: 29468
+  (A) for G at k = 2 (arb): fails 5983, undecided 0; (A) for G fails at some k <= 12 (float): 5987
+  (A) for Re G fails at some k <= 12 (float): 5443, of which first at k = 2: 5443
+  (B) at N = 2 (arb): fails 5443, undecided 0
+  (B) for N <= 12: fails 5443 (certified in arb), undecided 0, enumeration truncated 0; fails although (B) holds at N = 2: 0
+  consistency: every failure at N = 2 found by the search: True; every failure on n <= 2 is one at N = 2: True; (B) at N = 2 fails iff (A) for Re G fails at k = 2: True; (B) fails only where (A) for Re G does: True
+  real: 242; (A) for G fails at k = 2: 9; (B) fails: 9, at N = 2: 9
+  complex: 29226; (A) for G fails at k = 2: 5974; (B) fails: 5434, at N = 2: 5434
+  passing characters: least second minimum s_2 = 1.000037 (q = 311, label 232); s_2 < 1.01: 201; s_2 above 1.5: 16183
+real primitive characters, q <= 10000: 6086 characters (6086 real, 0 complex); positive definite on n <= 12: 6086
+  (A) for G at k = 2 (arb): fails 637, undecided 0; (A) for G fails at some k <= 12 (float): 637
+  (A) for Re G fails at some k <= 12 (float): 637, of which first at k = 2: 637
+  (B) at N = 2 (arb): fails 637, undecided 0
+  (B) for N <= 12: fails 637 (certified in arb), undecided 0, enumeration truncated 0; fails although (B) holds at N = 2: 0
+  consistency: every failure at N = 2 found by the search: True; every failure on n <= 2 is one at N = 2: True; (B) at N = 2 fails iff (A) for Re G fails at k = 2: True; (B) fails only where (A) for Re G does: True
+  real: 6086; (A) for G fails at k = 2: 637; (B) fails: 637, at N = 2: 637
+  passing characters: least second minimum s_2 = 1.001047 (q = 9867, label 9866); s_2 < 1.01: 27; s_2 above 1.5: 3278
+
+frobenius: q=2 g=1 L=[1, -2, 2] L*=[['z**2 - 2*z + 2', 1]] m irreducible=True (B) fails=False ties=2 s_2=1.000000
+frobenius: q=2 g=1 L=[1, 2, 2] L*=[['z**2 + 2*z + 2', 1]] m irreducible=True (B) fails=False ties=2 s_2=1.000000
+frobenius: q=2 g=2 L=[1, 0, 0, 0, 4] L*=[['z**2 - 2*z + 2', 1], ['z**2 + 2*z + 2', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=2 g=2 L=[1, -1, 2, -2, 4] L*=[['z**2 - 2*z + 2', 1], ['z**2 + z + 2', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=2 g=3 L=[1, -2, 4, -7, 8, -8, 8] L*=[['z**2 + z + 2', 1], ['z**4 - 3*z**3 + 5*z**2 - 6*z + 4', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=3 g=1 L=[1, -3, 3] L*=[['z**2 - 3*z + 3', 1]] m irreducible=True (B) fails=False ties=4 s_2=1.000000
+frobenius: q=3 g=2 L=[1, 1, 0, 3, 9] L*=[['z**2 - 2*z + 3', 1], ['z**2 + 3*z + 3', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=3 g=3 L=[1, -2, 6, -8, 18, -18, 27] L*=[['z**2 - z + 3', 1], ['z**4 - z**3 + 2*z**2 - 3*z + 9', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=4 g=2 L=[1, 0, -1, 0, 16] L*=[['z**2 - 3*z + 4', 1], ['z**2 + 3*z + 4', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=4 g=3 L=[1, -1, 2, -8, 8, -16, 64] L*=[['z**2 + 4', 1], ['z**4 - z**3 - 2*z**2 - 4*z + 16', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=5 g=1 L=[1, 4, 5] L*=[['z**2 + 4*z + 5', 1]] m irreducible=True (B) fails=False ties=2 s_2=1.000000
+frobenius: q=5 g=2 L=[1, 0, -6, 0, 25] L*=[['z**2 - 4*z + 5', 1], ['z**2 + 4*z + 5', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=5 g=3 L=[1, 2, 0, -10, 0, 50, 125] L*=[['z**2 + 2*z + 5', 1], ['z**4 - 5*z**2 + 25', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=5 g=3 L=[1, 0, 6, 0, 30, 0, 125] L*=[['z**2 - 3*z + 5', 1], ['z**2 + 5', 1], ['z**2 + 3*z + 5', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=7 g=2 L=[1, 5, 14, 35, 49] L*=[['z**2 + 7', 1], ['z**2 + 5*z + 7', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=7 g=3 L=[1, 5, 19, 46, 133, 245, 343] L*=[['z**2 - 2*z + 7', 1], ['z**2 + 3*z + 7', 1], ['z**2 + 4*z + 7', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=9 g=2 L=[1, 0, 2, 0, 81] L*=[['z**2 - 4*z + 9', 1], ['z**2 + 4*z + 9', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=9 g=3 L=[1, 1, 7, -14, 63, 81, 729] L*=[['z**2 + 4*z + 9', 1], ['z**4 - 3*z**3 + 10*z**2 - 27*z + 81', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=11 g=3 L=[1, 0, 8, -24, 88, 0, 1331] L*=[['z**2 + z + 11', 1], ['z**4 - z**3 - 2*z**2 - 11*z + 121', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+frobenius: q=13 g=2 L=[1, 1, 6, 13, 169] L*=[['z**2 - 4*z + 13', 1], ['z**2 + 5*z + 13', 1]] m irreducible=False (B) fails=False ties=0 s_2=None
+curves-all, (A) fails at n = 3 but (B) holds: q=2 g=1 L=[1, -2, 2] s_2=1.000000
+curves-all, (A) fails at n = 15 but (B) holds: q=2 g=2 L=[1, 0, 0, 0, 4] s_2=None
+curves-all, (A) fails at n = 8 but (B) holds: q=2 g=2 L=[1, 2, 2, 4, 4] s_2=1.250000
+curves-all, (A) fails at n = 15 but (B) holds: q=2 g=2 L=[1, -1, 2, -2, 4] s_2=None
+curves-all, (A) fails at n = 8 but (B) holds: q=3 g=1 L=[1, -1, 3] s_2=1.500000
+curves-all, (A) fails at n = 4 but (B) holds: q=3 g=1 L=[1, -2, 3] s_2=1.000000
+curves-all, (A) fails at n = 14 but (B) holds: q=4 g=1 L=[1, -1, 4] s_2=1.333333
+curves-all, (A) fails at n = 5 but (B) holds: q=4 g=1 L=[1, -2, 4] s_2=1.000000
+curves-all, (A) fails at n = 15 but (B) holds: q=4 g=1 L=[1, 0, 4] s_2=None
+curves-all, (A) fails at n = 5 but (B) holds: q=5 g=1 L=[1, 4, 5] s_2=1.000000
+curves-all, (A) fails at n = 8 but (B) holds: q=7 g=1 L=[1, -2, 7] s_2=1.000000
+curves-all, (A) fails at n = 10 but (B) holds: q=9 g=1 L=[1, -2, 9] s_2=1.000000
+curves-all, (A) fails at n = 10 but (B) holds: q=9 g=2 L=[1, -1, 4, -9, 81] s_2=1.000000
+curves-all, (A) fails at n = 10 but (B) holds: q=9 g=2 L=[1, 1, -8, 9, 81] s_2=1.000000
+curves-all, (A) fails at n = 12 but (B) holds: q=11 g=1 L=[1, -2, 11] s_2=1.000000
+curves-all, (A) fails at n = 14 but (B) holds: q=13 g=1 L=[1, -2, 13] s_2=1.000000
+curves-cop, (A) fails at n = 5 but (B) holds: q=2 g=1 L=[1, -2, 2] s_2=1.000000
+curves-cop, (A) fails at n = 5 but (B) holds: q=2 g=2 L=[1, -2, 2, -4, 4] s_2=1.000000
+curves-cop, (A) fails at n = 8 but (B) holds: q=3 g=1 L=[1, -1, 3] s_2=1.500000
+curves-cop, (A) fails at n = 5 but (B) holds: q=3 g=1 L=[1, -2, 3] s_2=1.000000
+curves-cop, (A) fails at n = 14 but (B) holds: q=4 g=1 L=[1, -1, 4] s_2=1.333333
+curves-cop, (A) fails at n = 6 but (B) holds: q=4 g=1 L=[1, -2, 4] s_2=1.000000
+curves-cop, (A) fails at n = 15 but (B) holds: q=4 g=1 L=[1, 0, 4] s_2=None
+curves-cop, (A) fails at n = 22 but (B) holds: q=5 g=1 L=[1, -1, 5] s_2=1.250000
+curves-cop, (A) fails at n = 9 but (B) holds: q=7 g=1 L=[1, -2, 7] s_2=1.000000
+curves-cop, (A) fails at n = 11 but (B) holds: q=9 g=1 L=[1, -2, 9] s_2=1.000000
+curves-cop, (A) fails at n = 11 but (B) holds: q=9 g=2 L=[1, -1, 4, -9, 81] s_2=1.000000
+curves-cop, (A) fails at n = 11 but (B) holds: q=9 g=2 L=[1, 1, -8, 9, 81] s_2=1.000000
+curves-cop, (A) fails at n = 13 but (B) holds: q=11 g=1 L=[1, -2, 11] s_2=1.000000
+curves-cop, (A) fails at n = 15 but (B) holds: q=13 g=1 L=[1, -2, 13] s_2=1.000000
