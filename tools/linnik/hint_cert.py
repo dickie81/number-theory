@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] | --try TAG a/b H HF MAXLEN [--lam N]
-[--pos] [--blk N] [--rows I J] [--out DIR]: the search with the reversal through the largest prime as a plan,
+[--pos] [--blk N] [--skip N] [--rows I J] [--out DIR]: the search with the reversal through the largest prime as a plan,
 the hints that lead the kernel through the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`,
 the theorem at L = 2150/1000, if none is given).
 
@@ -37,7 +37,11 @@ a bound whatever the hints are (`lib/pnt/SieveAdDir.lean`).
     counts the kernel's time: it chooses by the cost plus `lam` millionths of `K` for each second that `SEC`
     predicts (dropped or decomposed; reversed or decomposed; dropped cells next to each other as one cell),
     and with `Par.blk > 1` a new prime's cells are up to `blk` steps of the grid, each kept whole or halved
-    by the same count (`pBlock`). The kernel reads the same hints in every case;
+    by the same count (`pBlock`). With `Par.skip > 0` the planner's own search is shorter: an alternative that
+    lost at two cells of a new prime in a row (the decomposition of a box that may be dropped; the reversal of
+    a box of the sign `+`; the decomposition of a box of the sign `−` where its reversal won) is not tried at
+    the next cells, and the cells that skipped it are solved again when it comes out the other way (`want`,
+    `note`, `again`). The kernel reads the same hints in every case;
   * `dSolve`, `dStep`, `dKidsC`, `dPart`, `dFlipTree`, `dFlipCost`, `dAltF`, with `cfgIP`, `cfgJP`, `pickP`,
     `pickC`, `cfgIM`, `cfgJM`, `cfgIF`, `cfgJF`, `parM`, `parF`: `solveD`, `stepD`, `kidsC`, `partD`, `flipTreeD`,
     `flipCostD`, `altFD` and what they read from the hints, definition by definition; every part is run through
@@ -54,9 +58,10 @@ by `decide +kernel`) and `Linnik<TAG>.lean` (the route, the bound from the parts
 difference); it is not part of `check_certificate.py`, for it searches for ten minutes on four cores at
 `21500`. With `--cache DIR` the plan of each cell of the first prime is kept in DIR, so that a long plan can be
 stopped and taken up again. With `--try`, the search is planned with other parameters (cells of side H, chains'
-cells of side HF over the frozen parts, boxes of at most MAXLEN primes reversed; `--pos`, `--lam N`, `--blk N`
-as `Par.pos`, `Par.lam`, `Par.blk`) and its cost and the plan's size are printed; with `--out`, its files are
-written to DIR. PyPy runs it one and a half times as fast as CPython, with the same output.
+cells of side HF over the frozen parts, boxes of at most MAXLEN primes reversed; `--pos`, `--lam N`, `--blk N`,
+`--skip N` as `Par.pos`, `Par.lam`, `Par.blk`, `Par.skip`) and its cost and the plan's size are printed; with
+`--out`, its files are written to DIR. PyPy runs it one and a half times as fast as CPython, with the same
+output.
 
 Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
 primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over frozen parts; nine minutes on four
@@ -67,6 +72,9 @@ first certificate of this theorem, it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20
 side 0.003, chains' cells 0.006 and boxes of two to six primes of either sign reversed, the search costs 0.96408 K
 on 2.7·10^8 boxes with no price on the kernel's time (1.87·10^7 steps), and 0.99055 K on 3.5·10^8 boxes with
 `lam = 10` (9.8·10^6 steps, 39 part files; eighty minutes on three cores with PyPy): the certificate `21400`.
+Of the boxes of that search, 2% to 9% are under the plan that is kept (four cells of the first prime from
+x^0.28 to x^0.50); with `skip = 3`, on every sixth cell of the first prime, the search is 0.55 of its boxes and
+the plan costs 0.17% more, on 1% fewer steps (13 November 2026).
 
 Needs Python 3 only.
 """
@@ -129,6 +137,70 @@ class Planner(fl.FlipSearch):
     # in the main tree, and up to `blkF` over a frozen part
     blk = 1
     blkF = 1
+    # with `skip > 0`, an alternative that lost at two cells of a new prime in a row is not tried at the next
+    # cells of that prime: after its `k`-th loss in a row, not at the next `2^min(k − 1, skip) − 1` cells, a loss
+    # counting only if its search took `skipmin` boxes or more. The alternatives (`skipk`): `d`, a box that may
+    # be dropped decomposed; `p`, a box of the sign `+` reversed; `b`, a box of the sign `−` decomposed where its
+    # reversal won, the reversal then taken without the comparison; `f`, a box of the sign `−` reversed, is not
+    # among them: skipping it costs 4% at cells of the first prime near x^0.40. An alternative is always tried at
+    # the last cell of the prime's range, and when it is tried again and comes out the other way, the cells that
+    # skipped it are solved again with every alternative (`redo`), backwards until one comes out as it was. The
+    # plan is one that the kernel follows all the same; the search is shorter.
+    skip = 0
+    skipk = 'dpb'
+    skipmin = 30
+    redo = True
+    sib = None
+
+    def want(self, key):
+        """Whether the alternative `key` is tried at this cell, by what it did at the cells before."""
+        sib = self.sib
+        if sib is None or '!' in sib or key not in self.skipk:
+            return True
+        st = sib.get(key)
+        if st is None or st[1] == 0:
+            return True
+        if '$' in sib:
+            st[1] = 0
+            return True
+        st[1] -= 1
+        st[3] += 1
+        return False
+
+    def note(self, key, won, used):
+        """The alternative `key` was tried at this cell, on `used` boxes, and was kept (`won`) or not."""
+        sib = self.sib
+        if sib is None or '!' in sib:
+            return
+        st = sib.setdefault(key, [0, 0, None, 0])
+        if st[3] and st[2] is not None and won != st[2] and self.redo:
+            sib['<'] = max(sib.get('<', 0), st[3])
+        st[2], st[3] = won, 0
+        if won:
+            st[0] = st[1] = 0
+        elif used >= self.skipmin:
+            st[0] = min(st[0] + 1, self.skip + 1)
+            st[1] = (1 << (st[0] - 1)) - 1
+
+    def again(self, rec, bl, par, cells, tot, lim, grp):
+        """The cells before the last, which skipped an alternative that has now come out the other way, solved
+        again with every alternative tried, backwards until one comes out as it was. The new total."""
+        m, j = grp.pop('<'), len(cells) - 2
+        grp['!'] = True
+        try:
+            while m > 0 and j >= 0:
+                s, c, n0, c0 = cells[j]
+                l1 = lim - (tot - c0)
+                c1, n1 = rec([(s, c)] + bl, par, l1)
+                if n1 is None or l1 <= c1 or (c1 == c0 and n1[0] == n0[0]):
+                    break
+                cells[j] = (s, c, n1, c1)
+                tot += c1 - c0
+                self.stat['again'] = self.stat.get('again', 0) + 1
+                m, j = m - 1, j - 1
+        finally:
+            del grp['!']
+        return tot
 
     # the proposal of the strategy that four bits name: its floor is the one that `SieveAd.cfgJP` computes
     def tryJ2(self, bl, lomin, ls, hs, c, bit):
@@ -223,6 +295,20 @@ class Planner(fl.FlipSearch):
         return (c0, one) if ok0 else (max(lim, c0), None)
 
     def pKids(self, rec, top, bl, par, cs, a, lim, drp=None):
+        if not self.skip:
+            return self.pKids1(rec, top, bl, par, cs, a, lim, drp)
+        # the cells of this prime remember what lost at the cells before them
+        sib0, mine = self.sib, {}
+
+        def rec2(b, p, l):
+            self.sib = mine
+            return rec(b, p, l)
+        try:
+            return self.pKids1(rec2, top, bl, par, cs, a, lim, drp, mine)
+        finally:
+            self.sib = sib0
+
+    def pKids1(self, rec, top, bl, par, cs, a, lim, drp=None, grp=None):
         cells, tot, s = [], 0, a
         if self.lamK and (self.blk if self.frz is None else self.blkF) > 1:
             # the proposed cuts are a fine grid: cells of up to `blk` of its steps, halved where that pays
@@ -247,11 +333,17 @@ class Planner(fl.FlipSearch):
                         return tot, None
                     cells.append((s, c, n1, c1))
                     s = c
+                    if grp and '<' in grp:
+                        tot = self.again(rec, bl, par, cells, tot, lim, grp)
+            if grp is not None:
+                grp['$'] = True
             c1, n1 = rec([(s, top)] + bl, par, lim - tot)
             tot += c1
             if lim <= tot:
                 return tot, None
             cells.append((s, top, n1, c1))
+            if grp and '<' in grp:
+                tot = self.again(rec, bl, par, cells, tot, lim, grp)
         # consecutive evaluated cells that one test covers are one cell; so are consecutive dropped cells whose
         # one bound is within `dmerge` of the sum of theirs
         kids, keep, i = [], set(), 0
@@ -364,39 +456,78 @@ class Planner(fl.FlipSearch):
         if self.anyI(bl):
             return 0, ('E',)
         x, fz, lam = bl[0], self.frz is not None, self.lamK
+        skip, sib = self.skip, self.sib
         dc = O.drp(bl, par)
         if dc is not None:
             # a box that may be dropped: dropped, or decomposed if that costs less by more than the kernel's
             # time on the decomposition is worth
-            bc, nb = self.pBuch(O, S, n - 1, x, bl, par, dc if dc <= lim else lim)
-            if dc <= bc:
-                r, how = dc, ('D',)
-            elif lam and nb is not None and dc < lim and dc - bc < lam * (secs(nb, fz) - SEC[('D', fz)]):
+            if skip and dc <= lim and not self.want('d'):
                 r, how = dc, ('D',)
             else:
-                r, how = bc, nb
-            if self.pos and O is self.OR and par and 0 < r and how is not None and flipOK(self.maxlen, bl):
+                w0 = self.W['calls']
+                bc, nb = self.pBuch(O, S, n - 1, x, bl, par, dc if dc <= lim else lim)
+                if dc <= bc:
+                    r, how = dc, ('D',)
+                elif lam and nb is not None and dc < lim and dc - bc < lam * (secs(nb, fz) - SEC[('D', fz)]):
+                    r, how = dc, ('D',)
+                else:
+                    r, how = bc, nb
+                if skip and dc <= lim:
+                    self.sib = sib
+                    self.note('d', how is not None and how[0] != 'D', self.W['calls'] - w0)
+            if (self.pos and O is self.OR and par and 0 < r and how is not None and flipOK(self.maxlen, bl)
+                    and (not skip or self.want('p'))):
                 # a box of the sign `+` of the main tree, reversed through its largest prime
                 self.stat['postry'] += 1
+                w0 = self.W['calls']
                 c, nf = self.pFlip(bl, r if r <= lim else lim, True)
-                if nf is not None and c < r and (not lam or c + lam * secs(nf) < r + lam * secs(how, fz)):
+                won = nf is not None and c < r and (not lam or c + lam * secs(nf) < r + lam * secs(how, fz))
+                if skip:
+                    self.sib = sib
+                    self.note('p', won, self.W['calls'] - w0)
+                if won:
                     self.stat['poswin'] += 1
                     return c, nf
             return r, how
+        rev = O is self.OR and not par and self.flip and flipOK(self.maxlen, bl)
+        if skip and rev and not self.want('b'):
+            # the reversal won at the cells before: it is taken, if it is below the limit, without the
+            # decomposition that it would be compared with
+            self.stat['fliptry'] += 1
+            w0 = self.W['calls']
+            c, nf = self.pFlip(bl, lim)
+            if nf is not None:
+                self.stat['flipwin'] += 1
+                return c, nf
+            self.sib = sib
+            self.note('f', False, self.W['calls'] - w0)
+            self.note('b', True, 0)
+            rev = False
+        w0 = self.W['calls']
         bc, nb = self.pBuch(O, S, n - 1, x, bl, par, lim)
+        w1 = self.W['calls']
         l2 = bc if bc <= lim else lim
         if O is self.OR and not par:
             r, how = l2, None
-            if self.flip and flipOK(self.maxlen, bl):
+            if rev and (not skip or nb is None or self.want('f')):
                 self.stat['fliptry'] += 1
                 if lam and nb is not None:
                     # reversed or decomposed, by the cost and the kernel's time together
                     c, nf = self.pFlip(bl, lim)
-                    if nf is not None and c + lam * secs(nf) < bc + lam * secs(nb):
+                    won = nf is not None and c + lam * secs(nf) < bc + lam * secs(nb)
+                    if skip:
+                        self.sib = sib
+                        self.note('f', won, self.W['calls'] - w1)
+                        self.note('b', not won, w1 - w0)
+                    if won:
                         self.stat['flipwin'] += 1
                         return c, nf
                 else:
                     c, nf = self.pFlip(bl, r)
+                    if skip and nb is not None:
+                        self.sib = sib
+                        self.note('f', c < r, self.W['calls'] - w1)
+                        self.note('b', not c < r, w1 - w0)
                     if c < r:
                         self.stat['flipwin'] += 1
                         r, how = c, nf
@@ -770,14 +901,17 @@ class Par:
 
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
-                 blk=1, blkF=None):
+                 blk=1, blkF=None, skip=0, skipmin=30):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1` or `SEC2`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
-        `blkF` (`blk` if not given) steps of the grid of side `hF` over a frozen part."""
+        `blkF` (`blk` if not given) steps of the grid of side `hF` over a frozen part; `skip`: the planner does
+        not try again, at the next cells of a prime, an alternative that lost at two cells in a row (at most
+        `2^skip − 1` cells are skipped), a loss counting only if its search took `skipmin` boxes or more."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
+        self.skip, self.skipmin = skip, skipmin
         self.h, self.hI, self.depth, self.kappa = h, round(h * DEN), depth, kappa
         self.depthR, self.hR, self.hQ = depthR, round(hR * DEN), round(hQ * DEN)
         self.hF, self.depthF, self.maxlen = round(hF * DEN), depthF, maxlen
@@ -791,6 +925,7 @@ class Par:
         P = Planner(fc.TestsF(self.lnum, self.lden), self.hI, self.depth, fc.WMIN, self.kappa, self.hR,
                     self.depthR, self.hQ, fc.FUEL, self.hF, self.depthF, self.maxlen, rev=self.rev)
         P.lamK, P.pos, P.blk, P.blkF = self.lam * K // 10 ** 6, self.pos, self.blk, self.blkF
+        P.skip, P.skipmin = self.skip, self.skipmin
         P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
         return P
 
@@ -1242,6 +1377,7 @@ def main():
         par_ = Par(a[1], ln, ld, h=float(a[3]), hF=float(a[4]), maxlen=int(a[5]),
                    lam=int(a[a.index('--lam') + 1]) if '--lam' in a else 0, pos='--pos' in a,
                    blk=int(a[a.index('--blk') + 1]) if '--blk' in a else 1,
+                   skip=int(a[a.index('--skip') + 1]) if '--skip' in a else 0,
                    sec=2 if '--lam' in a or '--pos' in a else 1)
         rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache'):

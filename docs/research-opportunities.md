@@ -508,6 +508,37 @@ covers. The region does not close at `13/6`.
     in `168` minutes of its time (39 files, of `244` to `271` seconds each, four at a time on four cores, so
     `44` minutes), where the planner predicted `155`: two and two thirds times the theorem's at `2.15`, for
     `2.9` times its steps.
+    **What finer cells buy** (13 November; every sixth cell of the first prime, the sign `+`, no price on the
+    kernel's time). With every test taken at the midpoints of the cells, which is no certificate but an
+    estimate of the limit of fine cells (`hint_probe.py … pos,mI,mJ,fI,fJ`, on the grid of side `0.003`), the
+    search costs `0.789K` at `2.14`, `0.913K` at `2.13` and `1.023K` at `2.12`: by these numbers the rules
+    that are in Lean stop between `2.13` and `2.12`, near `2.122`, whatever the grid. The exact search at
+    `2.14` costs `0.964K` with cells of side `0.003` and `0.917K` with `0.0025`, on twice the boxes: `22%` and
+    `16%` above the limit. At `2.135` with cells of side `0.0025` it costs `0.967K`: it passes, on a plan of
+    `4.3·10^7` steps and twelve hours of the kernel predicted (four and a half times the certificate at
+    `2.14`), from a search of `5.6·10^8` boxes; a price on the kernel's time has `3%` to spend there. At
+    `2.13` the limit leaves `9.5%` for the cells: cells of side about `0.002` or less, and several times that
+    plan; not tried.
+    **The planner's own search** (13 November; the certificate's parameters). Of the boxes that the planner
+    searches on a cell of the first prime, `2%` to `9%` are under the plan that it keeps (four cells from
+    `x^{0.28}` to `x^{0.50}`); the rest are in what it tried and did not keep: the decomposition of boxes that
+    are then dropped (up to `57%` of a cell's search, most of it at boxes of two primes), reversals of boxes
+    of the sign `+` that lose (`11%` to `41%`) and of the sign `−` (`10%` to `16%`), and the decomposition of
+    boxes that are then reversed (up to `23%`). `Par.skip` (`hint_cert.py --try … --skip 3`) does not try
+    again, at the next one, three or seven cells of a new prime, what lost at two cells in a row (the
+    decomposition of a box that may be dropped, the reversal of a box of the sign `+`, the decomposition where
+    the reversal won), tries it always at the last cell of the range, and solves the skipped cells again when
+    it comes out the other way: on every sixth cell of the first prime the search is `0.55` of its boxes and
+    the plan costs `0.17%` more, on `1%` fewer steps (the worst cell, `1.1%` more). The certificates are
+    planned without it. What was tried and lost more: skipping after one loss costs `4.6%` on every sixth
+    cell, most of it at cells from `x^{0.13}` to `x^{0.2}` (one costs seven times as much), where the one
+    decomposition that loses in a prime's range is followed by one that wins; without solving the skipped
+    cells again, `1.3%` on four cells where solving them again leaves `0.2%`; skipping fifteen cells, `2%` to
+    `7%` on those four; skipping the reversal of a box of the sign `−`, `4.5%` at a cell near `x^{0.40}` for
+    `6%` of its search. A box takes PyPy `25` µs; by CPython's profile of a cell near `x^{0.46}`, three fifths
+    of that is the search for a configuration among the sets of the box's cells and a quarter the floor of a
+    Buchstab step, and subset searches by index in place of slices gain `5%`. The cells of the first prime are
+    planned apart, so the search goes as fast as there are cores.
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three
