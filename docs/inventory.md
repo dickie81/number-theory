@@ -3060,6 +3060,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTwoComp.prop6_two`: Harman's comparison with stops in two variables and the leaves of the wider region *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoComp.prop6_two_at`: Harman's comparison with stops in two variables, for an exponent `2 < L ≤ 5/2` *paper* ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveTwoCompE`: Harman's comparison in two variables with the leaves of a box cut in three
+
+- `SieveTwoCompE.prop6_two3_at`: Harman's comparison with stops in two variables with a box of leaves cut in three, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveTwoCross`: Conditions between the two variables of a bilinear estimate
 
 - `SieveTwoCross.kern_eq`: The product of the indicators is the indicator of the conjunction.
@@ -3069,10 +3073,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTwoP6.stops_bound2`: The stops of a tree *paper*
 - `SieveTwoP6.prop6_two_core`: Harman's comparison with stops in two variables, at one `q` ([note](../formalisations/halasz-montgomery.md))
-
-#### `SieveTwoP6E`: The comparison in two variables with the leaves of a box cut in three
-
-- `SieveTwoP6E.prop6_two_core3`: Harman's comparison with stops in two variables, at one `q`, with a box of leaves cut in three ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoPieces`: The zone's exponents by pieces of the curve, from the ends of each piece
 

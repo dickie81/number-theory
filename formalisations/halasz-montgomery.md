@@ -110,7 +110,13 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
 - `SieveTwoP6E.prop6_two_core3` (`lib/pnt/SieveTwoP6E.lean`): Harman's comparison with stops in two variables at one
   `q` (`SieveTwoP6.prop6_two_core`) with such a box: its leaves cut at `d₁ ≤ q^{pA}` and `d₂ ≤ q^{th}`, the first part
   by `LeavesOK` with `pA` in place of `d₁`'s exponent, the second with `th` in place of `d₂`'s, the third by
-  `SieveLeafTwo.LeavesE` (through `SieveTwoP6E.tree_pattern2_ib3` and `tree_pattern2_le3`); nothing uses it yet;
+  `SieveLeafTwo.LeavesE` (through `SieveTwoP6E.tree_pattern2_ib3` and `tree_pattern2_le3`);
+- `SieveTwoCompE.prop6_two3_at` (`lib/pnt/SieveTwoCompE.lean`, with a route `SieveTwoCompE.prop6_two3`):
+  `SieveTwoComp.prop6_two_at` for such a box, the paper's conditions on the leaves replaced by those at `(pA, D₂)` and
+  `(D₁, th)` and the region `LeafZoneX` on the third part's window (`m₁` from `pA − ε` to `D₁ + ε`, the rest from
+  `th − ε` to `D₂ + ε`); the third part by `SieveLeafTwo.leavesE_of_zone` on the boxes `(⌊q^{pA}⌋, ⌊4q^{D₁}⌋]` and
+  `(⌊q^{th}⌋, ⌊4q^{D₂}⌋]` (`SieveTwoCompE.leaf_window`). Nothing uses it yet: it is for the sieve's test of a box whose
+  leaves straddle the paper's region;
 - `SieveCurveHx.counts_hx` (`lib/pnt/SieveCurveHx.lean`, written by `tools/linnik/gen_zone.py`): the counts of the
   curve `ghx`, the trivial count `1` below `7789/10000` and Huxley's density estimate from there on (a step
   `SieveCurveHx.charDensity_hxT` on `[7789/10000, 131/168]` with the exponent `(7014/3125)(1 − σ)`, Huxley's

@@ -145,7 +145,7 @@ lean_lib Core where
     .one `ZerosInfinite, .one `Zeta, .one `ZetaDiscs, .one `ZetaDiscsR,
     .one `ZetaInputs]
 
-/-- lib/pnt: 871 modules. -/
+/-- lib/pnt: 872 modules. -/
 lean_lib PNT where
   srcDir := "lib/pnt"
   globs := #[
@@ -353,20 +353,20 @@ lean_lib PNT where
     .one `SieveTree21900P2, .one `SieveTree21900P3, .one `SieveTree21900P4, .one `SieveTree21900P5,
     .one `SieveTree21900P6, .one `SieveTree21900P7, .one `SieveTree21900P8, .one `SieveTree21900P9,
     .one `SieveTreeStop, .one `SieveTwoBins, .one `SieveTwoChain, .one `SieveTwoComp,
-    .one `SieveTwoCross, .one `SieveTwoFourth, .one `SieveTwoP6, .one `SieveTwoP6E,
-    .one `SieveTwoPieces, .one `SieveTwoPieces4, .one `SieveTwoTerm, .one `SieveTwoTuples,
-    .one `SieveTwoTypeII, .one `SieveTwoTypeII4, .one `SieveTwoZone, .one `SieveTwoZone4,
-    .one `SieveTwoZone7D, .one `SieveTypeIB, .one `SieveTypeIBAsym, .one `SieveTypeIBAsymWide,
-    .one `SieveTypeIBBrun, .one `SieveTypeIBEv, .one `SieveTypeIBFam, .one `SieveTypeIBLeaf,
-    .one `SieveTypeIBPairWide, .one `SieveTypeIBSum, .one `SieveTypeIBSumWide, .one `SieveTypeIBWide,
-    .one `SieveTypeII, .one `SieveTypeIIGen, .one `SieveTypeIIHM, .one `SieveTypeIIR,
-    .one `SieveTypeIIU, .one `SieveTypeIIU21800D, .one `SieveTypeIIU21900D, .one `SieveTypeIIU22000D,
-    .one `SieveUnwGen, .one `SieveUnwTwo, .one `SieveWeight, .one `SmallPrimes,
-    .one `SmoothPerron, .one `SquarefreeCount, .one `Subconvexity, .one `SubconvexityCrit,
-    .one `TwinKV, .one `ZetaAFE, .one `ZetaFourth, .one `ZetaGMBlock,
-    .one `ZetaGMDensity, .one `ZetaGMHux, .one `ZetaGMIngham, .one `ZetaGMLV,
-    .one `ZetaGMProp, .one `ZetaGMS3, .one `ZetaGMTrace, .one `ZetaGMWin,
-    .one `ZetaHuxley, .one `ZetaIngham, .one `ZetaKernel]
+    .one `SieveTwoCompE, .one `SieveTwoCross, .one `SieveTwoFourth, .one `SieveTwoP6,
+    .one `SieveTwoP6E, .one `SieveTwoPieces, .one `SieveTwoPieces4, .one `SieveTwoTerm,
+    .one `SieveTwoTuples, .one `SieveTwoTypeII, .one `SieveTwoTypeII4, .one `SieveTwoZone,
+    .one `SieveTwoZone4, .one `SieveTwoZone7D, .one `SieveTypeIB, .one `SieveTypeIBAsym,
+    .one `SieveTypeIBAsymWide, .one `SieveTypeIBBrun, .one `SieveTypeIBEv, .one `SieveTypeIBFam,
+    .one `SieveTypeIBLeaf, .one `SieveTypeIBPairWide, .one `SieveTypeIBSum, .one `SieveTypeIBSumWide,
+    .one `SieveTypeIBWide, .one `SieveTypeII, .one `SieveTypeIIGen, .one `SieveTypeIIHM,
+    .one `SieveTypeIIR, .one `SieveTypeIIU, .one `SieveTypeIIU21800D, .one `SieveTypeIIU21900D,
+    .one `SieveTypeIIU22000D, .one `SieveUnwGen, .one `SieveUnwTwo, .one `SieveWeight,
+    .one `SmallPrimes, .one `SmoothPerron, .one `SquarefreeCount, .one `Subconvexity,
+    .one `SubconvexityCrit, .one `TwinKV, .one `ZetaAFE, .one `ZetaFourth,
+    .one `ZetaGMBlock, .one `ZetaGMDensity, .one `ZetaGMHux, .one `ZetaGMIngham,
+    .one `ZetaGMLV, .one `ZetaGMProp, .one `ZetaGMS3, .one `ZetaGMTrace,
+    .one `ZetaGMWin, .one `ZetaHuxley, .one `ZetaIngham, .one `ZetaKernel]
 
 /-- lib/dh: 68 modules. -/
 lean_lib DH where
