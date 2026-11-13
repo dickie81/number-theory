@@ -169,6 +169,7 @@ import SieveTwoTypeII4
 import SieveLeafZone
 import SieveLeafTwo
 import SieveLeafSplit
+import SieveTwoP6E
 import SieveTwoZone
 import SieveCurveHx
 import SieveTwoZone7D
@@ -1017,6 +1018,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveLeafTwo.leavesE_of_zone
 #print axioms SieveLeafTwo.typeIITwoAt_leafX
 #print axioms SieveLeafSplit.tree_leaves_le3
+#print axioms SieveTwoP6E.prop6_two_core3
 #print axioms SieveTypeIIHM.typeII_two_long
 #print axioms SieveTypeIIHM.zonePiece_OO
 #print axioms SieveTypeIIHM.zonePiece_HH

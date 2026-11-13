@@ -106,7 +106,11 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   of leaves either by the paper's Lemma 4.3 or cut in three by two more comparisons, `d₁ ≤ X₁`, then `d₂ ≤ X₂`: the
   paper's lemma with its own exponents on the first two parts and any bound of the third
   (`SieveLeafSplit.large_leaves_le3`), at the cost of `3` in place of `1` in the error term. It is for a box of leaves
-  that straddles the paper's region and the region of the estimate in two variables; nothing uses it yet;
+  that straddles the paper's region and the region of the estimate in two variables;
+- `SieveTwoP6E.prop6_two_core3` (`lib/pnt/SieveTwoP6E.lean`): Harman's comparison with stops in two variables at one
+  `q` (`SieveTwoP6.prop6_two_core`) with such a box: its leaves cut at `d₁ ≤ q^{pA}` and `d₂ ≤ q^{th}`, the first part
+  by `LeavesOK` with `pA` in place of `d₁`'s exponent, the second with `th` in place of `d₂`'s, the third by
+  `SieveLeafTwo.LeavesE` (through `SieveTwoP6E.tree_pattern2_ib3` and `tree_pattern2_le3`); nothing uses it yet;
 - `SieveCurveHx.counts_hx` (`lib/pnt/SieveCurveHx.lean`, written by `tools/linnik/gen_zone.py`): the counts of the
   curve `ghx`, the trivial count `1` below `7789/10000` and Huxley's density estimate from there on (a step
   `SieveCurveHx.charDensity_hxT` on `[7789/10000, 131/168]` with the exponent `(7014/3125)(1 − σ)`, Huxley's

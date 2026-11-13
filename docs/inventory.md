@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1806 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1807 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 240, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 196 | 696 |
-| `lib/pnt` | 329 | 997 |
+| `lib/pnt` | 330 | 998 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -3069,6 +3069,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTwoP6.stops_bound2`: The stops of a tree *paper*
 - `SieveTwoP6.prop6_two_core`: Harman's comparison with stops in two variables, at one `q` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveTwoP6E`: The comparison in two variables with the leaves of a box cut in three
+
+- `SieveTwoP6E.prop6_two_core3`: Harman's comparison with stops in two variables, at one `q`, with a box of leaves cut in three ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoPieces`: The zone's exponents by pieces of the curve, from the ends of each piece
 
