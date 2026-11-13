@@ -9,6 +9,10 @@ Let χ_D be the real primitive character of a fundamental discriminant D, a = 0 
 ℓ_D = L′/L(1, χ_D). Let d₁, d₂ be the first two pivots of the orbit Gram matrix (see `ball-conjecture.md`; Theorem B
 in `ball-conjecture-tests.md` §2). By §5.1 there, for real χ with q ≤ 10⁴ the pivot d₂ alone decides the whole conjecture
 (d_k ≥ d₁ for all k ≤ 300). So, in that range, the density below is also the density of real characters violating it.
+The same density counts failures of the conjecture's shortest-vector form. Every orbit Gram matrix has G₂₂ = 2d₁, so the
+lattice spanned by w₁, w₂ has a vector shorter than w₁, namely δ₂ − sgn(G₁₂)δ₁, exactly when d₂ < d₁
+(`ball-conjecture-tests.md` §7, Theorem G). Every character counted below fails that form too, and for q ≤ 10⁴ and
+n ≤ 12 these are all its failures.
 
 1. **(Lean, given Theorem B and K₁ > 0)** d₂ ≥ d₁ ⇔ −2K₁ − 2c_a ≤ ℓ_D ≤ −2c_a, with c₀ = −¼ log(27/4) and
    c₁ = ¾ log(3/4). So the upper thresholds are ½ log(27/4) = 0.954771… (even) and (3/2) log(4/3) = 0.431523… (odd).

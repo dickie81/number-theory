@@ -948,8 +948,10 @@ and the inventory would carry them.
 
 ## 6. Directions looked at and not recommended now
 
-- **The orbit-lattice conjecture.** For `ζ` this is superseded by §8.3: under RH the pivot inequality holds for every
-  large `k` (`BallPivot`). The conclusion of 4 November stands for the analogues: the pivot inequality fails where RH holds. Of
+- **The orbit-lattice conjecture.** For `ζ` this is settled by §8.3: under RH the pivot inequality holds for every
+  `k`, so the conjecture is equivalent to RH (`PivotSharp`). The conclusion of 4 November stands for the analogues, and
+  for both forms of the conjecture: the pivot inequality and the shortest vector fail where RH holds
+  ([ball-conjecture-tests.md](ball-conjecture-tests.md), §4, §5, §7). Of
   the open problems in [ball-conjecture-tests.md](ball-conjecture-tests.md), a lower bound for `λ_min(G_N)` under RH,
   even `exp(−N^A)`, asks that the Dirichlet polynomial `V(s) = Σ_{n ≤ N} v_n n^s` be not small at all the low zeros at
   once. That is a sampling problem at the zeros, whose gaps, `≍ 1/log T` on average and `O(1)` in the worst case

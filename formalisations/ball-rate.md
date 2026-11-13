@@ -881,7 +881,9 @@ inequality for every `k`", gives such a design. Its test function vanishes below
 weight, and in this normalisation it has `ρ = π/(4P) = 19.3` and `s = 1.09`. It gives `d_k ≥ 1.449·d_1` for every
 `k ≥ 2` (`scripts/pivot_push.py`, numerical). The next section proves a cruder version in Lean, `d_k ≥ 1.249·d_1`.
 
-**Prior work.** The pivot inequality is the conjecture of this library's author; no source is known for it or for the
+**Prior work.** The pivot inequality is the conjecture of this library's author; a literature check
+([reports/Orbit lattice criterion prior art.md](../reports/Orbit%20lattice%20criterion%20prior%20art.md)) found no source
+for it, for its lattice form or for a margin of this kind, and none is known for the
 bound. The mechanism of `slack_top` is that of `BallGap.gap_ge`, the ground-state transform on the divisibility graph,
 read at the top vertex instead of the root.
 
@@ -903,7 +905,7 @@ read at the top vertex instead of the root.
 | `PivotMinorFT.integral_mu_cos_eq_zero`, `PivotMinorFT.integral_mu_ge` | `∫μ(s)cos(sv) ds = 0` for `\|v\| ≥ 1`, and `∫μ ≥ (7/8)φ̂(0)` | nothing |
 | `PivotTop.top_bound` | `(log N + d)Σ_{n ≤ N}c_n² − L(c) ≥ (13/10)c_N²` for `N ≥ 2`, `d ≥ 17/20` and every real `c` | nothing |
 | `PivotTop.mertens_le_uniform` | `Σ_{n ≤ y}Λ(n)/n ≤ log y + 81/100` for every `y` | nothing |
-| `PivotPhi.integral_phi_cos`, `PivotPhi.phi_mul_le`, `PivotPhi.phiE_strip`, `PivotPhi.norm_phiE_I_le` | the transform of `φ`; `φ(s)(s² + 1/16) ≤ 1`; the strip bound and the pole bound of its entire extension | nothing |
+| `PivotPhi.integral_phi_cos`, `PivotPhi.phi_nonneg`, `PivotPhi.phi_mul_le`, `PivotPhi.phi_le_sq`, `PivotPhi.phiE_strip`, `PivotPhi.norm_phiE_I_le` | the transform of `φ`; `φ ≥ 0`; `φ(s)(s² + 1/16) ≤ 1`; `φ(s) ≤ s²/3000` for `\|s\| ≤ 5`; the strip bound and the pole bound of its entire extension | nothing |
 
 **What it says.** Under RH every pivot `d_N`, `N ≥ 2`, is at least `0.0577`, against `d_1 = K_H(1) = 0.0462` (in Lean
 `< 0.0539`, `WeilTest.hadamard_const_lt`): `d_k ≥ 1.249·d_1` for every `k ≥ 2`. With `BallWeil.rh_of_pivots` the
@@ -926,7 +928,7 @@ where the density of the zeros is small. Weil's explicit formula is applied to `
 - **The test function** (`PivotPhi`): `φ(s) = (999/1000)(1 − K(s/5))/s²`, `K(x) = sinc²x·(1 + sin²x/3)`, a combination
   of the atoms `(1 − sinc²(βs))/s²` at `β = 1/5` and `2/5`. Its transform is the piecewise cubic
   `(999/1000)π((25/9)((2/5 − |v|)⁺)³ − (25/144)((4/5 − |v|)⁺)³)`, supported in `|v| ≤ 4/5`, and `φ̂(0) = (999/1000)·4π/45`.
-  `0 ≤ K ≤ 1` gives `φ ≥ 0`, and `φ(s)(s² + 1/16) ≤ 1` gives `Φ_N(γ) ≤ 1/(¼ + γ²)` for `N ≥ 2`: under RH the zero side is
+  `0 ≤ K ≤ 1` gives `φ ≥ 0` (`PivotPhi.phi_nonneg`), and `φ(s)(s² + 1/16) ≤ 1` gives `Φ_N(γ) ≤ 1/(¼ + γ²)` for `N ≥ 2`: under RH the zero side is
   at most `Q_N(x)`.
 - **The prime side is exact.** A near miss `jn ≠ j'` has `|log(jn) − log j'| ≥ log(1 + 1/N) ≥ 2/(2N + 1) ≥ 4/(5N)`, by
   `log((1 + u)/(1 − u)) ≥ 2u`, outside the support `4/(5N)` of `Φ_N`'s transform. So the prime side is Landau's form,
@@ -945,8 +947,9 @@ where the density of the zeros is small. Weil's explicit formula is applied to `
   `r` below on each cell through `sinc x ≥ 1 − x²/6 + x⁴/120 − x⁶/5040`, and `log y` below by `2v + 2v³/3`,
   `v = (y − 1)/(y + 1)`. Above `s = 20` the steps of height `0.693 < log 2` follow `log s`: writing `s = 10·2^j·y` with
   `y ∈ [1, 2)` reduces every `j` to the same 400 cells of `y`. `[12, 20)` and `[1/2, 12)` take 320 and 460 cells, and
-  `(0, 1/2]` follows from `φ(s) ≤ s²/3000`. The arithmetic is exact, in numbers `(p − m)/(d + 1)` with `p, m, d ∈ ℕ`,
-  and the least margin is `0.0042` above `s = 12` and `2.4%` below.
+  `(0, 1/2]` follows from `φ(s) ≤ s²/3000` (`PivotPhi.phi_le_sq`). The arithmetic is exact, in numbers `(p − m)/(d + 1)`
+  with `p, m, d ∈ ℕ`, and the least margin is `0.0042` above `s = 12` and `2.4%` below. `scripts/pivot_constants.py`
+  replays the 1181 cells in Python's rationals, with every other number of the proof.
 - **The pole.** `‖φ_ℂ(iy)‖ ≤ y²/3000` for `0 < y ≤ 1/4`, since the terms of order `y²` of `1 − K(iy/5)` cancel. So the
   pole costs at most `Σc_n²/(6000N)`, `5/1332` of the mass.
 - **The top vertex** (`PivotTop`). Mertens' sums satisfy `M(y) = Σ_{n ≤ y}Λ(n)/n ≤ log y + 81/100` for every `y`:
@@ -960,6 +963,73 @@ Against the numerical design of [ball-conjecture.md](../docs/ball-conjecture.md)
 Lean proof makes cruder choices that are easier to certify. It uses `K` in place of `K₄`, with support `4/5` in place
 of `2/3` and `P = 0.0444`. Its steps are dyadic. It has `d = 7/8` in place of `1.087`. It bounds the top vertex
 uniformly, not by `P·Λ(N)` at each `N`. The margin pays for all four.
+
+**Prior work.** The positivity underneath is known in substance. `G_N ⪰ 0` for every `N` is a discrete form of K.
+Matsumoto and M. Suzuki's theorem that `H₁(e^t) − H₁(1)`, with `H₁ = K_H`, is a screw function exactly
+under RH (J. Number Theory 280 (2026), Thm 1.3). Its 2×2 layer is J.-L. Nicolas's `|W(x)| ≤ β = K_H(1)` (Acta Arith.
+155 (2012)). A literature check found no source for the margin, `d_k ≥ d_1` with the first pivot as the threshold, or
+for the lattice form, `w_1` as a shortest vector
+([reports/Orbit lattice criterion prior art.md](../reports/Orbit%20lattice%20criterion%20prior%20art.md)). The nearest
+are three:
+- J. C. Lagarias's Gram matrix of the Weil scalar product on Li's functions (Ann. Inst. Fourier 57 (2007), Thm 3.1).
+  It is the same pairing on another orbit of `1/s`, and under RH its pivots fall to `0`.
+- H. Yoshida's non-degeneracy of Weil's form on windows (Adv. Stud. Pure Math. 21 (1992)), which bounds squared norms
+  rather than pivots.
+- E. Hallouin and M. Perret's Gram matrix of the Frobenius orbit of a curve (Trans. AMS 372 (2019)), where the margin
+  fails.
+
+Both forms also fail for the same construction over curves and for a positive proportion of real characters
+([ball-conjecture-tests.md](../docs/ball-conjecture-tests.md), §4, §5, §7). So a proof has to use `ζ`'s own constants,
+as this one does.
+
+## The orbit form on a window: Weil's form of the step functions (`OrbitWindow`)
+
+**Lean:** `OrbitWindow` (`lib/core/`), printed by `lib/check/CheckAll.lean`. The printed results depend on `propext`,
+`Classical.choice` and `Quot.sound` only.
+
+| Result | Statement | Conditional on |
+|---|---|---|
+| `OrbitWindow.form_eq_weilQg` | on `Σ_{n ≤ N} x_n = 0`, `Q_N(x) = weilQg (log N) g_x`, with `g_x(t) = e^{t/2}Σ_n x_n 1_{(0, log n]}(t)`, for `N ≥ 2` | nothing |
+| `OrbitWindow.weilQg_hasSum` | Weil's explicit formula for `h(z) = ĝ(z)ĝ(−z)` gives `Σ_ρ ĝ(t_ρ)ĝ(−t_ρ) = weilQg a g`, for a probe of either parity | nothing |
+| `OrbitWindow.weilQg_step_int_ge` | `weilQg (log N) (u^{1/2}y) ≥ (999/1000)(2/45)(13/10) = 0.0577` at every nonzero integer-valued `y = Σ_n k_n 1_{(0, n]}`, `Σ_n k_n = 0` | RH |
+| `OrbitWindow.weilQg_step_ge` | `weilQg (log N) g_x ≥ (√log N/(220e⁸N³))‖g_x‖²` on `Σ_n x_n = 0`, `N ≥ 3`, the norm that of `L²(d*u)` | RH |
+
+**What it says.** In `u = e^t` the step function is `g_x(u) = u^{1/2}Σ_n x_n 1_{(1, n]}(u)`, and on the hyperplane
+`Σ_n x_n = 0` it is `u^{1/2}Σ_n x_n 1_{(0, n]}(u)`, the combination of the orbit's vectors `u^{1/2}1_{(0, n]}`, whose
+Mellin transforms at `ρ − ½` are `n^ρ/ρ`. It is supported in `[1, N]`. Weil's form depends on `g` only through its
+autocorrelation, so the dilation `u ↦ u/√N` changes nothing and puts `g_x` in the window `[λ⁻¹, λ]`, `λ = √N`. These
+are the windows of A. Connes and C. Consani, and of R. Andrews, A. Connes and A. La Gatta (arXiv:2611.13129), whose
+form uses the prime powers up to `λ² = N`, as `G_N` does. So the orbit form on the hyperplane is their form,
+compressed to the `N − 1` step functions with jumps at the integers, and the integer vectors are the integer-valued
+step functions.
+
+Two results of this note then read as statements about Weil's form on a window. Under RH,
+`PivotSharp.lattice_gap` says that the form is at least `0.0577` at every nonzero integer-valued step function, and
+`BallGap.rate_gap` with `‖g_x‖² ≤ N²Σx_n²` (`normSq_stepProbe_le`) says that its Rayleigh quotient on the step
+functions is at least `√log N/(220e⁸N³)`. On the whole window the least eigenvalue is of order `e^{−4πλ²} = e^{−4πN}`
+(Andrews, Connes and La Gatta, numerically to `λ² = 300`, with an upper bound of Connes and Kastoris): the step
+functions of the orbit stay polynomially far from the form's nearly null, prolate directions.
+
+**The proof.**
+- **Any parity.** The library's `weilQg` is Weil's form for a real probe of either parity, with pole term
+  `2ĝ(i/2)ĝ(−i/2)`, but the bridge from the explicit formula (`WeilForm.weilQ_eq_zero_sum`) was for even probes.
+  `weilQg_hasSum` is the bridge for `h(z) = ĝ(z)ĝ(−z)`, which is `|ĝ|²` on `ℝ`. Its archimedean term (`arch_term_gen`)
+  is `ArchShift`'s Tonelli argument with `|ĝ|²` in place of `ĝ²`, through the parity-free Fourier inversion of
+  `ParityGap`.
+- **The step function is a probe.** Each atom `e^{t/2}1_{(0, L]}` has autocorrelation `e^{L − u/2} − e^{u/2}` on
+  `[0, L]` (`autocorr_stepAtom`), so `f(0) − f(u) ≤ (e^L + 1)u`. By `‖g − g(· + u)‖² = 2(f(0) − f(u))` and
+  Cauchy–Schwarz over the atoms, `g_x` has `f(0) − f(u) ≤ B·u` (`stepProbe_lip`), and its archimedean integral
+  converges.
+- **The transform** is `Σ_n x_n ∫_0^{log n} e^{(1/2 + iz)u} du` (`ghatC_stepProbe`), at most
+  `2(L + 2)e^{3L/2}/(1 + |Re z|)` per atom on `|Im z| ≤ 1` (`norm_expInt_le`). So `h` is a strip test function and
+  `weilExplicit_zeta` applies (`weil_hStep`), with no RH input.
+- **The zero side, term by term.** At `t = (ρ − ½)/i`, `½ + it = ρ`. On the hyperplane the `−1/ρ` of each atom
+  cancels, and `ĝ_x(t)ĝ_x(−t) = Σ_{m,n} x_m x_n √(mn)(m/n)^{ρ − ½}/(ρ(1 − ρ))` (`hStep_zero`). Summed over the zeros
+  this is `Σ_{m,n} x_m x_n √(mn)K_H(m/n)`, and `K_H = kψ` (`BallWeil.kerH_eq_kψ`).
+
+Off the hyperplane, `g_x` does not see `x_1`, since the atom at `n = 1` is empty, so the same theorem gives
+`weilQg(g_x) = Q_N(x − (Σ_n x_n)δ_1)`. The orbit's first vector `u^{1/2}1_{(0, 1]}` lies in no window: its transform
+`1/s` has a pole at `s = 0`.
 
 ## The low zeros: what the zeros above `8N` give, and `λ_N` to `N = 3·10⁴` (`BallLow`; `scripts/lambda_large.py`)
 
