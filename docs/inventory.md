@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1824 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1825 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 334 | 1005 |
+| `lib/pnt` | 335 | 1006 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -3022,6 +3022,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveRanges`: The ranges of Brun's sieve
 
 - `SieveRanges.rng_sum_le`: The prime sums of the ranges `rng A`, `A ≥ 1`, are uniformly bounded ([note](../formalisations/harman-sieve.md))
+
+#### `SieveResBins`: Proposition 3′ pointwise, by any classes of the characters
+
+- `SieveTypeIIHM.sum_typeII_cls`: Proposition 3′ pointwise, by classes of the characters, with the better bound per class ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveResMoment`: The 2k-th moment of a short polynomial over the characters
 

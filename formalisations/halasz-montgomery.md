@@ -88,6 +88,10 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `|W(χ)| ≥ V` is at most the moment. For a prime sum of length `q^s` and `ks ≥ 1`, the characters at which it
   exceeds `q^{st}` number about `q^{2ks(1−t)}`, the density hypothesis's count at the lengths `q^{1/k}`: the counts
   of the resonant window (`docs/research-opportunities.md`, §3.1), which nothing uses yet;
+- `SieveTypeIIHM.sum_typeII_cls` (`lib/pnt/SieveResBins.lean`): `SieveHMBins.sum_typeII_bins_hm` for any classes of
+  the characters (a map `cl` to `{0, …, N − 1}`) in place of the bins of their zeros, whose proof uses nothing of the
+  bins but that they partition the characters: the resonant window classes the characters by the sizes of the
+  rest's prime sums with their zeros' bins. Nothing uses it yet;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
