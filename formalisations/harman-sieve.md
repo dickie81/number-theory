@@ -309,6 +309,19 @@ Its main tools:
   (`Linnik21500.tree21500`). The hints are the plan that `tools/linnik/hint_cert.py` kept of its search:
   `3.4·10^6` steps, of which `1.6·10^5` reversals, in `1552` parts, where the search visited `3.4·10^7` boxes,
   `2.8·10^7` of them over frozen parts.
+- `Linnik21400.linnik_21400` (`lib/pnt/Linnik21400.lean`; the parts are `lib/pnt/SieveHint21400P1.lean` and the
+  files after it, without Mathlib), **Linnik's theorem with exponent `2140/1000`**: for every `q ≥ 1` and every
+  `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2140/1000}`, with no hypothesis. The route,
+  the tests and the search led by hints are those of the theorem at `2150/1000` (`SieveAd.solve21400`:
+  `SieveAd.solveD`), on cells of side at most `0.003` and chains' cells of side at most `0.006` over the frozen
+  parts; the hinted bound is the reversal through the largest prime of a box of at most six primes of either
+  sign, that is of three and of five primes with the sign `−` and of two, four and six with the sign `+`
+  (`SieveAd.bd_flip_coreB`). The bound of the first term costs `0.99055·K` (`Linnik21400.tree21400`). The hints
+  are the plan that `tools/linnik/hint_cert.py` kept of its search, each step chosen by its cost plus ten
+  millionths of `K` for each second that the planner predicts of the kernel: `9.8·10^6` steps, of which
+  `3.8·10^5` reversals (`2.3·10^4` of boxes of the sign `+`), in `3705` parts, where the search visited
+  `3.5·10^8` boxes, `3.2·10^8` of them over frozen parts. With no price on the kernel's time the same search
+  costs `0.96408·K` on `1.87·10^7` steps (`docs/research-opportunities.md`, §3.1).
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

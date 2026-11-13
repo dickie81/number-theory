@@ -129,10 +129,10 @@ Mathlib's `LSeries`); and, for the `log log q` lower bound, Brun–Titchmarsh, w
 **12 November: the paper at `43/20`, from the half-plane and Huxley's estimate.** The Linnik paper now proves
 `43/20` (`Linnik21500.linnik_21500`). Its Type II estimate in two variables counts characters only from `7789/10000`
 on, where Huxley's exponent is below Chen, Gupta and Li's, so its curve is now `ghx` (`SieveCurveHx`: the trivial
-count below `7789/10000`, Huxley's steps above; `tools/linnik/gen_zone.py`), and the import cones of the two theorems
-with no window, at `2165/1000` and `2150/1000`, have no module of Chen, Gupta and Li's paper; those at `11/5`,
-`219/100` and `218/100` keep their window, and with it the curve `g7d`. In the table below the column `A` of those two
-rows is the window route's, which they do not use. "The paper" in the entries before this date means its version at
+count below `7789/10000`, Huxley's steps above; `tools/linnik/gen_zone.py`), and the import cones of the theorems
+with no window, at `2165/1000`, `2150/1000` and (since, in no paper) `2140/1000`, have no module of Chen, Gupta and
+Li's paper; those at `11/5`, `219/100` and `218/100` keep their window, and with it the curve `g7d`. In the table
+below the column `A` of those three rows is the window route's, which they do not use. "The paper" in the entries before this date means its version at
 `11/5`.
 
 Section 2.2 of the paper's version at `11/5`: with a density curve whose largest exponent is `A`, the Type II window
@@ -148,6 +148,7 @@ the exponent each input would reach is:
 | The same tree with role reversal for a term of three primes that needs an upper bound, at one level (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.18`, a theorem** (`Linnik21800.linnik_21800`) |
 | The same search with no Type II window: the estimate in two variables alone, and for a term with no prime of the size of its rest, the rest among the primes of the comparison's own tree (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.165`, a theorem** (`Linnik21650.linnik_21650`) |
 | The same search with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, at one level (below; **in Lean**, the kernel following the plan of the search by hints) | `7/3` | `13/6` | **`2.15`, a theorem** (`Linnik21500.linnik_21500`) |
+| The same search with a term of the sign `+` reversed through its largest prime too, on cells of side `0.003`, its plan chosen by cost and by the kernel's time (below; **in Lean**, the kernel following the plan) | `7/3` | `13/6` | **`2.14`, a theorem** (`Linnik21400.linnik_21400`) |
 | The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no certificate; of what it assumes, the two estimates are in Lean as far as Harman's comparison with a rest among the term's primes) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
 | A hybrid large-values estimate of Guth–Maynard strength at `σ = 5/7`, `15/(3 + 5σ)` (the `gm` variant of `tools/linnik/density_payoff.py`) | `105/46 = 2.2826` | `2.1413` | about `2.17`–`2.18` |
 | Guth and Maynard's `30/13` as a cap everywhere | `2.3077` | `2.1538` | about `2.18`–`2.19` |
@@ -394,11 +395,12 @@ covers. The region does not close at `13/6`.
     `1.6·10^5` of them reversals, and `5.2` MB of hints, in `1552` parts (`lib/pnt/SieveHint21500P1.lean` and
     the sixteen files after it), which the kernel checks in 63 minutes of its time (17 files, of 143 to
     271 seconds each, three at a time on four cores).
-- **What is not written.** Role reversal at a second level (below); the reversal of terms of the sign `+` is
-  written since (below, *The sign `+` in the search*). The plan of the theorem's search passes at `2.145` with cells of side `0.0035` (`0.975K`, on
-  `6.0·10^7` boxes; `6.6·10^6` steps, which is about ten MB of hints and two hours of the kernel
-  as the search led by hints is now), twice the build of the theorem at `2.15` for `0.005` of exponent. What the second level and tests that do not narrow with the
-  cells would give in exact terms is measured in the last two items below.
+- **What is not written.** Role reversal at a second level (below). The reversal of terms of the sign `+` is
+  written since, and with it and a planner that counts the kernel's time there is a theorem at `2140/1000`
+  (`Linnik21400.linnik_21400`; below, *The sign `+` in the search*). Without them the plan of the theorem's
+  search passes at `2.145` with cells of side `0.0035` (`0.975K`, on `6.0·10^7` boxes; `6.6·10^6` steps), twice
+  the build of the theorem at `2.15` for `0.005` of exponent. What the second level and tests that do not narrow
+  with the cells would give in exact terms is measured in the first two items below.
   - *Where the cells' loss is, with this rule* (12 November; the theorem's search at `2.15`, on twenty of the
     `115` cells of the first prime, with some tests taken at the midpoints of the cells, which is no
     certificate). With every test at the midpoints the cost falls by `24.6%`; with those of one kind alone,
@@ -497,6 +499,15 @@ covers. The region does not close at `13/6`.
     grid twice as fine, with `blk = 2` and `λ = 3` (and an earlier form of the rule for when the halves are
     looked at), the cell costs `4.5%` less than on the grid of side `0.003` in the same time of the kernel,
     and ten times the planner's.
+    **The certificate at `2140/1000`** (`Linnik21400.linnik_21400`; `CERTS['21400']` in `hint_cert.py`: those
+    cells, the sign `+`, `λ = 10`, no blocks). The plan costs `0.99055K`, with `9.79·10^6` steps, `3.56·10^5`
+    of them reversals of boxes of the sign `−` and `2.3·10^4` of the sign `+`; the search visited `3.5·10^8`
+    boxes, in eighty minutes on three cores (PyPy). Against the plan with no price on the kernel's time, that is
+    `2.7%` more cost for `48%` fewer steps. It is `3705` parts in 39 files, `14.9` MB of hints (`31` MB as
+    written), and 645 cells have a Buchstab step of their own outside the parts. The kernel checks the parts
+    in `168` minutes of its time (39 files, of `244` to `271` seconds each, four at a time on four cores, so
+    `44` minutes), where the planner predicted `155`: two and two thirds times the theorem's at `2.15`, for
+    `2.9` times its steps.
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three

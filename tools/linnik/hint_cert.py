@@ -63,7 +63,10 @@ primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over f
 cores), and its plan has 3.4·10^6 steps. The kernel takes 0.3 ms on an evaluated box (0.5 ms over a frozen part),
 1.2 ms on a Buchstab step (1.1 ms), 0.25 ms on a dropped box (0.45 ms) and 3 ms on a reversal's root, and 63
 minutes on the 17 files; with the configurations searched by the kernel and the box read sum by sum, as in the
-first certificate of this theorem, it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20 ms.
+first certificate of this theorem, it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20 ms. At 2140/1000 with cells of
+side 0.003, chains' cells 0.006 and boxes of two to six primes of either sign reversed, the search costs 0.96408 K
+on 2.7·10^8 boxes with no price on the kernel's time (1.87·10^7 steps), and 0.99055 K on 3.5·10^8 boxes with
+`lam = 10` (9.8·10^6 steps, 39 part files; eighty minutes on three cores with PyPy): the certificate `21400`.
 
 Needs Python 3 only.
 """
