@@ -885,6 +885,64 @@ inequality for every `k`", gives such a design, numerical and not yet in Lean. I
 bound. The mechanism of `slack_top` is that of `BallGap.gap_ge`, the ground-state transform on the divisibility graph,
 read at the top vertex instead of the root.
 
+## The pivot inequality for every `k`, given the archimedean minorant (`PivotSharp`; its certificate in progress)
+
+**Lean:** `PivotTop`, `PivotPhi`, `PivotMinor`, `PivotMinorFT` and `PivotSharp` (`lib/core/`), printed by
+`lib/check/CheckAll.lean`. The printed results depend on `propext`, `Classical.choice` and `Quot.sound` only.
+
+| Result | Statement | Conditional on |
+|---|---|---|
+| `PivotSharp.rh_iff_orbitLattice_of_mu` | RH ⟺ `Q_k(δ_k − Σ_{n < k}c_n δ_n) ≥ Q_1(δ_1)` for every `k ≥ 1` and all real `c` | `PivotSharp.MuLe` |
+| `PivotSharp.orbitLattice_of_mu` | `Q_k(δ_k − Σ_{n < k}c_n δ_n) ≥ Q_1(δ_1)` for every `k ≥ 1` and all real `c` | RH and `PivotSharp.MuLe` |
+| `PivotSharp.pivot_ge` | `Q_N(x) ≥ (999/1000)(2/45)(13/10)·x_N² ≥ 0.0577·x_N²` for every `N ≥ 2` and every real `x` | RH and `PivotSharp.MuLe` |
+| `PivotSharp.form_ge` | `Q_N(x) ≥ (φ̂(0)/2πN)((log N + 7/8)Σc_n² − L(c)) − Σc_n²/(6000N)` for `N ≥ 2`, `c_n = x_n√n` | RH and `PivotSharp.MuLe` |
+| `PivotMinorFT.integral_mu_cos_eq_zero`, `PivotMinorFT.integral_mu_ge` | `∫μ(s)cos(sv) ds = 0` for `\|v\| ≥ 1`, and `∫μ ≥ (7/8)φ̂(0)` | nothing |
+| `PivotTop.top_bound` | `(log N + d)Σ_{n ≤ N}c_n² − L(c) ≥ (13/10)c_N²` for `N ≥ 2`, `d ≥ 17/20` and every real `c` | nothing |
+| `PivotTop.mertens_le_uniform` | `Σ_{n ≤ y}Λ(n)/n ≤ log y + 81/100` for every `y` | nothing |
+| `PivotPhi.integral_phi_cos`, `PivotPhi.phi_mul_le`, `PivotPhi.phiE_strip`, `PivotPhi.norm_phiE_I_le` | the transform of `φ`; `φ(s)(s² + 1/16) ≤ 1`; the strip bound and the pole bound of its entire extension | nothing |
+
+`PivotSharp.MuLe` is the pointwise inequality `μ(s) ≤ φ(s)(L(Ns) − log N)` for every `N ≥ 2` and every real `s`, with
+`L(t) = Re ψ(¼ + it/2) − log π`, for the minorant `μ = φλ − r` below. Its proof, an interval certificate, is in
+progress and not yet in the library. With it, `rh_iff_orbitLattice_of_mu` makes the orbit-lattice conjecture of
+[ball-conjecture.md](../docs/ball-conjecture.md) equivalent to RH, with no finite range left.
+
+**What it says.** Under RH and `MuLe` every pivot `d_N`, `N ≥ 2`, is at least `0.0577`, against `d_1 = K_H(1) = 0.0462`
+(in Lean `< 0.0539`, `WeilTest.hadamard_const_lt`): `d_k ≥ 1.249·d_1` for every `k ≥ 2`.
+
+**The proof.** It is `BallSharp`'s, with a test function that keeps the zeros above height `≈ 5N` and drops those below,
+where the density of the zeros is small. Weil's explicit formula is applied to `h = |D|²Φ_N`, `D(t) = Σ_{n ≤ N}c_n n^{−it}`,
+`c_n = x_n√n`, `Φ_N(t) = φ(t/N)/N²`, for each `N ≥ 2` with the same `φ`.
+
+- **The test function** (`PivotPhi`): `φ(s) = (999/1000)(1 − K(s/5))/s²`, `K(x) = sinc²x·(1 + sin²x/3)`, a combination
+  of the atoms `(1 − sinc²(βs))/s²` at `β = 1/5` and `2/5`. Its transform is the piecewise cubic
+  `(999/1000)π((25/9)((2/5 − |v|)⁺)³ − (25/144)((4/5 − |v|)⁺)³)`, supported in `|v| ≤ 4/5`, and `φ̂(0) = (999/1000)·4π/45`.
+  `0 ≤ K ≤ 1` gives `φ ≥ 0`, and `φ(s)(s² + 1/16) ≤ 1` gives `Φ_N(γ) ≤ 1/(¼ + γ²)` for `N ≥ 2`: under RH the zero side is
+  at most `Q_N(x)`.
+- **The prime side is exact.** A near miss `jn ≠ j'` has `|log(jn) − log j'| ≥ log(1 + 1/N) ≥ 2/(2N + 1) ≥ 4/(5N)`, by
+  `log((1 + u)/(1 − u)) ≥ 2u`, outside the support `4/(5N)` of `Φ_N`'s transform. So the prime side is Landau's form,
+  `(φ̂(0)/2πN)L(c)` exactly, at every `N ≥ 2`.
+- **The archimedean minorant.** `μ = φλ − r` (`PivotMinor`), with the staircase
+  `λ(s) = 23/100 + (693/1000)Σ_{k < 30}(1 − sinc²(s/(10·2^k)))`, whose steps of height `0.693 < log 2` at the scales
+  `10·2^k` follow `log s`, and nine Fejér bumps `r = Σ_j b_j(sinc²((s − γ_j)/2) + sinc²((s + γ_j)/2))` at `γ_j ≤ 17/2`,
+  `Σ_j b_j = 0.004561`, which pay for the heights `s < 12`. A step at scale `A ≥ 10` moves `φ̂` by at most `1/5`, so `μ`'s
+  transform vanishes for `|v| ≥ 1` (`PivotMinorFT`), and against `|D|²` only the diagonal survives: distinct
+  frequencies are `1/N` apart. Its mass is exact, `∫μ = φ̂(0)(23/100 + (693/1000)Σ_kκ(10·2^k)) − 4πΣ_j b_j`, with
+  `κ(A) = 15/(2A) − 175/(8A²) + 375/(16A³)`, from `sinc²y = ¼∫(2 − |w|)⁺cos(wy) dw` and Fubini; it is `0.8804·φ̂(0)`.
+  `MuLe` then bounds the archimedean term below by `(φ̂(0)/2πN)(log N + 7/8)Σc_n²`.
+- **The pole.** `‖φ_ℂ(iy)‖ ≤ y²/3000` for `0 < y ≤ 1/4`, since the terms of order `y²` of `1 − K(iy/5)` cancel. So the
+  pole costs at most `Σc_n²/(6000N)`, `5/1332` of the mass.
+- **The top vertex** (`PivotTop`). Mertens' sums satisfy `M(y) = Σ_{n ≤ y}Λ(n)/n ≤ log y + 81/100` for every `y`:
+  Chebyshev with `lcm(1, …, n) ≤ 3ⁿ` to `n = 2000`, by one kernel computation, and `ψ(y) ≤ y log 4 + 2√y log y` beyond.
+  Schur's test, row by row, leaves the parent `N/q` of the top vertex the room `d + log q − M(q − 1)`, computed exactly
+  for `q ≤ 7`. Completing the square at each parent, with `Σ_{q ∣ N}Λ(q) = log N`, gives
+  `(log N + d)Σc_n² − L(c) ≥ (13/10)c_N²` for `d ≥ 17/20`. At `d = 7/8 − 5/1332`, with `c_N² = N x_N²`:
+  `Q_N(x) ≥ (φ̂(0)/2π)(13/10)x_N² = (999/1000)(2/45)(13/10)x_N²`.
+
+Against the numerical design of [ball-conjecture.md](../docs/ball-conjecture.md), which gives `d_k ≥ 1.449·d_1`, the
+Lean proof makes cruder choices that are easier to certify. It uses `K` in place of `K₄`, with support `4/5` in place
+of `2/3` and `P = 0.0444`. Its steps are dyadic. It has `d = 7/8` in place of `1.087`. It bounds the top vertex
+uniformly, not by `P·Λ(N)` at each `N`. The margin pays for all four.
+
 ## The low zeros: what the zeros above `8N` give, and `λ_N` to `N = 3·10⁴` (`BallLow`; `scripts/lambda_large.py`)
 
 **Lean:** `BallLow` (`lib/core/BallLow.lean`), printed by `lib/check/CheckAll.lean`. The two printed results depend on
