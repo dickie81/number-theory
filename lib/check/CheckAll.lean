@@ -165,6 +165,7 @@ import SieveHMBins
 import SieveTwoBins
 import SieveTwoPieces
 import SieveTwoTypeII
+import SieveTwoTypeII4
 import SieveTwoZone
 import SieveCurveHx
 import SieveTwoZone7D
@@ -1006,6 +1007,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTypeIIHM.bin_bound_two
 #print axioms SieveTypeIIHM.twoBound_of_long
 #print axioms SieveTypeIIHM.typeII_two_gen
+#print axioms SieveTypeIIHM.typeII_two_gen4
 #print axioms SieveTypeIIHM.typeII_two_long
 #print axioms SieveTypeIIHM.zonePiece_OO
 #print axioms SieveTypeIIHM.zonePiece_HH

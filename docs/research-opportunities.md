@@ -539,6 +539,34 @@ covers. The region does not close at `13/6`.
     of that is the search for a configuration among the sets of the box's cells and a quarter the floor of a
     Buchstab step, and subset searches by index in place of slices gain `5%`. The cells of the first prime are
     planned apart, so the search goes as fast as there are cores.
+  - *Leaves below `√q`, by the fourth moment* (13 November; the first part in Lean, `SieveTwoFourth`,
+    `SieveTwoZone4`, `SieveTwoTypeII4`). The leaves' rule of the bilinear Type I estimate needs the cofactor longer
+    than `√q` once `d₁ ≥ q` and `d₂` is longer than the cofactor (`a₁ + a₂ < 1 − τ/2`), and that is the only one of
+    its three conditions that binds on its own: relaxed by `q^{1/50}` it takes `7.3%` off the cost of the search at
+    `2.15` on twenty of the `115` cells of the first prime (`0.14279K` for `0.15403K`), by `q^{1/10}` `18.7%`, and
+    no more by `q^{1/4}`, while `d₁ < x/q` and `d₁d₂² < x²/q²` relaxed alone by `q^{1/10}` give nothing; all three
+    by `q^{1/10}` give `37.6%`, by `q^{1/4}` `80.7%`. No bound for Kloosterman sums moves the floor (Weil's needs
+    `d₁n² > q^{5/2}` where the lemma needs `d₁n² > q²`, `n` the cofactor's length, since `Σ_{t≠0}|ŵ(t)| ≥ q − n`),
+    nor Burgess's bound with the large sieve over `d₂` (it needs `d₂n^{2/r} > q^{1+(r+1)/(2r²)}`, against
+    `d₂n ≤ q^{1.15}`). What does is the case `r = 2` of Burgess's moments inside the Type II estimate: the leaf is a
+    sum in three variables, `d₁` the first, the cofactor's interval the second and the primes of `d₂` the rest, and
+    the cofactor's mean square over a bin of `q^g` characters is at most `q^{g/2 + 1/2}` times its length by the
+    fourth moment, against `q` by orthogonality (`SieveTypeIIHM.typeII_two_gen4`). The zone's condition is then
+    `max(0, 1 − p) + g(β)/2 + 1/2 − ν + μ ≤ 2r(1 − β)` in exponents of `q` (`p`, `ν`, `r` those of `d₁`, the cofactor
+    and `d₂`), with the cofactor's character sum as a rest in the bins near `11/12` (`ShortCharSums`); it needs a
+    density estimate below `0.78`, where `ghx` counts trivially, and the curve `g7d` (Ingham's and Chen, Gupta
+    and Li's steps) gives it. Its region at `2.15`: `d₂` from `x^{0.27}` to `x^{0.31}`, `d₁` from `x^{0.44}` to
+    `x^{0.49}`, the cofactor down to about `q^{0.47}` (products to `x^{0.788}`, the floor being at `x^{0.767}`). Its
+    edges are the bins near `5/7`, where the density exponent peaks at `7/3`, and near `11/12`; the half-plane at
+    `7/8` would add only `x^{0.790}` to `x^{0.788}`. In the search (`tools/linnik` with the leaves' test replaced
+    by that region, closed downwards; computed, not proved): `−4.9%` with the fourth moment alone, `−8.0%` with
+    `ShortCharSums` in the high bins, `−2.7%` with Ingham's steps and Huxley's but not Chen, Gupta and Li's. With
+    the theorem's parameters at `2.15` the whole search passes at `2.145` (`0.97488K`, where the paper's rule costs
+    `1.01893K`); with those of the certificate at `2.14` (cells `0.003`, the sign `+`, no price on time), on every
+    sixth of the `155` cells of the first prime at `2.135` it costs `0.16331K` for the paper's `0.17179K`, so the
+    whole plan about `0.974K` for `1.024K`: `2.135` passes with these leaves and not without them. What remains in
+    Lean: the zone's condition on that region for `g7d`, the leaves through the Type II estimate (Brun's moduli in
+    `d₁`), the test of the search and its soundness, and the certificate.
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three

@@ -72,6 +72,15 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   It is `SieveTypeIIHM.typeII_gen_hm` with two polynomials in place of one and a region in place of the window;
 - `SieveTypeIIHM.typeII_two_long`: the same bound for `P₁ ≥ q`, `P₂ ≥ q` and `P₁P₂ ≤ q^{L − 1/2000}`, for every
   `L`, at the curve `g = 1`: no density estimate enters, only the half-plane through the prime sums;
+- `SieveTypeIIHM.typeII_two_gen4` (`lib/pnt/SieveTwoTypeII4.lean`): `typeII_two_gen` with a third bound for each
+  mean square, the fourth moment (`lib/pnt/SieveTwoFourth.lean`). `W(χ)²` is the polynomial of the products of two
+  elements of `S`, so orthogonality gives `Σ_χ |W(χ)|⁴ ≤ (3P² + q)·F·(Σ|a|²)²` (`sum_chars_dp_four_le`, with `F` the
+  divisor bound for the pairs, `card_fiber_le_pow`), and Cauchy–Schwarz over a bin of `|R|` characters gives
+  `Σ_{χ∈R}|W(χ)|² ≤ |R|^{1/2}((3P² + q)F)^{1/2}Σ|a|²` (`sum_bin_four_le`): the exponent `M ≥ g/2 + max(m, 1/2) + 2e`
+  (`SqExp4`, `lib/pnt/SieveTwoZone4.lean`). It is the case `r = 2` of the moments of Burgess's method; for a variable
+  shorter than `√q` it beats orthogonality in every bin with fewer than `q` characters. Nothing uses it yet: it is
+  for the leaves of Buchstab's tree with a cofactor shorter than `√q`, taken as the second variable with the
+  primes of `d₂` as the rest (`docs/research-opportunities.md`, §3.1);
 - `SieveCurveHx.counts_hx` (`lib/pnt/SieveCurveHx.lean`, written by `tools/linnik/gen_zone.py`): the counts of the
   curve `ghx`, the trivial count `1` below `7789/10000` and Huxley's density estimate from there on (a step
   `SieveCurveHx.charDensity_hxT` on `[7789/10000, 131/168]` with the exponent `(7014/3125)(1 − σ)`, Huxley's

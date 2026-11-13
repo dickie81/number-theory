@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1799 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1800 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 240, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 196 | 696 |
-| `lib/pnt` | 325 | 990 |
+| `lib/pnt` | 326 | 991 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -3081,6 +3081,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.ZoneOK`: The zone's exponents on a region *paper*
 - `SieveTypeIIHM.typeII_two_gen`: Proposition 3′ in two variables, for a curve on a region of a zone, pointwise in the heights *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.typeII_two_long`: The Type II estimate for two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveTwoTypeII4`: Proposition 3′ in two variables with the fourth moment
+
+- `SieveTypeIIHM.typeII_two_gen4`: Proposition 3′ in two variables with the fourth moment, for a curve on a region of a zone, pointwise in the heights ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoZone`: One bin in two variables, as powers of `q`
 
