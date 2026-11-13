@@ -18,6 +18,7 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README,
 | Paper | Its theorem | Lean | State |
 |---|---|---|---|
 | [Linnik's exponent](linnik-exponent/README.md) ([PDF](https://dickie81.github.io/number-theory/linnik-exponent.pdf), [supplement](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf)) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{43/20}` | `Linnik21500.linnik_21500` | A draft; the bibliography is checked except Buchstab (1937), which is unverified |
+| [The orbit lattice](orbit-lattice/README.md) ([PDF](https://dickie81.github.io/number-theory/orbit-lattice.pdf)) | RH holds if and only if every Gram–Schmidt pivot of the orbit with Gram matrix `√(mn)·K_H(m/n)`, computed from the primes, is at least the first, and if and only if `w_1` is a shortest vector of the lattice the orbit spans; under RH every pivot after the first is at least `0.0577 > 1.249·K_H(1)` | `PivotSharp.rh_iff_orbitLattice`, `PivotSharp.rh_iff_shortest`, `PivotSharp.pivot_ge_rh` | A first draft: the proofs of Section 4 are sketches, and three sources of the literature check are unread |
 
 ## Building
 

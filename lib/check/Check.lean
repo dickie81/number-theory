@@ -3,6 +3,10 @@
 import Linnik21500
 import Linnik22000E
 import LinnikG7
+import PivotSharp
+import BallFlat
+import BallGap
+import BallUpperEta
 
 /- Linnik's theorem with exponent `L = 43/20` (`2150/1000`), with no hypothesis: the Linnik paper's theorem
 (`papers/linnik-exponent/main.tex`). Harman's sieve with the Type II estimate in two variables, whose density curve is
@@ -258,3 +262,44 @@ in the library; the theorems of that version's claims table that the table above
 #print axioms LinnikG7.linnik_g7d
 #print axioms LinnikG7.charDensity_g7d
 #print axioms SieveCurve7D.g7d_le_lin
+
+/- The orbit-lattice paper (`papers/orbit-lattice/main.tex`): RH holds if and only if every Gram–Schmidt pivot of the
+orbit with Gram matrix `√(mn)·K_H(m/n)`, computed from the primes, is at least the first, and if and only if `w_1` is a
+shortest vector of the lattice the orbit spans; under RH every pivot after the first is at least `0.0577`
+(`formalisations/ball-rate.md`, "The pivot inequality for every `k`"). The theorems of the paper's claims table
+(Appendix A), in its order: the main theorems, the kernel and the positivity layer, the flat model and the growth of
+the pivots, the steps of the proof of the margin, and the bounds for the smallest eigenvalue. -/
+#print axioms PivotSharp.rh_iff_orbitLattice
+#print axioms BallWeil.rh_of_pivots
+#print axioms PivotSharp.orbitLattice_of_rh
+#print axioms PivotSharp.rh_iff_shortest
+#print axioms PivotSharp.shortest_of_rh
+#print axioms PivotSharp.pivot_ge_rh
+#print axioms PivotSharp.lattice_gap
+#print axioms PivotSharp.shortest_unique
+#print axioms BallHadamard.kerH_one
+#print axioms BallHadamard.kerH_inv
+#print axioms BallPsi.kerH_explicit
+#print axioms BallWeil.rh_iff_form
+#print axioms BallHadamard.rh_iff_realizationH
+#print axioms BallWeil.form_eq_norm_sq
+#print axioms BallFlat.gram_flat
+#print axioms BallFlat.flat_pivot
+#print axioms BallPivot.pivot_ge
+#print axioms WeilForm.weilExplicit_zeta
+#print axioms PivotPhi.integral_phi_cos
+#print axioms PivotPhi.phi_mul_le
+#print axioms PivotPhi.phiE_strip
+#print axioms PivotPhi.norm_phiE_I_le
+#print axioms PivotSharp.prime_eq
+#print axioms PivotMinorFT.integral_mu_cos_eq_zero
+#print axioms PivotMinorFT.integral_mu_ge
+#print axioms PivotCert.mu_le
+#print axioms PivotSharp.pole_ge
+#print axioms PivotSharp.form_ge
+#print axioms PivotTop.mertens_le_uniform
+#print axioms PivotTop.mertens_le_small
+#print axioms PivotTop.top_bound
+#print axioms BallGap.rate_gap
+#print axioms BallUpperEta.rate_upper_rh
+#print axioms BallUpperEta.rate_upper

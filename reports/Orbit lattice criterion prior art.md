@@ -143,7 +143,7 @@ Optional context citations round out the picture.
 | A. Connes, C. Consani ([arXiv:2006.13771](https://arxiv.org/abs/2006.13771); [arXiv:2106.01715](https://arxiv.org/abs/2106.01715)) | Weil's form on windows and its tiny eigenvalues; the link to Hallouin–Perret |
 | D. A. Cardon, S. A. Roberts ([doi:10.1016/j.jat.2005.09.016](https://doi.org/10.1016/j.jat.2005.09.016)) | orthogonal polynomials on the zeros |
 | A. Voros ([arXiv:math/0506326](https://arxiv.org/abs/math/0506326)); E. Bombieri, J. C. Lagarias ([doi:10.1006/jnth.1999.2392](https://doi.org/10.1006/jnth.1999.2392)) | variants of Li's criterion |
-| F. Mazhouda ([doi:10.1007/s00605-012-0436-3](https://doi.org/10.1007/s00605-012-0436-3)) | the diagonal Li margin; read it before writing that no margin version of any RH criterion exists |
+| K. Mazhouda, "On the Li coefficients for the Dirichlet L-functions", Monatsh. Math. 170 (2013), 405–423 ([doi:10.1007/s00605-012-0436-3](https://doi.org/10.1007/s00605-012-0436-3)) | the diagonal Li margin; read it before writing that no margin version of any RH criterion exists |
 | J. C. Lagarias, M. Suzuki ([arXiv:math/0412039](https://arxiv.org/abs/math/0412039)); J.-B. Bost ([arXiv:1909.04992](https://arxiv.org/abs/1909.04992)) | lattice zeta functions and slopes |
 | A. M. Odlyzko, H. J. J. te Riele ([CWI report](https://ir.cwi.nl/pub/6447/6447D.pdf)); Best and Trudgian, Math. Comp. 84 (2015), 2047–2058 ([arXiv:1209.3843](https://arxiv.org/abs/1209.3843)) | lattice reduction applied to the zeros |
 | Á. A. Morán Ledezma ([arXiv:2311.08519](https://arxiv.org/abs/2311.08519)) | Weil's explicit sums as covariances |
