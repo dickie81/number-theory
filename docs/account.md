@@ -290,11 +290,14 @@ In order of what is in reach.
    `D_n` with intersection numbers `D_m·D_n = m + n − √(mn)·K_H(m/n)`, computed from the primes. Then RH is the
    Castelnuovo–Severi inequality for their integer combinations (`BallWeil.rh_iff_castelnuovo_severi`), and also the
    upper half of the Hasse–Weil bound for those numbers (`BallWeil.rh_iff_weil_bound`), and the Hodge index theorem
-   from counting, through Minkowski's theorem (`HodgeCounting.rh_iff_counting`). The orbit-lattice conjecture implies
-   it (`BallWeil.rh_of_pivots`), and under RH its pivot inequality holds for every `k` with `log k ≥ 7100`: the pivots
-   are at least `(log k/2 + log 4 + 2)/(22e⁸)` (`BallPivot.pivot_ge`), so the conjecture is RH together with finitely
-   many pivot inequalities (`BallPivot.orbitLattice_iff`), and RH is equivalent to the orbit spanning a lattice: the
-   form is at least `(log 4 + 2)/(22e⁸)` at every nonzero integer vector (`BallPivot.rh_iff_lattice`). On the class of vectors `n·x_n = Σ_{d ∣ n, d ≤ D₀} E_d(n/N)`, to which the minimisers are seen to belong, a vector whose boundary function `G = Σ_d E_d/d` has `Ĝ(ρ) ≠ 0` at some zero has `Q_N(x) ≥ c·N` under RH, with `c` any number below the sum of `|Ĝ(ρ)|²/(¼ + γ²)` over finitely many zeros, so the vectors with `Q_N(x) = O((log N/N)·Σx_n²)` have `Ĝ(ρ) = 0` at every zero (`BallLoud.loud_sum`, `BallLoud.quiet_carries_zeta`). Two primes already carry RH: for distinct primes `p` and
+   from counting, through Minkowski's theorem (`HodgeCounting.rh_iff_counting`). The orbit-lattice conjecture is
+   equivalent to it (`PivotSharp.rh_iff_orbitLattice`; the direction to RH is `BallWeil.rh_of_pivots`). Under RH every
+   Gram–Schmidt pivot of the orbit after the first is at least `0.0577`, against the first, `K_H(1) = 0.0462`
+   (`PivotSharp.pivot_ge_rh`), and the pivots grow like `log k` (`BallPivot.pivot_ge`). RH is also equivalent to `w_1`
+   being a shortest vector of the lattice the orbit spans: the form is at least `K_H(1)` at every nonzero integer vector
+   (`PivotSharp.rh_iff_shortest`), and under RH `±w_1` are its only shortest vectors (`PivotSharp.shortest_unique`).
+   Both forms fail for the same construction over curves and for a positive proportion of real Dirichlet characters, so
+   they are specific to `ζ` ([ball-conjecture-tests.md](ball-conjecture-tests.md), §4, §5, §7). On the class of vectors `n·x_n = Σ_{d ∣ n, d ≤ D₀} E_d(n/N)`, to which the minimisers are seen to belong, a vector whose boundary function `G = Σ_d E_d/d` has `Ĝ(ρ) ≠ 0` at some zero has `Q_N(x) ≥ c·N` under RH, with `c` any number below the sum of `|Ĝ(ρ)|²/(¼ + γ²)` over finitely many zeros, so the vectors with `Q_N(x) = O((log N/N)·Σx_n²)` have `Ĝ(ρ) = 0` at every zero (`BallLoud.loud_sum`, `BallLoud.quiet_carries_zeta`). Two primes already carry RH: for distinct primes `p` and
    `q`, RH holds exactly when `K_H(p^a q^b) ≥ −K_H(1)` for all integers `a` and `b`
    (`BallSlice.rh_iff_bound_pair`), so in particular for `2^a 3^b` (`BallSlice.rh_iff_two_three`). At every stage `N` the primes above `N/2`, which have no other multiple
    up to `N`, are never absent and are asymptotically half of all the primes (`LonelyPrimes.lonely_ratio_pos`,
