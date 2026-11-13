@@ -180,7 +180,7 @@ theorem coreJ3_eq (f : ℕ) (e : Bool) (u v t r1 r2 c0lo c0hi h1s h2s : ℕ) :
 
 theorem coreJ2_eq (f : ℕ) (e : Bool) (u v t ρ₁ ρ₂ c0lo c0hi h1s h2s : ℕ) :
     coreJ2 f e u v t ρ₁ ρ₂ c0lo c0hi h1s h2s = (Nat.blt 0 f && coreJ2P f e u v t ρ₁ ρ₂ c0lo c0hi h1s h2s) := by
-  simp only [coreJ2, coreJ2P, zoneJP, leavesP, Bool.and_assoc]
+  simp only [coreJ2, coreJ2P, zoneJP, leavesP, leavesL, Bool.and_assoc]
   rfl
 
 /-! ### The tests with no window -/
@@ -200,7 +200,7 @@ theorem okJ2F_eq (bl : List Cell) (f : ℕ) (cfg : Cfg) : okJ2F bl f cfg = okJ2 
   simp only [Nat.zero_add]
   by_cases h : bl.length ≤ 13
   · rw [List.take_of_length_le h, cellsP_eq, uOfP_eq, vOfP_eq]
-    simp only [okJ2, chkJ2, coreJ2P, zoneJP, leavesP, Bool.and_assoc]
+    simp only [okJ2, chkJ2, coreJ2P, zoneJP, leavesP, leavesL, Bool.and_assoc]
     rfl
   · simp only [okJ2, chkJ2, ble_false_of_not_le h, Bool.false_and, Bool.and_false]
 

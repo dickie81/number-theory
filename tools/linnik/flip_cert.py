@@ -139,7 +139,8 @@ class FlipSearch(fc.FillSearch):
     def coreJ2(self, f, e, u, v, t, r1, r2, c0lo, c0hi, h1s, h2s):
         T = self.T
         D1, D2 = h1s + (t if e else 0), h2s + (0 if e else t)
-        return (0 < f and T.zone(r1, r2, u, v) and u + f < v and u <= t + c0lo and c0hi < v and T.leaves(D1, D2))
+        return (0 < f and T.zone(r1, r2, u, v) and u + f < v and u <= t + c0lo and c0hi < v
+                and (T.leaves(D1, D2) or (T.energy and T.leavesE(D1, D2))))
 
     def okIF(self, bl, cfg):
         e1, e2, Kb, beta = self.frz
@@ -185,7 +186,7 @@ class FlipSearch(fc.FillSearch):
 
     def propJFl(self, bl, lomin):
         ls, hs = loSum(bl), hiSum(bl)
-        if self.T5 < hs:
+        if self.t5J() < hs:
             return []
         r = self.propJ2(bl, lomin, ls, hs)
         out = []

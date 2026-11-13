@@ -16,7 +16,7 @@ not the boxes of the search's lists.
 
 * `evJ_two_core`: the same for the comparison with the rest among the box's primes (`SieveAd.evJ_twoE`,
   `SieveAd.coreJ2`), with a set `Sr ≠ ∅` of indices for the rest, disjoint from `S₀`, and numbers `ρ₁ ≤ Σ_{Sr} lo`,
-  `ρ₂ ≥ Σ_{Sr} hi`.
+  `ρ₂ ≥ Σ_{Sr} hi`; where the leaves are cut in three, by `SieveAd.evJ_two_core3`.
 
 * `evJ_fill_core_at`, `evJ_two_core_at`: the two with the route and its exponent as variables.
 
@@ -258,8 +258,15 @@ theorem evJ_two_core {k : ℕ} (bx : Fin k → Cell) (f : ℕ) (S₀ Sr S₁ : F
     (h2 : ∑ i ∈ S₁ᶜ, (bx i).2 ≤ h2s) {m J₀ : ℕ} (hm : 3 * k + m ≤ J₀) :
     ∀ η : ℝ, 0 < η → ∀ᶠ q : ℕ in atTop, ∀ a : ZMod q, IsUnit a → ∀ E : List (Atom k), E.length ≤ m →
       ThrOK q E → |dJP q a f bx (fun rt => ∀ A ∈ E, A.sem rt)| ≤ (q.totient : ℝ)⁻¹ * (η * Xq q) := by
-  simp only [coreJ2, Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq] at hok
-  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hf0, z1⟩, z2⟩, z3⟩, z4⟩, z5⟩, z6⟩, p1⟩, p2⟩, p3⟩, p4⟩, p5⟩, p6⟩ := hok
+  simp only [coreJ2, Bool.and_eq_true, Bool.or_eq_true, Nat.ble_eq, Nat.blt_eq] at hok
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hf0, z1⟩, z2⟩, z3⟩, z4⟩, z5⟩, z6⟩, p1⟩, p2⟩, p3⟩, hlv⟩ := hok
+  -- the leaves cut in three
+  rcases hlv with hlv | hE
+  swap
+  · exact evJ_two_core3 bx f S₀ Sr S₁ hdisj hSr e u v t ρ₁ ρ₂ c0lo c0hi h1s h2s hf0 z1 z2 z3 z4 z5 z6 p1 p2 p3 hE hbxc
+      hrlo hrhi h0lo h0hi h1 h2 hm
+  simp only [leavesL, Bool.and_eq_true, Nat.blt_eq, Nat.mul_eq, Nat.add_eq] at hlv
+  obtain ⟨⟨p4, p5⟩, p6⟩ := hlv
   set D₁ := h1s + cond e t 0 with hD₁def
   set D₂ := h2s + cond e 0 t with hD₂def
   have hρ12 : ρ₁ ≤ ρ₂ := hrlo.trans ((Finset.sum_le_sum fun i _ => (hbxc i).2.1).trans hrhi)

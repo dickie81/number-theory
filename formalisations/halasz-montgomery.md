@@ -101,9 +101,10 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   conclusion for every length up to a bound at once (`LeavesE`, as `SieveTwoTerm.chainOK2_of_zone` does for the
   chains); and `SieveLeafTwo.typeIITwoAt_leafX` is the estimate on `LeafZoneX L`, the region extended to cofactors
   longer than `√q` by its slice at `m₂ = 1/2` (an exponent for length `q^{1/2}` grows by `m₂ − 1/2` with the length,
-  `sqExp4_shift`). Nothing uses them yet: the sieve's tests check the leaves by the paper's rule;
+  `sqExp4_shift`). The sieve's tests use them through `SieveTwoCompE.prop6_two3_at`;
 - `SieveLeafSplit.tree_leaves_le3` (`lib/pnt/SieveLeafSplit.lean`): `SieveP6TreeLeaves.tree_leaves_le` with each size
-  of leaves either by the paper's Lemma 4.3 or cut in three by two more comparisons, `d₁ ≤ X₁`, then `d₂ ≤ X₂`: the
+  of leaves either by the paper's Lemma 4.3 (with either of two pairs of exponents: a size whose leaves have no prime
+  on one side lies in one part) or cut in three by two more comparisons, `d₁ ≤ X₁`, then `d₂ ≤ X₂`: the
   paper's lemma with its own exponents on the first two parts and any bound of the third
   (`SieveLeafSplit.large_leaves_le3`), at the cost of `3` in place of `1` in the error term. It is for a box of leaves
   that straddles the paper's region and the region of the estimate in two variables;
@@ -115,14 +116,14 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `SieveTwoComp.prop6_two_at` for such a box, the paper's conditions on the leaves replaced by those at `(pA, D₂)` and
   `(D₁, th)` and the region `LeafZoneX` on the third part's window (`m₁` from `pA − ε` to `D₁ + ε`, the rest from
   `th − ε` to `D₂ + ε`); the third part by `SieveLeafTwo.leavesE_of_zone` on the boxes `(⌊q^{pA}⌋, ⌊4q^{D₁}⌋]` and
-  `(⌊q^{th}⌋, ⌊4q^{D₂}⌋]` (`SieveTwoCompE.leaf_window`). Nothing uses it yet: it is for the sieve's test of a box whose
-  leaves straddle the paper's region;
-- `SieveLeafZoneX.leafZoneX_of_XL`, `SieveLeafZoneX.leafZoneXL_rect` and `SieveLeafZoneX.leafXN_sound`
-  (`lib/pnt/SieveLeafZoneX.lean`, written by `tools/linnik/gen_leafzone.py`): `LeafZoneX` contains the intersection
-  `LeafZoneXL` of 19 half-planes (the region's inequalities but `m₂ ≤ 1/2`, and its cuts again at `m₂ = 1/2`, since
-  every case has `m₂` on its larger side); `LeafZoneXL` holds on a rectangle of `(m₁, ρ)` when it holds at its four
-  corners; and at a point of exponents in units of `1/D` it is a test of natural numbers (`leafXN`). Nothing uses them
-  yet: they are for the sieve's test of a box of leaves cut in three;
+  `(⌊q^{th}⌋, ⌊4q^{D₂}⌋]` (`SieveTwoCompE.leaf_window`). The sieve's tests of the comparison in two variables use it
+  (`SieveAd.evJ_two_core3`): they accept the leaves cut in three where the paper's conditions fail;
+- `SieveLeafZoneX.leafZoneX_of_XL` and `SieveLeafZoneX.leafXR_sound` (`lib/pnt/SieveLeafZoneX.lean`, written by
+  `tools/linnik/gen_leafzone.py`): `LeafZoneX` contains the intersection `LeafZoneXL` of 19 half-planes (the
+  region's inequalities but `m₂ ≤ 1/2`, and its cuts again at `m₂ = 1/2`, since every case has `m₂` on its larger
+  side); and on a rectangle of exponents in units of `1/D` it is a test of natural numbers, each half-plane at the
+  corner where it is tightest (`leafXR`, in `lib/pnt/SieveLeafZoneXDefs.lean`, without Mathlib), which the sieve's
+  tests use (`SieveAd.leavesE`);
 - `SieveCurveHx.counts_hx` (`lib/pnt/SieveCurveHx.lean`, written by `tools/linnik/gen_zone.py`): the counts of the
   curve `ghx`, the trivial count `1` below `7789/10000` and Huxley's density estimate from there on (a step
   `SieveCurveHx.charDensity_hxT` on `[7789/10000, 131/168]` with the exponent `(7014/3125)(1 − σ)`, Huxley's

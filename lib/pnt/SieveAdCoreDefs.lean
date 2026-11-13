@@ -9,7 +9,8 @@ sums of a list: the terms of a reversed term, whose frozen part carries a cofact
   sums `c0lo`, `c0hi` of the lower and upper ends over the set that enters the window, and `h1s`, `h2s` of the
   upper ends over the first side of the leaves and over the other primes.
 * `coreJ2`: the checks of `chkJ2` (the comparison in two variables with the rest among the box's primes), on those
-  sums and on `ρ₁`, `ρ₂`, the sums of the lower and upper ends over the rest's set.
+  sums and on `ρ₁`, `ρ₂`, the sums of the lower and upper ends over the rest's set; the leaves by the paper's
+  conditions or cut in three.
 
 The file imports `SieveAdFillDefs.lean`.
 -/
@@ -62,8 +63,6 @@ def coreJ2 (f : ℕ) (e : Bool) (u v t ρ₁ ρ₂ c0lo c0hi h1s h2s : ℕ) : Bo
     Nat.blt (u + f) v &&
     Nat.ble u (t + c0lo) &&
     Nat.blt c0hi v &&
-    Nat.blt (Lnum * D₁ + Lden * DEN) (Lnum * DEN) &&
-    Nat.blt (2 * Lnum * (D₁ + D₂) + Lden * DEN) (2 * Lnum * DEN) &&
-    Nat.blt (Lnum * (D₁ + 2 * D₂) + 2 * Lden * DEN) (2 * Lnum * DEN)
+    (leavesL D₁ D₂ || leavesE D₁ D₂)
 
 end SieveAd

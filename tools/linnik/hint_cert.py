@@ -208,15 +208,15 @@ class Planner(fl.FlipSearch):
             return None
         u, v = self.uOfF(c[0]), self.vOfF(c[1])
         f = min(lomin, tsub(v, u + 1))
-        if not (0 < f and hs + tsub(u, tsub(ls, c[0])) <= self.T5):
+        if not (0 < f and hs + tsub(u, tsub(ls, c[0])) <= self.t5J()):
             return None
         b = self.bestSub(v, bit, bl, 1, 0, 0, 0, tsub(ls, c[0]), (0, 0))
-        sp = self.leavesOf(bl, hs, tsub(u, b[0]))
+        sp = self.leavesOfJ2(bl, hs, tsub(u, b[0]))
         return None if sp is None else (f, (1, b[1], bit, sp[0], sp[1]))
 
     def guideJ(self, bl, lomin, sel):
         ls, hs = loSum(bl), hiSum(bl)
-        if self.T5 < hs:
+        if self.t5J() < hs:
             return None
         j = sel // 2
         if sel % 2 == 0:
@@ -901,17 +901,19 @@ class Par:
 
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
-                 blk=1, blkF=None, skip=0, skipmin=30):
+                 blk=1, blkF=None, skip=0, skipmin=30, energy=False):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1` or `SEC2`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
         `blkF` (`blk` if not given) steps of the grid of side `hF` over a frozen part; `skip`: the planner does
         not try again, at the next cells of a prime, an alternative that lost at two cells in a row (at most
-        `2^skip − 1` cells are skipped), a loss counting only if its search took `skipmin` boxes or more."""
+        `2^skip − 1` cells are skipped), a loss counting only if its search took `skipmin` boxes or more; `energy`:
+        the planner may cut in three the leaves of the comparison with the rest among the box's primes, in the main
+        tree and over the frozen parts, as the kernel's tests allow (`SieveAd.leavesE`)."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
-        self.skip, self.skipmin = skip, skipmin
+        self.skip, self.skipmin, self.energy = skip, skipmin, energy
         self.h, self.hI, self.depth, self.kappa = h, round(h * DEN), depth, kappa
         self.depthR, self.hR, self.hQ = depthR, round(hR * DEN), round(hQ * DEN)
         self.hF, self.depthF, self.maxlen = round(hF * DEN), depthF, maxlen
@@ -926,6 +928,7 @@ class Par:
                     self.depthR, self.hQ, fc.FUEL, self.hF, self.depthF, self.maxlen, rev=self.rev)
         P.lamK, P.pos, P.blk, P.blkF = self.lam * K // 10 ** 6, self.pos, self.blk, self.blkF
         P.skip, P.skipmin = self.skip, self.skipmin
+        P.T.energy = self.energy
         P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
         return P
 

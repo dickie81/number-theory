@@ -319,30 +319,72 @@ def xl_nat(f, at_half):
     return [(int(al * Q), 'Ln * P'), (int(be * Q), 'Ln * R'), (int(g0 * Q), 'Ld * D'), (int(g1 * Q), 'Ln * D')], Q
 
 
+def corner_terms(terms):
+    """The terms of a conjunct at the corner of the rectangle `[P₁, P₂] × [R₁, R₂]` where its form is largest: the
+    atoms `lp1`, `lp2` (`Ln·P₁`, `Ln·P₂`), `lr1`, `lr2`, `ld` (`Ld·D`) and `ln` (`Ln·D`)."""
+    out = []
+    for c, a in terms:
+        if a == 'Ln * P':
+            a = 'lp2' if c > 0 else 'lp1'
+        elif a == 'Ln * R':
+            a = 'lr2' if c > 0 else 'lr1'
+        else:
+            a = {'Ld * D': 'ld', 'Ln * D': 'ln'}[a]
+        out.append((c, a))
+    return out
+
+
+def nat_sum_fast(terms):
+    """A Lean sum of `coef·atom` with the arithmetic of `ℕ` written out (`Nat.add`, `Nat.mul`)."""
+    out = None
+    for coef, atom in terms:
+        if coef == 0:
+            continue
+        t = atom if coef == 1 else f'(Nat.mul {coef} {atom})'
+        out = t if out is None else f'(Nat.add {out} {t})'
+    return out or '0'
+
+
+def xr_checks():
+    """`leafXR`'s checks: each conjunct of `LeafZoneXL` at its worst corner, as `pos ≤ neg` in `ℕ`."""
+    out = []
+    for f, h in xl_conjuncts():
+        terms, Q = xl_nat(f, h)
+        terms = corner_terms(terms)
+        pos = [(c, a) for c, a in terms if c > 0]
+        neg = [(-c, a) for c, a in terms if c < 0]
+        out.append((nat_sum_fast(pos), nat_sum_fast(neg), Q))
+    return out
+
+
 def lean_file_xdefs():
     cj = xl_conjuncts()
     checks = []
-    for f, h in cj:
-        terms, Q = xl_nat(f, h)
-        pos, neg = nat_terms(terms)
-        checks.append(f'Nat.ble ({pos}) ({neg})')
-    checks = ' &&\n    '.join(checks)
+    for pos, neg, _ in xr_checks():
+        one = f'Nat.ble {pos} {neg}'
+        checks.append(one if len(one) < 108 else f'Nat.ble {pos}\n        {neg}')
+    checks = ' &&\n      '.join(checks)
     return f"""/-
-# The test of the leaves' region above `√q` at a point, in natural numbers, without Mathlib
+# The test of the leaves' region above `√q` on a rectangle, in natural numbers, without Mathlib
 
 Written by `tools/linnik/gen_leafzone.py`; do not edit.
 
-`leafXN Ln Ld D P R`: the {len(cj)} inequalities of `SieveLeafZoneX.LeafZoneXL` at `m₁ = κP`, `ρ = κR`, `L = κD` with
-`Ln = Ld·D·κ` (exponents of `x` in units of `1/D`, `L = Ln/Ld`), each times `Ld·D` and its denominator. Its soundness
-is `SieveLeafZoneX.leafXN_sound`.
+`leafXR Ln Ld D P₁ P₂ R₁ R₂`: the {len(cj)} inequalities of `SieveLeafZoneX.LeafZoneXL` for `m₁ = κP`, `ρ = κR`, `L = κD`
+with `Ln = Ld·D·κ` (exponents of `x` in units of `1/D`, `L = Ln/Ld`), each times `Ld·D` and its denominator, each at
+the corner of the rectangle `[P₁, P₂] × [R₁, R₂]` where its linear form is largest, so that it holds on the whole
+rectangle. Its soundness is `SieveLeafZoneX.leafXR_sound`. The arithmetic of `ℕ` is written out, and the products
+`Ln·P₁`, `Ln·P₂`, `Ln·R₁`, `Ln·R₂`, `Ld·D`, `Ln·D` are computed once: the kernel evaluates the test where the sieve's
+leaves are cut in three.
 -/
 
 namespace SieveLeafZoneX
 
-/-- **The test of `LeafZoneXL` at a point in natural numbers**: `m₁ = κP`, `ρ = κR`, `L = κD`, each inequality times
-`Ld·D` and its denominator, with `Ln = Ld·D·κ`. -/
-def leafXN (Ln Ld D P R : Nat) : Bool :=
-  {checks}
+/-- **The test of `LeafZoneXL` on a rectangle in natural numbers**: `m₁ = κP` for `P` in `[P₁, P₂]`, `ρ = κR` for `R`
+in `[R₁, R₂]`, `L = κD`, each inequality times `Ld·D` and its denominator, with `Ln = Ld·D·κ`, at its worst corner. -/
+def leafXR (Ln Ld D P₁ P₂ R₁ R₂ : Nat) : Bool :=
+  (fun lp1 lp2 lr1 lr2 ld ln =>
+    {checks})
+    (Nat.mul Ln P₁) (Nat.mul Ln P₂) (Nat.mul Ln R₁) (Nat.mul Ln R₂) (Nat.mul Ld D) (Nat.mul Ln D)
 
 end SieveLeafZoneX
 """
@@ -356,21 +398,11 @@ def lean_file_x():
     nz = len(region()[0])
     q13 = ', '.join('?_' for _ in range(nz))
     qn = ', '.join('?_' for _ in range(n))
-    rect = []
-    for f, h in cj:
-        al, be, g0, g1 = xl_linear(f, h)
-        rect.append(f'  · have := lin_rect (α := {fmt(al)}) (β := {fmt(be)}) (γ := {fmt(g0)} + {fmt(g1)} * L) hu₁ hu₂ '
-                    f'hr₁ hr₂\n      (by linarith) (by linarith) (by linarith) (by linarith)\n    linarith')
-    rect = '\n'.join(rect)
-    checks, sound = [], []
-    for i, (f, h) in enumerate(cj):
-        terms, Q = xl_nat(f, h)
-        pos, neg = nat_terms(terms)
-        checks.append(f'Nat.ble ({pos}) ({neg})')
+    sound = []
+    for i, (_, _, Q) in enumerate(xr_checks()):
         sound.append(f'  · have h := cast k{i}\n    push_cast at h\n    rw [hLn] at h\n'
                      f'    refine le_of_mul_le_mul_left ?_ (mul_pos (by norm_num : (0 : ℝ) < {Q}) hM)\n'
                      f'    linarith [h]')
-    checks = ' &&\n    '.join(checks)
     sound = '\n'.join(sound)
     kpat = '⟨' * (n - 1) + 'k0, ' + '⟩, '.join(f'k{i}' for i in range(1, n)) + '⟩'
     return HEADX.format(n=n) + f'''/-- **The leaves' region above `√q` as {n} inequalities**: the region `LeafZone`'s but `m₂ ≤ 1/2`, and its cuts at
@@ -389,38 +421,20 @@ theorem leafZoneX_of_XL {{L m₁ m₂ : ℝ}} (h : LeafZoneXL L m₁ m₂) : Sie
     unfold SieveTypeIIHM.LeafZone
     refine ⟨{q13}⟩ <;> linarith
 
-/-- A linear form at most `0` at the four corners of a rectangle is at most `0` on it. -/
-theorem lin_rect {{α β γ u₁ u₂ r₁ r₂ u r : ℝ}} (hu₁ : u₁ ≤ u) (hu₂ : u ≤ u₂) (hr₁ : r₁ ≤ r) (hr₂ : r ≤ r₂)
-    (h11 : α * u₁ + β * r₁ + γ ≤ 0) (h12 : α * u₁ + β * r₂ + γ ≤ 0) (h21 : α * u₂ + β * r₁ + γ ≤ 0)
-    (h22 : α * u₂ + β * r₂ + γ ≤ 0) : α * u + β * r + γ ≤ 0 := by
-  rcases le_total 0 α with hα | hα <;> rcases le_total 0 β with hβ | hβ
-  · nlinarith [mul_le_mul_of_nonneg_left hu₂ hα, mul_le_mul_of_nonneg_left hr₂ hβ]
-  · nlinarith [mul_le_mul_of_nonneg_left hu₂ hα, mul_le_mul_of_nonpos_left hr₁ hβ]
-  · nlinarith [mul_le_mul_of_nonpos_left hu₁ hα, mul_le_mul_of_nonneg_left hr₂ hβ]
-  · nlinarith [mul_le_mul_of_nonpos_left hu₁ hα, mul_le_mul_of_nonpos_left hr₁ hβ]
-
 set_option maxHeartbeats 4000000 in
-/-- **`LeafZoneXL` on a rectangle of `(m₁, ρ)` from its four corners.** -/
-theorem leafZoneXL_rect {{L u₁ u₂ r₁ r₂ u r : ℝ}} (hu₁ : u₁ ≤ u) (hu₂ : u ≤ u₂) (hr₁ : r₁ ≤ r) (hr₂ : r ≤ r₂)
-    (h11 : LeafZoneXL L u₁ (L - u₁ - r₁)) (h12 : LeafZoneXL L u₁ (L - u₁ - r₂))
-    (h21 : LeafZoneXL L u₂ (L - u₂ - r₁)) (h22 : LeafZoneXL L u₂ (L - u₂ - r₂)) :
-    LeafZoneXL L u (L - u - r) := by
-  obtain ⟨{hs('a')}⟩ := h11
-  obtain ⟨{hs('b')}⟩ := h12
-  obtain ⟨{hs('c')}⟩ := h21
-  obtain ⟨{hs('d')}⟩ := h22
-  refine ⟨{qn}⟩
-{rect}
-
-set_option maxHeartbeats 4000000 in
-/-- **The test is sound**: for `Ld, D > 0` and `Ln = Ld·D·κ`, `leafXN` gives `LeafZoneXL` at `m₁ = κP`, `ρ = κR`,
-`L = κD`. -/
-theorem leafXN_sound {{Ln Ld D P R : ℕ}} {{κ : ℝ}} (hLd : 0 < Ld) (hD : 0 < D) (hLn : (Ln : ℝ) = Ld * D * κ)
-    (h : leafXN Ln Ld D P R = true) : LeafZoneXL (κ * D) (κ * P) (κ * D - κ * P - κ * R) := by
-  simp only [leafXN, Bool.and_eq_true, Nat.ble_eq] at h
+/-- **The test is sound**: for `Ld, D > 0` and `Ln = Ld·D·κ`, `leafXR` gives `LeafZoneXL` at `L = κD` for every
+`m₁` in `[κP₁, κP₂]` and `ρ` in `[κR₁, κR₂]`. -/
+theorem leafXR_sound {{Ln Ld D P₁ P₂ R₁ R₂ : ℕ}} {{κ : ℝ}} (hLd : 0 < Ld) (hD : 0 < D)
+    (hLn : (Ln : ℝ) = Ld * D * κ) (h : leafXR Ln Ld D P₁ P₂ R₁ R₂ = true) {{m₁ ρ : ℝ}} (h1 : κ * P₁ ≤ m₁)
+    (h2 : m₁ ≤ κ * P₂) (h3 : κ * R₁ ≤ ρ) (h4 : ρ ≤ κ * R₂) : LeafZoneXL (κ * D) m₁ (κ * D - m₁ - ρ) := by
+  simp only [leafXR, Bool.and_eq_true, Nat.ble_eq, Nat.mul_eq, Nat.add_eq] at h
   obtain {kpat} := h
   have hM : (0 : ℝ) < Ld * D := by positivity
   have cast : ∀ {{a b : ℕ}}, a ≤ b → (a : ℝ) ≤ b := fun hab => by exact_mod_cast hab
+  have b1 := mul_le_mul_of_nonneg_left h1 hM.le
+  have b2 := mul_le_mul_of_nonneg_left h2 hM.le
+  have b3 := mul_le_mul_of_nonneg_left h3 hM.le
+  have b4 := mul_le_mul_of_nonneg_left h4 hM.le
   refine ⟨{qn}⟩
 {sound}
 
@@ -437,12 +451,12 @@ Written by `tools/linnik/gen_leafzone.py`; do not edit.
 
 `SieveLeafTwo.LeafZoneX` is `LeafZone` below `m₂ = 1/2` and its slice at `m₂ = 1/2` above. Every case of the region
 has `m₂` on its larger side, so `LeafZoneX` contains the intersection of {n} half-planes in `(m₁, m₂)`: the region's
-inequalities but `m₂ ≤ 1/2`, and its cuts again at `m₂ = 1/2` (`LeafZoneXL`, `leafZoneX_of_XL`). An intersection of
-half-planes holds on a rectangle of `(m₁, ρ)`, `ρ = L − m₁ − m₂`, when it holds at the four corners (`lin_rect`,
-`leafZoneXL_rect`); and at a point `m₁ = κP`, `ρ = κR`, `L = κD` with `Ln = Ld·D·κ` (exponents of `x` in units of
-`1/D`, `L = Ln/Ld`), each of its inequalities is one of natural numbers (`leafXN`, `leafXN_sound`).
+inequalities but `m₂ ≤ 1/2`, and its cuts again at `m₂ = 1/2` (`LeafZoneXL`, `leafZoneX_of_XL`). A half-plane
+holds on a rectangle of `(m₁, ρ)`, `ρ = L − m₁ − m₂`, when it holds at the corner where its linear form is largest;
+for `m₁ = κP`, `ρ = κR`, `L = κD` with `Ln = Ld·D·κ` (exponents of `x` in units of `1/D`, `L = Ln/Ld`), that is an
+inequality of natural numbers, and `leafXR`'s {n} of them give `LeafZoneXL` on the rectangle (`leafXR_sound`).
 
-The file imports `SieveLeafTwo.lean` and `SieveLeafZoneXDefs.lean` (`leafXN`, without Mathlib).
+The file imports `SieveLeafTwo.lean` and `SieveLeafZoneXDefs.lean` (`leafXR`, without Mathlib).
 -/
 import SieveLeafTwo
 import SieveLeafZoneXDefs

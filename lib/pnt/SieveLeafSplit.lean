@@ -198,7 +198,8 @@ def Split3 (q : ℕ) (a' : ZMod q) (L a b a₂ b₂ δ' εw Λ₁ δ : ℝ) (k :
 
 set_option maxHeartbeats 1600000 in
 /-- **The leaves of a tree, each size by the paper's lemma or split in three.** `SieveP6TreeLeaves.tree_leaves_le`
-with, at each size `s < s_max`, either the sizes of `LeavesOK` at `(a, b)` on its large leaves or their split in three
+with, at each size `s < s_max`, either the sizes of `LeavesOK` at `(a, b)` or at `(a₂, b₂)` on its large leaves or their
+split in three
 (`Split3`, with `LeavesOK` at `(a, b)` and `(a₂, b₂)` on two parts and a bound of the third), and two more comparisons
 in the budget: the bound is the same with `3s_max·q^{L−δ}/φ(q)` in place of `s_max·q^{L−δ}/φ(q)`. -/
 theorem tree_leaves_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {L a b a₂ b₂ δ' εw Λ₀ Λ₁ C₀ δ : ℝ}
@@ -218,7 +219,12 @@ theorem tree_leaves_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {L 
       (q : ℝ) ^ (L - 1 - δ') < ((∏ i, x i : ℕ) : ℝ) →
         ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a) ∧
         ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) * ((∏ i ∈ (I s)ᶜ, x i : ℕ) : ℝ) ^ 2 ≤
-          (q : ℝ) ^ (L - b)) ∨
+          (q : ℝ) ^ (L - b)) ∨ (∀ x ∈ RTg (j + s) ⌊2 * (q : ℝ) ^ L⌋₊
+        (SieveP6Tree.leafCmps Ω S₀ E ⌈(q : ℝ) ^ εw⌉₊ z₀ s),
+      (q : ℝ) ^ (L - 1 - δ') < ((∏ i, x i : ℕ) : ℝ) →
+        ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a₂) ∧
+        ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) * ((∏ i ∈ (I s)ᶜ, x i : ℕ) : ℝ) ^ 2 ≤
+          (q : ℝ) ^ (L - b₂)) ∨
       Split3 q a' L a b a₂ b₂ δ' εw Λ₁ δ k Ω S₀ I E z₀ s)
     (hC₀ : 0 ≤ C₀) (hC : ∀ A : ℝ, 1 ≤ A → ∑ p ∈ SieveRanges.rng A, 1 / (p : ℝ) ≤ C₀) (hk : Even k) (hk1 : 1 ≤ k)
     (hkC : 2 * C₀ ^ 2 ≤ ((k : ℝ) + 1) * (k + 2)) (N : ℕ) :
@@ -367,7 +373,7 @@ theorem tree_leaves_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {L 
           rw [← h, ← filter_large_eq _ hX0] at hx
           obtain ⟨hx1, hx2⟩ := Finset.mem_filter.1 hx
           exact ⟨hx1, not_le.1 hx2⟩
-        rcases hcase s hs with hgeo | ⟨hne, hnec, X₁, X₂, hX₁1, hX₂1, hlX₁, hlX₂, hgA, hgB, hEs⟩
+        rcases hcase s hs with hgeo | hgeo | ⟨hne, hnec, X₁, X₂, hX₁1, hX₂1, hlX₁, hlX₂, hgA, hgB, hEs⟩
         · have hgeo' : ∀ x ∈ RTg (j + s) ⌊2 * (q : ℝ) ^ L⌋₊ ((SieveP6Tree.leafCmps Ω S₀ E ⌈(q : ℝ) ^ εw⌉₊ z₀ s ++
               [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter (fun C : GCmp (j + s) => decide (∃ i, C.e i ≠ 0))),
               ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a) ∧
@@ -379,6 +385,18 @@ theorem tree_leaves_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {L 
             obtain ⟨g1, g2⟩ := hgeo x hx1 hlt
             exact ⟨g1, g2, hlt.le⟩
           refine (large_leaves_le hok (I s) hK1 hK2 _ (by omega) hnz' hform' hreg' hgeo').trans ?_
+          linarith
+        · have hgeo' : ∀ x ∈ RTg (j + s) ⌊2 * (q : ℝ) ^ L⌋₊ ((SieveP6Tree.leafCmps Ω S₀ E ⌈(q : ℝ) ^ εw⌉₊ z₀ s ++
+              [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter (fun C : GCmp (j + s) => decide (∃ i, C.e i ≠ 0))),
+              ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a₂) ∧
+              ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) *
+                ((∏ i ∈ (I s)ᶜ, x i : ℕ) : ℝ) ^ 2 ≤ (q : ℝ) ^ (L - b₂) ∧
+              (q : ℝ) ^ (L - 1 - δ') ≤ ((∏ i, x i : ℕ) : ℝ) := by
+            intro x hx
+            obtain ⟨hx1, hlt⟩ := hlarge x hx
+            obtain ⟨g1, g2⟩ := hgeo x hx1 hlt
+            exact ⟨g1, g2, hlt.le⟩
+          refine (large_leaves_le hok₂ (I s) hK1 hK2 _ (by omega) hnz' hform' hreg' hgeo').trans ?_
           linarith
         · have hX₁ : (0 : ℝ) < X₁ := by linarith
           have hX₂ : (0 : ℝ) < X₂ := by linarith

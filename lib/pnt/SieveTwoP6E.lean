@@ -31,7 +31,7 @@ variable [Route]
 
 /-- **A tree pattern with each size of leaves by the paper's lemma or cut in three.** `SieveTwoP6.tree_pattern2_le`
 with `SieveLeafSplit.tree_leaves_le3` for the leaves: `LeavesOK` at `(a, b)` and `(a₂, b₂)`, and at each size either
-the paper's sizes or `SieveLeafSplit.Split3`. -/
+the paper's sizes at one of them or `SieveLeafSplit.Split3`. -/
 theorem tree_pattern2_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {a b a₂ b₂ δ' εw Λ₀ Λ₁ C₀ δl δc : ℝ}
     {k J₀ J₀' K₀ Kmax A B Ar Br : ℕ} (hokL : SieveP6TreeLeaves.LeavesOK q a' L a b δ' εw Λ₀ C₀ δl k J₀ Kmax)
     (hokL₂ : SieveP6TreeLeaves.LeavesOK q a' L a₂ b₂ δ' εw Λ₀ C₀ δl k J₀ Kmax)
@@ -54,7 +54,12 @@ theorem tree_pattern2_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {
       (q : ℝ) ^ (L - 1 - δ') < ((∏ i, x i : ℕ) : ℝ) →
         ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a) ∧
         ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) * ((∏ i ∈ (I s)ᶜ, x i : ℕ) : ℝ) ^ 2 ≤
-          (q : ℝ) ^ (L - b)) ∨
+          (q : ℝ) ^ (L - b)) ∨ (∀ x ∈ RTg (j + s) ⌊2 * (q : ℝ) ^ L⌋₊
+        (SieveP6Tree.leafCmps Ω S₀ ((A : ℝ) + 1) ⌈(q : ℝ) ^ εw⌉₊ z₀ s),
+      (q : ℝ) ^ (L - 1 - δ') < ((∏ i, x i : ℕ) : ℝ) →
+        ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a₂) ∧
+        ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) * ((∏ i ∈ (I s)ᶜ, x i : ℕ) : ℝ) ^ 2 ≤
+          (q : ℝ) ^ (L - b₂)) ∨
       SieveLeafSplit.Split3 q a' L a b a₂ b₂ δ' εw Λ₁ δl k Ω S₀ I ((A : ℝ) + 1) z₀ s)
     (hC₀ : 0 ≤ C₀) (hC : ∀ A : ℝ, 1 ≤ A → ∑ p ∈ SieveRanges.rng A, 1 / (p : ℝ) ≤ C₀) (hk : Even k) (hk1 : 1 ≤ k)
     (hkC : 2 * C₀ ^ 2 ≤ ((k : ℝ) + 1) * (k + 2)) :
@@ -137,28 +142,6 @@ theorem leaf_bounds {q : ℕ} [NeZero q] {εw t : ℝ} {j : ℕ} {Ω : List (GCm
     · simp only [ite_true, mul_one, add_zero]
       linarith
 
-omit [Route] in
-theorem castAdd_mem_Isplit {j : ℕ} (S₁ : Finset (Fin j)) (eIn₁ : Bool) (s : ℕ) (i : Fin j) :
-    Fin.castAdd s i ∈ Isplit S₁ eIn₁ s ↔ i ∈ S₁ := by
-  constructor
-  · intro h
-    rcases Finset.mem_union.1 h with h | h
-    · obtain ⟨i', hi', he⟩ := Finset.mem_map.1 h
-      have : i' = i := Fin.castAdd_injective _ _ he
-      rwa [← this]
-    · exfalso
-      cases eIn₁
-      · simp at h
-      · simp only [ite_true, Finset.mem_map, Finset.mem_univ, true_and] at h
-        obtain ⟨u, hu⟩ := h
-        have h1 := congrArg Fin.val hu
-        simp only [Fin.natAddEmb_apply, Fin.val_natAdd, Fin.val_castAdd] at h1
-        have := i.isLt
-        omega
-  · intro h
-    exact Finset.mem_union_left _ (Finset.mem_map_of_mem _ h)
-
-set_option maxHeartbeats 3200000 in
 /-- **A tree pattern with a box of leaves cut in three, with the sizes from the boxes.** `SieveTwoP6.tree_pattern2_ib`
 for a box whose leaves straddle the paper's region: at each size the leaves are cut at `d₁ ≤ q^{pA}` and then
 `d₂ ≤ q^{th}`; the first part by `LeavesOK` at `(a, b)` with the sizes of the box with `pA` for `d₁`, the second by
@@ -170,7 +153,7 @@ theorem tree_pattern2_ib3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a')
     (hokL₂ : SieveP6TreeLeaves.LeavesOK q a' L a₂ b₂ δ' εw Λ₀ C₀ δl k J₀ Kmax)
     (hokE : SieveLeafTwo.LeavesE q a' L Λ₁ δl J₀E K₀E ⌈(q : ℝ) ^ εw⌉₊ AE BE ArE BrE)
     (hokC : ChainOK2 q a' εw Λ₁ δc J₀' K₀ A B Ar Br) {j : ℕ} (Ω : List (GCmp j)) (S₀ Sr : Finset (Fin j))
-    (hdisj : Disjoint S₀ Sr) (hSr : Sr.Nonempty) (S₁ : Finset (Fin j)) (hS₁ : S₁.Nonempty) (hS₁c : S₁ᶜ.Nonempty)
+    (hdisj : Disjoint S₀ Sr) (hSr : Sr.Nonempty) (S₁ : Finset (Fin j))
     (eIn₁ : Bool) (hi : Fin j → ℝ) {z₀ smax : ℕ}
     (hw2 : 2 ≤ ⌈(q : ℝ) ^ εw⌉₊) (hwle : (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ≤ 2 * (q : ℝ) ^ εw) (hwz : ⌈(q : ℝ) ^ εw⌉₊ ≤ z₀)
     (hz₀ : z₀ ≤ ⌊2 * (q : ℝ) ^ L⌋₊ + 1) (hAB : (A + 1) * z₀ ≤ B)
@@ -223,17 +206,12 @@ theorem tree_pattern2_ib3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a')
     hlenL hlenC hΛ₁ hc hlz hlE hΛ hX hN
     (fun rt hp hΩ => ⟨(hreg rt hp hΩ).1, (hreg rt hp hΩ).2.1, (hreg rt hp hΩ).2.2.2.2⟩) hfam ?_ hC₀ hC hk hk1 hkC
   intro s hs
-  right
-  obtain ⟨i₁, hi₁⟩ := hS₁
-  obtain ⟨i₂, hi₂⟩ := hS₁c
-  refine ⟨⟨Fin.castAdd s i₁, (castAdd_mem_Isplit S₁ eIn₁ s i₁).2 hi₁⟩,
-    ⟨Fin.castAdd s i₂, Finset.mem_compl.2 fun h => (Finset.mem_compl.1 hi₂) ((castAdd_mem_Isplit S₁ eIn₁ s i₂).1 h)⟩,
-    (q : ℝ) ^ pA, (q : ℝ) ^ th, hX₁, hX₂, ?_, ?_, ?_, ?_, ?_⟩
-  · rw [Real.log_rpow hq0]
-    exact mul_le_mul_of_nonneg_right hpAΛ hlogq
-  · rw [Real.log_rpow hq0]
-    exact mul_le_mul_of_nonneg_right hthΛ hlogq
-  · -- the first part: `d₁ ≤ q^{pA}`
+  -- the first part's sizes, `d₁ ≤ q^{pA}`, and the second's, `d₂ ≤ q^{th}`
+  have hA : ∀ x ∈ RTg (j + s) ⌊2 * (q : ℝ) ^ L⌋₊ (SieveP6Tree.leafCmps Ω S₀ ((A : ℝ) + 1) ⌈(q : ℝ) ^ εw⌉₊ z₀ s),
+      (q : ℝ) ^ (L - 1 - δ') < ((∏ i, x i : ℕ) : ℝ) → ∏ i ∈ Isplit S₁ eIn₁ s, (x i : ℝ) ≤ (q : ℝ) ^ pA →
+        ((∏ i ∈ Isplit S₁ eIn₁ s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a) ∧
+        ((∏ i ∈ Isplit S₁ eIn₁ s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) *
+          ((∏ i ∈ (Isplit S₁ eIn₁ s)ᶜ, x i : ℕ) : ℝ) ^ 2 ≤ (q : ℝ) ^ (L - b) := by
     intro x hx _ hle
     have hprime : ∀ i, (x i).Prime := fun i =>
       (SieveTypeIIU.mem_primesLe.1 (Fintype.mem_piFinset.1 (Finset.mem_filter.1 hx).1 i)).2
@@ -242,8 +220,12 @@ theorem tree_pattern2_ib3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a')
     push_cast
     exact leaf_sizes_num hq0 (Finset.prod_nonneg fun i _ => Nat.cast_nonneg _) (by linarith) hIc' hw0.le hwpow
       hszA₁ hszA₂
-  · -- the second part: `d₁ > q^{pA}`, `d₂ ≤ q^{th}`
-    intro x hx _ _ hle
+  have hB : ∀ x ∈ RTg (j + s) ⌊2 * (q : ℝ) ^ L⌋₊ (SieveP6Tree.leafCmps Ω S₀ ((A : ℝ) + 1) ⌈(q : ℝ) ^ εw⌉₊ z₀ s),
+      (q : ℝ) ^ (L - 1 - δ') < ((∏ i, x i : ℕ) : ℝ) → ∏ i ∈ (Isplit S₁ eIn₁ s)ᶜ, (x i : ℝ) ≤ (q : ℝ) ^ th →
+        ((∏ i ∈ Isplit S₁ eIn₁ s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a₂) ∧
+        ((∏ i ∈ Isplit S₁ eIn₁ s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) *
+          ((∏ i ∈ (Isplit S₁ eIn₁ s)ᶜ, x i : ℕ) : ℝ) ^ 2 ≤ (q : ℝ) ^ (L - b₂) := by
+    intro x hx _ hle
     have hprime : ∀ i, (x i).Prime := fun i =>
       (SieveTypeIIU.mem_primesLe.1 (Fintype.mem_piFinset.1 (Finset.mem_filter.1 hx).1 i)).2
     obtain ⟨-, hI', -⟩ := leaf_bounds (S₁ := S₁) (eIn₁ := eIn₁) (hi := hi) (Sr := Sr) (Ar := Ar) (Br := Br) hw2 hwz
@@ -251,6 +233,30 @@ theorem tree_pattern2_ib3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a')
     push_cast
     exact leaf_sizes_num hq0 (Finset.prod_nonneg fun i _ => Nat.cast_nonneg _) hI' (by linarith) hw0.le hwpow
       hszB₁ hszB₂
+  -- a side of the leaves with no prime: all of them in the first part, or all in the second
+  by_cases h1 : (Isplit S₁ eIn₁ s).Nonempty
+  swap
+  · left
+    intro x hx hlt
+    refine hA x hx hlt ?_
+    rw [Finset.not_nonempty_iff_eq_empty.1 h1, Finset.prod_empty]
+    exact hX₁
+  by_cases h2 : (Isplit S₁ eIn₁ s)ᶜ.Nonempty
+  swap
+  · right
+    left
+    intro x hx hlt
+    refine hB x hx hlt ?_
+    rw [Finset.not_nonempty_iff_eq_empty.1 h2, Finset.prod_empty]
+    exact hX₂
+  right
+  right
+  refine ⟨h1, h2, (q : ℝ) ^ pA, (q : ℝ) ^ th, hX₁, hX₂, ?_, ?_, fun x hx hlt hle => hA x hx hlt hle,
+    fun x hx hlt _ hle => hB x hx hlt hle, ?_⟩
+  · rw [Real.log_rpow hq0]
+    exact mul_le_mul_of_nonneg_right hpAΛ hlogq
+  · rw [Real.log_rpow hq0]
+    exact mul_le_mul_of_nonneg_right hthΛ hlogq
   · -- the third part, by `LeavesE`
     have hlen : ((SieveP6Tree.leafCmps Ω S₀ ((A : ℝ) + 1) ⌈(q : ℝ) ^ εw⌉₊ z₀ s ++
         [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]) ++
@@ -264,8 +270,7 @@ theorem tree_pattern2_ib3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a')
       (w := (⌈(q : ℝ) ^ εw⌉₊ : ℝ)) (z₀ := (z₀ : ℝ)) (X := (q : ℝ) ^ (L - 1 - δ')) (s := s) (B := Λ₁ * Real.log q)
       (by positivity) hc hlz hlE hw1 hX
     refine hokE (j + s) (by omega) (Isplit S₁ eIn₁ s) (Isplit S₁ eIn₁ s)ᶜ _ disjoint_compl_right
-      ⟨Fin.castAdd s i₂, Finset.mem_compl.2 fun h => (Finset.mem_compl.1 hi₂) ((castAdd_mem_Isplit S₁ eIn₁ s i₂).1 h)⟩
-      hlen ?_ ?_
+      h2 hlen ?_ ?_
     · intro C hC
       rcases List.mem_append.1 hC with h | h
       · exact hcΩ C h
@@ -304,8 +309,7 @@ set_option maxHeartbeats 1600000 in
 `SieveTwoP6.prop6_two_core` with `tree_pattern2_ib3` for the part of the family at most `P₁`: its leaves cut at
 `d₁ ≤ q^{pA}` and `d₂ ≤ q^{th}`, by `LeavesOK` at `(aL, bL)` and `(aL₂, bL₂)` and by `LeavesE`. -/
 theorem prop6_two_core3 {q : ℕ} [NeZero q] {a : ZMod q} (ha : IsUnit a) {j : ℕ} (Ω : List (GCmp j))
-    (S₀ Sr S₁ : Finset (Fin j)) (hdisj : Disjoint S₀ Sr) (hSr : Sr.Nonempty) (hS₁ : S₁.Nonempty)
-    (hS₁c : S₁ᶜ.Nonempty) (eIn₁ : Bool) (lo hi : Fin j → ℝ)
+    (S₀ Sr S₁ : Finset (Fin j)) (hdisj : Disjoint S₀ Sr) (hSr : Sr.Nonempty) (eIn₁ : Bool) (lo hi : Fin j → ℝ)
     {t aL bL aL₂ bL₂ δ' εw c Λ₀ Λ₁ C₀ δ₁ δ₃ pA th : ℝ} {k J₀C K₀ Kmax smax P₁ P₂ Ar Br z₀ AE BE ArE BrE : ℕ}
     (hokL : SieveP6TreeLeaves.LeavesOK q a L aL bL δ' εw Λ₀ C₀ δ₃ k J₀C Kmax)
     (hokL₂ : SieveP6TreeLeaves.LeavesOK q a L aL₂ bL₂ δ' εw Λ₀ C₀ δ₃ k J₀C Kmax)
@@ -379,7 +383,7 @@ theorem prop6_two_core3 {q : ℕ} [NeZero q] {a : ZMod q} (ha : IsUnit a) {j : �
   rw [sum_RTg_cmp Ω S₀ hP₁0 (fun rt => ∑ n ∈ Finset.Ioc ⌊(q : ℝ) ^ L⌋₊ ⌊2 * (q : ℝ) ^ L⌋₊,
     dw q a n * (if (∏ i, rt i) ∣ n ∧ rough z₀ n then 1 else 0))]
   -- at most `P₁`: a tree
-  have hBb := tree_pattern2_ib3 ha hokL hokL₂ hokE hokC (Ω ++ [gUp S₀ (P₁ : ℝ) false]) S₀ Sr hdisj hSr S₁ hS₁ hS₁c
+  have hBb := tree_pattern2_ib3 ha hokL hokL₂ hokE hokC (Ω ++ [gUp S₀ (P₁ : ℝ) false]) S₀ Sr hdisj hSr S₁
     eIn₁ hi hw2 hwle hwz hz₀ hAB hsm hKm (by omega) hKm (by rw [List.length_append, List.length_singleton]; omega)
     (by rw [List.length_append, List.length_singleton]; omega)
     (by rw [List.length_append, List.length_singleton]; omega) hΛ₁ hcB hlz hl₁ hΛ hX hN

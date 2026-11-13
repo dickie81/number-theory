@@ -62,8 +62,84 @@ CFGW = (0, 0, 0, 0, False)
 CAP, PMAX, FCAP = 40.0, 10, 240.0
 
 
+def leafxr_checks():
+    """The inequalities of `SieveLeafZoneX.leafXR` (`lib/pnt/SieveLeafZoneXDefs.lean`, which `gen_leafzone.py`
+    writes), read from the file: for each, the coefficients of the products `lp1`, `lp2`, `lr1`, `lr2`, `ld`, `ln`
+    (`Ln·P₁`, `Ln·P₂`, `Ln·R₁`, `Ln·R₂`, `Ld·D`, `Ln·D`) on its two sides."""
+    import re
+    src = open(os.path.join(PNT, 'SieveLeafZoneXDefs.lean')).read()
+    body = src[src.index('def leafXR'):]
+    body = body[body.index('=>') + 2:body.index('(Nat.mul Ln P₁)')]
+    atoms = ('lp1', 'lp2', 'lr1', 'lr2', 'ld', 'ln')
+    toks = re.findall(r'\(|\)|Nat\.add|Nat\.mul|Nat\.ble|&&|\d+|lp1|lp2|lr1|lr2|ld|ln', body)
+    pos = [0]
+
+    def expr():
+        t = toks[pos[0]]
+        pos[0] += 1
+        if t in atoms:
+            return tuple(int(a == t) for a in atoms)
+        if t.isdigit():
+            assert t == '0', 'leafXR: a constant term'
+            return (0,) * len(atoms)
+        assert t == '(', t
+        op = toks[pos[0]]
+        pos[0] += 1
+        if op == 'Nat.add':
+            x, y = expr(), expr()
+            r = tuple(a + b for a, b in zip(x, y))
+        else:
+            assert op == 'Nat.mul', op
+            c = int(toks[pos[0]])
+            pos[0] += 1
+            r = tuple(c * a for a in expr())
+        assert toks[pos[0]] == ')'
+        pos[0] += 1
+        return r
+
+    out = []
+    while pos[0] < len(toks):
+        t = toks[pos[0]]
+        pos[0] += 1
+        if t in ('&&', ')'):
+            continue
+        assert t == 'Nat.ble', t
+        out.append((expr(), expr()))
+    assert len(out) == body.count('Nat.ble'), 'leafXR: a check was not read'
+    return out
+
+
+LEAFXR = leafxr_checks()
+
+
+def leafXR(Ln, Ld, D, P1, P2, R1, R2):
+    """`SieveLeafZoneX.leafXR Ln Ld D P₁ P₂ R₁ R₂`."""
+    at = (Ln * P1, Ln * P2, Ln * R1, Ln * R2, Ld * D, Ln * D)
+    return all(sum(c * x for c, x in zip(l, at)) <= sum(c * x for c, x in zip(r, at)) for l, r in LEAFXR)
+
+
+def subsE(cs, lo, hi, rem, bit=1, s=0, mask=0, out=None, cap=24):
+    """The first `cap` sets of the cells, as bits (the first cell's the lowest), whose upper ends' sum is in
+    `[lo, hi]`, depth first with each cell in before out; `rem` is the sum of the upper ends of `cs`."""
+    if out is None:
+        out = []
+    if len(out) >= cap or hi < s or s + rem < lo:
+        return out
+    if not cs:
+        out.append(mask)
+        return out
+    c = cs[0]
+    subsE(cs[1:], lo, hi, tsub(rem, c[1]), 2 * bit, s + c[1], mask + bit, out, cap)
+    subsE(cs[1:], lo, hi, tsub(rem, c[1]), 2 * bit, s, mask, out, cap)
+    return out
+
+
 class Tests:
-    """`SieveAd.mixTests` on the grid of the window and `IBPar ⟨Ln, Ld⟩`."""
+    """`SieveAd.mixTests` on the grid of the window and `IBPar ⟨Ln, Ld⟩`. The kernel's `chkJ2` and `coreJ2` take the
+    leaves cut in three where the paper's conditions fail (`SieveAd.leavesE`, `lib/pnt/SieveAdLeafDefs.lean`); the
+    planner proposes such leaves, and its tests accept them, only with `energy`."""
+
+    energy = False
 
     def __init__(self, W1, W2, Ln, Ld):
         self.U1, self.U2 = (W1 * DEN + 99999) // 100000, W2 * DEN // 100000
@@ -113,13 +189,31 @@ class Tests:
         return (Ln * D1 + Ld * DEN < Ln * DEN and 2 * Ln * (D1 + D2) + Ld * DEN < 2 * Ln * DEN
                 and Ln * (D1 + 2 * D2) + 2 * Ld * DEN < 2 * Ln * DEN)
 
+    # SieveAdLeafDefs.lean
+    def pStar(self, D2):
+        Ln, Ld = self.Ln, self.Ld
+        return min((Ln * DEN - Ld * DEN - 1) // Ln, tsub((2 * Ln * DEN - Ld * DEN - 1) // (2 * Ln), D2),
+                   tsub((2 * Ln * DEN - 2 * Ld * DEN - 1) // Ln, 2 * D2))
+
+    def thetaL(self, D1):
+        Ln, Ld = self.Ln, self.Ld
+        return min(tsub((2 * Ln * DEN - Ld * DEN - 1) // (2 * Ln), D1),
+                   tsub(2 * Ln * DEN - 2 * Ld * DEN - 1, Ln * D1) // (2 * Ln))
+
+    def leavesE(self, D1, D2):
+        Ln, Ld = self.Ln, self.Ld
+        P, th = self.pStar(D2), self.thetaL(D1)
+        return (self.leaves(P, D2) and self.leaves(D1, th) and D1 + D2 < DEN and 1 <= P and 1 <= th
+                and leafXR(Ln, Ld, DEN, tsub(P, 1), D1 + 1, tsub(th, 1), D2 + 1))
+
     def chkJ2(self, bl, f, s0, sr, s1, e, u, v, t):
         r1, r2 = mSum(0, bl, sr), mSum(1, bl, sr)
-        D1 = mSum(1, bl, s1) + (t if e else 0)
-        D2 = tsub(hiSum(bl), mSum(1, bl, s1)) + (0 if e else t)
+        h1, hs = mSum(1, bl, s1), hiSum(bl)
+        D1 = h1 + (t if e else 0)
+        D2 = tsub(hs, h1) + (0 if e else t)
         return (0 < f and len(bl) <= 13 and all(f <= c[0] <= c[1] <= DEN for c in bl) and s0 & sr == 0
                 and self.zone(r1, r2, u, v) and u + f < v and u <= t + mSum(0, bl, s0) and mSum(1, bl, s0) < v
-                and self.leaves(D1, D2))
+                and (self.leaves(D1, D2) or (self.energy and self.leavesE(D1, D2))))
 
     def okJ2(self, bl, f, cfg):
         _, s0, sr, s1, e = cfg
@@ -231,6 +325,8 @@ class Search:
         self.D1max = tsub((Ln - Ld) * DEN, 1) // Ln
         self.T5 = tsub(2 * Ln * DEN, Ld * DEN + 1) // (2 * Ln)
         self.T6 = tsub(2 * Ln * DEN, 2 * Ld * DEN + 1) // Ln
+        # with the leaves cut in three, the sizes' sum is at most (1 − 2/(5L))·DEN: the region asks m₂ ≥ 2/5
+        self.T5E = (5 * Ln * DEN - 2 * Ld * DEN) // (5 * Ln)
         self.W = dict.fromkeys(('calls', 'dfs', 'rest', 'okIW', 'okI2', 'okJ2', 'okJW', 'drop', 'cuts'), 0)
         self.minfuel = FUEL
 
@@ -327,6 +423,38 @@ class Search:
             return (m, False)
         return None
 
+    def energyHere(self):
+        """Whether the leaves of the comparison with the rest among the box's primes may be cut in three: with
+        `T.energy`, in the main tree and over the frozen parts."""
+        return self.T.energy
+
+    def t5J(self):
+        """The largest sum of the leaves' sizes for the comparison with the rest among the box's primes here."""
+        return max(self.T5, self.T5E) if self.energyHere() else self.T5
+
+    def leavesOfE(self, bl, hs, t):
+        """The leaves cut in three (`SieveAd.leavesE`): the first set of cells, with the small primes on its side and
+        then not, whose first side's exponent is from 0.85 to 1.25 (the region asks 0.9 to 1.2) and whose sizes
+        pass."""
+        if self.T5E < hs + t:
+            return None
+        T = self.T
+        p_lo, p_hi = 85 * T.Ld * DEN // (100 * T.Ln), cdiv(125 * T.Ld * DEN, 100 * T.Ln)
+        for e in (True, False):
+            tt = t if e else 0
+            for m in subsE(bl, tsub(p_lo, tt), tsub(p_hi, tt), hs):
+                h1 = mSum(1, bl, m)
+                if T.leavesE(h1 + tt, hs - h1 + (t - tt)):
+                    return (m, e)
+        return None
+
+    def leavesOfJ2(self, bl, hs, t):
+        """`leavesOf`, or where its conditions fail and `energyHere`, `leavesOfE`."""
+        sp = self.leavesOf(bl, hs, t)
+        if sp is None and self.energyHere():
+            sp = self.leavesOfE(bl, hs, t)
+        return sp
+
     def propJ2(self, bl, lomin, ls, hs):
         acc = (0, None)
         bit = 1
@@ -336,9 +464,9 @@ class Search:
             if self.restOK(c):
                 u, v = self.uOfF(c[0]), self.vOfF(c[1])
                 f = min(lomin, tsub(v, u + 1))
-                if acc[0] < f and hs + tsub(u, tsub(ls, c[0])) <= self.T5:
+                if acc[0] < f and hs + tsub(u, tsub(ls, c[0])) <= self.t5J():
                     b = self.bestSub(v, bit, bl, 1, 0, 0, 0, tsub(ls, c[0]), (0, 0))
-                    sp = self.leavesOf(bl, hs, tsub(u, b[0]))
+                    sp = self.leavesOfJ2(bl, hs, tsub(u, b[0]))
                     if sp is not None:
                         acc = (f, (1, b[1], bit, sp[0], sp[1]))
             bit *= 2

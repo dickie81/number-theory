@@ -122,7 +122,7 @@ class FillSearch(rc.RevSearch):
     def propJ(self, bl):
         """`propJF bl`."""
         lomin, ls, hs = min([DEN] + [c[0] for c in bl]), loSum(bl), hiSum(bl)
-        if self.T5 < hs:
+        if self.t5J() < hs:
             return []
         r = self.propJ2(bl, lomin, ls, hs)
         out = []

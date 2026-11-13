@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1810 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1809 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 240, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 196 | 696 |
-| `lib/pnt` | 331 | 1001 |
+| `lib/pnt` | 331 | 1000 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2920,8 +2920,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveLeafZoneX`: The leaves' region above `√q` as inequalities, and its test on a box in integers
 
 - `SieveLeafZoneX.leafZoneX_of_XL`: `LeafZoneXL` is in `LeafZoneX` ([note](../formalisations/halasz-montgomery.md))
-- `SieveLeafZoneX.leafZoneXL_rect`: `LeafZoneXL` on a rectangle of `(m₁, ρ)` from its four corners ([note](../formalisations/halasz-montgomery.md))
-- `SieveLeafZoneX.leafXN_sound`: The test is sound ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafZoneX.leafXR_sound`: The test is sound ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveLeaves`: The leaves' estimates on families of atoms
 

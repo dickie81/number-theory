@@ -166,7 +166,7 @@ theorem prop6_two3 [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg
     (hvρ : v + ρ₂ < L) (hρlo : ρ₁ ≤ ∑ i ∈ Sr, lo i) (hρhi : ∑ i ∈ Sr, hi i ≤ ρ₂) (hε : 0 < ε)
     (hzone : ∀ m₁ m₂ : ℝ, u ≤ m₁ → m₁ ≤ v → L - ρ₂ - ε ≤ m₁ + m₂ → m₁ + m₂ ≤ L - ρ₁ + ε → Rg m₁ m₂)
     (hlo : u - ∑ i ∈ S₀, lo i ≤ t) (hhi : ∑ i ∈ S₀, hi i < v)
-    (hS₁ : S₁.Nonempty) (hS₁c : S₁ᶜ.Nonempty) {pA th εE : ℝ} (hpA : 0 ≤ pA) (hth : 0 ≤ th) (hεE : 0 < εE)
+    {pA th εE : ℝ} (hpA : 0 ≤ pA) (hth : 0 ≤ th) (hεE : 0 < εE)
     (hDA₁ : pA < L - 1) (hDA₂ : max pA 1 + pA + 2 * (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) < 2 * L - 1)
     (hDB₁ : (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) < L - 1) (hDB₂ : max (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) 1 + (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) + 2 * th < 2 * L - 1)
     (hDL : (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) + (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) < L) (hD₁0 : 0 ≤ (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0))) (hD₂0 : 0 ≤ (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)))
@@ -474,7 +474,7 @@ theorem prop6_two3 [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg
   have hP₁4 : (⌈(q : ℝ) ^ u⌉₊ : ℝ) + 1 ≤ 4 * (q : ℝ) ^ L := by
     have : (q : ℝ) ^ u ≤ (q : ℝ) ^ L := Real.rpow_le_rpow_of_exponent_le hq1 (by linarith)
     linarith
-  have H := SieveTwoP6E.prop6_two_core3 ha Ω S₀ Sr S₁ hdisj hSr hS₁ hS₁c eIn₁ lo hi hokL hokL₂ hokE hokC hw2
+  have H := SieveTwoP6E.prop6_two_core3 ha Ω S₀ Sr S₁ hdisj hSr eIn₁ lo hi hokL hokL₂ hokE hokC hw2
     hwle hwz hz₀ hz₀q hΛ₁'0 hlz hΛ hX hN
     (by omega) le_rfl le_rfl hP₁1 hAB (hsmA _ hP₁4) (hlogA _ (by positivity) hP₁4)
     (fun s hs => by
@@ -610,7 +610,7 @@ theorem prop6_two3_at {L : ℝ} (hL2 : 2 < L) (hL : L ≤ 5 / 2) {Rg : ℝ → �
     (hvρ : v + ρ₂ < L) (hρlo : ρ₁ ≤ ∑ i ∈ Sr, lo i) (hρhi : ∑ i ∈ Sr, hi i ≤ ρ₂) (hε : 0 < ε)
     (hzone : ∀ m₁ m₂ : ℝ, u ≤ m₁ → m₁ ≤ v → L - ρ₂ - ε ≤ m₁ + m₂ → m₁ + m₂ ≤ L - ρ₁ + ε → Rg m₁ m₂)
     (hlo : u - ∑ i ∈ S₀, lo i ≤ t) (hhi : ∑ i ∈ S₀, hi i < v)
-    (hS₁ : S₁.Nonempty) (hS₁c : S₁ᶜ.Nonempty) {pA th εE : ℝ} (hpA : 0 ≤ pA) (hth : 0 ≤ th) (hεE : 0 < εE)
+    {pA th εE : ℝ} (hpA : 0 ≤ pA) (hth : 0 ≤ th) (hεE : 0 < εE)
     (hDA₁ : pA < L - 1) (hDA₂ : max pA 1 + pA + 2 * (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) < 2 * L - 1)
     (hDB₁ : (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) < L - 1) (hDB₂ : max (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) 1 + (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) + 2 * th < 2 * L - 1)
     (hDL : (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) + (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) < L) (hD₁0 : 0 ≤ (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0))) (hD₂0 : 0 ≤ (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)))
@@ -627,6 +627,6 @@ theorem prop6_two3_at {L : ℝ} (hL2 : 2 < L) (hL : L ≤ 5 / 2) {Rg : ℝ → �
   let _ : Route := SieveTwoTerm.routeOf L
   have _ : RouteOK := SieveTwoTerm.routeOK_of hL2 hL
   exact prop6_two3 hII j J₀ hΛ₁ ha₀ lo hi S₀ Sr S₁ hdisj hSr eIn₁ hu huv hρ₁0 hρ hvρ hρlo hρhi hε hzone hlo hhi
-    hS₁ hS₁c hpA hth hεE hDA₁ hDA₂ hDB₁ hDB₂ hDL hD₁0 hD₂0 hzoneE hη
+    hpA hth hεE hDA₁ hDA₂ hDB₁ hDB₂ hDL hD₁0 hD₂0 hzoneE hη
 
 end SieveTwoCompE
