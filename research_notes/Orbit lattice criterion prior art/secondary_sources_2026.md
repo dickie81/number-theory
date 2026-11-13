@@ -111,7 +111,9 @@ that period. The hits:
     O(Aσ² log λ) + 2 has λ_min ≥ −η(λ) → 0.
 
   This is the closest work in method: a margin of Weil's form and Schur complements. The differences:
-  - the test functions are continuous on a window, not points of the integer orbit;
+  - the test functions are general functions on a window, where (A) and (B) concern the orbit's vectors. On the
+    hyperplane Σ xₙ = 0 those are step functions in the window at λ = √N (`OrbitWindow.form_eq_weilQg`, proved after
+    this note was written);
   - the conditioning is by prolate and pole directions, not along the orbit's own order;
   - the results are conditional and aim at proving positivity, where (A) and (B) are unconditional equivalences;
   - there are no lattices.

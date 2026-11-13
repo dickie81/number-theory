@@ -178,8 +178,9 @@ The verdict stands, with one new neighbour.
   - under a hypothesis, they prove a margin ½ log σ on the complement of an explicit finite-dimensional space;
   - they reduce positivity to the sign of a Schur complement on a finite block.
 
-  It states neither (A) nor (B). Its test functions are continuous on a window, and its margins are conditional and
-  serve a proof of positivity. It has no lattice.
+  It states neither (A) nor (B). Its test functions are general functions on a window, and its margins are conditional
+  and serve a proof of positivity. It has no lattice. The orbit does sit inside its setting: on the hyperplane
+  Σ xₙ = 0 the orbit form is its form at λ = √N, on step functions (`OrbitWindow.form_eq_weilQg`, added the same day).
 - **Suzuki 2026.** His screw-function frame for Weil's form ([arXiv:2606.09096](https://arxiv.org/abs/2606.09096))
   has no Gram matrices or pivots.
 - **No pairing in any abstract.** No arXiv abstract from June 2024 to November 2026 pairs RH with Schur complements,
