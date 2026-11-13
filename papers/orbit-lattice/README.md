@@ -46,7 +46,8 @@ arithmetic, including the 1181 cells of the certificate, for readers without Lea
 ## What is not a Lean theorem
 
 These parts of the paper are not formalised:
-- the remarks, including the numerical values of §3.1;
+- the remarks, including the numerical values of §3.1 and those of the remark "How the hyperplane sits" at the end of
+  §2, which come from [`scripts/window_hyperplane.py`](../../scripts/window_hyperplane.py);
 - Section 6 on the analogues, except the density of real characters with `d₂ < d₁`. That density is
   `D2Good.d2_density_pos_closed` and `d2_density_neg_closed`, and its proof uses the library's formalisation of the
   zero-free half-plane of an unrefereed preprint;
