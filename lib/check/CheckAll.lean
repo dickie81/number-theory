@@ -26,6 +26,7 @@ import BallSilent
 import BallUpperEta
 import BallGap
 import BallPivot
+import PivotSharp
 import BallLoud
 import BallLow
 import HalfPlaneJoinsPNT
@@ -587,6 +588,25 @@ exactly under RH. -/
 #print axioms BallPivot.top_index_le
 #print axioms BallPivot.lattice_ge
 #print axioms BallPivot.rh_iff_lattice
+
+/- The pivot inequality for every `k` (`formalisations/ball-rate.md`): RH holds if and only if the orbit-lattice
+conjecture does. The explicit formula with the weight `φ(t/N)/N²`, `φ(s) = (999/1000)(1 − K(s/5))/s²`, whose transform
+has support `4/5`, so that the prime side is Landau's form exactly; the archimedean minorant `μ = φλ − r` of transform
+support `1` and mass `≥ (7/8)φ̂(0)`, below `φ(s)(L(Ns) − log N)` for every `N ≥ 2` by an exact interval certificate;
+and the top-vertex bound with Mertens' constant `81/100`. Under RH `d_N ≥ 0.0577 > d_1` for every `N ≥ 2`. -/
+#print axioms PivotTop.mertens_le_uniform
+#print axioms PivotTop.top_bound
+#print axioms PivotPhi.integral_phi_cos
+#print axioms PivotPhi.phi_mul_le
+#print axioms PivotPhi.phiE_strip
+#print axioms PivotPhi.norm_phiE_I_le
+#print axioms PivotMinorFT.integral_mu_cos_eq_zero
+#print axioms PivotMinorFT.integral_mu_ge
+#print axioms PivotCert.mu_le
+#print axioms PivotSharp.form_ge
+#print axioms PivotSharp.pivot_ge_rh
+#print axioms PivotSharp.orbitLattice_of_rh
+#print axioms PivotSharp.rh_iff_orbitLattice
 
 /- The inverse theorem on the arithmetic class, first half (`formalisations/ball-rate.md`): for the vectors
 `n·x_n = Σ_{d ∣ n, d ≤ D₀} E_d(n/N)` with bounded Lipschitz profiles that vanish beyond `1`, and `G = Σ_d E_d/d`,
