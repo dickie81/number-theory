@@ -11,16 +11,17 @@ side of the leaves; and the flag `e`, the side of the small primes. In units of 
 * the window `[u, v]` of the first variable is the largest that the region allows for the rests of exponent in
   `[ρ₁ − 1, ρ₂ + 1]` (`uOf`, `vOf`), and `t = u − Σ_{s0} lo` is the growth of the tree (`tOf`);
 * `chkJ2` checks the region's six inequalities at these, that the window is wider than the floor (`u + f < v`),
-  that the primes of `s0` stay below its upper end, and the two conditions on the leaves' sizes;
+  that the primes of `s0` stay below its upper end, and the paper's two conditions on the leaves' sizes or, where
+  they fail, the leaves cut in three (`SieveAdLeafDefs.lean`'s `leavesL`, `leavesE`);
 * `chkI2` is the test of a box evaluated outright (`SieveTwoTerm.chain2_bound`): the first variable is the product
   of the primes of `s0`, the rest that of `sr`, and the second variable the other primes and the cofactor; it
   checks the region's six inequalities for the box's ranges.
 
 `mSum F bl m` is the sum of `F` over the cells of the list at the positions whose bit is set in `m`. The file imports
-`SieveAdDefs.lean` and `SieveRuleDefs.lean` (for `SieveCert.IBPar`).
+`SieveAdDefs.lean` and `SieveAdLeafDefs.lean` (and through it `SieveRuleDefs.lean`, for `SieveCert.IBPar`).
 -/
 import SieveAdDefs
-import SieveRuleDefs
+import SieveAdLeafDefs
 
 namespace SieveAd
 
@@ -52,7 +53,7 @@ def vOf (ρ₂ : ℕ) : ℕ :=
     ((62500 * Lnum * DEN - 62505 * Lden * DEN - 34863 * Lnum * (ρ₂ + 1)) / (62500 * Lnum))
 
 /-- The checks of the comparison in two variables on a box, at the floor `f`, for the sets `s0`, `sr`, `s1`, the
-flag `e`, the window `[u, v]` and the growth `t`. -/
+flag `e`, the window `[u, v]` and the growth `t`; the leaves by the paper's conditions or cut in three. -/
 def chkJ2 (bl : List Cell) (f s0 sr s1 : ℕ) (e : Bool) (u v t : ℕ) : Bool :=
   let ρ₁ := mSum (fun c => c.1) bl sr
   let ρ₂ := mSum (fun c => c.2) bl sr
@@ -68,9 +69,7 @@ def chkJ2 (bl : List Cell) (f s0 sr s1 : ℕ) (e : Bool) (u v t : ℕ) : Bool :=
     Nat.blt (u + f) v &&
     Nat.ble u (t + mSum (fun c => c.1) bl s0) &&
     Nat.blt (mSum (fun c => c.2) bl s0) v &&
-    Nat.blt (Lnum * D₁ + Lden * DEN) (Lnum * DEN) &&
-    Nat.blt (2 * Lnum * (D₁ + D₂) + Lden * DEN) (2 * Lnum * DEN) &&
-    Nat.blt (Lnum * (D₁ + 2 * D₂) + 2 * Lden * DEN) (2 * Lnum * DEN)
+    (leavesL D₁ D₂ || leavesE D₁ D₂)
 
 /-- **The test of the comparison in two variables**: `chkJ2` at the window and the growth that the box gives. -/
 def okJ2 (bl : List Cell) (f : ℕ) (cfg : Cfg) : Bool :=
