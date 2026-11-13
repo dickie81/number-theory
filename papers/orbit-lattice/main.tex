@@ -468,7 +468,9 @@ This is the explicit formula of Guinand \cite{guinand48} and Weil \cite{weil52}.
 normalisation for $h$ analytic on $|\operatorname{Im} t| \le \frac12 + \epsilon$ with $|h(t)| \ll (1 + |t|)^{-1 -
 \delta}$ \cite[Lemma~1]{goldston-gonek07}, taking it from \cite[Theorem~5.12]{iwaniec-kowalski}, where the transform of
 $h$ is smooth with compact support. None of the test functions here has a smooth transform, so we give the standard
-proof. The Lean proof derives the lemma in the same way from the Hadamard product of $\xi$.
+proof. The Lean proof, \lean{WeilForm.weilExplicit\_zeta}, evaluates the same line integral but takes the sum over the
+zeros term by term from the Hadamard product of $\xi$: each pair of poles of $\xi'/\xi$, at $\rho$ and $1 - \rho$,
+contributes $2h(t_\rho)$, so it needs no bound on horizontal segments.
 
 \begin{proof}
 Let $H(s) = h(-i(s - \frac12))$, so that $H(\rho) = h(t_\rho)$. It is holomorphic on $-\frac12 \le \operatorname{Re} s
