@@ -593,7 +593,8 @@ exactly under RH. -/
 conjecture does. The explicit formula with the weight `φ(t/N)/N²`, `φ(s) = (999/1000)(1 − K(s/5))/s²`, whose transform
 has support `4/5`, so that the prime side is Landau's form exactly; the archimedean minorant `μ = φλ − r` of transform
 support `1` and mass `≥ (7/8)φ̂(0)`, below `φ(s)(L(Ns) − log N)` for every `N ≥ 2` by an exact interval certificate;
-and the top-vertex bound with Mertens' constant `81/100`. Under RH `d_N ≥ 0.0577 > d_1` for every `N ≥ 2`. -/
+and the top-vertex bound with Mertens' constant `81/100`. Under RH `d_N ≥ 0.0577 > d_1` for every `N ≥ 2`; so RH holds
+if and only if `w_1` is a shortest vector of the orbit lattice, and under RH `±w_1` are the only shortest vectors. -/
 #print axioms PivotTop.mertens_le_uniform
 #print axioms PivotTop.top_bound
 #print axioms PivotPhi.integral_phi_cos
@@ -607,6 +608,10 @@ and the top-vertex bound with Mertens' constant `81/100`. Under RH `d_N ≥ 0.05
 #print axioms PivotSharp.pivot_ge_rh
 #print axioms PivotSharp.orbitLattice_of_rh
 #print axioms PivotSharp.rh_iff_orbitLattice
+#print axioms PivotSharp.lattice_gap
+#print axioms PivotSharp.shortest_of_rh
+#print axioms PivotSharp.shortest_unique
+#print axioms PivotSharp.rh_iff_shortest
 
 /- The inverse theorem on the arithmetic class, first half (`formalisations/ball-rate.md`): for the vectors
 `n·x_n = Σ_{d ∣ n, d ≤ D₀} E_d(n/N)` with bounded Lipschitz profiles that vanish beyond `1`, and `G = Σ_d E_d/d`,

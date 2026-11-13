@@ -619,4 +619,121 @@ theorem rh_iff_orbitLattice :
       BallWeil.gram 1 1 ≤ BallWeil.form k (fun n => if n = k then 1 else -c n) :=
   rh_iff_orbitLattice_of_mu muLe
 
+/-! ## The orbit lattice: `w_1` is a shortest vector -/
+
+/-- An integer vector supported at `1` has `Q_N(a) = a_1²·K_H(1)`. -/
+lemma form_of_support_one {N : ℕ} (hN : 1 ≤ N) (a : ℕ → ℤ) (h : ∀ n ∈ Icc 2 N, a n = 0) :
+    BallWeil.form N (fun n => (a n : ℝ)) = (a 1 : ℝ) ^ 2 * BallWeil.gram 1 1 := by
+  rw [BallPivot.form_of_zero_above hN fun n h1 hnN => by
+    rw [h n (Finset.mem_Icc.2 ⟨by omega, hnN⟩), Int.cast_zero]]
+  unfold BallWeil.form
+  simp only [Finset.Icc_self, Finset.sum_singleton]
+  ring
+
+lemma gram_one_pos : 0 < BallWeil.gram 1 1 := by
+  rw [BallWeil.gram_self]
+  simpa using BallWeil.kψ_one_pos
+
+lemma one_le_sq_of_ne {z : ℤ} (hz : z ≠ 0) : (1 : ℝ) ≤ (z : ℝ) ^ 2 := by
+  have h1 : (1 : ℤ) ≤ z ^ 2 := by
+    have := pow_pos (abs_pos.2 hz) 2
+    rw [sq_abs] at this
+    omega
+  exact_mod_cast h1
+
+/-- **Away from `±δ_1` the lattice is longer** (RH): an integer vector with a nonzero coefficient at some
+`2 ≤ k ≤ N` has `Q_N(a) ≥ (999/1000)(2/45)(13/10) ≥ 0.0577`, by the pivot at its last nonzero coefficient. -/
+theorem lattice_gap (hRH : RiemannHypothesis) {N : ℕ} (a : ℕ → ℤ) (h : ∃ n ∈ Icc 2 N, a n ≠ 0) :
+    999 / 1000 * (2 / 45) * (13 / 10) ≤ BallWeil.form N (fun n => (a n : ℝ)) := by
+  classical
+  obtain ⟨n₀, hn₀, han₀⟩ := h
+  set S := (Icc 2 N).filter (fun n => a n ≠ 0) with hS
+  have hSne : S.Nonempty := ⟨n₀, Finset.mem_filter.2 ⟨hn₀, han₀⟩⟩
+  have hkS : S.max' hSne ∈ S := Finset.max'_mem S hSne
+  set k := S.max' hSne with hk
+  have hk2 : 2 ≤ k := (Finset.mem_Icc.1 (Finset.mem_filter.1 hkS).1).1
+  have hkN : k ≤ N := (Finset.mem_Icc.1 (Finset.mem_filter.1 hkS).1).2
+  have hak : a k ≠ 0 := (Finset.mem_filter.1 hkS).2
+  have hzero : ∀ n, k < n → n ≤ N → a n = 0 := by
+    intro n hkn hnN
+    by_contra hne
+    have hmem : n ∈ S := Finset.mem_filter.2 ⟨Finset.mem_Icc.2 ⟨by omega, hnN⟩, hne⟩
+    have := Finset.le_max' S n hmem
+    omega
+  rw [BallPivot.form_of_zero_above hkN fun n hkn hnN => by rw [hzero n hkn hnN, Int.cast_zero]]
+  have hp := pivot_ge_rh hRH hk2 (fun n => (a n : ℝ))
+  have hsq := one_le_sq_of_ne hak
+  have hc : (0 : ℝ) ≤ 999 / 1000 * (2 / 45) * (13 / 10) := by norm_num
+  calc (999 / 1000 * (2 / 45) * (13 / 10) : ℝ) = 999 / 1000 * (2 / 45) * (13 / 10) * 1 := (mul_one _).symm
+    _ ≤ 999 / 1000 * (2 / 45) * (13 / 10) * ((a k : ℤ) : ℝ) ^ 2 := mul_le_mul_of_nonneg_left hsq hc
+    _ ≤ BallWeil.form k (fun n => (a n : ℝ)) := hp
+
+/-- **Under RH, `w_1` is a shortest vector of the orbit lattice**: every nonzero integer vector has
+`Q_N(a) ≥ Q_1(δ_1) = K_H(1)`. In a realization `Q_N(a) = ‖Σ_n a_n w_n‖²` (`BallWeil.form_eq_norm_sq`). -/
+theorem shortest_of_rh (hRH : RiemannHypothesis) {N : ℕ} (a : ℕ → ℤ) (h : ∃ n ∈ Icc 1 N, a n ≠ 0) :
+    BallWeil.gram 1 1 ≤ BallWeil.form N (fun n => (a n : ℝ)) := by
+  by_cases h2 : ∃ n ∈ Icc 2 N, a n ≠ 0
+  · have hg := gram_one_lt
+    have hl := lattice_gap hRH a h2
+    have hn : (0.0539 : ℝ) ≤ 999 / 1000 * (2 / 45) * (13 / 10) := by norm_num
+    linarith
+  · push Not at h2
+    obtain ⟨n₀, hn₀, han₀⟩ := h
+    obtain ⟨h1N, hN0⟩ := Finset.mem_Icc.1 hn₀
+    have hN : 1 ≤ N := h1N.trans hN0
+    have ha1 : a 1 ≠ 0 := by
+      rcases Nat.lt_or_ge 1 n₀ with h1 | h1
+      · exact absurd (h2 n₀ (Finset.mem_Icc.2 ⟨h1, hN0⟩)) han₀
+      · have : n₀ = 1 := by omega
+        rwa [this] at han₀
+    rw [form_of_support_one hN a h2]
+    have hsq := one_le_sq_of_ne ha1
+    have hg := gram_one_pos
+    nlinarith
+
+/-- **Under RH the shortest vectors are `±δ_1` alone**: a nonzero integer vector with `Q_N(a) ≤ K_H(1)` has
+`a_1 = ±1` and `a_n = 0` for `2 ≤ n ≤ N`. -/
+theorem shortest_unique (hRH : RiemannHypothesis) {N : ℕ} (a : ℕ → ℤ) (h : ∃ n ∈ Icc 1 N, a n ≠ 0)
+    (hle : BallWeil.form N (fun n => (a n : ℝ)) ≤ BallWeil.gram 1 1) :
+    (a 1 = 1 ∨ a 1 = -1) ∧ ∀ n ∈ Icc 2 N, a n = 0 := by
+  have h2 : ∀ n ∈ Icc 2 N, a n = 0 := by
+    by_contra hc
+    push Not at hc
+    have hl := lattice_gap hRH a hc
+    have hg := gram_one_lt
+    have hn : (0.0539 : ℝ) ≤ 999 / 1000 * (2 / 45) * (13 / 10) := by norm_num
+    linarith
+  refine ⟨?_, h2⟩
+  obtain ⟨n₀, hn₀, han₀⟩ := h
+  obtain ⟨h1N, hN0⟩ := Finset.mem_Icc.1 hn₀
+  have hN : 1 ≤ N := h1N.trans hN0
+  have ha1 : a 1 ≠ 0 := by
+    rcases Nat.lt_or_ge 1 n₀ with h1 | h1
+    · exact absurd (h2 n₀ (Finset.mem_Icc.2 ⟨h1, hN0⟩)) han₀
+    · have : n₀ = 1 := by omega
+      rwa [this] at han₀
+  rw [form_of_support_one hN a h2] at hle
+  have hg := gram_one_pos
+  have hsq : ((a 1 : ℤ) : ℝ) ^ 2 ≤ 1 := by nlinarith
+  have hsqZ : a 1 ^ 2 ≤ 1 := by exact_mod_cast hsq
+  have hlo : -1 ≤ a 1 := by nlinarith
+  have hhi : a 1 ≤ 1 := by nlinarith
+  omega
+
+/-- **RH ⟺ `w_1` is a shortest vector of the orbit lattice**: RH holds if and only if, for every `N`, every nonzero
+integer vector `a` has `Q_N(a) ≥ Q_1(δ_1) = K_H(1)`, where `Q_N` is the form of the Gram matrix `√(mn)·K_H(m/n)`
+computed from the primes. Nonnegativity at the integer vectors is already RH (`BallWeil.rh_iff_form`). -/
+theorem rh_iff_shortest :
+    RiemannHypothesis ↔ ∀ (N : ℕ) (a : ℕ → ℤ), (∃ n ∈ Icc 1 N, a n ≠ 0) →
+      BallWeil.gram 1 1 ≤ BallWeil.form N (fun n => (a n : ℝ)) := by
+  refine ⟨fun hRH N a h => shortest_of_rh hRH a h, fun h => BallWeil.rh_iff_form.2 fun N x => ?_⟩
+  by_cases hx : ∃ n ∈ Icc 1 N, x n ≠ 0
+  · exact gram_one_pos.le.trans (h N x hx)
+  · push Not at hx
+    have h0 : BallWeil.form N (fun n => (x n : ℝ)) = 0 := by
+      unfold BallWeil.form
+      refine Finset.sum_eq_zero fun m hm => Finset.sum_eq_zero fun n _ => ?_
+      simp only [hx m hm, Int.cast_zero, zero_mul]
+    rw [h0]
+
 end PivotSharp
