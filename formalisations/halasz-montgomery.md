@@ -97,8 +97,16 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   rest of its size, the `w`-rough multiples `n ∈ (q^L, 2q^L]` of `∏x`, summed over `x`, have `|𝒜 − ℬ/φ(q)|` at most
   `q^{L−δ}/φ(q)`. The second variable is the cofactor `n/∏x`, a product of a non-increasing tuple of primes at least
   `w`, for each length a family of `SieveTwoChain.chain_two` (the proof of `SieveTwoTerm.chain2_bound` with the
-  cofactor rough at `w` in place of the chain's last prime). Nothing uses them yet: the sieve's tests check the
-  leaves by the paper's rule;
+  cofactor rough at `w` in place of the chain's last prime). `SieveLeafTwo.leavesE_of_zone` gives `leaf2_bound`'s
+  conclusion for every length up to a bound at once (`LeavesE`, as `SieveTwoTerm.chainOK2_of_zone` does for the
+  chains); and `SieveLeafTwo.typeIITwoAt_leafX` is the estimate on `LeafZoneX L`, the region extended to cofactors
+  longer than `√q` by its slice at `m₂ = 1/2` (an exponent for length `q^{1/2}` grows by `m₂ − 1/2` with the length,
+  `sqExp4_shift`). Nothing uses them yet: the sieve's tests check the leaves by the paper's rule;
+- `SieveLeafSplit.tree_leaves_le3` (`lib/pnt/SieveLeafSplit.lean`): `SieveP6TreeLeaves.tree_leaves_le` with each size
+  of leaves either by the paper's Lemma 4.3 or cut in three by two more comparisons, `d₁ ≤ X₁`, then `d₂ ≤ X₂`: the
+  paper's lemma with its own exponents on the first two parts and any bound of the third
+  (`SieveLeafSplit.large_leaves_le3`), at the cost of `3` in place of `1` in the error term. It is for a box of leaves
+  that straddles the paper's region and the region of the estimate in two variables; nothing uses it yet;
 - `SieveCurveHx.counts_hx` (`lib/pnt/SieveCurveHx.lean`, written by `tools/linnik/gen_zone.py`): the counts of the
   curve `ghx`, the trivial count `1` below `7789/10000` and Huxley's density estimate from there on (a step
   `SieveCurveHx.charDensity_hxT` on `[7789/10000, 131/168]` with the exponent `(7014/3125)(1 − σ)`, Huxley's

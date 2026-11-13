@@ -412,6 +412,60 @@ theorem leaf2_bound {L : ℝ} (hL0 : 0 < L) (hL : L ≤ 5 / 2) {Rg : ℝ → ℝ
         congr 2
         ring
 
+/-! ### At one modulus, for every length up to a bound -/
+
+/-- **The leaves by the estimate in two variables at `q`, for every length `K ≤ K₀`**: the conclusion of
+`leaf2_bound` for the boxes `(A, B]` of the first variable's product and `(Ar, Br]` of the rest's, with the leaves'
+roughness `w`. -/
+def LeavesE (q : ℕ) (a : ZMod q) (L Λ₁ δ : ℝ) (J₀ K₀ w A B Ar Br : ℕ) : Prop :=
+  ∀ K ≤ K₀, ∀ (S Sr : Finset (Fin K)) (Ω : List (GCmp K)), Disjoint S Sr → Sr.Nonempty →
+    Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) →
+    (∀ x : Fin K → ℕ, (∀ i, (x i).Prime) → (∀ C ∈ Ω, C.holds 0 x) →
+      (∀ i, w ≤ x i) ∧ A < ∏ i ∈ S, x i ∧ ∏ i ∈ S, x i ≤ B ∧ Ar < ∏ i ∈ Sr, x i ∧ ∏ i ∈ Sr, x i ≤ Br) →
+    ‖∑ x ∈ RTg K ⌊2 * (q : ℝ) ^ L⌋₊ Ω, ∑ n ∈ Finset.Ioc ⌊(q : ℝ) ^ L⌋₊ ⌊2 * (q : ℝ) ^ L⌋₊,
+        dw q a n * (if (∏ i, x i) ∣ n ∧ rough w n then 1 else 0)‖ ≤
+      (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ)
+
+theorem LeavesE.mono {q : ℕ} (hq : 1 ≤ q) {a : ZMod q} {L Λ₁ δ δ' : ℝ} {J₀ K₀ K₀' w A B Ar Br : ℕ}
+    (h : LeavesE q a L Λ₁ δ J₀ K₀ w A B Ar Br) (hδ : δ' ≤ δ) (hK : K₀' ≤ K₀) :
+    LeavesE q a L Λ₁ δ' J₀ K₀' w A B Ar Br := by
+  intro K hK' S Sr Ω hd hne hΩ hc hreg
+  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast hq
+  refine (h K (hK'.trans hK) S Sr Ω hd hne hΩ hc hreg).trans ?_
+  exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le hq1 (by linarith)) (by positivity)
+
+/-- `LeavesE` for large `q`, from `leaf2_bound` at each length up to `K₀`: given Proposition 3′ in two variables on
+`Rg`, for boxes on whose window `Rg` holds. -/
+theorem leavesE_of_zone {L : ℝ} (hL0 : 0 < L) (hL : L ≤ 5 / 2) {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
+    {e₀ : ℝ} (he₀ : 0 < e₀) (K₀ J₀ : ℕ) {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∀ w : ℕ, 2 ≤ w → (q : ℝ) ^ e₀ ≤ w →
+      ∀ A B Ar Br : ℕ, 1 ≤ A → 1 ≤ B → 1 ≤ Br → B * Br ≤ ⌊(q : ℝ) ^ L⌋₊ →
+        (∀ u v : ℝ, Real.logb q A ≤ u → u ≤ Real.logb q B →
+          ((⌊(q : ℝ) ^ L⌋₊ / Br : ℕ) : ℝ) ≤ 4 * (q : ℝ) ^ (u + v) →
+          (q : ℝ) ^ (u + v) ≤ ((⌊2 * (q : ℝ) ^ L⌋₊ / (Ar + 1) : ℕ) : ℝ) → Rg u v) →
+        LeavesE q a L Λ₁ δ J₀ K₀ w A B Ar Br := by
+  induction K₀ with
+  | zero =>
+    obtain ⟨δ, hδ, q₀, H⟩ := leaf2_bound hL0 hL hII he₀ 0 J₀ hΛ₁
+    refine ⟨δ, hδ, q₀, fun q _ hq a ha w hw2 hwq A B Ar Br hA hB hBr hBBr hR K hK S Sr Ω hd hne hΩ hc hreg => ?_⟩
+    obtain rfl : K = 0 := by omega
+    exact H q hq a ha w hw2 hwq S Sr Ω A B Ar Br hd hne hΩ hc hA hB hBr hBBr hR hreg
+  | succ K ih =>
+    obtain ⟨δ₁, hδ₁, q₁, H₁⟩ := ih
+    obtain ⟨δ₂, hδ₂, q₂, H₂⟩ := leaf2_bound hL0 hL hII he₀ (K + 1) J₀ hΛ₁
+    refine ⟨min δ₁ δ₂, lt_min hδ₁ hδ₂, max q₁ q₂,
+      fun q _ hq a ha w hw2 hwq A B Ar Br hA hB hBr hBBr hR K' hK' S Sr Ω hd hne hΩ hc hreg => ?_⟩
+    have hq1 : 1 ≤ q := Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
+    rcases Nat.lt_or_ge K' (K + 1) with h | h
+    · exact (H₁ q (le_trans (le_max_left _ _) hq) a ha w hw2 hwq A B Ar Br hA hB hBr hBBr hR).mono hq1
+        (min_le_left _ _) le_rfl K' (by omega) S Sr Ω hd hne hΩ hc hreg
+    · obtain rfl : K' = K + 1 := by omega
+      refine (H₂ q (le_trans (le_max_right _ _) hq) a ha w hw2 hwq S Sr Ω A B Ar Br hd hne hΩ hc hA hB hBr hBBr
+        hR hreg).trans ?_
+      exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hq1)
+        (by linarith [min_le_right δ₁ δ₂])) (by positivity)
+
 /-! ### The estimate on the leaves' region -/
 
 /-- **Proposition 3′ in two variables on the leaves' region**, from the fourth moment of short polynomials over the
@@ -419,5 +473,52 @@ characters: the curve `g7d` (the trivial count, Ingham, Chen–Gupta–Li and Hu
 theorem typeIITwoAt_leaf (L : ℝ) : TypeIITwoAt L (SieveTypeIIHM.LeafZone L) :=
   fun hf0 hsupp K₀ _ _ he₁ hη hη1 => SieveTypeIIHM.typeII_two_gen4 SieveCurve7D.g7d_le_one SieveCurve7D.g7d_half
     SieveCurve7D.counts_7d (SieveTypeIIHM.zone_leaf L) hf0 hsupp K₀ he₁ hη hη1
+
+/-! ### A cofactor longer than `√q` -/
+
+open SieveTypeIIHM in
+/-- An exponent for a polynomial of length `q^{1/2}` gives one for length `q^m`, `m ≥ 1/2`, larger by `m − 1/2`:
+orthogonality, the Halász–Montgomery inequality and the fourth moment alike. -/
+lemma sqExp4_shift {d e g M m : ℝ} (hd : 0 ≤ d) (h : SqExp4 d e g (1 / 2) M) (hm : 1 / 2 ≤ m) :
+    SqExp4 d e g m (M + (m - 1 / 2)) := by
+  rcases h with (⟨h1, h2⟩ | ⟨h1, h2⟩) | ⟨h1, h2⟩
+  · exact Or.inl (Or.inl ⟨by linarith, by linarith⟩)
+  · refine Or.inl (Or.inr ⟨by linarith, ?_⟩)
+    nlinarith
+  · refine Or.inr ⟨by linarith, ?_⟩
+    rw [max_eq_left hm]
+    rw [max_eq_left (le_refl _)] at h2
+    linarith
+
+open SieveTypeIIHM in
+/-- `twoBound4` at a second variable of length `q^{1/2}` gives it at length `q^{m₂}`, `m₂ ≥ 1/2`, with the same
+rest: the second variable's exponent grows with its length. -/
+lemma twoBound4_shift {L d e g β m₁ m₂ w : ℝ} (hd : 0 ≤ d) (h : twoBound4 (L - m₂ + 1 / 2) d e g β m₁ (1 / 2) w)
+    (hm : 1 / 2 ≤ m₂) : twoBound4 L d e g β m₁ m₂ w := by
+  obtain ⟨M₁, M₂, h1, h2, h3⟩ := h
+  refine ⟨M₁, M₂ + (m₂ - 1 / 2), h1, sqExp4_shift hd h2 hm, ?_⟩
+  have hρ : L - m₁ - m₂ = L - m₂ + 1 / 2 - m₁ - 1 / 2 := by ring
+  rw [hρ]
+  linarith
+
+/-- **The leaves' region with a cofactor of any length from `q^{2/5}`**: `LeafZone` below `m₂ = 1/2`, and above it
+the slice `m₂ = 1/2` with the same rest `ρ = L − m₁ − m₂`. -/
+def LeafZoneX (L m₁ m₂ : ℝ) : Prop :=
+  (m₂ ≤ 1 / 2 ∧ SieveTypeIIHM.LeafZone L m₁ m₂) ∨ (1 / 2 ≤ m₂ ∧ SieveTypeIIHM.LeafZone (L - m₂ + 1 / 2) m₁ (1 / 2))
+
+/-- The zone's exponents on `LeafZoneX L`: `zone_leaf` at `L`, and at `L − m₂ + 1/2` with the second exponent
+shifted (`twoBound4_shift`). -/
+theorem zone_leafX (L : ℝ) :
+    SieveTypeIIHM.ZoneOK4 SieveCurve7D.g7d L (1 / 1000) (1 / 1000) (LeafZoneX L) := by
+  intro β m₁ m₂ w hβ hβ1 hR hw hw1
+  rcases hR with ⟨-, hR⟩ | ⟨hm, hR⟩
+  · exact SieveTypeIIHM.zone_leaf L β m₁ m₂ w hβ hβ1 hR hw hw1
+  · exact twoBound4_shift (by norm_num)
+      (SieveTypeIIHM.zone_leaf (L - m₂ + 1 / 2) β m₁ (1 / 2) w hβ hβ1 hR hw hw1) hm
+
+/-- **Proposition 3′ in two variables on `LeafZoneX L`.** -/
+theorem typeIITwoAt_leafX (L : ℝ) : TypeIITwoAt L (LeafZoneX L) :=
+  fun hf0 hsupp K₀ _ _ he₁ hη hη1 => SieveTypeIIHM.typeII_two_gen4 SieveCurve7D.g7d_le_one SieveCurve7D.g7d_half
+    SieveCurve7D.counts_7d (zone_leafX L) hf0 hsupp K₀ he₁ hη hη1
 
 end SieveLeafTwo

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1803 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1806 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 240, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 196 | 696 |
-| `lib/pnt` | 328 | 994 |
+| `lib/pnt` | 329 | 997 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2902,10 +2902,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveLeaf.prod_primesBelow_le`: Mertens' product bound, in its elementary form *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveLeaf.prod_T_le`: The main term of a leaf *paper* ([note](../formalisations/harman-sieve.md))
 
+#### `SieveLeafSplit`: The large leaves of a family split in three: two by the paper's lemma, one by the estimate in two variables
+
+- `SieveLeafSplit.tree_leaves_le3`: The leaves of a tree, each size by the paper's lemma or split in three ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveLeafTwo`: The leaves by the Type II estimate in two variables
 
 - `SieveLeafTwo.leaf2_bound`: Leaves with two marked products ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafTwo.leavesE_of_zone`: `LeavesE` for large `q`, from `leaf2_bound` at each length up to `K₀` ([note](../formalisations/halasz-montgomery.md))
 - `SieveLeafTwo.typeIITwoAt_leaf`: Proposition 3′ in two variables on the leaves' region ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafTwo.typeIITwoAt_leafX`: Proposition 3′ in two variables on `LeafZoneX L` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveLeafZone`: The zone of the leaves with the fourth moment, for the curve `g7d`
 
@@ -2957,7 +2963,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveP6TreeLeaves`: Proposition 6 with the bilinear estimate: the leaves of the tree
 
-- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper* ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveP6ib`: Proposition 6 with the bilinear estimate
 
@@ -3075,7 +3081,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTwoTerm.sum_full_eq`: The chains with their cofactor's tuples are the full tuples
 - `SieveTwoTerm.chain2_bound`: Chains with two marked products *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoTerm.chain2R_bound`: Chains with two marked products and the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
-- `SieveTwoTerm.chainOK2_of_zone`: `ChainOK2` for every length up to `K₀ + 1` *paper*
+- `SieveTwoTerm.chainOK2_of_zone`: `ChainOK2` for every length up to `K₀ + 1` *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoTerm.chain2R_at`: Chains with two marked products and the cofactor in the rest, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoTuples`: Tuples of primes as the two variables of the Type II estimate
