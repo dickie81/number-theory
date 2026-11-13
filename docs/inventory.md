@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1805 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1809 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 276, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 197 | 702 |
+| `lib/core` | 198 | 706 |
 | `lib/pnt` | 325 | 990 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -685,6 +685,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `OddMargin2`: Odd-sector margin `4·10⁻⁵` at `L = 1/2`
 
 - `OddMargin2.odd_margin2`
+
+#### `OrbitWindow`: The orbit form is Weil's form on a window: the step functions of the orbit
+
+- `OrbitWindow.weilQg_hasSum`: The explicit-formula bridge, any parity ([note](../formalisations/ball-rate.md))
+- `OrbitWindow.form_eq_weilQg`: The dictionary ([note](../formalisations/ball-rate.md))
+- `OrbitWindow.weilQg_step_int_ge`: The integrality gap in the window ([note](../formalisations/ball-rate.md))
+- `OrbitWindow.weilQg_step_ge`: The step functions stay polynomially far from the radical ([note](../formalisations/ball-rate.md))
 
 #### `Orthogonality`: Orthogonality forces the Euclidean structure
 

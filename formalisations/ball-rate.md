@@ -982,6 +982,55 @@ Both forms also fail for the same construction over curves and for a positive pr
 ([ball-conjecture-tests.md](../docs/ball-conjecture-tests.md), §4, §5, §7). So a proof has to use `ζ`'s own constants,
 as this one does.
 
+## The orbit form on a window: Weil's form of the step functions (`OrbitWindow`)
+
+**Lean:** `OrbitWindow` (`lib/core/`), printed by `lib/check/CheckAll.lean`. The printed results depend on `propext`,
+`Classical.choice` and `Quot.sound` only.
+
+| Result | Statement | Conditional on |
+|---|---|---|
+| `OrbitWindow.form_eq_weilQg` | on `Σ_{n ≤ N} x_n = 0`, `Q_N(x) = weilQg (log N) g_x`, with `g_x(t) = e^{t/2}Σ_n x_n 1_{(0, log n]}(t)`, for `N ≥ 2` | nothing |
+| `OrbitWindow.weilQg_hasSum` | Weil's explicit formula for `h(z) = ĝ(z)ĝ(−z)` gives `Σ_ρ ĝ(t_ρ)ĝ(−t_ρ) = weilQg a g`, for a probe of either parity | nothing |
+| `OrbitWindow.weilQg_step_int_ge` | `weilQg (log N) (u^{1/2}y) ≥ (999/1000)(2/45)(13/10) = 0.0577` at every nonzero integer-valued `y = Σ_n k_n 1_{(0, n]}`, `Σ_n k_n = 0` | RH |
+| `OrbitWindow.weilQg_step_ge` | `weilQg (log N) g_x ≥ (√log N/(220e⁸N³))‖g_x‖²` on `Σ_n x_n = 0`, `N ≥ 3`, the norm that of `L²(d*u)` | RH |
+
+**What it says.** In `u = e^t` the step function is `g_x(u) = u^{1/2}Σ_n x_n 1_{(1, n]}(u)`, and on the hyperplane
+`Σ_n x_n = 0` it is `u^{1/2}Σ_n x_n 1_{(0, n]}(u)`, the combination of the orbit's vectors `u^{1/2}1_{(0, n]}`, whose
+Mellin transforms at `ρ − ½` are `n^ρ/ρ`. It is supported in `[1, N]`. Weil's form depends on `g` only through its
+autocorrelation, so the dilation `u ↦ u/√N` changes nothing and puts `g_x` in the window `[λ⁻¹, λ]`, `λ = √N`. These
+are the windows of A. Connes and C. Consani, and of R. Andrews, A. Connes and A. La Gatta (arXiv:2611.13129), whose
+form uses the prime powers up to `λ² = N`, as `G_N` does. So the orbit form on the hyperplane is their form,
+compressed to the `N − 1` step functions with jumps at the integers, and the integer vectors are the integer-valued
+step functions.
+
+Two results of this note then read as statements about Weil's form on a window. Under RH,
+`PivotSharp.lattice_gap` says that the form is at least `0.0577` at every nonzero integer-valued step function, and
+`BallGap.rate_gap` with `‖g_x‖² ≤ N²Σx_n²` (`normSq_stepProbe_le`) says that its Rayleigh quotient on the step
+functions is at least `√log N/(220e⁸N³)`. On the whole window the least eigenvalue is of order `e^{−4πλ²} = e^{−4πN}`
+(Andrews, Connes and La Gatta, numerically to `λ² = 300`, with an upper bound of Connes and Kastoris): the step
+functions of the orbit stay polynomially far from the form's nearly null, prolate directions.
+
+**The proof.**
+- **Any parity.** The library's `weilQg` is Weil's form for a real probe of either parity, with pole term
+  `2ĝ(i/2)ĝ(−i/2)`, but the bridge from the explicit formula (`WeilForm.weilQ_eq_zero_sum`) was for even probes.
+  `weilQg_hasSum` is the bridge for `h(z) = ĝ(z)ĝ(−z)`, which is `|ĝ|²` on `ℝ`. Its archimedean term (`arch_term_gen`)
+  is `ArchShift`'s Tonelli argument with `|ĝ|²` in place of `ĝ²`, through the parity-free Fourier inversion of
+  `ParityGap`.
+- **The step function is a probe.** Each atom `e^{t/2}1_{(0, L]}` has autocorrelation `e^{L − u/2} − e^{u/2}` on
+  `[0, L]` (`autocorr_stepAtom`), so `f(0) − f(u) ≤ (e^L + 1)u`. By `‖g − g(· + u)‖² = 2(f(0) − f(u))` and
+  Cauchy–Schwarz over the atoms, `g_x` has `f(0) − f(u) ≤ B·u` (`stepProbe_lip`), and its archimedean integral
+  converges.
+- **The transform** is `Σ_n x_n ∫_0^{log n} e^{(1/2 + iz)u} du` (`ghatC_stepProbe`), at most
+  `2(L + 2)e^{3L/2}/(1 + |Re z|)` per atom on `|Im z| ≤ 1` (`norm_expInt_le`). So `h` is a strip test function and
+  `weilExplicit_zeta` applies (`weil_hStep`), with no RH input.
+- **The zero side, term by term.** At `t = (ρ − ½)/i`, `½ + it = ρ`. On the hyperplane the `−1/ρ` of each atom
+  cancels, and `ĝ_x(t)ĝ_x(−t) = Σ_{m,n} x_m x_n √(mn)(m/n)^{ρ − ½}/(ρ(1 − ρ))` (`hStep_zero`). Summed over the zeros
+  this is `Σ_{m,n} x_m x_n √(mn)K_H(m/n)`, and `K_H = kψ` (`BallWeil.kerH_eq_kψ`).
+
+Off the hyperplane, `g_x` does not see `x_1`, since the atom at `n = 1` is empty, so the same theorem gives
+`weilQg(g_x) = Q_N(x − (Σ_n x_n)δ_1)`. The orbit's first vector `u^{1/2}1_{(0, 1]}` lies in no window: its transform
+`1/s` has a pole at `s = 0`.
+
 ## The low zeros: what the zeros above `8N` give, and `λ_N` to `N = 3·10⁴` (`BallLow`; `scripts/lambda_large.py`)
 
 **Lean:** `BallLow` (`lib/core/BallLow.lean`), printed by `lib/check/CheckAll.lean`. The two printed results depend on
