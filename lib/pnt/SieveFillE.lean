@@ -17,6 +17,8 @@ Plain statements. `L` is a route's exponent (`SieveRoute.Route`).
   trees below its stops.
 * `fill_window_ib3`: `SieveFill.fill_window_ib` with `SieveLeafSplit.tree_leaves_le3`, each size's three cases from
   the leaves' bounds (`SieveLeafFam3.cases3_of_bounds`).
+* `prop6_fill_core3`: `SieveFill.prop6_fill_core` with `fill_below_ib3` and `fill_window_ib3`: the error term's
+  `q^{L−δ₃}/φ(q)` three times.
 
 The file imports `SieveFill.lean` and `SieveLeafFam3.lean`.
 -/
@@ -34,7 +36,8 @@ variable [Route]
 
 set_option maxHeartbeats 1600000 in
 /-- **The leaves of the tree below the last entry, each size by the paper's lemma or cut in three.**
-`SieveFill.leaves_last_le` with each size by `SieveLeafFam3.family_leaves_le3`: the error term is `3s_max·q^{L−δ}/φ(q)`. -/
+`SieveFill.leaves_last_le` with each size by `SieveLeafFam3.family_leaves_le3`: the error term is
+`3s_max·q^{L−δ}/φ(q)`. -/
 theorem leaves_last_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {a b a₂ b₂ δ' εw Λ₀ Λ₁ C₀ δ E : ℝ}
     {k J₀ Kmax : ℕ} (hok : SieveP6TreeLeaves.LeavesOK q a' L a b δ' εw Λ₀ C₀ δ k J₀ Kmax)
     (hok₂ : SieveP6TreeLeaves.LeavesOK q a' L a₂ b₂ δ' εw Λ₀ C₀ δ k J₀ Kmax) {k' : ℕ}
@@ -61,7 +64,8 @@ theorem leaves_last_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {a 
         ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a₂) ∧
         ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) * ((∏ i ∈ (I s)ᶜ, x i : ℕ) : ℝ) ^ 2 ≤
           (q : ℝ) ^ (L - b₂)) ∨
-      SieveLeafFam3.Split3F q a' L a b a₂ b₂ δ' εw Λ₁ δ k (leafCmpsL Ω E ⌈(q : ℝ) ^ εw⌉₊ ((⌊2 * (q : ℝ) ^ L⌋₊ + 1 : ℕ) : ℝ) s) (I s))
+      SieveLeafFam3.Split3F q a' L a b a₂ b₂ δ' εw Λ₁ δ k
+        (leafCmpsL Ω E ⌈(q : ℝ) ^ εw⌉₊ ((⌊2 * (q : ℝ) ^ L⌋₊ + 1 : ℕ) : ℝ) s) (I s))
     (hC₀ : 0 ≤ C₀) (hC : ∀ A : ℝ, 1 ≤ A → ∑ p ∈ SieveRanges.rng A, 1 / (p : ℝ) ≤ C₀) (hk : Even k) (hk1 : 1 ≤ k)
     (hkC : 2 * C₀ ^ 2 ≤ ((k : ℝ) + 1) * (k + 2)) (N : ℕ) :
     ‖∑ s ∈ range N, (-1 : ℂ) ^ s *
@@ -188,7 +192,8 @@ theorem last_pattern_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {a
         ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a₂) ∧
         ((∏ i ∈ I s, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) * ((∏ i ∈ (I s)ᶜ, x i : ℕ) : ℝ) ^ 2 ≤
           (q : ℝ) ^ (L - b₂)) ∨
-      SieveLeafFam3.Split3F q a' L a b a₂ b₂ δ' εw Λ₁ δl k (leafCmpsL Ω ((Ar : ℝ) + 1) ⌈(q : ℝ) ^ εw⌉₊ ((⌊2 * (q : ℝ) ^ L⌋₊ + 1 : ℕ) : ℝ) s) (I s))
+      SieveLeafFam3.Split3F q a' L a b a₂ b₂ δ' εw Λ₁ δl k
+        (leafCmpsL Ω ((Ar : ℝ) + 1) ⌈(q : ℝ) ^ εw⌉₊ ((⌊2 * (q : ℝ) ^ L⌋₊ + 1 : ℕ) : ℝ) s) (I s))
     (hC₀ : 0 ≤ C₀) (hC : ∀ A : ℝ, 1 ≤ A → ∑ p ∈ SieveRanges.rng A, 1 / (p : ℝ) ≤ C₀) (hk : Even k) (hk1 : 1 ≤ k)
     (hkC : 2 * C₀ ^ 2 ≤ ((k : ℝ) + 1) * (k + 2)) :
     ‖∑ rt ∈ RTg (k' + 1) ⌊2 * (q : ℝ) ^ L⌋₊ Ω, ∑ n ∈ Finset.Ioc ⌊(q : ℝ) ^ L⌋₊ ⌊2 * (q : ℝ) ^ L⌋₊,
@@ -446,7 +451,8 @@ theorem fill_below_ib3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a')
   refine (norm_add_le _ _).trans ?_
   -- the leaves of the first tree
   have hΛA : Λ₁ * Real.log q + ((j : ℝ) + smax) * Real.log (N₂ : ℝ) ≤ Λ₀ * Real.log q := by
-    have h1 : (j : ℝ) + smax ≤ ((j + 2 * smax : ℕ) : ℝ) := by push_cast; linarith [(Nat.cast_nonneg smax : (0 : ℝ) ≤ smax)]
+    have h1 : (j : ℝ) + smax ≤ ((j + 2 * smax : ℕ) : ℝ) := by
+      push_cast; linarith [(Nat.cast_nonneg smax : (0 : ℝ) ≤ smax)]
     have := mul_le_mul_of_nonneg_right h1 hlogN
     linarith
   have hLv := SieveLeafSplit.tree_leaves_le3 ha' hokL hokL₂ Ω S₀ (Isplit S₁ eIn₁) hE hw2 hwz hz₀ hsmax (by omega)
@@ -631,6 +637,171 @@ theorem fill_below_ib3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a')
   rw [e]
   have e2 : ((smax : ℝ) + smax * smax) * el + (smax : ℝ) * smax * ec =
       smax * el + smax * (smax * el + smax * ec) := by ring
+  linarith
+
+set_option maxHeartbeats 1600000 in
+/-- **The comparison with the rest among the tree's primes at one `q`, the leaves cut in three.**
+`SieveFill.prop6_fill_core` with `fill_below_ib3` and `fill_window_ib3`. -/
+theorem prop6_fill_core3 {q : ℕ} [NeZero q] {a : ZMod q} (ha : IsUnit a) {j : ℕ} (Ω : List (GCmp j))
+    (S₀ S₁ : Finset (Fin j)) (eIn₁ : Bool) (lo hi : Fin j → ℝ)
+    {t T aL bL aL₂ bL₂ δ' εw c Λ₀ Λ₁ C₀ δ₁ δ₃ pA th : ℝ}
+    {k J₀C J₀E K₀ K₀E Kmax smax P₁ P₂ Ar Br z₀ AE BE ArE BrE : ℕ}
+    (hokL : SieveP6TreeLeaves.LeavesOK q a L aL bL δ' εw Λ₀ C₀ δ₃ k J₀C Kmax)
+    (hokL₂ : SieveP6TreeLeaves.LeavesOK q a L aL₂ bL₂ δ' εw Λ₀ C₀ δ₃ k J₀C Kmax)
+    (hokE : SieveLeafTwo.LeavesE q a L Λ₁ δ₃ J₀E K₀E ⌈(q : ℝ) ^ εw⌉₊ AE BE ArE BrE)
+    (hokC : ChainOK2 q a εw Λ₁ δ₁ J₀C K₀ P₁ P₂ Ar Br)
+    (hw2 : 2 ≤ ⌈(q : ℝ) ^ εw⌉₊) (hwle : (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ≤ 2 * (q : ℝ) ^ εw) (hwz : ⌈(q : ℝ) ^ εw⌉₊ ≤ z₀)
+    (hz₀ : z₀ ≤ ⌊2 * (q : ℝ) ^ L⌋₊ + 1) (hΛ₁ : 0 ≤ Λ₁) (hlz : Real.log z₀ ≤ Λ₁ * Real.log q)
+    (hlZ : Real.log ((⌊2 * (q : ℝ) ^ L⌋₊ + 1 : ℕ) : ℝ) ≤ Λ₁ * Real.log q)
+    (hΛ : Λ₁ * Real.log q + ((j + 2 * smax : ℕ) : ℝ) * Real.log ⌊2 * (q : ℝ) ^ L⌋₊ ≤ Λ₀ * Real.log q)
+    (hX : 1 ≤ (q : ℝ) ^ (L - 1 - δ')) (hN : ⌊(q : ℝ) ^ L⌋₊ ≤ ⌊2 * (q : ℝ) ^ L⌋₊)
+    (hJ : Ω.length + 1 + 2 * (smax * smax) + 5 * smax + 6 ≤ J₀C)
+    (hJE : Ω.length + 1 + 2 * (smax * smax) + 5 * smax + 6 ≤ J₀E) (hK : j + 2 * smax ≤ K₀)
+    (hKE : j + 2 * smax ≤ K₀E)
+    (hKm : j + 2 * smax ≤ Kmax) (hP₁ : 1 ≤ P₁) (hAr : 1 ≤ Ar) (hAB : (P₁ + 1) * z₀ ≤ P₂)
+    (hArB : (Ar + 1) * z₀ ≤ Br) (hsm : (P₁ : ℝ) + 1 ≤ (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ smax)
+    (hsmr : (Ar : ℝ) + 1 ≤ (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ smax)
+    (hl₁ : Real.log ((P₁ : ℝ) + 1) ≤ Λ₁ * Real.log q) (hlr : Real.log ((Ar : ℝ) + 1) ≤ Λ₁ * Real.log q)
+    (hB : ∀ s : ℝ, (q : ℝ) ^ (∑ i ∈ S₀, lo i) ≤ s → (P₁ : ℝ) + 1 ≤ 4 * (q : ℝ) ^ t * s)
+    (hA : (q : ℝ) ^ (∑ i ∈ S₀, hi i) ≤ P₂)
+    (hT : 4 * (q : ℝ) ^ t * z₀ * ((Ar : ℝ) + 1) ≤ 4 * (q : ℝ) ^ T) (hT' : (Ar : ℝ) + 1 ≤ 4 * (q : ℝ) ^ T)
+    (hεwc : (2 * k + 4 : ℝ) * εw = c)
+    (hpA : 0 ≤ pA) (hpAΛ : pA ≤ Λ₁) (hth : 0 ≤ th) (hthΛ : th ≤ Λ₁)
+    (hszA₁ : 4 * 2 ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - aL - pA - c))
+    (hszA₂ : 64 * 2 ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - bL - pA - 2 * (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else T)) - c))
+    (hszB₁ : 4 * 2 ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - aL₂ - (∑ i ∈ S₁, hi i + (if eIn₁ then T else 0)) - c))
+    (hszB₂ : 64 * 2 ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - bL₂ - (∑ i ∈ S₁, hi i + (if eIn₁ then T else 0)) - 2 * th - c))
+    (hAE : (AE : ℝ) ≤ (q : ℝ) ^ pA) (hBE : 4 * (q : ℝ) ^ (∑ i ∈ S₁, hi i + (if eIn₁ then T else 0)) < BE + 1)
+    (hArE : (ArE : ℝ) ≤ (q : ℝ) ^ th) (hBrE : 4 * (q : ℝ) ^ (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else T)) < BrE + 1)
+    (hC₀ : 0 ≤ C₀) (hC : ∀ A : ℝ, 1 ≤ A → ∑ p ∈ SieveRanges.rng A, 1 / (p : ℝ) ≤ C₀) (hk : Even k) (hk1 : 1 ≤ k)
+    (hkC : 2 * C₀ ^ 2 ≤ ((k : ℝ) + 1) * (k + 2)) (hΩc : ∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q)
+    (hΩ : ∀ rt : Fin j → ℕ, (∀ i, (rt i).Prime) → (∀ C ∈ Ω, C.holds 0 rt) →
+      StrictAnti rt ∧ (∀ i, z₀ ≤ rt i) ∧ ∀ i, (q : ℝ) ^ lo i ≤ rt i ∧ (rt i : ℝ) ≤ (q : ℝ) ^ hi i) :
+    ‖∑ rt ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ Ω, ∑ n ∈ Finset.Ioc ⌊(q : ℝ) ^ L⌋₊ ⌊2 * (q : ℝ) ^ L⌋₊,
+        dw q a n * (if (∏ i, rt i) ∣ n ∧ rough z₀ n then 1 else 0)‖ ≤
+      (2 * SieveProp6.zeta C₀ k * (((⌊2 * (q : ℝ) ^ L⌋₊ : ℝ) - ⌊(q : ℝ) ^ L⌋₊) /
+          (q.totient * Real.log (⌈(q : ℝ) ^ εw⌉₊ : ℝ))) +
+        2 * SieveProp6.rem (⌈(q : ℝ) ^ εw⌉₊ : ℝ) (SieveProp6.Jw ⌈(q : ℝ) ^ εw⌉₊) k * (q : ℝ) ^ (L - 1 - δ')) *
+          (((∑ rt ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ Ω, 1 / ((∏ i, rt i : ℕ) : ℝ)) *
+            ∏ p ∈ primesIco ⌈(q : ℝ) ^ εw⌉₊ z₀, (1 + 1 / (p : ℝ))) *
+            (1 + ∏ p ∈ primesIco ⌈(q : ℝ) ^ εw⌉₊ (⌊2 * (q : ℝ) ^ L⌋₊ + 1), (1 + 1 / (p : ℝ)))) +
+        (2 * smax + smax * smax) * (3 * ((q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₃))) +
+        (smax * smax + smax) * ((q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₁)) := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast NeZero.pos q
+  have hqn : 1 ≤ q := Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
+  have hP₁0 : (0 : ℝ) < P₁ := by exact_mod_cast hP₁
+  have hlogq : 0 ≤ Real.log q := Real.log_nonneg (by exact_mod_cast hqn)
+  have hlogN : 0 ≤ Real.log ((⌊2 * (q : ℝ) ^ L⌋₊ : ℕ) : ℝ) := Real.log_natCast_nonneg _
+  have hlP₁ : Real.log (P₁ : ℝ) ≤ Λ₁ * Real.log q := (Real.log_le_log hP₁0 (by linarith)).trans hl₁
+  -- the two patterns' comparisons
+  have hcB : ∀ C ∈ Ω ++ [gUp S₀ (P₁ : ℝ) false], C.c 0 ≤ Λ₁ * Real.log q := by
+    intro C hC
+    rcases List.mem_append.1 hC with h | h
+    · exact hΩc C h
+    · rw [List.mem_singleton] at h
+      rw [h]
+      exact hlP₁
+  have hcW : ∀ C ∈ Ω ++ [gDown S₀ (P₁ : ℝ) true], C.c 0 ≤ Λ₁ * Real.log q := by
+    intro C hC
+    rcases List.mem_append.1 hC with h | h
+    · exact hΩc C h
+    · rw [List.mem_singleton] at h
+      rw [h]
+      show -Real.log (P₁ : ℝ) ≤ Λ₁ * Real.log q
+      have h1 : 0 ≤ Real.log (P₁ : ℝ) := Real.log_nonneg (by exact_mod_cast hP₁)
+      have h2 := mul_nonneg hΛ₁ hlogq
+      linarith
+  have hpatB : ∀ {rt : Fin j → ℕ}, (∀ i, 1 ≤ rt i) → ((∀ C ∈ Ω ++ [gUp S₀ (P₁ : ℝ) false], C.holds 0 rt) ↔
+      (∀ C ∈ Ω, C.holds 0 rt) ∧ ∏ i ∈ S₀, (rt i : ℝ) ≤ P₁) := by
+    intro rt h1
+    simp only [List.forall_mem_append, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
+      and_true, gUp_holds _ hP₁0 false 0 h1, Bool.false_eq_true, ite_false]
+  have hpatW : ∀ {rt : Fin j → ℕ}, (∀ i, 1 ≤ rt i) → ((∀ C ∈ Ω ++ [gDown S₀ (P₁ : ℝ) true], C.holds 0 rt) ↔
+      (∀ C ∈ Ω, C.holds 0 rt) ∧ (P₁ : ℝ) < ∏ i ∈ S₀, (rt i : ℝ)) := by
+    intro rt h1
+    simp only [List.forall_mem_append, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
+      and_true, gDown_holds _ hP₁0 true 0 h1, ite_true]
+  rw [sum_RTg_cmp Ω S₀ hP₁0 (fun rt => ∑ n ∈ Finset.Ioc ⌊(q : ℝ) ^ L⌋₊ ⌊2 * (q : ℝ) ^ L⌋₊,
+    dw q a n * (if (∏ i, rt i) ∣ n ∧ rough z₀ n then 1 else 0))]
+  -- at most `P₁`: two trees
+  have hBb := fill_below_ib3 ha hokL hokL₂ hokE hokC (Ω ++ [gUp S₀ (P₁ : ℝ) false]) S₀ S₁ eIn₁ hi hw2 hwle hwz hz₀
+    hAB hArB hAr hsm hsmr hKm hK hKE (by rw [List.length_append, List.length_singleton]; omega)
+    (by rw [List.length_append, List.length_singleton]; omega)
+    (by rw [List.length_append, List.length_singleton]; omega) hΛ₁ hcB hlz hlZ hl₁ hlr hΛ hX hN
+    (fun rt hp hh => by
+      obtain ⟨hΩ', -⟩ := (hpatB (fun i => (hp i).one_lt.le)).1 hh
+      obtain ⟨hsa, hz, hb⟩ := hΩ rt hp hΩ'
+      exact ⟨hsa, hz, fun i => (hb i).2, hB _ (box_prod hq0 S₀ hb).1⟩)
+    (fun rt hrt => by
+      have := ((hpatB (one_le_of_mem_RTg hrt)).1 (Finset.mem_filter.1 hrt).2).2
+      linarith)
+    hT hεwc hpA hpAΛ hth hthΛ hszA₁ hszA₂ hszB₁ hszB₂ hAE hBE hArE hBrE hC₀ hC hk hk1 hkC
+  -- above `P₁`: in the window, one tree
+  have hΛW : Λ₁ * Real.log q + ((j : ℝ) + smax) * Real.log ((⌊2 * (q : ℝ) ^ L⌋₊ : ℕ) : ℝ) ≤ Λ₀ * Real.log q := by
+    have h1 : (j : ℝ) + smax ≤ ((j + 2 * smax : ℕ) : ℝ) := by
+      push_cast
+      linarith [(Nat.cast_nonneg smax : (0 : ℝ) ≤ smax)]
+    have := mul_le_mul_of_nonneg_right h1 hlogN
+    linarith
+  have hWb := fill_window_ib3 ha hokL hokL₂ hokE hokC (Ω ++ [gDown S₀ (P₁ : ℝ) true]) S₀ S₁ eIn₁ hi hw2 hwle hwz
+    hz₀ hArB hAr hsmr (by omega) (by omega) (by omega) (by rw [List.length_append, List.length_singleton]; nlinarith)
+    (by rw [List.length_append, List.length_singleton]; nlinarith)
+    (by rw [List.length_append, List.length_singleton]; nlinarith) hΛ₁ hcW hlz hlr hΛW hX hN
+    (fun rt hp hh => by
+      obtain ⟨hΩ', hlt⟩ := (hpatW (fun i => (hp i).one_lt.le)).1 hh
+      obtain ⟨hsa, hz, hb⟩ := hΩ rt hp hΩ'
+      have hle : ∏ i ∈ S₀, (rt i : ℝ) ≤ P₂ := (box_prod hq0 S₀ hb).2.trans hA
+      have hlt' : (P₁ : ℝ) < ((∏ i ∈ S₀, rt i : ℕ) : ℝ) := by push_cast; exact hlt
+      have hle' : ((∏ i ∈ S₀, rt i : ℕ) : ℝ) ≤ P₂ := by push_cast; exact hle
+      exact ⟨hsa, hz, fun i => (hb i).2, by exact_mod_cast hlt', by exact_mod_cast hle'⟩)
+    hT' hεwc hpA hpAΛ hth hthΛ hszA₁ hszA₂ hszB₁ hszB₂ hAE hBE hArE hBrE hC₀ hC hk hk1 hkC
+  -- the two families are the parts of the family
+  have hS := sum_RTg_cmp (Y := ⌊2 * (q : ℝ) ^ L⌋₊) Ω S₀ hP₁0 (fun rt => 1 / ((∏ i, rt i : ℕ) : ℝ))
+  have hnn : ∀ Ω' : List (GCmp j), 0 ≤ ∑ rt ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ Ω', 1 / ((∏ i, rt i : ℕ) : ℝ) :=
+    fun Ω' => Finset.sum_nonneg fun rt _ => by positivity
+  obtain ⟨Mc, hMcdef⟩ : ∃ Mc : ℝ, Mc = 2 * SieveProp6.zeta C₀ k * (((⌊2 * (q : ℝ) ^ L⌋₊ : ℝ) - ⌊(q : ℝ) ^ L⌋₊) /
+      (q.totient * Real.log (⌈(q : ℝ) ^ εw⌉₊ : ℝ))) +
+        2 * SieveProp6.rem (⌈(q : ℝ) ^ εw⌉₊ : ℝ) (SieveProp6.Jw ⌈(q : ℝ) ^ εw⌉₊) k * (q : ℝ) ^ (L - 1 - δ') :=
+    ⟨_, rfl⟩
+  have hMc : 0 ≤ Mc := by
+    rw [hMcdef]
+    have hN' : (0 : ℝ) ≤ (⌊2 * (q : ℝ) ^ L⌋₊ : ℝ) - ⌊(q : ℝ) ^ L⌋₊ := by
+      have : (⌊(q : ℝ) ^ L⌋₊ : ℝ) ≤ ⌊2 * (q : ℝ) ^ L⌋₊ := by exact_mod_cast hN
+      linarith
+    have hlw : 0 ≤ Real.log (⌈(q : ℝ) ^ εw⌉₊ : ℝ) := Real.log_nonneg (Nat.one_le_cast.2 (by omega))
+    exact add_nonneg (mul_nonneg (mul_nonneg zero_le_two (SieveProp6.zeta_nonneg hC₀ k))
+      (div_nonneg hN' (mul_nonneg (Nat.cast_nonneg _) hlw)))
+      (mul_nonneg (mul_nonneg zero_le_two (SieveProp6.rem_nonneg _ _ k)) (Real.rpow_nonneg hq0.le _))
+  rw [← hMcdef] at hBb hWb ⊢
+  obtain ⟨Pz, hPz⟩ : ∃ Pz : ℝ, Pz = ∏ p ∈ primesIco ⌈(q : ℝ) ^ εw⌉₊ z₀, (1 + 1 / (p : ℝ)) := ⟨_, rfl⟩
+  obtain ⟨PN, hPN⟩ : ∃ PN : ℝ,
+      PN = ∏ p ∈ primesIco ⌈(q : ℝ) ^ εw⌉₊ (⌊2 * (q : ℝ) ^ L⌋₊ + 1), (1 + 1 / (p : ℝ)) := ⟨_, rfl⟩
+  have hPz0 : 0 ≤ Pz := by rw [hPz]; exact Finset.prod_nonneg fun p _ => by positivity
+  have hPN0 : 0 ≤ PN := by rw [hPN]; exact Finset.prod_nonneg fun p _ => by positivity
+  rw [← hPz, ← hPN] at hBb ⊢
+  rw [← hPz] at hWb
+  obtain ⟨SB, hSB⟩ : ∃ SB : ℝ, SB = ∑ rt ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ (Ω ++ [gUp S₀ (P₁ : ℝ) false]),
+      1 / ((∏ i, rt i : ℕ) : ℝ) := ⟨_, rfl⟩
+  obtain ⟨SW, hSW⟩ : ∃ SW : ℝ, SW = ∑ rt ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ (Ω ++ [gDown S₀ (P₁ : ℝ) true]),
+      1 / ((∏ i, rt i : ℕ) : ℝ) := ⟨_, rfl⟩
+  rw [← hSB, ← hSW] at hS
+  rw [← hSB] at hBb
+  rw [← hSW] at hWb
+  rw [hS]
+  have hSB0 : 0 ≤ SB := by rw [hSB]; exact hnn _
+  have hSW0 : 0 ≤ SW := by rw [hSW]; exact hnn _
+  refine (norm_add_le _ _).trans ?_
+  have e1 : Mc * ((SB + SW) * Pz * (1 + PN)) = Mc * (SB * Pz * (1 + PN)) + Mc * (SW * Pz) +
+      Mc * (SW * Pz * PN) := by ring
+  have h3 : 0 ≤ Mc * (SW * Pz * PN) := mul_nonneg hMc (mul_nonneg (mul_nonneg hSW0 hPz0) hPN0)
+  rw [e1]
+  have e2 : (2 * (smax : ℝ) + smax * smax) * (3 * ((q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₃))) +
+      ((smax : ℝ) * smax + smax) * ((q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₁)) =
+      ((smax : ℝ) + smax * smax) * (3 * ((q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₃))) +
+        (smax : ℝ) * smax * ((q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₁)) +
+        (smax * (3 * ((q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₃))) +
+          smax * ((q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ₁))) := by
+    ring
   linarith
 
 end SieveFillE

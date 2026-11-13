@@ -424,12 +424,12 @@ class Search:
         return None
 
     def energyHere(self):
-        """Whether the leaves of the comparison with the rest among the box's primes may be cut in three: with
-        `T.energy`, in the main tree and over the frozen parts."""
+        """Whether the leaves of the comparisons may be cut in three: with `T.energy`, in the main tree and over the
+        frozen parts, with the rest among the box's primes or among the tree's."""
         return self.T.energy
 
     def t5J(self):
-        """The largest sum of the leaves' sizes for the comparison with the rest among the box's primes here."""
+        """The largest sum of the leaves' sizes for a comparison here."""
         return max(self.T5, self.T5E) if self.energyHere() else self.T5
 
     def leavesOfE(self, bl, hs, t):

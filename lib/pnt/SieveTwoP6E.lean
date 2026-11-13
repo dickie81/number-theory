@@ -11,8 +11,9 @@ estimate in two variables (`SieveLeafTwo.LeavesE`).
 Plain statements. `L` is a route's exponent (`SieveRoute.Route`).
 
 * `tree_pattern2_le3`: `SieveTwoP6.tree_pattern2_le` with `tree_leaves_le3` for the leaves.
-* `tree_pattern2_ib3`: the same with the sizes from the boxes, for a box whose leaves are cut at `d₁ ≤ q^{pA}` and
-  `d₂ ≤ q^{th}`: `LeavesOK` with `pA` for `d₁` on the first part and `th` for `d₂` on the second, `LeavesE` on the third.
+* `tree_pattern2_ib3`: the same with the sizes from the boxes, for a box whose leaves are cut at `d₁ ≤ q^{pA}`
+  and `d₂ ≤ q^{th}`: `LeavesOK` with `pA` for `d₁` on the first part and `th` for `d₂` on the second, `LeavesE`
+  on the third.
 * `prop6_two_core3`: `SieveTwoP6.prop6_two_core` with `tree_pattern2_ib3`.
 
 The file imports `SieveTwoP6.lean`, `SieveLeafSplit.lean` and `SieveLeafTwo.lean`.
@@ -83,7 +84,8 @@ theorem tree_pattern2_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {
   refine (norm_add_le _ _).trans ?_
   have hL := SieveLeafSplit.tree_leaves_le3 ha' hokL hokL₂ Ω S₀ I hE hw2 hwz hz₀ hsmax hKL hlenL hΛ₁ hc hlz hlE hΛ
     hX hN hreg' hcase hC₀ hC hk hk1 hkC ((primesIco ⌈(q : ℝ) ^ εw⌉₊ z₀).card + 1)
-  have hS := SieveTwoP6.stops_bound2 hq1 a' hΛ₁ hokC Ω S₀ Sr hdisj hSr (by omega) (Nat.le_ceil _) hwz hAB hsmax hKC hlenC hc
+  have hS := SieveTwoP6.stops_bound2 hq1 a' hΛ₁ hokC Ω S₀ Sr hdisj hSr (by omega) (Nat.le_ceil _) hwz hAB hsmax
+    hKC hlenC hc
     hlz hlE hreg ((primesIco ⌈(q : ℝ) ^ εw⌉₊ z₀).card + 1)
   linarith
 

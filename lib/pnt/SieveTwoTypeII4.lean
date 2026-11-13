@@ -33,7 +33,8 @@ set_option maxHeartbeats 1000000 in
 open scoped ContDiff in
 /-- **Proposition 3′ in two variables with the fourth moment, for a curve on a region of a zone, pointwise in the
 heights.** `typeII_two_gen` with the zone's exponents by the three bounds (`ZoneOK4`). Hypotheses: `g ≤ 1` (`hg1`),
-`g(1/2) = 1` (`hg0`), the counts `CurveCounts g` (`hcnt`), the zone's exponents on the region `R` (`hzone`), `f0` smooth (`hf0`) with support in `[1/2, 2]` (`hsupp`), `K₀ ≥ 0`, `e₁ > 0` (`he₁`) and `0 < η ≤ 10⁻⁵`
+`g(1/2) = 1` (`hg0`), the counts `CurveCounts g` (`hcnt`), the zone's exponents on the region `R` (`hzone`), `f0`
+smooth (`hf0`) with support in `[1/2, 2]` (`hsupp`), `K₀ ≥ 0`, `e₁ > 0` (`he₁`) and `0 < η ≤ 10⁻⁵`
 (`hη`, `hη1`). There is `q₀` such that for `q ≥ q₀`, `S_i ⊆ (P_i, 2P_i]` with `P_i ≥ 1` and the exponents
 `(log_q P₁, log_q P₂)` in `R`, and `K ≤ K₀` prime sums at scales `Q_j ≥ q^{e₁}` and heights `|h_j| ≤ q^η` with
 `∏ Q_j ≤ 2^{K₀}q^L/(P₁P₂)`: the sum over `χ ≠ 1` of

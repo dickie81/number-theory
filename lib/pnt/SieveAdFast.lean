@@ -175,7 +175,7 @@ theorem coreI2P_eq (u v ρ₁ ρ₂ : ℕ) : coreI2P u v ρ₁ ρ₂ = coreI2 u 
 
 theorem coreJ3_eq (f : ℕ) (e : Bool) (u v t r1 r2 c0lo c0hi h1s h2s : ℕ) :
     coreJ3 f e u v t r1 r2 c0lo c0hi h1s h2s = (Nat.blt 0 f && coreJ3P f e u v t r1 r2 c0lo c0hi h1s h2s) := by
-  simp only [coreJ3, coreJ3P, zoneJP, leavesP, Bool.and_assoc]
+  simp only [coreJ3, coreJ3P, zoneJP, leavesP, leavesL, Bool.and_assoc]
   rfl
 
 theorem coreJ2_eq (f : ℕ) (e : Bool) (u v t ρ₁ ρ₂ c0lo c0hi h1s h2s : ℕ) :
@@ -210,7 +210,7 @@ theorem okJ3F_eq (bl : List Cell) (f : ℕ) (cfg : Cfg) : okJ3F bl f cfg = okJ3 
   simp only [Nat.zero_add]
   by_cases h : bl.length ≤ 13
   · rw [List.take_of_length_le h, cellsP_eq, uOfP_eq, vOfP_eq]
-    simp only [okJ3, chkJ3, coreJ3P, zoneJP, leavesP, Bool.and_assoc]
+    simp only [okJ3, chkJ3, coreJ3P, zoneJP, leavesP, leavesL, Bool.and_assoc]
     rfl
   · simp only [okJ3, chkJ3, ble_false_of_not_le h, Bool.false_and, Bool.and_false]
 

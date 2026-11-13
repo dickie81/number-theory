@@ -133,7 +133,8 @@ on numbers. -/
 def coreJ3P (f : ℕ) (e : Bool) (u v t r1 r2 c0lo c0hi h1s h2s : ℕ) : Bool :=
   zoneJP u v r1 r2 && Nat.blt (Nat.add r1 f) r2 && Nat.blt (Nat.add u f) v && Nat.ble u (Nat.add t c0lo) &&
     Nat.blt c0hi v &&
-    leavesP (Nat.add h1s (cond e (Nat.add t r2) 0)) (Nat.add h2s (cond e 0 (Nat.add t r2)))
+    (leavesP (Nat.add h1s (cond e (Nat.add t r2) 0)) (Nat.add h2s (cond e 0 (Nat.add t r2))) ||
+      leavesE (Nat.add h1s (cond e (Nat.add t r2) 0)) (Nat.add h2s (cond e 0 (Nat.add t r2))))
 
 /-- `coreJ2` but for its first check `0 < f`: the checks of the comparison with the rest among the box's primes on
 numbers. -/

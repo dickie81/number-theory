@@ -118,6 +118,14 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `th − ε` to `D₂ + ε`); the third part by `SieveLeafTwo.leavesE_of_zone` on the boxes `(⌊q^{pA}⌋, ⌊4q^{D₁}⌋]` and
   `(⌊q^{th}⌋, ⌊4q^{D₂}⌋]` (`SieveTwoCompE.leaf_window`). The sieve's tests of the comparison in two variables use it
   (`SieveAd.evJ_two_core3`): they accept the leaves cut in three where the paper's conditions fail;
+- `SieveFillCompE.prop6_fill3_at` (`lib/pnt/SieveFillCompE.lean`, with a route `SieveFillCompE.prop6_fill3`):
+  `SieveFillComp.prop6_fill_at`, the comparison with the rest among the tree's primes, for a box of leaves cut in
+  three as `prop6_two3_at`'s, with the growth `t + ρ₂` in the leaves' sizes. Its proof is `prop6_fill`'s with
+  `SieveFillE.prop6_fill_core3` at each `q` (`lib/pnt/SieveFillE.lean`: the trees' leaves by
+  `SieveLeafSplit.tree_leaves_le3` and, below the stops, by `SieveFillE.leaves_last_le3`, each size's three cases
+  from the leaves' bounds by `SieveLeafFam3.cases3_of_bounds`; `lib/pnt/SieveLeafFam3.lean` states the cut for any
+  family, `SieveLeafFam3.family_leaves_le3`). The sieve's tests with the rest among the tree's primes use it
+  (`SieveAd.evJ_fill_core3`);
 - `SieveLeafZoneX.leafZoneX_of_XL` and `SieveLeafZoneX.leafXR_sound` (`lib/pnt/SieveLeafZoneX.lean`, written by
   `tools/linnik/gen_leafzone.py`): `LeafZoneX` contains the intersection `LeafZoneXL` of 19 half-planes (the
   region's inequalities but `m₂ ≤ 1/2`, and its cuts again at `m₂ = 1/2`, since every case has `m₂` on its larger

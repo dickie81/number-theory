@@ -7,7 +7,8 @@ sums of a list: the terms of a reversed term, whose frozen part carries a cofact
 
 * `coreJ3`: the checks of `chkJ3` (the comparison in two variables with the rest among the tree's primes), on the
   sums `c0lo`, `c0hi` of the lower and upper ends over the set that enters the window, and `h1s`, `h2s` of the
-  upper ends over the first side of the leaves and over the other primes.
+  upper ends over the first side of the leaves and over the other primes; the leaves by the paper's conditions or
+  cut in three.
 * `coreJ2`: the checks of `chkJ2` (the comparison in two variables with the rest among the box's primes), on those
   sums and on `ρ₁`, `ρ₂`, the sums of the lower and upper ends over the rest's set; the leaves by the paper's
   conditions or cut in three.
@@ -43,9 +44,7 @@ def coreJ3 (f : ℕ) (e : Bool) (u v t r1 r2 c0lo c0hi h1s h2s : ℕ) : Bool :=
     Nat.blt (u + f) v &&
     Nat.ble u (t + c0lo) &&
     Nat.blt c0hi v &&
-    Nat.blt (Lnum * D₁ + Lden * DEN) (Lnum * DEN) &&
-    Nat.blt (2 * Lnum * (D₁ + D₂) + Lden * DEN) (2 * Lnum * DEN) &&
-    Nat.blt (Lnum * (D₁ + 2 * D₂) + 2 * Lden * DEN) (2 * Lnum * DEN)
+    (leavesL D₁ D₂ || leavesE D₁ D₂)
 
 /-- The checks of the comparison in two variables at the floor `f`, on the sums of a box: the rest's exponent in
 `[ρ₁ − 1, ρ₂ + 1]`, `ρ₁` at most the sum of the lower ends over the rest's set and `ρ₂` at least that of the upper

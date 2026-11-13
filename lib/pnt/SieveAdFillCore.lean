@@ -9,7 +9,8 @@ same statement is made for a box as a function and sets of its indices, with num
 (`SieveAd.coreJ3`, `SieveAdCoreDefs.lean`): for the boxes that the tuples of a reversed term fall into, which are
 not the boxes of the search's lists.
 
-* `evJ_fill_core`: for a box `bx` with `f ≤ lo ≤ hi ≤ DEN`, sets `S₀`, `S₁` of its indices, and numbers
+* `evJ_fill_core`: for a box `bx` with `f ≤ lo ≤ hi ≤ DEN`, sets `S₀`, `S₁` of its indices (where the leaves are cut
+  in three, by `SieveAd.evJ_fill_core3`), and numbers
   `c0lo ≤ Σ_{S₀} lo`, `c0hi ≥ Σ_{S₀} hi`, `h1s ≥ Σ_{S₁} hi`, `h2s ≥ Σ_{S₁ᶜ} hi` that pass `coreJ3` at the floor
   `f`: the terms of the box at the floor `x^{f/DEN}` are evaluated under `m` more atoms, uniformly in the atoms,
   for any number `k` of primes.
@@ -50,8 +51,15 @@ theorem evJ_fill_core {k : ℕ} (bx : Fin k → Cell) (f : ℕ) (S₀ S₁ : Fin
     (h2 : ∑ i ∈ S₁ᶜ, (bx i).2 ≤ h2s) {m J₀ : ℕ} (hm : 3 * k + m ≤ J₀) :
     ∀ η : ℝ, 0 < η → ∀ᶠ q : ℕ in atTop, ∀ a : ZMod q, IsUnit a → ∀ E : List (Atom k), E.length ≤ m →
       ThrOK q E → |dJP q a f bx (fun rt => ∀ A ∈ E, A.sem rt)| ≤ (q.totient : ℝ)⁻¹ * (η * Xq q) := by
-  simp only [coreJ3, Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq] at hok
-  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hf0, z1⟩, z2⟩, z3⟩, z4⟩, z5⟩, z6⟩, q1⟩, p1⟩, p2⟩, p3⟩, p4⟩, p5⟩, p6⟩ := hok
+  simp only [coreJ3, Bool.and_eq_true, Bool.or_eq_true, Nat.ble_eq, Nat.blt_eq] at hok
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hf0, z1⟩, z2⟩, z3⟩, z4⟩, z5⟩, z6⟩, q1⟩, p1⟩, p2⟩, p3⟩, hlv⟩ := hok
+  -- the leaves cut in three
+  rcases hlv with hlv | hE
+  swap
+  · exact evJ_fill_core3 bx f S₀ S₁ e u v t r1 r2 c0lo c0hi h1s h2s hf0 z1 z2 z3 z4 z5 z6 q1 p1 p2 p3 hE hbxc h0lo
+      h0hi h1 h2 hm
+  simp only [leavesL, Bool.and_eq_true, Nat.blt_eq, Nat.mul_eq, Nat.add_eq] at hlv
+  obtain ⟨⟨p4, p5⟩, p6⟩ := hlv
   set D₁ := h1s + cond e (t + r2) 0 with hD₁def
   set D₂ := h2s + cond e 0 (t + r2) with hD₂def
   -- the reals

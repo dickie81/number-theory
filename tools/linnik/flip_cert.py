@@ -134,7 +134,7 @@ class FlipSearch(fc.FillSearch):
         T = self.T
         D1, D2 = h1s + (t + r2 if e else 0), h2s + (0 if e else t + r2)
         return (0 < f and T.zone(r1, r2, u, v) and r1 + f < r2 and u + f < v and u <= t + c0lo and c0hi < v
-                and T.leaves(D1, D2))
+                and (T.leaves(D1, D2) or (T.energy and T.leavesE(D1, D2))))
 
     def coreJ2(self, f, e, u, v, t, r1, r2, c0lo, c0hi, h1s, h2s):
         T = self.T

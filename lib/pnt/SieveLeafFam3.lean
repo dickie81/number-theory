@@ -178,14 +178,16 @@ theorem family_leaves_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {
         rw [← h, ← filter_large_eq _ hX0] at hx
         exact hreg x (Finset.mem_filter.1 hx).1
       -- a tuple of the large leaves, as a member with `∏x > X`
-      have hlarge : ∀ x ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))),
+      have hlarge : ∀ x ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter
+          (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))),
           x ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ Ω ∧ (q : ℝ) ^ (L - 1 - δ') < ((∏ i, x i : ℕ) : ℝ) := by
         intro x hx
         rw [← h, ← filter_large_eq _ hX0] at hx
         obtain ⟨hx1, hx2⟩ := Finset.mem_filter.1 hx
         exact ⟨hx1, not_le.1 hx2⟩
       rcases hcase with hgeo | hgeo | ⟨hne, hnec, X₁, X₂, hX₁1, hX₂1, hlX₁, hlX₂, hgA, hgB, hEs⟩
-      · have hgeo' : ∀ x ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))),
+      · have hgeo' : ∀ x ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter
+          (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))),
               ((∏ i ∈ S₁, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a) ∧
               ((∏ i ∈ S₁, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) *
                 ((∏ i ∈ S₁ᶜ, x i : ℕ) : ℝ) ^ 2 ≤ (q : ℝ) ^ (L - b) ∧
@@ -196,7 +198,8 @@ theorem family_leaves_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {
           exact ⟨g1, g2, hlt.le⟩
         refine (large_leaves_le hok S₁ hK1 hK2 _ (by omega) hnz' hform' hreg' hgeo').trans ?_
         linarith
-      · have hgeo' : ∀ x ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))),
+      · have hgeo' : ∀ x ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter
+          (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))),
               ((∏ i ∈ S₁, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a₂) ∧
               ((∏ i ∈ S₁, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) *
                 ((∏ i ∈ S₁ᶜ, x i : ℕ) : ℝ) ^ 2 ≤ (q : ℝ) ^ (L - b₂) ∧
@@ -220,7 +223,8 @@ theorem family_leaves_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {
             have := Real.log_nonneg hX₁1
             linarith
           · exact hlX₂
-        have hform'' : ∀ C ∈ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))) ++
+        have hform'' : ∀ C ∈ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter (fun C : GCmp j => decide (∃ i,
+            C.e i ≠ 0))) ++
             [gUp S₁ X₁ false, gDown S₁ X₁ true, gUp S₁ᶜ X₂ false],
             ∀ x : Fin j → ℕ, (∀ i, 1 ≤ x i ∧ x i ≤ ⌊2 * (q : ℝ) ^ L⌋₊) → C.form 0 x ≤ Λ₀ * Real.log q := by
           intro C hC x hx
@@ -230,7 +234,8 @@ theorem family_leaves_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {
               (fun i => by exact_mod_cast (hx i).2)
             have h2 := hcut C hC
             linarith
-        have hgeoA : ∀ x ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))),
+        have hgeoA : ∀ x ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter
+            (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))),
             ∏ i ∈ S₁, (x i : ℝ) ≤ X₁ →
               ((∏ i ∈ S₁, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a) ∧
               ((∏ i ∈ S₁, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) *
@@ -240,7 +245,8 @@ theorem family_leaves_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {
           obtain ⟨hx1, hlt⟩ := hlarge x hx
           obtain ⟨g1, g2⟩ := hgA x hx1 hlt hle
           exact ⟨g1, g2, hlt.le⟩
-        have hgeoB : ∀ x ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))),
+        have hgeoB : ∀ x ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter
+            (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))),
             X₁ < ∏ i ∈ S₁, (x i : ℝ) → ∏ i ∈ S₁ᶜ, (x i : ℝ) ≤ X₂ →
               ((∏ i ∈ S₁, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a₂) ∧
               ((∏ i ∈ S₁, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) *
@@ -250,7 +256,8 @@ theorem family_leaves_le3 {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {
           obtain ⟨hx1, hlt⟩ := hlarge x hx
           obtain ⟨g1, g2⟩ := hgB x hx1 hlt hlt₁ hle₂
           exact ⟨g1, g2, hlt.le⟩
-        have hfam : RTg j ⌊2 * (q : ℝ) ^ L⌋₊ (((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))) ++
+        have hfam : RTg j ⌊2 * (q : ℝ) ^ L⌋₊ (((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]).filter
+            (fun C : GCmp j => decide (∃ i, C.e i ≠ 0))) ++
             [gDown S₁ X₁ true, gDown S₁ᶜ X₂ true]) =
             RTg j ⌊2 * (q : ℝ) ^ L⌋₊ ((Ω ++ [gDown univ ((q : ℝ) ^ (L - 1 - δ')) true]) ++
               [gDown S₁ X₁ true, gDown S₁ᶜ X₂ true]) := by
@@ -309,7 +316,8 @@ theorem cases3_of_bounds {q : ℕ} [NeZero q] {a' : ZMod q} {L a b a₂ b₂ δ'
     ⟨fun i => (SieveTypeIIU.mem_primesLe.1 (Fintype.mem_piFinset.1 (Finset.mem_filter.1 hx).1 i)).2,
       (Finset.mem_filter.1 hx).2⟩
   -- the first part's sizes, `∏_I x ≤ q^{pA}`, and the second's, `∏_{Iᶜ} x ≤ q^{th}`
-  have hA : ∀ x ∈ RTg K ⌊2 * (q : ℝ) ^ L⌋₊ Ω, (q : ℝ) ^ (L - 1 - δ') < ((∏ i, x i : ℕ) : ℝ) → ∏ i ∈ I, (x i : ℝ) ≤ (q : ℝ) ^ pA →
+  have hA : ∀ x ∈ RTg K ⌊2 * (q : ℝ) ^ L⌋₊ Ω, (q : ℝ) ^ (L - 1 - δ') < ((∏ i,
+      x i : ℕ) : ℝ) → ∏ i ∈ I, (x i : ℝ) ≤ (q : ℝ) ^ pA →
       ((∏ i ∈ I, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a) ∧
           ((∏ i ∈ I, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) * ((∏ i ∈ Iᶜ, x i : ℕ) : ℝ) ^ 2 ≤
             (q : ℝ) ^ (L - b) := by
@@ -318,7 +326,8 @@ theorem cases3_of_bounds {q : ℕ} [NeZero q] {a' : ZMod q} {L a b a₂ b₂ δ'
     push_cast
     exact SieveP6ib.leaf_sizes_num hq0 (Finset.prod_nonneg fun i _ => Nat.cast_nonneg _) (by linarith) hIc' hw0
       hwpow hszA₁ hszA₂
-  have hB : ∀ x ∈ RTg K ⌊2 * (q : ℝ) ^ L⌋₊ Ω, (q : ℝ) ^ (L - 1 - δ') < ((∏ i, x i : ℕ) : ℝ) → ∏ i ∈ Iᶜ, (x i : ℝ) ≤ (q : ℝ) ^ th →
+  have hB : ∀ x ∈ RTg K ⌊2 * (q : ℝ) ^ L⌋₊ Ω, (q : ℝ) ^ (L - 1 - δ') < ((∏ i,
+      x i : ℕ) : ℝ) → ∏ i ∈ Iᶜ, (x i : ℝ) ≤ (q : ℝ) ^ th →
       ((∏ i ∈ I, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) ≤ (q : ℝ) ^ (L - 1 - a₂) ∧
           ((∏ i ∈ I, x i : ℕ) : ℝ) * (⌈(q : ℝ) ^ εw⌉₊ : ℝ) ^ (2 * k + 4) * ((∏ i ∈ Iᶜ, x i : ℕ) : ℝ) ^ 2 ≤
             (q : ℝ) ^ (L - b₂) := by

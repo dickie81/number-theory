@@ -100,7 +100,9 @@ from flip_cert import flipT, flipOK, vboxF  # noqa: E402
 CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
          # boxes of the sign `+` reversed too, and each step chosen by its cost plus ten millionths of `K` for
          # each second of the kernel
-         '21400': dict(lnum=2140, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=10, sec=2)}
+         '21400': dict(lnum=2140, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=10, sec=2),
+         # and the leaves of the comparisons cut in three where the paper's conditions fail
+         '21350': dict(lnum=2135, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=10, sec=2, energy=True)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
 # dropped cells next to each other are one cell while its bound is at most DMERGE of the sum of theirs
@@ -908,8 +910,8 @@ class Par:
         `blkF` (`blk` if not given) steps of the grid of side `hF` over a frozen part; `skip`: the planner does
         not try again, at the next cells of a prime, an alternative that lost at two cells in a row (at most
         `2^skip − 1` cells are skipped), a loss counting only if its search took `skipmin` boxes or more; `energy`:
-        the planner may cut in three the leaves of the comparison with the rest among the box's primes, in the main
-        tree and over the frozen parts, as the kernel's tests allow (`SieveAd.leavesE`)."""
+        the planner may cut in three the leaves of the comparisons, in the main tree and over the frozen parts, as
+        the kernel's tests allow (`SieveAd.leavesE`)."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
@@ -1381,7 +1383,7 @@ def main():
                    lam=int(a[a.index('--lam') + 1]) if '--lam' in a else 0, pos='--pos' in a,
                    blk=int(a[a.index('--blk') + 1]) if '--blk' in a else 1,
                    skip=int(a[a.index('--skip') + 1]) if '--skip' in a else 0,
-                   sec=2 if '--lam' in a or '--pos' in a else 1)
+                   sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a)
         rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache'):
         par_, rows = Par(tag, **CERTS[tag]), None

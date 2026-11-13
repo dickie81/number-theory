@@ -142,8 +142,9 @@ for `0 < u ≤ v`, `0 ≤ ρ₁ ≤ ρ₂`, `v + ρ₂ ≤ L` and `ε > 0`. Let 
 multiples `n ∈ (N₁, N₂]` of `∏rt` with no prime factor below `rt`'s last entry, summed over `rt`, have
 `|A − B/φ(q)|` at most `q^{L−δ}/φ(q)`: `SieveTwoTerm.chain2_bound` with the windows `(⌈q^u⌉ − 1, ⌊q^v⌋]` and
 `(⌈q^{ρ₁}⌉ − 1, ⌊q^{ρ₂}⌋]`. -/
-theorem chain2_exp {Rg : ℝ → ℝ → Prop} (hII : SieveFamilyTwo.TypeIITwoAt L Rg) {e₀ : ℝ} (he₀ : 0 < e₀) (k' J₀ : ℕ) {Λ₁ : ℝ}
-    (hΛ₁ : 0 ≤ Λ₁) {u v ρ₁ ρ₂ ε : ℝ} (hu : 0 < u) (huv : u ≤ v) (hρ₁0 : 0 ≤ ρ₁) (hρ : ρ₁ ≤ ρ₂) (hvρ : v + ρ₂ ≤ L)
+theorem chain2_exp {Rg : ℝ → ℝ → Prop} (hII : SieveFamilyTwo.TypeIITwoAt L Rg) {e₀ : ℝ} (he₀ : 0 < e₀) (k' J₀ : ℕ)
+    {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) {u v ρ₁ ρ₂ ε : ℝ} (hu : 0 < u) (huv : u ≤ v) (hρ₁0 : 0 ≤ ρ₁) (hρ : ρ₁ ≤ ρ₂)
+    (hvρ : v + ρ₂ ≤ L)
     (hε : 0 < ε)
     (hzone : ∀ m₁ m₂ : ℝ, u - ε ≤ m₁ → m₁ ≤ v → L - ρ₂ - ε ≤ m₁ + m₂ → m₁ + m₂ ≤ L - ρ₁ + ε → Rg m₁ m₂) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
@@ -303,8 +304,9 @@ set_option maxHeartbeats 1600000 in
 /-- **The comparison in two variables on the sums of a box, the leaves cut in three, under more atoms.** For a
 box `bx` with `f ≤ lo ≤ hi ≤ DEN`, sets `S₀`, `Sr ≠ ∅`, `S₁` of its indices, and numbers that bound their sums as
 for `SieveAd.evJ_two_core` and pass its checks but those of the leaves at the floor `f` (the region's six
-inequalities, the window and the set that enters it), the leaves' sizes passing `leavesE`: the terms of the box at the floor `x^{f/DEN}` are evaluated under `m` more atoms,
-uniformly in the atoms, when the box's `3k` atoms and those are at most `J₀`. -/
+inequalities, the window and the set that enters it), the leaves' sizes passing `leavesE`: the terms of the box at
+the floor `x^{f/DEN}` are evaluated under `m` more atoms, uniformly in the atoms, when the box's `3k` atoms and those
+are at most `J₀`. -/
 theorem evJ_two_core3 {k : ℕ} (bx : Fin k → Cell) (f : ℕ) (S₀ Sr S₁ : Finset (Fin k)) (hdisj : Disjoint S₀ Sr)
     (hSr : Sr.Nonempty) (e : Bool) (u v t ρ₁ ρ₂ c0lo c0hi h1s h2s : ℕ) (hf0 : 0 < f)
     (z1 : Lden * DEN + 2000 * Lnum ≤ 2000 * Lnum * ρ₁) (z2 : 2 * Lden * DEN ≤ 3 * Lnum * u)
@@ -489,8 +491,8 @@ theorem evJ_two_core3 {k : ℕ} (bx : Fin k → Cell) (f : ℕ) (S₀ Sr S₁ : 
   obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveTwoCompE.prop6_two3_at two_lt_L L_le (SieveFamilyTwo.typeIITwoAt_hx L) k J₀
     (Λ₁ := L + 1) (a₀ := κ * (f : ℝ)) (by linarith) (mul_pos hκ (by exact_mod_cast hf0))
     (fun i => κ * ((bx i).1 : ℝ)) (fun i => κ * ((bx i).2 : ℝ)) S₀ Sr S₁ hdisj hSr e
-    hu huv hρ₁0 hρ hvρ hρlo hρhi hκ hzone hlo hhi hpA hth hεE hDA₁ hDA₂ hDB₁ hDB₂ hDL hD₁0 hD₂0
-    hzoneE (η := η / (2 * L)) (by positivity)
+    hu huv hρ₁0 hρ hvρ hρlo hρhi hκ hzone hlo hhi rfl rfl hpA hth hεE hDA₁ hDA₂ hDB₁ hDB₂ hDL hD₁0
+    hD₂0 hzoneE (η := η / (2 * L)) (by positivity)
   filter_upwards [eventually_ge_atTop q₀, eventually_ge_atTop 2, le_Xq hδ (half_pos hη)] with q hq hq2 hX a ha
     E hEl hEt
   have : NeZero q := ⟨by omega⟩

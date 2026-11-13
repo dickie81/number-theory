@@ -15,8 +15,8 @@ complement nonempty, `D₁, D₂ ≥ 0`, `D₁ + D₂ < L`, and exponents `pA, t
 
 * `pA < L − 1` and `max(pA, 1) + pA + 2D₂ < 2L − 1` (the first part);
 * `D₁ < L − 1` and `max(D₁, 1) + D₁ + 2th < 2L − 1` (the second);
-* `LeafZoneX L m₁ m₂` for `pA − ε_E ≤ m₁ ≤ D₁ + ε_E` and `L − D₂ − ε_E ≤ m₁ + m₂ ≤ L − th + ε_E` (the third: `d₁` the first
-  variable, the cofactor the second, `d₂` the rest).
+* `LeafZoneX L m₁ m₂` for `pA − ε_E ≤ m₁ ≤ D₁ + ε_E` and `L − D₂ − ε_E ≤ m₁ + m₂ ≤ L − th + ε_E` (the third:
+  `d₁` the first variable, the cofactor the second, `d₂` the rest).
 
 The conclusion is the same: for every `η > 0` there are `δ > 0` and `q₀` with
 `|Σ_{rt}(S(A_r, z₀) − S(B_r, z₀)/φ(q))| ≤ ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` for `q ≥ q₀`.
@@ -52,9 +52,9 @@ theorem leavesOK_mono {q : ℕ} (hq : 1 ≤ q) {a' : ZMod q} {L a b δ' εw Λ�
 
 omit [Route] in
 /-- **The window of the leaves' third part.** For `q > 1`, `pA, th, D₁, D₂ ≥ 0`, `64 ≤ q^{L−D₁−D₂}` and `64 ≤ q^{ε_E}`:
-the boxes `(⌊q^{pA}⌋, ⌊4q^{D₁}⌋]` and `(⌊q^{th}⌋, ⌊4q^{D₂}⌋]` have their ends at least `1` and `⌊4q^{D₁}⌋⌊4q^{D₂}⌋ ≤ ⌊q^L⌋`,
-and a region that holds for `pA − ε_E ≤ m₁ ≤ D₁ + ε_E` and `L − D₂ − ε_E ≤ m₁ + m₂ ≤ L − th + ε_E` holds on their
-window (`SieveLeafTwo.leavesE_of_zone`'s). -/
+the boxes `(⌊q^{pA}⌋, ⌊4q^{D₁}⌋]` and `(⌊q^{th}⌋, ⌊4q^{D₂}⌋]` have their ends at least `1` and
+`⌊4q^{D₁}⌋⌊4q^{D₂}⌋ ≤ ⌊q^L⌋`, and a region that holds for `pA − ε_E ≤ m₁ ≤ D₁ + ε_E` and
+`L − D₂ − ε_E ≤ m₁ + m₂ ≤ L − th + ε_E` holds on their window (`SieveLeafTwo.leavesE_of_zone`'s). -/
 theorem leaf_window {q : ℕ} {L pA th D₁ D₂ εE : ℝ} (hq1' : (1 : ℝ) < q) (hpA : 0 ≤ pA) (hth : 0 ≤ th)
     (hD₁0 : 0 ≤ D₁) (hD₂0 : 0 ≤ D₂) (hL0 : 0 < L) (h64D : 64 ≤ (q : ℝ) ^ (L - D₁ - D₂))
     (h64ε : 64 ≤ (q : ℝ) ^ εE) {Rg : ℝ → ℝ → Prop}
@@ -166,11 +166,11 @@ theorem prop6_two3 [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg
     (hvρ : v + ρ₂ < L) (hρlo : ρ₁ ≤ ∑ i ∈ Sr, lo i) (hρhi : ∑ i ∈ Sr, hi i ≤ ρ₂) (hε : 0 < ε)
     (hzone : ∀ m₁ m₂ : ℝ, u ≤ m₁ → m₁ ≤ v → L - ρ₂ - ε ≤ m₁ + m₂ → m₁ + m₂ ≤ L - ρ₁ + ε → Rg m₁ m₂)
     (hlo : u - ∑ i ∈ S₀, lo i ≤ t) (hhi : ∑ i ∈ S₀, hi i < v)
-    {pA th εE : ℝ} (hpA : 0 ≤ pA) (hth : 0 ≤ th) (hεE : 0 < εE)
-    (hDA₁ : pA < L - 1) (hDA₂ : max pA 1 + pA + 2 * (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) < 2 * L - 1)
-    (hDB₁ : (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) < L - 1) (hDB₂ : max (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) 1 + (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) + 2 * th < 2 * L - 1)
-    (hDL : (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) + (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) < L) (hD₁0 : 0 ≤ (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0))) (hD₂0 : 0 ≤ (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)))
-    (hzoneE : ∀ m₁ m₂ : ℝ, pA - εE ≤ m₁ → m₁ ≤ (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) + εE → L - (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) - εE ≤ m₁ + m₂ →
+    {D₁ D₂ : ℝ} (hD₁def : D₁ = ∑ i ∈ S₁, hi i + (if eIn₁ then t else 0))
+    (hD₂def : D₂ = ∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) {pA th εE : ℝ} (hpA : 0 ≤ pA)
+    (hth : 0 ≤ th) (hεE : 0 < εE) (hDA₁ : pA < L - 1) (hDA₂ : max pA 1 + pA + 2 * D₂ < 2 * L - 1)
+    (hDB₁ : D₁ < L - 1) (hDB₂ : max D₁ 1 + D₁ + 2 * th < 2 * L - 1) (hDL : D₁ + D₂ < L) (hD₁0 : 0 ≤ D₁)
+    (hD₂0 : 0 ≤ D₂) (hzoneE : ∀ m₁ m₂ : ℝ, pA - εE ≤ m₁ → m₁ ≤ D₁ + εE → L - D₂ - εE ≤ m₁ + m₂ →
       m₁ + m₂ ≤ L - th + εE → SieveLeafTwo.LeafZoneX L m₁ m₂)
     {η : ℝ} (hη : 0 < η) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
@@ -183,11 +183,6 @@ theorem prop6_two3 [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg
   have hL2 := two_lt_L
   obtain ⟨C₀, hC₀1, hC⟩ := SieveRanges.rng_sum_le
   have hC₀ : 0 ≤ C₀ := by linarith
-  -- the leaves' two blocks, and their margins
-  obtain ⟨D₁, hD₁def⟩ : ∃ D₁ : ℝ, D₁ = ∑ i ∈ S₁, hi i + (if eIn₁ then t else 0) := ⟨_, rfl⟩
-  obtain ⟨D₂, hD₂def⟩ : ∃ D₂ : ℝ, D₂ = ∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t) := ⟨_, rfl⟩
-  rw [← hD₂def] at hDA₂ hDL hzoneE hD₂0
-  rw [← hD₁def] at hDB₁ hDB₂ hDL hzoneE hD₁0
   -- the exponents of the two parts by the paper's lemma: `(pA, D₂)` and `(D₁, th)`
   obtain ⟨A₀A, hA₀Adef⟩ : ∃ A₀ : ℝ, A₀ = L - 1 - max pA 1 := ⟨_, rfl⟩
   obtain ⟨A₀B, hA₀Bdef⟩ : ∃ A₀ : ℝ, A₀ = L - 1 - max D₁ 1 := ⟨_, rfl⟩
@@ -604,17 +599,18 @@ theorem prop6_two3 [RouteOK] {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg
 omit [Route] in
 /-- **Harman's comparison with stops in two variables with a box of leaves cut in three, for an exponent
 `2 < L ≤ 5/2`**: `prop6_two3` with no route. -/
-theorem prop6_two3_at {L : ℝ} (hL2 : 2 < L) (hL : L ≤ 5 / 2) {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg) (j J₀ : ℕ) {Λ₁ a₀ : ℝ} (hΛ₁ : 0 ≤ Λ₁)
-    (ha₀ : 0 < a₀) (lo hi : Fin j → ℝ) (S₀ Sr S₁ : Finset (Fin j)) (hdisj : Disjoint S₀ Sr) (hSr : Sr.Nonempty)
+theorem prop6_two3_at {L : ℝ} (hL2 : 2 < L) (hL : L ≤ 5 / 2) {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg)
+    (j J₀ : ℕ) {Λ₁ a₀ : ℝ} (hΛ₁ : 0 ≤ Λ₁) (ha₀ : 0 < a₀) (lo hi : Fin j → ℝ) (S₀ Sr S₁ : Finset (Fin j))
+    (hdisj : Disjoint S₀ Sr) (hSr : Sr.Nonempty)
     (eIn₁ : Bool) {t u v ρ₁ ρ₂ ε : ℝ} (hu : 0 < u) (huv : u + a₀ < v) (hρ₁0 : 0 ≤ ρ₁) (hρ : ρ₁ ≤ ρ₂)
     (hvρ : v + ρ₂ < L) (hρlo : ρ₁ ≤ ∑ i ∈ Sr, lo i) (hρhi : ∑ i ∈ Sr, hi i ≤ ρ₂) (hε : 0 < ε)
     (hzone : ∀ m₁ m₂ : ℝ, u ≤ m₁ → m₁ ≤ v → L - ρ₂ - ε ≤ m₁ + m₂ → m₁ + m₂ ≤ L - ρ₁ + ε → Rg m₁ m₂)
     (hlo : u - ∑ i ∈ S₀, lo i ≤ t) (hhi : ∑ i ∈ S₀, hi i < v)
-    {pA th εE : ℝ} (hpA : 0 ≤ pA) (hth : 0 ≤ th) (hεE : 0 < εE)
-    (hDA₁ : pA < L - 1) (hDA₂ : max pA 1 + pA + 2 * (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) < 2 * L - 1)
-    (hDB₁ : (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) < L - 1) (hDB₂ : max (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) 1 + (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) + 2 * th < 2 * L - 1)
-    (hDL : (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) + (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) < L) (hD₁0 : 0 ≤ (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0))) (hD₂0 : 0 ≤ (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)))
-    (hzoneE : ∀ m₁ m₂ : ℝ, pA - εE ≤ m₁ → m₁ ≤ (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) + εE → L - (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) - εE ≤ m₁ + m₂ →
+    {D₁ D₂ : ℝ} (hD₁def : D₁ = ∑ i ∈ S₁, hi i + (if eIn₁ then t else 0))
+    (hD₂def : D₂ = ∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) {pA th εE : ℝ} (hpA : 0 ≤ pA)
+    (hth : 0 ≤ th) (hεE : 0 < εE) (hDA₁ : pA < L - 1) (hDA₂ : max pA 1 + pA + 2 * D₂ < 2 * L - 1)
+    (hDB₁ : D₁ < L - 1) (hDB₂ : max D₁ 1 + D₁ + 2 * th < 2 * L - 1) (hDL : D₁ + D₂ < L) (hD₁0 : 0 ≤ D₁)
+    (hD₂0 : 0 ≤ D₂) (hzoneE : ∀ m₁ m₂ : ℝ, pA - εE ≤ m₁ → m₁ ≤ D₁ + εE → L - D₂ - εE ≤ m₁ + m₂ →
       m₁ + m₂ ≤ L - th + εE → SieveLeafTwo.LeafZoneX L m₁ m₂)
     {η : ℝ} (hη : 0 < η) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
@@ -627,6 +623,6 @@ theorem prop6_two3_at {L : ℝ} (hL2 : 2 < L) (hL : L ≤ 5 / 2) {Rg : ℝ → �
   let _ : Route := SieveTwoTerm.routeOf L
   have _ : RouteOK := SieveTwoTerm.routeOK_of hL2 hL
   exact prop6_two3 hII j J₀ hΛ₁ ha₀ lo hi S₀ Sr S₁ hdisj hSr eIn₁ hu huv hρ₁0 hρ hvρ hρlo hρhi hε hzone hlo hhi
-    hpA hth hεE hDA₁ hDA₂ hDB₁ hDB₂ hDL hD₁0 hD₂0 hzoneE hη
+    hD₁def hD₂def hpA hth hεE hDA₁ hDA₂ hDB₁ hDB₂ hDL hD₁0 hD₂0 hzoneE hη
 
 end SieveTwoCompE
