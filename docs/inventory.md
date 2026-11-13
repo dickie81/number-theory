@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1792 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1796 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 240, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 196 | 692 |
+| `lib/core` | 196 | 696 |
 | `lib/pnt` | 323 | 987 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -748,6 +748,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PivotSharp.pivot_ge_rh`: Under RH every pivot clears `d_1` ([note](../formalisations/ball-rate.md))
 - `PivotSharp.orbitLattice_of_rh`: The orbit-lattice conjecture holds under RH ([note](../formalisations/ball-rate.md))
 - `PivotSharp.rh_iff_orbitLattice`: RH ⟺ the orbit-lattice conjecture ([note](../formalisations/ball-rate.md))
+- `PivotSharp.lattice_gap`: Away from `±δ_1` the lattice is longer ([note](../formalisations/ball-rate.md))
+- `PivotSharp.shortest_of_rh`: Under RH, `w_1` is a shortest vector of the orbit lattice ([note](../formalisations/ball-rate.md))
+- `PivotSharp.shortest_unique`: Under RH the shortest vectors are `±δ_1` alone ([note](../formalisations/ball-rate.md))
+- `PivotSharp.rh_iff_shortest`: RH ⟺ `w_1` is a shortest vector of the orbit lattice ([note](../formalisations/ball-rate.md))
 
 #### `PivotTop`: The top vertex keeps `13/10` of its diagonal: `(log N + d)Σc_n² − L(c) ≥ (13/10)c_N²` for `d ≥ 17/20`
 

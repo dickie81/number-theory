@@ -895,6 +895,9 @@ read at the top vertex instead of the root.
 | `PivotSharp.rh_iff_orbitLattice` | RH ⟺ `Q_k(δ_k − Σ_{n < k}c_n δ_n) ≥ Q_1(δ_1)` for every `k ≥ 1` and all real `c` | nothing |
 | `PivotSharp.orbitLattice_of_rh` | `Q_k(δ_k − Σ_{n < k}c_n δ_n) ≥ Q_1(δ_1)` for every `k ≥ 1` and all real `c` | RH |
 | `PivotSharp.pivot_ge_rh` | `Q_N(x) ≥ (999/1000)(2/45)(13/10)·x_N² ≥ 0.0577·x_N²` for every `N ≥ 2` and every real `x` | RH |
+| `PivotSharp.rh_iff_shortest` | RH ⟺ `Q_N(a) ≥ Q_1(δ_1) = K_H(1)` at every nonzero integer vector `a`, for every `N`: `w_1` is a shortest vector of the orbit lattice | nothing |
+| `PivotSharp.shortest_of_rh`, `PivotSharp.shortest_unique` | every nonzero integer vector has `Q_N(a) ≥ K_H(1)`, and only `±δ_1` have `Q_N(a) ≤ K_H(1)` | RH |
+| `PivotSharp.lattice_gap` | an integer vector with a nonzero coefficient at some `2 ≤ k ≤ N` has `Q_N(a) ≥ (999/1000)(2/45)(13/10) ≥ 0.0577` | RH |
 | `PivotSharp.form_ge` | `Q_N(x) ≥ (φ̂(0)/2πN)((log N + 7/8)Σc_n² − L(c)) − Σc_n²/(6000N)` for `N ≥ 2`, `c_n = x_n√n` | RH and `PivotSharp.MuLe`, which `PivotCert.mu_le` proves |
 | `PivotCert.mu_le` | `μ(s) ≤ φ(s)(Re ψ(¼ + iNs/2) − log π − log N)` for every `N ≥ 2` and every real `s` | nothing |
 | `PivotMinorFT.integral_mu_cos_eq_zero`, `PivotMinorFT.integral_mu_ge` | `∫μ(s)cos(sv) ds = 0` for `\|v\| ≥ 1`, and `∫μ ≥ (7/8)φ̂(0)` | nothing |
@@ -907,6 +910,14 @@ read at the top vertex instead of the root.
 orbit-lattice conjecture of [ball-conjecture.md](../docs/ball-conjecture.md) is equivalent to RH, with no finite range
 left: neither the certificate for `k ≤ 10⁴` nor `BallPivot`'s range `log k ≥ 7100` is needed. It is another form of RH,
 not a route to it.
+
+**The orbit lattice.** For an integer vector the last nonzero coefficient `a_k` has `a_k² ≥ 1`, so the pivot at `k`
+gives `Q_N(a) ≥ 0.0577` as soon as `k ≥ 2` (`lattice_gap`), while a vector supported at `1` has `Q_N(a) = a_1²·K_H(1)`.
+So under RH the integer combinations of the orbit form a lattice whose minimum is `K_H(1) = ‖w_1‖²`, attained at `±w_1`
+only (`shortest_of_rh`, `shortest_unique`), and every other lattice vector is longer by a factor at least
+`√1.249 = 1.118`. Conversely a positive minimum at the integer vectors gives RH, as in `BallPivot.rh_iff_lattice`. This
+is the lattice statement of step 6 of [ball-conjecture.md](../docs/ball-conjecture.md) with its sharp constant: RH holds
+if and only if `w_1` is a shortest vector of the orbit lattice (`rh_iff_shortest`).
 
 **The proof.** It is `BallSharp`'s, with a test function that keeps the zeros above height `≈ 5N` and drops those below,
 where the density of the zeros is small. Weil's explicit formula is applied to `h = |D|²Φ_N`, `D(t) = Σ_{n ≤ N}c_n n^{−it}`,
