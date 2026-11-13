@@ -16,14 +16,15 @@ kernel computes at a box is written for it. Here:
 * `rules_frozC`: the nodes of a tree over a frozen part prove its statements with the tests `frozTestsC`, which
   read the frozen primes once for the tree: a statement of the tree concerns the boxes that end with the frozen
   primes, and on those `frozTestsC` implies `frozTests`.
-* `bd_flipCostD`, `altFD_sound`: the reversal of a box through its largest prime, its tree searched by hints,
-  bounds the term (`bd_flip_core` with the tree's bound from `solveD_sound` and `rules_frozC`).
+* `bd_flipCostD`, `altFD_sound`: the reversal of a box of either sign through its largest prime, its tree
+  searched by hints, bounds the term (`bd_flip_coreB` with the tree's bound from `solveD_sound` and
+  `rules_frozC`).
 * `pr_of_partD`, `pr_of_partD_at`: a part of the main search, as the kernel checks it, bounds the term of its
   range.
 
-The file imports `SieveAdFlipSearch.lean`, `SieveAdFast.lean` and `SieveAdDirDefs.lean`.
+The file imports `SieveAdFlipPos.lean`, `SieveAdFast.lean` and `SieveAdDirDefs.lean`.
 -/
-import SieveAdFlipSearch
+import SieveAdFlipPos
 import SieveAdFast
 import SieveAdDirDefs
 
@@ -707,11 +708,12 @@ theorem rules_frozC {ι : Type} {S : ℕ → Finset ι} {R : ι → ℕ} {O : Op
       exact frozTestsC_okJ e₁ e₂ Kb β ch f cfg hβ hJ
     exact h.buch hg hf hfx hJ' hc ch hch
 
-/-- **The cost of a reversal through the largest prime, its tree searched by hints, bounds the term.** A cost
-that `flipCostD` returns below its limit gives `Bd false (cost/K)` for the box, whatever the hints. -/
-theorem bd_flipCostD (κ hR fuel maxlen : ℕ) {bl : List Cell} {lim h : ℕ}
-    (hlt : (flipCostD κ hR fuel maxlen bl lim h).1 < lim) (k' : ℕ) (hl : bl.length = k' + 1) :
-    Bd false (((flipCostD κ hR fuel maxlen bl lim h).1 : ℝ) / K) (boxFn bl (k' + 1) hl) := by
+/-- **The cost of a reversal through the largest prime, its tree searched by hints, bounds the term**, for a box
+of the sign `−` (`pos = false`) or `+`. A cost that `flipCostD` returns below its limit gives `Bd pos (cost/K)` for
+the box, whatever the hints. -/
+theorem bd_flipCostD (κ hR fuel maxlen : ℕ) (pos : Bool) {bl : List Cell} {lim h : ℕ}
+    (hlt : (flipCostD κ hR fuel maxlen pos bl lim h).1 < lim) (k' : ℕ) (hl : bl.length = k' + 1) :
+    Bd pos (((flipCostD κ hR fuel maxlen pos bl lim h).1 : ℝ) / K) (boxFn bl (k' + 1) hl) := by
   unfold flipCostD at hlt ⊢
   rw [lastP_eq, initP_eq] at hlt ⊢
   revert hlt
@@ -739,7 +741,7 @@ theorem bd_flipCostD (κ hR fuel maxlen : ℕ) {bl : List Cell} {lim h : ℕ}
       exact initC_append_lastC hne
     simp only [dropL_eq, bdKP_eq] at hlt ⊢
     rw [hbl] at hlt ⊢
-    obtain ⟨r, hrdef⟩ : ∃ r, r = flipTreeD κ hR fuel (lastC bl) c0 b (Nat.add c0.1 (loSum b))
+    obtain ⟨r, hrdef⟩ : ∃ r, r = flipTreeD κ hR fuel pos (lastC bl) c0 b (Nat.add c0.1 (loSum b))
         (Nat.add c0.2 (hiSum b)) (Nat.succ b.length) CAPK h := ⟨_, rfl⟩
     rw [← hrdef] at hlt ⊢
     by_cases hcap : Nat.ble CAPK r.1 = true
@@ -767,11 +769,14 @@ theorem bd_flipCostD (κ hR fuel maxlen : ℕ) {bl : List Cell} {lim h : ℕ}
     unfold flipTreeD at hrdef
     simp only [] at hrdef
     generalize hpdef : cfgJF (Nat.add 12 (Nat.div DEN c0.1))
-      (maxN 1 (Nat.sub (Nat.sub DEN (lastC bl).2) (Nat.add c0.2 (hiSum b))))
-      (Nat.sub (Nat.succ (Nat.sub DEN (lastC bl).1)) (Nat.add c0.1 (loSum b))) (c0 :: b) (Nat.succ b.length)
+      (maxN 1 (Nat.sub (cond pos (Nat.add (Nat.sub DEN (lastC bl).2) 1) (Nat.sub DEN (lastC bl).2))
+        (Nat.add c0.2 (hiSum b))))
+      (Nat.sub (cond pos (Nat.sub DEN (lastC bl).1) (Nat.add (Nat.sub DEN (lastC bl).1) 1))
+        (Nat.add c0.1 (loSum b))) (c0 :: b) (Nat.succ b.length)
       (lomP (c0 :: b) DEN) (c0 :: b) h = p at hrdef
     by_cases hc : (Nat.blt 0 p.1.1 && Nat.ble p.1.1 (minN c0.1 (flipT (lastC bl))) &&
-        (frozTestsC (Nat.sub DEN (lastC bl).2) (Nat.add (Nat.sub DEN (lastC bl).1) 1)
+        (frozTestsC (cond pos (Nat.add (Nat.sub DEN (lastC bl).2) 1) (Nat.sub DEN (lastC bl).2))
+          (cond pos (Nat.sub DEN (lastC bl).1) (Nat.add (Nat.sub DEN (lastC bl).1) 1))
           (Nat.add 12 (Nat.div DEN c0.1)) (c0 :: b) (Nat.add c0.1 (loSum b)) (Nat.add c0.2 (hiSum b))
           (Nat.succ b.length) (lomP (c0 :: b) DEN)).okJ (c0 :: b) p.1.1 p.1.2) = true
     swap
@@ -781,35 +786,36 @@ theorem bd_flipCostD (κ hR fuel maxlen : ℕ) {bl : List Cell} {lim h : ℕ}
       exact absurd hccap (lt_irrefl _)
     rw [hc, Bool.cond_true] at hrdef
     simp only [Bool.and_eq_true, Nat.blt_eq, Nat.ble_eq] at hc
-    have hokJ : (frozTests (DEN - (lastC bl).2) (DEN - (lastC bl).1 + 1) (12 + DEN / c0.1) (c0 :: b)).okJ (c0 :: b)
+    have hokJ : (frozTests (cond pos (DEN - (lastC bl).2 + 1) (DEN - (lastC bl).2))
+        (cond pos (DEN - (lastC bl).1) (DEN - (lastC bl).1 + 1)) (12 + DEN / c0.1) (c0 :: b)).okJ (c0 :: b)
         p.1.1 p.1.2 = true :=
-      frozTestsC_okJ (DEN - (lastC bl).2) (DEN - (lastC bl).1 + 1) (12 + DEN / c0.1) (c0 :: b) [] p.1.1 p.1.2 hcf
+      frozTestsC_okJ (cond pos (DEN - (lastC bl).2 + 1) (DEN - (lastC bl).2))
+        (cond pos (DEN - (lastC bl).1) (DEN - (lastC bl).1 + 1)) (12 + DEN / c0.1) (c0 :: b) [] p.1.1 p.1.2 hcf
         hc.2
-    refine bd_flip_core hok k' hl hβ.symm hc.1.2 hokJ fun s hβl hR' => ?_
+    refine bd_flip_coreB pos hok k' hl hβ.symm hc.1.2 hokJ fun s hβl hR' => ?_
     have hR'' : Rules (opsKP (lastC bl) (Nat.succ b.length))
-        (frozTestsC (Nat.sub DEN (lastC bl).2) (Nat.add (Nat.sub DEN (lastC bl).1) 1)
+        (frozTestsC (cond pos (Nat.add (Nat.sub DEN (lastC bl).2) 1) (Nat.sub DEN (lastC bl).2))
+          (cond pos (Nat.sub DEN (lastC bl).1) (Nat.add (Nat.sub DEN (lastC bl).1) 1))
           (Nat.add 12 (Nat.div DEN c0.1)) (c0 :: b) (Nat.add c0.1 (loSum b)) (Nat.add c0.2 (hiSum b))
           (Nat.succ b.length) (lomP (c0 :: b) DEN))
-        (PF (fun q => frozS q (e1 (lastC bl)) (e2 (lastC bl)) (boxFn (c0 :: b) (s + 1) hβl)) frozR (c0 :: b)) := by
+        (PF (fun q => frozS q (cond pos (e1 (lastC bl) + 1) (e1 (lastC bl)))
+          (cond pos (e2 (lastC bl) - 1) (e2 (lastC bl))) (boxFn (c0 :: b) (s + 1) hβl)) frozR (c0 :: b)) := by
       rw [opsKP_eq]
       exact rules_frozC hcf hR'
     have hk := kidsF_sound hR''.split κ hR (lastC bl) (Nat.succ b.length) _
       (solveD_sound hR'' cfgIF _ (kidsF_sound hR''.split κ hR (lastC bl) (Nat.succ b.length)) (altH := noAltH)
         (fun _ _ _ _ _ hh => absurd hh (lt_irrefl _)) fuel)
-      (flipT (lastC bl)) (c0 :: b) true p.1.1 CAPK p.2 (by rw [← hrdef]; exact hccap)
+      (flipT (lastC bl)) (c0 :: b) (!pos) p.1.1 CAPK p.2 (by rw [← hrdef]; exact hccap)
     rw [← hrdef] at hk
     exact hk
 
 /-- **The hinted bound of the main search proves `PR`**: a cost that `altFD` returns below its limit bounds the
-term of the box. -/
+term of the box, of either sign. -/
 theorem altFD_sound (κ hR fuel maxlen : ℕ) (bl : List Cell) (par : Bool) (l h : ℕ)
     (hlt : (altFD κ hR fuel maxlen bl par l h).1 < l) : PR bl par (altFD κ hR fuel maxlen bl par l h).1 := by
   unfold altFD at hlt ⊢
-  cases par with
-  | true => exact absurd hlt (lt_irrefl _)
-  | false =>
-    intro k' hl
-    exact bd_flipCostD κ hR fuel maxlen hlt k' hl
+  intro k' hl
+  exact bd_flipCostD κ hR fuel maxlen par hlt k' hl
 
 /-! ### The main search -/
 
