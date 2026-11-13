@@ -49,21 +49,18 @@
 \maketitle
 
 \begin{abstract}
-Let $\KH(r) = \sum_\rho r^{\rho - 1/2}/(\rho(1 - \rho))$, the sum over the nontrivial zeros of the Riemann zeta
-function, and let $G_N$ be the matrix $(\sqrt{mn}\,\KH(m/n))_{m, n \le N}$, whose entries can be computed from the
-primes. By Weil's positivity criterion, in a discrete form of a theorem of Matsumoto and Suzuki, the Riemann hypothesis
-holds if and only if every $G_N$ is positive semidefinite, and under it $G_N$ is the Gram matrix of the vectors $w_n =
-(n^\rho/|\rho|)_\rho$. We prove two strengthenings, each equivalent to the Riemann hypothesis: every Gram--Schmidt pivot
-of $w_1, w_2, \dots$ is at least the first, $\|w_1\|^2 = \KH(1) = 2 + \gamma - \log 4\pi$; and $w_1$ is a shortest
-nonzero vector of the lattice spanned by $w_1, \dots, w_N$, for every $N$. The content is a margin: under the Riemann
-hypothesis every pivot after the first is at least $0.0577 > 1.249\,\KH(1)$, uniformly, and $\pm w_1$ are the only
-shortest vectors. The proof applies Weil's explicit formula to a band-limited test function at height of order $N$,
-which makes the prime side exactly Landau's quadratic form; that form is bounded at the top vertex of the divisibility
-graph by Schur's test with an explicit Mertens bound, and the archimedean term by an interval certificate. The proof is
-formalised in Lean~4 with Mathlib and depends only on Lean's standard axioms. Neither statement survives its natural
-analogues: both fail for every curve over a finite field, through an integral null vector that the Frobenius forces,
-and both fail for a positive proportion of real Dirichlet characters, at the first step. The margin is a property of the
-constants of $\zeta$, not of the structure that gives the Riemann hypothesis elsewhere.
+Let $\KH(r) = \sum_\rho r^{\rho - 1/2}/(\rho(1 - \rho))$, summed over the nontrivial zeros of $\zeta$, and $G_N =
+(\sqrt{mn}\,\KH(m/n))_{m, n \le N}$, whose entries can be computed from the primes. By Weil's criterion, in a discrete form of
+a theorem of Matsumoto and Suzuki, the Riemann hypothesis holds exactly when every $G_N$ is positive semidefinite, and
+$G_N$ is then the Gram matrix of $w_n = (n^\rho/|\rho|)_\rho$. We strengthen positivity to a margin. The Riemann
+hypothesis holds if and only if every Gram--Schmidt pivot of $w_1, w_2, \dots$ is at least the first, and if and only if
+$w_1$ is a shortest nonzero vector of every lattice $\mathbb Z w_1 + \dots + \mathbb Z w_N$. Under the hypothesis every
+later pivot is at least $0.0577$, against $\|w_1\|^2 = 2 + \gamma - \log 4\pi = 0.0462$, and $\pm w_1$ are the only
+shortest vectors. The proof picks a band-limited test function that makes the prime side of the explicit formula
+exactly Landau's quadratic form, then bounds that form by Schur's test and the archimedean term by an interval
+certificate. It is formalised in Lean~4 with Mathlib, on Lean's standard axioms alone. The margin is not structural:
+both statements fail for every curve over a finite field, where the Riemann hypothesis is a theorem, and for a positive
+proportion of real Dirichlet characters.
 \end{abstract}
 
 % TODO (draft): before submission, read in full what is known here only through reviews, abstracts and citing papers: Bombieri (2003), including its Section 8, on Brownian motion, against
