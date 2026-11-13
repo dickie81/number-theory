@@ -11,9 +11,10 @@ intersection numbers are computed from the primes, and that lattice statement im
 below). This page says what it claims, what is proved in the finite-rank cases it generalises, what the library already
 has towards it, what any version of it must survive, and the first steps.
 
-The tests so far tell against that lattice statement as a route to RH. It fails for curves over finite fields, where RH
-is proved, and for a positive proportion of Dirichlet `L`-functions, where GRH is expected. So as stated it is specific
-to `ζ` ("What it must survive", the last item).
+The tests so far tell against that lattice statement as a route to RH. In both its forms, the pivot inequality and
+the shortest vector, it fails for curves over finite fields, where RH is proved, and for a positive proportion of
+Dirichlet `L`-functions, where GRH is expected. So as stated it is specific to `ζ` ("What it must survive", the last
+item).
 
 For `ζ` itself the statement is equivalent to RH (`PivotSharp.rh_iff_orbitLattice`). Under RH every Gram–Schmidt
 pivot of the orbit after the first is at least `0.0577`, against `d_1 = 0.0462` (`PivotSharp.pivot_ge_rh`), so
@@ -191,32 +192,48 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
 - **No estimate can supply the positivity.** The least value of Weil's form on supports `[−a, a]` is at most
   `Ke^{16a − 2πe^{2a}}` (`WeilForm.lam_dexp`), so positivity on growing supports has a double-exponentially small
   margin. It has to come from an exact structure, as the definiteness of a lattice would.
-- **The pivot inequality fails where RH holds.**
-  - **The statement.** The lattice statement that implies RH (`BallWeil.rh_of_pivots`) says that the pivots `d_k` of
-    the orbit's Gram matrix `√(mn)·K_H(m/n)` satisfy `d_k ≥ d_1`.
-  - **The analogues fail.** The statement has natural analogues for curves over finite fields and for Dirichlet
-    `L`-functions, and both fail ([ball-conjecture-tests.md](ball-conjecture-tests.md)).
-  - **For curves, where RH is a theorem.** The zeros repeat vertically, which forces a null vector at `k = q^{2g}`.
-    Of a sample of 148 curves, 98 have some `d_k < d_1` with `k ≤ 150` (§4).
+- **The lattice statement fails where RH holds, in both its forms.**
+  - **The statement.** It has two forms, each equivalent to RH for `ζ`. The pivot form (A) says that the pivots `d_k`
+    of the orbit's Gram matrix `√(mn)·K_H(m/n)` satisfy `d_k ≥ d_1` (`PivotSharp.rh_iff_orbitLattice`; the direction to
+    RH is `BallWeil.rh_of_pivots`). The shortest-vector form (B) says that `Q_N(a) ≥ d_1` at every nonzero integer
+    vector `a`, so that `w_1` is a shortest vector of the lattice the orbit spans (`PivotSharp.rh_iff_shortest`). (B)
+    asks less: if `a_k` is the last nonzero entry of `a`, then `Q(a) ≥ a_k²d_k ≥ d_k`.
+  - **The analogues fail.** Both forms have natural analogues for curves over finite fields and for Dirichlet
+    `L`-functions, and both fail ([ball-conjecture-tests.md](ball-conjecture-tests.md)). At `k = 2` the two forms
+    coincide. Every orbit Gram matrix has `G_22 = 2d_1`, so `d_2 < d_1` exactly when `Q(δ_2 ± δ_1) = 3d_1 − 2|G_12|`
+    is below `d_1` (§7). Every failure of `d_2 ≥ d_1` below is a failure of (B) as well.
+  - **For curves, where RH is a theorem.** The zeros repeat vertically, which forces a null vector at `k = q^d`, where
+    `d ≤ 2g` is the degree of the minimal polynomial of Frobenius. That vector is integral, with the polynomial's
+    coefficients as its entries (§4, Theorem C′), so (B) fails for every curve too. Of a sample of 148 curves, 98 have
+    some `d_k < d_1` with `k ≤ 150` (§4), and 43 fail (B) already at `N = 2` (§7).
   - **For Dirichlet `L`-functions.** 5983 of the 29468 primitive characters with `q ≤ 400` have `d_2 < d_1` (§5).
-    - For a real character this happens exactly when the zero sum `Σ_ρ 1/|ρ|²` exceeds `log(q/π) + ψ((1+a)/2) − 4c_a`,
-      that is, when the low zeros carry more weight than their density accounts for (§5.1).
-    - In the range scanned, the first two or three pivots decide the whole inequality.
-  - **A positive proportion.** A positive proportion of quadratic characters fail. Per sign the proportion tends to
-    `P(X > ½ log(27/4)) = 0.0511` and `P(X > (3/2) log(4/3)) = 0.1609`, where `X` is Lamzouri's random model
-    ([d2-density.md](d2-density.md)). That is a written proof, unconditional, and a Lean proof,
-    `D2Good.d2_density_pos_closed`, conditional on the half-plane. These characters are expected to satisfy GRH, and
-    under GRH their Weil forms are positive.
-  - **The conclusion.** So the inequality does not follow from the structure that gives RH, or GRH, elsewhere: it fails
-    for curves, where RH is proved, and for characters where GRH is expected.
-  - **For `ζ`.** For `ζ` it holds as far as it has been checked: `scripts/ball_certificate.py` proves it for
-    `k ≤ 10⁴`, with a wide margin at `k = 2` (`d_2/d_1 = 1.718`). The data point to a reason particular to `ζ`:
-    conductor `1`, `K_H(1) = 0.046`, and no zero below `14.13`. So it reads as a property of `ζ`'s numbers rather than of
-    its structure, and as stated it is not a promising route to RH.
-    - Under RH it holds for every large `k`: `d_k ≥ (log k/2 + log 4 + 2)/(22e⁸)`, which passes `d_1` once
-      `log k ≥ 7100` (`BallPivot.pivot_ge`, `BallPivot.orbitLattice_of_log_ge`). The analogues fail differently:
-      for a curve the zeros repeat vertically, which forces a null vector at `k = q^{2g}`; for the characters the
-      failures found are at the first two or three pivots, where the conductor and the low zeros decide.
+    Integer vectors see only the real part of the Gram matrix. On `n ≤ 12`, (B) fails for 5443 of them, each at
+    `N = 2` and each among the 5983 (§7).
+    - For a real character `d_2 < d_1` happens exactly when the zero sum `Σ_ρ 1/|ρ|²` exceeds
+      `log(q/π) + ψ((1+a)/2) − 4c_a`, that is, when the low zeros carry more weight than their density accounts for
+      (§5.1). (B) at `N = 2` obeys the same criterion for every character, real or complex (§7).
+    - In the range scanned, the first two or three pivots decide (A), and `N = 2` decides (B).
+  - **A positive proportion.** A positive proportion of quadratic characters fail both forms. Per sign, the
+    proportion with `d_2 < d_1` tends to `P(X > ½ log(27/4)) = 0.0511` and `P(X > (3/2) log(4/3)) = 0.1609`, where `X`
+    is Lamzouri's random model ([d2-density.md](d2-density.md)). That is a written proof, unconditional, and a Lean
+    proof, `D2Good.d2_density_pos_closed`, conditional on the half-plane. These characters are expected to satisfy GRH,
+    and under GRH their Weil forms are positive.
+  - **Where the two forms part.** The analogue this page starts from, the orbit of the Frobenius graphs, has the Gram
+    matrix of E. Hallouin and M. Perret (Trans. AMS 372 (2019)). Its orbit vectors are dependent, so (A) fails for
+    every curve. Their integer span is still a lattice, `ℤ[z]/(m)` with `m` the minimal polynomial, and (B) holds
+    there. It holds by integrality when `m` is irreducible, and holds in the whole sample (§7).
+  - **The conclusion.** So neither form follows from the structure that gives RH, or GRH, elsewhere. Both fail for
+    curves, where RH is proved, and for characters where GRH is expected.
+  - **For `ζ`.** Both forms hold under RH for every `N`, with room to spare. Every `k ≥ 2` has
+    `d_k ≥ 0.0577 = 1.249·d_1` (`PivotSharp.pivot_ge_rh`), and every integer vector other than `±δ_1` has
+    `Q(a) ≥ 0.0577` (`PivotSharp.lattice_gap`). The true values are larger: `d_2/d_1 = 1.718`, and on `n ≤ 30` the
+    second minimum of the lattice is `1.939·d_1`, at `δ_1 + δ_2` (§7). Without RH, `scripts/ball_certificate.py` proves
+    (A) for `k ≤ 10⁴`. The data point to a reason particular to `ζ`: conductor `1`, `K_H(1) = 0.046`, and no zero below
+    `14.13`. So the conjecture reads as a property of `ζ`'s numbers rather than of its structure, and as stated it is
+    not a route to RH.
+    - The analogues fail differently. For a curve the zeros repeat vertically, which forces an integral null vector at
+      `k = q^d`. For the characters the failures found are at the first two or three pivots, where the conductor and
+      the low zeros decide.
   - **What a surviving version would need.** It would have to correct for the flat model, or depend on the conductor
     and the low zeros. It would then no longer be a uniform statement about a lattice.
 
@@ -855,8 +872,11 @@ other than the integers.
 - an exact criterion for `d_2 ≥ d_1`;
 - an independent cross-check in ball arithmetic of the bound `d_k > d_1` for ζ, at `k ≤ 500`, inside the range
   `k ≤ 10^4` that `scripts/ball_certificate.py` proves (step 6);
-- a function-field analogue, where a null vector is forced at `k = q^{2g}`;
+- a function-field analogue, where an integral null vector is forced at `k = q^d`, `d ≤ 2g`, so that both forms
+  fail;
 - Dirichlet characters for which `d_2 < d_1` (for example χ mod 19 and χ₋₁₆₃);
-- results on the smallest eigenvalue of the orbit Gram matrix (it is positive definite under RH, with `λ_min ≪ log²N/N`).
+- results on the smallest eigenvalue of the orbit Gram matrix (it is positive definite under RH, with `λ_min ≪ log²N/N`);
+- the shortest-vector form on the same analogues: it failed exactly where `d_2 < d_1`, and for every curve at `N = q^d`,
+  and it holds on the Frobenius orbit, where the pivot form fails (§7).
 
 The scripts are in `scripts/ball_tests/`.

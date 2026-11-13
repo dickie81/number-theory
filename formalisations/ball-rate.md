@@ -881,7 +881,9 @@ inequality for every `k`", gives such a design. Its test function vanishes below
 weight, and in this normalisation it has `ρ = π/(4P) = 19.3` and `s = 1.09`. It gives `d_k ≥ 1.449·d_1` for every
 `k ≥ 2` (`scripts/pivot_push.py`, numerical). The next section proves a cruder version in Lean, `d_k ≥ 1.249·d_1`.
 
-**Prior work.** The pivot inequality is the conjecture of this library's author; no source is known for it or for the
+**Prior work.** The pivot inequality is the conjecture of this library's author; a literature check
+([reports/Orbit lattice criterion prior art.md](../reports/Orbit%20lattice%20criterion%20prior%20art.md)) found no source
+for it, for its lattice form or for a margin of this kind, and none is known for the
 bound. The mechanism of `slack_top` is that of `BallGap.gap_ge`, the ground-state transform on the divisibility graph,
 read at the top vertex instead of the root.
 
@@ -960,6 +962,24 @@ Against the numerical design of [ball-conjecture.md](../docs/ball-conjecture.md)
 Lean proof makes cruder choices that are easier to certify. It uses `K` in place of `K₄`, with support `4/5` in place
 of `2/3` and `P = 0.0444`. Its steps are dyadic. It has `d = 7/8` in place of `1.087`. It bounds the top vertex
 uniformly, not by `P·Λ(N)` at each `N`. The margin pays for all four.
+
+**Prior work.** The positivity underneath is known in substance. `G_N ⪰ 0` for every `N` is a discrete form of K.
+Matsumoto and M. Suzuki's theorem that `H₁(e^t) − H₁(1)`, with `H₁ = K_H`, is a screw function exactly
+under RH (J. Number Theory 280 (2026), Thm 1.3). Its 2×2 layer is J.-L. Nicolas's `|W(x)| ≤ β = K_H(1)` (Acta Arith.
+155 (2012)). A literature check found no source for the margin, `d_k ≥ d_1` with the first pivot as the threshold, or
+for the lattice form, `w_1` as a shortest vector
+([reports/Orbit lattice criterion prior art.md](../reports/Orbit%20lattice%20criterion%20prior%20art.md)). The nearest
+are three:
+- J. C. Lagarias's Gram matrix of the Weil scalar product on Li's functions (Ann. Inst. Fourier 57 (2007), Thm 3.1).
+  It is the same pairing on another orbit of `1/s`, and under RH its pivots fall to `0`.
+- H. Yoshida's non-degeneracy of Weil's form on windows (Adv. Stud. Pure Math. 21 (1992)), which bounds squared norms
+  rather than pivots.
+- E. Hallouin and M. Perret's Gram matrix of the Frobenius orbit of a curve (Trans. AMS 372 (2019)), where the margin
+  fails.
+
+Both forms also fail for the same construction over curves and for a positive proportion of real characters
+([ball-conjecture-tests.md](../docs/ball-conjecture-tests.md), §4, §5, §7). So a proof has to use `ζ`'s own constants,
+as this one does.
 
 ## The low zeros: what the zeros above `8N` give, and `λ_N` to `N = 3·10⁴` (`BallLow`; `scripts/lambda_large.py`)
 
