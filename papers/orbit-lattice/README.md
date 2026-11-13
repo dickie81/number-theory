@@ -34,6 +34,8 @@ Appendix A names the Lean theorem behind each numbered result. `lib/check/Check.
 - `lcm(1, …, n) ≤ 3ⁿ` for `n ≤ 2000`, behind the Mertens bound (`PivotTop`).
 
 [`formalisations/ball-rate.md`](../../formalisations/ball-rate.md) documents the Lean proofs, section by section.
+[`scripts/pivot_constants.py`](../../scripts/pivot_constants.py) replays every number of Section 4 in exact rational
+arithmetic, including the 1181 cells of the certificate, for readers without Lean.
 
 ## What is not a Lean theorem
 
@@ -57,15 +59,22 @@ literature, and the paper credits them:
 
 ## State
 
-A first draft, of 13 November 2026. What remains:
-- **The proofs of Section 4.** Lemmas 4.2, 4.4, 4.5 and 4.7 and Proposition 4.8 have sketches only, to be written out
-  in full. The Lean proofs are complete, and `formalisations/ball-rate.md` has the details.
-- **The novelty statements of Sections 1 and 7.** The literature check could not read three sources: Bombieri (2003),
-  Broughan's *Equivalents of the Riemann Hypothesis* and Mazhouda (2013). The statements are final only once those
-  are read.
+A draft, of 13 November 2026. What remains:
 - **Section 8.** Whether the smallest eigenvalue stays in this paper.
-- **The bibliography.** It is to be checked against the publishers' pages. Weil (1952) was not consulted, and
-  `references.tex` records the state of each entry.
+- **The acknowledgements.** They are general.
+- **Reading before submission.** Several sources are known only from reviews, abstracts and citing papers:
+  - Mazhouda (2013), whose review states that GRH for `L(s, χ)`, `q > 1`, is equivalent to Li's coefficients
+    increasing;
+  - Bombieri (2003), whose §8 meets Brownian motion, as the flat model of Proposition 2.4 does;
+  - the chapters of Broughan's Volume 2 on Weil's explicit formula, discrete measures and Hermitian forms.
+
+  [`secondary_sources_2026.md`](../../research_notes/Orbit%20lattice%20criterion%20prior%20art/secondary_sources_2026.md)
+  records what those accounts say. It also covers the 2026 preprints, among them Andrews, Connes and La Gatta's
+  (arXiv:2611.13129), the closest work in method, which Sections 1 and 7 discuss.
+
+Done since the first draft:
+- The proofs of Section 4 are complete.
+- The bibliography was checked against Crossref, zbMATH Open and arXiv; `references.tex` records the corrections.
 
 ## Building
 

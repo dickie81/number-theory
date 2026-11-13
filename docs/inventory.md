@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1803 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1805 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 274, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 276, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 197 | 700 |
+| `lib/core` | 197 | 702 |
 | `lib/pnt` | 325 | 990 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -738,7 +738,9 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `PivotPhi`: The test function of the pivot inequality: `φ(s) = (999/1000)(1 − K(s/5))/s²`
 
 - `PivotPhi.integral_phi_cos`: The transform *paper* ([note](../formalisations/ball-rate.md))
+- `PivotPhi.phi_nonneg`: `φ ≥ 0` *paper* ([note](../formalisations/ball-rate.md))
 - `PivotPhi.phi_mul_le`: `φ ≤ w` for every `N ≥ 2` *paper* ([note](../formalisations/ball-rate.md))
+- `PivotPhi.phi_le_sq`: `φ` is small at `0` *paper* ([note](../formalisations/ball-rate.md))
 - `PivotPhi.phiE_strip`: The strip test *paper* ([note](../formalisations/ball-rate.md))
 - `PivotPhi.norm_phiE_I_le`: The pole *paper* ([note](../formalisations/ball-rate.md))
 

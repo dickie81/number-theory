@@ -288,7 +288,9 @@ the pivots, the steps of the proof of the margin, and the bounds for the smalles
 #print axioms BallPivot.pivot_ge
 #print axioms WeilForm.weilExplicit_zeta
 #print axioms PivotPhi.integral_phi_cos
+#print axioms PivotPhi.phi_nonneg
 #print axioms PivotPhi.phi_mul_le
+#print axioms PivotPhi.phi_le_sq
 #print axioms PivotPhi.phiE_strip
 #print axioms PivotPhi.norm_phiE_I_le
 #print axioms PivotSharp.prime_eq

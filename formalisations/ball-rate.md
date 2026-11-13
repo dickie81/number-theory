@@ -905,7 +905,7 @@ read at the top vertex instead of the root.
 | `PivotMinorFT.integral_mu_cos_eq_zero`, `PivotMinorFT.integral_mu_ge` | `∫μ(s)cos(sv) ds = 0` for `\|v\| ≥ 1`, and `∫μ ≥ (7/8)φ̂(0)` | nothing |
 | `PivotTop.top_bound` | `(log N + d)Σ_{n ≤ N}c_n² − L(c) ≥ (13/10)c_N²` for `N ≥ 2`, `d ≥ 17/20` and every real `c` | nothing |
 | `PivotTop.mertens_le_uniform` | `Σ_{n ≤ y}Λ(n)/n ≤ log y + 81/100` for every `y` | nothing |
-| `PivotPhi.integral_phi_cos`, `PivotPhi.phi_mul_le`, `PivotPhi.phiE_strip`, `PivotPhi.norm_phiE_I_le` | the transform of `φ`; `φ(s)(s² + 1/16) ≤ 1`; the strip bound and the pole bound of its entire extension | nothing |
+| `PivotPhi.integral_phi_cos`, `PivotPhi.phi_nonneg`, `PivotPhi.phi_mul_le`, `PivotPhi.phi_le_sq`, `PivotPhi.phiE_strip`, `PivotPhi.norm_phiE_I_le` | the transform of `φ`; `φ ≥ 0`; `φ(s)(s² + 1/16) ≤ 1`; `φ(s) ≤ s²/3000` for `\|s\| ≤ 5`; the strip bound and the pole bound of its entire extension | nothing |
 
 **What it says.** Under RH every pivot `d_N`, `N ≥ 2`, is at least `0.0577`, against `d_1 = K_H(1) = 0.0462` (in Lean
 `< 0.0539`, `WeilTest.hadamard_const_lt`): `d_k ≥ 1.249·d_1` for every `k ≥ 2`. With `BallWeil.rh_of_pivots` the
@@ -928,7 +928,7 @@ where the density of the zeros is small. Weil's explicit formula is applied to `
 - **The test function** (`PivotPhi`): `φ(s) = (999/1000)(1 − K(s/5))/s²`, `K(x) = sinc²x·(1 + sin²x/3)`, a combination
   of the atoms `(1 − sinc²(βs))/s²` at `β = 1/5` and `2/5`. Its transform is the piecewise cubic
   `(999/1000)π((25/9)((2/5 − |v|)⁺)³ − (25/144)((4/5 − |v|)⁺)³)`, supported in `|v| ≤ 4/5`, and `φ̂(0) = (999/1000)·4π/45`.
-  `0 ≤ K ≤ 1` gives `φ ≥ 0`, and `φ(s)(s² + 1/16) ≤ 1` gives `Φ_N(γ) ≤ 1/(¼ + γ²)` for `N ≥ 2`: under RH the zero side is
+  `0 ≤ K ≤ 1` gives `φ ≥ 0` (`PivotPhi.phi_nonneg`), and `φ(s)(s² + 1/16) ≤ 1` gives `Φ_N(γ) ≤ 1/(¼ + γ²)` for `N ≥ 2`: under RH the zero side is
   at most `Q_N(x)`.
 - **The prime side is exact.** A near miss `jn ≠ j'` has `|log(jn) − log j'| ≥ log(1 + 1/N) ≥ 2/(2N + 1) ≥ 4/(5N)`, by
   `log((1 + u)/(1 − u)) ≥ 2u`, outside the support `4/(5N)` of `Φ_N`'s transform. So the prime side is Landau's form,
@@ -947,8 +947,9 @@ where the density of the zeros is small. Weil's explicit formula is applied to `
   `r` below on each cell through `sinc x ≥ 1 − x²/6 + x⁴/120 − x⁶/5040`, and `log y` below by `2v + 2v³/3`,
   `v = (y − 1)/(y + 1)`. Above `s = 20` the steps of height `0.693 < log 2` follow `log s`: writing `s = 10·2^j·y` with
   `y ∈ [1, 2)` reduces every `j` to the same 400 cells of `y`. `[12, 20)` and `[1/2, 12)` take 320 and 460 cells, and
-  `(0, 1/2]` follows from `φ(s) ≤ s²/3000`. The arithmetic is exact, in numbers `(p − m)/(d + 1)` with `p, m, d ∈ ℕ`,
-  and the least margin is `0.0042` above `s = 12` and `2.4%` below.
+  `(0, 1/2]` follows from `φ(s) ≤ s²/3000` (`PivotPhi.phi_le_sq`). The arithmetic is exact, in numbers `(p − m)/(d + 1)`
+  with `p, m, d ∈ ℕ`, and the least margin is `0.0042` above `s = 12` and `2.4%` below. `scripts/pivot_constants.py`
+  replays the 1181 cells in Python's rationals, with every other number of the proof.
 - **The pole.** `‖φ_ℂ(iy)‖ ≤ y²/3000` for `0 < y ≤ 1/4`, since the terms of order `y²` of `1 − K(iy/5)` cancel. So the
   pole costs at most `Σc_n²/(6000N)`, `5/1332` of the mass.
 - **The top vertex** (`PivotTop`). Mertens' sums satisfy `M(y) = Σ_{n ≤ y}Λ(n)/n ≤ log y + 81/100` for every `y`:

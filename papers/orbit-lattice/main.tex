@@ -66,8 +66,10 @@ and both fail for a positive proportion of real Dirichlet characters, at the fir
 constants of $\zeta$, not of the structure that gives the Riemann hypothesis elsewhere.
 \end{abstract}
 
-% TODO (draft): expand the proof sketches of Section 4 into full proofs; decide whether Section 8 stays in this paper;
-% read Bombieri (2003), Broughan's book and Mazhouda (2013) before the novelty claims of Section 7 are final.
+% TODO (draft): decide whether Section 8 stays in this paper. Before submission, read in full what is known here only
+% through reviews, abstracts and citing papers: Bombieri (2003), including its Section 8, on Brownian motion, against
+% Proposition 2.4; Mazhouda (2013); the chapters of Broughan's Volume 2 on Weil's explicit formula, discrete measures
+% and Hermitian forms.
 
 \section{Introduction}\label{sec:intro}
 
@@ -128,13 +130,16 @@ after the first above $d_1$, and keep the lattice's shortest vector unique.
 
 \subsection*{What is new}
 
-As far as a literature search reaches \cite{repo-prior-art}, neither (A) nor (B) has been stated, no source measures the
-Gram--Schmidt pivots of an explicit-formula Gram matrix against the first pivot, and none states RH through a lattice
+As far as a literature search reaches \cite{repo-prior-art}, neither (A) nor (B) has been stated, no source bounds the
+Gram--Schmidt pivots of an explicit-formula Gram matrix below by the first pivot, and none states RH through a lattice
 minimum. The nearest results are Lagarias's Gram matrix of Weil's scalar product on Li's functions
 \cite[Theorem~3.1]{lagarias07}, the same pairing on another orbit of $1/s$, whose pivots collapse to $0$ under RH
 (Section~\ref{sec:li}); Yoshida's and Bombieri's non-degeneracy and minimisation results for Weil's form on windows
-\cite{yoshida92, bombieri00, bombieri03}, which bound squared norms rather than pivots; and Hallouin and Perret's Gram
-matrix of the Frobenius orbit of a curve \cite{hallouin-perret}, where the margin fails. Section~\ref{sec:related}
+\cite{yoshida92, bombieri00, bombieri03}, which bound squared norms rather than pivots; Andrews, Connes and La Gatta's
+recent reduction of Weil positivity on a window to the sign of a Schur complement, with a margin away from a
+finite-dimensional space, under a hypothesis \cite{acl26}; Mazhouda's monotonicity of Li's coefficients for Dirichlet
+$L$-functions \cite{mazhouda13}, a margin on the diagonal of Li's basis; and Hallouin and Perret's Gram matrix of the
+Frobenius orbit of a curve \cite{hallouin-perret}, where the margin fails. Section~\ref{sec:related}
 places the paper in that literature. We claim the margin, Theorem~\ref{thm:margin}, and the equivalences it gives; the
 positivity layer, the kernel and the constant $d_1$ are not ours.
 
@@ -303,22 +308,80 @@ Let $\sinc x = (\sin x)/x$, $\mathcal K(x) = \sinc^2 x\,(1 + \frac13 \sin^2 x)$,
 \begin{lemma}\label{lem:phi}
 \textup{(i)} $\hat\varphi(v) = \frac{999}{1000}\pi\big(\frac{25}{9}((\frac25 - |v|)^+)^3 - \frac{25}{144}((\frac45 -
 |v|)^+)^3\big)$; in particular $\hat\varphi$ vanishes for $|v| \ge \frac45$ and $\hat\varphi(0) = \frac{999}{1000}
-\cdot \frac{4\pi}{45}$. \textup{(ii)} $0 \le \varphi(s)$ and $\varphi(s)(s^2 + \frac1{16}) \le 1$ for real $s$.
-\textup{(iii)} $\varphi$ extends to an entire function $\varphi_{\mathbb C}$ with $|\varphi_{\mathbb C}(z)| \le C/(1 +
-(\operatorname{Re} z)^2)$ on $|\operatorname{Im} z| \le 1$, and $|\varphi_{\mathbb C}(iy)| \le y^2/3000$ for $0 < y
-\le \frac14$.
+\cdot \frac{4\pi}{45}$. \textup{(ii)} $0 \le \varphi(s)$ and $\varphi(s)(s^2 + \frac1{16}) \le 1$ for real $s$, and
+$\varphi(s) \le s^2/3000$ for $|s| \le 5$. \textup{(iii)} $\varphi$ extends to an entire function $\varphi_{\mathbb C}$
+with $|\varphi_{\mathbb C}(z)| \le C/(1 + (\operatorname{Re} z)^2)$ on $|\operatorname{Im} z| \le 1$, and
+$|\varphi_{\mathbb C}(iy)| \le y^2/3000$ for $0 < y \le \frac14$.
 \end{lemma}
 
-\begin{proof}[Sketch]
-$\varphi$ is a combination of the atoms $(1 - \sinc^2(\beta s))/s^2$ at $\beta = \frac15$ and $\frac25$, whose transforms
-are cubic splines supported in $|v| \le 2\beta$. Part (ii) follows from $0 \le \mathcal K \le 1$ and an elementary
-bound for $1 - \mathcal K$; in (iii) the terms of order $y^2$ of $1 - \mathcal K(iy/5)$ cancel.
+\begin{proof}
+For $\beta > 0$ let $A_\beta(s) = (1 - \sinc^2(\beta s))/s^2$. Since $\sinc^2 2x = \sinc^2 x \cos^2 x = \sinc^2
+x\,(1 - \sin^2 x)$, we have $\frac43(1 - \sinc^2 x) - \frac13(1 - \sinc^2 2x) = 1 - \mathcal K(x)$, so $\varphi =
+\frac{999}{1000}(\frac43 A_{1/5} - \frac13 A_{2/5})$.
+
+(i) The triangle $(2 - |w|)^+$ has integral $4$ and cosine transform $\int_{-2}^{2} (2 - |w|) \cos(wy)\,dw = 4
+\sin^2 y/y^2$, so
+\begin{equation}\label{eq:mix}
+1 - \sinc^2 y = \frac14 \int_{-2}^{2} (2 - |w|)\big(1 - \cos(wy)\big)\,dw .
+\end{equation}
+Fejér's kernel has the transform $\int_{\mathbb R} (1 - \cos(as)) \cos(sv)\,s^{-2}\,ds = \pi(a - |v|)^+$ for $a \ge 0$.
+As $0 \le (1 - \cos(\beta w s))/s^2 \le \min(2\beta^2, 2/s^2)$ for $|w| \le 2$, Fubini's theorem applies:
+$\hat A_\beta(v) = \frac\pi4 \int_{-2}^{2} (2 - |w|)(\beta|w| - |v|)^+\,dw$. This vanishes for $|v| \ge 2\beta$, and for
+$|v| < 2\beta$, with $u = \beta|w|$,
+\[
+\hat A_\beta(v) = \frac{\pi}{2\beta^2} \int_{|v|}^{2\beta} (2\beta - u)(u - |v|)\,du = \frac{\pi}{12\beta^2} (2\beta -
+|v|)^3 .
+\]
+At $\beta = \frac15$ and $\beta = \frac25$ this gives (i), and $\hat\varphi(0) = \frac{999}{1000}\pi(\frac{25}{9} \cdot
+\frac{8}{125} - \frac{25}{144} \cdot \frac{64}{125}) = \frac{999}{1000} \cdot \frac{4\pi}{45}$.
+
+(ii) Clearly $\mathcal K \ge 0$. For $\varphi \ge 0$ we show $\mathcal K \le 1$, that is $\sin^2 x\,(1 + \frac13
+\sin^2 x) \le x^2$. If $x^2 \ge \frac43$, the left side is at most $\frac43$. If $x^2 < \frac43$, let $t = x^2$ and $q
+= 1 - \frac t6 + \frac{t^2}{120} \in [0, 1]$, so that $|\sin x| \le |x| q$. As $u \mapsto u(1 + \frac u3)$ increases on
+$u \ge 0$,
+\[
+\sin^2 x\,(1 + \tfrac13 \sin^2 x) - x^2 \le tq^2(1 + \tfrac13 tq^2) - t = \frac{t^3 P(t)}{622080000},
+\]
+with $P(t) = t^7 - 80t^6 + 2880t^5 - 60800t^4 + 822400t^3 - 7252800t^2 + 39744000t - 110592000$. On $[0, \frac43]$,
+dropping the negative terms other than the constant, $P(t) \le -110592000 + 39744000 \cdot \frac43 + 822400
+(\frac43)^3 + 2880 (\frac43)^5 + (\frac43)^7 < 0$.
+
+For $x^2 \le 6$, $|\sin x| \ge |x| - |x|^3/6 \ge 0$, so $\sinc^2 x \ge (1 - \frac{x^2}6)^2 \ge 1 - \frac{x^2}3$; and
+$1 - \mathcal K(x) \le 1 - \sinc^2 x$. Write $\varphi(s)(s^2 + \frac1{16}) = \frac{999}{1000}(1 - \mathcal K(x))(1 +
+\frac{1}{16s^2})$ with $x = s/5$. If $s^2 \ge \frac{999}{16}$, then $(1 - \mathcal K(x))/(16s^2) \le \frac{1}{999}$,
+and the product is at most $\frac{999}{1000}(1 + \frac1{999}) = 1$. If $s^2 < \frac{999}{16}$, then $x^2 < \frac52$, so
+$\sinc^2 x \ge (\frac{7}{12})^2$ and $1 - \mathcal K(x) \le \min(\frac{x^2}{3}, \frac{95}{144})$, and the product is at
+most $\frac{999}{1000}(\frac{95}{144} + \frac{1}{1200}) < 1$. Finally, for $a = x^2 \le 1$ the bounds $\sinc^2 x \ge
+(1 - \frac a6)^2$ and $\sin^2 x \ge a(1 - \frac a6)^2$ give
+\[
+1 - \mathcal K(x) \le 1 - (1 - \tfrac a6)^2\big(1 + \tfrac a3 (1 - \tfrac a6)^2\big) = \tfrac{7}{36}a^2 -
+\tfrac{1}{18}a^3 + \tfrac{1}{162}a^4 - \tfrac{1}{3888}a^5 \le \tfrac{7}{36}x^4,
+\]
+so $\varphi(s) \le \frac{999}{1000} \cdot \frac{7}{36} \cdot \frac{s^2}{625} \le \frac{s^2}{3000}$ for $|s| \le 5$.
+
+(iii) Let $H(z) = 1 - \frac43 \sinc^2(z/5) + \frac13 \sinc^2(2z/5)$, with $\sinc$ extended to an entire function. $H$
+is even with $H(0) = 0$, so $\varphi_{\mathbb C}(z) = \frac{999}{1000} H(z)/z^2$ is entire, and it extends $\varphi$ by
+the identity above. On $|\operatorname{Im} z| \le 1$, $|\sin w| \le e^{|\operatorname{Im} w|}$ gives $|\sinc(z/5)| \le
+5e^{1/5}/|z|$ and $|\sinc(2z/5)| \le \frac52 e^{2/5}/|z|$; so $|\varphi_{\mathbb C}(z)| \le C'/|z|^2$ for $|z| \ge 1$,
+and $\varphi_{\mathbb C}$ is bounded on $|z| \le 1$. For the pole, $\sinc(iu) = (\sinh u)/u$, so with $a = y/5$ and
+$\sigma(a) = (\sinh a)/a$,
+\[
+H(iy) = 1 - \tfrac43 \sigma(a)^2 + \tfrac13 \sigma(2a)^2 .
+\]
+The exponential series gives $\sigma(a) = p(a) + \epsilon(a)$ with $p(a) = 1 + \frac{a^2}6 + \frac{a^4}{120}$ and
+$|\epsilon(a)| \le a^6/4000$ for $|a| \le 1$. The polynomial part is $1 - \frac43 p(a)^2 + \frac13 p(2a)^2 =
+\frac{8}{45}a^4 + \frac{1}{18}a^6 + \frac{7}{1200}a^8$: the terms of order $1$ and $a^2$ cancel. As $|2pe + e^2| \le 5c$
+for $0 \le p \le 2$ and $|e| \le c \le 1$, the errors add at most $\frac43 \cdot \frac{5a^6}{4000} + \frac13 \cdot
+\frac{5 \cdot 64a^6}{4000} = \frac{17}{600}a^6$. So for $0 < a \le \frac{1}{20}$, $|H(iy)| \le \frac{8}{45}a^4 +
+(\frac{1}{18} + \frac{17}{600})a^6 + \frac{7}{1200}a^8 \le \frac{a^4}{5}$, and $|\varphi_{\mathbb C}(iy)| =
+\frac{999}{1000}|H(iy)|/y^2 \le \frac{999}{1000} \cdot \frac{y^2}{3125} \le \frac{y^2}{3000}$ for $0 < y \le \frac14$.
 \end{proof}
 
-Let $\Phi_N(t) = \varphi(t/N)/N^2$ and $h = |D|^2 \Phi_N$, so that $h(t) = D(t) D(-t) \Phi_N(t)$ extends to an even
-entire function to which Lemma~\ref{lem:explicit} applies. By Lemma~\ref{lem:phi}(ii), $\Phi_N(t) \le 1/(t^2 + N^2/16)
-\le 1/(\frac14 + t^2)$ for real $t$ and $N \ge 2$, so under RH, where $t_\rho = \gamma_\rho$ is real and $D(\gamma_\rho)
-= \sum_n x_n n^{1 - \rho}$,
+Let $\Phi_N(t) = \varphi(t/N)/N^2$ and $h = |D|^2 \Phi_N$. On the real line $h(t) = D(t) D(-t) \Phi_N(t)$, which
+extends to an even entire function; Lemma~\ref{lem:explicit} applies to it, by Lemma~\ref{lem:phi}(iii), as $|D(t)| \le N \sum_n
+|c_n|$ on $|\operatorname{Im} t| \le 1$. For real $t$ and $N \ge 2$, Lemma~\ref{lem:phi}(ii) gives $\Phi_N(t) \le 1/(t^2 + N^2/16)
+\le 1/(\frac14 + t^2)$, so under RH, where $t_\rho = \gamma_\rho$ is real and $D(\gamma_\rho) = \sum_n x_n
+n^{1 - \rho}$,
 \begin{equation}\label{eq:zero-side}
 \sum_\rho h(t_\rho) = \sum_\rho \Big|\sum_{n \le N} x_n n^\rho\Big|^2 \Phi_N(\gamma_\rho) \le Q_N(x).
 \end{equation}
@@ -331,50 +394,143 @@ $2 \sum_n \Lambda(n) n^{-1/2} g_h(\log n) = \frac{\hat\varphi(0)}{2\pi N} L(c)$,
 \end{lemma}
 
 \begin{proof}
-Expanding $|D(r)|^2 = \sum_{j, j'} c_j c_{j'} \cos(r \log(j/j'))$ and using $\int \Phi_N(r) e^{irv}\,dr =
-\hat\varphi(Nv)/N$, $g_h(\log n)$ is a combination of the values $\hat\varphi(N(\log(jn) - \log j'))$. If $jn \ne j'$
-with $j, j' \le N$, then $|\log(jn) - \log j'| \ge \log(1 + \frac1N) \ge \frac{2}{2N + 1} \ge \frac{4}{5N}$, by
-$\log\frac{1 + u}{1 - u} \ge 2u$, and $\hat\varphi$ vanishes there. Only the exact matches $jn = j'$ remain, and
-$g_h(\log n) = \hat\varphi(0) e_n(c)/(2\pi N)$.
+Since $c$ is real, $|D(r)|^2 = \sum_{j, j' \le N} c_j c_{j'} \cos(r \log(j/j'))$, and $\int_{\mathbb R} \Phi_N(r)
+\cos(ru)\,dr = \hat\varphi(Nu)/N$. By $\cos\alpha \cos\beta = \frac12(\cos(\alpha + \beta) + \cos(\alpha - \beta))$,
+\[
+g_h(\log n) = \frac{1}{4\pi N} \sum_{j, j' \le N} c_j c_{j'} \Big(\hat\varphi\big(N \log\tfrac{jn}{j'}\big) +
+\hat\varphi\big(N \log\tfrac{j}{j'n}\big)\Big).
+\]
+If $jn \ne j'$, the larger of $jn$ and $j'$ exceeds the smaller, which is at most $N$, by at least $1$, so $|\log(jn) -
+\log j'| \ge \log(1 + \frac1N)$; and $\log(1 + \frac1N) \ge \frac{2}{2N + 1} \ge \frac{4}{5N}$ for $N \ge 2$, by
+$\log\frac{1 + u}{1 - u} \ge 2u$ at $u = \frac{1}{2N + 1}$. By Lemma~\ref{lem:phi}(i) the first term vanishes unless $jn
+= j'$, and likewise the second unless $j = j'n$. So $g_h(\log n) = \frac{\hat\varphi(0)}{2\pi N} e_n(c)$, which is $0$
+for $n > N$.
 \end{proof}
 
 \subsection{The archimedean term}
 
-Let $\lambda(s) = \frac{23}{100} + \frac{693}{1000} \sum_{k < 30} (1 - \sinc^2(s/(10 \cdot 2^k)))$, a staircase whose
-steps of height $0.693 < \log 2$ at the scales $10 \cdot 2^k$ follow $\log s$, and let $r(s) = \sum_{j = 1}^{9} b_j
-(\sinc^2(\frac{s - \gamma_j}{2}) + \sinc^2(\frac{s + \gamma_j}{2}))$, nine Fejér bumps with explicit rational $b_j > 0$
-and $0 < \gamma_j \le \frac{17}{2}$, $\sum_j b_j = 0.004561\ldots$, which pay for the heights $s < 12$. Let $\mu =
-\varphi\lambda - r$.
+Let $W(t) = \operatorname{Re} \psi_\Gamma(\frac14 + \frac{it}2) - \log \pi$ be the archimedean weight. Let $\lambda(s) =
+\frac{23}{100} + \frac{693}{1000} \sum_{k < 30} (1 - \sinc^2(s/(10 \cdot 2^k)))$, a staircase whose steps of height
+$0.693 < \log 2$ at the scales $10 \cdot 2^k$ follow $\log s$, and let
+\[
+r(s) = \sum_{j = 1}^{9} b_j \Big(\sinc^2\big(\tfrac{s - \gamma_j}{2}\big) + \sinc^2\big(\tfrac{s + \gamma_j}{2}\big)\Big),
+\]
+with the centres $\gamma_j$ and weights $b_j$
+\[
+\begin{array}{c|ccccccccc}
+\gamma_j & \frac32 & 2 & 3 & \frac72 & 4 & \frac92 & 7 & \frac{15}{2} & \frac{17}{2} \\[2pt] \hline
+10^6 b_j & 193 & 46 & 1021 & 593 & 568 & 617 & 1433 & 78 & 12
+\end{array}
+\]
+These are nine Fejér bumps, with $\sum_j b_j = 0.004561$, which pay for the heights $s < 12$, where $\lambda$ lies above
+$\log(s/2\pi)$. Let $\mu = \varphi\lambda - r$.
 
 \begin{lemma}\label{lem:minorant}
 \textup{(i)} $\int \mu(s) \cos(sv)\,ds = 0$ for $|v| \ge 1$, and $\int \mu \ge \frac78 \hat\varphi(0)$.
-\textup{(ii)} For every $N \ge 2$ and every real $s$, $\mu(s) \le \varphi(s)\big(\operatorname{Re}
-\psi_\Gamma(\frac14 + \frac{iNs}{2}) - \log \pi - \log N\big)$.
+\textup{(ii)} For every $N \ge 2$ and every real $s$, $\mu(s) \le \varphi(s)\big(W(Ns) - \log N\big)$.
 \end{lemma}
 
-\begin{proof}[Sketch]
-(i) A step at scale $A \ge 10$ widens the support of $\hat\varphi$ by at most $2/A \le \frac15$, and each bump has
-transform supported in $[-1, 1]$. The mass is exact: by $\sinc^2 y = \frac14 \int (2 - |w|)^+ \cos(wy)\,dw$ and Fubini,
-$\int \mu = \hat\varphi(0)(\frac{23}{100} + \frac{693}{1000} \sum_k \kappa(10 \cdot 2^k)) - 4\pi \sum_j b_j$ with
-$\kappa(A) = \frac{15}{2A} - \frac{175}{8A^2} + \frac{375}{16A^3}$, which is $0.8804\,\hat\varphi(0)$.
-(ii) Stirling's formula with two steps of the recurrence gives $\operatorname{Re} \psi_\Gamma(\frac14 + \frac{iNs}2) -
-\log \pi - \log N \ge g(s) = \log(s/2\pi) - \bar e(2s)$ for every $N \ge 2$ at once, with a rational function $\bar e$
-that decreases, so it suffices that $\varphi(\lambda - g) \le r$. That is an interval certificate in exact rational
-arithmetic: $\lambda$ is bounded above through $1 - \sinc^2 x \le \min(1, \frac{x^2}3 - \frac{2x^4}{45} +
-\frac{x^6}{315})$, $\varphi$ above and $r$ below through $\sinc x \ge 1 - \frac{x^2}6 + \frac{x^4}{120} -
-\frac{x^6}{5040}$, and $\log y$ below by $2v + \frac23 v^3$, $v = \frac{y - 1}{y + 1}$. Above $s = 20$, writing $s = 10
-\cdot 2^j y$ with $y \in [1, 2)$ reduces every $j$ to the same $400$ cells of $y$; $[12, 20)$ and $[\frac12, 12)$ take
-$320$ and $460$ cells, and $(0, \frac12]$ follows from $\varphi(s) \le s^2/3000$. The least margin is $0.0042$ above $s =
-12$ and $2.4\%$ below.
+\begin{proof}
+(i) By \eqref{eq:mix}, $\sinc^2(s/A) = \frac14 \int_{-2}^{2} (2 - |w|) \cos(ws/A)\,dw$, so by Fubini
+\[
+\int_{\mathbb R} \varphi(s) \sinc^2(s/A) \cos(sv)\,ds = \frac18 \int_{-2}^{2} (2 - |w|)\big(\hat\varphi(v + w/A) +
+\hat\varphi(v - w/A)\big)\,dw .
+\]
+For $A \ge 10$ and $|v| \ge 1$ both arguments have modulus at least $1 - \frac15 = \frac45$, where $\hat\varphi$
+vanishes; so the transform of $\varphi\lambda$ vanishes for $|v| \ge 1$. A bump has the transform $\int
+\sinc^2(\frac{s - \gamma}{2}) \cos(sv)\,ds = 2\pi(1 - |v|)^+ \cos(\gamma v)$, by Fejér's kernel and a translation, and
+it vanishes for $|v| \ge 1$ too. At $v = 0$ and $A \ge 5$ the arguments $w/A$ lie in $[-\frac25, \frac25]$, where
+$\hat\varphi$ is the polynomial of Lemma~\ref{lem:phi}(i), and integrating it,
+\[
+\int_{\mathbb R} \varphi(s)\big(1 - \sinc^2(s/A)\big)\,ds = \hat\varphi(0)\,\kappa(A), \qquad \kappa(A) = \frac{15}{2A} -
+\frac{175}{8A^2} + \frac{375}{16A^3} .
+\]
+Each bump has integral $4\pi$, so
+\[
+\int_{\mathbb R} \mu = \hat\varphi(0)\Big(\frac{23}{100} + \frac{693}{1000} \sum_{k < 30} \kappa(10 \cdot 2^k)\Big) - 4\pi
+\sum_j b_j = 0.88048\ldots\,\hat\varphi(0),
+\]
+as $\sum_{k < 30} \kappa(10 \cdot 2^k) = 1.23511\ldots$ and $4\pi \sum_j b_j/\hat\varphi(0) = 0.004561 \cdot
+\frac{45000}{999} = 0.20545\ldots$.
+
+(ii) The functions $\mu$, $\varphi$ and $W$ are even, and at $s = 0$, where $\varphi(0) = 0$ by
+Lemma~\ref{lem:phi}(ii), the claim is $-r(0) \le 0$. So let $s > 0$.
+
+\emph{The weight, uniformly in $N$.} The library proves Stirling's formula with the remainder $|\psi_\Gamma(w) - \log
+w + \frac{1}{2w} + \frac{1}{12w^2}| \le \frac{1}{120(\operatorname{Re} w)^4}$ for $\operatorname{Re} w > 0$, from
+Binet's formula. Apply it to $w = z + 2$, $z = \frac14 + ib$, $b > 0$, after two steps of the recurrence
+$\psi_\Gamma(z) = \psi_\Gamma(z + 2) - \frac1z - \frac{1}{z + 1}$. With $R = |w|^2 = \frac{81}{16} + b^2$:
+$\operatorname{Re} \log w = \frac12 \log R \ge \log b$, $\operatorname{Re} \frac{1}{2w} = \frac{9}{8R}$,
+$\operatorname{Re} \frac{1}{12w^2} = \frac{81/16 - b^2}{12R^2} \le \frac{81}{192R^2}$, $\operatorname{Re} \frac1z =
+\frac{1/4}{1/16 + b^2}$, $\operatorname{Re} \frac{1}{z + 1} = \frac{5/4}{25/16 + b^2}$, and $\frac{1}{120(9/4)^4} <
+\frac{1}{3000}$. So $\operatorname{Re} \psi_\Gamma(\frac14 + \frac{it}2) \ge \log\frac t2 - \bar e(t)$ for $t > 0$,
+where, with $b = t/2$,
+\[
+\bar e(t) = \frac{9}{8R} + \frac{81}{192R^2} + \frac{1/4}{1/16 + b^2} + \frac{5/4}{25/16 + b^2} + \frac{1}{3000},
+\]
+and $\bar e$ decreases on $[0, \infty)$. At $t = Ns \ge 2s$ this gives, for every $N \ge 2$,
+\[
+W(Ns) - \log N \ge \log\frac{s}{2\pi} - \bar e(Ns) \ge g(s), \qquad g(s) = \log\frac{s}{2\pi} - \bar e(2s).
+\]
+As $\varphi \ge 0$, it suffices that $\varphi(s)(\lambda(s) - g(s)) \le r(s)$, and as $r \ge 0$ this holds wherever
+$\lambda(s) \le g(s)$.
+
+\emph{The bounds.}
+\begin{itemize}
+\item[(a)] $1 - \sinc^2 x \le u(x) = \min(1, \frac{x^2}3 - \frac{2x^4}{45} + \frac{x^6}{315})$, from
+$\sinc^2 x = (1 - \cos 2x)/(2x^2)$ and the Taylor bound of $\cos$ of degree $8$. So $\lambda(s) \le \frac{23}{100} +
+\frac{693}{1000} S_{30}(s/10)$, with $S_n(x) = \sum_{k < n} u(x/2^k)$. As $u(x) \le x^2/3$, the terms of $S_n$ after the
+eighth sum to at most $x^2/147456$, so $S_n(x) \le T(x) = S_8(x) + x^2/147456$ for every $n$; and as $u \le 1$, $S_n(2^j
+y) \le j - 1 + u(2y) + T(y)$ for $j \ge 1$. Both $u$ and $T$ increase on $[0, \infty)$.
+\item[(b)] $\sinc x \ge \ell(x) = 1 - \frac{x^2}6 + \frac{x^4}{120} - \frac{x^6}{5040}$, and $\ell$ decreases in $x^2$. On a
+cell $s \in [s_a, s_b]$ with $\ell_b = \ell(s_b/5) > 0$, $\sinc^2(s/5) \ge \ell_b^2$ and $\sin^2(s/5) \ge (s_a/5)^2
+\ell_b^2$, so $\varphi(s) \le \frac{999}{1000}(1 - \ell_b^2(1 + s_a^2 \ell_b^2/75))/s_a^2$. Also $1 - \mathcal K(x) \le
+x^2 \rho(x^2)$ for $x^2 \le 6$, where $\rho(a) = \frac{7a}{36} - \frac{a^2}{18} + \frac{a^3}{162} - \frac{a^4}{3888}$
+increases on $[0, 3]$ and is largest at $3$; so $\varphi(s) \le \frac{999}{1000}\rho(\min(s_b^2/25, 3))/25$ if $s_b^2
+\le 150$. Let $\varphi_{\mathrm{up}}(s_a, s_b)$ be the smaller bound. Likewise $\sinc^2 z \ge \ell(D/2)^2$ for $|z| \le
+D/2$ when $\ell(D/2) > 0$; with $|s - \gamma_j| \le \max(\gamma_j - s_a, s_b - \gamma_j)$ and $0 \le s + \gamma_j \le
+s_b + \gamma_j$ this bounds $r$ on the cell from below by $r_{\mathrm{lo}}(s_a, s_b)$.
+\item[(c)] $\log y \ge 2v + \frac23 v^3$, $v = \frac{y - 1}{y + 1}$, for $y \ge 1$, applied after removing the powers of $2$,
+with $0.6931471803 < \log 2 < 0.6931471808$ and $\log \pi < 1.1558$. As $g$ increases, this bounds $g$ on $[s_a, \infty)$
+from below by $g_{\mathrm{lo}}(s_a)$.
+\end{itemize}
+
+\emph{The cells.} Each check compares two rational numbers.
+\begin{itemize}
+\item $s \ge 20$. Write $s = 10 \cdot 2^j y$ with $j \ge 1$ and $1 \le y < 2$. By (a), $\lambda(s) \le \frac{23}{100} +
+\frac{693}{1000}(j + u(2y) + T(y) - 1)$, and $g(s) \ge \log(10y) + j\log 2 - \log 2 - \log \pi - \bar e(40y)$. As
+$\frac{693}{1000} < \log 2$, $\lambda(s) \le g(s)$ follows, for every $j$ at once, from
+\[
+\tfrac{23}{100} + \tfrac{693}{1000}\big(u(2y) + T(y) - 1\big) \le \log(10y) - \log 2 - \log \pi - \bar e(40y),
+\]
+which is checked on $400$ cells of $[1, 2)$, with the left side at the right end of a cell and the right side at its
+left end.
+\item $12 \le s < 20$. On each of $320$ cells, $\frac{23}{100} + \frac{693}{1000} T(s_b/10) \le g_{\mathrm{lo}}(s_a)$, so
+$\lambda \le g$.
+\item $\frac12 \le s < 12$. On each of $460$ cells, either $\Delta = \frac{23}{100} + \frac{693}{1000} T(s_b/10) -
+g_{\mathrm{lo}}(s_a) \le 0$, so that $\lambda \le g$, or $\varphi_{\mathrm{up}}(s_a, s_b)\,\Delta \le r_{\mathrm{lo}}(s_a,
+s_b)$, with $\ell_b > 0$ and $s_b^2 \le 150$.
+\item $0 < s \le \frac12$. Here $\varphi(s) \le s^2/3000$ by Lemma~\ref{lem:phi}(ii), $\lambda(s) \le \frac{23}{100} +
+\frac{693}{1000} T(\frac{1}{20})$ and $-g(s) \le \log\frac1s + \log 2 + \log \pi + \bar e(0)$. So where $\lambda > g$,
+$\varphi(\lambda - g) \le \frac{s^2}{3000}(C_0 + \log\frac1s) \le \frac{1}{3000}(\frac{C_0}{4} + \frac12)$, with $C_0$
+the sum of the constants, as $s^2 \le \frac14$ and $s^2 \log\frac1s \le s$. The check is $\frac{1}{3000}(\frac{C_0}{4} +
+\frac12) \le r_{\mathrm{lo}}(0, \frac12)$.
+\end{itemize}
+The Lean kernel evaluates the $1181$ checks in exact rational arithmetic (\lean{PivotCert}), and
+\texttt{scripts/pivot\_constants.py} replays them with Python's rationals. The least margin is $0.0042$ in the first two
+ranges and $2.4\%$ of $r_{\mathrm{lo}}$ in the third, near $s = 2.8$, where $455$ of the $460$ cells need the bumps.
 \end{proof}
 
 \begin{lemma}\label{lem:pole}
 $h(\frac i2) + h(-\frac i2) \ge -\sum_{n \le N} c_n^2/(6000N)$.
 \end{lemma}
 
-\begin{proof}[Sketch]
-$h(\pm\frac i2) = D(\frac i2) D(-\frac i2) \varphi_{\mathbb C}(\frac{i}{2N})/N^2$; bound $|D(\pm\frac i2)|$ by
-Cauchy--Schwarz and $\varphi_{\mathbb C}$ by Lemma~\ref{lem:phi}(iii) at $y = 1/(2N) \le \frac14$.
+\begin{proof}
+As $h$ is even, $h(\frac i2) + h(-\frac i2) = 2h(\frac i2) = 2D(\frac i2) D(-\frac i2)\varphi_{\mathbb
+C}(\frac{i}{2N})/N^2$. Since $n^{\pm 1/2} \le N$ for $n \le N$, $|D(\pm\frac i2)| \le N \sum_n |c_n|$, and $(\sum_n
+|c_n|)^2 \le N \sum_n c_n^2$. By Lemma~\ref{lem:phi}(iii) at $y = \frac{1}{2N} \le \frac14$, $|\varphi_{\mathbb
+C}(\frac{i}{2N})| \le \frac{1}{12000N^2}$. So $|2h(\frac i2)| \le 2N^3 \sum_n c_n^2/(12000N^4) = \sum_n
+c_n^2/(6000N)$.
 \end{proof}
 
 \begin{proposition}\label{prop:form}
@@ -386,15 +542,22 @@ Q_N(x) \ge \frac{\hat\varphi(0)}{2\pi N}\Big(\big(\log N + \tfrac78\big) \sum_{n
 \end{proposition}
 
 \begin{proof}
-By \eqref{eq:zero-side} and Lemma~\ref{lem:explicit}, $Q_N(x)$ is at least the pole terms, plus the archimedean term
-$\frac{1}{2\pi} \int h(r)(\operatorname{Re} \psi_\Gamma(\frac14 + \frac{ir}2) - \log \pi)\,dr$, minus the prime side.
-Substituting $r = Ns$, the archimedean term is $\frac{1}{2\pi N} \int |D(Ns)|^2 \varphi(s)(\log N + (\operatorname{Re}
-\psi_\Gamma(\frac14 + \frac{iNs}2) - \log \pi - \log N))\,ds$, which by Lemma~\ref{lem:minorant}(ii) is at least
-$\frac{1}{2\pi N} \int |D(Ns)|^2 (\varphi(s) \log N + \mu(s))\,ds$. Distinct frequencies $\log j \ne \log j'$, $j, j' \le
-N$, are at least $1/N$ apart, so against $|D(N\cdot)|^2$ the transforms of $\varphi$ and $\mu$, supported in $[-\frac45,
-\frac45]$ and $[-1, 1]$, keep only the diagonal: the term is $\frac{1}{2\pi N}(\hat\varphi(0) \log N + \int \mu) \sum
-c_n^2 \ge \frac{\hat\varphi(0)}{2\pi N}(\log N + \frac78) \sum c_n^2$. Lemmas~\ref{lem:prime} and~\ref{lem:pole} give
-the prime side and the poles.
+By \eqref{eq:zero-side} and Lemma~\ref{lem:explicit}, as $g_h(0) = \frac{1}{2\pi} \int h$,
+\[
+Q_N(x) \ge h(\tfrac i2) + h(-\tfrac i2) + \frac{1}{2\pi} \int_{\mathbb R} h(r) W(r)\,dr - 2 \sum_{n \ge 1}
+\frac{\Lambda(n)}{\sqrt n}\, g_h(\log n).
+\]
+Substituting $r = Ns$, the integral is $\frac{1}{2\pi N} \int |D(Ns)|^2 \varphi(s)(\log N + W(Ns) - \log N)\,ds$,
+which by Lemma~\ref{lem:minorant}(ii) is at least $\frac{1}{2\pi N} \int |D(Ns)|^2 (\varphi(s) \log N + \mu(s))\,ds$.
+For $f = \varphi$ and $f = \mu$,
+\[
+\int_{\mathbb R} |D(Ns)|^2 f(s)\,ds = \sum_{j, j' \le N} c_j c_{j'} \hat f\big(N \log(j/j')\big) = \hat f(0) \sum_{n \le
+N} c_n^2,
+\]
+since $\hat f$ vanishes for $|v| \ge 1$, by Lemmas~\ref{lem:phi}(i) and~\ref{lem:minorant}(i), and distinct $j, j' \le
+N$ have $|\log(j/j')| \ge \log\frac{N}{N - 1} \ge \frac1N$. So the archimedean term is at least $\frac{1}{2\pi
+N}(\hat\varphi(0) \log N + \int \mu) \sum c_n^2 \ge \frac{\hat\varphi(0)}{2\pi N}(\log N + \frac78) \sum c_n^2$, by
+Lemma~\ref{lem:minorant}(i). Lemma~\ref{lem:prime} gives the prime side, and Lemma~\ref{lem:pole} the poles.
 \end{proof}
 
 \subsection{The top vertex}
@@ -406,10 +569,19 @@ $M(y) \le \log y + \frac{81}{100}$ for every integer $y \ge 1$. Moreover $M(y) \
 y)/y$ for $1 \le y \le 2000$.
 \end{lemma}
 
-\begin{proof}[Sketch]
-$\psi(n) = \log \operatorname{lcm}(1, \dots, n)$, and $\operatorname{lcm}(1, \dots, n) \le 3^n$ for $n \le 2000$, by one
-kernel computation. With $yM(y) \le \sum_{m \le y} \log m + \psi(y)$ and Stirling's bound this gives the second
-inequality, and Chebyshev's $\psi(y) \le y \log 4 + 2\sqrt y \log y$ gives the first beyond $y = 1600$.
+\begin{proof}
+Let $\psi(y) = \sum_{n \le y} \Lambda(n)$. For an integer $y \ge 1$, $\log y! = \sum_{n \le y} \Lambda(n) \lfloor y/n
+\rfloor \ge y M(y) - \psi(y)$, and $\log y! \le \int_1^y \log t\,dt + \log y = y \log y - y + 1 + \log y$, so
+\begin{equation}\label{eq:mertens}
+M(y) \le \log y - 1 + \frac{1 + \log y}{y} + \frac{\psi(y)}{y}.
+\end{equation}
+Now $\psi(n) = \log \operatorname{lcm}(1, \dots, n)$, and $\operatorname{lcm}(1, \dots, n) \le 3^n$ for $n \le 2000$, by
+one kernel computation that carries the pair $(\operatorname{lcm}(1, \dots, n), 3^n)$ from $n$ to $n + 1$; the largest
+$\psi(n)/n$ there is $1.0388 < \log 3$. With \eqref{eq:mertens} this is the second inequality. It gives the first for $3
+\le y \le 2000$, as $(1 + \log y)/y$ decreases and $\log 3 - 1 + (1 + \log 3)/3 < 0.7982$. For $y > 2000$, Chebyshev's
+bound $\psi(y) \le y \log 4 + 2\sqrt y \log y$, in Mathlib's form, turns \eqref{eq:mertens} into $M(y) \le \log y + \log 4
+- 1 + \frac{1 + \log y}{y} + \frac{2 \log y}{\sqrt y}$, which is below $\log y + 0.767$ for $y \ge 1600$. Finally $M(1)
+= 0$ and $M(2) = \frac12 \log 2$.
 \end{proof}
 
 \begin{proposition}\label{prop:top}
@@ -419,21 +591,46 @@ For every $N \ge 2$, every $d \ge \frac{17}{20}$ and every real $c$,
 \]
 \end{proposition}
 
-\begin{proof}[Sketch]
-Only prime powers $q$ contribute to $L(c)$, through the edges $(j, jq)$ of the divisibility graph on $[1, N]$. Split off
-the edges into the top vertex: $L(c) = L(c') + 2c_N \sum_{q \mid N} \Lambda(q) q^{-1/2} c_{N/q}$, where $c'$ is $c$ with
-$c_N = 0$. Schur's test, row by row, bounds $L(c')$ by $\sum_{j < N} c_j^2 (M(\lfloor (N - 1)/j \rfloor) + \log j)$, so
-row $j$ keeps the part $\rho_j = \log N + d - M(\lfloor (N - 1)/j \rfloor) - \log j \ge 0$ of its diagonal. At a
-parent $j = N/q$ of the top vertex, $\lfloor (N - 1)/j \rfloor = q - 1$ and $\rho_j = \operatorname{room}_d(q) = d +
-\log q - M(q - 1)$. Completing the square at each parent costs $c_N^2 \Lambda(q)^2/(q \operatorname{room}_d(q))$, and the
-parents are distinct, so by $\sum_{q \mid N} \Lambda(q) = \log N$ the coefficient of $c_N^2$ is at least
+\begin{proof}
+Let $c'$ be $c$ with $c_N$ replaced by $0$. A term of $L(c)$ contains $c_N$ only as $c_{jn}$ with $jn = N$, since $j =
+N$ forces $n = 1$ and $\Lambda(1) = 0$. So, with $q$ running over the divisors $q \ge 2$ of $N$,
 \[
-d + \sum_{q \mid N} \Lambda(q)\Big(1 - \frac{\Lambda(q)}{q \operatorname{room}_d(q)}\Big).
+L(c) = L(c') + 2c_N \sum_{q \mid N} \frac{\Lambda(q)}{\sqrt q}\, c_{N/q}.
 \]
-Every term is nonnegative, and a prime $p \mid N$ contributes at least $\frac{45}{100}$: $\operatorname{room}_d(q)$ is
-computed exactly for $q = 2, 3, 4, 5, 7$, it is at least $d - 0.52$ on $[8, 2001]$ and $d - 0.43$ on $[11, 2001]$ by the
-second bound of Lemma~\ref{lem:mertens}, and at least $d - 0.81$ everywhere by the first. So the coefficient is at least
-$\frac{17}{20} + \frac{45}{100} = \frac{13}{10}$.
+\emph{Schur's test, row by row.} For real $b$, $2\frac{\Lambda(n)}{\sqrt n}|b_j b_{jn}| \le b_j^2 \frac{\Lambda(n)}{n}
++ b_{jn}^2 \Lambda(n)$. Summing over $jn \le K$, with $\sum_{n \mid m} \Lambda(n) = \log m$, Landau's form $L_K$ on $[1,
+K]$ satisfies $L_K(b) \le \sum_{j \le K} b_j^2 (M(\lfloor K/j \rfloor) + \log j)$. As $c'$ lives on $[1, N - 1]$, with $K
+= N - 1$,
+\[
+(\log N + d) \sum_{j < N} c_j^2 - L(c') \ge \sum_{j < N} \rho_j c_j^2,
+\]
+where $\rho_j = \log N + d - M(\lfloor (N - 1)/j \rfloor) - \log j$; and $\rho_j \ge d - \frac{81}{100} > 0$, as $M(\lfloor (N - 1)/j \rfloor) \le \log\frac Nj + \frac{81}{100}$ by
+Lemma~\ref{lem:mertens}.
+
+\emph{The parents of the top vertex.} At $j = N/q$, $\lfloor (N - 1)/j \rfloor = q - 1$ and $\log j = \log N - \log q$,
+so $\rho_{N/q} = \operatorname{room}_d(q) = d + \log q - M(q - 1)$. Completing the square,
+\[
+\operatorname{room}_d(q)\, c_{N/q}^2 - 2c_N \frac{\Lambda(q)}{\sqrt q}\, c_{N/q} \ge -c_N^2 \frac{\Lambda(q)^2}{q
+\operatorname{room}_d(q)}.
+\]
+The parents $N/q$ are distinct, and the other rows have $\rho_j c_j^2 \ge 0$. So, by $\sum_{q \mid N} \Lambda(q) = \log
+N$,
+\begin{align*}
+(\log N + d) \sum_{n \le N} c_n^2 - L(c) &\ge c_N^2 \Big(\log N + d - \sum_{q \mid N} \frac{\Lambda(q)^2}{q
+\operatorname{room}_d(q)}\Big) \\
+&= c_N^2 \Big(d + \sum_{q \mid N} \Lambda(q)\Big(1 - \frac{\Lambda(q)}{q \operatorname{room}_d(q)}\Big)\Big).
+\end{align*}
+
+\emph{The numbers.} Every term of the last sum is nonnegative, that is $\Lambda(q) \le q \operatorname{room}_d(q)$: for
+$q \le 7$ the rooms are computed from the values of $M$; for $8 \le q \le 2001$ the second bound of
+Lemma~\ref{lem:mertens} gives $\operatorname{room}_d(q) \ge d - (\log 3 - 1) - \frac{1 + \log 7}{7} \ge d - 0.52 \ge
+0.33$, against $\log q \le 0.33q$; and for $q > 2001$ the first gives $\operatorname{room}_d(q) \ge d - 0.81 \ge 0.04$,
+against $\log q \le 0.04q$. A prime $p \mid N$ contributes at least $\frac{45}{100}$, and the contributions increase
+with $d$. At $d = \frac{17}{20}$ the primes $p = 2, 3, 5, 7$ have rooms $1.5431$, $1.6020$, $1.5734$ and $1.5880$, and
+contribute $0.5375$, $0.8475$, $1.2802$ and $1.6053$. For $11 \le p \le 2001$, $\operatorname{room}_d(p) \ge d - (\log 3
+- 1) - \frac{1 + \log 10}{10} \ge d - 0.43 \ge 0.42$, and $\log p - (\log p)^2/(0.42p)$ increases in $p$, from $1.153$
+at $p = 11$. For $p > 2001$, $\operatorname{room}_d(p) \ge 0.04$, and $\log p - (\log p)^2/(0.04p) \ge 6.88$. Since $N
+\ge 2$ has a prime factor, the coefficient of $c_N^2$ is at least $\frac{17}{20} + \frac{45}{100} = \frac{13}{10}$.
 \end{proof}
 
 \subsection{Proof of Theorem~\ref{thm:margin}}
@@ -608,10 +805,17 @@ $|W(x)| \le \beta$ \cite{nicolas} is its $2 \times 2$ layer. The constant $d_1$ 
 
 \emph{Weil's form on finite-dimensional spaces.} Yoshida \cite{yoshida92} proves non-degeneracy of Weil's form on
 windows and, by Gram--Schmidt on high Fourier modes, explicit lower bounds for squared norms; Bombieri \cite{bombieri00,
-bombieri03} studies its minimisation on windows. Connes and Consani \cite{connes-consani21, connes-consani23} study it on
-$[\lambda^{-1}, \lambda]$, where its small eigenvalues are extremely small. None of these measures pivots against a first
-pivot or considers integer lattices. The orbit vectors here are not compactly supported, and in Yoshida's setting only
-the hyperplane $\sum_n x_n = 0$ of their span fits a window.
+bombieri03} studies its minimisation over test functions on windows. Connes and Consani \cite{connes-consani21,
+connes-consani23} study it on $[\lambda^{-1}, \lambda]$, where its small eigenvalues are extremely small, and Suzuki
+\cite{suzuki26} places these results in the frame of the screw function. Closest in method, Andrews, Connes and La Gatta
+\cite{acl26} find numerically that conditioning Weil's form on $[\lambda^{-1}, \lambda]$ by prolate vectors and the pole
+functional removes its minuscule spectrum. Under a hypothesis they prove that the form is bounded below by an explicit
+positive constant on the orthogonal complement of an explicit finite-dimensional space, which reduces its positivity to
+the sign of a Schur complement on a finite block \cite[\S8]{acl26}. That margin holds away from a finite-dimensional
+space of test functions on a window, and it serves a proof of positivity. The margin here bounds every Schur complement
+along one basis, the orbit, and it is equivalent to RH. None of these works bounds pivots below by a first pivot or
+considers integer lattices. The orbit vectors here are not compactly supported, and in Yoshida's setting only the
+hyperplane $\sum_n x_n = 0$ of their span fits a window.
 
 \emph{Distances and extremal problems.} In the Nyman--Beurling criterion, in Báez-Duarte's form \cite{baez-duarte03},
 the squared distance from $1_{(0,1]}$ to the span of the first $N$ dilates tends to $0$; Burnol \cite{burnol02} bounds
@@ -626,9 +830,10 @@ stronger than RH, fail for $\zeta$; the margin here runs the other way, being eq
 its analogues.
 
 \emph{Li's criterion.} Li's coefficients \cite{li97} are values of Weil's form in another basis (Section~\ref{sec:li}).
-Mazhouda \cite{mazhouda13} studies the monotonicity of Li's coefficients for Dirichlet $L$-functions; a monotonicity
-statement equivalent to GRH would be a margin on the diagonal, not a margin for pivots.
-% TODO: read Mazhouda (2013), Bombieri (2003) and Broughan's book before the novelty statements are final.
+According to its review in zbMATH (Zbl 1326.11047), Mazhouda \cite{mazhouda13} proves that GRH for $L(s, \chi)$, $\chi$
+primitive of conductor $q > 1$, holds if and only if Li's coefficients $\lambda_\chi(n)$ increase with $n$. Under GRH
+this gives the margin $\lambda_\chi(n) \ge \lambda_\chi(1) > 0$ in Li's criterion. It is a margin of another kind: it
+lies on the diagonal of Li's basis, where the pivots collapse, and it excludes $\zeta$.
 
 \section{The smallest eigenvalue, and questions}\label{sec:lambda}
 
@@ -693,7 +898,7 @@ Proposition~\ref{prop:positivity} & \lean{BallWeil.rh\_iff\_form}, \lean{BallHad
 Proposition~\ref{prop:flat} & \lean{BallFlat.gram\_flat}, \lean{BallFlat.flat\_pivot} \\
 Proposition~\ref{prop:growth} & \lean{BallPivot.pivot\_ge} \\
 Lemma~\ref{lem:explicit} & \lean{WeilForm.weilExplicit\_zeta} \\
-Lemma~\ref{lem:phi} & \lean{PivotPhi.integral\_phi\_cos}, \lean{PivotPhi.phi\_mul\_le}, \lean{PivotPhi.phiE\_strip}, \lean{PivotPhi.norm\_phiE\_I\_le} \\
+Lemma~\ref{lem:phi} & \lean{PivotPhi.integral\_phi\_cos}, \lean{PivotPhi.phi\_nonneg}, \lean{PivotPhi.phi\_mul\_le}, \lean{PivotPhi.phi\_le\_sq}, \lean{PivotPhi.phiE\_strip}, \lean{PivotPhi.norm\_phiE\_I\_le} \\
 Lemma~\ref{lem:prime} & \lean{PivotSharp.prime\_eq} \\
 Lemma~\ref{lem:minorant}(i) & \lean{PivotMinorFT.integral\_mu\_cos\_eq\_zero}, \lean{PivotMinorFT.integral\_mu\_ge} \\
 Lemma~\ref{lem:minorant}(ii) & \lean{PivotCert.mu\_le} \\
