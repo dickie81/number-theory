@@ -1,0 +1,30 @@
+[computed 3000 zeros in 869 s]
+== Q1: the angle at which each new integer arrives (to the span of all earlier ones) ==
+first arrivals: 2: 68.0°, 3: 62.8°, 4: 64.0°, 5: 60.2°, 6: 55.2°, 7: 60.3°, 8: 58.8°, 9: 57.2°, 10: 52.8°, 11: 62.2°, 12: 51.0°, 13: 59.4°
+  n in [2, 64): median primes 56.22° (max 67.96°); powers 53.49° (max 64.03°); composites 45.12° (max 55.21°)
+  n in [64, 512): median primes 28.71° (max 45.08°); powers 32.33° (max 42.68°); composites 26.98° (max 42.12°)
+  n in [512, 4096): median primes 13.12° (max 22.90°); powers 14.34° (max 22.58°); composites 12.79° (max 22.88°)
+  arrivals at >= 45°: n = [np.int64(2), np.int64(3), np.int64(4), np.int64(5), np.int64(6), np.int64(7), np.int64(8), np.int64(9), np.int64(10), np.int64(11), np.int64(12), np.int64(13), np.int64(14), np.int64(15), np.int64(16), np.int64(17), np.int64(18), np.int64(19), np.int64(20), np.int64(21), np.int64(22), np.int64(23), np.int64(24), np.int64(25), np.int64(26), np.int64(27), np.int64(28), np.int64(29), np.int64(31), np.int64(32), np.int64(33), np.int64(34), np.int64(37), np.int64(38), np.int64(39), np.int64(41), np.int64(43), np.int64(46), np.int64(47), np.int64(49), np.int64(53), np.int64(58), np.int64(59), np.int64(61), np.int64(67)]
+
+== Q2: how far the thinnest axis turns when integer N arrives ==
+  N in [3, 50]: median turn primes 2.701°; powers 2.229°; composites 1.399°
+  N in [50, 600]: median turn primes 0.229°; powers 0.204°; composites 0.122°
+  largest turns: N = 2 (prime) 23.4°, N = 3 (prime) 16.4°, N = 4 (power) 10.3°, N = 5 (prime) 10.1°, N = 7 (prime) 7.5°, N = 6 (composite) 6.1°, N = 9 (power) 5.1°, N = 8 (power) 5.0°
+  turns >= 45°: []; smallest gap ratio λ2/λ1 over N >= 3: 3.10
+
+== Q3a: from the primes alone, Fourier-transform the tower's correlation K(e^u) ==
+  check: K(1) = 0.046191 (H0 = 0.046191)
+  peaks at a zero: 14.134, 21.022, 25.010, 30.424, 32.934, 37.586, 40.918, 43.326
+  zeros:           14.135, 21.022, 25.011, 30.425, 32.935, 37.586, 40.919, 43.327
+  weakest peak at a zero 8.12e-03; strongest peak elsewhere 6.43e-04
+  every one of the first 8 zeros recovered within 0.5: True
+
+== Q3b: from the first zeros alone, -Σ cos(γ_k u) (Fejér-tapered) ==
+  100 zeros: peaks at 16/16 prime powers <= 30; weakest (at 16) 1.5, strongest peak elsewhere -0.1 (at x = 1.93) -> clean separation: True
+  3000 zeros: peaks at 16/16 prime powers <= 30; weakest (at 16) 46.7, strongest peak elsewhere 5.4 (at x = 30.92) -> clean separation: True
+
+== Q4: nearest-neighbour spacings of the first zeros ==
+  2999 spacings; share below 0.25: 0.0070
+  GUE (no time reversal)  : predicts 0.0161 below 0.25; KS distance 0.035
+  GOE (time reversal)     : predicts 0.0479 below 0.25; KS distance 0.102
+  Poisson (uncorrelated)  : predicts 0.2212 below 0.25; KS distance 0.313

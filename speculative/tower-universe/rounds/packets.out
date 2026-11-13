@@ -1,0 +1,19 @@
+1/λ_N at N = 2048: 5652; primes so far 309; per prime on average 18.3
+     the prime's own kick: quartiles 2.18 / 2.49 / 2.94 integers' worth (CV 0.20); Spearman with the gap after it -0.19, with the gap before it -0.03
+[256, 512): 42 packets; a prime is worth 2.49 integers (each other integer ~1 on average); the prime's share of its packet: median 0.45 (range 0.20–0.95)
+     packet size ≈ 1.84 + 0.69·gap (integers' worth); Spearman(packet, gap) = 0.90
+       gap  2: packet 3.0 integers' worth (7 packets)
+       gap  6: packet 5.8 integers' worth (11 packets)
+       gap 14: packet 11.1 integers' worth (2 packets)
+     the prime's own kick: quartiles 2.27 / 2.54 / 2.87 integers' worth (CV 0.19); Spearman with the gap after it -0.22, with the gap before it 0.17
+[512, 1024): 74 packets; a prime is worth 2.54 integers (each other integer ~1 on average); the prime's share of its packet: median 0.41 (range 0.15–0.99)
+     packet size ≈ 1.76 + 0.74·gap (integers' worth); Spearman(packet, gap) = 0.94
+       gap  2: packet 3.0 integers' worth (12 packets)
+       gap  6: packet 6.3 integers' worth (20 packets)
+       gap 20: packet 15.1 integers' worth (1 packets)
+     the prime's own kick: quartiles 2.23 / 2.56 / 2.93 integers' worth (CV 0.21); Spearman with the gap after it -0.42, with the gap before it 0.03
+[1024, 2048): 136 packets; a prime is worth 2.56 integers (each other integer ~1 on average); the prime's share of its packet: median 0.39 (range 0.10–0.99)
+     packet size ≈ 1.72 + 0.77·gap (integers' worth); Spearman(packet, gap) = 0.94
+       gap  2: packet 3.2 integers' worth (26 packets)
+       gap  6: packet 6.4 integers' worth (35 packets)
+       gap 34: packet 27.8 integers' worth (1 packets)

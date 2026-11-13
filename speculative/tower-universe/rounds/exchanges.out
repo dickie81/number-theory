@@ -1,0 +1,23 @@
+== Who an embedded observer registers ==
+total click weight per tick 0.56996 (−ζ′(2)/ζ(2) = 0.56996)
+  species  2:  40.5% of what the observer registers
+  species  3:  24.1% of what the observer registers
+  species  5:  11.8% of what the observer registers
+  species  7:   7.1% of what the observer registers
+  species 11:   3.5% of what the observer registers
+  species 13:   2.7% of what the observer registers
+  primes above 100 together: 1.74% of what is registered, but 96.7% of Σ log n at our epoch
+
+== How long a new prime waits ==
+primes in (N/2, N], which divide no integer up to N: 47.56% at N = 10^7; 49.75% at our epoch
+a prime born at tick p first divides an integer at 2p (twice the age), then once every p ticks
+
+== Primes as matter, composites as radiation ==
+composites per prime at our epoch: N/π(N) − 1 ≈ 138.2  (measured: ~1.6e9 photons per baryon)
+the share of primes changes by 0.71% per e-fold of time; Ω_m changes by 195% (3·Ω_Λ·H·t): a factor 274
+integers with at most two prime factors at our epoch: ≈ 4.4% (primes 0.71%); at most three: ≈ 13.4%; the cut is a free choice
+
+== 2 and its multiples as photons ==
+prime factors per integer at our epoch ≈ 5.98, of which 2s: 1 on average, so 2s are 17% of all quanta
+share of Σ log n carried by 2s: log 2/(log N − 1) = 0.50%; share of what an embedded observer registers: 40.5%, the same at every epoch
+each 2-click joins tick N to tick N/2, so on the inside redshift 1 + z = N/n it comes from z = 1; a 4-click from z = 3, an 8-click from z = 7

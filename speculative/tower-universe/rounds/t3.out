@@ -1,0 +1,27 @@
+== T3: numerology audit ==
+shares: {1: np.float64(0.2164), 2: np.float64(0.3144), 3: np.float64(0.3836), 5: np.float64(0.4702), 10: np.float64(0.586), 29: np.float64(0.7404), 50: np.float64(0.8028), 100: np.float64(0.8653)} (zeros below 100: 29)
+44 model numbers, 38 measurements
+
+L0: best match 0.0411 sigma; random model numbers do at least this well in 21.5% of 20000 draws (median best 0.0959 sigma)
+    tau*lambda at N=4096 = 0.0541 ~ tau_reio = 0.0544 (0.04 sigma)
+    tau*lambda at N=2048 = 0.0547 ~ tau_reio = 0.0544 (0.04 sigma)
+    share of first 2 zeros = 0.31437 ~ Omega_m = 0.3153 (0.13 sigma)
+    tau*lambda at N=8192 = 0.053 ~ tau_reio = 0.0544 (0.19 sigma)
+    tau*lambda at N=16384 = 0.0525 ~ tau_reio = 0.0544 (0.26 sigma)
+    matches within 1 sigma: 8; random: median 6, at least 8 in 34% of draws
+
+L1: best match 0.0411 sigma; random model numbers do at least this well in 66.5% of 20000 draws (median best 0.0238 sigma)
+    tau*lambda at N=4096 = 0.0541 ~ tau_reio = 0.0544 (0.04 sigma)
+    tau*lambda at N=2048 = 0.0547 ~ tau_reio = 0.0544 (0.04 sigma)
+    1-share of first 2 zeros = 0.68563 ~ Omega_Lambda = 0.6847 (0.13 sigma)
+    share of first 2 zeros = 0.31437 ~ Omega_m = 0.3153 (0.13 sigma)
+    sqrt share of first 5 zeros = 0.68573 ~ Omega_Lambda = 0.6847 (0.14 sigma)
+    matches within 1 sigma: 33; random: median 28, at least 33 in 17% of draws
+
+L2: best match 0.0000 sigma; random model numbers do at least this well in 25.5% of 4000 draws (median best 0.0006 sigma)
+    1/2*(tau*lambda at N_now) = 0.02195 ~ sin^2 theta_13 = 0.02195 (0.00 sigma)
+    1/3*(1-tau*lambda at N=4096) = 0.3153 ~ Omega_m = 0.3153 (0.00 sigma)
+    1/8pi*(profile kappa 0.096) = 0.0038197 ~ |V_ub| = 0.00382 (0.00 sigma)
+    8pi*(tick drop at 7^2) = 0.55797 ~ sin^2 theta_23 = 0.558 (0.00 sigma)
+    1/4*(1-share of first 50 zeros) = 0.049292 ~ Omega_b = 0.0493 (0.01 sigma)
+    matches within 1 sigma: 453; random: median 458, at least 453 in 62% of draws

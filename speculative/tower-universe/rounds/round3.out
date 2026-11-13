@@ -1,0 +1,9 @@
+== O1: a ∝ t from inside (both clocks) ==
+T1: H0 t0 = 1.000; Planck (assumes LCDM) 0.950 ± 0.008: +6.3 sigma; cosmology-independent 0.92–1.03: inside
+T2: DESI DR2 BAO chi2 = 187.1 for 12 dof (p = 1e-33); flat LCDM 10.3 for 11; dchi2 = 176.8 (13.3 sigma for one parameter)
+
+== O2: what marks 'now' from inside ==
+share of new integers that are prime: 1/log N = 1/140.2; changes by 0.71% per e-fold of time
+N·λ_N = 0.0429 log N + 0.032 = 6.048; changes by 0.71% per e-fold
+our universe: Omega_Lambda changes by 90% per e-fold of time (d ln Ω_Λ/d ln a = 3Ω_m, × H·t)
+the view of the past: corr(w_N, w_n) = K(N/n)/H0 depends on N/n = 1 + z alone (exact, from G = √(mn)·K(m/n))
