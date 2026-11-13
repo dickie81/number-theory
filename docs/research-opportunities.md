@@ -1005,7 +1005,7 @@ So of this page's harvest, §1 (exponential sums with `μ` and `Λ` uniformly in
 from the half-plane alone should be expected to appear elsewhere. The library's own ground is §3, the certificates, and
 the orbit form.
 
-### 8.3 The orbit-lattice conjecture: what is left is a constant
+### 8.3 The orbit-lattice conjecture: it is equivalent to RH
 
 **Theorem (Lean, under RH).** `d_N ≥ (log N/2 + log 4 + 2)/(22e⁸)` for every `N ≥ 1`.
 
@@ -1015,9 +1015,11 @@ graph of Landau's form has no children, so `Σc_n² + G(c) ≥ (log N/2 + log 4 
 
 Three things follow, in order of cost.
 
-1. **The equivalence with RH outright (a computation, not new mathematics).** The pivot inequality `d_k ≥ d_1` is
-   proved for `k ≤ 10⁴` (`scripts/ball_certificate.py`) and, under RH, for `log k ≥ 7100`. The gap is the constant
-   `22e⁸`. Against the Fejér weight `sin²(πγ/2r)/γ²`, `r = ρN`, the mean of the zeros' density `log(|t|/2π)` is
+1. **The equivalence with RH outright (done, in Lean).** Under RH `d_k ≥ 0.0577 = 1.249·d_1` for every `k ≥ 2`
+   (`PivotSharp.pivot_ge_rh`), so RH holds if and only if the orbit-lattice conjecture does
+   (`PivotSharp.rh_iff_orbitLattice`; [ball-rate.md](../formalisations/ball-rate.md), "The pivot inequality for every
+   `k`"). Before it, the pivot inequality was proved for `k ≤ 10⁴` (`scripts/ball_certificate.py`) and, under RH, for
+   `log k ≥ 7100`, the gap being the constant `22e⁸`. Against the Fejér weight `sin²(πγ/2r)/γ²`, `r = ρN`, the mean of the zeros' density `log(|t|/2π)` is
    `log(ρN/12.93)`, and the same argument gives `d_k ≥ (π/(4ρ))(s + Σ_{q ∣ k}Λ(q)g/(g + Λ(q)/q))`, `g = s + 0.34`,
    from a sampling inequality with margin `s` over Landau's form. At `ρ = 120`, `s = 1/2` this is above `d_1` for
    every `k` from `5461` to `10⁶`; at `ρ = 100` from `1156` (`scripts/pivot_bound.py`, Numerical; the sum is
@@ -1025,7 +1027,7 @@ Three things follow, in order of cost.
    their natural constants, and Mertens' sum in the form `Σ_{n ≤ y}Λ(n)/n ≤ log y`. A design with a test
    function that vanishes below height `≈ 6N` clears `d_1` at every `k ≥ 2` (`d_k ≥ 1.449·d_1`, Numerical,
    `scripts/pivot_push.py`). [ball-conjecture.md](ball-conjecture.md), "The pivot inequality for every `k`", gives
-   it with what its Lean proof needs.
+   it, and the cruder version that `PivotSharp` proves.
 2. **Block pivots (Theorem modulo `BallSharp.rate_slack`).** For `N ≥ 9` and `K ≤ N/(4 log N)`,
    `Σc_n² + G(c) ≥ (log N/4)·Σ_{N−K < m ≤ N}c_m²`, so under RH
    `Q_N(x) ≥ (log N/(100e⁸))·Σ_{N−K < n ≤ N}x_n²`: the top window is uniformly independent of everything below it.

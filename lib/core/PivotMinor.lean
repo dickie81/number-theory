@@ -12,8 +12,8 @@ bounded below on `φ`'s support by the band-limited `μ = φλ − r`, independe
 * `r(s) = Σ_j b_j(sinc²((s − γ_j)/2) + sinc²((s + γ_j)/2))`, nine nonnegative bumps of transform support `1`
   centred at `γ_j ≤ 17/2`, paying for the heights `s < 12` where `λ` is above `log(s/2π)` (`rr`, `bumpData`).
 
-The pointwise inequality `μ(s) ≤ φ(s)(L(Ns) − log N)` for every `N ≥ 2` is `PivotSharp.MuLe`; `PivotMinorFT` proves
-that `μ`'s transform vanishes for `|v| ≥ 1` and that `∫μ ≥ (7/8)φ̂(0)`.
+`PivotCert` proves `μ(s) ≤ φ(s)(L(Ns) − log N)` for every `N ≥ 2` (`PivotCert.mu_le`); `PivotMinorFT` proves that
+`μ`'s transform vanishes for `|v| ≥ 1` and that `∫μ ≥ (7/8)φ̂(0)`.
 -/
 
 open Real MeasureTheory

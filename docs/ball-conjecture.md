@@ -15,13 +15,13 @@ The tests so far tell against that lattice statement as a route to RH. It fails 
 is proved, and for a positive proportion of Dirichlet `L`-functions, where GRH is expected. So as stated it is specific
 to `ζ` ("What it must survive", the last item).
 
-For `ζ` itself the statement is now RH up to finitely many cases. Under RH the Gram–Schmidt pivots of the orbit satisfy
-`d_k ≥ (log k/2 + log 4 + 2)/(22e⁸)` (`BallPivot.pivot_ge`), so they tend to infinity and `d_k ≥ d_1` holds for every `k`
-with `log k ≥ 7100` (`BallPivot.orbitLattice_of_log_ge`). The conjecture is therefore equivalent to RH together with the
-pivot inequalities for `log k < 7100` (`BallPivot.orbitLattice_iff`); what stands between that and an equivalence with
-RH outright is a constant ("What a proof under RH would need"). And with a smaller constant the lattice is there: RH holds if and
-only if the form of the orbit, computed from the primes, is at least `(log 4 + 2)/(22e⁸)` at every nonzero integer
-vector (`BallPivot.rh_iff_lattice`), so under RH the orbit of `w_1` spans a discrete lattice in every realization.
+For `ζ` itself the statement is equivalent to RH (`PivotSharp.rh_iff_orbitLattice`). Under RH every Gram–Schmidt
+pivot of the orbit after the first is at least `0.0577`, against `d_1 = 0.0462` (`PivotSharp.pivot_ge_rh`), so
+`d_k ≥ d_1` for every `k` (`PivotSharp.orbitLattice_of_rh`), and the pivots grow like `log k` (`BallPivot.pivot_ge`);
+the converse is `BallWeil.rh_of_pivots`. So the conjecture is another form of RH, not a route to it ("What a proof under
+RH would need"). And with a smaller constant the lattice is there: RH holds if and only if the form of the orbit,
+computed from the primes, is at least `(log 4 + 2)/(22e⁸)` at every nonzero integer vector (`BallPivot.rh_iff_lattice`),
+so under RH the orbit of `w_1` spans a discrete lattice in every realization.
 
 ## The conjecture
 
@@ -378,9 +378,9 @@ Báez-Duarte, the last entry.
    > **The orbit lattice.** The Gram–Schmidt pivots `d_k` of the matrices `(√(mn)·K_H(m/n))_{m,n ≤ N}`, which
    > `BallPsi.gram_explicit` writes through `ψ`, satisfy `d_k ≥ d_1` for every `k`.
 
-   It holds for `k ≤ 10^4`, by the certificate above, and under RH for every `k` with `log k ≥ 7100`
-   (`BallPivot.orbitLattice_of_log_ge`). Under RH it holds for every `k` by a numerical design not yet in Lean (the
-   last section, "The pivot inequality for every `k`").
+   It holds for `k ≤ 10^4`, by the certificate above, and under RH for every `k` (`PivotSharp.orbitLattice_of_rh`;
+   for `log k ≥ 7100` already `BallPivot.orbitLattice_of_log_ge`). So it is equivalent to RH
+   (`PivotSharp.rh_iff_orbitLattice`; the last section, "The pivot inequality for every `k`").
 
    It is a statement about the primes. Under RH it says that in every realization of `K_H`, `w_{k+1}` keeps distance
    `‖w_1‖` from the span of `w_1, …, w_k`. The orbit then spans a lattice with `w_1` as a shortest vector
@@ -395,10 +395,10 @@ Báez-Duarte, the last entry.
 
 ## What a proof under RH would need
 
-The orbit-lattice conjecture of step 6 implies RH, so the question is whether RH implies it. It would then be another
-form of RH, and would not by itself prove RH. For every large `k` it does (`BallPivot`), and for every `k ≥ 2` by a
-numerical design not yet in Lean (both at the end of this section). The four computations below, which
-`scripts/ball_orbit.py` reproduces, were made before either, and locate where the pivot is decided.
+The orbit-lattice conjecture of step 6 implies RH, so the question is whether RH implies it. It does: for every large
+`k` by `BallPivot`, and for every `k` by `PivotSharp` (both at the end of this section). So the conjecture is another
+form of RH, and does not by itself prove RH. The four computations below, which `scripts/ball_orbit.py` reproduces,
+were made before either, and locate where the pivot is decided.
 
 - **The flat model is the equality case** (`BallFlat`). Replace the zeros by Lebesgue measure, with the same weights
   `1/(¼ + γ²)`. The kernel becomes `e^{−|log x|/2} = min(√x, 1/√x)` (`BallFlat.kerFlat_eq_integral`), and the orbit's
@@ -455,7 +455,7 @@ was not chosen for size: with the natural constants of the same test functions t
 direction makes it a route to RH: it is what RH says about the pivots, as `λ_N ≍ log N/N` is what RH says about the
 smallest eigenvalue.
 
-**The pivot inequality for every `k`: a design (numerical, not yet in Lean).** With other test functions the same
+**The pivot inequality for every `k`.** With other test functions the same
 argument clears `d_1` at every `k ≥ 2`, and leaves no finite range (`scripts/pivot_push.py`). The bound of `BallSharp`
 is Weil's explicit formula for `h = |D|²Φ`, `D(t) = Σ_{n ≤ N}c_n n^{−it}`, `c_n = x_n√n`. Suppose that
 `Φ ≤ 1/(¼ + t²)` with its Fourier transform supported in `|v| < log(1 + 1/N)`, and that `m ≤ Φ·L`, with
@@ -506,25 +506,28 @@ a growing factor. The checks behind these numbers:
   `10⁻⁶`, for random `c` with `N ≤ 6` (`--zeros`). The zeros above the last are counted by their density and
   Landau's drift.
 
-Once formalised, this bound and `BallWeil.rh_of_pivots` make the conjecture equivalent to RH outright, with no finite
-range left for a certificate. Beyond what `BallCutoff` and `BallSharp` have, the Lean proof needs:
-
-1. **The test function.** `φ` with its transform (a piecewise polynomial on `[−2/3, 2/3]`, from that of `K₄`), its
-   support, `0 ≤ φ ≤ 1/(¼ + t²)`, its value at `i/2N`, and the strip bounds the explicit formula asks for.
-   `BallCutoff` proves the explicit formula, the exact prime side and the diagonal for its own test functions; the new
-   `Φ` and `m` go through the same steps.
-2. **The archimedean minorant.** `λ ≤ g` on `[12, ∞)` needs `L(t) ≥ log(t/2π) − E` for `t ≥ 24`. Stirling gives this
-   (`BallPsi`'s bounds cover `|t| ≥ 8`), together with the elementary majorant of `1 − sinc²`. `r ≥ φ(λ − g)` on
-   `[0, 12]` needs `L` at all small heights, and an interval computation on a compact interval. `L` can come, for
-   instance, from the monotonicity of `Re ψ(¼ + iτ)` in `τ` and its values at finitely many points.
-3. **Mertens.** Schur's test needs `M(y) ≤ log y + c` with `c < d` for every `y`, and room at the small parents. That
-   means the exact `M(q − 1)` for small `q` (finitely many logarithms) and a Chebyshev bound beyond. The library has
-   `M(y) ≤ log y + log 4 + 1` (`BallDensity`), which is too weak.
-
 The margin pays for cruder choices. The binding case is `k = 2`, where `d_2 ≥ d_1` needs only
 `P·(log 2 + d − (log 2)²/(2(log 2 + d))) ≥ d_1`. That holds down to `d = 0.62` at `P = 0.0407`, or down to
 `P = 0.0281` at `d = 1.09`. A staircase of eight steps (`A_k = 6.45·4^k`) still gives `d = 0.99`, which is
 `1.36·d_1` at `k = 2`. The cruder majorant `min(1, x²/3)` with seven steps gives `d = 0.88`, which is `1.26·d_1`.
+
+**In Lean** (`PivotSharp`; [ball-rate.md](../formalisations/ball-rate.md), "The pivot inequality for every `k`"). The
+proof takes such cruder choices, which are easier to certify:
+
+- the test function `φ(s) = (999/1000)(1 − K(s/5))/s²`, `K(x) = sinc²x·(1 + sin²x/3)`, whose transform is a piecewise
+  cubic supported in `|v| ≤ 4/5`, with `P = 0.0444` (`PivotPhi`);
+- a staircase of thirty dyadic steps, `λ(s) = 23/100 + (693/1000)Σ_{k < 30}(1 − sinc²(s/(10·2^k)))`, less nine Fejér
+  bumps, with mass `0.8804·∫φ`, computed exactly (`PivotMinorFT`); the pointwise inequality `μ ≤ φ·(L(N·) − log N)` for
+  every `N ≥ 2` is an interval certificate that the kernel checks (`PivotCert`);
+- Mertens' sums `M(y) ≤ log y + 81/100` for every `y`, and a bound for the top vertex uniform in `N`,
+  `(log N + d)Σc_n² − L(c) ≥ (13/10)c_N²` for `d ≥ 17/20` (`PivotTop`).
+
+The pole lowers `d` to `7/8 − 5/1332`, and
+
+> **Under RH, `d_k ≥ 0.0577 = 1.249·d_1` for every `k ≥ 2`** (`PivotSharp.pivot_ge_rh`).
+
+So the pivot inequality holds for every `k` (`PivotSharp.orbitLattice_of_rh`), and with `BallWeil.rh_of_pivots` the
+conjecture is equivalent to RH (`PivotSharp.rh_iff_orbitLattice`), with no finite range left for a certificate.
 
 ## Building the lattice forwards
 
@@ -665,7 +668,8 @@ Two differences from the curve case:
   decomposition of the previous section has this shape, `G = Σ_p log p·C_p + G_∞`, though the `C_p` are rational with
   powers of `p` in their denominators.
 
-The orbit-lattice conjecture implies RH (`BallWeil.rh_of_pivots`), as a statement about the Gram matrix alone. In
+The orbit-lattice conjecture is equivalent to RH (`PivotSharp.rh_iff_orbitLattice`), as a statement about the Gram
+matrix alone. In
 Weil's terms it is about the primitive parts `D'_n = D_n − n·e₁ − e₂`, which have `D'_n·e₁ = D'_n·e₂ = 0` and
 `−D'_m·D'_n = √(mn)·K_H(m/n)`. The Hodge index theorem asks that `−D²` be a positive semidefinite form on their span.
 The conjecture asks that in the norm `√(−D²)` each `D'_k` keep distance `√K_H(1)` from the span of the earlier ones.

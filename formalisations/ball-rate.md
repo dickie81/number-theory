@@ -877,37 +877,36 @@ certificate's range `k ≤ 10⁴`, and the conjecture would then be equivalent t
 its `T ≥ 2000N`, its `1/11` and its `−7` were chosen for the proof, not for the constant. So what is missing is the
 sampling inequality with its natural constants, an explicit computation with the test functions the library has, and
 the sharp Mertens bound. Neither is new mathematics. [ball-conjecture.md](../docs/ball-conjecture.md), "The pivot
-inequality for every `k`", gives such a design, numerical and not yet in Lean. Its test function vanishes below height
-`≈ 6N` in place of the Fejér weight, and in this normalisation it has `ρ = π/(4P) = 19.3` and `s = 1.09`. It gives
-`d_k ≥ 1.449·d_1` for every `k ≥ 2` (`scripts/pivot_push.py`).
+inequality for every `k`", gives such a design. Its test function vanishes below height `≈ 6N` in place of the Fejér
+weight, and in this normalisation it has `ρ = π/(4P) = 19.3` and `s = 1.09`. It gives `d_k ≥ 1.449·d_1` for every
+`k ≥ 2` (`scripts/pivot_push.py`, numerical). The next section proves a cruder version in Lean, `d_k ≥ 1.249·d_1`.
 
 **Prior work.** The pivot inequality is the conjecture of this library's author; no source is known for it or for the
 bound. The mechanism of `slack_top` is that of `BallGap.gap_ge`, the ground-state transform on the divisibility graph,
 read at the top vertex instead of the root.
 
-## The pivot inequality for every `k`, given the archimedean minorant (`PivotSharp`; its certificate in progress)
+## The pivot inequality for every `k`: RH ⟺ the orbit-lattice conjecture (`PivotSharp`)
 
-**Lean:** `PivotTop`, `PivotPhi`, `PivotMinor`, `PivotMinorFT` and `PivotSharp` (`lib/core/`), printed by
+**Lean:** `PivotTop`, `PivotPhi`, `PivotMinor`, `PivotMinorFT`, `PivotCert` and `PivotSharp` (`lib/core/`), printed by
 `lib/check/CheckAll.lean`. The printed results depend on `propext`, `Classical.choice` and `Quot.sound` only.
 
 | Result | Statement | Conditional on |
 |---|---|---|
-| `PivotSharp.rh_iff_orbitLattice_of_mu` | RH ⟺ `Q_k(δ_k − Σ_{n < k}c_n δ_n) ≥ Q_1(δ_1)` for every `k ≥ 1` and all real `c` | `PivotSharp.MuLe` |
-| `PivotSharp.orbitLattice_of_mu` | `Q_k(δ_k − Σ_{n < k}c_n δ_n) ≥ Q_1(δ_1)` for every `k ≥ 1` and all real `c` | RH and `PivotSharp.MuLe` |
-| `PivotSharp.pivot_ge` | `Q_N(x) ≥ (999/1000)(2/45)(13/10)·x_N² ≥ 0.0577·x_N²` for every `N ≥ 2` and every real `x` | RH and `PivotSharp.MuLe` |
-| `PivotSharp.form_ge` | `Q_N(x) ≥ (φ̂(0)/2πN)((log N + 7/8)Σc_n² − L(c)) − Σc_n²/(6000N)` for `N ≥ 2`, `c_n = x_n√n` | RH and `PivotSharp.MuLe` |
+| `PivotSharp.rh_iff_orbitLattice` | RH ⟺ `Q_k(δ_k − Σ_{n < k}c_n δ_n) ≥ Q_1(δ_1)` for every `k ≥ 1` and all real `c` | nothing |
+| `PivotSharp.orbitLattice_of_rh` | `Q_k(δ_k − Σ_{n < k}c_n δ_n) ≥ Q_1(δ_1)` for every `k ≥ 1` and all real `c` | RH |
+| `PivotSharp.pivot_ge_rh` | `Q_N(x) ≥ (999/1000)(2/45)(13/10)·x_N² ≥ 0.0577·x_N²` for every `N ≥ 2` and every real `x` | RH |
+| `PivotSharp.form_ge` | `Q_N(x) ≥ (φ̂(0)/2πN)((log N + 7/8)Σc_n² − L(c)) − Σc_n²/(6000N)` for `N ≥ 2`, `c_n = x_n√n` | RH and `PivotSharp.MuLe`, which `PivotCert.mu_le` proves |
+| `PivotCert.mu_le` | `μ(s) ≤ φ(s)(Re ψ(¼ + iNs/2) − log π − log N)` for every `N ≥ 2` and every real `s` | nothing |
 | `PivotMinorFT.integral_mu_cos_eq_zero`, `PivotMinorFT.integral_mu_ge` | `∫μ(s)cos(sv) ds = 0` for `\|v\| ≥ 1`, and `∫μ ≥ (7/8)φ̂(0)` | nothing |
 | `PivotTop.top_bound` | `(log N + d)Σ_{n ≤ N}c_n² − L(c) ≥ (13/10)c_N²` for `N ≥ 2`, `d ≥ 17/20` and every real `c` | nothing |
 | `PivotTop.mertens_le_uniform` | `Σ_{n ≤ y}Λ(n)/n ≤ log y + 81/100` for every `y` | nothing |
 | `PivotPhi.integral_phi_cos`, `PivotPhi.phi_mul_le`, `PivotPhi.phiE_strip`, `PivotPhi.norm_phiE_I_le` | the transform of `φ`; `φ(s)(s² + 1/16) ≤ 1`; the strip bound and the pole bound of its entire extension | nothing |
 
-`PivotSharp.MuLe` is the pointwise inequality `μ(s) ≤ φ(s)(L(Ns) − log N)` for every `N ≥ 2` and every real `s`, with
-`L(t) = Re ψ(¼ + it/2) − log π`, for the minorant `μ = φλ − r` below. Its proof, an interval certificate, is in
-progress and not yet in the library. With it, `rh_iff_orbitLattice_of_mu` makes the orbit-lattice conjecture of
-[ball-conjecture.md](../docs/ball-conjecture.md) equivalent to RH, with no finite range left.
-
-**What it says.** Under RH and `MuLe` every pivot `d_N`, `N ≥ 2`, is at least `0.0577`, against `d_1 = K_H(1) = 0.0462`
-(in Lean `< 0.0539`, `WeilTest.hadamard_const_lt`): `d_k ≥ 1.249·d_1` for every `k ≥ 2`.
+**What it says.** Under RH every pivot `d_N`, `N ≥ 2`, is at least `0.0577`, against `d_1 = K_H(1) = 0.0462` (in Lean
+`< 0.0539`, `WeilTest.hadamard_const_lt`): `d_k ≥ 1.249·d_1` for every `k ≥ 2`. With `BallWeil.rh_of_pivots` the
+orbit-lattice conjecture of [ball-conjecture.md](../docs/ball-conjecture.md) is equivalent to RH, with no finite range
+left: neither the certificate for `k ≤ 10⁴` nor `BallPivot`'s range `log k ≥ 7100` is needed. It is another form of RH,
+not a route to it.
 
 **The proof.** It is `BallSharp`'s, with a test function that keeps the zeros above height `≈ 5N` and drops those below,
 where the density of the zeros is small. Weil's explicit formula is applied to `h = |D|²Φ_N`, `D(t) = Σ_{n ≤ N}c_n n^{−it}`,
@@ -928,7 +927,15 @@ where the density of the zeros is small. Weil's explicit formula is applied to `
   transform vanishes for `|v| ≥ 1` (`PivotMinorFT`), and against `|D|²` only the diagonal survives: distinct
   frequencies are `1/N` apart. Its mass is exact, `∫μ = φ̂(0)(23/100 + (693/1000)Σ_kκ(10·2^k)) − 4πΣ_j b_j`, with
   `κ(A) = 15/(2A) − 175/(8A²) + 375/(16A³)`, from `sinc²y = ¼∫(2 − |w|)⁺cos(wy) dw` and Fubini; it is `0.8804·φ̂(0)`.
-  `MuLe` then bounds the archimedean term below by `(φ̂(0)/2πN)(log N + 7/8)Σc_n²`.
+  `PivotCert` proves `μ(s) ≤ φ(s)(L(Ns) − log N)` for every `N ≥ 2`, with `L(t) = Re ψ(¼ + it/2) − log π`:
+  Stirling with two steps of the recurrence gives `L(Ns) − log N ≥ g(s) = log(s/2π) − ē(2s)` for every `N ≥ 2` at
+  once, with a rational `ē` that decreases, so it suffices that `φ(λ − g) ≤ r`. That is an exact interval certificate
+  that the kernel checks. `λ` is bounded above through `1 − sinc²x ≤ min(1, x²/3 − 2x⁴/45 + x⁶/315)`, `φ` above and
+  `r` below on each cell through `sinc x ≥ 1 − x²/6 + x⁴/120 − x⁶/5040`, and `log y` below by `2v + 2v³/3`,
+  `v = (y − 1)/(y + 1)`. Above `s = 20` the steps of height `0.693 < log 2` follow `log s`: writing `s = 10·2^j·y` with
+  `y ∈ [1, 2)` reduces every `j` to the same 400 cells of `y`. `[12, 20)` and `[1/2, 12)` take 320 and 460 cells, and
+  `(0, 1/2]` follows from `φ(s) ≤ s²/3000`. The arithmetic is exact, in numbers `(p − m)/(d + 1)` with `p, m, d ∈ ℕ`,
+  and the least margin is `0.0042` above `s = 12` and `2.4%` below.
 - **The pole.** `‖φ_ℂ(iy)‖ ≤ y²/3000` for `0 < y ≤ 1/4`, since the terms of order `y²` of `1 − K(iy/5)` cancel. So the
   pole costs at most `Σc_n²/(6000N)`, `5/1332` of the mass.
 - **The top vertex** (`PivotTop`). Mertens' sums satisfy `M(y) = Σ_{n ≤ y}Λ(n)/n ≤ log y + 81/100` for every `y`:

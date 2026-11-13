@@ -1,12 +1,18 @@
 import Mathlib
 import PivotTop
 import PivotMinorFT
+import PivotCert
 
 /-! # The pivot inequality `d_k ≥ d_1` for every `k`, from the explicit formula with `φ(t/N)/N²`
 
 Plain statement. `Q_N(x) = Σ_{m,n ≤ N} x_m x_n √(mn)·K_H(m/n)` is the orbit form (`BallWeil.form`) and
-`d_N = min{Q_N(x) : x_N = 1}` its `N`-th pivot. Assume RH and the minorant inequality `MuLe`: `μ(s) ≤ φ(s)(L(Ns) − log N)`
-for every `N ≥ 2` and real `s`, with `L(t) = Re ψ(¼ + it/2) − log π` and `μ`, `φ` of `PivotMinor`, `PivotPhi`. Then:
+`d_N = min{Q_N(x) : x_N = 1}` its `N`-th pivot. **RH holds if and only if the orbit-lattice conjecture of
+`docs/ball-conjecture.md` does** (`rh_iff_orbitLattice`): under RH `d_N ≥ 0.0577 > d_1` for every `N ≥ 2`
+(`pivot_ge_rh`), so `d_k ≥ d_1` for every `k` (`orbitLattice_of_rh`), and the converse is `BallWeil.rh_of_pivots`.
+
+The theorems are first proved from RH and the minorant inequality `MuLe`: `μ(s) ≤ φ(s)(L(Ns) − log N)` for every
+`N ≥ 2` and real `s`, with `L(t) = Re ψ(¼ + it/2) − log π` and `μ`, `φ` of `PivotMinor`, `PivotPhi`; `PivotCert.mu_le`
+proves it (`muLe`).
 
 * `form_ge`: for `N ≥ 2` and every real `x`, with `c_n = x_n√n`,
   `Q_N(x) ≥ (φ̂(0)/2πN)((log N + 7/8)Σc_n² − L(c)) − Σc_n²/(6000N)`, `L(c) = 2Σ_{n ≤ N}Λ(n)n^{−1/2}Σ_{jn ≤ N}c_j c_{jn}`
@@ -436,7 +442,7 @@ lemma prime_eq {N : ℕ} (hN : 2 ≤ N) (c : ℕ → ℝ) :
 /-! ## The archimedean term -/
 
 /-- **The minorant inequality** `μ(s) ≤ φ(s)(L(Ns) − log N)` for every `N ≥ 2`, with `L(t) = Re ψ(¼ + it/2) − log π`:
-the hypothesis of this module's theorems, besides RH. Its proof, an interval certificate, is not yet in the library. -/
+the hypothesis of `form_ge`, `pivot_ge` and `orbitLattice_of_mu`, besides RH. `PivotCert.mu_le` proves it (`muLe`). -/
 def MuLe : Prop := ∀ N : ℕ, 2 ≤ N → ∀ s : ℝ,
   PivotMinor.mu s ≤ PivotPhi.phi s * (psiRe ((N : ℝ) * s) - Real.log π - Real.log N)
 
@@ -588,5 +594,29 @@ theorem rh_iff_orbitLattice_of_mu (hmu : MuLe) :
       BallWeil.gram 1 1 ≤ BallWeil.form k (fun n => if n = k then 1 else -c n) :=
   ⟨fun hRH k c hk => orbitLattice_of_mu hRH hmu k c hk, BallWeil.rh_of_pivots⟩
 
-end PivotSharp
+/-! ## Without the hypothesis -/
 
+/-- The minorant inequality holds (`PivotCert.mu_le`). -/
+theorem muLe : MuLe := fun _ hN s => PivotCert.mu_le hN s
+
+/-- **Under RH every pivot clears `d_1`**: `Q_N(x) ≥ (999/1000)(2/45)(13/10)·x_N² ≥ 0.0577·x_N²` for every `N ≥ 2` and
+every real `x`; so `d_N ≥ 0.0577 = 1.249·d_1`. -/
+theorem pivot_ge_rh (hRH : RiemannHypothesis) {N : ℕ} (hN : 2 ≤ N) (x : ℕ → ℝ) :
+    999 / 1000 * (2 / 45) * (13 / 10) * x N ^ 2 ≤ BallWeil.form N x :=
+  pivot_ge hRH muLe hN x
+
+/-- **The orbit-lattice conjecture holds under RH**: `Q_k(δ_k − Σ_{n < k}c_nδ_n) ≥ Q_1(δ_1)` for every `k ≥ 1` and all
+real `c`. -/
+theorem orbitLattice_of_rh (hRH : RiemannHypothesis) (k : ℕ) (c : ℕ → ℝ) (hk : 1 ≤ k) :
+    BallWeil.gram 1 1 ≤ BallWeil.form k (fun n => if n = k then 1 else -c n) :=
+  orbitLattice_of_mu hRH muLe k c hk
+
+/-- **RH ⟺ the orbit-lattice conjecture**: RH holds if and only if `Q_k(δ_k − Σ_{n < k}c_nδ_n) ≥ Q_1(δ_1)` for every
+`k ≥ 1` and all real `c`, where `Q` is the form of the Gram matrix `√(mn)·K_H(m/n)` of the orbit, computed from the
+primes. -/
+theorem rh_iff_orbitLattice :
+    RiemannHypothesis ↔ ∀ (k : ℕ) (c : ℕ → ℝ), 1 ≤ k →
+      BallWeil.gram 1 1 ≤ BallWeil.form k (fun n => if n = k then 1 else -c n) :=
+  rh_iff_orbitLattice_of_mu muLe
+
+end PivotSharp
