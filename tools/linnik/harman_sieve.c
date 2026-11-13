@@ -11,7 +11,8 @@
  * sum over the box of cells.  Every test holds, and every cost is taken, on the whole box:
  *
  *   evaluable    one choice of parts A, B and rest R is a two-factor (or window) Type II configuration at every
- *                point: A in the zone [Alo(rho), Ahi(rho)] of the rest, the cofactor in B or in the rest;
+ *                point: A in the zone [Alo(rho), Ahi(rho)] of the rest, the cofactor in B or in the rest; or, with
+ *                `res`, one choice of a rest passes the test of the resonant window (see `resonant`);
  *   capacity T   the products r P, P < x^T, are in the reach of the Type I estimates (plain, bilinear, and with
  *                `wide` the bilinear estimate without the condition 2HD < q);
  *   exact floor  the largest f at which Harman's comparison evaluates S(A_r, x^f): its tree over the primes below
@@ -83,6 +84,12 @@ typedef struct {
     int rev_first, rev_m2, rev_m3, rev_low, rev_natom, rev_nchain, rev_nodd, rev_nc1;
     int ev_win, ev_second, ev_rest;
     double ext;                  /* a what-if: the bilinear Type I estimates reach x^ext further */
+    int res;                     /* the resonant window (below): 1, +2 with the Halasz-Montgomery inequality for
+                                  * the powers, +4 with sifted parts in the rest */
+    int NC;
+    const double *cl, *reach;    /* the levels of the count, from 1 down to 0, and the density curve's reach there */
+    const int *ord;              /* the order in which the levels are tested */
+    double L, thr, wbin, mres, top, K0, K1;
 } Ctx;
 
 typedef struct {
@@ -166,6 +173,90 @@ static int evaluable(const Ctx *c, int k, const double *Slo, const double *Shi) 
                 return 1;
             if (!R) break;
         }
+    }
+    return 0;
+}
+
+/* The exponent of the kernel of the Halasz-Montgomery inequality for a length q^m, with the paper's margins. */
+static inline double kern(const Ctx *c, double m) {
+    double v = c->K0 + c->K1 * m;
+    return (v > 0 ? v : 0) + (1 - m) / 1000 + 2.0 / 1000;
+}
+
+/* What q^G characters save on W, a polynomial with arbitrary coefficients of length q^m, m >= mlo: the sum of |W|
+ * over q^G characters is at most W q^{G - wsave}.  It is the paper's bound, by Cauchy-Schwarz and the mean square
+ * of W over those characters, at most W (W + q) by orthogonality and W (W + q^{G + b(m)}) by the Halasz-Montgomery
+ * inequality: G/2 for m >= 1, and (m + G - min(1, max(m, G + b(m))))/2 for m < 1, which increases with m. */
+static double wsave(const Ctx *c, double mlo, double G) {
+    if (mlo >= 1) return G / 2;
+    double M = G + kern(c, mlo);
+    if (M < mlo) M = mlo;
+    if (M > 1) M = 1;
+    return (mlo + G - M) / 2;
+}
+
+/* The resonant window.  A set of atoms (with `res & 4`, also the cofactor) as the rest, and all the rest of the
+ * number as one polynomial W with arbitrary coefficients, of length q^m.  The characters are sorted by the sizes
+ * of the rest's own sums: a prime P = q^s of the rest has |P(chi)| = P^{b(chi)}, and the characters with b >= t
+ * are at most q^{n(t)}, with n(t) the least of
+ *     2 k s (1 - t)        for k s >= 1          (the mean value of the k-th power, of length q^{k s}),
+ *     1 + k s (1 - 2t)     for k s < 1           (the same),
+ *     2 k s (1 - t)        for k s < 1 and t > 1/2 + b(k s) / (2 k s)   (Halasz-Montgomery, with `res & 2`),
+ *     the density curve's count at t             (a large prime sum has a zero behind it),
+ * and no character beyond the half-plane's exponent; a sifted part has the last two only.  For a level c of the
+ * count let T_j(c) be the largest t with n_j(t) >= c, and D_j(c) = s_j (1 - T_j(c)) what the prime saves there:
+ * the greatest of s_j / 12 (the half-plane), s_j (1 - the curve's reach), c / (2k) for k s_j >= 1,
+ * s_j / 2 - (1 - c) / (2k) for k s_j < 1, and min(c / (2k), s_j / 2 - b(k s_j) / (2k)) for k s_j < 1.  The
+ * characters with b_j <= T_j(c) for every j, and b_j beyond T_j of the level before for some j, are at most
+ * q^{c'}, c' the level before, and for them the rest is at most its length times q^{-sum D_j(c)}; so the estimate
+ * holds when, at every level,
+ *     wsave(m, c') + sum_j D_j(c) >= c' + margin.
+ * (`pointwise` takes c' = c: the limit of fine levels.)  For m >= 1, where wsave = c'/2, and primes with
+ * k_j s_j >= 1, the middle levels ask for sum_j 1/k_j > 1: Hoelder's inequality with the exponents 2 and 2 k_j,
+ * and what is beyond 1 is paid by the half-plane's bound.  Every D is a lower bound on the box, and the lengths
+ * add up to L at every point. */
+#define NCMAX 320
+static int resonant(const Ctx *c, int k, const double *Slo, const double *Shi, int npm) {
+    int full = (1 << k) - 1, have = 0, NC = c->NC, sifted = npm | (1 << k);
+    double V[MAXK + 1][NCMAX], L = c->L, need = L - c->thr + c->wbin * L;
+    for (int Rm = 1; Rm < (2 << k); Rm++) {
+        if (!(c->res & 4) && (Rm & sifted)) continue;
+        int R = Rm & full, cof = Rm >> k & 1;
+        double mlo = cof ? L * Slo[full ^ R] : L * (1 - Shi[R]);
+        if (mlo > L - 1 || mlo < c->mres) continue;
+        if (!have) {
+            for (int j = 0; j <= k; j++) {
+                double slo = j < k ? L * Slo[1 << j] : L * (1 - Shi[full]);
+                double shi = j < k ? L * Shi[1 << j] : L * (1 - Slo[full]);
+                if (slo < 0) slo = 0;
+                int prime = !(sifted >> j & 1);
+                int kp = prime && slo > 0.0025 ? (int)ceil(1 / slo - 1e-12) : 0;
+                int km = prime && shi > 0.0025 ? (int)ceil(1 / shi - 1e-12) - 1 : 0;
+                double hm = km >= 1 && (c->res & 2) ? slo / 2 - kern(c, km * slo) / (2 * km) : 0;
+                for (int i = 0; i < NC; i++) {
+                    double lev = c->cl[i], T = c->reach[i] < c->top ? c->reach[i] : c->top, D = slo * (1 - T), v;
+                    if (kp >= 1 && (v = lev / (2 * kp)) > D) D = v;
+                    if (km >= 1) {
+                        if ((v = slo / 2 - (1 - lev) / (2 * km)) > D) D = v;
+                        if (c->res & 2) {
+                            v = lev / (2 * km) < hm ? lev / (2 * km) : hm;
+                            if (v > D) D = v;
+                        }
+                    }
+                    V[j][i] = D;
+                }
+            }
+            have = 1;
+        }
+        int ok = 1;
+        for (int it = 0; it < NC && ok; it++) {
+            int i = c->ord[it];
+            double G = c->pointwise || !i ? c->cl[i] : c->cl[i - 1], D = wsave(c, mlo, G);
+            for (int j = 0; j <= k; j++)
+                if (Rm >> j & 1) D += V[j][i];
+            if (D < G + need) ok = 0;
+        }
+        if (ok) return 1;
     }
     return 0;
 }
@@ -324,6 +415,7 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
     int hasd = mulo <= 0;                        /* some point may have r in A: the term counts n = r there */
     if (muhi < llo && !hasd) return 0;           /* u < 1 on the whole box, and r < x: the term is empty */
     if (evaluable(c, k, Slo, Shi)) return 0;
+    if (c->res && resonant(c, k, Slo, Shi, npm)) return 0;
     double T = capacity(c, k, Shi, !std && c->rev_linear);
     double fs = exact_floor(c, k, Slo, Shi, lhi, T);
     if (c->rev_floor && !std && fs >= 0)         /* a floor below every atom of a reversed term */

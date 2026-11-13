@@ -104,6 +104,33 @@ at 0.60; 2.098 with `gm`; 2.101, 2.099, 2.081, 2.062, 2.041 with `cap:2.25`, `2.
 with `dh` (2.090 with --no-window); 2.093, 2.087 with --kshift 0.05, 0.10, 2.063 with --kernel 0.5, 2.028 with
 --kernel 0; 2.095, 2.086, 2.075 with --ext 0.02, 0.05, 0.10; 2.109 with --nest 1 --rev first.
 
+The resonant window (`--res`; 13 November 2026; docs/research-opportunities.md, section 3.1, has the estimate and
+its proof; none of it is in Lean). A Type II estimate that takes nothing from the density curve. The rest is a set
+of the term's primes, and all the rest of the number, cofactor included, is one polynomial W of length q^m with
+arbitrary coefficients, as in the paper's window; but the characters are sorted by the sizes of the rest's own
+prime sums, not by their zeros. For a prime P = q^s the characters with |P(chi)| >= P^t are at most q^(2ks(1-t))
+when ks >= 1, by the mean value of the k-th power of the sum (a polynomial of length q^(ks) with coefficients at
+most k!): the count of the density hypothesis, at the lengths q^(1/k). With Cauchy-Schwarz for W and the
+half-plane's bound for the bins beyond 11/12, the estimate holds for W >= q when sum_j 1/k_j > 1, k_j the least k
+with P_j^k >= q (Hoelder's inequality with the exponents 2 and 2 k_j; what the sum has beyond 1 is paid in the
+half-plane's bound): two primes above q^(1/2) and any third; primes above q^(1/2), q^(1/3) and q^(1/5); primes
+below q^delta with product above q^(1 + delta). The test is made on levels of the count, with the other counts
+too: the power below (q^(1 + ks(1-2t)) for ks < 1), with `hm` the Halasz-Montgomery inequality for that power, and
+the density curve's count; with `sifted`, the cofactor and sifted atoms may be in the rest, with the density
+curve's count alone; and W shorter than q as in the paper's window. `points` then gives
+
+    L                            2.14    2.13    2.12    2.11    2.10    2.09    2.08
+    --res                        0.140   0.207   0.324   0.462   0.631   0.869   1.141
+    --res --nest 1 --rev first   0.194           0.459           0.788   0.982
+
+so the loss passes 1 at 2.085 (2.101 without), and at 2.089 with one level of reversal through the largest prime
+(2.109 without); `--res plain` gives 0.154 at 2.14 and 0.691 at 2.10. The rests on which the estimate holds are
+small sets (W >= q leaves the primes of the rest q^(L-2) in all above their lengths q^(1/k_j)), and a box passes
+only if its lowest corner does: `cells` at 2.13 give 0.932 with --h 0.004 (1.006 without) and 0.612 with --h 0.002
+(0.765 without). Not used: the estimate as a stop of Harman's comparison, and its counts in the estimate in two
+variables (with the zone of the density hypothesis, which is more than those counts give, and this window, the
+loss passes 1 at 2.080).
+
 What is assumed, beyond the paper: the estimate in two variables on the tabulated zone (two_factor.py states it;
 in Lean it is proved on the region SieveTwoZone7D.Zone7d, which holds all of the zone but under 2% of its width,
 as far as chains of primes: SieveTwoChain.chain_two); the bilinear Type I estimate without 2HD < q at the leaves
@@ -112,7 +139,9 @@ for a rest among the term's primes: SieveTwoComp.prop6_two); the same with the f
 where the small primes below the least rest that the zone takes (eps0) are left to Type I at no cost, which is
 Brun's sieve at a fixed level, whose gap is tiny but not o(1); role reversal, with the conditions that tie the
 variables of a reversed term together removed; and, with `--sieve` and `--upper`, the linear sieve's bounds F
-and f with the bilinear remainder and well-factorable weights. Here "the paper" is the Linnik paper's version at 11/5 (in the git history); the paper now proves 43/20
+and f with the bilinear remainder and well-factorable weights; and, with `--res`, the resonant window on every box
+that passes its test: the cells of the rest's primes and the conditions that tie W to them are taken as for the
+estimate in two variables, and the constants of the mean values as harmless. Here "the paper" is the Linnik paper's version at 11/5 (in the git history); the paper now proves 43/20
 (Linnik21500.linnik_21500, hint_cert.py), with no window. In Lean, this decomposition with the window,
 without role reversal and without the stops whose rest is the first small prime gives the exponent 219/100
 (Linnik21900.linnik_21900; tree_cert.py is its search in exact integers), and with the reversal of a term of
@@ -163,7 +192,10 @@ class Ctx(C.Structure):
                 ('rev_floor', C.c_int), ('rev_offdiag', C.c_int),
                 ('rev_first', C.c_int), ('rev_m2', C.c_int), ('rev_m3', C.c_int), ('rev_low', C.c_int),
                 ('rev_natom', C.c_int), ('rev_nchain', C.c_int), ('rev_nodd', C.c_int), ('rev_nc1', C.c_int),
-                ('ev_win', C.c_int), ('ev_second', C.c_int), ('ev_rest', C.c_int), ('ext', C.c_double)]
+                ('ev_win', C.c_int), ('ev_second', C.c_int), ('ev_rest', C.c_int), ('ext', C.c_double),
+                ('res', C.c_int), ('NC', C.c_int), ('cl', dp), ('reach', dp), ('ord', ip),
+                ('L', C.c_double), ('thr', C.c_double), ('wbin', C.c_double), ('mres', C.c_double),
+                ('top', C.c_double), ('K0', C.c_double), ('K1', C.c_double)]
 
 
 class Stats(C.Structure):
@@ -362,7 +394,7 @@ class Sieve:
     def __init__(self, L, h=0.004, depth=8, flips=6, nest=2, flipmax=8, flipmin=0.15, wide=True, usewin=True,
                  sieve=False, upper=False, type2=True, eps1=0.002, eps0=0.002, fmin=0.01, smax=7.0, shrink=0.0,
                  tables=None, rev=(), first=True, direct=('window', 'second', 'rest'), fill=False,
-                 curve='g7d', theta0=None, kernel=1.0, kshift=0.0, ext=0.0):
+                 curve='g7d', theta0=None, kernel=1.0, kshift=0.0, ext=0.0, res=0, levels=None):
         L = Fr(L)
         self.L, Lf = L, float(L)
         whatif = curve != 'g7d' or theta0 is not None or kernel != 1.0 or kshift != 0.0
@@ -431,6 +463,28 @@ class Sieve:
             setattr(ctx, 'rev_' + name, int(name in rev))
         ctx.ev_win, ctx.ev_second, ctx.ev_rest = (int(name in direct) for name in ('window', 'second', 'rest'))
         ctx.ext = ext
+        # the resonant window: the levels of the count, and the density curve's reach at each (the largest t at
+        # which its count, taken 0.002 lower for the step from a prime sum to a zero, is at least the level)
+        top = 11 / 12 if theta0 is None else float(theta0)
+        self.cl = np.ascontiguousarray(np.concatenate([np.linspace(1.0, 0.45, 56), np.linspace(0.45, 0.1, 176)[1:],
+                                                       np.linspace(0.1, 0.0, 21)[1:]]) if levels is None
+                                       else np.linspace(1.0, 0.0, levels))
+        NC = len(self.cl)
+        tt = np.arange(0.5, top + 1e-9, 1e-4)
+        gv = np.ones_like(tt)
+        for lo, hi, A in pieces_of(curve, theta0):
+            if A is not None:
+                sel = (tt - 0.002 >= lo) & (tt - 0.002 <= hi)
+                gv[sel] = np.minimum(1.0, A * (1 - (tt[sel] - 0.002)))
+        self.reach = np.ascontiguousarray([tt[gv >= lev - 1e-12].max() if (gv >= lev - 1e-12).any() else 0.5
+                                           for lev in self.cl])
+        self.ord = np.ascontiguousarray(sorted(range(NC), key=lambda i: int(format(i, '010b')[::-1], 2)),
+                                        dtype=np.int32)
+        ctx.res, ctx.NC = int(res), NC
+        ctx.cl, ctx.reach, ctx.ord = (self.cl.ctypes.data_as(dp), self.reach.ctypes.data_as(dp),
+                                     self.ord.ctypes.data_as(ip))
+        ctx.L, ctx.thr, ctx.wbin, ctx.mres, ctx.top = Lf, Lf - float(rl.MARGIN), 4e-6, 0.8, top
+        ctx.K0, ctx.K1 = kernel * (top - 0.5) - kshift, kernel * (1 - top)
         self.ctx = ctx
         # the floor of the top node: the largest f at which S(A, x^f) is evaluated
         T = ctx.theta - eps1
@@ -486,6 +540,10 @@ def main():
     ap.add_argument('--kernel', type=float, default=1.0, help="what-if: the Halasz-Montgomery kernel's exponent "
                     'times this (0: the mean square over a set of characters at most the length plus the set)')
     ap.add_argument('--kshift', type=float, default=0.0, help="what-if: the kernel's exponent less this")
+    ap.add_argument('--res', nargs='?', const='hm,sifted', default=None, help='with the resonant window: a rest '
+                    "whose own prime sums sort the characters, counted by the mean values of their powers; 'plain', "
+                    "or a comma-separated list of 'hm' (the Halasz-Montgomery inequality for the powers too) and "
+                    "'sifted' (the cofactor and sifted atoms may be in the rest, with the zeros' bound); alone: both")
     ap.add_argument('--ext', type=float, default=0.0, help='what-if: the bilinear Type I estimates reach x^ext '
                     'further (d1 d2^2 < x^(1 + ext))')
     a = ap.parse_args()
@@ -505,7 +563,8 @@ def main():
                       upper=a.upper or a.command == 'parity', shrink=a.shrink, type2=a.command != 'parity',
                       rev=tuple(x for x in a.rev.split(',') if x), first=not a.no_first,
                       direct=tuple(x for x in a.direct.split(',') if x),
-                      curve=a.curve, theta0=a.theta0, kernel=a.kernel, kshift=a.kshift, ext=a.ext)
+                      curve=a.curve, theta0=a.theta0, kernel=a.kernel, kshift=a.kshift, ext=a.ext,
+                      res=0 if a.res is None else 1 + 2 * ('hm' in a.res) + 4 * ('sifted' in a.res))
             if a.nu is not None:
                 nu = a.nu
             elif s.nu0 is not None:

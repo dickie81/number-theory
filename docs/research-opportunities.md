@@ -593,13 +593,93 @@ covers. The region does not close at `13/6`.
     nothing at `1/4`. Weil's bound for Kloosterman sums was looked at for the bilinear estimate and gains no
     range there (a count made here): where the estimate fails, the smooth variable and `d₂` together are
     shorter than `q`. And the half-plane at `7/8` changes nothing, the bin that binds being below it.
-    *So*, by the model: the rules and the inputs that are in Lean or in reach of it (more shapes of reversal,
-    finer cells, a wider bilinear estimate) end near `2.10`, a point or two above in exact terms (the exact
-    search's limit of fine cells with the rules in Lean is `2.122`, where the model has `2.109`). Below that
-    the route needs one of two things that are not known: the density exponent of the characters at most about
-    `2.2` on `[0.64, 0.79]`, or large values over the characters beyond Halász and Montgomery's for
-    polynomials of length near `q`; both are the questions of Guth and Maynard's work, in the `q`-aspect. The
-    first hard floor is `2`: the zone and the window both close there.
+    *So*, by the model: with the two Type II estimates as they stand, the rules and the inputs that are in
+    Lean or in reach of it (more shapes of reversal, finer cells, a wider bilinear estimate) end near `2.10`,
+    a point or two above in exact terms (the exact search's limit of fine cells with the rules in Lean is
+    `2.122`, where the model has `2.109`). Below that those two estimates need one of two things that are not
+    known: the density exponent of the characters at most about `2.2` on `[0.64, 0.79]`, or large values over
+    the characters beyond Halász and Montgomery's for polynomials of length near `q`; both are the questions
+    of Guth and Maynard's work, in the `q`-aspect. A third estimate, which needs neither, is the next item.
+    The first hard floor is `2`: the zone and the windows all close there.
+  - *The resonant window: a Type II estimate that takes nothing from the density curve* (13 November; found on
+    reading the hunt for a density exponent below `7/3`; written here, in no source that was read, on the
+    pattern of the sieves for primes in short intervals, where the sieve's own polynomials are counted by the
+    mean values of their powers; what it gives is the model's, `harman_sieve.py --res`; **none of it is in
+    Lean**). The paper's window and the estimate in two variables sort the characters by their zeros: in the
+    bin `β` the prime sums of the rest are at most their lengths to the power `β`, and the bin has at most
+    `q^{A(β)(1−β)}` characters, the characters that have a zero there. That count is what the peak `7/3` is
+    about: a zero is detected by a polynomial whose length cannot be chosen. But the estimate only needs the
+    number of characters at which *the rest's own prime sums* are large, and those are polynomials of known
+    lengths.
+
+    *The counts.* Let `P(χ) = Σ_{p ∈ I} χ(p)` for a set `I` of primes in `(P, 2P]`, `P = q^s`. Its `k`-th
+    power is `Σ_n c_n χ(n)` over the products of `k` primes of `I`, with `c_n ≤ k!` and `n ≤ (2P)^k`, so by
+    orthogonality `Σ_χ |P(χ)|^{2k} ≤ k! ((2P)^k + q) P^k`. Hence the characters with `|P(χ)| ≥ P^t` are, up to
+    a constant, at most `q^{2ks(1−t)}` when `ks ≥ 1`, and `q^{1+ks(1−2t)}` when `ks < 1`. Where `P^k` is just
+    above `q` the first is `q^{2(1−t)}`, the count of the density hypothesis: the power is then a polynomial
+    of length `q`, for which the mean value loses nothing. And beyond `t = 11/12 + η` there is no character
+    but the principal one, by the zero-free half-plane.
+
+    *The estimate.* Let `x = q^L`, `W(χ) = Σ_{w ∈ (W, 2W]} a_w χ(w)` with `|a_w| ≤ 1` and `W ≥ q`, and prime
+    sums `P_1, …, P_n` as above with `W P_1 ⋯ P_n = x`. Let `k_j` be the least `k` with `P_j^k ≥ q`. If `Σ_j
+    1/k_j > 1`, then
+
+        Σ_{χ ≠ χ₀} |W(χ)| |P_1(χ)| ⋯ |P_n(χ)| ≪ x q^{−δ},    δ = (1/12 − η)(Σ_j 1/k_j − 1),
+
+    so the numbers `w p_1 ⋯ p_n` are spread evenly over the classes mod `q`, whatever the coefficients of `W`.
+    Proof: take `a_j ∈ [0, 1]` with `Σ_j a_j/k_j = 1` and write `|P_j| ≤ |P_j|^{a_j} U_j^{1−a_j}`, with `U_j =
+    P_j^{11/12+η}` the half-plane's bound. By Hölder's inequality with the exponents `2` and `2k_j/a_j` the
+    sum is at most `(Σ_χ |W|²)^{1/2} Π_j (Σ_χ |P_j|^{2k_j})^{a_j/(2k_j)} U_j^{1−a_j} ≪ W Π_j P_j^{a_j}
+    U_j^{1−a_j}`, which is `x Π_j P_j^{−(1/12−η)(1−a_j)}`, and `Σ_j s_j(1 − a_j) ≥ Σ_j (1 − a_j)/k_j = Σ_j
+    1/k_j − 1`. With `Σ_j 1/k_j = 1` Hölder's inequality gives the trivial bound `x` exactly; what the sum has
+    beyond `1` is paid in the half-plane's bound, the one fact about zeros that is used.
+
+    *Which rests.* Two primes above `q^{1/2}` and any third prime; primes above `q^{1/2}`, `q^{1/3}` and
+    `q^{1/5}`; any primes below `q^δ` with product above `q^{1+δ}` (as `1/k ≥ s/(1 + s)`). A rest of one prime
+    does not pass, and one of two primes only if one of them is above `q`. As `W ≥ q`, the rest is at most
+    `q^{L−1}`, so its primes are above their lengths `q^{1/k_j}` by `q^{L−2}` at most in all: the estimate
+    holds where the primes of the rest are near the lengths `q^{1/k}`, and for every `L > 2` there are such
+    rests. The density curve adds to it: a sifted part of the rest, of length `q^z`, bounded through the
+    zeros, counts for `2z/A` in the sum, `A` the density exponent at the bin, and the paper's window is the
+    case with no prime, `2z/A > 1`.
+
+    *What the model tests* is the estimate by bins, on levels `c` of the count: for each prime of the rest the
+    largest `t` at which some count is still `q^c` (the mean values of the least power with `ks ≥ 1` and of
+    the greatest with `ks < 1`; the Halász–Montgomery inequality for the latter; the density curve, a large
+    prime sum having a zero behind it; the half-plane), for a sifted part the last two only, and for `W` the
+    paper's bound, which lets `W` be a little shorter than `q`. A box of cells passes if what the parts save
+    at each level is more than the level, at its lowest corner. `points` (each cell at its midpoint) gives:
+
+    | `L` | `2.14` | `2.13` | `2.12` | `2.11` | `2.10` | `2.09` | `2.08` | passes `1` at |
+    |---|---|---|---|---|---|---|---|---|
+    | as it was | `0.459` | `0.569` | `0.690` | `0.849` | `1.011` | | | `2.101` |
+    | with the resonant window | `0.140` | `0.207` | `0.324` | `0.462` | `0.631` | `0.869` | `1.141` | `2.085` |
+    | one level of reversal, through the largest prime, as in Lean | `0.620` | | `0.889` | | `1.084` | | | `2.109` |
+    | the same with the resonant window | `0.194` | | `0.459` | | `0.788` | `0.982` | | `2.089` |
+
+    With the mean values alone (`--res plain`) the loss is `0.154` at `2.14` and `0.691` at `2.10`. So the
+    loss at `2.14`, where the theorem is, falls to a third, and the floor of the model by a point and a half.
+    The sets of rests are small, so cells see them only when fine: `cells`, which takes every test on the
+    whole box, gives at `2.13` the loss `0.932` on cells of side `0.004` (`1.006` without the window) and
+    `0.612` on side `0.002` (`0.765` without). What an exact search gets of it is not known; nor is the
+    estimate used yet as a stop of Harman's comparison, or its counts in the estimate in two variables (with
+    the zone that the density hypothesis would give, which is more than those counts give, and this window,
+    the model passes `1` at `2.080`); and the primes of the rest are not opened by Heath-Brown's identity,
+    which is how the sieves for short intervals count a prime that is not near a length `q^{1/k}`.
+
+    *For the density exponent.* The condition `L > 1 + A/2` belongs to the count by zeros, not to the route:
+    this window is open below `13/6` with the curve as it is. A density exponent below `7/3` would widen the
+    paper's window, for rests of one prime or of sifted parts, and by the table of the item above it moves
+    nothing until it is below about `2.2`. What this estimate needs from the zeros is the half-plane alone.
+
+    *What a theorem needs.* In Lean: the mean value of a power of a prime sum (orthogonality, and at most `k!`
+    factorisations of a product of `k` primes), Hölder's inequality over the characters, and the half-plane's
+    bound for a prime sum in a cell, which the paper's Proposition 3 already uses; then the estimate on
+    families and chains of cells, as for the estimate in two variables, a test for the search, exact in
+    rationals (the condition `Σ_j 1/k_j > 1`, with the exponents `a_j` as the certificate), and a search and a
+    certificate. Going by the model's distance from the exact search so far, that would be a theorem near
+    `2.11` or `2.12` at about the cost of the one at `2.14`, if the exact search finds the small sets: a
+    guess, not a measurement.
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three
