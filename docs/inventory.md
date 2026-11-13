@@ -6,7 +6,7 @@ rewrites it, and CI checks that it is current (`--check`).
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
 `lib/check/Check.lean` print the axioms of 1809 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 275, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
@@ -82,7 +82,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `BallGap.gap_ge`: The Landau gap is at least `√log N` ([note](../formalisations/ball-rate.md))
 - `BallGap.edge_law`: The edge law ([note](../formalisations/ball-rate.md))
-- `BallGap.rate_gap`: The rate `λ_N ≫ √log N/N` *paper* ([note](../formalisations/ball-rate.md))
+- `BallGap.rate_gap`: The rate `λ_N ≫ √log N/N` ([note](../formalisations/ball-rate.md))
 
 #### `BallHadamard`: A kernel with a cusp: `K_H(r) = Σ_ρ r^{ρ − ½}/(ρ(1 − ρ))`
 
@@ -127,7 +127,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `BallPivot`: Under RH the pivots of the orbit form grow like `log N`: the orbit-lattice inequality for all large `N`
 
 - `BallPivot.slack_top`: The top vertex ([note](../formalisations/ball-rate.md))
-- `BallPivot.pivot_ge`: The pivots grow like `log N` *paper* ([note](../formalisations/ball-rate.md))
+- `BallPivot.pivot_ge`: The pivots grow like `log N` ([note](../formalisations/ball-rate.md))
 - `BallPivot.orbitLattice_of_log_ge`: The orbit-lattice inequality for large `k` ([note](../formalisations/ball-rate.md))
 - `BallPivot.pivot_tendsto`: Under RH the pivots tend to infinity ([note](../formalisations/ball-rate.md))
 - `BallPivot.orbitLattice_iff`: The orbit-lattice conjecture is RH together with finitely many pivot inequalities ([note](../formalisations/ball-rate.md))
@@ -691,7 +691,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `OrbitWindow.weilQg_hasSum`: The explicit-formula bridge, any parity *paper* ([note](../formalisations/ball-rate.md))
 - `OrbitWindow.form_eq_weilQg`: The dictionary *paper* ([note](../formalisations/ball-rate.md))
 - `OrbitWindow.weilQg_step_int_ge`: The integrality gap in the window *paper* ([note](../formalisations/ball-rate.md))
-- `OrbitWindow.weilQg_step_ge`: The step functions stay polynomially far from the radical *paper* ([note](../formalisations/ball-rate.md))
+- `OrbitWindow.weilQg_step_ge`: The step functions stay polynomially far from the radical ([note](../formalisations/ball-rate.md))
 
 #### `Orthogonality`: Orthogonality forces the Euclidean structure
 
@@ -1338,8 +1338,8 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `BallUpperEta`: The alternating vector at the low zeros, and the rate from above
 
 - `BallUpperEta.dpoly_xa_le`: The low zeros ([note](../formalisations/ball-rate.md))
-- `BallUpperEta.rate_upper_rh`: The upper bound `λ_N ≤ 67(1 + log N)/N` *paper* ([note](../formalisations/ball-rate.md))
-- `BallUpperEta.rate_upper`: `λ_N ≪ log N/N`, unconditionally *paper* ([note](../formalisations/ball-rate.md))
+- `BallUpperEta.rate_upper_rh`: The upper bound `λ_N ≤ 67(1 + log N)/N` ([note](../formalisations/ball-rate.md))
+- `BallUpperEta.rate_upper`: `λ_N ≪ log N/N`, unconditionally ([note](../formalisations/ball-rate.md))
 
 #### `BohrKV`: The Korobov–Vinogradov region as a shell around the Bohr sphere
 

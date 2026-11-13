@@ -286,7 +286,6 @@ the pivots, the steps of the proof of the margin, and the bounds for the smalles
 #print axioms BallWeil.form_eq_norm_sq
 #print axioms BallFlat.gram_flat
 #print axioms BallFlat.flat_pivot
-#print axioms BallPivot.pivot_ge
 #print axioms WeilForm.weilExplicit_zeta
 #print axioms PivotPhi.integral_phi_cos
 #print axioms PivotPhi.phi_nonneg
@@ -303,10 +302,6 @@ the pivots, the steps of the proof of the margin, and the bounds for the smalles
 #print axioms PivotTop.mertens_le_uniform
 #print axioms PivotTop.mertens_le_small
 #print axioms PivotTop.top_bound
-#print axioms BallGap.rate_gap
-#print axioms BallUpperEta.rate_upper_rh
-#print axioms BallUpperEta.rate_upper
 #print axioms OrbitWindow.form_eq_weilQg
 #print axioms OrbitWindow.weilQg_hasSum
 #print axioms OrbitWindow.weilQg_step_int_ge
-#print axioms OrbitWindow.weilQg_step_ge

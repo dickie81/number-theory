@@ -29,9 +29,8 @@ at least `(999/1000)(2/45)(13/10) = 0.05772`, against `K_H(1) = 0.04619`.
 
 Proposition 2.3 places the orbit in the windows of Connes and his collaborators. On `Σ x_n = 0`, the orbit form is Weil's
 form on the step functions `u^{1/2}Σ_n x_n 1_{(0, n]}(u)` of the window `[λ⁻¹, λ]`, `λ = √N`
-(`OrbitWindow.form_eq_weilQg`, no RH input). Two corollaries then read the margin and the bound for `λ_N` in that window:
-- Corollary 3.3: Weil's form is `≥ 0.0577` at every nonzero integer-valued step function.
-- Corollary 8.2: it is `≥ √log N‖g‖²/(220e⁸N³)` on all of them.
+(`OrbitWindow.form_eq_weilQg`, no RH input). Corollary 3.3 then reads the margin in that window: Weil's form is
+`≥ 0.0577` at every nonzero integer-valued step function.
 
 Appendix A names the Lean theorem behind each numbered result. `lib/check/Check.lean` prints their axioms, which are
 `propext`, `Classical.choice` and `Quot.sound` only. Two computations are checked by kernel evaluation (`decide
@@ -45,14 +44,21 @@ arithmetic, including the 1181 cells of the certificate, for readers without Lea
 
 ## What is not a Lean theorem
 
-These parts of the paper are not formalised:
-- the remarks, including the numerical values of §3.1 and those of the remark "How the hyperplane sits" at the end of
-  §2, which come from [`scripts/window_hyperplane.py`](../../scripts/window_hyperplane.py);
+These parts of the paper are not formalised. They are proved in the text or computed:
+- the remarks, including:
+  - the upper bound for the pivots in §3;
+  - the numerical values of §3.1;
+  - those of the remark "How the hyperplane sits" at the end of §2, which come from
+    [`scripts/window_hyperplane.py`](../../scripts/window_hyperplane.py);
+  - the numerics of Section 8;
 - Section 6 on the analogues, except the density of real characters with `d₂ < d₁`. That density is
-  `D2Good.d2_density_pos_closed` and `d2_density_neg_closed`, and its proof uses the library's formalisation of the
-  zero-free half-plane of an unrefereed preprint;
-- the conjecture `λ_N ~ 0.0429·log N/N` and the questions of Section 8;
+  `D2Good.d2_density_pos_closed` and `d2_density_neg_closed`, and its Lean proof uses the library's formalisation of the
+  zero-free half-plane of an unrefereed preprint. The paper's own proof sketch follows Lamzouri's method of moments;
+- the conjecture `λ_N ~ c·log N/N`, with `c ≈ 0.043` numerically, and the questions of Section 8;
 - the historical and comparative statements.
+
+The paper is self-contained apart from its citations of other papers and preprints. It points to the repository only
+for code: the Lean theorems and the scripts behind its numerical remarks.
 
 The analogues are computed by [`scripts/ball_tests/`](../../scripts/ball_tests/README.md). Their write-up is
 [`docs/ball-conjecture-tests.md`](../../docs/ball-conjecture-tests.md).
@@ -67,12 +73,11 @@ literature, and the paper credits them:
 ## State
 
 A draft, of 13 November 2026. What remains:
-- **Section 8.** Whether the smallest eigenvalue stays in this paper.
 - **The acknowledgements.** They are general.
 - **Reading before submission.** Several sources are known only from reviews, abstracts and citing papers:
   - Mazhouda (2013), whose review states that GRH for `L(s, χ)`, `q > 1`, is equivalent to Li's coefficients
     increasing;
-  - Bombieri (2003), whose §8 meets Brownian motion, as the flat model of Proposition 2.4 does;
+  - Bombieri (2003), whose §8 meets Brownian motion, as the flat model of Proposition 2.5 does;
   - the chapters of Broughan's Volume 2 on Weil's explicit formula, discrete measures and Hermitian forms.
 
   [`secondary_sources_2026.md`](../../research_notes/Orbit%20lattice%20criterion%20prior%20art/secondary_sources_2026.md)
@@ -82,6 +87,17 @@ A draft, of 13 November 2026. What remains:
 Done since the first draft:
 - The proofs of Section 4 are complete.
 - The bibliography was checked against Crossref, zbMATH Open and arXiv; `references.tex` records the corrections.
+- The paper is self-contained. Proposition 2.1, the pivot upper bound of §3 and the density remark of §6 now carry their
+  proofs.
+- Results whose proofs are only in the library are out. Each rests on the sampling theorem at the zeros and the
+  bounds for `λ_N`, which would roughly double the paper:
+  - the pivot growth `d_N ≫ log N` under RH (`BallPivot.pivot_ge`);
+  - the bounds `√log N/(220e⁸N) ≤ λ_N ≤ 67(1 + log N)/N` under RH, and `λ_N ≪ log N/N` without it (`BallGap.rate_gap`,
+    `BallUpperEta.rate_upper_rh`, `rate_upper`);
+  - the window bound `OrbitWindow.weilQg_step_ge`;
+  - the paper proof of `λ_N ≤ (0.04294 + o(1))·log N/N`.
+
+  They could make a second paper. Section 8 keeps the conjecture and the numerics.
 
 ## Building
 
