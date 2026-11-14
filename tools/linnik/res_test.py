@@ -442,8 +442,9 @@ class Box:
                 out.add(e + 1)
         return sorted(out)
 
-    def find(self, maxint=15):
-        """(k, h) for the test, or None."""
+    def find(self, maxint=15, fast=False):
+        """(k, h) for the test, or None. With `fast`, the last kink at which an interval passes is found by
+        bisection over the kinks (the default tries every kink): fewer evaluations, and sometimes another hint."""
         if not self.ok:
             return None
         K = self.kinks()
@@ -459,7 +460,17 @@ class Box:
             if r is None:
                 cand = [e for e in K if e > a24]
                 lo_e, best = a24, None
-                for e in cand:
+                if fast and cand:
+                    i0, i1 = -1, len(cand)                  # cand[i0] passes (or i0 = -1), cand[i1] is not tried
+                    while i1 - i0 > 1:
+                        im = (i0 + i1) // 2
+                        rr = feas(cand[im])
+                        if rr is not None:
+                            i0, lo_e, best = im, cand[im], rr
+                        else:
+                            i1 = im
+                    cand = cand if best is not None else []
+                for e in ([] if fast and best is not None else cand):
                     rr = feas(e)
                     if rr is not None:
                         lo_e, best = e, rr
@@ -483,18 +494,22 @@ class Box:
         return len(recs), h
 
 
-def hint(Lnum, Lden, cs, hs, mom=0):
+def hint(Lnum, Lden, cs, hs, mom=0, lv=None, fast=False):
     """The test's hint (k, h) for the rest's cells, or None; checked by the mirror of the kernel's test. With the
-    large values' term (`LVON`), a rest that fails `resT` is tried with `resT2`: its hint is `(0, k + 16h)`."""
-    r = Box(Lnum, Lden, cs, hs, mom).find()
-    if r is not None:
-        assert resT(Lnum, Lden, cs, hs, *r, mom=mom)
-        return r
-    if LVON:
-        r = Box(Lnum, Lden, cs, hs, mom, lv=True).find()
+    large values' term (`lv`; `LVON` if not given), a rest that fails `resT` is tried with `resT2`: its hint is
+    `(0, k + 16h)`. `fast`: `Box.find`'s bisection over the kinks, then its default if that finds nothing."""
+    lv = LVON if lv is None else lv
+    for f in ((True, False) if fast else (False,)):
+        r = Box(Lnum, Lden, cs, hs, mom).find(fast=f)
         if r is not None:
-            assert resT2(Lnum, Lden, cs, hs, *r, mom=mom)
-            return 0, r[0] + 16 * r[1]
+            assert resT(Lnum, Lden, cs, hs, *r, mom=mom)
+            return r
+    if lv:
+        for f in ((True, False) if fast else (False,)):
+            r = Box(Lnum, Lden, cs, hs, mom, lv=True).find(fast=f)
+            if r is not None:
+                assert resT2(Lnum, Lden, cs, hs, *r, mom=mom)
+                return 0, r[0] + 16 * r[1]
     return None
 
 
@@ -522,8 +537,14 @@ def _bm(a):
     return min(hi, 1 - a / A)
 
 
-def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0):
-    """Whether the bound may hold for the rest `cs`, `hs` (floats; `False` means the kernel's test fails)."""
+def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0, lv=None, maxleaf=None):
+    """Whether the bound may hold for the rest `cs`, `hs` (floats; `False` means the kernel's test fails). With a
+    negative `slack`, `fuel = 12` and `maxleaf = 15` it is the other way: `True` means that the bound holds with a
+    margin on at most fifteen intervals of the hint's grid, so that the kernel's test should pass (the planner
+    takes that as a pass and finds the hint when the plan is written). `lv`: with the large values' term (`LVON`
+    if not given)."""
+    lv = LVON if lv is None else lv
+    leaves = [0]
     import math
     L = Lnum / Lden
     kq = L / DEN
@@ -549,17 +570,17 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0):
     # the large values' term (`resT2`): for each term, `(k, Γ)` for the powers that the kernel tries, with a small
     # allowance in favour of passing
     lvs = [[] for _ in los]
-    if LVON:
+    if lv:
         e = float(LVEQ)
         for j, lo in enumerate(los):
             if mom >> j & 1:
                 continue
             k0 = max(1, math.ceil(1 / lo - 1e-12))
-            hi = L + 1e-5 - m - (sum(zl) - lo) + 1e-9
+            hi = L + 1e-5 - m - (sum(zl) - lo) - slack
             for k in range(k0 - 1, k0 - 1 - LVKS, -1):
-                if k >= 1 and k * lo >= 2 / 3 + e - 1e-9:
+                if k >= 1 and k * lo >= 2 / 3 + e - slack:
                     lvs[j].append((k, e + max(2 * k * hi * (0.2 + e), 0.5 - k * lo * (0.2 - 4 * e),
-                                              4 / 3 - k * lo * (1.2 - 4 * e)) - 1e-9))
+                                              4 / 3 - k * lo * (1.2 - 4 * e)) - slack))
 
     def lvv(lo, k, g):
         e = float(LVEQ)
@@ -569,8 +590,8 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0):
     for g in (0.0, 0.17, 0.26, 0.34, 0.4, 0.45, 0.5, 0.75, 1.0):
         v = g / 2 + min(c1, max(0.0, g / 2 + y0))
         b = _bm(g) + w - 1
-        for lo, zlo, mk, lv in zip(los, zl, ks, lvs):
-            v += min([zlo * b] + [p0 + p1 * g for p0, p1 in mk] + [lvv(lo, k, g) for k, G in lv if G < g])
+        for lo, zlo, mk, lvj in zip(los, zl, ks, lvs):
+            v += min([zlo * b] + [p0 + p1 * g for p0, p1 in mk] + [lvv(lo, k, g) for k, G in lvj if G < g])
         if v > thr:
             return False
 
@@ -587,14 +608,15 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0):
             if ia <= PK <= ib:
                 ia_inv = min(ia_inv, 1 / _HF[PK][2])
         ta, tb = t0 + t1 * a, t0 + t1 * b
-        for lo, zlo, mk, lv in zip(los, zl, ks, lvs):
+        for lo, zlo, mk, lvj in zip(los, zl, ks, lvs):
             cand = [(l0 + l1 * a, l0 + l1 * b) for l0, l1 in list(mk) + [(-zlo * dS, 0.0), (zlo * w, -zlo * ia_inv)]]
-            cand += [(lvv(lo, k, a), lvv(lo, k, b)) for k, G in lv if G < a]
+            cand += [(lvv(lo, k, a), lvv(lo, k, b)) for k, G in lvj if G < a]
             best = min(cand, key=lambda l: l[0] + l[1])
             ta += best[0]
             tb += best[1]
         if ta <= thr and tb <= thr:
-            return True
+            leaves[0] += 1
+            return maxleaf is None or leaves[0] <= maxleaf
         if fuel == 0:
             return False
         mid = (a + b) / 2
