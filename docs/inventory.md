@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1832 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1834 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 340 | 1013 |
+| `lib/pnt` | 341 | 1015 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -3027,7 +3027,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.sum_typeII_cls`: Proposition 3′ pointwise, by classes of the characters, with the better bound per class ([note](../formalisations/halasz-montgomery.md))
 
-#### `SieveResChain`: The resonant window for a family: the estimate at each frequency
+#### `SieveResChain`: The resonant window for a family and for the chains of primes times a rough cofactor
 
 - `SieveTypeIIHM.box_res`: The resonant estimate at each frequency, for a polynomial over the integers ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.typeII_gcmp_res`: Type II with comparisons, for the resonant window ([note](../formalisations/halasz-montgomery.md))
@@ -3036,6 +3036,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveResCount`: The characters at which a smoothed prime sum is large
 
 - `SieveTypeIIHM.card_Sp_large`: The characters at which a smoothed prime sum is large ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResFull`: The resonant window on tuples of primes with a given product, in no order
+
+- `SieveTypeIIHM.box_res_gen`: The resonant estimate for a polynomial over a finite set ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.chain_res_core`: Families of tuples of primes, by the resonant window ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveResMoment`: The 2k-th moment of a short polynomial over the characters
 

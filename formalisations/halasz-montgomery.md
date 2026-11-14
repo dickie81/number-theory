@@ -109,8 +109,12 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   (`lib/pnt/SieveResChain.lean`): `typeII_res` at each frequency for a polynomial over the integers cut into dyadic
   blocks, the family with comparisons on its primes (`SieveChain.typeII_gcmp`'s), and the chains of primes times a
   rough cofactor with the cofactor as the variable and all the chain's primes as the rest
-  (`SieveChain.chainTU_bound`'s), given `ResCond` at the cofactor's blocks and the primes' scales. Nothing uses them
-  yet: the kernel's test of `ResCond` on a box's cells is to come;
+  (`SieveChain.chainTU_bound`'s), given `ResCond` at the cofactor's blocks and the primes' scales;
+- `SieveTypeIIHM.box_res_gen` and `SieveTypeIIHM.chain_res_core` (`lib/pnt/SieveResFull.lean`): `typeII_res` for a
+  polynomial over a finite set with at most `D` elements for each value, and the families of tuples of primes in
+  no order (`SieveTwoChain.chain_two_core`'s) with one variable, the product of the entries outside a rest whose
+  entries have their own lower bounds. Nothing uses them yet: the kernel's test of `ResCond` on a box's cells is to
+  come;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
