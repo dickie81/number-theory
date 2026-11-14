@@ -121,7 +121,11 @@ CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
          # (`SieveResTest.resX`), lazy hints, a box cut where its first cell's top passes the window, and the
          # planner's search shortened (`skip`)
          '21100': dict(lnum=2110, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
-                       res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3)}
+                       res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3),
+         # at 2115/1000, the main tree's boxes decomposed to eight primes (the light cells of the first prime, below
+         # x^0.21, lose their dropped six-prime boxes)
+         '21150': dict(lnum=2115, lden=1000, h=0.003, hF=0.006, maxlen=6, depth=8, pos=True, lam=0, sec=2,
+                       energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
 # dropped cells next to each other are one cell while its bound is at most DMERGE of the sum of theirs
