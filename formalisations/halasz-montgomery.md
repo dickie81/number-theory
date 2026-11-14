@@ -133,6 +133,13 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   other primes and the cofactor; so the tests with the resonant window for an evaluation of kind `3` (and
   `fillTestsF`'s otherwise) are sound, and `SieveAd.pr_of_partD` applies to a search with them. No certificate uses
   them yet;
+- `SieveAd.evIF_froz_resT` (`lib/pnt/SieveAdFrozRes.lean`): the same over the frozen part of a reversal: when
+  `chkIR` passes the box `ch ++ β`, the term of the chain `ch` over the frozen part is evaluated, by
+  `SieveTypeIIHM.full_res_exp` on the frozen tuples `(a, y, c, y′)` with the rest among the frozen primes `a` and the
+  chain's primes `c`, each in its cell (`evIF_frozP_res`, `evIF_froz_res`). `SieveAd.rules_frozResC` and
+  `SieveAd.pr_of_partDR_at` (`lib/pnt/SieveAdFrozResTree.lean`; the tests `SieveAd.frozResTestsC`, the decoder
+  `SieveAd.cfgIFR` and the search `SieveAd.altFDR` in `lib/pnt/SieveAdFrozResDefs.lean`): so the search whose trees
+  over the frozen parts read the resonant window's test is sound;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length

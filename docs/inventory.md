@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1840 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1843 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 344 | 1021 |
+| `lib/pnt` | 346 | 1024 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2619,6 +2619,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.evIF_frozS_at`: The term over the frozen part by the primes of the cofactor, for any route ([note](../formalisations/harman-sieve.md))
 - `SieveAd.evJF_frozS_at`: The terms at a floor over the frozen part by the primes of the cofactor, for any route ([note](../formalisations/harman-sieve.md))
 
+#### `SieveAdFrozRes`: The term of a chain's box over the frozen part, by the resonant window
+
+- `SieveAd.evIF_froz_resT`: The term of a chain's box over the frozen part, when the resonant window's test passes the box `ch ++ β` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveAdFrozResTree`: The trees over the frozen parts with the resonant window are sound
+
+- `SieveAd.rules_frozResC`: The nodes of a tree over a frozen part, with the resonant window ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.pr_of_partDR_at`: A part of the main search with the resonant window over the frozen parts, for any route ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveAdFrozRole`: The two comparisons at a floor over the frozen part, on the cells and the slab
 
 - `SieveAd.evJF_froz_fill_at`: The comparison with the rest among the tree's primes, over the frozen part, for any route ([note](../formalisations/harman-sieve.md))
@@ -3046,7 +3055,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.box_res_gen`: The resonant estimate for a polynomial over a finite set ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.chain_res_core`: Families of tuples of primes, by the resonant window ([note](../formalisations/halasz-montgomery.md))
-- `SieveTypeIIHM.full_res_exp`: Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window, in exponents
+- `SieveTypeIIHM.full_res_exp`: Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window, in exponents ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveResMoment`: The 2k-th moment of a short polynomial over the characters
 
