@@ -464,14 +464,14 @@ class Planner(fl.FlipSearch):
     resmemo = None
 
     def resHint(self, bl):
-        """`(mask, k, h)` for a rest of the main tree's box `bl` that the kernel's test passes with its hint, or
-        `None`: the rests of at least two primes, in the order of their masks."""
+        """`(mask, k, h)` for a rest of the box `bl` that the kernel's test passes with its hint, or `None`: the
+        rests of at least two primes, in the order of their masks. The box is the main tree's, or with `res_frozen`
+        a tree's over a frozen part, `ch ++ β`."""
         if not self.res:
             return None
-        if self.frz is not None:
-            if not self.res_frozen:
-                return None
-            bl = bl + list(self.frz[3])
+        if self.frz is not None and not self.res_frozen:
+            return None
+        # a box of a tree over a frozen part is the chain's cells followed by the frozen primes' (`ch ++ β`)
         if len(bl) > 13:
             return None
         if any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
@@ -483,6 +483,8 @@ class Planner(fl.FlipSearch):
         # Σ(c − 1) at least `need`
         need = (DEN * ld * 25002 + ln * 25000 - 1) // (ln * 25000)
         nch = n - len(self.frz[3]) if self.frz is not None and self.res_frozen == 'chain' else n
+        if nch < 2:
+            return None
         for mask in range(3, 1 << nch):
             if mask & (mask - 1) == 0:
                 continue
