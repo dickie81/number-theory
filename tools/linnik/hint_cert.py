@@ -108,7 +108,10 @@ CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
          # each second of the kernel
          '21400': dict(lnum=2140, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=10, sec=2),
          # and the leaves of the comparisons cut in three where the paper's conditions fail
-         '21350': dict(lnum=2135, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True)}
+         '21350': dict(lnum=2135, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True),
+         # and the resonant window for the main tree's boxes (`SieveAd.chkIR`)
+         '21300': dict(lnum=2130, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
+                       res=True)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
 # dropped cells next to each other are one cell while its bound is at most DMERGE of the sum of theirs
@@ -1371,12 +1374,20 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
     plain = textwrap.fill(
         f'Plain statement (`linnik_{T}`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there '
         f'is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`, with no hypothesis. The route is at `L = {LN}` '
-        f'(`route{T}`), with the estimate in two variables alone, and the tests are `SieveAd.fillTests`, as for the '
-        f'theorem at `2165/1000`. ' + (
+        f'(`route{T}`), ' + (
+            'with the estimate in two variables and the resonant window, and the tests are `SieveAd.fillTests` with '
+            'the resonant window\'s for an evaluation of kind `3` (`SieveAd.resTestsF`). ' if res else
+            'with the estimate in two variables alone, and the tests are `SieveAd.fillTests`, as for the theorem at '
+            '`2165/1000`. ') + (
             'Where the paper\'s conditions on the leaves of a comparison fail, the plan cuts the box of leaves in '
             'three: the paper\'s lemma on two parts and, on the third, the leaves whose cofactor is shorter than '
             '`√q` by the estimate in two variables with the fourth moment (the tests\' `SieveAd.leavesE`; '
-            '`SieveTwoCompE.prop6_two3_at`, `SieveFillCompE.prop6_fill3_at`). ' if par_.energy else '') +
+            '`SieveTwoCompE.prop6_two3_at`, `SieveFillCompE.prop6_fill3_at`). ' if par_.energy else '') + (
+            'A box of the main tree may also be evaluated by the resonant window: a Type II estimate in one '
+            'variable, the box\'s other primes and the cofactor, with the characters sorted by the sizes of a rest '
+            'of its primes\' own sums as well as by their zeros, whose condition on the rest\'s cells the kernel '
+            'checks led by a hint (`SieveAd.chkIR`, `SieveResTest.resT`; `SieveAd.evI_resE`, '
+            '`SieveTypeIIHM.typeII_res`). ' if res else '') +
         f'The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
         f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.frozTests`. The '
         f'kernel does not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the '
