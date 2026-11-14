@@ -122,6 +122,11 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   hint into intervals, on each of which the hint names a line above each term (the moments' lines of `k₀ − 1` and
   `k₀ = ⌈1/lo⌉`, the curve's bound at the interval's left end, or the line `1 − γ/A` with `A` the larger of the end
   steps' factors), checked at the interval's ends in fixed point (`2^64`). Nothing uses it yet;
+- `SieveTypeIIHM.chain_res_exp` (`lib/pnt/SieveResTerm.lean`): `SieveTwoTerm.chain2_bound` by the resonant window: the
+  strictly decreasing chains of primes with a rest at given positions, each rest prime at least `q^{lo i}` and the
+  rest's product in `[q^{ρ₁}, q^{ρ₂}]`, times their rough cofactors, evaluated given
+  `ResBox g L (n + 1) (L − ρ₂ − ε) (lo − ε)`: the cofactor written out as its primes and `full_res_exp` on the full
+  tuples. Nothing uses it yet;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
