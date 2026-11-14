@@ -460,7 +460,7 @@ class Planner(fl.FlipSearch):
     # the resonant window (`SieveAd.chkIR`): a rest of at least two of the box's primes, in the main tree
     res = False
     res_frozen = False   # for measurement only: the window over the frozen parts too, the rest among the chain's
-    # and the frozen primes (no hints, no Lean yet)
+    # and the frozen primes, or ('chain') among the chain's alone (no hints, no Lean yet)
     resmemo = None
 
     def resHint(self, bl):
@@ -482,7 +482,8 @@ class Planner(fl.FlipSearch):
         # a rest whose exponents sum to less than 1 + 2/25000 fails (`res_test.quick`): in units of the cells,
         # Σ(c − 1) at least `need`
         need = (DEN * ld * 25002 + ln * 25000 - 1) // (ln * 25000)
-        for mask in range(3, 1 << n):
+        nch = n - len(self.frz[3]) if self.frz is not None and self.res_frozen == 'chain' else n
+        for mask in range(3, 1 << nch):
             if mask & (mask - 1) == 0:
                 continue
             if sum(bl[p][0] - 1 for p in range(n) if mask >> p & 1) < need:
