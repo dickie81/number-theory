@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] [--rows I J [STEP]] [--plan-only] | --try TAG a/b
 H HF MAXLEN [--lam N]
-[--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--split J] [--rows I J] [--out DIR]:
+[--depth N] [--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--split J] [--rows I J]
+[--out DIR]:
 the search with the reversal through the largest prime as a plan, the hints that lead the kernel through the plan,
 and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
 
@@ -1727,6 +1728,7 @@ def main():
     if a and a[0] == '--try':
         ln, ld = map(int, a[2].split('/'))
         par_ = Par(a[1], ln, ld, h=float(a[3]), hF=float(a[4]), maxlen=int(a[5]),
+                   depth=int(a[a.index('--depth') + 1]) if '--depth' in a else 6,
                    lam=int(a[a.index('--lam') + 1]) if '--lam' in a else 0, pos='--pos' in a,
                    blk=int(a[a.index('--blk') + 1]) if '--blk' in a else 1,
                    skip=int(a[a.index('--skip') + 1]) if '--skip' in a else 0,
