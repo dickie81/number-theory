@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] | --try TAG a/b H HF MAXLEN [--lam N]
+"""hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] [--rows I J [STEP]] [--plan-only] | --try TAG a/b
+H HF MAXLEN [--lam N]
 [--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--split J] [--rows I J] [--out DIR]:
 the search with the reversal through the largest prime as a plan, the hints that lead the kernel through the plan,
 and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
@@ -114,7 +115,12 @@ CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
                        res=True),
          # and for the boxes of the trees over the frozen parts (`SieveAd.frozResTestsC`)
          '21280': dict(lnum=2128, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
-                       res=True, resF=True)}
+                       res=True, resF=True),
+         # and the cofactor in the rest (`SieveAd.chkIRC`, `chkIRF`), the large values of the powers
+         # (`SieveResTest.resX`), lazy hints, a box cut where its first cell's top passes the window, and the
+         # planner's search shortened (`skip`)
+         '21100': dict(lnum=2110, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
+                       res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
 # dropped cells next to each other are one cell while its bound is at most DMERGE of the sum of theirs
@@ -1369,7 +1375,7 @@ def plan_all(par_, procs=4, rows=None, cache=None):
         os.makedirs(cache, exist_ok=True)
     jobs = [(par_, a, b, cache) for a, b in zip(cuts, cuts[1:])]
     if rows is not None:
-        jobs = jobs[rows[0]:rows[1]]
+        jobs = jobs[rows[0]:rows[1]:rows[2] if len(rows) > 2 else 1]
     if procs > 1:
         with multiprocessing.Pool(procs) as pool:
             # the cells that take longest first, each alone in its task
@@ -1720,16 +1726,27 @@ def main():
                    res='--res' in a or '--resF' in a or '--cof' in a, resF='--resF' in a, cof='--cof' in a,
                    lv='--lv' in a, lazy='--lazy' in a,
                    split=int(a[a.index('--split') + 1]) if '--split' in a else 0)
-        rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
-    elif not a or a[0] in ('--check', '--out', '--procs', '--cache'):
-        par_, rows = Par(tag, **CERTS[tag]), None
-        if out is None and '--check' not in a:
+    elif not a or a[0] in ('--check', '--out', '--procs', '--cache', '--rows', '--plan-only'):
+        par_ = Par(tag, **CERTS[tag])
+        if out is None and '--check' not in a and '--plan-only' not in a:
             out = tc.PNT
     else:
         print(__doc__)
         return 2
+    rows = None
+    if '--rows' in a:
+        # the cells `I` to `J` of the first prime, every `STEP`-th (`--rows I J [STEP]`)
+        i = a.index('--rows') + 1
+        rows = tuple(int(x) for x in a[i:i + 3] if x.isdigit())
     t0 = time.time()
     cache = a[a.index('--cache') + 1] if '--cache' in a else None
+    if '--plan-only' in a:
+        # the plans of the cells into the cache, and no file: for a search shared between machines
+        assert cache is not None, '--plan-only keeps its plans in --cache DIR'
+        f0, cfg0, parts, root, total, stats = plan_all(par_, procs, rows, cache)
+        print(f'L = {par_.lnum}/{par_.lden} rows {rows}: cost/K = {total / K:.5f}; {stats["boxes"]} boxes searched; '
+              f'{sum(stats["steps"].values())} steps; {time.time() - t0:.0f} s', flush=True)
+        return 0
     files, (parts, root, total, stats) = generate(par_, procs, rows, cache)
     times = [p[7] for p in parts]
     bits = sum(p[6].bit_length() for p in parts)
