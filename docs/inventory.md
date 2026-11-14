@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1828 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1832 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 338 | 1009 |
+| `lib/pnt` | 340 | 1013 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2769,7 +2769,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveChain.sum_rough_tuples`: For `z ≥ 2`, `Y ≥ 1` and `Y < z^{K+1}`, the `z`-rough `k ∈ [1, Y]` are the products of the non-increasing tuples of at most `K` primes at least `z`, the… *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveChain.typeII_gcmp'`: `typeII_gcmp` (with `RouteOK` and `hII`) for any number `K ≥ 1` of primes.
-- `SieveChain.chainTU_bound`: Chains times a rough cofactor in the window *paper*
+- `SieveChain.chainTU_bound`: Chains times a rough cofactor in the window *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveChain.chainTL_bound`: Chains with a product of some of their primes in the window *paper*
 
 #### `SieveChainR`: Type II for chains with part of their product in the reflection of the window
@@ -3027,6 +3027,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.sum_typeII_cls`: Proposition 3′ pointwise, by classes of the characters, with the better bound per class ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveResChain`: The resonant window for a family: the estimate at each frequency
+
+- `SieveTypeIIHM.box_res`: The resonant estimate at each frequency, for a polynomial over the integers ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.typeII_gcmp_res`: Type II with comparisons, for the resonant window ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.chainTU_res`: Chains times a rough cofactor, by the resonant window ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveResCount`: The characters at which a smoothed prime sum is large
 
 - `SieveTypeIIHM.card_Sp_large`: The characters at which a smoothed prime sum is large ([note](../formalisations/halasz-montgomery.md))
@@ -3238,6 +3244,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveUnwGen`: Type II families with sharp prime ranges, with an abstract polynomial part
 
 - `SieveUnwGen.unw_gen`: Families with sharp prime ranges, with an abstract polynomial part *paper* ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveUnwLo`: Type II families with sharp prime ranges, each prime with its own lower bound
+
+- `SieveUnwGen.unw_gen_lo`: `unw_gen` with a lower bound on each prime's range ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveUnwTwo`: Type II families in two variables with sharp prime ranges
 

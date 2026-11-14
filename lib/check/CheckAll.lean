@@ -172,6 +172,8 @@ import SieveResBins
 import SieveResZone
 import SieveResCount
 import SieveResTypeII
+import SieveUnwLo
+import SieveResChain
 import SieveLeafZone
 import SieveLeafTwo
 import SieveLeafSplit
@@ -1037,6 +1039,10 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTypeIIHM.bin_bound_exp
 #print axioms SieveTypeIIHM.card_Sp_large
 #print axioms SieveTypeIIHM.typeII_res
+#print axioms SieveUnwGen.unw_gen_lo
+#print axioms SieveTypeIIHM.box_res
+#print axioms SieveTypeIIHM.typeII_gcmp_res
+#print axioms SieveTypeIIHM.chainTU_res
 #print axioms SieveTypeIIHM.zone_leaf
 #print axioms SieveLeafTwo.typeIITwoAt_leaf
 #print axioms SieveLeafTwo.leaf2_bound

@@ -102,8 +102,15 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   conclusion of `SieveTypeIIHM.typeII_gen_hm` for a curve with its counts when `ResCond` holds at the variable's
   exponent and the rest's: the characters are classed by their zeros' bin and the size of each prime sum of the
   rest, in steps of `10⁻⁶` of its exponent; a class's count is the least of the curve's and each large prime sum's
-  moment count, and `bin_bound_exp` bounds the class. Nothing uses it yet: the chain of a box with the rest's
-  primes in their cells, and the kernel's test of `ResCond`, are to come;
+  moment count, and `bin_bound_exp` bounds the class;
+- `SieveUnwGen.unw_gen_lo` (`lib/pnt/SieveUnwLo.lean`): `SieveUnwGen.unw_gen` with a lower bound `x_i ≥ 2q^{lo i}`
+  on each prime of the family, so that the estimate at each frequency is asked for only on the scales
+  `Q_i ≥ q^{lo i}`; `SieveTypeIIHM.box_res`, `SieveTypeIIHM.typeII_gcmp_res` and `SieveTypeIIHM.chainTU_res`
+  (`lib/pnt/SieveResChain.lean`): `typeII_res` at each frequency for a polynomial over the integers cut into dyadic
+  blocks, the family with comparisons on its primes (`SieveChain.typeII_gcmp`'s), and the chains of primes times a
+  rough cofactor with the cofactor as the variable and all the chain's primes as the rest
+  (`SieveChain.chainTU_bound`'s), given `ResCond` at the cofactor's blocks and the primes' scales. Nothing uses them
+  yet: the kernel's test of `ResCond` on a box's cells is to come;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
