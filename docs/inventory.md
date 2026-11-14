@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1825 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1828 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 335 | 1006 |
+| `lib/pnt` | 338 | 1009 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -3027,10 +3027,22 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.sum_typeII_cls`: Proposition 3′ pointwise, by classes of the characters, with the better bound per class ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveResCount`: The characters at which a smoothed prime sum is large
+
+- `SieveTypeIIHM.card_Sp_large`: The characters at which a smoothed prime sum is large ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveResMoment`: The 2k-th moment of a short polynomial over the characters
 
 - `SieveTypeIIHM.sum_chars_dp_pow_le`: The `2k`-th moment of a polynomial over the characters ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.card_large_le`: The count of the large values ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResTypeII`: The resonant window: Proposition 3′ with the characters classed by the sizes of the rest's prime sums
+
+- `SieveTypeIIHM.typeII_res`: Proposition 3′ for the resonant window, pointwise in the heights ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResZone`: One class of characters, its exponents given: the bound of a class for the resonant window
+
+- `SieveTypeIIHM.bin_bound_exp`: One class ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveRough`: Rough numbers from above, and the shares of the certificate's cells
 
@@ -3201,7 +3213,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveTypeIIHM`: The bin bound with the Halász–Montgomery branch, and Proposition 3′ for a curve on a window
 
 - `SieveTypeIIHM.bin_bound_pt`: One bin by orthogonality, at one point
-- `SieveTypeIIHM.bin_bound_gen_hm`: One bin, with the better bound *paper*
+- `SieveTypeIIHM.bin_bound_gen_hm`: One bin, with the better bound *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.typeII_gen_hm`: Proposition 3′ for a curve and a window with the Halász–Montgomery branch, pointwise in the heights *paper* ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTypeIIU`: Type II families with sharp prime ranges

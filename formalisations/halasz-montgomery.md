@@ -87,11 +87,23 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `d(n)^k`, `card_tuples_le`), and Markov's count of the large values: `V^{2k}` times the number of characters with
   `|W(χ)| ≥ V` is at most the moment. For a prime sum of length `q^s` and `ks ≥ 1`, the characters at which it
   exceeds `q^{st}` number about `q^{2ks(1−t)}`, the density hypothesis's count at the lengths `q^{1/k}`: the counts
-  of the resonant window (`docs/research-opportunities.md`, §3.1), which nothing uses yet;
+  of the resonant window (`docs/research-opportunities.md`, §3.1), `SieveTypeIIHM.typeII_res` below;
 - `SieveTypeIIHM.sum_typeII_cls` (`lib/pnt/SieveResBins.lean`): `SieveHMBins.sum_typeII_bins_hm` for any classes of
-  the characters (a map `cl` to `{0, …, N − 1}`) in place of the bins of their zeros, whose proof uses nothing of the
-  bins but that they partition the characters: the resonant window classes the characters by the sizes of the
-  rest's prime sums with their zeros' bins. Nothing uses it yet;
+  the characters (a map `cl` into a finite type) in place of the bins of their zeros, whose proof uses nothing of
+  the bins but that they partition the characters: the resonant window classes the characters by the sizes of the
+  rest's prime sums with their zeros' bins;
+- `SieveTypeIIHM.bin_bound_exp` (`lib/pnt/SieveResZone.lean`): `SieveTypeIIHM.bin_bound_gen_hm` for one class of
+  characters with its exponents given, the prime sums at most `C₀q^E` and the class at most `C_d(qT)^γ(1 + log qT)^{10}`
+  characters, under `ResBinOK L d e E γ m` (orthogonality, or both of the Halász–Montgomery inequalities);
+- `SieveTypeIIHM.card_Sp_large` (`lib/pnt/SieveResCount.lean`): the `2k`-th moment for the smoothed prime sums
+  `SieveWeight.Sp` (a tuple of primes with a given product is one of `k^k`), so the characters at which a prime sum
+  of length `Q = q^s` is at least `Q^u` number at most `C_k q^{max(1, ks) + ks(1 − 2u)}`;
+- `SieveTypeIIHM.typeII_res` (`lib/pnt/SieveResTypeII.lean`), **Proposition 3′ for the resonant window**: the
+  conclusion of `SieveTypeIIHM.typeII_gen_hm` for a curve with its counts when `ResCond` holds at the variable's
+  exponent and the rest's: the characters are classed by their zeros' bin and the size of each prime sum of the
+  rest, in steps of `10⁻⁶` of its exponent; a class's count is the least of the curve's and each large prime sum's
+  moment count, and `bin_bound_exp` bounds the class. Nothing uses it yet: the chain of a box with the rest's
+  primes in their cells, and the kernel's test of `ResCond`, are to come;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
