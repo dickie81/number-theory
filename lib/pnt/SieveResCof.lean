@@ -63,6 +63,7 @@ lemma snocR_injective {n k' : ℕ} {r : Fin (n + 1) → Fin (k' + 1)} (hr : Func
 
 variable [Route]
 
+omit [Route] in
 /-- The rest's product with the cofactor: the chain's rest's times the cofactor. -/
 lemma prod_image_snocR {n k' : ℕ} (r : Fin (n + 1) → Fin (k' + 1)) (z : Fin (k' + 1 + 1) → ℕ) :
     ∏ x ∈ Finset.univ.image (snocR r), z x =

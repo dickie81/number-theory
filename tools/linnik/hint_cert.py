@@ -464,9 +464,11 @@ class Planner(fl.FlipSearch):
     res = False
     res_frozen = False   # the window over the frozen parts too (`SieveAd.frozResTestsC`), the rest among the chain's
     # and the frozen primes; for measurement, 'chain': among the chain's alone
-    res_cof = False      # in the main tree, a cofactor that is one prime (shorter than the square of the box's
-    # least prime) may be in the rest, its cell from the box's cells (`SieveAd.chkIRC`); for measurement only (no
-    # hints, no Lean), 'mom': any cofactor but 1 too, counted by its moments alone (`res_test.mkTmM`)
+    res_cof = False      # a cofactor that is one prime (shorter than the square of the box's least prime) may be in
+    # the rest, its cell from the box's cells: the main tree's (`SieveAd.chkIRC`) and, with `res_frozen`, the chain's
+    # in the trees over the frozen parts, its cell from the slab and the chain's cells too (`SieveAd.chkIRF`); for
+    # measurement only (no hints), 'main': the main tree's alone, and 'mom': that and any cofactor but 1, counted by
+    # its moments alone (`res_test.mkTmM`)
     resmemo = None
 
     def resHint(self, bl):
@@ -490,7 +492,7 @@ class Planner(fl.FlipSearch):
         need = (DEN * ld * 25002 + ln * 25000 - 1) // (ln * 25000)
         nch = n - len(self.frz[3]) if self.frz is not None and self.res_frozen == 'chain' else n
         cofm = False
-        if self.res_cof and self.frz is None:
+        if self.res_cof in (True, 'main', 'mom') and self.frz is None:
             # the cofactor `m = n/∏p` with `n ∈ (x, 2x]`: `m ∈ (x^{(DEN − Σhi)/DEN}, x^{(DEN − Σlo + 1)/DEN})`, one
             # prime at least the least prime `x^{lo₀/DEN}` when its upper end is at most twice `lo₀`
             # (the kernel's cell and conditions, `SieveAd.chkIRC`)
@@ -499,6 +501,15 @@ class Planner(fl.FlipSearch):
             cofm = self.res_cof == 'mom' and shi + 1 < DEN and not one
             if one or cofm:
                 bl = list(bl) + [(max(tsub(tsub(DEN, shi), 1), bl[0][0]), tsub(DEN, slo) + 1)]
+                n = nch = n + 1
+        elif self.res_cof is True and self.frz is not None and self.res_frozen is True and n > len(self.frz[3]):
+            # in a tree over a frozen part, the chain's cofactor `M` with `n = R·∏ch·M`, `R` in the slab
+            # `(x^{e₁/DEN}, x^{e₂/DEN}]`: one prime at least the chain's least prime when its upper end is at most
+            # twice that prime's lower end (the kernel's cell and conditions, `SieveAd.chkIRF`)
+            e1, e2, ch = self.frz[0], self.frz[1], bl[:n - len(self.frz[3])]
+            slo, shi = sum(c[0] for c in ch), sum(c[1] for c in ch)
+            if e2 + shi + 2 <= DEN and DEN + 1 <= e1 + slo + 2 * ch[0][0]:
+                bl = list(bl) + [(max(tsub(tsub(tsub(DEN, e2), shi), 1), ch[0][0]), tsub(tsub(DEN, e1), slo) + 1)]
                 n = nch = n + 1
         if nch < 2:
             return None
@@ -693,6 +704,27 @@ class Planner(fl.FlipSearch):
             cs, hs = cs + [max(tsub(tsub(DEN, shi), 1), lk)], hs + tsub(DEN, slo) + 1
         return rt.resT(self.T.Ln, self.T.Ld, cs, hs, k, h)
 
+    def chkIRF(self, e1, e2, beta, bl, sr, k, h):
+        """`SieveAd.chkIRF`: `chkIR` on the box `ch ++ β` of a tree over a frozen part, with the chain's cofactor in
+        the rest at the bit after the box's cells: one prime when the chain's upper ends (the box's less `β`'s) with
+        `e₂` sum to at most `DEN − 2` and its lower ends with `e₁` and twice its least prime's reach `DEN + 1`, in the
+        cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`."""
+        n = len(bl)
+        if n > 13 or any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
+            return False
+        cs = [bl[p][0] for p in range(n) if sr >> p & 1]
+        hs = sum(bl[p][1] for p in range(n) if sr >> p & 1)
+        if not cs:
+            return False
+        if sr >> n & 1:
+            slo, shi = tsub(loSum(bl), loSum(beta)), tsub(hiSum(bl), hiSum(beta))
+            lk = bl[0][0] if bl else 0
+            if not (e2 + shi + 2 <= DEN and DEN + 1 <= e1 + slo + 2 * lk):
+                return False
+            cs = cs + [max(tsub(tsub(tsub(DEN, e2), shi), 1), lk)]
+            hs += tsub(tsub(DEN, e1), slo) + 1
+        return rt.resT(self.T.Ln, self.T.Ld, cs, hs, k, h)
+
     def cfgIMRC(self, bl, h):
         """`SieveAd.cfgIMRC`: `cfgIPR` with a set of one more bit than the box has cells, the cofactor's."""
         return self.cfgIPR(2 ** (len(bl) + 1), h)
@@ -798,7 +830,9 @@ class Planner(fl.FlipSearch):
     # the search (stepD, solveD)
     def okIm(self, bl, cfg):
         if (self.res if self.frz is None else self.res_frozen) and cfg[0] == 3:
-            chk = self.chkIRC if self.frz is None and self.res_cof is True else self.chkIR
+            if self.frz is not None:
+                return self.chkIRF(self.frz[0], self.frz[1], self.frz[3], bl, cfg[2], cfg[3] & 15, cfg[3] >> 4)
+            chk = self.chkIRC if self.res_cof is True else self.chkIR
             return chk(bl, cfg[2], cfg[3] & 15, cfg[3] >> 4)
         return self.T.okI(bl, cfg) if self.frz is None else self.okIF(bl, cfg)
 
@@ -953,7 +987,7 @@ class Planner(fl.FlipSearch):
             assert cf and self.okIF(bl, cf[0])
             out.extend(self.evalFields(cf[0], w, bool(self.res_frozen)))
         elif kind == 'R':
-            assert self.res_frozen and self.chkIR(bl, node[1], node[2], node[3])
+            assert self.res_frozen and self.chkIRF(self.frz[0], self.frz[1], beta, bl, node[1], node[2], node[3])
             out.extend(self.resFields(node, w))
         elif kind == 'D':
             out.append((3, 3))

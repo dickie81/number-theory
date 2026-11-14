@@ -150,6 +150,13 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   to at most `DEN − 2` and whose lower ends with twice its least prime's reach `DEN + 1` has its cofactor, one prime
   in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`, in the rest when the test's bit after the box's cells is
   set; so the tests with it are sound;
+- `SieveAd.evIF_froz_resC` and `SieveAd.evIF_froz_resTC` (`lib/pnt/SieveAdFrozResCof.lean`; the test
+  `SieveAd.chkIRF` in `lib/pnt/SieveAdFrozResDefs.lean`): the same in the trees over the frozen parts. With the
+  frozen number in the slab `(x^{e₁/DEN}, x^{e₂/DEN}]`, a chain whose upper ends with `e₂` sum to at most `DEN − 2`
+  and whose lower ends with `e₁` and twice its least prime's reach `DEN + 1` has one prime as every multiple's chain
+  cofactor (`frozCof_facts`), in the cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`; the frozen tuples
+  `(a, y, c, y′)` have one prime `y′`, in the rest with the frozen primes and the chain's (`evIF_frozP_resC`).
+  `frozResTestsC` reads `chkIRF` (with the bit clear, `chkIR`), so `SieveAd.rules_frozResC` covers it;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length

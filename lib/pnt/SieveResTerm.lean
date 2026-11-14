@@ -33,6 +33,7 @@ open Classical SieveTypeIIGen
 
 variable [Route]
 
+omit [Route] in
 /-- The rest's product in the full tuple is the chain's. -/
 lemma prod_image_castAdd {k' t n : ℕ} (r : Fin (n + 1) → Fin (k' + 1)) (z : Fin (k' + 1 + t) → ℕ) :
     ∏ x ∈ Finset.univ.image (fun i => Fin.castAdd t (r i)), z x =

@@ -82,6 +82,7 @@ theorem cells_posB {q e₁ e₂ s t k : ℕ} {βx : Fin (s + 1) → Cell} {bx : 
 
 variable [RouteOK] [SieveCert.IBPar] [IBFits]
 
+omit [SieveCert.IBPar] [IBFits] in
 set_option maxHeartbeats 1600000 in
 /-- **The term of a chain's box over the frozen part with a cofactor of `t` primes, by the resonant window.** Let
 `βx` and the chain's box `bx` have cells with `1 ≤ lo ≤ hi ≤ DEN`, and `e₁, e₂ ≤ DEN`. Let the rest be at the
@@ -247,6 +248,7 @@ theorem evIF_frozP_res {e₁ e₂ s : ℕ} {βx : Fin (s + 1) → Cell}
         push_cast
         field_simp
 
+omit [SieveCert.IBPar] [IBFits] in
 /-- **The term of a chain's box over the frozen part, by the resonant window.** `evIF_frozP_res` for every number
 of the frozen cofactor's primes. -/
 theorem evIF_froz_res {e₁ e₂ s : ℕ} {βx : Fin (s + 1) → Cell}

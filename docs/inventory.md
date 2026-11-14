@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1846 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1848 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 348 | 1027 |
+| `lib/pnt` | 349 | 1029 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2622,6 +2622,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdFrozRes`: The term of a chain's box over the frozen part, by the resonant window
 
 - `SieveAd.evIF_froz_resT`: The term of a chain's box over the frozen part, when the resonant window's test passes the box `ch ++ β` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveAdFrozResCof`: The chain's cofactor over the frozen part, in the resonant window's rest
+
+- `SieveAd.evIF_froz_resC`: The term of a chain's box over the frozen part, by the resonant window with the chain's cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.evIF_froz_resTC`: The term of a chain's box over the frozen part, when the resonant window's test with the chain's cofactor passes the box `ch ++ β` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdFrozResTree`: The trees over the frozen parts with the resonant window are sound
 
