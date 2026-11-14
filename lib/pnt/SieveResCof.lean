@@ -17,7 +17,7 @@ overshoot `N₂` (`N₂ < ∏rt·p²` for the last prime `p`), and `y` is at lea
   `L − ρ₂ − ε > 0`, there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a` mod `q`: let `rt` run over the
   `(k′ + 1)`-tuples of primes up to `N₂ = ⌊2q^L⌋` that satisfy at most `J₀` comparisons, each strictly decreasing
   with entries at least `q^{e₀}` and `rt (r i) ≥ q^{lo i}`, with `∏rt ≤ N₁ = ⌊q^L⌋` and `N₂ < ∏rt·p²` for its last
-  prime `p`, and such that every `y` with `N₁ < ∏rt·y ≤ N₂` has `y ≥ q^{lo (n+1)}` and the rest's product
+  prime `p`, and such that every `y ≥ p` with `N₁ < ∏rt·y ≤ N₂` has `y ≥ q^{lo (n+1)}` and the rest's product
   `∏_i rt (r i)·y` in `[q^{ρ₁}, q^{ρ₂}]`. If `ResBox g L (n + 2) (L − ρ₂ − ε) (lo − ε)` holds, the multiples
   `n ∈ (N₁, N₂]` of `∏rt` with no prime factor below `p`, summed over `rt`, have `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`.
 
@@ -98,7 +98,7 @@ theorem chain_res_cof [RouteOK] {g : ℝ → ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg
         StrictAnti rt ∧ (∀ i, (q : ℝ) ^ e₀ ≤ rt i) ∧ (∀ i : Fin (n + 1), (q : ℝ) ^ lo i ≤ rt (r i)) ∧
           ∏ i, rt i ≤ ⌊(q : ℝ) ^ L⌋₊ ∧
           ⌊2 * (q : ℝ) ^ L⌋₊ < (∏ i, rt i) * (rt (Fin.last k') * rt (Fin.last k')) ∧
-          ∀ y : ℕ, ⌊(q : ℝ) ^ L⌋₊ < (∏ i, rt i) * y → (∏ i, rt i) * y ≤ ⌊2 * (q : ℝ) ^ L⌋₊ →
+          ∀ y : ℕ, rt (Fin.last k') ≤ y → ⌊(q : ℝ) ^ L⌋₊ < (∏ i, rt i) * y → (∏ i, rt i) * y ≤ ⌊2 * (q : ℝ) ^ L⌋₊ →
             (q : ℝ) ^ lo (n + 1) ≤ y ∧
               (q : ℝ) ^ ρ₁ ≤ (((∏ i ∈ Finset.univ.image r, rt i) * y : ℕ) : ℝ) ∧
               (((∏ i ∈ Finset.univ.image r, rt i) * y : ℕ) : ℝ) ≤ (q : ℝ) ^ ρ₂) →
@@ -255,7 +255,8 @@ theorem chain_res_cof [RouteOK] {g : ℝ → ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg
       rw [Fin.prod_univ_one]
       rfl
     rw [hy] at hprod
-    obtain ⟨hcy, hc1, hc2⟩ := hcof (z (Fin.last (k' + 1))) (by rw [← hprod]; exact hlo') (by rw [← hprod]; exact hhi')
+    obtain ⟨hcy, hc1, hc2⟩ := hcof (z (Fin.last (k' + 1))) (hlast 0) (by rw [← hprod]; exact hlo')
+      (by rw [← hprod]; exact hhi')
     have hρ := prod_image_snocR r z
     refine ⟨fun i => ?_, fun i => ?_, ?_, ?_, hlo', hhi'⟩
     · refine Fin.addCases (fun i => ?_) (fun b => ?_) i

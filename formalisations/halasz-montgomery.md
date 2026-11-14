@@ -141,6 +141,15 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `SieveAd.pr_of_partDR_at` (`lib/pnt/SieveAdFrozResTree.lean`; the tests `SieveAd.frozResTestsC`, the decoder
   `SieveAd.cfgIFR` and the search `SieveAd.altFDR` in `lib/pnt/SieveAdFrozResDefs.lean`): so the search whose trees
   over the frozen parts read the resonant window's test is sound;
+- `SieveTypeIIHM.chain_res_cof` (`lib/pnt/SieveResCof.lean`): `chain_res_exp` with the cofactor in the rest when it
+  is one prime: when no multiple is the chain's product itself and two primes at least the chain's last would
+  overshoot `N₂`, the term is the sum over the full tuples `(rt, y)` of one cofactor prime, and `full_res_exp` applies
+  with `y` in the rest, at least `q^{lo}` for the bound that `N₁ < ∏rt·y` gives. `SieveAd.evI_resCE` and
+  `SieveAd.resTestsFC_sound` (`lib/pnt/SieveAdResCof.lean`; the test `SieveAd.chkIRC`, the tests `SieveAd.resTestsFC`
+  and the decoder `SieveAd.cfgIMRC` in `lib/pnt/SieveAdResDefs.lean`): a box of the main tree whose upper ends sum
+  to at most `DEN − 2` and whose lower ends with twice its least prime's reach `DEN + 1` has its cofactor, one prime
+  in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`, in the rest when the test's bit after the box's cells is
+  set; so the tests with it are sound;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length

@@ -14,6 +14,10 @@ on the rest's cells; `SieveResTest.resT` checks that condition, led by a hint. T
   four bits); with `fillTestsF`'s tests for the other kinds.
 * `cfgIPR`, `cfgIMR`: the configuration of an evaluation from the hints: `0` and `cfgIP`'s code, or `1`, the rest
   (a set of `pw` values), four bits `k` and the test's `k` intervals' ends, thirteen bits each.
+* `headLo`, `chkIRC`, `okIRC`, `resTestsFC`, `cfgIMRC`: the same with the box's cofactor in the rest, at the bit
+  after the box's cells: when the box's upper ends sum to at most `DEN − 2` and its lower ends with twice its least
+  prime's reach `DEN + 1`, every multiple's cofactor is one prime, in the cell
+  `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)` (`lo₀` the least prime's lower end).
 
 Its soundness is `SieveAdRes.lean`'s. The file imports `SieveAdDirDefs.lean` and `SieveResTestDefs.lean`.
 -/
@@ -73,5 +77,44 @@ noncomputable def cfgIPR (pw h : ℕ) : Cfg × ℕ :=
 
 /-- **The configuration of an evaluation in the main tree, with the resonant window**, from the hints. -/
 noncomputable def cfgIMR (bl : List Cell) (h : ℕ) : Cfg × ℕ := cfgIPR (Nat.pow 2 (lenR bl)) h
+
+/-- The lower end of a box's first cell, its least prime's (`0` for no cell). -/
+def headLo : List Cell → ℕ
+  | [] => 0
+  | c :: _ => c.1
+
+section
+
+variable [SieveCert.IBPar]
+
+open SieveCert.IBPar (Lnum Lden)
+
+/-- **The resonant window's test of a box, with its cofactor**: `chkIR`, and when the bit of `sr` after the box's
+cells is set, the cofactor in the rest after the box's primes: when the box's upper ends sum to at most `DEN − 2`
+and its lower ends with twice its least prime's reach `DEN + 1`, in the cell `(max(DEN − Σhi − 1, lo₀),
+DEN − Σlo + 1)`. -/
+noncomputable def chkIRC (bl : List Cell) (sr k h : ℕ) : Bool :=
+  rpass bl sr fun los hs ns ok n =>
+    Nat.ble n 13 && ok && Nat.blt 0 ns &&
+      cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
+        (Nat.ble (Nat.add (hiSum bl) 2) DEN && Nat.ble (Nat.add DEN 1) (Nat.add (loSum bl) (Nat.mul 2 (headLo bl))) &&
+          SieveResTest.resT Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub DEN (hiSum bl)) 1) (headLo bl)])
+            (Nat.add hs (Nat.add (Nat.sub DEN (loSum bl)) 1)) k h)
+        (SieveResTest.resT Lnum Lden los hs k h)
+
+/-- The test of an evaluation of kind `3` with the cofactor: `chkIRC`. -/
+noncomputable def okIRC (bl : List Cell) (cfg : Cfg) : Bool :=
+  chkIRC bl cfg.sr (Nat.land cfg.s1 15) (Nat.div cfg.s1 16)
+
+/-- **The tests with the resonant window and the cofactor**: `okIRC` for an evaluation of kind `3`, `fillTestsF`'s
+otherwise. -/
+noncomputable def resTestsFC : Tests :=
+  ⟨fun bl cfg => cond (Nat.beq cfg.kind 3) (okIRC bl cfg) (fillTestsF.okI bl cfg), fillTestsF.okJ⟩
+
+end
+
+/-- The configuration of an evaluation in the main tree with the cofactor's bit: `cfgIPR` with a set of as many bits
+as the box has cells and one more. -/
+noncomputable def cfgIMRC (bl : List Cell) (h : ℕ) : Cfg × ℕ := cfgIPR (Nat.pow 2 (Nat.succ (lenR bl))) h
 
 end SieveAd
