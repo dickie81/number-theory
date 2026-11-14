@@ -182,6 +182,9 @@ import SieveResTerm
 import SieveAdRes
 import SieveAdFrozRes
 import SieveAdFrozResTree
+import SieveResCof
+import SieveAdResCof
+import SieveAdFrozResCof
 import SieveLeafZone
 import SieveLeafTwo
 import SieveLeafSplit
@@ -1066,6 +1069,11 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.evIF_froz_resT
 #print axioms SieveAd.rules_frozResC
 #print axioms SieveAd.pr_of_partDR_at
+#print axioms SieveTypeIIHM.chain_res_cof
+#print axioms SieveAd.evI_resCE
+#print axioms SieveAd.resTestsFC_sound
+#print axioms SieveAd.evIF_froz_resC
+#print axioms SieveAd.evIF_froz_resTC
 #print axioms SieveTypeIIHM.zone_leaf
 #print axioms SieveLeafTwo.typeIITwoAt_leaf
 #print axioms SieveLeafTwo.leaf2_bound

@@ -7,17 +7,16 @@ Plain statements. `SieveAdFrozResDefs.lean` has the search whose trees over the 
 window's test (`frozResTestsC`, `cfgIFR`, `flipTreeDR` … `altFDR`). Here it is sound, as `SieveAdDir.lean`'s:
 
 * `rules_frozResC`: **the nodes of a tree over a frozen part with the resonant window**: `rules_frozC`'s, and an
-  evaluation of kind `3` evaluates the chain's term over the frozen part by `evIF_froz_resT`, for a slab whose
-  ends are at most `DEN`.
+  evaluation of kind `3` evaluates the chain's term over the frozen part by `evIF_froz_resTC` (the chain's cofactor
+  in the rest or not), for a slab whose ends are at most `DEN` and are the tests'.
 * `bd_flipCostDR`, `altFDR_sound`: a cost that `flipCostDR` (`altFDR`) returns below its limit bounds the term.
 * `solveMDR_sound`, `pr_of_partDR`: **the main search with the hinted bound `altFDR` is sound**;
   `pr_of_partDR_at` with the route and its exponent as variables.
 
-The file imports `SieveAdDir.lean`, `SieveAdFrozRes.lean` and `SieveAdFrozResDefs.lean`.
+The file imports `SieveAdDir.lean` and `SieveAdFrozResCof.lean`.
 -/
 import SieveAdDir
-import SieveAdFrozRes
-import SieveAdFrozResDefs
+import SieveAdFrozResCof
 
 open Real Finset Filter SieveDecomp SieveLeaves SieveQ SieveRough SieveRoute
 
@@ -29,23 +28,24 @@ open SieveCert (DEN K cdiv omKw topK w1K LD)
 variable [Route] [RouteOK] [SieveCert.IBPar] [IBFits]
 
 /-- **The nodes of a tree over a frozen part, with the resonant window**: those of `rules_frozC`, and an evaluation
-of kind `3` (`okIR` on the box `ch ++ β`) evaluates the term of the chain `ch` over the frozen part
-(`evIF_froz_resT`), for a slab whose ends are at most `DEN`. -/
+of kind `3` (`okIRF` on the box `ch ++ β`) evaluates the term of the chain `ch` over the frozen part
+(`evIF_froz_resTC`), for a slab whose ends are at most `DEN` and are the tests' `e₁, e₂`. -/
 theorem rules_frozResC {O : Ops} {e₁ e₂ Kb : ℕ} {β : List Cell} {s : ℕ} (hβl : β.length = s + 1)
-    {e₁' e₂' : ℕ} (he₁ : e₁' ≤ DEN) (he₂ : e₂' ≤ DEN) (hβ : cellsFrom 1 β = true)
+    {e₁' e₂' : ℕ} (he₁ : e₁' ≤ DEN) (he₂ : e₂' ≤ DEN) (hee₁ : e₁ = e₁') (hee₂ : e₂ = e₂')
+    (hβ : cellsFrom 1 β = true)
     (h : Rules O (frozTests e₁ e₂ Kb β) (PF (fun q => frozS q e₁' e₂' (boxFn β (s + 1) hβl)) frozR β)) :
     Rules O (frozResTestsC e₁ e₂ Kb β (loSum β) (hiSum β) β.length (lomP β DEN))
       (PF (fun q => frozS q e₁' e₂' (boxFn β (s + 1) hβl)) frozR β) where
   van := h.van
   evl := by
     intro bl par cfg hg hI
-    change cond (Nat.beq cfg.kind 3) (okIR bl cfg)
+    change cond (Nat.beq cfg.kind 3) (okIRF e₁ e₂ β bl cfg)
       ((frozTestsC e₁ e₂ Kb β (loSum β) (hiSum β) β.length (lomP β DEN)).okI bl cfg) = true at hI
     by_cases h3 : cfg.kind = 3
     · rw [show Nat.beq cfg.kind 3 = true from Nat.beq_eq_true_eq _ _ ▸ h3, Bool.cond_true] at hI
       intro ch hbl k' hch ε hε
-      subst hbl
-      have hev := evIF_froz_resT β hβl he₁ he₂ ch k' hch cfg.sr _ _ hI
+      subst hbl hee₁ hee₂
+      have hev := evIF_froz_resTC β hβl he₁ he₂ ch k' hch cfg.sr _ _ hI
       refine bdF_mono (bdF_eval hev) ?_
       simp only [Nat.cast_zero, zero_div, zero_add]
       exact hε.le
@@ -173,7 +173,12 @@ theorem bd_flipCostDR (κ hR fuel maxlen : ℕ) (pos : Bool) {bl : List Cell} {l
         (PF (fun q => frozS q (cond pos (e1 (lastC bl) + 1) (e1 (lastC bl)))
           (cond pos (e2 (lastC bl) - 1) (e2 (lastC bl))) (boxFn (c0 :: b) (s + 1) hβl)) frozR (c0 :: b)) := by
       rw [opsKP_eq]
-      exact rules_frozResC hβl he₁' he₂' hcf hR'
+      refine rules_frozResC hβl he₁' he₂' ?_ ?_ hcf hR'
+      · cases pos <;> rfl
+      · cases pos
+        · rfl
+        · show DEN - (lastC bl).1 = DEN - (lastC bl).1 + 1 - 1
+          omega
     have hk := kidsF_sound hR''.split κ hR (lastC bl) (Nat.succ b.length) _
       (solveD_sound hR'' cfgIFR _ (kidsF_sound hR''.split κ hR (lastC bl) (Nat.succ b.length)) (altH := noAltH)
         (fun _ _ _ _ _ hh => absurd hh (lt_irrefl _)) fuel)

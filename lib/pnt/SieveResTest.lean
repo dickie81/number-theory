@@ -158,7 +158,7 @@ def tops (p : ℕ) : ℝ := pA p * (1 - pLo p)
 
 /-- **The step of a zero**: for `β ∈ [1/2, 11/12]` with count exponent `γ ≤ ghx β`, `β < 7789/10000` or `β` is in a
 step `p ≤ 16` with `γ ≤ A_p(1 − β)`. -/
-lemma ghx_piece {β γ : ℝ} (h1 : 1 / 2 ≤ β) (h2 : β ≤ 11 / 12) (hγ : γ ≤ ghx β) :
+lemma ghx_piece {β γ : ℝ} (_h1 : 1 / 2 ≤ β) (h2 : β ≤ 11 / 12) (hγ : γ ≤ ghx β) :
     β < 7789 / 10000 ∨ ∃ p ≤ 16, pLo p ≤ β ∧ β ≤ pHi p ∧ γ ≤ pA p * (1 - β) := by
   unfold ghx at hγ
   by_cases h0 : β < 7789 / 10000
@@ -1325,7 +1325,7 @@ theorem resTM_sound {L : ℝ} (hL : 0 ≤ L) {los : List ℕ} {mlo ltm k h : ℕ
     ∀ γ, GoalAt L los mlo γ := by
   have hS := S_pos
   unfold resTM at hT
-  simp only [shrN, Nat.add_eq, Nat.sub_eq, Nat.mul_eq, Bool.and_eq_true, Nat.ble_eq, minN_eq] at hT
+  simp only [shrN, Nat.add_eq, Nat.sub_eq, Bool.and_eq_true, Nat.ble_eq, minN_eq] at hT
   obtain ⟨hhp, hrun⟩ := hT
   have hok := clampOK_of' mlo
   intro γ β m s t h1 h2 hγ ht hk hm hs hsum
