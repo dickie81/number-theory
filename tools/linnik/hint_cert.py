@@ -1196,6 +1196,10 @@ SEC2.update({('E', True): 6.5e-4, ('B', True): 1.4e-3, ('D', True): 5.9e-4, ('P'
 for _t in (SEC1, SEC2):
     _t[('R', False)] = _t[('E', False)] + 1.6e-4
     _t[('R', True)] = _t[('E', True)] + 1.6e-4
+# the resonant window's leaves, timed in part files (14 November 2026; one row at 2135/1000 with the window in both
+# trees, the cofactor and the large values, unloaded): about 64 ms in the main tree and 8 ms over a frozen part, the
+# test of the rest by `resX` dominating; the step of the window's leaf in SEC1 above is far too low
+SEC2.update({('R', False): 6.4e-2, ('R', True): 8.0e-3})
 SEC = SEC1
 
 
