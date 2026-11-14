@@ -166,6 +166,27 @@ import SieveHMBins
 import SieveTwoBins
 import SieveTwoPieces
 import SieveTwoTypeII
+import SieveTwoTypeII4
+import SieveResMoment
+import SieveResBins
+import SieveResZone
+import SieveResCount
+import SieveResTypeII
+import SieveUnwLo
+import SieveResChain
+import SieveResFull
+import SieveResTest
+import SieveResTerm
+import SieveAdRes
+import SieveAdFrozRes
+import SieveAdFrozResTree
+import SieveLeafZone
+import SieveLeafTwo
+import SieveLeafSplit
+import SieveTwoP6E
+import SieveTwoCompE
+import SieveLeafZoneX
+import SieveFillCompE
 import SieveTwoZone
 import SieveCurveHx
 import SieveTwoZone7D
@@ -322,6 +343,8 @@ import SieveHint21500
 import Linnik21500
 import SieveHint21400
 import Linnik21400
+import SieveHint21350
+import Linnik21350
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
@@ -1015,6 +1038,38 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTypeIIHM.bin_bound_two
 #print axioms SieveTypeIIHM.twoBound_of_long
 #print axioms SieveTypeIIHM.typeII_two_gen
+#print axioms SieveTypeIIHM.typeII_two_gen4
+#print axioms SieveTypeIIHM.sum_chars_dp_pow_le
+#print axioms SieveTypeIIHM.card_large_le
+#print axioms SieveTypeIIHM.sum_typeII_cls
+#print axioms SieveTypeIIHM.bin_bound_exp
+#print axioms SieveTypeIIHM.card_Sp_large
+#print axioms SieveTypeIIHM.typeII_res
+#print axioms SieveUnwGen.unw_gen_lo
+#print axioms SieveTypeIIHM.box_res
+#print axioms SieveTypeIIHM.typeII_gcmp_res
+#print axioms SieveTypeIIHM.chainTU_res
+#print axioms SieveTypeIIHM.box_res_gen
+#print axioms SieveTypeIIHM.chain_res_core
+#print axioms SieveTypeIIHM.full_res_exp
+#print axioms SieveResTest.resT_sound
+#print axioms SieveResTest.resT_sound_cells
+#print axioms SieveTypeIIHM.chain_res_exp
+#print axioms SieveAd.evI_resE
+#print axioms SieveAd.resTestsF_sound
+#print axioms SieveAd.evIF_froz_resT
+#print axioms SieveAd.rules_frozResC
+#print axioms SieveAd.pr_of_partDR_at
+#print axioms SieveTypeIIHM.zone_leaf
+#print axioms SieveLeafTwo.typeIITwoAt_leaf
+#print axioms SieveLeafTwo.leaf2_bound
+#print axioms SieveLeafTwo.leavesE_of_zone
+#print axioms SieveLeafTwo.typeIITwoAt_leafX
+#print axioms SieveLeafSplit.tree_leaves_le3
+#print axioms SieveTwoCompE.prop6_two3_at
+#print axioms SieveFillCompE.prop6_fill3_at
+#print axioms SieveLeafZoneX.leafZoneX_of_XL
+#print axioms SieveLeafZoneX.leafXR_sound
 #print axioms SieveTypeIIHM.typeII_two_long
 #print axioms SieveTypeIIHM.zonePiece_OO
 #print axioms SieveTypeIIHM.zonePiece_HH
@@ -1299,6 +1354,8 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms Linnik21500.linnik_21500
 #print axioms Linnik21400.tree21400
 #print axioms Linnik21400.linnik_21400
+#print axioms Linnik21350.tree21350
+#print axioms Linnik21350.linnik_21350
 #print axioms SieveCurve7D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d

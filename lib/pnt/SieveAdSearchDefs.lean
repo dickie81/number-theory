@@ -116,9 +116,7 @@ evaluates once. -/
 /-- The window's configuration. -/
 def cfgW : Cfg := ⟨0, 0, 0, 0, false⟩
 
-/-- The smaller of two numbers. -/
-def minN (a b : ℕ) : ℕ := cond (Nat.ble a b) a b
-/-- The larger of two numbers. -/
+/-- The larger of two numbers (the smaller, `minN`, is `SieveAdLeafDefs.lean`'s). -/
 def maxN (a b : ℕ) : ℕ := cond (Nat.ble a b) b a
 
 /-- The least lower end of the cells (`DEN` for no cell). -/

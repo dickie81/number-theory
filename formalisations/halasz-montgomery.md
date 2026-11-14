@@ -72,6 +72,126 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   It is `SieveTypeIIHM.typeII_gen_hm` with two polynomials in place of one and a region in place of the window;
 - `SieveTypeIIHM.typeII_two_long`: the same bound for `P₁ ≥ q`, `P₂ ≥ q` and `P₁P₂ ≤ q^{L − 1/2000}`, for every
   `L`, at the curve `g = 1`: no density estimate enters, only the half-plane through the prime sums;
+- `SieveTypeIIHM.typeII_two_gen4` (`lib/pnt/SieveTwoTypeII4.lean`): `typeII_two_gen` with a third bound for each
+  mean square, the fourth moment (`lib/pnt/SieveTwoFourth.lean`). `W(χ)²` is the polynomial of the products of two
+  elements of `S`, so orthogonality gives `Σ_χ |W(χ)|⁴ ≤ (3P² + q)·F·(Σ|a|²)²` (`sum_chars_dp_four_le`, with `F` the
+  divisor bound for the pairs, `card_fiber_le_pow`), and Cauchy–Schwarz over a bin of `|R|` characters gives
+  `Σ_{χ∈R}|W(χ)|² ≤ |R|^{1/2}((3P² + q)F)^{1/2}Σ|a|²` (`sum_bin_four_le`): the exponent `M ≥ g/2 + max(m, 1/2) + 2e`
+  (`SqExp4`, `lib/pnt/SieveTwoZone4.lean`). It is the case `r = 2` of the moments of Burgess's method; for a variable
+  shorter than `√q` it beats orthogonality in every bin with fewer than `q` characters. It is for the leaves of
+  Buchstab's tree with a cofactor shorter than `√q`, taken as the second variable with the primes of `d₂` as the
+  rest (`docs/research-opportunities.md`, §3.1): `SieveLeafTwo.typeIITwoAt_leaf` below;
+- `SieveTypeIIHM.sum_chars_dp_pow_le` and `SieveTypeIIHM.card_large_le` (`lib/pnt/SieveResMoment.lean`): the
+  `2k`-th moment, `Σ_χ |W(χ)|^{2k} ≤ (B^k − A^k + q)·F·(Σ|a|²)^k` for `S ⊆ (A, B]` and `k ≥ 1` (`W(χ)^k` is the
+  polynomial of the products of `k` elements of `S`; `F` bounds the tuples with a given product `n`, at most
+  `d(n)^k`, `card_tuples_le`), and Markov's count of the large values: `V^{2k}` times the number of characters with
+  `|W(χ)| ≥ V` is at most the moment. For a prime sum of length `q^s` and `ks ≥ 1`, the characters at which it
+  exceeds `q^{st}` number about `q^{2ks(1−t)}`, the density hypothesis's count at the lengths `q^{1/k}`: the counts
+  of the resonant window (`docs/research-opportunities.md`, §3.1), `SieveTypeIIHM.typeII_res` below;
+- `SieveTypeIIHM.sum_typeII_cls` (`lib/pnt/SieveResBins.lean`): `SieveHMBins.sum_typeII_bins_hm` for any classes of
+  the characters (a map `cl` into a finite type) in place of the bins of their zeros, whose proof uses nothing of
+  the bins but that they partition the characters: the resonant window classes the characters by the sizes of the
+  rest's prime sums with their zeros' bins;
+- `SieveTypeIIHM.bin_bound_exp` (`lib/pnt/SieveResZone.lean`): `SieveTypeIIHM.bin_bound_gen_hm` for one class of
+  characters with its exponents given, the prime sums at most `C₀q^E` and the class at most `C_d(qT)^γ(1 + log qT)^{10}`
+  characters, under `ResBinOK L d e E γ m` (orthogonality, or both of the Halász–Montgomery inequalities);
+- `SieveTypeIIHM.card_Sp_large` (`lib/pnt/SieveResCount.lean`): the `2k`-th moment for the smoothed prime sums
+  `SieveWeight.Sp` (a tuple of primes with a given product is one of `k^k`), so the characters at which a prime sum
+  of length `Q = q^s` is at least `Q^u` number at most `C_k q^{max(1, ks) + ks(1 − 2u)}`;
+- `SieveTypeIIHM.typeII_res` (`lib/pnt/SieveResTypeII.lean`), **Proposition 3′ for the resonant window**: the
+  conclusion of `SieveTypeIIHM.typeII_gen_hm` for a curve with its counts when `ResCond` holds at the variable's
+  exponent and the rest's: the characters are classed by their zeros' bin and the size of each prime sum of the
+  rest, in steps of `10⁻⁶` of its exponent; a class's count is the least of the curve's and each large prime sum's
+  moment count, and `bin_bound_exp` bounds the class;
+- `SieveUnwGen.unw_gen_lo` (`lib/pnt/SieveUnwLo.lean`): `SieveUnwGen.unw_gen` with a lower bound `x_i ≥ 2q^{lo i}`
+  on each prime of the family, so that the estimate at each frequency is asked for only on the scales
+  `Q_i ≥ q^{lo i}`; `SieveTypeIIHM.box_res`, `SieveTypeIIHM.typeII_gcmp_res` and `SieveTypeIIHM.chainTU_res`
+  (`lib/pnt/SieveResChain.lean`): `typeII_res` at each frequency for a polynomial over the integers cut into dyadic
+  blocks, the family with comparisons on its primes (`SieveChain.typeII_gcmp`'s), and the chains of primes times a
+  rough cofactor with the cofactor as the variable and all the chain's primes as the rest
+  (`SieveChain.chainTU_bound`'s), given `ResCond` at the cofactor's blocks and the primes' scales;
+- `SieveTypeIIHM.box_res_gen` and `SieveTypeIIHM.chain_res_core` (`lib/pnt/SieveResFull.lean`): `typeII_res` for a
+  polynomial over a finite set with at most `D` elements for each value, and the families of tuples of primes in
+  no order (`SieveTwoChain.chain_two_core`'s) with one variable, the product of the entries outside a rest whose
+  entries have their own lower bounds. Nothing uses them yet;
+- `SieveResTest.resT_sound` and `SieveResTest.resT_sound_cells` (`lib/pnt/SieveResTest.lean`; the test
+  `SieveResTest.resT` in `lib/pnt/SieveResTestDefs.lean`, written by `tools/linnik/res_test.py`): the kernel's test
+  of `ResBox` on the curve `ghx` for a box's rest, led by a hint, is sound. The test bounds, for every count
+  exponent `γ`, the sum over the rest's primes of the least of the half-plane's bound and the moments' bounds, plus
+  `γ/2` and the Halász–Montgomery inequalities' clamp: `γ ≤ 0` by the half-plane at `11/12`, and `[0, 1]` cut by the
+  hint into intervals (their ends on the grid `2^-12`, 13 bits each), on each of which the test takes the line above
+  each term that is least at the interval's midpoint (among the moments' lines of `k₀ − 1` and `k₀ = ⌈1/lo⌉`, the
+  curve's bound at the interval's left end, and the line `1 − γ/A` with `A` the larger of the end steps' factors),
+  and likewise the clamp's, checked at the interval's ends in fixed point (`2^64`). Nothing uses it yet;
+- `SieveTypeIIHM.chain_res_exp` (`lib/pnt/SieveResTerm.lean`): `SieveTwoTerm.chain2_bound` by the resonant window: the
+  strictly decreasing chains of primes with a rest at given positions, each rest prime at least `q^{lo i}` and the
+  rest's product in `[q^{ρ₁}, q^{ρ₂}]`, times their rough cofactors, evaluated given
+  `ResBox g L (n + 1) (L − ρ₂ − ε) (lo − ε)`: the cofactor written out as its primes and `full_res_exp` on the full
+  tuples;
+- `SieveAd.evI_resE` and `SieveAd.resTestsF_sound` (`lib/pnt/SieveAdRes.lean`; the test `SieveAd.chkIR`, the tests
+  `SieveAd.resTestsF` and the hints' decoder `SieveAd.cfgIMR` in `lib/pnt/SieveAdResDefs.lean`): a box of the main
+  tree whose rest passes `SieveResTest.resT` has its term evaluated by `chain_res_exp`, the variable being the box's
+  other primes and the cofactor; so the tests with the resonant window for an evaluation of kind `3` (and
+  `fillTestsF`'s otherwise) are sound, and `SieveAd.pr_of_partD` applies to a search with them. No certificate uses
+  them yet;
+- `SieveAd.evIF_froz_resT` (`lib/pnt/SieveAdFrozRes.lean`): the same over the frozen part of a reversal: when
+  `chkIR` passes the box `ch ++ β`, the term of the chain `ch` over the frozen part is evaluated, by
+  `SieveTypeIIHM.full_res_exp` on the frozen tuples `(a, y, c, y′)` with the rest among the frozen primes `a` and the
+  chain's primes `c`, each in its cell (`evIF_frozP_res`, `evIF_froz_res`). `SieveAd.rules_frozResC` and
+  `SieveAd.pr_of_partDR_at` (`lib/pnt/SieveAdFrozResTree.lean`; the tests `SieveAd.frozResTestsC`, the decoder
+  `SieveAd.cfgIFR` and the search `SieveAd.altFDR` in `lib/pnt/SieveAdFrozResDefs.lean`): so the search whose trees
+  over the frozen parts read the resonant window's test is sound;
+- `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
+  the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
+  for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
+  `q^{m₂}` with `2/5 ≤ m₂ ≤ 1/2`, and the rest `ρ = L − m₁ − m₂` in `[3/10, 1]`, cut by the seven cases of the proof
+  that bind. Below `4/7` both variables are by orthogonality; above, the cofactor is by the fourth moment and `d₁`
+  by orthogonality while the curve is at least `1/2 − 2/1000`, by the Halász–Montgomery inequality after
+  (`SieveTwoPieces4`); each of the 536 cases at the ends of the 67 pieces is `linarith` from the region's 13
+  inequalities. At `L = 2.135` it holds the leaves with `d₂` from `x^{0.28}` to `x^{0.32}` and the cofactor down to
+  `q^{0.47}`;
+- `SieveLeafTwo.typeIITwoAt_leaf` and `SieveLeafTwo.leaf2_bound` (`lib/pnt/SieveLeafTwo.lean`): Proposition 3′ in
+  two variables on `LeafZone L` (`typeII_two_gen4` with `zone_leaf`), and a leaf's term by the estimate in two
+  variables: for tuples `x` of primes at least `w ≥ q^{e₀}` under comparisons, with `∏_S x` in `(A, B]` and
+  `∏_{Sr} x` in `(Ar, Br]` (`S`, `Sr ≠ ∅` disjoint, `B·Br ≤ q^L`) and the region on the window of `∏_S x` with the
+  rest of its size, the `w`-rough multiples `n ∈ (q^L, 2q^L]` of `∏x`, summed over `x`, have `|𝒜 − ℬ/φ(q)|` at most
+  `q^{L−δ}/φ(q)`. The second variable is the cofactor `n/∏x`, a product of a non-increasing tuple of primes at least
+  `w`, for each length a family of `SieveTwoChain.chain_two` (the proof of `SieveTwoTerm.chain2_bound` with the
+  cofactor rough at `w` in place of the chain's last prime). `SieveLeafTwo.leavesE_of_zone` gives `leaf2_bound`'s
+  conclusion for every length up to a bound at once (`LeavesE`, as `SieveTwoTerm.chainOK2_of_zone` does for the
+  chains); and `SieveLeafTwo.typeIITwoAt_leafX` is the estimate on `LeafZoneX L`, the region extended to cofactors
+  longer than `√q` by its slice at `m₂ = 1/2` (an exponent for length `q^{1/2}` grows by `m₂ − 1/2` with the length,
+  `sqExp4_shift`). The sieve's tests use them through `SieveTwoCompE.prop6_two3_at`;
+- `SieveLeafSplit.tree_leaves_le3` (`lib/pnt/SieveLeafSplit.lean`): `SieveP6TreeLeaves.tree_leaves_le` with each size
+  of leaves either by the paper's Lemma 4.3 (with either of two pairs of exponents: a size whose leaves have no prime
+  on one side lies in one part) or cut in three by two more comparisons, `d₁ ≤ X₁`, then `d₂ ≤ X₂`: the
+  paper's lemma with its own exponents on the first two parts and any bound of the third
+  (`SieveLeafSplit.large_leaves_le3`), at the cost of `3` in place of `1` in the error term. It is for a box of leaves
+  that straddles the paper's region and the region of the estimate in two variables;
+- `SieveTwoP6E.prop6_two_core3` (`lib/pnt/SieveTwoP6E.lean`): Harman's comparison with stops in two variables at one
+  `q` (`SieveTwoP6.prop6_two_core`) with such a box: its leaves cut at `d₁ ≤ q^{pA}` and `d₂ ≤ q^{th}`, the first part
+  by `LeavesOK` with `pA` in place of `d₁`'s exponent, the second with `th` in place of `d₂`'s, the third by
+  `SieveLeafTwo.LeavesE` (through `SieveTwoP6E.tree_pattern2_ib3` and `tree_pattern2_le3`);
+- `SieveTwoCompE.prop6_two3_at` (`lib/pnt/SieveTwoCompE.lean`, with a route `SieveTwoCompE.prop6_two3`):
+  `SieveTwoComp.prop6_two_at` for such a box, the paper's conditions on the leaves replaced by those at `(pA, D₂)` and
+  `(D₁, th)` and the region `LeafZoneX` on the third part's window (`m₁` from `pA − ε` to `D₁ + ε`, the rest from
+  `th − ε` to `D₂ + ε`); the third part by `SieveLeafTwo.leavesE_of_zone` on the boxes `(⌊q^{pA}⌋, ⌊4q^{D₁}⌋]` and
+  `(⌊q^{th}⌋, ⌊4q^{D₂}⌋]` (`SieveTwoCompE.leaf_window`). The sieve's tests of the comparison in two variables use it
+  (`SieveAd.evJ_two_core3`): they accept the leaves cut in three where the paper's conditions fail;
+- `SieveFillCompE.prop6_fill3_at` (`lib/pnt/SieveFillCompE.lean`, with a route `SieveFillCompE.prop6_fill3`):
+  `SieveFillComp.prop6_fill_at`, the comparison with the rest among the tree's primes, for a box of leaves cut in
+  three as `prop6_two3_at`'s, with the growth `t + ρ₂` in the leaves' sizes. Its proof is `prop6_fill`'s with
+  `SieveFillE.prop6_fill_core3` at each `q` (`lib/pnt/SieveFillE.lean`: the trees' leaves by
+  `SieveLeafSplit.tree_leaves_le3` and, below the stops, by `SieveFillE.leaves_last_le3`, each size's three cases
+  from the leaves' bounds by `SieveLeafFam3.cases3_of_bounds`; `lib/pnt/SieveLeafFam3.lean` states the cut for any
+  family, `SieveLeafFam3.family_leaves_le3`). The sieve's tests with the rest among the tree's primes use it
+  (`SieveAd.evJ_fill_core3`);
+- `SieveLeafZoneX.leafZoneX_of_XL` and `SieveLeafZoneX.leafXR_sound` (`lib/pnt/SieveLeafZoneX.lean`, written by
+  `tools/linnik/gen_leafzone.py`): `LeafZoneX` contains the intersection `LeafZoneXL` of 19 half-planes (the
+  region's inequalities but `m₂ ≤ 1/2`, and its cuts again at `m₂ = 1/2`, since every case has `m₂` on its larger
+  side); and on a rectangle of exponents in units of `1/D` it is a test of natural numbers, each half-plane at the
+  corner where it is tightest (`leafXR`, in `lib/pnt/SieveLeafZoneXDefs.lean`, without Mathlib), which the sieve's
+  tests use (`SieveAd.leavesE`);
 - `SieveCurveHx.counts_hx` (`lib/pnt/SieveCurveHx.lean`, written by `tools/linnik/gen_zone.py`): the counts of the
   curve `ghx`, the trivial count `1` below `7789/10000` and Huxley's density estimate from there on (a step
   `SieveCurveHx.charDensity_hxT` on `[7789/10000, 131/168]` with the exponent `(7014/3125)(1 − σ)`, Huxley's

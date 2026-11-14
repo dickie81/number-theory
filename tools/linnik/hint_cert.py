@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] | --try TAG a/b H HF MAXLEN [--lam N]
-[--pos] [--blk N] [--skip N] [--rows I J] [--out DIR]: the search with the reversal through the largest prime as a plan,
-the hints that lead the kernel through the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`,
-the theorem at L = 2150/1000, if none is given).
+[--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--rows I J] [--out DIR]: the search with the reversal
+through the largest prime as a plan, the hints that lead the kernel through the plan, and the Lean files of a
+theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
 it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
@@ -59,9 +59,9 @@ difference); it is not part of `check_certificate.py`, for it searches for ten m
 `21500`. With `--cache DIR` the plan of each cell of the first prime is kept in DIR, so that a long plan can be
 stopped and taken up again. With `--try`, the search is planned with other parameters (cells of side H, chains'
 cells of side HF over the frozen parts, boxes of at most MAXLEN primes reversed; `--pos`, `--lam N`, `--blk N`,
-`--skip N` as `Par.pos`, `Par.lam`, `Par.blk`, `Par.skip`) and its cost and the plan's size are printed; with
-`--out`, its files are written to DIR. PyPy runs it one and a half times as fast as CPython, with the same
-output.
+`--skip N`, `--energy` as `Par.pos`, `Par.lam`, `Par.blk`, `Par.skip`, `Par.energy`) and its cost and the plan's
+size are printed; with `--out`, its files are written to DIR. PyPy runs it one and a half times as fast as
+CPython, with the same output.
 
 Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
 primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over frozen parts; nine minutes on four
@@ -75,6 +75,11 @@ on 2.7·10^8 boxes with no price on the kernel's time (1.87·10^7 steps), and 0.
 Of the boxes of that search, 2% to 9% are under the plan that is kept (four cells of the first prime from
 x^0.28 to x^0.50); with `skip = 3`, on every sixth cell of the first prime, the search is 0.55 of its boxes and
 the plan costs 0.17% more, on 1% fewer steps (13 November 2026).
+At 2135/1000 with the leaves of the comparisons cut in three (`energy`) and the cells of 2140/1000, the search
+costs 0.98988 K on 3.7·10^8 boxes with no price on the kernel's time (2.4·10^7 steps, 98 part files, a predicted
+6.5 hours of the kernel; three hours on four cores with PyPy): the certificate `21350`. With `lam = 10` its first
+prime's cells from x^0.43 to x^0.50 cost 2.1% more, and the planner, which then tries each reversal at the full
+limit, takes fifteen to twenty-five minutes on a cell near x^0.40 (13 November 2026).
 
 Needs Python 3 only.
 """
@@ -87,7 +92,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import tree_cert as tc  # noqa: E402
 import rev_cert as rc  # noqa: E402
-import fill_cert as fc  # noqa: E402
+import fill_cert as fc
+import res_test as rt  # noqa: E402
 import flip_cert as fl  # noqa: E402
 from tree_cert import DEN, K, BIG, cdiv, tsub, loSum, hiSum, dropCost  # noqa: E402
 from rev_cert import bdK, CAPK  # noqa: E402
@@ -100,7 +106,12 @@ from flip_cert import flipT, flipOK, vboxF  # noqa: E402
 CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
          # boxes of the sign `+` reversed too, and each step chosen by its cost plus ten millionths of `K` for
          # each second of the kernel
-         '21400': dict(lnum=2140, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=10, sec=2)}
+         '21400': dict(lnum=2140, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=10, sec=2),
+         # and the leaves of the comparisons cut in three where the paper's conditions fail
+         '21350': dict(lnum=2135, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True),
+         # and the resonant window for the main tree's boxes (`SieveAd.chkIR`)
+         '21300': dict(lnum=2130, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
+                       res=True)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
 # dropped cells next to each other are one cell while its bound is at most DMERGE of the sum of theirs
@@ -208,15 +219,15 @@ class Planner(fl.FlipSearch):
             return None
         u, v = self.uOfF(c[0]), self.vOfF(c[1])
         f = min(lomin, tsub(v, u + 1))
-        if not (0 < f and hs + tsub(u, tsub(ls, c[0])) <= self.T5):
+        if not (0 < f and hs + tsub(u, tsub(ls, c[0])) <= self.t5J()):
             return None
         b = self.bestSub(v, bit, bl, 1, 0, 0, 0, tsub(ls, c[0]), (0, 0))
-        sp = self.leavesOf(bl, hs, tsub(u, b[0]))
+        sp = self.leavesOfJ2(bl, hs, tsub(u, b[0]))
         return None if sp is None else (f, (1, b[1], bit, sp[0], sp[1]))
 
     def guideJ(self, bl, lomin, sel):
         ls, hs = loSum(bl), hiSum(bl)
-        if self.T5 < hs:
+        if self.t5J() < hs:
             return None
         j = sel // 2
         if sel % 2 == 0:
@@ -446,6 +457,62 @@ class Planner(fl.FlipSearch):
             return lim, None
         return cdiv(cc * A + B, DEN * K), ('P' if pos else 'F', sel) + ns
 
+    # the resonant window (`SieveAd.chkIR`): a rest of at least two of the box's primes, in the main tree
+    res = False
+    res_frozen = False   # the window over the frozen parts too (`SieveAd.frozResTestsC`), the rest among the chain's
+    # and the frozen primes; for measurement, 'chain': among the chain's alone
+    res_cof = False      # for measurement only (no hints, no Lean): in the main tree, a cofactor that is one prime
+    # (shorter than the square of the box's least prime) may be in the rest, its cell from the box's cells
+    resmemo = None
+
+    def resHint(self, bl):
+        """`(mask, k, h)` for a rest of the box `bl` that the kernel's test passes with its hint, or `None`: the
+        rests of at least two primes, in the order of their masks. The box is the main tree's, or with `res_frozen`
+        a tree's over a frozen part, `ch ++ β`."""
+        if not self.res:
+            return None
+        if self.frz is not None and not self.res_frozen:
+            return None
+        # a box of a tree over a frozen part is the chain's cells followed by the frozen primes' (`ch ++ β`)
+        if len(bl) > 13:
+            return None
+        if any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
+            return None
+        if self.resmemo is None:
+            self.resmemo = {}
+        n, ln, ld = len(bl), self.T.Ln, self.T.Ld
+        # a rest whose exponents sum to less than 1 + 2/25000 fails (`res_test.quick`): in units of the cells,
+        # Σ(c − 1) at least `need`
+        need = (DEN * ld * 25002 + ln * 25000 - 1) // (ln * 25000)
+        nch = n - len(self.frz[3]) if self.frz is not None and self.res_frozen == 'chain' else n
+        if self.res_cof and self.frz is None:
+            # the cofactor `m = n/∏p` with `n ∈ (x, 2x]`: `m ∈ (x^{(DEN − Σhi)/DEN}, x^{(DEN − Σlo + 1)/DEN})`, one
+            # prime at least the least prime `x^{lo₀/DEN}` when its upper end is at most twice `lo₀`
+            slo, shi = sum(c[0] for c in bl), sum(c[1] for c in bl)
+            if shi < DEN and DEN - slo + 1 <= 2 * bl[0][0]:
+                bl = list(bl) + [(max(DEN - shi, bl[0][0]), DEN - slo + 1)]
+                n = nch = n + 1
+        if nch < 2:
+            return None
+        for mask in range(3, 1 << nch):
+            if mask & (mask - 1) == 0:
+                continue
+            if sum(bl[p][0] - 1 for p in range(n) if mask >> p & 1) < need:
+                continue
+            cs = tuple(bl[p][0] for p in range(n) if mask >> p & 1)
+            hs = sum(bl[p][1] for p in range(n) if mask >> p & 1)
+            if not rt.quick(ln, ld, list(cs), hs):
+                continue
+            key = (cs, hs)
+            r = self.resmemo.get(key, 0)
+            if r == 0:
+                r = rt.hint(ln, ld, list(cs), hs)
+                self.resmemo[key] = r
+            if r is not None:
+                self.stat['res'] = self.stat.get('res', 0) + 1
+                return (mask,) + r
+        return None
+
     def pSolve(self, O, S, n, bl, par, lim):
         self.minfuel = min(self.minfuel, n)
         if n == 0 or not bl or not O.grd(bl):
@@ -455,6 +522,9 @@ class Planner(fl.FlipSearch):
             return 0, ('V',)
         if self.anyI(bl):
             return 0, ('E',)
+        rh = self.resHint(bl)
+        if rh is not None:
+            return 0, ('R',) + rh
         x, fz, lam = bl[0], self.frz is not None, self.lamK
         skip, sib = self.skip, self.sib
         dc = O.drp(bl, par)
@@ -575,6 +645,27 @@ class Planner(fl.FlipSearch):
     def cfgIM(self, bl, h):
         return self.cfgIP(2 ** len(bl), h)
 
+    def cfgIPR(self, pw, h):
+        """`SieveAd.cfgIPR`: `0` and `cfgIP`'s code, or `1`, the rest, four bits `k` and the `k` intervals' ends,
+        `rt.EB` bits each."""
+        if h & 1 == 0:
+            return self.cfgIP(pw, h >> 1)
+        h1 = h >> 1
+        k, h2 = (h1 // pw) % 16, (h1 // pw) // 16
+        nb = rt.EB * k
+        return (3, 0, h1 % pw, k + 16 * (h2 % (1 << nb)), False), h2 >> nb
+
+    def cfgIMR(self, bl, h):
+        return self.cfgIPR(2 ** len(bl), h)
+
+    def chkIR(self, bl, sr, k, h):
+        """`SieveAd.chkIR`."""
+        if len(bl) > 13 or any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
+            return False
+        cs = [bl[p][0] for p in range(len(bl)) if sr >> p & 1]
+        hs = sum(bl[p][1] for p in range(len(bl)) if sr >> p & 1)
+        return bool(cs) and rt.resT(self.T.Ln, self.T.Ld, cs, hs, k, h)
+
     def cfgJM(self, bl, h):
         sel = h & 15
         _, lm, lo, hi, pw = self.pickP(bl, 2 ** (sel // 2))
@@ -582,6 +673,10 @@ class Planner(fl.FlipSearch):
 
     def cfgIF(self, bl, h):
         return self.cfgIP(2 ** (len(bl) + 1), h)
+
+    def cfgIFR(self, bl, h):
+        """`SieveAd.cfgIFR`: `cfgIPR` with a set of as many bits as the box has cells and one more."""
+        return self.cfgIPR(2 ** (len(bl) + 1), h)
 
     def pickC(self, bl, j, m):
         """`pickP` over the first `j` cells."""
@@ -671,6 +766,8 @@ class Planner(fl.FlipSearch):
 
     # the search (stepD, solveD)
     def okIm(self, bl, cfg):
+        if (self.res if self.frz is None else self.res_frozen) and cfg[0] == 3:
+            return self.chkIR(bl, cfg[2], cfg[3] & 15, cfg[3] >> 4)
         return self.T.okI(bl, cfg) if self.frz is None else self.okIF(bl, cfg)
 
     def dStep(self, O, dI, dJ, kd, altH, rec, bl, par, lim, h):
@@ -725,7 +822,8 @@ class Planner(fl.FlipSearch):
             return self.dKidsC(rec, top, b, p, self.parF(ctx, nb, b, top), ff, l, hh)
 
         def rec(b, p, l, hh):
-            return self.dSolve(O, self.cfgIF, dJ, kd, lambda b2, p2, l2, h2: (l2, h2), self.fuel, b, p, l, hh)
+            return self.dSolve(O, self.cfgIFR if self.res_frozen else self.cfgIF, dJ, kd,
+                               lambda b2, p2, l2, h2: (l2, h2), self.fuel, b, p, l, hh)
         return Kb, O, dJ, kd, rec
 
     def dFlipTree(self, ctx, beta, pos, lim, h):
@@ -757,7 +855,8 @@ class Planner(fl.FlipSearch):
     def dCheck(self, bl, par, lim, h):
         """`solveD opsMP fillTestsF cfgIM cfgJM (kidsM κ hI) (altFD κ hF fuel maxlen) fuel bl par lim h`."""
         O = rc.Ops(lambda b: True, tc.vanishOK, tc.dropC, lambda b, p, l: l)
-        return self.dSolve(O, self.cfgIM, self.cfgJM, self.kdM, self.dAltF, self.fuel, bl, par, lim, h)
+        return self.dSolve(O, self.cfgIMR if self.res else self.cfgIM, self.cfgJM, self.kdM, self.dAltF, self.fuel,
+                           bl, par, lim, h)
 
     # the hints of a plan
     def kidCells(self, cuts, f, top, bits):
@@ -800,9 +899,15 @@ class Planner(fl.FlipSearch):
             return [(sel, 4), (cfg[1], w), (0, 1)]
         return [(sel, 4), (cfg[1], w), (1, 1), (cfg[3], w), (int(cfg[4]), 1)]
 
-    def evalFields(self, cfg, w):
+    def evalFields(self, cfg, w, res=False):
         j = cfg[2].bit_length() - 1
-        return [(0, 1)] + ([(0, 1)] if j == 0 else [(1, 1), (j, 3)]) + [(cfg[1], w)]
+        return [(0, 1)] + ([(0, 1)] if res else []) + ([(0, 1)] if j == 0 else [(1, 1), (j, 3)]) + [(cfg[1], w)]
+
+    def resFields(self, node, w):
+        """A resonant leaf `('R', mask, k, h)`: the evaluation's bit, `1`, the rest, four bits `k`, the `k` ends."""
+        mask, k, h = node[1:]
+        assert 0 < k < 16 and mask < 1 << w and h < 1 << (rt.EB * k)
+        return [(0, 1), (1, 1), (mask, w), (k, 4), (h, rt.EB * k)]
 
     def dserF(self, ctx, beta, node, bl, par, out):
         """A node of a tree over a frozen part."""
@@ -814,7 +919,10 @@ class Planner(fl.FlipSearch):
             blv = fl.vboxF(ctx, beta, bl)
             cf = self.propI2(blv, loSum(blv))
             assert cf and self.okIF(bl, cf[0])
-            out.extend(self.evalFields(cf[0], w))
+            out.extend(self.evalFields(cf[0], w, bool(self.res_frozen)))
+        elif kind == 'R':
+            assert self.res_frozen and self.chkIR(bl, node[1], node[2], node[3])
+            out.extend(self.resFields(node, w))
         elif kind == 'D':
             out.append((3, 3))
         elif kind == 'S':
@@ -843,7 +951,10 @@ class Planner(fl.FlipSearch):
         elif kind == 'E':
             cf = self.propI2(bl, loSum(bl))
             assert cf and self.T.okI(bl, cf[0])
-            out.extend(self.evalFields(cf[0], w))
+            out.extend(self.evalFields(cf[0], w, self.res))
+        elif kind == 'R':
+            assert self.chkIR(bl, node[1], node[2], node[3])
+            out.extend(self.resFields(node, w))
         elif kind == 'D':
             out.append((3, 3))
         elif kind == 'S':
@@ -901,17 +1012,21 @@ class Par:
 
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
-                 blk=1, blkF=None, skip=0, skipmin=30):
+                 blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1` or `SEC2`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
         `blkF` (`blk` if not given) steps of the grid of side `hF` over a frozen part; `skip`: the planner does
         not try again, at the next cells of a prime, an alternative that lost at two cells in a row (at most
-        `2^skip − 1` cells are skipped), a loss counting only if its search took `skipmin` boxes or more."""
+        `2^skip − 1` cells are skipped), a loss counting only if its search took `skipmin` boxes or more; `energy`:
+        the planner may cut in three the leaves of the comparisons, in the main tree and over the frozen parts, as
+        the kernel's tests allow (`SieveAd.leavesE`); `res`: the resonant window's leaves in the main tree
+        (`SieveAd.resTestsF`), and with `resF` in the trees over the frozen parts too (`SieveAd.frozResTestsC`)."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
-        self.skip, self.skipmin = skip, skipmin
+        self.skip, self.skipmin, self.energy, self.res, self.resF = skip, skipmin, energy, res, resF
+        assert res or not resF, 'the window over the frozen parts comes with the main tree\'s'
         self.h, self.hI, self.depth, self.kappa = h, round(h * DEN), depth, kappa
         self.depthR, self.hR, self.hQ = depthR, round(hR * DEN), round(hQ * DEN)
         self.hF, self.depthF, self.maxlen = round(hF * DEN), depthF, maxlen
@@ -926,6 +1041,9 @@ class Par:
                     self.depthR, self.hQ, fc.FUEL, self.hF, self.depthF, self.maxlen, rev=self.rev)
         P.lamK, P.pos, P.blk, P.blkF = self.lam * K // 10 ** 6, self.pos, self.blk, self.blkF
         P.skip, P.skipmin = self.skip, self.skipmin
+        P.T.energy = self.energy
+        P.res = self.res
+        P.res_frozen = self.resF
         P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
         return P
 
@@ -941,6 +1059,9 @@ SEC1 = {('E', False): 4.0e-4, ('E', True): 1.05e-3, ('V', False): 1.3e-4, ('V', 
         ('S', False): 2.6e-4, ('S', True): 2.6e-4}
 SEC2 = dict(SEC1)
 SEC2.update({('E', True): 6.5e-4, ('B', True): 1.4e-3, ('D', True): 5.9e-4, ('P', False): 3.9e-3})
+for _t in (SEC1, SEC2):
+    _t[('R', False)] = _t[('E', False)] + 1.6e-4
+    _t[('R', True)] = _t[('E', True)] + 1.6e-4
 SEC = SEC1
 
 
@@ -1124,6 +1245,14 @@ def part_stmt(par_, k, p):
 
 def defs_file(par_):
     T, LN = par_.tag, f'{par_.lnum}/{par_.lden}'
+    res, resF = getattr(par_, 'res', False), getattr(par_, 'resF', False)
+    tests, cfgI = ('resTestsF', 'cfgIMR') if res else ('fillTestsF', 'cfgIM')
+    dimp = 'SieveAdFrozResDefs' if resF else 'SieveAdResDefs' if res else 'SieveAdDirDefs'
+    alt, ftests = ('altFDR', 'frozResTestsC') if resF else ('altFD', 'frozTestsC')
+    resdoc = ('With the resonant window: an evaluation of kind `3` in the main tree is `SieveAd.chkIR`\'s\n'
+              '(`SieveAd.resTestsF`), its configuration read by `SieveAd.cfgIMR`' + (
+                  '; over the frozen parts too, the box\n`ch ++ β` (`SieveAd.frozResTestsC`), read by '
+                  '`SieveAd.cfgIFR`.\n\n' if resF else '.\n\n') if res else '')
     return f"""/-
 # The exponent and the search led by hints at `L = {LN}`
 
@@ -1138,14 +1267,14 @@ The bilinear Type I rule's exponent `{LN}` (`ibPar{T}`), and `solve{T}`, the sea
   (`SieveAd.kidsM`) on the grid of side at most `{par_.hI}/DEN` (`{par_.h}`) and at most the exponent over
   `{par_.kappa}`;
 * as its hinted bound, the reversal through the largest prime of boxes of at most `{par_.maxlen}` primes
-  (`SieveAd.altFD`), with the tests `SieveAd.frozTestsC` and the chains over the frozen parts on the grid of side
+  (`SieveAd.{alt}`), with the tests `SieveAd.{ftests}` and the chains over the frozen parts on the grid of side
   at most `{par_.hF}/DEN` (`{par_.hFf}`);
 * the depth of recursion `{fc.FUEL}`.
 
-The file imports `SieveAdDirDefs.lean`; so neither it nor the part files (`SieveHint{T}P1.lean` …) load more of
+{resdoc}The file imports `{dimp}.lean`; so neither it nor the part files (`SieveHint{T}P1.lean` …) load more of
 `Mathlib` than `Mathlib.Data.Nat.Notation`.
 -/
-import SieveAdDirDefs
+import {dimp}
 
 namespace SieveCert
 
@@ -1160,8 +1289,8 @@ open SieveCert
 
 /-- **The search led by hints at `{LN}`**, with the reversal through the largest prime as its hinted bound. -/
 noncomputable def solve{T} : List Cell → Bool → ℕ → ℕ → ℕ × ℕ :=
-  solveD opsMP (@fillTestsF ibPar{T}) cfgIM (@cfgJM ibPar{T}) (kidsM {par_.kappa} {par_.hI})
-    (@altFD ibPar{T} {par_.kappa} {par_.hF} {fc.FUEL} {par_.maxlen}) {fc.FUEL}
+  solveD opsMP (@{tests} ibPar{T}) {cfgI} (@cfgJM ibPar{T}) (kidsM {par_.kappa} {par_.hI})
+    (@{alt} ibPar{T} {par_.kappa} {par_.hF} {fc.FUEL} {par_.maxlen}) {fc.FUEL}
 
 end SieveAd
 """
@@ -1259,18 +1388,41 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
                   'number (`SieveAdFlipDefs.lean`)')
         flips = f'{nflip} of them reversals through the largest prime'
     imports = '\n'.join(f'import SieveHint{T}P{i}' for i in range(1, nfiles + 1))
+    res, resF = getattr(par_, 'res', False), getattr(par_, 'resF', False)
+    cfgI = 'cfgIMR' if res else 'cfgIM'
+    resimp = 'import SieveAdRes\n' + ('import SieveAdFrozResTree\n' if resF else '') if res else ''
+    prof = 'pr_of_partDR' if resF else 'pr_of_partD'
+    if res:
+        soundF = (f'/-- The tests in one pass with the resonant window at `{LN}` are sound. -/\n'
+                  f'theorem soundF{T} : (resTestsF).Sound := resTestsF_sound\n')
+    else:
+        soundF = (f'/-- The tests in one pass at `{LN}` are sound: they are the tests. -/\n'
+                  f'theorem soundF{T} : (fillTestsF).Sound := by\n  rw [fillTestsF_eq]\n  exact fillTests_sound\n')
     plain = textwrap.fill(
         f'Plain statement (`linnik_{T}`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there '
         f'is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`, with no hypothesis. The route is at `L = {LN}` '
-        f'(`route{T}`), with the estimate in two variables alone, and the tests are `SieveAd.fillTests`, as for the '
-        f'theorem at `2165/1000`. The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
+        f'(`route{T}`), ' + (
+            'with the estimate in two variables and the resonant window, and the tests are `SieveAd.fillTests` with '
+            'the resonant window\'s for an evaluation of kind `3` (`SieveAd.resTestsF`). ' if res else
+            'with the estimate in two variables alone, and the tests are `SieveAd.fillTests`, as for the theorem at '
+            '`2165/1000`. ') + (
+            'Where the paper\'s conditions on the leaves of a comparison fail, the plan cuts the box of leaves in '
+            'three: the paper\'s lemma on two parts and, on the third, the leaves whose cofactor is shorter than '
+            '`√q` by the estimate in two variables with the fourth moment (the tests\' `SieveAd.leavesE`; '
+            '`SieveTwoCompE.prop6_two3_at`, `SieveFillCompE.prop6_fill3_at`). ' if par_.energy else '') + (
+            'A box of the main tree may also be evaluated by the resonant window: a Type II estimate in one '
+            'variable, the box\'s other primes and the cofactor, with the characters sorted by the sizes of a rest '
+            'of its primes\' own sums as well as by their zeros, whose condition on the rest\'s cells the kernel '
+            'checks led by a hint (`SieveAd.chkIR`, `SieveResTest.resT`; `SieveAd.evI_resE`, '
+            '`SieveTypeIIHM.typeII_res`). ' if res else '') +
+        f'The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
         f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.frozTests`. The '
         f'kernel does not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the '
         f'plan of the search that `tools/linnik/hint_cert.py` ran ({stats["boxes"]} boxes, {stats["fboxes"]} of '
         f'them over frozen parts), in {nsteps} steps, {flips}: what is '
         f'done at each box, with which configuration, and where the range of each new prime is cut. Each step is '
         f'checked, and a cost that the search returns below its limit bounds the term whatever the hints are '
-        f'(`SieveAd.pr_of_partD`). The search is in {len(parts)} parts, {nfiles} files (`SieveHint{T}P1.lean` … '
+        f'(`SieveAd.{prof}`). The search is in {len(parts)} parts, {nfiles} files (`SieveHint{T}P1.lean` … '
         f'`SieveHint{T}P{nfiles}.lean`). The kernel evaluates the tests in one pass over a box '
         f'(`SieveAd.fillTestsF`), equal to the tests that are proved sound; over a frozen part, in one pass over '
         f'the chain\'s cells, with what the tests read from the frozen primes computed once for a tree '
@@ -1298,7 +1450,7 @@ The file imports `SieveAdDir.lean`, `SieveAdFill.lean` and the part files.
 -/
 import SieveAdDir
 import SieveAdFill
-{imports}
+{resimp}{imports}
 
 namespace Linnik{T}
 
@@ -1324,15 +1476,12 @@ attribute [local instance] route{T} routeOK{T} ibPar{T} ibFits{T}
 /-- The tests at `{LN}` are sound. -/
 theorem sound{T} : (fillTests).Sound := fillTests_sound
 
-/-- The tests in one pass at `{LN}` are sound: they are the tests. -/
-theorem soundF{T} : (fillTestsF).Sound := by
-  rw [fillTestsF_eq]
-  exact fillTests_sound
+{soundF}
 
-/-- **A part of the search bounds its term**: `SieveAd.pr_of_partD` at the route. -/
+/-- **A part of the search bounds its term**: `SieveAd.{prof}` at the route. -/
 theorem part{T} {{top : ℕ}} {{bl : List Cell}} {{par : Bool}} {{cs : List ℕ}} {{a c h : ℕ}}
     (hk : (partD solve{T} top bl par cs a K h).1 ≤ c) (hc : c < K) : PR ((a, top) :: bl) par c :=
-  pr_of_partD soundF{T} cfgIM cfgJM {par_.kappa} {par_.hI} {par_.hF} {fc.FUEL} {par_.maxlen} {fc.FUEL} hk hc
+  {prof} soundF{T} {cfgI} cfgJM {par_.kappa} {par_.hI} {par_.hF} {fc.FUEL} {par_.maxlen} {fc.FUEL} hk hc
 
 {chr(10).join(n + chr(10) for n in nodes)}
 /-- **The first term at `{LN}`**: the term of the box of the first prime, with the cell `({f0}, DEN/2 + 1)`, of the
@@ -1378,7 +1527,8 @@ def main():
                    lam=int(a[a.index('--lam') + 1]) if '--lam' in a else 0, pos='--pos' in a,
                    blk=int(a[a.index('--blk') + 1]) if '--blk' in a else 1,
                    skip=int(a[a.index('--skip') + 1]) if '--skip' in a else 0,
-                   sec=2 if '--lam' in a or '--pos' in a else 1)
+                   sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a,
+                   res='--res' in a or '--resF' in a, resF='--resF' in a)
         rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache'):
         par_, rows = Par(tag, **CERTS[tag]), None

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1809 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1843 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 325 | 990 |
+| `lib/pnt` | 346 | 1024 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1561,6 +1561,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow`: The least prime primitive root mod a prime power
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_safe`: Safe primes
 
+#### `Linnik21350`: Linnik's theorem with exponent `2135 / 1000`, by a search led by hints
+
+- `Linnik21350.tree21350`: The first term at `2135 / 1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21350.linnik_21350`: Linnik's theorem with exponent `2135 / 1000`, by a search led by hints ([note](../formalisations/harman-sieve.md))
+
 #### `Linnik21400`: Linnik's theorem with exponent `2140 / 1000`, by a search led by hints
 
 - `Linnik21400.tree21400`: The first term at `2140 / 1000` ([note](../formalisations/harman-sieve.md))
@@ -2537,7 +2542,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.rules_frozC`: The nodes of a tree over a frozen part, with the tests that read the frozen primes once for the tree *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveAd.bd_flipCostD`: The cost of a reversal through the largest prime, its tree searched by hints, bounds the term *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveAd.altFD_sound`: The hinted bound of the main search proves `PR` *paper*
-- `SieveAd.pr_of_partD`: A part of the main search *paper*
+- `SieveAd.pr_of_partD`: A part of the main search *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.pr_of_partD_at`: A part of the main search, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFamCore`: The two comparisons at a floor for a family of tuples of distinct primes, on bounds for its products
@@ -2614,6 +2619,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.evIF_frozS_at`: The term over the frozen part by the primes of the cofactor, for any route ([note](../formalisations/harman-sieve.md))
 - `SieveAd.evJF_frozS_at`: The terms at a floor over the frozen part by the primes of the cofactor, for any route ([note](../formalisations/harman-sieve.md))
 
+#### `SieveAdFrozRes`: The term of a chain's box over the frozen part, by the resonant window
+
+- `SieveAd.evIF_froz_resT`: The term of a chain's box over the frozen part, when the resonant window's test passes the box `ch ++ β` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveAdFrozResTree`: The trees over the frozen parts with the resonant window are sound
+
+- `SieveAd.rules_frozResC`: The nodes of a tree over a frozen part, with the resonant window ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.pr_of_partDR_at`: A part of the main search with the resonant window over the frozen parts, for any route ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveAdFrozRole`: The two comparisons at a floor over the frozen part, on the cells and the slab
 
 - `SieveAd.evJF_froz_fill_at`: The comparison with the rest among the tree's primes, over the frozen part, for any route ([note](../formalisations/harman-sieve.md))
@@ -2634,6 +2648,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdFull`: The estimate in two variables on tuples of primes with a given product, in no order
 
 - `SieveAd.full2_core_at`: Tuples of primes with product in `(N₁, N₂]`, on exponents that pass the checks, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdRes`: The resonant window's test of a box in the main tree is sound
+
+- `SieveAd.evI_resE`: A box evaluated by the resonant window, under more atoms ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.resTestsF_sound`: The tests with the resonant window are sound ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdRev`: The tree of a reversed term bounds it
 
@@ -2764,7 +2783,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveChain.sum_rough_tuples`: For `z ≥ 2`, `Y ≥ 1` and `Y < z^{K+1}`, the `z`-rough `k ∈ [1, Y]` are the products of the non-increasing tuples of at most `K` primes at least `z`, the… *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveChain.typeII_gcmp'`: `typeII_gcmp` (with `RouteOK` and `hII`) for any number `K ≥ 1` of primes.
-- `SieveChain.chainTU_bound`: Chains times a rough cofactor in the window *paper*
+- `SieveChain.chainTU_bound`: Chains times a rough cofactor in the window *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveChain.chainTL_bound`: Chains with a product of some of their primes in the window *paper*
 
 #### `SieveChainR`: Type II for chains with part of their product in the reflection of the window
@@ -2866,7 +2885,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveFillComp`: The comparison in two variables with the rest among the tree's primes
 
 - `SieveFillComp.prop6_fill`: The comparison in two variables with the rest among the tree's primes *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveFillComp.prop6_fill_at`: The comparison in two variables with the rest among the tree's primes, for an exponent `2 < L ≤ 5/2` *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveFillComp.prop6_fill_at`: The comparison in two variables with the rest among the tree's primes, for an exponent `2 < L ≤ 5/2` *paper* ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveFillCompE`: The comparison with the rest among the tree's primes, the leaves cut in three
+
+- `SieveFillCompE.prop6_fill3_at`: The comparison with the rest among the tree's primes, the leaves cut in three, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveFillTree`: Buchstab's tree below a chain's last entry
 
@@ -2918,6 +2941,26 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveLeaf.prod_primesBelow_le`: Mertens' product bound, in its elementary form *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveLeaf.prod_T_le`: The main term of a leaf *paper* ([note](../formalisations/harman-sieve.md))
 
+#### `SieveLeafSplit`: The large leaves of a family split in three: two by the paper's lemma, one by the estimate in two variables
+
+- `SieveLeafSplit.tree_leaves_le3`: The leaves of a tree, each size by the paper's lemma or split in three ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveLeafTwo`: The leaves by the Type II estimate in two variables
+
+- `SieveLeafTwo.leaf2_bound`: Leaves with two marked products ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafTwo.leavesE_of_zone`: `LeavesE` for large `q`, from `leaf2_bound` at each length up to `K₀` ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafTwo.typeIITwoAt_leaf`: Proposition 3′ in two variables on the leaves' region ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafTwo.typeIITwoAt_leafX`: Proposition 3′ in two variables on `LeafZoneX L` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveLeafZone`: The zone of the leaves with the fourth moment, for the curve `g7d`
+
+- `SieveTypeIIHM.zone_leaf`: The zone's exponents with the fourth moment for the curve `g7d` on the region `LeafZone L` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveLeafZoneX`: The leaves' region above `√q` as inequalities, and its test on a box in integers
+
+- `SieveLeafZoneX.leafZoneX_of_XL`: `LeafZoneXL` is in `LeafZoneX` ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafZoneX.leafXR_sound`: The test is sound ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveLeaves`: The leaves' estimates on families of atoms
 
 - `SieveLeaves.TL_spec`: The lower window, on a family of atoms
@@ -2964,7 +3007,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveP6TreeLeaves`: Proposition 6 with the bilinear estimate: the leaves of the tree
 
-- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper* ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveP6ib`: Proposition 6 with the bilinear estimate
 
@@ -2993,6 +3036,48 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveRanges`: The ranges of Brun's sieve
 
 - `SieveRanges.rng_sum_le`: The prime sums of the ranges `rng A`, `A ≥ 1`, are uniformly bounded ([note](../formalisations/harman-sieve.md))
+
+#### `SieveResBins`: Proposition 3′ pointwise, by any classes of the characters
+
+- `SieveTypeIIHM.sum_typeII_cls`: Proposition 3′ pointwise, by classes of the characters, with the better bound per class ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResChain`: The resonant window for a family and for the chains of primes times a rough cofactor
+
+- `SieveTypeIIHM.box_res`: The resonant estimate at each frequency, for a polynomial over the integers ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.typeII_gcmp_res`: Type II with comparisons, for the resonant window ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.chainTU_res`: Chains times a rough cofactor, by the resonant window ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResCount`: The characters at which a smoothed prime sum is large
+
+- `SieveTypeIIHM.card_Sp_large`: The characters at which a smoothed prime sum is large ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResFull`: The resonant window on tuples of primes with a given product, in no order
+
+- `SieveTypeIIHM.box_res_gen`: The resonant estimate for a polynomial over a finite set ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.chain_res_core`: Families of tuples of primes, by the resonant window ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.full_res_exp`: Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window, in exponents ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResMoment`: The 2k-th moment of a short polynomial over the characters
+
+- `SieveTypeIIHM.sum_chars_dp_pow_le`: The `2k`-th moment of a polynomial over the characters ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.card_large_le`: The count of the large values ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResTerm`: Chains with a rest, by the resonant window
+
+- `SieveTypeIIHM.chain_res_exp`: Chains with a rest, by the resonant window ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResTest`: The resonant window's test on a box is sound
+
+- `SieveResTest.resT_sound`: The test is sound ([note](../formalisations/halasz-montgomery.md))
+- `SieveResTest.resT_sound_cells`: The test is sound, in the cells' units ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResTypeII`: The resonant window: Proposition 3′ with the characters classed by the sizes of the rest's prime sums
+
+- `SieveTypeIIHM.typeII_res`: Proposition 3′ for the resonant window, pointwise in the heights ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResZone`: One class of characters, its exponents given: the bound of a class for the resonant window
+
+- `SieveTypeIIHM.bin_bound_exp`: One class ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveRough`: Rough numbers from above, and the shares of the certificate's cells
 
@@ -3061,6 +3146,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTwoComp.prop6_two`: Harman's comparison with stops in two variables and the leaves of the wider region *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoComp.prop6_two_at`: Harman's comparison with stops in two variables, for an exponent `2 < L ≤ 5/2` *paper* ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveTwoCompE`: Harman's comparison in two variables with the leaves of a box cut in three
+
+- `SieveTwoCompE.prop6_two3_at`: Harman's comparison with stops in two variables with a box of leaves cut in three, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveTwoCross`: Conditions between the two variables of a bilinear estimate
 
 - `SieveTwoCross.kern_eq`: The product of the indicators is the indicator of the conjunction.
@@ -3082,7 +3171,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTwoTerm.sum_full_eq`: The chains with their cofactor's tuples are the full tuples
 - `SieveTwoTerm.chain2_bound`: Chains with two marked products *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoTerm.chain2R_bound`: Chains with two marked products and the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
-- `SieveTwoTerm.chainOK2_of_zone`: `ChainOK2` for every length up to `K₀ + 1` *paper*
+- `SieveTwoTerm.chainOK2_of_zone`: `ChainOK2` for every length up to `K₀ + 1` *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoTerm.chain2R_at`: Chains with two marked products and the cofactor in the rest, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoTuples`: Tuples of primes as the two variables of the Type II estimate
@@ -3097,6 +3186,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.ZoneOK`: The zone's exponents on a region *paper*
 - `SieveTypeIIHM.typeII_two_gen`: Proposition 3′ in two variables, for a curve on a region of a zone, pointwise in the heights *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.typeII_two_long`: The Type II estimate for two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveTwoTypeII4`: Proposition 3′ in two variables with the fourth moment
+
+- `SieveTypeIIHM.typeII_two_gen4`: Proposition 3′ in two variables with the fourth moment, for a curve on a region of a zone, pointwise in the heights ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoZone`: One bin in two variables, as powers of `q`
 
@@ -3155,7 +3248,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveTypeIIHM`: The bin bound with the Halász–Montgomery branch, and Proposition 3′ for a curve on a window
 
 - `SieveTypeIIHM.bin_bound_pt`: One bin by orthogonality, at one point
-- `SieveTypeIIHM.bin_bound_gen_hm`: One bin, with the better bound *paper*
+- `SieveTypeIIHM.bin_bound_gen_hm`: One bin, with the better bound *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.typeII_gen_hm`: Proposition 3′ for a curve and a window with the Halász–Montgomery branch, pointwise in the heights *paper* ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTypeIIU`: Type II families with sharp prime ranges
@@ -3180,6 +3273,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveUnwGen`: Type II families with sharp prime ranges, with an abstract polynomial part
 
 - `SieveUnwGen.unw_gen`: Families with sharp prime ranges, with an abstract polynomial part *paper* ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveUnwLo`: Type II families with sharp prime ranges, each prime with its own lower bound
+
+- `SieveUnwGen.unw_gen_lo`: `unw_gen` with a lower bound on each prime's range ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveUnwTwo`: Type II families in two variables with sharp prime ranges
 
