@@ -461,6 +461,8 @@ class Planner(fl.FlipSearch):
     res = False
     res_frozen = False   # the window over the frozen parts too (`SieveAd.frozResTestsC`), the rest among the chain's
     # and the frozen primes; for measurement, 'chain': among the chain's alone
+    res_cof = False      # for measurement only (no hints, no Lean): in the main tree, a cofactor that is one prime
+    # (shorter than the square of the box's least prime) may be in the rest, its cell from the box's cells
     resmemo = None
 
     def resHint(self, bl):
@@ -483,6 +485,13 @@ class Planner(fl.FlipSearch):
         # Σ(c − 1) at least `need`
         need = (DEN * ld * 25002 + ln * 25000 - 1) // (ln * 25000)
         nch = n - len(self.frz[3]) if self.frz is not None and self.res_frozen == 'chain' else n
+        if self.res_cof and self.frz is None:
+            # the cofactor `m = n/∏p` with `n ∈ (x, 2x]`: `m ∈ (x^{(DEN − Σhi)/DEN}, x^{(DEN − Σlo + 1)/DEN})`, one
+            # prime at least the least prime `x^{lo₀/DEN}` when its upper end is at most twice `lo₀`
+            slo, shi = sum(c[0] for c in bl), sum(c[1] for c in bl)
+            if shi < DEN and DEN - slo + 1 <= 2 * bl[0][0]:
+                bl = list(bl) + [(max(DEN - shi, bl[0][0]), DEN - slo + 1)]
+                n = nch = n + 1
         if nch < 2:
             return None
         for mask in range(3, 1 << nch):
