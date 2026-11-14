@@ -104,32 +104,38 @@ at 0.60; 2.098 with `gm`; 2.101, 2.099, 2.081, 2.062, 2.041 with `cap:2.25`, `2.
 with `dh` (2.090 with --no-window); 2.093, 2.087 with --kshift 0.05, 0.10, 2.063 with --kernel 0.5, 2.028 with
 --kernel 0; 2.095, 2.086, 2.075 with --ext 0.02, 0.05, 0.10; 2.109 with --nest 1 --rev first.
 
-The resonant window (`--res`; 13 November 2026; docs/research-opportunities.md, section 3.1, has the estimate and
-its proof; none of it is in Lean). A Type II estimate that takes nothing from the density curve. The rest is a set
-of the term's primes, and all the rest of the number, cofactor included, is one polynomial W of length q^m with
-arbitrary coefficients, as in the paper's window; but the characters are sorted by the sizes of the rest's own
-prime sums, not by their zeros. For a prime P = q^s the characters with |P(chi)| >= P^t are at most q^(2ks(1-t))
-when ks >= 1, by the mean value of the k-th power of the sum (a polynomial of length q^(ks) with coefficients at
-most k!): the count of the density hypothesis, at the lengths q^(1/k). With Cauchy-Schwarz for W and the
-half-plane's bound for the bins beyond 11/12, the estimate holds for W >= q when sum_j 1/k_j > 1, k_j the least k
-with P_j^k >= q (Hoelder's inequality with the exponents 2 and 2 k_j; what the sum has beyond 1 is paid in the
-half-plane's bound): two primes above q^(1/2) and any third; primes above q^(1/2), q^(1/3) and q^(1/5); primes
-below q^delta with product above q^(1 + delta). The test is made on levels of the count, with the other counts
-too: the power below (q^(1 + ks(1-2t)) for ks < 1), with `hm` the Halasz-Montgomery inequality for that power, and
-the density curve's count; with `sifted`, the cofactor and sifted atoms may be in the rest, with the density
-curve's count alone; and W shorter than q as in the paper's window. `points` then gives
+The resonant window (`--res`; 13 and 14 November 2026; docs/research-opportunities.md, section 3.1, has the
+estimate, its proof and the counts; none of it is in Lean as a rule of the sieve). A Type II estimate that takes
+nothing from the density curve. The rest is a set of the term's primes, and all the rest of the number, cofactor
+included, is one polynomial W of length q^m with arbitrary coefficients, as in the paper's window; but the
+characters are sorted by the sizes of the rest's own sums, not by their zeros. For a prime P = q^s the characters
+with |P(chi)| >= P^t are at most q^(2ks(1-t)) when ks >= 1, by the mean value of the k-th power of the sum (a
+polynomial of length q^(ks) with coefficients at most k!): the count of the density hypothesis, at the lengths
+q^(1/k). With Cauchy-Schwarz for W and the half-plane's bound for the bins beyond 11/12, the estimate holds for
+W >= q when sum_j 1/k_j > 1, k_j the least k with P_j^k >= q (Hoelder's inequality with the exponents 2 and 2 k_j;
+what the sum has beyond 1 is paid in the half-plane's bound): two primes above q^(1/2) and any third; primes above
+q^(1/2), q^(1/3) and q^(1/5); primes below q^delta with product above q^(1 + delta). The test is made on levels of
+the count, with every count that a sum of one length has: the power below (q^(1 + ks(1-2t)) for ks < 1); with `hm`
+the Halasz-Montgomery inequality for that power; with `lv` Chen, Gupta and Li's Proposition 3.1 for the powers of
+length at least q^(2/3), at 7/10 <= t <= 4/5 (LinnikCGLHB101.prop31: for any coefficients of modulus at most 1);
+and the density curve's count. With `sifted`, the cofactor and sifted atoms may be in the rest, with the density
+curve's count, and with `own` they are counted by their own sums as the primes are. W shorter than q is as in the
+paper's window. `points` gives
 
-    L                            2.14    2.13    2.12    2.11    2.10    2.09    2.08
-    --res                        0.140   0.207   0.324   0.462   0.631   0.869   1.141
-    --res --nest 1 --rev first   0.194           0.459           0.788   0.982
+    L                            2.14    2.13    2.12    2.11    2.10    2.09    2.08    2.07    2.06
+    --res hm,sifted              0.140   0.207   0.324   0.462   0.631   0.869   1.141
+    --res                        0.074           0.117           0.259           0.654   0.946   1.254
+    --res hm,sifted, in Lean's   0.194           0.459           0.788   0.982
+    --res, in Lean's shapes                                      0.318           0.782   1.001
 
-so the loss passes 1 at 2.085 (2.101 without), and at 2.089 with one level of reversal through the largest prime
-(2.109 without); `--res plain` gives 0.154 at 2.14 and 0.691 at 2.10. The rests on which the estimate holds are
+(Lean's shapes: --nest 1 --rev first.) So the loss passes 1 at 2.085 with the mean values, the Halasz-Montgomery
+inequality and the zeros' count for the sifted parts, and at 2.068 with every count (2.101 without the window);
+with one level of reversal through the largest prime, at 2.089 and 2.070 (2.109 without). At 2.10, `--res plain`
+gives 0.691, `--res hm,sifted,lv` 0.416 and `--res hm,sifted,own` 0.505. The rests on which the estimate holds are
 small sets (W >= q leaves the primes of the rest q^(L-2) in all above their lengths q^(1/k_j)), and a box passes
-only if its lowest corner does: `cells` at 2.13 give 0.932 with --h 0.004 (1.006 without) and 0.612 with --h 0.002
-(0.765 without). Not used: the estimate as a stop of Harman's comparison, and its counts in the estimate in two
-variables (with the zone of the density hypothesis, which is more than those counts give, and this window, the
-loss passes 1 at 2.080).
+only if its lowest corner does: with `--res hm,sifted`, `cells` at 2.13 give 0.932 with --h 0.004 (1.006 without)
+and 0.612 with --h 0.002 (0.765 without). Not used: the estimate as a stop of Harman's comparison, and its counts
+in the estimate in two variables.
 
 What is assumed, beyond the paper: the estimate in two variables on the tabulated zone (two_factor.py states it;
 in Lean it is proved on the region SieveTwoZone7D.Zone7d, which holds all of the zone but under 2% of its width,
@@ -540,10 +546,12 @@ def main():
     ap.add_argument('--kernel', type=float, default=1.0, help="what-if: the Halasz-Montgomery kernel's exponent "
                     'times this (0: the mean square over a set of characters at most the length plus the set)')
     ap.add_argument('--kshift', type=float, default=0.0, help="what-if: the kernel's exponent less this")
-    ap.add_argument('--res', nargs='?', const='hm,sifted', default=None, help='with the resonant window: a rest '
-                    "whose own prime sums sort the characters, counted by the mean values of their powers; 'plain', "
-                    "or a comma-separated list of 'hm' (the Halasz-Montgomery inequality for the powers too) and "
-                    "'sifted' (the cofactor and sifted atoms may be in the rest, with the zeros' bound); alone: both")
+    ap.add_argument('--res', nargs='?', const='hm,sifted,lv,own', default=None, help='with the resonant window: '
+                    "a rest whose own sums sort the characters, counted by the mean values of their powers; "
+                    "'plain', or a comma-separated list of 'hm' (the Halasz-Montgomery inequality for the powers), "
+                    "'lv' (Chen, Gupta and Li's large-value estimate for the powers), 'sifted' (the cofactor and "
+                    "sifted atoms may be in the rest, with the zeros' count) and 'own' (those counted by their own "
+                    "sums as well); alone: all four")
     ap.add_argument('--ext', type=float, default=0.0, help='what-if: the bilinear Type I estimates reach x^ext '
                     'further (d1 d2^2 < x^(1 + ext))')
     a = ap.parse_args()
@@ -564,7 +572,8 @@ def main():
                       rev=tuple(x for x in a.rev.split(',') if x), first=not a.no_first,
                       direct=tuple(x for x in a.direct.split(',') if x),
                       curve=a.curve, theta0=a.theta0, kernel=a.kernel, kshift=a.kshift, ext=a.ext,
-                      res=0 if a.res is None else 1 + 2 * ('hm' in a.res) + 4 * ('sifted' in a.res))
+                      res=0 if a.res is None else 1 + sum(v for kk, v in (('hm', 2), ('sifted', 4), ('lv', 16),
+                                                                    ('own', 32)) if kk in a.res.split(',')))
             if a.nu is not None:
                 nu = a.nu
             elif s.nu0 is not None:

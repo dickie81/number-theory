@@ -85,7 +85,8 @@ typedef struct {
     int ev_win, ev_second, ev_rest;
     double ext;                  /* a what-if: the bilinear Type I estimates reach x^ext further */
     int res;                     /* the resonant window (below): 1, +2 with the Halasz-Montgomery inequality for
-                                  * the powers, +4 with sifted parts in the rest */
+                                  * the powers, +4 with sifted parts in the rest, +16 with Chen-Gupta-Li's large
+                                  * values for the powers, +32 with the sifted parts counted by their own sums */
     int NC;
     const double *cl, *reach;    /* the levels of the count, from 1 down to 0, and the density curve's reach there */
     const int *ord;              /* the order in which the levels are tested */
@@ -203,8 +204,12 @@ static double wsave(const Ctx *c, double mlo, double G) {
  *     1 + k s (1 - 2t)     for k s < 1           (the same),
  *     2 k s (1 - t)        for k s < 1 and t > 1/2 + b(k s) / (2 k s)   (Halasz-Montgomery, with `res & 2`),
  *     the density curve's count at t             (a large prime sum has a zero behind it),
- * and no character beyond the half-plane's exponent; a sifted part has the last two only.  For a level c of the
- * count let T_j(c) be the largest t with n_j(t) >= c, and D_j(c) = s_j (1 - T_j(c)) what the prime saves there:
+ * and, with `res & 16`, for 7/10 <= t <= 4/5 and k s >= 2/3, Chen, Gupta and Li's Proposition 3.1 for the k-th
+ * power: max(m (2 - 2t), 1/2 + m (3 - 4t), 4/3 + m (2 - 4t)), m = k s (beyond 4/5, its value at 4/5); and no
+ * character beyond the half-plane's exponent.  A sifted part has the last two only, unless `res & 32`: its sum
+ * has coefficients 0 and 1 and a bounded number of prime factors, so its powers have the same counts.  For a
+ * level c of the count let T_j(c) be the largest t with n_j(t) >= c, and D_j(c) = s_j (1 - T_j(c)) what the
+ * prime saves there:
  * the greatest of s_j / 12 (the half-plane), s_j (1 - the curve's reach), c / (2k) for k s_j >= 1,
  * s_j / 2 - (1 - c) / (2k) for k s_j < 1, and min(c / (2k), s_j / 2 - b(k s_j) / (2k)) for k s_j < 1.  The
  * characters with b_j <= T_j(c) for every j, and b_j beyond T_j of the level before for some j, are at most
@@ -229,9 +234,9 @@ static int resonant(const Ctx *c, int k, const double *Slo, const double *Shi, i
                 double slo = j < k ? L * Slo[1 << j] : L * (1 - Shi[full]);
                 double shi = j < k ? L * Shi[1 << j] : L * (1 - Slo[full]);
                 if (slo < 0) slo = 0;
-                int prime = !(sifted >> j & 1);
-                int kp = prime && slo > 0.0025 ? (int)ceil(1 / slo - 1e-12) : 0;
-                int km = prime && shi > 0.0025 ? (int)ceil(1 / shi - 1e-12) - 1 : 0;
+                int own = (c->res & 32) || !(sifted >> j & 1);    /* counted by its own sums too */
+                int kp = own && slo > 0.0025 ? (int)ceil(1 / slo - 1e-12) : 0;
+                int km = own && shi > 0.0025 ? (int)ceil(1 / shi - 1e-12) - 1 : 0;
                 double hm = km >= 1 && (c->res & 2) ? slo / 2 - kern(c, km * slo) / (2 * km) : 0;
                 for (int i = 0; i < NC; i++) {
                     double lev = c->cl[i], T = c->reach[i] < c->top ? c->reach[i] : c->top, D = slo * (1 - T), v;
@@ -241,6 +246,20 @@ static int resonant(const Ctx *c, int k, const double *Slo, const double *Shi, i
                         if (c->res & 2) {
                             v = lev / (2 * km) < hm ? lev / (2 * km) : hm;
                             if (v > D) D = v;
+                        }
+                    }
+                    if (own && (c->res & 16) && slo > 0.0025) {
+                        /* Chen-Gupta-Li's Proposition 3.1 for the power of length q^m, m = kk s >= 2/3, at the
+                         * levels 7/10 <= t <= 4/5: at most q^{max(m(2-2t), 1/2 + m(3-4t), 4/3 + m(2-4t))} */
+                        for (int kk = (int)ceil(2.0 / (3 * slo) - 1e-12); kk * shi <= 1.25 && kk <= 400; kk++) {
+                            double mlo = kk * slo, mhi = kk * shi;
+                            double t1 = 1 - lev / (2 * mhi);
+                            double t2 = 0.75 + (0.5 - lev) / (4 * (lev >= 0.5 ? mhi : mlo));
+                            double t3 = 0.5 + (4.0 / 3 - lev) / (4 * mlo);
+                            double Tp = t1 > t2 ? t1 : t2;
+                            if (t3 > Tp) Tp = t3;
+                            if (Tp < 0.7) Tp = 0.7;
+                            if (Tp < 0.8 && (v = slo * (1 - Tp)) > D) D = v;
                         }
                     }
                     V[j][i] = D;

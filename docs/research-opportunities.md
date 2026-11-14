@@ -604,8 +604,8 @@ covers. The region does not close at `13/6`.
   - *The resonant window: a Type II estimate that takes nothing from the density curve* (13 November; found on
     reading the hunt for a density exponent below `7/3`; written here, in no source that was read, on the
     pattern of the sieves for primes in short intervals, where the sieve's own polynomials are counted by the
-    mean values of their powers; what it gives is the model's, `harman_sieve.py --res`; **none of it is in
-    Lean**). The paper's window and the estimate in two variables sort the characters by their zeros: in the
+    mean values of their powers; what it gives is the model's, `harman_sieve.py --res hm,sifted`; **none of it
+    is in Lean**). The paper's window and the estimate in two variables sort the characters by their zeros: in the
     bin `β` the prime sums of the rest are at most their lengths to the power `β`, and the bin has at most
     `q^{A(β)(1−β)}` characters, the characters that have a zero there. That count is what the peak `7/3` is
     about: a zero is detected by a polynomial whose length cannot be chosen. But the estimate only needs the
@@ -669,8 +669,9 @@ covers. The region does not close at `13/6`.
 
     *For the density exponent.* The condition `L > 1 + A/2` belongs to the count by zeros, not to the route:
     this window is open below `13/6` with the curve as it is. A density exponent below `7/3` would widen the
-    paper's window, for rests of one prime or of sifted parts, and by the table of the item above it moves
-    nothing until it is below about `2.2`. What this estimate needs from the zeros is the half-plane alone.
+    paper's window, for rests of one prime or of sifted parts, which by the table of the item above moves
+    nothing until the exponent is below about `2.2`; inside this window a lower exponent would count for more
+    (next item). What this estimate needs from the zeros is the half-plane alone.
 
     *What a theorem needs.* In Lean: the mean value of a power of a prime sum (orthogonality, and at most `k!`
     factorisations of a product of `k` primes), Hölder's inequality over the characters, and the half-plane's
@@ -680,6 +681,85 @@ covers. The region does not close at `13/6`.
     certificate. Going by the model's distance from the exact search so far, that would be a theorem near
     `2.11` or `2.12` at about the cost of the one at `2.14`, if the exact search finds the small sets: a
     guess, not a measurement.
+  - *The density exponent, length by length* (14 November; the question was a better density exponent, by any
+    method. The exponent of the density curve was not improved. What is here is the exponent that a sum of one
+    given length has, which is lower at most lengths, and what the model gets when each sum of the sieve is
+    counted at its own length: `harman_sieve.py --res`, with `lv` and `own`. The counts are from estimates
+    that are in Lean (orthogonality, the Halász–Montgomery inequality, Proposition 3.1 of Chen, Gupta and Li),
+    applied to powers of the sums; that application and their use in the sieve are not in Lean, and the values
+    are the model's).
+
+    *Where `7/3` comes from.* A zero of `L(s, χ)` with `β ≥ σ` makes one piece of the zero detector large: a
+    sum `Σ_{n ~ N} a_n χ(n) n^{−iγ}`, `|a_n| ⪅ 1`, of size at least `N^σ` and of a length `N = q^θ` that the
+    argument does not choose, `θ ≤ 1/2`. A sum of length `q^θ` is that large at no more than `q^{a(θ,σ)(1−σ)}`
+    characters, where `a(θ, σ)` is the least, over the powers `k`, of what is known for a sum of length
+    `q^{kθ}`: the mean value (`2kθ` for `kθ ≥ 1`, `(1 + kθ(1 − 2σ))/(1 − σ)` for `kθ < 1`), the
+    Halász–Montgomery inequality with the half-plane's kernel, and, for `7/10 ≤ σ ≤ 4/5` and `kθ ≥ 2/3`, Chen,
+    Gupta and Li's Proposition 3.1 (`LinnikCGLHB101.prop31`, for one point per character and any coefficients
+    of modulus at most `1`). The density curve is the greatest `a(θ, σ)` over `θ ≤ 1/2`. Below `5/7` it is
+    Ingham's `3/(2 − σ)`, at `θ = 1/(4 − 2σ)`, where the mean values of the square and of the cube agree;
+    above, `4/(1 + σ)`, at `θ = 2/(3(1 + σ))`, where the cube's mean value meets the third term of Proposition
+    3.1 for the square; at `5/7` both, at `θ = 7/18`. It is a narrow peak in the length: at `σ = 5/7`, `a ≥
+    2.24` only for `θ` within `0.016` of `7/18`.
+
+    *The peak was not moved.* What was tried, beyond the hunt of 9 November. (1) A shorter detector. The
+    approximate functional equation gives pieces of every length up to `q^{1/2}`; bounds for `L` at each point
+    of the strip, from the half-plane, give lengths up to `q^{5/(12σ−1)}`, which is longer (`q^{0.66}` at
+    `5/7`); a mollifier of length `q^ξ` lifts the smooth pieces above `q^ξ` and brings its own pieces of every
+    length up to `q^ξ`, with the same counts. (2) Sums over primes, whose length is free, and which at a
+    length `q^{1/k}` have the count of the density hypothesis. But a zero does not make the prime sum of a
+    given length large: the explicit formula has every zero of the character, and zeros in arithmetic
+    progression of difference `2π/(θ log q)` on a line `Re s = β` give prime sums that are large at the
+    lengths `q^{jθ}` and nowhere else. (3) That configuration, `L(s, χ) ≈ 1 − Q^{ρ−s}` with `Q = q^θ`, agrees
+    with every estimate here: its smooth sums, its Möbius sums and its prime sums are large at the lengths
+    `Q^j` alone, and at `θ = 7/18`, `β = 5/7` every count there is `q^{2/3}` exactly: the fourth moment at
+    `q^{7/9}`; the mean value at `q^{7/6}`, which for a length above `q` is the large sieve with nothing lost;
+    and the product with the Poisson dual, of length `q` exactly, is the fourth moment again. The
+    Halász–Montgomery inequality at `q^{7/9}` asks for a kernel of `q^{1/3}`, where the half-plane gives
+    `q^{13/27}`. So the peak asks for what the note on Chen, Gupta and Li's `S₃` term has already: a saving in
+    that term, or its hypothesis (H), the sixth moment at `q^{7/18}`. Neither was found.
+
+    *The exponent of a sum of one length.* A prime of a rest is not a zero detector: its sum has one length
+    `q^s`, and the characters at which it is at least `P^σ` are `q^{a(s,σ)(1−σ)}` at most, or the density
+    curve's count if that is less. At `σ = 5/7`, where the curve has `7/3`:
+
+    | the length `q^s`, `s` in | `(0, 0.2]` | `[0.2, 0.33]` | `[0.33, 0.37]` | `[0.37, 0.41]` | `[0.41, 0.5]` | `[0.5, 0.58]` | `[0.58, 0.78]` | `[0.78, 0.85]` | `[0.85, 1]` | `[1, 1.1]` | `[1.1, 7/6]` |
+    |---|---|---|---|---|---|---|---|---|---|---|---|
+    | `a(s, 5/7)` at most | `2.16` | `2.20` | `2.22` | `7/3` | `2.21` | `2.32` | `2.55` | `2.33` | `2.19` | `2.20` | `7/3` |
+    | and at least | `2` | `2` | `2` | `2.21` | `2` | `2` | `2.32` | `2.17` | `2` | `2` | `2.20` |
+
+    So a prime has the curve's `7/3` only near `q^{7/18}`, between `q^{0.58}` and `q^{0.78}`, and from
+    `q^{7/6}` on; on about three quarters of the lengths up to `q^{1.3}` its own count is the lower one (on
+    `0.71` to `0.75` of them at `σ = 0.70`, `5/7`, `0.73`, `0.75`, `0.78`). At `σ = 3/4` Proposition 3.1 gives
+    the count of the density hypothesis, `q^{1/2}`, for every length from `q^{5/6}` to `q`.
+
+    *In the sieve.* The resonant window of the item above sorts the characters by the sizes of the rest's own
+    sums, so each part of the rest can be counted at its own length. With `lv`, a prime's count is also that
+    of Proposition 3.1 for the powers of its sum (a power's coefficients are at most `k!`). With `own`, a
+    sifted part of the rest, the cofactor for one, is counted by its own sum too, not by its zeros alone: it
+    is a sum with coefficients `0` and `1`, a power of it has bounded coefficients (the part has a bounded
+    number of prime factors), and the mean values, the Halász–Montgomery inequality and Proposition 3.1 hold
+    for it as for a prime's. `points` gives:
+
+    | `L` | `2.14` | `2.12` | `2.10` | `2.08` | `2.07` | `2.06` | passes `1` at |
+    |---|---|---|---|---|---|---|---|
+    | the window as in the item above (`--res hm,sifted`) | `0.140` | `0.324` | `0.631` | `1.141` | | | `2.085` |
+    | with `lv` | | | `0.416` | | | | |
+    | with `own` | | | `0.505` | | | | |
+    | with both (`--res`) | `0.074` | `0.117` | `0.259` | `0.654` | `0.946` | `1.254` | `2.068` |
+    | both, one level of reversal as in Lean | | | `0.318` | `0.782` | `1.001` | | `2.070` |
+
+    So the floor of the model goes from `2.085` to `2.068` (`2.089` to `2.070` with the shapes of reversal
+    that are in Lean), and the loss at `2.10` from `0.631` to `0.259`. A lower density exponent would act
+    through the same counts: with the window as in the item above and the curve's exponent capped at `2.25`,
+    `2.2`, `2.15` (`--curve cap:A`) the loss at `2.10` is `0.606`, `0.493`, `0.177`, and of the fall to
+    `0.493` the zone accounts for `0.014`, the counts inside the window for the rest. The caveats are the item
+    above's: none of this is a rule of the search in Lean, the sets of rests are small, and what an exact
+    search gets is not measured. Not done: the primes between `q^0.58` and `q^0.78`, which keep the curve's
+    count, opened by Heath-Brown's identity into pieces that have their own (by a count made here on a few
+    shapes, not a computation, their exponent would be between `2.2` and `2.25`, and nothing is gained at
+    `q^0.7777777777777778`); and these counts in the estimate in two variables and in the stops of Harman's
+    comparison.
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three
