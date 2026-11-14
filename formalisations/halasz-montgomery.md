@@ -81,6 +81,82 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   shorter than `√q` it beats orthogonality in every bin with fewer than `q` characters. It is for the leaves of
   Buchstab's tree with a cofactor shorter than `√q`, taken as the second variable with the primes of `d₂` as the
   rest (`docs/research-opportunities.md`, §3.1): `SieveLeafTwo.typeIITwoAt_leaf` below;
+- `SieveTypeIIHM.sum_chars_dp_pow_le` and `SieveTypeIIHM.card_large_le` (`lib/pnt/SieveResMoment.lean`): the
+  `2k`-th moment, `Σ_χ |W(χ)|^{2k} ≤ (B^k − A^k + q)·F·(Σ|a|²)^k` for `S ⊆ (A, B]` and `k ≥ 1` (`W(χ)^k` is the
+  polynomial of the products of `k` elements of `S`; `F` bounds the tuples with a given product `n`, at most
+  `d(n)^k`, `card_tuples_le`), and Markov's count of the large values: `V^{2k}` times the number of characters with
+  `|W(χ)| ≥ V` is at most the moment. For a prime sum of length `q^s` and `ks ≥ 1`, the characters at which it
+  exceeds `q^{st}` number about `q^{2ks(1−t)}`, the density hypothesis's count at the lengths `q^{1/k}`: the counts
+  of the resonant window (`docs/research-opportunities.md`, §3.1), `SieveTypeIIHM.typeII_res` below;
+- `SieveTypeIIHM.sum_typeII_cls` (`lib/pnt/SieveResBins.lean`): `SieveHMBins.sum_typeII_bins_hm` for any classes of
+  the characters (a map `cl` into a finite type) in place of the bins of their zeros, whose proof uses nothing of
+  the bins but that they partition the characters: the resonant window classes the characters by the sizes of the
+  rest's prime sums with their zeros' bins;
+- `SieveTypeIIHM.bin_bound_exp` (`lib/pnt/SieveResZone.lean`): `SieveTypeIIHM.bin_bound_gen_hm` for one class of
+  characters with its exponents given, the prime sums at most `C₀q^E` and the class at most `C_d(qT)^γ(1 + log qT)^{10}`
+  characters, under `ResBinOK L d e E γ m` (orthogonality, or both of the Halász–Montgomery inequalities);
+- `SieveTypeIIHM.card_Sp_large` (`lib/pnt/SieveResCount.lean`): the `2k`-th moment for the smoothed prime sums
+  `SieveWeight.Sp` (a tuple of primes with a given product is one of `k^k`), so the characters at which a prime sum
+  of length `Q = q^s` is at least `Q^u` number at most `C_k q^{max(1, ks) + ks(1 − 2u)}`;
+- `SieveTypeIIHM.typeII_res` (`lib/pnt/SieveResTypeII.lean`), **Proposition 3′ for the resonant window**: the
+  conclusion of `SieveTypeIIHM.typeII_gen_hm` for a curve with its counts when `ResCond` holds at the variable's
+  exponent and the rest's: the characters are classed by their zeros' bin and the size of each prime sum of the
+  rest, in steps of `10⁻⁶` of its exponent; a class's count is the least of the curve's and each large prime sum's
+  moment count, and `bin_bound_exp` bounds the class;
+- `SieveUnwGen.unw_gen_lo` (`lib/pnt/SieveUnwLo.lean`): `SieveUnwGen.unw_gen` with a lower bound `x_i ≥ 2q^{lo i}`
+  on each prime of the family, so that the estimate at each frequency is asked for only on the scales
+  `Q_i ≥ q^{lo i}`; `SieveTypeIIHM.box_res`, `SieveTypeIIHM.typeII_gcmp_res` and `SieveTypeIIHM.chainTU_res`
+  (`lib/pnt/SieveResChain.lean`): `typeII_res` at each frequency for a polynomial over the integers cut into dyadic
+  blocks, the family with comparisons on its primes (`SieveChain.typeII_gcmp`'s), and the chains of primes times a
+  rough cofactor with the cofactor as the variable and all the chain's primes as the rest
+  (`SieveChain.chainTU_bound`'s), given `ResCond` at the cofactor's blocks and the primes' scales;
+- `SieveTypeIIHM.box_res_gen` and `SieveTypeIIHM.chain_res_core` (`lib/pnt/SieveResFull.lean`): `typeII_res` for a
+  polynomial over a finite set with at most `D` elements for each value, and the families of tuples of primes in
+  no order (`SieveTwoChain.chain_two_core`'s) with one variable, the product of the entries outside a rest whose
+  entries have their own lower bounds. Nothing uses them yet;
+- `SieveResTest.resT_sound` and `SieveResTest.resT_sound_cells` (`lib/pnt/SieveResTest.lean`; the test
+  `SieveResTest.resT` in `lib/pnt/SieveResTestDefs.lean`, written by `tools/linnik/res_test.py`): the kernel's test
+  of `ResBox` on the curve `ghx` for a box's rest, led by a hint, is sound. The test bounds, for every count
+  exponent `γ`, the sum over the rest's primes of the least of the half-plane's bound and the moments' bounds, plus
+  `γ/2` and the Halász–Montgomery inequalities' clamp: `γ ≤ 0` by the half-plane at `11/12`, and `[0, 1]` cut by the
+  hint into intervals (their ends on the grid `2^-12`, 13 bits each), on each of which the test takes the line above
+  each term that is least at the interval's midpoint (among the moments' lines of `k₀ − 1` and `k₀ = ⌈1/lo⌉`, the
+  curve's bound at the interval's left end, and the line `1 − γ/A` with `A` the larger of the end steps' factors),
+  and likewise the clamp's, checked at the interval's ends in fixed point (`2^64`). Nothing uses it yet;
+- `SieveTypeIIHM.chain_res_exp` (`lib/pnt/SieveResTerm.lean`): `SieveTwoTerm.chain2_bound` by the resonant window: the
+  strictly decreasing chains of primes with a rest at given positions, each rest prime at least `q^{lo i}` and the
+  rest's product in `[q^{ρ₁}, q^{ρ₂}]`, times their rough cofactors, evaluated given
+  `ResBox g L (n + 1) (L − ρ₂ − ε) (lo − ε)`: the cofactor written out as its primes and `full_res_exp` on the full
+  tuples;
+- `SieveAd.evI_resE` and `SieveAd.resTestsF_sound` (`lib/pnt/SieveAdRes.lean`; the test `SieveAd.chkIR`, the tests
+  `SieveAd.resTestsF` and the hints' decoder `SieveAd.cfgIMR` in `lib/pnt/SieveAdResDefs.lean`): a box of the main
+  tree whose rest passes `SieveResTest.resT` has its term evaluated by `chain_res_exp`, the variable being the box's
+  other primes and the cofactor; so the tests with the resonant window for an evaluation of kind `3` (and
+  `fillTestsF`'s otherwise) are sound, and `SieveAd.pr_of_partD` applies to a search with them. No certificate uses
+  them yet;
+- `SieveAd.evIF_froz_resT` (`lib/pnt/SieveAdFrozRes.lean`): the same over the frozen part of a reversal: when
+  `chkIR` passes the box `ch ++ β`, the term of the chain `ch` over the frozen part is evaluated, by
+  `SieveTypeIIHM.full_res_exp` on the frozen tuples `(a, y, c, y′)` with the rest among the frozen primes `a` and the
+  chain's primes `c`, each in its cell (`evIF_frozP_res`, `evIF_froz_res`). `SieveAd.rules_frozResC` and
+  `SieveAd.pr_of_partDR_at` (`lib/pnt/SieveAdFrozResTree.lean`; the tests `SieveAd.frozResTestsC`, the decoder
+  `SieveAd.cfgIFR` and the search `SieveAd.altFDR` in `lib/pnt/SieveAdFrozResDefs.lean`): so the search whose trees
+  over the frozen parts read the resonant window's test is sound;
+- `SieveTypeIIHM.chain_res_cof` (`lib/pnt/SieveResCof.lean`): `chain_res_exp` with the cofactor in the rest when it
+  is one prime: when no multiple is the chain's product itself and two primes at least the chain's last would
+  overshoot `N₂`, the term is the sum over the full tuples `(rt, y)` of one cofactor prime, and `full_res_exp` applies
+  with `y` in the rest, at least `q^{lo}` for the bound that `N₁ < ∏rt·y` gives. `SieveAd.evI_resCE` and
+  `SieveAd.resTestsFC_sound` (`lib/pnt/SieveAdResCof.lean`; the test `SieveAd.chkIRC`, the tests `SieveAd.resTestsFC`
+  and the decoder `SieveAd.cfgIMRC` in `lib/pnt/SieveAdResDefs.lean`): a box of the main tree whose upper ends sum
+  to at most `DEN − 2` and whose lower ends with twice its least prime's reach `DEN + 1` has its cofactor, one prime
+  in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`, in the rest when the test's bit after the box's cells is
+  set; so the tests with it are sound;
+- `SieveAd.evIF_froz_resC` and `SieveAd.evIF_froz_resTC` (`lib/pnt/SieveAdFrozResCof.lean`; the test
+  `SieveAd.chkIRF` in `lib/pnt/SieveAdFrozResDefs.lean`): the same in the trees over the frozen parts. With the
+  frozen number in the slab `(x^{e₁/DEN}, x^{e₂/DEN}]`, a chain whose upper ends with `e₂` sum to at most `DEN − 2`
+  and whose lower ends with `e₁` and twice its least prime's reach `DEN + 1` has one prime as every multiple's chain
+  cofactor (`frozCof_facts`), in the cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`; the frozen tuples
+  `(a, y, c, y′)` have one prime `y′`, in the rest with the frozen primes and the chain's (`evIF_frozP_resC`).
+  `frozResTestsC` reads `chkIRF` (with the bit clear, `chkIR`), so `SieveAd.rules_frozResC` covers it;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
