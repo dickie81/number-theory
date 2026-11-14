@@ -475,8 +475,13 @@ class Planner(fl.FlipSearch):
         if self.resmemo is None:
             self.resmemo = {}
         n, ln, ld = len(bl), self.T.Ln, self.T.Ld
+        # a rest whose exponents sum to less than 1 + 2/25000 fails (`res_test.quick`): in units of the cells,
+        # Σ(c − 1) at least `need`
+        need = (DEN * ld * 25002 + ln * 25000 - 1) // (ln * 25000)
         for mask in range(3, 1 << n):
             if mask & (mask - 1) == 0:
+                continue
+            if sum(bl[p][0] - 1 for p in range(n) if mask >> p & 1) < need:
                 continue
             cs = tuple(bl[p][0] for p in range(n) if mask >> p & 1)
             hs = sum(bl[p][1] for p in range(n) if mask >> p & 1)

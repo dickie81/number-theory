@@ -343,6 +343,10 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
     los = [kq * (c - 1) for c in cs]
     if not los or min(los) <= 0 or hs + 1 >= DEN:
         return False
+    # at g = 1 each term is at least -lo/2 (its lines there are -lo(1 - w - 7789/10000), -1/(2k0) and -lo/2), so
+    # the bound asks the rest's exponents to sum to at least 1 + 2 MARG
+    if sum(los) < 1 + 2 / 25000:
+        return False
     m = kq * (DEN - hs - 1)
     w, tau, marg = 4e-6, 1e-6, 1 / 25000
     c1 = max(1 - m, 0) / 2
