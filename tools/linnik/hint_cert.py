@@ -1439,11 +1439,12 @@ def defs_file(par_):
     dimp = 'SieveAdFrozResDefs' if resF else 'SieveAdResDefs' if res else 'SieveAdDirDefs'
     alt, ftests = ('altFDR', 'frozResTestsC') if resF else ('altFD', 'frozTestsC')
     resdoc = ('With the resonant window: an evaluation of kind `3` in the main tree is `SieveAd.chkIR`\'s\n'
-              '(`SieveAd.resTestsF`), its configuration read by `SieveAd.cfgIMR`' + (
-                  ', with the box\'s cofactor in the rest when it\nis one prime (`SieveAd.chkIRC`, '
+              '(`SieveAd.resTestsF`; the rest tested by `SieveResTest.resX`), its configuration read by\n'
+              '`SieveAd.cfgIMR`' + (
+                  ', with the box\'s cofactor in the rest when it is one prime (`SieveAd.chkIRC`,\n'
                   '`SieveAd.resTestsFC`, `SieveAd.cfgIMRC`)' if cof else '') + (
-                  '; over the frozen parts too, the box\n`ch ++ β` (`SieveAd.frozResTestsC`), read by '
-                  '`SieveAd.cfgIFR`.\n\n' if resF else '.\n\n') if res else '')
+                  '; over the frozen parts too, the box `ch ++ β` (`SieveAd.frozResTestsC`, with\n'
+                  '`SieveAd.chkIRF`), read by `SieveAd.cfgIFR`.\n\n' if resF else '.\n\n') if res else '')
     return f"""/-
 # The exponent and the search led by hints at `L = {LN}`
 
@@ -1608,8 +1609,15 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
             'A box of the main tree may also be evaluated by the resonant window: a Type II estimate in one '
             'variable, the box\'s other primes and the cofactor, with the characters sorted by the sizes of a rest '
             'of its primes\' own sums as well as by their zeros, whose condition on the rest\'s cells the kernel '
-            'checks led by a hint (`SieveAd.chkIR`, `SieveResTest.resT`; `SieveAd.evI_resE`, '
-            '`SieveTypeIIHM.typeII_res`). ' if res else '') +
+            'checks led by a hint (`SieveAd.chkIR`, `SieveResTest.resX`; `SieveAd.evI_resE`, '
+            '`SieveTypeIIHM.typeII_res`): the counts of the characters at which a sum of the rest is large are its '
+            'moments, the Halász–Montgomery inequality, the zeros\' bins and Chen, Gupta and Li\'s Proposition '
+            '3.1 for its powers. ' + (
+                'So may a box of a tree over a frozen part, its rest among the frozen primes and the chain\'s '
+                '(`SieveAd.evIF_froz_resT`). ' if resF else '') + (
+                'Where a box\'s cells leave room for one prime only as the cofactor of its numbers, that prime may '
+                'be in the rest too, in the cell that the cells leave it (`SieveAd.chkIRC`, `SieveAd.chkIRF`; '
+                '`SieveTypeIIHM.chain_res_cof`, `SieveAd.evIF_froz_resC`). ' if cof else '') if res else '') +
         f'The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
         f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.frozTests`. The '
         f'kernel does not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the '
