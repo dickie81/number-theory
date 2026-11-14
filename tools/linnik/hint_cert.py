@@ -111,7 +111,10 @@ CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
          '21350': dict(lnum=2135, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True),
          # and the resonant window for the main tree's boxes (`SieveAd.chkIR`)
          '21300': dict(lnum=2130, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
-                       res=True)}
+                       res=True),
+         # and for the boxes of the trees over the frozen parts (`SieveAd.frozResTestsC`)
+         '21280': dict(lnum=2128, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
+                       res=True, resF=True)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
 # dropped cells next to each other are one cell while its bound is at most DMERGE of the sum of theirs
@@ -462,7 +465,8 @@ class Planner(fl.FlipSearch):
     res_frozen = False   # the window over the frozen parts too (`SieveAd.frozResTestsC`), the rest among the chain's
     # and the frozen primes; for measurement, 'chain': among the chain's alone
     res_cof = False      # for measurement only (no hints, no Lean): in the main tree, a cofactor that is one prime
-    # (shorter than the square of the box's least prime) may be in the rest, its cell from the box's cells
+    # (shorter than the square of the box's least prime) may be in the rest, its cell from the box's cells; 'mom':
+    # any cofactor but 1, counted by its moments alone (a sifted part of the rest, `res_test.mkTmM`)
     resmemo = None
 
     def resHint(self, bl):
@@ -485,11 +489,14 @@ class Planner(fl.FlipSearch):
         # Σ(c − 1) at least `need`
         need = (DEN * ld * 25002 + ln * 25000 - 1) // (ln * 25000)
         nch = n - len(self.frz[3]) if self.frz is not None and self.res_frozen == 'chain' else n
+        cofm = False
         if self.res_cof and self.frz is None:
             # the cofactor `m = n/∏p` with `n ∈ (x, 2x]`: `m ∈ (x^{(DEN − Σhi)/DEN}, x^{(DEN − Σlo + 1)/DEN})`, one
             # prime at least the least prime `x^{lo₀/DEN}` when its upper end is at most twice `lo₀`
             slo, shi = sum(c[0] for c in bl), sum(c[1] for c in bl)
-            if shi < DEN and DEN - slo + 1 <= 2 * bl[0][0]:
+            one = shi < DEN and DEN - slo + 1 <= 2 * bl[0][0]
+            cofm = self.res_cof == 'mom' and shi + 1 < DEN and not one
+            if one or cofm:
                 bl = list(bl) + [(max(DEN - shi, bl[0][0]), DEN - slo + 1)]
                 n = nch = n + 1
         if nch < 2:
@@ -501,12 +508,13 @@ class Planner(fl.FlipSearch):
                 continue
             cs = tuple(bl[p][0] for p in range(n) if mask >> p & 1)
             hs = sum(bl[p][1] for p in range(n) if mask >> p & 1)
-            if not rt.quick(ln, ld, list(cs), hs):
+            mom = 1 << (len(cs) - 1) if cofm and mask >> (n - 1) & 1 else 0
+            if not rt.quick(ln, ld, list(cs), hs, mom=mom):
                 continue
-            key = (cs, hs)
+            key = (cs, hs, mom)
             r = self.resmemo.get(key, 0)
             if r == 0:
-                r = rt.hint(ln, ld, list(cs), hs)
+                r = rt.hint(ln, ld, list(cs), hs, mom)
                 self.resmemo[key] = r
             if r is not None:
                 self.stat['res'] = self.stat.get('res', 0) + 1

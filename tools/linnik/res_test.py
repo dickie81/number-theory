@@ -125,6 +125,18 @@ def mkTm(lo):
     return (lo, a0, a1, b1, mulC(lo, WC))
 
 
+def mkTmM(lo):
+    """For measurement only: a term counted by its moments alone (a sifted part of the rest, not a prime sum): the
+    lines of `k₀ − 1` and `k₀`, and the line `0` in place of the zeros' two (and in the half-plane's sum)."""
+    t = mkTm(lo)
+    return (0,) + t[1:4] + (0,)
+
+
+def terms(Lnum, Lden, cs, mom=0):
+    """The rest's terms, those at the set bits of `mom` counted by their moments alone (measurement)."""
+    return [mkTmM(loOf(Lnum, Lden, c)) if mom >> j & 1 else mkTm(loOf(Lnum, Lden, c)) for j, c in enumerate(cs)]
+
+
 def loOf(Lnum, Lden, c):
     return (Lnum * sub(c, 1) * S) // (Lden * DEN)
 
@@ -218,9 +230,10 @@ def intv(ts, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
     return le0(p0, p1, n0, n1, a) and le0(p0, p1, n0, n1, b)
 
 
-def resT(Lnum, Lden, cs, hs, k, h):
-    """The test: the rest's lower cells `cs`, the sum `hs` of its upper ends, `k` intervals in the hint `h`."""
-    ts = [mkTm(loOf(Lnum, Lden, c)) for c in cs]
+def resT(Lnum, Lden, cs, hs, k, h, mom=0):
+    """The test: the rest's lower cells `cs`, the sum `hs` of its upper ends, `k` intervals in the hint `h` (`mom`:
+    measurement only, the terms counted by their moments alone)."""
+    ts = terms(Lnum, Lden, cs, mom)
     mlo = (Lnum * sub(sub(DEN, hs), 1) * S) // (Lden * DEN)
     ltm = (Lnum * S + sub(Lden * 10 ** 6, 1)) // (Lden * 10 ** 6) + MG
     mtu, mtd = mulC(mlo, M1U), mulF(mlo, M1D)
@@ -247,9 +260,9 @@ def resT(Lnum, Lden, cs, hs, k, h):
 class Box:
     """The test's state for one box, with the hint search."""
 
-    def __init__(self, Lnum, Lden, cs, hs):
+    def __init__(self, Lnum, Lden, cs, hs, mom=0):
         self.Lnum, self.Lden, self.cs, self.hs = Lnum, Lden, cs, hs
-        self.ts = [mkTm(loOf(Lnum, Lden, c)) for c in cs]
+        self.ts = terms(Lnum, Lden, cs, mom)
         mlo = (Lnum * sub(sub(DEN, hs), 1) * S) // (Lden * DEN)
         self.ltm = (Lnum * S + sub(Lden * 10 ** 6, 1)) // (Lden * 10 ** 6) + MG
         mtu, mtd = mulC(mlo, M1U), mulF(mlo, M1D)
@@ -327,11 +340,11 @@ class Box:
         return len(recs), h
 
 
-def hint(Lnum, Lden, cs, hs):
+def hint(Lnum, Lden, cs, hs, mom=0):
     """The test's hint (k, h) for the rest's cells, or None; checked by the mirror of the kernel's test."""
-    r = Box(Lnum, Lden, cs, hs).find()
+    r = Box(Lnum, Lden, cs, hs, mom).find()
     if r is not None:
-        assert resT(Lnum, Lden, cs, hs, *r)
+        assert resT(Lnum, Lden, cs, hs, *r, mom=mom)
     return r
 
 
@@ -359,7 +372,7 @@ def _bm(a):
     return min(hi, 1 - a / A)
 
 
-def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
+def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0):
     """Whether the bound may hold for the rest `cs`, `hs` (floats; `False` means the kernel's test fails)."""
     import math
     L = Lnum / Lden
@@ -376,7 +389,8 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
     c1 = max(1 - m, 0) / 2
     y0 = (5 / 12 + 3 / 1000 - m * (11 / 12 + 1 / 1000)) / 2
     thr = -marg - L * tau + slack
-    if -sum(lo * (1 - w - 11 / 12) for lo in los) + min(c1, max(0.0, y0)) > thr:
+    zl = [0.0 if mom >> j & 1 else lo for j, lo in enumerate(los)]      # the zeros' lines' factors
+    if -sum(lo * (1 - w - 11 / 12) for lo in zl) + min(c1, max(0.0, y0)) > thr:
         return False
     ks = []
     for lo in los:
@@ -386,7 +400,7 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
     for g in (0.0, 0.17, 0.26, 0.34, 0.4, 0.45, 0.5, 0.75, 1.0):
         v = g / 2 + min(c1, max(0.0, g / 2 + y0))
         b = _bm(g) + w - 1
-        for lo, mk in zip(los, ks):
+        for lo, mk in zip(zl, ks):
             v += min([lo * b] + [p0 + p1 * g for p0, p1 in mk])
         if v > thr:
             return False
@@ -403,7 +417,7 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
             ia_inv = min(1 / _HF[ia][2] if ia < NP else 0.0, 1 / _HF[ib][2])
             if ia <= PK <= ib:
                 ia_inv = min(ia_inv, 1 / _HF[PK][2])
-        for lo, mk in zip(los, ks):
+        for lo, mk in zip(zl, ks):
             cand = list(mk) + [(-lo * dS, 0.0), (lo * w, -lo * ia_inv)]
             best = min(cand, key=lambda l: 2 * l[0] + l[1] * (a + b))
             t0 += best[0]
