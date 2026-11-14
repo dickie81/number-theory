@@ -1410,7 +1410,8 @@ def plan_all(par_, procs=4, rows=None, cache=None, asc=False):
         st.update(info[4])
         if r[0] == 'light':
             t = secs(r[3])
-            if group and gs + t > par_.cap:
+            # a part takes consecutive cells only (with `--rows I J STEP` the cells planned need not be)
+            if group and (gs + t > par_.cap or group[-1][1] != r[1]):
                 flush()
             group.append((r[1], r[2], r[3]))
             gs += t
