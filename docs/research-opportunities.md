@@ -760,6 +760,33 @@ covers. The region does not close at `13/6`.
     shapes, not a computation, their exponent would be between `2.2` and `2.25`, and nothing is gained at
     `q^0.7777777777777778`); and these counts in the estimate in two variables and in the stops of Harman's
     comparison.
+  - *What a certificate's grid gets of it* (14 November; `harman_sieve.py cells`, which takes every test on
+    the whole box, with the shapes of reversal that are in Lean (`--nest 1 --rev first`) and cells of side
+    `0.003`, the certificate's. Three switches for it: `--res-main`, the window in the main tree only;
+    `--res-lev`, the window tested at each level with that level's own count, as a test that is exact in the
+    level does; `--res-split`, a box of the main tree that fails cut in two. A model of an exact search, not
+    one). A box passes a test only if every point of it does, so what the window is worth depends on the grid:
+
+    | the loss on cells of side `0.003` | `2.135` | `2.12` | `2.10` |
+    |---|---|---|---|
+    | no window | `0.964` | `1.127` | `1.412` |
+    | the window in the main tree, with the mean values and the Halász–Montgomery inequality (`--res hm --res-main --res-lev`) | `0.903` | | `1.382` |
+    | every count, in the main tree (`--res --res-main --res-lev`) | | | `1.262` |
+    | every count, in the reversed trees too (`--res --res-lev`) | `0.363` | `0.665` | `1.186` |
+    | the same at the cells' midpoints (`points`) | `0.091` | | `0.318` |
+
+    The first two rows measure the model against the exact search. The certificate at `2135/1000` costs
+    `0.990K` where the model has `0.964` (the certificate has the leaves cut in three, which the model has
+    not). And the window as its Lean has it (pull request 118: in the main tree, with the mean values, the
+    Halász–Montgomery inequality and the zeros' count) is worth `6.4%` there in the model and `8.0%` in the
+    exact search. So on a grid the window alone is worth little, and at `2.10` almost nothing; the counts by
+    length and the reversed trees are what the grid can use: with them the model passes `1` near `2.107` on
+    this grid, against `2.070` in the limit of fine cells. The grid costs more as `L` falls, since the window
+    is the lengths from `q` to `q^{L−1}`, of width `L − 2`, and a box must lie inside it. The test must be
+    exact in the level: with the count of the level before on a lattice of 251 levels (the default of `cells`)
+    the last row but one is `0.589`, `0.915`, `1.347`. Cutting the boxes that fail helps where the margins are
+    wide (`--res-split 8` gives `0.507` for `0.589` at `2.135`) and little for the window alone (`0.927` for
+    `0.936`).
   - *What the reversal is worth, shape by shape* (11 November; `harman_sieve.py cells` with `--no-window`, at
     `2.15` on cells of side `0.004` unless said; the switches of `--rev` are new). With no reversal the loss is
     `1.280`; with the shapes that are in Lean (`--flips 3 --nest 1 --rev odd,first,m2,low`: a term of three

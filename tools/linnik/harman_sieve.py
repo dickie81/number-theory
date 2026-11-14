@@ -137,6 +137,16 @@ only if its lowest corner does: with `--res hm,sifted`, `cells` at 2.13 give 0.9
 and 0.612 with --h 0.002 (0.765 without). Not used: the estimate as a stop of Harman's comparison, and its counts
 in the estimate in two variables.
 
+What a grid gets of the window (14 November 2026; `cells` with --h 0.003 --nest 1 --rev first, the cells and the
+shapes of the certificates). `--res-main` keeps the window to the main tree; `--res-lev` tests it at each level
+with that level's own count, as a test that is exact in the level does (the default of `cells` takes the count of
+the level before, safe on the lattice of levels, and costs as much as the cells do); `--res-split N` cuts a box of
+the main tree that fails in two, N times at most. Without the window the cells give 0.964, 1.127, 1.412 at 2.135,
+2.12, 2.10; with --res hm --res-main --res-lev, 0.903 at 2.135 and 1.382 at 2.10; with --res --res-lev, 0.363,
+0.665, 1.186 (--res-main: 1.262 at 2.10), where `points` has 0.091 at 2.135 and 0.318 at 2.10. The exact search
+of the certificate at 2135/1000 costs 0.990, and the window as it is in Lean is worth 8.0% there, where the model
+has 6.4%.
+
 What is assumed, beyond the paper: the estimate in two variables on the tabulated zone (two_factor.py states it;
 in Lean it is proved on the region SieveTwoZone7D.Zone7d, which holds all of the zone but under 2% of its width,
 as far as chains of primes: SieveTwoChain.chain_two); the bilinear Type I estimate without 2HD < q at the leaves
@@ -201,7 +211,8 @@ class Ctx(C.Structure):
                 ('ev_win', C.c_int), ('ev_second', C.c_int), ('ev_rest', C.c_int), ('ext', C.c_double),
                 ('res', C.c_int), ('NC', C.c_int), ('cl', dp), ('reach', dp), ('ord', ip),
                 ('L', C.c_double), ('thr', C.c_double), ('wbin', C.c_double), ('mres', C.c_double),
-                ('top', C.c_double), ('K0', C.c_double), ('K1', C.c_double)]
+                ('top', C.c_double), ('K0', C.c_double), ('K1', C.c_double),
+                ('res_main', C.c_int), ('res_split', C.c_int), ('res_lev', C.c_int)]
 
 
 class Stats(C.Structure):
@@ -400,7 +411,8 @@ class Sieve:
     def __init__(self, L, h=0.004, depth=8, flips=6, nest=2, flipmax=8, flipmin=0.15, wide=True, usewin=True,
                  sieve=False, upper=False, type2=True, eps1=0.002, eps0=0.002, fmin=0.01, smax=7.0, shrink=0.0,
                  tables=None, rev=(), first=True, direct=('window', 'second', 'rest'), fill=False,
-                 curve='g7d', theta0=None, kernel=1.0, kshift=0.0, ext=0.0, res=0, levels=None):
+                 curve='g7d', theta0=None, kernel=1.0, kshift=0.0, ext=0.0, res=0, levels=None, res_main=False,
+                 res_split=0, res_lev=False):
         L = Fr(L)
         self.L, Lf = L, float(L)
         whatif = curve != 'g7d' or theta0 is not None or kernel != 1.0 or kshift != 0.0
@@ -491,6 +503,7 @@ class Sieve:
                                      self.ord.ctypes.data_as(ip))
         ctx.L, ctx.thr, ctx.wbin, ctx.mres, ctx.top = Lf, Lf - float(rl.MARGIN), 4e-6, 0.8, top
         ctx.K0, ctx.K1 = kernel * (top - 0.5) - kshift, kernel * (1 - top)
+        ctx.res_main, ctx.res_split, ctx.res_lev = int(res_main), int(res_split), int(res_lev)
         self.ctx = ctx
         # the floor of the top node: the largest f at which S(A, x^f) is evaluated
         T = ctx.theta - eps1
@@ -552,6 +565,13 @@ def main():
                     "'lv' (Chen, Gupta and Li's large-value estimate for the powers), 'sifted' (the cofactor and "
                     "sifted atoms may be in the rest, with the zeros' count) and 'own' (those counted by their own "
                     "sums as well); alone: all four")
+    ap.add_argument('--res-main', action='store_true', help='the resonant window in the main tree only')
+    ap.add_argument('--res-split', type=int, default=0, help='`cells`: a box of the main tree that fails the '
+                    'resonant window is cut in two across its widest cell, at most this many times, and is '
+                    'evaluated if every piece passes')
+    ap.add_argument('--res-lev', action='store_true', help='`cells`: the resonant window tested at each level '
+                    'with the count of that level, as a test that is exact in the level would (the default '
+                    'takes the count of the level before, which is safe on the lattice of levels)')
     ap.add_argument('--ext', type=float, default=0.0, help='what-if: the bilinear Type I estimates reach x^ext '
                     'further (d1 d2^2 < x^(1 + ext))')
     a = ap.parse_args()
@@ -573,7 +593,8 @@ def main():
                       direct=tuple(x for x in a.direct.split(',') if x),
                       curve=a.curve, theta0=a.theta0, kernel=a.kernel, kshift=a.kshift, ext=a.ext,
                       res=0 if a.res is None else 1 + sum(v for kk, v in (('hm', 2), ('sifted', 4), ('lv', 16),
-                                                                    ('own', 32)) if kk in a.res.split(',')))
+                                                                    ('own', 32)) if kk in a.res.split(',')),
+                      res_main=a.res_main, res_split=a.res_split, res_lev=a.res_lev)
             if a.nu is not None:
                 nu = a.nu
             elif s.nu0 is not None:

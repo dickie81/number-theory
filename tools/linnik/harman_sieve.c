@@ -91,6 +91,8 @@ typedef struct {
     const double *cl, *reach;    /* the levels of the count, from 1 down to 0, and the density curve's reach there */
     const int *ord;              /* the order in which the levels are tested */
     double L, thr, wbin, mres, top, K0, K1;
+    int res_main, res_split;     /* the window in the main tree only; a box that fails it is cut in two, so deep */
+    int res_lev;                 /* the levels as in `pointwise` on boxes too: a test that is exact in the level */
 } Ctx;
 
 typedef struct {
@@ -270,7 +272,7 @@ static int resonant(const Ctx *c, int k, const double *Slo, const double *Shi, i
         int ok = 1;
         for (int it = 0; it < NC && ok; it++) {
             int i = c->ord[it];
-            double G = c->pointwise || !i ? c->cl[i] : c->cl[i - 1], D = wsave(c, mlo, G);
+            double G = c->pointwise || c->res_lev || !i ? c->cl[i] : c->cl[i - 1], D = wsave(c, mlo, G);
             for (int j = 0; j <= k; j++)
                 if (Rm >> j & 1) D += V[j][i];
             if (D < G + need) ok = 0;
@@ -278,6 +280,40 @@ static int resonant(const Ctx *c, int k, const double *Slo, const double *Shi, i
         if (ok) return 1;
     }
     return 0;
+}
+
+/* The resonant window on a box of independent cells, cut in two where it fails (at most `depth` times, across the
+ * widest cell): the term of a box is the sum of its halves' terms, so a box whose pieces all pass is evaluated. */
+static int res_box(const Ctx *c, int k, const double *Slo, const double *Shi, int npm, int depth) {
+    if (resonant(c, k, Slo, Shi, npm)) return 1;
+    if (depth <= 0 || c->pointwise) return 0;
+    int jw = -1;
+    double wmax = 1e-9, lo[MAXK], hi[MAXK];
+    for (int j = 0; j < k; j++) {
+        lo[j] = Slo[1 << j];
+        hi[j] = Shi[1 << j];
+        if (hi[j] - lo[j] > wmax) {
+            wmax = hi[j] - lo[j];
+            jw = j;
+        }
+    }
+    if (jw < 0) return 0;
+    double mid = (lo[jw] + hi[jw]) / 2, a = lo[jw], b = hi[jw];
+    double *T = malloc(sizeof(double) << (k + 1)), *Tlo = T, *Thi = T + (1 << k);
+    int ok = 1;
+    for (int half = 0; half < 2 && ok; half++) {
+        lo[jw] = half ? mid : a;
+        hi[jw] = half ? b : mid;
+        Tlo[0] = Thi[0] = 0;
+        for (int m = 1; m < (1 << k); m++) {
+            int j = __builtin_ctz(m);
+            Tlo[m] = Tlo[m & (m - 1)] + lo[j];
+            Thi[m] = Thi[m & (m - 1)] + hi[j];
+        }
+        ok = res_box(c, k, Tlo, Thi, npm, depth - 1);
+    }
+    free(T);
+    return ok;
 }
 
 static double capacity(const Ctx *c, int k, const double *Shi, int linear) {
@@ -434,7 +470,7 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
     int hasd = mulo <= 0;                        /* some point may have r in A: the term counts n = r there */
     if (muhi < llo && !hasd) return 0;           /* u < 1 on the whole box, and r < x: the term is empty */
     if (evaluable(c, k, Slo, Shi)) return 0;
-    if (c->res && resonant(c, k, Slo, Shi, npm)) return 0;
+    if (c->res && (std || !c->res_main) && res_box(c, k, Slo, Shi, npm, std ? c->res_split : 0)) return 0;
     double T = capacity(c, k, Shi, !std && c->rev_linear);
     double fs = exact_floor(c, k, Slo, Shi, lhi, T);
     if (c->rev_floor && !std && fs >= 0)         /* a floor below every atom of a reversed term */
