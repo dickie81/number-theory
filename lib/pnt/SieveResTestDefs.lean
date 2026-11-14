@@ -43,11 +43,6 @@ The curve's steps, from the top (piece `17` is the trivial count, below `7789/10
 * `lvG`, `lvVal`, `Tv`, `mkTv`, `lvU`, `addTerms2`, `pickT2`, `chMid2`, `chkI2`, `intv2`, `runI2`, `resTM2`,
   `resT2`: the test with the large values of the powers as two more choices for each term; `resX`: **the test in
   either form**.
-* `W2`, `loW`, `hiW`, `mkTvH`, `intv3`, `runI3`, `lenV`, `resTM3`, `okY`, `resY`: **the test at the two corners of a
-  box of cells** (`SieveTypeIIHM.ResBoxT`: the rest's exponents in their cells, the variable's tied to them): the
-  upper corner as a point, its large values' thresholds those of the cells and the variable shorter by `1/11` of
-  the box's width, and the lower corner with no clamp; the record of an interval names the clamp's line and each
-  term's bound.
 -/
 
 namespace SieveResTest
@@ -435,80 +430,5 @@ def resT2 (Lnum Lden : Nat) (cs : List Nat) (hs k h : Nat) : Bool :=
 in the low four bits of `h` and their ends above. -/
 def resX (Lnum Lden : Nat) (cs : List Nat) (hs k h : Nat) : Bool :=
   cond (Nat.beq k 0) (resT2 Lnum Lden cs hs (Nat.land h 15) (Nat.shiftRight h 4)) (resT Lnum Lden cs hs k h)
-
-/-- The margin `2·10⁻⁵` of a cell's ends, times `S`, rounded up. -/
-def W2 : Nat := 368934881474192
-
-/-- `⌊L·c·S/DEN⌋ − W2`: a cell's lower end, less the margin. -/
-def loW (Lnum Lden c : Nat) : Nat := Nat.sub (Nat.div (Nat.mul (Nat.mul Lnum c) S) (Nat.mul Lden DEN)) W2
-
-/-- `⌈L·d·S/DEN⌉ + W2`: a cell's upper end, with the margin. -/
-def hiW (Lnum Lden d : Nat) : Nat :=
-  Nat.add (Nat.div (Nat.add (Nat.mul (Nat.mul Lnum d) S) (Nat.sub (Nat.mul Lden DEN) 1)) (Nat.mul Lden DEN)) W2
-
-/-- A term at its cell's upper end `hi`: the lines' constants at `hi`, the large values' thresholds of the whole cell
-`[lo, hi]`. -/
-def mkTvH (lo hi : Nat) : Tv :=
-  (fun k0 => ⟨mkTmK hi k0, Nat.sub k0 1, lvG lo hi (Nat.sub k0 1), Nat.sub k0 2, lvG lo hi (Nat.sub k0 2)⟩)
-    (Nat.div (Nat.add S (Nat.sub hi 1)) hi)
-
-/-- **One interval with its bounds named**: the record `r` has the interval's end in its low thirteen bits, the
-clamp's line in the next two and the terms' bounds above, three bits each. -/
-def intv3 (vs : List Tv) (c1 yuP yuN ydP ydN ltm a pa r : Nat) : Bool :=
-  (fun b =>
-    (fun pb =>
-      (fun dS iax =>
-        Nat.ble pb 17 && Nat.blt (get tFTm pb) b && Nat.ble b (get tFT pb) && Nat.ble a b &&
-          chkI2 vs ltm dS iax a b (Nat.shiftRight r 15)
-            (clampL c1 yuP yuN ydP ydN a b (Nat.land (Nat.shiftRight r 13) 3)))
-        (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA pb)))
-      (pieceOf b))
-    (bOf r)
-
-/-- **The intervals with their bounds named**: `k` records of `w` bits. -/
-def runI3 (vs : List Tv) (w c1 yuP yuN ydP ydN ltm : Nat) : Nat → Nat → Nat → Nat → Bool :=
-  Nat.rec (motive := fun _ => Nat → Nat → Nat → Bool) (fun a _ _ => Nat.beq a S)
-    (fun _ ih a pa h =>
-      (fun r => intv3 vs c1 yuP yuN ydP ydN ltm a pa r && ih (bOf r) (pieceOf (bOf r)) (Nat.shiftRight h w))
-        (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1)))
-
-/-- The number of terms. -/
-def lenV : List Tv → Nat
-  | [] => 0
-  | _ :: vs => Nat.succ (lenV vs)
-
-/-- The test of the terms `vs` with the variable's `m` times `S` (`mlo`) and `Lτ + MARG` times `S` (`ltm`) given,
-led by `k` records that name the bounds, each of `15 + 3·(the number of terms)` bits. -/
-def resTM3 (vs : List Tv) (mlo ltm k h : Nat) : Bool :=
-  (fun mtu mtd c1 =>
-    (fun yuP yuN ydP ydN =>
-      Nat.ble (Nat.add ltm (minN c1 yuP)) (hpSum2 vs) &&
-        runI3 vs (Nat.add 15 (Nat.mul 3 (lenV vs))) c1 yuP yuN ydP ydN ltm k 0 0 h)
-      (Nat.shiftRight (Nat.add (Nat.sub K1U mtd) 1) 1) (Nat.shiftRight (Nat.sub mtd K1U) 1)
-      (Nat.shiftRight (Nat.sub K1D mtu) 1) (Nat.shiftRight (Nat.add (Nat.sub mtu K1D) 1) 1))
-    (mulC mlo M1U) (mulF mlo M1D) (Nat.shiftRight (Nat.add (Nat.sub S mlo) 1) 1)
-
-/-- The cells `(c, d)` are in order, `c ≤ d`, and their lower ends, in the fixed point with the margin, are
-positive. -/
-def okY (Lnum Lden : Nat) : List (Nat × Nat) → Bool
-  | [] => true
-  | c :: cs => Nat.ble c.1 c.2 && Nat.blt 0 (loW Lnum Lden c.1) && okY Lnum Lden cs
-
-/-- **The test at the two corners of a box of cells** `(c, d)` at `L = Lnum/Lden`: the ends `lo = loW c`,
-`hi = hiW d`; the upper corner, with the terms `mkTvH lo hi` and the variable's `m·S` at least
-`⌊L·S⌋ − W2 − Σhi − ⌊(Σhi − Σlo)/11⌋ − 2`, led by `kH` records `hH`; and the lower corner, with the terms
-`mkTv (Σhi − Σlo) lo` and `m ≥ 1`, led by `kL` records `hL`. -/
-def resY (Lnum Lden : Nat) (cells : List (Nat × Nat)) (kH hH kL hL : Nat) : Bool :=
-  (fun ps =>
-    (fun sl sh ltm ls =>
-      (fun need =>
-        okY Lnum Lden cells && Nat.ble need ls &&
-          resTM3 (ps.map fun p => mkTvH p.1 p.2) (Nat.sub ls need) ltm kH hH &&
-          resTM3 (ps.map fun p => mkTv (Nat.sub sh sl) p.1) S ltm kL hL)
-        (Nat.add (Nat.add (Nat.add sh W2) (Nat.div (Nat.sub sh sl) 11)) 2))
-      (sumN (ps.map fun p => p.1)) (sumN (ps.map fun p => p.2))
-      (Nat.add (Nat.div (Nat.add (Nat.mul Lnum S) (Nat.sub (Nat.mul Lden 1000000) 1)) (Nat.mul Lden 1000000)) MG)
-      (Nat.div (Nat.mul Lnum S) Lden))
-    (cells.map fun c => (loW Lnum Lden c.1, hiW Lnum Lden c.2))
 
 end SieveResTest

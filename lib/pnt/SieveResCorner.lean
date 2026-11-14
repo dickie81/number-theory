@@ -4,7 +4,7 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 `SieveResTest.resX` tests the window's condition at a corner that is no point of the box: the rest's lower ends with
-the variable that the rest's upper ends leave. `SieveResTest.resY` (`SieveResTestDefs.lean`) tests the two corners
+the variable that the rest's upper ends leave. `SieveResTest.resY` (`SieveResTestYDefs.lean`) tests the two corners
 that are points of the box, and the record of an interval names the clamp's line and each term's bound, so that the
 kernel does not look for them. This file proves that it gives `SieveTypeIIHM.ResBoxT`, the condition with the
 variable tied to the rest.
@@ -21,9 +21,13 @@ variable tied to the rest.
   with the variable tied to the rest.
 * `resY_sound`: **`resY` gives `ResBoxT`** on the cells' exponents with the margin `2·10⁻⁵`.
 
-The file imports `SieveResLVTest.lean` and `SieveResTight.lean`.
+* `resY_room`: `resY` leaves the variable room: the cells are in order and their upper ends' exponents sum to at
+  most `L − 2·10⁻⁵`; `resYH_eq`: `resYH` is `resY` at the hints that it unpacks.
+
+The file imports `SieveResLVTest.lean`, `SieveResTestYDefs.lean` and `SieveResTight.lean`.
 -/
 import SieveResLVTest
+import SieveResTestYDefs
 import SieveResTight
 
 open Real Finset
@@ -848,8 +852,59 @@ theorem resY_sound {Lnum Lden : ℕ} (hLd : 0 < Lden) {cells : List (ℕ × ℕ)
   rw [hlen] at key
   exact key
 
+/-- The cells' upper ends, as exponents, sum to at most the sum of their fixed-point ends. -/
+lemma sum_getD_le {Lnum Lden : ℕ} (hLd : 0 < Lden) : ∀ cells : List (ℕ × ℕ),
+    ∑ j ∈ Finset.range cells.length, (Lnum : ℝ) / Lden / DEN * ((cells.getD j (0, 0)).2 : ℕ) ≤
+      ((sumN ((cells.map fun c => (loW Lnum Lden c.1, hiW Lnum Lden c.2)).map fun p => p.2) : ℕ) : ℝ) / S
+  | [] => by
+    rw [List.length_nil, Finset.sum_range_zero]
+    exact div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
+  | x :: xs => by
+    rw [List.length_cons, Finset.sum_range_succ', List.map_cons, List.map_cons, sumN_cons]
+    simp only [List.getD_cons_succ, List.getD_cons_zero]
+    have h1 := sum_getD_le (Lnum := Lnum) hLd xs
+    have h2 := hiW_ge (Lnum := Lnum) (Lden := Lden) (d := x.2) hLd
+    push_cast
+    rw [add_div]
+    linarith
+
+/-- **`resY` leaves the variable room**: the cells are in order, and their upper ends' exponents sum to at most
+`L − 2·10⁻⁵`. -/
+theorem resY_room {Lnum Lden : ℕ} (hLd : 0 < Lden) {cells : List (ℕ × ℕ)} {kH hH kL hL : ℕ}
+    (hT : resY Lnum Lden cells kH hH kL hL = true) :
+    (∀ c ∈ cells, c.1 ≤ c.2) ∧
+      ∑ j ∈ Finset.range cells.length, (Lnum : ℝ) / Lden / DEN * ((cells.getD j (0, 0)).2 : ℕ) + 2 / 10 ^ 5 ≤
+        (Lnum : ℝ) / Lden := by
+  have hS := S_pos
+  have hLd' : (0 : ℝ) < Lden := by exact_mod_cast hLd
+  unfold resY at hT
+  dsimp only at hT
+  simp only [Bool.and_eq_true, Nat.ble_eq] at hT
+  obtain ⟨⟨⟨hok, hneed⟩, -⟩, -⟩ := hT
+  refine ⟨fun c hc => (okY_mem hok c hc).1, ?_⟩
+  have h0 := sum_getD_le (Lnum := Lnum) hLd cells
+  generalize sumN ((cells.map fun c => (loW Lnum Lden c.1, hiW Lnum Lden c.2)).map fun p => p.2) = sh at hneed h0
+  generalize sumN ((cells.map fun c => (loW Lnum Lden c.1, hiW Lnum Lden c.2)).map fun p => p.1) = sl at hneed
+  have hneed' : sh + W2 + (sh - sl) / 11 + 2 ≤ Lnum * S / Lden := hneed
+  have h1 : ((sh + W2 : ℕ) : ℝ) ≤ ((Lnum * S / Lden : ℕ) : ℝ) := by
+    exact_mod_cast (by omega : sh + W2 ≤ Lnum * S / Lden)
+  have h2 := div_cast_le (Lnum * S) Lden
+  push_cast at h1 h2
+  have e1 : (Lnum : ℝ) * S / Lden = (Lnum : ℝ) / Lden * S := by field_simp
+  rw [e1] at h2
+  have h3 := W2_ge
+  have h4 : (sh : ℝ) / S + 2 / 10 ^ 5 ≤ (Lnum : ℝ) / Lden := by
+    rw [div_add' _ _ _ hS.ne', div_le_iff₀ hS]
+    linarith
+  linarith
+
+/-- `resYH` is `resY` at the hints that it unpacks. -/
+theorem resYH_eq (Lnum Lden : ℕ) (cells : List (ℕ × ℕ)) (s : ℕ) :
+    ∃ kH hH kL hL, resYH Lnum Lden cells s = resY Lnum Lden cells kH hH kL hL := ⟨_, _, _, _, rfl⟩
+
 end SieveResTest
 
 #print axioms SieveResTest.resTM3_sound
 #print axioms SieveResTest.two_corner
 #print axioms SieveResTest.resY_sound
+#print axioms SieveResTest.resY_room

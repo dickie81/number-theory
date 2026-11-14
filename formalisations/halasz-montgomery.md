@@ -157,6 +157,30 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   cofactor (`frozCof_facts`), in the cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`; the frozen tuples
   `(a, y, c, y′)` have one prime `y′`, in the rest with the frozen primes and the chain's (`evIF_frozP_resC`).
   `frozResTestsC` reads `chkIRF` (with the bit clear, `chkIR`), so `SieveAd.rules_frozResC` covers it;
+- `SieveResTest.resY_sound` (`lib/pnt/SieveResCorner.lean`; the test `SieveResTest.resY`, and `resYH` with its
+  hints in one number, in `lib/pnt/SieveResTestYDefs.lean`, written by `tools/linnik/res_test.py`): **the window's
+  test at the two corners of a box of cells**. `resX` tests the window at a corner that is no point of the box, the
+  rest's lower ends with the variable that the rest's upper ends leave. On a box the rest and the variable make up
+  `q^L`, so the condition is needed only with the variable tied to the rest, `SieveTypeIIHM.ResBoxT`
+  (`lib/pnt/SieveResTight.lean`): the rest's exponents in their cells and `Σ_j s_j + m ≥ L − 2·10⁻⁵`. `resY` gives
+  it from the bound at the box's upper corner, with the large values' thresholds of the cells and the variable
+  shorter by `1/11` of the box's width, and the bound with no clamp at its lower corner (`two_corner`: a class of
+  characters at a point of the box is carried to the upper corner with the sizes `t′ = 1/2 + (s/s′)(t − 1/2)`); the
+  record of an interval names the clamp's line and each term's bound, so the kernel does not look for them.
+  `SieveTypeIIHM.fullEst_of_tight` (`lib/pnt/SieveResTight.lean`): `ResBoxT` on a box gives the estimate of the
+  tuples of primes with the rest in its cells (`FullEst`, what `full_res_exp` gives): the family is cut by a
+  sub-cell of width `1/(4·10⁵(n + 1))` of each rest prime, a fixed number of families, and `full_res_exp` applies to
+  each (`resBox_of_tight`). The terms' evaluations with `FullEst` as a hypothesis, their proofs those of
+  `chain_res_exp`, `chain_res_cof`, `evIF_froz_res` and `evIF_froz_resC`: `SieveTypeIIHM.chain_res_gen`
+  (`lib/pnt/SieveResTermG.lean`), `chain_res_cofG` (`lib/pnt/SieveResCofG.lean`), `SieveAd.evIF_froz_gen`
+  (`lib/pnt/SieveAdFrozResG.lean`) and `evIF_froz_genC` (`lib/pnt/SieveAdFrozResCofG.lean`). In the search
+  (`lib/pnt/SieveAdResYDefs.lean`: the tests `SieveAd.chkIRY` of a box of the main tree and `chkIRFY` of a box
+  `ch ++ β` over a frozen part, each with the cofactor's cell when its bit is set; `resTestsFY`, `frozResTestsY`,
+  which read them for an evaluation of kind `4` and are `resTestsFC`, `frozResTestsC` otherwise; the decoders
+  `SieveAd.cfgIMY`, `cfgIFY`; the search `altFDY`): `SieveAd.resTestsFY_sound` (`lib/pnt/SieveAdResY.lean`), the
+  tests of the main tree are sound, and `SieveAd.pr_of_partDY_at` (`lib/pnt/SieveAdFrozResYTree.lean`, with
+  `evIF_froz_resTY` of `lib/pnt/SieveAdFrozResY.lean`), a part of the search whose trees over the frozen parts read
+  them bounds its term. The existing modules are unchanged. No certificate uses them yet;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
