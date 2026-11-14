@@ -312,6 +312,82 @@ def hint(Lnum, Lden, cs, hs):
 
 
 # ---------------------------------------------------------------------------------------------------------------
+# A quick filter in floats: the same bound evaluated by bisection on gamma, with a small allowance in favour of
+# passing, so that a box it rejects has no hint (the planner then skips the search for one).
+
+_HF = [(float(lo), float(hi), float(A)) for lo, hi, A in HUX]
+_TF = [A * (1 - lo) for lo, hi, A in _HF]
+_CHI = float(CONST_HI)
+
+
+def _pc(a):
+    for i, t in enumerate(_TF):
+        if a <= t:
+            return i
+    return NP
+
+
+def _bm(a):
+    i = _pc(a)
+    if i == NP:
+        return _CHI
+    lo, hi, A = _HF[i]
+    return min(hi, 1 - a / A)
+
+
+def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
+    """Whether the bound may hold for the rest `cs`, `hs` (floats; `False` means the kernel's test fails)."""
+    import math
+    L = Lnum / Lden
+    kq = L / DEN
+    los = [kq * (c - 1) for c in cs]
+    if not los or min(los) <= 0 or hs + 1 >= DEN:
+        return False
+    m = kq * (DEN - hs - 1)
+    w, tau, marg = 4e-6, 1e-6, 1 / 25000
+    c1 = max(1 - m, 0) / 2
+    y0 = (5 / 12 + 3 / 1000 - m * (11 / 12 + 1 / 1000)) / 2
+    thr = -marg - L * tau + slack
+    if -sum(lo * (1 - w - 11 / 12) for lo in los) + min(c1, max(0.0, y0)) > thr:
+        return False
+    ks = []
+    for lo in los:
+        k0 = max(1, math.ceil(1 / lo - 1e-12))
+        ks.append([(max(1 - k * lo, 0) / (2 * k), -1 / (2 * k)) for k in (k0 - 1, k0) if k >= 1])
+    # the bound itself at a few points: every line is above it, so where it exceeds the threshold the test fails
+    for g in (0.0, 0.17, 0.26, 0.34, 0.4, 0.45, 0.5, 0.75, 1.0):
+        v = g / 2 + min(c1, max(0.0, g / 2 + y0))
+        b = _bm(g) + w - 1
+        for lo, mk in zip(los, ks):
+            v += min([lo * b] + [p0 + p1 * g for p0, p1 in mk])
+        if v > thr:
+            return False
+
+    def check(a, b, fuel):
+        ya, yb = a / 2 + y0, b / 2 + y0
+        cl = min((max(0.0, yb), 0.0), (y0 + max(0.0, -ya), 0.5), (c1, 0.0), key=lambda l: 2 * l[0] + l[1] * (a + b))
+        t0, t1 = cl[0], cl[1] + 0.5
+        ia, ib = _pc(a), _pc(b)
+        dS = 1 - w - _bm(a)
+        if ib == NP:
+            ia_inv = 0.0
+        else:
+            ia_inv = min(1 / _HF[ia][2] if ia < NP else 0.0, 1 / _HF[ib][2])
+        for lo, mk in zip(los, ks):
+            cand = list(mk) + [(-lo * dS, 0.0), (lo * w, -lo * ia_inv)]
+            best = min(cand, key=lambda l: 2 * l[0] + l[1] * (a + b))
+            t0 += best[0]
+            t1 += best[1]
+        if t0 + t1 * a <= thr and t0 + t1 * b <= thr:
+            return True
+        if fuel == 0:
+            return False
+        mid = (a + b) / 2
+        return check(a, mid, fuel - 1) and check(mid, b, fuel - 1)
+    return check(0.0, 1.0, fuel)
+
+
+# ---------------------------------------------------------------------------------------------------------------
 # The Lean file.
 
 def lean():

@@ -92,7 +92,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import tree_cert as tc  # noqa: E402
 import rev_cert as rc  # noqa: E402
-import fill_cert as fc  # noqa: E402
+import fill_cert as fc
+import res_test as rt  # noqa: E402
 import flip_cert as fl  # noqa: E402
 from tree_cert import DEN, K, BIG, cdiv, tsub, loSum, hiSum, dropCost  # noqa: E402
 from rev_cert import bdK, CAPK  # noqa: E402
@@ -453,6 +454,37 @@ class Planner(fl.FlipSearch):
             return lim, None
         return cdiv(cc * A + B, DEN * K), ('P' if pos else 'F', sel) + ns
 
+    # the resonant window (`SieveAd.chkIR`): a rest of at least two of the box's primes, in the main tree
+    res = False
+    resmemo = None
+
+    def resHint(self, bl):
+        """`(mask, k, h)` for a rest of the main tree's box `bl` that the kernel's test passes with its hint, or
+        `None`: the rests of at least two primes, in the order of their masks."""
+        if not self.res or self.frz is not None or len(bl) > 13:
+            return None
+        if any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
+            return None
+        if self.resmemo is None:
+            self.resmemo = {}
+        n, ln, ld = len(bl), self.T.Ln, self.T.Ld
+        for mask in range(3, 1 << n):
+            if mask & (mask - 1) == 0:
+                continue
+            cs = tuple(bl[p][0] for p in range(n) if mask >> p & 1)
+            hs = sum(bl[p][1] for p in range(n) if mask >> p & 1)
+            if not rt.quick(ln, ld, list(cs), hs):
+                continue
+            key = (cs, hs)
+            r = self.resmemo.get(key, 0)
+            if r == 0:
+                r = rt.hint(ln, ld, list(cs), hs)
+                self.resmemo[key] = r
+            if r is not None:
+                self.stat['res'] = self.stat.get('res', 0) + 1
+                return (mask,) + r
+        return None
+
     def pSolve(self, O, S, n, bl, par, lim):
         self.minfuel = min(self.minfuel, n)
         if n == 0 or not bl or not O.grd(bl):
@@ -462,6 +494,9 @@ class Planner(fl.FlipSearch):
             return 0, ('V',)
         if self.anyI(bl):
             return 0, ('E',)
+        rh = self.resHint(bl)
+        if rh is not None:
+            return 0, ('R',) + rh
         x, fz, lam = bl[0], self.frz is not None, self.lamK
         skip, sib = self.skip, self.sib
         dc = O.drp(bl, par)
@@ -582,6 +617,25 @@ class Planner(fl.FlipSearch):
     def cfgIM(self, bl, h):
         return self.cfgIP(2 ** len(bl), h)
 
+    def cfgIPR(self, pw, h):
+        """`SieveAd.cfgIPR`: `0` and `cfgIP`'s code, or `1`, the rest, ten bits `nb` and the hint's `nb` bits."""
+        if h & 1 == 0:
+            return self.cfgIP(pw, h >> 1)
+        h1 = h >> 1
+        nb, h2 = (h1 // pw) % 1024, (h1 // pw) // 1024
+        return (3, 0, h1 % pw, h2 % (1 << nb), False), h2 >> nb
+
+    def cfgIMR(self, bl, h):
+        return self.cfgIPR(2 ** len(bl), h)
+
+    def chkIR(self, bl, sr, k, h):
+        """`SieveAd.chkIR`."""
+        if len(bl) > 13 or any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
+            return False
+        cs = [bl[p][0] for p in range(len(bl)) if sr >> p & 1]
+        hs = sum(bl[p][1] for p in range(len(bl)) if sr >> p & 1)
+        return bool(cs) and rt.resT(self.T.Ln, self.T.Ld, cs, hs, k, h)
+
     def cfgJM(self, bl, h):
         sel = h & 15
         _, lm, lo, hi, pw = self.pickP(bl, 2 ** (sel // 2))
@@ -678,6 +732,8 @@ class Planner(fl.FlipSearch):
 
     # the search (stepD, solveD)
     def okIm(self, bl, cfg):
+        if self.frz is None and self.res and cfg[0] == 3:
+            return self.chkIR(bl, cfg[2], cfg[3] & 15, cfg[3] >> 4)
         return self.T.okI(bl, cfg) if self.frz is None else self.okIF(bl, cfg)
 
     def dStep(self, O, dI, dJ, kd, altH, rec, bl, par, lim, h):
@@ -764,7 +820,8 @@ class Planner(fl.FlipSearch):
     def dCheck(self, bl, par, lim, h):
         """`solveD opsMP fillTestsF cfgIM cfgJM (kidsM κ hI) (altFD κ hF fuel maxlen) fuel bl par lim h`."""
         O = rc.Ops(lambda b: True, tc.vanishOK, tc.dropC, lambda b, p, l: l)
-        return self.dSolve(O, self.cfgIM, self.cfgJM, self.kdM, self.dAltF, self.fuel, bl, par, lim, h)
+        return self.dSolve(O, self.cfgIMR if self.res else self.cfgIM, self.cfgJM, self.kdM, self.dAltF, self.fuel,
+                           bl, par, lim, h)
 
     # the hints of a plan
     def kidCells(self, cuts, f, top, bits):
@@ -807,9 +864,17 @@ class Planner(fl.FlipSearch):
             return [(sel, 4), (cfg[1], w), (0, 1)]
         return [(sel, 4), (cfg[1], w), (1, 1), (cfg[3], w), (int(cfg[4]), 1)]
 
-    def evalFields(self, cfg, w):
+    def evalFields(self, cfg, w, res=False):
         j = cfg[2].bit_length() - 1
-        return [(0, 1)] + ([(0, 1)] if j == 0 else [(1, 1), (j, 3)]) + [(cfg[1], w)]
+        return [(0, 1)] + ([(0, 1)] if res else []) + ([(0, 1)] if j == 0 else [(1, 1), (j, 3)]) + [(cfg[1], w)]
+
+    def resFields(self, node, w):
+        """A resonant leaf `('R', mask, k, h)`: the evaluation's bit, `1`, the rest, ten bits `nb`, the hint."""
+        mask, k, h = node[1:]
+        data = k | h << 4
+        nb = data.bit_length()
+        assert 0 < nb < 1024 and mask < 1 << w
+        return [(0, 1), (1, 1), (mask, w), (nb, 10), (data, nb)]
 
     def dserF(self, ctx, beta, node, bl, par, out):
         """A node of a tree over a frozen part."""
@@ -850,7 +915,10 @@ class Planner(fl.FlipSearch):
         elif kind == 'E':
             cf = self.propI2(bl, loSum(bl))
             assert cf and self.T.okI(bl, cf[0])
-            out.extend(self.evalFields(cf[0], w))
+            out.extend(self.evalFields(cf[0], w, self.res))
+        elif kind == 'R':
+            assert self.chkIR(bl, node[1], node[2], node[3])
+            out.extend(self.resFields(node, w))
         elif kind == 'D':
             out.append((3, 3))
         elif kind == 'S':
@@ -908,7 +976,7 @@ class Par:
 
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
-                 blk=1, blkF=None, skip=0, skipmin=30, energy=False):
+                 blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1` or `SEC2`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
@@ -920,7 +988,7 @@ class Par:
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
-        self.skip, self.skipmin, self.energy = skip, skipmin, energy
+        self.skip, self.skipmin, self.energy, self.res = skip, skipmin, energy, res
         self.h, self.hI, self.depth, self.kappa = h, round(h * DEN), depth, kappa
         self.depthR, self.hR, self.hQ = depthR, round(hR * DEN), round(hQ * DEN)
         self.hF, self.depthF, self.maxlen = round(hF * DEN), depthF, maxlen
@@ -936,6 +1004,7 @@ class Par:
         P.lamK, P.pos, P.blk, P.blkF = self.lam * K // 10 ** 6, self.pos, self.blk, self.blkF
         P.skip, P.skipmin = self.skip, self.skipmin
         P.T.energy = self.energy
+        P.res = self.res
         P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
         return P
 
@@ -951,6 +1020,9 @@ SEC1 = {('E', False): 4.0e-4, ('E', True): 1.05e-3, ('V', False): 1.3e-4, ('V', 
         ('S', False): 2.6e-4, ('S', True): 2.6e-4}
 SEC2 = dict(SEC1)
 SEC2.update({('E', True): 6.5e-4, ('B', True): 1.4e-3, ('D', True): 5.9e-4, ('P', False): 3.9e-3})
+for _t in (SEC1, SEC2):
+    _t[('R', False)] = _t[('E', False)] + 1.6e-4
+    _t[('R', True)] = _t[('E', True)] + 1.6e-4
 SEC = SEC1
 
 
@@ -1134,6 +1206,11 @@ def part_stmt(par_, k, p):
 
 def defs_file(par_):
     T, LN = par_.tag, f'{par_.lnum}/{par_.lden}'
+    res = getattr(par_, 'res', False)
+    tests, cfgI = ('resTestsF', 'cfgIMR') if res else ('fillTestsF', 'cfgIM')
+    dimp = 'SieveAdResDefs' if res else 'SieveAdDirDefs'
+    resdoc = ('With the resonant window: an evaluation of kind `3` in the main tree is `SieveAd.chkIR`\'s\n'
+              '(`SieveAd.resTestsF`), its configuration read by `SieveAd.cfgIMR`.\n\n' if res else '')
     return f"""/-
 # The exponent and the search led by hints at `L = {LN}`
 
@@ -1152,10 +1229,10 @@ The bilinear Type I rule's exponent `{LN}` (`ibPar{T}`), and `solve{T}`, the sea
   at most `{par_.hF}/DEN` (`{par_.hFf}`);
 * the depth of recursion `{fc.FUEL}`.
 
-The file imports `SieveAdDirDefs.lean`; so neither it nor the part files (`SieveHint{T}P1.lean` …) load more of
+{resdoc}The file imports `{dimp}.lean`; so neither it nor the part files (`SieveHint{T}P1.lean` …) load more of
 `Mathlib` than `Mathlib.Data.Nat.Notation`.
 -/
-import SieveAdDirDefs
+import {dimp}
 
 namespace SieveCert
 
@@ -1170,7 +1247,7 @@ open SieveCert
 
 /-- **The search led by hints at `{LN}`**, with the reversal through the largest prime as its hinted bound. -/
 noncomputable def solve{T} : List Cell → Bool → ℕ → ℕ → ℕ × ℕ :=
-  solveD opsMP (@fillTestsF ibPar{T}) cfgIM (@cfgJM ibPar{T}) (kidsM {par_.kappa} {par_.hI})
+  solveD opsMP (@{tests} ibPar{T}) {cfgI} (@cfgJM ibPar{T}) (kidsM {par_.kappa} {par_.hI})
     (@altFD ibPar{T} {par_.kappa} {par_.hF} {fc.FUEL} {par_.maxlen}) {fc.FUEL}
 
 end SieveAd
@@ -1269,6 +1346,15 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
                   'number (`SieveAdFlipDefs.lean`)')
         flips = f'{nflip} of them reversals through the largest prime'
     imports = '\n'.join(f'import SieveHint{T}P{i}' for i in range(1, nfiles + 1))
+    res = getattr(par_, 'res', False)
+    cfgI = 'cfgIMR' if res else 'cfgIM'
+    resimp = 'import SieveAdRes\n' if res else ''
+    if res:
+        soundF = (f'/-- The tests in one pass with the resonant window at `{LN}` are sound. -/\n'
+                  f'theorem soundF{T} : (resTestsF).Sound := resTestsF_sound\n')
+    else:
+        soundF = (f'/-- The tests in one pass at `{LN}` are sound: they are the tests. -/\n'
+                  f'theorem soundF{T} : (fillTestsF).Sound := by\n  rw [fillTestsF_eq]\n  exact fillTests_sound\n')
     plain = textwrap.fill(
         f'Plain statement (`linnik_{T}`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there '
         f'is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`, with no hypothesis. The route is at `L = {LN}` '
@@ -1313,7 +1399,7 @@ The file imports `SieveAdDir.lean`, `SieveAdFill.lean` and the part files.
 -/
 import SieveAdDir
 import SieveAdFill
-{imports}
+{resimp}{imports}
 
 namespace Linnik{T}
 
@@ -1339,15 +1425,12 @@ attribute [local instance] route{T} routeOK{T} ibPar{T} ibFits{T}
 /-- The tests at `{LN}` are sound. -/
 theorem sound{T} : (fillTests).Sound := fillTests_sound
 
-/-- The tests in one pass at `{LN}` are sound: they are the tests. -/
-theorem soundF{T} : (fillTestsF).Sound := by
-  rw [fillTestsF_eq]
-  exact fillTests_sound
+{soundF}
 
 /-- **A part of the search bounds its term**: `SieveAd.pr_of_partD` at the route. -/
 theorem part{T} {{top : ℕ}} {{bl : List Cell}} {{par : Bool}} {{cs : List ℕ}} {{a c h : ℕ}}
     (hk : (partD solve{T} top bl par cs a K h).1 ≤ c) (hc : c < K) : PR ((a, top) :: bl) par c :=
-  pr_of_partD soundF{T} cfgIM cfgJM {par_.kappa} {par_.hI} {par_.hF} {fc.FUEL} {par_.maxlen} {fc.FUEL} hk hc
+  pr_of_partD soundF{T} {cfgI} cfgJM {par_.kappa} {par_.hI} {par_.hF} {fc.FUEL} {par_.maxlen} {fc.FUEL} hk hc
 
 {chr(10).join(n + chr(10) for n in nodes)}
 /-- **The first term at `{LN}`**: the term of the box of the first prime, with the cell `({f0}, DEN/2 + 1)`, of the
@@ -1393,7 +1476,7 @@ def main():
                    lam=int(a[a.index('--lam') + 1]) if '--lam' in a else 0, pos='--pos' in a,
                    blk=int(a[a.index('--blk') + 1]) if '--blk' in a else 1,
                    skip=int(a[a.index('--skip') + 1]) if '--skip' in a else 0,
-                   sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a)
+                   sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a, res='--res' in a)
         rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache'):
         par_, rows = Par(tag, **CERTS[tag]), None
