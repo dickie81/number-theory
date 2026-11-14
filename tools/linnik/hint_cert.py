@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] | --try TAG a/b H HF MAXLEN [--lam N]
-[--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J] [--rows I J]
-[--out DIR]: the search with the reversal through the largest prime as a plan, the hints that lead the kernel through
-the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is
-given).
+[--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J] [--depth N]
+[--rows I J] [--out DIR]: the search with the reversal through the largest prime as a plan, the hints that lead the
+kernel through the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at
+L = 2150/1000, if none is given).
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
 it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
@@ -1732,7 +1732,8 @@ def main():
                    sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a,
                    res='--res' in a or '--resF' in a or '--cof' in a, resF='--resF' in a, cof='--cof' in a,
                    lv='--lv' in a, lazy='--lazy' in a, rmerge='--rmerge' in a,
-                   split=int(a[a.index('--split') + 1]) if '--split' in a else 0)
+                   split=int(a[a.index('--split') + 1]) if '--split' in a else 0,
+                   depth=int(a[a.index('--depth') + 1]) if '--depth' in a else 6)
         rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache'):
         par_, rows = Par(tag, **CERTS[tag]), None
