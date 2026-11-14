@@ -113,8 +113,15 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
 - `SieveTypeIIHM.box_res_gen` and `SieveTypeIIHM.chain_res_core` (`lib/pnt/SieveResFull.lean`): `typeII_res` for a
   polynomial over a finite set with at most `D` elements for each value, and the families of tuples of primes in
   no order (`SieveTwoChain.chain_two_core`'s) with one variable, the product of the entries outside a rest whose
-  entries have their own lower bounds. Nothing uses them yet: the kernel's test of `ResCond` on a box's cells is to
-  come;
+  entries have their own lower bounds. Nothing uses them yet;
+- `SieveResTest.resT_sound` and `SieveResTest.resT_sound_cells` (`lib/pnt/SieveResTest.lean`; the test
+  `SieveResTest.resT` in `lib/pnt/SieveResTestDefs.lean`, written by `tools/linnik/res_test.py`): the kernel's test
+  of `ResBox` on the curve `ghx` for a box's rest, led by a hint, is sound. The test bounds, for every count
+  exponent `γ`, the sum over the rest's primes of the least of the half-plane's bound and the moments' bounds, plus
+  `γ/2` and the Halász–Montgomery inequalities' clamp: `γ ≤ 0` by the half-plane at `11/12`, and `[0, 1]` cut by the
+  hint into intervals, on each of which the hint names a line above each term (the moments' lines of `k₀ − 1` and
+  `k₀ = ⌈1/lo⌉`, the curve's bound at the interval's left end, or the line `1 − γ/A` with `A` the larger of the end
+  steps' factors), checked at the interval's ends in fixed point (`2^64`). Nothing uses it yet;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
