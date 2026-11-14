@@ -44,6 +44,11 @@ OUT = ROOT / 'lib' / 'pnt' / 'SieveResTestDefs.lean'
 S = 1 << 64
 DEN = 1 << 40
 G24 = 24
+GB = int(os.environ.get('RES_GRID', G24))         # the hint's grid `2^-GB`: the Lean's is `2^-24`
+EB, SH = GB + 1, 64 - GB                              # an end's bits and its shift to `S`
+EMASK = (1 << EB) - 1
+# the points at which a hint's lines are tried (measurement: `RES_MID=1`, the midpoint alone)
+LAMS = (0.5,) if os.environ.get('RES_MID') else (0.5, 0.0, 1.0, 0.25, 0.75, 0.1, 0.9)
 SLOT = 96
 W = Fr(4, 10 ** 6)
 TAU = Fr(1, 10 ** 6)
@@ -60,7 +65,7 @@ CONST_HI = _P[0][1]                                   # 7789/10000 for ghx
 TOPS = [A * (1 - lo) for lo, hi, A in HUX]
 PK = max(range(NP), key=lambda i: (HUX[i][2], -i))    # the first step of the largest A (the last one for ghx)
 PB = max(5, NP.bit_length())                          # the bits of a record's piece: 5 for ghx
-CB = 25 + PB                                          # where the clamp's two bits start (30 for ghx)
+CB = EB + PB                                          # where the clamp's two bits start (30 for ghx)
 TB = CB + 2                                           # where the terms' bits start (32 for ghx)
 PMASK = (1 << PB) - 1
 
@@ -156,7 +161,7 @@ TFT, TFTM, TIA, TDH = pack(FT), pack(FTM), pack(IA), pack(DH)
 
 
 def intv(ts, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
-    b, pb, cc = (r & 0x1FFFFFF) << 40, (r >> 25) & PMASK, (r >> CB) & 3
+    b, pb, cc = (r & EMASK) << SH, (r >> EB) & PMASK, (r >> CB) & 3
     if not (pb <= NP and get(TFTM, pb) < b and b <= get(TFT, pb) and a <= b):
         return False
     dS = max(get(TDH, pa), sub(mulF(a, get(TIA, pa)), WC))
@@ -191,7 +196,7 @@ def resT(Lnum, Lden, cs, hs, k, h):
         r = h & ((1 << w) - 1)
         if not intv(ts, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
             return False
-        a, pa, h = (r & 0x1FFFFFF) << 40, (r >> 25) & PMASK, h >> w
+        a, pa, h = (r & EMASK) << SH, (r >> EB) & PMASK, h >> w
     return a == S
 
 
@@ -216,14 +221,14 @@ class Box:
         self.y0 = self.yuP - self.yuN
 
     def rec(self, e, pb, ch, cc):
-        r = e | pb << 25 | cc << CB
+        r = e | pb << EB | cc << CB
         for j, c in enumerate(ch):
             r |= c << (TB + 2 * j)
         return r
 
     def try_choice(self, aS, pa, e, pb):
         """Some choices that pass on [a, e 2^-24], as a record, or None."""
-        bS = e << 40
+        bS = e << SH
         ts = self.ts
         dS = max(DH[pa], sub(mulF(aS, IA[pa]), WC))
         iax = min(IA[pa], IA[pb])
@@ -239,7 +244,7 @@ class Box:
         lines = []
         for lo, a0, a1, b1, lw in ts:
             lines.append([(a0, 0, 0, a1), (0, 0, 0, b1), (0, 0, mulF(lo, dS), 0), (lw, 0, 0, mulF(lo, iax))])
-        for lam in (0.5, 0.0, 1.0, 0.25, 0.75, 0.1, 0.9):
+        for lam in LAMS:
             xS = int(lam * aS + (1 - lam) * bS)
             ch = [min(range(4), key=lambda i: v(ln[i], xS)) for ln in lines]
             cc = min(range(3), key=lambda i: v((cl[i][0], cl[i][1], cl[i][2], 0), xS))
@@ -262,8 +267,8 @@ class Box:
                 pts.add(k0 * sub(S, (k0 - 1) * lo))
         out = set()
         for x in pts:
-            e = x >> 40
-            if 0 < e < 1 << G24:
+            e = x >> SH
+            if 0 < e < 1 << GB:
                 out.add(e)
                 out.add(e + 1)
         return sorted(out)
@@ -277,11 +282,11 @@ class Box:
         while aS < S:
             if len(recs) >= maxint:
                 return None
-            a24 = aS >> 40
+            a24 = aS >> SH
 
             def feas(e):
-                return self.try_choice(aS, pa, e, piece_of(e << 40))
-            r = feas(1 << G24)
+                return self.try_choice(aS, pa, e, piece_of(e << SH))
+            r = feas(1 << GB)
             if r is None:
                 cand = [e for e in K if e > a24]
                 lo_e, best = a24, None
@@ -289,7 +294,7 @@ class Box:
                     rr = feas(e)
                     if rr is not None:
                         lo_e, best = e, rr
-                hi_e = next((e for e in cand if e > lo_e), 1 << G24)
+                hi_e = next((e for e in cand if e > lo_e), 1 << GB)
                 while hi_e - lo_e > 1:
                     mid = (lo_e + hi_e) // 2
                     rr = feas(mid)
@@ -301,7 +306,7 @@ class Box:
                     return None
                 r = best
             recs.append(r)
-            aS, pa = (r & 0x1FFFFFF) << 40, (r >> 25) & PMASK
+            aS, pa = (r & EMASK) << SH, (r >> EB) & PMASK
         w = TB + 2 * len(self.ts)
         h = 0
         for i, r in enumerate(recs):
@@ -612,6 +617,8 @@ end SieveResTest
 
 
 def main():
+    if GB != G24:
+        sys.exit('RES_GRID is for measurement only: the Lean file has the grid 2^-24')
     ap = argparse.ArgumentParser()
     ap.add_argument('--check', action='store_true')
     a = ap.parse_args()
