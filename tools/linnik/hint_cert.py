@@ -2,7 +2,7 @@
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] [--rows I J [STEP]] [--plan-only] | --try TAG a/b
 H HF MAXLEN [--lam N]
 [--depth N] [--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J]
-[--rows I J] [--out DIR]:
+[--ycorner] [--rows I J] [--out DIR]:
 the search with the reversal through the largest prime as a plan, the hints that lead the kernel through the plan,
 and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
 
@@ -490,7 +490,16 @@ class Planner(fl.FlipSearch):
     # when the plan is written (`resolve`): `('R', mask, -1, key)` until then
     res_merge = False    # consecutive cells of a new prime that the window evaluates are one cell while one test
     # covers them (as the evaluated cells are)
+    res_y = False        # where the window's test fails, the test at the two corners of the box of a rest's cells,
+    # the variable tied to the rest (`SieveResTest.resY`; the tests `SieveAd.resTestsFY`, `frozResTestsY`): a leaf
+    # `('R', mask, 'Y', s)` with the hints `s` in one number, `('R', mask, -2, key)` until they are found
     resmemo = None
+
+    def hintY(self, cells):
+        """`('Y', s)` with the hints `s` of `resYH` for the cells, or `None`."""
+        hy = rt.hintY(self.T.Ln, self.T.Ld, list(cells), fast=self.res_lazy)
+        s = None if hy is None else rt.packY(len(cells), *hy)
+        return None if s is None else ('Y', s)
 
     def resHint(self, bl, probe=False):
         """`(mask, k, h)` for a rest of the box `bl` that the kernel's test passes with its hint, or `None`: the
@@ -562,6 +571,32 @@ class Planner(fl.FlipSearch):
                 if not probe:
                     self.stat['res'] = self.stat.get('res', 0) + 1
                 return (mask,) + r
+        if self.res_y and not cofm:
+            # no rest passes the window's test: the test at the two corners of the box of a rest's cells
+            for mask in range(3, 1 << nch):
+                if mask & (mask - 1) == 0:
+                    continue
+                cells = tuple(tuple(bl[p]) for p in range(n) if mask >> p & 1)
+                if sum(c[1] for c in cells) < need:
+                    continue
+                key = ('Y', cells)
+                r = self.resmemo.get(key, 0)
+                if r == 0 and probe:
+                    if rt.quickY(ln, ld, cells, lv=self.res_lv):
+                        return (mask, -2, key)
+                    continue
+                if r == 0:
+                    if not rt.quickY(ln, ld, cells, lv=self.res_lv, strict=False):
+                        r = None
+                    elif self.res_lazy and rt.quickY(ln, ld, cells, lv=self.res_lv):
+                        r = (-2, key)
+                    else:
+                        r = self.hintY(cells)
+                    self.resmemo[key] = r
+                if r is not None:
+                    if not probe:
+                        self.stat['resy'] = self.stat.get('resy', 0) + 1
+                    return (mask,) + r
         return None
 
     # a box that the plan does not evaluate is cut in two (the kernel's step `S`) when the top `1/2^j` of its first
@@ -747,6 +782,71 @@ class Planner(fl.FlipSearch):
     def cfgIMR(self, bl, h):
         return self.cfgIPR(2 ** len(bl), h)
 
+    def cfgIPY(self, pw, h):
+        """`SieveAd.cfgIPY`: by the two low bits: `0` in the first, `cfgIPR`'s code; `1` then `0`, `cfgIPR`'s window
+        code after them; `1` and `1`, the rest and the hints of `resYH`, `12 + (15 + 3n)(kH + kL)` bits, as the
+        configuration of kind `4`."""
+        if h & 3 == 3:
+            h1 = h >> 2
+            sr, h2 = h1 % pw, h1 // pw
+            p = 1 << (12 + (15 + 3 * (h2 % 16)) * ((h2 // 16) % 16 + (h2 // 256) % 16))
+            return (4, 0, sr, h2 % p, False), h2 // p
+        if h & 3 == 1:
+            return self.cfgIPR(pw, 1 + 2 * (h >> 2))
+        return self.cfgIPR(pw, h)
+
+    def cfgIMY(self, bl, h):
+        """`SieveAd.cfgIMY`."""
+        return self.cfgIPY(2 ** (len(bl) + 1), h)
+
+    def cfgIFY(self, bl, h):
+        """`SieveAd.cfgIFY`."""
+        return self.cfgIPY(2 ** (len(bl) + 1), h)
+
+    def chkIRY(self, bl, sr, s):
+        """`SieveAd.chkIRY`: `resYH` on the cells of the rest `sr`, with the cofactor's cell after them when the bit
+        after the box's cells is set, under `chkIRC`'s conditions."""
+        n = len(bl)
+        if n > 13 or any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
+            return False
+        cells = [tuple(bl[p]) for p in range(n) if sr >> p & 1]
+        if not cells:
+            return False
+        if sr >> n & 1:
+            slo, shi, lk = loSum(bl), hiSum(bl), bl[0][0]
+            if not (shi + 2 <= DEN and DEN + 1 <= slo + 2 * lk):
+                return False
+            cells = cells + [(max(tsub(tsub(DEN, shi), 1), lk), tsub(DEN, slo) + 1)]
+        return rt.resYH(self.T.Ln, self.T.Ld, cells, s)
+
+    def chkIRFY(self, e1, e2, beta, bl, sr, s):
+        """`SieveAd.chkIRFY`: `chkIRY` on the box `ch ++ β` of a tree over a frozen part, the chain's cofactor's
+        cell and its conditions those of `chkIRF`."""
+        n = len(bl)
+        if n > 13 or any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
+            return False
+        cells = [tuple(bl[p]) for p in range(n) if sr >> p & 1]
+        if not cells:
+            return False
+        if sr >> n & 1:
+            slo, shi = tsub(loSum(bl), loSum(beta)), tsub(hiSum(bl), hiSum(beta))
+            lk = bl[0][0] if bl else 0
+            if not (e2 + shi + 2 <= DEN and DEN + 1 <= e1 + slo + 2 * lk):
+                return False
+            cells = cells + [(max(tsub(tsub(tsub(DEN, e2), shi), 1), lk), tsub(tsub(DEN, e1), slo) + 1)]
+        return rt.resYH(self.T.Ln, self.T.Ld, cells, s)
+
+    def chkNode(self, bl, node, beta=None):
+        """The kernel's test of the window's leaf `node` on the box `bl` (of a tree over the frozen primes `beta`
+        if given)."""
+        if node[2] == 'Y':
+            if beta is not None:
+                return self.chkIRFY(self.frz[0], self.frz[1], beta, bl, node[1], node[3])
+            return self.chkIRY(bl, node[1], node[3])
+        if beta is not None:
+            return self.chkIRF(self.frz[0], self.frz[1], beta, bl, node[1], node[2], node[3])
+        return (self.chkIRC if self.res_cof is True else self.chkIR)(bl, node[1], node[2], node[3])
+
     def chkIR(self, bl, sr, k, h):
         """`SieveAd.chkIR`."""
         if len(bl) > 13 or any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
@@ -898,6 +998,10 @@ class Planner(fl.FlipSearch):
 
     # the search (stepD, solveD)
     def okIm(self, bl, cfg):
+        if self.res_y and cfg[0] == 4:
+            if self.frz is not None:
+                return self.chkIRFY(self.frz[0], self.frz[1], self.frz[3], bl, cfg[2], cfg[3])
+            return self.chkIRY(bl, cfg[2], cfg[3])
         if (self.res if self.frz is None else self.res_frozen) and cfg[0] == 3:
             if self.frz is not None:
                 return self.chkIRF(self.frz[0], self.frz[1], self.frz[3], bl, cfg[2], cfg[3] & 15, cfg[3] >> 4)
@@ -957,7 +1061,7 @@ class Planner(fl.FlipSearch):
             return self.dKidsC(rec, top, b, p, self.parF(ctx, nb, b, top), ff, l, hh)
 
         def rec(b, p, l, hh):
-            return self.dSolve(O, self.cfgIFR if self.res_frozen else self.cfgIF, dJ, kd,
+            return self.dSolve(O, self.cfgIFY if self.res_y else self.cfgIFR if self.res_frozen else self.cfgIF, dJ, kd,
                                lambda b2, p2, l2, h2: (l2, h2), self.fuel, b, p, l, hh)
         return Kb, O, dJ, kd, rec
 
@@ -990,7 +1094,8 @@ class Planner(fl.FlipSearch):
     def dCheck(self, bl, par, lim, h):
         """`solveD opsMP fillTestsF cfgIM cfgJM (kidsM κ hI) (altFD κ hF fuel maxlen) fuel bl par lim h`."""
         O = rc.Ops(lambda b: True, tc.vanishOK, tc.dropC, lambda b, p, l: l)
-        dI = self.cfgIMRC if self.res_cof is True else self.cfgIMR if self.res else self.cfgIM
+        dI = (self.cfgIMY if self.res_y else self.cfgIMRC if self.res_cof is True else self.cfgIMR if self.res
+              else self.cfgIM)
         return self.dSolve(O, dI, self.cfgJM, self.kdM, self.dAltF, self.fuel, bl, par, lim, h)
 
     # the hints of a plan
@@ -1041,13 +1146,19 @@ class Planner(fl.FlipSearch):
     def resFields(self, node, w):
         """A resonant leaf `('R', mask, k, h)`: the evaluation's bit, `1`, the rest, four bits `k`, the `k` ends."""
         mask, k, h = node[1:]
+        if k == 'Y':
+            # the test at the two corners (`cfgIPY`): `1`, `1`, the rest and the hints of `resYH`
+            nb = 12 + (15 + 3 * (h % 16)) * ((h // 16) % 16 + (h // 256) % 16)
+            assert self.res_y and mask < 1 << w and h < 1 << nb
+            return [(0, 1), (1, 1), (1, 1), (mask, w), (h, nb)]
+        y = [(0, 1)] if self.res_y else []      # with `cfgIPY`, the window's code has a `0` after its `1`
         if k == 0:
             # the test with the large values' term: `0`, then its number of intervals and their ends
             k2, h2 = h % 16, h // 16
             assert 0 < k2 < 16 and mask < 1 << w and h2 < 1 << (rt.EB * k2)
-            return [(0, 1), (1, 1), (mask, w), (0, 4), (k2, 4), (h2, rt.EB * k2)]
+            return [(0, 1), (1, 1)] + y + [(mask, w), (0, 4), (k2, 4), (h2, rt.EB * k2)]
         assert 0 < k < 16 and mask < 1 << w and h < 1 << (rt.EB * k)
-        return [(0, 1), (1, 1), (mask, w), (k, 4), (h, rt.EB * k)]
+        return [(0, 1), (1, 1)] + y + [(mask, w), (k, 4), (h, rt.EB * k)]
 
     def dserF(self, ctx, beta, node, bl, par, out):
         """A node of a tree over a frozen part."""
@@ -1061,7 +1172,7 @@ class Planner(fl.FlipSearch):
             assert cf and self.okIF(bl, cf[0])
             out.extend(self.evalFields(cf[0], w, bool(self.res_frozen)))
         elif kind == 'R':
-            assert self.res_frozen and self.chkIRF(self.frz[0], self.frz[1], beta, bl, node[1], node[2], node[3])
+            assert self.res_frozen and self.chkNode(bl, node, beta)
             out.extend(self.resFields(node, w))
         elif kind == 'D':
             out.append((3, 3))
@@ -1094,7 +1205,7 @@ class Planner(fl.FlipSearch):
             assert cf and self.T.okI(bl, cf[0])
             out.extend(self.evalFields(cf[0], wI, self.res))
         elif kind == 'R':
-            assert (self.chkIRC if self.res_cof is True else self.chkIR)(bl, node[1], node[2], node[3])
+            assert self.chkNode(bl, node)
             out.extend(self.resFields(node, wI))
         elif kind == 'D':
             out.append((3, 3))
@@ -1154,7 +1265,7 @@ class Par:
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
                  blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False, cof=False, lv=False,
-                 lazy=False, rmerge=False, split=0):
+                 lazy=False, rmerge=False, split=0, ycorner=False):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1` or `SEC2`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
@@ -1170,12 +1281,16 @@ class Par:
         it keeps when the plan is written (`resolve`); `rmerge`: consecutive cells of a new prime that the window
         evaluates are one cell while one test covers them; `split`: a box that the plan does not evaluate is cut in
         two where the top `1/2^j` of its first cell, `j ≤ split`, passes the window's float filter
-        (`Planner.res_split`)."""
+        (`Planner.res_split`); `ycorner`: where the window's test fails, the test at the two corners of the box of a
+        rest's cells (`SieveResTest.resY`; the tests `SieveAd.resTestsFY` and `frozResTestsY`, the search
+        `SieveAd.altFDY`), with `res`, `resF` and `cof`."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
         self.skip, self.skipmin, self.energy, self.res, self.resF, self.cof = skip, skipmin, energy, res, resF, cof
-        self.lv, self.lazy, self.rmerge, self.split = lv, lazy, rmerge, split
+        self.lv, self.lazy, self.rmerge, self.split, self.ycorner = lv, lazy, rmerge, split, ycorner
+        assert not ycorner or (res and resF and cof), 'the test at the two corners comes with the window in both ' \
+            'trees and the cofactor'
         assert res or not (resF or cof or split), 'the window over the frozen parts, the cofactor and the cuts come ' \
             'with the main tree\'s'
         self.h, self.hI, self.depth, self.kappa = h, round(h * DEN), depth, kappa
@@ -1197,6 +1312,7 @@ class Par:
         P.res_frozen = self.resF
         P.res_cof = self.cof
         P.res_lv, P.res_lazy, P.res_merge, P.res_split = self.lv, self.lazy, self.rmerge, self.split
+        P.res_y = self.ycorner
         P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
         return P
 
@@ -1302,6 +1418,18 @@ def resolve(P, node, bad, seen):
         if r is None or r[0] == -1:
             cs, hs, mom = key
             r = rt.hint(P.T.Ln, P.T.Ld, list(cs), hs, mom, lv=P.res_lv, fast=True)
+            P.resmemo[key] = r
+        if r is None:
+            bad.add(key)
+            out = node
+        else:
+            out = ('R', node[1]) + r
+    elif k == 'R' and node[2] == -2:
+        # a leaf of the test at the two corners: its hints
+        key = node[3]
+        r = P.resmemo.get(key)
+        if r is None or r[0] == -2:
+            r = P.hintY(key[1])
             P.resmemo[key] = r
         if r is None:
             bad.add(key)
@@ -1451,6 +1579,9 @@ def defs_file(par_):
     tests, cfgI = ('resTestsFC', 'cfgIMRC') if cof else ('resTestsF', 'cfgIMR') if res else ('fillTestsF', 'cfgIM')
     dimp = 'SieveAdFrozResDefs' if resF else 'SieveAdResDefs' if res else 'SieveAdDirDefs'
     alt, ftests = ('altFDR', 'frozResTestsC') if resF else ('altFD', 'frozTestsC')
+    yc = getattr(par_, 'ycorner', False)
+    if yc:
+        tests, cfgI, dimp, alt, ftests = 'resTestsFY', 'cfgIMY', 'SieveAdResYDefs', 'altFDY', 'frozResTestsY'
     resdoc = ('With the resonant window: an evaluation of kind `3` in the main tree is `SieveAd.chkIR`\'s\n'
               '(`SieveAd.resTestsF`; the rest tested by `SieveResTest.resX`), its configuration read by\n'
               '`SieveAd.cfgIMR`' + (
@@ -1458,6 +1589,11 @@ def defs_file(par_):
                   '`SieveAd.resTestsFC`, `SieveAd.cfgIMRC`)' if cof else '') + (
                   '; over the frozen parts too, the box `ch ++ β` (`SieveAd.frozResTestsC`, with\n'
                   '`SieveAd.chkIRF`), read by `SieveAd.cfgIFR`.\n\n' if resF else '.\n\n') if res else '')
+    if yc:
+        resdoc += ('With the window\'s test at the two corners of a box too: an evaluation of kind `4` is\n'
+                   '`SieveAd.chkIRY`\'s in the main tree and `SieveAd.chkIRFY`\'s over the frozen parts (the tests\n'
+                   '`SieveAd.resTestsFY`, `SieveAd.frozResTestsY`; the rest\'s cells tested by `SieveResTest.resYH`),\n'
+                   'and the configurations are read by `SieveAd.cfgIMY` and `SieveAd.cfgIFY`.\n\n')
     return f"""/-
 # The exponent and the search led by hints at `L = {LN}`
 
@@ -1598,7 +1734,14 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
     resimp = ('import SieveAdRes\n' + ('import SieveAdFrozResTree\n' if resF else '') +
               ('import SieveAdResCof\n' if cof else '') if res else '')
     prof = 'pr_of_partDR' if resF else 'pr_of_partD'
-    if cof:
+    yc = getattr(par_, 'ycorner', False)
+    if yc:
+        cfgI, prof = 'cfgIMY', 'pr_of_partDY'
+        resimp = 'import SieveAdFrozResYTree\n'
+        soundF = (f'/-- The tests in one pass with the resonant window, the cofactor and the test at the two corners '
+                  f'at `{LN}` are\nsound. -/\n'
+                  f'theorem soundF{T} : (resTestsFY).Sound := resTestsFY_sound\n')
+    elif cof:
         soundF = (f'/-- The tests in one pass with the resonant window and the cofactor at `{LN}` are sound. -/\n'
                   f'theorem soundF{T} : (resTestsFC).Sound := resTestsFC_sound\n')
     elif res:
@@ -1747,7 +1890,7 @@ def main():
                    sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a,
                    res='--res' in a or '--resF' in a or '--cof' in a, resF='--resF' in a, cof='--cof' in a,
                    lv='--lv' in a, lazy='--lazy' in a, rmerge='--rmerge' in a,
-                   split=int(a[a.index('--split') + 1]) if '--split' in a else 0)
+                   split=int(a[a.index('--split') + 1]) if '--split' in a else 0, ycorner='--ycorner' in a)
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache', '--rows', '--plan-only'):
         par_ = Par(tag, **CERTS[tag])
         if out is None and '--check' not in a and '--plan-only' not in a:

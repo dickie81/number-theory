@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""The resonant window's test on a box, led by a hint: the kernel's test (`lib/pnt/SieveResTestDefs.lean`), its
-mirror here, and the search for its hints.
+"""The resonant window's test on a box, led by a hint: the kernel's test (`lib/pnt/SieveResTestDefs.lean`, and
+`lib/pnt/SieveResTestYDefs.lean` for the test at the two corners of a box of cells), its mirror here, and the search
+for its hints.
 
-    python3 tools/linnik/res_test.py            write the Lean file
-    python3 tools/linnik/res_test.py --check    fail if the file on disk differs from what would be written
+    python3 tools/linnik/res_test.py            write the Lean files
+    python3 tools/linnik/res_test.py --check    fail if a file on disk differs from what would be written
 
 A box's rest is a set of its primes, each in its cell of exponents of `x = q^L` (units of `1/DEN`): the lower ends
 `c_j` and the sum `hs` of the upper ends. The variable is everything else, of exponent at least
@@ -737,28 +738,37 @@ def _bm(a):
     return min(hi, 1 - a / A)
 
 
-def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0, lv=None, maxleaf=None):
+def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0, lv=None, maxleaf=None, pt=None):
     """Whether the bound may hold for the rest `cs`, `hs` (floats; `False` means the kernel's test fails). With a
     negative `slack`, `fuel = 12` and `maxleaf = 15` it is the other way: `True` means that the bound holds with a
     margin on at most fifteen intervals of the hint's grid, so that the kernel's test should pass (the planner
     takes that as a pass and finds the hint when the plan is written). `lv`: with the large values' term (`LVON`
-    if not given)."""
+    if not given). `pt`: the bound at a point given as `(los, m, tlo, thi, clamp)` in the place of `cs`, `hs`: the
+    terms' exponents `los`, the variable's `m`, the ends `tlo`, `thi` of the terms' cells for the large values'
+    thresholds, and whether the clamp is there (`quickY`)."""
     lv = LVON if lv is None else lv
     leaves = [0]
     import math
     L = Lnum / Lden
     kq = L / DEN
-    los = [kq * (c - 1) for c in cs]
-    if not los or min(los) <= 0 or hs + 1 >= DEN:
-        return False
+    if pt is None:
+        los = [kq * (c - 1) for c in cs]
+        if not los or min(los) <= 0 or hs + 1 >= DEN:
+            return False
+        tlo, thi, clamp = los, None, True
+    else:
+        los, m, tlo, thi, clamp = pt
+        if not los or min(tlo) <= 0:
+            return False
     # at g = 1 each term is at least -lo/2 (its lines there are -lo(1 - w - 7789/10000), -1/(2k0) and -lo/2), so
     # the bound asks the rest's exponents to sum to at least 1 + 2 MARG
     if sum(los) < 1 + 2 / 25000:
         return False
-    m = kq * (DEN - hs - 1)
+    if pt is None:
+        m = kq * (DEN - hs - 1)
     w, tau, marg = 4e-6, 1e-6, 1 / 25000
-    c1 = max(1 - m, 0) / 2
-    y0 = (5 / 12 + 3 / 1000 - m * (11 / 12 + 1 / 1000)) / 2
+    c1 = max(1 - m, 0) / 2 if clamp else 0.0
+    y0 = (5 / 12 + 3 / 1000 - m * (11 / 12 + 1 / 1000)) / 2 if clamp else -1.0
     thr = -marg - L * tau + slack
     zl = [0.0 if mom >> j & 1 else lo for j, lo in enumerate(los)]      # the zeros' lines' factors
     if -sum(lo * (1 - w - 11 / 12) for lo in zl) + min(c1, max(0.0, y0)) > thr:
@@ -776,11 +786,12 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0, lv=None, maxleaf=None)
             if mom >> j & 1:
                 continue
             k0 = max(1, math.ceil(1 / lo - 1e-12))
-            hi = L + 1e-5 - m - (sum(zl) - lo) - slack
+            hi = (L + 1e-5 - m - (sum(zl) - lo) if thi is None else thi[j]) - slack
+            tl = tlo[j]
             for k in range(k0 - 1, k0 - 1 - LVKS, -1):
-                if k >= 1 and k * lo >= 2 / 3 + e - slack:
-                    lvs[j].append((k, e + max(2 * k * hi * (0.2 + e), 0.5 - k * lo * (0.2 - 4 * e),
-                                              4 / 3 - k * lo * (1.2 - 4 * e)) - slack))
+                if k >= 1 and k * tl >= 2 / 3 + e - slack:
+                    lvs[j].append((k, e + max(2 * k * hi * (0.2 + e), 0.5 - k * tl * (0.2 - 4 * e),
+                                              4 / 3 - k * tl * (1.2 - 4 * e)) - slack))
 
     def lvv(lo, k, g):
         e = float(LVEQ)
@@ -822,6 +833,23 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0, lv=None, maxleaf=None)
         mid = (a + b) / 2
         return check(a, mid, fuel - 1) and check(mid, b, fuel - 1)
     return check(0.0, 1.0, fuel)
+
+
+def quickY(Lnum, Lden, cells, lv=None, strict=True):
+    """`quick` for the test at the two corners of the box of the cells `(c, d)` (`resY`): the bound at the upper
+    corner, the variable shorter by `1/11` of the box's width, and with no clamp at the lower one. With `strict`
+    (`fuel = 12`, a negative slack, at most fifteen intervals) `True` means that `resY` should pass; without,
+    `False` means that it fails."""
+    lo = [loW(Lnum, Lden, c) for c, d in cells]
+    hi = [hiW(Lnum, Lden, d) for c, d in cells]
+    sl, sh, ls = sum(lo), sum(hi), (Lnum * S) // Lden
+    need = sh + W2 + sub(sh, sl) // 11 + 2
+    if not cells or any(c > d for c, d in cells) or min(lo) < 1 or need > ls:
+        return False
+    fl, fh, ub = [x / S for x in lo], [x / S for x in hi], sub(sh, sl) / S
+    kw = dict(fuel=12, slack=-1e-7, maxleaf=15) if strict else {}
+    return (quick(Lnum, Lden, None, None, lv=lv, pt=(fh, (ls - need) / S, fl, fh, True), **kw)
+            and quick(Lnum, Lden, None, None, lv=lv, pt=(fl, 1.0, fl, [x + ub for x in fl], False), **kw))
 
 
 # ---------------------------------------------------------------------------------------------------------------
