@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1838 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1840 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 343 | 1019 |
+| `lib/pnt` | 344 | 1021 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2542,7 +2542,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.rules_frozC`: The nodes of a tree over a frozen part, with the tests that read the frozen primes once for the tree *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveAd.bd_flipCostD`: The cost of a reversal through the largest prime, its tree searched by hints, bounds the term *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveAd.altFD_sound`: The hinted bound of the main search proves `PR` *paper*
-- `SieveAd.pr_of_partD`: A part of the main search *paper*
+- `SieveAd.pr_of_partD`: A part of the main search *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.pr_of_partD_at`: A part of the main search, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFamCore`: The two comparisons at a floor for a family of tuples of distinct primes, on bounds for its products
@@ -2639,6 +2639,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdFull`: The estimate in two variables on tuples of primes with a given product, in no order
 
 - `SieveAd.full2_core_at`: Tuples of primes with product in `(N₁, N₂]`, on exponents that pass the checks, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdRes`: The resonant window's test of a box in the main tree is sound
+
+- `SieveAd.evI_resE`: A box evaluated by the resonant window, under more atoms ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.resTestsF_sound`: The tests with the resonant window are sound ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdRev`: The tree of a reversed term bounds it
 

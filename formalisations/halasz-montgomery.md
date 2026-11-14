@@ -126,7 +126,13 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   strictly decreasing chains of primes with a rest at given positions, each rest prime at least `q^{lo i}` and the
   rest's product in `[q^{ρ₁}, q^{ρ₂}]`, times their rough cofactors, evaluated given
   `ResBox g L (n + 1) (L − ρ₂ − ε) (lo − ε)`: the cofactor written out as its primes and `full_res_exp` on the full
-  tuples. Nothing uses it yet;
+  tuples;
+- `SieveAd.evI_resE` and `SieveAd.resTestsF_sound` (`lib/pnt/SieveAdRes.lean`; the test `SieveAd.chkIR`, the tests
+  `SieveAd.resTestsF` and the hints' decoder `SieveAd.cfgIMR` in `lib/pnt/SieveAdResDefs.lean`): a box of the main
+  tree whose rest passes `SieveResTest.resT` has its term evaluated by `chain_res_exp`, the variable being the box's
+  other primes and the cofactor; so the tests with the resonant window for an evaluation of kind `3` (and
+  `fillTestsF`'s otherwise) are sound, and `SieveAd.pr_of_partD` applies to a search with them. No certificate uses
+  them yet;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length

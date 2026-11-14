@@ -1435,6 +1435,13 @@ theorem resT_sound {Lnum Lden : ℕ} (hLd : 0 < Lden) {cs : List ℕ} {hs k h : 
   rw [hlen] at hg
   exact binOK_of hg
 
+/-- The test passes only with `hs + 1 < DEN`. -/
+theorem resT_hs {Lnum Lden : ℕ} {cs : List ℕ} {hs k h : ℕ} (hT : resT Lnum Lden cs hs k h = true) :
+    hs + 1 < DEN := by
+  unfold resT at hT
+  simp only [Bool.and_eq_true, Nat.blt_eq, Nat.add_eq] at hT
+  exact hT.1
+
 /-- `ResBox` holds for larger lower bounds. -/
 lemma resBox_mono {g : ℝ → ℝ} {L : ℝ} {K : ℕ} {mlo mlo' : ℝ} {lo lo' : ℕ → ℝ} (h : ResBox g L K mlo lo)
     (hm : mlo ≤ mlo') (hl : ∀ j < K, lo j ≤ lo' j) : ResBox g L K mlo' lo' :=
