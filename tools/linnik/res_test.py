@@ -137,6 +137,18 @@ def mkTm(lo):
     return (lo, a0, a1, b1, mulC(lo, WC))
 
 
+def mkTmM(lo):
+    """For measurement only: a term counted by its moments alone (a sifted part of the rest, not a prime sum): the
+    lines of `k₀ − 1` and `k₀`, and the line `0` in place of the zeros' two (and in the half-plane's sum)."""
+    t = mkTm(lo)
+    return (0,) + t[1:4] + (0,)
+
+
+def terms(Lnum, Lden, cs, mom=0):
+    """The rest's terms, those at the set bits of `mom` counted by their moments alone (measurement)."""
+    return [mkTmM(loOf(Lnum, Lden, c)) if mom >> j & 1 else mkTm(loOf(Lnum, Lden, c)) for j, c in enumerate(cs)]
+
+
 def loOf(Lnum, Lden, c):
     return (Lnum * sub(c, 1) * S) // (Lden * DEN)
 
@@ -230,9 +242,10 @@ def intv(ts, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
     return le0(p0, p1, n0, n1, a) and le0(p0, p1, n0, n1, b)
 
 
-def resT(Lnum, Lden, cs, hs, k, h):
-    """The test: the rest's lower cells `cs`, the sum `hs` of its upper ends, `k` intervals in the hint `h`."""
-    ts = [mkTm(loOf(Lnum, Lden, c)) for c in cs]
+def resT(Lnum, Lden, cs, hs, k, h, mom=0):
+    """The test: the rest's lower cells `cs`, the sum `hs` of its upper ends, `k` intervals in the hint `h` (`mom`:
+    measurement only, the terms counted by their moments alone)."""
+    ts = terms(Lnum, Lden, cs, mom)
     mlo = (Lnum * sub(sub(DEN, hs), 1) * S) // (Lden * DEN)
     ltm = (Lnum * S + sub(Lden * 10 ** 6, 1)) // (Lden * 10 ** 6) + MG
     mtu, mtd = mulC(mlo, M1U), mulF(mlo, M1D)
@@ -330,10 +343,11 @@ def intv2(ts, tvs, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
     return le0(p0 + va, p1, n0, n1, a) and le0(p0 + vb, p1, n0, n1, b)
 
 
-def resT2(Lnum, Lden, cs, hs, k, h):
-    """The test with the large values' term: as `resT`, each term with its powers `k₀ − 1`, `k₀ − 2`."""
-    los = [loOf(Lnum, Lden, c) for c in cs]
-    ts = [mkTm(lo) for lo in los]
+def resT2(Lnum, Lden, cs, hs, k, h, mom=0):
+    """The test with the large values' term: as `resT`, each term with its powers `k₀ − 1`, `k₀ − 2` (`mom`:
+    measurement only, the terms counted by their moments alone, which have no such term)."""
+    ts = terms(Lnum, Lden, cs, mom)
+    los = [t[0] for t in ts]
     mlo = (Lnum * sub(sub(DEN, hs), 1) * S) // (Lden * DEN)
     ls5 = (Lnum * 10 ** 5 + Lden) * S // (Lden * 10 ** 5) + 1
     ub = sub(ls5, mlo + sum(los))
@@ -371,9 +385,9 @@ def resX(Lnum, Lden, cs, hs, k, h):
 class Box:
     """The test's state for one box, with the hint search."""
 
-    def __init__(self, Lnum, Lden, cs, hs, lv=False):
+    def __init__(self, Lnum, Lden, cs, hs, mom=0, lv=False):
         self.Lnum, self.Lden, self.cs, self.hs = Lnum, Lden, cs, hs
-        self.ts = [mkTm(loOf(Lnum, Lden, c)) for c in cs]
+        self.ts = terms(Lnum, Lden, cs, mom)
         mlo = (Lnum * sub(sub(DEN, hs), 1) * S) // (Lden * DEN)
         self.tvs = None
         if lv:
@@ -469,17 +483,17 @@ class Box:
         return len(recs), h
 
 
-def hint(Lnum, Lden, cs, hs):
+def hint(Lnum, Lden, cs, hs, mom=0):
     """The test's hint (k, h) for the rest's cells, or None; checked by the mirror of the kernel's test. With the
     large values' term (`LVON`), a rest that fails `resT` is tried with `resT2`: its hint is `(0, k + 16h)`."""
-    r = Box(Lnum, Lden, cs, hs).find()
+    r = Box(Lnum, Lden, cs, hs, mom).find()
     if r is not None:
-        assert resT(Lnum, Lden, cs, hs, *r)
+        assert resT(Lnum, Lden, cs, hs, *r, mom=mom)
         return r
     if LVON:
-        r = Box(Lnum, Lden, cs, hs, lv=True).find()
+        r = Box(Lnum, Lden, cs, hs, mom, lv=True).find()
         if r is not None:
-            assert resT2(Lnum, Lden, cs, hs, *r)
+            assert resT2(Lnum, Lden, cs, hs, *r, mom=mom)
             return 0, r[0] + 16 * r[1]
     return None
 
@@ -508,7 +522,7 @@ def _bm(a):
     return min(hi, 1 - a / A)
 
 
-def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
+def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0):
     """Whether the bound may hold for the rest `cs`, `hs` (floats; `False` means the kernel's test fails)."""
     import math
     L = Lnum / Lden
@@ -525,7 +539,8 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
     c1 = max(1 - m, 0) / 2
     y0 = (5 / 12 + 3 / 1000 - m * (11 / 12 + 1 / 1000)) / 2
     thr = -marg - L * tau + slack
-    if -sum(lo * (1 - w - 11 / 12) for lo in los) + min(c1, max(0.0, y0)) > thr:
+    zl = [0.0 if mom >> j & 1 else lo for j, lo in enumerate(los)]      # the zeros' lines' factors
+    if -sum(lo * (1 - w - 11 / 12) for lo in zl) + min(c1, max(0.0, y0)) > thr:
         return False
     ks = []
     for lo in los:
@@ -537,8 +552,10 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
     if LVON:
         e = float(LVEQ)
         for j, lo in enumerate(los):
+            if mom >> j & 1:
+                continue
             k0 = max(1, math.ceil(1 / lo - 1e-12))
-            hi = L + 1e-5 - m - (sum(los) - lo) + 1e-9
+            hi = L + 1e-5 - m - (sum(zl) - lo) + 1e-9
             for k in range(k0 - 1, k0 - 1 - LVKS, -1):
                 if k >= 1 and k * lo >= 2 / 3 + e - 1e-9:
                     lvs[j].append((k, e + max(2 * k * hi * (0.2 + e), 0.5 - k * lo * (0.2 - 4 * e),
@@ -552,8 +569,8 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
     for g in (0.0, 0.17, 0.26, 0.34, 0.4, 0.45, 0.5, 0.75, 1.0):
         v = g / 2 + min(c1, max(0.0, g / 2 + y0))
         b = _bm(g) + w - 1
-        for lo, mk, lv in zip(los, ks, lvs):
-            v += min([lo * b] + [p0 + p1 * g for p0, p1 in mk] + [lvv(lo, k, g) for k, G in lv if G < g])
+        for lo, zlo, mk, lv in zip(los, zl, ks, lvs):
+            v += min([zlo * b] + [p0 + p1 * g for p0, p1 in mk] + [lvv(lo, k, g) for k, G in lv if G < g])
         if v > thr:
             return False
 
@@ -570,8 +587,8 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
             if ia <= PK <= ib:
                 ia_inv = min(ia_inv, 1 / _HF[PK][2])
         ta, tb = t0 + t1 * a, t0 + t1 * b
-        for lo, mk, lv in zip(los, ks, lvs):
-            cand = [(l0 + l1 * a, l0 + l1 * b) for l0, l1 in list(mk) + [(-lo * dS, 0.0), (lo * w, -lo * ia_inv)]]
+        for lo, zlo, mk, lv in zip(los, zl, ks, lvs):
+            cand = [(l0 + l1 * a, l0 + l1 * b) for l0, l1 in list(mk) + [(-zlo * dS, 0.0), (zlo * w, -zlo * ia_inv)]]
             cand += [(lvv(lo, k, a), lvv(lo, k, b)) for k, G in lv if G < a]
             best = min(cand, key=lambda l: l[0] + l[1])
             ta += best[0]
