@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1853 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1858 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 352 | 1034 |
+| `lib/pnt` | 357 | 1039 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2628,6 +2628,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.evIF_froz_resC`: The term of a chain's box over the frozen part, by the resonant window with the chain's cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.evIF_froz_resTC`: The term of a chain's box over the frozen part, when the resonant window's test with the chain's cofactor passes the box `ch ++ β` ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveAdFrozResCofG`: The chain's cofactor over the frozen part, in the rest of an estimate given as a hypothesis
+
+- `SieveAd.evIF_froz_genC`: The term of a chain's box over the frozen part, by an estimate of the tuples with the chain's cofactor in the rest
+
+#### `SieveAdFrozResG`: The term of a chain's box over the frozen part, by an estimate of the tuples given as a hypothesis
+
+- `SieveAd.evIF_froz_gen`: The term of a chain's box over the frozen part, by an estimate of the tuples
+
 #### `SieveAdFrozResTree`: The trees over the frozen parts with the resonant window are sound
 
 - `SieveAd.rules_frozResC`: The nodes of a tree over a frozen part, with the resonant window ([note](../formalisations/halasz-montgomery.md))
@@ -3061,6 +3069,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.chain_res_cof`: Chains whose cofactor is one prime, by the resonant window with the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveResCofG`: Chains whose cofactor is one prime, the cofactor in the rest of an estimate given as a hypothesis
+
+- `SieveTypeIIHM.chain_res_cofG`: Chains whose cofactor is one prime, by an estimate of the tuples with the cofactor in the rest
+
 #### `SieveResCorner`: The resonant window's test at the two corners of a box, sound
 
 - `SieveResTest.resY_sound`: `resY` is sound
@@ -3094,10 +3106,18 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.chain_res_exp`: Chains with a rest, by the resonant window ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveResTermG`: Chains with a rest, by an estimate of the tuples given as a hypothesis
+
+- `SieveTypeIIHM.chain_res_gen`: Chains with a rest, by an estimate of the tuples
+
 #### `SieveResTest`: The resonant window's test on a box is sound
 
 - `SieveResTest.resT_sound`: The test is sound ([note](../formalisations/halasz-montgomery.md))
 - `SieveResTest.resT_sound_cells`: The test is sound, in the cells' units ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResTight`: The resonant window's condition on a box with the variable tied to the rest
+
+- `SieveTypeIIHM.fullEst_of_tight`: The estimate on a box, from the condition with the variable tied to the rest
 
 #### `SieveResTypeII`: The resonant window: Proposition 3′ with the characters classed by the sizes of the rest's prime sums
 
