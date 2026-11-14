@@ -652,6 +652,11 @@ class Planner(fl.FlipSearch):
             return self.cfgIP(pw, h >> 1)
         h1 = h >> 1
         k, h2 = (h1 // pw) % 16, (h1 // pw) // 16
+        if k == 0:
+            # the test with the large values' term: its number of intervals in the next four bits
+            k2, h3 = h2 % 16, h2 // 16
+            nb = rt.EB * k2
+            return (3, 0, h1 % pw, 16 * (k2 + 16 * (h3 % (1 << nb))), False), h3 >> nb
         nb = rt.EB * k
         return (3, 0, h1 % pw, k + 16 * (h2 % (1 << nb)), False), h2 >> nb
 
@@ -664,7 +669,7 @@ class Planner(fl.FlipSearch):
             return False
         cs = [bl[p][0] for p in range(len(bl)) if sr >> p & 1]
         hs = sum(bl[p][1] for p in range(len(bl)) if sr >> p & 1)
-        return bool(cs) and rt.resT(self.T.Ln, self.T.Ld, cs, hs, k, h)
+        return bool(cs) and rt.resX(self.T.Ln, self.T.Ld, cs, hs, k, h)
 
     def cfgJM(self, bl, h):
         sel = h & 15
@@ -906,6 +911,11 @@ class Planner(fl.FlipSearch):
     def resFields(self, node, w):
         """A resonant leaf `('R', mask, k, h)`: the evaluation's bit, `1`, the rest, four bits `k`, the `k` ends."""
         mask, k, h = node[1:]
+        if k == 0:
+            # the test with the large values' term: `0`, then its number of intervals and their ends
+            k2, h2 = h % 16, h // 16
+            assert 0 < k2 < 16 and mask < 1 << w and h2 < 1 << (rt.EB * k2)
+            return [(0, 1), (1, 1), (mask, w), (0, 4), (k2, 4), (h2, rt.EB * k2)]
         assert 0 < k < 16 and mask < 1 << w and h < 1 << (rt.EB * k)
         return [(0, 1), (1, 1), (mask, w), (k, 4), (h, rt.EB * k)]
 

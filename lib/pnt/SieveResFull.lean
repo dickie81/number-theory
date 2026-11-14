@@ -496,9 +496,11 @@ theorem full_res_bound {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (h
   · exact le_trans (by exact_mod_cast hhi') hN₂le
 
 /-- **The resonant window's condition on a box**: `ResCond` at every exponent `m ≥ m_lo` of the variable and every
-exponents `s j ≥ lo j` of the rest with `Σ_j s_j ≤ L`. -/
+exponents `s j ≥ lo j` of the rest with `Σ_j s_j ≤ L` and `Σ_j s_j + m ≤ L + 10⁻⁵` (the rest and the variable make
+up `q^L`: an upper bound of each `s j` on the box). -/
 def ResBox (g : ℝ → ℝ) (L : ℝ) (K : ℕ) (mlo : ℝ) (lo : ℕ → ℝ) : Prop :=
-  ∀ (m : ℝ) (s : ℕ → ℝ), mlo ≤ m → (∀ j < K, lo j ≤ s j) → ∑ j ∈ Finset.range K, s j ≤ L → ResCond g L K m s
+  ∀ (m : ℝ) (s : ℕ → ℝ), mlo ≤ m → (∀ j < K, lo j ≤ s j) → ∑ j ∈ Finset.range K, s j ≤ L →
+    ∑ j ∈ Finset.range K, s j + m ≤ L + 1 / 10 ^ 5 → ResCond g L K m s
 
 /-- **Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window, in exponents.** `full_res_bound`
 with the rest's product in `[q^{ρ₁}, q^{ρ₂}]` and each rest entry `z (r i) ≥ q^{lo i}`, given
@@ -522,9 +524,10 @@ theorem full_res_exp {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0
   have ev : ∀ {c : ℝ}, 0 < c → ∀ B : ℝ, ∀ᶠ q : ℕ in Filter.atTop, B ≤ (q : ℝ) ^ c := fun hc B =>
     ((tendsto_rpow_atTop hc).comp tendsto_natCast_atTop_atTop).eventually_ge_atTop B
   obtain ⟨q₁, hq₁⟩ := Filter.eventually_atTop.1 ((ev hε 8).and ((ev hLρ' 2).and
-    ((Filter.eventually_ge_atTop 2).and (ev hLρ ((2 : ℝ) ^ (K + 1))))))
+    ((Filter.eventually_ge_atTop 2).and ((ev hLρ ((2 : ℝ) ^ (K + 1))).and
+      (ev (by norm_num : (0 : ℝ) < 1 / 10 ^ 5) ((2 : ℝ) ^ (K + 1)))))))
   refine ⟨δ, hδ, max q₀ q₁, fun q _ hq a ha n r hr lo hres Ω ρ₁ hlen hc hreg => ?_⟩
-  obtain ⟨h8ε, h2ρ, hq2, hqK⟩ := hq₁ q (le_trans (le_max_right _ _) hq)
+  obtain ⟨h8ε, h2ρ, hq2, hqK, hqK5⟩ := hq₁ q (le_trans (le_max_right _ _) hq)
   have hq0 : (0 : ℝ) < q := by exact_mod_cast (show 0 < q by omega)
   have hq1' : (1 : ℝ) < q := by exact_mod_cast (show 1 < q by omega)
   have hq1 : (1 : ℝ) ≤ q := hq1'.le
@@ -571,7 +574,7 @@ theorem full_res_exp {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0
     have hP''0 : (0 : ℝ) < P'' := lt_of_lt_of_le hm0 hP''ge
     have hQpos : ∀ j < n + 1, 0 < Q j := fun j hj =>
       lt_of_lt_of_le (Real.rpow_pos_of_pos hq0 _) (hQlo j hj)
-    refine hres (Real.logb q P'') (fun j => Real.logb q (Q j)) ?_ ?_ ?_
+    refine hres (Real.logb q P'') (fun j => Real.logb q (Q j)) ?_ ?_ ?_ ?_
     · rw [Real.le_logb_iff_rpow_le hq1' hP''0]; exact hP''ge
     · intro j hj
       rw [Real.le_logb_iff_rpow_le hq1' (hQpos j hj)]; exact hQlo j hj
@@ -590,6 +593,22 @@ theorem full_res_exp {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0
       calc Real.logb q (∏ j ∈ Finset.range (n + 1), Q j) ≤ Real.logb q ((q : ℝ) ^ L) :=
             Real.logb_le_logb_of_le hq1' hprodQ0 hle
         _ = L := Real.logb_rpow hq0 hq1'.ne'
+    · -- the rest and the variable make up `q^L`: `∏Q_j·P″ ≤ 2^{K+1}q^L ≤ q^{L + 10⁻⁵}`
+      show ∑ j ∈ Finset.range (n + 1), Real.logb q (Q j) + Real.logb q P'' ≤ L + 1 / 10 ^ 5
+      rw [← Real.logb_prod _ _ fun j hj => (hQpos j (Finset.mem_range.1 hj)).ne']
+      have hprodQ0 : 0 < ∏ j ∈ Finset.range (n + 1), Q j :=
+        Finset.prod_pos fun j hj => hQpos j (Finset.mem_range.1 hj)
+      rw [← Real.logb_mul hprodQ0.ne' hP''0.ne']
+      have hle : (∏ j ∈ Finset.range (n + 1), Q j) * P'' ≤ (q : ℝ) ^ (L + 1 / 10 ^ 5) := by
+        have h1 : (∏ j ∈ Finset.range (n + 1), Q j) * P'' ≤ 2 ^ (K + 1) * (q : ℝ) ^ L :=
+          (le_div_iff₀ hP''0).1 hQprod
+        have hqL0 : (0 : ℝ) ≤ (q : ℝ) ^ L := by positivity
+        calc (∏ j ∈ Finset.range (n + 1), Q j) * P'' ≤ 2 ^ (K + 1) * (q : ℝ) ^ L := h1
+          _ ≤ (q : ℝ) ^ (1 / 10 ^ 5 : ℝ) * (q : ℝ) ^ L := mul_le_mul_of_nonneg_right hqK5 hqL0
+          _ = (q : ℝ) ^ (L + 1 / 10 ^ 5) := by rw [← Real.rpow_add hq0, add_comm]
+      calc Real.logb q ((∏ j ∈ Finset.range (n + 1), Q j) * P'') ≤ Real.logb q ((q : ℝ) ^ (L + 1 / 10 ^ 5)) :=
+            Real.logb_le_logb_of_le hq1' (mul_pos hprodQ0 hP''0) hle
+        _ = L + 1 / 10 ^ 5 := Real.logb_rpow hq0 hq1'.ne'
   · -- the ranges
     intro z hz hzΩ
     obtain ⟨hge, hlo, h3, h4, h5, h6⟩ := hreg z hz hzΩ

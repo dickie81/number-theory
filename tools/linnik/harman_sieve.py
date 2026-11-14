@@ -119,8 +119,8 @@ the count, with every count that a sum of one length has: the power below (q^(1 
 the Halasz-Montgomery inequality for that power; with `lv` Chen, Gupta and Li's Proposition 3.1 for the powers of
 length at least q^(2/3), at 7/10 <= t <= 4/5 (LinnikCGLHB101.prop31: for any coefficients of modulus at most 1);
 and the density curve's count. With `sifted`, the cofactor and sifted atoms may be in the rest, with the density
-curve's count, and with `own` they are counted by their own sums as the primes are. W shorter than q is as in the
-paper's window. `points` gives
+curve's count, and with `own` they are counted by their own sums as the primes are; with `cofp` a cofactor that is
+prime on the whole box is one more prime of the rest. W shorter than q is as in the paper's window. `points` gives
 
     L                            2.14    2.13    2.12    2.11    2.10    2.09    2.08    2.07    2.06
     --res hm,sifted              0.140   0.207   0.324   0.462   0.631   0.869   1.141
@@ -563,8 +563,9 @@ def main():
                     "a rest whose own sums sort the characters, counted by the mean values of their powers; "
                     "'plain', or a comma-separated list of 'hm' (the Halasz-Montgomery inequality for the powers), "
                     "'lv' (Chen, Gupta and Li's large-value estimate for the powers), 'sifted' (the cofactor and "
-                    "sifted atoms may be in the rest, with the zeros' count) and 'own' (those counted by their own "
-                    "sums as well); alone: all four")
+                    "sifted atoms may be in the rest, with the zeros' count), 'own' (those counted by their own "
+                    "sums as well) and 'cofp' (without 'sifted': the cofactor may be in the rest where it is "
+                    "prime on the whole box, counted as a prime); alone: the first four")
     ap.add_argument('--res-main', action='store_true', help='the resonant window in the main tree only')
     ap.add_argument('--res-split', type=int, default=0, help='`cells`: a box of the main tree that fails the '
                     'resonant window is cut in two across its widest cell, at most this many times, and is '
@@ -592,8 +593,8 @@ def main():
                       rev=tuple(x for x in a.rev.split(',') if x), first=not a.no_first,
                       direct=tuple(x for x in a.direct.split(',') if x),
                       curve=a.curve, theta0=a.theta0, kernel=a.kernel, kshift=a.kshift, ext=a.ext,
-                      res=0 if a.res is None else 1 + sum(v for kk, v in (('hm', 2), ('sifted', 4), ('lv', 16),
-                                                                    ('own', 32)) if kk in a.res.split(',')),
+                      res=0 if a.res is None else 1 + sum(v for kk, v in (('hm', 2), ('sifted', 4), ('cofp', 8),
+                                                                    ('lv', 16), ('own', 32)) if kk in a.res.split(',')),
                       res_main=a.res_main, res_split=a.res_split, res_lev=a.res_lev)
             if a.nu is not None:
                 nu = a.nu

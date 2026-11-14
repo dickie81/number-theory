@@ -8,22 +8,26 @@ of `β` each prime sum is at most `Q_j^{β+w}`, and the bin has at most `(qT)^{g
 classes the characters further, by the size of each prime sum: the level `ℓ_j` of `Sp_j(χ)` in steps of
 `τ = 10⁻⁶` of `log_{Q_j}` (`SieveTypeIIHM.lev`, capped at `10⁶`). A class `(i, ℓ)` has its prime sums at most
 `Q_j^{t_j}`, `t_j = min(β + w, τ(ℓ_j + 1))` (`β + w` at the cap), and at most as many characters as each prime sum
-has at least `Q_j^{τℓ_j}`: by the `2k`-th moment, `C_k q^{momExp k s_j (τℓ_j)}` (`SieveTypeIIHM.card_Sp_large`). The
-class's count exponent `γ` is the least of `g(β)` and these for `1 ≤ k ≤ k_max`, and `SieveTypeIIHM.bin_bound_exp`
-bounds the class with the rest's exponent `Σ_j s_j(t_j − 1) + L − m` (the product of the scales is at most
-`2^{K₀}q^L/P`). The condition on the exponents is `ResCond`, the large `k` being covered by `momExp_mono_k`.
+has at least `Q_j^{τℓ_j}`: by the `2k`-th moment, `C_k q^{momExp k s_j (τℓ_j)}` (`SieveTypeIIHM.card_Sp_large`), and
+by the large values of its `k`-th power, `C q^{lvExp k s_j (τℓ_j)}` (Chen, Gupta and Li's Proposition 3.1:
+`SieveTypeIIHM.card_Sp_large_lv` with `LinnikCGLHB101.prop31`). The class's count exponent `γ` is the least of `g(β)`
+and these for `k` up to a bound, and `SieveTypeIIHM.bin_bound_exp` bounds the class with the rest's exponent
+`Σ_j s_j(t_j − 1) + L − m` (the product of the scales is at most `2^{K₀}q^L/P`). The condition on the exponents is
+`ResCond`, the large `k` being covered by `momExp_mono_k` and by `lvExp_of_big`.
 
 * `ResCond g L K m s`: for the variable's exponent `m` and the rest's `s_0, …, s_{K−1}`, every `β ∈ [1/2, 11/12]`,
-  `γ ≤ g(β)` and `t_j ≤ β + 4·10⁻⁶` with `γ ≤ momExp k s_j (t_j − 10⁻⁶)` for all `k ≥ 1` have
-  `ResBinOK L (1/1000) (1/1000) (Σ_j s_j(t_j − 1) + L − m) γ m`.
+  `γ ≤ g(β)` and `t_j ≤ β + 4·10⁻⁶` with `γ ≤ momExp k s_j (t_j − 10⁻⁶)` and `γ ≤ lvExp k s_j (t_j − 10⁻⁶)` for all
+  `k ≥ 1` have `ResBinOK L (1/1000) (1/1000) (Σ_j s_j(t_j − 1) + L − m) γ m`.
 * `typeII_res`, **Proposition 3′ for the resonant window, pointwise in the heights**: the conclusion of
   `typeII_gen_hm` for a curve with its counts, when `ResCond` holds at `m = log_q P` and `s_j = log_q Q_j`. The
   classes number `500000·(10⁶ + 1)^K`, a constant absorbed into `q^{1/100000}` as the bins are.
 
-The file imports `SieveResBins.lean` and `SieveResCount.lean`.
+The file imports `SieveResBins.lean`, `SieveResCount.lean`, `SieveResLV.lean` and `LinnikCGLHB101.lean`.
 -/
 import SieveResBins
 import SieveResCount
+import SieveResLV
+import LinnikCGLHB101
 
 namespace SieveTypeIIHM
 
@@ -31,21 +35,23 @@ open Finset SieveTypeII SieveTypeIIGen
 
 /-- **The resonant window's condition** at the variable's exponent `m` and the rest's exponents `s 0, …, s (K − 1)`,
 for the curve `g` at `L`: every `β ∈ [1/2, 11/12]`, `γ ≤ g(β)` and sizes `t_j ≤ β + 4·10⁻⁶` whose prime sums' counts
-allow `γ` (`γ ≤ momExp k s_j (t_j − 10⁻⁶)` for all `k ≥ 1`) fit `ResBinOK` with the rest's exponent
-`Σ_j s_j(t_j − 1) + L − m`. -/
+allow `γ` (`γ ≤ momExp k s_j (t_j − 10⁻⁶)` and `γ ≤ lvExp k s_j (t_j − 10⁻⁶)` for all `k ≥ 1`: the moments, and the
+large values of the powers) fit `ResBinOK` with the rest's exponent `Σ_j s_j(t_j − 1) + L − m`. -/
 def ResCond (g : ℝ → ℝ) (L : ℝ) (K : ℕ) (m : ℝ) (s : ℕ → ℝ) : Prop :=
   ∀ (β γ : ℝ) (t : ℕ → ℝ), 1 / 2 ≤ β → β ≤ 11 / 12 → γ ≤ g β → (∀ j < K, t j ≤ β + 4 / 10 ^ 6) →
     (∀ j < K, ∀ k : ℕ, 1 ≤ k → γ ≤ momExp k (s j) (t j - 1 / 10 ^ 6)) →
+    (∀ j < K, ∀ k : ℕ, 1 ≤ k → γ ≤ lvExp k (s j) (t j - 1 / 10 ^ 6)) →
     ResBinOK L (1 / 1000) (1 / 1000) (∑ j ∈ Finset.range K, s j * (t j - 1) + L - m) γ m
 
+set_option maxHeartbeats 800000 in
 open scoped ContDiff in
 /-- **Proposition 3′ for the resonant window, pointwise in the heights.** Hypotheses: a curve `g ≤ 1` (`hg1`) with
 `g(1/2) = 1` (`hg0`) and its counts (`hcnt`), `f0` smooth (`hf0`) with support in `[1/2, 2]` (`hsupp`), `K₀ ≥ 0`,
 `e₁ > 0` (`he₁`) and `0 < η ≤ 10⁻⁵` (`hη`, `hη1`). For large `q`, `S ⊆ (P, 2P]` with `P ≥ 1`, `K ≤ K₀` scales
 `Q_j ≥ q^{e₁}` with heights `|h_j| ≤ q^η` and `∏_j Q_j ≤ 2^{K₀}q^L/P`, and `ResCond g L K (log_q P) (log_q Q_j)`:
 `Σ_{χ≠1} |W(χ)|·|∏_j Sp(χ, Q_j, h_j)| ≤ q^{L−1/50000}(Σ|a|²/P)^{1/2}`. The proof: `sum_typeII_cls` with the
-classes of the zeros' bin and the prime sums' levels, `bin_bound_exp` for each class, and the constants absorbed as
-in `typeII_gen_hm`. -/
+classes of the zeros' bin and the prime sums' levels, `bin_bound_exp` for each class (its count by the zeros' bin,
+by a moment or by the large values of a power), and the constants absorbed as in `typeII_gen_hm`. -/
 theorem typeII_res {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g (1 / 2) = 1) (hcnt : CurveCounts g)
     {f0 : ℝ → ℝ} (hf0 : ContDiff ℝ ∞ f0) (hsupp : Function.support f0 ⊆ Set.Icc (1 / 2) 2) (K₀ : ℕ) {e₁ η : ℝ}
     (he₁ : 0 < e₁) (hη : 0 < η) (hη1 : η ≤ 1 / 100000) :
@@ -103,9 +109,16 @@ theorem typeII_res {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 :
       (pow_le_pow_left₀ (by positivity) (by linarith) k).trans
         (pow_le_pow_right₀ (by nlinarith [sq_nonneg F₀]) hk2)
     exact mul_le_mul (mul_le_mul h1 h2 (by positivity) (by positivity)) h3 (by positivity) (by positivity)
-  obtain ⟨Cd', hCd'⟩ : ∃ C : ℝ, C = max (max Cd 1) Cm := ⟨_, rfl⟩
-  have hCd'1 : max Cd 1 ≤ Cd' := hCd' ▸ le_max_left _ _
-  have hCd'm : Cm ≤ Cd' := hCd' ▸ le_max_right _ _
+  -- the counts by large values: the bound of `f0` from `1`, the powers' range and the constant
+  obtain ⟨F₁, hF₁⟩ : ∃ F : ℝ, F = max F₀ 1 := ⟨_, rfl⟩
+  have hF₁1 : 1 ≤ F₁ := hF₁ ▸ le_max_right _ _
+  have hF₁f : ∀ u, |f0 u| ≤ F₁ := fun u => (hF₀ u).trans (hF₁ ▸ le_max_left _ _)
+  obtain ⟨kmax2, hkmax2⟩ : ∃ k : ℕ, k = ⌈5 / 2 / e₁⌉₊ + 1 := ⟨_, rfl⟩
+  obtain ⟨Clv, hClv1, q₃, hlvq⟩ := card_Sp_large_lv LinnikCGLHB101.prop31 kmax2 hF₁1
+  obtain ⟨Cd', hCd'⟩ : ∃ C : ℝ, C = max (max (max Cd 1) Cm) Clv := ⟨_, rfl⟩
+  have hCd'1 : max Cd 1 ≤ Cd' := hCd' ▸ (le_max_left _ _).trans (le_max_left _ _)
+  have hCd'm : Cm ≤ Cd' := hCd' ▸ (le_max_right _ _).trans (le_max_left _ _)
+  have hCd'l : Clv ≤ Cd' := hCd' ▸ le_max_right _ _
   have hCd'0 : 0 ≤ Cd' := le_trans (le_trans zero_le_one (le_max_right Cd 1)) hCd'1
   -- the number of classes, and the constant
   obtain ⟨NC, hNC⟩ : ∃ N : ℕ, N = 500000 * (10 ^ 6 + 1) ^ K₀ := ⟨_, rfl⟩
@@ -115,14 +128,16 @@ theorem typeII_res {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 :
   have hC₁0 : 0 ≤ C₁ := by rw [hC₁]; positivity
   obtain ⟨Q₂, hQ₂⟩ := Filter.eventually_atTop.1
     (LinnikTwelve.ev_log_pow (NC * C₁ * 3 ^ 10) (1 / 100000) 10 (by norm_num))
-  have hev : ∀ᶠ q : ℕ in Filter.atTop, q₁ ≤ q ∧ (2 : ℝ) ^ K₀ ≤ q ∧ 4 ≤ (q : ℝ) ^ e₁ ∧ Q₂ ≤ (q : ℝ) ∧ 2 ≤ q :=
+  have hev : ∀ᶠ q : ℕ in Filter.atTop,
+      q₁ ≤ q ∧ (2 : ℝ) ^ K₀ ≤ q ∧ 4 ≤ (q : ℝ) ^ e₁ ∧ Q₂ ≤ (q : ℝ) ∧ 2 ≤ q ∧ q₃ ≤ q :=
     (Filter.eventually_ge_atTop q₁).and
       ((tendsto_natCast_atTop_atTop.eventually_ge_atTop ((2 : ℝ) ^ K₀)).and
         ((((tendsto_rpow_atTop he₁).comp tendsto_natCast_atTop_atTop).eventually_ge_atTop 4).and
-          ((tendsto_natCast_atTop_atTop.eventually_ge_atTop Q₂).and (Filter.eventually_ge_atTop 2))))
+          ((tendsto_natCast_atTop_atTop.eventually_ge_atTop Q₂).and
+            ((Filter.eventually_ge_atTop 2).and (Filter.eventually_ge_atTop q₃)))))
   obtain ⟨q₀, hq₀⟩ := Filter.eventually_atTop.1 hev
   refine ⟨q₀, fun q _ hq P S hS hPpos a h₀ K hK Q h hQh hprod hres => ?_⟩
-  obtain ⟨hq₁, hq2K, hqe, hqQ₂, hq2⟩ := hq₀ q hq
+  obtain ⟨hq₁, hq2K, hqe, hqQ₂, hq2, hq₃⟩ := hq₀ q hq
   have hq2' : (2 : ℝ) ≤ q := by exact_mod_cast hq2
   have hq1 : (1 : ℝ) < q := by linarith
   have hq0 : (0 : ℝ) < q := by linarith
@@ -238,15 +253,22 @@ theorem typeII_res {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 :
       rw [ht']; dsimp only; split_ifs
       · exact min_le_left _ _
       · exact le_rfl
-    -- the class's count exponent: the least of `g(β)` and the moments' exponents
+    -- the class's count exponent: the least of `g(β)`, the moments' exponents and the large values'
     obtain ⟨Sjk, hSjk⟩ : ∃ T : Finset (Fin K × Fin kmax), T = Finset.univ.filter (fun jk => 1 ≤ ℓ jk.1) :=
       ⟨_, rfl⟩
     obtain ⟨fjk, hfjk⟩ : ∃ f : Fin K × Fin kmax → ℝ, f = fun jk =>
         momExp ((jk.2 : ℕ) + 1) (sv jk.1) (1 / 10 ^ 6 * (ℓ jk.1 : ℝ)) := ⟨_, rfl⟩
-    obtain ⟨γ, hγ⟩ : ∃ γ : ℝ, γ = Sjk.fold min (g (βg i)) fjk := ⟨_, rfl⟩
-    have hγle := (Finset.le_fold_min (s := Sjk) (b := g (βg i)) (f := fjk) γ).1 (le_of_eq hγ)
-    have hγg : γ ≤ g (βg i) := hγle.1
-    have hγf : ∀ jk ∈ Sjk, γ ≤ fjk jk := hγle.2
+    obtain ⟨Slv, hSlv⟩ : ∃ T : Finset (Fin K × Fin kmax2), T = Finset.univ.filter (fun jk => 1 ≤ ℓ jk.1) :=
+      ⟨_, rfl⟩
+    obtain ⟨flv, hflv⟩ : ∃ f : Fin K × Fin kmax2 → ℝ, f = fun jk =>
+        lvExp ((jk.2 : ℕ) + 1) (sv jk.1) (1 / 10 ^ 6 * (ℓ jk.1 : ℝ)) := ⟨_, rfl⟩
+    obtain ⟨γ₁, hγ₁⟩ : ∃ γ : ℝ, γ = Sjk.fold min (g (βg i)) fjk := ⟨_, rfl⟩
+    obtain ⟨γ, hγ⟩ : ∃ γ : ℝ, γ = Slv.fold min γ₁ flv := ⟨_, rfl⟩
+    have hγle2 := (Finset.le_fold_min (s := Slv) (b := γ₁) (f := flv) γ).1 (le_of_eq hγ)
+    have hγle := (Finset.le_fold_min (s := Sjk) (b := g (βg i)) (f := fjk) γ₁).1 (le_of_eq hγ₁)
+    have hγg : γ ≤ g (βg i) := hγle2.1.trans hγle.1
+    have hγf : ∀ jk ∈ Sjk, γ ≤ fjk jk := fun jk hjk => hγle2.1.trans (hγle.2 jk hjk)
+    have hγl : ∀ jk ∈ Slv, γ ≤ flv jk := hγle2.2
     have hγ1 : γ ≤ 1 := hγg.trans (hg1 _)
     -- the class's bound on the prime sums
     have hMc : M c = max (∏ j : Fin K, bnd j i (ℓ j)) 0 := by rw [hM, hic, hℓ]
@@ -310,7 +332,46 @@ theorem typeII_res {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 :
     have hl10 : 1 ≤ (1 + Real.log ((q : ℝ) * T)) ^ 10 := one_le_pow₀ (by linarith [Real.log_nonneg hqT1])
     have hcnt' : ((Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ cl χ = c).card : ℝ) ≤
         Cd' * ((q : ℝ) * T) ^ γ * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
-      rcases (Finset.fold_min_le (s := Sjk) (b := g (βg i)) (f := fjk) γ).1 (le_of_eq hγ.symm) with hgγ |
+      rcases (Finset.fold_min_le (s := Slv) (b := γ₁) (f := flv) γ).1 (le_of_eq hγ.symm) with hγ₁γ |
+        ⟨jk, hjkS, hjkγ⟩
+      swap
+      · -- a prime sum at least `Q_j^{τℓ_j}`: the large values of a power
+        rw [hSlv] at hjkS
+        have hℓ1 : 1 ≤ ℓ jk.1 := (Finset.mem_filter.1 hjkS).2
+        have hQj1 : 1 < Q jk.1 := by linarith [(hQh' jk.1 jk.1.isLt).1]
+        have hsub : (Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ cl χ = c) ⊆
+            (Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
+              Q jk.1 ^ (1 / 10 ^ 6 * (ℓ jk.1 : ℝ)) ≤ ‖SieveWeight.Sp χ f0 (Q jk.1) (h jk.1)‖) := by
+          intro χ hχ
+          obtain ⟨-, hχc⟩ := (Finset.mem_filter.1 hχ).2
+          refine Finset.mem_filter.2 ⟨Finset.mem_univ _, ?_⟩
+          have hlev : lev (10 ^ 6) (1 / 10 ^ 6) (Q jk.1) ‖SieveWeight.Sp χ f0 (Q jk.1) (h jk.1)‖ = ℓ jk.1 := by
+            have h1 := hcl2 χ jk.1
+            rw [hχc, hlv] at h1
+            rw [hℓ]; exact h1.symm
+          have h2 := rpow_le_of_one_le_lev (N := 10 ^ 6) (by norm_num : (0 : ℝ) < 1 / 10 ^ 6) hQj1 (norm_nonneg _)
+            (x := ‖SieveWeight.Sp χ f0 (Q jk.1) (h jk.1)‖) (by rw [hlev]; exact hℓ1)
+          rwa [hlev] at h2
+        have hk1 : 1 ≤ (jk.2 : ℕ) + 1 := by omega
+        have hkm : (jk.2 : ℕ) + 1 ≤ kmax2 := jk.2.isLt
+        have hlarge := hlvq q hq₃ f0 hF₁f hsupp (Q jk.1) (h jk.1) ((jk.2 : ℕ) + 1) (1 / 10 ^ 6 * (ℓ jk.1 : ℝ)) hk1
+          hkm (hQh' jk.1 jk.1.isLt).1
+        have hfj : flv jk = lvExp ((jk.2 : ℕ) + 1) (sv jk.1) (1 / 10 ^ 6 * (ℓ jk.1 : ℝ)) := by rw [hflv]
+        have hγ0 : 0 ≤ γ := le_trans (lvExp_nonneg (hsv0 jk.1 jk.1.isLt) _) (hfj ▸ hjkγ)
+        have hqγ : (q : ℝ) ^ lvExp ((jk.2 : ℕ) + 1) (sv jk.1) (1 / 10 ^ 6 * (ℓ jk.1 : ℝ)) ≤ ((q : ℝ) * T) ^ γ :=
+          (Real.rpow_le_rpow_of_exponent_le hq1.le (hfj ▸ hjkγ)).trans
+            (Real.rpow_le_rpow hq0.le (le_mul_of_one_le_right hq0.le hT1) hγ0)
+        have hqTγ0 : 0 ≤ ((q : ℝ) * T) ^ γ := Real.rpow_nonneg (by linarith) _
+        calc ((Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ cl χ = c).card : ℝ)
+            ≤ ((Finset.univ.filter fun χ : DirichletCharacter ℂ q =>
+                Q jk.1 ^ (1 / 10 ^ 6 * (ℓ jk.1 : ℝ)) ≤ ‖SieveWeight.Sp χ f0 (Q jk.1) (h jk.1)‖).card : ℝ) := by
+              exact_mod_cast Finset.card_le_card hsub
+          _ ≤ Clv * (q : ℝ) ^ lvExp ((jk.2 : ℕ) + 1) (sv jk.1) (1 / 10 ^ 6 * (ℓ jk.1 : ℝ)) := hlarge
+          _ ≤ Clv * ((q : ℝ) * T) ^ γ := mul_le_mul_of_nonneg_left hqγ (by linarith)
+          _ ≤ Cd' * ((q : ℝ) * T) ^ γ * 1 := by rw [mul_one]; exact mul_le_mul_of_nonneg_right hCd'l hqTγ0
+          _ ≤ Cd' * ((q : ℝ) * T) ^ γ * (1 + Real.log ((q : ℝ) * T)) ^ 10 :=
+              mul_le_mul_of_nonneg_left hl10 (mul_nonneg hCd'0 hqTγ0)
+      rcases (Finset.fold_min_le (s := Sjk) (b := g (βg i)) (f := fjk) γ).1 (hγ₁ ▸ hγ₁γ) with hgγ |
         ⟨jk, hjkS, hjkγ⟩
       · -- the zeros' bin
         have hsub : (Finset.univ.filter fun χ : DirichletCharacter ℂ q => χ ≠ 1 ∧ cl χ = c) ⊆
@@ -375,7 +436,7 @@ theorem typeII_res {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 :
     -- the condition at the class
     have hok : ResBinOK L (1 / 1000) (1 / 1000) (∑ j ∈ Finset.range K, sv j * (t j - 1) + L - m) γ m := by
       rw [hm]
-      refine hres (βg i) γ t hβi.1 hβi.2 hγg (fun j hj => ?_) (fun j hj k hk => ?_)
+      refine hres (βg i) γ t hβi.1 hβi.2 hγg (fun j hj => ?_) (fun j hj k hk => ?_) (fun j hj k hk => ?_)
       · rw [htt ⟨j, hj⟩]; exact (ht'le _).trans hw
       · have htj : t j = t' ⟨j, hj⟩ := htt ⟨j, hj⟩
         rw [htj]
@@ -425,6 +486,44 @@ theorem typeII_res {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 :
               have h2 : k₀ ≤ ⌈1 / e₁⌉₊ := hk₀ ▸ Nat.ceil_le_ceil h1
               omega
             exact (hmem k₀ hk₀pos hk₀max).trans (momExp_mono_k hsvj hu1 hk₀1 (by omega))
+      · -- the large values: `γ ≤ lvExp k s (τℓ)` for `k ≤ k_max2` by the class's exponent, `1` beyond
+        have htj : t j = t' ⟨j, hj⟩ := htt ⟨j, hj⟩
+        rw [htj]
+        have hsvj : 0 ≤ sv j := hsv0 j hj
+        show γ ≤ lvExp k (sv j) (t' ⟨j, hj⟩ - 1 / 10 ^ 6)
+        by_cases hl0 : ℓ ⟨j, hj⟩ = 0
+        · have ht0 : t' ⟨j, hj⟩ ≤ 1 / 10 ^ 6 := by
+            rw [ht']; dsimp only; rw [ite_eq_left (by rw [hl0]; norm_num), hl0]
+            exact (min_le_right _ _).trans (by norm_num)
+          rw [lvExp_of_lt (by unfold lvE; linarith)]
+          exact hγ1
+        · have hl1 : 1 ≤ ℓ ⟨j, hj⟩ := Nat.one_le_iff_ne_zero.2 hl0
+          have htu : t' ⟨j, hj⟩ - 1 / 10 ^ 6 ≤ 1 / 10 ^ 6 * (ℓ ⟨j, hj⟩ : ℝ) := by
+            rw [ht']; dsimp only; split_ifs with hl
+            · have := min_le_right (βg (i + 1) + 2 * δ) (1 / 10 ^ 6 * ((ℓ ⟨j, hj⟩ : ℝ) + 1))
+              linarith only [this]
+            · have hN : ℓ ⟨j, hj⟩ = 10 ^ 6 := le_antisymm (hℓle _) (not_lt.1 hl)
+              have hβ1 := hβi1.2
+              rw [hN, hδ]; push_cast; linarith only [hβ1]
+          refine le_trans ?_ (lvExp_anti hsvj htu)
+          by_cases hkk : k ≤ kmax2
+          · have hin : ((⟨j, hj⟩ : Fin K), (⟨k - 1, by omega⟩ : Fin kmax2)) ∈ Slv := by
+              rw [hSlv]; exact Finset.mem_filter.2 ⟨Finset.mem_univ _, hl1⟩
+            have h1 := hγl _ hin
+            rw [hflv] at h1
+            simp only at h1
+            rwa [Nat.sub_add_cancel hk] at h1
+          · have hks : 5 / 2 ≤ (k : ℝ) * sv j := by
+              have h1 : 5 / 2 / e₁ ≤ (⌈5 / 2 / e₁⌉₊ : ℝ) := Nat.le_ceil _
+              have h2 : ((⌈5 / 2 / e₁⌉₊ : ℕ) : ℝ) ≤ k := by exact_mod_cast (by omega : ⌈5 / 2 / e₁⌉₊ ≤ k)
+              have h3 : 5 / 2 ≤ (k : ℝ) * e₁ := by
+                rw [div_le_iff₀ he₁] at h1
+                have := mul_le_mul_of_nonneg_right h2 he₁.le
+                linarith
+              have h4 : (k : ℝ) * e₁ ≤ k * sv j := mul_le_mul_of_nonneg_left (hsve j hj) (Nat.cast_nonneg k)
+              linarith
+            rw [lvExp_of_big hks]
+            exact hγ1
     -- the class's bound
     have hb := bin_bound_exp (V := V) (L := L) (d := 1 / 1000) (e := 1 / 1000) (by norm_num) hq1 hPm hT1 hT3 hη.le
       hγ1 (by positivity : (0 : ℝ) ≤ 2 ^ K₀ * 2 ^ K₀) hCd'0 hCK0.le hMp (hM0 c) hcnt' (Nat.cast_nonneg _) hBk'

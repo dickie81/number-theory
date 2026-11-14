@@ -85,8 +85,9 @@ typedef struct {
     int ev_win, ev_second, ev_rest;
     double ext;                  /* a what-if: the bilinear Type I estimates reach x^ext further */
     int res;                     /* the resonant window (below): 1, +2 with the Halasz-Montgomery inequality for
-                                  * the powers, +4 with sifted parts in the rest, +16 with Chen-Gupta-Li's large
-                                  * values for the powers, +32 with the sifted parts counted by their own sums */
+                                  * the powers, +4 with sifted parts in the rest, +8 with a cofactor that is a
+                                  * prime as one of the box's primes, +16 with Chen-Gupta-Li's large values for the
+                                  * powers, +32 with the sifted parts counted by their own sums */
     int NC;
     const double *cl, *reach;    /* the levels of the count, from 1 down to 0, and the density curve's reach there */
     const int *ord;              /* the order in which the levels are tested */
@@ -223,8 +224,9 @@ static double wsave(const Ctx *c, double mlo, double G) {
  * and what is beyond 1 is paid by the half-plane's bound.  Every D is a lower bound on the box, and the lengths
  * add up to L at every point. */
 #define NCMAX 320
-static int resonant(const Ctx *c, int k, const double *Slo, const double *Shi, int npm) {
-    int full = (1 << k) - 1, have = 0, NC = c->NC, sifted = npm | (1 << k);
+static int resonant(const Ctx *c, int k, const double *Slo, const double *Shi, int npm, int cofprime) {
+    /* with `res & 8` a cofactor that is a prime on the whole box counts as a prime of the box */
+    int full = (1 << k) - 1, have = 0, NC = c->NC, sifted = npm | (cofprime && (c->res & 8) ? 0 : 1 << k);
     double V[MAXK + 1][NCMAX], L = c->L, need = L - c->thr + c->wbin * L;
     for (int Rm = 1; Rm < (2 << k); Rm++) {
         if (!(c->res & 4) && (Rm & sifted)) continue;
@@ -284,8 +286,8 @@ static int resonant(const Ctx *c, int k, const double *Slo, const double *Shi, i
 
 /* The resonant window on a box of independent cells, cut in two where it fails (at most `depth` times, across the
  * widest cell): the term of a box is the sum of its halves' terms, so a box whose pieces all pass is evaluated. */
-static int res_box(const Ctx *c, int k, const double *Slo, const double *Shi, int npm, int depth) {
-    if (resonant(c, k, Slo, Shi, npm)) return 1;
+static int res_box(const Ctx *c, int k, const double *Slo, const double *Shi, int npm, int cofprime, int depth) {
+    if (resonant(c, k, Slo, Shi, npm, cofprime)) return 1;
     if (depth <= 0 || c->pointwise) return 0;
     int jw = -1;
     double wmax = 1e-9, lo[MAXK], hi[MAXK];
@@ -310,7 +312,7 @@ static int res_box(const Ctx *c, int k, const double *Slo, const double *Shi, in
             Tlo[m] = Tlo[m & (m - 1)] + lo[j];
             Thi[m] = Thi[m & (m - 1)] + hi[j];
         }
-        ok = res_box(c, k, Tlo, Thi, npm, depth - 1);
+        ok = res_box(c, k, Tlo, Thi, npm, cofprime, depth - 1);
     }
     free(T);
     return ok;
@@ -470,7 +472,9 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
     int hasd = mulo <= 0;                        /* some point may have r in A: the term counts n = r there */
     if (muhi < llo && !hasd) return 0;           /* u < 1 on the whole box, and r < x: the term is empty */
     if (evaluable(c, k, Slo, Shi)) return 0;
-    if (c->res && (std || !c->res_main) && res_box(c, k, Slo, Shi, npm, std ? c->res_split : 0)) return 0;
+    if (c->res && (std || !c->res_main) &&
+        res_box(c, k, Slo, Shi, npm, mulo > 0 && muhi < 2 * llo, std ? c->res_split : 0))
+        return 0;
     double T = capacity(c, k, Shi, !std && c->rev_linear);
     double fs = exact_floor(c, k, Slo, Shi, lhi, T);
     if (c->rev_floor && !std && fs >= 0)         /* a floor below every atom of a reversed term */

@@ -171,6 +171,7 @@ import SieveResMoment
 import SieveResBins
 import SieveResZone
 import SieveResCount
+import SieveResLV
 import SieveResTypeII
 import SieveUnwLo
 import SieveResChain
@@ -1044,6 +1045,8 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTypeIIHM.sum_typeII_cls
 #print axioms SieveTypeIIHM.bin_bound_exp
 #print axioms SieveTypeIIHM.card_Sp_large
+#print axioms SieveTypeIIHM.card_Sp_pow_large
+#print axioms SieveTypeIIHM.card_Sp_large_lv
 #print axioms SieveTypeIIHM.typeII_res
 #print axioms SieveUnwGen.unw_gen_lo
 #print axioms SieveTypeIIHM.box_res
