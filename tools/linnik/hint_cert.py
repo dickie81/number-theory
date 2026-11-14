@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] | --try TAG a/b H HF MAXLEN [--lam N]
-[--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--split J] [--rows I J] [--out DIR]:
-the search with the reversal through the largest prime as a plan, the hints that lead the kernel through the plan,
-and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
+[--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J] [--rows I J]
+[--out DIR]: the search with the reversal through the largest prime as a plan, the hints that lead the kernel through
+the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is
+given).
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
 it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
@@ -364,9 +365,18 @@ class Planner(fl.FlipSearch):
         while i < len(cells):
             j = i
             kind = cells[i][2][0]
+            merged = None
             if self.merge and kind == 'E':
                 while (j + 1 < len(cells) and cells[j + 1][2][0] == 'E'
                        and self.anyI([(cells[i][0], cells[j + 1][1])] + bl)):
+                    j += 1
+            elif self.res_merge and kind == 'R':
+                # consecutive cells that the resonant window evaluates are one cell while one test covers them
+                while j + 1 < len(cells) and cells[j + 1][2][0] == 'R':
+                    rh = self.resHint([(cells[i][0], cells[j + 1][1])] + bl)
+                    if rh is None:
+                        break
+                    merged = ('R',) + rh
                     j += 1
             elif self.dmerge and kind == 'D' and drp is not None:
                 tsum = cells[i][3]
@@ -381,7 +391,7 @@ class Planner(fl.FlipSearch):
                 if j > i:
                     u = drp([(cells[i][0], cells[j][1])] + bl, par)
                     tot += u - tsum
-            kids.append(cells[i][2])
+            kids.append(cells[i][2] if merged is None else merged)
             if j + 1 < len(cells):
                 keep.add(cells[j][1])
             i = j + 1
@@ -472,6 +482,8 @@ class Planner(fl.FlipSearch):
     res_lv = False       # the test with the large values of the powers too (`SieveResTest.resT2`)
     res_lazy = False     # a rest that the strict float filter passes is taken as passing, and its hint is found
     # when the plan is written (`resolve`): `('R', mask, -1, key)` until then
+    res_merge = False    # consecutive cells of a new prime that the window evaluates are one cell while one test
+    # covers them (as the evaluated cells are)
     resmemo = None
 
     def resHint(self, bl, probe=False):
@@ -1136,7 +1148,7 @@ class Par:
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
                  blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False, cof=False, lv=False,
-                 lazy=False, split=0):
+                 lazy=False, rmerge=False, split=0):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1` or `SEC2`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
@@ -1149,14 +1161,15 @@ class Par:
         the boxes with their cofactor in the rest when it is one prime (`SieveAd.resTestsFC`, and with `resF`
         `SieveAd.chkIRF`); `lv`: the window's test with the large values of the powers too (`SieveResTest.resX`);
         `lazy`: the planner takes the strict float filter's word that a rest passes, and finds the hints of the plan
-        it keeps when the plan is written (`resolve`); `split`: a box that the plan does not evaluate is cut in two
-        where the top `1/2^j` of its first cell, `j ≤ split`, passes the window's float filter
+        it keeps when the plan is written (`resolve`); `rmerge`: consecutive cells of a new prime that the window
+        evaluates are one cell while one test covers them; `split`: a box that the plan does not evaluate is cut in
+        two where the top `1/2^j` of its first cell, `j ≤ split`, passes the window's float filter
         (`Planner.res_split`)."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
         self.skip, self.skipmin, self.energy, self.res, self.resF, self.cof = skip, skipmin, energy, res, resF, cof
-        self.lv, self.lazy, self.split = lv, lazy, split
+        self.lv, self.lazy, self.rmerge, self.split = lv, lazy, rmerge, split
         assert res or not (resF or cof or split), 'the window over the frozen parts, the cofactor and the cuts come ' \
             'with the main tree\'s'
         self.h, self.hI, self.depth, self.kappa = h, round(h * DEN), depth, kappa
@@ -1177,7 +1190,7 @@ class Par:
         P.res = self.res
         P.res_frozen = self.resF
         P.res_cof = self.cof
-        P.res_lv, P.res_lazy, P.res_split = self.lv, self.lazy, self.split
+        P.res_lv, P.res_lazy, P.res_merge, P.res_split = self.lv, self.lazy, self.rmerge, self.split
         P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
         return P
 
@@ -1718,7 +1731,7 @@ def main():
                    skip=int(a[a.index('--skip') + 1]) if '--skip' in a else 0,
                    sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a,
                    res='--res' in a or '--resF' in a or '--cof' in a, resF='--resF' in a, cof='--cof' in a,
-                   lv='--lv' in a, lazy='--lazy' in a,
+                   lv='--lv' in a, lazy='--lazy' in a, rmerge='--rmerge' in a,
                    split=int(a[a.index('--split') + 1]) if '--split' in a else 0)
         rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache'):
