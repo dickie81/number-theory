@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] | --try TAG a/b H HF MAXLEN [--lam N]
-[--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J] [--depth N]
-[--rows I J] [--out DIR]: the search with the reversal through the largest prime as a plan, the hints that lead the
-kernel through the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at
-L = 2150/1000, if none is given).
+"""hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] [--rows I J [STEP]] [--plan-only] | --try TAG a/b
+H HF MAXLEN [--lam N]
+[--depth N] [--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J]
+[--rows I J] [--out DIR]:
+the search with the reversal through the largest prime as a plan, the hints that lead the kernel through the plan,
+and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
 it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
@@ -115,7 +116,12 @@ CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
                        res=True),
          # and for the boxes of the trees over the frozen parts (`SieveAd.frozResTestsC`)
          '21280': dict(lnum=2128, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
-                       res=True, resF=True)}
+                       res=True, resF=True),
+         # and the cofactor in the rest (`SieveAd.chkIRC`, `chkIRF`), the large values of the powers
+         # (`SieveResTest.resX`), lazy hints, a box cut where its first cell's top passes the window, and the
+         # planner's search shortened (`skip`)
+         '21100': dict(lnum=2110, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
+                       res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
 # dropped cells next to each other are one cell while its bound is at most DMERGE of the sum of theirs
@@ -1382,7 +1388,7 @@ def plan_all(par_, procs=4, rows=None, cache=None):
         os.makedirs(cache, exist_ok=True)
     jobs = [(par_, a, b, cache) for a, b in zip(cuts, cuts[1:])]
     if rows is not None:
-        jobs = jobs[rows[0]:rows[1]]
+        jobs = jobs[rows[0]:rows[1]:rows[2] if len(rows) > 2 else 1]
     if procs > 1:
         with multiprocessing.Pool(procs) as pool:
             # the cells that take longest first, each alone in its task
@@ -1446,11 +1452,12 @@ def defs_file(par_):
     dimp = 'SieveAdFrozResDefs' if resF else 'SieveAdResDefs' if res else 'SieveAdDirDefs'
     alt, ftests = ('altFDR', 'frozResTestsC') if resF else ('altFD', 'frozTestsC')
     resdoc = ('With the resonant window: an evaluation of kind `3` in the main tree is `SieveAd.chkIR`\'s\n'
-              '(`SieveAd.resTestsF`), its configuration read by `SieveAd.cfgIMR`' + (
-                  ', with the box\'s cofactor in the rest when it\nis one prime (`SieveAd.chkIRC`, '
+              '(`SieveAd.resTestsF`; the rest tested by `SieveResTest.resX`), its configuration read by\n'
+              '`SieveAd.cfgIMR`' + (
+                  ', with the box\'s cofactor in the rest when it is one prime (`SieveAd.chkIRC`,\n'
                   '`SieveAd.resTestsFC`, `SieveAd.cfgIMRC`)' if cof else '') + (
-                  '; over the frozen parts too, the box\n`ch ++ β` (`SieveAd.frozResTestsC`), read by '
-                  '`SieveAd.cfgIFR`.\n\n' if resF else '.\n\n') if res else '')
+                  '; over the frozen parts too, the box `ch ++ β` (`SieveAd.frozResTestsC`, with\n'
+                  '`SieveAd.chkIRF`), read by `SieveAd.cfgIFR`.\n\n' if resF else '.\n\n') if res else '')
     return f"""/-
 # The exponent and the search led by hints at `L = {LN}`
 
@@ -1615,8 +1622,15 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
             'A box of the main tree may also be evaluated by the resonant window: a Type II estimate in one '
             'variable, the box\'s other primes and the cofactor, with the characters sorted by the sizes of a rest '
             'of its primes\' own sums as well as by their zeros, whose condition on the rest\'s cells the kernel '
-            'checks led by a hint (`SieveAd.chkIR`, `SieveResTest.resT`; `SieveAd.evI_resE`, '
-            '`SieveTypeIIHM.typeII_res`). ' if res else '') +
+            'checks led by a hint (`SieveAd.chkIR`, `SieveResTest.resX`; `SieveAd.evI_resE`, '
+            '`SieveTypeIIHM.typeII_res`): the counts of the characters at which a sum of the rest is large are its '
+            'moments, the Halász–Montgomery inequality, the zeros\' bins and Chen, Gupta and Li\'s Proposition '
+            '3.1 for its powers. ' + (
+                'So may a box of a tree over a frozen part, its rest among the frozen primes and the chain\'s '
+                '(`SieveAd.evIF_froz_resT`). ' if resF else '') + (
+                'Where a box\'s cells leave room for one prime only as the cofactor of its numbers, that prime may '
+                'be in the rest too, in the cell that the cells leave it (`SieveAd.chkIRC`, `SieveAd.chkIRF`; '
+                '`SieveTypeIIHM.chain_res_cof`, `SieveAd.evIF_froz_resC`). ' if cof else '') if res else '') +
         f'The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
         f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.frozTests`. The '
         f'kernel does not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the '
@@ -1726,24 +1740,35 @@ def main():
     if a and a[0] == '--try':
         ln, ld = map(int, a[2].split('/'))
         par_ = Par(a[1], ln, ld, h=float(a[3]), hF=float(a[4]), maxlen=int(a[5]),
+                   depth=int(a[a.index('--depth') + 1]) if '--depth' in a else 6,
                    lam=int(a[a.index('--lam') + 1]) if '--lam' in a else 0, pos='--pos' in a,
                    blk=int(a[a.index('--blk') + 1]) if '--blk' in a else 1,
                    skip=int(a[a.index('--skip') + 1]) if '--skip' in a else 0,
                    sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a,
                    res='--res' in a or '--resF' in a or '--cof' in a, resF='--resF' in a, cof='--cof' in a,
                    lv='--lv' in a, lazy='--lazy' in a, rmerge='--rmerge' in a,
-                   split=int(a[a.index('--split') + 1]) if '--split' in a else 0,
-                   depth=int(a[a.index('--depth') + 1]) if '--depth' in a else 6)
-        rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
-    elif not a or a[0] in ('--check', '--out', '--procs', '--cache'):
-        par_, rows = Par(tag, **CERTS[tag]), None
-        if out is None and '--check' not in a:
+                   split=int(a[a.index('--split') + 1]) if '--split' in a else 0)
+    elif not a or a[0] in ('--check', '--out', '--procs', '--cache', '--rows', '--plan-only'):
+        par_ = Par(tag, **CERTS[tag])
+        if out is None and '--check' not in a and '--plan-only' not in a:
             out = tc.PNT
     else:
         print(__doc__)
         return 2
+    rows = None
+    if '--rows' in a:
+        # the cells `I` to `J` of the first prime, every `STEP`-th (`--rows I J [STEP]`)
+        i = a.index('--rows') + 1
+        rows = tuple(int(x) for x in a[i:i + 3] if x.isdigit())
     t0 = time.time()
     cache = a[a.index('--cache') + 1] if '--cache' in a else None
+    if '--plan-only' in a:
+        # the plans of the cells into the cache, and no file: for a search shared between machines
+        assert cache is not None, '--plan-only keeps its plans in --cache DIR'
+        f0, cfg0, parts, root, total, stats = plan_all(par_, procs, rows, cache)
+        print(f'L = {par_.lnum}/{par_.lden} rows {rows}: cost/K = {total / K:.5f}; {stats["boxes"]} boxes searched; '
+              f'{sum(stats["steps"].values())} steps; {time.time() - t0:.0f} s', flush=True)
+        return 0
     files, (parts, root, total, stats) = generate(par_, procs, rows, cache)
     times = [p[7] for p in parts]
     bits = sum(p[6].bit_length() for p in parts)
