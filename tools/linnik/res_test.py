@@ -30,6 +30,7 @@ line (2 bits each), the first interval in the lowest bits.
 """
 import argparse
 import difflib
+import os
 import pathlib
 import sys
 from fractions import Fraction as Fr
@@ -49,11 +50,19 @@ TAU = Fr(1, 10 ** 6)
 MARG = Fr(1, 25000)
 DD = EE = Fr(1, 1000)
 
-_P = rl.parse('ghx')
+# the curve of the zeros' bins: `ghx` (the Lean file's), or `g7d` for measurement (RES_CURVE=g7d), whose steps' A
+# rise to a peak and fall again: on a range of steps the largest A is at an end or at the peak `PK`
+CURVE = os.environ.get('RES_CURVE', 'ghx')
+_P = rl.parse(CURVE)
 HUX = [p for p in _P if p[2] is not None][::-1]       # top first: (lo, hi, A)
-NP = len(HUX)                                         # 17; the piece NP is the trivial count
-CONST_HI = _P[0][1]                                   # 7789/10000
+NP = len(HUX)                                         # 17 for ghx; the piece NP is the trivial count
+CONST_HI = _P[0][1]                                   # 7789/10000 for ghx
 TOPS = [A * (1 - lo) for lo, hi, A in HUX]
+PK = max(range(NP), key=lambda i: (HUX[i][2], -i))    # the first step of the largest A (the last one for ghx)
+PB = max(5, NP.bit_length())                          # the bits of a record's piece: 5 for ghx
+CB = 25 + PB                                          # where the clamp's two bits start (30 for ghx)
+TB = CB + 2                                           # where the terms' bits start (32 for ghx)
+PMASK = (1 << PB) - 1
 
 
 def fl(x):
@@ -147,18 +156,20 @@ TFT, TFTM, TIA, TDH = pack(FT), pack(FTM), pack(IA), pack(DH)
 
 
 def intv(ts, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
-    b, pb, cc = (r & 0x1FFFFFF) << 40, (r >> 25) & 31, (r >> 30) & 3
-    if not (pb <= 17 and get(TFTM, pb) < b and b <= get(TFT, pb) and a <= b):
+    b, pb, cc = (r & 0x1FFFFFF) << 40, (r >> 25) & PMASK, (r >> CB) & 3
+    if not (pb <= NP and get(TFTM, pb) < b and b <= get(TFT, pb) and a <= b):
         return False
     dS = max(get(TDH, pa), sub(mulF(a, get(TIA, pa)), WC))
     iax = min(get(TIA, pa), get(TIA, pb))
+    if pa <= PK <= pb:
+        iax = min(iax, get(TIA, PK))
     if cc == 0:
         cp0, cp1, cn0 = sub(((b + 1) >> 1) + yuP, yuN), 0, 0
     elif cc == 1:
         cp0, cp1, cn0 = yuP + sub(ydN, (a >> 1) + ydP), S // 2, yuN
     else:
         cp0, cp1, cn0 = c1, 0, 0
-    p0, n0, n1 = addTerms(dS, iax, ts, r >> 32, ltm + cp0, cn0, 0)
+    p0, n0, n1 = addTerms(dS, iax, ts, r >> TB, ltm + cp0, cn0, 0)
     p1 = S // 2 + cp1
     return le0(p0, p1, n0, n1, a) and le0(p0, p1, n0, n1, b)
 
@@ -174,13 +185,13 @@ def resT(Lnum, Lden, cs, hs, k, h):
     ydP, ydN = sub(K1D, mtu) >> 1, (sub(mtu, K1D) + 1) >> 1
     if not (hs + 1 < DEN and ltm + min(c1, yuP) <= sum(mulF(t[0], HP) for t in ts)):
         return False
-    w = 32 + 2 * len(ts)
+    w = TB + 2 * len(ts)
     a, pa = 0, 0
     for _ in range(k):
         r = h & ((1 << w) - 1)
         if not intv(ts, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
             return False
-        a, pa, h = (r & 0x1FFFFFF) << 40, (r >> 25) & 31, h >> w
+        a, pa, h = (r & 0x1FFFFFF) << 40, (r >> 25) & PMASK, h >> w
     return a == S
 
 
@@ -205,9 +216,9 @@ class Box:
         self.y0 = self.yuP - self.yuN
 
     def rec(self, e, pb, ch, cc):
-        r = e | pb << 25 | cc << 30
+        r = e | pb << 25 | cc << CB
         for j, c in enumerate(ch):
-            r |= c << (32 + 2 * j)
+            r |= c << (TB + 2 * j)
         return r
 
     def try_choice(self, aS, pa, e, pb):
@@ -216,6 +227,8 @@ class Box:
         ts = self.ts
         dS = max(DH[pa], sub(mulF(aS, IA[pa]), WC))
         iax = min(IA[pa], IA[pb])
+        if pa <= PK <= pb:
+            iax = min(iax, IA[PK])
         cl = [(sub(((bS + 1) >> 1) + self.yuP, self.yuN), 0, 0),
               (self.yuP + sub(self.ydN, (aS >> 1) + self.ydP), S // 2, self.yuN),
               (self.c1, 0, 0)]
@@ -288,8 +301,8 @@ class Box:
                     return None
                 r = best
             recs.append(r)
-            aS, pa = (r & 0x1FFFFFF) << 40, (r >> 25) & 31
-        w = 32 + 2 * len(self.ts)
+            aS, pa = (r & 0x1FFFFFF) << 40, (r >> 25) & PMASK
+        w = TB + 2 * len(self.ts)
         h = 0
         for i, r in enumerate(recs):
             h |= r << (w * i)
@@ -377,6 +390,8 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9):
             ia_inv = 0.0
         else:
             ia_inv = min(1 / _HF[ia][2] if ia < NP else 0.0, 1 / _HF[ib][2])
+            if ia <= PK <= ib:
+                ia_inv = min(ia_inv, 1 / _HF[PK][2])
         for lo, mk in zip(los, ks):
             cand = list(mk) + [(-lo * dS, 0.0), (lo * w, -lo * ia_inv)]
             best = min(cand, key=lambda l: 2 * l[0] + l[1] * (a + b))
