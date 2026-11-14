@@ -725,8 +725,12 @@ covers. The region does not close at `13/6`.
     applied to powers of the sums. In Lean since: Proposition 3.1 for the powers of a prime's sum
     (`SieveTypeIIHM.card_Sp_pow_large`, and in exponents `card_Sp_large_lv`), as a count of the window's
     condition (`SieveTypeIIHM.ResCond`, `typeII_res`), and an upper end for each of the rest's exponents on a
-    box (`ResBox`). The kernel's test does not use that count yet, `own` is not in Lean, and the values are
-    the model's).
+    box (`ResBox`); and the kernel's test with that count as two more choices for each term of the rest, a
+    convex bound checked at the two ends of each interval (`SieveResTest.resX`, sound:
+    `SieveResTest.resX_sound_cells`), which the search's tests call (`SieveAd.chkIR`). On three cells of the
+    first prime at `2.12` (`x^0.41`, `x^0.45`, `x^0.48`; cells `0.003`, both trees) the exact search costs
+    `0.01260K`, `0.01086K`, `0.01087K` with it, for `0.01510K`, `0.01300K`, `0.01181K` without. `own` is not
+    in Lean, and the values below are the model's).
 
     *Where `7/3` comes from.* A zero of `L(s, χ)` with `β ≥ σ` makes one piece of the zero detector large: a
     sum `Σ_{n ~ N} a_n χ(n) n^{−iγ}`, `|a_n| ⪅ 1`, of size at least `N^σ` and of a length `N = q^θ` that the

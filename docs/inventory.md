@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1845 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1847 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 347 | 1026 |
+| `lib/pnt` | 348 | 1028 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -3061,6 +3061,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.card_Sp_pow_large`: The characters at which a power of a smoothed prime sum is large, by Chen, Gupta and Li's Proposition 3.1
 - `SieveTypeIIHM.card_Sp_large_lv`: The characters at which a smoothed prime sum is large, by the large values of its powers, in exponents
+
+#### `SieveResLVTest`: The resonant window's test with the large values of the powers is sound
+
+- `SieveResTest.lvU_le`: The kernel's term bounds the term
+- `SieveResTest.resX_sound_cells`: The test in either form is sound, in the cells' units
 
 #### `SieveResMoment`: The 2k-th moment of a short polynomial over the characters
 

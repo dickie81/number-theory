@@ -324,9 +324,9 @@ theorem evIF_froz_resT {e₁ e₂ s : ℕ} (β : List Cell) (hβl : β.length = 
   have hLeq : (Lnum : ℝ) / Lden = L := IBFits.L_eq
   have hLd : 0 < Lden := by exact_mod_cast hden
   -- the condition on the rest's cells
-  have hres := SieveResTest.resT_sound_cells hLd hc1 hT
+  have hres := SieveResTest.resX_sound_cells hLd hc1 hT
   have hhs : mSum (fun c => c.2) (ch ++ β) sr + 1 < DEN := by
-    have := SieveResTest.resT_hs hT
+    have := SieveResTest.resX_hs hT
     simpa [SieveResTest.DEN, SieveCert.DEN] using this
   have hDD : (SieveResTest.DEN : ℝ) = (DEN : ℝ) := by norm_num [SieveResTest.DEN, SieveCert.DEN]
   rw [hLeq, hDD, ← hκdef, hn] at hres
