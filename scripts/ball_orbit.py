@@ -17,6 +17,7 @@ u_k = dist(w_k, span(w_{k−1}))² = log(k/2π) + 1 − γ + o(1), which bounds 
     python3 scripts/ball_orbit.py [N]           # default N = 1000; needs numpy
     python3 scripts/ball_orbit.py --smooth [N]  # the zeros replaced by their density, no primes; needs scipy
     python3 scripts/ball_orbit.py --flat [N]    # the Gram matrix against the flat model d_1·min(m, n)
+    python3 scripts/ball_orbit.py --densities [N] # pivots for densities with and without a gap at low height
     python3 scripts/ball_orbit.py --zeros [M]   # which zeros carry d_k, from the first M zeros; needs mpmath, slow
     python3 scripts/ball_orbit.py --places [N]  # the Gram matrix as a sum over the places, and its rigidity
     python3 scripts/ball_orbit.py --weil [N]    # the intersection numbers D_m·D_n of BallWeil and the Weil bound
@@ -107,6 +108,59 @@ def smooth(N):
     for k in range(2, N + 1):
         rs, rt = ds[k - 1] / ds[0], dt[k - 1] / dt[0]
         print(f"  {k:3d}   {rs:12.3f}   {rt:14.3f}   {rt / rs:7.3f}")
+
+
+def densities(N):
+    """Pivots d_k/d_1 for six densities of zeros: what makes them exceed 1, the scarcity of zeros at low height or the
+    logarithmic growth of their density. The density is per unit height, one sign, and
+    K(x) = 2∫ρ(t)cos(t log x)/(t² + 1/4) dt."""
+    from fractions import Fraction
+    from scipy.integrate import quad
+    two_pi = 2 * math.pi
+    models = [
+        ("constant 1/2π at every height (flat)", [(0.0, np.inf, lambda t: 1 / two_pi)]),
+        ("log growth, no gap: 1/2π below 2πe, log(t/2π)/2π above",
+         [(0.0, two_pi * math.e, lambda t: 1 / two_pi), (two_pi * math.e, np.inf, lambda t: math.log(t / two_pi) / two_pi)]),
+        ("constant 1/2π, none below 2π (gap, no growth)", [(two_pi, np.inf, lambda t: 1 / two_pi)]),
+        ("log(t/2π)/2π, none below 2π (the zeros' density)", [(two_pi, np.inf, lambda t: math.log(t / two_pi) / two_pi)]),
+        ("log(t/2π)/2π, none below 14.13 (gap up to the first zero)",
+         [(14.134725, np.inf, lambda t: math.log(t / two_pi) / two_pi)]),
+        ("log(1 + t/2π)/2π at every height (small near 0, no gap)",
+         [(0.0, np.inf, lambda t: math.log1p(t / two_pi) / two_pi)]),
+    ]
+
+    def kernel(pieces):
+        cache = {}
+
+        def K(x):
+            u = abs(math.log(x))
+            if u not in cache:
+                tot = 0.0
+                for a, b, f in pieces:
+                    w = lambda t, f=f: f(t) / (0.25 + t * t)
+                    if u == 0:
+                        tot += 2 * quad(w, a, b, limit=500)[0]
+                    elif b == np.inf:
+                        tot += 2 * quad(w, a, b, weight="cos", wvar=u, limlst=200)[0]
+                    else:
+                        tot += 2 * quad(w, a, b, weight="cos", wvar=u, limit=500)[0]
+                cache[u] = tot
+            return cache[u]
+        return K
+
+    ks = [k for k in (2, 3, 5, 10, 20, 30) if k <= N]
+    print(f"d_k/d_1 at k = {', '.join(map(str, ks))}, N = {N}")
+    for name, pieces in models:
+        K = kernel(pieces)
+        S = np.zeros((N, N))
+        for m in range(1, N + 1):
+            for n in range(1, N + 1):
+                f = Fraction(max(m, n), min(m, n))
+                S[m - 1, n - 1] = math.sqrt(m * n) * K(f.numerator / f.denominator)
+        d = pivots(S)
+        print(f"  {name:58s} " + ", ".join(f"{d[k - 1] / d[0]:.3f}" for k in ks))
+    d = pivots(gram(N))
+    print(f"  {'the zeros of ζ':58s} " + ", ".join(f"{d[k - 1] / d[0]:.3f}" for k in ks))
 
 
 def flat(N):
@@ -637,7 +691,7 @@ def purity_zeros(M):
 def main():
     if len(sys.argv) > 1 and sys.argv[1].startswith("--"):
         arg = int(sys.argv[2]) if len(sys.argv) > 2 else None
-        {"--smooth": lambda: smooth(arg or 60), "--flat": lambda: flat(arg or 1000),
+        {"--smooth": lambda: smooth(arg or 60), "--flat": lambda: flat(arg or 1000), "--densities": lambda: densities(arg or 30),
          "--zeros": lambda: zeros(arg or 2000), "--places": lambda: places(arg or 60),
          "--weil": lambda: weil(arg or 1000), "--forward": lambda: forward(arg or 1000),
          "--slices": lambda: slices(arg or 10 ** 6), "--lattice": lambda: lattice(arg or 120),

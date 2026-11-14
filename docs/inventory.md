@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1809 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1813 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 281, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 198 | 706 |
+| `lib/core` | 198 | 710 |
 | `lib/pnt` | 325 | 990 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -71,8 +71,9 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `BallFlat`: The flat model: with Lebesgue measure for the zeros, the orbit spans the cubic lattice
 
-- `BallFlat.kerFlat_eq_integral`: `K₀` is `K_H` with Lebesgue measure for the zeros
+- `BallFlat.kerFlat_eq_integral`: `K₀` is `K_H` with Lebesgue measure for the zeros *paper*
 - `BallFlat.gram_flat`: The orbit Gram matrix of the flat kernel is `min(a, b)` *paper*
+- `BallFlat.inner_increments`: The increments are orthogonal, each of squared norm `c` *paper*
 - `BallFlat.telescope`: `v_n` is the sum of the increments below it.
 - `BallFlat.norm_sq_lattice`: The orbit spans the cubic lattice
 - `BallFlat.flat_pivot`: The pivots of the flat model are all `c = ‖v_1‖²` *paper*
@@ -82,10 +83,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `BallGap.gap_ge`: The Landau gap is at least `√log N` ([note](../formalisations/ball-rate.md))
 - `BallGap.edge_law`: The edge law ([note](../formalisations/ball-rate.md))
-- `BallGap.rate_gap`: The rate `λ_N ≫ √log N/N` *paper* ([note](../formalisations/ball-rate.md))
+- `BallGap.rate_gap`: The rate `λ_N ≫ √log N/N` ([note](../formalisations/ball-rate.md))
 
 #### `BallHadamard`: A kernel with a cusp: `K_H(r) = Σ_ρ r^{ρ − ½}/(ρ(1 − ρ))`
 
+- `BallHadamard.summable_hw`: The Hadamard weights are summable *paper*
 - `BallHadamard.kerH_one`: `K_H(1)` is Hadamard's constant *paper*
 - `BallHadamard.kerH_inv`: The kernel is even *paper*
 - `BallHadamard.rh_iff_posDefH`: The Riemann hypothesis is positive-definiteness of `K_H` on the positive rationals ([note](../formalisations/weil-positivity.md))
@@ -127,7 +129,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `BallPivot`: Under RH the pivots of the orbit form grow like `log N`: the orbit-lattice inequality for all large `N`
 
 - `BallPivot.slack_top`: The top vertex ([note](../formalisations/ball-rate.md))
-- `BallPivot.pivot_ge`: The pivots grow like `log N` *paper* ([note](../formalisations/ball-rate.md))
+- `BallPivot.pivot_ge`: The pivots grow like `log N` ([note](../formalisations/ball-rate.md))
 - `BallPivot.orbitLattice_of_log_ge`: The orbit-lattice inequality for large `k` ([note](../formalisations/ball-rate.md))
 - `BallPivot.pivot_tendsto`: Under RH the pivots tend to infinity ([note](../formalisations/ball-rate.md))
 - `BallPivot.orbitLattice_iff`: The orbit-lattice conjecture is RH together with finitely many pivot inequalities ([note](../formalisations/ball-rate.md))
@@ -217,7 +219,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `BallWeil.rh_iff_castelnuovo_severi`: The Riemann hypothesis is the Castelnuovo–Severi inequality for the divisors `D_n`
 - `BallWeil.rh_iff_hodge_index`: The Riemann hypothesis is the Hodge index theorem for the divisors `D_n`
 - `BallWeil.weil_bound`: The Weil bound
-- `BallWeil.rh_iff_weil_bound`: The upper Weil bound gives the Riemann hypothesis
+- `BallWeil.rh_iff_weil_bound`: The upper Weil bound gives the Riemann hypothesis *paper*
 - `BallWeil.rh_of_pivots`: The orbit-lattice conjecture implies the Riemann hypothesis *paper* ([note](../formalisations/ball-rate.md))
 
 #### `BohrJoins`: The geometric picture joined to the library
@@ -691,7 +693,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `OrbitWindow.weilQg_hasSum`: The explicit-formula bridge, any parity *paper* ([note](../formalisations/ball-rate.md))
 - `OrbitWindow.form_eq_weilQg`: The dictionary *paper* ([note](../formalisations/ball-rate.md))
 - `OrbitWindow.weilQg_step_int_ge`: The integrality gap in the window *paper* ([note](../formalisations/ball-rate.md))
-- `OrbitWindow.weilQg_step_ge`: The step functions stay polynomially far from the radical *paper* ([note](../formalisations/ball-rate.md))
+- `OrbitWindow.weilQg_step_ge`: The step functions stay polynomially far from the radical ([note](../formalisations/ball-rate.md))
 
 #### `Orthogonality`: Orthogonality forces the Euclidean structure
 
@@ -756,12 +758,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PivotSharp.pole_ge`: The pole *paper*
 - `PivotSharp.prime_eq`: The prime side is Landau's form *paper*
 - `PivotSharp.form_ge`: The explicit-formula bound *paper* ([note](../formalisations/ball-rate.md))
+- `PivotSharp.muLe`: The minorant inequality holds (`PivotCert.mu_le`). *paper*
 - `PivotSharp.pivot_ge_rh`: Under RH every pivot clears `d_1` *paper* ([note](../formalisations/ball-rate.md))
 - `PivotSharp.orbitLattice_of_rh`: The orbit-lattice conjecture holds under RH *paper* ([note](../formalisations/ball-rate.md))
 - `PivotSharp.rh_iff_orbitLattice`: RH ⟺ the orbit-lattice conjecture *paper* ([note](../formalisations/ball-rate.md))
 - `PivotSharp.lattice_gap`: Away from `±δ_1` the lattice is longer *paper* ([note](../formalisations/ball-rate.md))
 - `PivotSharp.shortest_of_rh`: Under RH, `w_1` is a shortest vector of the orbit lattice *paper* ([note](../formalisations/ball-rate.md))
 - `PivotSharp.shortest_unique`: Under RH the shortest vectors are `±δ_1` alone *paper* ([note](../formalisations/ball-rate.md))
+- `PivotSharp.lattice_second`: Every other lattice vector clears `c₀` *paper* ([note](../formalisations/ball-rate.md))
 - `PivotSharp.rh_iff_shortest`: RH ⟺ `w_1` is a shortest vector of the orbit lattice *paper* ([note](../formalisations/ball-rate.md))
 
 #### `PivotTop`: The top vertex keeps `13/10` of its diagonal: `(log N + d)Σc_n² − L(c) ≥ (13/10)c_N²` for `d ≥ 17/20`
@@ -1338,8 +1342,8 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `BallUpperEta`: The alternating vector at the low zeros, and the rate from above
 
 - `BallUpperEta.dpoly_xa_le`: The low zeros ([note](../formalisations/ball-rate.md))
-- `BallUpperEta.rate_upper_rh`: The upper bound `λ_N ≤ 67(1 + log N)/N` *paper* ([note](../formalisations/ball-rate.md))
-- `BallUpperEta.rate_upper`: `λ_N ≪ log N/N`, unconditionally *paper* ([note](../formalisations/ball-rate.md))
+- `BallUpperEta.rate_upper_rh`: The upper bound `λ_N ≤ 67(1 + log N)/N` ([note](../formalisations/ball-rate.md))
+- `BallUpperEta.rate_upper`: `λ_N ≪ log N/N`, unconditionally ([note](../formalisations/ball-rate.md))
 
 #### `BohrKV`: The Korobov–Vinogradov region as a shell around the Bohr sphere
 

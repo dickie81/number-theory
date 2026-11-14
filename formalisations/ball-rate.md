@@ -900,6 +900,7 @@ read at the top vertex instead of the root.
 | `PivotSharp.rh_iff_shortest` | RH ⟺ `Q_N(a) ≥ Q_1(δ_1) = K_H(1)` at every nonzero integer vector `a`, for every `N`: `w_1` is a shortest vector of the orbit lattice | nothing |
 | `PivotSharp.shortest_of_rh`, `PivotSharp.shortest_unique` | every nonzero integer vector has `Q_N(a) ≥ K_H(1)`, and only `±δ_1` have `Q_N(a) ≤ K_H(1)` | RH |
 | `PivotSharp.lattice_gap` | an integer vector with a nonzero coefficient at some `2 ≤ k ≤ N` has `Q_N(a) ≥ (999/1000)(2/45)(13/10) ≥ 0.0577` | RH |
+| `PivotSharp.lattice_second` | every nonzero integer vector other than `±δ_1` has `Q_N(a) ≥ (999/1000)(2/45)(13/10)`: `mδ_1` with `\|m\| ≥ 2` has `Q_N = m²K_H(1) > 4/50` (`PivotSharp.gram_one_gt`: `K_H(1) > 1/50`) | RH |
 | `PivotSharp.form_ge` | `Q_N(x) ≥ (φ̂(0)/2πN)((log N + 7/8)Σc_n² − L(c)) − Σc_n²/(6000N)` for `N ≥ 2`, `c_n = x_n√n` | RH and `PivotSharp.MuLe`, which `PivotCert.mu_le` proves |
 | `PivotCert.mu_le` | `μ(s) ≤ φ(s)(Re ψ(¼ + iNs/2) − log π − log N)` for every `N ≥ 2` and every real `s` | nothing |
 | `PivotMinorFT.integral_mu_cos_eq_zero`, `PivotMinorFT.integral_mu_ge` | `∫μ(s)cos(sv) ds = 0` for `\|v\| ≥ 1`, and `∫μ ≥ (7/8)φ̂(0)` | nothing |
@@ -917,7 +918,7 @@ not a route to it.
 gives `Q_N(a) ≥ 0.0577` as soon as `k ≥ 2` (`lattice_gap`), while a vector supported at `1` has `Q_N(a) = a_1²·K_H(1)`.
 So under RH the integer combinations of the orbit form a lattice whose minimum is `K_H(1) = ‖w_1‖²`, attained at `±w_1`
 only (`shortest_of_rh`, `shortest_unique`), and every other lattice vector is longer by a factor at least
-`√1.249 = 1.118`. Conversely a positive minimum at the integer vectors gives RH, as in `BallPivot.rh_iff_lattice`. This
+`√1.249 = 1.118` (`lattice_second`). Conversely a positive minimum at the integer vectors gives RH, as in `BallPivot.rh_iff_lattice`. This
 is the lattice statement of step 6 of [ball-conjecture.md](../docs/ball-conjecture.md) with its sharp constant: RH holds
 if and only if `w_1` is a shortest vector of the orbit lattice (`rh_iff_shortest`).
 
@@ -1006,8 +1007,9 @@ step functions.
 Two results of this note then read as statements about Weil's form on a window. Under RH,
 `PivotSharp.lattice_gap` says that the form is at least `0.0577` at every nonzero integer-valued step function, and
 `BallGap.rate_gap` with `‖g_x‖² ≤ N²Σx_n²` (`normSq_stepProbe_le`) says that its Rayleigh quotient on the step
-functions is at least `√log N/(220e⁸N³)`. On the whole window the least eigenvalue is of order `e^{−4πλ²} = e^{−4πN}`
-(Andrews, Connes and La Gatta, numerically to `λ² = 300`, with an upper bound of Connes and Kastoris): the step
+functions is at least `√log N/(220e⁸N³)`. On the whole window the least eigenvalue decays like `e^{−4πλ²} =
+e^{−4πN}`, up to a power of `λ` (Andrews, Connes and La Gatta, numerically to `λ² = 300`, with an upper bound of Connes
+and Kastoris): the step
 functions of the orbit stay polynomially far from the form's nearly null, prolate directions.
 
 **The proof.**
@@ -1030,6 +1032,56 @@ functions of the orbit stay polynomially far from the form's nearly null, prolat
 Off the hyperplane, `g_x` does not see `x_1`, since the atom at `n = 1` is empty, so the same theorem gives
 `weilQg(g_x) = Q_N(x − (Σ_n x_n)δ_1)`. The orbit's first vector `u^{1/2}1_{(0, 1]}` lies in no window: its transform
 `1/s` has a pole at `s = 0`.
+
+### How the hyperplane sits
+
+**Script:** [`scripts/window_hyperplane.py`](../scripts/window_hyperplane.py), about two seconds. Uncertified
+double-precision numerics, from the Gram matrix computed from the primes as in `scripts/ball_orbit.py`. The paper's
+remark "How the hyperplane sits" (end of §2 of `papers/orbit-lattice`) quotes them.
+
+The hyperplane `H = {Σ_n x_n = 0}` misses one direction, `w_1`. How `H` sits against `w_1` separates ζ from the flat
+model.
+
+- **The flat model.** For the Gram matrix `min(m, n)`, `H` is orthogonal to `w_1`: it is spanned by the `δ_n − δ_1`,
+  and `min(n, 1) − min(1, 1) = 0`. These are Brownian motion's increments after time 1, orthogonal to its value at
+  time 1. With `y_k = Σ_{n ≥ k} x_n`, the value of `Σ_n x_n 1_{(0, n]}` on `(k − 1, k]`, the flat form is
+  `Σ_{k ≤ N} y_k² = (Σ_n x_n)² + Σ_{k ≥ 2} y_k²`. On `H` it is `‖g_x‖²`, the norm of `weilQg_step_ge`.
+- **ζ.** The squared distance from `w_1` to `H` is `1/(1ᵀG_N⁻¹1)`, the least value of `Q_N(z)` over `Σ_n z_n = 1`.
+  Under RH that is the least value of `Σ_ρ |P(ρ)|²/|ρ|²` over the Dirichlet polynomials `P(s) = Σ_n z_n n^s` with
+  `P(0) = 1`. One Cholesky factor gives it for every `N ≤ 3000`: with `G_3000 = LLᵀ`, the leading blocks of `L`
+  factor every `G_N`, so `1ᵀG_N⁻¹1 = Σ_{i ≤ N} v_i²` for `v = L⁻¹1`. Direct solves at `N = 10` and `1000` agree to
+  `10⁻¹⁴`.
+
+| `N` | 2 | 3 | 10 | 100 | 1000 | 3000 |
+|---|---|---|---|---|---|---|
+| `dist²(w_1, H)/d_1` | 0.423 | 0.257 | 0.0567 | 0.00358 | 0.000257 | 0.0000752 |
+| angle between `w_1` and `H` | 40.58° | 30.45° | 13.78° | 3.43° | 0.92° | 0.50° |
+
+In the flat model the angle is 90° at every `N`. For ζ, `w_1` almost lies in `H`. Between `N = 100` and `3000`,
+`d_1/(N·dist²)` grows by about 0.48 per unit of `log N`, so `dist²` falls roughly like `d_1/(N log N)`. Two readings
+follow.
+- The zeros barely register the value of a Dirichlet polynomial at `s = 0`. In the flat model `|P(0)|² ≤ Q_flat`
+  always.
+- The pivot criterion needs `w_1` first. Taken after `H`, `w_1` would have pivot `dist²(w_1, H)`.
+
+**Inside `H`.**
+- **Shortest vectors.** At `N = 30` the shortest nonzero integer vector of `H` is `±(δ_2 − δ_1)`, the step
+  `1_{(1, 2]}`, with `Q = 4.0613·d_1`. The next is `±(δ_3 − δ_2)`, at `4.4316·d_1`. `weilQg_step_int_ge` proves
+  `1.2496·d_1` under RH. The search runs over the step coordinates `y`, which are unimodular, so it covers exactly the
+  integer-valued step functions.
+- **Unit steps.** The steps `δ_k − δ_{k−1}` are all shortest in the flat model, each with `Q` equal to its `d_1`.
+  For ζ they grow like `log k`, by about `21.6·d_1` per unit of `log k` between `k = 100` and `3000`: `Q/d_1` is 4.06 at
+  `k = 2`, 22.1 at `k = 10`, 69.3 at `k = 100` and 118.9 at `k = 1000`.
+- **Rayleigh quotient.** The least value over `H` of `weilQg(g_x)/‖g_x‖² = Q_N(x)/Σ_{k ≥ 2} y_k²`, which is also ζ's
+  form against the flat one there:
+
+| `N` | 2 | 10 | 100 | 300 | 1000 |
+|---|---|---|---|---|---|
+| least value × `N²` | 0.750 | 1.391 | 1.977 | 2.257 | 2.561 |
+| least value × `N²/√log N` | 0.901 | 0.917 | 0.921 | 0.945 | 0.975 |
+
+At the `N` computed, from 2 to 1000, the least value lies between 0.90 and 1.10 times `√log N/N²`. Under RH
+`weilQg_step_ge` proves `√log N/(220e⁸N³)`, and on the whole window the least eigenvalue is about `e^{−4πN}`.
 
 ## The low zeros: what the zeros above `8N` give, and `λ_N` to `N = 3·10⁴` (`BallLow`; `scripts/lambda_large.py`)
 

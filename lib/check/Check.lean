@@ -264,12 +264,12 @@ in the library; the theorems of that version's claims table that the table above
 #print axioms LinnikG7.charDensity_g7d
 #print axioms SieveCurve7D.g7d_le_lin
 
-/- The orbit-lattice paper (`papers/orbit-lattice/main.tex`): RH holds if and only if every Gram–Schmidt pivot of the
-orbit with Gram matrix `√(mn)·K_H(m/n)`, computed from the primes, is at least the first, and if and only if `w_1` is a
-shortest vector of the lattice the orbit spans; under RH every pivot after the first is at least `0.0577`
-(`formalisations/ball-rate.md`, "The pivot inequality for every `k`"). The theorems of the paper's claims table
-(Appendix A), in its order: the main theorems, the kernel and the positivity layer, the flat model and the growth of
-the pivots, the steps of the proof of the margin, and the bounds for the smallest eigenvalue. -/
+/- The orbit-lattice paper (`papers/orbit-lattice/main.tex`): under RH every pivot of the orbit with Gram matrix
+`√(mn)·K_H(m/n)`, computed from the primes, is at least `0.0577` after the first (`formalisations/ball-rate.md`, "The
+pivot inequality for every `k`"); hence RH holds if and only if every pivot is at least the first, and if and only if
+`w_1` is a shortest vector of the lattice the orbit spans. The theorems of the paper's claims table (Appendix A): the
+equivalences and the margin, the kernel and the positivity layer, the flat model, the window, and the steps of the
+proof of the margin. -/
 #print axioms PivotSharp.rh_iff_orbitLattice
 #print axioms BallWeil.rh_of_pivots
 #print axioms PivotSharp.orbitLattice_of_rh
@@ -278,15 +278,19 @@ the pivots, the steps of the proof of the margin, and the bounds for the smalles
 #print axioms PivotSharp.pivot_ge_rh
 #print axioms PivotSharp.lattice_gap
 #print axioms PivotSharp.shortest_unique
+#print axioms PivotSharp.lattice_second
 #print axioms BallHadamard.kerH_one
+#print axioms BallHadamard.summable_hw
 #print axioms BallHadamard.kerH_inv
 #print axioms BallPsi.kerH_explicit
 #print axioms BallWeil.rh_iff_form
+#print axioms BallWeil.rh_iff_weil_bound
 #print axioms BallHadamard.rh_iff_realizationH
 #print axioms BallWeil.form_eq_norm_sq
 #print axioms BallFlat.gram_flat
+#print axioms BallFlat.kerFlat_eq_integral
 #print axioms BallFlat.flat_pivot
-#print axioms BallPivot.pivot_ge
+#print axioms BallFlat.inner_increments
 #print axioms WeilForm.weilExplicit_zeta
 #print axioms PivotPhi.integral_phi_cos
 #print axioms PivotPhi.phi_nonneg
@@ -300,13 +304,10 @@ the pivots, the steps of the proof of the margin, and the bounds for the smalles
 #print axioms PivotCert.mu_le
 #print axioms PivotSharp.pole_ge
 #print axioms PivotSharp.form_ge
+#print axioms PivotSharp.muLe
 #print axioms PivotTop.mertens_le_uniform
 #print axioms PivotTop.mertens_le_small
 #print axioms PivotTop.top_bound
-#print axioms BallGap.rate_gap
-#print axioms BallUpperEta.rate_upper_rh
-#print axioms BallUpperEta.rate_upper
 #print axioms OrbitWindow.form_eq_weilQg
 #print axioms OrbitWindow.weilQg_hasSum
 #print axioms OrbitWindow.weilQg_step_int_ge
-#print axioms OrbitWindow.weilQg_step_ge
