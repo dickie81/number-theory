@@ -14,10 +14,11 @@ corners, the variable tied to the rest. This file is the kernel's side of the se
   `chkIRC`'s conditions. `chkIRFY`: the same on a box `ch ++ β` of a tree over a frozen part, as `chkIRF`.
 * `resTestsFY`, `frozResTestsY`: the tests: `chkIRY` (`chkIRFY`) for an evaluation of kind `4`, `resTestsFC`'s
   (`frozResTestsC`'s) otherwise.
-* `cfgIPY`, `cfgIMY`, `cfgIFY`: the configuration of an evaluation from the hints, by the two low bits: `0` in the
-  first, `cfgIPR`'s code (`cfgIP`'s); `1` then `0`, `cfgIPR`'s window code after them; `1` and `1`, the rest (a set
-  of `pw` values) and `resYH`'s hints, `12 + (15 + 3n)(kH + kL)` bits with `n`, `kH`, `kL` in the low twelve, as the
-  configuration of kind `4`.
+* `cfgIPY`, `cfgIMY`, `cfgIFY`: the configuration of an evaluation from the hints: `cfgIPR`'s, except where its
+  window code has no interval in either form (`1`, the rest, and eight bits `0`, which `cfgIPR`'s hints never have):
+  then `resYH`'s hints follow, `12 + (15 + 3n)(kH + kL)` bits with `n`, `kH`, `kL` in the low twelve, as the
+  configuration of kind `4`. So the hints of a plan without the test at the two corners are read as `cfgIPR` reads
+  them.
 * `flipTreeDY`, `flipCostBY`, `flipCostDY`, `altFDY`: `flipTreeDR`, `flipCostBR`, `flipCostDR` and `altFDR` with
   these tests and this configuration in the trees over the frozen parts.
 
@@ -91,20 +92,20 @@ noncomputable def frozResTestsY (e₁ e₂ Kb : ℕ) (β : List Cell) (lsβ hsβ
 
 end
 
-/-- The configuration of an evaluation, from the hints, by the two low bits: `0` in the first, `cfgIPR`'s code
-(`cfgIP`'s); `1` then `0`, `cfgIPR`'s window code after them; `1` and `1`, the rest (a set of `pw` values) and the
-hints of `SieveResTest.resYH`, `12 + (15 + 3n)(kH + kL)` bits with `n`, `kH` and `kL` in the low twelve, as the
-configuration of kind `4` with the hints in `s1`. -/
+/-- The configuration of an evaluation, from the hints: `cfgIPR`'s, except where its window code has no interval in
+either form, `1`, the rest (a set of `pw` values) and eight bits `0`: then the hints of `SieveResTest.resYH` follow,
+`12 + (15 + 3n)(kH + kL)` bits with `n`, `kH` and `kL` in the low twelve, as the configuration of kind `4` with the
+hints in `s1`. -/
 noncomputable def cfgIPY (pw h : ℕ) : Cfg × ℕ :=
-  cond (Nat.beq (Nat.land h 3) 3)
+  cond (Nat.beq (Nat.land h 1) 1 && Nat.beq (Nat.mod (Nat.div (Nat.div h 2) pw) 256) 0)
     ((fun h1 =>
       (fun sr h2 =>
         (fun p => (⟨4, 0, sr, Nat.mod h2 p, false⟩, Nat.div h2 p))
           (Nat.pow 2 (Nat.add 12 (Nat.mul (Nat.add 15 (Nat.mul 3 (Nat.mod h2 16)))
             (Nat.add (Nat.mod (Nat.div h2 16) 16) (Nat.mod (Nat.div h2 256) 16))))))
-        (Nat.mod h1 pw) (Nat.div h1 pw))
-      (Nat.div h 4))
-    (cond (Nat.beq (Nat.land h 3) 1) (cfgIPR pw (Nat.add 1 (Nat.mul 2 (Nat.div h 4)))) (cfgIPR pw h))
+        (Nat.mod h1 pw) (Nat.div (Nat.div h1 pw) 256))
+      (Nat.div h 2))
+    (cfgIPR pw h)
 
 /-- **The configuration of an evaluation in the main tree, with the window's test at the two corners too**:
 `cfgIPY` with a set of as many bits as the box has cells and one more, for the cofactor. -/

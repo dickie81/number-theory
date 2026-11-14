@@ -787,16 +787,14 @@ class Planner(fl.FlipSearch):
         return self.cfgIPR(2 ** len(bl), h)
 
     def cfgIPY(self, pw, h):
-        """`SieveAd.cfgIPY`: by the two low bits: `0` in the first, `cfgIPR`'s code; `1` then `0`, `cfgIPR`'s window
-        code after them; `1` and `1`, the rest and the hints of `resYH`, `12 + (15 + 3n)(kH + kL)` bits, as the
+        """`SieveAd.cfgIPY`: `cfgIPR`'s configuration, except where its window code has no interval in either form
+        (`1`, the rest and eight bits `0`): then the hints of `resYH` follow, `12 + (15 + 3n)(kH + kL)` bits, as the
         configuration of kind `4`."""
-        if h & 3 == 3:
-            h1 = h >> 2
-            sr, h2 = h1 % pw, h1 // pw
+        if h & 1 and ((h >> 1) // pw) % 256 == 0:
+            h1 = h >> 1
+            sr, h2 = h1 % pw, (h1 // pw) // 256
             p = 1 << (12 + (15 + 3 * (h2 % 16)) * ((h2 // 16) % 16 + (h2 // 256) % 16))
             return (4, 0, sr, h2 % p, False), h2 // p
-        if h & 3 == 1:
-            return self.cfgIPR(pw, 1 + 2 * (h >> 2))
         return self.cfgIPR(pw, h)
 
     def cfgIMY(self, bl, h):
@@ -1151,18 +1149,18 @@ class Planner(fl.FlipSearch):
         """A resonant leaf `('R', mask, k, h)`: the evaluation's bit, `1`, the rest, four bits `k`, the `k` ends."""
         mask, k, h = node[1:]
         if k == 'Y':
-            # the test at the two corners (`cfgIPY`): `1`, `1`, the rest and the hints of `resYH`
+            # the test at the two corners (`cfgIPY`): the window's code with no interval in either form, then the
+            # hints of `resYH`
             nb = 12 + (15 + 3 * (h % 16)) * ((h // 16) % 16 + (h // 256) % 16)
             assert self.res_y and mask < 1 << w and h < 1 << nb
-            return [(0, 1), (1, 1), (1, 1), (mask, w), (h, nb)]
-        y = [(0, 1)] if self.res_y else []      # with `cfgIPY`, the window's code has a `0` after its `1`
+            return [(0, 1), (1, 1), (mask, w), (0, 8), (h, nb)]
         if k == 0:
             # the test with the large values' term: `0`, then its number of intervals and their ends
             k2, h2 = h % 16, h // 16
             assert 0 < k2 < 16 and mask < 1 << w and h2 < 1 << (rt.EB * k2)
-            return [(0, 1), (1, 1)] + y + [(mask, w), (0, 4), (k2, 4), (h2, rt.EB * k2)]
+            return [(0, 1), (1, 1), (mask, w), (0, 4), (k2, 4), (h2, rt.EB * k2)]
         assert 0 < k < 16 and mask < 1 << w and h < 1 << (rt.EB * k)
-        return [(0, 1), (1, 1)] + y + [(mask, w), (k, 4), (h, rt.EB * k)]
+        return [(0, 1), (1, 1), (mask, w), (k, 4), (h, rt.EB * k)]
 
     def dserF(self, ctx, beta, node, bl, par, out):
         """A node of a tree over a frozen part."""
