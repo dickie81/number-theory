@@ -9,9 +9,10 @@ exponents of `x = q^L`): for every count exponent `γ` of a class of characters,
 `U_j(γ) = min(lo_j(β̄(γ) + w − 1), min_k (max(1 − k·lo_j, 0) − γ)/(2k))`, `lo_j = κ(c_j − 1)`, the variable's exponent
 `m ≥ κ(DEN − hs − 1)`, `c₁ = max(1 − m, 0)/2`, `y(γ) = γ/2 + (5/12 + d + 2e − m(11/12 + d))/2`, and `β̄(γ)` the largest
 real part of a zero on the curve `ghx` with count exponent `γ`. The half-plane at `11/12` bounds it for `γ ≤ 0`; on
-`[0, 1]` the hint cuts the range of `γ` into intervals and names a line above each term on each, and `resT` checks
-the sum of the lines at the ends of each interval. Everything is in fixed point, `S = 2^64`, rounded so that the sum
-stays above `F`. Its soundness is `SieveResTest.resT_sound`.
+`[0, 1]` the hint cuts the range of `γ` into intervals, the test takes on each a line above each term (the least at
+the interval's midpoint of a term's four lines, and of the clamp's three), and `resT` checks the sum of the lines at
+the ends of each interval. Everything is in fixed point, `S = 2^64`, rounded so that the sum stays above `F`. Its
+soundness is `SieveResTest.resT_sound`.
 
 The curve's steps, from the top (piece `17` is the trivial count, below `7789/10000`), `[lo, hi]` and `A`:
    0: [5/6, 11/12], A = 101/50
@@ -35,9 +36,10 @@ The curve's steps, from the top (piece `17` is the trivial count, below `7789/10
 * `tFT`, `tFTm`, `tIA`, `tDH`: tables of 96-bit entries by piece: `⌊A(1 − lo)·S⌋` (the largest `γ` of the piece;
   `S` for piece `17`), the same one piece up (`0` for piece `0`), `⌊S/A⌋` (`0` for piece `17`) and
   `⌊(1 − w − hi)·S⌋`.
-* `Tm`, `mkTm`: a term's constants. `addTerms`: the sum of the terms' lines that the hint names. `le0`: a line is at
-  most `0` at a point. `clampL`: the clamp's line. `chkI`: the check at an interval's ends. `intv`: one interval.
-  `runI`: the intervals. `hpSum`: the half-plane's sum. `resTM`, `resT`: **the test**.
+* `Tm`, `mkTm`: a term's constants. `addTerms`: the sum of the terms' lines that two bits each name. `le0`: a line
+  is at most `0` at a point. `clampL`: the clamp's line. `chkI`: the check at an interval's ends. `bOf`, `pieceOf`:
+  an interval's end and its piece. `best`, `pickT`, `pickC`, `chMid`: the lines least at the midpoint. `intv`: one
+  interval. `runI`: the intervals. `hpSum`: the half-plane's sum. `resTM`, `resT`: **the test**.
 -/
 
 namespace SieveResTest
@@ -163,26 +165,52 @@ def chkI (ts : List Tm) (ltm dS iax a b ch : Nat) (cl : Nat × Nat × Nat) : Boo
   (fun s => le0 s.1 (Nat.add H cl.2.1) s.2.1 s.2.2 a && le0 s.1 (Nat.add H cl.2.1) s.2.1 s.2.2 b)
     (addTerms dS iax ts ch (Nat.add ltm cl.1) cl.2.2 0)
 
-/-- A record's right end `b`: 25 bits on the grid `2^-24`, times `S`. -/
-def bOf (r : Nat) : Nat := Nat.shiftLeft (Nat.land r 33554431) 40
+/-- A record's end `b`: 13 bits on the grid `2^-12`, times `S`. -/
+def bOf (r : Nat) : Nat := Nat.shiftLeft (Nat.land r 8191) 52
 
-/-- A record's piece of its right end: 5 bits. -/
-def pbOf (r : Nat) : Nat := Nat.land (Nat.shiftRight r 25) 31
+/-- The piece of an end `b`: the first piece `p ≤ 16` whose top `tFT[p]` is at least `b`, `17` if none. -/
+def pieceOf (b : Nat) : Nat :=
+  Nat.rec (motive := fun _ => Nat) 17 (fun n ih => cond (Nat.ble b (get tFT (Nat.sub 16 n))) (Nat.sub 16 n) ih) 17
 
-/-- **One interval** `[a, b]` with the record `r`: `b = bOf r`, its piece `pbOf r`, the clamp's line (2 bits from
-bit 30) and the terms' lines (from bit 32). `a` is in the piece `pa`. -/
+/-- The line `i` of value `(A − B)/S` in place of the line `c` (its index, `A`, `B`) if it is less there. -/
+def best (c : Nat × Nat × Nat) (i A B : Nat) : Nat × Nat × Nat :=
+  cond (Nat.blt (Nat.add A c.2.2) (Nat.add c.2.1 B)) (i, A, B) c
+
+/-- The term's line least at `x` (the first of them on a tie): `0` for `k₀ − 1`, `1` for `k₀`, `2` for `C`, `3` for
+`W`. -/
+def pickT (t : Tm) (dS iax x : Nat) : Nat :=
+  (best (best (best (0, t.a0, mulF t.a1 x) 1 0 (mulF t.b1 x)) 2 0 (mulF t.lo dS)) 3 t.lw (mulF (mulF t.lo iax) x)).1
+
+/-- The clamp's line least at `x` (the first of them on a tie). -/
+def pickC (c1 yuP yuN ydP ydN a b x : Nat) : Nat :=
+  (fun l0 l1 l2 =>
+    (best (best (0, Nat.add l0.1 (mulC l0.2.1 x), l0.2.2) 1 (Nat.add l1.1 (mulC l1.2.1 x)) l1.2.2) 2
+      (Nat.add l2.1 (mulC l2.2.1 x)) l2.2.2).1)
+    (clampL c1 yuP yuN ydP ydN a b 0) (clampL c1 yuP yuN ydP ydN a b 1) (clampL c1 yuP yuN ydP ydN a b 2)
+
+/-- The terms' lines least at `x`, two bits each, the first term's lowest. -/
+def chMid (dS iax x : Nat) : List Tm → Nat
+  | [] => 0
+  | t :: ts => Nat.add (pickT t dS iax x) (Nat.mul 4 (chMid dS iax x ts))
+
+/-- **One interval** `[a, b]` with the record `r`: `b = bOf r` in its piece `pieceOf b`, each term's line and the
+clamp's the least at the midpoint `(a + b)/2`. `a` is in the piece `pa`. -/
 def intv (ts : List Tm) (c1 yuP yuN ydP ydN ltm a pa r : Nat) : Bool :=
-  (fun b pb =>
-    Nat.ble pb 17 && Nat.blt (get tFTm pb) b && Nat.ble b (get tFT pb) && Nat.ble a b &&
-      chkI ts ltm (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA pb)) a b
-        (Nat.shiftRight r 32) (clampL c1 yuP yuN ydP ydN a b (Nat.land (Nat.shiftRight r 30) 3)))
-    (bOf r) (pbOf r)
+  (fun b =>
+    (fun pb =>
+      (fun dS iax x =>
+        Nat.ble pb 17 && Nat.blt (get tFTm pb) b && Nat.ble b (get tFT pb) && Nat.ble a b &&
+          chkI ts ltm dS iax a b (chMid dS iax x ts) (clampL c1 yuP yuN ydP ydN a b (pickC c1 yuP yuN ydP ydN a b x)))
+        (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA pb))
+        (Nat.shiftRight (Nat.add a b) 1))
+      (pieceOf b))
+    (bOf r)
 
 /-- **The intervals**, `k` of them from `(a, pa)`, each a record of `w` bits of `h`; the last ends at `S`. -/
 def runI (ts : List Tm) (w c1 yuP yuN ydP ydN ltm : Nat) : Nat → Nat → Nat → Nat → Bool :=
   Nat.rec (motive := fun _ => Nat → Nat → Nat → Bool) (fun a _ _ => Nat.beq a S)
     (fun _ ih a pa h =>
-      (fun r => intv ts c1 yuP yuN ydP ydN ltm a pa r && ih (bOf r) (pbOf r) (Nat.shiftRight h w))
+      (fun r => intv ts c1 yuP yuN ydP ydN ltm a pa r && ih (bOf r) (pieceOf (bOf r)) (Nat.shiftRight h w))
         (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1)))
 
 /-- The half-plane's sum `Σ ⌊lo·HP/S⌋` over the terms. -/
@@ -195,7 +223,7 @@ def resTM (ts : List Tm) (mlo ltm k h : Nat) : Bool :=
   (fun mtu mtd c1 =>
     (fun yuP yuN ydP ydN =>
       Nat.ble (Nat.add ltm (minN c1 yuP)) (hpSum ts) &&
-        runI ts (Nat.add 32 (Nat.mul 2 ts.length)) c1 yuP yuN ydP ydN ltm k 0 0 h)
+        runI ts 13 c1 yuP yuN ydP ydN ltm k 0 0 h)
       (Nat.shiftRight (Nat.add (Nat.sub K1U mtd) 1) 1) (Nat.shiftRight (Nat.sub mtd K1U) 1)
       (Nat.shiftRight (Nat.sub K1D mtu) 1) (Nat.shiftRight (Nat.add (Nat.sub mtu K1D) 1) 1))
     (mulC mlo M1U) (mulF mlo M1D) (Nat.shiftRight (Nat.add (Nat.sub S mlo) 1) 1)

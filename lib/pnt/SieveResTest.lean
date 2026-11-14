@@ -1021,11 +1021,14 @@ lemma piece_order {pa pb : ℕ} (hpa : pa ≤ 17) (hpb : pb ≤ 17) {a b : ℝ} 
 
 lemma intv_eq (ts : List Tm) (c1 yuP yuN ydP ydN ltm a pa r : ℕ) :
     intv ts c1 yuP yuN ydP ydN ltm a pa r =
-      (Nat.ble (pbOf r) 17 && Nat.blt (get tFTm (pbOf r)) (bOf r) && Nat.ble (bOf r) (get tFT (pbOf r)) &&
-        Nat.ble a (bOf r) &&
-        chkI ts ltm (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA (pbOf r)))
-          a (bOf r) (Nat.shiftRight r 32)
-          (clampL c1 yuP yuN ydP ydN a (bOf r) (Nat.land (Nat.shiftRight r 30) 3))) := rfl
+      (Nat.ble (pieceOf (bOf r)) 17 && Nat.blt (get tFTm (pieceOf (bOf r))) (bOf r) &&
+        Nat.ble (bOf r) (get tFT (pieceOf (bOf r))) && Nat.ble a (bOf r) &&
+        chkI ts ltm (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC))
+          (minN (get tIA pa) (get tIA (pieceOf (bOf r)))) a (bOf r)
+          (chMid (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC))
+            (minN (get tIA pa) (get tIA (pieceOf (bOf r)))) (Nat.shiftRight (Nat.add a (bOf r)) 1) ts)
+          (clampL c1 yuP yuN ydP ydN a (bOf r)
+            (pickC c1 yuP yuN ydP ydN a (bOf r) (Nat.shiftRight (Nat.add a (bOf r)) 1)))) := rfl
 
 lemma chkI_eq (ts : List Tm) (ltm dS iax a b ch : ℕ) (cl : ℕ × ℕ × ℕ) :
     chkI ts ltm dS iax a b ch cl =
@@ -1156,17 +1159,19 @@ lemma intv_sound {L : ℝ} {los : List ℕ} {mlo c1 yuP yuN ydP ydN ltm a pa r :
     (hok : ClampOK mlo c1 yuP yuN ydP ydN) (hltm : L * (1 / 10 ^ 6) + 1 / 25000 ≤ (ltm : ℝ) / S)
     (h : intv (los.map mkTm) c1 yuP yuN ydP ydN ltm a pa r = true) (hpa : pa ≤ 17)
     (hlo : pa = 0 ∨ tops (pa - 1) * S < a) (hhi : pa ≤ 16 → (a : ℝ) ≤ tops pa * S) :
-    pbOf r ≤ 17 ∧ (pbOf r = 0 ∨ tops (pbOf r - 1) * S < bOf r) ∧
-      (pbOf r ≤ 16 → (bOf r : ℝ) ≤ tops (pbOf r) * S) ∧ a ≤ bOf r ∧
+    pieceOf (bOf r) ≤ 17 ∧ (pieceOf (bOf r) = 0 ∨ tops (pieceOf (bOf r) - 1) * S < bOf r) ∧
+      (pieceOf (bOf r) ≤ 16 → (bOf r : ℝ) ≤ tops (pieceOf (bOf r)) * S) ∧ a ≤ bOf r ∧
       ∀ γ, (a : ℝ) / S ≤ γ → γ ≤ (bOf r : ℝ) / S → GoalAt L los mlo γ := by
   have hS := S_pos
   rw [intv_eq] at h
   simp only [Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq] at h
   obtain ⟨⟨⟨⟨h17, hlt⟩, hle⟩, hab⟩, hchk⟩ := h
-  generalize hbdef : bOf r = b at hlt hle hab hchk ⊢
-  generalize hpbdef : pbOf r = pb at h17 hlt hle hchk ⊢
-  generalize hccdef : Nat.land (Nat.shiftRight r 30) 3 = cc at hchk
-  generalize hchdef : Nat.shiftRight r 32 = ch at hchk
+  generalize hbdef : bOf r = b at h17 hlt hle hab hchk ⊢
+  generalize hpbdef : pieceOf b = pb at h17 hlt hle hchk ⊢
+  -- the lines that the test picks at the midpoint: any choice is a bound
+  generalize hccdef : pickC c1 yuP yuN ydP ydN a b (Nat.shiftRight (Nat.add a b) 1) = cc at hchk
+  generalize hchdef : chMid (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA pb))
+    (Nat.shiftRight (Nat.add a b) 1) (los.map mkTm) = ch at hchk
   have hFTm := get_tFTm pb (by omega)
   have hFT := get_tFT pb (by omega)
   have hblo : pb = 0 ∨ tops (pb - 1) * S < b := by
@@ -1247,7 +1252,7 @@ lemma runI_succ (ts : List Tm) (w c1 yuP yuN ydP ydN ltm k a pa h : ℕ) :
     runI ts w c1 yuP yuN ydP ydN ltm (k + 1) a pa h =
       (intv ts c1 yuP yuN ydP ydN ltm a pa (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1)) &&
         runI ts w c1 yuP yuN ydP ydN ltm k (bOf (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1)))
-          (pbOf (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1))) (Nat.shiftRight h w)) := rfl
+          (pieceOf (bOf (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1)))) (Nat.shiftRight h w)) := rfl
 
 /-- **The intervals are sound**: `runI` from `a` in the piece `pa` gives the bound at every `γ ∈ (a/S, 1]`. -/
 lemma runI_sound {L : ℝ} {los : List ℕ} {mlo c1 yuP yuN ydP ydN ltm w : ℕ}

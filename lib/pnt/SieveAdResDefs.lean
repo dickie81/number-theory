@@ -13,7 +13,7 @@ on the rest's cells; `SieveResTest.resT` checks that condition, led by a hint. T
 * `okIR`, `resTestsF`: the test of an evaluation of kind `3`, its hint in `s1` (the intervals' number in the low
   four bits); with `fillTestsF`'s tests for the other kinds.
 * `cfgIPR`, `cfgIMR`: the configuration of an evaluation from the hints: `0` and `cfgIP`'s code, or `1`, the rest
-  (a set of `pw` values), ten bits `nb` and the test's hint in the next `nb` bits.
+  (a set of `pw` values), four bits `k` and the test's `k` intervals' ends, thirteen bits each.
 
 Its soundness is `SieveAdRes.lean`'s. The file imports `SieveAdDirDefs.lean` and `SieveResTestDefs.lean`.
 -/
@@ -59,12 +59,15 @@ noncomputable def resTestsF : Tests :=
 end
 
 /-- The configuration of an evaluation, from the hints: `0` and `cfgIP`'s code; or `1`, the rest (a set of `pw`
-values), ten bits `nb`, and the resonant window's hint in the next `nb` bits, as the configuration of kind `3`. -/
+values), four bits `k`, and the resonant window's `k` intervals' ends in the next `13k` bits, as the configuration of
+kind `3` with `k + 16·ends` in `s1`. -/
 noncomputable def cfgIPR (pw h : ℕ) : Cfg × ℕ :=
   Bool.rec (motive := fun _ => Cfg × ℕ) (cfgIP pw (Nat.div h 2))
     ((fun h1 =>
-      (fun nb h2 => (⟨3, 0, Nat.mod h1 pw, Nat.mod h2 (Nat.pow 2 nb), false⟩, Nat.div h2 (Nat.pow 2 nb)))
-        (Nat.mod (Nat.div h1 pw) 1024) (Nat.div (Nat.div h1 pw) 1024))
+      (fun k h2 =>
+        (⟨3, 0, Nat.mod h1 pw, Nat.add k (Nat.mul 16 (Nat.mod h2 (Nat.pow 2 (Nat.mul 13 k)))), false⟩,
+          Nat.div h2 (Nat.pow 2 (Nat.mul 13 k))))
+        (Nat.mod (Nat.div h1 pw) 16) (Nat.div (Nat.div h1 pw) 16))
       (Nat.div h 2))
     (Nat.beq (Nat.land h 1) 1)
 

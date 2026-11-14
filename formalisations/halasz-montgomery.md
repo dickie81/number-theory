@@ -119,9 +119,10 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   of `ResBox` on the curve `ghx` for a box's rest, led by a hint, is sound. The test bounds, for every count
   exponent `γ`, the sum over the rest's primes of the least of the half-plane's bound and the moments' bounds, plus
   `γ/2` and the Halász–Montgomery inequalities' clamp: `γ ≤ 0` by the half-plane at `11/12`, and `[0, 1]` cut by the
-  hint into intervals, on each of which the hint names a line above each term (the moments' lines of `k₀ − 1` and
-  `k₀ = ⌈1/lo⌉`, the curve's bound at the interval's left end, or the line `1 − γ/A` with `A` the larger of the end
-  steps' factors), checked at the interval's ends in fixed point (`2^64`). Nothing uses it yet;
+  hint into intervals (their ends on the grid `2^-12`, 13 bits each), on each of which the test takes the line above
+  each term that is least at the interval's midpoint (among the moments' lines of `k₀ − 1` and `k₀ = ⌈1/lo⌉`, the
+  curve's bound at the interval's left end, and the line `1 − γ/A` with `A` the larger of the end steps' factors),
+  and likewise the clamp's, checked at the interval's ends in fixed point (`2^64`). Nothing uses it yet;
 - `SieveTypeIIHM.chain_res_exp` (`lib/pnt/SieveResTerm.lean`): `SieveTwoTerm.chain2_bound` by the resonant window: the
   strictly decreasing chains of primes with a rest at given positions, each rest prime at least `q^{lo i}` and the
   rest's product in `[q^{ρ₁}, q^{ρ₂}]`, times their rough cofactors, evaluated given

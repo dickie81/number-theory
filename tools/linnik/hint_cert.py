@@ -646,12 +646,14 @@ class Planner(fl.FlipSearch):
         return self.cfgIP(2 ** len(bl), h)
 
     def cfgIPR(self, pw, h):
-        """`SieveAd.cfgIPR`: `0` and `cfgIP`'s code, or `1`, the rest, ten bits `nb` and the hint's `nb` bits."""
+        """`SieveAd.cfgIPR`: `0` and `cfgIP`'s code, or `1`, the rest, four bits `k` and the `k` intervals' ends,
+        `rt.EB` bits each."""
         if h & 1 == 0:
             return self.cfgIP(pw, h >> 1)
         h1 = h >> 1
-        nb, h2 = (h1 // pw) % 1024, (h1 // pw) // 1024
-        return (3, 0, h1 % pw, h2 % (1 << nb), False), h2 >> nb
+        k, h2 = (h1 // pw) % 16, (h1 // pw) // 16
+        nb = rt.EB * k
+        return (3, 0, h1 % pw, k + 16 * (h2 % (1 << nb)), False), h2 >> nb
 
     def cfgIMR(self, bl, h):
         return self.cfgIPR(2 ** len(bl), h)
@@ -902,12 +904,10 @@ class Planner(fl.FlipSearch):
         return [(0, 1)] + ([(0, 1)] if res else []) + ([(0, 1)] if j == 0 else [(1, 1), (j, 3)]) + [(cfg[1], w)]
 
     def resFields(self, node, w):
-        """A resonant leaf `('R', mask, k, h)`: the evaluation's bit, `1`, the rest, ten bits `nb`, the hint."""
+        """A resonant leaf `('R', mask, k, h)`: the evaluation's bit, `1`, the rest, four bits `k`, the `k` ends."""
         mask, k, h = node[1:]
-        data = k | h << 4
-        nb = data.bit_length()
-        assert 0 < nb < 1024 and mask < 1 << w
-        return [(0, 1), (1, 1), (mask, w), (nb, 10), (data, nb)]
+        assert 0 < k < 16 and mask < 1 << w and h < 1 << (rt.EB * k)
+        return [(0, 1), (1, 1), (mask, w), (k, 4), (h, rt.EB * k)]
 
     def dserF(self, ctx, beta, node, bl, par, out):
         """A node of a tree over a frozen part."""

@@ -9,7 +9,7 @@ kernel's side of the search with it:
 * `frozResTestsC`: **the tests of a tree over a frozen part with the resonant window**: `okIR` for an evaluation of
   kind `3`, `frozTestsC`'s otherwise.
 * `cfgIFR`: the configuration of an evaluation in a tree over a frozen part, from the hints: `0` and `cfgIF`'s
-  code, or `1`, the rest, ten bits `nb` and the test's hint (`cfgIPR` with the cofactor's bit).
+  code, or `1`, the rest, four bits `k` and the test's `k` intervals' ends (`cfgIPR` with the cofactor's bit).
 * `flipTreeDR`, `flipCostBR`, `flipCostDR`, `altFDR`: `flipTreeD`, `flipCostB`, `flipCostD` and `altFD` with these
   tests and this configuration in the trees over the frozen parts.
 

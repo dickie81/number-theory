@@ -25,8 +25,9 @@ curve's piece `pa` and `b` in `pb` (pieces from the top, `17` the trivial count)
 * `W`: `lo(w − γ/A)`, `A = max(A_pa, A_pb)`, above `lo(β̄(γ) + w − 1)` on `[a, b]` since the steps' `A` fall then rise;
 
 and for the clamp `max(0, y(b))`, `y + max(0, −y(a))` and `c₁`. A hint is, for each interval, its right end on the
-grid `2^-24` (25 bits, `2^24` for `γ = 1`), the piece of that end (5 bits), the clamp's line (2 bits) and each term's
-line (2 bits each), the first interval in the lowest bits.
+grid `2^-12` (13 bits, `2^12` for `γ = 1`), the first interval in the lowest bits; the kernel finds the end's piece by
+the table of the pieces' tops, and takes for each term, and for the clamp, the line that is least at the interval's
+midpoint `(a + b)/2` (the first of them on a tie).
 """
 import argparse
 import difflib
@@ -43,12 +44,10 @@ OUT = ROOT / 'lib' / 'pnt' / 'SieveResTestDefs.lean'
 
 S = 1 << 64
 DEN = 1 << 40
-G24 = 24
-GB = int(os.environ.get('RES_GRID', G24))         # the hint's grid `2^-GB`: the Lean's is `2^-24`
-EB, SH = GB + 1, 64 - GB                              # an end's bits and its shift to `S`
+G12 = 12
+GB = int(os.environ.get('RES_GRID', G12))         # the hint's grid `2^-GB`: the Lean's is `2^-12`
+EB, SH = GB + 1, 64 - GB                              # a record's bits (an interval's end) and its shift to `S`
 EMASK = (1 << EB) - 1
-# the points at which a hint's lines are tried (measurement: `RES_MID=1`, the midpoint alone)
-LAMS = (0.5,) if os.environ.get('RES_MID') else (0.5, 0.0, 1.0, 0.25, 0.75, 0.1, 0.9)
 SLOT = 96
 W = Fr(4, 10 ** 6)
 TAU = Fr(1, 10 ** 6)
@@ -64,10 +63,6 @@ NP = len(HUX)                                         # 17 for ghx; the piece NP
 CONST_HI = _P[0][1]                                   # 7789/10000 for ghx
 TOPS = [A * (1 - lo) for lo, hi, A in HUX]
 PK = max(range(NP), key=lambda i: (HUX[i][2], -i))    # the first step of the largest A (the last one for ghx)
-PB = max(5, NP.bit_length())                          # the bits of a record's piece: 5 for ghx
-CB = EB + PB                                          # where the clamp's two bits start (30 for ghx)
-TB = CB + 2                                           # where the terms' bits start (32 for ghx)
-PMASK = (1 << PB) - 1
 
 
 def fl(x):
@@ -160,21 +155,65 @@ def get(t, p):
 TFT, TFTM, TIA, TDH = pack(FT), pack(FTM), pack(IA), pack(DH)
 
 
+def pieceOf(b):
+    """`SieveResTest.pieceOf`: the first piece whose top is at least `b`, `NP` if none."""
+    for p in range(NP):
+        if b <= get(TFT, p):
+            return p
+    return NP
+
+
+def best(c, i, A, B):
+    """`SieveResTest.best`: the line `i` of value `A − B` in place of `c` if it is less (the first on a tie)."""
+    return (i, A, B) if A + c[2] < c[1] + B else c
+
+
+def pickT(t, dS, iax, x):
+    """`SieveResTest.pickT`: the term's line least at `x`."""
+    lo, a0, a1, b1, lw = t
+    c = best((0, a0, mulF(a1, x)), 1, 0, mulF(b1, x))
+    c = best(c, 2, 0, mulF(lo, dS))
+    return best(c, 3, lw, mulF(mulF(lo, iax), x))[0]
+
+
+def clampL(c1, yuP, yuN, ydP, ydN, a, b, cc):
+    """`SieveResTest.clampL`: the clamp's line `(P0, P1, N0)`."""
+    if cc == 0:
+        return sub(((b + 1) >> 1) + yuP, yuN), 0, 0
+    if cc == 1:
+        return yuP + sub(ydN, (a >> 1) + ydP), S // 2, yuN
+    return c1, 0, 0
+
+
+def pickC(c1, yuP, yuN, ydP, ydN, a, b, x):
+    """`SieveResTest.pickC`: the clamp's line least at `x`."""
+    ls = [clampL(c1, yuP, yuN, ydP, ydN, a, b, i) for i in range(3)]
+    c = (0, ls[0][0] + mulC(ls[0][1], x), ls[0][2])
+    for i in (1, 2):
+        c = best(c, i, ls[i][0] + mulC(ls[i][1], x), ls[i][2])
+    return c[0]
+
+
+def chMid(dS, iax, x, ts):
+    """`SieveResTest.chMid`: the terms' lines least at `x`, two bits each."""
+    out = 0
+    for j, t in enumerate(ts):
+        out |= pickT(t, dS, iax, x) << (2 * j)
+    return out
+
+
 def intv(ts, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
-    b, pb, cc = (r & EMASK) << SH, (r >> EB) & PMASK, (r >> CB) & 3
+    b = (r & EMASK) << SH
+    pb = pieceOf(b)
     if not (pb <= NP and get(TFTM, pb) < b and b <= get(TFT, pb) and a <= b):
         return False
     dS = max(get(TDH, pa), sub(mulF(a, get(TIA, pa)), WC))
     iax = min(get(TIA, pa), get(TIA, pb))
     if pa <= PK <= pb:
         iax = min(iax, get(TIA, PK))
-    if cc == 0:
-        cp0, cp1, cn0 = sub(((b + 1) >> 1) + yuP, yuN), 0, 0
-    elif cc == 1:
-        cp0, cp1, cn0 = yuP + sub(ydN, (a >> 1) + ydP), S // 2, yuN
-    else:
-        cp0, cp1, cn0 = c1, 0, 0
-    p0, n0, n1 = addTerms(dS, iax, ts, r >> TB, ltm + cp0, cn0, 0)
+    x = (a + b) >> 1
+    cp0, cp1, cn0 = clampL(c1, yuP, yuN, ydP, ydN, a, b, pickC(c1, yuP, yuN, ydP, ydN, a, b, x))
+    p0, n0, n1 = addTerms(dS, iax, ts, chMid(dS, iax, x, ts), ltm + cp0, cn0, 0)
     p1 = S // 2 + cp1
     return le0(p0, p1, n0, n1, a) and le0(p0, p1, n0, n1, b)
 
@@ -190,13 +229,13 @@ def resT(Lnum, Lden, cs, hs, k, h):
     ydP, ydN = sub(K1D, mtu) >> 1, (sub(mtu, K1D) + 1) >> 1
     if not (hs + 1 < DEN and ltm + min(c1, yuP) <= sum(mulF(t[0], HP) for t in ts)):
         return False
-    w = TB + 2 * len(ts)
     a, pa = 0, 0
     for _ in range(k):
-        r = h & ((1 << w) - 1)
+        r = h & EMASK
         if not intv(ts, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
             return False
-        a, pa, h = (r & EMASK) << SH, (r >> EB) & PMASK, h >> w
+        a, h = r << SH, h >> EB
+        pa = pieceOf(a)
     return a == S
 
 
@@ -220,37 +259,11 @@ class Box:
         self.ok = hs + 1 < DEN and self.ltm + min(self.c1, self.yuP) <= sum(mulF(t[0], HP) for t in self.ts)
         self.y0 = self.yuP - self.yuN
 
-    def rec(self, e, pb, ch, cc):
-        r = e | pb << EB | cc << CB
-        for j, c in enumerate(ch):
-            r |= c << (TB + 2 * j)
-        return r
-
-    def try_choice(self, aS, pa, e, pb):
-        """Some choices that pass on [a, e 2^-24], as a record, or None."""
-        bS = e << SH
-        ts = self.ts
-        dS = max(DH[pa], sub(mulF(aS, IA[pa]), WC))
-        iax = min(IA[pa], IA[pb])
-        if pa <= PK <= pb:
-            iax = min(iax, IA[PK])
-        cl = [(sub(((bS + 1) >> 1) + self.yuP, self.yuN), 0, 0),
-              (self.yuP + sub(self.ydN, (aS >> 1) + self.ydP), S // 2, self.yuN),
-              (self.c1, 0, 0)]
-
-        def v(ln, x):
-            p0, p1, n0, n1 = ln
-            return p0 + mulC(p1, x) - n0 - mulF(n1, x)
-        lines = []
-        for lo, a0, a1, b1, lw in ts:
-            lines.append([(a0, 0, 0, a1), (0, 0, 0, b1), (0, 0, mulF(lo, dS), 0), (lw, 0, 0, mulF(lo, iax))])
-        for lam in LAMS:
-            xS = int(lam * aS + (1 - lam) * bS)
-            ch = [min(range(4), key=lambda i: v(ln[i], xS)) for ln in lines]
-            cc = min(range(3), key=lambda i: v((cl[i][0], cl[i][1], cl[i][2], 0), xS))
-            r = self.rec(e, pb, ch, cc)
-            if intv(ts, self.c1, self.yuP, self.yuN, self.ydP, self.ydN, self.ltm, aS, pa, r):
-                return r
+    def try_choice(self, aS, pa, e):
+        """The record of the end `e`, if the interval `[a, e 2^-GB]` passes with the kernel's lines, or None."""
+        r = e
+        if intv(self.ts, self.c1, self.yuP, self.yuN, self.ydP, self.ydN, self.ltm, aS, pa, r):
+            return r
         return None
 
     def kinks(self):
@@ -285,7 +298,7 @@ class Box:
             a24 = aS >> SH
 
             def feas(e):
-                return self.try_choice(aS, pa, e, piece_of(e << SH))
+                return self.try_choice(aS, pa, e)
             r = feas(1 << GB)
             if r is None:
                 cand = [e for e in K if e > a24]
@@ -306,19 +319,12 @@ class Box:
                     return None
                 r = best
             recs.append(r)
-            aS, pa = (r & EMASK) << SH, (r >> EB) & PMASK
-        w = TB + 2 * len(self.ts)
+            aS = r << SH
+            pa = pieceOf(aS)
         h = 0
         for i, r in enumerate(recs):
-            h |= r << (w * i)
+            h |= r << (EB * i)
         return len(recs), h
-
-
-def piece_of(xS):
-    for p in range(NP):
-        if xS <= FT[p]:
-            return p
-    return NP
 
 
 def hint(Lnum, Lden, cs, hs):
@@ -428,9 +434,10 @@ exponents of `x = q^L`): for every count exponent `γ` of a class of characters,
 `U_j(γ) = min(lo_j(β̄(γ) + w − 1), min_k (max(1 − k·lo_j, 0) − γ)/(2k))`, `lo_j = κ(c_j − 1)`, the variable's exponent
 `m ≥ κ(DEN − hs − 1)`, `c₁ = max(1 − m, 0)/2`, `y(γ) = γ/2 + (5/12 + d + 2e − m(11/12 + d))/2`, and `β̄(γ)` the largest
 real part of a zero on the curve `ghx` with count exponent `γ`. The half-plane at `11/12` bounds it for `γ ≤ 0`; on
-`[0, 1]` the hint cuts the range of `γ` into intervals and names a line above each term on each, and `resT` checks
-the sum of the lines at the ends of each interval. Everything is in fixed point, `S = 2^64`, rounded so that the sum
-stays above `F`. Its soundness is `SieveResTest.resT_sound`.
+`[0, 1]` the hint cuts the range of `γ` into intervals, the test takes on each a line above each term (the least at
+the interval's midpoint of a term's four lines, and of the clamp's three), and `resT` checks the sum of the lines at
+the ends of each interval. Everything is in fixed point, `S = 2^64`, rounded so that the sum stays above `F`. Its
+soundness is `SieveResTest.resT_sound`.
 
 The curve's steps, from the top (piece `17` is the trivial count, below `{CONST_HI}`), `[lo, hi]` and `A`:
 {pieces}
@@ -438,9 +445,10 @@ The curve's steps, from the top (piece `17` is the trivial count, below `{CONST_
 * `tFT`, `tFTm`, `tIA`, `tDH`: tables of 96-bit entries by piece: `⌊A(1 − lo)·S⌋` (the largest `γ` of the piece;
   `S` for piece `17`), the same one piece up (`0` for piece `0`), `⌊S/A⌋` (`0` for piece `17`) and
   `⌊(1 − w − hi)·S⌋`.
-* `Tm`, `mkTm`: a term's constants. `addTerms`: the sum of the terms' lines that the hint names. `le0`: a line is at
-  most `0` at a point. `clampL`: the clamp's line. `chkI`: the check at an interval's ends. `intv`: one interval.
-  `runI`: the intervals. `hpSum`: the half-plane's sum. `resTM`, `resT`: **the test**.
+* `Tm`, `mkTm`: a term's constants. `addTerms`: the sum of the terms' lines that two bits each name. `le0`: a line
+  is at most `0` at a point. `clampL`: the clamp's line. `chkI`: the check at an interval's ends. `bOf`, `pieceOf`:
+  an interval's end and its piece. `best`, `pickT`, `pickC`, `chMid`: the lines least at the midpoint. `intv`: one
+  interval. `runI`: the intervals. `hpSum`: the half-plane's sum. `resTM`, `resT`: **the test**.
 -/
 
 namespace SieveResTest
@@ -566,26 +574,52 @@ def chkI (ts : List Tm) (ltm dS iax a b ch : Nat) (cl : Nat × Nat × Nat) : Boo
   (fun s => le0 s.1 (Nat.add H cl.2.1) s.2.1 s.2.2 a && le0 s.1 (Nat.add H cl.2.1) s.2.1 s.2.2 b)
     (addTerms dS iax ts ch (Nat.add ltm cl.1) cl.2.2 0)
 
-/-- A record's right end `b`: 25 bits on the grid `2^-24`, times `S`. -/
-def bOf (r : Nat) : Nat := Nat.shiftLeft (Nat.land r 33554431) 40
+/-- A record's end `b`: 13 bits on the grid `2^-12`, times `S`. -/
+def bOf (r : Nat) : Nat := Nat.shiftLeft (Nat.land r 8191) 52
 
-/-- A record's piece of its right end: 5 bits. -/
-def pbOf (r : Nat) : Nat := Nat.land (Nat.shiftRight r 25) 31
+/-- The piece of an end `b`: the first piece `p ≤ 16` whose top `tFT[p]` is at least `b`, `17` if none. -/
+def pieceOf (b : Nat) : Nat :=
+  Nat.rec (motive := fun _ => Nat) 17 (fun n ih => cond (Nat.ble b (get tFT (Nat.sub 16 n))) (Nat.sub 16 n) ih) 17
 
-/-- **One interval** `[a, b]` with the record `r`: `b = bOf r`, its piece `pbOf r`, the clamp's line (2 bits from
-bit 30) and the terms' lines (from bit 32). `a` is in the piece `pa`. -/
+/-- The line `i` of value `(A − B)/S` in place of the line `c` (its index, `A`, `B`) if it is less there. -/
+def best (c : Nat × Nat × Nat) (i A B : Nat) : Nat × Nat × Nat :=
+  cond (Nat.blt (Nat.add A c.2.2) (Nat.add c.2.1 B)) (i, A, B) c
+
+/-- The term's line least at `x` (the first of them on a tie): `0` for `k₀ − 1`, `1` for `k₀`, `2` for `C`, `3` for
+`W`. -/
+def pickT (t : Tm) (dS iax x : Nat) : Nat :=
+  (best (best (best (0, t.a0, mulF t.a1 x) 1 0 (mulF t.b1 x)) 2 0 (mulF t.lo dS)) 3 t.lw (mulF (mulF t.lo iax) x)).1
+
+/-- The clamp's line least at `x` (the first of them on a tie). -/
+def pickC (c1 yuP yuN ydP ydN a b x : Nat) : Nat :=
+  (fun l0 l1 l2 =>
+    (best (best (0, Nat.add l0.1 (mulC l0.2.1 x), l0.2.2) 1 (Nat.add l1.1 (mulC l1.2.1 x)) l1.2.2) 2
+      (Nat.add l2.1 (mulC l2.2.1 x)) l2.2.2).1)
+    (clampL c1 yuP yuN ydP ydN a b 0) (clampL c1 yuP yuN ydP ydN a b 1) (clampL c1 yuP yuN ydP ydN a b 2)
+
+/-- The terms' lines least at `x`, two bits each, the first term's lowest. -/
+def chMid (dS iax x : Nat) : List Tm → Nat
+  | [] => 0
+  | t :: ts => Nat.add (pickT t dS iax x) (Nat.mul 4 (chMid dS iax x ts))
+
+/-- **One interval** `[a, b]` with the record `r`: `b = bOf r` in its piece `pieceOf b`, each term's line and the
+clamp's the least at the midpoint `(a + b)/2`. `a` is in the piece `pa`. -/
 def intv (ts : List Tm) (c1 yuP yuN ydP ydN ltm a pa r : Nat) : Bool :=
-  (fun b pb =>
-    Nat.ble pb 17 && Nat.blt (get tFTm pb) b && Nat.ble b (get tFT pb) && Nat.ble a b &&
-      chkI ts ltm (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA pb)) a b
-        (Nat.shiftRight r 32) (clampL c1 yuP yuN ydP ydN a b (Nat.land (Nat.shiftRight r 30) 3)))
-    (bOf r) (pbOf r)
+  (fun b =>
+    (fun pb =>
+      (fun dS iax x =>
+        Nat.ble pb 17 && Nat.blt (get tFTm pb) b && Nat.ble b (get tFT pb) && Nat.ble a b &&
+          chkI ts ltm dS iax a b (chMid dS iax x ts) (clampL c1 yuP yuN ydP ydN a b (pickC c1 yuP yuN ydP ydN a b x)))
+        (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA pb))
+        (Nat.shiftRight (Nat.add a b) 1))
+      (pieceOf b))
+    (bOf r)
 
 /-- **The intervals**, `k` of them from `(a, pa)`, each a record of `w` bits of `h`; the last ends at `S`. -/
 def runI (ts : List Tm) (w c1 yuP yuN ydP ydN ltm : Nat) : Nat → Nat → Nat → Nat → Bool :=
   Nat.rec (motive := fun _ => Nat → Nat → Nat → Bool) (fun a _ _ => Nat.beq a S)
     (fun _ ih a pa h =>
-      (fun r => intv ts c1 yuP yuN ydP ydN ltm a pa r && ih (bOf r) (pbOf r) (Nat.shiftRight h w))
+      (fun r => intv ts c1 yuP yuN ydP ydN ltm a pa r && ih (bOf r) (pieceOf (bOf r)) (Nat.shiftRight h w))
         (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1)))
 
 /-- The half-plane's sum `Σ ⌊lo·HP/S⌋` over the terms. -/
@@ -598,7 +632,7 @@ def resTM (ts : List Tm) (mlo ltm k h : Nat) : Bool :=
   (fun mtu mtd c1 =>
     (fun yuP yuN ydP ydN =>
       Nat.ble (Nat.add ltm (minN c1 yuP)) (hpSum ts) &&
-        runI ts (Nat.add 32 (Nat.mul 2 ts.length)) c1 yuP yuN ydP ydN ltm k 0 0 h)
+        runI ts 13 c1 yuP yuN ydP ydN ltm k 0 0 h)
       (Nat.shiftRight (Nat.add (Nat.sub K1U mtd) 1) 1) (Nat.shiftRight (Nat.sub mtd K1U) 1)
       (Nat.shiftRight (Nat.sub K1D mtu) 1) (Nat.shiftRight (Nat.add (Nat.sub mtu K1D) 1) 1))
     (mulC mlo M1U) (mulF mlo M1D) (Nat.shiftRight (Nat.add (Nat.sub S mlo) 1) 1)
@@ -617,8 +651,8 @@ end SieveResTest
 
 
 def main():
-    if GB != G24:
-        sys.exit('RES_GRID is for measurement only: the Lean file has the grid 2^-24')
+    if GB != G12 or CURVE != 'ghx':
+        sys.exit('RES_GRID and RES_CURVE are for measurement only: the Lean file has the grid 2^-12 and ghx')
     ap = argparse.ArgumentParser()
     ap.add_argument('--check', action='store_true')
     a = ap.parse_args()
