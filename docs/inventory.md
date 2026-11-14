@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1852 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1853 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 351 | 1033 |
+| `lib/pnt` | 352 | 1034 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -3060,6 +3060,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveResCof`: Chains whose cofactor is one prime, the cofactor in the resonant window's rest
 
 - `SieveTypeIIHM.chain_res_cof`: Chains whose cofactor is one prime, by the resonant window with the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResCorner`: The resonant window's test at the two corners of a box, sound
+
+- `SieveResTest.resY_sound`: `resY` is sound
 
 #### `SieveResCount`: The characters at which a smoothed prime sum is large
 
