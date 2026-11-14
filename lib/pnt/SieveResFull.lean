@@ -16,6 +16,11 @@ the integers with coefficients at most `(K + 1)^K`.
 * `chain_res_core`: **families of tuples of primes, by the resonant window**: `SieveTwoChain.chain_two_core` with
   one variable, the product of the entries outside the rest `r 0, …, r n`, in `(P, P′]`, each `z (r i) ≥ 2q^{lo i}`,
   given `ResCond` at the variable's blocks and the rest's scales.
+* `full_res_bound`: `SieveAd.full2_bound` with one variable: the tuples with product in `(⌊q^L⌋, ⌊2q^L⌋]` and the
+  rest's product in `(Ar, Br]`.
+* `ResBox g L K m_lo lo`, **the condition on a box**: `ResCond` at every exponent `m ≥ m_lo` of the variable and
+  every exponents `s j ≥ lo j` of the rest with `Σ s ≤ L`. `full_res_exp`: `full_res_bound` in exponents, the rest's
+  product in `[q^{ρ₁}, q^{ρ₂}]` and its entries `z (r i) ≥ q^{lo i}`, given `ResBox g L (n + 1) (L − ρ₂ − ε) (lo − ε)`.
 
 The file imports `SieveResChain.lean` and `SieveTwoChain.lean`.
 -/
@@ -443,9 +448,167 @@ theorem chain_res_core {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (h
         congr 2
         ring
 
+/-- **Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window.** `SieveAd.full2_bound` with one
+variable: the rest `r 0, …, r n` with product in `(Ar, Br]` and each entry `z (r i) ≥ 2q^{lo i}`, the variable the
+product of the other entries, in `(⌊q^L⌋/Br, ⌊2q^L⌋/(Ar + 1)]`; `chain_res_core` applies when `ResCond` holds at
+`log_q P″` for `P″ ≥ ⌊q^L⌋/Br` and the rest's scales. -/
+theorem full_res_bound {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g (1 / 2) = 1) (hcnt : CurveCounts g)
+    (hL0 : 0 < L) (hL : L ≤ 5 / 2) {e₀ : ℝ} (he₀ : 0 < e₀) (K J₀ : ℕ) {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∀ (n : ℕ) (r : Fin (n + 1) → Fin K), Function.Injective r → ∀ lo : ℕ → ℝ,
+      ∀ (Ω : List (GCmp K)) (Ar Br : ℕ), Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) →
+      1 ≤ ⌊(q : ℝ) ^ L⌋₊ / Br →
+      (∀ P'' : ℕ, ⌊(q : ℝ) ^ L⌋₊ / Br ≤ P'' → ∀ Q : ℕ → ℝ, (∀ j < n + 1, (q : ℝ) ^ (e₀ / 2) ≤ Q j) →
+        (∀ j < n + 1, (q : ℝ) ^ lo j ≤ Q j) →
+        ∏ j ∈ Finset.range (n + 1), Q j ≤ 2 ^ (K + 1) * (q : ℝ) ^ L / (P'' : ℝ) →
+        ResCond g L (n + 1) (Real.logb q P'') (fun j => Real.logb q (Q j))) →
+      (∀ z : Fin K → ℕ, (∀ t, (z t).Prime) → (∀ C ∈ Ω, C.holds 0 z) →
+        (∀ t, (q : ℝ) ^ e₀ ≤ z t) ∧ (∀ i : Fin (n + 1), 2 * (q : ℝ) ^ lo i ≤ z (r i)) ∧
+          Ar < ∏ t ∈ Finset.univ.image r, z t ∧ ∏ t ∈ Finset.univ.image r, z t ≤ Br ∧
+          ⌊(q : ℝ) ^ L⌋₊ < ∏ t, z t ∧ ∏ t, z t ≤ ⌊2 * (q : ℝ) ^ L⌋₊) →
+      ‖∑ z ∈ RTg K ⌊2 * (q : ℝ) ^ L⌋₊ Ω, dw q a (∏ t, z t)‖ ≤ (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
+  obtain ⟨δ, hδ, q₀, H⟩ := chain_res_core hg1 hg0 hcnt hL0 hL he₀ K J₀ hΛ₁
+  refine ⟨δ, hδ, max q₀ 1, ?_⟩
+  intro q _ hq a ha n r hr lo Ω Ar Br hΩlen hΩc hP1 hRes hreg
+  have hq1' : (1 : ℝ) ≤ q := by exact_mod_cast le_trans (le_max_right _ _) hq
+  set N₁ := ⌊(q : ℝ) ^ L⌋₊ with hN₁
+  set N₂ := ⌊2 * (q : ℝ) ^ L⌋₊ with hN₂
+  have hN₂le : (N₂ : ℝ) ≤ 2 * (q : ℝ) ^ L := Nat.floor_le (by positivity)
+  have hBr1 : 1 ≤ Br := by
+    rcases Nat.eq_zero_or_pos Br with h | h
+    · rw [h, Nat.div_zero] at hP1; omega
+    · exact h
+  refine H q (le_trans (le_max_left _ _) hq) a ha n r hr lo Ω hΩlen hΩc (N₁ / Br) (N₂ / (Ar + 1)) hP1 hRes ?_
+  intro z hz hzΩ
+  obtain ⟨hge, hlo, hrlo, hrhi, hlo', hhi'⟩ := hreg z hz hzΩ
+  have hall : ∏ t, z t = (∏ t ∈ Finset.univ.image r, z t) * ∏ t ∈ (Finset.univ.image r)ᶜ, z t :=
+    (Finset.prod_mul_prod_compl _ _).symm
+  refine ⟨hge, hlo, ?_, ?_, ?_⟩
+  · refine Nat.div_lt_of_lt_mul ?_
+    calc N₁ < ∏ t, z t := hlo'
+      _ = (∏ t ∈ Finset.univ.image r, z t) * ∏ t ∈ (Finset.univ.image r)ᶜ, z t := hall
+      _ ≤ Br * ∏ t ∈ (Finset.univ.image r)ᶜ, z t := Nat.mul_le_mul_right _ hrhi
+  · refine (Nat.le_div_iff_mul_le (by omega)).2 ?_
+    calc (∏ t ∈ (Finset.univ.image r)ᶜ, z t) * (Ar + 1)
+        ≤ (∏ t ∈ (Finset.univ.image r)ᶜ, z t) * ∏ t ∈ Finset.univ.image r, z t := Nat.mul_le_mul_left _ hrlo
+      _ = ∏ t, z t := by rw [hall]; ring
+      _ ≤ N₂ := hhi'
+  · exact le_trans (by exact_mod_cast hhi') hN₂le
+
+/-- **The resonant window's condition on a box**: `ResCond` at every exponent `m ≥ m_lo` of the variable and every
+exponents `s j ≥ lo j` of the rest with `Σ_j s_j ≤ L`. -/
+def ResBox (g : ℝ → ℝ) (L : ℝ) (K : ℕ) (mlo : ℝ) (lo : ℕ → ℝ) : Prop :=
+  ∀ (m : ℝ) (s : ℕ → ℝ), mlo ≤ m → (∀ j < K, lo j ≤ s j) → ∑ j ∈ Finset.range K, s j ≤ L → ResCond g L K m s
+
+/-- **Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window, in exponents.** `full_res_bound`
+with the rest's product in `[q^{ρ₁}, q^{ρ₂}]` and each rest entry `z (r i) ≥ q^{lo i}`, given
+`ResBox g L (n + 1) (L − ρ₂ − ε) (lo − ε)` for `ε > 0` with `L − ρ₂ − ε > 0`: the windows `(⌈q^{ρ₁}⌉ − 1, ⌊q^{ρ₂}⌋]`,
+the variable from `⌊q^L⌋/⌊q^{ρ₂}⌋ ≥ q^{L−ρ₂−ε}` on, and `Σ_j log_q Q_j ≤ L` once `2^{K+1} ≤ q^{L−ρ₂−ε}`. -/
+theorem full_res_exp {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g (1 / 2) = 1) (hcnt : CurveCounts g)
+    (hL0 : 0 < L) (hL : L ≤ 5 / 2) {e₀ : ℝ} (he₀ : 0 < e₀) (K J₀ : ℕ) {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) {ρ₂ ε : ℝ}
+    (hρ₂0 : 0 ≤ ρ₂) (hε : 0 < ε) (hLρ : 0 < L - ρ₂ - ε) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∀ (n : ℕ) (r : Fin (n + 1) → Fin K), Function.Injective r → ∀ lo : ℕ → ℝ,
+      ResBox g L (n + 1) (L - ρ₂ - ε) (fun j => lo j - ε) →
+      ∀ (Ω : List (GCmp K)) (ρ₁ : ℝ), Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) →
+      (∀ z : Fin K → ℕ, (∀ t, (z t).Prime) → (∀ C ∈ Ω, C.holds 0 z) →
+        (∀ t, (q : ℝ) ^ e₀ ≤ z t) ∧ (∀ i : Fin (n + 1), (q : ℝ) ^ lo i ≤ z (r i)) ∧
+          (q : ℝ) ^ ρ₁ ≤ ((∏ t ∈ Finset.univ.image r, z t : ℕ) : ℝ) ∧
+          ((∏ t ∈ Finset.univ.image r, z t : ℕ) : ℝ) ≤ (q : ℝ) ^ ρ₂ ∧
+          ⌊(q : ℝ) ^ L⌋₊ < ∏ t, z t ∧ ∏ t, z t ≤ ⌊2 * (q : ℝ) ^ L⌋₊) →
+      ‖∑ z ∈ RTg K ⌊2 * (q : ℝ) ^ L⌋₊ Ω, dw q a (∏ t, z t)‖ ≤ (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := full_res_bound hg1 hg0 hcnt hL0 hL he₀ K J₀ hΛ₁
+  have hLρ' : 0 < L - ρ₂ := by linarith
+  have ev : ∀ {c : ℝ}, 0 < c → ∀ B : ℝ, ∀ᶠ q : ℕ in Filter.atTop, B ≤ (q : ℝ) ^ c := fun hc B =>
+    ((tendsto_rpow_atTop hc).comp tendsto_natCast_atTop_atTop).eventually_ge_atTop B
+  obtain ⟨q₁, hq₁⟩ := Filter.eventually_atTop.1 ((ev hε 8).and ((ev hLρ' 2).and
+    ((Filter.eventually_ge_atTop 2).and (ev hLρ ((2 : ℝ) ^ (K + 1))))))
+  refine ⟨δ, hδ, max q₀ q₁, fun q _ hq a ha n r hr lo hres Ω ρ₁ hlen hc hreg => ?_⟩
+  obtain ⟨h8ε, h2ρ, hq2, hqK⟩ := hq₁ q (le_trans (le_max_right _ _) hq)
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast (show 0 < q by omega)
+  have hq1' : (1 : ℝ) < q := by exact_mod_cast (show 1 < q by omega)
+  have hq1 : (1 : ℝ) ≤ q := hq1'.le
+  have h2ε : (2 : ℝ) ≤ (q : ℝ) ^ ε := by linarith
+  have hqρ₂1 : (1 : ℝ) ≤ (q : ℝ) ^ ρ₂ := Real.one_le_rpow hq1 hρ₂0
+  have hBrle : (⌊(q : ℝ) ^ ρ₂⌋₊ : ℝ) ≤ (q : ℝ) ^ ρ₂ := Nat.floor_le (by positivity)
+  have hBr1 : 1 ≤ ⌊(q : ℝ) ^ ρ₂⌋₊ := Nat.le_floor (by exact_mod_cast hqρ₂1)
+  have hAr1 : 1 ≤ ⌈(q : ℝ) ^ ρ₁⌉₊ := Nat.one_le_iff_ne_zero.2 (Nat.ceil_pos.2 (by positivity)).ne'
+  -- `⌊q^L⌋/⌊q^{ρ₂}⌋ ≥ 4q^{L−ρ₂−ε}`
+  have hm0 : (0 : ℝ) < (q : ℝ) ^ (L - ρ₂ - ε) := by positivity
+  have hprod : (q : ℝ) ^ (L - ρ₂ - ε) * (q : ℝ) ^ ε * (q : ℝ) ^ ρ₂ = (q : ℝ) ^ L := by
+    rw [← Real.rpow_add hq0, ← Real.rpow_add hq0]; congr 1; ring
+  have h8' : 8 * ((q : ℝ) ^ (L - ρ₂ - ε) * (q : ℝ) ^ ρ₂) ≤ (q : ℝ) ^ L := by
+    have h := mul_le_mul_of_nonneg_left h8ε (mul_nonneg hm0.le (Real.rpow_nonneg hq0.le ρ₂))
+    calc 8 * ((q : ℝ) ^ (L - ρ₂ - ε) * (q : ℝ) ^ ρ₂) = (q : ℝ) ^ (L - ρ₂ - ε) * (q : ℝ) ^ ρ₂ * 8 := by ring
+      _ ≤ (q : ℝ) ^ (L - ρ₂ - ε) * (q : ℝ) ^ ρ₂ * (q : ℝ) ^ ε := h
+      _ = (q : ℝ) ^ L := by rw [← hprod]; ring
+  have h2' : 2 * (q : ℝ) ^ ρ₂ ≤ (q : ℝ) ^ L := by
+    have e : (q : ℝ) ^ L = (q : ℝ) ^ (L - ρ₂) * (q : ℝ) ^ ρ₂ := by
+      rw [← Real.rpow_add hq0]; congr 1; ring
+    rw [e]
+    exact mul_le_mul_of_nonneg_right h2ρ (by positivity)
+  have hmle : ⌈4 * (q : ℝ) ^ (L - ρ₂ - ε)⌉₊ ≤ ⌊(q : ℝ) ^ L⌋₊ / ⌊(q : ℝ) ^ ρ₂⌋₊ := by
+    refine (Nat.le_div_iff_mul_le hBr1).2 (Nat.le_floor ?_)
+    push_cast
+    have hc1 : (⌈4 * (q : ℝ) ^ (L - ρ₂ - ε)⌉₊ : ℝ) < 4 * (q : ℝ) ^ (L - ρ₂ - ε) + 1 :=
+      Nat.ceil_lt_add_one (by positivity)
+    have h3 : (⌈4 * (q : ℝ) ^ (L - ρ₂ - ε)⌉₊ : ℝ) * (⌊(q : ℝ) ^ ρ₂⌋₊ : ℝ) ≤
+        (4 * (q : ℝ) ^ (L - ρ₂ - ε) + 1) * (q : ℝ) ^ ρ₂ :=
+      mul_le_mul hc1.le hBrle (Nat.cast_nonneg _) (by positivity)
+    linarith
+  have h9 : 4 * (q : ℝ) ^ (L - ρ₂ - ε) ≤ ((⌊(q : ℝ) ^ L⌋₊ / ⌊(q : ℝ) ^ ρ₂⌋₊ : ℕ) : ℝ) :=
+    (Nat.le_ceil _).trans (by exact_mod_cast hmle)
+  have h2K1 : (1 : ℝ) ≤ (2 : ℝ) ^ (K + 1) := one_le_pow₀ (by norm_num)
+  have hP1 : 1 ≤ ⌊(q : ℝ) ^ L⌋₊ / ⌊(q : ℝ) ^ ρ₂⌋₊ := by
+    have : (1 : ℝ) ≤ ((⌊(q : ℝ) ^ L⌋₊ / ⌊(q : ℝ) ^ ρ₂⌋₊ : ℕ) : ℝ) := by linarith
+    exact_mod_cast this
+  refine hq₀ q (le_trans (le_max_left _ _) hq) a ha n r hr (fun j => lo j - ε) Ω (⌈(q : ℝ) ^ ρ₁⌉₊ - 1)
+    ⌊(q : ℝ) ^ ρ₂⌋₊ hlen hc hP1 ?_ ?_
+  · -- the condition at the variable's blocks and the rest's scales
+    intro P'' hP'' Q hQe hQlo hQprod
+    have hP''r : ((⌊(q : ℝ) ^ L⌋₊ / ⌊(q : ℝ) ^ ρ₂⌋₊ : ℕ) : ℝ) ≤ P'' := by exact_mod_cast hP''
+    have hP''ge : (q : ℝ) ^ (L - ρ₂ - ε) ≤ (P'' : ℝ) := by linarith
+    have hP''0 : (0 : ℝ) < P'' := lt_of_lt_of_le hm0 hP''ge
+    have hQpos : ∀ j < n + 1, 0 < Q j := fun j hj =>
+      lt_of_lt_of_le (Real.rpow_pos_of_pos hq0 _) (hQlo j hj)
+    refine hres (Real.logb q P'') (fun j => Real.logb q (Q j)) ?_ ?_ ?_
+    · rw [Real.le_logb_iff_rpow_le hq1' hP''0]; exact hP''ge
+    · intro j hj
+      rw [Real.le_logb_iff_rpow_le hq1' (hQpos j hj)]; exact hQlo j hj
+    · show ∑ j ∈ Finset.range (n + 1), Real.logb q (Q j) ≤ L
+      rw [← Real.logb_prod _ _ fun j hj => (hQpos j (Finset.mem_range.1 hj)).ne']
+      have hprodQ0 : 0 < ∏ j ∈ Finset.range (n + 1), Q j :=
+        Finset.prod_pos fun j hj => hQpos j (Finset.mem_range.1 hj)
+      have hle : ∏ j ∈ Finset.range (n + 1), Q j ≤ (q : ℝ) ^ L := by
+        refine hQprod.trans ?_
+        rw [div_le_iff₀ hP''0]
+        have hqL0 : (0 : ℝ) ≤ (q : ℝ) ^ L := by positivity
+        calc 2 ^ (K + 1) * (q : ℝ) ^ L ≤ (q : ℝ) ^ (L - ρ₂ - ε) * (q : ℝ) ^ L :=
+              mul_le_mul_of_nonneg_right hqK hqL0
+          _ ≤ (P'' : ℝ) * (q : ℝ) ^ L := mul_le_mul_of_nonneg_right hP''ge hqL0
+          _ = (q : ℝ) ^ L * P'' := by ring
+      calc Real.logb q (∏ j ∈ Finset.range (n + 1), Q j) ≤ Real.logb q ((q : ℝ) ^ L) :=
+            Real.logb_le_logb_of_le hq1' hprodQ0 hle
+        _ = L := Real.logb_rpow hq0 hq1'.ne'
+  · -- the ranges
+    intro z hz hzΩ
+    obtain ⟨hge, hlo, h3, h4, h5, h6⟩ := hreg z hz hzΩ
+    refine ⟨hge, fun i => ?_, ?_, Nat.le_floor h4, h5, h6⟩
+    · have e : (q : ℝ) ^ lo i = (q : ℝ) ^ (lo i - ε) * (q : ℝ) ^ ε := by
+        rw [← Real.rpow_add hq0]; congr 1; ring
+      have h0 : (0 : ℝ) ≤ (q : ℝ) ^ (lo i - ε) := by positivity
+      calc 2 * (q : ℝ) ^ (lo i - ε) ≤ (q : ℝ) ^ ε * (q : ℝ) ^ (lo i - ε) := mul_le_mul_of_nonneg_right h2ε h0
+        _ = (q : ℝ) ^ lo i := by rw [e]; ring
+        _ ≤ z (r i) := hlo i
+    · have := Nat.ceil_le.2 h3
+      omega
+
+
 end Chain
 
 end SieveTypeIIHM
 
 #print axioms SieveTypeIIHM.box_res_gen
 #print axioms SieveTypeIIHM.chain_res_core
+#print axioms SieveTypeIIHM.full_res_bound
+#print axioms SieveTypeIIHM.full_res_exp
