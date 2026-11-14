@@ -122,8 +122,11 @@ CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
          '21100': dict(lnum=2110, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
                        res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3),
          # at 2115/1000, the main tree's boxes decomposed to eight primes (the light cells of the first prime, below
-         # x^0.21, lose their dropped six-prime boxes)
-         '21150': dict(lnum=2115, lden=1000, h=0.003, hF=0.006, maxlen=6, depth=8, pos=True, lam=0, sec=2,
+         # x^0.21, lose their dropped six-prime boxes), and each step chosen by its cost plus a millionth of `K` for
+         # each second of the kernel: on four cells sampled from x^0.17 to x^0.42 that adds at most a thousandth of
+         # `K` to a cell's plan, and leaves a seventh to two thirds of its hints' bits and a third to three quarters
+         # of the kernel's predicted time
+         '21150': dict(lnum=2115, lden=1000, h=0.003, hF=0.006, maxlen=6, depth=8, pos=True, lam=1, sec=2,
                        energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
