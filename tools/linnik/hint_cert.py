@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] | --try TAG a/b H HF MAXLEN [--lam N]
-[--pos] [--blk N] [--skip N] [--energy] [--res] [--resF] [--cof] [--lv] [--lazy] [--rmerge] [--rows I J] [--out DIR]: the search with the reversal
-through the largest prime as a plan, the hints that lead the kernel through the plan, and the Lean files of a
-theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
+[--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J] [--rows I J]
+[--out DIR]: the search with the reversal through the largest prime as a plan, the hints that lead the kernel through
+the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is
+given).
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
 it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
@@ -485,10 +486,11 @@ class Planner(fl.FlipSearch):
     # covers them (as the evaluated cells are)
     resmemo = None
 
-    def resHint(self, bl):
+    def resHint(self, bl, probe=False):
         """`(mask, k, h)` for a rest of the box `bl` that the kernel's test passes with its hint, or `None`: the
         rests of at least two primes, in the order of their masks. The box is the main tree's, or with `res_frozen`
-        a tree's over a frozen part, `ch ++ β`."""
+        a tree's over a frozen part, `ch ++ β`. With `probe`, the strict float filter's word alone, and nothing
+        kept."""
         if not self.res:
             return None
         if self.frz is not None and not self.res_frozen:
@@ -539,6 +541,10 @@ class Planner(fl.FlipSearch):
                 continue
             key = (cs, hs, mom)
             r = self.resmemo.get(key, 0)
+            if r == 0 and probe:
+                if rt.quick(ln, ld, list(cs), hs, fuel=12, slack=-1e-7, mom=mom, lv=self.res_lv, maxleaf=15):
+                    return (mask, -1, key)
+                continue
             if r == 0:
                 if self.res_lazy and rt.quick(ln, ld, list(cs), hs, fuel=12, slack=-1e-7, mom=mom, lv=self.res_lv,
                                               maxleaf=15):
@@ -547,11 +553,45 @@ class Planner(fl.FlipSearch):
                     r = rt.hint(ln, ld, list(cs), hs, mom, lv=self.res_lv, fast=self.res_lazy)
                 self.resmemo[key] = r
             if r is not None:
-                self.stat['res'] = self.stat.get('res', 0) + 1
+                if not probe:
+                    self.stat['res'] = self.stat.get('res', 0) + 1
                 return (mask,) + r
         return None
 
+    # a box that the plan does not evaluate is cut in two (the kernel's step `S`) when the top `1/2^j` of its first
+    # cell, for some `j ≤ res_split` that the cuts can reach, passes the window's float filter for some rest, and the
+    # halves cost less
+    res_split = 0
+
+    def nearRes(self, S, bl):
+        """The top `1/2^j` of the box's first cell passes the window's float filter for some rest, for some
+        `j ≤ res_split` that cuts at the midpoints, each of a cell wider than `S.wmin`, reach."""
+        x = bl[0]
+        lo, w = x[0], tsub(x[1], x[0])
+        for _ in range(self.res_split):
+            if not (S.wmin < w and lo < (lo + x[1]) // 2 < x[1]):
+                return False
+            lo = (lo + x[1]) // 2
+            w = tsub(x[1], lo)
+            if self.resHint([(lo, x[1])] + bl[1:], True) is not None:
+                return True
+        return False
+
     def pSolve(self, O, S, n, bl, par, lim):
+        c, node = self.pSolve1(O, S, n, bl, par, lim)
+        if not self.res_split or node is None or c == 0 or n <= 1 or not bl or node[0] in ('E', 'R', 'V', 'S'):
+            return c, node
+        x = bl[0]
+        if not self.nearRes(S, bl):
+            return c, node
+        self.stat['splittry'] = self.stat.get('splittry', 0) + 1
+        cs, ns = self.pSplit(O, S, n - 1, x, bl, par, c)
+        if ns is not None and cs < c:
+            self.stat['splitwin'] = self.stat.get('splitwin', 0) + 1
+            return cs, ns
+        return c, node
+
+    def pSolve1(self, O, S, n, bl, par, lim):
         self.minfuel = min(self.minfuel, n)
         if n == 0 or not bl or not O.grd(bl):
             return lim, None
@@ -1108,7 +1148,7 @@ class Par:
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
                  blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False, cof=False, lv=False,
-                 lazy=False, rmerge=False):
+                 lazy=False, rmerge=False, split=0):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1` or `SEC2`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
@@ -1118,17 +1158,20 @@ class Par:
         the planner may cut in three the leaves of the comparisons, in the main tree and over the frozen parts, as
         the kernel's tests allow (`SieveAd.leavesE`); `res`: the resonant window's leaves in the main tree
         (`SieveAd.resTestsF`), and with `resF` in the trees over the frozen parts too (`SieveAd.frozResTestsC`); `cof`:
-        the main tree's boxes with their cofactor in the rest when it is one prime (`SieveAd.resTestsFC`); `lv`: the
-        window's test with the large values of the powers too (`SieveResTest.resX`); `lazy`: the planner takes the
-        strict float filter's word that a rest passes, and finds the hints of the plan it keeps when the plan is
-        written (`resolve`); `rmerge`: consecutive cells of a new prime that the window evaluates are one cell
-        while one test covers them."""
+        the boxes with their cofactor in the rest when it is one prime (`SieveAd.resTestsFC`, and with `resF`
+        `SieveAd.chkIRF`); `lv`: the window's test with the large values of the powers too (`SieveResTest.resX`);
+        `lazy`: the planner takes the strict float filter's word that a rest passes, and finds the hints of the plan
+        it keeps when the plan is written (`resolve`); `rmerge`: consecutive cells of a new prime that the window
+        evaluates are one cell while one test covers them; `split`: a box that the plan does not evaluate is cut in
+        two where the top `1/2^j` of its first cell, `j ≤ split`, passes the window's float filter
+        (`Planner.res_split`)."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
         self.skip, self.skipmin, self.energy, self.res, self.resF, self.cof = skip, skipmin, energy, res, resF, cof
-        self.lv, self.lazy, self.rmerge = lv, lazy, rmerge
-        assert res or not (resF or cof), 'the window over the frozen parts and the cofactor come with the main tree\'s'
+        self.lv, self.lazy, self.rmerge, self.split = lv, lazy, rmerge, split
+        assert res or not (resF or cof or split), 'the window over the frozen parts, the cofactor and the cuts come ' \
+            'with the main tree\'s'
         self.h, self.hI, self.depth, self.kappa = h, round(h * DEN), depth, kappa
         self.depthR, self.hR, self.hQ = depthR, round(hR * DEN), round(hQ * DEN)
         self.hF, self.depthF, self.maxlen = round(hF * DEN), depthF, maxlen
@@ -1147,7 +1190,7 @@ class Par:
         P.res = self.res
         P.res_frozen = self.resF
         P.res_cof = self.cof
-        P.res_lv, P.res_lazy, P.res_merge = self.lv, self.lazy, self.rmerge
+        P.res_lv, P.res_lazy, P.res_merge, P.res_split = self.lv, self.lazy, self.rmerge, self.split
         P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
         return P
 
@@ -1166,6 +1209,10 @@ SEC2.update({('E', True): 6.5e-4, ('B', True): 1.4e-3, ('D', True): 5.9e-4, ('P'
 for _t in (SEC1, SEC2):
     _t[('R', False)] = _t[('E', False)] + 1.6e-4
     _t[('R', True)] = _t[('E', True)] + 1.6e-4
+# the resonant window's leaves, timed in part files (14 November 2026; one row at 2135/1000 with the window in both
+# trees, the cofactor and the large values, unloaded): about 64 ms in the main tree and 8 ms over a frozen part, the
+# test of the rest by `resX` dominating; the step of the window's leaf in SEC1 above is far too low
+SEC2.update({('R', False): 6.4e-2, ('R', True): 8.0e-3})
 SEC = SEC1
 
 
@@ -1684,7 +1731,8 @@ def main():
                    skip=int(a[a.index('--skip') + 1]) if '--skip' in a else 0,
                    sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a,
                    res='--res' in a or '--resF' in a or '--cof' in a, resF='--resF' in a, cof='--cof' in a,
-                   lv='--lv' in a, lazy='--lazy' in a, rmerge='--rmerge' in a)
+                   lv='--lv' in a, lazy='--lazy' in a, rmerge='--rmerge' in a,
+                   split=int(a[a.index('--split') + 1]) if '--split' in a else 0)
         rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache'):
         par_, rows = Par(tag, **CERTS[tag]), None
