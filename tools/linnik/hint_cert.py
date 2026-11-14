@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] [--rows I J [STEP]] [--plan-only] | --try TAG a/b
-H HF MAXLEN [--lam N]
-[--depth N] [--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J]
-[--ycorner] [--rows I J] [--out DIR]:
-the search with the reversal through the largest prime as a plan, the hints that lead the kernel through the plan,
-and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
+"""hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] [--rows I J [STEP]] [--plan-only [--asc]]
+| --try TAG a/b H HF MAXLEN [--lam N] [--depth N] [--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof]
+[--lv] [--lazy] [--rmerge] [--split J] [--ycorner] [--rows I J] [--out DIR]: the search with the reversal through the
+largest prime as a plan, the hints that lead the kernel through the plan, and the Lean files of a theorem (`TAG`: one
+of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
 it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
@@ -1506,7 +1505,7 @@ def shift(piece, off):
     return piece[:5] + ([shift(x, off) for x in piece[5]], piece[6])
 
 
-def plan_all(par_, procs=4, rows=None, cache=None):
+def plan_all(par_, procs=4, rows=None, cache=None, asc=False):
     """The parts and the assembly of the bound of the first term: (f0, cfg0, parts, root, total, stats)."""
     import multiprocessing
     P = par_.planner()
@@ -1521,8 +1520,9 @@ def plan_all(par_, procs=4, rows=None, cache=None):
         jobs = jobs[rows[0]:rows[1]:rows[2] if len(rows) > 2 else 1]
     if procs > 1:
         with multiprocessing.Pool(procs) as pool:
-            # the cells that take longest first, each alone in its task
-            order = sorted(range(len(jobs)), key=lambda i: -jobs[i][1])
+            # the cells that take longest first, each alone in its task (with `asc`, the lightest first: a share
+            # of cells taken from the other end while another machine plans from the top)
+            order = sorted(range(len(jobs)), key=lambda i: jobs[i][1] if asc else -jobs[i][1])
             got = pool.map(row_cached, [jobs[i] for i in order], chunksize=1)
             res = [None] * len(jobs)
             for i, r in zip(order, got):
@@ -1910,7 +1910,7 @@ def main():
     if '--plan-only' in a:
         # the plans of the cells into the cache, and no file: for a search shared between machines
         assert cache is not None, '--plan-only keeps its plans in --cache DIR'
-        f0, cfg0, parts, root, total, stats = plan_all(par_, procs, rows, cache)
+        f0, cfg0, parts, root, total, stats = plan_all(par_, procs, rows, cache, asc='--asc' in a)
         print(f'L = {par_.lnum}/{par_.lden} rows {rows}: cost/K = {total / K:.5f}; {stats["boxes"]} boxes searched; '
               f'{sum(stats["steps"].values())} steps; {time.time() - t0:.0f} s', flush=True)
         return 0
