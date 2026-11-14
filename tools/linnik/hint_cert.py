@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] | --try TAG a/b H HF MAXLEN [--lam N]
-[--pos] [--blk N] [--skip N] [--energy] [--res] [--resF] [--cof] [--rows I J] [--out DIR]: the search with the reversal
-through the largest prime as a plan, the hints that lead the kernel through the plan, and the Lean files of a
-theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
+[--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--rows I J] [--out DIR]: the search
+with the reversal through the largest prime as a plan, the hints that lead the kernel through the plan, and the Lean
+files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
 it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
@@ -469,6 +469,9 @@ class Planner(fl.FlipSearch):
     # in the trees over the frozen parts, its cell from the slab and the chain's cells too (`SieveAd.chkIRF`); for
     # measurement only (no hints), 'main': the main tree's alone, and 'mom': that and any cofactor but 1, counted by
     # its moments alone (`res_test.mkTmM`)
+    res_lv = False       # the test with the large values of the powers too (`SieveResTest.resT2`)
+    res_lazy = False     # a rest that the strict float filter passes is taken as passing, and its hint is found
+    # when the plan is written (`resolve`): `('R', mask, -1, key)` until then
     resmemo = None
 
     def resHint(self, bl):
@@ -521,12 +524,16 @@ class Planner(fl.FlipSearch):
             cs = tuple(bl[p][0] for p in range(n) if mask >> p & 1)
             hs = sum(bl[p][1] for p in range(n) if mask >> p & 1)
             mom = 1 << (len(cs) - 1) if cofm and mask >> (n - 1) & 1 else 0
-            if not rt.quick(ln, ld, list(cs), hs, mom=mom):
+            if not rt.quick(ln, ld, list(cs), hs, mom=mom, lv=self.res_lv):
                 continue
             key = (cs, hs, mom)
             r = self.resmemo.get(key, 0)
             if r == 0:
-                r = rt.hint(ln, ld, list(cs), hs, mom)
+                if self.res_lazy and rt.quick(ln, ld, list(cs), hs, fuel=12, slack=-1e-7, mom=mom, lv=self.res_lv,
+                                              maxleaf=15):
+                    r = (-1, key)
+                else:
+                    r = rt.hint(ln, ld, list(cs), hs, mom, lv=self.res_lv, fast=self.res_lazy)
                 self.resmemo[key] = r
             if r is not None:
                 self.stat['res'] = self.stat.get('res', 0) + 1
@@ -672,6 +679,11 @@ class Planner(fl.FlipSearch):
             return self.cfgIP(pw, h >> 1)
         h1 = h >> 1
         k, h2 = (h1 // pw) % 16, (h1 // pw) // 16
+        if k == 0:
+            # the test with the large values' term: its number of intervals in the next four bits
+            k2, h3 = h2 % 16, h2 // 16
+            nb = rt.EB * k2
+            return (3, 0, h1 % pw, 16 * (k2 + 16 * (h3 % (1 << nb))), False), h3 >> nb
         nb = rt.EB * k
         return (3, 0, h1 % pw, k + 16 * (h2 % (1 << nb)), False), h2 >> nb
 
@@ -684,7 +696,7 @@ class Planner(fl.FlipSearch):
             return False
         cs = [bl[p][0] for p in range(len(bl)) if sr >> p & 1]
         hs = sum(bl[p][1] for p in range(len(bl)) if sr >> p & 1)
-        return bool(cs) and rt.resT(self.T.Ln, self.T.Ld, cs, hs, k, h)
+        return bool(cs) and rt.resX(self.T.Ln, self.T.Ld, cs, hs, k, h)
 
     def chkIRC(self, bl, sr, k, h):
         """`SieveAd.chkIRC`: `chkIR`, with the box's cofactor in the rest at the bit after its cells: one prime when
@@ -702,7 +714,7 @@ class Planner(fl.FlipSearch):
             if not (shi + 2 <= DEN and DEN + 1 <= slo + 2 * lk):
                 return False
             cs, hs = cs + [max(tsub(tsub(DEN, shi), 1), lk)], hs + tsub(DEN, slo) + 1
-        return rt.resT(self.T.Ln, self.T.Ld, cs, hs, k, h)
+        return rt.resX(self.T.Ln, self.T.Ld, cs, hs, k, h)
 
     def chkIRF(self, e1, e2, beta, bl, sr, k, h):
         """`SieveAd.chkIRF`: `chkIR` on the box `ch ++ β` of a tree over a frozen part, with the chain's cofactor in
@@ -723,7 +735,7 @@ class Planner(fl.FlipSearch):
                 return False
             cs = cs + [max(tsub(tsub(tsub(DEN, e2), shi), 1), lk)]
             hs += tsub(tsub(DEN, e1), slo) + 1
-        return rt.resT(self.T.Ln, self.T.Ld, cs, hs, k, h)
+        return rt.resX(self.T.Ln, self.T.Ld, cs, hs, k, h)
 
     def cfgIMRC(self, bl, h):
         """`SieveAd.cfgIMRC`: `cfgIPR` with a set of one more bit than the box has cells, the cofactor's."""
@@ -972,6 +984,11 @@ class Planner(fl.FlipSearch):
     def resFields(self, node, w):
         """A resonant leaf `('R', mask, k, h)`: the evaluation's bit, `1`, the rest, four bits `k`, the `k` ends."""
         mask, k, h = node[1:]
+        if k == 0:
+            # the test with the large values' term: `0`, then its number of intervals and their ends
+            k2, h2 = h % 16, h // 16
+            assert 0 < k2 < 16 and mask < 1 << w and h2 < 1 << (rt.EB * k2)
+            return [(0, 1), (1, 1), (mask, w), (0, 4), (k2, 4), (h2, rt.EB * k2)]
         assert 0 < k < 16 and mask < 1 << w and h < 1 << (rt.EB * k)
         return [(0, 1), (1, 1), (mask, w), (k, 4), (h, rt.EB * k)]
 
@@ -1079,7 +1096,8 @@ class Par:
 
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
-                 blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False, cof=False):
+                 blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False, cof=False, lv=False,
+                 lazy=False):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1` or `SEC2`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
@@ -1089,11 +1107,15 @@ class Par:
         the planner may cut in three the leaves of the comparisons, in the main tree and over the frozen parts, as
         the kernel's tests allow (`SieveAd.leavesE`); `res`: the resonant window's leaves in the main tree
         (`SieveAd.resTestsF`), and with `resF` in the trees over the frozen parts too (`SieveAd.frozResTestsC`); `cof`:
-        the main tree's boxes with their cofactor in the rest when it is one prime (`SieveAd.resTestsFC`)."""
+        the boxes with their cofactor in the rest when it is one prime (`SieveAd.resTestsFC`, and with `resF`
+        `SieveAd.chkIRF`); `lv`: the window's test with the large values of the powers too (`SieveResTest.resX`);
+        `lazy`: the planner takes the strict float filter's word that a rest passes, and finds the hints of the plan
+        it keeps when the plan is written (`resolve`)."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
         self.skip, self.skipmin, self.energy, self.res, self.resF, self.cof = skip, skipmin, energy, res, resF, cof
+        self.lv, self.lazy = lv, lazy
         assert res or not (resF or cof), 'the window over the frozen parts and the cofactor come with the main tree\'s'
         self.h, self.hI, self.depth, self.kappa = h, round(h * DEN), depth, kappa
         self.depthR, self.hR, self.hQ = depthR, round(hR * DEN), round(hQ * DEN)
@@ -1113,6 +1135,7 @@ class Par:
         P.res = self.res
         P.res_frozen = self.resF
         P.res_cof = self.cof
+        P.res_lv, P.res_lazy = self.lv, self.lazy
         P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
         return P
 
@@ -1201,6 +1224,35 @@ def cut(P, par_, node, bl, par, parts):
     return ('buch', bl, par, f, cfg, out, sum(piece_cost(p, parts) for p in out))
 
 
+def resolve(P, node, bad, seen):
+    """The plan `node` with the hints of its resonant leaves found (`Par.lazy`): a leaf `('R', mask, -1, key)`
+    becomes `('R', mask, k, h)`; the keys for which no hint is found are added to `bad`."""
+    got = seen.get(id(node))
+    if got is not None:
+        return got[1]
+    k = node[0]
+    if k == 'R' and node[2] == -1:
+        key = node[3]
+        r = P.resmemo.get(key)
+        if r is None or r[0] == -1:
+            cs, hs, mom = key
+            r = rt.hint(P.T.Ln, P.T.Ld, list(cs), hs, mom, lv=P.res_lv, fast=True)
+            P.resmemo[key] = r
+        if r is None:
+            bad.add(key)
+            out = node
+        else:
+            out = ('R', node[1]) + r
+    elif k in ('B', 'F', 'P'):
+        out = node[:2] + ([resolve(P, x, bad, seen) for x in node[2]],) + node[3:]
+    elif k == 'S':
+        out = ('S', resolve(P, node[1], bad, seen), resolve(P, node[2], bad, seen))
+    else:
+        out = node
+    seen[id(node)] = (node, out)
+    return out
+
+
 def row_job(args):
     """The plan of one cell of the first prime: light, to be put in a part with its neighbours, or cut."""
     par_, a, b = args
@@ -1208,6 +1260,22 @@ def row_job(args):
     sys.setrecursionlimit(100000)
     c, node = P.plan([(a, b)], False, K)
     assert node is not None and c < K, (a, b, c)
+    while par_.lazy:
+        # the hints of the plan's resonant leaves; a leaf with none (the float filter was wrong) fails from now
+        # on, and the cell is planned again
+        bad = set()
+        node = resolve(P, node, bad, {})
+        if not bad:
+            break
+        memo, calls, fcalls = P.resmemo, P.W['calls'], P.W['fcalls']
+        for key in bad:
+            memo[key] = None
+        P = par_.planner()
+        P.resmemo = memo
+        P.W['calls'], P.W['fcalls'] = calls, fcalls
+        P.stat['replan'] = P.stat.get('replan', 0) + len(bad)
+        c, node = P.plan([(a, b)], False, K)
+        assert node is not None and c < K, (a, b, c)
     cnt = Counter()
     count(node, cnt)
     info = (c, dict(cnt), P.W['calls'], P.W['fcalls'], dict(P.stat))
@@ -1603,7 +1671,8 @@ def main():
                    blk=int(a[a.index('--blk') + 1]) if '--blk' in a else 1,
                    skip=int(a[a.index('--skip') + 1]) if '--skip' in a else 0,
                    sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a,
-                   res='--res' in a or '--resF' in a or '--cof' in a, resF='--resF' in a, cof='--cof' in a)
+                   res='--res' in a or '--resF' in a or '--cof' in a, resF='--resF' in a, cof='--cof' in a,
+                   lv='--lv' in a, lazy='--lazy' in a)
         rows = tuple(int(x) for x in a[a.index('--rows') + 1:][:2]) if '--rows' in a else None
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache'):
         par_, rows = Par(tag, **CERTS[tag]), None

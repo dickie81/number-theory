@@ -1427,7 +1427,7 @@ theorem resT_sound {Lnum Lden : ℕ} (hLd : 0 < Lden) {cs : List ℕ} {hs k h : 
   rw [hmap] at hT
   have hL : (0 : ℝ) ≤ (Lnum : ℝ) / Lden := div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
   have hgoal := resTM_sound hL (ltm_ok hLd) hT
-  intro m s hm hs hsum β γ t h1 h2 hγ ht hk
+  intro m s hm hs hsum _ β γ t h1 h2 hγ ht hk _
   have hlen : (cs.map (loOf Lnum Lden)).length = cs.length := List.length_map _
   have hg := hgoal γ β m s t h1 h2 hγ (by rw [hlen]; exact ht) (by rw [hlen]; exact hk) hm
     (fun j hj => by
@@ -1450,7 +1450,7 @@ theorem resT_hs {Lnum Lden : ℕ} {cs : List ℕ} {hs k h : ℕ} (hT : resT Lnum
 /-- `ResBox` holds for larger lower bounds. -/
 lemma resBox_mono {g : ℝ → ℝ} {L : ℝ} {K : ℕ} {mlo mlo' : ℝ} {lo lo' : ℕ → ℝ} (h : ResBox g L K mlo lo)
     (hm : mlo ≤ mlo') (hl : ∀ j < K, lo j ≤ lo' j) : ResBox g L K mlo' lo' :=
-  fun m s hm' hs hsum => h m s (hm.trans hm') (fun j hj => (hl j hj).trans (hs j hj)) hsum
+  fun m s hm' hs hsum hsum2 => h m s (hm.trans hm') (fun j hj => (hl j hj).trans (hs j hj)) hsum hsum2
 
 /-- **The test is sound, in the cells' units**: with `κ = L/DEN`, `L = Lnum/Lden`, cells `c_j ≥ 1` and `hs + 1 < DEN`,
 `resT` gives `ResBox ghx L K (L − κ·hs − κ) (κ·c_j − κ)`. -/

@@ -87,6 +87,18 @@ M1U = ce(Fr(11, 12) + DD)
 M1D = fl(Fr(11, 12) + DD)
 HP = fl(1 - W - Fr(11, 12))
 MSK = (1 << SLOT) - 1
+# the large values of the powers (`SieveTypeIIHM.lvExp`): the margin `lvE`, and the constants of its lines
+LVON = os.environ.get('RES_LV', '') != ''             # measurement: the test with the large values' term tried too
+LVKS = int(os.environ.get('RES_LVK', 2))              # how many powers below `k₀` are tried (the Lean's: 2)
+LVEQ = Fr(1, 10 ** 5)
+LVE = ce(LVEQ)
+OFF = 4 * S                                           # the offset that keeps the term's value a natural number
+E23 = ce(Fr(2, 3) + LVEQ)                             # the least `k·lo`
+C310 = fl(Fr(3, 10) - LVEQ)                           # below the range of sizes: `−lo(3/10 − lvE)`
+C15U = ce(Fr(1, 5) + LVEQ)                            # at the size `4/5 − lvE`: `2k·hi(1/5 + lvE)`,
+C15D = fl(Fr(1, 5) - 4 * LVEQ)                        # `1/2 − k·lo(1/5 − 4lvE)`
+C65D = fl(Fr(6, 5) - 4 * LVEQ)                        # and `4/3 − k·lo(6/5 − 4lvE)`
+C43 = ce(Fr(4, 3))
 
 
 def pack(vals):
@@ -253,6 +265,119 @@ def resT(Lnum, Lden, cs, hs, k, h, mom=0):
 
 
 # ---------------------------------------------------------------------------------------------------------------
+# The test with the large values of the powers. A class of characters with count exponent `γ` at which the prime
+# sum of length `q^s`, `s ≥ lo`, has the size `t` satisfies `γ ≤ lvExp k s (t − τ)` for every `k`
+# (`SieveTypeIIHM.ResCond`); for `k·lo ≥ 2/3 + lvE` and `γ` above
+#     Γ = lvE + max(2k·hi(1/5 + lvE), 1/2 − k·lo(1/5 − 4lvE), 4/3 − k·lo(6/5 − 4lvE)),   hi ≥ s,
+# the size is at most `4/5 − lvE + τ`, and then
+#     s(t − 1) − sτ ≤ LV_k(γ) = max(−lo(3/10 − lvE), (lvE − γ)/(2k), (1/2 + lvE − γ − k·lo)/(4k),
+#                                  (4/3 + lvE − γ − 2k·lo)/(4k)),
+# a convex function of `γ`: the check at the two ends of an interval holds between them. The upper end of a term is
+# `hi_j = L + 10⁻⁵ − m − Σ_{i≠j} lo_i` (`SieveTypeIIHM.ResBox`). The kernel tries, for each term, the powers
+# `k₀ − 1` and `k₀ − 2` where they apply from the interval's left end on, with the four lines, at the midpoint.
+
+def mkTv(lo, ub):
+    """A term's constants for the large values: for `k = k₀ − 1, k₀ − 2, …`, `(k, g)` with `g` the least `γ·S`
+    above which the term applies (`S²` if never); `ub + lo` is the upper end of the term's exponent."""
+    k0 = (S + sub(lo, 1)) // lo if lo else 0
+    out = []
+    for d in range(1, LVKS + 1):
+        k = sub(k0, d)
+        if k >= 1 and k * lo >= E23:
+            g = LVE + max(mulC(2 * k * (ub + lo), C15U), sub(S // 2, mulF(k * lo, C15D)),
+                          sub(C43, mulF(k * lo, C65D)))
+        else:
+            g = S * S
+        out.append((k, g))
+    return out
+
+
+def lvVal(lo, k, x):
+    """`OFF + S·LV_k(x/S)`, rounded up."""
+    return max(sub(OFF, mulF(lo, C310)),
+               sub(2 * k * OFF + LVE + 2 * k - 1, x) // (2 * k),
+               sub(4 * k * OFF + S // 2 + LVE + 4 * k - 1, x + k * lo) // (4 * k),
+               sub(4 * k * OFF + C43 + LVE + 4 * k - 1, x + 2 * k * lo) // (4 * k))
+
+
+def pickT2(t, tv, dS, iax, a, x):
+    """The term's bound least at `x`: one of the four lines (`0` to `3`), or the large values' with the power
+    `tv[i]` (`4 + i`) where it applies from `a` on."""
+    lo, a0, a1, b1, lw = t
+    c = best((0, a0, mulF(a1, x)), 1, 0, mulF(b1, x))
+    c = best(c, 2, 0, mulF(lo, dS))
+    c = best(c, 3, lw, mulF(mulF(lo, iax), x))
+    for i, (k, g) in enumerate(tv):
+        if g < a:
+            c = best(c, 4 + i, lvVal(lo, k, x), OFF)
+    return c[0]
+
+
+def intv2(ts, tvs, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
+    b = (r & EMASK) << SH
+    pb = pieceOf(b)
+    if not (pb <= NP and get(TFTM, pb) < b and b <= get(TFT, pb) and a <= b):
+        return False
+    dS = max(get(TDH, pa), sub(mulF(a, get(TIA, pa)), WC))
+    iax = min(get(TIA, pa), get(TIA, pb))
+    if pa <= PK <= pb:
+        iax = min(iax, get(TIA, PK))
+    x = (a + b) >> 1
+    cp0, cp1, cn0 = clampL(c1, yuP, yuN, ydP, ydN, a, b, pickC(c1, yuP, yuN, ydP, ydN, a, b, x))
+    p0, n0, n1, va, vb = ltm + cp0, cn0, 0, 0, 0
+    for t, tv in zip(ts, tvs):
+        lo, a0, a1, b1, lw = t
+        c = pickT2(t, tv, dS, iax, a, x)
+        if c == 0:
+            p0, n1 = p0 + a0, n1 + a1
+        elif c == 1:
+            n1 = n1 + b1
+        elif c == 2:
+            n0 = n0 + mulF(lo, dS)
+        elif c == 3:
+            p0, n1 = p0 + lw, n1 + mulF(lo, iax)
+        else:
+            k = tv[c - 4][0]
+            va, vb, n0 = va + lvVal(lo, k, a), vb + lvVal(lo, k, b), n0 + OFF
+    p1 = S // 2 + cp1
+    return le0(p0 + va, p1, n0, n1, a) and le0(p0 + vb, p1, n0, n1, b)
+
+
+def resT2(Lnum, Lden, cs, hs, k, h, mom=0):
+    """The test with the large values' term: as `resT`, each term with its powers `k₀ − 1`, `k₀ − 2` (`mom`:
+    measurement only, the terms counted by their moments alone, which have no such term)."""
+    ts = terms(Lnum, Lden, cs, mom)
+    los = [t[0] for t in ts]
+    mlo = (Lnum * sub(sub(DEN, hs), 1) * S) // (Lden * DEN)
+    ls5 = (Lnum * 10 ** 5 + Lden) * S // (Lden * 10 ** 5) + 1
+    ub = sub(ls5, mlo + sum(los))
+    tvs = [mkTv(lo, ub) for lo in los]
+    ltm = (Lnum * S + sub(Lden * 10 ** 6, 1)) // (Lden * 10 ** 6) + MG
+    mtu, mtd = mulC(mlo, M1U), mulF(mlo, M1D)
+    c1 = (sub(S, mlo) + 1) >> 1
+    yuP, yuN = (sub(K1U, mtd) + 1) >> 1, sub(mtd, K1U) >> 1
+    ydP, ydN = sub(K1D, mtu) >> 1, (sub(mtu, K1D) + 1) >> 1
+    if not (hs + 1 < DEN and ltm + min(c1, yuP) <= sum(mulF(t[0], HP) for t in ts)):
+        return False
+    a, pa = 0, 0
+    for _ in range(k):
+        r = h & EMASK
+        if not intv2(ts, tvs, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
+            return False
+        a, h = r << SH, h >> EB
+        pa = pieceOf(a)
+    return a == S
+
+
+def resX(Lnum, Lden, cs, hs, k, h):
+    """The test in either form: `k ≥ 1` intervals for `resT`; `k = 0` for `resT2`, with its number of intervals in
+    the low four bits of `h`."""
+    if k:
+        return resT(Lnum, Lden, cs, hs, k, h)
+    return resT2(Lnum, Lden, cs, hs, h & 15, h >> 4)
+
+
+# ---------------------------------------------------------------------------------------------------------------
 # The hints: on each interval, for a few points between its ends, each term's least line there; the intervals by a
 # greedy cover from the left, each as far as some choice passes (the curve's and the clamp's kinks first, then a
 # binary search on the grid).
@@ -260,10 +385,15 @@ def resT(Lnum, Lden, cs, hs, k, h, mom=0):
 class Box:
     """The test's state for one box, with the hint search."""
 
-    def __init__(self, Lnum, Lden, cs, hs, mom=0):
+    def __init__(self, Lnum, Lden, cs, hs, mom=0, lv=False):
         self.Lnum, self.Lden, self.cs, self.hs = Lnum, Lden, cs, hs
         self.ts = terms(Lnum, Lden, cs, mom)
         mlo = (Lnum * sub(sub(DEN, hs), 1) * S) // (Lden * DEN)
+        self.tvs = None
+        if lv:
+            ls5 = (Lnum * 10 ** 5 + Lden) * S // (Lden * 10 ** 5) + 1
+            ub = sub(ls5, mlo + sum(t[0] for t in self.ts))
+            self.tvs = [mkTv(t[0], ub) for t in self.ts]
         self.ltm = (Lnum * S + sub(Lden * 10 ** 6, 1)) // (Lden * 10 ** 6) + MG
         mtu, mtd = mulC(mlo, M1U), mulF(mlo, M1D)
         self.c1 = (sub(S, mlo) + 1) >> 1
@@ -275,6 +405,10 @@ class Box:
     def try_choice(self, aS, pa, e):
         """The record of the end `e`, if the interval `[a, e 2^-GB]` passes with the kernel's lines, or None."""
         r = e
+        if self.tvs is not None:
+            if intv2(self.ts, self.tvs, self.c1, self.yuP, self.yuN, self.ydP, self.ydN, self.ltm, aS, pa, r):
+                return r
+            return None
         if intv(self.ts, self.c1, self.yuP, self.yuN, self.ydP, self.ydN, self.ltm, aS, pa, r):
             return r
         return None
@@ -291,6 +425,15 @@ class Box:
             k0 = (S + lo - 1) // lo if lo else 0
             if k0 >= 2:
                 pts.add(k0 * sub(S, (k0 - 1) * lo))
+        if self.tvs is not None:
+            # where a term's large values begin to apply, and where its lines cross
+            for (lo, a0, a1, b1, lw), tv in zip(self.ts, self.tvs):
+                for k, g in tv:
+                    if g < S:
+                        c0 = mulF(lo, C310)
+                        pts.update((g + 1, sub(k * lo + LVE, S // 2), sub(2 * k * lo + LVE, C43),
+                                    LVE + 2 * k * c0, sub(S // 2 + LVE + 4 * k * c0, k * lo),
+                                    sub(C43 + LVE + 4 * k * c0, 2 * k * lo)))
         out = set()
         for x in pts:
             e = x >> SH
@@ -299,8 +442,9 @@ class Box:
                 out.add(e + 1)
         return sorted(out)
 
-    def find(self, maxint=15):
-        """(k, h) for the test, or None."""
+    def find(self, maxint=15, fast=False):
+        """(k, h) for the test, or None. With `fast`, the last kink at which an interval passes is found by
+        bisection over the kinks (the default tries every kink): fewer evaluations, and sometimes another hint."""
         if not self.ok:
             return None
         K = self.kinks()
@@ -316,7 +460,17 @@ class Box:
             if r is None:
                 cand = [e for e in K if e > a24]
                 lo_e, best = a24, None
-                for e in cand:
+                if fast and cand:
+                    i0, i1 = -1, len(cand)                  # cand[i0] passes (or i0 = -1), cand[i1] is not tried
+                    while i1 - i0 > 1:
+                        im = (i0 + i1) // 2
+                        rr = feas(cand[im])
+                        if rr is not None:
+                            i0, lo_e, best = im, cand[im], rr
+                        else:
+                            i1 = im
+                    cand = cand if best is not None else []
+                for e in ([] if fast and best is not None else cand):
                     rr = feas(e)
                     if rr is not None:
                         lo_e, best = e, rr
@@ -340,12 +494,23 @@ class Box:
         return len(recs), h
 
 
-def hint(Lnum, Lden, cs, hs, mom=0):
-    """The test's hint (k, h) for the rest's cells, or None; checked by the mirror of the kernel's test."""
-    r = Box(Lnum, Lden, cs, hs, mom).find()
-    if r is not None:
-        assert resT(Lnum, Lden, cs, hs, *r, mom=mom)
-    return r
+def hint(Lnum, Lden, cs, hs, mom=0, lv=None, fast=False):
+    """The test's hint (k, h) for the rest's cells, or None; checked by the mirror of the kernel's test. With the
+    large values' term (`lv`; `LVON` if not given), a rest that fails `resT` is tried with `resT2`: its hint is
+    `(0, k + 16h)`. `fast`: `Box.find`'s bisection over the kinks, then its default if that finds nothing."""
+    lv = LVON if lv is None else lv
+    for f in ((True, False) if fast else (False,)):
+        r = Box(Lnum, Lden, cs, hs, mom).find(fast=f)
+        if r is not None:
+            assert resT(Lnum, Lden, cs, hs, *r, mom=mom)
+            return r
+    if lv:
+        for f in ((True, False) if fast else (False,)):
+            r = Box(Lnum, Lden, cs, hs, mom, lv=True).find(fast=f)
+            if r is not None:
+                assert resT2(Lnum, Lden, cs, hs, *r, mom=mom)
+                return 0, r[0] + 16 * r[1]
+    return None
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -372,8 +537,14 @@ def _bm(a):
     return min(hi, 1 - a / A)
 
 
-def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0):
-    """Whether the bound may hold for the rest `cs`, `hs` (floats; `False` means the kernel's test fails)."""
+def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0, lv=None, maxleaf=None):
+    """Whether the bound may hold for the rest `cs`, `hs` (floats; `False` means the kernel's test fails). With a
+    negative `slack`, `fuel = 12` and `maxleaf = 15` it is the other way: `True` means that the bound holds with a
+    margin on at most fifteen intervals of the hint's grid, so that the kernel's test should pass (the planner
+    takes that as a pass and finds the hint when the plan is written). `lv`: with the large values' term (`LVON`
+    if not given)."""
+    lv = LVON if lv is None else lv
+    leaves = [0]
     import math
     L = Lnum / Lden
     kq = L / DEN
@@ -396,12 +567,31 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0):
     for lo in los:
         k0 = max(1, math.ceil(1 / lo - 1e-12))
         ks.append([(max(1 - k * lo, 0) / (2 * k), -1 / (2 * k)) for k in (k0 - 1, k0) if k >= 1])
+    # the large values' term (`resT2`): for each term, `(k, Γ)` for the powers that the kernel tries, with a small
+    # allowance in favour of passing
+    lvs = [[] for _ in los]
+    if lv:
+        e = float(LVEQ)
+        for j, lo in enumerate(los):
+            if mom >> j & 1:
+                continue
+            k0 = max(1, math.ceil(1 / lo - 1e-12))
+            hi = L + 1e-5 - m - (sum(zl) - lo) - slack
+            for k in range(k0 - 1, k0 - 1 - LVKS, -1):
+                if k >= 1 and k * lo >= 2 / 3 + e - slack:
+                    lvs[j].append((k, e + max(2 * k * hi * (0.2 + e), 0.5 - k * lo * (0.2 - 4 * e),
+                                              4 / 3 - k * lo * (1.2 - 4 * e)) - slack))
+
+    def lvv(lo, k, g):
+        e = float(LVEQ)
+        return max(-lo * (0.3 - e), (e - g) / (2 * k), (0.5 + e - g - k * lo) / (4 * k),
+                   (4 / 3 + e - g - 2 * k * lo) / (4 * k))
     # the bound itself at a few points: every line is above it, so where it exceeds the threshold the test fails
     for g in (0.0, 0.17, 0.26, 0.34, 0.4, 0.45, 0.5, 0.75, 1.0):
         v = g / 2 + min(c1, max(0.0, g / 2 + y0))
         b = _bm(g) + w - 1
-        for lo, mk in zip(zl, ks):
-            v += min([lo * b] + [p0 + p1 * g for p0, p1 in mk])
+        for lo, zlo, mk, lvj in zip(los, zl, ks, lvs):
+            v += min([zlo * b] + [p0 + p1 * g for p0, p1 in mk] + [lvv(lo, k, g) for k, G in lvj if G < g])
         if v > thr:
             return False
 
@@ -417,13 +607,16 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0):
             ia_inv = min(1 / _HF[ia][2] if ia < NP else 0.0, 1 / _HF[ib][2])
             if ia <= PK <= ib:
                 ia_inv = min(ia_inv, 1 / _HF[PK][2])
-        for lo, mk in zip(zl, ks):
-            cand = list(mk) + [(-lo * dS, 0.0), (lo * w, -lo * ia_inv)]
-            best = min(cand, key=lambda l: 2 * l[0] + l[1] * (a + b))
-            t0 += best[0]
-            t1 += best[1]
-        if t0 + t1 * a <= thr and t0 + t1 * b <= thr:
-            return True
+        ta, tb = t0 + t1 * a, t0 + t1 * b
+        for lo, zlo, mk, lvj in zip(los, zl, ks, lvs):
+            cand = [(l0 + l1 * a, l0 + l1 * b) for l0, l1 in list(mk) + [(-zlo * dS, 0.0), (zlo * w, -zlo * ia_inv)]]
+            cand += [(lvv(lo, k, a), lvv(lo, k, b)) for k, G in lvj if G < a]
+            best = min(cand, key=lambda l: l[0] + l[1])
+            ta += best[0]
+            tb += best[1]
+        if ta <= thr and tb <= thr:
+            leaves[0] += 1
+            return maxleaf is None or leaves[0] <= maxleaf
         if fuel == 0:
             return False
         mid = (a + b) / 2
@@ -463,6 +656,9 @@ The curve's steps, from the top (piece `17` is the trivial count, below `{CONST_
   is at most `0` at a point. `clampL`: the clamp's line. `chkI`: the check at an interval's ends. `bOf`, `pieceOf`:
   an interval's end and its piece. `best`, `pickT`, `pickC`, `chMid`: the lines least at the midpoint. `intv`: one
   interval. `runI`: the intervals. `hpSum`: the half-plane's sum. `resTM`, `resT`: **the test**.
+* `lvG`, `lvVal`, `Tv`, `mkTv`, `lvU`, `addTerms2`, `pickT2`, `chMid2`, `chkI2`, `intv2`, `runI2`, `resTM2`,
+  `resT2`: the test with the large values of the powers as two more choices for each term; `resX`: **the test in
+  either form**.
 -/
 
 namespace SieveResTest
@@ -659,6 +855,197 @@ def resT (Lnum Lden : Nat) (cs : List Nat) (hs k h : Nat) : Bool :=
       (Nat.div (Nat.mul (Nat.mul Lnum (Nat.sub (Nat.sub DEN hs) 1)) S) (Nat.mul Lden DEN))
       (Nat.add (Nat.div (Nat.add (Nat.mul Lnum S) (Nat.sub (Nat.mul Lden 1000000) 1)) (Nat.mul Lden 1000000)) MG)
       k h
+
+/-! ### The test with the large values of the powers
+
+A class of characters with count exponent `γ` at which the prime sum of length `q^s` has the size `t` has
+`γ ≤ lvExp k s (t − τ)` for every `k` (`SieveTypeIIHM.ResCond`). For a term with `lo ≤ s·S ≤ hi`, `k ≥ 1`,
+`k·lo ≥ (2/3 + lvE)·S` and `γ` above `Γ = lvE + max(2k·hi(1/5 + lvE), 1/2 − k·lo(1/5 − 4lvE), 4/3 − k·lo(6/5 − 4lvE))`
+(in units of `S`), the size is at most `4/5 − lvE + τ`, and then
+`s(t − 1) − sτ ≤ LV_k(γ) = max(−lo(3/10 − lvE), (lvE − γ)/(2k), (1/2 + lvE − γ − k·lo)/(4k), (4/3 + lvE − γ − 2k·lo)/(4k))`,
+a convex function of `γ`: a sum of lines and of such terms that is at most `0` at the two ends of an interval is at
+most `0` on it. `resT2` is `resT` with this term as two more choices for each term of the rest, for the powers
+`k₀ − 1` and `k₀ − 2`; `resX` is `resT` for `k ≥ 1` intervals and `resT2` for `k = 0`, its number of intervals in the
+low four bits of the hint. Its soundness is `SieveResLVTest.resX_sound_cells`. -/
+
+/-- `4S`, the offset that keeps the value of the large values' term a natural number. -/
+def OFF : Nat := {OFF}
+
+/-- `⌈lvE·S⌉`, `lvE = 10⁻⁵` the margin of `SieveTypeIIHM.lvExp`. -/
+def LVE : Nat := {LVE}
+
+/-- `⌈(2/3 + lvE)·S⌉`, the least `k·lo`. -/
+def E23 : Nat := {E23}
+
+/-- `⌊(3/10 − lvE)·S⌋`. -/
+def C310 : Nat := {C310}
+
+/-- `⌈(1/5 + lvE)·S⌉`. -/
+def C15U : Nat := {C15U}
+
+/-- `⌊(1/5 − 4lvE)·S⌋`. -/
+def C15D : Nat := {C15D}
+
+/-- `⌊(6/5 − 4lvE)·S⌋`. -/
+def C65D : Nat := {C65D}
+
+/-- `⌈4S/3⌉`. -/
+def C43 : Nat := {C43}
+
+/-- The least `γ·S` above which the large values' term of the power `k` applies to a term with exponent between
+`lo/S` and `hi/S`: `LVE + max(⌈2k·hi(1/5 + lvE)⌉, S/2 − ⌊k·lo(1/5 − 4lvE)⌋, C43 − ⌊k·lo(6/5 − 4lvE)⌋)`; `S²` (never)
+unless `k ≥ 1` and `k·lo ≥ E23`. -/
+def lvG (lo hi k : Nat) : Nat :=
+  cond (Nat.ble 1 k && Nat.ble E23 (Nat.mul k lo))
+    (Nat.add LVE (maxN (mulC (Nat.mul (Nat.mul 2 k) hi) C15U)
+      (maxN (Nat.sub H (mulF (Nat.mul k lo) C15D)) (Nat.sub C43 (mulF (Nat.mul k lo) C65D)))))
+    SS
+
+/-- `OFF + S·LV_k(x/S)`, rounded up: the large values' term of the power `k` for a term `lo`, at `γ = x/S`. -/
+def lvVal (lo k x : Nat) : Nat :=
+  maxN
+    (maxN (Nat.sub OFF (mulF lo C310))
+      (Nat.div (Nat.sub (Nat.add (Nat.add (Nat.mul (Nat.mul 2 k) OFF) LVE) (Nat.sub (Nat.mul 2 k) 1)) x)
+        (Nat.mul 2 k)))
+    (maxN
+      (Nat.div
+        (Nat.sub (Nat.add (Nat.add (Nat.mul (Nat.mul 4 k) OFF) (Nat.add H LVE)) (Nat.sub (Nat.mul 4 k) 1))
+          (Nat.add x (Nat.mul k lo)))
+        (Nat.mul 4 k))
+      (Nat.div
+        (Nat.sub (Nat.add (Nat.add (Nat.mul (Nat.mul 4 k) OFF) (Nat.add C43 LVE)) (Nat.sub (Nat.mul 4 k) 1))
+          (Nat.add x (Nat.mul (Nat.mul 2 k) lo)))
+        (Nat.mul 4 k)))
+
+/-- A term with the large values' constants: its lines' (`t`) and, for the powers `k₀ − 1` (`k1`) and `k₀ − 2`
+(`k2`), the least `γ·S` above which the power's term applies (`g1`, `g2`). -/
+structure Tv where
+  /-- The lines' constants. -/
+  t : Tm
+  /-- `k₀ − 1`. -/
+  k1 : Nat
+  /-- `lvG` for `k₀ − 1`. -/
+  g1 : Nat
+  /-- `k₀ − 2`. -/
+  k2 : Nat
+  /-- `lvG` for `k₀ − 2`. -/
+  g2 : Nat
+
+/-- A term's constants: `ub + lo` is the upper end of its exponent, times `S`. -/
+def mkTv (ub lo : Nat) : Tv :=
+  (fun k0 =>
+    ⟨mkTmK lo k0, Nat.sub k0 1, lvG lo (Nat.add ub lo) (Nat.sub k0 1), Nat.sub k0 2,
+      lvG lo (Nat.add ub lo) (Nat.sub k0 2)⟩)
+    (Nat.div (Nat.add S (Nat.sub lo 1)) lo)
+
+/-- The large values' term at `x` where it applies from `a` on (`g < a`); `OFF`, the bound `0`, elsewhere. -/
+def lvU (lo k g a x : Nat) : Nat := cond (Nat.blt g a) (lvVal lo k x) OFF
+
+/-- The terms' bounds named by the hint `h`, three bits each: `0` to `3` the lines of `addTerms`; `4` and `5` the
+large values' term of `k1` and `k2`, its values at `a` and `b` added to `(VA, VB)` and `OFF` to `N0`. Added to
+`(P0, N0, N1, VA, VB)`. -/
+def addTerms2 (dS iax a b : Nat) : List Tv → Nat → Nat → Nat → Nat → Nat → Nat → Nat × Nat × Nat × Nat × Nat
+  | [], _, p0, n0, n1, va, vb => (p0, n0, n1, va, vb)
+  | v :: vs, h, p0, n0, n1, va, vb =>
+    (fun c =>
+      cond (Nat.beq c 0)
+        (addTerms2 dS iax a b vs (Nat.shiftRight h 3) (Nat.add p0 v.t.a0) n0 (Nat.add n1 v.t.a1) va vb)
+        (cond (Nat.beq c 1) (addTerms2 dS iax a b vs (Nat.shiftRight h 3) p0 n0 (Nat.add n1 v.t.b1) va vb)
+          (cond (Nat.beq c 2)
+            (addTerms2 dS iax a b vs (Nat.shiftRight h 3) p0 (Nat.add n0 (mulF v.t.lo dS)) n1 va vb)
+            (cond (Nat.beq c 3)
+              (addTerms2 dS iax a b vs (Nat.shiftRight h 3) (Nat.add p0 v.t.lw) n0
+                (Nat.add n1 (mulF v.t.lo iax)) va vb)
+              (cond (Nat.beq c 4)
+                (addTerms2 dS iax a b vs (Nat.shiftRight h 3) p0 (Nat.add n0 OFF) n1
+                  (Nat.add va (lvU v.t.lo v.k1 v.g1 a a)) (Nat.add vb (lvU v.t.lo v.k1 v.g1 a b)))
+                (addTerms2 dS iax a b vs (Nat.shiftRight h 3) p0 (Nat.add n0 OFF) n1
+                  (Nat.add va (lvU v.t.lo v.k2 v.g2 a a)) (Nat.add vb (lvU v.t.lo v.k2 v.g2 a b))))))))
+      (Nat.land h 7)
+
+/-- The term's bound least at `x` (the first of them on a tie): `pickT`'s lines `0` to `3`, then `4` and `5` for the
+large values' term of `k1` and `k2`, each where it applies from `a` on. -/
+def pickT2 (v : Tv) (dS iax a x : Nat) : Nat :=
+  (fun c3 =>
+    (fun c4 => (cond (Nat.blt v.g2 a) (best c4 5 (lvVal v.t.lo v.k2 x) OFF) c4).1)
+      (cond (Nat.blt v.g1 a) (best c3 4 (lvVal v.t.lo v.k1 x) OFF) c3))
+    (best (best (best (0, v.t.a0, mulF v.t.a1 x) 1 0 (mulF v.t.b1 x)) 2 0 (mulF v.t.lo dS)) 3 v.t.lw
+      (mulF (mulF v.t.lo iax) x))
+
+/-- The terms' bounds least at `x`, three bits each, the first term's lowest. -/
+def chMid2 (dS iax a x : Nat) : List Tv → Nat
+  | [] => 0
+  | v :: vs => Nat.add (pickT2 v dS iax a x) (Nat.mul 8 (chMid2 dS iax a x vs))
+
+/-- The sum's check on `[a, b]` with the terms' bounds and the clamp's line: the lines, with the large values'
+terms' values at each end. -/
+def chkI2 (vs : List Tv) (ltm dS iax a b ch : Nat) (cl : Nat × Nat × Nat) : Bool :=
+  (fun s =>
+    le0 (Nat.add s.1 s.2.2.2.1) (Nat.add H cl.2.1) s.2.1 s.2.2.1 a &&
+      le0 (Nat.add s.1 s.2.2.2.2) (Nat.add H cl.2.1) s.2.1 s.2.2.1 b)
+    (addTerms2 dS iax a b vs ch (Nat.add ltm cl.1) cl.2.2 0 0 0)
+
+/-- **One interval** `[a, b]` with the record `r`, as `intv` with the large values' terms. -/
+def intv2 (vs : List Tv) (c1 yuP yuN ydP ydN ltm a pa r : Nat) : Bool :=
+  (fun b =>
+    (fun pb =>
+      (fun dS iax x =>
+        Nat.ble pb 17 && Nat.blt (get tFTm pb) b && Nat.ble b (get tFT pb) && Nat.ble a b &&
+          chkI2 vs ltm dS iax a b (chMid2 dS iax a x vs)
+            (clampL c1 yuP yuN ydP ydN a b (pickC c1 yuP yuN ydP ydN a b x)))
+        (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA pb))
+        (Nat.shiftRight (Nat.add a b) 1))
+      (pieceOf b))
+    (bOf r)
+
+/-- **The intervals**, as `runI` with the large values' terms. -/
+def runI2 (vs : List Tv) (w c1 yuP yuN ydP ydN ltm : Nat) : Nat → Nat → Nat → Nat → Bool :=
+  Nat.rec (motive := fun _ => Nat → Nat → Nat → Bool) (fun a _ _ => Nat.beq a S)
+    (fun _ ih a pa h =>
+      (fun r => intv2 vs c1 yuP yuN ydP ydN ltm a pa r && ih (bOf r) (pieceOf (bOf r)) (Nat.shiftRight h w))
+        (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1)))
+
+/-- The half-plane's sum `Σ ⌊lo·HP/S⌋` over the terms. -/
+def hpSum2 : List Tv → Nat
+  | [] => 0
+  | v :: vs => Nat.add (mulF v.t.lo HP) (hpSum2 vs)
+
+/-- The sum of a list of numbers. -/
+def sumN : List Nat → Nat
+  | [] => 0
+  | x :: xs => Nat.add x (sumN xs)
+
+/-- The test with the large values' terms, the variable's `m` times `S` (`mlo`) and `Lτ + MARG` times `S` (`ltm`)
+given. -/
+def resTM2 (vs : List Tv) (mlo ltm k h : Nat) : Bool :=
+  (fun mtu mtd c1 =>
+    (fun yuP yuN ydP ydN =>
+      Nat.ble (Nat.add ltm (minN c1 yuP)) (hpSum2 vs) &&
+        runI2 vs 13 c1 yuP yuN ydP ydN ltm k 0 0 h)
+      (Nat.shiftRight (Nat.add (Nat.sub K1U mtd) 1) 1) (Nat.shiftRight (Nat.sub mtd K1U) 1)
+      (Nat.shiftRight (Nat.sub K1D mtu) 1) (Nat.shiftRight (Nat.add (Nat.sub mtu K1D) 1) 1))
+    (mulC mlo M1U) (mulF mlo M1D) (Nat.shiftRight (Nat.add (Nat.sub S mlo) 1) 1)
+
+/-- **The test with the large values' terms** at `L = Lnum/Lden`: as `resT`; each term's upper end is
+`⌈(L + 10⁻⁵)S⌉ − m − Σ_i lo_i + lo_j` (`SieveTypeIIHM.ResBox`). -/
+def resT2 (Lnum Lden : Nat) (cs : List Nat) (hs k h : Nat) : Bool :=
+  Nat.blt (Nat.add hs 1) DEN &&
+    (fun los mlo =>
+      resTM2
+        (los.map
+          (mkTv
+            (Nat.sub (Nat.succ (Nat.div (Nat.mul (Nat.add (Nat.mul Lnum 100000) Lden) S) (Nat.mul Lden 100000)))
+              (Nat.add mlo (sumN los)))))
+        mlo
+        (Nat.add (Nat.div (Nat.add (Nat.mul Lnum S) (Nat.sub (Nat.mul Lden 1000000) 1)) (Nat.mul Lden 1000000)) MG)
+        k h)
+      (cs.map (loOf Lnum Lden))
+      (Nat.div (Nat.mul (Nat.mul Lnum (Nat.sub (Nat.sub DEN hs) 1)) S) (Nat.mul Lden DEN))
+
+/-- **The test in either form**: `resT` with `k ≥ 1` intervals; for `k = 0`, `resT2` with its number of intervals
+in the low four bits of `h` and their ends above. -/
+def resX (Lnum Lden : Nat) (cs : List Nat) (hs k h : Nat) : Bool :=
+  cond (Nat.beq k 0) (resT2 Lnum Lden cs hs (Nat.land h 15) (Nat.shiftRight h 4)) (resT Lnum Lden cs hs k h)
 
 end SieveResTest
 '''

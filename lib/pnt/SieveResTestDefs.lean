@@ -40,6 +40,9 @@ The curve's steps, from the top (piece `17` is the trivial count, below `7789/10
   is at most `0` at a point. `clampL`: the clamp's line. `chkI`: the check at an interval's ends. `bOf`, `pieceOf`:
   an interval's end and its piece. `best`, `pickT`, `pickC`, `chMid`: the lines least at the midpoint. `intv`: one
   interval. `runI`: the intervals. `hpSum`: the half-plane's sum. `resTM`, `resT`: **the test**.
+* `lvG`, `lvVal`, `Tv`, `mkTv`, `lvU`, `addTerms2`, `pickT2`, `chMid2`, `chkI2`, `intv2`, `runI2`, `resTM2`,
+  `resT2`: the test with the large values of the powers as two more choices for each term; `resX`: **the test in
+  either form**.
 -/
 
 namespace SieveResTest
@@ -236,5 +239,196 @@ def resT (Lnum Lden : Nat) (cs : List Nat) (hs k h : Nat) : Bool :=
       (Nat.div (Nat.mul (Nat.mul Lnum (Nat.sub (Nat.sub DEN hs) 1)) S) (Nat.mul Lden DEN))
       (Nat.add (Nat.div (Nat.add (Nat.mul Lnum S) (Nat.sub (Nat.mul Lden 1000000) 1)) (Nat.mul Lden 1000000)) MG)
       k h
+
+/-! ### The test with the large values of the powers
+
+A class of characters with count exponent `γ` at which the prime sum of length `q^s` has the size `t` has
+`γ ≤ lvExp k s (t − τ)` for every `k` (`SieveTypeIIHM.ResCond`). For a term with `lo ≤ s·S ≤ hi`, `k ≥ 1`,
+`k·lo ≥ (2/3 + lvE)·S` and `γ` above `Γ = lvE + max(2k·hi(1/5 + lvE), 1/2 − k·lo(1/5 − 4lvE), 4/3 − k·lo(6/5 − 4lvE))`
+(in units of `S`), the size is at most `4/5 − lvE + τ`, and then
+`s(t − 1) − sτ ≤ LV_k(γ) = max(−lo(3/10 − lvE), (lvE − γ)/(2k), (1/2 + lvE − γ − k·lo)/(4k), (4/3 + lvE − γ − 2k·lo)/(4k))`,
+a convex function of `γ`: a sum of lines and of such terms that is at most `0` at the two ends of an interval is at
+most `0` on it. `resT2` is `resT` with this term as two more choices for each term of the rest, for the powers
+`k₀ − 1` and `k₀ − 2`; `resX` is `resT` for `k ≥ 1` intervals and `resT2` for `k = 0`, its number of intervals in the
+low four bits of the hint. Its soundness is `SieveResLVTest.resX_sound_cells`. -/
+
+/-- `4S`, the offset that keeps the value of the large values' term a natural number. -/
+def OFF : Nat := 73786976294838206464
+
+/-- `⌈lvE·S⌉`, `lvE = 10⁻⁵` the margin of `SieveTypeIIHM.lvExp`. -/
+def LVE : Nat := 184467440737096
+
+/-- `⌈(2/3 + lvE)·S⌉`, the least `k·lo`. -/
+def E23 : Nat := 12298013849913771507
+
+/-- `⌊(3/10 − lvE)·S⌋`. -/
+def C310 : Nat := 5533838754672128389
+
+/-- `⌈(1/5 + lvE)·S⌉`. -/
+def C15U : Nat := 3689533282182647419
+
+/-- `⌊(1/5 − 4lvE)·S⌋`. -/
+def C15D : Nat := 3688610944978961941
+
+/-- `⌊(6/5 − 4lvE)·S⌋`. -/
+def C65D : Nat := 22135355018688513557
+
+/-- `⌈4S/3⌉`. -/
+def C43 : Nat := 24595658764946068822
+
+/-- The least `γ·S` above which the large values' term of the power `k` applies to a term with exponent between
+`lo/S` and `hi/S`: `LVE + max(⌈2k·hi(1/5 + lvE)⌉, S/2 − ⌊k·lo(1/5 − 4lvE)⌋, C43 − ⌊k·lo(6/5 − 4lvE)⌋)`; `S²` (never)
+unless `k ≥ 1` and `k·lo ≥ E23`. -/
+def lvG (lo hi k : Nat) : Nat :=
+  cond (Nat.ble 1 k && Nat.ble E23 (Nat.mul k lo))
+    (Nat.add LVE (maxN (mulC (Nat.mul (Nat.mul 2 k) hi) C15U)
+      (maxN (Nat.sub H (mulF (Nat.mul k lo) C15D)) (Nat.sub C43 (mulF (Nat.mul k lo) C65D)))))
+    SS
+
+/-- `OFF + S·LV_k(x/S)`, rounded up: the large values' term of the power `k` for a term `lo`, at `γ = x/S`. -/
+def lvVal (lo k x : Nat) : Nat :=
+  maxN
+    (maxN (Nat.sub OFF (mulF lo C310))
+      (Nat.div (Nat.sub (Nat.add (Nat.add (Nat.mul (Nat.mul 2 k) OFF) LVE) (Nat.sub (Nat.mul 2 k) 1)) x)
+        (Nat.mul 2 k)))
+    (maxN
+      (Nat.div
+        (Nat.sub (Nat.add (Nat.add (Nat.mul (Nat.mul 4 k) OFF) (Nat.add H LVE)) (Nat.sub (Nat.mul 4 k) 1))
+          (Nat.add x (Nat.mul k lo)))
+        (Nat.mul 4 k))
+      (Nat.div
+        (Nat.sub (Nat.add (Nat.add (Nat.mul (Nat.mul 4 k) OFF) (Nat.add C43 LVE)) (Nat.sub (Nat.mul 4 k) 1))
+          (Nat.add x (Nat.mul (Nat.mul 2 k) lo)))
+        (Nat.mul 4 k)))
+
+/-- A term with the large values' constants: its lines' (`t`) and, for the powers `k₀ − 1` (`k1`) and `k₀ − 2`
+(`k2`), the least `γ·S` above which the power's term applies (`g1`, `g2`). -/
+structure Tv where
+  /-- The lines' constants. -/
+  t : Tm
+  /-- `k₀ − 1`. -/
+  k1 : Nat
+  /-- `lvG` for `k₀ − 1`. -/
+  g1 : Nat
+  /-- `k₀ − 2`. -/
+  k2 : Nat
+  /-- `lvG` for `k₀ − 2`. -/
+  g2 : Nat
+
+/-- A term's constants: `ub + lo` is the upper end of its exponent, times `S`. -/
+def mkTv (ub lo : Nat) : Tv :=
+  (fun k0 =>
+    ⟨mkTmK lo k0, Nat.sub k0 1, lvG lo (Nat.add ub lo) (Nat.sub k0 1), Nat.sub k0 2,
+      lvG lo (Nat.add ub lo) (Nat.sub k0 2)⟩)
+    (Nat.div (Nat.add S (Nat.sub lo 1)) lo)
+
+/-- The large values' term at `x` where it applies from `a` on (`g < a`); `OFF`, the bound `0`, elsewhere. -/
+def lvU (lo k g a x : Nat) : Nat := cond (Nat.blt g a) (lvVal lo k x) OFF
+
+/-- The terms' bounds named by the hint `h`, three bits each: `0` to `3` the lines of `addTerms`; `4` and `5` the
+large values' term of `k1` and `k2`, its values at `a` and `b` added to `(VA, VB)` and `OFF` to `N0`. Added to
+`(P0, N0, N1, VA, VB)`. -/
+def addTerms2 (dS iax a b : Nat) : List Tv → Nat → Nat → Nat → Nat → Nat → Nat → Nat × Nat × Nat × Nat × Nat
+  | [], _, p0, n0, n1, va, vb => (p0, n0, n1, va, vb)
+  | v :: vs, h, p0, n0, n1, va, vb =>
+    (fun c =>
+      cond (Nat.beq c 0)
+        (addTerms2 dS iax a b vs (Nat.shiftRight h 3) (Nat.add p0 v.t.a0) n0 (Nat.add n1 v.t.a1) va vb)
+        (cond (Nat.beq c 1) (addTerms2 dS iax a b vs (Nat.shiftRight h 3) p0 n0 (Nat.add n1 v.t.b1) va vb)
+          (cond (Nat.beq c 2)
+            (addTerms2 dS iax a b vs (Nat.shiftRight h 3) p0 (Nat.add n0 (mulF v.t.lo dS)) n1 va vb)
+            (cond (Nat.beq c 3)
+              (addTerms2 dS iax a b vs (Nat.shiftRight h 3) (Nat.add p0 v.t.lw) n0
+                (Nat.add n1 (mulF v.t.lo iax)) va vb)
+              (cond (Nat.beq c 4)
+                (addTerms2 dS iax a b vs (Nat.shiftRight h 3) p0 (Nat.add n0 OFF) n1
+                  (Nat.add va (lvU v.t.lo v.k1 v.g1 a a)) (Nat.add vb (lvU v.t.lo v.k1 v.g1 a b)))
+                (addTerms2 dS iax a b vs (Nat.shiftRight h 3) p0 (Nat.add n0 OFF) n1
+                  (Nat.add va (lvU v.t.lo v.k2 v.g2 a a)) (Nat.add vb (lvU v.t.lo v.k2 v.g2 a b))))))))
+      (Nat.land h 7)
+
+/-- The term's bound least at `x` (the first of them on a tie): `pickT`'s lines `0` to `3`, then `4` and `5` for the
+large values' term of `k1` and `k2`, each where it applies from `a` on. -/
+def pickT2 (v : Tv) (dS iax a x : Nat) : Nat :=
+  (fun c3 =>
+    (fun c4 => (cond (Nat.blt v.g2 a) (best c4 5 (lvVal v.t.lo v.k2 x) OFF) c4).1)
+      (cond (Nat.blt v.g1 a) (best c3 4 (lvVal v.t.lo v.k1 x) OFF) c3))
+    (best (best (best (0, v.t.a0, mulF v.t.a1 x) 1 0 (mulF v.t.b1 x)) 2 0 (mulF v.t.lo dS)) 3 v.t.lw
+      (mulF (mulF v.t.lo iax) x))
+
+/-- The terms' bounds least at `x`, three bits each, the first term's lowest. -/
+def chMid2 (dS iax a x : Nat) : List Tv → Nat
+  | [] => 0
+  | v :: vs => Nat.add (pickT2 v dS iax a x) (Nat.mul 8 (chMid2 dS iax a x vs))
+
+/-- The sum's check on `[a, b]` with the terms' bounds and the clamp's line: the lines, with the large values'
+terms' values at each end. -/
+def chkI2 (vs : List Tv) (ltm dS iax a b ch : Nat) (cl : Nat × Nat × Nat) : Bool :=
+  (fun s =>
+    le0 (Nat.add s.1 s.2.2.2.1) (Nat.add H cl.2.1) s.2.1 s.2.2.1 a &&
+      le0 (Nat.add s.1 s.2.2.2.2) (Nat.add H cl.2.1) s.2.1 s.2.2.1 b)
+    (addTerms2 dS iax a b vs ch (Nat.add ltm cl.1) cl.2.2 0 0 0)
+
+/-- **One interval** `[a, b]` with the record `r`, as `intv` with the large values' terms. -/
+def intv2 (vs : List Tv) (c1 yuP yuN ydP ydN ltm a pa r : Nat) : Bool :=
+  (fun b =>
+    (fun pb =>
+      (fun dS iax x =>
+        Nat.ble pb 17 && Nat.blt (get tFTm pb) b && Nat.ble b (get tFT pb) && Nat.ble a b &&
+          chkI2 vs ltm dS iax a b (chMid2 dS iax a x vs)
+            (clampL c1 yuP yuN ydP ydN a b (pickC c1 yuP yuN ydP ydN a b x)))
+        (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA pb))
+        (Nat.shiftRight (Nat.add a b) 1))
+      (pieceOf b))
+    (bOf r)
+
+/-- **The intervals**, as `runI` with the large values' terms. -/
+def runI2 (vs : List Tv) (w c1 yuP yuN ydP ydN ltm : Nat) : Nat → Nat → Nat → Nat → Bool :=
+  Nat.rec (motive := fun _ => Nat → Nat → Nat → Bool) (fun a _ _ => Nat.beq a S)
+    (fun _ ih a pa h =>
+      (fun r => intv2 vs c1 yuP yuN ydP ydN ltm a pa r && ih (bOf r) (pieceOf (bOf r)) (Nat.shiftRight h w))
+        (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1)))
+
+/-- The half-plane's sum `Σ ⌊lo·HP/S⌋` over the terms. -/
+def hpSum2 : List Tv → Nat
+  | [] => 0
+  | v :: vs => Nat.add (mulF v.t.lo HP) (hpSum2 vs)
+
+/-- The sum of a list of numbers. -/
+def sumN : List Nat → Nat
+  | [] => 0
+  | x :: xs => Nat.add x (sumN xs)
+
+/-- The test with the large values' terms, the variable's `m` times `S` (`mlo`) and `Lτ + MARG` times `S` (`ltm`)
+given. -/
+def resTM2 (vs : List Tv) (mlo ltm k h : Nat) : Bool :=
+  (fun mtu mtd c1 =>
+    (fun yuP yuN ydP ydN =>
+      Nat.ble (Nat.add ltm (minN c1 yuP)) (hpSum2 vs) &&
+        runI2 vs 13 c1 yuP yuN ydP ydN ltm k 0 0 h)
+      (Nat.shiftRight (Nat.add (Nat.sub K1U mtd) 1) 1) (Nat.shiftRight (Nat.sub mtd K1U) 1)
+      (Nat.shiftRight (Nat.sub K1D mtu) 1) (Nat.shiftRight (Nat.add (Nat.sub mtu K1D) 1) 1))
+    (mulC mlo M1U) (mulF mlo M1D) (Nat.shiftRight (Nat.add (Nat.sub S mlo) 1) 1)
+
+/-- **The test with the large values' terms** at `L = Lnum/Lden`: as `resT`; each term's upper end is
+`⌈(L + 10⁻⁵)S⌉ − m − Σ_i lo_i + lo_j` (`SieveTypeIIHM.ResBox`). -/
+def resT2 (Lnum Lden : Nat) (cs : List Nat) (hs k h : Nat) : Bool :=
+  Nat.blt (Nat.add hs 1) DEN &&
+    (fun los mlo =>
+      resTM2
+        (los.map
+          (mkTv
+            (Nat.sub (Nat.succ (Nat.div (Nat.mul (Nat.add (Nat.mul Lnum 100000) Lden) S) (Nat.mul Lden 100000)))
+              (Nat.add mlo (sumN los)))))
+        mlo
+        (Nat.add (Nat.div (Nat.add (Nat.mul Lnum S) (Nat.sub (Nat.mul Lden 1000000) 1)) (Nat.mul Lden 1000000)) MG)
+        k h)
+      (cs.map (loOf Lnum Lden))
+      (Nat.div (Nat.mul (Nat.mul Lnum (Nat.sub (Nat.sub DEN hs) 1)) S) (Nat.mul Lden DEN))
+
+/-- **The test in either form**: `resT` with `k ≥ 1` intervals; for `k = 0`, `resT2` with its number of intervals
+in the low four bits of `h` and their ends above. -/
+def resX (Lnum Lden : Nat) (cs : List Nat) (hs k h : Nat) : Bool :=
+  cond (Nat.beq k 0) (resT2 Lnum Lden cs hs (Nat.land h 15) (Nat.shiftRight h 4)) (resT Lnum Lden cs hs k h)
 
 end SieveResTest

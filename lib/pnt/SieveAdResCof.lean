@@ -223,9 +223,9 @@ theorem evI_resCE (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk hh
   have hLeq : (Lnum : ℝ) / Lden = L := IBFits.L_eq
   have hLd : 0 < Lden := by exact_mod_cast hden
   -- the condition on the rest's cells
-  have hres := SieveResTest.resT_sound_cells hLd hc1 hT
+  have hres := SieveResTest.resX_sound_cells hLd hc1 hT
   have hhs1 : hs + 1 < DEN := by
-    have := SieveResTest.resT_hs hT
+    have := SieveResTest.resX_hs hT
     simpa [SieveResTest.DEN, SieveCert.DEN] using this
   have hDD : (SieveResTest.DEN : ℝ) = (DEN : ℝ) := by norm_num [SieveResTest.DEN, SieveCert.DEN]
   rw [hLeq, hDD, ← hκdef, hcsn] at hres

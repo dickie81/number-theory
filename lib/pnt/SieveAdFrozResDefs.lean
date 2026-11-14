@@ -42,9 +42,9 @@ noncomputable def chkIRF (e₁ e₂ : ℕ) (β bl : List Cell) (sr k h : ℕ) : 
         cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
           (Nat.ble (Nat.add (Nat.add e₂ shi) 2) DEN &&
             Nat.ble (Nat.add DEN 1) (Nat.add (Nat.add e₁ slo) (Nat.mul 2 (headLo bl))) &&
-            SieveResTest.resT Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub (Nat.sub DEN e₂) shi) 1) (headLo bl)])
+            SieveResTest.resX Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub (Nat.sub DEN e₂) shi) 1) (headLo bl)])
               (Nat.add hs (Nat.add (Nat.sub (Nat.sub DEN e₁) slo) 1)) k h)
-          (SieveResTest.resT Lnum Lden los hs k h))
+          (SieveResTest.resX Lnum Lden los hs k h))
     (Nat.sub (loSum bl) (loSum β)) (Nat.sub (hiSum bl) (hiSum β))
 
 /-- The test of an evaluation of kind `3` in a tree over a frozen part: `chkIRF` with the rest `sr` and the hint in

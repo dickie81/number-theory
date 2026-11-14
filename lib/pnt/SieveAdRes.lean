@@ -11,11 +11,11 @@ is `SieveAdResDefs.lean`'s `chkIR`. Write `κ = L/DEN`.
   indices of those cells, in the list's order; `mList_eq`: `mList` is `F` of the box's values there.
 * `evI_resE`: **a box evaluated by the resonant window, under more atoms.** If `chkIR` passes the box with the rest
   `sr`, the term of the box is evaluated (`SieveAd.EvI`), the variable being the other primes and the cofactor:
-  `SieveResTest.resT_sound_cells` gives `ResBox` on the rest's cells and `SieveTypeIIHM.chain_res_exp` the bound.
+  `SieveResTest.resX_sound_cells` gives `ResBox` on the rest's cells and `SieveTypeIIHM.chain_res_exp` the bound.
 * `evI_res`, `resTestsF_sound`: so the tests with the resonant window, `resTestsF`, are sound (`SieveAd.Tests.Sound`).
 
 The file imports `SieveAdTwo.lean`, `SieveAdFill.lean`, `SieveAdFast.lean`, `SieveAdResDefs.lean`,
-`SieveResTerm.lean` and `SieveResTest.lean`.
+`SieveResTerm.lean`, `SieveResTest.lean` and `SieveResLVTest.lean`.
 -/
 import SieveAdTwo
 import SieveAdFill
@@ -23,6 +23,7 @@ import SieveAdFast
 import SieveAdResDefs
 import SieveResTerm
 import SieveResTest
+import SieveResLVTest
 
 open Real Finset Filter SieveDecomp SieveLeaves SieveQ SieveRoute SieveChain SieveFamily
 
@@ -179,9 +180,9 @@ theorem evI_resE (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk hh 
   have hLeq : (Lnum : ℝ) / Lden = L := IBFits.L_eq
   have hLd : 0 < Lden := by exact_mod_cast hden
   -- the condition on the rest's cells
-  have hres := SieveResTest.resT_sound_cells hLd hc1 hT
+  have hres := SieveResTest.resX_sound_cells hLd hc1 hT
   have hhs : mSum (fun c => c.2) bl sr + 1 < DEN := by
-    have := SieveResTest.resT_hs hT
+    have := SieveResTest.resX_hs hT
     simpa [SieveResTest.DEN, SieveCert.DEN] using this
   have hDD : (SieveResTest.DEN : ℝ) = (DEN : ℝ) := by norm_num [SieveResTest.DEN, SieveCert.DEN]
   rw [hLeq, hDD, ← hκdef, hn] at hres

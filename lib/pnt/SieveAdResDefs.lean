@@ -3,17 +3,20 @@
 
 The resonant window evaluates a box's term with one variable, the product of all but a rest of the box's primes,
 the rest's primes in their cells (`SieveTypeIIHM.chain_res_exp`), where its condition `SieveTypeIIHM.ResBox` holds
-on the rest's cells; `SieveResTest.resT` checks that condition, led by a hint. This file is the kernel's side:
+on the rest's cells; `SieveResTest.resX` checks that condition, led by a hint (`resT`, or `resT2` with the large
+values of the powers). This file is the kernel's side:
 
 * `rpass bl m k`: one pass over the box by the recursor of lists: the lower ends of the cells at the set bits of `m`
   (in the list's order), the sum of their upper ends, how many they are, whether every cell has
   `1 ≤ lo ≤ hi ≤ DEN`, and the number of cells, passed to `k`.
 * `chkIR bl sr k h`: **the resonant window's test of a box**: at most `13` cells, each from `1`, a rest `sr` with at
-  least one cell, and `resT` on the rest, led by the hint's `k` intervals `h`.
+  least one cell, and `resX` on the rest, led by the hint's `k` intervals `h` (`k = 0`: `resT2`, its number of
+  intervals in the low four bits of `h`).
 * `okIR`, `resTestsF`: the test of an evaluation of kind `3`, its hint in `s1` (the intervals' number in the low
   four bits); with `fillTestsF`'s tests for the other kinds.
 * `cfgIPR`, `cfgIMR`: the configuration of an evaluation from the hints: `0` and `cfgIP`'s code, or `1`, the rest
-  (a set of `pw` values), four bits `k` and the test's `k` intervals' ends, thirteen bits each.
+  (a set of `pw` values), four bits `k` and the test's `k` intervals' ends, thirteen bits each; or, for `k = 0`
+  (`resT2`), four more bits `k₂` and `k₂` ends.
 * `headLo`, `chkIRC`, `okIRC`, `resTestsFC`, `cfgIMRC`: the same with the box's cofactor in the rest, at the bit
   after the box's cells: when the box's upper ends sum to at most `DEN − 2` and its lower ends with twice its least
   prime's reach `DEN + 1`, every multiple's cofactor is one prime, in the cell
@@ -45,11 +48,11 @@ variable [SieveCert.IBPar]
 open SieveCert.IBPar (Lnum Lden)
 
 /-- **The resonant window's test of a box**: at most `13` cells, each with `1 ≤ lo ≤ hi ≤ DEN`, a rest `sr` with at
-least one cell, and `SieveResTest.resT` on the rest's lower ends and the sum of its upper ends, led by the hint's
-`k` intervals `h`. -/
+least one cell, and `SieveResTest.resX` on the rest's lower ends and the sum of its upper ends, led by the hint's
+`k` intervals `h` (`k = 0`: the test with the large values of the powers). -/
 noncomputable def chkIR (bl : List Cell) (sr k h : ℕ) : Bool :=
   rpass bl sr fun los hs ns ok n =>
-    Nat.ble n 13 && ok && Nat.blt 0 ns && SieveResTest.resT Lnum Lden los hs k h
+    Nat.ble n 13 && ok && Nat.blt 0 ns && SieveResTest.resX Lnum Lden los hs k h
 
 /-- The test of an evaluation of kind `3`: the rest `sr`, and the hint's number of intervals in the low four bits of
 `s1`, its records above. -/
@@ -64,13 +67,20 @@ end
 
 /-- The configuration of an evaluation, from the hints: `0` and `cfgIP`'s code; or `1`, the rest (a set of `pw`
 values), four bits `k`, and the resonant window's `k` intervals' ends in the next `13k` bits, as the configuration of
-kind `3` with `k + 16·ends` in `s1`. -/
+kind `3` with `k + 16·ends` in `s1`; for `k = 0`, the test with the large values of the powers: four more bits `k₂`
+and `k₂` ends, with `16·(k₂ + 16·ends)` in `s1`. -/
 noncomputable def cfgIPR (pw h : ℕ) : Cfg × ℕ :=
   Bool.rec (motive := fun _ => Cfg × ℕ) (cfgIP pw (Nat.div h 2))
     ((fun h1 =>
       (fun k h2 =>
-        (⟨3, 0, Nat.mod h1 pw, Nat.add k (Nat.mul 16 (Nat.mod h2 (Nat.pow 2 (Nat.mul 13 k)))), false⟩,
-          Nat.div h2 (Nat.pow 2 (Nat.mul 13 k))))
+        cond (Nat.beq k 0)
+          ((fun k2 h3 =>
+            (⟨3, 0, Nat.mod h1 pw,
+                Nat.mul 16 (Nat.add k2 (Nat.mul 16 (Nat.mod h3 (Nat.pow 2 (Nat.mul 13 k2))))), false⟩,
+              Nat.div h3 (Nat.pow 2 (Nat.mul 13 k2))))
+            (Nat.mod h2 16) (Nat.div h2 16))
+          (⟨3, 0, Nat.mod h1 pw, Nat.add k (Nat.mul 16 (Nat.mod h2 (Nat.pow 2 (Nat.mul 13 k)))), false⟩,
+            Nat.div h2 (Nat.pow 2 (Nat.mul 13 k))))
         (Nat.mod (Nat.div h1 pw) 16) (Nat.div (Nat.div h1 pw) 16))
       (Nat.div h 2))
     (Nat.beq (Nat.land h 1) 1)
@@ -98,9 +108,9 @@ noncomputable def chkIRC (bl : List Cell) (sr k h : ℕ) : Bool :=
     Nat.ble n 13 && ok && Nat.blt 0 ns &&
       cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
         (Nat.ble (Nat.add (hiSum bl) 2) DEN && Nat.ble (Nat.add DEN 1) (Nat.add (loSum bl) (Nat.mul 2 (headLo bl))) &&
-          SieveResTest.resT Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub DEN (hiSum bl)) 1) (headLo bl)])
+          SieveResTest.resX Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub DEN (hiSum bl)) 1) (headLo bl)])
             (Nat.add hs (Nat.add (Nat.sub DEN (loSum bl)) 1)) k h)
-        (SieveResTest.resT Lnum Lden los hs k h)
+        (SieveResTest.resX Lnum Lden los hs k h)
 
 /-- The test of an evaluation of kind `3` with the cofactor: `chkIRC`. -/
 noncomputable def okIRC (bl : List Cell) (cfg : Cfg) : Bool :=
