@@ -456,7 +456,8 @@ class Planner(fl.FlipSearch):
 
     # the resonant window (`SieveAd.chkIR`): a rest of at least two of the box's primes, in the main tree
     res = False
-    res_frozen = False   # for measurement only: the window over the frozen parts too (no hints, no Lean yet)
+    res_frozen = False   # for measurement only: the window over the frozen parts too, the rest among the chain's
+    # and the frozen primes (no hints, no Lean yet)
     resmemo = None
 
     def resHint(self, bl):
@@ -467,7 +468,7 @@ class Planner(fl.FlipSearch):
         if self.frz is not None:
             if not self.res_frozen:
                 return None
-            bl = bl + list(self.frz[3]) + [self.fctx]
+            bl = bl + list(self.frz[3])
         if len(bl) > 13:
             return None
         if any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
