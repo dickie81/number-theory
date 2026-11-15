@@ -163,6 +163,16 @@ static U Udiv(U a, U d, U *rem) {
             if (rem) *rem = Uu(xx % yy);
             return Uu(xx / yy);
         }
+#if defined(__x86_64__)
+        if (!(y >> 64)) {
+            /* 128 bits by 64: the high word's quotient, then `divq` on the remainder and the low word */
+            u64 dd = (u64)y, hi = (u64)(x >> 64), lo = (u64)x;
+            u64 qhi = hi / dd, r = hi % dd, qlo, r2;
+            __asm__("divq %4" : "=a"(qlo), "=d"(r2) : "a"(lo), "d"(r), "rm"(dd));
+            if (rem) *rem = Uu(r2);
+            return Uu(((u128)qhi << 64) | qlo);
+        }
+#endif
         if (rem) *rem = Uu(x % y);
         return Uu(x / y);
     }

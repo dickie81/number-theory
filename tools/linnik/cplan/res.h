@@ -613,12 +613,12 @@ static int hintYc(const i64 *lo_, const i64 *hi_, int n, int fast, HintY *out) {
 
 /* ---------------------------------------------------------------------------------------------------------------
    The float filters (`quick`, `quickY`). */
-static int pcF(double a) {
+static inline int pcF(double a) {
     for (int i = 0; i < RC.NP; i++)
         if (a <= RC.TF[i]) return i;
     return RC.NP;
 }
-static double bmF(double a) {
+static inline double bmF(double a) {
     int i = pcF(a);
     if (i == RC.NP) return RC.CHI;
     double hi = RC.HFhi[i], v = 1 - a / RC.HFA[i];
@@ -639,7 +639,7 @@ typedef struct {
     int leaves, maxleaf;
 } QState;
 
-static double lvv(double lo, double k, double g) {
+static inline double lvv(double lo, double k, double g) {
     double e = RC.LVEQ;
     double v = -lo * (0.3 - e);
     v = pmaxF(v, (e - g) / (2 * k));
@@ -844,7 +844,12 @@ static int quickY(const i64 *lo_, const i64 *hi_, int n, int lv, int strict) {
         sl = Uadd(sl, lo[j]);
         sh = Uadd(sh, hi[j]);
     }
-    U ls = Ufdiv(Umul(Uu(RC.Ln), S), Uu(RC.Ld));
+    static U ls;
+    static int lsSet;
+    if (!lsSet) {
+        ls = Ufdiv(Umul(Uu(RC.Ln), S), Uu(RC.Ld));
+        lsSet = 1;
+    }
     U need = Uadd(Uadd(Uadd(sh, RC.W2), Ufdiv(Ust(sh, sl), Us(11))), Us(2));
     for (int j = 0; j < n; j++)
         if (lo_[j] > hi_[j]) return 0;

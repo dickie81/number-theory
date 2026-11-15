@@ -26,7 +26,7 @@ def build():
     exe = os.path.join(tempfile.gettempdir(), f'hint_plan_{tag}')
     if not os.path.exists(exe):
         tmp = f'{exe}.{os.getpid()}'
-        subprocess.run([os.environ.get('CC', 'cc'), '-O2', '-std=gnu11', '-ffp-contract=off', '-fno-fast-math', '-o',
+        subprocess.run([os.environ.get('CC', 'cc'), '-O3', '-std=gnu11', '-ffp-contract=off', '-fno-fast-math', '-o',
                         tmp, SRCS[0], '-lm'], check=True)
         os.replace(tmp, exe)
     return exe
