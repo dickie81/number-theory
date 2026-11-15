@@ -1584,8 +1584,8 @@ def defs_file(par_):
                   '; over the frozen parts too, the box `ch ++ β` (`SieveAd.frozResTestsC`, with\n'
                   '`SieveAd.chkIRF`), read by `SieveAd.cfgIFR`.\n\n' if resF else '.\n\n') if res else '')
     if hl:
-        resdoc += ('The window\'s lines are named by the hint: each interval\'s record has its piece and its terms\'\n'
-                   'lines as well as its end (`SieveResTest.resXH`), in the tests `SieveAd.resTestsFCH` and\n'
+        resdoc += ('The window\'s lines are named by the hint: each interval\'s record names the clamp\'s line and its\n'
+                   'terms\' lines as well as its end (`SieveResTest.resXH`), in the tests `SieveAd.resTestsFCH` and\n'
                    '`SieveAd.frozResTestsCH`, read by `SieveAd.cfgIMRCH` and `SieveAd.cfgIFRH`.\n\n')
     return f"""/-
 # The exponent and the search led by hints at `L = {LN}`
@@ -1786,9 +1786,9 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
                 'Where a box\'s cells leave room for one prime only as the cofactor of its numbers, that prime may '
                 'be in the rest too, in the cell that the cells leave it (`SieveAd.chkIRC`, `SieveAd.chkIRF`; '
                 '`SieveTypeIIHM.chain_res_cof`, `SieveAd.evIF_froz_resC`). ' if cof else '') + (
-                'The hint names the window\'s lines as well as its intervals\' ends, each interval\'s piece and its '
-                'terms\' lines, so the kernel checks them rather than picks them (`SieveResTest.resXH`, '
-                '`SieveAd.resTestsFCH`, `SieveAd.frozResTestsCH`). ' if hl else '') if res else '') +
+                'The hint names the window\'s lines as well as its intervals\' ends, the clamp\'s line and each '
+                'term\'s, so the kernel checks them rather than picks them (`SieveResTest.resXH`). ' if hl else '') if res
+            else '') +
         f'The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
         f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.frozTests`. The '
         f'kernel does not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the '
