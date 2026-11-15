@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] [--rows I J [STEP]] [--plan-only [--asc]]
-| --try TAG a/b H HF MAXLEN [--lam N] [--depth N] [--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof]
-[--lv] [--lazy] [--rmerge] [--split J] [--ycorner] [--exh N] [--rows I J] [--out DIR]: the search with the reversal
-through the largest prime as a plan, the hints that lead the kernel through the plan, and the Lean files of a
-theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
+| --try TAG a/b H HF MAXLEN [--lam N] [--sec N] [--depth N] [--pos] [--blk N] [--skip N] [--energy]
+[--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J] [--ycorner] [--exh N] [--split2 J] [--rows I J]
+[--out DIR]: the search with the reversal through the largest prime as a plan, the hints that lead the kernel
+through the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if
+none is given).
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
 it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
@@ -178,6 +179,11 @@ class Planner(fl.FlipSearch):
     # (`floorX`); with `exh = 2` the floor is always the greatest of those that pass
     exh = 0
     sumsmemo = None
+    # with `split2 = j > 0`, a box of two primes of the main tree that the plan does not evaluate is also tried
+    # cut in two at the midpoint of the second prime's cell (the kernel's cut of the newest cell), down to cells of
+    # `1/2^j` of the grid's step, and the cut is kept where it costs less (with a price on the kernel's time, where
+    # it costs less with the time of the two halves counted)
+    split2 = 0
     skipk = 'dpb'
     skipmin = 30
     redo = True
@@ -778,14 +784,18 @@ class Planner(fl.FlipSearch):
 
     def pSolve(self, O, S, n, bl, par, lim):
         c, node = self.pSolve1(O, S, n, bl, par, lim)
-        if not self.res_split or node is None or c == 0 or n <= 1 or not bl or node[0] in ('E', 'R', 'V', 'S'):
+        if (not (self.res_split or self.split2) or node is None or c == 0 or n <= 1 or not bl
+                or node[0] in ('E', 'R', 'V', 'S')):
             return c, node
         x = bl[0]
-        if not self.nearRes(S, bl):
+        two = (self.split2 and self.frz is None and len(bl) == 2 and S.wmin < tsub(x[1], x[0])
+               and self.hI < tsub(x[1], x[0]) * 2 ** self.split2)
+        if not two and not self.nearRes(S, bl):
             return c, node
         self.stat['splittry'] = self.stat.get('splittry', 0) + 1
         cs, ns = self.pSplit(O, S, n - 1, x, bl, par, c)
-        if ns is not None and cs < c:
+        if ns is not None and cs < c and (not (two and self.lamK)
+                                          or cs + self.lamK * secs(ns) < c + self.lamK * secs(node)):
             self.stat['splitwin'] = self.stat.get('splitwin', 0) + 1
             return cs, ns
         return c, node
@@ -1420,9 +1430,9 @@ class Par:
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
                  blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False, cof=False, lv=False,
-                 lazy=False, rmerge=False, split=0, ycorner=False, exh=0):
+                 lazy=False, rmerge=False, split=0, ycorner=False, exh=0, split2=0):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
-        `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1` or `SEC2`); `blk`: with
+        `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1`, `SEC2` or `SEC3`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
         `blkF` (`blk` if not given) steps of the grid of side `hF` over a frozen part; `skip`: the planner does
         not try again, at the next cells of a prime, an alternative that lost at two cells in a row (at most
@@ -1440,13 +1450,14 @@ class Par:
         rest's cells (`SieveResTest.resY`; the tests `SieveAd.resTestsFY` and `frozResTestsY`, the search
         `SieveAd.altFDY`), with `res`, `resF` and `cof`; `exh`: over a frozen part the planner searches every
         configuration of the estimate in two variables and, with `2`, of the floors (`Planner.exh`); the kernel
-        reads them from the hints."""
+        reads them from the hints; `split2`: boxes of two primes of the main tree are tried cut in two
+        (`Planner.split2`)."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
         self.skip, self.skipmin, self.energy, self.res, self.resF, self.cof = skip, skipmin, energy, res, resF, cof
         self.lv, self.lazy, self.rmerge, self.split, self.ycorner = lv, lazy, rmerge, split, ycorner
-        self.exh = exh
+        self.exh, self.split2 = exh, split2
         assert not ycorner or (res and resF and cof), 'the test at the two corners comes with the window in both ' \
             'trees and the cofactor'
         assert res or not (resF or cof or split), 'the window over the frozen parts, the cofactor and the cuts come ' \
@@ -1460,7 +1471,7 @@ class Par:
     def planner(self):
         """The planner of this certificate; the table of the kernel's seconds becomes this certificate's."""
         global SEC
-        SEC = {1: SEC1, 2: SEC2}[self.sec]
+        SEC = {1: SEC1, 2: SEC2, 3: SEC3}[self.sec]
         P = Planner(fc.TestsF(self.lnum, self.lden), self.hI, self.depth, fc.WMIN, self.kappa, self.hR,
                     self.depthR, self.hQ, fc.FUEL, self.hF, self.depthF, self.maxlen, rev=self.rev)
         P.lamK, P.pos, P.blk, P.blkF = self.lam * K // 10 ** 6, self.pos, self.blk, self.blkF
@@ -1471,7 +1482,7 @@ class Par:
         P.res_cof = self.cof
         P.res_lv, P.res_lazy, P.res_merge, P.res_split = self.lv, self.lazy, self.rmerge, self.split
         P.res_y = self.ycorner
-        P.exh = self.exh
+        P.exh, P.split2 = self.exh, self.split2
         P.sumsmemo = {}
         P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
         return P
@@ -1495,6 +1506,10 @@ for _t in (SEC1, SEC2):
 # trees, the cofactor and the large values, unloaded): about 64 ms in the main tree and 8 ms over a frozen part, the
 # test of the rest by `resX` dominating; the step of the window's leaf in SEC1 above is far too low
 SEC2.update({('R', False): 6.4e-2, ('R', True): 8.0e-3})
+# `SEC3`: `SEC2` with the steps over a frozen part at 1.78 times and the main tree's at 0.27 times: the fit of the
+# kernel's time on whole cells of the first prime of the certificate at 2115/1000 (15 November 2026: the files of
+# five cells compiled alone; fitted on three, within 2% on the other two)
+SEC3 = dict((_k, _v * (1.78 if _k[1] else 0.27)) for _k, _v in SEC2.items())
 SEC = SEC1
 
 
@@ -2045,14 +2060,17 @@ def main():
         ln, ld = map(int, a[2].split('/'))
         par_ = Par(a[1], ln, ld, h=float(a[3]), hF=float(a[4]), maxlen=int(a[5]),
                    depth=int(a[a.index('--depth') + 1]) if '--depth' in a else 6,
-                   lam=int(a[a.index('--lam') + 1]) if '--lam' in a else 0, pos='--pos' in a,
+                   lam=(float if '.' in a[a.index('--lam') + 1] else int)(a[a.index('--lam') + 1])
+                   if '--lam' in a else 0, pos='--pos' in a,
                    blk=int(a[a.index('--blk') + 1]) if '--blk' in a else 1,
                    skip=int(a[a.index('--skip') + 1]) if '--skip' in a else 0,
-                   sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a,
+                   sec=int(a[a.index('--sec') + 1]) if '--sec' in a else 2 if '--lam' in a or '--pos' in a else 1,
+                   energy='--energy' in a,
                    res='--res' in a or '--resF' in a or '--cof' in a, resF='--resF' in a, cof='--cof' in a,
                    lv='--lv' in a, lazy='--lazy' in a, rmerge='--rmerge' in a,
                    split=int(a[a.index('--split') + 1]) if '--split' in a else 0, ycorner='--ycorner' in a,
-                   exh=int(a[a.index('--exh') + 1]) if '--exh' in a else 0)
+                   exh=int(a[a.index('--exh') + 1]) if '--exh' in a else 0,
+                   split2=int(a[a.index('--split2') + 1]) if '--split2' in a else 0)
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache', '--rows', '--plan-only'):
         par_ = Par(tag, **CERTS[tag])
         if out is None and '--check' not in a and '--plan-only' not in a:
