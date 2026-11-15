@@ -638,8 +638,8 @@ covers. The region does not close at `13/6`.
   - *The resonant window: a Type II estimate that takes nothing from the density curve* (13 November; found on
     reading the hunt for a density exponent below `7/3`; written here, in no source that was read, on the
     pattern of the sieves for primes in short intervals, where the sieve's own polynomials are counted by the
-    mean values of their powers; what it gives is the model's, `harman_sieve.py --res hm,sifted`; **none of it
-    is in Lean**). The paper's window and the estimate in two variables sort the characters by their zeros: in the
+    mean values of their powers; what it gives is the model's, `harman_sieve.py --res hm,sifted`; in Lean since,
+    with the theorem at `2115/1000`, `Linnik21150.linnik_21150`: see the end of the item). The paper's window and the estimate in two variables sort the characters by their zeros: in the
     bin `β` the prime sums of the rest are at most their lengths to the power `β`, and the bin has at most
     `q^{A(β)(1−β)}` characters, the characters that have a zero there. That count is what the peak `7/3` is
     about: a zero is detected by a polynomial whose length cannot be chosen. But the estimate only needs the
@@ -714,7 +714,10 @@ covers. The region does not close at `13/6`.
     rationals (the condition `Σ_j 1/k_j > 1`, with the exponents `a_j` as the certificate), and a search and a
     certificate. Going by the model's distance from the exact search so far, that would be a theorem near
     `2.11` or `2.12` at about the cost of the one at `2.14`, if the exact search finds the small sets: a
-    guess, not a measurement.
+    guess, not a measurement. Measured since (15 November): in Lean, the estimate (`SieveTypeIIHM.typeII_res`),
+    the kernel's test (`SieveResTest.resX`) in both trees, with the cofactor in the rest when it is one prime and
+    Chen, Gupta and Li's large values of the powers (next item), and the theorem at `2115/1000`
+    (`Linnik21150.linnik_21150`): the exact search costs `0.88304K` there, on `3.04·10^7` steps.
   - *The density exponent, length by length* (14 November; the question was a better density exponent, by any
     method. The exponent of the density curve was not improved. What is here is the exponent that a sum of one
     given length has, which is lower at most lengths, and what the model gets when each sum of the sieve is
