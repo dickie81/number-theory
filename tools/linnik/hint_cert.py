@@ -2,9 +2,9 @@
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] [--rows I J [STEP]] [--plan-only [--asc]]
 | --try TAG a/b H HF MAXLEN [--lam N] [--sec N] [--depth N] [--pos] [--blk N] [--skip N] [--energy]
 [--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J] [--ycorner] [--exh N] [--split2 J] [--hl]
-[--chunk N] [--rows I J] [--out DIR]: the search with the reversal through the largest prime as a plan, the hints
-that lead the kernel through the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`; `21500`, the theorem
-at L = 2150/1000, if none is given).
+[--chunk N] [--rescap N] [--rows I J] [--out DIR]: the search with the reversal through the largest prime as a
+plan, the hints that lead the kernel through the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`;
+`21500`, the theorem at L = 2150/1000, if none is given).
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
 it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
@@ -671,10 +671,16 @@ class Planner(fl.FlipSearch):
     # the variable tied to the rest (`SieveResTest.resY`; the tests `SieveAd.resTestsFY`, `frozResTestsY`): a leaf
     # `('R', mask, 'Y', s)` with the hints `s` in one number, `('R', mask, -2, key)` until they are found
     resmemo = None
-    # the memo of the window's tests is emptied when it passes `rescap` entries (0: never): a cell of the first
-    # prime near x^0.4 at 2100/1000 fills several million of them, 3 to 4.6 GB of memory; `resbad`: the keys that
-    # passed the float filter and for which the writer found no hint
-    rescap = 1500000
+    # with `res_lazy`, the memo of the window's tests is trimmed when it passes `rescap` entries (0, the default:
+    # never): a cell of the first prime near x^0.4 at 2100/1000 fills several million of them, 3 to 4.6 GB of
+    # memory. A probe reads the memo before it asks the strict float filter (`resHint`), so the entries on which
+    # the two differ stay: the hints that a search found where the strict filter failed, and the keys that passed
+    # it and for which the writer found no hint (`resbad`). The entries dropped are those that the strict filter
+    # passed (they are found again as they were) and the failures after it failed (the search fails again), so
+    # the plan is the one made with no limit
+    rescap = 0
+    reslim = 0
+    restrims = 0         # the number of trims (not in `stat`: a cell's cache entry is the same with and without)
     resbad = None
 
     def hintY(self, cells):
@@ -699,11 +705,13 @@ class Planner(fl.FlipSearch):
             return None
         if self.resmemo is None:
             self.resmemo = {}
-        elif self.rescap and len(self.resmemo) > self.rescap:
-            # the memo is emptied (its entries are computed again when they are needed); the keys whose hint the
-            # writer did not find stay failed
-            self.resmemo = dict((k, None) for k in (self.resbad or ()))
-            self.stat['restrim'] = self.stat.get('restrim', 0) + 1
+        elif self.rescap and self.res_lazy and len(self.resmemo) > max(self.rescap, self.reslim):
+            bad = self.resbad or ()
+            self.resmemo = dict((k, v) for k, v in self.resmemo.items()
+                                if ((v[0] != -1 and v[0] != -2) if v is not None else k in bad))
+            # the next trim when the memo has doubled at least
+            self.reslim = 2 * len(self.resmemo)
+            self.restrims += 1
         n, ln, ld = len(bl), self.T.Ln, self.T.Ld
         # a rest whose exponents sum to less than 1 + 2/25000 fails (`res_test.quick`): in units of the cells,
         # Σ(c − 1) at least `need`
@@ -1493,7 +1501,8 @@ class Par:
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
                  blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False, cof=False, lv=False,
-                 lazy=False, rmerge=False, split=0, ycorner=False, exh=0, split2=0, hl=False, chunk=0):
+                 lazy=False, rmerge=False, split=0, ycorner=False, exh=0, split2=0, hl=False, chunk=0,
+                 rescap=0):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1`, `SEC2` or `SEC3`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
@@ -1518,13 +1527,14 @@ class Par:
         `SieveAd.frozResTestsCH` (with `ycorner`, `SieveAd.resTestsFYH` and `frozResTestsYH`) with
         `SieveResTest.resXH` (`res_test.hintH` writes the hints from the plan); `chunk`: the theorems of the cells
         cut by the next prime's cells in files of at most `chunk` theorems (`final_file`), which the build checks
-        side by side, rather than in `Linnik<TAG>.lean`."""
+        side by side, rather than in `Linnik<TAG>.lean`; `rescap`: with `lazy`, the memo of the window's tests is
+        trimmed past that many entries (`Planner.rescap`; the plan is the same, the memory is bounded)."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
         self.skip, self.skipmin, self.energy, self.res, self.resF, self.cof = skip, skipmin, energy, res, resF, cof
         self.lv, self.lazy, self.rmerge, self.split, self.ycorner = lv, lazy, rmerge, split, ycorner
-        self.exh, self.split2, self.hl, self.chunk = exh, split2, hl, chunk
+        self.exh, self.split2, self.hl, self.chunk, self.rescap = exh, split2, hl, chunk, rescap
         assert not hl or (cof and resF), 'the lines named by the hint come with the cofactor in both trees'
         assert not ycorner or (res and resF and cof), 'the test at the two corners comes with the window in both ' \
             'trees and the cofactor'
@@ -1552,6 +1562,7 @@ class Par:
         P.res_y = self.ycorner
         P.res_hl = self.hl
         P.exh, P.split2 = self.exh, self.split2
+        P.rescap = getattr(self, 'rescap', 0)
         P.sumsmemo = {}
         P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
         return P
@@ -2403,7 +2414,8 @@ def main():
                    split=int(a[a.index('--split') + 1]) if '--split' in a else 0, ycorner='--ycorner' in a,
                    exh=int(a[a.index('--exh') + 1]) if '--exh' in a else 0,
                    split2=int(a[a.index('--split2') + 1]) if '--split2' in a else 0, hl='--hl' in a,
-                   chunk=int(a[a.index('--chunk') + 1]) if '--chunk' in a else 0)
+                   chunk=int(a[a.index('--chunk') + 1]) if '--chunk' in a else 0,
+                   rescap=int(a[a.index('--rescap') + 1]) if '--rescap' in a else 0)
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache', '--rows', '--plan-only'):
         par_ = Par(tag, **CERTS[tag])
         if out is None and '--check' not in a and '--plan-only' not in a:
