@@ -189,6 +189,21 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   cell's index); `SieveAd.solveDS_sound`, by `stepD_sound` at each depth; and `SieveAd.pr_of_partDYS_at`, a part of
   that search bounds its term. It is for boxes that the edge of a test's zone crosses: cut at the zone's edge,
   the part inside is evaluated and only the rest is dropped or decomposed. No certificate uses it yet;
+- `SieveResTest.resXH_sound_cells` (`lib/pnt/SieveResTestH.lean`; the test `SieveResTest.resXH` in
+  `lib/pnt/SieveResTestHDefs.lean`, written by `tools/linnik/res_test.py`): `resX` with each interval's lines named
+  by the hint. A record gives the interval's end, the line of the Halász–Montgomery clamp and each term's line;
+  the kernel checks that the named lines hold at the interval's ends, where `resX` picks them itself at the
+  interval's midpoint. Any line is an upper bound, so the proof is `resX`'s with the choices as variables. On a
+  certificate's file the test is twice as fast, for hints half as long again. `SieveAd.resTestsFCH_sound` and
+  `SieveAd.pr_of_partDRCH_at` (`lib/pnt/SieveAdResH.lean`; the tests `SieveAd.resTestsFCH`, `SieveAd.frozResTestsCH`,
+  the decoders `SieveAd.cfgIMRCH`, `SieveAd.cfgIFRH` and the search `SieveAd.altFDRH` in
+  `lib/pnt/SieveAdResHDefs.lean`): the main tree's and the frozen trees' tests with the cofactor and with `resXH`
+  are sound, and so is a part of a search with them (`tools/linnik/hint_cert.py --hl`). With the window's test
+  at the two corners too, `SieveAd.resTestsFYH_sound` and `SieveAd.pr_of_partDYCH_at` (`lib/pnt/SieveAdResYH.lean`;
+  the tests `SieveAd.resTestsFYH`, `frozResTestsYH`, which read `chkIRY`, `chkIRFY` for an evaluation of kind `4`
+  and are `resTestsFCH`, `frozResTestsCH` otherwise, the decoders `SieveAd.cfgIMYH`, `cfgIFYH` and the search
+  `altFDYH` in `lib/pnt/SieveAdResYHDefs.lean`): the proofs of `resTestsFY_sound` and `pr_of_partDY_at` with
+  those of the tests with `resXH` (`hint_cert.py --ycorner --hl`). No certificate uses them yet;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length

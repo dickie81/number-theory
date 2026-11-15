@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""The resonant window's test on a box, led by a hint: the kernel's test (`lib/pnt/SieveResTestDefs.lean`, and
-`lib/pnt/SieveResTestYDefs.lean` for the test at the two corners of a box of cells), its mirror here, and the search
-for its hints.
+"""The resonant window's test on a box, led by a hint: the kernel's test (`lib/pnt/SieveResTestDefs.lean`;
+`lib/pnt/SieveResTestYDefs.lean` for the test at the two corners of a box of cells, and
+`lib/pnt/SieveResTestHDefs.lean` for the test with the lines named by the hint), its mirror here, and the search for
+its hints.
 
     python3 tools/linnik/res_test.py            write the Lean files
     python3 tools/linnik/res_test.py --check    fail if a file on disk differs from what would be written
@@ -43,6 +44,7 @@ import route_limits as rl  # noqa: E402
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 OUT = ROOT / 'lib' / 'pnt' / 'SieveResTestDefs.lean'
 OUTY = ROOT / 'lib' / 'pnt' / 'SieveResTestYDefs.lean'
+OUTH = ROOT / 'lib' / 'pnt' / 'SieveResTestHDefs.lean'
 
 S = 1 << 64
 DEN = 1 << 40
@@ -518,6 +520,138 @@ def resYH(Lnum, Lden, cells, s):
     n, kH, kL, hh = s % 16, (s // 16) % 16, (s // 256) % 16, s // 4096
     sh = 1 << ((15 + 3 * n) * kH)
     return resY(Lnum, Lden, cells, kH, hh % sh, kL, hh // sh)
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# The test with the lines named by the hint (`SieveResTestHDefs.lean`): an interval's record is its end (`EB` bits),
+# the clamp's line (2 bits) and each term's line (2 bits, or 3 with the large values' terms), so that the kernel does
+# not pick them at the midpoint; the piece of an end is found by bisection. Any lines are bounds, so a hint whose lines
+# are those that `intv` and `intv2` pick passes exactly when the hint of its ends passes.
+
+def pieceC(b):
+    """`SieveResTest.pieceC`: `pieceOf` by bisection over the tops of the pieces."""
+    lo, hi = 0, NP
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if b <= get(TFT, mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+
+def recW(n, lv):
+    """The width of an interval's record for `n` terms."""
+    return EB + 2 + (3 if lv else 2) * n
+
+
+def intvH(ts, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
+    b = (r & EMASK) << SH
+    pb = pieceC(b)
+    if not (pb <= NP and get(TFTM, pb) < b and b <= get(TFT, pb) and a <= b):
+        return False
+    dS = max(get(TDH, pa), sub(mulF(a, get(TIA, pa)), WC))
+    iax = min(get(TIA, pa), get(TIA, pb))
+    cp0, cp1, cn0 = clampL(c1, yuP, yuN, ydP, ydN, a, b, (r >> EB) & 3)
+    p0, n0, n1 = addTerms(dS, iax, ts, r >> (EB + 2), ltm + cp0, cn0, 0)
+    p1 = S // 2 + cp1
+    return le0(p0, p1, n0, n1, a) and le0(p0, p1, n0, n1, b)
+
+
+def intv2H(ts, tvs, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
+    b = (r & EMASK) << SH
+    pb = pieceC(b)
+    if not (pb <= NP and get(TFTM, pb) < b and b <= get(TFT, pb) and a <= b):
+        return False
+    dS = max(get(TDH, pa), sub(mulF(a, get(TIA, pa)), WC))
+    iax = min(get(TIA, pa), get(TIA, pb))
+    cp0, cp1, cn0 = clampL(c1, yuP, yuN, ydP, ydN, a, b, (r >> EB) & 3)
+    p0, n0, n1, va, vb = ltm + cp0, cn0, 0, 0, 0
+    ch = r >> (EB + 2)
+    for t, tv in zip(ts, tvs):
+        lo, a0, a1, b1, lw = t
+        c = ch & 7
+        ch >>= 3
+        if c == 0:
+            p0, n1 = p0 + a0, n1 + a1
+        elif c == 1:
+            n1 = n1 + b1
+        elif c == 2:
+            n0 = n0 + mulF(lo, dS)
+        elif c == 3:
+            p0, n1 = p0 + lw, n1 + mulF(lo, iax)
+        else:
+            k, g = tv[0] if c == 4 else tv[1]
+            if g < a:
+                va, vb = va + lvVal(lo, k, a), vb + lvVal(lo, k, b)
+            else:
+                va, vb = va + OFF, vb + OFF
+            n0 = n0 + OFF
+    p1 = S // 2 + cp1
+    return le0(p0 + va, p1, n0, n1, a) and le0(p0 + vb, p1, n0, n1, b)
+
+
+def _box(Lnum, Lden, cs, hs, lv):
+    ts = terms(Lnum, Lden, cs)
+    mlo = (Lnum * sub(sub(DEN, hs), 1) * S) // (Lden * DEN)
+    tvs = None
+    if lv:
+        ls5 = (Lnum * 10 ** 5 + Lden) * S // (Lden * 10 ** 5) + 1
+        ub = sub(ls5, mlo + sum(t[0] for t in ts))
+        tvs = [mkTv(t[0], ub) for t in ts]
+    ltm = (Lnum * S + sub(Lden * 10 ** 6, 1)) // (Lden * 10 ** 6) + MG
+    mtu, mtd = mulC(mlo, M1U), mulF(mlo, M1D)
+    c1 = (sub(S, mlo) + 1) >> 1
+    yuP, yuN = (sub(K1U, mtd) + 1) >> 1, sub(mtd, K1U) >> 1
+    ydP, ydN = sub(K1D, mtu) >> 1, (sub(mtu, K1D) + 1) >> 1
+    ok = hs + 1 < DEN and ltm + min(c1, yuP) <= sum(mulF(t[0], HP) for t in ts)
+    return ts, tvs, ltm, c1, yuP, yuN, ydP, ydN, ok
+
+
+def resXH(Lnum, Lden, cs, hs, k, h):
+    """`SieveResTest.resXH`: `resX` with the lines named by the hint."""
+    lv = k == 0
+    if lv:
+        k, h = h & 15, h >> 4
+    ts, tvs, ltm, c1, yuP, yuN, ydP, ydN, ok = _box(Lnum, Lden, cs, hs, lv)
+    if not ok:
+        return False
+    w = recW(len(cs), lv)
+    a, pa = 0, 0
+    for _ in range(k):
+        r = h & ((1 << w) - 1)
+        if not (intv2H(ts, tvs, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r) if lv
+                else intvH(ts, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r)):
+            return False
+        a, h = (r & EMASK) << SH, h >> w
+        pa = pieceC(a)
+    return a == S
+
+
+def hintH(Lnum, Lden, cs, hs, k, h):
+    """The hint of `resXH` from a hint `(k, h)` of `resX`: each interval's record with the lines that `resX` picks at
+    its midpoint, so that it passes when `resX` does."""
+    lv = k == 0
+    kk, hh = (h & 15, h >> 4) if lv else (k, h)
+    ts, tvs, ltm, c1, yuP, yuN, ydP, ydN, ok = _box(Lnum, Lden, cs, hs, lv)
+    w = recW(len(cs), lv)
+    a, pa, out = 0, 0, 0
+    for i in range(kk):
+        r = hh & EMASK
+        hh >>= EB
+        b = r << SH
+        pb = pieceOf(b)
+        dS = max(get(TDH, pa), sub(mulF(a, get(TIA, pa)), WC))
+        iax = min(get(TIA, pa), get(TIA, pb))
+        x = (a + b) >> 1
+        cc = pickC(c1, yuP, yuN, ydP, ydN, a, b, x)
+        if lv:
+            ch = sum(pickT2(t, tv, dS, iax, a, x) << (3 * j) for j, (t, tv) in enumerate(zip(ts, tvs)))
+        else:
+            ch = chMid(dS, iax, x, ts)
+        out |= (r | cc << EB | ch << (EB + 2)) << (w * i)
+        a, pa = b, pieceOf(b)
+    return (0, kk + 16 * out) if lv else (kk, out)
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -1389,22 +1523,161 @@ end SieveResTest
 '''
 
 
+def lean_h():
+    """`SieveResTestHDefs.lean`: the test with the lines named by the hint."""
+    tops = [get(TFT, p) for p in range(NP)]
+    assert all(tops[i] < tops[i + 1] for i in range(NP - 1))
+
+    # the bisection, one comparison a line where a branch does not fit on the line
+    def build(lo, hi):
+        if lo == hi:
+            return str(hi)
+        mid = (lo + hi) // 2
+        return f'(cond (Nat.ble b {tops[mid]}) {build(lo, mid)} {build(mid + 1, hi)})'
+
+    def lay(lo, hi, ind):
+        if lo == hi:
+            return [ind + str(hi)]
+        mid = (lo + hi) // 2
+        one = build(lo, hi)
+        if len(ind) + len(one) <= 116:
+            return [ind + one]
+        return ([ind + f'(cond (Nat.ble b {tops[mid]})'] + lay(lo, mid, ind + '  ') + lay(mid + 1, hi, ind + '  ')[:-1]
+                + [lay(mid + 1, hi, ind + '  ')[-1] + ')'])
+    body = '\n'.join(lay(0, NP, '  ')).lstrip()
+    return f"""/-
+# The resonant window's test with the lines named by the hint
+
+Generated by `tools/linnik/res_test.py`; do not edit by hand.
+
+`resX` (`SieveResTestDefs.lean`) picks, on each interval of its hint, each term's line and the clamp's at the
+interval's midpoint, and checks their sum at the ends. Any lines are bounds, so the choice can be the hint's: here an
+interval's record is its end ({EB} bits), the clamp's line (two bits) and each term's line (two bits, or three with
+the large values' terms), and the kernel only adds and compares. The piece of an end is found by bisection over the
+pieces' tops (`pieceC`). The writer takes the lines that `resX` picks, so a box passes `resXH` with its hint exactly
+when it passes `resX` with its own. Its soundness is `SieveResTestH.resXH_sound_cells`.
+
+* `pieceC`: `pieceOf` by bisection. `intvH`, `runIH`, `resTMH`, `resTH`: the test with the lines named by the record.
+  `intv2H`, `runI2H`, `resTM2H`, `resT2H`: the same with the large values' terms. `resXH`: **the test in either
+  form**.
+-/
+import SieveResTestDefs
+
+namespace SieveResTest
+
+/-- The piece of an end `b`, by bisection over the tops of the pieces: the first piece `p ≤ 16` whose top is at least
+`b`, `17` if none. -/
+def pieceC (b : Nat) : Nat :=
+  {body}
+
+/-- **One interval** with the record `r`: its end `b = bOf r` in its piece `pieceC b`; the clamp's line in the two
+bits after the end, and each term's line in two bits each after those. `a` is in the piece `pa`. -/
+def intvH (ts : List Tm) (c1 yuP yuN ydP ydN ltm a pa r : Nat) : Bool :=
+  (fun b =>
+    (fun pb =>
+      Nat.ble pb 17 && Nat.blt (get tFTm pb) b && Nat.ble b (get tFT pb) && Nat.ble a b &&
+        chkI ts ltm (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA pb)) a b
+          (Nat.shiftRight r {EB + 2}) (clampL c1 yuP yuN ydP ydN a b (Nat.land (Nat.shiftRight r {EB}) 3)))
+      (pieceC b))
+    (bOf r)
+
+/-- **The intervals**, `k` of them from `(a, pa)`, each a record of `w` bits of `h`; the last ends at `S`. -/
+def runIH (ts : List Tm) (w c1 yuP yuN ydP ydN ltm : Nat) : Nat → Nat → Nat → Nat → Bool :=
+  Nat.rec (motive := fun _ => Nat → Nat → Nat → Bool) (fun a _ _ => Nat.beq a S)
+    (fun _ ih a pa h =>
+      (fun r => intvH ts c1 yuP yuN ydP ydN ltm a pa r && ih (bOf r) (pieceC (bOf r)) (Nat.shiftRight h w))
+        (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1)))
+
+/-- The test with the variable's `m` times `S` (`mlo`) and `Lτ + MARG` times `S` (`ltm`) given: records of
+`{EB + 2} + 2n` bits for `n` terms. -/
+def resTMH (ts : List Tm) (mlo ltm k h : Nat) : Bool :=
+  (fun mtu mtd c1 =>
+    (fun yuP yuN ydP ydN =>
+      Nat.ble (Nat.add ltm (minN c1 yuP)) (hpSum ts) &&
+        runIH ts (Nat.add {EB + 2} (Nat.mul 2 ts.length)) c1 yuP yuN ydP ydN ltm k 0 0 h)
+      (Nat.shiftRight (Nat.add (Nat.sub K1U mtd) 1) 1) (Nat.shiftRight (Nat.sub mtd K1U) 1)
+      (Nat.shiftRight (Nat.sub K1D mtu) 1) (Nat.shiftRight (Nat.add (Nat.sub mtu K1D) 1) 1))
+    (mulC mlo M1U) (mulF mlo M1D) (Nat.shiftRight (Nat.add (Nat.sub S mlo) 1) 1)
+
+/-- **The test with the lines named by the hint** at `L = Lnum/Lden`: as `resT`. -/
+def resTH (Lnum Lden : Nat) (cs : List Nat) (hs k h : Nat) : Bool :=
+  Nat.blt (Nat.add hs 1) DEN &&
+    resTMH (cs.map fun c => mkTm (loOf Lnum Lden c))
+      (Nat.div (Nat.mul (Nat.mul Lnum (Nat.sub (Nat.sub DEN hs) 1)) S) (Nat.mul Lden DEN))
+      (Nat.add (Nat.div (Nat.add (Nat.mul Lnum S) (Nat.sub (Nat.mul Lden 1000000) 1)) (Nat.mul Lden 1000000)) MG)
+      k h
+
+/-- **One interval** with the large values' terms, as `intvH`; each term's bound in three bits (`addTerms2`). -/
+def intv2H (vs : List Tv) (c1 yuP yuN ydP ydN ltm a pa r : Nat) : Bool :=
+  (fun b =>
+    (fun pb =>
+      Nat.ble pb 17 && Nat.blt (get tFTm pb) b && Nat.ble b (get tFT pb) && Nat.ble a b &&
+        chkI2 vs ltm (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA pb)) a b
+          (Nat.shiftRight r {EB + 2}) (clampL c1 yuP yuN ydP ydN a b (Nat.land (Nat.shiftRight r {EB}) 3)))
+      (pieceC b))
+    (bOf r)
+
+/-- **The intervals**, as `runIH` with the large values' terms. -/
+def runI2H (vs : List Tv) (w c1 yuP yuN ydP ydN ltm : Nat) : Nat → Nat → Nat → Nat → Bool :=
+  Nat.rec (motive := fun _ => Nat → Nat → Nat → Bool) (fun a _ _ => Nat.beq a S)
+    (fun _ ih a pa h =>
+      (fun r => intv2H vs c1 yuP yuN ydP ydN ltm a pa r && ih (bOf r) (pieceC (bOf r)) (Nat.shiftRight h w))
+        (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1)))
+
+/-- The test with the large values' terms and the lines named by the hint, `mlo` and `ltm` given: records of
+`{EB + 2} + 3n` bits for `n` terms. -/
+def resTM2H (vs : List Tv) (mlo ltm k h : Nat) : Bool :=
+  (fun mtu mtd c1 =>
+    (fun yuP yuN ydP ydN =>
+      Nat.ble (Nat.add ltm (minN c1 yuP)) (hpSum2 vs) &&
+        runI2H vs (Nat.add {EB + 2} (Nat.mul 3 vs.length)) c1 yuP yuN ydP ydN ltm k 0 0 h)
+      (Nat.shiftRight (Nat.add (Nat.sub K1U mtd) 1) 1) (Nat.shiftRight (Nat.sub mtd K1U) 1)
+      (Nat.shiftRight (Nat.sub K1D mtu) 1) (Nat.shiftRight (Nat.add (Nat.sub mtu K1D) 1) 1))
+    (mulC mlo M1U) (mulF mlo M1D) (Nat.shiftRight (Nat.add (Nat.sub S mlo) 1) 1)
+
+/-- **The test with the large values' terms and the lines named by the hint**: as `resT2`. -/
+def resT2H (Lnum Lden : Nat) (cs : List Nat) (hs k h : Nat) : Bool :=
+  Nat.blt (Nat.add hs 1) DEN &&
+    (fun los mlo =>
+      resTM2H
+        (los.map
+          (mkTv
+            (Nat.sub (Nat.succ (Nat.div (Nat.mul (Nat.add (Nat.mul Lnum 100000) Lden) S) (Nat.mul Lden 100000)))
+              (Nat.add mlo (sumN los)))))
+        mlo
+        (Nat.add (Nat.div (Nat.add (Nat.mul Lnum S) (Nat.sub (Nat.mul Lden 1000000) 1)) (Nat.mul Lden 1000000)) MG)
+        k h)
+      (cs.map (loOf Lnum Lden))
+      (Nat.div (Nat.mul (Nat.mul Lnum (Nat.sub (Nat.sub DEN hs) 1)) S) (Nat.mul Lden DEN))
+
+/-- **The test in either form, with the lines named by the hint**: `resTH` with `k ≥ 1` intervals; for `k = 0`,
+`resT2H` with its number of intervals in the low four bits of `h` and their records above. -/
+def resXH (Lnum Lden : Nat) (cs : List Nat) (hs k h : Nat) : Bool :=
+  cond (Nat.beq k 0) (resT2H Lnum Lden cs hs (Nat.land h 15) (Nat.shiftRight h 4)) (resTH Lnum Lden cs hs k h)
+
+end SieveResTest
+"""
+
+
 def main():
     if GB != G12 or CURVE != 'ghx':
         sys.exit('RES_GRID and RES_CURVE are for measurement only: the Lean file has the grid 2^-12 and ghx')
     ap = argparse.ArgumentParser()
     ap.add_argument('--check', action='store_true')
     a = ap.parse_args()
-    for out, text in ((OUT, lean()), (OUTY, lean_y())):
+    bad = False
+    for out, text in ((OUT, lean()), (OUTY, lean_y()), (OUTH, lean_h())):
         if a.check:
             old = out.read_text() if out.exists() else ''
             if old != text:
                 sys.stdout.writelines(difflib.unified_diff(old.splitlines(True), text.splitlines(True), str(out),
                                                            'new'))
-                sys.exit(1)
+                bad = True
             continue
         out.write_text(text)
         print('wrote', out)
+    if bad:
+        sys.exit(1)
 
 
 if __name__ == '__main__':
