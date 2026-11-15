@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] [--rows I J [STEP]] [--plan-only [--asc]]
 | --try TAG a/b H HF MAXLEN [--lam N] [--depth N] [--pos] [--blk N] [--skip N] [--energy] [--res | --resF] [--cof]
-[--lv] [--lazy] [--rmerge] [--split J] [--ycorner] [--rows I J] [--out DIR]: the search with the reversal through the
-largest prime as a plan, the hints that lead the kernel through the plan, and the Lean files of a theorem (`TAG`: one
-of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
+[--lv] [--lazy] [--rmerge] [--split J] [--ycorner] [--exh N] [--rows I J] [--out DIR]: the search with the reversal
+through the largest prime as a plan, the hints that lead the kernel through the plan, and the Lean files of a
+theorem (`TAG`: one of `CERTS`; `21500`, the theorem at L = 2150/1000, if none is given).
 
 `flip_cert.py`'s search tries, at each box, what its strategy proposes, and keeps the cheapest; the kernel, running
 it, spends most of its time on what is not kept, on the search for a configuration among the sets of a box's
@@ -171,6 +171,13 @@ class Planner(fl.FlipSearch):
     # skipped it are solved again with every alternative (`redo`), backwards until one comes out as it was. The
     # plan is one that the kernel follows all the same; the search is shorter.
     skip = 0
+    # with `exh > 0`, over a frozen part, the configuration of an evaluation is searched among every set and every
+    # rest of one cell with the sums that the kernel's test reads (`loR`, `hiR`: a set with the cofactor has the
+    # slab's ends less the frozen primes outside it), not only on the box with the cofactor as one more cell; and
+    # where no proposed floor passes, the floors that the four bits name are tried with sets found by those sums
+    # (`floorX`); with `exh = 2` the floor is always the greatest of those that pass
+    exh = 0
+    sumsmemo = None
     skipk = 'dpb'
     skipmin = 30
     redo = True
@@ -252,12 +259,158 @@ class Planner(fl.FlipSearch):
 
     def guide(self, bl, sel):
         """The proposal that `sel` names, on the box or, inside a tree over a frozen part, on the box with the
-        cofactor as one more cell, widened by the room of the tests."""
+        cofactor as one more cell, widened by the room of the tests; with `exh`, over a frozen part, where that
+        proposal is none or fails the test, the floor of `sel` with the sets that `guideX` finds."""
         if self.frz is None:
             return self.guideJ(bl, min([DEN] + [c[0] for c in bl]), sel)
         Kb, beta = self.frz[2], self.frz[3]
-        return self.guideJ(fl.widen(Kb, vboxF(self.fctx, beta, bl)), min([DEN] + [c[0] for c in fl.widen(Kb, bl)]),
-                           sel)
+        r = self.guideJ(fl.widen(Kb, vboxF(self.fctx, beta, bl)), min([DEN] + [c[0] for c in fl.widen(Kb, bl)]),
+                        sel)
+        if self.exh and (r is None or not self.okJm(bl, r[0], r[1])):
+            return self.guideX(bl, sel)
+        return r
+
+    def sumsF(self, bl):
+        """For every set of bits over `ch ++ β ++ [cofactor]`: `loR`, `hiR` and `hiRc`, as three lists."""
+        e1, e2, Kb, beta = self.frz
+        key = (tuple(bl), e1, e2, len(beta))
+        got = self.sumsmemo.get(key)
+        if got is not None:
+            return got
+        nb = len(beta)
+        nch = len(bl) - nb
+        n = len(bl)
+        lsb, hsb, hsc = loSum(beta), hiSum(beta), hiSum(bl[:nch])
+        N = 1 << n
+        cl, chh, bl_, bh = [0] * N, [0] * N, [0] * N, [0] * N
+        for m in range(1, N):
+            j = (m & -m).bit_length() - 1
+            r = m & (m - 1)
+            c = bl[j]
+            if j < nch:
+                cl[m], chh[m], bl_[m], bh[m] = cl[r] + c[0], chh[r] + c[1], bl_[r], bh[r]
+            else:
+                cl[m], chh[m], bl_[m], bh[m] = cl[r], chh[r], bl_[r] + c[0], bh[r] + c[1]
+        lo = [bl_[m] + cl[m] for m in range(N)] + [tsub(e1, hsb - bh[m]) + cl[m] for m in range(N)]
+        hi = [bh[m] + chh[m] for m in range(N)] + [tsub(e2, lsb - bl_[m]) + chh[m] for m in range(N)]
+        hic = ([tsub(e2, bl_[m]) + (hsc - chh[m]) for m in range(N)]
+               + [(hsb - bh[m]) + (hsc - chh[m]) for m in range(N)])
+        if len(self.sumsmemo) > 20000:
+            self.sumsmemo.clear()
+        self.sumsmemo[key] = (lo, hi, hic)
+        return lo, hi, hic
+
+    def guideX(self, bl, sel):
+        """Over a frozen part: the floor that the kernel computes for `sel` (`cfgJF`), with sets `s0`, `s1` and a
+        side that pass the kernel's test there (`okJF2`, `okJF3`), searched with the sums that the test reads: `s0`
+        the set below the window's upper end with the greatest lower sum, then the first `s1` and side whose leaves
+        pass. `None` if there is none."""
+        e1, e2, Kb, beta = self.frz
+        nb, T = len(beta), self.T
+        (f, cfg0), _ = self.cfgJF(Kb, max(1, tsub(e1, hiSum(beta))), tsub(e2, loSum(beta)), beta, nb,
+                                  min([DEN] + [c[0] for c in beta]), bl, sel)
+        kind, sr = cfg0[0], cfg0[2]
+        if not (0 < f and all(f <= c[0] <= c[1] <= DEN for c in bl)) or len(bl) > 9:
+            return None
+        lo, hi, hic = self.sumsF(bl)
+        N2 = len(lo)
+        if kind == 1:
+            if sr >= N2 or not 0 < lo[sr]:
+                return None
+            r1, r2, add = tsub(lo[sr], Kb), hi[sr] + Kb, 0
+        else:
+            r1, r2 = T.fillLo, T.fillLo + f + 1
+            add = r2
+        u, v = T.uOf(r1), T.vOf(r2)
+        if not (T.zone(r1, r2, u, v) and u + f < v):
+            return None
+        best, s0 = -1, 0
+        for m in range(N2):
+            if m & sr == 0 and hi[m] + Kb < v and tsub(lo[m], Kb) > best:
+                best, s0 = tsub(lo[m], Kb), m
+        if best < 0:
+            return None
+        t = tsub(u, best) + add
+        for s1 in range(N2):
+            h1, h2 = hi[s1] + Kb, hic[s1] + Kb
+            for e in (True, False):
+                D1, D2 = h1 + (t if e else 0), h2 + (0 if e else t)
+                if T.leaves(D1, D2) or (T.energy and T.leavesE(D1, D2)):
+                    cfg = (kind, s0, sr, s1, e)
+                    if self.okJm(bl, f, cfg):
+                        return f, cfg
+                    self.stat['jmiss'] = self.stat.get('jmiss', 0) + 1
+                    return None
+        return None
+
+    def floorX(self, bl, lo0):
+        """Over a frozen part, with `exh`: the greatest floor at most `lo0`, of those that the four bits name,
+        for which `guide` has sets that pass; `(sel, floor)`, or `None`."""
+        e1, e2, Kb, beta = self.frz
+        cl, chh = max(1, tsub(e1, hiSum(beta))), tsub(e2, loSum(beta))
+        lomb = min([DEN] + [c[0] for c in beta])
+        fs = sorted(((self.cfgJF(Kb, cl, chh, beta, len(beta), lomb, bl, sel)[0][0], -sel) for sel in range(16)),
+                    reverse=True)
+        for f, ms in fs:
+            if 0 < f <= lo0:
+                r = self.guide(bl, -ms)
+                if r is not None and r[0] == f and self.okJm(bl, r[0], r[1]):
+                    self.stat['jexh'] = self.stat.get('jexh', 0) + 1
+                    return -ms, f
+        return None
+
+    def propIF(self, bl):
+        """The configuration of an evaluation over a frozen part, as a list of at most one: the proposal on the
+        box with the cofactor as one more cell if it passes `okIF`; with `exh`, else the first that passes among
+        every rest of one cell (of the first eight, which is what the hints name) and every set: for a rest of
+        ends `r1`, `r2` the set's exponents are to lie in `[uminOf r1, vOfF r2]`; the sets with no cofactor are
+        searched as on a box, and those with the cofactor frozen prime by frozen prime, from the slab's ends."""
+        e1, e2, Kb, beta = self.frz
+        blv = vboxF(self.fctx, beta, bl)
+        for cfg in self.propI2(blv, loSum(blv)):
+            self.W['okI2'] += 1
+            if self.okIF(bl, cfg):
+                return [cfg]
+        if not self.exh:
+            return []
+        nb = len(beta)
+        nch = len(bl) - nb
+        ch = bl[:nch]
+        lsb, lsc, hsb_, lsb_ = loSum(bl), loSum(ch), hiSum(beta), loSum(beta)
+        for ri in range(min(len(bl) + 1, 8)):
+            sr = 1 << ri
+            r1, r2 = self.loR(e1, beta, ch, sr), self.hiR(e2, beta, ch, sr)
+            if r1 <= 0 or not self.restOK((r1, r2)):
+                continue
+            U, V = self.uminOf(r1), self.vOfF(r2)
+            if V < U:
+                continue
+            cands = []
+            if ri < len(bl):
+                cands.append(self.findSub2(U, V, sr, bl, 1, 0, 0, 0, tsub(lsb, bl[ri][0])))
+                for mb in range(1 << nb):
+                    if ri >= nch and mb >> (ri - nch) & 1:
+                        continue
+                    cands.append(self.findSub2(
+                        U, V, sr if ri < nch else 0, ch, 1, tsub(e1, tsub(hsb_, tc.mSum(1, beta, mb))),
+                        tsub(e2, tsub(lsb_, tc.mSum(0, beta, mb))), (mb << nch) | (1 << len(bl)),
+                        tsub(lsc, ch[ri][0]) if ri < nch else lsc))
+            else:
+                cands.append(self.findSub2(U, V, 0, bl, 1, 0, 0, 0, lsb))
+            for m in cands:
+                if m:
+                    self.W['okI2'] += 1
+                    cfg = (1, m, sr, 0, False)
+                    if self.okIF(bl, cfg):
+                        self.stat['exh'] = self.stat.get('exh', 0) + 1
+                        return [cfg]
+                    self.stat['exhmiss'] = self.stat.get('exhmiss', 0) + 1
+        return []
+
+    def anyI(self, bl):
+        if self.frz is None:
+            return super().anyI(bl)
+        return bool(self.propIF(bl))
 
     def okJm(self, bl, f, cfg):
         """`τ.okJ bl f cfg` for the tests of the tree being searched."""
@@ -267,9 +420,11 @@ class Planner(fl.FlipSearch):
 
     def floorOf(self, bl, lo0):
         """The first proposed floor that passes, as the bits that name it to the guide, with the floor."""
+        if self.exh >= 2 and self.frz is not None:
+            return self.floorX(bl, lo0)
         fj = self.firstJ(bl, lo0, self.propJ(bl))
         if fj is None:
-            return None
+            return self.floorX(bl, lo0) if self.exh and self.frz is not None else None
         f, cfg = fj
         if cfg[0] == 1:
             sel = 2 * (cfg[2].bit_length() - 1)
@@ -282,7 +437,7 @@ class Planner(fl.FlipSearch):
                 g = 3 * g // 4
         if sel is None or sel > 15 or self.guide(bl, sel) != (f, cfg):
             self.stat['noguide'] = self.stat.get('noguide', 0) + 1
-            return None
+            return self.floorX(bl, lo0) if self.exh and self.frz is not None else None
         return sel, f
 
     def guideLomin(self, bl):
@@ -1168,8 +1323,7 @@ class Planner(fl.FlipSearch):
         if kind == 'V':
             out.append((31, 6))
         elif kind == 'E':
-            blv = fl.vboxF(ctx, beta, bl)
-            cf = self.propI2(blv, loSum(blv))
+            cf = self.propIF(bl)
             assert cf and self.okIF(bl, cf[0])
             out.extend(self.evalFields(cf[0], w, bool(self.res_frozen)))
         elif kind == 'R':
@@ -1266,7 +1420,7 @@ class Par:
     def __init__(self, tag, lnum, lden, h=0.005, depth=6, kappa=10, depthR=3, hR=0.012, hQ=0.02, hF=0.006,
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
                  blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False, cof=False, lv=False,
-                 lazy=False, rmerge=False, split=0, ycorner=False):
+                 lazy=False, rmerge=False, split=0, ycorner=False, exh=0):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1` or `SEC2`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
@@ -1284,12 +1438,15 @@ class Par:
         two where the top `1/2^j` of its first cell, `j ≤ split`, passes the window's float filter
         (`Planner.res_split`); `ycorner`: where the window's test fails, the test at the two corners of the box of a
         rest's cells (`SieveResTest.resY`; the tests `SieveAd.resTestsFY` and `frozResTestsY`, the search
-        `SieveAd.altFDY`), with `res`, `resF` and `cof`."""
+        `SieveAd.altFDY`), with `res`, `resF` and `cof`; `exh`: over a frozen part the planner searches every
+        configuration of the estimate in two variables and, with `2`, of the floors (`Planner.exh`); the kernel
+        reads them from the hints."""
         assert not rev, 'the search led by hints has no three-prime reversal'
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
         self.skip, self.skipmin, self.energy, self.res, self.resF, self.cof = skip, skipmin, energy, res, resF, cof
         self.lv, self.lazy, self.rmerge, self.split, self.ycorner = lv, lazy, rmerge, split, ycorner
+        self.exh = exh
         assert not ycorner or (res and resF and cof), 'the test at the two corners comes with the window in both ' \
             'trees and the cofactor'
         assert res or not (resF or cof or split), 'the window over the frozen parts, the cofactor and the cuts come ' \
@@ -1314,6 +1471,8 @@ class Par:
         P.res_cof = self.cof
         P.res_lv, P.res_lazy, P.res_merge, P.res_split = self.lv, self.lazy, self.rmerge, self.split
         P.res_y = self.ycorner
+        P.exh = self.exh
+        P.sumsmemo = {}
         P.stat.update(postry=0, poswin=0, posroot=0, poscap=0)
         return P
 
@@ -1892,7 +2051,8 @@ def main():
                    sec=2 if '--lam' in a or '--pos' in a else 1, energy='--energy' in a,
                    res='--res' in a or '--resF' in a or '--cof' in a, resF='--resF' in a, cof='--cof' in a,
                    lv='--lv' in a, lazy='--lazy' in a, rmerge='--rmerge' in a,
-                   split=int(a[a.index('--split') + 1]) if '--split' in a else 0, ycorner='--ycorner' in a)
+                   split=int(a[a.index('--split') + 1]) if '--split' in a else 0, ycorner='--ycorner' in a,
+                   exh=int(a[a.index('--exh') + 1]) if '--exh' in a else 0)
     elif not a or a[0] in ('--check', '--out', '--procs', '--cache', '--rows', '--plan-only'):
         par_ = Par(tag, **CERTS[tag])
         if out is None and '--check' not in a and '--plan-only' not in a:
