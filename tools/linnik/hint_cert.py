@@ -671,6 +671,11 @@ class Planner(fl.FlipSearch):
     # the variable tied to the rest (`SieveResTest.resY`; the tests `SieveAd.resTestsFY`, `frozResTestsY`): a leaf
     # `('R', mask, 'Y', s)` with the hints `s` in one number, `('R', mask, -2, key)` until they are found
     resmemo = None
+    # the memo of the window's tests is emptied when it passes `rescap` entries (0: never): a cell of the first
+    # prime near x^0.4 at 2100/1000 fills several million of them, 3 to 4.6 GB of memory; `resbad`: the keys that
+    # passed the float filter and for which the writer found no hint
+    rescap = 1500000
+    resbad = None
 
     def hintY(self, cells):
         """`('Y', s)` with the hints `s` of `resYH` for the cells, or `None`."""
@@ -694,6 +699,11 @@ class Planner(fl.FlipSearch):
             return None
         if self.resmemo is None:
             self.resmemo = {}
+        elif self.rescap and len(self.resmemo) > self.rescap:
+            # the memo is emptied (its entries are computed again when they are needed); the keys whose hint the
+            # writer did not find stay failed
+            self.resmemo = dict((k, None) for k in (self.resbad or ()))
+            self.stat['restrim'] = self.stat.get('restrim', 0) + 1
         n, ln, ld = len(bl), self.T.Ln, self.T.Ld
         # a rest whose exponents sum to less than 1 + 2/25000 fails (`res_test.quick`): in units of the cells,
         # Σ(c − 1) at least `need`
@@ -1768,10 +1778,11 @@ def row_job(args):
         if not bad:
             break
         memo, calls, fcalls = P.resmemo, P.W['calls'], P.W['fcalls']
+        allbad = (P.resbad or set()) | bad
         for key in bad:
             memo[key] = None
         P = par_.planner()
-        P.resmemo = memo
+        P.resmemo, P.resbad = memo, allbad
         P.W['calls'], P.W['fcalls'] = calls, fcalls
         P.stat['replan'] = P.stat.get('replan', 0) + len(bad)
         c, node = P.plan([(a, b)], False, K)
@@ -1831,7 +1842,9 @@ def plan_all(par_, procs=4, rows=None, cache=None, asc=False):
     if rows is not None:
         jobs = jobs[rows[0]:rows[1]:rows[2] if len(rows) > 2 else 1]
     if procs > 1:
-        with multiprocessing.Pool(procs) as pool:
+        # a new process for each cell: a process that has planned a heavy cell gives its memory back, and one that
+        # the system kills (out of memory) loses its own cell only
+        with multiprocessing.Pool(procs, maxtasksperchild=1) as pool:
             # the cells that take longest first, each alone in its task (with `asc`, the lightest first: a share
             # of cells taken from the other end while another machine plans from the top)
             order = sorted(range(len(jobs)), key=lambda i: jobs[i][1] if asc else -jobs[i][1])
