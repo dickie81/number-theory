@@ -44,7 +44,7 @@ def params(par_):
     P = par_.planner()
     T = P.T
     assert P.res_frozen in (True, False) and P.res_cof in (True, False), 'measurement modes are not supported'
-    assert P.blk == 1 and P.blkF == 1 and not P.split2 and not P.rev, 'blk, split2 and rev are not supported'
+    assert P.blk == 1 and P.blkF == 1 and not P.rev, 'blk and rev are not supported'
     lam = P.lamK
     assert float(lam) == lam, 'the price of a second is not a float'
     out = []

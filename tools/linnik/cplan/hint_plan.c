@@ -1785,13 +1785,17 @@ static i128 pSolve(const Ops *O, const Strat *S, int n, const Cell *bl, int nbl,
         node->k == KV || node->k == KS)
         return c;
     Cell x = bl[0];
-    CHECK(!G.split2, "split2 is not supported");
-    int two = 0;
+    /* `split2`: a box of two primes of the main tree is also tried cut in two, down to cells of 1/2^j of the grid's
+       step; with a price on the kernel's time the cut is kept where it costs less with the time of the two halves
+       counted (the sums as Python's: the costs as floats) */
+    int two = G.split2 && !FZ.on && nbl == 2 && G.wmin < tsub(x.hi, x.lo) &&
+              G.hI < tsub(x.hi, x.lo) * ((i64)1 << G.split2);
     if (!two && !nearRes(bl, nbl)) return c;
     statAdd(S_splittry, 1);
     Node *ns = NULL;
     i128 cs = pSplit(O, S, n - 1, x, bl, nbl, par, c, sib, &ns);
-    if (ns && cs < c) {
+    if (ns && cs < c &&
+        (!(two && G.lamK != 0.0) || (double)cs + G.lamK * ns->secs < (double)c + G.lamK * node->secs)) {
         statAdd(S_splitwin, 1);
         nfree(node);
         *out = ns;
