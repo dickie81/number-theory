@@ -9,7 +9,7 @@
    PARAMS is written by tools/linnik/cplan.py (the certificate's parameters and the constants of the tests, read
    from the Python modules); CELLS has a line `a b` for each cell of the first prime; for each, PLANS has the plan's
    cost, the search's counts and the plan's nodes in prefix order (see `emit`). With CPLAN_DEBUG set, the memo's
-   size and a line every 2^20 boxes on stderr.
+   size and a line every 2^20 boxes on stderr; with CPLAN_MAXCALLS=N the program stops after N boxes (to profile).
 
    Two things differ from the Python planner in how, not in what. The memo of the window's tests keeps only the
    entries that can change an answer (`resHint`): a key of the test at the two corners that fails the loose filter
@@ -216,38 +216,56 @@ static inline int zone(i128 r1, i128 r2, i128 u, i128 v) {
            62505 * Ld * DEN + 62500 * Ln * v + 34863 * Ln * (r2 + 1) <= 62500 * Ln * DEN &&
            125005 * Ld * DEN + 34863 * Ln * (r2 + 1) <= 62500 * Ln * DEN;
 }
-static inline int leavesT(i128 D1, i128 D2) {
-    i128 Ln = G.Ln, Ld = G.Ld;
-    return Ln * D1 + Ld * DEN < Ln * DEN && 2 * Ln * (D1 + D2) + Ld * DEN < 2 * Ln * DEN &&
-           Ln * (D1 + 2 * D2) + 2 * Ld * DEN < 2 * Ln * DEN;
+/* the leaves' tests (`Tests.leaves`, `pStar`, `thetaL`, `leavesE`). With PS1 = ⌊(Ln·DEN − Ld·DEN − 1)/Ln⌋,
+   PS2 = ⌊(2Ln·DEN − Ld·DEN − 1)/(2Ln)⌋ and PS3 = ⌊(2Ln·DEN − 2Ld·DEN − 1)/Ln⌋, the three inequalities of `leaves` on
+   sizes D1, D2 ≥ 0 are D1 ≤ PS1, D1 + D2 ≤ PS2 and D1 + 2·D2 ≤ PS3; `pStar D2` is the largest D1 with them (PS1,
+   PS2 − D2, PS3 − 2·D2), and `thetaL D1` the largest D2 with the last two. So in `leavesE`, once P = pStar D2 and
+   th = thetaL D1 are at least 1, `leaves P D2` holds and `leaves D1 th` is D1 ≤ PS1 */
+static i64 PS1, PS2, PS3, TH0;
+static int LXn[32][2], LXj[32][2][6];
+static i64 LXc[32][2][6];
+static void leavesInit(void) {
+    i64 Ln = G.Ln, Ld = G.Ld;
+    PS1 = (Ln * DEN - Ld * DEN - 1) / Ln;
+    PS2 = (2 * Ln * DEN - Ld * DEN - 1) / (2 * Ln);
+    PS3 = (2 * Ln * DEN - 2 * Ld * DEN - 1) / Ln;
+    TH0 = 2 * Ln * DEN - 2 * Ld * DEN - 1;
+    CHECK(PS1 > 0 && PS2 > 0 && PS3 > 0 && TH0 > 0, "the leaves' constants");
+    for (int i = 0; i < G.nlx; i++)
+        for (int side = 0; side < 2; side++) {
+            LXn[i][side] = 0;
+            for (int j = 0; j < 6; j++)
+                if (G.LX[i][6 * side + j]) {
+                    LXj[i][side][LXn[i][side]] = j;
+                    LXc[i][side][LXn[i][side]++] = G.LX[i][6 * side + j];
+                }
+        }
 }
-static inline i128 pStar(i128 D2) {
-    i128 Ln = G.Ln, Ld = G.Ld;
-    return minI(minI((Ln * DEN - Ld * DEN - 1) / Ln, tsubI((2 * Ln * DEN - Ld * DEN - 1) / (2 * Ln), D2)),
-                tsubI((2 * Ln * DEN - 2 * Ld * DEN - 1) / Ln, 2 * D2));
+static inline __attribute__((always_inline)) int leavesT(i128 D1, i128 D2) {
+    CHECK(D1 >= 0 && D2 >= 0, "a leaf of negative size");
+    return D1 <= PS1 && D1 + D2 <= PS2 && D1 + 2 * D2 <= PS3;
 }
-static inline i128 thetaL(i128 D1) {
-    i128 Ln = G.Ln, Ld = G.Ld;
-    return minI(tsubI((2 * Ln * DEN - Ld * DEN - 1) / (2 * Ln), D1),
-                tsubI(2 * Ln * DEN - 2 * Ld * DEN - 1, Ln * D1) / (2 * Ln));
-}
-static int leafXR(i128 D, i128 P1, i128 P2, i128 R1, i128 R2) {
+static inline i128 pStar(i128 D2) { return minI(minI(PS1, tsubI(PS2, D2)), tsubI(PS3, 2 * D2)); }
+static inline i128 thetaL(i128 D1) { return minI(tsubI(PS2, D1), tsubI(TH0, G.Ln * D1) / (2 * G.Ln)); }
+static inline int leafXR(i128 D, i128 P1, i128 P2, i128 R1, i128 R2) {
     i128 Ln = G.Ln, Ld = G.Ld;
     i128 at[6] = {Ln * P1, Ln * P2, Ln * R1, Ln * R2, Ld * D, Ln * D};
     for (int i = 0; i < G.nlx; i++) {
         i128 l = 0, r = 0;
-        for (int j = 0; j < 6; j++) {
-            l += (i128)G.LX[i][j] * at[j];
-            r += (i128)G.LX[i][6 + j] * at[j];
-        }
+        for (int q = 0; q < LXn[i][0]; q++) l += (i128)LXc[i][0][q] * at[LXj[i][0][q]];
+        for (int q = 0; q < LXn[i][1]; q++) r += (i128)LXc[i][1][q] * at[LXj[i][1][q]];
         if (!(l <= r)) return 0;
     }
     return 1;
 }
-static int leavesE(i128 D1, i128 D2) {
-    i128 P = pStar(D2), th = thetaL(D1);
-    return leavesT(P, D2) && leavesT(D1, th) && D1 + D2 < DEN && 1 <= P && 1 <= th &&
-           leafXR(DEN, tsubI(P, 1), D1 + 1, tsubI(th, 1), D2 + 1);
+static inline __attribute__((always_inline)) int leavesE(i128 D1, i128 D2) {
+    if (!(D1 + D2 < DEN)) return 0;
+    if (!(D1 <= PS1)) return 0;
+    i128 P = pStar(D2);
+    if (!(1 <= P)) return 0;
+    i128 th = thetaL(D1);
+    if (!(1 <= th)) return 0;
+    return leafXR(DEN, P - 1, D1 + 1, th - 1, D2 + 1);
 }
 static int cellsIn(i64 f, const Cell *bl, int n) {       /* all(f <= c[0] <= c[1] <= DEN) */
     for (int i = 0; i < n; i++)
@@ -589,6 +607,7 @@ static i64 ST[NSTAT];
 static int STord[NSTAT], STn, STin[NSTAT];
 static i128 Wcalls, Wfcalls;
 static int DBG;
+static long MAXCALLS;
 
 static void statReset(void) {
     memset(ST, 0, sizeof ST);
@@ -1148,6 +1167,9 @@ static FC guideX(const Cell *bl, int n, int sel) {
     i128 t = tsubI(u, bestv) + add;
     for (int s1 = 0; s1 < N2; s1++) {
         i128 h1 = hi[s1] + Kb, h2 = hic[s1] + Kb;
+        /* on both sides D1 + D2 = h1 + h2 + t, and both tests need it below DEN (`leaves`: 2·Ln·(D1 + D2) + Ld·DEN <
+           2·Ln·DEN; `leavesE`: D1 + D2 < DEN), so a set whose sum reaches DEN passes on neither */
+        if (h1 + h2 + t >= DEN) continue;
         for (int ei = 0; ei < 2; ei++) {
             int e = ei == 0;
             i128 D1 = h1 + (e ? t : 0), D2 = h2 + (e ? 0 : t);
@@ -1784,6 +1806,7 @@ static i128 pSolve1(const Ops *O, const Strat *S, int n, const Cell *bl, int nbl
     *out = NULL;
     if (n == 0 || nbl == 0 || !Ogrd(O, nbl)) return lim;
     Wcalls += 1;
+    if (MAXCALLS && Wcalls >= MAXCALLS) exit(0);
     if (DBG && (Wcalls & ((1 << 20) - 1)) == 0)
         fprintf(stderr, "  %ld M boxes: %ld nodes live (peak %ld), %ld memo entries, %ld cached filters\n",
                 (long)(Wcalls >> 20), NLIVE, NPEAK, MN, QN);
@@ -2266,6 +2289,8 @@ int main(int argc, char **argv) {
     }
     readParams(argv[1]);
     DBG = getenv("CPLAN_DEBUG") != NULL;
+    leavesInit();
+    if (getenv("CPLAN_MAXCALLS")) MAXCALLS = atol(getenv("CPLAN_MAXCALLS"));
     qclear();
     long long a, b;
     while (scanf("%lld %lld", &a, &b) == 2) planCell(a, b, stdout);
