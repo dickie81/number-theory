@@ -67,7 +67,7 @@ the plan's size are printed; with `--out`, its files are written to DIR. A cell 
 written with it all the same: its parts' hints are transcoded (`transcode_hl`). PyPy runs it one and a half times as
 fast as CPython, with the same output. With `--cplan` the search of each cell of the first prime is the C planner's
 (`cplan.py`, `cplan/hint_plan.c`: `Planner.plan`, the lazy hints and the replan of `row_job`, method by method):
-the same plans, costs and counts as PyPy's (`cplan_test.py`), 25 to 30 times as fast and in a fraction of the
+the same plans, costs and counts as PyPy's (`cplan_test.py`), 20 to 50 times as fast and in a fraction of the
 memory; the cut into parts, with the kernel's mirror on every hint, stays in Python.
 
 Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
