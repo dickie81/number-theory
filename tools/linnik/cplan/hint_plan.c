@@ -4,12 +4,16 @@
    planner's (`Planner.rescap = 0`, the memo never emptied): the integers are exact (an overflow stops the program)
    and the floats are evaluated as Python evaluates them, a sum from the left as PyPy's `sum` does it.
 
-       hint_plan PARAMS < CELLS > PLANS
+       hint_plan PARAMS [cut] < CELLS > PLANS
+       hint_plan PARAMS gen < COMMANDS > PARTS
 
    PARAMS is written by tools/linnik/cplan.py (the certificate's parameters and the constants of the tests, read
    from the Python modules); CELLS has a line `a b` for each cell of the first prime; for each, PLANS has the plan's
-   cost, the search's counts and the plan's nodes in prefix order (see `emit`). With CPLAN_DEBUG set, the memo's
-   size and a line every 2^20 boxes on stderr; with CPLAN_MAXCALLS=N the program stops after N boxes (to profile).
+   cost, the search's counts and the plan's nodes in prefix order (see `emit`), or with `cut`, for a heavy cell, the
+   counts of its plan's steps and its cut into parts by the generator (gen.h). With `gen`, the generator runs the
+   commands of `genMain` (the parts of light cells, the cut of a plan given, the transcoding of a part's hints).
+   With CPLAN_DEBUG set, the memo's size and a line every 2^20 boxes on stderr; with CPLAN_MAXCALLS=N the program
+   stops after N boxes (to profile).
 
    Two things differ from the Python planner in how, not in what. The memo of the window's tests keeps only the
    entries that can change an answer (`resHint`): a key of the test at the two corners that fails the loose filter
@@ -35,7 +39,7 @@ static struct {
     i64 Ln, Ld;
     i64 hI, hF, hR, hQ, wmin, kappa;
     int depth, depthR, depthF, maxlen, fuel;
-    int pos, skip, skipmin, energy, res, resF, cof, lv, lazy, rmerge, split, ycorner, exh, split2, blk, blkF;
+    int pos, skip, skipmin, energy, res, resF, cof, lv, lazy, rmerge, split, ycorner, exh, split2, blk, blkF, hl;
     int redo, merge;
     double lamK;
     i64 dm0, dm1;
@@ -1225,12 +1229,15 @@ static int floorX(const Cell *bl, int n, i64 lo0, i64 *fout) {
 }
 
 /* `propIF`: the configuration of an evaluation over a frozen part, if any */
-static int propIF(const Cell *bl, int n) {
+static int propIF(const Cell *bl, int n, Cfg *out) {
     Cell vb[MAXB + 1];
     int nv = vboxF(FZ.ctx, FZ.beta, FZ.nb, bl, n, vb);
     Cfg cfg;
     if (propI2(vb, nv, loSum(vb, nv), &cfg))
-        if (okIF(bl, n, &cfg)) return 1;
+        if (okIF(bl, n, &cfg)) {
+            if (out) *out = cfg;
+            return 1;
+        }
     if (!G.exh) return 0;
     i64 e1 = FZ.e1, e2 = FZ.e2;
     int nb = FZ.nb, nch = n - nb;
@@ -1263,6 +1270,7 @@ static int propIF(const Cell *bl, int n) {
                 Cfg c = {1, (u32)m, sr, 0, 0};
                 if (okIF(bl, n, &c)) {
                     statAdd(S_exh, 1);
+                    if (out) *out = c;
                     return 1;
                 }
                 statAdd(S_exhmiss, 1);
@@ -1273,7 +1281,7 @@ static int propIF(const Cell *bl, int n) {
 }
 
 static int anyI(const Cell *bl, int n) {
-    if (FZ.on) return propIF(bl, n);
+    if (FZ.on) return propIF(bl, n, NULL);
     Cfg cfg;
     if (propI2(bl, n, loSum(bl, n), &cfg))
         if (okI_T(bl, n, &cfg)) return 1;
@@ -2052,7 +2060,13 @@ static void putI(FILE *f, i128 x) {
     fputs(buf + i, f);
 }
 
-/* `row_job`'s plan of one cell of the first prime */
+/* the generator (`--cgen`) */
+static i128 parseI(const char *s);
+#include "gen.h"
+
+/* `row_job`'s plan of one cell of the first prime; with `cut`, a heavy cell's parts and pieces (`cut`) in place of
+   its plan, and the counts of its plan's steps */
+static int CUTMODE;
 static void planCell(i64 a, i64 b, FILE *f) {
     mclear();
     Wcalls = Wfcalls = 0;
@@ -2085,9 +2099,23 @@ static void planCell(i64 a, i64 b, FILE *f) {
     putI(f, Wfcalls);
     fputs("\nSTAT", f);
     for (int i = 0; i < STn; i++) fprintf(f, " %s %lld", SNAME[STord[i]], (long long)ST[STord[i]]);
-    fputs("\nTREE ", f);
-    emit(f, node);
-    fputs("\nEND\n", f);
+    if (CUTMODE && !(node->secs <= CAP) && node->k == KB) {
+        Part cp;
+        memset(&cp, 0, sizeof cp);
+        countg(node, 0, &cp);
+        fputs("\nCOUNT", f);
+        for (int i = 0; i < cp.nord; i++) {
+            int k = cp.ord[i] / 2, z = cp.ord[i] % 2;
+            fprintf(f, " %c %d %ld", KCH[k], z, cp.cnt[k][z]);
+        }
+        fputc('\n', f);
+        cutAndWrite(f, node, a, b);
+        fputs("END\n", f);
+    } else {
+        fputs("\nTREE ", f);
+        emit(f, node);
+        fputs("\nEND\n", f);
+    }
     fflush(f);
     if (getenv("CPLAN_DEBUG")) fprintf(stderr, "cell %lld %lld: %ld memo entries\n", (long long)a, (long long)b, MN);
     nfree(node);
@@ -2272,6 +2300,10 @@ static void readParams(const char *path) {
     u3 = rdI("u3");
     fmax3 = rdI("fmax3");
     fillLo = rdI("fillLo");
+    /* the generator's */
+    G.hl = (int)rdI("hl");
+    CAP = rdF("cap");
+    LEVELS = (int)rdI("levels");
     CHECK(!strcmp(nextTok(), "end"), "the parameters' end");
     free(buf);
     for (int z = 0; z < 2; z++) {
@@ -2288,7 +2320,7 @@ static void readParams(const char *path) {
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        fprintf(stderr, "usage: hint_plan PARAMS < CELLS\n");
+        fprintf(stderr, "usage: hint_plan PARAMS [cut] < CELLS, or hint_plan PARAMS gen < COMMANDS\n");
         return 2;
     }
     readParams(argv[1]);
@@ -2296,6 +2328,11 @@ int main(int argc, char **argv) {
     leavesInit();
     if (getenv("CPLAN_MAXCALLS")) MAXCALLS = atol(getenv("CPLAN_MAXCALLS"));
     qclear();
+    if (argc > 2 && !strcmp(argv[2], "gen")) {
+        genMain(stdin, stdout);
+        return 0;
+    }
+    CUTMODE = argc > 2 && !strcmp(argv[2], "cut");
     long long a, b;
     while (scanf("%lld %lld", &a, &b) == 2) planCell(a, b, stdout);
     return 0;

@@ -2,8 +2,12 @@
 own constants, the program run on cells of the first prime, and its plans read back as the Python planner's tuples.
 The C planner is the Python planner's search (`Planner.plan`, the lazy hints' `resolve` and the replan of
 `row_job`), method by method; `--cplan` changes how long a plan takes and how much memory it needs, not what it is
-(`cplan_test.py` compares the two). The program is compiled once for each version of its sources, in the temporary
-directory, with `$CC` (`cc` if unset); it needs a C compiler with `__int128` (GCC or Clang) and libm."""
+(`cplan_test.py` compares the two). The same program is the generator in C (`cplan/gen.h`, `hint_cert.py --cgen`):
+the cut of a heavy cell into parts (`cut`, in the run that plans it, or from a plan given), the parts of light cells
+(`add_part`) and the transcoding of a part's hints for `Par.hl` (`hl_parts`), with the hints of each part written and
+checked by the kernel's mirror (`dHints`, `dPart`) as the Python generator does (`cgen_test.py` compares the two).
+The program is compiled once for each version of its sources, in the temporary directory, with `$CC` (`cc` if
+unset); it needs a C compiler with `__int128` (GCC or Clang) and libm."""
 import hashlib
 import os
 import subprocess
@@ -17,7 +21,7 @@ import rev_cert as rc  # noqa: E402
 import res_test as rt  # noqa: E402
 import mirror8 as m8  # noqa: E402
 
-SRCS = [os.path.join(HERE, 'cplan', f) for f in ('hint_plan.c', 'num.h', 'res.h')]
+SRCS = [os.path.join(HERE, 'cplan', f) for f in ('hint_plan.c', 'num.h', 'res.h', 'gen.h')]
 
 
 def build():
@@ -99,6 +103,11 @@ def params(par_):
               'u3', 'fmax3'):
         kv(k, getattr(P, k))
     kv('fillLo', T.fillLo)
+    # the generator's (`--cgen`): the window's lines named by the hints, and `cut`'s limits
+    assert P.res_hl in (True, False), 'measurement modes are not supported'
+    kv('hl', int(P.res_hl))
+    kv('cap', _f(par_.cap))
+    kv('levels', int(par_.levels))
     out.append('end')
     return '\n'.join(out) + '\n'
 
@@ -145,8 +154,91 @@ def parse_tree(toks, i):
             node = tuple(par) if isinstance(par, list) else par
 
 
+def dump_tree(node, out):
+    """The tokens of the plan `node` as the program writes them (`parse_tree`'s input), appended to `out`."""
+    stack = [node]
+    while stack:
+        x = stack.pop()
+        k = x[0]
+        if k in ('V', 'E', 'D'):
+            out.append(k)
+        elif k == 'R':
+            assert x[2] not in (-1, -2), 'a window\'s leaf without its hint'
+            out.append(f'Y {x[1]} {x[3]:x}' if x[2] == 'Y' else f'R {x[1]} {x[2]} {x[3]:x}')
+        elif k in ('B', 'F', 'P'):
+            out.append(f'{k} {x[1]} {len(x[2])} {"".join("1" if b else "0" for b in x[3]) or "-"}')
+            stack.extend(reversed(x[2]))
+        elif k == 'S':
+            out.append('S')
+            stack.append(x[2])
+            stack.append(x[1])
+        else:
+            raise ValueError(k)
+    return out
+
+
+def parse_part(toks, i):
+    """A part as the program writes it (`PART …`): `add_part`'s tuple, and the index after it."""
+    assert toks[i] == 'PART', toks[i]
+    top, nbl = int(toks[i + 1]), int(toks[i + 2])
+    i += 3
+    bl = [(int(toks[i + 2 * j]), int(toks[i + 2 * j + 1])) for j in range(nbl)]
+    i += 2 * nbl
+    par, ncs = toks[i] == '1', int(toks[i + 1])
+    i += 2
+    cs = [int(x) for x in toks[i:i + ncs]]
+    i += ncs
+    a, c, secs_, steps, ncnt = int(toks[i]), int(toks[i + 1]), float.fromhex(toks[i + 2]), int(toks[i + 3]), \
+        int(toks[i + 4])
+    i += 5
+    cnt = {}
+    for _ in range(ncnt):
+        cnt[(toks[i], toks[i + 1] == '1')] = int(toks[i + 2])
+        i += 3
+    h = int(toks[i], 16)
+    return (top, bl, par, cs, a, c, h, secs_, steps, cnt), i + 1
+
+
+def parse_piece(toks, i, parts):
+    """A piece of a cut cell (`p i` or `b …`) as `hint_cert.cut` returns it, its parts' indices those of the cell's
+    own list `parts`, and the index after it."""
+    if toks[i] == 'p':
+        return ('part', int(toks[i + 1])), i + 2
+    assert toks[i] == 'b', toks[i]
+    nbl = int(toks[i + 1])
+    i += 2
+    bl = [(int(toks[i + 2 * j]), int(toks[i + 2 * j + 1])) for j in range(nbl)]
+    i += 2 * nbl
+    par, f = toks[i] == '1', int(toks[i + 1])
+    cfg = (int(toks[i + 2]), int(toks[i + 3]), int(toks[i + 4]), int(toks[i + 5]), toks[i + 6] == '1')
+    nout = int(toks[i + 7])
+    i += 8
+    out = []
+    for _ in range(nout):
+        p, i = parse_piece(toks, i, parts)
+        out.append(p)
+    cost = sum(parts[p[1]][5] if p[0] == 'part' else p[6] for p in out)
+    return ('buch', bl, par, f, cfg, out, cost), i
+
+
+def parse_cut(lines):
+    """A heavy cell's parts and pieces (`PARTS m`, the parts, `PIECE …`) from the iterator of lines `lines`."""
+    head = next(lines).split()
+    assert head[0] == 'PARTS', head[:2]
+    parts = []
+    for _ in range(int(head[1])):
+        p, _ = parse_part(next(lines).split(), 0)
+        parts.append(p)
+    toks = next(lines).split()
+    assert toks[0] == 'PIECE'
+    piece, i = parse_piece(toks, 1, parts)
+    assert i == len(toks)
+    return piece, parts
+
+
 def parse(text):
-    """The plans in the program's output: a list of `(a, b, cost, calls, fcalls, stat, node)`."""
+    """The plans in the program's output: a list of `(a, b, cost, calls, fcalls, stat, node)`; with `cut`, a heavy
+    cell has in place of its plan `node` the triple `(counts, piece, parts)` of its plan's steps and its cut."""
     out = []
     lines = iter(text.split('\n'))
     for line in lines:
@@ -159,9 +251,14 @@ def parse(text):
         st = next(lines).split()[1:]
         stat = {st[j]: int(st[j + 1]) for j in range(0, len(st), 2)}
         toks = next(lines).split()
-        assert toks[0] == 'TREE'
-        node, i = parse_tree(toks, 1)
-        assert i == len(toks), 'tokens after the plan'
+        if toks[0] == 'COUNT':
+            cnt = {(toks[j], toks[j + 1] == '1'): int(toks[j + 2]) for j in range(1, len(toks), 3)}
+            piece, parts = parse_cut(lines)
+            node = (cnt, piece, parts)
+        else:
+            assert toks[0] == 'TREE'
+            node, i = parse_tree(toks, 1)
+            assert i == len(toks), 'tokens after the plan'
         assert next(lines) == 'END'
         out.append((a, b, c, calls, fcalls, stat, node))
     return out
@@ -179,12 +276,70 @@ def params_file(par_):
     return path
 
 
-def plan_cells(par_, cells):
-    """The plans of the cells `(a, b)` of the first prime, in the program's output order."""
+def plan_cells(par_, cells, cut=False):
+    """The plans of the cells `(a, b)` of the first prime, in the program's output order; with `cut`, a heavy cell
+    (`row_job`'s test) is cut into its parts by the generator in C (`parse`)."""
     exe = build()
     path = params_file(par_)
     inp = ''.join(f'{a} {b}\n' for a, b in cells)
-    r = subprocess.run([exe, path], input=inp, capture_output=True, text=True)
+    r = subprocess.run([exe, path] + (['cut'] if cut else []), input=inp, capture_output=True, text=True)
     if r.returncode != 0:
         raise RuntimeError(f'hint_plan failed ({r.returncode}): {r.stderr.strip()}')
     return parse(r.stdout)
+
+
+# the generator in C (`--cgen`): `hint_cert.add_part`, `cut` and `hl_parts` with the same results
+
+def _gen(par_, cmds):
+    exe = build()
+    path = params_file(par_)
+    r = subprocess.run([exe, path, 'gen'], input='\n'.join(cmds) + '\n', capture_output=True, text=True)
+    if r.returncode != 0:
+        raise RuntimeError(f'hint_plan gen failed ({r.returncode}): {r.stderr.strip()}')
+    return r.stdout
+
+
+def add_parts(par_, groups):
+    """`hint_cert.add_part` of each group `(bl, par, [(lo, hi, plan)])`: the parts' tuples, in order."""
+    cmds = []
+    for bl, par, group in groups:
+        toks = ['ADD', str(int(par)), str(len(bl))] + [f'{x} {y}' for x, y in bl] + [str(len(group))]
+        for lo, hi, node in group:
+            toks.append(f'{lo} {hi}')
+            dump_tree(node, toks)
+        cmds.append(' '.join(toks))
+    out = []
+    for line in _gen(par_, cmds).split('\n'):
+        if line:
+            p, i = parse_part(line.split(), 0)
+            out.append(p)
+    assert len(out) == len(groups)
+    return out
+
+
+def cut_cells(par_, cells):
+    """`hint_cert.cut` of the heavy cells `(a, b, plan)` of the first prime: `(piece, parts)` for each."""
+    cmds = []
+    for a, b, node in cells:
+        cmds.append(' '.join(dump_tree(node, ['CUT', str(a), str(b)])))
+    lines = iter(_gen(par_, cmds).split('\n'))
+    out = [parse_cut(lines) for _ in cells]
+    assert not ''.join(lines)
+    return out
+
+
+def hl_parts(par_, parts):
+    """`hint_cert.hl_parts`: each part as it is if its hints pass with the window's lines named (`Par.hl`), else
+    with its hints transcoded (`transcode_hl`)."""
+    cmds = []
+    for top, bl, par, cs, a, c, h in (p[:7] for p in parts):
+        cmds.append(' '.join(['HL', str(top), str(len(bl))] + [f'{x} {y}' for x, y in bl]
+                             + [str(int(par)), str(len(cs))] + [str(x) for x in cs] + [str(a), str(c), f'{h:x}']))
+    out = []
+    lines = [x for x in _gen(par_, cmds).split('\n') if x]
+    assert len(lines) == len(parts)
+    for p, line in zip(parts, lines):
+        t = line.split()
+        assert t[0] == 'HLPART'
+        out.append(p if t[1] == '0' else p[:6] + (int(t[2], 16),) + p[7:])
+    return out

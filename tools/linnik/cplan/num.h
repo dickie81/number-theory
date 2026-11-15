@@ -13,7 +13,13 @@ typedef uint64_t u64;
 typedef int64_t i64;
 typedef uint32_t u32;
 
+#include <setjmp.h>
+
+/* a run that may fail without stopping the program (the generator's reading of a part's hints in the other format,
+   `gen.h`): a failed check returns to it */
+static jmp_buf *DIEJMP;
 static void die(const char *msg) {
+    if (DIEJMP) longjmp(*DIEJMP, 1);
     fprintf(stderr, "hint_plan: %s\n", msg);
     exit(3);
 }

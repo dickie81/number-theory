@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] [--rows I J [STEP]] [--plan-only [--asc]]
-[--cplan] | --try TAG a/b H HF MAXLEN [--lam N] [--sec N] [--depth N] [--pos] [--blk N] [--skip N] [--energy]
-[--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J] [--ycorner] [--exh N] [--split2 J] [--hl]
-[--chunk N] [--rescap N] [--rows I J] [--out DIR]: the search with the reversal through the largest prime as a
+[--cplan] [--cgen] | --try TAG a/b H HF MAXLEN [--lam N] [--sec N] [--depth N] [--pos] [--blk N] [--skip N]
+[--energy] [--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J] [--ycorner] [--exh N] [--split2 J]
+[--hl] [--chunk N] [--rescap N] [--rows I J] [--out DIR]: the search with the reversal through the largest prime as a
 plan, the hints that lead the kernel through the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`;
 `21500`, the theorem at L = 2150/1000, if none is given).
 
@@ -68,7 +68,10 @@ written with it all the same: its parts' hints are transcoded (`transcode_hl`). 
 fast as CPython, with the same output. With `--cplan` the search of each cell of the first prime is the C planner's
 (`cplan.py`, `cplan/hint_plan.c`: `Planner.plan`, the lazy hints and the replan of `row_job`, method by method):
 the same plans, costs and counts as PyPy's (`cplan_test.py`), 20 to 50 times as fast and in a fraction of the
-memory; the cut into parts, with the kernel's mirror on every hint, stays in Python.
+memory. With `--cgen` the generator is in C too (`cplan/gen.h`): the cut of a heavy cell into parts, the hints of
+each part with the kernel's mirror on them (`cut`, `add_part`, `dHints`, `dPart`), the parts of the light cells and
+the transcoding of a cached cell's hints for `--hl` (`hl_parts`), with the same parts, hints, costs and counts as
+the Python generator's (`cgen_test.py`); Python writes the Lean files.
 
 Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
 primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over frozen parts; nine minutes on four
@@ -1808,8 +1811,12 @@ def row_job(args):
     info = (c, dict(cnt), P.W['calls'], P.W['fcalls'], dict(P.stat))
     if secs(node) <= par_.cap or node[0] != 'B':
         return ('light', a, b, node, info)
-    parts = []
-    piece = cut(P, par_, node, [(a, b)], False, parts)
+    if getattr(par_, 'cgen', False):
+        import cplan
+        piece, parts = cplan.cut_cells(par_, [(a, b, node)])[0]
+    else:
+        parts = []
+        piece = cut(P, par_, node, [(a, b)], False, parts)
     assert piece[6] == c, (piece[6], c)
     return ('heavy', a, b, piece, parts, info)
 
@@ -1817,10 +1824,16 @@ def row_job(args):
 def row_job_c(par_, a, b):
     """`row_job` with the search in C (`--cplan`): the plan, its cost and the counts are `cplan/hint_plan.c`'s,
     which are the Python planner's (with `Planner.rescap = 0`); the cut of a heavy cell into parts, with the kernel's
-    mirror on every hint, is the Python one."""
+    mirror on every hint, is the Python one, or with `--cgen` the C one (`cplan/gen.h`, in the same run)."""
     import cplan
     sys.setrecursionlimit(100000)
-    _, _, c, calls, fcalls, stat, node = cplan.plan_cells(par_, [(a, b)])[0]
+    cgen = getattr(par_, 'cgen', False)
+    _, _, c, calls, fcalls, stat, node = cplan.plan_cells(par_, [(a, b)], cut=cgen)[0]
+    if cgen and isinstance(node[0], dict):
+        # a heavy cell, cut in C: the counts of its plan's steps, its pieces and its parts
+        cnt, piece, parts = node
+        assert c < K and piece[6] == c, (a, b, c)
+        return ('heavy', a, b, piece, parts, (c, cnt, calls, fcalls, stat))
     assert node is not None and c < K, (a, b, c)
     P = par_.planner()
     cnt = Counter()
@@ -1849,7 +1862,11 @@ def row_cached(args):
             # a cell planned without `hl`: its parts' window's records name the lines once transcoded
             P = par_.planner()
             sys.setrecursionlimit(100000)
-            r = r[:4] + (hl_parts(P, r[4]),) + r[5:]
+            if getattr(par_, 'cgen', False):
+                import cplan
+                r = r[:4] + (cplan.hl_parts(par_, r[4]),) + r[5:]
+            else:
+                r = r[:4] + (hl_parts(P, r[4]),) + r[5:]
         return r
     r = row_job((par_, a, b))
     with open(path + '.tmp', 'wb') as fh:
@@ -1897,7 +1914,12 @@ def plan_all(par_, procs=4, rows=None, cache=None, asc=False):
     def flush():
         nonlocal group, gs
         if group:
-            root.append(('part', add_part(P, [], False, group, parts)))
+            if getattr(par_, 'cgen', False):
+                import cplan
+                parts.append(cplan.add_parts(par_, [([], False, group)])[0])
+                root.append(('part', len(parts) - 1))
+            else:
+                root.append(('part', add_part(P, [], False, group, parts)))
             group, gs = [], 0.0
 
     for r in res:
@@ -2451,6 +2473,9 @@ def main():
     if '--cplan' in a:
         # the search of each cell in C (`cplan.py`): the same plans, in a fraction of the time and memory
         par_.cplan = True
+    if '--cgen' in a:
+        # the generator in C (`cplan/gen.h`): the same parts and hints, in a fraction of the time
+        par_.cgen = True
     rows = None
     if '--rows' in a:
         # the cells `I` to `J` of the first prime, every `STEP`-th (`--rows I J [STEP]`)
