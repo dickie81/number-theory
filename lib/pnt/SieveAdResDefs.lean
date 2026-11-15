@@ -14,7 +14,7 @@ values of the powers). This file is the kernel's side:
   intervals in the low four bits of `h`).
 * `okIR`, `resTestsF`: the test of an evaluation of kind `3`, its hint in `s1` (the intervals' number in the low
   four bits); with `fillTestsF`'s tests for the other kinds.
-* `cfgIPR`, `cfgIMR`: the configuration of an evaluation from the hints: `0` and `cfgIP`'s code, or `1`, the rest
+* `cfgIPR`: the configuration of an evaluation from the hints: `0` and `cfgIP`'s code, or `1`, the rest
   (a set of `pw` values), four bits `k` and the test's `k` intervals' ends, thirteen bits each; or, for `k = 0`
   (`resT2`), four more bits `k₂` and `k₂` ends.
 * `headLo`, `chkIRC`, `okIRC`, `resTestsFC`, `cfgIMRC`: the same with the box's cofactor in the rest, at the bit
@@ -84,9 +84,6 @@ noncomputable def cfgIPR (pw h : ℕ) : Cfg × ℕ :=
         (Nat.mod (Nat.div h1 pw) 16) (Nat.div (Nat.div h1 pw) 16))
       (Nat.div h 2))
     (Nat.beq (Nat.land h 1) 1)
-
-/-- **The configuration of an evaluation in the main tree, with the resonant window**, from the hints. -/
-noncomputable def cfgIMR (bl : List Cell) (h : ℕ) : Cfg × ℕ := cfgIPR (Nat.pow 2 (lenR bl)) h
 
 /-- The lower end of a box's first cell, its least prime's (`0` for no cell). -/
 def headLo : List Cell → ℕ

@@ -2,7 +2,7 @@
 # The resonant window's test in the trees over the frozen parts, without Mathlib
 
 `SieveAdResDefs.lean` has the resonant window's test of a box of the main tree, `chkIR`, read from the hints by
-`cfgIMR`. A box of a tree over a frozen part is the chain's cells followed by the frozen primes' (`ch ++ β`), and the
+`cfgIPR`. A box of a tree over a frozen part is the chain's cells followed by the frozen primes' (`ch ++ β`), and the
 same test applies to it: a rest among its primes, the frozen ones included, each in its cell. This file is the
 kernel's side of the search with it:
 

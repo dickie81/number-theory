@@ -101,6 +101,7 @@ result's note finds it unused; blank where neither has been checked.
 | The same with `p ≤ Kq^{218/100}`, with role reversal for a term of three primes added to that tree (in no paper) | `Linnik21800.linnik_21800` | yes |
 | The same with `p ≤ Kq^{2165/1000}`, below `13/6`, where the Type II estimate in one variable has no window: the same search with the estimate in two variables alone, the rest of a term with no prime of the rest's size being a product of the primes of its comparison's own tree (in no paper) | `Linnik21650.linnik_21650` | yes |
 | The same with `p ≤ Kq^{2150/1000}`: that search with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, the kernel following the plan of the search by hints; from the half-plane and Huxley's estimate, with no input of Chen, Gupta and Li's (the Linnik paper's theorem) | `Linnik21500.linnik_21500` | yes |
+| The same with `p ≤ Kq^{2115/1000}`: that search with terms of the sign `+` reversed too, the leaves of a comparison cut in three (the fourth moment of the cofactor's polynomial), and the resonant window in both trees, a Type II estimate in one variable that sorts the characters by the sizes of a rest's own prime sums as well as by their zeros, with Chen, Gupta and Li's large values of the powers and the cofactor in the rest when it is one prime (in no paper) | `Linnik21150.linnik_21150` | yes |
 | Linnik by density estimates and the classical deduction, with the exponents `12`, `4`, `17/6`, `36/13`, `87/35`, `12/5` and `2.3334`, each `+ η` | `Linnik.linnik_twelve`, `LinnikDensity.linnik_four`, `LinnikSubconvex.linnik_seventeen_sixths`, `LinnikIngham.linnik_thirtysix_thirteenths`, `LinnikHuxley.linnik_eighty_seven_thirty_fifths`, `LinnikTwelve.linnik_twelve_fifths`, `LinnikG7.linnik_g7d` | yes |
 | A prime in `(y, y + y^θ]` for every large `y`, `θ > 17/30`; and for all `y ∈ [X, 2X]` outside a set of measure `X^{1−δ}`, `θ > 2/15` | `ZetaGMDensity.short_primes_seventeen_thirtieths`, `ZetaGMDensity.almost_all_short_primes_two_fifteenths` | yes |
 | In terms of `Θ`: `limsup log\|ψ(x) − x\|/log x = Θ`, the same for `M(x)`, `Σ μ(n)n^{−s}` converges exactly on `Re s > Θ`, and a prime in `(y, y + y^θ]` for `θ > 2Θ/(1 + 2Θ)` | `PsiExponent.limsup_expo`, `MertensExponent.limsup_mexpo`, `MertensExponent.moebiusAbscissa_eq_Theta`, `InghamDensity.short_primes_Theta` | |
@@ -245,7 +246,11 @@ In order of what is in reach.
    evaluated by the Type II estimate in two variables with the fourth moment of the cofactor's polynomial over a
    bin of characters (the case `r = 2` of Burgess's moments) as a third bound, a box of leaves that straddles the
    paper's region being cut in three. With it, and no price on the kernel's time, the search passed at
-   `2135/1000` (in no paper; superseded since, and in the git history), at a cost of `0.98988K`. Going further needs Type I
+   `2135/1000` (in no paper; superseded since, and in the git history), at a cost of `0.98988K`. The resonant window
+   (`SieveTypeIIHM.typeII_res`), a Type II estimate in one variable whose characters are sorted by the sizes of a
+   rest's own prime sums as well as by their zeros, with Chen, Gupta and Li's large values of the powers and the
+   cofactor in the rest when it is one prime, takes the search to `2115/1000` (`Linnik21150.linnik_21150`, in no
+   paper), at a cost of `0.88304K` on `3.04·10^7` steps. Going much further needs Type I
    information on longer products than the bilinear estimate's `d₁d₂² < x`, or a Type II estimate on a wider
    region, which a better density estimate above `7789/10000` would give only a little of.
 3. **The half-plane at `7/8`.** OpenAI's main preprint states `Re s > 7/8`, and their own Lean proves it for every

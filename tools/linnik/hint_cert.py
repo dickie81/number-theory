@@ -86,6 +86,10 @@ of the kernel; three hours on four cores with PyPy): the certificate `21350`, su
 history. With `lam = 10` its first prime's cells from x^0.43 to x^0.50 cost 2.1% more, and the planner, which then
 tries each reversal at the full limit, takes fifteen to twenty-five minutes on a cell near x^0.40 (13 November
 2026).
+At 2115/1000 (`21150`: the resonant window in both trees with the cofactor and the large values of the powers, the
+main tree to depth 8, `lam = 1`) the search costs 0.88304 K on 4.9·10^8 boxes (3.04·10^7 steps, 612 part files of
+57 689 parts, a predicted 40 hours of the kernel by `SEC2`; the cells of the first prime planned on two machines,
+about nine hours on four cores each), the cells' theorems in 17 files (15 November 2026).
 
 Needs Python 3 only.
 """
@@ -115,7 +119,8 @@ CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
          '21400': dict(lnum=2140, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=10, sec=2),
          # and the leaves of the comparisons cut in three where the paper's conditions fail
          '21350': dict(lnum=2135, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True),
-         # and the resonant window for the main tree's boxes (`SieveAd.chkIR`)
+         # and the resonant window for the main tree's boxes (`SieveAd.chkIR`); this and the next are plans only: the
+         # library keeps the window's decoder with the cofactor alone (`SieveAd.cfgIMRC`), so their files are not written
          '21300': dict(lnum=2130, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
                        res=True),
          # and for the boxes of the trees over the frozen parts (`SieveAd.frozResTestsC`)
@@ -130,9 +135,9 @@ CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
          # x^0.21, lose their dropped six-prime boxes), and each step chosen by its cost plus a millionth of `K` for
          # each second of the kernel: on four cells sampled from x^0.17 to x^0.42 that adds at most a thousandth of
          # `K` to a cell's plan, and leaves a seventh to two thirds of its hints' bits and a third to three quarters
-         # of the kernel's predicted time
+         # of the kernel's predicted time; the cells' theorems in files of at most 700 (`chunk`)
          '21150': dict(lnum=2115, lden=1000, h=0.003, hF=0.006, maxlen=6, depth=8, pos=True, lam=1, sec=2,
-                       energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3)}
+                       energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3, chunk=700)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
 # dropped cells next to each other are one cell while its bound is at most DMERGE of the sum of theirs
@@ -1886,7 +1891,10 @@ def part_stmt(par_, k, p):
 def defs_file(par_):
     T, LN = par_.tag, f'{par_.lnum}/{par_.lden}'
     res, resF, cof = getattr(par_, 'res', False), getattr(par_, 'resF', False), getattr(par_, 'cof', False)
-    tests, cfgI = ('resTestsFC', 'cfgIMRC') if cof else ('resTestsF', 'cfgIMR') if res else ('fillTestsF', 'cfgIM')
+    # the window is written with the cofactor only: the library has no decoder for it without (a plan made with `res`
+    # alone is planned and checked here all the same, by `Planner.cfgIMR`)
+    assert cof or not res, 'the window\'s certificates are written with the cofactor (--cof)'
+    tests, cfgI = ('resTestsFC', 'cfgIMRC') if cof else ('fillTestsF', 'cfgIM')
     dimp = 'SieveAdFrozResDefs' if resF else 'SieveAdResDefs' if res else 'SieveAdDirDefs'
     alt, ftests = ('altFDR', 'frozResTestsC') if resF else ('altFD', 'frozTestsC')
     yc = getattr(par_, 'ycorner', False)
@@ -1894,15 +1902,14 @@ def defs_file(par_):
         tests, cfgI, dimp, alt, ftests = 'resTestsFY', 'cfgIMY', 'SieveAdResYDefs', 'altFDY', 'frozResTestsY'
     hl = getattr(par_, 'hl', False)
     if hl:
-        # the window's lines named by the hint: the same tests with `SieveResTest.resXH`
+        # the window's lines named by the hint: the same tests with `SieveResTest.resXH` (`SieveAdResHDefs.lean`,
+        # `SieveAdResYHDefs.lean`)
         tests, cfgI, dimp, alt, ftests = (
             ('resTestsFYH', 'cfgIMYH', 'SieveAdResYHDefs', 'altFDYH', 'frozResTestsYH') if yc else
             ('resTestsFCH', 'cfgIMRCH', 'SieveAdResHDefs', 'altFDRH', 'frozResTestsCH'))
-    resdoc = ('With the resonant window: an evaluation of kind `3` in the main tree is `SieveAd.chkIR`\'s\n'
-              '(`SieveAd.resTestsF`; the rest tested by `SieveResTest.resX`), its configuration read by\n'
-              '`SieveAd.cfgIMR`' + (
-                  ', with the box\'s cofactor in the rest when it is one prime (`SieveAd.chkIRC`,\n'
-                  '`SieveAd.resTestsFC`, `SieveAd.cfgIMRC`)' if cof else '') + (
+    resdoc = ('With the resonant window: an evaluation of kind `3` in the main tree is `SieveAd.chkIRC`\'s\n'
+              '(`SieveAd.resTestsFC`; the rest tested by `SieveResTest.resX`, with the box\'s cofactor in it when it is\n'
+              'one prime), its configuration read by `SieveAd.cfgIMRC`' + (
                   '; over the frozen parts too, the box `ch ++ β` (`SieveAd.frozResTestsC`, with\n'
                   '`SieveAd.chkIRF`), read by `SieveAd.cfgIFR`.\n\n' if resF else '.\n\n') if res else '')
     if yc:
@@ -2076,7 +2083,7 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
     res, resF, cof = getattr(par_, 'res', False), getattr(par_, 'resF', False), getattr(par_, 'cof', False)
     hl = getattr(par_, 'hl', False)
     yc = getattr(par_, 'ycorner', False)
-    cfgI = 'cfgIMRCH' if hl else 'cfgIMRC' if cof else 'cfgIMR' if res else 'cfgIM'
+    cfgI = 'cfgIMRCH' if hl else 'cfgIMRC' if cof else 'cfgIM'
     resimp = ('import SieveAdRes\n' + ('import SieveAdFrozResTree\n' if resF else '') +
               ('import SieveAdResCof\n' if cof else '') + ('import SieveAdResH\n' if hl else '') if res else '')
     prof = 'pr_of_partDRH' if hl else 'pr_of_partDR' if resF else 'pr_of_partD'

@@ -318,6 +318,15 @@ Its main tools:
   leaves of a comparison cut in three where the paper's conditions fail (`SieveAd.leavesE`;
   `SieveTwoCompE.prop6_two3_at`, `SieveFillCompE.prop6_fill3_at`, in `formalisations/halasz-montgomery.md`),
   with no price on the kernel's time: `0.98988·K` on `2.4·10^7` steps, in `9110` parts.
+- `Linnik21150.linnik_21150`, Linnik's theorem with exponent `2115/1000` (in no paper): the search led by hints of
+  those two, with the main tree's boxes decomposed to eight primes, and the resonant window in both trees, with the
+  cofactor in the rest when it is one prime and Chen, Gupta and Li's large values of the powers
+  (`SieveAd.resTestsFC_sound`, `SieveAd.pr_of_partDR_at`, in `formalisations/halasz-montgomery.md`); each step
+  chosen by its cost plus a millionth of `K` for each second that the planner predicts of the kernel. The bound of
+  the first term costs `0.88304·K` (`Linnik21150.tree21150`), on `3.04·10^7` steps, `7.5·10^5` of them reversals,
+  in `57689` parts (`lib/pnt/SieveHint21150P1.lean` … `SieveHint21150P612.lean`), with the theorems of the cells
+  cut by the next prime's cells in 17 files (`lib/pnt/SieveHint21150N1.lean` …), where the search visited
+  `4.9·10^8` boxes.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

@@ -129,7 +129,7 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `ResBox g L (n + 1) (L − ρ₂ − ε) (lo − ε)`: the cofactor written out as its primes and `full_res_exp` on the full
   tuples;
 - `SieveAd.evI_resE` and `SieveAd.resTestsF_sound` (`lib/pnt/SieveAdRes.lean`; the test `SieveAd.chkIR`, the tests
-  `SieveAd.resTestsF` and the hints' decoder `SieveAd.cfgIMR` in `lib/pnt/SieveAdResDefs.lean`): a box of the main
+  `SieveAd.resTestsF` in `lib/pnt/SieveAdResDefs.lean`): a box of the main
   tree whose rest passes `SieveResTest.resT` has its term evaluated by `chain_res_exp`, the variable being the box's
   other primes and the cofactor; so the tests with the resonant window for an evaluation of kind `3` (and
   `fillTestsF`'s otherwise) are sound, and `SieveAd.pr_of_partD` applies to a search with them. No certificate uses
