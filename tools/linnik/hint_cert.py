@@ -68,20 +68,22 @@ CPython, with the same output.
 Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
 primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over frozen parts; nine minutes on four
 cores), and its plan has 3.4·10^6 steps. The kernel takes 0.3 ms on an evaluated box (0.5 ms over a frozen part),
-1.2 ms on a Buchstab step (1.1 ms), 0.25 ms on a dropped box (0.45 ms) and 3 ms on a reversal's root, and 63
-minutes on the 17 files; with the configurations searched by the kernel and the box read sum by sum, as in the
-first certificate of this theorem, it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20 ms. At 2140/1000 with cells of
-side 0.003, chains' cells 0.006 and boxes of two to six primes of either sign reversed, the search costs 0.96408 K
-on 2.7·10^8 boxes with no price on the kernel's time (1.87·10^7 steps), and 0.99055 K on 3.5·10^8 boxes with
-`lam = 10` (9.8·10^6 steps, 39 part files; eighty minutes on three cores with PyPy): the certificate `21400`.
+1.2 ms on a Buchstab step (1.1 ms), 0.25 ms on a dropped box (0.45 ms) and 3 ms on a reversal's root, and 63 minutes
+on the 17 files; with the configurations searched by the kernel and the box read sum by sum, as in the first
+certificate of this theorem, it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20 ms. At 2140/1000 with cells of side
+0.003, chains' cells 0.006 and boxes of two to six primes of either sign reversed, the search costs 0.96408 K on
+2.7·10^8 boxes with no price on the kernel's time (1.87·10^7 steps), and 0.99055 K on 3.5·10^8 boxes with `lam = 10`
+(9.8·10^6 steps, 39 part files; eighty minutes on three cores with PyPy): the certificate `21400`, superseded since,
+its files in the git history.
 Of the boxes of that search, 2% to 9% are under the plan that is kept (four cells of the first prime from
 x^0.28 to x^0.50); with `skip = 3`, on every sixth cell of the first prime, the search is 0.55 of its boxes and
 the plan costs 0.17% more, on 1% fewer steps (13 November 2026).
-At 2135/1000 with the leaves of the comparisons cut in three (`energy`) and the cells of 2140/1000, the search
-costs 0.98988 K on 3.7·10^8 boxes with no price on the kernel's time (2.4·10^7 steps, 98 part files, a predicted
-6.5 hours of the kernel; three hours on four cores with PyPy): the certificate `21350`. With `lam = 10` its first
-prime's cells from x^0.43 to x^0.50 cost 2.1% more, and the planner, which then tries each reversal at the full
-limit, takes fifteen to twenty-five minutes on a cell near x^0.40 (13 November 2026).
+At 2135/1000 with the leaves of the comparisons cut in three (`energy`) and the cells of 2140/1000, the search costs
+0.98988 K on 3.7·10^8 boxes with no price on the kernel's time (2.4·10^7 steps, 98 part files, a predicted 6.5 hours
+of the kernel; three hours on four cores with PyPy): the certificate `21350`, superseded since, its files in the git
+history. With `lam = 10` its first prime's cells from x^0.43 to x^0.50 cost 2.1% more, and the planner, which then
+tries each reversal at the full limit, takes fifteen to twenty-five minutes on a cell near x^0.40 (13 November
+2026).
 
 Needs Python 3 only.
 """
@@ -123,8 +125,11 @@ CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
          '21100': dict(lnum=2110, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
                        res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3),
          # at 2115/1000, the main tree's boxes decomposed to eight primes (the light cells of the first prime, below
-         # x^0.21, lose their dropped six-prime boxes)
-         '21150': dict(lnum=2115, lden=1000, h=0.003, hF=0.006, maxlen=6, depth=8, pos=True, lam=0, sec=2,
+         # x^0.21, lose their dropped six-prime boxes), and each step chosen by its cost plus a millionth of `K` for
+         # each second of the kernel: on four cells sampled from x^0.17 to x^0.42 that adds at most a thousandth of
+         # `K` to a cell's plan, and leaves a seventh to two thirds of its hints' bits and a third to three quarters
+         # of the kernel's predicted time
+         '21150': dict(lnum=2115, lden=1000, h=0.003, hF=0.006, maxlen=6, depth=8, pos=True, lam=1, sec=2,
                        energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
@@ -1722,7 +1727,8 @@ def plan_all(par_, procs=4, rows=None, cache=None, asc=False):
         st.update(info[4])
         if r[0] == 'light':
             t = secs(r[3])
-            if group and gs + t > par_.cap:
+            # a part takes consecutive cells only (with `--rows I J STEP` the cells planned need not be)
+            if group and (gs + t > par_.cap or group[-1][1] != r[1]):
                 flush()
             group.append((r[1], r[2], r[3]))
             gs += t

@@ -129,11 +129,11 @@ Mathlib's `LSeries`); and, for the `log log q` lower bound, Brun–Titchmarsh, w
 **12 November: the paper at `43/20`, from the half-plane and Huxley's estimate.** The Linnik paper now proves
 `43/20` (`Linnik21500.linnik_21500`). Its Type II estimate in two variables counts characters only from `7789/10000`
 on, where Huxley's exponent is below Chen, Gupta and Li's, so its curve is now `ghx` (`SieveCurveHx`: the trivial
-count below `7789/10000`, Huxley's steps above; `tools/linnik/gen_zone.py`), and the import cones of the theorems
-with no window, at `2165/1000`, `2150/1000` and (since, in no paper) `2140/1000`, have no module of Chen, Gupta and
-Li's paper; those at `11/5`, `219/100` and `218/100` keep their window, and with it the curve `g7d`. In the table
-below the column `A` of those three rows is the window route's, which they do not use. "The paper" in the entries before this date means its version at
-`11/5`.
+count below `7789/10000`, Huxley's steps above; `tools/linnik/gen_zone.py`), and the import cones of the theorems with
+no window, at `2165/1000` and `2150/1000` (and the one at `2140/1000`, in the git history since), have no module of
+Chen, Gupta and Li's paper; those at `11/5`, `219/100` and `218/100` keep their window, and with it the curve `g7d`.
+In the table below the column `A` of those three rows is the window route's, which they do not use. "The paper" in the
+entries before this date means its version at `11/5`.
 
 Section 2.2 of the paper's version at `11/5`: with a density curve whose largest exponent is `A`, the Type II window
 exists exactly when `L > 1 + A/2`, and the certificate needs between `0.03` and `0.04` above the threshold (that
@@ -148,7 +148,7 @@ the exponent each input would reach is:
 | The same tree with role reversal for a term of three primes that needs an upper bound, at one level (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.18`, a theorem** (`Linnik21800.linnik_21800`) |
 | The same search with no Type II window: the estimate in two variables alone, and for a term with no prime of the size of its rest, the rest among the primes of the comparison's own tree (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.165`, a theorem** (`Linnik21650.linnik_21650`) |
 | The same search with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, at one level (below; **in Lean**, the kernel following the plan of the search by hints) | `7/3` | `13/6` | **`2.15`, a theorem** (`Linnik21500.linnik_21500`) |
-| The same search with a term of the sign `+` reversed through its largest prime too, on cells of side `0.003`, its plan chosen by cost and by the kernel's time (below; **in Lean**, the kernel following the plan) | `7/3` | `13/6` | **`2.14`, a theorem** (`Linnik21400.linnik_21400`) |
+| The same search with a term of the sign `+` reversed through its largest prime too, on cells of side `0.003`, its plan chosen by cost and by the kernel's time (below; **in Lean**, the kernel following the plan) | `7/3` | `13/6` | **`2.14`, a theorem** (`Linnik21400.linnik_21400`; superseded since, in the git history) |
 | The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no certificate; of what it assumes, the two estimates are in Lean as far as Harman's comparison with a rest among the term's primes) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
 | A hybrid large-values estimate of Guth–Maynard strength at `σ = 5/7`, `15/(3 + 5σ)` (the `gm` variant of `tools/linnik/density_payoff.py`) | `105/46 = 2.2826` | `2.1413` | about `2.17`–`2.18` |
 | Guth and Maynard's `30/13` as a cap everywhere | `2.3077` | `2.1538` | about `2.18`–`2.19` |
@@ -395,12 +395,12 @@ covers. The region does not close at `13/6`.
     `1.6·10^5` of them reversals, and `5.2` MB of hints, in `1552` parts (`lib/pnt/SieveHint21500P1.lean` and
     the sixteen files after it), which the kernel checks in 63 minutes of its time (17 files, of 143 to
     271 seconds each, three at a time on four cores).
-- **What is not written.** Role reversal at a second level (below). The reversal of terms of the sign `+` is
-  written since, and with it and a planner that counts the kernel's time there is a theorem at `2140/1000`
-  (`Linnik21400.linnik_21400`; below, *The sign `+` in the search*). Without them the plan of the theorem's
-  search passes at `2.145` with cells of side `0.0035` (`0.975K`, on `6.0·10^7` boxes; `6.6·10^6` steps), twice
-  the build of the theorem at `2.15` for `0.005` of exponent. What the second level and tests that do not narrow
-  with the cells would give in exact terms is measured in the first two items below.
+- **What is not written.** Role reversal at a second level (below). The reversal of terms of the sign `+` is written
+  since, and with it and a planner that counts the kernel's time there was a theorem at `2140/1000`
+  (`Linnik21400.linnik_21400`, superseded since and in the git history; below, *The sign `+` in the search*). Without
+  them the plan of the theorem's search passes at `2.145` with cells of side `0.0035` (`0.975K`, on `6.0·10^7` boxes;
+  `6.6·10^6` steps), twice the build of the theorem at `2.15` for `0.005` of exponent. What the second level and tests
+  that do not narrow with the cells would give in exact terms is measured in the first two items below.
   - *Where the cells' loss is, with this rule* (12 November; the theorem's search at `2.15`, on twenty of the
     `115` cells of the first prime, with some tests taken at the midpoints of the cells, which is no
     certificate). With every test at the midpoints the cost falls by `24.6%`; with those of one kind alone,
@@ -499,26 +499,24 @@ covers. The region does not close at `13/6`.
     grid twice as fine, with `blk = 2` and `λ = 3` (and an earlier form of the rule for when the halves are
     looked at), the cell costs `4.5%` less than on the grid of side `0.003` in the same time of the kernel,
     and ten times the planner's.
-    **The certificate at `2140/1000`** (`Linnik21400.linnik_21400`; `CERTS['21400']` in `hint_cert.py`: those
-    cells, the sign `+`, `λ = 10`, no blocks). The plan costs `0.99055K`, with `9.79·10^6` steps, `3.56·10^5`
-    of them reversals of boxes of the sign `−` and `2.3·10^4` of the sign `+`; the search visited `3.5·10^8`
-    boxes, in eighty minutes on three cores (PyPy). Against the plan with no price on the kernel's time, that is
-    `2.7%` more cost for `48%` fewer steps. It is `3705` parts in 39 files, `14.9` MB of hints (`31` MB as
-    written), and 645 cells have a Buchstab step of their own outside the parts. The kernel checks the parts
-    in `168` minutes of its time (39 files, of `244` to `271` seconds each, four at a time on four cores, so
-    `44` minutes), where the planner predicted `155`: two and two thirds times the theorem's at `2.15`, for
-    `2.9` times its steps.
-    **What finer cells buy** (13 November; every sixth cell of the first prime, the sign `+`, no price on the
-    kernel's time). With every test taken at the midpoints of the cells, which is no certificate but an
-    estimate of the limit of fine cells (`hint_probe.py … pos,mI,mJ,fI,fJ`, on the grid of side `0.003`), the
-    search costs `0.789K` at `2.14`, `0.913K` at `2.13` and `1.023K` at `2.12`: by these numbers the rules
-    that are in Lean stop between `2.13` and `2.12`, near `2.122`, whatever the grid. The exact search at
-    `2.14` costs `0.964K` with cells of side `0.003` and `0.917K` with `0.0025`, on twice the boxes: `22%` and
-    `16%` above the limit. At `2.135` with cells of side `0.0025` it costs `0.967K`: it passes, on a plan of
-    `4.3·10^7` steps and twelve hours of the kernel predicted (four and a half times the certificate at
-    `2.14`), from a search of `5.6·10^8` boxes; a price on the kernel's time has `3%` to spend there. At
-    `2.13` the limit leaves `9.5%` for the cells: cells of side about `0.002` or less, and several times that
-    plan; not tried.
+    **The certificate at `2140/1000`** (`Linnik21400.linnik_21400`, in the git history; `CERTS['21400']` in
+    `hint_cert.py`: those cells, the sign `+`, `λ = 10`, no blocks). The plan costs `0.99055K`, with `9.79·10^6`
+    steps, `3.56·10^5` of them reversals of boxes of the sign `−` and `2.3·10^4` of the sign `+`; the search visited
+    `3.5·10^8` boxes, in eighty minutes on three cores (PyPy). Against the plan with no price on the kernel's time,
+    that is `2.7%` more cost for `48%` fewer steps. It is `3705` parts in 39 files, `14.9` MB of hints (`31` MB as
+    written), and 645 cells have a Buchstab step of their own outside the parts. The kernel checks the parts in `168`
+    minutes of its time (39 files, of `244` to `271` seconds each, four at a time on four cores, so `44` minutes),
+    where the planner predicted `155`: two and two thirds times the theorem's at `2.15`, for `2.9` times its steps.
+    **What finer cells buy** (13 November; every sixth cell of the first prime, the sign `+`, no price on the kernel's
+    time). With every test taken at the midpoints of the cells, which is no certificate but an estimate of the limit
+    of fine cells (`hint_probe.py … pos,mI,mJ,fI,fJ`, on the grid of side `0.003`), the search costs `0.789K` at
+    `2.14`, `0.913K` at `2.13` and `1.023K` at `2.12`: by these numbers the rules that are in Lean stop between `2.13`
+    and `2.12`, near `2.122`, whatever the grid. The exact search at `2.14` costs `0.964K` with cells of side `0.003`
+    and `0.917K` with `0.0025`, on twice the boxes: `22%` and `16%` above the limit. At `2.135` with cells of side
+    `0.0025` it costs `0.967K`: it passes, on a plan of `4.3·10^7` steps and twelve hours of the kernel predicted
+    (four and a half times the certificate at `2.14`), from a search of `5.6·10^8` boxes; a price on the kernel's time
+    has `3%` to spend there. At `2.13` the limit leaves `9.5%` for the cells: cells of side about `0.002` or less, and
+    several times that plan; not tried.
     **The planner's own search** (13 November; the certificate's parameters). Of the boxes that the planner
     searches on a cell of the first prime, `2%` to `9%` are under the plan that it keeps (four cells from
     `x^{0.28}` to `x^{0.50}`); the rest are in what it tried and did not keep: the decomposition of boxes that
@@ -540,38 +538,38 @@ covers. The region does not close at `13/6`.
     Buchstab step, and subset searches by index in place of slices gain `5%`. The cells of the first prime are
     planned apart, so the search goes as fast as there are cores.
   - *Leaves below `√q`, by the fourth moment* (13 November; in Lean, with a certificate at `2135/1000`,
-    `Linnik21350.linnik_21350`). The leaves' rule of the bilinear Type I estimate needs the cofactor longer
-    than `√q` once `d₁ ≥ q` and `d₂` is longer than the cofactor (`a₁ + a₂ < 1 − τ/2`), and that is the only one of
-    its three conditions that binds on its own: relaxed by `q^{1/50}` it takes `7.3%` off the cost of the search at
-    `2.15` on twenty of the `115` cells of the first prime (`0.14279K` for `0.15403K`), by `q^{1/10}` `18.7%`, and
-    no more by `q^{1/4}`, while `d₁ < x/q` and `d₁d₂² < x²/q²` relaxed alone by `q^{1/10}` give nothing; all three
-    by `q^{1/10}` give `37.6%`, by `q^{1/4}` `80.7%`. No bound for Kloosterman sums moves the floor (Weil's needs
-    `d₁n² > q^{5/2}` where the lemma needs `d₁n² > q²`, `n` the cofactor's length, since `Σ_{t≠0}|ŵ(t)| ≥ q − n`),
-    nor Burgess's bound with the large sieve over `d₂` (it needs `d₂n^{2/r} > q^{1+(r+1)/(2r²)}`, against
-    `d₂n ≤ q^{1.15}`). What does is the case `r = 2` of Burgess's moments inside the Type II estimate: the leaf is a
-    sum in three variables, `d₁` the first, the cofactor's interval the second and the primes of `d₂` the rest, and
-    the cofactor's mean square over a bin of `q^g` characters is at most `q^{g/2 + 1/2}` times its length by the
-    fourth moment, against `q` by orthogonality (`SieveTypeIIHM.typeII_two_gen4`). The zone's condition is then
-    `max(0, 1 − p) + g(β)/2 + 1/2 − ν + μ ≤ 2r(1 − β)` in exponents of `q` (`p`, `ν`, `r` those of `d₁`, the cofactor
-    and `d₂`), with the cofactor's character sum as a rest in the bins near `11/12` (`ShortCharSums`); it needs a
-    density estimate below `0.78`, where `ghx` counts trivially, and the curve `g7d` (Ingham's and Chen, Gupta
-    and Li's steps) gives it. Its region at `2.15`: `d₂` from `x^{0.27}` to `x^{0.31}`, `d₁` from `x^{0.44}` to
-    `x^{0.49}`, the cofactor down to about `q^{0.47}` (products to `x^{0.788}`, the floor being at `x^{0.767}`). Its
-    edges are the bins near `5/7`, where the density exponent peaks at `7/3`, and near `11/12`; the half-plane at
-    `7/8` would add only `x^{0.790}` to `x^{0.788}`. In the search (`tools/linnik` with the leaves' test replaced
-    by that region, closed downwards; computed, not proved): `−4.9%` with the fourth moment alone, `−8.0%` with
-    `ShortCharSums` in the high bins, `−2.7%` with Ingham's steps and Huxley's but not Chen, Gupta and Li's. With
+    `Linnik21350.linnik_21350`, superseded since and in the git history). The leaves' rule of the bilinear Type I
+    estimate needs the cofactor longer than `√q` once `d₁ ≥ q` and `d₂` is longer than the cofactor (`a₁ + a₂ < 1 −
+    τ/2`), and that is the only one of its three conditions that binds on its own: relaxed by `q^{1/50}` it takes
+    `7.3%` off the cost of the search at `2.15` on twenty of the `115` cells of the first prime (`0.14279K` for
+    `0.15403K`), by `q^{1/10}` `18.7%`, and no more by `q^{1/4}`, while `d₁ < x/q` and `d₁d₂² < x²/q²` relaxed alone
+    by `q^{1/10}` give nothing; all three by `q^{1/10}` give `37.6%`, by `q^{1/4}` `80.7%`. No bound for Kloosterman
+    sums moves the floor (Weil's needs `d₁n² > q^{5/2}` where the lemma needs `d₁n² > q²`, `n` the cofactor's length,
+    since `Σ_{t≠0}|ŵ(t)| ≥ q − n`), nor Burgess's bound with the large sieve over `d₂` (it needs `d₂n^{2/r} >
+    q^{1+(r+1)/(2r²)}`, against `d₂n ≤ q^{1.15}`). What does is the case `r = 2` of Burgess's moments inside the Type
+    II estimate: the leaf is a sum in three variables, `d₁` the first, the cofactor's interval the second and the
+    primes of `d₂` the rest, and the cofactor's mean square over a bin of `q^g` characters is at most `q^{g/2 + 1/2}`
+    times its length by the fourth moment, against `q` by orthogonality (`SieveTypeIIHM.typeII_two_gen4`). The zone's
+    condition is then `max(0, 1 − p) + g(β)/2 + 1/2 − ν + μ ≤ 2r(1 − β)` in exponents of `q` (`p`, `ν`, `r` those of
+    `d₁`, the cofactor and `d₂`), with the cofactor's character sum as a rest in the bins near `11/12`
+    (`ShortCharSums`); it needs a density estimate below `0.78`, where `ghx` counts trivially, and the curve `g7d`
+    (Ingham's and Chen, Gupta and Li's steps) gives it. Its region at `2.15`: `d₂` from `x^{0.27}` to `x^{0.31}`, `d₁`
+    from `x^{0.44}` to `x^{0.49}`, the cofactor down to about `q^{0.47}` (products to `x^{0.788}`, the floor being at
+    `x^{0.767}`). Its edges are the bins near `5/7`, where the density exponent peaks at `7/3`, and near `11/12`; the
+    half-plane at `7/8` would add only `x^{0.790}` to `x^{0.788}`. In the search (`tools/linnik` with the leaves' test
+    replaced by that region, closed downwards; computed, not proved): `−4.9%` with the fourth moment alone, `−8.0%`
+    with `ShortCharSums` in the high bins, `−2.7%` with Ingham's steps and Huxley's but not Chen, Gupta and Li's. With
     the theorem's parameters at `2.15` the whole search passes at `2.145` (`0.97488K`, where the paper's rule costs
     `1.01893K`); with those of the certificate at `2.14` (cells `0.003`, the sign `+`, no price on time), on every
     sixth of the `155` cells of the first prime at `2.135` it costs `0.16331K` for the paper's `0.17179K`, so the
-    whole plan about `0.974K` for `1.024K`: `2.135` passes with these leaves and not without them. In Lean: the
-    fourth moment (`SieveTwoFourth`), the estimate with it (`SieveTwoTypeII4`), the zone for `g7d` on a region of
-    536 cases (`SieveLeafZone`), the leaves' term through it (`SieveLeafTwo.leaf2_bound`), and a test that a kernel
-    can check, which is weaker than the region closed downwards: a box of leaves that straddles the paper's region
-    is cut where `d₁` and then `d₂` leave it, the paper's lemma takes the first two parts and the zone, at the
-    corners of a rectangle of exponents, the third (`SieveAd.leavesE`; `SieveTwoCompE.prop6_two3_at`,
-    `SieveFillCompE.prop6_fill3_at`). With that test the sample costs `0.16638K` (`−3.15%`), and the whole plan,
-    with no price on the kernel's time, `0.98988K` on `2.4·10^7` steps: the theorem at `2135/1000`. The price of the
+    whole plan about `0.974K` for `1.024K`: `2.135` passes with these leaves and not without them. In Lean: the fourth
+    moment (`SieveTwoFourth`), the estimate with it (`SieveTwoTypeII4`), the zone for `g7d` on a region of 536 cases
+    (`SieveLeafZone`), the leaves' term through it (`SieveLeafTwo.leaf2_bound`), and a test that a kernel can check,
+    which is weaker than the region closed downwards: a box of leaves that straddles the paper's region is cut where
+    `d₁` and then `d₂` leave it, the paper's lemma takes the first two parts and the zone, at the corners of a
+    rectangle of exponents, the third (`SieveAd.leavesE`; `SieveTwoCompE.prop6_two3_at`,
+    `SieveFillCompE.prop6_fill3_at`). With that test the sample costs `0.16638K` (`−3.15%`), and the whole plan, with
+    no price on the kernel's time, `0.98988K` on `2.4·10^7` steps: the theorem at `2135/1000`. The price of the
     theorem at `2.14` (ten millionths of `K` for each second of the kernel) costs `2.1%` on the first prime's cells
     from `x^{0.43}` to `x^{1/2}`, which `2.135` cannot afford. Not in Lean: the cofactor's character sum as a rest in
     the high bins (`ShortCharSums`), worth `−8.0%` in place of `−4.9%` with the idealised test.
