@@ -1785,13 +1785,16 @@ static i128 pSolve(const Ops *O, const Strat *S, int n, const Cell *bl, int nbl,
         node->k == KV || node->k == KS)
         return c;
     Cell x = bl[0];
-    CHECK(!G.split2, "split2 is not supported");
-    int two = 0;
+    /* with `split2 = J`, a box of two primes of the main tree is also tried cut in two, down to cells of 1/2^J of the
+       grid's step, and kept cut where that costs less with the kernel's time of both counted */
+    int two = G.split2 && !FZ.on && nbl == 2 && G.wmin < tsub(x.hi, x.lo) &&
+              (i128)G.hI < (i128)tsub(x.hi, x.lo) * ((i128)1 << G.split2);
     if (!two && !nearRes(bl, nbl)) return c;
     statAdd(S_splittry, 1);
     Node *ns = NULL;
     i128 cs = pSplit(O, S, n - 1, x, bl, nbl, par, c, sib, &ns);
-    if (ns && cs < c) {
+    if (ns && cs < c &&
+        (!(two && G.lamK != 0) || addIF(cs, G.lamK * ns->secs) < addIF(c, G.lamK * node->secs))) {
         statAdd(S_splitwin, 1);
         nfree(node);
         *out = ns;
