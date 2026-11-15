@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """hint_cert.py [TAG] [--check] [--out DIR] [--procs N] [--cache DIR] [--rows I J [STEP]] [--plan-only [--asc]]
-| --try TAG a/b H HF MAXLEN [--lam N] [--sec N] [--depth N] [--pos] [--blk N] [--skip N] [--energy]
+[--cplan] | --try TAG a/b H HF MAXLEN [--lam N] [--sec N] [--depth N] [--pos] [--blk N] [--skip N] [--energy]
 [--res | --resF] [--cof] [--lv] [--lazy] [--rmerge] [--split J] [--ycorner] [--exh N] [--split2 J] [--hl]
 [--chunk N] [--rescap N] [--rows I J] [--out DIR]: the search with the reversal through the largest prime as a
 plan, the hints that lead the kernel through the plan, and the Lean files of a theorem (`TAG`: one of `CERTS`;
@@ -65,7 +65,10 @@ cells of side HF over the frozen parts, boxes of at most MAXLEN primes reversed;
 named by the hint, `Par.hl`; `--chunk N`, the cells' theorems in files of at most N, `Par.chunk`) and its cost and
 the plan's size are printed; with `--out`, its files are written to DIR. A cell kept in the cache without `--hl` is
 written with it all the same: its parts' hints are transcoded (`transcode_hl`). PyPy runs it one and a half times as
-fast as CPython, with the same output.
+fast as CPython, with the same output. With `--cplan` the search of each cell of the first prime is the C planner's
+(`cplan.py`, `cplan/hint_plan.c`: `Planner.plan`, the lazy hints and the replan of `row_job`, method by method):
+the same plans, costs and counts as PyPy's (`cplan_test.py`), 25 to 30 times as fast and in a fraction of the
+memory; the cut into parts, with the kernel's mirror on every hint, stays in Python.
 
 Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
 primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over frozen parts; nine minutes on four
@@ -677,7 +680,7 @@ class Planner(fl.FlipSearch):
     # the two differ stay: the hints that a search found where the strict filter failed, and the keys that passed
     # it and for which the writer found no hint (`resbad`). The entries dropped are those that the strict filter
     # passed (they are found again as they were) and the failures after it failed (the search fails again), so
-    # the plan is the one made with no limit
+    # the plan is the one made with no limit. `--cplan`, whose memo keeps those entries only, needs no limit
     rescap = 0
     reslim = 0
     restrims = 0         # the number of trims (not in `stat`: a cell's cache entry is the same with and without)
@@ -1777,6 +1780,8 @@ def hl_parts(P, parts):
 def row_job(args):
     """The plan of one cell of the first prime: light, to be put in a part with its neighbours, or cut."""
     par_, a, b = args
+    if getattr(par_, 'cplan', False):
+        return row_job_c(par_, a, b)
     P = par_.planner()
     sys.setrecursionlimit(100000)
     c, node = P.plan([(a, b)], False, K)
@@ -1801,6 +1806,26 @@ def row_job(args):
     cnt = Counter()
     count(node, cnt)
     info = (c, dict(cnt), P.W['calls'], P.W['fcalls'], dict(P.stat))
+    if secs(node) <= par_.cap or node[0] != 'B':
+        return ('light', a, b, node, info)
+    parts = []
+    piece = cut(P, par_, node, [(a, b)], False, parts)
+    assert piece[6] == c, (piece[6], c)
+    return ('heavy', a, b, piece, parts, info)
+
+
+def row_job_c(par_, a, b):
+    """`row_job` with the search in C (`--cplan`): the plan, its cost and the counts are `cplan/hint_plan.c`'s,
+    which are the Python planner's (with `Planner.rescap = 0`); the cut of a heavy cell into parts, with the kernel's
+    mirror on every hint, is the Python one."""
+    import cplan
+    sys.setrecursionlimit(100000)
+    _, _, c, calls, fcalls, stat, node = cplan.plan_cells(par_, [(a, b)])[0]
+    assert node is not None and c < K, (a, b, c)
+    P = par_.planner()
+    cnt = Counter()
+    count(node, cnt)
+    info = (c, dict(cnt), calls, fcalls, stat)
     if secs(node) <= par_.cap or node[0] != 'B':
         return ('light', a, b, node, info)
     parts = []
@@ -2423,6 +2448,9 @@ def main():
     else:
         print(__doc__)
         return 2
+    if '--cplan' in a:
+        # the search of each cell in C (`cplan.py`): the same plans, in a fraction of the time and memory
+        par_.cplan = True
     rows = None
     if '--rows' in a:
         # the cells `I` to `J` of the first prime, every `STEP`-th (`--rows I J [STEP]`)
