@@ -189,6 +189,8 @@ import SieveAdResYDefs
 import SieveAdResY
 import SieveAdFrozResY
 import SieveAdFrozResYTree
+import SieveAdCutDefs
+import SieveAdCut
 import SieveResTerm
 import SieveAdRes
 import SieveAdFrozRes
@@ -1076,6 +1078,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveResTest.resX_sound_cells
 #print axioms SieveAd.resTestsFY_sound
 #print axioms SieveAd.pr_of_partDY_at
+#print axioms SieveAd.pr_of_partDYS_at
 #print axioms SieveAd.cfgIMY
 #print axioms SieveTypeIIHM.chain_res_exp
 #print axioms SieveAd.evI_resE

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1855 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1856 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 354 | 1036 |
+| `lib/pnt` | 355 | 1037 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2529,6 +2529,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAd22000`: Linnik's theorem with exponent `11/5` from a tree that passes the tests
 
 - `SieveAd22000.linnik_tree_22000`: Linnik's theorem with exponent `11/5`, from a tree that passes the tests
+
+#### `SieveAdCut`: The search led by hints with a cut of any cell of a box at any point is sound
+
+- `SieveAd.pr_of_partDYS_at`: A part of the main search with cuts of any cell, for any route ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdDefs`: A tree of Buchstab steps on boxes of cells, without Mathlib
 

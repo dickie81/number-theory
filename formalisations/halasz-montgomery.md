@@ -180,7 +180,15 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `SieveAd.cfgIMY`, `cfgIFY`; the search `altFDY`): `SieveAd.resTestsFY_sound` (`lib/pnt/SieveAdResY.lean`), the
   tests of the main tree are sound, and `SieveAd.pr_of_partDY_at` (`lib/pnt/SieveAdFrozResYTree.lean`, with
   `evIF_froz_resTY` of `lib/pnt/SieveAdFrozResY.lean`), a part of the search whose trees over the frozen parts read
-  them bounds its term. The existing modules are unchanged. No certificate uses them yet;
+  them bounds its term. The existing modules are unchanged. No certificate uses them yet. **A cut of any cell
+  of a box, at any point, in the search led by hints** (`lib/pnt/SieveAdCutDefs.lean`: `SieveAd.altC`, a cut read
+  where `stepD` reads its hinted bound, one bit, the cell's position and the exponent of the cut; `solveDS`, the
+  search with it at every depth; `flipTreeDYS` … `altFDYS`, the reversal whose trees are searched that way, a cut
+  there being of a cell of the chain): `SieveAd.pr_splitAt` and `pf_splitAt` (`lib/pnt/SieveAdCut.lean`), the
+  costs of the two boxes of a cut add, in the main tree and over a frozen part (`bd_split`, `bdF_split` at the
+  cell's index); `SieveAd.solveDS_sound`, by `stepD_sound` at each depth; and `SieveAd.pr_of_partDYS_at`, a part of
+  that search bounds its term. It is for boxes that the edge of a test's zone crosses: cut at the zone's edge,
+  the part inside is evaluated and only the rest is dropped or decomposed. No certificate uses it yet;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
