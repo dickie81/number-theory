@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1848 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1851 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 349 | 1029 |
+| `lib/pnt` | 351 | 1032 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2654,6 +2654,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.evI_resCE`: A box evaluated by the resonant window with its cofactor in the rest, under more atoms ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.resTestsFC_sound`: The tests with the resonant window and the cofactor are sound ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveAdResH`: The resonant window's tests with the lines named by the hint are sound
+
+- `SieveAd.resTestsFCH_sound`: The tests with the resonant window, its lines named by the hint, and the cofactor are sound ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.pr_of_partDRCH_at`: A part of the search with the window's lines named by the hint bounds its term ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveAdRev`: The tree of a reversed term bounds it
 
 - `SieveAd.rootJ_sound`: The cost of the terms of an atoms' box at its level
@@ -3084,6 +3089,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveResTest.resT_sound`: The test is sound ([note](../formalisations/halasz-montgomery.md))
 - `SieveResTest.resT_sound_cells`: The test is sound, in the cells' units ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResTestH`: The resonant window's test with the lines named by the hint is sound
+
+- `SieveResTest.resXH_sound_cells`: The test with the lines named by the hint, in either form, is sound, in the cells' units ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveResTypeII`: The resonant window: Proposition 3′ with the characters classed by the sizes of the rest's prime sums
 
