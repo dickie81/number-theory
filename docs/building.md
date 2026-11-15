@@ -28,7 +28,8 @@ default build also has the certificates' part files: the 17 of the Linnik paper'
 (`lib/pnt/SieveHint21500P<k>.lean`, 1552 parts), about an hour of the kernel in all, and the 114 of the library's
 theorem at `11/5` (`lib/pnt/SieveCert22000EP<k>.lean`, 1136 parts), about 6.2 hours of one core in all. `CheckAll` has
 also the 39 of the library's theorem at `2140/1000` (`lib/pnt/SieveHint21400P<k>.lean`, 3705 parts), about 2.8 hours
-of the kernel in all. Of Mathlib the parts import only `Mathlib.Data.Nat.Notation`, and each of the 114 used at most
+of the kernel in all, and the 98 of the theorem at `2135/1000` (`lib/pnt/SieveHint21350P<k>.lean`, 9110 parts), about
+6.5 hours by the planner's prediction. Of Mathlib the parts import only `Mathlib.Data.Nat.Notation`, and each of the 114 used at most
 2.8 GiB of private memory while the kernel checked it. `scripts/lean-slots.sh` still honours a `-- exclusive-heavy`
 mark, which runs a part file with no other certificate part; no part file now carries it. Earlier certificates (for
 the weaker exponents `278/125`, `899/400`, `9/4`, `226/100` and others) and the stepping-stone modules only they used

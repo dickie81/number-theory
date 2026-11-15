@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1809 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1822 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 325 | 990 |
+| `lib/pnt` | 333 | 1003 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1561,6 +1561,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow`: The least prime primitive root mod a prime power
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_safe`: Safe primes
 
+#### `Linnik21350`: Linnik's theorem with exponent `2135 / 1000`, by a search led by hints
+
+- `Linnik21350.tree21350`: The first term at `2135 / 1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21350.linnik_21350`: Linnik's theorem with exponent `2135 / 1000`, by a search led by hints ([note](../formalisations/harman-sieve.md))
+
 #### `Linnik21400`: Linnik's theorem with exponent `2140 / 1000`, by a search led by hints
 
 - `Linnik21400.tree21400`: The first term at `2140 / 1000` ([note](../formalisations/harman-sieve.md))
@@ -2866,7 +2871,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveFillComp`: The comparison in two variables with the rest among the tree's primes
 
 - `SieveFillComp.prop6_fill`: The comparison in two variables with the rest among the tree's primes *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveFillComp.prop6_fill_at`: The comparison in two variables with the rest among the tree's primes, for an exponent `2 < L ≤ 5/2` *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveFillComp.prop6_fill_at`: The comparison in two variables with the rest among the tree's primes, for an exponent `2 < L ≤ 5/2` *paper* ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveFillCompE`: The comparison with the rest among the tree's primes, the leaves cut in three
+
+- `SieveFillCompE.prop6_fill3_at`: The comparison with the rest among the tree's primes, the leaves cut in three, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveFillTree`: Buchstab's tree below a chain's last entry
 
@@ -2918,6 +2927,26 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveLeaf.prod_primesBelow_le`: Mertens' product bound, in its elementary form *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveLeaf.prod_T_le`: The main term of a leaf *paper* ([note](../formalisations/harman-sieve.md))
 
+#### `SieveLeafSplit`: The large leaves of a family split in three: two by the paper's lemma, one by the estimate in two variables
+
+- `SieveLeafSplit.tree_leaves_le3`: The leaves of a tree, each size by the paper's lemma or split in three ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveLeafTwo`: The leaves by the Type II estimate in two variables
+
+- `SieveLeafTwo.leaf2_bound`: Leaves with two marked products ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafTwo.leavesE_of_zone`: `LeavesE` for large `q`, from `leaf2_bound` at each length up to `K₀` ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafTwo.typeIITwoAt_leaf`: Proposition 3′ in two variables on the leaves' region ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafTwo.typeIITwoAt_leafX`: Proposition 3′ in two variables on `LeafZoneX L` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveLeafZone`: The zone of the leaves with the fourth moment, for the curve `g7d`
+
+- `SieveTypeIIHM.zone_leaf`: The zone's exponents with the fourth moment for the curve `g7d` on the region `LeafZone L` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveLeafZoneX`: The leaves' region above `√q` as inequalities, and its test on a box in integers
+
+- `SieveLeafZoneX.leafZoneX_of_XL`: `LeafZoneXL` is in `LeafZoneX` ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafZoneX.leafXR_sound`: The test is sound ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveLeaves`: The leaves' estimates on families of atoms
 
 - `SieveLeaves.TL_spec`: The lower window, on a family of atoms
@@ -2964,7 +2993,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveP6TreeLeaves`: Proposition 6 with the bilinear estimate: the leaves of the tree
 
-- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper* ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveP6ib`: Proposition 6 with the bilinear estimate
 
@@ -3061,6 +3090,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTwoComp.prop6_two`: Harman's comparison with stops in two variables and the leaves of the wider region *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoComp.prop6_two_at`: Harman's comparison with stops in two variables, for an exponent `2 < L ≤ 5/2` *paper* ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveTwoCompE`: Harman's comparison in two variables with the leaves of a box cut in three
+
+- `SieveTwoCompE.prop6_two3_at`: Harman's comparison with stops in two variables with a box of leaves cut in three, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveTwoCross`: Conditions between the two variables of a bilinear estimate
 
 - `SieveTwoCross.kern_eq`: The product of the indicators is the indicator of the conjunction.
@@ -3082,7 +3115,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTwoTerm.sum_full_eq`: The chains with their cofactor's tuples are the full tuples
 - `SieveTwoTerm.chain2_bound`: Chains with two marked products *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoTerm.chain2R_bound`: Chains with two marked products and the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
-- `SieveTwoTerm.chainOK2_of_zone`: `ChainOK2` for every length up to `K₀ + 1` *paper*
+- `SieveTwoTerm.chainOK2_of_zone`: `ChainOK2` for every length up to `K₀ + 1` *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoTerm.chain2R_at`: Chains with two marked products and the cofactor in the rest, for an exponent `2 < L ≤ 5/2` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoTuples`: Tuples of primes as the two variables of the Type II estimate
@@ -3097,6 +3130,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.ZoneOK`: The zone's exponents on a region *paper*
 - `SieveTypeIIHM.typeII_two_gen`: Proposition 3′ in two variables, for a curve on a region of a zone, pointwise in the heights *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.typeII_two_long`: The Type II estimate for two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveTwoTypeII4`: Proposition 3′ in two variables with the fourth moment
+
+- `SieveTypeIIHM.typeII_two_gen4`: Proposition 3′ in two variables with the fourth moment, for a curve on a region of a zone, pointwise in the heights ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoZone`: One bin in two variables, as powers of `q`
 

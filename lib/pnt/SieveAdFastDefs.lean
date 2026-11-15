@@ -15,7 +15,8 @@ a frozen part imply the proved ones on the boxes of the tree.
   sum over all the cells of `(lo − f) + (hi − lo) + (DEN − hi)`, and the number of cells, passed to `k`.
 * `cellsP f e n`: the cells' check from that sum `e` and their number `n`.
 * `uOfP`, `vOfP`, `coreI2P`, `coreJ2P`, `coreJ3P`: `uOf`, `vOf` and the checks on numbers, with the arithmetic of
-  `ℕ` written out.
+  `ℕ` written out (but for the leaves cut in three, `SieveAd.leavesE`, which `coreJ2P` reads only where the paper's
+  conditions fail).
 * `okI2F`, `okJ2F`, `okJ3F`, `fillTestsF`: the tests with no window.
 * `lenR`: the length of a list, by the recursor.
 * `okIFC`, `okJF3C`, `okJF2C`, `frozTestsC`: the tests of the tree over a frozen part. A box of such a tree is a
@@ -132,13 +133,15 @@ on numbers. -/
 def coreJ3P (f : ℕ) (e : Bool) (u v t r1 r2 c0lo c0hi h1s h2s : ℕ) : Bool :=
   zoneJP u v r1 r2 && Nat.blt (Nat.add r1 f) r2 && Nat.blt (Nat.add u f) v && Nat.ble u (Nat.add t c0lo) &&
     Nat.blt c0hi v &&
-    leavesP (Nat.add h1s (cond e (Nat.add t r2) 0)) (Nat.add h2s (cond e 0 (Nat.add t r2)))
+    (leavesP (Nat.add h1s (cond e (Nat.add t r2) 0)) (Nat.add h2s (cond e 0 (Nat.add t r2))) ||
+      leavesE (Nat.add h1s (cond e (Nat.add t r2) 0)) (Nat.add h2s (cond e 0 (Nat.add t r2))))
 
 /-- `coreJ2` but for its first check `0 < f`: the checks of the comparison with the rest among the box's primes on
 numbers. -/
 def coreJ2P (f : ℕ) (e : Bool) (u v t ρ₁ ρ₂ c0lo c0hi h1s h2s : ℕ) : Bool :=
   zoneJP u v ρ₁ ρ₂ && Nat.blt (Nat.add u f) v && Nat.ble u (Nat.add t c0lo) && Nat.blt c0hi v &&
-    leavesP (Nat.add h1s (cond e t 0)) (Nat.add h2s (cond e 0 t))
+    (leavesP (Nat.add h1s (cond e t 0)) (Nat.add h2s (cond e 0 t)) ||
+      leavesE (Nat.add h1s (cond e t 0)) (Nat.add h2s (cond e 0 t)))
 
 /-! ### The tests with no window -/
 

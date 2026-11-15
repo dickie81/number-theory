@@ -72,7 +72,7 @@ class TestsF(tc.Tests):
         D2 = tsub(hiSum(bl), mSum(1, bl, s1)) + (0 if e else t + r2)
         return (0 < f and len(bl) <= 13 and all(f <= c[0] <= c[1] <= DEN for c in bl)
                 and self.zone(r1, r2, u, v) and r1 + f < r2 and u + f < v and u <= t + mSum(0, bl, s0)
-                and mSum(1, bl, s0) < v and self.leaves(D1, D2))
+                and mSum(1, bl, s0) < v and (self.leaves(D1, D2) or (self.energy and self.leavesE(D1, D2))))
 
     def okJ3(self, bl, f, cfg):
         _, s0, _, s1, e = cfg
@@ -108,7 +108,7 @@ class FillSearch(rc.RevSearch):
     def tryJ3(self, bl, ls, hs, f):
         r2 = self.restLo + f + 1
         b = self.bestSub(self.vOfF(r2), 0, bl, 1, 0, 0, 0, ls, (0, 0))
-        sp = self.leavesOf(bl, hs, tsub(self.u3, b[0]) + r2)
+        sp = self.leavesOfJ2(bl, hs, tsub(self.u3, b[0]) + r2)
         return None if sp is None else (f, (2, b[1], 0, sp[0], sp[1]))
 
     def propJ3(self, bl, ls, hs, n, f):
@@ -122,7 +122,7 @@ class FillSearch(rc.RevSearch):
     def propJ(self, bl):
         """`propJF bl`."""
         lomin, ls, hs = min([DEN] + [c[0] for c in bl]), loSum(bl), hiSum(bl)
-        if self.T5 < hs:
+        if self.t5J() < hs:
             return []
         r = self.propJ2(bl, lomin, ls, hs)
         out = []
