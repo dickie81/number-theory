@@ -1,16 +1,18 @@
 zeta, n <= 12: (B) pass; second minimum s_2 = 1.938705 at {1: -1, 2: -1} (arb: [1.9387054450527943871370953 +/- 5.12e-26])
 zeta, n <= 30: (B) pass; second minimum s_2 = 1.938705 at {1: -1, 2: -1} (arb: [1.9387054450527943871370953 +/- 5.12e-26])
 curves-all: 148 curves, windows of 3..20 indices; positive definite: 148
-  (A) fails in the window: 59 (at the second index: 43)
+  (A) fails in the window (exact): 59 (at the second index: 43); the 40-digit pivots agree: True
   (B) fails in the window (exact): 43, on the first two indices: 43, only beyond them: 0; (B) fails only where (A) does: True; curves with exact ties Q = d_1: 18; truncated: 0
   k = 2 identity, (B) fails at N = 2 iff d_2 < d_1: True
   passing curves: least second minimum s_2 = 1.000000; (A) fails but (B) holds: 16
 curves-cop: 148 curves, windows of 20..20 indices; positive definite: 148
-  (A) fails in the window: 53 (at the second index: 39)
+  (A) fails in the window (exact): 53 (at the second index: 39); the 40-digit pivots agree: True
   (B) fails in the window (exact): 39, on the first two indices: 39, only beyond them: 0; (B) fails only where (A) does: True; curves with exact ties Q = d_1: 15; truncated: 1
   passing curves: least second minimum s_2 = 1.000000; (A) fails but (B) holds: 14
 relation: Q = 0 exactly for 148 of 148 curves, so (B) fails at N = q^deg(m); N ranges over 4..4826809, median 256; N <= 20: 28
-frobenius: 148 curves; m irreducible: 132; (B) fails: 0; curves with ties T(P) = 2g at P other than +-1: 4; (A) fails below z^deg(m): 1; least second minimum T(P)/2g: 1.000000
+frobenius: 148 curves; m irreducible: 132; (B) fails: 0; truncated: 0; curves with ties T(P) = 2g at P other than +-1: 4; (A) fails below z^deg(m): 1; least second minimum T(P)/2g: 1.000000
+searches truncated (node budget): 1, of curves counted as passing (B) there: 0
+  truncated: curves-cop q=4 g=1 L=[1, -4, 4]: (B) fails, certified exactly at a vector found
 all primitive characters, q <= 400: 29468 characters (242 real, 29226 complex); positive definite on n <= 12: 29468
   (A) for G at k = 2 (arb): fails 5983, undecided 0; (A) for G fails at some k <= 12 (float): 5987
   (A) for Re G fails at some k <= 12 (float): 5443, of which first at k = 2: 5443

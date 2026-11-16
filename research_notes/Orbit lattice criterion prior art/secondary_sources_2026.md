@@ -50,7 +50,7 @@ E. Bombieri, "A variational approach to the explicit formula", Comm. Pure Appl. 
   continuous relatives of λ_N in Section 8. As described, he does not take pivots against a first vector or consider
   integer lattices. The paper's wording, "minimisation over test functions on windows", stands.
 - **A lead to check before submission.** Section 8 of Bombieri (2003) meets Brownian motion. In the paper the flat
-  model (Proposition 2.4) gives the covariance of Brownian motion at integer times, min(m, n). The paper should
+  model (Proposition 2.5) gives the covariance of Brownian motion at integer times, min(m, n). The paper should
   compare the two once Bombieri's text is read.
 
 ## Broughan's three volumes

@@ -720,6 +720,64 @@ theorem shortest_unique (hRH : RiemannHypothesis) {N : ℕ} (a : ℕ → ℤ) (h
   have hhi : a 1 ≤ 1 := by nlinarith
   omega
 
+/-- `d_1 = K_H(1) > 1/50`: Mathlib's `H_n − log(n + 1) < γ` at `n = 32`, with `log 33 ≤ 5 log 2 + 1/32`, gives
+`γ > 0.5615`, and `log π < 1.15`. -/
+lemma gram_one_gt : (1 / 50 : ℝ) < BallWeil.gram 1 1 := by
+  rw [BallWeil.gram_self, BallWeil.kψ_one, Nat.cast_one, one_mul]
+  have hγ := Real.eulerMascheroniSeq_lt_eulerMascheroniConstant 32
+  have e : Real.eulerMascheroniSeq 32 = 586061125622639 / 144403552893600 - Real.log 33 := by
+    rw [Real.eulerMascheroniSeq]; norm_num [harmonic, Finset.sum_range_succ]
+  have h33 : Real.log 33 ≤ 5 * Real.log 2 + 1 / 32 := by
+    have h1 : Real.log 33 = Real.log 32 + Real.log (33 / 32) := by
+      rw [← Real.log_mul (by norm_num) (by norm_num)]; norm_num
+    have h32 : Real.log 32 = 5 * Real.log 2 := by
+      rw [show (32 : ℝ) = 2 ^ 5 by norm_num, Real.log_pow]; norm_num
+    have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 33 / 32 by norm_num)
+    linarith
+  have hlog4pi : Real.log (4 * π) = 2 * Real.log 2 + Real.log π := by
+    rw [Real.log_mul (by norm_num) Real.pi_ne_zero, show (4 : ℝ) = 2 ^ 2 by norm_num, Real.log_pow]
+    norm_num
+  have hl2 := Real.log_two_lt_d9
+  have hlpi : Real.log π < 1.15 := by
+    rw [Real.log_lt_iff_lt_exp Real.pi_pos]
+    have h := Real.sum_le_exp_of_nonneg (x := 1.15) (by norm_num) 8
+    simp only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial] at h
+    norm_num at h
+    have hπ := Real.pi_lt_d6
+    linarith
+  rw [e] at hγ
+  rw [hlog4pi]
+  norm_num at hγ hl2 ⊢
+  linarith
+
+/-- **Every other lattice vector clears `c₀`** (RH): a nonzero integer vector other than `±δ_1` has
+`Q_N(a) ≥ (999/1000)(2/45)(13/10)`. With a nonzero coefficient at some `n ≥ 2` this is `lattice_gap`; otherwise `a`
+is `mδ_1` with `|m| ≥ 2`, and `Q_N(a) = m²·d_1 ≥ 4·d_1 > 0.08`. -/
+theorem lattice_second (hRH : RiemannHypothesis) {N : ℕ} (a : ℕ → ℤ) (h : ∃ n ∈ Icc 1 N, a n ≠ 0)
+    (hne : ¬((a 1 = 1 ∨ a 1 = -1) ∧ ∀ n ∈ Icc 2 N, a n = 0)) :
+    999 / 1000 * (2 / 45) * (13 / 10) ≤ BallWeil.form N (fun n => (a n : ℝ)) := by
+  by_cases h2 : ∃ n ∈ Icc 2 N, a n ≠ 0
+  · exact lattice_gap hRH a h2
+  · push Not at h2
+    obtain ⟨n₀, hn₀, han₀⟩ := h
+    obtain ⟨h1N, hN0⟩ := Finset.mem_Icc.1 hn₀
+    have hN : 1 ≤ N := h1N.trans hN0
+    have ha1 : a 1 ≠ 0 := by
+      rcases Nat.lt_or_ge 1 n₀ with h1 | h1
+      · exact absurd (h2 n₀ (Finset.mem_Icc.2 ⟨h1, hN0⟩)) han₀
+      · have : n₀ = 1 := by omega
+        rwa [this] at han₀
+    have hp1 : a 1 ≠ 1 := fun h' => hne ⟨Or.inl h', h2⟩
+    have hm1 : a 1 ≠ -1 := fun h' => hne ⟨Or.inr h', h2⟩
+    have h4 : (4 : ℤ) ≤ a 1 ^ 2 := by
+      have hc : 2 ≤ a 1 ∨ a 1 ≤ -2 := by omega
+      rcases hc with hc | hc <;> nlinarith
+    have h4R : (4 : ℝ) ≤ (a 1 : ℝ) ^ 2 := by exact_mod_cast h4
+    rw [form_of_support_one hN a h2]
+    have hg := gram_one_gt
+    calc (999 / 1000 * (2 / 45) * (13 / 10) : ℝ) ≤ 4 * (1 / 50) := by norm_num
+      _ ≤ (a 1 : ℝ) ^ 2 * BallWeil.gram 1 1 := mul_le_mul h4R hg.le (by norm_num) (by positivity)
+
 /-- **RH ⟺ `w_1` is a shortest vector of the orbit lattice**: RH holds if and only if, for every `N`, every nonzero
 integer vector `a` has `Q_N(a) ≥ Q_1(δ_1) = K_H(1)`, where `Q_N` is the form of the Gram matrix `√(mn)·K_H(m/n)`
 computed from the primes. Nonnegativity at the integer vectors is already RH (`BallWeil.rh_iff_form`). -/

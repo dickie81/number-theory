@@ -8,8 +8,10 @@ for x ≥ 1, by
 
     K_H(x) = √x·(Σ_{n ≤ x} Λ(n)(1/n − 1/x) − log x + 1 + γ − log(2π)/x + Σ_{k ≥ 1} x^{−2k−1}/(2k(2k + 1))).
 
-This is BallPsi.kerH_explicit with its archimedean term in closed form. The closed form is checked numerically against
-the integral that defines BallPsi.archH, and is not proved. The script prints the squared Gram–Schmidt norms
+This is the classical explicit formula with the kernel x^s/(s(s − 1)); its derivation is item 1 of the docstring of
+scripts/ball_certificate.py and the remark "A closed form" of the paper (papers/orbit-lattice/main.tex). The Lean form,
+BallPsi.kerH_explicit, writes the archimedean part as an integral (BallPsi.archH) instead; the two agree numerically
+(--closed), and the closed form is not a Lean theorem. The script prints the squared Gram–Schmidt norms
 d_k = dist(w_k, span(w_1, …, w_{k−1}))² relative to d_1 = ‖w_1‖² = K_H(1) = 2 + γ − log 4π. If d_k ≥ d_1 for every k,
 then w_1 is a shortest nonzero vector of the lattice that the orbit spans (BallPsi.orbit_lattice). It compares them with
 u_k = dist(w_k, span(w_{k−1}))² = log(k/2π) + 1 − γ + o(1), which bounds them above.
@@ -17,6 +19,9 @@ u_k = dist(w_k, span(w_{k−1}))² = log(k/2π) + 1 − γ + o(1), which bounds 
     python3 scripts/ball_orbit.py [N]           # default N = 1000; needs numpy
     python3 scripts/ball_orbit.py --smooth [N]  # the zeros replaced by their density, no primes; needs scipy
     python3 scripts/ball_orbit.py --flat [N]    # the Gram matrix against the flat model d_1·min(m, n)
+    python3 scripts/ball_orbit.py --closed      # the closed form against the Lean form of K_H; mpmath, 3 minutes
+    python3 scripts/ball_orbit.py --densities [N] # pivots for nine densities, with and without a gap at low height,
+                                                  # and the share of their weight below height 1
     python3 scripts/ball_orbit.py --zeros [M]   # which zeros carry d_k, from the first M zeros; needs mpmath, slow
     python3 scripts/ball_orbit.py --places [N]  # the Gram matrix as a sum over the places, and its rigidity
     python3 scripts/ball_orbit.py --weil [N]    # the intersection numbers D_m·D_n of BallWeil and the Weil bound
@@ -107,6 +112,115 @@ def smooth(N):
     for k in range(2, N + 1):
         rs, rt = ds[k - 1] / ds[0], dt[k - 1] / dt[0]
         print(f"  {k:3d}   {rs:12.3f}   {rt:14.3f}   {rt / rs:7.3f}")
+
+
+def densities(N):
+    """Pivots d_k/d_1 for nine densities of zeros: what makes them exceed 1, the scarcity of zeros at low height or the
+    logarithmic growth of their density. The density is per unit height, one sign, and
+    K(x) = 2∫ρ(t)cos(t log x)/(t² + 1/4) dt. The column "below 1" is the share of the weight ∫ρ(t) dt/(t² + 1/4)
+    that lies below height 1."""
+    from fractions import Fraction
+    from scipy.integrate import quad
+    two_pi = 2 * math.pi
+    flat_from = lambda h: [(h, np.inf, lambda t: 1 / two_pi)]
+    models = [
+        ("constant 1/2π at every height (flat)", flat_from(0.0)),
+        ("log growth, no gap: 1/2π below 2πe, log(t/2π)/2π above",
+         [(0.0, two_pi * math.e, lambda t: 1 / two_pi), (two_pi * math.e, np.inf, lambda t: math.log(t / two_pi) / two_pi)]),
+        ("constant 1/2π, none below 1/2", flat_from(0.5)),
+        ("log(1 + t/2π)/2π at every height (small near 0, no gap)",
+         [(0.0, np.inf, lambda t: math.log1p(t / two_pi) / two_pi)]),
+        ("constant 1/2π, none below 1", flat_from(1.0)),
+        ("constant 1/2π, none below 2", flat_from(2.0)),
+        ("constant 1/2π, none below 2π (gap, no growth)", flat_from(two_pi)),
+        ("log(t/2π)/2π, none below 2π (the zeros' density)", [(two_pi, np.inf, lambda t: math.log(t / two_pi) / two_pi)]),
+        ("log(t/2π)/2π, none below 14.13 (gap up to the first zero)",
+         [(14.134725, np.inf, lambda t: math.log(t / two_pi) / two_pi)]),
+    ]
+
+    def kernel(pieces):
+        cache = {}
+
+        def K(x):
+            u = abs(math.log(x))
+            if u not in cache:
+                tot = 0.0
+                for a, b, f in pieces:
+                    w = lambda t, f=f: f(t) / (0.25 + t * t)
+                    if u == 0:
+                        tot += 2 * quad(w, a, b, limit=500)[0]
+                    elif b == np.inf:
+                        tot += 2 * quad(w, a, b, weight="cos", wvar=u, limlst=200)[0]
+                    else:
+                        tot += 2 * quad(w, a, b, weight="cos", wvar=u, limit=500)[0]
+                cache[u] = tot
+            return cache[u]
+        return K
+
+    def below_one(pieces):
+        """The share of the weight ∫ρ(t) dt/(t² + 1/4) below height 1."""
+        low = sum(quad(lambda t, f=f: f(t) / (0.25 + t * t), a, min(b, 1.0), limit=500)[0]
+                  for a, b, f in pieces if a < 1.0)
+        return low / (kernel(pieces)(1.0) / 2)
+
+    ks = [k for k in (2, 3, 5, 10, 20, 30) if k <= N]
+    print(f"d_k/d_1 at k = {', '.join(map(str, ks))}, N = {N}; \"below 1\": the share of the weight below height 1")
+    print(f"  {'':58s} below 1   d_k/d_1")
+    for name, pieces in models:
+        K = kernel(pieces)
+        S = np.zeros((N, N))
+        for m in range(1, N + 1):
+            for n in range(1, N + 1):
+                f = Fraction(max(m, n), min(m, n))
+                S[m - 1, n - 1] = math.sqrt(m * n) * K(f.numerator / f.denominator)
+        d = pivots(S)
+        print(f"  {name:58s} {below_one(pieces):5.3f}     " + ", ".join(f"{d[k - 1] / d[0]:.3f}" for k in ks))
+    d = pivots(gram(N))
+    print(f"  {'the zeros of ζ':58s} {0:5.3f}     " + ", ".join(f"{d[k - 1] / d[0]:.3f}" for k in ks))
+
+
+def closed():
+    """The closed form of K_H (kernel_over_sqrt) against the Lean form, BallPsi.kerH_explicit: for x ≥ 1, u = log x,
+    K_H(x) = cosh(u/2)·(2 + γ − log 4π) + sinh(u/2)·(log π − 2u) + A(u) + √x·Σ_{n ≤ x} Λ(n)/n − ψ(x)/√x,
+    A(u) = (1/2π)∫_ℝ H_u(r)·Re ψ_Γ(1/4 + ir/2) dr, H_u(r) = (cos(ru) − cosh(u/2))/(r² + 1/4) (BallPsi.archH).
+    The integrand is even; its non-oscillating part −cosh(u/2)·Re ψ_Γ/(r² + 1/4) is integrated by mpmath.quad on
+    [0, ∞), its oscillating part cos(ru)·Re ψ_Γ/(r² + 1/4) by mpmath.quadosc. Both are done at 20 and at 30 digits;
+    the last column is the change, a check that the quadrature has converged."""
+    import mpmath as mp
+    A, B = tables(20)
+
+    def lean_form(x, dps):
+        with mp.workdps(dps):
+            x = mp.mpf(x)
+            u = mp.log(x)
+            q = mp.mpf(1) / 4
+            w = lambda r: mp.re(mp.digamma(q + 0.5j * r)) / (r * r + q)
+            arch = mp.mpf(0)
+            if u > 0:
+                arch = (-mp.cosh(u / 2) * 2 * mp.quad(w, [0, 1, 4, 16, 64, mp.inf])
+                        + 2 * mp.quadosc(lambda r: mp.cos(r * u) * w(r), [0, mp.inf], omega=u)) / (2 * mp.pi)
+            lam = [mp.mpf(0)] * (int(x) + 1)
+            for p in primes_upto(int(x)):
+                pk = p
+                while pk <= x:
+                    lam[pk] = mp.log(p)
+                    pk *= p
+            s1 = sum(lam[n] / n for n in range(2, int(x) + 1))
+            psi = sum(lam)
+            return (mp.cosh(u / 2) * (2 + mp.euler - mp.log(4 * mp.pi)) + mp.sinh(u / 2) * (mp.log(mp.pi) - 2 * u)
+                    + arch + mp.sqrt(x) * s1 - psi / mp.sqrt(x))
+
+    print("K_H(x) from the closed form (the classical explicit formula) and from the Lean form (BallPsi.kerH_explicit,")
+    print("with the integral BallPsi.archH by mpmath quadrature at 20 and 30 digits)")
+    print("     x   closed form            Lean form              difference   quadrature change 20 → 30 digits")
+    worst = 0.0
+    for x in [1, 1.5, 2, 3, 7.5, 10]:
+        c = float(kernel_over_sqrt(np.array([float(x)]), A, B)[0]) * math.sqrt(x)
+        l20, l30 = lean_form(x, 20), lean_form(x, 30)
+        diff = float(l30) - c
+        worst = max(worst, abs(diff))
+        print(f"  {x:4}   {c:+.17f}   {float(l30):+.17f}   {diff:+.1e}      {float(l30 - l20):+.1e}")
+    print(f"  largest difference {worst:.1e}")
 
 
 def flat(N):
@@ -637,7 +751,8 @@ def purity_zeros(M):
 def main():
     if len(sys.argv) > 1 and sys.argv[1].startswith("--"):
         arg = int(sys.argv[2]) if len(sys.argv) > 2 else None
-        {"--smooth": lambda: smooth(arg or 60), "--flat": lambda: flat(arg or 1000),
+        {"--smooth": lambda: smooth(arg or 60), "--flat": lambda: flat(arg or 1000), "--densities": lambda: densities(arg or 30),
+         "--closed": closed,
          "--zeros": lambda: zeros(arg or 2000), "--places": lambda: places(arg or 60),
          "--weil": lambda: weil(arg or 1000), "--forward": lambda: forward(arg or 1000),
          "--slices": lambda: slices(arg or 10 ** 6), "--lattice": lambda: lattice(arg or 120),
