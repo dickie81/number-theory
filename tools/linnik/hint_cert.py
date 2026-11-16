@@ -96,6 +96,13 @@ At 2115/1000 (`21150`: the resonant window in both trees with the cofactor and t
 main tree to depth 8, `lam = 1`) the search costs 0.88304 K on 4.9·10^8 boxes (3.04·10^7 steps, 612 part files of
 57 689 parts, a predicted 40 hours of the kernel by `SEC2`; the cells of the first prime planned on two machines,
 about nine hours on four cores each), the cells' theorems in 17 files (15 November 2026).
+At 2100/1000 (`21000`: with the window's test at the two corners of a box, consecutive cells that one test of
+the window covers as one cell, cells of side 0.003 over the frozen parts, every configuration of the estimate in
+two variables searched over them, a box of two primes of the main tree cut in two where that is worth the
+kernel's time, the window's lines named by the hint, and `lam = 0.3` on `SEC3`) the search costs 0.97717 K on
+5.14·10^9 boxes (9.01·10^7 steps, 1150 part files of 107 374 parts, a predicted 76 hours of
+the kernel by `SEC3`; the cells of the first prime planned on two machines with the planner in C, `--cplan`,
+three to four hours on four cores each), the cells' theorems in 58 files (16 November 2026).
 
 Needs Python 3 only.
 """
@@ -143,7 +150,17 @@ CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
          # `K` to a cell's plan, and leaves a seventh to two thirds of its hints' bits and a third to three quarters
          # of the kernel's predicted time; the cells' theorems in files of at most 700 (`chunk`)
          '21150': dict(lnum=2115, lden=1000, h=0.003, hF=0.006, maxlen=6, depth=8, pos=True, lam=1, sec=2,
-                       energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3, chunk=700)}
+                       energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, split=2, skip=3, chunk=700),
+         # and the window's test at the two corners of the box of a rest's cells where its test at one corner fails
+         # (`SieveResTest.resY`, `ycorner`), consecutive cells that one test of the window covers as one cell
+         # (`rmerge`), the cuts at the window's edge to three halvings, cells of side 0.003 over the frozen parts
+         # too, and over them every configuration of the estimate in two variables that the hints can name, not the
+         # planner's proposal alone (`exh`); a box of two primes of the main tree cut in two where that is worth
+         # the kernel's time (`split2`); the window's lines named by the hint (`hl`); three tenths of a millionth
+         # of `K` for each second of the kernel by the table fitted on the plan at 2115/1000 (`SEC3`)
+         '21000': dict(lnum=2100, lden=1000, h=0.003, hF=0.003, maxlen=6, depth=8, pos=True, lam=0.3, sec=3,
+                       energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, rmerge=True, split=3, skip=3,
+                       ycorner=True, exh=2, split2=1, hl=True, chunk=700)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
 # dropped cells next to each other are one cell while its bound is at most DMERGE of the sum of theirs

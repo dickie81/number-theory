@@ -183,7 +183,8 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `SieveAd.cfgIMY`, `cfgIFY`; the search `altFDY`): `SieveAd.resTestsFY_sound` (`lib/pnt/SieveAdResY.lean`), the
   tests of the main tree are sound, and `SieveAd.pr_of_partDY_at` (`lib/pnt/SieveAdFrozResYTree.lean`, with
   `evIF_froz_resTY` of `lib/pnt/SieveAdFrozResY.lean`), a part of the search whose trees over the frozen parts read
-  them bounds its term. The existing modules are unchanged. No certificate uses them yet. **A cut of any cell
+  them bounds its term. The existing modules are unchanged. The certificate at `2100/1000` uses these tests with
+  the window's lines named by the hint (below). **A cut of any cell
   of a box, at any point, in the search led by hints** (`lib/pnt/SieveAdCutDefs.lean`: `SieveAd.altC`, a cut read
   where `stepD` reads its hinted bound, one bit, the cell's position and the exponent of the cut; `solveDS`, the
   search with it at every depth; `flipTreeDYS` … `altFDYS`, the reversal whose trees are searched that way, a cut
@@ -206,7 +207,8 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   the tests `SieveAd.resTestsFYH`, `frozResTestsYH`, which read `chkIRY`, `chkIRFY` for an evaluation of kind `4`
   and are `resTestsFCH`, `frozResTestsCH` otherwise, the decoders `SieveAd.cfgIMYH`, `cfgIFYH` and the search
   `altFDYH` in `lib/pnt/SieveAdResYHDefs.lean`): the proofs of `resTestsFY_sound` and `pr_of_partDY_at` with
-  those of the tests with `resXH` (`hint_cert.py --ycorner --hl`). No certificate uses them yet;
+  those of the tests with `resXH` (`hint_cert.py --ycorner --hl`). They are the tests of the search at
+  `2100/1000` (`Linnik21000.linnik_21000`, `formalisations/harman-sieve.md`);
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
@@ -428,3 +430,4 @@ result uses: lemmas of a route that nothing proves (`scripts/dead_code.py` reads
 |---|---|---|
 | The tests with the resonant window for an evaluation of kind `3`, the rest among the box's cells only, are sound | a route and the parameters of the induction (`SieveRoute.Route`, `SieveCert.IBPar`); the certificate at `2115/1000` uses the tests with the cofactor in the rest (`SieveAd.resTestsFC_sound`) | `SieveAd.resTestsF_sound` |
 | The chains of primes times a rough cofactor, by the resonant window, with all the chain's primes as the rest | a route (`SieveRoute.Route`, `SieveRoute.RouteOK`) | `SieveTypeIIHM.chainTU_res` |
+| The tests with the window's test at the two corners of a box for an evaluation of kind `4`, the window's lines found by the kernel, are sound | a route and the parameters of the induction (`SieveRoute.Route`, `SieveCert.IBPar`); the certificate at `2100/1000` uses the tests with the lines named by the hint (`SieveAd.resTestsFYH_sound`) | `SieveAd.resTestsFY_sound` |

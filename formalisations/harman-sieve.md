@@ -327,6 +327,17 @@ Its main tools:
   in `57689` parts (`lib/pnt/SieveHint21150P1.lean` … `SieveHint21150P612.lean`), with the theorems of the cells
   cut by the next prime's cells in 17 files (`lib/pnt/SieveHint21150N1.lean` …), where the search visited
   `4.9·10^8` boxes.
+- `Linnik21000.linnik_21000`, Linnik's theorem with exponent `2100/1000` (in no paper): that search with the
+  window's test at the two corners of the box of a rest's cells where its test at one corner fails, and the
+  window's lines named by the hint (`SieveAd.resTestsFYH_sound`, `SieveAd.pr_of_partDYCH_at`, in
+  `formalisations/halasz-montgomery.md`); the chains over the frozen parts on cells of side `0.003`; a box of two
+  primes of the main tree cut in two where that is worth the kernel's time; and a plan that searches, over the
+  frozen parts, every configuration of the estimate in two variables that the hints can name. Each step is chosen
+  by its cost plus three tenths of a millionth of `K` for each second that the planner predicts of the kernel.
+  The bound of the first term costs `0.97717·K` (`Linnik21000.tree21000`), on `9.01·10^7` steps,
+  `2.22·10^6` of them reversals, in `107374` parts (`lib/pnt/SieveHint21000P1.lean` …
+  `SieveHint21000P1150.lean`), with the theorems of the cells cut by the next prime's cells in 58
+  files (`lib/pnt/SieveHint21000N1.lean` …), where the search visited `5.14·10^9` boxes.
 - `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer

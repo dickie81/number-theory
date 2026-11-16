@@ -717,7 +717,10 @@ covers. The region does not close at `13/6`.
     guess, not a measurement. Measured since (15 November): in Lean, the estimate (`SieveTypeIIHM.typeII_res`),
     the kernel's test (`SieveResTest.resX`) in both trees, with the cofactor in the rest when it is one prime and
     Chen, Gupta and Li's large values of the powers (next item), and the theorem at `2115/1000`
-    (`Linnik21150.linnik_21150`): the exact search costs `0.88304K` there, on `3.04·10^7` steps.
+    (`Linnik21150.linnik_21150`): the exact search costs `0.88304K` there, on `3.04·10^7` steps. And at
+    `2100/1000` (`Linnik21000.linnik_21000`, 16 November), with the window's test at the two corners of a box, cells
+    of `0.003` over the frozen parts, boxes of two primes cut in two, and a plan that searches every configuration
+    the kernel accepts over the frozen parts: `0.97717K`, on `9.01·10^7` steps.
   - *The density exponent, length by length* (14 November; the question was a better density exponent, by any
     method. The exponent of the density curve was not improved. What is here is the exponent that a sum of one
     given length has, which is lower at most lengths, and what the model gets when each sum of the sieve is
