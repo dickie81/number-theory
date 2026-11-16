@@ -1,5 +1,6 @@
 # row a b kind cost/K boxes frozen-boxes largest-part-s  (2100/1000, lam 0.3, --split2 1, --cplan; split cells cut through their halves: recut_cache.py or --cgen at 3557b83; odd rows planned here for the other session)
 87 320509182024 323807716907 heavy 0.008613 43508677 39399284 3.5
 89 327106251790 330404786673 heavy 0.009436 42568391 39013789 3.5
+91 333703321556 337001856439 heavy 0.010306 203673320 188189824 3.5
 93 340300391322 343598926205 heavy 0.011368 43357007 40355224 3.5
-# 3 rows, total cost 0.029417 K; the largest part 3.5 predicted seconds
+# 4 rows, total cost 0.039722 K; the largest part 3.5 predicted seconds
