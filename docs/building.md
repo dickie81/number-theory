@@ -25,15 +25,15 @@ On 4 cores and 16 GB, a cold build of the default target takes several hours.
 
 A module that imports Mathlib maps Mathlib's files into memory, and that mapping is shared between compiles. The
 default build also has the certificates' part files: the 17 of the Linnik paper's theorem at `43/20`
-(`lib/pnt/SieveHint21500P<k>.lean`, 1552 parts), about an hour of the kernel in all, and the 114 of the library's
-theorem at `11/5` (`lib/pnt/SieveCert22000EP<k>.lean`, 1136 parts), about 6.2 hours of one core in all. `CheckAll` has
-also the 39 of the library's theorem at `2140/1000` (`lib/pnt/SieveHint21400P<k>.lean`, 3705 parts), about 2.8 hours
-of the kernel in all, and the 98 of the theorem at `2135/1000` (`lib/pnt/SieveHint21350P<k>.lean`, 9110 parts), about
-6.5 hours by the planner's prediction. Of Mathlib the parts import only `Mathlib.Data.Nat.Notation`, and each of the 114 used at most
-2.8 GiB of private memory while the kernel checked it. `scripts/lean-slots.sh` still honours a `-- exclusive-heavy`
+(`lib/pnt/SieveHint21500P<k>.lean`, 1552 parts), about an hour of the kernel in all, the 114 of the library's
+theorem at `11/5` (`lib/pnt/SieveCert22000EP<k>.lean`, 1136 parts), about 6.2 hours of one core in all, and the 612
+of the theorem at `2115/1000` (`lib/pnt/SieveHint21150P<k>.lean`, 57 689 parts), about 32 hours of one core by the
+generator's estimate, with the theorems of its cells in 17 files checked side by side
+(`lib/pnt/SieveHint21150N<j>.lean`). Of Mathlib the parts import only `Mathlib.Data.Nat.Notation`; each of the 114
+used at most 2.8 GiB of private memory while the kernel checked it, and each of the 612 at most 1.8 GiB. `scripts/lean-slots.sh` still honours a `-- exclusive-heavy`
 mark, which runs a part file with no other certificate part; no part file now carries it. Earlier certificates (for
-the weaker exponents `278/125`, `899/400`, `9/4`, `226/100` and others) and the stepping-stone modules only they used
-are no longer in the tree; they are in the git history.
+the weaker exponents `278/125`, `899/400`, `9/4`, `226/100`, `2140/1000`, `2135/1000` and others) and the
+stepping-stone modules only they used are no longer in the tree; they are in the git history.
 
 Lake runs about as many compiles at once as there are cores, so a plain `lake build` on a machine with less than about
 5 GiB of memory per core can run out while it builds the certificates. `scripts/build.sh` runs Lake with a wrapper

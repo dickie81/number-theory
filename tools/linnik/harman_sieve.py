@@ -91,6 +91,62 @@ with 307000 nodes (0.967 with --plain; 0.865 at 2.195). Of the ways to evaluate 
 needed (1.102 with --direct second,rest) and so is the estimate with the cofactor in the second variable (1.202
 with --direct window,rest); the cofactor in the rest is not (0.945 with --direct window,second).
 
+What-if switches (13 November 2026; hypotheses, to see which input the loss depends on): `--curve` takes the
+density curve `ghx` (the count 1 below 7789/10000, Huxley's steps above: the curve of the estimate in Lean), `gm`
+(Guth and Maynard's 15/(3 + 5 sigma) on [7/10, 8/10], as if it held for the characters, and Ingham's exponent where
+`g7d` has the count 1), `cap:A` (the exponent at most A), `shift:d`, or `dh` (the density hypothesis); `--theta0` the
+zero-free half-plane (the bins above it are gone and the kernel of the Halasz-Montgomery inequality is
+q^(theta0 - 1/2 + (1 - theta0) m) for a length q^m); `--kernel`, `--kshift` that kernel's exponent times a factor,
+or less a number; `--ext` the bilinear Type I estimates x^ext further. With a what-if the window is the one of
+its own curve (a sampled scan, no corners). `points` passes 1 at (L in steps of 0.02, interpolated): 2.101 as it
+is; 2.102 with `ghx`; 2.100 with the half-plane at 7/8 or 5/6, 2.091 at 3/4, 2.073 at 0.70, 2.056 at 0.65, 2.039
+at 0.60; 2.098 with `gm`; 2.101, 2.099, 2.081, 2.062, 2.041 with `cap:2.25`, `2.20`, `2.15`, `2.10`, `2.05`; 2.021
+with `dh` (2.090 with --no-window); 2.093, 2.087 with --kshift 0.05, 0.10, 2.063 with --kernel 0.5, 2.028 with
+--kernel 0; 2.095, 2.086, 2.075 with --ext 0.02, 0.05, 0.10; 2.109 with --nest 1 --rev first.
+
+The resonant window (`--res`; 13 and 14 November 2026; docs/research-opportunities.md, section 3.1, has the
+estimate, its proof and the counts; none of it is in Lean as a rule of the sieve). A Type II estimate that takes
+nothing from the density curve. The rest is a set of the term's primes, and all the rest of the number, cofactor
+included, is one polynomial W of length q^m with arbitrary coefficients, as in the paper's window; but the
+characters are sorted by the sizes of the rest's own sums, not by their zeros. For a prime P = q^s the characters
+with |P(chi)| >= P^t are at most q^(2ks(1-t)) when ks >= 1, by the mean value of the k-th power of the sum (a
+polynomial of length q^(ks) with coefficients at most k!): the count of the density hypothesis, at the lengths
+q^(1/k). With Cauchy-Schwarz for W and the half-plane's bound for the bins beyond 11/12, the estimate holds for
+W >= q when sum_j 1/k_j > 1, k_j the least k with P_j^k >= q (Hoelder's inequality with the exponents 2 and 2 k_j;
+what the sum has beyond 1 is paid in the half-plane's bound): two primes above q^(1/2) and any third; primes above
+q^(1/2), q^(1/3) and q^(1/5); primes below q^delta with product above q^(1 + delta). The test is made on levels of
+the count, with every count that a sum of one length has: the power below (q^(1 + ks(1-2t)) for ks < 1); with `hm`
+the Halasz-Montgomery inequality for that power; with `lv` Chen, Gupta and Li's Proposition 3.1 for the powers of
+length at least q^(2/3), at 7/10 <= t <= 4/5 (LinnikCGLHB101.prop31: for any coefficients of modulus at most 1);
+and the density curve's count. With `sifted`, the cofactor and sifted atoms may be in the rest, with the density
+curve's count, and with `own` they are counted by their own sums as the primes are; with `cofp` a cofactor that is
+prime on the whole box is one more prime of the rest. W shorter than q is as in the paper's window. `points` gives
+
+    L                            2.14    2.13    2.12    2.11    2.10    2.09    2.08    2.07    2.06
+    --res hm,sifted              0.140   0.207   0.324   0.462   0.631   0.869   1.141
+    --res                        0.074           0.117           0.259           0.654   0.946   1.254
+    --res hm,sifted, in Lean's   0.194           0.459           0.788   0.982
+    --res, in Lean's shapes                                      0.318           0.782   1.001
+
+(Lean's shapes: --nest 1 --rev first.) So the loss passes 1 at 2.085 with the mean values, the Halasz-Montgomery
+inequality and the zeros' count for the sifted parts, and at 2.068 with every count (2.101 without the window);
+with one level of reversal through the largest prime, at 2.089 and 2.070 (2.109 without). At 2.10, `--res plain`
+gives 0.691, `--res hm,sifted,lv` 0.416 and `--res hm,sifted,own` 0.505. The rests on which the estimate holds are
+small sets (W >= q leaves the primes of the rest q^(L-2) in all above their lengths q^(1/k_j)), and a box passes
+only if its lowest corner does: with `--res hm,sifted`, `cells` at 2.13 give 0.932 with --h 0.004 (1.006 without)
+and 0.612 with --h 0.002 (0.765 without). Not used: the estimate as a stop of Harman's comparison, and its counts
+in the estimate in two variables.
+
+What a grid gets of the window (14 November 2026; `cells` with --h 0.003 --nest 1 --rev first, the cells and the
+shapes of the certificates). `--res-main` keeps the window to the main tree; `--res-lev` tests it at each level
+with that level's own count, as a test that is exact in the level does (the default of `cells` takes the count of
+the level before, safe on the lattice of levels, and costs as much as the cells do); `--res-split N` cuts a box of
+the main tree that fails in two, N times at most. Without the window the cells give 0.964, 1.127, 1.412 at 2.135,
+2.12, 2.10; with --res hm --res-main --res-lev, 0.903 at 2.135 and 1.382 at 2.10; with --res --res-lev, 0.363,
+0.665, 1.186 (--res-main: 1.262 at 2.10), where `points` has 0.091 at 2.135 and 0.318 at 2.10. The exact search
+of the certificate at 2135/1000 costs 0.990, and the window as it is in Lean is worth 8.0% there, where the model
+has 6.4%.
+
 What is assumed, beyond the paper: the estimate in two variables on the tabulated zone (two_factor.py states it;
 in Lean it is proved on the region SieveTwoZone7D.Zone7d, which holds all of the zone but under 2% of its width,
 as far as chains of primes: SieveTwoChain.chain_two); the bilinear Type I estimate without 2HD < q at the leaves
@@ -99,7 +155,9 @@ for a rest among the term's primes: SieveTwoComp.prop6_two); the same with the f
 where the small primes below the least rest that the zone takes (eps0) are left to Type I at no cost, which is
 Brun's sieve at a fixed level, whose gap is tiny but not o(1); role reversal, with the conditions that tie the
 variables of a reversed term together removed; and, with `--sieve` and `--upper`, the linear sieve's bounds F
-and f with the bilinear remainder and well-factorable weights. Here "the paper" is the Linnik paper's version at 11/5 (in the git history); the paper now proves 43/20
+and f with the bilinear remainder and well-factorable weights; and, with `--res`, the resonant window on every box
+that passes its test: the cells of the rest's primes and the conditions that tie W to them are taken as for the
+estimate in two variables, and the constants of the mean values as harmless. Here "the paper" is the Linnik paper's version at 11/5 (in the git history); the paper now proves 43/20
 (Linnik21500.linnik_21500, hint_cert.py), with no window. In Lean, this decomposition with the window,
 without role reversal and without the stops whose rest is the first small prime gives the exponent 219/100
 (Linnik21900.linnik_21900; tree_cert.py is its search in exact integers), and with the reversal of a term of
@@ -150,7 +208,11 @@ class Ctx(C.Structure):
                 ('rev_floor', C.c_int), ('rev_offdiag', C.c_int),
                 ('rev_first', C.c_int), ('rev_m2', C.c_int), ('rev_m3', C.c_int), ('rev_low', C.c_int),
                 ('rev_natom', C.c_int), ('rev_nchain', C.c_int), ('rev_nodd', C.c_int), ('rev_nc1', C.c_int),
-                ('ev_win', C.c_int), ('ev_second', C.c_int), ('ev_rest', C.c_int)]
+                ('ev_win', C.c_int), ('ev_second', C.c_int), ('ev_rest', C.c_int), ('ext', C.c_double),
+                ('res', C.c_int), ('NC', C.c_int), ('cl', dp), ('reach', dp), ('ord', ip),
+                ('L', C.c_double), ('thr', C.c_double), ('wbin', C.c_double), ('mres', C.c_double),
+                ('top', C.c_double), ('K0', C.c_double), ('K1', C.c_double),
+                ('res_main', C.c_int), ('res_split', C.c_int), ('res_lev', C.c_int)]
 
 
 class Stats(C.Structure):
@@ -178,11 +240,56 @@ def lib():
     return _LIB
 
 
-def zones(L, curve='g7d', margin=None, samples=60):
+def pieces_of(curve, theta0=None):
+    """The pieces `(lo, hi, A)` of a density curve on `[1/2, theta0]`, in floats (`A = None`: the count 1). `curve`:
+    `g7d` or `ghx` (route_limits.py), and the what-ifs `dh` (the density hypothesis, A = 2), `gm` (`g7d` with
+    Guth and Maynard's 15/(3 + 5 sigma) on [7/10, 8/10], as if it held for the characters), `cap:A` (`g7d` with
+    its exponent at most A) and `shift:d` (`g7d` with its exponent lowered by d, not below 2). `theta0`: the
+    zero-free half-plane Re s > theta0 (11/12 if not given)."""
+    top = 11 / 12 if theta0 is None else float(theta0)
+    name, _, par = curve.partition(':')
+    base = [(float(lo), float(hi), None if A is None else float(A))
+            for lo, hi, A in rl.parse('ghx' if name == 'ghx' else 'g7d')]
+    if name in ('g7d', 'ghx'):
+        out = base
+    elif name == 'dh':
+        out = [(0.5, top, 2.0)]
+    elif name in ('gm', 'cap', 'shift'):
+        cuts = sorted({top} | {x for lo, hi, _ in base for x in (lo, hi)} | {0.5 + 0.0025 * i for i in range(167)})
+        cuts = [x for x in cuts if x <= top]
+        out = []
+        for lo, hi in zip(cuts, cuts[1:]):
+            A = next(A for l2, h2, A in base if l2 <= lo < h2)
+            if name == 'gm':
+                # Ingham's 3/(2 - sigma) where the curve has the count 1, and Guth and Maynard's on [7/10, 8/10]
+                A = min(A if A is not None else 3 / (2 - hi), 15 / (3 + 5 * lo) if 0.7 <= lo < 0.8 else 9.0)
+            elif name == 'cap':
+                A = min(A if A is not None else 9.0, float(par))
+            elif name == 'shift' and A is not None:
+                A = max(2.0, A - float(par))
+            # a count above 1 is the count 1
+            out.append((lo, hi, None if A is None or A * (1 - lo) >= 1 else A))
+    else:
+        raise ValueError(curve)
+    return [(lo, min(hi, top), A) for lo, hi, A in out if lo < top]
+
+
+def kernel_b(m, theta0=None, kernel=1.0, kshift=0.0):
+    """The exponent of the Halasz-Montgomery kernel for a polynomial of length q^m, m <= 1: the paper's
+    5/12 + m/12 (from the half-plane at 11/12: theta0 - 1/2 + (1 - theta0) m), times `kernel`, less `kshift`,
+    with the paper's margins."""
+    if theta0 is None and kernel == 1.0 and kshift == 0.0:
+        return 5 / 12 + m / 12 + (1 - m) / 1000 + 2 / 1000
+    t0 = 11 / 12 if theta0 is None else float(theta0)
+    return np.maximum(0.0, kernel * (t0 - 0.5 + (1 - t0) * m) - kshift) + (1 - m) / 1000 + 2 / 1000
+
+
+def zones(L, curve='g7d', margin=None, samples=60, theta0=None, kernel=1.0, kshift=0.0):
     """For each rest rho = c DL: the interval [Alo, Ahi] of the exponents a1 of the first part for which the
-    estimate in two variables holds, the second part being 1 - a1 - rho (the longest run on the lattice)."""
+    estimate in two variables holds, the second part being 1 - a1 - rho (the longest run on the lattice). The
+    what-ifs: another curve or half-plane (`pieces_of`), another kernel (`kernel_b`)."""
     bs, gs = [], []
-    for lo, hi, A in rl.parse(curve):
+    for lo, hi, A in (rl.parse(curve) if curve in ('g7d', 'ghx') and theta0 is None else pieces_of(curve, theta0)):
         b = np.linspace(float(lo), float(hi), samples)
         bs.append(b)
         gs.append(np.ones_like(b) if A is None else float(A) * (1 - b))
@@ -192,10 +299,10 @@ def zones(L, curve='g7d', margin=None, samples=60):
     a = A0 + DL * np.arange(int(round((A1 - A0) / DL)) + 1)
     r = DL * np.arange(int(round(R1 / DL)) + 1)
     ms = a * Lf
-    Bs = 5 / 12 + ms / 12 + (1 - ms) / 1000 + 2 / 1000
+    Bs = kernel_b(ms, theta0, kernel, kshift)
     a2 = 1.0 - a[:, None] - r[None, :]
     m2 = a2 * Lf
-    B2 = 5 / 12 + m2 / 12 + (1 - m2) / 1000 + 2 / 1000
+    B2 = kernel_b(m2, theta0, kernel, kshift)
     fail = (a2 <= 0) | (r[None, :] <= 0)
     for bb, gg in zip(b, g):
         M = np.where(ms > 1, ms, np.minimum(1.0, np.maximum(ms, gg + Bs)))
@@ -211,6 +318,43 @@ def zones(L, curve='g7d', margin=None, samples=60):
             run = max(np.split(idx, np.nonzero(np.diff(idx) > 1)[0] + 1), key=len)
             Alo[c], Ahi[c] = a[run[0]], a[run[-1]]
     return r, Alo, Ahi
+
+
+def window_whatif(L, curve, theta0=None, kernel=1.0, kshift=0.0):
+    """The window of a what-if (`route_limits.window`'s sampled scan with the pieces and the kernel of the
+    what-if; no corners are tested): the ends, in exponents of x, of the longest run of lengths q^m at which the
+    estimate in one variable holds, or None."""
+    bs, gs = [], []
+    for lo, hi, A in pieces_of(curve, theta0):
+        b = np.linspace(lo, hi, 402)
+        bs.append(b)
+        gs.append(np.ones_like(b) if A is None else A * (1 - b))
+    b, g = np.concatenate(bs), np.concatenate(gs)
+    Lf, marg = float(L), float(rl.MARGIN)
+    ms = np.arange(0.30 * Lf, 0.52 * Lf, 1 / 20000)
+    ok = np.ones(len(ms), dtype=bool)
+    for k, m in enumerate(ms):
+        for w in (0.0, 4e-6):
+            base = (Lf - m) * (b + w) + g / 2
+            E = base + ((1 + m) / 2 if m <= 1 else m)
+            if m <= 1:
+                E = np.minimum(E, base + m / 2 + np.maximum(m, g + kernel_b(m, theta0, kernel, kshift)) / 2)
+            if (E > Lf - marg).any():
+                ok[k] = False
+                break
+    runs, start = [], None
+    for i, o in enumerate(list(ok) + [False]):
+        if o and start is None:
+            start = i
+        if not o and start is not None:
+            runs.append((start, i - 1))
+            start = None
+    if not runs:
+        return None
+    x, z = max(runs, key=lambda q: q[1] - q[0])
+    if ms[z] <= ms[x] or ms[z] <= 1:
+        return None
+    return round(float(ms[x]) / Lf, 5), round(float(ms[z]) / Lf, 5)
 
 
 def buchstab(umax=14.0):
@@ -266,10 +410,13 @@ def window(L):
 class Sieve:
     def __init__(self, L, h=0.004, depth=8, flips=6, nest=2, flipmax=8, flipmin=0.15, wide=True, usewin=True,
                  sieve=False, upper=False, type2=True, eps1=0.002, eps0=0.002, fmin=0.01, smax=7.0, shrink=0.0,
-                 tables=None, rev=(), first=True, direct=('window', 'second', 'rest'), fill=False):
+                 tables=None, rev=(), first=True, direct=('window', 'second', 'rest'), fill=False,
+                 curve='g7d', theta0=None, kernel=1.0, kshift=0.0, ext=0.0, res=0, levels=None, res_main=False,
+                 res_split=0, res_lev=False):
         L = Fr(L)
         self.L, Lf = L, float(L)
-        r, Alo, Ahi = tables if tables is not None else zones(L)
+        whatif = curve != 'g7d' or theta0 is not None or kernel != 1.0 or kshift != 0.0
+        r, Alo, Ahi = tables if tables is not None else zones(L, curve, theta0=theta0, kernel=kernel, kshift=kshift)
         Alo, Ahi = Alo + shrink / 2, Ahi - shrink / 2          # a narrower zone, to see what the width is worth
         ok = np.isfinite(Alo) & (Alo <= Ahi) if type2 else np.zeros(len(r), dtype=bool)
         idx = np.nonzero(ok)[0]
@@ -310,7 +457,8 @@ class Sieve:
         ctx.f0hi, ctx.f0t = self.f0hi.ctypes.data_as(dp), self.f0t.ctypes.data_as(dp)
         ctx.f0ok = self.f0ok.ctypes.data_as(ip)
         ctx.f0lo = int(np.argmax(self.f0ok)) if self.f0ok.any() else NR + 1
-        self.win = window(L) if (usewin and type2) else None
+        self.win = ((window_whatif(L, curve, theta0, kernel, kshift) if whatif else window(L))
+                    if (usewin and type2) else None)
         ctx.haswin = int(self.win is not None)
         if self.win:
             ctx.u1, ctx.u2 = self.win
@@ -332,6 +480,30 @@ class Sieve:
                      'nchain', 'nodd', 'nc1'):
             setattr(ctx, 'rev_' + name, int(name in rev))
         ctx.ev_win, ctx.ev_second, ctx.ev_rest = (int(name in direct) for name in ('window', 'second', 'rest'))
+        ctx.ext = ext
+        # the resonant window: the levels of the count, and the density curve's reach at each (the largest t at
+        # which its count, taken 0.002 lower for the step from a prime sum to a zero, is at least the level)
+        top = 11 / 12 if theta0 is None else float(theta0)
+        self.cl = np.ascontiguousarray(np.concatenate([np.linspace(1.0, 0.45, 56), np.linspace(0.45, 0.1, 176)[1:],
+                                                       np.linspace(0.1, 0.0, 21)[1:]]) if levels is None
+                                       else np.linspace(1.0, 0.0, levels))
+        NC = len(self.cl)
+        tt = np.arange(0.5, top + 1e-9, 1e-4)
+        gv = np.ones_like(tt)
+        for lo, hi, A in pieces_of(curve, theta0):
+            if A is not None:
+                sel = (tt - 0.002 >= lo) & (tt - 0.002 <= hi)
+                gv[sel] = np.minimum(1.0, A * (1 - (tt[sel] - 0.002)))
+        self.reach = np.ascontiguousarray([tt[gv >= lev - 1e-12].max() if (gv >= lev - 1e-12).any() else 0.5
+                                           for lev in self.cl])
+        self.ord = np.ascontiguousarray(sorted(range(NC), key=lambda i: int(format(i, '010b')[::-1], 2)),
+                                        dtype=np.int32)
+        ctx.res, ctx.NC = int(res), NC
+        ctx.cl, ctx.reach, ctx.ord = (self.cl.ctypes.data_as(dp), self.reach.ctypes.data_as(dp),
+                                     self.ord.ctypes.data_as(ip))
+        ctx.L, ctx.thr, ctx.wbin, ctx.mres, ctx.top = Lf, Lf - float(rl.MARGIN), 4e-6, 0.8, top
+        ctx.K0, ctx.K1 = kernel * (top - 0.5) - kshift, kernel * (1 - top)
+        ctx.res_main, ctx.res_split, ctx.res_lev = int(res_main), int(res_split), int(res_lev)
         self.ctx = ctx
         # the floor of the top node: the largest f at which S(A, x^f) is evaluated
         T = ctx.theta - eps1
@@ -382,6 +554,27 @@ def main():
     ap.add_argument('--direct', default='window,second,rest', help='how a box may be evaluated outright, '
                     'comma-separated: window, second (the estimate, the cofactor in the second variable), rest '
                     '(the estimate, the cofactor in the rest)')
+    ap.add_argument('--curve', default='g7d', help='what-if: the density curve (g7d, ghx, dh, gm, cap:A, shift:d)')
+    ap.add_argument('--theta0', type=float, default=None, help='what-if: the zero-free half-plane Re s > theta0')
+    ap.add_argument('--kernel', type=float, default=1.0, help="what-if: the Halasz-Montgomery kernel's exponent "
+                    'times this (0: the mean square over a set of characters at most the length plus the set)')
+    ap.add_argument('--kshift', type=float, default=0.0, help="what-if: the kernel's exponent less this")
+    ap.add_argument('--res', nargs='?', const='hm,sifted,lv,own', default=None, help='with the resonant window: '
+                    "a rest whose own sums sort the characters, counted by the mean values of their powers; "
+                    "'plain', or a comma-separated list of 'hm' (the Halasz-Montgomery inequality for the powers), "
+                    "'lv' (Chen, Gupta and Li's large-value estimate for the powers), 'sifted' (the cofactor and "
+                    "sifted atoms may be in the rest, with the zeros' count), 'own' (those counted by their own "
+                    "sums as well) and 'cofp' (without 'sifted': the cofactor may be in the rest where it is "
+                    "prime on the whole box, counted as a prime); alone: the first four")
+    ap.add_argument('--res-main', action='store_true', help='the resonant window in the main tree only')
+    ap.add_argument('--res-split', type=int, default=0, help='`cells`: a box of the main tree that fails the '
+                    'resonant window is cut in two across its widest cell, at most this many times, and is '
+                    'evaluated if every piece passes')
+    ap.add_argument('--res-lev', action='store_true', help='`cells`: the resonant window tested at each level '
+                    'with the count of that level, as a test that is exact in the level would (the default '
+                    'takes the count of the level before, which is safe on the lattice of levels)')
+    ap.add_argument('--ext', type=float, default=0.0, help='what-if: the bilinear Type I estimates reach x^ext '
+                    'further (d1 d2^2 < x^(1 + ext))')
     a = ap.parse_args()
     h = a.h if a.h is not None else (0.004 if a.command == 'points' else 0.002)
     for Ls in a.L:
@@ -398,7 +591,11 @@ def main():
                       usewin=not a.no_window, sieve=a.sieve or a.command == 'parity',
                       upper=a.upper or a.command == 'parity', shrink=a.shrink, type2=a.command != 'parity',
                       rev=tuple(x for x in a.rev.split(',') if x), first=not a.no_first,
-                      direct=tuple(x for x in a.direct.split(',') if x))
+                      direct=tuple(x for x in a.direct.split(',') if x),
+                      curve=a.curve, theta0=a.theta0, kernel=a.kernel, kshift=a.kshift, ext=a.ext,
+                      res=0 if a.res is None else 1 + sum(v for kk, v in (('hm', 2), ('sifted', 4), ('cofp', 8),
+                                                                    ('lv', 16), ('own', 32)) if kk in a.res.split(',')),
+                      res_main=a.res_main, res_split=a.res_split, res_lev=a.res_lev)
             if a.nu is not None:
                 nu = a.nu
             elif s.nu0 is not None:
