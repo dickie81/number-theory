@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1861 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1877 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 358 | 1042 |
+| `lib/pnt` | 366 | 1058 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2542,11 +2542,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdDir`: The search led by hints is sound
 
-- `SieveAd.solveD_sound`: The search led by hints is sound *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveAd.rules_frozC`: The nodes of a tree over a frozen part, with the tests that read the frozen primes once for the tree *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveAd.bd_flipCostD`: The cost of a reversal through the largest prime, its tree searched by hints, bounds the term *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveAd.altFD_sound`: The hinted bound of the main search proves `PR` *paper*
-- `SieveAd.pr_of_partD`: A part of the main search *paper* ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.solveD_sound`: The search led by hints is sound ([note](../formalisations/harman-sieve.md))
+- `SieveAd.rules_frozC`: The nodes of a tree over a frozen part, with the tests that read the frozen primes once for the tree ([note](../formalisations/harman-sieve.md))
+- `SieveAd.bd_flipCostD`: The cost of a reversal through the largest prime, its tree searched by hints, bounds the term ([note](../formalisations/harman-sieve.md))
+- `SieveAd.altFD_sound`: The hinted bound of the main search proves `PR`
+- `SieveAd.pr_of_partD`: A part of the main search ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.pr_of_partD_at`: A part of the main search, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFamCore`: The two comparisons at a floor for a family of tuples of distinct primes, on bounds for its products
@@ -2560,25 +2560,25 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdFast`: The tests in one pass are the tests
 
-- `SieveAd.fillTestsF_eq`: The tests with no window in one pass are `fillTests` *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveAd.frozTestsC_okI`: The tests that read the frozen primes once for each tree imply `frozTests` *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveAd.frozTestsC_okJ`: The same for the terms at a floor. *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.fillTestsF_eq`: The tests with no window in one pass are `fillTests` ([note](../formalisations/harman-sieve.md))
+- `SieveAd.frozTestsC_okI`: The tests that read the frozen primes once for each tree imply `frozTests` ([note](../formalisations/harman-sieve.md))
+- `SieveAd.frozTestsC_okJ`: The same for the terms at a floor. ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFill`: The tests with no window are sound
 
-- `SieveAd.fillTests_sound`: The tests with no window are sound *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.fillTests_sound`: The tests with no window are sound ([note](../formalisations/harman-sieve.md))
 - `SieveAd.fillTests_soundX`: The tests with no window are sound under two more atoms ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFillCore`: The comparison with the rest among the tree's primes, on the sums of a box
 
-- `SieveAd.evJ_fill_core`: The comparison with the rest among the tree's primes, on the sums of a box, under more atoms *paper*
-- `SieveAd.evJ_two_core`: The comparison in two variables on the sums of a box, under more atoms *paper*
+- `SieveAd.evJ_fill_core`: The comparison with the rest among the tree's primes, on the sums of a box, under more atoms
+- `SieveAd.evJ_two_core`: The comparison in two variables on the sums of a box, under more atoms
 - `SieveAd.evJ_fill_core_at`: The comparison with the rest among the tree's primes, on the sums of a box, for any route ([note](../formalisations/harman-sieve.md))
 - `SieveAd.evJ_two_core_at`: The comparison in two variables on the sums of a box, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFillDefs`: The test of the comparison with the rest among the tree's primes, and the tests with no window, without Mathlib
 
-- `SieveAd.okJ3`: The test of the comparison with the rest among the tree's primes *paper*
+- `SieveAd.okJ3`: The test of the comparison with the rest among the tree's primes
 
 #### `SieveAdFlip`: Role reversal through the largest prime, as an identity: the two inclusions
 
@@ -2593,7 +2593,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdFlipSearch`: The search with the reversal of a box through its largest prime is sound
 
-- `SieveAd.bd_flip_core`: The reversal through the largest prime, from the bound of a tree *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.bd_flip_core`: The reversal through the largest prime, from the bound of a tree ([note](../formalisations/harman-sieve.md))
 - `SieveAd.pr_of_kidsF_at`: A part of a search with the reversal through the largest prime, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFlipSum`: Role reversal through the largest prime, as an identity: the weights and the bound
@@ -2648,7 +2648,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdFrozTests`: The tests of the tree over the frozen part of a reversal are sound
 
-- `SieveAd.frozTests_sound`: The tests of the tree over the frozen part are sound *paper*
+- `SieveAd.frozTests_sound`: The tests of the tree over the frozen part are sound
 - `SieveAd.frozTests_sound_at`: The tests of the tree over the frozen part are sound, for any route ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFrozTree`: The nodes of the tree of a reversed term over a frozen part
@@ -2661,6 +2661,46 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdFull`: The estimate in two variables on tuples of primes with a given product, in no order
 
 - `SieveAd.full2_core_at`: Tuples of primes with product in `(N₁, N₂]`, on exponents that pass the checks, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdPlainDefs`: The tests, the reversal and its tree with the paper's conditions on the leaves alone, without Mathlib
+
+- `SieveAd.Plain.okJ2`: The test of the comparison in two variables *paper*
+- `SieveAd.Plain.okJ3`: The test of the comparison with the rest among the tree's primes *paper*
+
+#### `SieveAdPlainDir`: The search led by hints is sound: the paper's conditions on the leaves alone
+
+- `SieveAd.Plain.solveD_sound`: The search led by hints is sound *paper*
+- `SieveAd.Plain.rules_frozC`: The nodes of a tree over a frozen part, with the tests that read the frozen primes once for the tree *paper*
+- `SieveAd.Plain.bd_flipCostD`: The cost of a reversal through the largest prime, its tree searched by hints, bounds the term *paper*
+- `SieveAd.Plain.altFD_sound`: The hinted bound of the main search proves `PR` *paper*
+- `SieveAd.Plain.pr_of_partD`: A part of the main search *paper*
+
+#### `SieveAdPlainFast`: The tests in one pass with the paper's conditions on the leaves alone
+
+- `SieveAd.Plain.fillTestsF_eq`: The tests with no window in one pass are `fillTests` *paper*
+- `SieveAd.Plain.frozTestsC_okI`: The tests that read the frozen primes once for each tree imply `frozTests` *paper*
+- `SieveAd.Plain.frozTestsC_okJ`: The same for the terms at a floor. *paper*
+
+#### `SieveAdPlainFill`: The tests with no window are sound: the paper's conditions on the leaves alone
+
+- `SieveAd.Plain.fillTests_sound`: The tests with no window are sound *paper*
+
+#### `SieveAdPlainFillCore`: The comparison with the rest among the tree's primes, on the sums of a box: the paper's conditions on the leaves alone
+
+- `SieveAd.Plain.evJ_fill_core`: The comparison with the rest among the tree's primes, on the sums of a box, under more atoms *paper*
+- `SieveAd.Plain.evJ_two_core`: The comparison in two variables on the sums of a box, under more atoms *paper*
+
+#### `SieveAdPlainFlipSearch`: The search with the reversal of a box through its largest prime is sound: the paper's conditions on the leaves alone
+
+- `SieveAd.Plain.bd_flip_core`: The reversal through the largest prime, from the bound of a tree *paper*
+
+#### `SieveAdPlainFrozTests`: The tests of the tree over the frozen part of a reversal are sound: the paper's conditions on the leaves alone
+
+- `SieveAd.Plain.frozTests_sound`: The tests of the tree over the frozen part are sound *paper*
+
+#### `SieveAdPlainTwo`: The test of the comparison in two variables for a tree of Buchstab steps is sound: the paper's conditions on the leaves alone
+
+- `SieveAd.Plain.evI_twoE`: A box evaluated by the estimate in two variables, under more atoms *paper*
 
 #### `SieveAdRes`: The resonant window's test of a box in the main tree is sound
 
@@ -2756,11 +2796,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdTwo`: The test of the comparison in two variables for a tree of Buchstab steps is sound
 
-- `SieveAd.evI_twoE`: A box evaluated by the estimate in two variables, under more atoms *paper* ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.evI_twoE`: A box evaluated by the estimate in two variables, under more atoms ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdTwoDefs`: The tests of the estimate in two variables for a tree of Buchstab steps, without Mathlib
 
-- `SieveAd.okJ2`: The test of the comparison in two variables *paper*
+- `SieveAd.okJ2`: The test of the comparison in two variables
 - `SieveAd.okI2`: The test of a box by the estimate in two variables *paper*
 
 #### `SieveBox`: The share of a box of prime intervals

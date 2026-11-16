@@ -6,19 +6,21 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). G
 
 Plain statement (`linnik_21500`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a
 prime `p ≡ a (mod q)` with `p ≤ K·q^{2150 / 1000}`, with no hypothesis. The route is at `L = 2150 / 1000`
-(`route21500`), with the estimate in two variables alone, and the tests are `SieveAd.fillTests`, as for the theorem
-at `2165/1000`. The sieve's decomposition is a tree of Buchstab steps with the reversal of a term of the sign `−` of
-three or five primes through its largest prime, the cofactor kept as one number (`SieveAdFlipDefs.lean`): its tree
-runs over the frozen numbers, with the tests `SieveAd.frozTests`. The kernel does not search for the tree: it
-follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the plan of the search that `tools/linnik/hint_cert.py` ran
-(34356403 boxes, 28257594 of them over frozen parts), in 3400745 steps, 161674 of them reversals through the largest
-prime: what is done at each box, with which configuration, and where the range of each new prime is cut. Each step
-is checked, and a cost that the search returns below its limit bounds the term whatever the hints are
-(`SieveAd.pr_of_partD`). The search is in 1552 parts, 17 files (`SieveHint21500P1.lean` … `SieveHint21500P17.lean`).
-The kernel evaluates the tests in one pass over a box (`SieveAd.fillTestsF`), equal to the tests that are proved
-sound; over a frozen part, in one pass over the chain's cells, with what the tests read from the frozen primes
-computed once for a tree (`SieveAd.frozTestsC`), and those imply the tests that are proved sound on the boxes of the
-tree (`SieveAdFast.lean`).
+(`route21500`), with the estimate in two variables alone, and the tests are `SieveAd.Plain.fillTests`: the tests
+with no window and with the paper's conditions on the leaves alone (`SieveAdPlainDefs.lean`), so that the proof does
+not rest on the leaves cut in three, nor on the density curve behind them. The sieve's decomposition is a tree of
+Buchstab steps with the reversal of a term of the sign `−` of three or five primes through its largest prime, the
+cofactor kept as one number (`SieveAdFlipDefs.lean`): its tree runs over the frozen numbers, with the tests
+`SieveAd.Plain.frozTests`. The kernel does not search for the tree: it follows hints (`SieveAd.solveD`,
+`SieveAdDirDefs.lean`), the plan of the search that `tools/linnik/hint_cert.py` ran (34356403 boxes, 28257594 of
+them over frozen parts), in 3400745 steps, 161674 of them reversals through the largest prime: what is done at each
+box, with which configuration, and where the range of each new prime is cut. Each step is checked, and a cost that
+the search returns below its limit bounds the term whatever the hints are (`SieveAd.Plain.pr_of_partD`). The search
+is in 1552 parts, 17 files (`SieveHint21500P1.lean` … `SieveHint21500P17.lean`). The kernel evaluates the tests in
+one pass over a box (`SieveAd.Plain.fillTestsF`), equal to the tests that are proved sound; over a frozen part, in
+one pass over the chain's cells, with what the tests read from the frozen primes computed once for a tree
+(`SieveAd.Plain.frozTestsC`), and those imply the tests that are proved sound on the boxes of the tree
+(`SieveAdPlainFast.lean`).
 
 * `route21500`, `routeOK21500`, `ibFits21500`: the route and its exponent.
 * `sound21500`, `soundF21500`: the tests are sound, and so are the tests in one pass.
@@ -30,10 +32,10 @@ tree (`SieveAdFast.lean`).
 * `linnik_21500`: `SieveAd.linnik_pr` at them, with the root at the floor `49170839016/DEN`, by the comparison with the rest
   among the tree's primes.
 
-The file imports `SieveAdDir.lean`, `SieveAdFill.lean` and the part files.
+The file imports `SieveAdPlainDir.lean`, `SieveAdPlainFill.lean` and the part files.
 -/
-import SieveAdDir
-import SieveAdFill
+import SieveAdPlainDir
+import SieveAdPlainFill
 import SieveHint21500P1
 import SieveHint21500P2
 import SieveHint21500P3
@@ -74,17 +76,18 @@ section
 attribute [local instance] route21500 routeOK21500 ibPar21500 ibFits21500
 
 /-- The tests at `2150 / 1000` are sound. -/
-theorem sound21500 : (fillTests).Sound := fillTests_sound
+theorem sound21500 : (Plain.fillTests).Sound := Plain.fillTests_sound
 
 /-- The tests in one pass at `2150 / 1000` are sound: they are the tests. -/
-theorem soundF21500 : (fillTestsF).Sound := by
-  rw [fillTestsF_eq]
-  exact fillTests_sound
+theorem soundF21500 : (Plain.fillTestsF).Sound := by
+  rw [Plain.fillTestsF_eq]
+  exact Plain.fillTests_sound
 
-/-- **A part of the search bounds its term**: `SieveAd.pr_of_partD` at the route. -/
+
+/-- **A part of the search bounds its term**: `SieveAd.Plain.pr_of_partD` at the route. -/
 theorem part21500 {top : ℕ} {bl : List Cell} {par : Bool} {cs : List ℕ} {a c h : ℕ}
     (hk : (partD solve21500 top bl par cs a K h).1 ≤ c) (hc : c < K) : PR ((a, top) :: bl) par c :=
-  pr_of_partD soundF21500 cfgIM cfgJM 10 4398046511 6597069767 200 6 200 hk hc
+  Plain.pr_of_partD soundF21500 cfgIM cfgJM 10 4398046511 6597069767 200 6 200 hk hc
 
 /-- The cell `(110743490170, 115141536681)` of the first prime: Buchstab's identity at the floor `61371304554`, and
 the pieces of the next prime's range. -/

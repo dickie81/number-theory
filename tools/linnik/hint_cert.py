@@ -126,7 +126,9 @@ from flip_cert import flipT, flipOK, vboxF  # noqa: E402
 # the certificates, by tag: the exponent and the parameters of each (`Par`): cells of side at most `h`, chains'
 # cells over the frozen parts at most `hF`, boxes of at most `maxlen` primes reversed through their largest prime,
 # and no three-prime reversal in the plan
-CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
+CERTS = {# the tests, the reversal and their soundness are `SieveAd.Plain`'s (`plain`): the paper's conditions on the
+         # leaves alone, so that the theorem's proof does not rest on the leaves cut in three
+         '21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6, plain=True),
          # boxes of the sign `+` reversed too, and each step chosen by its cost plus ten millionths of `K` for
          # each second of the kernel
          '21400': dict(lnum=2140, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=10, sec=2),
@@ -1525,7 +1527,7 @@ class Par:
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
                  blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False, cof=False, lv=False,
                  lazy=False, rmerge=False, split=0, ycorner=False, exh=0, split2=0, hl=False, chunk=0,
-                 rescap=0):
+                 rescap=0, plain=False):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1`, `SEC2` or `SEC3`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
@@ -1551,8 +1553,14 @@ class Par:
         `SieveResTest.resXH` (`res_test.hintH` writes the hints from the plan); `chunk`: the theorems of the cells
         cut by the next prime's cells in files of at most `chunk` theorems (`final_file`), which the build checks
         side by side, rather than in `Linnik<TAG>.lean`; `rescap`: with `lazy`, the memo of the window's tests is
-        trimmed past that many entries (`Planner.rescap`; the plan is the same, the memory is bounded)."""
+        trimmed past that many entries (`Planner.rescap`; the plan is the same, the memory is bounded); `plain`:
+        the Lean files name the tests, the reversal and their soundness in `SieveAd.Plain` (`SieveAdPlainDefs.lean`,
+        `SieveAdPlainDir.lean`), the tests with the paper's conditions on the leaves alone, whose proofs do not rest
+        on the leaves cut in three: for a plan with neither `energy` nor `res`, in one file of cells."""
         assert not rev, 'the search led by hints has no three-prime reversal'
+        assert not plain or not (energy or res or pos or chunk), 'the tests with the paper\'s conditions alone ' \
+            'have neither the leaves cut in three, nor the window, nor the reversal of the sign +'
+        self.plain = plain
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
         self.skip, self.skipmin, self.energy, self.res, self.resF, self.cof = skip, skipmin, energy, res, resF, cof
@@ -1999,6 +2007,9 @@ def defs_file(par_):
     dimp = 'SieveAdFrozResDefs' if resF else 'SieveAdResDefs' if res else 'SieveAdDirDefs'
     alt, ftests = ('altFDR', 'frozResTestsC') if resF else ('altFD', 'frozTestsC')
     yc = getattr(par_, 'ycorner', False)
+    pl = getattr(par_, 'plain', False)
+    if pl:
+        tests, dimp, alt, ftests = 'Plain.fillTestsF', 'SieveAdPlainDefs', 'Plain.altFD', 'Plain.frozTestsC'
     if yc:
         tests, cfgI, dimp, alt, ftests = 'resTestsFY', 'cfgIMY', 'SieveAdResYDefs', 'altFDY', 'frozResTestsY'
     hl = getattr(par_, 'hl', False)
@@ -2025,6 +2036,15 @@ def defs_file(par_):
                        '`SieveAd.cfgIFYH`.\n\n' if yc else
                        '`SieveAd.resTestsFCH` and\n`SieveAd.frozResTestsCH`, read by `SieveAd.cfgIMRCH` and '
                        '`SieveAd.cfgIFRH`.\n\n'))
+    tdoc = '(`SieveAd.fillTestsF`)'
+    adoc = (f'  (`SieveAd.{alt}`), with the tests `SieveAd.{ftests}` and the chains over the frozen parts on the grid '
+            f'of side\n  at most `{par_.hF}/DEN` (`{par_.hFf}`);')
+    if pl:
+        tdoc = 'with the paper\'s conditions on the leaves alone (`SieveAd.Plain.fillTestsF`)'
+        adoc = (f'  (`SieveAd.{alt}`), with the tests `SieveAd.{ftests}` and the chains over the frozen parts on the\n'
+                f'  grid of side at most `{par_.hF}/DEN` (`{par_.hFf}`);')
+        resdoc = ('The tests are those of `SieveAdPlainDefs.lean`: they do not read the leaves cut in three, so the '
+                  'theorem\'s proof\ndoes not rest on the estimate behind them.\n\n')
     return f"""/-
 # The exponent and the search led by hints at `L = {LN}`
 
@@ -2034,13 +2054,12 @@ The bilinear Type I rule's exponent `{LN}` (`ibPar{T}`), and `solve{T}`, the sea
 (`SieveAd.solveD`):
 
 * the nodes of the main tree with a dropped box's cost in one pass (`SieveAd.opsMP`), and the tests in one pass
-  (`SieveAd.fillTestsF`);
+  {tdoc};
 * the configurations read from the hints (`SieveAd.cfgIM`, `SieveAd.cfgJM`), and the cells of a new prime
   (`SieveAd.kidsM`) on the grid of side at most `{par_.hI}/DEN` (`{par_.h}`) and at most the exponent over
   `{par_.kappa}`;
 * as its hinted bound, the reversal through the largest prime of boxes of at most `{par_.maxlen}` primes
-  (`SieveAd.{alt}`), with the tests `SieveAd.{ftests}` and the chains over the frozen parts on the grid of side
-  at most `{par_.hF}/DEN` (`{par_.hFf}`);
+{adoc}
 * the depth of recursion `{fc.FUEL}`.
 
 {resdoc}The file imports `{dimp}.lean`; so neither it nor the part files (`SieveHint{T}P1.lean` …) load more of
@@ -2188,6 +2207,11 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
     resimp = ('import SieveAdRes\n' + ('import SieveAdFrozResTree\n' if resF else '') +
               ('import SieveAdResCof\n' if cof else '') + ('import SieveAdResH\n' if hl else '') if res else '')
     prof = 'pr_of_partDRH' if hl else 'pr_of_partDR' if resF else 'pr_of_partD'
+    # the tests with the paper's conditions on the leaves alone: the names of `SieveAd.Plain` and its modules
+    pl = getattr(par_, 'plain', False)
+    P = 'Plain.' if pl else ''
+    if pl:
+        prof = 'Plain.pr_of_partD'
     if yc and hl:
         cfgI, prof = 'cfgIMYH', 'pr_of_partDYH'
         resimp = 'import SieveAdResYH\n'
@@ -2212,13 +2236,17 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
                   f'theorem soundF{T} : (resTestsF).Sound := resTestsF_sound\n')
     else:
         soundF = (f'/-- The tests in one pass at `{LN}` are sound: they are the tests. -/\n'
-                  f'theorem soundF{T} : (fillTestsF).Sound := by\n  rw [fillTestsF_eq]\n  exact fillTests_sound\n')
+                  f'theorem soundF{T} : ({P}fillTestsF).Sound := by\n  rw [{P}fillTestsF_eq]\n'
+                  f'  exact {P}fillTests_sound\n')
     plain = textwrap.fill(
         f'Plain statement (`linnik_{T}`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there '
         f'is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`, with no hypothesis. The route is at `L = {LN}` '
         f'(`route{T}`), ' + (
             'with the estimate in two variables and the resonant window, and the tests are `SieveAd.fillTests` with '
             'the resonant window\'s for an evaluation of kind `3` (`SieveAd.resTestsF`). ' if res else
+            'with the estimate in two variables alone, and the tests are `SieveAd.Plain.fillTests`: the tests with no '
+            'window and with the paper\'s conditions on the leaves alone (`SieveAdPlainDefs.lean`), so that the proof '
+            'does not rest on the leaves cut in three, nor on the density curve behind them. ' if pl else
             'with the estimate in two variables alone, and the tests are `SieveAd.fillTests`, as for the theorem at '
             '`2165/1000`. ') + (
             'Where the paper\'s conditions on the leaves of a comparison fail, the plan cuts the box of leaves in '
@@ -2243,7 +2271,7 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
                 'a rest\'s cells, the variable tied to the rest (`SieveAd.chkIRY`, `SieveAd.chkIRFY`, '
                 '`SieveResTest.resYH`; `SieveAd.evI_resY`, `SieveAd.evIF_froz_resTY`). ' if yc else '') if res else '') +
         f'The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
-        f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.frozTests`. The '
+        f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.{P}frozTests`. The '
         f'kernel does not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the '
         f'plan of the search that `tools/linnik/hint_cert.py` ran ({stats["boxes"]} boxes, {stats["fboxes"]} of '
         f'them over frozen parts), in {nsteps} steps, {flips}: what is '
@@ -2251,10 +2279,10 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
         f'checked, and a cost that the search returns below its limit bounds the term whatever the hints are '
         f'(`SieveAd.{prof}`). The search is in {len(parts)} parts, {nfiles} files (`SieveHint{T}P1.lean` … '
         f'`SieveHint{T}P{nfiles}.lean`). The kernel evaluates the tests in one pass over a box '
-        f'(`SieveAd.fillTestsF`), equal to the tests that are proved sound; over a frozen part, in one pass over '
+        f'(`SieveAd.{P}fillTestsF`), equal to the tests that are proved sound; over a frozen part, in one pass over '
         f'the chain\'s cells, with what the tests read from the frozen primes computed once for a tree '
-        f'(`SieveAd.frozTestsC`), and those imply the tests that are proved sound on the boxes of the tree '
-        f'(`SieveAdFast.lean`).', width=116)
+        f'(`SieveAd.{P}frozTestsC`), and those imply the tests that are proved sound on the boxes of the tree '
+        f'(`{"SieveAdPlainFast" if pl else "SieveAdFast"}.lean`).', width=116)
     route = f"""/-- **The route's parameters at `{LN}`**: `L = {LN}`; the window's ends, `1/3` and `1/2`, are not used. -/
 @[instance_reducible] noncomputable def route{T} : Route := ⟨{LN}, 1 / 3, 1 / 2⟩
 
@@ -2270,7 +2298,7 @@ theorem ibFits{T} : @IBFits route{T} ibPar{T} :=
 """
     insts = f'attribute [local instance] route{T} routeOK{T} ibPar{T} ibFits{T}'
     sound = f"""/-- The tests at `{LN}` are sound. -/
-theorem sound{T} : (fillTests).Sound := fillTests_sound
+theorem sound{T} : ({P}fillTests).Sound := {P}fillTests_sound
 
 {soundF}
 
@@ -2304,6 +2332,7 @@ end Linnik{T}
 * `linnik_{T}`: `SieveAd.linnik_pr` at them, with the root at the floor `{f0}/DEN`, by the comparison with the rest
   among the tree's primes."""
     chunk = getattr(par_, 'chunk', 0)
+    dirmod, fillmod = ('SieveAdPlainDir', 'SieveAdPlainFill') if pl else ('SieveAdDir', 'SieveAdFill')
     if not chunk:
         return f"""/-
 # Linnik's theorem with exponent `{LN}`, by a search led by hints
@@ -2320,10 +2349,10 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). G
   the cell's own Buchstab step (`SieveAd.pr_buch`), and the pieces below it.
 {bullets}
 
-The file imports `SieveAdDir.lean`, `SieveAdFill.lean` and the part files.
+The file imports `{dirmod}.lean`, `{fillmod}.lean` and the part files.
 -/
-import SieveAdDir
-import SieveAdFill
+import {dirmod}
+import {fillmod}
 {resimp}{imports}
 
 namespace Linnik{T}

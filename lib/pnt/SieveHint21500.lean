@@ -7,19 +7,22 @@ The bilinear Type I rule's exponent `2150/1000` (`ibPar21500`), and `solve21500`
 (`SieveAd.solveD`):
 
 * the nodes of the main tree with a dropped box's cost in one pass (`SieveAd.opsMP`), and the tests in one pass
-  (`SieveAd.fillTestsF`);
+  with the paper's conditions on the leaves alone (`SieveAd.Plain.fillTestsF`);
 * the configurations read from the hints (`SieveAd.cfgIM`, `SieveAd.cfgJM`), and the cells of a new prime
   (`SieveAd.kidsM`) on the grid of side at most `4398046511/DEN` (`0.004`) and at most the exponent over
   `10`;
 * as its hinted bound, the reversal through the largest prime of boxes of at most `6` primes
-  (`SieveAd.altFD`), with the tests `SieveAd.frozTestsC` and the chains over the frozen parts on the grid of side
-  at most `6597069767/DEN` (`0.006`);
+  (`SieveAd.Plain.altFD`), with the tests `SieveAd.Plain.frozTestsC` and the chains over the frozen parts on the
+  grid of side at most `6597069767/DEN` (`0.006`);
 * the depth of recursion `200`.
 
-The file imports `SieveAdDirDefs.lean`; so neither it nor the part files (`SieveHint21500P1.lean` …) load more of
+The tests are those of `SieveAdPlainDefs.lean`: they do not read the leaves cut in three, so the theorem's proof
+does not rest on the estimate behind them.
+
+The file imports `SieveAdPlainDefs.lean`; so neither it nor the part files (`SieveHint21500P1.lean` …) load more of
 `Mathlib` than `Mathlib.Data.Nat.Notation`.
 -/
-import SieveAdDirDefs
+import SieveAdPlainDefs
 
 namespace SieveCert
 
@@ -34,7 +37,7 @@ open SieveCert
 
 /-- **The search led by hints at `2150/1000`**, with the reversal through the largest prime as its hinted bound. -/
 noncomputable def solve21500 : List Cell → Bool → ℕ → ℕ → ℕ × ℕ :=
-  solveD opsMP (@fillTestsF ibPar21500) cfgIM (@cfgJM ibPar21500) (kidsM 10 4398046511)
-    (@altFD ibPar21500 10 6597069767 200 6) 200
+  solveD opsMP (@Plain.fillTestsF ibPar21500) cfgIM (@cfgJM ibPar21500) (kidsM 10 4398046511)
+    (@Plain.altFD ibPar21500 10 6597069767 200 6) 200
 
 end SieveAd
