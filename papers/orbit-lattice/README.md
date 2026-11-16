@@ -22,20 +22,20 @@ The main theorem, Theorem 1.1, is the margin `PivotSharp.pivot_ge_rh` in `lib/co
 `Q_N(x) ≥ c₀·x_N²` for every `N ≥ 2` and every real `x`, with `c₀ = (999/1000)(2/45)(13/10) = 0.05772`, against
 `K_H(1) = 0.04619`. So every pivot after the first is at least `c₀`.
 
-Corollary 1.2 states its consequences as equivalences, `PivotSharp.rh_iff_orbitLattice` and `PivotSharp.rh_iff_shortest`.
-Neither has a hypothesis:
+Corollary 1.2 states its consequences as equivalences, `PivotSharp.rh_iff_orbitLattice` and
+`PivotSharp.rh_iff_shortest`. Neither has a hypothesis:
 - RH holds if and only if every Gram–Schmidt pivot of the orbit is at least the first;
 - RH holds if and only if the form is at least `K_H(1)` at every nonzero integer vector, which under RH makes `w_1` a
   shortest nonzero vector of the lattice the orbit spans.
 
 The orbit's Gram matrix `√(mn)·K_H(m/n)` in their statements is computed from the primes (`BallWeil.gram`, through
-`BallPsi.kerH_explicit`). The threshold `K_H(1)` is a choice. Given positivity, a uniform lower bound `ε` for the pivots
-is equivalent to RH for every `ε ∈ (0, K_H(1)]`, and `K_H(1)` is the value at which the statement becomes a lattice
-minimum.
+`BallPsi.kerH_explicit`). The threshold `K_H(1)` is a choice. Given Theorem 1.1, a uniform lower bound `ε` for the
+pivots is equivalent to RH for every `ε ∈ (0, K_H(1)]`, and `K_H(1)` is the value at which the statement becomes a
+lattice minimum.
 
-Proposition 2.3 places the orbit in the windows of Connes and his collaborators. On `Σ x_n = 0`, the orbit form is Weil's
-form on the step functions `u^{1/2}Σ_n x_n 1_{(0, n]}(u)` of the window `[λ⁻¹, λ]`, `λ = √N`
-(`OrbitWindow.form_eq_weilQg`, no RH input). Corollary 3.3 then reads the margin in that window: Weil's form is
+Proposition 2.3 places the orbit in the windows of Connes and his collaborators. On `Σ x_n = 0`, the orbit form is
+Weil's form on the step functions `u^{1/2}Σ_n x_n 1_{(0, n]}(u)` of the window `[λ⁻¹, λ]`, `λ = √N`
+(`OrbitWindow.form_eq_weilQg`, no RH input). Corollary 3.2 then reads the margin in that window: Weil's form is
 `≥ 0.0577` at every nonzero integer-valued step function.
 
 Appendix A names the Lean theorem behind each numbered result. `lib/check/Check.lean` prints their axioms, which are
@@ -58,9 +58,14 @@ These parts of the paper are not formalised. They are proved in the text or comp
   - those of the remark "How the hyperplane sits" at the end of §2, which come from
     [`scripts/window_hyperplane.py`](../../scripts/window_hyperplane.py);
   - the numerics of Section 8;
-- the numerical values quoted in the introduction, among them the comparison of the pivots for six densities of zeros,
-  which shows that the scarcity of zeros below height about `2π`, not the growth of their density, makes the pivots
-  exceed the first at `k = 2` (`scripts/ball_orbit.py --densities`);
+- the numerical values quoted in the introduction, among them the ratio `c₀/d₁ = 1.2495…` (Lean proves
+  `1/50 < K_H(1) < 0.0539 < c₀`);
+- Table 1, the comparison of the pivots for ten densities of zeros (`scripts/ball_orbit.py --densities`). It shows that
+  the scarcity of zeros below height about 1, where the weight `1/(1/4 + t²)` is concentrated, not the growth of their
+  density, makes the second pivot exceed the first (`d₂/d₁ = 2 − ω²`, `ω = √2·K_H(2)/K_H(1)`);
+- the closed form of the kernel (the remark "A closed form"), which the certified computations use: it is the classical
+  explicit formula with the kernel `x^s/(s(s − 1))`;
+- the strict form of (B), the uniqueness of the shortest vectors `±δ₁`, which the text derives;
 - the equivalence of the lattice form (B′) with RH, which the text derives from Proposition 2.2 and Corollary 1.2;
 - Section 6 on the analogues. Its density remark follows Lamzouri, whose approximation step uses Heath-Brown's
   zero-density estimate, and gets the positive proportion of the abstract from his published theorems. The repository
@@ -82,22 +87,32 @@ literature, and the paper credits them:
 - Its `2 × 2` case is noted by Nicolas under RH. Its lower half alone, `K_H(r) ≥ −K_H(1)` at the rationals, is already
   equivalent to RH (Proposition 2.2, `BallWeil.rh_iff_weil_bound`).
 - The value of `K_H(1)` is classical; RH ⟺ `Σ_ρ 1/|ρ|² = K_H(1)` is Burnol's remark, also proved by Gun, Murty and Rath.
+- RH ⟺ `K_H` bounded follows from Matsumoto and Suzuki's Corollary 3.1.
+- The row-by-row bound for Landau's form, from which the last step of the proof (Proposition 4.8) starts, is Conrey,
+  Ghosh and Gonek's, known through Goldston–Trudgian–Turnage-Butterbaugh.
 - Weil's explicit formula, which the library proves.
 
 ## State
 
-A draft, of 13 November 2026. What remains:
+A draft, of 16 November 2026. What remains:
 - **The acknowledgements.** They are general.
-- **Reading before submission.** Several sources are known only from reviews, abstracts and citing papers:
-  - Mazhouda (2013), whose review states that GRH for `L(s, χ)`, `q > 1`, is equivalent to Li's coefficients
-    increasing;
-  - Bombieri (2003), whose §8 meets Brownian motion, as the flat model of Proposition 2.5 does;
-  - the chapters of Broughan's Volume 2 on Weil's explicit formula, discrete measures and Hermitian forms;
-  - the sources of the method that Section 7 and Lemma 4.1 cite: Landau (1912) and Gonek (1993) for Landau's formula,
-    Fujii (1989), Montgomery–Odlyzko (1984) and Conrey–Ghosh–Gonek (1984) on gaps between zeros, and Iwaniec–Kowalski's
-    Theorem 5.12.
-    They are cited from Goldston–Gonek (2007), whose Lemma 1 was checked against Lemma 4.1 term by term, from Bui,
-    Milinovich and Ng (arXiv:0910.2052) and from Goldston's survey (arXiv:math/0412313).
+- **Reading before submission.** Several sources are cited second-hand, for their content, through the account named
+  (the same list as in `references.tex`):
+  - Weil (1952) through Bombieri (2000);
+  - Landau (1912), Fujii (1989) and Gonek (1993) through Goldston's survey and Bui–Florea–Milinovich's Lemma 3.2;
+  - Montgomery–Odlyzko (1984) and Conrey–Ghosh–Gonek (1984) through Bui–Milinovich–Ng and
+    Goldston–Trudgian–Turnage-Butterbaugh;
+  - Iwaniec–Kowalski's Theorem 5.12 through Goldston–Gonek, whose Lemma 1 was checked against Lemma 4.1 term by term;
+  - Bombieri (2003) through Suzuki (2026) and its review;
+  - Lubinsky (2014) through Dimitrov–Oliveira;
+  - Báez-Duarte–Balazard–Landreau–Saias (2000) through Burnol (2002);
+  - Kreĭn–Langer through Matsumoto–Suzuki;
+  - Kastoris and Connes–Kastoris through Andrews–Connes–La Gatta;
+  - Connes–van Suijlekom and Connes–Consani–Moscovici from their arXiv abstracts and Groskin's.
+
+  Not read at all, and not cited: the chapters of Broughan's Volume 2 on Weil's explicit formula, discrete measures
+  and Hermitian forms; and §8 of Bombieri (2003), which meets Brownian motion, as the flat model of Proposition 2.5
+  does.
 
   [`secondary_sources_2026.md`](../../research_notes/Orbit%20lattice%20criterion%20prior%20art/secondary_sources_2026.md)
   records what those accounts say. It also covers the 2026 preprints, among them Andrews, Connes and La Gatta's
@@ -110,7 +125,7 @@ Done since the first draft:
   proofs.
 - After a hostile review:
   - Proposition 2.2 has its proof, by Landau's theorem;
-  - the proof of Theorem 3.1 no longer uses a false inequality;
+  - the proof of the main equivalence (then Theorem 3.1, now Corollary 1.2) no longer uses a false inequality;
   - the abstract states the equivalences for `G_N`, whose Gram realisation by the `w_n` needs RH;
   - Binet's remainder and Lemma 4.7 are proved from citations, with the Lean routes stated;
   - statements equivalent to RH say "under RH";
@@ -143,7 +158,7 @@ Done since the first draft:
   - Section 7 credits Conrey, Ghosh and Gonek's bound on the weighted Landau form for every choice of coefficients (as
     Bui, Milinovich and Ng report), and says what is new: an identity exact at every `N`, and Schur's test at the top
     vertex leaving `(13/10)c_N²` to spare;
-  - Corollary 3.2 covers `a = mδ₁`, `|m| ≥ 2`, in the text and in Lean (`PivotSharp.lattice_second`, with
+  - Corollary 3.1 covers `a = mδ₁`, `|m| ≥ 2`, in the text and in Lean (`PivotSharp.lattice_second`, with
     `PivotSharp.gram_one_gt`: `K_H(1) > 1/50`);
   - Proposition 2.2 also states that `K_H(r) ≥ −K_H(1)` at the rationals is equivalent to RH, which its proof already
     showed (`BallWeil.rh_iff_weil_bound`);
@@ -159,6 +174,24 @@ Done since the first draft:
     Szegő's theorem; Groskin's pivot certification of truncated Weil forms is cited;
   - the window factor of Section 8 grows like `√log N`, the fitted constant depends on the law fitted, the per-sign
     density limits are marked as a sketch, and the notation and wording are tidied.
+- After a fourth hostile review:
+  - the row-by-row bound for Landau's form is credited to Conrey, Ghosh and Gonek, and the paper says what it adds:
+    the completion at the top vertex and explicit Mertens constants;
+  - the novelty claim rests on uniformity: Bui–Florea–Milinovich's discrete mean value theorem with that bound gives a
+    top-coefficient bound that decays like `(log log N)²/log² N`;
+  - the closed form of the kernel that the certified computations use is stated, with its derivation;
+  - the density comparison is a table, and its conclusion is about heights below about 1, not `2π`;
+  - the uniqueness of the shortest vectors is shown equivalent to RH in the text; `c₀/d₁ = 1.2495…` is marked as a
+    numerical evaluation; Proposition 2.5 has its proof;
+  - the claims table lists `shortest_unique` for Theorem 1.1 and the two lemmas behind Lemma 4.2(iii);
+  - Mazhouda's and Lévy's papers are no longer cited; Lamzouri's Theorem 1.1 gives the density directly;
+  - credit: Matsumoto–Suzuki's Corollary 3.1, Hallouin–Perret's remark on the dimension of the Frobenius span,
+    Bombieri's Theorem 8, Zhu's certified window positivity, the conditions of Connes–Consani's positivity, one `log λ`
+    in Andrews–Connes–La Gatta's numerics, DLMF (5.9.13) alone;
+  - notation: the Gram–Schmidt coefficients are `z_n`; in Section 4 the bumps are `ν`, the weight's lower bound is
+    `W_*`, and four dummy letters are renamed; "orbit", "realisation" and "second minimum" are defined;
+  - the curve failures of (A) are decided in exact rational arithmetic by the script, and
+    `PivotSharp.lattice_second` is registered as a conditional result (commit e140320).
 - Results whose proofs are only in the library are out. Each rests on the sampling theorem at the zeros and the
   bounds for `λ_N`, which would roughly double the paper:
   - the pivot growth `d_N ≫ log N` under RH (`BallPivot.pivot_ge`);

@@ -267,7 +267,8 @@ in the library; the theorems of that version's claims table that the table above
 /- The orbit-lattice paper (`papers/orbit-lattice/main.tex`): under RH every pivot of the orbit with Gram matrix
 `√(mn)·K_H(m/n)`, computed from the primes, is at least `0.0577` after the first (`formalisations/ball-rate.md`, "The
 pivot inequality for every `k`"); hence RH holds if and only if every pivot is at least the first, and if and only if
-`w_1` is a shortest vector of the lattice the orbit spans. The theorems of the paper's claims table (Appendix A): the
+the form is at least `K_H(1)` at every nonzero integer vector, which under RH makes `w_1` a shortest vector of the
+lattice the orbit spans. The theorems of the paper's claims table (Appendix A): the
 equivalences and the margin, the kernel and the positivity layer, the flat model, the window, and the steps of the
 proof of the margin. -/
 #print axioms PivotSharp.rh_iff_orbitLattice
@@ -298,6 +299,8 @@ proof of the margin. -/
 #print axioms PivotPhi.phi_le_sq
 #print axioms PivotPhi.phiE_strip
 #print axioms PivotPhi.norm_phiE_I_le
+#print axioms PivotPhi.differentiable_phiE
+#print axioms PivotPhi.phiE_ofReal
 #print axioms PivotSharp.prime_eq
 #print axioms PivotMinorFT.integral_mu_cos_eq_zero
 #print axioms PivotMinorFT.integral_mu_ge
