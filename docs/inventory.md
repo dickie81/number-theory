@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1938 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1942 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 282, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 286, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 379 | 1119 |
+| `lib/pnt` | 381 | 1123 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2584,6 +2584,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.inSlab_frozS_at`: The frozen part lies in the range of `r'`, for any route ([note](../formalisations/harman-sieve.md))
 - `SieveAd.inSlab_frozS_inner_at`: The narrower frozen part lies in the range of `r'`, for any route ([note](../formalisations/harman-sieve.md))
 
+#### `SieveAdFlipDefs`: The cost of the reversal of a box through its largest prime, without Mathlib
+
+- `SieveAd.flipOK`: A box that may be reversed through its largest prime *paper* ([note](../formalisations/harman-sieve.md))
+
 #### `SieveAdFlipPos`: The reversal of a box of the sign `+` through its largest prime, from the bound of a tree
 
 - `SieveAd.bd_flip_core_pos`: The reversal of a box of the sign `+` through its largest prime, from the bound of a tree ([note](../formalisations/harman-sieve.md))
@@ -2683,6 +2687,8 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd.Plain.okJ2`: The test of the comparison in two variables *paper*
 - `SieveAd.Plain.okJ3`: The test of the comparison with the rest among the tree's primes *paper*
+- `SieveAd.Plain.frozTests`: The tests of the tree over the frozen part *paper*
+- `SieveAd.Plain.flipCostD`: The cost of the reversal of a box through its largest prime, the tree over the frozen part searched by hints *paper*
 
 #### `SieveAdPlainDir`: The search led by hints is sound: the paper's conditions on the leaves alone
 
@@ -2773,6 +2779,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdRev`: The tree of a reversed term bounds it
 
 - `SieveAd.rootJ_sound`: The cost of the terms of an atoms' box at its level
+
+#### `SieveAdRevDefs`: Role reversal in a tree of Buchstab steps, without Mathlib
+
+- `SieveAd.opsK`: The nodes of the tree of a reversed term *paper*
 
 #### `SieveAdRevFam`: The cost of an atoms' box of a reversed term
 

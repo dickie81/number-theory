@@ -137,7 +137,7 @@ entries before this date means its version at `11/5`.
 *16 November:* from pull request 115 (15 November) the shared tests brought the curve `g7d` (`SieveCurve7D`), and with
 it Chen, Gupta and Li's modules, into the import cone of the theorem at `2150/1000`; that theorem now takes its tests
 from the namespace `SieveAd.Plain` (`lib/pnt/SieveAdPlain*.lean`), with the paper's conditions on the leaves alone, so
-that its cone again has none of them (487 modules). The theorem at `2165/1000` took the shared tests, and its cone
+that its cone again has none of them (487 modules then, 486 without the strategies' file removed below). The theorem at `2165/1000` took the shared tests, and its cone
 had `SieveCurve7D` and `LinnikCGLHB101`; the theorem at `2150/1000` supersedes it, and it is removed the same day
 (`Linnik21650.linnik_21650`, in the git history at commit `faaa2d1`), with its 62 part files, about four hours of
 the kernel in `CheckAll`'s build; with the second statement of its tests (`SieveAd.fillTests_soundX`, under two

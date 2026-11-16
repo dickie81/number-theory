@@ -120,7 +120,11 @@ certificate is too heavy for the default build. -/
 #print axioms SieveAd.flip_inject
 #print axioms SieveAd.froz_weight_le
 #print axioms SieveAd.Plain.frozTests_sound
+#print axioms SieveAd.opsK
+#print axioms SieveAd.Plain.frozTests
 #print axioms SieveAd.frozRules
+#print axioms SieveAd.flipOK
+#print axioms SieveAd.Plain.flipCostD
 #print axioms SieveAd.bd_flip_neg
 #print axioms SieveAd.Plain.bd_flip_core
 #print axioms SieveAd.Plain.bd_flipCostD

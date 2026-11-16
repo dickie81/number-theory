@@ -77,7 +77,7 @@ The formalisation is in `lib/pnt`, in the modules whose names begin with `Linnik
   only on `[0.7, 0.8]`. The Lean statement covers only `[5/7, 16/21]`, which lies inside `[0.7, 0.8]`. The Linnik
   paper uses Proposition 3.1 on `[5/7, 131/168]`, also inside `[0.7, 0.8]`, through its steps (below).
 - **Their Theorem 1.1 is not formalised.** The step needs the large-values count only at `V = N^σ/Z` with
-  `5/7 ≤ σ ≤ 16/21`. That lies inside Proposition 3.1's range `[N^{7/10}, N^{4/5}]`, where the paper's reduction is
+  `5/7 ≤ σ ≤ 16/21`. That lies inside Proposition 3.1's range `7/10 ≤ σ ≤ 4/5`, where the paper's reduction is
   the three-part split of the polynomial alone (`LinnikCGLLV.lv_range`). The subdivision in `T`, the mean value
   theorem and Huxley's estimate, which their proof of Theorem 1.1 uses, are not needed.
 - **Explicit constants and extra factors.** Several of the paper's `≪` and `⪅` bounds are stated in Lean with
@@ -609,7 +609,7 @@ follows.
   counts characters only from `7789/10000` on, where Huxley's exponent is below theirs, by the curve `ghx`
   (`SieveCurveHx.counts_hx`). Its tests are those of the namespace `SieveAd.Plain` (`lib/pnt/SieveAdPlain*.lean`),
   the paper's conditions on the leaves alone, and no module of this formalisation is in its import cone
-  (`scripts/import_cone.py`: 487 modules). Between pull request 115 (15 November 2026) and that change the shared
+  (`scripts/import_cone.py`: 486 modules). Between pull request 115 (15 November 2026) and that change the shared
   tests had brought `SieveCurve7D`, and with it this formalisation, into the cone.
 - **Theorem 1.1, at `21/10`** (`Linnik21000.linnik_21000`), uses Proposition 3.1 twice. In the resonant window
   (`SieveTypeIIHM.typeII_res`) it counts the characters at which a power of a prime sum of the rest is large
