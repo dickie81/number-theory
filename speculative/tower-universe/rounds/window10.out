@@ -1,0 +1,13 @@
+== Q12: the co-rotating window ==
+axis ratios: middle 0.9470–0.9471, short 0.6171–0.6172
+mean rate H·t = 0.5000; each axis's own rate within ±2.0e-04 of 1/2
+  N in [2^12, 2^15): shear σ/H max 1.2e-04; axes turn ≤ 2.6e-03 rad per unit log N
+  N in [2^15, 2^18): shear σ/H max 1.4e-05; axes turn ≤ 2.7e-04 rad per unit log N
+  N in [2^18, 2^21): shear σ/H max 1.8e-06; axes turn ≤ 3.4e-05 rad per unit log N
+  shear falls like N^-1.00; extrapolated to N = 8e60: σ/H ≈ 7e-62
+  (fixed outside axes, round 2: σ/H median 0.77; long axis turning 14.1 rad per unit log N)
+
+== Q13: the share of the outer product in its top three axes ==
+  N = 1024: top-3 share 0.3024 (axes 0.1274, 0.1117, 0.0633)
+  N = 2048: top-3 share 0.3024 (axes 0.1273, 0.1117, 0.0633)
+  N = 4096: top-3 share 0.3023 (axes 0.1273, 0.1117, 0.0633)

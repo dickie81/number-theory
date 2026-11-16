@@ -1,0 +1,4 @@
+flat ΛCDM                χ² =   10.27 (11 dof, p = 5.1e-01);  Δχ² vs ΛCDM =   0.00 (0.0σ);  Ω_m = 0.2975
+DGP self-accelerating    χ² =   15.09 (11 dof, p = 1.8e-01);  Δχ² vs ΛCDM =   4.82 (2.2σ);  Ω_m = 0.2602, Ω_rc = 0.1368
+best power law           χ² =   96.97 (11 dof, p = 7.1e-16);  Δχ² vs ΛCDM =  86.69 (9.3σ);  p = 0.912
+DGP crossover distance r_c = 1/(2 H0 √Ω_rc) = 1.35 Hubble lengths  (a second scale, put in by hand)

@@ -1,0 +1,14 @@
+n = 1: 465 predicted clicks for N <= 3000
+   strongest clicks (N, measured, predicted): (3, 0.0439, 0.3662), (5, 0.1223, 0.3219), (7, 0.1351, 0.2780), (11, 0.1270, 0.2180), (13, 0.1203, 0.1973)
+   D(N) = click − 1/N + residual: |residual| <= 1.1e-02 over all N (the −1/N background is rough at small N); for N >= 100, |residual| <= 1.6e-07, against the faintest click there 3.4e-04
+   embedded observer: AUC for finding the click times = 1.000
+   3D       observer: AUC for finding the click times = 0.566
+n = 6: 114 predicted clicks for N <= 3000
+   strongest clicks (N, measured, predicted): (18, 0.3129, 0.3662), (12, 0.2773, 0.3466), (30, 0.2888, 0.3219), (42, 0.2542, 0.2780), (66, 0.2028, 0.2180)
+   D(N) = click − 1/N + residual: |residual| <= 1.3e-01 over all N (the −1/N background is rough at small N); for N >= 100, |residual| <= 2.0e-06, against the faintest click there 2.7e-03
+   embedded observer: AUC for finding the click times = 0.999
+   3D       observer: AUC for finding the click times = 0.594
+
+total click strength per tick, Σ_{p^k | N} log p / p^k:
+   primes: median 0.0054 (one click each, against n = 1); composites: median 0.6355
+   e.g. N = 2999 (prime): 0.0027;  N = 2520 = 2^3·3^2·5·7: 1.6947

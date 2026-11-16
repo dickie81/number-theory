@@ -1,0 +1,55 @@
+== S1: a(t) ∝ ‖w_N‖ = √(N·H0), so H·t = 1/2 at all times ==
+T1: H0 t0 = 0.500 against 0.950 ± 0.008 (-56 sigma)
+T2: DESI DR2 BAO chi2 = 5436 for 12 dof (flat LCDM 10.3 for 11), p = 0e+00
+
+== S2: the drawn slice as our space ==
+axis scale factors ∝ √N: mean H·t over the three axes = 0.501
+  long   axis: size/long = 1.000–1.000; own rate H_i·t from -0.02 to +1.18
+  middle axis: size/long = 0.908–0.959; own rate H_i·t from -0.04 to +1.26
+  short  axis: size/long = 0.574–0.620; own rate H_i·t from -0.50 to +1.57
+  long axis turns at 14.14 rad per unit log N (γ1 = 14.13): once per ×1.249 in N, i.e. 28.3 radians per e-fold of the scale factor
+  shear σ/H (rms spread of the axes' rates over their mean): median 0.77, max 3.64
+  measured: σ/H < 4.7e-11 (vector mode), < 1.0e-6 (tensor mode)  =>  off by ≥ 8e+05
+
+== A1/A2: the Gram matrix place by place ==
+all places: positive definite to N = 4096
+lengths: ‖w_n‖² = n·kos(1), kos(1) = H0 = 0.046191, all of it from the real place (A(1) = ψ(1) = 0)
+finite places alone: fails at N = 1 (no lengths: every diagonal entry is 0)
+real place alone: fails at N = 3
+only the places p ≤ P (with the real place):
+   P =   2: fails at N = 4
+   P =   3: fails at N = 6
+   P =   5: fails at N = 8
+   P =   7: fails at N = 12
+   P =  11: fails at N = 14
+   P =  13: fails at N = 18
+   P =  17: fails at N = 20
+   P =  19: fails at N = 24
+   P =  23: fails at N = 30
+   P =  29: fails at N = 32
+   P =  31: fails at N = 38
+   P =  37: fails at N = 42
+   P =  41: fails at N = 44
+   P =  43: fails at N = 48
+   P =  47: fails at N = 54
+   P =  53: fails at N = 60
+   P =  59: fails at N = 63
+   P =  61: fails at N = 69
+   P =  67: fails at N = 73
+   P =  71: fails at N = 75
+   P =  73: fails at N = 81
+   P =  79: fails at N = 85
+   P =  83: fails at N = 91
+   P =  89: fails at N = 99
+   P =  97: fails at N = 103
+all places but one:
+   without p =    2: fails at N = 3
+   without p =    3: fails at N = 4
+   without p =    5: fails at N = 6
+   without p =    7: fails at N = 8
+   without p =   11: fails at N = 12
+   without p =   13: fails at N = 14
+   without p =   31: fails at N = 32
+   without p =  101: fails at N = 103
+   without p =  307: fails at N = 311
+   without p = 1009: fails at N = 1017

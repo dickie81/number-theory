@@ -1,0 +1,4 @@
+data/
+qrng_dl/
+packets_inv.npy
+__pycache__/

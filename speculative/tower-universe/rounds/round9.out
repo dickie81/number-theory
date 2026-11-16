@@ -1,0 +1,16 @@
+[segmented Ω matches the plain sieve on [1, 10^6]; 1 s]
+[window at 1.000e+12: 1 s]
+[window at 1.001e+12: 1 s]
+[window at 1.002e+12: 1 s]
+[window at 1.003e+12: 1 s]
+[window at 1.000e+15: 5 s]
+[window at 1.000e+15: 4 s]
+[window at 1.000e+15: 5 s]
+[window at 1.000e+15: 5 s]
+
+sequence                   n S1 patterns |z|   bias z  lags |z|       S2 drift D        S3 tones fingerprints
+tower, from its origin     1            1.36     0.27      1.01   -0.682          +0.995              1/1
+tower, late (10^12)        4            2.12     1.43      2.10   +0.090 ± 0.152  +0.004 ± 0.044      0/4
+tower, late (10^15)        4            1.71     1.43      1.45   -0.224 ± 0.613  -0.047 ± 0.050      0/4
+ANU quantum bits          20            3.62     1.93      2.78   -0.255 ± 0.739  +0.008 ± 0.027      0/20
+pseudo-random (PCG64)     20            3.35     1.51      2.37   +0.087 ± 0.709  -0.010 ± 0.037      0/20

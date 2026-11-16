@@ -1,0 +1,48 @@
+N_now = t0/t_P = 8.0702e+60, log N_now = 140.243
+  (age +- 0.020 Gyr moves log N by 1.5e-03; Planck's lensing column 13.797 Gyr: 140.244)
+
+== T1: no free parameters ==
+N*lambda_N at N_now: law 6.048; arithmetic class [5.61, 6.02]; proven under RH only [1.8e-05, 6.02]
+prime clock: pi(N) = 8.070e+60 at N = 1.164e+63; tau*lambda_N = 0.0434
+reading                                   H0 t0      q0  Omega_vac   measured: H0t0 = 0.95 +- 0.008, q0 = -0.53, Omega_L = 0.6847
+D1 rate, integer clock                    6.048  -0.836          -   H0t0 off by     +637 sigma
+D2 rate, prime clock                      0.043  22.030          -   H0t0 off by     -113 sigma
+D3 density, integer clock [G=1]          17.507  -0.943      1.000   H0t0 off by    +2070 sigma
+D3 density, integer clock [8piG=1]        3.452  -0.710      1.000   H0t0 off by     +313 sigma
+D4 density, prime clock [G=1]             0.667   0.500      0.036   H0t0 off by      -35 sigma
+D4 density, prime clock [8piG=1]          0.667   0.500      0.001   H0t0 off by      -35 sigma
+
+== T2: shape only, DESI DR2 BAO (13 points, full covariance, H0 r_d free) ==
+flat LCDM (Omega_m free)     chi2 =    10.27  dof 11  p = 5.1e-01  dchi2 vs LCDM =     0.0 (0.0 sigma)   best Omega_m = 0.2975
+D1 shape (H t = A log t)     chi2 =    94.90  dof 11  p = 1.8e-15  dchi2 vs LCDM =    84.6 (9.2 sigma)   best H0 t0 = 0.911
+D2 shape (power law)         chi2 =    96.97  dof 11  p = 7.1e-16  dchi2 vs LCDM =    86.7 (9.3 sigma)   best p = 0.913
+D3/D4 shape (a ~ t^2/3)      chi2 =  1420.18  dof 12  p = 6.2e-297  dchi2 vs LCDM =  1409.9 (37.5 sigma)   best none
+D1 with its own amplitude (H0 t0 = 6.05): chi2 = 10442.2
+
+== T3: numerology audit ==
+shares: {1: np.float64(0.2164), 2: np.float64(0.3144), 3: np.float64(0.3836), 5: np.float64(0.4702), 10: np.float64(0.586), 29: np.float64(0.7404), 50: np.float64(0.8028), 100: np.float64(0.8653)} (zeros below 100: 29)
+44 model numbers, 38 measurements
+
+L0: best match 0.041 sigma; random model numbers do at least this well in 23% of 20000 draws (median best 0.107 sigma)
+    tau*lambda at N=4096 = 0.0541 ~ tau_reio = 0.0544 (0.04 sigma)
+    tau*lambda at N=2048 = 0.0547 ~ tau_reio = 0.0544 (0.04 sigma)
+    share of first 2 zeros = 0.31437 ~ Omega_m = 0.3153 (0.13 sigma)
+    tau*lambda at N=8192 = 0.053 ~ tau_reio = 0.0544 (0.19 sigma)
+    tau*lambda at N=16384 = 0.0525 ~ tau_reio = 0.0544 (0.26 sigma)
+    matches within 1 sigma: 8 (random: median 6)
+
+L1: best match 0.041 sigma; random model numbers do at least this well in 68% of 20000 draws (median best 0.025 sigma)
+    tau*lambda at N=4096 = 0.0541 ~ tau_reio = 0.0544 (0.04 sigma)
+    tau*lambda at N=2048 = 0.0547 ~ tau_reio = 0.0544 (0.04 sigma)
+    1-share of first 2 zeros = 0.68563 ~ Omega_Lambda = 0.6847 (0.13 sigma)
+    share of first 2 zeros = 0.31437 ~ Omega_m = 0.3153 (0.13 sigma)
+    sqrt share of first 5 zeros = 0.68573 ~ Omega_Lambda = 0.6847 (0.14 sigma)
+    matches within 1 sigma: 33 (random: median 28)
+
+L2: best match 0.000 sigma; random model numbers do at least this well in 0% of 4000 draws (median best 0.001 sigma)
+    1/2*(tau*lambda at N_now) = 0.02195 ~ sin^2 theta_13 = 0.02195 (0.00 sigma)
+    1/3*(1-tau*lambda at N=4096) = 0.3153 ~ Omega_m = 0.3153 (0.00 sigma)
+    1/8pi*(profile kappa 0.096) = 0.0038197 ~ |V_ub| = 0.00382 (0.00 sigma)
+    8pi*(tick drop at 7^2) = 0.55797 ~ sin^2 theta_23 = 0.558 (0.00 sigma)
+    1/4*(1-share of first 50 zeros) = 0.049292 ~ Omega_b = 0.0493 (0.01 sigma)
+    matches within 1 sigma: 453 (random: median 457)
