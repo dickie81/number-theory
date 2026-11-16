@@ -263,6 +263,8 @@ in the library; the theorems of that version's claims table that the table above
 #print axioms LinnikCGLP81.cglp81
 #print axioms LinnikCGLHB101.cgls3
 #print axioms LinnikCGLHB101.cglt101
+#print axioms LinnikCGLLV.cgl_all
+#print axioms LinnikCGLStep.charDensity_cglGen
 #print axioms LinnikG7.linnik_g7d
 #print axioms LinnikG7.charDensity_g7d
 #print axioms SieveCurve7D.g7d_le_lin

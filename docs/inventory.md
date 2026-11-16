@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1877 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1942 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 280, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 282, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 366 | 1058 |
+| `lib/pnt` | 381 | 1123 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1782,7 +1782,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikCGLLV`: Chen–Gupta–Li's Proposition 3.1 as a hypothesis, and the large-values counts it gives
 
 - `LinnikCGLLV.lv_range`: The large values of `D_N` on Proposition 3.1's range ([note](../formalisations/chen-gupta-li-density.md))
-- `LinnikCGLLV.cgl_all`: Proposition 3.1's count over all characters mod `q`
+- `LinnikCGLLV.cgl_all`: Proposition 3.1's count over all characters mod `q` *paper*
 - `LinnikCGLLV.taylor_pick`: One character off the line
 - `LinnikCGLLV.cgl_shift`: Proposition 3.1's count off the line
 
@@ -1933,6 +1933,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LinnikCGLStep.block_bin_cgl`: One dyadic block and one bin, by Chen–Gupta–Li's estimate
 - `LinnikCGLStep.class1_cgl`: The polynomial class with Chen–Gupta–Li's estimate on `[lo, hi]`
 - `LinnikCGLStep.count_cgl`: The range `[lo, hi]`
+- `LinnikCGLStep.charDensity_cglGen`: A density estimate over the characters mod `q` with exponent `A` on `[lo, hi]`, under `CGLProp31` *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikCGLSteps`: Chen–Gupta–Li's Proposition 3.1 at every point of `[5/7, 131/168]`: 30 density steps with the exponent
 
@@ -2546,6 +2547,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.rules_frozC`: The nodes of a tree over a frozen part, with the tests that read the frozen primes once for the tree ([note](../formalisations/harman-sieve.md))
 - `SieveAd.bd_flipCostD`: The cost of a reversal through the largest prime, its tree searched by hints, bounds the term ([note](../formalisations/harman-sieve.md))
 - `SieveAd.altFD_sound`: The hinted bound of the main search proves `PR`
+- `SieveAd.rulesMP`: The nodes of the main tree, a dropped box's cost in one pass, bound the term
 - `SieveAd.pr_of_partD`: A part of the main search ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.pr_of_partD_at`: A part of the main search, for any route ([note](../formalisations/harman-sieve.md))
 
@@ -2566,6 +2568,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdFill`: The tests with no window are sound
 
+- `SieveAd.evJ_fill_core3`: The comparison with the rest among the tree's primes, on the sums of a box, the leaves cut in three, under more atoms ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.fillTests_sound`: The tests with no window are sound ([note](../formalisations/harman-sieve.md))
 - `SieveAd.fillTests_soundX`: The tests with no window are sound under two more atoms ([note](../formalisations/harman-sieve.md))
 
@@ -2589,6 +2592,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdFlipPos`: The reversal of a box of the sign `+` through its largest prime, from the bound of a tree
 
+- `SieveAd.bd_flip_core_pos`: The reversal of a box of the sign `+` through its largest prime, from the bound of a tree ([note](../formalisations/harman-sieve.md))
 - `SieveAd.bd_flip_coreB`: The reversal through the largest prime, from the bound of a tree, for a box of either sign ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFlipSearch`: The search with the reversal of a box through its largest prime is sound
@@ -2600,6 +2604,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd.froz_weight_le`: The weight of the narrower frozen part is at most `h₁/DEN` times the share of the box *paper*
 - `SieveAd.bd_flip_neg`: The reversal bounds a term that needs an upper bound *paper*
+- `SieveAd.bd_flip_pos`: The reversal bounds a term that needs a lower bound ([note](../formalisations/harman-sieve.md))
 - `SieveAd.bd_flip_neg_at`: The reversal bounds a term that needs an upper bound, for any route ([note](../formalisations/harman-sieve.md))
 - `SieveAd.bd_flip_pos_at`: The reversal bounds a term that needs a lower bound, for any route ([note](../formalisations/harman-sieve.md))
 - `SieveAd.froz_weight_le_at`: The weight of the narrower frozen part, for any route ([note](../formalisations/harman-sieve.md))
@@ -2625,17 +2630,31 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdFrozRes`: The term of a chain's box over the frozen part, by the resonant window
 
+- `SieveAd.evIF_froz_res`: The term of a chain's box over the frozen part, by the resonant window
 - `SieveAd.evIF_froz_resT`: The term of a chain's box over the frozen part, when the resonant window's test passes the box `ch ++ β` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdFrozResCof`: The chain's cofactor over the frozen part, in the resonant window's rest
 
+- `SieveAd.frozCof_facts`: The chain's cofactor over the frozen part is one prime
 - `SieveAd.evIF_froz_resC`: The term of a chain's box over the frozen part, by the resonant window with the chain's cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.evIF_froz_resTC`: The term of a chain's box over the frozen part, when the resonant window's test with the chain's cofactor passes the box `ch ++ β` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveAdFrozResCofG`: The chain's cofactor over the frozen part, in the rest of an estimate given as a hypothesis
+
+- `SieveAd.evIF_froz_genC`: The term of a chain's box over the frozen part, by an estimate of the tuples with the chain's cofactor in the rest
+
+#### `SieveAdFrozResG`: The term of a chain's box over the frozen part, by an estimate of the tuples given as a hypothesis
+
+- `SieveAd.evIF_froz_gen`: The term of a chain's box over the frozen part, by an estimate of the tuples ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdFrozResTree`: The trees over the frozen parts with the resonant window are sound
 
 - `SieveAd.rules_frozResC`: The nodes of a tree over a frozen part, with the resonant window ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.pr_of_partDR_at`: A part of the main search with the resonant window over the frozen parts, for any route ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveAdFrozResY`: The window's test at the two corners of a box, over the frozen part, is sound
+
+- `SieveAd.evIF_froz_resTY`: The term of a chain's box over the frozen part, when the window's test at the two corners passes the box `ch ++ β`
 
 #### `SieveAdFrozResYTree`: The trees over the frozen parts with the window's test at the two corners are sound
 
@@ -2661,6 +2680,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAdFull`: The estimate in two variables on tuples of primes with a given product, in no order
 
 - `SieveAd.full2_core_at`: Tuples of primes with product in `(N₁, N₂]`, on exponents that pass the checks, for any route ([note](../formalisations/harman-sieve.md))
+
+#### `SieveAdLeafDefs`: The leaves of the comparison in two variables cut in three, without Mathlib
+
+- `SieveAd.leavesE`: The leaves of sizes `D₁`, `D₂` cut in three ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdPlainDefs`: The tests, the reversal and its tree with the paper's conditions on the leaves alone, without Mathlib
 
@@ -2709,26 +2732,49 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdResCof`: The resonant window's test with the box's cofactor in the rest, in the main tree, is sound
 
+- `SieveAd.cof_facts`: The cofactor's facts
 - `SieveAd.evI_resCE`: A box evaluated by the resonant window with its cofactor in the rest, under more atoms ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.resTestsFC_sound`: The tests with the resonant window and the cofactor are sound ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdResH`: The resonant window's tests with the lines named by the hint are sound
 
+- `SieveAd.evI_resEH`: A box evaluated by the resonant window, under more atoms
+- `SieveAd.evI_resCEH`: A box evaluated by the resonant window with its cofactor in the rest, under more atoms
 - `SieveAd.resTestsFCH_sound`: The tests with the resonant window, its lines named by the hint, and the cofactor are sound ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.evIF_froz_resTCH`: The term of a chain's box over the frozen part, when the resonant window's test with the chain's cofactor passes the box `ch ++ β`
 - `SieveAd.pr_of_partDRCH_at`: A part of the search with the window's lines named by the hint bounds its term ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveAdResHDefs`: The resonant window's tests with the lines named by the hint, without Mathlib
+
+- `SieveAd.chkIRCH`: The resonant window's test of a box with its cofactor, its lines named by the hint
+- `SieveAd.chkIRFH`: The resonant window's test of a box `ch ++ β` of a tree over a frozen part, with the chain's cofactor in the rest
 
 #### `SieveAdResY`: The resonant window's test at the two corners of a box, in the main tree, is sound
 
+- `SieveAd.evI_resYE`: A box evaluated by the test at the two corners, under more atoms
 - `SieveAd.resTestsFY_sound`: The tests with the window's test at the two corners too are sound ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdResYDefs`: The resonant window's test at the two corners of a box, in the search, without Mathlib
 
+- `SieveAd.chkIRY`: The test at the two corners of a box, with its cofactor ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.chkIRFY`: The test at the two corners of a box `ch ++ β` of a tree over a frozen part, with the chain's cofactor
 - `SieveAd.cfgIMY`: The configuration of an evaluation in the main tree, with the window's test at the two corners too ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdResYH`: The search with the window's test at the two corners and the lines named by the hint is sound
 
 - `SieveAd.resTestsFYH_sound`: The tests with the window's test at the two corners and the lines named by the hint are sound ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.rules_frozResYH`: The nodes of a tree over a frozen part, with the window's test at the two corners and the lines named by the hint
+- `SieveAd.bd_flipCostDYH`: The cost of a reversal through the largest prime, its tree searched by hints with the window's test at the two corners too, bounds the term
+- `SieveAd.altFDYH_sound`: The hinted bound with the window's test at the two corners and the lines named by the hint over the frozen parts proves `PR`
+- `SieveAd.solveMDYH_sound`: The main search led by hints, with the window's test at the two corners and the lines named by the hint over the frozen parts, is sound
+- `SieveAd.pr_of_partDYH`: A part of the main search, with the window's test at the two corners and the lines named by the hint over the frozen parts
 - `SieveAd.pr_of_partDYCH_at`: A part of the search with the window's test at the two corners and the lines named by the hint bounds its term ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveAdResYHDefs`: The window's test at the two corners of a box and the lines named by the hint, in the search, without Mathlib
+
+- `SieveAd.resTestsFYH`: The tests with the window's test at the two corners and the lines named by the hint ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.flipCostBYH`: `flipCostB` with the tree `flipTreeDYH`.
+- `SieveAd.altFDYH`: The bound that reads hints, with the window's test at the two corners and the lines named by the hint over the frozen parts
 
 #### `SieveAdRev`: The tree of a reversed term bounds it
 
@@ -2796,6 +2842,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdTwo`: The test of the comparison in two variables for a tree of Buchstab steps is sound
 
+- `SieveAd.evJ_two_core3`: The comparison in two variables on the sums of a box, the leaves cut in three, under more atoms ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.evI_twoE`: A box evaluated by the estimate in two variables, under more atoms ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdTwoDefs`: The tests of the estimate in two variables for a tree of Buchstab steps, without Mathlib
@@ -3009,6 +3056,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveCurveGlue.windowPieceHM_affine_split`: An affine piece by the Halász–Montgomery branch below `m = 1` and by orthogonality above it
 - `SieveCurveGlue.windowPieceHM_const_split`: The piece `g β = A(1 − β)` by `windowPieceHM_affine_split` at `p = A` (as `windowPiece_const`), for `lo ≤ hi` (`hlo`) and the corner inequalities `h1`, `h2`…
 
+#### `SieveHint21000R`: The route and the parts' bound at `L = 2100 / 1000`
+
+- `Linnik21000.sound21000`: The tests at `2100 / 1000` are sound.
+- `Linnik21000.soundF21000`: The tests in one pass with the resonant window, its lines named by the hint, the cofactor and the test at the two corners at `2100 / 1000` are sound.
+- `Linnik21000.part21000`: A part of the search bounds its term
+
 #### `SieveLeaf`: The leaves of Buchstab's tree, by the fundamental lemma
 
 - `SieveLeaf.leaf_A`: A leaf, for `A` ([note](../formalisations/harman-sieve.md))
@@ -3019,6 +3072,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveLeafSplit`: The large leaves of a family split in three: two by the paper's lemma, one by the estimate in two variables
 
+- `SieveLeafSplit.large_leaves_le3`: The large leaves of a family, split in three ([note](../formalisations/halasz-montgomery.md))
 - `SieveLeafSplit.tree_leaves_le3`: The leaves of a tree, each size by the paper's lemma or split in three ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveLeafTwo`: The leaves by the Type II estimate in two variables
@@ -3026,16 +3080,23 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveLeafTwo.leaf2_bound`: Leaves with two marked products ([note](../formalisations/halasz-montgomery.md))
 - `SieveLeafTwo.leavesE_of_zone`: `LeavesE` for large `q`, from `leaf2_bound` at each length up to `K₀` ([note](../formalisations/halasz-montgomery.md))
 - `SieveLeafTwo.typeIITwoAt_leaf`: Proposition 3′ in two variables on the leaves' region ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafTwo.LeafZoneX`: The leaves' region with a cofactor of any length from `q^{2/5}`
+- `SieveLeafTwo.zone_leafX`: The zone's exponents on `LeafZoneX L`
 - `SieveLeafTwo.typeIITwoAt_leafX`: Proposition 3′ in two variables on `LeafZoneX L` ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `SieveLeafZone`: The zone of the leaves with the fourth moment, for the curve `g7d`
 
+- `SieveTypeIIHM.LeafZone`: The region of the leaves with the fourth moment
 - `SieveTypeIIHM.zone_leaf`: The zone's exponents with the fourth moment for the curve `g7d` on the region `LeafZone L` ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveLeafZoneX`: The leaves' region above `√q` as inequalities, and its test on a box in integers
 
 - `SieveLeafZoneX.leafZoneX_of_XL`: `LeafZoneXL` is in `LeafZoneX` ([note](../formalisations/halasz-montgomery.md))
 - `SieveLeafZoneX.leafXR_sound`: The test is sound ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveLeafZoneXDefs`: The test of the leaves' region above `√q` on a rectangle, in natural numbers, without Mathlib
+
+- `SieveLeafZoneX.leafXR`: The test of `LeafZoneXL` on a rectangle in natural numbers
 
 #### `SieveLeaves`: The leaves' estimates on families of atoms
 
@@ -3127,6 +3188,17 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.chain_res_cof`: Chains whose cofactor is one prime, by the resonant window with the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveResCofG`: Chains whose cofactor is one prime, the cofactor in the rest of an estimate given as a hypothesis
+
+- `SieveTypeIIHM.chain_res_cofG`: Chains whose cofactor is one prime, by an estimate of the tuples with the cofactor in the rest
+
+#### `SieveResCorner`: The resonant window's test at the two corners of a box, sound
+
+- `SieveResTest.two_corner`: The two corners give the box
+- `SieveResTest.resY_sound`: `resY` is sound ([note](../formalisations/halasz-montgomery.md))
+- `SieveResTest.resY_room`: `resY` leaves the variable room
+- `SieveResTest.resYH_eq`: `resYH` is `resY` at the hints that it unpacks.
+
 #### `SieveResCount`: The characters at which a smoothed prime sum is large
 
 - `SieveTypeIIHM.card_Sp_large`: The characters at which a smoothed prime sum is large ([note](../formalisations/halasz-montgomery.md))
@@ -3135,6 +3207,8 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.box_res_gen`: The resonant estimate for a polynomial over a finite set ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.chain_res_core`: Families of tuples of primes, by the resonant window ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.full_res_bound`: Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window
+- `SieveTypeIIHM.ResBox`: The resonant window's condition on a box
 - `SieveTypeIIHM.full_res_exp`: Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window, in exponents ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveResLV`: The characters at which a smoothed prime sum is large, by the large values of its powers
@@ -3144,6 +3218,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveResLVTest`: The resonant window's test with the large values of the powers is sound
 
+- `SieveResTest.lv_bound`: The large values' bound of a term
 - `SieveResTest.lvU_le`: The kernel's term bounds the term
 - `SieveResTest.resX_sound_cells`: The test in either form is sound, in the cells' units
 
@@ -3156,21 +3231,36 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeIIHM.chain_res_exp`: Chains with a rest, by the resonant window ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveResTermG`: Chains with a rest, by an estimate of the tuples given as a hypothesis
+
+- `SieveTypeIIHM.chain_res_gen`: Chains with a rest, by an estimate of the tuples ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveResTest`: The resonant window's test on a box is sound
 
+- `SieveResTest.binOK_of`: `ResBinOK` from the bound with the clamp.
 - `SieveResTest.resT_sound`: The test is sound ([note](../formalisations/halasz-montgomery.md))
 - `SieveResTest.resT_sound_cells`: The test is sound, in the cells' units ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveResTestH`: The resonant window's test with the lines named by the hint is sound
 
+- `SieveResTest.resXH_hs`: `resXH` passes only with `hs + 1 < DEN`.
 - `SieveResTest.resXH_sound_cells`: The test with the lines named by the hint, in either form, is sound, in the cells' units ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveResTight`: The resonant window's condition on a box with the variable tied to the rest
+
+- `SieveTypeIIHM.ResBoxT`: The resonant window's condition on a box, the variable tied to the rest ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.resBox_of_tight`: A thin sub-cell of a box with the variable tied to the rest
+- `SieveTypeIIHM.FullEst`: The estimate of the tuples of primes with a rest in a region
+- `SieveTypeIIHM.fullEst_of_tight`: The estimate on a box, from the condition with the variable tied to the rest ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveResTypeII`: The resonant window: Proposition 3′ with the characters classed by the sizes of the rest's prime sums
 
+- `SieveTypeIIHM.ResCond`: The resonant window's condition
 - `SieveTypeIIHM.typeII_res`: Proposition 3′ for the resonant window, pointwise in the heights ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `SieveResZone`: One class of characters, its exponents given: the bound of a class for the resonant window
 
+- `SieveTypeIIHM.ResBinOK`: A class's exponents fit
 - `SieveTypeIIHM.bin_bound_exp`: One class ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveRough`: Rough numbers from above, and the shares of the certificate's cells
@@ -3249,6 +3339,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTwoCross.kern_eq`: The product of the indicators is the indicator of the conjunction.
 - `SieveTwoCross.BilBd.cmp_list`: A list of `k` conditions between `i` and `j` costs a factor `(N + 1)^k` *paper* ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveTwoFourth`: The fourth moment of a short polynomial over the characters, and a third bound for a bin
+
+- `SieveTypeIIHM.sum_chars_dp_four_le`: The fourth moment of a polynomial over the characters ([note](../formalisations/hybrid-fourth-moment.md))
+- `SieveTypeIIHM.sum_bin_four_le`: The third bound for a bin
+- `SieveTypeIIHM.card_fiber_le_pow`: The divisor bound for the pairs
+
 #### `SieveTwoP6`: Harman's comparison with stops in two variables, at one modulus
 
 - `SieveTwoP6.stops_bound2`: The stops of a tree *paper*
@@ -3259,6 +3355,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.zonePiece_of_ends`: A piece of a zone from its two ends *paper*
 - `SieveTypeIIHM.zonePiece_OO`: Both variables by orthogonality
 - `SieveTypeIIHM.zonePiece_HH`: Both variables by the Halász–Montgomery inequality *paper*
+
+#### `SieveTwoPieces4`: The zone's exponents with the fourth moment, by pieces of the curve
+
+- `SieveTypeIIHM.zonePiece4_of_ends`: A piece of the zone with the fourth moment, from its two ends
+- `SieveTypeIIHM.zonePiece4_OO`: Both variables by orthogonality
+- `SieveTypeIIHM.zonePiece4_OE`: The first variable by orthogonality, the second by the fourth moment
+- `SieveTypeIIHM.zonePiece4_HE`: The first variable by the Halász–Montgomery inequality, the second by the fourth moment
 
 #### `SieveTwoTerm`: Chains with two marked products, by the Type II estimate in two variables
 
@@ -3283,6 +3386,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveTwoTypeII4`: Proposition 3′ in two variables with the fourth moment
 
+- `SieveTypeIIHM.ZoneOK4`: The zone's exponents on a region, with the fourth moment
 - `SieveTypeIIHM.typeII_two_gen4`: Proposition 3′ in two variables with the fourth moment, for a curve on a region of a zone, pointwise in the heights ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTwoZone`: One bin in two variables, as powers of `q`
@@ -3291,6 +3395,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.twoBound`: The exponent bound of the estimate in two variables at `(β, m₁, m₂, w)`, for a curve value `g` *paper*
 - `SieveTypeIIHM.bin_bound_two`: One bin in two variables, as a power of `q` *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.twoBound_of_long`: Two variables of length at least `q` ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveTwoZone4`: One bin in two variables with the fourth moment, as powers of `q`
+
+- `SieveTypeIIHM.SqExp4`: `M` is an exponent for the mean square of a polynomial of length `q^m` over a bin with about `q^g` characters by one of three bounds
+- `SieveTypeIIHM.twoBound4`: The exponent bound of the estimate in two variables at `(β, m₁, m₂, w)` with the three bounds
+- `SieveTypeIIHM.bin_bound_two4`: One bin in two variables with the fourth moment, as a power of `q`
 
 #### `SieveTwoZone7D`: The zone of the Type II estimate in two variables, for the curve `ghx`
 
