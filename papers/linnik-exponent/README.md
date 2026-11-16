@@ -27,11 +27,7 @@ Li's large values estimate (their Proposition 3.1), and the classical results it
 Huxley's density estimates, the Halász–Montgomery inequality and Harman's sieve. Naslund's entry was checked against
 its Hexagon record on 16 November 2026.
 
-The paper and its supplement describe the library at the commit that contains them. Their earlier versions, at
-weaker exponents, are in the git history: the last, with the theorem at `43/20` alone, at commit
-[`40411d7`](https://github.com/dickie81/number-theory/tree/40411d7); before it, at `11/5`
-(`Linnik22000E.linnik_22000e`, still in the library), at commit
-[`49dc981`](https://github.com/dickie81/number-theory/tree/49dc9812703c80448f96349e06a4c793a9339f6b).
+The paper and its supplement describe the library at the commit that contains them.
 
 Theorem 1.1 is `Linnik21000.linnik_21000` in `lib/pnt/Linnik21000.lean`, with the exponent written `2100/1000`, and
 Theorem 1.2 is `Linnik21500.linnik_21500` in `lib/pnt/Linnik21500.lean`, with the exponent written `2150/1000`. Neither
@@ -56,7 +52,7 @@ preprint's theorem matters for attribution and interpretation, not for the truth
 of the half-plane result is partial: OpenAI's release has its own Lean formalisation (its catalogue
 `lean/formalization.yaml` marks it "partial progress", review status "unchecked"), which is not independent of OpenAI;
 and the AIProofWatch record covers the Riemann zeta function only. Chen, Gupta and Li's preprint is not refereed. The
-theorems are unconditional. Their exponents are to be compared with `12/5`, which the classical deduction gives from
+theorems are unconditional (Theorem 1.1 once the kernel's check of its certificate ends). Their exponents are to be compared with `12/5`, which the classical deduction gives from
 the half-plane and Huxley's estimate, and with `7/3`, which it gives with Chen, Gupta and Li's density estimate: the
 paper's sieve brings them down to `43/20 = 2.15` and to `21/10 = 2.1`. They are not on the same footing as the
 exponents `5.5` and `5` of Heath-Brown and Xylouris, whose proofs use refereed results only, while these use the two
@@ -67,8 +63,9 @@ prints the axioms of Theorem 1.2 and of the theorems of Sections 2 to 7; `lib/ch
 `python3 scripts/check_axioms.py --all`) prints those of Theorem 1.1 and of the theorems of Sections 8 to 10, with
 further declarations of the library. The certificate at `43/20` is checked by the kernel in 1552 parts, in the 17
 files `lib/pnt/SieveHint21500P1.lean` to `SieveHint21500P17.lean`, about 63 minutes of the kernel's time. The
-certificate at `21/10` is checked in 107374 parts, in the 1150 files `lib/pnt/SieveHint21000P1.lean` to
-`SieveHint21000P1150.lean`, about 76 hours of one core by the generator's estimate. `tools/linnik/hint_cert.py` writes
+certificate at `21/10` has 107374 parts, in the 1150 files `lib/pnt/SieveHint21000P1.lean` to
+`SieveHint21000P1150.lean`, about 76 hours of one core by the generator's estimate; the kernel's check of them was not
+finished on 16 November 2026, and Theorem 1.1 is a theorem of the library once it ends without error. `tools/linnik/hint_cert.py` writes
 both.
 
 To build: `latexmk -pdf main.tex`, then `latexmk -pdf supplement.tex` (pdfLaTeX, as CI does; the supplement reads the

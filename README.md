@@ -7,7 +7,7 @@ from `main` on every push.
 
 | Paper | Read it |
 |---|---|
-| *Linnik's constant below the zero-density exponent: 21/10 from a zero-free half-plane*. Every reduced residue class mod `q` contains a prime `p ≤ Kq^{21/10}` (`Linnik21000.linnik_21000`), and a prime `p ≤ Kq^{43/20}` from the half-plane and Huxley's density estimate alone (`Linnik21500.linnik_21500`), by Harman's sieve with a Type II estimate in two variables over the zeros' real parts and a decomposition by trees of Buchstab steps whose certificate the kernel follows by hints; for `21/10` also with a Type II estimate in one variable over the sizes of a term's own prime sums, counted with Chen, Gupta and Li's large values estimate, the leaves of a comparison cut in three, and the reversal of the terms of the sign `+`. | [Paper (PDF)](https://dickie81.github.io/number-theory/linnik-exponent.pdf) · [Supplement (PDF)](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf) · [Source](papers/linnik-exponent/README.md) |
+| *Linnik's constant below the zero-density exponent: 21/10 from a zero-free half-plane*. Every reduced residue class mod `q` contains a prime `p ≤ Kq^{21/10}` (`Linnik21000.linnik_21000`; the kernel's check of its certificate was not finished on 16 November 2026), and a prime `p ≤ Kq^{43/20}` from the half-plane and Huxley's density estimate alone (`Linnik21500.linnik_21500`), by Harman's sieve with a Type II estimate in two variables over the zeros' real parts and a decomposition by trees of Buchstab steps whose certificate the kernel follows by hints; for `21/10` also with a Type II estimate in one variable over the sizes of a term's own prime sums, counted with Chen, Gupta and Li's large values estimate, the leaves of a comparison cut in three, and the reversal of the terms of the sign `+`. | [Paper (PDF)](https://dickie81.github.io/number-theory/linnik-exponent.pdf) · [Supplement (PDF)](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf) · [Source](papers/linnik-exponent/README.md) |
 | *A margin in Weil's criterion: the Riemann hypothesis as a lattice minimum* (a first draft). RH holds if and only if every Gram–Schmidt pivot of the orbit with Gram matrix `√(mn)·K_H(m/n)`, computed from the primes, is at least the first (`PivotSharp.rh_iff_orbitLattice`), and if and only if `w_1` is a shortest vector of the lattice the orbit spans (`PivotSharp.rh_iff_shortest`); under RH every pivot after the first is at least `0.0577 > 1.249·K_H(1)` (`PivotSharp.pivot_ge_rh`), by Weil's explicit formula with a band-limited test function, Schur's test at the top vertex of the divisibility graph and an interval certificate. | [Paper (PDF)](https://dickie81.github.io/number-theory/orbit-lattice.pdf) · [Source](papers/orbit-lattice/README.md) |
 
 ## What is here
@@ -31,8 +31,8 @@ from `main` on every push.
 
 | Path | Contents |
 |---|---|
-| `lib/core` | The library's modules that need only Mathlib: 475 files. |
-| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 821 files. |
+| `lib/core` | The library's modules that need only Mathlib: 482 files. |
+| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 2666 files, 1854 of them the part and cell files of the certificates `SieveHint<tag>`. |
 | `lib/dh` | The Davenport–Heilbronn function and its zeros: 68 files. |
 | `lib/zeta23` | The modules that also use `zeta23`: 10 files. |
 | `lib/vendor/pnt-plus`, `lib/vendor/zeta23` | Two upstream libraries, ported to this toolchain, each with its license and its port patch. See their READMEs. |

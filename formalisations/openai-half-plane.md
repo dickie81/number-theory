@@ -44,7 +44,7 @@ scope as "Partial progress", its automation as `agent` and its review status as 
 not an independent one. Beyond the rebuild above, nothing here confirms that the release's Lean is correct, and this
 library's proof was not compared with it. Third-party reports of replaying OpenAI's Lean proof of the `7/8` result exist
 (including, in at least one report, for the Dirichlet statement); they check the proof, not the mathematics, and the author
-has not rerun them. The AIProofWatch record (reviewed 2026-10-25) covers the Riemann zeta function at `7/8` only. For
+has not rerun them. The AIProofWatch record (check dated 2026-10-07, assessment reviewed 2026-11-07, read 2026-11-16) covers the Riemann zeta function at `7/8` only. For
 Dirichlet L-functions in general, no review of the mathematics independent of OpenAI and of this library is known.
 
 ## What the formalisation here is

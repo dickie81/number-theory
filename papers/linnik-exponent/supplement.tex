@@ -998,8 +998,9 @@ differences between the Lean statement and the published one.
 
 \begin{sloppypar}
 The statements of Sections~\ref{M-sec:type1} to~\ref{M-sec:certificate} carry, in Lean, the instances
-\lean{SieveRoute.Route} and \lean{SieveRoute.RouteOK}, which hold $L$ and $2 < L \le 5/2$ (with two more fields, which
-the proofs at $43/20$ and $21/10$ do not use), and \lean{SieveCert.IBPar} and \lean{SieveQ.IBFits}, which hold $L$ as a
+\lean{SieveRoute.Route} and \lean{SieveRoute.RouteOK}, which hold $L$ and $2 < L \le 5/2$ (with the ends $w_1$, $w_2$
+of a window and the facts $0 < w_1 < w_2 < 1$, which the proofs at $43/20$ and $21/10$ do not use), and
+\lean{SieveCert.IBPar} and \lean{SieveQ.IBFits}, which hold $L$ as a
 fraction
 of integers for the tests of Section~\ref{M-sec:decomp}. A statement of the paper that holds under the input uses the
 library's proof of the input;
@@ -1029,9 +1030,9 @@ and $s_i \ge -10$, among which are its five vertices.
 In Sections~\ref{M-sec:type1} to~\ref{M-sec:certificate}, \file{formalisations/harman-sieve.md} gives the sources of
 Harman's comparisons and of Lemma~\ref{M-lem:rough} and the differences between the Lean statements and the classical
 ones, and \file{formalisations/README.md} lists the Fourier separation of variables behind the family lemmas among the
-standard results. The sifting function $S(\mathcal C_r, z)$ is, in the Lean, the number of the multiples of $r$ in
-$\mathcal C$ with no prime factor below $z$ (\lean{SieveTree.rough}), and so agrees with the paper's when $r$ has no
-prime factor below $z$, as in every use; and the count of rough numbers is \lean{SieveRough.Psi}.
+standard results. The sifting function $S(\mathcal C_r, z)$ is, in the Lean as in the paper, the number of the
+multiples of $r$ in $\mathcal C$ with no prime factor below $z$ (the predicate \lean{SieveTree.rough}); and the count
+of rough numbers is \lean{SieveRough.Psi}.
 In Sections~\ref{M-sec:decomp} and~\ref{M-sec:certificate}, the exponents of the cells are integers over $D = 2^{40}$
 (\lean{SieveCert.DEN}) and the costs integers over $\mathcal K = 2^{60}$ (\lean{SieveCert.K}); the factors $\tilde t$
 and $\tilde s$ of a dropped box's cost are fixed-point numbers with the scale $2^{64}$ (\lean{SieveAd.SC}). The tests of
@@ -1050,8 +1051,8 @@ Lemma~\ref{M-lem:chains-two} directly (\lean{SieveAd.Plain.full2\_core}). The tr
 Definition~\ref{M-def:tree} without the node (R) are \lean{SieveAd.Tree}, checked by \lean{SieveAd.ok}, and
 Proposition~\ref{M-prop:tree-bound} for them is \lean{SieveAd.sound}. The reversal is not a node of
 \lean{SieveAd.Tree} but a rule of the searches (\lean{SieveAd.Plain.altFD} in the search led by hints), with the bound
-of
-Proposition~\ref{M-prop:reversal} (\lean{SieveAd.Plain.bd\_flipCostD}). What the searches prove,
+of Proposition~\ref{M-prop:reversal} for a box of the sign $-$ and of Proposition~\ref{M-prop:reversal-plus}(a) for
+one of the sign $+$ (\lean{SieveAd.Plain.bd\_flipCostD}). What the searches prove,
 Lemma~\ref{M-lem:search}
 (\lean{SieveAd.solveG\_sound} for any rules, \lean{SieveAd.Plain.solveD\_sound} for the search led by hints), is the
 bound
@@ -1067,7 +1068,10 @@ have the leaves' condition $(\mathrm L)$ alone, and their modules, \file{lib/pnt
 after it, import of the modules of Sections~\ref{M-sec:window} and~\ref{M-sec:rules} only
 \file{lib/pnt/SieveAdLeafDefs.lean} and \file{lib/pnt/SieveLeafZoneXDefs.lean}, the definitions in natural numbers of
 the condition $(\mathrm L_3)$ (Definition~\ref{M-def:leaves3}), which no statement of the proof of
-Theorem~\ref{M-thm:4320} uses; no theorem of those sections is in their import cone. The same names without
+Theorem~\ref{M-thm:4320} uses. Of the theorems of those sections only the reversal of a term of the sign $+$
+(\lean{SieveAd.bd\_flip\_pos}, Proposition~\ref{M-prop:reversal-plus}(a)) is in their import cone: the search led by
+hints is proved sound for a reversal of either sign, although the hints at $43/20$ reverse boxes of the sign $-$
+only; its proof uses neither Input~\ref{M-inp:cgl} nor $g^*$. The same names without
 \lean{Plain} are the tests and the search of Theorem~\ref{M-thm:2110}, with $(\mathrm L)$ or $(\mathrm L_3)$
 (Definition~\ref{M-def:leaves3}); the two families of proofs differ in the leaves' condition, and the library keeps
 both so that the proof of Theorem~\ref{M-thm:4320} does not depend on the second input. In
@@ -1094,8 +1098,8 @@ times sextic Gauss sums into cubic Gauss sums. Kubota's cubic theta function \ci
 with Patterson's formula for its coefficients \cite{patterson}, Dunn and Radziwi\l\l's cusp expansions
 \cite{dunn-radziwill}, and the quadratic large sieve over $\mathbb Z[\omega]$ \cite{hb-quadratic, goldmakher-louvel},
 which bounds the dual mean square. Möbius inversion removes the cube factors and gives the exponent $11/12$. The chain
-gives $\zeta$ and $L(s, \chi_{-3})$ first, then the real characters, the characters of order dividing $6$, and every
-other character through the family twisted by a character modulo $4q$. The classical results that the route uses,
+gives $\zeta$ and $L(s, \chi_{-3})$ first, then the real characters, and then every character with $\chi^2 \ne 1$
+through the family twisted by a character modulo $4q$. The classical results that the route uses,
 among them cubic and sextic reciprocity \cite{ireland-rosen}, are theorems of the library. The import cone of the
 theorem in the library has $223$ files, all of them in \texttt{lib/core}.
 
@@ -1188,7 +1192,8 @@ tests
 of Lemma~\ref{M-lem:frozen-tests} on the boxes of a tree over it (\lean{SieveAd.Plain.frozTestsC\_okI},
 \lean{SieveAd.Plain.frozTestsC\_okJ}), and a statement of the tree concerns no other box
 (\lean{SieveAd.Plain.\allowbreak rules\_frozC}). So
-they are sound. The hints are $1552$ natural numbers, $5220964$ bytes in all, written in hexadecimal.
+they are sound. The hints are $1552$ natural numbers, written in hexadecimal: $10441119$ digits, which make $5220964$
+bytes, counting each part's digits two to a byte.
 The definitions the kernel evaluates are arithmetic on Lean's core natural numbers, lists and booleans; their files
 import from Mathlib only the notation $\mathbb N$. Lean's kernel reduces the operations of the natural numbers on
 literals (addition, multiplication, division, comparison and the like) by the GMP library's arithmetic rather than by
@@ -1243,14 +1248,13 @@ files take $1036194529$ bytes. The plan of Proposition~\ref{M-prop:certificate-b
 \file{tools/linnik/hint\_cert.py} with the settings of Section~\ref{M-sec:certificate-b}, its search led by the
 strategy as at $43/20$. It visits $5141981623$ boxes, $4684054098$ of them over the frozen parts of reversals; the
 first prime's cells were planned on two machines, with the planner written in C, in three to four hours on four cores
-each. The generator's model of the kernel's time, fitted on the plan at $2115/1000$, predicts $183$ to $240$ seconds
-for each part file and $273632$ seconds, about $76$ hours of one core, for all of them; this is a prediction, and the
-repository records no measured time of the kernel at $21/10$. At the date of this version, 16 November 2026, the
-kernel has not yet checked the certificate at $21/10$ as a whole: the files of the definitions and of the route
-compile (\lean{Linnik21000.part21000}, on the three standard axioms), and the build of the $1150$ part files and of
-the $58$ files of the cells is running in the repository's continuous integration (run $608$ of its workflow, at
-commit \texttt{0771fbd}). Theorem~\ref{M-thm:2110} is a theorem of the library once that build ends without error, and
-the claims of this section about it are subject to that; at $43/20$ the whole build has run, and
+each. The generator's model of the kernel's time predicts $183$ to $240$ seconds
+for each part file and $273632$ seconds, about $76$ hours of one core, for all of them; this is a prediction, not a
+measured time of the certificate's files. At the time of writing (16 November 2026) the kernel has not yet checked the
+certificate at
+$21/10$ as a whole: the build of its $1150$ part files and of the $58$ files of its cells, at the commit of this
+paper, has not finished. Theorem~\ref{M-thm:2110} is a theorem of the library once that build ends without error,
+and the claims of this section about it are subject to that; at $43/20$ the whole build has run, and
 \lean{Linnik21500.linnik\_21500} is printed with the three standard axioms. The cost $c$, the number of parts and the
 counts of
 the table are the Lean's; they are read from the statements of the generated files by scripts, which reproduce the
@@ -1258,21 +1262,17 @@ figures that Proposition~\ref{M-prop:certificate} and the paragraphs after it gi
 
 \subsection*{The artefact}
 
-The library, the paper and this supplement are in the repository \cite{repo}; this version of the paper and of the
-supplement describes the library at the commit that contains it. The version before this one proved
-Theorem~\ref{M-thm:4320} alone; it is in the repository's history at commit \texttt{40411d7}. The versions before that
-proved the exponent $11/5$, by a Type~II estimate in one variable on a window with Chen, Gupta and Li's density
-estimate as a second input; that theorem, \lean{Linnik22000E.linnik\_22000e}, is still in the library, and that
-version of the paper is in the repository's history at commit \texttt{49dc981}. Before it, the paper proved $278/125$
-(\lean{Linnik22240R.linnik\_22240r}, at commit \texttt{8ba053b}). The toolchain is Lean \texttt{v4.35.0-rc3}
+The library, the paper and this supplement are in the repository \cite{repo}; the paper and the supplement describe
+the library at the commit that contains them. The toolchain is Lean \texttt{v4.35.0-rc3}
 \cite{lean4}, a release candidate, with Mathlib \cite{mathlib} at commit \texttt{0f64d30a},
 PrimeNumberTheoremAnd at \texttt{650d312} and \texttt{formal-math} at \texttt{fbdc36b}. The repository's README gives
 the
 commands: \texttt{lake exe cache get} for Mathlib's prebuilt files (which the build then trusts; building Mathlib
 from source, or replaying the environment with \texttt{lean4checker}, removes that trust), \texttt{scripts/build.sh} for
-the build, which limits how many of the memory-hungry kernel checks of the certificate run at once, and
-\texttt{python3 scripts/check\_axioms.py} for the axioms; the repository's continuous integration runs them on every
-change to the library.
+the build of Theorem~\ref{M-thm:4320} (the default target, \file{lib/check/Check.lean}) and \texttt{scripts/build.sh
+CheckAll} for that of Theorem~\ref{M-thm:2110}, a script that limits how many of the memory-hungry kernel checks of
+a certificate run at once, and \texttt{python3 scripts/check\_axioms.py} for the axioms (with \texttt{--all} for
+\file{lib/check/CheckAll.lean}); the repository's continuous integration runs them on every change to the library.
 
 \section{Computations around the exponents}\label{sup:computations}
 
@@ -1310,34 +1310,25 @@ joined cell's cost stays within $0.2\%$ of the sum of theirs, so the certificate
 These numbers are the script's, written into the header of \file{lib/pnt/Linnik21500.lean}; the cost $c$ and the
 number of parts are the Lean's.
 
-\subsection*{Below $43/20$}
+\subsection*{Where the cost at $43/20$ is}
 
-The plan of the same search passes at $L = 2.145$ with cells of side $0.0035$: its cost is $0.975\mathcal K$, on
-$6.0 \cdot 10^7$ boxes, with $6.6 \cdot 10^6$ steps, which would be about ten MB of hints and two hours of
-the kernel's time; that plan is not in the library. With each test of the search taken at the midpoint of its cell in
-place of the whole cell,
-which is no certificate, the cost at $43/20$ on twenty of the first prime's cells falls by $24.6\%$; with those of one
-kind alone, by $12.1\%$ (the estimate
-in two variables over the frozen parts of the reversals), $5.8\%$ (the same in the main tree), $5.8\%$ (the comparisons
-at
-a floor in the main tree) and $4.1\%$ (those over the frozen parts). So about a quarter of the cost is the cells'. Each
-$0.005$ of the exponent costs between $5\%$ and
-$9\%$: on cells of side $0.005$ the cost is $0.829\mathcal K$, $0.981\mathcal K$ and $1.034\mathcal K$ at $2.165$,
-$2.155$
-and $2.15$. The rules that the certificate lacks are worth a few per cent each, measured in exact integers at $43/20$
-on twenty of the first prime's cells, where the plan costs $0.15403\mathcal K$ (\file{tools/linnik/hint\_probe.py}): a
-second level of reversal, a box of the sign $-$ in the tree over a reversed box's frozen part reversed again through
-the largest frozen prime, saves $2.3\%$ for $2.6$ times the search; the reversal of boxes of the sign $+$
-(\lean{SieveAd.bd\_flip\_pos}), which the search at $43/20$ does not use and that at $21/10$ does
-(Section~\ref{M-sec:reversal-plus}), $2.3\%$ for twice the search; and a plan that
-weighs each step's cost against its time in the kernel, about $5\%$ at equal time. By these numbers, which are
-estimates (no plan was made at $2.14$), $2.14$ needs the last two and cells of side about $0.003$ together, on a
-certificate two to three times this one; nothing measured gives $2.13$, and $2.12$ is beyond these rules. These are
-measurements on the certificate of Theorem~\ref{M-thm:4320}, made before the rules of Sections~\ref{M-sec:window}
-and~\ref{M-sec:rules}, which are of another kind and with which the search passes at $21/10$. In
-particular a further reversal of the boxes of two primes that the plan drops, which are $42\%$ of its cost, does not
+With each test of the search taken at the midpoint of its cell in place of the whole cell, which is no certificate,
+the cost at $43/20$ on twenty of the first prime's cells falls by $24.6\%$; with those of one kind alone, by
+$12.1\%$ (the estimate in two variables over the frozen parts of the reversals), $5.8\%$ (the same in the main
+tree), $5.8\%$ (the comparisons at a floor in the main tree) and $4.1\%$ (those over the frozen parts). So about a
+quarter of the cost is the cells'. Each $0.005$ of the exponent costs between $5\%$ and $9\%$: on cells of side
+$0.005$ the cost is $0.829\mathcal K$, $0.981\mathcal K$ and $1.034\mathcal K$ at $2.165$, $2.155$ and $2.15$. The
+rules that the certificate lacks are worth a few per cent each, measured in exact integers at $43/20$ on twenty of
+the first prime's cells, where the plan costs $0.15403\mathcal K$ (\file{tools/linnik/hint\_probe.py}): a second
+level of reversal, a box of the sign $-$ in the tree over a reversed box's frozen part reversed again through the
+largest frozen prime, saves $2.3\%$ for $2.6$ times the search; the reversal of boxes of the sign $+$
+(\lean{SieveAd.bd\_flip\_pos}), which the plan at $43/20$ does not use and that at $21/10$ does
+(Section~\ref{M-sec:reversal-plus}), $2.3\%$ for twice the search; and a plan that weighs each step's cost against
+its time in the kernel, about $5\%$ at equal time. A
+further reversal of the boxes of two primes that the plan drops, which are $42\%$ of its cost, does not
 pay: on nine cells of the first prime from $x^{0.16}$ to $x^{0.47}$, none of them costs less reversed than dropped,
-with one level of reversal or two.
+with one level of reversal or two. These are measurements on the certificate of
+Theorem~\ref{M-thm:4320}; the rules of Sections~\ref{M-sec:window} and~\ref{M-sec:rules} are of another kind.
 
 \section{Proofs for the resonant window}\label{sup:window}
 
@@ -1624,9 +1615,11 @@ cell of the box and one for the cofactor, then the four bits $N_I$ and the recor
 \end{enumerate}
 Each corner has its own intervals and records of $15 + 3K$ bits. Lemma~\ref{M-lem:two-corners} turns (ii) and (iii),
 with the room (i), into the resonance condition at every $s$ with $\ell_j/Z \le s_j \le u_j/Z$ and every $m$ with
-$\sum_j s_j + m \ge L - 2 \cdot 10^{-5}$ (\lean{SieveResTest.\allowbreak two\_corner}); the class at $s$ is carried to
-the upper corner, where the rest's term is lower by half the distance $\sum_j (u_j/Z - s_j)$ and the variable longer by
-at least $12/11$ of it. Since $\ell_j/Z \le \kappa c_j - 2 \cdot 10^{-5}$ and $u_j/Z \ge \kappa d_j + 2 \cdot 10^{-5}$,
+$\sum_j s_j + m \ge L - 2 \cdot 10^{-5}$ (\lean{SieveResTest.\allowbreak two\_corner}); an admissible tuple at $\mathbf
+s$ is carried to
+the upper corner, where the rest's term is lower by half the distance $\Theta = \sum_j (u_j/Z - s_j)$, while the
+variable at $\mathbf s$ is longer than the upper corner's by at least $(12/11)\Theta$. Since $\ell_j/Z \le \kappa c_j -
+2 \cdot 10^{-5}$ and $u_j/Z \ge \kappa d_j + 2 \cdot 10^{-5}$,
 this is the tied condition of (W$'$) on the widened box, and (i) gives $\sum_j \kappa d_j + 2 \cdot 10^{-5} \le L$
 (\lean{SieveResTest.\allowbreak resY\_sound}, \lean{SieveResTest.\allowbreak resY\_room}). This proves
 Lemma~\ref{M-lem:window-kernel}(b). The form with the hints in one number (\lean{SieveResTest.\allowbreak resYH}) reads
@@ -1644,13 +1637,8 @@ over the frozen parts they are \lean{SieveAd.\allowbreak frozResTestsYH}, with \
 \lean{SieveAd.\allowbreak rules\_frozResYH}, through \lean{SieveResTest.\allowbreak resXH\_sound\_cells},
 \lean{SieveResTest.\allowbreak resY\_sound}, \lean{SieveAd.\allowbreak fullEst\_of\_resYH}, \lean{SieveAd.\allowbreak
 evI\_resCEH}, \lean{SieveAd.\allowbreak evI\_resYE}, \lean{SieveAd.\allowbreak evIF\_froz\_resTCH} and
-\lean{SieveAd.\allowbreak evIF\_froz\_resTY}. The earlier forms are stepping stones, proved and not used at $21/10$:
-\lean{SieveResTest.\allowbreak resT}, \lean{SieveResTest.\allowbreak resT2}, \lean{SieveResTest.\allowbreak resX} (with
-\lean{SieveResTest.\allowbreak resT\_sound} and \lean{SieveResTest.\allowbreak resX\_sound\_cells}) and the box tests
-\lean{SieveAd.\allowbreak chkIR}, \lean{SieveAd.\allowbreak chkIRC}, \lean{SieveAd.\allowbreak chkIRF},
-\lean{SieveAd.\allowbreak resTestsF}, \lean{SieveAd.\allowbreak resTestsFC} (the tests of the certificate at
-$2115/1000$) and \lean{SieveAd.\allowbreak resTestsFY}; \lean{SieveAd.\allowbreak resTestsFCH} is used only as the part
-of kind 3 of \lean{SieveAd.\allowbreak resTestsFYH}.
+\lean{SieveAd.\allowbreak evIF\_froz\_resTY}. The tests \lean{SieveAd.\allowbreak resTestsFCH} are the part of kind 3
+of \lean{SieveAd.\allowbreak resTestsFYH}.
 
 \section{Proofs for the leaves cut in three}\label{sup:leaves}
 
