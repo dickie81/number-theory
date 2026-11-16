@@ -26,10 +26,11 @@ Two forms of it are used.
 - `SieveTypeIIHM.sum_bin_hm` (`lib/pnt/SieveHMBin.lean`) is the case `σ = 0`, `β_χ = 0` and `γ_χ = h₀`, one height
   for the whole bin, at `Λ = 2P` for `S ⊆ (P, 2P]`.
 
-`hm_duality_W` is in the proof of `Linnik21500.linnik_21500`, the Linnik paper's theorem, through Huxley's estimate,
-and `hm_duality` and `sum_bin_hm` in that of `Linnik22000E.linnik_22000e`, the library's theorem at `11/5`. The
-axioms of both theorems are `propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`), so these depend
-on those only. `hm_duality` does not use the zero-free half-plane.
+`hm_duality_W` is in the proofs of `Linnik21500.linnik_21500` and `Linnik21000.linnik_21000`, the Linnik paper's
+Theorems 1.2 and 1.1, through Huxley's estimate, and `hm_duality` and `sum_bin_hm` in that of
+`Linnik22000E.linnik_22000e`, the library's theorem at `11/5`, and in Theorem 1.1's resonant window (below). The
+axioms of these theorems (`lib/check/Check.lean`; for `linnik_21000`, `lib/check/CheckAll.lean`) are `propext`,
+`Classical.choice` and `Quot.sound`, so these depend on those only. `hm_duality` does not use the zero-free half-plane.
 
 ## With weights, in mean square, and for two polynomials
 
@@ -115,7 +116,8 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
 - `SieveTypeIIHM.box_res_gen` and `SieveTypeIIHM.chain_res_core` (`lib/pnt/SieveResFull.lean`): `typeII_res` for a
   polynomial over a finite set with at most `D` elements for each value, and the families of tuples of primes in
   no order (`SieveTwoChain.chain_two_core`'s) with one variable, the product of the entries outside a rest whose
-  entries have their own lower bounds. Nothing uses them yet;
+  entries have their own lower bounds. Through `full_res_bound` and `full_res_exp` they are in the proofs of the
+  theorems at `2115/1000` and `2100/1000` (`Linnik21150.linnik_21150`, `Linnik21000.linnik_21000`);
 - `SieveResTest.resT_sound` and `SieveResTest.resT_sound_cells` (`lib/pnt/SieveResTest.lean`; the test
   `SieveResTest.resT` in `lib/pnt/SieveResTestDefs.lean`, written by `tools/linnik/res_test.py`): the kernel's test
   of `ResBox` on the curve `ghx` for a box's rest, led by a hint, is sound. The test bounds, for every count
@@ -124,7 +126,9 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   hint into intervals (their ends on the grid `2^-12`, 13 bits each), on each of which the test takes the line above
   each term that is least at the interval's midpoint (among the moments' lines of `k₀ − 1` and `k₀ = ⌈1/lo⌉`, the
   curve's bound at the interval's left end, and the line `1 − γ/A` with `A` the larger of the end steps' factors),
-  and likewise the clamp's, checked at the interval's ends in fixed point (`2^64`). Nothing uses it yet;
+  and likewise the clamp's, checked at the interval's ends in fixed point (`2^64`). The theorem at `2115/1000` uses
+  it, through `SieveResTest.resX_sound`; the theorem at `2100/1000` uses the hinted form instead
+  (`SieveResTest.resXH_sound_cells`, and the test at the two corners `SieveResTest.resYH`);
 - `SieveTypeIIHM.chain_res_exp` (`lib/pnt/SieveResTerm.lean`): `SieveTwoTerm.chain2_bound` by the resonant window: the
   strictly decreasing chains of primes with a rest at given positions, each rest prime at least `q^{lo i}` and the
   rest's product in `[q^{ρ₁}, q^{ρ₂}]`, times their rough cofactors, evaluated given
@@ -357,7 +361,8 @@ The region enters through a rectangle cut by a band of the sum of the two expone
 family whose two variables have their exponents in such a set inside the region. A set of tuples cut by another
 slanted side of the region is a union of such sets and a remainder that these lemmas do not evaluate.
 
-Two theorems of the library use them, both in no paper. Linnik's theorem with exponent `219/100`
+They are in the proofs of the paper's two theorems ([harman-sieve.md](harman-sieve.md)). Two theorems of the
+library in no paper used them first. Linnik's theorem with exponent `219/100`
 (`Linnik21900.linnik_21900`) has for its decomposition a tree of Buchstab steps with the window's tests
 and two tests by this estimate, a box evaluated outright (`SieveAd.evI_two`, from `chain2_bound`) and the
 comparison at a floor (`SieveAd.evJ_two`, from `prop6_two_at`); the term with its cofactor in the rest
@@ -408,11 +413,19 @@ the others at most `B`.
 
 ## Where the Linnik paper uses it
 
-- Through Huxley's estimate, on the steps of the density curve from `7789/10000` on
-  ([huxley-density.md](huxley-density.md)).
-- Directly, in mean square, in the Type II estimate in two variables: each bin of characters from `7789/10000` on
+Both of the paper's theorems, at `43/20` (Theorem 1.2) and at `21/10` (Theorem 1.1), use it:
+
+- through Huxley's estimate, on the steps of the density curve from `7789/10000` on
+  ([huxley-density.md](huxley-density.md));
+- directly, in mean square, in the Type II estimate in two variables: each bin of characters from `7789/10000` on
   bounds the mean square of a polynomial by `SieveTypeIIHM.sum_bin_hm_sq`, from the weighted form
   `SieveTypeIIHM.hm_duality_wt` at the weights `conj W(χ)`, with the kernel bound above.
+
+Theorem 1.1 uses it in two more places: in the resonant window (`SieveTypeIIHM.typeII_res`), where `bin_bound_exp`
+bounds each class of characters by orthogonality or by the inequality at one height (`SieveTypeIIHM.sum_bin_hm`, not
+the mean square), as the library's theorem at `11/5` did; and in the estimate in two variables
+with the fourth moment on the leaves' region (`SieveLeafTwo.typeIITwoAt_leafX`), where the first variable's mean
+square is bounded by it on the pieces of the curve `g7d` from `163/210` on, and by orthogonality below.
 
 The library's theorem at `11/5` used it directly on the top piece `[5/6, 11/12]` of its Type II estimate in one
 variable: there `SieveHMBins` and `SieveTypeIIHM` bound each bin of characters at one height by

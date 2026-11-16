@@ -18,7 +18,7 @@ bound `A` below on `[lo, hi]`. `LFunction` is Mathlib's `DirichletCharacter.LFun
 
 The Linnik proofs use these instances:
 
-- `SieveCurveHx.charDensity_hxT`, one step on `[7789/10000, 131/168]`, in the Linnik paper's curve (below);
+- `SieveCurveHx.charDensity_hxT`, one step on `[7789/10000, 131/168]`, in the Linnik paper's curve `ghx` (below);
 - `LinnikStairs7.charDensity_hx7_5` to `charDensity_hx7_19`, the last fifteen of twenty equal steps `[σ₁, σ₂]` of
   `[16/21, 5/6]` (`LinnikStairs7` has `charDensity_hx7_0` … `charDensity_hx7_19`; the paper's curve replaces the first
   five by the step above, and the curve of the library's theorem at `11/5`, `Linnik22000E.linnik_22000e`, by the
@@ -30,9 +30,11 @@ The Linnik proofs use these instances:
   the zero-free half-plane ([openai-half-plane.md](openai-half-plane.md)): no non-principal character is counted
   there.
 
-These theorems are in the proof of `Linnik21500.linnik_21500`, the Linnik paper's theorem, whose axioms are
-`propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`), so they depend on those only. `charDensity_gen` and the twenty steps do not use
-the half-plane: `Eis.LFunction_ne_zero_of_re_gt` is not among the declarations their proofs depend on.
+These theorems are in the proofs of the Linnik paper's two theorems, `Linnik21500.linnik_21500` (Theorem 1.2, at
+`43/20`) and `Linnik21000.linnik_21000` (Theorem 1.1, at `21/10`), whose axioms are `propext`, `Classical.choice` and
+`Quot.sound` (`lib/check/Check.lean`; for `linnik_21000`, `lib/check/CheckAll.lean`), so they depend on those only.
+`charDensity_gen` and the twenty steps do not use the half-plane: `Eis.LFunction_ne_zero_of_re_gt` is not among the
+declarations their proofs depend on.
 
 ## Source
 
@@ -97,6 +99,10 @@ trivial count below `7789/10000` and this estimate from there on: a step `SieveC
 end; parameters `M = 1497`, `a = 18703/25000`, `λ = 224439/200000`, `A_i = 224447/100000`, found and checked against
 `LinnikHuxStep.Par.Good` in exact rationals by `tools/linnik/gen_zone.py`), the fifteen steps
 `LinnikStairs7.charDensity_hx7_5` to `charDensity_hx7_19` on `[131/168, 5/6]`, and `LinnikStep.charDensity_step` from
-`5/6` on. It is the only density estimate of the paper's theorem: below `7789/10000` the estimate in two variables
-bounds both variables by orthogonality, whatever the curve. The window route's curve `g7d` (`SieveCurve7D.counts_7d`,
-the library's theorems at `11/5`, `219/100` and `218/100`) takes the same fifteen steps and the last.
+`5/6` on. It is the only density estimate of Theorem 1.2, at `43/20`: below `7789/10000` the estimate in two variables
+bounds both variables by orthogonality, whatever the curve. Theorem 1.1, at `21/10`, uses `ghx` in the same estimate
+and in the resonant window (`SieveTypeIIHM.typeII_res`). It also uses the curve `g7d` (`SieveCurve7D.counts_7d`), in
+the estimate in two variables with the fourth moment on the leaves' region (`SieveLeafTwo.typeIITwoAt_leafX`); `g7d`
+takes the same fifteen steps and the last, with Ingham's and Chen, Gupta and Li's steps below `131/168`
+([ingham-density.md](ingham-density.md), [chen-gupta-li-density.md](chen-gupta-li-density.md)). The window route's
+theorems at `11/5`, `219/100` and `218/100` take `g7d` too.

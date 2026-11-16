@@ -602,13 +602,30 @@ it, and no paper in this repository claims it.
 
 ## Where the Linnik paper uses it
 
-The Linnik paper's theorem, at `43/20` (`Linnik21500.linnik_21500`), does not use this estimate: its Type II estimate
-in two variables counts characters only from `7789/10000` on, where Huxley's exponent is below theirs, by the curve
-`ghx` (`SieveCurveHx.counts_hx`); no module of this formalisation is in its import cone. The paper's earlier version,
-at `11/5`, used it, and the library keeps that theorem (`Linnik22000E.linnik_22000e`) and those at `219/100` and
-`218/100`, whose Type II estimate in one variable, on a window, takes the curve `g7d` (`SieveCurve7D.counts_7d`). That
-curve takes their Proposition 3.1 directly, on 30 steps of `[5/7, 131/168]` (next section), and not `CGLDensity`. An earlier curve, `g7c`
-(`SieveTypeIIU226C.counts_7c`, now in the git history), used `CGLDensity`; it was built from these pieces:
+Their Proposition 3.1 (`LinnikCGLHB101.prop31`) is Input 2 of the Linnik paper. The paper's two theorems use it as
+follows.
+
+- **Theorem 1.2, at `43/20`** (`Linnik21500.linnik_21500`), does not use it: its Type II estimate in two variables
+  counts characters only from `7789/10000` on, where Huxley's exponent is below theirs, by the curve `ghx`
+  (`SieveCurveHx.counts_hx`). Its tests are those of the namespace `SieveAd.Plain` (`lib/pnt/SieveAdPlain*.lean`),
+  the paper's conditions on the leaves alone, and no module of this formalisation is in its import cone
+  (`scripts/import_cone.py`: 487 modules). Between pull request 115 (15 November 2026) and that change the shared
+  tests had brought `SieveCurve7D`, and with it this formalisation, into the cone.
+- **Theorem 1.1, at `21/10`** (`Linnik21000.linnik_21000`), uses Proposition 3.1 twice. In the resonant window
+  (`SieveTypeIIHM.typeII_res`) it counts the characters at which a power of a prime sum of the rest is large
+  (`SieveTypeIIHM.card_Sp_large_lv`, with the exponent `SieveTypeIIHM.lvExp`). In the estimate in two variables with
+  the fourth moment on the leaves' region (`SieveLeafTwo.typeIITwoAt_leafX`), which evaluates the leaves cut in
+  three, it enters through the curve `g7d` (`SieveCurve7D.counts_7d`): the thirty steps
+  `LinnikCGLSteps.charDensity_s0` … `charDensity_s29` on `[5/7, 131/168]` (next section).
+- Neither theorem uses their Theorem 1.2 or `CGLDensity`: `LinnikCGLDensity` is in neither import cone.
+
+The theorem at `2115/1000` (`Linnik21150.linnik_21150`, in no paper) uses Proposition 3.1 in the same two ways.
+
+The paper's earlier version, at `11/5`, used it, and the library keeps that theorem (`Linnik22000E.linnik_22000e`)
+and those at `219/100` and `218/100`, whose Type II estimate in one variable, on a window, takes the curve `g7d`
+(`SieveCurve7D.counts_7d`). That curve takes their Proposition 3.1 directly, on 30 steps of `[5/7, 131/168]` (next
+section), and not `CGLDensity`. An earlier curve, `g7c` (`SieveTypeIIU226C.counts_7c`, now in the git history),
+used `CGLDensity`; it was built from these pieces:
 
 - the trivial count below `4/7`;
 - twenty steps from Ingham's estimate;

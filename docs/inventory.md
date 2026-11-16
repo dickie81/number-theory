@@ -1564,12 +1564,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `Linnik21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints
 
 - `Linnik21000.tree21000`: The first term at `2100 / 1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21000.linnik_21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints ([note](../formalisations/halasz-montgomery.md))
+- `Linnik21000.linnik_21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `Linnik21150`: Linnik's theorem with exponent `2115 / 1000`, by a search led by hints
 
 - `Linnik21150.tree21150`: The first term at `2115 / 1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21150.linnik_21150`: Linnik's theorem with exponent `2115 / 1000`, by a search led by hints ([note](../formalisations/harman-sieve.md))
+- `Linnik21150.linnik_21150`: Linnik's theorem with exponent `2115 / 1000`, by a search led by hints ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `Linnik21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints
 
@@ -3026,7 +3026,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveLeafTwo.leaf2_bound`: Leaves with two marked products ([note](../formalisations/halasz-montgomery.md))
 - `SieveLeafTwo.leavesE_of_zone`: `LeavesE` for large `q`, from `leaf2_bound` at each length up to `K₀` ([note](../formalisations/halasz-montgomery.md))
 - `SieveLeafTwo.typeIITwoAt_leaf`: Proposition 3′ in two variables on the leaves' region ([note](../formalisations/halasz-montgomery.md))
-- `SieveLeafTwo.typeIITwoAt_leafX`: Proposition 3′ in two variables on `LeafZoneX L` ([note](../formalisations/halasz-montgomery.md))
+- `SieveLeafTwo.typeIITwoAt_leafX`: Proposition 3′ in two variables on `LeafZoneX L` ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `SieveLeafZone`: The zone of the leaves with the fourth moment, for the curve `g7d`
 
@@ -3140,7 +3140,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveResLV`: The characters at which a smoothed prime sum is large, by the large values of its powers
 
 - `SieveTypeIIHM.card_Sp_pow_large`: The characters at which a power of a smoothed prime sum is large, by Chen, Gupta and Li's Proposition 3.1
-- `SieveTypeIIHM.card_Sp_large_lv`: The characters at which a smoothed prime sum is large, by the large values of its powers, in exponents
+- `SieveTypeIIHM.card_Sp_large_lv`: The characters at which a smoothed prime sum is large, by the large values of its powers, in exponents ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `SieveResLVTest`: The resonant window's test with the large values of the powers is sound
 
@@ -3167,7 +3167,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveResTypeII`: The resonant window: Proposition 3′ with the characters classed by the sizes of the rest's prime sums
 
-- `SieveTypeIIHM.typeII_res`: Proposition 3′ for the resonant window, pointwise in the heights ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.typeII_res`: Proposition 3′ for the resonant window, pointwise in the heights ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `SieveResZone`: One class of characters, its exponents given: the bound of a class for the resonant window
 

@@ -21,8 +21,9 @@ primary squarefree `n` with `U/2 ≤ N(n) ≤ 2U`, and all coefficients `β_n`,
 
 `Σ_k |Σ_n β_n(n/k)₂|² ≤ C(HU)^ε(H + U)Σ_n |β_n|²`.
 
-The theorem is in the proof of `Linnik21500.linnik_21500`, the Linnik paper's theorem, whose axioms are `propext`,
-`Classical.choice` and `Quot.sound` (`lib/check/Check.lean`), so it depends on those only.
+The theorem is in the proofs of `Linnik21500.linnik_21500` and `Linnik21000.linnik_21000`, the Linnik paper's
+Theorems 1.2 and 1.1, whose axioms are `propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`; for
+`linnik_21000`, `lib/check/CheckAll.lean`), so it depends on those only.
 
 ## Source
 
@@ -80,7 +81,7 @@ transforms (`MellinSep`), and a radial majorant with compactly supported Fourier
 
 ## Where the Linnik paper uses it
 
-Through the zero-free half-plane ([openai-half-plane.md](openai-half-plane.md)). The companion preprint's Lemma 6.6
-bounds the prepared sums in mean square with it (`EisensteinPrepared`, `EisensteinThetaAssembly`), and the dual mean
-square of its route follows. With the theta transformation ([cubic-theta.md](cubic-theta.md)) it gives the
-half-plane for `ζ` and `L(s, χ₋₃)` (`Eis.ne_zero_of_thetaRows`).
+In both theorems, through the zero-free half-plane ([openai-half-plane.md](openai-half-plane.md)). The companion
+preprint's Lemma 6.6 bounds the prepared sums in mean square with it (`EisensteinPrepared`,
+`EisensteinThetaAssembly`), and the dual mean square of its route follows. With the theta transformation
+([cubic-theta.md](cubic-theta.md)) it gives the half-plane for `ζ` and `L(s, χ₋₃)` (`Eis.ne_zero_of_thetaRows`).

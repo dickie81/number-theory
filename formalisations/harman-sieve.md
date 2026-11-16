@@ -300,12 +300,13 @@ Its main tools:
   in the arithmetic of `ℕ` written out, and is `dropC`'s and `dropK`'s (`SieveAd.omKwP_eq`, `SieveAd.drpMP_eq`,
   `SieveAd.opsKP_eq`).
 - `Linnik21500.linnik_21500` (`lib/pnt/Linnik21500.lean`; the parts are `lib/pnt/SieveHint21500P1.lean` and the
-  files after it, without Mathlib), **Linnik's theorem with exponent `2150/1000`**: for every `q ≥ 1` and every
-  `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2150/1000}`, with no hypothesis. The route
-  and the tests are those of the theorem at `2165/1000`; the search is led by hints (`SieveAd.solve21500`:
-  `SieveAd.solveD`), with the reversal through the largest prime of boxes of the sign `−` of at most six
-  primes, that is of three and of five, as its hinted bound, on cells of side at most `0.004` and chains' cells
-  of side at most `0.006` over the frozen parts. The bound of the first term costs `0.94847·K`
+  files after it, without Mathlib), **Linnik's theorem with exponent `2150/1000`**, the Linnik paper's Theorem 1.2:
+  for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2150/1000}`, with no
+  hypothesis. The route is that of the theorem at `2165/1000`, and the tests are those of the namespace
+  `SieveAd.Plain` (`lib/pnt/SieveAdPlain*.lean`), with the paper's conditions on the leaves alone; the search is
+  led by hints (`SieveAd.solve21500`: `SieveAd.solveD`), with the reversal through the largest prime of boxes of
+  the sign `−` of at most six primes, that is of three and of five, as its hinted bound, on cells of side at most
+  `0.004` and chains' cells of side at most `0.006` over the frozen parts. The bound of the first term costs `0.94847·K`
   (`Linnik21500.tree21500`). The hints are the plan that `tools/linnik/hint_cert.py` kept of its search:
   `3.4·10^6` steps, of which `1.6·10^5` reversals, in `1552` parts, where the search visited `3.4·10^7` boxes,
   `2.8·10^7` of them over frozen parts.
@@ -327,9 +328,9 @@ Its main tools:
   in `57689` parts (`lib/pnt/SieveHint21150P1.lean` … `SieveHint21150P612.lean`), with the theorems of the cells
   cut by the next prime's cells in 17 files (`lib/pnt/SieveHint21150N1.lean` …), where the search visited
   `4.9·10^8` boxes.
-- `Linnik21000.linnik_21000`, Linnik's theorem with exponent `2100/1000` (in no paper): that search with the
-  window's test at the two corners of the box of a rest's cells where its test at one corner fails, and the
-  window's lines named by the hint (`SieveAd.resTestsFYH_sound`, `SieveAd.pr_of_partDYCH_at`, in
+- `Linnik21000.linnik_21000`, Linnik's theorem with exponent `2100/1000`, the Linnik paper's Theorem 1.1:
+  that search with the window's test at the two corners of the box of a rest's cells where its test at one corner
+  fails, and the window's lines named by the hint (`SieveAd.resTestsFYH_sound`, `SieveAd.pr_of_partDYCH_at`, in
   `formalisations/halasz-montgomery.md`); the chains over the frozen parts on cells of side `0.003`; a box of two
   primes of the main tree cut in two where that is worth the kernel's time; and a plan that searches, over the
   frozen parts, every configuration of the estimate in two variables that the hints can name. Each step is chosen
@@ -413,11 +414,21 @@ theorem in the form `|θ(t) − t| ≤ εt/log t` for all large `t` (`SieveRough
 
 ## Where the Linnik paper uses it
 
-The paper's theorem at `43/20` (`Linnik21500.linnik_21500`) uses Harman's comparison in two variables through the
-tests of its trees: `SieveTwoComp.prop6_two_at` (the rest among the box's primes) for the test `okJ2`
-(`SieveAd.evJ_two`), `SieveFillComp.prop6_fill_at` (the rest among the primes of the comparison's own tree) for
-`okJ3` (`SieveAd.evJ_fill`), and the chains of `SieveTwoTerm.chain2_bound` for `okI2` (`SieveAd.evI_two`); the leaves
-of both comparisons are evaluated on the wider region of the bilinear Type I estimate (`SieveP6LeavesWide.leavesOK_wide`).
+The paper's Theorem 1.2, at `43/20` (`Linnik21500.linnik_21500`), uses Harman's comparison in two variables through
+the tests of its trees: `SieveTwoComp.prop6_two_at` (the rest among the box's primes) for the test `okJ2`
+(`SieveAd.Plain.evJ_two`), `SieveFillComp.prop6_fill_at` (the rest among the primes of the comparison's own tree) for
+`okJ3` (`SieveAd.Plain.evJ_fill`), and the chains of `SieveTwoTerm.chain2_bound` for `okI2`
+(`SieveAd.Plain.evI_two`); the leaves of both comparisons are evaluated on the wider
+region of the bilinear Type I estimate (`SieveP6LeavesWide.leavesOK_wide`). Its tests are those of the namespace
+`SieveAd.Plain`, which accept the leaves by the paper's conditions alone.
+
+The paper's Theorem 1.1, at `21/10` (`Linnik21000.linnik_21000`), uses the same comparisons, and two rules more. Where
+the paper's conditions on the leaves fail for a box, the leaves are cut in three (`SieveAd.leavesE`): the paper's
+lemma on the first two parts, and on the third the estimate in two variables with the fourth moment of the cofactor's
+polynomial, on the curve `g7d` (`SieveTwoCompE.prop6_two3_at`, `SieveFillCompE.prop6_fill3_at`, with
+`SieveLeafTwo.typeIITwoAt_leafX`). And a term of the sign `+` is reversed through its largest prime, bounded from
+below by the identity that bounds a term of the sign `−` from above (`SieveAd.bd_flip_pos`). Its tests also have the
+resonant window ([halasz-montgomery.md](halasz-montgomery.md)).
 Its earlier version, at `11/5` (`Linnik22000E.linnik_22000e`, still in the library), used it in the leaves of its
 decomposition: `SieveLeaves.P6_spec` applies `prop6` to each family of at most `40` comparisons,
 and `SieveLeaves.P6IB_spec` applies the form of Proposition 6 with the bilinear Type I estimate (`SieveP6ib.prop6ib`)

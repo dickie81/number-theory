@@ -12,8 +12,9 @@ theorem fourth_moment {ε : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) :
 In words: for every `ε` in `(0, 1]` there is `C` such that, for every modulus `q ≥ 1`, every set `R` of non-principal
 characters mod `q` and every choice of one point `|t_χ| ≤ T` for each `χ ∈ R`,
 `Σ_{χ∈R} |L(1/2 + it_χ, χ)|⁴ ≤ C(q(T + 2))^{1+ε}`. `LFunction` is Mathlib's `DirichletCharacter.LFunction`. The theorem
-is in the proof of `Linnik21500.linnik_21500`, the Linnik paper's theorem, whose axioms are `propext`,
-`Classical.choice` and `Quot.sound` (`lib/check/Check.lean`), so it depends on those only.
+is in the proofs of the Linnik paper's two theorems, `Linnik21500.linnik_21500` (Theorem 1.2) and
+`Linnik21000.linnik_21000` (Theorem 1.1), whose axioms are `propext`, `Classical.choice` and `Quot.sound`
+(`lib/check/Check.lean`; for `linnik_21000`, `lib/check/CheckAll.lean`), so it depends on those only.
 
 ## Source
 
@@ -58,6 +59,13 @@ hybrid large values estimate. Nothing in this library claims the estimate as its
 
 ## Where the Linnik paper uses it
 
-Through Huxley's density estimate ([huxley-density.md](huxley-density.md)), which bounds its integral class, the
-characters for which the detector's integral along `Re s = 1/2` is large, with this estimate; Ingham's
-([ingham-density.md](ingham-density.md)), which the library's theorems at `11/5` and earlier use, does the same.
+In both theorems, through Huxley's density estimate ([huxley-density.md](huxley-density.md)), which bounds its
+integral class, the characters for which the detector's integral along `Re s = 1/2` is large, with this estimate. In
+Theorem 1.1 also through the other steps of the curve `g7d`, which bounds the leaves cut in three: Ingham's
+([ingham-density.md](ingham-density.md)), which the library's theorems at `11/5` and earlier use too, and the steps
+from Chen, Gupta and Li's Proposition 3.1 (`LinnikCGLStep.charDensity_cglGen`;
+[chen-gupta-li-density.md](chen-gupta-li-density.md)) do the same.
+
+This is not the fourth moment of the estimate on the leaves' region: that one is the fourth moment of a short
+Dirichlet polynomial over all the characters (`SieveTypeIIHM.sum_chars_dp_four_le`), orthogonality applied to the
+polynomial's square, which is elementary and the library's own.

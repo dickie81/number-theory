@@ -1129,6 +1129,59 @@ import from Mathlib only the notation $\mathbb N$. Lean's kernel reduces the ope
 literals (addition, multiplication, division, comparison and the like) by the GMP library's arithmetic rather than by
 their definitions, so this check trusts GMP as well as the kernel.
 
+\subsection*{The certificate at $21/10$}
+
+The certificate of Proposition~\ref{M-prop:certificate-b} is checked as that of Proposition~\ref{M-prop:certificate}, by
+kernel evaluation, \lean{decide +kernel}, and not by compiled code. The search led by hints, \lean{SieveAd.\allowbreak
+solve21000}, is evaluated on $107374$ parts, the theorems \lean{SieveAd.\allowbreak tree21000\_0} to
+\lean{SieveAd.\allowbreak tree21000\_107373} in the $1150$ files \file{lib/pnt/SieveHint21000P1.lean} to
+\file{lib/pnt/SieveHint21000P1150.lean}, $65$ to $100$ parts in a file, each of which bounds the search's value on a
+range of cells. By the number of primes of its boxes, the new prime included, a part has one prime in $3$ cases, two
+in $910$, three in $47336$, four in $58144$ and five in $981$; $813$ parts have the bound $0$, and the largest bound of
+a part is $0.011118\mathcal K$. Each part becomes a bound of its term by \lean{Linnik21000.\allowbreak part21000},
+which is Lemma~\ref{M-lem:search-b}(b) (\lean{SieveAd.\allowbreak pr\_of\_partDYH}) with the tests of the search,
+\lean{SieveAd.\allowbreak resTestsFYH}, and their soundness. The $29349$ steps of Buchstab's identity that join the
+parts, the theorems \lean{Linnik21000.\allowbreak node21000\_0} to \lean{Linnik21000.\allowbreak node21000\_29348} in
+the $58$ files \file{lib/pnt/SieveHint21000N1.lean} to \file{lib/pnt/SieveHint21000N58.lean}, $355$ to $699$ in a file,
+are proved one by one, each test by \lean{decide +kernel}, with the tests \lean{SieveAd.\allowbreak fillTests}: (J2)
+and (J3) with (L) or (L$_3$). So are the first term, \lean{Linnik21000.\allowbreak tree21000}, and the root's
+test, in \file{lib/pnt/Linnik21000.lean}.
+
+The steps outside the parts, by the number of primes of the box whose step is taken:
+\begin{center}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+primes & 1 & 2 & 3 & 4 & all \\
+\midrule
+steps & $147$ & $6414$ & $22334$ & $454$ & $29349$ \\
+(J3) & $140$ & $6189$ & $21076$ & $401$ & $27806$ \\
+(J2) & $7$ & $225$ & $1258$ & $53$ & $1543$ \\
+sign of the box & $-$ & $+$ & $-$ & $+$ & \\
+\bottomrule
+\end{tabular}
+\end{center}
+Of these steps, $24041$ are at the floor $f_*$; the next floors are $18864364051$ ($1129$ steps), $25152485402$ ($981$)
+and $14148273038$ ($592$). (J3) takes the side $\iota = 1$ in $26474$ steps and $\iota = 2$ in $1332$, (J2) in $1503$
+and $40$. Re-evaluated outside the kernel, every condition of these tests holds, and (L) holds in all but ten, all
+(J3), on eight boxes of two primes and two of three, which pass with (L$_3$) only. At $43/20$ (L) holds in all $256$.
+Every cell's cost is exactly the sum of its pieces' costs, and every part is used once.
+
+The steps, the reversals and the boxes are the generator's counts, written into the headers of
+\file{lib/pnt/Linnik21000.lean} and of the part files. Its plan has $90137757$ steps, the nodes of the trees over the
+frozen parts included, of which $2222610$ are reversals through the largest prime, $507357$ of them of boxes of the
+sign $+$; the part files' headers count $90105821$ steps in the parts. The hints are $107374$ natural numbers,
+$1003394125$ hexadecimal digits, which make $501724020$ bytes, counting each part's digits two to a byte; the part
+files take $1036194529$ bytes. The plan of Proposition~\ref{M-prop:certificate-b} is made by
+\file{tools/linnik/hint\_cert.py} with the settings of Section~\ref{M-sec:certificate-b}, its search led by the
+strategy as at $43/20$. It visits $5141981623$ boxes, $4684054098$ of them over the frozen parts of reversals; the
+first prime's cells were planned on two machines, with the planner written in C, in three to four hours on four cores
+each. The generator's model of the kernel's time, fitted on the plan at $2115/1000$, predicts $183$ to $240$ seconds
+for each part file and $273632$ seconds, about $76$ hours of one core, for all of them; this is a prediction, and the
+repository records no measured time of the kernel at $21/10$. The cost $c$, the number of parts and the counts of
+the table are the Lean's; they are read from the statements of the generated files by scripts, which reproduce the
+figures that Proposition~\ref{M-prop:certificate} and the paragraphs after it give at $43/20$.
+
 \subsection*{The artefact}
 
 The library, the paper and this supplement are in the repository \cite{repo}; this version of the paper and of the

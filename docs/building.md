@@ -24,12 +24,12 @@ On 4 cores and 16 GB, a cold build of the default target takes several hours.
 ### Memory
 
 A module that imports Mathlib maps Mathlib's files into memory, and that mapping is shared between compiles. The
-default build also has the certificates' part files: the 17 of the Linnik paper's theorem at `43/20`
+default build also has the certificates' part files: the 17 of the Linnik paper's Theorem 1.2, at `43/20`
 (`lib/pnt/SieveHint21500P<k>.lean`, 1552 parts), about an hour of the kernel in all, the 114 of the library's
 theorem at `11/5` (`lib/pnt/SieveCert22000EP<k>.lean`, 1136 parts), about 6.2 hours of one core in all, the 612
 of the theorem at `2115/1000` (`lib/pnt/SieveHint21150P<k>.lean`, 57 689 parts), about 32 hours of one core by the
 generator's estimate, with the theorems of its cells in 17 files checked side by side
-(`lib/pnt/SieveHint21150N<j>.lean`), and the 1150 of the theorem at `2100/1000`
+(`lib/pnt/SieveHint21150N<j>.lean`), and the 1150 of the paper's Theorem 1.1, at `2100/1000`
 (`lib/pnt/SieveHint21000P<k>.lean`, 107 374 parts), about 76 hours of one core by the generator's
 estimate, with the theorems of its cells in 58 files (`lib/pnt/SieveHint21000N<j>.lean`). Of Mathlib the
 parts import only `Mathlib.Data.Nat.Notation`; each of the 114 used at most 2.8 GiB of private memory while the

@@ -38,9 +38,10 @@ Here `K = ℚ(ω)`, `𝓞 K = ℤ[ω]`, `δ₃ = 1 + 2ω` is a square root of `�
   `τ(±δ₃nb³) = C·N(b)^{1/2}·(δ₃/n)₆²·conj γ₂(n)` for one constant `C ≠ 0`. Here `(·/n)₆` is the sextic residue symbol,
   and `γ₂(n) = Σ_{x mod n} (x/n)₆²ψ_n(x)/|n|` is the normalised cubic Gauss sum (`gamI 2`).
 
-The constant terms `c₀`, `cP` and `cM` are left free. The theorem is in the proof of `Linnik21500.linnik_21500`,
-the Linnik paper's theorem, whose axioms are `propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`),
-so it depends on those only.
+The constant terms `c₀`, `cP` and `cM` are left free. The theorem is in the proofs of `Linnik21500.linnik_21500`
+and `Linnik21000.linnik_21000`, the Linnik paper's Theorems 1.2 and 1.1, whose axioms are `propext`,
+`Classical.choice` and `Quot.sound` (`lib/check/Check.lean`; for `linnik_21000`, `lib/check/CheckAll.lean`), so it
+depends on those only.
 
 ## Source
 
@@ -115,7 +116,8 @@ the theorem as its own.
 
 ## Where the Linnik paper uses it
 
-Through the zero-free half-plane ([openai-half-plane.md](openai-half-plane.md)). `Eis.thetaRows_of_kubota`
-(`lib/core/KubotaRows.lean`) derives from the display the companion preprint's theta transformation for the rows
-(`Eis.ThetaRows`; its Section 6 and Appendix A.2). That transformation is the companion preprint's own, adapting Dunn
-and Radziwiłł's method. `Eis.ne_zero_of_kubotaTheta` turns it into the half-plane for `ζ` and `L(s, χ₋₃)`.
+In both theorems, through the zero-free half-plane ([openai-half-plane.md](openai-half-plane.md)).
+`Eis.thetaRows_of_kubota` (`lib/core/KubotaRows.lean`) derives from the display the companion preprint's theta
+transformation for the rows (`Eis.ThetaRows`; its Section 6 and Appendix A.2). That transformation is the companion
+preprint's own, adapting Dunn and Radziwiłł's method. `Eis.ne_zero_of_kubotaTheta` turns it into the half-plane for
+`ζ` and `L(s, χ₋₃)`.

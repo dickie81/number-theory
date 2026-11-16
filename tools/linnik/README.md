@@ -1,11 +1,13 @@
 # The Linnik paper's certificate tools
 
 These scripts compute the Linnik sieve's certificates outside Lean and generate the Lean files that the kernel
-checks. They need Python 3 only. The paper's theorem at `43/20` (`Linnik21500.linnik_21500`) is `hint_cert.py`'s, on
-the searches of `tree_cert.py`, `rev_cert.py`, `fill_cert.py` and `flip_cert.py`, with the curve and region of
-`gen_zone.py`. The scripts from `route_limits.py` to `type2_model.py` in the table are those of the window route, of
-the library's theorems at `11/5`, `219/100` and `218/100`; in their rows "the paper" is the paper's version at `11/5`,
-in the git history at commit `49dc981`.
+checks. They need Python 3 only. The paper's Theorem 1.2, at `43/20` (`Linnik21500.linnik_21500`), is
+`hint_cert.py`'s, on the searches of `tree_cert.py`, `rev_cert.py`, `fill_cert.py` and `flip_cert.py`, with the curve
+and region of `gen_zone.py`. Its Theorem 1.1, at `21/10` (`Linnik21000.linnik_21000`), is `hint_cert.py`'s too, with
+the leaves' region of `gen_leafzone.py` and the resonant window's test of `res_test.py`. The scripts from
+`route_limits.py` to `type2_model.py` in the table are those of the window route, of the library's theorems at
+`11/5`, `219/100` and `218/100`; in their rows "the paper" is the paper's version at `11/5`, in the git history at
+commit `49dc981`.
 
 | File | What it does |
 |---|---|

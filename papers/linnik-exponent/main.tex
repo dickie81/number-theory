@@ -2061,6 +2061,241 @@ argument needs no step on an exceptional zero, since Input~\ref{inp:half-plane} 
 enormous: the cells of exponents are multiples of $2^{-40}$, and the steps of Section~\ref{sec:decomp} ask, among
 other things, $x^{2^{-40}} \ge 3$, that is $q \ge 3^{2^{40}/L}$.
 
+\section{The certificate at \texorpdfstring{$21/10$}{21/10}, and the proof of Theorem~\ref{thm:2110}}\label{sec:certificate-b}
+
+This section puts the rules of Sections~\ref{sec:window} and~\ref{sec:rules} into the trees of
+Section~\ref{sec:decomp}, describes the search that Lean's kernel follows at $L = 21/10$ and its result, and proves
+Theorem~\ref{thm:2110}. The notation of Sections~\ref{sec:decomp} and~\ref{sec:certificate} is kept.
+
+\subsection{The trees of Theorem~\ref{thm:2110}}
+
+\begin{definition}\label{def:tree-b}
+% Lean: SieveAd.Rules, SieveAd.opsMP, SieveAd.resTestsFYH, SieveAd.fillTests, SieveAd.leavesE; the reversal of either sign: SieveAd.flipOKP, SieveAd.flipTreeDYH, SieveAd.flipCostBYH, SieveAd.flipCostDYH, SieveAd.altFDYH; over a frozen part: SieveAd.opsKP, SieveAd.frozResTestsYH
+Let $\mathfrak b$ be a box of $k \ge 1$ primes and $\varepsilon$ a sign. A \emph{tree of Theorem~\ref{thm:2110}} on
+$\mathfrak b$ with the sign $\varepsilon$ is a tree of Definition~\ref{def:tree}, with trees over frozen parts of
+Definition~\ref{def:frozen-tree} in its reversals, with three changes.
+\begin{enumerate}
+\item[(i)] A node (E) passes if $\mathfrak b$ passes (I), or (W) or (W$'$) of Definition~\ref{def:window-tests}, with
+  or without the cofactor. A node (E$_{\mathcal M}$) of a tree over a frozen part passes if its chain passes
+  (I$_{\mathcal M}$), or (W$_{\mathcal M}$) or (W$'_{\mathcal M}$), with or without the chain's cofactor. Cost $0$.
+\item[(ii)] The tests (J2) and (J3) of a node (B), and (J2$_{\mathcal M}$) and (J3$_{\mathcal M}$) at the floor of
+  a reversal, are taken with (L) or (L$_3$) (Section~\ref{sec:leaves-three}).
+\item[(iii)] A new node (R$^+$), \emph{reversed with the sign $+$}: $\varepsilon = +$, and a reversal of $\mathfrak b$
+  with the sign $+$ (Section~\ref{sec:reversal-plus}). Cost $c_R^+$ of (\ref{eq:cRplus}).
+\end{enumerate}
+The trees over the frozen parts of the reversals of either sign, over the wide part for (R) and over the narrow part
+for (R$^+$), have the nodes of Definition~\ref{def:frozen-tree} with the changes (i) and (ii).
+\end{definition}
+
+The cost of such a tree is, as before, the sum of the costs of its dropped boxes and of its reversals: the boxes
+evaluated by the window cost nothing, like those evaluated by (I). A box of the sign $+$ may now be dropped, decomposed,
+cut, evaluated or reversed, and so may a box of the sign $-$ but for the drop. A tree over a frozen part has no node
+(R) or (R$^+$): the reversals are not nested.
+
+Proposition~\ref{prop:tree-bound} holds for the trees of Definition~\ref{def:tree-b}, with its proof and three more
+cases: a node (E) by (W) or (W$'$) is Lemma~\ref{lem:window-tests}(a); a node (B) whose test passes with (L$_3$) uses
+Lemma~\ref{lem:tests3}(a) in place of Lemma~\ref{lem:tests}(b); and a node (R$^+$) is
+Proposition~\ref{prop:reversal-plus}(b). Lemma~\ref{lem:tests3}(c) holds, with the same proof, for every frozen part
+$\mathcal M(e_-, e_+)$ with $e_- \le e_+ \le D$, in particular the narrow part; it replaces Lemma~\ref{lem:frozen-tests}
+at the floor of a reversal of either sign, in Propositions~\ref{prop:reversal} and~\ref{prop:reversal-plus}(b), and at
+the nodes (B) of the trees over the frozen parts. Lemma~\ref{lem:frozen-tree} holds for their trees over the frozen
+parts, the wide and the narrow ones, with Lemma~\ref{lem:window-tests}(b) for the nodes (E$_{\mathcal M}$) and
+Lemma~\ref{lem:tests3}(c) for the tests at a floor. And
+Theorem~\ref{thm:tree} holds with the root's test (J3) taken with (L) or (L$_3$), by Lemma~\ref{lem:tests3}(a) in place
+of Lemma~\ref{lem:tests}(b). In the formalisation the trees of Definition~\ref{def:tree-b} are not a type: their
+leaves in the main tree, the nodes (V), (E) and the drops, are one-node trees of Definition~\ref{def:tree}, with the tests of the
+search, bounded by Proposition~\ref{prop:tree-bound} (\lean{SieveAd.\allowbreak sound}, through
+\lean{SieveAd.\allowbreak pr\_of\_has}); their other nodes are the rules of the search, which the kernel follows, and
+the induction is that of the search (Lemma~\ref{lem:search-b}). The rules are
+\lean{SieveAd.\allowbreak rulesMP} with the soundness of the tests, \lean{SieveAd.\allowbreak resTestsFYH\_sound}, for
+the nodes other than the reversals; \lean{SieveAd.\allowbreak bd\_flipCostDYH} for the reversals of either sign; and
+\lean{SieveAd.\allowbreak rules\_frozResYH} for the nodes over a frozen part. Theorem~\ref{thm:tree} is
+\lean{SieveAd.\allowbreak linnik\_pr}, which takes any sound tests: at $21/10$ the tests (I), (J2) and (J3) with (L) or
+(L$_3$), sound by \lean{SieveAd.\allowbreak fillTests\_sound}.
+% Lean: SieveAd.sound, SieveAd.pr_of_has, SieveAd.has_eval, SieveAd.has_vanish, SieveAd.pr_drop, SieveAd.frozTests_sound, SieveAd.rulesMP, SieveAd.resTestsFYH_sound, SieveAd.bd_flipCostDYH, SieveAd.altFDYH_sound, SieveAd.rules_frozResYH, SieveAd.pr_split, SieveAd.pr_buch, SieveAd.linnik_pr, SieveAd.fillTests_sound
+
+\subsection{The search}
+
+The search is that of Section~\ref{sec:certificate}, led by hints, with the nodes of Definition~\ref{def:tree-b}. Its
+tests are the conditions of Definitions~\ref{def:tests} and~\ref{def:frozen-tree} with (L) or (L$_3$), in integers, and
+the kernel's tests of (W) and (W$'$) of Section~\ref{sec:window-tests}, led by the records that the hints give; its
+costs are (\ref{eq:cD}), $c'_D$, (\ref{eq:cR}) and (\ref{eq:cRplus}). A reversal of either sign is searched as in
+Section~\ref{sec:certificate}: the test at its floor over the wide or the narrow part, then the tree over that part on
+$((f, \nu))$, with the sign opposite to the box's, searched with the fixed limit $64\mathcal K$. Its soundness is proved
+once, for every hint.
+
+\begin{lemma}\label{lem:search-b}
+% Lean: SieveAd.pr_of_partDYH, SieveAd.solveMDYH_sound, SieveAd.solveD_sound, SieveAd.stepD_sound, SieveAd.rulesMP, SieveAd.resTestsFYH_sound, SieveAd.altFDYH_sound, SieveAd.bd_flipCostDYH, SieveAd.rules_frozResYH, SieveAd.kidsM_sound, SieveAd.kidsF_sound, SieveAd.kidsC_sound, SieveAd.partD_sound, SieveAd.pr_split, SieveAd.pr_mono; at 21/10: Linnik21000.part21000, Linnik21000.soundF21000
+Let $2 < L \le 5/2$ be rational. Whatever the hints, the way the configurations of the main tree are read from them, the
+grids of the cells of the new primes, the depths of recursion of both searches and the bound $k_{\max} \le 11$ on the
+number of primes of a reversed box:
+\begin{enumerate}
+\item[(a)] if the search with the nodes of Definition~\ref{def:tree-b} returns on a box of $k \ge 1$ primes, a sign and a
+  limit a value $c$ below the limit, then the term of the box with that sign is bounded at $c/\mathcal K$;
+\item[(b)] let $\mathfrak b$ be a box of $k \ge 0$ primes, $\varepsilon$ a sign and $a = e_0 < e_1 < \dots < e_r <
+  e_{r + 1} = t$ integers. If the values of the search on the boxes $\mathfrak b \oplus (e_{i - 1}, e_i)$, $1 \le i \le r
+  + 1$, with the sign $\varepsilon$, the hints read in turn and each with the limit $\mathcal K$ less the values before
+  it, are each below its limit and add up to at most $c < \mathcal K$, then the term of $\mathfrak b \oplus (a, t)$
+  with the sign $\varepsilon$ is bounded at $c/\mathcal K$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) is the proof of Lemma~\ref{lem:search}, by induction on the depth of recursion, with the cases of
+Definition~\ref{def:tree-b}. A value below the limit comes from a node whose condition the search has evaluated to true.
+An evaluation whose kernel's test of (W) or (W$'$) passes, with or without the cofactor, is a node (E), by
+Lemma~\ref{lem:window-kernel}(c); one whose test (I) passes is a node (E) as before. A step of Buchstab's identity whose
+test passes is a node (B), its test being (J2) or (J3) with (L) or (L$_3$), and Lemma~\ref{lem:tests3}(a) evaluates its
+terms at the floor; the values of the cells of the new prime add up by cuts (S), since any point strictly inside a range
+is a cut. A reversal of either sign has passed the conditions of Definition~\ref{def:reversal} on the box, with $k \le
+k_{\max}$, and the test at its floor over the wide part for the sign $-$ and over the narrow part for the sign $+$
+(Section~\ref{sec:reversal-plus}); its tree over that part has, by the same induction with the nodes over that part
+(Lemma~\ref{lem:window-kernel}(c) for the window's tests, Lemma~\ref{lem:tests3}(c) for the tests at a floor), a value
+below $64\mathcal K$, which is the cost $c_F$ of a tree that passes; and Proposition~\ref{prop:reversal}
+or~\ref{prop:reversal-plus}(b) bounds the term at the reversal's cost. A branch whose condition fails returns its limit,
+which says nothing. (b) follows from (a) by induction on $r$: each value is below its limit, so (a) bounds each cell's
+term, and Lemma~\ref{lem:box-identities}(a) adds the bounds.
+\end{proof}
+
+So the hints are not trusted at $21/10$ either: a wrong hint can make the check fail, not make it wrong.
+
+\subsection{The search and its plan at \texorpdfstring{$21/10$}{21/10}}
+
+The grid of the new primes' cells, which the search in the Lean fixes (\lean{SieveAd.\allowbreak solve21000},
+\lean{SieveAd.\allowbreak stepOf}), has steps of at most a tenth of the point and at most $3298534883/D$, about $0.003$,
+for the first four primes of a box of the main tree, twice that for the fifth and sixth and three times for the seventh
+and eighth; over a frozen part $3298534883/D$ for the chain's first two primes and twice that from the third (at
+$43/20$, $4398046511/D$ in the main tree and $6597069767/D$ over the frozen parts). The strategy at $21/10$ differs from
+that of Section~\ref{sec:certificate} in the following; as there, it needs no proof, and its choices affect only the
+cost. The depth is $8$: boxes of fewer than eight primes are decomposed. Boxes of two to six primes are reversed, of
+either sign, so the reversed boxes of the sign $-$ have three or five primes and those of the sign $+$ two, four or six.
+Over a frozen part, chains of fewer than three primes are decomposed, as before, and the plan tries every configuration
+of (I$_{\mathcal M}$) that the hints can name, not the strategy's proposal alone. Besides (I), the strategy proposes the
+window: (W) for a rest of the box's primes, with the cofactor when the box's cells leave room for one prime, and (W$'$)
+where no rest passes (W). Consecutive cells that one test of the window evaluates are one cell. A box is cut in two at
+the middle of its newest cell, up to three times, where the top of that cell passes the window, and a box of two primes
+of the main tree is cut in two where that saves time in the kernel. Each step is chosen by its cost plus $0.3 \cdot
+10^{-6}\mathcal K$ for each second of the kernel's time that the generator's model predicts for it.
+% Lean (the search at 21/10; the strategy is tools/linnik/hint_cert.py, CERTS['21000']): SieveAd.solve21000, SieveAd.solveD, SieveAd.stepD, SieveAd.kidsM, SieveAd.kidsF, SieveAd.kidsC, SieveAd.kidsCS, SieveAd.stepOf, SieveAd.cfgIMYH, SieveAd.cfgIFYH, SieveAd.cfgJM, SieveAd.cfgJF, SieveAd.altFDYH, SieveAd.partD
+
+The hints are those of Section~\ref{sec:certificate} but for the code of an evaluation, which has one more bit, and the
+sets of an evaluation in the main tree, which have one more bit, the cofactor's, the last, as over a frozen part at
+$43/20$ already. The codes of a box are:
+\begin{center}
+\small
+\begin{tabular}{@{}lp{0.72\textwidth}@{}}
+\toprule
+Hints & What the search does at the box \\
+\midrule
+\texttt{00} & evaluates the box by (I): the rest's cell, $0$ for the first or $1$ and three bits for its index, then the set
+  $\mathcal S$ in $k + 1$ bits \\
+\texttt{01} & evaluates the box by the window: the rest $\mathcal S_r$ in $k + 1$ bits, then four bits $n_1 \ne 0$
+  and $n_1$ records of $15 + 2|\mathcal S_r|$ bits, for (W); or \texttt{0000}, four bits $n_2 \ne 0$ and $n_2$ records
+  of $15 + 3|\mathcal S_r|$ bits, for (W) with the large values of the powers; or eight zeros, four bits each for $n_r$,
+  $k_{\mathrm H}$ and $k_{\mathrm L}$, and $(15 + 3n_r)(k_{\mathrm H} + k_{\mathrm L})$ bits, for (W$'$) \\
+\texttt{10} & Buchstab's identity, as at $43/20$ \\
+\texttt{110} & drops the box \\
+\texttt{1110} & reverses the box, of either sign: the floor and the configuration of the test over the wide or the
+  narrow part, then the cuts of the range of the chain's first prime \\
+\texttt{11110} & cuts the newest cell in two at its middle \\
+\texttt{111110} & finds the box empty, (V) \\
+\bottomrule
+\end{tabular}
+\end{center}
+Here $k$ is the number of primes of the box, and over a frozen part the number of the chain's and the frozen primes.
+A record of (W) is an interval's end in thirteen bits, the line of the variable's term in two bits, and the line
+of each member of the rest in two bits, three with the large values of the powers; those of (W$'$) are those of its
+$k_{\mathrm H}$ intervals at the upper corner and its $k_{\mathrm L}$ at the lower, with $n_r$ members; \S S7 has what
+the lines are. The set $\mathcal S$ of (I) has the cofactor's bit, which (I) does not read. The configurations at a
+floor and the codes of the cuts are those of Section~\ref{sec:certificate}.
+% Lean: SieveAd.cfgIPYH, SieveAd.cfgIPRH, SieveAd.cfgIP, SieveAd.recW2, SieveAd.recW3, SieveAd.popc, SieveAd.okI2F (through SieveAd.fillTestsF)
+
+\subsection{The certificate at \texorpdfstring{$21/10$}{21/10}}
+
+\begin{proposition}\label{prop:certificate-b}
+% Lean: Linnik21000.tree21000 (the bound of the first term), Linnik21000.linnik_21000 (the root's test, by evaluation), Linnik21000.part21000, Linnik21000.sound21000, Linnik21000.soundF21000, SieveAd.fillTests_sound, SieveAd.resTestsFYH_sound, SieveAd.pr_of_partDYH, SieveAd.pr_buch, SieveAd.pr_split, SieveAd.pr_mono
+Let $L = 21/10$ and $f_* = 33536647203$. The box of no prime passes (J3), with (L) or (L$_3$), at $f_*$ with $\mathcal
+S_0 = \mathcal S_1 = \emptyset$ and $\iota = 1$, and the term of the box $((f_*, D/2 + 1))$ with the sign $-$ is bounded
+at $c/\mathcal K$, by the search of this section on its parts and by the steps of Buchstab's identity that join them
+(Lemmas~\ref{lem:search-b}(b), \ref{lem:tests3}(a) and~\ref{lem:box-identities}), with
+\[
+  c = 1126600180626425749 = 0.97716989\ldots\, \mathcal K < 0.97717\, \mathcal K.
+\]
+\end{proposition}
+
+The proposition is a computation, which the kernel carries out (Section~\ref{sec:lean}); with Theorem~\ref{thm:tree},
+for the trees of Definition~\ref{def:tree-b}, it gives Theorem~\ref{thm:2110}. At the root, $f_*/D = 0.0305014\ldots$,
+$r_1 = 261788484$, and the window of (J3) is $[u, v]$ with $u = 523503090992$ and $v = 557039738196$, that is
+$[0.4761233, 0.5066247]$ in exponents of $x$: $f_* = v - u - 1$ is the largest floor with $u + f_* < v$, and (L) holds,
+$(u + r_2)/D = 0.5068628\ldots < 1 - 1/L = 0.5238095\ldots$, so the root does not need (L$_3$). As at $43/20$, the window
+is wider than the floor only below about $(L - 2)/((2 - \lambda)L) = 0.0306$.
+
+The check is in parts, as at $43/20$. The first prime's range $[f_*, D/2 + 1)$ is cut into $150$ pieces: three parts,
+with $11$ cells of side $3298534883/D$, cover $[f_*, 69820530916/D) = [0.0305014, 0.0635014)$, and $147$ cells, $145$
+of side $3298534883/D$ from $69820530916/D$ to $548108088951/D = 0.4985014\ldots$ and two shorter ones up to $D/2 + 1$,
+have their own step of Buchstab's identity taken outside the parts and the next prime's range cut again into parts and
+further cells. In all $29349$ cells are cut so: $147$, $6414$, $22334$ and $454$ of the first, second, third and
+fourth primes. $27806$ of their steps of Buchstab's identity use (J3) and $1543$ use (J2), and $24041$ are at the floor
+$f_*$; these steps are checked with the tests (J2) and (J3) with (L) or (L$_3$), and, by a computation outside the
+kernel, ten of them, all (J3), eight on boxes of two primes and two on boxes of three, pass with (L$_3$) only. There
+are $107374$ parts, in $1150$ files, and the cells' steps are in $58$ files. Lemma~\ref{lem:box-identities}(a) and~(b)
+join the pieces, and their costs add up to $c$ exactly. By the first prime, with each piece counted in the range of its
+lower end and the ranges ending at pieces' ends:
+\begin{center}
+\small
+\begin{tabular}{@{}lc@{}}
+\toprule
+$\log p_1/\log x$ & cost$/\mathcal K$ \\
+\midrule
+$[0.0305, 0.1025)$ & $0.0005$ \\
+$[0.1025, 0.2015)$ & $0.0119$ \\
+$[0.2015, 0.3005)$ & $0.1343$ \\
+$[0.3005, 0.4025)$ & $0.4597$ \\
+$[0.4025, 0.5]$ & $0.3707$ \\
+\midrule
+all & $0.9772$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The rows and the total are rounded separately. The pieces of the first prime above $x^{0.3}$ cost $0.8305\mathcal K$,
+$85\%$ of $c$, and those below $x^{0.2}$ $0.0106\mathcal K$. The most expensive cells cost about $0.015\mathcal K$ each,
+near $p_1 = x^{0.40}$ and $x^{0.497}$: $0.01547\mathcal K$ on $[0.4955, 0.4985)$ and $0.01524\mathcal K$ on $[0.3965,
+0.3995)$.
+
+The generator of the files counts $90137757$ steps in its plan, $2222610$ of them reversals through the largest prime,
+$507357$ of them of boxes of the sign $+$; the headers of the part files count $90105821$ steps in the parts. The hints
+take $501724020$ bytes. The search outside the kernel that made the plan visits $5141981623$ boxes, $4684054098$ of
+them over frozen parts; the first prime's cells were planned on two machines, in about three to four hours on four
+cores each. The generator predicts $273632$ seconds of one core of the kernel's time for the part files, about $76$
+hours, $183$ to $240$ seconds for each file; this is its model's prediction, not a measurement. \S S5 and \S S6 have
+the statistics in more detail.
+
+\subsection{Proof of Theorem~\ref{thm:2110}}
+
+\begin{proof}[Proof of Theorem~\ref{thm:2110}]
+Take $L = 21/10$. As in Section~\ref{sec:proof}, Theorem~\ref{thm:type2}, under Input~\ref{inp:half-plane}, gives the
+comparisons of Section~\ref{sec:type1} at $L$ and with them the tests of Section~\ref{sec:decomp}.
+Theorem~\ref{thm:type2-leaves}, under Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, gives the estimate in two variables
+on the leaves' region $\mathcal R^{\mathrm{lf}}_L$, and with it Propositions~\ref{prop:harman-two3}
+and~\ref{prop:harman-fill3} and the tests with (L) or (L$_3$), Lemma~\ref{lem:tests3}. Theorem~\ref{thm:window}, under
+the same two inputs, gives the window, and with it the tests (W) and (W$'$), Lemmas~\ref{lem:window-tests}
+and~\ref{lem:window-kernel}. Propositions~\ref{prop:reversal} and~\ref{prop:reversal-plus} give the reversals of
+either sign. So Proposition~\ref{prop:tree-bound} and Theorem~\ref{thm:tree} hold for the trees of
+Definition~\ref{def:tree-b}, and Lemma~\ref{lem:search-b} for their search. Proposition~\ref{prop:certificate-b} gives
+a floor $f_*$ at which the box of no prime passes (J3), and bounds the term of the root box with the sign $-$ at
+$c/\mathcal K$, with $c = 1126600180626425749 < \mathcal K = 2^{60}$. Theorem~\ref{thm:tree} gives
+Theorem~\ref{thm:2110} under the two inputs.
+
+Input~\ref{inp:half-plane} enters as in Section~\ref{sec:proof}, and through the bins of the zeros in the window of
+Theorem~\ref{thm:window} and in the estimate on the leaves' region. Input~\ref{inp:cgl} enters in two places: through
+the count of the large values of the powers of a prime sum, Lemma~\ref{lem:lv-powers}, in the window; and through the
+curve $g^*$ of Proposition~\ref{prop:curve-star}, in the estimate on the leaves' region. Ingham's and Huxley's density
+estimates enter through $g^*$ and $g_{\mathrm H}$.
+\end{proof}
+
+The remarks after the proof of Theorem~\ref{thm:4320} hold here as well: the proof does not compute $K$, every constant
+is effective in principle, and the thresholds are enormous.
+
 \section{The formalisation}\label{sec:lean}
 
 Appendix~\ref{app:claims} names the Lean theorems that prove each numbered result of Sections~\ref{sec:intro}

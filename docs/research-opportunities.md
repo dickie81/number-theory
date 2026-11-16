@@ -134,6 +134,11 @@ no window, at `2165/1000` and `2150/1000` (and the one at `2140/1000`, in the gi
 Chen, Gupta and Li's paper; those at `11/5`, `219/100` and `218/100` keep their window, and with it the curve `g7d`.
 In the table below the column `A` of those three rows is the window route's, which they do not use. "The paper" in the
 entries before this date means its version at `11/5`.
+*16 November:* from pull request 115 (15 November) the shared tests brought the curve `g7d` (`SieveCurve7D`), and with
+it Chen, Gupta and Li's modules, into the import cone of the theorem at `2150/1000`; that theorem now takes its tests
+from the namespace `SieveAd.Plain` (`lib/pnt/SieveAdPlain*.lean`), with the paper's conditions on the leaves alone, so
+that its cone again has none of them (487 modules). The theorem at `2165/1000` still takes the shared tests, and its
+cone has `SieveCurve7D` and `LinnikCGLHB101` (`scripts/import_cone.py Linnik21650 --why`).
 
 Section 2.2 of the paper's version at `11/5`: with a density curve whose largest exponent is `A`, the Type II window
 exists exactly when `L > 1 + A/2`, and the certificate needs between `0.03` and `0.04` above the threshold (that
