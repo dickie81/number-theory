@@ -33,6 +33,8 @@ The analogues:
 For each case the script also reports the second minimum s_2: the least Q(a)/d_1 over integer a other than 0, +-delta_1
 (Fincke-Pohst up to 1.5 d_1; recorded as None above that). (B) fails exactly when s_2 < 1; in the flat model
 (G = d_1 min(m, n)) every increment delta_n - delta_(n-1) has Q = d_1, so s_2 = 1.
+(A) for the curves is decided in exact rational arithmetic (exact LDL^T pivots of G/log q), with the 40-digit pivots as
+a cross-check; the summary reports every Fincke-Pohst search that ran out of its node budget.
 
 Usage: python3 shortest.py [QALL QREAL]   (defaults 400 10000; from this directory; writes res.json, every row, and out.txt)
        python3 shortest.py --report       (rebuilds out.txt from res.json)
@@ -123,20 +125,38 @@ def qexact(Gx, a):
     return sum(a[i] * a[j] * Gx[i][j] for i in range(len(a)) for j in range(len(a)) if a[i] and a[j])
 
 
+def ldl_exact(Gx):
+    """The LDL^T (Gram-Schmidt) pivots of a symmetric Fraction matrix, exactly. As ffcore.pivots does, a pivot <= 0
+    is recorded and the elimination stops there."""
+    A = [[F(v) for v in row] for row in Gx]; n = len(A); piv = []
+    for k in range(n):
+        p = A[k][k]; piv.append(p)
+        if p <= 0: break
+        for i in range(k + 1, n):
+            f = A[i][k] / p
+            for j in range(k + 1, n): A[i][j] -= f * A[k][j]
+    return piv
+
+
 def curve_window(Pc, q, idx):
-    """(A) and (B) for the curve's orbit on the indices idx: pivots at dps 40, short vectors rechecked exactly."""
+    """(A) and (B) for the curve's orbit on the indices idx. G/log q is rational (gram_exact), so (A) is decided by
+    exact LDL^T pivots: it fails at the first k with d_k < d_1. The dps-40 pivots with tolerance 1e-30 are kept as a
+    cross-check (A_first_fail_mp). (B): Fincke-Pohst on the float Gram, short vectors rechecked exactly."""
+    Gx = gram_exact(Pc, q, idx); d1x = Gx[0][0]
+    px = ldl_exact(Gx)
     G = ffgram(Pc, q, max(idx))
     sub = G[np.ix_([i - 1 for i in idx], [i - 1 for i in idx])]
     d = mp_pivots(sub); d1 = d[0]
-    pd = all(x == x and x > 0 for x in d)
+    pd = len(px) == len(idx) and all(x > 0 for x in px)
     tol = mp.mpf(10) ** -30
-    out = dict(idx=idx, pd=pd, d2_over_d1=float(d[1] / d1),
-               A_first_fail=next((idx[k] for k in range(1, len(d)) if d[k] == d[k] and d[k] < d1 * (1 - tol)), None))
+    out = dict(idx=idx, pd=pd, d2_over_d1=float(px[1] / px[0]),
+               A_first_fail=next((idx[k] for k in range(1, len(px)) if px[k] < px[0]), None),
+               A_first_fail_mp=next((idx[k] for k in range(1, len(d)) if d[k] == d[k] and d[k] < d1 * (1 - tol)), None),
+               pd_mp=all(x == x and x > 0 for x in d))
     if not pd:
         return out
     Gf = np.array([[float(sub[i, j]) for j in range(len(idx))] for i in range(len(idx))])
     best, bx, below, trunc = enum(Gf, RADIUS * float(d1), float(d1) * (1 + TIE))
-    Gx = gram_exact(Pc, q, idx); d1x = Gx[0][0]
     fails, ties = [], 0
     for _, x in below:
         r = qexact(Gx, x) / d1x
@@ -177,13 +197,13 @@ def curve_job(args):
         for i in range(k + 1, dm):
             f = A[i][k] / p
             for j in range(k + 1, dm): A[i][j] -= f * A[k][j]
-    best, bx, below, _ = enum(np.array(T, dtype=float), RADIUS * 2 * g, 2 * g + 0.5)
+    best, bx, below, trunc = enum(np.array(T, dtype=float), RADIUS * 2 * g, 2 * g + 0.5)
     exact = sorted((qexact(T, x), x) for _, x in below)       # T(P) is an integer: exact
     fails = [e for e in exact if e[0] < 2 * g]
     fl = sp.factor_list(m.as_expr())[1]
     res['frobenius'] = dict(deg_m=dm, m_irreducible=(len(fl) == 1), Lstar_factors=[(str(f), e) for f, e in sp.factor_list(Lstar.as_expr())[1]],
                             A_first_fail=next((k for k in range(1, dm) if piv[k] < piv[0]), None),
-                            s2=float(best / (2 * g)) if bx else None, ties=sum(1 for e in exact if e[0] == 2 * g),
+                            s2=float(best / (2 * g)) if bx else None, trunc=trunc, ties=sum(1 for e in exact if e[0] == 2 * g),
                             B_fails=bool(fails), B_min=fails[0][0] if fails else None, B_vector=fails[0][1] if fails else None)
     return res
 
@@ -322,8 +342,10 @@ def summarise_curves(cr, lines):
         cnt = lambda f: sum(1 for r in rr if f(r))
         win = sorted(set(len(r['idx']) for r in rr))
         lines.append(f"curves-{key}: {len(rr)} curves, windows of {win[0]}..{win[-1]} indices; positive definite: {cnt(lambda r: r['pd'])}")
-        lines.append(f"  (A) fails in the window: {cnt(lambda r: r['A_first_fail'] is not None)} "
-                     f"(at the second index: {cnt(lambda r: r['A_first_fail'] == r['idx'][1])})")
+        lines.append(f"  (A) fails in the window (exact): {cnt(lambda r: r['A_first_fail'] is not None)} "
+                     f"(at the second index: {cnt(lambda r: r['A_first_fail'] == r['idx'][1])}); "
+                     f"the 40-digit pivots agree: "
+                     f"{all(r['A_first_fail'] == r['A_first_fail_mp'] and r['pd'] == r['pd_mp'] for r in rr)}")
         lines.append(f"  (B) fails in the window (exact): {cnt(lambda r: r.get('B_fails'))}, on the first two indices: "
                      f"{cnt(lambda r: r.get('B_first2'))}, only beyond them: {cnt(lambda r: r.get('B_fails') and not r.get('B_first2'))}; "
                      f"(B) fails only where (A) does: {all(r['A_first_fail'] is not None for r in rr if r.get('B_fails'))}; "
@@ -340,9 +362,15 @@ def summarise_curves(cr, lines):
                  f"N ranges over {Ns[0]}..{Ns[-1]}, median {Ns[len(Ns) // 2]}; N <= {NC}: {sum(1 for v in Ns if v <= NC)}")
     fr = [x['frobenius'] for x in cr]
     lines.append(f"frobenius: {len(fr)} curves; m irreducible: {sum(r['m_irreducible'] for r in fr)}; "
-                 f"(B) fails: {sum(r['B_fails'] for r in fr)}; curves with ties T(P) = 2g at P other than +-1: {sum(1 for r in fr if r['ties'])}; "
+                 f"(B) fails: {sum(r['B_fails'] for r in fr)}; truncated: {sum(1 for r in fr if r['trunc'])}; curves with ties T(P) = 2g at P other than +-1: {sum(1 for r in fr if r['ties'])}; "
                  f"(A) fails below z^deg(m): {sum(1 for r in fr if r['A_first_fail'] is not None)}; "
                  f"least second minimum T(P)/2g: {f6(min((r['s2'] for r in fr if r['s2'] is not None), default=None))}")
+    tr = [(k, x) for x in cr for k in ('all', 'cop', 'frobenius') if x[k].get('trunc')]
+    lines.append(f"searches truncated (node budget): {len(tr)}, of curves counted as passing (B) there: "
+                 f"{sum(1 for k, x in tr if not x[k].get('B_fails'))}")
+    for k, x in tr:
+        lines.append(f"  truncated: {'curves-' + k if k != 'frobenius' else k} q={x['q']} g={x['g']} L={x['Pc']}: "
+                     f"(B) {'fails, certified exactly at a vector found' if x[k].get('B_fails') else 'holds where searched'}")
 
 
 def int_keys(data):
