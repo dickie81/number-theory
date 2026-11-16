@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1942 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1872 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 286, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 198, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 381 | 1123 |
+| `lib/pnt` | 363 | 1053 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1566,11 +1566,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Linnik21000.tree21000`: The first term at `2100 / 1000` ([note](../formalisations/harman-sieve.md))
 - `Linnik21000.linnik_21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints ([note](../formalisations/chen-gupta-li-density.md))
 
-#### `Linnik21150`: Linnik's theorem with exponent `2115 / 1000`, by a search led by hints
-
-- `Linnik21150.tree21150`: The first term at `2115 / 1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21150.linnik_21150`: Linnik's theorem with exponent `2115 / 1000`, by a search led by hints ([note](../formalisations/chen-gupta-li-density.md))
-
 #### `Linnik21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints
 
 - `Linnik21500.sound21500`: The tests at `2150 / 1000` are sound. *paper*
@@ -1578,24 +1573,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Linnik21500.part21500`: A part of the search bounds its term *paper*
 - `Linnik21500.tree21500`: The first term at `2150 / 1000` *paper* ([note](../formalisations/harman-sieve.md))
 - `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints *paper* ([note](../formalisations/chen-gupta-li-density.md))
-
-#### `Linnik21800`: Linnik's theorem with exponent `218 / 100`, by a search with role reversal
-
-- `Linnik21800.tree21800`: The first term at `218 / 100`
-- `Linnik21800.linnik_21800`: Linnik's theorem with exponent `218 / 100`, by a search with role reversal ([note](../formalisations/halasz-montgomery.md))
-
-#### `Linnik21900`: Linnik's theorem with exponent `219 / 100`, by a tree of Buchstab steps
-
-- `Linnik21900.tree21900`: The tree at `219 / 100`
-- `Linnik21900.linnik_21900`: Linnik's theorem with exponent `219 / 100`, by a tree of Buchstab steps ([note](../formalisations/halasz-montgomery.md))
-
-#### `Linnik22000E`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 and its certificate at `n = 272`
-
-- `Linnik22000E.routeOK22000D`: `route22000D` is a route *paper*
-- `Linnik22000E.fits22000E`: `grid22000E` fits `route22000D` *paper*
-- `Linnik22000E.ibFits22000E`: `ibPar22000E`'s exponent `Lnum/Lden` is the route's `L = 11 / 5`. *paper*
-- `Linnik22000E.deepGrid22000E`: `grid22000E` holds the decomposition to depth 8 *paper*
-- `Linnik22000E.linnik_22000e`: Linnik's theorem with exponent `11 / 5`, by the decomposition to depth 8 at `n = 272` *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikAFE`: The approximate functional equation for `L(s, χ)²`
 
@@ -2021,7 +1998,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `LinnikG7`: Linnik's theorem with exponent `2.3334 + ε` from the curve `g7d`, by the classical deduction
 
-- `LinnikG7.charDensity_g7d`: The density estimate of the curve `g7d` *paper*
+- `LinnikG7.charDensity_g7d`: The density estimate of the curve `g7d`
 - `LinnikG7.linnik_g7d`: Linnik's theorem with exponent `11667/5000 + η` *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `LinnikGRH`: GRH for every Dirichlet L-function gives the density hypothesis `CharDensity 2 0 1`, and so Linnik's exponent `2 + η`
@@ -2522,10 +2499,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `ShortSieveTypeI.abs_count_sub_le_typeI`: The asymptotic formula for a Type I term from Li's Lemmas 3.1 and 3.2 ([note](../formalisations/short-intervals.md))
 
-#### `SieveAd22000`: Linnik's theorem with exponent `11/5` from a tree that passes the tests
-
-- `SieveAd22000.linnik_tree_22000`: Linnik's theorem with exponent `11/5`, from a tree that passes the tests
-
 #### `SieveAdCut`: The search led by hints with a cut of any cell of a box at any point is sound
 
 - `SieveAd.pr_of_partDYS_at`: A part of the main search with cuts of any cell, for any route ([note](../formalisations/halasz-montgomery.md))
@@ -2866,56 +2839,24 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveBrun.fundamental`: The fundamental lemma in product form, abstractly *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveBrun.gap_le`: For even `k_j`, `0 ≤ g ≤ 1` on each `T_j`, `C₀ ≥ 0` with `Σ_{T_j} g ≤ C₀`, and `∏_{T_j} (1 − g) ≥ c₀ > 0` ([note](../formalisations/harman-sieve.md))
 
-#### `SieveBuch`: The decomposition to depth 6, with the certificate's classification
-
-- `SieveBuch.Par.T_eq`: Depth 0 *paper*
-- `SieveBuch.Par.I_S1`: Depth 1 *paper*
-- `SieveBuch.Par.I_S2`: Depth 2 *paper*
-- `SieveBuch.Par.I_S3`: Depth 3 *paper*
-- `SieveBuch.Par.I_S4`: Depth 4 *paper*
-- `SieveBuch.Par.I_S5`: Depth 5 *paper*
-- `SieveBuch.Par.I_S6`: Depth 6 *paper*
-- `SieveBuch.Par.I_S3c_vanish`: Depth 3, outside `inKK` *paper*
-- `SieveBuch.Par.I_S4c_vanish_lt`: Depth 4, `l > k` *paper*
-- `SieveBuch.Par.I_S4c_vanish_reg`: Depth 4, outside the region *paper*
-- `SieveBuch.Par.I_S5c_vanish_lt`: Depth 5, `eC b ≥ e_l + H` *paper*
-- `SieveBuch.Par.I_S5c_vanish_reg`: Depth 5, outside the region *paper*
-- `SieveBuch.Par.I_S6c_vanish_lt`: Depth 6, `c > b` *paper*
-- `SieveBuch.Par.I_S6c_vanish_reg`: Depth 6, outside the region *paper*
-
 #### `SieveBuch8`: The decomposition to depth 8
 
-- `SieveBuch.Par.I_S6c`: Depth 6 *paper*
-- `SieveBuch.Par.I_S6cle`: Depth 6 *paper*
-- `SieveBuch.Par.I_S7`: Depth 7 *paper*
-- `SieveBuch.Par.I_S7c`: Depth 7 *paper*
-- `SieveBuch.Par.I_S7le`: Depth 7 *paper*
-- `SieveBuch.Par.I_S8`: Depth 8 *paper*
-- `SieveBuch.Par.I_S7c_vanish_lt`: Depth 7, `d > c` *paper*
-- `SieveBuch.Par.I_S8c_vanish_lt`: Depth 8, `f > d` *paper*
-- `SieveBuch.Par.I_S7c_vanish_reg`: Depth 7, outside the region *paper*
-- `SieveBuch.Par.I_S8c_vanish_reg`: Depth 8, outside the region *paper*
-- `SieveBuch.Par.decomp8`: The decomposition's inequality to depth 8 *paper*
+- `SieveBuch.Par.decomp8`: The decomposition's inequality to depth 8
 
 #### `SieveCert`: The certificate of the sieve route's loss, checked by the kernel
 
 - `SieveCert.omegaC_le_w`: `ω*` on a box *paper*
-- `SieveCert.bound2_ge`: A cell of depth 2 with lower corner `(a, b)` costs at least `omK/K` times the first cell's trapezoid bound and the last cell's `DEN·H/(b(b + H))`. *paper*
-
-#### `SieveCert22000E`: The certificate to depth 8 of the sieve route's loss at `L = 11/5` with `n = 272`: `totalD < K`
-
-- `SieveDeep.totalD_lt_22000E`: The certificate to depth 8 on `grid22000E` *paper*
+- `SieveCert.bound2_ge`: A cell of depth 2 with lower corner `(a, b)` costs at least `omK/K` times the first cell's trapezoid bound and the last cell's `DEN·H/(b(b + H))`.
 
 #### `SieveChain`: Type II for chains of primes
 
-- `SieveChain.sum_rough_tuples`: For `z ≥ 2`, `Y ≥ 1` and `Y < z^{K+1}`, the `z`-rough `k ∈ [1, Y]` are the products of the non-increasing tuples of at most `K` primes at least `z`, the… *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveChain.typeII_gcmp'`: `typeII_gcmp` (with `RouteOK` and `hII`) for any number `K ≥ 1` of primes.
-- `SieveChain.chainTU_bound`: Chains times a rough cofactor in the window *paper* ([note](../formalisations/halasz-montgomery.md))
-- `SieveChain.chainTL_bound`: Chains with a product of some of their primes in the window *paper*
+- `SieveChain.chainTU_bound`: Chains times a rough cofactor in the window ([note](../formalisations/halasz-montgomery.md))
+- `SieveChain.chainTL_bound`: Chains with a product of some of their primes in the window
 
 #### `SieveChainR`: Type II for chains with part of their product in the reflection of the window
 
-- `SieveChainR.chainTR_bound`: Chains with part of their product in the reflection of the window *paper*
+- `SieveChainR.chainTR_bound`: Chains with part of their product in the reflection of the window
 
 #### `SieveCount`: Type I counts in a residue class
 
@@ -2926,7 +2867,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveCurve7D.g7d_le_one`: `g7d ≤ 1` *paper*
 - `SieveCurve7D.g7d_half` *paper*
-- `SieveCurve7D.g7d_le_lin`: `g7d σ ≤ (11667 / 5000)(1 − σ)` for `σ ≤ 1` *paper* ([note](../formalisations/chen-gupta-li-density.md))
+- `SieveCurve7D.g7d_le_lin`: `g7d σ ≤ (11667 / 5000)(1 − σ)` for `σ ≤ 1` ([note](../formalisations/chen-gupta-li-density.md))
 - `SieveCurve7D.counts_7d`: The counts of the curve *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `SieveCurveHx`: The curve `ghx` of the Type II estimate in two variables, and its counts
@@ -2939,17 +2880,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveDecomp`: Families of prime tuples, and Buchstab's identity on them
 
 - `SieveDecomp.buchstab_pt`: Buchstab's identity at one `n` *paper*
-- `SieveDecomp.buchstab_fam`: Buchstab's identity on a family *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveDecomp.buchstab_fam`: Buchstab's identity on a family ([note](../formalisations/harman-sieve.md))
 - `SieveDecomp.famI_cells`: The cells of the prime `t`
 - `SieveDecomp.famI_vanish`: A family whose products are at most `N₁` and whose products times their last prime exceed `N₂` contributes `0`
 
 #### `SieveDeep`: The certificate to depth 8: its rule and its decisions
 
-- `SieveDeep.surelyEval4_of_lmask`: A bit of the mask of `l` makes the box `(i, j, k, l)` surely evaluable *paper*
-- `SieveDeep.surelyEval5_of_emask`: A bit `b` of the coarse mask of one cell makes the box `(i, j, k, l, b)` surely evaluable *paper*
-- `SieveDeep.surelyEval6_of_emask`: A bit `c` of the coarse mask of one cell, or `b + c` of that of two, makes the box `(i, j, k, l, b, c)` surely evaluable *paper*
-- `SieveDeep.okIB_of_okD`: The block test is sound *paper*
-- `SieveDeep.scheme`: The certificate's scheme of decisions *paper*
+- `SieveDeep.okIB_of_okD`: The block test is sound
 
 #### `SieveDeepCert`: The certificate to depth 8, by parts
 
@@ -2957,27 +2894,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveDeepCost`: The certificate to depth 8: its costs bound the dropped cells' charges
 
-- `SieveDeep.Ch3_le`: The charges below a cell `(i, j)` are at most `SC⁸·refcost` *paper*
-
-#### `SieveDrop`: The dropped terms' `B`-count
-
-- `SieveDrop.drop2_le`: A dropped cell of depth 2 *paper*
-- `SieveDrop.corner_le`: A corner cell *paper*
-- `SieveDrop.corner_ev`: The corner is `o(x/log x)` *paper*
+- `SieveDeep.Ch3_le`: The charges below a cell `(i, j)` are at most `SC⁸·refcost`
 
 #### `SieveDrop8`: The dropped terms' `B`-count, to depth 8
 
-- `SieveDrop8.drop4_le'`: A dropped cell of depth 4 *paper*
-- `SieveDrop8.drop6_le'`: A dropped cell of depth 6 *paper*
-- `SieveDrop8.drop8_le`: A dropped cell of depth 8 *paper*
-- `SieveDrop8.trB_le_trapF`: `trB ≤ trapF/SC`. *paper*
-- `SieveDrop8.exB_le_lastF`: `exB ≤ lastF/SC`. *paper*
-- `SieveDrop8.share4D`: The share of a counted cell of depth 4 *paper*
-- `SieveDrop8.share6D`: The share of a counted cell of depth 6 *paper*
-- `SieveDrop8.share8D`: The share of a cell of depth 8 of the region *paper*
+- `SieveDrop8.share8D`: The share of a cell of depth 8 of the region
 - `SieveDrop8.E1_le`: The dropped terms' `B`-count
-- `SieveDrop8.dT_le_cost`: The dropped sums of a cell `(i, j)` against its cost *paper*
-- `SieveDrop8.drop_ev8`: The dropped terms, for large `q`, with the loss as a parameter *paper*
+- `SieveDrop8.dT_le_cost`: The dropped sums of a cell `(i, j)` against its cost
+- `SieveDrop8.drop_ev8`: The dropped terms, for large `q`, with the loss as a parameter
 
 #### `SieveDyadic`: A dyadic partition of unity
 
@@ -2988,7 +2912,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveFamily.family_bound`: The bound for a smooth family
 - `SieveFamily.Dsum_sharp_le`: A sharp family, explicitly
 - `SieveFamily.typeII_sharp_explicit`: A sharp family, with the Type II estimate
-- `SieveFamily.typeII_sharp`: The Type II estimate for a sharp family (Lemmas 4′ and 4″), asymptotic form *paper* ([note](../formalisations/halasz-montgomery.md))
+- `SieveFamily.typeII_sharp`: The Type II estimate for a sharp family (Lemmas 4′ and 4″), asymptotic form ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveFamilyGen`: Type II families with an abstract polynomial part
 
@@ -3027,27 +2951,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveGap.family_leaves_le`: A family of chains at a fixed level ([note](../formalisations/harman-sieve.md))
 - `SieveGap.gap_at`: Brun's sieve at a fixed level, for a family in boxes, at large `q` ([note](../formalisations/harman-sieve.md))
 
-#### `SieveGrid21800`: The grid, the strategies and the nodes of the search with role reversal at `L = 218/100`
-
-- `SieveCert.gridOK21800`
-
-#### `SieveGrid21900`: The grid and the strategy of the tree at `L = 219/100`
-
-- `SieveCert.gridOK21900`
-
-#### `SieveGrid22000E`: The grid of the certificate to depth 8 at `L = 11/5` with `n = 272`
-
-- `SieveCert.gridOK22000E` *paper*
-- `SieveCert.gridOKC22000E`: The coarse grid `Gc` (`n / 4 = 68` cells) and the facts about it that the deepest levels use. *paper*
-
 #### `SieveHMBin`: Halász–Montgomery for one bin of characters at one height
 
 - `SieveTypeIIHM.dp_eq_pv`: The bridge
-- `SieveTypeIIHM.sum_bin_hm`: Halász–Montgomery for one bin at one height *paper* ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.sum_bin_hm`: Halász–Montgomery for one bin at one height ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveHMBins`: Proposition 3′ pointwise, by bins, with the Halász–Montgomery bound per bin
 
-- `SieveTypeIIHM.sum_typeII_bins_hm`: Proposition 3′ pointwise, by bins, with the better bound per bin *paper* ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.sum_typeII_bins_hm`: Proposition 3′ pointwise, by bins, with the better bound per bin ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.offK_bound`: A uniform kernel bound at `z = 0` *paper*
 
 #### `SieveHMWindow`: The window condition with the Halász–Montgomery branch
@@ -3066,7 +2977,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveLeaf.leaf_A`: A leaf, for `A` ([note](../formalisations/harman-sieve.md))
 - `SieveLeaf.leaf_B`: A leaf, for `B/φ(q)` ([note](../formalisations/harman-sieve.md))
-- `SieveLeaf.leaf_gap`: The relative error of a leaf *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveLeaf.leaf_gap`: The relative error of a leaf ([note](../formalisations/harman-sieve.md))
 - `SieveLeaf.prod_primesBelow_le`: Mertens' product bound, in its elementary form *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveLeaf.prod_T_le`: The main term of a leaf *paper* ([note](../formalisations/harman-sieve.md))
 
@@ -3117,21 +3028,16 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveMain8`: Linnik's theorem by the sieve route, under the certificate of depth 8
 
-- `SieveMain8.linnik_large8`: Linnik's theorem at `x = q^L`, for large `q`, under the certificate of depth 8 *paper*
-- `SieveMain8.linnik_route_lt8`: Linnik's theorem with exponent `L`, under a certificate of depth 8 whose total is below `K` *paper*
+- `SieveMain8.linnik_route_lt8`: Linnik's theorem with exponent `L`, under a certificate of depth 8 whose total is below `K`
 
 #### `SieveOmegaB`: Buchstab's `ω` on `[2, 3]`, and the logarithm's bounds of the certificate's cells
 
-- `SieveOmegaB.log_le_half_sub_inv`: `log y ≤ (y − 1/y)/2` for `y ≥ 1` *paper*
+- `SieveOmegaB.log_le_half_sub_inv`: `log y ≤ (y − 1/y)/2` for `y ≥ 1`
 - `SieveOmegaB.omB_le_w1`: The maximum of Buchstab's `ω` on `[2, 3]` *paper*
 - `SieveOmegaB.omB_mono`: Buchstab's `ω` increases on `[2, 2.76]` *paper*
 - `SieveOmegaB.omB_anti`: Buchstab's `ω` decreases from `2.77` on *paper*
 - `SieveOmegaB.lnT_ge`: The table *paper*
 - `SieveOmegaB.omF_ge`: `omF` bounds Buchstab's `ω` *paper*
-
-#### `SieveP6Leaves`: Proposition 6 with the bilinear estimate: the large leaves
-
-- `SieveP6Leaves.leaves_chain`: The large leaves of a family, with Brun's weights *paper*
 
 #### `SieveP6LeavesWide`: The large leaves of a family on the wider region
 
@@ -3148,22 +3054,21 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveP6ib`: Proposition 6 with the bilinear estimate
 
-- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate *paper* ([note](../formalisations/halasz-montgomery.md))
+- `SieveP6ib.prop6ib`: Proposition 6 with the bilinear estimate ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveProp6`: Proposition 6, Harman's fundamental theorem in the form used
 
 - `SieveProp6.leaf_bound`: A leaf *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveProp6.prop6`: Proposition 6 *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveProp6.prop6`: Proposition 6 ([note](../formalisations/harman-sieve.md))
 
 #### `SieveQ`: The decomposition at `x = q^L`, and its leaves for large `q`
 
 - `SieveQ.good_of_large`: The decomposition's hypotheses hold for large `q`
-- `SieveQ.P6IB_box`: Proposition 6-ib on a box the bilinear rule passes *paper*
 - `SieveQ.P6IB_boxes`: Proposition 6-ib, uniformly over finitely many boxes ([note](../formalisations/harman-sieve.md))
 
 #### `SieveQ8`: The leaves of the decomposition to depth 8, for large `q`
 
-- `SieveQ8.leaves_ev8`: The leaves of the decomposition to depth 8, for large `q` *paper*
+- `SieveQ8.leaves_ev8`: The leaves of the decomposition to depth 8, for large `q`
 
 #### `SieveRangeSum`: The prime sums of the ranges are at most 3
 
@@ -3268,19 +3173,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveRough.Psi_le_buchstab`: Buchstab's inequality *paper*
 - `SieveRough.super_M`: The supersolution property *paper*
 - `SieveRough.psi_le`: Rough numbers from above *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveRough.evLe_cell_tr`: On a grid with `GridOK`, the cell's `Σ 1/p` is at most the trapezoid bound `trB(e_k, H) = H(2e_k + H)/(2e_k(e_k + H))` of `log(1 + H/e_k)`, up to `o(1)`. *paper*
-- `SieveRough.evLe_cell_ex`: On a grid with `GridOK`, the cell's `log x · Σ 1/(p log p)` is at most `exB(e_k, H) = H·DEN/(e_k(e_k + H))`, the exact `DEN(1/e_k − 1/(e_k + H))`, up to `o(1)`. *paper*
+- `SieveRough.evLe_cell_tr`: On a grid with `GridOK`, the cell's `Σ 1/p` is at most the trapezoid bound `trB(e_k, H) = H(2e_k + H)/(2e_k(e_k + H))` of `log(1 + H/e_k)`, up to `o(1)`.
+- `SieveRough.evLe_cell_ex`: On a grid with `GridOK`, the cell's `log x · Σ 1/(p log p)` is at most `exB(e_k, H) = H·DEN/(e_k(e_k + H))`, the exact `DEN(1/e_k − 1/(e_k + H))`, up to `o(1)`.
 - `SieveRough.share2`: The share of a cell of depth 2
-- `SieveRough.share2_of_cand`: `share2` on a candidate cell, on a grid with `GridOK`. *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveRough.share2_of_cand`: `share2` on a candidate cell, on a grid with `GridOK`. ([note](../formalisations/harman-sieve.md))
 
 #### `SieveRoughTuple`: Rough numbers as tuples of primes
 
 - `SieveRoughTuple.sum_rough_eq`: Rough numbers as tuples of primes
-
-#### `SieveRule`: The certificate under a decomposition rule, over `Finset`
-
-- `SieveCert.ibOK_sound`: The bilinear Type I rule's witnesses *paper* ([note](../formalisations/harman-sieve.md))
-- `SieveCert.okIB_cases`: `okIB` passes a box only when `limOK` does, or `ibOK` and `nbOK` do. *paper*
 
 #### `SieveSep`: Separation of smooth comparisons by Fourier inversion over `ℝ^J`
 
@@ -3298,20 +3198,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveSpline.what_spl`: The spline's transform
 - `SieveSpline.norm_what_spl_tail`: The spline's tail
 - `SieveSpline.norm_Ew_spl_le`: `E_w` for a spline
-- `SieveSpline.typeIB_spline`: The bilinear Type I estimate with a spline weight *paper*
+- `SieveSpline.typeIB_spline`: The bilinear Type I estimate with a spline weight
 
 #### `SieveStops2`: The stops of Buchstab's tree above the threshold
 
 - `SieveStops2.typeII_cmp`: Type II with a list of comparisons
-- `SieveStops2.stops2_bound`: The stops above the threshold *paper* ([note](../formalisations/harman-sieve.md))
-
-#### `SieveTree`: Buchstab's tree
-
-- `SieveTree.tree_pt`: The Buchstab tree at one `n` *paper*
+- `SieveStops2.stops2_bound`: The stops above the threshold ([note](../formalisations/harman-sieve.md))
 
 #### `SieveTreeStop`: Buchstab's tree with a stopping rule
 
-- `SieveTreeStop.tree_pt_stop`: Buchstab's tree with a stopping rule, at one `n` *paper*
 - `SieveTreeStop.tree_weighted_stop`: Buchstab's tree with a stopping rule, weighted *paper*
 
 #### `SieveTwoBins`: The Type II estimate in two variables, by bins of characters
@@ -3412,11 +3307,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveTypeIB`: A bilinear Type I estimate by Parseval's identity
 
 - `SieveTypeIB.sum_bilinear`: The bilinear sum in Fourier form
-- `SieveTypeIB.typeIB_bound`: The bilinear Type I estimate *paper*
-
-#### `SieveTypeIBAsym`: The leaves by the bilinear estimate: the asymptotic form
-
-- `SieveTypeIBAsym.leaves_ib`: The leaves by the bilinear estimate, asymptotically *paper*
+- `SieveTypeIB.typeIB_bound`: The bilinear Type I estimate
 
 #### `SieveTypeIBAsymWide`: The leaves by the bilinear estimate without `2HDm < q`: the asymptotic form
 
@@ -3452,27 +3343,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveTypeIIHM`: The bin bound with the Halász–Montgomery branch, and Proposition 3′ for a curve on a window
 
 - `SieveTypeIIHM.bin_bound_pt`: One bin by orthogonality, at one point
-- `SieveTypeIIHM.bin_bound_gen_hm`: One bin, with the better bound *paper* ([note](../formalisations/halasz-montgomery.md))
-- `SieveTypeIIHM.typeII_gen_hm`: Proposition 3′ for a curve and a window with the Halász–Montgomery branch, pointwise in the heights *paper* ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.bin_bound_gen_hm`: One bin, with the better bound ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.typeII_gen_hm`: Proposition 3′ for a curve and a window with the Halász–Montgomery branch, pointwise in the heights ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveTypeIIU`: Type II families with sharp prime ranges
 
-- `SieveTypeIIU.typeII_unw`: Type II for families with sharp prime ranges *paper* ([note](../formalisations/halasz-montgomery.md))
-
-#### `SieveTypeIIU21800D`: Proposition 3′ at `L = 218 / 100` on the window `[45073/100000, 46472/100000]·L`, for the curve `g7d`
-
-- `SieveTypeIIU21800D.window_21800d`: The window's exponents
-- `SieveTypeIIU21800D.typeII_21800d`: Proposition 3′ at `L = 218 / 100` on `[45073/100000, 46472/100000]·L`, for the curve `g7d`
-
-#### `SieveTypeIIU21900D`: Proposition 3′ at `L = 219 / 100` on the window `[44260/100000, 46717/100000]·L`, for the curve `g7d`
-
-- `SieveTypeIIU21900D.window_21900d`: The window's exponents
-- `SieveTypeIIU21900D.typeII_21900d`: Proposition 3′ at `L = 219 / 100` on `[44260/100000, 46717/100000]·L`, for the curve `g7d`
-
-#### `SieveTypeIIU22000D`: Proposition 3′ at `L = 11 / 5` on the window `[43457/100000, 46959/100000]·L`, for the curve `g7d`
-
-- `SieveTypeIIU22000D.window_22000d`: The window's exponents *paper*
-- `SieveTypeIIU22000D.typeII_22000d`: Proposition 3′ at `L = 11 / 5` on `[43457/100000, 46959/100000]·L`, for the curve `g7d` *paper*
+- `SieveTypeIIU.typeII_unw`: Type II for families with sharp prime ranges ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveUnwGen`: Type II families with sharp prime ranges, with an abstract polynomial part
 

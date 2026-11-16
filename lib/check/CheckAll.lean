@@ -230,7 +230,6 @@ import SieveAdTwoDefs
 import SieveAdTwo
 import SieveAdMixDefs
 import SieveAdMix
-import SieveAd22000
 import SieveAdSearchDefs
 import SieveAdSearch
 import SieveAdFilt
@@ -344,20 +343,8 @@ import SieveBox
 import SieveDrop8
 import SieveMain8
 import SieveDeepCert
-import SieveTypeIIU22000D
-import SieveGrid22000E
-import SieveCert22000E
-import Linnik22000E
-import SieveTypeIIU21900D
-import SieveGrid21900
-import Linnik21900
-import SieveTypeIIU21800D
-import SieveGrid21800
-import Linnik21800
 import SieveHint21500
 import Linnik21500
-import SieveHint21150
-import Linnik21150
 import SieveHint21000
 import Linnik21000
 import LinnikG7
@@ -1152,7 +1139,6 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTwoComp.prop6_two_at
 #print axioms SieveAd.linnik_tree
 #print axioms SieveAd.linnik_tree_at
-#print axioms SieveAd22000.linnik_tree_22000
 #print axioms SieveAd.findSub2_eq
 #print axioms SieveAd.bestSub_eq
 #print axioms SieveAd.findSub1_eq
@@ -1376,28 +1362,8 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveDrop8.drop_ev8
 #print axioms SieveMain8.linnik_route_lt8
 #print axioms SieveDeep.totalD_eq_rowsJD
-#print axioms SieveTypeIIU22000D.window_22000d
-#print axioms SieveTypeIIU22000D.typeII_22000d
-#print axioms SieveCert.gridOK22000E
-#print axioms SieveCert.gridOKC22000E
-#print axioms SieveDeep.totalD_lt_22000E
-#print axioms Linnik22000E.fits22000E
-#print axioms Linnik22000E.deepGrid22000E
-#print axioms Linnik22000E.linnik_22000e
-#print axioms SieveTypeIIU21900D.window_21900d
-#print axioms SieveTypeIIU21900D.typeII_21900d
-#print axioms SieveCert.gridOK21900
-#print axioms Linnik21900.tree21900
-#print axioms Linnik21900.linnik_21900
-#print axioms SieveTypeIIU21800D.window_21800d
-#print axioms SieveTypeIIU21800D.typeII_21800d
-#print axioms SieveCert.gridOK21800
-#print axioms Linnik21800.tree21800
-#print axioms Linnik21800.linnik_21800
 #print axioms Linnik21500.tree21500
 #print axioms Linnik21500.linnik_21500
-#print axioms Linnik21150.tree21150
-#print axioms Linnik21150.linnik_21150
 #print axioms Linnik21000.tree21000
 #print axioms Linnik21000.linnik_21000
 /- The Linnik paper's Theorem 1.1, at `21/10` (`papers/linnik-exponent/main.tex`, Sections 8 to 10): the declarations
