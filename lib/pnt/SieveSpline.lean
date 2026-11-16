@@ -511,31 +511,4 @@ theorem sum_norm_what_spl_le (A B ℓ r : ℕ) (hℓ : 1 ≤ ℓ) :
     _ ≤ (((B + r * (ℓ - 1) - A) / q + 1 : ℕ) : ℝ) * (B + r * (ℓ - 1) - A : ℕ) :=
         mul_le_mul_of_nonneg_left h2 (by positivity)
 
-/-- **The bilinear Type I estimate with a spline weight.** In `SieveTypeIB.typeIB_bound` take `S = (A, B + r(ℓ − 1)]`
-and `w` the spline (`ℓ ≥ 1`). Then `|Σ_{d₁,d₂} α(d₁)β(d₂)Σ_k w(k)dw(d₁d₂k)|` is at most
-`(Σ|α|²)^{1/2}(mF(Σ|β|²)(⌊n/q⌋ + 1)n)^{1/2} + (B − A)(q/(2ℓ(H + 1)))^r(Σ|α|)(Σ|β|) + |Σα||Σβ|d(q)/φ(q)`, with
-`n = B + r(ℓ − 1) − A`. -/
-theorem typeIB_spline (a : ZMod q) (ha : IsUnit a) (D₁ D₂ : Finset ℕ) (α β : ℕ → ℂ)
-    (hD₁ : ∀ d ∈ D₁, IsUnit (d : ZMod q)) (hD₂ : ∀ d ∈ D₂, IsUnit (d : ZMod q)) (hD₂0 : ∀ d ∈ D₂, 0 < d)
-    (A B ℓ r : ℕ) (hℓ : 1 ≤ ℓ) {H Dm F m : ℕ}
-    (hDm : ∀ d ∈ D₂, d ≤ Dm) (hDm1 : 1 ≤ Dm) (hq : 2 * H * Dm < q)
-    (hm : ∀ r : ZMod q, #(D₁.filter (fun d : ℕ => ((d : ZMod q))⁻¹ = r)) ≤ m)
-    (hF : ∀ t : ℤ, t ≠ 0 → t.natAbs ≤ H → ∀ d ∈ D₂, (t.natAbs * d).divisors.card ≤ F) :
-    ‖∑ d₁ ∈ D₁, ∑ d₂ ∈ D₂, α d₁ * β d₂ *
-        ∑ k ∈ supp A B ℓ r, ((spl A B ℓ r k : ℝ) : ℂ) * SieveFamily.dw q a (d₁ * d₂ * k)‖ ≤
-      √(∑ d ∈ D₁, ‖α d‖ ^ 2) * √(m * F * (∑ d ∈ D₂, ‖β d‖ ^ 2) *
-          ((((B + r * (ℓ - 1) - A) / q + 1 : ℕ) : ℝ) * (B + r * (ℓ - 1) - A : ℕ))) +
-        ((B - A : ℕ) : ℝ) * ((q : ℝ) / (2 * ℓ * (H + 1))) ^ r * ((∑ d ∈ D₁, ‖α d‖) * (∑ d ∈ D₂, ‖β d‖)) +
-        ‖∑ d ∈ D₁, α d‖ * ‖∑ d ∈ D₂, β d‖ * (q.divisors.card / q.totient) := by
-  have hφ : (0 : ℝ) < q.totient := by exact_mod_cast Nat.totient_pos.2 (NeZero.pos q)
-  have hb := typeIB_bound a ha D₁ D₂ α β hD₁ hD₂ hD₂0 (supp A B ℓ r) (fun k => ((spl A B ℓ r k : ℝ) : ℂ))
-    (H := H) (Dm := Dm) (F := F) (m := m) (W := ((B - A : ℕ) : ℝ) * ((q : ℝ) / (2 * ℓ * (H + 1))) ^ r)
-    (by positivity) hDm hDm1 hq hm hF (fun h h0 hH => norm_what_spl_tail A B ℓ r H hℓ h h0 hH)
-  refine hb.trans (add_le_add (add_le_add ?_ le_rfl) ?_)
-  · refine mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt ?_) (Real.sqrt_nonneg _)
-    exact mul_le_mul_of_nonneg_left (sum_norm_what_spl_le A B ℓ r hℓ) (by positivity)
-  · rw [norm_mul, norm_mul, norm_div, Complex.norm_natCast]
-    refine mul_le_mul_of_nonneg_left (div_le_div_of_nonneg_right (norm_Ew_spl_le A B ℓ r hℓ) hφ.le)
-      (by positivity)
-
 end SieveSpline

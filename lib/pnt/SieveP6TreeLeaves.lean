@@ -57,30 +57,6 @@ def LeavesOK (q : ℕ) (a' : ZMod q) (L a b δ' εw Λ₀ C₀ δ : ℝ) (k J₀
           (((∏ i, y₁ i) * ∏ i, y₂ i : ℕ) : ℝ) +
       (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ)
 
-/-- `SieveP6Leaves.leaves_chain` for every pair of block sizes up to `K_max`. -/
-theorem leavesOK_of {L : ℝ} (hL : 2 < L) {a b δ' εw Λ₀ : ℝ} (hδ' : 0 ≤ δ') (hab : δ' < a) (haL : a ≤ L - 2)
-    (hb : 0 < b) (hbL : b ≤ L) (hεw : 0 < εw) (hΛ₀ : 0 ≤ Λ₀) (Kmax J₀ : ℕ) {C₀ : ℝ} (hC₀ : 0 ≤ C₀)
-    (hC : ∀ A : ℝ, 1 ≤ A → ∑ p ∈ SieveRanges.rng A, 1 / (p : ℝ) ≤ C₀) {k : ℕ} (hk : Even k) (hk1 : 1 ≤ k)
-    (hkC : 2 * C₀ ^ 2 ≤ ((k : ℝ) + 1) * (k + 2)) (hεwk : (2 * k + 4) * εw ≤ 1 / 16) :
-    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a' : ZMod q), IsUnit a' →
-      LeavesOK q a' L a b δ' εw Λ₀ C₀ δ k J₀ Kmax := by
-  have H := fun K₁ K₂ : ℕ =>
-    SieveP6Leaves.leaves_chain hL hδ' hab haL hb hbL hεw hΛ₀ K₁ K₂ J₀ hC₀ hC hk hk1 hkC hεwk
-  choose δf hδf q₀f hq₀f using H
-  set P : Finset (ℕ × ℕ) := (range (Kmax + 1)) ×ˢ (range (Kmax + 1)) with hPdef
-  have hP : P.Nonempty := ⟨(0, 0), by simp [hPdef]⟩
-  refine ⟨P.inf' hP (fun p => δf p.1 p.2), (Finset.lt_inf'_iff hP).2 fun p _ => hδf p.1 p.2,
-    P.sup (fun p => q₀f p.1 p.2), ?_⟩
-  intro q _ hq a' ha' K₁ K₂ hK₁ hK₂ Y₁ Y₂ hY₁ hY₂ M hM cc e₁ e₂ Pr hPr hΛ hpiv hgeo
-  have hmem : (K₁, K₂) ∈ P :=
-    Finset.mem_product.2 ⟨Finset.mem_range.2 (by omega), Finset.mem_range.2 (by omega)⟩
-  have hq' : q₀f K₁ K₂ ≤ q := le_trans (Finset.le_sup (f := fun p : ℕ × ℕ => q₀f p.1 p.2) hmem) hq
-  refine (hq₀f K₁ K₂ q hq' a' ha' Y₁ Y₂ hY₁ hY₂ hM cc e₁ e₂ Pr hPr hΛ hpiv hgeo).trans ?_
-  have hδle : P.inf' hP (fun p => δf p.1 p.2) ≤ δf K₁ K₂ := Finset.inf'_le (fun p : ℕ × ℕ => δf p.1 p.2) hmem
-  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast Nat.one_le_iff_ne_zero.2 (NeZero.ne q)
-  exact add_le_add le_rfl (mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le hq1 (by linarith))
-    (by positivity))
-
 /-! ### The large leaves of a family of chains -/
 
 theorem prod_Sc {K : ℕ} (S : Finset (Fin K)) (f : Fin K → ℕ) : ∏ i ∈ Sᶜ, f i = ∏ v, f (eS S (Sum.inr v)) := by

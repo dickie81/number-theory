@@ -28,22 +28,6 @@ namespace SieveAd
 open Classical
 open SieveCert (DEN DEN_pos')
 
-/-- The cells of a list, by the prime's index, are the list reversed. -/
-theorem ofFn_boxFn : ∀ (bl : List Cell) (k : ℕ) (h : bl.length = k), List.ofFn (boxFn bl k h) = bl.reverse := by
-  intro bl
-  induction bl with
-  | nil =>
-    intro k h
-    subst h
-    simp
-  | cons x bl ih =>
-    intro k h
-    subst h
-    show List.ofFn (boxFn (x :: bl) (bl.length + 1) rfl) = _
-    rw [boxFn_cons x bl bl.length rfl, List.ofFn_succ', List.reverse_cons]
-    simp only [Fin.snoc_castSucc, Fin.snoc_last]
-    rw [List.concat_eq_append, ← ih bl.length rfl]
-
 variable [Route]
 
 /-- The atoms of a box: the cells' ends, and the order of consecutive primes. -/

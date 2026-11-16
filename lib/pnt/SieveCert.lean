@@ -45,125 +45,18 @@ variable [Grid]
 
 /-! ### Sums -/
 
-omit [Grid] in
-theorem sumTo_eq (m : ℕ) (f : ℕ → ℕ) : sumTo m f = ∑ i ∈ Finset.range m, f i := by
-  induction m with
-  | zero => rfl
-  | succ m ih => rw [Finset.sum_range_succ, ← ih]; rfl
-
 /-! ### Facts about the grid -/
 
 omit [Grid] in
 theorem DEN_pos : 0 < DEN := by decide
 
-variable [GridOK]
-
-theorem H_pos : 0 < H := GridOK.H_pos
-theorem U1_lt_U2 : U1 < U2 := GridOK.U1_lt_U2
-theorem two_U2_lt : 2 * U2 < DEN := GridOK.two_U2_lt
-theorem U2_le_DEN : U2 ≤ DEN := by have := two_U2_lt; omega
-theorem U1_le_DEN : U1 ≤ DEN := le_trans U1_lt_U2.le U2_le_DEN
-theorem V_pos : 0 < V := by unfold V; have := U1_lt_U2; omega
-theorem two_e_lt (i : ℕ) (hi : i < n) : 2 * e i < DEN := by
-  have h : 2 * e (n - 1) < DEN := GridOK.two_e_lt
-  have hle : e i ≤ e (n - 1) := by
-    unfold e
-    exact Nat.add_le_add_left (Nat.mul_le_mul_left _ (by omega)) _
-  omega
-theorem n_pos : 0 < n := by
-  rcases Nat.eq_zero_or_pos n with h | h
-  · have h0 := H_pos
-    unfold H at h0
-    rw [h, Nat.zero_mul, Nat.div_zero, Nat.mul_zero] at h0
-    exact absurd h0 (lt_irrefl 0)
-  · exact h
-theorem two_V_lt : 2 * V < DEN := by simpa [e] using two_e_lt 0 n_pos
-/-- For a grid with `GridOK`, the grid's top `V + nH` lies above `DEN/2`. -/
-theorem DEN_lt_top : DEN < 2 * (V + n * H) := GridOK.DEN_lt_top
-/-- For a grid with `GridOK`, the grid's top `V + nH` is at most `DEN`. -/
-theorem top_le_DEN : V + n * H ≤ DEN := by
-  have h1 : 2 * e (n - 1) < DEN := GridOK.two_e_lt
-  have h2 : 4 * H ≤ V := GridOK.four_H_le_V
-  have h3 := two_V_lt
-  have hn : n * H = H * (n - 1) + H := by
-    calc n * H = ((n - 1) + 1) * H := by rw [Nat.sub_add_cancel n_pos]
-      _ = H * (n - 1) + H := by ring
-  unfold e at h1
-  omega
 
 /-! ### Points -/
 
 noncomputable section
 
-/-- `α ∈ [e k, e k + H)/DEN`. -/
-def InCell (k : ℕ) (α : ℝ) : Prop := (e k : ℝ) ≤ α * DEN ∧ α * DEN < e k + H
-
-omit [Grid] [GridOK] in
+omit [Grid] in
 theorem DEN_pos' : (0 : ℝ) < DEN := by exact_mod_cast DEN_pos
-
-omit [GridOK] in
-theorem insideF_eq (lo hi : ℕ) : insideF lo hi = inside lo hi := by
-  simp only [insideF, inside]
-  rw [Bool.eq_iff_iff]
-  simp [Nat.blt_eq]
-
-omit [GridOK] in
-theorem anySub_eq (xs : List (ℕ × ℕ)) : ∀ a b : ℕ,
-    anySub xs a b = (subsetSums xs).any (fun s => inside (a + s.1) (b + s.2)) := by
-  induction xs with
-  | nil => intro a b; simp [anySub, insideF_eq, subsetSums]
-  | cons p rest ih =>
-    intro a b
-    simp only [anySub, ih, subsetSums, List.any_append, List.any_map, Function.comp_def]
-    congr 2
-    funext s
-    simp only [Nat.add_assoc]
-    simp [Nat.add_comm p.1, Nat.add_comm p.2]
-
-omit [GridOK] in
-/-- `surelyEval` (the unrolled search) is `surelyEvalSpec` (the list of all subset sums). -/
-theorem surelyEval_eq (xs : List (ℕ × ℕ)) : surelyEval xs = surelyEvalSpec xs := by
-  have key : ∀ xs : List (ℕ × ℕ), anySub xs 0 0 = surelyEvalSpec xs := fun xs => by
-    simp [surelyEvalSpec, anySub_eq]
-  match xs with
-  | [] => rw [← key]; rfl
-  | [p] => rw [← key]; rfl
-  | [p, q] => rw [← key]; rfl
-  | [p, q, r] => rw [← key]; rfl
-  | [p, q, r, s] => rw [← key]; rfl
-  | [p, q, r, s, t] => rw [← key]; rfl
-  | [p, q, r, s, t, u] => rw [← key]; rfl
-  | _ :: _ :: _ :: _ :: _ :: _ :: _ :: _ => simp [surelyEval]
-
-theorem exists_cell {α : ℝ} (h0 : (V : ℝ) ≤ α * DEN) (h1 : α * DEN < V + n * H) : ∃ k < n, InCell k α := by
-  have hH : (0 : ℝ) < H := by exact_mod_cast H_pos
-  set y := (α * DEN - V) / H with hy
-  have hy0 : 0 ≤ y := div_nonneg (by linarith) hH.le
-  refine ⟨⌊y⌋₊, ?_, ?_, ?_⟩
-  · have : y < n := by rw [hy, div_lt_iff₀ hH]; linarith
-    exact_mod_cast (Nat.floor_lt hy0).2 this
-  · have hf := Nat.floor_le hy0
-    simp only [e]
-    push_cast
-    have : (⌊y⌋₊ : ℝ) * H ≤ α * DEN - V := by
-      calc (⌊y⌋₊ : ℝ) * H ≤ y * H := by gcongr
-        _ = α * DEN - V := by rw [hy]; field_simp
-    linarith
-  · have hf := Nat.lt_floor_add_one y
-    simp only [e]
-    push_cast
-    have : α * DEN - V < ((⌊y⌋₊ : ℝ) + 1) * H := by
-      calc α * DEN - V = y * H := by rw [hy]; field_simp
-        _ < ((⌊y⌋₊ : ℝ) + 1) * H := by gcongr
-    linarith
-
-omit [GridOK] in
-theorem e_add_H_le {j : ℕ} (hj : j < n) : (e j : ℝ) + H ≤ V + n * H := by
-  have : e j + H ≤ V + n * H := by
-    unfold e
-    have : H * j + H ≤ n * H := by nlinarith
-    omega
-  exact_mod_cast this
 
 /-! ### The bound `ω*` for Buchstab's `ω` -/
 
@@ -172,27 +65,27 @@ theorem e_add_H_le {j : ℕ} (hj : j < n) : (e j : ℝ) + H ≤ V + n * H := by
 def omegaC (u : ℝ) : ℝ :=
   if u < 1 then 0 else if u < 2 then 1 / u else if u ≤ 3 then SieveOmegaB.omB u else 565073 / 1000000
 
-omit [Grid] [GridOK] in
+omit [Grid] in
 theorem K_pos' : (0 : ℝ) < K := by norm_num [K]
 
-omit [Grid] [GridOK] in
+omit [Grid] in
 theorem topK_ge : (565073 / 1000000 : ℝ) ≤ topK / K := by
   rw [le_div_iff₀ K_pos']
   have h : K * 565073 ≤ topK * 1000000 := by decide
   have h' : (K : ℝ) * 565073 ≤ topK * 1000000 := by exact_mod_cast h
   linarith
 
-omit [Grid] [GridOK] in
+omit [Grid] in
 theorem w1K_ge : (5671433 / 10000000 : ℝ) ≤ w1K / K := by
   rw [le_div_iff₀ K_pos']
   have h : K * 5671433 ≤ w1K * 10000000 := by decide
   have h' : (K : ℝ) * 5671433 ≤ w1K * 10000000 := by exact_mod_cast h
   linarith
 
-omit [Grid] [GridOK] in
+omit [Grid] in
 theorem div_le_cdiv (a b : ℕ) (hb : 0 < b) : (a : ℝ) / b ≤ cdiv a b := SieveOmegaB.div_le_cdiv a b hb
 
-omit [Grid] [GridOK] in
+omit [Grid] in
 /-- `ω*` is at most `0.565073` from `3` on (`ω(3) = (1 + log 2)/3 ≤ 0.565073`). -/
 theorem omegaC_le_of_three_le {u : ℝ} (h3 : 3 ≤ u) : omegaC u ≤ 565073 / 1000000 := by
   unfold omegaC
@@ -201,7 +94,7 @@ theorem omegaC_le_of_three_le {u : ℝ} (h3 : 3 ≤ u) : omegaC u ≤ 565073 / 1
   · rw [le_antisymm h h3]; exact SieveOmegaB.omB_three_le
   · exact le_rfl
 
-omit [Grid] [GridOK] in
+omit [Grid] in
 /-- **`ω*` on a box.** Let the other exponents sum to `σ` and the last be `α`, with `s ≤ σ·DEN`, `t ≤ α·DEN ≤ t + w`
 and `(σ + α)DEN ≤ s + t + W`, as for the lower corner `(s, t)` of a box whose widths sum to `W`, the last `w`. Then on
 the argument `(1 − σ − α + τ)/α`, widened by `0 ≤ τ < 1/DEN`, `ω*` is at most `omKw s t W w / K`. The argument lies
@@ -384,45 +277,22 @@ theorem omegaC_le_w {s t W w : ℕ} {σ α τ : ℝ} (ht : 0 < t) (hσ : (s : �
     rw [hω, ite_eq_left hs4]
     exact topK_ge.trans (le_max_right _ _)
 
-omit [GridOK] in
-theorem omK_eq_omKw (s t m : ℕ) : omK s t m = omKw s t (m * H) H := rfl
-
 /-! ### The cells' bounds -/
 
-theorem e_pos (k : ℕ) : 0 < e k := by unfold e; have := V_pos; omega
-
-omit [Grid] [GridOK] in
+omit [Grid] in
 /-- The trapezoid bound of a cell's `Σ 1/p`, for the cell `[a, a + w]` (in units of `1/DEN`):
 `w(2a + w)/(2a(a + w))`, at least `log(1 + w/a)` (`SieveOmegaB.log_le_half_sub_inv`). -/
 def trB (a w : ℕ) : ℝ := (w : ℝ) * (2 * a + w) / (2 * a * (a + w))
 
-omit [Grid] [GridOK] in
+omit [Grid] in
 /-- The last cell's `log x · Σ 1/(p log p)`, for the cell `[a, a + w]`: `DEN·w/(a(a + w)) = DEN(1/a − 1/(a + w))`. -/
 def exB (a w : ℕ) : ℝ := (DEN : ℝ) * w / (a * (a + w))
 
-omit [Grid] [GridOK] in
+omit [Grid] in
 theorem trB_nonneg (a w : ℕ) : 0 ≤ trB a w := by unfold trB; positivity
 
-omit [Grid] [GridOK] in
+omit [Grid] in
 theorem exB_nonneg (a w : ℕ) : 0 ≤ exB a w := by unfold exB; positivity
-
-omit [GridOK] in
-/-- A cell of depth 2 with lower corner `(a, b)` costs at least `omK/K` times the first cell's trapezoid bound and the
-last cell's `DEN·H/(b(b + H))`. -/
-theorem bound2_ge {a b : ℕ} (ha : 0 < a) (hb : 0 < b) :
-    trB a H * exB b H * ((omK a b 2 : ℝ) / K) ≤ (bound2 a b : ℝ) / K := by
-  have hD := DEN_pos'
-  have hK := K_pos'
-  have ha' : (0 : ℝ) < a := by exact_mod_cast ha
-  have hb' : (0 : ℝ) < b := by exact_mod_cast hb
-  have haH : (0 : ℝ) < a + H := by positivity
-  have hbH : (0 : ℝ) < b + H := by positivity
-  have hc := div_le_cdiv (H * H * (2 * a + H) * DEN * omK a b 2) (2 * a * (a + H) * (b * (b + H))) (by positivity)
-  have heq : trB a H * exB b H * ((omK a b 2 : ℝ) / K) =
-      ((H * H * (2 * a + H) * DEN * omK a b 2 : ℕ) : ℝ) / ((2 * a * (a + H) * (b * (b + H)) : ℕ) : ℝ) / K := by
-    simp only [trB, exB]; push_cast; field_simp
-  rw [heq, bound2]
-  exact div_le_div_of_nonneg_right hc hK.le
 
 /-! ### The costs -/
 
@@ -430,6 +300,4 @@ end
 
 end SieveCert
 
-#print axioms SieveCert.bound2_ge
-#print axioms SieveCert.omK_eq_omKw
 #print axioms SieveCert.omegaC_le_w

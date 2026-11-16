@@ -20,7 +20,8 @@ exponents `E` (the rest's) and `γ` (the count's) given.
 
 The file imports `SieveTypeIIHM.lean`.
 -/
-import SieveTypeIIHM
+import SieveHMBins
+import SieveCurveGlue
 
 namespace SieveTypeIIHM
 

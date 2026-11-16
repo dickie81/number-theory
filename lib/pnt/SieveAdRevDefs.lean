@@ -198,57 +198,8 @@ def revCost (τ : Tests) (SK : Cell → ℕ → Strat) (fuel : ℕ) (cq : ℕ �
       (DEN - (c1.2 + c2.2 + c3.2)) (DEN + 1 - (c1.1 + c2.1 + c3.1))
   | _, lim => lim
 
-/-- **The search with role reversal**: `SieveAdDefs.lean`'s nodes, and for a box of the sign `−` that may be
-reversed, the reversal's cost as one more bound. -/
-def opsR (τ : Tests) (SK : Cell → ℕ → Strat) (fuel : ℕ) (cq : ℕ → ℕ → List ℕ) : Ops :=
-  ⟨fun _ => true, vanishOK, dropC, fun bl par l => cond (!par && revOK bl) (revCost τ SK fuel cq bl l) l⟩
-
 /-! ### A strategy with cells that shrink with the exponent -/
 
-/-- The cuts from `c` up to `reg`, each step at most `st` and at most the exponent over `κ`. -/
-def geoCuts (κ st reg : ℕ) : ℕ → ℕ → List ℕ
-  | 0, _ => []
-  | n + 1, c =>
-    cond (Nat.blt c reg)
-      ((fun c' => minN c' reg :: geoCuts κ st reg n c') (Nat.add c (maxN 1 (minN st (Nat.div c κ)))))
-      []
-
-/-- The cuts of the new prime's range above the floor `f`, as `cutsOf`'s with cells that shrink. -/
-def cutsOfG (κ hI : ℕ) (bl : List Cell) (f : ℕ) : List ℕ :=
-  match bl with
-  | [] => []
-  | x :: b =>
-    (fun reg last =>
-      cond (Nat.blt f reg) (geoCuts κ (stepOf hI (Nat.add b.length 2)) reg 4096 f ++ [last]) [last])
-      (minN x.2 (Nat.add (Nat.div (Nat.sub DEN (loSum (x :: b))) 2) 2)) (Nat.sub (Nat.sub DEN 1) (hiSum (x :: b)))
-
-/-- The cuts of the new prime's range in the tree of a reversed term, above the floor `f` and below `top`: cells up
-to where the new prime's square is too large for `n/r'`, and a cut where the chain's product reaches the range of
-`n/r'`. -/
-def cutsK (κ hR : ℕ) (ctx : Cell) (ch : List Cell) (top f : ℕ) : List ℕ :=
-  (fun reg last =>
-    cond (Nat.blt f reg) (geoCuts κ (cond (Nat.blt ch.length 2) hR (Nat.mul 2 hR)) reg 4096 f ++ [last]) [last])
-    (minN top (Nat.add (Nat.div (Nat.sub (Nat.succ ctx.2) (loSum ch)) 2) 2))
-    (Nat.sub (Nat.sub ctx.1 1) (hiSum ch))
-
-/-- The cuts of the range `[a, top)` into cells of side at most `hQ`. -/
-def cutsQ (hQ a top : ℕ) : List ℕ :=
-  (fun n => cutList a (Nat.sub top a) n n []) (maxN 1 (cdiv (Nat.sub top a) hQ))
-
 variable [SieveCert.Grid] [SieveCert.IBPar]
-
-/-- **A strategy for `mixTests`** with cells of side at most `hI` and at most the exponent over `κ`. -/
-def stratG (κ hI depth wmin : ℕ) : Strat :=
-  ⟨depth, wmin, fun bl => cfgW :: propI2 bl (loSum bl) bl 1, propJ, cutsOfG κ hI⟩
-
-/-- **A strategy for the tree of a reversed term** with `na` atoms, its chains of fewer than `depthR` primes. -/
-def stratK (κ hR depthR wmin : ℕ) (ctx : Cell) (na : ℕ) : Strat :=
-  ⟨depthR + na, wmin, fun bl => cfgW :: propI2 bl (loSum bl) bl 1, propJ,
-    fun bl f =>
-      (fun ch =>
-        cutsK κ hR ctx ch
-          (match ch with
-            | [] => (getC bl 0).1
-            | x :: _ => x.2) f) (chainOf na bl)⟩
 
 end SieveAd

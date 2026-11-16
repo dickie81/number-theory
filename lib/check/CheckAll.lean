@@ -148,7 +148,6 @@ import SieveStops2
 import SieveProp6
 import SieveChain
 import SieveDecomp
-import SieveBuch
 import SieveLeaves
 import SieveQ
 import SieveDrop
@@ -224,12 +223,8 @@ import SieveTwoComp
 import SieveAdDefs
 import SieveAdTree
 import SieveAdSpec
-import SieveAdWinDefs
-import SieveAdWin
 import SieveAdTwoDefs
 import SieveAdTwo
-import SieveAdMixDefs
-import SieveAdMix
 import SieveAdSearchDefs
 import SieveAdSearch
 import SieveAdFilt
@@ -266,8 +261,6 @@ import SieveAdFastDefs
 import SieveAdFast
 import SieveAdDirDefs
 import SieveAdDir
-import SieveHMWindow
-import SieveTypeIIHM
 import LinnikCGLLV
 import LinnikCGLStep
 import LinnikCGLMat
@@ -335,14 +328,7 @@ import LinnikCGLContinuation
 import SieveMain2
 import LinnikCGLSteps
 import SieveCurve7D
-import SieveBuch8
-import SieveQ8
-import SieveDeep
-import SieveDeepCost
 import SieveBox
-import SieveDrop8
-import SieveMain8
-import SieveDeepCert
 import SieveHint21500
 import Linnik21500
 import SieveHint21000
@@ -940,8 +926,6 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveWeight.norm_Sp_le
 #print axioms SieveTypeII.sum_chars_dp_sq_le
 #print axioms SieveRough.psi_le
-#print axioms SieveRough.share2
-#print axioms SieveRough.share2_of_cand
 #print axioms SieveOmegaB.log_le_half_sub_inv
 #print axioms SieveOmegaB.omB_le_w1
 #print axioms SieveOmegaB.omB_mono
@@ -949,22 +933,13 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveOmegaB.lnT_ge
 #print axioms SieveOmegaB.omF_ge
 #print axioms SieveCert.omegaC_le_w
-#print axioms SieveCert.bound2_ge
 #print axioms SieveRough.super_M
-#print axioms SieveRough.evLe_cell_tr
-#print axioms SieveRough.evLe_cell_ex
 #print axioms SieveSep.sum_sep
 #print axioms SieveSep.sep_bound
-#print axioms SieveFamily.family_bound
-#print axioms SieveFamily.Dsum_sharp_le
-#print axioms SieveFamily.typeII_sharp_explicit
-#print axioms SieveFamily.typeII_sharp
 #print axioms SieveTypeIB.sum_bilinear
-#print axioms SieveTypeIB.typeIB_bound
 #print axioms SieveSpline.what_spl
 #print axioms SieveSpline.norm_what_spl_tail
 #print axioms SieveSpline.norm_Ew_spl_le
-#print axioms SieveSpline.typeIB_spline
 #print axioms SieveTypeIB.card_fiber_cong_le
 #print axioms SieveTypeIB.typeIB_bound_wide
 #print axioms SieveSpline.typeIB_spline_wide
@@ -1010,27 +985,8 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveLeaf.prod_T_le
 #print axioms SieveLeaf.prod_primesBelow_le
 #print axioms SieveDyadic.sum_bump
-#print axioms SieveTypeIIU.typeII_unw
 #print axioms SieveRoughTuple.sum_rough_eq
-#print axioms SieveStops2.typeII_cmp
-#print axioms SieveStops2.stops2_bound
-#print axioms SieveProp6.prop6
-#print axioms SieveChain.typeII_gcmp'
-#print axioms SieveChain.chainTU_bound
-#print axioms SieveChain.chainTL_bound
-#print axioms SieveChainR.chainTR_bound
-#print axioms SieveDecomp.buchstab_fam
-#print axioms SieveDecomp.famI_cells
 #print axioms SieveDecomp.famI_vanish
-#print axioms SieveLeaves.TL_spec
-#print axioms SieveLeaves.TU_spec
-#print axioms SieveLeaves.P6_spec
-#print axioms SieveP6ib.prop6ib
-#print axioms SieveLeaves.TR_spec
-#print axioms SieveLeaves.P6IB_spec
-#print axioms SieveQ.good_of_large
-#print axioms SieveQ.P6IB_boxes
-#print axioms SieveMain.TB_ev
 #print axioms LinnikHuxStep.class1_gen
 #print axioms LinnikHuxStep.count_gen
 #print axioms LinnikHuxStep.charDensity_gen
@@ -1045,7 +1001,6 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms LinnikStairs7.charDensity_hy_top
 #print axioms SieveTypeIIHM.dp_eq_pv
 #print axioms SieveTypeIIHM.sum_bin_hm
-#print axioms SieveTypeIIHM.sum_typeII_bins_hm
 #print axioms SieveTypeIIHM.offK_bound
 #print axioms SieveTypeIIHM.hm_duality_wt
 #print axioms SieveTypeIIHM.sum_bin_hm_sq
@@ -1143,9 +1098,6 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.bestSub_eq
 #print axioms SieveAd.findSub1_eq
 #print axioms SieveAd.tstarF_eq
-#print axioms SieveAd.solveF_sound
-#print axioms SieveAd.has_of_kids
-#print axioms SieveAd.linnik_has
 #print axioms SieveAd.linnik_bd
 #print axioms SieveAd.solveG_sound
 #print axioms SieveAd.rootJ_sound
@@ -1153,7 +1105,6 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.rev_cover
 #print axioms SieveAd.rev_inject
 #print axioms SieveAd.bd_rev
-#print axioms SieveAd.solveR_sound
 #print axioms SieveAd.famIR_eq
 #print axioms SieveAd.famJR_eq
 #print axioms SieveAd.frozSolve_sound_at
@@ -1181,14 +1132,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.frozTests_sound_at
 #print axioms SieveAd.pr_of_kidsF_at
 #print axioms SieveAd.pr_of_partD_at
-#print axioms SieveAd.pr_of_kids
 #print axioms SieveAd.linnik_pr
-#print axioms SieveCurveGlue.affine_corner_bound
-#print axioms SieveCurveGlue.windowPieceHM_affine_split
-#print axioms SieveCurveGlue.windowPieceHM_const_split
-#print axioms SieveTypeIIHM.bin_bound_pt
-#print axioms SieveTypeIIHM.bin_bound_gen_hm
-#print axioms SieveTypeIIHM.typeII_gen_hm
 #print axioms LinnikCGLLV.lv_range
 #print axioms LinnikCGLLV.cgl_all
 #print axioms LinnikCGLLV.taylor_pick
@@ -1351,17 +1295,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms LinnikCGLSteps.charDensity_s29
 #print axioms LinnikCGLSteps.charDensity_inT
 #print axioms SieveCurve7D.counts_7d
-#print axioms SieveBuch.Par.decomp8
-#print axioms SieveQ8.leaves_ev8
-#print axioms SieveDeep.okIB_of_okD
-#print axioms SieveDeep.Ch3_le
 #print axioms SieveRough.shareBox
-#print axioms SieveDrop8.share8D
-#print axioms SieveDrop8.E1_le
-#print axioms SieveDrop8.dT_le_cost
-#print axioms SieveDrop8.drop_ev8
-#print axioms SieveMain8.linnik_route_lt8
-#print axioms SieveDeep.totalD_eq_rowsJD
 #print axioms Linnik21500.tree21500
 #print axioms Linnik21500.linnik_21500
 #print axioms Linnik21000.tree21000

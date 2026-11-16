@@ -22,18 +22,18 @@ The file imports `SieveQ.lean`.
 -/
 import SieveQ
 
-open Real Finset Filter SieveFamily SieveChain SieveDecomp SieveBuch SieveLeaves SieveQ SieveRough SieveRoute
-open SieveCert (V DEN H U1 U2 cand inKK ne3 counted4 surelyEval cell bound2 K nC eC inKK5 ne5 counted6)
+open Real Finset Filter SieveFamily SieveChain SieveDecomp SieveLeaves SieveQ SieveRough SieveRoute
+open SieveCert (V DEN H U1 U2 cell K)
 
 namespace SieveDrop
 
 open Classical
 
-variable [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits]
+variable [Route] [RouteOK] [SieveCert.Grid]
 
 /-! ### A dropped family's `B`-count, by rough numbers -/
 
-omit [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
+omit [Route] [RouteOK] [SieveCert.Grid] in
 /-- For `x > 0` and `W > 0`, the multiples `n = Wc ∈ (x, 2x]` of `W` with no prime factor below `z` inject into
 `Ψ(x/W, z)` by `n ↦ n/W`. -/
 theorem card_le_Psi {x : ℝ} (hx : 0 < x) {W z : ℕ} (hW : 0 < W) :
@@ -66,19 +66,19 @@ theorem card_le_Psi {x : ℝ} (hx : 0 < x) {W z : ℕ} (hW : 0 < W) :
     rw [Finset.mem_coe, Finset.mem_filter] at hn₁ hn₂
     exact (Nat.div_left_inj hn₁.2.1 hn₂.2.1).1 h
 
-omit [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
+omit [Route] [RouteOK] [SieveCert.Grid] in
 theorem gB_le (q m : ℕ) : gB q m ≤ (q.totient : ℝ)⁻¹ := by
   unfold gB
   split_ifs
   · exact le_rfl
   · positivity
 
-omit [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
+omit [Route] [RouteOK] [SieveCert.Grid] in
 theorem gB_nonneg (q m : ℕ) : 0 ≤ gB q m := by
   unfold gB
   split_ifs <;> positivity
 
-omit [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
+omit [RouteOK] [SieveCert.Grid] in
 /-- **A family's `B`-count.** For `q ≥ 1` and a family of tuples of primes, it is at most
 `φ(q)⁻¹ Σ_rt Ψ(x/∏rt, rt_last)`. -/
 theorem famI_gB_le (q : ℕ) {k' : ℕ} (F : Finset (Fin (k' + 1) → ℕ)) (hF : ∀ rt ∈ F, ∀ i, (rt i).Prime)
@@ -106,338 +106,14 @@ theorem famI_gB_le (q : ℕ) {k' : ℕ} (F : Finset (Fin (k' + 1) → ℕ)) (hF 
         refine mul_le_mul_of_nonneg_left ?_ (by positivity)
         exact_mod_cast card_le_Psi hx hW
 
-omit [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
-/-- A sum of a nonnegative `g` over the pairs of a family whose entries lie in `s₀`, `s₁` is at most the sum over
-`s₀ × s₁`. -/
-theorem sum_le_box2 {s₀ s₁ : Finset ℕ} (F : Finset (Fin 2 → ℕ)) (hF : ∀ rt ∈ F, rt 0 ∈ s₀ ∧ rt 1 ∈ s₁)
-    (g : ℕ → ℕ → ℝ) (hg : ∀ a b, 0 ≤ g a b) :
-    ∑ rt ∈ F, g (rt 0) (rt 1) ≤ ∑ a ∈ s₀, ∑ b ∈ s₁, g a b := by
-  rw [← Finset.sum_product']
-  have hinj : Set.InjOn (fun rt : Fin 2 → ℕ => (rt 0, rt 1)) F := by
-    intro r₁ _ r₂ _ h
-    simp only [Prod.mk.injEq] at h
-    funext t
-    fin_cases t
-    · exact h.1
-    · exact h.2
-  rw [← Finset.sum_image (f := fun p : ℕ × ℕ => g p.1 p.2) hinj]
-  refine Finset.sum_le_sum_of_subset_of_nonneg ?_ fun p _ _ => hg _ _
-  intro p hp
-  obtain ⟨rt, hrt, rfl⟩ := Finset.mem_image.1 hp
-  exact Finset.mem_product.2 (hF rt hrt)
-
 /-! ### The dropped cells -/
-
-omit [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem mem_cellP_of {q : ℕ} {c p : ℕ} (hp : p.Prime) (h : InC (xq q) c p) : p ∈ cellP (xq q) c :=
-  mem_primesIn.2 ⟨hp, h.1, h.2⟩
-
-omit [RouteOK] [SieveCert.GridOK] [Fits] in
-/-- **A dropped cell of depth 2**, for `q ≥ 1`: its `B`-count is at most `φ(q)⁻¹ Σ_{p₁, p₂} Ψ(x/(p₁p₂), p₂)` over the
-cell. -/
-theorem drop2_le {q : ℕ} (hq : 1 ≤ q) (i j : ℕ) :
-    (parQ q).I (gB q) ((parQ q).S2c i j) ≤
-      (q.totient : ℝ)⁻¹ * ∑ p₁ ∈ cellP (xq q) i, ∑ p₂ ∈ cellP (xq q) j, (Psi (xq q / (p₁ * p₂)) p₂ : ℝ) := by
-  have hF : ∀ rt ∈ famSet 2 (N2 q) ((parQ q).S2c i j), ∀ t, (rt t).Prime :=
-    fun rt hrt t => ((mem_famSet.1 hrt).1 t).2
-  refine (famI_gB_le q _ hF hq).trans (mul_le_mul_of_nonneg_left ?_ (by positivity))
-  have h := sum_le_box2 (s₀ := cellP (xq q) i) (s₁ := cellP (xq q) j) (famSet 2 (N2 q) ((parQ q).S2c i j))
-    (fun rt hrt => by
-      obtain ⟨-, hi, hj⟩ := (parQ q).facts_S2c hrt
-      exact ⟨mem_cellP_of (hF rt hrt 0) hi, mem_cellP_of (hF rt hrt 1) hj⟩)
-    (fun a b => (Psi (xq q / (a * b)) b : ℝ)) (fun a b => Nat.cast_nonneg _)
-  refine le_of_eq_of_le (Finset.sum_congr rfl fun rt _ => ?_) h
-  rw [Fin.prod_univ_two]
-  push_cast
-  rfl
-
-/-- The primes of `(⌊z/4⌋, z]`, where the corner's primes lie. -/
-noncomputable def cornerP (z : ℕ) : Finset ℕ := (Ioc ⌊(z : ℝ) / 4⌋₊ z).filter Nat.Prime
-
-omit [RouteOK] [Fits] in
-/-- **A corner cell** (not a candidate, not surely evaluable, `p₁`'s cell `i < n` not inside the window), on a grid with
-`GridOK`, for `(parQ q).Good` and `z_top² ≤ 4N₁`: its `n` are the products `p₁p₂` of its pairs, so its `B`-count is at
-most `φ(q)⁻¹ |cornerP|²`. -/
-theorem corner_le {q : ℕ} (G : (parQ q).Good) (hsq : (((parQ q).ztop : ℝ)) ^ 2 ≤ 4 * N1 q) {i j : ℕ}
-    (hi : i < SieveCert.n) (hW : ¬ Par.inW i) (hc : cand i j = false) (hs : Par.sE2 i j = false) :
-    (parQ q).I (gB q) ((parQ q).S2c i j) ≤ (q.totient : ℝ)⁻¹ * ((cornerP (parQ q).ztop).card : ℝ) ^ 2 := by
-  have hx0 : 0 < (parQ q).x := by linarith [G.hx]
-  have hx1 : 1 ≤ (parQ q).x := G.hx.le
-  have h2i := SieveCert.two_e_lt i hi
-  have hcases : SieveCert.e i + H ≤ SieveCert.e j ∨ DEN < SieveCert.e i + 2 * SieveCert.e j := by
-    simp only [cand, Par.sE2] at hc hs
-    simp only [hs, Bool.not_false, Bool.and_true, Bool.and_eq_false_iff, decide_eq_false_iff_not, not_lt,
-      not_le, Bool.not_eq_false', Bool.and_eq_true, decide_eq_true_eq] at hc
-    unfold Par.inW at hW
-    rcases hc with ((h | h) | h) | h
-    · exact Or.inl h
-    · omega
-    · exact Or.inr h
-    · exact absurd h hW
-  have hφ : (0 : ℝ) ≤ (q.totient : ℝ)⁻¹ := by positivity
-  rcases hcases with h | h
-  · -- empty: `p₂ ≥ x^{e_j} ≥ x^{e_i + H} > p₁`
-    have : (parQ q).I (gB q) ((parQ q).S2c i j) = 0 := by
-      refine famI_eq_zero _ _ _ _ fun rt hrt => False.elim ?_
-      obtain ⟨hch, hCi, hCj⟩ := (parQ q).facts_S2c hrt
-      have h10 : rt 1 < rt 0 := hch.1 (show (0 : Fin 2) < 1 by decide)
-      have : (rt 0 : ℝ) < rt 1 := lt_of_lt_of_le hCi.2 ((Par.rpow_cell_le hx1 h).trans hCj.1)
-      exact absurd h10 (not_lt.2 (by exact_mod_cast this.le))
-    rw [this]
-    positivity
-  · -- the corner: each pair contributes at most `n = p₁p₂`
-    unfold Par.I famI
-    set F := famSet 2 (N2 q) ((parQ q).S2c i j) with hFdef
-    have hterm : ∀ rt ∈ F, ∑ m ∈ Ioc (N1 q) (N2 q), gB q m *
-        (if (∏ t, rt t) ∣ m ∧ SieveTree.rough (rt (Fin.last 1)) m then 1 else 0) ≤
-          (q.totient : ℝ)⁻¹ * (if N1 q < rt 0 * rt 1 then 1 else 0) := by
-      intro rt hrt
-      obtain ⟨hch, hCi, hCj⟩ := (parQ q).facts_S2c hrt
-      have hp : ∀ t, (rt t).Prime := fun t => ((mem_famSet.1 hrt).1 t).2
-      have hW2 : (∏ t, rt t) = rt 0 * rt 1 := Fin.prod_univ_two _
-      -- `p₁p₂² > N₂`
-      have hbig : N2 q < rt 0 * rt 1 * rt 1 := by
-        have hp4 := Par.prod4_ge hx0 hCi.1 hCj.1 hCj.1 (show (parQ q).x ^ ((0 : ℝ) / DEN) ≤ (1 : ℝ) by simp)
-        have hreg := Par.rpow_region hx1 (s := SieveCert.e i + 2 * SieveCert.e j) h
-        have : (N2 q : ℝ) < ((rt 0 * rt 1 * rt 1 : ℕ) : ℝ) := by
-          push_cast
-          refine lt_of_lt_of_le G.hN₂ (hreg.trans (le_of_eq_of_le ?_ (hp4.trans (le_of_eq (by ring)))))
-          congr 1
-          push_cast
-          ring
-        exact_mod_cast this
-      have hsub : (Ioc (N1 q) (N2 q)).filter (fun m => (∏ t, rt t) ∣ m ∧
-          SieveTree.rough (rt (Fin.last 1)) m) ⊆ (Ioc (N1 q) (N2 q)).filter (fun m => m = rt 0 * rt 1) := by
-        intro m hm
-        rw [Finset.mem_filter] at hm ⊢
-        refine ⟨hm.1, ?_⟩
-        obtain ⟨⟨c, rfl⟩, hr⟩ := hm.2
-        rw [hW2] at hr ⊢
-        rcases Nat.lt_or_ge c 2 with hc2 | hc2
-        · have hc0 : c ≠ 0 := by
-            rintro rfl
-            have := (Finset.mem_Ioc.1 hm.1).1
-            rw [hW2] at this
-            simp at this
-          have : c = 1 := by omega
-          subst this
-          ring
-        · exfalso
-          have hrc : SieveTree.rough (rt 1) c := fun p hp1 hpp hpc =>
-            hr p hp1 hpp (dvd_mul_of_dvd_right hpc _)
-          have hmin := (SieveStops2.rough_iff_le_minFac hc2).1 hrc
-          have := Nat.minFac_le (by omega : 0 < c)
-          have h3 : rt 0 * rt 1 * rt 1 ≤ rt 0 * rt 1 * c := Nat.mul_le_mul_left _ (by omega)
-          have := (Finset.mem_Ioc.1 hm.1).2
-          rw [hW2] at this
-          omega
-      calc ∑ m ∈ Ioc (N1 q) (N2 q), gB q m *
-            (if (∏ t, rt t) ∣ m ∧ SieveTree.rough (rt (Fin.last 1)) m then 1 else 0)
-          ≤ ∑ m ∈ Ioc (N1 q) (N2 q), (q.totient : ℝ)⁻¹ *
-            (if (∏ t, rt t) ∣ m ∧ SieveTree.rough (rt (Fin.last 1)) m then 1 else 0) :=
-            Finset.sum_le_sum fun m _ => mul_le_mul_of_nonneg_right (gB_le q m) (by split_ifs <;> norm_num)
-        _ = (q.totient : ℝ)⁻¹ * (((Ioc (N1 q) (N2 q)).filter (fun m => (∏ t, rt t) ∣ m ∧
-              SieveTree.rough (rt (Fin.last 1)) m)).card : ℝ) := by
-            rw [← Finset.mul_sum, Finset.card_filter]
-            push_cast
-            rfl
-        _ ≤ (q.totient : ℝ)⁻¹ * (if N1 q < rt 0 * rt 1 then 1 else 0) := by
-            refine mul_le_mul_of_nonneg_left ?_ hφ
-            have hc := Finset.card_le_card hsub
-            have hc1 : ((Ioc (N1 q) (N2 q)).filter (fun m => m = rt 0 * rt 1)).card ≤
-                if N1 q < rt 0 * rt 1 then 1 else 0 := by
-              split_ifs with hlt
-              · refine (Finset.card_le_card (t := {rt 0 * rt 1}) fun m hm => ?_).trans
-                  (Finset.card_singleton _).le
-                rw [Finset.mem_filter] at hm
-                exact Finset.mem_singleton.2 hm.2
-              · refine Nat.le_zero.2 (Finset.card_eq_zero.2 (Finset.filter_eq_empty_iff.2 fun m hm hmeq => ?_))
-                have := (Finset.mem_Ioc.1 hm).1
-                omega
-            have := hc.trans hc1
-            split_ifs at this ⊢ <;> exact_mod_cast this
-    calc ∑ rt ∈ F, ∑ m ∈ Ioc (N1 q) (N2 q), gB q m *
-          (if (∏ t, rt t) ∣ m ∧ SieveTree.rough (rt (Fin.last 1)) m then 1 else 0)
-        ≤ ∑ rt ∈ F, (q.totient : ℝ)⁻¹ * (if N1 q < rt 0 * rt 1 then 1 else 0) := Finset.sum_le_sum hterm
-      _ = (q.totient : ℝ)⁻¹ * ((F.filter (fun rt => N1 q < rt 0 * rt 1)).card : ℝ) := by
-          rw [← Finset.mul_sum, Finset.card_filter]
-          push_cast
-          rfl
-      _ ≤ (q.totient : ℝ)⁻¹ * ((cornerP (parQ q).ztop).card : ℝ) ^ 2 := by
-          refine mul_le_mul_of_nonneg_left ?_ hφ
-          rw [sq, ← Nat.cast_mul, ← Finset.card_product]
-          refine Nat.cast_le.2 (Finset.card_le_card_of_injOn (fun rt => (rt 0, rt 1)) ?_ ?_)
-          · intro rt hrt
-            rw [Finset.mem_coe, Finset.mem_filter] at hrt
-            obtain ⟨hch, -, -⟩ := (parQ q).facts_S2c hrt.1
-            have hp : ∀ t, (rt t).Prime := fun t => ((mem_famSet.1 hrt.1).1 t).2
-            have h10 : rt 1 < rt 0 := hch.1 (show (0 : Fin 2) < 1 by decide)
-            have h0z : rt 0 < (parQ q).ztop := hch.2.2 0
-            have hN : N1 q < rt 0 * rt 1 := hrt.2
-            -- both primes exceed `z_top/4`
-            have hz4 : ((parQ q).ztop : ℝ) / 4 < rt 1 := by
-              have h1 : ((N1 q : ℕ) : ℝ) < (rt 0 : ℝ) * rt 1 := by exact_mod_cast hN
-              have h2 : (rt 0 : ℝ) < (parQ q).ztop := by exact_mod_cast h0z
-              have h3 : (0 : ℝ) < rt 1 := by exact_mod_cast (hp 1).pos
-              nlinarith
-            have hz4' : ((parQ q).ztop : ℝ) / 4 < rt 0 := lt_trans hz4 (by exact_mod_cast h10)
-            rw [Finset.mem_coe, Finset.mem_product]
-            refine ⟨Finset.mem_filter.2 ⟨Finset.mem_Ioc.2 ⟨?_, h0z.le⟩, hp 0⟩,
-              Finset.mem_filter.2 ⟨Finset.mem_Ioc.2 ⟨?_, (h10.trans h0z).le⟩, hp 1⟩⟩
-            · exact (Nat.floor_lt (by positivity)).2 hz4'
-            · exact (Nat.floor_lt (by positivity)).2 hz4
-          · intro r₁ _ r₂ _ hr
-            simp only [Prod.mk.injEq] at hr
-            funext t
-            fin_cases t
-            · exact hr.1
-            · exact hr.2
 
 /-! ### The corner is small -/
 
-omit [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
+omit [SieveCert.Grid] in
 theorem tendsto_xq : Tendsto xq atTop atTop :=
   (tendsto_rpow_atTop (L_pos : (0 : ℝ) < L)).comp tendsto_natCast_atTop_atTop
 
-omit [SieveCert.GridOK] [Fits] in
-/-- For a route with `RouteOK` and `q ≥ 1`, `√x ≤ z_top ≤ √(2x) + 1`. -/
-theorem ztop_bounds (q : ℕ) (hq : 1 ≤ q) :
-    Real.sqrt (xq q) ≤ ((parQ q).ztop : ℝ) ∧ ((parQ q).ztop : ℝ) ≤ Real.sqrt (2 * xq q) + 1 := by
-  show Real.sqrt (xq q) ≤ ((Nat.sqrt (N2 q) + 1 : ℕ) : ℝ) ∧ ((Nat.sqrt (N2 q) + 1 : ℕ) : ℝ) ≤ _
-  push_cast
-  constructor
-  · exact (Real.sqrt_le_sqrt (N2_ge q hq)).trans Real.real_sqrt_le_nat_sqrt_succ
-  · have h1 : (Nat.sqrt (N2 q) : ℝ) ≤ Real.sqrt (N2 q) := Real.nat_sqrt_le_real_sqrt
-    have h2 : Real.sqrt (N2 q) ≤ Real.sqrt (2 * xq q) := Real.sqrt_le_sqrt (N2_le q)
-    linarith
-
-omit [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [Fits] in
-/-- The corner's primes number at most `12√x/log x`, for `√x ≤ z ≤ 2√x` and `x` large. -/
-theorem cornerP_card_ev : ∃ X₀ : ℝ, ∀ x ≥ X₀, ∀ z : ℕ, Real.sqrt x ≤ z → (z : ℝ) ≤ 2 * Real.sqrt x →
-    ((cornerP z).card : ℝ) ≤ 12 * Real.sqrt x / Real.log x := by
-  obtain ⟨y₀, hy₀⟩ := card_primes_dyadic (ε := 1) one_pos
-  refine ⟨max (16 * y₀ ^ 2) 16, fun x hx z hz1 hz2 => ?_⟩
-  have hx16 : 16 ≤ x := le_trans (le_max_right _ _) hx
-  have hsx : 4 ≤ Real.sqrt x := by
-    rw [show (4 : ℝ) = Real.sqrt 16 by rw [show (16 : ℝ) = 4 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]]
-    exact Real.sqrt_le_sqrt hx16
-  have hlogx : 4 * Real.log 2 ≤ Real.log x := by
-    rw [← Real.log_rpow (by norm_num)]
-    exact Real.log_le_log (by positivity) (by norm_num; linarith)
-  set A : ℝ := (z : ℝ) / 4 with hA
-  have hA0 : 0 < A := by rw [hA]; linarith
-  have hy : y₀ ≤ A := by
-    have : y₀ ≤ Real.sqrt x / 4 := by
-      have h1 : Real.sqrt (16 * y₀ ^ 2) ≤ Real.sqrt x := Real.sqrt_le_sqrt (le_trans (le_max_left _ _) hx)
-      rw [Real.sqrt_mul (by norm_num), Real.sqrt_sq_eq_abs,
-        show Real.sqrt 16 = 4 by rw [show (16 : ℝ) = 4 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]] at h1
-      have := le_abs_self y₀
-      linarith
-    rw [hA]
-    linarith
-  -- `(⌊A⌋, z] = (⌊A⌋, ⌊2A⌋] ∪ (⌊2A⌋, ⌊4A⌋]`
-  have hz4 : ⌊2 * (2 * A)⌋₊ = z := by
-    rw [hA, show 2 * (2 * ((z : ℝ) / 4)) = (z : ℝ) by ring, Nat.floor_natCast]
-  have hle1 : ⌊A⌋₊ ≤ ⌊2 * A⌋₊ := Nat.floor_le_floor (by linarith)
-  have hle2 : ⌊2 * A⌋₊ ≤ z := by rw [← hz4]; exact Nat.floor_le_floor (by linarith)
-  have hsplit : cornerP z ⊆ ((Ioc ⌊A⌋₊ ⌊2 * A⌋₊).filter Nat.Prime) ∪
-      ((Ioc ⌊2 * A⌋₊ ⌊2 * (2 * A)⌋₊).filter Nat.Prime) := by
-    intro p hp
-    rw [cornerP, Finset.mem_filter, Finset.mem_Ioc] at hp
-    rw [hz4, Finset.mem_union, Finset.mem_filter, Finset.mem_filter, Finset.mem_Ioc, Finset.mem_Ioc]
-    by_cases h : p ≤ ⌊2 * A⌋₊
-    · exact Or.inl ⟨⟨by rw [hA]; exact hp.1.1, h⟩, hp.2⟩
-    · exact Or.inr ⟨⟨by omega, hp.1.2⟩, hp.2⟩
-  have hc1 := hy₀ A hy
-  have hc2 := hy₀ (2 * A) (by linarith)
-  have hcard : ((cornerP z).card : ℝ) ≤
-      (1 + 1) * A / Real.log (2 * A) + (1 + 1) * (2 * A) / Real.log (2 * (2 * A)) := by
-    have := Finset.card_le_card hsplit
-    have h2 := Finset.card_union_le ((Ioc ⌊A⌋₊ ⌊2 * A⌋₊).filter Nat.Prime)
-      ((Ioc ⌊2 * A⌋₊ ⌊2 * (2 * A)⌋₊).filter Nat.Prime)
-    have h3 : ((cornerP z).card : ℝ) ≤ (((Ioc ⌊A⌋₊ ⌊2 * A⌋₊).filter Nat.Prime).card : ℝ) +
-        (((Ioc ⌊2 * A⌋₊ ⌊2 * (2 * A)⌋₊).filter Nat.Prime).card : ℝ) := by exact_mod_cast this.trans h2
-    linarith
-  -- `log 2A ≥ (log x)/4`
-  have hl2A : Real.log x / 4 ≤ Real.log (2 * A) := by
-    have h1 : Real.sqrt x / 2 ≤ 2 * A := by rw [hA]; linarith
-    have h2 : Real.log (Real.sqrt x / 2) = Real.log x / 2 - Real.log 2 := by
-      rw [Real.log_div (by positivity) (by norm_num), Real.log_sqrt (by linarith)]
-    have h3 := Real.log_le_log (by positivity) h1
-    linarith
-  have hlx : 0 < Real.log x := by have := Real.log_pos (show (1 : ℝ) < 2 by norm_num); linarith
-  have hl4A : Real.log (2 * A) ≤ Real.log (2 * (2 * A)) := Real.log_le_log (by positivity) (by linarith)
-  have hl2A0 : 0 < Real.log (2 * A) := by linarith
-  have hb1 : (1 + 1) * A / Real.log (2 * A) ≤ 2 * A / (Real.log x / 4) := by
-    rw [show (1 + 1 : ℝ) = 2 by norm_num]
-    exact div_le_div_of_nonneg_left (by positivity) (by positivity) hl2A
-  have hb2 : (1 + 1) * (2 * A) / Real.log (2 * (2 * A)) ≤ 4 * A / (Real.log x / 4) := by
-    rw [show (1 + 1 : ℝ) * (2 * A) = 4 * A by ring]
-    exact div_le_div_of_nonneg_left (by positivity) (by positivity) (hl2A.trans hl4A)
-  have hAx : A ≤ Real.sqrt x / 2 := by rw [hA]; linarith
-  have : 2 * A / (Real.log x / 4) + 4 * A / (Real.log x / 4) = 24 * A / Real.log x := by
-    field_simp
-    ring
-  have h24 : 24 * A / Real.log x ≤ 12 * Real.sqrt x / Real.log x :=
-    div_le_div_of_nonneg_right (by linarith) hlx.le
-  linarith
-
-omit [SieveCert.GridOK] [Fits] in
-/-- **The corner is `o(x/log x)`.** For a route with `RouteOK`, `ε > 0` and large `q`: `z_top² ≤ 4N₁` and
-`n²|cornerP(z_top)|² ≤ εx/log x`. -/
-theorem corner_ev {ε : ℝ} (hε : 0 < ε) : ∀ᶠ q : ℕ in atTop,
-    (((parQ q).ztop : ℝ)) ^ 2 ≤ 4 * N1 q ∧
-      (SieveCert.n : ℝ) ^ 2 * ((cornerP (parQ q).ztop).card : ℝ) ^ 2 ≤ ε * (xq q / Real.log (xq q)) := by
-  obtain ⟨X₀, hX₀⟩ := cornerP_card_ev
-  have hev := tendsto_xq.eventually_ge_atTop (max (max X₀ 16) (Real.exp (144 * (SieveCert.n : ℝ) ^ 2 / ε)))
-  filter_upwards [hev, eventually_ge_atTop 1] with q hq hq1
-  have hx16 : 16 ≤ xq q := le_trans (le_trans (le_max_right _ _) (le_max_left _ _)) hq
-  have hxX : X₀ ≤ xq q := le_trans (le_trans (le_max_left _ _) (le_max_left _ _)) hq
-  have hxe : Real.exp (144 * (SieveCert.n : ℝ) ^ 2 / ε) ≤ xq q := le_trans (le_max_right _ _) hq
-  have hsx : 4 ≤ Real.sqrt (xq q) := by
-    rw [show (4 : ℝ) = Real.sqrt 16 by rw [show (16 : ℝ) = 4 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]]
-    exact Real.sqrt_le_sqrt hx16
-  obtain ⟨hz1, hz2⟩ := ztop_bounds q hq1
-  have hs2 : Real.sqrt (2 * xq q) = Real.sqrt 2 * Real.sqrt (xq q) := Real.sqrt_mul (by norm_num) _
-  have hr2 : Real.sqrt 2 < 3 / 2 := by
-    rw [Real.sqrt_lt' (by norm_num)]
-    norm_num
-  have hsq_x : Real.sqrt (xq q) ^ 2 = xq q := Real.sq_sqrt (by linarith)
-  have hz2' : ((parQ q).ztop : ℝ) ≤ 2 * Real.sqrt (xq q) := by nlinarith
-  refine ⟨?_, ?_⟩
-  · have hN1 : xq q - 1 < (N1 q : ℝ) := Nat.sub_one_lt_floor _
-    have : ((parQ q).ztop : ℝ) ≤ 3 / 2 * Real.sqrt (xq q) + 1 := by nlinarith
-    have h0 : (0 : ℝ) ≤ (parQ q).ztop := Nat.cast_nonneg _
-    nlinarith
-  · have hc := hX₀ (xq q) hxX _ hz1 hz2'
-    have hlx : 144 * (SieveCert.n : ℝ) ^ 2 / ε ≤ Real.log (xq q) := by
-      rw [← Real.log_exp (144 * (SieveCert.n : ℝ) ^ 2 / ε)]
-      exact Real.log_le_log (Real.exp_pos _) hxe
-    have hlx0 : 0 < Real.log (xq q) := Real.log_pos (by linarith)
-    have hc0 : (0 : ℝ) ≤ (cornerP (parQ q).ztop).card := Nat.cast_nonneg _
-    have hsq : ((cornerP (parQ q).ztop).card : ℝ) ^ 2 ≤ 144 * xq q / Real.log (xq q) ^ 2 := by
-      have h1 : ((cornerP (parQ q).ztop).card : ℝ) ^ 2 ≤ (12 * Real.sqrt (xq q) / Real.log (xq q)) ^ 2 :=
-        pow_le_pow_left₀ hc0 hc 2
-      rw [div_pow, mul_pow, hsq_x] at h1
-      linarith
-    have hn : (0 : ℝ) ≤ (SieveCert.n : ℝ) ^ 2 := by positivity
-    calc (SieveCert.n : ℝ) ^ 2 * ((cornerP (parQ q).ztop).card : ℝ) ^ 2
-        ≤ (SieveCert.n : ℝ) ^ 2 * (144 * xq q / Real.log (xq q) ^ 2) := mul_le_mul_of_nonneg_left hsq hn
-      _ = (144 * (SieveCert.n : ℝ) ^ 2 / Real.log (xq q)) * (xq q / Real.log (xq q)) := by
-          field_simp
-      _ ≤ ε * (xq q / Real.log (xq q)) := by
-          refine mul_le_mul_of_nonneg_right ?_ (by positivity)
-          rw [div_le_iff₀ hlx0]
-          rw [div_le_iff₀ hε] at hlx
-          linarith
-
 /-! ### All the dropped terms -/
-
-/-- A cell's sum `Σ_{p₁, p₂} Ψ(x/(p₁p₂), p₂)` of depth 2. -/
-noncomputable def S2 (x : ℝ) (i j : ℕ) : ℝ := ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, (Psi (x / (p₁ * p₂)) p₂ : ℝ)
-
-omit [Route] [RouteOK] [SieveCert.GridOK] [Fits] in
-theorem S2_nonneg (x : ℝ) (i j : ℕ) : 0 ≤ S2 x i j :=
-  Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _
 
 end SieveDrop

@@ -97,7 +97,4 @@ def chkI2 (bl : List Cell) (s0 sr : ℕ) : Bool :=
 /-- **The test of a box by the estimate in two variables.** -/
 def okI2 (bl : List Cell) (cfg : Cfg) : Bool := chkI2 bl cfg.s0 cfg.sr
 
-/-- **The tests of the estimate in two variables.** -/
-def twoTests : Tests := ⟨okI2, okJ2⟩
-
 end SieveAd

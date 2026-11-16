@@ -107,52 +107,6 @@ theorem revOK_length {bl : List Cell} (h : revOK bl = true) : bl.length = 3 := b
   match bl, h with
   | [_, _, _], _ => rfl
 
-/-- **The nodes of the search with role reversal bound the term**, for tests that are sound and sound under two
-more atoms. -/
-theorem rulesR [RouteOK] {τ : Tests} (hτ : τ.Sound) (hτX : τ.SoundX) (SK : Cell → ℕ → Strat) (fuel : ℕ)
-    (cq : ℕ → ℕ → List ℕ) : Rules (opsR τ SK fuel cq) τ PR where
-  van := fun _ hv => pr_of_has hτ (has_vanish hv)
-  evl := by
-    intro bl par cfg _ hI
-    cases bl with
-    | nil =>
-      intro k' h
-      simp at h
-    | cons x b => exact pr_of_has hτ (has_eval hI)
-  drp := fun _ hd => pr_drop hτ hd
-  alt := by
-    intro bl par l _ h
-    simp only [opsR] at h ⊢
-    by_cases hc : (!par && revOK bl) = true
-    · rw [hc, Bool.cond_true] at h ⊢
-      simp only [Bool.and_eq_true, Bool.not_eq_true'] at hc
-      obtain ⟨hp, hrev⟩ := hc
-      subst hp
-      intro k' hl
-      have h3 := revOK_length hrev
-      have hk : k' = 2 := by omega
-      subst hk
-      exact bd_rev hτX SK fuel cq hrev h hl
-    · rw [Bool.not_eq_true] at hc
-      rw [hc, Bool.cond_false] at h
-      omega
-  split := pr_split
-  buch := fun _ _ hfx hJ hc => pr_buch hτ hfx hJ hc
-
-/-- **The search with role reversal is sound**: a cost that it returns below its limit bounds the term. -/
-theorem solveR_sound [RouteOK] {τ : Tests} (hτ : τ.Sound) (hτX : τ.SoundX) (SK : Cell → ℕ → Strat) (fuel : ℕ)
-    (cq : ℕ → ℕ → List ℕ) (S : Strat) (n : ℕ) : RecP PR (solveG (opsR τ SK fuel cq) τ S n) :=
-  solveG_sound (rulesR hτ hτX SK fuel cq) S n
-
-/-- **A part of a search with role reversal**, as the kernel checks it: if the costs of the cells of the new prime
-between `a` and `top`, cut at `cs` and searched with the limit `K`, sum to at most `c < K`, then the term of the box
-of the whole range is at least `−(c/K + o(1))x/(φ(q) log x)` with its sign. -/
-theorem pr_of_kids [RouteOK] {τ : Tests} (hτ : τ.Sound) (hτX : τ.SoundX) (SK : Cell → ℕ → Strat) (fuel : ℕ)
-    (cq : ℕ → ℕ → List ℕ) (S : Strat) (n : ℕ) {top : ℕ} {bl : List Cell} {par : Bool} {cs : List ℕ} {a c : ℕ}
-    (h : kids (solveG (opsR τ SK fuel cq) τ S n) top bl par cs a K ≤ c) (hc : c < K) :
-    PR ((a, top) :: bl) par c :=
-  pr_mono (kidsP_sound pr_split (solveR_sound hτ hτX SK fuel cq S n) top bl par cs a K (lt_of_le_of_lt h hc)) h
-
 /-- **Linnik's theorem from a search with role reversal.** For a route with `RouteOK` and sound tests: if the terms
 at the floor `x^{f₀/DEN}` of the box with no prime pass `okJ`, and the term of the box of one prime with the cell
 `(f₀, DEN/2 + 1)`, of the sign `−`, has a bound at a cost below `K`, then there is `K'` such that for every `q ≥ 1`
@@ -167,6 +121,4 @@ theorem linnik_pr [RouteOK] {τ : Tests} (hτ : τ.Sound) (f₀ : ℕ) (cfg₀ :
 
 end SieveAd
 
-#print axioms SieveAd.solveR_sound
-#print axioms SieveAd.pr_of_kids
 #print axioms SieveAd.linnik_pr

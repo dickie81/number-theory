@@ -105,9 +105,6 @@ theorem EvLe.prod {m : ℕ} (S : Fin m → ℝ → ℝ) (P : Fin m → ℝ) (hP 
 noncomputable def SB (x : ℝ) {m : ℕ} (a w : Fin (m + 1) → ℕ) : ℝ :=
   ∑ rt ∈ Fintype.piFinset (fun t => boxP x (a t) (w t)), (Psi (x / (∏ t, rt t : ℕ)) (rt (Fin.last m)) : ℝ)
 
-theorem SB_nonneg (x : ℝ) {m : ℕ} (a w : Fin (m + 1) → ℕ) : 0 ≤ SB x a w :=
-  Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _
-
 /-- **The share of a box.** For `m + 1` intervals with positive lower ends that fit (`s + t + W ≤ DEN`) and
 `B ≥ (omKw s t W w_last/K)·∏_{t<m} trB(a_t, w_t)·exB(a_last, w_last)`: for every `δ > 0`, eventually
 `SB x a w ≤ (B + δ)·x/log x`. -/

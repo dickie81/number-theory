@@ -933,17 +933,5 @@ theorem evJ_okJ2 (bl : List Cell) (f : ℕ) (cfg : Cfg) (k : ℕ) (h : bl.length
     EvJ f (boxFn bl k h) :=
   evJ_two bl k h f cfg.s0 cfg.sr cfg.s1 cfg.e _ _ _ hok
 
-/-- **The tests of the estimate in two variables are sound.** -/
-theorem twoTests_sound : (twoTests).Sound :=
-  ⟨fun bl cfg k' h hok => evI_okI2 bl cfg k' h hok, fun bl f cfg k h hok => evJ_okJ2 bl f cfg k h hok⟩
-
-/-- **The tests of the estimate in two variables are sound under two more atoms**, on the boxes of at most twelve
-primes. -/
-theorem twoTests_soundX : (twoTests).SoundX :=
-  ⟨fun bl cfg k' h hk hok => evI_twoE bl k' h cfg.s0 cfg.sr hok (m := 2) (by omega),
-    fun bl f cfg k h hk hok => evJ_twoE bl k h f cfg.s0 cfg.sr cfg.s1 cfg.e _ _ _ hok (m := 2) (by omega)⟩
-
 end SieveAd
 
-#print axioms SieveAd.twoTests_sound
-#print axioms SieveAd.twoTests_soundX

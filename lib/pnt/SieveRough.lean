@@ -1443,75 +1443,11 @@ theorem evLe_sum_inv_log {a c : ℝ} (ha : 0 < a) (hac : a ≤ c) :
 
 /-! ### The cells -/
 
-variable [Grid] [GridOK]
-
-/-- The primes of the cell `k` at `x`: `x^{e_k/DEN} ≤ p < x^{(e_k + H)/DEN}`. -/
-noncomputable def cellP (x : ℝ) (k : ℕ) : Finset ℕ :=
-  primesIn (x ^ ((SieveCert.e k : ℝ) / DEN)) (x ^ (((SieveCert.e k : ℝ) + H) / DEN))
-
-omit [GridOK] in
-/-- A prime lies in `cellP x k` exactly when its exponent `log p/log x` lies in the cell `k`. -/
-theorem mem_cellP {x : ℝ} (hx : 1 < x) {k p : ℕ} :
-    p ∈ cellP x k ↔ p.Prime ∧ InCell k (Real.log p / Real.log x) := by
-  have hx0 : 0 < x := by linarith
-  have hlx : 0 < Real.log x := Real.log_pos hx
-  have hD := DEN_pos'
-  rw [cellP, mem_primesIn, InCell]
-  refine and_congr_right fun hp => ?_
-  have hp0 : (0 : ℝ) < p := by exact_mod_cast hp.pos
-  have key : ∀ r : ℝ, x ^ r ≤ p ↔ r * DEN ≤ Real.log p / Real.log x * DEN := by
-    intro r
-    rw [← Real.log_le_log_iff (Real.rpow_pos_of_pos hx0 r) hp0, Real.log_rpow hx0,
-      mul_le_mul_iff_of_pos_right hD, le_div_iff₀ hlx]
-  have key' : ∀ r : ℝ, (p : ℝ) < x ^ r ↔ Real.log p / Real.log x * DEN < r * DEN := by
-    intro r
-    rw [← not_le, key, not_le]
-  rw [key, key', div_mul_cancel₀ _ hD.ne', div_mul_cancel₀ _ hD.ne']
-
-/-- On a grid with `GridOK`, the cell's `Σ 1/p` is at most the trapezoid bound
-`trB(e_k, H) = H(2e_k + H)/(2e_k(e_k + H))` of `log(1 + H/e_k)`, up to `o(1)`. -/
-theorem evLe_cell_tr (k : ℕ) : EvLe (fun x => ∑ p ∈ cellP x k, 1 / (p : ℝ)) (trB (SieveCert.e k) H) := by
-  have hek : (0 : ℝ) < SieveCert.e k := by exact_mod_cast e_pos k
-  have hH : (0 : ℝ) < H := by exact_mod_cast H_pos
-  have hD := DEN_pos'
-  have ha : (0 : ℝ) < (SieveCert.e k : ℝ) / DEN := div_pos hek hD
-  have hac : (SieveCert.e k : ℝ) / DEN ≤ ((SieveCert.e k : ℝ) + H) / DEN := div_le_div_of_nonneg_right (by linarith) hD.le
-  have hlog : Real.log (((SieveCert.e k : ℝ) + H) / DEN) - Real.log ((SieveCert.e k : ℝ) / DEN) ≤
-      trB (SieveCert.e k) H := by
-    rw [← Real.log_div (by positivity) (by positivity)]
-    have heq : ((SieveCert.e k : ℝ) + H) / DEN / ((SieveCert.e k : ℝ) / DEN) = ((SieveCert.e k : ℝ) + H) / SieveCert.e k := by
-      field_simp
-    rw [heq]
-    have h1 : (1 : ℝ) ≤ ((SieveCert.e k : ℝ) + H) / SieveCert.e k := by rw [le_div_iff₀ hek]; linarith
-    have h := SieveOmegaB.log_le_half_sub_inv h1
-    have h2 : (((SieveCert.e k : ℝ) + H) / SieveCert.e k - (((SieveCert.e k : ℝ) + H) / SieveCert.e k)⁻¹) / 2 =
-        trB (SieveCert.e k) H := by
-      unfold trB; field_simp; ring
-    linarith
-  intro δ hδ
-  filter_upwards [evLe_sum_inv ha hac δ hδ] with x hx
-  exact le_trans hx (by linarith)
-
-/-- On a grid with `GridOK`, the cell's `log x · Σ 1/(p log p)` is at most `exB(e_k, H) = H·DEN/(e_k(e_k + H))`, the
-exact `DEN(1/e_k − 1/(e_k + H))`, up to `o(1)`. -/
-theorem evLe_cell_ex (k : ℕ) :
-    EvLe (fun x => Real.log x * ∑ p ∈ cellP x k, 1 / ((p : ℝ) * Real.log p)) (exB (SieveCert.e k) H) := by
-  have hek : (0 : ℝ) < SieveCert.e k := by exact_mod_cast e_pos k
-  have hH : (0 : ℝ) < H := by exact_mod_cast H_pos
-  have hD := DEN_pos'
-  have ha : (0 : ℝ) < (SieveCert.e k : ℝ) / DEN := div_pos hek hD
-  have hac : (SieveCert.e k : ℝ) / DEN ≤ ((SieveCert.e k : ℝ) + H) / DEN := div_le_div_of_nonneg_right (by linarith) hD.le
-  have hle : 1 / ((SieveCert.e k : ℝ) / DEN) - 1 / (((SieveCert.e k : ℝ) + H) / DEN) = exB (SieveCert.e k) H := by
-    unfold exB; field_simp; ring
-  intro δ hδ
-  filter_upwards [evLe_sum_inv_log ha hac δ hδ] with x hx
-  exact le_trans hx (by linarith)
+variable [Grid]
 
 /-! ### A point of a cell -/
 
-theorem four_H_le_V : 4 * H ≤ V := GridOK.four_H_le_V
-
-omit [Grid] [GridOK] in
+omit [Grid] in
 /-- **A point of a cell.** Let `x > 1` with `(log 2/log x)·DEN < 1`, let `d ≥ 1` be the product of the other primes
 and `p ≥ 2` the last, with `s ≤ (log d/log x)DEN`, `t ≤ (log p/log x)DEN ≤ t + w` and
 `((log d + log p)/log x)DEN ≤ s + t + W ≤ DEN`. If `z₀` is `psi_le`'s for `U = 2DEN/t` and `ε`, and `p ≥ z₀`, then
@@ -1584,21 +1520,7 @@ theorem psi_point_w {s t W w z₀ p : ℕ} {ε x d : ℝ} (ht : 0 < t)
     _ ≤ ((omKw s t W w : ℝ) / K + ε) * (x / (d * p * Real.log p)) :=
         mul_le_mul_of_nonneg_right (by linarith) (div_nonneg hx0.le (by positivity))
 
-omit [GridOK] in
-/-- `psi_point_w` with all `m` boxes of width `H`. -/
-theorem psi_point {s t m z₀ p : ℕ} {ε x d : ℝ} (ht : 0 < t)
-    (hz₀ : ∀ z : ℕ, z₀ ≤ z → ∀ y : ℝ, 1 ≤ y → Real.log (2 * y) ≤ 2 * DEN / t * Real.log z →
-      (Psi y z : ℝ) ≤ (omegaC (Real.log (2 * y) / Real.log z) + ε) * y / Real.log z)
-    (hx : 1 < x) (hτ : Real.log 2 / Real.log x * DEN < 1) (hd : 1 ≤ d) (hp : 2 ≤ p) (hpz : z₀ ≤ p)
-    (hs : (s : ℝ) ≤ Real.log d / Real.log x * DEN)
-    (htp : (t : ℝ) ≤ Real.log p / Real.log x * DEN) (htpH : Real.log p / Real.log x * DEN ≤ t + H)
-    (hsum : (Real.log d / Real.log x + Real.log p / Real.log x) * DEN ≤ s + t + m * H)
-    (hDEN : (s : ℝ) + t + m * H ≤ DEN) :
-    (Psi (x / (d * p)) p : ℝ) ≤ ((omK s t m : ℝ) / K + ε) * (x / (d * p * Real.log p)) := by
-  rw [omK_eq_omKw]
-  exact psi_point_w ht hz₀ hx hτ hd hp hpz hs htp htpH (by exact_mod_cast hsum) (by exact_mod_cast hDEN)
-
-omit [Grid] [GridOK] in
+omit [Grid] in
 /-- **The finish.** Let `W, P ≥ 0`. If `F ≤ (W + ε)(x/log x)R` eventually for every `ε > 0`, `limsup R ≤ P` and
 `WP ≤ B`, then `F ≤ (B + δ)x/log x` eventually, for every `δ > 0`. -/
 theorem evLe_finish {F R : ℝ → ℝ} {W P B : ℝ} (hW : 0 ≤ W) (hP : 0 ≤ P) (hWP : W * P ≤ B) (hR : EvLe R P)
@@ -1626,87 +1548,16 @@ theorem evLe_finish {F R : ℝ → ℝ} {W P B : ℝ} (hW : 0 ≤ W) (hP : 0 ≤
 
 /-! ### The shares -/
 
-omit [Grid] [GridOK] in
+omit [Grid] in
 theorem sum_inv_nonneg (s : Finset ℕ) : 0 ≤ ∑ p ∈ s, 1 / (p : ℝ) :=
   Finset.sum_nonneg fun p _ => by positivity
 
-omit [Grid] [GridOK] in
+omit [Grid] in
 theorem ev_log_mul_nonneg (f : ℝ → Finset ℕ) :
     ∀ᶠ x : ℝ in atTop, 0 ≤ Real.log x * ∑ p ∈ f x, 1 / ((p : ℝ) * Real.log p) := by
   filter_upwards [eventually_ge_atTop (1 : ℝ)] with x hx
   exact mul_nonneg (Real.log_nonneg hx)
     (Finset.sum_nonneg fun p _ => one_div_nonneg.2 (mul_nonneg (Nat.cast_nonneg p) (Real.log_natCast_nonneg p)))
-
-/-- **The share of a cell of depth 2.** On a grid with `GridOK`, for a cell `(i, j)` with `e_i + 2e_j ≤ DEN`, as for a
-candidate, and every `δ > 0`: eventually `Σ_{p₁ ∈ cell i} Σ_{p₂ ∈ cell j} Ψ(x/(p₁p₂), p₂) ≤ (bound2/K + δ)·x/log x`. -/
-theorem share2 {i j : ℕ} (hij : SieveCert.e i + 2 * SieveCert.e j ≤ DEN) {δ : ℝ} (hδ : 0 < δ) :
-    ∀ᶠ x : ℝ in atTop, ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, (Psi (x / (p₁ * p₂)) p₂ : ℝ) ≤
-      ((bound2 (SieveCert.e i) (SieveCert.e j) : ℝ) / K + δ) * (x / Real.log x) := by
-  have hD := DEN_pos'
-  have hH : (0 : ℝ) < H := by exact_mod_cast H_pos
-  have hei : (0 : ℝ) < SieveCert.e i := by exact_mod_cast e_pos i
-  have hej : (0 : ℝ) < SieveCert.e j := by exact_mod_cast e_pos j
-  have hK := K_pos'
-  have hfit : SieveCert.e i + SieveCert.e j + 2 * H ≤ DEN := by
-    have h1 : V ≤ SieveCert.e j := by unfold SieveCert.e; omega
-    have h2 := four_H_le_V
-    omega
-  have hfit' : (SieveCert.e i : ℝ) + SieveCert.e j + 2 * H ≤ DEN := by exact_mod_cast hfit
-  obtain ⟨W, hW⟩ : ∃ W, W = (omK (SieveCert.e i) (SieveCert.e j) 2 : ℝ) / K := ⟨_, rfl⟩
-  have hW0 : 0 ≤ W := by rw [hW]; positivity
-  have hP1 : (0 : ℝ) ≤ trB (SieveCert.e i) H := trB_nonneg _ _
-  have hP2 : (0 : ℝ) ≤ exB (SieveCert.e j) H := exB_nonneg _ _
-  have hWP : W * (trB (SieveCert.e i) H * exB (SieveCert.e j) H) ≤
-      (bound2 (SieveCert.e i) (SieveCert.e j) : ℝ) / K := by
-    have h := bound2_ge (e_pos i) (e_pos j)
-    rw [hW]
-    calc _ = trB (SieveCert.e i) H * exB (SieveCert.e j) H * ((omK (SieveCert.e i) (SieveCert.e j) 2 : ℝ) / K) := by
-          ring
-      _ ≤ _ := h
-  have hR := EvLe.mul hP1 hP2 (Filter.Eventually.of_forall fun x => sum_inv_nonneg (cellP x i))
-    (ev_log_mul_nonneg fun x => cellP x j) (evLe_cell_tr i) (evLe_cell_ex j)
-  refine evLe_finish hW0 (mul_nonneg hP1 hP2) hWP hR (fun ε hε => ?_) hδ
-  obtain ⟨z₀, hz₀⟩ := psi_le (2 * DEN / SieveCert.e j) hε
-  have hb : (0 : ℝ) < (SieveCert.e j : ℝ) / DEN := div_pos hej hD
-  filter_upwards [eventually_gt_atTop 1, Real.tendsto_log_atTop.eventually_gt_atTop (DEN * Real.log 2),
-    (tendsto_rpow_atTop hb).eventually_ge_atTop (z₀ : ℝ)] with x hx1 hlx2 hxz
-  have hlx : 0 < Real.log x := Real.log_pos hx1
-  have hτ : Real.log 2 / Real.log x * DEN < 1 := by
-    rw [div_mul_eq_mul_div, div_lt_one hlx]; linarith
-  have hterm : ∀ p₁ ∈ cellP x i, ∀ p₂ ∈ cellP x j,
-      (Psi (x / (p₁ * p₂)) p₂ : ℝ) ≤ (W + ε) * (x / ((p₁ : ℝ) * p₂ * Real.log p₂)) := by
-    intro p₁ hp₁ p₂ hp₂
-    have hz : z₀ ≤ p₂ := by
-      have h1 : (z₀ : ℝ) ≤ p₂ := le_trans hxz (mem_primesIn.1 hp₂).2.1
-      exact_mod_cast h1
-    rw [mem_cellP hx1] at hp₁ hp₂
-    obtain ⟨hp₁p, hc₁l, hc₁r⟩ := hp₁
-    obtain ⟨hp₂p, hc₂l, hc₂r⟩ := hp₂
-    rw [hW]
-    refine psi_point (s := SieveCert.e i) (t := SieveCert.e j) (m := 2) (e_pos j) hz₀ hx1 hτ
-      (by exact_mod_cast hp₁p.one_lt.le) hp₂p.two_le hz hc₁l hc₂l hc₂r.le ?_ ?_
-    · rw [add_mul]; push_cast; linarith
-    · push_cast; linarith
-  have hsum_eq : ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, (W + ε) * (x / ((p₁ : ℝ) * p₂ * Real.log p₂)) =
-      (W + ε) * (x / Real.log x) * ((∑ p₁ ∈ cellP x i, 1 / (p₁ : ℝ)) *
-        (Real.log x * ∑ p₂ ∈ cellP x j, 1 / ((p₂ : ℝ) * Real.log p₂))) := by
-    rw [Finset.mul_sum (cellP x j), Finset.sum_mul_sum, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun p₁ _ => ?_
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun p₂ _ => ?_
-    have := hlx.ne'
-    field_simp
-  calc ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, (Psi (x / (p₁ * p₂)) p₂ : ℝ)
-      ≤ ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, (W + ε) * (x / ((p₁ : ℝ) * p₂ * Real.log p₂)) :=
-        Finset.sum_le_sum fun p₁ hp₁ => Finset.sum_le_sum fun p₂ hp₂ => hterm p₁ hp₁ p₂ hp₂
-    _ = _ := hsum_eq
-
-/-- `share2` on a candidate cell, on a grid with `GridOK`. -/
-theorem share2_of_cand {i j : ℕ} (h : cand i j = true) {δ : ℝ} (hδ : 0 < δ) :
-    ∀ᶠ x : ℝ in atTop, ∑ p₁ ∈ cellP x i, ∑ p₂ ∈ cellP x j, (Psi (x / (p₁ * p₂)) p₂ : ℝ) ≤
-      ((bound2 (SieveCert.e i) (SieveCert.e j) : ℝ) / K + δ) * (x / Real.log x) := by
-  simp only [cand, Bool.and_eq_true, decide_eq_true_eq] at h
-  exact share2 h.1.1.2 hδ
 
 end Shares
 
@@ -1722,9 +1573,3 @@ end SieveRough
 #print axioms SieveRough.super_M
 #print axioms SieveRough.claim_step
 #print axioms SieveRough.psi_le
-#print axioms SieveRough.mem_cellP
-#print axioms SieveRough.evLe_cell_tr
-#print axioms SieveRough.evLe_cell_ex
-#print axioms SieveRough.psi_point
-#print axioms SieveRough.share2
-#print axioms SieveRough.share2_of_cand

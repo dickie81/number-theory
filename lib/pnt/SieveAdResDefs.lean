@@ -120,8 +120,4 @@ noncomputable def resTestsFC : Tests :=
 
 end
 
-/-- The configuration of an evaluation in the main tree with the cofactor's bit: `cfgIPR` with a set of as many bits
-as the box has cells and one more. -/
-noncomputable def cfgIMRC (bl : List Cell) (h : ℕ) : Cfg × ℕ := cfgIPR (Nat.pow 2 (Nat.succ (lenR bl))) h
-
 end SieveAd
