@@ -305,10 +305,6 @@ lemma pLo_le_pHi : ∀ p ≤ 16, pLo p ≤ pHi p := by
   intro p hp
   interval_cases p <;> norm_num [pLo, pHi]
 
-lemma pHi_le : ∀ p ≤ 16, pHi p ≤ 11 / 12 := by
-  intro p hp
-  interval_cases p <;> norm_num [pHi]
-
 lemma tops_pos : ∀ p ≤ 16, 0 < tops p := by
   intro p hp
   interval_cases p <;> norm_num [tops, pA, pLo]
