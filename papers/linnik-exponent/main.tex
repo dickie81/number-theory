@@ -2033,7 +2033,7 @@ no tree of the plan reaches).
 
 What the search tries is proposed by a \emph{strategy}, which needs no proof: every proposal is tested before it is
 used. At $43/20$ the strategy proposes the following.
-% Lean (the strategy, as the searches without hints use it; at 43/20 the plan carries its choices, made by tools/linnik/hint_cert.py): SieveAd.stratGFF, SieveAd.stratGF, SieveAd.propI2, SieveAd.propJF, SieveAd.propJ2, SieveAd.propJ3, SieveAd.fmax3, SieveAd.leavesOf, SieveAd.bestSub, SieveAd.cutsOfGF, SieveAd.cutsOfG, SieveAd.geoCuts, SieveAd.stepOf, SieveAd.stratFF, SieveAd.cutsK, SieveAd.vboxF, SieveAd.widen, SieveAd.propIF, SieveAd.propJFF, SieveAd.opsR, SieveAd.solveG, SieveAd.nodeG, SieveAd.kids
+% The strategy is the planner's (tools/linnik/hint_cert.py, on flip_cert.py and fill_cert.py; the plan carries its choices). In Lean, what its proposals are made of: SieveAd.propI2, SieveAd.propJ2, SieveAd.fmax3, SieveAd.leavesOf, SieveAd.bestSub, SieveAd.cutsOfG, SieveAd.geoCuts, SieveAd.stepOf, SieveAd.cutsK; the searches that try: SieveAd.opsR, SieveAd.solveG, SieveAd.nodeG, SieveAd.kids. The Lean definitions of the strategies of those searches were removed with the library's theorem at 2165/1000 (git history, commit faaa2d1).
 \begin{itemize}
 \item For (I): as the rest, the first prime of the box, from the smallest, whose cell the region admits for a rest and
   for which a set of the other primes has sums that the region admits for the first variable with it; and that set.

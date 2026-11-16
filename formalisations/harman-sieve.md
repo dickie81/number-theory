@@ -80,15 +80,18 @@ Its main tools:
   `|Σ_r (S(A_r, z₀) − S(B_r, z₀)/φ(q))| ≤ ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` for every `η > 0` and large `q`. The
   leaves pass through two trees, so the level `k` is chosen with `(2k + 4)³ζ(k)` small
   (`SieveFillComp.exists_k3`).
-- `SieveAd.fillTests_sound`, `SieveAd.fillTests_soundX` (`lib/pnt/SieveAdFill.lean`; the tests are
+- `SieveAd.fillTests_sound` (`lib/pnt/SieveAdFill.lean`; the tests are
   `lib/pnt/SieveAdFillDefs.lean`'s, without Mathlib), **the tests of a decomposition with no Type II window**, for
   the trees of Buchstab steps on boxes of cells (`SieveAd.sound`). A box is evaluated by the estimate in two
   variables (`okI2`); its terms at a floor by the comparison with the rest among the box's primes (`okJ2`) or,
   for a box that has none of that size, among the tree's (`okJ3`, by `SieveFillComp.prop6_fill_at`): the rest is
   then of exponent between `r₁`, the least that the region takes, and `r₁ + f` for the floor `x^{f/DEN}`, the
-  window is the one the region allows for all such rests, and the leaves grow by `t + r₁ + f`. The second
-  statement is the same under two more atoms, for the trees of a reversed term. They are the tests of the
-  theorems at `2165/1000` and `2150/1000`, `Linnik21650.linnik_21650` and `Linnik21500.linnik_21500`
+  window is the one the region allows for all such rests, and the leaves grow by `t + r₁ + f`. They are the
+  tests of the theorems at `2115/1000` and `21/10`, with the resonant window's, and, with the paper's conditions
+  on the leaves alone (`SieveAd.Plain.fillTests_sound`), of the theorem at `2150/1000`,
+  `Linnik21500.linnik_21500`. They were written for a theorem at `2165/1000` (11 November 2026), whose search
+  had the role reversal of the theorem at `218/100` and took the tests under two more atoms as well; the theorem
+  at `2150/1000` superseded it, and it, that second statement and its part files are in the git history
   (`formalisations/README.md`; `docs/research-opportunities.md`, §3.1).
 - `SieveAd.frozSolve_sound_at`, `SieveAd.dJF_level_at`, `SieveAd.famIR_eq`, `SieveAd.famJR_eq`
   (`lib/pnt/SieveAdFroz.lean`, `lib/pnt/SieveAdFrozTree.lean`), **the tree of a reversed term over a frozen
@@ -247,21 +250,11 @@ Its main tools:
   `SieveAd.frozTests_sound_at`), the terms at the root's floor from the test that passed, and the weights of
   the frozen part and of its two ends from the shares of the three boxes (`SieveAd.froz_weight_le_at`). So the search with these nodes is sound for any strategies
   (`SieveAd.solveF2_sound`), and a part of it as the kernel checks it gives the bound for its range, in the form
-  of `SieveAd.pr_of_kids`.
-- `Linnik21650.flip_box_21650` (`lib/pnt/SieveFlipBox21650.lean`; the part is `lib/pnt/SieveFlipPart21650.lean`'s
-  and the strategies `lib/pnt/SieveAdFlipStratDefs.lean`'s, both without Mathlib), **a bound by the search with
-  the reversal through the largest prime**, at `L = 2165/1000`: for `p₁` between `x^{0.4237}` and `x^{0.4287}`
-  and `p₂` between `x^{0.2687}` and `x^{0.2737}`, the term of the box `(p₁, p₂)`, of the sign `+`, is at least
-  its count in the comparison set less `(c/K + o(1))x/(φ(q) log x)` with `c = 0.000501·K`, where the search of
-  the theorem at `2165/1000` drops the box, at `0.000734·K`. The strategies: `SieveAd.stratFF` for a tree over a
-  frozen part proposes the sets of the tests on the box with the cofactor as one more cell (`SieveAd.vboxF`),
-  widened by the tests' room for the floors (`SieveAd.propIF`, `SieveAd.propJFF`), and cuts the chain's first
-  prime from the level down; `SieveAd.stratGFF` is the theorem's strategy with one more cut of a new prime's
-  range, one unit below the largest prime's cell, so that the box below the cut passes `flipOK`. The kernel
-  runs the search on the box (`SieveAd.flipPart21650`, by `decide +kernel`, nineteen seconds): it takes seven
-  reversals through the largest prime, of boxes of three primes, of the nineteen it tries. This is one part,
-  not a certificate of the sieve: it checks the rule, its strategies and `tools/linnik/flip_cert.py`, the
-  search in Python, against the kernel.
+  of `SieveAd.pr_of_kids`. The kernel checked one part of this search, a box of two primes at `2165/1000`, with
+  strategies written for it as Lean definitions (nineteen seconds: seven reversals of boxes of three primes
+  taken, of nineteen tried); it checked the rule and `tools/linnik/flip_cert.py`, the search in Python, against
+  the kernel. That part and those strategies went with the theorem at `2165/1000` and are in the git history;
+  the search that the kernel follows now is led by hints (below), and its plan carries the strategies' choices.
 - `SieveAd.pr_of_partD_at` (`lib/pnt/SieveAdDir.lean`; the search is `lib/pnt/SieveAdDirDefs.lean`'s, without
   Mathlib), **the search led by hints is sound.** The search of `SieveAdRevDefs.lean` tries at each box what
   its strategy proposes and keeps the cheapest; the kernel, running it, spends most of its time on what is not
@@ -302,8 +295,9 @@ Its main tools:
 - `Linnik21500.linnik_21500` (`lib/pnt/Linnik21500.lean`; the parts are `lib/pnt/SieveHint21500P1.lean` and the
   files after it, without Mathlib), **Linnik's theorem with exponent `2150/1000`**, the Linnik paper's Theorem 1.2:
   for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2150/1000}`, with no
-  hypothesis. The route is that of the theorem at `2165/1000`, and the tests are those of the namespace
-  `SieveAd.Plain` (`lib/pnt/SieveAdPlain*.lean`), with the paper's conditions on the leaves alone; the search is
+  hypothesis. The route has no Type II window, its only estimate being the one in two variables, and the tests
+  are those of the namespace `SieveAd.Plain` (`lib/pnt/SieveAdPlain*.lean`), with the paper's conditions on the
+  leaves alone; the search is
   led by hints (`SieveAd.solve21500`: `SieveAd.solveD`), with the reversal through the largest prime of boxes of
   the sign `−` of at most six primes, that is of three and of five, as its hinted bound, on cells of side at most
   `0.004` and chains' cells of side at most `0.006` over the frozen parts. The bound of the first term costs `0.94847·K`

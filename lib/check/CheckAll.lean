@@ -263,7 +263,6 @@ import SieveAdFrozTests
 import SieveAdFlipDefs
 import SieveAdFlipSearch
 import SieveAdFlipPos
-import SieveAdFlipStratDefs
 import SieveAdFastDefs
 import SieveAdFast
 import SieveAdDirDefs
@@ -355,10 +354,6 @@ import Linnik21900
 import SieveTypeIIU21800D
 import SieveGrid21800
 import Linnik21800
-import SieveFill21650
-import Linnik21650
-import SieveFlipPart21650
-import SieveFlipBox21650
 import SieveHint21500
 import Linnik21500
 import SieveHint21150
@@ -1007,7 +1002,6 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveFillComp.prop6_fill
 #print axioms SieveFillComp.prop6_fill_at
 #print axioms SieveAd.fillTests_sound
-#print axioms SieveAd.fillTests_soundX
 #print axioms SieveAd.okJ2
 #print axioms SieveAd.okJ3
 #print axioms SieveAd.evJ_fill_core
@@ -1400,9 +1394,6 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveCert.gridOK21800
 #print axioms Linnik21800.tree21800
 #print axioms Linnik21800.linnik_21800
-#print axioms Linnik21650.tree21650
-#print axioms Linnik21650.linnik_21650
-#print axioms Linnik21650.flip_box_21650
 #print axioms Linnik21500.tree21500
 #print axioms Linnik21500.linnik_21500
 #print axioms Linnik21150.tree21150

@@ -1012,9 +1012,7 @@ $62500 - 27637 = 34863$ and $2 \cdot 62500 + 5 = 125005$. Lemma~\ref{M-lem:tests
 (\lean{SieveDecomp.Atom}): a prime with a threshold, two primes, or the product of some of the primes with a threshold.
 The proof of Theorem~\ref{M-thm:4320} uses (c) in one form, for the tests at a floor over a frozen part, with any
 number of primes and of comparisons (\lean{SieveAd.Plain.evJ\_fill\_core}, \lean{SieveAd.Plain.evJ\_two\_core}); (a) with at most
-$40 - 3k$ comparisons is \lean{SieveAd.Plain.evI\_twoE}; and the tests with at most two comparisons for boxes of at most
-twelve primes (\lean{SieveAd.fillTests\_soundX}) serve the role reversal of three primes, which the certificate does not
-use. The test (I$_{\mathcal M}$) goes through Lemma~\ref{M-lem:chains-two} directly (\lean{SieveAd.Plain.full2\_core}). The trees of
+$40 - 3k$ comparisons is \lean{SieveAd.Plain.evI\_twoE}. The test (I$_{\mathcal M}$) goes through Lemma~\ref{M-lem:chains-two} directly (\lean{SieveAd.Plain.full2\_core}). The trees of
 Definition~\ref{M-def:tree} without the node (R) are \lean{SieveAd.Tree}, checked by \lean{SieveAd.ok}, and
 Proposition~\ref{M-prop:tree-bound} for them is \lean{SieveAd.sound}. The reversal is not a node of
 \lean{SieveAd.Tree} but a rule of the searches (\lean{SieveAd.Plain.altFD} in the search led by hints), with the bound of

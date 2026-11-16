@@ -130,15 +130,24 @@ Mathlib's `LSeries`); and, for the `log log q` lower bound, Brun–Titchmarsh, w
 `43/20` (`Linnik21500.linnik_21500`). Its Type II estimate in two variables counts characters only from `7789/10000`
 on, where Huxley's exponent is below Chen, Gupta and Li's, so its curve is now `ghx` (`SieveCurveHx`: the trivial
 count below `7789/10000`, Huxley's steps above; `tools/linnik/gen_zone.py`), and the import cones of the theorems with
-no window, at `2165/1000` and `2150/1000` (and the one at `2140/1000`, in the git history since), have no module of
-Chen, Gupta and Li's paper; those at `11/5`, `219/100` and `218/100` keep their window, and with it the curve `g7d`.
+no window, at `2165/1000` and `2150/1000` (and the one at `2140/1000`; of the three, only the one at `2150/1000` is in
+the tree now, the others in the git history), have no module of Chen, Gupta and Li's paper; those at `11/5`, `219/100` and `218/100` keep their window, and with it the curve `g7d`.
 In the table below the column `A` of those three rows is the window route's, which they do not use. "The paper" in the
 entries before this date means its version at `11/5`.
 *16 November:* from pull request 115 (15 November) the shared tests brought the curve `g7d` (`SieveCurve7D`), and with
 it Chen, Gupta and Li's modules, into the import cone of the theorem at `2150/1000`; that theorem now takes its tests
 from the namespace `SieveAd.Plain` (`lib/pnt/SieveAdPlain*.lean`), with the paper's conditions on the leaves alone, so
-that its cone again has none of them (487 modules). The theorem at `2165/1000` still takes the shared tests, and its
-cone has `SieveCurve7D` and `LinnikCGLHB101` (`scripts/import_cone.py Linnik21650 --why`).
+that its cone again has none of them (487 modules). The theorem at `2165/1000` took the shared tests, and its cone
+had `SieveCurve7D` and `LinnikCGLHB101`; the theorem at `2150/1000` supersedes it, and it is removed the same day
+(`Linnik21650.linnik_21650`, in the git history at commit `faaa2d1`), with its 62 part files, about four hours of
+the kernel in `CheckAll`'s build; with the second statement of its tests (`SieveAd.fillTests_soundX`, under two
+more atoms, for its role reversal); with the Lean definitions of the strategies of the searches that try
+(`SieveAd.stratGF`, `SieveAd.stratKF`, `SieveAd.stratFF`, `SieveAd.stratGFF` and what they proposed;
+`lib/pnt/SieveAdFlipStratDefs.lean`), which only it and the part below used; and with that part,
+`Linnik21650.flip_box_21650`, the one box that the kernel checked as a search with the reversal through the largest
+prime. The strategies are in Python still (`tools/linnik/fill_cert.py`, `tools/linnik/flip_cert.py`), where the plan
+of the search led by hints takes its choices from them; the part of `fill_cert.py` that wrote the theorem's files
+is removed too.
 
 Section 2.2 of the paper's version at `11/5`: with a density curve whose largest exponent is `A`, the Type II window
 exists exactly when `L > 1 + A/2`, and the certificate needs between `0.03` and `0.04` above the threshold (that
@@ -151,7 +160,7 @@ the exponent each input would reach is:
 | The same, with the Type II estimate in two variables as one more way to evaluate a box (below; the estimate by bins is in Lean, the sieve with it is not) | `7/3` | `13/6` | `2.193` (computed: `2.193` passes, `2.192` fails) |
 | The same inputs in a tree of Buchstab steps chosen term by term, with the window's tests and those of the estimate in two variables, and no role reversal (below; **in Lean**, the kernel searching for the tree) | `7/3` | `13/6` | **`2.19`, a theorem** (`Linnik21900.linnik_21900`) |
 | The same tree with role reversal for a term of three primes that needs an upper bound, at one level (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.18`, a theorem** (`Linnik21800.linnik_21800`) |
-| The same search with no Type II window: the estimate in two variables alone, and for a term with no prime of the size of its rest, the rest among the primes of the comparison's own tree (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.165`, a theorem** (`Linnik21650.linnik_21650`) |
+| The same search with no Type II window: the estimate in two variables alone, and for a term with no prime of the size of its rest, the rest among the primes of the comparison's own tree (below; **in Lean**, the kernel running the search) | `7/3` | `13/6` | **`2.165`, a theorem** (`Linnik21650.linnik_21650`; superseded since, in the git history) |
 | The same search with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, at one level (below; **in Lean**, the kernel following the plan of the search by hints) | `7/3` | `13/6` | **`2.15`, a theorem** (`Linnik21500.linnik_21500`) |
 | The same search with a term of the sign `+` reversed through its largest prime too, on cells of side `0.003`, its plan chosen by cost and by the kernel's time (below; **in Lean**, the kernel following the plan) | `7/3` | `13/6` | **`2.14`, a theorem** (`Linnik21400.linnik_21400`; superseded since, in the git history) |
 | The same inputs in a decomposition that does not lean on the window: a floor for each term, the estimate in two variables at every depth, role reversal (below; floating point, no certificate; of what it assumes, the two estimates are in Lean as far as Harman's comparison with a rest among the term's primes) | `7/3` | `13/6` | `2.12` (computed conservatively on cells of side `0.002`: `2.12` passes, `2.11` fails); about `2.10` in the limit of fine cells |
@@ -353,7 +362,8 @@ covers. The region does not close at `13/6`.
     boxes with cells of side at most `0.006` and at most a tenth of the exponent. The kernel runs it in `587` parts
     (`lib/pnt/SieveTree21800P1.lean` and the files after it; `SieveAd.pr_of_kids`), in about an hour and forty
     minutes of its time, and `tools/linnik/rev_cert.py` is the same search in Python.
-  - **Linnik's theorem with exponent `2165/1000`** (11 November; `Linnik21650.linnik_21650`): for every `q ≥ 1`
+  - **Linnik's theorem with exponent `2165/1000`** (11 November; `Linnik21650.linnik_21650`, superseded since and
+    in the git history): for every `q ≥ 1`
     and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2165/1000}`, with no hypothesis.
     The exponent is below `13/6`, where the Type II estimate in one variable has no window, and the route has the
     estimate in two variables alone. The rest of that estimate is a product of primes of exponent between `1/2000`
@@ -368,13 +378,14 @@ covers. The region does not close at `13/6`.
     trees, which costs one more product of `(1 + 1/p)` in the sums over them, and the level is chosen with
     `(2k + 4)³ζ(k)` small where one tree needs the square. The test of a box by this comparison is `okJ3`
     (`lib/pnt/SieveAdFillDefs.lean`), sound and sound under the atoms of a reversed term
-    (`SieveAd.fillTests_sound`, `fillTests_soundX`), and the search is the one of the theorem at `218/100`, with
-    role reversal, with a strategy that proposes no window and this test's floors
-    (`lib/pnt/SieveAdFillSearchDefs.lean`). The root is the comparison of the whole sieve at the floor `x^{0.0489}`,
+    (`SieveAd.fillTests_sound`; the second statement, `fillTests_soundX`, went with the theorem), and the search
+    was the one of the theorem at `218/100`, with role reversal, with a strategy that proposes no window and this
+    test's floors (then in `lib/pnt/SieveAdFillSearchDefs.lean`, which keeps the largest of the floors,
+    `SieveAd.fmax3`). The root is the comparison of the whole sieve at the floor `x^{0.0489}`,
     by this test. The bound's cost is `0.95053K`, from a search on `3607561` boxes with cells of side at most
     `0.005` and at most a tenth of the exponent, which takes `8720` of the `18611` reversals that it tries. The
-    kernel runs it in `2353` parts (`lib/pnt/SieveTree21650P1.lean` and the files after it), in about four hours of its
-    time, and `tools/linnik/fill_cert.py` is the same search in Python.
+    kernel ran it in `2353` parts, in about four hours of its time, and `tools/linnik/fill_cert.py` is the same
+    search in Python.
   - **Linnik's theorem with exponent `2150/1000`** (12 November; `Linnik21500.linnik_21500`): for every `q ≥ 1`
     and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2150/1000}`, with no hypothesis.
     Two things are new. The first is a rule: a term of the sign `−` of three or five primes is reversed through
@@ -929,7 +940,7 @@ covers. The region does not close at `13/6`.
     (`lib/pnt/SieveAdFlipStratDefs.lean`), with the search in Python definition by definition
     (`tools/linnik/flip_cert.py`), checked against the kernel on one part at `2165/1000`
     (`Linnik21650.flip_box_21650`: a box of two primes that the theorem's search drops at `0.000734·K` costs
-    `0.000501·K`). Not written: the reversal of a box of the sign `+` in the
+    `0.000501·K`; the part and the Lean strategies are in the git history since 16 November). Not written: the reversal of a box of the sign `+` in the
     search (worth `0.004` at `2.165` with cells of side `0.01`, and `2.3%` at `2.15` with the theorem's cells),
     and the second level (above). The kernel takes about
     `13` ms a box over a frozen part, where it takes `4` ms a box of the main tree (the sets of the tests are
@@ -1123,8 +1134,8 @@ covers. The region does not close at `13/6`.
     (`SieveFillComp.prop6_fill`, `prop6_fill_at`; `SieveTwoComp.prop6_two` takes its rest among the family's
     primes): the tree to the window is `prop6_two`'s, and each of its stops is sifted by a second tree, below
     its last prime, whose primes are the rest. So is the test of a box by it, in the search's terms and under
-    the atoms of a reversed term (`SieveAd.fillTests_sound`, `fillTests_soundX`), and the theorem at `2165/1000`
-    above is the search with it. Of the route by a fixed level, `SieveGap.gap_at` is proved and nothing uses it.
+    the atoms of a reversed term (`SieveAd.fillTests_sound`; `fillTests_soundX`, in the git history since), and the
+    theorem at `2165/1000` above was the search with it. Of the route by a fixed level, `SieveGap.gap_at` is proved and nothing uses it.
   - *Role reversal*, in exact terms: for a term `Σ S(A_{p₁⋯p_k}, p_k)` on a box of cells and one of its primes
     `p_j` in `[X, X′)`, the numbers `n = (r/p_j)·m·p_j` with `N₂/X′ < (r/p_j)m ≤ N₁/X` have `p_j = n/((r/p_j)m)`
     in its cell whatever `n` in `(N₁, N₂]`, so on them the term is `Σ S(A_{r′}, ⌈X′^{1/2}⌉)` over `r′ = (r/p_j)m`

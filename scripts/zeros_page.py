@@ -270,9 +270,9 @@ SIEVE = [
     ("Linnik21900.linnik_21900",
      "with the window too, in a tree of Buchstab steps that the kernel searches for"),
     ("Linnik21800.linnik_21800", "and role reversal for a term of three primes"),
-    ("Linnik21650.linnik_21650", "with the estimate in two variables alone: no window"),
     ("Linnik21500.linnik_21500",
-     "and a term of three or five primes reversed through its largest prime: Theorem 1.2 of the Linnik paper"),
+     "with the estimate in two variables alone, no window, and a term of three or five primes reversed through its "
+     "largest prime: Theorem 1.2 of the Linnik paper"),
 ]
 TWO = "SieveTwoZone7D.typeII_two_hx"
 

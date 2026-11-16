@@ -27,8 +27,6 @@ The second is `tree_cert.py --check`, which runs the search in Python, cuts it i
 SieveGrid21900.lean, every SieveTree21900P<k>.lean and Linnik21900.lean with the files in lib/pnt (half a minute).
 The third is `rev_cert.py --check`, the same for the search with role reversal and SieveGrid21800.lean, every
 SieveTree21800P<k>.lean and Linnik21800.lean (two minutes).
-The fourth is `fill_cert.py --check`, the same for the search with no window and SieveFill21650.lean, every
-SieveTree21650P<k>.lean and Linnik21650.lean (five minutes).
 
 `--inputs` prints, one glob pattern a line from the repository's root, the files that the check reads: this script,
 the generators it runs and the scripts of this directory that they import, and the files of lib/pnt whose names hold
@@ -53,8 +51,7 @@ CERTS = {
 
 
 # tag: the generator of a tree's files and its arguments
-TREES = {'21900': ['tree_cert.py', '--check'], '21800': ['rev_cert.py', '--check'],
-         '21650': ['fill_cert.py', '--check']}
+TREES = {'21900': ['tree_cert.py', '--check'], '21800': ['rev_cert.py', '--check']}
 
 
 def check_tree(tag):

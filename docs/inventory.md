@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1942 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1938 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 282, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 706 |
-| `lib/pnt` | 381 | 1123 |
+| `lib/pnt` | 379 | 1119 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1579,11 +1579,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Linnik21500.tree21500`: The first term at `2150 / 1000` *paper* ([note](../formalisations/harman-sieve.md))
 - `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
-#### `Linnik21650`: Linnik's theorem with exponent `2165 / 1000`, by a search with no Type II window
-
-- `Linnik21650.tree21650`: The first term at `2165 / 1000`
-- `Linnik21650.linnik_21650`: Linnik's theorem with exponent `2165 / 1000`, by a search with no Type II window ([note](../formalisations/harman-sieve.md))
-
 #### `Linnik21800`: Linnik's theorem with exponent `218 / 100`, by a search with role reversal
 
 - `Linnik21800.tree21800`: The first term at `218 / 100`
@@ -2570,7 +2565,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd.evJ_fill_core3`: The comparison with the rest among the tree's primes, on the sums of a box, the leaves cut in three, under more atoms ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.fillTests_sound`: The tests with no window are sound ([note](../formalisations/harman-sieve.md))
-- `SieveAd.fillTests_soundX`: The tests with no window are sound under two more atoms ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdFillCore`: The comparison with the rest among the tree's primes, on the sums of a box
 
@@ -2706,7 +2700,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdPlainFill`: The tests with no window are sound: the paper's conditions on the leaves alone
 
-- `SieveAd.Plain.fillTests_sound`: The tests with no window are sound *paper*
+- `SieveAd.Plain.fillTests_sound`: The tests with no window are sound *paper* ([note](../formalisations/harman-sieve.md))
 
 #### `SieveAdPlainFillCore`: The comparison with the rest among the tree's primes, on the sums of a box: the paper's conditions on the leaves alone
 
@@ -3017,10 +3011,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveFillTree`: Buchstab's tree below a chain's last entry
 
 - `SieveFillTree.tree_last`: Buchstab's tree below the last entry, as chains *paper* ([note](../formalisations/harman-sieve.md))
-
-#### `SieveFlipBox21650`: A bound by the search with the reversal through the largest prime, at `L = 2165/1000`
-
-- `Linnik21650.flip_box_21650`: A bound by the search with the reversal through the largest prime ([note](../formalisations/harman-sieve.md))
 
 #### `SieveGap`: Brun's sieve at a fixed level on a family of chains
 

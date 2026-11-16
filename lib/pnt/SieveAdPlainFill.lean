@@ -12,8 +12,6 @@ modules; `SieveAdFill.lean` serves the later theorems, and its header describes 
 
 Its declarations: `evJ_fillE`, `evJ_fill`, `fillTests_sound`.
 
-Left out, as no result of that theorem uses them: `fillTests_soundX`.
-
 The file imports `SieveAdPlainTwo.lean`, `SieveAdPlainDefs.lean` and `SieveFillComp.lean`.
 -/
 import SieveAdPlainTwo
