@@ -14,8 +14,8 @@ the small primes. In units of `1/DEN` of exponents of `x`:
 * the window `[u, v]` of the first variable is the largest that the region allows for the rests of exponent in
   `[r₁ − 1, r₂ + 1]` (`uOf`, `vOf`), and `t = u − Σ_{s0} lo` is the growth of the tree to the window;
 * `chkJ3` checks the region's six inequalities at these, that the window is wider than the floor (`u + f < v`),
-  that the primes of `s0` stay below its upper end, and the two conditions on the leaves' sizes with the growth
-  `t + r₂`.
+  that the primes of `s0` stay below its upper end, and the paper's two conditions on the leaves' sizes with the
+  growth `t + r₂` or, where they fail, the leaves cut in three (`SieveAdLeafDefs.lean`'s `leavesL`, `leavesE`).
 
 `fillTests` are the tests of a decomposition with no window: the estimate in two variables for a box
 (`okI2`), and at a floor the comparison with the rest among the box's primes (`okJ2`) or, for a configuration of
@@ -53,9 +53,7 @@ def chkJ3 (bl : List Cell) (f s0 s1 : ℕ) (e : Bool) (u v t r1 r2 : ℕ) : Bool
     Nat.blt (u + f) v &&
     Nat.ble u (t + mSum (fun c => c.1) bl s0) &&
     Nat.blt (mSum (fun c => c.2) bl s0) v &&
-    Nat.blt (Lnum * D₁ + Lden * DEN) (Lnum * DEN) &&
-    Nat.blt (2 * Lnum * (D₁ + D₂) + Lden * DEN) (2 * Lnum * DEN) &&
-    Nat.blt (Lnum * (D₁ + 2 * D₂) + 2 * Lden * DEN) (2 * Lnum * DEN)
+    (leavesL D₁ D₂ || leavesE D₁ D₂)
 
 /-- **The test of the comparison with the rest among the tree's primes**: `chkJ3` at the rests, the window and the
 growth that the box and the floor give. -/
