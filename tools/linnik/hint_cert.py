@@ -1643,24 +1643,37 @@ def piece_cost(p, parts):
 
 def cut(P, par_, node, bl, par, parts):
     """The pieces of the Buchstab step `node` at the box `bl`: parts of consecutive cells of the new prime of at
-    most `cap` predicted seconds, and cells with their own step."""
+    most `cap` predicted seconds, and cells with their own step. With `split2`, a cell over `cap` that the plan
+    cuts in two is taken as its two halves, each a cell of its own: the kernel reads a part's cells at the ends it
+    is given, and the pieces of a step are joined at any point (`pr_split`), so a half with its own step is cut
+    further and a part stays small (a cell cut in two and left whole is one part, of up to 250 predicted seconds
+    at 2100/1000, on which the kernel needs more than 10 GB)."""
     _, sel, kids, bits = node
     f, cfg, cells = kid_cells(P, bl, sel, bits)
     assert len(cells) == len(kids), (len(cells), len(kids))
+
+    def halves(s, e, k):
+        if getattr(par_, 'split2', 0) and k[0] == 'S' and secs(k) > par_.cap:
+            mid = (s + e) // 2
+            yield from halves(s, mid, k[1])
+            yield from halves(mid, e, k[2])
+        else:
+            yield s, e, k
     out, group, gs = [], [], 0.0
-    for (s, e), k in zip(cells, kids):
-        t = secs(k)
-        if t > par_.cap and k[0] == 'B' and len(bl) + 1 < par_.levels:
-            if group:
+    for s0, e0, k0 in ((s, e, k) for (s, e), k in zip(cells, kids)):
+        for s, e, k in halves(s0, e0, k0):
+            t = secs(k)
+            if t > par_.cap and k[0] == 'B' and len(bl) + 1 < par_.levels:
+                if group:
+                    out.append(('part', add_part(P, bl, not par, group, parts)))
+                    group, gs = [], 0.0
+                out.append(cut(P, par_, k, [(s, e)] + bl, not par, parts))
+                continue
+            if group and gs + t > par_.cap:
                 out.append(('part', add_part(P, bl, not par, group, parts)))
                 group, gs = [], 0.0
-            out.append(cut(P, par_, k, [(s, e)] + bl, not par, parts))
-            continue
-        if group and gs + t > par_.cap:
-            out.append(('part', add_part(P, bl, not par, group, parts)))
-            group, gs = [], 0.0
-        group.append((s, e, k))
-        gs += t
+            group.append((s, e, k))
+            gs += t
     if group:
         out.append(('part', add_part(P, bl, not par, group, parts)))
     return ('buch', bl, par, f, cfg, out, sum(piece_cost(p, parts) for p in out))

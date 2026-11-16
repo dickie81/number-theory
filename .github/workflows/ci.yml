@@ -280,7 +280,9 @@ jobs:
   # The Lean build in stages: a cold build takes longer than one job may run (six hours). Each stage continues from
   # the previous stage's cache, and runs only if the previous one stopped at its time limit. Each builds Check,
   # CheckAll, CheckZeta23, CheckDH, and every module the change edits or that imports one (scripts/lean_targets.py);
-  # the checkout keeps the commit's parent, a pull request's base.
+  # the checkout keeps the commit's parent, a pull request's base. Six stages: the part files of a certificate of
+  # the search led by hints at 2115/1000 took one stage and a third on a runner, and one with three times its steps
+  # takes four.
   build-1:
     name: Lean build (stage 1)
     needs: changes
@@ -321,6 +323,8 @@ jobs:
     if: needs.build-2.outputs.partial == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 355
+    outputs:
+      partial: ${{ steps.build.outputs.partial }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -329,6 +333,55 @@ jobs:
         uses: ./.github/actions/lean-build
         with:
           stage: '3'
+
+  build-4:
+    name: Lean build (stage 4)
+    needs: build-3
+    if: needs.build-3.outputs.partial == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    outputs:
+      partial: ${{ steps.build.outputs.partial }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '4'
+
+  build-5:
+    name: Lean build (stage 5)
+    needs: build-4
+    if: needs.build-4.outputs.partial == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    outputs:
+      partial: ${{ steps.build.outputs.partial }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '5'
+
+  build-6:
+    name: Lean build (stage 6)
+    needs: build-5
+    if: needs.build-5.outputs.partial == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '6'
           last: 'true'
 
   # The one required check of main's branch protection. It passes when every job above passed or was skipped, and
@@ -336,7 +389,8 @@ jobs:
   ci-passed:
     name: CI passed
     if: always()
-    needs: [changes, checks, certificate, papers, pdf-preview, build-1, build-2, build-3]
+    needs: [changes, checks, certificate, papers, pdf-preview, build-1, build-2, build-3, build-4, build-5,
+            build-6]
     runs-on: ubuntu-latest
     steps:
       - name: Every job passed or was skipped

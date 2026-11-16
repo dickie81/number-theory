@@ -95,7 +95,7 @@ adding, removing or renaming a module.
   files come from Mathlib's own cache (`lake exe cache get`).
   The library's build directory, `.lake/build`, is restored from the GitHub Actions cache and saved back after
   every stage, including a stage that fails or is cancelled. Lake then rebuilds only what changed. A cold build
-  takes longer than one job may run (six hours), so the build runs in up to three chained stages, each continuing
+  takes longer than one job may run (six hours), so the build runs in up to six chained stages, each continuing
   from the previous stage's cache. The stage that finishes the build runs `check_axioms.py`,
   `check_axioms.py --all`, `check_axioms.py --zeta23` and `check_axioms.py --dh`, then `dead_code.py`, which
   needs every check file built, and then `check_warnings.py` on the build's log, so that warnings in the library's
