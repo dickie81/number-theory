@@ -303,7 +303,9 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       <span class="math">σ</span> = {{hxLo}} on: its curve <span class="math">g<sub>H</sub></span>, <code>SieveCurveHx.ghx</code>,
       is the trivial count below {{hxLo}}, a step of Huxley's estimate with the exponent {{hxA}} up to 131/168, and
       <span class="math">g*</span> from there on, which is Huxley's too: {{nhx}} pieces, counted by
-      <code>SieveCurveHx.counts_hx</code>.</p>
+      <code>SieveCurveHx.counts_hx</code>. That is all the paper's Theorem 1.2 counts by. Its Theorem 1.1 counts by
+      <span class="math">g*</span> as well, on the leaves of a comparison cut in three, and its resonant window counts
+      by Chen, Gupta and Li's Proposition 3.1 directly.</p>
     <div class="plate">
       <div class="legend" id="char-legend"></div>
       <div class="chart" id="char" tabindex="0" role="img" aria-label="The window route's density curve g star as a function of σ, with the source of each range below the axis. Use the left and right arrow keys to move the readout."></div>
@@ -320,35 +322,42 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       class mod <span class="math">q</span> contains a prime <span class="math">p ≤ Kq</span><sup class="math">L</sup>. The zeros
       above decide <span class="math">L</span>. A zero with real part <span class="math">β</span> costs about
       <span class="math">x</span><sup class="math">β−1</sup> of the primes up to <span class="math">x</span>, so the half-plane
-      leaves no zero that costs much, and the density curve says how many zeros there are. The library proves
-      <span class="math">L</span> = {{Lbest}} = {{Lbestdec}} (<code>{{bestLean}}</code>), the theorem of the Linnik paper,
-      from the half-plane and Huxley's density estimate: the half-plane is its only input that has not been refereed. An
+      leaves no zero that costs much, and the density curve says how many zeros there are. The library proves the two
+      theorems of the Linnik paper. Its Theorem 1.2 is <span class="math">L</span> = {{Lbest}} = {{Lbestdec}}
+      (<code>{{bestLean}}</code>), from the half-plane and Huxley's density estimate: the half-plane is its only input
+      that has not been refereed. Its Theorem 1.1 is <span class="math">L</span> = {{Lres}} (<code>{{resLean}}</code>),
+      with the resonant window, the leaves of a comparison cut in three and the terms of the sign + reversed as well; it
+      rests on two inputs that have not been refereed: the half-plane and Chen, Gupta and Li's Proposition 3.1. An
       earlier route, with a Type II estimate in one variable on a window, gives <span class="math">L</span> = {{L}}
-      (<code>Linnik22000E.linnik_22000e</code>); it rests on the curve <span class="math">g*</span>, and so on two inputs
-      that have not been refereed: the half-plane and Chen, Gupta and Li's Proposition 3.1.</p>
+      (<code>Linnik22000E.linnik_22000e</code>); it rests on the curve <span class="math">g*</span>, and so on the same
+      two inputs.</p>
     <div class="plate">
       <div class="legend">
         <span><i class="kd lean"></i><span>proved in Lean</span></span>
         <span><i class="kd other"></i><span>stated, not formalised</span></span>
         <span><i class="kd ref"></i><span>refereed, without the half-plane</span></span>
         <span><i class="kv"></i><span>{{grh}}: every <i>L</i> &gt; {{grh}} under GRH (in Lean)</span></span>
-        <span><i class="kv dash"></i><span>{{floor}} = 1 + <i>A</i>/2 at <i>A</i> = {{cgl}}: a window in one variable closes below it</span></span>
+        <span><i class="kv dash"></i><span>{{floor}} = 1 + <i>A</i>/2 at <i>A</i> = {{cgl}}: a window in one variable that sorts the characters by their zeros alone closes below it</span></span>
       </div>
-      <div class="ladder" id="ladder" role="list" aria-label="Linnik exponents, from the half-plane alone down to {{Lbest}}"></div>
+      <div class="ladder" id="ladder" role="list" aria-label="Linnik exponents, from the half-plane alone down to {{Lres}}"></div>
     </div>
 
     <h3 id="la-h">From the density exponent to <span class="math">L</span></h3>
     <p>The density deduction turns a density exponent <span class="math">A</span> into every <span class="math">L &gt; A</span>
       (<code>Linnik.linnik_of_charDensity</code>): the diagonal. Harman's sieve goes below it, since Cauchy–Schwarz over the
-      characters halves the density exponent. With a Type II estimate in one variable, on a window of lengths, it stops at
-      <span class="math">L = 1 + A/2</span>, where the window closes; the two lines meet at the density hypothesis,
-      <span class="math">A</span> = {{grh}}. The Type II estimate in two variables of the Linnik paper
-      (<code>SieveTwoZone7D.typeII_two_hx</code>) holds on a region for every <span class="math">L</span>, and counts the
-      characters only from <span class="math">σ</span> = {{hxLo}} on, by Huxley's estimate; with it the sieve goes below
-      that line, to {{Lbest}}, from the density exponent {{hux}} of Huxley's estimate.</p>
+      characters halves the density exponent. With a Type II estimate in one variable, on a window of lengths, that sorts
+      the characters by their zeros, it stops at <span class="math">L = 1 + A/2</span>, where the window closes; the two
+      lines meet at the density hypothesis, <span class="math">A</span> = {{grh}}. The Type II estimate in two
+      variables of the Linnik paper (<code>SieveTwoZone7D.typeII_two_hx</code>) holds on a region for every
+      <span class="math">L</span>, and counts the characters only from <span class="math">σ</span> = {{hxLo}} on, by
+      Huxley's estimate; with it the sieve goes below that line, to {{Lbest}} (Theorem 1.2), from the density exponent
+      {{hux}} of Huxley's estimate. The resonant window (<code>{{resWin}}</code>) is a Type II estimate in one variable
+      that sorts the characters by the sizes of the rest's own prime sums as well as by their zeros, and counts them by
+      <span class="math">g<sub>H</sub></span>, by moments and by Chen, Gupta and Li's Proposition 3.1; with it as well, and with
+      the curve <span class="math">g*</span> on the leaves, the sieve goes further below the line, to {{Lres}} (Theorem 1.1).</p>
     <div class="plate">
       <div class="legend" id="la-legend"></div>
-      <div class="chart" id="la" tabindex="0" role="img" aria-label="The Linnik exponent L against the largest density exponent A of the curve: the density deduction gives L = A, the sieve gives less: with a window in one variable down to L = 1 + A/2, and with the Type II estimate in two variables below that line. Use the left and right arrow keys to step through the points."></div>
+      <div class="chart" id="la" tabindex="0" role="img" aria-label="The Linnik exponent L against the largest density exponent A of the curve: the density deduction gives L = A, the sieve gives less: with a window in one variable down to L = 1 + A/2, with the Type II estimate in two variables below that line, and with the resonant window as well to {{Lres}} at the peak of g star. Use the left and right arrow keys to step through the points."></div>
       <details>
         <summary>Table</summary>
         <div class="scroll"><table id="la-table"></table></div>
@@ -364,8 +373,10 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
       (<code>SieveCurveGlue.WindowOKHM</code>), and the two curves are its ends. The window
       has to fit at every <span class="math">β</span> at once, so it is pinched where <span class="math">g*</span> peaks, on
       [{{gmaxLo}}, {{gmaxHi}}]. Move <span class="math">L</span> to open and close it. Below
-      <span class="math">1 + A/2</span> there is no window, and the library's exponents there use the estimate in two variables
-      alone.</p>
+      <span class="math">1 + A/2</span> this window, which sorts the characters by their zeros, closes. The library's
+      exponents there use the estimate in two variables; at {{Lmid}} (<code>{{midLean}}</code>) and {{Lres}} they use the
+      resonant window too, another Type II estimate in one variable, which sorts the characters by the sizes of the
+      rest's own prime sums as well.</p>
     <div class="slider">
       <label for="Lrange">L</label>
       <input type="range" id="Lrange" min="2.15" max="2.4" step="0.0001" value="{{Ldec}}">
@@ -888,7 +899,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     if (!narrow) txt(X(MAIN.A) - 6, (Y(MAIN.A) + Y(MAIN.L)) / 2 + 4, "−" + (MAIN.A - MAIN.L).toFixed(3), "ink", "end", svg);
     LA.forEach(function (p) {
       var lean = p.kind === "lean";
-      el("circle", { cx: X(p.A), cy: Y(p.L), r: p.role === "main" ? 6 : 4.5,
+      el("circle", { cx: X(p.A), cy: Y(p.L), r: p.role === "main" || p.role === "res" ? 6 : 4.5,
         fill: lean ? css("--s1") : css("--surface"), stroke: lean ? css("--surface") : p.kind === "other" ? css("--s2") : css("--ref"),
         "stroke-width": 2 }, svg);
     });
@@ -900,6 +911,7 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     });
     lab(MAIN, 10, 4, "start", MAIN.text);
     role("window").forEach(function (p) { lab(p, 9, 4, "start", p.text); });
+    role("res").forEach(function (p) { lab(p, 10, 4, "start", p.text); });
     var tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; box.appendChild(tip);
     var ring = el("circle", { r: 9, fill: "none", stroke: css("--ink"), "stroke-width": 1.5, visibility: "hidden" }, svg);
     function show(i) {
@@ -933,8 +945,8 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     box.onblur = hide;
     document.getElementById("la-legend").innerHTML =
       '<span><i class="key" style="color:' + css("--ref") + '"></i><span><i>L = A</i>: the density deduction</span></span>' +
-      '<span><i class="key dash" style="color:' + css("--ref") + '"></i><span><i>L</i> = 1 + <i>A</i>/2: the window ' +
-      'closes</span></span>' +
+      '<span><i class="key dash" style="color:' + css("--ref") + '"></i><span><i>L</i> = 1 + <i>A</i>/2: the window by ' +
+      'zeros closes</span></span>' +
       '<span><i class="kd lean"></i><span>proved in Lean</span></span>' +
       '<span><i class="kd other"></i><span>computed, not formalised</span></span>';
     table("la-table", ["A, the peak", "L", "How", "Lean or source"], LA.map(function (p) {
@@ -975,10 +987,13 @@ input[type="range"] { accent-color: var(--accent); width: min(340px, 100%); }
     return b;
   })();
   var WIN_L = WD.L, C = DATA.cert, GMAX = DATA.gmax, BEST = DATA.best;
-  // what the library proves below the window's exponent, with the Type II estimate in two variables
+  // what the library proves below the window's exponent, with the Type II estimate in two variables, and with the
+  // resonant window as well
+  var RES = DATA.res;
   function beyond(L) {
     return L >= BEST.x - 5e-5 ? " The library proves every exponent from " + BEST.t + " up, with the Type II estimate " +
-      "in two variables (<code>" + BEST.lean + "</code>)." : "";
+      "in two variables (<code>" + BEST.lean + "</code>), and with the resonant window as well it proves " + RES.t +
+      " (<code>" + RES.lean + "</code>)." : "";
   }
   function stepName(i) {
     var p = G7D[i];
