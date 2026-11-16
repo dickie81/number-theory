@@ -100,9 +100,9 @@ result's note finds it unused; blank where neither has been checked.
 | The same with `p ≤ Kq^{219/100}`, by a tree of Buchstab steps with a Type II estimate in two variables (in no paper) | `Linnik21900.linnik_21900` | yes |
 | The same with `p ≤ Kq^{218/100}`, with role reversal for a term of three primes added to that tree (in no paper) | `Linnik21800.linnik_21800` | yes |
 | The same with `p ≤ Kq^{2165/1000}`, below `13/6`, where the Type II estimate in one variable has no window: the same search with the estimate in two variables alone, the rest of a term with no prime of the rest's size being a product of the primes of its comparison's own tree (in no paper) | `Linnik21650.linnik_21650` | yes |
-| The same with `p ≤ Kq^{2150/1000}`: that search with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, the kernel following the plan of the search by hints; from the half-plane and Huxley's estimate, with no input of Chen, Gupta and Li's (the Linnik paper's theorem) | `Linnik21500.linnik_21500` | yes |
+| The same with `p ≤ Kq^{2150/1000}`: that search with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, the kernel following the plan of the search by hints; from the half-plane and Huxley's estimate, with no input of Chen, Gupta and Li's: its tests have the paper's conditions on the leaves of a comparison alone (`SieveAd.Plain.fillTests`), so no module of that formalisation is in its import cone (the Linnik paper's Theorem 1.2) | `Linnik21500.linnik_21500` | yes |
 | The same with `p ≤ Kq^{2115/1000}`: that search with terms of the sign `+` reversed too, the leaves of a comparison cut in three (the fourth moment of the cofactor's polynomial), and the resonant window in both trees, a Type II estimate in one variable that sorts the characters by the sizes of a rest's own prime sums as well as by their zeros, with Chen, Gupta and Li's large values of the powers and the cofactor in the rest when it is one prime (in no paper) | `Linnik21150.linnik_21150` | yes |
-| The same with `p ≤ Kq^{2100/1000}`: that search with the window's test at the two corners of the box of a rest's cells where its test at one corner fails, the chains over the frozen parts on cells as fine as the main tree's, a box of two primes cut in two where that pays, and a plan that searches every configuration of the estimate in two variables that the kernel's tests accept over the frozen parts (in no paper) | `Linnik21000.linnik_21000` | yes |
+| The same with `p ≤ Kq^{2100/1000}`: that search with the window's test at the two corners of the box of a rest's cells where its test at one corner fails, the chains over the frozen parts on cells as fine as the main tree's, a box of two primes cut in two where that pays, and a plan that searches every configuration of the estimate in two variables that the kernel's tests accept over the frozen parts (the Linnik paper's Theorem 1.1) | `Linnik21000.linnik_21000` | yes |
 | Linnik by density estimates and the classical deduction, with the exponents `12`, `4`, `17/6`, `36/13`, `87/35`, `12/5` and `2.3334`, each `+ η` | `Linnik.linnik_twelve`, `LinnikDensity.linnik_four`, `LinnikSubconvex.linnik_seventeen_sixths`, `LinnikIngham.linnik_thirtysix_thirteenths`, `LinnikHuxley.linnik_eighty_seven_thirty_fifths`, `LinnikTwelve.linnik_twelve_fifths`, `LinnikG7.linnik_g7d` | yes |
 | A prime in `(y, y + y^θ]` for every large `y`, `θ > 17/30`; and for all `y ∈ [X, 2X]` outside a set of measure `X^{1−δ}`, `θ > 2/15` | `ZetaGMDensity.short_primes_seventeen_thirtieths`, `ZetaGMDensity.almost_all_short_primes_two_fifteenths` | yes |
 | In terms of `Θ`: `limsup log\|ψ(x) − x\|/log x = Θ`, the same for `M(x)`, `Σ μ(n)n^{−s}` converges exactly on `Re s > Θ`, and a prime in `(y, y + y^θ]` for `θ > 2Θ/(1 + 2Θ)` | `PsiExponent.limsup_expo`, `MertensExponent.limsup_mexpo`, `MertensExponent.moebiusAbscissa_eq_Theta`, `InghamDensity.short_primes_Theta` | |
@@ -227,13 +227,14 @@ In order of what is in reach.
    and not a proof, keeps Li's constant positive down to `θ ≈ 0.5182` once Guth and Maynard's estimate
    (`ZetaGMLV.gm_large_values`) joins Huxley's. A Lean proof below `0.52` would go below Li, resting on the half-plane
    as Linnik's exponent does: the sieve's main terms take the prime number theorem in short ranges from it.
-2. **Linnik's exponent.** The theorem is `43/20 = 2150/1000` (`Linnik21500.linnik_21500`), the Linnik paper's,
-   from the half-plane and Huxley's density estimate. Its sieve has a Type II estimate in two variables on an explicit
+2. **Linnik's exponent.** The Linnik paper proves `21/10 = 2100/1000` (`Linnik21000.linnik_21000`, its Theorem 1.1),
+   and `43/20 = 2150/1000` (`Linnik21500.linnik_21500`, its Theorem 1.2) from the half-plane and Huxley's density
+   estimate alone. The sieve of the second has a Type II estimate in two variables on an explicit
    region, which counts characters only from `7789/10000` on; Harman's comparisons, with the rest among a term's own
    primes or among the primes of its comparison's own tree (`SieveFillComp.prop6_fill`); and the reversal of a term
    of three or five primes through its largest prime, as an identity with the cofactor kept as one number
-   (`SieveAd.bd_flip_core`). Its certificate is the plan of a search, which the kernel follows by hints and checks
-   step by step (`SieveAd.solveD_sound`). The library's earlier theorems were steps on the way: at `11/5`, `219/100`
+   (`SieveAd.Plain.bd_flip_core`). Its certificate is the plan of a search, which the kernel follows by hints and checks
+   step by step (`SieveAd.Plain.solveD_sound`). The library's earlier theorems were steps on the way: at `11/5`, `219/100`
    and `218/100` with a Type II estimate in one variable on a window, which closes at `1 + A/2 = 13/6` for the peak
    `A = 7/3` of Chen, Gupta and Li's curve, and at `2165/1000` with the estimate in two variables alone. Below
    `43/20`, by the exact search's measurements ([`research-opportunities.md`](research-opportunities.md), §3.1),
@@ -253,7 +254,7 @@ In order of what is in reach.
    cofactor in the rest when it is one prime, takes the search to `2115/1000` (`Linnik21150.linnik_21150`, in no
    paper), at a cost of `0.88304K` on `3.04·10^7` steps. With the window's test at the two corners of a box
    (`SieveResTest.resY_sound`), finer cells over the frozen parts, and a plan that searches every configuration
-   the kernel's tests accept there, the search passes at `2100/1000` (`Linnik21000.linnik_21000`, in no paper),
+   the kernel's tests accept there, the search passes at `2100/1000` (`Linnik21000.linnik_21000`, the paper's Theorem 1.1),
    at a cost of `0.97717K` on `9.01·10^7` steps. Going much further needs Type I
    information on longer products than the bilinear estimate's `d₁d₂² < x`, or a Type II estimate on a wider
    region, which a better density estimate above `7789/10000` would give only a little of.

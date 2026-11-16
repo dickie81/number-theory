@@ -1,9 +1,12 @@
-% The Linnik exponent paper. The claims table of Appendix A names the Lean theorem behind each claim, and
-% lib/check/Check.lean prints their axioms. The paper claims only its own steps: the results it uses from the
-% literature are documented in formalisations/ and cited, not restated as its own. supplement.tex holds the proofs of
-% the prime sums' lemma and the kernel bound, of the family lemmas in two variables, of Harman's comparisons in two
-% variables and the leaves' lemma, and of the bound for rough numbers, the Lean details of the paper and the
-% computations around its exponent; compile this file first.
+% The Linnik exponent paper: Theorem 1.1 (the exponent 21/10) and Theorem 1.2 (the exponent 43/20 from the half-plane
+% and Huxley's estimate alone). The claims table of Appendix A names the Lean theorem behind each claim;
+% lib/check/Check.lean prints the axioms of the theorems of Sections 2 to 7 and of Theorem 1.2, and
+% lib/check/CheckAll.lean those of Sections 8 to 10 and of Theorem 1.1. The paper claims only its own steps: the results
+% it uses from the literature are documented in formalisations/ and cited, not restated as its own. supplement.tex
+% holds the proofs of the prime sums' lemma and the kernel bound, of the family lemmas in two variables, of Harman's
+% comparisons in two variables and the leaves' lemma, and of the bound for rough numbers, the Lean details of the
+% paper, the computations around its exponents, and the proofs for the resonant window and for the leaves cut in
+% three; compile this file first.
 \documentclass[11pt]{article}
 \usepackage[T1]{fontenc}
 % pdfLaTeX needs the input encoding and the glyph declarations below; XeTeX reads Unicode directly.
@@ -13,7 +16,7 @@
 \usepackage{longtable}
 \usepackage{array}
 \usepackage[hidelinks]{hyperref}
-% The Unicode symbols of the Lean statement quoted in Section 8.
+% The Unicode symbols of the Lean statements quoted in Section 11.
 \ifdefined\XeTeXversion\else
 \DeclareUnicodeCharacter{2203}{\ensuremath{\exists}}
 \DeclareUnicodeCharacter{2200}{\ensuremath{\forall}}
@@ -38,46 +41,71 @@
 \newcommand{\file}[1]{\nolinkurl{#1}}
 \emergencystretch=3em
 
-\title{Linnik's constant below the zero-density exponent: $43/20$ from a zero-free half-plane}
+\title{Linnik's constant below the zero-density exponent: $21/10$ from a zero-free half-plane}
 \author{Ritchie Comley}
-\date{Draft, 12 November 2026}
+\date{Draft, 16 November 2026}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
 We prove that there is a constant $K$ such that every reduced residue class modulo $q$ contains a prime $p \le K
-q^{43/20}$. The proof uses one recent result that has not been refereed, OpenAI's zero-free half-plane
-$\operatorname{Re} s > 11/12$ for Dirichlet $L$-functions, and Huxley's classical zero-density estimate. From these the
-classical argument gives every exponent above $12/5$, and with Chen, Gupta and Li's recent density estimate every
-exponent above $7/3$. We go below both with Harman's sieve, fed by a Type~II estimate in two variables that sorts the
-characters by the real parts of the zeros of their $L$-functions. In each class of characters, Cauchy--Schwarz is
-taken between the two Dirichlet polynomials, and each mean square is bounded by orthogonality or by the
-Hal\'asz--Montgomery inequality in mean square, so that the number of characters in a class matters only where
-Huxley's estimate makes it small; the estimate then holds on an explicit region of the two lengths, for every exponent.
-Harman's comparison in two variables, a reversal of the sieve's terms through their largest prime and a bilinear
-Type~I estimate proved by Parseval's identity bound the primes the sieve loses by $0.9485$ of them, by a search that
-Lean's kernel follows step by step. The whole proof is formalised in Lean~4 with Mathlib, including the half-plane and
-Huxley's estimate, and depends only on Lean's standard axioms. The exponent is to be compared with $12/5$, not with
-Xylouris's $5$, whose proof uses refereed results only.
+q^{21/10}$. The proof uses two recent results that have not been refereed: OpenAI's zero-free half-plane
+$\operatorname{Re} s > 11/12$ for Dirichlet $L$-functions, and Chen, Gupta and Li's large values estimate for
+Dirichlet polynomials with characters. With the half-plane and Huxley's classical zero-density estimate alone we prove
+the exponent $43/20$. From the half-plane the classical argument gives every exponent above $12/5$ with Huxley's
+estimate, and every exponent above $7/3$ with Chen, Gupta and Li's density estimate. We go below both with Harman's
+sieve, fed by a Type~II estimate in two variables that sorts the characters by the real parts of the zeros of their
+$L$-functions. In each class of characters, Cauchy--Schwarz is taken between the two Dirichlet polynomials, and each
+mean square is bounded by orthogonality or by the Hal\'asz--Montgomery inequality in mean square, so that the number of
+characters in a class matters only where Huxley's estimate makes it small; the estimate then holds on an explicit
+region of the two lengths, for every exponent. Harman's comparison in two variables, a reversal of the sieve's terms
+through their largest prime and a bilinear Type~I estimate proved by Parseval's identity bound the primes the sieve
+loses by $0.9485$ of them at $43/20$, by a search that Lean's kernel follows step by step. For $21/10$ the sieve has
+three more rules, and loses at most $0.9772$ of the primes. The first is a Type~II estimate in one variable that sorts
+the characters also by the sizes of the prime sums of a term's other primes, and counts the characters of a class by
+the moments of those sums and by the large values of their powers. The second cuts the leaves of Harman's comparison
+in three and bounds the third part by the estimate in two variables with a fourth moment. The third extends the
+reversal to the terms of the sign $+$. The whole proof is formalised in Lean~4 with Mathlib, including the half-plane,
+the large values estimate and the density estimates of Ingham and Huxley, and depends only on Lean's standard axioms.
+The exponents are to be compared with $7/3$ and $12/5$, not with Xylouris's $5$, whose proof uses refereed results
+only.
 \end{abstract}
 
 \section{Introduction}\label{sec:intro}
 
-\begin{theorem}\label{thm:main}
+\begin{theorem}\label{thm:2110}
+% Lean: Linnik21000.linnik_21000
+There is $K$ such that for every $q \ge 1$ and every $a$ prime to $q$ there is a prime $p \equiv a \pmod q$ with
+$p \le K q^{21/10}$.
+\end{theorem}
+
+\begin{theorem}\label{thm:4320}
+% Lean: Linnik21500.linnik_21500
 There is $K$ such that for every $q \ge 1$ and every $a$ prime to $q$ there is a prime $p \equiv a \pmod q$ with
 $p \le K q^{43/20}$.
 \end{theorem}
+
+Theorem~\ref{thm:4320} is the weaker statement. It is stated because its proof uses less: of the results that have not
+been refereed it uses one, a zero-free half-plane (Input~\ref{inp:half-plane}), and its only density estimate is
+Huxley's. The proof of Theorem~\ref{thm:2110} uses a second such result, a large values estimate of Chen, Gupta and Li
+(Input~\ref{inp:cgl}), and three further rules in the sieve. Sections~\ref{sec:type2} to~\ref{sec:proof} prove
+Theorem~\ref{thm:4320}, and Sections~\ref{sec:window} to~\ref{sec:certificate-b} prove Theorem~\ref{thm:2110} on top of
+them.
 
 Linnik \cite{linnik44, linnik44b} proved that there are absolute constants $K$ and $L$ such that every reduced residue
 class mod $q$ contains a prime $p \le K q^L$ (see \cite[Chapter~18]{iwaniec-kowalski} for an account). The admissible
 exponent $L$, Linnik's constant, has been lowered many times: Heath-Brown \cite{heath-brown92} reached $L = 5.5$, and
 Xylouris $L = 5.18$ \cite{xylouris-acta} and then $L = 5$ \cite{xylouris11}, and again $L = 5$ in a short version, which
 notes that a slightly smaller value follows \cite{xylouris18}. Under the generalised Riemann hypothesis every $L > 2$ is
-admissible \cite{lls, lls-corr}. Theorem~\ref{thm:main} has $L = 43/20 = 2.15$, but it is not on the same footing as
-these exponents, whose proofs use refereed results only: its proof uses a recent result that has not been refereed
-(Section~\ref{sec:inputs}), and with it and Huxley's density estimate the classical argument already gives every $L >
-12/5$. What this paper adds is measured from $12/5$.
+admissible \cite{lls, lls-corr}. Naslund \cite{naslund} has announced $L = 3.99$ for large $q$, in a preprint that
+has not been refereed; his proof extends Heath-Brown's method and uses none of the results below.
+Theorems~\ref{thm:2110} and~\ref{thm:4320} have $L = 21/10 = 2.1$ and $L = 43/20 = 2.15$, but they are not on the same
+footing as Heath-Brown's and Xylouris's exponents, whose proofs use refereed results only: their proofs use recent
+results that have not been refereed (Section~\ref{sec:inputs}). With the first of these, the zero-free half-plane, and
+Huxley's density estimate the classical argument already gives every $L > 12/5$, and with Chen, Gupta and Li's density
+estimate every $L > 7/3$. What this paper adds is measured from $12/5$ for Theorem~\ref{thm:4320} and from $7/3$ for
+Theorem~\ref{thm:2110}.
 
 \subsection*{The zeros near $\operatorname{Re} s = 1$}
 
@@ -127,9 +155,22 @@ mean square, with Huxley's density estimate, takes over from orthogonality, from
 holds on an explicit region of the two lengths for every $L$ (Section~\ref{sec:type2}), and the sieve's task is to
 bring as many of its terms as it can into that region.
 
-The sieve cannot bring them all, and it pays for the sums it cannot compare. At $L = 43/20$ the primes that the sieve
-loses, bounded by a finite computation, are at most $0.94847$ of them (Section~\ref{sec:certificate}). The table
-compares what the inputs give with and without the sieve (Section~\ref{sec:comparison}).
+The estimate in one variable can also go below $1 + A/2$, where the product $S$ is a product of a few prime sums. The
+count $q^{A(1 - \beta)}$ is the number of characters that have a zero, and what the estimate needs is the number of
+characters at which the prime sums of the product are large. Those are polynomials of known lengths. The $k$-th power
+of a prime sum of length $Q = q^s$ is a Dirichlet polynomial of length about $Q^k$ with bounded coefficients,
+so by orthogonality the prime sum is at least $Q^u$ at no more than about $q^{\max(1, ks) + ks(1 - 2u)}$ characters;
+where $Q^k$ is just above $q$ this is $q^{2(1 - u)}$, the count that a density exponent $2$ would give. Chen, Gupta and
+Li's large values estimate (Input~\ref{inp:cgl}), applied to the same power, gives a second count. So the characters
+are sorted by the size of each prime sum of the product as well as by their zeros, and each class is again bounded by
+orthogonality or by the Hal\'asz--Montgomery inequality; the estimate holds for the lengths at which every class
+passes (Section~\ref{sec:window}). The library calls this the resonant window, and the name is kept here.
+
+The sieve cannot bring all its terms into these regions, and it pays for the sums it cannot compare. The primes that
+the sieve loses, bounded by a finite computation, are at most $0.94847$ of them at $L = 43/20$
+(Section~\ref{sec:certificate}), and at most $0.97717$ of them at $L = 21/10$, with the further rules of
+Sections~\ref{sec:window} and~\ref{sec:rules} (Section~\ref{sec:certificate-b}). The table compares what the inputs
+give with and without the sieve (Section~\ref{sec:comparison}).
 \begin{center}
 \small
 \begin{tabular}{@{}p{0.40\textwidth}p{0.24\textwidth}l@{}}
@@ -141,12 +182,18 @@ Input~\ref{inp:half-plane}, Ingham & density deduction & $36/13 + \varepsilon \a
 Input~\ref{inp:half-plane}, Ingham, Huxley & density deduction & $12/5 + \varepsilon = 2.4 + \varepsilon$ \\
 Input~\ref{inp:half-plane}, Chen--Gupta--Li's estimate \cite{cgl} & density deduction (not formalised) &
   $7/3 + \varepsilon \approx 2.333$ \\
-Input~\ref{inp:half-plane}, Huxley from $0.7789$ on & sieve, this paper & $43/20 = 2.15$ \\
+Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, Ingham, Huxley & density deduction &
+  $11667/5000 + \varepsilon = 2.3334 + \varepsilon$ \\
+Input~\ref{inp:half-plane}, Huxley from $0.7789$ on & sieve, Theorem~\ref{thm:4320} & $43/20 = 2.15$ \\
+Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, Ingham, Huxley & sieve, Theorem~\ref{thm:2110} & $21/10 = 2.1$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-The sieve uses no density estimate below $0.7789$, and Chen, Gupta and Li's estimate would not change it: above
-$0.7789$ Huxley's exponent is the smaller of the two (Section~\ref{sec:region}).
+The estimate in two variables, and so Theorem~\ref{thm:4320}, uses no density estimate below $0.7789$, and Chen, Gupta
+and Li's density estimate would not change it: above $0.7789$ Huxley's exponent is the smaller of the two
+(Section~\ref{sec:region}). Theorem~\ref{thm:2110} uses Input~\ref{inp:cgl} in two places: in the counts of the
+estimate in one variable, and, through a second density curve that is not trivial below $0.7789$, in the estimate for
+the leaves of Section~\ref{sec:leaf-estimate}.
 
 \subsection*{Harman's sieve, and what is new}
 
@@ -159,7 +206,8 @@ region, bounded coefficients, and $r$ a product of primes, which the Type~II est
 count of primes in $\mathcal A$ by Buchstab's identity into terms, compares with $\mathcal B$ the terms it can, and
 drops the others with a sign that keeps a lower bound; a finite computation bounds the fraction it loses.
 
-The paper's contributions are four.
+The paper's contributions are eight. The first four prove Theorem~\ref{thm:4320}, and all eight
+Theorem~\ref{thm:2110}.
 \begin{enumerate}
 \item \emph{A Type~II estimate in two variables over the zeros' real parts} (Section~\ref{sec:type2}). The characters
   mod $q$ are sorted into bins by the largest real part of the zeros of their $L$-functions up to a height. In each bin
@@ -179,27 +227,48 @@ The paper's contributions are four.
   rough numbers. A term that needs an upper bound and that no test passes may be reversed: rewritten through its
   largest prime as a sum over the multiples of the other primes.
 \item \emph{A certificate} (Section~\ref{sec:certificate}). The trees are found by a search, and the certificate is the
-  plan of that search, which Lean's kernel follows step by step; its cost, $1093510193343867034 \cdot 2^{-60}
-  = 0.94846\ldots$, bounds the fraction of the primes that the sieve loses, and it is below $1$.
+  plan of that search, which Lean's kernel follows step by step; its cost at $43/20$, $1093510193343867034 \cdot
+  2^{-60} = 0.94846\ldots$, bounds the fraction of the primes that the sieve loses, and it is below $1$.
+\item \emph{A Type~II estimate in one variable over the sizes of the rest's prime sums}
+  (Section~\ref{sec:window-estimate}). The characters of a bin are sorted further, by the size of each prime sum of the
+  rest. A class has at most as many characters as the density curve allows and as each of its prime sums is large at,
+  by the $2k$-th moments of the prime sum and by Input~\ref{inp:cgl} for its $k$-th power, and it is bounded by
+  orthogonality or by the Hal\'asz--Montgomery inequality. The estimate holds where the exponents of every class fit.
+\item \emph{The tests of that estimate} (Sections~\ref{sec:window-terms} to~\ref{sec:window-tests}). A term of the
+  sieve is evaluated with its other primes and its cofactor as the variable and some of its primes as the rest, and,
+  where the cofactor is one prime, with the cofactor in the rest. The condition on a box of exponents is checked by
+  the kernel on finitely many integers, led by a hint; where the condition fails on the box, it may still hold on the
+  part of it that the term occupies, between two corners.
+\item \emph{Two more rules} (Section~\ref{sec:rules}). Where the leaves of Harman's comparison are outside the range of
+  the bilinear Type~I estimate, they are cut in three, and the third part is bounded by the estimate in two variables
+  with the cofactor as the second variable, whose mean square over a bin is bounded by its fourth moment. And a term
+  of the sign $+$ that no test passes may be reversed through its largest prime, as a term of the sign $-$ is.
+\item \emph{The certificate at $21/10$} (Section~\ref{sec:certificate-b}), of cost $1126600180626425749 \cdot 2^{-60} =
+  0.97716\ldots$.
 \end{enumerate}
 
-The rest is not new. Input~\ref{inp:half-plane} is OpenAI's, and the density estimate of Huxley \cite{huxley72,
-huxley75}, the Hal\'asz--Montgomery inequality \cite{halasz, montgomery69}, Buchstab's identity \cite{buchstab}, Brun's
-sieve \cite{brun} and Harman's sieve are classical.
+The rest is not new. Input~\ref{inp:half-plane} is OpenAI's and Input~\ref{inp:cgl} is Chen, Gupta and Li's, by Guth
+and Maynard's method; the density estimates of Ingham \cite{ingham} and Huxley \cite{huxley72, huxley75}, the
+Hal\'asz--Montgomery inequality \cite{halasz, montgomery69}, Buchstab's identity \cite{buchstab}, Brun's sieve
+\cite{brun} and Harman's sieve are classical. Sorting a sieve's own polynomials by their sizes and counting them by the
+mean values of their powers is the practice of the sieves for primes in short intervals \cite{bhp}.
 
 \subsection*{Status and formalisation}
 
-The Lean statement of Theorem~\ref{thm:main} has no hypotheses, and its axioms are Lean's standard three, so the
-theorem is unconditional. Its proof uses one recent result that has not been refereed, OpenAI's zero-free half-plane,
-which Section~\ref{sec:inputs} states as Input~\ref{inp:half-plane}. The library proves it along OpenAI's companion
-preprint, and proves Huxley's density estimate, so the truth of the theorem rests on Lean's kernel, Mathlib and the
-pinned toolchain (with the vendored upstream files and the provenance of Mathlib's prebuilt files, \S S5), not on the
-preprint. Whether the Lean statement of the input faithfully captures the preprint's theorem matters for attributing
-and interpreting it, not for the truth of the theorem, and the kernel does not check it. Every step of the proof, and
-every result from the literature that it uses, is proved in the Lean library \cite{repo}, written with Lean~4
+The Lean statements of Theorems~\ref{thm:2110} and~\ref{thm:4320} have no hypotheses, and their axioms are Lean's
+standard three, so the theorems are unconditional. The proof of Theorem~\ref{thm:4320} uses one recent result that has
+not been refereed, OpenAI's zero-free half-plane, which Section~\ref{sec:inputs} states as
+Input~\ref{inp:half-plane}; the proof of Theorem~\ref{thm:2110} uses a second, Chen, Gupta and Li's large values
+estimate, stated as Input~\ref{inp:cgl}. The library proves the first along OpenAI's companion preprint and the second
+along Chen, Gupta and Li's preprint, and proves Ingham's and Huxley's density estimates, so the truth of the theorems
+rests on Lean's kernel, Mathlib and the pinned toolchain (with the vendored upstream files and the provenance of
+Mathlib's prebuilt files, \S S5), not on the preprints. Whether the Lean statement of an input faithfully captures the
+preprint's theorem matters for attributing and interpreting it, not for the truth of the theorems, and the kernel does
+not check it. Every step of the proofs, and every result from the literature that they use, is proved in the Lean
+library \cite{repo}, written with Lean~4
 \cite{lean4} and Mathlib \cite{mathlib}, or in Mathlib itself, which supplies among others Dirichlet's theorem and the
 functional equation of Dirichlet $L$-functions. Appendix~\ref{app:claims} names the theorems, Section~\ref{sec:lean}
-says what is formalised and what is known of independent checking of the input, and the directory
+says what is formalised and what is known of independent checking of the inputs, and the directory
 \file{formalisations/} of the repository documents each result from the literature: its source, its Lean statement and
 the differences between them. The proofs of the paper are those of the library, written at the level of detail of a
 paper, except the proof of Proposition~\ref{prop:curve}, which is the classical one; where the Lean proof fixes a constant whose value the argument does not need, the paper usually says only that
@@ -214,23 +283,27 @@ over the characters mod $q$. Harman's sieve with a numerical bound for its loss 
 Pintz \cite{bhp} and of R.~Li \cite{li-harman}. R.~Li also adapts his calculation to moduli all of whose prime factors
 are below $q^C$, under a zero-free region of width $(\log q)^{-3/4}$, and obtains $1/0.4752 < 2.1044$ for the powers of
 a fixed prime; Input~\ref{inp:half-plane} implies his hypothesis, so for such moduli his theorem, if it holds as stated,
-gives a smaller exponent (Section~\ref{sec:comparison}). Theorem~\ref{thm:main} holds for every modulus.
+gives an exponent smaller than that of Theorem~\ref{thm:4320} and larger than that of Theorem~\ref{thm:2110}
+(Section~\ref{sec:comparison}). Both theorems hold for every modulus.
 
 \subsection*{Outline}
 
-Section~\ref{sec:inputs} states the input and the density curve. Section~\ref{sec:type2} proves the Type~II estimate in
-two variables and gives its region. Section~\ref{sec:type1} gives the Type~I estimates, the classical one and a
-bilinear one, and Harman's comparison in two variables. Section~\ref{sec:decomp} describes the decomposition by trees,
-its tests, its drops and its reversals, and proves that a tree of cost below $1$ gives Linnik's theorem;
+Section~\ref{sec:inputs} states the two inputs and the two density curves. Section~\ref{sec:type2} proves the Type~II
+estimate in two variables and gives its region. Section~\ref{sec:type1} gives the Type~I estimates, the classical one
+and a bilinear one, and Harman's comparison in two variables. Section~\ref{sec:decomp} describes the decomposition by
+trees, its tests, its drops and its reversals, and proves that a tree of cost below $1$ gives Linnik's theorem;
 Section~\ref{sec:certificate} describes the search and its certificate at $43/20$, and Section~\ref{sec:proof}
-assembles the proof. Section~\ref{sec:lean} describes the formalisation, and Section~\ref{sec:comparison} compares
-Theorem~\ref{thm:main} with what the input gives without the sieve, and discusses the method's limits.
-Appendix~\ref{app:claims} names the Lean theorem behind each claim. A supplement holds the proofs of the prime sums'
-lemma and of the kernel bound (\S S1), of the family lemmas in two variables (\S S2), of Harman's comparisons and the
-leaves' lemma (\S S3) and of the lemma on rough numbers (\S S4), the Lean details of the paper (\S S5) and the
-computations around the exponent (\S S6).
+assembles the proof of Theorem~\ref{thm:4320}. Section~\ref{sec:window} proves the Type~II estimate in one variable
+and gives its tests, Section~\ref{sec:rules} the leaves cut in three and the reversal of a term of the sign $+$, and
+Section~\ref{sec:certificate-b} the certificate at $21/10$ and the proof of Theorem~\ref{thm:2110}.
+Section~\ref{sec:lean} describes the formalisation, and Section~\ref{sec:comparison} compares the two theorems with
+what the inputs give without the sieve, and discusses the method's limits. Appendix~\ref{app:claims} names the Lean
+theorem behind each claim. A supplement holds the proofs of the prime sums' lemma and of the kernel bound (\S S1), of
+the family lemmas in two variables (\S S2), of Harman's comparisons and the leaves' lemma (\S S3) and of the lemma on
+rough numbers (\S S4), the Lean details of the paper (\S S5), the computations around the exponents (\S S6), and the
+proofs for the resonant window (\S S7) and for the leaves cut in three (\S S8).
 
-\section{Notation and the input}\label{sec:inputs}
+\section{Notation and the inputs}\label{sec:inputs}
 
 Throughout, $q \ge 1$ is the modulus and $a$ is prime to $q$. The Dirichlet characters mod $q$ are $\chi$, the trivial
 one is $\chi_0$, and $L(s, \chi)$ is the $L$-function of $\chi$, continued to the whole plane. For
@@ -240,11 +313,12 @@ $1/2 \le \sigma \le 1$ and $T \ge 2$ let
 \]
 where $\mathcal R(\sigma, T) = \{s : \operatorname{Re} s \ge \sigma,\ |\operatorname{Im} s| \le T\}$: the number of
 characters mod $q$ whose $L$-function has a zero in the rectangle. It counts characters, not zeros, so a bound
-for the number of zeros bounds it. The proof is a sieve on the integers of $(x, 2x]$, $x = q^L$, with $L = 43/20$ in
-the end, and $q$ is taken large.
+for the number of zeros bounds it. The proof is a sieve on the integers of $(x, 2x]$, $x = q^L$, with $L = 43/20$ or
+$L = 21/10$ in the end, and $q$ is taken large.
 
-The paper states one input, written \emph{Input} and not \emph{hypothesis} because the library proves it
-(Section~\ref{sec:lean}). A statement below that holds `under' the input is conditional in the text of the paper.
+The paper states two inputs, written \emph{Input} and not \emph{hypothesis} because the library proves them
+(Section~\ref{sec:lean}). A statement below that holds `under' an input is conditional in the text of the paper.
+Sections~\ref{sec:type2} to~\ref{sec:proof} use the first input only.
 
 \begin{inputthm}[the zero-free half-plane]\label{inp:half-plane}
 For every $q \ge 1$, every Dirichlet character $\chi$ mod $q$ and every $s$ with $\operatorname{Re} s > 11/12$,
@@ -656,7 +730,8 @@ $q^{1/2000}$.
 
 \section{Type I estimates and Harman's sieve in two variables}\label{sec:type1}
 
-Let $2 < L \le 5/2$; Theorem~\ref{thm:main} takes $L = 43/20$. Let $x = q^L$ and let $a$ be prime to $q$. The sets of
+Let $2 < L \le 5/2$; Theorem~\ref{thm:4320} takes $L = 43/20$ and Theorem~\ref{thm:2110} takes $L = 21/10$. Let $x =
+q^L$ and let $a$ be prime to $q$. The sets of
 the sieve are
 \[
   \mathcal A = \{n \in (x, 2x] : n \equiv a \ (\mathrm{mod}\ q)\}, \qquad
@@ -1182,7 +1257,7 @@ identity, and the identities are exact for the ordered tuples, while the bounds 
 tuples of the cells' primes, in any order.
 
 \begin{definition}\label{def:tree}
-% Lean: SieveAd.Tree, SieveAd.ok, SieveAd.cost, SieveAd.vanishOK, SieveAd.dropOK, SieveAd.dropBOK, SieveAd.splitOK; node (R): SieveAd.flipOK, SieveAd.flipCost, SieveAd.flipCostD, SieveAd.altFD
+% Lean: SieveAd.Tree, SieveAd.ok, SieveAd.cost, SieveAd.vanishOK, SieveAd.dropOK, SieveAd.dropBOK, SieveAd.splitOK; node (R): SieveAd.flipOK, SieveAd.flipCost, SieveAd.Plain.flipCostD, SieveAd.Plain.altFD
 Let $\mathfrak b$ be a box of $k \ge 1$ primes and $\varepsilon$ a sign. A \emph{tree} on $\mathfrak b$ with the sign
 $\varepsilon$ is one of the following nodes, with the trees below it. It \emph{passes} if the node's condition holds and
 the trees below it pass. Its \emph{cost} is an integer, which stands for its multiple of $1/\mathcal K$.
@@ -1237,7 +1312,7 @@ and then it is the set of the integers of $[u, v]$, with
 \end{align*}
 
 \begin{definition}\label{def:tests}
-% Lean: SieveAd.chkI2, SieveAd.okI2, SieveAd.chkJ2, SieveAd.okJ2, SieveAd.chkJ3, SieveAd.okJ3, SieveAd.uOf, SieveAd.vOf, SieveAd.fillLo, SieveAd.fillTests; the region: SieveTwoZone7D.Zone7d
+% Lean: SieveAd.chkI2, SieveAd.okI2, SieveAd.Plain.chkJ2, SieveAd.Plain.okJ2, SieveAd.Plain.chkJ3, SieveAd.Plain.okJ3, SieveAd.uOf, SieveAd.vOf, SieveAd.fillLo, SieveAd.Plain.fillTests; the region: SieveTwoZone7D.Zone7d
 Let $\mathfrak b$ be a box of $k \le 13$ primes. For a set $\mathcal S_1$ of its indices, a side $\iota \in \{1, 2\}$ and
 an integer $g \ge 0$, the \emph{growth}, the \emph{leaves' condition} is
 \[
@@ -1271,10 +1346,13 @@ why $g$ has $r_2$ added. So (J3) needs no rest among the box's primes, and appli
 does not. The growth $g$ bounds the leaves' new primes, which go to the side $\iota$, and $(\mathrm L)$ implies the
 leaves' rule of Lemma~\ref{lem:leaves} in exponents of $x$, $a_1 < 1 - 1/L$ and $\max(a_1, 1/L) + a_1 + 2a_2 < 2 - 1/L$.
 The one-unit margins absorb the integer parts of the ranges. For rational $L$ each condition, multiplied through by its
-denominators, is an inequality between integers, and the formalisation checks it so.
+denominators, is an inequality between integers, and the formalisation checks it so. These are the tests of the
+certificate at $43/20$. Those of the certificate at $21/10$ accept, in place of $(\mathrm L)$, the leaves cut in three
+as well (Section~\ref{sec:leaves-three}), and have a further test, of the estimate in one variable
+(Section~\ref{sec:window-tests}).
 
 \begin{lemma}\label{lem:tests}
-% Lean: SieveAd.evI_okI2, SieveAd.evI_two, SieveAd.chain2_exp, SieveAd.evJ_okJ2, SieveAd.evJ_two, SieveAd.evJ_fill, SieveAd.fillTests_sound; (c), with the comparisons SieveDecomp.Atom: SieveAd.evJ_fill_core, SieveAd.evJ_two_core, SieveAd.evI_twoE, SieveAd.evJ_twoE, SieveAd.evJ_fillE
+% Lean: SieveAd.Plain.evI_okI2, SieveAd.Plain.evI_two, SieveAd.Plain.chain2_exp, SieveAd.Plain.evJ_okJ2, SieveAd.Plain.evJ_two, SieveAd.Plain.evJ_fill, SieveAd.Plain.fillTests_sound; (c), with the comparisons SieveDecomp.Atom: SieveAd.Plain.evJ_fill_core, SieveAd.Plain.evJ_two_core, SieveAd.Plain.evI_twoE, SieveAd.Plain.evJ_twoE, SieveAd.Plain.evJ_fillE
 \begin{enumerate}
 \item[(a)] The term of a box of $k \ge 1$ primes that passes (I) is evaluated.
 \item[(b)] The terms at the floor $f$ of a box that passes (J2) or (J3) at $f$ are evaluated.
@@ -1509,7 +1587,7 @@ term of the box lies between the terms at the level $\nu$ of the narrow and of t
 are lost. The weight of a frozen part is bounded by the share of a box.
 
 \begin{lemma}\label{lem:frozen-weight}
-% Lean: SieveAd.froz_weight_le, SieveAd.shareLe_list, SieveAd.shareLe_of_box, SieveAd.card_primes_le_famJR
+% Lean: SieveAd.froz_weight_le, SieveAd.Plain.shareLe_list, SieveAd.shareLe_of_box, SieveAd.card_primes_le_famJR
 Let $0 < l_i < h_i$ for every $i$, $h(\mathfrak b) \le D$, $h_1 \le 2l_1$ and $h_2 \le l_1$. For every $\varepsilon > 0$
 and large $q$, $\operatorname{wt}(\mathcal M_{\mathrm n}) \le (h_1/D)\, c_D(\mathfrak b)/\mathcal K + \varepsilon$.
 \end{lemma}
@@ -1554,7 +1632,7 @@ passes over $\mathcal M$
 \end{enumerate}
 
 \begin{lemma}\label{lem:frozen-tests}
-% Lean: SieveAd.frozTests_sound, SieveAd.evIF_froz_two, SieveAd.evJF_froz_fill, SieveAd.evJF_froz_two, SieveAd.evJF_frozP, SieveAd.evJ_famSet, SieveAd.evJ_fam_fill, SieveAd.evJ_fam_two, SieveAd.full2_core, SieveAd.frozW_noninj_le, SieveAd.sum_frozS_eq, SieveAd.rough_div_iff
+% Lean: SieveAd.Plain.frozTests_sound, SieveAd.Plain.evIF_froz_two, SieveAd.Plain.evJF_froz_fill, SieveAd.Plain.evJF_froz_two, SieveAd.evJF_frozP, SieveAd.evJ_famSet, SieveAd.Plain.evJ_fam_fill, SieveAd.Plain.evJ_fam_two, SieveAd.Plain.full2_core, SieveAd.frozW_noninj_le, SieveAd.sum_frozS_eq, SieveAd.rough_div_iff
 Let $\mathcal M = \mathcal M_{\mathrm w}$ be the wide part of a box $\mathfrak b$ of $k \ge 2$ primes with $0 < l_1 \le
 h_1 \le D$. If a chain $\mathfrak c$ of $j \ge 1$ primes passes (I$_{\mathcal M}$), then $\Delta_{\mathcal M}(\mathfrak c)
 = o(X)$; if a chain $\mathfrak c$ of $j \ge 0$ primes passes (J2$_{\mathcal M}$) or (J3$_{\mathcal M}$) at $f$, then
@@ -1603,7 +1681,7 @@ finitely many boxes gives $o(X)$.
 \end{proof}
 
 \begin{definition}\label{def:frozen-tree}
-% Lean: SieveAd.opsK, SieveAd.vanishK, SieveAd.dropK, SieveAd.chainOf; its tests: SieveAd.frozTests, SieveAd.okIF, SieveAd.okJF2, SieveAd.okJF3, SieveAd.loR, SieveAd.hiR, SieveAd.hiRc, SieveAd.coreI2, SieveAd.coreJ2, SieveAd.coreJ3
+% Lean: SieveAd.opsK, SieveAd.vanishK, SieveAd.dropK, SieveAd.chainOf; its tests: SieveAd.Plain.frozTests, SieveAd.okIF, SieveAd.Plain.okJF2, SieveAd.Plain.okJF3, SieveAd.loR, SieveAd.hiR, SieveAd.hiRc, SieveAd.coreI2, SieveAd.Plain.coreJ2, SieveAd.Plain.coreJ3
 Let $\mathfrak b$ be a box of $k \ge 2$ primes and $\mathcal M = \mathcal M_{\mathrm w}$ its wide part. A \emph{tree
 over the frozen part} on a chain $\mathfrak c$ of $j \ge 1$ primes, $j + k \le 13$, with a sign $\varepsilon$, is a node
 (S) or (B) of Definition~\ref{def:tree}, with (J2$_{\mathcal M}$) and (J3$_{\mathcal M}$) in place of (J2) and (J3), on
@@ -1644,7 +1722,7 @@ cell.
 \end{proof}
 
 \begin{definition}\label{def:reversal}
-% Lean: SieveAd.flipOK, SieveAd.flipT, SieveAd.lastC, SieveAd.initC, SieveAd.flipTree, SieveAd.flipTreeD, SieveAd.flipCost, SieveAd.flipCostD, SieveAd.bdK
+% Lean: SieveAd.flipOK, SieveAd.flipT, SieveAd.lastC, SieveAd.initC, SieveAd.flipTree, SieveAd.Plain.flipTreeD, SieveAd.flipCost, SieveAd.Plain.flipCostD, SieveAd.bdK
 A box $\mathfrak b$ of $k$ primes \emph{may be reversed} if $2 \le k \le 11$, $0 < l_i < h_i$ for every $i$, $h(\mathfrak
 b) + 2 \le D$, $h_2 + 1 \le l_1$, $l_1 \ge 3$, $\nu \le l_1$ and $h_1 + \nu + 1 \le D$, where $\nu = \lceil h_1/2 \rceil$.
 A \emph{reversal} of such a box is a floor $f$ with $0 < f \le \min(l_k, \nu)$ at which the chain of no prime passes
@@ -1660,7 +1738,7 @@ cost of the ends.
 \end{definition}
 
 \begin{proposition}\label{prop:reversal}
-% Lean: SieveAd.bd_flip_neg, SieveAd.bd_flip_core, SieveAd.bd_flipCost, SieveAd.bd_flipCostD, SieveAd.froz_ends_le, SieveAd.froz_top_le, SieveAd.dJF_level, SieveAd.psi_level; the sign +: SieveAd.bd_flip_pos
+% Lean: SieveAd.bd_flip_neg, SieveAd.Plain.bd_flip_core, SieveAd.bd_flipCost, SieveAd.Plain.bd_flipCostD, SieveAd.froz_ends_le, SieveAd.froz_top_le, SieveAd.dJF_level, SieveAd.psi_level; the sign +: SieveAd.bd_flip_pos
 Let $\mathfrak b$ be a box that may be reversed, with a reversal of cost $c_R$ whose tree passes. Then the term of
 $\mathfrak b$ with the sign $-$ is bounded at $c_R/\mathcal K$.
 \end{proposition}
@@ -1694,7 +1772,8 @@ depends only on $C$, $C_e$ and the $w_i$.
 \end{proof}
 
 The same argument with the narrow part in place of the wide one, and a tree on $((f, \nu))$ with the sign $-$, bounds the
-term with the sign $+$ at $Cw_0 + C_e(w_1 + w_2)$; the formalisation proves it, and the search does not use it.
+term with the sign $+$ at $Cw_0 + C_e(w_1 + w_2)$. The search of Theorem~\ref{thm:4320} does not use it; that of
+Theorem~\ref{thm:2110} does, with the cost of Section~\ref{sec:reversal-plus}.
 
 \emph{When the reversal wins.} The reversal costs about $C h_1/D$ times the box's share $c_D(\mathfrak b)/\mathcal K$,
 the ends adding little, as they are one unit wide. Here $C$ is the cost of the tree over the frozen part in units of
@@ -1711,7 +1790,7 @@ which $c_R$ would reach that of the alternative.
 \subsection{What a tree gives}
 
 \begin{proposition}\label{prop:tree-bound}
-% Lean: SieveAd.sound, SieveAd.bd_split, SieveAd.bd_buch, SieveAd.bd_mono, SieveAd.rulesMP, SieveAd.solveD_sound, SieveAd.altFD_sound, SieveAd.bd_flipCostD, SieveAd.pr_split, SieveAd.pr_buch
+% Lean: SieveAd.sound, SieveAd.bd_split, SieveAd.bd_buch, SieveAd.bd_mono, SieveAd.Plain.rulesMP, SieveAd.Plain.solveD_sound, SieveAd.Plain.altFD_sound, SieveAd.Plain.bd_flipCostD, SieveAd.pr_split, SieveAd.pr_buch
 Let $\mathfrak b$ be a box of $k \ge 1$ primes. If a tree on $\mathfrak b$ with the sign $\varepsilon$ passes, with cost
 $c$, then the term of $\mathfrak b$ with the sign $\varepsilon$ is bounded at $c/\mathcal K$.
 \end{proposition}
@@ -1772,13 +1851,13 @@ rational $L$, and at $L = 43/20$ with $f_*$ and the bound of Proposition~\ref{pr
 
 \section{The certificate}\label{sec:certificate}
 
-Theorem~\ref{thm:tree} reduces Theorem~\ref{thm:main} to a finite computation: a floor $f_*$ at which the box of no
-prime passes (J3), and a bound below $1$ for the term of the box of the first prime with the sign $-$, which a tree of
-cost below $\mathcal K$ gives. At $L =
-43/20$ the tree has some $3.4 \cdot 10^6$ nodes, those of the trees over the frozen parts of its reversals included,
-and the formalisation never writes it down. Lean's kernel runs a search that follows a plan computed
-beforehand; what is checked is that the search, on the first prime's box, returns a cost below $\mathcal K$. This
-section describes the search, why its result is a proof whatever the plan, and the numbers at $43/20$.
+Theorem~\ref{thm:tree} reduces Linnik's theorem with the exponent $L$ to a finite computation: a floor $f_*$ at which
+the box of no prime passes (J3), and a bound below $1$ for the term of the box of the first prime with the sign $-$,
+which a tree of cost below $\mathcal K$ gives. At $L = 43/20$ the tree has some $3.4 \cdot 10^6$ nodes, those of the
+trees over the frozen parts of its reversals included, and the formalisation never writes it down. Lean's kernel runs
+a search that follows a plan computed beforehand; what is checked is that the search, on the first prime's box, returns
+a cost below $\mathcal K$. This section describes the search, why its result is a proof whatever the plan, and the
+numbers at $43/20$; Section~\ref{sec:certificate-b} has the search and the numbers at $21/10$.
 
 \subsection{The search}
 
@@ -1840,7 +1919,7 @@ compiled code. The search is such a function: its tests are the conditions of De
 strategy.
 
 \begin{lemma}\label{lem:search}
-% Lean: SieveAd.solveF_sound, SieveAd.has_of_kids, SieveAd.solveG_sound, SieveAd.kidsP_sound, SieveAd.solveD_sound, SieveAd.stepD_sound, SieveAd.kidsC_sound, SieveAd.partD_sound, SieveAd.solveMD_sound, SieveAd.altFD_sound, SieveAd.pr_of_partD
+% Lean: SieveAd.solveF_sound, SieveAd.has_of_kids, SieveAd.solveG_sound, SieveAd.kidsP_sound, SieveAd.Plain.solveD_sound, SieveAd.Plain.stepD_sound, SieveAd.Plain.kidsC_sound, SieveAd.Plain.partD_sound, SieveAd.Plain.solveMD_sound, SieveAd.Plain.altFD_sound, SieveAd.Plain.pr_of_partD
 Whatever the strategy, or the hints that lead the search (below), if the search returns on a box, a sign and a limit a value
 $c$ below the limit, then the term of the box with that sign is bounded at $c/\mathcal K$.
 \end{lemma}
@@ -1870,7 +1949,7 @@ configuration among the sets of a box's cells. So the search is run once outside
 arithmetic and definition by definition, and the plan it keeps is written as \emph{hints}: for each part of the check,
 a natural number, read from its low end in the order in which the search visits the boxes. At a box the hints give a
 run of ones closed by a zero, which names the node, and then what the node needs.
-% Lean: SieveAd.solveD, SieveAd.stepD, SieveAd.cfgIP, SieveAd.cfgJP, SieveAd.cfgIM, SieveAd.cfgJM, SieveAd.cfgIF, SieveAd.cfgJF, SieveAd.floorP, SieveAd.kidsCS, SieveAd.kidsC, SieveAd.kidsM, SieveAd.kidsF, SieveAd.partD, SieveAd.altFD, SieveAd.flipCostD, SieveAd.flipTreeD, SieveAd.solve21500
+% Lean: SieveAd.solveD, SieveAd.stepD, SieveAd.cfgIP, SieveAd.cfgJP, SieveAd.cfgIM, SieveAd.cfgJM, SieveAd.cfgIF, SieveAd.cfgJF, SieveAd.floorP, SieveAd.kidsCS, SieveAd.kidsC, SieveAd.kidsM, SieveAd.kidsF, SieveAd.partD, SieveAd.Plain.altFD, SieveAd.Plain.flipCostD, SieveAd.Plain.flipTreeD, SieveAd.solve21500
 \begin{center}
 \small
 \begin{tabular}{@{}lp{0.68\textwidth}@{}}
@@ -1910,7 +1989,7 @@ limit, which says nothing. So the hints are not trusted: a wrong hint can make t
 \subsection{The certificate at \texorpdfstring{$43/20$}{43/20}}
 
 \begin{proposition}\label{prop:certificate}
-% Lean: Linnik21500.tree21500 (the bound of the first term), Linnik21500.linnik_21500 (the root's test, by evaluation), Linnik21500.part21500, Linnik21500.sound21500, Linnik21500.soundF21500, SieveAd.fillTests_sound, SieveAd.fillTestsF_eq, SieveAd.frozTestsC_okI, SieveAd.frozTestsC_okJ, SieveAd.rules_frozC
+% Lean: Linnik21500.tree21500 (the bound of the first term), Linnik21500.linnik_21500 (the root's test, by evaluation), Linnik21500.part21500, Linnik21500.sound21500, Linnik21500.soundF21500, SieveAd.Plain.fillTests_sound, SieveAd.Plain.fillTestsF_eq, SieveAd.Plain.frozTestsC_okI, SieveAd.Plain.frozTestsC_okJ, SieveAd.Plain.rules_frozC
 Let $L = 43/20$ and $f_* = 49170839016$. The box of no prime passes (J3) at $f_*$ with $\mathcal S_0 = \mathcal S_1 =
 \emptyset$ and $\iota = 1$, and the term of the box $((f_*, D/2 + 1))$ with the sign $-$ is bounded at $c/\mathcal K$,
 by the search of this section, with
@@ -1920,7 +1999,7 @@ by the search of this section, with
 \end{proposition}
 
 The proposition is a computation, which the kernel carries out (Section~\ref{sec:lean}); with Theorem~\ref{thm:tree} it
-gives Theorem~\ref{thm:main} (Section~\ref{sec:proof}). At the root, $f_*/D = 0.0447206\ldots$, $r_1 = 255700380$,
+gives Theorem~\ref{thm:4320} (Section~\ref{sec:proof}). At the root, $f_*/D = 0.0447206\ldots$, $r_1 = 255700380$,
 and the window of (J3) is $[u, v]$ with $u = 511328600504$ and $v = 560499439521$, that is $[0.4650507, 0.5097713]$ in
 exponents of $x$: $f_* = v - u - 1$ is the largest floor with $u + f_* < v$, and $(\mathrm L)$ reads $(u + r_2)/D =
 0.5100038\ldots < 1 - 1/L = 0.5348837\ldots$. The window is wider than the floor only below about $(L - 2)/((2 -
@@ -1960,14 +2039,14 @@ kernel that made the plan visits $34356403$ boxes, $28257594$ of them over froze
 cores. The kernel checks the $17$ files in about $63$ minutes, each in two and a half to four and a half minutes;
 \S S5 and \S S6 have the statistics in more detail.
 
-\section{Proof of Theorem~\ref{thm:main}}\label{sec:proof}
+\section{Proof of Theorem~\ref{thm:4320}}\label{sec:proof}
 
-\begin{proof}[Proof of Theorem~\ref{thm:main}]
+\begin{proof}[Proof of Theorem~\ref{thm:4320}]
 Take $L = 43/20$. Theorem~\ref{thm:type2}, under Input~\ref{inp:half-plane}, is the Type~II estimate in two variables
 on the region $\mathcal R_L$, so the comparisons of Section~\ref{sec:type1} hold at $L$, and with them the tests of
 Section~\ref{sec:decomp}. Proposition~\ref{prop:certificate} gives a floor $f_*$ at which the box of no prime passes
 (J3), and bounds the term of the root box with the sign $-$ at $c/\mathcal K$, with $c = 1093510193343867034 <
-\mathcal K = 2^{60}$. Theorem~\ref{thm:tree} gives Theorem~\ref{thm:main} under the input.
+\mathcal K = 2^{60}$. Theorem~\ref{thm:tree} gives Theorem~\ref{thm:4320} under the input.
 Input~\ref{inp:half-plane} enters through Lemma~\ref{lem:prime-sum} and the top bin in Section~\ref{sec:type2},
 through the kernel bound of Section~\ref{sec:two-bounds} (where the Pólya--Vinogradov inequality would do instead),
 through the piece of $g_{\mathrm H}$ above $11/12$, which only makes $g_{\mathrm H}$ a density curve on all of
@@ -1985,51 +2064,71 @@ other things, $x^{2^{-40}} \ge 3$, that is $q \ge 3^{2^{40}/L}$.
 \section{The formalisation}\label{sec:lean}
 
 Appendix~\ref{app:claims} names the Lean theorems that prove each numbered result of Sections~\ref{sec:intro}
-to~\ref{sec:proof}, and the results from the literature that the proof uses; they are in \texttt{lib/} of the
+to~\ref{sec:certificate-b}, and the results from the literature that the proofs use; they are in \texttt{lib/} of the
 repository \cite{repo} or in Mathlib. \file{formalisations/} documents the results from the literature and the further
-classical results behind them. The Lean statement of Theorem~\ref{thm:main} is
+classical results behind them. The Lean statements of Theorems~\ref{thm:2110} and~\ref{thm:4320} are
 {\small
 \begin{verbatim}
+theorem linnik_21000 : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ),
+    a.Coprime q → ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧
+      (p : ℝ) ≤ K * (q : ℝ) ^ (2100 / 1000 : ℝ)
+
 theorem linnik_21500 : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ),
     a.Coprime q → ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧
       (p : ℝ) ≤ K * (q : ℝ) ^ (2150 / 1000 : ℝ)
 \end{verbatim}
 }
-where \lean{[NeZero q]} says $q \ge 1$, the power is the real power, and $2150/1000 = 43/20$. The file
-\texttt{lib/check/Check.lean} prints the axioms of the library's theorems in Appendix~\ref{app:claims}, and
-\texttt{scripts/check\_axioms.py} checks that they are \lean{propext}, \lean{Classical.choice} and \lean{Quot.sound}
-only. The axioms of a theorem cover its whole dependency cone, so a \lean{sorry} anywhere in it would appear as
-\lean{sorryAx}; the library's own sources contain no \lean{sorry}, no declared axiom and no \lean{native\_decide}
-(\texttt{scripts/check\_hygiene.py}). The certificate of Proposition~\ref{prop:certificate} is checked by kernel
-evaluation, \lean{decide +kernel}, and not by compiled code, on definitions that are arithmetic on Lean's core natural
-numbers, lists and booleans: the search that the certificate's hints lead is evaluated in $1552$ parts, in $17$ files
-of two and a half to four and a half minutes each, about $63$ minutes of the kernel's time, and the $256$ Buchstab steps
-that join the parts are proved one by one. The proof's import cone contains no module of the library's formalisation of
-Chen, Gupta and Li's paper, and no declaration of Ingham's estimate is reachable from it, by a static over-approximation
-of the constants that each proof uses (\texttt{scripts/decl\_reach.py}); Ingham's zero detector is used, in the proof of
-Huxley's estimate. The toolchain is Lean \texttt{v4.35.0-rc3} with Mathlib at commit \texttt{0f64d30a}, and the
-repository's continuous integration builds the library and checks the axioms on every change to it.
+where \lean{[NeZero q]} says $q \ge 1$, the power is the real power, $2100/1000 = 21/10$ and $2150/1000 = 43/20$. The
+file \texttt{lib/check/Check.lean}, the repository's default build, prints the axioms of Theorem~\ref{thm:4320} and of
+the library's theorems that Appendix~\ref{app:claims} names for Sections~\ref{sec:inputs} to~\ref{sec:proof};
+\texttt{lib/check/CheckAll.lean} prints those of Theorem~\ref{thm:2110} and of the theorems named for
+Sections~\ref{sec:window} to~\ref{sec:certificate-b}. \texttt{scripts/check\_axioms.py} checks that they are
+\lean{propext}, \lean{Classical.choice} and \lean{Quot.sound} only. The axioms of a theorem cover its whole dependency
+cone, so a \lean{sorry} anywhere in it would appear as \lean{sorryAx}; the library's own sources contain no
+\lean{sorry}, no declared axiom and no \lean{native\_decide} (\texttt{scripts/check\_hygiene.py}).
+
+The certificates of Propositions~\ref{prop:certificate} and~\ref{prop:certificate-b} are checked by kernel evaluation,
+\lean{decide +kernel}, and not by compiled code, on definitions that are arithmetic on Lean's core natural numbers,
+lists and booleans. At $43/20$ the search that the certificate's hints lead is evaluated in $1552$ parts, in $17$ files
+of two and a half to four and a half minutes each, about $63$ minutes of the kernel's time, and the $256$ Buchstab
+steps that join the parts are proved one by one. At $21/10$ it is evaluated in $107374$ parts, in $1150$ files, and
+$29349$ Buchstab steps join the parts; the generator of the files predicts about $76$ hours of the kernel's time on one
+core for them, so the default build does not include them, and the repository's continuous integration builds them
+in stages.
+
+The two theorems share Sections~\ref{sec:inputs} to~\ref{sec:decomp} but not their tests. The tests of
+Theorem~\ref{thm:4320} are those of Definition~\ref{def:tests}, with the leaves' condition $(\mathrm L)$ alone
+(the namespace \lean{SieveAd.Plain}); those of Theorem~\ref{thm:2110} accept the leaves cut in three as well
+(Section~\ref{sec:leaves-three}), and their soundness uses the second density curve. So the import cone of
+Theorem~\ref{thm:4320} contains no module of the library's formalisation of Chen, Gupta and Li's paper, and no
+declaration of Ingham's estimate is reachable from it, by a static over-approximation of the constants that each proof
+uses (\texttt{scripts/decl\_reach.py}); Ingham's zero detector is used, in the proof of Huxley's estimate. The
+toolchain is Lean \texttt{v4.35.0-rc3} with Mathlib at commit \texttt{0f64d30a}, and the repository's continuous
+integration builds the library and checks the axioms on every change to it.
 
 Among the statements that are not Lean theorems are: the historical statements of Sections~\ref{sec:intro}
-and~\ref{sec:comparison}, among them the remarks on R.~Li's and on Banks and Shparlinski's results; the heuristic
-remarks of Sections~\ref{sec:intro}, \ref{sec:type2} and~\ref{sec:type1}, among them what the region needs of the kernel
-bound and of a density estimate, and the effectivity remark of Section~\ref{sec:proof}; the remarks that Chen, Gupta
-and Li's Theorem~1.2 and Corollary~1.4 give $7/3 + \varepsilon$; the figures computed by the repository's scripts (the
-shape of the region at $43/20$, the statistics of the search and of the certificate, and the computations of
-Section~\ref{sec:comparison}); and what is said about the source of the input and its independent checking.
+and~\ref{sec:comparison}, among them the remarks on Naslund's, R.~Li's and Banks and Shparlinski's results; the
+heuristic remarks of Sections~\ref{sec:intro}, \ref{sec:type2}, \ref{sec:type1} and~\ref{sec:window}, among them what
+the region needs of the kernel bound and of a density estimate, and the effectivity remark of Section~\ref{sec:proof};
+the remarks that Chen, Gupta and Li's Theorem~1.2 and Corollary~1.4 give $7/3 + \varepsilon$; the figures computed by
+the repository's scripts (the shape of the region at $43/20$, the statistics of the searches and of the certificates,
+and the computations of Section~\ref{sec:comparison}); and what is said about the sources of the inputs and their
+independent checking.
 
-Independent checking of the input is limited: OpenAI's own Lean formalisation of the main preprint's result
+Independent checking of the inputs is limited. OpenAI's own Lean formalisation of the main preprint's result
 \cite{openai-lean} is OpenAI's record, not an independent one, and this library's proof of
-Input~\ref{inp:half-plane} is the author's new formalisation of the companion preprint's route. Huxley's estimate is
-refereed and classical; the library's proof of it, by the large values of Dirichlet polynomials and the fourth moment,
-is the author's. \S S5 gives the details: the Lean statements, the library's proof of Input~\ref{inp:half-plane}, what
-the kernel checks, and the artefact.
+Input~\ref{inp:half-plane} is the author's new formalisation of the companion preprint's route. Chen, Gupta and Li's
+preprint \cite{cgl} has not been refereed; the library's proof of Input~\ref{inp:cgl} follows their route, with the one-modulus case of Heath-Brown's large values estimate for
+double sums \cite{hb79b}, which they quote, proved along Kerr \cite{kerr} and Jutila \cite{jutila}. Ingham's and
+Huxley's estimates are refereed and classical; the library's proofs of them, by the large values of Dirichlet
+polynomials and the fourth moment, are the author's. \S S5 gives the details: the Lean statements, the library's
+proofs of the inputs, what the kernel checks, and the artefact.
 
-\section{What the input gives without the sieve, and the method's limits}\label{sec:comparison}
+\section{What the inputs give without the sieve, and the method's limits}\label{sec:comparison}
 
-This section claims nothing new. It places Theorem~\ref{thm:main} against what the same input gives by the classical
-argument, which has no sieve, and against the exponents known for special moduli; the table of the introduction sums
-it up.
+This section claims nothing new. It places Theorems~\ref{thm:2110} and~\ref{thm:4320} against what the same inputs
+give by the classical argument, which has no sieve, and against the exponents known for special moduli; the table of
+the introduction sums it up.
 
 \subsection*{The classical deduction}
 
@@ -2050,11 +2149,15 @@ proves:
 \item $L = 36/13 + \varepsilon$ with Ingham's estimate, whose exponent $3/(2 - \sigma)$ is $36/13$ at
   $\sigma = 11/12$;
 \item $L = 12/5 + \varepsilon$ with Huxley's estimate (with Ingham's below $\sigma = 3/4$), which bounds the density
-  exponent by $12/5$ on the whole range.
+  exponent by $12/5$ on the whole range;
+\item $L = 11667/5000 + \varepsilon = 2.3334 + \varepsilon$ with the curve $g^*$ of Proposition~\ref{prop:curve-star},
+  whose pieces between $5/7$ and $131/168$ come from Input~\ref{inp:cgl}: its exponent is at most $11667/5000$ on the
+  whole range.
 \end{itemize}
-Appendix~\ref{app:claims} names the Lean theorem of each. With Chen, Gupta and Li's estimate the exponent is $7/3 +
-\varepsilon$, by the same deduction from their Theorem~1.2 \cite{cgl} (exponent $A = 7/3$), which the library does not
-formalise as they state it. They do not state a Linnik exponent, but their Corollary~1.4 \cite{cgl}, on primes
+Appendix~\ref{app:claims} names the Lean theorem of each. With Chen, Gupta and Li's density estimate the exponent is
+$7/3 + \varepsilon$, by the same deduction from their Theorem~1.2 \cite{cgl} (exponent $A = 7/3$), which the library
+does not formalise as they state it; the last item is what the library proves in its place, and it differs from $7/3$
+by the rounding of the curve's steps. They do not state a Linnik exponent, but their Corollary~1.4 \cite{cgl}, on primes
 in progressions in short intervals under a zero-free region, contains this one: for $h \le x$ it gives
 $\psi(x + h; q, a) - \psi(x; q, a) \sim h/\varphi(q)$ whenever
 $h/\varphi(q) \ge x^{1/2 + \varepsilon} q^{1/6} + x^{17/30 + \varepsilon}$, and with $h = x$ and
@@ -2062,7 +2165,8 @@ Input~\ref{inp:half-plane} as the zero-free region this holds at $x = q^L$ for e
 
 \subsection*{Special moduli}
 
-For special moduli smaller exponents are known. For the powers of a fixed prime, Banks and Shparlinski
+For special moduli exponents smaller than that of Theorem~\ref{thm:4320} are known; that of
+Theorem~\ref{thm:2110} is smaller than they are. For the powers of a fixed prime, Banks and Shparlinski
 \cite{banks-shparlinski} have $2.1115$ (the value as cited in \cite[footnote~1]{cgl}). R.~Li \cite{li-harman} adapts
 his Harman-sieve calculation to primes in progressions to large moduli $q$ whose prime factors are all below $q^C$, for
 an absolute constant $C > 0$ whose existence his theorem asserts without giving it, when the $L$-functions of the
@@ -2071,32 +2175,51 @@ $|\operatorname{Im} s| \le \exp(\varepsilon (\log q)^{3/4})$, with the $\varepsi
 powers of a fixed prime he deduces the exponent $1/0.4752 < 2.1044$ (his Theorem~11), improving Banks and Shparlinski's.
 He presents these theorems as modifications of that calculation, without separate proofs. Input~\ref{inp:half-plane}
 implies the zero-free hypothesis of his Theorem~9 for every large $q$, so if that theorem holds as stated, it gives with
-Input~\ref{inp:half-plane} the exponent $1/0.4752$ for every large modulus whose prime factors are all below $q^C$.
+Input~\ref{inp:half-plane} the exponent $1/0.4752 = 2.1043\ldots$ for every large modulus whose prime factors are all
+below $q^C$, between the exponents of the two theorems.
 
 \subsection*{What the half-plane is used for}
 
 The classical deduction does not need the value $11/12$ of Input~\ref{inp:half-plane}: it works with any zero-free
-half-plane $\operatorname{Re} s > 1 - \eta_0$, for a fixed $\eta_0 > 0$. The proof of Theorem~\ref{thm:main} uses the
+half-plane $\operatorname{Re} s > 1 - \eta_0$, for a fixed $\eta_0 > 0$. The proof of Theorem~\ref{thm:4320} uses the
 half-plane for the prime sums of Lemma~\ref{lem:prime-sum}, whose contour runs to its edge, for the top bin of
 Section~\ref{sec:bins}, for the kernel bound, where the Pólya--Vinogradov inequality would do
 (Section~\ref{sec:region}), and for the prime number theorem. With a narrower half-plane the bins would run up to $1 -
 \eta_0$, and the zone condition for two variables of length $q$ at the top bin would need $\rho \ge 1/(25000\eta_0)$
-in place of $1/2000$; the region, and so the certificate, would change, and this is not pursued. What the proof uses is
-that there are no zeros near $\operatorname{Re} s = 1$, and in particular no exceptional zero.
+in place of $1/2000$; the region, and so the certificate, would change, and this is not pursued. The proof of
+Theorem~\ref{thm:2110} uses the half-plane in the same places, and in the bins of its two further estimates: in the
+estimate in one variable the sizes of the rest's prime sums run up to the top bin, so that no prime sum of length $Q$
+exceeds about $Q^{11/12}$, and the classes that no count makes small are bounded by that alone
+(Section~\ref{sec:window-estimate}). What the proofs use is that there are no zeros near $\operatorname{Re} s = 1$, and
+in particular no exceptional zero.
 
 \subsection*{Where the gain comes from, and its limits}
 
 The deduction needs the zeros of every real part to contribute less than the main term, so its exponent is the
-largest density exponent on $[1/2, 11/12]$, which is $12/5$ with Huxley's estimate, at $\sigma = 3/4$. The sieve needs
-the zeros only in sums of two variables near $q$ times a product of primes, where Theorem~\ref{thm:type2} holds for
-every $L$ and uses the density estimate only above $0.7789$, and it recovers the primes from those sums at the cost that
-the certificate bounds. In exponents of $x$ the region shrinks as $L$ grows smaller, and more of the sieve's terms
-fall outside it: the cost is $0.94847$ at $43/20$, and the plan of the same search passes at $2.145$ with cells of side
-$0.0035$ (cost $0.975$, about twice the build). On twenty of the first prime's cells, about a quarter of the cost at
-$43/20$ is the cells' width; each $0.005$ of exponent costs between $5\%$ and $9\%$ of it; and the rules that the
-certificate lacks are worth a few per cent each in the exact search. By these estimates $2.14$ needs several of them
-and cells of side about $0.003$ together, and $2.12$ is beyond them (\S S6). Going much further needs Type~I
-information on longer products, or a Type~II estimate on a wider region, which a better density estimate above
+largest density exponent on $[1/2, 11/12]$, which is $12/5$ with Huxley's estimate, at $\sigma = 3/4$, and $7/3$ with
+Chen, Gupta and Li's, at $\sigma = 5/7$. The sieve needs the zeros only in sums of two variables near $q$ times a
+product of primes, where Theorem~\ref{thm:type2} holds for every $L$ and uses the density estimate only above
+$0.7789$, and it recovers the primes from those sums at the cost that the certificate bounds. In exponents of $x$ the
+region shrinks as $L$ grows smaller, and more of the sieve's terms fall outside it.
+
+With the rules of Sections~\ref{sec:type2} to~\ref{sec:certificate} alone the cost is $0.94847$ at $43/20$, and the plan
+of the same search passes at $2.145$ with cells of side $0.0035$ (cost $0.975$, about twice the build). On twenty of the
+first prime's cells, about a quarter of the cost at $43/20$ is the cells' width; each $0.005$ of exponent costs between
+$5\%$ and $9\%$ of it; and the rules that this certificate lacks, the reversal of the terms of the sign $+$ among them,
+are worth a few per cent each in the exact search. By these estimates $2.14$ needs several of them and cells of side
+about $0.003$ together, and $2.12$ is beyond them (\S S6).
+
+The rules of Sections~\ref{sec:window} and~\ref{sec:rules} are of another kind. The estimate in one variable evaluates
+terms that are outside the region of two variables, and where a power of each length of its rest is near $q$ it takes
+nothing from the density estimate. The leaves cut in three recover comparisons that the bilinear Type~I estimate does
+not reach. With them, the reversal of the terms of the sign $+$ and cells of side $0.003$ in the main tree, the search
+passes at $2115/1000$ with the cost $0.88304$ (a theorem of the library, \lean{Linnik21150.linnik\_21150}, which the
+paper does not use). At $21/10$ the search has the test at the two corners as well, cells of side $0.003$ over the
+frozen parts and a plan that tries every configuration there, and its cost is $0.97717$, on a certificate of
+twenty-six times the steps of that at $43/20$. So $0.015$ of exponent costs about a tenth of the primes, although the
+search has more rules at the lower exponent, and $0.023$ of the primes is left: $21/10$ is close to what these rules
+give as the search uses them. Going much further needs
+Type~I information on longer products, or Type~II estimates on wider regions, which a better density estimate above
 $0.7789$ would give only a little of (Section~\ref{sec:region}).
 
 \section*{Acknowledgements}
@@ -2115,10 +2238,14 @@ integration, and not by the assistants.
 \section{The claims table}\label{app:claims}
 
 The table names the Lean theorem behind each result of the paper, and behind the results from the literature that its
-argument uses directly, with the main ones behind the input and the density estimate. Of Huxley's fifteen steps from
-$131/168$ on, \texttt{lib/check/Check.lean} prints the first and the last; \lean{SieveCurveHx.counts\_hx} uses every
-step of the curve, so all of them are in the dependency cone of \lean{Linnik21500.linnik\_21500}, whose axioms are
-checked. \texttt{lib/check/CheckAll.lean} prints the axioms of further declarations of the library.
+argument uses directly, with the main ones behind the inputs and the density estimates. Its first block is
+Sections~\ref{sec:intro} to~\ref{sec:proof}, whose theorems \texttt{lib/check/Check.lean} prints; its second block is
+Sections~\ref{sec:window} to~\ref{sec:certificate-b}, whose theorems \texttt{lib/check/CheckAll.lean} prints, with
+further declarations of the library. Of Huxley's fifteen steps from $131/168$ on, \texttt{lib/check/Check.lean} prints
+the first and the last; \lean{SieveCurveHx.counts\_hx} uses every step of the curve, so all of them are in the
+dependency cone of \lean{Linnik21500.linnik\_21500}, whose axioms are checked. Likewise
+\lean{SieveCurve7D.counts\_7d} uses every step of the curve $g^*$, and it is in the dependency cone of
+\lean{Linnik21000.linnik\_21000}.
 
 A name's first component is its namespace, which is usually also the name of its file in \file{lib/pnt}. The
 exceptions in the table are these, in \file{lib/pnt} except the last four, which are in \file{lib/core};
@@ -2134,19 +2261,19 @@ Dirichlet's theorem is Mathlib's.
 \file{SieveBox.lean} & \lean{SieveRough.shareBox}, \lean{SieveRough.evLe\_box\_tr}, \lean{SieveRough.evLe\_box\_ex} \\
 \file{SieveAdDefs.lean} & \lean{SieveAd.Tree}, \lean{SieveAd.ok}, \lean{SieveAd.cost} \\
 \file{SieveAdTree.lean} & \lean{SieveAd.famI\_cut}, \lean{SieveAd.famI\_buch}, \lean{SieveAd.famI\_vanish\_box}, \lean{SieveAd.Ttop\_eq}, \lean{SieveAd.Ttop\_gB\_ge}, \lean{SieveAd.dropCost\_ge}, \lean{SieveAd.dropBCost\_ge}, \lean{SieveAd.drop\_bound}, \lean{SieveAd.dropB\_bound}, \lean{SieveAd.shareBd}, \lean{SieveAd.sound}, \lean{SieveAd.linnik\_bd} \\
-\file{SieveAdTwoDefs.lean} & \lean{SieveAd.okI2}, \lean{SieveAd.okJ2} \\
-\file{SieveAdFillDefs.lean} & \lean{SieveAd.okJ3} \\
-\file{SieveAdFill.lean} & \lean{SieveAd.fillTests\_sound} \\
-\file{SieveAdFillCore.lean} & \lean{SieveAd.evJ\_fill\_core}, \lean{SieveAd.evJ\_two\_core} \\
-\file{SieveAdTwo.lean} & \lean{SieveAd.evI\_twoE} \\
+\file{SieveAdTwoDefs.lean} & \lean{SieveAd.okI2} \\
+\file{SieveAdPlainDefs.lean} & \lean{SieveAd.Plain.okJ2}, \lean{SieveAd.Plain.okJ3} \\
+\file{SieveAdPlainFill.lean} & \lean{SieveAd.Plain.fillTests\_sound} \\
+\file{SieveAdPlainFillCore.lean} & \lean{SieveAd.Plain.evJ\_fill\_core}, \lean{SieveAd.Plain.evJ\_two\_core} \\
+\file{SieveAdPlainTwo.lean} & \lean{SieveAd.Plain.evI\_twoE} \\
 \file{SieveAdFroz.lean} & \lean{SieveAd.famIR\_eq}, \lean{SieveAd.famJR\_eq} \\
 \file{SieveAdFrozTree.lean} & \lean{SieveAd.dJF\_level}, \lean{SieveAd.frozRules} \\
-\file{SieveAdFrozTests.lean} & \lean{SieveAd.frozTests\_sound} \\
+\file{SieveAdPlainFrozTests.lean} & \lean{SieveAd.Plain.frozTests\_sound} \\
 \file{SieveAdFlip.lean} & \lean{SieveAd.flip\_cover}, \lean{SieveAd.flip\_inject} \\
 \file{SieveAdFlipSum.lean} & \lean{SieveAd.froz\_weight\_le}, \lean{SieveAd.bd\_flip\_neg} \\
-\file{SieveAdFlipSearch.lean} & \lean{SieveAd.bd\_flip\_core} \\
-\file{SieveAdFast.lean} & \lean{SieveAd.fillTestsF\_eq}, \lean{SieveAd.frozTestsC\_okI}, \lean{SieveAd.frozTestsC\_okJ} \\
-\file{SieveAdDir.lean} & \lean{SieveAd.rules\_frozC}, \lean{SieveAd.bd\_flipCostD}, \lean{SieveAd.altFD\_sound}, \lean{SieveAd.solveD\_sound}, \lean{SieveAd.pr\_of\_partD} \\
+\file{SieveAdPlainFlipSearch.lean} & \lean{SieveAd.Plain.bd\_flip\_core} \\
+\file{SieveAdPlainFast.lean} & \lean{SieveAd.Plain.fillTestsF\_eq}, \lean{SieveAd.Plain.frozTestsC\_okI}, \lean{SieveAd.Plain.frozTestsC\_okJ} \\
+\file{SieveAdPlainDir.lean} & \lean{SieveAd.Plain.rules\_frozC}, \lean{SieveAd.Plain.bd\_flipCostD}, \lean{SieveAd.Plain.altFD\_sound}, \lean{SieveAd.Plain.solveD\_sound}, \lean{SieveAd.Plain.pr\_of\_partD} \\
 \file{SieveAdSearchG.lean} & \lean{SieveAd.solveG\_sound} \\
 \file{SieveAdRevSearch.lean} & \lean{SieveAd.linnik\_pr} \\
 \file{LinnikWeighted.lean} & \lean{LinnikReflect.hm\_duality\_W} \\
@@ -2165,7 +2292,7 @@ Dirichlet's theorem is Mathlib's.
 Claim & Lean \\
 \midrule
 \endhead
-Theorem~\ref{thm:main} & \lean{Linnik21500.linnik\_21500} \\
+Theorem~\ref{thm:4320} & \lean{Linnik21500.linnik\_21500} \\
 Definition~\ref{def:curve}, density curves & \lean{SieveTypeIIGen.CurveCounts} \\
 Proposition~\ref{prop:curve}: $g_{\mathrm H}$ is a density curve & \lean{SieveCurveHx.counts\_hx} \\
 \quad and $g_{\mathrm H} \le 1$, $g_{\mathrm H}(1/2) = 1$ & \lean{SieveCurveHx.ghx\_le\_one}, \\
@@ -2234,12 +2361,12 @@ Definition~\ref{def:tree}, trees, their check and their cost & \lean{SieveAd.Tre
  & \lean{SieveAd.ok}, \\
  & \lean{SieveAd.cost} \\
 Definition~\ref{def:tests}, the tests & \lean{SieveAd.okI2}, \\
- & \lean{SieveAd.okJ2}, \\
- & \lean{SieveAd.okJ3} \\
-Lemma~\ref{lem:tests}, what the tests give, (a) and (b) & \lean{SieveAd.fillTests\_sound} \\
-\quad (c), with further comparisons & \lean{SieveAd.evJ\_fill\_core}, \\
- & \lean{SieveAd.evJ\_two\_core}, \\
- & \lean{SieveAd.evI\_twoE} \\
+ & \lean{SieveAd.Plain.okJ2}, \\
+ & \lean{SieveAd.Plain.okJ3} \\
+Lemma~\ref{lem:tests}, what the tests give, (a) and (b) & \lean{SieveAd.Plain.fillTests\_sound} \\
+\quad (c), with further comparisons & \lean{SieveAd.Plain.evJ\_fill\_core}, \\
+ & \lean{SieveAd.Plain.evJ\_two\_core}, \\
+ & \lean{SieveAd.Plain.evI\_twoE} \\
 Lemma~\ref{lem:rough}, rough numbers from above & \lean{SieveRough.psi\_le} \\
 \quad Buchstab's inequality for rough numbers & \lean{SieveRough.Psi\_le\_buchstab} \\
 \quad its delay inequality & \lean{SieveRough.super\_M} \\
@@ -2263,27 +2390,27 @@ The terms over a frozen part, and the identity between levels & \lean{SieveAd.fa
 Lemma~\ref{lem:sandwich}, the narrow and the wide part & \lean{SieveAd.flip\_cover}, \\
  & \lean{SieveAd.flip\_inject} \\
 Lemma~\ref{lem:frozen-weight}, the weight of a frozen part & \lean{SieveAd.froz\_weight\_le} \\
-Lemma~\ref{lem:frozen-tests}, the tests over a frozen part & \lean{SieveAd.frozTests\_sound} \\
+Lemma~\ref{lem:frozen-tests}, the tests over a frozen part & \lean{SieveAd.Plain.frozTests\_sound} \\
 Lemma~\ref{lem:frozen-tree}, the trees over a frozen part & \lean{SieveAd.frozRules} \\
 Proposition~\ref{prop:reversal}, the reversal through the largest prime & \lean{SieveAd.bd\_flip\_neg}, \\
- & \lean{SieveAd.bd\_flip\_core}, \\
- & \lean{SieveAd.bd\_flipCostD} \\
+ & \lean{SieveAd.Plain.bd\_flip\_core}, \\
+ & \lean{SieveAd.Plain.bd\_flipCostD} \\
 Proposition~\ref{prop:tree-bound}, what a tree gives & \lean{SieveAd.sound} (the nodes but (R)), \\
- & \lean{SieveAd.altFD\_sound} (R) \\
+ & \lean{SieveAd.Plain.altFD\_sound} (R) \\
 Theorem~\ref{thm:tree}, Linnik's theorem from the root's bound (for rational $L$) & \lean{SieveAd.linnik\_pr}, \\
  & \lean{SieveAd.linnik\_bd} \\
 \quad the main term, the primes of $(x, 2x]$ & \lean{SieveAd.Ttop\_gB\_ge} \\
 Lemma~\ref{lem:search}, the searches are sound & \lean{SieveAd.solveG\_sound}, \\
- & \lean{SieveAd.solveD\_sound}, \\
- & \lean{SieveAd.pr\_of\_partD} \\
+ & \lean{SieveAd.Plain.solveD\_sound}, \\
+ & \lean{SieveAd.Plain.pr\_of\_partD} \\
 Proposition~\ref{prop:certificate}, the certificate & \lean{Linnik21500.tree21500}, \\
  & \lean{Linnik21500.part21500}, \\
  & \lean{Linnik21500.sound21500}, \\
  & \lean{Linnik21500.soundF21500} \\
-\quad the tests in one pass, equal to the tests & \lean{SieveAd.fillTestsF\_eq} \\
-\quad the tests over a frozen part in one pass over the chain, which imply the tests on the boxes of its tree & \lean{SieveAd.frozTestsC\_okI}, \\
- & \lean{SieveAd.frozTestsC\_okJ}, \\
- & \lean{SieveAd.rules\_frozC} \\
+\quad the tests in one pass, equal to the tests & \lean{SieveAd.Plain.fillTestsF\_eq} \\
+\quad the tests over a frozen part in one pass over the chain, which imply the tests on the boxes of its tree & \lean{SieveAd.Plain.frozTestsC\_okI}, \\
+ & \lean{SieveAd.Plain.frozTestsC\_okJ}, \\
+ & \lean{SieveAd.Plain.rules\_frozC} \\
 \quad the root's test, by evaluation & \lean{Linnik21500.linnik\_21500} \\
 \quad Dirichlet's theorem, for the small moduli (Mathlib) & \lean{Nat.forall\_exists\_prime\_gt\_and\_modEq} \\
 \quad the prime number theorem, from Input~\ref{inp:half-plane} & \lean{HalfPlanePNT.psi\_isBigO\_eleven\_twelfths} \\
@@ -2329,11 +2456,18 @@ Its exponents $12 + \varepsilon$, $36/13 + \varepsilon$ and $12/5 + \varepsilon$
 % Added on 28 October 2026, checked against Math-Net.Ru and EuDML (Linnik II), the IMPAN record (Jutila), arXiv (Kerr),
 % Heath-Brown's publication list (Heath-Brown 1979, Heath-Brown--Iwaniec), the Cambridge record (Baker--Harman--Pintz),
 % the AMS record (Cheer--Goldston), and the Springer and ACM records (Lean 4, Mathlib). Heath-Brown's large-values paper
-% (1979, J. London Math. Soc. 20) is cited as Chen, Gupta and Li cite it; it was not read.
+% (1979, J. London Math. Soc. 20) is cited as Chen, Gupta and Li cite it; it was not read then, and was read in full
+% in November 2026 (formalisations/chen-gupta-li-density.md).
 % Added on 29 October 2026: Titchmarsh (2nd ed., 1986), the standard edition; Bui--Heath-Brown checked against the IMPAN
 % record (Acta Arith. 141 (2010), 335--344) and arXiv:0903.4008, whose introduction was read for the statement of
 % Montgomery's fourth moment; Harman's series as LMS Monographs (New Series). Banks--Shparlinski's arXiv version
 % (1605.07553v2) says that it does not improve the Linnik exponent, so the 2.1115 is in the published version only.
+% Added on 16 November 2026: Chen--Gupta--Li (v2 still the current version; Proposition 3.1 on p. 8 and Theorem 10.1
+% on p. 40 read in v2), R. Li (v8 still current), Kerr (arXiv, v1) and the OpenAI repository (the preprints unchanged
+% since adc7f12; formalization.yaml still v0.4, partial progress, unchecked) were checked again. Naslund: the Hexagon
+% record 2610.00018v1 (2 October 2026; title, contributor and abstract) was read; the paper's proof was not. Burgess
+% (1962), Heath-Brown (1979) and Jutila (1977): the Crossref records. Burgess's paper was not read: it is cited for
+% the method whose case r = 2 the fourth moment of Section 9 is, not for a statement.
 \begin{thebibliography}{99}
 \raggedright
 \input{references}

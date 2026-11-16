@@ -1,6 +1,7 @@
 % The supplement to the Linnik exponent paper (main.tex): the proofs of the prime sums' lemma and the kernel bound, of
 % the family lemmas in two variables, of Harman's comparisons in two variables and the leaves' lemma, and of the bound
-% for rough numbers, the Lean details of the paper, and the computations around its exponent.
+% for rough numbers, the Lean details of the paper, the computations around its exponents, and the proofs for the
+% resonant window and for the leaves cut in three (Sections 8 and 9 of the paper).
 % Compile main.tex first: the references to the paper (\ref{M-...}) are read from main.aux.
 \documentclass[11pt]{article}
 \usepackage[T1]{fontenc}
@@ -34,18 +35,19 @@
 \numberwithin{equation}{section}
 \renewcommand{\thesection}{S\arabic{section}}
 
-\title{Supplement to ``Linnik's constant below the zero-density exponent: $43/20$ from a zero-free half-plane''}
+\title{Supplement to ``Linnik's constant below the zero-density exponent: $21/10$ from a zero-free half-plane''}
 \author{Ritchie Comley}
-\date{Draft, 12 November 2026}
+\date{Draft, 16 November 2026}
 
 \begin{document}
 \maketitle
 
 This supplement holds the proofs of the lemma on prime sums and of the kernel bound, of the family lemmas in two
 variables, of Harman's comparisons in two variables and of the lemma on the leaves, and of the bound for rough
-numbers, in the form in which the Lean library proves them (Sections~\ref{app:prime-sum} to~\ref{app:rough}), and the details of the paper's
-account of the formalisation (Section~\ref{sup:lean}) and of its computations around the exponent
-(Section~\ref{sup:computations}). Numbers such as Lemma~\ref{M-lem:prime-sum} and Section~\ref{M-sec:certificate} refer
+numbers, in the form in which the Lean library proves them (Sections~\ref{app:prime-sum} to~\ref{app:rough}), the
+details of the paper's account of the formalisation (Section~\ref{sup:lean}) and of its computations around the
+exponents (Section~\ref{sup:computations}), and the proofs that Sections~\ref{M-sec:window} and~\ref{M-sec:rules} of
+the paper leave to it (Sections~\ref{sup:window} and~\ref{sup:leaves}). Numbers such as Lemma~\ref{M-lem:prime-sum} and Section~\ref{M-sec:certificate} refer
 to the paper, and those that begin with S to this supplement. Its notation is the paper's.
 
 \section{Proof of Lemma~\ref{M-lem:prime-sum}, and the kernel bound}\label{app:prime-sum}
@@ -969,7 +971,7 @@ differences between the Lean statement and the published one.
 \begin{sloppypar}
 The statements of Sections~\ref{M-sec:type1} to~\ref{M-sec:certificate} carry, in Lean, the instances
 \lean{SieveRoute.Route} and \lean{SieveRoute.RouteOK}, which hold $L$ and $2 < L \le 5/2$ (with two more fields, which
-the proof at $43/20$ does not use), and \lean{SieveCert.IBPar} and \lean{SieveCert.IBFits}, which hold $L$ as a fraction
+the proofs at $43/20$ and $21/10$ do not use), and \lean{SieveCert.IBPar} and \lean{SieveQ.IBFits}, which hold $L$ as a fraction
 of integers for the tests of Section~\ref{M-sec:decomp}. A statement of the paper that holds under the input uses the library's proof of the input;
 one about a density curve, such as Proposition~\ref{M-prop:type2-gen} (\lean{SieveTypeIIHM.typeII\_two\_gen}), takes
 the curve's counts as a hypothesis as well. The exception in
@@ -1002,22 +1004,22 @@ prime factor below $z$, as in every use; and the count of rough numbers is \lean
 In Sections~\ref{M-sec:decomp} and~\ref{M-sec:certificate}, the exponents of the cells are integers over $D = 2^{40}$
 (\lean{SieveCert.DEN}) and the costs integers over $\mathcal K = 2^{60}$ (\lean{SieveCert.K}); the factors $\tilde t$
 and $\tilde s$ of a dropped box's cost are fixed-point numbers with the scale $2^{64}$ (\lean{SieveAd.SC}). The tests of
-Definition~\ref{M-def:tests} are \lean{SieveAd.okI2}, \lean{SieveAd.okJ2} and \lean{SieveAd.okJ3}, checks in natural
+Definition~\ref{M-def:tests} are \lean{SieveAd.okI2}, \lean{SieveAd.Plain.okJ2} and \lean{SieveAd.Plain.okJ3}, checks in natural
 numbers with $L$ written as $2150/1000$; the region's six inequalities enter them as multiples of $1/62500$, with
 $\lambda = 27637/62500$ and $1/12500 = 5/62500$, so with the constants $62505$, $62500 + 27637 = 90137$,
 $62500 - 27637 = 34863$ and $2 \cdot 62500 + 5 = 125005$. Lemma~\ref{M-lem:tests}(a) and~(b) are
-\lean{SieveAd.fillTests\_sound}. In (c) the further comparisons are those of the formalisation's families
+\lean{SieveAd.Plain.fillTests\_sound}. In (c) the further comparisons are those of the formalisation's families
 (\lean{SieveDecomp.Atom}): a prime with a threshold, two primes, or the product of some of the primes with a threshold.
-The proof of Theorem~\ref{M-thm:main} uses (c) in one form, for the tests at a floor over a frozen part, with any
-number of primes and of comparisons (\lean{SieveAd.evJ\_fill\_core}, \lean{SieveAd.evJ\_two\_core}); (a) with at most
-$40 - 3k$ comparisons is \lean{SieveAd.evI\_twoE}; and the tests with at most two comparisons for boxes of at most
+The proof of Theorem~\ref{M-thm:4320} uses (c) in one form, for the tests at a floor over a frozen part, with any
+number of primes and of comparisons (\lean{SieveAd.Plain.evJ\_fill\_core}, \lean{SieveAd.Plain.evJ\_two\_core}); (a) with at most
+$40 - 3k$ comparisons is \lean{SieveAd.Plain.evI\_twoE}; and the tests with at most two comparisons for boxes of at most
 twelve primes (\lean{SieveAd.fillTests\_soundX}) serve the role reversal of three primes, which the certificate does not
-use. The test (I$_{\mathcal M}$) goes through Lemma~\ref{M-lem:chains-two} directly (\lean{SieveAd.full2\_core}). The trees of
+use. The test (I$_{\mathcal M}$) goes through Lemma~\ref{M-lem:chains-two} directly (\lean{SieveAd.Plain.full2\_core}). The trees of
 Definition~\ref{M-def:tree} without the node (R) are \lean{SieveAd.Tree}, checked by \lean{SieveAd.ok}, and
 Proposition~\ref{M-prop:tree-bound} for them is \lean{SieveAd.sound}. The reversal is not a node of
-\lean{SieveAd.Tree} but a rule of the searches (\lean{SieveAd.altFD} in the search led by hints), with the bound of
-Proposition~\ref{M-prop:reversal} (\lean{SieveAd.bd\_flipCostD}). What the searches prove, Lemma~\ref{M-lem:search}
-(\lean{SieveAd.solveG\_sound} for any rules, \lean{SieveAd.solveD\_sound} for the search led by hints), is the bound
+\lean{SieveAd.Tree} but a rule of the searches (\lean{SieveAd.Plain.altFD} in the search led by hints), with the bound of
+Proposition~\ref{M-prop:reversal} (\lean{SieveAd.Plain.bd\_flipCostD}). What the searches prove, Lemma~\ref{M-lem:search}
+(\lean{SieveAd.solveG\_sound} for any rules, \lean{SieveAd.Plain.solveD\_sound} for the search led by hints), is the bound
 \lean{SieveAd.PR}, that the term of a box with a sign is bounded at a cost, and not the tree; Theorem~\ref{M-thm:tree} is
 \lean{SieveAd.linnik\_pr}, from that bound.
 The prime number theorem of Theorem~\ref{M-thm:tree} is derived from the case of $\zeta$ of Input~\ref{M-inp:half-plane},
@@ -1040,7 +1042,26 @@ other character through the family twisted by a character modulo $4q$. The class
 among them cubic and sextic reciprocity \cite{ireland-rosen}, are theorems of the library. The import cone of the
 theorem in the library has $223$ files, all of them in \texttt{lib/core}.
 
-\subsection*{Independent checking of the input}
+\subsection*{The library's proof of Input~\ref{M-inp:cgl}}
+
+The library proves Input~\ref{M-inp:cgl} as \lean{LinnikCGLHB101.prop31}, along Chen, Gupta and Li's preprint
+\cite{cgl} (\file{formalisations/chen-gupta-li-density.md}); the formalisation is in the modules of \file{lib/pnt}
+whose names begin with \texttt{LinnikCGL}. Its inputs are their Proposition~4.6, their Proposition~6.1, the bound for
+the sum they call $S_2$, and their Proposition~11.1, the bound for $S_3$, with their Sections~7 to~10 behind it, among
+them their Proposition~8.1 and their Theorem~10.1. That theorem is Heath-Brown's large values estimate for double sums
+with characters \cite{hb79b}, at one modulus and for primitive characters; the library proves that case on dyadic
+ranges, with a factor $(qTM)^\varepsilon$ in place of Heath-Brown's, by his method in Kerr's arrangement \cite{kerr}
+(positivity, lengthening, squaring and a reflection), with Jutila's lemma \cite{jutila} for the reflection with
+characters. The Lean statement has one point for each character, the indicator of $[6N/5, 9N/5]$ in place of the
+preprint's smooth weight, which is $1$ there, and an explicit factor $(qTN)^\varepsilon$ for its $\lessapprox$; the
+lemmas behind it hold for several separated points of each character. The formalisation found seven places where the
+preprint's text needs a small repair, none of which affects its results; the note lists them. The library does not
+formalise their Theorem~1.2 as they state it: from Input~\ref{M-inp:cgl} it derives the thirty steps of the curve $g^*$
+between $5/7$ and $131/168$ (\lean{LinnikCGLSteps.charDensity\_s0} to \lean{LinnikCGLSteps.charDensity\_s29}), by zero
+detection after their Section~12, and the count of the large values of the powers of a prime sum
+(Lemma~\ref{M-lem:lv-powers}).
+
+\subsection*{Independent checking of the inputs}
 
 Independent checking of Input~\ref{M-inp:half-plane} is partial, and little of it is independent of OpenAI. OpenAI's
 release has its own Lean formalisation of the main preprint's result. Its catalogue \texttt{lean/formalization.yaml}
@@ -1059,8 +1080,15 @@ it is not a review of the mathematics that is independent of OpenAI and of the a
 specialisation to the Riemann zeta function at $7/8$, not Dirichlet $L$-functions in general. So the author knows of no
 review of the mathematics for Dirichlet $L$-functions in general that is independent of OpenAI and of the author.
 
-Huxley's estimate is refereed and classical. The library's proof of it is the author's, in the same way, and Lean's
-kernel checks that proof; \file{formalisations/huxley-density.md} compares its statement with Huxley's.
+Input~\ref{M-inp:cgl} is Proposition~3.1 of a preprint that has not been refereed \cite{cgl}. The library's proof of it
+is a formalisation of that preprint's argument, written by the author with the same assistance, so it is a
+machine-checked proof of the statement of Input~\ref{M-inp:cgl}, and not a review of the preprint that is independent
+of the author; parts of the preprint were read only in outline, and \file{formalisations/chen-gupta-li-density.md}
+says which.
+
+Ingham's and Huxley's estimates are refereed and classical. The library's proofs of them are the author's, in the same
+way, and Lean's kernel checks those proofs; \file{formalisations/ingham-density.md} and
+\file{formalisations/huxley-density.md} compare their statements with the published ones.
 
 \subsection*{What the kernel checks}
 
@@ -1070,12 +1098,14 @@ which \texttt{scripts/check\_hygiene.py} checks. The library vendors 19 files of
 and, in \texttt{lib/vendor/zeta23}, 117 files of the \texttt{zeta23} folder of Anthropic's \texttt{formal-math}
 \cite{formal-math}, each ported to the
 library's toolchain by a patch that the repository records. That scan does not cover them; but the import cone of
-Theorem~\ref{M-thm:main} contains 15 of the PrimeNumberTheoremAnd files and none of the \texttt{zeta23} ones, and not
+Theorem~\ref{M-thm:4320} contains 15 of the PrimeNumberTheoremAnd files and none of the \texttt{zeta23} ones, and not
 \texttt{Wiener.lean}, the vendored file that contains \lean{sorry}. In any case the axiom check of the theorems in the
 table of Appendix~\ref{M-app:claims} covers the whole dependency cone of each, and a \lean{sorry} in it would appear there
-as \lean{sorryAx}. The import cone of Theorem~\ref{M-thm:main} has $482$ files of the library, $282$ in
-\texttt{lib/core} and $200$ in \texttt{lib/pnt}; it contains no module of the library's formalisation of Chen, Gupta and
-Li's paper.
+as \lean{sorryAx}. The import cone of Theorem~\ref{M-thm:4320} has $487$ files of the library besides the theorem's
+own, $282$ in \texttt{lib/core} and $205$ in \texttt{lib/pnt}; it contains no module of the library's formalisation of
+Chen, Gupta and Li's paper. That of Theorem~\ref{M-thm:2110} has $1796$, $282$ in \texttt{lib/core} and $1514$ in
+\texttt{lib/pnt}, among them $63$ modules of that formalisation, the $1150$ part files of its certificate and the $58$
+files of its cells (\texttt{scripts/import\_cone.py}).
 
 The certificate of Proposition~\ref{M-prop:certificate} is checked by kernel evaluation, \lean{decide +kernel}, and not
 by compiled code. The search led by hints is evaluated on $1552$ parts, the theorems \lean{SieveAd.tree21500\_0} to
@@ -1087,12 +1117,12 @@ takes about $0.3$ ms on an evaluated box ($0.5$ ms over a frozen part), $1.2$ ms
 ($1.1$ ms), $0.25$ ms on a dropped box ($0.45$ ms) and $3$ ms on a reversal's root. The search reads every
 configuration from the hints (\file{lib/pnt/SieveAdDirDefs.lean}), and its tests are written for the kernel: one pass
 over a box by the recursor of lists, with the arithmetic of the natural numbers written out and the bits of the sets as
-factors (\lean{SieveAd.fillTestsF}). Over a frozen part the pass reads the cells of the chain alone: the frozen primes
+factors (\lean{SieveAd.Plain.fillTestsF}). Over a frozen part the pass reads the cells of the chain alone: the frozen primes
 are the same at every box of a tree, and the sums of their cells' ends over a set of them are values of the tree, which
-the kernel computes once for the tree and the set (\lean{SieveAd.frozTestsC}). The tests of the main tree are proved
-equal to the tests of Lemma~\ref{M-lem:tests} (\lean{SieveAd.fillTestsF\_eq}). Those over a frozen part imply the tests
-of Lemma~\ref{M-lem:frozen-tests} on the boxes of a tree over it (\lean{SieveAd.frozTestsC\_okI},
-\lean{SieveAd.frozTestsC\_okJ}), and a statement of the tree concerns no other box (\lean{SieveAd.rules\_frozC}). So
+the kernel computes once for the tree and the set (\lean{SieveAd.Plain.frozTestsC}). The tests of the main tree are proved
+equal to the tests of Lemma~\ref{M-lem:tests} (\lean{SieveAd.Plain.fillTestsF\_eq}). Those over a frozen part imply the tests
+of Lemma~\ref{M-lem:frozen-tests} on the boxes of a tree over it (\lean{SieveAd.Plain.frozTestsC\_okI},
+\lean{SieveAd.Plain.frozTestsC\_okJ}), and a statement of the tree concerns no other box (\lean{SieveAd.Plain.rules\_frozC}). So
 they are sound. The hints are $1552$ natural numbers, $5220964$ bytes in all, written in hexadecimal.
 The definitions the kernel evaluates are arithmetic on Lean's core natural numbers, lists and booleans; their files
 import from Mathlib only the notation $\mathbb N$. Lean's kernel reduces the operations of the natural numbers on
@@ -1102,10 +1132,11 @@ their definitions, so this check trusts GMP as well as the kernel.
 \subsection*{The artefact}
 
 The library, the paper and this supplement are in the repository \cite{repo}; this version of the paper and of the
-supplement describes the library at the commit that contains it. The earlier versions of the paper proved the exponent
-$11/5$, by a Type~II estimate in one variable on a window with Chen, Gupta and Li's density estimate as a second input;
-that theorem, \lean{Linnik22000E.linnik\_22000e}, is still in the library, and that version of the paper is in the
-repository's history at commit \texttt{49dc981}. Before it, the paper proved $278/125$
+supplement describes the library at the commit that contains it. The version before this one proved
+Theorem~\ref{M-thm:4320} alone; it is in the repository's history at commit \texttt{40411d7}. The versions before that
+proved the exponent $11/5$, by a Type~II estimate in one variable on a window with Chen, Gupta and Li's density
+estimate as a second input; that theorem, \lean{Linnik22000E.linnik\_22000e}, is still in the library, and that
+version of the paper is in the repository's history at commit \texttt{49dc981}. Before it, the paper proved $278/125$
 (\lean{Linnik22240R.linnik\_22240r}, at commit \texttt{8ba053b}). The toolchain is Lean \texttt{v4.35.0-rc3}
 \cite{lean4}, a release candidate, with Mathlib \cite{mathlib} at commit \texttt{0f64d30a},
 PrimeNumberTheoremAnd at \texttt{650d312} and \texttt{formal-math} at \texttt{fbdc36b}. The repository's README gives the

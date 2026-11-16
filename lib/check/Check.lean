@@ -9,15 +9,18 @@ import BallGap
 import BallUpperEta
 import OrbitWindow
 
-/- Linnik's theorem with exponent `L = 43/20` (`2150/1000`), with no hypothesis: the Linnik paper's theorem
+/- Linnik's theorem with exponent `L = 43/20` (`2150/1000`), with no hypothesis: Theorem 1.2 of the Linnik paper
 (`papers/linnik-exponent/main.tex`). Harman's sieve with the Type II estimate in two variables, whose density curve is
 the trivial count below `7789/10000` and Huxley's estimate above (`SieveCurveHx`), a decomposition by trees of
 Buchstab steps with the reversal of a term through its largest prime, and its certificate, the plan of a search that
 the kernel follows by hints. Its one input that has not been refereed is the zero-free half-plane `Re s > 11/12`,
 OpenAI's result, proved here along their companion preprint (`formalisations/openai-half-plane.md`); no estimate of
-Ingham's or of Chen, Gupta and Li's is in its proof. The theorems of the paper's claims table (Appendix A), in its
-order: its own steps by section, then the results of the literature it uses, each with a note in `formalisations/`,
-then the classical deduction it compares with. -/
+Ingham's or of Chen, Gupta and Li's is in its proof: its tests are those of the namespace `SieveAd.Plain`, with the
+paper's conditions on the leaves of a comparison alone. The theorems of the first block of the paper's claims table
+(Appendix A), in its order: its own steps by section (Sections 2 to 7), then the results of the literature it uses,
+each with a note in `formalisations/`, then the classical deduction it compares with. The paper's Theorem 1.1, at
+`21/10` (`Linnik21000.linnik_21000`), and the theorems of its Sections 8 to 10 are printed by `CheckAll.lean`: its
+certificate is too heavy for the default build. -/
 #print axioms Linnik21500.linnik_21500
 #print axioms SieveTypeIIGen.CurveCounts
 #print axioms SieveCurveHx.counts_hx

@@ -7,7 +7,9 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README,
 
 - **Every numbered result is a Lean theorem.** Each paper has a table that names the Lean theorem behind each of its numbered results. Historical remarks, comparisons with other methods and heuristics in a paper are not Lean theorems, and the paper says so.
   `lib/check/Check.lean` prints the axioms of those theorems, and `scripts/check_axioms.py` checks that they are
-  `propext`, `Classical.choice` and `Quot.sound` only.
+  `propext`, `Classical.choice` and `Quot.sound` only. A theorem whose certificate is too heavy for the default build
+  is printed by `lib/check/CheckAll.lean` instead (`scripts/check_axioms.py --all`), and its paper says so: Theorem 1.1
+  of the Linnik paper, and the theorems of its Sections 8 to 10.
 - **A paper claims only its own steps.** The results it uses from the literature are proved in `lib/` too. Each has a
   note in [`formalisations/`](../formalisations/README.md) with its source and the differences between the Lean
   statement and the published one. The paper cites the result to its source and to the note, and does not restate
@@ -17,7 +19,7 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README,
 
 | Paper | Its theorem | Lean | State |
 |---|---|---|---|
-| [Linnik's exponent](linnik-exponent/README.md) ([PDF](https://dickie81.github.io/number-theory/linnik-exponent.pdf), [supplement](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf)) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{43/20}` | `Linnik21500.linnik_21500` | A draft; the bibliography is checked except Buchstab (1937), which is unverified |
+| [Linnik's exponent](linnik-exponent/README.md) ([PDF](https://dickie81.github.io/number-theory/linnik-exponent.pdf), [supplement](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf)) | There is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ Kq^{21/10}`; and with `p ≤ Kq^{43/20}` by a proof whose only unrefereed input is the zero-free half-plane | `Linnik21000.linnik_21000`, `Linnik21500.linnik_21500` | A draft; the bibliography is checked except Buchstab (1937), which is unverified |
 | [The orbit lattice](orbit-lattice/README.md) ([PDF](https://dickie81.github.io/number-theory/orbit-lattice.pdf)) | RH holds if and only if every Gram–Schmidt pivot of the orbit with Gram matrix `√(mn)·K_H(m/n)`, computed from the primes, is at least the first, and if and only if `w_1` is a shortest vector of the lattice the orbit spans; under RH every pivot after the first is at least `0.0577 > 1.249·K_H(1)` | `PivotSharp.rh_iff_orbitLattice`, `PivotSharp.rh_iff_shortest`, `PivotSharp.pivot_ge_rh` | A first draft: the proofs of Section 4 are sketches, and three sources of the literature check are unread |
 
 ## Building
