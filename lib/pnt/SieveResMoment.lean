@@ -17,7 +17,6 @@ density hypothesis's count. These are the counts of the bins of the resonant win
 * `dp_pow_eq`: `(dp S (aχ) t)^k = dp (powSet S k) (cχ) t` with `c = powCoeff S k a`.
 * `powSet_subset`: `powSet S k ⊆ (A^k, B^k]` for `S ⊆ (A, B]` and `k ≥ 1`.
 * `sum_powCoeff_sq_le`: `Σ_n |c_n|² ≤ F(Σ|a|²)^k` when no `n` has more than `F` tuples.
-* `card_tuples_le`: the `k`-tuples of elements of `S` with product `n ≥ 1` number at most `d(n)^k`.
 * `sum_chars_dp_pow_le`, **the `2k`-th moment**: `Σ_χ |dp S (aχ) t|^{2k} ≤ (B^k − A^k + q)·F·(Σ|a|²)^k`.
 * `card_large_le`, **the count of the large values**: `V^{2k}·#{χ : V ≤ |dp S (aχ) t|} ≤ Σ_χ |dp S (aχ) t|^{2k}`.
 
@@ -115,20 +114,6 @@ lemma sum_powCoeff_sq_le {S : Finset ℕ} (k : ℕ) (a : ℕ → ℂ) {F : ℝ}
           (t := powSet S k) (fun x hx => Finset.mem_image_of_mem _ hx)]
     _ = F * (∑ j ∈ S, ‖a j‖ ^ 2) ^ k := by
         rw [hT, ← Fin.prod_const k (∑ j ∈ S, ‖a j‖ ^ 2), Finset.prod_univ_sum]
-
-/-- **The tuples with a given product**: for `n ≥ 1`, the `k`-tuples of elements of `S` with product `n` number at
-most `d(n)^k`, each entry being a divisor of `n`. -/
-lemma card_tuples_le {S : Finset ℕ} (k : ℕ) {n : ℕ} (hn : n ≠ 0) :
-    ((Fintype.piFinset fun _ : Fin k => S).filter fun x => ∏ i, x i = n).card ≤ n.divisors.card ^ k := by
-  classical
-  calc ((Fintype.piFinset fun _ : Fin k => S).filter fun x => ∏ i, x i = n).card
-      ≤ (Fintype.piFinset fun _ : Fin k => n.divisors).card := by
-        refine Finset.card_le_card fun x hx => ?_
-        obtain ⟨_, hxn⟩ := Finset.mem_filter.1 hx
-        refine Fintype.mem_piFinset.2 fun i => Nat.mem_divisors.2 ⟨?_, hn⟩
-        rw [← hxn]
-        exact Finset.dvd_prod_of_mem _ (Finset.mem_univ i)
-    _ = n.divisors.card ^ k := by rw [Fintype.card_piFinset, Fin.prod_const]
 
 /-- **The `2k`-th moment of a polynomial over the characters.** For `S ⊆ (A, B]`, `k ≥ 1` and `F` such that every
 `n` is the product of at most `F` tuples of `k` elements of `S`:

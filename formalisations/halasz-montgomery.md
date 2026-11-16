@@ -83,8 +83,8 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   rest (`docs/research-opportunities.md`, §3.1): `SieveLeafTwo.typeIITwoAt_leaf` below;
 - `SieveTypeIIHM.sum_chars_dp_pow_le` and `SieveTypeIIHM.card_large_le` (`lib/pnt/SieveResMoment.lean`): the
   `2k`-th moment, `Σ_χ |W(χ)|^{2k} ≤ (B^k − A^k + q)·F·(Σ|a|²)^k` for `S ⊆ (A, B]` and `k ≥ 1` (`W(χ)^k` is the
-  polynomial of the products of `k` elements of `S`; `F` bounds the tuples with a given product `n`, at most
-  `d(n)^k`, `card_tuples_le`), and Markov's count of the large values: `V^{2k}` times the number of characters with
+  polynomial of the products of `k` elements of `S`; `F` bounds the number of tuples with a given product
+  `n`), and Markov's count of the large values: `V^{2k}` times the number of characters with
   `|W(χ)| ≥ V` is at most the moment. For a prime sum of length `q^s` and `ks ≥ 1`, the characters at which it
   exceeds `q^{st}` number about `q^{2ks(1−t)}`, the density hypothesis's count at the lengths `q^{1/k}`: the counts
   of the resonant window (`docs/research-opportunities.md`, §3.1), `SieveTypeIIHM.typeII_res` below;
@@ -109,7 +109,9 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   (`lib/pnt/SieveResChain.lean`): `typeII_res` at each frequency for a polynomial over the integers cut into dyadic
   blocks, the family with comparisons on its primes (`SieveChain.typeII_gcmp`'s), and the chains of primes times a
   rough cofactor with the cofactor as the variable and all the chain's primes as the rest
-  (`SieveChain.chainTU_bound`'s), given `ResCond` at the cofactor's blocks and the primes' scales;
+  (`SieveChain.chainTU_bound`'s), given `ResCond` at the cofactor's blocks and the primes' scales. No certificate
+  takes the chains this way, so `chainTU_res` is a result of a route that nothing proves (Conditional results,
+  below);
 - `SieveTypeIIHM.box_res_gen` and `SieveTypeIIHM.chain_res_core` (`lib/pnt/SieveResFull.lean`): `typeII_res` for a
   polynomial over a finite set with at most `D` elements for each value, and the families of tuples of primes in
   no order (`SieveTwoChain.chain_two_core`'s) with one variable, the product of the entries outside a rest whose
@@ -132,8 +134,9 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `SieveAd.resTestsF` in `lib/pnt/SieveAdResDefs.lean`): a box of the main
   tree whose rest passes `SieveResTest.resT` has its term evaluated by `chain_res_exp`, the variable being the box's
   other primes and the cofactor; so the tests with the resonant window for an evaluation of kind `3` (and
-  `fillTestsF`'s otherwise) are sound, and `SieveAd.pr_of_partD` applies to a search with them. No certificate uses
-  them yet;
+  `fillTestsF`'s otherwise) are sound, and `SieveAd.pr_of_partD` applies to a search with them. The certificate at
+  `2115/1000` uses the tests with the cofactor in the rest instead (`SieveAd.resTestsFC`), so `resTestsF_sound` is a
+  result of a route that nothing proves (Conditional results, below);
 - `SieveAd.evIF_froz_resT` (`lib/pnt/SieveAdFrozRes.lean`): the same over the frozen part of a reversal: when
   `chkIR` passes the box `ch ++ β`, the term of the chain `ch` over the frozen part is evaluated, by
   `SieveTypeIIHM.full_res_exp` on the frozen tuples `(a, y, c, y′)` with the rest among the frozen primes `a` and the
@@ -415,3 +418,13 @@ variable: there `SieveHMBins` and `SieveTypeIIHM` bound each bin of characters a
 `[43457/100000, 46959/100000]·L` at `L = 11/5`, is the window of this branch (`SieveTypeIIU22000D`). (The earlier windows, `[41556/100000, 47531/100000]·L` at `L = 278/125`,
   `[41479/100000, 47555/100000]·L` at `L = 89/40` and `[41335/100000, 48069/100000]·L` at `L = 899/400`, are in the git
   history.)
+
+## Conditional results
+
+Results of the resonant window that the library proves under the hypotheses of a route, and that no unconditional
+result uses: lemmas of a route that nothing proves (`scripts/dead_code.py` reads the Lean column).
+
+| Result | Hypothesis | Lean |
+|---|---|---|
+| The tests with the resonant window for an evaluation of kind `3`, the rest among the box's cells only, are sound | a route and the parameters of the induction (`SieveRoute.Route`, `SieveCert.IBPar`); the certificate at `2115/1000` uses the tests with the cofactor in the rest (`SieveAd.resTestsFC_sound`) | `SieveAd.resTestsF_sound` |
+| The chains of primes times a rough cofactor, by the resonant window, with all the chain's primes as the rest | a route (`SieveRoute.Route`, `SieveRoute.RouteOK`) | `SieveTypeIIHM.chainTU_res` |
