@@ -5,7 +5,8 @@ The C planner is the Python planner's search (`Planner.plan`, the lazy hints' `r
 (`cplan_test.py` compares the two). The same program is the generator in C (`cplan/gen.h`, `hint_cert.py --cgen`):
 the cut of a heavy cell into parts (`cut`, in the run that plans it, or from a plan given), the parts of light cells
 (`add_part`) and the transcoding of a part's hints for `Par.hl` (`hl_parts`), with the hints of each part written and
-checked by the kernel's mirror (`dHints`, `dPart`) as the Python generator does (`cgen_test.py` compares the two).
+checked by the kernel's mirror (`dHints`, `dPart`) as the Python generator does (`cgen_test.py` compares the two);
+and the plan of a heavy cell kept in a cache, read back from its parts' hints, cut again (`recut_cells`).
 The program is compiled once for each version of its sources, in the temporary directory, with `$CC` (`cc` if
 unset); it needs a C compiler with `__int128` (GCC or Clang) and libm."""
 import hashlib
@@ -325,6 +326,60 @@ def cut_cells(par_, cells):
     lines = iter(_gen(par_, cmds).split('\n'))
     out = [parse_cut(lines) for _ in cells]
     assert not ''.join(lines)
+    return out
+
+
+def dump_piece(p, out):
+    """The tokens of a piece of a cut cell (`parse_piece`'s input), appended to `out`."""
+    if p[0] == 'part':
+        out += ['p', str(p[1])]
+        return out
+    _, bl, par, f, cfg, ps, _ = p
+    out += ['b', str(len(bl))] + [f'{x} {y}' for x, y in bl] + [str(int(par)), str(f)]
+    out += [str(int(v)) for v in cfg[:4]] + [str(int(bool(cfg[4]))), str(len(ps))]
+    for q in ps:
+        dump_piece(q, out)
+    return out
+
+
+def _entry_cmd(cmd, r):
+    """The command `RECUT` or `REBUILD` of a heavy cell kept in a cache: `r` = ('heavy', a, b, piece, parts, info)."""
+    _, a, b, piece, parts = r[:5]
+    toks = [cmd, str(a), str(b), str(len(parts))]
+    for top, bl, par, cs, a_, c, h in (p[:7] for p in parts):
+        toks += (['P', str(top), str(len(bl))] + [f'{x} {y}' for x, y in bl] + [str(int(par)), str(len(cs))]
+                 + [str(x) for x in cs] + [str(a_), str(c), f'{h:x}'])
+    toks.append('PIECE')
+    return ' '.join(dump_piece(piece, toks))
+
+
+def recut_cells(par_, entries):
+    """The heavy cells kept in a cache (`row_job`'s `('heavy', a, b, piece, parts, info)`, cut without the halves of
+    a split cell) cut again by `cut`: each cell's plan is read back from its parts' hints by the kernel's search
+    (`gen.h`, `rebuild`), the steps of its pieces above them, and cut as `hint_cert.cut` cuts it now; the entries
+    with their new pieces and parts, the rest as it was (the same plan, cost and counts)."""
+    if not entries:
+        return []
+    lines = iter(_gen(par_, [_entry_cmd('RECUT', r) for r in entries]).split('\n'))
+    out = []
+    for r in entries:
+        piece, parts = parse_cut(lines)
+        assert piece[6] == r[3][6], 'the cell cut again at another cost'
+        out.append(r[:3] + (piece, parts) + r[5:])
+    return out
+
+
+def rebuild_trees(par_, entries):
+    """The plans of heavy cells kept in a cache, read back from their parts' hints (`recut_cells`), as trees."""
+    out = []
+    for line in _gen(par_, [_entry_cmd('REBUILD', r) for r in entries]).split('\n'):
+        if line:
+            toks = line.split()
+            assert toks[0] == 'TREE'
+            node, i = parse_tree(toks, 1)
+            assert i == len(toks)
+            out.append(node)
+    assert len(out) == len(entries)
     return out
 
 

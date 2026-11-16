@@ -1202,6 +1202,52 @@ static Piece *partPiece(Parts *ps, const Cell *bl, int nbl, int par, GCell *g, i
 }
 static double CAP;
 static int LEVELS;
+/* the cells of a step's new prime as `cut` goes through them: the part being filled (`group`, `gs`) */
+typedef struct {
+    Piece *pc;
+    Parts *ps;
+    const Cell *bl;
+    int nbl, par;
+    GCell *group;
+    int ng, cap;
+    double gs;
+} CutCtx;
+static Piece *cutg(const Node *node, const Cell *bl, int nbl, int par, Parts *ps);
+static void cutFlush(CutCtx *x) {
+    if (!x->ng) return;
+    pieceAdd(x->pc, partPiece(x->ps, x->bl, x->nbl, !x->par, x->group, x->ng));
+    x->ng = 0;
+    x->gs = 0.0;
+}
+/* one cell of the new prime; with `split2`, a cell over `cap` that the plan cuts in two is taken as its two halves,
+   each a cell of its own (`halves`) */
+static void cutCell(CutCtx *x, i64 s, i64 e, Node *k) {
+    if (G.split2 && k->k == KS && k->secs > CAP) {
+        i64 mid = (s + e) / 2;
+        cutCell(x, s, mid, k->u.s.a);
+        cutCell(x, mid, e, k->u.s.b);
+        return;
+    }
+    double t = k->secs;
+    if (t > CAP && k->k == KB && x->nbl + 1 < LEVELS) {
+        cutFlush(x);
+        Cell box[MAXB];
+        mkBox(s, e, x->bl, x->nbl, box);
+        pieceAdd(x->pc, cutg(k, box, x->nbl + 1, !x->par, x->ps));
+        return;
+    }
+    if (x->ng && x->gs + t > CAP) cutFlush(x);
+    if (x->ng == x->cap) {
+        x->cap = x->cap ? 2 * x->cap : 64;
+        x->group = realloc(x->group, sizeof(GCell) * x->cap);
+        CHECK(x->group, "out of memory");
+    }
+    x->group[x->ng].lo = s;
+    x->group[x->ng].hi = e;
+    x->group[x->ng].n = k;
+    x->ng++;
+    x->gs += t;
+}
 /* `cut` */
 static Piece *cutg(const Node *node, const Cell *bl, int nbl, int par, Parts *ps) {
     memset(&FZ, 0, sizeof FZ);
@@ -1225,38 +1271,10 @@ static Piece *cutg(const Node *node, const Cell *bl, int nbl, int par, Parts *ps
     pc->par = par;
     pc->f = f;
     pc->cfg = gd.cfg;
-    GCell *group = malloc(sizeof(GCell) * (nc ? nc : 1));
-    CHECK(group, "out of memory");
-    int ng = 0;
-    double gs = 0.0;
-    for (int i = 0; i < nc; i++) {
-        i64 s = ends[i], e = ends[i + 1];
-        Node *k = node->u.b.kids[i];
-        double t = k->secs;
-        if (t > CAP && k->k == KB && nbl + 1 < LEVELS) {
-            if (ng) {
-                pieceAdd(pc, partPiece(ps, bl, nbl, !par, group, ng));
-                ng = 0;
-                gs = 0.0;
-            }
-            Cell box[MAXB];
-            mkBox(s, e, bl, nbl, box);
-            pieceAdd(pc, cutg(k, box, nbl + 1, !par, ps));
-            continue;
-        }
-        if (ng && gs + t > CAP) {
-            pieceAdd(pc, partPiece(ps, bl, nbl, !par, group, ng));
-            ng = 0;
-            gs = 0.0;
-        }
-        group[ng].lo = s;
-        group[ng].hi = e;
-        group[ng].n = k;
-        ng++;
-        gs += t;
-    }
-    if (ng) pieceAdd(pc, partPiece(ps, bl, nbl, !par, group, ng));
-    free(group);
+    CutCtx x = {pc, ps, bl, nbl, par, NULL, 0, 0, 0.0};
+    for (int i = 0; i < nc; i++) cutCell(&x, ends[i], ends[i + 1], node->u.b.kids[i]);
+    cutFlush(&x);
+    free(x.group);
     free(ends);
     i128 tot = 0;
     for (int i = 0; i < pc->nout; i++) tot += pc->out[i]->cost;
@@ -1444,6 +1462,346 @@ static Node *parseNode(int fz) {
     return NULL;
 }
 
+/* ---------------------------------------------------------------------------------------------------------------
+   The plans back from the hints (`RECUT`): the kernel's search led by a part's hints, read as the plan that wrote
+   them, step by step (`dStep`'s codes: the step's kind, its configuration, its cells and the plans below them).
+   A heavy cell kept in a cache has its parts' hints and its pieces, not its plan; its plan is the pieces' steps
+   with the parts' cells under them, so it can be cut again (`cut` with the halves of a split cell). */
+static Node *bSolve(const Ops *O, int nf, const Cell *bl, int nbl, int par, long *pos);
+
+/* the bits of a step's plan (`kidCells`) from the ends of its cells: whether each proposed cut is taken */
+static uint8_t *bitsOf(int frozen, const Cell *bl, int nbl, i64 f, i64 top, const i64 *ends, int nk, int *nbits) {
+    Vec cs = {0, 0, NULL};
+    Strat S = {frozen, 0, FZ.ctx, FZ.nb};
+    Scuts(&S, bl, nbl, f, &cs);
+    uint8_t *bits = malloc(cs.n + 1);
+    CHECK(bits, "out of memory");
+    int nb = 0, j = 1;
+    i64 last = f;
+    for (int i = 0; i < cs.n; i++) {
+        i64 c = cs.v[i];
+        if (last < c && c < top) {
+            int b = j < nk && c == ends[j];
+            bits[nb++] = (uint8_t)b;
+            if (b) {
+                last = c;
+                j++;
+            }
+        }
+    }
+    free(cs.v);
+    CHECK(j == nk, "recut: a cell's end that the strategy does not propose");
+    *nbits = nb;
+    return bits;
+}
+/* `dKidsC` as a plan: the cells' ends (nk + 1 of them) and their plans */
+static Node **bKids(const Ops *O, int nrec, i64 top, const Cell *bl, int nbl, int par, i64 f, long *pos,
+                    i64 **endsOut, int *nkOut) {
+    i64 st, reg, e, last;
+    if (!O->frozen) {
+        st = stepOf(nbl + 1);
+        reg = min64(top, tsub(DEN, loSum(bl, nbl)) / 2 + 2);
+        e = tsub(bl[nbl - 1].lo, 1);
+        last = tsub(DEN - 1, hiSum(bl, nbl));
+    } else {
+        int nch = (int)tsub(nbl, FZ.nb);
+        st = nch < 2 ? G.hF : 2 * G.hF;
+        reg = min64(top, tsub(FZ.ctx.hi + 1, loSum(bl, nch)) / 2 + 2);
+        e = 0;
+        last = tsub(tsub(FZ.ctx.lo, 1), hiSum(bl, nch));
+    }
+    CHECK(nbl + 1 <= MAXB, "recut: a box of too many primes");
+    int cap = 16, n = 0;
+    Node **kids = malloc(sizeof(Node *) * cap);
+    i64 *ends = malloc(sizeof(i64) * (cap + 1));
+    CHECK(kids && ends, "out of memory");
+    ends[0] = f;
+    Cell box[MAXB];
+    i64 c = f, a = f;
+    for (int it = 0; it < 4096; it++) {
+        if (n + 1 >= cap) {
+            cap *= 2;
+            kids = realloc(kids, sizeof(Node *) * cap);
+            ends = realloc(ends, sizeof(i64) * (cap + 1));
+            CHECK(kids && ends, "out of memory");
+        }
+        if (bget(D.w, D.nw, *pos, 1) == 0) {
+            *pos += 1;
+            mkBox(a, top, bl, nbl, box);
+            kids[n++] = bSolve(O, nrec, box, nbl + 1, par, pos);
+            ends[n] = top;
+            *endsOut = ends;
+            *nkOut = n;
+            return kids;
+        }
+        int j = (int)bget(D.w, D.nw, *pos + 1, 2);
+        long hh;
+        i64 p, nc;
+        if (j != 3) {
+            p = c;
+            for (int s = 0; s < j + 1; s++) p = p + max64(1, min64(st, p / G.kappa));
+            hh = *pos + 3;
+            nc = p;
+        } else {
+            int t = (int)bget(D.w, D.nw, *pos + 3, 3);
+            if (t <= 3) {
+                p = c;
+                for (int s = 0; s < t + 4; s++) p = p + max64(1, min64(st, p / G.kappa));
+                hh = *pos + 6;
+                nc = p;
+            } else if (t == 4) {
+                for (int s = 0; s < 7; s++) c = c + max64(1, min64(st, c / G.kappa));
+                *pos += 6;
+                continue;
+            } else {
+                p = t == 5 ? reg : t == 6 ? e : last;
+                hh = *pos + 6;
+                nc = c;
+            }
+        }
+        CHECK(a < p && p < top, "recut: a cell out of the step's range");
+        *pos = hh;
+        mkBox(a, p, bl, nbl, box);
+        kids[n++] = bSolve(O, nrec, box, nbl + 1, par, pos);
+        ends[n] = p;
+        a = p;
+        c = nc;
+    }
+    die("recut: a step of too many cells");
+    return NULL;
+}
+/* a window's leaf from its configuration: the plan's hint (`resX`'s records are the low `EB` bits of `resXH`'s) */
+static Node *bLeafR(const DCfg *d, int fz) {
+    if (d->c.kind == 4) {
+        Memo *e = memoOwn(1);
+        HintY *hy = calloc(1, sizeof(HintY));
+        CHECK(hy, "out of memory");
+        long rs = d->rs;
+        hy->n = (int)bget(D.w, D.nw, rs, 4);
+        hy->kH = (int)bget(D.w, D.nw, rs + 4, 4);
+        hy->kL = (int)bget(D.w, D.nw, rs + 8, 4);
+        int w = 15 + 3 * hy->n;
+        CHECK(w <= 64 && w == RC.EB + 2 + 3 * hy->n, "recut: a corner's record");
+        for (int i = 0; i < hy->kH; i++) hy->recH[i] = bget(D.w, D.nw, rs + 12 + (long)w * i, w);
+        for (int i = 0; i < hy->kL; i++) hy->recL[i] = bget(D.w, D.nw, rs + 12 + (long)w * (hy->kH + i), w);
+        e->hint = hy;
+        return mkR(fz, d->c.sr, e);
+    }
+    Memo *e = memoOwn(0);
+    HintX *hx = calloc(1, sizeof(HintX));
+    CHECK(hx, "out of memory");
+    hx->lvf = d->k == 0;
+    hx->k = hx->lvf ? d->k2 : d->k;
+    CHECK(hx->k <= MAXREC, "recut: too many intervals");
+    int w = D.hl ? recW(__builtin_popcount(d->c.sr), hx->lvf) : RC.EB;
+    for (int i = 0; i < hx->k; i++) hx->rec[i] = bget(D.w, D.nw, d->rs + (long)w * i, w) & emask();
+    e->hint = hx;
+    return mkR(fz, d->c.sr, e);
+}
+/* `dFlipCost` and `dFlipTree` as a plan: the reversal's step `F` (a box of the sign −) or `P` (+) */
+static Node *bFlip(const Cell *bl, int n, int par, long *pos) {
+    CHECK(flipOK(G.maxlen, bl, n), "recut: a reversal that the search does not take");
+    Cell ctx = bl[n - 1];
+    int nb = n - 1;
+    Cell c = bl[0];
+    i64 t = flipT(ctx);
+    i64 lsb = loSum(bl, nb), hsb = hiSum(bl, nb);
+    FZ.on = 1;
+    FZ.e1 = tsub(DEN, ctx.hi) + par;
+    FZ.e2 = tsub(DEN, ctx.lo) + 1 - par;
+    FZ.Kb = 12 + DEN / bl[0].lo;
+    memcpy(FZ.beta, bl, sizeof(Cell) * nb);
+    FZ.nb = nb;
+    FZ.ctx = ctx;
+    FZD.Kb = FZ.Kb;
+    FZD.cl = max64(1, tsub(FZ.e1, hsb));
+    FZD.chh = tsub(FZ.e2, lsb);
+    FZD.lomb = lomin(FZ.beta, nb);
+    Ops O = {1, ctx, nb};
+    int sel = (int)bget(D.w, D.nw, *pos, 4);
+    FC fc = cfgJFd(FZD.Kb, FZD.cl, FZD.chh, FZ.beta, nb, FZD.lomb, FZ.beta, nb, pos);
+    CHECK(1 <= fc.f && fc.f <= min64(c.lo, t) && okJm(FZ.beta, nb, fc.f, &fc.cfg), "recut: a reversal's step fails");
+    i64 *ends;
+    int nk, nbits;
+    Node **kids = bKids(&O, G.fuel, t, FZ.beta, nb, !par, fc.f, pos, &ends, &nk);
+    uint8_t *bits = bitsOf(1, FZ.beta, nb, fc.f, t, ends, nk, &nbits);
+    free(ends);
+    FZ.on = 0;
+    return mkBFP(par ? KP : KF, 0, sel, kids, nk, bits, nbits);
+}
+static Node *bStep(const Ops *O, int nf, const Cell *bl, int nbl, int par, long *pos) {
+    CHECK(nbl > 0 && Ogrd(O, nbl), "recut: a step that the search does not take");
+    int fz = O->frozen;
+    Cell x = bl[0];
+    if (bget(D.w, D.nw, *pos, 1) == 0) {
+        *pos += 1;
+        DCfg d;
+        dIg(bl, nbl, pos, &d);
+        if (d.c.kind == 3 || d.c.kind == 4) return bLeafR(&d, fz);
+        return mkLeaf(KE, fz);
+    }
+    if (bget(D.w, D.nw, *pos + 1, 1) == 0) {
+        *pos += 2;
+        int sel = (int)bget(D.w, D.nw, *pos, 4);
+        FC fc = O->frozen ? cfgJFd(FZD.Kb, FZD.cl, FZD.chh, FZ.beta, FZ.nb, FZD.lomb, bl, nbl, pos)
+                          : cfgJMd(bl, nbl, pos);
+        CHECK(1 <= fc.f && fc.f <= x.lo && okJm(bl, nbl, fc.f, &fc.cfg), "recut: a Buchstab step fails");
+        i64 *ends;
+        int nk, nbits;
+        Node **kids = bKids(O, nf - 1, x.hi, bl, nbl, !par, fc.f, pos, &ends, &nk);
+        uint8_t *bits = bitsOf(O->frozen, bl, nbl, fc.f, x.hi, ends, nk, &nbits);
+        free(ends);
+        return mkBFP(KB, fz, sel, kids, nk, bits, nbits);
+    }
+    if (bget(D.w, D.nw, *pos + 2, 1) == 0) {
+        *pos += 3;
+        return mkLeaf(KD, fz);
+    }
+    if (bget(D.w, D.nw, *pos + 3, 1) == 0) {
+        *pos += 4;
+        CHECK(!O->frozen, "recut: a reversal over a frozen part");
+        return bFlip(bl, nbl, par, pos);
+    }
+    if (bget(D.w, D.nw, *pos + 4, 1) == 0) {
+        *pos += 5;
+        i64 mid = (x.lo + x.hi) / 2;
+        CHECK(x.lo < mid && mid < x.hi, "recut: a split of a cell too small");
+        Cell box[MAXB];
+        memcpy(box, bl, sizeof(Cell) * nbl);
+        box[0].hi = mid;
+        Node *a = bSolve(O, nf - 1, box, nbl, par, pos);
+        box[0].lo = mid;
+        box[0].hi = x.hi;
+        Node *b = bSolve(O, nf - 1, box, nbl, par, pos);
+        return mkS(fz, a, b);
+    }
+    if (bget(D.w, D.nw, *pos + 5, 1) == 0) {
+        *pos += 6;
+        return mkLeaf(KV, fz);
+    }
+    die("recut: the search's own alternative in a plan");
+    return NULL;
+}
+static Node *bSolve(const Ops *O, int nf, const Cell *bl, int nbl, int par, long *pos) {
+    CHECK(nf > 0, "recut: the search's fuel spent");
+    return bStep(O, nf, bl, nbl, par, pos);
+}
+
+/* the pieces of a cut cell as read: a part (its index) or a step with its items */
+typedef struct PIn PIn;
+struct PIn {
+    int kind, idx;
+    Cell bl[MAXB];
+    int nbl, par;
+    i64 f;
+    Cfg cfg;
+    PIn **out;
+    int nout;
+};
+static PIn *readPiece(void) {
+    char *t = gtokx();
+    PIn *x = calloc(1, sizeof(PIn));
+    CHECK(x, "out of memory");
+    if (!strcmp(t, "p")) {
+        x->kind = 0;
+        x->idx = (int)gint();
+        return x;
+    }
+    CHECK(!strcmp(t, "b"), "a malformed piece");
+    x->kind = 1;
+    x->nbl = (int)gint();
+    CHECK(x->nbl >= 1 && x->nbl <= MAXB, "a piece's box");
+    for (int i = 0; i < x->nbl; i++) {
+        x->bl[i].lo = gint();
+        x->bl[i].hi = gint();
+    }
+    x->par = (int)gint();
+    x->f = gint();
+    x->cfg.kind = (int)gint();
+    x->cfg.s0 = (u32)gint();
+    x->cfg.sr = (u32)gint();
+    x->cfg.s1 = (u32)gint();
+    x->cfg.e = (int)gint();
+    x->nout = (int)gint();
+    x->out = calloc(x->nout ? x->nout : 1, sizeof(PIn *));
+    CHECK(x->out, "out of memory");
+    for (int i = 0; i < x->nout; i++) x->out[i] = readPiece();
+    return x;
+}
+static void pinFree(PIn *x) {
+    for (int i = 0; i < x->nout; i++) pinFree(x->out[i]);
+    free(x->out);
+    free(x);
+}
+/* the plan of a step of a cut cell: its parts' cells (their plans read from the hints) and its steps cut further,
+   in order; the step's `sel` the first that `guide` reads as its floor and configuration (the plan's own, or one
+   that gives the same cells) */
+static Node *rebuild(const PIn *x, Part *parts, int np) {
+    CHECK(x->kind == 1, "recut: a part where a step is due");
+    int cap = 64, nk = 0;
+    Node **kids = malloc(sizeof(Node *) * cap);
+    i64 *ends = malloc(sizeof(i64) * (cap + 1));
+    CHECK(kids && ends, "out of memory");
+    ends[0] = x->f;
+    Ops O = {0, {0, 0}, 0};
+    for (int i = 0; i < x->nout; i++) {
+        const PIn *y = x->out[i];
+        if (y->kind == 0) {
+            CHECK(y->idx >= 0 && y->idx < np, "recut: a part's index");
+            Part *p = &parts[y->idx];
+            CHECK(p->nbl == x->nbl && !memcmp(p->bl, x->bl, sizeof(Cell) * x->nbl) && p->par == !x->par,
+                  "recut: a part that is not under its step");
+            D.w = p->h.w;
+            D.nw = p->h.cap;
+            D.hl = G.hl;
+            D.hook = 0;
+            memset(&FZ, 0, sizeof FZ);
+            long pos = 0;
+            Cell box[MAXB];
+            i64 a = p->a;
+            for (int j = 0; j <= p->ncs; j++) {
+                i64 b = j < p->ncs ? p->cs[j] : p->top;
+                CHECK(a == ends[nk], "recut: the parts' cells do not follow each other");
+                mkBox(a, b, p->bl, p->nbl, box);
+                if (nk + 1 >= cap) {
+                    cap *= 2;
+                    kids = realloc(kids, sizeof(Node *) * cap);
+                    ends = realloc(ends, sizeof(i64) * (cap + 1));
+                    CHECK(kids && ends, "out of memory");
+                }
+                kids[nk++] = bSolve(&O, G.fuel, box, p->nbl + 1, p->par, &pos);
+                ends[nk] = b;
+                a = b;
+            }
+            CHECK(pos >= bvLen(p->h.w, p->h.cap), "recut: a part's hints longer than its plans");
+        } else {
+            CHECK(y->nbl == x->nbl + 1 && !memcmp(y->bl + 1, x->bl, sizeof(Cell) * x->nbl) && y->par == !x->par &&
+                      y->bl[0].lo == ends[nk],
+                  "recut: a step that is not under its step");
+            if (nk + 1 >= cap) {
+                cap *= 2;
+                kids = realloc(kids, sizeof(Node *) * cap);
+                ends = realloc(ends, sizeof(i64) * (cap + 1));
+                CHECK(kids && ends, "out of memory");
+            }
+            kids[nk++] = rebuild(y, parts, np);
+            ends[nk] = y->bl[0].hi;
+        }
+    }
+    CHECK(ends[nk] == x->bl[0].hi, "recut: the step's cells do not reach its top");
+    memset(&FZ, 0, sizeof FZ);
+    int sel = -1;
+    for (int s = 0; s < 16 && sel < 0; s++) {
+        FC g = guide(x->bl, x->nbl, s);
+        if (g.ok && g.f == x->f && cfgEq(&g.cfg, &x->cfg)) sel = s;
+    }
+    CHECK(sel >= 0, "recut: no proposal gives the step's floor and configuration");
+    int nbits;
+    uint8_t *bits = bitsOf(0, x->bl, x->nbl, x->f, x->bl[0].hi, ends, nk, &nbits);
+    free(ends);
+    return mkBFP(KB, 0, sel, kids, nk, bits, nbits);
+}
+
 static void putHexF(FILE *f, double x) { fprintf(f, "%a", x); }
 static void writePart(FILE *f, const Part *p) {
     fprintf(f, "PART %lld %d", (long long)p->top, p->nbl);
@@ -1492,11 +1850,35 @@ static void cutAndWrite(FILE *f, const Node *node, i64 a, i64 b) {
     free(ps.v);
 }
 
+/* a part's fields: top nbl (lo hi)… par ncs cs… a c HEX */
+static void readPartIn(Part *p) {
+    memset(p, 0, sizeof *p);
+    p->top = gint();
+    p->nbl = (int)gint();
+    CHECK(p->nbl + 1 <= MAXB, "a part's box of too many primes");
+    for (int i = 0; i < p->nbl; i++) {
+        p->bl[i].lo = gint();
+        p->bl[i].hi = gint();
+    }
+    p->par = (int)gint();
+    p->ncs = (int)gint();
+    p->cs = malloc(sizeof(i64) * (p->ncs ? p->ncs : 1));
+    CHECK(p->cs, "out of memory");
+    for (int i = 0; i < p->ncs; i++) p->cs[i] = gint();
+    p->a = gint();
+    p->c = parseI(gtokx());
+    bvFromHex(&p->h, gtokx());
+}
+
 /* the commands:
      ADD par nbl (lo hi)… ng (lo hi PLAN)…     `add_part` of a group of cells, answered by `PART …`
      CUT a b PLAN                              `cut` of a heavy cell of the first prime: `PARTS m`, the parts,
                                                `PIECE …`
      HL top nbl (lo hi)… par ncs cs… a c HEX   `hl_parts` of a part: `HLPART t HEX`, t = 1 if transcoded
+     RECUT a b np (P part)… PIECE piece         a heavy cell kept in a cache (its parts, `P` and the fields of
+                                               `HL`, and its pieces) cut again from its plan, read back from
+                                               the hints: answered as `CUT`; `REBUILD` the same, answered by
+                                               the plan (`TREE …`, as `emit` writes it)
    and `PART` is `PART top nbl (lo hi)… par ncs cs… a c secs steps ncnt (kind fz count)… HEX`; the pieces are
    `p i` (the part i of the cell) or `b nbl (lo hi)… par f kind s0 sr s1 e nout piece…`. */
 static void genMain(FILE *in, FILE *out) {
@@ -1551,27 +1933,39 @@ static void genMain(FILE *in, FILE *out) {
             memosFree();
         } else if (!strcmp(t, "HL")) {
             Part p;
-            memset(&p, 0, sizeof p);
-            p.top = gint();
-            p.nbl = (int)gint();
-            CHECK(p.nbl + 1 <= MAXB, "HL: a box of too many primes");
-            for (int i = 0; i < p.nbl; i++) {
-                p.bl[i].lo = gint();
-                p.bl[i].hi = gint();
-            }
-            p.par = (int)gint();
-            p.ncs = (int)gint();
-            p.cs = malloc(sizeof(i64) * (p.ncs ? p.ncs : 1));
-            CHECK(p.cs, "out of memory");
-            for (int i = 0; i < p.ncs; i++) p.cs[i] = gint();
-            p.a = gint();
-            p.c = parseI(gtokx());
-            bvFromHex(&p.h, gtokx());
+            readPartIn(&p);
             int tr = hlPart(&p);
             fprintf(out, "HLPART %d ", tr);
             bvHex(out, p.h.w, p.h.cap);
             fputc('\n', out);
             partFree(&p);
+        } else if (!strcmp(t, "RECUT") || !strcmp(t, "REBUILD")) {
+            int recut = !strcmp(t, "RECUT");
+            i64 a = gint(), b = gint();
+            int np = (int)gint();
+            Part *parts = calloc(np ? np : 1, sizeof(Part));
+            CHECK(parts, "out of memory");
+            for (int i = 0; i < np; i++) {
+                CHECK(!strcmp(gtokx(), "P"), "RECUT: a part expected");
+                readPartIn(&parts[i]);
+            }
+            CHECK(!strcmp(gtokx(), "PIECE"), "RECUT: the pieces expected");
+            PIn *x = readPiece();
+            CHECK(x->kind == 1 && x->nbl == 1 && x->bl[0].lo == a && x->bl[0].hi == b && !x->par,
+                  "RECUT: the pieces of another cell");
+            Node *node = rebuild(x, parts, np);
+            if (recut)
+                cutAndWrite(out, node, a, b);
+            else {
+                fputs("TREE ", out);
+                emit(out, node);
+                fputc('\n', out);
+            }
+            nfree(node);
+            pinFree(x);
+            for (int i = 0; i < np; i++) partFree(&parts[i]);
+            free(parts);
+            memosFree();
         } else
             die("an unknown command");
         fflush(out);
