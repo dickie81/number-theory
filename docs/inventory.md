@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1867 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1876 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 283, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 712 |
-| `lib/pnt` | 358 | 1042 |
+| `lib/pnt` | 360 | 1051 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1980,6 +1980,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Linnik.logDeriv_LFunction_le`: `L′/L(·, χ)` where `L(·, χ)` has no zero in one disc
 - `Linnik.norm_Sx_le`: The bound for one character
 
+#### `LinnikCount`: The number of primes in a class at the exponents `2100/1000` and `2150/1000`
+
+- `Linnik21000.count_21000`: Primes in every class, in number, at the exponent `2100/1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21000.count_large_21000`: The primes of a class in `(q^L, 2q^L]` at `L = 2100/1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.count_21500`: Primes in every class, in number, at the exponent `2150/1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.count_large_21500`: The primes of a class in `(q^L, 2q^L]` at `L = 2150/1000` ([note](../formalisations/harman-sieve.md))
+
 #### `LinnikDeduction`: Linnik's theorem from a density estimate over the characters mod `q`
 
 - `Linnik.totient_mul_SAP`: Orthogonality
@@ -2535,6 +2542,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `SieveAd22000`: Linnik's theorem with exponent `11/5` from a tree that passes the tests
 
 - `SieveAd22000.linnik_tree_22000`: Linnik's theorem with exponent `11/5`, from a tree that passes the tests
+
+#### `SieveAdCount`: The number of primes that a bound of the first term gives, and every `x ≥ K·q^L`
+
+- `SieveAd.count_of_large`: Every `x ≥ K·q^L`, from the count at `Q^L` for every large modulus ([note](../formalisations/harman-sieve.md))
+- `SieveAd.count_large_bd`: The count at `x = q^L`, for large `q`, from a bound of the first term ([note](../formalisations/harman-sieve.md))
+- `SieveAd.count_bd`: Every `x ≥ K'·q^L`, from a bound of the first term
+- `SieveAd.count_large_pr`: The count at `x = q^L` from a search
+- `SieveAd.count_pr`: Primes in every class, in number, from a search
 
 #### `SieveAdCut`: The search led by hints with a cut of any cell of a box at any point is sound
 

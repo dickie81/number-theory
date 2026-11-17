@@ -365,6 +365,8 @@ import SieveHint21150
 import Linnik21150
 import SieveHint21000
 import Linnik21000
+import SieveAdCount
+import LinnikCount
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
@@ -1394,6 +1396,15 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms Linnik21150.linnik_21150
 #print axioms Linnik21000.tree21000
 #print axioms Linnik21000.linnik_21000
+#print axioms SieveAd.count_of_large
+#print axioms SieveAd.count_large_bd
+#print axioms SieveAd.count_bd
+#print axioms SieveAd.count_large_pr
+#print axioms SieveAd.count_pr
+#print axioms Linnik21500.count_21500
+#print axioms Linnik21500.count_large_21500
+#print axioms Linnik21000.count_21000
+#print axioms Linnik21000.count_large_21000
 #print axioms SieveCurve7D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d
