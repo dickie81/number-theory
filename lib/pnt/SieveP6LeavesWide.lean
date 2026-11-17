@@ -3,15 +3,17 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveP6Leaves.leaves_chain` evaluates the large leaves of a tree, with Brun's weights for the sifted cofactor, by
-the paper's Lemma 4.3 (`SieveTypeIBAsym.leaves_ib`), on the region `d₁ ≤ q^{L−1−a}`, `d₁d₂² ≤ q^{L−b}`. This file is
-the same with Lemma 4.3 on the wider region (`SieveTypeIBAsymWide.leaves_ib_wide`), `d₁d₂² ≤ q^{L+c}`.
+`leaves_chain_wide` evaluates the large leaves of a tree, with Brun's weights for the sifted cofactor
+(`SieveP6Leaves`), by the bilinear estimate on the wider region (`SieveTypeIBAsymWide.leaves_ib_wide`), for leaves
+`d = ∏y₁∏y₂` with `∏y₁·w^{2k+4} ≤ q^{L−1−a}`, `∏y₁·w^{2k+4}·(∏y₂)² ≤ q^{L+c}` and `q^{L−1−δ'} ≤ ∏y₁∏y₂`. With
+`leavesOK_wide` it is the paper's Lemma 4.3 (`lem:leaves`, the leaves by the bilinear estimate).
 
-* `leaves_chain_wide`: `leaves_chain` with `leaves_ib_wide`.
-* `leavesOK_wide`: `SieveP6TreeLeaves.LeavesOK q a′ L a (−c) δ' εw Λ₀ C₀ δ k J₀ K_max` for large `q`: the hypothesis on
-  the leaves of `SieveP6ib.prop6ib_core` and of `SieveTwoP6.prop6_two_core`, on the wider region.
-
-The proofs are `leaves_chain`'s and `leavesOK_of`'s; the two lemmas on the leaves have the same conclusion.
+* `leaves_chain_wide`: for large `q`, with Brun's weights at `w = ⌈q^{εw}⌉`, `J = Jw w` and `(2k + 4)εw ≤ 1/16`, and
+  two sets of decreasing tuples of primes in `[w, ⌊2q^L⌋]` in that region: the leaves total at most
+  `ζ(k)(N₂ − N₁)/(φ(q) log w)·Σ 1/d + q^{L−δ}/φ(q)` in absolute value.
+* `leavesOK_wide`: `SieveP6TreeLeaves.LeavesOK q a′ L a (−c) δ' εw Λ₀ C₀ δ k J₀ K_max` for large `q`, by
+  `leaves_chain_wide` for every pair of block sizes up to `K_max`: the hypothesis on the leaves of
+  `SieveTwoP6.prop6_two_core`, on the wider region.
 
 The file imports `SieveP6TreeLeaves.lean` and `SieveTypeIBAsymWide.lean`.
 -/
@@ -24,12 +26,14 @@ open Real Finset SieveFamily SieveTree SieveChain SieveBrun SieveTypeIBLeaf Siev
 namespace SieveP6LeavesWide
 
 open Classical Filter in
-/-- **The large leaves of a family, with Brun's weights, on the wider region.** `SieveP6Leaves.leaves_chain` with
-`SieveTypeIBAsymWide.leaves_ib_wide` in place of `SieveTypeIBAsym.leaves_ib`: let `L > 2`, `a ≤ L − 2`, a margin
-`κ > 0`, `0 ≤ δ' ≤ min(κ/4, 1/8)`, `−L ≤ c ≤ a − δ' − κ` and `a − δ' − κ ≥ 0`, with `Λ₀`, `εw`, `k` and `C₀` as there.
-There are `δ > 0` and `q₀` such that for `q ≥ q₀`, `a` a unit, `w = ⌈q^{εw}⌉`, and two sets `Y₁`, `Y₂` of decreasing
-tuples of primes in `[w, ⌊2q^L⌋]` with comparisons `Pr` and the sizes `∏y₁·w^{2k+4} ≤ q^{L−1−a}`,
-`∏y₁·w^{2k+4}·(∏y₂)² ≤ q^{L+c}`, `q^{L−1−δ'} ≤ ∏y₁∏y₂`: the leaves `d = ∏y₁∏y₂` total at most
+/-- **The large leaves of a family, with Brun's weights, on the wider region**, by
+`SieveTypeIBAsymWide.leaves_ib_wide`: let `L > 2`, `a ≤ L − 2`, a margin `κ > 0`, `0 ≤ δ' ≤ min(κ/4, 1/8)`,
+`−L ≤ c ≤ a − δ' − κ` and `a − δ' − κ ≥ 0`, `Λ₀ ≥ 0`, `εw > 0`, and the levels `k + 2j` with `k ≥ 1` even,
+`2C₀² ≤ (k + 1)(k + 2)` and `(2k + 4)εw ≤ 1/16`, `C₀ ≥ 0` bounding the sums `Σ 1/p` over the ranges. There are `δ > 0`
+and `q₀` such that for `q ≥ q₀`, `a` a unit, `w = ⌈q^{εw}⌉`, and two sets `Y₁`, `Y₂` of decreasing tuples of primes in
+`[w, ⌊2q^L⌋]` with at most `J₀` sharp comparisons `Pr` whose forms are at most `Λ₀ log q` and each have a coefficient
+`±1`, and the sizes `∏y₁·w^{2k+4} ≤ q^{L−1−a}`, `∏y₁·w^{2k+4}·(∏y₂)² ≤ q^{L+c}`, `q^{L−1−δ'} ≤ ∏y₁∏y₂`: the leaves
+`d = ∏y₁∏y₂`, counted by `Σ_{n∈(⌊q^L⌋, ⌊2q^L⌋]} dw(n)·1[d ∣ n, n has no prime factor below w]`, total at most
 `ζ(k)(N₂ − N₁)/(φ(q) log w)·Σ 1/d + q^{L−δ}/φ(q)` in absolute value. -/
 theorem leaves_chain_wide {L : ℝ} (hL : 2 < L) {a c δ' κ εw Λ₀ : ℝ} (hδ' : 0 ≤ δ') (haL : a ≤ L - 2)
     (hκ : 0 < κ) (hκ1 : c ≤ a - δ' - κ) (hκ3 : 0 ≤ a - δ' - κ) (hδ1 : δ' ≤ κ / 4) (hδ2 : δ' ≤ 1 / 8)

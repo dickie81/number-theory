@@ -1,5 +1,8 @@
 /-
-# Proposition 6 with the bilinear estimate: the large leaves
+# Brun's weights for the large leaves
+
+The bounds on Brun's weights and on a leaf's count that `SieveP6LeavesWide.leaves_chain_wide` puts into the bilinear
+estimate for the large leaves of a tree.
 
 Plain statements. `T w J j` are `SieveLeaf`'s ranges, `wS₁`, `wS₂`, `wl₁`, `wl₂`, `wf`, `wf₂` and `Rs` are Brun's
 weights and the sifted indicator of `SieveTypeIBBrun`, at the levels `lev k J j = k + 2j`; `rng`, `dwR`, `dv` and `gU`
@@ -24,9 +27,6 @@ are `SieveTypeIBLeaf`'s, `Jw w` and `rem` are `SieveProp6`'s.
   number at most `d(d)`, and the pairs `(y, x)` with `∏y·f_x = d` at most `(J + 1)d(d)`. `card_fibre_le_one`: a
   decreasing tuple of primes is determined by its product.
 * `W_le_rpow`, `V_le_rpow`, `fibres_le_rpow`: the three bounds at a power of `x`, for `J = Jw w`.
-* `leaves_chain`: `SieveTypeIBAsym.leaves_ib` with these weights, at `w = ⌈q^{εw}⌉`, `J = Jw w` and
-  `(2k + 4)εw ≤ 1/16`, for two sets of decreasing tuples of primes in `[w, ⌊2q^L⌋]`: the leaves `d = ∏y₁∏y₂` total at
-  most `ζ(k)(N₂ − N₁)/(φ(q) log w)·Σ 1/d + q^{L−δ}/φ(q)` in absolute value.
 
 The file imports `SieveP6Chain.lean`, `SieveTypeIBAsym.lean` and `SieveTypeIBBrun.lean`.
 -/
@@ -812,7 +812,5 @@ theorem fibres_le_rpow {x c₁ ε' D : ℝ} {n K k : ℕ} (hx1 : 1 ≤ x) {w : �
       linarith
     · rw [Finset.not_nonempty_iff_eq_empty.1 he, Finset.sum_empty]
       positivity
-
-/-! ### The leaves of a family -/
 
 end SieveP6Leaves

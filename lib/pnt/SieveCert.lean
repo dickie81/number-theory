@@ -1,34 +1,20 @@
 /-
-# The certificate of the sieve route's loss, checked by the kernel
+# Buchstab's `ω` on a box, and the cells' factors
 
-The loss certificate of the sieve route is computed here in natural numbers on a grid of cells (`Grid`: the window's
-ends, the number `n` of cells a side and the cells' multiplier). Each cell's bound is computed from its corners,
-rounding up twice (the value of `ω*`, then the bound), and is a multiple of `2^{−60}`. The library's certificate is on
-`grid22000E`, the grid of the curve `g7d` at `L = 11/5` on the window `[43457/100000, 46959/100000]` with `n = 272`
-(`SieveGrid22000E.lean`), and is the one of `SieveDeepDefs.lean`, to depth 8; the kernel checks it by
-`decide +kernel` (`SieveCert22000E.lean`).
+The lemmas in the reals about the definitions of `SieveCertDefs.lean` that the certificates use.
 
-* The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. The window's ends are `U1 < U2` (for `grid22000E`,
-  `U1 = ⌈(43457/100000)DEN⌉` and `U2 = ⌊(46959/100000)DEN⌋`), `V = U2 − U1`, and the cells of side
-  `H = ⌈(DEN/2 − V)/n⌉` start at `e k = V + Hk`. `GridOK` lists the facts about the grid that the semantic lemmas below
-  and the route's proofs use; for a given grid each is checked by `decide`.
-* The tests, as in the certificate: `cand` (a cell of `(α₁, α₂)` that may meet the region and may be non-evaluable),
-  `inKK` and `ne3` (the cells of `α₃`), and `counted4` (the cells of depth 4). Evaluability is a subset sum of the
-  cell's corners inside `U = (u₁, u₂) ∪ (1 − u₂, 1 − u₁)` (`surelyEval`).
+* Coordinates are multiples of `1/DEN`, `DEN = 2^40`, and bounds are multiples of `1/K = 2^{−60}`.
 * The bound `ω*` for Buchstab's `ω` (`omegaC`): `0` below `1`, `1/u` on `[1, 2)`, Buchstab's `(1 + log(u − 1))/u` on
-  `[2, 3]` and `0.565073` above. On a cell, `omKw` (and `omK`, its case of `m` cells of side `H`) bounds it on the
-  arguments the cell's points can have, from its corners.
-* The bounds: `omK/K` times a factor for each cell, the trapezoid bound `trB a H = H(2a + H)/(2a(a + H))` of the cell's
-  `Σ 1/p` for the first ones and the exact `exB a H = DEN·H/(a(a + H))` of the last cell's `log x · Σ 1/(p log p)`,
-  rounded up to a multiple of `2^{−60}` (`bound2`).
+  `[2, 3]` and `0.565073` above. On a box, `omKw` bounds it on the arguments the box's points can have, from its
+  corners, rounded up to a multiple of `2^{−60}`.
+* The cells' factors: the trapezoid bound `trB a w = w(2a + w)/(2a(a + w))` of the `Σ 1/p` of a cell `[a, a + w]`, and
+  the exact `exB a w = DEN·w/(a(a + w))` of the last cell's `log x · Σ 1/(p log p)`.
 
 The semantic lemmas:
 
 * `omegaC_le_w`: `ω*` on the box's arguments, widened by `τ < 1/DEN`, is at most `omKw/K`; on `[2, 3]` by Buchstab's
   `ω` at the box's ends where it is monotone (`SieveOmegaB`).
-* `bound2_ge`: the bound is at least `omK/K` times the cells' `trB` and `exB`.
-
-The grid is a parameter (`Grid`, with `GridOK`); the certificates' grids are in `SieveGrid…`.
+* `omegaC_le_of_three_le`: `ω*` is at most `0.565073` from `3` on.
 
 The file imports Mathlib, `SieveCertDefs.lean`, which holds the definitions, and `SieveOmegaB.lean`.
 -/
@@ -38,20 +24,17 @@ import SieveOmegaB
 
 namespace SieveCert
 
-/-! The definitions that the certificate builds on (`DEN` … `counted6`) and the class `GridOK` are in
-`SieveCertDefs.lean`. -/
+/-! The definitions that the certificates build on (`DEN`, the class `Grid`, the bound `omKw` with its table, and the
+grid's `V`, `H`, `e` and `cell`) are in `SieveCertDefs.lean`. -/
 
 variable [Grid]
 
-/-! ### Sums -/
-
-/-! ### Facts about the grid -/
+/-! ### The denominator `DEN` is positive -/
 
 omit [Grid] in
 theorem DEN_pos : 0 < DEN := by decide
 
-
-/-! ### Points -/
+/-! ### `DEN` is positive in the reals -/
 
 noncomputable section
 
@@ -293,8 +276,6 @@ theorem trB_nonneg (a w : ℕ) : 0 ≤ trB a w := by unfold trB; positivity
 
 omit [Grid] in
 theorem exB_nonneg (a w : ℕ) : 0 ≤ exB a w := by unfold exB; positivity
-
-/-! ### The costs -/
 
 end
 

@@ -3,26 +3,51 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveTypeIBFam` and `SieveTypeIBEv` bring the bilinear Type I estimate `SieveSpline.typeIB_spline` to a block pair
-of the leaves: the estimate over families with comparisons (`typeIB_smooth`, `typeIB_sharp0`), then a block pair
-(`pair_le`), where the cut of the frequencies is `H = ⌊(q − 1)/(2D_m)⌋`, the largest with `2HD_m < q`. This file is
-the same with `SieveSpline.typeIB_spline_wide`, which asks only `2H < q` and counts the diagonal on the congruence.
+Plain statements. `dw q a n = 1[n ≡ a] − 1[(n, q) = 1]/φ(q)` (`SieveFamily.dw`), and `w` is the spline of
+`SieveSpline.spl` on its support `(A, B + r(ℓ − 1)]`, `n = B + r(ℓ − 1) − A`. A *family* has two groups of variables,
+`y₁` over a finite set `Y₁` with values `π₁(y₁)` and coefficients `a₁(y₁)`, and `y₂` over `Y₂` with `π₂(y₂)` and
+`a₂(y₂)`; on the fibre of a value `d` the coefficients aggregate to `A₁(d) = Σ_{π₁(y₁) = d} |a₁(y₁)|` and `A₂(d)`.
+This file brings the bilinear Type I estimate `SieveSpline.typeIB_spline_wide`, which asks only `2H < q` and counts
+the diagonal on the congruence, to a family and then to a block pair of the leaves.
 
-* `typeIB_smooth_wide`, `typeIB_sharp0_wide`: the estimate over a family with smooth, then sharp, comparisons, for
-  `2H < q`: the bounds of `typeIB_smooth` and `typeIB_sharp0` with `F(⌊2HDm/q⌋ + 1)` in place of `F`.
+* `typeIB_smooth_wide`: let `J` continuous integrable `g_j` with integrable `𝓕g_j` be applied to the forms
+  `φ_j(y₁) + ψ_j(y₂)`. Under the conditions of `SieveSpline.typeIB_spline_wide` on the values (`0 < π₂ ≤ Dm`,
+  `2H < q`, every residue the inverse of at most `m` values `π₁` prime to `q`, every `|t|π₂` with `0 < |t| ≤ H` with
+  at most `F` divisors), `|Σ_{y₁,y₂} a₁a₂ ∏_j g_j(φ_j(y₁) + ψ_j(y₂)) Σ_k w(k)dw(π₁(y₁)π₂(y₂)k)|` is at most
+  `∏_j ‖𝓕g_j‖₁` times `(ΣA₁²)^{1/2}(mF′(ΣA₂²)(⌊n/q⌋ + 1)n)^{1/2} + (B − A)(q/(2ℓ(H + 1)))^r(Σ|a₁|)(Σ|a₂|) +
+  (Σ|a₁|)(Σ|a₂|)d(q)/φ(q)`, with `F′ = F(⌊2HDm/q⌋ + 1)`.
+* `typeIB_sharp0_wide`: `J` comparisons `I_j(y₁, y₂) ∈ [0, 1]`, replaced by smooth `G_j ∈ [0, 1]` of the forms `ℓ_j`
+  with `|I_j − G_j| ≤ M_j(ℓ_j)` for smooth `M_j`. Then `|Σ_{y₁,y₂} a₁a₂ ∏_j I_j Σ_k w(k)dw(π₁π₂k)|` is at most
+  `∏_j ‖𝓕G_j‖₁·bd + Σ_j (2φ(q)⁻¹(B − A)Σ_y |a₁||a₂|M_j(ℓ_j) + ‖𝓕M_j‖₁·bd)`, where `bd` is
+  `SieveTypeIBFam.bdIB` at `F′`, the bound of `typeIB_smooth_wide` without the factor `∏_j ‖𝓕g_j‖₁`.
 * `bdPW`, `pair_le_wide`: a block pair `(β₁, β₂)` with any cut `H`, `2H < q`, and `d(n) ≤ F` for `0 < n ≤ H⌊P₂⌋`:
   the bilinear sum is at most `(∏_j ‖𝓕G_j‖₁ + Σ_j ‖𝓕M_j‖₁)M_fM₂·bdPW` plus the near-boundary masses, with
   `bdPW = √(P₁P₂(P₁/q + 1)F(2HP₂/q + 1)(n/q + 1)n) + (B − A)(q/(2ℓ(H + 1)))^r P₁P₂ + P₁P₂d(q)/φ(q)`,
   `P_i = ρ^{β_i+1}` and `n` the spline's length.
 
 With `H = ⌊(q − 1)/(2D_m)⌋` the factor `2HP₂/q + 1` is at most `2` and the second term is at most
-`(B − A)(P₂/ℓ)^r P₁P₂`: `pair_le`, which needs `P₂ ≤ ℓ`, that is `d₁d₂² ≤ x` up to the step's constants. A larger `H`
-makes the second term small for any `P₂` at the price of the factor `2HP₂/q + 1` under the root: with
-`H ≈ qY/ℓ` it is `Y^{−r}` against `2YP₂/ℓ + 1`. So the estimate reaches leaves with `d₁d₂² > x`, where the paper's
-Lemma 4.3 stops; the sum over the block pairs and the asymptotic form (`SieveTypeIBSum`, `SieveTypeIBAsym`) are not
-redone here.
+`(B − A)(P₂/ℓ)^r P₁P₂`, which is small only for `P₂ ≤ ℓ`, that is `d₁d₂² ≤ x` up to the step's constants. A larger
+`H` makes the second term small for any `P₂` at the price of the factor `2HP₂/q + 1` under the root: with
+`H ≈ qY/ℓ` it is `Y^{−r}` against `2YP₂/ℓ + 1`. So the estimate reaches leaves with `d₁d₂² > x`. The sum over the
+block pairs and the asymptotic form are in `SieveTypeIBSumWide` and `SieveTypeIBAsymWide`.
 
-The proofs are those of `SieveTypeIBFam` and `SieveTypeIBEv`.
+The proof:
+
+* `typeIB_smooth_wide`: `SieveSep.sum_sep` writes the sum as an integral over `ℝ^J` of `∏_j 𝓕g_j(ξ_j)` times the
+  twisted sum, whose twists `e^{2πiΣ_jξ_jφ_j(y₁)}` and `e^{2πiΣ_jξ_jψ_j(y₂)}` go into the coefficients
+  (`SieveTypeIBFam.norm_twist`). Aggregated over the fibres (`SieveTypeIBFam.sum_fiber`) and restricted to the values
+  prime to `q` (`SieveTypeIBFam.dw_of_not_isUnit`, `SieveTypeIBFam.sum_units_eq`), the twisted sum is the bilinear
+  form of `SieveSpline.typeIB_spline_wide`, with coefficients of size at most `A₁` and `A₂`;
+  `SieveTypeIBFam.norm_integral_prod_le` integrates the bound.
+* `typeIB_sharp0_wide`: `SieveFamily.norm_Dsum_sharp_le` over the triples `(y₁, y₂, k)`. Its smoothed sum and
+  near-boundary sums are `typeIB_smooth_wide`'s, with the coefficients `|a₁|`, `|a₂|` for the latter
+  (`SieveTypeIBFam.bdIB_norm`), and the near-boundary masses carry the spline's mass `B − A`
+  (`SieveSpline.sum_spl`).
+* `pair_le_wide`: `typeIB_sharp0_wide` on the block pair, with `D_m = ⌊P₂⌋` and `m = ⌊P₁⌋/q + 1`: the block's values
+  `d₁` with a given inverse mod `q` lie in one residue class of `[1, P₁]` (`SieveTypeIBEv.eq_of_inv_eq`,
+  `SieveSpline.card_Ioc_filter_cong_le`). The block's values number at most `P_i`, so its fibres give
+  `Σ_d A₁(d)² ≤ M_f²P₁` and `Σ|a₁| ≤ M_fP₁` (`SieveTypeIBEv.fibre_le`), and the same with `M₂`, `P₂`; and
+  `F(⌊2HD_m/q⌋ + 1) ≤ F(2HP₂/q + 1)`.
 
 The file imports `SieveTypeIBEv.lean` and `SieveTypeIBWide.lean`.
 -/
@@ -42,8 +67,7 @@ variable {q : ℕ} [NeZero q]
 integrable `g_j` with integrable `𝓕g_j` be applied to the forms `φ_j(y₁) + ψ_j(y₂)`. Under the conditions of
 `SieveSpline.typeIB_spline_wide` on the values (`π₂ ≤ Dm`, `2H < q`),
 `|Σ_{y₁,y₂} a₁a₂ ∏_j g_j(φ_j(y₁) + ψ_j(y₂)) Σ_k w(k)dw(π₁(y₁)π₂(y₂)k)|` is at most `∏_j ‖𝓕g_j‖₁` times
-`SieveSpline.typeIB_spline_wide`'s bound with the fibres' aggregates `A₁`, `A₂` of `|a₁|`, `|a₂|`: the bound of
-`SieveTypeIBFam.typeIB_smooth` with `F(⌊2HDm/q⌋ + 1)` in place of `F`. -/
+`SieveSpline.typeIB_spline_wide`'s bound with the fibres' aggregates `A₁`, `A₂` of `|a₁|`, `|a₂|`. -/
 theorem typeIB_smooth_wide (a : ZMod q) (ha : IsUnit a) {ι₁ ι₂ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂)
     (π₁ : ι₁ → ℕ) (π₂ : ι₂ → ℕ) (a₁ : ι₁ → ℂ) (a₂ : ι₂ → ℂ) {J : Type*} [Fintype J] {g : J → ℝ → ℂ}
     (hgc : ∀ j, Continuous (g j)) (hgi : ∀ j, Integrable (g j)) (hgf : ∀ j, Integrable (𝓕 (g j)))
@@ -124,7 +148,7 @@ theorem typeIB_smooth_wide (a : ZMod q) (ha : IsUnit a) {ι₁ ι₂ : Type*} (Y
         Complex.exp (2 * Real.pi * I * ∑ j, (ξ j : ℂ) * (fun j y => φ j y.1 + ψ j y.2) j y) =
       ∑ d₁ ∈ D₁, ∑ d₂ ∈ D₂, α d₁ * β d₂ * X (d₁ * d₂) := hform
   rw [hform']
-  -- the bound of `typeIB_spline`
+  -- the bound of `typeIB_spline_wide`
   have hD₁u : ∀ d ∈ D₁, IsUnit (d : ZMod q) := fun d hd => (Finset.mem_filter.1 hd).2
   have hD₂u : ∀ d ∈ D₂, IsUnit (d : ZMod q) := fun d hd => (Finset.mem_filter.1 hd).2
   have hD₂img : ∀ d ∈ D₂, ∃ y ∈ Y₂, π₂ y = d := fun d hd => Finset.mem_image.1 (Finset.mem_filter.1 hd).1
@@ -172,9 +196,10 @@ theorem typeIB_smooth_wide (a : ZMod q) (ha : IsUnit a) {ι₁ ι₂ : Type*} (Y
       (norm_nonneg _) (Finset.sum_nonneg fun y _ => norm_nonneg _)) hdq
 
 
-/-- **Sharp comparisons without `2HDm < q`**: for `2H < q` the bound is
-`∏_j ‖𝓕G_j‖₁·bd + Σ_j (2φ(q)⁻¹(B − A)Σ_y |a₁||a₂|M_j(ℓ_j) + ‖𝓕M_j‖₁·bd)`, with `bd` the bound `bdIB` of
-`SieveTypeIBFam.typeIB_sharp0` at `F(⌊2HDm/q⌋ + 1)` in place of `F`. -/
+/-- **Sharp comparisons without `2HDm < q`**: for comparisons `I_j ∈ [0, 1]`, smooth `G_j ∈ [0, 1]` of the forms
+`ℓ_j = φ_j(y₁) + ψ_j(y₂)` with `|I_j − G_j(ℓ_j)| ≤ M_j(ℓ_j)`, and `2H < q`, the bound is
+`∏_j ‖𝓕G_j‖₁·bd + Σ_j (2φ(q)⁻¹(B − A)Σ_y |a₁||a₂|M_j(ℓ_j) + ‖𝓕M_j‖₁·bd)`, with `bd` the bound
+`SieveTypeIBFam.bdIB` at `F(⌊2HDm/q⌋ + 1)` in place of `F`. -/
 theorem typeIB_sharp0_wide (a : ZMod q) (ha : IsUnit a) {ι₁ ι₂ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂)
     (π₁ : ι₁ → ℕ) (π₂ : ι₂ → ℕ) (a₁ : ι₁ → ℂ) (a₂ : ι₂ → ℂ) {J : ℕ} (I : Fin J → ι₁ → ι₂ → ℝ)
     (Gs Ms : Fin J → ℝ → ℝ) (hGc : ∀ j, Continuous (fun u => ((Gs j u : ℝ) : ℂ)))
@@ -267,8 +292,8 @@ noncomputable def bdPW (q : ℕ) (ρ : ℝ) (β₁ β₂ : ℕ) (t : ℕ × ℕ 
     massv t * ((q : ℝ) / (2 * t.2.2.1 * (H + 1))) ^ t.2.2.2 * (ρ ^ (β₁ + 1) * ρ ^ (β₂ + 1)) +
     ρ ^ (β₁ + 1) * ρ ^ (β₂ + 1) * ((q.divisors.card : ℝ) / q.totient)
 
-/-- **A block pair, without `2HDm < q`.** Let the comparisons `c = ∏_j I_j` of `SieveTypeIBFam.typeIB_sharp0` be
-given, every value `π₁(y₁)`, `π₂(y₂)`, `f_σ` at least `1`, and the fibres bounded: `Σ_{π₁(y₁)f_σ = d} |λ_σ| ≤ M_f` and
+/-- **A block pair, without `2HDm < q`.** Let the comparisons `c = ∏_j I_j` of `typeIB_sharp0_wide` be given, every
+value `π₁(y₁)`, `π₂(y₂)`, `f_σ` at least `1`, and the fibres bounded: `Σ_{π₁(y₁)f_σ = d} |λ_σ| ≤ M_f` and
 `#{y₂ : π₂(y₂) = d} ≤ M₂`. Let `H` be any cut of the frequencies with `2H < q` (`hH`), and let `d(n) ≤ F` for
 `0 < n ≤ H⌊ρ^{β₂+1}⌋` (`hF`). The bilinear sum of the block pair `(β₁, β₂)` of `blk ρ` with the spline `t` is at most
 `(∏_j ‖𝓕G_j‖₁ + Σ_j ‖𝓕M_j‖₁)·M_fM₂·bdPW` plus the near-boundary masses
@@ -323,7 +348,7 @@ theorem pair_le_wide (a : ZMod q) (ha : IsUnit a) {ι₁ ι₂ κ : Type*} (Y₁
     have := (blk_spec hρ (hπ₂ y hy2)).2
     rw [hyb] at this
     exact this.le
-  -- the block sum in the form of `typeIB_sharp0`
+  -- the block sum in the form of `typeIB_sharp0_wide`
   have hform : blockSum q a Y₁ Y₂ π₁ π₂ S f lam c (blk ρ) (blk ρ) β₁ β₂ t =
       ∑ x ∈ Y₁', ∑ y₂ ∈ Y₂', (fun x : ι₁ × κ => ((lam x.2 : ℝ) : ℂ)) x * (fun _ : ι₂ => (1 : ℂ)) y₂ *
         (∏ j, ((fun j (x : ι₁ × κ) y₂ => I j x.1 y₂) j x y₂ : ℂ)) *

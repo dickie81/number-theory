@@ -1,12 +1,13 @@
 /-
-# Parts of the Type II estimate for a curve and a window (Proposition 3′ with parameters)
+# Parts of the Type II estimate for a curve (Proposition 3′ with parameters)
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 The counts of a curve `g` (`CurveCounts g`): for some `C`, at most `C(qT)^{g(σ)}(1 + log qT)^{10}` characters mod `q`
 have a zero with `Re s ≥ σ` and `|Im s| ≤ T`, for every `q ≥ 1`, `1/2 ≤ σ ≤ 1` and `T ≥ 2`. This file has that
-hypothesis, the count of one bin for `g` and the product of Lemma 1's bounds at `L`; `SieveTypeIIHM.typeII_gen_hm`
-states the estimate for a curve on a window, with the Halász–Montgomery branch.
+hypothesis, the count of one bin for `g` and the product of Lemma 1's bounds at `L`. `SieveTypeIIHM.typeII_two_gen`,
+`SieveTypeIIHM.typeII_two_gen4` and `SieveTypeIIHM.typeII_res` count their bins with `card_bin_gen`, and the first two
+bound the product with `prod_MB_le_gen`.
 
 * `CurveCounts`: the hypothesis.
 * `card_bin_gen`, `prod_MB_le_gen`: the count of one bin for `g` with `g(1/2) = 1`, and the product of Lemma 1's

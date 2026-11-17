@@ -1,29 +1,18 @@
 /-
-# Type II families with sharp prime ranges
+# Sharp prime ranges: the primes up to `Y`, dyadic blocks and `Dsum`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statement (`typeII_unw`). Let `L`, `w₁` and `w₂` be a route's parameters (`SieveRoute.Route`) with `RouteOK`, and
-assume its Type II estimate (`hII : SieveRoute.TypeIIAt`). Fix `K₀`, `J₀`, `e₁ > 0`, `E₀ ≥ 0` and `Λ₁ ≥ 0`. There are
-`δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a` mod `q`: let `m` run over `S ⊆ (P₁, P₂]` with `q^{w₁L} ≤ P₁` and
-`P₂ ≤ q^{w₂L}`, with coefficients `|a_m| ≤ 1`, and let `n + 1 ≤ K₀` primes `x_i` run over all the primes up to `⌊2q^L⌋`.
-Let `J ≤ J₀` sharp comparisons `P_j` hold when `ℓ_j = φ_j(m) + Σ_i e_{ji} log x_i > 0` and imply `ℓ_j ≥ 0`, with
-`|e_{ji}| ≤ E₀`, `φ_j(m) ≤ Λ₁ log q` on `S`, and for each `j` a pivot `i` with `e_{ji} = ±1`. If wherever all the
-comparisons hold each `x_i ≥ 2q^{e₁}` and `m∏_i x_i ≤ 2q^L`, then the family's `|A − B/φ(q)|` (`SieveFamily.Dsum`) is at
-most `q^{L−δ}/φ(q)`.
+Lemmas for the Type II families with sharp prime ranges: the primes up to `Y`, the dyadic block of an integer, sums
+`Dsum`, and a power of a logarithm below a power.
 
-This removes the dyadic weights from `SieveFamily.typeII_sharp`, whose primes carry `f0(x_i/Q_i)` at fixed scales
-and whose `m` lies in a dyadic block, so that families with sharp ranges can be used.
-
-The proof:
-
+* `primesLe Y`: the primes up to `Y`, with `mem_primesLe`; `mem_primesTo`: for `Q ≥ 0`, `p ∈ primesTo Q` if and only
+  if `p ≤ 2Q` and `p` is prime.
 * `blk_spec`: for `P₁ ≥ 1`, `m ∈ (P₁, P₂]` lies in the dyadic block `(P₁2^b, 2P₁2^b]` with `b = log₂((m − 1)/P₁)`.
-* `SieveDyadic.sum_bump`: each prime's range is covered by `Σ_k bump(x/2^k) = 1`, so the family is a sum of families
-  with weights `bump(x_i/Q_i)` at the scales `Q_i = 2^{k_i}`, and `box_change` puts each one in `Sp`'s ranges.
-* `SieveFamily.typeII_sharp` bounds each piece by `q^{L−δ}/φ(q)` (with `f0 = bump`, `F₀ = 1`, `A₀ = 1`). The pieces
-  number at most `(3 + 4 log q)^{K₀+1}`, which `ev_log_pow_le` puts below `q^{δ/2}`.
-
-`L`, `w₁` and `w₂` are a route's parameters and the Type II estimate is a hypothesis (`hII`).
+* `Dsum_sum`, `Dsum_subset`, `Dsum_congr`: `Dsum` (`SieveFamily.Dsum`) is additive in the weight, may be taken over a
+  smaller set when the weight vanishes off it, and depends only on the weight's values on the set.
+* `ev_log_pow_le`: for `r > 0`, eventually `(3 + 4 log x)^K ≤ x^r`; it puts a count of pieces such as
+  `(3 + 4 log q)^{K₀+1}` below `q^{δ/2}`.
 
 The file imports `SieveFamily.lean` and `SieveDyadic.lean`.
 -/
@@ -99,12 +88,5 @@ theorem ev_log_pow_le (K : ℕ) {r : ℝ} (hr : 0 < r) :
 
 theorem mem_primesTo {Q : ℝ} (hQ : 0 ≤ Q) {p : ℕ} : p ∈ primesTo Q ↔ (p : ℝ) ≤ 2 * Q ∧ p.Prime := by
   rw [primesTo, Finset.mem_filter, Finset.mem_range, Nat.lt_succ_iff, Nat.le_floor_iff (by positivity)]
-
-section Main
-
-open Classical
-open scoped ContDiff
-
-end Main
 
 end SieveTypeIIU

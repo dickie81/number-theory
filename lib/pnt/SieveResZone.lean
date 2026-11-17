@@ -3,22 +3,25 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveTypeIIHM.bin_bound_gen_hm` bounds the contribution of one bin of the characters' zeros, `Mp·binTerm cnt P q V B`,
-when the prime sums are at most `C₀(q^L/P)^{β+w}` on the bin and the bin has at most `C_d(qT)^{g(β)}(1 + log qT)^{10}`
-characters. The resonant window classes the characters by the sizes of the rest's prime sums as well, and a class's
-bounds are then powers `q^E` and `(qT)^γ` that are not the zone's: this file is the bound of one class with the
-exponents `E` (the rest's) and `γ` (the count's) given.
+`binTerm cnt P q V B` (`SieveHMBins`) bounds the sum of `|W(χ)|` over a class of `cnt` characters, and
+`Mp·binTerm cnt P q V B` the class's contribution when the prime sums are at most `Mp` on it. The resonant window
+classes the characters by the sizes of the rest's prime sums, and a class's bounds are then powers `q^E` and
+`(qT)^γ`: this file is the bound of one class with the exponents `E` (the rest's) and `γ` (the count's) given.
 
 * `momExp k s t = max(1, ks) + ks(1 − 2t)`: the exponent of the number of characters at which a prime sum of length
   `q^s` exceeds `q^{st}`, by its `2k`-th moment (`SieveResMoment`).
 * `ResBinOK L d e E γ m`: the class's exponents fit, by orthogonality
   (`E + γ/2 + (m + max(m, 1))/2 ≤ L − 1/25000`) or by the Halász–Montgomery inequality
   (`E + γ/2 + m ≤ L − 1/25000` and `E + m/2 + γ + (m(1/12 − d) + 5/12 + d + 2e)/2 ≤ L − 1/25000`).
-* `qpow_combine_exp`, `bin_bound_pt_exp`: `SieveTypeII.qpow_combine` and `SieveTypeIIHM.bin_bound_pt` with `q^E`.
-* `bin_bound_exp`, **one class**: `SieveTypeIIHM.bin_bound_gen_hm` with `Mp ≤ C₀q^E`,
-  `cnt ≤ C_d(qT)^γ(1 + log qT)^{10}` and `ResBinOK L d e E γ m`, with the same constant.
+* `qpow_combine_exp`: `SieveTypeII.qpow_combine` with `q^E`.
+* `bin_bound_pt_exp`, one class by orthogonality: under the orthogonality inequalities, with `Mp ≤ C₀q^E` and
+  `cnt ≤ C_d(qT)^γ(1 + log qT)^{10}`,
+  `Mp·cnt^{1/2}((P + q)V)^{1/2} ≤ 2√3·C₀C_d^{1/2}(1 + log qT)^5 q^{L − 1/25000 + η/2}(V/P)^{1/2}`.
+* `bin_bound_exp`, **one class**: with `Mp ≤ C₀q^E`, `cnt ≤ C_d(qT)^γ(1 + log qT)^{10}`,
+  `B ≤ C_K(2P)^{1/12−d}(2q)^{5/12+d+2e}` and `ResBinOK L d e E γ m`,
+  `Mp·binTerm cnt P q V B ≤ C′(1 + log qT)^{10}q^{L − 1/25000 + η}(V/P)^{1/2}`.
 
-The file imports `SieveTypeIIHM.lean`.
+The file imports `SieveHMBins.lean` and `SieveCurveGlue.lean`.
 -/
 import SieveHMBins
 import SieveCurveGlue
@@ -119,8 +122,8 @@ lemma qpow_combine_exp {q P V T η γ E m : ℝ} (hq : 1 < q) (hPm : P = q ^ m) 
       _ = 2 * Real.sqrt 3 * (q ^ E * q ^ (γ / 2 + η / 2) * q ^ m) * Real.sqrt (V / P) := by ring
       _ = _ := by rw [eq]
 
-/-- `SieveTypeIIHM.bin_bound_pt` with `q^E`: under the orthogonality inequalities (`hexp`), for `γ ≤ 1` (`hg1`),
-`q > 1`, `P = q^m`, `1 ≤ T ≤ 3q^η`, `C₀, C_d ≥ 0`, `Mp ≤ C₀q^E` and `cnt ≤ C_d(qT)^γ(1 + log qT)^{10}`:
+/-- **One class by orthogonality**: under the orthogonality inequalities (`hexp`), for `γ ≤ 1` (`hg1`), `q > 1`,
+`P = q^m`, `1 ≤ T ≤ 3q^η`, `C₀, C_d ≥ 0`, `Mp ≤ C₀q^E` and `cnt ≤ C_d(qT)^γ(1 + log qT)^{10}`:
 `Mp·cnt^{1/2}((P + q)V)^{1/2} ≤ 2√3·C₀C_d^{1/2}(1 + log qT)^5 q^{L − 1/25000 + η/2}(V/P)^{1/2}`. -/
 lemma bin_bound_pt_exp {L q P m T η E γ Mp cnt V C₀ Cd : ℝ} (hg1 : γ ≤ 1)
     (hexp : (m ≤ 1 → E + γ / 2 + (1 + m) / 2 ≤ L - 1 / 25000) ∧
@@ -168,11 +171,11 @@ lemma bin_bound_pt_exp {L q P m T η E γ Mp cnt V C₀ Cd : ℝ} (hg1 : γ ≤ 
           (2 * Real.sqrt 3 * q ^ (L - 1 / 25000 + η / 2) * Real.sqrt (V / P)) := by gcongr
     _ = _ := by ring
 
-/-- **One class**: `SieveTypeIIHM.bin_bound_gen_hm` with the exponents given. For `e ≤ 3/4` (`he`), `q > 1` (`hq`),
-`P = q^m` (`hPm`), `1 ≤ T ≤ 3q^η` (`hT1`, `hT`), `η ≥ 0` (`hη`), `γ ≤ 1` (`hg1`), `C₀, C_d, C_K ≥ 0` (`hC₀`, `hCd`,
-`hCK`), `0 ≤ Mp ≤ C₀q^E` (`hMp0`, `hMp`), `0 ≤ cnt ≤ C_d(qT)^γ(1 + log qT)^{10}` (`hcnt0`, `hcnt`),
+/-- **One class**, its exponents given. For `e ≤ 3/4` (`he`), `q > 1` (`hq`), `P = q^m` (`hPm`),
+`1 ≤ T ≤ 3q^η` (`hT1`, `hT`), `η ≥ 0` (`hη`), `γ ≤ 1` (`hg1`), `C₀, C_d, C_K ≥ 0` (`hC₀`, `hCd`, `hCK`),
+`0 ≤ Mp ≤ C₀q^E` (`hMp0`, `hMp`), `0 ≤ cnt ≤ C_d(qT)^γ(1 + log qT)^{10}` (`hcnt0`, `hcnt`),
 `0 ≤ B ≤ C_K(2P)^{1/12−d}(2q)^{5/12+d+2e}` (`hB0`, `hB`) and `ResBinOK L d e E γ m` (`hok`):
-`Mp · binTerm cnt P q V B ≤ C′(1 + log qT)^{10} q^{L − 1/25000 + η}(V/P)^{1/2}`, with `bin_bound_gen_hm`'s
+`Mp · binTerm cnt P q V B ≤ C′(1 + log qT)^{10} q^{L − 1/25000 + η}(V/P)^{1/2}`, with
 `C′ = 2√3·(exp 1)^{1/2}C₀C_d^{1/2} + 3(exp 1)^{1/2}C₀C_dC_K^{1/2}·2`. By orthogonality `binTerm` is at most its first
 term and `bin_bound_pt_exp` applies; by the Halász–Montgomery inequality its second term is at most
 `(exp 1)^{1/2}(V/P)^{1/2}(√2·cnt^{1/2}P + P^{1/2}cnt·B^{1/2})`, whose summands carry `q` to the exponents of
@@ -296,7 +299,7 @@ theorem bin_bound_exp {L d e : ℝ} (he : e ≤ 3 / 4)
             rw [e1, e2]; ring
         _ = Real.sqrt (Real.exp 1) * Real.sqrt (V / P) *
               (Real.sqrt 2 * Real.sqrt cnt * P + Real.sqrt P * (cnt * Real.sqrt B)) := by rw [hPP]
-    -- the first summand: the exponent of `hmBound`'s first inequality, plus `η/2`
+    -- the first summand: the exponent of `ResBinOK`'s first Halász–Montgomery inequality, plus `η/2`
     have hT1b : Mp * Real.sqrt cnt * P ≤
         C₀ * Real.sqrt Cd * Real.sqrt 3 * ℓ ^ 10 * q ^ (L - 1 / 25000 + η) := by
       have hx : q ^ E * q ^ ((γ + η) / 2) * q ^ m ≤ q ^ (L - 1 / 25000 + η) := by
@@ -309,7 +312,7 @@ theorem bin_bound_exp {L d e : ℝ} (he : e ≤ 3 / 4)
         _ = C₀ * Real.sqrt Cd * Real.sqrt 3 * ℓ ^ 5 *
               (q ^ E * q ^ ((γ + η) / 2) * q ^ m) := by ring
         _ ≤ C₀ * Real.sqrt Cd * Real.sqrt 3 * ℓ ^ 10 * q ^ (L - 1 / 25000 + η) := by gcongr
-    -- the second summand: the exponent of `hmBound`'s second inequality, plus `η`
+    -- the second summand: the exponent of `ResBinOK`'s second Halász–Montgomery inequality, plus `η`
     have hT2b : Mp * Real.sqrt P * cnt * Real.sqrt B ≤
         C₀ * Cd * 3 * Real.sqrt CK * 2 * ℓ ^ 10 * q ^ (L - 1 / 25000 + η) := by
       have hx : q ^ E * q ^ (m / 2) * q ^ (γ + η) *

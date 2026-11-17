@@ -1,27 +1,30 @@
 /-
 # The certificate's definitions, without Mathlib
 
-The definitions that the certificate builds on: its grid of cells (`Grid`, `cell`, `cellC`), the bound `ω*` for
-Buchstab's `ω` on a box (`omKw`, with its table `lnT` and `omF`), the test of evaluability (`surelyEval`), the bound
-`bound2`, the cells' tests (`cand`, `inKK`, `ne3`, `counted4`, `inKK5`, `ne5`, `counted6`) and the classes `GridOK` and
-`GridOKC`; the certificate, the total `totalD`, is in `SieveDeepDefs.lean`. They are arithmetic on natural numbers, lists
-and booleans, and the file imports only `Mathlib.Data.Nat.Notation` (the notation `ℕ`), whose closure is `Mathlib.Init`'s:
-1,339 modules, loaded in about 0.9 GiB, not the whole of Mathlib. So a file that imports no more than this one, such as a
-certificate's part files (`SieveCert22000EP1.lean` … `SieveCert22000EP114.lean`), runs its kernel checks without the
-environment of `import Mathlib`, which loads about 6.3 GiB into every process. The lemmas about these definitions, in the
-reals and over `Finset`, are in `SieveCert.lean` and `SieveOmegaB.lean`, which import this file and Mathlib.
+The definitions that the certificates build on: the grid of cells (`Grid`, `V`, `H`, `e`, `cell`) and the bound `ω*`
+for Buchstab's `ω` on a box (`omKw`, with its table `lnT` and `omF`). They are arithmetic on natural numbers, and the
+file imports only `Mathlib.Data.Nat.Notation` (the notation `ℕ`), whose closure is `Mathlib.Init`'s: 1,339 modules,
+loaded in about 0.9 GiB, not the whole of Mathlib. So a file that imports no more than this one and the other
+Mathlib-free definitions, such as the certificate's parts `SieveHint21500P1.lean` … `SieveHint21500P17.lean`, runs its
+kernel checks without the environment of `import Mathlib`, which loads about 6.3 GiB into every process. The lemmas
+about these definitions, in the reals, are in `SieveCert.lean` and `SieveOmegaB.lean`, which import this file and
+Mathlib.
+
+* The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. A grid (`Grid`) has the window's ends `U1 < U2`, in
+  units of `1/DEN`, the number `n` of cells a side and the cells' multiplier `μ`. The window's width is `V = U2 − U1`,
+  the cells' side is `H = μ⌈(DEN/2 − V)/(μn)⌉` (for `μ = 1`, `⌈(DEN/2 − V)/n⌉`), and cell `k` is
+  `cell k = (e k, e k + H)` with `e k = V + Hk`.
 -/
 import Mathlib.Data.Nat.Notation
 
 namespace SieveCert
 
-/-! ### The grid and the certificate, in natural numbers -/
+/-! ### The grid, in natural numbers -/
 
 /-- The denominator of the coordinates. -/
 def DEN : ℕ := 2 ^ 40
 /-- **A grid of the certificate**: the window's ends `U1 < U2`, in units of `1/DEN`, the number `n` of cells a side,
-and the cells' multiplier `μ`: a cell is `μ` consecutive cells of the grid of `μn` cells (`μ = 1` for a certificate's
-grid; its coarse grid `Gc` has `n/4` cells of four). -/
+and the cells' multiplier `μ`: a cell is `μ` consecutive cells of the grid of `μn` cells. -/
 class Grid where
   /-- The window's left end. -/
   U1 : ℕ
@@ -104,15 +107,7 @@ def H : ℕ := Grid.mult * ((DEN / 2 - V + n * Grid.mult - 1) / (n * Grid.mult))
 /-- The lower end of cell `k`. -/
 def e (k : ℕ) : ℕ := V + H * k
 
-/-! The search of `anySub` unrolled for `k ≤ 6` boxes, `sub k`: the same tree of `||`, with `Nat.add` and no recursion,
-which the kernel evaluates several times faster than the recursion; `SieveCert.surelyEval_eq` proves `surelyEval` equal to
-`surelyEvalSpec`. -/
-
 /-- The range of cell `k`. -/
 def cell (k : ℕ) : ℕ × ℕ := (e k, e k + H)
-
-/-! ### The coarse grid of the primes `p₅` and `p₆`, and the cells of depths 5 and 6 -/
-
-/-! ### Facts about the grid -/
 
 end SieveCert

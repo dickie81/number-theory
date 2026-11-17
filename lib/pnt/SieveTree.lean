@@ -1,19 +1,16 @@
 /-
-# Buchstab's tree
+# Buchstab's tree: rough numbers and the primes of an interval
 
-Plain statement. `rough z n` says that `n` has no prime factor below `z`; `primesIco w z` is the set of primes of
+Plain statements. `rough z n` says that `n` has no prime factor below `z`; `primesIco w z` is the set of primes of
 `[w, z)`.
 
-* `tree_pt`: Buchstab's tree at one `n`. For `w ≤ z₀` and `r ≤ X` with every prime factor of `r` at least `z₀`,
-  `[r ∣ n, rough z₀ n]` is the leaves' sum `Σ_{P ⊆ [w, z₀), r∏P ≤ X} (−1)^{|P|} [r∏P ∣ n, rough w n]` plus the stops'
-  sum `Σ_{w ≤ p < z₀} Σ_{P ⊆ (p, z₀), r∏P ≤ X < r∏P·p} (−1)^{|P|+1} [r∏P·p ∣ n, rough p n]`, over sets `P` of primes.
+* `rough_mono`: for `w ≤ z`, `rough z n` implies `rough w n`.
+* `prod_dvd_iff`: for a set `P` of primes, `∏P ∣ n` iff every `p ∈ P` divides `n`.
+* `coprime_r`: `r`, whose prime factors are at least `z`, is prime to a product of primes below `z`.
+* `mem_primesIco`: `p ∈ primesIco w z` iff `w ≤ p < z` and `p` is prime.
 
-This is Buchstab's identity iterated from `z₀` down to `w`, each branch stopped once its product would pass the
-threshold `X`.
-
-The proof: for `n` with `r ∣ n` and `rough w n`, let `Q` be the primes of `[w, z₀)` that divide `n`. The leaves that
-count `n` are the `P ⊆ Q`, and the stops those with `p = min Q`. `alt_cancel`,
-`Σ_{P⊆Q} (−1)^{|P|}[a∏P ≤ X] + Σ_{P'⊆Q∖{q}} (−1)^{|P'|+1}[a∏P' ≤ X < a∏P'q] = 0` with `q = min Q`, leaves `[Q = ∅]`.
+All four are used in the proof of `SieveTreeStop.tree_pt_stop`, Buchstab's tree with a stopping rule at one `n`:
+Buchstab's identity iterated from `z₀` down to `w` over the sets `P` of primes of `[w, z₀)`.
 
 The file imports only Mathlib.
 -/

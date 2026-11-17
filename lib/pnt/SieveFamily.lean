@@ -1,52 +1,39 @@
 /-
-# Type II families
+# Lemmas for Type II families
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statements. `L`, `w₁` and `w₂` are a route's parameters (`SieveRoute.Route`), and `family_bound`,
-`typeII_sharp_explicit` and `typeII_sharp` assume the route's Type II estimate (`hII : SieveRoute.TypeIIAt`). Let `f0`
-be smooth and real with support in `[1/2, 2]`, `K₀ ≥ 0` and `e₁ > 0`. A *family* has: a large `q`; `P` with
-`q^{w₁L} ≤ P ≤ q^{w₂L}`; `S ⊆ (P, 2P]` with coefficients `a_m`; `K ≤ K₀` primes `x_i` of `Sp`'s ranges at the scales
-`Q_i ≥ q^{e₁}` (`primesTo Q_i`, the primes up to `2Q_i`), with the weights `f0(x_i/Q_i)` and `∏_i Q_i ≤ 2^{K₀}q^L/P`;
-and `J` forms `ℓ_j(m, x) = φ_j(m) + Σ_i e_{ji} log x_i`. For a unit `a` mod `q`, its `A − B/φ(q)` is `Dsum`: the sum of
-its weights times `1[n ≡ a] − 1[(n, q) = 1]/φ(q)` at `n = m∏_i x_i`.
+Plain statements. These are the lemmas on orthogonality, the cut-off, the pivots and the elementary bounds for the
+Type II families of `SieveFamilyGen`. A family has `m` with coefficients `a_m`, `K` primes `x_i` of `Sp`'s ranges at
+the scales `Q_i` (`primesTo Q_i`, the primes up to `2Q_i`) with the weights `f0(x_i/Q_i)`, and `J` forms
+`ℓ_j(m, x) = φ_j(m) + Σ_i e_{ji} log x_i`. For a unit `a` mod `q`, its `A − B/φ(q)` is `Dsum`: the sum of its weights
+times `1[n ≡ a] − 1[(n, q) = 1]/φ(q)` at `n = m∏_i x_i`.
 
-* `family_bound` (Lemma 4′ with Proposition 3′): let `J` continuous integrable `g_j` with integrable `𝓕g_j` be applied
-  to the forms, with `2π(Σ_j |e_{ji}|)T₀ ≤ q^η` for each `i` and `0 < η ≤ 10⁻⁵`. The sum over `χ ≠ 1` of the family's
-  twisted sums is at most `q^{L−1/50000}(Σ_m |a_m|²/P)^{1/2} ∏_j ‖𝓕g_j‖₁`, plus the number of characters `χ ≠ 1` times
-  `Σ_m |a_m| ∏_i Σ_p |f0(p/Q_i)|` times `Σ_j (∫_{|t|>T₀} |𝓕g_j(t)| dt) ∏_{i≠j} ‖𝓕g_i‖₁`.
-* `typeII_sharp_explicit` (Lemma 4″): let also `0 ≤ f0 ≤ F₀`, and cut a family with at least one prime by `J` sharp
-  comparisons `P_j`, where `P_j` holds when `ℓ_j > 0` and implies `ℓ_j ≥ 0`. If `0 < θ ≤ 1 ≤ Λ`, `ℓ_j ≤ Λ` on the
-  family, each comparison has a pivot prime with coefficient `±1`, `T₀ ≥ 1`, `k ≥ 2` and
-  `2π(Σ_j |e_{ji}|)T₀ ≤ q^{1/100000}` for each `i`, then `|A − B/φ(q)|` is at most an explicit bound in the cut-off's
-  masses and tails (`massB`, `tailB`) and the pivots' counts.
-* `typeII_sharp`: fix also `J₀`, `E₀ ≥ 0`, `Λ₀ ≥ 0` and `A₀ ≥ 0`. There are `δ > 0` and `q₀` such that for `q ≥ q₀`,
-  every such family with `|a_m| ≤ A₀` for every `m`, `J ≤ J₀`, `|e_{ji}| ≤ E₀`, `ℓ_j ≤ Λ₀ log q` on the family and
-  pivots as above has `|A − B/φ(q)| ≤ A₀q^{L−δ}/φ(q)`.
-
-The proof:
-
-* `sum_twist_eq`, `inner_factor`: a separated family sum factors into the twisted `m`-sum and the twisted prime sums,
-  which are `SieveWeight.Sp` at the heights `−2πΣ_j ξ_je_{ji}`.
-* `family_bound`: `SieveSep.sum_sep` writes each character's sum as an integral over `ℝ^J`. On the box `|ξ_j| ≤ T₀` the
-  heights are at most `q^η`, and `hII` bounds the sum over `χ ≠ 1`; everywhere the trivial bound holds;
-  `SieveSep.sep_bound` combines the two.
+* `sum_twist_eq`: for `Q > 0`, a prime sum with the twist `p^{2πiH}` is `Q^{2πiH}` times `SieveWeight.Sp` at the
+  height `−2πH`.
 * `integral_norm_GC_le`, `mass_GC_le`, `tail_GC_le`: for `SieveSmooth`'s cut-off `G` with `0 < θ ≤ 2Λ`,
   `‖G‖₁ ≤ 2Λ + θ` and `‖𝓕G‖₁ ≤ π(2Λ + θ) + c₂/(2πθ)`, and for `θ > 0`, `Λ ≥ 0`, `k ≥ 2` and `T₀ ≥ 1`,
-  `∫_{|ξ|>T₀} |𝓕G| ≤ 2π·2θ^{1−k}c_k(2π)^{−k}T₀^{2−k}`, with `c_k = ‖g^{(k)}‖₁`.
+  `∫_{|ξ|>T₀} |𝓕G| ≤ 2π·2θ^{1−k}c_k(2π)^{−k}T₀^{2−k}`, with `c_k = ‖g^{(k)}‖₁`. `massB` and `tailB` are these bounds.
 * `dw`, `dw_eq`, `Dsum`, `norm_Dsum_le`: orthogonality, `1[n ≡ a] − 1[(n, q) = 1]/φ(q) = φ(q)⁻¹Σ_{χ≠1} χ(a⁻¹)χ(n)` for
   a unit `a`.
 * `abs_prod_sub_prod_le`, `norm_Dsum_sharp_le`: sharp against smooth, from `|∏_j I_j − ∏_j G_j| ≤ Σ_j |I_j − G_j|` for
   values in `[0, 1]`.
-* `abs_ind_sub_G_le`, `card_short_le`, `pivot_sum_le`, `pivot_term_le`: near the boundary `|1[P_j] − G| ≤ G̃`, with
-  `G̃(u) = G_{θ,θ}(u + θ)`, and over the pivot prime `Σ_y f0(y/Q)G̃(…) ≤ F₀((e^{3θ} − 1)2Q + 1)`.
-* `Dsum_sharp_le`, `typeII_sharp_explicit`: the smoothed family and the `J` near-boundary families by `family_bound`,
-  and the pivots' counts by `pivot_sum_le`.
-* `typeII_sharp`: `θ = q^{−ε₂}` with `ε₂ = 1/(400000(J₀ + 1))`, `Λ = Λ₀ log q + 1`, `T₀ = q^{1/200000}` and
-  `k = 1200003`. The masses are at most `Cq^{ε₂}` (`massB_le`) and the tails at most `c′q^{−3}` (`tailB_le`). The box
-  and the pivots' counts are at most constants times `A₀q^L` (`box_le`, `pivot_le`). So the bound is at most
-  `A₀q^L/φ(q)` times `a₁q^{−7/400000} + a₂q^{−1} + a₃(12q^{−ε₂} + q^{−e₁})`, which is at most `q^{−δ}` for large `q`,
-  with `δ = min(ε₂, e₁)/2` (`bracket_le`).
+* `abs_ind_sub_G_le`, `card_short_le`, `sum_piFinset_pivot`, `pivot_sum_le`, `pivot_term_le`: near the boundary
+  `|1[P_j] − G| ≤ G̃`, with `G̃(u) = G_{θ,θ}(u + θ)`, and over the pivot prime
+  `Σ_y f0(y/Q)G̃(…) ≤ F₀((e^{3θ} − 1)2Q + 1)`.
+* `card_chars_le`, `prod_masses_le`, `sum_tails_le`: at most `φ(q)` characters `χ ≠ 1`; `∏_j m_j ≤ M^J` and
+  `Σ_j t_j ∏_{i≠j} m_i ≤ JτM^J` for `0 ≤ m_j ≤ M`, `0 ≤ t_j ≤ τ` and `M ≥ 1`.
+* `card_primesTo_le`, `sum_f0_le`, `sum_norm_le`, `sqrt_sum_sq_le`, `exp_three_sub_one_le`: elementary bounds. For
+  `Q ≥ 1`, `primesTo Q` has at most `3Q` elements, and `Σ_p |f0(p/Q)| ≤ 3F₀Q` when `0 ≤ f0 ≤ F₀`. For `S ⊆ (P, 2P]`
+  and `|a_m| ≤ A₀` for every `m`, `Σ_{m∈S} |a_m| ≤ PA₀`, and for `P > 0` also `(Σ_{m∈S} |a_m|²/P)^{1/2} ≤ A₀`. And
+  `e^{3θ} − 1 ≤ 6θ` for `0 ≤ θ ≤ 1/3`.
+* `ev_pi_log_le`: for `r > 0` and `Λ₀ ≥ 0`, eventually `π(2Λ₀ log x + 3) ≤ x^r`.
+* `massB_le`: for `x ≥ 1`, `Λ₀ ≥ 0` and `π(2Λ₀ log x + 3) ≤ x^ε`, at `θ = x^{−ε}` and `Λ = Λ₀ log x + 1` both
+  `massB θ Λ` and `massB θ θ` are at most `Cx^ε`, `C = 1 + c₂/(2π)`.
+* `tailB_le`: for `x ≥ 1`, `k ≥ 2` and `εk − ε − (k − 2)/200000 ≤ −3`, at `θ = x^{−ε}` and `T₀ = x^{1/200000}` the
+  tail `tailB θ T₀ k` is at most `2π(2c_k/(2π)^k)x^{−3}`.
+* `bracket_le`: `a₁x^{−7/400000} + a₂x^{−1} + a₃(12x^{−ε} + x^{−e}) ≤ x^{−δ}` for `x ≥ 1`, `a₁, a₂, a₃ ≥ 0`, `δ > 0`,
+  `2δ ≤ ε ≤ 1/400000`, `2δ ≤ e` and `a₁ + a₂ + 13a₃ ≤ x^δ`.
 
 The file imports `SieveSep.lean` and `SieveRoute.lean`.
 -/
@@ -542,12 +529,6 @@ theorem pivot_term_le {f0 : ℝ → ℝ} {F₀ : ℝ} (hf0 : ∀ u, 0 ≤ f0 u) 
         have hyle : y ≤ ⌊2 * Q⌋₊ := Nat.lt_succ_iff.1 hyp.1
         exact le_trans (by exact_mod_cast hyle) (Nat.floor_le (by positivity))
 
-section SharpFamily
-
-open SieveSmooth Classical
-
-end SharpFamily
-
 /-- There are at most `φ(q)` characters `χ ≠ 1`. -/
 theorem card_chars_le : ((Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1)).card : ℝ) ≤ q.totient := by
   have h : Fintype.card (DirichletCharacter ℂ q) = q.totient := by
@@ -658,7 +639,7 @@ theorem exp_three_sub_one_le {θ : ℝ} (h0 : 0 ≤ θ) (h1 : θ ≤ 1 / 3) : Re
   norm_num at h'
   linarith
 
-/-! ### The asymptotic form -/
+/-! ### Bounds at the parameters of the asymptotic form -/
 
 section Helpers
 
@@ -758,12 +739,5 @@ theorem bracket_le {x a₁ a₂ a₃ ε e δ : ℝ} (hx : 1 ≤ x) (h₁ : 0 ≤
     _ = x ^ (-δ) := by rw [hsplit, ← mul_assoc, hdd, one_mul]
 
 end Helpers
-
-section Asym
-
-open SieveSmooth Classical Filter Asymptotics
-open scoped ContDiff
-
-end Asym
 
 end SieveFamily

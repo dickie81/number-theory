@@ -1,37 +1,36 @@
 /-
-# Type II for chains of primes
+# Comparisons and sums for chains of primes
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Plain statements. A `GCmp` is a comparison `0 ≤ c(m) + Σ_i e_i log x_i` (or `0 <`) with coefficients in `{−1, 0, 1}` and
 no designated pivot. `RTg k Y Ω` is the set of `k`-tuples of primes up to `Y` that satisfy the comparisons `Ω` at
-`m = 0`. `L`, `w₁` and `w₂` are a route's parameters (`SieveRoute.Route`) with `RouteOK`, and the bounds below assume
-its Type II estimate (`hII : SieveRoute.TypeIIAt`). `N₁ = ⌊q^L⌋` and `N₂ = ⌊2q^L⌋`.
+`m = 0`.
 
-* `typeII_gcmp`, `typeII_gcmp'`: `SieveStops2.typeII_cmp` for `GCmp`s: those with a nonzero coefficient are pivoted,
-  and those without one become conditions on `m`.
-* `chainTU_bound` (the upper window): fix `e₀ > 0`, `k′`, `J₀` and `Λ₁ ≥ 0`. There are `δ > 0` and `q₀` such that for
-  `q ≥ q₀` and a unit `a` mod `q`: let `rt` run over `RTg (k′ + 1) N₂ Ω` with at most `J₀` comparisons, whose `m`-parts
-  at `m = 0` are at most `Λ₁ log q`, each such tuple having its entries at least `q^{e₀}`, its last entry least, and
-  `W₀ < ∏rt ≤ W₁`. Let `W₁ ≤ N₁`, `q^{w₁L} ≤ ⌊N₁/W₁⌋` and `⌊N₂/(W₀ + 1)⌋ ≤ q^{w₂L}`. Then the multiples `n ∈ (N₁, N₂]`
-  of `∏rt` with no prime factor below `rt`'s last entry, summed over `rt`, have `|A − B/φ(q)|` at most `q^{L−δ}/φ(q)`.
-* `chainTL_bound` (the lower window): the same for `rt` strictly decreasing, with entries at least `q^{e₀}` and
-  `P₁ < ∏_{i∈S} rt_i ≤ P₂` for a set `S` of indices, where `q^{w₁L} ≤ P₁` and `P₂ ≤ q^{w₂L}`.
+* `pivoted`, `holds_iff_pivoted`: a list of `GCmp`s holds iff its comparisons with a nonzero coefficient hold, pivoted
+  as `SieveCmp.Cmp`s, and those with every coefficient zero hold at `x = 1`.
+* The basic comparisons: `GCmp.const` (a comparison taken at `m = 0`), `grough i` (`x_i ≤ minFac m`), `grangeLo b`
+  (`b < m∏_i x_i`), `grangeHi b` (`m∏_i x_i ≤ b`) and `ggeVar i j` (`x_j ≤ x_i`), each with its `_holds` lemma:
+  `GCmp.const_holds` for every tuple, `grough_holds` and `ggeVar_holds` for entries at least 1, and `grangeLo_holds`
+  and `grangeHi_holds` for entries at least 1, `0 < b` and `m ≥ 1`.
+* `sum_cofactor_range`: for a `p`-rough `W ∈ (W₀, W₁]` with `W₁ ≤ N₁` and `1 ≤ N₁/W₁`, the `p`-rough multiples of `W`
+  in `(N₁, N₂]` are `Wk` with `k ∈ (N₁/W₁, N₂/(W₀ + 1)]` and `p ≤ minFac k`.
+* `eS`, `merge` and their lemmas: a tuple indexed by `Fin k` as its entries on a set `S` of indices and on `Sᶜ`, each
+  part in order.
+* `liftChain`, `yPairs`, `yLast`, `fullTL`: comparisons on the full tuple `(rt, y)` of a chain `rt` and a tuple `y`.
+  `fullTL_holds`: for positive `N₁`, `N₂` and entries at least 1, `fullTL` holds at `m = 1` iff `rt` satisfies `Ω` at
+  `m = 0`, `y` is non-increasing with entries at least `rt`'s last entry, and `N₁ < ∏rt·∏y ≤ N₂`.
+* `sum_mult_eq`: the `p`-rough multiples in `(N₁, N₂]` of a `p`-rough `W > 0` are `Wk` with `k ∈ [1, N₂]` `p`-rough.
+* `sum_rough_tuples`: for `z ≥ 2`, `Y ≥ 1` and `Y < z^{K+1}`, a sum over the `z`-rough `k ∈ [1, Y]` is a sum over the
+  non-increasing tuples of at most `K` primes at least `z` with product at most `Y` (`SieveRoughTuple.tuples`), the
+  empty tuple included.
+* `cmpsTU k' Ω N₁ N₂`: the comparisons `Ω` taken at `m = 0`, the last entry at most `minFac m`, and `N₁ < m∏_i x_i`
+  and `m∏_i x_i ≤ N₂`.
 
-These evaluate the evaluable terms of the sieve's decomposition: a chain `p₁ > ⋯ > p_k` of
-primes, and the rough rest of `n`. In the upper window the chain's product is the Type II variable's partner and
-the rest of `n` is the variable; in the lower window `m = ∏_S rt` is the variable, and the rest of `n` with the
-primes off `S` are the family's primes.
-
-The proof:
-
-* Upper window: `sum_cofactor_range` puts the rest of `n` in `(N₁/W₁, N₂/(W₀ + 1)]`, the comparisons `cmpsTU` (the
-  region, the rest's roughness against the last prime, the range) cut out the family, and `typeII_gcmp` bounds it.
-* Lower window: the rest of `n` is the product of a non-increasing tuple `y` of primes at least `rt`'s last entry
-  (`sum_mult_eq`, `sum_rough_tuples`). `sum_TL_eq` regroups the pairs `(rt, y)` by `m = ∏_S rt`, a squarefree `m`
-  of `Mset S P₁ P₂`, with the prime variables `x = (y, rt on Sᶜ)` and the comparisons `cmpsTL`, whose `m`-parts
-  read `m`'s factors in decreasing order (`factS`). Their `m`-parts are at most `B + log m` (`cmpsTL_c_le`), and
-  `typeII_gcmp'` bounds each length of `y`.
+These are the pieces for the evaluable terms of the sieve's decomposition: a chain `p₁ > ⋯ > p_k` of primes, and the
+rough rest of `n`. In the upper window the chain's product is the Type II variable's partner and the rest of `n` is
+the variable (`sum_cofactor_range`, `cmpsTU`); in the lower window the rest of `n` is the product of a non-increasing
+tuple `y` of primes at least the chain's last entry (`sum_mult_eq`, `sum_rough_tuples`, `fullTL`).
 
 The file imports `SieveProp6.lean`.
 -/
@@ -402,14 +401,6 @@ theorem fullTL_holds {k' t : ℕ} (Ω : List (GCmp (k' + 1))) {N₁ N₂ : ℝ} 
 
 end TLcmps
 
-/-! ### The lower window: chains and cofactor tuples as `m = ∏_S rt` and the other primes -/
-
-section TLsum
-
-open Classical
-
-end TLsum
-
 /-! ### Multiples of a number as cofactor tuples -/
 
 /-- The `p`-rough multiples in `(N₁, N₂]` of a `p`-rough `W > 0` are `Wk` with `k ∈ [1, N₂]` `p`-rough. -/
@@ -483,6 +474,8 @@ theorem sum_rough_tuples {z Y : ℕ} (hz : 2 ≤ z) (hY : 1 ≤ Y) {M : Type*} [
       simpa using hY
   rw [h0, Finset.sum_singleton]
   simp
+
+/-! ### The comparisons of the upper window -/
 
 section TypeII
 

@@ -1,11 +1,10 @@
 /-
-# The tree's weights
+# A sum of `dw` as two counts
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Plain statements. `SieveFamily.dw q a n = 1[n ≡ a] − 1[(n, q) = 1]/φ(q)`.
 
-* `tree_weighted`: for any weights `f`, `SieveTree.tree_pt` summed over a finite set.
 * `sum_dw_eq`: a sum of `dw` over a set is the count of its `n ≡ a` minus the count of its `n` prime to `q`, divided
   by `φ(q)`.
 

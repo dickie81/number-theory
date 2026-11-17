@@ -1,23 +1,16 @@
 /-
-# The search for a tree is sound
+# A tree that passes on a box, and its leaves
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statements. `SieveAdSearchDefs.lean` defines a search (`SieveAd.solveF`) that returns a cost and no tree. Here:
+Plain statements. `SieveAdDefs.lean` checks a tree of Buchstab steps on a box (`SieveAd.ok`) and gives it a cost
+(`SieveAd.cost`). Here:
 
 * `Has τ bl par c`: some tree passes `SieveAd.ok` on the box `bl`, for a term of the sign `par`, with cost at most `c`.
-  `has_vanish`, `has_eval`, `has_drop`, `has_dropB`, `has_split`, `has_buch`: the nodes of a tree, in this form.
-* `kids_sound`: if every box that `rec` searches to a cost below its limit has a tree at that cost (`RecOK`), then
-  so has the box of the new prime's whole range when the cells' costs sum to less than the limit.
-* `step_sound`, `solveF_sound`: **the search is sound.** A cost that `solveF` returns below the limit it was given
-  is the cost of a tree. The strategy that proposes the nodes is any: the search uses a node only after its check
-  has passed.
-* `has_of_kids`: a part of a search, as the kernel checks it: if the costs of the cells of the new prime between
-  `a` and `top`, searched with the limit `K`, sum to at most `c < K`, the box of the whole range has a tree at
-  cost `c`.
-* `linnik_has`: **the theorem from the tree of a search.** For a route and sound tests: if the terms at the floor of
-  the box with no prime pass `okJ` and the box of one prime has a tree at a cost below `K`, then every class prime
-  to `q` has a prime at most `K'q^L`.
+* `has_vanish`, `has_eval`, `has_drop`, `has_dropB`: the leaves of a tree, in this form: a box with no term and a box
+  that a test evaluates have a tree at the cost `0`, for either sign; a box that is dropped, or dropped for its
+  products, has one for the sign `true` at the cost of the drop.
+* `dropC_spec`: a box has a tree at the cost that `SieveAd.dropC` gives it.
 
 The file imports `SieveAdSearchDefs.lean` and `SieveAdTree.lean`.
 -/

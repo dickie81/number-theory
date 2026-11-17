@@ -9,8 +9,7 @@ at the upper ends, in units of `1/DEN`. A certificate's file gives the instance 
 `SieveHint21500.lean`, `ibPar21000` in `SieveHint21000.lean`).
 
 The class is two natural numbers, and the file imports only `SieveCertDefs.lean`, so a part file that imports no
-more than this one runs its kernel checks without `Mathlib`. (The decomposition rule `Rule` of the certificates on a
-grid, with its tests `ibOK` and `allowedR`, is in the git history, with those certificates.)
+more than this one runs its kernel checks without `Mathlib`.
 -/
 import SieveCertDefs
 

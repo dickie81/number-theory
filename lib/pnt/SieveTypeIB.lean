@@ -1,5 +1,5 @@
 /-
-# A bilinear Type I estimate by Parseval's identity
+# The bilinear form of a Type I sum, and Parseval's identity
 
 Plain statements. `e(x) = e^{2πix/q}` is Mathlib's `ZMod.stdAddChar`, `dw q a n = 1[n ≡ a] − 1[(n, q) = 1]/φ(q)`
 (`SieveFamily.dw`), and for a weight `w` on a finite set `S` of naturals, `ŵ(h) = Σ_{k∈S} w(k)e(hk)` (`what`) and
@@ -10,28 +10,23 @@ naturals prime to `q`, `B(h) = Σ_{d₁,d₂} α(d₁)β(d₂)e(−had̄₁d̄�
 * `sum_w_dw`: for `d` prime to `q`, `Σ_{k∈S} w(k)dw(dk) = q⁻¹Σ_{h≠0} ŵ(h)e(−had̄) − E_w/φ(q)`.
 * `sum_bilinear`: `Σ_{d₁,d₂} α(d₁)β(d₂)Σ_{k∈S} w(k)dw(d₁d₂k) = q⁻¹Σ_{h≠0} ŵ(h)B(h) − (Σα)(Σβ)E_w/φ(q)`.
 * `sum_norm_sq_le` (Parseval): `Σ_r |Σ_{j∈J} c_je(rs_j)|² ≤ qΣ_{j,j′∈J, s_j = s_j′} |c_j||c_j′|`.
-* `typeIB_bound`, **the bilinear Type I estimate**: let `a` be a unit mod `q`, `D₂ ⊆ [1, Dm]` with `Dm ≥ 1` and
-  `2HDm < q`, every residue the inverse of at most `m` elements of `D₁`, every `|t|d` with `0 < |t| ≤ H` and `d ∈ D₂`
-  with at most `F` divisors, and `|ŵ(h)| ≤ W` at the frequencies `h ≠ 0` off the image of `[−H, H]`. Then
-  `|Σ_{d₁,d₂} α(d₁)β(d₂)Σ_{k∈S} w(k)dw(d₁d₂k)|` is at most
-  `(Σ|α|²)^{1/2}(mF(Σ|β|²)·q⁻¹Σ_h|ŵ(h)|²)^{1/2} + W(Σ|α|)(Σ|β|) + |(Σα)(Σβ)E_w/φ(q)|`.
+* `norm_sum_B_le`: if every residue is the inverse of at most `m` elements of `D₁`, then for frequencies `f_j` with
+  weights `c_j`, `|Σ_j c_jB(f_j)| ≤ (Σ|α|²)^{1/2}(m·qΣ_{x,y}|c_{x₁}β(x₂)||c_{y₁}β(y₂)|)^{1/2}`, the sum over the pairs
+  `x, y ∈ J × D₂` with `f_{x₁}d̄_{x₂} = f_{y₁}d̄_{y₂}`.
+* `card_fiber_le`: for `t ≠ 0`, `d′ ≥ 1` and `D₂` of positive naturals, the pairs `(t′, d)` of `J × D₂` with
+  `t′d = td′` number at most the divisors of `|t|d′`; `sum_swap4` reindexes a sum over `(J × D₂)²`.
+* `Jset H`, the frequencies `0 < |t| ≤ H`; for `2H < q` their casts to `ℤ/qℤ` are distinct and not `0`
+  (`cast_injOn`, `cast_ne_zero`). `norm_Bh_le`: `|B(h)| ≤ (Σ|α|)(Σ|β|)`.
 
 The proof:
 
 * `sum_w_dw`, `sum_bilinear`: expand `1[d₁d₂k ≡ a]` by `ind_eq`; the frequency `h = 0` cancels the units' term up to
   `E_w`.
-* `norm_sum_B_le`: for frequencies `f_j` with weights `c_j`, Cauchy–Schwarz over `d₁` extends `d̄₁` to every residue,
-  counted at most `m` times, and Parseval (`sum_norm_sq_le`) leaves the pairs `(j, d₂)`, `(j′, d₂′)` with
-  `f_jd̄₂ = f_j′d̄₂′`.
-* `diag_le`: on the integer frequencies `0 < |t| ≤ H`, with `2HDm < q`, that congruence is the equation `td₂′ = t′d₂`
-  (`int_eq_of_cong`); `|c_t||β_{d₂}||c_{t′}||β_{d₂′}| ≤ ½(|c_t|²|β_{d₂′}|² + |c_{t′}|²|β_{d₂}|²)`, and for each
-  `(t, d₂′)` the pairs `(t′, d₂)` number at most `F` (`card_fiber_le`). So the diagonal is at most
-  `F(Σ|c|²)(Σ|β|²)`.
-* `typeIB_bound`: the frequencies `0 < |t| ≤ H` by `norm_sum_B_le` and `diag_le`, with `c_t = ŵ(t)` and
-  `Σ_t |ŵ(t)|² ≤ Σ_h |ŵ(h)|²` (the casts are distinct, `cast_injOn`); the others by `|B(h)| ≤ (Σ|α|)(Σ|β|)`
-  (`norm_Bh_le`).
+* `norm_sum_B_le`: Cauchy–Schwarz over `d₁` extends `d̄₁` to every residue, counted at most `m` times, and Parseval
+  (`sum_norm_sq_le`) leaves the pairs `(j, d₂)`, `(j′, d₂′)` with `f_jd̄₂ = f_j′d̄₂′`.
 
-The weights themselves, intervals and splines, are in `SieveSpline.lean`.
+The bilinear Type I estimate built from these, `typeIB_bound_wide`, and its form with a spline weight are in
+`SieveTypeIBWide.lean`; the weights themselves, intervals and splines, are in `SieveSpline.lean`.
 
 The file imports `SieveFamily.lean` (for `dw`).
 -/
@@ -344,7 +339,7 @@ theorem sum_swap4 (J : Finset ℤ) (D₂ : Finset ℕ) (φ : ℤ → ℕ → ℤ
   rw [Finset.sum_congr rfl fun t' _ => Finset.sum_comm]
   rw [Finset.sum_comm]
 
-/-! ### The estimate -/
+/-! ### The small frequencies -/
 
 /-- The small frequencies, `0 < |t| ≤ H`. -/
 def Jset (H : ℕ) : Finset ℤ := (Finset.Icc (-(H : ℤ)) H).filter (· ≠ 0)

@@ -15,11 +15,11 @@ Plain statements, with `e(x) = e^{2πix/q}` (`SieveTypeIB.eq`), `ŵ(h) = Σ_{k�
   `|ŵ(h)| ≤ (B − A)(q/(2ℓ(H + 1)))^r`).
 * `norm_sum_Ioc_unit_le`, `norm_Ew_spl_le`: `|E_w| ≤ d(q)` for the indicator of an interval (as the termwise sum of
   `Ew_eq`) and for a spline.
-* `typeIB_spline`: `SieveTypeIB.typeIB_bound` with a spline weight on its support. For `D₁`, `D₂` prime to `q` with
-  `D₂ ⊆ [1, Dm]`, `2HDm < q`, every residue the inverse of at most `m` elements of `D₁` and every `|t|d`
-  (`0 < |t| ≤ H`, `d ∈ D₂`) with at most `F` divisors, `|Σ_{d₁,d₂} α(d₁)β(d₂)Σ_k w(k)dw(d₁d₂k)|` is at most
-  `(Σ|α|²)^{1/2}(mF(Σ|β|²)(⌊n/q⌋ + 1)n)^{1/2} + (B − A)(q/(2ℓ(H + 1)))^r(Σ|α|)(Σ|β|) + |Σα||Σβ|d(q)/φ(q)`, where
-  `n = B + r(ℓ − 1) − A` is the length of the support.
+* `card_Ioc_filter_cong_le`, `sum_norm_what_spl_le`: an interval `(C, D]` holds at most `⌊(D − C)/q⌋ + 1` elements
+  of a residue class, and for the spline `q⁻¹Σ_h|ŵ(h)|² ≤ (⌊n/q⌋ + 1)n`, where `n = B + r(ℓ − 1) − A` is the length
+  of the support.
+
+These are the weight's terms in `SieveSpline.typeIB_spline_wide` (`SieveTypeIBWide.lean`).
 
 The proof:
 
@@ -33,7 +33,7 @@ The proof:
 * `norm_sum_Ioc_unit_le`: by Möbius over the divisors of `q` (`ind_unit_eq`, `totient_div_eq`), the sum is
   `Σ_{d|q} μ(d)((⌊D/d⌋ − ⌊C/d⌋) − (D − C)/d)`, and each bracket is `((C mod d) − (D mod d))/d`, of size below `1`.
   The spline's `E_w` averages the intervals' (`sum_spl_mul`).
-* `typeIB_spline`: `card_Ioc_filter_cong_le` gives `M = ⌊n/q⌋ + 1` in `sum_norm_what_sq_le`, and `|w| ≤ 1`.
+* `sum_norm_what_spl_le`: `card_Ioc_filter_cong_le` gives `M = ⌊n/q⌋ + 1` in `sum_norm_what_sq_le`, and `|w| ≤ 1`.
 
 The file imports `SieveTypeIB.lean` and `ExpSum.lean` (for the geometric sum).
 -/
@@ -457,7 +457,7 @@ theorem norm_Ew_spl_le (A B ℓ r : ℕ) (hℓ : 1 ≤ ℓ) :
         push_cast
         field_simp
 
-/-! ### The estimate with a spline weight -/
+/-! ### The spline's transform in mean square -/
 
 omit [NeZero q] in
 /-- An interval's residue classes: `#{k′ ∈ (C, D] : k′ ≡ k (mod q)} ≤ ⌊(D − C)/q⌋ + 1`. -/

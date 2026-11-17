@@ -1,18 +1,23 @@
 /-
-# Proposition 6 with the bilinear estimate: the leaves of the tree
+# The leaves of the tree
 
 Plain statements. `GCmp`, `RTg`, `eS` and `merge` are `SieveChain`'s; `DT` is `SieveP6Split`'s; `leafCmps` is
 `SieveP6Tree`'s; `rough z n` and `primesIco w z` are `SieveTree`'s; `zeta`, `rem` and `Jw` are `SieveProp6`'s.
 `N₁ = ⌊q^L⌋`, `N₂ = ⌊2q^L⌋` and `w = ⌈q^{εw}⌉`.
 
-* `LeavesOK`, `leavesOK_of`: `SieveP6Leaves.leaves_chain` at `q`, for every pair of block sizes up to `K_max`.
-* `large_leaves_le`: for a family of chains split into the blocks `S` and `Sᶜ`, with comparisons none of which is
-  constant, forms at most `Λ₀ log q`, chains strictly decreasing with entries at least `w`, and the sizes of
-  `leaves_chain`: the leaves total at most `ζ(k)(N₂ − N₁)/(φ(q) log w)·Σ 1/d + q^{L−δ}/φ(q)`.
+* `LeavesOK`: the bound on the large leaves at `q`, for every pair of block sizes `K₁, K₂ ≤ K_max`: for two sets
+  `Y₁`, `Y₂` of decreasing tuples of primes in `[w, N₂]`, at most `J₀` sharp comparisons `Pr` whose forms are at most
+  `Λ₀ log q` and each have a coefficient `±1`, and the sizes `∏y₁·w^{2k+4} ≤ q^{L−1−a}`,
+  `∏y₁·w^{2k+4}·(∏y₂)² ≤ q^{L−b}`, `q^{L−1−δ'} ≤ ∏y₁∏y₂`: the leaves `d = ∏y₁∏y₂` total at most
+  `ζ(k)(N₂ − N₁)/(φ(q) log w)·Σ 1/d + q^{L−δ}/φ(q)` in absolute value. `SieveP6LeavesWide.leavesOK_wide` gives it, with
+  `b = −c`, for large `q`.
+* `large_leaves_le`: given `LeavesOK`, for a family of chains split into the blocks `S` and `Sᶜ`, with comparisons
+  none of which is constant, forms at most `Λ₀ log q`, chains strictly decreasing with entries at least `w`, and the
+  sizes of `LeavesOK`: the leaves total at most `ζ(k)(N₂ − N₁)/(φ(q) log w)·Σ 1/d + q^{L−δ}/φ(q)`.
 * `small_leaves_le`: `SieveProp6.leaf_bound` at each chain of a set of tuples of primes at least `w ≥ 2`.
 * `sum_leaves_inv_le`: over the leaves of a tree, `Σ 1/d ≤ (Σ_{rt} 1/r)∏_{p∈[w,z₀)}(1 + 1/p)`.
 * `tree_leaves_le`: **the leaves of a tree.** The leaves with `∏x ≤ X = q^{L−1−δ'}` by `small_leaves_le`, at most
-  `X·Σ 1/d` of them; the others, split into two blocks with the sizes of `leaves_chain`, by `large_leaves_le` after
+  `X·Σ 1/d` of them; the others, split into two blocks with the sizes of `LeavesOK`, by `large_leaves_le` after
   dropping constant comparisons. In all, `(2ζ(k)(N₂ − N₁)/(φ(q) log w) + 2·rem·X)(Σ_{rt} 1/r)∏_{p∈[w,z₀)}(1 + 1/p)`
   plus `s_max·q^{L−δ}/φ(q)`.
 
@@ -29,8 +34,11 @@ open Classical
 
 /-! ### The large leaves for every pair of block sizes up to a bound -/
 
-/-- **The large leaves for every pair of block sizes up to `K_max`**: the conclusion of
-`SieveP6Leaves.leaves_chain` at `q` with `δ`, for every `K₁, K₂ ≤ K_max`. -/
+/-- **The large leaves for every pair of block sizes up to `K_max`**: at `q` with `δ`, for every `K₁, K₂ ≤ K_max`,
+two sets of decreasing tuples of primes in `[w, ⌊2q^L⌋]`, `w = ⌈q^{εw}⌉`, at most `J₀` sharp comparisons `Pr` with
+forms at most `Λ₀ log q`, each with a coefficient `±1`, and the sizes `∏y₁·w^{2k+4} ≤ q^{L−1−a}`,
+`∏y₁·w^{2k+4}·(∏y₂)² ≤ q^{L−b}`, `q^{L−1−δ'} ≤ ∏y₁∏y₂`: the leaves `d = ∏y₁∏y₂` total at most
+`ζ(k)(N₂ − N₁)/(φ(q) log w)·Σ 1/d + q^{L−δ}/φ(q)` in absolute value. -/
 def LeavesOK (q : ℕ) (a' : ZMod q) (L a b δ' εw Λ₀ C₀ δ : ℝ) (k J₀ Kmax : ℕ) : Prop :=
   ∀ K₁ K₂ : ℕ, K₁ ≤ Kmax → K₂ ≤ Kmax →
   ∀ (Y₁ : Finset (Fin K₁ → ℕ)) (Y₂ : Finset (Fin K₂ → ℕ)),
@@ -67,7 +75,7 @@ theorem prod_Sc {K : ℕ} (S : Finset (Fin K)) (f : Fin K → ℕ) : ∏ i ∈ S
 
 /-- **The large leaves of a family of chains**, split into the blocks `S` and `Sᶜ`: `LeavesOK` with the family's
 comparisons, none of them constant, their forms at most `Λ₀ log q`, the chains strictly decreasing with entries at least
-`w`, and the sizes of `leaves_chain` at every chain. -/
+`w`, and the sizes of `LeavesOK` at every chain. -/
 theorem large_leaves_le {q : ℕ} {a' : ZMod q} {L a b δ' εw Λ₀ C₀ δ : ℝ} {k J₀ Kmax : ℕ}
     (hok : LeavesOK q a' L a b δ' εw Λ₀ C₀ δ k J₀ Kmax) {K : ℕ} (S : Finset (Fin K)) (hK₁ : S.card ≤ Kmax)
     (hK₂ : Sᶜ.card ≤ Kmax) (Ω : List (GCmp K)) (hlen : Ω.length ≤ J₀) (hnz : ∀ C ∈ Ω, ∃ i, C.e i ≠ 0)
@@ -271,7 +279,7 @@ theorem norm_sum_sizes_le' {N smax : ℕ} {ε X : ℕ → ℂ} {b : ℕ → ℝ}
 with `E ≤ w^{s_max}` and `j + s_max ≤ K_max`: for a family `RTg j N₂ Ω` of strictly decreasing tuples with entries at
 least `z₀` (at most `J₀ − s_max² − 2s_max − 2` comparisons, with `m`-parts, `log z₀` and `log E` at most
 `Λ₁ log q`, and `Λ₁ log q + (j + s_max) log N₂ ≤ Λ₀ log q`): split each leaf `x` of size `s` with `∏x > X = q^{L−1−δ'}`
-into the blocks `I_s` and `I_sᶜ` with the sizes of `leaves_chain`. Then the leaves (with the signs `(−1)^s`) total at
+into the blocks `I_s` and `I_sᶜ` with the sizes of `LeavesOK`. Then the leaves (with the signs `(−1)^s`) total at
 most `(2ζ(k)(N₂ − N₁)/(φ(q) log w) + 2·rem·X)(Σ_{rt} 1/r)∏_{p∈[w,z₀)}(1 + 1/p) + s_max·q^{L−δ}/φ(q)`. -/
 theorem tree_leaves_le {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {L a b δ' εw Λ₀ Λ₁ C₀ δ : ℝ}
     {k J₀ Kmax : ℕ} (hok : LeavesOK q a' L a b δ' εw Λ₀ C₀ δ k J₀ Kmax) {j : ℕ} (Ω : List (GCmp j))

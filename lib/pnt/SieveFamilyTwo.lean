@@ -3,9 +3,9 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-The paper's Lemma 4.4 (`SieveFamily.typeII_sharp`) bounds the sum over `𝒜 − ℬ/φ(q)` of a family with one polynomial
-variable `m` in the window. This file is the same for two polynomial variables, with Proposition 3′ in two variables
-(`SieveTwoTypeII.typeII_two_gen`) in place of the estimate on the window.
+The paper's Lemma 4.4 bounds the sum over `𝒜 − ℬ/φ(q)` of a family with one polynomial variable `m` in the window.
+This file is the same for two polynomial variables, through `SieveFamilyGen.sharp_gen`, with Proposition 3′ in two
+variables (`SieveTypeIIHM.typeII_two_gen`) in place of the estimate on the window.
 
 A *family in two variables* has: a large `q`; `m₁ ∈ S₁ ⊆ (P₁, 2P₁]` and `m₂ ∈ S₂ ⊆ (P₂, 2P₂]` with coefficients
 `a_{m₁}` and `b_{m₂}`, the exponents `(log_q P₁, log_q P₂)` in a region `R`; `n + 1 ≤ K₀` primes `x_i` of `Sp`'s ranges

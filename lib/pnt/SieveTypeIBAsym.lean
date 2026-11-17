@@ -1,8 +1,8 @@
 /-
-# The leaves by the bilinear estimate: the asymptotic form
+# The leaves by the bilinear estimate: the tools of the asymptotic form
 
 Plain statements. `G θ Λ` is `SieveSmooth`'s cut-off and `massB θ Λ = π(2Λ + θ) + c₂/(2πθ)` its Fourier mass bound
-(`SieveFamily.massB`); `bdU` is `SieveTypeIBSum`'s uniform bound of a block pair.
+(`SieveFamily.massB`). The asymptotic form itself, `SieveTypeIBAsymWide.leaves_ib_wide`, is built on these.
 
 * `norm_fourier_comp_add`: a translate has the same `|𝓕|`: `|𝓕(f(· + c))(w)| = |𝓕f(w)|`.
 * `cutoffs`: for `0 < θ ≤ 2Λ`, the cut-off `G θ Λ` and the narrow cut-off `u ↦ G θ θ (u + θ)` are continuous and
@@ -16,32 +16,14 @@ Plain statements. `G θ Λ` is `SieveSmooth`'s cut-off and `massB θ Λ = π(2Λ
 * `nb_regroup`: the near-boundary masses of a sieve, regrouped:
   `Σ_{(y₁,σ),y₂} C|λ_σ|M/(π₁f_σπ₂) = C(Σ_σ |λ_σ|/f_σ)Σ_{y₁,y₂} M/(π₁π₂)`.
 * `half_le_log_one_add`, `blk_floor_le`: for `x ≥ 3`, `ρ = 1 + x^{−s}` and `1 ≤ X ≤ x^L`: `blk⌊X⌋ + 1 ≤ 3Lx^s log x`.
-* `bdU_le_pow`: **the uniform bound as powers of `q`.** With `x = q`, `η = x^{−s}`, `ρ = 1 + η`, `N₁ = ⌊x^L⌋`,
-  `N₂ = ⌊2x^L⌋`, `X₁ = x^{L−1−a}`, `X₂ = x^{L−b}`, `X₃ = x^{L−1−δ'}`, `r ≥ 4/b` and `F, d(q) ≤ C_dx^s`:
-  `bdU ≤ √(816C_d)x^{L−1−(a−δ'−s)/2} + 16(16r)^r x^{L−2} + 4C_dx^{L−1/2+s}/φ(q)`.
 * `ev_log_sq_le`: for `α < β`, eventually `C(log x)²x^α ≤ x^β`.
-* `sIB`, `sIB_spec`: the exponent `s = min((a − δ')/(2(J₀ + 6)), b/2, e₀, 1/(4(J₀ + 6)))` of `η = θ = q^{−s}`.
 * `masses_le`, `rpow_mul_le_div`, `bil_le`: the Fourier masses of `J ≤ J₀` cut-offs, each at most `M ≥ 1`, give
   `∏_j m_j + Σ_j m'_j ≤ (J₀ + 1)M^{J₀}`; and the bilinear part `4k₁k₂·FN·M_fM₂U` is at most
   `36L²(J₀ + 1)C_m^{J₀}(√(816C_d) + r' + 4C_d)(log x)²x^{L−3s/4}/φ(q)` when `k_i ≤ 3Lx^s log x`,
-  `FN ≤ (J₀ + 1)(C_mx^s)^{J₀}`, `M_f, M₂ ≤ x^{c₁}`, `U` is at most `bdU_le_pow`'s bound and the exponents allow.
+  `FN ≤ (J₀ + 1)(C_mx^s)^{J₀}`, `M_f, M₂ ≤ x^{c₁}`,
+  `U ≤ √(816C_d)x^{L−1−(a−δ'−s)/2} + r'x^{L−2} + 4C_dx^{L−1/2+s}/φ(q)` and the exponents allow.
 * `split_main`: the leaves' main errors, regrouped into the main term, the transition `(VΘ/x)Σ_y c/d` and
   `(4W/x + 2W·d(q)/φ(q))Σ_y c`, `V = Σ|λ|/f` and `W = Σ|λ|`.
-* `leaves_ib`: **the leaves by the bilinear estimate, asymptotically.** Fix `L > 2`, margins `0 ≤ δ' < a ≤ L − 2` and
-  `0 < b ≤ L`, `e₀ > 0`, `Λ₀ ≥ 0`, `B ≥ 1`, sizes `K₁`, `K₂`, `J₀`, and `0 ≤ c₁ < s/4` with `s = sIB a b δ' e₀ J₀`.
-  For large `q`: let families `Y₁`, `Y₂` of tuples lie in boxes of integers at least `q^{e₀}` with `Σ 1/p ≤ B` on
-  each coordinate, `J ≤ J₀` sharp comparisons `Pr_j` of forms at most `Λ₀ log q` each have a coefficient `±1`, and
-  sieve weights `S₁` above and `S₂` below sandwich `R`, with fibres and `Σ|λ|/f` at most `q^{c₁}` and `Σ|λ|` at
-  most `q^{1/4}`; and let every leaf have `∏y₁·f_max ≤ q^{L−1−a}`, `∏y₁·f_max(∏y₂)² ≤ q^{L−b}` and
-  `∏y₁∏y₂ ≥ q^{L−1−δ'}`. Then `|Σ_y c Σ_m rng(d, m)R(m)dw(dm)| ≤ (N₂ − N₁)/q·|Γ|·Σ_y c/d + q^{L−s/4}/φ(q)`,
-  `c = ∏_j 1[Pr_j]`, `d = ∏y₁∏y₂`, `N₁ = ⌊q^L⌋`, `N₂ = ⌊2q^L⌋`, `Γ` the sieve's gap.
-
-The proof of `leaves_ib`: `SieveTypeIBSum.leaves_family` at `θ = η = q^{−s}`, `Λ = Λ₀ log q + 1`, `r = ⌈4/b⌉` and
-`F = ⌊C_dq^s⌋` (`LinnikPower.card_divisors_le`), with each comparison replaced off the family by its cut-off, so that
-`|I_j − G θ Λ| ≤ G θ θ (· + θ)` everywhere (`SieveFamily.abs_ind_sub_G_le`). The transition is bounded by
-`Θ ≤ 11q^{L−s}` and `Σ_y c ≤ q^{L−1/2}B^{K₁+K₂}` (in the region, `(∏y₁∏y₂)² ≤ X₁X₂`), the bilinear part by `bil_le`,
-and the near-boundary masses by `nb_regroup` and `pivot_two_le`. Their total is at most `C(log q)²q^{L−3s/4}/φ(q)`,
-and `ev_log_sq_le` absorbs the constant.
 
 The file imports `SieveTypeIBSum.lean` and `LinnikPower.lean`.
 -/
@@ -362,7 +344,7 @@ theorem ev_log_sq_le (C : ℝ) {α β : ℝ} (h : α < β) :
     _ = x ^ β := by
         rw [← Real.rpow_add hx0, ← Real.rpow_add hx0, hg]; ring_nf
 
-/-! ### The asymptotic form -/
+/-! ### The leaves' weights, the masses and the bilinear part -/
 
 /-- The leaves' weights over boxes: `Σ_{y₁,y₂} c/(∏y₁∏y₂) ≤ B^{K₁+K₂}` for `0 ≤ c ≤ 1`, families in boxes with
 `Σ_{p∈t_i} 1/p ≤ B` and `B ≥ 0`. -/
@@ -419,7 +401,7 @@ theorem rpow_mul_le_div {x φ α β γ : ℝ} (hx : 1 ≤ x) (hφ0 : 0 < φ) (h�
     _ = x ^ γ := by rw [Real.rpow_sub_one hx0.ne']; field_simp
 
 /-- **The bilinear part, as a power of `q`.** With `k_i ≤ 3Lx^s log x`, `FN ≤ (J₀ + 1)(C_mx^s)^{J₀}`,
-`M_f, M₂ ≤ x^{c₁}` and `U` at most `bdU_le_pow`'s bound (with `r' = 16(16r)^r`), and the exponents below:
+`M_f, M₂ ≤ x^{c₁}` and `U ≤ √(816C_d)x^{L−1−(a−δ'−s)/2} + r'x^{L−2} + 4C_dx^{L−1/2+s}/φ`, and the exponents below:
 `4k₁k₂·FN·M_fM₂U ≤ 36L²(J₀ + 1)C_m^{J₀}(√(816C_d) + r' + 4C_d)(log x)²x^{L−3s/4}/φ`. -/
 theorem bil_le {x φ L s c₁ a δ' Cm Cd r' FN Mf M₂ U k₁ k₂ : ℝ} {J₀ : ℕ} (hx : 3 ≤ x) (hφ0 : 0 < φ) (hφx : φ ≤ x)
     (hL : 0 ≤ L) (hk₁0 : 0 ≤ k₁) (hk₁ : k₁ ≤ 3 * L * x ^ s * Real.log x) (hk₂0 : 0 ≤ k₂)

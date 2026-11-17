@@ -3,10 +3,9 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-The paper's Lemma 4.6 (`SieveChain.chainTL_bound`, `SieveChainR.chainTR_bound`) evaluates a family of chains of
-primes when the product of some of them lies in the window. This file is the same with the Type II estimate in two
-variables (`SieveFamilyTwo.TypeIITwoAt`): two disjoint sets of the chain's primes form the two variables, and the
-other primes are the rest.
+The paper's Lemma 4.6 evaluates a family of chains of primes when the product of some of them lies in the window. This
+file is that evaluation with the Type II estimate in two variables (`SieveFamilyTwo.TypeIITwoAt`): two disjoint sets
+of the chain's primes form the two variables, and the other primes are the rest.
 
 Plain statements. A `GCmp` is a comparison `0 ≤ c + Σ_i e_i log z_i` (or `0 <`) with coefficients in `{−1, 0, 1}`;
 `RTg K Y Ω` is the set of `K`-tuples of primes up to `Y` that satisfy the comparisons `Ω` (both are `SieveChain`'s).

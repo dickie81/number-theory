@@ -1,37 +1,22 @@
 /-
-# The leaves' estimates on families of atoms
+# The weights and the thresholds of families of atoms
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statements. `gA q a m = 1[m ≡ a]` and `gB q m = 1[(m, q) = 1]/φ(q)`; `L`, `w₁` and `w₂` are a route's parameters
+Plain statements. `gA q a m = 1[m ≡ a]` and `gB q m = 1[(m, q) = 1]/φ(q)`; `L` is a route's exponent
 (`SieveRoute.Route`); `N1 q = ⌊q^L⌋`, `N2 q = ⌊2q^L⌋`; `ThrOK q spec` says that the atoms' thresholds lie in
-`[1, q^{L+1}]`. The cells are those of `SieveCert`'s grid (`SieveCert.Grid`).
+`[1, q^{L+1}]`.
 
-* `exists_inside`: a box (its primes' ranges, in units of `1/DEN`) that `SieveCert.surelyEval` passes has a set `T` of
-  its primes whose subset sums over the box stay inside `U = (u₁, u₂) ∪ (1 − u₂, 1 − u₁)`.
-* `window_lo`, `window_hi`: for `x > 1` and primes in their cells, `⌊x^{B/DEN}⌋ < ∏_T rt` when `B` is below the box's
-  lower sum over `T`, and `∏_T rt ≤ ⌊x^{B/DEN}⌋` when `B` is above its upper sum; `window_lo_gen` and
-  `window_hi_gen` for primes in ranges of any widths.
-* `TL_spec`, `TU_spec`, `TR_spec`: `SieveChain.chainTL_bound`, `chainTU_bound` and `SieveChainR.chainTR_bound` (with
-  `RouteOK` and `hII`) on a family of at most `40` atoms with `ThrOK`, as bounds on `|famI(g_A) − famI(g_B)|`: the
-  product of a set of the primes in the lower window, the product of all of them in the upper one, and the product of
-  a set of them in the reflected window `(N₁/W₁, N₂/(W₀ + 1)]`.
-* `P6_spec`: `SieveProp6.prop6` (with `RouteOK` and `hII`) on a family of at most `40` atoms with `ThrOK` and nonzero
-  coefficients (`NZ`), as a bound on `|famJ(g_A, z₀) − famJ(g_B, z₀)|`.
-* `P6IB_spec`: `SieveP6ib.prop6ib`, Proposition 6 with the bilinear Type I estimate (with `RouteOK` and `hII`), on a
-  family of at most `40` atoms with `ThrOK` whose tuples are strictly decreasing, with entries at least `q^{a₀}` and the
-  `i`-th in `[q^{lo_i}, q^{hi_i}]` for exponents meeting its conditions, as a bound on
-  `|famJ(g_A, z₀) − famJ(g_B, z₀)|`.
+* `dw_eq`, `sum_dw_famI`, `sum_dw_famJ`: `SieveFamily.dw = gA − gB`, so a sum of `dw` over a family's terms is
+  `famI(g_A) − famI(g_B)`, or `famJ(g_A, z) − famJ(g_B, z)`.
+* `c_le_of_thrOK`: with `ThrOK` and `q ≥ 1`, each atom's comparison (`Atom.toG`) has its part at `m = 0` at most
+  `(L + 1) log q`.
+* `holds_iff_sem`, `RTg_eq_of_thrOK`: with `ThrOK`, on tuples of primes the atoms' comparisons hold at `m = 0` exactly
+  when the atoms do, and the family `famSet k Y spec` is `SieveChain.RTg` of the comparisons.
 
-These connect the families (`SieveDecomp`) with the Type II bounds and Proposition 6. `dw_eq`, `sum_dw_famI` and
-`sum_dw_famJ` write `SieveFamily.dw = gA − gB` on the families, and `RTg_eq_of_thrOK` and `RT_pivoted` identify a
-family with the comparisons of its atoms.
+These connect the families (`SieveDecomp`) with the comparisons of `SieveChain`.
 
-The route's numbers and the certificate's grid parameters are parameters and the Type II estimate is a hypothesis
-(`hII`); the case of the library's theorem, `Linnik22000E.route22000D` and `SieveCert.grid22000E`, takes
-`Linnik22000E.typeII22000d` for `hII`.
-
-The file imports `SieveBuch.lean` and `SieveP6ib.lean`.
+The file imports `SieveDecomp.lean`, `SieveCert.lean`, `SieveRuleDefs.lean` and `SieveP6ib.lean`.
 -/
 import SieveDecomp
 import SieveCert
@@ -44,8 +29,6 @@ open SieveCert (V DEN H U1 U2 cell)
 namespace SieveLeaves
 
 open Classical
-
-/-! ### A box surely evaluable has one set of primes in a window -/
 
 /-! ### The weights, and the sums of `dw` -/
 
@@ -88,7 +71,7 @@ theorem sum_dw_famJ (q : ℕ) (a : ZMod q) (N₁ N₂ z : ℕ) {k : ℕ} (F : Fi
   rw [dw_eq]
   split_ifs <;> push_cast <;> ring
 
-/-! ### The estimates on families of atoms -/
+/-! ### The window ends, and the thresholds of a family's atoms -/
 
 variable [Route]
 

@@ -1,5 +1,5 @@
 /-
-# The leaves by the bilinear estimate: blocks, splines, and a block pair
+# The leaves by the bilinear estimate: blocks, splines, and a block's fibres
 
 Plain statements. For `ρ > 1` the block of `d ≥ 1` is `blk ρ d = ⌊log d/log ρ⌋`. At a scale `D > 0`, with `ρ ≥ 1`,
 `0 ≤ η ≤ 1` and `r ≥ 1`, the splines (`SieveSpline.spl`) of step `ℓ = ⌊ηN₁/(rDρ²)⌋ + 1` (`stp`) are the majorant
@@ -11,18 +11,13 @@ Plain statements. For `ρ > 1` the block of `d ≥ 1` is `blk ρ d = ⌊log d/lo
 * `sandwich`: for `D ≤ d < Dρ²`, `TMs ≤ rng(d, ·) ≤ TPs`.
 * `mass_diff_le`: the majorant's mass exceeds the minorant's by at most `(N₁ + N₂)(1 − ρ⁻²)/D + 2ηN₁/(Dρ²) + 2`;
   `len_TPs_le`, `len_TMs_le`: both supports have length at most `N₂/D + ηN₁/(Dρ²)`.
-* `pair_le`: for a family with comparisons `c = ∏_j I_j` as in `SieveTypeIBFam.typeIB_sharp0`, values `π₁`, `π₂`, `f`
-  at least `1` and fibres `Σ_{π₁(y₁)f_σ = d} |λ_σ| ≤ M_f`, `#{π₂(y₂) = d} ≤ M₂`, and `d(n) ≤ F` for `0 < n < q`: a block
-  pair's bilinear sum (`SieveTypeIBLeaf.blockSum`) with a spline `t` is at most
-  `(∏_j ‖𝓕G_j‖₁ + Σ_j ‖𝓕M_j‖₁)M_fM₂·bdP + Σ_j 2φ(q)⁻¹(B − A)Σ |λ_σ|M_j(ℓ_j)`, the last sum over the block pair, with
-  `bdP = √(P₁P₂(P₁/q + 1)F(n/q + 1)n) + (B − A)(P₂/ℓ)^r P₁P₂ + P₁P₂d(q)/φ(q)`, `P_i = ρ^{β_i+1}` and `n` the spline's
-  length.
+* `fibre_le`: if the values `π(y)` (`y ∈ Y`) lie in `[1, P]` and every fibre has `Σ|c| ≤ M`, then
+  `Σ_d (Σ_{π(y) = d} |c(y)|)² ≤ M²P` and `Σ_y |c(y)| ≤ MP`.
+* `lenv`, the length `B + r(ℓ − 1) − A` of a spline's support; `eq_of_inv_eq`: units mod `q` with the same inverse
+  are equal.
 
-The proof of `pair_le`: `SieveTypeIBFam.typeIB_sharp0` on the block pair, with `D_m = ⌊P₂⌋` (`π₂ ≤ D_m` on the block),
-`H = ⌊(q − 1)/(2D_m)⌋` (so `2HD_m < q` and `q/(2ℓ(H + 1)) ≤ D_m/ℓ`), and `m = ⌊P₁⌋/q + 1`: the block's values `d₁`
-with a given inverse mod `q` lie in one residue class of `[1, P₁]` (`eq_of_inv_eq`,
-`SieveSpline.card_Ioc_filter_cong_le`). The block's values number at most `P_i`, so its fibres give
-`Σ_d A₁(d)² ≤ M_f²P₁` and `Σ|a₁| ≤ M_fP₁` (`fibre_le`), and the same with `M₂`, `P₂`.
+The block pair's estimate `SieveTypeIBPairWide.pair_le_wide` and the sums over the block pairs (`SieveTypeIBSum`,
+`SieveTypeIBSumWide`) are built on these.
 
 The file imports `SieveTypeIBLeaf.lean`.
 -/
@@ -267,7 +262,7 @@ theorem len_TMs_le {η ρ D : ℝ} (hη : 0 ≤ η) (hρ : 1 ≤ ρ) (hD : 0 < D
   have hsR : ((s : ℕ) : ℝ) ≤ η * N₁ / (D * ρ ^ 2) := hs
   linarith
 
-/-! ### A block pair -/
+/-! ### A block's fibres -/
 
 /-- A block's fibres: if the values `π y` (`y ∈ Y`) lie in `[1, P]` and every fibre has `Σ‖c‖ ≤ M`, then
 `Σ_d (Σ_{π y = d} ‖c y‖)² ≤ M²P` and `Σ_y ‖c y‖ ≤ MP`. -/

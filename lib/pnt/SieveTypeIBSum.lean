@@ -1,32 +1,19 @@
 /-
-# The leaves by the bilinear estimate: a family of leaves
+# The leaves by the bilinear estimate: a leaf's splines, its main errors, and the block pairs
 
-Plain statements. `bdP` is a block pair's bound (`SieveTypeIBEv.bdP`), and the splines are those of `SieveTypeIBEv` at
-the scale `D = ρ^{β₁+β₂}` of a block pair of `blk ρ`.
+Plain statements. The splines are those of `SieveTypeIBEv` (`TPs`, `TMs`) at the scale `D = ρ^{β₁+β₂}` of a block
+pair of `blk ρ`.
 
-* `bdP_le`: let a block pair `(β₁, β₂)` hold `d₁` and `d₂` with `d₁ ≤ X₁`, `d₁d₂² ≤ X₂` and `X₃ ≤ d₁d₂`, and let a
-  spline `t` have length and mass at most `N₂/D + ηN₁/(Dρ²)`, step `ℓ ≥ ηN₁/(rDρ²)` and power `r`. Then `bdP ≤ bdU`,
-  `bdU = √(ρ²(1 + η)N₂(ρX₁/q + 1)F((1 + η)ρ²N₂/(X₃q) + 1)) + ρ²(1 + η)N₂(rρ³X₂/(ηN₁))^r + ρ²√(X₁X₂)d(q)/φ(q)`.
+* `blk_mono`: for `ρ > 1`, `blk ρ` is monotone on `d ≥ 1`.
 * `mass_leaf_le`, `massd_le`, `errL_le`: at a leaf `d₁d₂` and a weight `f`, the splines at the block pair of
-  `(d₁f, d₂)` have masses differing by at most `Θ/(d₁fd₂) + 2`, `Θ = (N₁ + N₂)(ρ² − 1) + 2ηN₁`, and `(B − A)d₁fd₂`
-  at most `(1 + η)ρ²N₂`; so the leaf's main errors (`SieveTypeIBLeaf.errL`) are at most
-  `(N₂ − N₁)|Γ|/(qd₁d₂) + (VΘ/(d₁d₂) + 4W)/q + 2W·d(q)/φ(q)`, `V = Σ|λ_i|/f_i` and `W = Σ|λ_i|` over both sieves.
-* `witness_le`: at a leaf with `p₁f_max ≤ X₁`, `p₁f_max p₂² ≤ X₂` and `X₃ ≤ p₁p₂`, the block pair of `(p₁f, p₂)` has
-  `blk(p₁f) ≤ blk⌊X₁⌋`, `blk(p₂) ≤ blk⌊√X₂⌋`, and `bdP ≤ bdU` for both splines.
-* `pair_le_W`, `blocks_le`: a block pair's bilinear sum is at most `(∏_j ‖𝓕G_j‖₁ + Σ_j ‖𝓕M_j‖₁)M_fM₂U` if the pair
-  holds a leaf and `0` if not, plus its near-boundary masses; over the block pairs of one sieve, at most
-  `2(K₁ + 1)(K₂ + 1)` times that plus `Σ_j 2φ(q)⁻¹Σ_{(y₁,σ),y₂} M_m|λ_σ|M_j(ℓ_j)/(π₁f_σπ₂)` (`sum_pairs`).
-* `leaves_family`: **a family of leaves.** For leaves `(y₁, y₂)` with comparisons `c = ∏_j I_j` (as in
-  `SieveTypeIBFam.typeIB_sharp0`), sieve weights `S₁` above and `S₂` below `R` with divisors `f ≤ f_max`, bounded
-  fibres, `d(n) ≤ F` for `0 < n < q`, and every leaf in the region `π₁f_max ≤ X₁`, `π₁f_maxπ₂² ≤ X₂`,
-  `X₃ ≤ π₁π₂`: `|Σ_y c Σ_m rng(d, m)R(m)dw(dm)|` is at most the leaves' main errors (`errL_le`), plus
-  `4(K₁ + 1)(K₂ + 1)(∏_j ‖𝓕G_j‖₁ + Σ_j ‖𝓕M_j‖₁)M_fM₂·bdU` with `K₁ = blk⌊X₁⌋` and `K₂ = blk⌊√X₂⌋`, plus the
-  near-boundary masses of both sieves with `M_m = (1 + η)ρ²N₂`.
+  `(d₁f, d₂)` have masses differing by at most `Θ/(d₁fd₂) + 2`, `Θ = (N₁ + N₂)(ρ² − 1) + 2ηN₁`, and at the block pair
+  of `(d₁, d₂)` the mass `B − A` times `d₁d₂` is at most `(1 + η)ρ²N₂`; so the leaf's main errors
+  (`SieveTypeIBLeaf.errL`) are at most `(N₂ − N₁)|Γ|/(qd₁d₂) + (VΘ/(d₁d₂) + 4W)/q + 2W·d(q)/φ(q)`,
+  `V = Σ|λ_i|/f_i` and `W = Σ|λ_i|` over both sieves. `massv_le_lenv`: a spline's mass is at most its length.
+* `sum_pairs`: over all block pairs, the pairs' sums make up the whole family; `ppart_le_abs`, `npart_le_abs`:
+  `|x⁺|, |x⁻| ≤ |x|`.
 
-The proof of `leaves_family`: `SieveTypeIBLeaf.leaves_bound` with the splines `TPs`, `TMs` at the block pairs
-(`SieveTypeIBEv.sandwich`, `blk_pair`); the bilinear parts by `SieveTypeIBLeaf.abs_dwU_le`, `abs_dwL_le` and
-`blocks_le`, where a block pair holding a leaf is bounded by `SieveTypeIBEv.pair_le` with `bdP ≤ bdU` at the leaf
-(`witness_le`), and one holding none vanishes.
+The family of leaves by the bilinear estimate, built on these, is `SieveTypeIBSumWide.leaves_family_wide`.
 
 The file imports `SieveTypeIBEv.lean`.
 -/
@@ -81,7 +68,7 @@ theorem massv_le_lenv (t : ℕ × ℕ × ℕ × ℕ) : massv t ≤ lenv t := by
   unfold massv lenv
   exact_mod_cast Nat.sub_le_sub_right (Nat.le_add_right _ _) _
 
-/-- The mass at a leaf: `(B − A)d ≤ (1 + η)ρ²N₂` for the splines at the block pair of `(d₁f, d₂)`, `d = d₁fd₂`. -/
+/-- The mass at a leaf: `(B − A)d ≤ (1 + η)ρ²N₂` for the splines at the block pair of `(d₁, d₂)`, `d = d₁d₂`. -/
 theorem massd_le {ρ η : ℝ} (hρ : 1 < ρ) (hη : 0 ≤ η) {N₁ N₂ : ℕ} (hN : N₁ ≤ N₂) {r : ℕ} (hr : 1 ≤ r)
     {d₁ d₂ : ℕ} (hd₁ : 1 ≤ d₁) (hd₂ : 1 ≤ d₂) :
     massv (TPs η ρ (ρ ^ (blk ρ d₁ + blk ρ d₂)) N₁ N₂ r) * (d₁ * d₂ : ℕ) ≤ (1 + η) * ρ ^ 2 * N₂ ∧

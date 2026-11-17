@@ -9,7 +9,7 @@ side of the leaves; and the flag `e`, the side of the small primes. In units of 
 `ρ₁`, `ρ₂` the sums of the lower and upper ends over `sr`:
 
 * the window `[u, v]` of the first variable is the largest that the region allows for the rests of exponent in
-  `[ρ₁ − 1, ρ₂ + 1]` (`uOf`, `vOf`), and `t = u − Σ_{s0} lo` is the growth of the tree (`tOf`);
+  `[ρ₁ − 1, ρ₂ + 1]` (`uOf`, `vOf`), and `t = u − Σ_{s0} lo` is the growth of the tree (`okJ2`);
 * `chkJ2` checks the region's six inequalities at these, that the window is wider than the floor (`u + f < v`),
   that the primes of `s0` stay below its upper end, and the paper's two conditions on the leaves' sizes or, where
   they fail, the leaves cut in three (`SieveAdLeafDefs.lean`'s `leavesL`, `leavesE`);

@@ -1,34 +1,21 @@
 /-
-# Type I_B families: the bilinear Type I estimate over families with comparisons
+# Type I_B families: fibres, twists and the bound `bdIB`
 
-Plain statements. `dw q a n = 1[n ≡ a] − 1[(n, q) = 1]/φ(q)` (`SieveFamily.dw`), and `w` is the spline of
-`SieveSpline.spl` on its support `(A, B + r(ℓ − 1)]`. A *family* has two groups of variables, `y₁` over a finite set
-`Y₁` with values `π₁(y₁)` and coefficients `a₁(y₁)`, and `y₂` over `Y₂` with `π₂(y₂)` and `a₂(y₂)`; on the fibre of a
-value `d` the coefficients aggregate to `A₁(d) = Σ_{π₁(y₁) = d} |a₁(y₁)|` and `A₂(d)`.
+Plain statements. `dw q a n = 1[n ≡ a] − 1[(n, q) = 1]/φ(q)` (`SieveFamily.dw`). A *family* has two groups of
+variables, `y₁` over a finite set `Y₁` with values `π₁(y₁)` and coefficients `a₁(y₁)`, and `y₂` over `Y₂` with `π₂(y₂)`
+and `a₂(y₂)`; on the fibre of a value `d` the coefficients aggregate to `A₁(d) = Σ_{π₁(y₁) = d} |a₁(y₁)|` and `A₂(d)`.
+These are the steps by which `SieveTypeIBPairWide.typeIB_smooth_wide` and `SieveTypeIBPairWide.typeIB_sharp0_wide`
+bring the bilinear Type I estimate to a family.
 
 * `norm_integral_prod_le`: `|∫ ∏_j h_j(ξ_j)F(ξ) dξ| ≤ B ∏_j ‖h_j‖₁` when `|F| ≤ B` everywhere.
-* `sum_fiber`: `Σ_{y∈Y} c(y)f(π(y)) = Σ_{d ∈ π(Y)} (Σ_{π(y) = d} c(y)) f(d)`.
-* `dw_of_not_isUnit`: `dw q a n = 0` when `n` is not prime to `q`, for `a` a unit.
-* `typeIB_smooth`: let `J` continuous integrable `g_j` with integrable `𝓕g_j` be applied to the forms
-  `φ_j(y₁) + ψ_j(y₂)`. Under the conditions of `SieveSpline.typeIB_spline` on the values (`π₂ ≤ Dm`, `2HDm < q`, every
-  residue the inverse of at most `m` values `π₁` prime to `q`, every `|t|π₂` with `0 < |t| ≤ H` with at most `F`
-  divisors), `|Σ_{y₁,y₂} a₁a₂ ∏_j g_j(φ_j(y₁) + ψ_j(y₂)) Σ_k w(k)dw(π₁(y₁)π₂(y₂)k)|` is at most `∏_j ‖𝓕g_j‖₁` times
-  `(ΣA₁²)^{1/2}(mF(ΣA₂²)(⌊n/q⌋ + 1)n)^{1/2} + (B − A)(q/(2ℓ(H + 1)))^r(Σ|a₁|)(Σ|a₂|) + (Σ|a₁|)(Σ|a₂|)d(q)/φ(q)`,
-  `n = B + r(ℓ − 1) − A`. `bdIB` is this bound without the factor `∏_j ‖𝓕g_j‖₁`.
-* `typeIB_sharp0`: `J` comparisons `I_j(y₁, y₂) ∈ [0, 1]`, replaced by smooth `G_j ∈ [0, 1]` of the forms `ℓ_j` with
-  `|I_j − G_j| ≤ M_j(ℓ_j)` for smooth `M_j`. Then `|Σ_{y₁,y₂} a₁a₂ ∏_j I_j Σ_k w(k)dw(π₁π₂k)|` is at most
-  `∏_j ‖𝓕G_j‖₁·bdIB + Σ_j (2φ(q)⁻¹(B − A)Σ_y |a₁||a₂|M_j(ℓ_j) + ‖𝓕M_j‖₁·bdIB)`.
-
-The proof:
-
-* `typeIB_smooth`: `SieveSep.sum_sep` writes the sum as an integral over `ℝ^J` of `∏_j 𝓕g_j(ξ_j)` times the twisted
-  sum, whose twists `e^{2πiΣ_jξ_jφ_j(y₁)}` and `e^{2πiΣ_jξ_jψ_j(y₂)}` go into the coefficients. Aggregated over the
-  fibres (`sum_fiber`) and restricted to the values prime to `q` (`dw_of_not_isUnit`), the twisted sum is the
-  bilinear form of `SieveSpline.typeIB_spline`, with coefficients of size at most `A₁` and `A₂`;
-  `norm_integral_prod_le` integrates the bound.
-* `typeIB_sharp0`: `SieveFamily.norm_Dsum_sharp_le` over the triples `(y₁, y₂, k)`. Its smoothed sum
-  and near-boundary sums are `typeIB_smooth`'s, with the coefficients `|a₁|`, `|a₂|` for the latter (`bdIB_norm`), and
-  the near-boundary masses carry the spline's mass `B − A` (`SieveSpline.sum_spl`).
+* `sum_fiber`: `Σ_{y∈Y} c(y)f(π(y)) = Σ_{d ∈ π(Y)} (Σ_{π(y) = d} c(y)) f(d)`; `sum_fiber_norm`: the fibres' aggregates
+  of `|c|` sum to `Σ_{y∈Y} |c(y)|`.
+* `dw_of_not_isUnit`: `dw q a n = 0` when `n` is not prime to `q`, for `a` a unit; `sum_units_eq` restricts a double
+  sum to the values prime to `q` when the terms vanish off them.
+* `norm_twist`: `|c·e^{2πiΣ_jξ_jφ_j}| = |c|`.
+* `bdIB`: for the spline `w` of `SieveSpline.spl` on `(A, B + r(ℓ − 1)]`, `n = B + r(ℓ − 1) − A`,
+  `(ΣA₁²)^{1/2}(mF(ΣA₂²)(⌊n/q⌋ + 1)n)^{1/2} + (B − A)(q/(2ℓ(H + 1)))^r(Σ|a₁|)(Σ|a₂|) + (Σ|a₁|)(Σ|a₂|)d(q)/φ(q)`;
+  `bdIB_norm`: it depends on the sizes `|a₁|`, `|a₂|` only.
 
 The file imports `SieveSpline.lean` and `SieveSep.lean`.
 -/
@@ -110,7 +97,7 @@ theorem norm_twist {J : Type*} [Fintype J] (c : ℂ) (ξ : J → ℝ) (φ : J �
     push_cast; ring
   rw [norm_mul, this, Complex.norm_exp_ofReal_mul_I, mul_one]
 
-/-- The bound of `typeIB_smooth` for coefficients `a₁`, `a₂` (it depends on their sizes only). -/
+/-- The bound of the bilinear estimate over a family, for coefficients `a₁`, `a₂` (it depends on their sizes only). -/
 noncomputable def bdIB (q : ℕ) {ι₁ ι₂ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂) (π₁ : ι₁ → ℕ) (π₂ : ι₂ → ℕ)
     (a₁ : ι₁ → ℂ) (a₂ : ι₂ → ℂ) (A B ℓ r H F m : ℕ) : ℝ :=
   √(∑ d ∈ Y₁.image π₁, (∑ y ∈ Y₁.filter (fun y => π₁ y = d), ‖a₁ y‖) ^ 2) *

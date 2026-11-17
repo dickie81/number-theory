@@ -3,26 +3,41 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveTypeIBSum.leaves_family` sums the block pairs of a family of leaves, each bounded by `SieveTypeIBEv.pair_le`,
-whose cut of the frequencies is the largest with `2HD_m < q`; its region asks `d₁d₂² ≤ X₂` with `X₂` below the length
-`N₁` of the integers, for the tail `(rρ³X₂/(ηN₁))^r` to be small. This file is the same with
-`SieveTypeIBPairWide.pair_le_wide` and the cut `H = ⌈qY/ℓ⌉` for a spline of step `ℓ` and a parameter `Y > 0`.
+This file sums the block pairs of a family of leaves, each bounded by `SieveTypeIBPairWide.pair_le_wide` with the
+cut `H = ⌈qY/ℓ⌉` for a spline of step `ℓ` and a parameter `Y > 0`. The splines are those of `SieveTypeIBEv` (`TPs`,
+`TMs`) at the scale `D = ρ^{β₁+β₂}` of a block pair of `blk ρ`.
 
-* `cutH q Y t = ⌈qY/ℓ⌉`, the cut for the spline `t` of step `ℓ`.
+* `cutH q Y t = ⌈qY/ℓ⌉`, the cut for the spline `t` of step `ℓ`; `stp_le`: the step at the scale `D` is at most
+  `ηN₁/(rDρ²) + 1`; `CutOK`: a spline is good for the cut with a bound `U` if `2H < q`, `H⌊ρ^{β₂+1}⌋ ≤ N_F` and
+  `bdPW ≤ U`.
 * `bdUW`, `bdPW_le`: **a block pair in the region.** Let a block pair hold `d₁`, `d₂` with `d₁ ≤ X₁`, `d₁d₂² ≤ X₂` and
-  `X₃ ≤ d₁d₂`, and let the spline be as in `SieveTypeIBSum.bdP_le`, with step `ℓ ≤ ηN₁/(rDρ²) + 1`. If
-  `2(qY·rρ²√(X₁X₂)/(ηN₁) + 1) < q`, `ηN₁/(rX₃) + 1 ≤ qY` (so that `ℓ ≤ qY`) and `2qY·rρ³X₂/(ηN₁) ≤ N_F`, then
-  `2H < q`, `H⌊P₂⌋ ≤ N_F` and `bdPW ≤ bdUW`,
+  `X₃ ≤ d₁d₂`, and let the spline have length and mass at most `N₂/D + ηN₁/(Dρ²)`, step `ℓ` between `ηN₁/(rDρ²)` and
+  `ηN₁/(rDρ²) + 1`, and power `r`. If `2(qY·rρ²√(X₁X₂)/(ηN₁) + 1) < q`, `ηN₁/(rX₃) + 1 ≤ qY` (so that `ℓ ≤ qY`) and
+  `2qY·rρ³X₂/(ηN₁) ≤ N_F`, then `2H < q`, `H⌊P₂⌋ ≤ N_F` and `bdPW ≤ bdUW`,
   `bdUW = √(ρ²(1 + η)N₂(ρX₁/q + 1)F(4Y·rρ³X₂/(ηN₁) + 1)((1 + η)ρ²N₂/(X₃q) + 1)) +
   ρ²(1 + η)N₂(1/(2Y))^r + ρ²√(X₁X₂)d(q)/φ(q)`.
   The tail is `(2Y)^{−r}` whatever `X₂`; the price is the factor `4Y·rρ³X₂/(ηN₁) + 1` under the root, which is
   bounded when `X₂` is below `N₁/Y` and grows like `X₂/N₁` beyond.
-* `witness_le_wide`, `pair_le_W_wide`, `blocks_le_wide`: a leaf's block pair, a block pair by a witness, and the
-  block pairs of one sieve, as in `SieveTypeIBSum`.
-* `leaves_family_wide`: **a family of leaves.** As `SieveTypeIBSum.leaves_family`, with `d(n) ≤ F` for
-  `0 < n ≤ N_F`, the three conditions on `Y` above, and `bdUW` in place of `bdU`.
+* `witness_le_wide`: under the three conditions on `Y` of `bdPW_le`, at a leaf with `p₁f_max ≤ X₁`,
+  `p₁f_max p₂² ≤ X₂` and `X₃ ≤ p₁p₂`, the block pair of `(p₁f, p₂)` has `blk(p₁f) ≤ blk⌊X₁⌋`, `blk(p₂) ≤ blk⌊√X₂⌋`,
+  and both splines are good for the cut with the bound `bdUW`.
+* `pair_le_W_wide`, `blocks_le_wide`: a block pair's bilinear sum is at most `(∏_j ‖𝓕G_j‖₁ + Σ_j ‖𝓕M_j‖₁)M_fM₂U` if
+  the pair holds a leaf and `0` if not, plus its near-boundary masses; over the block pairs of one sieve, at most
+  `2(K₁ + 1)(K₂ + 1)` times that plus `Σ_j 2φ(q)⁻¹Σ_{(y₁,σ),y₂} M_m|λ_σ|M_j(ℓ_j)/(π₁f_σπ₂)`
+  (`SieveTypeIBSum.sum_pairs`).
+* `leaves_family_wide`: **a family of leaves.** For leaves `(y₁, y₂)` with comparisons `c = ∏_j I_j` as in
+  `SieveTypeIBPairWide.typeIB_sharp0_wide`, sieve weights `S₁` above and `S₂` below `R` with divisors `f ≤ f_max`,
+  bounded fibres, `d(n) ≤ F` for `0 < n ≤ N_F`, the three conditions on `Y` above, and every leaf in the region
+  `π₁f_max ≤ X₁`, `π₁f_maxπ₂² ≤ X₂`, `X₃ ≤ π₁π₂`: `|Σ_y c Σ_m rng(d, m)R(m)dw(dm)|` is at most the leaves' main
+  errors (`SieveTypeIBSum.errL_le`), plus `4(K₁ + 1)(K₂ + 1)(∏_j ‖𝓕G_j‖₁ + Σ_j ‖𝓕M_j‖₁)M_fM₂·bdUW` with
+  `K₁ = blk⌊X₁⌋` and `K₂ = blk⌊√X₂⌋`, plus the near-boundary masses of both sieves with `M_m = (1 + η)ρ²N₂`.
 
-The asymptotic form (`SieveTypeIBAsym.leaves_ib`) is not redone here.
+The proof of `leaves_family_wide`: `SieveTypeIBLeaf.leaves_bound` with the splines `TPs`, `TMs` at the block pairs
+(`SieveTypeIBEv.sandwich`, `SieveTypeIBEv.blk_pair`); the bilinear parts by `SieveTypeIBLeaf.abs_dwU_le`,
+`SieveTypeIBLeaf.abs_dwL_le` and `blocks_le_wide`, where a block pair holding a leaf is bounded by
+`SieveTypeIBPairWide.pair_le_wide` with `bdPW ≤ bdUW` at the leaf (`witness_le_wide`), and one holding none vanishes.
+
+The asymptotic form is `SieveTypeIBAsymWide.leaves_ib_wide`.
 
 The file imports `SieveTypeIBSum.lean` and `SieveTypeIBPairWide.lean`.
 -/
@@ -566,13 +581,13 @@ theorem blocks_le_wide (a : ZMod q) (ha : IsUnit a) {ι₁ ι₂ κ : Type*} (Y�
 
 set_option maxHeartbeats 1600000 in
 open Classical in
-/-- **A family of leaves by the bilinear estimate without `2HDm < q`.** As `SieveTypeIBSum.leaves_family`: the
+/-- **A family of leaves by the bilinear estimate without `2HDm < q`.** The
 leaves `(y₁, y₂)` carry the comparisons `c = ∏_j I_j`, the sieve weights `S₁` above and `S₂` below sandwich `R`, with
 divisors `f ≤ f_max`, and the fibres are bounded (`M_f`, `M₂`); `ρ > 1`, `0 < η ≤ 1`, `r ≥ 1`, and every leaf
 (`c ≠ 0`) has `π₁f_max ≤ X₁`, `π₁f_maxπ₂² ≤ X₂` and `X₃ ≤ π₁π₂`. Let `Y > 0` with
 `2(qY·rρ²√(X₁X₂)/(ηN₁) + 1) < q`, `ηN₁/(rX₃) + 1 ≤ qY` and `2qY·rρ³X₂/(ηN₁) ≤ N_F`, and let `d(n) ≤ F` for
 `0 < n ≤ N_F`. Then
-`|Σ_{y₁,y₂} c Σ_m rng(d, m)R(m)dw(dm)|`, `d = π₁π₂`, is at most the leaves' main errors (as in `leaves_family`) plus
+`|Σ_{y₁,y₂} c Σ_m rng(d, m)R(m)dw(dm)|`, `d = π₁π₂`, is at most the leaves' main errors (`SieveTypeIBSum.errL_le`) plus
 `4(K₁ + 1)(K₂ + 1)(∏_j ‖𝓕G_j‖₁ + Σ_j ‖𝓕M_j‖₁)M_fM₂·bdUW` (`K₁ = blk⌊X₁⌋`, `K₂ = blk⌊√X₂⌋`) plus the near-boundary
 masses of both sieves. -/
 theorem leaves_family_wide (a : ZMod q) (ha : IsUnit a) {N₁ N₂ : ℕ} (hN : N₁ ≤ N₂) (hN₁ : 1 ≤ N₁)

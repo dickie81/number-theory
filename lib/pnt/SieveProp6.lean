@@ -1,36 +1,33 @@
 /-
-# Proposition 6, Harman's fundamental theorem in the form used
+# The fundamental lemma at a leaf, and the arithmetic of the error terms
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statement (`prop6`). Let `L`, `w₁` and `w₂` be a route's parameters (`SieveRoute.Route`) with `RouteOK`, and
-assume its Type II estimate (`hII : SieveRoute.TypeIIAt`). Fix `j`, `J₀`, `Λ₁ ≥ 0`, exponents `a₀ > 0` and `b₀` with
-`a₀ + b₀ < (1 − w₁)L` and `(1 − w₂)L < b₀ < L − 1`, and `η > 0`. There are `δ > 0` and `q₀` such that for `q ≥ q₀` and a
-unit `a` mod `q`: let `rt` run over the `j`-tuples of primes up to `⌊2q^L⌋` that satisfy at most `J₀` comparisons `Ω`
-(taken at `m = 0`, with `m`-parts `c(0)` at most `Λ₁ log q`) forcing every `rt_i ≥ z₀ = ⌈q^{a₀}⌉` and
-`∏rt ≤ X' = ⌊q^{b₀}⌋`. Then `Σ_{rt}(S(A_r, z₀) − S(B_r, z₀)/φ(q))`, `r = ∏rt`, is at most
-`ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` in absolute value, where `A` is the `n ∈ (⌊q^L⌋, ⌊2q^L⌋]` with `n ≡ a` and `B` those
-prime to `q`.
+Plain statements. `T w J j` are `SieveLeaf`'s ranges and `rng A` `SieveRanges`'s; `rough z n` is `SieveTree`'s.
+`N₁ ≤ N₂`. The lemmas here bound one leaf of Buchstab's tree by the fundamental lemma at the ranges' levels
+`k + 2j`, sum `1/d` over the leaves, and do the arithmetic that puts the main terms below `ηq^L/(φ(q) log q)` and the
+remainders below `q^{L−c}/φ(q)`.
 
-It is built with one tree at the threshold `X'` for every `r ≤ X'`. The conditions on `a₀` and `b₀` say that the
-stops' cofactors fall in the lower window (`a₀ + b₀ < (1 − w₁)L`, `(1 − w₂)L < b₀`: a stop lies in `(X', X'z₀)`) and
-that the leaves' remainder is small (`b₀ < L − 1`).
-
-The proof:
-
-* The tree (`SieveDiff.tree_weighted`) runs from `z₀` down to `w = ⌈q^{ε_w}⌉`, `ε_w = c/(2k + 4)`,
-  `c = (L − 1 − b₀)/4`, at the threshold `X'`. `SieveStops2.stops2_bound` bounds its stops (`window_lo`,
-  `window_hi`).
-* `leaf_bound`: at a leaf `d = r∏P ≤ X'`, `SieveLeaf.leaf_A` and `leaf_B` with the ranges' levels `k + 2j`
-  (`Jw_spec`, `SieveLeaf.leaf_gap`) give `2ζ(k)·YV + 2·rem`, `Y = (N₂ − N₁)/(dq)`, and `V ≤ q/(φ(q) log w)`
-  (`SieveLeaf.prod_T_le`, Mertens' product bound in its elementary form).
-* `leaves_sum_le`: with `N₂ − N₁ ≤ X + 1`, `X = q^L`, the leaves total at most
-  `(2ζ(k)(X + 1)/(φ(q) log w) + 2·rem·X')·Σ_{rt} Σ_P 1/(r∏P)`, and the double sum is `Σ_{rt} 1/r ∏_{w ≤ p < z₀} (1 + 1/p)`
-  (`sum_leaves_inv`), bounded by `sum_RT_inv_le` and `SieveRough.evLe_sum_inv`.
-* `exists_k`, `main_coef`, `main_term`: an even `k` with `(2k + 4)²ζ(k)` small puts the main terms below
-  `ηq^L/(φ(q) log q)`; `rem_le`, `rem_term`: the remainders total at most `q^{L−c}/φ(q)`.
-
-`L`, `w₁` and `w₂` are a route's parameters and the Type II estimate is a hypothesis (`hII`).
+* `rem`, `rem_le`: the fundamental lemma's remainder at the levels `k + 2j`, at most `(J + 1)2^J w^{2k+4}` for `w ≥ 1`
+  (`card_T_le`: a range has at most `w^{2^{−j}}` primes).
+* `Jw`, `Jw_spec`: the number of ranges `J = 2⌊log₂ w⌋ + 2`; for `w ≥ 2`, `w^{2^{−J}} ≤ 2`, `2^J ≤ 4w²` and
+  `J + 1 ≤ 3w`.
+* `zeta`: `ζ(k) = e^{2C₀}(2C₀^k/k!)·exp(e^{2C₀}·2C₀^{k+1}/(k + 1)!)`, the fundamental lemma's relative error.
+* `leaf_bound`: at a leaf `d` with every prime factor at least `w ≥ 2`, for ranges with `w^{2^{−J}} ≤ 2` (as
+  `Jw_spec` gives), `SieveLeaf.leaf_A` and `leaf_B` with the ranges' levels `k + 2j` (`SieveLeaf.leaf_gap`) give
+  `2ζ(k)·YV + 2·rem`, `Y = (N₂ − N₁)/(dq)`, and `V ≤ q/(φ(q) log w)` (`SieveLeaf.prod_T_le`, Mertens' product bound
+  in its elementary form), so `|A − B/φ(q)| ≤ 2ζ(k)(N₂ − N₁)/(dφ(q) log w) + 2·rem`; for `k ≥ 1` even with
+  `2C₀² ≤ (k + 1)(k + 2)` and `C₀ ≥ 0` bounding the sums `Σ 1/p` over the ranges `rng A`.
+* `sum_leaves_inv`: `Σ_{rt} Σ_{P ⊆ T} 1/(r∏P) = (Σ_{rt} 1/r)·∏_{p∈T}(1 + 1/p)`; `sum_RT_inv_le`: over tuples with
+  entries in `s`, `Σ_{rt} 1/∏rt ≤ (Σ_{p∈s} 1/p)^j`.
+* `exists_k`: for `C₀ ≥ 0`, `ε > 0` and `a₀ > 0`, an even `k ≥ 2` with `2C₀² ≤ (k + 1)(k + 2)`, `(2k + 4)²ζ(k) ≤ ε`
+  and `c < (2k + 4)a₀`.
+* `main_coef`, `main_term`: for a real `Z` (in use `ζ(k)`; `main_term` asks `Z ≥ 0`), with `ε_w = c/(2k + 4)`,
+  `(2k + 4)²Z ≤ ηc²/(4E(K₁ + 1)a₀)` and `L_w ≥ ε_w L_Q` (in use `L_w = log w`, `L_Q = log q`), the leaves' main term
+  `2Z(X + 1)/(φL_w)·K₁(Ea₀/ε_w)` is at most `ηX/(φL_Q)`.
+* `rem_term`: for a route with `RouteOK`, a real `Q ≥ 1` (in use `q`), `K ≥ 0`, `1 ≤ w ≤ 2Q^{ε_w}`,
+  `ε_w(2k + 7) ≤ 2c`, `0 ≤ X' ≤ Q^{b₀}`, `2^J ≤ 4w²`, `J + 1 ≤ 3w`, `24·2^{2k+7}K ≤ Q^c`, `0 < φ ≤ Q` and
+  `L − 1 − c = c + b₀ + 2c`, the leaves' remainder `2RX'K`, `R ≤ (J + 1)2^J w^{2k+4}`, is at most `φ⁻¹Q^{L−c}`.
 
 The file imports `SieveStops2.lean`.
 -/
@@ -333,8 +330,6 @@ theorem sum_RT_inv_le {j : ℕ} {RT : Finset (Fin j → ℕ)} {s : Finset ℕ}
     _ = ∏ _i : Fin j, ∑ p ∈ s, 1 / (p : ℝ) := (Finset.prod_univ_sum (fun _ => s) (fun _ p => 1 / (p : ℝ))).symm
     _ = (∑ p ∈ s, 1 / (p : ℝ)) ^ j := by rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
 
-/-! ### The leaves of the tree -/
-
 /-! ### The level `k` -/
 
 theorem sq_le_four_pow (k : ℕ) : (((2 * k + 4 : ℕ) : ℝ)) ^ 2 ≤ 16 * 4 ^ k := by
@@ -406,8 +401,6 @@ theorem exists_k {C₀ : ℝ} (hC₀ : 0 ≤ C₀) {ε c a₀ : ℝ} (hε : 0 < 
     have h2 := Nat.le_ceil (c / a₀)
     have h3 : c / a₀ < ((2 * (2 * m) + 4 : ℕ) : ℝ) := by push_cast; linarith
     rwa [div_lt_iff₀ ha₀] at h3
-
-/-! ### The windows of the stops -/
 
 /-! ### Arithmetic of the error terms -/
 
@@ -495,13 +488,5 @@ theorem rem_term [Route] [RouteOK] {Q w X' φ K εw c b₀ Mrem R : ℝ} {k J : 
     rw [e, inv_mul_eq_div, le_div_iff₀ hφ]
     exact mul_le_mul_of_nonneg_left hφq (by positivity)
   linarith
-
-/-! ### Proposition 6 -/
-
-section Prop6
-
-open Classical
-
-end Prop6
 
 end SieveProp6

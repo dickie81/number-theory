@@ -3,10 +3,9 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveP6ib.prop6ib` evaluates `Σ_r S(A_r, z₀)` over a family of chains in boxes when the tree over the primes below
-`z₀` can be stopped in a window of the Type II estimate in one variable, with its leaves in the reach of the paper's
-Lemma 4.3. This file is the same with the estimate in two variables (`SieveFamilyTwo.TypeIITwoAt`) and Lemma 4.3 on
-the wider region (`SieveTypeIBAsymWide.leaves_ib_wide`).
+This file evaluates `Σ_r S(A_r, z₀)` over a family of chains in boxes when the tree over the primes below `z₀` can be
+stopped in a window of the Type II estimate in two variables (`SieveFamilyTwo.TypeIITwoAt`), with its leaves in the
+reach of the paper's Lemma 4.3 on the wider region (`SieveTypeIBAsymWide.leaves_ib_wide`).
 
 Plain statement (`prop6_two`). Let `L` be a route's exponent (`SieveRoute.Route`, with `RouteOK`), and assume
 Proposition 3′ in two variables at `L` on a region `Rg`. Fix `j`, `J₀`, `Λ₁ ≥ 0`, the exponent `a₀ > 0` of
@@ -32,9 +31,9 @@ to the integer parts. The leaves have `∏P < 4q^t`, and
 split as `d₁d₂` with `d₁ ≤ 4q^{D₁}` and `d₂ ≤ 4q^{D₂}`; the condition on `D₁` and `D₂` is the wider region's, in
 exponents of `q`: `2D₁ + 2D₂ < 2L − 1` for `D₁ ≥ 1`, and `D₁ + 2D₂ < 2L − 2` for `D₁ ≤ 1`.
 
-The proof is `SieveP6ib.prop6ib`'s, with `SieveTwoP6.prop6_two_core` at each `q`, `SieveTwoTerm.chainOK2_of_zone`
-for the chains and `SieveP6LeavesWide.leavesOK_wide` for the leaves, at `a = L − 1 − max(D₁, 1) − 2c` with the
-margins `δ' = 4c` and `κ = 16c`.
+The proof applies `SieveTwoP6.prop6_two_core` at each `q`, with `SieveTwoTerm.chainOK2_of_zone` for the chains and
+`SieveP6LeavesWide.leavesOK_wide` for the leaves, at `a = L − 1 − max(D₁, 1) − 2c` with the margins `δ' = 4c` and
+`κ = 16c`.
 
 The file imports `SieveTwoTerm.lean` and `SieveP6LeavesWide.lean`.
 -/

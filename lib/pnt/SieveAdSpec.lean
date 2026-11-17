@@ -14,7 +14,6 @@ the comparisons of atoms (`SieveChain.RTg`). The family of a box (`SieveAd.famB`
   `dIP_nil`, `dJP_nil`: with no more atom, the terms are the box's.
 * `thrOK_specB`: for `x ≥ 1` and cells with ends at most `DEN`, the atoms' thresholds lie in `[1, q^{L+1}]`
   (`SieveLeaves.ThrOK`); `thrOK_append`, `thrOK_nil`.
-* `ofFn_boxFn`: the cells of a list, by the prime's index, are the list reversed.
 * `le_Xq`: for `δ > 0` and `η > 0`, `q^{L−δ} ≤ η·x/log x` for large `q`.
 
 The file imports `SieveAdFilt.lean`.

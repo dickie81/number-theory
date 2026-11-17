@@ -1,22 +1,17 @@
 /-
-# The dropped terms' `B`-count
+# A family's `B`-count
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statements. The route and the grid are as in `SieveQ`, with `RouteOK`, `GridOK` and `Fits` where the Lean
-takes them. `xq q = q^L`, and `cornerP z` is the set of primes of `(⌊z/4⌋, z]`.
+Plain statements. `L` is a route's exponent (`SieveRoute.Route`), with `RouteOK` where the Lean takes it;
+`xq q = q^L`, `N1 q = ⌊q^L⌋` and `N2 q = ⌊2q^L⌋`.
 
-* `card_le_Psi`, `famI_gB_le`: a family's `B`-count is at most `φ(q)⁻¹ Σ_rt Ψ(x/∏rt, rt_last)`, since the `n = Wc ∈
-  (x, 2x]` with no prime factor below `z` inject into `Ψ(x/W, z)`.
-* `drop2_le`, `S2`: a dropped cell's `B`-count at depth 2 is at most `φ(q)⁻¹` times its sum over the primes of its
-  cells (`SieveRough.cellP`), `Σ Ψ(x/(p₁p₂), p₂)`.
-* `corner_le`, `corner_ev`: for `(parQ q).Good` and `z_top² ≤ 4N₁`, a corner cell (not a candidate, not surely
-  evaluable, `p₁`'s cell not inside the window) counts only the `n = p₁p₂`, both primes in `cornerP z_top`, so it is at
-  most `φ(q)⁻¹|cornerP|²`; for `ε > 0` and large `q`, `z_top² ≤ 4N₁` and `n²|cornerP|² ≤ εx/log x` (`n` the grid's
-  number of cells a side), by `cornerP_card_ev`.
-
-So the corner near `(1/2, 1/2)` is `o(x/log x)`. The library's theorem (`Linnik22000E`) bounds the dropped terms to
-depth 8 (`SieveDrop8`), with the shares of the dropped cells and the certificate's total.
+* `card_le_Psi`: for `x > 0` and `W > 0`, the `n = Wc ∈ (x, 2x]` with no prime factor below `z` inject into
+  `Ψ(x/W, z)` by `n ↦ n/W`.
+* `gB_le`, `gB_nonneg`: `0 ≤ gB q m ≤ φ(q)⁻¹`.
+* `famI_gB_le`: for `q ≥ 1`, a family of tuples of primes has `B`-count `famI(g_B)` on `(N₁, N₂]` at most
+  `φ(q)⁻¹ Σ_rt Ψ(x/∏rt, rt_last)` at `x = q^L`.
+* `tendsto_xq`: with `RouteOK`, `q^L → ∞` as `q → ∞`.
 
 The file imports `SieveQ.lean`.
 -/
@@ -106,14 +101,10 @@ theorem famI_gB_le (q : ℕ) {k' : ℕ} (F : Finset (Fin (k' + 1) → ℕ)) (hF 
         refine mul_le_mul_of_nonneg_left ?_ (by positivity)
         exact_mod_cast card_le_Psi hx hW
 
-/-! ### The dropped cells -/
-
-/-! ### The corner is small -/
+/-! ### `x = q^L` tends to infinity -/
 
 omit [SieveCert.Grid] in
 theorem tendsto_xq : Tendsto xq atTop atTop :=
   (tendsto_rpow_atTop (L_pos : (0 : ℝ) < L)).comp tendsto_natCast_atTop_atTop
-
-/-! ### All the dropped terms -/
 
 end SieveDrop

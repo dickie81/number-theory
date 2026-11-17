@@ -2,16 +2,15 @@
 # Comparisons of a family's primes
 
 Plain statements. A comparison `Cmp K` is `0 ≤ c(m) + Σ_i e_i log x_i`, or `0 <` when it is strict, with
-coefficients at most `1` in absolute value and a pivot `i` with `e_i = ±1`. Each kind below comes with a lemma that
-says what it means for `x_i ≥ 1` (the `_holds` lemmas):
+coefficients at most `1` in absolute value and a pivot `i` with `e_i = ±1`.
 
-* `gt`: `x_i > x_{i'}`; `ge`, `lt`: `x_i ≥ b` and `x_i < b`, for `b > 0`;
-* `prodLe`, `prodGt`: `∏_{i∈s} x_i ≤ b` and `> b`, for `b > 0`, pivoted at `i₀ ∈ s`;
-* `rough`: `x_i ≤ minFac m`, for `m ≥ 2`; `rangeLo`, `rangeHi`: `b < m∏_i x_i` and `m∏_i x_i ≤ b`, for `b > 0`, `m ≥ 1`;
-* `lift`: a comparison of the first `j` coordinates, as one of `K ≥ j`.
+* `Cmp.form`, `Cmp.holds`: the form `c(m) + Σ_i e_i log x_i`, and the comparison on it; `Cmp.spec`: `0 < form`
+  implies the comparison, and the comparison implies `0 ≤ form`.
+* `sum_single`, `sum_set`: `Σ_t e_t log x_t` for the indicator coefficients of one coordinate `i`, which is
+  `log x_i`, and of a set `s`, which is `log ∏_{i∈s} x_i` when every `x_t ≥ 1`.
 
-These are the comparisons of `SieveFamily.typeII_sharp`'s families, in
-the kinds that Proposition 6's stops need. The file imports only Mathlib.
+`SieveChain.GCmp.toCmp` pivots a comparison of `SieveChain` into a `Cmp`, and `SieveDecomp.Atom.toG_holds` reads the
+atoms' comparisons with `sum_single` and `sum_set`. The file imports only Mathlib.
 -/
 import Mathlib
 
@@ -55,7 +54,5 @@ theorem sum_set (s : Finset (Fin K)) (x : Fin K → ℕ) (hx : ∀ i, 1 ≤ x i)
     ∑ t, (if t ∈ s then (1 : ℝ) else 0) * Real.log (x t) = Real.log (∏ t ∈ s, (x t : ℝ)) := by
   rw [Real.log_prod (fun t _ => by have := hx t; positivity)]
   simp [ite_mul, Finset.sum_ite_mem]
-
-/-! ### The basic comparisons, and what they say on tuples of positive integers -/
 
 end SieveCmp

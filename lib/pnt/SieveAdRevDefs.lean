@@ -11,8 +11,9 @@ condition on their product (`x/r'` in the range of `p₁`), and that sum is a te
 
 What this file defines, as arithmetic on natural numbers, lists and booleans:
 
-* `Ops`, `nodeG`, `stepG`, `solveG`: `SieveAdSearchDefs.lean`'s search with the tests of its nodes as parameters:
-  the boxes it treats, the test of a box with no term, the cost of dropping a box, and one more bound (`alt`).
+* `Ops`, `nodeG`, `stepG`, `solveG`: a search for a tree, from the parts of `SieveAdSearchDefs.lean`, with the tests
+  of its nodes as parameters: the boxes it treats, the test of a box with no term, the cost of dropping a box, and
+  one more bound (`alt`).
 * `vanishK`, `dropK`, `opsK`: the nodes of the tree of a reversed term. Its boxes are the atoms' cells with, before
   them, the cells of the chain, the primes of `n/r'` that Buchstab's identity has brought out. `n/r'` lies between
   `x^{(l₁−1)/DEN}` and `x^{(h₁+1)/DEN}`, for the cell `(l₁, h₁)` of the prime that is reversed (`ctx`).
@@ -23,8 +24,6 @@ What this file defines, as arithmetic on natural numbers, lists and booleans:
   of `p₁` and over the others (the `r'` near the two ends, where nothing is subtracted: `bdK`).
 * `revOK`, `revCost`: the test of a box that may be reversed, and the cost: the two boxes with `m` prime, and for
   each cell of `q₂` the three boxes with `m = q₂Q`.
-* `opsR`: the search of `SieveAdDefs.lean`'s trees with the reversal as one more bound for a box of the sign `−`.
-* `geoCuts`, `cutsOfG`, `cutsK`, `cutsQ`, `stratG`, `stratK`: a strategy whose cells shrink with the exponent.
 
 `SieveAdRev.lean` proves what a cost returned below its limit gives. The file imports `SieveAdSearchDefs.lean`.
 -/
@@ -197,8 +196,6 @@ def revCost (τ : Tests) (SK : Cell → ℕ → Strat) (fuel : ℕ) (cq : ℕ �
         (maxN μlo c3.1, μhi) ((μhi + 1) / 2))
       (DEN - (c1.2 + c2.2 + c3.2)) (DEN + 1 - (c1.1 + c2.1 + c3.1))
   | _, lim => lim
-
-/-! ### A strategy with cells that shrink with the exponent -/
 
 variable [SieveCert.Grid] [SieveCert.IBPar]
 

@@ -2769,15 +2769,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd.rev_cover`: The term of the box is at most the terms of its atoms' boxes
 
-#### `SieveAdRevSearch`: The search with role reversal is sound
+#### `SieveAdRevSearch`: The bound of a box's term by a cost, and Linnik's theorem from it
 
-- `SieveAd.linnik_pr`: Linnik's theorem from a search with role reversal *paper*
+- `SieveAd.linnik_pr`: Linnik's theorem from the bound of the box of one prime *paper*
 
 #### `SieveAdRevSum`: Role reversal: the cost of a reversal bounds the term
 
 - `SieveAd.bd_rev`: The cost of a reversal bounds the term
 
-#### `SieveAdSearchDefs`: A search for a tree of Buchstab steps, without Mathlib
+#### `SieveAdSearchDefs`: The parts of a search for a tree of Buchstab steps, without Mathlib
 
 - `SieveAd.findSub2_eq`
 - `SieveAd.bestSub_eq`
@@ -2831,7 +2831,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveBrun.fundamental`: The fundamental lemma in product form, abstractly *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveBrun.gap_le`: For even `k_j`, `0 ≤ g ≤ 1` on each `T_j`, `C₀ ≥ 0` with `Σ_{T_j} g ≤ C₀`, and `∏_{T_j} (1 − g) ≥ c₀ > 0` ([note](../formalisations/harman-sieve.md))
 
-#### `SieveCert`: The certificate of the sieve route's loss, checked by the kernel
+#### `SieveCert`: Buchstab's `ω` on a box, and the cells' factors
 
 - `SieveCert.omegaC_le_w`: `ω*` on a box *paper*
 
@@ -2854,7 +2854,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveCurveHx.ghx_half` *paper*
 - `SieveCurveHx.counts_hx`: The counts of the curve *paper* ([note](../formalisations/huxley-density.md))
 
-#### `SieveDecomp`: Families of prime tuples, and Buchstab's identity on them
+#### `SieveDecomp`: Families of prime tuples, and Buchstab's identity at one `n`
 
 - `SieveDecomp.buchstab_pt`: Buchstab's identity at one `n` *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveDecomp.famI_vanish`: A family whose products are at most `N₁` and whose products times their last prime exceed `N₂` contributes `0`
@@ -2905,7 +2905,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.dp_eq_pv`: The bridge
 - `SieveTypeIIHM.sum_bin_hm`: Halász–Montgomery for one bin at one height ([note](../formalisations/halasz-montgomery.md))
 
-#### `SieveHMBins`: Proposition 3′ pointwise, by bins, with the Halász–Montgomery bound per bin
+#### `SieveHMBins`: The bound for one bin of characters, and a uniform kernel bound at `z = 0`
 
 - `SieveTypeIIHM.offK_bound`: A uniform kernel bound at `z = 0` *paper* ([note](../formalisations/halasz-montgomery.md))
 
@@ -2970,15 +2970,15 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveP6LeavesWide.leaves_chain_wide`: The large leaves of a family, with Brun's weights, on the wider region *paper*
 - `SieveP6LeavesWide.leavesOK_wide`: `LeavesOK` on the wider region *paper* ([note](../formalisations/halasz-montgomery.md))
 
-#### `SieveP6Tree`: Proposition 6 with the bilinear estimate: Buchstab's tree on a family
+#### `SieveP6Tree`: Buchstab's tree on a family
 
 - `SieveP6Tree.tree_chains`: Buchstab's tree on a family, as chains *paper* ([note](../formalisations/harman-sieve.md))
 
-#### `SieveP6TreeLeaves`: Proposition 6 with the bilinear estimate: the leaves of the tree
+#### `SieveP6TreeLeaves`: The leaves of the tree
 
 - `SieveP6TreeLeaves.tree_leaves_le`: The leaves of a tree *paper* ([note](../formalisations/halasz-montgomery.md))
 
-#### `SieveProp6`: Proposition 6, Harman's fundamental theorem in the form used
+#### `SieveProp6`: The fundamental lemma at a leaf, and the arithmetic of the error terms
 
 - `SieveProp6.leaf_bound`: A leaf *paper* ([note](../formalisations/harman-sieve.md))
 
@@ -3080,7 +3080,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.ResBinOK`: A class's exponents fit
 - `SieveTypeIIHM.bin_bound_exp`: One class ([note](../formalisations/halasz-montgomery.md))
 
-#### `SieveRough`: Rough numbers from above, and the shares of the certificate's cells
+#### `SieveRough`: Rough numbers from above
 
 - `SieveRough.Psi_le_buchstab`: Buchstab's inequality *paper*
 - `SieveRough.super_M`: The supersolution property *paper*
@@ -3206,7 +3206,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTwoZone7D.zone_hx`: The zone's exponents for the curve `ghx` on the region `Zone7d L` *paper* ([note](../formalisations/halasz-montgomery.md))
 - `SieveTwoZone7D.typeII_two_hx`: Proposition 3′ in two variables for the curve `ghx` *paper* ([note](../formalisations/halasz-montgomery.md))
 
-#### `SieveTypeIB`: A bilinear Type I estimate by Parseval's identity
+#### `SieveTypeIB`: The bilinear form of a Type I sum, and Parseval's identity
 
 - `SieveTypeIB.sum_bilinear`: The bilinear sum in Fourier form
 
@@ -3235,7 +3235,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveTypeII.sum_chars_dp_sq_le`: Orthogonality (T1) *paper* ([note](../formalisations/mean-values.md))
 
-#### `SieveTypeIIGen`: Parts of the Type II estimate for a curve and a window (Proposition 3′ with parameters)
+#### `SieveTypeIIGen`: Parts of the Type II estimate for a curve (Proposition 3′ with parameters)
 
 - `SieveTypeIIGen.CurveCounts`: The counts of a curve `g` *paper*
 - `SieveTypeIIGen.card_bin_gen`: The count of a bin of the grid

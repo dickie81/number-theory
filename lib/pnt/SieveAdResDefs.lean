@@ -17,10 +17,10 @@ values of the powers). This file is the kernel's side:
 * `cfgIPR`: the configuration of an evaluation from the hints: `0` and `cfgIP`'s code, or `1`, the rest
   (a set of `pw` values), four bits `k` and the test's `k` intervals' ends, thirteen bits each; or, for `k = 0`
   (`resT2`), four more bits `k₂` and `k₂` ends.
-* `headLo`, `chkIRC`, `okIRC`, `resTestsFC`, `cfgIMRC`: the same with the box's cofactor in the rest, at the bit
-  after the box's cells: when the box's upper ends sum to at most `DEN − 2` and its lower ends with twice its least
-  prime's reach `DEN + 1`, every multiple's cofactor is one prime, in the cell
-  `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)` (`lo₀` the least prime's lower end).
+* `headLo`, `chkIRC`, `okIRC`, `resTestsFC`: the same with the box's cofactor in the rest, at the bit after the
+  box's cells: when the box's upper ends sum to at most `DEN − 2` and its lower ends with twice its least prime's
+  reach `DEN + 1`, every multiple's cofactor is one prime, in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`
+  (`lo₀` the least prime's lower end).
 
 Its soundness is `SieveAdRes.lean`'s. The file imports `SieveAdDirDefs.lean` and `SieveResTestDefs.lean`.
 -/

@@ -7,8 +7,8 @@ Plain statements. A box is `m + 1` intervals of exponents `[a_t, a_t + w_t)`, in
 set of primes `p` with `x^{a/DEN} ≤ p < x^{(a + w)/DEN}`, and `SB x a w` the sum `Σ Ψ(x/∏rt, rt_last)` over the tuples
 `rt` of primes in the box's intervals.
 
-* `mem_boxP`, `evLe_box_tr`, `evLe_box_ex`: the box's primes by their exponents, and as `SieveRough.evLe_cell_tr` and
-  `evLe_cell_ex` for an interval: `Σ 1/p ≤ trB(a, w) + o(1)` and `log x · Σ 1/(p log p) ≤ exB(a, w) + o(1)`.
+* `mem_boxP`, `evLe_box_tr`, `evLe_box_ex`: the box's primes by their exponents, and for an interval with `a > 0`:
+  `Σ 1/p ≤ trB(a, w) + o(1)` and `log x · Σ 1/(p log p) ≤ exB(a, w) + o(1)`.
 * `EvLe.prod`: `SieveRough.EvLe` holds for finite products of nonnegative functions.
 * `shareBox`: **the share of a box.** If the intervals' lower ends are positive, the box fits
   (`s + t + W ≤ DEN`, with `s` the sum of the lower ends but the last, `t` the last, `W` the widths' sum), and

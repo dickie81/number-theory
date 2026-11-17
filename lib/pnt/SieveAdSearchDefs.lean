@@ -1,11 +1,9 @@
 /-
-# A search for a tree of Buchstab steps, without Mathlib
+# The parts of a search for a tree of Buchstab steps, without Mathlib
 
-`SieveAdDefs.lean` checks a tree that it is given. A tree for an exponent below `11/5` has several hundred thousand
-nodes, too many to write out; so the kernel runs the search itself. `solveF` is a search for a tree on a box that
-returns a cost and no tree: `SieveAdSearch.lean` proves that when the cost it returns is below the limit it was
-given, a tree exists that passes `SieveAd.ok` on the box at that cost (`SieveAd.solveF_sound`). The search uses a
-node only after the check of `SieveAd.ok` for it has passed, so what proposes the nodes needs no proof:
+`SieveAdDefs.lean` checks a tree that it is given. A search instead runs in the kernel and returns a cost and no
+tree; it uses a node only after the check of `SieveAd.ok` for it has passed, so what proposes the nodes needs no
+proof. This file defines its parts:
 
 * a **strategy** (`Strat`) proposes the configurations to try for a box (`propI`), the floors of Buchstab's
   identity with theirs (`propJ`), and the cuts of the new prime's range into cells (`cuts`);
@@ -16,12 +14,15 @@ node only after the check of `SieveAd.ok` for it has passed, so what proposes th
 * a **limit** stops the search of a subtree whose cost reaches it: a value at least the limit says nothing;
 * a search is checked in parts: `kids` on a range of the new prime's cells is one part.
 
-`mixStrat` is a strategy for the tests `SieveAd.mixTests`: the window's configuration first; for the estimate in
-two variables the rest is one prime, the first variable the set of the others with the largest lower sum that stays
-below the window's top (`bestSub`), and the leaves are split by a set with its sum in range (`findSub1`). The
-window's floor is proposed only where a copy of the bilinear rule's test without its lists passes (`ibFast`).
+`SieveAdRevDefs.lean`'s search `solveG` treats a box with `anyI`, `buchC` and `splitC`.
 
-These are arithmetic on natural numbers, lists and booleans, and the file imports only `SieveAdMixDefs.lean`.
+The second part is written for the kernel's speed: searches over the sets of a box's cells (`findSub2`, `bestSub`,
+`findSub1`, `tstarF`, the last over the window cost `cIBF` of a set), each with a twin by structural recursion for
+compiled code; the route's constants and `uOf`, `vOf` by them (`restLo`, `uC0`, …, `uOfF`, `vOfF`); and the side
+of a prime's cells (`stepOf`).
+
+These are arithmetic on natural numbers, lists and booleans, and the file imports `SieveAdDefs.lean`,
+`SieveRuleDefs.lean` and `SieveAdTwoDefs.lean`.
 -/
 import SieveAdDefs
 import SieveRuleDefs
@@ -31,7 +32,7 @@ namespace SieveAd
 
 open SieveCert (DEN cdiv V)
 
-/-! ### The search, for any tests and any strategy -/
+/-! ### The parts of the search, for any tests and any strategy -/
 
 /-- What proposes the nodes of a tree. -/
 structure Strat where
@@ -103,11 +104,10 @@ def step (τ : Tests) (S : Strat) (rec : List Cell → Bool → ℕ → ℕ) (bl
   | [] => lim
   | x :: b => cond (vanishOK (x :: b) || anyI τ (x :: b) (S.propI (x :: b))) 0 (node τ S rec x b par lim)
 
-/-! ### A strategy for the window's tests and the estimate's
+/-! ### Searches over the sets of a box's cells, and the route's constants
 
-What follows proposes nodes, and is written for the kernel's speed: arithmetic by `Nat.add`, `Nat.mul`, `Nat.sub`,
-`Nat.div` and `Nat.ble`, with no instance to unfold, and the route's constants as definitions, which the kernel
-evaluates once. -/
+What follows is written for the kernel's speed: arithmetic by `Nat.add`, `Nat.mul`, `Nat.sub`, `Nat.div` and
+`Nat.ble`, with no instance to unfold, and the route's constants as definitions, which the kernel evaluates once. -/
 
 /-- The larger of two numbers (the smaller, `minN`, is `SieveAdLeafDefs.lean`'s). -/
 def maxN (a b : ℕ) : ℕ := cond (Nat.ble a b) b a
@@ -231,7 +231,7 @@ open SieveCert.IBPar (Lnum Lden)
 /-- The least lower end of a prime that may be the rest. -/
 def restLo : ℕ := cdiv (Lden * DEN + 2000 * Lnum) (2000 * Lnum)
 
-/-- The constants of `uOf`, `vOf` and of the least lower sum that `chkI2` passes. -/
+/-- The constants of `uOf` and `vOf`. -/
 def uC0 : ℕ := cdiv (2 * Lden * DEN) (3 * Lnum)
 @[inherit_doc uC0] def uA : ℕ := 62505 * Lden * DEN + 27637 * Lnum
 @[inherit_doc uC0] def uB : ℕ := 27637 * Lnum
@@ -246,7 +246,8 @@ def uOfF (ρ₁ : ℕ) : ℕ := maxN uC0 (Nat.div (Nat.sub (Nat.add (Nat.sub uA 
 def vOfF (ρ₂ : ℕ) : ℕ :=
   minN (Nat.sub vA (Nat.succ ρ₂)) (Nat.div (Nat.sub vB (Nat.mul vC (Nat.succ ρ₂))) uC)
 
-/-- `cIB` of the sums `slo`, `shi` of a set. -/
+/-- For a set with lower sum `slo` and upper sum `shi`: the larger of `U1 − slo` and, if `U2 ≤ shi`,
+`DEN − U2 − max(slo, U2)`. -/
 def cIBF (slo shi : ℕ) : ℕ :=
   maxN (Nat.sub U1 slo) (cond (Nat.ble U2 shi) (Nat.sub (Nat.sub DEN U2) (maxN slo U2)) 0)
 

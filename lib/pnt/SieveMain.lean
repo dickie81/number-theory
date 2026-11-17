@@ -1,20 +1,14 @@
 /-
-# The primes of `(x, 2x]` prime to `q`, for Linnik's theorem by the sieve route
+# The primes of `(x, 2x]`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statements. The route and the grid are as in `SieveQ` (`RouteOK`, `GridOK`, `GridOKC` and `Fits`).
+Plain statements.
 
 * `primes_dyadic_ge`: for `ε > 0`, the primes of `(⌊x⌋, ⌊2x⌋]` number at least `(1 − ε)x/log x` for large `x`.
-* `TB_ev`: for `ε > 0`, `S(B, z_top) ≥ φ(q)⁻¹((1 − ε)x/log x − q)` for large `q`, at `x = q^L`.
+* `ev_log_le`: for `c > 0` and `r > 0`, `log q ≤ c q^r` for large `q`.
 
-The proof:
-
-* `primes_dyadic_ge`: `SieveRough.theta_near` at `x` and `2x`. `TB_ev`: `z_top = ⌊√N₂⌋ + 1`, so the `z_top`-rough
-  `n ∈ (N₁, N₂]` are the primes there, and at most `ω(q) ≤ q` of them divide `q`.
-
-The route's numbers and the certificate's grids are parameters. `SieveMain8.lean` proves Linnik's theorem by the
-sieve route with `TB_ev`.
+The proof of `primes_dyadic_ge` is `SieveRough.theta_near` at `x` and `2x`.
 
 The file imports `SieveDrop.lean`.
 -/
@@ -29,7 +23,7 @@ open Classical
 
 variable [Route] [RouteOK] [SieveCert.Grid]
 
-/-! ### `S(B, z_top)`: the primes of `(x, 2x]` prime to `q` -/
+/-! ### The primes of `(x, 2x]` -/
 
 omit [Route] [RouteOK] [SieveCert.Grid] in
 /-- For `ε > 0`, the primes of `(⌊x⌋, ⌊2x⌋]` number at least `(1 − ε)x/log x` for large `x`. -/
@@ -106,7 +100,7 @@ theorem primes_dyadic_ge {ε : ℝ} (hε : 0 < ε) : ∀ᶠ x : ℝ in atTop,
     exact hkey
   linarith [this, (div_le_div_of_nonneg_right hθ h2x0.le)]
 
-/-! ### The count, and the theorem -/
+/-! ### `log q` against a power of `q` -/
 
 omit [Route] [RouteOK] [SieveCert.Grid] in
 /-- `log q ≤ c q^r` for large `q`, any `c > 0`, `r > 0`. -/

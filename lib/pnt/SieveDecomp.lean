@@ -1,5 +1,5 @@
 /-
-# Families of prime tuples, and Buchstab's identity on them
+# Families of prime tuples, and Buchstab's identity at one `n`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -9,22 +9,14 @@ up to `Y` that satisfy every atom of `spec`. For weights `g` on `(N₁, N₂]`, 
 `S_g(∏rt, rt_last) = Σ_n g(n)[∏rt ∣ n, no prime factor of n below rt_last]` over a family, and `famJ` the terms
 `S_g(∏rt, z)`.
 
-* `RTg_eq`: with positive thresholds, a family is `SieveChain.RTg` of its atoms' comparisons (`Atom.toG`).
-* `buchstab_pt`, `buchstab_fam`: Buchstab's identity. For a family whose tuples have their last prime least and at
-  least `z`, `famI = famJ(z) − famI` of the extended family (`extS`: one more prime `p ∈ [z, rt_last)`).
-* `famI_cells`: if every tuple has its prime `t` in `[x^{V/DEN}, x^{(V + nH)/DEN})`, `x > 1`, the family is the sum over
-  the cells `c < n` of a grid with `GridOK` (`SieveCert.Grid`) of its subfamilies with
-  `x^{e_c/DEN} ≤ rt_t < x^{(e_c + H)/DEN}` (`cellA`).
-* `famI_split`: a family is the sum of its subfamilies under an atom and under its complement.
+* `RTg_eq`: with positive thresholds, a family is `SieveChain.RTg` of its atoms' comparisons (`Atom.toG`);
+  `Atom.toG_holds`: with a positive threshold, on entries at least `1`, the comparison holds exactly when the atom
+  does, and `Atom.toG_c_le`: its part at `m = 0` is at most `|log thr|`.
+* `buchstab_pt`: Buchstab's identity at one `n ≠ 0`. For `W` whose primes are at least `P ≥ z`,
+  `[W ∣ n, rough P n] = [W ∣ n, rough z n] − Σ_{z ≤ p < P} [Wp ∣ n, rough p n]`; `dvd_rough_iff`: for a prime `p`
+  and `n ≥ 2`, `p ∣ n` with `n` free of primes below `p` means `p = minFac n`.
 * `famI_eq_zero`, `famI_vanish`: a family contributes `0` when no `n ∈ (N₁, N₂]` is counted, in particular when every
   `∏rt ≤ N₁` while `∏rt·rt_last > N₂`.
-
-These are the operations of the decomposition of the sieve, on families
-described by finitely many atoms: extension by one prime (Buchstab), the cells of the newest prime, splits by a
-product against a threshold, and families that vanish.
-
-The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
-statements for the library's grid are the case `SieveCert.grid22000E`.
 
 The file imports `SieveChain.lean`.
 -/
@@ -156,7 +148,7 @@ theorem famI_nonneg {g : ℕ → ℝ} (hg : ∀ n, 0 ≤ g n) (N₁ N₂ : ℕ) 
     0 ≤ famI g N₁ N₂ F :=
   Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun n _ => mul_nonneg (hg n) (by split_ifs <;> norm_num)
 
-/-! ### Buchstab's identity on a family -/
+/-! ### Buchstab's identity at one `n` -/
 
 /-- For a prime `p` and `n ≥ 2`, `p ∣ n` with `n` free of primes below `p` means `p = minFac n`. -/
 theorem dvd_rough_iff {p n : ℕ} (hp : p.Prime) (hn : 2 ≤ n) :
@@ -223,7 +215,7 @@ theorem prod_snoc {k : ℕ} (rt : Fin k → ℕ) (p : ℕ) : ∏ i, (Fin.snoc rt
   rw [Fin.prod_univ_castSucc]
   simp only [Fin.snoc_castSucc, Fin.snoc_last]
 
-/-! ### Cells, splits and empty terms -/
+/-! ### Families that contribute `0` -/
 
 /-- A family none of whose terms has an `n ∈ (N₁, N₂]` contributes `0`. -/
 theorem famI_eq_zero (g : ℕ → ℝ) (N₁ N₂ : ℕ) {k' : ℕ} (F : Finset (Fin (k' + 1) → ℕ))
@@ -231,9 +223,7 @@ theorem famI_eq_zero (g : ℕ → ℝ) (N₁ N₂ : ℕ) {k' : ℕ} (F : Finset 
     famI g N₁ N₂ F = 0 :=
   Finset.sum_eq_zero fun rt hrt => Finset.sum_eq_zero fun n hn => by rw [ite_eq_right (h rt hrt n hn), mul_zero]
 
-/-! ### Chains -/
-
-/-! ### Membership through the atoms -/
+/-! ### Products at most `N₁` whose last prime takes them past `N₂` -/
 
 /-- A family whose products are at most `N₁` and whose products times their last prime exceed `N₂` contributes `0`:
 its `n = (∏rt)c ∈ (N₁, N₂]` would have `c ≥ 2` with no prime factor below `rt_last`. -/

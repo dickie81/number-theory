@@ -25,9 +25,9 @@ the exponent `κn` of `q`.
 * `evI_two`, `evI_okI2`: **a box evaluated by the estimate.** If `chkI2` passes the box, for the first variable
   `s0` and the rest `sr`, the term of the box is evaluated (`SieveAd.EvI`), the second variable being the other
   primes and the cofactor.
-* `twoTests_sound`: so the tests of the estimate in two variables are sound (`SieveAd.Tests.Sound`).
-* `evJ_twoE`, `evI_twoE`, `twoTests_soundX`: the same under more atoms, uniformly in the atoms, while the box's
-  atoms and those are at most `40` (`SieveAd.Tests.SoundX`).
+* `evJ_twoE`, `evI_twoE`: `evJ_two` and `evI_two` under more atoms: `dJP` at the floor `f`, and `dIP`, are at most
+  `η · Xq q / φ(q)` for large `q`, uniformly in the lists `E` of at most `m` atoms that pass `ThrOK`, where
+  `3 · min(k, 13) + m ≤ 40` for a box of `k` primes.
 
 The file imports `SieveAdSpec.lean`, `SieveAdTwoDefs.lean`, `SieveTwoComp.lean`, `SieveTwoCompE.lean` and
 `SieveLeafZoneX.lean`.

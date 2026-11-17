@@ -1,5 +1,5 @@
 /-
-# Rough numbers from above, and the shares of the certificate's cells
+# Rough numbers from above
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
@@ -9,14 +9,18 @@ Plain statements.
   and `u = log 2y/log z ≤ U`. Here `Ψ(y, z) = #{m ∈ (y, 2y] : p | m ⇒ p ≥ z}` (`Psi`), and `ω*` is the bound for
   Buchstab's `ω` of `SieveCert.omegaC`: `0` below `1`, `1/u` on `[1, 2)`, Buchstab's `(1 + log(u − 1))/u` on `[2, 3]`
   and `0.565073` above `3`.
-* `share2`: let `cellP x k` be the primes whose exponent `log p/log x` lies in the cell `k` of a grid of the certificate
-  (`SieveCert.Grid`, `mem_cellP`). On a grid with `GridOK`, for a cell `(i, j)` with `e_i + 2e_j ≤ DEN`, as for a
-  candidate cell, and every `δ > 0`, eventually in `x`:
-  `Σ_{p₁ ∈ cellP x i} Σ_{p₂ ∈ cellP x j} Ψ(x/(p₁p₂), p₂) ≤ (bound2(e_i, e_j)/K + δ)x/log x`.
-* `share2_of_cand`: `share2` on the cells that pass `SieveCert.cand`.
+* `psi_point_w`: **a point of a cell.** Let `x > 1` with `(log 2/log x)·DEN < 1`, let `d ≥ 1` be the product of the
+  other primes and `p ≥ 2` the last, with `s ≤ (log d/log x)DEN`, `t ≤ (log p/log x)DEN ≤ t + w` and
+  `((log d + log p)/log x)DEN ≤ s + t + W ≤ DEN`. If `z₀` is `psi_le`'s for `U = 2DEN/t` and `ε`, and `p ≥ z₀`, then
+  `Ψ(x/(dp), p) ≤ (omKw s t W w/K + ε)·x/(dp log p)`.
+* `evLe_sum_inv`, `evLe_sum_inv_log`: for `0 < a ≤ c` and every `δ > 0`, eventually in `x`, the primes of `[x^a, x^c)`
+  (`primesIn`) have `Σ 1/p ≤ log c − log a + δ` and `log x · Σ 1/(p log p) ≤ 1/a − 1/c + δ` (`EvLe`).
+* `evLe_finish`: let `W, P ≥ 0`. If `F ≤ (W + ε)(x/log x)R` eventually for every `ε > 0`, `limsup R ≤ P` and
+  `WP ≤ B`, then `F ≤ (B + δ)x/log x` eventually, for every `δ > 0`.
 
-`Ψ(x/d, p)` counts the integers `n = dm ∈ (x, 2x]` whose cofactor `m` has no prime factor below `p`. The share bounds
-these counts, summed over a cell's primes, by the certificate's own bound `bound2/K`.
+`Ψ(x/d, p)` counts the integers `n = dm ∈ (x, 2x]` whose cofactor `m` has no prime factor below `p`.
+`SieveBox.shareBox` bounds these counts, summed over the primes of a box, with `psi_point_w`, `evLe_sum_inv`,
+`evLe_sum_inv_log` and `evLe_finish`.
 
 The proof:
 
@@ -36,19 +40,10 @@ The proof:
   `ω*((L − log p)/log p)/(p log p)` over the primes of `(z, √(2y)]`: `ω* ≤ 0.565073` for `log p ≤ L/4`,
   `ω* ≤ 0.5671433` for `log p ≤ L/3`, and `ω* = log p/(L − log p)` above.
 * `Claim`, `claim_step`, `claim_nat`, `psi_le`: the induction on the level `K` in `log 2y ≤ K log z`.
-* `evLe_sum_inv`, `evLe_sum_inv_log`, `evLe_cell_tr`, `evLe_cell_ex`: for `0 < a ≤ c` and large `x`, the primes of
-  `[x^a, x^c)` have `Σ 1/p ≤ log c − log a + δ` and `log x · Σ 1/(p log p) ≤ 1/a − 1/c + δ`; on the cell `k` of a grid
-  with `GridOK`, whose side is `h = H/DEN` and whose lower corner is `a = e_k/DEN`, these are at most the trapezoid
-  bound `h(2a + h)/(2a(a + h)) + δ` of `log(1 + h/a)` (`SieveCert.trB`) and `h/(a(a + h)) + δ` (`SieveCert.exB`).
-* `psi_point`: at a point of a cell, `psi_le` and `SieveCert.omegaC_le_w` (through `psi_point_w`) give
-  `Ψ(x/(dp), p) ≤ (omK/K + ε)x/(dp log p)`.
-* `evLe_finish`, `share2`: the share is at most `(omK/K + ε)x/log x` times the product of the cells' prime sums
-  (`Σ 1/p`, and `log x · Σ 1/(p log p)` for the last cell). For large `x` that product is at most the product of the
-  cells' `trB` and the last cell's `exB`, plus `δ`, and `SieveCert.bound2_ge` bounds `omK/K` times the product by
-  `bound2/K`.
-
-The certificate's grid is a parameter (`SieveCert.Grid`, with `GridOK` where the Lean takes it); the
-case `SieveCert.grid22000E` is the grid of exponent `11/5`.
+* `evLe_sum_inv`, `evLe_sum_inv_log`: `sum_inv_le` and `sum_inv_mul_log_le`, with `theta_near`, on the primes of
+  `[x^a, x^c)`.
+* `psi_point_w`: the bound of `psi_le` (a hypothesis) at `y = x/(dp)` and `z = p`, and `SieveCert.omegaC_le_w` on the
+  argument `log 2y/log p`.
 -/
 import HalfPlaneFinal
 import LinnikTwelveSizes
@@ -1440,8 +1435,6 @@ theorem evLe_sum_inv_log {a c : ℝ} (ha : 0 < a) (hac : a ≤ c) :
   have h7 := mul_le_mul_of_nonneg_left (h2.trans (add_le_add le_rfl h1)) hlx.le
   rw [mul_add] at h7
   linarith
-
-/-! ### The cells -/
 
 variable [Grid]
 

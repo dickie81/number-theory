@@ -1,8 +1,8 @@
 /-
-# Proposition 6 with the bilinear estimate: Buchstab's tree on a family
+# Buchstab's tree on a family
 
 Plain statements. `GCmp`, `RTg` and `liftChain` are `SieveChain`'s; `gUp`, `gDown`, `gltVar` and `Pblock` are
-`SieveP6Chain`'s; `rough z n` and `primesIco w z` are `SieveTree`'s. `N₁ = ⌊q^L⌋` and `N₂ = ⌊2q^L⌋`.
+`SieveP6Chain`'s; `rough z n` and `primesIco w z` are `SieveTree`'s.
 
 * `sum_snoc_chain`: the pairs `(rt, p)`, `rt` in a family of chains and `p ∈ [z, rt_last)` prime, are the chains of
   the family extended by `extG` (`p < rt_last`, `z ≤ p`).
@@ -13,14 +13,6 @@ Plain statements. `GCmp`, `RTg` and `liftChain` are `SieveChain`'s; `gUp`, `gDow
   have entries at least `z₀` and `c = ∏_{i∈S₀} rt_i < E`: the multiples of `∏rt` with no prime factor below `z₀` are
   `Σ_s (−1)^s` times the leaves of size `s` (the chains of `leafCmps`, sifted at `w`) plus `Σ_s (−1)^{s+1}` times the
   stops of size `s + 1` (the chains of `stopCmps`, sifted at their last entry).
-* `ChainOK`: the bound `q^{L−δ}/φ(q)` for chains of length at most `K₀ + 1` with a product in the window `(A, B]`.
-  `chainOK_TL` and `chainOK_TR` give it for the lower window (`SieveChain.chainTL_bound`) and its reflection
-  (`SieveChainR.chainTR_bound`).
-* `root_bound`: for a family with a product in a window, sifted at `z₀`, one step of Buchstab's identity
-  (`SieveDecomp.buchstab_pt`) and `ChainOK` give `2q^{L−δ}/φ(q)`.
-* `stops_bound`: the stops of the tree at `E = A + 1`, with `(A + 1)z₀ ≤ B` and `A + 1 ≤ w^{s_max}`, total at most
-  `s_max·q^{L−δ}/φ(q)` by `ChainOK`: a stop's product lies in `(A, (A + 1)z₀)`, and no stop has `s_max` primes below
-  `z₀` before its last.
 
 The file imports `SieveP6Chain.lean` and `SieveDecomp.lean`.
 -/
@@ -484,11 +476,5 @@ theorem norm_sum_sizes_le {N smax : ℕ} {b : ℝ} (hb : 0 ≤ b) {ε X : ℕ �
 end Chains
 
 variable [Route]
-
-/-! ### Chains with a product in a window, for every length up to a bound -/
-
-/-! ### A family with a product in a window -/
-
-/-! ### The stops of a tree -/
 
 end SieveP6Tree

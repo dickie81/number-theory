@@ -1,18 +1,19 @@
 /-
-# Proposition 6 with the bilinear estimate
+# A family split by one comparison, a leaf's two blocks
 
-Plain statements. `GCmp`, `RTg` are `SieveChain`'s; `gUp`, `gDown` are `SieveP6Chain`'s; `ChainOK` is `SieveP6Tree`'s
-and `LeavesOK` `SieveP6TreeLeaves`'s; `rough z n` and `primesIco w z` are `SieveTree`'s; `zeta`, `rem` and `Jw` are
-`SieveProp6`'s. `N₁ = ⌊q^L⌋`, `N₂ = ⌊2q^L⌋` and `w = ⌈q^{εw}⌉`.
+Plain statements. `GCmp`, `RTg` are `SieveChain`'s; `gUp`, `gDown` are `SieveP6Chain`'s.
 
-* `sum_patterns`: a family split into five patterns by `c = ∏_{i∈S₀} rt_i` against the windows `(P₁, P₂]` and
-  `(W₀, W₁]`: below the first, in it, between the two, in the second, above it.
-* `tree_pattern_ib`: a pattern below a window, by Buchstab's tree; its leaves split into two blocks by
-  `Isplit S₁ eIn₁`, their sizes from the boxes `rt_i ≤ q^{hi_i}`.
-* `root_bound'`: a pattern in a window, by `ChainOK`.
-* `win_lo`, `win_hi`: the windows `(⌈q^{w₁L}⌉, ⌊q^{w₂L}⌋]` and `(⌈N₂/q^{w₂L}⌉, ⌊N₁/⌈q^{w₁L}⌉⌋]` fit.
-* `prop6ib_core`, `prop6ib_at`: the bound at one `q`, for given windows and for these.
-* `prop6ib`: **Proposition 6 with the bilinear estimate**, for `q ≥ q₀`.
+* `sum_RTg_cmp`: a family `RTg K Y Ω` split by `∏_{i∈I} x_i ≤ b` and `b < ∏_{i∈I} x_i`, for `b > 0`, as the families
+  with `gUp I b false` and with `gDown I b true` added to `Ω`.
+* `Isplit`, `prod_Isplit`, `prod_Isplit_compl`: a leaf `x = (rt, y)` split into two blocks, `S₁` among the family's
+  primes together with all of `y` if `eIn₁`, and the complement; the products over the two blocks.
+* `leaf_blocks_le`: for `rt_i ≤ Q^{hi_i}` and `∏y ≤ Y₀`, `∏_{I}x ≤ Q^{Σ_{S₁} hi}·(Y₀ if eIn₁)` and
+  `∏_{Iᶜ}x ≤ Q^{Σ_{S₁ᶜ} hi}·(Y₀ unless eIn₁)`.
+* `leaf_sizes_num`: the sizes of `SieveP6TreeLeaves.LeavesOK` from `∏_I x ≤ 4Q^{D₁}`, `∏_{Iᶜ} x ≤ 4Q^{D₂}` and
+  `w^{2k+4} ≤ 2^{2k+4}Q^c`, once `4·2^{2k+4} ≤ Q^{L−1−a−D₁−c}` and `64·2^{2k+4} ≤ Q^{L−b−D₁−2D₂−c}`.
+* `box_prod`: the box bounds `Q^{Σ lo} ≤ ∏_{i∈S₀} rt_i ≤ Q^{Σ hi}` from `Q^{lo_i} ≤ rt_i ≤ Q^{hi_i}`.
+* `final_bound`: the arithmetic of the final bound: a main term, a remainder and the error terms `e_i ≤ X_d`, with
+  `(4s + 5)X_d ≤ X_δ`, total at most `main + φ⁻¹X_δ`.
 
 The file imports `SieveP6TreeLeaves.lean`.
 -/
@@ -112,8 +113,8 @@ theorem leaf_blocks_le {j : ℕ} (S₁ : Finset (Fin j)) (eIn₁ : Bool) {s : �
   · simp only [ite_true, mul_one]
     exact ⟨mul_le_mul (hT S₁) hy hy0 (hQ0 _), hT S₁ᶜ⟩
 
-/-- The sizes of `leaves_chain` from `∏_I x ≤ 4Q^{D₁}`, `∏_{Iᶜ} x ≤ 4Q^{D₂}` and `w^{2k+4} ≤ 2^{2k+4}Q^c`, once
-`4·2^{2k+4} ≤ Q^{L−1−a−D₁−c}` and `64·2^{2k+4} ≤ Q^{L−b−D₁−2D₂−c}`. -/
+/-- The sizes of `SieveP6TreeLeaves.LeavesOK` from `∏_I x ≤ 4Q^{D₁}`, `∏_{Iᶜ} x ≤ 4Q^{D₂}` and
+`w^{2k+4} ≤ 2^{2k+4}Q^c`, once `4·2^{2k+4} ≤ Q^{L−1−a−D₁−c}` and `64·2^{2k+4} ≤ Q^{L−b−D₁−2D₂−c}`. -/
 theorem leaf_sizes_num {Q : ℝ} (hQ : 0 < Q) {D₁ D₂ c a b L' : ℝ} {k : ℕ} {U V W : ℝ} (hV : 0 ≤ V)
     (hU' : U ≤ 4 * Q ^ D₁) (hV' : V ≤ 4 * Q ^ D₂) (hW : 0 ≤ W) (hW' : W ^ (2 * k + 4) ≤ 2 ^ (2 * k + 4) * Q ^ c)
     (h₁ : 4 * 2 ^ (2 * k + 4) ≤ Q ^ (L' - 1 - a - D₁ - c))
@@ -140,15 +141,7 @@ theorem leaf_sizes_num {Q : ℝ} (hQ : 0 < Q) {D₁ D₂ c a b L' : ℝ} {k : �
           mul_le_mul_of_nonneg_right h₂ (by positivity)
       _ = Q ^ (L' - b) := e2.symm
 
-/-! ### The five patterns of a family -/
-
-section Patterns
-
-variable {j : ℕ} (Ω : List (GCmp j)) (S₀ : Finset (Fin j)) (P₁ P₂ W₀ W₁ : ℝ)
-
-variable {Ω S₀ P₁ P₂ W₀ W₁}
-
-end Patterns
+/-! ### The boxes and the final bound -/
 
 /-- The box bounds on `c = ∏_{i∈S₀} rt_i`: `Q^{Σ lo} ≤ c ≤ Q^{Σ hi}`. -/
 theorem box_prod {j : ℕ} {Q : ℝ} (hQ : 0 < Q) (S₀ : Finset (Fin j)) {lo hi : Fin j → ℝ} {rt : Fin j → ℕ}
@@ -158,8 +151,9 @@ theorem box_prod {j : ℕ} {Q : ℝ} (hQ : 0 < Q) (S₀ : Finset (Fin j)) {lo hi
   exact ⟨Finset.prod_le_prod₀ (fun i _ => by positivity) fun i _ => (h i).1,
     Finset.prod_le_prod₀ (fun i _ => Nat.cast_nonneg _) fun i _ => (h i).2⟩
 
-/-- The arithmetic of the final bound: the patterns' bound, with `S·Pr ≤ K`, the main term `M_z K ≤ main`, the
-remainder `M_r K ≤ φ⁻¹e₀`, and every error `e_i ≤ X_d` with `(4s + 5)X_d ≤ X_δ`, is at most `main + φ⁻¹X_δ`. -/
+/-- The arithmetic of the final bound: `n ≤ (M_z + M_r)·S·Pr + 2s·φ⁻¹e₃ + (s + 2)φ⁻¹e₁ + (s + 2)φ⁻¹e₂`, with
+`S·Pr ≤ K`, the main term `M_z K ≤ main`, the remainder `M_r K ≤ φ⁻¹e₀`, and every error `e_i ≤ X_d` with
+`(4s + 5)X_d ≤ X_δ`, is at most `main + φ⁻¹X_δ`. -/
 theorem final_bound {Mz Mr S Pr K main e₀ e₁ e₂ e₃ φi Xd Xδ sm n : ℝ}
     (hn : n ≤ (Mz + Mr) * (S * Pr) + 2 * sm * (φi * e₃) + (sm + 2) * (φi * e₁) + (sm + 2) * (φi * e₂))
     (hSP : S * Pr ≤ K) (hMz : 0 ≤ Mz) (hMr : 0 ≤ Mr) (hmain : Mz * K ≤ main) (hrem : Mr * K ≤ φi * e₀)
@@ -175,17 +169,5 @@ theorem final_bound {Mz Mr S Pr K main e₀ e₁ e₂ e₃ φi Xd Xδ sm n : ℝ
   linarith
 
 variable [Route]
-
-/-! ### A tree pattern -/
-
-/-! ### A family in a window, of any length -/
-
-/-! ### The windows -/
-
-/-! ### Proposition 6 with the bilinear estimate, for given windows -/
-
-/-! ### Proposition 6 with the bilinear estimate, at one `q` -/
-
-/-! ### Proposition 6 with the bilinear estimate -/
 
 end SieveP6ib

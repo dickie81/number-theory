@@ -1,27 +1,20 @@
 /-
-# The search with role reversal is sound
+# The bound of a box's term by a cost, and Linnik's theorem from it
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statements. `SieveAdRevDefs.lean` defines a search (`SieveAd.solveG` with the nodes `SieveAd.opsR`) whose
-nodes are those of `SieveAdDefs.lean`'s trees and, for a box of three primes of the sign `−`, the cost of a role
-reversal as one more bound. Here:
+Plain statements. For a route:
 
 * `PR bl par c`: the term of the box `bl`, with the sign `par`, is at least `−(c/K + o(1))x/(φ(q) log x)` in `𝒜`
   minus the comparison set.
-* `pr_of_has`: a tree that passes on the box at a cost at most `c` gives `PR bl par c`.
-* `rulesR`: **the nodes of the search prove `PR`**, for tests that are sound and sound under two more atoms: the
-  nodes of a tree by `SieveAd.sound`, a reversal by `SieveAd.bd_rev`, a cut and Buchstab's identity by
-  `SieveAd.bd_split` and `SieveAd.bd_buch`.
-* `solveR_sound`: **the search is sound.** A cost that the search returns below the limit it was given bounds the
-  term.
-* `pr_split`, `pr_buch`, `pr_drop`, `pr_mono`: the steps that join the parts of a search: a cut of a cell,
-  Buchstab's identity at a floor that passes, a box dropped at the cost that `SieveAd.dropC` gives, a larger cost.
-* `pr_of_kids`: a part of a search, as the kernel checks it: if the costs of the cells of the new prime between `a`
-  and `top`, searched with the limit `K`, sum to at most `c < K`, the box of the whole range has `PR` at `c`.
-* `linnik_pr`: **the theorem from a search with role reversal.** For a route and sound tests: if the terms at the
-  floor of the box with no prime pass `okJ` and the box of one prime has `PR` at a cost below `K`, then every class
-  prime to `q` has a prime at most `K'q^L`.
+* `pr_of_has`: a tree that passes on the box at a cost at most `c` gives `PR bl par c`, by `SieveAd.sound`.
+* `pr_split`, `pr_buch`, `pr_drop`, `pr_mono`: the steps that join the parts of a search: a cut of a cell
+  (`SieveAd.bd_split`), Buchstab's identity at a floor that passes (`SieveAd.bd_buch`), a box dropped at the cost
+  that `SieveAd.dropC` gives, a larger cost.
+* `revOK_length`: a box that may be reversed (`SieveAd.revOK`) has three primes.
+* `linnik_pr`: **the theorem from the bound of the box of one prime.** For a route and sound tests: if the terms at
+  the floor of the box with no prime pass `okJ` and the box of one prime has `PR` at a cost below `K`, then every
+  class prime to `q` has a prime at most `K'q^L`.
 
 The file imports `SieveAdRevSum.lean` and `SieveAdSearch.lean`.
 -/
@@ -107,10 +100,10 @@ theorem revOK_length {bl : List Cell} (h : revOK bl = true) : bl.length = 3 := b
   match bl, h with
   | [_, _, _], _ => rfl
 
-/-- **Linnik's theorem from a search with role reversal.** For a route with `RouteOK` and sound tests: if the terms
-at the floor `x^{f₀/DEN}` of the box with no prime pass `okJ`, and the term of the box of one prime with the cell
-`(f₀, DEN/2 + 1)`, of the sign `−`, has a bound at a cost below `K`, then there is `K'` such that for every `q ≥ 1`
-and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K'·q^L`. -/
+/-- **Linnik's theorem from the bound of the box of one prime.** For a route with `RouteOK` and sound tests: if the
+terms at the floor `x^{f₀/DEN}` of the box with no prime pass `okJ`, and the term of the box of one prime with the
+cell `(f₀, DEN/2 + 1)`, of the sign `−`, has a bound at a cost below `K`, then there is `K'` such that for every
+`q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K'·q^L`. -/
 theorem linnik_pr [RouteOK] {τ : Tests} (hτ : τ.Sound) (f₀ : ℕ) (cfg₀ : Cfg) (hf₀ : f₀ ≤ DEN / 2 + 1)
     (hroot : τ.okJ [] f₀ cfg₀ = true) {c : ℕ} (h : PR [(f₀, DEN / 2 + 1)] false c) (hc : c < K) :
     ∃ K' : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
