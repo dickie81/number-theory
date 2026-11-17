@@ -330,9 +330,10 @@ Its main tools:
   `2.22·10^6` of them reversals, in `107374` parts (`lib/pnt/SieveHint21000P1.lean` …
   `SieveHint21000P1150.lean`), with the theorems of the cells cut by the next prime's cells in 58
   files (`lib/pnt/SieveHint21000N1.lean` …), where the search visited `5.14·10^9` boxes.
-- `Linnik21000.count_21000` and `Linnik21500.count_21500`, the two theorems in number (in no paper): there are
-  `c > 0` and `K` such that for every `q ≥ 1`, every `a` prime to `q` and every `x ≥ K·q^L` the primes `p ≤ x` with
-  `p ≡ a (mod q)` number at least `c·x/(φ(q) log x)`, at `L = 2100/1000` and at `L = 2150/1000`
+- `Linnik21000.count_21000` and `Linnik21500.count_21500`, the two theorems in number, the Linnik paper's
+  Corollary 1.3: there are `c > 0` and `K` such that for every `q ≥ 1`, every `a` prime to `q` and every
+  `x ≥ K·q^L` the primes `p ≤ x` with `p ≡ a (mod q)` number at least `c·x/(φ(q) log x)`, at `L = 2100/1000` and
+  at `L = 2150/1000`
   (`lib/pnt/SieveAdCount.lean`; `lib/pnt/Linnik21000Count.lean` and `lib/pnt/Linnik21500Count.lean`, the
   second of which imports nothing of the theorem at `2100/1000`). Two steps. A bound `C < 1` of the first term gives
   `S(𝒜, z_top) ≥ φ(q)⁻¹·(1 − C)/2·x/log x` at `x = q^L` for large `q`, and every integer that `S(𝒜, z_top)` counts
