@@ -200,7 +200,11 @@ covers. The region does not close at `13/6`.
   condition `|α₁ − α₂| < 2θ − 1` is unchanged and its other side shrinks by at most a tenth (`ρ < 0.100` for his
   `0.112` at `θ = 0.528`), so that the region at `θ = 0.530` contains his at `0.528`. That suggests that his sieve
   reaches every modulus near `q < x^{0.47}`, an exponent of about `2.13`, given the half-plane. It is an estimate
-  from one lemma's region: the sieve was not run, and his Type I lemmas were not modelled.
+  from one lemma's region: the sieve was not run, and his Type I lemmas were not modelled. Harman's own theorem
+  (Int. J. Number Theory 4 (2008), Theorem 1.2, read on 17 November 2026) has `q < x^{0.4736}` for large moduli
+  whose prime factors are all below `q^δ`, under a zero-free condition that the half-plane implies: the exponent
+  `1/0.4736 < 2.1115`. Its Remark 1.3 says that his theorem of 2005 had `0.472` and that the condition on the prime
+  factors was added in 2008; the paper of 2005 was not read (the Linnik paper, Section 12).
 - **In a decomposition that does not lean on the window** (`tools/linnik/harman_sieve.py`, whose docstring states
   it). Each term has its own floor, the largest at which Harman's comparison evaluates it: its tree over the small
   primes is stopped by the estimate (the part that enters the zone is a set of the term's primes times the small

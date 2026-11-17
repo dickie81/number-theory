@@ -10,7 +10,8 @@ prime `p ≡ a (mod q)` with `p ≤ K·q^L`, where `L = 21/10` or `L = 43/20`. I
 
 The proofs use recent results that have not been refereed. Theorem 1.2 uses one, OpenAI's zero-free half-plane
 `Re s > 11/12` for Dirichlet L-functions, and of the density estimates only Huxley's; Theorem 1.1 also uses Chen, Gupta
-and Li's large values estimate. The exponents are to be compared with `12/5` and `7/3`, not with Xylouris's `5`
+and Li's large values estimate. The exponents are to be compared with `12/5` and `7/3`, and with what the
+half-plane gives through Harman's theorems on primes in a progression, not with Xylouris's `5`
 ([below](#what-the-proofs-rest-on)). Lean's kernel had not finished its check of the certificate at `21/10` on
 16 November 2026 ([below](#checking-the-proofs)).
 
@@ -107,7 +108,12 @@ theorems are unconditional (Theorem 1.1 once the check of its certificate by Lea
 Their exponents are to be compared with `12/5` and `7/3`: from the half-plane, the classical deduction gives every
 exponent above `12/5` with Huxley's estimate, and every exponent above `7/3` with Chen, Gupta and Li's density
 estimate (their Theorem 1.2, not their Proposition 3.1). The paper's sieve brings these down to `43/20 = 2.15` and to
-`21/10 = 2.1`. They are not on the same footing as the
+`21/10 = 2.1`. They are also to be compared with what the half-plane gives through Harman's theorems on primes in a
+progression (the paper's Section 12): `1/0.4736 < 2.1115` for large moduli with only small prime factors, by his
+Theorem 1.2 of 2008; and `1/0.472 < 2.1187` for every modulus, if his theorem of 2005, which was not read, is that
+theorem with the range `0.472` and without the condition on the prime factors, as the paper of 2008 indicates. In
+that case Theorem 1.2's `43/20` is not the smallest exponent that the half-plane gives; Theorem 1.1's `21/10` is
+below all of these. The paper's exponents are not on the same footing as the
 exponents `5.5` and `5` of Heath-Brown and Xylouris, whose proofs use refereed results only, while Theorem 1.2 uses one
 of the two recent results and Theorem 1.1 both, through their formalisations.
 
@@ -155,9 +161,12 @@ checked against the journal's PDF, the Lamzouri–Li–Soundararajan corrigendum
 Comp. 86 (2017), 2551–2554), and Naslund's entry against its Hexagon record on 16 November 2026. The exceptions:
 
 - Buchstab's volume, issue and pages (1937) are unverified, having been seen in secondary sources only.
-- Harman's papers of 2005 and 2008 and Alford, Granville and Pomerance's of 1994 were not read, and their publishers'
-  pages could not be reached; what the paper says of them is taken from R. Li's, Lichtman's and Baier and Pujahari's
-  citations.
+- Harman's paper of 2008 was read in full on 17 November 2026. His paper of 2005 and Alford, Granville and
+  Pomerance's of 1994 were not read, and their publishers' pages could not be reached; what the paper says of them
+  is taken from Harman's paper of 2008 and from Wright's, R. Li's, Lichtman's and Baier and Pujahari's citations.
+  `main.tex` says that its account of the theorem of 2005 is taken from the paper of 2008, and states that
+  theorem's consequence with an "if". The paper of 2005 must be read before submission: it decides whether
+  Theorem 1.2's exponent is below what the half-plane gives with a refereed theorem.
 - Banks and Shparlinski's entry and their exponent `2.1115` are taken from R. Li's and Chen, Gupta and Li's citations
   of that paper, whose published version was not read; its arXiv version, 1605.07553v2, says that it does not improve
   the Linnik exponent.
