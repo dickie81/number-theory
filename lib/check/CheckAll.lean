@@ -333,6 +333,8 @@ import SieveHint21500
 import Linnik21500
 import SieveHint21000
 import Linnik21000
+import SieveAdCount
+import LinnikCount
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
@@ -1300,6 +1302,15 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms Linnik21500.linnik_21500
 #print axioms Linnik21000.tree21000
 #print axioms Linnik21000.linnik_21000
+#print axioms SieveAd.count_of_large
+#print axioms SieveAd.count_large_bd
+#print axioms SieveAd.count_bd
+#print axioms SieveAd.count_large_pr
+#print axioms SieveAd.count_pr
+#print axioms Linnik21500.count_21500
+#print axioms Linnik21500.count_large_21500
+#print axioms Linnik21000.count_21000
+#print axioms Linnik21000.count_large_21000
 /- The Linnik paper's Theorem 1.1, at `21/10` (`papers/linnik-exponent/main.tex`, Sections 8 to 10): the declarations
 of its claims table (Appendix A, second block) that no line above prints, in the table's order by name. The others
 of that block are printed above: the resonant window and its steps, the leaves' estimate, the tests' soundness, the

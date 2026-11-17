@@ -330,6 +330,19 @@ Its main tools:
   `2.22·10^6` of them reversals, in `107374` parts (`lib/pnt/SieveHint21000P1.lean` …
   `SieveHint21000P1150.lean`), with the theorems of the cells cut by the next prime's cells in 58
   files (`lib/pnt/SieveHint21000N1.lean` …), where the search visited `5.14·10^9` boxes.
+- `Linnik21000.count_21000` and `Linnik21500.count_21500`, the two theorems in number (in no paper): there are
+  `c > 0` and `K` such that for every `q ≥ 1`, every `a` prime to `q` and every `x ≥ K·q^L` the primes `p ≤ x` with
+  `p ≡ a (mod q)` number at least `c·x/(φ(q) log x)`, at `L = 2100/1000` and at `L = 2150/1000`
+  (`lib/pnt/SieveAdCount.lean`, `lib/pnt/LinnikCount.lean`). Two steps. A bound `C < 1` of the first term gives
+  `S(𝒜, z_top) ≥ φ(q)⁻¹·(1 − C)/2·x/log x` at `x = q^L` for large `q`, and every integer that `S(𝒜, z_top)` counts
+  is a prime of the class in `(q^L, 2q^L]` (`SieveAd.count_large_bd`, the proof of `SieveAd.linnik_large_bd` with
+  its last step counting; `Linnik21000.count_large_21000` and `Linnik21500.count_large_21500` state it with the
+  searches' costs, `(1 − C)/2 > 0.0114` and `> 0.0257`). And the count at `Q^L` for every large modulus `Q` and
+  every unit class gives the count for every `x ≥ K·q^L` (`SieveAd.count_of_large`, which has no route): for the
+  multiple `Q = qm` of `q` with `x/2^{L+1} ≤ Q^L ≤ x/2`, the `φ(Q)/φ(q)` unit classes mod `Q` above `a`
+  (`SieveAd.card_units_above`) have their primes of `(Q^L, 2Q^L]` below `x`, in the class of `a` mod `q`, and
+  apart; the constant is `c = (1 − C)/2^{L+2}`. The step uses that the theorems hold for every modulus and every
+  class: with exceptional moduli it would not go through.
 - `SieveDecomp.buchstab_pt`, Buchstab's identity at one `n`, which summed over a set `C` is
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)` for `m` whose prime factors are at least `z ≥ w`, in the form
   that extends a tuple by one smaller prime.
