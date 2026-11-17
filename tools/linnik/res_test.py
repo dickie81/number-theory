@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""The resonant window's test on a box, led by a hint: the kernel's test (`lib/pnt/SieveResTestDefs.lean`), its
-mirror here, and the search for its hints.
+"""The resonant window's test on a box, led by a hint: the kernel's test (`lib/pnt/SieveResTestDefs.lean`;
+`lib/pnt/SieveResTestYDefs.lean` for the test at the two corners of a box of cells, and
+`lib/pnt/SieveResTestHDefs.lean` for the test with the lines named by the hint), its mirror here, and the search for
+its hints.
 
-    python3 tools/linnik/res_test.py            write the Lean file
-    python3 tools/linnik/res_test.py --check    fail if the file on disk differs from what would be written
+    python3 tools/linnik/res_test.py            write the Lean files
+    python3 tools/linnik/res_test.py --check    fail if a file on disk differs from what would be written
 
 A box's rest is a set of its primes, each in its cell of exponents of `x = q^L` (units of `1/DEN`): the lower ends
 `c_j` and the sum `hs` of the upper ends. The variable is everything else, of exponent at least
@@ -41,6 +43,7 @@ import route_limits as rl  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 OUT = ROOT / 'lib' / 'pnt' / 'SieveResTestDefs.lean'
+OUTY = ROOT / 'lib' / 'pnt' / 'SieveResTestYDefs.lean'
 OUTH = ROOT / 'lib' / 'pnt' / 'SieveResTestHDefs.lean'
 
 S = 1 << 64
@@ -379,6 +382,147 @@ def resX(Lnum, Lden, cs, hs, k, h):
 
 
 # ---------------------------------------------------------------------------------------------------------------
+# The test at the two corners of a box of cells, with the bounds named by the hint (`SieveResTest.resY`). On a box
+# the rest's exponents `s_j` lie in their cells and the variable's is tied to them, `m ≥ L − 2·10⁻⁵ − Σ s_j`
+# (`SieveTypeIIHM.ResBoxT`). A class at `s` with the sizes `t_j` is carried to the upper corner `s′` by
+# `t′_j = 1/2 + (s_j/s′_j)(t_j − 1/2)`: the moments' conditions hold there, `s′_j(t′_j − 1) = s_j(t_j − 1) −
+# (s′_j − s_j)/2`, and the large values' term of `s′_j` bounds it when its threshold is the cell's (`lvG lo hi k`).
+# So the box passes if the upper corner passes as a point with the variable shorter by `1/11` of the box's width
+# (the clamp falls by at most half of what the variable gains, and by `(11/12 + d)/2` of it on its second line), and
+# the lower corner passes with no clamp (`m ≥ 1`). The record of an interval names the clamp's line and each term's
+# bound, so the kernel does not look for them: its end in the low `EB` bits, the clamp's line in the next two, the
+# terms' bounds above, three bits each.
+
+W2 = ce(Fr(2, 10 ** 5))                               # the margin of a cell's ends
+
+
+def loW(Lnum, Lden, c):
+    """`⌊L·c·S/DEN⌋ − W2`."""
+    return sub((Lnum * c * S) // (Lden * DEN), W2)
+
+
+def hiW(Lnum, Lden, d):
+    """`⌈L·d·S/DEN⌉ + W2`."""
+    return (Lnum * d * S + Lden * DEN - 1) // (Lden * DEN) + W2
+
+
+def lvG(lo, hi, k):
+    """`SieveResTest.lvG`: the least `γ·S` above which the large values' term of the power `k` applies on the cell
+    `[lo, hi]` (`S²` if never)."""
+    if k >= 1 and k * lo >= E23:
+        return LVE + max(mulC(2 * k * hi, C15U), sub(S // 2, mulF(k * lo, C15D)), sub(C43, mulF(k * lo, C65D)))
+    return S * S
+
+
+def mkTvH(lo, hi):
+    """`SieveResTest.mkTvH`: a term at its cell's upper end: the lines' constants at `hi`, the large values'
+    thresholds from the whole cell."""
+    k0 = (S + sub(hi, 1)) // hi if hi else 0
+    return mkTm(hi), [(sub(k0, 1), lvG(lo, hi, sub(k0, 1))), (sub(k0, 2), lvG(lo, hi, sub(k0, 2)))]
+
+
+def lvU(lo, k, g, a, x):
+    return lvVal(lo, k, x) if g < a else OFF
+
+
+def chkI2(ts, tvs, ltm, dS, iax, a, b, ch, cl):
+    """`SieveResTest.chkI2`: the sum's check on `[a, b]` with the terms' bounds `ch` and the clamp's line `cl`."""
+    cp0, cp1, cn0 = cl
+    p0, n0, n1, va, vb = ltm + cp0, cn0, 0, 0, 0
+    for t, tv in zip(ts, tvs):
+        lo, a0, a1, b1, lw = t
+        c, ch = ch & 7, ch >> 3
+        if c == 0:
+            p0, n1 = p0 + a0, n1 + a1
+        elif c == 1:
+            n1 = n1 + b1
+        elif c == 2:
+            n0 = n0 + mulF(lo, dS)
+        elif c == 3:
+            p0, n1 = p0 + lw, n1 + mulF(lo, iax)
+        else:
+            k, g = tv[0] if c == 4 else tv[1]
+            va, vb, n0 = va + lvU(lo, k, g, a, a), vb + lvU(lo, k, g, a, b), n0 + OFF
+    p1 = S // 2 + cp1
+    return le0(p0 + va, p1, n0, n1, a) and le0(p0 + vb, p1, n0, n1, b)
+
+
+def intv3(ts, tvs, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
+    """`SieveResTest.intv3`: one interval with the bounds named by the record."""
+    b = (r & EMASK) << SH
+    pb = pieceOf(b)
+    if not (pb <= NP and get(TFTM, pb) < b and b <= get(TFT, pb) and a <= b):
+        return False
+    dS = max(get(TDH, pa), sub(mulF(a, get(TIA, pa)), WC))
+    iax = min(get(TIA, pa), get(TIA, pb))
+    return chkI2(ts, tvs, ltm, dS, iax, a, b, r >> (EB + 2),
+                 clampL(c1, yuP, yuN, ydP, ydN, a, b, (r >> EB) & 3))
+
+
+def clampOf(mlo):
+    mtu, mtd = mulC(mlo, M1U), mulF(mlo, M1D)
+    return ((sub(S, mlo) + 1) >> 1, (sub(K1U, mtd) + 1) >> 1, sub(mtd, K1U) >> 1, sub(K1D, mtu) >> 1,
+            (sub(mtu, K1D) + 1) >> 1)
+
+
+def resTM3(ts, tvs, mlo, ltm, k, h):
+    """`SieveResTest.resTM3`: the test of the terms `ts`, `tvs` with the variable's `m·S` at least `mlo`, led by `k`
+    records of `EB + 2 + 3·(number of terms)` bits."""
+    c1, yuP, yuN, ydP, ydN = clampOf(mlo)
+    if not ltm + min(c1, yuP) <= sum(mulF(t[0], HP) for t in ts):
+        return False
+    w = EB + 2 + 3 * len(ts)
+    a, pa = 0, 0
+    for _ in range(k):
+        r = h & ((1 << w) - 1)
+        if not intv3(ts, tvs, c1, yuP, yuN, ydP, ydN, ltm, a, pa, r):
+            return False
+        a, h = (r & EMASK) << SH, h >> w
+        pa = pieceOf(a)
+    return a == S
+
+
+def cornersOf(Lnum, Lden, cells):
+    """What `resY` makes of the cells `(c, d)`: the terms of the two corners, the variable's `m·S` at the upper one,
+    `Lτ + MARG`, and whether the cells are in order and inside `x`."""
+    los = [loW(Lnum, Lden, c) for c, d in cells]
+    his = [hiW(Lnum, Lden, d) for c, d in cells]
+    sl, sh = sum(los), sum(his)
+    ls = (Lnum * S) // Lden
+    need = sh + W2 + sub(sh, sl) // 11 + 2
+    ltm = (Lnum * S + sub(Lden * 10 ** 6, 1)) // (Lden * 10 ** 6) + MG
+    ok = all(c <= d for c, d in cells) and all(lo >= 1 for lo in los) and need <= ls
+    hi_c = [mkTvH(lo, hi) for lo, hi in zip(los, his)]
+    lo_c = [(mkTm(lo), mkTv(lo, sub(sh, sl))) for lo in los]
+    return ok, hi_c, sub(ls, need), lo_c, ltm
+
+
+def resY(Lnum, Lden, cells, kH, hH, kL, hL):
+    """`SieveResTest.resY`: the test at the two corners of the box of the cells `(c, d)` (lower and upper ends in
+    units of `1/DEN`): the upper corner led by `kH` records `hH`, the lower one, with no clamp, by `kL` records
+    `hL`."""
+    ok, hi_c, mH, lo_c, ltm = cornersOf(Lnum, Lden, cells)
+    return (ok and resTM3([t for t, tv in hi_c], [tv for t, tv in hi_c], mH, ltm, kH, hH)
+            and resTM3([t for t, tv in lo_c], [tv for t, tv in lo_c], S, ltm, kL, hL))
+
+
+def packY(n, kH, hH, kL, hL):
+    """The hints of `resY` on `n` cells in one number, as `resYH` reads it; None if a field does not fit."""
+    w = EB + 2 + 3 * n
+    if not (n < 16 and kH < 16 and kL < 16 and hH < (1 << (w * kH)) and hL < (1 << (w * kL))):
+        return None
+    return n + 16 * (kH + 16 * (kL + 16 * (hH + (hL << (w * kH)))))
+
+
+def resYH(Lnum, Lden, cells, s):
+    """`SieveResTest.resYH`: `resY` with its hints in one number: four bits for the number of cells, four for `kH`,
+    four for `kL`, then the records of the upper corner and those of the lower one."""
+    n, kH, kL, hh = s % 16, (s // 16) % 16, (s // 256) % 16, s // 4096
+    sh = 1 << ((15 + 3 * n) * kH)
+    return resY(Lnum, Lden, cells, kH, hh % sh, kL, hh // sh)
+
+
+# ---------------------------------------------------------------------------------------------------------------
 # The test with the lines named by the hint (`SieveResTestHDefs.lean`): an interval's record is its end (`EB` bits),
 # the clamp's line (2 bits) and each term's line (2 bits, or 3 with the large values' terms), so that the kernel does
 # not pick them at the midpoint; the piece of an end is found by bisection. Any lines are bounds, so a hint whose lines
@@ -619,12 +763,70 @@ class Box:
                     return None
                 r = best
             recs.append(r)
-            aS = r << SH
+            aS = (r & EMASK) << SH
             pa = pieceOf(aS)
+        return len(recs), self.pack(recs)
+
+    def pack(self, recs):
         h = 0
         for i, r in enumerate(recs):
             h |= r << (EB * i)
-        return len(recs), h
+        return h
+
+
+class Corner(Box):
+    """The hint search of `resTM3` on given terms: `Box.find` with records that name the clamp's line and the terms'
+    bounds, those least at the interval's midpoint."""
+
+    def __init__(self, ts, tvs, mlo, ltm):
+        self.ts, self.tvs, self.ltm = ts, tvs, ltm
+        self.c1, self.yuP, self.yuN, self.ydP, self.ydN = clampOf(mlo)
+        self.ok = self.ltm + min(self.c1, self.yuP) <= sum(mulF(t[0], HP) for t in ts)
+        self.y0 = self.yuP - self.yuN
+
+    def try_choice(self, aS, pa, e):
+        b = e << SH
+        pb = pieceOf(b)
+        if not (pb <= NP and get(TFTM, pb) < b and b <= get(TFT, pb) and aS <= b):
+            return None
+        dS = max(get(TDH, pa), sub(mulF(aS, get(TIA, pa)), WC))
+        iax = min(get(TIA, pa), get(TIA, pb))
+        x = (aS + b) >> 1
+        cc = pickC(self.c1, self.yuP, self.yuN, self.ydP, self.ydN, aS, b, x)
+        ch = 0
+        for j, (t, tv) in enumerate(zip(self.ts, self.tvs)):
+            ch |= pickT2(t, tv, dS, iax, aS, x) << (3 * j)
+        r = e | cc << EB | ch << (EB + 2)
+        if intv3(self.ts, self.tvs, self.c1, self.yuP, self.yuN, self.ydP, self.ydN, self.ltm, aS, pa, r):
+            return r
+        return None
+
+    def pack(self, recs):
+        w = EB + 2 + 3 * len(self.ts)
+        h = 0
+        for i, r in enumerate(recs):
+            h |= r << (w * i)
+        return h
+
+
+def hintY(Lnum, Lden, cells, fast=False):
+    """The hints `(kH, hH, kL, hL)` of `resY` for the box of the cells `(c, d)`, or None; checked by the mirror."""
+    ok, hi_c, mH, lo_c, ltm = cornersOf(Lnum, Lden, cells)
+    if not ok:
+        return None
+    out = []
+    for terms_, mlo in ((hi_c, mH), (lo_c, S)):
+        ts, tvs = [t for t, tv in terms_], [tv for t, tv in terms_]
+        r = None
+        for f in ((True, False) if fast else (False,)):
+            r = Corner(ts, tvs, mlo, ltm).find(fast=f)
+            if r is not None:
+                break
+        if r is None:
+            return None
+        out.extend(r)
+    assert resY(Lnum, Lden, cells, *out)
+    return tuple(out)
 
 
 def hint(Lnum, Lden, cs, hs, mom=0, lv=None, fast=False):
@@ -670,28 +872,37 @@ def _bm(a):
     return min(hi, 1 - a / A)
 
 
-def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0, lv=None, maxleaf=None):
+def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0, lv=None, maxleaf=None, pt=None):
     """Whether the bound may hold for the rest `cs`, `hs` (floats; `False` means the kernel's test fails). With a
     negative `slack`, `fuel = 12` and `maxleaf = 15` it is the other way: `True` means that the bound holds with a
     margin on at most fifteen intervals of the hint's grid, so that the kernel's test should pass (the planner
     takes that as a pass and finds the hint when the plan is written). `lv`: with the large values' term (`LVON`
-    if not given)."""
+    if not given). `pt`: the bound at a point given as `(los, m, tlo, thi, clamp)` in the place of `cs`, `hs`: the
+    terms' exponents `los`, the variable's `m`, the ends `tlo`, `thi` of the terms' cells for the large values'
+    thresholds, and whether the clamp is there (`quickY`)."""
     lv = LVON if lv is None else lv
     leaves = [0]
     import math
     L = Lnum / Lden
     kq = L / DEN
-    los = [kq * (c - 1) for c in cs]
-    if not los or min(los) <= 0 or hs + 1 >= DEN:
-        return False
+    if pt is None:
+        los = [kq * (c - 1) for c in cs]
+        if not los or min(los) <= 0 or hs + 1 >= DEN:
+            return False
+        tlo, thi, clamp = los, None, True
+    else:
+        los, m, tlo, thi, clamp = pt
+        if not los or min(tlo) <= 0:
+            return False
     # at g = 1 each term is at least -lo/2 (its lines there are -lo(1 - w - 7789/10000), -1/(2k0) and -lo/2), so
     # the bound asks the rest's exponents to sum to at least 1 + 2 MARG
     if sum(los) < 1 + 2 / 25000:
         return False
-    m = kq * (DEN - hs - 1)
+    if pt is None:
+        m = kq * (DEN - hs - 1)
     w, tau, marg = 4e-6, 1e-6, 1 / 25000
-    c1 = max(1 - m, 0) / 2
-    y0 = (5 / 12 + 3 / 1000 - m * (11 / 12 + 1 / 1000)) / 2
+    c1 = max(1 - m, 0) / 2 if clamp else 0.0
+    y0 = (5 / 12 + 3 / 1000 - m * (11 / 12 + 1 / 1000)) / 2 if clamp else -1.0
     thr = -marg - L * tau + slack
     zl = [0.0 if mom >> j & 1 else lo for j, lo in enumerate(los)]      # the zeros' lines' factors
     if -sum(lo * (1 - w - 11 / 12) for lo in zl) + min(c1, max(0.0, y0)) > thr:
@@ -709,11 +920,12 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0, lv=None, maxleaf=None)
             if mom >> j & 1:
                 continue
             k0 = max(1, math.ceil(1 / lo - 1e-12))
-            hi = L + 1e-5 - m - (sum(zl) - lo) - slack
+            hi = (L + 1e-5 - m - (sum(zl) - lo) if thi is None else thi[j]) - slack
+            tl = tlo[j]
             for k in range(k0 - 1, k0 - 1 - LVKS, -1):
-                if k >= 1 and k * lo >= 2 / 3 + e - slack:
-                    lvs[j].append((k, e + max(2 * k * hi * (0.2 + e), 0.5 - k * lo * (0.2 - 4 * e),
-                                              4 / 3 - k * lo * (1.2 - 4 * e)) - slack))
+                if k >= 1 and k * tl >= 2 / 3 + e - slack:
+                    lvs[j].append((k, e + max(2 * k * hi * (0.2 + e), 0.5 - k * tl * (0.2 - 4 * e),
+                                              4 / 3 - k * tl * (1.2 - 4 * e)) - slack))
 
     def lvv(lo, k, g):
         e = float(LVEQ)
@@ -755,6 +967,23 @@ def quick(Lnum, Lden, cs, hs, fuel=22, slack=1e-9, mom=0, lv=None, maxleaf=None)
         mid = (a + b) / 2
         return check(a, mid, fuel - 1) and check(mid, b, fuel - 1)
     return check(0.0, 1.0, fuel)
+
+
+def quickY(Lnum, Lden, cells, lv=None, strict=True):
+    """`quick` for the test at the two corners of the box of the cells `(c, d)` (`resY`): the bound at the upper
+    corner, the variable shorter by `1/11` of the box's width, and with no clamp at the lower one. With `strict`
+    (`fuel = 12`, a negative slack, at most fifteen intervals) `True` means that `resY` should pass; without,
+    `False` means that it fails."""
+    lo = [loW(Lnum, Lden, c) for c, d in cells]
+    hi = [hiW(Lnum, Lden, d) for c, d in cells]
+    sl, sh, ls = sum(lo), sum(hi), (Lnum * S) // Lden
+    need = sh + W2 + sub(sh, sl) // 11 + 2
+    if not cells or any(c > d for c, d in cells) or min(lo) < 1 or need > ls:
+        return False
+    fl, fh, ub = [x / S for x in lo], [x / S for x in hi], sub(sh, sl) / S
+    kw = dict(fuel=12, slack=-1e-7, maxleaf=15) if strict else {}
+    return (quick(Lnum, Lden, None, None, lv=lv, pt=(fh, (ls - need) / S, fl, fh, True), **kw)
+            and quick(Lnum, Lden, None, None, lv=lv, pt=(fl, 1.0, fl, [x + ub for x in fl], False), **kw))
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -1184,6 +1413,116 @@ end SieveResTest
 '''
 
 
+def lean_y():
+    return f'''/-
+# The resonant window's test at the two corners of a box of cells, in natural numbers, without Mathlib
+
+Generated by `tools/linnik/res_test.py`; do not edit by hand.
+
+`SieveResTestDefs.lean` has the test `resX` of the condition `SieveTypeIIHM.ResBox` on a box's rest: every exponent
+of the variable from the one that the rest's upper ends leave. This file has the test of the condition on a box
+with the variable tied to the rest (`SieveTypeIIHM.ResBoxT`: the rest's exponents in their cells, the variable's
+what they leave), on the terms and the lines of `SieveResTestDefs.lean`:
+
+* `W2`, `loW`, `hiW`, `mkTvH`, `intv3`, `runI3`, `lenV`, `resTM3`, `okY`, `resY`: **the test at the two corners of a
+  box of cells**: the upper corner as a point, its large values' thresholds those of the cells and the variable
+  shorter by `1/11` of the box's width, and the lower corner with no clamp; the record of an interval names the
+  clamp's line and each term's bound.
+* `resYH`: **`resY` with its hints in one number**.
+
+Its soundness is `SieveResCorner.lean`'s. The file imports `SieveResTestDefs.lean`.
+-/
+import SieveResTestDefs
+
+namespace SieveResTest
+
+/-- The margin `2·10⁻⁵` of a cell's ends, times `S`, rounded up. -/
+def W2 : Nat := {W2}
+
+/-- `⌊L·c·S/DEN⌋ − W2`: a cell's lower end, less the margin. -/
+def loW (Lnum Lden c : Nat) : Nat := Nat.sub (Nat.div (Nat.mul (Nat.mul Lnum c) S) (Nat.mul Lden DEN)) W2
+
+/-- `⌈L·d·S/DEN⌉ + W2`: a cell's upper end, with the margin. -/
+def hiW (Lnum Lden d : Nat) : Nat :=
+  Nat.add (Nat.div (Nat.add (Nat.mul (Nat.mul Lnum d) S) (Nat.sub (Nat.mul Lden DEN) 1)) (Nat.mul Lden DEN)) W2
+
+/-- A term at its cell's upper end `hi`: the lines' constants at `hi`, the large values' thresholds of the whole cell
+`[lo, hi]`. -/
+def mkTvH (lo hi : Nat) : Tv :=
+  (fun k0 => ⟨mkTmK hi k0, Nat.sub k0 1, lvG lo hi (Nat.sub k0 1), Nat.sub k0 2, lvG lo hi (Nat.sub k0 2)⟩)
+    (Nat.div (Nat.add S (Nat.sub hi 1)) hi)
+
+/-- **One interval with its bounds named**: the record `r` has the interval's end in its low thirteen bits, the
+clamp's line in the next two and the terms' bounds above, three bits each. -/
+def intv3 (vs : List Tv) (c1 yuP yuN ydP ydN ltm a pa r : Nat) : Bool :=
+  (fun b =>
+    (fun pb =>
+      (fun dS iax =>
+        Nat.ble pb 17 && Nat.blt (get tFTm pb) b && Nat.ble b (get tFT pb) && Nat.ble a b &&
+          chkI2 vs ltm dS iax a b (Nat.shiftRight r 15)
+            (clampL c1 yuP yuN ydP ydN a b (Nat.land (Nat.shiftRight r 13) 3)))
+        (maxN (get tDH pa) (Nat.sub (mulF a (get tIA pa)) WC)) (minN (get tIA pa) (get tIA pb)))
+      (pieceOf b))
+    (bOf r)
+
+/-- **The intervals with their bounds named**: `k` records of `w` bits. -/
+def runI3 (vs : List Tv) (w c1 yuP yuN ydP ydN ltm : Nat) : Nat → Nat → Nat → Nat → Bool :=
+  Nat.rec (motive := fun _ => Nat → Nat → Nat → Bool) (fun a _ _ => Nat.beq a S)
+    (fun _ ih a pa h =>
+      (fun r => intv3 vs c1 yuP yuN ydP ydN ltm a pa r && ih (bOf r) (pieceOf (bOf r)) (Nat.shiftRight h w))
+        (Nat.land h (Nat.sub (Nat.shiftLeft 1 w) 1)))
+
+/-- The number of terms. -/
+def lenV : List Tv → Nat
+  | [] => 0
+  | _ :: vs => Nat.succ (lenV vs)
+
+/-- The test of the terms `vs` with the variable's `m` times `S` (`mlo`) and `Lτ + MARG` times `S` (`ltm`) given,
+led by `k` records that name the bounds, each of `15 + 3·(the number of terms)` bits. -/
+def resTM3 (vs : List Tv) (mlo ltm k h : Nat) : Bool :=
+  (fun mtu mtd c1 =>
+    (fun yuP yuN ydP ydN =>
+      Nat.ble (Nat.add ltm (minN c1 yuP)) (hpSum2 vs) &&
+        runI3 vs (Nat.add 15 (Nat.mul 3 (lenV vs))) c1 yuP yuN ydP ydN ltm k 0 0 h)
+      (Nat.shiftRight (Nat.add (Nat.sub K1U mtd) 1) 1) (Nat.shiftRight (Nat.sub mtd K1U) 1)
+      (Nat.shiftRight (Nat.sub K1D mtu) 1) (Nat.shiftRight (Nat.add (Nat.sub mtu K1D) 1) 1))
+    (mulC mlo M1U) (mulF mlo M1D) (Nat.shiftRight (Nat.add (Nat.sub S mlo) 1) 1)
+
+/-- The cells `(c, d)` are in order, `c ≤ d`, and their lower ends, in the fixed point with the margin, are
+positive. -/
+def okY (Lnum Lden : Nat) : List (Nat × Nat) → Bool
+  | [] => true
+  | c :: cs => Nat.ble c.1 c.2 && Nat.blt 0 (loW Lnum Lden c.1) && okY Lnum Lden cs
+
+/-- **The test at the two corners of a box of cells** `(c, d)` at `L = Lnum/Lden`: the ends `lo = loW c`,
+`hi = hiW d`; the upper corner, with the terms `mkTvH lo hi` and the variable's `m·S` at least
+`⌊L·S⌋ − W2 − Σhi − ⌊(Σhi − Σlo)/11⌋ − 2`, led by `kH` records `hH`; and the lower corner, with the terms
+`mkTv (Σhi − Σlo) lo` and `m ≥ 1`, led by `kL` records `hL`. -/
+def resY (Lnum Lden : Nat) (cells : List (Nat × Nat)) (kH hH kL hL : Nat) : Bool :=
+  (fun ps =>
+    (fun sl sh ltm ls =>
+      (fun need =>
+        okY Lnum Lden cells && Nat.ble need ls &&
+          resTM3 (ps.map fun p => mkTvH p.1 p.2) (Nat.sub ls need) ltm kH hH &&
+          resTM3 (ps.map fun p => mkTv (Nat.sub sh sl) p.1) S ltm kL hL)
+        (Nat.add (Nat.add (Nat.add sh W2) (Nat.div (Nat.sub sh sl) 11)) 2))
+      (sumN (ps.map fun p => p.1)) (sumN (ps.map fun p => p.2))
+      (Nat.add (Nat.div (Nat.add (Nat.mul Lnum S) (Nat.sub (Nat.mul Lden 1000000) 1)) (Nat.mul Lden 1000000)) MG)
+      (Nat.div (Nat.mul Lnum S) Lden))
+    (cells.map fun c => (loW Lnum Lden c.1, hiW Lnum Lden c.2))
+
+/-- **`resY` with its hints in one number** `s`: four bits for the number of cells, four for `kH`, four for `kL`,
+then the `kH` records of the upper corner and the `kL` records of the lower one, each of `15 + 3·(the number of
+cells)` bits. -/
+def resYH (Lnum Lden : Nat) (cells : List (Nat × Nat)) (s : Nat) : Bool :=
+  (fun kH kL hh sh => resY Lnum Lden cells kH (Nat.mod hh sh) kL (Nat.div hh sh))
+    (Nat.mod (Nat.div s 16) 16) (Nat.mod (Nat.div s 256) 16) (Nat.div s 4096)
+    (Nat.pow 2 (Nat.mul (Nat.add 15 (Nat.mul 3 (Nat.mod s 16))) (Nat.mod (Nat.div s 16) 16)))
+
+end SieveResTest
+'''
+
+
 def lean_h():
     """`SieveResTestHDefs.lean`: the test with the lines named by the hint."""
     tops = [get(TFT, p) for p in range(NP)]
@@ -1327,7 +1666,7 @@ def main():
     ap.add_argument('--check', action='store_true')
     a = ap.parse_args()
     bad = False
-    for out, text in ((OUT, lean()), (OUTH, lean_h())):
+    for out, text in ((OUT, lean()), (OUTY, lean_y()), (OUTH, lean_h())):
         if a.check:
             old = out.read_text() if out.exists() else ''
             if old != text:

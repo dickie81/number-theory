@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1859 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1867 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 283, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 712 |
-| `lib/pnt` | 352 | 1034 |
+| `lib/pnt` | 358 | 1042 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1567,6 +1567,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow`: The least prime primitive root mod a prime power
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_safe`: Safe primes
 
+#### `Linnik21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints
+
+- `Linnik21000.tree21000`: The first term at `2100 / 1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21000.linnik_21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints ([note](../formalisations/halasz-montgomery.md))
+
 #### `Linnik21150`: Linnik's theorem with exponent `2115 / 1000`, by a search led by hints
 
 - `Linnik21150.tree21150`: The first term at `2115 / 1000` ([note](../formalisations/harman-sieve.md))
@@ -2531,6 +2536,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd22000.linnik_tree_22000`: Linnik's theorem with exponent `11/5`, from a tree that passes the tests
 
+#### `SieveAdCut`: The search led by hints with a cut of any cell of a box at any point is sound
+
+- `SieveAd.pr_of_partDYS_at`: A part of the main search with cuts of any cell, for any route ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveAdDefs`: A tree of Buchstab steps on boxes of cells, without Mathlib
 
 - `SieveAd.Tree`: What is done with the term over a box. *paper*
@@ -2634,6 +2643,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.rules_frozResC`: The nodes of a tree over a frozen part, with the resonant window ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.pr_of_partDR_at`: A part of the main search with the resonant window over the frozen parts, for any route ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveAdFrozResYTree`: The trees over the frozen parts with the window's test at the two corners are sound
+
+- `SieveAd.pr_of_partDY_at`: A part of the main search with the window's test at the two corners over the frozen parts too, for any route ([note](../formalisations/halasz-montgomery.md))
+
 #### `SieveAdFrozRole`: The two comparisons at a floor over the frozen part, on the cells and the slab
 
 - `SieveAd.evJF_froz_fill_at`: The comparison with the rest among the tree's primes, over the frozen part, for any route ([note](../formalisations/harman-sieve.md))
@@ -2669,6 +2682,19 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `SieveAd.resTestsFCH_sound`: The tests with the resonant window, its lines named by the hint, and the cofactor are sound ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.pr_of_partDRCH_at`: A part of the search with the window's lines named by the hint bounds its term ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveAdResY`: The resonant window's test at the two corners of a box, in the main tree, is sound
+
+- `SieveAd.resTestsFY_sound`: The tests with the window's test at the two corners too are sound ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveAdResYDefs`: The resonant window's test at the two corners of a box, in the search, without Mathlib
+
+- `SieveAd.cfgIMY`: The configuration of an evaluation in the main tree, with the window's test at the two corners too ([note](../formalisations/halasz-montgomery.md))
+
+#### `SieveAdResYH`: The search with the window's test at the two corners and the lines named by the hint is sound
+
+- `SieveAd.resTestsFYH_sound`: The tests with the window's test at the two corners and the lines named by the hint are sound ([note](../formalisations/halasz-montgomery.md))
+- `SieveAd.pr_of_partDYCH_at`: A part of the search with the window's test at the two corners and the lines named by the hint bounds its term ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveAdRev`: The tree of a reversed term bounds it
 

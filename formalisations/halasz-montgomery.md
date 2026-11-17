@@ -160,6 +160,39 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   cofactor (`frozCof_facts`), in the cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`; the frozen tuples
   `(a, y, c, y′)` have one prime `y′`, in the rest with the frozen primes and the chain's (`evIF_frozP_resC`).
   `frozResTestsC` reads `chkIRF` (with the bit clear, `chkIR`), so `SieveAd.rules_frozResC` covers it;
+- `SieveResTest.resY_sound` (`lib/pnt/SieveResCorner.lean`; the test `SieveResTest.resY`, and `resYH` with its
+  hints in one number, in `lib/pnt/SieveResTestYDefs.lean`, written by `tools/linnik/res_test.py`): **the window's
+  test at the two corners of a box of cells**. `resX` tests the window at a corner that is no point of the box, the
+  rest's lower ends with the variable that the rest's upper ends leave. On a box the rest and the variable make up
+  `q^L`, so the condition is needed only with the variable tied to the rest, `SieveTypeIIHM.ResBoxT`
+  (`lib/pnt/SieveResTight.lean`): the rest's exponents in their cells and `Σ_j s_j + m ≥ L − 2·10⁻⁵`. `resY` gives
+  it from the bound at the box's upper corner, with the large values' thresholds of the cells and the variable
+  shorter by `1/11` of the box's width, and the bound with no clamp at its lower corner (`two_corner`: a class of
+  characters at a point of the box is carried to the upper corner with the sizes `t′ = 1/2 + (s/s′)(t − 1/2)`); the
+  record of an interval names the clamp's line and each term's bound, so the kernel does not look for them.
+  `SieveTypeIIHM.fullEst_of_tight` (`lib/pnt/SieveResTight.lean`): `ResBoxT` on a box gives the estimate of the
+  tuples of primes with the rest in its cells (`FullEst`, what `full_res_exp` gives): the family is cut by a
+  sub-cell of width `1/(4·10⁵(n + 1))` of each rest prime, a fixed number of families, and `full_res_exp` applies to
+  each (`resBox_of_tight`). The terms' evaluations with `FullEst` as a hypothesis, their proofs those of
+  `chain_res_exp`, `chain_res_cof`, `evIF_froz_res` and `evIF_froz_resC`: `SieveTypeIIHM.chain_res_gen`
+  (`lib/pnt/SieveResTermG.lean`), `chain_res_cofG` (`lib/pnt/SieveResCofG.lean`), `SieveAd.evIF_froz_gen`
+  (`lib/pnt/SieveAdFrozResG.lean`) and `evIF_froz_genC` (`lib/pnt/SieveAdFrozResCofG.lean`). In the search
+  (`lib/pnt/SieveAdResYDefs.lean`: the tests `SieveAd.chkIRY` of a box of the main tree and `chkIRFY` of a box
+  `ch ++ β` over a frozen part, each with the cofactor's cell when its bit is set; `resTestsFY`, `frozResTestsY`,
+  which read them for an evaluation of kind `4` and are `resTestsFC`, `frozResTestsC` otherwise; the decoders
+  `SieveAd.cfgIMY`, `cfgIFY`; the search `altFDY`): `SieveAd.resTestsFY_sound` (`lib/pnt/SieveAdResY.lean`), the
+  tests of the main tree are sound, and `SieveAd.pr_of_partDY_at` (`lib/pnt/SieveAdFrozResYTree.lean`, with
+  `evIF_froz_resTY` of `lib/pnt/SieveAdFrozResY.lean`), a part of the search whose trees over the frozen parts read
+  them bounds its term. The existing modules are unchanged. The certificate at `2100/1000` uses these tests with
+  the window's lines named by the hint (below). **A cut of any cell
+  of a box, at any point, in the search led by hints** (`lib/pnt/SieveAdCutDefs.lean`: `SieveAd.altC`, a cut read
+  where `stepD` reads its hinted bound, one bit, the cell's position and the exponent of the cut; `solveDS`, the
+  search with it at every depth; `flipTreeDYS` … `altFDYS`, the reversal whose trees are searched that way, a cut
+  there being of a cell of the chain): `SieveAd.pr_splitAt` and `pf_splitAt` (`lib/pnt/SieveAdCut.lean`), the
+  costs of the two boxes of a cut add, in the main tree and over a frozen part (`bd_split`, `bdF_split` at the
+  cell's index); `SieveAd.solveDS_sound`, by `stepD_sound` at each depth; and `SieveAd.pr_of_partDYS_at`, a part of
+  that search bounds its term. It is for boxes that the edge of a test's zone crosses: cut at the zone's edge,
+  the part inside is evaluated and only the rest is dropped or decomposed. No certificate uses it yet;
 - `SieveResTest.resXH_sound_cells` (`lib/pnt/SieveResTestH.lean`; the test `SieveResTest.resXH` in
   `lib/pnt/SieveResTestHDefs.lean`, written by `tools/linnik/res_test.py`): `resX` with each interval's lines named
   by the hint. A record gives the interval's end, the line of the Halász–Montgomery clamp and each term's line;
@@ -169,8 +202,13 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `SieveAd.pr_of_partDRCH_at` (`lib/pnt/SieveAdResH.lean`; the tests `SieveAd.resTestsFCH`, `SieveAd.frozResTestsCH`,
   the decoders `SieveAd.cfgIMRCH`, `SieveAd.cfgIFRH` and the search `SieveAd.altFDRH` in
   `lib/pnt/SieveAdResHDefs.lean`): the main tree's and the frozen trees' tests with the cofactor and with `resXH`
-  are sound, and so is a part of a search with them (`tools/linnik/hint_cert.py --hl`). No certificate uses them
-  yet;
+  are sound, and so is a part of a search with them (`tools/linnik/hint_cert.py --hl`). With the window's test
+  at the two corners too, `SieveAd.resTestsFYH_sound` and `SieveAd.pr_of_partDYCH_at` (`lib/pnt/SieveAdResYH.lean`;
+  the tests `SieveAd.resTestsFYH`, `frozResTestsYH`, which read `chkIRY`, `chkIRFY` for an evaluation of kind `4`
+  and are `resTestsFCH`, `frozResTestsCH` otherwise, the decoders `SieveAd.cfgIMYH`, `cfgIFYH` and the search
+  `altFDYH` in `lib/pnt/SieveAdResYHDefs.lean`): the proofs of `resTestsFY_sound` and `pr_of_partDY_at` with
+  those of the tests with `resXH` (`hint_cert.py --ycorner --hl`). They are the tests of the search at
+  `2100/1000` (`Linnik21000.linnik_21000`, `formalisations/harman-sieve.md`);
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length
@@ -392,3 +430,4 @@ result uses: lemmas of a route that nothing proves (`scripts/dead_code.py` reads
 |---|---|---|
 | The tests with the resonant window for an evaluation of kind `3`, the rest among the box's cells only, are sound | a route and the parameters of the induction (`SieveRoute.Route`, `SieveCert.IBPar`); the certificate at `2115/1000` uses the tests with the cofactor in the rest (`SieveAd.resTestsFC_sound`) | `SieveAd.resTestsF_sound` |
 | The chains of primes times a rough cofactor, by the resonant window, with all the chain's primes as the rest | a route (`SieveRoute.Route`, `SieveRoute.RouteOK`) | `SieveTypeIIHM.chainTU_res` |
+| The tests with the window's test at the two corners of a box for an evaluation of kind `4`, the window's lines found by the kernel, are sound | a route and the parameters of the induction (`SieveRoute.Route`, `SieveCert.IBPar`); the certificate at `2100/1000` uses the tests with the lines named by the hint (`SieveAd.resTestsFYH_sound`) | `SieveAd.resTestsFY_sound` |

@@ -178,6 +178,19 @@ import SieveResChain
 import SieveResFull
 import SieveResTest
 import SieveResLVTest
+import SieveResTight
+import SieveResCorner
+import SieveResTermG
+import SieveResCofG
+import SieveAdFrozResG
+import SieveAdFrozResCofG
+import SieveResTestYDefs
+import SieveAdResYDefs
+import SieveAdResY
+import SieveAdFrozResY
+import SieveAdFrozResYTree
+import SieveAdCutDefs
+import SieveAdCut
 import SieveResTerm
 import SieveAdRes
 import SieveAdFrozRes
@@ -186,6 +199,7 @@ import SieveResCof
 import SieveAdResCof
 import SieveAdFrozResCof
 import SieveAdResH
+import SieveAdResYH
 import SieveLeafZone
 import SieveLeafTwo
 import SieveLeafSplit
@@ -349,6 +363,8 @@ import SieveHint21500
 import Linnik21500
 import SieveHint21150
 import Linnik21150
+import SieveHint21000
+import Linnik21000
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
@@ -1062,6 +1078,10 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveResTest.resT_sound_cells
 #print axioms SieveResTest.lvU_le
 #print axioms SieveResTest.resX_sound_cells
+#print axioms SieveAd.resTestsFY_sound
+#print axioms SieveAd.pr_of_partDY_at
+#print axioms SieveAd.pr_of_partDYS_at
+#print axioms SieveAd.cfgIMY
 #print axioms SieveTypeIIHM.chain_res_exp
 #print axioms SieveAd.evI_resE
 #print axioms SieveAd.resTestsF_sound
@@ -1076,6 +1096,8 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveResTest.resXH_sound_cells
 #print axioms SieveAd.resTestsFCH_sound
 #print axioms SieveAd.pr_of_partDRCH_at
+#print axioms SieveAd.resTestsFYH_sound
+#print axioms SieveAd.pr_of_partDYCH_at
 #print axioms SieveTypeIIHM.zone_leaf
 #print axioms SieveLeafTwo.typeIITwoAt_leaf
 #print axioms SieveLeafTwo.leaf2_bound
@@ -1370,6 +1392,8 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms Linnik21500.linnik_21500
 #print axioms Linnik21150.tree21150
 #print axioms Linnik21150.linnik_21150
+#print axioms Linnik21000.tree21000
+#print axioms Linnik21000.linnik_21000
 #print axioms SieveCurve7D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d
