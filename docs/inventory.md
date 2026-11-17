@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1835 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1836 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 201, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 209, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 712 |
-| `lib/pnt` | 346 | 1010 |
+| `lib/pnt` | 347 | 1011 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1572,6 +1572,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Linnik21000.tree21000`: The first term at `2100 / 1000` ([note](../formalisations/harman-sieve.md))
 - `Linnik21000.linnik_21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints ([note](../formalisations/chen-gupta-li-density.md))
 
+#### `Linnik21000Count`: The number of primes in a class at the exponent `2100/1000`
+
+- `Linnik21000.count_21000`: Primes in every class, in number, at the exponent `2100/1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21000.count_large_21000`: The primes of a class in `(q^L, 2q^L]` at `L = 2100/1000` ([note](../formalisations/harman-sieve.md))
+
 #### `Linnik21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints
 
 - `Linnik21500.sound21500`: The tests at `2150 / 1000` are sound. *paper*
@@ -1579,6 +1584,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Linnik21500.part21500`: A part of the search bounds its term *paper*
 - `Linnik21500.tree21500`: The first term at `2150 / 1000` *paper* ([note](../formalisations/harman-sieve.md))
 - `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints *paper* ([note](../formalisations/chen-gupta-li-density.md))
+
+#### `Linnik21500Count`: The number of primes in a class at the exponent `2150/1000`
+
+- `Linnik21500.count_21500`: Primes in every class, in number, at the exponent `2150/1000` *paper* ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.count_large_21500`: The primes of a class in `(q^L, 2q^L]` at `L = 2150/1000` *paper* ([note](../formalisations/harman-sieve.md))
 
 #### `LinnikAFE`: The approximate functional equation for `L(s, χ)²`
 
@@ -1952,13 +1962,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Linnik.perron_exp`: Perron's formula for `e^{−n/x}`
 - `Linnik.logDeriv_LFunction_le`: `L′/L(·, χ)` where `L(·, χ)` has no zero in one disc
 - `Linnik.norm_Sx_le`: The bound for one character
-
-#### `LinnikCount`: The number of primes in a class at the exponents `2100/1000` and `2150/1000`
-
-- `Linnik21000.count_21000`: Primes in every class, in number, at the exponent `2100/1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21000.count_large_21000`: The primes of a class in `(q^L, 2q^L]` at `L = 2100/1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21500.count_21500`: Primes in every class, in number, at the exponent `2150/1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21500.count_large_21500`: The primes of a class in `(q^L, 2q^L]` at `L = 2150/1000` ([note](../formalisations/harman-sieve.md))
 
 #### `LinnikDeduction`: Linnik's theorem from a density estimate over the characters mod `q`
 
@@ -2514,11 +2517,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdCount`: The number of primes that a bound of the first term gives, and every `x ≥ K·q^L`
 
-- `SieveAd.count_of_large`: Every `x ≥ K·q^L`, from the count at `Q^L` for every large modulus ([note](../formalisations/harman-sieve.md))
-- `SieveAd.count_large_bd`: The count at `x = q^L`, for large `q`, from a bound of the first term ([note](../formalisations/harman-sieve.md))
-- `SieveAd.count_bd`: Every `x ≥ K'·q^L`, from a bound of the first term
-- `SieveAd.count_large_pr`: The count at `x = q^L` from a search
-- `SieveAd.count_pr`: Primes in every class, in number, from a search
+- `SieveAd.card_units_above`: The unit classes mod `Q` above a unit class mod `q`, for `q ∣ Q` *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.count_of_large`: Every `x ≥ K·q^L`, from the count at `Q^L` for every large modulus *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.count_large_bd`: The count at `x = q^L`, for large `q`, from a bound of the first term *paper* ([note](../formalisations/harman-sieve.md))
+- `SieveAd.count_bd`: Every `x ≥ K'·q^L`, from a bound of the first term *paper*
+- `SieveAd.count_large_pr`: The count at `x = q^L` from a search *paper*
+- `SieveAd.count_pr`: Primes in every class, in number, from a search *paper*
 
 #### `SieveAdCut`: The search led by hints with a cut of any cell of a box at any point is sound
 

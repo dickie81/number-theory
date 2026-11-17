@@ -1,6 +1,7 @@
 /- The axioms of the papers' theorems, the repository's default build target. Every line this file prints must be
 `[propext, Classical.choice, Quot.sound]` or a subset of them (`scripts/check_axioms.py`). -/
 import Linnik21500
+import Linnik21500Count
 import LinnikG7
 import PivotSharp
 import BallFlat
@@ -9,18 +10,21 @@ import BallUpperEta
 import OrbitWindow
 
 /- Linnik's theorem with exponent `L = 43/20` (`2150/1000`), with no hypothesis: Theorem 1.2 of the Linnik paper
-(`papers/linnik-exponent/main.tex`). Harman's sieve with the Type II estimate in two variables, whose density curve is
-the trivial count below `7789/10000` and Huxley's estimate above (`SieveCurveHx`), a decomposition by trees of
-Buchstab steps with the reversal of a term through its largest prime, and its certificate, the plan of a search that
-the kernel follows by hints. Its one input that has not been refereed is the zero-free half-plane `Re s > 11/12`,
-OpenAI's result, proved here along their companion preprint (`formalisations/openai-half-plane.md`); no estimate of
-Ingham's or of Chen, Gupta and Li's is in its proof: its tests are those of the namespace `SieveAd.Plain`, with the
-paper's conditions on the leaves of a comparison alone. The theorems of the first block of the paper's claims table
-(Appendix A), in its order: its own steps by section (Sections 2 to 7), then the results of the literature it uses,
-each with a note in `formalisations/`, then the classical deduction it compares with. The paper's Theorem 1.1, at
-`21/10` (`Linnik21000.linnik_21000`), and the theorems of its Sections 8 to 10 are printed by `CheckAll.lean`: its
-certificate is too heavy for the default build. -/
+(`papers/linnik-exponent/main.tex`), and its form in number, the case `43/20` of the paper's Corollary 1.3: at least
+`c·x/(φ(q) log x)` primes of every class below every `x ≥ K·q^{43/20}` (`Linnik21500.count_21500`). Harman's sieve
+with the Type II estimate in two variables, whose density curve is the trivial count below `7789/10000` and Huxley's
+estimate above (`SieveCurveHx`), a decomposition by trees of Buchstab steps with the reversal of a term through its
+largest prime, and its certificate, the plan of a search that the kernel follows by hints. Its one input that has not
+been refereed is the zero-free half-plane `Re s > 11/12`, OpenAI's result, proved here along their companion preprint
+(`formalisations/openai-half-plane.md`); no estimate of Ingham's or of Chen, Gupta and Li's is in its proof: its tests
+are those of the namespace `SieveAd.Plain`, with the paper's conditions on the leaves of a comparison alone. The
+theorems of the first block of the paper's claims table (Appendix A), in its order: its own steps by section (Sections
+2 to 7), then the results of the literature it uses, each with a note in `formalisations/`, then the classical
+deduction it compares with. The paper's Theorem 1.1, at `21/10` (`Linnik21000.linnik_21000`), and the theorems of its
+Sections 8 to 10 are printed by `CheckAll.lean`: its certificate is too heavy for the default build. -/
 #print axioms Linnik21500.linnik_21500
+#print axioms Linnik21500.count_21500
+#print axioms Linnik21500.count_large_21500
 #print axioms SieveTypeIIGen.CurveCounts
 #print axioms SieveCurveHx.counts_hx
 #print axioms SieveCurveHx.ghx_le_one
@@ -132,6 +136,12 @@ certificate is too heavy for the default build. -/
 #print axioms SieveAd.linnik_pr
 #print axioms SieveAd.linnik_bd
 #print axioms SieveAd.Ttop_gB_ge
+#print axioms SieveAd.count_large_bd
+#print axioms SieveAd.count_large_pr
+#print axioms SieveAd.count_of_large
+#print axioms SieveAd.card_units_above
+#print axioms SieveAd.count_bd
+#print axioms SieveAd.count_pr
 #print axioms SieveAd.solveG_sound
 #print axioms SieveAd.Plain.solveD_sound
 #print axioms SieveAd.Plain.pr_of_partD
