@@ -366,7 +366,8 @@ import Linnik21150
 import SieveHint21000
 import Linnik21000
 import SieveAdCount
-import LinnikCount
+import Linnik21500Count
+import Linnik21000Count
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane

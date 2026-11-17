@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 712 |
-| `lib/pnt` | 360 | 1051 |
+| `lib/pnt` | 361 | 1051 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1572,6 +1572,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Linnik21000.tree21000`: The first term at `2100 / 1000` ([note](../formalisations/harman-sieve.md))
 - `Linnik21000.linnik_21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints ([note](../formalisations/halasz-montgomery.md))
 
+#### `Linnik21000Count`: The number of primes in a class at the exponent `2100/1000`
+
+- `Linnik21000.count_21000`: Primes in every class, in number, at the exponent `2100/1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21000.count_large_21000`: The primes of a class in `(q^L, 2q^L]` at `L = 2100/1000` ([note](../formalisations/harman-sieve.md))
+
 #### `Linnik21150`: Linnik's theorem with exponent `2115 / 1000`, by a search led by hints
 
 - `Linnik21150.tree21150`: The first term at `2115 / 1000` ([note](../formalisations/harman-sieve.md))
@@ -1584,6 +1589,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Linnik21500.part21500`: A part of the search bounds its term *paper*
 - `Linnik21500.tree21500`: The first term at `2150 / 1000` *paper* ([note](../formalisations/harman-sieve.md))
 - `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints *paper* ([note](../formalisations/chen-gupta-li-density.md))
+
+#### `Linnik21500Count`: The number of primes in a class at the exponent `2150/1000`
+
+- `Linnik21500.count_21500`: Primes in every class, in number, at the exponent `2150/1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.count_large_21500`: The primes of a class in `(q^L, 2q^L]` at `L = 2150/1000` ([note](../formalisations/harman-sieve.md))
 
 #### `Linnik21650`: Linnik's theorem with exponent `2165 / 1000`, by a search with no Type II window
 
@@ -1979,13 +1989,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `Linnik.perron_exp`: Perron's formula for `e^{−n/x}`
 - `Linnik.logDeriv_LFunction_le`: `L′/L(·, χ)` where `L(·, χ)` has no zero in one disc
 - `Linnik.norm_Sx_le`: The bound for one character
-
-#### `LinnikCount`: The number of primes in a class at the exponents `2100/1000` and `2150/1000`
-
-- `Linnik21000.count_21000`: Primes in every class, in number, at the exponent `2100/1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21000.count_large_21000`: The primes of a class in `(q^L, 2q^L]` at `L = 2100/1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21500.count_21500`: Primes in every class, in number, at the exponent `2150/1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21500.count_large_21500`: The primes of a class in `(q^L, 2q^L]` at `L = 2150/1000` ([note](../formalisations/harman-sieve.md))
 
 #### `LinnikDeduction`: Linnik's theorem from a density estimate over the characters mod `q`
 
