@@ -80,3 +80,8 @@ both.
 To build: `latexmk -pdf main.tex`, then `latexmk -pdf supplement.tex` (pdfLaTeX, as CI does; the supplement reads the
 paper's numbering from `main.aux` through `xr-hyper`). The preamble also lets XeTeX (for example
 `tectonic main.tex`) compile the paper; the Lean blocks then lack some glyphs of the monospace font.
+
+The paper's three figures are TikZ files, `fig-density.tex`, `fig-region.tex` and `fig-cost.tex`, which
+`tools/linnik/fig_density.py`, `fig_region.py` and `fig_cost.py` write from the Lean sources (the two density curves,
+the region `SieveTwoZone7D.Zone7d`, and the pieces of the two certificates' bounds); with `--check` a script compares
+its file with what it would write. They need `pgfplots`.
