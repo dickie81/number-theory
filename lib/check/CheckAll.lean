@@ -85,6 +85,8 @@ import LinnikSubconvex
 import MertensChi
 import ShortCharSums
 import LeastPrimitiveRoot
+import SieveBrunW
+import LeastPrimitiveRootLog
 import LucasWitness
 import CyclotomicFrobenius
 import MillerTest
@@ -1446,6 +1448,12 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_prime
 #print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow
 #print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_safe
+#print axioms SieveBrun.fundamentalW
+#print axioms LeastPrimitiveRoot.abs_sum_yv_sub_le
+#print axioms LeastPrimitiveRoot.sum_primRoot_ge
+#print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_log
+#print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_log_prime
+#print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_log_pow
 #print axioms LucasWitness.prime_iff_exists_lucas_le_rpow
 #print axioms LucasWitness.prime_iff_exists_lucas_le_safe
 #print axioms CyclotomicFrobenius.closure_frob_eq_top

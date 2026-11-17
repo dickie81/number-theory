@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1875 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1881 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 283, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 712 |
-| `lib/pnt` | 359 | 1050 |
+| `lib/pnt` | 361 | 1056 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1567,6 +1567,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow`: The least prime primitive root mod a prime power
 - `LeastPrimitiveRoot.exists_prime_primRoot_le_safe`: Safe primes
 
+#### `LeastPrimitiveRootLog`: The least prime primitive root is at most a power of `log q`
+
+- `LeastPrimitiveRoot.abs_sum_yv_sub_le`: The prime powers that are `ℓ`-th powers for every `ℓ ∈ s`
+- `LeastPrimitiveRoot.sum_primRoot_ge`: The prime powers that are primitive roots, from below
+- `LeastPrimitiveRoot.exists_prime_primRoot_le_log`: The least prime primitive root is at most a power of `log q`
+- `LeastPrimitiveRoot.exists_prime_primRoot_le_log_prime`: The least prime primitive root mod a prime is at most a power of `log p`
+- `LeastPrimitiveRoot.exists_prime_primRoot_le_log_pow`: The least prime primitive root mod a prime power
+
 #### `Linnik21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints
 
 - `Linnik21000.tree21000`: The first term at `2100 / 1000` ([note](../formalisations/harman-sieve.md))
@@ -2791,6 +2799,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveBrun.bonferroni`: Bonferroni's inequalities
 - `SieveBrun.fundamental`: The fundamental lemma in product form, abstractly *paper* ([note](../formalisations/harman-sieve.md))
 - `SieveBrun.gap_le`: For even `k_j`, `0 ≤ g ≤ 1` on each `T_j`, `C₀ ≥ 0` with `Σ_{T_j} g ≤ C₀`, and `∏_{T_j} (1 − g) ≥ c₀ > 0` ([note](../formalisations/harman-sieve.md))
+
+#### `SieveBrunW`: Brun's sieve in product form, with weights and abstract events
+
+- `SieveBrun.fundamentalW`: The fundamental lemma in product form, with weights and abstract events
 
 #### `SieveBuch`: The decomposition to depth 6, with the certificate's classification
 
