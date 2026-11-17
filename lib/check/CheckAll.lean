@@ -366,6 +366,7 @@ import Linnik21150
 import SieveHint21000
 import Linnik21000
 import LinnikG7
+import LinnikAlmostAll
 import LinnikGRH
 import ShortPrimesHalfPlane
 import LinnikWeylBridge
@@ -1397,6 +1398,14 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveCurve7D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d
+#print axioms LinnikAlmostAll.least_prime_of_charDensity
+#print axioms LinnikAlmostAll.few_of_charDensity
+#print axioms LinnikAlmostAll.meanSq_of_charDensity
+#print axioms LinnikAlmostAll.entropy_of_charDensity
+#print axioms LinnikAlmostAll.least_prime_g7d
+#print axioms LinnikAlmostAll.few_g7d
+#print axioms LinnikAlmostAll.meanSq_g7d
+#print axioms LinnikAlmostAll.entropy_g7d
 #print axioms LinnikDetect.LSeries_aXχ
 #print axioms LinnikDetect.detect_identityχ
 #print axioms LinnikDetect.dichotomy

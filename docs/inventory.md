@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1867 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1875 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 283, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 712 |
-| `lib/pnt` | 358 | 1042 |
+| `lib/pnt` | 359 | 1050 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1613,6 +1613,17 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `LinnikGamma.norm_gammaFactor_ratio_le`: The ratio of two values of the Archimedean factor
 - `LinnikGamma.verticalIntegral_sub_eq`: Moving the line of integration across a simple pole at `0` ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikGamma.afe`: The approximate functional equation for `L(s, χ)²` ([note](../formalisations/hybrid-fourth-moment.md))
+
+#### `LinnikAlmostAll`: Primes in almost every residue class, and the entropy of the primes mod `q`
+
+- `LinnikAlmostAll.few_of_charDensity`: Primes in almost every class
+- `LinnikAlmostAll.least_prime_of_charDensity`: The least prime of almost every class
+- `LinnikAlmostAll.meanSq_of_charDensity`: The mean square of the primes mod `q`
+- `LinnikAlmostAll.entropy_of_charDensity`: The entropy of the primes mod `q`
+- `LinnikAlmostAll.few_g7d`: Primes in almost every class, with no hypothesis
+- `LinnikAlmostAll.least_prime_g7d`: The least prime of almost every class, with no hypothesis
+- `LinnikAlmostAll.meanSq_g7d`: The mean square of the primes mod `q`, with no hypothesis
+- `LinnikAlmostAll.entropy_g7d`: The entropy of the primes mod `q`, with no hypothesis
 
 #### `LinnikBuckets`: The off-diagonal pairs in dyadic buckets of the analytic conductor
 
