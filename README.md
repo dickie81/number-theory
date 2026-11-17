@@ -32,7 +32,7 @@ from `main` on every push.
 | Path | Contents |
 |---|---|
 | `lib/core` | The library's modules that need only Mathlib: 482 files. |
-| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 1866 files, 1225 of them the part and cell files of the certificates `SieveHint<tag>`. |
+| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 1869 files, 1225 of them the part and cell files of the certificates `SieveHint<tag>`. |
 | `lib/dh` | The Davenport–Heilbronn function and its zeros: 68 files. |
 | `lib/zeta23` | The modules that also use `zeta23`: 10 files. |
 | `lib/vendor/pnt-plus`, `lib/vendor/zeta23` | Two upstream libraries, ported to this toolchain, each with its license and its port patch. See their READMEs. |
