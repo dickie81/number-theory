@@ -14,22 +14,19 @@ statement:
 - the shares of the zeros that are distinct, simple and on the line, and the constants of the local count
   (`ShortWeil.Kloc`), with `κ = Σ Λ(n)n^{−3/2}` (`Kaiser.kLam`) computed here;
 - the density exponents of `ζ`;
-- the curve `g*` of the window route (`SieveCurve7D.g7d`) and the curve `g_H` of the Type II estimate in two
-  variables (`SieveCurveHx.ghx`: the trivial count, then Huxley's steps), each with the theorem that counts each of
-  its pieces, read from the proofs of `counts_7d` and `counts_hx` and checked against the piece's range and exponent;
-- the Linnik exponents: the density deduction's; the sieve's with a Type II estimate in one variable on a window
-  (`Linnik22000E.linnik_22000e`, 11/5); and those of the sieve with the Type II estimate in two variables for `g_H`
-  (`SieveTwoZone7D.typeII_two_hx`), whose modules must import it and which must go down from 11/5 to one below
-  `1 + A/2` at Chen, Gupta and Li's `A`, the last of them Theorem 1.2 of the Linnik paper; and those below it, with
-  the resonant window (`SieveTypeIIHM.typeII_res`) and Chen, Gupta and Li's Proposition 3.1
-  (`LinnikCGLHB101.prop31`) as well, whose modules must import both and which must go down from there, the last of
-  them Theorem 1.1 of the Linnik paper;
-- the window condition of a Type II estimate in one variable (`SieveCurveGlue.WindowOKHM`), with its constants, and
-  the window and the exponent of `window_22000d`;
-- the bound of that theorem's certificate (`SieveDeep.totalD_lt_22000E`).
+- the curve `g*` (`SieveCurve7D.g7d`) and the curve `g_H` of the Type II estimate in two variables
+  (`SieveCurveHx.ghx`: the trivial count, then Huxley's steps), each with the theorem that counts each of its pieces,
+  read from the proofs of `counts_7d` and `counts_hx` and checked against the piece's range and exponent;
+- the Linnik exponents: the density deduction's; Theorem 1.2 of the Linnik paper (`Linnik21500.linnik_21500`), the
+  sieve with the Type II estimate in two variables for `g_H` (`SieveTwoZone7D.typeII_two_hx`), whose module must
+  import it and which must lie below `1 + A/2` at Chen, Gupta and Li's `A`; and Theorem 1.1
+  (`Linnik21000.linnik_21000`), with the resonant window (`SieveTypeIIHM.typeII_res`) and Chen, Gupta and Li's
+  Proposition 3.1 (`LinnikCGLHB101.prop31`) as well, whose module must import both and which must lie below
+  Theorem 1.2's.
 Every theorem the page presents as a result must be printed by one of the check files `lib/check/Check.lean`,
-`CheckAll.lean`, `CheckZeta23.lean` and `CheckDH.lean`, whose axioms CI checks. The window's exact ends, computed
-here from the Lean's curve and condition, must contain the Lean's window.
+`CheckAll.lean`, `CheckZeta23.lean` and `CheckDH.lean`, whose axioms CI checks. The line `L = 1 + A/2`, where a Type II
+estimate in one variable on a window that sorts the characters by their zeros closes, is computed here, not read
+from the Lean.
 The numbers that are not theorems of the library (the literature's exponents) are read from the paper's sources. A
 change to the Lean or to the paper that the page does not follow makes this script fail; CI runs it with `--check`,
 and `scripts/build_site.py` runs it to write the page.
@@ -188,37 +185,6 @@ def linnik(name):
     return q(e[:-4] if plus else e), plus, "PsiOmega.GRH χ" in s
 
 
-# The forms of the window condition that site/zeros.html computes (`winEnds`), with the constants left open. If the
-# Lean's condition changes, the page's computation must change with it.
-WINDOW_FORMS = {
-    "SieveCurveGlue.WindowOKHM":
-        "def WindowOKHM (g : ℝ → ℝ) (L m₁ m₂ d e : ℝ) : Prop := ∀ β m w : ℝ, 1 / 2 ≤ β → β ≤ {TOP} → m₁ ≤ m → "
-        "m ≤ m₂ → 0 ≤ w → w ≤ {W} → ((m ≤ 1 → (L - m) * (β + w) + g β / 2 + (1 + m) / 2 ≤ L - {M}) ∧ "
-        "(1 ≤ m → (L - m) * (β + w) + g β / 2 + m ≤ L - {M})) ∨ (m ≤ 1 ∧ hmBound L d e (g β) β m w)",
-    "SieveCurveGlue.hmBound":
-        "def hmBound (L d e gβ β m w : ℝ) : Prop := (L - m) * (β + w) + gβ / 2 + m / 2 + m / 2 ≤ L - {M} ∧ "
-        "(L - m) * (β + w) + gβ / 2 + m / 2 + (gβ + ({K0} + m / {K1} + d * (1 - m) + 2 * e)) / 2 ≤ L - {M}",
-}
-
-
-def form(name):
-    """The constants of a definition of WINDOW_FORMS, which must have that form."""
-    text, seen, pattern = definition(name), set(), ""
-    for part in re.split(r"(\{\w+\})", WINDOW_FORMS[name]):
-        m = re.fullmatch(r"\{(\w+)\}", part)
-        if not m:
-            pattern += re.escape(part)
-        elif m.group(1) in seen:
-            pattern += f"(?P={m.group(1)})"
-        else:
-            seen.add(m.group(1))
-            pattern += rf"(?P<{m.group(1)}>\d+(?: / \d+(?: \^ \d+)?)?)"
-    m = re.fullmatch(pattern, text)
-    need(m, f"{name} is no longer of the form the page computes; update winEnds in site/zeros.html and WINDOW_FORMS "
-            f"in this script. It reads: {text}")
-    return {k: q(v) for k, v in m.groupdict().items()}
-
-
 # ---- the paper ---------------------------------------------------------------------------------------------------
 
 def tex(name):
@@ -263,30 +229,13 @@ DEDUCTION = [
     ("LinnikG7.linnik_g7d", "with the curve <i>g*</i>"),
 ]
 
-# The Linnik exponents of the sieve beyond 11/5, from the highest, with what each adds. All of them rest on the
-# Type II estimate in two variables, TWO, for the curve g_H of Huxley's estimate (the first two also on the window of
-# g*); the last is Theorem 1.2 of the Linnik paper, from the half-plane and Huxley's estimate.
-SIEVE = [
-    ("Linnik21900.linnik_21900",
-     "with the window too, in a tree of Buchstab steps that the kernel searches for"),
-    ("Linnik21800.linnik_21800", "and role reversal for a term of three primes"),
-    ("Linnik21500.linnik_21500",
-     "with the estimate in two variables alone, no window, and a term of three or five primes reversed through its "
-     "largest prime: Theorem 1.2 of the Linnik paper"),
-]
+# The sieve's two Linnik exponents. BEST, Theorem 1.2 of the Linnik paper, rests on the half-plane and Huxley's
+# estimate alone, by the Type II estimate in two variables, TWO, for the curve g_H. RESBEST, Theorem 1.1, rests on TWO
+# as well, and on the resonant window, RESW: a Type II estimate in one variable that sorts the characters by the sizes
+# of the rest's own prime sums as well as by their zeros, which counts by Chen, Gupta and Li's Proposition 3.1, CGLP.
+BEST = "Linnik21500.linnik_21500"
+RESBEST = "Linnik21000.linnik_21000"
 TWO = "SieveTwoZone7D.typeII_two_hx"
-
-# The Linnik exponents below SIEVE's last, from the highest, with what each adds. They rest on TWO as well, and on the
-# resonant window, RESW: a Type II estimate in one variable that sorts the characters by the sizes of the rest's own
-# prime sums as well as by their zeros, which counts by Chen, Gupta and Li's Proposition 3.1, CGLP. The last is
-# Theorem 1.1 of the Linnik paper.
-RES = [
-    ("Linnik21150.linnik_21150",
-     "with the resonant window too, the leaves of a comparison cut in three, and the terms of the sign + reversed, "
-     "with Chen, Gupta and Li's Proposition 3.1: in no paper"),
-    ("Linnik21000.linnik_21000",
-     "and the window's test at the two corners of a box: Theorem 1.1 of the Linnik paper"),
-]
 RESW = "SieveTypeIIHM.typeII_res"
 CGLP = "LinnikCGLHB101.prop31"
 
@@ -454,99 +403,31 @@ def extract():
     deduction.sort(key=lambda r: -r[0])
     gx = [L for L, n, _ in deduction if n == "LinnikG7.linnik_g7d"][0]
     need(gx == gmax, f"LinnikG7.linnik_g7d gives {gx}, not g*'s largest exponent {gmax}")
-    Lmain, plus, grh = linnik(res("Linnik22000E.linnik_22000e"))
-    need(not plus and not grh, "Linnik22000E.linnik_22000e is not an exponent without hypothesis")
     need("counts_hx" in definition(res(TWO)), f"{TWO} is no longer the estimate for g_H, whose counts are counts_hx")
     _, imports = import_cone.sources()
-    sieve = []
-    for n, label in SIEVE:
-        x, plus, grh = linnik(res(n))
-        need(not plus and not grh, f"{n} is not an exponent without hypothesis")
-        need(TWO.split(".")[0] in import_cone.cone(imports, [n.split(".")[0]]),
-             f"{n}'s module does not import {TWO.split('.')[0]}, the Type II estimate in two variables")
-        need(x < (sieve[-1][0] if sieve else Lmain), f"{n} is not below the exponent before it (SIEVE's order)")
-        sieve.append((x, n, label))
-    Lbest, best = sieve[-1][0], sieve[-1][1]
-    # the modules of the resonant window and of Proposition 3.1, which every module of RES must import
+
+    def module(n):
+        need(n in index(), f"no module of lib/ declares {n}")
+        return os.path.splitext(os.path.basename(index()[n][0]))[0]
+
+    best, resbest = BEST, RESBEST
+    Lbest, plus, grh = linnik(res(best))
+    need(not plus and not grh, f"{best} is not an exponent without hypothesis")
+    need(module(TWO) in import_cone.cone(imports, [module(best)]),
+         f"{best}'s module does not import {module(TWO)}, the Type II estimate in two variables")
+    # the modules of the resonant window and of Proposition 3.1, which Theorem 1.1's module must import
     cited.add(CGLP)
-    need_mods = {n: os.path.splitext(os.path.basename(index()[n][0]))[0] for n in (res(RESW), CGLP) if n in index()}
-    need(len(need_mods) == 2, f"no module of lib/ declares {RESW} or {CGLP}")
-    ressieve = []
-    for n, label in RES:
-        x, plus, grh = linnik(res(n))
-        need(not plus and not grh, f"{n} is not an exponent without hypothesis")
-        cone = import_cone.cone(imports, [n.split(".")[0]])
-        for d, mod in need_mods.items():
-            need(mod in cone, f"{n}'s module does not import {mod}, the module of {d}")
-        need(x < (ressieve[-1][0] if ressieve else Lbest), f"{n} is not below the exponent before it (RES's order)")
-        ressieve.append((x, n, label))
-    Lres, resbest = ressieve[-1][0], ressieve[-1][1]
+    Lres, plus, grh = linnik(res(resbest))
+    need(not plus and not grh, f"{resbest} is not an exponent without hypothesis")
+    cone = import_cone.cone(imports, [module(resbest)])
+    for d in (TWO, res(RESW), CGLP):
+        need(module(d) in cone, f"{resbest}'s module does not import {module(d)}, the module of {d}")
+    need(Lres < Lbest, f"{resbest} is not below {best}")
     Lgrh, plus, grh = linnik(res("LinnikGRH.linnik_two_of_GRH"))
     need(plus and grh, "LinnikGRH.linnik_two_of_GRH no longer assumes GRH")
     Agrh = q(grab(r"Linnik\.CharDensity (\S+) \S+ \S+$", statement(res("LinnikGRH.charDensity_two_of_GRH")),
                   "the density exponent under GRH").group(1))
     need(Agrh == Lgrh, "GRH's density exponent is not its Linnik exponent")
-
-    # The window: the condition, its constants, the window of the Lean and the exponent.
-    s = statement(res("SieveTypeIIU22000D.window_22000d"))
-    m = grab(r"WindowOKHM g7d \((.+?)\) \((.+?) \* \((.+?)\)\) \((.+?) \* \((.+?)\)\) \((.+?)\) \((.+?)\)$", s,
-             "the window of window_22000d")
-    L, u1, La, u2, Lb, kd, ke = (q(x) for x in m.groups())
-    need(L == La == Lb == Lmain, "window_22000d's exponent is not linnik_22000e's")
-    route = grab(r"⟨(.+?), (.+?), (.+?)⟩", definition("Linnik22000E.route22000D"), "the route's parameters")
-    cited.update({"Linnik22000E.route22000D", "SieveCurveGlue.WindowOKHM", "SieveCurveGlue.hmBound"})
-    need((q(route.group(1)), q(route.group(2)), q(route.group(3))) == (L, u1, u2),
-         "route22000D's parameters are not window_22000d's")
-    c = {**form("SieveCurveGlue.WindowOKHM"), **form("SieveCurveGlue.hmBound")}
-    need(c["TOP"] == hp, "the window condition does not stop at the half-plane")
-    margin, varpi, k0, k1 = c["M"], c["W"], c["K0"], 1 / c["K1"]
-
-    def ends(x, beta, g):
-        """The window's ends allowed at β for the exponent x, as winEnds of site/zeros.html computes them, in exact
-        arithmetic."""
-        th, b = x - margin, beta + varpi
-        lo = (x * b + g / 2 + F(1, 2) - th) / (b - F(1, 2))
-        hi = (th - x * b - g / 2) / (1 - b)
-        k = b - F(1, 2) - (k1 - kd) / 2
-        if k > 0:
-            lh = (x * b + g + (k0 + kd + 2 * ke) / 2 - th) / k
-            if lh <= min(1, hi):
-                lo = min(lo, lh)
-        return lo, hi
-
-    def exact(x):
-        """The widest window at the exponent x, in units of x: on each piece of g* its ends move monotonically, so
-        the piece's ends suffice."""
-        out = [F(-10), F(10)]
-        for lo, hi, A in pieces:
-            for beta in (lo, hi):
-                a, b = ends(x, beta, F(1) if A is None else A * (1 - beta))
-                out = [max(out[0], a / x), min(out[1], b / x)]
-        return out
-
-    def fits(x):
-        lo, hi = exact(x)
-        return lo <= u1 and u2 <= hi
-
-    exact_lo, exact_hi = exact(L)
-    need(fits(L), "the Lean's window does not lie in the exact window computed here")
-    # The least exponent at which the Lean's window still fits, by bisection: it fits at L, and not at 1 + A/2 for
-    # g*'s largest exponent A, below which there is no window.
-    x0, x1 = 1 + gmax / 2, L
-    need(not fits(x0), f"the Lean's window fits at 1 + {t(gmax)}/2")
-    for _ in range(40):
-        x0, x1 = (x0, (x0 + x1) / 2) if fits((x0 + x1) / 2) else ((x0 + x1) / 2, x1)
-    corners = x1
-
-    # The certificate: the bound on its total that the kernel checks is less than K.
-    cert = "SieveDeep.totalD_lt_22000E"
-    need(statement(res(cert)) == "theorem totalD_lt_22000E : totalD < K", f"{cert} no longer says totalD < K")
-    top = grab(r"rw \[totalD_eq_rowsJD\] exact lt_of_le_of_lt (\w+) \(by decide \+kernel\)$", definition(cert),
-               f"the proof of {cert}").group(1)
-    m = grab(r"rowsJD 0 (\d+) 0 \1 ≤ (\d+)$", statement("SieveDeep." + top), f"the bound of SieveDeep.{top}")
-    k = int(grab(r"def K : ℕ := 2 \^ (\d+)$", definition("SieveCert.K"), "the certificate's K").group(1))
-    bound = F(int(m.group(2)), 2 ** k)
-    need(bound < 1, f"the bound of SieveDeep.{top} is not less than K")
 
     # The paper: the literature's numbers, which the page cites.
     main, bib = tex("main.tex"), tex("references.tex")
@@ -558,8 +439,8 @@ def extract():
     cgl = F(int(m.group(1)), int(m.group(2)))
     says(r"Chen--Gupta--Li's density estimate \\cite\[Theorem~1\.2\]\{cgl\} &\s+density deduction \(not formalised\) &",
          main, "row for 7/3")
-    # The floor of a window for a Type II estimate in one variable, 1 + A/2 at Chen, Gupta and Li's A: computed here,
-    # as the window condition gives it (the window of the 11/5 theorem does not fit at 1 + A/2 for g*'s A, above).
+    # The floor of a Type II estimate in one variable on a window that sorts the characters by their zeros,
+    # L = 1 + A/2 at Chen, Gupta and Li's A: computed here, not read from the Lean.
     floor = 1 + cgl / 2
     need(Lbest < floor, f"{best} is not below 1 + A/2 = {t(floor)}, as the page says")
 
@@ -575,17 +456,17 @@ def extract():
     rows.append({"label": "with Chen, Gupta and Li's Theorem 1.2", "L": float(cgl), "text": t(cgl) + " + ε",
                  "dec": dec(cgl, 3), "kind": "other", "src": "not formalised as they state it"})
     ladder += sorted(rows, key=lambda r: -r["L"])
-    ladder += [{"group": "Harman's sieve: below the density exponent"},
-               {"label": "with a Type II estimate in one variable, on a window, and a bilinear Type I estimate",
-                "L": float(Lmain), "text": lt(Lmain), "dec": dec(Lmain, 3), "kind": "lean",
-                "src": "Linnik22000E.linnik_22000e"},
-               {"group": "The sieve with a Type II estimate in two variables"}]
-    ladder += [{"label": label, "L": float(x), "text": lt(x), "dec": dec(x, 3) if "/" in lt(x) else None,
-                "kind": "lean", "src": n, "main": n == best} for x, n, label in sieve]
-    ladder += [{"group": "With a Type II estimate in one variable over the sizes of a term's own prime sums as well, "
-                         "and Chen, Gupta and Li's Proposition 3.1"}]
-    ladder += [{"label": label, "L": float(x), "text": lt(x), "dec": dec(x, 3) if "/" in lt(x) else None,
-                "kind": "lean", "src": n, "main": n == resbest} for x, n, label in ressieve]
+    sieve = [("Harman's sieve: below the density exponent, with a Type II estimate in two variables", Lbest, best,
+              "from the half-plane and Huxley's estimate alone, with a term of three or five primes reversed through "
+              "its largest prime: Theorem 1.2 of the Linnik paper"),
+             ("With a Type II estimate in one variable over the sizes of a term's own prime sums as well, and Chen, "
+              "Gupta and Li's Proposition 3.1", Lres, resbest,
+              "with the resonant window, the leaves of a comparison cut in three and the terms of the sign + "
+              "reversed as well, and the window's test at the two corners of a box: Theorem 1.1 of the Linnik paper")]
+    for group, x, n, label in sieve:
+        ladder += [{"group": group},
+                   {"label": label, "L": float(x), "text": lt(x), "dec": dec(x, 3) if "/" in lt(x) else None,
+                    "kind": "lean", "src": n, "main": True}]
 
     la = [{"A": float(Agrh), "L": float(Lgrh), "kind": "limit", "role": "dh", "text": t(Lgrh) + " + η",
            "label": f"the density hypothesis, A = {t(Agrh)}, which GRH implies",
@@ -595,9 +476,6 @@ def extract():
             la.append({"A": float(x), "L": float(x), "kind": "lean", "role": "ded",
                        "text": (t(x) if x.denominator < 1000 else dec(x, 4)) + " + η",
                        "label": "the deduction, " + re.sub(r"<[^>]+>", "", label), "src": n})
-    la.append({"A": float(gmax), "L": float(Lmain), "kind": "lean", "role": "window", "text": lt(Lmain),
-               "label": "the sieve with the curve g*, a Type II estimate in one variable on a window and a bilinear "
-                        "Type I estimate", "src": "Linnik22000E.linnik_22000e"})
     Ahux = [x for x, n, _ in deduction if n == "LinnikTwelve.linnik_twelve_fifths"][0]
     la.append({"A": float(Ahux), "L": float(Lbest), "kind": "lean", "role": "main", "text": lt(Lbest),
                "label": "Theorem 1.2 of the Linnik paper: the sieve with the half-plane and Huxley's estimate, by the "
@@ -620,10 +498,6 @@ def extract():
         "best": {"x": float(Lbest), "t": lt(Lbest), "lean": best, "two": TWO},
         "res": {"x": float(Lres), "t": lt(Lres), "lean": resbest, "win": RESW},
         "ladder": ladder, "la": la,
-        "window": {"L": float(L), "Lt": t(L), "Ld": dec(L, 4), "u1": float(u1), "u2": float(u2), "u1t": dec(u1, 5),
-                   "u2t": dec(u2, 5), "margin": float(margin), "varpi": float(varpi), "d": float(kd), "e": float(ke),
-                   "k0": float(k0), "k1": float(k1)},
-        "cert": {"corners": cut(corners, 7), "bound": cut(bound, 5), "lean": cert},
         "shares": [{"x": float(x), "t": t(x), "what": what, "lean": n} for x, what, n in (
             (half, "simple and on the line", "CriticalLine.half_simple"),
             (two, "distinct and on the line", "CriticalLine.two_thirds"),
@@ -641,28 +515,25 @@ def extract():
         "npieces": str(len(pieces)), "nhx": str(len(hpieces)), "hxLo": t(hthr), "hxA": dec(hA, 5), "hux": t(Ahux),
         "gmax": dec(gmax, 4), "gmaxLo": t(pieces[peak][0]), "gmaxHi": t(pieces[peak][1]),
         "cgl": t(cgl), "floor": t(floor), "grh": t(Lgrh),
-        "L": t(Lmain), "Ldec": dec(Lmain, 4), "u1": dec(u1, 5), "u2": dec(u2, 5),
         "Lbest": lt(Lbest), "Lbestdec": dec(Lbest, 4), "bestLean": best,
         "Lres": lt(Lres), "resLean": resbest, "resWin": RESW,
-        "Lmid": lt(ressieve[0][0]), "midLean": ressieve[0][1],
-        "exactLo": cut(exact_lo, 8), "exactHi": cut(exact_hi, 8),
         "nresults": str(len(shown)),
         "commit": f'<a href="{REPO}/tree/{sha}">{sha[:7]}</a>' if sha else "the working tree",
         "date": html.escape(day or ""),
-        "theorems": theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain, Lbest, best, kloc, simple,
+        "theorems": theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lbest, best, kloc, simple,
                                  half, dist, Lres, resbest),
     }
     for k in ("hp", "hpWidth", "bandLo", "bandHi", "thetaLo", "thetaHi", "selberg", "onLine", "kvA", "kvB", "nzeta",
               "klocA", "klocC", "klocSlope", "klocShift", "klocConst", "kappa", "simpleSel", "halfSimple", "distinct",
               "multiple", "conrey",
               "npieces", "nhx", "hxLo", "hxA", "hux", "gmax",
-              "gmaxLo", "gmaxHi", "cgl", "floor", "grh", "L", "Ldec", "u1", "u2", "exactLo", "exactHi", "nresults",
-              "Lbest", "Lbestdec", "bestLean", "Lres", "resLean", "resWin", "Lmid", "midLean"):
+              "gmaxLo", "gmaxHi", "cgl", "floor", "grh", "nresults",
+              "Lbest", "Lbestdec", "bestLean", "Lres", "resLean", "resWin"):
         texts[k] = html.escape(texts[k])
     return data, texts, named, results
 
 
-def theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain, Lbest, best, kloc, simple, half, dist,
+def theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lbest, best, kloc, simple, half, dist,
                  Lres, resbest):
     """The rows of the page's table of theorems, as HTML."""
     m = lambda s: f'<span class="math">{s}</span>'  # noqa: E731
@@ -711,9 +582,6 @@ def theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain, Lbes
                      [z["lean"]]))
     rows.append((f"At most {m('C(qT)')}<sup class=\"math\">g*(σ)</sup>{m('(1 + log qT)')}<sup>10</sup> characters mod "
                  f"{m('q')} have a zero with {m('β ≥ σ')}, {m('|γ| ≤ T')}", ["SieveCurve7D.counts_7d"]))
-    rows.append((f"Every reduced residue class mod {m('q')} contains a prime {m('p ≤ Kq')}"
-                 f"<sup class=\"math\">{t(Lmain)}</sup>, by a Type II estimate in one variable on a window",
-                 ["Linnik22000E.linnik_22000e"]))
     rows.append((f"At most {m('C(qT)')}<sup class=\"math\">g<sub>H</sub>(σ)</sup>{m('(1 + log qT)')}<sup>10</sup> "
                  f"characters mod {m('q')} have a zero with {m('β ≥ σ')}, {m('|γ| ≤ T')}: the trivial count, then "
                  f"Huxley's steps", ["SieveCurveHx.counts_hx"]))
@@ -724,7 +592,8 @@ def theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lmain, Lbes
     rows.append((f"Every reduced residue class mod {m('q')} contains a prime {m('p ≤ Kq')}"
                  f"<sup class=\"math\">{lt(Lres)}</sup>, with the resonant window, the leaves of a comparison cut in "
                  f"three and the terms of the sign + reversed as well, from the half-plane, Chen, Gupta and Li's "
-                 f"Proposition 3.1, and Ingham's and Huxley's estimates: Theorem 1.1 of the Linnik paper", [resbest, RESW]))
+                 f"Proposition 3.1, and Ingham's and Huxley's estimates: Theorem 1.1 of the Linnik paper (the kernel's check of "
+                 f"its certificate was not finished on 16 November 2026)", [resbest, RESW]))
     return "\n".join(f"          <tr><td>{a}</td>\n            <td>{', '.join(f'<code>{n}</code>' for n in ns)}</td></tr>"
                      for a, ns in rows)
 
@@ -762,8 +631,7 @@ def main(argv):
               f"printed by Check, CheckAll, CheckZeta23 or CheckDH; g*'s {len(data['g7d'])} pieces each counted by the "
               f"theorem counts_7d glues in, and g_H's {texts['nhx']} by the one counts_hx glues in; Linnik's exponents "
               f"{data['best']['t']} ({data['best']['lean']}) and {data['res']['t']} ({data['res']['lean']}), below "
-              f"1 + A/2 = {data['floor']['t']}; the exact window [{texts['exactLo']}…, {texts['exactHi']}…] "
-              f"contains the Lean's, which fits down to L = {data['cert']['corners']}…")
+              f"1 + A/2 = {data['floor']['t']}")
         return 0
     out = argv[0] if argv else OUT
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)

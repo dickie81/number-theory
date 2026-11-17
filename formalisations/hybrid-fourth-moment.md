@@ -62,9 +62,9 @@ hybrid large values estimate. Nothing in this library claims the estimate as its
 In both theorems, through Huxley's density estimate ([huxley-density.md](huxley-density.md)), which bounds its
 integral class, the characters for which the detector's integral along `Re s = 1/2` is large, with this estimate. In
 Theorem 1.1 also through the other steps of the curve `g7d`, which bounds the leaves cut in three: Ingham's
-([ingham-density.md](ingham-density.md)), which the library's theorems at `11/5` and earlier use too, and the steps
-from Chen, Gupta and Li's Proposition 3.1 (`LinnikCGLStep.charDensity_cglGen`;
-[chen-gupta-li-density.md](chen-gupta-li-density.md)) do the same.
+([ingham-density.md](ingham-density.md)), which `LinnikG7.linnik_g7d` uses too, and the steps from Chen, Gupta and
+Li's Proposition 3.1 (`LinnikCGLStep.charDensity_cglGen`; [chen-gupta-li-density.md](chen-gupta-li-density.md)) do the
+same.
 
 This is not the fourth moment of the estimate on the leaves' region: that one is the fourth moment of a short
 Dirichlet polynomial over all the characters (`SieveTypeIIHM.sum_chars_dp_four_le`), orthogonality applied to the

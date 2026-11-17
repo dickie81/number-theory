@@ -97,6 +97,6 @@ Halász–Montgomery inequality (`LinnikLindelof.lindelof`) and the prime number
 the resonant window of the paper's Theorem 1.1 (`SieveTypeIIHM.typeII_res`) it bounds every prime sum of the rest by
 its length to the power `11/12`, up to the width of a bin, at every character, before the sums' moments and large
 values sort the characters. The paper's two exponents, `43/20` (Theorem 1.2, `Linnik21500.linnik_21500`) and
-`21/10` (Theorem 1.1, `Linnik21000.linnik_21000`), therefore depend on this result, its Input 1, as do the library's
-earlier theorems at `11/5` and below. The paper states the dependence, and compares what its method gives with what
-the half-plane and the density estimates give without it.
+`21/10` (Theorem 1.1, `Linnik21000.linnik_21000`), therefore depend on this result, its Input 1. The paper
+states the dependence, and compares what its method gives with what the half-plane and the density estimates give
+without it.

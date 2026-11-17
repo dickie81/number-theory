@@ -4,7 +4,8 @@
     two_factor.py region a/b                 the region at L = a/b, on the paper's grid
     two_factor.py total W1 W2 N a/b [opts]   the certificate's total on the grid of `mirror8.py W1 W2 N a/b`
     two_factor.py scan a/b ... [opts]        for each L: the window chosen afresh (as `density_payoff.py` does), the
-                                             least grid that satisfies the Lean's conditions, and the total
+                                             least grid that satisfies the conditions of `mirror8.py`'s grids, and
+                                             the total
     opts:  --base       without the estimate (the total is then `mirror8.py`'s; `scan` prints both)
            --depth D    the estimate evaluates boxes of depth at most D (2, 3 or 4; the default is 4)
            --stops      the rule's stops may also be stops of the estimate
@@ -381,7 +382,7 @@ def window(pieces, L):
 
 
 def gridok(W1, W2, L, N):
-    """`density_payoff.gridok`: the Lean's conditions on the grid and its coarse grid."""
+    """`density_payoff.gridok`: the conditions on the grid and its coarse grid."""
     U1, U2 = (W1 * DEN + 99999) // 100000, W2 * DEN // 100000
     V, nC = U2 - U1, N // 4
     H = (max(DEN // 2 - V, 0) + N - 1) // N

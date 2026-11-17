@@ -1775,7 +1775,7 @@ Lemma~\ref{lem:tests}(c) bound; the loss is the numbers $n/r'$ free of primes be
 Lemma~\ref{lem:rough} and the prime number theorem bound, and the $n$ with a square factor. The formalisation proves
 this bound; neither certificate uses it, and the paper does not need it. The reversal below keeps the cofactor as one
 number, whatever its prime factors, and loses nothing to it.
-% Lean: SieveAd.bd_rev, SieveAd.rev_cover, SieveAd.rev_inject, SieveAd.famCost_sound, SieveAd.rulesR
+% Lean: SieveAd.bd_rev, SieveAd.rev_cover, SieveAd.rev_inject, SieveAd.famCost_sound
 
 % Lean: SieveAd.frozS, SieveAd.frozR, SieveAd.e1, SieveAd.e2, SieveAd.WF, SieveAd.famIR, SieveAd.famJR, SieveAd.famIR_eq, SieveAd.famJR_eq, SieveAd.dIF, SieveAd.dJF, SieveAd.dJF_level, SieveAd.famJ_levelN
 \emph{The frozen part.} Let $\mathfrak b$ be a box of $k \ge 2$ primes, $(l_1, h_1)$ the cell of its largest prime
@@ -2171,7 +2171,7 @@ no tree of the plan reaches).
 
 What the search tries is proposed by a \emph{strategy}, which needs no proof: every proposal is tested before it is
 used. At $43/20$ the strategy proposes the following.
-% The strategy is the planner's (tools/linnik/hint_cert.py, on flip_cert.py and fill_cert.py; the plan carries its choices). In Lean, what its proposals are made of: SieveAd.propI2, SieveAd.propJ2, SieveAd.fmax3, SieveAd.leavesOf, SieveAd.bestSub, SieveAd.cutsOfG, SieveAd.geoCuts, SieveAd.stepOf, SieveAd.cutsK; the searches that try: SieveAd.opsR, SieveAd.solveG, SieveAd.nodeG, SieveAd.kids.
+% The strategy is the planner's (tools/linnik/hint_cert.py, on flip_cert.py and fill_cert.py; the plan carries its choices). In Lean, what its proposals are made of: SieveAd.fmax3, SieveAd.bestSub, SieveAd.stepOf; the searches that try: SieveAd.solveG, SieveAd.nodeG, SieveAd.kids.
 \begin{itemize}
 \item For (I): as the rest, the first prime of the box, from the smallest, whose cell the region admits for a rest and
   for which a set of the other primes has sums that the region admits for the first variable with it; and that set.
@@ -2208,7 +2208,7 @@ tests are the conditions of Definitions~\ref{def:tests},
 strategy.
 
 \begin{lemma}\label{lem:search}
-% Lean: SieveAd.solveF_sound, SieveAd.has_of_kids, SieveAd.solveG_sound, SieveAd.kidsP_sound, SieveAd.Plain.solveD_sound, SieveAd.Plain.stepD_sound, SieveAd.Plain.kidsC_sound, SieveAd.Plain.partD_sound, SieveAd.Plain.solveMD_sound, SieveAd.Plain.altFD_sound, SieveAd.Plain.pr_of_partD
+% Lean: SieveAd.solveG_sound, SieveAd.kidsP_sound, SieveAd.Plain.solveD_sound, SieveAd.Plain.stepD_sound, SieveAd.Plain.kidsC_sound, SieveAd.Plain.partD_sound, SieveAd.Plain.solveMD_sound, SieveAd.Plain.altFD_sound, SieveAd.Plain.pr_of_partD
 Whatever the strategy, or the hints that lead the search (below):
 \begin{enumerate}
 \item[(a)] if the search returns on a box, a sign and a limit a value $c$ below the limit, then the term of the box

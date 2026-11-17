@@ -10,8 +10,9 @@ join the first variable until its product enters the window, and the next ones a
 reaches q^(1/2000). The tests are `SieveAd.fillTests` (`lib/pnt/SieveAdFillDefs.lean`): `okI2` for a box, and at a
 floor `okJ2` (the rest among the box's primes) or, for a configuration of kind 2, `okJ3` (the rest among the
 tree's); they are sound (`lib/pnt/SieveAdFill.lean`). The search is `rev_cert.py`'s, with role reversal
-(`SieveAd.solveG` with the nodes `SieveAd.opsR`), and its strategy proposes no window and the floors of `okJ3`,
-counted down from `SieveAd.fmax3` (`lib/pnt/SieveAdFillSearchDefs.lean`). This script is that search in Python, on
+(`SieveAd.solveG`, with the cost `SieveAd.revCost` of the reversal of a box of the sign `−` that `SieveAd.revOK`
+accepts as one more bound), and its strategy proposes no window and the floors of `okJ3`, counted down from
+`SieveAd.fmax3` (`lib/pnt/SieveAdFillSearchDefs.lean`). This script is that search in Python, on
 top of `rev_cert.py` and `tree_cert.py`:
 
   * `TestsF`: `fillTests` (`chkJ3`, `okJ3`), definition by definition;

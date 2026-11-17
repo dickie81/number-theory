@@ -21,8 +21,8 @@ The Linnik proofs use these instances:
 - `SieveCurveHx.charDensity_hxT`, one step on `[7789/10000, 131/168]`, in the Linnik paper's curve `ghx` (below);
 - `LinnikStairs7.charDensity_hx7_5` to `charDensity_hx7_19`, the last fifteen of twenty equal steps `[σ₁, σ₂]` of
   `[16/21, 5/6]` (`LinnikStairs7` has `charDensity_hx7_0` … `charDensity_hx7_19`; the paper's curve replaces the first
-  five by the step above, and the curve of the library's theorem at `11/5`, `Linnik22000E.linnik_22000e`, by the
-  steps of `LinnikCGLSteps`, see [chen-gupta-li-density.md](chen-gupta-li-density.md)). Each has the exponent `3/(3σ₁ − 1) + 1/2000`: Huxley's
+  five by the step above, and the curve `g7d` (`SieveCurve7D.g7d`) by the steps of `LinnikCGLSteps`, see
+  [chen-gupta-li-density.md](chen-gupta-li-density.md)). Each has the exponent `3/(3σ₁ − 1) + 1/2000`: Huxley's
   exponent at the step's left end, plus `1/2000`. The first step is `[16/21, 643/840]` with the exponent `14003/6000`,
   which is `7/3 + 1/2000`.
 - `LinnikStep.charDensity_step`, the exponent `101/50` on `5/6 ≤ σ ≤ 1`, by the same argument at fixed parameters.
@@ -104,5 +104,5 @@ bounds both variables by orthogonality, whatever the curve. Theorem 1.1, at `21/
 and in the resonant window (`SieveTypeIIHM.typeII_res`). It also uses the curve `g7d` (`SieveCurve7D.counts_7d`), in
 the estimate in two variables with the fourth moment on the leaves' region (`SieveLeafTwo.typeIITwoAt_leafX`); `g7d`
 takes the same fifteen steps and the last, with Ingham's and Chen, Gupta and Li's steps below `131/168`
-([ingham-density.md](ingham-density.md), [chen-gupta-li-density.md](chen-gupta-li-density.md)). The window route's
-theorems at `11/5`, `219/100` and `218/100` take `g7d` too.
+([ingham-density.md](ingham-density.md), [chen-gupta-li-density.md](chen-gupta-li-density.md)). The classical
+deduction `LinnikG7.linnik_g7d` takes `g7d` too.

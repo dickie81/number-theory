@@ -147,21 +147,22 @@ the main tree that fails in two, N times at most. Without the window the cells g
 of the certificate at 2135/1000 costs 0.990, and the window as it is in Lean is worth 8.0% there, where the model
 has 6.4%.
 
-What is assumed, beyond the paper: the estimate in two variables on the tabulated zone (two_factor.py states it;
-in Lean it is proved on the region SieveTwoZone7D.Zone7d, which holds all of the zone but under 2% of its width,
-as far as chains of primes: SieveTwoChain.chain_two); the bilinear Type I estimate without 2HD < q at the leaves
-(in Lean: SieveTypeIBAsymWide.leaves_ib_wide); Harman's comparison with these stops and these leaves (in Lean
-for a rest among the term's primes: SieveTwoComp.prop6_two); the same with the first small prime as the rest,
-where the small primes below the least rest that the zone takes (eps0) are left to Type I at no cost, which is
-Brun's sieve at a fixed level, whose gap is tiny but not o(1); role reversal, with the conditions that tie the
-variables of a reversed term together removed; and, with `--sieve` and `--upper`, the linear sieve's bounds F
-and f with the bilinear remainder and well-factorable weights; and, with `--res`, the resonant window on every box
-that passes its test: the cells of the rest's primes and the conditions that tie W to them are taken as for the
-estimate in two variables, and the constants of the mean values as harmless. Here "the paper" is the Linnik paper's version at 11/5 (in the git history); the paper now proves 43/20
-(Linnik21500.linnik_21500, hint_cert.py), with no window. In Lean, this decomposition with the window,
-without role reversal and without the stops whose rest is the first small prime gives the exponent 219/100
-(Linnik21900.linnik_21900; tree_cert.py is its search in exact integers), and with the reversal of a term of
-three primes through its largest, at one level, the exponent 218/100 (Linnik21800.linnik_21800; rev_cert.py).
+What is assumed, beyond the paper: the estimate in two variables on the tabulated zone (two_factor.py states it; in
+Lean it is proved on the region SieveTwoZone7D.Zone7d, which holds all of the zone but under 2% of its width, as far
+as chains of primes: SieveTwoChain.chain_two); the bilinear Type I estimate without 2HD < q at the leaves (in Lean:
+SieveTypeIBAsymWide.leaves_ib_wide); Harman's comparison with these stops and these leaves (in Lean for a rest among
+the term's primes: SieveTwoComp.prop6_two); the same with the first small prime as the rest, where the small primes
+below the least rest that the zone takes (eps0) are left to Type I at no cost, which is Brun's sieve at a fixed
+level, whose gap is tiny but not o(1); role reversal, with the conditions that tie the variables of a reversed term
+together removed; and, with `--sieve` and `--upper`, the linear sieve's bounds F and f with the bilinear remainder
+and well-factorable weights; and, with `--res`, the resonant window on every box that passes its test: the cells of
+the rest's primes and the conditions that tie W to them are taken as for the estimate in two variables, and the
+constants of the mean values as harmless. Here "the paper" is the Linnik paper's version at 11/5 (in the git history
+at commit 49dc981); the paper now proves 43/20 (Linnik21500.linnik_21500), with neither window, and 21/10
+(Linnik21000.linnik_21000), with the resonant window's test (res_test.py), both by hint_cert.py. In exact integers,
+tree_cert.py searches this decomposition with the window, without role reversal and without the stops whose rest is
+the first small prime, and rev_cert.py adds the reversal of a term of three primes through its largest, at one
+level.
 In this computation, with one level of reversal for terms of at most three primes (--flips 3 --nest 1 --no-first
 --h 0.007) the cells give 0.863 at 2.18 with 463000 nodes and 1.042 at 2.17; with --rev prime,offdiag they give
 1.067 at 2.18.

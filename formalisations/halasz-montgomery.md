@@ -28,9 +28,10 @@ Two forms of it are used.
 
 `hm_duality_W` is in the proofs of `Linnik21500.linnik_21500` and `Linnik21000.linnik_21000`, the Linnik paper's
 Theorems 1.2 and 1.1, through Huxley's estimate, and `hm_duality` and `sum_bin_hm` in that of
-`Linnik22000E.linnik_22000e`, the library's theorem at `11/5`, and in Theorem 1.1's resonant window (below). The
-axioms of these theorems (`lib/check/Check.lean`; for `linnik_21000`, `lib/check/CheckAll.lean`) are `propext`,
-`Classical.choice` and `Quot.sound`, so these depend on those only. `hm_duality` does not use the zero-free half-plane.
+`linnik_21000`, in Theorem 1.1's resonant window (below); the kernel's check of `linnik_21000`'s certificate was not
+finished on 16 November 2026. The axioms of `hm_duality_W`, `hm_duality` and `sum_bin_hm` (`lib/check/CheckAll.lean`)
+are `propext`, `Classical.choice` and `Quot.sound`, so these depend on those only. `hm_duality` does not use the
+zero-free half-plane.
 
 ## With weights, in mean square, and for two polynomials
 
@@ -53,7 +54,7 @@ For two polynomials `W₁` and `W₂`, Cauchy–Schwarz over a bin needs no coun
 - `SieveTypeIIHM.sum_bin_two`: `Σ_{χ∈R} |W₁(χ)||W₂(χ)|` is at most the product of the square roots of the two mean
   squares, each the smaller of orthogonality's bound and the one above (`sqTerm`);
 - `SieveTypeIIHM.sum_typeII_two_bins`: the sum over `χ ≠ 1` of `|W₁(χ)||W₂(χ)||B(χ)|`, by bins, as
-  `SieveTypeIIHM.sum_typeII_bins_hm` does for one polynomial;
+  `SieveTypeIIHM.sum_typeII_cls` (below) does by classes for one polynomial;
 - `SieveTypeIIHM.bin_bound_two` (`lib/pnt/SieveTwoZone.lean`): a bin's contribution as a power of `q`. For
   `P_i = q^{m_i}` it is at most a constant times `(1 + log qT)^{10} q^{L − 1/25000 + η}(Σ|a|²/P₁)^{1/2}(Σ|b|²/P₂)^{1/2}`
   when there are exponents `M_i` for the two mean squares (`M_i ≥ max(m_i, 1)`, or `M_i ≥ max(m_i, g + b(m_i))` with
@@ -69,8 +70,7 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `w ≤ 4·10⁻⁶` (`ZoneOK g L d e R`), there is `q₀` such that for `q ≥ q₀`, `S_i ⊆ (P_i, 2P_i]` with
   `(log_q P₁, log_q P₂)` in `R`, and at most `K₀` prime sums at scales `Q_j ≥ q^{e₁}` with
   `∏ Q_j ≤ 2^{K₀}q^L/(P₁P₂)`:
-  `Σ_{χ≠1} |W₁(χ)||W₂(χ)||∏_j Sp(χ, Q_j, h_j)| ≤ q^{L − 1/50000}(Σ|a|²/P₁)^{1/2}(Σ|b|²/P₂)^{1/2}`.
-  It is `SieveTypeIIHM.typeII_gen_hm` with two polynomials in place of one and a region in place of the window;
+  `Σ_{χ≠1} |W₁(χ)||W₂(χ)||∏_j Sp(χ, Q_j, h_j)| ≤ q^{L − 1/50000}(Σ|a|²/P₁)^{1/2}(Σ|b|²/P₂)^{1/2}`;
 - `SieveTypeIIHM.typeII_two_long`: the same bound for `P₁ ≥ q`, `P₂ ≥ q` and `P₁P₂ ≤ q^{L − 1/2000}`, for every
   `L`, at the curve `g = 1`: no density estimate enters, only the half-plane through the prime sums;
 - `SieveTypeIIHM.typeII_two_gen4` (`lib/pnt/SieveTwoTypeII4.lean`): `typeII_two_gen` with a third bound for each
@@ -89,18 +89,21 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `|W(χ)| ≥ V` is at most the moment. For a prime sum of length `q^s` and `ks ≥ 1`, the characters at which it
   exceeds `q^{st}` number about `q^{2ks(1−t)}`, the density hypothesis's count at the lengths `q^{1/k}`: the counts
   of the resonant window (`docs/research-opportunities.md`, §3.1), `SieveTypeIIHM.typeII_res` below;
-- `SieveTypeIIHM.sum_typeII_cls` (`lib/pnt/SieveResBins.lean`): `SieveHMBins.sum_typeII_bins_hm` for any classes of
-  the characters (a map `cl` into a finite type) in place of the bins of their zeros, whose proof uses nothing of
-  the bins but that they partition the characters: the resonant window classes the characters by the sizes of the
-  rest's prime sums with their zeros' bins;
-- `SieveTypeIIHM.bin_bound_exp` (`lib/pnt/SieveResZone.lean`): `SieveTypeIIHM.bin_bound_gen_hm` for one class of
+- `SieveTypeIIHM.sum_typeII_cls` (`lib/pnt/SieveResBins.lean`): Proposition 3′ pointwise, by classes of the
+  characters (a map `cl` into a finite type): with `|B(χ)| ≤ M_i` on the class `i`, the sum over `χ ≠ 1` of
+  `|W(χ)||B(χ)|` is at most `Σ_i M_i·binTerm`, `binTerm` the smaller of orthogonality's bound and the
+  Halász–Montgomery bound for a set of `#(class i)` characters. The resonant window classes the characters by the
+  sizes of the rest's prime sums with their zeros' bins;
+- `SieveTypeIIHM.bin_bound_exp` (`lib/pnt/SieveResZone.lean`): a class's term as a power of `q`, for one class of
   characters with its exponents given, the prime sums at most `C₀q^E` and the class at most `C_d(qT)^γ(1 + log qT)^{10}`
-  characters, under `ResBinOK L d e E γ m` (orthogonality, or both of the Halász–Montgomery inequalities);
+  characters, under `ResBinOK L d e E γ m` (orthogonality, or both of the Halász–Montgomery inequalities): at most a
+  constant times `(1 + log qT)^{10}q^{L − 1/25000 + η}(Σ|a|²/P)^{1/2}`;
 - `SieveTypeIIHM.card_Sp_large` (`lib/pnt/SieveResCount.lean`): the `2k`-th moment for the smoothed prime sums
   `SieveWeight.Sp` (a tuple of primes with a given product is one of `k^k`), so the characters at which a prime sum
   of length `Q = q^s` is at least `Q^u` number at most `C_k q^{max(1, ks) + ks(1 − 2u)}`;
-- `SieveTypeIIHM.typeII_res` (`lib/pnt/SieveResTypeII.lean`), **Proposition 3′ for the resonant window**: the
-  conclusion of `SieveTypeIIHM.typeII_gen_hm` for a curve with its counts when `ResCond` holds at the variable's
+- `SieveTypeIIHM.typeII_res` (`lib/pnt/SieveResTypeII.lean`), **Proposition 3′ for the resonant window**: for a
+  curve with its counts, `S ⊆ (P, 2P]` and prime sums at scales `Q_j ≥ q^{e₁}` with `∏ Q_j ≤ 2^{K₀}q^L/P`,
+  `Σ_{χ≠1} |W(χ)||∏_j Sp(χ, Q_j, h_j)| ≤ q^{L − 1/50000}(Σ|a|²/P)^{1/2}` when `ResCond` holds at the variable's
   exponent and the rest's: the characters are classed by their zeros' bin and the size of each prime sum of the
   rest, in steps of `10⁻⁶` of its exponent; a class's count is the least of the curve's and each large prime sum's
   moment count, and `bin_bound_exp` bounds the class;
@@ -108,16 +111,15 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   on each prime of the family, so that the estimate at each frequency is asked for only on the scales
   `Q_i ≥ q^{lo i}`; `SieveTypeIIHM.box_res`, `SieveTypeIIHM.typeII_gcmp_res` and `SieveTypeIIHM.chainTU_res`
   (`lib/pnt/SieveResChain.lean`): `typeII_res` at each frequency for a polynomial over the integers cut into dyadic
-  blocks, the family with comparisons on its primes (`SieveChain.typeII_gcmp`'s), and the chains of primes times a
-  rough cofactor with the cofactor as the variable and all the chain's primes as the rest
-  (`SieveChain.chainTU_bound`'s), given `ResCond` at the cofactor's blocks and the primes' scales. No certificate
-  takes the chains this way, so `chainTU_res` is a result of a route that nothing proves (Conditional results,
-  below);
+  blocks, the family with comparisons on its primes, and the chains of primes times a rough cofactor with the
+  cofactor as the variable and all the chain's primes as the rest, given `ResCond` at the cofactor's blocks and the
+  primes' scales. No certificate takes the chains this way, so `chainTU_res` is a result of a route that nothing
+  proves (Conditional results, below);
 - `SieveTypeIIHM.box_res_gen` and `SieveTypeIIHM.chain_res_core` (`lib/pnt/SieveResFull.lean`): `typeII_res` for a
   polynomial over a finite set with at most `D` elements for each value, and the families of tuples of primes in
   no order (`SieveTwoChain.chain_two_core`'s) with one variable, the product of the entries outside a rest whose
-  entries have their own lower bounds. Through `full_res_bound` and `full_res_exp` they are in the proofs of the
-  theorems at `2115/1000` and `2100/1000` (`Linnik21150.linnik_21150`, `Linnik21000.linnik_21000`);
+  entries have their own lower bounds. Through `full_res_bound` and `full_res_exp` they are in the proof of the
+  theorem at `2100/1000` (`Linnik21000.linnik_21000`);
 - `SieveResTest.resT_sound` and `SieveResTest.resT_sound_cells` (`lib/pnt/SieveResTest.lean`; the test
   `SieveResTest.resT` in `lib/pnt/SieveResTestDefs.lean`, written by `tools/linnik/res_test.py`): the kernel's test
   of `ResBox` on the curve `ghx` for a box's rest, led by a hint, is sound. The test bounds, for every count
@@ -126,9 +128,13 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   hint into intervals (their ends on the grid `2^-12`, 13 bits each), on each of which the test takes the line above
   each term that is least at the interval's midpoint (among the moments' lines of `k₀ − 1` and `k₀ = ⌈1/lo⌉`, the
   curve's bound at the interval's left end, and the line `1 − γ/A` with `A` the larger of the end steps' factors),
-  and likewise the clamp's, checked at the interval's ends in fixed point (`2^64`). The theorem at `2115/1000` uses
-  it, through `SieveResTest.resX_sound`; the theorem at `2100/1000` uses the hinted form instead
-  (`SieveResTest.resXH_sound_cells`, and the test at the two corners `SieveResTest.resYH`);
+  and likewise the clamp's, checked at the interval's ends in fixed point (`2^64`). `SieveResTest.resX_sound` and
+  `SieveResTest.resX_sound_cells` (`lib/pnt/SieveResLVTest.lean`; the tests `SieveResTest.resT2` and
+  `SieveResTest.resX` in `lib/pnt/SieveResTestDefs.lean`): the same for `resX`, which is `resT` or, when its count of
+  intervals `k` is `0`, `resT2`, `resT` with Chen, Gupta and Li's large values of the powers `k₀ − 1` and `k₀ − 2` as two more
+  bounds for each term; the tests `SieveAd.chkIR` and `SieveAd.chkIRC` below read `resX`. The theorem at
+  `2100/1000` uses its hinted form (`SieveResTest.resXH_sound_cells`, and the test at the two corners
+  `SieveResTest.resYH`);
 - `SieveTypeIIHM.chain_res_exp` (`lib/pnt/SieveResTerm.lean`): `SieveTwoTerm.chain2_bound` by the resonant window: the
   strictly decreasing chains of primes with a rest at given positions, each rest prime at least `q^{lo i}` and the
   rest's product in `[q^{ρ₁}, q^{ρ₂}]`, times their rough cofactors, evaluated given
@@ -139,8 +145,8 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   tree whose rest passes `SieveResTest.resT` has its term evaluated by `chain_res_exp`, the variable being the box's
   other primes and the cofactor; so the tests with the resonant window for an evaluation of kind `3` (and
   `fillTestsF`'s otherwise) are sound, and `SieveAd.pr_of_partD` applies to a search with them. The certificate at
-  `2115/1000` uses the tests with the cofactor in the rest instead (`SieveAd.resTestsFC`), so `resTestsF_sound` is a
-  result of a route that nothing proves (Conditional results, below);
+  `2100/1000` uses the tests with the cofactor in the rest instead, in their hinted form (`SieveAd.resTestsFCH_sound`,
+  below), so `resTestsF_sound` is a result of a route that nothing proves (Conditional results, below);
 - `SieveAd.evIF_froz_resT` (`lib/pnt/SieveAdFrozRes.lean`): the same over the frozen part of a reversal: when
   `chkIR` passes the box `ch ++ β`, the term of the chain `ch` over the frozen part is evaluated, by
   `SieveTypeIIHM.full_res_exp` on the frozen tuples `(a, y, c, y′)` with the rest among the frozen primes `a` and the
@@ -153,10 +159,12 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   overshoot `N₂`, the term is the sum over the full tuples `(rt, y)` of one cofactor prime, and `full_res_exp` applies
   with `y` in the rest, at least `q^{lo}` for the bound that `N₁ < ∏rt·y` gives. `SieveAd.evI_resCE` and
   `SieveAd.resTestsFC_sound` (`lib/pnt/SieveAdResCof.lean`; the test `SieveAd.chkIRC`, the tests `SieveAd.resTestsFC`
-  and the decoder `SieveAd.cfgIMRC` in `lib/pnt/SieveAdResDefs.lean`): a box of the main tree whose upper ends sum
+  in `lib/pnt/SieveAdResDefs.lean`): a box of the main tree whose upper ends sum
   to at most `DEN − 2` and whose lower ends with twice its least prime's reach `DEN + 1` has its cofactor, one prime
   in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`, in the rest when the test's bit after the box's cells is
-  set; so the tests with it are sound;
+  set; so the tests with it are sound. The certificate at `2100/1000` uses `chain_res_cof` through the hinted tests
+  (`SieveAd.resTestsFCH_sound`, below), so `resTestsFC_sound` is a result of a route that nothing proves
+  (Conditional results, below);
 - `SieveAd.evIF_froz_resC` and `SieveAd.evIF_froz_resTC` (`lib/pnt/SieveAdFrozResCof.lean`; the test
   `SieveAd.chkIRF` in `lib/pnt/SieveAdFrozResDefs.lean`): the same in the trees over the frozen parts. With the
   frozen number in the slab `(x^{e₁/DEN}, x^{e₂/DEN}]`, a chain whose upper ends with `e₂` sum to at most `DEN − 2`
@@ -283,16 +291,16 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `[5/7, 131/168]`), whose zone is in the git history; its name stays, as the certificate's tests are written for it;
 - `SieveTwoZone7D.typeII_two_hx`: `typeII_two_gen` for `ghx` on `Zone7d L`, with no hypothesis.
 
-The sieve meets the estimate through families of sums (in one variable `SieveFamily.typeII_sharp`): a
-polynomial variable with coefficients, primes with smooth weights at fixed scales, and sharp comparisons between
-them, each with a prime as a pivot. For two polynomial variables:
+The sieve meets the estimate through families of sums: a polynomial variable with coefficients, primes with smooth
+weights at fixed scales, and sharp comparisons between them, each with a prime as a pivot. For two polynomial variables:
 
-- `SieveFamilyGen` (`lib/pnt/SieveFamilyGen.lean`) is `SieveFamily`'s argument with the polynomial part abstract. It
-  uses the variable `m` only through its value, its coefficient, its parts `φ_j(m)` of the comparisons' forms, the
-  sum of `|a_m|`, and one bound, the Type II estimate at each frequency of the separated sum; there these are data
-  (`m` in a finite set of any type) and a hypothesis. `SieveFamilyGen.family_bound_gen`,
-  `SieveFamilyGen.sharp_explicit_gen` and `SieveFamilyGen.sharp_gen` are `family_bound`, `typeII_sharp_explicit` and
-  `typeII_sharp` in that form; the lemmas on the cut-off and the pivots are `SieveFamily`'s, unchanged;
+- `SieveFamilyGen` (`lib/pnt/SieveFamilyGen.lean`) is the argument for such a family with the polynomial part
+  abstract. It uses the variable `m` only through its value, its coefficient, its parts `φ_j(m)` of the comparisons'
+  forms, the sum of `|a_m|`, and one bound, the Type II estimate at each frequency of the separated sum; there these
+  are data (`m` in a finite set of any type) and a hypothesis. `SieveFamilyGen.family_bound_gen` bounds a smooth
+  family, `SieveFamilyGen.sharp_explicit_gen` a family cut by sharp comparisons with pivots, explicitly, and
+  `SieveFamilyGen.sharp_gen` gives it `|𝒜 − ℬ/φ(q)| ≤ A₀q^{L−δ}/φ(q)` when the estimate is `A₀q^{L − 1/50000}`; the
+  lemmas on the cut-off and the pivots are `SieveFamily`'s;
 - `SieveFamilyTwo.box_two` (`lib/pnt/SieveFamilyTwo.lean`) is the hypothesis for pairs `(m₁, m₂)`: a phase
   `κ + Σ_j ξ_j(φ_j(m₁) + ψ_j(m₂))` is a twist of `a` times a twist of `b`, and `χ(m₁m₂) = χ(m₁)χ(m₂)`, so the sum
   over the pairs is a product of two polynomials, which Proposition 3′ in two variables bounds
@@ -308,7 +316,7 @@ them, each with a prime as a pivot. For two polynomial variables:
   dyadic weights. For `0 < L ≤ 5/2`, `m_i ∈ S_i ⊆ (P_i, P_i′]` with `P_i ≥ 1`, `P_i′ ≤ 2q^L` and `R` on the rectangle
   `[log_q P₁, log_q P₁′] × [log_q P₂, log_q P₂′]`, the primes over all the primes up to `⌊2q^L⌋`, and comparisons
   as above that force each prime to be at least `2q^{e₁}` and `m₁m₂∏x_i ≤ 2q^L`: the family's sum over
-  `𝒜 − ℬ/φ(q)` is at most `A₀B₀q^{L−δ}/φ(q)`. It is `SieveUnwGen.unw_gen` (`SieveTypeIIU.typeII_unw`'s argument
+  `𝒜 − ℬ/φ(q)` is at most `A₀B₀q^{L−δ}/φ(q)`. It is `SieveUnwGen.unw_gen` (the families with sharp prime ranges,
   with the polynomial part abstract and cut into blocks by a map) for the pairs of dyadic blocks, at most
   `(3 + 4 log q)²` of them.
 
@@ -341,8 +349,7 @@ them, each with a prime as a pivot. For two polynomial variables:
   `2 < L ≤ 5/2`, with no route).
 
 - `SieveTwoComp.prop6_two`, **Harman's comparison with stops in two variables** (`lib/pnt/SieveTwoComp.lean`): the
-  paper's Proposition 4.8 (`SieveP6ib.prop6ib`) with this estimate in place of the window, and with its Lemma 4.3 on
-  the wider region. For a family of strictly decreasing chains `rt` in boxes `q^{lo_i} ≤ rt_i ≤ q^{hi_i}`, all at
+  Linnik paper's Proposition 4.9, Harman's comparison in two variables, with its Lemma 4.3 on the wider region. For a family of strictly decreasing chains `rt` in boxes `q^{lo_i} ≤ rt_i ≤ q^{hi_i}`, all at
   least `z₀ = ⌈q^{a₀}⌉`, a set `S₀` of indices whose product `c` enters a window `(u, v)` with `u + a₀ < v`,
   `u − Σ_{S₀} lo ≤ t` and `Σ_{S₀} hi < v`, a disjoint set `Sr ≠ ∅` whose product, the rest, has its exponent in
   `[ρ₁, ρ₂]`, the region at the `(m₁, m₂)` with `u ≤ m₁ ≤ v` and `L − ρ₂ − ε ≤ m₁ + m₂ ≤ L − ρ₁ + ε`, and a split
@@ -352,25 +359,19 @@ them, each with a prime as a pivot. For two polynomial variables:
   tree over the primes below `z₀` stops when `c∏P` passes `⌈q^u⌉`; a stop's first variable is `c∏P·p`, in the
   window because the steps are below `z₀`, its rest is the chain's, and its second variable is all the rest of `n`
   (`SieveTwoTerm.chain2_bound`, from `chain_two` on the chain and the primes of its cofactor). The tree and its
-  leaves are the paper's (`SieveTwoP6.prop6_two_core` is `SieveP6ib.prop6ib_core` with the rest carried along the
-  extensions of a chain), and the leaves' sizes are those of `SieveTypeIBAsymWide.leaves_ib_wide`
-  (`SieveP6LeavesWide.leavesOK_wide`). `SieveTwoComp.prop6_two_at` is the statement for an exponent `2 < L ≤ 5/2`,
-  with no route: these lemmas use a route only for its exponent.
+  leaves are the paper's (`SieveTwoP6.prop6_two_core` carries the rest along the extensions of a chain), and the
+  leaves' sizes are those of `SieveTypeIBAsymWide.leaves_ib_wide` (`SieveP6LeavesWide.leavesOK_wide`).
+  `SieveTwoComp.prop6_two_at` is the statement for an exponent `2 < L ≤ 5/2`, with no route: these lemmas use a route
+  only for its exponent.
 
 The region enters through a rectangle cut by a band of the sum of the two exponents: the estimate holds for a
 family whose two variables have their exponents in such a set inside the region. A set of tuples cut by another
 slanted side of the region is a union of such sets and a remainder that these lemmas do not evaluate.
 
-They are in the proofs of the paper's two theorems ([harman-sieve.md](harman-sieve.md)). Two theorems of the
-library in no paper used them first. Linnik's theorem with exponent `219/100`
-(`Linnik21900.linnik_21900`) has for its decomposition a tree of Buchstab steps with the window's tests
-and two tests by this estimate, a box evaluated outright (`SieveAd.evI_two`, from `chain2_bound`) and the
-comparison at a floor (`SieveAd.evJ_two`, from `prop6_two_at`); the term with its cofactor in the rest
-(`chain2R_bound`) is not used there. Linnik's theorem with exponent `218/100` (`Linnik21800.linnik_21800`) adds
-role reversal for a term of three primes to that tree, and uses the two tests under two more conditions on the
-tuples (`SieveAd.evI_twoE`, `SieveAd.evJ_twoE`), for the trees of the reversed terms.
-`lib/check/CheckAll.lean` prints their axioms, which are `propext`,
-`Classical.choice` and `Quot.sound`. They are the estimate in two variables of
+They are in the proofs of the paper's two theorems ([harman-sieve.md](harman-sieve.md)). The sieve's two tests by
+this estimate are a box evaluated outright (`SieveAd.evI_two`, from `chain2_bound`) and the comparison at a floor
+(`SieveAd.evJ_two`, from `prop6_two_at`), and the same under more atoms, uniformly in them (`SieveAd.evI_twoE`,
+`SieveAd.evJ_twoE`). These lemmas are the estimate in two variables of
 [`docs/research-opportunities.md`](../docs/research-opportunities.md) (§3.1). What that section's computations
 below `2.18` use and these do not give: role reversal for terms of more primes and at more than one level, and the
 comparison with its rest among the small primes.
@@ -404,7 +405,7 @@ the others at most `B`.
 - **The kernel bound is a hypothesis.** `B` is any bound on the off-diagonal kernels. Each use supplies its own:
   - Huxley's estimate bounds the kernels through the functional equation
     (`LinnikReflect.norm_hTerm_le_reflect`; [huxley-density.md](huxley-density.md)).
-  - The Type II estimate's top piece takes `B` from `LinnikOffDiag.norm_offK_le`:
+  - The Type II estimates by bins take `B` from `LinnikOffDiag.norm_offK_le` (`SieveTypeIIHM.offK_bound`):
     `C(2P)^{1/12−δ}(2q)^{5/12+δ+2ε′}`. That bound moves the kernel's integral to `Re w = 1/12 − δ`. There it uses the
     functional equation and the bound on `Re s = 11/12 + δ` that the zero-free half-plane gives
     (`LinnikLindelof.lindelof`; [openai-half-plane.md](openai-half-plane.md)).
@@ -423,16 +424,9 @@ Both of the paper's theorems, at `43/20` (Theorem 1.2) and at `21/10` (Theorem 1
 
 Theorem 1.1 uses it in two more places: in the resonant window (`SieveTypeIIHM.typeII_res`), where `bin_bound_exp`
 bounds each class of characters by orthogonality or by the inequality at one height (`SieveTypeIIHM.sum_bin_hm`, not
-the mean square), as the library's theorem at `11/5` did; and in the estimate in two variables
+the mean square), with the kernel bound above; and in the estimate in two variables
 with the fourth moment on the leaves' region (`SieveLeafTwo.typeIITwoAt_leafX`), where the first variable's mean
 square is bounded by it on the pieces of the curve `g7d` from `163/210` on, and by orthogonality below.
-
-The library's theorem at `11/5` used it directly on the top piece `[5/6, 11/12]` of its Type II estimate in one
-variable: there `SieveHMBins` and `SieveTypeIIHM` bound each bin of characters at one height by
-`SieveTypeIIHM.sum_bin_hm`, with the kernel bound above, and the window of that theorem,
-`[43457/100000, 46959/100000]·L` at `L = 11/5`, is the window of this branch (`SieveTypeIIU22000D`). (The earlier windows, `[41556/100000, 47531/100000]·L` at `L = 278/125`,
-  `[41479/100000, 47555/100000]·L` at `L = 89/40` and `[41335/100000, 48069/100000]·L` at `L = 899/400`, are in the git
-  history.)
 
 ## Conditional results
 
@@ -441,6 +435,7 @@ result uses: lemmas of a route that nothing proves (`scripts/dead_code.py` reads
 
 | Result | Hypothesis | Lean |
 |---|---|---|
-| The tests with the resonant window for an evaluation of kind `3`, the rest among the box's cells only, are sound | a route and the parameters of the induction (`SieveRoute.Route`, `SieveCert.IBPar`); the certificate at `2115/1000` uses the tests with the cofactor in the rest (`SieveAd.resTestsFC_sound`) | `SieveAd.resTestsF_sound` |
+| The tests with the resonant window for an evaluation of kind `3`, the rest among the box's cells only, are sound | a route and the parameters of the induction (`SieveRoute.Route`, `SieveCert.IBPar`); the certificate at `2100/1000` uses the tests with the cofactor in the rest, with hints and the window's test at the two corners (`SieveAd.resTestsFYH_sound`) | `SieveAd.resTestsF_sound` |
+| The tests with the resonant window and the cofactor in the rest for an evaluation of kind `3`, the window's lines found by the kernel, are sound | a route and the parameters of the induction (`SieveRoute.Route`, `SieveRoute.RouteOK`, `SieveCert.IBPar`); the certificate at `2100/1000` uses the tests with the lines named by the hint (`SieveAd.resTestsFCH_sound`) | `SieveAd.resTestsFC_sound` |
 | The chains of primes times a rough cofactor, by the resonant window, with all the chain's primes as the rest | a route (`SieveRoute.Route`, `SieveRoute.RouteOK`) | `SieveTypeIIHM.chainTU_res` |
 | The tests with the window's test at the two corners of a box for an evaluation of kind `4`, the window's lines found by the kernel, are sound | a route and the parameters of the induction (`SieveRoute.Route`, `SieveCert.IBPar`); the certificate at `2100/1000` uses the tests with the lines named by the hint (`SieveAd.resTestsFYH_sound`) | `SieveAd.resTestsFY_sound` |

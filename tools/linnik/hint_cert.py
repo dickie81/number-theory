@@ -54,24 +54,24 @@ a bound whatever the hints are (`lib/pnt/SieveAdDir.lean`).
     the plan cut into parts of at most `cap` predicted seconds of the kernel: consecutive cells of one prime, a
     heavy cell cut by its own Buchstab step.
 
-It writes `lib/pnt/SieveHint<TAG>.lean` (the exponent and the search), `SieveHint<TAG>P<k>.lean` (the parts, each
-by `decide +kernel`) and `Linnik<TAG>.lean` (the route, the bound from the parts, and the theorem). With
-`--check`, nothing is written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a
-difference); it is not part of `check_certificate.py`, for it searches for ten minutes on four cores at
-`21500`. With `--cache DIR` the plan of each cell of the first prime is kept in DIR, so that a long plan can be
-stopped and taken up again. With `--try`, the search is planned with other parameters (cells of side H, chains'
-cells of side HF over the frozen parts, boxes of at most MAXLEN primes reversed; `--pos`, `--lam N`, `--blk N`,
-`--skip N`, `--energy` as `Par.pos`, `Par.lam`, `Par.blk`, `Par.skip`, `Par.energy`; `--hl`, the window's lines
-named by the hint, `Par.hl`; `--chunk N`, the cells' theorems in files of at most N, `Par.chunk`) and its cost and
-the plan's size are printed; with `--out`, its files are written to DIR. A cell kept in the cache without `--hl` is
-written with it all the same: its parts' hints are transcoded (`transcode_hl`). PyPy runs it one and a half times as
-fast as CPython, with the same output. With `--cplan` the search of each cell of the first prime is the C planner's
-(`cplan.py`, `cplan/hint_plan.c`: `Planner.plan`, the lazy hints and the replan of `row_job`, method by method):
-the same plans, costs and counts as PyPy's (`cplan_test.py`), 20 to 50 times as fast and in a fraction of the
-memory. With `--cgen` the generator is in C too (`cplan/gen.h`): the cut of a heavy cell into parts, the hints of
-each part with the kernel's mirror on them (`cut`, `add_part`, `dHints`, `dPart`), the parts of the light cells and
-the transcoding of a cached cell's hints for `--hl` (`hl_parts`), with the same parts, hints, costs and counts as
-the Python generator's (`cgen_test.py`); Python writes the Lean files.
+It writes `lib/pnt/SieveHint<TAG>.lean` (the exponent and the search), `SieveHint<TAG>P<k>.lean` (the parts, each by
+`decide +kernel`) and `Linnik<TAG>.lean` (the route, the bound from the parts, and the theorem). With `--check`,
+nothing is written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a difference);
+`check_certificate.py` runs it at `21500` with `--cplan` (about a minute and a half on four busy cores; fifteen
+minutes without `--cplan`). With `--cache DIR` the plan of each cell of the first prime is kept in DIR, so that a
+long plan can be stopped and taken up again. With `--try`, the search is planned with other parameters (cells of
+side H, chains' cells of side HF over the frozen parts, boxes of at most MAXLEN primes reversed; `--pos`, `--lam N`,
+`--blk N`, `--skip N`, `--energy` as `Par.pos`, `Par.lam`, `Par.blk`, `Par.skip`, `Par.energy`; `--hl`, the window's
+lines named by the hint, `Par.hl`; `--chunk N`, the cells' theorems in files of at most N, `Par.chunk`) and its cost
+and the plan's size are printed; with `--out`, its files are written to DIR. A cell kept in the cache without `--hl`
+is written with it all the same: its parts' hints are transcoded (`transcode_hl`). PyPy runs it one and a half times
+as fast as CPython, with the same output. With `--cplan` the search of each cell of the first prime is the C
+planner's (`cplan.py`, `cplan/hint_plan.c`: `Planner.plan`, the lazy hints and the replan of `row_job`, method by
+method): the same plans, costs and counts as PyPy's (`cplan_test.py`), 20 to 50 times as fast and in a fraction of
+the memory. With `--cgen` the generator is in C too (`cplan/gen.h`): the cut of a heavy cell into parts, the hints
+of each part with the kernel's mirror on them (`cut`, `add_part`, `dHints`, `dPart`), the parts of the light cells
+and the transcoding of a cached cell's hints for `--hl` (`hl_parts`), with the same parts, hints, costs and counts
+as the Python generator's (`cgen_test.py`); Python writes the Lean files.
 
 Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
 primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over frozen parts; nine minutes on four
@@ -81,21 +81,21 @@ on the 17 files; with the configurations searched by the kernel and the box read
 certificate of this theorem, it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20 ms. At 2140/1000 with cells of side
 0.003, chains' cells 0.006 and boxes of two to six primes of either sign reversed, the search costs 0.96408 K on
 2.7·10^8 boxes with no price on the kernel's time (1.87·10^7 steps), and 0.99055 K on 3.5·10^8 boxes with `lam = 10`
-(9.8·10^6 steps, 39 part files; eighty minutes on three cores with PyPy): the certificate `21400`, superseded since,
-its files in the git history.
+(9.8·10^6 steps, 39 part files; eighty minutes on three cores with PyPy): the certificate `21400`.
 Of the boxes of that search, 2% to 9% are under the plan that is kept (four cells of the first prime from
 x^0.28 to x^0.50); with `skip = 3`, on every sixth cell of the first prime, the search is 0.55 of its boxes and
 the plan costs 0.17% more, on 1% fewer steps (13 November 2026).
 At 2135/1000 with the leaves of the comparisons cut in three (`energy`) and the cells of 2140/1000, the search costs
 0.98988 K on 3.7·10^8 boxes with no price on the kernel's time (2.4·10^7 steps, 98 part files, a predicted 6.5 hours
-of the kernel; three hours on four cores with PyPy): the certificate `21350`, superseded since, its files in the git
-history. With `lam = 10` its first prime's cells from x^0.43 to x^0.50 cost 2.1% more, and the planner, which then
-tries each reversal at the full limit, takes fifteen to twenty-five minutes on a cell near x^0.40 (13 November
-2026).
+of the kernel; three hours on four cores with PyPy): the certificate `21350`. With
+`lam = 10` its first prime's cells from x^0.43 to x^0.50 cost 2.1% more, and the planner, which then tries each
+reversal at the full limit, takes fifteen to twenty-five minutes on a cell near x^0.40 (13 November 2026).
 At 2115/1000 (`21150`: the resonant window in both trees with the cofactor and the large values of the powers, the
 main tree to depth 8, `lam = 1`) the search costs 0.88304 K on 4.9·10^8 boxes (3.04·10^7 steps, 612 part files of
 57 689 parts, a predicted 40 hours of the kernel by `SEC2`; the cells of the first prime planned on two machines,
-about nine hours on four cores each), the cells' theorems in 17 files (15 November 2026).
+about nine hours on four cores each), the cells' theorems in 17 files (15 November 2026): the certificate `21150`.
+The files of the certificates `21400`, `21350` and `21150` are not in `lib/pnt`; they are in the git history (those
+of `21150` at commit 76abe3c).
 At 2100/1000 (`21000`: with the window's test at the two corners of a box, consecutive cells that one test of
 the window covers as one cell, cells of side 0.003 over the frozen parts, every configuration of the estimate in
 two variables searched over them, a box of two primes of the main tree cut in two where that is worth the
@@ -134,8 +134,13 @@ CERTS = {# the tests, the reversal and their soundness are `SieveAd.Plain`'s (`p
          '21400': dict(lnum=2140, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=10, sec=2),
          # and the leaves of the comparisons cut in three where the paper's conditions fail
          '21350': dict(lnum=2135, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True),
-         # and the resonant window for the main tree's boxes (`SieveAd.chkIR`); this and the next are plans only: the
-         # library keeps the window's decoder with the cofactor alone (`SieveAd.cfgIMRC`), so their files are not written
+         # and the resonant window for the main tree's boxes (`SieveAd.chkIR`); this and the next three are plans
+         # only. The script writes the window's certificates with the cofactor only (`--cof`), so the files of this
+         # and the next are not written; and the library's decoders of the window's configurations with the
+         # cofactor are those under `--hl` (`SieveAd.cfgIMRCH`), `--ycorner` (`SieveAd.cfgIMY`) and both
+         # (`SieveAd.cfgIMYH`), so the files
+         # that `21100` and `21150` write, with neither, do not compile: the decoder they name is gone with the
+         # certificate at 2115/1000 (in the git history at commit 76abe3c)
          '21300': dict(lnum=2130, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
                        res=True),
          # and for the boxes of the trees over the frozen parts (`SieveAd.frozResTestsC`)
@@ -1139,7 +1144,8 @@ class Planner(fl.FlipSearch):
         return cs, hs
 
     def cfgIMRC(self, bl, h):
-        """`SieveAd.cfgIMRC`: `cfgIPR` with a set of one more bit than the box has cells, the cofactor's."""
+        """`cfgIPR` with a set of one more bit than the box has cells, the cofactor's (the Lean decoder it mirrored
+        is gone with the certificate at 2115/1000, in the git history at commit 76abe3c)."""
         return self.cfgIPR(2 ** (len(bl) + 1), h)
 
     def cfgJM(self, bl, h):
@@ -1453,7 +1459,7 @@ class Planner(fl.FlipSearch):
         """A node of the main tree."""
         kind = node[0]
         w = len(bl)
-        wI = w + (1 if self.res_cof is True else 0)    # an evaluation's set, with the cofactor's bit (`cfgIMRC`)
+        wI = w + (1 if self.res_cof is True else 0)    # an evaluation's set, with the cofactor's bit
         if kind == 'V':
             out.append((31, 6))
         elif kind == 'E':
@@ -2019,9 +2025,11 @@ def defs_file(par_):
         tests, cfgI, dimp, alt, ftests = (
             ('resTestsFYH', 'cfgIMYH', 'SieveAdResYHDefs', 'altFDYH', 'frozResTestsYH') if yc else
             ('resTestsFCH', 'cfgIMRCH', 'SieveAdResHDefs', 'altFDRH', 'frozResTestsCH'))
+    # the decoder of the main tree's configurations with neither `--ycorner` nor `--hl`, `cfgIMRC`, is not in the
+    # library (see `CERTS`), and a certificate with either does not use it: its doc names the decoders it uses, below
     resdoc = ('With the resonant window: an evaluation of kind `3` in the main tree is `SieveAd.chkIRC`\'s\n'
               '(`SieveAd.resTestsFC`; the rest tested by `SieveResTest.resX`, with the box\'s cofactor in it when it is\n'
-              'one prime), its configuration read by `SieveAd.cfgIMRC`' + (
+              'one prime)' + ('' if yc or hl else ', its configuration read by `SieveAd.cfgIMRC`') + (
                   '; over the frozen parts too, the box `ch ++ β` (`SieveAd.frozResTestsC`, with\n'
                   '`SieveAd.chkIRF`), read by `SieveAd.cfgIFR`.\n\n' if resF else '.\n\n') if res else '')
     if yc:

@@ -17,7 +17,7 @@ every `q ≥ 1`, `1/2 + δ₀ ≤ σ ≤ σ₂` and `T ≥ 2`, at most `C(qT)^{(
 an `L`-function with a zero in `Re s ≥ σ`, `|Im s| ≤ T`. `LFunction` is Mathlib's `DirichletCharacter.LFunction`.
 
 The theorem is in the proofs of `Linnik21000.linnik_21000`, the Linnik paper's Theorem 1.1 (at `21/10`), and of
-`Linnik22000E.linnik_22000e`, the library's theorem at `11/5`, whose axioms are `propext`, `Classical.choice` and
+`LinnikG7.linnik_g7d`, the classical deduction from the curve `g7d`, whose axioms are `propext`, `Classical.choice` and
 `Quot.sound` (`lib/check/CheckAll.lean`, `lib/check/Check.lean`), so it depends on those only. The paper's
 Theorem 1.2, at `43/20`, does not use it. It does not use the zero-free half-plane:
 `Eis.LFunction_ne_zero_of_re_gt` is not among the declarations its proof depends on.
@@ -87,7 +87,7 @@ of this estimate is reachable from `Linnik21500.linnik_21500` (`scripts/decl_rea
 `LinnikInghamC` is in its import cone, through `LinnikStairs7`. Theorem 1.1, at `21/10`, uses it through the density
 curve `g7d` (`SieveCurve7D.counts_7d`), in the estimate in two variables with the fourth moment on the leaves' region
 (`SieveLeafTwo.typeIITwoAt_leafX`), which evaluates the leaves cut in three; there the curve counts the characters
-from `4/7` on. The same curve is that of the library's theorems at `11/5`, `219/100` and `218/100`, whose Type II
-estimate in one variable is on a window. It takes the nineteen steps
+from `4/7` on. The same curve gives the classical deduction `LinnikG7.linnik_g7d`, Linnik's theorem with exponent
+`11667/5000 + η`. It takes the nineteen steps
 `LinnikStairs7.charDensity_in7_0` to `charDensity_in7_18` on `[4/7, 99/140]`, and on `[99/140, 5/7]` the last step at
 `ε = 1/400000`, `LinnikCGLSteps.charDensity_inT`.

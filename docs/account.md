@@ -86,7 +86,7 @@ result's note finds it unused; blank where neither has been checked.
 | At most `C(qT)^{A(1−σ)}(log qT)^{10}` characters mod `q` have a zero with `β ≥ σ`, `\|γ\| ≤ T`: Ingham's `A = 3/(2 − σ)` and Huxley's `3/(3σ − 1)`, in steps | `LinnikInghamC.charDensity_ingham_c`, `LinnikHuxStep.charDensity_gen` | no |
 | The same with `A = 101/50` on `[5/6, 1]` | `LinnikStep.charDensity_step` | yes |
 | Chen, Gupta and Li's `(qT)^{(7/3)(1−σ)+ε}` on `[5/7, 16/21]`; and, on 30 steps of `[5/7, 131/168]`, exponents within `10^{−4}` of `4/(1 + σ)` with `(log qT)^{10}` | `LinnikCGLDensity.cglDensity`, `LinnikCGLSteps.charDensity_s0`, `LinnikCGLSteps.charDensity_s29` | |
-| The window route's curve `g*`, glued from these pieces: at most `2.3334(1 − σ)`, its largest exponent `7/3` (in Lean `2.3334`) at `σ = 5/7` | `SieveCurve7D.counts_7d`, `SieveCurve7D.g7d_le_lin` | yes |
+| The curve `g*`, glued from these pieces: at most `2.3334(1 − σ)`, its largest exponent `7/3` (in Lean `2.3334`) at `σ = 5/7` | `SieveCurve7D.counts_7d`, `SieveCurve7D.g7d_le_lin` | yes |
 | The Linnik paper's curve `g_H`: the trivial count below `7789/10000`, Huxley's steps above, with no estimate of Ingham's or of Chen, Gupta and Li's | `SieveCurveHx.counts_hx`, `SieveCurveHx.charDensity_hxT` | yes |
 
 ### Primes
@@ -96,12 +96,8 @@ result's note finds it unused; blank where neither has been checked.
 | `ψ(x) = x + O(x^{11/12+ε})` | `HalfPlanePNT.psi_isBigO_eleven_twelfths` | yes |
 | `ψ(x) = x + O(x·exp(−c(log x)^{3/5}(log log x)^{−1/5}))`, the strongest form known from refereed results | `PNTKV.PNT_KV` | no |
 | `ψ(x; q, a) = x/φ(q) + O(x^{11/12+η})` for every `q` and every `a` prime to `q`, at fixed `q` | `PNTProgressions.psiAP_isBigO` | yes |
-| Linnik: every class `a` mod `q` with `(a, q) = 1` holds a prime `p ≤ Kq^{11/5}`, by a Type II estimate in one variable on a window (in no paper) | `Linnik22000E.linnik_22000e` | yes |
-| The same with `p ≤ Kq^{219/100}`, by a tree of Buchstab steps with a Type II estimate in two variables (in no paper) | `Linnik21900.linnik_21900` | yes |
-| The same with `p ≤ Kq^{218/100}`, with role reversal for a term of three primes added to that tree (in no paper) | `Linnik21800.linnik_21800` | yes |
-| The same with `p ≤ Kq^{2150/1000}`, below `13/6`, where the Type II estimate in one variable has no window: the search with the estimate in two variables alone, the rest of a term with no prime of the rest's size being a product of the primes of its comparison's own tree, and with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, the kernel following the plan of the search by hints; from the half-plane and Huxley's estimate, with no input of Chen, Gupta and Li's: its tests have the paper's conditions on the leaves of a comparison alone (`SieveAd.Plain.fillTests`), so no module of that formalisation is in its import cone (the Linnik paper's Theorem 1.2) | `Linnik21500.linnik_21500` | yes |
-| The same with `p ≤ Kq^{2115/1000}`: that search with terms of the sign `+` reversed too, the leaves of a comparison cut in three (the fourth moment of the cofactor's polynomial), and the resonant window in both trees, a Type II estimate in one variable that sorts the characters by the sizes of a rest's own prime sums as well as by their zeros, with Chen, Gupta and Li's large values of the powers and the cofactor in the rest when it is one prime (in no paper) | `Linnik21150.linnik_21150` | yes |
-| The same with `p ≤ Kq^{2100/1000}`: that search with the window's test at the two corners of the box of a rest's cells where its test at one corner fails, the chains over the frozen parts on cells as fine as the main tree's, a box of two primes cut in two where that pays, and a plan that searches every configuration of the estimate in two variables that the kernel's tests accept over the frozen parts (the Linnik paper's Theorem 1.1; the kernel's check of its certificate, 1150 part files, was not finished on 16 November 2026) | `Linnik21000.linnik_21000` | yes |
+| Linnik: every class `a` mod `q` with `(a, q) = 1` holds a prime `p ≤ Kq^{2150/1000}`, below `13/6`, where the Type II estimate in one variable has no window: the search with the estimate in two variables alone, the rest of a term with no prime of the rest's size being a product of the primes of its comparison's own tree, and with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, the kernel following the plan of the search by hints; from the half-plane and Huxley's estimate, with no input of Chen, Gupta and Li's: its tests have the paper's conditions on the leaves of a comparison alone (`SieveAd.Plain.fillTests`), so no module of that formalisation is in its import cone (the Linnik paper's Theorem 1.2) | `Linnik21500.linnik_21500` | yes |
+| The same with `p ≤ Kq^{2100/1000}`: that search with terms of the sign `+` reversed too, the leaves of a comparison cut in three (the fourth moment of the cofactor's polynomial), the resonant window in both trees, a Type II estimate in one variable that sorts the characters by the sizes of a rest's own prime sums as well as by their zeros, with Chen, Gupta and Li's large values of the powers and the cofactor in the rest when it is one prime, the window's test at the two corners of the box of a rest's cells where its test at one corner fails, the chains over the frozen parts on cells as fine as the main tree's, a box of two primes cut in two where that pays, and a plan that searches every configuration of the estimate in two variables that the kernel's tests accept over the frozen parts (the Linnik paper's Theorem 1.1; the kernel's check of its certificate, 1150 part files, was not finished on 16 November 2026) | `Linnik21000.linnik_21000` | yes |
 | Linnik by density estimates and the classical deduction, with the exponents `12`, `4`, `17/6`, `36/13`, `87/35`, `12/5` and `2.3334`, each `+ η` | `Linnik.linnik_twelve`, `LinnikDensity.linnik_four`, `LinnikSubconvex.linnik_seventeen_sixths`, `LinnikIngham.linnik_thirtysix_thirteenths`, `LinnikHuxley.linnik_eighty_seven_thirty_fifths`, `LinnikTwelve.linnik_twelve_fifths`, `LinnikG7.linnik_g7d` | yes |
 | A prime in `(y, y + y^θ]` for every large `y`, `θ > 17/30`; and for all `y ∈ [X, 2X]` outside a set of measure `X^{1−δ}`, `θ > 2/15` | `ZetaGMDensity.short_primes_seventeen_thirtieths`, `ZetaGMDensity.almost_all_short_primes_two_fifteenths` | yes |
 | In terms of `Θ`: `limsup log\|ψ(x) − x\|/log x = Θ`, the same for `M(x)`, `Σ μ(n)n^{−s}` converges exactly on `Re s > Θ`, and a prime in `(y, y + y^θ]` for `θ > 2Θ/(1 + 2Θ)` | `PsiExponent.limsup_expo`, `MertensExponent.limsup_mexpo`, `MertensExponent.moebiusAbscissa_eq_Theta`, `InghamDensity.short_primes_Theta` | |
@@ -140,7 +136,7 @@ The estimates that the results above are built from, each stated for reuse:
 | Large values: Halász–Montgomery (also with weights, and in mean square over a set of characters), Huxley's estimate, Guth and Maynard's, and Chen, Gupta and Li's with characters | `LinnikPower.hm_duality`, `SieveTypeIIHM.hm_duality_wt`, `SieveTypeIIHM.sum_bin_hm_sq`, `LinnikReflect.huxley_large_values`, `ZetaGMLV.gm_large_values`, `LinnikCGLHB101.prop31` |
 | The hybrid fourth moment of `L(1/2 + it, χ)`; the fourth moment of `ζ` at well-spaced points; the approximate functional equation of `L(s, χ)²` | `LinnikFourth.fourth_moment`, `ZetaFourth.zeta_fourth_moment`, `LinnikGamma.afe` |
 | Zero detection by a mollified Dirichlet polynomial; log-derivatives in zero-free discs; Perron's formula with a smooth weight, and contour shifts | `LinnikDetect.dichotomy`, `LogDerivDisc.logDeriv_le_Kld`, `Linnik.perron_exp`, `SmoothPerron.verticalIntegral_shift` |
-| Sieves: Brun's fundamental lemma, Buchstab's identity on tuples of primes, Harman's comparison with and without the bilinear Type I estimate and with stops in two variables, that estimate by Parseval's identity (also without its condition `2HD < q`), Proposition 3′ for two polynomials (for a curve on a region, and for the curve `ghx` of Huxley's estimate) and Lemmas 4.4, 4.5 and 4.6 for families in two variables, rough numbers by Buchstab's `ω` | `SieveBrun.fundamental`, `SieveDecomp.buchstab_fam`, `SieveProp6.prop6`, `SieveP6ib.prop6ib`, `SieveTypeIB.typeIB_bound`, `SieveTypeIB.typeIB_bound_wide`, `SieveTypeIBPairWide.pair_le_wide`, `SieveTypeIBAsymWide.leaves_ib_wide`, `SieveTypeIIHM.typeII_two_gen`, `SieveTwoZone7D.typeII_two_hx`, `SieveFamilyTwo.typeII_sharp_two`, `SieveUnwTwo.typeII_unw_two`, `SieveTwoChain.chain_two`, `SieveTwoComp.prop6_two`, `SieveRough.psi_le` |
+| Sieves: Brun's fundamental lemma, Buchstab's identity at one `n`, Harman's comparison with stops in two variables and the bilinear Type I estimate, that estimate by Parseval's identity without the condition `2HD < q`, Proposition 3′ for two polynomials (for a curve on a region, and for the curve `ghx` of Huxley's estimate) and Lemmas 4.4, 4.5 and 4.6 for families in two variables, rough numbers by Buchstab's `ω` | `SieveBrun.fundamental`, `SieveDecomp.buchstab_pt`, `SieveTypeIB.typeIB_bound_wide`, `SieveTypeIBPairWide.pair_le_wide`, `SieveTypeIBAsymWide.leaves_ib_wide`, `SieveTypeIIHM.typeII_two_gen`, `SieveTwoZone7D.typeII_two_hx`, `SieveFamilyTwo.typeII_sharp_two`, `SieveUnwTwo.typeII_unw_two`, `SieveTwoChain.chain_two`, `SieveTwoComp.prop6_two`, `SieveRough.psi_le` |
 | Over `ℤ[ω]` and `ℍ³`: the quadratic large sieve, and Kubota's theta function with Patterson's coefficients | `Eis.quadLargeSieve`, `Eis.kubotaTheta` |
 | Vinogradov's mean value theorem, weak form; Weil's explicit formula as a form | `VinoRec.vmvt_weak`, `WeilForm.weilQ_symbol` |
 
@@ -166,7 +162,7 @@ The deductions are stated for any input, against Mathlib's `ζ` and `LFunction`,
 | Petrow and Young's Weyl bound for every `L(s, χ)`, uniformly (`LinnikWeyl.PYWeyl`) | Weyl's bound for `ζ`, and Huxley's exponents above `5/6` for the characters | `LinnikWeylBridge.weylBound_of_PYWeyl`, `LinnikStairs7.charDensity_hy_0`, `LinnikStairs7.charDensity_hy_top` |
 | that RH fails | `ψ(x) − x = Ω±(√x)` | `HalfPlaneJoinsPNT.psiOmegaSqrt_of_not_RH` |
 | the arb certificates `WeilForm.CertE` and `WeilForm.CertO`: lower bounds for 350 mode energies, and the definiteness of two Gram matrices | Weil's form positive on every real probe at supports `2a ≤ 1.6`, past the prime powers `2`, `3` and `4` | `WeilForm.weilQg_ge_both` |
-| a Type II estimate on a window (`SieveRoute.TypeIIAt`) | Harman's comparison for the primes in a class mod `q` | `SieveProp6.prop6` |
+| Proposition 3′ in two variables at `L` on a region (`SieveFamilyTwo.TypeIITwoAt`), `2 < L ≤ 5/2` | Harman's comparison for the primes in a class mod `q` | `SieveTwoComp.prop6_two_at` |
 
 ## Connections
 
@@ -226,38 +222,33 @@ In order of what is in reach.
    and not a proof, keeps Li's constant positive down to `θ ≈ 0.5182` once Guth and Maynard's estimate
    (`ZetaGMLV.gm_large_values`) joins Huxley's. A Lean proof below `0.52` would go below Li, resting on the half-plane
    as Linnik's exponent does: the sieve's main terms take the prime number theorem in short ranges from it.
-2. **Linnik's exponent.** The Linnik paper proves `21/10 = 2100/1000` (`Linnik21000.linnik_21000`, its Theorem 1.1, subject to the kernel's
-   check of its certificate, not finished on 16 November 2026),
-   and `43/20 = 2150/1000` (`Linnik21500.linnik_21500`, its Theorem 1.2) from the half-plane and Huxley's density
-   estimate alone. The sieve of the second has a Type II estimate in two variables on an explicit
-   region, which counts characters only from `7789/10000` on; Harman's comparisons, with the rest among a term's own
-   primes or among the primes of its comparison's own tree (`SieveFillComp.prop6_fill`); and the reversal of a term
-   of three or five primes through its largest prime, as an identity with the cofactor kept as one number
-   (`SieveAd.Plain.bd_flip_core`). Its certificate is the plan of a search, which the kernel follows by hints and checks
-   step by step (`SieveAd.Plain.solveD_sound`). The library's earlier theorems were steps on the way: at `11/5`, `219/100`
-   and `218/100` with a Type II estimate in one variable on a window, which closes at `1 + A/2 = 13/6` for the peak
-   `A = 7/3` of Chen, Gupta and Li's curve, and at `2165/1000` with the estimate in two variables alone (in no paper; superseded
-   since, and in the git history). Below `43/20`, by the exact search's measurements ([`research-opportunities.md`](research-opportunities.md), §3.1),
-   about a quarter of the cost is the cells' width, each `0.005` of exponent costs `5%` to `9%`, and the rules that
-   the paper's certificate lacks are worth a few per cent each. Two of them are written since, the reversal of
-   terms of the sign `+` and a plan that weighs the kernel's time, and with cells of side `0.003` they gave a
-   theorem at `2140/1000` (in no paper; superseded since, and in the git history), on a plan three times the
-   size; the third, a
-   second level of reversal, is not written, and `2.12` is beyond all three. A rule of another kind is written
-   since: the leaves of Buchstab's tree whose cofactor is shorter than `√q`, out of the bilinear estimate's reach,
-   evaluated by the Type II estimate in two variables with the fourth moment of the cofactor's polynomial over a
-   bin of characters (the case `r = 2` of Burgess's moments) as a third bound, a box of leaves that straddles the
-   paper's region being cut in three. With it, and no price on the kernel's time, the search passed at
-   `2135/1000` (in no paper; superseded since, and in the git history), at a cost of `0.98988K`. The resonant window
+2. **Linnik's exponent.** The Linnik paper proves `43/20 = 2150/1000` (`Linnik21500.linnik_21500`, its Theorem 1.2)
+   from the half-plane and Huxley's density estimate alone, and `21/10 = 2100/1000` (`Linnik21000.linnik_21000`, its
+   Theorem 1.1) from the half-plane, Chen, Gupta and Li's Proposition 3.1 and Ingham's and Huxley's density estimates,
+   subject to the kernel's check of its certificate, not finished on 16 November 2026. Both exponents are below
+   `13/6`, where a Type II estimate in one variable on a window whose characters are counted only through the zeros'
+   bins closes for the peak `A = 7/3` of Chen, Gupta and Li's curve (`1 + A/2 = 13/6`), and both
+   sieves have a Type II estimate in two variables on an explicit region, which counts characters only from
+   `7789/10000` on. The sieve of `43/20` has Harman's comparisons, with the rest among a term's own primes or among
+   the primes of its comparison's own tree (`SieveFillComp.prop6_fill`), and the reversal of a term of three or five
+   primes through its largest prime, as an identity with the cofactor kept as one number
+   (`SieveAd.Plain.bd_flip_core`). Its certificate is the plan of a search, which the kernel follows by hints and
+   checks step by step (`SieveAd.Plain.solveD_sound`). The sieve of `21/10` has three rules more. Terms of the sign
+   `+` are reversed too. The leaves of Buchstab's tree whose cofactor is shorter than `√q`, out of the bilinear
+   estimate's reach, are evaluated by the Type II estimate in two variables with the fourth moment of the cofactor's
+   polynomial over a bin of characters (the case `r = 2` of Burgess's moments) as a third bound, a box of leaves that
+   straddles the paper's region being cut in three. And a box may be evaluated by the resonant window
    (`SieveTypeIIHM.typeII_res`), a Type II estimate in one variable whose characters are sorted by the sizes of a
    rest's own prime sums as well as by their zeros, with Chen, Gupta and Li's large values of the powers and the
-   cofactor in the rest when it is one prime, takes the search to `2115/1000` (`Linnik21150.linnik_21150`, in no
-   paper), at a cost of `0.88304K` on `3.04·10^7` steps. With the window's test at the two corners of a box
-   (`SieveResTest.resY_sound`), finer cells over the frozen parts, and a plan that searches every configuration
-   the kernel's tests accept there, the search passes at `2100/1000` (`Linnik21000.linnik_21000`, the paper's Theorem 1.1),
-   at a cost of `0.97717K` on `9.01·10^7` steps. Going much further needs Type I
-   information on longer products than the bilinear estimate's `d₁d₂² < x`, or a Type II estimate on a wider
-   region, which a better density estimate above `7789/10000` would give only a little of.
+   cofactor in the rest when it is one prime, tested at one corner of the box of a rest's cells or at two
+   (`SieveResTest.resY_sound`). With cells over the frozen parts as fine as the main tree's, and a plan that searches
+   every configuration the kernel's tests accept there, the search passes at `2100/1000` at a cost of `0.97717K` on
+   `9.01·10^7` steps. The certificates at weaker exponents are no longer in the tree; they are in the git history.
+   Below `43/20`, by the exact search's measurements ([`research-opportunities.md`](research-opportunities.md), §3.1),
+   about a quarter of the cost is the cells' width, each `0.005` of exponent costs `5%` to `9%`, and the rules that
+   the certificate at `43/20` lacks are worth a few per cent each; a second level of reversal is not written. Going
+   much further needs Type I information on longer products than the bilinear estimate's `d₁d₂² < x`, or a Type II
+   estimate on a wider region, which a better density estimate above `7789/10000` would give only a little of.
 3. **The half-plane at `7/8`.** OpenAI's main preprint states `Re s > 7/8`, and their own Lean proves it for every
    `χ`; the library proves `11/12`, by the companion route. A proof of `7/8` here would feed the deductions above at
    once: `ψ`, `M`, `ψ(x, χ)` and `Σ d_k` at `x^{7/8+η}`, the squarefree count at `x^{8/17+η}`, and `Θ ≤ 7/8`. The

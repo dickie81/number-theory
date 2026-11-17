@@ -74,8 +74,8 @@ None of these papers was read for the formalisation. The library's proofs were w
 In both theorems, through Huxley's density estimate ([huxley-density.md](huxley-density.md)), which counts the
 characters whose mollified Dirichlet polynomial is large at a zero, their polynomial class, with
 `large_values_chars_off`; Ingham's ([ingham-density.md](ingham-density.md)), which Theorem 1.1 takes on the leaves'
-region and the library's theorems at `11/5` and earlier use, does the same. Of this note the Type II estimates in two
-variables themselves (on the leaves' region too, where the fourth moment `SieveTypeIIHM.sum_chars_dp_four_le` is this
-orthogonality applied to the polynomial's square) use only the orthogonality of the characters at one height,
+region and `LinnikG7.linnik_g7d` uses, does the same. Of this note the Type II estimates in two variables themselves
+(on the leaves' region too, where the fourth moment `SieveTypeIIHM.sum_chars_dp_four_le` is this orthogonality
+applied to the polynomial's square) use only the orthogonality of the characters at one height,
 `Σ_χ |Σ_{j∈S} c_jχ(j)j^{−it}|² ≤ (P + q)Σ|c_j|²` for `S ⊆ (P, 2P]` (`SieveTypeII.sum_chars_dp_sq_le`, from
 `LinnikHybrid.sum_chars_norm_sq_le`), which is elementary.

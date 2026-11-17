@@ -1,43 +1,39 @@
 #!/usr/bin/env python3
-"""tree_cert.py [--check] [--stats] [--try H DEPTH [W1 W2 a/b]]: the tree of Buchstab steps at L = 219/100, searched
-as the kernel searches it, cut into parts, and the Lean files of the theorem there.
+"""tree_cert.py --try H DEPTH [W1 W2 a/b]: the search for a tree of Buchstab steps with the window's tests and those
+of the estimate in two variables, and the base of the searches of `rev_cert.py`, `fill_cert.py`, `flip_cert.py` and
+`hint_cert.py`.
 
-The route is L = 219/100 with the window [44260, 46717]/10^5 (`gen_cgl_curve.py` computes it and writes its
-Proposition 3'). A tree of `lib/pnt/SieveAdDefs.lean` on the box of the first prime, of cost below K, gives the
-theorem (`SieveAd.linnik_tree`). No tree is written out: `SieveAd.solveF` (`lib/pnt/SieveAdSearchDefs.lean`) is a
-search that the kernel runs, and a cost that it returns below its limit is the cost of a tree
-(`SieveAd.solveF_sound`). This script is that search in Python, definition by definition:
+A tree of `lib/pnt/SieveAdDefs.lean` on the box of the first prime, of cost below K, gives Linnik's theorem
+(`SieveAd.linnik_tree`). The search returns a cost and no tree. This script has, in Python:
 
-  * the tests `SieveAd.mixTests` (`Tests`): `okIW`, `okJW` (SieveAdWinDefs.lean) and `okI2`, `okJ2`
-    (SieveAdTwoDefs.lean), with `surelyEval`, `ibOK` of mirror8.py;
-  * `vanishOK`, `dropOK`, `dropCost`, `dropBOK`, `dropBCost` (SieveAdDefs.lean);
-  * the search (`Search`): `findSub2`, `bestSub`, `findSub1`, `tstarF`, `propI2`, `leavesOf`, `propJ2`, `ibFast`,
-    `propJ`, `cutsOf`, `kids`, `buchC`, `splitC`, `node`, `step`, `solveF` and the strategy `mixStrat`.
+  * the tests (`Tests`): the window's, `okIW` with mirror8.py's `surelyEval` and `okJW` with `ibOK`, built here from
+    mirror8.py's `tstar`, `condIB`, `subsetSums` and `hiSum`; and those of the estimate in two variables, `okI2`,
+    `okJ2` (SieveAdTwoDefs.lean), the leaves cut in three only with `energy`;
+  * `vanishOK`, `dropOK`, `dropCost`, `dropBOK`, `dropBCost` (SieveAdDefs.lean), definition by definition;
+  * the search (`Search`): the searches over the sets of a box's cells `findSub2`, `bestSub`, `findSub1`,
+    `tstarF`, and the steps `anyI`, `firstJ`, `kids`, `buchC`, `splitC`, `node` and `step` (as `solve`, with the
+    fuel of the recursion), definition by definition as `lib/pnt/SieveAdSearchDefs.lean` has them, with the
+    proposals of the configurations, the floors and the cuts.
+
+The window's tests, the proposals and the recursion are those of the theorem at L = 219/100, whose Lean is in the
+git history at commit 76abe3c.
 
 A box is a list of cells (lo, hi), the newest prime first, in units of 1/DEN of exponents of x. The search treats a
 box so: no term, or evaluated by the window or by the estimate in two variables (rest: one prime; first variable: a
 set of the others in the window that the rest leaves), costs 0; otherwise it is dropped, if its sign is +, or
 decomposed by Buchstab's identity at the largest floor at which the comparison passes, the new prime's range cut
-into cells of side HI (coarser from the fifth prime on), whichever is cheaper; a box that can be neither dropped
+into cells of side H (coarser from the fifth prime on), whichever is cheaper; a box that can be neither dropped
 nor decomposed is cut in two, down to the width WMIN. A box of DEPTH primes is not decomposed. A limit stops the
-search of a subtree whose cost reaches it.
+search of a subtree whose cost reaches it. `pred` predicts the kernel's time on a part of the search from the
+search's work in it (a least-squares fit to the kernel's checks of seventeen parts, of 26 to 63 seconds, with an
+error of at most five seconds); `rev_cert.py` and `fill_cert.py` build their predictions on it.
 
-The kernel checks the search in parts, each a range of consecutive cells of one prime (`kids`): a range of cells of
-the first prime, or, for a cell of the first prime whose search is long, ranges of the cells of the second prime
-below it, glued by the cell's own Buchstab step. A part's time is predicted from the search's work in it (`pred`:
-a least-squares fit to the kernel's checks of seventeen parts across the tree, of 26 to 63 seconds, with an error of
-at most five seconds), and the parts are cut at CAP predicted seconds.
+What is here is what the other scripts import, and `--try`, which runs the search with cells of side H and boxes of
+fewer than DEPTH primes decomposed, on the window [W1, W2]/10^5 at L = a/b (by default [44260, 46717]/10^5 at
+219/100), and prints its cost.
 
-It writes `lib/pnt/SieveGrid21900.lean` (the grid and the strategy), `lib/pnt/SieveTree21900P<k>.lean` (the parts,
-each by `decide +kernel`) and `lib/pnt/Linnik21900.lean` (the route, the tree from the parts, and the theorem).
-With `--check`, nothing is written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a
-difference). With `--stats`, the search's work and the parts' predicted times are printed. With `--try`, only
-the search is run, with cells of side H and boxes of fewer than DEPTH primes decomposed (and on another route, if
-given), and its cost is printed.
-
-Values (11 November 2026): cost/K 0.98189 with 301834 boxes searched, at H = 0.006 and DEPTH = 6, the strategy of
-the Lean files: 81 parts in 11 files, which the kernel checks in 2515 seconds in all (180 to 260 a file). `--try 0.005 6`: 0.93489, 547117 boxes; `--try 0.005 8`: 0.92462, 558412; `--try 0.006 8`: 0.96227,
-311103; `--try 0.0065 6`: 1.00099. Of these the first is the least search that passes.
+Values (11 November 2026), at 219/100: `--try 0.006 6`: 0.98189, 301834 boxes; `--try 0.005 6`: 0.93489, 547117
+boxes; `--try 0.005 8`: 0.92462, 558412; `--try 0.006 8`: 0.96227, 311103; `--try 0.0065 6`: 1.00099.
 
 Needs Python 3 only. Under a minute.
 """
@@ -53,13 +49,11 @@ PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 DEN, K, SC = m8.DEN, m8.K, m8.SC
 cdiv, tsub, omKw = m8.cdiv, m8.tsub, m8.omKw
 
-# the route, the window and the strategy
-TAG, LNUM, LDEN, W1, W2, GN = '21900', 219, 100, 44260, 46717, 272
-HI, DEPTH, WMIN, FUEL = round(0.006 * DEN), 6, round(0.0005 * DEN), 200
+# the route of `--try` when none is given, the least width of a cell that is cut for want of a test, and the fuel
+LNUM, LDEN, W1, W2 = 219, 100, 44260, 46717
+WMIN, FUEL = round(0.0005 * DEN), 200
 BIG = 2 ** 70
 CFGW = (0, 0, 0, 0, False)
-# the parts: at most CAP predicted seconds each, a file of at most PMAX parts and FCAP predicted seconds
-CAP, PMAX, FCAP = 40.0, 10, 240.0
 
 
 def leafxr_checks():
@@ -135,9 +129,11 @@ def subsE(cs, lo, hi, rem, bit=1, s=0, mask=0, out=None, cap=24):
 
 
 class Tests:
-    """`SieveAd.mixTests` on the grid of the window and `IBPar ⟨Ln, Ld⟩`. The kernel's `chkJ2` and `coreJ2` take the
-    leaves cut in three where the paper's conditions fail (`SieveAd.leavesE`, `lib/pnt/SieveAdLeafDefs.lean`); the
-    planner proposes such leaves, and its tests accept them, only with `energy`."""
+    """The window's tests and those of the estimate in two variables on the grid of the window and `IBPar ⟨Ln, Ld⟩`
+    (`okI` and `okJ` take a configuration of kind `0` to the window, any other to the estimate). The kernel's
+    `chkJ2` and `coreJ2` take the leaves cut in three where the paper's conditions fail (`SieveAd.leavesE`,
+    `lib/pnt/SieveAdLeafDefs.lean`); the planner proposes such leaves, and its tests accept them, only with
+    `energy`."""
 
     energy = False
 
@@ -147,7 +143,7 @@ class Tests:
         self.Ln, self.Ld = Ln, Ld
         m8.G.update(U1=self.U1, U2=self.U2, Lnum=Ln, Lden=Ld)
 
-    # SieveAdWinDefs.lean
+    # the window's tests
     def cellsIn(self, lo, bl):
         return all(lo <= c[0] <= DEN and c[1] <= DEN for c in bl)
 
@@ -230,7 +226,7 @@ class Tests:
                 and 62505 * Ld * DEN + 62500 * Ln * v + 34863 * Ln * (r2 + 1) <= 62500 * Ln * DEN
                 and 125005 * Ld * DEN + 34863 * Ln * (r2 + 1) <= 62500 * Ln * DEN)
 
-    # SieveAdMixDefs.lean
+    # the tests of either kind, by the configuration's kind
     def okI(self, bl, cfg):
         return self.okIW(bl) if cfg[0] == 0 else self.chkI2(bl, cfg[1], cfg[2])
 
@@ -310,7 +306,8 @@ def dropC(bl, par):
 # SieveAdSearchDefs.lean
 
 class Search:
-    """`SieveAd.solveF mixTests (mixStrat hI depth wmin)`, with counts of its work."""
+    """The search with these tests, cells of side at most hI (`stepOf`), boxes of fewer than `depth` primes
+    decomposed and cells cut in two down to the width `wmin`, with counts of its work."""
 
     def __init__(self, T, hI, depth, wmin):
         self.T, self.hI, self.depth, self.wmin = T, hI, depth, wmin
@@ -526,7 +523,7 @@ class Search:
         return None
 
     def kids(self, top, bl, par, cs, a, lim, n):
-        """`kids (solveF n) top bl par cs a lim`."""
+        """`kids` of SieveAdSearchDefs.lean, with `solve` at the fuel `n` for `rec`."""
         for i, c in enumerate(cs):
             if a < c < top:
                 c1 = self.solve([(a, c)] + bl, par, lim, n)
@@ -565,7 +562,7 @@ class Search:
         return self.splitC(x, bl, par, lim, n)
 
     def solve(self, bl, par, lim, n):
-        """`solveF n bl par lim`."""
+        """`step` of SieveAdSearchDefs.lean, with `solve` at the fuel `n − 1` for `rec`; at the fuel 0, the limit."""
         self.minfuel = min(self.minfuel, n)
         if n == 0 or not bl:
             return lim
@@ -587,31 +584,12 @@ def pred(w):
     return 1.3 + 3.0e-3 * w['calls'] + 8.8e-5 * w['dfs'] + 8.3e-3 * w['okJ2']
 
 
-def addw(a, b):
-    return {k: a[k] + b[k] for k in a}
-
-
 def rowCuts(T, hI, wmin):
     """The ends of the cells of the first prime: steps of at most hI from V to DEN/2 + 1, the window's ends, and a
     thin cell at the top (the corner where two primes are near x^{1/2} costs its width)."""
     top = DEN // 2 + 1
     n = max(1, cdiv(top - T.V, hI))
     return sorted({T.V + (top - T.V) * j // n for j in range(n + 1)} | {T.U1 + 1, T.U2 - 1, DEN // 2 - wmin})
-
-
-def groups(cells, cap):
-    """Consecutive cells [(lo, hi, cost, work)] in groups of at most `cap` predicted seconds."""
-    out, cur, w = [], [], None
-    for c in cells:
-        w2 = c[3] if w is None else addw(w, c[3])
-        if cur and pred(w2) > cap:
-            out.append(cur)
-            cur, w2 = [], c[3]
-        cur.append(c)
-        w = w2
-    if cur:
-        out.append(cur)
-    return out
 
 
 def search_only(h, depth, w1, w2, ln, ld):
@@ -624,69 +602,7 @@ def search_only(h, depth, w1, w2, ln, ld):
     return S.kids(DEN // 2 + 1, [], False, cuts[1:-1], cuts[0], K, FUEL), S.W['calls']
 
 
-def plan():
-    """The parts of the search and the tree's assembly: (parts, root), with
-
-    parts: [(top, bl, par, cuts, a, cost, work)], a part being `kids (solveF FUEL) top bl par cuts a K <= cost`;
-    root: the pieces of the first prime's range, in order: ('part', k), or ('row', (a, b), f, cfg, [k, ...]) for a
-    cell (a, b) of the first prime decomposed at the floor f with the configuration cfg, its second prime's range
-    in the parts k."""
-    T = Tests(W1, W2, LNUM, LDEN)
-    S = Search(T, HI, DEPTH, WMIN)
-    sys.setrecursionlimit(100000)
-    cuts = rowCuts(T, HI, WMIN)
-    assert cuts[0] == T.V and cuts[-1] == DEN // 2 + 1 and T.okJ([], T.V, CFGW)
-    rows = []
-    for a, b in zip(cuts, cuts[1:]):
-        c, w = S.work(lambda: S.solve([(a, b)], False, K, FUEL))
-        rows.append((a, b, c, w))
-    searched = dict(S.W)
-    parts, root = [], []
-
-    def part(top, bl, par, cells):
-        cs = [c[0] for c in cells[1:]]
-        c, w = S.work(lambda: S.kids(top, bl, par, cs, cells[0][0], K, FUEL))
-        assert c == sum(x[2] for x in cells) < K
-        parts.append((top, bl, par, cs, cells[0][0], c, w))
-        return len(parts) - 1
-
-    light = []
-
-    def flush():
-        for g in groups(light, CAP):
-            root.append(('part', part(g[-1][1], [], False, g)))
-        light.clear()
-
-    for a, b, c, w in rows:
-        if pred(w) <= CAP:
-            light.append((a, b, c, w))
-            continue
-        # a long cell: its own Buchstab step, and the cells of the second prime below it
-        bl = [(a, b)]
-        assert not vanishOK(bl) and not S.anyI(bl) and dropC(bl, False) is None
-        fj = S.firstJ(bl, a, S.propJ(bl))
-        assert fj is not None
-        f, cfg = fj
-        ends = [f]
-        for x in S.cutsOf(bl, f):
-            if ends[-1] < x < b:
-                ends.append(x)
-        ends.append(b)
-        cells = []
-        for s, e in zip(ends, ends[1:]):
-            c2, w2 = S.work(lambda: S.solve([(s, e)] + bl, True, K, FUEL))
-            cells.append((s, e, c2, w2))
-        assert sum(x[2] for x in cells) == c
-        flush()
-        root.append(('row', (a, b), f, cfg, [part(g[-1][1], bl, True, g) for g in groups(cells, CAP)]))
-    flush()
-    assert S.minfuel > 100
-    total = sum(r[2] for r in rows)
-    assert total == sum(p[5] for p in parts) < K
-    return T, searched, parts, root, total
-
-
-# the Lean files
+# the Lean text, as `rev_cert.py` and `hint_cert.py` write it
 
 def wrap(s, indent='    '):
     return ('\n' + indent).join(textwrap.wrap(s, 116 - len(indent), break_long_words=False))
@@ -697,249 +613,6 @@ def nat(x):
     return '(DEN / 2 + 1)' if x == DEN // 2 + 1 else str(x)
 
 
-def boxlit(bl):
-    return '[' + ', '.join(f'({a}, {b})' for a, b in bl) + ']'
-
-
-def part_stmt(k, p):
-    top, bl, par, cs, a, c, _ = p
-    return wrap(f'theorem tree{TAG}_{k} : kids (solveF mixTests strat{TAG} {FUEL}) {nat(top)} {boxlit(bl)} '
-                f'{"true" if par else "false"} [{", ".join(map(str, cs))}] {a} K ≤ {c} := by decide +kernel')
-
-
-def grid_file(T):
-    return f'''/-
-# The grid and the strategy of the tree at `L = {LNUM}/{LDEN}`
-
-Generated by `tools/linnik/tree_cert.py`; do not edit by hand.
-
-The grid of `SieveTypeIIU{TAG}D.typeII_{TAG}d`'s window: `U1 = ⌈({W1}/100000)DEN⌉`, `U2 = ⌊({W2}/100000)DEN⌋`
-(`grid{TAG}`, `gridOK{TAG}`; its number of cells is not used by a tree), the bilinear Type I rule's exponent
-`{LNUM}/{LDEN}` (`ibPar{TAG}`), and the strategy of the search for a tree (`strat{TAG}`): `SieveAd.mixStrat` with
-cells of side `{HI}/DEN` (`0.006`), boxes of fewer than `{DEPTH}` primes decomposed, and cells wider than
-`{WMIN}/DEN` (`0.0005`) cut for want of a test.
-
-The file imports `SieveAdSearchDefs.lean`; so neither it nor the part files (`SieveTree{TAG}P1.lean` …) load more of
-`Mathlib` than `Mathlib.Data.Nat.Notation`.
--/
-import SieveAdSearchDefs
-
-namespace SieveCert
-
-/-- **The grid at `L = {LNUM}/{LDEN}`**: `U1 = ⌈({W1}/100000)DEN⌉`, `U2 = ⌊({W2}/100000)DEN⌋`. -/
-@[instance_reducible] def grid{TAG} : Grid := ⟨({W1} * DEN + 99999) / 100000, {W2} * DEN / 100000, {GN}, 1⟩
-
-theorem gridOK{TAG} : @GridOK grid{TAG} :=
-  @GridOK.mk grid{TAG} (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
-
-/-- **The bilinear Type I rule's exponent** at `L = {LNUM}/{LDEN}`. -/
-@[instance_reducible] def ibPar{TAG} : IBPar := ⟨{LNUM}, {LDEN}⟩
-
-end SieveCert
-
-namespace SieveAd
-
-open SieveCert
-
-/-- **The strategy of the search for a tree at `{LNUM}/{LDEN}`.** -/
-def strat{TAG} : Strat := @mixStrat grid{TAG} ibPar{TAG} {HI} {DEPTH} {WMIN}
-
-end SieveAd
-
-#print axioms SieveCert.gridOK{TAG}
-'''
-
-
-def part_files(parts):
-    """The parts in files: consecutive parts, at most PMAX of them and FCAP predicted seconds a file."""
-    files, cur, t = [], [], 0.0
-    for k, p in enumerate(parts):
-        tp = pred(p[6])
-        if cur and (len(cur) >= PMAX or t + tp > FCAP):
-            files.append(cur)
-            cur, t = [], 0.0
-        cur.append(k)
-        t += tp
-    if cur:
-        files.append(cur)
-    out = {}
-    for i, g in enumerate(files, 1):
-        secs = sum(pred(parts[k][6]) for k in g)
-        desc = textwrap.fill(
-            f'File {i} of {len(files)}: the parts `tree{TAG}_{g[0]}` … `tree{TAG}_{g[-1]}` of the search for a tree '
-            f'at `L = {LNUM}/{LDEN}` with the strategy `SieveAd.strat{TAG}` ({len(g)} parts, predicted {secs:.0f} s of '
-            f'the kernel). A part is a range of consecutive cells of one prime: the sum of the costs that the search '
-            f'(`SieveAd.solveF`) returns on them, each searched with the limit that the cells before it leave of `K`, '
-            f'is at most the part\'s bound, by `decide +kernel`, one at a time (`Elab.async false`). '
-            f'`Linnik{TAG}.lean` makes the tree from the parts.', width=116)
-        body = '\n\n'.join(part_stmt(k, parts[k]) for k in g)
-        out[f'SieveTree{TAG}P{i}.lean'] = f'''/-
-# The tree at `L = {LNUM}/{LDEN}`, parts {g[0]}–{g[-1]} of {len(parts)}
-
-Generated by `tools/linnik/tree_cert.py`; do not edit by hand.
-
-{desc}
-
-The file imports `SieveGrid{TAG}.lean`.
--/
-import SieveGrid{TAG}
-
-/-! The kernel checks run one at a time: with asynchronous elaboration they would run together and need the
-memory of the whole file. -/
-set_option Elab.async false
-
-namespace SieveAd
-
-open SieveCert
-
-section
-
-attribute [local instance] grid{TAG} ibPar{TAG}
-
-{body}
-
-end
-
-end SieveAd
-
-#print axioms SieveAd.tree{TAG}_{g[0]}
-#print axioms SieveAd.tree{TAG}_{g[-1]}
-'''
-    return out
-
-
-def chain(items, indent):
-    """`has_split` over the pieces `items` (Lean terms), nested to the right."""
-    if len(items) == 1:
-        return items[0]
-    pad = ' ' * indent
-    return (f'has_split (by decide) (by decide)\n{pad}  ({items[0]})\n{pad}  ('
-            + chain(items[1:], indent + 2) + ')')
-
-
-def final_file(T, parts, root, total, nfiles):
-    LN = f'{LNUM} / {LDEN}'
-    piece = lambda k: f'has_of_kids strat{TAG} {FUEL} tree{TAG}_{k} (by decide)'  # noqa: E731
-    rows, items = [], []
-    for r in root:
-        if r[0] == 'part':
-            items.append(piece(r[1]))
-            continue
-        _, (a, b), f, cfg, ks = r
-        i = len(rows)
-        c = sum(parts[k][5] for k in ks)
-        cfgs = f'⟨{cfg[0]}, {cfg[1]}, {cfg[2]}, {cfg[3]}, {"true" if cfg[4] else "false"}⟩'
-        rows.append(f'''/-- The cell `({a}, {b})` of the first prime: Buchstab's identity at the floor `{f}`, and
-the parts of the second prime's range. -/
-theorem row{TAG}_{i} : Has mixTests [({a}, {b})] false {c} :=
-  (has_buch (τ := mixTests) (x := ({a}, {b})) (b := []) (par := false) (f := {f})
-    (cfg := {cfgs}) (by decide) (by decide) (by decide +kernel)
-    ({chain([piece(k) for k in ks], 4)})).mono (by decide)''')
-        items.append(f'row{TAG}_{i}')
-    imports = '\n'.join(f'import SieveTree{TAG}P{i}' for i in range(1, nfiles + 1))
-    nrow = len(rows)
-    return f'''/-
-# Linnik's theorem with exponent `{LN}`, by a tree of Buchstab steps
-
-Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). Generated by
-`tools/linnik/tree_cert.py`; do not edit by hand.
-
-Plain statement (`linnik_{TAG}`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime
-`p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`, with no hypothesis. The route is at `L = {LN}` on the window
-`[{W1}/100000, {W2}/100000]` (`route{TAG}`, with its Type II estimate `SieveTypeIIU{TAG}D.typeII_{TAG}d`), and the
-sieve's decomposition is a tree of Buchstab steps chosen term by term (`SieveAdDefs.lean`), with the window's tests
-and those of the estimate in two variables (`SieveAd.mixTests`, sound by `SieveAd.mixTests_sound`). The tree is not
-written out: the kernel runs a search for it (`SieveAd.solveF`, with the strategy `SieveAd.strat{TAG}`) in
-{len(parts)} parts, {nfiles} files (`SieveTree{TAG}P1.lean` … `SieveTree{TAG}P{nfiles}.lean`), and a cost that the search returns is the
-cost of a tree (`SieveAd.has_of_kids`).
-
-* `route{TAG}`, `routeOK{TAG}`, `typeII{TAG}`, `fits{TAG}`, `ibFits{TAG}`: the route, its estimate and the grid's fit.
-* `row{TAG}_0` … `row{TAG}_{nrow - 1}`: the {nrow} cells of the first prime whose search is cut into parts by the cells of the
-  second prime: the cell's own Buchstab step (`SieveAd.has_buch`), and the parts below it.
-* `tree{TAG}`: a tree on the box of the first prime, of cost `{total}`, which is `{total / K:.5f}·K`.
-* `linnik_{TAG}`: `SieveAd.linnik_has` at them.
-
-The file imports `SieveAdSearch.lean`, `SieveAdMix.lean`, `SieveTypeIIU{TAG}D.lean` and the part files.
--/
-import SieveAdSearch
-import SieveAdMix
-import SieveTypeIIU{TAG}D
-{imports}
-
-namespace Linnik{TAG}
-
-open SieveCert SieveRoute SieveQ SieveAd
-
-/-- **The route's parameters at `{LN}`**: `L = {LN}` on the window `[{W1}/100000, {W2}/100000]`. -/
-@[instance_reducible] noncomputable def route{TAG} : Route := ⟨{LN}, {W1} / 100000, {W2} / 100000⟩
-
-/-- `route{TAG}` is a route: `2 < L ≤ 5/2` and `0 < w₁ < w₂ < 1`. -/
-theorem routeOK{TAG} : @RouteOK route{TAG} :=
-  @RouteOK.mk route{TAG} (show (2 : ℝ) < {LN} by norm_num) (show (0 : ℝ) < {W1} / 100000 by norm_num)
-    (show ({W1} / 100000 : ℝ) < {W2} / 100000 by norm_num) (show ({W2} / 100000 : ℝ) < 1 by norm_num)
-    (show ({LN} : ℝ) ≤ 5 / 2 by norm_num)
-
-/-- **`SieveTypeIIU{TAG}D.typeII_{TAG}d` as `TypeIIAt`** at the route's parameters. -/
-theorem typeII{TAG} : @TypeIIAt route{TAG} := by
-  intro f0 hf0 hsupp K₀ e₁ η he₁ hη hη1
-  exact SieveTypeIIU{TAG}D.typeII_{TAG}d hf0 hsupp K₀ he₁ hη hη1
-
-/-- `grid{TAG}` fits `route{TAG}`: `({W1}/100000)·DEN < U1`, `U2 < ({W2}/100000)·DEN` and `DEN < ({LN})·U2`. -/
-theorem fits{TAG} : @Fits route{TAG} grid{TAG} := by
-  refine @Fits.mk route{TAG} grid{TAG} ?_ ?_ ?_
-  · have h : ({W1} * DEN : ℕ) < 100000 * (({W1} * DEN + 99999) / 100000) := by decide
-    have h' : ({W1} : ℝ) * DEN < 100000 * ((({W1} * DEN + 99999) / 100000 : ℕ) : ℝ) := by exact_mod_cast h
-    show ({W1} / 100000 : ℝ) * DEN < ((({W1} * DEN + 99999) / 100000 : ℕ) : ℝ)
-    linarith
-  · have h : 100000 * ({W2} * DEN / 100000) < {W2} * DEN := by decide
-    have h' : (100000 : ℝ) * (({W2} * DEN / 100000 : ℕ) : ℝ) < {W2} * DEN := by exact_mod_cast h
-    show (({W2} * DEN / 100000 : ℕ) : ℝ) < {W2} / 100000 * DEN
-    linarith
-  · have h : {LDEN} * DEN < {LNUM} * ({W2} * DEN / 100000) := by decide
-    have h' : ({LDEN} : ℝ) * DEN < {LNUM} * (({W2} * DEN / 100000 : ℕ) : ℝ) := by exact_mod_cast h
-    show (DEN : ℝ) < {LN} * (({W2} * DEN / 100000 : ℕ) : ℝ)
-    linarith
-
-/-- `ibPar{TAG}`'s exponent `Lnum/Lden` is the route's `L = {LN}`. -/
-theorem ibFits{TAG} : @IBFits route{TAG} ibPar{TAG} :=
-  @IBFits.mk route{TAG} ibPar{TAG} (show (({LNUM} : ℕ) : ℝ) / (({LDEN} : ℕ) : ℝ) = {LN} by norm_num)
-
-section
-
-attribute [local instance] grid{TAG} ibPar{TAG}
-
-{chr(10).join(r + chr(10) for r in rows)}
-/-- **The tree at `{LN}`**: the box of the first prime, with the cell `({T.V}, DEN/2 + 1)`, has a tree that passes
-`SieveAd.ok` with the tests `SieveAd.mixTests`, for a term of the sign `−`, at the cost `{total}`, below `K`. -/
-theorem tree{TAG} : Has mixTests [({T.V}, DEN / 2 + 1)] false {total} :=
-  ({chain(items, 2)}).mono (by decide)
-
-end
-
-/-- **Linnik's theorem with exponent `{LN}`, by a tree of Buchstab steps**: there is `K` such that for every `q ≥ 1`
-and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`. -/
-theorem linnik_{TAG} : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ ({LN} : ℝ) :=
-  @linnik_has route{TAG} routeOK{TAG} (@mixTests grid{TAG} ibPar{TAG})
-    (@mixTests_sound route{TAG} routeOK{TAG} grid{TAG} gridOK{TAG} fits{TAG} ibPar{TAG} ibFits{TAG} typeII{TAG})
-    {T.V} cfgW (by decide) (by decide +kernel) {total} tree{TAG} (by decide)
-
-end Linnik{TAG}
-
-#print axioms Linnik{TAG}.tree{TAG}
-#print axioms Linnik{TAG}.linnik_{TAG}
-'''
-
-
-def generate():
-    T, searched, parts, root, total = plan()
-    files = {f'SieveGrid{TAG}.lean': grid_file(T)}
-    pf = part_files(parts)
-    files.update(pf)
-    files[f'Linnik{TAG}.lean'] = final_file(T, parts, root, total, len(pf))
-    return files, (searched, parts, root, total)
-
-
 def main():
     if '--try' in sys.argv:
         a = sys.argv[sys.argv.index('--try') + 1:]
@@ -948,33 +621,8 @@ def main():
         print(f'L = {ln}/{ld}, window [{w1}, {w2}]/10^5, cells of side {a[0]}, depth {a[1]}: cost/K = {c / K:.5f}; '
               f'{n} boxes searched')
         return 0
-    files, (searched, parts, root, total) = generate()
-    nrow = sum(1 for r in root if r[0] == 'row')
-    times = [pred(p[6]) for p in parts]
-    print(f'L = {LNUM}/{LDEN}, window [{W1}, {W2}]/10^5, cells of side {HI / DEN:.4f}, depth {DEPTH}: cost/K = '
-          f'{total / K:.5f}; {searched["calls"]} boxes searched; {len(parts)} parts in {len(files) - 2} files, {nrow} '
-          f'cells of the first prime cut by the second; predicted seconds of the kernel {sum(times):.0f}, a part at '
-          f'most {max(times):.0f}')
-    if '--stats' in sys.argv:
-        print('work:', searched)
-        for k, p in enumerate(parts):
-            print(f'part {k}: {times[k]:.1f} s', p[6])
-    if '--check' in sys.argv:
-        there = sorted(f for f in os.listdir(PNT)
-                       if f.startswith(f'SieveTree{TAG}P') or f in (f'SieveGrid{TAG}.lean', f'Linnik{TAG}.lean'))
-        bad = [n for n, t in files.items()
-               if not os.path.exists(os.path.join(PNT, n)) or open(os.path.join(PNT, n), encoding='utf-8').read() != t]
-        bad += [n for n in there if n not in files]
-        print('TREE', TAG, 'FAIL: ' + ', '.join(bad) if bad else 'PASS')
-        return 1 if bad else 0
-    for n in os.listdir(PNT):
-        if n.startswith(f'SieveTree{TAG}P') and n not in files:
-            os.remove(os.path.join(PNT, n))
-    for n, t in files.items():
-        with open(os.path.join(PNT, n), 'w', encoding='utf-8') as f:
-            f.write(t)
-    print('wrote', len(files), 'files')
-    return 0
+    print(__doc__)
+    return 2
 
 
 if __name__ == '__main__':
