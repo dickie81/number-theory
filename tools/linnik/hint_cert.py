@@ -2246,12 +2246,28 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
         soundF = (f'/-- The tests in one pass at `{LN}` are sound: they are the tests. -/\n'
                   f'theorem soundF{T} : ({P}fillTestsF).Sound := by\n  rw [{P}fillTestsF_eq]\n'
                   f'  exact {P}fillTests_sound\n')
+    # the tests with the resonant window that the search reads: `resTestsF<sfx>` in the main tree and
+    # `frozResTests<sfx>` over a frozen part, `<sfx>` naming the cofactor (`C`), the lines named by the hint (`H`)
+    # and the test at the two corners (`Y`), as in `soundF` above; an evaluation of kind `4` is the test at the two
+    # corners
+    sfx = 'YH' if yc and hl else 'Y' if yc else 'CH' if hl else 'C' if cof else ''
+    kinds = 'of kind `3` or `4`' if yc else 'of kind `3`'
+    if res:
+        onepass = (f'(`SieveAd.resTestsF{sfx}`: for an evaluation of another kind and for a comparison they are '
+                   f'`SieveAd.fillTestsF`\'s, equal to the tests that are proved sound); over a frozen part, in one '
+                   f'pass over the chain\'s cells, with what the tests read from the frozen primes computed once for a '
+                   f'tree (' + (f'`SieveAd.frozResTests{sfx}`: `SieveAd.frozTestsC` for another kind and for a '
+                                f'comparison' if resF else '`SieveAd.frozTestsC`') + ')')
+    else:
+        onepass = (f'(`SieveAd.{P}fillTestsF`), equal to the tests that are proved sound; over a frozen part, in one '
+                   f'pass over the chain\'s cells, with what the tests read from the frozen primes computed once for a '
+                   f'tree (`SieveAd.{P}frozTestsC`)')
     plain = textwrap.fill(
         f'Plain statement (`linnik_{T}`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there '
         f'is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`, with no hypothesis. The route is at `L = {LN}` '
         f'(`route{T}`), ' + (
             'with the estimate in two variables and the resonant window, and the tests are `SieveAd.fillTests` with '
-            'the resonant window\'s for an evaluation of kind `3` (`SieveAd.resTestsF`). ' if res else
+            f'the resonant window\'s for an evaluation {kinds} (`SieveAd.resTestsF{sfx}`). ' if res else
             'with the estimate in two variables alone, and the tests are `SieveAd.Plain.fillTests`: the tests with no '
             'window and with the paper\'s conditions on the leaves alone (`SieveAdPlainDefs.lean`), so that the proof '
             'does not rest on the leaves cut in three, nor on the density curve behind them. ' if pl else
@@ -2279,7 +2295,8 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
                 'a rest\'s cells, the variable tied to the rest (`SieveAd.chkIRY`, `SieveAd.chkIRFY`, '
                 '`SieveResTest.resYH`; `SieveAd.evI_resY`, `SieveAd.evIF_froz_resTY`). ' if yc else '') if res else '') +
         f'The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
-        f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.{P}frozTests`. The '
+        f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.{P}frozTests`' + (
+            f' and the resonant window\'s (`SieveAd.frozResTests{sfx}`)' if resF else '') + '. The '
         f'kernel does not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the '
         f'plan of the search that `tools/linnik/hint_cert.py` ran ({stats["boxes"]} boxes, {stats["fboxes"]} of '
         f'them over frozen parts), in {nsteps} steps, {flips}: what is '
@@ -2287,9 +2304,7 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
         f'checked, and a cost that the search returns below its limit bounds the term whatever the hints are '
         f'(`SieveAd.{prof}`). The search is in {len(parts)} parts, {nfiles} files (`SieveHint{T}P1.lean` … '
         f'`SieveHint{T}P{nfiles}.lean`). The kernel evaluates the tests in one pass over a box '
-        f'(`SieveAd.{P}fillTestsF`), equal to the tests that are proved sound; over a frozen part, in one pass over '
-        f'the chain\'s cells, with what the tests read from the frozen primes computed once for a tree '
-        f'(`SieveAd.{P}frozTestsC`), and those imply the tests that are proved sound on the boxes of the tree '
+        f'{onepass}, and those imply the tests that are proved sound on the boxes of the tree '
         f'(`{"SieveAdPlainFast" if pl else "SieveAdFast"}.lean`).', width=116)
     route = f"""/-- **The route's parameters at `{LN}`**: `L = {LN}`; the window's ends, `1/3` and `1/2`, are not used. -/
 @[instance_reducible] noncomputable def route{T} : Route := ⟨{LN}, 1 / 3, 1 / 2⟩

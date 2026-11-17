@@ -7,18 +7,18 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). G
 Plain statement (`linnik_21000`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a
 prime `p ≡ a (mod q)` with `p ≤ K·q^{2100 / 1000}`, with no hypothesis. The route is at `L = 2100 / 1000`
 (`route21000`), with the estimate in two variables and the resonant window, and the tests are `SieveAd.fillTests`
-with the resonant window's for an evaluation of kind `3` (`SieveAd.resTestsF`). Where the paper's conditions on the
-leaves of a comparison fail, the plan cuts the box of leaves in three: the paper's lemma on two parts and, on the
-third, the leaves whose cofactor is shorter than `√q` by the estimate in two variables with the fourth moment (the
-tests' `SieveAd.leavesE`; `SieveTwoCompE.prop6_two3_at`, `SieveFillCompE.prop6_fill3_at`). A box of the main tree
-may also be evaluated by the resonant window: a Type II estimate in one variable, the box's other primes and the
-cofactor, with the characters sorted by the sizes of a rest of its primes' own sums as well as by their zeros, whose
-condition on the rest's cells the kernel checks led by a hint (`SieveAd.chkIR`, `SieveResTest.resX`;
-`SieveAd.evI_resE`, `SieveTypeIIHM.typeII_res`): the counts of the characters at which a sum of the rest is large
-are its moments, the Halász–Montgomery inequality, the zeros' bins and Chen, Gupta and Li's Proposition 3.1 for its
-powers. So may a box of a tree over a frozen part, its rest among the frozen primes and the chain's
-(`SieveAd.evIF_froz_resT`). Where a box's cells leave room for one prime only as the cofactor of its numbers, that
-prime may be in the rest too, in the cell that the cells leave it (`SieveAd.chkIRC`, `SieveAd.chkIRF`;
+with the resonant window's for an evaluation of kind `3` or `4` (`SieveAd.resTestsFYH`). Where the paper's
+conditions on the leaves of a comparison fail, the plan cuts the box of leaves in three: the paper's lemma on two
+parts and, on the third, the leaves whose cofactor is shorter than `√q` by the estimate in two variables with the
+fourth moment (the tests' `SieveAd.leavesE`; `SieveTwoCompE.prop6_two3_at`, `SieveFillCompE.prop6_fill3_at`). A box
+of the main tree may also be evaluated by the resonant window: a Type II estimate in one variable, the box's other
+primes and the cofactor, with the characters sorted by the sizes of a rest of its primes' own sums as well as by
+their zeros, whose condition on the rest's cells the kernel checks led by a hint (`SieveAd.chkIR`,
+`SieveResTest.resX`; `SieveAd.evI_resE`, `SieveTypeIIHM.typeII_res`): the counts of the characters at which a sum of
+the rest is large are its moments, the Halász–Montgomery inequality, the zeros' bins and Chen, Gupta and Li's
+Proposition 3.1 for its powers. So may a box of a tree over a frozen part, its rest among the frozen primes and the
+chain's (`SieveAd.evIF_froz_resT`). Where a box's cells leave room for one prime only as the cofactor of its
+numbers, that prime may be in the rest too, in the cell that the cells leave it (`SieveAd.chkIRC`, `SieveAd.chkIRF`;
 `SieveTypeIIHM.chain_res_cof`, `SieveAd.evIF_froz_resC`). The hint names the window's lines as well as its
 intervals' ends, the clamp's line and each term's, so the kernel checks them rather than picks them
 (`SieveResTest.resXH`). Where no rest passes, a box may be evaluated by the window's test at the two corners of the
@@ -26,16 +26,18 @@ box of a rest's cells, the variable tied to the rest (`SieveAd.chkIRY`, `SieveAd
 `SieveAd.evI_resY`, `SieveAd.evIF_froz_resTY`). The sieve's decomposition is a tree of Buchstab steps with the
 reversal of a term through its largest prime, of the sign `−` (of three or five primes) or `+` (of two, four or
 six), the cofactor kept as one number (`SieveAdFlipDefs.lean`, `SieveAdFlipPos.lean`): its tree runs over the frozen
-numbers, with the tests `SieveAd.frozTests`. The kernel does not search for the tree: it follows hints
-(`SieveAd.solveD`, `SieveAdDirDefs.lean`), the plan of the search that `tools/linnik/hint_cert.py` ran (5141981623
-boxes, 4684054098 of them over frozen parts), in 90137757 steps, 2222610 of them reversals through the largest prime
-(507357 of boxes of the sign `+`): what is done at each box, with which configuration, and where the range of each
-new prime is cut. Each step is checked, and a cost that the search returns below its limit bounds the term whatever
-the hints are (`SieveAd.pr_of_partDYH`). The search is in 107374 parts, 1150 files (`SieveHint21000P1.lean` …
-`SieveHint21000P1150.lean`). The kernel evaluates the tests in one pass over a box (`SieveAd.fillTestsF`), equal to
-the tests that are proved sound; over a frozen part, in one pass over the chain's cells, with what the tests read
-from the frozen primes computed once for a tree (`SieveAd.frozTestsC`), and those imply the tests that are proved
-sound on the boxes of the tree (`SieveAdFast.lean`).
+numbers, with the tests `SieveAd.frozTests` and the resonant window's (`SieveAd.frozResTestsYH`). The kernel does
+not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the plan of the search that
+`tools/linnik/hint_cert.py` ran (5141981623 boxes, 4684054098 of them over frozen parts), in 90137757 steps, 2222610
+of them reversals through the largest prime (507357 of boxes of the sign `+`): what is done at each box, with which
+configuration, and where the range of each new prime is cut. Each step is checked, and a cost that the search
+returns below its limit bounds the term whatever the hints are (`SieveAd.pr_of_partDYH`). The search is in 107374
+parts, 1150 files (`SieveHint21000P1.lean` … `SieveHint21000P1150.lean`). The kernel evaluates the tests in one pass
+over a box (`SieveAd.resTestsFYH`: for an evaluation of another kind and for a comparison they are
+`SieveAd.fillTestsF`'s, equal to the tests that are proved sound); over a frozen part, in one pass over the chain's
+cells, with what the tests read from the frozen primes computed once for a tree (`SieveAd.frozResTestsYH`:
+`SieveAd.frozTestsC` for another kind and for a comparison), and those imply the tests that are proved sound on the
+boxes of the tree (`SieveAdFast.lean`).
 
 * `route21000`, `routeOK21000`, `ibFits21000`, `sound21000`, `soundF21000`, `part21000`: the route, the tests and a
   part's bound (`SieveHint21000R.lean`).
