@@ -439,6 +439,17 @@ def extract():
     cgl = F(int(m.group(1)), int(m.group(2)))
     says(r"Chen, Gupta and Li's density estimate \\cite\[Theorem~1\.2\]\{cgl\} &\s+density deduction \(not formalised\) &",
          main, "row for 7/3")
+    # Harman's theorems on primes in a progression: their ranges q < x^B are read from the paper's table, and the
+    # exponents 1/B that the half-plane gives with them are computed here. They are stated, not formalised.
+    hrow = r"Harman's theorem \\cite\[Theorem~%s\]\{%s\} &\s+Harman's sieve \(not formalised\) & \$1/(0\.\d+) < ([\d.]+)\$"
+    harman = []
+    for thm, key, year, scope in (("2", "harman05", "2005", "every modulus"),
+                                  (r"1\.2", "harman08", "2008", "moduli with only small prime factors")):
+        m = says(hrow % (thm, key), main, f"row for Harman's theorem of {year}")
+        B = F(m.group(1))
+        need(1 / B < F(m.group(2)) < 1 / B + F(1, 10000), f"the paper's bound for 1/{m.group(1)} is not a bound cut at four places")
+        harman.append((1 / B, "1/" + m.group(1), m.group(2), year, thm.replace("\\", ""), scope))
+    need(Lres < harman[1][0] < harman[0][0] < Lbest, "Harman's exponents no longer lie between the paper's two theorems")
     # The floor of a Type II estimate in one variable on a window that sorts the characters by their zeros,
     # L = 1 + A/2 at Chen, Gupta and Li's A: computed here, not read from the Lean.
     floor = 1 + cgl / 2
@@ -463,10 +474,16 @@ def extract():
               "Gupta and Li's Proposition 3.1", Lres, resbest,
               "with the resonant window, the leaves of a comparison cut in three and the terms of the sign + "
               "reversed as well, and the window's test at the two corners of a box: Theorem 1.1 of the Linnik paper")]
-    for group, x, n, label in sieve:
+    for i, (group, x, n, label) in enumerate(sieve):
         ladder += [{"group": group},
                    {"label": label, "L": float(x), "text": lt(x), "dec": dec(x, 3) if "/" in lt(x) else None,
                     "kind": "lean", "src": n, "main": True}]
+        if i == 0:
+            ladder += [{"group": "Harman's theorems on primes in a progression, with the half-plane for their "
+                                 "condition on the zeros"}]
+            ladder += [{"label": f"Harman ({year}), Theorem {thm}: {scope}", "L": float(x), "text": text,
+                        "dec": "< " + bound, "kind": "other", "src": "a refereed theorem; the deduction is not formalised"}
+                       for x, text, bound, year, thm, scope in harman]
 
     la = [{"A": float(Agrh), "L": float(Lgrh), "kind": "limit", "role": "dh", "text": t(Lgrh) + " + η",
            "label": f"the density hypothesis, A = {t(Agrh)}, which GRH implies",
@@ -517,6 +534,7 @@ def extract():
         "cgl": t(cgl), "floor": t(floor), "grh": t(Lgrh),
         "Lbest": lt(Lbest), "Lbestdec": dec(Lbest, 4), "bestLean": best,
         "Lres": lt(Lres), "resLean": resbest, "resWin": RESW,
+        "harman": harman[0][1], "harmanBound": harman[0][2],
         "nresults": str(len(shown)),
         "commit": f'<a href="{REPO}/tree/{sha}">{sha[:7]}</a>' if sha else "the working tree",
         "date": html.escape(day or ""),

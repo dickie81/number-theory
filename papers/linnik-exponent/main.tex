@@ -63,15 +63,15 @@ We prove that for some constant $K$ every reduced residue class modulo $q$ conta
 The proof uses two recent results that have not been refereed: OpenAI's zero-free half-plane
 $\operatorname{Re} s > 11/12$ for Dirichlet $L$-functions, and Chen, Gupta and Li's large values estimate for
 Dirichlet polynomials with characters. With the half-plane and Huxley's zero-density estimate alone we prove the
-exponent $43/20$. Both theorems also count the primes: for $x \ge K q^L$, $L$ the exponent, the class contains
-$\gg x/(\varphi(q) \log x)$ primes $p \le x$.
+exponent $43/20$. Both theorems also count the primes: for $x$ larger than a constant times $q^L$, $L$ the exponent,
+the residue class contains $\gg x/(\varphi(q) \log x)$ primes $p \le x$.
 
-From the half-plane the classical argument gives every exponent above $12/5$ with Huxley's estimate, and above $7/3$
-with Chen, Gupta and Li's density estimate. We go below both with Harman's sieve, fed by a Type~II estimate sorting
-the characters by the largest real part of the zeros of their $L$-functions. A finite computation bounds the fraction
-of primes the sieve loses. Our exponents are not to be compared with Xylouris's $5$, whose proof uses refereed
-results only. They are to be compared with $12/5$ and $7/3$, and with the exponent $1/0.4736 < 2.1115$ that a
-theorem of Harman gives from the half-plane for moduli with only small prime factors.
+These exponents are not to be compared with Xylouris's $5$, whose proof uses refereed results only. From the
+half-plane, the classical argument gives every exponent above $12/5$ with Huxley's estimate and above $7/3$ with Chen,
+Gupta and Li's density estimate, and a theorem of Harman on primes in a progression gives $1/0.472 < 2.1187$. Our
+$43/20$ is larger than Harman's exponent, and our $21/10$ is smaller. Both proofs use Harman's sieve, fed by a
+Type~II estimate that sorts the characters by the largest real part of the zeros of their $L$-functions; a finite
+computation bounds the fraction of the primes that the sieve loses.
 
 The whole proof is formalised in Lean~4 with Mathlib, including both recent results. The proof at $43/20$ depends
 only on Lean's standard axioms. So does the proof at $21/10$ once the check of its finite computation by Lean's
@@ -132,7 +132,8 @@ Theorem~\ref{thm:2110} needs.
 Linnik \cite{linnik44, linnik44b} proved the theorem with absolute constants $K$ and $L$ (see
 \cite[Chapter~18]{iwaniec-kowalski} for an account). The admissible exponent $L$, Linnik's constant, has been lowered
 many times: Heath-Brown \cite{heath-brown92} reached $L = 5.5$, and Xylouris $L = 5.18$ \cite{xylouris-acta} and then
-$L = 5$ \cite{xylouris11}, and again $L = 5$ \cite{xylouris18}. Under the generalised Riemann hypothesis every $L > 2$
+$L = 5$ \cite{xylouris11}, and again $L = 5$ in a journal article \cite{xylouris18}.
+Under the generalised Riemann hypothesis every $L > 2$
 is admissible, classically by the explicit formula, and Lamzouri, Li and Soundararajan give an explicit bound of the
 order of $(\varphi(q) \log q)^2$ \cite{lls, lls-corr}. Naslund \cite{naslund} has announced $L = 3.99$ for large $q$,
 in a preprint that has not been refereed; his proof builds on the method of Heath-Brown and Xylouris and uses neither
@@ -141,17 +142,19 @@ of the two inputs of this paper.
 Theorems~\ref{thm:2110} and~\ref{thm:4320} have $L = 2.1$ and $L = 2.15$, but they are not on the same footing as
 Heath-Brown's and Xylouris's exponents. Those proofs use refereed results only; the proofs of Theorems~\ref{thm:2110}
 and~\ref{thm:4320} use recent results that have not been refereed (Section~\ref{sec:inputs}). With the zero-free
-half-plane and Huxley's density estimate the classical argument already gives every $L > 12/5$, and with Chen, Gupta and
-Li's density estimate every $L > 7/3$. The value $2.4$ is recorded in Tao's collaborative list of constants
-\cite{tao-constants} as a deduction that has not been refereed; Section~\ref{sec:inputs} says which half-plane each
-preprint proves. Against the classical argument, what this paper adds is measured from $12/5$ for
-Theorem~\ref{thm:4320} and from $7/3$ for Theorem~\ref{thm:2110}.
+half-plane and Huxley's density estimate the classical argument already gives every $L > 12/5$, and with Chen, Gupta
+and Li's density estimate every $L > 7/3$. The value $2.4$ is recorded in Tao's collaborative list of constants
+\cite{tao-constants} as a deduction, not refereed, from the half-plane $\operatorname{Re} s > 7/8$ of OpenAI's main
+preprint (Section~\ref{sec:inputs}) and the classical density estimate. Against the classical argument,
+Theorem~\ref{thm:4320} goes from $12/5$ to $43/20$ and Theorem~\ref{thm:2110} from $7/3$ to $21/10$.
 
-The half-plane also gives an exponent through Harman's theorem on primes in a progression \cite{harman08}, which
-assumes a zero-free region for the modulus (see the subsection on related work below): $1/0.4736 < 2.1115$, for large
-moduli $q$ whose prime factors are all below $q^\delta$, for a certain $\delta > 0$. If his earlier theorem
-\cite{harman05} is as \cite{harman08} indicates, it gives $1/0.472 < 2.1187$ for every modulus. The exponent of
-Theorem~\ref{thm:4320} is larger than both, and that of Theorem~\ref{thm:2110} is smaller.
+The half-plane gives more than the classical argument through Harman's theorems on primes in a progression
+\cite{harman05, harman08}, which assume a zero-free region for the modulus; Input~\ref{inp:half-plane} supplies it
+(see the subsection on related work below). His theorem of 2005 then gives Linnik's theorem with the exponent
+$1/0.472 < 2.1187$. His theorem of 2008 gives $1/0.4736 < 2.1115$ for large moduli $q$ whose prime factors are all
+below $q^\delta$, for a certain $\delta > 0$. So the exponent of Theorem~\ref{thm:4320} is not the smallest that
+Input~\ref{inp:half-plane} gives: it is larger than both of these. That of Theorem~\ref{thm:2110} is smaller than
+both.
 
 \subsection*{The zeros near $\operatorname{Re} s = 1$}
 
@@ -205,8 +208,9 @@ logarithms and margins, the bound is smaller than the main term for $P$ around $
 with $A$ the largest density exponent over $\sigma$: $11/5$ with Huxley's $12/5$, and $13/6$ with Chen, Gupta and Li's
 $7/3$.
 
-In two variables, with two polynomials $W_1$ and $W_2$ of lengths $q^{m_1}$ and $q^{m_2}$, and prime sums of total
-length $q^\rho$, $\rho = L - m_1 - m_2$, Cauchy--Schwarz is taken between $W_1$ and $W_2$ instead. Each mean square over
+In two variables, with two polynomials $W_1$ and $W_2$ of lengths $q^{m_1}$ and $q^{m_2}$, and prime sums over the
+primes of the rest, of total length $q^\rho$ with $\rho = L - m_1 - m_2$, Cauchy--Schwarz is taken between $W_1$ and
+$W_2$ instead. Each mean square over
 a bin is then at most $(q + q^{m_i})$ times the sum of the squared coefficients, whatever the bin's size. With $s_i = 1
 - m_i$ and $s^+ = \max(s, 0)$, the bin of $\beta$ contributes, against the main term, about
 \[
@@ -218,7 +222,7 @@ estimate. A polynomial shorter than $q$ costs $q^{s_i/2}$, which the zeros' savi
 and that saving vanishes as $\beta$ approaches $1$. There the bins are small, and the Hal\'asz--Montgomery inequality
 in mean square, with Huxley's density estimate, takes over from orthogonality. It does so from $\beta = 0.7789$ on, just
 above the point $0.7784$ from which, with Huxley's estimate, it beats orthogonality on a polynomial of length about
-$q$; below it the estimate uses no density estimate (Section~\ref{sec:region}).
+$q$; below $0.7789$ the estimate uses no density estimate (Section~\ref{sec:region}).
 So the estimate holds on an explicit region of the two lengths for every $L$ (Section~\ref{sec:type2}), and the
 sieve's task is to bring as many of its terms as it can into that region.
 
@@ -243,11 +247,10 @@ give with and without the sieve of this paper.
 \begin{table}[t]
 \centering
 \small
-\caption{Linnik exponents from the inputs, by the classical deduction from a density exponent, by Harman's theorem
+\caption{Linnik exponents from the inputs, by the classical deduction from a density exponent, by Harman's theorems
 and by the sieve of this paper (Section~\ref{sec:comparison}). The exponent $12$ comes from the trivial count, at most
 $\varphi(q)$ characters. The exponent $11667/5000 = 2.3334$ is what the library proves in place of $7/3$, from which
-it differs by a rounding. Harman's theorem is for large moduli with only small prime factors; his earlier theorem
-\cite{harman05}, which we have not consulted, is not in the table.}
+it differs by a rounding. Harman's theorem of 2008 is for large moduli with only small prime factors.}
 \label{tab:exponents}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.40\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}l@{}}
 \toprule
@@ -260,9 +263,11 @@ Input~\ref{inp:half-plane}, Chen, Gupta and Li's density estimate \cite[Theorem~
   density deduction (not formalised) & $7/3 + \varepsilon \approx 2.333$ \\
 Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, Ingham, Huxley & density deduction &
   $2.3334 + \varepsilon$ \\
+Input~\ref{inp:half-plane}, Huxley from $0.7789$ on & sieve, Theorem~\ref{thm:4320} & $43/20 = 2.15$ \\
+Input~\ref{inp:half-plane}, Harman's theorem \cite[Theorem~2]{harman05} &
+  Harman's sieve (not formalised) & $1/0.472 < 2.1187$ \\
 Input~\ref{inp:half-plane}, Harman's theorem \cite[Theorem~1.2]{harman08} &
   Harman's sieve (not formalised) & $1/0.4736 < 2.1115$ \\
-Input~\ref{inp:half-plane}, Huxley from $0.7789$ on & sieve, Theorem~\ref{thm:4320} & $43/20 = 2.15$ \\
 Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, Ingham, Huxley & sieve, Theorem~\ref{thm:2110} & $21/10 = 2.1$ \\
 \bottomrule
 \end{tabular}
@@ -286,8 +291,8 @@ to 3, the search of item 4, and items 5 to 8.
 \item \emph{Harman's comparison in two variables} (Section~\ref{sec:type1}). Steps of Buchstab's identity bring a
   product of some of a term's primes into a range that the region of item~1 allows for $n_1$; the rest is a product
   of other primes, and $n_2$ is what remains of the integer. The branches that the steps do not stop, the
-  \emph{leaves}, are compared by Type~I information, with a bilinear Type~I estimate that reaches the multiples of
-  integers beyond $x/q$.
+  \emph{leaves}, are compared by Type~I information, with a bilinear Type~I estimate that reaches moduli beyond
+  $x/q$.
 \item \emph{A decomposition by trees of Buchstab steps, with a reversal} (Section~\ref{sec:decomp}). A tree splits the
   sieve's terms by the ranges of their primes, evaluates a term where the estimate of item~1 or the
   comparison of item~2 applies, and drops others at a cost bounded by counts of rough numbers. A term of the sign $-$
@@ -301,8 +306,8 @@ to 3, the search of item 4, and items 5 to 8.
   The classes of a bin are counted by the moments of the prime sums and by Input~\ref{inp:cgl} for their powers, and
   the estimate holds where the bound for every class is below the main term.
 \item \emph{The tests of that estimate} (Sections~\ref{sec:window-terms} to~\ref{sec:window-tests}). A term is
-  evaluated by the estimate in one variable, with some of its primes, the rest, giving the prime sums of $S$, and its
-  other primes and its cofactor giving $W$; a cofactor of one prime may be in the rest. The condition on the classes
+  evaluated by the estimate in one variable: some of its primes, the rest, give the prime sums of $S$, and its other
+  primes and its cofactor give $W$; a cofactor of one prime may be in the rest. The condition on the classes
   is checked on finitely many integers for a whole range of primes.
 \item \emph{Two more rules} (Section~\ref{sec:rules}). Leaves beyond the reach of the bilinear Type~I estimate are cut
   in three ranges: two that it reaches, and a third bounded by an estimate in two variables with a fourth moment. A term
@@ -328,23 +333,21 @@ characters mod $q$ into bins by their zeros. Harman's sieve with a numerical bou
 Harman and Pintz \cite{bhp} and of R.~Li \cite{li-harman}.
 
 Harman himself applied it to primes in a progression to one large modulus, in his work on Carmichael numbers
-\cite{harman05, harman08}, where Alford, Granville and Pomerance \cite{agp} had the ranges $q \le x^B$ for $B < 5/12$,
-the reciprocal of Huxley's density exponent. Harman's Theorem~1.2 in \cite{harman08} gives $\pi(x; q, a) \gg
-x/(\varphi(q) \log x)$ whenever $q < x^{0.4736}$, for every large modulus $q$ that satisfies two conditions. The
-condition on the prime factors: all prime factors of $q$ are below $q^\delta$, for a certain $\delta > 0$. The
+\cite{harman05, harman08}, where Alford, Granville and Pomerance \cite{agp} had the ranges $q \le x^B$ for
+$B < 5/12$, the reciprocal of Huxley's density exponent. His Theorem~2 in \cite{harman05} gives
+$\pi(x; q, a) \gg x/(\varphi(q) \log x)$ whenever $q < x^{0.472}$, for every large modulus $q$ that satisfies a
 condition on the zeros: the $L$-functions of the primitive characters to the divisors of $q$ have no zero in a region
-of width $(\log q)^{-3/4}$ to the left of the line $\operatorname{Re} s = 1$. Section~\ref{sec:comparison} quotes the
-statement. R.~Li's Theorem~9 \cite{li-harman} has the same two conditions and the range $q < x^{0.4752}$; for the
-powers of a fixed prime he deduces the exponent $1/0.4752 < 2.1044$ (his Theorem~11).
+of width $(\log q)^{-3/4}$ to the left of the line $\operatorname{Re} s = 1$. His Theorem~1.2 in \cite{harman08} has
+the range $q < x^{0.4736}$ under that condition and a condition on the prime factors: all prime factors of $q$ are
+below $q^\delta$, for a certain $\delta > 0$. Section~\ref{sec:comparison} quotes the statements. R.~Li's Theorem~9
+\cite{li-harman} has the same two conditions and the range $q < x^{0.4752}$; for the powers of a fixed prime he
+deduces the exponent $1/0.4752 < 2.1044$ (his Theorem~11).
 
-Input~\ref{inp:half-plane} implies the condition on the zeros for every large $q$. So for the large moduli that
-satisfy the condition on the prime factors, Harman's Theorem~1.2 gives with Input~\ref{inp:half-plane} the exponent
-$1/0.4736 < 2.1115$, and R.~Li's Theorem~9 gives $1/0.4752$ if it holds as stated. Theorems~\ref{thm:2110}
-and~\ref{thm:4320} hold for every modulus. Linnik's theorem with the exponent $1/0.472 < 2.1187$ would follow for
-every modulus as well, if the theorem of \cite{harman05} is Theorem~1.2 of \cite{harman08} with $0.472$ in the place
-of $0.4736$ and without the condition on the prime factors. Remark~1.3 of \cite{harman08} says that the exponent was
-$0.472$ in \cite{harman05} and that the condition on the prime factors was imposed in \cite{harman08}; we have not
-consulted \cite{harman05}. Section~\ref{sec:comparison} gives the details.
+Input~\ref{inp:half-plane} implies the condition on the zeros for every large $q$. So Harman's Theorem~2 gives with
+Input~\ref{inp:half-plane} Linnik's theorem with the exponent $1/0.472 < 2.1187$, for every modulus. For the large
+moduli that satisfy the condition on the prime factors, his Theorem~1.2 gives $1/0.4736 < 2.1115$, and R.~Li's
+Theorem~9 gives $1/0.4752$ if it holds as stated. These three exponents are smaller than that of
+Theorem~\ref{thm:4320} and larger than that of Theorem~\ref{thm:2110} (Section~\ref{sec:comparison}).
 
 \subsection*{Formalisation}
 
@@ -353,8 +356,8 @@ beyond Lean's three standard ones (Section~\ref{sec:lean}), for Theorem~\ref{thm
 certificate (above) ends without error. The library proves the two inputs and the density estimates of Ingham and
 Huxley itself; so the truth of the theorems rests on Lean's kernel, Mathlib and the toolchain, not on the preprints.
 Whether the Lean statement of an input captures the preprint's theorem is not checked by the kernel; it matters for
-attributing and interpreting the input, not for the truth of the theorems (Section~\ref{sec:inputs} compares each
-input with its source; Section~\ref{sec:lean} says what is known of independent checking of the inputs).
+attributing and interpreting the input, not for the truth of the theorems. Section~\ref{sec:inputs} compares each
+input with its source, and Section~\ref{sec:lean} says what is known of independent checking of the inputs.
 
 Every step of the proofs, and every result from the literature that they use, is proved in the library \cite{repo}
 (Lean~4 \cite{lean4} with Mathlib \cite{mathlib}) or in Mathlib, at $21/10$ subject to the same check.
@@ -408,9 +411,9 @@ for the number of zeros bounds it. The proof is a sieve on the integers of $(x, 
 $L = 21/10$ in the end, and $q$ is taken large. Appendix~\ref{app:terms} lists the paper's terms and notation, with
 the place of each definition.
 
-The paper states two inputs. Its proofs assume them where they use them, and a statement below says so (`under' an
-input); the library proves both (Section~\ref{sec:lean}), so its statements of the theorems carry no hypothesis, and
-the inputs are written \emph{Input} and not \emph{hypothesis}.
+The paper states two inputs. A statement below that holds `under' an input is conditional in the text of the paper.
+The library proves both inputs (Section~\ref{sec:lean}), so its theorems carry no such hypothesis; hence the word
+\emph{Input} and not \emph{hypothesis}.
 Sections~\ref{sec:type2} to~\ref{sec:proof} use the first input only.
 
 \begin{inputthm}[the zero-free half-plane]\label{inp:half-plane}
@@ -439,21 +442,19 @@ Then
 \end{inputthm}
 
 This is Proposition~3.1 of Chen, Gupta and Li \cite{cgl}, with one point for each character; their method is Guth and
-Maynard's \cite{guth-maynard}. Their proposition bounds a set of pairs $(t, \chi)$ whose pairs with the same character
-are $(qT)^\varepsilon$ apart, for the sum $\sum_n w(n/N) b_n \chi(n) n^{it}$ with the smooth weight $w$ of their \S 3,
-supported in $[1, 2]$ and equal to $1$ on $[6/5, 9/5]$, under the same conditions $7/10 \le \sigma \le 4/5$,
-$N \ge (qT)^{2/3}/2$ and the sum at least $N^\sigma/6$ in absolute value, up to a factor
-$C(\varepsilon)(qT)^\varepsilon$ for $qT$ large. Input~\ref{inp:cgl} takes distinct characters with one point each,
-the coefficients $b_n \mathbf 1_S(n)$, on
-which the weight is $1$, and the factor $C(qTN)^\varepsilon$ for every $q$ and $T$. The library proves
-Input~\ref{inp:cgl} along their proof (\S S5). One of its steps, their Theorem~10.1, is the case of one modulus, for
-primitive characters, of Heath-Brown's large values estimate for double sums with characters
-\cite[Theorem~1]{hb79b}, which they quote; the library proves that case with a factor $(qTM)^\varepsilon$ in place
-of Heath-Brown's $D^{c_0/\log\log D}$, along Kerr's proof of the case $q = 1$ \cite{kerr}, with Jutila's Lemma~1
+Maynard's \cite{guth-maynard}. Their proposition bounds, up to a factor $C(\varepsilon)(qT)^\varepsilon$ for $qT$
+large, a set of pairs $(t, \chi)$ whose pairs with the same character are $(qT)^\varepsilon$ apart. Its sum is $\sum_n
+w(n/N) b_n \chi(n) n^{it}$, with the smooth weight $w$ of their \S 3, supported in $[1, 2]$ and equal to $1$ on $[6/5,
+9/5]$, and its conditions are those of Input~\ref{inp:cgl}: $7/10 \le \sigma \le 4/5$, $N \ge (qT)^{2/3}/2$ and the
+sum at least $N^\sigma/6$ in absolute value. Input~\ref{inp:cgl} takes distinct characters with one point each, the
+coefficients $b_n \mathbf 1_S(n)$, on which the weight is $1$, and the factor $C(qTN)^\varepsilon$ for every $q$ and
+$T$. The library proves Input~\ref{inp:cgl} along their proof (\S S5). One of its steps, their Theorem~10.1, is the
+case of one modulus, for primitive characters, of Heath-Brown's large values estimate for double sums with characters
+\cite[Theorem~1]{hb79b}, which they quote; the library proves that case with a factor $(qTM)^\varepsilon$ in place of
+Heath-Brown's $D^{c_0/\log\log D}$, along Kerr's proof of the case $q = 1$ \cite{kerr}, with Jutila's Lemma~1
 \cite{jutila} for the reflection with characters. Heath-Brown's theorem is refereed; Chen, Gupta and Li's preprint is
-not. The formalisation found seven places where the
-preprint's text needs a small repair, none of which affects its results (\S S5 and
-\file{formalisations/chen-gupta-li-density.md}).
+not. The formalisation found seven places where the preprint's text needs a small repair, none of which affects its
+results (\S S5 and \file{formalisations/chen-gupta-li-density.md}).
 
 Input~\ref{inp:cgl} is stated for primitive characters. A character mod $q$ is induced by a primitive character mod a
 divisor $d$ of $q$, and a sum with the character is the sum with the primitive character and the coefficients
@@ -467,9 +468,9 @@ $|\sum_{N < n \le 2N} a_n \chi(n) n^{it_\chi}| \ge V$ at a point $|t_\chi| \le T
   C q^\varepsilon (qTN)^\varepsilon \bigl(N^2 V^{-2} + (qT)^{1/2} N^3 V^{-4} + (qT)^{4/3} N^2 V^{-4}\bigr). \tag{CGL}
 \]
 Indeed, of the three parts of the sum, cut at $6N/5$ and $9N/5$, one is at least $V/3$. Apply Input~\ref{inp:cgl} to
-the three parts at the lengths $11N/15$, $N$ and $19N/15$, each at least $(qT)^{2/3}/2$; with $V = N^\sigma$, the
-threshold $(cN)^\sigma/6$ is at most $V/3$ for these $c$. Then sum over the divisors of $q$, of which there are at most
-$C(\varepsilon) q^\varepsilon$.
+the three parts at the lengths $cN$, $c = 11/15$, $1$ and $19/15$, each at least $(qT)^{2/3}/2$; with $V = N^\sigma$,
+$7/10 \le \sigma \le 4/5$, the threshold $(cN)^\sigma/6$ is at most $V/3$ since $c^\sigma \le 2$. Then sum over the
+divisors of $q$, of which there are at most $C(\varepsilon) q^\varepsilon$.
 
 \subsection*{The density curve}
 
@@ -484,8 +485,8 @@ $q \ge 1$, every $1/2 \le \sigma \le 1$ and every $T \ge 2$,
 \]
 \end{definition}
 
-A density exponent $A$ gives the curve $A(1 - \sigma)$, and the curve $1$ is the trivial count
-$N^*(\sigma, T; q) \le \varphi(q) \le qT$.
+A density estimate $N^*(\sigma, T; q) \ll (qT)^{A(1 - \sigma)}$, with $A$ constant and no factor $(qT)^\varepsilon$,
+gives the curve $A(1 - \sigma)$, and the curve $1$ is the trivial count $N^*(\sigma, T; q) \le \varphi(q) \le qT$.
 
 The Type~II estimate uses the curve only from the threshold $\beta^\dagger = 7789/10000$ on, where the
 Hal\'asz--Montgomery inequality takes over from orthogonality (Section~\ref{sec:region}). Below $\beta^\dagger$ it
@@ -628,8 +629,9 @@ the other pieces need none.
   $[\sigma_-, \sigma_+]$ Ingham's estimate bounds the count by
   $C(qT)^{(3/(2 - \sigma_+) + 4\varepsilon)(1 - \sigma)} (\log qT)^{10}$, by zero detection, the mean value theorem
   for the Dirichlet polynomials and the hybrid fourth moment of the $L$-functions for the integrals. The library
-  proves it with an exponent $2 + 4c$, $0 \le c \le 1$, under a linear condition at $\sigma_+$ that holds with
-  equality at $2 + 4c = 3/(2 - \sigma_+)$. On the first nineteen steps
+  proves it with the exponent $2 + 4c + 4\varepsilon$, $0 \le c \le 1$, under a condition at $\sigma_+$, linear in
+  $c$, that holds exactly when $2 + 4c \ge 3/(2 - \sigma_+)$; each step takes $2 + 4c = 3/(2 - \sigma_+)$. On the
+  first nineteen steps
   $\varepsilon = 1/8000$, so $4\varepsilon = 1/2000$; on the last $c = 1/12$, $2 + 4c = 7/3$ and
   $\varepsilon = 1/400000$, so $4\varepsilon = 1/100000$.
 \item On each step $[\sigma^*_k, \sigma^*_{k+1}]$ of $[5/7, 131/168]$: Input~\ref{inp:cgl}, through a density step
@@ -650,10 +652,10 @@ the other pieces need none.
   cut by the dyadic blocks of the polynomial and into bins of the real parts $\beta_\chi$ of width $e/200$. A block of
   length $P$
   is raised to a power $\kappa \le 1556$ with $Q^{\alpha_k} \le P^\kappa \le Q^{\alpha'_k}$, where $\alpha_k \ge 2/3$ and
-  $\alpha'_k$ are exponents chosen for the step. Each dyadic piece of the power, of length $N$, is counted by (CGL),
-  carried to the points off the line by a Taylor expansion of $n^{-\delta}$, $0 \le \delta \le 1/16$, at a threshold
-  $N^\sigma/Z$, where $Z \le N^{1/70}$ is a loss that depends on $\kappa$, on the divisor bound and on the number of
-  Taylor terms; the threshold lies in $[N^{7/10}, N^{4/5}]$ since $5/7 \le \sigma \le 4/5$.
+  $\alpha'_k$ are exponents chosen for the step. Each dyadic piece of the power, of length $N$, is counted by (CGL)
+  at the threshold $V = N^\sigma/Z$, carried to the points off the line by a Taylor expansion of $n^{-\delta}$,
+  $0 \le \delta \le 1/16$. Here $Z \le N^{1/70}$ is a loss that depends on $\kappa$, on the divisor bound and on the
+  number of Taylor terms; since $5/7 \le \sigma \le 4/5$, the threshold lies in $[N^{7/10}, N^{4/5}]$.
 
   The exponents of the three terms of (CGL) are affine in $\log_Q N$, so it suffices that each is at most
   $A_{k,\mathrm i}(1 - \sigma) - e/4$ at $N = Q^{\alpha_k}$ and at $N = Q^{\alpha'_k}$, where $A_{k,\mathrm i}$ is the
@@ -693,7 +695,8 @@ For two finite sets $S_1 \subseteq (P_1, 2P_1]$ and $S_2 \subseteq (P_2, 2P_2]$ 
   W_1(\chi) = \sum_{m \in S_1} a_m \chi(m) m^{-it_1}, \qquad W_2(\chi) = \sum_{m \in S_2} b_m \chi(m) m^{-it_2},
 \]
 and $V_1 = \sum_{m \in S_1} |a_m|^2$, $V_2 = \sum_{m \in S_2} |b_m|^2$. Write $\mathcal X^*$ for the non-trivial
-characters mod $q$. The estimate holds on the following explicit region of the two lengths.
+characters mod $q$. Theorem~\ref{thm:type2} below holds on the following explicit region of the exponents
+$m_i = \log_q P_i$ of the two lengths.
 
 \begin{definition}\label{def:region}
 % Lean: SieveTwoZone7D.Zone7d
@@ -707,13 +710,12 @@ the pairs $(m_1, m_2)$ of reals such that, with $s_i = 1 - m_i$ and $\rho = L - 
 
 For $P_i = q^{m_i}$, the number $\rho$ is the exponent of the rest $q^L/(P_1 P_2)$, the length of the product of the
 prime sums. Two variables of length at least $q$ ($s_i \le 0$) are in the region as soon as $\rho \ge 1/2000$. A
-variable of length $q^{1 - s_i}$ shorter than $q$ is allowed when $s_i \le \lambda\rho - \mu$, and two such variables
-when $s_1 + s_2 \le \lambda\rho - \mu$. Since $s_1 + s_2 = 2 - L + \rho$, the last
-condition is $\rho \le (L - 2 - \mu)/(1 - \lambda)$, so for each $L$ the region is a bounded polygon. The number
-$\lambda$ is $2(1 - \beta^\dagger - 4 \cdot 10^{-6})$ at the threshold $\beta^\dagger = 7789/10000$ of
-Section~\ref{sec:inputs}, where $4 \cdot 10^{-6}$ is the bound for $\varpi$ in Definition~\ref{def:zone}; it covers the
-bins' $\varpi < 2.9 \cdot 10^{-6}$, the excess of the prime sums' exponent over the lower end of the bin
-(Section~\ref{sec:bins}). The
+variable of length $q^{1 - s_i}$ shorter than $q$ needs $s_i \le \lambda\rho - \mu$, and the two variables together
+need $s_1 + s_2 \le \lambda\rho - \mu$. Since $s_1 + s_2 = 2 - L + \rho$, the last condition is $\rho \le (L - 2 -
+\mu)/(1 - \lambda)$, so for each $L$ the region is a bounded polygon. The number $\lambda$ is $2(1 - \beta^\dagger - 4
+\cdot 10^{-6})$ at the threshold $\beta^\dagger = 7789/10000$ of Section~\ref{sec:inputs}, where $4 \cdot 10^{-6}$ is
+the bound for $\varpi$ in Definition~\ref{def:zone}. Here $\varpi$ is the excess of the prime sums' exponent over the
+lower end of a bin, and the bins of Section~\ref{sec:bins} have $\varpi < 2.9 \cdot 10^{-6}$, within this bound. The
 number $\mu$ is twice the saving $1/25000$ that each bin must make. Section~\ref{sec:region} explains both.
 
 \begin{theorem}[the Type~II estimate in two variables]\label{thm:type2}
@@ -736,8 +738,9 @@ prime sums are bounded through the zeros of each character's $L$-function (Lemma
 characters are sorted by those zeros into bins (Section~\ref{sec:bins}), and in each bin the sum over the characters
 is bounded. The difference is in the third part. In each bin, Cauchy--Schwarz is taken between $W_1$ and $W_2$, and
 each mean square is bounded by the better of orthogonality and the Hal\'asz--Montgomery inequality in mean square
-(Section~\ref{sec:two-bounds}). The number of characters in a bin enters only the second bound; so a density
-estimate is needed only where the bins are small, and there the classical one suffices. Section~\ref{sec:zone}
+(Section~\ref{sec:two-bounds}). The number of characters in a bin enters only the second bound, multiplied by a
+bound for the kernel $k_Y$; so a density estimate is needed only where the bins are small, and there the classical
+one suffices. Section~\ref{sec:zone}
 reduces the theorem to a condition on the pairs of lengths, the zone condition, and Section~\ref{sec:region} checks
 it on $\mathcal R_L$ through finitely many linear inequalities.
 
@@ -885,10 +888,10 @@ prime sums is at most $q^{\rho(\beta + \varpi)}$, and $\mathcal H \le q^{b(m)}$ 
 \[
   M \ge \max(m, 1) \qquad \text{or} \qquad M \ge \max\bigl(m, g(\beta) + b(m)\bigr).
 \]
-The first alternative suffices by orthogonality, since $P + q \le 2q^{\max(m, 1)}$, and the second by
-Lemma~\ref{lem:hm-sq}, since $2P \le 2q^m$ and the bin's size times $\mathcal H$ is at most a constant times
-$q^{g(\beta) + b(m) + \eta}$. With exponents $M_1$ and
-$M_2$ of the two mean squares, and $V_i^{1/2} = q^{m_i/2}(V_i/P_i)^{1/2}$, the bin contributes at most $q^E
+Either alternative makes the mean square at most $q^{M + \eta} V$, up to constants and powers of $1 + \log qT$: the
+first by orthogonality, since $P + q \le 2q^{\max(m, 1)}$, and the second by Lemma~\ref{lem:hm-sq}, since $2P \le
+2q^m$ and the bin's size times $\mathcal H$ is at most a constant times $q^{g(\beta) + b(m) + \eta}$. With exponents
+$M_1$ and $M_2$ of the two mean squares, and $V_i^{1/2} = q^{m_i/2}(V_i/P_i)^{1/2}$, the bin contributes at most $q^E
 (V_1/P_1)^{1/2}(V_2/P_2)^{1/2}$, up to the same factors, with
 \[
   E = \rho(\beta + \varpi) + \frac{m_1 + M_1}2 + \frac{m_2 + M_2}2.
@@ -1055,13 +1058,12 @@ Proposition~\ref{prop:region} still hold at the vertices for every $\varepsilon 
 Input~\ref{inp:half-plane} for the prime sums, through Lemma~\ref{lem:prime-sum} and the top bin of
 Section~\ref{sec:bins}, and not for the kernel $k_Y$.
 
-Below $\beta^\dagger$ the density curve is not used. A smaller exponent at $\beta^\dagger$ and above would let the
-threshold move down, to the point where $g(\beta) = 249/500$, and with it raise $\lambda = 2(1 - \beta^\dagger -
-4 \cdot 10^{-6})$. Chen, Gupta and Li's exponent $4/(1 + \sigma)$ \cite{cgl} is larger than Huxley's there. Even the
-density
-hypothesis, $A = 2$, would give the threshold $0.751$ and $\lambda \approx 0.498$, about $13\%$ above $0.442192$. The
-limit of the method lies elsewhere: in the number of the sieve's terms that
-fall outside the region (Section~\ref{sec:comparison}).
+No density estimate better than Huxley's would enlarge the region by much. Below $\beta^\dagger$ the density curve is
+not used. A smaller exponent at $\beta^\dagger$ and above would let the threshold move down, to the point where
+$g(\beta) = 249/500$, and with it raise $\lambda = 2(1 - \beta^\dagger - 4 \cdot 10^{-6})$. Chen, Gupta and Li's
+exponent $4/(1 + \sigma)$ \cite{cgl} is larger than Huxley's there. Even the density hypothesis, $A = 2$, would give the
+threshold $0.751$ and $\lambda \approx 0.498$. The limit of the method lies elsewhere: in the number of the sieve's
+terms that fall outside the region (Section~\ref{sec:comparison}).
 
 In one variable the bound is different in kind. There Cauchy--Schwarz is taken over the bin, so the bin's size enters
 orthogonality as $|\mathcal X_i|^{1/2} \approx q^{g(\beta)/2}$, and for a polynomial of length about $q$ the condition
@@ -1097,7 +1099,7 @@ which is orthogonality: the trivial character cancels, and the other characters 
 This section states the tools of Harman's sieve \cite{harman83}, \cite[Chapter~3]{harman} in the form the proof uses,
 with every exponent an exponent of $q$; Section~\ref{sec:decomp} converts them to exponents of $x$.
 Lemma~\ref{lem:type1} is the classical Type~I count, and Lemma~\ref{lem:typeIB} a bilinear form of Type~I information,
-proved by the standard argument of orthogonality, Cauchy--Schwarz and Parseval's identity, with no bound for
+proved by orthogonality, Cauchy--Schwarz and Parseval's identity, with no bound for
 Kloosterman sums; Lemma~\ref{lem:leaves} applies it at the
 leaves of Buchstab's tree. Lemmas~\ref{lem:family-two} to~\ref{lem:term-two} carry Theorem~\ref{thm:type2} to sums over
 integers whose primes are cut out by conditions, and Propositions~\ref{prop:harman-two} and~\ref{prop:harman-fill} are
@@ -1203,6 +1205,7 @@ has the following properties (\S S3):
 \item $|\hat w(h)| \le (B - A)(q/(2\ell(H + 1)))^r$ at the residues $h$ of the integers $t$ with $H < |t| \le q/2$,
   since $\hat w(h)$ is the sum over the interval times the $r$-th power of a geometric sum of length $\ell$.
 \end{itemize}
+
 In the application the coefficients are bounded, and
 the pairs $(d_1, d_2)$ are taken in short blocks, on each of which $d_1 \approx P_1$, $d_2 \approx P_2$ and the cofactor
 runs over an interval of length about $n = x/(P_1 P_2)$, with a spline whose step $\ell$ is below $n$ by a small power
@@ -1210,12 +1213,13 @@ of $q$. The cut is $H = \lceil qY/\ell \rceil$ for a small power $Y$ of $q$: the
 the block's size, small for large $r$ whatever the size of $d_2$, and the factor $\lfloor 2HD/q \rfloor + 1$ of the
 first term, with $D = P_2$, is about $1 + Y P_2/\ell$, that is $1 + Y q^{s} d_1 d_2^2/x$ for a step $\ell = n q^{-s}$.
 Measured against $x/q$, the size of a block's main term, the first term is then about
-$(F(P_1 + q)(n + q)(1 + Y q^s d_1 d_2^2/x)/x)^{1/2}$: that is $(q^2/x)^{1/2}$ times the factors $(P_1/q + 1)^{1/2}$ of
-Parseval's identity over the inverses $\bar d_1$ and $(n/q + 1)^{1/2}$ of the cofactor's residues, and those of the
-diagonal, $F$ and the number of its integers.
+$(F(P_1 + q)(n + q)(1 + Y q^s d_1 d_2^2/x)/x)^{1/2}$. That is $(q^2/x)^{1/2}$ times $(P_1/q + 1)^{1/2}$, from
+Parseval's identity over the inverses $\bar d_1$, times $(n/q + 1)^{1/2}$, from the cofactor's residues, and times
+$(F(1 + Y q^s d_1 d_2^2/x))^{1/2}$, from the diagonal: $F$ and the number of its integers.
 
 At the leaves below, where the cofactor is short, $n \le 2q^{1 + \delta'}$ for a small margin $\delta'$ (not the
-$\delta' = 1/1000$ of Section~\ref{sec:type2}), it is small when $d_1 \le x/q^{1 + \xi}$ and $d_1 d_2^2 \le x q^c$ with
+$\delta' = 1/1000$ of Section~\ref{sec:type2}), the first term is small when $d_1 \le x/q^{1 + \xi}$ and
+$d_1 d_2^2 \le x q^c$ with
 $\max(c, 0) + \delta' < \xi$: so $d_1 d_2$ may exceed $x/q$, and $d_1 d_2^2$ may exceed $x$; only $d_1$, the part that
 Parseval's identity averages, must stay below $x/q$. Lemma~\ref{lem:leaves} assumes these conditions with a slack
 $\kappa > 0$ in the last one.
@@ -1322,7 +1326,7 @@ most $A_0 B_0 q^{L - \delta}/\varphi(q)$ in absolute value.
 
 The proof is in \S S2. The pairs $(m_1, m_2)$ are cut into the pairs of dyadic blocks $(P_1 2^{b_1}, P_1 2^{b_1 + 1}]
 \times (P_2 2^{b_2}, P_2 2^{b_2 + 1}]$, at most $(3 + 4 \log q)^2$ of them since $L \le 5/2$, and each prime variable by
-the smooth partition of unity $\sum_t f_0(y/2^t) = 1$, for the particular $f_0(y) = F(y) - F(y/2)$ of \S S2, into at
+the smooth partition of unity $\sum_t f_0(y/2^t) = 1$, for the particular $f_0$ of \S S2, into at
 most $3 + 4 \log q$ dyadic scales $Q_i = 2^{t_i}$. A piece
 with some $Q_i < q^{e_1}$, or with $Q_1 \cdots Q_K > 2^{K_0 + 1} q^L/(P_1 2^{b_1} P_2 2^{b_2})$, vanishes, since the
 comparisons force $p_i \ge 2q^{e_1}$ and $m_1 m_2 p_1 \cdots p_K \le 2q^L$. Every other piece is a family in two
@@ -1330,7 +1334,7 @@ variables at the lower ends $(P_1 2^{b_1}, P_2 2^{b_2})$ of its block, whose exp
 block is not empty, and Lemma~\ref{lem:family-two}, with $K_0 + 1$ in place of $K_0$ and $\Lambda_1 + K_0 E_0 (L + 3)$
 in place of $\Lambda_0$, bounds it; the number of pieces, a power of $\log q$, is absorbed by a power of $q$. The region
 is asked on the whole rectangle of the two ranges' exponents; Lemma~\ref{lem:chains-two} asks it only on the part that
-the product $m_1 m_2$ allows.
+the product $n_1 n_2$ of the two variables allows.
 
 In both lemmas every comparison has a prime as a pivot, and its form separates into a function of $m_1$, one of $m_2$
 and the logarithms of the primes. A condition on $m_1$ alone, or on $m_2$ alone, can go into the coefficients. A
@@ -1452,9 +1456,9 @@ of $s$; so if $\delta_1$ is the $\delta$ that Lemma~\ref{lem:chains-two} gives h
 large $q$.
 \end{proof}
 
-So a term is evaluated outright when a set $\mathcal S$ of its primes, the first variable, and a disjoint nonempty set
-$\mathcal S_r$, the rest, have products in ranges on which the region holds for every second variable, the integer
-divided by the two.
+So a term is evaluated outright when a set $\mathcal S$ of its primes and a disjoint nonempty set $\mathcal S_r$ have
+products, the first variable and the rest, in ranges on which the region holds for every length of the second
+variable, the integer $n$ divided by these two products.
 
 \subsection{Harman's comparison in two variables}\label{sec:harman}
 
@@ -1466,9 +1470,9 @@ Proposition~\ref{prop:harman-two}, once its first variable is in range), $W$ bei
 of the branch's new primes and $p$ the last and least of them; a \emph{leaf} is the sum $S(\mathcal A_d, w)$ of a
 branch that reaches $w$, $d$ being the same product. In Proposition~\ref{prop:harman-two}, (a) puts the stops' first
 variable, built on the primes of $\mathcal S_0$, in the range $(q^u, q^v]$, and $4q^t$ bounds the product of a leaf's
-new primes; (b) puts the rest, the product of the primes of $\mathcal S_r$, in $[q^{\rho_1}, q^{\rho_2}]$; (c) asks
-the region on these ranges; and (d), in which $\mathcal S_1$ and the side $\iota$ split a leaf's primes into two
-variables, is the condition of Lemma~\ref{lem:leaves} with margins.
+new primes. Hypothesis (b) puts the rest, the product of the primes of $\mathcal S_r$, in $[q^{\rho_1}, q^{\rho_2}]$,
+and (c) asks the region on these ranges. Hypothesis (d) is the condition of Lemma~\ref{lem:leaves} with margins, for
+the two variables into which $\mathcal S_1$ and the side $\iota$ split a leaf's primes.
 
 \begin{proposition}[Harman's comparison in two variables]\label{prop:harman-two}
 % Lean: SieveTwoComp.prop6_two_at, SieveTwoComp.prop6_two, SieveTreeStop.tree_weighted_stop, SieveP6Tree.tree_chains, SieveTwoP6.stops_bound2, SieveTwoTerm.chainOK2_of_zone, SieveP6TreeLeaves.tree_leaves_le, SieveProp6.leaf_bound, SieveBrun.fundamental, SieveLeaf.prod_T_le, SieveLeaf.prod_primesBelow_le
@@ -1511,11 +1515,11 @@ first variable's range, since $r_{\mathcal S_0} \le q^{\sum_{\mathcal S_0} h_i} 
 identity and
 Lemma~\ref{lem:term-two} evaluate them.
 
-The leaves are sifted only by the primes below $w$, and their new primes have a product below $4q^t$. Split into
-$d_1$, the primes of $\mathcal S_1$ and, if $\iota = 1$, the new primes, and $d_2$, the other primes, they satisfy
-$d_1 \le 4q^{D_1}$ and $d_2 \le 4q^{D_2}$, and (d) is the condition of Lemma~\ref{lem:leaves} with
-margins: that lemma counts the leaves with $d > q^{L - 1 - 4c'}$, for a small $c' > 0$, and Lemma~\ref{lem:type1} the
-others.
+The leaves are sifted only by the primes below $w$, and their new primes have a product below $4q^t$. Split the
+product $d$ of a leaf into $d_1$, the product of the primes of $\mathcal S_1$ and, if $\iota = 1$, of the new primes,
+and $d_2$, that of the other primes. Then $d_1 \le 4q^{D_1}$ and $d_2 \le 4q^{D_2}$, and (d) is the condition of
+Lemma~\ref{lem:leaves} with margins. That lemma counts the leaves with $d > q^{L - 1 - 4c'}$, for a small $c' > 0$,
+and Lemma~\ref{lem:type1} the others.
 Brun's sieve \cite{brun}, in the form of the fundamental lemma of sieve theory \cite{friedlander-iwaniec},
 \cite[Chapter~6]{iwaniec-kowalski}, gives the main terms of the leaves with an error. That error is at most
 $\eta q^L/(\varphi(q) \log q)$, by the elementary bound $\prod_{p < w}(1 - 1/p) \le 1/\log w$, Mertens' theorem for the
@@ -1545,8 +1549,8 @@ $S(\mathcal A, z_0) - S(\mathcal B, z_0)/\varphi(q)$.
 The proof (\S S3) has two trees. The first is that of Proposition~\ref{prop:harman-two}: it brings the product of
 $\mathcal S_0$ and of the largest small primes into the first variable's range. Each of its stops $S(\mathcal A_W, p)$
 is not evaluated but sifted further, by Buchstab's tree below its last prime $p$, stopped as soon as that second tree's
-own product reaches $\lceil q^\tau \rceil$; this product, in $[\lceil q^\tau \rceil, \lceil q^\tau \rceil \lceil
-q^{a_0} \rceil)$, inside $[q^\tau, q^{\rho_2}]$ for large $q$ by (b), is the rest, and Lemma~\ref{lem:term-two}
+own product reaches $\lceil q^\tau \rceil$. This product lies in $[\lceil q^\tau \rceil, \lceil q^\tau \rceil \lceil
+q^{a_0} \rceil)$, so inside $[q^\tau, q^{\rho_2}]$ for large $q$ by (b); it is the rest, and Lemma~\ref{lem:term-two}
 evaluates the second stops. A tuple whose first variable is already in its range has the second tree alone, from
 $z_0$. The rest's range no longer depends on the term, so (c) asks the region for every rest in $[\tau, \rho_2]$, and
 the
@@ -1720,14 +1724,15 @@ inequalities,
   m_1 + \lambda \rho \ge 1 + \tfrac1{12500}, \qquad m_1 + (1 - \lambda)\rho \le L - 1 - \tfrac1{12500}, \\
   (1 - \lambda)\rho \le L - 2 - \tfrac1{12500},
 \end{gather*}
-which say that $\rho \ge 1/2000$, that $m_1, m_2 \ge 2/3$, and that $s_1$, $s_2$ and $s_1 + s_2$ are at most
+which say that $\rho \ge 1/2000$, that $m_1, m_2 \ge 2/3$, and that, with $s_i = 1 - m_i$ as in
+Definition~\ref{def:region}, $s_1$, $s_2$ and $s_1 + s_2$ are at most
 $\lambda\rho
 - 1/12500$. So $\mathcal R$ holds on a rectangle of pairs $(m_1, \rho)$ when each inequality holds at the corner where
 it
 is tightest. Below, integers such as $\rho_\pm$, $u$ and $v$ are exponents in units of $1/D$ of $x$, like the ends of
 the cells, while $m_1$ and $\rho$ are exponents of $q$. For integers $\rho_- \le \rho_+$, the \emph{admissible range}
 $\mathcal W(\rho_-, \rho_+)$ of the first variable is the set of the integers
-$w$ such that $(m_1, L - m_1 - \rho) \in \mathcal R$ for $m_1 = Lw/D$ and every $\rho \in [L(\rho_- - 1)/D, L(\rho_+ +
+$e$ such that $(m_1, L - m_1 - \rho) \in \mathcal R$ for $m_1 = Le/D$ and every $\rho \in [L(\rho_- - 1)/D, L(\rho_+ +
 1)/D]$: the first variables that the region allows with every rest of exponent within one unit of $[\rho_-, \rho_+]$. It
 is empty unless the two inequalities in $\rho$ alone hold at $\rho = L(\rho_- - 1)/D$ and at $\rho = L(\rho_+ + 1)/D$.
 When they hold, it is the set of the integers of $[u, v]$, with
@@ -1807,18 +1812,16 @@ comparisons for the cells and $k - 1$ for the order, so at most $3k \le 39$, eac
 at most $L \log q$.
 Take $J_0 = 40$, or $J_0 = 3k + J$ for (c), and $\Lambda_1 = L + 1$.
 
-(a) Apply Lemma~\ref{lem:term-two} with $e_0 = L/D$, since every prime is at least $x^{1/D}$, the sets $\mathcal S$ and
-$\mathcal S_r$, and $A = \lceil x^{l(\mathcal S)/D} \rceil - 1$, $B = \lfloor x^{h(\mathcal S)/D} \rfloor$, $R_- =
-\lceil x^{l(\mathcal S_r)/D} \rceil - 1$ and $R_+ = \lfloor x^{h(\mathcal S_r)/D} \rfloor$, so that $A < \prod_{\mathcal
-S} p_i \le B$ and $R_- < \prod_{\mathcal S_r} p_i \le R_+$ on the family. The inequality $\rho \ge 1/2000$ at
-$L(l(\mathcal
-S_r) - 1)/D$ makes $\mathcal S_r$ nonempty, and $m_1 + \rho \le L - 2/3$ at the corner $(Lh(\mathcal S)/D, L(h(\mathcal
-S_r) + 1)/D)$ gives $h(\mathcal S) + h(\mathcal S_r) + 1 < D$, so $BR_+ \le x^{1 - 1/D} \le N_1$ for large $q$. For
-large
-$q$, $\log_q A \ge L(l(\mathcal S) - 1)/D$, and an $m_2$ with $\lfloor N_1/R_+ \rfloor \le 4q^{m_1 + m_2}$ and $q^{m_1 +
-m_2} \le \lfloor N_2/(R_- + 1) \rfloor$ has $L - m_1 - m_2$ in $[L(l(\mathcal S_r) - 1)/D, L(h(\mathcal S_r) + 1)/D]$,
-since the factors $4$ and $2$ are below $x^{1/D}$. So the region's hypothesis of the lemma is (I), and its bound
-$q^{L - \delta}/\varphi(q)$ is $o(X)$.
+(a) Apply Lemma~\ref{lem:term-two} with $e_0 = L/D$, since every prime is at least $x^{1/D}$, and with the sets
+$\mathcal S$ and $\mathcal S_r$. Take $A = \lceil x^{l(\mathcal S)/D} \rceil - 1$, $B = \lfloor x^{h(\mathcal S)/D}
+\rfloor$, $R_- = \lceil x^{l(\mathcal S_r)/D} \rceil - 1$ and $R_+ = \lfloor x^{h(\mathcal S_r)/D} \rfloor$, so that
+$A < \prod_{\mathcal S} p_i \le B$ and $R_- < \prod_{\mathcal S_r} p_i \le R_+$ on the family. The inequality $\rho
+\ge 1/2000$ at $L(l(\mathcal S_r) - 1)/D$ makes $\mathcal S_r$ nonempty, and $m_1 + \rho \le L - 2/3$ at the corner
+$(Lh(\mathcal S)/D, L(h(\mathcal S_r) + 1)/D)$ gives $h(\mathcal S) + h(\mathcal S_r) + 1 < D$, so $BR_+ \le x^{1 -
+1/D} \le N_1$ for large $q$. For large $q$, $\log_q A \ge L(l(\mathcal S) - 1)/D$, and an $m_2$ with $\lfloor N_1/R_+
+\rfloor \le 4q^{m_1 + m_2}$ and $q^{m_1 + m_2} \le \lfloor N_2/(R_- + 1) \rfloor$ has $L - m_1 - m_2$ in
+$[L(l(\mathcal S_r) - 1)/D, L(h(\mathcal S_r) + 1)/D]$, since the factors $4$ and $2$ are below $x^{1/D}$. So the
+region's hypothesis of the lemma is (I), and its bound $q^{L - \delta}/\varphi(q)$ is $o(X)$.
 
 (b) For (J2), apply Proposition~\ref{prop:harman-two} with $j = k$, the sets $\mathcal S_0$, $\mathcal S_r$ and
 $\mathcal S_1$, the side $\iota$, $\eta/(2L)$ in place of $\eta$, and its $l_i$, $h_i$, $u$, $v$, $t$, $a_0$, $\rho_1$,
@@ -1828,8 +1831,9 @@ $\rho_2$ and margin $\varepsilon$ equal, in this order, to
   \frac{Ll(\mathcal S_r)}D, \quad \frac{Lh(\mathcal S_r)}D, \quad \frac LD.
 \] The family's comparisons force $p_1 > \dots > p_k \ge z_f$, since a prime at least $x^{l_i/D} \ge x^{f/D}$ is
 at least $z_f$. As in part (a) of this proof, the admissible range is nonempty only if $\rho \ge 1/2000$ at
-$L(l(\mathcal S_r) - 1)/D$, and this makes $\mathcal S_r$ nonempty and $k \ge 1$. Hypothesis (a) of the proposition
-is $u > 0$, which $m_1 \ge 2/3$ gives, $u + f < v$, $g \ge u - l(\mathcal S_0)$ and $h(\mathcal S_0) < v$.
+$L(l(\mathcal S_r) - 1)/D$, and this makes $\mathcal S_r$ nonempty and $k \ge 1$. Hypothesis (a) of the proposition,
+in units of $1/D$ of $x$, is $u > 0$ (which $m_1 \ge 2/3$ gives), $u + f < v$, $g \ge u - l(\mathcal S_0)$ and
+$h(\mathcal S_0) < v$.
 Hypothesis (b) holds since $m_1 + \rho \le L - 2/3$ at the corner $(Lv/D, \rho_2 + L/D)$. Hypothesis (c) asks the
 region for $m_1 \in [Lu/D, Lv/D]$ and the rests in $[\rho_1 - L/D, \rho_2 + L/D]$; the admissible range gives it at
 the corners of this rectangle, where $m_1 = Lu/D$ or $Lv/D$, and so on the rectangle. Hypothesis (d) is $(\mathrm L)$:
@@ -1897,7 +1901,7 @@ $u_+ \le 2.76$, $\omega(u_-)$ if $u_- \ge 2.77$, and $0.5671433$ otherwise. At a
 =
 (u - 1)/(1 + j/16) \ge 1$, and $\ell_j \ge \log(1 + j/16)$ is one of seventeen rationals of a table, each checked
 against
-the exponential's series; the second term is $\log \xi \le (\xi - 1/\xi)/2$, the trapezoid rule, which here errs
+the exponential's series. The second term comes from $\log \xi \le (\xi - 1/\xi)/2$, the trapezoid rule, which here errs
 by less than $4 \cdot 10^{-5}$.
 
 \emph{The costs.} For a cell $(l, l + w)$ with $l > 0$ let
@@ -1975,15 +1979,15 @@ decomposed, or cut into boxes to which (D), (P) or (V) of Definition~\ref{def:tr
 A term with the sign $-$ needs an upper bound, and Buchstab's identity gives one only when its box passes a test at a
 floor. Role reversal \cite{bhp}, \cite{harman} counts a term's integers from the other end: a term of $p_1 > p_2 > \dots
 > p_k$ counts the $n = p_1 R$ with $R = p_2 \cdots p_k m$, and summing over $R$ instead, the quotient $n/R$ is the
-prime $p_1$. When $p_1$ is large, a number of the size of $p_1$ with no prime factor below the square root of the
-upper end of
-$p_1$'s range is prime,
-so the term is a term of a sieve on the numbers $n/R$, which Buchstab's identity decomposes further.
+prime $p_1$. When $p_1$ is large, a number in the range of $p_1$ that has no prime factor below the square root of the
+range's upper end is prime, so the term is a term of a sieve on the numbers $n/R$, which Buchstab's identity
+decomposes further.
 
 The subsection makes this precise in steps. The term of the box lies between the terms over two frozen parts, sets of
 the other primes and the cofactor, held fixed while $n/R$ is sieved (Lemma~\ref{lem:sandwich}). Buchstab's identity
 (\ref{eq:levels}) writes the upper one as a term at a floor, which a test evaluates, less the term of a chain of one
-prime; the chain enters with the sign $-$, so a tree over the frozen part with the sign $+$ bounds it
+prime; that term enters with a minus and so needs a lower bound, which a tree over the frozen part with the sign
+$+$ gives
 (Definition~\ref{def:frozen-tree}, Lemma~\ref{lem:frozen-tree}). The weights of the frozen parts are bounded by shares
 of boxes (Lemma~\ref{lem:frozen-weight}), and Proposition~\ref{prop:reversal} collects the bounds. A box of the sign
 $-$ whose decomposition would give boxes of the sign $+$ dropped at their full shares then pays only a fraction of its
@@ -2051,10 +2055,9 @@ prime. As $P \ge x^{l_1/D} \ge x^{h_2/D} > a_2$, $(P, \mathbf a)$ is a tuple of 
 the cofactor $m$, and $(\mathbf a, m) \mapsto (P, \mathbf a)$ is injective for each $n$.
 \end{proof}
 
-The two frozen parts differ only in the $R$ within the factor $x^{1/D}$ of the two ends of the range. So, for either
-set, the term of the box lies between the terms at the level $\nu$ over the narrow and the wide frozen part, and only
-the ends
-are lost. The weight of a frozen part is bounded by the share of a box.
+The two frozen parts differ only in the $R$ within the factor $x^{1/D}$ of the two ends of the range. So, in
+$\mathcal A$ and in $\mathcal B$ alike, the term of the box lies between the terms at the level $\nu$ over the narrow
+and the wide frozen part, and only the ends are lost. The weight of a frozen part is bounded by the share of a box.
 
 \begin{lemma}\label{lem:frozen-weight}
 % Lean: SieveAd.froz_weight_le, SieveAd.Plain.shareLe_list, SieveAd.shareLe_of_box, SieveAd.card_primes_le_famJR
@@ -2089,10 +2092,11 @@ x^{\overline e(\mathcal S)/D}]$ with
   \end{cases}
 \]
 since $m \prod_{\mathcal S_{\mathrm{fr}}} a_i = R/\prod_{\mathcal S_{\mathrm{fr}}^{\mathrm c}} a_i$; here $l'$ and
-$h'$ are the sums of the chain's
-cells. The \emph{room} is $\gamma = 12 + \lfloor D/l_k \rfloor$, with $\lfloor\cdot\rfloor$ the integer part: a tuple
-of the family has at most $12$ frozen and chain primes and at most $\lfloor D/l_k \rfloor$ primes of $m$, and each can
-move a sum of exponents by one unit (proof of Lemma~\ref{lem:frozen-tests}). Recall (Definition~\ref{def:tests}) that
+$h'$ are the sums of the chain's cells.
+
+The \emph{room} is $\gamma = 12 + \lfloor D/l_k \rfloor$, with $\lfloor\cdot\rfloor$ the integer part: a tuple that a
+term sums over has at most $12$ frozen and chain primes and at most $\lfloor D/l_k \rfloor$ primes of $m$, and each
+can move a sum of exponents by one unit (proof of Lemma~\ref{lem:frozen-tests}). Recall (Section~\ref{sec:tests}) that
 the first variable is the product over $\mathcal S$ in (I) and starts from that over $\mathcal S_0$ in (J2) and (J3),
 that the rest is the product over $\mathcal S_r$ in (I) and (J2), and that $(\mathrm L)$ counts $\mathcal S_1$ in its
 first exponent. A chain $\mathfrak c$ of $j$ primes, $j + k \le 13$, passes over $\mathcal M$
@@ -2153,7 +2157,8 @@ The tuples of distinct primes form a family cut out by comparisons, with no orde
 $\mathbf p'$.
 Sorted in decreasing order, each lies in exactly one box of cells of one unit, $(\lfloor D \log p/\log x \rfloor,
 \lfloor
-D\log p/\log x \rfloor + 1)$ for each prime $p$; there are at most $D^K K!$ such boxes, a number that does not depend on
+D\log p/\log x \rfloor + 1)$ for each prime $p$ (integer parts); there are at most $D^K K!$ such boxes, a number that
+does not depend on
 $q$, and the sum is the sum over them of their terms at the floor $f$, under the family's comparisons carried to the
 box's order. A unit box that holds a tuple of the family has, for each set $\mathcal S$ of variables, its lower ends'
 sum at least $\underline e(\mathcal S) - K$ and its upper ends' sum at most $\overline e(\mathcal S) + K$, since each of
@@ -2409,9 +2414,9 @@ Reduction mod $q$ is a homomorphism from the group of units mod $Q$ to that of u
 onto. Let $s$ be the product of the primes that divide $Q$ but neither $q$ nor $a$, and $b = a + qs$. A prime factor
 of $Q$ that divides $q$ divides $qs$ and not $a$; one that divides $a$ but not $q$ divides neither $q$ nor $s$, so
 not $qs$; any other divides $qs$ and not $a$. None of them divides $b$, so $b$ is prime to $Q$, and $b \equiv a
-\pmod q$. So the unit classes mod $Q$ above $a$ form a coset of the kernel, and there are $\varphi(Q)/\varphi(q)$ of
-them. A prime $p \equiv b \pmod Q$ with $b$ above $a$ has $p \equiv a \pmod q$, since $q \mid Q$. A prime lies in one
-class mod $Q$ only, so the primes of different classes are different.
+\pmod q$. So the unit classes mod $Q$ above $a$ form a coset of the kernel of this reduction, and there are
+$\varphi(Q)/\varphi(q)$ of them. A prime $p \equiv b \pmod Q$ with $b$ above $a$ has $p \equiv a \pmod q$, since $q
+\mid Q$. A prime lies in one class mod $Q$ only, so the primes of different classes are different.
 
 By the hypothesis at $Q \ge q_0$, each class above $a$ has at least $c_0 Q^L/(\varphi(Q) \log Q^L)$ primes in $(Q^L,
 2Q^L]$, and they are at most $2Q^L \le x$. Summing over the classes,
@@ -2436,9 +2441,9 @@ with the sign $-$, which a tree of cost below $\mathcal K$ gives. At $L = 43/20$
 nodes, those of the trees over the frozen parts of its reversals included. It is found by a search run outside Lean's
 kernel; that search tries what a strategy proposes and needs no proof, and the choices it keeps, the plan, are written
 down as hints. Lean's kernel runs a search led by the hints, which chooses nothing, on the \emph{parts of the
-certificate}, ranges of cells of the first, second or third prime, and checks that its values there, joined by steps
-of Buchstab's identity, add up to a cost below $\mathcal K$. This section describes the search, why its value is a
-proof whatever the strategy or the hints (Lemma~\ref{lem:search}), the hints, and the numbers at $43/20$;
+certificate}: ranges of cells of the first, second or third prime. It checks that the search's values there, joined by
+steps of Buchstab's identity, add up to a cost below $\mathcal K$. This section describes the search, why its value is
+a proof whatever the strategy or the hints (Lemma~\ref{lem:search}), the hints, and the numbers at $43/20$;
 Section~\ref{sec:certificate-b} has the search and the numbers at $21/10$.
 
 \subsection{The search}\label{sec:search}
@@ -2464,11 +2469,11 @@ keeps the cheaper.
   is wider than a least width that the strategy fixes.
 \item Otherwise the search returns a value at least the limit, which says nothing.
 \end{enumerate}
-A reversal is searched in the same way: its floor is the first proposed floor at which the chain of no prime passes a
-test over the frozen part, and the tree over the frozen part on $((f, \nu))$ is searched with the nodes of
+A reversal is searched in the same way. Its floor is the first proposed floor at which the chain of no prime passes a
+test over the frozen part. The tree over the frozen part on $((f, \nu))$ is searched with the nodes of
 Definition~\ref{def:frozen-tree}, and with the limit past which the reversal's cost (\ref{eq:cR}) would not be below
-that of the decomposition (the search that the kernel follows searches it with the fixed limit $64\mathcal K$, which
-no tree of the plan reaches).
+that of the decomposition. The search that the kernel follows searches it with the fixed limit $64\mathcal K$
+instead, which no tree of the plan reaches.
 
 At $43/20$ the strategy proposes the following.
 % The strategy is the planner's (tools/linnik/hint_cert.py, on flip_cert.py and fill_cert.py; the plan carries its choices). In Lean, what its proposals are made of: SieveAd.fmax3, SieveAd.bestSub, SieveAd.stepOf; the searches that try: SieveAd.solveG, SieveAd.nodeG, SieveAd.kids.
@@ -2618,19 +2623,21 @@ gives Theorem~\ref{thm:4320} (Section~\ref{sec:proof}).
 
 The floor $f_*$, with $f_*/D = 0.0447206\ldots$, is close to the limit above which the admissible range of (J3) is no
 wider than the floor, about $(L - 2)/((2 - \lambda)L) = 0.0448$. The floor $f$ raises the largest rest $r_2 = r_1 + f
-+ 1$ of (J3), which lowers the upper end $v$ by $1 - \lambda$ for each unit, while the lower end $u$ depends on $r_1$
-alone. At the root, $r_1 = 255700380$, and the admissible range $[u, v]$ of (J3) (Definition~\ref{def:tests}) has $u =
-511328600504$ and $v = 560499439521$, that is $[0.4650507, 0.5097713]$ in exponents of $x$: $f_* = v - u - 1$ is the
-largest floor with $u + f_* < v$, and $(\mathrm L)$, with $a_1 = (u + r_2)/D$ and $a_2 = 0$, reads $(u + r_2)/D =
-0.5100038\ldots < 1 - 1/L = 0.5348837\ldots$.
++ 1$ of (J3), and each unit of $f$ lowers the upper end $v$ of the admissible range by $1 - \lambda$, while the lower
+end $u$ depends on $r_1$ alone. At the root, $r_1 = 255700380$, and the admissible range $[u, v]$ of (J3)
+(Definition~\ref{def:tests}) has $u = 511328600504$ and $v = 560499439521$, that is $[0.4650507, 0.5097713]$ in
+exponents of $x$: $f_* = v - u - 1$ is the largest floor with $u + f_* < v$, and $(\mathrm L)$, with $a_1 = (u +
+r_2)/D$ and $a_2 = 0$, reads $(u + r_2)/D = 0.5100038\ldots < 1 - 1/L = 0.5348837\ldots$.
 
-The first prime's range $[f_*, D/2 + 1)$ is cut into $104$ pieces: three parts of the certificate, ranges of its
-cells searched with the limit $\mathcal K$ and led by hints, cover $[f_*, 0.1007)$, and $101$ cells, $99$ of side
-$4398046511/D$ from $110743490170/D = 0.10072\ldots$ and two up to $D/2 + 1$, have their own step of Buchstab's identity
-taken outside the parts and the next prime's range cut again into parts and further cells. In all $256$ cells are cut
+The first prime's range $[f_*, D/2 + 1)$ is cut into $104$ pieces. Three are parts of the certificate, which cover
+$[f_*, 0.1007)$ and are searched with the limit $\mathcal K$ and led by hints. The other $101$ are cells, $99$ of side
+$4398046511/D$ from $110743490170/D = 0.10072\ldots$ and two up to $D/2 + 1$; each has its own step of Buchstab's
+identity, taken outside the parts, and the next prime's range is cut again into parts and further cells. In all $256$
+cells are cut
 so, $101$ of the first prime and $155$ of the second; $227$ of their steps of Buchstab's identity use (J3), $29$ use
-(J2), and $217$ are at the floor $f_*$. There are $1552$ parts, in $17$ files. Lemma~\ref{lem:box-identities}(a) and~(b)
-join the pieces, and their costs add up to $c$ exactly. The pieces' costs show where the cost goes:
+(J2), and $217$ are at the floor $f_*$. There are $1552$ parts of the certificate, in $17$ files.
+Lemma~\ref{lem:box-identities}(a) and~(b) join the pieces, and their costs add up to $c$ exactly. The pieces' costs
+show where the cost goes:
 \begin{center}
 \small
 \begin{tabular}{@{}lc@{}}
@@ -2686,9 +2693,8 @@ Take $L = 43/20$ and
   C = \frac{1093510193343867034}{\mathcal K},
 \]
 the cost of Proposition~\ref{prop:certificate} over $\mathcal K$. As in the proof of Theorem~\ref{thm:4320},
-Theorem~\ref{thm:tree} applies with this $C$, and its count
-(b) is (b) of the corollary. With $c_0 = (1 - C)/2$ and the $q_0$ of (b), Lemma~\ref{lem:every-x} gives (a) with $c =
-(1 - C)/2^{L + 2}$.
+Theorem~\ref{thm:tree} applies with this $C$, and its count (b) is part (b) of the corollary. With $c_0 = (1 - C)/2$
+and the $q_0$ of (b), Lemma~\ref{lem:every-x} gives part (a) of the corollary, with $c = (1 - C)/2^{L + 2}$.
 \end{proof}
 
 \section{The resonant window}\label{sec:window}
@@ -2696,8 +2702,9 @@ Theorem~\ref{thm:tree} applies with this $C$, and its count
 Sections~\ref{sec:type2} to~\ref{sec:proof} bound the prime sums of a rest only through the zeros: in the bin $i$ each
 prime sum of length $Q$ is at most about $Q^{\beta_i}$, and the bin has at most about $q^{g(\beta_i)}$ characters. In
 two variables the bin's size multiplies only the kernel bound $\mathcal H$ (Section~\ref{sec:two-bounds}), and this
-suffices on the region $\mathcal R_L$. In one variable Cauchy--Schwarz is taken over the bin, the bin's size enters
-orthogonality, and for a polynomial of length about $q$ the estimate needs $L \ge 1 + A/2$, with $A$ the largest
+suffices on the region $\mathcal R_L$. In one variable Cauchy--Schwarz is taken over the bin, so the bin's size enters
+orthogonality as $q^{g(\beta_i)/2}$. For a polynomial of length about $q$ the estimate then needs $L \ge 1 + A/2$,
+with $A$ the largest
 exponent of a density estimate on all of $[1/2, 11/12]$ (the remark at the end of Section~\ref{sec:type2}): $11/5$
 with Huxley's $12/5$ and $13/6$ with Chen, Gupta and Li's $7/3$, both above $21/10$. So a term of the sieve whose rest
 is counted only through the zeros' bins is evaluated in one variable only where the largest density exponent allows it.
@@ -2716,7 +2723,7 @@ the characters of a bin into classes by the levels of the rest's prime sums, and
 Section~\ref{sec:window-terms} carries it to the sieve's terms, Section~\ref{sec:corners} ties the variable to the
 rest on a box, and Section~\ref{sec:window-tests} gives the tests that Lean's kernel checks in the certificate.
 
-A heuristic, which the paper does not use, shows what the counts give; the paragraph after the proof of
+A heuristic remark, which the paper does not use, shows what the counts give; the paragraph after the proof of
 Theorem~\ref{thm:window} compares it with the theorem. Let $W$ have length $P \ge q$ and coefficients of modulus at
 most $1$, let the rest have the prime sums
 $S_{Q_j}$, $Q_j = q^{s_j}$, with $P Q_1 \cdots Q_K = q^L$, and let $k_j$ be the least integer with $k_j s_j \ge 1$. If
@@ -2727,9 +2734,10 @@ $2k_j/a_j$, the sum over $\chi \ne \chi_0$ of $|W(\chi)| \prod_j |S_{Q_j}(\chi)|
 \prod_j (\sum_\chi |S_{Q_j}|^{2k_j})^{a_j/(2k_j)} U_j^{1 - a_j}$. Orthogonality gives $\sum_\chi |W|^2 \ll P^2$ and,
 since $Q_j^{k_j} \ge q$, $\sum_\chi |S_{Q_j}|^{2k_j} \ll Q_j^{2k_j}$. So the sum is $\ll q^L \prod_j Q_j^{-(1/12 -
 \varepsilon)(1 - a_j)}$. As $\sum_j s_j(1 - a_j) \ge \sum_j (1 - a_j)/k_j = \sum_j 1/k_j - 1$, the sum is $\ll q^{L -
-\kappa}$ with $\kappa = (1/12 - \varepsilon)(\sum_j 1/k_j - 1)$, a saving when $\sum_j 1/k_j > 1$. A rest of one prime
-never gives a saving, nor a rest of two primes both below $q$; two primes above $q^{1/2}$ and any third prime give one,
-and so do primes above $q^{1/2}$, $q^{1/3}$ and $q^{1/5}$.
+\kappa}$ with $\kappa = (1/12 - \varepsilon)(\sum_j 1/k_j - 1)$, a saving when $\sum_j 1/k_j > 1$.
+
+A rest of one prime never gives a saving, nor a rest of two primes both below $q$; two primes above $q^{1/2}$ and any
+third prime give one, and so do primes above $q^{1/2}$, $q^{1/3}$ and $q^{1/5}$.
 
 \subsection{The estimate}\label{sec:window-estimate}
 
@@ -2831,8 +2839,8 @@ terms at the length $(2Q)^k$ and the threshold $Z/B_k$.
 \epsilon_{\mathrm{lv}})$, the count $\varphi(q) \le q$ suffices. Otherwise $2ks(1 - u') < 1$ gives $ks \le 5/2$, and
 the previous step applies at $Z = q^{ksu'} \le |S_Q(\chi, h)|^k$ with $\varepsilon = \epsilon_{\mathrm{lv}}/5$: the
 margins $ks(u' - 7/10) \ge \epsilon_{\mathrm{lv}}/2$ and $ks(4/5 - u') \ge \epsilon_{\mathrm{lv}}/2$ absorb the powers
-of $2$ and $B_k \le B_{k_{\max}}$ once $q^{\epsilon_{\mathrm{lv}}/2} \ge 4 \cdot 2^{k_{\max}} B_{k_{\max}}$, which
-also gives the length condition, $(Q/2)^k \ge 2^{-k_{\max}} q^{2/3 + \epsilon_{\mathrm{lv}}} \ge 2q^{2/3} + 2$, and
+of $2$ and $B_k \le B_{k_{\max}}$ once $q^{\epsilon_{\mathrm{lv}}/2} \ge 4 \cdot 2^{k_{\max}} B_{k_{\max}}$ (which
+also gives the length condition, $(Q/2)^k \ge 2^{-k_{\max}} q^{2/3 + \epsilon_{\mathrm{lv}}} \ge 2q^{2/3} + 2$), and
 $q^\varepsilon (q(2Q)^k)^\varepsilon \le 2^k q^{\epsilon_{\mathrm{lv}}}$. Each of the three terms is
 then a constant times $q$ to a term of $\mathfrak r_k(s, u')$, so the count is at most a constant, depending on
 $k_{\max}$ and $F_1$ only, times $q^{\mathfrak r_k(s, u') + \epsilon_{\mathrm{lv}}}$.
@@ -2851,8 +2859,8 @@ together with the levels of its prime sums, $(i, \ell_1(\chi), \dots, \ell_K(\ch
 1)^K$ classes, with $I = 500000$ the number of bins.
 
 On a class each prime sum is at most $2Q_j^{t_j}$, with the \emph{size} $t_j$ the smaller of the zeros' bound
-$\beta_{i+1} + 2\delta$ of Section~\ref{sec:bins} and, if $\ell_j < 10^6$, the bound $(\ell_j + 1)\tau$ of the level,
-and the class has at most about $q^\gamma$ characters, with the \emph{count exponent} $\gamma$ the least of
+$\beta_{i+1} + 2\delta$ of Section~\ref{sec:bins} and, if $\ell_j < 10^6$, the bound $(\ell_j + 1)\tau$ of the level.
+The class has at most about $q^\gamma$ characters, with the \emph{count exponent} $\gamma$ the least of
 the density curve's exponent at the bin and the exponents of Lemmas~\ref{lem:moments} and~\ref{lem:lv-powers} at the
 levels. A class is bounded as a bin is in Section~\ref{sec:zone}, by orthogonality or by the Hal\'asz--Montgomery
 inequality, but in one variable: Cauchy--Schwarz is taken over the class, and the inequality is used in its first-moment
@@ -2879,9 +2887,9 @@ or both
 The first is orthogonality, $|\mathcal X|^{1/2}((P + q)V)^{1/2}$; the other two are the diagonal term $2P|\mathcal X|$
 and the off-diagonal term $|\mathcal X|^2 \mathcal H$ of the Hal\'asz--Montgomery inequality, each of which must pass.
 For $m \ge 1$ the first of the two is the bound by orthogonality, so the inequality helps only for a variable shorter
-than $q$. The condition on the exponents asks this of every class that the counts allow. In the
-condition a tuple stands for a class: $\beta = \beta_i$ for its bin $i$, $\gamma$ for its count exponent and $t_j$ for
-its sizes, with the counts read one step $\tau$ lower, at $t_j - \tau$.
+than $q$. The resonance condition (Definition~\ref{def:res}) asks this of every class that the counts allow. In it a
+tuple stands for a class: $\beta = \beta_i$ for its bin $i$, $\gamma$ for its count exponent and $t_j$ for its sizes,
+with the counts read one step $\tau$ lower, at $t_j - \tau$.
 
 \begin{definition}\label{def:res}
 % Lean: SieveTypeIIHM.ResCond, SieveCurveHx.ghx
@@ -2909,7 +2917,7 @@ to $4 \cdot 10^{-6}$. The left sides of Definition~\ref{def:fit} increase with $
 the hypotheses bound $\gamma$ by functions of $t_j$ that do not increase. So the condition weighs the size of a prime
 sum against the number of characters at which
 it can be that large, and the classes that bind combine a large size with as many characters as the counts allow at
-it. The condition reads $m$ and each $s_j$, not only their sum, and the variable may be shorter than $q$.
+that size. The condition reads $m$ and each $s_j$, not only their sum, and the variable may be shorter than $q$.
 
 \begin{lemma}[one class]\label{lem:class}
 % Lean: SieveTypeIIHM.bin_bound_exp, SieveTypeIIHM.sum_typeII_cls, SieveTypeIIHM.sum_bin_hm, SieveTypeII.sum_chars_dp_sq_le
@@ -2994,7 +3002,7 @@ at most $2^K q^{\sum_j s_j t_j} = 2^K q^{\sum_j s_j(t_j - 1)} \prod_j Q_j \le 4^
 
 \emph{The count.} Let $\gamma$ be the least of $g_{\mathrm H}(\beta_i)$, of $\mathfrak m_k(s_j, \tau\ell_j)$ for $1 \le
 k \le k_1$, and of $\mathfrak v_k(s_j, \tau\ell_j)$ for $1 \le k \le k_2$, over the $j$ with $\ell_j \ge 1$. The class
-lies in the set that the least of these counts: the bin $i$, with at most $C_d (qT)^{g_{\mathrm H}(\beta_i)} (1 + \log
+lies in the set counted by the least of these: the bin $i$, with at most $C_d (qT)^{g_{\mathrm H}(\beta_i)} (1 + \log
 qT)^{10}$ characters (Section~\ref{sec:bins}), or, for a $j$ with $\ell_j \ge 1$, the characters with $|S_{Q_j}(\chi,
 h_j)| \ge Q_j^{\tau\ell_j}$, counted by Lemma~\ref{lem:moments} or Lemma~\ref{lem:lv-powers}. In the last two cases
 $\gamma \ge 0$, since $s_j \ge 0$ and $\tau\ell_j \le 1$, so $q^\gamma \le (qT)^\gamma$. In every case the class has
@@ -3174,9 +3182,10 @@ estimate.
 The proof is that of Lemma~\ref{lem:term-two}, with the tuple estimate in place of Lemma~\ref{lem:chains-two}; we give
 what changes. Let $t_{\max} = \lceil (L + 1)/e_0 \rceil$. As there, the cofactor $n/r$ of an integer counted for a
 tuple $\mathbf r$ is the product of a unique non-increasing tuple $y_1 \ge \dots \ge y_t \ge r_k$ of primes with $t \le
-t_{\max}$, and for each $t$ the pairs $(\mathbf r, \mathbf y)$ are the $(k + t)$-tuples of primes up to $N_2$ that
-satisfy a list of at most $J_0 + t_{\max}^2 + t_{\max} + 2$ comparisons, with constant terms at most $(\Lambda_1 + L +
-1)\log q$. Every such tuple has its entries at least $q^{e_0}$, as $y_a \ge r_k$, its rest $(r_{i_1},
+t_{\max}$. For each $t$ the pairs $(\mathbf r, \mathbf y)$ are the $(k + t)$-tuples of primes up
+to $N_2$ that satisfy a list of at most $J_0 + t_{\max}^2 + t_{\max} + 2$ comparisons: the given ones, the order of
+$\mathbf y$, $y_a \ge r_k$ and $N_1 < \prod \mathbf r \prod \mathbf y \le N_2$. Their constant terms are at most
+$(\Lambda_1 + L + 1)\log q$. Every such tuple has its entries at least $q^{e_0}$, as $y_a \ge r_k$, its rest $(r_{i_1},
 \dots, r_{i_K})$ in $\mathcal G_q$, and its product in $(N_1, N_2]$. Apply the tuple estimate with $k + t$ entries, $J_0
 + t_{\max}^2 + t_{\max} + 2$ comparisons and $\Lambda_1 + L + 1$, the rest at the indices $i_1, \dots, i_K$ of
 $\mathbf r$; it gives $\delta_t$, and each $t$ contributes at most $q^{L - \delta_t}/\varphi(q)$. With $\delta_0 =
@@ -3225,10 +3234,10 @@ $h(\mathfrak
 \end{lemma}
 
 In (a) and (b) the conditions $r \le N_1$ and $N_2 < r r_k^2$ make the cofactor one prime, and the rest has $K + 1$
-members, the last the cofactor; (c) gives those conditions for a box of the main tree (the tree on the boxes of
-Definition~\ref{def:tree}, as against the trees over frozen parts of Definition~\ref{def:frozen-tree}), and the
-cofactor's cell
-$(\max(D - h(\mathfrak b) - 1, l_k), D - l(\mathfrak b) + 1)$, its upper end included.
+members, the last the cofactor. Lemma~\ref{lem:term-rest-cof}(c) gives those conditions for a box of the main tree,
+and the cofactor's cell $(\max(D - h(\mathfrak b) - 1, l_k), D - l(\mathfrak b) + 1)$, its upper end included. The
+main tree is the tree on the boxes of Definition~\ref{def:tree}, as against the trees over frozen parts of
+Definition~\ref{def:frozen-tree}.
 
 \begin{proof}
 (a) and (b). As in the proof of Lemma~\ref{lem:term-rest}, the integers counted for a tuple $\mathbf r$ are $n = r y_1
@@ -3257,10 +3266,10 @@ Lemma~\ref{lem:tied-to-tuples} for the box of the rest's cells.
 \subsection{The two corners of a box}\label{sec:corners}
 
 This subsection proves what the test (W$'$) of Section~\ref{sec:window-tests} needs: an inequality checked at two
-corners of the box of the rest's cells gives the tuple estimate on that box. The condition on a quadrant asks too much
-for this, so we tie the variable to the rest (Definition~\ref{def:res-tied}). The clamp gives one inequality that
-implies the fit of Definition~\ref{def:fit} (Lemma~\ref{lem:clamp}); that inequality at two corners gives the tied
-condition (Lemma~\ref{lem:two-corners}); and the tied condition gives the tuple estimate
+corners of the box of the rest's cells gives the tuple estimate on that box. The condition on a quadrant asks for more
+than this needs, so we tie the variable to the rest (Definition~\ref{def:res-tied}). The clamp gives one inequality
+that implies the fit of Definition~\ref{def:fit} (Lemma~\ref{lem:clamp}); that inequality at two corners gives the
+tied condition (Lemma~\ref{lem:two-corners}); and the tied condition gives the tuple estimate
 (Lemma~\ref{lem:tied-to-tuples}).
 
 A box of the decomposition gives each prime of the rest a cell, so each exponent $s_j$ an interval $[a_j, b_j]$; in
@@ -3271,8 +3280,9 @@ $s_j
 \ge \sigma_j = a_j$ and every $m \ge m_0$, where $m_0$ is the exponent of the variable that the upper ends leave,
 about $L - \sum_j
 b_j$. It contains the corner $(m_0; a_1, \dots, a_K)$, where the prime sums are shortest and so is the variable, and
-which no tuple of the box reaches: there $\sum_j s_j + m$ falls short of $L$ by the box's width $\sum_j (b_j - a_j)$.
-On a wide box the condition can fail at that corner and hold at every point that the box's tuples reach (a
+which no tuple of primes of the box reaches: there $\sum_j s_j + m$ falls short of $L$ by the box's width $\sum_j
+(b_j - a_j)$. On a wide box the condition can fail at that corner and hold at every point that the box's tuples of
+primes reach (a
 heuristic, not proved). The condition below ties the variable to the rest.
 
 \begin{definition}\label{def:res-tied}
@@ -3339,7 +3349,8 @@ For $k \ge 1$ and $0 \le \theta_- \le s \le \theta_+$ with $k\theta_- \ge 2/3 + 
 (\S S7). The first entry of $\operatorname{LV}_k$ covers the sizes with $t - \tau < 7/10 + \epsilon_{\mathrm{lv}}$,
 where $\mathfrak v_k = 1$; the other three come from the three terms of $\mathfrak r_k$, solved for $s(t - 1 - \tau)$.
 The threshold $\Gamma_k(\theta_-, \theta_+)$ is the largest value of $\mathfrak r_k(s, 4/5 - \epsilon_{\mathrm{lv}}) +
-\epsilon_{\mathrm{lv}}$ for $s \in [\theta_-, \theta_+]$, so that above it $t - \tau < 4/5 - \epsilon_{\mathrm{lv}}$.
+\epsilon_{\mathrm{lv}}$ for $s \in [\theta_-, \theta_+]$, so that for $\gamma$ above it every such size has $t - \tau <
+4/5 - \epsilon_{\mathrm{lv}}$.
 % Library name: SieveResTest.lv_bound
 
 \emph{The large values' condition.} The test applies (LV) to each member of the rest through a \emph{large values'
@@ -3418,10 +3429,11 @@ Fix $\mathbf s$ and $m$ as in the statement and an admissible tuple $(\beta, \ga
 
 \emph{The lower corner.} The tuple satisfies the hypotheses of (Lo) at $\mathbf s$ and $m = 1$: $s_j \ge a_j$, $\sum_j
 s_j \le L$, the moments' conditions are those of the tuple, and the tuple has $\mathfrak L^-_{a_j, v}(s_j, t_j,
-\gamma)$. Indeed, where $U \ne 0$, (LV) with $\theta_- = a_j \le s_j \le b_j \le \theta_+ = a_j + v$, $\gamma \ge
-\alpha > \Gamma_k(a_j, a_j + v)$ and the tuple's $\gamma \le \mathfrak v_k(s_j, t_j - \tau)$ gives $s_j(t_j - 1) -
-s_j\tau \le \operatorname{LV}_k(\gamma; a_j)$, which is below the chord as in the last item of the carry below;
-where $U = 0$, $s_j(t_j - 1) - s_j\tau \le 0$ as $t_j \le \beta + 4 \cdot 10^{-6} < 1$. As $\operatorname{cl} \ge 0$,
+\gamma)$. Where $U = 0$ the condition reads $s_j(t_j - 1) - s_j\tau \le 0$, true as $t_j \le \beta + 4 \cdot 10^{-6}
+< 1$. Where $U \ne 0$, (LV) with $\theta_- = a_j \le s_j \le b_j \le \theta_+ = a_j + v$, $\gamma \ge \alpha >
+\Gamma_k(a_j, a_j + v)$ and the tuple's $\gamma \le \mathfrak v_k(s_j, t_j - \tau)$ gives $s_j(t_j - 1) - s_j\tau \le
+\operatorname{LV}_k(\gamma; a_j)$, which is below the chord of $U$ as in the last item of the carry below. As
+$\operatorname{cl} \ge 0$,
 \[
   Y + \gamma/2 \le -1/25000. \tag{a}
 \]
@@ -3545,14 +3557,13 @@ $2^{-64}\mathbb Z$, so the two lemmas together turn a passing test (W$'$) into t
 The window evaluates the term of a box when a rest, a set of its primes (Section~\ref{sec:window-terms}), satisfies the
 resonance condition (Definition~\ref{def:res}) on the exponents that the box's cells allow. This subsection writes that
 condition as two tests, (W) and (W$'$), on a box and as (W$_{\mathcal M}$) and (W$'_{\mathcal M}$) on a chain over a
-frozen part (Definition~\ref{def:window-tests}); it proves that a box that passes them has its term evaluated and that a
-chain that passes them has its term over the frozen part $o(X)$ (Lemma~\ref{lem:window-tests}), and then gives the two
-integer tests that Lean's kernel decides and that imply them (Lemma~\ref{lem:window-kernel}). The condition is stated in
-the units of Section~\ref{sec:decomp}: a cell $(l, h)$ is in units of $1/D$ of exponents of $x$, and $Le/D$ is the
-exponent of $q$ of the unit $e$. Throughout, $\mathfrak b$ is a box of $k \ge 1$ primes with cells $(l_i, h_i)$, the
-curve is
-$g_{\mathrm H}$, and for a nonempty set $\mathcal S_r$ of indices, $l(\mathcal S_r)$ and $h(\mathcal S_r)$ are as in
-Section~\ref{sec:decomp}.
+frozen part (Definition~\ref{def:window-tests}). Lemma~\ref{lem:window-tests} proves that a box that passes them has
+its term evaluated, and that a chain that passes them has its term over the frozen part $o(X)$;
+Lemma~\ref{lem:window-kernel} gives the two integer tests that Lean's kernel decides and that imply them. The condition
+is stated in the units of Section~\ref{sec:decomp}: a cell $(l, h)$ is in units of $1/D$ of exponents of $x$, and $Le/D$
+is the exponent of $q$ of the unit $e$. Throughout, $\mathfrak b$ is a box of $k \ge 1$ primes with cells $(l_i, h_i)$,
+the curve is $g_{\mathrm H}$, and for a nonempty set $\mathcal S_r$ of indices, $l(\mathcal S_r)$ and $h(\mathcal S_r)$
+are as in Section~\ref{sec:decomp}.
 
 \emph{The cofactor.} The cofactor $n/(p_1 \cdots p_k)$ of a counted $n$ is one prime when the box's cells leave room
 for one prime and no more:
@@ -3563,10 +3574,10 @@ the hypotheses of Lemma~\ref{lem:term-rest-cof}(c). For large $q$ that lemma giv
 p_1 \cdots p_k\, p_k^2$, and puts the cofactor of a counted $n$, a prime $y \ge p_k$, possibly equal to $p_k$, in the
 cell $c_* = (l_*, h_*)$, here with both ends included ($x^{l_*/D} \le y \le x^{h_*/D}$), with $l_* = \max(D -
 h(\mathfrak b) - 1, l_k)$ and $h_* = D - l(\mathfrak b) + 1$.
-Over a frozen part $\mathcal M(e_-, e_+)$ and a chain $\mathfrak c$ of $j \ge 1$ primes with cells $(l'_i, h'_i)$
-(Section~\ref{sec:reversal}: $R$ is the product of the frozen primes $a_2, \dots, a_k$ and of the frozen cofactor, an
-integer with no prime factor below $a_k$, and $\Delta_{\mathcal M}(\mathfrak c)$ is the chain's term over $\mathcal
-M$), the chain's cofactor $k' = n/(R p'_1 \cdots p'_j)$ is one prime when
+Over a frozen part $\mathcal M(e_-, e_+)$ (Section~\ref{sec:reversal}), $R$ is the product of the frozen primes $a_2,
+\dots, a_k$ and of the frozen cofactor, an integer with no prime factor below $a_k$, and $\Delta_{\mathcal M}(\mathfrak
+c)$ is the term over $\mathcal M$ of a chain $\mathfrak c$. For a chain $\mathfrak c$ of $j \ge 1$ primes with cells
+$(l'_i, h'_i)$, the chain's cofactor $k' = n/(R p'_1 \cdots p'_j)$ is one prime when
 \[
   (\mathrm{Cf}_{\mathcal M}) \qquad e_+ + h'(\mathfrak c) \le D - 2, \qquad e_- + l'(\mathfrak c) + 2l'_j \ge D + 1,
 \]
@@ -3677,16 +3688,16 @@ $(\mathbf a, \mathbf y, \mathbf p', \mathbf y')$ of $(k - 1) + t + j + t'$ prime
 such family is cut out by at most $3(k - 1) + 3j + (t^2 + t) + (t'^2 + t') + 2 + 2$ comparisons, with constant terms at
 most $(L + 1)\log q$; in that order, they are the cells and the order of $\mathbf a$ and of $\mathbf p'$, the order of
 $\mathbf y$ and $y_i \ge a_k$, that of $\mathbf y'$ and $y'_i \ge p'_j$, the two of $R \in (x^{e_-/D}, x^{e_+/D}]$, and
-the two of the range of $n$. There is no order
-between $\mathbf a$, $\mathbf y$ and $\mathbf p'$; Proposition~\ref{prop:tuples-rest} asks none. Apply it to each
-family, with $e_0 = L/D$, the rest at the positions of its variables among $\mathbf a$ and $\mathbf p'$, $\rho_2 =
-L\overline e(\mathcal S)/D$ and $\rho_1 = L\underline e(\mathcal S)/D$ for the rest $\mathcal S$ (as in
-Section~\ref{sec:reversal}, with the frozen cofactor not in $\mathcal S$), $\varepsilon = L/D$, and as lower bounds the
-lower ends of the members' cells times $L/D$: every entry is at least $x^{1/D}$, each member of the rest lies in its
-cell, and the rest's product lies in $[x^{\underline e(\mathcal S)/D}, x^{\overline e(\mathcal S)/D}]$. Its condition is
-(W$_{\mathcal M}$), and it bounds each family by
-$q^{L - \delta}/\varphi(q)$, with $\delta$ and $q_0$ that depend on $t$, $t'$ and the fixed data only. The $(D + 1)^2$
-families give $o(X)$.
+the two of the range of $n$.
+
+There is no order between $\mathbf a$, $\mathbf y$ and $\mathbf p'$; Proposition~\ref{prop:tuples-rest} asks none.
+Apply it to each family, with $e_0 = L/D$, the rest at the positions of its variables among $\mathbf a$ and $\mathbf
+p'$, $\rho_2 = L\overline e(\mathcal S)/D$ and $\rho_1 = L\underline e(\mathcal S)/D$ for the rest $\mathcal S$ (as in
+Section~\ref{sec:reversal}, with the frozen cofactor not in $\mathcal S$), $\varepsilon = L/D$, and as lower bounds
+the lower ends of the members' cells times $L/D$. Its hypotheses hold: every entry is at least $x^{1/D}$, each member
+of the rest lies in its cell, and the rest's product lies in $[x^{\underline e(\mathcal S)/D}, x^{\overline e(\mathcal
+S)/D}]$. Its condition is (W$_{\mathcal M}$), and it bounds each family by $q^{L - \delta}/\varphi(q)$, with $\delta$
+and $q_0$ that depend on $t$, $t'$ and the fixed data only. The $(D + 1)^2$ families give $o(X)$.
 
 With the chain's cofactor in the rest, $(\mathrm{Cf}_{\mathcal M})$ gives, for large $q$ and every tuple $(\mathbf a,
 \mathbf y, \mathbf p')$, $R p'_1 \cdots p'_j \le N_1$ and $N_2 < R p'_1 \cdots p'_j\, {p'_j}^2$, so only $t' = 1$
@@ -3719,7 +3730,8 @@ the resonance condition, and of the first or the second test on the rest's cells
 chkIRCH}, \lean{SieveAd.\allowbreak chkIRY}; over a frozen part \lean{SieveAd.\allowbreak chkIRFH},
 \lean{SieveAd.\allowbreak chkIRFY}).
 
-\emph{The test in mathematical terms.} Write $\sigma_j = L(c_j - 1)/D$ and $m_0 = L(D - H - 1)/D$. By
+\emph{The test of the resonance condition in mathematical terms.} Write $\sigma_j = L(c_j - 1)/D$ and
+$m_0 = L(D - H - 1)/D$. By
 Lemma~\ref{lem:clamp}, $\operatorname{Res}_L$ holds on the quadrant $(m_0; \sigma_1, \dots, \sigma_K)$ if, at every
 point $(m; s_1, \dots, s_K)$ of the quadrant and for every admissible tuple $(\beta, \gamma, t_1, \dots, t_K)$ at
 $(s_1, \dots, s_K)$ (Definition~\ref{def:res}),
@@ -3735,7 +3747,8 @@ For $\gamma \le 0$ the half-plane gives $t_j - 1 \le \beta + 4 \cdot 10^{-6} - 1
 $g_{\mathrm H} \le 1$, $\gamma \le 1$.
 
 The hint cuts $(0, 1]$ into at most $15$ intervals with ends on the grid $2^{-12}$. On each interval $[\alpha,
-\alpha']$ it names an upper line in $\gamma$ for each member's term $s_j(t_j - 1) - s_j\tau$, from one of
+\alpha']$ it names an upper line in $\gamma$ for each member's term $s_j(t_j - 1) - s_j\tau$, with $\tau = 10^{-6}$
+(Definition~\ref{def:res}), from one of
 \begin{itemize}
 \item the half-plane and the curve, through the bound of $\beta$ that the curve's pieces give for $\gamma \ge \alpha$;
 \item the moments $\mathfrak m_{k_0 - 1}$ and $\mathfrak m_{k_0}$, $k_0 = \lceil 1/\sigma_j \rceil$ for $\sigma_j > 0$
@@ -3776,8 +3789,9 @@ Definition~\ref{def:window-tests}; (b) gives the room $2 \cdot 10^{-5}$, more th
 Then (c) is Lemma~\ref{lem:window-tests}.
 \end{proof}
 
-At $21/10$ the search of Section~\ref{sec:certificate-b} decides, besides the tests of Definition~\ref{def:tests}, the
-kernel's tests of an evaluation by (W) and (W$'$), led by the hints; under Inputs~\ref{inp:half-plane}
+At $21/10$ the search of Section~\ref{sec:certificate-b} decides, besides the tests of
+Definitions~\ref{def:tests} and~\ref{def:frozen-tree}, the kernel's tests of an evaluation by (W) and (W$'$), led by
+the hints; under Inputs~\ref{inp:half-plane}
 and~\ref{inp:cgl} and for $2 < L \le 5/2$ it is sound whatever its hints (Lemma~\ref{lem:search-b}(a)), as the search
 of Section~\ref{sec:certificate} is (Lemma~\ref{lem:search}).
 
@@ -3786,22 +3800,21 @@ of Section~\ref{sec:certificate} is (Lemma~\ref{lem:search}).
 Theorem~\ref{thm:2110} is proved by the decomposition of Section~\ref{sec:decomp}, with the tests of the window of
 Section~\ref{sec:window} and two more rules.
 
-The first concerns the leaves of a comparison. The tests (J2) and (J3) of
-Definition~\ref{def:tests} evaluate the leaves by Lemma~\ref{lem:leaves}, and for that they ask the leaves' condition
-(L). Its second inequality, $a_1 + a_2 < 1 - 1/(2L)$, with $d_1$ and $d_2$ of about $x^{a_1}$ and $x^{a_2}$, says that
-the cofactor of a leaf, the integer divided by $d_1
-d_2$, is longer than $x^{1/(2L)} = q^{1/2}$, and for $d_1 \ge q$ the rule of Lemma~\ref{lem:leaves} says the same. So
-the tests do not evaluate the leaves whose cofactor is shorter. Such a leaf is a sum over the integers $n$ divisible by
-$d_1 d_2$ whose cofactor $n/(d_1 d_2)$ is $w$-rough, and the first rule evaluates it by an estimate in two variables in
-which $d_1$ is the first variable, the cofactor the second, and the primes of $d_2$ the rest. A variable shorter than
-$\sqrt q$ needs
-a third bound for its mean square over a bin, by a fourth moment: Section~\ref{sec:leaf-estimate} gives it, and the
-estimate on a region of the leaves. Section~\ref{sec:leaves-three} cuts the leaves of a comparison in three ranges, two
-that Lemma~\ref{lem:leaves} reaches and the third range in that region, and gives the condition (L$_3$) that the tests
-may ask in place of (L).
+The first concerns the leaves of a comparison. The tests (J2) and (J3) of Definition~\ref{def:tests} evaluate the
+leaves by Lemma~\ref{lem:leaves}, and for that they ask the leaves' condition (L). Write $d_1$ and $d_2$ for the two
+products of primes of a leaf, of about $x^{a_1}$ and $x^{a_2}$. The second inequality of (L), $a_1 + a_2 < 1 -
+1/(2L)$, says that the cofactor of a leaf, the integer divided by $d_1 d_2$, is longer than $x^{1/(2L)} = q^{1/2}$;
+for $d_1 \ge q$ the rule of Lemma~\ref{lem:leaves} says the same. So the tests do not evaluate the leaves whose
+cofactor is shorter. Such a leaf is a sum over the integers $n$ divisible by $d_1 d_2$ whose cofactor $n/(d_1 d_2)$ is
+$w$-rough, and the first rule evaluates it by an estimate in two variables in which $d_1$ is the first variable, the
+cofactor the second, and the primes of $d_2$ the rest. A variable shorter than $\sqrt q$, such as this cofactor, needs
+a third bound for its mean square over a bin, by a fourth moment. Section~\ref{sec:leaf-estimate} proves that bound,
+and the estimate on a region of the leaves. Section~\ref{sec:leaves-three} cuts the leaves of a comparison in three
+ranges, two that Lemma~\ref{lem:leaves} reaches and the third range in that region, and gives the condition (L$_3$)
+that the tests may ask in place of (L).
 
 The second rule is the reversal of a term of the sign $+$. Section~\ref{sec:reversal} reverses a box of the sign $-$; a
-box of the sign $+$ that no test evaluates is dropped (Lemma~\ref{lem:drop}(1)) or decomposed.
+box of the sign $+$ that no test evaluates is dropped (Lemma~\ref{lem:drop}) or decomposed.
 Section~\ref{sec:reversal-plus} reverses such a box, with the roles of $\mathcal A$ and $\mathcal B$ exchanged.
 
 \subsection{The estimate in two variables with a fourth moment}\label{sec:leaf-estimate}
@@ -3903,12 +3916,11 @@ unchanged.
 
 \emph{The leaves' region.} At a leaf, $d_1$ is the first variable, of length $q^{m_1}$, the cofactor the second, of
 length $q^{m_2}$, and $d_2$ the rest, of length $q^\rho$, with $\rho = L - m_1 - m_2$. The region below is cut out
-of three ranges, which are chosen and not derived, by seven inequalities. Each cut is a case of the proof of
-Proposition~\ref{prop:leaf-zone}: the computation of \S S8 added, one at a time, the case most violated at a vertex of
-the region so far, until all the cases held; the table after the definition names each case. The curve of the cases is
-$g^*$ of Section~\ref{sec:inputs}: the trivial count below $4/7$, then Ingham's exponent and those that
-Input~\ref{inp:cgl} gives up to $131/168$, and $g_{\mathrm H}$ from there on. The paragraph \emph{Why the curve is
-$g^*$} below says why.
+of three ranges, chosen and not derived, by seven inequalities, the cuts. The proof of
+Proposition~\ref{prop:leaf-zone} takes its cases with the curve $g^*$ of Section~\ref{sec:inputs}: the trivial count
+below $4/7$, then Ingham's exponent and those that Input~\ref{inp:cgl} gives up to $131/168$, and $g_{\mathrm H}$ from
+there on (the paragraph \emph{Why the curve is $g^*$} below says why). The computation of \S S8 added the cuts one at
+a time, each the case most violated at a vertex of the region so far, until all the cases held.
 
 \begin{definition}\label{def:leaf-region}
 % Lean: SieveTypeIIHM.LeafZone, SieveLeafTwo.LeafZoneX
@@ -3940,14 +3952,13 @@ and $c_2$ in place of the exponents $M_1$ and $M_2$ (a computation, \S S8):
 \[
   \frac{m_1 - c_1}2 + \frac{m_2 - c_2}2 + \rho\bigl(1 - \beta - 4 \cdot 10^{-6}\bigr) \ge \frac1{25000}.
 \]
-The table below gives $\beta$ and the $c_i$. There $c_i = 1$, or $c_1 = m_1$, is the exponent $\max(m_i, 1)$ of
-orthogonality, $A(1 - \beta) + b(m_1)$ that of the Hal\'asz--Montgomery inequality, and $A(1 - \beta)/2 + 1/2 +
-2\varepsilon'$ that of the third bound, with $g^*(\beta) = A(1 - \beta)$ for the exponent $A$ of the piece of $g^*$
-used there. Here $b(m) = 5/12 + m/12 + \delta'(1 - m) + 2\varepsilon'$ is the exponent of the bound for
-$|k_{2P}(\psi)|$ at $P = q^m$ (Section~\ref{sec:two-bounds}); it gives the coefficient $2753/6000 = 1/2 - (1/12 -
-\delta')/2$ of $m_1$ in (C7). The pieces of (C3), (C5), (C6) and (C7) are steps that Input~\ref{inp:cgl} gives; (C3)
-is at the right end of its
-piece, (C7) at the left end of the next.
+The table below gives $\beta$ and the $c_i$, with $A$ the exponent of the piece of $g^*$ used, $g^*(\beta) = A(1 -
+\beta)$. An entry $1$ or $m_1$ is the exponent $\max(m_i, 1)$ of orthogonality, $A(1 - \beta) + b(m_1)$ is that of the
+Hal\'asz--Montgomery inequality, and $A(1 - \beta)/2 + 1/2 + 2\varepsilon'$ that of the third bound. Here $b(m) = 5/12
++ m/12 + \delta'(1 - m) + 2\varepsilon'$ is the exponent of the bound for $|k_{2P}(\psi)|$ at $P = q^m$
+(Section~\ref{sec:two-bounds}); it gives the coefficient $2753/6000 = 1/2 - (1/12 - \delta')/2$ of $m_1$ in (C7). The
+pieces of (C3), (C5), (C6) and (C7) are steps that Input~\ref{inp:cgl} gives; (C3) is at the right end of its piece,
+(C7) at the left end of the next.
 
 \begin{center}
 \small\setlength{\tabcolsep}{4pt}
@@ -4002,13 +4013,14 @@ The $67 \times 2 \times 4 = 536$ cases hold at its vertices, in exact rational a
 polytope; the seven cuts are seven of them, with no slack. In the formalisation each case
 is a linear combination of the $13$ inequalities with nonnegative coefficients, for every $L$.
 
-For $\mathcal R^{\mathrm{lf}}_L$ it remains to take $m_2 \ge 1/2$, with $(m_1, 1/2) \in \mathcal R^{\mathrm{lf},0}_{L'}$
-and $L' = L - m_2 + 1/2$. The case $m_2 \le 1/2$ gives exponents $M_1$ and $M_2$ at $(\beta, \varpi)$ for $(m_1, 1/2)$ at
-$L'$. Then $M_1$ and $M_2 + (m_2 - 1/2)$ are exponents with the third bound for $(m_1, m_2)$. Indeed $M_2 \ge 1/2$,
-so $M_2 + m_2 - 1/2 \ge m_2$; and, with $g = g^*(\beta)$, if $M_2 \ge 1$ then $M_2 + m_2 - 1/2 \ge 1$; if $M_2 \ge g +
-b(1/2)$ then $M_2 + m_2 - 1/2 \ge g + b(m_2)$, since $b(m_2) - b(1/2) = (m_2 - 1/2)(1/12 - \delta') \le m_2 - 1/2$; and
-if $M_2 \ge g/2 + 1/2 + 2\varepsilon'$ then $M_2 + m_2 - 1/2 \ge g/2 + \max(m_2, 1/2) + 2\varepsilon'$. The rest $\rho$
-is the same, and both sides of $E \le L - 1/25000$ grow by $m_2 - 1/2$ from $L'$ to $L$.
+For $\mathcal R^{\mathrm{lf}}_L$ it remains to take $m_2 \ge 1/2$, with $(m_1, 1/2) \in \mathcal
+R^{\mathrm{lf},0}_{L'}$ and $L' = L - m_2 + 1/2$. The proof above, for $\mathcal R^{\mathrm{lf},0}_{L'}$, gives
+exponents $M_1$ and $M_2$ at $(\beta, \varpi)$ for $(m_1, 1/2)$ at $L'$. Then $M_1$ and $M_2 + (m_2 - 1/2)$ are
+exponents with the third bound for $(m_1, m_2)$. Indeed $M_2 \ge 1/2$, so $M_2 + m_2 - 1/2 \ge m_2$; and, with $g =
+g^*(\beta)$, if $M_2 \ge 1$ then $M_2 + m_2 - 1/2 \ge 1$; if $M_2 \ge g + b(1/2)$ then $M_2 + m_2 - 1/2 \ge g +
+b(m_2)$, since $b(m_2) - b(1/2) = (m_2 - 1/2)(1/12 - \delta') \le m_2 - 1/2$; and if $M_2 \ge g/2 + 1/2 +
+2\varepsilon'$ then $M_2 + m_2 - 1/2 \ge g/2 + \max(m_2, 1/2) + 2\varepsilon'$. The rest $\rho$ is the same, and both
+sides of $E \le L - 1/25000$ grow by $m_2 - 1/2$ from $L'$ to $L$.
 \end{proof}
 
 At $L = 21/10$ the set $\mathcal R^{\mathrm{lf},0}_L$ is the quadrilateral with the vertices $(m_1, m_2, \rho) \approx
@@ -4069,9 +4081,11 @@ most $\Lambda_1 \log q$; and suppose that every tuple of primes that satisfies t
 For one $K$ the proof is that of Lemma~\ref{lem:term-two}, with $w$ in place of the last prime $r_k$. Every prime of $d$
 is at least $w$, so an integer $n$ with $d \mid n$ has no prime factor below $w$ exactly when its cofactor $n/d$ has
 none. The cofactor, at most $N_2 < q^{L + 1}$, is then the product of a unique non-increasing tuple $z_1 \ge \dots \ge
-z_t \ge w$ of primes, $t \le t_1 = \lceil (L + 1)/e_0 \rceil$ since $w \ge q^{e_0}$, and for each $t$ the tuples
-$(\mathbf y, \mathbf z)$ satisfy at most $J_0 + t_1^2 + t_1 + 2$ comparisons, with constant terms at most $(\Lambda_1 +
-L + 1)\log q$, as there. In Lemma~\ref{lem:chains-two}, $\mathcal S_1 = \mathcal S$, and $\mathcal S_2$ is the indices
+z_t \ge w$ of primes, with $t \le t_1 = \lceil (L + 1)/e_0 \rceil$ since $w \ge q^{e_0}$. For each $t$, the pairs
+$(\mathbf y, \mathbf z)$ are the $(K + t)$-tuples of primes up to $N_2$ that satisfy the given comparisons on $\mathbf
+y$, the comparisons $z_b \le z_a$ for $a \le b$ and $z_a \ge w$, and $N_1 < \prod \mathbf y \prod \mathbf z \le N_2$: at
+most $J_0 + t_1^2 + t_1 + 2$ comparisons, with constant terms at most $(\Lambda_1 + L + 1)\log q$. Apply
+Lemma~\ref{lem:chains-two} to them with $\mathcal S_1 = \mathcal S$ and $\mathcal S_2$ the indices
 off $\mathcal S \cup \mathcal S_r$, among them all those of $\mathbf z$; $P_1$ and $P_1'$ are those of the lemma, $P_2 =
 \lfloor N_1/(P_1'R_+) \rfloor \ge 1$, $P_2' = \lfloor N_2/((P_1 + 1)(R_- + 1)) \rfloor$, and the band is that of
 Lemma~\ref{lem:term-two}, with $M_{\mathrm{lo}} = \lfloor N_1/R_+ \rfloor \ge 1$. The region's hypothesis is the one
@@ -4095,10 +4109,10 @@ primes of $\mathcal S_1$ and, if $\iota = 1$, of the new primes, and $d_2$ the p
 \[
   D_1 < L - 1, \qquad \max(D_1, 1) + D_1 + 2D_2 < 2L - 1.
 \]
-Only the large leaves need it, those with $d = d_1 d_2 > q^{L - 1 - 4c'}$, for a small $c' > 0$ fixed in the proof
-below. For $D_1 \ge 1$ the second condition reads $D_1 + D_2 < L - 1/2$: it asks the cofactor $n/d$ of a leaf to be
-longer than about $\sqrt q$, as said at the start of this section. A box whose leaves fail (d) fails (J2) and (J3) with
-that choice of $\mathcal S_1$ and $\iota$. For the large leaves whose cofactor may be shorter, the cofactor becomes a
+Only the large leaves need (d), those with $d = d_1 d_2 > q^{L - 1 - 4c'}$, for a small $c' > 0$ fixed in \S S3. For
+$D_1 \ge 1$ the second condition reads $D_1 + D_2 < L - 1/2$: it asks the cofactor $n/d$ of a leaf to be longer than
+about $\sqrt q$, as said at the start of this section. A box whose leaves fail (d) fails (J2) and (J3) with that
+choice of $\mathcal S_1$ and $\iota$. For the large leaves whose cofactor may be shorter, the cofactor becomes a
 variable of its own: Lemma~\ref{lem:leaf-term} evaluates them where their exponents lie in $\mathcal
 R^{\mathrm{lf}}_L$, with $d_1$ as the first variable, the cofactor as the second and $d_2$ as the rest, and its bound
 has no main term. The first condition of (d), $D_1 < L - 1$, is kept, at $D_1$ and at the cut $D_1^*$ below.
@@ -4113,9 +4127,9 @@ tuple, \S S3) are cut in three by two more comparisons, with exponents $D_1^*$ a
   $(\lfloor q^{D_1^*} \rfloor, \lfloor 4q^{D_1} \rfloor]$ and $d_2$ in $(\lfloor q^{D_2^*} \rfloor, \lfloor 4q^{D_2}
   \rfloor]$.
 \end{enumerate}
-So (d) is replaced by three conditions, together with $D_1, D_2 \ge 0$ and $D_1 + D_2 < L$ (see after the
-statements): Lemma~\ref{lem:leaves}'s at $(D_1^*, D_2)$ and at $(D_1, D_2^*)$, and the region $\mathcal
-R^{\mathrm{lf}}_L$ on the rectangle of the third range. The two propositions below are
+So (d) is replaced by three conditions: Lemma~\ref{lem:leaves}'s at $(D_1^*, D_2)$ and at $(D_1, D_2^*)$, and the
+region $\mathcal R^{\mathrm{lf}}_L$ on the rectangle of the third range; with them come $D_1, D_2 \ge 0$ and $D_1 + D_2
+< L$ (see after the statements). The two propositions below are
 Propositions~\ref{prop:harman-two} and~\ref{prop:harman-fill} with (d) so replaced, under the two inputs.
 
 \begin{proposition}[Harman's comparison in two variables, the leaves cut in three]\label{prop:harman-two3}
@@ -4180,7 +4194,8 @@ respectively.
 
 On (T1) and (T2), Lemma~\ref{lem:leaves} applies at the exponents $(D_1^*, D_2)$ and $(D_1, D_2^*)$, with the choices
 that the proof of Proposition~\ref{prop:harman-two} makes for $(D_1, D_2)$, and with $c' = \min(1, \omega_*)/32$, where
-$\omega_* > 0$ is the least of the margins of the four inequalities of (d$_3$). On each of the two ranges its bound is
+$\omega_* > 0$ is the least of $L - 1 - \max(D_1^*, 1)$, $2L - 1 - \max(D_1^*, 1) - D_1^* - 2D_2$, $L - 1 - \max(D_1,
+1)$ and $2L - 1 - \max(D_1, 1) - D_1 - 2D_2^*$, positive by (d$_3$) and $L > 2$. On each of the two ranges its bound is
 the main term of Lemma~\ref{lem:leaves}, with the sum of $1/d$ over the range, and an error $q^{L -
 \delta_3}/\varphi(q)$, with $\delta_3 > 0$
 fixed in \S S8. On (T3), Lemma~\ref{lem:leaf-term}, with $\mathcal R^{\mathrm{lf}}_L$ as its region by
@@ -4229,10 +4244,12 @@ rectangle is that of the third range, $d_1$ from about $x^{A^*/D}$ to $x^{A/D}$ 
 $x^{B/D}$, with one unit of margin on each side. So, up to the margins, (L$_3$) asks (L) at $(A^*, B)$ and at $(A,
 B^*)$, $A + B < D$, and the leaves' region on the third range; in powers of $q$, the region's first five inequalities
 ask $d_1$ to lie between about $q^{9/10}$ and $q^{6/5}$, $d_2$ between about $q^{3/10}$ and $q$, and the cofactor to be
-at least about $q^{2/5}$. Each of the nineteen inequalities is affine in $(m_1, \rho)$, so it holds on the whole
-rectangle when it holds at that corner. On the rectangle they imply $(m_1, m_2) \in \mathcal R^{\mathrm{lf}}_L$. If
-$m_2 \le 1/2$, the inequalities of $\mathcal R^{\mathrm{lf},0}_L$ other than $m_2 \le 1/2$ are among them, and $m_2
-\le 1/2$ is the case. If $m_2 \ge 1/2$, those of $\mathcal R^{\mathrm{lf},0}_{L - m_2 + 1/2}$ at $(m_1, 1/2)$, with the
+at least about $q^{2/5}$.
+
+Each of the nineteen inequalities is affine in $(m_1, \rho)$, so it holds on the whole rectangle when it holds at the
+corner of (ii) where it is tightest. On the rectangle they imply $(m_1, m_2) \in \mathcal R^{\mathrm{lf}}_L$. If $m_2
+\le 1/2$, the inequalities of $\mathcal R^{\mathrm{lf},0}_L$ other than $m_2 \le 1/2$, which holds, are among them. If
+$m_2 \ge 1/2$, those of $\mathcal R^{\mathrm{lf},0}_{L - m_2 + 1/2}$ at $(m_1, 1/2)$, with the
 same rest $\rho$, are among them, except the bounds $2/5 \le 1/2 \le 1/2$, which hold; this is the other half of
 Definition~\ref{def:leaf-region}. The largest $A^*$ and
 $B^*$ are explicit: (L) at $(A^*, B)$ is
@@ -4344,7 +4361,8 @@ Let $\mathfrak b$ be a box that may be reversed (Definition~\ref{def:reversal}),
 \item[(i)] a floor $f$ with $0 < f \le \min(l_k, \nu)$ at which the chain of no prime passes (J2$_{\mathcal M}$) or
   (J3$_{\mathcal M}$) over the narrow part $\mathcal M_{\mathrm n}$, with the room of Section~\ref{sec:reversal}, and
 \item[(ii)] a tree over $\mathcal M_{\mathrm n}$ on the chain $((f, \nu))$ with the sign $-$, whose tests are read
-  over $\mathcal M_{\mathrm n}$.
+  over $\mathcal M_{\mathrm n}$; at $21/10$ its nodes (E$_{\mathcal M}$) may also use the tests (W$_{\mathcal M}$) and
+  (W$'_{\mathcal M}$) of Definition~\ref{def:window-tests} over $\mathcal M_{\mathrm n}$.
 \end{enumerate}
 If that tree's cost is $c_F$, the reversal's cost is
 \begin{equation}\label{eq:cRplus}
@@ -4402,12 +4420,12 @@ $h_1 \le 2\nu$ and $h_2 \le l_1$, and to $\mathcal B$ for the upper,
 By (\ref{eq:levels}) over $\mathcal M_{\mathrm n}$, with $f \le \nu \le l_1 < h_1 \le D$, $\Delta_{\mathcal M_{\mathrm
 n}}(\emptyset; \nu) = \Delta_{\mathcal M_{\mathrm n}}(\emptyset; f) - \Delta_{\mathcal M_{\mathrm n}}(((f, \nu)))$. By
 (i) the first term is at least $-\eta X$ for large $q$, and by (ii) the second is at least $-(C
-\operatorname{wt}(\mathcal M_{\mathrm n}) + \eta) X$. The ends lie in the wide range, so, as in the proof of
-Proposition~\ref{prop:reversal}, for $R$ in them $y = x/R \in [x^{(l_1 - 1)/D}, x^{h_1/D})$, the integers of $\mathcal
-B$ counted for $R$ at the level $\nu$ are at most $\Phi(y, z_\nu)$, the arguments $\log 2y/\log z_\nu$ lie in $[(l_1 -
-1)/(\nu + 1), (h_1 + 2)/\nu)$, and Lemma~\ref{lem:rough} gives $T_{\mathcal M_{\mathrm e}}(\mathcal B, \emptyset;
-\nu)/\varphi(q) \le (C_e + \eta) \operatorname{wt}(\mathcal M_{\mathrm e}) X$ for large $q$; this bound on the ends is
-where $h_1 + \nu + 1 \le D$ is used. Hypothesis (iii) gives $\operatorname{wt}(\mathcal M_{\mathrm n}) \le w_0 +
+\operatorname{wt}(\mathcal M_{\mathrm n}) + \eta) X$. The ends lie in the wide range. So, as in the proof of
+Proposition~\ref{prop:reversal}, for $R$ in them $y = x/R \in [x^{(l_1 - 1)/D}, x^{h_1/D})$, and the integers of
+$\mathcal B$ counted for $R$ at the level $\nu$ are at most $\Phi(y, z_\nu)$. The arguments $\log 2y/\log z_\nu$ lie in
+$[(l_1 - 1)/(\nu + 1), (h_1 + 2)/\nu)$, and Lemma~\ref{lem:rough} gives $T_{\mathcal M_{\mathrm e}}(\mathcal B,
+\emptyset; \nu)/\varphi(q) \le (C_e + \eta) \operatorname{wt}(\mathcal M_{\mathrm e}) X$ for large $q$; this bound on
+the ends uses $h_1 + \nu + 1 \le D$. Hypothesis (iii) gives $\operatorname{wt}(\mathcal M_{\mathrm n}) \le w_0 +
 \eta$ and $\operatorname{wt}(\mathcal M_{\mathrm e}) \le w_1 + w_2 + 2\eta$. As $C \ge 0$, collecting gives
 $\Delta(\mathfrak b) \ge -(C w_0 + C_e(w_1 + w_2) + O(\eta)) X$, with an $O$ that depends only on $C$, $C_e$ and the
 $w_i$.
@@ -4434,11 +4452,12 @@ c_R^+/\mathcal K$.
 \end{proof}
 
 \emph{Which boxes the search reverses.} The search at $21/10$ (Section~\ref{sec:certificate-b}) reverses boxes of either
-sign, of at most six primes: the bound $11$ on $k$ of Definition~\ref{def:reversal} is lowered to $6$ there. In its
-main tree, the tree on the boxes as against the trees over frozen parts, the root is one prime with the sign $-$, a node
-(B) adds one prime and changes the sign, and a node (S) keeps both; so a box of $k$ primes has the sign $(-1)^k$, and
+sign, of at most six primes: the bound $11$ on $k$ of Definition~\ref{def:reversal} is lowered to $6$ there. Its main
+tree is the tree on the boxes, as against the trees over frozen parts. There the root is one prime with the sign $-$, a
+node (B) adds one prime and changes the sign, and a node (S) keeps both. So a box of $k$ primes has the sign $(-1)^k$:
 the reversed boxes of the sign $-$ have three or five primes, those of the sign $+$ two, four or six. This is a property
-of the search's plan, not a theorem: the soundness of the reversal holds for either sign.
+of the search's plan, not a theorem: the soundness of the reversal holds for either sign. Reversals are not nested: a
+tree over a frozen part reverses no box, with either sign.
 % Lean: SieveAd.flipTreeDYH, SieveAd.flipCostBYH (the flag pos), SieveAd.bd_flip_coreB, SieveAd.opsKP, SieveAd.dropK, SieveAd.pr_buch, Linnik21000.part21000
 
 \section{The certificate at \texorpdfstring{$21/10$}{21/10}, and the proof of
@@ -4541,7 +4560,8 @@ Under Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, four earlier results extend
   particular the narrow part; it replaces Lemma~\ref{lem:frozen-tests} at the floor of a reversal of either sign, in
   Propositions~\ref{prop:reversal} and~\ref{prop:reversal-plus}(b), and at the nodes (B) of the trees over the frozen
   parts.
-\item Lemma~\ref{lem:frozen-tree} holds for their trees over the frozen parts, the wide and the narrow ones, with
+\item Lemma~\ref{lem:frozen-tree} holds for the trees over the frozen parts of Definition~\ref{def:tree-b}, the wide
+  and the narrow ones, with
   Lemma~\ref{lem:window-tests}(b) for the nodes (E$_{\mathcal M}$) and Lemma~\ref{lem:tests3}(c) for the tests at a
   floor.
 \item Theorem~\ref{thm:tree} holds with the root's test (J3) taken with (L) or (L$_3$), by Lemma~\ref{lem:tests3}(a) in
@@ -4638,14 +4658,14 @@ proof, and its choices affect only the cost.
 \end{itemize}
 % Lean (the search at 21/10; the strategy is tools/linnik/hint_cert.py, CERTS['21000']): SieveAd.solve21000, SieveAd.solveD, SieveAd.stepD, SieveAd.kidsM, SieveAd.kidsF, SieveAd.kidsC, SieveAd.kidsCS, SieveAd.stepOf, SieveAd.cfgIMYH, SieveAd.cfgIFYH, SieveAd.cfgJM, SieveAd.cfgJF, SieveAd.altFDYH, SieveAd.partD
 
-The hints are those of Section~\ref{sec:certificate}, with three changes. The code of an evaluation has one more bit,
+The hints are those of Section~\ref{sec:certificate}, with two changes. The code of an evaluation has one more bit,
 which chooses between (I) and the window: \texttt{00} evaluates the box by (I), and \texttt{01} by the window, with
 the rest $\mathcal S_r$ and then the records of the test. A record of (W) gives the end of one interval of the cut of
 $(0, 1]$ that the hint makes (Section~\ref{sec:window-tests}), and the upper line taken on that interval for the clamp
 and for each member of the rest; those of (W$'$) do the same at each of its two corners, and \S S7 gives their layout
 in bits. In the main tree the sets of an evaluation have one more bit, the last, for the cofactor, as the sets over a
-frozen part already had at $43/20$; (I) does not read it. And the code \texttt{1110} reverses a box of either sign,
-with the floor and the configuration of the test over the wide or the narrow part. The other codes, the
+frozen part already had at $43/20$; (I) does not read it. As at $43/20$, the code \texttt{1110} reverses a box of
+either sign, with the floor and the configuration of the test over the wide or the narrow part. The other codes, the
 configurations at a floor and the codes of the cuts are those of Section~\ref{sec:certificate}.
 % Lean: SieveAd.cfgIPYH, SieveAd.cfgIPRH, SieveAd.cfgIP, SieveAd.recW2, SieveAd.recW3, SieveAd.popc, SieveAd.okI2F (through SieveAd.fillTestsF)
 
@@ -4667,18 +4687,19 @@ The proposition is a computation, which the kernel carries out and, at the time 
 (Section~\ref{sec:lean}); with Theorem~\ref{thm:tree}, it gives Theorem~\ref{thm:2110}. At the root, $f_*/D =
 0.0305014\ldots$, the integer $r_1$ of (J3) (Definition~\ref{def:tests}) is $261788484$, and the admissible range of
 (J3) is $[u, v]$ with $u = 523503090992$ and $v = 557039738196$, that is
-$[0.4761233, 0.5066247]$ in exponents of $x$: $f_* = v - u - 1$ is the largest floor with $u + f_* < v$, and (L) holds,
-$(u + r_2)/D = 0.5068628\ldots < 1 - 1/L = 0.5238095\ldots$, so the root does not need (L$_3$). As at $43/20$, the
+$[0.4761233, 0.5066247]$ in exponents of $x$: $f_* = v - u - 1$ is the largest floor with $u + f_* < v$, and (L) holds
+with $r_2 = r_1 + f_* + 1$, $(u + r_2)/D = 0.5068628\ldots < 1 - 1/L = 0.5238095\ldots$, so the root does not need
+(L$_3$). As at $43/20$, the
 admissible range is wider than the floor only below about $(L - 2)/((2 - \lambda)L) = 0.0306$.
 
 The check is in parts of the certificate, as at $43/20$. The first prime's range $[f_*, D/2 + 1)$ is cut into $150$
-pieces: three parts,
-with $11$ cells of side $3298534883/D$, cover $[f_*, 69820530916/D) = [0.0305014, 0.0635014)$, and $147$ cells, $145$
-of side $3298534883/D$ from $69820530916/D$ to $548108088951/D = 0.4985014\ldots$ and two shorter ones up to $D/2 + 1$,
-have their own step of Buchstab's identity taken outside the parts and the next prime's range cut again into parts and
-further cells. In all $29349$ cells are cut so: $147$, $6414$, $22334$ and $454$ of the first, second, third and
+pieces. Three parts, with $11$ cells of side $3298534883/D$, cover $[f_*, 69820530916/D) = [0.0305014, 0.0635014)$.
+The other $147$ pieces are cells, $145$ of side $3298534883/D$ from $69820530916/D$ to $548108088951/D =
+0.4985014\ldots$ and two shorter ones up to $D/2 + 1$; each has its own step of Buchstab's identity, taken outside the
+parts, and the next prime's range cut again into parts and further cells. In all $29349$ cells are cut so: $147$,
+$6414$, $22334$ and $454$ of the first, second, third and
 fourth primes. $27806$ of their steps of Buchstab's identity use (J3) and $1543$ use (J2), and $24041$ are at the floor
-$f_*$; these steps are checked with the tests (J2) and (J3) with (L) or (L$_3$), and, by a computation outside the
+$f_*$. These steps are checked with the tests (J2) and (J3) with (L) or (L$_3$); by a computation outside the
 kernel, ten of them, all (J3), eight on boxes of two primes and two on boxes of three, pass with (L$_3$) only. There
 are $107374$ parts, in $1150$ files, and the cells' steps are in $58$ files. Lemma~\ref{lem:box-identities}(a) and~(b)
 join the pieces, and their costs add up to $c$ exactly. The pieces' costs show where the cost goes (each row ends at
@@ -4721,8 +4742,8 @@ given above the plot.}
 \end{figure}
 
 The plan has $90137757$ steps, and its hints take $501724020$ bytes. The search outside the kernel that made it visits
-$5141981623$ boxes; it planned the first prime's cells in about three to four hours on four cores of each of two
-machines, and predicts $273632$ seconds of one core of the kernel's time for the $1150$ files of the parts of the
+$5141981623$ boxes. It planned the first prime's cells in about three to four hours on four cores of each of two
+machines. It predicts $273632$ seconds of one core of the kernel's time for the $1150$ files of the parts of the
 certificate, about $76$ hours; this is a prediction, not a measurement. \S S5 has the other counts.
 
 \subsection{Proof of Theorem~\ref{thm:2110}}
@@ -4808,16 +4829,14 @@ cone, so a \lean{sorry} anywhere in it would appear as \lean{sorryAx}; the libra
 The certificates of Propositions~\ref{prop:certificate} and~\ref{prop:certificate-b} are checked by evaluation in
 Lean's kernel, which trusts no code compiled from the definitions (Section~\ref{sec:certificate}); the definitions are
 arithmetic on Lean's core natural numbers, lists and booleans. At $43/20$ the search led by the certificate's hints is
-evaluated in $1552$ parts of the
-certificate, in $17$ files that the kernel checks in $143$ to $271$ seconds each, about $63$ minutes in all, and the
-$256$ Buchstab
-steps that join the parts are proved one by one. At $21/10$ it is evaluated in $107374$ parts, in $1150$ files, and
-$29349$ Buchstab steps join the parts; the program that wrote the hints predicts about $76$ hours of the kernel's time
-on one core for the part files, so the default build includes neither them nor the $58$ files of the cells' steps, and
-the repository's continuous integration builds them
-in stages. At the time of writing that build has not finished, so the kernel has not yet checked the certificate
-at $21/10$ as a whole (\S S5); Theorem~\ref{thm:2110} is a theorem of the library once the build at the commit of
-this paper ends without error.
+evaluated in $1552$ parts of the certificate, in $17$ files that the kernel checks in $143$ to $271$ seconds each,
+about $63$ minutes in all, and the $256$ Buchstab steps that join the parts are proved one by one. At $21/10$ it is
+evaluated in $107374$ parts, in $1150$ files, and $29349$ Buchstab steps join the parts. The program that wrote the
+hints predicts about $76$ hours of the kernel's time on one core for the part files, so the default build includes
+neither them nor the $58$ files of the cells' steps; the repository's continuous integration builds them in stages. At
+the time of writing that build has not finished, so the kernel has not yet checked the certificate at $21/10$ as a
+whole (\S S5); Theorem~\ref{thm:2110} is a theorem of the library once the build at the commit of this paper ends
+without error.
 
 The two theorems share Input~\ref{inp:half-plane}, the curve $g_{\mathrm H}$ and Sections~\ref{sec:type2}
 to~\ref{sec:decomp}, and differ in their tests. The tests of
@@ -4849,20 +4868,20 @@ Among the statements that are not Lean theorems are:
 \end{itemize}
 
 Independent checking of the inputs is limited. OpenAI's own Lean formalisation of the main preprint's result
-\cite{openai-lean} is OpenAI's record, not an independent one, and this library's proof of
-Input~\ref{inp:half-plane} is the author's new formalisation, written with the AI assistance of the acknowledgements,
-of the companion preprint's route. Chen, Gupta and Li's
-preprint \cite{cgl} has not been refereed; the library's proof of Input~\ref{inp:cgl} follows their route
-(Section~\ref{sec:inputs}). Ingham's and Huxley's estimates are refereed and classical; the library's proofs of them
-are the author's, in the same way. \S S5 gives the details: the Lean statements, the library's
-proofs of the inputs, what the kernel checks, and the artefact.
+\cite{openai-lean} is OpenAI's record, not an independent one, and this library's proof of Input~\ref{inp:half-plane}
+is the author's new formalisation, written with the AI assistance of the acknowledgements, of the companion preprint's
+route. Chen, Gupta and Li's preprint \cite{cgl} has not been refereed; the library's proof of Input~\ref{inp:cgl}
+follows their route (Section~\ref{sec:inputs}). Ingham's and Huxley's estimates are refereed and classical; the
+library's proofs of them, by the large values of Dirichlet polynomials and the fourth moment, are the author's,
+written with the same assistance. \S S5 gives the details: the Lean statements, the library's proofs of the inputs,
+what Lean's kernel checks, and the artefact.
 
-\section{What the inputs give without the sieve, and the method's limits}\label{sec:comparison}
+\section{What the inputs give by other means, and the method's limits}\label{sec:comparison}
 
 This section claims nothing new. It places Theorems~\ref{thm:2110} and~\ref{thm:4320}, and
 Corollary~\ref{cor:count}(a), against what the same inputs give by the classical argument, which has no sieve, and
-against Harman's theorems on primes in a progression and the exponents known for special moduli; the table of the
-introduction sums up the first comparison.
+against Harman's theorems on primes in a progression and the exponents known for special moduli.
+Table~\ref{tab:exponents} sums up the first two comparisons.
 
 \subsection*{The classical deduction}
 
@@ -4893,8 +4912,8 @@ With Chen, Gupta and Li's density estimate the exponent is
 $7/3 + \varepsilon$, by the same deduction from their Theorem~1.2 \cite{cgl} (exponent $A = 7/3$), which the library
 does not formalise as they state it; the last item is what the library proves in its place, and it differs from $7/3$
 by the rounding up of the steps of $g^*$. They do not state a Linnik exponent, but their Corollary~1.4 \cite{cgl}, on
-primes in progressions in short intervals under a zero-free region, contains the exponent $7/3 + \varepsilon$: with
-$\psi(x; q, a)$ the sum of $\Lambda(n)$ over $n \le x$, $n \equiv a \bmod q$, for $h \le x$ it gives
+primes in progressions in short intervals under a zero-free region, contains the exponent $7/3 + \varepsilon$. Let
+$\psi(x; q, a)$ be the sum of $\Lambda(n)$ over $n \le x$, $n \equiv a \bmod q$. For $h \le x$ their corollary gives
 $\psi(x + h; q, a) - \psi(x; q, a) \sim h/\varphi(q)$ whenever
 $h/\varphi(q) \ge x^{1/2 + \varepsilon} q^{1/6} + x^{17/30 + \varepsilon}$, and with $h = x$ and
 Input~\ref{inp:half-plane} as the zero-free region this holds at $x = q^L$ for every $L > 7/3$ and all large $q$.
@@ -4903,42 +4922,40 @@ Input~\ref{inp:half-plane} as the zero-free region this holds at $x = q^L$ for e
 
 Harman \cite{harman05, harman08} applied his sieve to primes in a progression to one large modulus $q$, for Alford,
 Granville and Pomerance's construction of Carmichael numbers \cite{agp}, which has the ranges $q \le x^B$ for
-$B < 5/12$ outside exceptional moduli. His Theorem~1.2 in \cite{harman08} is the following. There is $\delta > 0$
-such that for every $\varepsilon > 0$ there are $K$ and $c > 0$ with this property. Let $q > K$ have all its prime
-factors below $q^\delta$, and suppose that for every $d \mid q$ and every primitive character $\chi$ mod $d$
+$B < 5/12$ outside exceptional moduli. His Theorem~2 in \cite{harman05} is the following. For every
+$\varepsilon > 0$ there are $K$ and $c > 0$ with this property. Let $q > K$, and suppose that for every $d \mid q$
+and every primitive character $\chi$ mod $d$
 \[
   L(s, \chi) \ne 0 \quad \text{for} \quad \operatorname{Re} s > 1 - (\log q)^{-3/4}, \quad
   |\operatorname{Im} s| \le \exp\bigl(\varepsilon (\log q)^{3/4}\bigr).
 \]
 Then for every $a$ prime to $q$
 \[
-  \pi(x; q, a) \ge c\, \frac{x}{\varphi(q) \log x} \qquad \text{whenever } q < x^{0.4736}.
+  \pi(x; q, a) \ge c\, \frac{x}{\varphi(q) \log x} \qquad \text{whenever } q < x^{0.472}.
 \]
-Harman proves one lemma in full and sketches the rest of the proof, which follows \cite{bhp} as in \cite{harman05}.
-What \cite{harman08} adds to \cite{harman05} is Watt's mean value theorem on sums of character sums, and the
-condition on the prime factors serves its application.
+In his construction the exceptional moduli are those for which the condition on the zeros fails. Harman sketches the
+proof. Its arithmetical information is the zero-free region, a mean value estimate, the fourth moment of the
+$L$-functions and Huxley's large values estimate, and it follows work on prime ideals in small regions that uses no
+analogue of Watt's mean value theorem (see \cite{harman05} for the references). His Theorem~1.2 in \cite{harman08}
+is the same statement with $0.4736$ in the place of $0.472$, for the moduli $q > K$ all of whose prime factors are
+below $q^\delta$, where $\delta > 0$ is a constant that the theorem asserts to exist. It brings in Watt's mean value
+theorem on sums of character sums, and the condition on the prime factors serves its application; Harman proves one
+lemma in full and sketches the remainder.
 
 Input~\ref{inp:half-plane} implies the condition on the zeros, for every $\varepsilon$, as soon as
-$(\log q)^{3/4} \ge 12$. So with Input~\ref{inp:half-plane}, Harman's Theorem~1.2 applies to every large modulus all
-of whose prime factors are below $q^\delta$: the least prime in every class prime to such a modulus is at most
-$q^{1/0.4736}$, and $1/0.4736 < 2.1115$. This exponent is smaller than that of Theorem~\ref{thm:4320} and larger
-than that of Theorem~\ref{thm:2110}. Harman's theorem is in a refereed journal, and it needs the condition on the
-zeros for the divisors of the one modulus only. Its consequence for the least prime uses Input~\ref{inp:half-plane}
-for that condition, and so rests on a result that has not been refereed, as Theorems~\ref{thm:2110}
-and~\ref{thm:4320} do.
-
-We have not consulted \cite{harman05}. Of its theorem, \cite{harman08} says three things: that it holds outside a
-small set of exceptional moduli, whose size is unaltered in \cite{harman08}; that its exponent is $0.472$ where
-Theorem~1.2 has $0.4736$; and that the condition on the prime factors of $q$ has been imposed in \cite{harman08} (the
-last two in Remark~1.3). Suppose that the theorem of \cite{harman05} is the statement above with $0.472$ in the place
-of $0.4736$ and without the condition on the prime factors. Then with Input~\ref{inp:half-plane} the least prime in
-every class prime to a large modulus $q$ is at most $q^{1/0.472}$, and $1/0.472 < 2.1187$. This gives Linnik's theorem
+$(\log q)^{3/4} \ge 12$. So with Input~\ref{inp:half-plane}, Harman's Theorem~2 applies to every large modulus: the
+least prime in every class prime to $q$ is at most $q^{1/0.472}$, and $1/0.472 < 2.1187$. This is Linnik's theorem
 for every modulus, the constant $K$ covering the small moduli, with an exponent smaller than that of
-Theorem~\ref{thm:4320}. The exponent of Theorem~\ref{thm:4320} is then not the smallest that
-Input~\ref{inp:half-plane} gives; the theorem is stated because its proof uses Input~\ref{inp:half-plane} and Huxley's
-estimate only, and the proof of Theorem~\ref{thm:2110} adds to it (Sections~\ref{sec:window}
-to~\ref{sec:certificate-b}). The exponent of Theorem~\ref{thm:2110} is smaller than $1/0.472$ by $0.0186\ldots$, and
-its proof uses Input~\ref{inp:cgl} as well.
+Theorem~\ref{thm:4320}. In the same way his Theorem~1.2 gives the exponent $1/0.4736 < 2.1115$ for the large moduli
+all of whose prime factors are below $q^\delta$. Harman's theorems are in refereed journals, and they need the
+condition on the zeros for the divisors of the one modulus only. Their consequences for the least prime use
+Input~\ref{inp:half-plane} for that condition, and so rest on a result that has not been refereed, as
+Theorems~\ref{thm:2110} and~\ref{thm:4320} do.
+
+So the exponent of Theorem~\ref{thm:4320} is not the smallest that Input~\ref{inp:half-plane} gives. The theorem is
+stated because its proof uses Input~\ref{inp:half-plane} and Huxley's estimate only, and the proof of
+Theorem~\ref{thm:2110} adds to it (Sections~\ref{sec:window} to~\ref{sec:certificate-b}). The exponent of
+Theorem~\ref{thm:2110} is smaller than $1/0.472$ by $0.0186\ldots$, and its proof uses Input~\ref{inp:cgl} as well.
 
 For the powers of a fixed prime, exponents smaller than that of Theorem~\ref{thm:4320} have been obtained without
 Input~\ref{inp:half-plane}. Banks and Shparlinski \cite{banks-shparlinski} have $2.1115$ (the value as cited in
@@ -4956,18 +4973,19 @@ for every modulus $q \le (x/K)^{10/21}$, $10/21 = 0.4761\ldots$, and, from Input
 estimate alone, for every $q \le (x/K)^{20/43}$, $20/43 = 0.4651\ldots$, with $K$ depending on the exponent. The
 ranges $0.472$, $0.4736$ and $0.4752$ above lie between these two: the corollary's range is shorter than each of
 them at $20/43$, and longer at $10/21$. The corollary uses Input~\ref{inp:half-plane}, and at $10/21$
-Input~\ref{inp:cgl} as well, which have not been refereed; Harman's theorem assumes its condition on the zeros for
-the one modulus.
+Input~\ref{inp:cgl} as well, which have not been refereed; Harman's theorems assume their condition on the zeros
+for the one modulus.
 
 \subsection*{What the half-plane is used for}
 
 The classical deduction does not need the value $11/12$ of Input~\ref{inp:half-plane}: it works with any zero-free
 half-plane $\operatorname{Re} s > 1 - \eta_0$, for a fixed $\eta_0 > 0$. The proof of Theorem~\ref{thm:4320} uses the
-half-plane where the end of its proof says (Section~\ref{sec:proof}): for the prime sums of
+half-plane in the places that the end of its proof lists (Section~\ref{sec:proof}): for the prime sums of
 Lemma~\ref{lem:prime-sum}, whose contour runs to its edge, for the top bin of Section~\ref{sec:bins}, for the kernel
 bound, where the Pólya--Vinogradov inequality would do (Section~\ref{sec:region}), for the piece of $g_{\mathrm H}$
 above $11/12$, and for the prime number theorem. With a narrower half-plane the bins would run up to $1 -
-\eta_0$, and the zone condition for two variables of length $q$ at the top bin would need $\rho$ at least about
+\eta_0$, and the zone condition for two variables of length $q$ at the top bin would need the exponent $\rho$ of the
+rest at least about
 $1/(25000\eta_0)$, where $\rho \ge 1/2000$ suffices at $\eta_0 = 1/12$; the region, and so the certificate, would
 change, and this is not pursued. The proof of
 Theorem~\ref{thm:2110} uses the half-plane in the same places, and in the bins of its two further estimates. In the
@@ -4980,30 +4998,31 @@ in particular no exceptional zero.
 
 The deduction needs the zeros of every real part to contribute less than the main term, so its exponent is the
 largest density exponent on $[1/2, 11/12]$, which is $12/5$ with Huxley's estimate, at $\sigma = 3/4$, and $7/3$ with
-Chen, Gupta and Li's, at $\sigma = 5/7$. The sieve of Theorem~\ref{thm:4320} meets the zeros only in sums of two
-variables of lengths near $q$ times a product of primes, where Theorem~\ref{thm:type2} holds for every $L$ and uses the
+Chen, Gupta and Li's, at $\sigma = 5/7$. The sieve of Theorem~\ref{thm:4320} meets the zeros only in sums over
+$n = n_1 n_2 r$, with $n_1$ and $n_2$ of lengths near $q$ and $r$ a product of primes, where Theorem~\ref{thm:type2}
+holds for every $L$ and uses the
 density estimate only above $0.7789$, and it recovers the primes from those sums at the cost that its certificate
 bounds. In exponents of $x$ the region shrinks as $L$ grows smaller, so more of the sieve's terms fall outside it.
 
 With the rules of Sections~\ref{sec:type2} to~\ref{sec:certificate} alone the cost is $0.94846\ldots$ at $43/20$. On
 a sample of twenty of the first prime's cells, taking each test at the midpoint of its cell, which gives no
 certificate, lowers the cost by about a quarter. Each $0.005$ of exponent costs between $5\%$ and $9\%$ of the cost,
-as measured with a coarser search, and the rules that this certificate lacks, the reversal of the terms of the sign
-$+$ among them, are worth a few per
-cent each, measured in exact integers on twenty of the first prime's cells (\S S6).
+as measured with a coarser search. The rules that this certificate lacks, the reversal of the terms of the sign $+$
+among them, are worth a few per cent each, measured in exact integers on the same twenty cells (\S S6).
 
 The rules of Sections~\ref{sec:window} and~\ref{sec:rules} are of another kind. The estimate in one variable evaluates
-terms that are outside the region of two variables. Where, for each prime sum of a term's rest, a power of the sum's
-length is near $q$, the mean value of that power of the sum counts the characters at which the sum is large as well as
-a density exponent $2$ would, as the introduction explains. The leaves cut in three recover comparisons that the
+terms that are outside the region of two variables. Where each prime sum of a term's rest has a power of length near
+$q$, the mean value of that power counts the characters at which the sum is large as well as a density exponent $2$
+would (Section~\ref{sec:intro}). The leaves cut in three recover comparisons that the
 bilinear
 Type~I estimate does
-not reach. With them, the reversal of the terms of the sign $+$, the test at the two corners, cells of side $0.003$
-and a plan that tries every configuration over the frozen parts, the search passes at $21/10$ with the cost
-$0.97716\ldots$, on a certificate whose plan has $90137757$ steps against $3400745$ at $43/20$
-(Sections~\ref{sec:certificate} and~\ref{sec:certificate-b}), about twenty-six and a half times as many. So about
+not reach. With them, the reversal of the terms of the sign $+$, the test at the two corners and cells of side $0.003$,
+the search passes at $21/10$ with the cost $0.97716\ldots$ when it tries every configuration over the frozen parts.
+Its plan has $90137757$ steps against $3400745$ at $43/20$ (Sections~\ref{sec:certificate}
+and~\ref{sec:certificate-b}), about twenty-six and a half times as many. So about
 $0.023$ of the primes is left at
-$21/10$, of which Corollary~\ref{cor:count}(b) keeps half. Going much further needs
+$21/10$, of which Corollary~\ref{cor:count}(b) keeps half. With so little left, $21/10$ is close to what these rules
+give as the search uses them. Going much further needs
 Type~I information on longer products, or Type~II estimates on wider regions, which a better density estimate above
 $0.7789$ would give only a little of (Section~\ref{sec:region}).
 
@@ -5031,15 +5050,15 @@ belongs to the last unindented row above it: a further part of its statement, a 
 rests on. The names against a claim state or prove it, and a mark (\S S$n$) points to the section of the supplement
 that proves the step.
 
-The file \file{lib/check/Check.lean} prints the theorems of the first, third and fourth blocks, and
-\file{lib/check/CheckAll.lean} those of the second. Where the table elides steps with dots,
-\file{lib/check/Check.lean} prints the first and the last, and a theorem that uses every step, so all of them are in a
-dependency cone whose axioms are checked. For Huxley's fifteen steps on $[131/168, 5/6)$ that theorem is
-\lean{SieveCurveHx.counts\_hx}, in the cone of \lean{Linnik21500.linnik\_21500}; for the steps of $g^*$ (those of
-Input~\ref{inp:cgl} from $0$ to $29$, and Ingham's from $0$ to $18$) it is \lean{SieveCurve7D.counts\_7d}. Dirichlet's
-theorem, \lean{Nat.forall\_exists\_prime\_gt\_and\_modEq}, is Mathlib's, and neither file prints it; it is in the
-dependency cone of \lean{Linnik21000.linnik\_21000}, and in that of \lean{Linnik21500.linnik\_21500}, whose axioms are
-checked.
+The file \file{lib/check/Check.lean} prints the axioms of the theorems of the first, third and fourth blocks, and
+\file{lib/check/CheckAll.lean} those of the second; Section~\ref{sec:lean} says how they are checked. Where the table
+elides steps with dots, \file{lib/check/Check.lean} prints the first and the last, and a theorem that uses every step,
+so all of them are in a dependency cone whose axioms are checked. For Huxley's fifteen steps on $[131/168, 5/6)$ that
+theorem is \lean{SieveCurveHx.counts\_hx}, in the cone of \lean{Linnik21500.linnik\_21500}; for the steps of $g^*$
+(those of Input~\ref{inp:cgl} from $0$ to $29$, and Ingham's from $0$ to $18$) it is \lean{SieveCurve7D.counts\_7d}.
+Dirichlet's theorem, \lean{Nat.forall\_exists\_prime\_gt\_and\_modEq}, is Mathlib's, and neither file prints it; it is
+in the dependency cone of \lean{Linnik21500.linnik\_21500}, whose axioms are checked, and in that of
+\lean{Linnik21000.linnik\_21000}.
 
 A name's first component is its namespace, which is usually also the name of its file in \file{lib/pnt}; a list
 after the table gives the exceptions.
@@ -5052,6 +5071,8 @@ Claim & Lean \\
 \endhead
 \multicolumn{2}{@{}l}{\emph{Theorem~\ref{thm:4320} and Sections~\ref{sec:inputs} to~\ref{sec:proof}}} \\
 Theorem~\ref{thm:4320} & \lean{Linnik21500.linnik\_21500} \\
+\quad Dirichlet's theorem, for the small moduli (Mathlib) & \lean{Nat.forall\_exists\_prime\_gt\_and\_modEq} \\
+\quad the prime number theorem, from Input~\ref{inp:half-plane} & \lean{HalfPlanePNT.psi\_isBigO\_eleven\_twelfths} \\
 Corollary~\ref{cor:count} at $43/20$, (a) and (b) & \lean{Linnik21500.count\_21500}, \\
  & \lean{Linnik21500.count\_large\_21500} \\
 Definition~\ref{def:curve}, density curves & \lean{SieveTypeIIGen.CurveCounts} \\
@@ -5114,7 +5135,7 @@ Proposition~\ref{prop:harman-two}, Harman's comparison in two variables & \lean{
  & \lean{SieveBrun.fundamental} \\
 \quad the main term at a leaf, with $\prod_{p < w}(1 - 1/p) \le 1/\log w$ & \lean{SieveLeaf.prod\_T\_le}, \\
  & \lean{SieveLeaf.prod\_primesBelow\_le} \\
-Proposition~\ref{prop:harman-fill}, the rest among the primes of the comparison's tree &
+Proposition~\ref{prop:harman-fill}, the rest among the comparison's own small primes &
 \lean{SieveFillComp.prop6\_fill\_at}, \\
  & \lean{SieveFillComp.prop6\_fill} \\
 \quad its second trees and their stops (\S S3) & \lean{SieveFillTree.tree\_last}, \\
@@ -5192,8 +5213,6 @@ Proposition~\ref{prop:certificate}, the certificate & \lean{Linnik21500.tree2150
  & \lean{SieveAd.Plain.frozTestsC\_okJ}, \\
  & \lean{SieveAd.Plain.rules\_frozC} \\
 \quad the root's test, by evaluation & \lean{Linnik21500.linnik\_21500} \\
-\quad Dirichlet's theorem, for the small moduli (Mathlib) & \lean{Nat.forall\_exists\_prime\_gt\_and\_modEq} \\
-\quad the prime number theorem, from Input~\ref{inp:half-plane} & \lean{HalfPlanePNT.psi\_isBigO\_eleven\_twelfths} \\
 \midrule
 \multicolumn{2}{@{}l}{\emph{Theorem~\ref{thm:2110} and Sections~\ref{sec:window} to~\ref{sec:certificate-b}}} \\
 Theorem~\ref{thm:2110} & \lean{Linnik21000.linnik\_21000} \\
@@ -5274,7 +5293,7 @@ Lemma~\ref{lem:leaf-term}, a leaf in two variables & \lean{SieveLeafTwo.leavesE\
  & \lean{SieveLeafTwo.leaf2\_bound} \\
 Proposition~\ref{prop:harman-two3}, Harman's comparison, the leaves cut in three & \lean{SieveTwoCompE.prop6\_two3\_at}
 \\
-Proposition~\ref{prop:harman-fill3}, the rest among the primes of the comparison's tree, the leaves cut in three &
+Proposition~\ref{prop:harman-fill3}, the rest among the comparison's own small primes, the leaves cut in three &
 \lean{SieveFillCompE.prop6\_fill3\_at} \\
 \quad one family of large leaves cut in three (\S S8) & \lean{SieveLeafSplit.large\_leaves\_le3} \\
 Definition~\ref{def:leaves3}, the condition (L$_3$) & \lean{SieveAd.leavesE}, \\
@@ -5326,9 +5345,9 @@ Huxley's density estimate (\file{formalisations/huxley-density.md}) & \lean{Linn
 \quad its steps on $[131/168, 5/6)$ & \lean{LinnikStairs7.charDensity\_hx7\_5}, \\
  & \dots, \lean{LinnikStairs7.charDensity\_hx7\_19} \\
 \quad from $5/6$ on (with Input~\ref{inp:half-plane} above $11/12$) & \lean{LinnikStep.charDensity\_step} \\
-The Hal\'asz--Montgomery inequality (\file{formalisations/halasz-montgomery.md}), in the weighted forms that &
-\lean{SieveTypeIIHM.hm\_duality\_wt}, \\
-\quad the proof uses, here and in Huxley's estimate & \lean{LinnikReflect.hm\_duality\_W} \\
+The Hal\'asz--Montgomery inequality (\file{formalisations/halasz-montgomery.md}), in the weighted forms that the proof
+uses, here and in Huxley's estimate & \lean{SieveTypeIIHM.hm\_duality\_wt}, \\
+ & \lean{LinnikReflect.hm\_duality\_W} \\
 Mean values over the characters mod $q$ \cite{montgomery-vaughan, gallagher67, gallagher70} &
 \lean{LinnikHybrid.mean\_value\_chars}, \\
  & \lean{LinnikHybrid.large\_values\_chars} \\
@@ -5353,8 +5372,8 @@ Its exponents $12 + \varepsilon$, $36/13 + \varepsilon$, $12/5 + \varepsilon$ an
 \end{longtable}
 }
 
-Among the names of the claims table, those whose file is not named after their namespace in \file{lib/pnt} are
-these; the last four files are in \file{lib/core}, the others in \file{lib/pnt}.
+The library's names in the claims table whose file is not named after their namespace are these, by file; the last
+four files are in \file{lib/core}, the others in \file{lib/pnt}.
 {\footnotesize
 \begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.55\textwidth}@{}}
 \toprule
@@ -5513,7 +5532,7 @@ evaluated; bounded at $C$ & $\Delta(\mathfrak b) = o(X)$; $\varepsilon\Delta(\ma
 tree; passes; cost & nodes (V)\ldots(R) with the trees below; all conditions hold; the drops' and reversals' costs &
   Def.~\ref{def:tree} \\
 test & a condition on a box's exponents under which its terms are evaluated: (I), (J2), (J3); (W), (W$'$) &
-  Def.~\ref{def:tests} \\
+  Def.~\ref{def:tests}, \ref{def:window-tests} \\
 admissible range & $\mathcal W(\rho_-, \rho_+) = [u, v]$: the first variables (units of $1/D$) that the region allows
   with every rest near $[\rho_-, \rho_+]$ &
   \S\ref{sec:tests} \\
@@ -5540,18 +5559,18 @@ strategy; depth & what the search tries, needing no proof; the number of primes 
 configuration & the sets and the side that a test takes & \S\ref{sec:search} \\
 Lean's kernel & Lean's checker; it decides propositions about natural numbers, lists and Booleans by
   evaluation & \S\ref{sec:checking} \\
-certificate; part & the hints and the propositions that Lean's kernel checks; a range of cells checked as one unit &
-  \S\ref{sec:checking} \\
-plan; hints & the choices that the search outside Lean's kernel kept; the plan written down for the kernel &
-  \S\ref{sec:hints} \\
+certificate; part of the certificate & the hints and the propositions that Lean's kernel checks; a range of cells
+  checked as one unit & \S\S\ref{sec:checking}, \ref{sec:certificate} \\
+plan; hints & the choices that the search outside Lean's kernel kept; the plan written down for Lean's kernel &
+  \S\S\ref{sec:certificate}, \ref{sec:hints} \\
 the window & the resonant window, the Type~II estimate in one variable, and its tests (W), (W$'$) &
   \S\ref{sec:window} \\
 variable & in Section~\ref{sec:window} and the tests (W), (W$'$): $W$, of length $q^m$; in a term, $n$ outside the
   rest & \S\ref{sec:window-estimate} \\
 level of a prime sum; class & $\ell_j(\chi) \approx \tau^{-1} \log_{Q_j} |S_{Q_j}(\chi, h_j)|$; a bin refined by the
   levels & \S\ref{sec:window-estimate} \\
-size; count exponent & $t_j$, with $|S_{Q_j}| \le 2Q_j^{t_j}$ on a class; $\gamma$, with about $q^\gamma$ characters
-  in it & \S\ref{sec:window-estimate} \\
+size of a prime sum; count exponent & $t_j$, with $|S_{Q_j}| \le 2Q_j^{t_j}$ on a class; $\gamma$, with about
+  $q^\gamma$ characters in it & \S\ref{sec:window-estimate} \\
 admissible tuple & $(\beta, \gamma, t_1, \dots, t_K)$ with $\gamma \le g_{\mathrm H}(\beta)$, $t_j \le \beta + 4
   \cdot 10^{-6}$, and $\gamma$ below the counts at $t_j - \tau$ & Def.~\ref{def:res} \\
 fit & of $(E, \gamma, m)$: orthogonality's bound, or both Hal\'asz--Montgomery bounds, at most $L - 1/25000$ &
@@ -5559,10 +5578,11 @@ fit & of $(E, \gamma, m)$: orthogonality's bound, or both Hal\'asz--Montgomery b
 resonance condition & every admissible tuple $(\beta, \gamma, t_1, \dots, t_K)$ gives exponents that fit &
   Def.~\ref{def:res} \\
 main tree; end node & the tree on the boxes, not over a frozen part; a node with no tree below it: (V), (E), (D), (P)
-  & \S\S\ref{sec:window-terms}, \ref{sec:window-tests} \\
+  & \S\S\ref{sec:window-terms}, \ref{sec:certificate-b} \\
 leaves' region & $\mathcal R^{\mathrm{lf}}_L$, for a leaf's $d_1$ (first variable), cofactor (second variable) and
   $d_2$ (rest) &
   Def.~\ref{def:leaf-region} \\
+size of a leaf & the number of primes that the comparison's tree adds to the tuple & \S\ref{sec:leaves-three} \\
 leaves cut in three & cuts $d_1 \le q^{D_1^*}$, then $d_2 \le q^{D_2^*}$, and the third range; tested by
   (L$_3$) & \S\ref{sec:leaves-three} \\
 tree of Theorem~\ref{thm:2110} & with (W), (W$'$) in (E), (L$_3$) in (B), and the node (R$^+$) &
@@ -5595,9 +5615,8 @@ $L$; $x$ & the Linnik exponent; $x = q^L$ & \S\ref{sec:inputs} \\
 $x$ & any real $x \ge Kq^L$ & Lem.~\ref{lem:every-x} \\
 $K$ & the constant of Theorems~\ref{thm:2110} and~\ref{thm:4320} & Thm.~\ref{thm:2110} \\
 $K$ & the number of prime sums & Thm.~\ref{thm:type2} \\
-$N^*(\sigma, T; q)$ & the number of $\chi \bmod q$ with a zero in $\mathcal R(\sigma, T)$ & \S\ref{sec:inputs} \\
-$\mathcal R(\sigma, T)$ & the rectangle $\operatorname{Re} s \ge \sigma$, $|\operatorname{Im} s| \le T$ &
-  \S\ref{sec:inputs} \\
+$N^*(\sigma, T; q)$ & the number of $\chi \bmod q$ with a zero in $\operatorname{Re} s \ge \sigma$,
+  $|\operatorname{Im} s| \le T$ & \S\ref{sec:inputs} \\
 $\mathcal A$, $\mathcal B$; $N_1$, $N_2$ & the $n \in (x, 2x]$ with $n \equiv a$, with $(n, q) = 1$; $\lfloor x
   \rfloor$, $\lfloor 2x \rfloor$ & \S\ref{sec:type1} \\
 $S(\mathcal C_r, z)$; $\vartheta$ & the number of $n \in \mathcal C$, $r \mid n$, with no prime factor below $z$;
@@ -5634,6 +5653,8 @@ $T$; $\eta$ & the height bound for the zeros; the heights' exponent, $\eta \le 1
   Thm.~\ref{thm:type2} \\
 $\eta$ & any positive tolerance: in $o(X)$, in ``bounded at $C$'', in Proposition~\ref{prop:harman-two} &
   \S\ref{sec:boxes} \\
+$\delta$ & $10^{-6}$, in the bound for the prime sums on a bin; in an estimate with the bound $q^{L -
+  \delta}/\varphi(q)$, its saving & \S\S\ref{sec:bins}, \ref{sec:type1} \\
 $\varpi$ & in the bin $i$, the excess over $\beta_i$ of the prime sums' exponent, $< 2.9 \cdot 10^{-6}$ &
   \S\ref{sec:bins} \\
 $\mathcal H$; $b(m)$; $\delta'$, $\varepsilon'$ & a bound for $|k_{2P}|$; its exponent of $q$ at $P = q^m$; $1/1000$,
@@ -5644,7 +5665,7 @@ $M$; $E$ & an exponent of a mean square; the exponent of a bin's bound & \S\ref{
 $E$ & the exponent of the rest's bound & Def.~\ref{def:fit} \\
 $\ell_j(\chi)$; $t_j$; $\tau$ & the level of the $j$-th prime sum; its size; $10^{-6}$, the levels' step &
   \S\ref{sec:window-estimate} \\
-$\tau$ & $1/L$; in Proposition~\ref{prop:harman-fill}, the lower end of the rest & \S\ref{sec:type1} \\
+$\tau$ & in Proposition~\ref{prop:harman-fill}, the exponent of the rest's lower end & Prop.~\ref{prop:harman-fill} \\
 $\gamma$ & the count exponent of a class & \S\ref{sec:window-estimate} \\
 $\gamma$ & the room, $12 + \lfloor D/l_k \rfloor$ units, in the tests over a frozen part & \S\ref{sec:reversal} \\
 $\mathfrak m_k$, $\mathfrak v_k$ & the counts' exponents, by the moments and by the large values &
@@ -5653,7 +5674,8 @@ $\operatorname{Res}_L$; $\operatorname{cl}$ & the resonance condition; the clamp
   \S\ref{sec:corners} \\
 \midrule
 \multicolumn{3}{@{}l}{\emph{The sieve: boxes, floors, trees and costs}} \\
-$D$; $\mathcal K$ & $2^{40}$, the unit of exponents; $2^{60}$, the unit of costs & \S\S\ref{sec:boxes},
+$D$; $\mathcal K$ & $2^{40}$, with $1/D$ the unit of exponents; $2^{60}$, with $1/\mathcal K$ the unit of costs &
+  \S\S\ref{sec:boxes},
   \ref{sec:decomp} \\
 $D$ & the mean square; an integer bound & Lem.~\ref{lem:hm-sq}, \ref{lem:typeIB} \\
 $D_1$, $D_2$; $D_i^*$ & exponents of $q$ of the bounds $d_i \le 4q^{D_i}$ on a leaf's two blocks; the exponents of the
@@ -5704,7 +5726,8 @@ $c$; $C$ & the cost of a tree, an integer; $C = c/\mathcal K$, the fraction of t
 $c$ & a positive constant & Cor.~\ref{cor:count} \\
 $f_*$; $c$ & at $43/20$, $49170839016$ and $1093510193343867034 < 0.94847\, \mathcal K$; at $21/10$, $33536647203$ and
   $1126600180626425749 < 0.97717\, \mathcal K$ & Prop.~\ref{prop:certificate}, \ref{prop:certificate-b} \\
-$c'$ & a small constant, for the leaves of Lemma~\ref{lem:type1} & \S\ref{sec:harman} \\
+$c'$ & a small constant: Lemma~\ref{lem:leaves} counts the leaves with $d > q^{L - 1 - 4c'}$, Lemma~\ref{lem:type1}
+  the others & \S\ref{sec:harman} \\
 $c'$ & the cost of a piece of the first prime's range & Fig.~\ref{fig:cost} \\
 \bottomrule
 \end{longtable}
@@ -5722,38 +5745,38 @@ $c'$ & the cost of a piece of the first prime's range & Fig.~\ref{fig:cost} \\
 % the list of optimization constants at teorth.github.io/optimizationproblems, which records 2.4 with an asterisk, as the
 % contributing author's deduction from OpenAI's half-plane at 7/8 and the classical 12/5 density estimate, not refereed.
 % Xylouris (2018): the journal's record (title, volume, issue, pages, abstract) was read; the PDF was not.
-% Harman (2008) was read in full on 17 November 2026, in the published version (Int. J. Number Theory 4 (2008),
-% 241--248): Theorem 1.2 and Remark 1.3 (p. 243); the abstract and the introduction (p. 241: Watt's new mean value
-% theorem "can be included in the method described in the author's recent work [6]"; sigma = (5/12)(1 - 1/(2 sqrt e))
-% for Alford, Granville and Pomerance; p. 242: their exponent as a product EB, "(1.5) ... except for relatively few
-% exceptional q", "(i) to prove a new result on primes in arithmetic progressions (mod q) valid except for a small set
-% of exceptional q", "we will content ourselves with a brief sketch with the explicit proof of one lemma ... the
-% reader will need to consult [3, 6] to understand the proof fully", [3] being Baker--Harman--Pintz and [6] Harman
-% (2005); p. 243: "Since the size of the exceptional set is unaltered, step (ii) remains the same as in [6]"); and the
-% sketch of the proof (Section 2: "In view of our smoothness restriction on q, terms involving q^delta can be absorbed
-% into the x^epsilon term", p. 246; the result at theta = 0.5264, p. 247). Its reference list gives the volume of
+% Harman (2005) and Harman (2008) were read in full on 17 November 2026, in the published versions.
+% Harman (2005), Bull. London Math. Soc. 37, 641--650: Theorem 2 (p. 643: "Given epsilon > 0, there are constants
+% K(epsilon) >= 2 and c > 0 such that, if q > K and for every d | q with chi a primitive character (mod d) we have
+% L(s, chi) != 0 for Re s > 1 - 1/(log q)^{3/4}, |t| <= exp(epsilon (log q)^{3/4}), then, for any a with (a, q) = 1,
+% we have pi(x; q, a) >= cx/(phi(q) log x) whenever x^{0.472} > q"); the remark after it (the hypothesis can be
+% weakened to Re s > 1 - J log log q/log q); the sketch of its proof (pp. 643--646: the method of [3] gives
+% 0.45 - epsilon; "in [11] the cognate problem of the distribution of prime ideals in small regions is considered ...
+% This is done without using any analogue of Watt's result. We will sketch the proof of Theorem 2 by showing that the
+% arithmetical information available here is exactly analogous to that in [11] and [16]"; the information (i) to (iv):
+% the zero-free region, a mean-value estimate, the fourth-power moment, a large-values estimate from Huxley's
+% adaptation of the Halasz method; "we can obtain the result for q < x^{0.47}. The result of [16, Chapter 4] ...
+% allows us to relax the condition to q < x^{0.472}"; [11] is Harman--Kumchev--Lewis, Trans. Amer. Math. Soc. 356
+% (2004), and [16] P. A. Lewis's thesis, Cardiff, 2002); Section 2 (p. 642: "to increase the size of B from 5/12
+% (= 0.416...) to 0.472", "except for relatively few, exceptional q"); and the construction (p. 647: "First we must
+% remove all those q for which inequality (5) fails").
+% Harman (2008), Int. J. Number Theory 4, 241--248: Theorem 1.2 and Remark 1.3 (p. 243); the abstract and the
+% introduction (p. 241: Watt's new mean value theorem "can be included in the method described in the author's recent
+% work [6]"; p. 242: "we will content ourselves with a brief sketch with the explicit proof of one lemma ... the reader
+% will need to consult [3, 6] to understand the proof fully", [3] being Baker--Harman--Pintz and [6] Harman (2005);
+% p. 243: "Since the size of the exceptional set is unaltered, step (ii) remains the same as in [6]"); and the sketch
+% of the proof (Section 2: "In view of our smoothness restriction on q, terms involving q^delta can be absorbed into
+% the x^epsilon term", p. 246; the result at theta = 0.5264, p. 247). Both papers' reference lists give the volume of
 % Alford--Granville--Pomerance as 140; it is 139.
-% Harman (2005) and Alford--Granville--Pomerance (1994) were NOT read (the publishers' pages could not be reached).
-% What is said of Harman (2005) is taken from Harman (2008): the sentences of pp. 242-243 just quoted and Remark 1.3,
-% "We have increased the exponent of x from 0.472 to 0.4736 compared with [6]" and "We have also imposed the condition
-% that q be delta-smooth". Harman (2008) does not state the 2005 theorem's condition on the zeros, its residue classes
-% or its conclusion. What is said of Alford--Granville--Pomerance is taken from Wright, arXiv:1212.5850, Section 2,
-% which quotes their Theorem 2.1 (for fixed 0 < B < 5/12, pi(z; d, c) >= pi(z)/(2 phi(d)) for d <= min(x^B, z/x^{1-B})
-% not divisible by an element of a bounded exceptional set); from Harman (2008), pp. 241-242; from Lichtman,
-% arXiv:2211.09641, p. 1 (AGP's x^{(5/12)(1 - beta)}, "the current record is x^{0.4736(1 - beta)} due to Harman"); and
-% from Baier and Pujahari, arXiv:2107.04348v5, pp. 4-6 ("Harman himself did this in his papers on Carmichael numbers
-% for more general moduli q"; Banks and Shparlinski "obtained their result by a combination of a result in [Harman
-% 2008] and improved zero-free regions ... uses [Harman 2008, Theorem 1.2]"). R. Li's Theorems 9 to 11 and reference
-% list (v8, p. 36) were read; his constant is called C there and c_1 here, and his statement does not quantify
-% epsilon.
-% TO DO BEFORE SUBMISSION: read Harman (2005) and quote its theorem on primes in a progression with its number and
-% exact hypotheses: the condition on the zeros, the classes a, the range of x and q, any condition on q. If it is
-% Theorem 1.2 of Harman (2008) with 0.472 and without the smoothness condition, then Input 1 with it gives the
-% exponent 1/0.472 = 2.1186... for EVERY modulus, below Theorem 1.2's 43/20. Then: the sentences of Section 1 (Earlier
-% exponents, Related work) and of Section 12 that say "if" and "Suppose" become plain statements, and "We have not
-% consulted" goes; the abstract names this exponent and says that Theorem 1.2 does not improve on it; Table
-% tab:exponents gets a row for it; and README.md (the opening, "What the proofs rest on"),
-% docs/research-opportunities.md and the ladder of the zeros page (scripts/zeros_page.py, site/zeros.html) follow.
+% Alford--Granville--Pomerance (1994) was NOT read (the publisher's page could not be reached). What is said of it is
+% taken from Harman (2005), p. 642; from Wright, arXiv:1212.5850, Section 2, which quotes its Theorem 2.1 (for fixed
+% 0 < B < 5/12, pi(z; d, c) >= pi(z)/(2 phi(d)) for d <= min(x^B, z/x^{1-B}) not divisible by an element of a bounded
+% exceptional set); from Lichtman, arXiv:2211.09641, p. 1 (AGP's x^{(5/12)(1 - beta)}, "the current record is
+% x^{0.4736(1 - beta)} due to Harman"); and from Baier and Pujahari, arXiv:2107.04348v5, pp. 4-6 ("Harman himself did
+% this in his papers on Carmichael numbers for more general moduli q"; Banks and Shparlinski "obtained their result by
+% a combination of a result in [Harman 2008] and improved zero-free regions ... uses [Harman 2008, Theorem 1.2]").
+% R. Li's Theorems 9 to 11 and reference list (v8, p. 36) were read; his constant is called C there and c_1 here, and
+% his statement does not quantify epsilon.
 % Chen--Gupta--Li's Corollary 1.4 and footnote 1 were read in v2 on 28 October 2026. Banks--Shparlinski: the data as in
 % R. Li's reference [7] (J. Anal. Math. 139 (2019), 239--263; DOI 10.1007/s11854-019-0060-4), the value 2.1115 as in
 % Chen--Gupta--Li's footnote 1, and R. Li's sentence before his Theorem 11 that his result improves theirs; the paper

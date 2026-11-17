@@ -321,7 +321,10 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
       leaves no zero that costs much, and the density curve says how many zeros there are. The library proves the two
       theorems of the Linnik paper. Its Theorem 1.2 is <span class="math">L</span> = {{Lbest}} = {{Lbestdec}}
       (<code>{{bestLean}}</code>), from the half-plane and Huxley's density estimate: the half-plane is its only input
-      that has not been refereed. Its Theorem 1.1 is <span class="math">L</span> = {{Lres}} (<code>{{resLean}}</code>),
+      that has not been refereed. That exponent is not the smallest that the half-plane gives: with Harman's theorem of
+      2005 on primes in a progression, a refereed theorem that assumes a zero-free region for the modulus, the half-plane
+      gives <span class="math">L</span> = {{harman}} &lt; {{harmanBound}} (the paper's Section 12; not formalised). Its
+      Theorem 1.1 is <span class="math">L</span> = {{Lres}} (<code>{{resLean}}</code>),
       with the resonant window, the leaves of a comparison cut in three and the terms of the sign + reversed as well; it
       rests on two inputs that have not been refereed: the half-plane and Chen, Gupta and Li's Proposition 3.1. The
       kernel's check of its certificate was not finished on 16 November 2026.</p>
