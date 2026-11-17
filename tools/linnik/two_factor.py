@@ -167,9 +167,7 @@ def build_lean(L):
     1/DEN: with rho = DEN - a1 - a2, the region is `i0 <= i1 rho`, `m0 <= m1 a_i`, `c1 - lq a_i <= ll rho` and
     `c2 - lq (a1 + a2) <= ll rho`."""
     L = Fr(L)
-    pieces = rl.parse('g7d')
-    _, bd = gen_zone.threshold(pieces)
-    lam = 2 * (1 - bd - gen_zone.W)
+    lam = gen_zone.LAM
     ln, ld, an, ad = L.numerator, L.denominator, lam.numerator, lam.denominator
     mu = gen_zone.MU
     assert mu == Fr(1, 12500) and gen_zone.RHO0 == Fr(1, 2000) and gen_zone.MMIN == Fr(2, 3)
