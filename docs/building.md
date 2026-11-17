@@ -24,10 +24,11 @@ On 4 cores and 16 GB, a cold build of the default target takes several hours.
 ### Memory
 
 A module that imports Mathlib maps Mathlib's files into memory, and that mapping is shared between compiles. The
-default build also has the certificates' part files: the 17 of the Linnik paper's Theorem 1.2, at `43/20`
-(`lib/pnt/SieveHint21500P<k>.lean`, 1552 parts), about an hour of the kernel in all, and the 1150 of the paper's
+default build also has the part files of one certificate: the 17 of the Linnik paper's Theorem 1.2, at `43/20`
+(`lib/pnt/SieveHint21500P<k>.lean`, 1552 parts), about an hour of the kernel in all. The 1150 of the paper's
 Theorem 1.1, at `2100/1000` (`lib/pnt/SieveHint21000P<k>.lean`, 107 374 parts), about 76 hours of one core by the
-generator's estimate, with the theorems of its cells in 58 files (`lib/pnt/SieveHint21000N<j>.lean`). Of Mathlib the
+generator's estimate, with the theorems of its cells in 58 files (`lib/pnt/SieveHint21000N<j>.lean`), are not in the
+default build: `scripts/build.sh CheckAll` builds them, and CI builds them in stages. Of Mathlib the
 parts import only `Mathlib.Data.Nat.Notation`. `scripts/lean-slots.sh` still honours a `-- exclusive-heavy` mark,
 which runs a part file with no other certificate part; no part file now carries it. The certificates at weaker
 exponents (`278/125`, `899/400`, `9/4`, `226/100`, `2165/1000`, `2140/1000`, `2135/1000`, `11/5`, `219/100`,

@@ -437,7 +437,7 @@ def extract():
     xy_src = says(r"\\bibitem\{xylouris11\} .*?\\emph\{[^}]*\}, (.+?), Bonn, (\d{4})\.", bib, "reference for Xylouris")
     m = says(r"prove \$A = (\d+)/(\d+)\$, uniformly in \$q\$ and \$T\$", main, "exponent of Chen, Gupta and Li")
     cgl = F(int(m.group(1)), int(m.group(2)))
-    says(r"Chen--Gupta--Li's density estimate \\cite\[Theorem~1\.2\]\{cgl\} &\s+density deduction \(not formalised\) &",
+    says(r"Chen, Gupta and Li's density estimate \\cite\[Theorem~1\.2\]\{cgl\} &\s+density deduction \(not formalised\) &",
          main, "row for 7/3")
     # The floor of a Type II estimate in one variable on a window that sorts the characters by their zeros,
     # L = 1 + A/2 at Chen, Gupta and Li's A: computed here, not read from the Lean.

@@ -176,6 +176,7 @@ Li's Proposition 3.1 and the steps of the curve `g7d`, the Halász–Montgomery 
 estimate) and the classical deduction. -/
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_inT
+#print axioms LinnikCGLLV.CGLProp31
 #print axioms LinnikCGLHB101.prop31
 #print axioms LinnikCGLSteps.charDensity_s29
 #print axioms SieveCurve7D.counts_7d

@@ -4,15 +4,15 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1836 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1837 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 209, marked *paper*. Each line gives a theorem's name and the
+papers' theorems, of which there are 210, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 712 |
-| `lib/pnt` | 347 | 1011 |
+| `lib/pnt` | 347 | 1012 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1769,6 +1769,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `LinnikCGLLV`: Chen–Gupta–Li's Proposition 3.1 as a hypothesis, and the large-values counts it gives
 
+- `LinnikCGLLV.CGLProp31`: Chen–Gupta–Li's Proposition 3.1, one point per character *paper*
 - `LinnikCGLLV.lv_range`: The large values of `D_N` on Proposition 3.1's range ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikCGLLV.cgl_all`: Proposition 3.1's count over all characters mod `q` *paper*
 - `LinnikCGLLV.taylor_pick`: One character off the line
