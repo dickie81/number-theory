@@ -1,12 +1,12 @@
 % The Linnik exponent paper: Theorem 1.1 (the exponent 21/10) and Theorem 1.2 (the exponent 43/20 from the half-plane
 % and Huxley's estimate alone). The claims table of Appendix A names the Lean theorem behind each claim;
-% lib/check/Check.lean prints the axioms of the theorems of Sections 2 to 7 and of Theorem 1.2, and
-% lib/check/CheckAll.lean those of Sections 8 to 10 and of Theorem 1.1. The paper claims only its own steps: the results
-% it uses from the literature are documented in formalisations/ and cited, not restated as its own. supplement.tex
-% holds the proofs of the prime sums' lemma and the kernel bound, of the family lemmas in two variables, of Harman's
-% comparisons in two variables and the leaves' lemma, and of the bound for rough numbers, the Lean details of the
-% paper, the computations around its exponents, and the proofs for the resonant window and for the leaves cut in
-% three; compile this file first.
+% lib/check/Check.lean prints the axioms of the theorems of Sections 2 to 7 and of Theorem 1.2 and Corollary 1.3 at
+% 43/20, and lib/check/CheckAll.lean those of Sections 8 to 10 and of Theorem 1.1 and Corollary 1.3 at 21/10. The paper
+% claims only its own steps: the results it uses from the literature are documented in formalisations/ and cited, not
+% restated as its own. supplement.tex holds the proofs of the prime sums' lemma and the kernel bound, of the family
+% lemmas in two variables, of Harman's comparisons in two variables and the leaves' lemma, and of the bound for rough
+% numbers, the Lean details of the paper, the computations around its exponents, and the proofs for the resonant window
+% and for the leaves cut in three; compile this file first.
 \documentclass[11pt]{article}
 \usepackage[T1]{fontenc}
 % pdfLaTeX needs the input encoding and the glyph declarations below; XeTeX reads Unicode directly.
@@ -33,6 +33,7 @@
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{inputthm}{Input}
@@ -53,10 +54,12 @@ We prove that there is a constant $K$ such that every reduced residue class modu
 q^{21/10}$. The proof uses two recent results that have not been refereed: OpenAI's zero-free half-plane
 $\operatorname{Re} s > 11/12$ for Dirichlet $L$-functions, and Chen, Gupta and Li's large values estimate for
 Dirichlet polynomials with characters. With the half-plane and Huxley's classical zero-density estimate alone we prove
-the exponent $43/20$. From the half-plane the classical argument gives every exponent above $12/5$ with Huxley's
-estimate, and every exponent above $7/3$ with Chen, Gupta and Li's density estimate. We go below both with Harman's
-sieve, fed by a Type~II estimate in two variables that sorts the characters by the real parts of the zeros of their
-$L$-functions. In each class of characters, Cauchy--Schwarz is taken between the two Dirichlet polynomials, and each
+the exponent $43/20$. Both theorems also give primes in number: for $x$ larger than a constant times $q^L$, $L$ the
+exponent, the class has $\gg x/(\varphi(q) \log x)$ primes $p \le x$. From the half-plane the classical argument gives
+every exponent above $12/5$ with Huxley's estimate, and every exponent above $7/3$ with Chen, Gupta and Li's density
+estimate. We go below both with Harman's sieve, fed by a Type~II estimate in two variables that sorts the characters
+by the real parts of the zeros of their $L$-functions. In each class of characters, Cauchy--Schwarz is taken between the
+two Dirichlet polynomials, and each
 mean square is bounded by orthogonality or by the Hal\'asz--Montgomery inequality in mean square, so that the number of
 characters in a class matters only where Huxley's estimate makes it small; the estimate then holds on an explicit
 region of the two lengths, for every exponent. Harman's comparison in two variables, a reversal of the sieve's terms
@@ -87,6 +90,33 @@ $p \le K q^{21/10}$.
 There is $K$ such that for every $q \ge 1$ and every $a$ prime to $q$ there is a prime $p \equiv a \pmod q$ with
 $p \le K q^{43/20}$.
 \end{theorem}
+
+Let $\pi(x; q, a)$ be the number of primes $p \le x$ with $p \equiv a \pmod q$.
+
+\begin{corollary}\label{cor:count}
+% Lean: Linnik21000.count_21000, Linnik21000.count_large_21000, Linnik21500.count_21500, Linnik21500.count_large_21500
+Let $L = 21/10$ or $L = 43/20$.
+\begin{enumerate}
+\item[(a)] There are $c > 0$ and $K$ such that for every $q \ge 1$, every $a$ prime to $q$ and every $x \ge Kq^L$,
+  \[
+    \pi(x; q, a) \ge c\, \frac{x}{\varphi(q) \log x}.
+  \]
+\item[(b)] For large $q$ and every $a$ prime to $q$, the primes $p \equiv a \pmod q$ with $q^L < p \le 2q^L$ number
+  at least
+  \[
+    \frac{1 - C}2 \cdot \frac{q^L}{\varphi(q) \log q^L},
+  \]
+  where $C = 1126600180626425749 \cdot 2^{-60} = 0.97716\ldots$ at $21/10$ and $C = 1093510193343867034 \cdot 2^{-60}
+  = 0.94846\ldots$ at $43/20$; so $(1 - C)/2 > 0.0114$ at $21/10$ and $(1 - C)/2 > 0.0257$ at $43/20$.
+\end{enumerate}
+\end{corollary}
+
+The corollary is proved with the theorems, in Sections~\ref{sec:proof} and~\ref{sec:certificate-b}. At $43/20$ it
+uses what Theorem~\ref{thm:4320} uses and no more: the proof of Theorem~\ref{thm:tree} already counts the primes, and
+the step from $x = q^L$ to every $x$ (Lemma~\ref{lem:every-x}) uses no input. At $21/10$ it rests on the same
+certificate as Theorem~\ref{thm:2110}, and on the same kernel check of it, not finished at the time of writing
+(Section~\ref{sec:lean}). In (a) the moduli range over $q \le (x/K)^{1/L}$; Section~\ref{sec:comparison} compares
+this range with Harman's.
 
 Theorem~\ref{thm:4320} is the weaker statement. It is stated because its proof uses less: of the results that have not
 been refereed it uses one, a zero-free half-plane (Input~\ref{inp:half-plane}), and its only density estimate is
@@ -2102,12 +2132,12 @@ argument computes is that of $S(\mathcal B, z_{\mathrm{top}})$: every other term
 $\mathcal B/\varphi(q)$, dropped at the cost of that version, or bounded through a reversal by such comparisons.
 
 \begin{theorem}\label{thm:tree}
-% Lean: SieveAd.linnik_pr, SieveAd.linnik_bd, SieveAd.linnik_large_bd, SieveAd.linnik_tree, SieveAd.Ttop_eq, SieveAd.Ttop_gB_ge, SieveMain2.route_of_large
+% Lean: SieveAd.linnik_pr, SieveAd.linnik_bd, SieveAd.linnik_large_bd, SieveAd.linnik_tree, SieveAd.Ttop_eq, SieveAd.Ttop_gB_ge, SieveMain2.route_of_large, SieveAd.count_large_bd, SieveAd.count_large_pr
 Let $2 < L \le 5/2$, and let $f_* \le D/2 + 1$ be a floor at which the box of no prime passes (J3). If the term of
 the box $((f_*, D/2 + 1))$ of one prime with the sign $-$ is bounded at some $C < 1$, in particular if that box has a
 tree with the sign $-$ that passes, with cost $c < \mathcal K$ and $C = c/\mathcal K$, then there is $K$ such that for
 every $q \ge 1$ and every $a$ prime to $q$ there is a prime $p \equiv a \pmod q$ with $p \le Kq^L$; and for large $q$
-there is one with $q^L < p \le 2q^L$.
+and every $a$ prime to $q$ the primes $p \equiv a \pmod q$ with $q^L < p \le 2q^L$ number at least $(1 - C)X/2$.
 \end{theorem}
 
 \begin{proof}
@@ -2126,14 +2156,61 @@ of $(x, 2x]$, which is at least $(1 - \eta)x/\log x$ by the prime number theorem
   S(\mathcal A, z_{\mathrm{top}}) \ge (1 - \eta)X - \eta X - (C + \eta)X > \frac{1 - C}2 X > 0.
 \]
 An integer counted by $S(\mathcal A, z_{\mathrm{top}})$ is at most $N_2 < z_{\mathrm{top}}^2$ and has no prime factor
-below $z_{\mathrm{top}}$, so it is a prime $p \equiv a \pmod q$ with $q^L < p \le 2q^L$. This gives $q_0$ such that the
-theorem holds for $q \ge q_0$ with $K = 2$. Each of the finitely many pairs $(q, a \bmod q)$ with $q < q_0$ has a prime
+below $z_{\mathrm{top}}$, so it is a prime $p \equiv a \pmod q$ with $q^L < p \le 2q^L$. So these primes number at
+least $S(\mathcal A, z_{\mathrm{top}}) > (1 - C)X/2 > 0$. This gives $q_0$ such that the theorem holds for $q \ge q_0$
+with $K = 2$. Each of the finitely many pairs $(q, a \bmod q)$ with $q < q_0$ has a prime
 $p \equiv a \pmod q$ by Dirichlet's theorem, and $K$ is taken large enough to cover them.
 \end{proof}
 
 The theorem holds for every such $L$ with the tests as defined. For rational $L$ the tests are inequalities between
 integers, which is how the formalisation states them and how its kernel evaluates them: it proves the theorem for
 rational $L$, and at $L = 43/20$ with $f_*$ and the bound of Proposition~\ref{prop:certificate}.
+
+The count of Theorem~\ref{thm:tree} is at $x = q^L$. The following lemma does not use the conventions of this
+section: in it $L > 0$ is arbitrary, $x$ is any real number with $x \ge Kq^L$, not $q^L$, and no input is assumed.
+It is a statement about primes in progressions alone, and uses no sieve.
+
+\begin{lemma}\label{lem:every-x}
+% Lean: SieveAd.count_of_large, SieveAd.card_units_above (with Theorem thm:tree: SieveAd.count_bd, SieveAd.count_pr)
+Let $L > 0$, $c_0 \ge 0$ and $q_0 \ge 1$. Suppose that for every modulus $Q \ge q_0$ and every $b$ prime to $Q$ the
+primes $p \equiv b \pmod Q$ with $Q^L < p \le 2Q^L$ number at least $c_0 Q^L/(\varphi(Q) \log Q^L)$. Let $K =
+\max(2^{L + 2}, 2(2q_0)^L)$. Then for every $q \ge 1$, every $a$ prime to $q$ and every $x \ge Kq^L$,
+\[
+  \pi(x; q, a) \ge \frac{c_0}{2^{L + 1}} \cdot \frac{x}{\varphi(q) \log x}.
+\]
+\end{lemma}
+
+\begin{proof}
+Since $q \ge 1$, $x \ge 2^{L + 2} q^L$ and $x \ge 2(2q_0)^L$. Let $t = (x/2)^{1/L}$, so that $t^L = x/2$. As $x/2
+\ge 2^{L + 1} q^L \ge (2q)^L$, $x/2 \ge (2q_0)^L$ and $y \mapsto y^L$ increases on $[0, \infty)$, $t \ge 2q$ and $t
+\ge 2q_0$. Let $m = \lfloor t/q \rfloor$ and $Q = qm$. Then $Q \le t$, and $Q > t - q \ge t/2$ since $q \le t/2$. So
+$Q \ge q_0$, $Q \ge q \ge 1$, $q \mid Q$, and
+\[
+  \frac x{2^{L + 1}} = \Bigl(\frac t2\Bigr)^L \le Q^L \le t^L = \frac x2;
+\]
+moreover $x/2^{L + 1} \ge 2q^L \ge 2$, so $Q^L \ge 2$.
+
+Reduction mod $q$ is a homomorphism from the group of units mod $Q$ to that of units mod $q$, since $q \mid Q$. It is
+onto. Let $s$ be the product of the primes that divide $Q$ but neither $q$ nor $a$, and $b = a + qs$. A prime factor
+of $Q$ that divides $q$ divides $qs$ and not $a$; one that divides $a$ but not $q$ divides neither $q$ nor $s$, so
+not $qs$; any other divides $qs$ and not $a$. None of them divides $b$, so $b$ is prime to $Q$, and $b \equiv a
+\pmod q$. So the unit classes mod $Q$ above $a$ form a coset of the kernel, and there are $\varphi(Q)/\varphi(q)$ of
+them. A prime $p \equiv b \pmod Q$ with $b$ above $a$ has $p \equiv a \pmod q$, since $q \mid Q$. A prime lies in one
+class mod $Q$ only, so the primes of different classes are different.
+
+By the hypothesis at $Q \ge q_0$, each class above $a$ has at least $c_0 Q^L/(\varphi(Q) \log Q^L)$ primes in $(Q^L,
+2Q^L]$, and they are at most $2Q^L \le x$. Summing over the classes,
+\[
+  \pi(x; q, a) \ge \frac{\varphi(Q)}{\varphi(q)} \cdot \frac{c_0 Q^L}{\varphi(Q) \log Q^L}
+  = \frac{c_0}{\varphi(q)} \cdot \frac{Q^L}{\log Q^L}.
+\]
+Finally $2 \le Q^L \le x/2 < x$ gives $0 < \log Q^L \le \log x$, and with $Q^L \ge x/2^{L + 1}$ this gives $Q^L/\log
+Q^L \ge (x/2^{L + 1})/\log x$.
+\end{proof}
+
+The lemma uses its hypothesis for every modulus $Q \ge q_0$ and every class prime to $Q$: $Q$ is the multiple of $q$
+that $q$ and $x$ determine, and every class above $a$ is counted, so a count that leaves out exceptional moduli does
+not give it.
 
 \section{The certificate}\label{sec:certificate}
 
@@ -2364,6 +2441,13 @@ from Dirichlet's theorem. The argument needs no step on an exceptional zero, sin
 none; the paper does not claim that its constants are effective, and its thresholds are in any case
 enormous: the cells of exponents are multiples of $2^{-40}$, and the steps of Section~\ref{sec:decomp} ask, among
 other things, $x^{2^{-40}} \ge 3$, that is $q \ge 3^{2^{40}/L}$.
+
+\begin{proof}[Proof of Corollary~\ref{cor:count} at $43/20$]
+Take $L = 43/20$ and $C = c/\mathcal K$ for the cost $c = 1093510193343867034$ of
+Proposition~\ref{prop:certificate}. As in the proof of Theorem~\ref{thm:4320}, Theorem~\ref{thm:tree} applies with
+this $C$, and its count is (b), since $X = q^L/(\varphi(q) \log q^L)$ at $x = q^L$. With $c_0 = (1 - C)/2$ and the
+$q_0$ of (b), Lemma~\ref{lem:every-x} gives (a) with the constant $(1 - C)/2^{L + 2}$.
+\end{proof}
 
 \section{The resonant window}\label{sec:window}
 
@@ -4267,6 +4351,13 @@ estimates enter through $g^*$ and $g_{\mathrm H}$.
 The remarks after the proof of Theorem~\ref{thm:4320} hold here as well: the proof does not compute $K$, no constant
 is claimed to be effective, and the thresholds are enormous.
 
+\begin{proof}[Proof of Corollary~\ref{cor:count} at $21/10$]
+Take $L = 21/10$ and $C = c/\mathcal K$ for the cost $c = 1126600180626425749$ of
+Proposition~\ref{prop:certificate-b}. As in the proof of Theorem~\ref{thm:2110}, Theorem~\ref{thm:tree} applies with
+this $C$ under the two inputs, and its count is (b). Lemma~\ref{lem:every-x}, with $c_0 = (1 - C)/2$, gives (a) with
+the constant $(1 - C)/2^{L + 2}$, as at $43/20$.
+\end{proof}
+
 \section{The formalisation}\label{sec:lean}
 
 Appendix~\ref{app:claims} names the Lean theorems that prove each numbered result of Sections~\ref{sec:intro}
@@ -4284,12 +4375,20 @@ theorem linnik_21500 : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ),
       (p : ℝ) ≤ K * (q : ℝ) ^ (2150 / 1000 : ℝ)
 \end{verbatim}
 }
-where \lean{[NeZero q]} says $q \ge 1$, the power is the real power, $2100/1000 = 21/10$ and $2150/1000 = 43/20$. The
-file \file{lib/check/Check.lean}, the repository's default build, prints the axioms of Theorem~\ref{thm:4320} and of
-the library's theorems that Appendix~\ref{app:claims} names for Sections~\ref{sec:inputs} to~\ref{sec:proof};
-\file{lib/check/CheckAll.lean} prints those of Theorem~\ref{thm:2110} and of the theorems named for
-Sections~\ref{sec:window} to~\ref{sec:certificate-b}. \file{scripts/check\_axioms.py} checks that they are
-\lean{propext}, \lean{Classical.choice} and \lean{Quot.sound} only. The axioms of a theorem cover its whole dependency
+where \lean{[NeZero q]} says $q \ge 1$, the power is the real power, $2100/1000 = 21/10$ and $2150/1000 = 43/20$.
+Corollary~\ref{cor:count} is \lean{Linnik21000.\allowbreak count\_21000} and
+\lean{Linnik21000.\allowbreak count\_large\_21000} at $21/10$, in \file{lib/pnt/Linnik21000Count.lean}, and
+\lean{Linnik21500.\allowbreak count\_21500} and \lean{Linnik21500.\allowbreak count\_large\_21500} at $43/20$, in
+\file{lib/pnt/Linnik21500Count.lean}, with no hypotheses either; there $\pi(x; q, a)$ counts the primes $p \le
+\lfloor x \rfloor$, and the interval $(q^L, 2q^L]$ is $(\lfloor q^L \rfloor, \lfloor 2q^L \rfloor]$, which has the same
+integers. At $21/10$ the corollary uses the certificate of Theorem~\ref{thm:2110}, and like it is a theorem of the
+library once the kernel's check of that certificate ends (see below). The file \file{lib/check/Check.lean}, the
+repository's default build, prints the axioms of Theorem~\ref{thm:4320}, of Corollary~\ref{cor:count} at $43/20$ and
+of the library's theorems that Appendix~\ref{app:claims} names for Sections~\ref{sec:inputs} to~\ref{sec:proof};
+\file{lib/check/CheckAll.lean} prints those of Theorem~\ref{thm:2110}, of Corollary~\ref{cor:count} at $21/10$ and of
+the theorems named for Sections~\ref{sec:window} to~\ref{sec:certificate-b}. \file{scripts/check\_axioms.py} checks
+that they are \lean{propext}, \lean{Classical.choice} and \lean{Quot.sound} only. The axioms of a theorem cover its
+whole dependency
 cone, so a \lean{sorry} anywhere in it would appear as \lean{sorryAx}; the library's own sources contain no
 \lean{sorry}, no declared axiom and no \lean{native\_decide} (\file{scripts/check\_hygiene.py}).
 
@@ -4338,9 +4437,9 @@ proofs of the inputs, what the kernel checks, and the artefact.
 
 \section{What the inputs give without the sieve, and the method's limits}\label{sec:comparison}
 
-This section claims nothing new. It places Theorems~\ref{thm:2110} and~\ref{thm:4320} against what the same inputs
-give by the classical argument, which has no sieve, and against the exponents known for special moduli; the table of
-the introduction sums it up.
+This section claims nothing new. It places Theorems~\ref{thm:2110} and~\ref{thm:4320}, and
+Corollary~\ref{cor:count}(a), against what the same inputs give by the classical argument, which has no sieve, and
+against the exponents known for special moduli; the table of the introduction sums it up.
 
 \subsection*{The classical deduction}
 
@@ -4394,6 +4493,12 @@ He presents these theorems as modifications of that calculation, without separat
 implies the zero-free hypothesis of his Theorem~9 for every large $q$, so if that theorem holds as stated, it gives with
 Input~\ref{inp:half-plane} the exponent $1/0.4752 = 2.1043\ldots$ for every large modulus whose prime factors are all
 below $q^C$, between the exponents of the two theorems.
+
+Corollary~\ref{cor:count}(a) gives the lower bound of Harman's range, $\pi(x; q, a) \gg x/(\varphi(q) \log x)$, for
+every modulus $q \le (x/K)^{10/21}$, $10/21 = 0.4761\ldots$, and, from Input~\ref{inp:half-plane} and Huxley's
+estimate alone, for every $q \le (x/K)^{20/43}$, $20/43 = 0.4651\ldots$, with $K$ depending on the exponent. It has
+no exceptional modulus, but uses Input~\ref{inp:half-plane}, and at $10/21$ Input~\ref{inp:cgl} as well, which have
+not been refereed.
 
 \subsection*{What the half-plane is used for}
 
@@ -4454,10 +4559,11 @@ integration, and not by the assistants.
 
 The table names the Lean theorem behind each result of the paper, and behind the results from the literature that its
 argument uses directly, with the main ones behind the inputs and the density estimates. Its first block is
-Theorem~\ref{thm:4320} and Sections~\ref{sec:inputs} to~\ref{sec:proof}, whose theorems \file{lib/check/Check.lean}
-prints; its second block is Theorem~\ref{thm:2110} and Sections~\ref{sec:window} to~\ref{sec:certificate-b}, whose
-theorems \file{lib/check/CheckAll.lean} prints, with further declarations of the library; the third block is the
-literature, and the fourth the classical deduction, both printed by \file{lib/check/Check.lean}. Of Huxley's fifteen
+Theorem~\ref{thm:4320}, Corollary~\ref{cor:count} at $43/20$ and Sections~\ref{sec:inputs} to~\ref{sec:proof}, whose
+theorems \file{lib/check/Check.lean} prints; its second block is Theorem~\ref{thm:2110}, Corollary~\ref{cor:count} at
+$21/10$ and Sections~\ref{sec:window} to~\ref{sec:certificate-b}, whose theorems \file{lib/check/CheckAll.lean}
+prints, with further declarations of the library; the third block is the literature, and the fourth the classical
+deduction, both printed by \file{lib/check/Check.lean}. Of Huxley's fifteen
 steps from $131/168$ on, \file{lib/check/Check.lean} prints
 the first and the last; \lean{SieveCurveHx.counts\_hx} uses every step of the curve, so all of them are in the
 dependency cone of \lean{Linnik21500.linnik\_21500}, whose axioms are checked. Likewise, of the steps of $g^*$ that
@@ -4506,6 +4612,10 @@ exceptions in the table are these, in \file{lib/pnt} except the last four, which
 \lean{SieveAd.Plain.altFD\_sound}, \lean{SieveAd.Plain.solveD\_sound}, \lean{SieveAd.Plain.pr\_of\_partD} \\
 \file{SieveAdSearchG.lean} & \lean{SieveAd.solveG\_sound} \\
 \file{SieveAdRevSearch.lean} & \lean{SieveAd.linnik\_pr} \\
+\file{SieveAdCount.lean} & \lean{SieveAd.card\_units\_above}, \lean{SieveAd.count\_of\_large},
+\lean{SieveAd.count\_large\_bd}, \lean{SieveAd.count\_bd}, \lean{SieveAd.count\_large\_pr}, \lean{SieveAd.count\_pr} \\
+\file{Linnik21500Count.lean} & \lean{Linnik21500.count\_21500}, \lean{Linnik21500.count\_large\_21500} \\
+\file{Linnik21000Count.lean} & \lean{Linnik21000.count\_21000}, \lean{Linnik21000.count\_large\_21000} \\
 \file{SieveAdDir.lean} & \lean{SieveAd.rulesMP} \\
 \file{SieveAdFill.lean} & \lean{SieveAd.fillTests\_sound}, \lean{SieveAd.evJ\_fill\_core3} \\
 \file{SieveAdTwo.lean} & \lean{SieveAd.evJ\_two\_core3} \\
@@ -4573,6 +4683,8 @@ Claim & Lean \\
 \midrule
 \endhead
 Theorem~\ref{thm:4320} & \lean{Linnik21500.linnik\_21500} \\
+Corollary~\ref{cor:count} at $43/20$, (a) and (b) & \lean{Linnik21500.count\_21500}, \\
+ & \lean{Linnik21500.count\_large\_21500} \\
 Definition~\ref{def:curve}, density curves & \lean{SieveTypeIIGen.CurveCounts} \\
 Proposition~\ref{prop:curve}: $g_{\mathrm H}$ is a density curve & \lean{SieveCurveHx.counts\_hx} \\
 \quad and $g_{\mathrm H} \le 1$, $g_{\mathrm H}(1/2) = 1$ & \lean{SieveCurveHx.ghx\_le\_one}, \\
@@ -4687,6 +4799,12 @@ Proposition~\ref{prop:tree-bound}, what a tree gives & \lean{SieveAd.sound} (the
 Theorem~\ref{thm:tree}, Linnik's theorem from the root's bound (for rational $L$) & \lean{SieveAd.linnik\_pr}, \\
  & \lean{SieveAd.linnik\_bd} \\
 \quad the main term, the primes of $(x, 2x]$ & \lean{SieveAd.Ttop\_gB\_ge} \\
+\quad the count of the primes in $(q^L, 2q^L]$ & \lean{SieveAd.count\_large\_bd}, \\
+ & \lean{SieveAd.count\_large\_pr} \\
+Lemma~\ref{lem:every-x}, from every large modulus to every $x \ge Kq^L$ & \lean{SieveAd.count\_of\_large}, \\
+ & \lean{SieveAd.card\_units\_above} \\
+\quad with the count of Theorem~\ref{thm:tree} & \lean{SieveAd.count\_bd}, \\
+ & \lean{SieveAd.count\_pr} \\
 Lemma~\ref{lem:search}, the searches are sound & \lean{SieveAd.solveG\_sound}, \\
  & \lean{SieveAd.Plain.solveD\_sound}, \\
  & \lean{SieveAd.Plain.pr\_of\_partD} \\
@@ -4704,6 +4822,8 @@ Proposition~\ref{prop:certificate}, the certificate & \lean{Linnik21500.tree2150
 \quad the prime number theorem, from Input~\ref{inp:half-plane} & \lean{HalfPlanePNT.psi\_isBigO\_eleven\_twelfths} \\
 \midrule
 Theorem~\ref{thm:2110} & \lean{Linnik21000.linnik\_21000} \\
+Corollary~\ref{cor:count} at $21/10$, (a) and (b) & \lean{Linnik21000.count\_21000}, \\
+ & \lean{Linnik21000.count\_large\_21000} \\
 Lemma~\ref{lem:moments}, the moments of a prime sum & \lean{SieveTypeIIHM.card\_Sp\_large} \\
 \quad the $2k$-th moment of a polynomial, and Markov's inequality & \lean{SieveTypeIIHM.sum\_chars\_dp\_pow\_le}, \\
  & \lean{SieveTypeIIHM.card\_large\_le} \\

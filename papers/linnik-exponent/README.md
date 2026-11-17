@@ -33,6 +33,14 @@ Theorem 1.1 is `Linnik21000.linnik_21000` in `lib/pnt/Linnik21000.lean`, with th
 Theorem 1.2 is `Linnik21500.linnik_21500` in `lib/pnt/Linnik21500.lean`, with the exponent written `2150/1000`. Neither
 has a hypothesis in Lean.
 
+Corollary 1.3 is the two theorems in number: for every `x ≥ K·q^L` the class has at least `c·x/(φ(q) log x)` primes
+`p ≤ x`, and for large `q` at least `(1 − C)/2·q^L/(φ(q) log q^L)` in `(q^L, 2q^L]`, with `C = c/2^60`, `c` the cost
+of the certificate. It is `Linnik21000.count_21000` and `Linnik21000.count_large_21000` in
+`lib/pnt/Linnik21000Count.lean`, and `Linnik21500.count_21500` and `Linnik21500.count_large_21500` in
+`lib/pnt/Linnik21500Count.lean`; the step from `x = q^L` to every `x`, through the moduli that are multiples of `q`, is
+`SieveAd.count_of_large` in `lib/pnt/SieveAdCount.lean`, and uses no input. At `21/10` it uses the certificate of
+Theorem 1.1, and is a theorem of the library once the kernel's check of that certificate ends.
+
 The proof of Theorem 1.2 uses one unrefereed result, which the library re-proves itself: the zero-free half-plane
 `Re s > 11/12` of OpenAI's preprints (the library follows the companion preprint). Its density estimate is Huxley's,
 which the library proves, used only from `7789/10000` on: below that the Type II estimate bounds both of its variables
@@ -59,8 +67,9 @@ exponents `5.5` and `5` of Heath-Brown and Xylouris, whose proofs use refereed r
 recent results through their formalisations.
 
 The claims table (Appendix A) names the Lean theorem behind each claim. `lib/check/Check.lean`, the default build,
-prints the axioms of Theorem 1.2 and of the theorems of Sections 2 to 7; `lib/check/CheckAll.lean` (with
-`python3 scripts/check_axioms.py --all`) prints those of Theorem 1.1 and of the theorems of Sections 8 to 10, with
+prints the axioms of Theorem 1.2, of Corollary 1.3 at `43/20` and of the theorems of Sections 2 to 7;
+`lib/check/CheckAll.lean` (with `python3 scripts/check_axioms.py --all`) prints those of Theorem 1.1, of Corollary 1.3
+at `21/10` and of the theorems of Sections 8 to 10, with
 further declarations of the library. The certificate at `43/20` is checked by the kernel in 1552 parts, in the 17
 files `lib/pnt/SieveHint21500P1.lean` to `SieveHint21500P17.lean`, about 63 minutes of the kernel's time. The
 certificate at `21/10` has 107374 parts, in the 1150 files `lib/pnt/SieveHint21000P1.lean` to
