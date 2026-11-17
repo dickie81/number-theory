@@ -99,4 +99,5 @@ its length to the power `11/12`, up to the width of a bin, at every character, b
 values sort the characters. The paper's two exponents, `43/20` (Theorem 1.2, `Linnik21500.linnik_21500`) and
 `21/10` (Theorem 1.1, `Linnik21000.linnik_21000`), therefore depend on this result, its Input 1. The paper
 states the dependence, and compares what its method gives with what the half-plane and the density estimates give
-without it.
+without it, and with what the half-plane gives through Harman's theorems on primes in a progression, one of which
+gives `1/0.472 < 2.1187`, below Theorem 1.2's `43/20` (its Section 12).

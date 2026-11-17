@@ -68,8 +68,8 @@ the residue class contains $\gg x/(\varphi(q) \log x)$ primes $p \le x$.
 
 These exponents are not to be compared with Xylouris's $5$, whose proof uses refereed results only. From the
 half-plane, the classical argument gives every exponent above $12/5$ with Huxley's estimate and above $7/3$ with Chen,
-Gupta and Li's density estimate, and a theorem of Harman on primes in a progression gives $1/0.472 < 2.1187$. Our
-$43/20$ is larger than Harman's exponent, and our $21/10$ is smaller. Both proofs use Harman's sieve, fed by a
+Gupta and Li's density estimate. A theorem of Harman on primes in a progression gives $1/0.472 < 2.1187$ from the
+half-plane; our $43/20$ is larger, and our $21/10$ smaller. Like Harman's, our proofs use his sieve, fed here by a
 Type~II estimate that sorts the characters by the largest real part of the zeros of their $L$-functions; a finite
 computation bounds the fraction of the primes that the sieve loses.
 
@@ -118,7 +118,9 @@ Let $L = 21/10$ or $L = 43/20$.
 \end{corollary}
 
 Theorem~\ref{thm:4320} is the weaker statement, stated because its proof uses less: the zero-free half-plane of
-Input~\ref{inp:half-plane}, the one result it uses that has not been refereed, and Huxley's density estimate.
+Input~\ref{inp:half-plane}, the one result it uses that has not been refereed, and Huxley's density estimate. Its
+exponent is not the smallest that the half-plane gives: with the same half-plane, Harman's theorem on primes in a
+progression \cite{harman05} gives $1/0.472 < 2.1187$ (see the end of the next subsection).
 Theorem~\ref{thm:2110} uses a second such result, the large values estimate of Chen, Gupta and Li (Input~\ref{inp:cgl}),
 and three further rules in the sieve (items 6 and 7 below). The corollary is proved with the theorems
 (Sections~\ref{sec:proof} and~\ref{sec:certificate-b}) and uses no more than they do. The certificate at $21/10$
@@ -149,12 +151,11 @@ preprint (Section~\ref{sec:inputs}) and the classical density estimate. Against 
 Theorem~\ref{thm:4320} goes from $12/5$ to $43/20$ and Theorem~\ref{thm:2110} from $7/3$ to $21/10$.
 
 The half-plane gives more than the classical argument through Harman's theorems on primes in a progression
-\cite{harman05, harman08}, which assume a zero-free region for the modulus; Input~\ref{inp:half-plane} supplies it
+\cite{harman05, harman08}, which assume a zero-free region for the modulus that Input~\ref{inp:half-plane} supplies
 (see the subsection on related work below). His theorem of 2005 then gives Linnik's theorem with the exponent
-$1/0.472 < 2.1187$. His theorem of 2008 gives $1/0.4736 < 2.1115$ for large moduli $q$ whose prime factors are all
-below $q^\delta$, for a certain $\delta > 0$. So the exponent of Theorem~\ref{thm:4320} is not the smallest that
-Input~\ref{inp:half-plane} gives: it is larger than both of these. That of Theorem~\ref{thm:2110} is smaller than
-both.
+$1/0.472 < 2.1187$, and his theorem of 2008 gives $1/0.4736 < 2.1115$ for large moduli with only small prime
+factors. So the exponent of Theorem~\ref{thm:4320} is not the smallest that the half-plane gives: it is larger than
+both of these, and that of Theorem~\ref{thm:2110} is smaller than both.
 
 \subsection*{The zeros near $\operatorname{Re} s = 1$}
 
@@ -193,7 +194,8 @@ loses.
 
 For primes in short intervals a density exponent $A$ gives intervals of length $x^{1 - 1/A}$, and Harman's sieve goes
 further, to $x^{0.525}$ \cite{bhp}. The same happens for primes in a progression: Harman showed it in his work on
-Carmichael numbers \cite{harman05, harman08}, and it happens here. The Type~II estimate bounds
+Carmichael numbers \cite{harman05, harman08}, where his sieve reaches the moduli $q < x^{0.472}$, beyond the
+$x^{5/12}$ of the density exponent $12/5$; and it happens here. The Type~II estimate bounds
 \[
   \sum_{\chi \ne \chi_0} |W(\chi) S(\chi)|,
 \]
@@ -250,7 +252,7 @@ give with and without the sieve of this paper.
 \caption{Linnik exponents from the inputs, by the classical deduction from a density exponent, by Harman's theorems
 and by the sieve of this paper (Section~\ref{sec:comparison}). The exponent $12$ comes from the trivial count, at most
 $\varphi(q)$ characters. The exponent $11667/5000 = 2.3334$ is what the library proves in place of $7/3$, from which
-it differs by a rounding. Harman's theorem of 2008 is for large moduli with only small prime factors.}
+it differs by a rounding. Harman's Theorem~1.2 \cite{harman08} is for large moduli with only small prime factors.}
 \label{tab:exponents}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.40\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}l@{}}
 \toprule
@@ -264,9 +266,9 @@ Input~\ref{inp:half-plane}, Chen, Gupta and Li's density estimate \cite[Theorem~
 Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, Ingham, Huxley & density deduction &
   $2.3334 + \varepsilon$ \\
 Input~\ref{inp:half-plane}, Huxley from $0.7789$ on & sieve, Theorem~\ref{thm:4320} & $43/20 = 2.15$ \\
-Input~\ref{inp:half-plane}, Harman's theorem \cite[Theorem~2]{harman05} &
+Input~\ref{inp:half-plane}, Harman's Theorem~2 \cite{harman05} &
   Harman's sieve (not formalised) & $1/0.472 < 2.1187$ \\
-Input~\ref{inp:half-plane}, Harman's theorem \cite[Theorem~1.2]{harman08} &
+Input~\ref{inp:half-plane}, Harman's Theorem~1.2 \cite{harman08} &
   Harman's sieve (not formalised) & $1/0.4736 < 2.1115$ \\
 Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, Ingham, Huxley & sieve, Theorem~\ref{thm:2110} & $21/10 = 2.1$ \\
 \bottomrule
@@ -329,25 +331,23 @@ counting them by the mean values of their powers is the practice of the sieves f
 
 Heath-Brown and Iwaniec \cite{hb-iwaniec} combined a sieve with zero-density estimates, which bound Dirichlet
 polynomials over primes in the $t$-aspect; Section~\ref{sec:type2} applies the idea in the $q$-aspect, sorting the
-characters mod $q$ into bins by their zeros. Harman's sieve with a numerical bound for its loss is the method of Baker,
-Harman and Pintz \cite{bhp} and of R.~Li \cite{li-harman}.
+characters mod $q$ into bins by their zeros. Harman's sieve with a numerical bound for its loss is Harman's method
+\cite{harman}, as in Baker, Harman and Pintz \cite{bhp} and R.~Li \cite{li-harman}.
 
 Harman himself applied it to primes in a progression to one large modulus, in his work on Carmichael numbers
-\cite{harman05, harman08}, where Alford, Granville and Pomerance \cite{agp} had the ranges $q \le x^B$ for
-$B < 5/12$, the reciprocal of Huxley's density exponent. His Theorem~2 in \cite{harman05} gives
+\cite{harman05, harman08}. Alford, Granville and Pomerance \cite{agp} had the ranges $q \le x^B$ for $B < 5/12$
+there, and Harman raised $5/12$ to $0.472$. His Theorem~2 in \cite{harman05} gives
 $\pi(x; q, a) \gg x/(\varphi(q) \log x)$ whenever $q < x^{0.472}$, for every large modulus $q$ that satisfies a
 condition on the zeros: the $L$-functions of the primitive characters to the divisors of $q$ have no zero in a region
-of width $(\log q)^{-3/4}$ to the left of the line $\operatorname{Re} s = 1$. His Theorem~1.2 in \cite{harman08} has
-the range $q < x^{0.4736}$ under that condition and a condition on the prime factors: all prime factors of $q$ are
-below $q^\delta$, for a certain $\delta > 0$. Section~\ref{sec:comparison} quotes the statements. R.~Li's Theorem~9
-\cite{li-harman} has the same two conditions and the range $q < x^{0.4752}$; for the powers of a fixed prime he
-deduces the exponent $1/0.4752 < 2.1044$ (his Theorem~11).
+of width $(\log q)^{-3/4}$ to the left of the line $\operatorname{Re} s = 1$, up to a height that grows with $q$. His
+Theorem~1.2 in \cite{harman08} has the range $q < x^{0.4736}$ under that condition and a condition on the prime
+factors: all prime factors of $q$ are below $q^\delta$, for a certain $\delta > 0$. Section~\ref{sec:comparison}
+quotes the statements. R.~Li's Theorem~9 \cite{li-harman} has the same two conditions and the range
+$q < x^{0.4752}$; for the powers of a fixed prime he deduces the exponent $1/0.4752 < 2.1044$ (his Theorem~11).
 
-Input~\ref{inp:half-plane} implies the condition on the zeros for every large $q$. So Harman's Theorem~2 gives with
-Input~\ref{inp:half-plane} Linnik's theorem with the exponent $1/0.472 < 2.1187$, for every modulus. For the large
-moduli that satisfy the condition on the prime factors, his Theorem~1.2 gives $1/0.4736 < 2.1115$, and R.~Li's
-Theorem~9 gives $1/0.4752$ if it holds as stated. These three exponents are smaller than that of
-Theorem~\ref{thm:4320} and larger than that of Theorem~\ref{thm:2110} (Section~\ref{sec:comparison}).
+Input~\ref{inp:half-plane} implies the condition on the zeros for every large $q$. This is how Harman's theorems give
+the exponents stated above, and R.~Li's Theorem~9 gives $1/0.4752$ for the moduli that satisfy the condition on the
+prime factors, if it holds as stated (Section~\ref{sec:comparison}).
 
 \subsection*{Formalisation}
 
@@ -1370,17 +1370,16 @@ induction applied to the remainders mod $T$. With $\|f^-\| \|g^+\| \le \|f\| \|g
 
 \begin{lemma}[chains in two variables]\label{lem:chains-two}
 % Lean: SieveTwoChain.chain_two
-Fix $e_0 > 0$, integers $K$ and $J_0$, and $\Lambda_1 \ge 0$. There are $\delta > 0$ and $q_0$ such that the following
-holds for every $q \ge q_0$ and every $a$ prime to $q$. Let $\mathcal S_1$ and $\mathcal S_2$ be disjoint subsets of
-$\{1, \dots, K\}$ whose union is not all of it; let $\mathbf z = (z_1, \dots, z_K)$ run over the $K$-tuples of primes up
-to $N_2$ that satisfy at most $J_0$ comparisons of tuples of primes, on any of the indices, with constant terms at most
-$\Lambda_1 \log q$; and let
-$P_1, P_1', P_2, P_2', M_{\mathrm{lo}}, M_{\mathrm{hi}}$ be integers with $P_1, P_2, M_{\mathrm{lo}} \ge 1$ and
-$M_{\mathrm{hi}} \le 2q^L$. Suppose that every tuple of primes that satisfies the comparisons has $z_t \ge q^{e_0}$ for
-every $t$, $P_1 < \prod_{\mathcal S_1} z_t \le P_1'$, $P_2 < \prod_{\mathcal S_2} z_t \le P_2'$,
-$M_{\mathrm{lo}} < \prod_{\mathcal S_1 \cup \mathcal S_2} z_t \le M_{\mathrm{hi}}$ and $\prod_t z_t \le 2q^L$; and that
-$(m_1, m_2) \in \mathcal R$ for every $m_1 \in [\log_q P_1, \log_q P_1']$ and $m_2 \in [\log_q P_2, \log_q P_2']$ with
-$M_{\mathrm{lo}} \le 4q^{m_1 + m_2}$ and $q^{m_1 + m_2} \le M_{\mathrm{hi}}$. Then
+Fix $e_0 > 0$, integers $K$ and $J_0$, and a real $\Lambda_1 \ge 0$. There are $\delta > 0$ and $q_0$ such that the
+following holds for every $q \ge q_0$ and every $a$ prime to $q$. Let $\mathcal S_1$ and $\mathcal S_2$ be disjoint
+subsets of $\{1, \dots, K\}$ whose union is not all of it; let $\mathbf z = (z_1, \dots, z_K)$ run over the $K$-tuples
+of primes up to $N_2$ that satisfy at most $J_0$ comparisons of tuples of primes, on any of the indices, with constant
+terms at most $\Lambda_1 \log q$; and let $P_1, P_1', P_2, P_2', M_{\mathrm{lo}}, M_{\mathrm{hi}}$ be integers with
+$P_1, P_2, M_{\mathrm{lo}} \ge 1$ and $M_{\mathrm{hi}} \le 2q^L$. Suppose that every tuple of primes that satisfies
+the comparisons has $z_t \ge q^{e_0}$ for every $t$, $P_1 < \prod_{\mathcal S_1} z_t \le P_1'$, $P_2 < \prod_{\mathcal
+S_2} z_t \le P_2'$, $M_{\mathrm{lo}} < \prod_{\mathcal S_1 \cup \mathcal S_2} z_t \le M_{\mathrm{hi}}$ and $\prod_t
+z_t \le 2q^L$; and that $(m_1, m_2) \in \mathcal R$ for every $m_1 \in [\log_q P_1, \log_q P_1']$ and $m_2 \in [\log_q
+P_2, \log_q P_2']$ with $M_{\mathrm{lo}} \le 4q^{m_1 + m_2}$ and $q^{m_1 + m_2} \le M_{\mathrm{hi}}$. Then
 \[
   \Bigl|\sum_{\mathbf z} \vartheta(z_1 \cdots z_K)\Bigr| \le \frac{q^{L - \delta}}{\varphi(q)}.
 \]
@@ -1426,7 +1425,7 @@ and $m$ is a product of at most $\lceil (L + 1)/e_0 \rceil$ primes.
 
 \begin{lemma}[a term in two variables]\label{lem:term-two}
 % Lean: SieveTwoTerm.chain2_bound
-Fix $e_0 > 0$, integers $k \ge 1$ and $J_0$, and $\Lambda_1 \ge 0$. There are $\delta > 0$ and $q_0$ such that the
+Fix $e_0 > 0$, integers $k \ge 1$ and $J_0$, and a real $\Lambda_1 \ge 0$. There are $\delta > 0$ and $q_0$ such that the
 following holds for every $q \ge q_0$ and every $a$ prime to $q$. Let $\mathcal S$ and $\mathcal S_r$ be disjoint
 subsets of $\{1, \dots, k\}$ with $\mathcal S_r \ne \emptyset$; let $(r_1, \dots, r_k)$ run over the $k$-tuples of
 primes up to $N_2$ that satisfy at most $J_0$ comparisons with constant terms at most $\Lambda_1 \log q$; and let $A,
@@ -3147,7 +3146,7 @@ $q$: the quadrant of the hypothesis.
 
 \begin{lemma}[a term with a rest]\label{lem:term-rest}
 % Lean: (a) SieveTypeIIHM.chain_res_gen; (b) SieveTypeIIHM.chain_res_exp
-Let $2 < L \le 5/2$, $e_0 > 0$, let $k \ge 1$ and $J_0 \ge 0$ be integers, and $\Lambda_1 \ge 0$.
+Let $2 < L \le 5/2$, $e_0 > 0$, let $k \ge 1$ and $J_0 \ge 0$ be integers, and $\Lambda_1 \ge 0$ a real.
 \begin{enumerate}
 \item[(a)] Let $K \ge 1$ and let $\mathcal G$ be a region of $K$-tuples for which the tuple estimate holds at $(L,
   e_0)$. There are $\delta > 0$ and $q_0$ such that the following holds for every $q \ge q_0$ and every $a$ prime to
@@ -3202,9 +3201,9 @@ cells leave room for exactly one more prime gives, and its cell is then known.
 
 \begin{lemma}[the cofactor in the rest]\label{lem:term-rest-cof}
 % Lean: (a) SieveTypeIIHM.chain_res_cofG; (b) SieveTypeIIHM.chain_res_cof; (c) SieveAd.cof_facts
-Let $2 < L \le 5/2$, $e_0 > 0$, let $k \ge 1$ and $J_0 \ge 0$ be integers, and $\Lambda_1 \ge 0$. In (a) and (b), once
-$q$ is given, let $(r_1, \dots, r_k)$ run over the $k$-tuples of primes up to $N_2$ that satisfy a list of at most
-$J_0$ comparisons with constant terms at most $\Lambda_1 \log q$, and let $r = r_1 \cdots r_k$.
+Let $2 < L \le 5/2$, $e_0 > 0$, let $k \ge 1$ and $J_0 \ge 0$ be integers, and $\Lambda_1 \ge 0$ a real. In (a) and
+(b), once $q$ is given, let $(r_1, \dots, r_k)$ run over the $k$-tuples of primes up to $N_2$ that satisfy a list of
+at most $J_0$ comparisons with constant terms at most $\Lambda_1 \log q$, and let $r = r_1 \cdots r_k$.
 \begin{enumerate}
 \item[(a)] Let $K \ge 1$ and let $\mathcal G$ be a region of $(K + 1)$-tuples for which the tuple estimate holds at
   $(L, e_0)$. There are $\delta > 0$ and $q_0$ such that for every $q \ge q_0$, every $a$ prime to $q$ and all
@@ -4061,16 +4060,17 @@ $m_1 + m_2$, with its factor $4$, is that of Lemma~\ref{lem:chains-two}.
 
 \begin{lemma}[a leaf in two variables]\label{lem:leaf-term}
 % Lean: SieveLeafTwo.leavesE_of_zone, SieveLeafTwo.LeavesE, SieveLeafTwo.leaf2_bound
-Let $0 < L \le 5/2$ and let $\mathcal R$ be a set of pairs for which the conclusion of Theorem~\ref{thm:type2} holds at
-$L$ with $\mathcal R$ in place of $\mathcal R_L$. Fix $e_0 > 0$, integers $K_0, J_0 \ge 0$, and $\Lambda_1 \ge 0$. There
-are $\delta > 0$ and $q_0$ such that the following holds for every $q \ge q_0$, every $a$ prime to $q$ and every integer
-$w \ge 2$ with $w \ge q^{e_0}$. Let $P_1, P_1', R_-, R_+$ be integers with $P_1, P_1', R_+ \ge 1$, $R_- \ge 0$ and $P_1'
-R_+ \le N_1$, such that $(m_1, m_2) \in \mathcal R$ for every $m_1 \in [\log_q P_1, \log_q P_1']$ and every $m_2$ with
-$\lfloor N_1/R_+ \rfloor \le 4q^{m_1 + m_2}$ and $q^{m_1 + m_2} \le \lfloor N_2/(R_- + 1) \rfloor$. Let $K \le K_0$; let
-$\mathcal S$ and $\mathcal S_r$ be disjoint subsets of $\{1, \dots, K\}$ with $\mathcal S_r \ne \emptyset$; let $(y_1,
-\dots, y_K)$ run over the $K$-tuples of primes up to $N_2$ that satisfy at most $J_0$ comparisons with constant terms at
-most $\Lambda_1 \log q$; and suppose that every tuple of primes that satisfies them has $y_i \ge w$ for every $i$, $P_1
-< \prod_{\mathcal S} y_i \le P_1'$ and $R_- < \prod_{\mathcal S_r} y_i \le R_+$. Then, with $d = y_1 \cdots y_K$,
+Let $0 < L \le 5/2$ and let $\mathcal R$ be a set of pairs for which the conclusion of Theorem~\ref{thm:type2} holds
+at $L$ with $\mathcal R$ in place of $\mathcal R_L$. Fix $e_0 > 0$, integers $K_0, J_0 \ge 0$, and a real $\Lambda_1
+\ge 0$. There are $\delta > 0$ and $q_0$ such that the following holds for every $q \ge q_0$, every $a$ prime to $q$
+and every integer $w \ge 2$ with $w \ge q^{e_0}$. Let $P_1, P_1', R_-, R_+$ be integers with $P_1, P_1', R_+ \ge 1$,
+$R_- \ge 0$ and $P_1' R_+ \le N_1$, such that $(m_1, m_2) \in \mathcal R$ for every $m_1 \in [\log_q P_1, \log_q
+P_1']$ and every $m_2$ with $\lfloor N_1/R_+ \rfloor \le 4q^{m_1 + m_2}$ and $q^{m_1 + m_2} \le \lfloor N_2/(R_- + 1)
+\rfloor$. Let $K \le K_0$; let $\mathcal S$ and $\mathcal S_r$ be disjoint subsets of $\{1, \dots, K\}$ with $\mathcal
+S_r \ne \emptyset$; let $(y_1, \dots, y_K)$ run over the $K$-tuples of primes up to $N_2$ that satisfy at most $J_0$
+comparisons with constant terms at most $\Lambda_1 \log q$; and suppose that every tuple of primes that satisfies them
+has $y_i \ge w$ for every $i$, $P_1 < \prod_{\mathcal S} y_i \le P_1'$ and $R_- < \prod_{\mathcal S_r} y_i \le R_+$.
+Then, with $d = y_1 \cdots y_K$,
 \[
   \Bigl|\sum_{(y_1, \dots, y_K)} \Bigl(S(\mathcal A_d, w) - \frac{S(\mathcal B_d, w)}{\varphi(q)}\Bigr)\Bigr|
   \le \frac{q^{L - \delta}}{\varphi(q)}.
@@ -4781,8 +4781,8 @@ Take $L = 21/10$ and
 \]
 the cost of Proposition~\ref{prop:certificate-b} over $\mathcal K$. As in the proof of Theorem~\ref{thm:2110},
 Theorem~\ref{thm:tree} applies with this $C$ under the two
-inputs, and its count is (b). Lemma~\ref{lem:every-x}, with $c_0 = (1 - C)/2$, gives (a) with $c = (1 - C)/2^{L + 2}$,
-as at $43/20$.
+inputs, and its count (b) is part (b) of the corollary. Lemma~\ref{lem:every-x}, with $c_0 = (1 - C)/2$, gives
+part (a) of the corollary, with $c = (1 - C)/2^{L + 2}$, as at $43/20$.
 \end{proof}
 
 \section{The formalisation}\label{sec:lean}
@@ -4881,7 +4881,7 @@ what Lean's kernel checks, and the artefact.
 This section claims nothing new. It places Theorems~\ref{thm:2110} and~\ref{thm:4320}, and
 Corollary~\ref{cor:count}(a), against what the same inputs give by the classical argument, which has no sieve, and
 against Harman's theorems on primes in a progression and the exponents known for special moduli.
-Table~\ref{tab:exponents} sums up the first two comparisons.
+Table~\ref{tab:exponents} sums up the comparisons with the classical argument and with Harman's theorems.
 
 \subsection*{The classical deduction}
 
@@ -4922,9 +4922,10 @@ Input~\ref{inp:half-plane} as the zero-free region this holds at $x = q^L$ for e
 
 Harman \cite{harman05, harman08} applied his sieve to primes in a progression to one large modulus $q$, for Alford,
 Granville and Pomerance's construction of Carmichael numbers \cite{agp}, which has the ranges $q \le x^B$ for
-$B < 5/12$ outside exceptional moduli. His Theorem~2 in \cite{harman05} is the following. For every
-$\varepsilon > 0$ there are $K$ and $c > 0$ with this property. Let $q > K$, and suppose that for every $d \mid q$
-and every primitive character $\chi$ mod $d$
+$B < 5/12$ outside exceptional moduli. In Harman's construction the exceptional moduli are those for which the
+first display below, the condition on the zeros, fails. His Theorem~2 in \cite{harman05} is the following. For every
+$\varepsilon > 0$ there are $K(\varepsilon)$ and $c > 0$ with this property. Let $q > K(\varepsilon)$, and suppose
+that for every $d \mid q$ and every primitive character $\chi$ mod $d$
 \[
   L(s, \chi) \ne 0 \quad \text{for} \quad \operatorname{Re} s > 1 - (\log q)^{-3/4}, \quad
   |\operatorname{Im} s| \le \exp\bigl(\varepsilon (\log q)^{3/4}\bigr).
@@ -4933,36 +4934,42 @@ Then for every $a$ prime to $q$
 \[
   \pi(x; q, a) \ge c\, \frac{x}{\varphi(q) \log x} \qquad \text{whenever } q < x^{0.472}.
 \]
-In his construction the exceptional moduli are those for which the condition on the zeros fails. Harman sketches the
-proof. Its arithmetical information is the zero-free region, a mean value estimate, the fourth moment of the
-$L$-functions and Huxley's large values estimate, and it follows work on prime ideals in small regions that uses no
-analogue of Watt's mean value theorem (see \cite{harman05} for the references). His Theorem~1.2 in \cite{harman08}
-is the same statement with $0.4736$ in the place of $0.472$, for the moduli $q > K$ all of whose prime factors are
-below $q^\delta$, where $\delta > 0$ is a constant that the theorem asserts to exist. It brings in Watt's mean value
-theorem on sums of character sums, and the condition on the prime factors serves its application; Harman proves one
-lemma in full and sketches the remainder.
+Harman sketches the proof. Its arithmetical information is the zero-free region, a mean value estimate, the fourth
+moment of the $L$-functions and Huxley's large values estimate. He shows that this information is analogous to that
+of Harman, Kumchev and Lewis's work on prime ideals in small regions \cite{hkl}, which uses no analogue of Watt's
+mean value theorem, and so obtains the range $q < x^{0.47}$; the more careful numerical analysis of Lewis's thesis
+\cite{lewis-thesis} gives $q < x^{0.472}$ \cite[p.~646]{harman05}. The comparisons below hold with $0.47$ as well,
+since $1/0.47 < 2.128$.
+
+His Theorem~1.2 in \cite{harman08} is this: there is $\delta > 0$ such that the statement above holds, with $0.4736$
+in the place of $0.472$, for the moduli $q > K(\varepsilon)$ all of whose prime factors are below $q^\delta$. Its
+proof brings in Watt's mean value theorem on sums of character sums, and the condition on the prime factors serves
+that theorem's application; Harman proves one lemma in full and sketches the remainder.
 
 Input~\ref{inp:half-plane} implies the condition on the zeros, for every $\varepsilon$, as soon as
 $(\log q)^{3/4} \ge 12$. So with Input~\ref{inp:half-plane}, Harman's Theorem~2 applies to every large modulus: the
 least prime in every class prime to $q$ is at most $q^{1/0.472}$, and $1/0.472 < 2.1187$. This is Linnik's theorem
-for every modulus, the constant $K$ covering the small moduli, with an exponent smaller than that of
-Theorem~\ref{thm:4320}. In the same way his Theorem~1.2 gives the exponent $1/0.4736 < 2.1115$ for the large moduli
-all of whose prime factors are below $q^\delta$. Harman's theorems are in refereed journals, and they need the
-condition on the zeros for the divisors of the one modulus only. Their consequences for the least prime use
-Input~\ref{inp:half-plane} for that condition, and so rest on a result that has not been refereed, as
-Theorems~\ref{thm:2110} and~\ref{thm:4320} do.
+for every modulus: the finitely many moduli that are not large are covered by the constant of Linnik's theorem. In
+the same way his Theorem~1.2 gives the exponent $1/0.4736 < 2.1115$ for the large moduli all of whose prime factors
+are below $q^\delta$. Harman's theorems are in refereed journals, and they need the condition on the zeros for the
+divisors of the one modulus only. Their consequences for the least prime use Input~\ref{inp:half-plane} for that
+condition, and so rest on a result that has not been refereed, as Theorems~\ref{thm:2110} and~\ref{thm:4320} do.
 
-So the exponent of Theorem~\ref{thm:4320} is not the smallest that Input~\ref{inp:half-plane} gives. The theorem is
-stated because its proof uses Input~\ref{inp:half-plane} and Huxley's estimate only, and the proof of
-Theorem~\ref{thm:2110} adds to it (Sections~\ref{sec:window} to~\ref{sec:certificate-b}). The exponent of
-Theorem~\ref{thm:2110} is smaller than $1/0.472$ by $0.0186\ldots$, and its proof uses Input~\ref{inp:cgl} as well.
+The exponent of Theorem~\ref{thm:4320} is larger than $1/0.472$, so it is not the smallest that
+Input~\ref{inp:half-plane} gives. The theorem is stated because its proof, from Input~\ref{inp:half-plane} and
+Huxley's density estimate, is given in full and formalised, and because the proof of Theorem~\ref{thm:2110} builds
+on it (Sections~\ref{sec:window} to~\ref{sec:certificate-b} add to Sections~\ref{sec:inputs} to~\ref{sec:proof}).
+The exponent of Theorem~\ref{thm:2110} is smaller than $1/0.472$ by $0.0186\ldots$, and its proof uses
+Input~\ref{inp:cgl} as well. We have not examined what Harman's argument would give with the inputs of this paper
+in the place of its own: the half-plane for its zero-free region, and Input~\ref{inp:cgl} for Huxley's large values
+estimate.
 
 For the powers of a fixed prime, exponents smaller than that of Theorem~\ref{thm:4320} have been obtained without
 Input~\ref{inp:half-plane}. Banks and Shparlinski \cite{banks-shparlinski} have $2.1115$ (the value as cited in
 \cite[footnote~1]{cgl}), from Harman's Theorem~1.2 and their zero-free region (as described by Baier and Pujahari
 \cite{baier-pujahari}). R.~Li's Theorem~9 \cite{li-harman} has the range $q < x^{0.4752}$ under the two conditions
-of Harman's Theorem~1.2, with a constant $c_1 > 0$ in the place of $\delta$; like $\delta$, $c_1$ is asserted to
-exist and not given. For the powers of a fixed prime he deduces the exponent $1/0.4752 < 2.1044$ (his Theorem~11),
+of Harman's Theorem~1.2, with a constant $c_1 > 0$ in the place of $\delta$. For the powers of a fixed prime he
+deduces the exponent $1/0.4752 < 2.1044$ (his Theorem~11),
 improving Banks and Shparlinski's exponent. He presents these theorems as modifications of his Harman-sieve
 calculation, without separate proofs. If his Theorem~9 holds as stated, it gives with Input~\ref{inp:half-plane} the
 exponent $1/0.4752 = 2.1043\ldots$ for every large modulus whose prime factors are all below $q^{c_1}$. Every
@@ -5767,9 +5774,12 @@ $c'$ & the cost of a piece of the first prime's range & Fig.~\ref{fig:cost} \\
 % p. 243: "Since the size of the exceptional set is unaltered, step (ii) remains the same as in [6]"); and the sketch
 % of the proof (Section 2: "In view of our smoothness restriction on q, terms involving q^delta can be absorbed into
 % the x^epsilon term", p. 246; the result at theta = 0.5264, p. 247). Both papers' reference lists give the volume of
-% Alford--Granville--Pomerance as 140; it is 139.
+% Alford--Granville--Pomerance as 140; Wright's and Lichtman's reference lists give 139, as the entry here does.
+% Harman--Kumchev--Lewis (2004) and Lewis's thesis (2002) were NOT read: what is said of them is what Harman (2005)
+% says, pp. 643 and 646. Their entries follow R. Li's reference list ([22]) and that of arXiv:2303.05822 ([8], [13]);
+% Harman (2005) prints the first title as "... of quadratic imaginary fields", and R. Li shortens the second.
 % Alford--Granville--Pomerance (1994) was NOT read (the publisher's page could not be reached). What is said of it is
-% taken from Harman (2005), p. 642; from Wright, arXiv:1212.5850, Section 2, which quotes its Theorem 2.1 (for fixed
+% taken from Harman (2005), p. 642, and Harman (2008), pp. 241--242; from Wright, arXiv:1212.5850, Section 2, which quotes its Theorem 2.1 (for fixed
 % 0 < B < 5/12, pi(z; d, c) >= pi(z)/(2 phi(d)) for d <= min(x^B, z/x^{1-B}) not divisible by an element of a bounded
 % exceptional set); from Lichtman, arXiv:2211.09641, p. 1 (AGP's x^{(5/12)(1 - beta)}, "the current record is
 % x^{0.4736(1 - beta)} due to Harman"); and from Baier and Pujahari, arXiv:2107.04348v5, pp. 4-6 ("Harman himself did

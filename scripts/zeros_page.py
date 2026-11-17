@@ -22,7 +22,10 @@ statement:
   import it and which must lie below `1 + A/2` at Chen, Gupta and Li's `A`; and Theorem 1.1
   (`Linnik21000.linnik_21000`), with the resonant window (`SieveTypeIIHM.typeII_res`) and Chen, Gupta and Li's
   Proposition 3.1 (`LinnikCGLHB101.prop31`) as well, whose module must import both and which must lie below
-  Theorem 1.2's.
+  Theorem 1.2's;
+- the two exponents `1/B` that the half-plane gives with Harman's theorems on primes in a progression (Theorem 2 of
+  2005 and Theorem 1.2 of 2008), with `B` read from the paper's table: stated, not formalised, and required to lie
+  between Theorem 1.1's and Theorem 1.2's.
 Every theorem the page presents as a result must be printed by one of the check files `lib/check/Check.lean`,
 `CheckAll.lean`, `CheckZeta23.lean` and `CheckDH.lean`, whose axioms CI checks. The line `L = 1 + A/2`, where a Type II
 estimate in one variable on a window that sorts the characters by their zeros closes, is computed here, not read
@@ -441,13 +444,15 @@ def extract():
          main, "row for 7/3")
     # Harman's theorems on primes in a progression: their ranges q < x^B are read from the paper's table, and the
     # exponents 1/B that the half-plane gives with them are computed here. They are stated, not formalised.
-    hrow = r"Harman's theorem \\cite\[Theorem~%s\]\{%s\} &\s+Harman's sieve \(not formalised\) & \$1/(0\.\d+) < ([\d.]+)\$"
+    hrow = (r"Harman's Theorem~%s \\cite\{%s\} &\s+Harman's sieve \(not formalised\) & "
+            r"\$1/(0\.\d+) < ([\d.]+)\$")
     harman = []
     for thm, key, year, scope in (("2", "harman05", "2005", "every modulus"),
                                   (r"1\.2", "harman08", "2008", "moduli with only small prime factors")):
         m = says(hrow % (thm, key), main, f"row for Harman's theorem of {year}")
         B = F(m.group(1))
-        need(1 / B < F(m.group(2)) < 1 / B + F(1, 10000), f"the paper's bound for 1/{m.group(1)} is not a bound cut at four places")
+        need(1 / B < F(m.group(2)) < 1 / B + F(1, 10000),
+             f"the paper's bound for 1/{m.group(1)} is not an upper bound rounded up at four places")
         harman.append((1 / B, "1/" + m.group(1), m.group(2), year, thm.replace("\\", ""), scope))
     need(Lres < harman[1][0] < harman[0][0] < Lbest, "Harman's exponents no longer lie between the paper's two theorems")
     # The floor of a Type II estimate in one variable on a window that sorts the characters by their zeros,
@@ -470,7 +475,8 @@ def extract():
     sieve = [("Harman's sieve: below the density exponent, with a Type II estimate in two variables", Lbest, best,
               "from the half-plane and Huxley's estimate alone, with a term of three or five primes reversed through "
               "its largest prime: Theorem 1.2 of the Linnik paper"),
-             ("With a Type II estimate in one variable over the sizes of a term's own prime sums as well, and Chen, "
+             ("Harman's sieve with a Type II estimate in one variable over the sizes of a term's own prime sums "
+              "too, and Chen, "
               "Gupta and Li's Proposition 3.1", Lres, resbest,
               "with the resonant window, the leaves of a comparison cut in three and the terms of the sign + "
               "reversed as well, and the window's test at the two corners of a box: Theorem 1.1 of the Linnik paper")]
@@ -482,7 +488,8 @@ def extract():
             ladder += [{"group": "Harman's theorems on primes in a progression, with the half-plane for their "
                                  "condition on the zeros"}]
             ladder += [{"label": f"Harman ({year}), Theorem {thm}: {scope}", "L": float(x), "text": text,
-                        "dec": "< " + bound, "kind": "other", "src": "a refereed theorem; the deduction is not formalised"}
+                        "dec": "< " + bound, "kind": "other",
+                        "src": "a refereed theorem; the deduction is not formalised"}
                        for x, text, bound, year, thm, scope in harman]
 
     la = [{"A": float(Agrh), "L": float(Lgrh), "kind": "limit", "role": "dh", "text": t(Lgrh) + " + η",
@@ -546,7 +553,7 @@ def extract():
               "multiple", "conrey",
               "npieces", "nhx", "hxLo", "hxA", "hux", "gmax",
               "gmaxLo", "gmaxHi", "cgl", "floor", "grh", "nresults",
-              "Lbest", "Lbestdec", "bestLean", "Lres", "resLean", "resWin"):
+              "Lbest", "Lbestdec", "bestLean", "Lres", "resLean", "resWin", "harman", "harmanBound"):
         texts[k] = html.escape(texts[k])
     return data, texts, named, results
 

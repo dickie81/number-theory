@@ -1569,18 +1569,16 @@ coefficients $b_n = \sum_{\nu(m) = n} c_m$. By Cauchy--Schwarz over each fibre, 
 bounds the sum by $q^{L - 1/50000} (V/P)^{1/2} \le D_0 q^{L - 1/50000}$.
 \end{proof}
 
-\emph{(C) Tuples with the variable in a range.} Assume Inputs~\ref{M-inp:half-plane} and~\ref{M-inp:cgl}. Let $0 < L \le
-5/2$, $e_0 > 0$, $k$ and
-$J_0$ integers and $\Lambda_1 \ge 0$. There are $\delta > 0$ and $q_0$ such that the following holds for every $q \ge
-q_0$ and every $a$ prime to $q$. Let $i_1, \dots, i_K$ be distinct indices of $\{1, \dots, k\}$, $\mathcal S_r$ their
-set, and $\sigma_1, \dots, \sigma_K$ reals; let $\mathbf z$ run over the $k$-tuples of primes up to $N_2$ that satisfy
-at
-most $J_0$ comparisons with constant terms at most $\Lambda_1 \log q$; and let $P \ge 1$ and $P'$ be integers. Suppose
-that every tuple of primes that satisfies the comparisons has $z_t \ge q^{e_0}$ for every $t$, $z_{i_j} \ge
-2q^{\sigma_j}$ for every $j$, $P < \prod_{t \notin \mathcal S_r} z_t \le P'$ and $z_1 \cdots z_k \le 2q^L$; and that
-$\operatorname{Res}_L(\log_q P''; \log_q Q_1, \dots, \log_q Q_K)$ holds for every integer $P'' \ge P$ and all $Q_j \ge
-q^{e_0/2}$ with $Q_j \ge q^{\sigma_j}$ and $Q_1 \cdots Q_K \le 2^{k + 1} q^L/P''$. Then $|\sum_{\mathbf z}
-\vartheta(z_1 \cdots z_k)| \le q^{L - \delta}/\varphi(q)$.
+\emph{(C) Tuples with the variable in a range.} Assume Inputs~\ref{M-inp:half-plane} and~\ref{M-inp:cgl}. Let $0 < L
+\le 5/2$, $e_0 > 0$, $k$ and $J_0$ integers and $\Lambda_1 \ge 0$ a real. There are $\delta > 0$ and $q_0$ such that
+the following holds for every $q \ge q_0$ and every $a$ prime to $q$. Let $i_1, \dots, i_K$ be distinct indices of
+$\{1, \dots, k\}$, $\mathcal S_r$ their set, and $\sigma_1, \dots, \sigma_K$ reals; let $\mathbf z$ run over the
+$k$-tuples of primes up to $N_2$ that satisfy at most $J_0$ comparisons with constant terms at most $\Lambda_1 \log
+q$; and let $P \ge 1$ and $P'$ be integers. Suppose that every tuple of primes that satisfies the comparisons has $z_t
+\ge q^{e_0}$ for every $t$, $z_{i_j} \ge 2q^{\sigma_j}$ for every $j$, $P < \prod_{t \notin \mathcal S_r} z_t \le P'$
+and $z_1 \cdots z_k \le 2q^L$; and that $\operatorname{Res}_L(\log_q P''; \log_q Q_1, \dots, \log_q Q_K)$ holds for
+every integer $P'' \ge P$ and all $Q_j \ge q^{e_0/2}$ with $Q_j \ge q^{\sigma_j}$ and $Q_1 \cdots Q_K \le 2^{k + 1}
+q^L/P''$. Then $|\sum_{\mathbf z} \vartheta(z_1 \cdots z_k)| \le q^{L - \delta}/\varphi(q)$.
 % Lean: SieveTypeIIHM.chain_res_core
 
 \begin{proof}

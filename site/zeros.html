@@ -161,9 +161,10 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
     <p class="lede">What the library's Lean theorems say about the zeros of <span class="math">ζ(s)</span> and of Dirichlet
       <span class="math">L</span>-functions: where in the critical strip a zero can be, how many zeros there are and how
       many are simple, how many can lie to the right of a line <span class="math">Re s = σ</span>, and what that gives for
-      Linnik's exponent. Every constraint drawn in color is
+      Linnik's exponent. Every constraint drawn in solid color is
       a theorem of the library, named beside it, and its numbers are read from the theorem's statement; the gray curves
-      are published or conjectured bounds, drawn for comparison.</p>
+      are published or conjectured bounds, drawn for comparison, and an open ring marks a result that is stated and
+      not formalised.</p>
   </header>
 
   <section aria-labelledby="strip-h">
@@ -323,8 +324,8 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
       (<code>{{bestLean}}</code>), from the half-plane and Huxley's density estimate: the half-plane is its only input
       that has not been refereed. That exponent is not the smallest that the half-plane gives: with Harman's theorem of
       2005 on primes in a progression, a refereed theorem that assumes a zero-free region for the modulus, the half-plane
-      gives <span class="math">L</span> = {{harman}} &lt; {{harmanBound}} (the paper's Section 12; not formalised). Its
-      Theorem 1.1 is <span class="math">L</span> = {{Lres}} (<code>{{resLean}}</code>),
+      gives <span class="math">L</span> = {{harman}} &lt; {{harmanBound}} (the paper's Section 12; not formalised). The
+      paper's Theorem 1.1 is <span class="math">L</span> = {{Lres}} (<code>{{resLean}}</code>),
       with the resonant window, the leaves of a comparison cut in three and the terms of the sign + reversed as well; it
       rests on two inputs that have not been refereed: the half-plane and Chen, Gupta and Li's Proposition 3.1. The
       kernel's check of its certificate was not finished on 16 November 2026.</p>
@@ -348,7 +349,8 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
       variables of the Linnik paper (<code>SieveTwoZone7D.typeII_two_hx</code>) holds on a region for every
       <span class="math">L</span>, and counts the characters only from <span class="math">σ</span> = {{hxLo}} on, by
       Huxley's estimate; with it the sieve goes below that line, to {{Lbest}} (Theorem 1.2), from the density exponent
-      {{hux}} of Huxley's estimate. The resonant window (<code>{{resWin}}</code>) is a Type II estimate in one variable
+      {{hux}} of Huxley's estimate. Harman's theorem of 2005, whose proof uses Huxley's large values estimate, goes
+      further below the line with the half-plane, to {{harman}} &lt; {{harmanBound}} (not formalised). The resonant window (<code>{{resWin}}</code>) is a Type II estimate in one variable
       that sorts the characters by the sizes of the rest's own prime sums as well as by their zeros, and counts them by
       <span class="math">g<sub>H</sub></span>, by moments and by Chen, Gupta and Li's Proposition 3.1; with it as well, and with
       the curve <span class="math">g*</span> on the leaves, the sieve goes further below the line, to {{Lres}} (Theorem 1.1).</p>

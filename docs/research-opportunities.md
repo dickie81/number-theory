@@ -203,8 +203,8 @@ covers. The region does not close at `13/6`.
   from one lemma's region: the sieve was not run, and his Type I lemmas were not modelled. Harman's own theorems, read on
   17 November 2026, are stronger. His Theorem 2 of 2005 (Bull. London Math. Soc. 37) has `q < x^{0.472}` for every
   large modulus under a zero-free condition that the half-plane implies: the exponent `1/0.472 < 2.1187` for every
-  modulus. (His proof says that the published information gives `q < x^{0.47}`, the model's figure, and a finer
-  numerical analysis `0.472`.) His Theorem 1.2 of 2008 (Int. J. Number Theory 4) has `q < x^{0.4736}` for large
+  modulus. (His proof gets `q < x^{0.47}`, the model's figure, from the analogy with Harman, Kumchev and Lewis's work
+  on prime ideals, and `0.472` from a finer numerical analysis in Lewis's thesis.) His Theorem 1.2 of 2008 (Int. J. Number Theory 4) has `q < x^{0.4736}` for large
   moduli whose prime factors are all below `q^δ`: the exponent `1/0.4736 < 2.1115` (the Linnik paper, Section 12).
 - **In a decomposition that does not lean on the window** (`tools/linnik/harman_sieve.py`, whose docstring states
   it). Each term has its own floor, the largest at which Harman's comparison evaluates it: its tree over the small

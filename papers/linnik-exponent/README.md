@@ -12,8 +12,9 @@ The proofs use recent results that have not been refereed. Theorem 1.2 uses one,
 `Re s > 11/12` for Dirichlet L-functions, and of the density estimates only Huxley's; Theorem 1.1 also uses Chen, Gupta
 and Li's large values estimate. The exponents are not to be compared with Xylouris's `5`. They are to be compared
 with `12/5` and `7/3`, and with the `1/0.472 < 2.1187` that the half-plane gives through Harman's theorem of 2005:
-Theorem 1.2's `43/20` is larger than that, Theorem 1.1's `21/10` smaller ([below](#what-the-proofs-rest-on)). Lean's kernel had not finished its check of the certificate at `21/10` on
-16 November 2026 ([below](#checking-the-proofs)).
+Theorem 1.2's `43/20` is larger than that, Theorem 1.1's `21/10` smaller ([below](#what-the-proofs-rest-on)).
+Lean's kernel had not finished its check of the certificate at `21/10` on 16 November 2026
+([below](#checking-the-proofs)).
 
 ## The paper and the supplement
 
@@ -113,8 +114,10 @@ estimate (their Theorem 1.2, not their Proposition 3.1). The paper's sieve bring
 progression, which assume a zero-free region for the modulus that the half-plane supplies (the paper's Section 12).
 His Theorem 2 of 2005 then gives Linnik's theorem with `1/0.472 < 2.1187` for every modulus, and his Theorem 1.2 of
 2008 gives `1/0.4736 < 2.1115` for large moduli with only small prime factors. So Theorem 1.2's `43/20` is not the
-smallest exponent that the half-plane gives; it is stated because its proof uses the half-plane and Huxley's
-estimate only, and Theorem 1.1's proof adds to it. Theorem 1.1's `21/10` is below both of Harman's exponents.
+smallest exponent that the half-plane gives; it is stated because its proof, from the half-plane and Huxley's
+density estimate, is given in full and formalised, and because Theorem 1.1's proof builds on it. Theorem 1.1's
+`21/10` is below both of the exponents that the half-plane gives through Harman's theorems. What Harman's argument
+would give with this paper's inputs in the place of its own has not been examined.
 The paper's exponents are not on the same footing as the
 exponents `5.5` and `5` of Heath-Brown and Xylouris, whose proofs use refereed results only, while Theorem 1.2 uses one
 of the two recent results and Theorem 1.1 both, through their formalisations.
@@ -165,7 +168,11 @@ Comp. 86 (2017), 2551–2554), and Naslund's entry against its Hexagon record on
 - Buchstab's volume, issue and pages (1937) are unverified, having been seen in secondary sources only.
 - Alford, Granville and Pomerance's paper of 1994 was not read, and its publisher's page could not be reached; what
   the paper says of it is taken from Harman's papers of 2005 and 2008, which were read in full on 17 November 2026,
-  and from Wright's, Lichtman's and Baier and Pujahari's citations.
+  and from Wright's, Lichtman's and Baier and Pujahari's citations. Both of Harman's papers print its volume as
+  140; Wright's and Lichtman's reference lists give 139, as the entry does.
+- Harman, Kumchev and Lewis's paper of 2004 and Lewis's thesis of 2002, on which Harman's exponent `0.472` rests,
+  were not read; the paper says of them what Harman's paper of 2005 says, and their entries follow R. Li's
+  reference list and that of arXiv:2303.05822.
 - Banks and Shparlinski's entry and their exponent `2.1115` are taken from R. Li's and Chen, Gupta and Li's citations
   of that paper, whose published version was not read; its arXiv version, 1605.07553v2, says that it does not improve
   the Linnik exponent.

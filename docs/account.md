@@ -226,7 +226,9 @@ In order of what is in reach.
 2. **Linnik's exponent.** The Linnik paper proves `43/20 = 2150/1000` (`Linnik21500.linnik_21500`, its Theorem 1.2)
    from the half-plane and Huxley's density estimate alone, and `21/10 = 2100/1000` (`Linnik21000.linnik_21000`, its
    Theorem 1.1) from the half-plane, Chen, Gupta and Li's Proposition 3.1 and Ingham's and Huxley's density estimates,
-   subject to the kernel's check of its certificate, not finished on 16 November 2026. Both exponents are below
+   subject to the kernel's check of its certificate, not finished on 16 November 2026. With the half-plane, Harman's
+   theorem of 2005 on primes in a progression (refereed, not formalised) gives `1/0.472 < 2.1187`, below `43/20` and
+   above `21/10` (the paper's Section 12). Both exponents are below
    `13/6`, where a Type II estimate in one variable on a window whose characters are counted only through the zeros'
    bins closes for the peak `A = 7/3` of Chen, Gupta and Li's curve (`1 + A/2 = 13/6`), and both
    sieves have a Type II estimate in two variables on an explicit region, which counts characters only from
@@ -336,8 +338,8 @@ In order of what is in reach.
 - Computations that are not theorems: the region's exactness and the Pólya–Vinogradov check of the Linnik
   supplement (§S6), the measurements of the sieve below `43/20`, and the short-interval Monte Carlo of pull request
   #48.
-- Each note lists the sources that were not read; one entry of the Linnik paper's bibliography, Buchstab (1937), is
-  unverified.
+- Each note lists the sources that were not read; of the Linnik paper's bibliography, Buchstab (1937) is unverified,
+  and the paper's README lists the entries that were not read.
 
 ## Building on it
 
