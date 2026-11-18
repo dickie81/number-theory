@@ -13,7 +13,7 @@ classes the characters by the sizes of the rest's prime sums, and a class's boun
 * `ResBinOK L d e E γ m`: the class's exponents fit, by orthogonality
   (`E + γ/2 + (m + max(m, 1))/2 ≤ L − 1/25000`) or by the Halász–Montgomery inequality
   (`E + γ/2 + m ≤ L − 1/25000` and `E + m/2 + γ + (m(1/12 − d) + 5/12 + d + 2e)/2 ≤ L − 1/25000`).
-* `qpow_combine_exp`: `SieveTypeII.qpow_combine` with `q^E`.
+* `qpow_combine_exp`: the factors of one bin as powers of `q`, the rest's as `q^E`.
 * `bin_bound_pt_exp`, one class by orthogonality: under the orthogonality inequalities, with `Mp ≤ C₀q^E` and
   `cnt ≤ C_d(qT)^γ(1 + log qT)^{10}`,
   `Mp·cnt^{1/2}((P + q)V)^{1/2} ≤ 2√3·C₀C_d^{1/2}(1 + log qT)^5 q^{L − 1/25000 + η/2}(V/P)^{1/2}`.
@@ -41,8 +41,9 @@ def ResBinOK (L d e E γ m : ℝ) : Prop :=
     (E + γ / 2 + m ≤ L - 1 / 25000 ∧
       E + m / 2 + γ + (m * (1 / 12 - d) + (5 / 12 + d + 2 * e)) / 2 ≤ L - 1 / 25000)
 
-/-- `SieveTypeII.qpow_combine` with `q^E` in place of `(q^L/P)^{θ′}`: `q^E(qT)^{γ/2}((P + q)V)^{1/2}` is at most
-`2√3·q^{E + γ/2 + (1 + m)/2 + η/2}(V/P)^{1/2}` for `m ≤ 1`, and with `m` in place of `(1 + m)/2` for `m ≥ 1`. -/
+/-- **The factors of one bin as powers of `q`.** With `P = q^m`, `1 ≤ T ≤ 3q^η` and `γ ≤ 1`:
+`q^E(qT)^{γ/2}((P + q)V)^{1/2}` is at most `2√3·q^{E + γ/2 + (1 + m)/2 + η/2}(V/P)^{1/2}` for `m ≤ 1`, and with `m`
+in place of `(1 + m)/2` for `m ≥ 1`, for `q > 1`. -/
 lemma qpow_combine_exp {q P V T η γ E m : ℝ} (hq : 1 < q) (hPm : P = q ^ m) (hT1 : 1 ≤ T)
     (hT : T ≤ 3 * q ^ η) (hγ1 : γ ≤ 1) :
     (m ≤ 1 → q ^ E * Real.sqrt ((q * T) ^ γ) * Real.sqrt ((P + q) * V) ≤

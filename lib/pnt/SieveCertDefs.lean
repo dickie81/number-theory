@@ -1,7 +1,7 @@
 /-
 # The certificate's definitions, without Mathlib
 
-The definitions that the certificates build on: the grid of cells (`Grid`, `V`, `H`, `e`, `cell`) and the bound `ω*`
+The definitions that the certificates build on: the grid of cells (`Grid`) and the bound `ω*`
 for Buchstab's `ω` on a box (`omKw`, with its table `lnT` and `omF`). They are arithmetic on natural numbers, and the
 file imports only `Mathlib.Data.Nat.Notation` (the notation `ℕ`), whose closure is `Mathlib.Init`'s: 1,339 modules,
 loaded in about 0.9 GiB, not the whole of Mathlib. So a file that imports no more than this one and the other
@@ -11,9 +11,7 @@ about these definitions, in the reals, are in `SieveCert.lean` and `SieveOmegaB.
 Mathlib.
 
 * The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. A grid (`Grid`) has the window's ends `U1 < U2`, in
-  units of `1/DEN`, the number `n` of cells a side and the cells' multiplier `μ`. The window's width is `V = U2 − U1`,
-  the cells' side is `H = μ⌈(DEN/2 − V)/(μn)⌉` (for `μ = 1`, `⌈(DEN/2 − V)/n⌉`), and cell `k` is
-  `cell k = (e k, e k + H)` with `e k = V + Hk`.
+  units of `1/DEN`, the number `n` of cells a side and the cells' multiplier `μ`.
 -/
 import Mathlib.Data.Nat.Notation
 
@@ -97,17 +95,5 @@ def omKw (s t W w : ℕ) : ℕ :=
       (if 100 * (DEN + 1 - s - t) ≤ 276 * t then omF (DEN + 1 - s - t) t
         else if 277 * (t + w) ≤ 100 * (DEN - s - t - W) then omF (DEN - s - t - W) (t + w) else w1K))
     (if s + 4 * t ≤ DEN then topK else 0)
-
-variable [Grid]
-
-/-- The window's width, the least exponent of a sifted prime. -/
-def V : ℕ := U2 - U1
-/-- The cells' side, `μ⌈(DEN/2 − V)/(μn)⌉`: for `μ = 1`, `⌈(DEN/2 − V)/n⌉`. -/
-def H : ℕ := Grid.mult * ((DEN / 2 - V + n * Grid.mult - 1) / (n * Grid.mult))
-/-- The lower end of cell `k`. -/
-def e (k : ℕ) : ℕ := V + H * k
-
-/-- The range of cell `k`. -/
-def cell (k : ℕ) : ℕ × ℕ := (e k, e k + H)
 
 end SieveCert

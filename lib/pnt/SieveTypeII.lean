@@ -13,7 +13,6 @@ estimate.
 * `bin`, `bin_rect`, `card_bin_le`: the bin of `χ` is the largest `i` with a zero in `Re s > β_i`, `|Im s| ≤ T`;
   above it lies the zero-free rectangle of Lemma 1, and in it a zero counted by (H2′).
 * `MB_le`: for all large `q`, Lemma 1's bound is at most `2Q^{θ+2δ}`.
-* `qpow_combine`: the factors of one bin as powers of `q`.
 * `βg`: the grid of the bins, `β_i = 1/2 + (5/12)(i/500000)`, of width `1/1200000`.
 -/
 import LinnikStep
@@ -353,86 +352,6 @@ lemma MB_le {Bc Cc KLmax δ e₁ η U : ℝ} {Kd : ℕ} (hBc : 0 ≤ Bc) (hCc : 
   rw [hKLθ]
   linarith
 
-/-! ### The exponents on the window -/
-
-/-- **The factors as powers of `q`.** With `P = q^m`, `1 ≤ T ≤ 3q^η` and `g ≤ 1`:
-`(q^L/P)^{θ′}((qT)^g)^{1/2}((P + q)V)^{1/2} ≤ 2√3·q^{(L−m)θ′ + g/2 + t + η/2}(V/P)^{1/2}`, where `t = (1 + m)/2` if
-`m ≤ 1` and `t = m` if `m ≥ 1`, for `q > 1`. -/
-lemma qpow_combine {q P V T η g θ' L m : ℝ} (hq : 1 < q) (hPm : P = q ^ m) (hT1 : 1 ≤ T)
-    (hT : T ≤ 3 * q ^ η) (hg1 : g ≤ 1) :
-    (m ≤ 1 → (q ^ L / P) ^ θ' * Real.sqrt ((q * T) ^ g) * Real.sqrt ((P + q) * V) ≤
-      2 * Real.sqrt 3 * q ^ ((L - m) * θ' + g / 2 + (1 + m) / 2 + η / 2) * Real.sqrt (V / P)) ∧
-    (1 ≤ m → (q ^ L / P) ^ θ' * Real.sqrt ((q * T) ^ g) * Real.sqrt ((P + q) * V) ≤
-      2 * Real.sqrt 3 * q ^ ((L - m) * θ' + g / 2 + m + η / 2) * Real.sqrt (V / P)) := by
-  have hq0 : 0 < q := by linarith
-  have hP0 : 0 < P := by rw [hPm]; positivity
-  have hT0 : 0 < T := by linarith
-  -- the first factor
-  have h1 : (q ^ L / P) ^ θ' = q ^ ((L - m) * θ') := by
-    rw [hPm, ← Real.rpow_sub hq0, ← Real.rpow_mul hq0.le]
-  -- the second factor
-  have h2 : Real.sqrt ((q * T) ^ g) ≤ Real.sqrt 3 * q ^ (g / 2 + η / 2) := by
-    rw [Real.sqrt_eq_rpow, ← Real.rpow_mul (by positivity), Real.mul_rpow hq0.le hT0.le]
-    have hTg : T ^ (g * (1 / 2)) ≤ T ^ (1 / 2 : ℝ) := Real.rpow_le_rpow_of_exponent_le hT1 (by nlinarith)
-    have hT3 : T ^ (1 / 2 : ℝ) ≤ (3 * q ^ η) ^ (1 / 2 : ℝ) := Real.rpow_le_rpow hT0.le hT (by norm_num)
-    have e3 : (3 * q ^ η) ^ (1 / 2 : ℝ) = Real.sqrt 3 * q ^ (η / 2) := by
-      rw [Real.mul_rpow (by norm_num) (by positivity), ← Real.sqrt_eq_rpow, ← Real.rpow_mul hq0.le]; ring_nf
-    have eq : q ^ (g * (1 / 2)) * q ^ (η / 2) = q ^ (g / 2 + η / 2) := by
-      rw [← Real.rpow_add hq0]; ring_nf
-    calc q ^ (g * (1 / 2)) * T ^ (g * (1 / 2)) ≤ q ^ (g * (1 / 2)) * (Real.sqrt 3 * q ^ (η / 2)) := by
-          gcongr; exact (hTg.trans hT3).trans e3.le
-      _ = Real.sqrt 3 * q ^ (g / 2 + η / 2) := by rw [← eq]; ring
-  -- the third factor
-  have hsplit : Real.sqrt ((P + q) * V) = Real.sqrt ((P + q) * P) * Real.sqrt (V / P) := by
-    rw [← Real.sqrt_mul (by positivity)]
-    congr 1
-    field_simp
-  have hs3 : 0 ≤ Real.sqrt 3 := Real.sqrt_nonneg 3
-  have hs2 : Real.sqrt 2 ≤ 2 := by rw [Real.sqrt_le_left (by norm_num)]; norm_num
-  have hA : 0 ≤ q ^ ((L - m) * θ') := by positivity
-  have hVP : 0 ≤ Real.sqrt (V / P) := Real.sqrt_nonneg _
-  constructor
-  · intro hm1
-    have hPq : P ≤ q := by
-      rw [hPm]; calc q ^ m ≤ q ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le hq.le hm1
-        _ = q := Real.rpow_one q
-    have h3 : Real.sqrt ((P + q) * P) ≤ 2 * q ^ ((1 + m) / 2) := by
-      have hb : (P + q) * P ≤ 2 * q ^ (1 + m) := by
-        rw [Real.rpow_add hq0, Real.rpow_one, ← hPm]; nlinarith
-      calc Real.sqrt ((P + q) * P) ≤ Real.sqrt (2 * q ^ (1 + m)) := Real.sqrt_le_sqrt hb
-        _ = Real.sqrt 2 * q ^ ((1 + m) / 2) := by
-            rw [Real.sqrt_mul (by norm_num), Real.sqrt_eq_rpow (q ^ (1 + m)), ← Real.rpow_mul hq0.le]; ring_nf
-        _ ≤ 2 * q ^ ((1 + m) / 2) := by gcongr
-    have eq : q ^ ((L - m) * θ') * q ^ (g / 2 + η / 2) * q ^ ((1 + m) / 2) =
-        q ^ ((L - m) * θ' + g / 2 + (1 + m) / 2 + η / 2) := by
-      rw [← Real.rpow_add hq0, ← Real.rpow_add hq0]; ring_nf
-    rw [h1, hsplit]
-    calc q ^ ((L - m) * θ') * Real.sqrt ((q * T) ^ g) * (Real.sqrt ((P + q) * P) * Real.sqrt (V / P))
-        ≤ q ^ ((L - m) * θ') * (Real.sqrt 3 * q ^ (g / 2 + η / 2)) * (2 * q ^ ((1 + m) / 2) * Real.sqrt (V / P)) := by
-          gcongr
-      _ = 2 * Real.sqrt 3 * (q ^ ((L - m) * θ') * q ^ (g / 2 + η / 2) * q ^ ((1 + m) / 2)) * Real.sqrt (V / P) := by
-          ring
-      _ = _ := by rw [eq]
-  · intro hm1
-    have hPq : q ≤ P := by
-      rw [hPm]; calc q = q ^ (1 : ℝ) := (Real.rpow_one q).symm
-        _ ≤ q ^ m := Real.rpow_le_rpow_of_exponent_le hq.le hm1
-    have h3 : Real.sqrt ((P + q) * P) ≤ 2 * q ^ m := by
-      have hb : (P + q) * P ≤ 2 * (q ^ m) ^ 2 := by rw [← hPm]; nlinarith
-      calc Real.sqrt ((P + q) * P) ≤ Real.sqrt (2 * (q ^ m) ^ 2) := Real.sqrt_le_sqrt hb
-        _ = Real.sqrt 2 * q ^ m := by
-            rw [Real.sqrt_mul (by norm_num), Real.sqrt_sq (by positivity)]
-        _ ≤ 2 * q ^ m := by gcongr
-    have eq : q ^ ((L - m) * θ') * q ^ (g / 2 + η / 2) * q ^ m =
-        q ^ ((L - m) * θ' + g / 2 + m + η / 2) := by
-      rw [← Real.rpow_add hq0, ← Real.rpow_add hq0]; ring_nf
-    rw [h1, hsplit]
-    calc q ^ ((L - m) * θ') * Real.sqrt ((q * T) ^ g) * (Real.sqrt ((P + q) * P) * Real.sqrt (V / P))
-        ≤ q ^ ((L - m) * θ') * (Real.sqrt 3 * q ^ (g / 2 + η / 2)) * (2 * q ^ m * Real.sqrt (V / P)) := by
-          gcongr
-      _ = 2 * Real.sqrt 3 * (q ^ ((L - m) * θ') * q ^ (g / 2 + η / 2) * q ^ m) * Real.sqrt (V / P) := by ring
-      _ = _ := by rw [eq]
-
 /-! ### The grid of the bins -/
 
 /-- The grid of the bins: `β_i = 1/2 + (5/12)(i/500000)`, of width `1/1200000`. -/
@@ -475,4 +394,3 @@ end SieveTypeII
 #print axioms SieveTypeII.bin_rect
 #print axioms SieveTypeII.card_bin_le
 #print axioms SieveTypeII.MB_le
-#print axioms SieveTypeII.qpow_combine

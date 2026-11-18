@@ -24,7 +24,7 @@ import SieveRuleDefs
 import SieveP6ib
 
 open Real Finset SieveFamily SieveChain SieveDecomp SieveRoute
-open SieveCert (V DEN H U1 U2 cell)
+open SieveCert (DEN U1 U2)
 
 namespace SieveLeaves
 

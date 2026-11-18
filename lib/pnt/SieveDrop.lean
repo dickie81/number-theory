@@ -18,7 +18,7 @@ The file imports `SieveQ.lean`.
 import SieveQ
 
 open Real Finset Filter SieveFamily SieveChain SieveDecomp SieveLeaves SieveQ SieveRough SieveRoute
-open SieveCert (V DEN H U1 U2 cell K)
+open SieveCert (DEN U1 U2 K)
 
 namespace SieveDrop
 

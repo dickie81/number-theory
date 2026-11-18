@@ -14,7 +14,7 @@ The file imports `SieveLeaves.lean`.
 import SieveLeaves
 
 open Real Finset Filter SieveFamily SieveChain SieveDecomp SieveLeaves SieveRoute
-open SieveCert (V DEN H U1 U2 cell)
+open SieveCert (DEN U1 U2)
 
 namespace SieveQ
 

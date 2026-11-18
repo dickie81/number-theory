@@ -7,10 +7,9 @@ proof. This file defines its parts:
 
 * a **strategy** (`Strat`) proposes the configurations to try for a box (`propI`), the floors of Buchstab's
   identity with theirs (`propJ`), and the cuts of the new prime's range into cells (`cuts`);
-* `step` treats a box: one with no term, or that a proposed configuration evaluates, costs `0`; otherwise the box
-  is dropped, if its sign allows (`dropC`), or decomposed at the first proposed floor that passes (`buchC`, the
-  cells of the new prime by `kids`), whichever is cheaper; a box that can be neither dropped nor decomposed is cut
-  in two (`splitC`);
+* the steps of a search on a box: a proposed configuration that evaluates it (`anyI`), its drop, if its sign
+  allows (`dropC`), Buchstab's identity at the first proposed floor that passes (`buchC`, the cells of the new
+  prime by `kids`), and its cut in two (`splitC`);
 * a **limit** stops the search of a subtree whose cost reaches it: a value at least the limit says nothing;
 * a search is checked in parts: `kids` on a range of the new prime's cells is one part.
 
@@ -30,7 +29,7 @@ import SieveAdTwoDefs
 
 namespace SieveAd
 
-open SieveCert (DEN cdiv V)
+open SieveCert (DEN cdiv)
 
 /-! ### The parts of the search, for any tests and any strategy -/
 
@@ -90,19 +89,6 @@ def splitC (S : Strat) (rec : List Cell → Bool → ℕ → ℕ) (x : Cell) (b 
       ((fun c1 => cond (Nat.ble lim c1) c1 (Nat.add c1 (rec ((mid, x.2) :: b) par (Nat.sub lim c1))))
         (rec ((x.1, mid) :: b) par lim))
       (Nat.add lim BIG)) (Nat.div (Nat.add x.1 x.2) 2)
-
-/-- A box that nothing evaluates: dropped or decomposed, whichever is cheaper, or cut in two. -/
-def node (τ : Tests) (S : Strat) (rec : List Cell → Bool → ℕ → ℕ) (x : Cell) (b : List Cell) (par : Bool)
-    (lim : ℕ) : ℕ :=
-  match dropC (x :: b) par with
-  | some dc => (fun bc => cond (Nat.ble dc bc) dc bc) (buchC τ S rec x b par (cond (Nat.ble dc lim) dc lim))
-  | none => (fun bc => cond (Nat.blt bc BIG) bc (splitC S rec x b par lim)) (buchC τ S rec x b par lim)
-
-/-- One step of the search on a box, the boxes below it by `rec`. -/
-def step (τ : Tests) (S : Strat) (rec : List Cell → Bool → ℕ → ℕ) (bl : List Cell) (par : Bool) (lim : ℕ) : ℕ :=
-  match bl with
-  | [] => lim
-  | x :: b => cond (vanishOK (x :: b) || anyI τ (x :: b) (S.propI (x :: b))) 0 (node τ S rec x b par lim)
 
 /-! ### Searches over the sets of a box's cells, and the route's constants
 

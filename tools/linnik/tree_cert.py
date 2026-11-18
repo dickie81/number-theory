@@ -11,9 +11,10 @@ A tree of `lib/pnt/SieveAdDefs.lean` on the box of the first prime, of cost belo
     `okJ2` (SieveAdTwoDefs.lean), the leaves cut in three only with `energy`;
   * `vanishOK`, `dropOK`, `dropCost`, `dropBOK`, `dropBCost` (SieveAdDefs.lean), definition by definition;
   * the search (`Search`): the searches over the sets of a box's cells `findSub2`, `bestSub`, `findSub1`,
-    `tstarF`, and the steps `anyI`, `firstJ`, `kids`, `buchC`, `splitC`, `node` and `step` (as `solve`, with the
-    fuel of the recursion), definition by definition as `lib/pnt/SieveAdSearchDefs.lean` has them, with the
-    proposals of the configurations, the floors and the cuts.
+    `tstarF`, and the steps `anyI`, `firstJ`, `kids`, `buchC` and `splitC`, definition by definition as
+    `lib/pnt/SieveAdSearchDefs.lean` has them, and `node` and `step` (as `solve`, with the fuel of the recursion)
+    as it had them until 18 November 2026 (in the git history at commit 99ea246), with the proposals of the
+    configurations, the floors and the cuts.
 
 The window's tests, the proposals and the recursion are those of the theorem at L = 219/100, whose Lean is in the
 git history at commit 76abe3c.
@@ -562,7 +563,8 @@ class Search:
         return self.splitC(x, bl, par, lim, n)
 
     def solve(self, bl, par, lim, n):
-        """`step` of SieveAdSearchDefs.lean, with `solve` at the fuel `n − 1` for `rec`; at the fuel 0, the limit."""
+        """`step` of SieveAdSearchDefs.lean at commit 99ea246, with `solve` at the fuel `n − 1` for `rec`; at the fuel
+        0, the limit."""
         self.minfuel = min(self.minfuel, n)
         if n == 0 or not bl:
             return lim
