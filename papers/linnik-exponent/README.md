@@ -13,8 +13,6 @@ The proofs use recent results that have not been refereed. Theorem 1.2 uses one,
 and Li's large values estimate. The exponents are not to be compared with Xylouris's `5`. They are to be compared
 with `12/5` and `7/3`, and with the `1/0.472 < 2.1187` that the half-plane gives through Harman's theorem of 2005:
 Theorem 1.2's `43/20` is larger than that, Theorem 1.1's `21/10` smaller ([below](#what-the-proofs-rest-on)).
-Lean's kernel had not finished its check of the certificate at `21/10` on 16 November 2026
-([below](#checking-the-proofs)).
 
 ## The paper and the supplement
 
@@ -105,8 +103,7 @@ of the half-plane result is limited: OpenAI's release has its own Lean formalisa
 the library's proof follows the companion preprint's route and is the author's formalisation, so it is not a review of
 the mathematics independent of OpenAI and of the author;
 and the AIProofWatch record covers the Riemann zeta function only. Chen, Gupta and Li's preprint is not refereed. The
-theorems are unconditional (Theorem 1.1 once the check of its certificate by Lean's kernel ends without error, see
-[below](#checking-the-proofs)).
+theorems are unconditional (see [below](#checking-the-proofs)).
 Their exponents are to be compared with `12/5` and `7/3`: from the half-plane, the classical deduction gives every
 exponent above `12/5` with Huxley's estimate, and every exponent above `7/3` with Chen, Gupta and Li's density
 estimate (their Theorem 1.2, not their Proposition 3.1). The paper's sieve brings these down to `43/20 = 2.15` and to
@@ -142,8 +139,8 @@ files `lib/pnt/SieveHint21500P1.lean` to `SieveHint21500P17.lean`, about 63 minu
 certificate at `21/10` has 107374 parts, in the 1150 files `lib/pnt/SieveHint21000P1.lean` to
 `SieveHint21000P1150.lean`, about 76 hours of one core by the estimate of the program that wrote the hints, and the
 29349 Buchstab steps that join the parts are in the 58 files `lib/pnt/SieveHint21000N1.lean` to
-`SieveHint21000N58.lean`; the kernel's check of these files was not finished on 16 November 2026, and Theorem 1.1 is a
-theorem of the library once it ends without error. `tools/linnik/hint_cert.py` writes both.
+`SieveHint21000N58.lean`; the repository's continuous integration builds these files in stages, and the kernel checks
+them there. `tools/linnik/hint_cert.py` writes both.
 
 ## Building the PDFs
 

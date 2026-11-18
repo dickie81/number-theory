@@ -28,8 +28,7 @@ Two forms of it are used.
 
 `hm_duality_W` is in the proofs of `Linnik21500.linnik_21500` and `Linnik21000.linnik_21000`, the Linnik paper's
 Theorems 1.2 and 1.1, through Huxley's estimate, and `hm_duality` and `sum_bin_hm` in that of
-`linnik_21000`, in Theorem 1.1's resonant window (below); the kernel's check of `linnik_21000`'s certificate was not
-finished on 16 November 2026. The axioms of `hm_duality_W`, `hm_duality` and `sum_bin_hm` (`lib/check/CheckAll.lean`)
+`linnik_21000`, in Theorem 1.1's resonant window (below). The axioms of `hm_duality_W`, `hm_duality` and `sum_bin_hm` (`lib/check/CheckAll.lean`)
 are `propext`, `Classical.choice` and `Quot.sound`, so these depend on those only. `hm_duality` does not use the
 zero-free half-plane.
 

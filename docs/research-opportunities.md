@@ -1257,8 +1257,7 @@ and the inventory would carry them.
   `account.md`, and §1 and §2 above would gain `23/24` and the constant `8` in place of `12`.
 - **Linnik below `2.198`:** not by the decomposition of the paper's version at `11/5`, with the window as its Type
   II estimate; with the estimate in two variables that decomposition reaches `2.193`. The searches of §3.1 go lower and are in
-  Lean: `2.15` (`Linnik21500.linnik_21500`) and `21/10` (`Linnik21000.linnik_21000`; the kernel's check of its
-  certificate not finished on 16 November).
+  Lean: `2.15` (`Linnik21500.linnik_21500`) and `21/10` (`Linnik21000.linnik_21000`).
 
 ### 6.1 The `positivity-search` branch and its gravastar strand
 

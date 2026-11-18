@@ -73,9 +73,8 @@ half-plane; our $43/20$ is larger, and our $21/10$ smaller. Like Harman's, our p
 Type~II estimate that sorts the characters by the largest real part of the zeros of their $L$-functions; a finite
 computation bounds the fraction of the primes that the sieve loses.
 
-The whole proof is formalised in Lean~4 with Mathlib, including both recent results. The proof at $43/20$ depends
-only on Lean's standard axioms. So does the proof at $21/10$ once the check of its finite computation by Lean's
-kernel ends without error; that check was not finished at the time of writing.
+The whole proof is formalised in Lean~4 with Mathlib, including both recent results. Both proofs depend only on
+Lean's standard axioms.
 \end{abstract}
 
 \tableofcontents
@@ -124,8 +123,8 @@ progression \cite{harman05} gives $1/0.472 < 2.1187$ (see the end of the next su
 Theorem~\ref{thm:2110} uses a second such result, the large values estimate of Chen, Gupta and Li (Input~\ref{inp:cgl}),
 and three further rules in the sieve (items 6 and 7 below). The corollary is proved with the theorems
 (Sections~\ref{sec:proof} and~\ref{sec:certificate-b}) and uses no more than they do. The certificate at $21/10$
-records the finite computation on which Theorem~\ref{thm:2110} and the corollary at $21/10$ rest; its check by Lean's
-kernel was not finished at the time of writing (Section~\ref{sec:lean}). Sections~\ref{sec:inputs}
+records the finite computation on which Theorem~\ref{thm:2110} and the corollary at $21/10$ rest; Lean's kernel
+checks it (Section~\ref{sec:lean}). Sections~\ref{sec:inputs}
 to~\ref{sec:proof} prove Theorem~\ref{thm:4320}, and Sections~\ref{sec:window} to~\ref{sec:certificate-b} add what
 Theorem~\ref{thm:2110} needs.
 
@@ -352,12 +351,11 @@ prime factors, if it holds as stated (Section~\ref{sec:comparison}).
 \subsection*{Formalisation}
 
 The Lean statements of Theorems~\ref{thm:2110} and~\ref{thm:4320} have no hypotheses, and their proofs use no axiom
-beyond Lean's three standard ones (Section~\ref{sec:lean}), for Theorem~\ref{thm:2110} once the check of its
-certificate (above) ends without error. The library proves the two inputs and the density estimates of Ingham and
-Huxley itself; so the truth of the theorems rests on Lean's kernel, Mathlib and the toolchain, not on the preprints.
-Whether the Lean statement of an input captures the preprint's theorem is not checked by the kernel; it matters for
-attributing and interpreting the input, not for the truth of the theorems. Section~\ref{sec:inputs} compares each
-input with its source, and Section~\ref{sec:lean} says what is known of independent checking of the inputs.
+beyond Lean's three standard ones (Section~\ref{sec:lean}). The library proves the two inputs and the density estimates
+of Ingham and Huxley itself; so the truth of the theorems rests on Lean's kernel, Mathlib and the toolchain, not on the
+preprints. Whether the Lean statement of an input captures the preprint's theorem is not checked by the kernel; it
+matters for attributing and interpreting the input, not for the truth of the theorems. Section~\ref{sec:inputs} compares
+each input with its source, and Section~\ref{sec:lean} says what is known of independent checking of the inputs.
 
 Every step of the proofs, and every result from the literature that they use, is proved in the library \cite{repo}
 (Lean~4 \cite{lean4} with Mathlib \cite{mathlib}) or in Mathlib, at $21/10$ subject to the same check.
@@ -4683,8 +4681,8 @@ identity that join them
 \]
 \end{proposition}
 
-The proposition is a computation, which the kernel carries out and, at the time of writing, has not finished
-(Section~\ref{sec:lean}); with Theorem~\ref{thm:tree}, it gives Theorem~\ref{thm:2110}. At the root, $f_*/D =
+The proposition is a computation, which the kernel carries out (Section~\ref{sec:lean}); with
+Theorem~\ref{thm:tree}, it gives Theorem~\ref{thm:2110}. At the root, $f_*/D =
 0.0305014\ldots$, the integer $r_1$ of (J3) (Definition~\ref{def:tests}) is $261788484$, and the admissible range of
 (J3) is $[u, v]$ with $u = 523503090992$ and $v = 557039738196$, that is
 $[0.4761233, 0.5066247]$ in exponents of $x$: $f_* = v - u - 1$ is the largest floor with $u + f_* < v$, and (L) holds
@@ -4787,8 +4785,8 @@ part (a) of the corollary, with $c = (1 - C)/2^{L + 2}$, as at $43/20$.
 
 \section{The formalisation}\label{sec:lean}
 
-This section says which Lean theorems state the paper's results and with which axioms they are checked, what Lean's
-kernel has not yet checked, what is not formalised, and what is known of the independent checking of the inputs.
+This section says which Lean theorems state the paper's results and with which axioms they are checked, what is not
+formalised, and what is known of the independent checking of the inputs.
 Appendix~\ref{app:claims} names the Lean theorems that prove each numbered result of Sections~\ref{sec:intro}
 to~\ref{sec:certificate-b}, and the results from the literature that the proofs use; they are in \file{lib/} of the
 repository \cite{repo} or in Mathlib. \file{formalisations/} documents the results from the literature and the further
@@ -4833,10 +4831,8 @@ evaluated in $1552$ parts of the certificate, in $17$ files that the kernel chec
 about $63$ minutes in all, and the $256$ Buchstab steps that join the parts are proved one by one. At $21/10$ it is
 evaluated in $107374$ parts, in $1150$ files, and $29349$ Buchstab steps join the parts. The program that wrote the
 hints predicts about $76$ hours of the kernel's time on one core for the part files, so the default build includes
-neither them nor the $58$ files of the cells' steps; the repository's continuous integration builds them in stages. At
-the time of writing that build has not finished, so the kernel has not yet checked the certificate at $21/10$ as a
-whole (\S S5); Theorem~\ref{thm:2110} is a theorem of the library once the build at the commit of this paper ends
-without error.
+neither them nor the $58$ files of the cells' steps; the repository's continuous integration builds them in stages,
+and the kernel checks them there (\S S5).
 
 The two theorems share Input~\ref{inp:half-plane}, the curve $g_{\mathrm H}$ and Sections~\ref{sec:type2}
 to~\ref{sec:decomp}, and differ in their tests. The tests of

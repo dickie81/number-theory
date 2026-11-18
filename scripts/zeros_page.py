@@ -617,8 +617,7 @@ def theorem_rows(hp, band, th_lo, th_hi, slog, sel, two, zeta, c524, Lbest, best
     rows.append((f"Every reduced residue class mod {m('q')} contains a prime {m('p ≤ Kq')}"
                  f"<sup class=\"math\">{lt(Lres)}</sup>, with the resonant window, the leaves of a comparison cut in "
                  f"three and the terms of the sign + reversed as well, from the half-plane, Chen, Gupta and Li's "
-                 f"Proposition 3.1, and Ingham's and Huxley's estimates: Theorem 1.1 of the Linnik paper (the kernel's check of "
-                 f"its certificate was not finished on 16 November 2026)", [resbest, RESW]))
+                 f"Proposition 3.1, and Ingham's and Huxley's estimates: Theorem 1.1 of the Linnik paper", [resbest, RESW]))
     return "\n".join(f"          <tr><td>{a}</td>\n            <td>{', '.join(f'<code>{n}</code>' for n in ns)}</td></tr>"
                      for a, ns in rows)
 
