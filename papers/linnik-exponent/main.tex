@@ -71,11 +71,7 @@ half-plane, the classical argument gives every exponent above $12/5$ with Huxley
 Gupta and Li's density estimate. A theorem of Harman on primes in a progression gives $1/0.472 < 2.1187$ from the
 half-plane; our $43/20$ is larger, and our $21/10$ smaller. Like Harman's, our proofs use his sieve, fed here by a
 Type~II estimate that sorts the characters by the largest real part of the zeros of their $L$-functions; a finite
-computation bounds the fraction of the primes that the sieve loses.
-
-The theorems, the corollary and every numbered result of their proofs are theorems of a Lean~4 library built on
-Mathlib, which proves the two recent results in its own statements of them. The Lean theorems have no hypotheses and
-depend only on Lean's standard axioms, and Lean's kernel checks the finite computations.
+computation, checked by Lean's kernel, bounds the fraction of the primes that the sieve loses.
 \end{abstract}
 
 \tableofcontents
