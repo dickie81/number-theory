@@ -1417,8 +1417,11 @@ $1036194529$ bytes.
 The plan is made by \file{tools/linnik/hint\_cert.py} with the settings of Section~\ref{M-sec:certificate-b},
 its search led by the strategy as at $43/20$. It visits $5141981623$ boxes, $4684054098$ of them over the frozen parts
 of reversals; the search that planned the first prime's cells is written in C. The program's model of the kernel's
-time predicts $183$ to $240$ seconds for each part file and $273632$ seconds, about $76$ hours of one core, for all of
-them; this is a prediction, not a measured time of the certificate's files. The cost $c$, the number of parts and the
+time predicted $183$ to $240$ seconds for each part file and $273632$ seconds, about $76$ hours of one core, for all
+of them. Lake's build times in the repository's continuous integration, the kernel's checks included, are $128$ to
+$349$ seconds for each part file, $218713$ seconds in all, about $61$ hours of one core, and $16$ to $51$ seconds for
+each of the $58$ files of the cells, $1451$ seconds in all; they were measured at commits whose part files, and the
+definitions that these use, are this paper's. The cost $c$, the number of parts and the
 counts of the table are the Lean's: scripts read them from the statements of the generated files, and the same scripts
 give the figures that Proposition~\ref{M-prop:certificate} and the paragraphs after it give at $43/20$.
 

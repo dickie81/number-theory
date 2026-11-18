@@ -71,7 +71,7 @@ It is `Linnik21000.count_21000` and `Linnik21000.count_large_21000` in
 `lib/pnt/Linnik21000Count.lean`, and `Linnik21500.count_21500` and `Linnik21500.count_large_21500` in
 `lib/pnt/Linnik21500Count.lean`; the step from `x = q^L` to every `x` (Lemma 5.16) is
 `SieveAd.count_of_large` in `lib/pnt/SieveAdCount.lean`, and uses no input. At `21/10` the corollary rests on the
-certificate of Theorem 1.1 and on the same check of it by Lean's kernel ([below](#checking-the-proofs)).
+certificate of Theorem 1.1 ([below](#checking-the-proofs)).
 
 ## What the proofs rest on
 
@@ -137,10 +137,10 @@ The script fails unless every theorem it prints depends only on `propext`, `Clas
 The certificate at `43/20` is checked by Lean's kernel in 1552 parts, in the 17
 files `lib/pnt/SieveHint21500P1.lean` to `SieveHint21500P17.lean`, about 63 minutes of the kernel's time. The
 certificate at `21/10` has 107374 parts, in the 1150 files `lib/pnt/SieveHint21000P1.lean` to
-`SieveHint21000P1150.lean`, about 76 hours of one core by the estimate of the program that wrote the hints, and the
-29349 Buchstab steps that join the parts are in the 58 files `lib/pnt/SieveHint21000N1.lean` to
-`SieveHint21000N58.lean`; the repository's continuous integration builds these files in stages, and the kernel checks
-them there. `tools/linnik/hint_cert.py` writes both.
+`SieveHint21000P1150.lean`, which the kernel checks in 128 to 349 seconds each, about 61 hours of one core in all
+(Lake's build times in CI; the program that wrote the hints predicted 76), and the 29349 Buchstab steps that join the
+parts are in the 58 files `lib/pnt/SieveHint21000N1.lean` to `SieveHint21000N58.lean`, 24 minutes in all; the
+repository's continuous integration builds these files in stages. `tools/linnik/hint_cert.py` writes both.
 
 ## Building the PDFs
 

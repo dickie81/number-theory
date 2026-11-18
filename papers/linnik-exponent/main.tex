@@ -73,8 +73,9 @@ half-plane; our $43/20$ is larger, and our $21/10$ smaller. Like Harman's, our p
 Type~II estimate that sorts the characters by the largest real part of the zeros of their $L$-functions; a finite
 computation bounds the fraction of the primes that the sieve loses.
 
-The whole proof is formalised in Lean~4 with Mathlib, including both recent results. Both proofs depend only on
-Lean's standard axioms.
+The theorems, the corollary and every numbered result of their proofs are theorems of a Lean~4 library built on
+Mathlib, which proves the two recent results in its own statements of them. The Lean theorems have no hypotheses and
+depend only on Lean's standard axioms, and Lean's kernel checks the finite computations.
 \end{abstract}
 
 \tableofcontents
@@ -358,7 +359,7 @@ matters for attributing and interpreting the input, not for the truth of the the
 each input with its source, and Section~\ref{sec:lean} says what is known of independent checking of the inputs.
 
 Every step of the proofs, and every result from the literature that they use, is proved in the library \cite{repo}
-(Lean~4 \cite{lean4} with Mathlib \cite{mathlib}) or in Mathlib, at $21/10$ subject to the same check.
+(Lean~4 \cite{lean4} with Mathlib \cite{mathlib}) or in Mathlib.
 Appendix~\ref{app:claims} names the Lean theorem behind each claim and Section~\ref{sec:lean} says what is formalised;
 the proofs of the paper are those of the library, at the level of detail of a paper, except where
 Section~\ref{sec:inputs} says otherwise, at Propositions~\ref{prop:curve} and~\ref{prop:curve-star}. Where the Lean
@@ -4741,8 +4742,9 @@ given above the plot.}
 
 The plan has $90137757$ steps, and its hints take $501724020$ bytes. The search outside the kernel that made it visits
 $5141981623$ boxes. It planned the first prime's cells in about three to four hours on four cores of each of two
-machines. It predicts $273632$ seconds of one core of the kernel's time for the $1150$ files of the parts of the
-certificate, about $76$ hours; this is a prediction, not a measurement. \S S5 has the other counts.
+machines. Lean builds each of the $1150$ files of the parts of the certificate, the kernel's checks included, in $128$
+to $349$ seconds, about $61$ hours of one core in all, where the program predicted $76$ hours. \S S5 has the other
+counts.
 
 \subsection{Proof of Theorem~\ref{thm:2110}}
 
@@ -4810,16 +4812,16 @@ Corollary~\ref{cor:count} is \lean{Linnik21000.\allowbreak count\_21000} and
 \lean{Linnik21500.\allowbreak count\_21500} and \lean{Linnik21500.\allowbreak count\_large\_21500} at $43/20$, in
 \file{lib/pnt/Linnik21500Count.lean}, with no hypotheses either; there $\pi(x; q, a)$ counts the primes $p \le
 \lfloor x \rfloor$, and the interval $(q^L, 2q^L]$ is $(\lfloor q^L \rfloor, \lfloor 2q^L \rfloor]$, which has the same
-integers. At $21/10$ the corollary uses the certificate of Theorem~\ref{thm:2110} and has the same status (see below).
+integers. At $21/10$ the corollary uses the certificate of Theorem~\ref{thm:2110}.
 
-The file \file{lib/check/Check.lean}, the
-repository's default build, prints the axioms of Theorem~\ref{thm:4320}, of Corollary~\ref{cor:count} at $43/20$ and
+The file \file{lib/check/Check.lean}
+prints the axioms of Theorem~\ref{thm:4320}, of Corollary~\ref{cor:count} at $43/20$ and
 of the library's theorems that Appendix~\ref{app:claims} names for Sections~\ref{sec:inputs} to~\ref{sec:proof}, for
 the results from the literature and for the classical deduction;
 \file{lib/check/CheckAll.lean} prints those of Theorem~\ref{thm:2110}, of Corollary~\ref{cor:count} at $21/10$ and of
 the theorems named for Sections~\ref{sec:window} to~\ref{sec:certificate-b}. \file{scripts/check\_axioms.py} checks
 that they are \lean{propext}, \lean{Classical.choice} and \lean{Quot.sound} only. \file{lib/check/CheckAll.lean}
-imports the certificate at $21/10$, so its report waits for the build described below. The axioms of a theorem cover its
+imports the certificate at $21/10$, so that its build includes the certificate's files (below). The axioms of a theorem cover its
 whole dependency
 cone, so a \lean{sorry} anywhere in it would appear as \lean{sorryAx}; the library's own sources contain no
 \lean{sorry}, no declared axiom and no \lean{native\_decide} (\file{scripts/check\_hygiene.py}).
@@ -4829,10 +4831,10 @@ Lean's kernel, which trusts no code compiled from the definitions (Section~\ref{
 arithmetic on Lean's core natural numbers, lists and booleans. At $43/20$ the search led by the certificate's hints is
 evaluated in $1552$ parts of the certificate, in $17$ files that the kernel checks in $143$ to $271$ seconds each,
 about $63$ minutes in all, and the $256$ Buchstab steps that join the parts are proved one by one. At $21/10$ it is
-evaluated in $107374$ parts, in $1150$ files, and $29349$ Buchstab steps join the parts. The program that wrote the
-hints predicts about $76$ hours of the kernel's time on one core for the part files, so the default build includes
-neither them nor the $58$ files of the cells' steps; the repository's continuous integration builds them in stages,
-and the kernel checks them there (\S S5).
+evaluated in $107374$ parts, in $1150$ files that the kernel checks in $128$ to $349$ seconds each, about $61$ hours
+of one core in all, and the $29349$ Buchstab steps that join the parts are proved in $58$ files, in $24$ minutes in
+all. The repository's continuous integration builds these files in stages, with \file{lib/check/CheckAll.lean}
+(\S S5).
 
 The two theorems share Input~\ref{inp:half-plane}, the curve $g_{\mathrm H}$ and Sections~\ref{sec:type2}
 to~\ref{sec:decomp}, and differ in their tests. The tests of
