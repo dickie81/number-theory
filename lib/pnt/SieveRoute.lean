@@ -1,11 +1,11 @@
 /-
-# The parameters of the sieve route, and its Type II input
+# The parameters of the sieve route
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-The sieve route runs at `x = q^L` with a Type II window `[w₁L, w₂L]`. `Route`
-holds `L`, `w₁` and `w₂`, and `RouteOK` the facts about them that the route's proofs use. `TypeIIAt` is the Type II
-estimate the route takes as its input: Proposition 3′ at `L` on the window, pointwise in the heights.
+The sieve route runs at `x = q^L`. `Route` holds `L` and the ends `w₁`, `w₂` of a Type II window as fractions of `L`,
+and `RouteOK` the facts about them: `2 < L ≤ 5/2` and `0 < w₁ < w₂ < 1`. The route's proofs use those about `L`
+(`two_lt_L`, `L_pos`, `L_le`, and the tactic `route_num`).
 
 The file imports `SieveTypeII.lean`.
 -/
@@ -39,39 +39,17 @@ class RouteOK : Prop where
   w₂_lt_one : w₂ < 1
   L_le : L ≤ 5 / 2
 
-open scoped Classical ContDiff in
-/-- **Proposition 3′ at `L` on the window `[w₁L, w₂L]`, pointwise in the heights.** -/
-def TypeIIAt : Prop :=
-  ∀ {f0 : ℝ → ℝ}, ContDiff ℝ ∞ f0 → Function.support f0 ⊆ Set.Icc (1 / 2) 2 → ∀ (K₀ : ℕ) {e₁ η : ℝ}, 0 < e₁ →
-    0 < η → η ≤ 1 / 100000 →
-    ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q →
-      ∀ (P : ℕ) (S : Finset ℕ), S ⊆ Finset.Ioc P (2 * P) →
-      (q : ℝ) ^ (w₁ * L) ≤ P → (P : ℝ) ≤ (q : ℝ) ^ (w₂ * L) →
-      ∀ (a : ℕ → ℂ) (h₀ : ℝ) (K : ℕ), K ≤ K₀ → ∀ Q h : ℕ → ℝ,
-      (∀ j < K, (q : ℝ) ^ e₁ ≤ Q j ∧ |h j| ≤ (q : ℝ) ^ η) →
-      ∏ j ∈ Finset.range K, Q j ≤ 2 ^ K₀ * (q : ℝ) ^ L / P →
-      ∑ χ ∈ Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1),
-          ‖DirMean.dp S (fun m => a m * χ m) h₀‖ * ‖∏ j ∈ Finset.range K, SieveWeight.Sp χ f0 (Q j) (h j)‖ ≤
-        (q : ℝ) ^ (L - 1 / 50000) * Real.sqrt ((∑ m ∈ S, ‖a m‖ ^ 2) / P)
-
 variable [RouteOK]
 
 theorem two_lt_L : 2 < L := RouteOK.two_lt_L
 theorem L_pos : 0 < L := by linarith [two_lt_L]
-theorem w₁_pos : 0 < w₁ := RouteOK.w₁_pos
-theorem w₁_lt_w₂ : w₁ < w₂ := RouteOK.w₁_lt_w₂
-theorem w₂_lt_one : w₂ < 1 := RouteOK.w₂_lt_one
 theorem L_le : L ≤ 5 / 2 := RouteOK.L_le
-theorem w₁L_pos : 0 < w₁ * L := mul_pos w₁_pos L_pos
-theorem w₂L_lt_L : w₂ * L < L := by nlinarith [w₂_lt_one, L_pos]
 
-/-- Closes the numeric side goals about `L`, `w₁` and `w₂` that the route's proofs meet: `norm_num`, or `nlinarith`
-with the facts of `RouteOK`. -/
+/-- Closes the numeric side goals about `L` that the route's proofs meet: `norm_num`, or `nlinarith` with
+`0 < L`, `L ≤ 5/2` and `2 < L`. -/
 macro "route_num" : tactic =>
   `(tactic| first
     | (norm_num; done)
-    | nlinarith [SieveRoute.L_pos, SieveRoute.w₁_pos, SieveRoute.w₁_lt_w₂, SieveRoute.w₂_lt_one, SieveRoute.L_le,
-        SieveRoute.two_lt_L, SieveRoute.w₁L_pos, SieveRoute.w₂L_lt_L])
+    | nlinarith [SieveRoute.L_pos, SieveRoute.L_le, SieveRoute.two_lt_L])
 
 end SieveRoute
-

@@ -3,24 +3,53 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveFamily` bounds the sum over `𝒜 − ℬ/φ(q)` of a family: `m` in a set `S ⊆ (P, 2P]` with coefficients `a_m`, primes
-with smooth weights, and sharp comparisons with pivots, given the route's Type II estimate for one polynomial. Its
-argument uses `m` only through its value, its coefficient, its parts `φ_j(m)` of the forms, the sum of `|a_m|`, and one
-bound: the Type II estimate at each frequency of the separated sum. This file is that argument with those five as
-data: `m` runs over a finite set `Xs` of any type, with a value `nv m`, a coefficient `c_m` and parts `φ_j(m)`, and
-the estimate is a hypothesis (`hbox`): for the coefficients `c_m` and `|c_m|`, every `ξ ∈ ℝ^J`, `κ ∈ ℝ` and heights
-`|h_i| ≤ q^{1/100000}`,
+A Type II family: `m` runs over a finite set `Xs` of any type, with a value `nv m`, a coefficient `c_m` and parts
+`φ_j(m)` of the forms `ℓ_j = φ_j(m) + Σ_i e_{ji} log x_i`; the primes `x_i` run over `Sp`'s ranges at the scales `Q_i`
+with smooth weights `f0(x_i/Q_i)`; and sharp comparisons with pivots cut the family. The bounds use `m` only through
+these data, the sum of `|c_m|`, and one estimate at each frequency of the separated sum, which is a hypothesis
+(`hbox`): for the coefficients `c_m` and `|c_m|`, every `ξ ∈ ℝ^J`, `κ ∈ ℝ` and heights `|h_i| ≤ q^{1/100000}`,
 
 `Σ_{χ≠1} |Σ_m c′_m e(κ + Σ_j ξ_jφ_j(m))χ(nv m)|·|∏_i Sp(χ, Q_i, h_i)| ≤ B₁`.
 
-* `family_bound_gen` (Lemma 4′): the smooth family, as `SieveFamily.family_bound`.
-* `Dsum_sharp_le_gen`, `sharp_explicit_gen` (Lemma 4″): sharp comparisons with pivots, as
-  `SieveFamily.typeII_sharp_explicit`.
-* `sharp_gen`: the asymptotic form, as `SieveFamily.typeII_sharp`: with `Σ|c_m| ≤ PA₀`, `∏ Q_i ≤ 2^{K₀}q^L/P` and
-  `B₁ = A₀q^{L − 1/50000}`, there are `δ > 0` and `q₀` with `|A − B/φ(q)| ≤ A₀q^{L−δ}/φ(q)` for `q ≥ q₀`.
+* `inner_factor_gen`: the separated family sum factors into the twisted `m`-sum and the twisted prime sums.
+* `family_bound_gen` (Lemma 4′): the smooth family. For `J` continuous integrable `g_j` with integrable `𝓕g_j` applied
+  to the forms, `2π(Σ_j |e_{ji}|)T₀ ≤ q^η` for each `i`, and the estimate (without `κ`) at heights `|h_i| ≤ q^η`, the
+  sum over `χ ≠ 1` of the family's twisted sums is at most `B₁∏_j ‖𝓕g_j‖₁`, plus the number of characters `χ ≠ 1`
+  times `Σ_m |c_m| ∏_i Σ_p |f0(p/Q_i)|` times `Σ_j (∫_{|t|>T₀} |𝓕g_j(t)| dt) ∏_{i≠j} ‖𝓕g_i‖₁`.
+* `Dsum_sharp_le_gen` (Lemma 4″): sharp comparisons `P_j` that hold when `ℓ_j > 0` and imply `ℓ_j ≥ 0`, with
+  `ℓ_j ≤ Λ` on the family and a pivot prime with coefficient `±1` in each. For `0 < θ ≤ 2Λ`, the family's
+  `|A − B/φ(q)|` is at most `φ(q)⁻¹` times the twisted sums of the smoothed family and of the `J` near-boundary
+  families, plus twice `φ(q)⁻¹` times the pivots' counts.
+* `sharp_explicit_gen` (Lemma 4″): for such comparisons with `0 < θ ≤ 1 ≤ Λ`, `T₀ ≥ 1`, `k ≥ 2`,
+  `2π(Σ_j |e_{ji}|)T₀ ≤ q^{1/100000}` and the estimate, the family's `|A − B/φ(q)|` is at most
+  `φ(q)⁻¹(B₁(M^J + J·M̃) + φ(q)·Box·Jτ(M^J + 1))` plus twice `φ(q)⁻¹` times the pivots' counts, with
+  `M = massB θ Λ`, `M̃ = massB θ θ`, `τ = tailB θ T₀ k` and `Box = Σ|c_m| ∏_i Σ_p |f0(p/Q_i)|`.
+* `tuple_sum_eq_gen`, `box_le_gen`, `pivot_le_gen`: the family's sum over its tuples as a sum over `m` and the primes;
+  for `Σ|c_m| ≤ PA₀` and `∏ Q_i ≤ X/P`, the box is at most `A₀(3F₀ + 1)^{K₀}X` and a pivot's count at most
+  `F₀A₀(3F₀ + 1)^{K₀}(12θ + 1/Q_min)X`.
+* `sharp_gen`: the asymptotic form. Fix `L`, `K₀`, `J₀`, `e₁ > 0`, `E₀ ≥ 0` and `Λ₀ ≥ 0`. There are `δ > 0` and `q₀`
+  such that for `q ≥ q₀`, every family with `Σ|c_m| ≤ PA₀`, at most `K₀` primes at the scales `Q_i ≥ q^{e₁}`,
+  `∏ Q_i ≤ 2^{K₀}q^L/P`, `J ≤ J₀` comparisons as above with `|e_{ji}| ≤ E₀`, `ℓ_j ≤ Λ₀ log q` on the family and
+  pivots with coefficient `±1`, and the estimate with `B₁ = A₀q^{L − 1/50000}`, has
+  `|A − B/φ(q)| ≤ A₀q^{L−δ}/φ(q)`.
 
-`SieveFamilyTwo` applies it to pairs `(m₁, m₂)`, where the estimate is Proposition 3′ in two variables. The proofs
-are those of `SieveFamily`, whose lemmas on the cut-off, the pivots and the elementary bounds are used as they are.
+`SieveFamilyTwo` applies it to pairs `(m₁, m₂)`, where the estimate is Proposition 3′ in two variables.
+
+The proofs:
+
+* `family_bound_gen`: `SieveSep.sum_sep` writes each character's sum as an integral over `ℝ^J`, whose integrand
+  factors by `inner_factor_gen`. On the box `|ξ_j| ≤ T₀` the heights are at most `q^η`, and `hbox` bounds the sum over
+  `χ ≠ 1`; everywhere the trivial bound holds; `SieveSep.sep_bound` combines the two.
+* `Dsum_sharp_le_gen`: `SieveFamily.norm_Dsum_sharp_le` with the cut-off `G_{θ,Λ}` and, near the boundary,
+  `SieveFamily.abs_ind_sub_G_le`; the pivots' counts by `SieveFamily.pivot_sum_le` and `SieveFamily.pivot_term_le`.
+* `sharp_explicit_gen`: the smoothed family and the `J` near-boundary families by `family_bound_gen`, with the masses
+  and tails of `SieveFamily.mass_GC_le` and `SieveFamily.tail_GC_le`.
+* `sharp_gen`: `θ = q^{−ε₂}` with `ε₂ = 1/(400000(J₀ + 1))`, `Λ = Λ₀ log q + 1`, `T₀ = q^{1/200000}` and
+  `k = 1200003` in `sharp_explicit_gen`. The masses are at most `Cq^{ε₂}` (`SieveFamily.massB_le`) and the tails at
+  most `c′q^{−3}` (`SieveFamily.tailB_le`). The box and the pivots' counts are at most constants times `A₀q^L`
+  (`box_le_gen`, `pivot_le_gen`). So the bound is at most `A₀q^L/φ(q)` times
+  `a₁q^{−7/400000} + a₂q^{−1} + a₃(12q^{−ε₂} + q^{−e₁})`, which is at most `q^{−δ}` for large `q`, with
+  `δ = min(ε₂, e₁)/2` (`SieveFamily.bracket_le`).
 
 The file imports `SieveFamily.lean`.
 -/
@@ -228,11 +257,12 @@ section SharpFamily
 open SieveSmooth Classical
 
 /-- **A sharp family, explicitly.** Let `a` be a unit, `Q_i > 0`, `0 ≤ f0 ≤ F₀` and `0 < θ ≤ 2Λ`. The tuples
-`(m, x)` with `m ∈ Xs`, of value `nv m`, and `n + 1` primes `x_i` of `Sp`'s ranges, with weight `w = c_m ∏_i f0(x_i/Q_i)`, are cut by `J`
-sharp comparisons `P_j`, where `P_j` holds when `ℓ_j(m, x) = φ_j(m) + Σ_i e_{ji} log x_i > 0` and implies `ℓ_j ≥ 0`. If
-each `ℓ_j ≤ Λ` on the tuples and each comparison has a pivot prime with coefficient `±1`, then `|A − B/φ(q)|` of the
-family is at most `φ(q)⁻¹` times the twisted sums of the smoothed family and of the `J` near-boundary families, plus
-twice `φ(q)⁻¹` times the pivots' counts. -/
+`(m, x)` with `m ∈ Xs`, of value `nv m`, and `n + 1` primes `x_i` of `Sp`'s ranges, with weight
+`w = c_m ∏_i f0(x_i/Q_i)`, are cut by `J` sharp comparisons `P_j`, where `P_j` holds when
+`ℓ_j(m, x) = φ_j(m) + Σ_i e_{ji} log x_i > 0` and implies `ℓ_j ≥ 0`. If each `ℓ_j ≤ Λ` on the tuples and each
+comparison has a pivot prime with coefficient `±1`, then `|A − B/φ(q)|` of the family is at most `φ(q)⁻¹` times the
+twisted sums of the smoothed family and of the `J` near-boundary families, plus twice `φ(q)⁻¹` times the pivots'
+counts. -/
 theorem Dsum_sharp_le_gen {ι : Type*} {a : ZMod q} (ha : IsUnit a) (Xs : Finset ι) (nv : ι → ℕ) (cf : ι → ℂ)
     {n : ℕ} (Q : ℕ → ℝ)
     (hQ : ∀ i : Fin (n + 1), 0 < Q i) {f0 : ℝ → ℝ} {F₀ : ℝ} (hf0 : ∀ u, 0 ≤ f0 u) (hF₀ : ∀ u, f0 u ≤ F₀) {J : ℕ}
@@ -335,7 +365,7 @@ theorem Dsum_sharp_le_gen {ι : Type*} {a : ZMod q} (ha : IsUnit a) (Xs : Finset
 end SharpFamily
 
 omit [NeZero q] in
-/-- The tuple form of a twisted family sum is the form of `family_bound`. -/
+/-- The tuple form of a twisted family sum is the form of `family_bound_gen`'s sum. -/
 theorem tuple_sum_eq_gen {ι : Type*} (χ : DirichletCharacter ℂ q) (Xs : Finset ι) (nv : ι → ℕ) (cf : ι → ℂ)
     {K J : ℕ} (Q : ℕ → ℝ)
     (f0 : ℝ → ℝ) (g : Fin J → ℝ → ℂ) (ℓ : Fin J → ι → (Fin K → ℕ) → ℝ) :
@@ -658,8 +688,8 @@ scales `Q_i ≥ q^{e₁}`, `∏_i Q_i ≤ 2^{K₀}q^L/P`, with the weights `f0(x
 hold when `ℓ_j = φ_j(m) + Σ_i e_{ji} log x_i > 0` and imply `ℓ_j ≥ 0`, with `|e_{ji}| ≤ E₀`, `ℓ_j ≤ Λ₀ log q` on the
 family, and for each `j` a pivot `i` with `e_{ji} = ±1`. Suppose that for the coefficients `c_m` and `|c_m|`, every
 `ξ ∈ ℝ^J`, `κ ∈ ℝ` and all heights `|h_i| ≤ q^{1/100000}`, the sum over `χ ≠ 1` of
-`|Σ_m c′_m e(κ + Σ_j ξ_jφ_j(m))χ(nv m)|·|∏_i Sp(χ, Q_i, h_i)|` is at most `A₀q^{L − 1/50000}` (`hbox`). Then the family's
-`|A − B/φ(q)|` is at most `A₀q^{L−δ}/φ(q)`. -/
+`|Σ_m c′_m e(κ + Σ_j ξ_jφ_j(m))χ(nv m)|·|∏_i Sp(χ, Q_i, h_i)|` is at most `A₀q^{L − 1/50000}` (`hbox`). Then the
+family's `|A − B/φ(q)|` is at most `A₀q^{L−δ}/φ(q)`. -/
 theorem sharp_gen {ι : Type*} {f0 : ℝ → ℝ} (hf0nn : ∀ u, 0 ≤ f0 u) {F₀ : ℝ} (hF₀ : ∀ u, f0 u ≤ F₀) (K₀ J₀ : ℕ)
     (L : ℝ) {e₁ E₀ Λ₀ : ℝ} (he₁ : 0 < e₁) (hE₀ : 0 ≤ E₀) (hΛ₀ : 0 ≤ Λ₀) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →

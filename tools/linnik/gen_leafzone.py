@@ -472,6 +472,15 @@ def main():
         print(f'{len(forms)} inequalities ({len(forms) - 6} cases on the box), {len(allc)} cases')
         for f in forms:
             print('  ', lean_ineq(f))
+        for L in (Fr(21, 10),):
+            # the section of the region by the plane m₁ + m₂ + ρ = L, and its extent in exponents of x = q^L
+            V = sorted(vertices(forms + [lin(a=1, b=1, c=1, k=-L), lin(a=-1, b=-1, c=-1, k=L)]))
+            print(f'at L = {L}: {len(V)} vertices (m₁, m₂, ρ)')
+            for v in V:
+                print('   ', ', '.join(f'{float(x):.5f}' for x in v))
+            for i, nm in enumerate(('d₁', 'the cofactor', 'd₂')):
+                lo, hi = min(v[i] for v in V) / L, max(v[i] for v in V) / L
+                print(f'    {nm}: x^{float(lo):.4f} to x^{float(hi):.4f}')
         return 0
     files = [(OUT, lean_file()), (OUTXD, lean_file_xdefs()), (OUTX, lean_file_x())]
     if '--check' in sys.argv[1:]:

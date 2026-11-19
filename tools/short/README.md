@@ -129,9 +129,10 @@ The plan, with what is done:
    - His Lemmas 3.1 and 3.2 (their Lemmas 12 and 13) rest on Watt's mean value theorem (their Lemma 2), which rests on
      Deshouillers and Iwaniec's bounds for sums of Kloosterman sums: not in the library, and a hypothesis until it
      is.
-3. **The sieve.** Buchstab's identity on families of tuples (`SieveDecomp.buchstab_fam` has the form the Linnik route
-   uses), the comparison of `(x − x^θ, x]` with `(x − x^{1−ρ}, x]`, and Li's decomposition into the regions `A`, `B`
-   and `C`. The main terms in the comparison interval: the prime number theorem there and the upper bound with
+3. **The sieve.** Buchstab's identity on the certificate's nodes (`ShortSieveBuch.count_buchstab`: the Type I term,
+   with the item free of primes below the level, is the node plus its Buchstab child; done), the comparison of
+   `(x − x^θ, x]` with `(x − x^{1−ρ}, x]`, and Li's decomposition into the regions `A`, `B` and `C`. The main terms in
+   the comparison interval: the prime number theorem there and the upper bound with
    Buchstab's `ω` for its rough numbers, uniformly in the cofactors, are `ShortSieveLong` (done). The asymptotic
    formula for a term (done): its tuples of primes, cut out by conditions `Σ e_j log p_j ≤ b` (the bounds of a cell,
    the order of the primes, the sizes of products), are split by the boxes of a grid of ratio `2^{1/d}`; the boxes

@@ -8,7 +8,7 @@ lies between `Σ_{τ∈S⁻} λ⁻_τ 1[f⁻_τ ∣ m]` and `Σ_{σ∈S⁺} λ�
 
 * `sum_mul_dvd`: for `f ≥ 1`, `Σ_{m≤N} 1[f ∣ m]F(m) = Σ_{k≤N} F(fk)` when `F` vanishes above `N`.
 * `brun_upper`, `brun_lower`: the sifted sums of `g ≥ 0` over the range, against the weights' sums.
-* `spline_upper`, `spline_lower`: the sign-split sandwich: for `λ = λ₊ − λ₋` (the positive and negative parts),
+* `split_upper`, `split_lower`: the sign-split sandwich: for `λ = λ₊ − λ₋` (the positive and negative parts),
   `λ Σ_k rng(d, k)g(dk) ≤ λ₊ Σ_k wp(k)g(dk) − λ₋ Σ_k wm(k)g(dk)`, and the reverse with `wp`, `wm` exchanged.
 
 The file imports `SieveTypeIBFam.lean`.
@@ -1013,7 +1013,7 @@ theorem sum_blocks {ι₁ ι₂ κ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset
   exact Finset.sum_comm
 
 /-- A block pair's bilinear sum: over `(y₁, σ)` with `b₁(π₁(y₁)f_σ) = β₁` and `y₂` with `b₂(π₂(y₂)) = β₂`, of
-`λ(σ)c(y₁, y₂)Σ_k w_t(k)dw(π₁(y₁)f_σπ₂(y₂)k)`, in the form of `SieveTypeIBFam.typeIB_sharp0`. -/
+`λ(σ)c(y₁, y₂)Σ_k w_t(k)dw(π₁(y₁)f_σπ₂(y₂)k)`, in the form of `SieveTypeIBPairWide.typeIB_sharp0_wide`. -/
 noncomputable def blockSum (q : ℕ) (a : ZMod q) {ι₁ ι₂ κ : Type*} (Y₁ : Finset ι₁) (Y₂ : Finset ι₂) (π₁ : ι₁ → ℕ)
     (π₂ : ι₂ → ℕ) (S : Finset κ) (f : κ → ℕ) (lam : κ → ℝ) (c : ι₁ → ι₂ → ℝ) (b₁ b₂ : ℕ → ℕ) (β₁ β₂ : ℕ)
     (t : ℕ × ℕ × ℕ × ℕ) : ℂ :=

@@ -44,7 +44,7 @@ scope as "Partial progress", its automation as `agent` and its review status as 
 not an independent one. Beyond the rebuild above, nothing here confirms that the release's Lean is correct, and this
 library's proof was not compared with it. Third-party reports of replaying OpenAI's Lean proof of the `7/8` result exist
 (including, in at least one report, for the Dirichlet statement); they check the proof, not the mathematics, and the author
-has not rerun them. The AIProofWatch record (reviewed 2026-10-25) covers the Riemann zeta function at `7/8` only. For
+has not rerun them. The AIProofWatch record (check dated 2026-10-07, assessment reviewed 2026-11-07, read 2026-11-16) covers the Riemann zeta function at `7/8` only. For
 Dirichlet L-functions in general, no review of the mathematics independent of OpenAI and of this library is known.
 
 ## What the formalisation here is
@@ -93,7 +93,11 @@ The paper's Type II estimate in two variables (`SieveTypeIIHM.typeII_two_gen`) h
 characters mod `q`. It needs every character's prime sums to be small, not only most of them. Its proof sorts the
 characters into bins by the real parts of their zeros. At the top bin, `SieveTypeII.bin_rect` uses the half-plane: no
 zero of `L(·, χ)` lies in `Re s > 11/12`. The half-plane also gives the bound of the kernels in the
-Halász–Montgomery inequality (`LinnikLindelof.lindelof`) and the prime number theorem of the sieve's main terms. The
-paper's exponent, `43/20` (`Linnik21500.linnik_21500`), therefore depends on this result, as do the library's earlier
-theorems at `11/5` and below. The paper states the dependence, and compares what its method gives with what the
-half-plane and the density estimate give without it.
+Halász–Montgomery inequality (`LinnikLindelof.lindelof`) and the prime number theorem of the sieve's main terms. In
+the resonant window of the paper's Theorem 1.1 (`SieveTypeIIHM.typeII_res`) it bounds every prime sum of the rest by
+its length to the power `11/12`, up to the width of a bin, at every character, before the sums' moments and large
+values sort the characters. The paper's two exponents, `43/20` (Theorem 1.2, `Linnik21500.linnik_21500`) and
+`21/10` (Theorem 1.1, `Linnik21000.linnik_21000`), therefore depend on this result, its Input 1. The paper
+states the dependence, and compares what its method gives with what the half-plane and the density estimates give
+without it, and with what the half-plane gives through Harman's theorems on primes in a progression, one of which
+gives `1/0.472 < 2.1187`, below Theorem 1.2's `43/20` (its Section 12).

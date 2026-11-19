@@ -12,8 +12,8 @@ leaves, the terms `S(A_d, w)`, by Brun's sieve: `SieveP6TreeLeaves.tree_leaves_l
 error asked for shrinks. Here there is no tree and the level is fixed: the family's own terms at the level `w`.
 
 * `family_leaves_le`: for a family `RTg j N₂ Ω` of strictly decreasing chains with entries at least `w ≥ 2`, split
-  into the blocks `S₁` and `S₁ᶜ` with the sizes of `SieveP6Leaves.leaves_chain` at the chains with `∏x > q^{L−1−δ'}`:
-  `|Σ_x (S(A_x, w) − S(B_x, w)/φ(q))|` is at most
+  into the blocks `S₁` and `S₁ᶜ` with `∏_{S₁} x·w^{2k+4} ≤ q^{L−1−a}` and `∏_{S₁} x·w^{2k+4}·(∏_{S₁ᶜ} x)² ≤ q^{L−b}`
+  at the chains with `∏x > q^{L−1−δ'}`: `|Σ_x (S(A_x, w) − S(B_x, w)/φ(q))|` is at most
   `(2ζ(k)(N₂ − N₁)/(φ(q) log w) + 2·rem·q^{L−1−δ'})·Σ_x 1/∏x + q^{L−δ}/φ(q)`.
   The chains with `∏x ≤ q^{L−1−δ'}` by `small_leaves_le`, the others by `large_leaves_le` after the comparisons that
   are constant are dropped.
@@ -34,8 +34,8 @@ open Classical
 
 /-- **A family of chains at a fixed level.** At `w = ⌈q^{εw}⌉ ≥ 2`, for a family `RTg j N₂ Ω` of strictly
 decreasing tuples with entries at least `w` (at most `J₀ − 1` comparisons, with `m`-parts at most `Λ₁ log q`, and
-`Λ₁ log q + j log N₂ ≤ Λ₀ log q`), whose chains with `∏x > q^{L−1−δ'}` split into the blocks `S₁` and `S₁ᶜ` with the
-sizes of `leaves_chain`: the terms at the level `w` total at most
+`Λ₁ log q + j log N₂ ≤ Λ₀ log q`), whose chains with `∏x > q^{L−1−δ'}` split into the blocks `S₁` and `S₁ᶜ` with
+`∏_{S₁} x·w^{2k+4} ≤ q^{L−1−a}` and `∏_{S₁} x·w^{2k+4}·(∏_{S₁ᶜ} x)² ≤ q^{L−b}`: the terms at the level `w` total at most
 `(2ζ(k)(N₂ − N₁)/(φ(q) log w) + 2·rem·q^{L−1−δ'})·Σ_x 1/∏x + q^{L−δ}/φ(q)`. -/
 theorem family_leaves_le {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {L a b δ' εw Λ₀ Λ₁ C₀ δ : ℝ}
     {k J₀ Kmax : ℕ} (hok : LeavesOK q a' L a b δ' εw Λ₀ C₀ δ k J₀ Kmax) {j : ℕ} (Ω : List (GCmp j))

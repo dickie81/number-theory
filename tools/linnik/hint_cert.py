@@ -54,24 +54,24 @@ a bound whatever the hints are (`lib/pnt/SieveAdDir.lean`).
     the plan cut into parts of at most `cap` predicted seconds of the kernel: consecutive cells of one prime, a
     heavy cell cut by its own Buchstab step.
 
-It writes `lib/pnt/SieveHint<TAG>.lean` (the exponent and the search), `SieveHint<TAG>P<k>.lean` (the parts, each
-by `decide +kernel`) and `Linnik<TAG>.lean` (the route, the bound from the parts, and the theorem). With
-`--check`, nothing is written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a
-difference); it is not part of `check_certificate.py`, for it searches for ten minutes on four cores at
-`21500`. With `--cache DIR` the plan of each cell of the first prime is kept in DIR, so that a long plan can be
-stopped and taken up again. With `--try`, the search is planned with other parameters (cells of side H, chains'
-cells of side HF over the frozen parts, boxes of at most MAXLEN primes reversed; `--pos`, `--lam N`, `--blk N`,
-`--skip N`, `--energy` as `Par.pos`, `Par.lam`, `Par.blk`, `Par.skip`, `Par.energy`; `--hl`, the window's lines
-named by the hint, `Par.hl`; `--chunk N`, the cells' theorems in files of at most N, `Par.chunk`) and its cost and
-the plan's size are printed; with `--out`, its files are written to DIR. A cell kept in the cache without `--hl` is
-written with it all the same: its parts' hints are transcoded (`transcode_hl`). PyPy runs it one and a half times as
-fast as CPython, with the same output. With `--cplan` the search of each cell of the first prime is the C planner's
-(`cplan.py`, `cplan/hint_plan.c`: `Planner.plan`, the lazy hints and the replan of `row_job`, method by method):
-the same plans, costs and counts as PyPy's (`cplan_test.py`), 20 to 50 times as fast and in a fraction of the
-memory. With `--cgen` the generator is in C too (`cplan/gen.h`): the cut of a heavy cell into parts, the hints of
-each part with the kernel's mirror on them (`cut`, `add_part`, `dHints`, `dPart`), the parts of the light cells and
-the transcoding of a cached cell's hints for `--hl` (`hl_parts`), with the same parts, hints, costs and counts as
-the Python generator's (`cgen_test.py`); Python writes the Lean files.
+It writes `lib/pnt/SieveHint<TAG>.lean` (the exponent and the search), `SieveHint<TAG>P<k>.lean` (the parts, each by
+`decide +kernel`) and `Linnik<TAG>.lean` (the route, the bound from the parts, and the theorem). With `--check`,
+nothing is written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a difference);
+`check_certificate.py` runs it at `21500` with `--cplan` (about a minute and a half on four busy cores; fifteen
+minutes without `--cplan`). With `--cache DIR` the plan of each cell of the first prime is kept in DIR, so that a
+long plan can be stopped and taken up again. With `--try`, the search is planned with other parameters (cells of
+side H, chains' cells of side HF over the frozen parts, boxes of at most MAXLEN primes reversed; `--pos`, `--lam N`,
+`--blk N`, `--skip N`, `--energy` as `Par.pos`, `Par.lam`, `Par.blk`, `Par.skip`, `Par.energy`; `--hl`, the window's
+lines named by the hint, `Par.hl`; `--chunk N`, the cells' theorems in files of at most N, `Par.chunk`) and its cost
+and the plan's size are printed; with `--out`, its files are written to DIR. A cell kept in the cache without `--hl`
+is written with it all the same: its parts' hints are transcoded (`transcode_hl`). PyPy runs it one and a half times
+as fast as CPython, with the same output. With `--cplan` the search of each cell of the first prime is the C
+planner's (`cplan.py`, `cplan/hint_plan.c`: `Planner.plan`, the lazy hints and the replan of `row_job`, method by
+method): the same plans, costs and counts as PyPy's (`cplan_test.py`), 20 to 50 times as fast and in a fraction of
+the memory. With `--cgen` the generator is in C too (`cplan/gen.h`): the cut of a heavy cell into parts, the hints
+of each part with the kernel's mirror on them (`cut`, `add_part`, `dHints`, `dPart`), the parts of the light cells
+and the transcoding of a cached cell's hints for `--hl` (`hl_parts`), with the same parts, hints, costs and counts
+as the Python generator's (`cgen_test.py`); Python writes the Lean files.
 
 Values (12 November 2026): at 2150/1000 with cells of side 0.004 and chains' cells 0.006, boxes of three and five
 primes reversed, the search costs 0.94847 K on 3.4·10^7 boxes (2.8·10^7 over frozen parts; nine minutes on four
@@ -81,21 +81,21 @@ on the 17 files; with the configurations searched by the kernel and the box read
 certificate of this theorem, it took 3.7 ms, 7.6 ms (13 ms), 0.9 ms and 20 ms. At 2140/1000 with cells of side
 0.003, chains' cells 0.006 and boxes of two to six primes of either sign reversed, the search costs 0.96408 K on
 2.7·10^8 boxes with no price on the kernel's time (1.87·10^7 steps), and 0.99055 K on 3.5·10^8 boxes with `lam = 10`
-(9.8·10^6 steps, 39 part files; eighty minutes on three cores with PyPy): the certificate `21400`, superseded since,
-its files in the git history.
+(9.8·10^6 steps, 39 part files; eighty minutes on three cores with PyPy): the certificate `21400`.
 Of the boxes of that search, 2% to 9% are under the plan that is kept (four cells of the first prime from
 x^0.28 to x^0.50); with `skip = 3`, on every sixth cell of the first prime, the search is 0.55 of its boxes and
 the plan costs 0.17% more, on 1% fewer steps (13 November 2026).
 At 2135/1000 with the leaves of the comparisons cut in three (`energy`) and the cells of 2140/1000, the search costs
 0.98988 K on 3.7·10^8 boxes with no price on the kernel's time (2.4·10^7 steps, 98 part files, a predicted 6.5 hours
-of the kernel; three hours on four cores with PyPy): the certificate `21350`, superseded since, its files in the git
-history. With `lam = 10` its first prime's cells from x^0.43 to x^0.50 cost 2.1% more, and the planner, which then
-tries each reversal at the full limit, takes fifteen to twenty-five minutes on a cell near x^0.40 (13 November
-2026).
+of the kernel; three hours on four cores with PyPy): the certificate `21350`. With
+`lam = 10` its first prime's cells from x^0.43 to x^0.50 cost 2.1% more, and the planner, which then tries each
+reversal at the full limit, takes fifteen to twenty-five minutes on a cell near x^0.40 (13 November 2026).
 At 2115/1000 (`21150`: the resonant window in both trees with the cofactor and the large values of the powers, the
 main tree to depth 8, `lam = 1`) the search costs 0.88304 K on 4.9·10^8 boxes (3.04·10^7 steps, 612 part files of
 57 689 parts, a predicted 40 hours of the kernel by `SEC2`; the cells of the first prime planned on two machines,
-about nine hours on four cores each), the cells' theorems in 17 files (15 November 2026).
+about nine hours on four cores each), the cells' theorems in 17 files (15 November 2026): the certificate `21150`.
+The files of the certificates `21400`, `21350` and `21150` are not in `lib/pnt`; they are in the git history (those
+of `21150` at commit 76abe3c).
 At 2100/1000 (`21000`: with the window's test at the two corners of a box, consecutive cells that one test of
 the window covers as one cell, cells of side 0.003 over the frozen parts, every configuration of the estimate in
 two variables searched over them, a box of two primes of the main tree cut in two where that is worth the
@@ -126,14 +126,21 @@ from flip_cert import flipT, flipOK, vboxF  # noqa: E402
 # the certificates, by tag: the exponent and the parameters of each (`Par`): cells of side at most `h`, chains'
 # cells over the frozen parts at most `hF`, boxes of at most `maxlen` primes reversed through their largest prime,
 # and no three-prime reversal in the plan
-CERTS = {'21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6),
+CERTS = {# the tests, the reversal and their soundness are `SieveAd.Plain`'s (`plain`): the paper's conditions on the
+         # leaves alone, so that the theorem's proof does not rest on the leaves cut in three
+         '21500': dict(lnum=2150, lden=1000, h=0.004, hF=0.006, maxlen=6, plain=True),
          # boxes of the sign `+` reversed too, and each step chosen by its cost plus ten millionths of `K` for
          # each second of the kernel
          '21400': dict(lnum=2140, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=10, sec=2),
          # and the leaves of the comparisons cut in three where the paper's conditions fail
          '21350': dict(lnum=2135, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True),
-         # and the resonant window for the main tree's boxes (`SieveAd.chkIR`); this and the next are plans only: the
-         # library keeps the window's decoder with the cofactor alone (`SieveAd.cfgIMRC`), so their files are not written
+         # and the resonant window for the main tree's boxes (`SieveAd.chkIR`); this and the next three are plans
+         # only. The script writes the window's certificates with the cofactor only (`--cof`), so the files of this
+         # and the next are not written; and the library's decoders of the window's configurations with the
+         # cofactor are those under `--hl` (`SieveAd.cfgIMRCH`), `--ycorner` (`SieveAd.cfgIMY`) and both
+         # (`SieveAd.cfgIMYH`), so the files
+         # that `21100` and `21150` write, with neither, do not compile: the decoder they name is gone with the
+         # certificate at 2115/1000 (in the git history at commit 76abe3c)
          '21300': dict(lnum=2130, lden=1000, h=0.003, hF=0.006, maxlen=6, pos=True, lam=0, sec=2, energy=True,
                        res=True),
          # and for the boxes of the trees over the frozen parts (`SieveAd.frozResTestsC`)
@@ -1137,7 +1144,8 @@ class Planner(fl.FlipSearch):
         return cs, hs
 
     def cfgIMRC(self, bl, h):
-        """`SieveAd.cfgIMRC`: `cfgIPR` with a set of one more bit than the box has cells, the cofactor's."""
+        """`cfgIPR` with a set of one more bit than the box has cells, the cofactor's (the Lean decoder it mirrored
+        is gone with the certificate at 2115/1000, in the git history at commit 76abe3c)."""
         return self.cfgIPR(2 ** (len(bl) + 1), h)
 
     def cfgJM(self, bl, h):
@@ -1451,7 +1459,7 @@ class Planner(fl.FlipSearch):
         """A node of the main tree."""
         kind = node[0]
         w = len(bl)
-        wI = w + (1 if self.res_cof is True else 0)    # an evaluation's set, with the cofactor's bit (`cfgIMRC`)
+        wI = w + (1 if self.res_cof is True else 0)    # an evaluation's set, with the cofactor's bit
         if kind == 'V':
             out.append((31, 6))
         elif kind == 'E':
@@ -1525,7 +1533,7 @@ class Par:
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
                  blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False, cof=False, lv=False,
                  lazy=False, rmerge=False, split=0, ycorner=False, exh=0, split2=0, hl=False, chunk=0,
-                 rescap=0):
+                 rescap=0, plain=False):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1`, `SEC2` or `SEC3`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
@@ -1551,8 +1559,14 @@ class Par:
         `SieveResTest.resXH` (`res_test.hintH` writes the hints from the plan); `chunk`: the theorems of the cells
         cut by the next prime's cells in files of at most `chunk` theorems (`final_file`), which the build checks
         side by side, rather than in `Linnik<TAG>.lean`; `rescap`: with `lazy`, the memo of the window's tests is
-        trimmed past that many entries (`Planner.rescap`; the plan is the same, the memory is bounded)."""
+        trimmed past that many entries (`Planner.rescap`; the plan is the same, the memory is bounded); `plain`:
+        the Lean files name the tests, the reversal and their soundness in `SieveAd.Plain` (`SieveAdPlainDefs.lean`,
+        `SieveAdPlainDir.lean`), the tests with the paper's conditions on the leaves alone, whose proofs do not rest
+        on the leaves cut in three: for a plan with neither `energy` nor `res`, in one file of cells."""
         assert not rev, 'the search led by hints has no three-prime reversal'
+        assert not plain or not (energy or res or pos or chunk), 'the tests with the paper\'s conditions alone ' \
+            'have neither the leaves cut in three, nor the window, nor the reversal of the sign +'
+        self.plain = plain
         self.tag, self.lnum, self.lden, self.rev = tag, lnum, lden, rev
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
         self.skip, self.skipmin, self.energy, self.res, self.resF, self.cof = skip, skipmin, energy, res, resF, cof
@@ -1999,6 +2013,9 @@ def defs_file(par_):
     dimp = 'SieveAdFrozResDefs' if resF else 'SieveAdResDefs' if res else 'SieveAdDirDefs'
     alt, ftests = ('altFDR', 'frozResTestsC') if resF else ('altFD', 'frozTestsC')
     yc = getattr(par_, 'ycorner', False)
+    pl = getattr(par_, 'plain', False)
+    if pl:
+        tests, dimp, alt, ftests = 'Plain.fillTestsF', 'SieveAdPlainDefs', 'Plain.altFD', 'Plain.frozTestsC'
     if yc:
         tests, cfgI, dimp, alt, ftests = 'resTestsFY', 'cfgIMY', 'SieveAdResYDefs', 'altFDY', 'frozResTestsY'
     hl = getattr(par_, 'hl', False)
@@ -2008,9 +2025,11 @@ def defs_file(par_):
         tests, cfgI, dimp, alt, ftests = (
             ('resTestsFYH', 'cfgIMYH', 'SieveAdResYHDefs', 'altFDYH', 'frozResTestsYH') if yc else
             ('resTestsFCH', 'cfgIMRCH', 'SieveAdResHDefs', 'altFDRH', 'frozResTestsCH'))
+    # the decoder of the main tree's configurations with neither `--ycorner` nor `--hl`, `cfgIMRC`, is not in the
+    # library (see `CERTS`), and a certificate with either does not use it: its doc names the decoders it uses, below
     resdoc = ('With the resonant window: an evaluation of kind `3` in the main tree is `SieveAd.chkIRC`\'s\n'
               '(`SieveAd.resTestsFC`; the rest tested by `SieveResTest.resX`, with the box\'s cofactor in it when it is\n'
-              'one prime), its configuration read by `SieveAd.cfgIMRC`' + (
+              'one prime)' + ('' if yc or hl else ', its configuration read by `SieveAd.cfgIMRC`') + (
                   '; over the frozen parts too, the box `ch ++ β` (`SieveAd.frozResTestsC`, with\n'
                   '`SieveAd.chkIRF`), read by `SieveAd.cfgIFR`.\n\n' if resF else '.\n\n') if res else '')
     if yc:
@@ -2025,6 +2044,15 @@ def defs_file(par_):
                        '`SieveAd.cfgIFYH`.\n\n' if yc else
                        '`SieveAd.resTestsFCH` and\n`SieveAd.frozResTestsCH`, read by `SieveAd.cfgIMRCH` and '
                        '`SieveAd.cfgIFRH`.\n\n'))
+    tdoc = '(`SieveAd.fillTestsF`)'
+    adoc = (f'  (`SieveAd.{alt}`), with the tests `SieveAd.{ftests}` and the chains over the frozen parts on the grid '
+            f'of side\n  at most `{par_.hF}/DEN` (`{par_.hFf}`);')
+    if pl:
+        tdoc = 'with the paper\'s conditions on the leaves alone (`SieveAd.Plain.fillTestsF`)'
+        adoc = (f'  (`SieveAd.{alt}`), with the tests `SieveAd.{ftests}` and the chains over the frozen parts on the\n'
+                f'  grid of side at most `{par_.hF}/DEN` (`{par_.hFf}`);')
+        resdoc = ('The tests are those of `SieveAdPlainDefs.lean`: they do not read the leaves cut in three, so the '
+                  'theorem\'s proof\ndoes not rest on the estimate behind them.\n\n')
     return f"""/-
 # The exponent and the search led by hints at `L = {LN}`
 
@@ -2034,13 +2062,12 @@ The bilinear Type I rule's exponent `{LN}` (`ibPar{T}`), and `solve{T}`, the sea
 (`SieveAd.solveD`):
 
 * the nodes of the main tree with a dropped box's cost in one pass (`SieveAd.opsMP`), and the tests in one pass
-  (`SieveAd.fillTestsF`);
+  {tdoc};
 * the configurations read from the hints (`SieveAd.cfgIM`, `SieveAd.cfgJM`), and the cells of a new prime
   (`SieveAd.kidsM`) on the grid of side at most `{par_.hI}/DEN` (`{par_.h}`) and at most the exponent over
   `{par_.kappa}`;
 * as its hinted bound, the reversal through the largest prime of boxes of at most `{par_.maxlen}` primes
-  (`SieveAd.{alt}`), with the tests `SieveAd.{ftests}` and the chains over the frozen parts on the grid of side
-  at most `{par_.hF}/DEN` (`{par_.hFf}`);
+{adoc}
 * the depth of recursion `{fc.FUEL}`.
 
 {resdoc}The file imports `{dimp}.lean`; so neither it nor the part files (`SieveHint{T}P1.lean` …) load more of
@@ -2188,6 +2215,11 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
     resimp = ('import SieveAdRes\n' + ('import SieveAdFrozResTree\n' if resF else '') +
               ('import SieveAdResCof\n' if cof else '') + ('import SieveAdResH\n' if hl else '') if res else '')
     prof = 'pr_of_partDRH' if hl else 'pr_of_partDR' if resF else 'pr_of_partD'
+    # the tests with the paper's conditions on the leaves alone: the names of `SieveAd.Plain` and its modules
+    pl = getattr(par_, 'plain', False)
+    P = 'Plain.' if pl else ''
+    if pl:
+        prof = 'Plain.pr_of_partD'
     if yc and hl:
         cfgI, prof = 'cfgIMYH', 'pr_of_partDYH'
         resimp = 'import SieveAdResYH\n'
@@ -2212,13 +2244,33 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
                   f'theorem soundF{T} : (resTestsF).Sound := resTestsF_sound\n')
     else:
         soundF = (f'/-- The tests in one pass at `{LN}` are sound: they are the tests. -/\n'
-                  f'theorem soundF{T} : (fillTestsF).Sound := by\n  rw [fillTestsF_eq]\n  exact fillTests_sound\n')
+                  f'theorem soundF{T} : ({P}fillTestsF).Sound := by\n  rw [{P}fillTestsF_eq]\n'
+                  f'  exact {P}fillTests_sound\n')
+    # the tests with the resonant window that the search reads: `resTestsF<sfx>` in the main tree and
+    # `frozResTests<sfx>` over a frozen part, `<sfx>` naming the cofactor (`C`), the lines named by the hint (`H`)
+    # and the test at the two corners (`Y`), as in `soundF` above; an evaluation of kind `4` is the test at the two
+    # corners
+    sfx = 'YH' if yc and hl else 'Y' if yc else 'CH' if hl else 'C' if cof else ''
+    kinds = 'of kind `3` or `4`' if yc else 'of kind `3`'
+    if res:
+        onepass = (f'(`SieveAd.resTestsF{sfx}`: for an evaluation of another kind and for a comparison they are '
+                   f'`SieveAd.fillTestsF`\'s, equal to the tests that are proved sound); over a frozen part, in one '
+                   f'pass over the chain\'s cells, with what the tests read from the frozen primes computed once for a '
+                   f'tree (' + (f'`SieveAd.frozResTests{sfx}`: `SieveAd.frozTestsC` for another kind and for a '
+                                f'comparison' if resF else '`SieveAd.frozTestsC`') + ')')
+    else:
+        onepass = (f'(`SieveAd.{P}fillTestsF`), equal to the tests that are proved sound; over a frozen part, in one '
+                   f'pass over the chain\'s cells, with what the tests read from the frozen primes computed once for a '
+                   f'tree (`SieveAd.{P}frozTestsC`)')
     plain = textwrap.fill(
         f'Plain statement (`linnik_{T}`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there '
         f'is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`, with no hypothesis. The route is at `L = {LN}` '
         f'(`route{T}`), ' + (
             'with the estimate in two variables and the resonant window, and the tests are `SieveAd.fillTests` with '
-            'the resonant window\'s for an evaluation of kind `3` (`SieveAd.resTestsF`). ' if res else
+            f'the resonant window\'s for an evaluation {kinds} (`SieveAd.resTestsF{sfx}`). ' if res else
+            'with the estimate in two variables alone, and the tests are `SieveAd.Plain.fillTests`: the tests with no '
+            'window and with the paper\'s conditions on the leaves alone (`SieveAdPlainDefs.lean`), so that the proof '
+            'does not rest on the leaves cut in three, nor on the density curve behind them. ' if pl else
             'with the estimate in two variables alone, and the tests are `SieveAd.fillTests`, as for the theorem at '
             '`2165/1000`. ') + (
             'Where the paper\'s conditions on the leaves of a comparison fail, the plan cuts the box of leaves in '
@@ -2243,7 +2295,8 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
                 'a rest\'s cells, the variable tied to the rest (`SieveAd.chkIRY`, `SieveAd.chkIRFY`, '
                 '`SieveResTest.resYH`; `SieveAd.evI_resY`, `SieveAd.evIF_froz_resTY`). ' if yc else '') if res else '') +
         f'The sieve\'s decomposition is a tree of Buchstab steps with the reversal of a '
-        f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.frozTests`. The '
+        f'{shapes}: its tree runs over the frozen numbers, with the tests `SieveAd.{P}frozTests`' + (
+            f' and the resonant window\'s (`SieveAd.frozResTests{sfx}`)' if resF else '') + '. The '
         f'kernel does not search for the tree: it follows hints (`SieveAd.solveD`, `SieveAdDirDefs.lean`), the '
         f'plan of the search that `tools/linnik/hint_cert.py` ran ({stats["boxes"]} boxes, {stats["fboxes"]} of '
         f'them over frozen parts), in {nsteps} steps, {flips}: what is '
@@ -2251,10 +2304,8 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
         f'checked, and a cost that the search returns below its limit bounds the term whatever the hints are '
         f'(`SieveAd.{prof}`). The search is in {len(parts)} parts, {nfiles} files (`SieveHint{T}P1.lean` … '
         f'`SieveHint{T}P{nfiles}.lean`). The kernel evaluates the tests in one pass over a box '
-        f'(`SieveAd.fillTestsF`), equal to the tests that are proved sound; over a frozen part, in one pass over '
-        f'the chain\'s cells, with what the tests read from the frozen primes computed once for a tree '
-        f'(`SieveAd.frozTestsC`), and those imply the tests that are proved sound on the boxes of the tree '
-        f'(`SieveAdFast.lean`).', width=116)
+        f'{onepass}, and those imply the tests that are proved sound on the boxes of the tree '
+        f'(`{"SieveAdPlainFast" if pl else "SieveAdFast"}.lean`).', width=116)
     route = f"""/-- **The route's parameters at `{LN}`**: `L = {LN}`; the window's ends, `1/3` and `1/2`, are not used. -/
 @[instance_reducible] noncomputable def route{T} : Route := ⟨{LN}, 1 / 3, 1 / 2⟩
 
@@ -2270,7 +2321,7 @@ theorem ibFits{T} : @IBFits route{T} ibPar{T} :=
 """
     insts = f'attribute [local instance] route{T} routeOK{T} ibPar{T} ibFits{T}'
     sound = f"""/-- The tests at `{LN}` are sound. -/
-theorem sound{T} : (fillTests).Sound := fillTests_sound
+theorem sound{T} : ({P}fillTests).Sound := {P}fillTests_sound
 
 {soundF}
 
@@ -2304,6 +2355,7 @@ end Linnik{T}
 * `linnik_{T}`: `SieveAd.linnik_pr` at them, with the root at the floor `{f0}/DEN`, by the comparison with the rest
   among the tree's primes."""
     chunk = getattr(par_, 'chunk', 0)
+    dirmod, fillmod = ('SieveAdPlainDir', 'SieveAdPlainFill') if pl else ('SieveAdDir', 'SieveAdFill')
     if not chunk:
         return f"""/-
 # Linnik's theorem with exponent `{LN}`, by a search led by hints
@@ -2320,10 +2372,10 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). G
   the cell's own Buchstab step (`SieveAd.pr_buch`), and the pieces below it.
 {bullets}
 
-The file imports `SieveAdDir.lean`, `SieveAdFill.lean` and the part files.
+The file imports `{dirmod}.lean`, `{fillmod}.lean` and the part files.
 -/
-import SieveAdDir
-import SieveAdFill
+import {dirmod}
+import {fillmod}
 {resimp}{imports}
 
 namespace Linnik{T}

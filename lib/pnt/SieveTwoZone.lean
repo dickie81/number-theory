@@ -3,8 +3,7 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveTypeIIHM.bin_bound_gen_hm` turns the bound of a bin for one polynomial into a power of `q`, under the window's
-inequalities. This file does the same for `SieveTwoBins.sum_bin_two`, the bound of a bin for two polynomials. For a
+This file turns `SieveTwoBins.sum_bin_two`, the bound of a bin for two polynomials, into a power of `q`. For a
 polynomial of length `P = q^m` and a bin with at most `C_d(qT)^{g}(1 + log qT)^{10}` characters, the mean square
 `sqTerm` is at most a constant times `(1 + log qT)^{10} q^{M + η}Σ|a|²` for every `M` that is an exponent for it:
 
@@ -14,8 +13,8 @@ polynomial of length `P = q^m` and a bin with at most `C_d(qT)^{g}(1 + log qT)^{
 
 So the bin's contribution, `Mp` times the two square roots, with `Mp ≤ C₀(q^L/(P₁P₂))^{β+w}` the bound for the third
 factor, is at most a constant times `(1 + log qT)^{10} q^{E + η}(Σ|a|²/P₁)^{1/2}(Σ|b|²/P₂)^{1/2}` with
-`E = (L − m₁ − m₂)(β + w) + (m₁ + M₁)/2 + (m₂ + M₂)/2`. No `g/2` enters, as it does in the window's exponents: the
-number of characters of the bin is felt only through the Halász–Montgomery exponent.
+`E = (L − m₁ − m₂)(β + w) + (m₁ + M₁)/2 + (m₂ + M₂)/2`. No `g/2` enters: the number of characters of the bin is felt
+only through the Halász–Montgomery exponent.
 
 * `SqExp d e g m M`: `M` is an exponent for the mean square, by one of the two bounds.
 * `twoBound L d e g β m₁ m₂ w`: there are exponents `M₁`, `M₂` with `E ≤ L − 1/25000`.
@@ -27,8 +26,7 @@ number of characters of the bin is felt only through the Halász–Montgomery ex
 * `twoBound_of_long`, **two variables of length at least `q`**: if `m₁, m₂ ≥ 1` and `m₁ + m₂ + 1/2000 ≤ L`, then
   `twoBound` holds at every `β ≤ 11/12` and `w ≤ 4·10⁻⁶`, for every value of the curve. Here orthogonality loses
   nothing in either variable, and the third factor, of length at least `q^{1/2000}`, saves `(L − m₁ − m₂)(1 − β − w)`.
-  In exponents of `x = q^L` this is two variables in `[1/L, 1 − 1/L]` and a rest: it needs no density estimate, and
-  it does not close at `L = 13/6`, where the window does.
+  In exponents of `x = q^L` this is two variables in `[1/L, 1 − 1/L]` and a rest: it needs no density estimate.
 
 The file imports `SieveTwoBins.lean`.
 -/

@@ -1,7 +1,7 @@
 /- The axioms of the papers' theorems, the repository's default build target. Every line this file prints must be
 `[propext, Classical.choice, Quot.sound]` or a subset of them (`scripts/check_axioms.py`). -/
 import Linnik21500
-import Linnik22000E
+import Linnik21500Count
 import LinnikG7
 import PivotSharp
 import BallFlat
@@ -9,16 +9,22 @@ import BallGap
 import BallUpperEta
 import OrbitWindow
 
-/- Linnik's theorem with exponent `L = 43/20` (`2150/1000`), with no hypothesis: the Linnik paper's theorem
-(`papers/linnik-exponent/main.tex`). Harman's sieve with the Type II estimate in two variables, whose density curve is
-the trivial count below `7789/10000` and Huxley's estimate above (`SieveCurveHx`), a decomposition by trees of
-Buchstab steps with the reversal of a term through its largest prime, and its certificate, the plan of a search that
-the kernel follows by hints. Its one input that has not been refereed is the zero-free half-plane `Re s > 11/12`,
-OpenAI's result, proved here along their companion preprint (`formalisations/openai-half-plane.md`); no estimate of
-Ingham's or of Chen, Gupta and Li's is in its proof. The theorems of the paper's claims table (Appendix A), in its
-order: its own steps by section, then the results of the literature it uses, each with a note in `formalisations/`,
-then the classical deduction it compares with. -/
+/- Linnik's theorem with exponent `L = 43/20` (`2150/1000`), with no hypothesis: Theorem 1.2 of the Linnik paper
+(`papers/linnik-exponent/main.tex`), and its form in number, the case `43/20` of the paper's Corollary 1.3: at least
+`c·x/(φ(q) log x)` primes of every class below every `x ≥ K·q^{43/20}` (`Linnik21500.count_21500`). Harman's sieve
+with the Type II estimate in two variables, whose density curve is the trivial count below `7789/10000` and Huxley's
+estimate above (`SieveCurveHx`), a decomposition by trees of Buchstab steps with the reversal of a term through its
+largest prime, and its certificate, the plan of a search that the kernel follows by hints. Its one input that has not
+been refereed is the zero-free half-plane `Re s > 11/12`, OpenAI's result, proved here along their companion preprint
+(`formalisations/openai-half-plane.md`); no estimate of Ingham's or of Chen, Gupta and Li's is in its proof: its tests
+are those of the namespace `SieveAd.Plain`, with the paper's conditions on the leaves of a comparison alone. The
+theorems of the first block of the paper's claims table (Appendix A), in its order: its own steps by section (Sections
+2 to 7), then the results of the literature it uses, each with a note in `formalisations/`, then the classical
+deduction it compares with. The paper's Theorem 1.1, at `21/10` (`Linnik21000.linnik_21000`), and the theorems of its
+Sections 8 to 10 are printed by `CheckAll.lean`: its certificate is too heavy for the default build. -/
 #print axioms Linnik21500.linnik_21500
+#print axioms Linnik21500.count_21500
+#print axioms Linnik21500.count_large_21500
 #print axioms SieveTypeIIGen.CurveCounts
 #print axioms SieveCurveHx.counts_hx
 #print axioms SieveCurveHx.ghx_le_one
@@ -87,12 +93,12 @@ then the classical deduction it compares with. -/
 #print axioms SieveAd.ok
 #print axioms SieveAd.cost
 #print axioms SieveAd.okI2
-#print axioms SieveAd.okJ2
-#print axioms SieveAd.okJ3
-#print axioms SieveAd.fillTests_sound
-#print axioms SieveAd.evJ_fill_core
-#print axioms SieveAd.evJ_two_core
-#print axioms SieveAd.evI_twoE
+#print axioms SieveAd.Plain.okJ2
+#print axioms SieveAd.Plain.okJ3
+#print axioms SieveAd.Plain.fillTests_sound
+#print axioms SieveAd.Plain.evJ_fill_core
+#print axioms SieveAd.Plain.evJ_two_core
+#print axioms SieveAd.Plain.evI_twoE
 #print axioms SieveRough.psi_le
 #print axioms SieveRough.Psi_le_buchstab
 #print axioms SieveRough.super_M
@@ -116,27 +122,37 @@ then the classical deduction it compares with. -/
 #print axioms SieveAd.flip_cover
 #print axioms SieveAd.flip_inject
 #print axioms SieveAd.froz_weight_le
-#print axioms SieveAd.frozTests_sound
+#print axioms SieveAd.Plain.frozTests_sound
+#print axioms SieveAd.opsK
+#print axioms SieveAd.Plain.frozTests
 #print axioms SieveAd.frozRules
+#print axioms SieveAd.flipOK
+#print axioms SieveAd.Plain.flipCostD
 #print axioms SieveAd.bd_flip_neg
-#print axioms SieveAd.bd_flip_core
-#print axioms SieveAd.bd_flipCostD
+#print axioms SieveAd.Plain.bd_flip_core
+#print axioms SieveAd.Plain.bd_flipCostD
 #print axioms SieveAd.sound
-#print axioms SieveAd.altFD_sound
+#print axioms SieveAd.Plain.altFD_sound
 #print axioms SieveAd.linnik_pr
 #print axioms SieveAd.linnik_bd
 #print axioms SieveAd.Ttop_gB_ge
+#print axioms SieveAd.count_large_bd
+#print axioms SieveAd.count_large_pr
+#print axioms SieveAd.count_of_large
+#print axioms SieveAd.card_units_above
+#print axioms SieveAd.count_bd
+#print axioms SieveAd.count_pr
 #print axioms SieveAd.solveG_sound
-#print axioms SieveAd.solveD_sound
-#print axioms SieveAd.pr_of_partD
+#print axioms SieveAd.Plain.solveD_sound
+#print axioms SieveAd.Plain.pr_of_partD
 #print axioms Linnik21500.tree21500
 #print axioms Linnik21500.part21500
 #print axioms Linnik21500.sound21500
 #print axioms Linnik21500.soundF21500
-#print axioms SieveAd.fillTestsF_eq
-#print axioms SieveAd.frozTestsC_okI
-#print axioms SieveAd.frozTestsC_okJ
-#print axioms SieveAd.rules_frozC
+#print axioms SieveAd.Plain.fillTestsF_eq
+#print axioms SieveAd.Plain.frozTestsC_okI
+#print axioms SieveAd.Plain.frozTestsC_okJ
+#print axioms SieveAd.Plain.rules_frozC
 #print axioms HalfPlanePNT.psi_isBigO_eleven_twelfths
 #print axioms Eis.LFunction_ne_zero_of_re_gt
 #print axioms LinnikHuxStep.charDensity_gen
@@ -155,103 +171,17 @@ then the classical deduction it compares with. -/
 #print axioms LinnikIngham.linnik_thirtysix_thirteenths
 #print axioms LinnikTwelve.linnik_twelve_fifths
 
-/- The paper's earlier version proved `L = 11/5` (it is in the git history): the sieve route with a Type II estimate in
-one variable on a window, with the density curve `g7d` (Chen–Gupta–Li's Proposition 3.1 on `[5/7, 131/168]`,
-`LinnikCGLSteps`), the bilinear Type I estimate and the decomposition to depth 8, and its certificate. Its theorem stays
-in the library; the theorems of that version's claims table that the table above does not name are printed here. -/
-#print axioms Linnik22000E.linnik_22000e
-#print axioms SieveMain8.linnik_route_lt8
-#print axioms SieveMain8.linnik_large8
-#print axioms SieveDeep.totalD_lt_22000E
-#print axioms SieveCert.gridOK22000E
-#print axioms SieveCert.gridOKC22000E
-#print axioms Linnik22000E.routeOK22000D
-#print axioms Linnik22000E.fits22000E
-#print axioms Linnik22000E.deepGrid22000E
-#print axioms SieveTypeIIU22000D.typeII_22000d
+/- Further theorems of the Linnik paper's claims table: the literature that the two theorems use (Chen, Gupta and
+Li's Proposition 3.1 and the steps of the curve `g7d`, the Halász–Montgomery inequality, the bilinear Type I
+estimate) and the classical deduction. -/
 #print axioms LinnikCGLSteps.charDensity_s0
 #print axioms LinnikCGLSteps.charDensity_inT
+#print axioms LinnikCGLLV.CGLProp31
 #print axioms LinnikCGLHB101.prop31
 #print axioms LinnikCGLSteps.charDensity_s29
 #print axioms SieveCurve7D.counts_7d
 #print axioms SieveCurve7D.g7d_le_one
 #print axioms SieveCurve7D.g7d_half
-#print axioms SieveTypeIIU22000D.window_22000d
-#print axioms SieveTypeIIHM.sum_bin_hm
-#print axioms SieveTypeIIHM.sum_typeII_bins_hm
-#print axioms SieveTypeIIHM.bin_bound_gen_hm
-#print axioms SieveTypeIIHM.typeII_gen_hm
-#print axioms SieveTypeIB.typeIB_bound
-#print axioms SieveSpline.typeIB_spline
-#print axioms SieveP6Leaves.leaves_chain
-#print axioms SieveTypeIBAsym.leaves_ib
-#print axioms SieveFamily.typeII_sharp
-#print axioms SieveTypeIIU.typeII_unw
-#print axioms SieveChain.chainTU_bound
-#print axioms SieveChain.chainTL_bound
-#print axioms SieveChainR.chainTR_bound
-#print axioms SieveChain.sum_rough_tuples
-#print axioms SieveProp6.prop6
-#print axioms SieveTree.tree_pt
-#print axioms SieveStops2.stops2_bound
-#print axioms SieveLeaf.leaf_gap
-#print axioms SieveP6ib.prop6ib
-#print axioms SieveTreeStop.tree_pt_stop
-#print axioms SieveCert.okIB_cases
-#print axioms SieveCert.ibOK_sound
-#print axioms SieveQ.P6IB_box
-#print axioms SieveDecomp.buchstab_fam
-#print axioms SieveBuch.Par.T_eq
-#print axioms SieveBuch.Par.I_S1
-#print axioms SieveBuch.Par.I_S2
-#print axioms SieveBuch.Par.I_S3
-#print axioms SieveBuch.Par.I_S4
-#print axioms SieveBuch.Par.I_S5
-#print axioms SieveBuch.Par.I_S6
-#print axioms SieveBuch.Par.I_S6c
-#print axioms SieveBuch.Par.I_S6cle
-#print axioms SieveBuch.Par.I_S7
-#print axioms SieveBuch.Par.I_S7c
-#print axioms SieveBuch.Par.I_S7le
-#print axioms SieveBuch.Par.I_S8
-#print axioms SieveBuch.Par.I_S3c_vanish
-#print axioms SieveBuch.Par.I_S4c_vanish_lt
-#print axioms SieveBuch.Par.I_S4c_vanish_reg
-#print axioms SieveBuch.Par.I_S5c_vanish_lt
-#print axioms SieveBuch.Par.I_S5c_vanish_reg
-#print axioms SieveBuch.Par.I_S6c_vanish_lt
-#print axioms SieveBuch.Par.I_S6c_vanish_reg
-#print axioms SieveBuch.Par.I_S7c_vanish_lt
-#print axioms SieveBuch.Par.I_S7c_vanish_reg
-#print axioms SieveBuch.Par.I_S8c_vanish_lt
-#print axioms SieveBuch.Par.I_S8c_vanish_reg
-#print axioms SieveQ8.leaves_ev8
-#print axioms SieveRough.evLe_cell_tr
-#print axioms SieveRough.evLe_cell_ex
-#print axioms SieveOmegaB.log_le_half_sub_inv
-#print axioms SieveCert.bound2_ge
-#print axioms SieveDrop8.trB_le_trapF
-#print axioms SieveDrop8.exB_le_lastF
-#print axioms SieveDrop.drop2_le
-#print axioms SieveDrop8.drop4_le'
-#print axioms SieveDrop8.drop6_le'
-#print axioms SieveDrop8.drop8_le
-#print axioms SieveRough.share2_of_cand
-#print axioms SieveDrop8.share4D
-#print axioms SieveDrop8.share6D
-#print axioms SieveDrop8.share8D
-#print axioms SieveDrop.corner_le
-#print axioms SieveDrop.corner_ev
-#print axioms SieveDeep.okIB_of_okD
-#print axioms SieveDeep.surelyEval4_of_lmask
-#print axioms SieveDeep.surelyEval5_of_emask
-#print axioms SieveDeep.surelyEval6_of_emask
-#print axioms SieveDeep.scheme
-#print axioms SieveDeep.Ch3_le
-#print axioms SieveDrop8.dT_le_cost
-#print axioms SieveBuch.Par.decomp8
-#print axioms SieveDrop8.drop_ev8
-#print axioms Linnik22000E.ibFits22000E
 #print axioms LinnikStairs7.charDensity_in7_0
 #print axioms LinnikStairs7.charDensity_in7_18
 #print axioms LinnikInghamC.charDensity_ingham_c
@@ -260,9 +190,9 @@ in the library; the theorems of that version's claims table that the table above
 #print axioms LinnikCGLP81.cglp81
 #print axioms LinnikCGLHB101.cgls3
 #print axioms LinnikCGLHB101.cglt101
+#print axioms LinnikCGLLV.cgl_all
+#print axioms LinnikCGLStep.charDensity_cglGen
 #print axioms LinnikG7.linnik_g7d
-#print axioms LinnikG7.charDensity_g7d
-#print axioms SieveCurve7D.g7d_le_lin
 
 /- The orbit-lattice paper (`papers/orbit-lattice/main.tex`): under RH every pivot of the orbit with Gram matrix
 `√(mn)·K_H(m/n)`, computed from the primes, is at least `0.0577` after the first (`formalisations/ball-rate.md`, "The

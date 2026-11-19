@@ -1,38 +1,40 @@
-"""route_limits.py: where the sieve route's certificate ends. The certificates, the window corners and `quadfit` are
-computed in exact arithmetic; `fit` and the window's sampled scan in floating point.
+"""route_limits.py: where a sieve route with a Halász–Montgomery window and a certificate on a grid ends. The
+certificates, the window corners and `quadfit` are computed in exact arithmetic; `fit` and the window's sampled scan in
+floating point.
 
-The sieve route proves Linnik's theorem with exponent `L` from three checks on a window `[w₁, w₂]` (`m = w·L`): the
-window condition `WindowOKHM g L m₁ m₂ (1/1000) (1/1000)`, which the window files prove by `norm_num` at the corners
-of each piece; the grid's and route's conditions `GridOK`, `GridOKC`, `Fits` and `RouteOK` (by `decide` and
-`norm_num`, as in `Linnik22000E.lean`); and the certificate's total below `K` on the grid, which the kernel checks by
-`decide +kernel`: at `11/5`, `totalD < K` of `lib/pnt/SieveDeepDefs.lean` (`SieveMain8.linnik_route_lt8`), and at
-`278/125`, in the git history with its files, the refined certificate's `total2 < K` of `SieveCert2Defs.lean`
-(`SieveMain2.linnik_route_lt2`). This script computes the window, its corners and the depth-4 certificate (`replay`)
-for a curve, an exponent and a grid size `n`, without Lean; the refined `total2`, to depth 6 with the kept parts, is
-`mirror2.py`'s, and the depth-8 `totalD` is `mirror8.py`'s:
+Such a route proves Linnik's theorem with exponent `L` from three checks on a window `[w₁, w₂]` (`m = w·L`): the window
+condition of Proposition 3′ (orthogonality or the Halász–Montgomery inequality) with `δ = ε = 1/1000`, at the corners
+of each piece of the curve; the grid's conditions, the fit of the grid to the window and the route's conditions
+(`SieveRoute.RouteOK`); and the certificate's total below `K` on the grid. No theorem in the tree takes this route: its
+theorems and certificates, at `11/5` with the depth-8 `totalD < K` and at `278/125` with the refined `total2 < K`, are
+no longer in the tree; they are in the git history (the one at `11/5` at commit `76abe3c`), where each part is bounded
+by `⌈1.001 × part⌉`, about `0.1%` above the parts the mirrors compute. This script computes the window, its corners
+and the depth-4 certificate (`replay`) for a curve, an exponent and a grid size `n`, without Lean; the refined
+`total2`, to depth 6 with the kept parts, is `mirror2.py`'s, and the depth-8 `totalD` is `mirror8.py`'s:
 
 * `window`: the Halász–Montgomery window by a sampled scan (`β` at each piece's ends and 400 interior points, `m` in
   steps of `1/20000` over `[0.30L, 0.52L]`, `w ∈ {0, 4·10⁻⁶}`, the margin `1/25000`), the longest passing run of `m`,
   its ends `m/L` rounded to five decimals;
-* `corners`: every corner inequality of the window files in exact rationals: each piece below `5/6` by orthogonality
-  (T1) at `β ∈ {lo, hi}`, `w ∈ {0, 4·10⁻⁶}` and the window's ends and `1`; the top piece `[5/6, 11/12]` by
-  `windowPieceHM_const_split`'s three families. If a corner at an end fails, that end moves inward by `10⁻⁵` until none
-  fails; the row records the ends used. `corners` also takes a window with `m₁ ≥ 1`, which `WindowOKHM` allows: there
-  the inequalities for `m ≥ 1`, at `m₁` and `m₂`, and at `m₁ = 1` those for `m ≤ 1` at `m = 1` too;
-* `replay`: the depth-4 certificate of the library's first route, before the depths 5 and 6, the kept parts and the
-  present bounds of the cells (its `omK` is `0.5672` from `2` on, and `bound2`, `bound4` take `h/a` and `h/a²` at the
+* `corners`: every corner inequality of the window condition in exact rationals: each piece below `5/6` by
+  orthogonality (T1) at `β ∈ {lo, hi}`, `w ∈ {0, 4·10⁻⁶}` and the window's ends and `1`; the top piece `[5/6, 11/12]`
+  by the three families of the Halász–Montgomery branch (HM1, HM2, HM3). If a corner at an end fails, that end moves
+  inward by `10⁻⁵` until none fails; the row records the ends used. `corners` also takes a window with `m₁ ≥ 1`, which
+  the window condition allows: there the inequalities for `m ≥ 1`, at `m₁` and `m₂`, and at `m₁ = 1` those for
+  `m ≤ 1` at `m = 1` too;
+* `replay`: the depth-4 certificate of the route, without the depths 5 and 6, the kept parts and the sharper bounds
+  of the cells (its `omK` is `0.5672` from `2` on, and `bound2`, `bound4` take `h/a` and `h/a²` at the
   lower corners; the refined `total` and `total2` are `mirror2.py`'s), on the grid `U1 = ⌈w₁·DEN⌉`,
   `U2 = ⌊w₂·DEN⌋`, `n`, in exact integers (`cdiv`, `omK`, `bound2`, `bound4`, `cand`, `allowed`, `refcost`, `dec`,
-  `cost` as `SieveCertDefs.lean` had them; natural subtraction truncated at `0`, division by `0` giving `0`), and
-  `GridOK`, `Fits` and `RouteOK` as `decide` would evaluate them.
+  `cost`, with natural subtraction truncated at `0` and division by `0` giving `0`), and the grid's conditions
+  (`gridok`), the fit of the grid to the window (`fits`) and the route's conditions (`route`) as `decide` would
+  evaluate them.
 
-A row with the depth-4 `total < K`, no failed corner and every grid and route condition true (`accepted`) would have
-been a certificate of that first route (its certificate files are in the git history); the later theorems take the
-refined `total2 < K` (`mirror2.py`) or, at `11/5`, the depth-8 `totalD < K` (`mirror8.py`) instead, with the curve's
-counts (`counts_7c`, which holds with no hypothesis because `LinnikCGLDensity.cglDensity` proves `CGLDensity`, or
-`counts_7d`). The counts do not depend on `L`. What remains is the kernel's run of `norm_num` at the corners and of
-`decide +kernel` on the total, which this script does not make. The certificate files bound each part by `⌈1.001 ×
-part⌉`, about `0.1%` above the parts the mirrors compute.
+A row with the depth-4 `total < K`, no failed corner and every grid and route condition true (`accepted`) passes every
+check this script models at depth 4; the refined `total2 < K` (`mirror2.py`) and the depth-8 `totalD < K`
+(`mirror8.py`) are sharper totals on the same grid. The curve's counts (for `g7d`, `SieveCurve7D.counts_7d`, with no
+hypothesis) do not depend on `L`. A row is not a certificate: a theorem would still need the window condition and the
+grid's conditions in Lean and the kernel's run of `norm_num` at the corners and of `decide +kernel` on the total,
+which this script does not make.
 
 Curves: `g7d`, parsed from the Lean sources (`SieveCurve7D.lean`, with no hypothesis: `g7c` with Chen–Gupta–Li's
 Proposition 3.1 on `[5/7, 131/168]`, `LinnikCGLSteps.lean`; generated by `gen_cgl_curve.py`), and `g7c`, the curve of
@@ -58,11 +60,11 @@ Usage:
 the loss as `N → ∞`, and `c/(1 − a)` is the `N` at which the fitted line crosses `1`. `L` is given as a decimal or a
 fraction (`9/4`) and stored as a fraction.
 
-`floor`'s exact floor: `Fits` gives `DEN < L·U2 < L·w₂·DEN`, so `m₂ > 1`, where `WindowOKHM` has only its orthogonality
-branch; at `m = m₂` that branch is `(L − m₂)(1 − β − w) ≥ g(β)/2 + 1/25000`, so every window that `Fits` and
-`WindowOKHM` accept has `L > L* = 1 + sup (g(β)/2 + 1/25000)/(1 − β − 4·10⁻⁶)` over `1/2 ≤ β ≤ 11/12`. On each piece
-the quotient grows with `β`, so its supremum there is its value at the piece's right end (Lean's `if σ < hi` gives `hi`
-itself to the next piece).
+`floor`'s exact floor: the grid's fit gives `DEN < L·U2 < L·w₂·DEN`, so `m₂ > 1`, where the window condition has only
+its orthogonality branch; at `m = m₂` that branch is `(L − m₂)(1 − β − w) ≥ g(β)/2 + 1/25000`, so every window that
+the fit and the window condition accept has `L > L* = 1 + sup (g(β)/2 + 1/25000)/(1 − β − 4·10⁻⁶)` over
+`1/2 ≤ β ≤ 11/12`. On each piece the quotient grows with `β`, so its supremum there is its value at the piece's right
+end (Lean's `if σ < hi` gives `hi` itself to the next piece).
 """
 import json, os, re, sys, time
 from fractions import Fraction as Fr
@@ -154,8 +156,8 @@ def window(pieces, L):
 
 def corners(pieces, L, W1, W2, D=100000):
     """Every corner inequality of the window `[W1/D, W2/D]`, exact: on each piece and at its ends, the inequality for
-    `m ≤ 1` at the ends of `[m₁, 1]` when `m₁ ≤ 1`, and the one for `m ≥ 1` at the ends of `[max(m₁, 1), m₂]` (`Fits`
-    gives `m₂ > 1`; `m₁ ≥ 1` is allowed). Returns (failures as (end, tag), least slack, its tag)."""
+    `m ≤ 1` at the ends of `[m₁, 1]` when `m₁ ≤ 1`, and the one for `m ≥ 1` at the ends of `[max(m₁, 1), m₂]` (the
+    grid's fit gives `m₂ > 1`; `m₁ ≥ 1` is allowed). Returns (failures as (end, tag), least slack, its tag)."""
     m1, m2 = Fr(W1, D) * L, Fr(W2, D) * L
     assert m1 < m2 and 1 < m2, (float(m1), float(m2))
     lo_ms, hi_ms = ((m1, Fr(1)) if m1 <= 1 else ()), (max(m1, Fr(1)), m2)
@@ -226,8 +228,9 @@ def subset_sums(xs):
 
 
 def replay(U1, U2, n, per_row=False):
-    """`SieveCertDefs.lean`'s `total` and the grid's conditions; counts of candidates, decompositions and tests; with
-    `per_row`, also each row's tests, candidates and decomposed cells of depth 4."""
+    """The depth-4 certificate's `total` and the grid's conditions (`gridok`) of the module docstring; counts of
+    candidates, decompositions and tests; with `per_row`, also each row's tests, candidates and decomposed cells of
+    depth 4."""
     V = U2 - U1
     H = (tsub(DEN // 2, V) + n - 1) // n
     lim = tsub(DEN, U1)
@@ -400,7 +403,8 @@ def cmd_floor(curve, over=()):
     """The exact floor `L*` (the module docstring's argument), and the least `L = k/10⁴` in `[2.10, 2.30]` at which the
     sampled window is nonempty (bisection on `k`, the window growing with `L`), with that window's exact corners. With
     `over`, triples `(LO, HI, A)`: every piece inside `[LO, HI]` first takes the exponent `A` (a curve that is not
-    committed, to measure what a lower density exponent there would move)."""
+    committed, to measure what a lower density exponent there would move). The output's `Fits` is the grid's fit of
+    the module docstring."""
     pieces = parse(curve)
     for lo_, hi_, A_ in over:
         pieces = [(lo, hi, A_ if lo_ <= lo and hi <= hi_ else A) for lo, hi, A in pieces]
@@ -479,7 +483,7 @@ def cmd_quadfit(out):
 
 
 def cmd_windows(curve, Ls):
-    """All the windows `[W1, W2]/10⁵` whose exact corners pass (`corners`), `Fits` asking `m₂ > 1`. Each corner
+    """All the windows `[W1, W2]/10⁵` whose exact corners pass (`corners`), the grid's fit asking `m₂ > 1`. Each corner
     inequality is affine in `m` and is also checked at `m = 1` when the window contains it, so with `c` the largest `W`
     with `W·L < 10⁵` and `d` the least with `W·L > 10⁵`: the windows with `m₁ < 1 < m₂` that pass are those with `W1`
     in an interval ending at `c` and `W2` in one starting at `d` (none if `[c, d]` fails), and the windows with

@@ -1,15 +1,17 @@
-"""mirror8.py W1 W2 N a/b [OUT.json] [--rows A B]: the certificate to depth 8 of SieveDeepDefs.lean on the grid
+"""mirror8.py W1 W2 N a/b [OUT.json] [--rows A B]: the certificate to depth 8 on the grid
 U1 = ⌈(W1/10⁵)DEN⌉, U2 = ⌊(W2/10⁵)DEN⌋, n = N (a multiple of 4, with the coarse grid of N/4 cells of four), under the
-bilinear Type I rule at L = a/b, in exact integers, cell by cell as the Lean definitions read: `cand`, `inKK`, `ne3`,
-`okIB`, `bound2` (SieveCertDefs.lean, SieveRuleDefs.lean), and `trapF`, `lastF`, `Q4`, `q6`, `R8in`, `R8`, `vR`,
-`vRpre`, the masks `lbase1` … `emask`, `creg`, `lreg`, `bcnt`, `Fpure`, `Gpure`, the block test `dcpT`, `dcpF`, `dcp`,
-`dmaxL`, `dmax3`, `okD`, `cntH`, `cstar`, the costs `tail6`, `cost6b`, `bad5`, `cost6`, `pureOK`, `cost4`, `row`, `P3`,
-`refcost`, and `ok3D`, `allowedD`, `decD`, `costD`, `totalD` (SieveDeepDefs.lean). Prints `totalD`; with OUT, writes
-per candidate cell (i, j) its cost and the kernel work it makes (see `WORK`). Rows are computed in parallel processes.
-With `--rows A B` only the rows A ≤ i < B (OUT then holds those rows' cells, and the total is theirs).
+bilinear Type I rule at L = a/b, in exact integers, cell by cell: `cand`, `inKK`, `ne3`, `okIB`, `bound2`, and
+`trapF`, `lastF`, `Q4`, `q6`, `R8in`, `R8`, `vR`, `vRpre`, the masks `lbase1` … `emask`, `creg`, `lreg`, `bcnt`,
+`Fpure`, `Gpure`, the block test `dcpT`, `dcpF`, `dcp`, `dmaxL`, `dmax3`, `okD`, `cntH`, `cstar`, the costs `tail6`,
+`cost6b`, `bad5`, `cost6`, `pureOK`, `cost4`, `row`, `P3`, `refcost`, and `ok3D`, `allowedD`, `decD`, `costD`,
+`totalD`. Buchstab's bound `omKw`, with `omF`, `invKw` and the table `lnT`, is that of `lib/pnt/SieveCertDefs.lean`;
+the rest is the decomposition of the window route at L = 11/5, whose Lean is in the git history at commit 76abe3c.
+Prints `totalD`; with OUT, writes per candidate cell (i, j) its cost and the work of its evaluation (see `WORK`).
+Rows are computed in parallel processes. With `--rows A B` only the rows A ≤ i < B (OUT then holds those rows'
+cells, and the total is theirs).
 
-The kernel's check of a part `rowsJD a b j₀ j₁ ≤ B` evaluates exactly these functions; `gen_cert8.py` cuts the parts
-from OUT, with bounds ⌈1.001 × part⌉."""
+`tree_cert.py` and `cplan.py` take Buchstab's bound `omKw` from here, and `density_payoff.py --deep` and
+`two_factor.py` replay the certificate (at 11/5 on the grid `43457 46959 272`)."""
 import json
 import os
 import sys

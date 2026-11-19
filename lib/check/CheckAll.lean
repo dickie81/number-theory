@@ -148,7 +148,6 @@ import SieveStops2
 import SieveProp6
 import SieveChain
 import SieveDecomp
-import SieveBuch
 import SieveLeaves
 import SieveQ
 import SieveDrop
@@ -224,13 +223,8 @@ import SieveTwoComp
 import SieveAdDefs
 import SieveAdTree
 import SieveAdSpec
-import SieveAdWinDefs
-import SieveAdWin
 import SieveAdTwoDefs
 import SieveAdTwo
-import SieveAdMixDefs
-import SieveAdMix
-import SieveAd22000
 import SieveAdSearchDefs
 import SieveAdSearch
 import SieveAdFilt
@@ -263,13 +257,10 @@ import SieveAdFrozTests
 import SieveAdFlipDefs
 import SieveAdFlipSearch
 import SieveAdFlipPos
-import SieveAdFlipStratDefs
 import SieveAdFastDefs
 import SieveAdFast
 import SieveAdDirDefs
 import SieveAdDir
-import SieveHMWindow
-import SieveTypeIIHM
 import LinnikCGLLV
 import LinnikCGLStep
 import LinnikCGLMat
@@ -337,32 +328,9 @@ import LinnikCGLContinuation
 import SieveMain2
 import LinnikCGLSteps
 import SieveCurve7D
-import SieveBuch8
-import SieveQ8
-import SieveDeep
-import SieveDeepCost
 import SieveBox
-import SieveDrop8
-import SieveMain8
-import SieveDeepCert
-import SieveTypeIIU22000D
-import SieveGrid22000E
-import SieveCert22000E
-import Linnik22000E
-import SieveTypeIIU21900D
-import SieveGrid21900
-import Linnik21900
-import SieveTypeIIU21800D
-import SieveGrid21800
-import Linnik21800
-import SieveFill21650
-import Linnik21650
-import SieveFlipPart21650
-import SieveFlipBox21650
 import SieveHint21500
 import Linnik21500
-import SieveHint21150
-import Linnik21150
 import SieveHint21000
 import Linnik21000
 import SieveAdCount
@@ -961,8 +929,6 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveWeight.norm_Sp_le
 #print axioms SieveTypeII.sum_chars_dp_sq_le
 #print axioms SieveRough.psi_le
-#print axioms SieveRough.share2
-#print axioms SieveRough.share2_of_cand
 #print axioms SieveOmegaB.log_le_half_sub_inv
 #print axioms SieveOmegaB.omB_le_w1
 #print axioms SieveOmegaB.omB_mono
@@ -970,22 +936,13 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveOmegaB.lnT_ge
 #print axioms SieveOmegaB.omF_ge
 #print axioms SieveCert.omegaC_le_w
-#print axioms SieveCert.bound2_ge
 #print axioms SieveRough.super_M
-#print axioms SieveRough.evLe_cell_tr
-#print axioms SieveRough.evLe_cell_ex
 #print axioms SieveSep.sum_sep
 #print axioms SieveSep.sep_bound
-#print axioms SieveFamily.family_bound
-#print axioms SieveFamily.Dsum_sharp_le
-#print axioms SieveFamily.typeII_sharp_explicit
-#print axioms SieveFamily.typeII_sharp
 #print axioms SieveTypeIB.sum_bilinear
-#print axioms SieveTypeIB.typeIB_bound
 #print axioms SieveSpline.what_spl
 #print axioms SieveSpline.norm_what_spl_tail
 #print axioms SieveSpline.norm_Ew_spl_le
-#print axioms SieveSpline.typeIB_spline
 #print axioms SieveTypeIB.card_fiber_cong_le
 #print axioms SieveTypeIB.typeIB_bound_wide
 #print axioms SieveSpline.typeIB_spline_wide
@@ -1010,34 +967,29 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveFillComp.prop6_fill
 #print axioms SieveFillComp.prop6_fill_at
 #print axioms SieveAd.fillTests_sound
-#print axioms SieveAd.fillTests_soundX
+#print axioms SieveAd.okJ2
+#print axioms SieveAd.okJ3
+#print axioms SieveAd.evJ_fill_core
+#print axioms SieveAd.evJ_two_core
+#print axioms SieveAd.evI_twoE
+#print axioms SieveAd.frozTests_sound
+#print axioms SieveAd.bd_flip_core
+#print axioms SieveAd.bd_flipCostD
+#print axioms SieveAd.altFD_sound
+#print axioms SieveAd.solveD_sound
+#print axioms SieveAd.pr_of_partD
+#print axioms SieveAd.fillTestsF_eq
+#print axioms SieveAd.frozTestsC_okI
+#print axioms SieveAd.frozTestsC_okJ
+#print axioms SieveAd.rules_frozC
 #print axioms SieveLeaf.leaf_A
 #print axioms SieveLeaf.leaf_B
 #print axioms SieveLeaf.leaf_gap
 #print axioms SieveLeaf.prod_T_le
 #print axioms SieveLeaf.prod_primesBelow_le
 #print axioms SieveDyadic.sum_bump
-#print axioms SieveTypeIIU.typeII_unw
 #print axioms SieveRoughTuple.sum_rough_eq
-#print axioms SieveStops2.typeII_cmp
-#print axioms SieveStops2.stops2_bound
-#print axioms SieveProp6.prop6
-#print axioms SieveChain.typeII_gcmp'
-#print axioms SieveChain.chainTU_bound
-#print axioms SieveChain.chainTL_bound
-#print axioms SieveChainR.chainTR_bound
-#print axioms SieveDecomp.buchstab_fam
-#print axioms SieveDecomp.famI_cells
 #print axioms SieveDecomp.famI_vanish
-#print axioms SieveLeaves.TL_spec
-#print axioms SieveLeaves.TU_spec
-#print axioms SieveLeaves.P6_spec
-#print axioms SieveP6ib.prop6ib
-#print axioms SieveLeaves.TR_spec
-#print axioms SieveLeaves.P6IB_spec
-#print axioms SieveQ.good_of_large
-#print axioms SieveQ.P6IB_boxes
-#print axioms SieveMain.TB_ev
 #print axioms LinnikHuxStep.class1_gen
 #print axioms LinnikHuxStep.count_gen
 #print axioms LinnikHuxStep.charDensity_gen
@@ -1052,7 +1004,6 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms LinnikStairs7.charDensity_hy_top
 #print axioms SieveTypeIIHM.dp_eq_pv
 #print axioms SieveTypeIIHM.sum_bin_hm
-#print axioms SieveTypeIIHM.sum_typeII_bins_hm
 #print axioms SieveTypeIIHM.offK_bound
 #print axioms SieveTypeIIHM.hm_duality_wt
 #print axioms SieveTypeIIHM.sum_bin_hm_sq
@@ -1146,14 +1097,10 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTwoComp.prop6_two_at
 #print axioms SieveAd.linnik_tree
 #print axioms SieveAd.linnik_tree_at
-#print axioms SieveAd22000.linnik_tree_22000
 #print axioms SieveAd.findSub2_eq
 #print axioms SieveAd.bestSub_eq
 #print axioms SieveAd.findSub1_eq
 #print axioms SieveAd.tstarF_eq
-#print axioms SieveAd.solveF_sound
-#print axioms SieveAd.has_of_kids
-#print axioms SieveAd.linnik_has
 #print axioms SieveAd.linnik_bd
 #print axioms SieveAd.solveG_sound
 #print axioms SieveAd.rootJ_sound
@@ -1161,7 +1108,6 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.rev_cover
 #print axioms SieveAd.rev_inject
 #print axioms SieveAd.bd_rev
-#print axioms SieveAd.solveR_sound
 #print axioms SieveAd.famIR_eq
 #print axioms SieveAd.famJR_eq
 #print axioms SieveAd.frozSolve_sound_at
@@ -1189,14 +1135,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.frozTests_sound_at
 #print axioms SieveAd.pr_of_kidsF_at
 #print axioms SieveAd.pr_of_partD_at
-#print axioms SieveAd.pr_of_kids
 #print axioms SieveAd.linnik_pr
-#print axioms SieveCurveGlue.affine_corner_bound
-#print axioms SieveCurveGlue.windowPieceHM_affine_split
-#print axioms SieveCurveGlue.windowPieceHM_const_split
-#print axioms SieveTypeIIHM.bin_bound_pt
-#print axioms SieveTypeIIHM.bin_bound_gen_hm
-#print axioms SieveTypeIIHM.typeII_gen_hm
 #print axioms LinnikCGLLV.lv_range
 #print axioms LinnikCGLLV.cgl_all
 #print axioms LinnikCGLLV.taylor_pick
@@ -1359,42 +1298,9 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms LinnikCGLSteps.charDensity_s29
 #print axioms LinnikCGLSteps.charDensity_inT
 #print axioms SieveCurve7D.counts_7d
-#print axioms SieveBuch.Par.decomp8
-#print axioms SieveQ8.leaves_ev8
-#print axioms SieveDeep.okIB_of_okD
-#print axioms SieveDeep.Ch3_le
 #print axioms SieveRough.shareBox
-#print axioms SieveDrop8.share8D
-#print axioms SieveDrop8.E1_le
-#print axioms SieveDrop8.dT_le_cost
-#print axioms SieveDrop8.drop_ev8
-#print axioms SieveMain8.linnik_route_lt8
-#print axioms SieveDeep.totalD_eq_rowsJD
-#print axioms SieveTypeIIU22000D.window_22000d
-#print axioms SieveTypeIIU22000D.typeII_22000d
-#print axioms SieveCert.gridOK22000E
-#print axioms SieveCert.gridOKC22000E
-#print axioms SieveDeep.totalD_lt_22000E
-#print axioms Linnik22000E.fits22000E
-#print axioms Linnik22000E.deepGrid22000E
-#print axioms Linnik22000E.linnik_22000e
-#print axioms SieveTypeIIU21900D.window_21900d
-#print axioms SieveTypeIIU21900D.typeII_21900d
-#print axioms SieveCert.gridOK21900
-#print axioms Linnik21900.tree21900
-#print axioms Linnik21900.linnik_21900
-#print axioms SieveTypeIIU21800D.window_21800d
-#print axioms SieveTypeIIU21800D.typeII_21800d
-#print axioms SieveCert.gridOK21800
-#print axioms Linnik21800.tree21800
-#print axioms Linnik21800.linnik_21800
-#print axioms Linnik21650.tree21650
-#print axioms Linnik21650.linnik_21650
-#print axioms Linnik21650.flip_box_21650
 #print axioms Linnik21500.tree21500
 #print axioms Linnik21500.linnik_21500
-#print axioms Linnik21150.tree21150
-#print axioms Linnik21150.linnik_21150
 #print axioms Linnik21000.tree21000
 #print axioms Linnik21000.linnik_21000
 #print axioms SieveAd.count_of_large
@@ -1406,6 +1312,75 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms Linnik21500.count_large_21500
 #print axioms Linnik21000.count_21000
 #print axioms Linnik21000.count_large_21000
+/- The Linnik paper's Theorem 1.1, at `21/10` (`papers/linnik-exponent/main.tex`, Sections 8 to 10): the declarations
+of its claims table (Appendix A, second block) that no line above prints, in the table's order by name. The others
+of that block are printed above: the resonant window and its steps, the leaves' estimate, the tests' soundness, the
+certificate's bound and the theorem. -/
+#print axioms Linnik21000.part21000
+#print axioms Linnik21000.sound21000
+#print axioms Linnik21000.soundF21000
+#print axioms LinnikCGLStep.charDensity_cglGen
+#print axioms SieveAd.altFDYH
+#print axioms SieveAd.altFDYH_sound
+#print axioms SieveAd.bd_flipCostDYH
+#print axioms SieveAd.bd_flip_core_pos
+#print axioms SieveAd.bd_flip_pos
+#print axioms SieveAd.chkIRCH
+#print axioms SieveAd.chkIRFH
+#print axioms SieveAd.chkIRFY
+#print axioms SieveAd.chkIRY
+#print axioms SieveAd.cof_facts
+#print axioms SieveAd.evIF_froz_gen
+#print axioms SieveAd.evIF_froz_genC
+#print axioms SieveAd.evIF_froz_res
+#print axioms SieveAd.evIF_froz_resTCH
+#print axioms SieveAd.evIF_froz_resTY
+#print axioms SieveAd.evI_resCEH
+#print axioms SieveAd.evI_resEH
+#print axioms SieveAd.evI_resYE
+#print axioms SieveAd.evJ_fill_core3
+#print axioms SieveAd.evJ_two_core3
+#print axioms SieveAd.flipCostBYH
+#print axioms SieveAd.frozCof_facts
+#print axioms SieveAd.leavesE
+#print axioms SieveAd.pr_of_partDYH
+#print axioms SieveAd.resTestsFYH
+#print axioms SieveAd.rulesMP
+#print axioms SieveAd.rules_frozResYH
+#print axioms SieveAd.solveMDYH_sound
+#print axioms SieveLeafSplit.large_leaves_le3
+#print axioms SieveLeafTwo.LeafZoneX
+#print axioms SieveLeafTwo.zone_leafX
+#print axioms SieveLeafZoneX.leafXR
+#print axioms SieveResTest.binOK_of
+#print axioms SieveResTest.lv_bound
+#print axioms SieveResTest.resXH_hs
+#print axioms SieveResTest.resYH_eq
+#print axioms SieveResTest.resY_room
+#print axioms SieveResTest.resY_sound
+#print axioms SieveResTest.two_corner
+#print axioms SieveTypeIIHM.FullEst
+#print axioms SieveTypeIIHM.LeafZone
+#print axioms SieveTypeIIHM.ResBinOK
+#print axioms SieveTypeIIHM.ResBox
+#print axioms SieveTypeIIHM.ResBoxT
+#print axioms SieveTypeIIHM.ResCond
+#print axioms SieveTypeIIHM.SqExp4
+#print axioms SieveTypeIIHM.ZoneOK4
+#print axioms SieveTypeIIHM.bin_bound_two4
+#print axioms SieveTypeIIHM.card_fiber_le_pow
+#print axioms SieveTypeIIHM.chain_res_cofG
+#print axioms SieveTypeIIHM.chain_res_gen
+#print axioms SieveTypeIIHM.fullEst_of_tight
+#print axioms SieveTypeIIHM.full_res_bound
+#print axioms SieveTypeIIHM.resBox_of_tight
+#print axioms SieveTypeIIHM.sum_bin_four_le
+#print axioms SieveTypeIIHM.sum_chars_dp_four_le
+#print axioms SieveTypeIIHM.twoBound4
+#print axioms SieveTypeIIHM.zonePiece4_HE
+#print axioms SieveTypeIIHM.zonePiece4_OE
+#print axioms SieveTypeIIHM.zonePiece4_OO
+#print axioms SieveTypeIIHM.zonePiece4_of_ends
 #print axioms SieveCurve7D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d

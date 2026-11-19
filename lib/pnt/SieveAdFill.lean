@@ -9,8 +9,7 @@ decomposition with no window.
 
 * `evJ_fillE`: if `chkJ3` passes a box at a floor, the terms of the box at the floor are evaluated under `m` more
   atoms, uniformly in the atoms, when the box's atoms and those are at most `40`; `evJ_fill` with none.
-* `fillTests_sound`, `fillTests_soundX`: **the tests with no window are sound**, and sound under two more atoms
-  on the boxes of at most twelve primes.
+* `fillTests_sound`: **the tests with no window are sound**.
 
 The proof of `evJ_fillE` is `SieveAdTwo.evJ_twoE`'s: the box's cells give the exponents of `q`, `κ = L/DEN` for a
 unit; the rest's range is `[κr₁, κr₂]` in place of the sums over a set of the box's primes, and the leaves' growth
@@ -499,18 +498,6 @@ theorem fillTests_sound : (fillTests).Sound := by
   · rw [hk] at hok
     exact evJ_fill bl k h f cfg.s0 cfg.s1 cfg.e _ _ _ _ _ hok
 
-/-- **The tests with no window are sound under two more atoms**, on the boxes of at most twelve primes. -/
-theorem fillTests_soundX : (fillTests).SoundX := by
-  refine ⟨fun bl cfg k' h hk hok => evI_twoE bl k' h cfg.s0 cfg.sr hok (m := 2) (by omega),
-    fun bl f cfg k h hk hok => ?_⟩
-  simp only [fillTests] at hok
-  cases hk2 : Nat.beq cfg.kind 2
-  · rw [hk2] at hok
-    exact evJ_twoE bl k h f cfg.s0 cfg.sr cfg.s1 cfg.e _ _ _ hok (m := 2) (by omega)
-  · rw [hk2] at hok
-    exact evJ_fillE bl k h f cfg.s0 cfg.s1 cfg.e _ _ _ _ _ hok (m := 2) (by omega)
-
 end SieveAd
 
 #print axioms SieveAd.fillTests_sound
-#print axioms SieveAd.fillTests_soundX

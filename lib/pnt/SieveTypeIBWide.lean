@@ -5,12 +5,11 @@ Plain statements, in the notation of `SieveTypeIB.lean`: `e(x) = e^{2πix/q}`, `
 1]/φ(q)`, `ŵ(h) = Σ_{k∈S} w(k)e(hk)` and `E_w` for a weight `w` on a finite set `S`, coefficients `α` on `D₁` and `β`
 on `D₂`, sets of naturals prime to `q`.
 
-`SieveTypeIB.typeIB_bound` asks that `2HDm < q`, where `D₂ ⊆ [1, Dm]` and `[−H, H]` holds the frequencies at which
-`ŵ` is not small: then the congruence `td₂′ ≡ t′d₂ (mod q)` on the diagonal is an equation in the integers, and for
-each `(t, d₂′)` the pairs `(t′, d₂)` number at most `F`, a bound for the number of divisors of the `|t|d`. Without
-the condition the product `t′d₂` is one of the integers of `[−HDm, HDm]` in the class of `td₂′`, at most
-`⌊2HDm/q⌋ + 1` of them, and each is `t′d₂` for at most `F` pairs. So the estimate holds for every `H` with `2H < q`,
-with `F(⌊2HDm/q⌋ + 1)` in place of `F`.
+Here `D₂ ⊆ [1, Dm]` and `[−H, H]` holds the frequencies at which `ŵ` is not small, with `2H < q`; `2HDm < q` is not
+asked. On the diagonal of `SieveTypeIB.norm_sum_B_le` the product `t′d₂` is one of the integers of `[−HDm, HDm]` in
+the class of `td₂′`, at most `⌊2HDm/q⌋ + 1` of them, and each is `t′d₂` for at most `F` pairs, `F` a bound for the
+number of divisors of the `|t|d`. So the diagonal carries the factor `F(⌊2HDm/q⌋ + 1)`, which is `F` when
+`2HDm < q`.
 
 * `card_Icc_cast_eq_le`: the integers of `[−M, M]` in one residue class mod `q` number at most `⌊2M/q⌋ + 1`.
 * `card_fiber_cong_le`: for `J ⊆ [−H, H] ∖ {0}` and `D₂ ⊆ [1, Dm]`, if every `|t|d` (`t ∈ J`, `d ∈ D₂`) has at most
@@ -23,8 +22,11 @@ with `F(⌊2HDm/q⌋ + 1)` in place of `F`.
   and `|ŵ(h)| ≤ W` at the frequencies `h ≠ 0` off the image of `[−H, H]`. Then
   `|Σ_{d₁,d₂} α(d₁)β(d₂)Σ_{k∈S} w(k)dw(d₁d₂k)|` is at most
   `(Σ|α|²)^{1/2}(mF(⌊2HDm/q⌋ + 1)(Σ|β|²)·q⁻¹Σ_h|ŵ(h)|²)^{1/2} + W(Σ|α|)(Σ|β|) + |(Σα)(Σβ)E_w/φ(q)|`.
-  For `2HDm < q` the factor `⌊2HDm/q⌋ + 1` is `1`, and this is `SieveTypeIB.typeIB_bound`.
-* `typeIB_spline_wide`: the same with a spline weight on its support, as `SieveSpline.typeIB_spline`.
+  For `2HDm < q` the factor `⌊2HDm/q⌋ + 1` is `1`.
+* `typeIB_spline_wide`: the same with `S = (A, B + r(ℓ − 1)]` and `w` the spline `SieveSpline.spl` (`ℓ ≥ 1`), with
+  the bounds of `SieveSpline.lean` on `ŵ` and `E_w`: `|Σ_{d₁,d₂} α(d₁)β(d₂)Σ_k w(k)dw(d₁d₂k)|` is at most
+  `(Σ|α|²)^{1/2}(mF(⌊2HDm/q⌋ + 1)(Σ|β|²)(⌊n/q⌋ + 1)n)^{1/2} + (B − A)(q/(2ℓ(H + 1)))^r(Σ|α|)(Σ|β|) +
+  |Σα||Σβ|d(q)/φ(q)`, with `n = B + r(ℓ − 1) − A`.
 
 The proof:
 
@@ -33,7 +35,7 @@ The proof:
 * `card_fiber_cong_le`: the products `t′d` of the pairs lie in `[−HDm, HDm]` and in the class
   (`card_Icc_cast_eq_le`), and the pairs with a given product `t₀d₀` number at most the divisors of `|t₀|d₀`
   (`SieveTypeIB.card_fiber_le`).
-* `diag_le_wide`: as `SieveTypeIB.diag_le`, on the congruence itself: `|c_t||β_d||c_{t′}||β_{d′}| ≤
+* `diag_le_wide`: on the congruence `td′ ≡ t′d`: `|c_t||β_d||c_{t′}||β_{d′}| ≤
   ½(|c_t|²|β_{d′}|² + |c_{t′}|²|β_d|²)`, the two halves are equal by the symmetry of the congruence, and for each
   `(t, d′)` the pairs `(t′, d)` are counted by `card_fiber_cong_le`.
 * `typeIB_bound_wide`: `SieveTypeIB.sum_bilinear`; the frequencies `0 < |t| ≤ H` by `SieveTypeIB.norm_sum_B_le` and

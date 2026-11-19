@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""gen_cgl_curve.py [--check]: the Lean files of the curve `g7d`, of its window and its theorem at `L = 11/5`, and of
-its windows at `L = 219/100` and `L = 218/100`.
+"""gen_cgl_curve.py [--check] [--table]: the Lean files of the curve `g7d`.
 
 `g7d` is `g7c` (`route_limits.G7C`) with Chen-Gupta-Li's Proposition 3.1 used at every point of
 `[5/7, 131/168]`, instead of the flat `7/3 + 1/2000` and Huxley's steps there, and with Ingham's last step
@@ -12,33 +11,21 @@ step's two ends over `(a, λ)` (a convex problem, solved in floating point, roun
 checked in exact rationals), `A_i` the least multiple of `10⁻⁵` that satisfies them, and `A = A_i + 10⁻⁵`. Every
 condition of `ParC.Good` is checked here in exact rationals (`check_good`) before a file is written. From `131/168` on,
 `g7d` is `g7c` (Huxley's steps `hx7_5` ... `hx7_19`, then `(101/50)(1 - σ)` from `5/6`): there Huxley's exponent is
-smaller than the step's. Huxley's exponent `3/(3σ - 1)` is already below `4/(1 + σ)` from `7/9` on, inside the last
-step `[163/210, 131/168]`; using it there does not change the window, so the whole step is Chen-Gupta-Li's (from
-11161/5000 to 89/40 the steps of `[1307/1680, 131/168]` were Huxley's, in a file `LinnikHuxJunction.lean`, in the git
-history).
+smaller than the step's.
 
-The first steps are narrow because both ends of the window are set where a step's exponent most exceeds the curve it
-bounds, on the first step `[5/7, 1201/1680]`, at its right end: its exponent `2.3334` is the curve's largest, `7/3` at
-`5/7`, where Ingham's last step and the first Chen-Gupta-Li step meet. The corners' slack grows along `[5/7, 131/168]`:
-from `5/7 + 14/1680` on, steps of `1/280` leave the window as it is (steps of `1/140` would too at `11/5`, but moved
-its lower end at `278/125`). Ingham's theorem (`LinnikInghamC.charDensity_ingham_c`) takes any `ε > 0`, so its slack
-there is cut to `10⁻⁵`. (With steps of `1/280` from `5/7`, at larger `L`, the lower end was set at the step containing
-`7/9`, where `4/(1 + σ)` meets Huxley's `3/(3σ − 1)`; that constraint binds only above `L = 107/48`.)
+The steps were chosen for the Type II windows of the window route, whose ends were set where a step's exponent most
+exceeds the curve it bounds, on the first step `[5/7, 1201/1680]`, at its right end: its exponent `2.3334` is the
+curve's largest, `7/3` at `5/7`, where Ingham's last step and the first Chen-Gupta-Li step meet; from `5/7 + 14/1680`
+on, steps of `1/280` left the windows as they were. Ingham's theorem (`LinnikInghamC.charDensity_ingham_c`) takes any
+`ε > 0`, so its slack there is cut to `10⁻⁵`. The windows, their Proposition 3′ and the theorems of the window route,
+and the part of this script that wrote them, are in the git history at commit 76abe3c.
 
-Writes `lib/pnt/LinnikCGLSteps.lean` (the Chen-Gupta-Li steps, and Ingham's last step `charDensity_inT`),
-`lib/pnt/SieveCurve7D.lean` (`g7d`, `g7d_le_one`, `g7d_half`, `g7d_le_lin` and its counts), and, at `L = 11/5`,
-`lib/pnt/SieveTypeIIU22000D.lean` (the window there and Proposition 3′) and `lib/pnt/Linnik22000E.lean` (the theorem,
-by the decomposition to depth 8, whose certificate `gen_cert8.py` writes), and, at `L = 219/100`,
-`lib/pnt/SieveTypeIIU21900D.lean` (the window there and Proposition 3′; the theorem at `219/100` is by a tree of
-Buchstab steps, whose files `tree_cert.py` writes), and, at `L = 218/100`, `lib/pnt/SieveTypeIIU21800D.lean` (the
-window there and Proposition 3′; the theorem at `218/100` is by a search with role reversal, whose files
-`rev_cert.py` writes). The theorem at `278/125`, with the refined
-certificate, and the window and Proposition 3′ there are in the git history. The window `[W1, W2]/100000` is the one
-`route_limits.py run` computes for `g7d` at `L` (the sampled scan, then the exact corners).
-With `--check`, nothing is written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a
-difference). With `--table`, the steps' parameters are printed.
+Writes `lib/pnt/LinnikCGLSteps.lean` (the Chen-Gupta-Li steps, and Ingham's last step `charDensity_inT`) and
+`lib/pnt/SieveCurve7D.lean` (`g7d`, `g7d_le_one`, `g7d_half`, `g7d_le_lin` and its counts). With `--check`, nothing
+is written: the files are regenerated in memory and compared with `lib/pnt` (exit 1 on a difference). With
+`--table`, the steps' parameters are printed.
 
-Needs Python 3 only. About half a minute (the windows' scans).
+Needs Python 3 only. Seconds.
 """
 import math
 import os
@@ -54,18 +41,6 @@ E = Fr(1, 100000)
 M = 1556
 # the curve's file and namespace
 CURVE = 'SieveCurve7D'
-# the route at `L = 11/5`: the window there, by the same curve (`window_file`), and the theorem (`final_file_deep`) by
-# the decomposition to depth 8, whose certificate on that window's grid with `n = 272` is `gen_cert8.py`'s
-L3 = Fr(11, 5)
-TAG3, LNUM3, LDEN3, N3 = '22000', 11, 5, 272
-# the route at `L = 219/100`: the window there (`window_file`); `tree_cert.py` takes it as `[W1_4, W2_4]/100000`
-L4 = Fr(219, 100)
-TAG4, LNUM4, LDEN4 = '21900', 219, 100
-W1_4, W2_4 = 44260, 46717
-# the route at `L = 218/100`: the window there (`window_file`); `rev_cert.py` takes it as `[W1_5, W2_5]/100000`
-L5 = Fr(218, 100)
-TAG5, LNUM5, LDEN5 = '21800', 218, 100
-W1_5, W2_5 = 45073, 46472
 STEP = Fr(1, 1680)
 # the steps of `[5/7, 131/168]`: `NARROW` of width `STEP` from `5/7`, then steps of width `WIDE`
 NARROW, WIDE = 14, Fr(1, 280)
@@ -202,23 +177,6 @@ def litp(x):
 
 def dec(x, k=6):
     return f'{float(x):.{k}f}'
-
-
-def window_for(pieces, L):
-    w = rl.window(pieces, L)
-    assert w is not None
-    W1, W2 = round(w[0] * 100000), round(w[1] * 100000)
-    moves = 0
-    while True:
-        fails, slack, tag = rl.corners(pieces, L, W1, W2)
-        if not fails:
-            return W1, W2, moves
-        ends = {f[0] for f in fails}
-        assert 'one' not in ends, fails[:3]
-        W1 += 'lo' in ends
-        W2 -= 'hi' in ends
-        moves += 1
-        assert moves <= 50
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -361,105 +319,6 @@ theorem charDensity_inT :
     return '\n'.join(out) + '\n'
 
 
-def window_lines(pcs, los, W1, W2, tag, LN):
-    """The proof of `window_{tag}d`: the pieces of the curve glued, each by its corners."""
-    win = ['theorem window_%sd : WindowOKHM g7d (%s) (%d / 100000 * (%s)) (%d / 100000 * (%s))' % (tag, LN, W1, LN, W2, LN),
-           '    (1 / 1000) (1 / 1000) :=']
-    for k, (lo, hi, A, nm, (hr, ar)) in enumerate(pcs):
-        if A is None:
-            body = 'windowPiece_one (by norm_num) (by norm_num) (by corners) (by corners)'
-            piece = f'      {body}'
-        else:
-            piece = (f'      windowPiece_const (A := {ar}) (lo := {los[k]}) (hi := {hr})\n'
-                     f'        (by norm_num) (by norm_num) (by corners) (by corners)')
-        pre = '  windowOKHM_of_piece <| ' if k == 0 else '    '
-        win.append(f'{pre}windowPieceHM_glue (windowPieceHM_of_piece <|\n{piece}) <|')
-    win.append('    windowPieceHM_const_split (A := 101 / 50) (lo := 5 / 6) (hi := 11 / 12)')
-    win.append('      (by norm_num) (by cornersHMD) (by cornersHMD) (by cornersHMD)')
-    return win
-
-
-def typeII_text(W1, W2, tag, LN):
-    """`typeII_{tag}d`: `typeII_gen_hm` at `g7d` on the window."""
-    doc = f'''/-- **Proposition 3′ at `L = {LN}` on `[{W1}/100000, {W2}/100000]·L`, for the curve `g7d`**, with no
-hypothesis: `typeII_gen_hm` for `f0` smooth (`hf0`) with support in `[1/2, 2]` (`hsupp`), `K₀`, `e₁ > 0` (`he₁`) and
-`0 < η ≤ 10⁻⁵` (`hη`, `hη1`): there is `q₀` such that its bound holds for `q ≥ 1` with `q ≥ q₀`. -/'''
-    return f'''open scoped ContDiff in
-{doc}
-theorem typeII_{tag}d {{f0 : ℝ → ℝ}} (hf0 : ContDiff ℝ ∞ f0)
-    (hsupp : Function.support f0 ⊆ Set.Icc (1 / 2) 2)
-    (K₀ : ℕ) {{e₁ η : ℝ}} (he₁ : 0 < e₁) (hη : 0 < η) (hη1 : η ≤ 1 / 100000) :
-    ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q →
-      ∀ (P : ℕ) (S : Finset ℕ), S ⊆ Finset.Ioc P (2 * P) →
-      (q : ℝ) ^ ({W1} / 100000 * ({LN}) : ℝ) ≤ P →
-      (P : ℝ) ≤ (q : ℝ) ^ ({W2} / 100000 * ({LN}) : ℝ) →
-      ∀ (a : ℕ → ℂ) (h₀ : ℝ) (K : ℕ), K ≤ K₀ → ∀ Q h : ℕ → ℝ,
-      (∀ j < K, (q : ℝ) ^ e₁ ≤ Q j ∧ |h j| ≤ (q : ℝ) ^ η) →
-      ∏ j ∈ Finset.range K, Q j ≤ 2 ^ K₀ * (q : ℝ) ^ ({LN} : ℝ) / P →
-      ∑ χ ∈ Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1),
-          ‖DirMean.dp S (fun m => a m * χ m) h₀‖ * ‖∏ j ∈ Finset.range K, SieveWeight.Sp χ f0 (Q j) (h j)‖ ≤
-        (q : ℝ) ^ (({LN} : ℝ) - 1 / 50000) * Real.sqrt ((∑ m ∈ S, ‖a m‖ ^ 2) / P) :=
-  typeII_gen_hm g7d_le_one g7d_half counts_7d window_{tag}d hf0 hsupp K₀ he₁ hη hη1'''
-
-
-def window_file(allp, W1, W2, tag=TAG3, LN=f'{LNUM3} / {LDEN3}', base=CURVE):
-    """`SieveTypeIIU{tag}D.lean`: `{base}`'s curve `g7d` on the window at `L = LN`."""
-    pcs = allp[:-1]
-    los = ['1 / 2'] + [p[4][0] for p in pcs[:-1]]
-    win = window_lines(pcs, los, W1, W2, tag, LN)
-    return f'''/-
-# Proposition 3′ at `L = {LN}` on the window `[{W1}/100000, {W2}/100000]·L`, for the curve `g7d`
-
-Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). Generated by
-`tools/linnik/gen_cgl_curve.py`; do not edit by hand.
-
-The curve `g7d`, its bounds and its counts are `{base}`'s (`g7d_le_one`, `g7d_half`, `counts_7d`). Every
-piece of `WindowOKHM` below `5/6` holds by orthogonality at its corners (the tactic `corners`), the top piece
-`[5/6, 11/12]` by `windowPieceHM_const_split` (the tactic `cornersHMD`, defined here).
-
-* `window_{tag}d`: `WindowOKHM g7d L m₁ m₂ (1/1000) (1/1000)` at `L = {LN}` on `[{W1}/100000, {W2}/100000]·L`.
-* `typeII_{tag}d`: `typeII_gen_hm` at `g7d`, with no hypothesis.
-
-The window is the one `route_limits.window` and `route_limits.corners` give for `g7d` at `L = {LN}` (the sampled
-scan, then the exact corners), as `gen_cgl_curve.py` computes it.
-
-The file imports `{base}.lean` and `SieveTypeIIHM.lean`.
--/
-import {base}
-import SieveTypeIIHM
-
-open Complex Real Finset
-
-noncomputable section
-
-/- The window's proof glues the curve's {len(allp)} pieces, nested as deeply; the default recursion depth is not enough to
-elaborate it. -/
-set_option maxRecDepth 10000
-
-namespace SieveTypeIIU{tag}D
-
-open DirichletCharacter SieveTypeIIGen SieveCurveGlue SieveTypeIIHM {base}
-
-set_option hygiene false in
-/-- The corner cases of `windowPieceHM_const_split`: two values of `β`, two of `m`, two of `w`, each by `norm_num`. -/
-macro "cornersHMD" : tactic =>
-  `(tactic| (intro β m w hb hm hw
-             rcases hb with rfl | rfl <;> rcases hm with rfl | rfl <;> rcases hw with rfl | rfl <;> norm_num))
-
-set_option maxHeartbeats 20000000 in
-/-- **The window's exponents** at `L = {LN}` on `[{W1}/100000, {W2}/100000]·L`, with the Halász–Montgomery
-branch on the top piece. -/
-{chr(10).join(win)}
-
-{typeII_text(W1, W2, tag, LN)}
-
-end SieveTypeIIU{tag}D
-
-#print axioms SieveTypeIIU{tag}D.window_{tag}d
-#print axioms SieveTypeIIU{tag}D.typeII_{tag}d
-'''
-
-
 def curve_file(keep, new, hx, params, name=CURVE):
     """`{CURVE}.lean`: g7d and its counts."""
     names, kc = [], 0
@@ -526,15 +385,11 @@ def curve_file(keep, new, hx, params, name=CURVE):
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). Generated by
 `tools/linnik/gen_cgl_curve.py`; do not edit by hand.
 
-The curve `g7d` is `g7c`, the curve of the route at `L = 226 / 100` (`SieveTypeIIU226C.lean`, in the git history),
-with the {n} steps of `LinnikCGLSteps.lean` (Chen–Gupta–Li's Proposition 3.1, exponent `A(1 − σ)` with `A` just
-above `4/(1 + σ)` at the step's left end) on `[5/7, 131/168]`, in place of `7/3 + 1/2000` on `[5/7, 16/21]` and
-Huxley's steps `hx7_0` … `hx7_4`. From `131/168` on it is `g7c` (Huxley's steps `hx7_5` … `hx7_19`, then
-`(101/50)(1 − σ)` from `5/6`, `LinnikStep.charDensity_step`); below `5/7` it is `g7c` with Ingham's last step at
-`ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`: the exponent is `7/3 + 4ε = 7/3 + 1/100000` in place of
-`7/3 + 1/2000`). Its counts need no hypothesis. Its window and Proposition 3′ at `L = {LNUM3} / {LDEN3}` are in
-`SieveTypeIIU{TAG3}D.lean`; those at `L = 278 / 125`, which an earlier version of this file had, are in the git
-history.
+The curve `g7d` is `1` below `4/7`, then twenty Ingham steps up to `5/7`, the last at `ε = 1/400000`
+(`LinnikCGLSteps.charDensity_inT`: the exponent is `7/3 + 4ε = 7/3 + 1/100000`), then the {n} steps of
+`LinnikCGLSteps.lean` (Chen–Gupta–Li's Proposition 3.1, exponent `A(1 − σ)` with `A` just above `4/(1 + σ)` at the
+step's left end) on `[5/7, 131/168]`, Huxley's steps `charDensity_hx7_5` … `charDensity_hx7_19` of `LinnikStairs7` on
+`[131/168, 5/6]`, and `(101/50)(1 − σ)` from `5/6` on (`LinnikStep.charDensity_step`). Its counts need no hypothesis.
 
 * `g7d`, `g7d_le_one`, `g7d_half`; `g7d_le_lin`: `g7d σ ≤ {litp(A_MAX)}(1 − σ)` for `σ ≤ 1` (the curve's largest
   exponent is that of the first Chen–Gupta–Li step); `counts_7d`: `CurveCounts g7d`, with no hypothesis, glued by
@@ -591,133 +446,28 @@ end {name}
     return txt, allp
 
 
-def fits_text(W1, W2, tag, gtag, LNUM, LDEN):
-    """`fits{gtag}`: the grid `grid{gtag}` fits `route{tag}D`."""
-    LN = f'{LNUM} / {LDEN}'
-    return f'''/-- `grid{gtag}` fits `route{tag}D`: `({W1}/100000)·DEN < U1`, `U2 < ({W2}/100000)·DEN` and
-`DEN < ({LN})·U2`. -/
-theorem fits{gtag} : @Fits route{tag}D grid{gtag} := by
-  refine @Fits.mk route{tag}D grid{gtag} ?_ ?_ ?_
-  · have h : ({W1} * DEN : ℕ) < 100000 * (({W1} * DEN + 99999) / 100000) := by decide
-    have h' : ({W1} : ℝ) * DEN < 100000 * ((({W1} * DEN + 99999) / 100000 : ℕ) : ℝ) := by exact_mod_cast h
-    show ({W1} / 100000 : ℝ) * DEN < ((({W1} * DEN + 99999) / 100000 : ℕ) : ℝ)
-    linarith
-  · have h : 100000 * ({W2} * DEN / 100000) < {W2} * DEN := by decide
-    have h' : (100000 : ℝ) * (({W2} * DEN / 100000 : ℕ) : ℝ) < {W2} * DEN := by exact_mod_cast h
-    show (({W2} * DEN / 100000 : ℕ) : ℝ) < {W2} / 100000 * DEN
-    linarith
-  · have h : {LDEN} * DEN < {LNUM} * ({W2} * DEN / 100000) := by decide
-    have h' : ({LDEN} : ℝ) * DEN < {LNUM} * (({W2} * DEN / 100000 : ℕ) : ℝ) := by exact_mod_cast h
-    show (DEN : ℝ) < {LN} * (({W2} * DEN / 100000 : ℕ) : ℝ)
-    linarith'''
-
-
-def final_file_deep(W1, W2, tag=TAG3, LNUM=LNUM3, LDEN=LDEN3, N=N3):
-    """`Linnik{tag}E.lean`: the theorem at `L = LNUM/LDEN` by the bilinear Type I rule and the decomposition to depth
-    8, with no hypothesis: its certificate is `SieveCert{tag}E.lean` (`gen_cert8.py`)."""
-    LN = f'{LNUM} / {LDEN}'
-    return f'''/-
-# Linnik's theorem with exponent `{LN}`, by the decomposition to depth 8 and its certificate at `n = {N}`
-
-Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`). Generated by
-`tools/linnik/gen_cgl_curve.py`; do not edit by hand.
-
-Plain statement (`linnik_{tag}e`): there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a prime
-`p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`, with no hypothesis. The route is at `L = {LN}` on the window
-`[{W1}/100000, {W2}/100000]` (`route{tag}D`, with its Type II estimate `SieveTypeIIU{tag}D.typeII_{tag}d`), on the
-grid of that window with `n = {N}` (`SieveCert.grid{tag}E`), under the bilinear Type I rule at `L` (`SieveCert.ibRule`
-with `SieveCert.ibPar{tag}E`), with the decomposition to depth 8 (`SieveBuch8.lean`) and its certificate
-(`SieveDeepDefs.lean`), whose total is less than `K` (`SieveDeep.totalD_lt_{tag}E`), with
-`SieveMain8.linnik_route_lt8`.
-
-* `route{tag}D`, `routeOK{tag}D`: `L = {LN}` on `[{W1}/100000, {W2}/100000]`; `2 < L ≤ 5/2` and `0 < w₁ < w₂ < 1`.
-* `typeII{tag}d`: `SieveTypeIIU{tag}D.typeII_{tag}d` as `TypeIIAt`.
-* `fits{tag}E`: `grid{tag}E` fits `route{tag}D`: `({W1}/100000)·DEN < U1`, `U2 < ({W2}/100000)·DEN` and
-  `DEN < ({LN})·U2`.
-* `ibFits{tag}E`: the bilinear rule's exponent `{LNUM}/{LDEN}` (`ibPar{tag}E`) is the route's.
-* `deepGrid{tag}E`: `HC = 4H`, `H > 0` and `4H + 4HC ≤ V` on `grid{tag}E`, by `decide`.
-* `linnik_{tag}e`: `SieveMain8.linnik_route_lt8` at them.
-
-The file imports `SieveMain8.lean`, `SieveCert{tag}E.lean` and `SieveTypeIIU{tag}D.lean`.
--/
-import SieveMain8
-import SieveCert{tag}E
-import SieveTypeIIU{tag}D
-
-namespace Linnik{tag}E
-
-open SieveCert SieveRoute SieveQ SieveDeep
-
-/-- **The route's parameters at `{LN}`**: `L = {LN}` on the window `[{W1}/100000, {W2}/100000]`. -/
-@[instance_reducible] noncomputable def route{tag}D : Route := ⟨{LN}, {W1} / 100000, {W2} / 100000⟩
-
-/-- `route{tag}D` is a route: `2 < L ≤ 5/2` and `0 < w₁ < w₂ < 1`. -/
-theorem routeOK{tag}D : @RouteOK route{tag}D :=
-  @RouteOK.mk route{tag}D (show (2 : ℝ) < {LN} by norm_num) (show (0 : ℝ) < {W1} / 100000 by norm_num)
-    (show ({W1} / 100000 : ℝ) < {W2} / 100000 by norm_num) (show ({W2} / 100000 : ℝ) < 1 by norm_num)
-    (show ({LN} : ℝ) ≤ 5 / 2 by norm_num)
-
-/-- **`SieveTypeIIU{tag}D.typeII_{tag}d` as `TypeIIAt`** at the route's parameters. -/
-theorem typeII{tag}d : @TypeIIAt route{tag}D := by
-  intro f0 hf0 hsupp K₀ e₁ η he₁ hη hη1
-  exact SieveTypeIIU{tag}D.typeII_{tag}d hf0 hsupp K₀ he₁ hη hη1
-
-{fits_text(W1, W2, tag, tag + 'E', LNUM, LDEN)}
-
-/-- `ibPar{tag}E`'s exponent `Lnum/Lden` is the route's `L = {LN}`. -/
-theorem ibFits{tag}E : @IBFits route{tag}D ibPar{tag}E :=
-  @IBFits.mk route{tag}D ibPar{tag}E (show (({LNUM} : ℕ) : ℝ) / (({LDEN} : ℕ) : ℝ) = {LN} by norm_num)
-
-/-- `grid{tag}E` holds the decomposition to depth 8: `HC = 4H`, `H > 0` and `4H + 4HC ≤ V`. -/
-theorem deepGrid{tag}E : @SieveDrop8.DeepGrid grid{tag}E :=
-  @SieveDrop8.DeepGrid.mk grid{tag}E (by decide) (by decide) (by decide)
-
-/-- **Linnik's theorem with exponent `{LN}`, by the decomposition to depth 8 at `n = {N}`**: there is `K` such that
-for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{{{LN}}}`. -/
-theorem linnik_{tag}e : ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
-    ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ ({LN} : ℝ) :=
-  @SieveMain8.linnik_route_lt8 route{tag}D routeOK{tag}D grid{tag}E gridOK{tag}E gridOKC{tag}E fits{tag}E
-    ibPar{tag}E ibFits{tag}E deepGrid{tag}E typeII{tag}d totalD_lt_{tag}E
-
-end Linnik{tag}E
-
-#print axioms Linnik{tag}E.fits{tag}E
-#print axioms Linnik{tag}E.linnik_{tag}e
-'''
-
-
 def generate():
     base = rl.parse('g7c')
     keep, new, params, hx = steps(base)
     sfile = steps_file(new, params)
-    # the curve's pieces, for the window
+    # the curve's pieces
     pcs = [(Fr(1, 2), Fr(4, 7), None)] + [(lo, hi, A) for lo, hi, A, _, _ in keep] + new + [(lo, hi, A) for lo, hi, A, _, _ in hx] \
         + [(Fr(5, 6), Fr(11, 12), Fr(101, 50))]
-    W1, W2, moves = window_for(pcs, L3)
-    W1b, W2b, _ = window_for(pcs, L4)
-    assert (W1b, W2b) == (W1_4, W2_4), (W1b, W2b)
-    W1c, W2c, _ = window_for(pcs, L5)
-    assert (W1c, W2c) == (W1_5, W2_5), (W1c, W2c)
     cfile, allp = curve_file(keep, new, hx, params)
     assert [(lo, hi, A) for lo, hi, A, _, _ in allp] == pcs
     files = {'LinnikCGLSteps.lean': sfile,
-             f'{CURVE}.lean': cfile,
-             f'SieveTypeIIU{TAG3}D.lean': window_file(allp, W1, W2),
-             f'Linnik{TAG3}E.lean': final_file_deep(W1, W2),
-             f'SieveTypeIIU{TAG4}D.lean': window_file(allp, W1b, W2b, tag=TAG4, LN=f'{LNUM4} / {LDEN4}'),
-             f'SieveTypeIIU{TAG5}D.lean': window_file(allp, W1c, W2c, tag=TAG5, LN=f'{LNUM5} / {LDEN5}')}
-    return files, (W1, W2, moves, params, new)
+             f'{CURVE}.lean': cfile}
+    return files, (params, new)
 
 
 def main():
-    files, (W1, W2, moves, params, new) = generate()
+    files, (params, new) = generate()
     if '--table' in sys.argv:
         for k, (lo, hi, A) in enumerate(new):
             p = params[(lo, hi)]
             print(k, lit(lo), lit(hi), 'a', dec(p['a'], 5), 'lam', dec(p['lam'], 5), 'Ai', dec(p['Ai'], 5), 'A', dec(A, 5),
                   '4/(1+lo)', dec(Fr(4) / (1 + lo), 5))
-    print(f'window [{W1}, {W2}]/100000 at L = {L3} (corner moves {moves}), [{W1_4}, {W2_4}]/100000 at L = {L4} and '
-          f'[{W1_5}, {W2_5}]/100000 at L = {LNUM5}/{LDEN5}; {len(new)} steps, every ParC.Good field checked')
+    print(f'{len(new)} steps, every ParC.Good field checked')
     if '--check' in sys.argv:
         bad = [n for n, t in files.items()
                if not os.path.exists(os.path.join(PNT, n)) or open(os.path.join(PNT, n), encoding='utf-8').read() != t]

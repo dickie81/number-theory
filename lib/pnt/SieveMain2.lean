@@ -12,15 +12,15 @@ The file imports `SieveMain.lean`.
 -/
 import SieveMain
 
-open Real Finset Filter SieveFamily SieveChain SieveDecomp SieveBuch SieveLeaves SieveQ SieveRough SieveDrop SieveRoute
+open Real Finset Filter SieveFamily SieveChain SieveDecomp SieveLeaves SieveQ SieveRough SieveDrop SieveRoute
 
 namespace SieveMain2
 
 open Classical
 
-variable [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [SieveCert.GridOKC] [Fits]
+variable [Route] [RouteOK] [SieveCert.Grid]
 
-omit [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [SieveCert.GridOKC] [Fits] in
+omit [RouteOK] [SieveCert.Grid] in
 /-- **The small moduli.** For `L ≥ 0` (`hL0`): if for large `q` every unit `a` mod `q` has a prime `p ≡ a (mod q)`
 with `q^L < p ≤ 2q^L` (`hlarge`), there is `K` such that for every `q ≥ 1` and every `a` prime to `q` there is a
 prime `p ≡ a (mod q)` with `p ≤ K·q^L`: Dirichlet's theorem gives a prime for each of the finitely many smaller `q`

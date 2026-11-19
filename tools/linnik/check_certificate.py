@@ -1,101 +1,51 @@
 #!/usr/bin/env python3
-"""Regenerate the Linnik certificates' files and compare them with lib/pnt byte for byte.
+"""Regenerate the Linnik certificate at 43/20 and compare its files with lib/pnt byte for byte.
 
-Three certificates are checked (with no argument, or one named by its tag):
+The certificate is that of the Linnik paper's Theorem 1.2, `Linnik21500.linnik_21500` (L = 2150/1000 = 43/20, the
+search with the reversal through the largest prime, led by hints): `hint_cert.py 21500 --check --cplan` plans the
+search again, cuts the plan into parts, writes the hints of each part, runs every part through the kernel's search
+led by its hints (the script's mirror of `SieveAd.solveD`), and compares SieveHint21500.lean, every
+SieveHint21500P<k>.lean and Linnik21500.lean with the files in lib/pnt; a file that differs, or a part file that
+exists on one side only, fails the check. With `--cplan` the search of each cell of the first prime is the C
+planner's (`cplan.py`, compiled once by a C compiler with `__int128`, GCC or Clang, as on CI's runner): the same plans
+as the Python planner's, which takes ten times as long (16 November 2026, on four busy cores: 88 seconds against
+882).
 
-* `22000E`: `SieveDeep.totalD_lt_22000E` (L = 11/5, the window [43457/100000, 46959/100000], n = 272, the curve `g7d`,
-  the decomposition to depth 8 under the bilinear Type I rule), the theorem of the Linnik paper's version at 11/5;
-* `21900`: `Linnik21900.tree21900` (L = 219/100, the window [44260/100000, 46717/100000], a tree of Buchstab steps
-  that the kernel searches for in parts);
-* `21800`: `Linnik21800.tree21800` (L = 218/100, the window [45073/100000, 46472/100000], a search with role
-  reversal that the kernel runs in parts).
-
-Earlier certificates, at weaker exponents (the last, `22240R` at 278/125), are no longer in the tree; see the git
-history.
-
-The first is generated in two steps:
-
-1. `mirror8.py W1 W2 272 11/5 CELLS.json` evaluates the certificate's definitions (SieveDeepDefs.lean) cell by cell in
-   exact integers, in parallel, and writes each cell's cost and kernel work (about a minute on four cores);
-2. `gen_cert8.py CELLS.json OUTDIR [--tag ...]` cuts the certificate into parts and writes the Lean files.
-
-This script runs both in a temporary directory and compares SieveGrid<tag>.lean, every SieveCert<tag>P<k>.lean and
-SieveCert<tag>.lean with the files in lib/pnt. A file that differs, or a part file that exists on one side only,
-fails the check.
-
-The second is `tree_cert.py --check`, which runs the search in Python, cuts it into parts and compares
-SieveGrid21900.lean, every SieveTree21900P<k>.lean and Linnik21900.lean with the files in lib/pnt (half a minute).
-The third is `rev_cert.py --check`, the same for the search with role reversal and SieveGrid21800.lean, every
-SieveTree21800P<k>.lean and Linnik21800.lean (two minutes).
-The fourth is `fill_cert.py --check`, the same for the search with no window and SieveFill21650.lean, every
-SieveTree21650P<k>.lean and Linnik21650.lean (five minutes).
+The certificate of Theorem 1.1, at 21/10 (`hint_cert.py 21000`), is not checked here: its plan takes hours on
+several machines. The certificates at 11/5, 219/100, 218/100 and 2115/1000 are in the git history at
+commit 76abe3c.
 
 `--inputs` prints, one glob pattern a line from the repository's root, the files that the check reads: this script,
-the generators it runs and the scripts of this directory that they import, and the files of lib/pnt whose names hold
-a certificate's tag, which include every file it compares. Only a change to one of them can change its outcome, so CI
-runs the check only then (the job `changes` of .github/workflows/ci.yml).
+the generators it runs and the files of this directory that they import or compile, the files of lib/pnt that they
+read when they start (`READS`), and the files of lib/pnt whose names hold the certificate's tag, which include every
+file it compares. Only a change to one of them can change its outcome, so CI runs the check only then (the job
+`changes` of .github/workflows/ci.yml).
 """
-import filecmp
 import os
 import re
 import subprocess
 import sys
-import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PNT = os.path.join(HERE, '..', '..', 'lib', 'pnt')
 
-# tag: (the mirror and its arguments before CELLS.json, the generator and its arguments after OUTDIR)
-CERTS = {
-    '22000E': (['mirror8.py', '43457', '46959', '272', '11/5'],
-               ['gen_cert8.py', '--tag', '22000E', '--curve', 'g7d', '--typeii', 'SieveTypeIIU22000D.typeII_22000d']),
-}
-
-
-# tag: the generator of a tree's files and its arguments
-TREES = {'21900': ['tree_cert.py', '--check'], '21800': ['rev_cert.py', '--check'],
-         '21650': ['fill_cert.py', '--check']}
+# tag: the generator that regenerates and compares a certificate's files, and its arguments
+CERTS = {'21500': ['hint_cert.py', '21500', '--check', '--cplan']}
+# the files of this directory, other than scripts, that the generators read: the C planner, which `--cplan` compiles
+EXTRA = ['cplan/*']
+# the files of lib/pnt that the scripts read when they start: the curve `ghx` (`res_test.py`, through
+# `route_limits.parse`) and the leaves' region `leafXR` (`tree_cert.py`)
+READS = ['lib/pnt/SieveCurveHx.lean', 'lib/pnt/SieveLeafZoneXDefs.lean']
 
 
-def check_tree(tag):
-    gen = TREES[tag]
+def check(tag):
+    gen = CERTS[tag]
     r = subprocess.run([sys.executable, os.path.join(HERE, gen[0]), *gen[1:]], capture_output=True, text=True)
     print(r.stdout.rstrip())
     if r.returncode:
         print(r.stderr.rstrip())
-    print(f'CERTIFICATE {tag}', 'PASS' if r.returncode == 0 else 'FAIL')
-    return r.returncode == 0
-
-
-def names(d, tag):
-    return sorted(f for f in os.listdir(d) if re.fullmatch(rf'SieveGrid{tag}\.lean|SieveCert{tag}(P\d+)?\.lean', f))
-
-
-def check(tag):
-    mirror, gen = CERTS[tag]
-    with tempfile.TemporaryDirectory() as tmp:
-        cells, out = os.path.join(tmp, 'cells.json'), os.path.join(tmp, 'out')
-        for args in ([os.path.join(HERE, mirror[0]), *mirror[1:], cells],
-                     [os.path.join(HERE, gen[0]), cells, out, *gen[1:]]):
-            r = subprocess.run([sys.executable, *args], capture_output=True, text=True)
-            print(r.stdout.rstrip())
-            if r.returncode:
-                print(r.stderr.rstrip())
-                print(f'CERTIFICATE {tag} FAIL')
-                return False
-        here, there = names(out, tag), names(PNT, tag)
-        only = sorted(set(here) ^ set(there))
-        same = [f for f in here if f in there and filecmp.cmp(os.path.join(out, f), os.path.join(PNT, f), shallow=False)]
-        bad = [f for f in here if f in there and f not in same]
-        print(f'{len(here)} files generated, {len(there)} in lib/pnt: {len(same)} identical, {len(bad)} differ, '
-              f'{len(only)} on one side only')
-        for f in bad:
-            print('  DIFFERS:', f)
-        for f in only:
-            print('  ONE SIDE ONLY:', f)
-        ok = not bad and not only and len(same) == len(there) > 0
-        print(f'CERTIFICATE {tag}', 'PASS' if ok else 'FAIL')
-        return ok
+    ok = r.returncode == 0 and f'SEARCH {tag} PASS' in r.stdout
+    print(f'CERTIFICATE {tag}', 'PASS' if ok else 'FAIL')
+    return ok
 
 
 def local_imports(script):
@@ -107,8 +57,7 @@ def local_imports(script):
 
 def inputs():
     """The files that the check reads, as glob patterns from the repository's root (see the module's docstring)."""
-    todo = [os.path.basename(__file__)] + [s[0] for mirror, gen in CERTS.values() for s in (mirror, gen)] \
-        + [gen[0] for gen in TREES.values()]
+    todo = [os.path.basename(__file__)] + [gen[0] for gen in CERTS.values()]
     seen = set()
     while todo:
         script = todo.pop()
@@ -116,21 +65,20 @@ def inputs():
             seen.add(script)
             todo += local_imports(script)
     here = os.path.relpath(HERE, os.path.join(HERE, '..', '..')).replace(os.sep, '/')
-    return [f'{here}/{s}' for s in sorted(seen)] + [f'lib/pnt/*{tag}*.lean' for tag in [*CERTS, *TREES]]
+    return ([f'{here}/{s}' for s in sorted(seen) + EXTRA] + READS
+            + [f'lib/pnt/*{tag}*.lean' for tag in CERTS])
 
 
 def main():
     if sys.argv[1:] == ['--inputs']:
         print('\n'.join(inputs()))
         return 0
-    tags = [a for a in sys.argv[1:]] or list(CERTS) + list(TREES)
+    tags = sys.argv[1:] or list(CERTS)
     for t in tags:
-        if t not in CERTS and t not in TREES:
-            print(f'unknown certificate {t}; known: {", ".join(list(CERTS) + list(TREES))}')
+        if t not in CERTS:
+            print(f'unknown certificate {t}; known: {", ".join(CERTS)}')
             return 2
-    results = [check(t) if t in CERTS else check_tree(t) for t in tags]
-    if len(tags) > 1:
-        print('CERTIFICATE', 'PASS' if all(results) else 'FAIL', '(' + ', '.join(tags) + ')')
+    results = [check(t) for t in tags]
     return 0 if all(results) else 1
 
 

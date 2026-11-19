@@ -1,10 +1,10 @@
 /-
-# Curves of counts glued from pieces, and their windows checked at the corners
+# Curves of counts glued from pieces
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveTypeIIHM.typeII_gen_hm` takes a curve `g` with `CurveCounts g` and the window condition `WindowOKHM`. A curve
-made of many constant pieces `A_i(1 − σ)` (a staircase above a density curve) is glued here piece by piece.
+The resonant window (`SieveTypeIIHM.typeII_res`) takes a curve `g` with `CurveCounts g`. A curve made of many constant
+pieces `A_i(1 − σ)` (a staircase above a density curve) is glued here piece by piece.
 
 *  `RangeCounts g lo hi`: the counts of `g` on `lo ≤ σ ≤ hi` (`CurveCounts` restricted to a range).
 *  `rangeCounts_of_density`: a density estimate `C(qT)^{A(1−σ)}(log qT)^{10}` on `[lo, hi]` gives
@@ -14,14 +14,6 @@ made of many constant pieces `A_i(1 − σ)` (a staircase above a density curve)
 *  `rangeCounts_glue`: `RangeCounts g lo mid` and `RangeCounts g' mid hi` give
   `RangeCounts (fun σ => if σ < mid then g σ else g' σ) lo hi`.
 *  `curveCounts_of_range`: `RangeCounts g (1/2) 1` is `CurveCounts g`.
-*  `WindowPiece g L m₁ m₂ lo hi`: the window's two inequalities, the orthogonality branch of `WindowOKHM`, for
-  `lo ≤ β ≤ hi`.
-*  `windowPiece_affine` (and its forms `windowPiece_const` for `A(1 − β)` and `windowPiece_one` for `1`): for
-  `g β = p − Aβ` on `[lo, hi]` (`A(1 − β)` is `p = A`; the trivial piece `1` is `p = 1`, `A = 0`), with `lo ≤ hi` and
-  `m₁ ≤ m₂`, the inequalities at the corners `β ∈ {lo, hi}`, `m ∈ {m₁, 1, m₂}` (each where it lies in the range of its
-  inequality) and `w ∈ {0, 4·10⁻⁶}` give the piece: on each range of `m` the exponent is affine in `w`, in `β` and in
-  `m` separately, so it is at most its values at the corners of the box; the tactic `corners` closes the corner
-  cases of `windowPiece_const` and `windowPiece_one`.
 
 The file imports `SieveTypeIIGen.lean`.
 -/
@@ -104,138 +96,5 @@ theorem rangeCounts_glue {g g' : ℝ → ℝ} {lo mid hi : ℝ} (h₁ : RangeCou
           hC₂ q σ T (not_lt.1 hm) hσ1 hT
       _ ≤ max C₁ C₂ * ((q : ℝ) * T) ^ g' σ * (1 + Real.log ((q : ℝ) * T)) ^ 10 := by
           gcongr; exact le_max_right _ _
-
-/-- **The window's inequalities on a range of `β`**: the orthogonality branch of `WindowOKHM`, for `lo ≤ β ≤ hi`. -/
-def WindowPiece (g : ℝ → ℝ) (L m₁ m₂ lo hi : ℝ) : Prop :=
-  ∀ β m w : ℝ, lo ≤ β → β ≤ hi → m₁ ≤ m → m ≤ m₂ → 0 ≤ w → w ≤ 4 / 10 ^ 6 →
-    (m ≤ 1 → (L - m) * (β + w) + g β / 2 + (1 + m) / 2 ≤ L - 1 / 25000) ∧
-    (1 ≤ m → (L - m) * (β + w) + g β / 2 + m ≤ L - 1 / 25000)
-
-/-- **A piece with an affine exponent `g β = p − Aβ`** (`A(1 − β)` is `p = A`; the trivial piece is `p = 1`, `A = 0`):
-for `lo ≤ hi` and `m₁ ≤ m₂`, the corner inequalities give the piece. For the inequality with `m ≤ 1` the corners are
-`β ∈ {lo, hi}`, `m ∈ {m₁, 1, m₂}` where the corner is at most `1`, `w ∈ {0, 4·10⁻⁶}`; for the one with `m ≥ 1` the
-corners `m` are those at least `1`. On each range of `m` the exponent is affine in `w`, in `β` and in `m` separately,
-so it is at most its values at the corners of the box. -/
-theorem windowPiece_affine {p A L m₁ m₂ lo hi : ℝ} (hlo : lo ≤ hi) (hm : m₁ ≤ m₂)
-    (hL1 : ∀ β m w, (β = lo ∨ β = hi) → ((m = m₁ ∧ m₁ ≤ 1) ∨ (m = 1 ∧ m₁ ≤ 1 ∧ 1 ≤ m₂) ∨ (m = m₂ ∧ m₂ ≤ 1)) →
-      (w = 0 ∨ w = 4 / 10 ^ 6) → (L - m) * (β + w) + (p - A * β) / 2 + (1 + m) / 2 ≤ L - 1 / 25000)
-    (hL2 : ∀ β m w, (β = lo ∨ β = hi) → ((m = m₁ ∧ 1 ≤ m₁) ∨ (m = 1 ∧ m₁ ≤ 1 ∧ 1 ≤ m₂) ∨ (m = m₂ ∧ 1 ≤ m₂)) →
-      (w = 0 ∨ w = 4 / 10 ^ 6) → (L - m) * (β + w) + (p - A * β) / 2 + m ≤ L - 1 / 25000) :
-    WindowPiece (fun β => p - A * β) L m₁ m₂ lo hi := by
-  intro β m w hβ hβ1 hm1 hm2 hw hw1
-  -- `F(β, m, w) = (L − m)(β + w) + (p − Aβ)/2 + t(m)` is affine in `w`, in `β`, and in `m` for each affine `t`;
-  -- a function affine in each variable separately is at most its maximum over the corners of a box.
-  have key : ∀ (t₀ t₁ : ℝ) (ma mb : ℝ), ma ≤ m → m ≤ mb →
-      (∀ β' m' w', (β' = lo ∨ β' = hi) → (m' = ma ∨ m' = mb) → (w' = 0 ∨ w' = 4 / 10 ^ 6) →
-        (L - m') * (β' + w') + (p - A * β') / 2 + (t₀ + t₁ * m') ≤ L - 1 / 25000) →
-      (L - m) * (β + w) + (p - A * β) / 2 + (t₀ + t₁ * m) ≤ L - 1 / 25000 := by
-    intro t₀ t₁ ma mb hma hmb hc
-    -- interpolate in `w`, then in `β`, then in `m`
-    have hw' : ∀ β' m', (β' = lo ∨ β' = hi) → (m' = ma ∨ m' = mb) →
-        (L - m') * (β' + w) + (p - A * β') / 2 + (t₀ + t₁ * m') ≤ L - 1 / 25000 := by
-      intro β' m' hb' hm'
-      have h0 := hc β' m' 0 hb' hm' (Or.inl rfl)
-      have h1 := hc β' m' (4 / 10 ^ 6) hb' hm' (Or.inr rfl)
-      -- affine in `w`: the value at `w` is a convex combination of the values at `0` and `4/10^6`
-      have hθ : (L - m') * (β' + w) + (p - A * β') / 2 + (t₀ + t₁ * m') =
-          (1 - w / (4 / 10 ^ 6)) * ((L - m') * (β' + 0) + (p - A * β') / 2 + (t₀ + t₁ * m')) +
-          (w / (4 / 10 ^ 6)) * ((L - m') * (β' + 4 / 10 ^ 6) + (p - A * β') / 2 + (t₀ + t₁ * m')) := by
-        field_simp; ring
-      have hθ0 : 0 ≤ w / (4 / 10 ^ 6) := by positivity
-      have hθ1 : w / (4 / 10 ^ 6) ≤ 1 := by rw [div_le_one (by norm_num)]; exact hw1
-      rw [hθ]
-      nlinarith [mul_le_mul_of_nonneg_left h0 (by linarith : 0 ≤ 1 - w / (4 / 10 ^ 6)),
-        mul_le_mul_of_nonneg_left h1 hθ0]
-    have hβ' : ∀ m', (m' = ma ∨ m' = mb) →
-        (L - m') * (β + w) + (p - A * β) / 2 + (t₀ + t₁ * m') ≤ L - 1 / 25000 := by
-      intro m' hm'
-      have h0 := hw' lo m' (Or.inl rfl) hm'
-      have h1 := hw' hi m' (Or.inr rfl) hm'
-      rcases eq_or_lt_of_le hlo with heq | hlt
-      · subst heq
-        have : β = lo := le_antisymm hβ1 hβ
-        subst this; exact h0
-      · have hθ : (L - m') * (β + w) + (p - A * β) / 2 + (t₀ + t₁ * m') =
-            ((hi - β) / (hi - lo)) * ((L - m') * (lo + w) + (p - A * lo) / 2 + (t₀ + t₁ * m')) +
-            ((β - lo) / (hi - lo)) * ((L - m') * (hi + w) + (p - A * hi) / 2 + (t₀ + t₁ * m')) := by
-          field_simp; ring
-        have hθ0 : 0 ≤ (hi - β) / (hi - lo) := div_nonneg (by linarith) (by linarith)
-        have hθ1 : 0 ≤ (β - lo) / (hi - lo) := div_nonneg (by linarith) (by linarith)
-        have hsum : (hi - β) / (hi - lo) + (β - lo) / (hi - lo) = 1 := by
-          field_simp; ring
-        rw [hθ]
-        nlinarith [mul_le_mul_of_nonneg_left h0 hθ0, mul_le_mul_of_nonneg_left h1 hθ1]
-    have h0 := hβ' ma (Or.inl rfl)
-    have h1 := hβ' mb (Or.inr rfl)
-    rcases eq_or_lt_of_le (hma.trans hmb) with heq | hlt
-    · have : m = ma := le_antisymm (heq ▸ hmb) hma
-      subst this; exact h0
-    · have hθ : (L - m) * (β + w) + (p - A * β) / 2 + (t₀ + t₁ * m) =
-          ((mb - m) / (mb - ma)) * ((L - ma) * (β + w) + (p - A * β) / 2 + (t₀ + t₁ * ma)) +
-          ((m - ma) / (mb - ma)) * ((L - mb) * (β + w) + (p - A * β) / 2 + (t₀ + t₁ * mb)) := by
-        field_simp; ring
-      have hθ0 : 0 ≤ (mb - m) / (mb - ma) := div_nonneg (by linarith) (by linarith)
-      have hθ1 : 0 ≤ (m - ma) / (mb - ma) := div_nonneg (by linarith) (by linarith)
-      rw [hθ]
-      nlinarith [mul_le_mul_of_nonneg_left h0 hθ0, mul_le_mul_of_nonneg_left h1 hθ1]
-  constructor
-  · intro hm1'
-    -- `m ∈ [m₁, min 1 m₂]`; corners `m₁` and `min 1 m₂`
-    have hmin : m ≤ min 1 m₂ := le_min hm1' hm2
-    have := key (1 / 2) (1 / 2) m₁ (min 1 m₂) hm1 hmin (by
-      intro β' m' w' hb' hm' hw'
-      rcases hm' with rfl | rfl
-      · have := hL1 β' m' w' hb' (Or.inl ⟨rfl, hm1.trans hm1'⟩) hw'; linarith
-      · rcases le_total 1 m₂ with h12 | h12
-        · rw [min_eq_left h12]
-          have := hL1 β' 1 w' hb' (Or.inr (Or.inl ⟨rfl, hm1.trans hm1', h12⟩)) hw'; linarith
-        · rw [min_eq_right h12]
-          have := hL1 β' m₂ w' hb' (Or.inr (Or.inr ⟨rfl, h12⟩)) hw'; linarith)
-    linarith
-  · intro hm1'
-    have hmax : max m₁ 1 ≤ m := max_le hm1 hm1'
-    have := key 0 1 (max m₁ 1) m₂ hmax hm2 (by
-      intro β' m' w' hb' hm' hw'
-      rcases hm' with rfl | rfl
-      · rcases le_total 1 m₁ with h11 | h11
-        · rw [max_eq_left h11]
-          have := hL2 β' m₁ w' hb' (Or.inl ⟨rfl, h11⟩) hw'; linarith
-        · rw [max_eq_right h11]
-          have := hL2 β' 1 w' hb' (Or.inr (Or.inl ⟨rfl, h11, hm1'.trans hm2⟩)) hw'; linarith
-      · have := hL2 β' m' w' hb' (Or.inr (Or.inr ⟨rfl, hm1'.trans hm2⟩)) hw'; linarith)
-    linarith
-
-/-- `WindowPiece` for a curve equal to another pointwise. -/
-theorem windowPiece_congr {g g' : ℝ → ℝ} {L m₁ m₂ lo hi : ℝ} (hg : ∀ β, g β = g' β)
-    (h : WindowPiece g L m₁ m₂ lo hi) : WindowPiece g' L m₁ m₂ lo hi := by
-  have : g' = g := funext fun β => (hg β).symm
-  rw [this]; exact h
-
-/-- The piece `g β = A(1 − β)`: `windowPiece_affine` at `p = A`. -/
-theorem windowPiece_const {A L m₁ m₂ lo hi : ℝ} (hlo : lo ≤ hi) (hm : m₁ ≤ m₂)
-    (hL1 : ∀ β m w, (β = lo ∨ β = hi) → ((m = m₁ ∧ m₁ ≤ 1) ∨ (m = 1 ∧ m₁ ≤ 1 ∧ 1 ≤ m₂) ∨ (m = m₂ ∧ m₂ ≤ 1)) →
-      (w = 0 ∨ w = 4 / 10 ^ 6) → (L - m) * (β + w) + (A - A * β) / 2 + (1 + m) / 2 ≤ L - 1 / 25000)
-    (hL2 : ∀ β m w, (β = lo ∨ β = hi) → ((m = m₁ ∧ 1 ≤ m₁) ∨ (m = 1 ∧ m₁ ≤ 1 ∧ 1 ≤ m₂) ∨ (m = m₂ ∧ 1 ≤ m₂)) →
-      (w = 0 ∨ w = 4 / 10 ^ 6) → (L - m) * (β + w) + (A - A * β) / 2 + m ≤ L - 1 / 25000) :
-    WindowPiece (fun β => A * (1 - β)) L m₁ m₂ lo hi :=
-  windowPiece_congr (fun β => by ring) (windowPiece_affine hlo hm hL1 hL2)
-
-/-- The trivial piece `g β = 1`: `windowPiece_affine` at `p = 1`, `A = 0`. -/
-theorem windowPiece_one {L m₁ m₂ lo hi : ℝ} (hlo : lo ≤ hi) (hm : m₁ ≤ m₂)
-    (hL1 : ∀ β m w, (β = lo ∨ β = hi) → ((m = m₁ ∧ m₁ ≤ 1) ∨ (m = 1 ∧ m₁ ≤ 1 ∧ 1 ≤ m₂) ∨ (m = m₂ ∧ m₂ ≤ 1)) →
-      (w = 0 ∨ w = 4 / 10 ^ 6) → (L - m) * (β + w) + (1 - 0 * β) / 2 + (1 + m) / 2 ≤ L - 1 / 25000)
-    (hL2 : ∀ β m w, (β = lo ∨ β = hi) → ((m = m₁ ∧ 1 ≤ m₁) ∨ (m = 1 ∧ m₁ ≤ 1 ∧ 1 ≤ m₂) ∨ (m = m₂ ∧ 1 ≤ m₂)) →
-      (w = 0 ∨ w = 4 / 10 ^ 6) → (L - m) * (β + w) + (1 - 0 * β) / 2 + m ≤ L - 1 / 25000) :
-    WindowPiece (fun _ => (1 : ℝ)) L m₁ m₂ lo hi :=
-  windowPiece_congr (fun β => by ring) (windowPiece_affine hlo hm hL1 hL2)
-
-set_option hygiene false in
-/-- The corner cases of `windowPiece_const` and `windowPiece_one`: the two values of `β`, the three of `m` where the
-side condition holds, the two of `w`, each closed by `norm_num` (a corner whose side condition is false, `m = m₂` with
-`m₂ ≤ 1` or `m = m₁` with `1 ≤ m₁`, is closed at `h`). -/
-macro "corners" : tactic =>
-  `(tactic| (intro β m w hb hm hw
-             rcases hb with rfl | rfl <;> rcases hm with ⟨rfl, h⟩ | ⟨rfl, h, h'⟩ | ⟨rfl, h⟩ <;>
-               rcases hw with rfl | rfl <;> (try norm_num at h) <;> norm_num ))
 
 end SieveCurveGlue

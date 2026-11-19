@@ -3,10 +3,10 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveTypeIBAsym.leaves_ib` (the paper's Lemma 4.3) bounds the leaves `d = d₁d₂` with `d₁f_max ≤ q^{L−1−a}`,
-`d₁f_maxd₂² ≤ q^{L−b}` and `d₁d₂ ≥ q^{L−1−δ'}`, `b > 0`: the second condition, `d₁d₂² ≤ x^{1−b/L}`, is what the cut
-`2HD_m < q` of its bilinear estimate needs. This file is the same with `SieveTypeIBSumWide.leaves_family_wide`,
-whose cut is `H = ⌈qY/ℓ⌉`, for leaves with `d₁f_maxd₂² ≤ q^{L+c}`, `c` of either sign.
+This file puts `SieveTypeIBSumWide.leaves_family_wide`, whose cut of the frequencies is `H = ⌈qY/ℓ⌉`, in powers of
+`q`, for leaves `d = d₁d₂` with `d₁f_max ≤ q^{L−1−a}`, `d₁f_maxd₂² ≤ q^{L+c}` and `d₁d₂ ≥ q^{L−1−δ'}`, `c` of either
+sign. `G θ Λ` is `SieveSmooth`'s cut-off, and the tools of the asymptotic form (the cut-offs, the pivots, the number
+of blocks, the bilinear part as a power of `q`) are in `SieveTypeIBAsym`.
 
 * `bdUW_le_pow`: **the uniform bound as powers of `q`.** With `x = q`, `η = x^{−s}`, `ρ = 1 + η`, `N₁ = ⌊x^L⌋`,
   `N₂ = ⌊2x^L⌋`, `X₁ = x^{L−1−a}`, `X₂ = x^{L+c}`, `X₃ = x^{L−1−δ'}`, `Y = x^y`, `r ≥ 2/y`, `F, d(q) ≤ C_dx^s`, and a
@@ -14,21 +14,30 @@ whose cut is `H = ⌈qY/ℓ⌉`, for leaves with `d₁f_maxd₂² ≤ q^{L+c}`, 
   `bdUW ≤ √(816(64r + 1)C_d)x^{L−1−(κ−y−2s)/2} + 16x^{L−2} + 4(64r + 1)C_dx^{L−1/2+s}/φ(q)`.
 * `sIBW`, `sIBW_spec`: the exponent `s = min(κ/(4(J₀ + 6)), e₀, 1/(4(J₀ + 6)))` of `η = θ = q^{−s}`.
 * `leaves_ib_wide`: **the leaves by the bilinear estimate on the wider region, asymptotically.** Fix `L > 2`,
-  `a ≤ L − 2`, `c ≥ −L`, a margin `κ > 0` and `0 ≤ δ' ≤ min(κ/4, 1/8)` with `max(c, 0) ≤ a − δ' − κ`, and the sizes
-  of `leaves_ib`. For large `q`, families of leaves as in `leaves_ib` with every leaf in the region
-  `∏y₁·f_max ≤ q^{L−1−a}`, `∏y₁·f_max(∏y₂)² ≤ q^{L+c}`, `∏y₁∏y₂ ≥ q^{L−1−δ'}` have
-  `|Σ_y c Σ_m rng(d, m)R(m)dw(dm)| ≤ (N₂ − N₁)/q·|Γ|·Σ_y c/d + q^{L−s/4}/φ(q)`.
+  `a ≤ L − 2`, `c ≥ −L`, a margin `κ > 0` and `0 ≤ δ' ≤ min(κ/4, 1/8)` with `max(c, 0) ≤ a − δ' − κ`; `e₀ > 0`,
+  `Λ₀ ≥ 0`, `B ≥ 1`, sizes `K₁`, `K₂`, `J₀`, and `0 ≤ c₁ < s/4` with `s = sIBW κ e₀ J₀`. There are `δ > 0` and `q₀`
+  such that for `q ≥ q₀` and a unit `a'`: let families `Y₁`, `Y₂` of tuples lie in boxes of integers at least
+  `q^{e₀}` with `Σ 1/p ≤ B` on each coordinate, `J ≤ J₀` sharp comparisons `Pr_j` of forms at most `Λ₀ log q` each
+  have a coefficient `±1`, and sieve weights `S₁` above and `S₂` below sandwich `R`, with divisors in `[1, f_max]`,
+  fibres and `Σ|λ|/f` at most `q^{c₁}` and `Σ|λ|` at most `q^{1/4}`; and let every leaf have `∏y₁·f_max ≤ q^{L−1−a}`,
+  `∏y₁·f_max(∏y₂)² ≤ q^{L+c}` and `∏y₁∏y₂ ≥ q^{L−1−δ'}`. Then
+  `|Σ_y c Σ_m rng(d, m)R(m)dw(dm)| ≤ (N₂ − N₁)/q·|Γ|·Σ_y c/d + q^{L−δ}/φ(q)`, `c = ∏_j 1[Pr_j]`, `d = ∏y₁∏y₂`,
+  `N₁ = ⌊q^L⌋`, `N₂ = ⌊2q^L⌋`, `Γ` the sieve's gap.
 
-In exponents of `x = q^L`, with `d₁ = x^{a₁}`, `d₂ = x^{a₂}` and `τ = 1/L`: the paper's lemma asks `a₁ + 2a₂ < 1`
-besides `a₁ < 1 − τ`; this one asks `a₁ + 2a₂ < 1 + c/L` with `c < a − δ'`, where `q^{−a}` is the room of `d₁` below
-`x/q` (at most `q^{L−2}`, the room of `q` itself) and `q^{δ'}` that of the cofactor above `q`. For a cofactor of
-length at most about `q` (`δ'` small) that is, up to the margins, `2a₁ + 2a₂ < 2 − τ` for `a₁ ≥ τ` (take
-`d₁ = x^{1−τ−a/L}`) and `a₁ + 2a₂ < 2 − 2τ` for `a₁ ≤ τ` (take `a = L − 2`): the rule
-`max(a₁, τ) + a₁ + 2a₂ < 2 − τ` of `tools/linnik/two_factor.py --bil`.
+In exponents of `x = q^L`, with `d₁ = x^{a₁}`, `d₂ = x^{a₂}` and `τ = 1/L`: the region asks `a₁ + 2a₂ < 1 + c/L`
+with `c < a − δ'`, where `q^{−a}` is the room of `d₁` below `x/q` (at most `q^{L−2}`, the room of `q` itself) and
+`q^{δ'}` that of the cofactor above `q`. For a cofactor of length at most about `q` (`δ'` small) that is, up to the
+margins, `2a₁ + 2a₂ < 2 − τ` for `a₁ ≥ τ` (take `d₁ = x^{1−τ−a/L}`) and `a₁ + 2a₂ < 2 − 2τ` for `a₁ ≤ τ` (take
+`a = L − 2`): the rule `max(a₁, τ) + a₁ + 2a₂ < 2 − τ` of `tools/linnik/two_factor.py --bil`.
 
-The proof of `leaves_ib_wide` is that of `leaves_ib`, with `Y = q^y`, `y = min(κ/4, 1/8)`, `r = ⌈2/y⌉`, the divisor
-bound `d(n) ≤ F` for `n ≤ ⌊q^{L+2}⌋`, and the three conditions on `Y` of `SieveTypeIBSumWide.bdPW_le` for large `q`
-(the step of the splines is at most `q^{1+δ'−s} + 1 ≤ qY`, which is where `δ' ≤ y` enters).
+The proof of `leaves_ib_wide`: `SieveTypeIBSumWide.leaves_family_wide` at `θ = η = q^{−s}`, `Λ = Λ₀ log q + 1`,
+`Y = q^y`, `y = min(κ/4, 1/8)`, `r = ⌈2/y⌉` and `F = ⌊C_dq^s⌋`, with the divisor bound `d(n) ≤ F` for
+`n ≤ ⌊q^{L+2}⌋` (`LinnikPower.card_divisors_le`) and the three conditions on `Y` of `SieveTypeIBSumWide.bdPW_le` for
+large `q` (the step of the splines is at most `q^{1+δ'−s} + 1 ≤ qY`, which is where `δ' ≤ y` enters). Each
+comparison is replaced off the family by its cut-off, so that `|I_j − G θ Λ| ≤ G θ θ (· + θ)` everywhere
+(`SieveFamily.abs_ind_sub_G_le`). The transition is bounded by `Θ ≤ 11q^{L−s}` and `Σ_y c ≤ q^{L−1/2}B^{K₁+K₂}`,
+the bilinear part by `SieveTypeIBAsym.bil_le`, and the near-boundary masses by `SieveTypeIBAsym.nb_regroup` and
+`SieveTypeIBAsym.pivot_two_le`; `SieveTypeIBAsym.ev_log_sq_le` absorbs the constant, and `δ = s/4`.
 
 The file imports `SieveTypeIBAsym.lean` and `SieveTypeIBSumWide.lean`.
 -/
@@ -45,8 +54,9 @@ open SieveTypeIB SieveSpline SieveTypeIBLeaf SieveTypeIBEv SieveTypeIBSum SieveS
 
 set_option maxHeartbeats 1000000 in
 /-- **The uniform bound with the cut `⌈qY/ℓ⌉`, as powers of `q`.** Let `x = q ≥ 3`, `L > 2`, `0 ≤ δ'`, `a ≤ L − 2`,
-`0 < s`, `0 < y`, `r ≥ 2/y`, `F ≤ C_dx^s`, `d(q) ≤ C_dx^s`, and `κ ≥ 0` with `c` and `0` at most `a − δ' − κ`. With `η = x^{−s}`, `ρ = 1 + η`, `N₁ = ⌊x^L⌋`, `N₂ = ⌊2x^L⌋`, `X₁ = x^{L−1−a}`, `X₂ = x^{L+c}`,
-`X₃ = x^{L−1−δ'}` and `Y = x^y`:
+`0 < s`, `0 < y`, `r ≥ 2/y`, `F ≤ C_dx^s`, `d(q) ≤ C_dx^s`, and `κ ≥ 0` with `c` and `0` at most `a − δ' − κ`.
+With `η = x^{−s}`, `ρ = 1 + η`, `N₁ = ⌊x^L⌋`, `N₂ = ⌊2x^L⌋`, `X₁ = x^{L−1−a}`, `X₂ = x^{L+c}`, `X₃ = x^{L−1−δ'}` and
+`Y = x^y`:
 `bdUW ≤ √(816(64r + 1)C_d)x^{L−1−(κ−y−2s)/2} + 16x^{L−2} + 4(64r + 1)C_dx^{L−1/2+s}/φ(q)`. -/
 theorem bdUW_le_pow (q : ℕ) [NeZero q] {L s a c δ' κ y Cd : ℝ} (hq3 : (3 : ℝ) ≤ q) (hL : 2 < L) (hδ' : 0 ≤ δ')
     (haL : a ≤ L - 2) (hκ : 0 ≤ κ) (hκ1 : c ≤ a - δ' - κ)
@@ -225,8 +235,7 @@ coordinate, with fibres of `∏y₂` at most `q^{c₁}`; let `J ≤ J₀` sharp 
 below sandwich `R`, with divisors in `[1, f_max]`, fibres and `Σ|λ|/f` at most `q^{c₁}` and `Σ|λ|` at most `q^{1/4}`;
 and let every leaf have `∏y₁·f_max ≤ q^{L−1−a}`, `∏y₁·f_max(∏y₂)² ≤ q^{L+c}` and `∏y₁∏y₂ ≥ q^{L−1−δ'}`. Then the
 leaves' sum `Σ_{y₁,y₂} c Σ_m rng(d, m)R(m)dw(dm)`, `c = ∏_j 1[Pr_j]`, `d = ∏y₁∏y₂`, `N₁ = ⌊q^L⌋`, `N₂ = ⌊2q^L⌋`, is at
-most `(N₂ − N₁)/q·|Γ|·Σ_y c/d + q^{L−δ}/φ(q)` in absolute value, `Γ` the sieve's gap. `SieveTypeIBAsym.leaves_ib` is
-the region `∏y₁·f_max(∏y₂)² ≤ q^{L−b}`, `b > 0`. -/
+most `(N₂ − N₁)/q·|Γ|·Σ_y c/d + q^{L−δ}/φ(q)` in absolute value, `Γ` the sieve's gap. -/
 theorem leaves_ib_wide {L : ℝ} (hL : 2 < L) {a c δ' κ e₀ c₁ Λ₀ B : ℝ} (hδ' : 0 ≤ δ') (haL : a ≤ L - 2)
     (hκ : 0 < κ) (hκ1 : c ≤ a - δ' - κ) (hκ3 : 0 ≤ a - δ' - κ) (hδ1 : δ' ≤ κ / 4) (hδ2 : δ' ≤ 1 / 8)
     (hcL : -L ≤ c) (he₀ : 0 < e₀) (hΛ₀ : 0 ≤ Λ₀) (hB : 1 ≤ B) (K₁ K₂ J₀ : ℕ) (hc₁0 : 0 ≤ c₁)

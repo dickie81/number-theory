@@ -13,7 +13,7 @@ the roots use, through types and proofs. The check fails if:
    declarations and the meta level, macros and syntax, aside), or a module of those directories is imported by no
    check file;
 2. a root has a closed hypothesis, a proposition or an instance that mentions none of its variables (such as
-   `RiemannHypothesis`, `SieveRoute.TypeIIAt` or `[SieveCert.Grid]`), and no root without one uses it, nor a result of
+   `RiemannHypothesis` or `[SieveCert.Grid]`), and no root without one uses it, nor a result of
    a section "Conditional results" of formalisations/ (formalisations/README.md's, or a note's), which lists the results
    conditional on purpose: a lemma of a route that nothing proves any more;
 3. a root that no other root uses, a result of the library, is neither printed by Check.lean (the papers' results),
