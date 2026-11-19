@@ -85,6 +85,8 @@ import LinnikSubconvex
 import MertensChi
 import ShortCharSums
 import LeastPrimitiveRoot
+import SieveBrunW
+import LeastPrimitiveRootLog
 import LucasWitness
 import CyclotomicFrobenius
 import MillerTest
@@ -337,6 +339,7 @@ import SieveAdCount
 import Linnik21500Count
 import Linnik21000Count
 import LinnikG7
+import LinnikAlmostAll
 import LinnikGRH
 import ShortPrimesHalfPlane
 import LinnikWeylBridge
@@ -1384,6 +1387,14 @@ certificate's bound and the theorem. -/
 #print axioms SieveCurve7D.g7d_le_lin
 #print axioms LinnikG7.charDensity_g7d
 #print axioms LinnikG7.linnik_g7d
+#print axioms LinnikAlmostAll.least_prime_of_charDensity
+#print axioms LinnikAlmostAll.few_of_charDensity
+#print axioms LinnikAlmostAll.meanSq_of_charDensity
+#print axioms LinnikAlmostAll.entropy_of_charDensity
+#print axioms LinnikAlmostAll.least_prime_g7d
+#print axioms LinnikAlmostAll.few_g7d
+#print axioms LinnikAlmostAll.meanSq_g7d
+#print axioms LinnikAlmostAll.entropy_g7d
 #print axioms LinnikDetect.LSeries_aXχ
 #print axioms LinnikDetect.detect_identityχ
 #print axioms LinnikDetect.dichotomy
@@ -1424,6 +1435,12 @@ certificate's bound and the theorem. -/
 #print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_prime
 #print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_rpow_pow
 #print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_safe
+#print axioms SieveBrun.fundamentalW
+#print axioms LeastPrimitiveRoot.abs_sum_yv_sub_le
+#print axioms LeastPrimitiveRoot.sum_primRoot_ge
+#print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_log
+#print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_log_prime
+#print axioms LeastPrimitiveRoot.exists_prime_primRoot_le_log_pow
 #print axioms LucasWitness.prime_iff_exists_lucas_le_rpow
 #print axioms LucasWitness.prime_iff_exists_lucas_le_safe
 #print axioms CyclotomicFrobenius.closure_frob_eq_top

@@ -36,4 +36,8 @@ export LAKE_OVERRIDE_LEAN=true LEAN_SYSROOT="$SYS"
 export LEAN_SLOTS_REAL="$PREFIX/bin/lean" LEAN_SLOTS_LOCKS="$SYS/locks"
 export LEAN_SLOTS="${LEAN_SLOTS:-$(getconf _NPROCESSORS_ONLN)}" LEAN_HEAVY="${LEAN_HEAVY:-2}"
 echo "scripts/build.sh: at most $LEAN_SLOTS compiles at once, at most $LEAN_HEAVY of them heavy modules"
+# Outside CI: a clone whose commits no hook checks for dead code says so (git takes no hooks from a clone by itself).
+if [ -z "${CI:-}" ] && git rev-parse --git-dir >/dev/null 2>&1 && [ -z "$(git config --get core.hooksPath)" ]; then
+  echo "scripts/build.sh: this clone's commits are not checked for dead code; to install the hook: scripts/install_hooks.sh"
+fi
 exec lake build "$@"

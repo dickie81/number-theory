@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Before a commit that changes a Lean file, or a note of formalisations/: the fast dead-code check
+# (scripts/dead_code_fast.py) on what the commit would record, against the commit before it. It reports only what
+# the commit adds: a declaration that nothing uses any more, a module that no check file imports, a printed result
+# that nothing uses and formalisations/ does not name. It reads the sources and the builds already made, and builds
+# nothing: a few seconds. The check that decides is CI's, scripts/dead_code.py, after the whole build.
+#
+# Installed by scripts/install_hooks.sh (git config core.hooksPath .githooks). `.githooks/pre-merge-commit` runs
+# the same check on a merge that git commits by itself.
+#
+# A commit of work in progress (a lemma before its use):  DEAD_CODE_HOOK=warn git commit …   reports and commits;
+# DEAD_CODE_HOOK=off skips the check; `git commit --no-verify` skips every hook.
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+mode="${DEAD_CODE_HOOK:-block}"
+if [ "$mode" = off ]; then
+  exit 0
+fi
+if git rev-parse -q --verify HEAD >/dev/null; then
+  against=(--against HEAD)
+  unchanged() { git diff --cached --quiet --diff-filter=ACDMR HEAD -- '*.lean' 'formalisations/*.md'; }
+else
+  against=()
+  unchanged() { [ -z "$(git ls-files -- '*.lean' 'formalisations/*.md' | head -1)" ]; }
+fi
+if unchanged; then
+  exit 0
+fi
+rc=0
+python3 scripts/dead_code_fast.py --staged "${against[@]}" || rc=$?
+if [ "$rc" -eq 1 ] && [ "$mode" = warn ]; then
+  echo "pre-commit: DEAD_CODE_HOOK=warn: committed with the findings above; CI's check will fail on them." >&2
+elif [ "$rc" -eq 1 ]; then
+  echo >&2
+  echo "pre-commit: the commit would leave the findings above. Remove or use what is unused, or register the" >&2
+  echo "result in formalisations/; \`python3 scripts/dead_code_fast.py --why NAME\` shows what counts as a use." >&2
+  echo "Work in progress (a lemma before its use): DEAD_CODE_HOOK=warn git commit …  reports and commits." >&2
+  exit 1
+elif [ "$rc" -ne 0 ]; then
+  # the check itself failed: that is not the commit's fault
+  echo "pre-commit: scripts/dead_code_fast.py could not run (exit $rc); the commit goes through unchecked." >&2
+fi

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# After a merge that git can commit by itself: the check of .githooks/pre-commit on the merge's result, against the
+# branch before it. A merge can leave unused on one side what the other side stopped using. (A merge with conflicts
+# is committed by `git commit`, which runs pre-commit.)
+exec "$(dirname "${BASH_SOURCE[0]}")/pre-commit" "$@"
