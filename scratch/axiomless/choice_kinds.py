@@ -15,7 +15,7 @@ The chains are not followed below those constants. LABELS_BINARY is the compiled
 """
 import subprocess, sys
 from collections import Counter
-from census_report import load
+from census_report import load, written
 
 LEM, DEC, CHOICE = 1, 2, 4
 AC = {"Classical.axiomOfChoice", "Classical.axiom_of_choice", "Classical.skolem", "Classical.nonempty_pi"}
@@ -36,7 +36,7 @@ def main():
     open(labels, "w").write("\n".join(lines) + "\n")
     masks = list(map(int, subprocess.run([binary, edges, str(len(rows)), labels], capture_output=True, text=True, check=True).stdout.split()))
     name = lambda m: " + ".join(n for b, n in ((LEM, "excluded middle"), (DEC, "classical decidability"), (CHOICE, "choice of an element")) if m & b)
-    tainted = [(r, masks[i]) for i, r in enumerate(rows) if r[1] == "theorem" and not r[7] and (r[3] & ch)]
+    tainted = [(r, masks[i]) for i, r in enumerate(rows) if written(r) and (r[3] & ch)]
     for label, sel in (("theorems that depend on Classical.choice", tainted),
                        ("of them, those whose statement is free of choice", [(r, m) for r, m in tainted if not (r[4] & ch)])):
         print(f"{label}: {len(sel)}")

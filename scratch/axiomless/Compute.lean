@@ -33,7 +33,8 @@ theorem factor_1000001 : (factor 1000001 (by decide)).val = [101, 9901] := by de
 theorem prime_9901 : Prime 9901 := by decide +kernel
 theorem not_prime_5041 : ¬ Prime 5041 := by decide +kernel
 
-/-! `10! + 1 = 11 · 329891`. The kernel takes about two minutes: 329891 steps of the search. Uncomment to check.
+/-! `10! + 1 = 11 · 329891`. The kernel takes two minutes and 13.5 GB: 329891 steps of the search. Uncomment to
+check.
 theorem factor_fact10 : (factor 3628801 (by decide)).val = [11, 329891] := by decide +kernel
 -/
 

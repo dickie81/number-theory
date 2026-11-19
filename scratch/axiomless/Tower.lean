@@ -110,15 +110,15 @@ theorem not_dvd_of_rem {d q r n : Nat} (hr0 : 0 < r) (hrd : r < d) (h : d * q + 
 `P` is a decidable predicate. `search` looks for the least number satisfying `P`, from `start` upwards, for `fuel`
 steps, where `start + fuel = bound`. It returns the least one, or a proof that there is none below `bound`. -/
 
-/-- `k n`, with `n` evaluated first. The kernel substitutes arguments unevaluated, so a number that a recursion
-passes on (`start + 1`, then `start + 1 + 1`, …) would be recomputed at every use; the match makes the kernel
-reduce `n` to a numeral, and passes the numeral. -/
+/-- `k n`, with `n` evaluated first: the kernel reduces the match only once `n` is a numeral, and passes the
+numeral on. The kernel passes arguments unevaluated, so without it the candidate of the search below grows into
+a term `0 + 1 + 1 + …`. Up to 100 000 steps that costs nothing. A search of 329 891 steps takes 86 s with
+`strict`; without it, it was stopped after nine minutes. -/
 def strict {α : Nat → Sort u} (n : Nat) (k : (m : Nat) → α m) : α n :=
   match n with
   | 0 => k 0
   | m + 1 => k (m + 1)
 
-/-- The recursive call is the whole result of a step, so the kernel's evaluation does not nest. -/
 def search (P : Nat → Prop) [DecidablePred P] (bound : Nat) :
     (fuel start : Nat) → start + fuel = bound → (∀ k, k < start → ¬ P k) →
       {m : Nat // P m ∧ ∀ k, k < m → ¬ P k} ⊕' (∀ k, k < bound → ¬ P k)
@@ -229,7 +229,9 @@ def nextPrime (n : Nat) : {p : Nat // n < p ∧ Prime p} :=
 theorem exists_prime_gt (n : Nat) : ∃ p, n < p ∧ Prime p :=
   ⟨(nextPrime n).1, (nextPrime n).2⟩
 
-/-- Primality is decidable: `p ≥ 2` is prime if and only if its least divisor above `1` is `p`. -/
+/-- Primality is decidable: `p ≥ 2` is prime if and only if its least divisor above `1` is `p`. The kernel
+decides it in time linear in `p`. A bounded `∀ d < p + 1` by core's instance `Nat.decidableBallLT`, which wraps
+the predicate once more at each step, takes quadratic time: 117 s for `Prime 9901`, against 4 s. -/
 instance decPrime (p : Nat) : Decidable (Prime p) :=
   if h : 2 ≤ p then
     if e : (primeFactor p h).1 = p then .isTrue (e ▸ (primeFactor p h).2.1)
@@ -318,8 +320,7 @@ def quot (d n : Nat) (hd : 0 < d) (h : d ∣ n) : {c : Nat // n = d * c} :=
       let ⟨c, hc⟩ := h
       hno c (Nat.lt_succ_of_le (hc ▸ Nat.le_mul_of_pos_left c hd)) hc
 
-/-- Existence, as a function: split off the least prime factor, at most `fuel` times. The quotient is matched
-against `0` and `m + 1` so that the kernel evaluates it before the next step (see `strict`). -/
+/-- Existence, as a function: split off the least prime factor, at most `fuel` times. -/
 def factorFuel : (fuel n : Nat) → 0 < n → n ≤ fuel → {l : List Nat // AllPrime l ∧ prod l = n}
   | 0, _, hn, hle => absurd hn (Nat.not_lt_of_le hle)
   | f + 1, n, hn, hle =>
@@ -329,13 +330,12 @@ def factorFuel : (fuel n : Nat) → 0 < n → n ≤ fuel → {l : List Nat // Al
       match primeFactor n h2 with
       | ⟨p, hp, hpn⟩ =>
         match quot p n hp.pos hpn with
-        | ⟨0, hm⟩ => absurd hn (by rw [hm, Nat.mul_zero]; exact Nat.lt_irrefl 0)
-        | ⟨m + 1, hm⟩ =>
-          have hmn : m + 1 < n := by
+        | ⟨m, hm⟩ =>
+          have hm0 : 0 < m := pos_of_mul_pos_right (hm ▸ hn)
+          have hmn : m < n := by
             rw [hm]
-            exact Nat.lt_of_lt_of_le (Nat.lt_add_of_pos_right (Nat.succ_pos m))
-              (Nat.two_mul (m + 1) ▸ Nat.mul_le_mul_right (m + 1) hp.1)
-          match factorFuel f (m + 1) (Nat.succ_pos m) (Nat.le_of_lt_succ (Nat.lt_of_lt_of_le hmn hle)) with
+            exact Nat.lt_of_lt_of_le (Nat.lt_add_of_pos_right hm0) (Nat.two_mul m ▸ Nat.mul_le_mul_right m hp.1)
+          match factorFuel f m hm0 (Nat.le_of_lt_succ (Nat.lt_of_lt_of_le hmn hle)) with
           | ⟨l, hl, hprod⟩ => ⟨p :: l, ⟨hp, hl⟩, by rw [hm, ← hprod]; rfl⟩
 
 /-- Every positive number is a product of primes. The list comes out in increasing order. -/
